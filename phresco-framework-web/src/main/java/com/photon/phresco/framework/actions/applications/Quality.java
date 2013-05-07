@@ -76,6 +76,7 @@ import com.photon.phresco.commons.FileListFilter;
 import com.photon.phresco.commons.FrameworkConstants;
 import com.photon.phresco.commons.model.ApplicationInfo;
 import com.photon.phresco.commons.model.ProjectInfo;
+import com.photon.phresco.commons.model.Technology;
 import com.photon.phresco.exception.PhrescoException;
 import com.photon.phresco.framework.FrameworkConfiguration;
 import com.photon.phresco.framework.PhrescoFrameworkFactory;
@@ -2846,6 +2847,13 @@ public class Quality extends DynamicParameterAction implements Constants {
 	            S_LOGGER.debug("check functional Test xml Availablity ==>" + xmlResultsAvailable);
 			}
 			
+			// component xml check 
+			if(!xmlResultsAvailable) {
+				file = new File(sb.toString() + frameworkUtil.getComponentTestReportDir(appInfo));
+				xmlResultsAvailable = xmlFileSearch(file, xmlResultsAvailable);
+	            S_LOGGER.debug("check component Test xml Availablity ==>" + xmlResultsAvailable);
+			}
+			
 			// performance xml check
 			if (StringUtils.isEmpty(isIphone)) {
 				if(!xmlResultsAvailable) {
@@ -2918,6 +2926,7 @@ public class Quality extends DynamicParameterAction implements Constants {
 			ProjectInfo projectInfo = getProjectInfo();
 			
 			ApplicationInfo applicationInfo = getApplicationInfo();
+			Technology technology = getServiceManager().getTechnology(applicationInfo.getTechInfo().getId());
 			MojoProcessor mojo = new MojoProcessor(new File(getPhrescoPluginInfoFilePath(PHASE_PDF_REPORT)));
 			List<Parameter> parameters = getMojoParameters(mojo, PHASE_PDF_REPORT);
 			String sonarUrl = (String) getReqAttribute(REQ_SONAR_URL);
@@ -2937,6 +2946,8 @@ public class Quality extends DynamicParameterAction implements Constants {
 	            		parameter.setValue(getLogoImageString());
 	            	} else if ("theme".equals(key)) {
 	            		parameter.setValue(getThemeColorJson());
+	            	} else if ("technologyName".equals(key)) {
+	            		parameter.setValue(technology.getName());
 	            	}
 	            }
 	        }
