@@ -374,6 +374,7 @@ public interface FrameworkConstants {
 	String PDF_REPORT = "pdfReport";
 	String LOAD_TEST = "loadTest";
 	String PERFORMANCE_TEST_CI = "performanceTest";
+	String COMPONENT_TEST_CI = "componentTest";
 	String REQ_FUNCTEST_SELENIUM_TOOL = "functionalTestSeleniumTool";
 	String SELENIUM_GRID = "grid";
 	String SELENIUM_WEBDRIVER = "webdriver";

@@ -532,7 +532,11 @@
 									        	<option value="performanceTest">Performance Test</option>
 									    <%
 									    	}
-									    %>									    								    
+									    	if (optionIds.contains(FrameworkConstants.COMPONENT_TEST_KEY)) {%>
+									    	<option value="componentTest">Component Test</option>
+									    <%
+									    	}
+									    %>
 										</select>
 									</div>
 								</div>
