@@ -25,5 +25,7 @@ public interface MavenServiceConstants {
 	public String COMPLETED ="COMPLETED";
 	public String ERROR ="ERROR";
 	
+	public String BUILDPROJECT="BUILD";
+	public String DEPLOYPROJECT="DEPLOY";
 
 }

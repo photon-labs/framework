@@ -34,7 +34,18 @@ public class MavenService implements MavenServiceConstants {
 	@Produces(MediaType.APPLICATION_JSON)
 	 public Response build(@Context HttpServletRequest request) throws PhrescoException  {
 		MavenFunctions lMavenFunctions = new MavenFunctions();
-		MavenResponse response = lMavenFunctions.processBuildRequest(request);
+		MavenResponse response = lMavenFunctions.processRequest(request,BUILDPROJECT);
+		return Response.status(Status.OK).entity(response).header("Access-Control-Allow-Origin", "*").build();
+		
+	}
+	
+	
+	@POST
+	@Path("/deploy")
+	@Produces(MediaType.APPLICATION_JSON)
+	 public Response deploy(@Context HttpServletRequest request) throws PhrescoException  {
+		MavenFunctions lMavenFunctions = new MavenFunctions();
+		MavenResponse response = lMavenFunctions.processRequest(request,DEPLOYPROJECT);
 		return Response.status(Status.OK).entity(response).header("Access-Control-Allow-Origin", "*").build();
 		
 	}

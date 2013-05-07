@@ -37,6 +37,7 @@ import com.photon.phresco.framework.PhrescoFrameworkFactory;
 import com.photon.phresco.framework.api.ActionType;
 import com.photon.phresco.framework.api.ApplicationManager;
 import com.photon.phresco.framework.api.ProjectManager;
+import com.photon.phresco.framework.commons.FrameworkUtil;
 import com.photon.phresco.framework.impl.ProjectManagerImpl;
 import com.photon.phresco.framework.rest.api.ServiceManagerMap;
 import com.photon.phresco.framework.rest.api.util.MavenServiceConstants;
@@ -188,7 +189,7 @@ public class MavenFunctions implements Constants ,FrameworkConstants,MavenServic
 	}
 	
 	
-    public MavenResponse processBuildRequest(HttpServletRequest request){
+    public MavenResponse processRequest(HttpServletRequest request,String Command){
 
 		boolean continue_status = true;
 		MavenResponse response = new MavenResponse();
@@ -223,16 +224,33 @@ public class MavenFunctions implements Constants ,FrameworkConstants,MavenServic
 						
 		            	try {
 		            		
-						     BufferedReader server_logs = build(getUsername());
+		            		BufferedReader server_logs=null;
+		            		
+		            		if(Command.equalsIgnoreCase(BUILDPROJECT)){
+		            			
+		            			server_logs = build(getUsername());
+		            		}
+		            		else if(Command.equalsIgnoreCase(DEPLOYPROJECT)){
+		            			
+		            			server_logs = deploy();
+		            		}
+		            		if(server_logs != null){
+		            			
+		            			 UUID uniqueKey = UUID.randomUUID();
+							     String unique_key = uniqueKey.toString();
+							     BufferMap.addBufferReader(unique_key, server_logs);
+							     
+							     	response.setStatus(STARTED);
+									response.setLog(STARTED);
+									response.setService_exception("");
+									response.setUniquekey(unique_key);
+		            		}
+		            		else{
+		            			
+		            			throw new PhrescoException("No build logs obatined");
+		            		}
+		            		
 						     
-						     UUID uniqueKey = UUID.randomUUID();
-						     String unique_key = uniqueKey.toString();
-						     BufferMap.addBufferReader(unique_key, server_logs);
-						     
-						     	response.setStatus(STARTED);
-								response.setLog(STARTED);
-								response.setService_exception("");
-								response.setUniquekey(unique_key);
 						     
 						     /*String line="";
 				                while((line=server_logs.readLine())!=null) {
@@ -301,6 +319,39 @@ public class MavenFunctions implements Constants ,FrameworkConstants,MavenServic
 
 		return reader;
 	}
+	
+	
+	public BufferedReader deploy() throws PhrescoException {
+		    	
+	    	BufferedReader reader=null;
+	    	
+			if (isDebugEnabled) {
+				S_LOGGER.debug("Entering Method  deploy()");
+			}
+			try {
+				ApplicationManager applicationManager = PhrescoFrameworkFactory.getApplicationManager();
+				ProjectInfo projectInfo = getProjectInfo();
+				ApplicationInfo applicationInfo = getApplicationInfo();
+				MojoProcessor mojo = new MojoProcessor(new File(getPhrescoPluginInfoFilePath(PHASE_DEPLOY)));
+				
+				persistValuesToXml(mojo, PHASE_DEPLOY);
+				//To get maven build arguments
+				List<Parameter> parameters = getMojoParameters(mojo, PHASE_DEPLOY);
+				List<String> buildArgCmds = getMavenArgCommands(parameters);
+				buildArgCmds.add(HYPHEN_N);
+				String workingDirectory = getAppDirectoryPath(applicationInfo);
+				reader = applicationManager.performAction(projectInfo, ActionType.DEPLOY, buildArgCmds, workingDirectory);
+				
+			} catch (PhrescoException e) {
+				if (isDebugEnabled) {
+					S_LOGGER.error("Exception occured in the deploy process()" + FrameworkUtil.getStackTraceAsString(e));
+					throw new PhrescoException("Exception occured in the build process");
+				}
+			}
+	
+			return reader;
+	}
+
 	
 	protected ProjectInfo getProjectInfo() throws PhrescoException {
 		ProjectManager projectManager = PhrescoFrameworkFactory.getProjectManager();
