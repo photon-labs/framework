@@ -18,7 +18,6 @@
 package com.photon.phresco.framework.actions.applications;
 
 import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -61,7 +60,6 @@ import javax.xml.xpath.XPathFactory;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -74,7 +72,6 @@ import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
 import com.google.gson.Gson;
-import com.google.gson.JsonIOException;
 import com.photon.phresco.commons.FileListFilter;
 import com.photon.phresco.commons.FrameworkConstants;
 import com.photon.phresco.commons.model.ApplicationInfo;
@@ -2848,6 +2845,13 @@ public class Quality extends DynamicParameterAction implements Constants {
 				file = new File(sb.toString() + frameworkUtil.getFunctionalTestReportDir(appInfo));
 				xmlResultsAvailable = xmlFileSearch(file, xmlResultsAvailable);
 	            S_LOGGER.debug("check functional Test xml Availablity ==>" + xmlResultsAvailable);
+			}
+			
+			// component xml check 
+			if(!xmlResultsAvailable) {
+				file = new File(sb.toString() + frameworkUtil.getComponentTestReportDir(appInfo));
+				xmlResultsAvailable = xmlFileSearch(file, xmlResultsAvailable);
+	            S_LOGGER.debug("check component Test xml Availablity ==>" + xmlResultsAvailable);
 			}
 			
 			// performance xml check
