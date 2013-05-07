@@ -40,11 +40,13 @@ public class IphoneNativeProjectTest extends BaseTest{
 	private static ApplicationManager applicationManager = null;
 	private ProjectInfo projectInfo;	
 	private List<ApplicationInfo> appInfos = new ArrayList<ApplicationInfo>();
+	private List<String> appDirNames = new ArrayList<String>();
 	
 	@Before
 	public void setUp() throws PhrescoException {
 		ApplicationInfo appInfo = getAppInfo("IPHONE-NATIVE", "tech-iphone-native");
 		appInfos.add(appInfo);
+		appDirNames.add("IPHONE-NATIVE");
 		projectInfo = getProjectInfo("tech-iphone-native", "tech-iphone-native" , "Sample-IphoneNative-1" , "Sample-IphoneNative-2", "PHR_IphoneNative");
 		if ((projectManager == null) && (applicationManager == null)) {
 			projectManager = PhrescoFrameworkFactory.getProjectManager();
@@ -54,7 +56,7 @@ public class IphoneNativeProjectTest extends BaseTest{
 	
 	@After
 	public void tearDown() throws PhrescoException {
-		boolean delete = projectManager.delete(appInfos);
+		boolean delete = projectManager.delete(appDirNames);
 		Assert.assertTrue(delete);
 	}
 	

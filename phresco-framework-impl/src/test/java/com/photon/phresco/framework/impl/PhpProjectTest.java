@@ -40,11 +40,13 @@ public class PhpProjectTest extends BaseTest{
 	private static ApplicationManager applicationManager = null;
 	private ProjectInfo projectInfo;
 	private List<ApplicationInfo> appInfos = new ArrayList<ApplicationInfo>();
+	private List<String> appDirNames = new ArrayList<String>();
 		
 	@Before
 	public void setUp() throws PhrescoException {
 		ApplicationInfo appInfo = getAppInfo("PHP", "tech-php");
 		appInfos.add(appInfo);
+		appDirNames.add("PHP");
 		projectInfo = getProjectInfo("tech-php", "tech-php" , "Sample-Php-1" , "Sample-Php-2", "PHR_PHP");
 		if ((projectManager == null) && (applicationManager == null)) {
 			projectManager = PhrescoFrameworkFactory.getProjectManager();
@@ -54,7 +56,7 @@ public class PhpProjectTest extends BaseTest{
 	
 	@After
 	public void tearDown() throws PhrescoException {
-		boolean delete = projectManager.delete(appInfos);
+		boolean delete = projectManager.delete(appDirNames);
 		Assert.assertTrue(delete);
 	}
 

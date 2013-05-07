@@ -30,7 +30,6 @@ import com.photon.phresco.commons.model.ApplicationInfo;
 import com.photon.phresco.commons.model.ProjectInfo;
 import com.photon.phresco.exception.PhrescoException;
 import com.photon.phresco.framework.PhrescoFrameworkFactory;
-import com.photon.phresco.framework.api.ActionType;
 import com.photon.phresco.framework.api.ApplicationManager;
 import com.photon.phresco.framework.api.ProjectManager;
 
@@ -40,12 +39,14 @@ public class WinMetroProjectTest extends BaseTest{
 	private static ProjectManager projectManager = null;
 	private static ApplicationManager applicationManager = null;
 	private List<ApplicationInfo> appInfos = new ArrayList<ApplicationInfo>();
+	private List<String> appDirNames = new ArrayList<String>();
 	private ProjectInfo projectInfo;	
 	@Before
 	public void setUp() throws PhrescoException {
 		projectInfo = getProjectInfo("tech-win-metro", "tech-win-metro" , "Sample-winmetro-1" , "Sample-winmetro-2", "PHR_winmetro");
 		ApplicationInfo appInfo = getAppInfo("WINDOWS_METRO", "tech-win-metro");
 		appInfos.add(appInfo);
+		appDirNames.add("WINDOWS_METRO");
 		if ((projectManager == null) && (applicationManager == null)) {
 			projectManager = PhrescoFrameworkFactory.getProjectManager();
 			applicationManager=PhrescoFrameworkFactory.getApplicationManager();
@@ -54,7 +55,7 @@ public class WinMetroProjectTest extends BaseTest{
 	
 	@After
 	public void tearDown() throws PhrescoException {
-		boolean delete = projectManager.delete(appInfos);
+		boolean delete = projectManager.delete(appDirNames);
 		Assert.assertTrue(delete);
 	}
 	

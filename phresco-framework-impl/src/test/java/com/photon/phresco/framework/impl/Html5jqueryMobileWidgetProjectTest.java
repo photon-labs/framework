@@ -40,12 +40,14 @@ public class Html5jqueryMobileWidgetProjectTest extends BaseTest{
 	private static ProjectManager projectManager = null;
 	private static ApplicationManager applicationManager = null;
 	private List<ApplicationInfo> appInfos = new ArrayList<ApplicationInfo>();
+	private List<String> appDirNames = new ArrayList<String>();
 	private ProjectInfo projectInfo;
 	
 	@Before
 	public void setUp() throws PhrescoException {
 		ApplicationInfo appInfo = getAppInfo("HTML5_JQUERY_MOBILE_WIDGET", "tech-html5-jquery-mobile-widget");
 		appInfos.add(appInfo);
+		appDirNames.add("HTML5_JQUERY_MOBILE_WIDGET");
 		projectInfo = getProjectInfo("tech-html5-jquery-mobile-widget", "tech-html5-jquery-mobile-widget" , "Sample-html5jquerymobilewidget-1" , "Sample-html5jquerymobilewidget-2", "PHR_html5jquerymobilewidget");
 		if ((projectManager == null) && (applicationManager == null)) {
 			projectManager = PhrescoFrameworkFactory.getProjectManager();
@@ -55,7 +57,7 @@ public class Html5jqueryMobileWidgetProjectTest extends BaseTest{
 	
 	@After
 	public void tearDown() throws PhrescoException {
-		boolean delete = projectManager.delete(appInfos);
+		boolean delete = projectManager.delete(appDirNames);
 		Assert.assertTrue(delete);
 	}
 	

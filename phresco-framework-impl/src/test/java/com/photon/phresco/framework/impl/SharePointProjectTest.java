@@ -40,6 +40,7 @@ public class SharePointProjectTest extends BaseTest{
 	private static ProjectManager projectManager = null;
 	private static ApplicationManager applicationManager = null;
 	private List<ApplicationInfo> appInfos = new ArrayList<ApplicationInfo>();
+	private List<String> appDirNames = new ArrayList<String>();
 	private ProjectInfo projectInfo;
 		
 	@Before
@@ -47,6 +48,7 @@ public class SharePointProjectTest extends BaseTest{
 		projectInfo = getProjectInfo("tech-sharepoint", "tech-sharepoint" , "Sample-sharepoint-1" , "Sample-sharepoint-2", "PHR_sharepoint");
 		ApplicationInfo appInfo = getAppInfo("SHAREPOINT", "tech-sharepoint");
 		appInfos.add(appInfo);
+		appDirNames.add("SHAREPOINT");
 		if ((projectManager == null) && (applicationManager == null)) {
 			projectManager = PhrescoFrameworkFactory.getProjectManager();
 			applicationManager=PhrescoFrameworkFactory.getApplicationManager();
@@ -55,7 +57,7 @@ public class SharePointProjectTest extends BaseTest{
 	
 	@After
 	public void tearDown() throws PhrescoException {
-		boolean delete = projectManager.delete(appInfos);
+		boolean delete = projectManager.delete(appDirNames);
 		Assert.assertTrue(delete);
 	}
 	

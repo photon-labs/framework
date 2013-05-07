@@ -41,11 +41,13 @@ public class Html5WidgetProjectTest extends BaseTest{
 	private static ApplicationManager applicationManager = null;
 	private ProjectInfo projectInfo;
 	private List<ApplicationInfo> appInfos = new ArrayList<ApplicationInfo>();
+	private List<String> appDirNames = new ArrayList<String>();
 	
 	@Before
 	public void setUp() throws PhrescoException {
 		ApplicationInfo appInfo = getAppInfo("HTML5_WIDGET", "tech-html5-widget");
 		appInfos.add(appInfo);
+		appDirNames.add("HTML5_WIDGET");
 		projectInfo = getProjectInfo("tech-html5-widget", "tech-html5-widget" , "Sample-html5widget-1" , "Sample-html5widget-2", "PHR_html5widget");
 		if ((projectManager == null) && (applicationManager == null)) {
 			projectManager = PhrescoFrameworkFactory.getProjectManager();
@@ -55,7 +57,7 @@ public class Html5WidgetProjectTest extends BaseTest{
 	
 	@After
 	public void tearDown() throws PhrescoException {
-		boolean delete = projectManager.delete(appInfos);
+		boolean delete = projectManager.delete(appDirNames);
 		Assert.assertTrue(delete);
 	}
 	

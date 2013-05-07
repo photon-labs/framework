@@ -40,6 +40,7 @@ public class PhpDru7ProjectTest extends BaseTest{
 	private static ProjectManager projectManager = null;
 	private static ApplicationManager applicationManager = null;
 	private List<ApplicationInfo> appInfos = new ArrayList<ApplicationInfo>();
+	private List<String> appDirNames = new ArrayList<String>();
 	private ProjectInfo projectInfo;
 		
 	@Before
@@ -47,6 +48,7 @@ public class PhpDru7ProjectTest extends BaseTest{
 		projectInfo = getProjectInfo("tech-phpdru7", "tech-phpdru7" , "Sample-phpdru7-1" , "Sample-phpdru7-2", "PHR_phpdru7");
 		ApplicationInfo appInfo = getAppInfo("DRUPAL7", "tech-phpdru7");
 		appInfos.add(appInfo);
+		appDirNames.add("DRUPAL7");
 		if ((projectManager == null) && (applicationManager == null)) {
 			projectManager = PhrescoFrameworkFactory.getProjectManager();
 			applicationManager=PhrescoFrameworkFactory.getApplicationManager();
@@ -55,7 +57,7 @@ public class PhpDru7ProjectTest extends BaseTest{
 	
 	@After
 	public void tearDown() throws PhrescoException {
-		boolean delete = projectManager.delete(appInfos);
+		boolean delete = projectManager.delete(appDirNames);
 		Assert.assertTrue(delete);
 	}
 

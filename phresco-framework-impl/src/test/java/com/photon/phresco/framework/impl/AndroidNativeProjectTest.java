@@ -30,7 +30,6 @@ import com.photon.phresco.commons.model.ApplicationInfo;
 import com.photon.phresco.commons.model.ProjectInfo;
 import com.photon.phresco.exception.PhrescoException;
 import com.photon.phresco.framework.PhrescoFrameworkFactory;
-import com.photon.phresco.framework.api.ActionType;
 import com.photon.phresco.framework.api.ApplicationManager;
 import com.photon.phresco.framework.api.ProjectManager;
 
@@ -41,10 +40,12 @@ public final class AndroidNativeProjectTest extends BaseTest {
 	private static ApplicationManager applicationManager = null;
 	private ProjectInfo projectInfo;
 	private List<ApplicationInfo> appInfos = new ArrayList<ApplicationInfo>();
+	private List<String> appDirNames = new ArrayList<String>();
 	
 	@Before
 	public void setUp() throws PhrescoException {
 		ApplicationInfo appInfo = getAppInfo("ANDROID_NATIVE", "tech-android-native");
+		appDirNames.add("ANDROID_NATIVE");
 		appInfos.add(appInfo);
 		projectInfo = getProjectInfo("tech-android-native", "tech-android-native" , "Sample-androidnative-1" , "Sample-androidnative-2", "PHR_androidnative");
 		if ((projectManager == null) && (applicationManager == null)) {
@@ -55,7 +56,7 @@ public final class AndroidNativeProjectTest extends BaseTest {
 	
 	@After
 	public void tearDown() throws PhrescoException {
-		boolean delete = projectManager.delete(appInfos);
+		boolean delete = projectManager.delete(appDirNames);
 		Assert.assertTrue(delete);
 	}
 	

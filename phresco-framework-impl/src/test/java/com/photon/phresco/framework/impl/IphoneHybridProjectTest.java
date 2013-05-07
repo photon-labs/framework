@@ -40,12 +40,14 @@ public class IphoneHybridProjectTest extends BaseTest {
 	private static ProjectManager projectManager = null;
 	private static ApplicationManager applicationManager = null;
 	private List<ApplicationInfo> appInfos = new ArrayList<ApplicationInfo>();
+	private List<String> appDirNames = new ArrayList<String>();
 	private ProjectInfo projectInfo;	
 	
 	@Before
 	public void setUp() throws PhrescoException {
 		ApplicationInfo appInfo = getAppInfo("IPHONE_IPHONE_HYBRID", "tech-iphone-hybrid");
 		appInfos.add(appInfo);
+		appDirNames.add("IPHONE_IPHONE_HYBRID");
 		projectInfo = getProjectInfo("tech-iphone-hybrid", "tech-iphone-hybrid" , "Sample-iphonehybrid-1" , "Sample-iphonehybrid-2", "PHR_iphonehybrid");
 		if ((projectManager == null) && (applicationManager == null)) {
 			projectManager = PhrescoFrameworkFactory.getProjectManager();
@@ -55,7 +57,7 @@ public class IphoneHybridProjectTest extends BaseTest {
 	
 	@After
 	public void tearDown() throws PhrescoException {
-		boolean delete = projectManager.delete(appInfos);
+		boolean delete = projectManager.delete(appDirNames);
 		Assert.assertTrue(delete);
 	}
 	@Test

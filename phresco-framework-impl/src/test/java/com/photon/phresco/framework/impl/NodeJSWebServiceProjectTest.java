@@ -40,13 +40,14 @@ public class NodeJSWebServiceProjectTest extends BaseTest{
 	private static ProjectManager projectManager = null;
 	private static ApplicationManager applicationManager = null;
 	private List<ApplicationInfo> appInfos = new ArrayList<ApplicationInfo>();
-	
+	private List<String> appDirNames = new ArrayList<String>();
 	private ProjectInfo projectInfo;
 		
 	@Before
 	public void setUp() throws PhrescoException {
 		ApplicationInfo appInfo = getAppInfo("NODEJS", "tech-nodejs-webservice");
 		appInfos.add(appInfo);
+		appDirNames.add("NODEJS");
 		projectInfo = getProjectInfo("tech-nodejs-webservice", "tech-nodejs-webservice" , "Sample-nodejswebservice-1" , "Sample-nodejswebservice-2", "PHR_nodejswebservice");
 		if ((projectManager == null) && (applicationManager == null)) {
 			projectManager = PhrescoFrameworkFactory.getProjectManager();
@@ -56,7 +57,7 @@ public class NodeJSWebServiceProjectTest extends BaseTest{
 	
 	@After
 	public void tearDown() throws PhrescoException {
-		boolean delete = projectManager.delete(appInfos);
+		boolean delete = projectManager.delete(appDirNames);
 		Assert.assertTrue(delete);
 	}
 	

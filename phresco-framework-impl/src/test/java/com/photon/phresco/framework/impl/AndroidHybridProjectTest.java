@@ -40,6 +40,7 @@ public class AndroidHybridProjectTest extends BaseTest {
 	private static ProjectManager projectManager = null;
 	private static ApplicationManager applicationManager = null;
 	private List<ApplicationInfo> appInfos = new ArrayList<ApplicationInfo>();
+	private List<String> appDirNames = new ArrayList<String>();
 	private ProjectInfo projectInfo;
 	
 	@Before
@@ -47,6 +48,7 @@ public class AndroidHybridProjectTest extends BaseTest {
 		projectInfo = getProjectInfo("tech-android-hybrid", "tech-android-hybrid" , "Sample-androidhybrid-1" , "Sample-androidhybrid-2", "PHR_androidhybrid");
 		ApplicationInfo appInfo = getAppInfo("ANDROID_HYBRID_TEST", "tech-android-hybrid");
 		appInfos.add(appInfo);
+		appDirNames.add("ANDROID_HYBRID_TEST");
 		if ((projectManager == null) && (applicationManager == null)) {
 			projectManager = PhrescoFrameworkFactory.getProjectManager();
 			applicationManager=PhrescoFrameworkFactory.getApplicationManager();
@@ -55,7 +57,7 @@ public class AndroidHybridProjectTest extends BaseTest {
 	
 	@After
 	public void tearDown() throws PhrescoException {
-		boolean delete = projectManager.delete(appInfos);
+		boolean delete = projectManager.delete(appDirNames);
 		Assert.assertTrue(delete);
 	}
 	

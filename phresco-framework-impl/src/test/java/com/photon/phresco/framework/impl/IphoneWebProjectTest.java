@@ -41,12 +41,14 @@ public class IphoneWebProjectTest extends BaseTest{
 	private static ProjectManager projectManager = null;
 	private static ApplicationManager applicationManager = null;
 	private List<ApplicationInfo> appInfos = new ArrayList<ApplicationInfo>();
+	private List<String> appDirNames = new ArrayList<String>();
 	private ProjectInfo projectInfo;
 	
 	@Before
 	public void setUp() throws PhrescoException {
 		ApplicationInfo appInfo = getAppInfo("IPHONE_WEB", "tech-iphone-web" );
 		appInfos.add(appInfo);
+		appDirNames.add("IPHONE_WEB");
 		projectInfo = getProjectInfo("tech-iphone-web", "tech-iphone-web" , "Sample-iphoneweb-1" , "Sample-iphoneweb-2", "PHR_iphoneweb");
 		if ((projectManager == null) && (applicationManager == null)) {
 			projectManager = PhrescoFrameworkFactory.getProjectManager();
@@ -56,7 +58,7 @@ public class IphoneWebProjectTest extends BaseTest{
 	
 	@After
 	public void tearDown() throws PhrescoException {
-		boolean delete = projectManager.delete(appInfos);
+		boolean delete = projectManager.delete(appDirNames);
 		Assert.assertTrue(delete);
 	}
 	

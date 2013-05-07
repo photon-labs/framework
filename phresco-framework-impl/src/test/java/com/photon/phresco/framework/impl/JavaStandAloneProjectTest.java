@@ -40,12 +40,14 @@ public class JavaStandAloneProjectTest extends BaseTest{
 	private static ProjectManager projectManager = null;
 	private static ApplicationManager applicationManager = null;
 	private List<ApplicationInfo> appInfos = new ArrayList<ApplicationInfo>();
+	private List<String> appDirNames = new ArrayList<String>();
 	private ProjectInfo projectInfo;	
 	
 	@Before
 	public void setUp() throws PhrescoException {
 		ApplicationInfo appInfo = getAppInfo("JAVA_STANDALONE", "tech-java-standalone");
 		appInfos.add(appInfo);
+		appDirNames.add("JAVA_STANDALONE");
 		projectInfo = getProjectInfo("tech-java-standalone", "tech-java-standalone" , "Sample-javastandalone-1" , "Sample-javastandalone-2", "PHR_javastandalone");
 		if ((projectManager == null) && (applicationManager == null)) {
 			projectManager = PhrescoFrameworkFactory.getProjectManager();
@@ -55,7 +57,7 @@ public class JavaStandAloneProjectTest extends BaseTest{
 	
 	@After
 	public void tearDown() throws PhrescoException {
-		boolean delete = projectManager.delete(appInfos);
+		boolean delete = projectManager.delete(appDirNames);
 		Assert.assertTrue(delete);
 	}
 	

@@ -40,11 +40,13 @@ public class DotNetProjectTest extends BaseTest {
 	private static ProjectManager projectManager = null;
 	private static ApplicationManager applicationManager = null;
 	private List<ApplicationInfo> appInfos = new ArrayList<ApplicationInfo>();
+	private List<String> appDirNames = new ArrayList<String>();
 	private ProjectInfo projectInfo;
 	
 	@Before
 	public void setUp() throws PhrescoException {
 		ApplicationInfo appInfo = getAppInfo("DOTNET", "tech-dotnet");
+		appDirNames.add("DOTNET");
 		appInfos.add(appInfo);
 		projectInfo = getProjectInfo("tech-dotnet", "tech-dotnet" , "Sample-dotnet-1" , "Sample-dotnet-2", "PHR_dotnet");
 		if ((projectManager == null) && (applicationManager == null)) {
@@ -55,7 +57,7 @@ public class DotNetProjectTest extends BaseTest {
 	
 	@After
 	public void tearDown() throws PhrescoException {
-		boolean delete = projectManager.delete(appInfos);
+		boolean delete = projectManager.delete(appDirNames);
 		Assert.assertTrue(delete);
 	}
 	
