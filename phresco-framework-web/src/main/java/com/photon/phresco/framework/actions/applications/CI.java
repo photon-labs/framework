@@ -424,6 +424,9 @@ public class CI extends DynamicParameterAction implements FrameworkConstants {
 	        } else if (PERFORMANCE_TEST_CI.equals(operation)) {
 	        	phase = PHASE_PERFORMANCE_TEST;
 	        	restoreValuesToXml(mojo, phase, ciJob);
+	        }  else if (COMPONENT_TEST_CI.equals(operation)) {
+	        	phase = PHASE_COMPONENT_TEST;
+	        	restoreValuesToXml(mojo, phase, ciJob);
 	        }
 		} catch (Exception e) {
 			throw new PhrescoException(e);
@@ -506,6 +509,11 @@ public class CI extends DynamicParameterAction implements FrameworkConstants {
             	parameters = getMojoParameters(mojo, PHASE_PERFORMANCE_TEST);
             	setReqAttribute(REQ_PHASE, PHASE_CI);
             	goal = PHASE_PERFORMANCE_TEST;
+            	setReqAttribute(REQ_GOAL, goal);
+            } else if (COMPONENT_TEST_CI.equals(operation)) {
+            	parameters = getMojoParameters(mojo, PHASE_COMPONENT_TEST);
+            	setReqAttribute(REQ_PHASE, PHASE_CI);
+            	goal = PHASE_COMPONENT_TEST;
             	setReqAttribute(REQ_GOAL, goal);
             }
             
@@ -905,6 +913,26 @@ public class CI extends DynamicParameterAction implements FrameworkConstants {
 				// To handle multi module project
 				performanceTestPreBuildCmd = performanceTestPreBuildCmd + FrameworkConstants.SPACE + HYPHEN_N;
 				preBuildStepCmds.add(performanceTestPreBuildCmd);
+			} else if (COMPONENT_TEST_CI.equals(operation)) {
+				if (debugEnabled) {
+					S_LOGGER.debug("Component test operation!!!!!!");
+				}				
+				MojoProcessor mojo = new MojoProcessor(new File(getPhrescoPluginInfoFilePath(Constants.PHASE_CI)));
+				persistValuesToXml(mojo, Constants.PHASE_COMPONENT_TEST);
+				constructCiJobObj(mojo, Constants.PHASE_COMPONENT_TEST, existJob);
+				
+				//To get maven build arguments
+				parameters = getMojoParameters(mojo, Constants.PHASE_COMPONENT_TEST);
+				ActionType actionType = ActionType.COMPONENT_TEST;
+				mvncmd =  actionType.getActionType().toString();
+				
+				String componentTestPreBuildCmd = CI_PRE_BUILD_STEP + " -Dgoal=" + Constants.PHASE_CI + " -Dphase=" + Constants.PHASE_COMPONENT_TEST;
+				if(!POM_NAME.equals(pomFileName)) {
+					componentTestPreBuildCmd = componentTestPreBuildCmd + " -f " + pomFileName; 
+				}
+				// To handle multi module project
+				componentTestPreBuildCmd = componentTestPreBuildCmd + FrameworkConstants.SPACE + HYPHEN_N;
+				preBuildStepCmds.add(componentTestPreBuildCmd);
 			}
 			
 			List<String> buildArgCmds = getMavenArgCommands(parameters);
