@@ -27,5 +27,10 @@ public interface MavenServiceConstants {
 	
 	public String BUILDPROJECT="BUILD";
 	public String DEPLOYPROJECT="DEPLOY";
+	public String UNIT_TEST="UNIT_TEST";
+	public String CODE_VALIDATE="CODE_VALIDATE";
+	public String RUN_AGAINST_SOURCE="RUN_AGAINST_SOURCE";
+	public String RESTART_SERVER="RESTART_SERVER";
+	public String STOP_SERVER="STOP_SERVER";
 
 }

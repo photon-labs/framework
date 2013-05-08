@@ -17,6 +17,7 @@ import org.eclipse.jdt.internal.core.search.indexing.InternalSearchDocument;
 
 import com.google.gson.JsonObject;
 import com.photon.phresco.exception.PhrescoException;
+import com.photon.phresco.framework.commons.FrameworkUtil;
 import com.photon.phresco.framework.rest.api.util.BufferMap;
 import com.photon.phresco.framework.rest.api.util.MavenFunctions;
 import com.photon.phresco.framework.rest.api.util.MavenResponse;
@@ -50,6 +51,60 @@ public class MavenService implements MavenServiceConstants {
 		
 	}
 	
+	
+	@POST
+	@Path("/runUnitTest")
+	@Produces(MediaType.APPLICATION_JSON)
+	 public Response runUnitTest(@Context HttpServletRequest request) throws PhrescoException  {
+		MavenFunctions lMavenFunctions = new MavenFunctions();
+		MavenResponse response = lMavenFunctions.processRequest(request,UNIT_TEST);
+		return Response.status(Status.OK).entity(response).header("Access-Control-Allow-Origin", "*").build();
+		
+	}
+	
+	
+	@POST
+	@Path("/codeValidate")
+	@Produces(MediaType.APPLICATION_JSON)
+	 public Response codeValidate(@Context HttpServletRequest request) throws PhrescoException  {
+		MavenFunctions lMavenFunctions = new MavenFunctions();
+		MavenResponse response = lMavenFunctions.processRequest(request,CODE_VALIDATE);
+		return Response.status(Status.OK).entity(response).header("Access-Control-Allow-Origin", "*").build();
+		
+	}
+	
+	
+	@POST
+	@Path("/runAgainstSource")
+	@Produces(MediaType.APPLICATION_JSON)
+	 public Response runAgainstSource(@Context HttpServletRequest request) throws PhrescoException  {
+		MavenFunctions lMavenFunctions = new MavenFunctions();
+		MavenResponse response = lMavenFunctions.processRequest(request,RUN_AGAINST_SOURCE);
+		return Response.status(Status.OK).entity(response).header("Access-Control-Allow-Origin", "*").build();
+		
+	}
+	
+	
+	@POST
+	@Path("/stopServer")
+	@Produces(MediaType.APPLICATION_JSON)
+	 public Response startServer(@Context HttpServletRequest request) throws PhrescoException  {
+		MavenFunctions lMavenFunctions = new MavenFunctions();
+		MavenResponse response = lMavenFunctions.processRequest(request,STOP_SERVER);
+		return Response.status(Status.OK).entity(response).header("Access-Control-Allow-Origin", "*").build();
+		
+	}
+	
+	@POST
+	@Path("/restartServer")
+	@Produces(MediaType.APPLICATION_JSON)
+	 public Response restartServer(@Context HttpServletRequest request) throws PhrescoException  {
+		MavenFunctions lMavenFunctions = new MavenFunctions();
+		MavenResponse response = lMavenFunctions.processRequest(request,RESTART_SERVER);
+		return Response.status(Status.OK).entity(response).header("Access-Control-Allow-Origin", "*").build();
+		
+	}
+	
 	@GET
 	@Path("/readlog")
 	@Produces(MediaType.APPLICATION_JSON)
@@ -74,7 +129,7 @@ public class MavenService implements MavenServiceConstants {
 				if (isDebugEnabled) {
 					S_LOGGER.debug("Log has finished and hence removing the bufferreader from the map");
 				}
-				BufferMap.readBufferReader(uniquekey);
+				BufferMap.removeBufferReader(uniquekey);
 				status=COMPLETED;
 			}
 			else{
@@ -84,17 +139,16 @@ public class MavenService implements MavenServiceConstants {
 		
 		} catch (IOException e) {
 			status=ERROR;
-			S_LOGGER.error(e.getMessage());
-			response.setService_exception(e.getMessage());
+			S_LOGGER.error(FrameworkUtil.getStackTraceAsString(e));
+			response.setService_exception(FrameworkUtil.getStackTraceAsString(e));
 		} catch (Exception e) {
 			status=ERROR;
-			S_LOGGER.error(e.getMessage());
-			response.setService_exception(e.getMessage());
+			S_LOGGER.error(FrameworkUtil.getStackTraceAsString(e));
+			response.setService_exception(FrameworkUtil.getStackTraceAsString(e));
 		}
 		
 		response.setStatus(status);
 		response.setLog(log);
-		response.setService_exception("");
 		response.setUniquekey(uniquekey);
 		
 		return Response.status(Status.OK).entity(response).header("Access-Control-Allow-Origin", "*").build();
