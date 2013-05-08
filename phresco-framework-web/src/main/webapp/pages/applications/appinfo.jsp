@@ -17,6 +17,7 @@
     limitations under the License.
 
 --%>
+<%@page import="com.photon.phresco.commons.model.FunctionalFramework"%>
 <%@ taglib uri="/struts-tags" prefix="s"%>
 
 <%@ page import="java.util.Collection" %>
@@ -34,10 +35,12 @@
 <%@ page import="com.photon.phresco.commons.model.ApplicationInfo"%>
 <%@ page import="com.photon.phresco.commons.model.WebService"%>
 <%@ page import="com.photon.phresco.commons.model.DownloadInfo"%>
+<%@ page import="com.photon.phresco.commons.model.TechnologyOptions"%>
 
 <%
 	String appId = (String)request.getAttribute(FrameworkConstants.REQ_APP_ID);
 	Technology technology = (Technology) session.getAttribute(FrameworkConstants.REQ_TECHNOLOGY);
+	List<FunctionalFramework> funcTestFrameworks = (List<FunctionalFramework>) session.getAttribute(FrameworkConstants.REQ_FUNCTIONAL_TEST_FRAMEWORKS);
 	List<ApplicationInfo> pilotProjects = (List<ApplicationInfo>) session.getAttribute(FrameworkConstants.REQ_PILOT_PROJECTS);
 	ProjectInfo projectInfo = (ProjectInfo) session.getAttribute(appId + FrameworkConstants.SESSION_APPINFO);
 	List<WebService> webservices = (List<WebService>)request.getAttribute(FrameworkConstants.REQ_WEBSERVICES);
@@ -71,6 +74,7 @@
 	String oldAppName = "";
 	String embedAppId = "";
 	String appTypeId = "";
+	String functionalFramework = "";
 	List<String> selectedWebservices = null;
 	List<ArtifactGroupInfo> pilotServers = null;
 	List<ArtifactGroupInfo> pilotDatabases = null;
@@ -104,6 +108,9 @@
 		
 		if (CollectionUtils.isNotEmpty(selectedInfo.getSelectedDatabases())) {
 			selectedDatabases = selectedInfo.getSelectedDatabases();
+		}
+		if (StringUtils.isNotEmpty(selectedInfo.getFunctionalFramework())) {
+			functionalFramework = selectedInfo.getFunctionalFramework();
 		}
 	} else {
 		oldAppDirName = appDir;
@@ -214,6 +221,34 @@
 			}
 		%>
 		<!-- pilot project ends -->
+		
+		<!-- Functional test framework start -->
+		<% 
+		  	if (CollectionUtils.isNotEmpty(funcTestFrameworks)) {
+		%>
+			<div class="control-group <%= uiTypeClass %>" id="funcFrameworkControl">
+				<label class="accordion-control-label labelbold"><s:text name='lbl.functional.test.framework'/></label>
+				<div class="controls">
+					<select class="input-xlarge" name="functionalFramework" <%-- onchange="showPilotProjectInfo(this);" --%>>
+						<option value="" selected disabled><s:text name='lbl.default.opt.select.func.framework'/></option>
+						<%
+							for (FunctionalFramework funcTestFramework : funcTestFrameworks) {
+								String selectedStr = "";
+								if (funcTestFramework.getName().equals(functionalFramework)) {
+									selectedStr = "selected";
+								}
+	                    %>
+                  					<option value = "<%= funcTestFramework.getName() %>" <%= selectedStr %>><%= funcTestFramework.getDisplayName() %></option>
+						<% 	 
+							}
+						%> 
+					</select>
+				</div>
+			</div>
+		<% 
+			}
+		%>
+		<!-- Functional test framework end -->
 		
 		<!-- Technology version start -->
 		<%
@@ -472,6 +507,7 @@
 			$("#appVersionControl").css("display", displayProp);
 			$("#technologyControl").css("display", displayProp);
 			$("#pilotProjectControl").css("display", displayProp);
+			$("#funcFrameworkControl").css("display", displayProp)
 		});
         
 		<% if (projectInfo != null) { %>
