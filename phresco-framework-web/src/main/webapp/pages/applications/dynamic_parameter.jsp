@@ -762,7 +762,7 @@
 	
 	function appendParameterRow(obj) {
 		$(obj).closest('tbody').append('<tr class="parameterRow"><td class="noBorder"><input type="text" style="width:130px;"  class="parameterName" name="parameterName"></td>' + 
-		'<td class="noBorder"><input type="text" style="width:130px;" class="parameterValue" name="parameterValue"></td>' +
+		'<td class="noBorder"><textarea type="text" style="width:130px; height:20px; resize:none;" class="parameterValue" name="parameterValue"></textarea></td>' +
 		'<td class="noBorder"><input type="checkbox" class="parameterEncode" name="parameterEncode"></td>' + 
 		'<td class="noBorder"><a><img src="images/icons/add_icon.png" id="parameterPlus" class="parameterPlus" onclick="appendParameterRow(this);"></a>' + 
 		' <a><img class="del imagealign hide parameterMinus" src="images/icons/minus_icon.png" onclick="removeParameterRow(this);">' +
