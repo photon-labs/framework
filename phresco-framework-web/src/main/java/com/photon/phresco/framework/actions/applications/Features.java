@@ -130,6 +130,7 @@ public class Features extends DynamicParameterModule {
 	private String type = "";
 	private String customerId = "";
 	private String pilotProject = "";
+	private String functionalFramework = "";
 	
 	private String nameError = "";
 	private String codeError = "";
@@ -681,6 +682,9 @@ public class Features extends DynamicParameterModule {
     	if (StringUtils.isNotEmpty(getWebserviceLayer()) && CollectionUtils.isNotEmpty(getWebservice())) {
 			appInfo.setSelectedWebservices(getWebservice());
 		}
+    	if (StringUtils.isNotEmpty(getFunctionalFramework())) {
+    		appInfo.setFunctionalFramework(getFunctionalFramework());
+    	}
     	
     	return appInfo;
 	}
@@ -1556,5 +1560,13 @@ public class Features extends DynamicParameterModule {
 
 	public String getOldAppName() {
 		return oldAppName;
+	}
+
+	public void setFunctionalFramework(String functionalFramework) {
+		this.functionalFramework = functionalFramework;
+	}
+
+	public String getFunctionalFramework() {
+		return functionalFramework;
 	}
 }
