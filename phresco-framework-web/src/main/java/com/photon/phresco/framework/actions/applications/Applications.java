@@ -51,6 +51,8 @@ import com.photon.phresco.commons.model.CoreOption;
 import com.photon.phresco.commons.model.DownloadInfo;
 import com.photon.phresco.commons.model.DownloadInfo.Category;
 import com.photon.phresco.commons.model.Element;
+import com.photon.phresco.commons.model.FunctionalFramework;
+import com.photon.phresco.commons.model.FunctionalFrameworkProperties;
 import com.photon.phresco.commons.model.ProjectInfo;
 import com.photon.phresco.commons.model.SelectedFeature;
 import com.photon.phresco.commons.model.SettingsTemplate;
@@ -64,6 +66,7 @@ import com.photon.phresco.framework.commons.FrameworkUtil;
 import com.photon.phresco.framework.impl.SCMManagerImpl;
 import com.photon.phresco.plugins.model.Mojos.ApplicationHandler;
 import com.photon.phresco.plugins.util.MojoProcessor;
+import com.photon.phresco.service.client.api.ServiceManager;
 import com.photon.phresco.util.Constants;
 import com.photon.phresco.util.Utility;
 import com.phresco.pom.exception.PhrescoPomException;
@@ -71,7 +74,7 @@ import com.phresco.pom.model.Scm;
 import com.phresco.pom.util.PomProcessor;
 
 
-public class Applications extends FrameworkBaseAction {
+public class Applications extends FrameworkBaseAction implements Constants {
 
     private static final long serialVersionUID = -4282767788002019870L;
 
@@ -179,14 +182,16 @@ public class Applications extends FrameworkBaseAction {
                         }
                     }
                 }
-        		
+        		ServiceManager serviceManager = getServiceManager();
         		technologyId = projectInfo.getAppInfos().get(0).getTechInfo().getId();
-        		List<ApplicationInfo> pilotProjects = getServiceManager().getPilotProjects(getCustomerId(), technologyId);
-        		Technology technologyInfo = getServiceManager().getTechnology(technologyId);
+        		List<ApplicationInfo> pilotProjects = serviceManager.getPilotProjects(getCustomerId(), technologyId);
+        		Technology technologyInfo = serviceManager.getTechnology(technologyId);
         		setSessionAttribute(REQ_TECHNOLOGY, technologyInfo);
         		setSessionAttribute(REQ_PILOT_PROJECTS, pilotProjects);
         		setSessionAttribute(getAppId() + SESSION_APPINFO, projectInfo);
         		setReqAttribute(REQ_OLD_APPDIR, projectInfo.getAppInfos().get(0).getName());
+        		List<FunctionalFramework> functionalFrameworks = technologyInfo.getFunctionalFrameworks();
+        		setSessionAttribute(REQ_FUNCTIONAL_TEST_FRAMEWORKS, functionalFrameworks);
         	} else {
         		projectInfo = (ProjectInfo)getSessionAttribute(getAppId() + SESSION_APPINFO);
             	ApplicationInfo appInfo = projectInfo.getAppInfos().get(0);
@@ -516,6 +521,7 @@ public class Applications extends FrameworkBaseAction {
     		projectInfo.setAppInfos(Collections.singletonList(appInfo));
     		ProjectManager projectManager = PhrescoFrameworkFactory.getProjectManager();
     		projectManager.update(projectInfo, getServiceManager(), getOldAppDirName());
+    		updateFunctionalTestProperties(appInfo);
             List<ProjectInfo> projects = projectManager.discover(getCustomerId());
             if (CollectionUtils.isNotEmpty(projects)) {
             	Collections.sort(projects, sortByNameInAlphaOrder());
@@ -533,6 +539,35 @@ public class Applications extends FrameworkBaseAction {
     	}
     	return SUCCESS;
     }
+
+	private void updateFunctionalTestProperties(ApplicationInfo appInfo) throws PhrescoException {
+    	try {
+    		FunctionalFramework functionalFramework = getServiceManager().getFunctionalTestFramework(appInfo.getFunctionalFramework(), appInfo.getTechInfo().getId());
+    		List<FunctionalFrameworkProperties> funcFrameworkProperties = functionalFramework.getFuncFrameworkProperties();
+    		if (CollectionUtils.isNotEmpty(funcFrameworkProperties)) {
+    			FunctionalFrameworkProperties frameworkProperties = funcFrameworkProperties.get(0);
+    			String testDir = frameworkProperties.getTestDir();
+    			String testReportDir = frameworkProperties.getTestReportDir();
+    			String testcasePath = frameworkProperties.getTestcasePath();
+    			String testsuiteXpathPath = frameworkProperties.getTestsuiteXpathPath();
+    			String adaptConfigPath = frameworkProperties.getAdaptConfigPath();
+    			
+    			FrameworkUtil frameworkUtil = FrameworkUtil.getInstance();
+    			PomProcessor pomProcessor = frameworkUtil.getPomProcessor(appInfo);
+    			pomProcessor.setProperty(POM_PROP_KEY_FUNCTEST_SELENIUM_TOOL, appInfo.getFunctionalFramework());
+    			pomProcessor.setProperty(POM_PROP_KEY_FUNCTEST_DIR, testDir);
+    			pomProcessor.setProperty(POM_PROP_KEY_FUNCTEST_RPT_DIR, testReportDir);
+    			pomProcessor.setProperty(POM_PROP_KEY_FUNCTEST_TESTCASE_PATH, testcasePath);
+    			pomProcessor.setProperty(POM_PROP_KEY_FUNCTEST_TESTSUITE_XPATH, testsuiteXpathPath);
+    			pomProcessor.setProperty(PHRESCO_FUNCTIONAL_TEST_ADAPT_DIR, adaptConfigPath);
+    			pomProcessor.save();
+    		}
+		} catch (PhrescoException e) {
+			throw e;
+		} catch (PhrescoPomException e) {
+			throw new PhrescoException(e);
+		}
+	}
     
     public void checkForVersions(String newArtifactid, String oldArtifactGroupId, ApplicationInfo applicationInfo) throws PhrescoException {
     	try {

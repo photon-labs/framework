@@ -644,6 +644,7 @@ public interface FrameworkConstants {
     String REQ_TOTAL_THROUGHPUT = "totalThroughput";
     String REQ_TOTAL_STD_DEV = "totalStdDev";
     String REQ_TECHNOLOGY = "technology";
+    String REQ_FUNCTIONAL_TEST_FRAMEWORKS = "funcTestFrameworks";
     String REQ_TECH_HAS_SERVER = "hasServer";
     String REQ_TECH_HAS_DB = "hasDb";
     String REQ_TECH_HAS_WEBSERVICE = "hasWebservice";
