@@ -57,7 +57,7 @@
                             </tbody>
                           </table>
                          <div class="flt_right">
-                            <input type="button" value="Run" class="btn btn_style">
+                            <input id="buildRun" type="button" value="Run" class="btn btn_style">
                             <input type="button" value="Close" class="btn btn_style dyn_popup_close">
                          </div>
                       </div>
@@ -173,168 +173,55 @@
                     </tr>    
                 </thead>  
         		<tbody> 
-        			<tr>
-        				<td>1001</td>
-                        <td>18/Mar/2013 10:56:43</td>
-                        <td><img src="../themes/default/images/helios/download_icon.png" width="15" height="18" border="0" alt=""></td>
-                        <td><a onClick="openccmini(this,'builddeploy');" href="javascript:;"><img src="../themes/default/images/helios/deploy_icon.png" width="16" height="20" border="0" alt=""></a>
-                        	<div id="builddeploy" class="dyn_popup popup_bg" style="display:none;">
-                                <table class="clonetable deploy_pop" width="100%" border="0" cellspacing="0" cellpadding="0">
-                                    <tbody>
-                                        <tr>
-                                        	<td>Environment<sup>*</sup></td>
-                                        </tr>
-                                        <tr>    
-                                            <td>
-                                            	<select>
-                                                	<option>Production</option>
-                                                </select>
-                                            </td>
-                                         </tr>    
-                                         <tr>
-                                            <td>Logs</td>
-                                         </tr>
-                                         <tr>   
-                                            <td>
-                                            	<select>
-                                                	<option>Show Errors</option>
-                                                </select>
-                                            </td>
-                                        </tr>
-                                    </tbody>
-                                  </table>
-                                 <div class="flt_right">
-                                    <input type="button" value="Deploy" class="btn btn_style">
-                                    <input type="button" value="Close" class="btn btn_style dyn_popup_close">
-                                 </div>
-                          	</div>
-                        </td>
-                        <td><img src="../themes/default/images/helios/delete_icon.png" width="16" height="20" border="0" alt=""></td>
-                    </tr>
-                    <tr>
-        				<td>1001</td>
-                        <td>18/Mar/2013 10:56:43</td>
-                        <td><img src="../themes/default/images/helios/download_icon.png" width="15" height="18" border="0" alt=""><img src="../themes/default/images/helios/ipa_icon.png" width="13" height="18" border="0" alt=""></td>
-                        <td><img src="../themes/default/images/helios/deploy_icon.png" width="16" height="20" border="0" alt=""></td>
-                        <td><img src="../themes/default/images/helios/delete_icon.png" width="16" height="20" border="0" alt=""></td>
-                    </tr>
-                    <tr>
-        				<td>1001</td>
-                        <td>18/Mar/2013 10:56:43</td>
-                        <td><img src="../themes/default/images/helios/download_icon.png" width="15" height="18" border="0" alt=""></td>
-                        <td><img src="../themes/default/images/helios/deploy_icon.png" width="16" height="20" border="0" alt=""></td>
-                        <td><img src="../themes/default/images/helios/delete_icon.png" width="16" height="20" border="0" alt=""></td>
-                    </tr>
-                    <tr>
-        				<td>1001</td>
-                        <td>18/Mar/2013 10:56:43</td>
-                        <td><img src="../themes/default/images/helios/download_icon.png" width="15" height="18" border="0" alt=""></td>
-                        <td><img src="../themes/default/images/helios/deploy_icon.png" width="16" height="20" border="0" alt=""></td>
-                        <td><img src="../themes/default/images/helios/delete_icon.png" width="16" height="20" border="0" alt=""></td>
-                    </tr>
-                    <tr>
-        				<td>1001</td>
-                        <td>18/Mar/2013 10:56:43</td>
-                        <td><img src="../themes/default/images/helios/download_icon.png" width="15" height="18" border="0" alt=""><img src="../themes/default/images/helios/ipa_icon.png" width="13" height="18" border="0" alt=""></td>
-                        <td><img src="../themes/default/images/helios/deploy_icon.png" width="16" height="20" border="0" alt=""></td>
-                        <td><img src="../themes/default/images/helios/delete_icon.png" width="16" height="20" border="0" alt=""></td>
-                    </tr>
-                    <tr>
-        				<td>1001</td>
-                        <td>18/Mar/2013 10:56:43</td>
-                        <td><img src="../themes/default/images/helios/download_icon.png" width="15" height="18" border="0" alt=""></td>
-                        <td><img src="../themes/default/images/helios/deploy_icon.png" width="16" height="20" border="0" alt=""></td>
-                        <td><img src="../themes/default/images/helios/delete_icon.png" width="16" height="20" border="0" alt=""></td>
-                    </tr>
-                    <tr>
-        				<td>1001</td>
-                        <td>18/Mar/2013 10:56:43</td>
-                        <td><img src="../themes/default/images/helios/download_icon.png" width="15" height="18" border="0" alt=""></td>
-                        <td><img src="../themes/default/images/helios/deploy_icon.png" width="16" height="20" border="0" alt=""></td>
-                        <td><img src="../themes/default/images/helios/delete_icon.png" width="16" height="20" border="0" alt=""></td>
-                    </tr>
-					<tr>
-        				<td>1001</td>
-                        <td>18/Mar/2013 10:56:43</td>
-                        <td><img src="../themes/default/images/helios/download_icon.png" width="15" height="18" border="0" alt=""><img src="../themes/default/images/helios/ipa_icon.png" width="13" height="18" border="0" alt=""></td>
-                        <td><img src="../themes/default/images/helios/deploy_icon.png" width="16" height="20" border="0" alt=""></td>
-                        <td><img src="../themes/default/images/helios/delete_icon.png" width="16" height="20" border="0" alt=""></td>
-                    </tr>
-                    <tr>
-        				<td>1001</td>
-                        <td>18/Mar/2013 10:56:43</td>
-                        <td><img src="../themes/default/images/helios/download_icon.png" width="15" height="18" border="0" alt=""></td>
-                        <td><img src="../themes/default/images/helios/deploy_icon.png" width="16" height="20" border="0" alt=""></td>
-                        <td><img src="../themes/default/images/helios/delete_icon.png" width="16" height="20" border="0" alt=""></td>
-                    </tr>
-                    <tr>
-        				<td>1001</td>
-                        <td>18/Mar/2013 10:56:43</td>
-                        <td><img src="../themes/default/images/helios/download_icon.png" width="15" height="18" border="0" alt=""></td>
-                        <td><img src="../themes/default/images/helios/deploy_icon.png" width="16" height="20" border="0" alt=""></td>
-                        <td><img src="../themes/default/images/helios/delete_icon.png" width="16" height="20" border="0" alt=""></td>
-                    </tr>
-					<tr>
-        				<td>1001</td>
-                        <td>18/Mar/2013 10:56:43</td>
-                        <td><img src="../themes/default/images/helios/download_icon.png" width="15" height="18" border="0" alt=""><img src="../themes/default/images/helios/ipa_icon.png" width="13" height="18" border="0" alt=""></td>
-                        <td><img src="../themes/default/images/helios/deploy_icon.png" width="16" height="20" border="0" alt=""></td>
-                        <td><img src="../themes/default/images/helios/delete_icon.png" width="16" height="20" border="0" alt=""></td>
-                    </tr>
-                    <tr>
-        				<td>1001</td>
-                        <td>18/Mar/2013 10:56:43</td>
-                        <td><img src="../themes/default/images/helios/download_icon.png" width="15" height="18" border="0" alt=""></td>
-                        <td><img src="../themes/default/images/helios/deploy_icon.png" width="16" height="20" border="0" alt=""></td>
-                        <td><img src="../themes/default/images/helios/delete_icon.png" width="16" height="20" border="0" alt=""></td>
-                    </tr>
-                    <tr>
-        				<td>1001</td>
-                        <td>18/Mar/2013 10:56:43</td>
-                        <td><img src="../themes/default/images/helios/download_icon.png" width="15" height="18" border="0" alt=""></td>
-                        <td><img src="../themes/default/images/helios/deploy_icon.png" width="16" height="20" border="0" alt=""></td>
-                        <td><img src="../themes/default/images/helios/delete_icon.png" width="16" height="20" border="0" alt=""></td>
-                    </tr><tr>
-        				<td>1001</td>
-                        <td>18/Mar/2013 10:56:43</td>
-                        <td><img src="../themes/default/images/helios/download_icon.png" width="15" height="18" border="0" alt=""><img src="../themes/default/images/helios/ipa_icon.png" width="13" height="18" border="0" alt=""></td>
-                        <td><img src="../themes/default/images/helios/deploy_icon.png" width="16" height="20" border="0" alt=""></td>
-                        <td><img src="../themes/default/images/helios/delete_icon.png" width="16" height="20" border="0" alt=""></td>
-                    </tr>
-                    <tr>
-        				<td>1001</td>
-                        <td>18/Mar/2013 10:56:43</td>
-                        <td><img src="../themes/default/images/helios/download_icon.png" width="15" height="18" border="0" alt=""></td>
-                        <td><img src="../themes/default/images/helios/deploy_icon.png" width="16" height="20" border="0" alt=""></td>
-                        <td><img src="../themes/default/images/helios/delete_icon.png" width="16" height="20" border="0" alt=""></td>
-                    </tr>
-                    <tr>
-        				<td>1001</td>
-                        <td>18/Mar/2013 10:56:43</td>
-                        <td><img src="../themes/default/images/helios/download_icon.png" width="15" height="18" border="0" alt=""></td>
-                        <td><img src="../themes/default/images/helios/deploy_icon.png" width="16" height="20" border="0" alt=""></td>
-                        <td><img src="../themes/default/images/helios/delete_icon.png" width="16" height="20" border="0" alt=""></td>
-                    </tr><tr>
-        				<td>1001</td>
-                        <td>18/Mar/2013 10:56:43</td>
-                        <td><img src="../themes/default/images/helios/download_icon.png" width="15" height="18" border="0" alt=""><img src="../themes/default/images/helios/ipa_icon.png" width="13" height="18" border="0" alt=""></td>
-                        <td><img src="../themes/default/images/helios/deploy_icon.png" width="16" height="20" border="0" alt=""></td>
-                        <td><img src="../themes/default/images/helios/delete_icon.png" width="16" height="20" border="0" alt=""></td>
-                    </tr>
-                    <tr>
-        				<td>1001</td>
-                        <td>18/Mar/2013 10:56:43</td>
-                        <td><img src="../themes/default/images/helios/download_icon.png" width="15" height="18" border="0" alt=""></td>
-                        <td><img src="../themes/default/images/helios/deploy_icon.png" width="16" height="20" border="0" alt=""></td>
-                        <td><img src="../themes/default/images/helios/delete_icon.png" width="16" height="20" border="0" alt=""></td>
-                    </tr>
-                    <tr>
-        				<td>1001</td>
-                        <td>18/Mar/2013 10:56:43</td>
-                        <td><img src="../themes/default/images/helios/download_icon.png" width="15" height="18" border="0" alt=""></td>
-                        <td><img src="../themes/default/images/helios/deploy_icon.png" width="16" height="20" border="0" alt=""></td>
-                        <td><img src="../themes/default/images/helios/delete_icon.png" width="16" height="20" border="0" alt=""></td>
-                    </tr>
+					{{#each buildInfo}}
+						<tr>
+							<td>{{version}}</td>
+							<td>{{datetime}}</td>
+							<td><img name="downloadBuild" src="../themes/default/images/helios/download_icon.png" width="15" height="18" border="0" alt=""></td>
+							<td><a onClick="openccmini(this,'builddeploy');" href="javascript:;"><img src="../themes/default/images/helios/deploy_icon.png" width="16" height="20" border="0" alt=""></a>
+								<div id="builddeploy" class="dyn_popup popup_bg" style="display:none;">
+									<table class="clonetable deploy_pop" width="100%" border="0" cellspacing="0" cellpadding="0">
+										<tbody>
+											<tr>
+												<td>Environment<sup>*</sup></td>
+											</tr>
+											<tr>    
+												<td>
+													<select>
+														<option>Production</option>
+													</select>
+												</td>
+											 </tr>    
+											 <tr>
+												<td>Logs</td>
+											 </tr>
+											 <tr>   
+												<td>
+													<select>
+														<option>Show Errors</option>
+													</select>
+												</td>
+											</tr>
+										</tbody>
+									  </table>
+									 <div class="flt_right">
+										<input type="button" value="Deploy" class="btn btn_style">
+										<input type="button" value="Close" class="btn btn_style dyn_popup_close">
+									 </div>
+								</div>
+							</td>
+							<td>
+								<a name="delete_msg" class="tooltiptop" title="" data-placement="top" data-toggle="tooltip" href="#" data-original-title="Delete Row"><img name="deleteBuild" src="../themes/default/images/helios/delete_icon.png" width="16" height="20" border="0" alt=""></a>
+								<div id="delete_msg" class="dyn_popup">
+								  Are you sure to delete this ?
+									<div>
+										<input type="button" value="Delete" class="btn btn_style">
+										<input type="button" value="No" class="btn btn_style dyn_popup_close">
+									</div>
+								</div>
+							</td>
+						</tr>
+					{{/each}}
                 </tbody>    
             </table>
         </div>

@@ -20,7 +20,8 @@ define(["framework/widgetWithTemplate", "navigation/listener/navigationListener"
 		 */
 		initialize : function(globalConfig){
 			var self = this;
-			self.navigationListener = new Clazz.com.components.navigation.js.listener.navigationListener();
+			commonVariables.navListener = new Clazz.com.components.navigation.js.listener.navigationListener();
+			self.navigationListener = commonVariables.navListener;
 			self.registerEvents(self.navigationListener);
 		},
 
@@ -29,7 +30,8 @@ define(["framework/widgetWithTemplate", "navigation/listener/navigationListener"
 		 *
 		 */
 		loadPage : function(){
-			self.navigationListener = new Clazz.com.components.navigation.js.listener.navigationListener();
+			commonVariables.navListener = new Clazz.com.components.navigation.js.listener.navigationListener();
+			self.navigationListener = commonVariables.navListener;
 		},
 		
 		registerEvents : function(navigationListener) {
@@ -46,7 +48,9 @@ define(["framework/widgetWithTemplate", "navigation/listener/navigationListener"
 		 *
 		 * @element: Element as the result of the template + data binding
 		 */
-		postRender : function(element) {			
+		postRender : function(element) {	
+			var self = this;
+			self.navigationListener.landingPage();
 		},
 
 		/***

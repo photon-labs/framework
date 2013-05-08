@@ -4,6 +4,14 @@ var commonVariables = {
 	webserviceurl : "../rest/api/",
 	contexturl : "..",
 	
+	navListener : null,
+	
+	header : "header",
+	headerContext : "",
+	
+	footer : "footer",
+	footerContext : "",
+		
 	login : "login",
 	loginContext : "login",
 

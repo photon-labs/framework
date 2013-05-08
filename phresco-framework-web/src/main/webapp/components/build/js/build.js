@@ -23,8 +23,8 @@ define(["framework/widgetWithTemplate", "build/listener/buildListener"], functio
 		
 		registerEvents : function () {
 			var self = this;
-			//self.onProgressEvent = new signals.Signal();
-			//self.onProgressEvent.add(self.buildListener.onPrgoress, self.buildListener);
+			self.onProgressEvent = new signals.Signal();
+			self.onProgressEvent.add(self.buildListener.onPrgoress, self.buildListener);
 		},
 		
 		/***
@@ -34,6 +34,24 @@ define(["framework/widgetWithTemplate", "build/listener/buildListener"], functio
 		loadPage : function(){
 			Clazz.navigationController.push(this);
 		},
+		
+		preRender: function(whereToRender, renderFunction){
+			var self = this;
+			/* self.buildListener.getBuildInfo(self.buildListener.getRequestHeader(self.projectRequestBody), function(response) {
+				renderFunction(response, whereToRender);
+			}); */
+			
+			var buildInfo = {"buildInfo":[
+				{"version" : "1000", "datetime":"18/Mar/2013 10:51:43"},
+				{"version" : "1001", "datetime":"19/Mar/2013 10:23:43"},
+				{"version" : "1002", "datetime":"20/Mar/2013 10:45:43"},
+				{"version" : "1003", "datetime":"21/Mar/2013 10:11:43"},
+				{"version" : "1004", "datetime":"23/Mar/2013 10:33:43"},
+				{"version" : "1005", "datetime":"24/Mar/2013 10:55:43"}
+			]};
+			renderFunction(buildInfo, whereToRender);
+		},
+
 		
 		/***
 		 * Called after the preRender() and bindUI() completes. 
@@ -74,23 +92,41 @@ define(["framework/widgetWithTemplate", "build/listener/buildListener"], functio
 				self.buildListener.onPrgoress(this);
 			});
 			
-			$(window).resize(function() {
-				$(".dyn_popup").hide();
-				var height = $(this).height();
-				$('.features_content_main').height(height - 230);
-				$('.build_progress').height(height - 230);
+			$("img[name=downloadBuild]").click(function(){
+				console.info("download clicked");
 			});
-	  
-			$(window).resize();
+			
+			$("#buildRun").click(function(){
+				console.info("Build run clicked");
+			});
+			
+			$(".tooltiptop").unbind("click");
+			$(".tooltiptop").click(function() {
+				self.opencc(this, $(this).attr('name'));
+			});
+			
+			$('.connected').sortable({
+				connectWith: '.connected'
+			});
 
 			$(window).resize(function() {
+			
+				$(".dyn_popup").hide();
+
+				var height = $(this).height();
 				var twowidth = window.innerWidth/2.5;
 				var onewidth = window.innerWidth - (twowidth+70);
+				
+				$('.features_content_main').height(height - 230);
+				$('.build_progress').height(height - 230);
+				
 				$('.build_info').css("width",twowidth);
 				$('.build_progress').css("width",onewidth);
 				$('.build_close').css("right",onewidth+10);
 				
 			});
+			
+			$(window).resize();
 		
 			$("#content_div").mCustomScrollbar({
 				autoHideScrollbar:true,

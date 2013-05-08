@@ -1,15 +1,16 @@
-define(["framework/widget"], function() {
+define(["framework/widget", "build/api/buildAPI"], function() {
 
 	Clazz.createPackage("com.components.build.js.listener");
 
 	Clazz.com.components.build.js.listener.BuildListener = Clazz.extend(Clazz.Widget, {
-				
+		buildAPI : null,		
 		/***
 		 * Called in initialization time of this class 
 		 *
 		 * @config: configurations for this listener
 		 */
 		initialize : function(config) {
+			this.buildAPI = new Clazz.com.components.build.js.api.BuildAPI();
 		},
 		
 		onPrgoress : function(clicked) {
@@ -28,8 +29,47 @@ define(["framework/widget"], function() {
 				$(clicked).attr('data-flag','true');
 				$(window).resize();
 			}
-		}
+		},
 		
+		getBuildInfo : function(header, callback){
+			var self = this;
+			try {
+				self.buildAPI.build(header,
+					function(response) {
+						if (response !== null) {
+							callback(response);
+						} else {
+							callback({ "status" : "service failure"});
+						}
+					},
+
+					function(textStatus) {
+						callback({ "status" : "Connection failure"});
+					}
+				);
+			} catch(exception) {
+				callback({ "status" : "service exception"});
+			}
+		},
+		
+		/***
+		 * provides the request header
+		 *
+		 * @BuildRequestBody: request body of Build
+		 * @return: returns the contructed header
+		 */
+		getRequestHeader : function(projectRequestBody) {
+			var self=this, header;
+			
+			header = {
+				contentType: "application/json",
+				requestMethod: "GET",
+				dataType: "json",
+				webserviceurl: ''
+			}
+			
+			return header;
+		}
 	});
 
 	return Clazz.com.components.build.js.listener.BuildListener;

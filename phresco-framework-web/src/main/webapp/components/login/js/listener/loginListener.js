@@ -38,12 +38,12 @@ define(["framework/widget", "login/api/loginAPI", "common/loading", "footer/foot
 							if(response != undefined && response != null && response.data.validLogin == true){
 								self.setUserInfo(response.data);
 								self.appendPlaceholder();
-								self.renderHeader();
-								self.renderFooter();
-								self.renderContent();
+								//self.renderHeader();
+								//self.renderFooter();
+								//self.renderContent();
 								self.renderNavigation();
 							} else {
-								//authendication failed
+								//authentication failed
 								self.loadingScreen.removeLoading();
 							}
 						}, 
