@@ -25,7 +25,13 @@ public class ContextUrls {
     private String contextType;
     private String contextPostData;
     private String encodingType;
+    private boolean redirectAutomatically;
+    private boolean followRedirects;
+	private boolean keepAlive;
+    private boolean multipartData;
+    private boolean compatibleHeaders;
     private List<Headers> headers;
+    private List<Parameters> parameters;
     
 	public ContextUrls() {
 	}
@@ -87,5 +93,53 @@ public class ContextUrls {
 
 	public List<Headers> getHeaders() {
 		return headers;
+	}
+
+	public boolean isRedirectAutomatically() {
+		return redirectAutomatically;
+	}
+
+	public void setRedirectAutomatically(boolean redirectAutomatically) {
+		this.redirectAutomatically = redirectAutomatically;
+	}
+
+	public boolean isFollowRedirects() {
+		return followRedirects;
+	}
+
+	public void setFollowRedirects(boolean followRedirects) {
+		this.followRedirects = followRedirects;
+	}
+
+	public boolean isKeepAlive() {
+		return keepAlive;
+	}
+
+	public void setKeepAlive(boolean keepAlive) {
+		this.keepAlive = keepAlive;
+	}
+
+	public boolean isMultipartData() {
+		return multipartData;
+	}
+
+	public void setMultipartData(boolean multipartData) {
+		this.multipartData = multipartData;
+	}
+
+	public boolean isCompatibleHeaders() {
+		return compatibleHeaders;
+	}
+
+	public void setCompatibleHeaders(boolean compatibleHeaders) {
+		this.compatibleHeaders = compatibleHeaders;
+	}
+
+	public List<Parameters> getParameters() {
+		return parameters;
+	}
+
+	public void setParameters(List<Parameters> parameters) {
+		this.parameters = parameters;
 	}
 }
