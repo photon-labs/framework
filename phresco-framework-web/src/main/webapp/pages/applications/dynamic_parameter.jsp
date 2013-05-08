@@ -704,6 +704,8 @@
 			j++;
 		});
 		
+		$("#"+contextUrlsRowId).find('.redirectAutomatically').prop('checked', true);
+		
 		showHideMinusIcon($("#"+contextUrlsRowId).find('.parameterPlus'), 1);
 		// when adding, if the checkbox is checked on first Context URLs checkbox, enable delete button
 		enableDelBtn($('.ctxUrlCheck'));
@@ -760,9 +762,9 @@
 	}
 	
 	function appendParameterRow(obj) {
-		$(obj).closest('tbody').append('<tr class="parameterRow"><td class="noBorder"><input type="text" class="input-medium parameterName" name="parameterName"></td>' + 
-		'<td class="noBorder"><input type="text" class="input-medium parameterValue" name="parameterValue"></td>' +
-		'<td class="noBorder"><input type="checkbox" class="input-medium parameterEncode" name="parameterEncode"></td>' + 
+		$(obj).closest('tbody').append('<tr class="parameterRow"><td class="noBorder"><input type="text" style="width:130px;"  class="parameterName" name="parameterName"></td>' + 
+		'<td class="noBorder"><input type="text" style="width:130px;" class="parameterValue" name="parameterValue"></td>' +
+		'<td class="noBorder"><input type="checkbox" class="parameterEncode" name="parameterEncode"></td>' + 
 		'<td class="noBorder"><a><img src="images/icons/add_icon.png" id="parameterPlus" class="parameterPlus" onclick="appendParameterRow(this);"></a>' + 
 		' <a><img class="del imagealign hide parameterMinus" src="images/icons/minus_icon.png" onclick="removeParameterRow(this);">' +
 		'</a></td></tr>');

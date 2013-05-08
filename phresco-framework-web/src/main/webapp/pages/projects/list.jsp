@@ -126,7 +126,7 @@
 																<tr>
 																	<td class="no-left-bottom-border table-pad">
 																		<input type="checkbox" class="check <%= project.getId() %>" appId="<%= appInfo.getId() %>" name="selectedAppInfo" value='<%= gson.toJson(appInfo) %>'
-																			<%= checkedStr %> onclick="checkboxEvent($('.<%= project.getId() %>'), $('#<%= project.getId() %>'));">
+																			<%= checkedStr %> onclick="checkboxEvent($('.<%= project.getId() %>'), $('input[id=<%= project.getId() %>]'));">
 																	</td>
 																	<td class="no-left-bottom-border table-pad">
 																		<a href="#" id="appNameInHover" onclick="editApplication('<%= project.getId() %>', '<%= appInfo.getId() %>');" name="edit">
@@ -192,10 +192,13 @@
 		$("#" + recentProjectId).parent().parent().removeClass('closereg').addClass('openreg');
 		$("#" + recentProjectId).attr("src","images/r_arrowopen.png");
 		$("#" + recentProjectId).parent().parent().next('.mfbox').show();
+		
+		var parentCheckBox  = $("#" + recentProjectId).siblings('.accordianChkBox');
+		parentCheckBox.attr('checked',true);
 		$("." + recentProjectId).each(function () {
 			if ($(this).attr("appId") === recentAppId) {
 				$(this).attr("checked", true);
-				checkboxEvent($('.' + recentProjectId), $('#' + recentProjectId));
+				checkboxEvent($('.' + recentProjectId), parentCheckBox);
 				return false;
 			}
 		});
