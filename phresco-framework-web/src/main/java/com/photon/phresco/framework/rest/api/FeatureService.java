@@ -9,13 +9,15 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import com.photon.phresco.commons.model.ArtifactElement;
 import com.photon.phresco.commons.model.ArtifactGroup;
 import com.photon.phresco.exception.PhrescoException;
 import com.photon.phresco.service.client.api.ServiceManager;
+import com.photon.phresco.util.ServiceConstants;
 import com.sun.jersey.api.client.ClientResponse.Status;
 
 @Path("/features")
-public class FeatureService {
+public class FeatureService implements ServiceConstants {
 	@GET
 	@Path("/list")
 	@Produces(MediaType.APPLICATION_JSON)
@@ -30,6 +32,28 @@ public class FeatureService {
 			}
 			List<ArtifactGroup> features = serviceManager.getFeatures(customer, techId, type);
 			ResponseInfo finalOutput = ServiceManagerMap.responseDataEvaluation(responseData, null, "Application Features listed successfully", features);
+			return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
+		} catch (PhrescoException e) {
+			ResponseInfo finalOutput = ServiceManagerMap.responseDataEvaluation(responseData, e, "Application Features not fetched", null);
+			return Response.status(Status.BAD_REQUEST).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
+		}
+	}
+	
+	@GET
+	@Path("/desc")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response getDescription(@QueryParam("customerId") String customer, 
+			@QueryParam(DB_COLUMN_ARTIFACT_GROUP_ID) String artifactGroupId, @QueryParam("userId") String userId) {
+		ResponseInfo responseData = new ResponseInfo();
+		try {
+			ServiceManager serviceManager = ServiceManagerMap.CONTEXT_MANAGER_MAP.get(userId);
+			if(serviceManager == null) {
+				ResponseInfo finalOutput = ServiceManagerMap.responseDataEvaluation(responseData, null, "UnAuthorized User", null);
+	        	return Response.status(Status.BAD_REQUEST).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
+			}
+			ArtifactElement artifactElement = serviceManager.getArtifactDescription(artifactGroupId);
+			ResponseInfo finalOutput = ServiceManagerMap.responseDataEvaluation(responseData, null, 
+					"Application Features listed successfully", artifactElement.getDescription());
 			return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
 		} catch (PhrescoException e) {
 			ResponseInfo finalOutput = ServiceManagerMap.responseDataEvaluation(responseData, e, "Application Features not fetched", null);
