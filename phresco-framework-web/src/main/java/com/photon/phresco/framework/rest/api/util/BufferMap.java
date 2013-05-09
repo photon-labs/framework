@@ -26,7 +26,7 @@ public class BufferMap {
 			BufferReaderMap.put(key, bufferReader);
 		}
 		
-		public static void removeBufferReader(String key,BufferedReader bufferReader) {
+		public static void removeBufferReader(String key) {
 			
 			BufferReaderMap.remove(key);
 		}
