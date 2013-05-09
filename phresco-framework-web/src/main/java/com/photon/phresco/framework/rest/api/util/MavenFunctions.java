@@ -5,6 +5,7 @@ import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -12,6 +13,7 @@ import java.io.InputStreamReader;
 import java.io.StringWriter;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -20,6 +22,8 @@ import java.util.UUID;
 
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
 
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.collections.CollectionUtils;
@@ -27,6 +31,8 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.codehaus.plexus.util.cli.CommandLineException;
 import org.codehaus.plexus.util.cli.Commandline;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 
 import com.google.gson.Gson;
 import com.photon.phresco.api.ApplicationProcessor;
@@ -66,6 +72,7 @@ import com.photon.phresco.util.Constants;
 import com.photon.phresco.util.Credentials;
 import com.photon.phresco.util.PhrescoDynamicLoader;
 import com.photon.phresco.util.Utility;
+import com.phresco.pom.util.PomProcessor;
 
 
 
@@ -78,6 +85,7 @@ public class MavenFunctions implements Constants ,FrameworkConstants,MavenServic
     public static final java.lang.String SERVICE_USERNAME = "phresco.service.username";
     public static final java.lang.String SERVICE_PASSWORD = "phresco.service.password";
     public static final java.lang.String SERVICE_API_KEY = "phresco.service.api.key";
+    public static final String SUCCESS = "success";
     
 	private static final Logger S_LOGGER= Logger.getLogger(MavenFunctions.class);
 	private static boolean isInfoEnabled = S_LOGGER.isInfoEnabled();
@@ -90,9 +98,21 @@ public class MavenFunctions implements Constants ,FrameworkConstants,MavenServic
 	String selectedFiles="";
 	String phase="";
 	String username="";
-	/*String uniquekey="";*/
+	
+	private String testAgainst = "";
+	private String testName = "";
+	private String resultJson = "";
+	private String isFromCI = "";
+	
+	private List<String> minifyFileNames = null;
 	
 
+
+	private String minifyAll = "";
+	
+	
+	/*String uniquekey="";*/
+	
 	HttpServletRequest request;
 	
 	private ServiceManager serviceManager = null;
@@ -104,6 +124,54 @@ public class MavenFunctions implements Constants ,FrameworkConstants,MavenServic
 	public void setUniquekey(String uniquekey) {
 		this.uniquekey = uniquekey;
 	}*/
+	
+	public HttpServletRequest getHttpRequest(){
+		
+		return request;
+		
+	}
+	
+	public List<String> getMinifyFileNames() {
+		return minifyFileNames;
+	}
+	public void setMinifyFileNames(List<String> minifyFileNames) {
+		this.minifyFileNames = minifyFileNames;
+	}
+	
+	public String getMinifyAll() {
+		return minifyAll;
+	}
+	public void setMinifyAll(String minifyAll) {
+		this.minifyAll = minifyAll;
+	}
+	
+	
+	public String getIsFromCI() {
+		return isFromCI;
+	}
+	public void setIsFromCI(String isFromCI) {
+		this.isFromCI = isFromCI;
+	}
+	
+	public String getResultJson() {
+		return resultJson;
+	}
+	public void setResultJson(String resultJson) {
+		this.resultJson = resultJson;
+	}
+	
+	public String getTestAgainst() {
+		return testAgainst;
+	}
+	public void setTestAgainst(String testAgainst) {
+		this.testAgainst = testAgainst;
+	}
+	public String getTestName() {
+		return testName;
+	}
+	public void setTestName(String testName) {
+		this.testName = testName;
+	}
 	
 	public String getUsername() {
 		return username;
@@ -197,8 +265,97 @@ public class MavenFunctions implements Constants ,FrameworkConstants,MavenServic
 			setSelectedFiles(request.getParameter(SELECTED_FILES));
 			
 		} catch (Exception e) {
-			throw new PhrescoException("Required parameters are not passed");
+			throw new PhrescoException(e.getMessage());
 		}
+	}
+	
+	public void prePopulatePerformanceTestData(HttpServletRequest request) throws PhrescoException {
+		
+		
+		try {
+			
+			
+			if( !("".equalsIgnoreCase(request.getParameter(TEST_AGAINST))) && (request.getParameter(TEST_AGAINST) != null) && !("null".equalsIgnoreCase(request.getParameter(TEST_AGAINST))) )
+			{
+				setTestAgainst(request.getParameter(TEST_AGAINST));	
+			}
+			else
+			{
+				throw new PhrescoException("No valid TEST_AGAINST Passed");
+			}
+			
+			if( !("".equalsIgnoreCase(request.getParameter(TEST_NAME))) && (request.getParameter(TEST_NAME) != null) && !("null".equalsIgnoreCase(request.getParameter(TEST_NAME))) )
+			{
+				setTestName(request.getParameter(TEST_NAME));	
+			}
+			else
+			{
+				throw new PhrescoException("No valid TEST_NAME Passed");
+			}
+			
+			if( !("".equalsIgnoreCase(request.getParameter(RESULT_JSON))) && (request.getParameter(RESULT_JSON) != null) && !("null".equalsIgnoreCase(request.getParameter(RESULT_JSON))) )
+			{
+				setResultJson(request.getParameter(RESULT_JSON));	
+			}
+			else
+			{
+				throw new PhrescoException("No valid RESULT_JSON Passed");
+			}
+			
+			//To avoid null pointer exception incase of normal performance test.
+			setIsFromCI("");
+			
+			
+		} catch (Exception e) {
+			throw new PhrescoException(e.getMessage());
+		}
+	
+		
+	}
+	
+	
+	public void prePopulateMinificationData(HttpServletRequest request) throws PhrescoException {
+		
+		
+		try {
+			
+			if( (request.getParameterValues(MINIFY_FILE_NAMES) != null) )
+			{
+				String[] minify_file_names = request.getParameterValues(MINIFY_FILE_NAMES);
+				List<String> minifyFileNames_local= new ArrayList<String>();
+				for(String temp : minify_file_names)
+				{
+					minifyFileNames_local.add(temp);
+				}
+				if(minifyFileNames_local.size() != 0) {
+				setMinifyFileNames(minifyFileNames_local);
+				}
+				else {
+					throw new PhrescoException("No valid MINIFYFILENAMES Passed");
+				}
+			}
+			else
+			{
+				throw new PhrescoException("No valid MINIFYFILENAMES Passed");
+			}
+			
+			if( !("".equalsIgnoreCase(request.getParameter(MINIFY_ALL))) && (request.getParameter(MINIFY_ALL) != null) && !("null".equalsIgnoreCase(request.getParameter(MINIFY_ALL))) )
+			{
+				setMinifyAll(request.getParameter(MINIFY_ALL));	
+			}
+			else
+			{
+				//To avoid parser exception incase minifyall is not selected.
+				setMinifyAll("false");
+			}
+			
+		} catch (Exception e) {
+			throw new PhrescoException(e.getMessage());
+		}
+	
+		
+	
+		
 	}
 	
 	
@@ -266,6 +423,20 @@ public class MavenFunctions implements Constants ,FrameworkConstants,MavenServic
 		            		else if(Command.equalsIgnoreCase(MavenServiceConstants.RESTART_SERVER)){
 		            			
 		            			server_logs = restartServer();
+		            		}
+		            		else if(Command.equalsIgnoreCase(MavenServiceConstants.PERFORMANCE_TEST)){
+		            			
+		            			prePopulatePerformanceTestData(request);
+		            			server_logs = performanceTest();
+		            		}
+		            		else if(Command.equalsIgnoreCase(MavenServiceConstants.LOAD_TEST)){
+		            			
+		            			server_logs = loadTest();
+		            		}
+		            		else if(Command.equalsIgnoreCase(MavenServiceConstants.MINIFY)){
+		            			
+		            			prePopulateMinificationData(request);
+		            			server_logs = minification();
 		            		}
 		            		
 		            		if(server_logs != null){
@@ -535,6 +706,266 @@ public class MavenFunctions implements Constants ,FrameworkConstants,MavenServic
 
 		return reader;
 	}
+	
+	
+	public BufferedReader performanceTest() throws PhrescoException {
+		
+		BufferedReader reader=null;
+		
+    	try {
+    		FileOutputStream fop = null;
+    		ApplicationManager applicationManager = PhrescoFrameworkFactory.getApplicationManager();
+    		ProjectInfo projectInfo = getProjectInfo();
+    		ApplicationInfo applicationInfo = getApplicationInfo();
+    		MojoProcessor mojo = new MojoProcessor(new File(getPhrescoPluginInfoFilePath(PHASE_PERFORMANCE_TEST)));
+    		persistValuesToXml(mojo, PHASE_PERFORMANCE_TEST);
+
+    		//To get maven build arguments
+    		List<Parameter> parameters = getMojoParameters(mojo, PHASE_PERFORMANCE_TEST);
+    		List<String> buildArgCmds = getMavenArgCommands(parameters);
+    		buildArgCmds.add(HYPHEN_N);
+    		String workingDirectory = getAppDirectoryPath(applicationInfo);  
+    		
+    		//
+            performanceJsonWriter();    			
+    		reader = applicationManager.performAction(projectInfo, ActionType.PERFORMANCE_TEST, buildArgCmds, workingDirectory);
+    		
+    	} catch (PhrescoException e) {
+    		throw new PhrescoException(e);
+    	}
+
+    	return reader;
+    }
+	
+	
+	public BufferedReader loadTest() throws PhrescoException {
+		
+		BufferedReader reader = null;
+    	if (isDebugEnabled) {
+	        S_LOGGER.debug("Entering Method MavenFunctions.runLoadTest()");
+	    } 
+    	try {
+    		ApplicationInfo appInfo = getApplicationInfo();
+	        StringBuilder workingDirectory = new StringBuilder(getAppDirectoryPath(appInfo));
+	        MojoProcessor mojo = new MojoProcessor(new File(getPhrescoPluginInfoFilePath(PHASE_LOAD_TEST)));
+            persistValuesToXml(mojo, PHASE_LOAD_TEST);
+            List<Parameter> parameters = getMojoParameters(mojo, PHASE_LOAD_TEST);
+            List<String> buildArgCmds = getMavenArgCommands(parameters);
+            buildArgCmds.add(HYPHEN_N);
+            ApplicationManager applicationManager = PhrescoFrameworkFactory.getApplicationManager();
+            reader = applicationManager.performAction(getProjectInfo(), ActionType.LOAD_TEST, buildArgCmds, workingDirectory.toString());
+    	} catch(PhrescoException e) {
+	    		S_LOGGER.error("Entered into catch block of MavenFunctions.LoadTest()"+ FrameworkUtil.getStackTraceAsString(e));
+	    		throw new PhrescoException("Exception occured in the MavenFunctions.LoadTest process");
+    	}
+    	return reader;
+    }
+	
+	public BufferedReader minification() throws PhrescoException {
+		
+		BufferedReader reader = null;
+		try {
+			ApplicationManager applicationManager = PhrescoFrameworkFactory.getApplicationManager();
+			ApplicationInfo applicationInfo = getApplicationInfo();
+			ProjectInfo projectInfo = getProjectInfo();
+			String pomPath = Utility.getProjectHome() + File.separator + applicationInfo.getAppDirName() + File.separator + POM_FILE;
+			PomProcessor pomProcessor = new PomProcessor(new File(pomPath));
+			DocumentBuilderFactory dbfac = DocumentBuilderFactory.newInstance();
+			DocumentBuilder docBuilder = dbfac.newDocumentBuilder();
+			Document doc = docBuilder.newDocument();
+			List<Element> configList = new ArrayList<Element>();
+			List<String> files = getMinifyFileNames();
+			createExcludesTagInPom(doc, configList);
+			if (Boolean.parseBoolean(getMinifyAll()) && CollectionUtils.isEmpty(files)) { // Only Minify all is selected
+				configList.add(createElement(doc, POM_OUTPUTDIR, POM_SOURCE_DIRECTORY));
+			} else if (CollectionUtils.isNotEmpty(files)) {
+				String dynamicIncludeDir = "";
+				if (Boolean.parseBoolean(getMinifyAll())) {//if Minify all is selected
+					dynamicIncludeDir = POM_SOURCE_DIRECTORY;
+					configList.add(createElement(doc, POM_OUTPUTDIR, POM_SOURCE_DIRECTORY));
+				} else {//if Minify all not is selected
+					dynamicIncludeDir = POM_OUTPUT_DIRECTORY;
+					configList.add(createElement(doc, POM_OUTPUTDIR, POM_OUTPUT_DIRECTORY));
+				}
+				createAggregationTagInPom(applicationInfo, doc, configList, files, dynamicIncludeDir);
+			}
+			pomProcessor.addConfiguration(MINIFY_PLUGIN_GROUPID, MINIFY_PLUGIN_ARTFACTID, configList);
+			pomProcessor.save();
+			
+			String workingDirectory = getAppDirectoryPath(applicationInfo);
+			
+			reader = applicationManager.performAction(projectInfo, ActionType.MINIFY, null, workingDirectory);
+		} catch (Exception e) {
+				S_LOGGER.error("Entered into catch block of MavenFunctions.minification()"+ FrameworkUtil.getStackTraceAsString(e));
+				throw new PhrescoException("Exception occured in the MavenFunctions.minification process");
+		}
+		
+		return reader;
+	}
+	
+	/**
+	 * To create Aggregations tag in Pom.xml with minification details
+	 * @param applicationInfo
+	 * @param doc
+	 * @param configList
+	 * @param files
+	 * @param dynamicIncludeDir
+	 */
+	private void createAggregationTagInPom(ApplicationInfo applicationInfo, Document doc, List<Element> configList, List<String> files,
+			String dynamicIncludeDir) throws PhrescoException {
+		Element aggregationsElement = doc.createElement(POM_AGGREGATIONS);
+		for (String file : files) {
+			String newFileName = ""; 
+			String extension = "";
+			String csvJsFile = getHttpRequest().getParameter(file);
+			List<String> chosenFiles = Arrays.asList(csvJsFile.split(CSV_PATTERN));
+			Element agrigationElement = appendChildElement(doc, aggregationsElement, POM_AGGREGATION, null);
+			appendChildElement(doc, agrigationElement, POM_INPUTDIR, dynamicIncludeDir);
+			Element includesElement = doc.createElement(POM_INCLUDES);
+			for (String chosenFile : chosenFiles) {
+				int lastDot = chosenFile.lastIndexOf(DOT);
+				newFileName = chosenFile.substring(0, lastDot);
+				extension = chosenFile.substring(lastDot + 1, chosenFile.length());
+				appendChildElement(doc, includesElement, POM_INCLUDE, "**/" + newFileName + HYPEN_MIN_DOT + extension);
+				agrigationElement.appendChild(includesElement);
+			}
+			String location = getHttpRequest().getParameter(file + MINIFY_FILE_LOCATION);
+			String[] splitted = location.split(applicationInfo.getAppDirName());
+			String minificationDir = splitted[1];
+			appendChildElement(doc, agrigationElement, POM_OUTPUT, MINIFY_OUTPUT_DIRECTORY + minificationDir + file + DOT_MIN_DOT + extension);
+		}
+		configList.add(aggregationsElement);
+	}
+	
+	private void createExcludesTagInPom(Document doc, List<Element> configList) throws PhrescoException {
+		configList.add(createElement(doc, POM_SOURCEDIR, POM_SOURCE_DIRECTORY));
+		configList.add(createElement(doc, POM_FORCE, POM_VALUE_TRUE));
+		configList.add(createElement(doc, POM_JS_WARN, POM_VALUE_FALSE));
+		configList.add(createElement(doc, POM_LINE_BREAK, POM_LINE_MAX_COL_COUNT));
+		
+		Element excludesElement = doc.createElement(POM_EXCLUDES);
+		appendChildElement(doc, excludesElement, POM_EXCLUDE, POM_EXCLUDE_JS);
+		appendChildElement(doc, excludesElement, POM_EXCLUDE, POM_EXCLUDE_MIN_JS);
+		appendChildElement(doc, excludesElement, POM_EXCLUDE, POM_EXCLUDE_MINIFIED_JS);
+		appendChildElement(doc, excludesElement, POM_EXCLUDE, POM_EXCLUDE_MIN_CSS);
+		appendChildElement(doc, excludesElement, POM_EXCLUDE, POM_EXCLUDE_MINIFIED_CSS);
+		configList.add(excludesElement);
+	}
+	
+	private Element createElement(Document doc, String elementName, String textContent) throws PhrescoException {
+		Element element = doc.createElement(elementName);
+		if (StringUtils.isNotEmpty(textContent)) {
+			element.setTextContent(textContent);
+		}
+		return element;
+	}
+	
+	private Element appendChildElement(Document doc, Element parent, String elementName, String textContent) throws PhrescoException {
+		Element childElement = createElement(doc, elementName, textContent);
+		parent.appendChild(childElement);
+		return childElement;
+	}
+	
+	public String performanceJsonWriter() throws PhrescoException {
+		
+		FileWriter fw = null;
+		
+		try {
+			if(StringUtils.isNotEmpty(getTestAgainst())) {
+				ApplicationInfo applicationInfo = getApplicationInfo();
+				PomProcessor processor = new PomProcessor(getPOMFile(applicationInfo.getAppDirName()));					
+		        String performTestDir = processor.getProperty(POM_PROP_KEY_PERFORMANCETEST_DIR);	        
+				FileOutputStream fop;
+				boolean success = false;
+				if(getIsFromCI().equalsIgnoreCase("true")) {				
+					StringBuilder filepath = new StringBuilder(Utility.getProjectHome())
+					.append(applicationInfo.getAppDirName())
+					.append(performTestDir)
+					.append(File.separator)
+					.append(getTestAgainst())
+					.append(File.separator)
+					.append(Constants.FOLDER_JSON);
+//					.append(File.separator)
+//					.append("CITemp");					
+					success = new File(filepath.toString()).mkdirs();
+					
+					filepath.append(File.separator)
+					.append(getTestName())
+					.append(DOT_JSON);
+					File file = new File(filepath.toString());
+					fop = new FileOutputStream(file);
+					if (!file.exists()) {
+						file.createNewFile();
+					}
+					byte[] contentInBytes = getResultJson().getBytes();				 
+					fop.write(contentInBytes);
+					fop.flush();
+					fop.close();				
+										
+					StringBuilder infofilepath = new StringBuilder(Utility.getProjectHome())
+					.append(applicationInfo.getAppDirName())
+					.append(performTestDir)
+					.append(File.separator)
+					.append(getTestAgainst())
+					.append(File.separator)
+					.append(Constants.FOLDER_JSON)				
+//					.append(File.separator)
+//					.append("CITemp")
+					.append(File.separator)
+					.append("ci")
+					.append(".info");					
+					file = new File(infofilepath.toString());					
+					if (!file.exists()) {
+						file.createNewFile();
+						fw = new FileWriter(file);
+						fw.write(getTestName()+DOT_JSON);
+					} else {
+						fw = new FileWriter(infofilepath.toString(),true);
+						StringBuilder jsonFileName = new StringBuilder()
+						.append(",")
+						.append(getTestName());
+						fw.write(jsonFileName.toString()+DOT_JSON);						
+					}
+					
+				} else {					
+					StringBuilder filepath = new StringBuilder(Utility.getProjectHome())
+					.append(applicationInfo.getAppDirName())
+					.append(performTestDir)
+					.append(File.separator)
+					.append(getTestAgainst())
+					.append(File.separator)
+					.append(Constants.FOLDER_JSON);			
+					if (new File(filepath.toString()).exists()) {
+						filepath.append(File.separator)
+						.append(getTestName())
+						.append(DOT_JSON);				
+						File file = new File(filepath.toString());
+						fop = new FileOutputStream(file);
+						if (!file.exists()) {
+							file.createNewFile();
+						}
+						byte[] contentInBytes = getResultJson().getBytes();				 
+						fop.write(contentInBytes);
+						fop.flush();
+						fop.close();				
+					}
+				}				
+			}			
+		} catch (Exception e) {			
+			throw new PhrescoException(e);
+		} finally {
+			Utility.closeStream(fw);
+		}
+		return SUCCESS;
+	}
+	
+    private File getPOMFile(String appDirName) throws PhrescoException {
+        StringBuilder builder = new StringBuilder(Utility.getProjectHome())
+        .append(appDirName)
+        .append(File.separatorChar)
+        .append(POM_NAME);
+        return new File(builder.toString());
+    }
 	
 	
 	private BufferedReader handleStopServer(boolean readData) throws PhrescoException {

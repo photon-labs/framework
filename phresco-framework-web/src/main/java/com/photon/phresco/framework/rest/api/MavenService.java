@@ -105,6 +105,36 @@ public class MavenService implements MavenServiceConstants {
 		
 	}
 	
+	@POST
+	@Path("/performanceTest")
+	@Produces(MediaType.APPLICATION_JSON)
+	 public Response performanceTest(@Context HttpServletRequest request) throws PhrescoException  {
+		MavenFunctions lMavenFunctions = new MavenFunctions();
+		MavenResponse response = lMavenFunctions.processRequest(request,PERFORMANCE_TEST);
+		return Response.status(Status.OK).entity(response).header("Access-Control-Allow-Origin", "*").build();
+		
+	}
+	
+	@POST
+	@Path("/loadTest")
+	@Produces(MediaType.APPLICATION_JSON)
+	 public Response loadTest(@Context HttpServletRequest request) throws PhrescoException  {
+		MavenFunctions lMavenFunctions = new MavenFunctions();
+		MavenResponse response = lMavenFunctions.processRequest(request,LOAD_TEST);
+		return Response.status(Status.OK).entity(response).header("Access-Control-Allow-Origin", "*").build();
+		
+	}
+	
+	@POST
+	@Path("/minification")
+	@Produces(MediaType.APPLICATION_JSON)
+	 public Response minification(@Context HttpServletRequest request) throws PhrescoException  {
+		MavenFunctions lMavenFunctions = new MavenFunctions();
+		MavenResponse response = lMavenFunctions.processRequest(request,MINIFY);
+		return Response.status(Status.OK).entity(response).header("Access-Control-Allow-Origin", "*").build();
+		
+	}
+	
 	@GET
 	@Path("/readlog")
 	@Produces(MediaType.APPLICATION_JSON)
