@@ -41,10 +41,10 @@ public class BuildInfoService implements FrameworkConstants {
 					+ File.separator + BUILD_INFO_FILE_NAME);
 			ApplicationManager applicationManager = PhrescoFrameworkFactory.getApplicationManager();
 			List<BuildInfo> builds = applicationManager.getBuildInfos(buildInfoFile);
-			ResponseInfo finalOutput = ServiceManagerMap.responseDataEvalution(responseData, null,"Buildinfo return Successfully", builds);
+			ResponseInfo finalOutput = ServiceManagerMap.responseDataEvaluation(responseData, null,"Buildinfo return Successfully", builds);
 			return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
 		} catch (PhrescoException e) {
-			ResponseInfo finalOutput = ServiceManagerMap.responseDataEvalution(responseData, e,"Buildinfo return Failed", null);
+			ResponseInfo finalOutput = ServiceManagerMap.responseDataEvaluation(responseData, e,"Buildinfo return Failed", null);
 			return Response.status(Status.NOT_FOUND).entity(finalOutput).header("Access-Control-Allow-Origin", "*")
 			.build();
 		}
@@ -92,10 +92,10 @@ public class BuildInfoService implements FrameworkConstants {
 				return Response.status(Status.OK).entity(fileInputStream).header("Access-Control-Allow-Origin", "*").build();
 			}
 		} catch (FileNotFoundException e) {
-			ResponseInfo finalOutput = ServiceManagerMap.responseDataEvalution(responseData, e, "Zip Download Failed", null);
+			ResponseInfo finalOutput = ServiceManagerMap.responseDataEvaluation(responseData, e, "Zip Download Failed", null);
 			return Response.status(Status.NOT_FOUND).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
 		} catch (PhrescoException e) {
-			ResponseInfo finalOutput = ServiceManagerMap.responseDataEvalution(responseData, e, "Zip Download Failed", null);
+			ResponseInfo finalOutput = ServiceManagerMap.responseDataEvaluation(responseData, e, "Zip Download Failed", null);
 			return Response.status(Status.NOT_FOUND).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
 		}
 		return null;
@@ -105,23 +105,25 @@ public class BuildInfoService implements FrameworkConstants {
 	@Path("/deletebuild")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response deleteproject(String[] buildNumbers, @QueryParam("projectId") String projectId, @QueryParam("customerId") String customerId,  @QueryParam("appId") String appId ) {
+	public Response deleteBuild(String[] buildNumbers, @QueryParam("projectId") String projectId, @QueryParam("customerId") String customerId,  @QueryParam("appId") String appId ) {
 		ResponseInfo responseData = new ResponseInfo();
 		try {
+			System.out.println("projectId ::: " + projectId + "::customerId:: " + customerId + "::appId::" + appId);
 			int[] buildInts = new int[buildNumbers.length];
 			for (int i = 0; i < buildNumbers.length; i++) {
 				buildInts[i] = Integer.parseInt(buildNumbers[i]);
+				System.out.println("buildInts ::: " + buildInts[i]);
 			}
 			ProjectManager projectManager = PhrescoFrameworkFactory.getProjectManager();
 			ProjectInfo project = projectManager.getProject(projectId, customerId, appId);
-
+			System.out.println("project id :: " + project.getId());
 			ApplicationManager applicationManager = PhrescoFrameworkFactory.getApplicationManager();
 			applicationManager.deleteBuildInfos(project, buildInts);
 		} catch (PhrescoException e) {
-			ResponseInfo finalOutput = ServiceManagerMap.responseDataEvalution(responseData, e, "Build delete Failed", null);
+			ResponseInfo finalOutput = ServiceManagerMap.responseDataEvaluation(responseData, e, "Build delete Failed", null);
 			return Response.status(Status.NOT_FOUND).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
 		}
-		ResponseInfo finalOutput = ServiceManagerMap.responseDataEvalution(responseData, null, "Build deleted Successfully", null);
+		ResponseInfo finalOutput = ServiceManagerMap.responseDataEvaluation(responseData, null, "Build deleted Successfully", null);
 		return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
 	}
 }

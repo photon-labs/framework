@@ -40,12 +40,12 @@ public class LoginService extends RestBase {
 	        try {
 	        	user = doLogin(credentials);
 	        	if (user == null) {
-	        		ResponseInfo finalOuptut = ServiceManagerMap.responseDataEvalution(responseData, null, "Login failed", null);
-	        		return Response.ok(finalOuptut).header("Access-Control-Allow-Origin", "*").build();
+	        		ResponseInfo finalOuptut = ServiceManagerMap.responseDataEvaluation(responseData, null, "Login failed", null);
+	        		return Response.status(Status.EXPECTATION_FAILED).entity(finalOuptut).header("Access-Control-Allow-Origin", "*").build();
 	        	}
 	        	if (!user.isPhrescoEnabled()) {
-	        		ResponseInfo finalOuptut = ServiceManagerMap.responseDataEvalution(responseData, null, "Login failed", null);
-	        		return Response.ok(finalOuptut).header("Access-Control-Allow-Origin", "*").build();
+	        		ResponseInfo finalOuptut = ServiceManagerMap.responseDataEvaluation(responseData, null, "Login failed", null);
+	        		return Response.status(Status.EXPECTATION_FAILED).entity(finalOuptut).header("Access-Control-Allow-Origin", "*").build();
 	        	}
 	        	
 	        	List<Customer> customers = user.getCustomers();
@@ -77,17 +77,17 @@ public class LoginService extends RestBase {
 	        	writer.write(userjson.toString());
 	        	writer.close();
 	        	
-			ResponseInfo finalOuptut = ServiceManagerMap.responseDataEvalution(responseData, null, "Login Successfull", user);
+			ResponseInfo finalOuptut = ServiceManagerMap.responseDataEvaluation(responseData, null, "Login Successfull", user);
 			return Response.ok(finalOuptut).header("Access-Control-Allow-Origin", "*").build();
 			
 	        } catch (PhrescoWebServiceException e) {
-	        	ResponseInfo finalOuptut = ServiceManagerMap.responseDataEvalution(responseData, e, "Login failed", null);
+	        	ResponseInfo finalOuptut = ServiceManagerMap.responseDataEvaluation(responseData, e, "Login failed", null);
 	        	return Response.status(Status.EXPECTATION_FAILED).entity(finalOuptut).header("Access-Control-Allow-Origin", "*").build();
 	        } catch (IOException e) {
-	        	ResponseInfo finalOuptut = ServiceManagerMap.responseDataEvalution(responseData, e, "Login failed", null);
+	        	ResponseInfo finalOuptut = ServiceManagerMap.responseDataEvaluation(responseData, e, "Login failed", null);
 	        	return Response.status(Status.INTERNAL_SERVER_ERROR).entity(finalOuptut).header("Access-Control-Allow-Origin", "*").build();
 			} catch (ParseException e) {
-				ResponseInfo finalOuptut = ServiceManagerMap.responseDataEvalution(responseData, e, "Login failed", null);
+				ResponseInfo finalOuptut = ServiceManagerMap.responseDataEvaluation(responseData, e, "Login failed", null);
 				return Response.status(Status.INTERNAL_SERVER_ERROR).entity(finalOuptut).header("Access-Control-Allow-Origin", "*").build();
 			}
 	    }

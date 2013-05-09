@@ -10,7 +10,7 @@ public class ServiceManagerMap {
 	
 	public static final Map<String, ServiceManager> CONTEXT_MANAGER_MAP = new HashMap<String, ServiceManager>();
 
-	protected static ResponseInfo responseDataEvalution(ResponseInfo responseData, Exception e, String msg, Object data ) {
+	protected static ResponseInfo responseDataEvaluation(ResponseInfo responseData, Exception e, String msg, Object data ) {
 		responseData.setResponse(0);
 		responseData.setException(e);
 		responseData.setMessage(msg);

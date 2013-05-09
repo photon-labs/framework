@@ -28,10 +28,10 @@ public class AppInfoConfigs {
 		try {
 			ServiceManager serviceManager = ServiceManagerMap.CONTEXT_MANAGER_MAP.get(userId);
 			List<DownloadInfo> downloadInfos = serviceManager.getDownloads(customerId, techId, type, platform);
-			ResponseInfo finalOutput = ServiceManagerMap.responseDataEvalution(responseData, null, " Configuration listed successfully", downloadInfos);
+			ResponseInfo finalOutput = ServiceManagerMap.responseDataEvaluation(responseData, null, " Configuration listed successfully", downloadInfos);
 			return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
 		} catch (PhrescoException e) {
-			ResponseInfo finalOutput = ServiceManagerMap.responseDataEvalution(responseData, e, "Configuration not fetched", null);
+			ResponseInfo finalOutput = ServiceManagerMap.responseDataEvaluation(responseData, e, "Configuration not fetched", null);
 			return Response.status(Status.BAD_REQUEST).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
 		}
 	}
@@ -44,10 +44,10 @@ public class AppInfoConfigs {
 		try {
 			ServiceManager serviceManager = ServiceManagerMap.CONTEXT_MANAGER_MAP.get(userId);
 			List<WebService> webServices = serviceManager.getWebServices();
-			ResponseInfo finalOutput = ServiceManagerMap.responseDataEvalution(responseData, null, " Configuration listed successfully", webServices);
+			ResponseInfo finalOutput = ServiceManagerMap.responseDataEvaluation(responseData, null, " Configuration listed successfully", webServices);
 			return Response.status(ClientResponse.Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
 		} catch (PhrescoException e) {
-			ResponseInfo finalOutput = ServiceManagerMap.responseDataEvalution(responseData, e, "Webservice configuration not fetched", null);
+			ResponseInfo finalOutput = ServiceManagerMap.responseDataEvaluation(responseData, e, "Webservice configuration not fetched", null);
 			return Response.status(Status.BAD_REQUEST).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
 		}
 	}

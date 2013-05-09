@@ -26,14 +26,14 @@ public class PilotService {
 		try {
 			ServiceManager serviceManager = ServiceManagerMap.CONTEXT_MANAGER_MAP.get(userId);
 			if(serviceManager == null) {
-				ResponseInfo finalOutput = ServiceManagerMap.responseDataEvalution(responseData, null, "UnAuthorized User", null);
+				ResponseInfo finalOutput = ServiceManagerMap.responseDataEvaluation(responseData, null, "UnAuthorized User", null);
 	        	return Response.status(Status.BAD_REQUEST).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
 			}
 			List<ApplicationInfo> pilotProjects = serviceManager.getPilotProjects(customer, techId);
-			ResponseInfo finalOutput = ServiceManagerMap.responseDataEvalution(responseData, null, "Application pilot listed successfully", pilotProjects);
+			ResponseInfo finalOutput = ServiceManagerMap.responseDataEvaluation(responseData, null, "Application pilot listed successfully", pilotProjects);
 			return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
 		} catch (PhrescoException e) {
-			ResponseInfo finalOutput = ServiceManagerMap.responseDataEvalution(responseData, e, "Application pilot list not fetched", null);
+			ResponseInfo finalOutput = ServiceManagerMap.responseDataEvaluation(responseData, e, "Application pilot list not fetched", null);
 			return Response.status(Status.BAD_REQUEST).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
 		}
 	}

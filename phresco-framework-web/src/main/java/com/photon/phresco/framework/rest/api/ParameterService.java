@@ -51,11 +51,11 @@ public class ParameterService {
 			File file = new File(filePath);
 			MojoProcessor mojo = new MojoProcessor(file);
 			parameter = mojo.getParameters(goal);
-			ResponseInfo finalOutput = ServiceManagerMap.responseDataEvalution(responseData, null, "Parameter returned successfully", parameter);
+			ResponseInfo finalOutput = ServiceManagerMap.responseDataEvaluation(responseData, null, "Parameter returned successfully", parameter);
 			return Response.ok(finalOutput).header("Access-Control-Allow-Origin", "*").build();
 
 		} catch (Exception e) {
-			ResponseInfo finalOutput = ServiceManagerMap.responseDataEvalution(responseData, e, "Parameter not fetched", null);
+			ResponseInfo finalOutput = ServiceManagerMap.responseDataEvaluation(responseData, e, "Parameter not fetched", null);
 			return Response.status(Status.BAD_REQUEST).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
 		}
 	}
@@ -69,10 +69,10 @@ public class ParameterService {
 			String filePath = Utility.getProjectHome() + appName + "/.phresco/phresco-"+ goal +"-info.xml";
 			File file = new File(filePath);
 			String xml = IOUtils.toString(new FileInputStream(file));
-			ResponseInfo finalOutput = ServiceManagerMap.responseDataEvalution(responseData, null, "Parameter returned successfully", xml);
+			ResponseInfo finalOutput = ServiceManagerMap.responseDataEvaluation(responseData, null, "Parameter returned successfully", xml);
 			return Response.status(200).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
 		} catch (Exception e) {
-			ResponseInfo finalOutput = ServiceManagerMap.responseDataEvalution(responseData, e, "Parameter not fetched", null);
+			ResponseInfo finalOutput = ServiceManagerMap.responseDataEvaluation(responseData, e, "Parameter not fetched", null);
 			return Response.status(Status.BAD_REQUEST).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
 		}
 	}
@@ -93,10 +93,10 @@ public class ParameterService {
 			if (StringUtils.isNotEmpty(dependency)) {
 				possibleValues = getPossibleValues(processor, goal, dependency, appName, customerId);
 			}
-			ResponseInfo finalOutput = ServiceManagerMap.responseDataEvalution(responseData, null, "Dependency returned successfully", possibleValues);
+			ResponseInfo finalOutput = ServiceManagerMap.responseDataEvaluation(responseData, null, "Dependency returned successfully", possibleValues);
 			return Response.ok(finalOutput).header("Access-Control-Allow-Origin", "*").build();
 		} catch (PhrescoException e) {
-			ResponseInfo finalOutput = ServiceManagerMap.responseDataEvalution(responseData, e, "Dependency not fetched", null);
+			ResponseInfo finalOutput = ServiceManagerMap.responseDataEvaluation(responseData, e, "Dependency not fetched", null);
 			return Response.status(Status.BAD_REQUEST).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
 		}
 	}

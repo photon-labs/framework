@@ -25,14 +25,14 @@ public class FeatureService {
 		try {
 			ServiceManager serviceManager = ServiceManagerMap.CONTEXT_MANAGER_MAP.get(userId);
 			if(serviceManager == null) {
-				ResponseInfo finalOutput = ServiceManagerMap.responseDataEvalution(responseData, null, "UnAuthorized User", null);
+				ResponseInfo finalOutput = ServiceManagerMap.responseDataEvaluation(responseData, null, "UnAuthorized User", null);
 	        	return Response.status(Status.BAD_REQUEST).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
 			}
 			List<ArtifactGroup> features = serviceManager.getFeatures(customer, techId, type);
-			ResponseInfo finalOutput = ServiceManagerMap.responseDataEvalution(responseData, null, "Application Features listed successfully", features);
+			ResponseInfo finalOutput = ServiceManagerMap.responseDataEvaluation(responseData, null, "Application Features listed successfully", features);
 			return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
 		} catch (PhrescoException e) {
-			ResponseInfo finalOutput = ServiceManagerMap.responseDataEvalution(responseData, e, "Application Features not fetched", null);
+			ResponseInfo finalOutput = ServiceManagerMap.responseDataEvaluation(responseData, e, "Application Features not fetched", null);
 			return Response.status(Status.BAD_REQUEST).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
 		}
 	}

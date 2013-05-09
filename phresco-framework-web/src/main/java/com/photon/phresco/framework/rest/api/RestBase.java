@@ -34,6 +34,7 @@ public class RestBase {
 		} catch (PhrescoException e) {
 			throw new PhrescoWebServiceException(e);
 		}
+
 		return serviceManager;
 	}
 
