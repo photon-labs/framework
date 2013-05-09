@@ -46,6 +46,7 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.codehaus.jettison.json.JSONArray;
 import org.quartz.CronExpression;
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
@@ -98,6 +99,7 @@ public class CI extends DynamicParameterAction implements FrameworkConstants {
 	private String contentType = null;
 	private String fileType = null;
 	private String from = "";
+	private boolean coberturaPlugin = false;
 
 	private List<String> triggers = null;
 	private String buildNumber = null;
@@ -118,6 +120,15 @@ public class CI extends DynamicParameterAction implements FrameworkConstants {
 	private String collabNetPackage = "";
 	private String collabNetRelease = "";
 	private boolean collabNetoverWriteFiles = false;
+	
+	//confluence implementation
+	private boolean enableConfluence = false;
+	private String confluenceSite = "";
+	private boolean confluencePublish = false;
+	private String confluenceSpace = "";
+	private String confluencePage = "";
+	private boolean confluenceArtifacts = false;
+	private String confluenceOther = "";
 
 	// Test automation in jenkins
 	private String usedClonnedWorkspace = "";
@@ -136,6 +147,7 @@ public class CI extends DynamicParameterAction implements FrameworkConstants {
     private String logo = "";
     private String sonarUrl = "";
     private boolean isDownStreamAvailable;
+    private String values = "";
     
 	public String ci() {
 		if (debugEnabled) {
@@ -340,6 +352,7 @@ public class CI extends DynamicParameterAction implements FrameworkConstants {
 				// restore values in popup
 				restoreValues(existJob, appInfo);
 			}
+			setReqAttribute(REQ_CONFLUENCE_SITES, ciManager.getConfluenceSites());
 			setReqAttribute(REQ_EXISTING_JOB, existJob);
 			setReqAttribute(REQ_EXISTING_JOBS_NAMES, existingJobsNames);
 			setReqAttribute(REQ_EXISTING_CLONNED_JOBS, clonedWorkspaces);
@@ -363,7 +376,28 @@ public class CI extends DynamicParameterAction implements FrameworkConstants {
 			String smtpAuthUsername = ciManager.getMailConfiguration(SMTP_AUTH_USERNAME);
 			String smtpAuthPassword = ciManager.getMailConfiguration(SMTP_AUTH_PASSWORD);
 			setReqAttribute(REQ_SENDER_EMAILID, smtpAuthUsername);
-			setReqAttribute(REQ_SENDER_EMAIL_PASSWORD, smtpAuthPassword);
+			setReqAttribute(REQ_SENDER_EMAIL_PASSWORD, ciManager.decyPassword(smtpAuthPassword));
+		} catch (PhrescoException e) {
+			if (debugEnabled) {
+				S_LOGGER.error("Entered into catch block of CI.showEmailConfiguration()" + FrameworkUtil.getStackTraceAsString(e));
+			}
+			return showErrorPopup(e, getText(EXCEPTION_CI_MAIL_CONFIGURE_POPUP));
+		}
+		return SUCCESS;
+	}
+	
+	public String showConfluenceConfiguration() {
+		if (debugEnabled) {
+			S_LOGGER.debug("Entering Method  CI.showEmailConfiguration()");
+		}
+		try {
+			CIManager ciManager = PhrescoFrameworkFactory.getCIManager();
+			ApplicationInfo appInfo = getApplicationInfo();
+			setReqAttribute(REQ_APPINFO, appInfo);
+			JSONArray confluenceConfiguration = ciManager.getConfluenceConfiguration();
+			if (confluenceConfiguration != null) {
+				setReqAttribute(CONFLUENCECONFIGURATION, confluenceConfiguration);
+			}
 		} catch (PhrescoException e) {
 			if (debugEnabled) {
 				S_LOGGER.error("Entered into catch block of CI.showEmailConfiguration()" + FrameworkUtil.getStackTraceAsString(e));
@@ -386,9 +420,48 @@ public class CI extends DynamicParameterAction implements FrameworkConstants {
 			restartJenkins(); // reload config
 			addActionMessage(getText(CI_MAIL_CONFIGURE_SUCCESS));
 		} catch (PhrescoException e) {
-			S_LOGGER.error("Entered into catch block of CI.doUpdateSave()" + FrameworkUtil.getStackTraceAsString(e));
+			if (debugEnabled) {
+				S_LOGGER.error("Entered into catch block of CI.doUpdateSave()" + FrameworkUtil.getStackTraceAsString(e));
+			}
 			addActionMessage(getText(CI_EMAIL_SAVE_UPDATE_FAILED, e.getLocalizedMessage()));
 		}
+		return ci();
+	}
+	
+	public String saveConfluenceConfiguration() throws PhrescoException {
+		if (debugEnabled) {
+			S_LOGGER.debug("Entering Method  CI.saveEmailConfiguration()");
+		}
+		try {
+			CIManager ciManager = PhrescoFrameworkFactory.getCIManager();
+			ApplicationInfo appInfo = getApplicationInfo();
+			setReqAttribute(REQ_APPINFO, appInfo);
+			
+			String jenkinsJobHome = System.getenv(FrameworkConstants.JENKINS_HOME);
+    		StringBuilder jenkinsHome = new StringBuilder(jenkinsJobHome);
+    		jenkinsHome.append(File.separator);
+    		File confluenceHomeXml = new File(jenkinsHome.toString() + CI_CONFLUENCE_XML);
+    		if (confluenceHomeXml.exists()) {
+    			ciManager.clearConfluenceSitesNodes();
+    		}
+			org.codehaus.jettison.json.JSONObject jsonObj = new org.codehaus.jettison.json.JSONObject(values);
+			JSONArray jsonArray = jsonObj.getJSONArray(VALUES_KEY);
+			 for (int i=0; i < jsonArray.length(); i++) {
+				 org.codehaus.jettison.json.JSONObject item = jsonArray.getJSONObject(i);
+				 String confluenceUrl = item.getString(CONFLUENCE_URL_KEY);
+				 String confluenceUsername = item.getString(CONFLUENCE_USERNAME_KEY);
+				 String confluencePassword = item.getString(CONFLUENCE_PASSWORD_KEY);
+				 ciManager.saveConfluenceConfiguration(confluenceUrl, confluenceUsername, confluencePassword);
+			 }
+			 restartJenkins();
+			 addActionMessage(getText(CI_CONFLUENCE_CONFIGURE_SUCCESS));
+		} catch (Exception e) {
+			if (debugEnabled) {
+				S_LOGGER.error("Entered into catch block of CI.saveConfluenceConfiguration()" + FrameworkUtil.getStackTraceAsString(e));
+			}
+			throw new PhrescoException(e);
+		} 
+		
 		return ci();
 	}
 	
@@ -670,6 +743,7 @@ public class CI extends DynamicParameterAction implements FrameworkConstants {
 			existJob.setScheduleExpression(cronExpression);
 			existJob.setBranch(branch);
 			existJob.setRepoType(svnType);
+			existJob.setCoberturaPlugin(coberturaPlugin);
 			
 			// collabNet file release plugin imple
 			existJob.setEnableBuildRelease(enableBuildRelease);
@@ -681,6 +755,15 @@ public class CI extends DynamicParameterAction implements FrameworkConstants {
 			existJob.setCollabNetRelease(collabNetRelease);
 			existJob.setCollabNetoverWriteFiles(collabNetoverWriteFiles);
 
+			// confluence file release plugin imple
+			existJob.setEnableConfluence(enableConfluence);
+			existJob.setConfluenceSite(confluenceSite);
+			existJob.setConfluencePublish(confluencePublish);
+			existJob.setConfluenceSpace(confluenceSpace);
+			existJob.setConfluencePage(confluencePage);
+			existJob.setConfluenceArtifacts(confluenceArtifacts);
+			existJob.setConfluenceOther(confluenceOther);
+			
 			// Automate values
 			existJob.setCloneWorkspace(cloneWorkspace);
 			existJob.setUsedClonnedWorkspace(usedClonnedWorkspace);
@@ -847,6 +930,15 @@ public class CI extends DynamicParameterAction implements FrameworkConstants {
 				// To handle multi module project
 				unitTestPreBuildCmd = unitTestPreBuildCmd + FrameworkConstants.SPACE + HYPHEN_N;
 				preBuildStepCmds.add(unitTestPreBuildCmd);
+				if (coberturaPlugin) {
+					existJob.setEnablePostBuildStep(true);
+					List<String> postBuildStepCmds = new ArrayList<String>();
+					postBuildStepCmds.add(MAVEN_SEP_COBER);
+					postBuildStepCmds.add("shell#SEP#cd BASEDIR='${JENKINS_HOME}/workspace/"+name+"/src' GCOVR='${GCOV_HOME}' -r BASEDIR='${JENKINS_HOME}/workspace/"+name+"/src' -x -o coverage.xml");
+					if (CollectionUtils.isNotEmpty(postBuildStepCmds)) {
+						existJob.setPostbuildStepCommands(postBuildStepCmds);
+					}
+				}
 			} else if (FUNCTIONAL_TEST.equals(operation)) {
 				if (debugEnabled) {
 					S_LOGGER.debug("Functional test operation!!!!!");
@@ -1814,5 +1906,77 @@ public class CI extends DynamicParameterAction implements FrameworkConstants {
 
 	public void setFrom(String from) {
 		this.from = from;
+	}
+
+	public void setCoberturaPlugin(boolean coberturaPlugin) {
+		this.coberturaPlugin = coberturaPlugin;
+	}
+
+	public boolean isCoberturaPlugin() {
+		return coberturaPlugin;
+	}
+
+	public void setValues(String values) {
+		this.values = values;
+	}
+
+	public String getValues() {
+		return values;
+	}
+
+	public void setEnableConfluence(boolean enableConfluence) {
+		this.enableConfluence = enableConfluence;
+	}
+
+	public boolean isEnableConfluence() {
+		return enableConfluence;
+	}
+
+	public void setConfluencePublish(boolean confluencePublish) {
+		this.confluencePublish = confluencePublish;
+	}
+
+	public boolean isConfluencePublish() {
+		return confluencePublish;
+	}
+
+	public void setConfluenceSpace(String confluenceSpace) {
+		this.confluenceSpace = confluenceSpace;
+	}
+
+	public String getConfluenceSpace() {
+		return confluenceSpace;
+	}
+
+	public void setConfluencePage(String confluencePage) {
+		this.confluencePage = confluencePage;
+	}
+
+	public String getConfluencePage() {
+		return confluencePage;
+	}
+
+	public void setConfluenceArtifacts(boolean confluenceArtifacts) {
+		this.confluenceArtifacts = confluenceArtifacts;
+	}
+
+	public boolean isConfluenceArtifacts() {
+		return confluenceArtifacts;
+	}
+
+	public void setConfluenceSite(String confluenceSite) {
+		this.confluenceSite = confluenceSite;
+	}
+
+	public String getConfluenceSite() {
+		return confluenceSite;
+	}
+
+	public void setConfluenceOther(String confluenceOther) {
+		this.confluenceOther = confluenceOther;
+	}
+
+	public String getConfluenceOther() {
+		return confluenceOther;
 	}
 }

@@ -300,6 +300,7 @@ public interface FrameworkConstants {
 	String MAVEN_NAME_NODE = "mavenName";
 	String TARGETS_NODE = "targets";
 	String HUDSON_TASKS_MAVEN_NODE = "hudson.tasks.Maven";
+	String HUDSON_TASKS_SHELL = "hudson.tasks.Shell";
 	String POST_BUILDERS_NODE = "postbuilders";
 	String PRE_BUILDERS_NODE = "prebuilders";
     String CI_FILE_RELEASE_PUBLISHER_NODE="publishers";
@@ -345,13 +346,55 @@ public interface FrameworkConstants {
     String LT_HTTPS_COLON_BACKSLASH = "<https://";
     String COLON_443_GT_SPACE = ":443> ";
     String CREDENTIAL_ENTRY_STRING = "//credentials/entry/string";
+    String SITES_CONFLUENCE= "//sites";
     String USERNAME = "userName";
+    String CONFLUENCE_USERNAME = "username";
     String ENTRY_TAG = "entry";
+    String CONFLUENCE_SITE_NODE="com.myyearbook.hudson.plugins.confluence.ConfluenceSite";
+    String CONFLUENCE_SITE_URL="url";
     String HYPEN_PASSWORDCREDENIAL_TAG = "hudson.scm.SubversionSCM_-DescriptorImpl_-PasswordCredential";
     String STRING_TAG = "string";
     String YES = "yes";
-    
-    
+    String SITE_NAME = "siteName";
+    String ATTACH_ARCHIVED_ARTIFACTS = "attachArchivedArtifacts";
+    String BUILD_IF_UNSTABLE = "buildIfUnstable";
+    String FILE_SET = "fileSet";
+    String SPACE_NAME = "spaceName";
+    String PAGE_NAME = "pageName";
+    String EDITORS = "editors";
+    String HUDSON_COBERTURA_PUBLISHER = "hudson.plugins.cobertura.CoberturaPublisher";
+    String COBERTURA_REPORT_FILE = "coberturaReportFile";
+    String COVERAGE_XML = "**/coverage.xml";
+    String ONLY_STABLE = "onlyStable";
+    String FAIL_UNHEALTHY = "failUnhealthy";
+    String FAIL_UNSTABLE = "failUnstable";
+    String AUTO_UPDATE_HEALTH = "autoUpdateHealth";
+    String AUTO_UPDATE_STABILITY = "autoUpdateStability";
+    String ZOOM_COVERAGE_CHART = "zoomCoverageChart";
+    String FAIL_NO_REPORTS = "failNoReports";
+    String HEALTHY_TARGET = "healthyTarget";
+    String UNHEALTHY_TARGET = "unhealthyTarget";
+    String FAILING_TARGET = "failingTarget";
+    String TARGETS = "targets";
+    String ENUM_MAP= "enum-map";
+    String ENUM_TYPE = "enum-type";
+    String HUDSON_COBERTURA_TARGETS_COVERAGEMETRIC = "hudson.plugins.cobertura.targets.CoverageMetric";
+    String INT = "int";
+    String CONDITIONAL = "CONDITIONAL";
+    String LINE = "LINE";
+    String METHOD = "METHOD";
+    String SOURCE_ENCODING = "sourceEncoding";
+    String ASCII = "ASCII";
+    String HUDSON_TRIGGER_TIMER = "hudson.triggers.TimerTrigger";
+    String HUDSON_TRIGGER_SCMTRIGGER = "hudson.triggers.SCMTrigger";
+    String SPEC = "spec";
+    String SITES_CONFLUENCESITE_URL = "//sites/com.myyearbook.hudson.plugins.confluence.ConfluenceSite/url";
+    String CONFLUENCECONFIGURATION = "confluenceConfigurations";
+    String CONFLUENCE_URL_KEY = "confluenceUrl";
+    String CONFLUENCE_USERNAME_KEY = "confluenceUsername";
+    String CONFLUENCE_PASSWORD_KEY = "confluencePassword";
+    String VALUES_KEY = "values";
+    String MAVEN_SEP_COBER = "mvn#SEP#cobertura:cobertura";
 
     String JAVA_STAND_ALONE = "tech-java-standalone";
     String MAINCLASSNAME = "mainClassName";
@@ -433,6 +476,9 @@ public interface FrameworkConstants {
     String CODE_404 = "404";
     String CI_PRE_BUILD_STEP = "phresco:ci-prestep -DjobName=${env.JOB_NAME}";
     
+    String MAVEN = "mvn";
+    String SHELL = "shell";
+    String COMMAND = "command";
     String SKIP_TESTS = "-DskipTests=true";
     String TEST_DIRECTORY = "dir_type";
     String MVN_TEST_COMMAND = "mvn clean test";
@@ -585,6 +631,7 @@ public interface FrameworkConstants {
     String CI_SECRET_KEY_FILE = "secret.key";
     String CI_MAVEN_HOME_XML = "hudson.tasks.Maven.xml";
     String CI_CREDENTIAL_XML = "hudson.scm.SubversionSCM.xml";
+    String CI_CONFLUENCE_XML = "com.myyearbook.hudson.plugins.confluence.ConfluencePublisher.xml";
     String CI_MAILER_XML = "hudson.tasks.Mailer.xml";
     String CI_MAIL_EXT_PLUGIN = "email-ext.hpi";
     String CI_HUDSONURL = "hudsonUrl";
@@ -865,6 +912,7 @@ public interface FrameworkConstants {
 	String REQ_TECH_NAME = "techName";
 	String REQ_PROJECT_NAME = "projectName";
     
+	String REQ_CONFLUENCE_SITES = "ConfluenceSites";
     String REQ_EXISTING_JOB = "existingJob";
     String REQ_EXISTING_CLONNED_JOBS = "existingClonedJobs";
     String REQ_EXISTING_JOBS = "existingJobs";
@@ -1381,6 +1429,7 @@ public interface FrameworkConstants {
     String SUCCESS_UPDATE = "ci.update.success";
     String FAILURE_UPDATE = "ci.update.failure";
     String CI_MAIL_CONFIGURE_SUCCESS = "ci.mail.configure.success";
+    String CI_CONFLUENCE_CONFIGURE_SUCCESS = "ci.confluence.configure.success";
     
     /* About Keys */
     String ABOUT_SUCCESS_UPDATE = "abt.update.success";

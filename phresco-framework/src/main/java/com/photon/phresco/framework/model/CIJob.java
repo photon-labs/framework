@@ -44,6 +44,14 @@ public class CIJob {
     private String collabNetRelease = "";
     private boolean collabNetoverWriteFiles = false;
     private String collabNetFileReleasePattern = "";
+    //confluence implementation
+    private boolean enableConfluence = false;
+	private String confluenceSite;
+	private boolean confluencePublish = false;
+	private String confluenceSpace = "";
+	private String confluencePage = "";
+	private boolean confluenceArtifacts = false;
+	private String confluenceOther = "";
     
     //  CI  automation
     // whether to clone the current jobs workspace for further reference
@@ -159,6 +167,7 @@ public class CIJob {
 	private String contextUrls = "";
 	private String dbContextUrls = "";
 	private String isFromCI = ""; 
+	private boolean coberturaPlugin = false;
   
 	// Android functional test
 	private String deviceList = "";
@@ -983,4 +992,70 @@ public class CIJob {
 	public String getZipAlign() {
 		return zipAlign;
 	}
+
+	public void setCoberturaPlugin(boolean coberturaPlugin) {
+		this.coberturaPlugin = coberturaPlugin;
+	}
+
+	public boolean isCoberturaPlugin() {
+		return coberturaPlugin;
+	}
+
+	public boolean isEnableConfluence() {
+		return enableConfluence;
+	}
+
+	public void setEnableConfluence(boolean enableConfluence) {
+		this.enableConfluence = enableConfluence;
+	}
+
+	public String getConfluenceSite() {
+		return confluenceSite;
+	}
+
+	public void setConfluenceSite(String confluenceSite) {
+		this.confluenceSite = confluenceSite;
+	}
+
+	public boolean isConfluencePublish() {
+		return confluencePublish;
+	}
+
+	public void setConfluencePublish(boolean confluencePublish) {
+		this.confluencePublish = confluencePublish;
+	}
+
+	public String getConfluenceSpace() {
+		return confluenceSpace;
+	}
+
+	public void setConfluenceSpace(String confluenceSpace) {
+		this.confluenceSpace = confluenceSpace;
+	}
+
+	public String getConfluencePage() {
+		return confluencePage;
+	}
+
+	public void setConfluencePage(String confluencePage) {
+		this.confluencePage = confluencePage;
+	}
+
+	public boolean isConfluenceArtifacts() {
+		return confluenceArtifacts;
+	}
+
+	public void setConfluenceArtifacts(boolean confluenceArtifacts) {
+		this.confluenceArtifacts = confluenceArtifacts;
+	}
+
+	public String getConfluenceOther() {
+		return confluenceOther;
+	}
+
+	public void setConfluenceOther(String confluenceOther) {
+		this.confluenceOther = confluenceOther;
+	}
+
+	
 }
