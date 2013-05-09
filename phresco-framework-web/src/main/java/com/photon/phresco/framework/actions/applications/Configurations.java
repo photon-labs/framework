@@ -535,6 +535,10 @@ public class Configurations extends FrameworkBaseAction {
     							properties.setProperty(propKey, propValue);
     						}
     					}
+						
+							if (CONFIG_TYPE.equals(propKey)) {
+    						properties.setProperty(TYPE_VERSION, getVersion());
+    					}
     				}
     			}
     		}

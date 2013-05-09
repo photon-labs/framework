@@ -542,26 +542,28 @@ public class Applications extends FrameworkBaseAction implements Constants {
 
 	private void updateFunctionalTestProperties(ApplicationInfo appInfo) throws PhrescoException {
     	try {
-    		FunctionalFramework functionalFramework = getServiceManager().getFunctionalTestFramework(appInfo.getFunctionalFramework(), appInfo.getTechInfo().getId());
-    		List<FunctionalFrameworkProperties> funcFrameworkProperties = functionalFramework.getFuncFrameworkProperties();
-    		if (CollectionUtils.isNotEmpty(funcFrameworkProperties)) {
-    			FunctionalFrameworkProperties frameworkProperties = funcFrameworkProperties.get(0);
-    			String testDir = frameworkProperties.getTestDir();
-    			String testReportDir = frameworkProperties.getTestReportDir();
-    			String testcasePath = frameworkProperties.getTestcasePath();
-    			String testsuiteXpathPath = frameworkProperties.getTestsuiteXpathPath();
-    			String adaptConfigPath = frameworkProperties.getAdaptConfigPath();
-    			
-    			FrameworkUtil frameworkUtil = FrameworkUtil.getInstance();
-    			PomProcessor pomProcessor = frameworkUtil.getPomProcessor(appInfo);
-    			pomProcessor.setProperty(POM_PROP_KEY_FUNCTEST_SELENIUM_TOOL, appInfo.getFunctionalFramework());
-    			pomProcessor.setProperty(POM_PROP_KEY_FUNCTEST_DIR, testDir);
-    			pomProcessor.setProperty(POM_PROP_KEY_FUNCTEST_RPT_DIR, testReportDir);
-    			pomProcessor.setProperty(POM_PROP_KEY_FUNCTEST_TESTCASE_PATH, testcasePath);
-    			pomProcessor.setProperty(POM_PROP_KEY_FUNCTEST_TESTSUITE_XPATH, testsuiteXpathPath);
-    			pomProcessor.setProperty(PHRESCO_FUNCTIONAL_TEST_ADAPT_DIR, adaptConfigPath);
-    			pomProcessor.save();
-    		}
+			if (StringUtils.isNotEmpty(appInfo.getFunctionalFramework())) { 
+				FunctionalFramework functionalFramework = getServiceManager().getFunctionalTestFramework(appInfo.getFunctionalFramework(), appInfo.getTechInfo().getId());
+				List<FunctionalFrameworkProperties> funcFrameworkProperties = functionalFramework.getFuncFrameworkProperties();
+				if (CollectionUtils.isNotEmpty(funcFrameworkProperties)) {
+					FunctionalFrameworkProperties frameworkProperties = funcFrameworkProperties.get(0);
+					String testDir = frameworkProperties.getTestDir();
+					String testReportDir = frameworkProperties.getTestReportDir();
+					String testcasePath = frameworkProperties.getTestcasePath();
+					String testsuiteXpathPath = frameworkProperties.getTestsuiteXpathPath();
+					String adaptConfigPath = frameworkProperties.getAdaptConfigPath();
+					
+					FrameworkUtil frameworkUtil = FrameworkUtil.getInstance();
+					PomProcessor pomProcessor = frameworkUtil.getPomProcessor(appInfo);
+					pomProcessor.setProperty(POM_PROP_KEY_FUNCTEST_SELENIUM_TOOL, appInfo.getFunctionalFramework());
+					pomProcessor.setProperty(POM_PROP_KEY_FUNCTEST_DIR, testDir);
+					pomProcessor.setProperty(POM_PROP_KEY_FUNCTEST_RPT_DIR, testReportDir);
+					pomProcessor.setProperty(POM_PROP_KEY_FUNCTEST_TESTCASE_PATH, testcasePath);
+					pomProcessor.setProperty(POM_PROP_KEY_FUNCTEST_TESTSUITE_XPATH, testsuiteXpathPath);
+					pomProcessor.setProperty(PHRESCO_FUNCTIONAL_TEST_ADAPT_DIR, adaptConfigPath);
+					pomProcessor.save();
+				}
+			}
 		} catch (PhrescoException e) {
 			throw e;
 		} catch (PhrescoPomException e) {
