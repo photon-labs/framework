@@ -35,6 +35,10 @@ var commonVariables = {
 	
 	configuration : "configuration",
 	
+	customerTheme : null,
+	defaultcustomer : "Photon",
+	customerInfoContext : "technology/customerinfo?customerName=",
+	
 	build : "build",
 	
 	edit : "Edit",
@@ -127,16 +131,15 @@ $(document).ready(function(){
 				transitionType : Clazz.config.navigation.transitionType,
 				isNative : Clazz.config.navigation.isNative
 			});
+
+			//Apply customer based theme
+			//location.href
+			$.get(commonVariables.webserviceurl + commonVariables.customerInfoContext + commonVariables.defaultcustomer, function(themeData){
+				JSS.css(themeData.data.frameworkTheme);
+			});
 			
 			var loginView = new Clazz.com.components.login.js.Login();
 			loginView.loadPage();
-			
-			//Register hashChange function for History back
-			/* $(window).on("hashChange", function(e){
-				Clazz.navigationController.pop();
-			});
-				
-			$(window).hashChange(); */
 		});
 	}, "json");
 });

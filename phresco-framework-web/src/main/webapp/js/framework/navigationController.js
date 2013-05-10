@@ -2,10 +2,16 @@ define(["framework/base", "framework/animationProvider"], function() {
 
 	Clazz.NAVIGATION_ANIMATION = {
 		// push transition in goes to the left, pop going the reverse
-		SLIDE_LEFT_RIGHT : 1,
-		SLIDE_UP_DOWN : 2,
-		FADE_IN_FADE_OUT : 3,
-		FADE_OUT_QUICK : 7
+		SLIDE_LEFT_FADE_IN : 1,
+		FADE_OUT_SLIDE_RIGHT : 2,
+		SLIDE_UP_DOWN : 3,
+		FADE_IN_FADE_OUT : 4,
+		FADE_OUT_QUICK : 7,
+		WEBKIT_TRANSITION_RIGHT_LEFT : 8,
+		WEBKIT_TRANSITION_LEFT_RIGHT : 9,
+		WEBKIT_TRANSITION_FLIP_IN_OUT : 10,
+		WEBKIT_TRANSITION_FADE_IN_FLIP_OUT : 11,
+		WEBKIT_TRANSITION_SLIDEDOWN_IN_OUT : 12
 	};
 
 	// TODO: ongoing work
@@ -36,32 +42,83 @@ define(["framework/base", "framework/animationProvider"], function() {
 				if(config.isNative) {
 					this.isNative = config.isNative;
 				}
-
-				if(this.transitionType === Clazz.NAVIGATION_ANIMATION.SLIDE_LEFT_RIGHT) {
+				
+				this.setAnimation(this.transitionType);
+			},
+			
+			setAnimation : function(transitionType){
+				if(transitionType === Clazz.NAVIGATION_ANIMATION.SLIDE_LEFT_FADE_IN) {
 					this.pushAnimationTypeForGoingIn = Clazz.ANIMATION_TYPE.FADE_IN;
 					this.pushAnimationTypeForGoingOut = Clazz.ANIMATION_TYPE.SLIDE_LEFT;
 					
+					this.popAnimationTypeForGoingIn = Clazz.ANIMATION_TYPE.FADE_IN;
+					this.popAnimationTypeForGoingOut = Clazz.ANIMATION_TYPE.SLIDE_LEFT;
+					
+				} else if(transitionType === Clazz.NAVIGATION_ANIMATION.FADE_OUT_SLIDE_RIGHT) {
+					this.pushAnimationTypeForGoingIn = Clazz.ANIMATION_TYPE.SLIDE_RIGHT;
+					this.pushAnimationTypeForGoingOut = Clazz.ANIMATION_TYPE.FADE_OUT;
+					
 					this.popAnimationTypeForGoingIn = Clazz.ANIMATION_TYPE.SLIDE_RIGHT;
 					this.popAnimationTypeForGoingOut = Clazz.ANIMATION_TYPE.FADE_OUT;
-				} else if(this.transitionType === Clazz.NAVIGATION_ANIMATION.SLIDE_UP_DOWN) {
+					
+				} else if(transitionType === Clazz.NAVIGATION_ANIMATION.SLIDE_UP_DOWN) {
 					this.pushAnimationTypeForGoingIn = Clazz.ANIMATION_TYPE.FADE_IN;
 					this.pushAnimationTypeForGoingOut = Clazz.ANIMATION_TYPE.SLIDE_UP;
 					
 					this.popAnimationTypeForGoingIn = Clazz.ANIMATION_TYPE.SLIDE_DOWN;
 					this.popAnimationTypeForGoingOut = Clazz.ANIMATION_TYPE.FADE_OUT;
-				} else  if(this.transitionType === Clazz.NAVIGATION_ANIMATION.FADE_IN_FADE_OUT) {
+					
+				} else if(transitionType === Clazz.NAVIGATION_ANIMATION.FADE_IN_FADE_OUT) {
 					this.pushAnimationTypeForGoingIn = Clazz.ANIMATION_TYPE.FADE_IN;
 					this.pushAnimationTypeForGoingOut = Clazz.ANIMATION_TYPE.FADE_OUT;
 					
 					this.popAnimationTypeForGoingIn = Clazz.ANIMATION_TYPE.FADE_IN;
 					this.popAnimationTypeForGoingOut = Clazz.ANIMATION_TYPE.FADE_OUT;
 				
-				}
-				else  if(this.transitionType === Clazz.NAVIGATION_ANIMATION.FADE_OUT_QUICK) {
+				} else if(transitionType === Clazz.NAVIGATION_ANIMATION.FADE_OUT_QUICK) {
 					this.pushAnimationTypeForGoingOut = Clazz.ANIMATION_TYPE.FADE_OUT_QUICK;
-					
 					this.popAnimationTypeForGoingOut = Clazz.ANIMATION_TYPE.FADE_OUT_QUICK;
 				
+				} else if(transitionType == Clazz.NAVIGATION_ANIMATION.WEBKIT_TRANSITION_RIGHT_LEFT) {
+					this.pushAnimationTypeForGoingIn = Clazz.ANIMATION_TYPE.WEBKIT_TRANSITION_LEFT;
+					this.pushAnimationTypeForGoingOut = Clazz.ANIMATION_TYPE.WEBKIT_TRANSITION_RIGHT;
+					
+					this.popAnimationTypeForGoingIn = Clazz.ANIMATION_TYPE.WEBKIT_TRANSITION_LEFT;
+					this.popAnimationTypeForGoingOut = Clazz.ANIMATION_TYPE.WEBKIT_TRANSITION_RIGHT;
+				
+				} else if(transitionType == Clazz.NAVIGATION_ANIMATION.WEBKIT_TRANSITION_LEFT_RIGHT) {
+					this.pushAnimationTypeForGoingIn = Clazz.ANIMATION_TYPE.WEBKIT_TRANSITION_RIGHT;
+					this.pushAnimationTypeForGoingOut =  Clazz.ANIMATION_TYPE.WEBKIT_TRANSITION_LEFT;
+					
+					this.popAnimationTypeForGoingIn = Clazz.ANIMATION_TYPE.WEBKIT_TRANSITION_RIGHT;
+					this.popAnimationTypeForGoingOut = Clazz.ANIMATION_TYPE.WEBKIT_TRANSITION_LEFT;
+				
+				} else if(transitionType == Clazz.NAVIGATION_ANIMATION.WEBKIT_TRANSITION_FLIP_IN_OUT) {
+					this.pushAnimationTypeForGoingIn = Clazz.ANIMATION_TYPE.WEBKIT_TRANSITION_FLIP_IN;
+					this.pushAnimationTypeForGoingOut = Clazz.ANIMATION_TYPE.WEBKIT_TRANSITION_FLIP_OUT;
+					
+					this.popAnimationTypeForGoingIn = Clazz.ANIMATION_TYPE.WEBKIT_TRANSITION_FLIP_IN;
+					this.popAnimationTypeForGoingOut = Clazz.ANIMATION_TYPE.WEBKIT_TRANSITION_FLIP_OUT;
+				
+				} 
+				
+				
+				else if(transitionType == Clazz.NAVIGATION_ANIMATION.WEBKIT_TRANSITION_FADE_IN_FLIP_OUT) {
+					this.pushAnimationTypeForGoingIn = Clazz.ANIMATION_TYPE.FADE_IN;
+					this.pushAnimationTypeForGoingOut = Clazz.ANIMATION_TYPE.WEBKIT_TRANSITION_FLIP_OUT;
+					
+					this.popAnimationTypeForGoingIn = Clazz.ANIMATION_TYPE.FADE_IN;
+					this.popAnimationTypeForGoingOut = Clazz.ANIMATION_TYPE.WEBKIT_TRANSITION_FLIP_OUT;
+				
+				} 
+				
+				
+				else if(transitionType == Clazz.NAVIGATION_ANIMATION.WEBKIT_TRANSITION_SLIDEDOWN_IN_OUT) {
+					this.pushAnimationTypeForGoingIn = Clazz.ANIMATION_TYPE.WEBKIT_TRANSITION_SLIDEDOWN_IN;
+					this.pushAnimationTypeForGoingOut = Clazz.ANIMATION_TYPE.WEBKIT_TRANSITION_SLIDEDOWN_OUT;
+					
+					this.popAnimationTypeForGoingIn = Clazz.ANIMATION_TYPE.WEBKIT_TRANSITION_SLIDEDOWN_IN;
+					this.popAnimationTypeForGoingOut = Clazz.ANIMATION_TYPE.WEBKIT_TRANSITION_SLIDEDOWN_OUT;
 				}
 			},
 			

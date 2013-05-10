@@ -24,7 +24,7 @@ html,body {
 	margin:0;
 	font-family: 'luxi_sansregular' !important;
 	width:100%;
-	font-size:13px;
+	font-size:12px !important;
 }
 
 /* Basic Styles for all Pages */
@@ -54,7 +54,6 @@ header, aside, figure, footer, ul, li {
 	padding: 6px 12px !important;
 	background: #ef7b43 !important;
 	color: #ffffff !important;
-	font-size: 13px !important;
 	text-shadow: none !important;
 	box-shadow: none !important;
 	border: 0 !important;
@@ -66,7 +65,6 @@ header, aside, figure, footer, ul, li {
 	padding: 4px 12px !important;
 	background: #dddddd !important;
 	color: #ffffff !important;
-	font-size: 13px !important;
 	text-shadow: none !important;
 	box-shadow: none !important;
 	border: 0 !important;
@@ -210,7 +208,6 @@ to {
 	margin: 15px 10px 0 0;
 	color: #ff0808;
 	font-weight: bold;
-	font-size: 12px;
 	padding: 4px 15px 4px 8px;
 	border-radius: 6px;
 	margin-bottom: 14px;
@@ -335,11 +332,18 @@ html, body {
 
 .header_left {
 	float:left;
-	padding-top:19px;
+}
+
+.header_left figure {
+	height: 60px;	
+}
+
+.header_left figure img {
+	padding-top: 20px;
 }
 
 .header_section ul {
-	padding:16px 0px 0px 0px;
+	padding:0px;
 	margin:0;
 	list-style:none;
 }
@@ -362,6 +366,7 @@ html, body {
 .header_section ul li a {
 	color:#FFFFFF;
 	text-decoration:none;
+	font-size: 13px !important;
 }
 
 .header_section ul li a:hover, .header_section ul li a.nav_active {
@@ -383,6 +388,10 @@ html, body {
 
 .header_right img {
 	margin-top:-5px;
+}
+
+.header_right .navbar {
+	padding-top: 15px;	
 }
 
 .header_section .header_right ul li {
@@ -410,7 +419,7 @@ html, body {
 }
 
 .content_title h1 {
-	font-size:16px;
+	font-size:15px;
 	color:#000000;
 	padding:0px;
 	margin:22px 0 0 0;
@@ -503,7 +512,7 @@ a.dropdown-toggle b.caret  {
 	color: #000 !important;
 	line-height: 29px;
 	float: none !important;
-	text-align:right;
+	text-align:left;
 	margin-right: 0px !important;
 	border-bottom: 1px solid #d9d9d9;
 }
@@ -514,7 +523,7 @@ a.dropdown-toggle b.caret  {
 
 .cust_sel ul li a{
 	color: #000 !important;
-	padding-right: 12px;
+	padding: 0 12px;
 	display:block !important;
 }
 	
@@ -666,7 +675,7 @@ ul.nav li.dropdown:hover > .test_options{
 .table_border tr.proj_title td {
 	background:url(../../images/helios/proj_list_bg.jpg) repeat-x left bottom #f7f7f7;
 	color:#e15432;
-	font-size:15px;
+	font-size:14px;
 	font-weight:bold;
 	border-top:1px solid #DDD;
 	border-bottom:1px solid #DDD;
@@ -798,9 +807,17 @@ ul.nav li.dropdown:hover > .test_options{
 	border: none;
 }*/
 
+.create_proj textarea {
+	margin-bottom: 0px;
+}
+
 .startdate input, .enddate input {
 	width: 178px;
 	margin-right: 4px;
+}
+
+.icon_center {
+	padding-top: 5px;	
 }
 
 .content_end {
@@ -837,6 +854,7 @@ ul.nav li.dropdown:hover > .test_options{
 	text-decoration:none;
 	border-left:1px solid #c5c5c5;
 	text-shadow:none !important;
+	font-size: 13px;
 }
 
 .title_nav ul a:hover, .title_nav ul a.act {
@@ -864,13 +882,15 @@ ul.nav li.dropdown:hover > .test_options{
 }
 
 .loading_bar {
-	margin-left:-50px;
+	margin: 4px 0px 0px 4px;
+	position:absolute;
 }	
 
 /* *************************************************************************** CSS for App Info Page ************************************************************************** */
 
 .tech_ver {
-	width: 90px;
+	width: 38px !important;
+	margin-left: 5px;
 }
 
 .desc, .descdata {
@@ -888,7 +908,7 @@ ul.nav li.dropdown:hover > .test_options{
 /* *************************************************************************** CSS for Quality selection dropdown ************************************************************************** */
 
 .title_nav .cust_sel ul li a {
-	padding: 0 12px 0 0 !important;
+	padding: 0 12px 0 10px !important;
 }
 
 .title_nav .cust_sel ul li a:hover {
@@ -934,14 +954,6 @@ ul.nav li.dropdown:hover > .test_options{
 	padding:0;
 	margin:0 0 0 10px;
 	float:right;
-}
-
-.switchOn{
-	background-position:right !important;
-}
-
-.switchOff{
-	background-position:left !important;
 }
 
 .on, .off{
@@ -1028,7 +1040,7 @@ ul.nav li.dropdown:hover > .test_options{
 
 .features_box h1 {
 	float:left;
-	font-size:16px;
+	font-size:15px;
 	color:#e05432;
 	padding:0 !important;
 	margin:0 !important;
@@ -1037,7 +1049,7 @@ ul.nav li.dropdown:hover > .test_options{
 }
 .settings_icon {
 	float:right;
-	margin:0px !important;	
+	margin:0px 5px 0 0 !important;	
 	padding:0 !important;
 	line-height:38px;
 }
@@ -1067,7 +1079,6 @@ ul.nav li.dropdown:hover > .test_options{
 
 .featureinfo .features_cont {
 	padding:8px;
-	font-size:12px;
 }
 
 .featureinfo .dyn_popup_close, .featureinfo .dyn_popup_close:hover {
@@ -1194,7 +1205,6 @@ ul.nav li.dropdown:hover > .test_options{
 	background: #ffffff;
 	border-radius: 6px;
 	padding: 10px;
-	font-size:12px;
 }
 
 
@@ -1385,9 +1395,12 @@ ul.nav li.dropdown:hover > .test_options{
 	width:100px !important;
 }
 
+.create_proj select {
+	width: 87px !important;
+}
+
 .title_nav ul a {
 	padding: 12px 4px !important;
-	font-size: 12px;
 }
 }
 @media screen and (min-width: 1025px) and (max-width: 1152px) {
@@ -1402,16 +1415,19 @@ ul.nav li.dropdown:hover > .test_options{
 }
 
  .create_proj table tr td select {
-	width: 138px; 
+	width: 134px; 
  }
  
  .custon_dropdown {
 	width:106px !important;
 }
 
+.create_proj select {
+	width: 111px !important;
+}
+
 .title_nav ul a {
 	padding: 12px 5px !important;
-	font-size: 12px;
 }
 }
 
@@ -1427,11 +1443,11 @@ ul.nav li.dropdown:hover > .test_options{
 }
 
  .create_proj table tr td select {
-	width: 163px; 
+	width: 162px; 
  }
  
 .custon_dropdown {
-	width:117px !important;
+	width:125px !important;
 }
 
 .title_nav ul a {
@@ -1476,7 +1492,7 @@ ul.nav li.dropdown:hover > .test_options{
  }
  
  .custon_dropdown {
-	width: 133px !important;
+	width: 141px !important;
 }
 }
 
@@ -1538,6 +1554,11 @@ ul.nav li.dropdown:hover > .test_options{
 
 /* *************************************************************************** STYLES FOR BUILD PAGE ************************************************************************** */
 
+.table thead th {
+	vertical-align: bottom;
+	font-size: 13px;
+}
+
 .build_genbuild, .build_minifier {
 	display: inline-block;
 }
@@ -1564,7 +1585,7 @@ ul.nav li.dropdown:hover > .test_options{
 	border: 1px solid #ddd;
 	border-radius: 6px;
 	background:#f7f7f7;
-	overflow-y:auto;
+	overflow:hidden;
 }
 
 .build_progress {
@@ -1696,8 +1717,8 @@ ul.nav li.dropdown:hover > .test_options{
 }
 .env_border ul li {
 	border-bottom:1px solid #d8d8d8;
-	padding:5px 0 5px 10px;
-	font-size:12px;
+	padding:0px 0 0px 10px;
+	line-height: 30px;
 }
 .env_border ul:first-child li {
 	border-right: 1px solid #d8d8d8;
@@ -1706,7 +1727,6 @@ ul.nav li.dropdown:hover > .test_options{
 	border-bottom:none;
 }
 .env_border ul li label {
-	font-size:12px !important;
 	margin:0 !important;
 }
 
@@ -1722,6 +1742,22 @@ ul.nav li.dropdown:hover > .test_options{
 .env_border .add_env tr td ul {
 	max-height: 185px;
 	overflow-y: auto;
+}
+
+.add_env .connected li div:first-child{
+	float:left;
+	width: 51px;
+	text-align:center;
+	border-right: 1px solid #d8d8d8;
+}
+
+.add_env .connected li div:last-child{
+	padding-left: 64px;
+}
+
+.add_env tr th:first-child {
+	width: 45px;
+	border-right: 1px solid #ffffff;
 }
 
 .def_btn .btn_style {
@@ -1746,7 +1782,6 @@ ul.nav li.dropdown:hover > .test_options{
 }
 .tab_line .table_border td select {
 	margin-bottom:0;
-	margin-left:10px;
 }
 .tab_line .table_border tr.row_bg td {
 	border-top:1px solid #e2e2e2 !important;
@@ -1767,7 +1802,6 @@ ul.nav li.dropdown:hover > .test_options{
 .clonetable th, .clonetable td {
 	border-top:0 !important;
 	padding-top:3px !important;
-	padding-bottom:0 !important;
 }
 
 .clonetable td div.env_border {
@@ -1814,4 +1848,123 @@ ul.nav li.dropdown:hover > .test_options{
 .fix_height {
 	max-height: 150px;
 	overflow-y: auto;
+}
+
+
+/* *************************************************************************** STYLES FOR FIXED-HEADER ************************************************************************************ */
+
+
+thead.fixedHeader tr {
+	position: relative;
+}
+
+html>body thead.fixedHeader tr {
+	display: block;
+}
+
+html>body tbody.scrollContent {
+	display: block;
+	height: 580px;
+	overflow: auto;
+	width: 100%;
+}
+
+.build_info table thead.fixedHeader th {
+	width: 140px;
+	text-align: center !important;
+}
+
+.build_info table thead.fixedHeader th + th {
+	width: 340px;
+}
+
+.build_info table thead.fixedHeader th + th + th {
+	width: 180px;
+}
+
+.build_info table thead.fixedHeader th + th + th + th {
+	width: 240px;
+}
+
+.build_info table thead.fixedHeader th + th + th + th + th {
+	width: 380px;
+}
+
+.build_info table tbody.scrollContent td {
+	width: 200px;
+}
+
+.build_info table tbody.scrollContent td + td {
+	width: 240px;
+}
+
+.build_info table tbody.scrollContent td + td + td {
+	width: 300px;
+}
+
+
+/* ********************************************************************** STYLES FOR QUALITY_UNIT PAGE ************************************************************************************ */
+
+.unit_text {
+	float:left;
+	font-size: 14px;
+	font-weight:bold;
+	color: #ef7b43;
+	margin: 10px auto; 
+}
+
+.unit_path {
+	float: left;
+	padding-top: 7px;	
+}
+
+.unit_path input:first-child{
+	margin-right: 3px;
+}
+
+.unit_path input:last-child{
+	margin-right: 6px;
+}
+
+.qual_unit .code_report {
+	width: 80px;
+}
+
+.qual_unit .code_func {
+	width: 48px;
+}
+
+
+/* *************************************************************** STYLES FOR QUALITY_UNIT_RESULT PAGE ************************************************************************************ */
+
+.unit_view {
+	float: left;
+	padding-top: 9px;	
+}
+
+.unit_view span {
+	font-weight:bold;
+	margin-right: 10px;	
+	padding-top: 8px;
+}
+
+.unit_view span img {
+	margin-right: 5px;	
+}
+
+.unit_view span b {
+	color: #ef7b43 !important;
+}
+
+/* *************************************************************** STYLES FOR QUALITY_UNIT_GRAPH PAGE ************************************************************************************ */
+
+.graph_area {
+	width: 30%;
+	margin: 0 auto;
+}
+
+/* *************************************************************** STYLES FOR QUALITY_UNIT_DESC PAGE ************************************************************************************ */
+
+.unit_view .code_report_icon {
+	margin: -2px 6px 0px 0px;	
 }
