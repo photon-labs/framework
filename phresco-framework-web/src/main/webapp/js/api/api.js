@@ -35,7 +35,7 @@ define(["framework/base", "api/localStorageAPI"], function(){
 				header : "Access-Control-Allow-Headers: x-requested-with",
 				contentType : header.contentType,
 				data : header.requestPostBody,
-				timeout: 90000,
+				timeout: 1000000,
 				//crossDomain: true,
 				cache: true,
 				async: true,

@@ -23,17 +23,13 @@ define(["framework/widget", "framework/widgetWithTemplate", "projectlist/api/pro
 		
 		onEditProject : function(projectId) {
 			var self = this;
-
-			if(self.editproject === null) {
-				self.editproject = new Clazz.com.components.projects.js.Project();
-			}
-			self.getProjectList(self.getRequestHeader(self.projectRequestBody, projectId), function(response) {
-				self.editproject.projectEdit = response.data;
-			});
+			commonVariables.projectId = projectId;
 			Clazz.navigationController.jQueryContainer = commonVariables.contentPlaceholder;
 			Clazz.navigationController.push(self.editproject, true);
+			$("#editprojectTab").css("display", "block");
 			self.dynamicrenderlocales(commonVariables.contentPlaceholder);
 		},
+
 
 		getProjectList : function(header, callback) {
 			var self = this;

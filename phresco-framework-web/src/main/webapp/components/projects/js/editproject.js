@@ -25,8 +25,16 @@ define(["framework/widgetWithTemplate", "projects/listener/projectsListener", "p
 			var self = this;
 			self.projectsListener = new Clazz.com.components.projects.js.listener.projectsListener();
 			self.projectAPI = new Clazz.com.components.projects.js.api.ProjectsAPI();
+			self.registerEvents(self.projectsListener);
 		},
-
+		
+		registerEvents : function (projectsListener) {
+			var self = this;
+			self.onUpdateProjectsEvent = new signals.Signal();
+			self.onUpdateProjectsEvent.add(projectsListener.createproject, projectsListener);
+		},
+		
+		
 		/***
 		 * Called once to register all the events 
 		 *
@@ -49,33 +57,56 @@ define(["framework/widgetWithTemplate", "projects/listener/projectsListener", "p
 		 
 		preRender: function(whereToRender, renderFunction){
 			var self = this;
-			self.setTechnologyData("photon");
-			self.applicationlayerData = self.projectAPI.localVal.getJson("Application Layer");
-			self.weblayerData = self.projectAPI.localVal.getJson("Web Layer");
-			self.mobilelayerData = self.projectAPI.localVal.getJson("Mobile Layer");
-			self.templateData.applicationlayerData = self.applicationlayerData;
-			self.templateData.weblayerData = self.weblayerData;
-			self.templateData.mobilelayerData = self.mobilelayerData;
-			self.projectsListener.getEditProject(self.projectsListener.getRequestHeader(self.projectRequestBody, self.projectId), function(response) {
-				self.templateData.editProject = response.data;				
-			});
-			renderFunction(self.templateData, whereToRender);
-		}, 
-		
-		postRender : function(element) {
-		},
-		
-		setTechnologyData : function(customerId) {
-			var self=this;
-			self.userInfo = JSON.parse(self.projectAPI.localVal.getSession('userInfo'));
-			$.each(self.userInfo.customers, function(index, value){
-				if(value.id === customerId){
-					$.each(value.applicableAppTypes, function(index, value){
-						self.projectAPI.localVal.setJson(value.name, value);
+				self.applicationlayerData = self.projectAPI.localVal.getJson("Application Layer");
+				self.weblayerData = self.projectAPI.localVal.getJson("Web Layer");
+				self.mobilelayerData = self.projectAPI.localVal.getJson("Mobile Layer");
+			if (self.applicationlayerData != null && self.weblayerData != null && self.mobilelayerData != null) {
+				self.templateData.applicationlayerData = self.applicationlayerData;
+				self.templateData.weblayerData = self.weblayerData;
+				self.templateData.mobilelayerData = self.mobilelayerData;
+				self.projectsListener.getEditProject(self.projectsListener.getRequestHeader(self.projectRequestBody, commonVariables.projectId), function(response) {
+					self.templateData.editProject = response.data;	
+					self.getData = self.templateData.editProject.appInfos;				
+				});
+				renderFunction(self.templateData, whereToRender);
+			} else {
+				self.setTechnologyData(function(bCheck){
+				if(bCheck){
+					self.applicationlayerData = self.projectAPI.localVal.getJson("Application Layer");
+					self.weblayerData = self.projectAPI.localVal.getJson("Web Layer");
+					self.mobilelayerData = self.projectAPI.localVal.getJson("Mobile Layer");
+					self.templateData.applicationlayerData = self.applicationlayerData;
+					self.templateData.weblayerData = self.weblayerData;
+					self.templateData.mobilelayerData = self.mobilelayerData;
+					self.projectsListener.getEditProject(self.projectsListener.getRequestHeader(self.projectRequestBody, commonVariables.projectId), function(response) {
+						self.templateData.editProject = response.data;	
+						self.getData = self.templateData.editProject.appInfos;				
 					});
+					renderFunction(self.templateData, whereToRender);
 				}
 			});
+			}
+		}, 
+		
+		setTechnologyData : function(callback) {
+			var self=this;
+			self.projectsListener.getEditProject(self.projectsListener.getRequestHeader(self.projectRequestBody, '', 'apptypes'), function(response) {
+				$.each(response.data, function(index, value){
+					//console.info("index",index,"value",value);
+					self.projectAPI.localVal.setJson(value.name, value);
+					
+					if(response.data.length == (index + 1)){
+						callback(true);
+					}
+				});
+			});
 		},
+		
+		postRender : function(element) {
+			var self=this;
+			self.projectsListener.editSeriveTechnolyEvent(self.getData);
+		},
+		
 		/***
 		 * Bind the action listeners. The bindUI() is called automatically after the render is complete 
 		 *
@@ -88,8 +119,9 @@ define(["framework/widgetWithTemplate", "projects/listener/projectsListener", "p
 			self.projectsListener.removeLayersEvent();
 			self.projectsListener.technologyAndVersionChangeEvent();
 			
-			self.getData = self.templateData.editProject.appInfos;
-			self.projectsListener.editSeriveTechnolyEvent(self.getData);
+			$("#updateProject").click(function() {
+				self.onUpdateProjectsEvent.dispatch(commonVariables.projectId, "update");
+			});
 			
 		}
 	});

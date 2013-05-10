@@ -16,6 +16,8 @@ define(["framework/widgetWithTemplate", "projects/listener/projectsListener", "p
 		onProjectsEvent : null,
 		onRemoveLayerEvent : null,
 		onAddLayerEvent : null,
+		onCreateEvent : null,
+		
 			
 		/***
 		 * Called in initialization time of this class 
@@ -39,8 +41,10 @@ define(["framework/widgetWithTemplate", "projects/listener/projectsListener", "p
 			self.onProjectsEvent = new signals.Signal();
 			self.onRemoveLayerEvent = new signals.Signal();
 			self.onAddLayerEvent = new signals.Signal();
+			self.onCreateEvent = new signals.Signal();
 			self.onRemoveLayerEvent.add(projectsListener.removelayer, projectsListener);
 			self.onAddLayerEvent.add(projectsListener.addlayer, projectsListener);
+			self.onCreateEvent.add(projectsListener.createproject, projectsListener)
 		},
 		
 		/***
@@ -55,14 +59,17 @@ define(["framework/widgetWithTemplate", "projects/listener/projectsListener", "p
 		
 		preRender : function(whereToRender, renderFunction) {
 			var self=this;
-			self.setTechnologyData("photon");
-			self.applicationlayerData = self.projectAPI.localVal.getJson("Application Layer");
-			self.weblayerData = self.projectAPI.localVal.getJson("Web Layer");
-			self.mobilelayerData = self.projectAPI.localVal.getJson("Mobile Layer");
-			self.templateData.applicationlayerData = self.applicationlayerData;
-			self.templateData.weblayerData = self.weblayerData;
-			self.templateData.mobilelayerData = self.mobilelayerData;
-			renderFunction(self.templateData, whereToRender);
+			self.setTechnologyData(function(bCheck){
+				if(bCheck){
+					self.applicationlayerData = self.projectAPI.localVal.getJson("Application Layer");
+					self.weblayerData = self.projectAPI.localVal.getJson("Web Layer");
+					self.mobilelayerData = self.projectAPI.localVal.getJson("Mobile Layer");
+					self.templateData.applicationlayerData = self.applicationlayerData;
+					self.templateData.weblayerData = self.weblayerData;
+					self.templateData.mobilelayerData = self.mobilelayerData;
+					renderFunction(self.templateData, whereToRender);
+				}
+			});
 		},
 		
 		/***
@@ -72,17 +79,21 @@ define(["framework/widgetWithTemplate", "projects/listener/projectsListener", "p
 		 * @element: Element as the result of the template + data binding
 		 */
 		postRender : function(element) {
+		
 		},
 		
-		setTechnologyData : function(customerId) {
+		setTechnologyData : function(callback) {
 			var self=this;
 			self.userInfo = JSON.parse(self.projectAPI.localVal.getSession('userInfo'));
-			$.each(self.userInfo.customers, function(index, value){
-				if(value.id === customerId){
-					$.each(value.applicableAppTypes, function(index, value){
-						self.projectAPI.localVal.setJson(value.name, value);
-					});
-				}
+			self.projectsListener.getEditProject(self.projectsListener.getRequestHeader(self.projectRequestBody, '', 'apptypes'), function(response) {
+				$.each(response.data, function(index, value){
+					//console.info("index",index,"value",value);
+					self.projectAPI.localVal.setJson(value.name, value);
+					
+					if(response.data.length == (index + 1)){
+						callback(true);
+					}
+				});
 			});
 		},
 		
@@ -105,6 +116,11 @@ define(["framework/widgetWithTemplate", "projects/listener/projectsListener", "p
 			$(".content_end input").unbind('click');
 			$(".content_end input").bind('click', function(){
 				self.onAddLayerEvent.dispatch($(this));
+			});
+			
+			$("input[name='Create']").unbind('click');
+			$("input[name='Create']").bind('click', function(){
+				self.onCreateEvent.dispatch('', 'create');
 			});
 			 
 		}
