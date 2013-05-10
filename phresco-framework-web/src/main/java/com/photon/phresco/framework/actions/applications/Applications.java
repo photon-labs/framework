@@ -647,9 +647,13 @@ public class Applications extends FrameworkBaseAction implements Constants {
 			if (importProject != null) {
 				String importTest = "";
 				if (testClone) {
-					String path = Utility.getProjectHome() + File.separator + importProject.getAppDirName() + File.separator + TEST;
-					org.apache.commons.io.FileUtils.cleanDirectory(new File(path));
-					importTest = scmi.svnCheckout(testUserName, testPassword, testRepoUrl, path);
+					String path = Utility.getProjectHome() + File.separator + importProject.getAppDirName() + File.separator;
+					File testFolder = new File(path, TEST);
+					if (!testFolder.exists()) {
+						testFolder.mkdirs();
+					}
+					FileUtils.cleanDirectory(testFolder);
+					importTest = scmi.svnCheckout(testUserName, testPassword, testRepoUrl, testFolder.getPath());
 					if (SUCCESSFUL.equalsIgnoreCase(importTest)) {
 						errorString = getText(IMPORT_SUCCESS_PROJECT);
 						errorFlag = true;
@@ -921,7 +925,7 @@ public class Applications extends FrameworkBaseAction implements Constants {
 			if(s_debugEnabled){
 				S_LOGGER.error(e.getLocalizedMessage());
 			}
-			errorString = getText(UPDATE_PROJECT_FAIL);
+			errorString = getText(e.getLocalizedMessage());
 			errorFlag = false;
 		}
 
