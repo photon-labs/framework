@@ -373,6 +373,7 @@
 				displayProp = "block";
 			}
 			$(".simpleUiCtrls").css("display", displayProp);
+			hideRemoteDeployBasedOnOptionIds();
 // 			getPropertyTemplate();
 		});
 	});

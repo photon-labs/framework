@@ -424,14 +424,7 @@
 			}
 		}
 		
-		<% if (FrameworkConstants.ADD_CONFIG.equals(fromPage) || FrameworkConstants.EDIT_CONFIG.equals(fromPage)) {
-				if (CollectionUtils.isNotEmpty(options) && !options.contains(FrameworkConstants.REMOTE_DEPLOYMENT_OPTION)) {
-		%>
-				hideRemoteDeply();
-		<%	
-				}
-			}
-		%>
+		hideRemoteDeployBasedOnOptionIds();
 		
 		<% if (FrameworkConstants.ADD_SETTINGS.equals(fromPage) || FrameworkConstants.EDIT_SETTINGS.equals(fromPage)) { %>
 			serverTypeSpecific();
@@ -480,7 +473,18 @@
 			$("#hiddenEnvName").val(envName);
 		});
 	});
-
+	
+	function hideRemoteDeployBasedOnOptionIds() {
+		<% if (FrameworkConstants.ADD_CONFIG.equals(fromPage) || FrameworkConstants.EDIT_CONFIG.equals(fromPage)) {
+				if (CollectionUtils.isNotEmpty(options) && !options.contains(FrameworkConstants.REMOTE_DEPLOYMENT_OPTION)) {
+		%>
+					hideRemoteDeply();
+		<%	
+				}
+			}
+		%>
+	}
+	
 	function remoteDeplyChecked() {
 		var isRemoteChecked = $("input[name='remoteDeployment']").is(":checked");
 		if (isRemoteChecked) {

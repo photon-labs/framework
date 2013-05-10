@@ -739,12 +739,14 @@ public class DynamicParameterAction extends FrameworkBaseAction implements Const
 	
 	private boolean editableComboValidate(Parameter parameter,
 			boolean returnFlag, String lableTxt) {
-		if (StringUtils.isEmpty(getReqParameter(parameter.getKey())) || 
-				"Type or select from the list".equalsIgnoreCase(getReqParameter(parameter.getKey()))) {
+		String value = getReqParameter(parameter.getKey());
+		value = value.replaceAll("\\s+", "").toLowerCase();
+		
+		if (StringUtils.isEmpty(value) || "typeorselectfromlist".equalsIgnoreCase(value)) {
 			setErrorFound(true);
 			setErrorMsg(lableTxt + " " +getText(EXCEPTION_MANDAOTRY_MSG));
 			returnFlag = true;
-		}
+		} 
 		
 		return returnFlag;
 	}
