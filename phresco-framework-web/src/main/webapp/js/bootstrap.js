@@ -45,7 +45,50 @@ var commonVariables = {
 	headerPlaceholder : $("<header\\:widget></header\\:widget>"),
 	navigationPlaceholder : $("<navigation\\:widget></navigation\\:widget>"),
 	contentPlaceholder : $("<content\\:widget></content\\:widget>"),
-	footerPlaceholder : $("<footer\\:widget></footer\\:widget>")
+	footerPlaceholder : $("<footer\\:widget></footer\\:widget>"),
+
+
+	openccmini : function(e,place) {
+			
+		var clicked = $(e);
+		var target = $("#" + place);
+		var twowidth = window.innerWidth/1.5;;
+
+		if (clicked.offset().left < twowidth) {	
+			$(target).toggle();
+			var t=clicked.offset().top - target.height()/2 + 10;
+			var l=clicked.offset().left + clicked.width()+ 15;
+			$(target).offset({
+				top: t,
+				left: l
+			});
+			
+			$(target).addClass('speakstyleleft').removeClass('speakstyleright');
+		}
+		else {
+			$(target).toggle();
+			var t=clicked.offset().top - target.height()/2 + 10;
+			var l=clicked.offset().left - (target.width()+15);
+			$(target).offset({
+				top: t,
+				left: l
+			});
+			
+			$(target).addClass('speakstyleright').removeClass('speakstyleleft');
+
+		}
+		
+		$(document).keyup(function(e) {
+			if(e.which == 27){
+				$("#" + place).hide();
+			}
+		});
+		
+		$('.dyn_popup_close').click( function() {
+			$("#" + place).hide();
+		});
+	}
+
 };
 
 $(document).ready(function(){

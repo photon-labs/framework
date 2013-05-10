@@ -88,22 +88,22 @@ define(["framework/widget", "features/api/featuresAPI", "features/features",  "a
 		 * @synonymRequestBody: request body of synonym
 		 * @return: returns the contructed header
 		 */
-		getRequestHeader : function(projectRequestBody, type) {
-			if(type == "features"){
-				var type = "FEATURE";
-			}
-			if(type == "jsibraries"){
-				var type = "JSLIBRARIES";
-			}
-			if(type == "components"){
-				var type = "COMPONENTS";
-			}
+		 //header.webserviceurl: commonVariables.webserviceurl+commonVariables.featurePageContext+"//desc?customerId=photon&artifactGroupId="+type+"&userId="+userId.id*/
+		getRequestHeader : function(projectRequestBody, type, descid) {
+			var url;
 			var userId = JSON.parse(self.featuresAPI.localVal.getSession("userInfo"));
+			if(type != ""){
+				url = commonVariables.webserviceurl+commonVariables.featurePageContext+"/list?customerId=photon&techId=tech-java-webservice&type="+type+"&userId="+userId.id;
+			}
+			else {
+				url = commonVariables.webserviceurl+commonVariables.featurePageContext+"/desc?customerId=photon&artifactGroupId="+descid+"&userId="+userId.id;
+			}
+			
 			var header = {
 				contentType: "application/json",
 				requestMethod: "GET",
 				dataType: "json",
-				webserviceurl: commonVariables.webserviceurl+commonVariables.featurePageContext+"/list?customerId=photon&techId=tech-java-webservice&type="+type+"&userId="+userId.id
+				webserviceurl: url
 			};
 
 			return header;

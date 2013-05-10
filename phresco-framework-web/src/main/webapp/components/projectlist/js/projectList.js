@@ -16,6 +16,7 @@ define(["framework/widgetWithTemplate", "projectlist/listener/projectListListene
 		onProjectEditEvent : null,
 		registerEvents : null,
 		repositoryEvent : null,
+		deletearray : [],
 		
 		/***
 		 * Called in initialization time of this class 
@@ -61,11 +62,19 @@ define(["framework/widgetWithTemplate", "projectlist/listener/projectListListene
 
 		preRender: function(whereToRender, renderFunction){
 			var self = this;
-			self.projectslistListener.getProjectList(self.projectslistListener.getRequestHeader(self.projectRequestBody), function(response) {
+			self.projectslistListener.getProjectList(self.projectslistListener.getRequestHeader(self.projectRequestBody, ''), function(response) {
 				var projectlist = {};
 				projectlist.projectlist = response.data;				
 				renderFunction(projectlist, whereToRender);
 			});
+		},
+
+		getAction : function(actionBody, action, callback) {
+			var self = this;
+			self.projectslistListener.projectListAction(self.projectslistListener.getActionHeader(actionBody, action), function(response) {
+				self.preRender(commonVariables.contentPlaceholder,$.proxy(self.renderTemplate, self));
+			});
+
 		},
 
 		/***
@@ -77,10 +86,8 @@ define(["framework/widgetWithTemplate", "projectlist/listener/projectListListene
 			$(".tooltiptop").tooltip();
 			$(".dyn_popup").hide();
 			$("#applicationedit").css("display", "none");
-			$("#editprojectTab").css("display", "none");
 			$("img[name=editproject]").unbind("click");
 			$("img[name=editproject]").click(function(){
-				$("#editprojecttitle").html("Edit Project ("+$(this).parent().parent().siblings().text()+")");
 				self.onProjectEditEvent.dispatch($(this).attr('key'));
 			});	
 			
@@ -100,6 +107,28 @@ define(["framework/widgetWithTemplate", "projectlist/listener/projectListListene
 			$("a[name = 'updatesvn']").bind("click",function(){
 				$("#svn_update").show();
 			});
+			$("input[name='deleteConfirm']").unbind('click');
+			$("input[name='deleteConfirm']").click(function(e) {
+				var deleteproject = $(this).closest("tr").attr("class");
+				self.deletearray.push(deleteproject);
+				console.info("deletearray", self.deletearray);		
+				self.getAction(self.deletearray,"delete");
+			});
+
+			$("input[name='holeDelete']").unbind('click');
+			$("input[name='holeDelete']").click(function(e) {
+				var projectnameArray = [];
+				var currentRow =  $(this).parents().parent("td.delimages").parent().next();
+				while(currentRow != null && currentRow.length > 0) {
+				   var classname = currentRow.attr("class");
+				   if(classname != "proj_title") {
+				        currentRow = currentRow.next('tr');
+				        projectnameArray.push(classname);
+				        self.getAction(projectnameArray,"delete");
+				   }else {currentRow = null}
+				}
+			});
+			
 		}
 	});
 

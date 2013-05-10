@@ -57,6 +57,8 @@ define(["framework/widgetWithTemplate", "features/listener/featuresListener"], f
 		},
 
 
+
+
 		/***
 		 * Called in once the login is success */
 		loadPage :function(){			
@@ -85,7 +87,7 @@ define(["framework/widgetWithTemplate", "features/listener/featuresListener"], f
 
 		getFeatures : function(collection, callback){
 			var self = this;
-			self.featuresListener.getFeaturesList(self.featuresListener.getRequestHeader(self.featureRequestBody, "features"), function(response) {
+			self.featuresListener.getFeaturesList(self.featuresListener.getRequestHeader(self.featureRequestBody, "FEATURE"), function(response) {
 				collection.featureslist = response.data;	
 				self.getLibraries(collection, callback);
 			});
@@ -93,7 +95,7 @@ define(["framework/widgetWithTemplate", "features/listener/featuresListener"], f
 
 		getLibraries : function(collection, callback){
 			var self = this;
-			self.featuresListener.getFeaturesList(self.featuresListener.getRequestHeader(self.featureRequestBody, "jsibraries"), function(response) {
+			self.featuresListener.getFeaturesList(self.featuresListener.getRequestHeader(self.featureRequestBody, "JSLIBRARIES"), function(response) {
 				collection.jsibrarielist = response.data;	
 				self.getComponents(collection, callback);
 			});
@@ -101,7 +103,7 @@ define(["framework/widgetWithTemplate", "features/listener/featuresListener"], f
 
 		getComponents : function(collection, callback){
 			var self = this;
-			self.featuresListener.getFeaturesList(self.featuresListener.getRequestHeader(self.featureRequestBody, "components"), function(response) {
+			self.featuresListener.getFeaturesList(self.featuresListener.getRequestHeader(self.featureRequestBody, "COMPONENTS"), function(response) {
 				collection.componentList = response.data;	
 				callback(collection);
 			});
@@ -129,32 +131,17 @@ define(["framework/widgetWithTemplate", "features/listener/featuresListener"], f
 				if(button == 'on'){ $(this).closest('fieldset').css('background-position', 'left'); }	
 			});
 
-			$("#content_1").mCustomScrollbar({
-				autoHideScrollbar:true,
-				theme:"light-thin"
-			});
-			
-			$("#content_2").mCustomScrollbar({
-				autoHideScrollbar:true,
-				theme:"light-thin"
-			});
-			
-			$("#content_3").mCustomScrollbar({
-				autoHideScrollbar:true,
-				theme:"light-thin"
-			});
+			self.scrollbarEnable();
 			
 			$('#module').keyup(function(event) {
 				var txtSearch = $('#module').val();
 				var divId = "moduleContent";
-				//search(txtSearch, divId);
 				self.onSearchEvent.dispatch(txtSearch, divId);
            	});
 
            	$('#jsibraries').keyup(function(event) {
 				var txtSearch = $('#jsibraries').val();
 				var divId = "jsibrariesContent";
-				//search(txtSearch, divId);
 				self.onSearchEvent.dispatch(txtSearch, divId);
            	});
 
@@ -170,18 +157,53 @@ define(["framework/widgetWithTemplate", "features/listener/featuresListener"], f
            		$("ul li fieldset").each(function() {
            			if($(this).attr("class") == "switch switchOn"){
            				$(this).parent().show();
+						self.scrollbarUpdate();
            			}     			
-           		});
-           		
+           		});           		
            	});
            	$('#switchonbutton').on("click", function(event) {
-           		$("ul li").show();         
+           		$("ul li").show();
+           		self.scrollbarUpdate();
            	});
 
        		$('#cancelUpdateFeature').click(function() {
 				self.onCancelEvent.dispatch();
            	});
-           
+
+          	$('.featureinfo_img').on("click", function(event) {				
+				var descid = $(this).attr("value");
+				var currentObj = this;				
+				self.featuresListener.getFeaturesList(self.featuresListener.getRequestHeader(self.featureRequestBody, "", descid), function(response) {
+					var divhtml = '<div id="'+descid+'" class="dyn_popup featureinfo"><h1>Description</h1><a href="#" class="dyn_popup_close">X</a><div class="features_cont"><span><img src="../themes/default/images/helios/feature_info_logo.png" width="42" height="42" border="0" alt=""></span>'+response.data+'</div></div>';
+					$("#desc").children().remove();
+					$("#desc").append(divhtml);
+					commonVariables.temp = currentObj;
+					commonVariables.openccmini(currentObj,descid);
+					$("#"+descid).show();
+				});
+           	});
+		},
+		scrollbarEnable : function(){
+			$("#content_1").mCustomScrollbar({
+				autoHideScrollbar:true,
+				theme:"light-thin",
+				updateOnContentResize: true
+			});
+			
+			$("#content_2").mCustomScrollbar({
+				autoHideScrollbar:true,
+				theme:"light-thin"
+			});
+			
+			$("#content_3").mCustomScrollbar({
+				autoHideScrollbar:true,
+				theme:"light-thin"
+			});
+		},
+		scrollbarUpdate : function(){
+			$("#content_1").mCustomScrollbar("update"); 
+			$("#content_2").mCustomScrollbar("update"); 
+			$("#content_3").mCustomScrollbar("update"); 
 		},
 
 		bcheck : function(obj){

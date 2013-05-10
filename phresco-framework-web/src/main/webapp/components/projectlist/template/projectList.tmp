@@ -15,10 +15,17 @@
                   {{#each projectlist}}
                       <tr class="proj_title"> 
                         <td colspan="4">{{name}}</td>  
-                        <td colspan="3" align="right"><a href="#" class="tooltiptop" title="" data-placement="top" data-toggle="tooltip"  data-original-title="Edit Project"><img name="editproject" key="{{id}}" src="../themes/default/images/helios/edit_row_icon.png" width="29" height="23" border="0" alt=""></a> <a class="tooltiptop" title="" data-placement="top" data-toggle="tooltip" href="#" data-original-title="Delete Project"><img src="../themes/default/images/helios/delete_row_icon.png" width="29" height="23" border="0" alt="0"></a></td>
+                        <td colspan="3" align="right" class="delimages"><a href="#" class="tooltiptop" title="" data-placement="top" data-toggle="tooltip"  data-original-title="Edit Project"><img name="editproject" key="{{id}}" src="../themes/default/images/helios/edit_row_icon.png" width="29" height="23" border="0" alt=""></a> <a name="{{id}}" class="tooltiptop" title="" data-placement="top" data-toggle="tooltip" href="#" data-original-title="Delete Row"><img src="../themes/default/images/helios/delete_row_icon.png" width="29" height="23" border="0" alt="0"></a>
+                            <div id="{{id}}" class="dyn_popup"> Are you sure to delete this ?
+                                <div>
+                                    <input type="button" value="Yes" class="btn btn_style" name="holeDelete">
+                                    <input type="button" value="No" class="btn btn_style dyn_popup_close">
+                                </div>
+                            </div>
+                        </td>
                       </tr>
-					{{#each appInfos}}
-                      <tr>
+					         {{#each appInfos}}
+                      <tr class="{{appDirName}}">
                         <td><a name="editApplication" href="javascript:;">{{name}}</a></td>
                         <td>{{description}}</td>
                         <td>{{techInfo.id}}</td>
@@ -39,7 +46,7 @@
                             <td>Apr 17 2013 12:51</td>
                             <td>Detailed</td>
                             <td><img src="../themes/default/images/helios/download_icon.png" width="15" height="18" border="0" alt="0"></td>
-                            <td><img src="../themes/default/images/helios/delete_row.png" width="14" height="18" border="0" alt="0"></td>
+                            <td><img name="delete" src="../themes/default/images/helios/delete_row.png" width="14" height="18" border="0" alt="0"></td>
                         </tr>
                     </tbody>    
                 </table>
@@ -257,11 +264,11 @@
                     <!--svn_update div ends here -->  
                   </div>
                   </td>
-                  <td><a name="delete_msg" class="tooltiptop" title="" data-placement="top" data-toggle="tooltip" href="#" data-original-title="Delete Row"><img src="../themes/default/images/helios/delete_row.png" width="14" height="18" border="0" alt=""></a>
-                    <div id="delete_msg" class="dyn_popup">
-                      Are you sure to delete this ?
+                  <td><a name="{{appDirName}}" class="tooltiptop" title="" data-placement="top" data-toggle="tooltip" href="#" data-original-title="Delete Row"><img name="delete" src="../themes/default/images/helios/delete_row.png" width="14" height="18" border="0" alt=""></a>
+                    <div id="{{appDirName}}" class="dyn_popup ">
+                      Are you sure to delete ?
                         <div>
-                            <input type="button" value="Delete" class="btn btn_style">
+                            <input type="button" value="Yes" class="btn btn_style" name="deleteConfirm">
                             <input type="button" value="No" class="btn btn_style dyn_popup_close">
                         </div>
                     </div>
