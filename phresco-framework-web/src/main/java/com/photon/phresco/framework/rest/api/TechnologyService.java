@@ -28,7 +28,7 @@ public class TechnologyService {
 	@GET
 	@Path("/apptypes")
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response listApptypes(@QueryParam("userId") String userId) {
+	public Response listApptypes(@QueryParam("userId") String userId, @QueryParam("customerId") String customerId) {
 		ResponseInfo responseData = new ResponseInfo();
 		try {
 			ServiceManager serviceManager = ServiceManagerMap.CONTEXT_MANAGER_MAP.get(userId);
@@ -36,7 +36,7 @@ public class TechnologyService {
 				ResponseInfo finalOutput = ServiceManagerMap.responseDataEvaluation(responseData, null, "UnAuthorized User", null);
 	        	return Response.status(Status.BAD_REQUEST).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
 			}
-			List<ApplicationType> applicationTypes = serviceManager.getApplicationTypes();
+			List<ApplicationType> applicationTypes = serviceManager.getApplicationTypes(customerId);
 			ResponseInfo finalOutput = ServiceManagerMap.responseDataEvaluation(responseData, null, "Apptypes listed successfully", applicationTypes);
 			return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
 		} catch (PhrescoException e) {
