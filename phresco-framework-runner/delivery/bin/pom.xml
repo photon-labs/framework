@@ -286,7 +286,7 @@
                                 
                                 <artifactItem>
 									<groupId>softwares.iphone.files</groupId>
-                                    <artifactId>checker-272</artifactId>
+                                    <artifactId>checker-274</artifactId>
                                     <version>${checker.version}</version>
                                     <classifier>${checkers.classifier}</classifier>
                                     <type>zip</type>
