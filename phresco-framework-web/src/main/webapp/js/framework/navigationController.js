@@ -191,6 +191,7 @@ define(["framework/base", "framework/animationProvider"], function() {
 						animationProviderMain.animate(self.pushAnimationTypeForGoingIn, function(container) {
 							container.show();
 							container.css("z-index", 4);
+							self.removeClasses(container);
 						});
 
 						if(self.stack.length > 0) {
@@ -210,6 +211,7 @@ define(["framework/base", "framework/animationProvider"], function() {
 								container.hide();
 								container.css("z-index", 3);
 								$(container).remove();
+								self.removeClasses(container);
 							});
 						}
 						
@@ -260,6 +262,18 @@ define(["framework/base", "framework/animationProvider"], function() {
 						page.view.onResume();
 					}
 				} 
+			},
+			
+			removeClasses : function(container){
+				setTimeout(function(){
+					$(container).css("left", "0px");
+					$(container).removeClass("slide in");
+					$(container).removeClass("slide out reverse");
+					$(container).removeClass("flip in");
+					$(container).removeClass("flip out");
+					$(container).removeClass("slidedown in");
+					$(container).removeClass("slidedown out");
+				},800);
 			}
 		}
 	);
