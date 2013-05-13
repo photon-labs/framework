@@ -6,6 +6,7 @@ define(["framework/widget", "common/loading", "header/api/headerAPI", "login/log
 		loadingScreen : null,
 		headerAPI : null,
 		projectListContent: null,
+		currentTab : null,
 		
 		initialize : function(config){
 			 this.headerAPI = new Clazz.com.commonComponents.modules.header.js.api.HeaderAPI;
@@ -14,12 +15,9 @@ define(["framework/widget", "common/loading", "header/api/headerAPI", "login/log
 		doLogout : function(){
 			this.clearSession();
 			Clazz.navigationController.jQueryContainer = commonVariables.basePlaceholder;
-			
-			//$(Clazz.navigationController.jQueryContainer).children().remove();
 			this.removePlaceholder();
-			
-			var loginView = new Clazz.com.components.login.js.Login();
-			loginView.loadPage();
+			location.hash = '';
+			location.reload();
 		},
 		
 		clearSession : function(){
@@ -30,13 +28,23 @@ define(["framework/widget", "common/loading", "header/api/headerAPI", "login/log
 			}
 		},
 		
-		projectList : function() {
-			var self = this;
+		loadTab : function(){
+			var self = this, currentObj = null;
 			Clazz.navigationController.jQueryContainer = commonVariables.contentPlaceholder;
-			self.projectListContent = new Clazz.com.components.projectlist.js.ProjectList();
-			Clazz.navigationController.push(self.projectListContent, true);
+			
+			if(self.currentTab == "Dashboard"){
+			}else if(self.currentTab == "Projects"){
+				currentObj = commonVariables.navListener.getMyObj(commonVariables.projectlist);
+			}else if(self.currentTab == "Settings"){
+			}else if(self.currentTab == "Downloads"){
+			}else if(self.currentTab == "Admin"){
+			}	
+
+			if(currentObj != null){
+				Clazz.navigationController.push(currentObj, true);
+			}
 		},
-		
+
 		removePlaceholder : function() {
 			$(commonVariables.headerPlaceholder).remove();
 			$(commonVariables.headerPlaceholder).empty();

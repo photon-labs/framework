@@ -12,6 +12,7 @@ define(["framework/widgetWithTemplate", "navigation/listener/navigationListener"
 		navigationListener : null,
 		onAddNewProjectEvent : null,
 		onMytabEvent : null,
+		currentContent : null,
 	
 		/***
 		 * Called in initialization time of this class 
@@ -50,7 +51,7 @@ define(["framework/widgetWithTemplate", "navigation/listener/navigationListener"
 		 */
 		postRender : function(element) {	
 			var self = this;
-			self.navigationListener.landingPage();
+			self.navigationListener.landingPage(self.currentContent);
 		},
 
 		/***

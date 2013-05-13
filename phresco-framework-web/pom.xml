@@ -104,6 +104,34 @@
 			<type>js</type>
 		</dependency>
 		
+		<dependency>
+			<groupId>jslibraries.files</groupId>
+			<artifactId>jslib_bootstrap_datepicker</artifactId>
+			<version>1.0.0</version>
+			<type>js</type>
+		</dependency>
+
+		<dependency>
+			<groupId>jslibraries.files</groupId>
+			<artifactId>jslib_min</artifactId>
+			<version>1.0.0</version>
+			<type>js</type>
+		</dependency>
+
+		<dependency>
+			<groupId>jslibraries.files</groupId>
+			<artifactId>jslib_jquery_sortable_min</artifactId>
+			<version>1.0.0</version>
+			<type>js</type>
+		</dependency>
+		
+		<dependency>
+			<groupId>jslibraries.files</groupId>
+			<artifactId>jslib_hasher</artifactId>
+			<version>1.0.0</version>
+			<type>js</type>
+		</dependency>
+		
 		<!-- CometD insertions start -->
 	    
 	    <dependency>
