@@ -142,6 +142,7 @@ public class CIJob {
     private String testType = "";
     private String logo = "";
     private String sonarUrl = "";
+    private String technologyName = ""; 
     
 	// Load Test CI integration
 	//  private String testAgainst = "";
@@ -982,5 +983,13 @@ public class CIJob {
 
 	public String getZipAlign() {
 		return zipAlign;
+	}
+
+	public void setTechnologyName(String technologyName) {
+		this.technologyName = technologyName;
+	}
+
+	public String getTechnologyName() {
+		return technologyName;
 	}
 }
