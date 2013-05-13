@@ -2,7 +2,7 @@
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="PhrescoXmlReport" pageWidth="595" pageHeight="842" columnWidth="535" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20">
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="101"/>
+	<property name="ireport.y" value="0"/>
 	<import value="org.apache.commons.codec.binary.Base64"/>
 	<style name="PSFRTitle"/>
 	<style name="PSFRTitleRect"/>
@@ -190,19 +190,19 @@
 		<band height="25" splitType="Stretch">
 			<frame>
 				<reportElement style="PSFRCopyRight" mode="Opaque" x="0" y="1" width="555" height="24"/>
-				<textField evaluationTime="Report">
-					<reportElement style="PSFRCopyRightPageNo" x="513" y="0" width="40" height="24"/>
-					<textElement verticalAlignment="Middle">
-						<font fontName="Times New Roman" size="11" isBold="true"/>
-					</textElement>
-					<textFieldExpression><![CDATA[" " + $V{PAGE_NUMBER}]]></textFieldExpression>
-				</textField>
 				<textField>
 					<reportElement style="PSFRCopyRightPageNo" x="433" y="0" width="80" height="24"/>
 					<textElement textAlignment="Right" verticalAlignment="Middle">
 						<font fontName="Times New Roman" size="11" isBold="true"/>
 					</textElement>
 					<textFieldExpression><![CDATA["Page "+$V{PAGE_NUMBER}+" of "]]></textFieldExpression>
+				</textField>
+				<textField evaluationTime="Report">
+					<reportElement style="PSFRCopyRightPageNo" x="513" y="0" width="40" height="24"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Times New Roman" size="11" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[" " + $V{PAGE_NUMBER}]]></textFieldExpression>
 				</textField>
 				<textField>
 					<reportElement style="PSFRCopyRight" x="4" y="0" width="419" height="24"/>

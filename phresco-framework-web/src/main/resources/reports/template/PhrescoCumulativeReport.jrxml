@@ -2,7 +2,7 @@
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="PhrescoXmlReport" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20">
 	<property name="ireport.zoom" value="1.100000000000001"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="0"/>
+	<property name="ireport.y" value="112"/>
 	<import value="org.apache.commons.codec.binary.Base64"/>
 	<style name="PCRTitle"/>
 	<style name="PCRTitleRect"/>
@@ -157,6 +157,9 @@
 				</reportElement>
 				<subreport>
 					<reportElement x="0" y="0" width="555" height="50" isRemoveLineWhenBlank="true"/>
+					<subreportParameter name="testType">
+						<subreportParameterExpression><![CDATA["unit"]]></subreportParameterExpression>
+					</subreportParameter>
 					<subreportParameter name="multiModuleUnitTestReports">
 						<subreportParameterExpression><![CDATA[$P{multiModuleUnitTestReports}]]></subreportParameterExpression>
 					</subreportParameter>
@@ -192,6 +195,26 @@
 			</frame>
 		</band>
 		<band height="50">
+			<printWhenExpression><![CDATA[!$P{componentTestReports}.isEmpty()]]></printWhenExpression>
+			<frame>
+				<reportElement x="0" y="0" width="555" height="50" isRemoveLineWhenBlank="true"/>
+				<subreport>
+					<reportElement x="0" y="0" width="555" height="50" isRemoveLineWhenBlank="true"/>
+					<subreportParameter name="testType">
+						<subreportParameterExpression><![CDATA["component"]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="reportsDatatype">
+						<subreportParameterExpression><![CDATA[$P{reportsDataType}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="isClassEmpty">
+						<subreportParameterExpression><![CDATA[$P{isClassEmpty}]]></subreportParameterExpression>
+					</subreportParameter>
+					<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource($P{componentTestReports})]]></dataSourceExpression>
+					<subreportExpression><![CDATA["ComponentCumulativeReport.jasper"]]></subreportExpression>
+				</subreport>
+			</frame>
+		</band>
+		<band height="50">
 			<printWhenExpression><![CDATA[!$P{functionalTestReports}.isEmpty()]]></printWhenExpression>
 			<frame>
 				<reportElement x="0" y="0" width="555" height="50" isRemoveLineWhenBlank="true"/>
@@ -208,20 +231,6 @@
 					</subreportParameter>
 					<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource($P{functionalTestReports})]]></dataSourceExpression>
 					<subreportExpression><![CDATA["FunctionalCumulativeReport.jasper"]]></subreportExpression>
-				</subreport>
-			</frame>
-		</band>
-		<band height="50">
-			<printWhenExpression><![CDATA[!$P{loadTestReports}.isEmpty()]]></printWhenExpression>
-			<frame>
-				<reportElement x="0" y="0" width="555" height="50" isRemoveLineWhenBlank="true"/>
-				<subreport>
-					<reportElement x="0" y="0" width="555" height="50" isRemoveLineWhenBlank="true"/>
-					<subreportParameter name="reportsDataType">
-						<subreportParameterExpression><![CDATA[$P{reportsDataType}]]></subreportParameterExpression>
-					</subreportParameter>
-					<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource($P{loadTestReports})]]></dataSourceExpression>
-					<subreportExpression><![CDATA["PhrescoLoadCumulativeTest.jasper"]]></subreportExpression>
 				</subreport>
 			</frame>
 		</band>
@@ -254,6 +263,20 @@
 			</frame>
 		</band>
 		<band height="50">
+			<printWhenExpression><![CDATA[!$P{loadTestReports}.isEmpty()]]></printWhenExpression>
+			<frame>
+				<reportElement x="0" y="0" width="555" height="50" isRemoveLineWhenBlank="true"/>
+				<subreport>
+					<reportElement x="0" y="0" width="555" height="50" isRemoveLineWhenBlank="true"/>
+					<subreportParameter name="reportsDataType">
+						<subreportParameterExpression><![CDATA[$P{reportsDataType}]]></subreportParameterExpression>
+					</subreportParameter>
+					<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource($P{loadTestReports})]]></dataSourceExpression>
+					<subreportExpression><![CDATA["PhrescoLoadCumulativeTest.jasper"]]></subreportExpression>
+				</subreport>
+			</frame>
+		</band>
+		<band height="50">
 			<printWhenExpression><![CDATA[!$P{sonarReport}.isEmpty()]]></printWhenExpression>
 			<frame>
 				<reportElement x="0" y="0" width="555" height="50"/>
@@ -267,25 +290,6 @@
 				</subreport>
 			</frame>
 		</band>
-		<band height="50">
-			<frame>
-				<reportElement x="0" y="0" width="555" height="50" isRemoveLineWhenBlank="true"/>
-				<subreport>
-					<reportElement x="0" y="0" width="555" height="50" isRemoveLineWhenBlank="true"/>
-					<subreportParameter name="testType">
-						<subreportParameterExpression><![CDATA["component"]]></subreportParameterExpression>
-					</subreportParameter>
-					<subreportParameter name="reportsDatatype">
-						<subreportParameterExpression><![CDATA[$P{reportsDataType}]]></subreportParameterExpression>
-					</subreportParameter>
-					<subreportParameter name="isClassEmpty">
-						<subreportParameterExpression><![CDATA[$P{isClassEmpty}]]></subreportParameterExpression>
-					</subreportParameter>
-					<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource($P{componentTestReports})]]></dataSourceExpression>
-					<subreportExpression><![CDATA["ComponentCumulativeReport.jasper"]]></subreportExpression>
-				</subreport>
-			</frame>
-		</band>
 	</detail>
 	<pageFooter>
 		<band height="29" splitType="Stretch">
@@ -293,18 +297,25 @@
 				<reportElement style="PCRCopyRight" x="0" y="3" width="555" height="25"/>
 			</rectangle>
 			<textField>
-				<reportElement style="PCRCopyRightPageNo" x="428" y="5" width="119" height="22"/>
-				<textElement textAlignment="Left" verticalAlignment="Middle">
-					<font fontName="Times New Roman" size="11" isBold="true"/>
-				</textElement>
-				<textFieldExpression><![CDATA["Page " + $V{PAGE_NUMBER} + " of " + $V{PAGE_NUMBER}]]></textFieldExpression>
-			</textField>
-			<textField>
 				<reportElement style="PCRCopyRight" x="4" y="5" width="414" height="22"/>
 				<textElement verticalAlignment="Middle">
 					<font fontName="Times New Roman" size="11" isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{copyRights}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement style="PCRCopyRightPageNo" x="431" y="5" width="80" height="24"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="11" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Page "+$V{PAGE_NUMBER}+" of "]]></textFieldExpression>
+			</textField>
+			<textField evaluationTime="Report">
+				<reportElement style="PCRCopyRightPageNo" x="511" y="5" width="40" height="24"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="11" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[" " + $V{PAGE_NUMBER}]]></textFieldExpression>
 			</textField>
 		</band>
 	</pageFooter>

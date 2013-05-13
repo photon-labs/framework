@@ -27,7 +27,7 @@
 	<pageHeader>
 		<band height="28">
 			<frame>
-				<reportElement style="FCRHeading" mode="Opaque" x="0" y="0" width="555" height="24" isRemoveLineWhenBlank="true">
+				<reportElement style="FCRHeading" mode="Opaque" x="0" y="0" width="555" height="24">
 					<printWhenExpression><![CDATA[$P{testType}.contains("functional") && !$F{testSuites}.isEmpty() || $P{testType}.contains("functional") && !$F{allTestSuites}.isEmpty()]]></printWhenExpression>
 				</reportElement>
 				<staticText>
@@ -37,6 +37,11 @@
 					</textElement>
 					<text><![CDATA[Functional Test Report]]></text>
 				</staticText>
+				<textField>
+					<reportElement x="319" y="0" width="100" height="20"/>
+					<textElement/>
+					<textFieldExpression><![CDATA[$P{testType}]]></textFieldExpression>
+				</textField>
 			</frame>
 		</band>
 	</pageHeader>

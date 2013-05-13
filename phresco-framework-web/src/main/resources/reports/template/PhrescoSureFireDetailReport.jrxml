@@ -37,7 +37,7 @@
 	<detail>
 		<band height="323" splitType="Stretch">
 			<frame>
-				<reportElement mode="Opaque" x="0" y="5" width="555" height="43" forecolor="#000000" backcolor="#FFFFFF"/>
+				<reportElement mode="Opaque" x="0" y="5" width="555" height="43" isRemoveLineWhenBlank="true" forecolor="#000000" backcolor="#FFFFFF"/>
 				<staticText>
 					<reportElement x="8" y="0" width="169" height="18"/>
 					<textElement>
@@ -67,7 +67,7 @@
 				</textField>
 			</frame>
 			<frame>
-				<reportElement x="0" y="50" width="555" height="272"/>
+				<reportElement x="0" y="50" width="555" height="272" isRemoveLineWhenBlank="true"/>
 				<subreport>
 					<reportElement x="0" y="0" width="555" height="272" isRemoveLineWhenBlank="true"/>
 					<subreportParameter name="testType">

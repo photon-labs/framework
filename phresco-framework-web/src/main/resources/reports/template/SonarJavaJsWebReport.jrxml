@@ -64,14 +64,14 @@
 			<frame>
 				<reportElement style="SJJWRHeading" mode="Opaque" x="0" y="0" width="555" height="24"/>
 				<textField>
-					<reportElement x="15" y="4" width="155" height="15" forecolor="#FFFFFF"/>
+					<reportElement x="15" y="4" width="165" height="15" forecolor="#FFFFFF"/>
 					<textElement>
 						<font fontName="Times New Roman" size="12" isBold="true" isItalic="false"/>
 					</textElement>
 					<textFieldExpression><![CDATA["Sonar Report -" + $F{reportType}]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="true">
-					<reportElement x="181" y="4" width="360" height="15" forecolor="#FFFFFF">
+					<reportElement x="190" y="4" width="351" height="15" forecolor="#FFFFFF">
 						<printWhenExpression><![CDATA[!$F{moduleName}.isEmpty()]]></printWhenExpression>
 					</reportElement>
 					<textElement>
@@ -509,7 +509,7 @@
 				</textField>
 			</frame>
 			<frame>
-				<reportElement x="0" y="479" width="555" height="57" isRemoveLineWhenBlank="true" isPrintWhenDetailOverflows="true">
+				<reportElement x="0" y="479" width="555" height="57" isRemoveLineWhenBlank="true">
 					<printWhenExpression><![CDATA[!$F{classes}.isEmpty()]]></printWhenExpression>
 				</reportElement>
 				<rectangle>

@@ -340,9 +340,7 @@
 		<band height="55">
 			<printWhenExpression><![CDATA[$P{testType}.equals("component")]]></printWhenExpression>
 			<frame>
-				<reportElement x="0" y="0" width="555" height="55" isRemoveLineWhenBlank="true">
-					<printWhenExpression><![CDATA[$P{isClassEmpty}.equals(true)]]></printWhenExpression>
-				</reportElement>
+				<reportElement x="0" y="0" width="555" height="55" isRemoveLineWhenBlank="true"/>
 				<componentElement>
 					<reportElement key="table" style="table" x="0" y="0" width="555" height="55"/>
 					<jr:table xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd">
@@ -437,7 +435,7 @@
 	<summary>
 		<band height="194">
 			<subreport>
-				<reportElement x="0" y="3" width="555" height="191"/>
+				<reportElement x="0" y="0" width="555" height="191"/>
 				<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource($P{testCases})]]></dataSourceExpression>
 				<subreportExpression><![CDATA["PhrescoSureFireTestCaseReport.jasper"]]></subreportExpression>
 			</subreport>

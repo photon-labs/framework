@@ -26,9 +26,9 @@
 	<pageHeader>
 		<band height="24">
 			<frame>
-				<reportElement style="PAPCRHeading" mode="Opaque" x="0" y="0" width="555" height="24" isRemoveLineWhenBlank="true"/>
+				<reportElement style="PAPCRHeading" mode="Opaque" x="0" y="0" width="555" height="24"/>
 				<staticText>
-					<reportElement x="5" y="4" width="313" height="15" forecolor="#FFFFFF"/>
+					<reportElement x="5" y="3" width="313" height="17" forecolor="#FFFFFF"/>
 					<textElement>
 						<font fontName="Times New Roman" size="12" isBold="true"/>
 					</textElement>

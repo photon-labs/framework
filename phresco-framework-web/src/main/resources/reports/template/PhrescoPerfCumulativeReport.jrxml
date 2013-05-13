@@ -23,7 +23,7 @@
 	<pageHeader>
 		<band height="27">
 			<frame>
-				<reportElement style="PPCRHeading" mode="Opaque" x="0" y="0" width="555" height="24" isRemoveLineWhenBlank="true"/>
+				<reportElement style="PPCRHeading" mode="Opaque" x="0" y="0" width="555" height="24"/>
 				<staticText>
 					<reportElement x="5" y="4" width="354" height="18" forecolor="#FFFFFF"/>
 					<textElement>

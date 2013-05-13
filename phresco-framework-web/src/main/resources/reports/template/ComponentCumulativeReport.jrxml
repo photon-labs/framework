@@ -27,7 +27,7 @@
 	<pageHeader>
 		<band height="28">
 			<frame>
-				<reportElement style="CCRHeading" mode="Opaque" x="0" y="0" width="555" height="24" isRemoveLineWhenBlank="true">
+				<reportElement style="CCRHeading" mode="Opaque" x="0" y="0" width="555" height="24">
 					<printWhenExpression><![CDATA[($P{testType}.equals("component") && !$F{testSuites}.isEmpty()) || ($P{testType}.equals("unit") && !$F{allTestSuites}.isEmpty())]]></printWhenExpression>
 				</reportElement>
 				<staticText>
