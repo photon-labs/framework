@@ -93,6 +93,7 @@
 	        <input id="deleteBuild" type="button" value="<s:text name="lbl.deletebuild"/>" class="btn" disabled="disabled">
 	        <input id="deleteJobBtn" type="button" value="<s:text name="lbl.deletejob"/>" class="btn"  disabled="disabled" data-toggle="modal" href="#popupPage"/>
 	        <input id="emailConfiguration" type="button" value="<s:text name="lbl.email.configuration"/>" class="btn btn-primary">
+	        <input id="confluenceConfiguration" type="button" value="<s:text name="lbl.confluence.configuration"/>" class="btn btn-primary">
         </div>
     </div>
     
@@ -302,6 +303,10 @@ $(document).ready(function() {
 	$('#emailConfiguration').click(function() {
 		yesnoPopup('showEmailConfiguration', '<s:text name="lbl.email.configuration"/>', 'saveEmailConfiguration','<s:text name="lbl.save"/>', $('#deleteObjects'));
 	});
+	
+	$('#confluenceConfiguration').click(function() {
+		yesnoPopup('showconfluenceConfiguration', '<s:text name="lbl.confluence.configuration"/>', 'saveConfluenceConfiguration','<s:text name="lbl.save"/>');
+	});
     
     $('#setup').click(function() {
     	progressPopup('setup', '<%= appId %>', '<%= FrameworkConstants.CI_SETUP %>', '', '', getBasicParams());
@@ -331,12 +336,14 @@ $(document).ready(function() {
     	enableStart();
     	enableButton($("#configure"));
     	enableButton($("#emailConfiguration"));
+    	enableButton($("confluenceConfiguration"));
     	disableButton($("#setup"));
     } else {
     	console.log("Jenkins down , disabled configure button ");
     	enableStop();
     	disableButton($("#configure"));
     	disableButton($("#emailConfiguration"));
+    	disableButton($("#confluenceConfiguration"));
     }
     
 	// when checking on more than one job, configure button should be disabled. it can not show already created job info for more than one job
@@ -535,7 +542,10 @@ function successEvent(pageUrl, data) {
 			showProgressBar("Deleting job (s)");	
 	 	 	loadContent('CIJobDelete',$('#deleteObjects'), $('#subcontainer'), getBasicParams(), false, true);
 		}
-	}
+	} else if (pageUrl == 'saveConfluenceConfiguration'){
+		hidePopuploadingIcon();
+		$('#popupPage').modal('hide');
+	} 
 }
 
 function enableDisableDeleteButton(atleastOneCheckBoxVal) {
@@ -649,18 +659,43 @@ function popupOnOk(obj) {
 				// show popup loading icon
 	 			showPopuploadingIcon();
 			}
+		} else if (okUrl == 'saveConfluenceConfiguration') {
+			showPopuploadingIcon();
+			constructJsonString();
 		}
 }
 
 function redirectCiConfigure() {
-	if (validation && $("input:radio[name=enableBuildRelease][value='true']").is(':checked')) {
-		if(collabNetValidation()) {
-			console.log("create job with collabnet plugin ");
-			configureJob(okUrl);			
+	var collabnet = $("input:radio[name=enableBuildRelease][value='true']").is(':checked');
+	var confluence = $("input:radio[name=enableConfluence][value='true']").is(':checked')
+	if (validation) {
+		var colabStatus = false;
+		var conflStatus = false;
+		if (collabnet || confluence ) {
+			if (confluence) {
+				if(confluenceValidation()) {
+					conflStatus = true;
+				}
+			}
+			
+			if (collabnet) {
+				if(collabNetValidation()) {
+					colabStatus = true;
+				}
+			}
+			
+			if (collabnet && colabStatus) {
+				if (confluence && conflStatus) {
+					configureJob(okUrl);
+				} else if ((collabnet && colabStatus) && !confluence) {
+					configureJob(okUrl);
+				}
+			} else if ((confluence && conflStatus) && !collabnet) {
+				configureJob(okUrl);
+			} 
+		} else {
+			configureJob(okUrl);
 		}
-	} else if (validation) {
-		console.log("create job with out collabnet plugin ");
-		configureJob(okUrl);
 	}
 }
 </script>

@@ -47,6 +47,7 @@
     String appId  = appInfo.getId();
     
     String actionStr = "saveJob";
+    List<String> confluenceSites = (List<String>)request.getAttribute(FrameworkConstants.REQ_CONFLUENCE_SITES);
     actionStr = (existingJob == null || StringUtils.isEmpty(existingJob.getRepoType())) ? "saveJob" : "updateJob";
     existingJob = (existingJob == null || StringUtils.isEmpty(existingJob.getRepoType())) ? null : existingJob; // when we setup it ll have only jenkins url and port in that case we have to check svnUrl and make null
     List<String> existingClonedWorkspaces = (List<String>) request.getAttribute(FrameworkConstants.REQ_EXISTING_CLONNED_JOBS);
@@ -424,16 +425,16 @@
 										<select id="downstreamProject" name="downstreamProject" class="input-xlarge">
 											<option value="">-- Select DownStream --</option>
 											<%
-												if (CollectionUtils.isNotEmpty(existingJobsNames)) {
-													for (Properties existingJobsName : existingJobsNames) {
-														Enumeration em = existingJobsName.keys();
-														 while (em.hasMoreElements()) {
-															 String key = (String) em.nextElement();
-															 String appName = (String) existingJobsName.get(key);
-															 if(existingJob != null && existingJob.getName().equals(key)) { 
-	 															continue;
-															 }
-											%>
+											if (CollectionUtils.isNotEmpty(existingJobsNames)) {
+												for (Properties existingJobsName : existingJobsNames) {
+													Enumeration em = existingJobsName.keys();
+													 while (em.hasMoreElements()) {
+														 String key = (String) em.nextElement();
+														 String appName = (String) existingJobsName.get(key);
+														 if(existingJob != null && existingJob.getName().equals(key)) { 
+ 															continue;
+														 }
+														 %>
 														 <option value="<%= key %>"><%= key %> - (<%= appName %>)</option> 
 											<% 			}
 													}
@@ -555,6 +556,8 @@
 	<!-- CI basic settings ends -->
 		
 	<!-- build release plugin changes starts -->
+	
+	<!-- build Collabnet release plugin changes starts -->
 	<div class="theme_accordion_container clearfix" style="float: none;" id="collabnetContainer">
 	    <section class="accordion_panel_wid">
 	        <div class="accordion_panel_inner adv-settings-accoridan-inner">
@@ -660,6 +663,90 @@
 									</div>
 									
 								</fieldset>
+								<!-- build Collabnet release plugin changes ends -->
+								
+								<!-- build Confluence release plugin changes starts -->
+							
+								<div class="control-group">
+									<label class="control-label labelbold popupLbl">
+										<s:text name='lbl.enable.confluence.release' /> 
+									</label>
+									<div class="controls" style="padding-top: 5px;">
+										<input type="radio" name="enableConfluence" value="true" />&nbsp; <s:text name="lbl.yes"/>
+										<input type="radio" name="enableConfluence" value="false" checked />&nbsp; <s:text name="lbl.no"/>
+									</div>
+								</div>
+								
+								<fieldset class="popup-fieldset fieldsetBottom perFieldSet" style="text-align: left;" id="confluenceInfo">
+									<legend class="fieldSetLegend"><s:text name="lbl.confluence.release"/></legend>
+										<div id = "confluenceConfig">
+										
+											<div class="control-group">
+												<label class="control-label labelbold popupLbl">
+													<span class="red">* </span>  <s:text name='lbl.confluence.site' />
+												</label>
+												<div class="controls">
+													<select id="confluenceSite" name="confluenceSite" class="input-xlarge">
+													<%
+														if (CollectionUtils.isNotEmpty(confluenceSites)) { 
+															for (String confluenceSite : confluenceSites) { 
+												 	%> 
+																	 <option value="<%= confluenceSite %>"><%= confluenceSite %> </option> 
+													<% 
+															} 
+														} 
+													%> 
+													</select>
+												</div>
+											</div>
+											
+											<div class="control-group">
+												<div class="controls">
+													<input type="checkbox" id="confluencePublish"  name="confluencePublish" value="<%= existingJob == null ? "" : existingJob.isConfluencePublish() %>">
+													<s:text name='lbl.confluence.publish.even.build.fails' />
+												</div>
+											</div>
+											
+											<div class="control-group">
+												<label class="control-label labelbold popupLbl">
+													<span class="red">* </span>  <s:text name='lbl.confluence.space' />
+												</label>
+												<div class="controls">
+													<input type="text" id="confluenceSpace" class="input-xlarge" name="confluenceSpace" value="<%= existingJob == null ? "" : existingJob.getConfluenceSpace() %>">
+												</div>
+											</div>
+											
+											<div class="control-group">
+												<label class="control-label labelbold popupLbl">
+													<span class="red">* </span>  <s:text name='lbl.confluence.page' />
+												</label>
+												<div class="controls">
+													<input type="text" id="confluencePage" class="input-xlarge" name="confluencePage" value="<%= existingJob == null ? "" : existingJob.getConfluencePage() %>">
+												</div>
+											</div>
+											
+											<div class="control-group">
+												<label class="control-label labelbold popupLbl">
+													 <s:text name='lbl.confluence.artifacts' />
+												</label>
+												<div class="controls">
+													<input type="checkbox" id="confluenceArtifacts"  name="confluenceArtifacts" value="<%= existingJob == null ? "" : existingJob.isConfluenceArtifacts() %>">
+													<s:text name='lbl.confluence.attach.archived.artifacts' />
+												</div>
+											</div>
+											
+											<div class="control-group">
+												<label class="control-label labelbold popupLbl">
+													 <s:text name='lbl.confluence.other.files.attach' />
+												</label>
+												<div class="controls">
+													<input type="text" id="confluenceOther" class="input-xlarge" name="confluenceOther" value="<%= existingJob == null ? "" : existingJob.getConfluenceOther() %>">
+												</div>
+											</div>
+											
+										</div>
+									</fieldset>
+								<!-- build Confluence release plugin changes ends -->
 	                        </section>
 	                    </div>
 	                </div>
@@ -682,6 +769,15 @@
 		
 		credentialsDisp();
 		$("#name").focus();
+		
+		$('#confluencePublish').click(function() {
+			changeChckBoxValue(this);
+		});
+		
+		$('#confluenceArtifacts').click(function() {
+			changeChckBoxValue(this);
+		});
+		
 		
 		$("#successEmail").click(function() {
 			if($(this).is(":checked")) {
@@ -737,6 +833,7 @@
 				
 				// when the job is not null, have to make selection in radio buttons of collabnet plugin
 				$('input:radio[name=enableBuildRelease]').filter("[value='"+<%= existingJob.isEnableBuildRelease() %>+"']").attr("checked", true);
+				$('input:radio[name=enableConfluence]').filter("[value='"+<%= existingJob.isEnableConfluence() %>+"']").attr("checked", true);
 				$('input:radio[name=collabNetoverWriteFiles]').filter("[value='"+<%= existingJob.isCollabNetoverWriteFiles() %>+"']").attr("checked", true);
 				$("select[name=usedClonnedWorkspace] option[value='<%= existingJob.getUsedClonnedWorkspace() %>']").attr('selected', 'selected');
 				$("#downstreamProject option[value='<%= existingJob.getDownStreamProject() %>']").attr('selected', 'selected');
@@ -754,6 +851,11 @@
 		
 		$('input:radio[name=enableBuildRelease]').click(function() {
 			enableDisableCollabNet();
+			ciConfigureError('errMsg', "");
+		});
+		
+		$('input:radio[name=enableConfluence]').click(function() {
+			enableDisableConfluence();
 			ciConfigureError('errMsg', "");
 		});
 		
@@ -780,7 +882,20 @@
 		enableDisableMailId();
 		showConfigBasedOnTech();
 		
+		enableDisableCheckBoxBasedOnValue();
+			
+		selectSiteValue();
+		
 	});
+	
+	function selectSiteValue() {
+		$('#confluenceSite').val('<%= existingJob == null ? "" : existingJob.getConfluenceSite() %>');
+	}
+	
+	function enableDisableCheckBoxBasedOnValue() {
+		$('input:checkbox[value="' + true + '"]').attr('checked', true);
+		$('input:checkbox[value="' + false + '"]').attr('checked', false);
+	}
 	
 	function enableDisableMailId() {
 		if ($("#successEmail").is(":checked")) {
@@ -812,6 +927,7 @@
 			$('input:radio[name=enableBuildRelease]').filter("[value='false']").attr("checked", true);
 		}
 		enableDisableCollabNet();
+		enableDisableConfluence();
 	}
 
 	function showConfigBasedOnTech() {
@@ -849,7 +965,15 @@
  			showPopuploadingIcon();
  			loadContent(url, $('#configureForm, #generateBuildForm'), $('#subcontainer'), getBasicParams(), false, true);
  		}
-						
+		disableCiFormControls();
+	}
+	
+	function disableCiFormControls() {
+		//To disable controls in ci configure popup
+		$("#configureForm :input").attr("disabled", true);
+		$("#showPattern").removeAttr("onclick");
+		$("#configureForm :input[type=button]").removeClass("btn-primary");
+		$("#configureForm").find("img").removeAttr("onclick");
 	}
 	
 	function enableDisableCollabNet() {
@@ -865,10 +989,25 @@
 		
 	}
 	
+	function enableDisableConfluence() {
+		if($('input:radio[name=enableConfluence]:checked').val() == "true") {
+			$('#confluenceInfo').show();
+			$('select[name=confluenceSite]').focus();
+		} else {
+			$('#confluenceInfo').hide();
+			//when user selects no resets all the value
+			$('select[name=confluenceSite]').val('');
+			$('input:text[name=confluenceSpace],input:text[name=confluenceOther], input:text[name=confluencePage]').val('');
+			$('input:checkbox[name=confluencePublish], input:checkbox[name=confluenceArtifacts]').attr('checked', false);
+		}
+		
+	}
+	
 	// when the configure popup is clicked on save button, it should validate mandatory fields before submitting form
 	function configureJobValidation() {
 		var name= $("#name").val();
-		var svnurl= $("#svnurl").val();
+		var svnurl= $("#svnurl").val().trim();
+		$("#svnurl").val(svnurl);
 		var username= $("#username").val();
 		var password= $("#password").val();
 		var senderEmailId = $("#senderEmailId").val();
@@ -890,11 +1029,20 @@
 		}
 		
 		if($("input:radio[name=svnType][value='svn']").is(':checked')) {
-			if(isValidUrl(svnurl)){
+			
+			if (isBlank(svnurl)) {
 				$("#errMsg").html("Enter the URL");
 				$("#svnurl").focus();
 				$("#svnurl").val("");
-				console.log("url is not specified ");
+				console.log("url is missing");
+				return false;
+			} 
+			
+			if(!isBlank(svnurl) && isValidUrl(svnurl)){
+				$("#errMsg").html("Enter valid URL");
+				$("#svnurl").focus();
+				$("#svnurl").val("");
+				console.log("url is invalid");
 				return false;
 			}
 			
@@ -944,8 +1092,14 @@
 	}
 	
 	function collabNetValidation() {
-		if(isValidUrl($('input:text[name=collabNetURL]').val())) {
+		var collabNetUrl = $('input:text[name=collabNetURL]').val().trim();
+		$('#collabNetURL').val(collabNetUrl);
+		if (isBlank(collabNetUrl)) {
 			ciConfigureError('errMsg', "URL is missing");
+			$('input:text[name=collabNetURL]').focus();
+			return false;
+		} else if(isValidUrl(collabNetUrl)) {
+			ciConfigureError('errMsg', "URL is invalid");
 			$('input:text[name=collabNetURL]').focus();
 			return false;
 		} else if (isBlank($('input:text[name=collabNetusername]').val())) {
@@ -969,6 +1123,21 @@
 			$('input:text[name=collabNetRelease]').focus();
 			return false;
 		} else {
+// 			ciConfigureError('errMsg', "");
+			return true;
+	 	}
+	}
+	
+	function confluenceValidation(){
+		if (isBlank($('input:text[name=confluenceSpace]').val())) {
+			ciConfigureError('errMsg', "Space is missing");
+			$('input:text[name=confluenceSpace]').focus();
+			return false;
+		} else if (isBlank($('input:text[name=confluencePage]').val())) {
+			ciConfigureError('errMsg', "Page is missing");
+			$('input:text[name=confluencePage]').focus();
+			return false;
+		} else {
 			ciConfigureError('errMsg', "");
 			return true;
 	 	}
@@ -987,7 +1156,7 @@
 		}
 	}
 	
-	function ciConfigureError(id, errMsg){
+	function ciConfigureError(id, errMsg) {
 		$("#" + id ).empty();
 		$("#" + id ).append(errMsg);
 	}

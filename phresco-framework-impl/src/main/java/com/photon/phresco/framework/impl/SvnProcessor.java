@@ -24,8 +24,17 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
+import java.net.MalformedURLException;
 import java.net.URL;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.util.ArrayList;
+import java.util.List;
 
+import javax.crypto.Cipher;
+import javax.crypto.SecretKey;
+import javax.crypto.spec.SecretKeySpec;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.transform.OutputKeys;
@@ -38,6 +47,8 @@ import javax.xml.xpath.XPathExpression;
 import javax.xml.xpath.XPathFactory;
 
 import org.apache.log4j.Logger;
+import org.codehaus.jettison.json.JSONArray;
+import org.codehaus.jettison.json.JSONObject;
 import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.JDOMException;
@@ -50,6 +61,7 @@ import org.w3c.dom.NodeList;
 import com.photon.phresco.commons.FrameworkConstants;
 import com.photon.phresco.exception.PhrescoException;
 import com.photon.phresco.framework.model.CIJob;
+import com.trilead.ssh2.crypto.Base64;
 
 public class SvnProcessor implements FrameworkConstants{
     private static final Logger S_LOGGER = Logger.getLogger(SvnProcessor.class);
@@ -121,7 +133,7 @@ public class SvnProcessor implements FrameworkConstants{
         xmlOutput.output(document_, writer);
     }
     
-    public boolean writeXml(String generatedStringValue, CIJob job) throws PhrescoException {
+    public boolean writeSvnXml(String generatedStringValue, CIJob job) throws PhrescoException {
     	if (debugEnabled) {
     		S_LOGGER.debug("Entering Method SvnProcessor.writeXml(String generatedStringValue, CIJob job)");
     	}
@@ -134,40 +146,40 @@ public class SvnProcessor implements FrameworkConstants{
     		String jenkinsJobHome = System.getenv(JENKINS_HOME);
     		StringBuilder jenkinsHome = new StringBuilder(jenkinsJobHome);
     		jenkinsHome.append(File.separator);
-    		File file = new File(jenkinsHome.toString() + CI_CREDENTIAL_XML);
-    		org.w3c.dom.Document doc = builder.parse(file);
+    		File svnCredentialXml = new File(jenkinsHome.toString() + CI_CREDENTIAL_XML);
+    		org.w3c.dom.Document doc = builder.parse(svnCredentialXml);
     		XPathFactory xpathfactory = XPathFactory.newInstance();
     		javax.xml.xpath.XPath xpath = xpathfactory.newXPath();
     		XPathExpression expr = xpath.compile(CREDENTIAL_ENTRY_STRING);
     		Object result = expr.evaluate(doc, XPathConstants.NODESET);
     		NodeList nodes = (NodeList) result;
-    		boolean flag = false;
+    		boolean nodeExistFlag = false;
     		if (nodes != null) {
     			for (int i = 0; i < nodes.getLength(); i++) {
     				String xmlStringValue = nodes.item(i).getTextContent();
     				//check already present?
-    				if(xmlStringValue.equals(generatedStringValue)) {
-    					flag = true;
+    				if (xmlStringValue.equals(generatedStringValue)) {
+    					nodeExistFlag = true;
 
     					Node firstSibling = nodes.item(i).getNextSibling().getNextSibling();
     					Node firstNode = firstSibling.getFirstChild().getNextSibling();
     					String firstNodeName = firstNode.getNodeName();
-    					if(USERNAME.equals(firstNodeName)) {
+    					if (USERNAME.equals(firstNodeName)) {
     						if (firstNode.getTextContent().equals(job.getUserName())) {
     							credExist = true;
     						} else {
     							firstNode.setTextContent(job.getUserName());
     						}
-    					} else if(PASSWORD.equals(firstNodeName)) {
+    					} else if (PASSWORD.equals(firstNodeName)) {
     						firstNode.setTextContent(job.getPassword());
     					}
 
     					Node lastSibling = nodes.item(i).getNextSibling().getNextSibling();
     					Node lastNode = lastSibling.getLastChild().getPreviousSibling();
     					String lastNodeName = lastNode.getNodeName();
-    					if(PASSWORD.equals(lastNodeName)) {
+    					if (PASSWORD.equals(lastNodeName)) {
     						lastNode.setTextContent(job.getPassword());
-    					} else if(USERNAME.equals(lastNodeName)) {
+    					} else if (USERNAME.equals(lastNodeName)) {
     						if (lastNode.getTextContent().equals(job.getUserName())) {
     							credExist = true;
     						} else {
@@ -176,8 +188,8 @@ public class SvnProcessor implements FrameworkConstants{
     					}
     				} 
     				if ( i == nodes.getLength()-1) {
-    					//create new if not present
-    					if (!flag) {
+    					//create new nodes if not present already.
+    					if (!nodeExistFlag) {
     						Node credentialsNode = nodes.item(i).getParentNode().getParentNode();
     						org.w3c.dom.Element entry = doc.createElement(ENTRY_TAG);
     						credentialsNode.appendChild(entry);
@@ -201,12 +213,10 @@ public class SvnProcessor implements FrameworkConstants{
     			}
     		}
     		TransformerFactory transformerFactory = TransformerFactory.newInstance();
-    		Transformer transformer;
-
-    		transformer = transformerFactory.newTransformer();
+    		Transformer transformer = transformerFactory.newTransformer();
     		transformer.setOutputProperty(OutputKeys.INDENT, YES);
     		transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "2");
-    		transformer.transform(new DOMSource(doc), new StreamResult(file.getPath()));
+    		transformer.transform(new DOMSource(doc), new StreamResult(svnCredentialXml.getPath()));
     		return credExist;
     	} catch (Exception e) {
     		if (debugEnabled) {
@@ -214,6 +224,251 @@ public class SvnProcessor implements FrameworkConstants{
     		}
     		throw new PhrescoException(e);
     	} 
+    }
+    
+    public void writeConfluenceXml(String confUrl, String confUsername, String confPassword) throws PhrescoException {
+    	if (debugEnabled) {
+			S_LOGGER.error("Entered Method SvnProcessor.writeConfluenceXml");
+		}
+    	try {
+    		DocumentBuilderFactory domFactory = DocumentBuilderFactory.newInstance();
+    		domFactory.setNamespaceAware(true); 
+    		DocumentBuilder builder;
+
+    		builder = domFactory.newDocumentBuilder();
+
+    		String jenkinsJobHome = System.getenv(JENKINS_HOME);
+    		StringBuilder jenkinsHome = new StringBuilder(jenkinsJobHome);
+    		jenkinsHome.append(File.separator);
+    		File confluenceHomeXml = new File(jenkinsHome.toString() + CI_CONFLUENCE_XML);
+    		org.w3c.dom.Document doc = builder.parse(confluenceHomeXml);
+    		XPathFactory xpathfactory = XPathFactory.newInstance();
+    		javax.xml.xpath.XPath xpath = xpathfactory.newXPath();
+    		
+    		Node siteNode = (Node) xpath.evaluate(SITES_CONFLUENCE, doc, XPathConstants.NODE);
+    		org.w3c.dom.Element confluenceSiteNode = doc.createElement(CONFLUENCE_SITE_NODE);
+    		siteNode.appendChild(confluenceSiteNode);
+			
+			org.w3c.dom.Element confluenceSiteUrl = doc.createElement(CONFLUENCE_SITE_URL);
+			confluenceSiteNode.appendChild(confluenceSiteUrl);
+			confluenceSiteUrl.setTextContent(confUrl);
+			
+			org.w3c.dom.Element confluenceUserName = doc.createElement(CONFLUENCE_USERNAME);
+			confluenceSiteNode.appendChild(confluenceUserName);
+			confluenceUserName.setTextContent(confUsername);
+			
+			org.w3c.dom.Element confluencePassword = doc.createElement(PASSWORD);
+			confluenceSiteNode.appendChild(confluencePassword);
+			confluencePassword.setTextContent(confPassword);
+    		
+			TransformerFactory transformerFactory = TransformerFactory.newInstance();
+    		Transformer transformer = transformerFactory.newTransformer();
+    		transformer.setOutputProperty(OutputKeys.INDENT, YES);
+    		transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "2");
+    		transformer.transform(new DOMSource(doc), new StreamResult(confluenceHomeXml.getPath()));
+    	} catch (Exception e) {
+    		if (debugEnabled) {
+    			S_LOGGER.error("Entered into the catch block of SvnProcessor.writeConfluenceXml " + e.getLocalizedMessage());
+    		}
+    		throw new PhrescoException(e);
+    	} 
+    }
+    
+    public JSONArray readConfluenceXml() throws PhrescoException {
+    	if (debugEnabled) {
+			S_LOGGER.error("Entered Method SvnProcessor.readConfluenceXml");
+		}
+    	try {
+    		String jenkinsJobHome = System.getenv(JENKINS_HOME);
+    		StringBuilder jenkinsHome = new StringBuilder(jenkinsJobHome);
+    		jenkinsHome.append(File.separator);
+    		File confluenceHomeXml = new File(jenkinsHome.toString() + CI_CONFLUENCE_XML);
+    		if (!confluenceHomeXml.exists()) {
+    			return null;
+    		} else {
+    			DocumentBuilderFactory domFactory = DocumentBuilderFactory.newInstance();
+    			domFactory.setNamespaceAware(true); 
+    			DocumentBuilder builder = domFactory.newDocumentBuilder();
+    			org.w3c.dom.Document doc = builder.parse(confluenceHomeXml);
+    			XPathFactory xpathfactory = XPathFactory.newInstance();
+    			javax.xml.xpath.XPath xpath = xpathfactory.newXPath();
+    			XPathExpression expr = xpath.compile(SITES_CONFLUENCESITE_URL);
+    			Object result = expr.evaluate(doc, XPathConstants.NODESET);
+    			NodeList nodes = (NodeList) result;
+    			if (nodes.getLength() == 0) {
+    				return null;
+    			}
+    			if (nodes != null) {
+    				JSONArray jsonarray = new JSONArray();
+    				for (int i = 0; i < nodes.getLength(); i++) {
+    					JSONObject json = new JSONObject();
+    					String url = "";
+    					String userName = "";
+    					String password = "";
+    					String urlNode = nodes.item(i).getNodeName();
+    					if (CONFLUENCE_SITE_URL.equalsIgnoreCase(urlNode)) {
+    						url = nodes.item(i).getTextContent();
+    					} else if (CONFLUENCE_USERNAME.equalsIgnoreCase(urlNode)) {
+    						userName = nodes.item(i).getTextContent();
+    					} else if (PASSWORD.equalsIgnoreCase(urlNode)) {
+    						password = nodes.item(i).getTextContent();
+    					}
+
+    					String nameNode = nodes.item(i).getNextSibling().getNextSibling().getNodeName();
+    					if (CONFLUENCE_SITE_URL.equalsIgnoreCase(nameNode)) {
+    						url = nodes.item(i).getNextSibling().getNextSibling().getTextContent();
+    					} else if (CONFLUENCE_USERNAME.equalsIgnoreCase(nameNode)) {
+    						userName = nodes.item(i).getNextSibling().getNextSibling().getTextContent();
+    					} else if (PASSWORD.equalsIgnoreCase(nameNode)) {
+    						password = nodes.item(i).getNextSibling().getNextSibling().getTextContent();
+    					}
+
+    					String passNode = nodes.item(i).getNextSibling().getNextSibling().getNextSibling().getNextSibling().getNodeName();
+    					if (CONFLUENCE_SITE_URL.equalsIgnoreCase(passNode)) {
+    						url = nodes.item(i).getNextSibling().getNextSibling().getNextSibling().getNextSibling().getTextContent();
+    					} else if (CONFLUENCE_USERNAME.equalsIgnoreCase(passNode)) {
+    						userName = nodes.item(i).getNextSibling().getNextSibling().getNextSibling().getNextSibling().getTextContent();
+    					} else if (PASSWORD.equalsIgnoreCase(passNode)) {
+    						password = nodes.item(i).getNextSibling().getNextSibling().getNextSibling().getNextSibling().getTextContent();
+    					}
+    					json.put(CONFLUENCE_SITE_URL, url);
+    					json.put(CONFLUENCE_USERNAME, userName);
+    					json.put(PASSWORD, decyPassword(password));
+    					jsonarray.put(json);
+    				}
+
+    				return jsonarray;
+    			}
+    		}
+    	} catch (Exception e) {
+    		if (debugEnabled) {
+    			S_LOGGER.error("Entered into the catch block of SvnProcessor.readConfluenceXml "+e.getLocalizedMessage());
+    		}
+    		throw new PhrescoException(e);
+    	}
+    	
+		return null;
+    }
+    
+    public List<String> readConfluenceSites() throws PhrescoException {
+    	if (debugEnabled) {
+			S_LOGGER.error("Entered Method SvnProcessor.readConfluenceSites");
+		}
+    	try {
+    		List<String> confluenceSites = new ArrayList<String>();
+    		String jenkinsJobHome = System.getenv(JENKINS_HOME);
+    		StringBuilder jenkinsHome = new StringBuilder(jenkinsJobHome);
+    		jenkinsHome.append(File.separator);
+    		File confluenceHomeXml = new File(jenkinsHome.toString() + CI_CONFLUENCE_XML);
+    		if (!confluenceHomeXml.exists()) {
+    			return null;
+    		} else {
+    			DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+    			DocumentBuilder db = dbf.newDocumentBuilder();
+    			org.w3c.dom.Document dom = db.parse(confluenceHomeXml);
+    			javax.xml.xpath.XPath xpath = XPathFactory.newInstance().newXPath();
+
+    			XPathExpression thingExpr = xpath.compile(SITES_CONFLUENCESITE_URL);
+    			NodeList siteUrls = (NodeList)thingExpr.evaluate(dom, XPathConstants.NODESET);
+    			for(int count = 0; count < siteUrls.getLength(); count++) {
+    				confluenceSites.add(getHost(siteUrls.item(count).getTextContent()));
+    			}
+    			return confluenceSites;
+    		}
+    	} catch(Exception e) {
+    		if (debugEnabled) {
+    			S_LOGGER.error("Entered catch block of SvnProcessor.readConfluenceSites "+e.getLocalizedMessage());
+    		}
+    		throw new PhrescoException(e);	
+    	}
+    }
+    
+    private String getHost(String url) throws PhrescoException {
+    	if (debugEnabled) {
+			S_LOGGER.error("Entered Method SvnProcessor.getHost");
+		}
+    	try {
+			URL host = new URL(url);
+			return host.getHost();
+		} catch (MalformedURLException e) {
+			if (debugEnabled) {
+				S_LOGGER.error("Entered catch block of SvnProcessor.getHost "+e.getLocalizedMessage());
+			}
+			throw new PhrescoException(e);
+		}
+    }
+    
+    private String decyPassword(String encryptedText) throws PhrescoException {
+    	if (debugEnabled) {
+			S_LOGGER.error("Entered Method SvnProcessor.decyPassword");
+		}
+        String plainText = "";
+        try {
+            Cipher cipher = Cipher.getInstance(AES_ALGO);
+            cipher.init(Cipher.DECRYPT_MODE, getAes128Key(CI_SECRET_KEY));
+            byte[] decode = Base64.decode(encryptedText.toCharArray());
+            plainText = new String(cipher.doFinal(decode));
+            plainText = plainText.replace(CI_ENCRYPT_MAGIC, "");
+        } catch (Exception e) {
+        	if (debugEnabled) {
+    			S_LOGGER.error("Entered catch block of SvnProcessor.decyPassword "+e.getLocalizedMessage());
+    		}
+            throw new PhrescoException(e);
+        }
+        return plainText;
+    }
+    
+    private static SecretKey getAes128Key(String s) {
+        try {
+            MessageDigest digest = MessageDigest.getInstance(SHA_ALGO);
+            digest.reset();
+            digest.update(s.getBytes(CI_UTF8));
+            return new SecretKeySpec(digest.digest(),0,128/8, AES_ALGO);
+        } catch (NoSuchAlgorithmException e) {
+            throw new Error(e);
+        } catch (UnsupportedEncodingException e) {
+            throw new Error(e);
+        }
+    }
+    
+    public void clearSitesNodes() throws PhrescoException {
+    	if (debugEnabled) {
+			S_LOGGER.error("Entered Method SvnProcessor.clearSitesNodes");
+		}
+    	try {
+    		String jenkinsJobHome = System.getenv(JENKINS_HOME);
+    		StringBuilder jenkinsHome = new StringBuilder(jenkinsJobHome);
+    		jenkinsHome.append(File.separator);
+    		File confluenceHomeXml = new File(jenkinsHome.toString() + CI_CONFLUENCE_XML);
+    		if (confluenceHomeXml.exists()) {
+    			DocumentBuilderFactory domFactory = DocumentBuilderFactory.newInstance();
+    			domFactory.setNamespaceAware(true);
+    			DocumentBuilder builder = domFactory.newDocumentBuilder();
+    			org.w3c.dom.Document doc = builder.parse(confluenceHomeXml);
+    			removeAll(doc, Node.ELEMENT_NODE, CONFLUENCE_SITE_NODE);
+    			TransformerFactory transformerFactory = TransformerFactory.newInstance();
+    			Transformer transformer = transformerFactory.newTransformer();
+    			transformer.setOutputProperty(OutputKeys.INDENT, YES);
+    			transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "2");
+    			transformer.transform(new DOMSource(doc), new StreamResult(confluenceHomeXml.getPath()));
+    		}
+    	} catch (Exception e) {
+    		if (debugEnabled) {
+    			S_LOGGER.error("Entered catch block of SvnProcessor.clearSitesNodes "+e.getLocalizedMessage());
+    		}
+    		throw new PhrescoException(e);
+    	}
+    }
+
+    private void removeAll(Node node, short nodeType, String name) {
+    	if (node.getNodeType() == nodeType && (name == null || node.getNodeName().equals(name))) {
+    		node.getParentNode().removeChild(node);
+    	} else {
+    		NodeList list = node.getChildNodes();
+    		for (int i = 0; i < list.getLength(); i++) {
+    			removeAll(list.item(i), nodeType, name);
+    		}
+    	}
     }
     
     
