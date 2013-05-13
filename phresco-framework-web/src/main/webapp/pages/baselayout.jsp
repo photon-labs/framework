@@ -544,9 +544,9 @@
 			var individualWidth = 575/5;
 			var newWidth = individualWidth * noOfVisibleChildrens
 			if ($.browser.safari) {
-				$(".headerInnerTop ul").css("width", newWidth + 40);
+				$(".headerInnerTop ul").css("width", newWidth + 51);
 	    	} else {
-	    		$(".headerInnerTop ul").css("width", newWidth + 15);
+	    		$(".headerInnerTop ul").css("width", newWidth + 29);
 	    	}
 		} else {
 			if ($.browser.safari) {
