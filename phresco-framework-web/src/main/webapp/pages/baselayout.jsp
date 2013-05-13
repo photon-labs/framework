@@ -176,7 +176,7 @@
 					<div class="nav_slider">
 						<nav class="headerInnerTop">
 							<ul>
-								<li class="wid_home"><a href="#" class="inactive" name="headerMenu" id="home">
+								<li class="hideContent wid_home <%= FrameworkConstants.HOME_KEY %>"><a href="#" class="inactive" name="headerMenu" id="home">
 								    <s:label key="lbl.hdr.home"  theme="simple"/></a>
                                 </li>
 								<li class="wid_app"><a href="#" class="inactive" name="headerMenu" id="applications">

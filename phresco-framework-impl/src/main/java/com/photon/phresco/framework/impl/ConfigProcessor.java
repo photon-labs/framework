@@ -25,6 +25,7 @@ import java.util.*;
 import javax.crypto.*;
 import javax.crypto.spec.*;
 
+import org.apache.commons.configuration.plist.ParseException;
 import org.apache.commons.lang.*;
 import org.apache.log4j.*;
 import org.jdom.*;
@@ -84,16 +85,18 @@ public class ConfigProcessor implements FrameworkConstants {
         if (triggers != null) {
         	for (String trigger : triggers) {
     			if(TIMER_TRIGGER.equals(trigger)) {
-    				triggerNode.addContent(createElement("hudson.triggers.TimerTrigger", null).addContent(createElement("spec", cronExpression)));
+    				triggerNode.addContent(createElement(HUDSON_TRIGGER_TIMER, null).addContent(createElement(SPEC, cronExpression)));
     			} else {
-    				triggerNode.addContent(createElement("hudson.triggers.SCMTrigger", null).addContent(createElement("spec", cronExpression)));
+    				triggerNode.addContent(createElement(HUDSON_TRIGGER_SCMTRIGGER, null).addContent(createElement(SPEC, cronExpression)));
     			}
     		}
         }
     }
     
     public void enableCollabNetBuildReleasePlugin(CIJob job) throws PhrescoException {
-    	S_LOGGER.debug("Entering Method ConfigProcessor.enableCollabNetBuildReleasePlugin()");
+    	if (DebugEnabled) {
+    		S_LOGGER.debug("Entering Method ConfigProcessor.enableCollabNetBuildReleasePlugin()");
+    	}
     	try {
 			org.jdom.Element element = new Element(CI_FILE_RELEASE_NODE);
 			element.addContent(createElement(CI_FILE_RELEASE_OVERRIDE_AUTH_NODE, TRUE));
@@ -108,15 +111,45 @@ public class ConfigProcessor implements FrameworkConstants {
 			
 	    	XPath xpath = XPath.newInstance(CI_FILE_RELEASE_PUBLISHER_NODE);
 	        xpath.addNamespace(root_.getNamespace());
-	        Element pullisherNode = (Element) xpath.selectSingleNode(root_);
-	        pullisherNode.getContent().add(3, element);
+	        Element publisherNode = (Element) xpath.selectSingleNode(root_);
+	        publisherNode.getContent().add(3, element);
     	} catch (Exception e) {
+    		if (DebugEnabled) {
+        		S_LOGGER.debug("Entering catch block of ConfigProcessor.enableCollabNetBuildReleasePlugin() "+e.getLocalizedMessage());
+        	}
 			throw new PhrescoException(e);
 		}
     }
+       
+    public void enableConfluenceReleasePlugin(CIJob job) throws PhrescoException {
+    	if (DebugEnabled) {
+    		S_LOGGER.debug("Entering Method ConfigProcessor.enableConfluenceReleasePlugin()");
+    	}
+    	try {
+    		org.jdom.Element element = new Element("com.myyearbook.hudson.plugins.confluence.ConfluencePublisher");
+    		element.addContent(createElement(SITE_NAME, job.getConfluenceSite()));
+    		element.addContent(createElement(ATTACH_ARCHIVED_ARTIFACTS, String.valueOf(job.isConfluenceArtifacts())));
+    		element.addContent(createElement(BUILD_IF_UNSTABLE, String.valueOf(job.isConfluencePublish())));
+    		element.addContent(createElement(FILE_SET, job.getConfluenceOther()));
+    		element.addContent(createElement(SPACE_NAME, job.getConfluenceSpace()));
+    		element.addContent(createElement(PAGE_NAME, job.getConfluencePage()));
+    		element.addContent(createElement(EDITORS, job.getConfluenceOther()));
+    		XPath  xpath = XPath.newInstance(CI_FILE_RELEASE_PUBLISHER_NODE);
+    		xpath.addNamespace(root_.getNamespace());
+    		Element publisherNode = (Element) xpath.selectSingleNode(root_);
+    		publisherNode.getContent().add(element);
+    	} catch (JDOMException e) {
+    		if (DebugEnabled) {
+        		S_LOGGER.debug("Entering catch block of ConfigProcessor.enableConfluenceReleasePlugin() "+e.getLocalizedMessage());
+        	}
+    		throw new PhrescoException(e);
+    	}
+    }
     
     public void useClonedScm(String parentJobName, String criteria) throws PhrescoException {
-    	S_LOGGER.debug("Entering Method ConfigProcessor.useClonedScm()");
+    	if (DebugEnabled) {
+    		S_LOGGER.debug("Entering Method ConfigProcessor.useClonedScm()");
+    	}
     	try {
             if(StringUtils.isEmpty(criteria)) {
             	criteria = ANY;
@@ -129,12 +162,17 @@ public class ConfigProcessor implements FrameworkConstants {
             scmNode.addContent(createElement(PARENT_JOB_NAME, parentJobName));
             scmNode.addContent(createElement(CI_CRITERIA, criteria));
 		} catch (Exception e) {
+			if (DebugEnabled) {
+	    		S_LOGGER.debug("Entering catch block of ConfigProcessor.useClonedScm() "+e.getLocalizedMessage());
+	    	}
 			throw new PhrescoException(e);
 		}
     }
     
     public void cloneWorkspace(String clonePattern, String criteria, String archiveMethod) throws PhrescoException {
-    	S_LOGGER.debug("Entering Method ConfigProcessor.cloneWorkspace()");
+    	if (DebugEnabled) {
+    		S_LOGGER.debug("Entering Method ConfigProcessor.cloneWorkspace()");
+    	}
     	try {
         	XPath xpath = XPath.newInstance(PUBLISHERS_NODE);
             xpath.addNamespace(root_.getNamespace());
@@ -154,12 +192,17 @@ public class ConfigProcessor implements FrameworkConstants {
             element.addContent(createElement(ARCHIVE_METHOD, archiveMethod));
             publisherNode.addContent(element);
 		} catch (Exception e) {
+			if (DebugEnabled) {
+	    		S_LOGGER.debug("Entering catch block of ConfigProcessor.cloneWorkspace() "+e.getLocalizedMessage());
+	    	}
 			throw new PhrescoException(e);
 		}
     }
     
     public void buildOtherProjects(String childProjects, String name, String ordinal, String color)  throws PhrescoException {
-    	S_LOGGER.debug("Entering Method ConfigProcessor.buildOtherProjects()");
+    	if (DebugEnabled) {
+    		S_LOGGER.debug("Entering Method ConfigProcessor.buildOtherProjects()");
+    	}
     	try {
         	XPath xpath = XPath.newInstance(PUBLISHERS_NODE);
             xpath.addNamespace(root_.getNamespace());
@@ -169,21 +212,31 @@ public class ConfigProcessor implements FrameworkConstants {
             element.addContent(createElement(THRESHOLD, null).addContent(createElement(NAME, name)).addContent(createElement(ORDINAL, ordinal)).addContent(createElement(COLOR, color)));
             publisherNode.addContent(element);
 		} catch (Exception e) {
+			if (DebugEnabled) {
+	    		S_LOGGER.debug("Entering catch block of ConfigProcessor.buildOtherProjects() " +e.getLocalizedMessage());
+	    	}
 			throw new PhrescoException(e);
 		}
     }
     
     public void updatePOMLocation(String pomLocation)  throws PhrescoException {
-    	S_LOGGER.debug("Entering Method ConfigProcessor.updatePOMLocation()");
+    	if (DebugEnabled) {
+    		S_LOGGER.debug("Entering Method ConfigProcessor.updatePOMLocation()");
+    	}
     	try {
             root_.addContent(createElement(ROOT_POM, pomLocation));
 		} catch (Exception e) {
+			if (DebugEnabled) {
+	    		S_LOGGER.debug("Entering catch block of ConfigProcessor.updatePOMLocation() "+e.getLocalizedMessage());
+	    	}
 			throw new PhrescoException(e);
 		}
     }
     
     public void enablePostBuildStep(String pomLocation, String mvnCommand)  throws PhrescoException {
-    	S_LOGGER.debug("Entering Method ConfigProcessor.enablePostBuildStep()");
+    	if (DebugEnabled) {
+    		S_LOGGER.debug("Entering Method ConfigProcessor.enablePostBuildStep()");
+    	}
     	try {
 	    	XPath xpath = XPath.newInstance(POST_BUILDERS_NODE);
 	        xpath.addNamespace(root_.getNamespace());
@@ -206,7 +259,9 @@ public class ConfigProcessor implements FrameworkConstants {
     }
     
     public void enablePreBuildStep(String pomLocation, String mvnCommand) throws PhrescoException {
-    	S_LOGGER.debug("Entering Method ConfigProcessor.enablePreBuildStep");
+    	if (DebugEnabled) {
+    		S_LOGGER.debug("Entering Method ConfigProcessor.enablePreBuildStep");
+    	}
     	try {
 	    	XPath xpath = XPath.newInstance(PRE_BUILDERS_NODE);
 	        xpath.addNamespace(root_.getNamespace());
@@ -218,16 +273,21 @@ public class ConfigProcessor implements FrameworkConstants {
 			if (!StringUtils.isEmpty(pomLocation)) {
 				element.addContent(createElement(POM_NODE, pomLocation));
 			}
-			element.addContent(createElement(USE_PRIVATE_REPOSITORY_NODE, "false"));
-			S_LOGGER.debug("pullisherNode " + postBuildNode);
+			element.addContent(createElement(USE_PRIVATE_REPOSITORY_NODE, FALSE));
+			S_LOGGER.debug("publisherNode " + postBuildNode);
 	        postBuildNode.addContent(element);
 		} catch (Exception e) {
+			if (DebugEnabled) {
+	    		S_LOGGER.debug("Entering catch block of ConfigProcessor.enablePreBuildStep "+e.getLocalizedMessage());
+	    	}
 			throw new PhrescoException(e);
 		}
     }
     
     public void setArtifactArchiver(boolean enableArtifactArchiver, String artifactArchiverLocation) throws PhrescoException {
-    	S_LOGGER.debug("Entering Method ConfigProcessor.enableArtifactArchiver");
+    	if (DebugEnabled) {
+    		S_LOGGER.debug("Entering Method ConfigProcessor.enableArtifactArchiver");
+    	}
     	try {
     		if (enableArtifactArchiver) {
     			changeNodeValue(ARTIFACT_ARCHIVER_VALUE_NODE, artifactArchiverLocation);
@@ -236,12 +296,17 @@ public class ConfigProcessor implements FrameworkConstants {
     			deleteElement(CI_FILE_RELEASE_PUBLISHER_NODE, HUDSON_TASKS_ARTIFACT_ARCHIVER_NODE);
     		}
     	} catch (Exception e) {
+    		if (DebugEnabled) {
+        		S_LOGGER.debug("Entering catch block of ConfigProcessor.enableArtifactArchiver "+e.getLocalizedMessage());
+        	}
 			throw new PhrescoException(e);
 		}
     }
     
     public void setEmailPublisher(Map<String, String> emails, String attachmentsPattern) throws PhrescoException {
-    	S_LOGGER.debug("Entering Method ConfigProcessor.enableEmailPublisher");
+    	if (DebugEnabled) {
+    		S_LOGGER.debug("Entering Method ConfigProcessor.enableEmailPublisher");
+    	}
     	try {
     		String failureEmails = (String)emails.get(FAILURE_EMAILS);
     		String successEmails = (String)emails.get(SUCCESS_EMAILS);
@@ -259,6 +324,9 @@ public class ConfigProcessor implements FrameworkConstants {
     	        }
     		}
     	} catch (Exception e) {
+    		if (DebugEnabled) {
+        		S_LOGGER.debug("Entering catch block of ConfigProcessor.enableEmailPublisher "+e.getLocalizedMessage());
+        	}
 			throw new PhrescoException(e);
 		}
     }
@@ -280,12 +348,18 @@ public class ConfigProcessor implements FrameworkConstants {
     }
     
 	public String encyPassword(String password) throws PhrescoException {
+		if (DebugEnabled) {
+    		S_LOGGER.debug("Entering method ConfigProcessor.encyPassword ");
+    	}
 		String encString = "";
 		try {
 			Cipher cipher = Cipher.getInstance(AES_ALGO);
 			cipher.init(Cipher.ENCRYPT_MODE, getAes128Key(CI_SECRET_KEY));
 			encString = new String(Base64.encode(cipher.doFinal((password+CI_ENCRYPT_MAGIC).getBytes(CI_UTF8))));
 		} catch (Exception e) {
+			if (DebugEnabled) {
+	    		S_LOGGER.debug("Entering catch block of ConfigProcessor.encyPassword "+e.getLocalizedMessage());
+	    	}
 			throw new PhrescoException(e);
 		}
 		return encString;
@@ -305,7 +379,9 @@ public class ConfigProcessor implements FrameworkConstants {
     }
 	
     public void deleteElement(String xpathRootNodePath, String xpathDeleteNode) throws PhrescoException {
-    	S_LOGGER.debug("Entering Method ConfigProcessor.deleteElement()");
+    	if (DebugEnabled) {
+    		S_LOGGER.debug("Entering Method ConfigProcessor.deleteElement()");
+    	}
     	try {
         	XPath xpath = XPath.newInstance(xpathRootNodePath);
             xpath.addNamespace(root_.getNamespace());
@@ -316,16 +392,25 @@ public class ConfigProcessor implements FrameworkConstants {
             	xpathRootNode.removeContent();
             }
 		} catch (Exception e) {
+			if (DebugEnabled) {
+	    		S_LOGGER.debug("Entering catch block of ConfigProcessor.deleteElement() "+e.getLocalizedMessage());
+	    	}
 			throw new PhrescoException(e);
 		}
     }
     
     public void saveStreamAsFile(File destFile) throws PhrescoException {
+    	if (DebugEnabled) {
+    		S_LOGGER.debug("Entering method ConfigProcessor.saveStreamAsFile");
+    	}
     	try {
             InputStream configAsStream = getConfigAsStream();
             CIManagerImpl cmi = new CIManagerImpl();
             cmi.streamToFile(destFile, configAsStream) ;
 		} catch (Exception e) {
+			if (DebugEnabled) {
+	    		S_LOGGER.debug("Entering catch block of ConfigProcessor.saveStreamAsFile "+e.getLocalizedMessage());
+	    	}
 			throw new PhrescoException(e);
 		}
     }

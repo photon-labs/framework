@@ -296,8 +296,18 @@
             <result name="success">/pages/applications/ci/emailConfiguration.jsp</result>
         </action>
         
+<!--         Show Confluence configuration on CI -->
+         <action name="showconfluenceConfiguration" method="showConfluenceConfiguration" class="com.photon.phresco.framework.actions.applications.CI">
+            <result name="success">/pages/applications/ci/confluenceConfiguration.jsp</result>
+        </action>
+        
 <!--         Save email configuration on CI -->
         <action name="saveEmailConfiguration" method="saveEmailConfiguration" class="com.photon.phresco.framework.actions.applications.CI">
+            <result name="ci">/pages/applications/ci/ci.jsp</result>
+        </action>
+        
+<!--         Save Confluence configuration on CI -->
+        <action name="saveConfluenceConfiguration" method="saveConfluenceConfiguration" class="com.photon.phresco.framework.actions.applications.CI">
             <result name="ci">/pages/applications/ci/ci.jsp</result>
         </action>
         
