@@ -74,6 +74,11 @@
 			"path": "components/projects/js"
 		},
 		
+		"MockProject" : {
+			"moduleName":"MockProject",
+			"path" : "components/projects/test/MockProject"
+		},
+		
 		"projectTest": {
 			"moduleName":"projectTest",
 			"path" : "components/projects/test/projectTest"

@@ -35,6 +35,7 @@ define(["framework/widget", "common/loading", "header/api/headerAPI", "login/log
 			Clazz.navigationController.jQueryContainer = commonVariables.contentPlaceholder;
 			self.projectListContent = new Clazz.com.components.projectlist.js.ProjectList();
 			Clazz.navigationController.push(self.projectListContent, true);
+			$("#navigation").css("display", "block");
 		},
 		
 		removePlaceholder : function() {

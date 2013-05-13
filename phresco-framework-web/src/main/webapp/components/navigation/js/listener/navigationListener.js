@@ -1,4 +1,4 @@
-define(["framework/widget", "navigation/api/navigationAPI", "projects/project", "application/application", "features/features", "codequality/codequality", "configuration/configuration", "build/build"], function() {
+define(["framework/widget", "navigation/api/navigationAPI", "projects/project", "projects/editproject", "application/application", "features/features", "codequality/codequality", "configuration/configuration", "build/build"], function() {
 
 	Clazz.createPackage("com.components.navigation.js.listener");
 
@@ -16,6 +16,7 @@ define(["framework/widget", "navigation/api/navigationAPI", "projects/project", 
 		configuration : null, 
 		build : null,
 		currentTab : null,
+		editproject : null,
 		
 		/***
 		 * Called in initialization time of this class 
@@ -116,6 +117,14 @@ define(["framework/widget", "navigation/api/navigationAPI", "projects/project", 
 							self.project = new Clazz.com.components.projects.js.Project();
 							
 						retuenObj = self.project;
+						break;
+					
+					case commonVariables.editproject :
+						
+						if(self.editproject === null)
+							self.editproject = new Clazz.com.components.projects.js.EditProject();
+							
+						retuenObj = self.editproject;
 						break;
 				
 				}
