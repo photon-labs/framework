@@ -5832,6 +5832,7 @@ input[class*='chckBxAlign'] {
 
 .vAlignSub {
 	vertical-align: middle !important;
+	cursor: pointer;
 }
 
 .buildTypeSpan {
