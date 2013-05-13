@@ -37,11 +37,6 @@
 					</textElement>
 					<text><![CDATA[Functional Test Report]]></text>
 				</staticText>
-				<textField>
-					<reportElement x="319" y="0" width="100" height="20"/>
-					<textElement/>
-					<textFieldExpression><![CDATA[$P{testType}]]></textFieldExpression>
-				</textField>
 			</frame>
 		</band>
 	</pageHeader>
