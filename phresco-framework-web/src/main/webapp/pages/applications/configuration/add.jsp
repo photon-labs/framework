@@ -484,7 +484,7 @@
 	}
 	
 	function getPropertyTemplate() {
-		showLoadingIcon();//To hide the loading icon
+		showLoadingIcon();//To show the loading icon
 		var selectedConfigname = $('#configName').val();
 		var envData;
 		var selectedEnv = "";

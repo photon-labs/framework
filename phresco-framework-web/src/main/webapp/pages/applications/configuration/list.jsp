@@ -91,10 +91,10 @@
 	var favouriteConfigId = "<%= favouriteConfigId %>";
 	
 	$(document).ready(function() {
+		$('#successmsg').hide();
 		var basicParams = getBasicParamsAsJson();
 		var params = '{' + basicParams + ', "fromPage" : "' + fromPage + '", "configPath" : "' + configPath + '", "envSpecific" : ' + isEnvSpecific + ', "fromFavouriteConfig" : ' + fromFavouriteConfig + ', "configId" : "' + favouriteConfigId + '"}';
 		loadJsonContent('envList', params,  $('#loadEnv'));
-		
 		
 		$('#addEnvironments').click(function() {
 			var params = "envSpecific=";

@@ -23,15 +23,19 @@
 <%@ page import="java.util.List" %>
 <%@ page import="org.apache.commons.collections.CollectionUtils"%>
 <%@ page import="com.phresco.pom.site.Reports"%>
+<%@ page import="com.phresco.pom.site.ReportCategories"%>
 
 <script src="js/reader.js" ></script>
 
 <%
 	String appId = (String)request.getAttribute(FrameworkConstants.REQ_APP_ID);
     List<Reports> selectedReports = (List<Reports>) request.getAttribute(FrameworkConstants.REQ_SITE_SLECTD_REPORTS);
+	List<ReportCategories> selectedCategories = (List<ReportCategories>) request.getAttribute(FrameworkConstants.REQ_SITE_SELECTD_CATEGORIES);
+	String requestIp = (String) request.getAttribute(FrameworkConstants.REQ_REQUEST_IP);
+	String showIcons = (String) session.getAttribute(requestIp);
     String disabledStr = "";
-    if (CollectionUtils.isEmpty(selectedReports)) {
-        disabledStr = "disabled";
+    if (CollectionUtils.isEmpty(selectedCategories)) {
+    	disabledStr = "disabled";
     } else {
         disabledStr = "";
     }
@@ -57,7 +61,7 @@
 
 <script>
 	/** To enable/disable the Generate button based on the site configured **/
-	<%  if (CollectionUtils.isEmpty(selectedReports)){ %>
+	<%  if (CollectionUtils.isEmpty(selectedCategories)) { %>
 	        $("#generate").removeClass("btn-primary");  
 	        $("#generate").addClass("disabled");
 	<% } else { %>
@@ -74,7 +78,7 @@
     	});
     	
     	$('#generate').click(function() {
-    		progressPopup('generateReport', '<%= appId %>', '<%= FrameworkConstants.REQ_SITE_REPORT %>', '', '', getBasicParams());
+    		progressPopup('generateReport', '<%= appId %>', '<%= FrameworkConstants.REQ_SITE_REPORT %>', '', '', getBasicParams(), '', '', '<%= showIcons %>');
     	});
 
     	hideLoadingIcon();

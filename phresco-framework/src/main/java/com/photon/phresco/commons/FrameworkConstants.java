@@ -1480,6 +1480,7 @@ public interface FrameworkConstants {
    String REQ_SITE_REPORTS = "reports";
    String REQ_SITE_SLECTD_REPORTS = "selectedReports";
    String REQ_SITE_SLECTD_REPORTSCATEGORIES = "maven-project-info-reports-plugin";
+   String REQ_SITE_SELECTD_CATEGORIES = "selectedCategories";
    String REQ_SONAR_REPORT = "sonarReport";
    
    

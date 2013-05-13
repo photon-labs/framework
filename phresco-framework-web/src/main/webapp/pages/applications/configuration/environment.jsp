@@ -153,16 +153,20 @@ $(document).ready(function() {
 	
 	$("#multiselectAppliesTo").scrollbars(); //JQuery scroll bar
 	
+	$('#envName').bind('input propertychange', function (e) {
+        var envName = $(this).val();
+        envName = checkForSplChrExceptDot(envName);
+        $(this).val(envName);
+    });
+	
 	hidePopuploadingIcon();
 	document.getElementById('createEnvironment').disabled = true; 
 	$("#createEnvironment").removeClass("btn-primary");
 	$('#errMsg').empty();
 	
-	var update = false;
 	$('input[name="envNames"]').change(function() {
 		if ($(this).is(':checked')) {
 			$('input[name="addBtn"]').val("<s:text name='lbl.btn.update'/>");
-			update = true;
 			var envData = $.parseJSON($(this).val());
 			var appliesTos = envData.appliesTo;
 			$('#multiselectAppliesTo ul li input[type=checkbox]').each(function() {
@@ -196,11 +200,12 @@ $(document).ready(function() {
 			setTimeOut();
 			returnVal = false;
 		} else {
+			var checkToAdd = $('input[name="addBtn"]').val();
 			$('#multiselect ul li input[type=checkbox]').each(function() {
 				var jsonData = $(this).val();
 				var envs = $.parseJSON(jsonData);
 				var envName = envs.name;
-				if(!update) {
+				if(checkToAdd == "Add") {
 					if (name.trim().toLowerCase() == envName.trim().toLowerCase()) {
 						$("#errMsg").html("<s:text name='popup.err.msg.env.name.exists'/>");
 						setTimeOut();

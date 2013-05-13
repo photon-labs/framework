@@ -202,6 +202,7 @@
 		
 		hideLoadingIcon();//To hide the loading icon
 		hideProgressBar();
+		$('#successmsg').show();
 		accordionOperation();
 		deleteButtonStatus();
 		

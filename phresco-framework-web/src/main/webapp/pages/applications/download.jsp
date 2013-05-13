@@ -439,7 +439,8 @@
 						}
 					}
                 %>
-            </section>  
+            </section> 
+                
 			<% if (serverDownloadUrl == false && dbDownloadUrl == false && editorDownloadUrl == false && toolsDownloadUrl == false && othersDownloadUrl == false) { %>
 					<div class="alert alert-block">
 						<s:text name="lbl.err.msg.list.downloads"/>
@@ -454,7 +455,7 @@
 	
 	//To check whether the device is ipad or not and then apply jquery scrollbar
 	if(!isiPad()) {
-		$(".mfbox").scrollbars();
+		$(".theme_accordion_container").scrollbars();		
 	}
 	
 	$(document).ready(function(){
