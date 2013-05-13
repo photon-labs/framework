@@ -17,7 +17,6 @@
     limitations under the License.
 
 --%>
-<%@page import="com.photon.phresco.commons.model.FunctionalFramework"%>
 <%@ taglib uri="/struts-tags" prefix="s"%>
 
 <%@ page import="java.util.Collection" %>
@@ -36,6 +35,7 @@
 <%@ page import="com.photon.phresco.commons.model.WebService"%>
 <%@ page import="com.photon.phresco.commons.model.DownloadInfo"%>
 <%@ page import="com.photon.phresco.commons.model.TechnologyOptions"%>
+<%@ page import="com.photon.phresco.commons.model.FunctionalFramework"%>
 
 <%
 	String appId = (String)request.getAttribute(FrameworkConstants.REQ_APP_ID);
@@ -77,6 +77,7 @@
 	String functionalFramework = "";
 	List<String> selectedWebservices = null;
 	List<ArtifactGroupInfo> pilotServers = null;
+	String pilotFunctionalFramework = "";
 	List<ArtifactGroupInfo> pilotDatabases = null;
 	List<String> pilotWebservices = null;
 	List<ArtifactGroupInfo> selectedServers = null;
@@ -229,7 +230,7 @@
 			<div class="control-group <%= uiTypeClass %>" id="funcFrameworkControl">
 				<label class="accordion-control-label labelbold"><s:text name='lbl.functional.test.framework'/></label>
 				<div class="controls">
-					<select class="input-xlarge" name="functionalFramework" <%-- onchange="showPilotProjectInfo(this);" --%>>
+					<select class="input-xlarge" name="functionalFramework" id="functionalFramework">
 						<option value="" selected disabled><s:text name='lbl.default.opt.select.func.framework'/></option>
 						<%
 							for (FunctionalFramework funcTestFramework : funcTestFrameworks) {
@@ -601,6 +602,7 @@
     <% 					pilotServers = appInfo.getSelectedServers();
 						pilotDatabases = appInfo.getSelectedDatabases();	
 						pilotWebservices = appInfo.getSelectedWebservices();
+						pilotFunctionalFramework = appInfo.getFunctionalFramework();
 	%>
 						showPilotSelectedDownloadInfo();
 					}
@@ -665,61 +667,72 @@
 	}	
     
     function showPilotSelectedDownloadInfo() {
-   		
- 	<% 	if (pilotServers != null) {
-			for(ArtifactGroupInfo artifactGrpInfo : pilotServers) {
-				String server = artifactGrpInfo.getArtifactGroupId();
-				List<String> serverVersions = artifactGrpInfo.getArtifactInfoIds();
-	%>			
-				var pilotsrver = '<%= server %>';
-				$('select[name=server] option').each(function () {
-			 		var server = $(this).val();
-			 		if (pilotsrver === server) {
-			 			accordionOpen('#serverLayerControl', $('input[value=serverLayer]'));
-			 			$('#serverLayerControl').each(function () {
-							document.getElementById("checkAll1").checked=true
-			        	});
-			 		}
-			   	});
-				
-				addServer('<%= server %>', '<%= serverVersions %>', pilotsrver);
-	<%
+    	<%
+    		if (StringUtils.isNotEmpty(pilotFunctionalFramework)) {
+   		%>
+	    		$("#functionalFramework option").each(function() {
+	    			if ($(this).val() == '<%= pilotFunctionalFramework %>') {
+	    				$(this).attr("selected", "selected");
+	    				return false;
+	    			}
+	    		})
+    	<%
+    		}
+	 		if (pilotServers != null) {
+				for(ArtifactGroupInfo artifactGrpInfo : pilotServers) {
+					String server = artifactGrpInfo.getArtifactGroupId();
+					List<String> serverVersions = artifactGrpInfo.getArtifactInfoIds();
+		%>			
+					var pilotsrver = '<%= server %>';
+					$('select[name=server] option').each(function () {
+				 		var server = $(this).val();
+				 		if (pilotsrver === server) {
+				 			accordionOpen('#serverLayerControl', $('input[value=serverLayer]'));
+				 			$('#serverLayerControl').each(function () {
+								document.getElementById("checkAll1").checked=true
+				        	});
+				 		}
+				   	});
+					
+					addServer('<%= server %>', '<%= serverVersions %>', pilotsrver);
+		<%
+			    }
 		    }
-	    }
-	%>
+		%>
+		
+		<%
+			if (pilotDatabases != null) {
+				for(ArtifactGroupInfo artifactGrpInfo : pilotDatabases) {
+					String database = artifactGrpInfo.getArtifactGroupId();
+					List<String> databaseVersions = artifactGrpInfo.getArtifactInfoIds();
+		%>
+					var pilotDb = '<%= database %>';
+					$('select[name=database] option').each(function () {
+				 		var database = $(this).val();
+				 		if (pilotDb === database) {
+				 			accordionOpen('#databaseLayerControl', $('input[value=databaseLayer]'));
+							$('#databaseLayerControl').each(function () {
+								document.getElementById("checkAll2").checked=true
+				        	});
+				 		}
+				   	});
+					addDatabase('<%= database%>', '<%=databaseVersions%>', pilotDb);
+		<%
+			    }
+	    	}
+		%>
+		<% 
+			if (pilotWebservices != null) {
+		%>	
+				accordionOpen('#webserviceLayerControl', $('input[value=webserviceLayer]'));
 	
-	<% 	if (pilotDatabases != null) {
-			for(ArtifactGroupInfo artifactGrpInfo : pilotDatabases) {
-				String database = artifactGrpInfo.getArtifactGroupId();
-				List<String> databaseVersions = artifactGrpInfo.getArtifactInfoIds();
-	%>
-				var pilotDb = '<%= database %>';
-				$('select[name=database] option').each(function () {
-			 		var database = $(this).val();
-			 		if (pilotDb === database) {
-			 			accordionOpen('#databaseLayerControl', $('input[value=databaseLayer]'));
-						$('#databaseLayerControl').each(function () {
-							document.getElementById("checkAll2").checked=true
-			        	});
-			 		}
-			   	});
-				addDatabase('<%= database%>', '<%=databaseVersions%>', pilotDb);
-	<%
-		    }
-    	}
-	%>
-	<% 
-		if (pilotWebservices != null) {
-	%>	
-			accordionOpen('#webserviceLayerControl', $('input[value=webserviceLayer]'));
-
-			$('#webserviceLayerControl').each(function () {
-				document.getElementById("checkAll3").checked = true;
-	       	});
-			selectDelselectWebService(true);
-	<%
-		}
-	%>
+				$('#webserviceLayerControl').each(function () {
+					document.getElementById("checkAll3").checked = true;
+		       	});
+				selectDelselectWebService(true);
+		<%
+			}
+		%>
     }
     
     function selectDelselectWebService(checkedStr) {
