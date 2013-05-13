@@ -40,6 +40,7 @@
 	String actualResult = "";
 	String status = "";
 	String strDisable = "";
+	String bugComment = "";
 	if(testCase != null) {
 		featureId = testCase.getFeatureId();
 		testCaseId = testCase.getTestCaseId();
@@ -48,6 +49,7 @@
 		expectedResult = testCase.getExpectedResult();
 		actualResult = testCase.getActualResult();
 		status = testCase.getStatus();
+		bugComment = testCase.getBugComment();
 		strDisable = "disabled";
 	}
 %>
@@ -183,7 +185,7 @@
 		    <div class="controls">
 		        <textarea class="appinfo-desc input-xlarge" maxlength="150" title="<s:text name="title.150.chars"/>" class="xlarge" 
 		        	id="bugComment" placeholder="<s:text name="label.testcase.comment.placeholder"/>"
-		        	name="bugComment"></textarea>
+		        	name="bugComment"><%= StringUtils.isNotEmpty(bugComment) ? bugComment : "" %></textarea>
 		    </div>
 		</div>
 		<!-- BugComment ends -->

@@ -63,6 +63,9 @@ import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.codehaus.jettison.json.JSONArray;
+import org.codehaus.jettison.json.JSONException;
+import org.codehaus.jettison.json.JSONObject;
 import org.w3c.dom.Document;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
@@ -2288,7 +2291,7 @@ public class Quality extends DynamicParameterAction implements Constants {
 		FrameworkUtil frameworkUtil = FrameworkUtil.getInstance();
 		setReqAttribute(PATH, frameworkUtil.getManualTestDir(appInfo));
 		
-		return APP_MANUAL_TEST;
+		return MANUAL;
 	   }
 	 
 	public String fetchManualTestSuites() throws PhrescoException, PhrescoPomException  {
@@ -2444,6 +2447,8 @@ public class Quality extends DynamicParameterAction implements Constants {
 			S_LOGGER.debug("Entering Method Quality.saveTestSuites()");
 		}
 		ApplicationInfo appInfo = getApplicationInfo();
+		String requestIp = getHttpRequest().getRemoteAddr();
+		setReqAttribute(REQ_REQUEST_IP, requestIp);
 		setReqAttribute(REQ_APPINFO, appInfo);
 		FrameworkUtil frameworkUtil = FrameworkUtil.getInstance();
 		String path = frameworkUtil.getManualTestDir(appInfo);
@@ -2461,6 +2466,8 @@ public class Quality extends DynamicParameterAction implements Constants {
 			S_LOGGER.debug("Entering Method Quality.saveTestCases()");
 		}
 		ApplicationInfo appInfo = getApplicationInfo();
+		String requestIp = getHttpRequest().getRemoteAddr();
+		setReqAttribute(REQ_REQUEST_IP, requestIp);
 		setReqAttribute(REQ_APPINFO, appInfo);
 		FrameworkUtil frameworkUtil = FrameworkUtil.getInstance();
 		String path = frameworkUtil.getManualTestDir(appInfo);
@@ -2529,13 +2536,12 @@ public class Quality extends DynamicParameterAction implements Constants {
     public class FileNameFileFilter implements FilenameFilter {
         private String filter_;
         private String startWith_;
-        public FileNameFileFilter(String filter, String startWith) {
+        public FileNameFileFilter(String filter) {
             filter_ = filter;
-            startWith_ = startWith;
         }
 
         public boolean accept(File dir, String name) {
-            return name.endsWith(filter_) && name.startsWith(startWith_);
+            return name.endsWith(filter_);
         }
     }
 
@@ -2578,7 +2584,7 @@ public class Quality extends DynamicParameterAction implements Constants {
 			setReqAttribute(REQ_FROM_PAGE, getFromPage());
 			setReqAttribute(REQ_SONAR_URL, url);
 			setReqAttribute(CHECK_REPORT_AVAILABILITY, isReportAvailable);
-        	List<String> existingPDFs = getExistingPDFs();
+        	JSONArray existingPDFs = getExistingPDFs();
     		if (existingPDFs != null) {
     			setReqAttribute(REQ_PDF_REPORT_FILES, existingPDFs);
     		}
@@ -2849,9 +2855,12 @@ public class Quality extends DynamicParameterAction implements Constants {
 			
 			// component xml check 
 			if(!xmlResultsAvailable) {
-				file = new File(sb.toString() + frameworkUtil.getComponentTestReportDir(appInfo));
-				xmlResultsAvailable = xmlFileSearch(file, xmlResultsAvailable);
-	            S_LOGGER.debug("check component Test xml Availablity ==>" + xmlResultsAvailable);
+				String componentDir = frameworkUtil.getComponentTestReportDir(appInfo);
+				if(StringUtils.isNotEmpty(componentDir)) {
+					file = new File(sb.toString() + componentDir);
+					xmlResultsAvailable = xmlFileSearch(file, xmlResultsAvailable);
+		            S_LOGGER.debug("check component Test xml Availablity ==>" + xmlResultsAvailable);
+				}
 			}
 			
 			// performance xml check
@@ -2890,9 +2899,10 @@ public class Quality extends DynamicParameterAction implements Constants {
 		return xmlResultsAvailable;
 	}
 
-	private List<String> getExistingPDFs() throws PhrescoException {
+	private JSONArray getExistingPDFs() throws PhrescoException, JSONException {
 		S_LOGGER.debug("Entering Method Quality.getExistingPDFs()");
 		List<String> pdfFiles = new ArrayList<String>();
+		JSONArray jsonarray = null;
 		// popup showing list of pdf's already created
 		String pdfDirLoc = "";
 		String fileFilterName = "";
@@ -2905,18 +2915,29 @@ public class Quality extends DynamicParameterAction implements Constants {
 		}
 		File pdfFileDir = new File(pdfDirLoc);
 		if(pdfFileDir.isDirectory()) {
-		    File[] children = pdfFileDir.listFiles(new FileNameFileFilter(DOT + PDF, fileFilterName));
+		    File[] children = pdfFileDir.listFiles(new FileNameFileFilter(DOT + PDF));
 		    QualityUtil util = new QualityUtil();
 		    if(children != null) {
 		    	util.sortResultFile(children);
 		    }
+		    jsonarray = new JSONArray();
 			for (File child : children) {
-				String fileNameWithType = child.getName().replace(DOT + PDF, "").replace(fileFilterName + UNDERSCORE, "");
-				String[] fileWithType = fileNameWithType.split(UNDERSCORE);
-				pdfFiles.add(fileWithType[0] + UNDERSCORE + fileWithType[1]);
+				JSONObject json = new JSONObject();
+				// three value
+				DateFormat yymmdd = new SimpleDateFormat("MMM dd yyyy HH.mm");
+				if(child.toString().contains("detail")) {
+					json.put("time", yymmdd.format(child.lastModified()));
+					json.put("type", "detail");
+					json.put("fileName", child.getName());
+				} else if(child.toString().contains("crisp")) {
+					json.put("time", yymmdd.format(child.lastModified()));
+					json.put("type", "crisp");
+					json.put("fileName", child.getName());
+				}
+				jsonarray.put(json);
 			}
 		}
-		return pdfFiles;
+		return jsonarray;
 	}
     
     public String printAsPdf () {
@@ -2948,6 +2969,8 @@ public class Quality extends DynamicParameterAction implements Constants {
 	            		parameter.setValue(getThemeColorJson());
 	            	} else if ("technologyName".equals(key)) {
 	            		parameter.setValue(technology.getName());
+	            	} else if ("reportName".equals(key)) {
+	            		parameter.setValue(reportName);
 	            	}
 	            }
 	        }
@@ -2991,14 +3014,14 @@ public class Quality extends DynamicParameterAction implements Constants {
         	String pdfLOC = "";
         	String archivePath = getApplicationHome() + File.separator + DO_NOT_CHECKIN_DIR + File.separator + ARCHIVES + File.separator;
         	if ((FrameworkConstants.ALL).equals(fromPage)) {
-        		pdfLOC = archivePath + CUMULATIVE + File.separator + getApplicationInfo().getAppDirName() + UNDERSCORE + reportFileName + DOT + PDF;
+        		pdfLOC = archivePath + CUMULATIVE + File.separator + reportFileName;
         	} else {
-        		pdfLOC = archivePath + fromPage + File.separator + fromPage + UNDERSCORE + reportFileName + DOT + PDF;
+        		pdfLOC = archivePath + fromPage + File.separator + reportFileName;
         	}
             File pdfFile = new File(pdfLOC);
             if (pdfFile.isFile()) {
     			fileInputStream = new FileInputStream(pdfFile);
-    			fileName = reportFileName.split(UNDERSCORE)[1];
+    			fileName = reportFileName;
             }
         } catch (Exception e) {
         	if (s_debugEnabled) {
@@ -3017,9 +3040,9 @@ public class Quality extends DynamicParameterAction implements Constants {
         	String pdfLOC = "";
         	String archivePath = getApplicationHome() + File.separator + DO_NOT_CHECKIN_DIR + File.separator + ARCHIVES + File.separator;
         	if ((FrameworkConstants.ALL).equals(fromPage)) {
-        		pdfLOC = archivePath + CUMULATIVE + File.separator + getApplicationInfo().getAppDirName() + UNDERSCORE + reportFileName + DOT + PDF;
+        		pdfLOC = archivePath + CUMULATIVE + File.separator + reportFileName;
         	} else {
-        		pdfLOC = archivePath + fromPage + File.separator + fromPage + UNDERSCORE + reportFileName + DOT + PDF;
+        		pdfLOC = archivePath + fromPage + File.separator + reportFileName;
         	}
             File pdfFile = new File(pdfLOC);
             if (pdfFile.isFile()) {
