@@ -555,9 +555,10 @@ public interface FrameworkConstants {
 	/*
 	 * Technology based Key
 	 */
-	String HELP_KEY = "Help";
+	String HOME_KEY = "Home";
 	String SETTINGS_KEY = "Settings";
 	String DOWNLOAD_KEY = "Download";
+	String HELP_KEY = "Help";
 	String CODE_KEY = "Code";
 	String BUILD_KEY = "Build";
 	String UNIT_TEST_KEY = "Unit_Test";
