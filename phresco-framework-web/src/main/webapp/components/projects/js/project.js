@@ -107,6 +107,7 @@ define(["framework/widgetWithTemplate", "projects/listener/projectsListener", "p
 			self.projectsListener.addLayersEvent();
 			self.projectsListener.removeLayersEvent();
 			self.projectsListener.technologyAndVersionChangeEvent();
+			self.setDateTimePicker();
 			
 			$("img[name='close']").unbind('click');
 			$("img[name='close']").bind('click', function(){

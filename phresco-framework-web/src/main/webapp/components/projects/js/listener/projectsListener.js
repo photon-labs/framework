@@ -571,9 +571,10 @@ define(["framework/widget", "framework/widgetWithTemplate", "common/loading", "p
 			self.appInfos = [];
 			self.appInfosweb = [];
 			self.appInfosmobile = [];
-			self.customerIds.push("photon");
+			self.customerIds.push(self.getCustomer());
 			self.projectInfo.version = projectversion;
 			self.projectInfo.name = projectname;
+			self.projectInfo.projectCode = projectcode;
 			self.projectInfo.description = projectdescription;
 			self.projectInfo.customerIds = self.customerIds;
 						
@@ -639,7 +640,7 @@ define(["framework/widget", "framework/widgetWithTemplate", "common/loading", "p
 						appInfo.name = projectname + "-" + techName; 
 						techInfo.id = $(value).children("td.types").children("select.mobile_types").find(':selected').val();
 						techInfo.appTypeId = "mobile-layer";
-						techInfo.techGroupId = $(value).children("td.mobile").children("select.mobile_layer").find(':selected').val();
+						techInfo.techGroupId = $(value).children("td.mobile").children("select.mobile_layer").find(':selected').text();
 						if(versionText == "No Versions available") {
 							techInfo.version = "";
 						} else {
