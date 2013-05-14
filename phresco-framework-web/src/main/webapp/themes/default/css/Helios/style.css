@@ -454,7 +454,7 @@ html, body {
 	background: -ms-linear-gradient(top,  #3e3e3e 0%,#1b1b1b 100%); /* IE10+ */
 	background: linear-gradient(to bottom,  #3e3e3e 0%,#1b1b1b 100%); /* W3C */
 	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#3e3e3e', endColorstr='#1b1b1b',GradientType=0 ); /* IE6-9 */
-	z-index:4;
+	z-index:1;
 }
 
 /* ********************************************** CSS related to Customer change Dropdown ************************************************************************************** */
@@ -1378,6 +1378,32 @@ ul.nav li.dropdown:hover > .test_options{
 
 @media screen and (min-width: 978px) and (max-width: 1024px) {
 
+.build_info table.small thead.fixedHeader th {
+	width: 350px;
+}
+
+.build_info table.big thead.fixedHeader th:nth-child(2) {
+	width: 100px;
+}
+
+.build_info table.big thead.fixedHeader th:nth-child(3) {
+	width: 160px;
+}
+
+.build_info table.big thead.fixedHeader th:nth-child(4) {
+	width: 250px;
+}
+
+.build_info table.big thead.fixedHeader th:nth-child(5) {
+	width: 135px;
+}
+
+.optiontitle .alert_div {
+	font-size: 9px !important;
+	width: 28%;	
+	margin: 0 4px !important;
+}
+
 .startdate input, .enddate input {
 	width: 85px !important;
 	margin-right: 4px;
@@ -1402,8 +1428,29 @@ ul.nav li.dropdown:hover > .test_options{
 .title_nav ul a {
 	padding: 12px 4px !important;
 }
+
 }
 @media screen and (min-width: 1025px) and (max-width: 1152px) {
+
+.build_info table.small thead.fixedHeader th {
+	width: 240px;
+}
+
+.build_info table.big thead.fixedHeader th:nth-child(2) {
+	width: 125px;
+}
+
+.build_info table.big thead.fixedHeader th:nth-child(3) {
+	width: 160px;
+}
+
+.build_info table.big thead.fixedHeader th:nth-child(4) {
+	width: 324px;
+}
+
+.build_info table.big thead.fixedHeader th:nth-child(5) {
+	width: 135px;
+}
 
 .startdate input, .enddate input {
 	width: 95px !important;
@@ -1433,6 +1480,22 @@ ul.nav li.dropdown:hover > .test_options{
 
 @media screen and (min-width: 1153px) and (max-width: 1280px) {
 
+.build_info table.small thead.fixedHeader th {
+	width: 190px;
+}
+
+.build_info table.big thead.fixedHeader th:nth-child(2) {
+	width: 175px;
+}
+
+.build_info table.big thead.fixedHeader th:nth-child(3) {
+	width: 160px;
+}
+
+.build_info table.big thead.fixedHeader th:nth-child(4) {
+	width: 324px;
+}
+
 .startdate input, .enddate input {
 	width: 120px !important;
 	margin-right: 4px;
@@ -1457,6 +1520,22 @@ ul.nav li.dropdown:hover > .test_options{
 }
 
 @media screen and (min-width: 1281px) and (max-width: 1360px) {
+
+.build_info table.small thead.fixedHeader th {
+	width: 170px;
+}
+
+.build_info table.big thead.fixedHeader th:nth-child(2) {
+	width: 175px;
+}
+
+.build_info table.big thead.fixedHeader th:nth-child(3) {
+	width: 214px;
+}
+
+.build_info table.big thead.fixedHeader th:nth-child(4) {
+	width: 324px;
+}
 
 .startdate input, .enddate input {
 	width: 140px !important;
@@ -1664,7 +1743,8 @@ ul.nav li.dropdown:hover > .test_options{
 #build_runagsource .table:nth-child(2) ul {
 	border: 1px solid #c7c7c7;
 	border-radius:6px;
-	min-height: 150px;	
+	min-height: 150px;
+	cursor: move;	
 }
 
 #build_runagsource .table:nth-child(2) ul li {
@@ -1695,7 +1775,7 @@ ul.nav li.dropdown:hover > .test_options{
 	margin-left: 10px !important;	
 }
 
-/* *************************************************************************** STYLES FOR CONFIGUARATION PAGE ************************************************************************** */
+/* ****************************************************************** STYLES FOR CONFIGUARATION PAGE ************************************************************************** */
 
 .env_border {
 	border:1px solid #cdcdcd;
@@ -1746,9 +1826,13 @@ ul.nav li.dropdown:hover > .test_options{
 
 .add_env .connected li div:first-child{
 	float:left;
-	width: 51px;
+	width: 54px;
 	text-align:center;
 	border-right: 1px solid #d8d8d8;
+}
+
+.add_env .connected li div input{
+	margin-top:0 !important;
 }
 
 .add_env .connected li div:last-child{
@@ -1853,6 +1937,7 @@ ul.nav li.dropdown:hover > .test_options{
 
 /* *************************************************************************** STYLES FOR FIXED-HEADER ************************************************************************************ */
 
+/* build page */
 
 thead.fixedHeader tr {
 	position: relative;
@@ -1874,20 +1959,40 @@ html>body tbody.scrollContent {
 	text-align: center !important;
 }
 
-.build_info table thead.fixedHeader th + th {
-	width: 340px;
+.build_info table.small thead.fixedHeader th + th {
+	width: 370px;
 }
 
-.build_info table thead.fixedHeader th + th + th {
-	width: 180px;
+.build_info table.small thead.fixedHeader th + th + th {
+	width: 245px;
 }
 
-.build_info table thead.fixedHeader th + th + th + th {
-	width: 240px;
+.build_info table.small thead.fixedHeader th + th + th + th {
+	width: 210px;
 }
 
-.build_info table thead.fixedHeader th + th + th + th + th {
-	width: 380px;
+.build_info table.small thead.fixedHeader th + th + th + th + th {
+	width: 450px;
+}
+
+.build_info table.big thead.fixedHeader th:first-child {
+	text-align: left!important;	
+}
+
+.build_info table.big thead.fixedHeader th + th {
+	width: 210px;
+}
+
+.build_info table.big thead.fixedHeader th + th + th {
+	width: 184px;
+}
+
+.build_info table.big thead.fixedHeader th + th + th + th {
+	width: 377px;
+}
+
+.build_info table.big thead.fixedHeader th + th + th + th + th {
+	width: 220px;
 }
 
 .build_info table tbody.scrollContent td {
@@ -1902,6 +2007,17 @@ html>body tbody.scrollContent {
 	width: 300px;
 }
 
+/* Project_list page fixed header*/
+
+.proj_list table tbody.scrollContent td {
+	width: 18%;
+}
+
+/* quality_unit page fixed header*/
+
+.code_content table tbody.scrollContent td {
+	width: 9%;
+}
 
 /* ********************************************************************** STYLES FOR QUALITY_UNIT PAGE ************************************************************************************ */
 
@@ -1920,10 +2036,12 @@ html>body tbody.scrollContent {
 
 .unit_path input:first-child{
 	margin-right: 3px;
+	font-size: 12px;
 }
 
 .unit_path input:last-child{
 	margin-right: 6px;
+	font-size: 12px;
 }
 
 .qual_unit .code_report {
@@ -1956,6 +2074,10 @@ html>body tbody.scrollContent {
 	color: #ef7b43 !important;
 }
 
+.unit_view a, .unit_view a:hover {
+	color: #333;
+	text-decoration:none;
+}
 /* *************************************************************** STYLES FOR QUALITY_UNIT_GRAPH PAGE ************************************************************************************ */
 
 .graph_area {
