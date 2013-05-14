@@ -4,7 +4,6 @@ define(["framework/widgetWithTemplate", "header/listener/headerListener"] , func
 
 	Clazz.com.commonComponents.modules.header.js.Header = Clazz.extend(Clazz.WidgetWithTemplate, {
 		headerEvent : null,
-		
 		// template URL, used to indicate where to get the template
 		templateUrl: commonVariables.contexturl + "/js/commonComponents/modules/header/template/header.tmp",
 		configUrl: "../../js/commonComponents/modules/header/config/config.json",
@@ -39,10 +38,11 @@ define(["framework/widgetWithTemplate", "header/listener/headerListener"] , func
         registerEvents : function (headerListener) {
             var self = this;
 			self.onLogoutEvent = new signals.Signal();
-			self.onProjectlistEvent = new signals.Signal();
+			self.onTabChangeEvent = new signals.Signal();
 			self.onSelectCustomerEvent = new signals.Signal();
+			
 			self.onLogoutEvent.add(headerListener.doLogout, headerListener);
-			self.onProjectlistEvent.add(headerListener.projectList, headerListener);
+			self.onTabChangeEvent.add(headerListener.loadTab, headerListener);
 			self.onSelectCustomerEvent.add(headerListener.selectCoustomer, headerListener);
         },
 		
@@ -57,8 +57,11 @@ define(["framework/widgetWithTemplate", "header/listener/headerListener"] , func
 				self.onLogoutEvent.dispatch();
 			});
 			
-			$('#pojectList').click(function(){
-				self.onProjectlistEvent.dispatch();
+			$(".header_left ul li").click(function(){
+				if($(this).text() != self.headerListener.currentTab){
+					self.headerListener.currentTab = $(this).text();
+					self.onTabChangeEvent.dispatch();
+				}
 			});
 			
 			$('a[name=customers]').click(function(){

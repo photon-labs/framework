@@ -38,9 +38,6 @@ define(["framework/widget", "login/api/loginAPI", "common/loading", "footer/foot
 							if(response != undefined && response != null && response.data.validLogin == true){
 								self.setUserInfo(response.data);
 								self.appendPlaceholder();
-								//self.renderHeader();
-								//self.renderFooter();
-								//self.renderContent();
 								self.renderNavigation();
 							} else {
 								//authentication failed
@@ -60,6 +57,11 @@ define(["framework/widget", "login/api/loginAPI", "common/loading", "footer/foot
 			}
 		},
 		
+		pageRefresh : function(contentObj){
+			var self = this;
+			self.appendPlaceholder();
+			self.renderNavigation(contentObj);
+		},
 		
 		setUserInfo : function(data){
 			var self = this, userInfo = JSON.stringify(data);
@@ -126,33 +128,12 @@ define(["framework/widget", "login/api/loginAPI", "common/loading", "footer/foot
 			$(commonVariables.basePlaceholder).append(commonVariables.footerPlaceholder);
 		},
 		
-		renderHeader : function() {
-			var self = this;
-			Clazz.navigationController.jQueryContainer = commonVariables.headerPlaceholder;
-			self.headerContent = new Clazz.com.commonComponents.modules.header.js.Header();
-			self.headerContent.data = JSON.parse(self.loginAPI.localVal.getSession('userInfo'));
-			Clazz.navigationController.push(self.headerContent, false);
-		},
-		
-		renderNavigation : function() {
+		renderNavigation : function(contentObj) {
 			var self = this;
 			Clazz.navigationController.jQueryContainer = commonVariables.navigationPlaceholder;
 			self.navigationContent = new Clazz.com.components.navigation.js.navigation();
+			self.navigationContent.currentContent = contentObj;
 			Clazz.navigationController.push(self.navigationContent, false);
-		},
-		
-		renderContent : function(){
-			var self = this;
-			Clazz.navigationController.jQueryContainer = commonVariables.contentPlaceholder;
-			self.projectlistContent = new Clazz.com.components.projectlist.js.ProjectList();
-			Clazz.navigationController.push(self.projectlistContent, true);
-		},
-		
-		renderFooter : function(){
-			var self = this;
-			Clazz.navigationController.jQueryContainer = commonVariables.footerPlaceholder;
-			self.footerContent = new Clazz.com.commonComponents.modules.footer.js.Footer();
-			Clazz.navigationController.push(self.footerContent, false);
 		}
 	});
 
