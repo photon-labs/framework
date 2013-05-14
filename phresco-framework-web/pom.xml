@@ -113,7 +113,7 @@
 
 		<dependency>
 			<groupId>jslibraries.files</groupId>
-			<artifactId>jslib_min</artifactId>
+			<artifactId>jslib_jss_min</artifactId>
 			<version>1.0.0</version>
 			<type>js</type>
 		</dependency>

@@ -47,7 +47,7 @@ define(["framework/widget", "login/api/loginAPI", "common/loading", "footer/foot
 						function(serviceError){
 							//service access failed
 							self.loadingScreen.removeLoading();
-							$(".login_error_msg").text('authendication failed');
+							$(".login_error_msg").text('authentication failed');
 						}
 					);
 				}
