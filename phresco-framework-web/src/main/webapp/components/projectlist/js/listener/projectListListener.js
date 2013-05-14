@@ -135,6 +135,8 @@ define(["framework/widget", "framework/widgetWithTemplate", "projectlist/api/pro
 			var self = this;
 			Clazz.navigationController.jQueryContainer = commonVariables.contentPlaceholder;
 			self.editAplnContent = new Clazz.com.components.application.js.Application();
+			self.editAplnContent.appDirName = value;
+			self.projectListAPI.localVal.setJson('appDirName', value);
 			Clazz.navigationController.push(self.editAplnContent, true);
 			$("#applicationedit").css("display", "block");
 			$("#aplntitle").html("Edit - "+value);

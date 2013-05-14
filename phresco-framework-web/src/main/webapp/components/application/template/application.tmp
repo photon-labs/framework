@@ -2,83 +2,94 @@
     <section class="content_main create_proj" id="appinfo">
           <table class="table table-striped table_border table-bordered" cellpadding="0" cellspacing="0" border="0">  
             <tbody> 
+			{{#each projectlist.appdetails.data.appInfos}}
             	<tr>
                     <td data-i18n="application.edit.name"><sup>*</sup></td>
-                    <td><input type="text" placeholder="Dr-Drupal7"/></td>
+                    <td><input type="text" placeholder="Dr-Drupal7" value="{{name}}"/></td>
                     <td data-i18n="application.edit.code"><sup>*</sup></td>
-                    <td><input type="text" placeholder="Application Code"/></td>
+                    <td><input type="text" placeholder="Application Code" value="{{code}}"/></td>
                     <td class="desc" rowspan="3" data-i18n="application.edit.description"></td>
-                    <td class="descdata" rowspan="3"><textarea rows="5"></textarea></td>
+                    <td class="descdata" rowspan="3"><textarea rows="5">{{description}}</textarea></td>
                 </tr>
                 <tr>
                 	<td data-i18n="application.edit.appdirectory"></td>
-                    <td><input type="text" placeholder="1.0"/></td>
+                    <td><input type="text" placeholder="1.0" value="{{appDirName}}"/></td>
                     <td data-i18n="application.edit.version"><sup>*</sup></td>
-                    <td><input type="text" placeholder="2.0" readonly/></td>
+                    <td><input type="text" placeholder="2.0" readonly value="{{version}}"/></td>
                 </tr>
                 <tr>
                     <td data-i18n="application.edit.technology"></td>
-                    <td><input type="text" placeholder="Android Hybrid"/><input class="tech_ver" type="text" placeholder="4.0.3"/></td>
+                    <td><input type="text" placeholder="Android Hybrid" value="{{techInfo.id}}"/>
+					<input class="tech_ver" type="text" placeholder="4.0.3" value="{{techInfo.version}}"/></td>
                     <td data-i18n="application.edit.pilotproject">Pilot Projects</td>
                     <td>
                         <select>
                             <option>Eshop</option>
                         </select>
                     </td>
-                </tr>     
+                </tr>
+				{{/each}}	  
+				
                 <tr class="proj_title">
                       <td colspan="3" data-i18n="application.edit.servers"></td>
-                      <td colspan="3"><img src="../themes/default/images/helios/close_icon.png"  width="25" height="20" border="0" alt=""></td>
+                      <td colspan="3"><img src="../themes/default/images/helios/close_icon.png"  border="0" alt=""></td>
                     </tr>
                     <tr class="servers">
                       <td data-i18n="application.edit.servers"></td>
-                      <td><select>
-                            <option>Select Servers</option>
+                      <td name="servers"><select name="appServers">
+						<option>Select Server</option>
+						{{#each projectlist.serverData}}
+                            <option value="{{id}}">{{name}}</option>
+						{{/each}}
                           </select>
                       </td>
                       <td data-i18n="application.edit.versions"></td>
-                      <td colspan="3"><select>
-                            <option>Select Version</option>
-                          </select>
+                      <td colspan="3" name="version">
+							<select name="server_version">
+								<option>Select Version</option>
+							</select>
 						  <div class="flt_right">
-							<a href="javascript:;"><img name="addServer" src="../themes/default/images/helios/plus_icon.png" width="25" height="20" border="0" alt=""> </a> <a href="javascript:;"><img name="removeServer" width="25" height="20" border="0" alt=""></a>
+							<a href="javascript:;"><img name="addServer" src="../themes/default/images/helios/plus_icon.png" border="0" alt=""> </a> <a href="javascript:;"><img name="removeServer" border="0" alt=""></a>
 						</div>
                       </td>
                     </tr>
                     
                     <tr class="proj_title">
                       <td colspan="3" data-i18n="application.edit.database"></td>
-                      <td colspan="3"><img src="../themes/default/images/helios/close_icon.png"  width="25" height="20" border="0" alt=""></td>
+                      <td colspan="3"><img src="../themes/default/images/helios/close_icon.png"  border="0" alt=""></td>
                      </tr>
                       <tr class="database">
                       <td data-i18n="application.edit.database"></td>
-                      <td><select>
-                            <option>Select Database</option>
+                      <td name="servers"><select name="databases">
+						<option>Select Database</option>
+						{{#each projectlist.databaseData}}
+                            <option value="{{id}}">{{name}}</option>
+						{{/each}}
                           </select>
                       </td>
                       <td data-i18n="application.edit.versions"></td>
-                      <td colspan="3"><select>
-                            <option>Select Version</option>
+                      <td colspan="3" name="version">
+							<select name="db_version">
+								<option>Select Version</option>
                           </select>
                            <div class="flt_right">
-								<a href="javascript:;"><img src="../themes/default/images/helios/plus_icon.png" name="addDatabase" width="25" height="20" border="0" alt=""></a> <a href="javascript:;"><img name="removeDatabase" width="25" height="20" border="0" alt=""></a>
+								<a href="javascript:;"><img src="../themes/default/images/helios/plus_icon.png" name="addDatabase" border="0" alt=""></a> <a href="javascript:;"><img name="removeDatabase" border="0" alt=""></a>
 							</div>
                       </td>
                     </tr>
     
                     <tr class="proj_title">
                       <td colspan="3" data-i18n="application.edit.webservice"></td>
-                      <td colspan="3"><img src="../themes/default/images/helios/close_icon.png"  width="25" height="20" border="0" alt=""></td>
+                      <td colspan="3"><img src="../themes/default/images/helios/close_icon.png"  border="0" alt=""></td>
                      </tr>
                      <tr>
                        <td colspan="6">
                           <table width="100%" cellpadding="0" cellspacing="0" border="0">
                           <tr>
-                          		<td data-i18n="application.edit.webservice"></td>		
-                                <td><input type="checkbox"> REST/JSON</td>
-                                <td><input type="checkbox"> REST/XML</td>
-                                <td><input type="checkbox"> SOAP 1.2</td>
-                                <td><input type="checkbox"> SOAP 1.1</td>
+                          		<td data-i18n="application.edit.webservice"></td>
+									{{#each projectlist.webserviceData}}				
+										<td><input type="checkbox" value="{{id}}"> {{name}}</td>
+									{{/each}}	
                               	<td></td>
                           </tr>
                           </table>

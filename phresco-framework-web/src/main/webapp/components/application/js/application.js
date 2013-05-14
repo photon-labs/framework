@@ -24,13 +24,16 @@ define(["framework/widgetWithTemplate", "application/listener/applicationListene
 		initialize : function(globalConfig){
 			var self = this;
 			self.editApplicationListener = new Clazz.com.components.application.js.listener.ApplicationListener(globalConfig);
+			self.applicationAPI = applicationAPI = new Clazz.com.components.application.js.api.ApplicationAPI();
 			self.registerEvents(self.editApplicationListener);
 		},
 		
 		registerEvents : function(editApplicationListener) {
 			var self = this;
 			self.onCancelEvent = new signals.Signal();
+			self.appConfig = new signals.Signal();
 			self.onCancelEvent.add(editApplicationListener.onCancelUpdate, editApplicationListener); 
+			self.appConfig.add(editApplicationListener.getAppConfig, editApplicationListener); 
 		},
 		
 		
@@ -52,6 +55,19 @@ define(["framework/widgetWithTemplate", "application/listener/applicationListene
 		postRender : function(element) {			
 		},
 		
+		preRender: function(whereToRender, renderFunction){
+			var self = this;
+			setTimeout(function() {
+				self.editApplicationListener.getAppInfo(self.editApplicationListener.getRequestHeader(self.appDirName), function(response) {
+					var projectlist = {};
+					projectlist.projectlist = response;
+					//console.info('projectlist = ' , projectlist);
+					//console.info('appdir = ' , self.applicationAPI.localVal.getJson("appDirName"));
+					renderFunction(projectlist, whereToRender);
+				});
+			}, 200);	
+		},
+				
 		/***
 		 * Bind the action listeners. The bindUI() is called automatically after the render is complete 
 		 *
@@ -63,7 +79,7 @@ define(["framework/widgetWithTemplate", "application/listener/applicationListene
 			$('#cancelbutton').click(function(){
 				self.onCancelEvent.dispatch();
 			}); 
-			
+			self.editApplicationListener.serverDBChangeEvent();
 			self.editApplicationListener.addServerDatabaseEvent();
 			self.editApplicationListener.removeServerDatabaseEvent();
 		}
