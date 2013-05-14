@@ -15,7 +15,7 @@
 								<img src="../themes/default/images/helios/username_icon.png">
 							</div>
 							<div class="logintext">	
-								<input type="text" id="username"  data-i18n="[placeholder]login.placeholder.username;" >
+								<input type="text" id="username" value="arunkumar_ve"  data-i18n="[placeholder]login.placeholder.username;" >
 							</div>
 							<div class="clear"></div>
 					 	</div>
@@ -28,7 +28,7 @@
 								<img src="../themes/default/images/helios/password_icon.png">
 							</div>
 							<div class="logintext">	
-								<input type="password" id="password"  data-i18n="[placeholder]login.placeholder.password;">
+								<input type="password" id="password" value="Arunkumar_1988"  data-i18n="[placeholder]login.placeholder.password;">
 							</div>
 							<div class="clear"></div>
 					 	</div>
