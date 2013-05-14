@@ -176,7 +176,8 @@ define(["framework/widget", "framework/templateProvider"], function() {
 			setDateTimePicker : function(){
 				var nowTemp = new Date();
 				var now = new Date(nowTemp.getFullYear(), nowTemp.getMonth(), nowTemp.getDate(), 0, 0, 0, 0);
-				 
+				
+				$(".datepicker").remove();
 				var checkin = $('#startDate').datepicker({
 					onRender: function(date) {return date.valueOf() < now.valueOf() ? 'disabled' : '';}
 				}).on('changeDate', function(ev) {
