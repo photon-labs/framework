@@ -316,7 +316,7 @@ public class CIManagerImpl implements CIManager, FrameworkConstants {
 			InetAddress ownIP = InetAddress.getLocalHost();
 			processor.changeNodeValue(CI_HUDSONURL, HTTP_PROTOCOL + PROTOCOL_POSTFIX + ownIP.getHostAddress() + COLON + jenkinsPort + FORWARD_SLASH + CI + FORWARD_SLASH);
             processor.changeNodeValue("smtpAuthUsername", senderEmailId);
-            processor.changeNodeValue("smtpAuthPassword", senderEmailPassword);
+            processor.changeNodeValue("smtpAuthPassword", encyPassword(senderEmailPassword));
             processor.changeNodeValue("adminAddress", senderEmailId);
             
             //jenkins home location
@@ -385,6 +385,8 @@ public class CIManagerImpl implements CIManager, FrameworkConstants {
 	            byte[] decode = Base64.decode(encryptedText.toCharArray());
 	            plainText = new String(cipher.doFinal(decode));
 	            plainText = plainText.replace(CI_ENCRYPT_MAGIC, "");
+	        } catch (javax.crypto.IllegalBlockSizeException e) {
+				return encryptedText;
 	        } catch (Exception e) {
 	        	if (debugEnabled) {
 	    			S_LOGGER.error("Entered catch block of SvnProcessor.decyPassword "+e.getLocalizedMessage());
