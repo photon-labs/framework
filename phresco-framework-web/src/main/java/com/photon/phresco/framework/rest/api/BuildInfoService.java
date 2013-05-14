@@ -108,15 +108,12 @@ public class BuildInfoService implements FrameworkConstants {
 	public Response deleteBuild(String[] buildNumbers, @QueryParam("projectId") String projectId, @QueryParam("customerId") String customerId,  @QueryParam("appId") String appId ) {
 		ResponseInfo responseData = new ResponseInfo();
 		try {
-			System.out.println("projectId ::: " + projectId + "::customerId:: " + customerId + "::appId::" + appId);
 			int[] buildInts = new int[buildNumbers.length];
 			for (int i = 0; i < buildNumbers.length; i++) {
 				buildInts[i] = Integer.parseInt(buildNumbers[i]);
-				System.out.println("buildInts ::: " + buildInts[i]);
 			}
 			ProjectManager projectManager = PhrescoFrameworkFactory.getProjectManager();
 			ProjectInfo project = projectManager.getProject(projectId, customerId, appId);
-			System.out.println("project id :: " + project.getId());
 			ApplicationManager applicationManager = PhrescoFrameworkFactory.getApplicationManager();
 			applicationManager.deleteBuildInfos(project, buildInts);
 		} catch (PhrescoException e) {
