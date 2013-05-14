@@ -1,4 +1,4 @@
-define(["framework/widgetWithTemplate", "projectlist/listener/projectListListener"], function() {  
+define(["framework/widgetWithTemplate", "projectlist/listener/projectListListener"], function() {
 	
 	Clazz.createPackage("com.components.projectlist.js");
 
@@ -71,38 +71,9 @@ define(["framework/widgetWithTemplate", "projectlist/listener/projectListListene
 			self.projectslistListener.projectListAction(self.projectslistListener.getActionHeader(actionBody, action), function(response) {
 				self.preRender(commonVariables.contentPlaceholder,$.proxy(self.renderTemplate, self));
 			});
-
 		},
 		
-		//$(window).resize(function() {
-		resize : function(){
-			console.info("test");
-			var w1 = $(".scrollContent tr:nth-child(2) td:first-child").width();
-			var w2 = $(".scrollContent tr:nth-child(2) td:nth-child(2)").width();
-			var w3 = $(".scrollContent tr:nth-child(2) td:nth-child(3)").width();
-			var w4 = $(".scrollContent tr:nth-child(2) td:nth-child(4)").width();
-			var w5 = $(".scrollContent tr:nth-child(2) td:nth-child(5)").width();
-			var w6 = $(".scrollContent tr:nth-child(2) td:nth-child(6)").width();
-			
-			$(".fixedHeader tr th:first-child").css("width",w1);
-			$(".fixedHeader tr th:nth-child(2)").css("width",w2);
-			$(".fixedHeader tr th:nth-child(3)").css("width",w3);
-			$(".fixedHeader tr th:nth-child(4)").css("width",w4);
-			$(".fixedHeader tr th:nth-child(5)").css("width",w5);
-			$(".fixedHeader tr th:nth-child(6)").css("width",w6);
-			
-			
-			var height = $(this).height();
-			var resultvalue = 0;
-			$('.content_main').prevAll().each(function() {
-				var rv = $(this).height();
-				resultvalue = resultvalue + rv; 
-			});
-				var footervalue = $('.footer_section').height();
-				resultvalue = resultvalue + footervalue + 65;
-			$('.content_main .scrollContent').height(height - resultvalue);
-		},
-		
+	
 		/***
 		 * Bind the action listeners. The bindUI() is called automatically after the render is complete 
 		 *
@@ -153,16 +124,7 @@ define(["framework/widgetWithTemplate", "projectlist/listener/projectListListene
 				        self.getAction(projectnameArray,"delete");
 				   }else {currentRow = null}
 				}
-			});
-			
-			$(".proj_list .scrollContent").mCustomScrollbar({
-				autoHideScrollbar:true,
-				theme:"light-thin",
-				advanced:{ updateOnContentResize: true
-						}
-			});
-			self.resize();
-			
+			});			
 		}
 	});
 
