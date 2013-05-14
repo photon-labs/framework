@@ -29,7 +29,7 @@ define(["framework/widgetWithTemplate", "projectlist/listener/projectListListene
 			self.registerEvents(self.projectslistListener);
 		},
 
-		/***
+		/*** 
 		 * Called in once the login is success
 		 *
 		 */
