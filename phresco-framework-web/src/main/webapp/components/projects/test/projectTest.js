@@ -1,32 +1,25 @@
-define(["projects/project",  "framework/navigationController", "framework/widgetWithTemplate", "projects/listener/projectsListener"], function(AddProject, navigation, WidgetWithTemplate, projectsListener) {
+define(["MockProject"], function(MockProject) {
 
 	return { runTests: function (configData) {
+		/**
+		 * Test that the setMainContent method sets the text in the MyCart-widget
+		 */
+		module("Project.js;Project");
 		
-		module("project.js;Project");
+		var mockprojectUpdate, mockFunc;
+		mockprojectUpdate = new MockProject();
 		
-		asyncTest("Test - AddProject design", function() {
-		
-			var addproject, navigationController, widgetWithTemplate, projectslistener, addprojectid;
-			 
-			Clazz.config = configData;
-			Clazz.navigationController = new Clazz.NavigationController({
-				mainContainer : "basepage\\:widget",
-				transitionType : Clazz.config.navigation.transitionType,
-				isNative : Clazz.config.navigation.isNative
-			});
-			
-			addproject = new AddProject();
-			Clazz.navigationController.jQueryContainer = $("<div id='addprojectTest' style='display:none;'></div>");
-			Clazz.navigationController.push(addproject, false);
-			
-			setTimeout(function() {
-				addprojectid = $(Clazz.navigationController.jQueryContainer).find("#addproject").attr('id');
-				//console.info("addprojectid",addprojectid);
-				equal(addprojectid, "addproject", "AddProject Page Successfully Rendered");
-				start();
-			}, 500);
-			
+		mockFunc = mockFunction();
+		when(mockFunc)(anything()).then(function(arg) {
+			var projectlistReturn = "Project Updated Successfully"; 		
+			return projectlistReturn;
 		});
-		
+
+	   mockprojectUpdate.projectUpdate = mockFunc
+	   
+	   test("ProjectUpdate Test", function() {
+		   equal(mockprojectUpdate.projectUpdate(configData), "Project Updated Successfully", "projectUpdate Test");
+	   });
+		  
 	}};
 });

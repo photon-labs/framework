@@ -139,46 +139,8 @@ $(document).ready(function(){
 				JSS.css(themeData.data.frameworkTheme);
 			});
 			
-			app.initialize();
+			var loginView = new Clazz.com.components.login.js.Login();
+			loginView.loadPage();
 		});
 	}, "json");
 });
-
- app = {
-    initialize: function() {
-        this.bind();
-    },
-    bind: function() {
-        //router  
-        hasher.initialized.add(this.handleChanges);
-        hasher.changed.add(this.handleChanges);
-        hasher.init();
-        if(!window.location.hash){
-         //   hasher.setHash('#login');
-        }  
-    },
-    handleChanges: function(newHash, oldHash){
-		var flag=false;
-		//console.log('hashtag',newHash,oldHash);
-
-		if(newHash != undefined && newHash != null && newHash !=""){
-			if(localStorage.getItem("userInfo") == null){
-				location.hash = '';
-				var loginView = new Clazz.com.components.login.js.Login();
-				loginView.loadPage();
-			} else {
-				var loginlistenerObj = new Clazz.com.components.login.js.listener.LoginListener();
-				if(loginlistenerObj != undefined && loginlistenerObj != null && loginlistenerObj != ""){
-					//loginlistenerObj.pageRefresh(newHash);
-					loginlistenerObj.pageRefresh(commonVariables.projectlist);
-				}
-			}
-		}else if((newHash == undefined || newHash == null || newHash =="") && 
-		(oldHash == undefined || oldHash == null || oldHash =="")){
-			var loginView = new Clazz.com.components.login.js.Login();
-			loginView.loadPage();
-		}
-	}
-};
-
-

@@ -6,7 +6,7 @@ define(["framework/widgetWithTemplate", "projects/listener/projectsListener", "p
 		projectsEvent : null,
 		templateUrl: commonVariables.contexturl + "/components/projects/template/editproject.tmp",
 		configUrl: "../components/projects/config/config.json",
-		name : commonVariables.project,
+		name : commonVariables.editproject,
 		projectsListener : null,
 		onProjectsEvent : null,
 		projectRequestBody : {},

@@ -77,41 +77,41 @@ define(["framework/widget", "framework/widgetWithTemplate", "common/loading", "p
 			var self=this, header, data = {}, userId;
 			self.projectId = id;
 			data = JSON.parse(self.projectAPI.localVal.getSession('userInfo'));
-			userId = data.id;
+			var userId = (data !== null) ? data.id : "";
+		
+				header = {
+					contentType: "application/json",
+					requestMethod: "GET",
+					dataType: "json",
+					requestPostBody : '',
+					webserviceurl: commonVariables.webserviceurl + "project/edit?userId="+userId+"&customerId=photon&projectId="+id
+				}
 
-			header = {
-				contentType: "application/json",
-				requestMethod: "GET",
-				dataType: "json",
-				requestPostBody : '',
-				webserviceurl: commonVariables.webserviceurl + "project/edit?userId="+userId+"&customerId=photon&projectId="+id
-			}
+				if(projectRequestBody != "") {
+					header.requestPostBody = JSON.stringify(projectRequestBody);
+				}
+				
+				if(action == "projectlist"){
+					header.requestMethod = "GET";
+					header.webserviceurl = commonVariables.webserviceurl + commonVariables.projectlistContext +"/list?customerId=photon"
+				}
 
-			if(projectRequestBody != "") {
-				header.requestPostBody = JSON.stringify(projectRequestBody);
-			}
-			
-			if(action == "projectlist"){
-				header.requestMethod = "GET";
-				header.webserviceurl = commonVariables.webserviceurl + commonVariables.projectlistContext +"/list?customerId=photon"
-			}
+				if(action == "update"){
+					header.requestMethod = "PUT";
+					header.webserviceurl = commonVariables.webserviceurl + "project/updateproject?userId="+userId;
+				}
+				
+				if(action == "create"){
+					header.requestMethod = "POST";
+					header.webserviceurl = commonVariables.webserviceurl + "project/create?userId="+userId;
+				}
+				
+				if(action === "apptypes"){
+					header.requestMethod = "GET";
+					header.webserviceurl = commonVariables.webserviceurl + "technology/apptypes?userId="+userId+"&customerId="+self.getCustomer();
+				}
 
-			if(action == "update"){
-				header.requestMethod = "PUT";
-				header.webserviceurl = commonVariables.webserviceurl + "project/updateproject?userId="+userId;
-			}
-			
-			if(action == "create"){
-				header.requestMethod = "POST";
-				header.webserviceurl = commonVariables.webserviceurl + "project/create?userId="+userId;
-			}
-			
-			if(action === "apptypes"){
-				header.requestMethod = "GET";
-				header.webserviceurl = commonVariables.webserviceurl + "technology/apptypes?userId="+userId+"&customerId="+self.getCustomer();
-			}
-
-			return header;
+				return header;
 		},
 
 		getCustomer : function() {
@@ -135,7 +135,7 @@ define(["framework/widget", "framework/widgetWithTemplate", "common/loading", "p
 
 			weblayer ='<tr class="webLayer" name="staticWebLayer" key="displayed"><td data-i18n="project.create.label.appcode"></td><td class="webappcode"><input type="text" class="web-appcode"></td><td data-i18n="project.create.label.weblayer"></td><td name="web"><select name="weblayer"><option>Select Web Layer</option>'+self.getWidget() +'</select></td><td data-i18n="project.create.label.widget"></td><td name="widget" class="widget"><select name="web_widget" class="web_widget"> <option>Select Widget</option></select></td><td data-i18n="project.create.label.widgetversion"></td><td name="widgetversion" class="widgetversion"> <select name="web_version" class="web_version"><option>Select Version</option></select><div class="flt_right icon_center"><a href="javascript:;"><img name="addWebLayer" src="../themes/default/images/helios/plus_icon.png" border="0" alt=""></a> <a href="javascript:;"><img name="removeWebLayer" src="../themes/default/images/helios/minus_icon.png" border="0" alt=""></a></div></td></tr>',
 
-			mobilelayer = '<tr class="mobileLayer" name="staticMobileLayer" key="displayed"><td data-i18n="project.create.label.appcode"></td><td class="mobileappcode"><input type="text" class="mobile-appcode"></td><td data-i18n="project.create.label.mobile"></td><td name="mobile" class="mobile"><select name="mobile_layer" class="mobile_layer"><option>Select Model</option>'+self.getMobile() +'</select></td><td data-i18n="project.create.label.types"></td><td name="types" class="types"><select name="mobile_types" class="mobile_types"><option>Select Types</option></select></td><td data-i18n="project.create.label.mobileversion"></td><td name="mobileversion" class="mobileversion"><select name="mobile_version" class="mobile_version"><option>Select Version</option></select></td><td style="padding-right:0;"> <input type="checkbox"> <font data-i18n="project.create.label.mobile"></font> &nbsp;&nbsp;&nbsp;<input type="checkbox"> <font data-i18n="project.create.label.tablet"></font>&nbsp;&nbsp;&nbsp;<div class="flt_right icon_center"><a href="javascript:;"><img name="addMobileLayer" src="../themes/default/images/helios/plus_icon.png" border="0" alt=""></a> <a href="javascript:;"><img name="removeMobileLayer" src="../themes/default/images/helios/minus_icon.png" width="25" height="20" border="0" alt=""></a></div></td></tr>';
+			mobilelayer = '<tr class="mobileLayer" name="staticMobileLayer"><td data-i18n="project.create.label.appcode"></td><td class="mobileappcode"><input type="text" class="mobile-appcode"></td><td data-i18n="project.create.label.mobile"></td><td name="mobile" class="mobile"><select name="mobile_layer" class="mobile_layer"><option>Select Model</option>'+self.getMobile() +'</select></td><td data-i18n="project.create.label.types"></td><td name="types" class="types"><select name="mobile_types" class="mobile_types"><option>Select Types</option></select></td><td data-i18n="project.create.label.mobileversion"></td><td name="mobileversion" class="mobileversion"><select name="mobile_version" class="mobile_version"><option>Select Version</option></select></td><td style="padding-right:0;"> <input type="checkbox"> <font data-i18n="project.create.label.mobile"></font> &nbsp;&nbsp;&nbsp;<input type="checkbox"> <font data-i18n="project.create.label.tablet"></font>&nbsp;&nbsp;&nbsp;<div class="flt_right icon_center"><a href="javascript:;"><img name="addMobileLayer" src="../themes/default/images/helios/plus_icon.png" border="0" alt=""></a> <a href="javascript:;"><img name="removeMobileLayer" src="../themes/default/images/helios/minus_icon.png" width="25" height="20" border="0" alt=""></a></div></td></tr>';
 			
 			if (layerType === "addApplnLayer") {
 				dynamicValue = $(applicationlayer).insertAfter(whereToAppend);
@@ -323,13 +323,17 @@ define(["framework/widget", "framework/widgetWithTemplate", "common/loading", "p
 			self.renderlocales(contentPlaceholder);
 		},
 		
-		getTechnology : function() {
+		getTechnology : function(id) {
 			var self=this, option;
 			self.applicationlayerData = self.projectAPI.localVal.getJson("Application Layer");
 			option = '';
 			$.each(self.applicationlayerData.techGroups, function(index, value){
 				$.each(value.techInfos, function(index, value){
-				    option += '<option value='+ value.id +'>'+ value.name +'</option>';
+					if (id === value.id) {
+						option += '<option value='+ value.id +' selected=selected>'+ value.name +'</option>';
+					} else {
+						option += '<option value='+ value.id +'>'+ value.name +'</option>';
+					}
 				});
 			});
 			
@@ -347,15 +351,17 @@ define(["framework/widget", "framework/widgetWithTemplate", "common/loading", "p
 			return option;
 		},
 		
-		getMobile : function() {
+		getMobile : function(id) {
 			var self=this, option;
 			self.mobilelayerData = self.projectAPI.localVal.getJson("Mobile Layer");
 			option = '';
 			$.each(self.mobilelayerData.techGroups, function(index, value){
-				if(value !== '' && value !== undefined) {
-					option += '<option value='+ value.id +'>'+ value.name +'</option>';
+				if (id === value.id) {
+					option += '<option value='+ value.id +' selected=selected>'+ value.name +'</option>';
 				} else {
-					option += '<option>No Versions available</option>';
+					if(value !== '' && value !== undefined) {
+						option += '<option value='+ value.id +'>'+ value.name +'</option>';
+					}
 				}
 			});
 			
@@ -401,6 +407,22 @@ define(["framework/widget", "framework/widgetWithTemplate", "common/loading", "p
 			});
 		},
 		
+		editgetwidgettype : function(id) {
+			var self=this, option;
+			self.weblayerData = self.projectAPI.localVal.getJson("Web Layer");
+			$.each(self.weblayerData.techGroups, function(index, value){
+				$.each(value.techInfos, function(index, value){
+					if (id === value.id) {
+						option += '<option value='+ value.id +' selected=selected>'+ value.name +'</option>';
+					} else {
+						option += '<option value='+ value.id +'>'+ value.name +'</option>';
+					}
+				});
+			});
+			
+			return option;
+		},
+		
 		getwidgetversion : function(object, widgettype) {
 			var self=this, option, widget, widgetTypePlaceholder;
 			widget = object.parents("td[name='widget']");
@@ -438,6 +460,22 @@ define(["framework/widget", "framework/widgetWithTemplate", "common/loading", "p
 					$(mobileTypePlaceholder).html(option);
 				}
 			});
+		},
+		
+		editgetmobiletype : function(id) {
+			var self=this, option;
+			self.mobilelayerData = self.projectAPI.localVal.getJson("Mobile Layer");
+			$.each(self.mobilelayerData.techGroups, function(index, value){
+				$.each(value.techInfos, function(index, value){
+					if (id === value.id) {
+						option += '<option value='+ value.id +' selected=selected>'+ value.name +'</option>';
+					} else {
+						option += '<option value='+ value.id +'>'+ value.name +'</option>';
+					}
+				})
+			});
+			
+			return option;
 		},
 		
 		getmobileversion : function(object, mobileType) {
@@ -485,14 +523,14 @@ define(["framework/widget", "framework/widgetWithTemplate", "common/loading", "p
 					$("#appLayaer").show();
 					var splitValue = value.appDirName;
 					var finalValue = splitValue.split("-");
-					var appendData = '<tr class="applnLayer" name="dynamicAppLayer"><td data-i18n="project.create.label.appcode"></td><td><input type="text" value="'+finalValue[0]+'" disabled></td><td data-i18n="project.create.label.technology"></td><td name="technology"><select name="appln_technology" disabled><option>'+finalValue[1]+'</option></select></td><td data-i18n="project.create.label.applicationversion"></td><td colspan="3" name="version"><select name="appln_version" disabled><option>'+value.techInfo.version+'</option></select><div class="flt_right icon_center"><a href="javascript:;"><img name="addApplnLayer" border="0" alt=""></a> <a href="javascript:;"><img name="removeApplnLayer" border="0" alt=""></a></div></td></tr>';
+					var appendData = '<tr class="applnLayer" name="dynamicAppLayer"><td data-i18n="project.create.label.appcode"></td><td><input type="text" value="'+finalValue[0]+'" disabled></td><td data-i18n="project.create.label.technology"></td><td name="technology"><select name="appln_technology" disabled>'+ self.getTechnology(value.techInfo.id) +'</select></td><td data-i18n="project.create.label.applicationversion"></td><td colspan="3" name="version"><select name="appln_version" disabled><option>'+value.techInfo.version+'</option></select><div class="flt_right icon_center"><a href="javascript:;"><img name="addApplnLayer" border="0" alt=""></a> <a href="javascript:;"><img name="removeApplnLayer" border="0" alt=""></a></div></td></tr>';
 					$(appendData).insertAfter("#appLayaer:last");
 					$("tr[name=dynamicAppLayer]:last").find("img[name=addApplnLayer]").attr("src", "../themes/default/images/helios/plus_icon.png");
 				} else if (value.techInfo.appTypeId == "web-layer") {
 					$("#webLayaer").show();
 					var splitValue = value.appDirName;
 					var finalValue = splitValue.split("-");
-					var appendData = '<tr class="webLayer" name="dynamicWebLayer"><td data-i18n="project.create.label.appcode"></td><td><input type="text" value="'+finalValue[0]+'" disabled></td><td data-i18n="project.create.label.weblayer"></td><td name="web"><select name="weblayer" disabled><option>HTML5</option></select></td><td data-i18n="project.create.label.widget"></td><td name="widget"><select name="web_widget" disabled> <option>'+finalValue[1]+'</option></select></td><td data-i18n="project.create.label.widgetversion"></td><td name="widgetversion"> <select name="web_version" disabled><option>'+value.techInfo.version+'</option></select><div class="flt_right icon_center"><a href="javascript:;"><img name="addWebLayer" border="0" alt=""></a> <a href="javascript:;"><img name="removeWebLayer" border="0" alt=""></a></div></td></tr>';
+					var appendData = '<tr class="webLayer" name="dynamicWebLayer"><td data-i18n="project.create.label.appcode"></td><td><input type="text" value="'+finalValue[0]+'" disabled></td><td data-i18n="project.create.label.weblayer"></td><td name="web"><select name="weblayer" disabled><option>'+value.techInfo.techGroupId+'</option></select></td><td data-i18n="project.create.label.widget"></td><td name="widget"><select name="web_widget" disabled> '+ self.editgetwidgettype(value.techInfo.id) +'</select></td><td data-i18n="project.create.label.widgetversion"></td><td name="widgetversion"> <select name="web_version" disabled><option>'+value.techInfo.version+'</option></select><div class="flt_right icon_center"><a href="javascript:;"><img name="addWebLayer" border="0" alt=""></a> <a href="javascript:;"><img name="removeWebLayer" border="0" alt=""></a></div></td></tr>';
 					$(appendData).insertAfter("#webLayaer:last");
 					$("tr[name=dynamicWebLayer]:last").find("img[name=addWebLayer]").attr("src", "../themes/default/images/helios/plus_icon.png");
 				} else if (value.techInfo.appTypeId == "mobile-layer") {
@@ -500,7 +538,7 @@ define(["framework/widget", "framework/widgetWithTemplate", "common/loading", "p
 					$("#mobLayaer").next('tr').show();
 					var splitValue = value.appDirName;
 					var finalValue = splitValue.split("-");
-					var appendData = '<tr class="mobileLayer" name="dynamicMobileLayer"><td data-i18n="project.create.label.appcode"></td><td class="mobileappcode"><input type="text" value="'+finalValue[0]+'" disabled></td> <td data-i18n="project.create.label.mobile"> </td><td><select disabled><option>'+value.techInfo.techGroupId+'</option></select></td><td data-i18n="project.create.label.types"></td><td><select class="mobile_types" disabled><option>'+finalValue[1]+'</option></select></td><td data-i18n="project.create.label.mobileversion"></td><td><select disabled><option>'+value.techInfo.version+'</option></select></td><td style="padding-right:0;"> <input type="checkbox"> <font data-i18n="project.create.label.mobile"></font> &nbsp;&nbsp;&nbsp;<input type="checkbox"> <font data-i18n="project.create.label.tablet"></font>&nbsp;&nbsp;&nbsp;</td><td><div class="flt_right icon_center"><a href="javascript:;"><img name="addMobileLayer" border="0" alt=""></a> <a href="javascript:;"><img name="removeMobileLayer" border="0" alt=""></a></div></td></tr>';
+					var appendData = '<tr class="mobileLayer" name="dynamicMobileLayer"><td data-i18n="project.create.label.appcode"></td><td class="mobileappcode"><input type="text" value="'+finalValue[0]+'" disabled></td> <td data-i18n="project.create.label.mobile"> </td><td><select disabled><option>'+self.getMobile(value.techInfo.techGroupId)+'</option></select></td><td data-i18n="project.create.label.types"></td><td><select class="mobile_types" disabled><option>'+self.editgetmobiletype(value.techInfo.id)+'</option></select></td><td data-i18n="project.create.label.mobileversion"></td><td><select disabled><option>'+value.techInfo.version+'</option></select></td><td style="padding-right:0;"> <input type="checkbox"> <font data-i18n="project.create.label.mobile"></font> &nbsp;&nbsp;&nbsp;<input type="checkbox"> <font data-i18n="project.create.label.tablet"></font>&nbsp;&nbsp;&nbsp;</td><td><div class="flt_right icon_center"><a href="javascript:;"><img name="addMobileLayer" border="0" alt=""></a> <a href="javascript:;"><img name="removeMobileLayer" border="0" alt=""></a></div></td></tr>';
 					$("#mobileTable").append(appendData);
 				}
 			});
@@ -533,9 +571,10 @@ define(["framework/widget", "framework/widgetWithTemplate", "common/loading", "p
 			self.appInfos = [];
 			self.appInfosweb = [];
 			self.appInfosmobile = [];
-			self.customerIds.push("photon");
+			self.customerIds.push(self.getCustomer());
 			self.projectInfo.version = projectversion;
 			self.projectInfo.name = projectname;
+			self.projectInfo.projectCode = projectcode;
 			self.projectInfo.description = projectdescription;
 			self.projectInfo.customerIds = self.customerIds;
 						
@@ -601,7 +640,7 @@ define(["framework/widget", "framework/widgetWithTemplate", "common/loading", "p
 						appInfo.name = projectname + "-" + techName; 
 						techInfo.id = $(value).children("td.types").children("select.mobile_types").find(':selected').val();
 						techInfo.appTypeId = "mobile-layer";
-						techInfo.techGroupId = $(value).children("td.mobile").children("select.mobile_layer").find(':selected').val();
+						techInfo.techGroupId = $(value).children("td.mobile").children("select.mobile_layer").find(':selected').text();
 						if(versionText == "No Versions available") {
 							techInfo.version = "";
 						} else {

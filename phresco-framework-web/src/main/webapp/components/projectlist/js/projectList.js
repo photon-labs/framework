@@ -86,6 +86,7 @@ define(["framework/widgetWithTemplate", "projectlist/listener/projectListListene
 			$(".tooltiptop").tooltip();
 			$(".dyn_popup").hide();
 			$("#applicationedit").css("display", "none");
+			$("#editprojectTab").css("display", "none");
 			$("img[name=editproject]").unbind("click");
 			$("img[name=editproject]").click(function(){
 				self.onProjectEditEvent.dispatch($(this).attr('key'));

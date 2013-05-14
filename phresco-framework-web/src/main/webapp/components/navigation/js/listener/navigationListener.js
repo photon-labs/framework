@@ -35,17 +35,13 @@ define(["framework/widget", "navigation/api/navigationAPI", "projects/project", 
 			Clazz.navigationController.push(self.project, true);
 		},
 		
-		landingPage : function(currentContent){
+		landingPage : function(){
 			var self = this;
 			self.renderHeader();
-			if(currentContent == undefined || currentContent == null){
-				self.renderContent();
-			} else if(currentContent != undefined && currentContent != null && currentContent != "") {
-				self.dynamicContent(currentContent);
-			}
+			self.renderContent();
 			self.renderFooter();
 		},
-
+		
 		getMyObj : function(keyword){
 			var self=this, retuenObj;
 
@@ -148,15 +144,7 @@ define(["framework/widget", "navigation/api/navigationAPI", "projects/project", 
 			var self = this;
 			Clazz.navigationController.jQueryContainer = commonVariables.contentPlaceholder;
 			self.getMyObj(commonVariables.projectlist);
-			self.header.headerListener.currentTab = "Projects";
 			Clazz.navigationController.push(self.projectlist, true);
-		},
-		
-		dynamicContent : function(contentObj){
-			var self = this, current;
-			Clazz.navigationController.jQueryContainer = commonVariables.contentPlaceholder;
-			current = self.getMyObj(contentObj);
-			Clazz.navigationController.push(current, true);
 		},
 		
 		renderFooter : function(){

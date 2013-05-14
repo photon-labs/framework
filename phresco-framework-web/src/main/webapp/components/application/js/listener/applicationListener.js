@@ -1,4 +1,4 @@
-define(["framework/widget", "framework/widgetWithTemplate", "application/api/applicationAPI", "projectlist/projectList"], function() {
+define(["framework/widget", "framework/widgetWithTemplate", "application/api/applicationAPI"], function() {
 
 	Clazz.createPackage("com.components.application.js.listener");
 
@@ -20,7 +20,7 @@ define(["framework/widget", "framework/widgetWithTemplate", "application/api/app
 		onCancelUpdate : function() {
 			var self = this;
 			Clazz.navigationController.jQueryContainer = commonVariables.contentPlaceholder;
-			self.projectlistContent = new Clazz.com.components.projectlist.js.ProjectList();
+			self.projectlistContent = commonVariables.navListener.getMyObj(commonVariables.projectlist);
 			Clazz.navigationController.push(self.projectlistContent, true);
 		},
 		

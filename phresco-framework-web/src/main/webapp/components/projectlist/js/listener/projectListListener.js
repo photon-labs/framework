@@ -1,4 +1,4 @@
-define(["framework/widget", "framework/widgetWithTemplate", "projectlist/api/projectListAPI", "projects/project", "application/application"], function() {
+define(["framework/widget", "framework/widgetWithTemplate", "projectlist/api/projectListAPI"], function() {
 
 	Clazz.createPackage("com.components.projectlist.js.listener");
 
@@ -18,7 +18,7 @@ define(["framework/widget", "framework/widgetWithTemplate", "projectlist/api/pro
 			var self = this;
 			this.loadingScreen = new Clazz.com.js.widget.common.Loading();
 			self.projectListAPI = new Clazz.com.components.projectlist.js.api.ProjectsListAPI();
-			self.editproject = new Clazz.com.components.projects.js.Project();
+			self.editproject = commonVariables.navListener.getMyObj(commonVariables.editproject);
 		},
 		
 		onEditProject : function(projectId) {
@@ -134,7 +134,7 @@ define(["framework/widget", "framework/widgetWithTemplate", "projectlist/api/pro
 		editApplication : function(value) {
 			var self = this;
 			Clazz.navigationController.jQueryContainer = commonVariables.contentPlaceholder;
-			self.editAplnContent = new Clazz.com.components.application.js.Application();
+			self.editAplnContent = commonVariables.navListener.getMyObj(commonVariables.editApplication);
 			Clazz.navigationController.push(self.editAplnContent, true);
 			$("#applicationedit").css("display", "block");
 			$("#aplntitle").html("Edit - "+value);

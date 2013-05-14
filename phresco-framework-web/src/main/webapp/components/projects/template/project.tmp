@@ -19,9 +19,9 @@
                 </tr>
                 <tr>
                     <td data-i18n="project.create.label.startdate"></td>
-                    <td class="startdate"><input name="startdate" type="text"><img src="../themes/default/images/helios/cal_icon.png" border="0" alt=""></td>
+                    <td class="startdate"><div class="input-append date" id="startDate" data-date="13-05-2013" data-date-format="dd-mm-yyyy"><input name="startdate" type="text" disabled><span class="add-on"><img src="../themes/default/images/helios/cal_icon.png" border="0" alt=""></span></div></td>
                     <td data-i18n="project.create.label.enddate"></td>
-                    <td class="enddate"><input name="enddate" type="text"><img src="../themes/default/images/helios/cal_icon.png"   border="0" alt=""></td>
+                    <td class="enddate"><div class="input-append date" id="endDate" data-date="14-05-2013" data-date-format="dd-mm-yyyy"><input name="enddate" type="text" disabled><span class="add-on"><img src="../themes/default/images/helios/cal_icon.png"   border="0" alt=""></span></div></td>
                     <td colspan="2">
                         <select class="custon_dropdown">
                             <option>Pre Built</option>
@@ -40,35 +40,38 @@
                         </select>
                     </td>
                 </tr>
-                <tr class="proj_title">
-                  <td colspan="4">{{applicationlayerData.name}}</td>
-                  <td colspan="4"><img name="close" id="applicationlayer" src="../themes/default/images/helios/close_icon.png"   border="0" alt=""></td>
-                </tr>
-                <tr class="applnLayer" name="staticApplnLayer" key="displayed">
-                  <td data-i18n="project.create.label.appcode"></td>	
-                  <td class="applnappcode"><input type="text" class="appln-appcode"></td>
-                  <td data-i18n="project.create.label.technology"></td>
-                  <td name="technology" class="technology">
-				      <select name="appln_technology" class="appln_technology">
-                        <option>Select Technology</option>
-						{{#each applicationlayerData.techGroups}}
-							{{#each techInfos}}
-							  <option value="{{id}}">{{name}}</option>
-							{{/each}}	
-						{{/each}}
-                      </select>
-				  </td>
-                  <td data-i18n="project.create.label.applicationversion"></td>
-                  <td colspan="3" name="version" class="version">
-                    <select name="appln_version" class="appln_version">
-                        <option>Select Version</option>
-                    </select>
-                    <div class="flt_right icon_center">
-					  <a href="javascript:;"><img name="addApplnLayer" src="../themes/default/images/helios/plus_icon.png"  border="0" alt=""></a>
-					  <a href="javascript:;"><img name="removeApplnLayer" border="0" alt=""></a>
-				    </div>
-                  </td>
-                </tr>
+				{{#if applicationlayerData.techGroups}}
+					<tr class="proj_title">
+					  <td colspan="4">{{applicationlayerData.name}}</td>
+					  <td colspan="4"><img name="close" id="applicationlayer" src="../themes/default/images/helios/close_icon.png"   border="0" alt=""></td>
+					</tr>
+					<tr class="applnLayer" name="staticApplnLayer" key="displayed">
+					  <td data-i18n="project.create.label.appcode"></td>	
+					  <td class="applnappcode"><input type="text" class="appln-appcode"></td>
+					  <td data-i18n="project.create.label.technology"></td>
+					  <td name="technology" class="technology">
+						  <select name="appln_technology" class="appln_technology">
+							<option>Select Technology</option>
+							{{#each applicationlayerData.techGroups}}
+								{{#each techInfos}}
+								  <option value="{{id}}">{{name}}</option>
+								{{/each}}	
+							{{/each}}
+						  </select>
+					  </td>
+					  <td data-i18n="project.create.label.applicationversion"></td>
+					  <td colspan="3" name="version" class="version">
+						<select name="appln_version" class="appln_version">
+							<option>Select Version</option>
+						</select>
+						<div class="flt_right icon_center">
+						  <a href="javascript:;"><img name="addApplnLayer" src="../themes/default/images/helios/plus_icon.png"  border="0" alt=""></a>
+						  <a href="javascript:;"><img name="removeApplnLayer" border="0" alt=""></a>
+						</div>
+					  </td>
+					</tr>
+				 {{/if}}
+				 {{#if weblayerData.techGroups}}
                      <tr class="proj_title">
                       <td colspan="4">{{weblayerData.name}}</td>
                       <td colspan="4"><img name="close" id="weblayer" src="../themes/default/images/helios/close_icon.png"   border="0" alt=""></td>
@@ -103,7 +106,8 @@
 						</div>
                        </td>
                       </tr>
-    
+					{{/if}}
+				{{#if mobilelayerData.techGroups}}
                     <tr class="proj_title">
                       <td colspan="4">{{mobilelayerData.name}}</td>
                       <td colspan="4"><img name="close" id="mobilelayer" src="../themes/default/images/helios/close_icon.png"  border="0" alt=""></td>
@@ -146,6 +150,7 @@
                           </table>
                       </td>	
                     </tr>
+					{{/if}}
               	</tbody>
             </table>
     	<!--content_main div ends here -->
