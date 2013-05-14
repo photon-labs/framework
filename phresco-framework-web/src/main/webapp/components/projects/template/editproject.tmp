@@ -64,7 +64,7 @@
     <section class="content_end">
         <div class="flt_right">
         	<input type="submit" value="Update" id="updateProject" class="btn btn_style add_icon_btn">
-            <input type="submit" value="Cancel" class="btn btn_style cancel_icon_btn">
+            <input type="submit" value="Cancel" id="cancelUpdate" class="btn btn_style cancel_icon_btn">
         </div>
     	<!--content_title ends here -->
     </section>

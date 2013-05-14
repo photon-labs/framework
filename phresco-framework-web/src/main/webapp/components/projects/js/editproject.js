@@ -31,7 +31,9 @@ define(["framework/widgetWithTemplate", "projects/listener/projectsListener", "p
 		registerEvents : function (projectsListener) {
 			var self = this;
 			self.onUpdateProjectsEvent = new signals.Signal();
+			self.onCancelUpdateEvent = new signals.Signal();
 			self.onUpdateProjectsEvent.add(projectsListener.createproject, projectsListener);
+			self.onCancelUpdateEvent.add(projectsListener.cancelCreateproject, projectsListener);
 		},
 		
 		
@@ -121,6 +123,10 @@ define(["framework/widgetWithTemplate", "projects/listener/projectsListener", "p
 			
 			$("#updateProject").click(function() {
 				self.onUpdateProjectsEvent.dispatch(commonVariables.projectId, "update");
+			});
+			
+			$("#cancelUpdate").click(function() {
+				self.onCancelUpdateEvent.dispatch();
 			});
 			
 		}

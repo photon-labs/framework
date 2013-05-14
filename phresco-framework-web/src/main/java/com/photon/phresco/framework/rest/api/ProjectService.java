@@ -130,32 +130,39 @@ public class ProjectService implements FrameworkConstants {
 			return Response.status(Status.BAD_REQUEST).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
 		}
 	}
-
+	
 	@PUT
-	@Path("/updateApplication")
+	@Path("/updateFeature")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response updateApplication(List<SelectedFeature> selectedFeaturesFromUI, @QueryParam("oldAppDirName") String oldAppDirName , ProjectInfo projectInfo, @QueryParam("userId") String userId, @QueryParam("customerId") String customerId) {
-		ResponseInfo responseData = new ResponseInfo();
+	public Response updateApplicationFeatures(List<SelectedFeature> selectedFeaturesFromUI, @QueryParam("appDirName") String appDirName, @QueryParam("userId") String userId, @QueryParam("customerId") String customerId) {
+		File filePath = null;
 		BufferedReader bufferedReader = null;
+		Gson gson = new Gson();
+		ResponseInfo responseData = new ResponseInfo();
+		List<String> selectedFeatures = new ArrayList<String>();
+		List<String> selectedJsLibs = new ArrayList<String>();
+		List<String> selectedComponents = new ArrayList<String>();
+		List<ArtifactGroup> listArtifactGroup = new ArrayList<ArtifactGroup>();
 		try {
-			ApplicationInfo appInfo = projectInfo.getAppInfos().get(0);
 			ServiceManager serviceManager = ServiceManagerMap.CONTEXT_MANAGER_MAP.get(userId);
 			if(serviceManager == null) {
 				ResponseInfo finalOutput = ServiceManagerMap.responseDataEvaluation(responseData, null, "UnAuthorized User", null);
 				return Response.status(Status.BAD_REQUEST).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
 			}
-//			List<String> allJsonData = getJsonData();
-			List<String> selectedFeatures = new ArrayList<String>();
-			List<String> selectedJsLibs = new ArrayList<String>();
-			List<String> selectedComponents = new ArrayList<String>();
-			List<ArtifactGroup> listArtifactGroup = new ArrayList<ArtifactGroup>();
-			List<DownloadInfo> selectedServerGroup = new ArrayList<DownloadInfo>();
-			List<DownloadInfo> selectedDatabaseGroup = new ArrayList<DownloadInfo>();
+			StringBuilder sbs = null;
+			if(StringUtils.isNotEmpty(appDirName)) {
+				sbs = new StringBuilder(Utility.getProjectHome()).append(appDirName).append(
+						File.separator).append(Constants.DOT_PHRESCO_FOLDER).append(File.separator).append("project.info");
+			} 
+			bufferedReader = new BufferedReader(new FileReader(sbs.toString()));
+			Type type = new TypeToken<ProjectInfo>() {}.getType();
+			ProjectInfo projectinfo = gson.fromJson(bufferedReader, type);
+			ApplicationInfo applicationInfo = projectinfo.getAppInfos().get(0);
 			if (CollectionUtils.isNotEmpty(selectedFeaturesFromUI)) {
 				for (SelectedFeature selectedFeatureFromUI : selectedFeaturesFromUI) {
-//					Gson gson = new Gson();
-//					SelectedFeature obj = gson.fromJson(string, SelectedFeature.class);
+//				Gson gson = new Gson();
+//				SelectedFeature obj = gson.fromJson(string, SelectedFeature.class);
 					String artifactGroupId = selectedFeatureFromUI.getModuleId();
 					ArtifactGroup artifactGroup = serviceManager.getArtifactGroupInfo(artifactGroupId);
 					ArtifactInfo artifactInfo = serviceManager.getArtifactInfo(selectedFeatureFromUI.getVersionID());
@@ -165,7 +172,7 @@ public class ProjectService implements FrameworkConstants {
 					}
 					List<CoreOption> appliesTo = artifactGroup.getAppliesTo();
 					for (CoreOption coreOption : appliesTo) {
-						if (coreOption.getTechId().equals(appInfo.getTechInfo().getId())) {
+						if (coreOption.getTechId().equals(applicationInfo.getTechInfo().getId())) {
 							artifactGroup.setAppliesTo(Collections.singletonList(coreOption));
 							listArtifactGroup.add(artifactGroup);
 							break;
@@ -182,6 +189,65 @@ public class ProjectService implements FrameworkConstants {
 					}
 				}
 			}
+				if (StringUtils.isNotEmpty(appDirName)) {
+					StringBuilder sb = new StringBuilder(Utility.getProjectHome())
+					.append(appDirName)
+					.append(File.separator)
+					.append(Constants.DOT_PHRESCO_FOLDER)
+					.append(File.separator)
+					.append(Constants.APPLICATION_HANDLER_INFO_FILE);
+					filePath = new File(sb.toString());
+				}
+			MojoProcessor mojo = new MojoProcessor(filePath);
+			ApplicationHandler applicationHandler = mojo.getApplicationHandler();
+			//To write selected Features into phresco-application-Handler-info.xml
+			String artifactGroup = gson.toJson(listArtifactGroup);
+			applicationHandler.setSelectedFeatures(artifactGroup);
+
+			//To write Deleted Features into phresco-application-Handler-info.xml
+			List<ArtifactGroup> removedModules = getRemovedModules(applicationInfo, selectedFeaturesFromUI, serviceManager);
+			Type jsonType = new TypeToken<Collection<ArtifactGroup>>(){}.getType();
+			String deletedFeatures = gson.toJson(removedModules, jsonType);
+			applicationHandler.setDeletedFeatures(deletedFeatures);
+			
+			mojo.save();
+			applicationInfo.setSelectedModules(selectedFeatures);
+			applicationInfo.setSelectedJSLibs(selectedJsLibs);
+			applicationInfo.setSelectedComponents(selectedComponents);
+			
+			projectinfo.setAppInfos(Collections.singletonList(applicationInfo));
+		} catch (FileNotFoundException e) {
+			ResponseInfo finalOutput = ServiceManagerMap.responseDataEvaluation(responseData, e, "update Feature failed", null);
+			return Response.status(Status.BAD_REQUEST).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
+		} catch (PhrescoException e) {
+			ResponseInfo finalOutput = ServiceManagerMap.responseDataEvaluation(responseData, e, "update Feature failed", null);
+			return Response.status(Status.BAD_REQUEST).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
+		} catch (IOException e) {
+			ResponseInfo finalOutput = ServiceManagerMap.responseDataEvaluation(responseData, e, "update Feature failed", null);
+			return Response.status(Status.BAD_REQUEST).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
+		}
+		return null;
+		
+	}
+	
+	@PUT
+	@Path("/updateApplication")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response updateApplication( @QueryParam("oldAppDirName") String oldAppDirName , ProjectInfo projectInfo, @QueryParam("userId") String userId, @QueryParam("customerId") String customerId) {
+		ResponseInfo responseData = new ResponseInfo();
+		BufferedReader bufferedReader = null;
+		try {
+			ApplicationInfo appInfo = projectInfo.getAppInfos().get(0);
+			ServiceManager serviceManager = ServiceManagerMap.CONTEXT_MANAGER_MAP.get(userId);
+			if(serviceManager == null) {
+				ResponseInfo finalOutput = ServiceManagerMap.responseDataEvaluation(responseData, null, "UnAuthorized User", null);
+				return Response.status(Status.BAD_REQUEST).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
+			}
+//			List<String> allJsonData = getJsonData();
+			List<DownloadInfo> selectedServerGroup = new ArrayList<DownloadInfo>();
+			List<DownloadInfo> selectedDatabaseGroup = new ArrayList<DownloadInfo>();
+
 			Gson gson = new Gson();
 
 			File filePath = null;
@@ -204,16 +270,6 @@ public class ProjectService implements FrameworkConstants {
 			}
 			MojoProcessor mojo = new MojoProcessor(filePath);
 			ApplicationHandler applicationHandler = mojo.getApplicationHandler();
-
-			//To write selected Features into phresco-application-Handler-info.xml
-			String artifactGroup = gson.toJson(listArtifactGroup);
-			applicationHandler.setSelectedFeatures(artifactGroup);
-
-			//To write Deleted Features into phresco-application-Handler-info.xml
-			List<ArtifactGroup> removedModules = getRemovedModules(appInfo, selectedFeaturesFromUI, serviceManager);
-			Type jsonType = new TypeToken<Collection<ArtifactGroup>>(){}.getType();
-			String deletedFeatures = gson.toJson(removedModules, jsonType);
-			applicationHandler.setDeletedFeatures(deletedFeatures);
 
 			//To write selected Database into phresco-application-Handler-info.xml
 			List<ArtifactGroupInfo> selectedDatabases = appInfo.getSelectedDatabases();
@@ -286,10 +342,6 @@ public class ProjectService implements FrameworkConstants {
 			}
 
 			mojo.save();
-			appInfo.setSelectedModules(selectedFeatures);
-			appInfo.setSelectedJSLibs(selectedJsLibs);
-			appInfo.setSelectedComponents(selectedComponents);
-
 			StringBuilder sbs = null;
 			if(StringUtils.isNotEmpty(oldAppDirName)) {
 				sbs = new StringBuilder(Utility.getProjectHome()).append(oldAppDirName).append(
@@ -321,7 +373,7 @@ public class ProjectService implements FrameworkConstants {
 		}
 		return null;
 	}
-
+	
 	@GET
 	@Path("/editApplication")
 	@Produces(MediaType.APPLICATION_JSON)

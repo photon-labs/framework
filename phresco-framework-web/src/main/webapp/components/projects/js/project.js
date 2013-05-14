@@ -42,9 +42,11 @@ define(["framework/widgetWithTemplate", "projects/listener/projectsListener", "p
 			self.onRemoveLayerEvent = new signals.Signal();
 			self.onAddLayerEvent = new signals.Signal();
 			self.onCreateEvent = new signals.Signal();
+			self.onCancelCreateEvent = new signals.Signal();
 			self.onRemoveLayerEvent.add(projectsListener.removelayer, projectsListener);
 			self.onAddLayerEvent.add(projectsListener.addlayer, projectsListener);
 			self.onCreateEvent.add(projectsListener.createproject, projectsListener)
+			self.onCancelCreateEvent.add(projectsListener.cancelCreateproject, projectsListener)
 		},
 		
 		/***
@@ -122,6 +124,11 @@ define(["framework/widgetWithTemplate", "projects/listener/projectsListener", "p
 			$("input[name='Create']").unbind('click');
 			$("input[name='Create']").bind('click', function(){
 				self.onCreateEvent.dispatch('', 'create');
+			});
+			
+			$("input[name='Cancel']").unbind('click');
+			$("input[name='Cancel']").bind('click', function(){
+				self.onCancelCreateEvent.dispatch();
 			});
 			 
 		}

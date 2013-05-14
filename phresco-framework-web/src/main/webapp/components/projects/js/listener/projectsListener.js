@@ -17,6 +17,7 @@ define(["framework/widget", "framework/widgetWithTemplate", "common/loading", "p
 		appInfosmobile : [],
 		projectRequestBody : {},
 		contentContainer : commonVariables.contentPlaceholder,
+		projectlistContent : null,
 		
 		/***
 		 * Called in initialization time of this class 
@@ -28,7 +29,14 @@ define(["framework/widget", "framework/widgetWithTemplate", "common/loading", "p
 			self.loadingScreen = new Clazz.com.js.widget.common.Loading();
 			self.projectAPI = new Clazz.com.components.projects.js.api.ProjectsAPI();
 		},
-	
+		
+		cancelCreateproject : function() {
+			var self = this;
+			Clazz.navigationController.jQueryContainer = commonVariables.contentPlaceholder;
+			self.projectlistContent = commonVariables.navListener.getMyObj(commonVariables.projectlist);
+			Clazz.navigationController.push(self.projectlistContent, true);
+		},
+		
 		removelayer : function(object) {
 			var layerId = object.attr('id');
 			object.closest('tr').next().attr('name', layerId + "content");
@@ -129,49 +137,49 @@ define(["framework/widget", "framework/widgetWithTemplate", "common/loading", "p
 		},
 		
 		addLayers :function(layerType, whereToAppend) {
-			var self=this;
+			var self=this, minusIcon = '<img src="../themes/default/images/helios/minus_icon.png" border="0" alt="">';
 			
-			var self = this, dynamicValue, applicationlayer = '<tr class="applnLayer" name="staticApplnLayer" key="displayed"><td data-i18n="project.create.label.appcode" ></td><td class="applnappcode"><input type="text" class="appln-appcode"></td><td data-i18n="project.create.label.technology"></td><td name="technology" class="technology"><select name="appln_technology" class="appln_technology"><option>Select Technology</option>'+ self.getTechnology() +'</select></td><td data-i18n="project.create.label.applicationversion"></td><td colspan="3" name="version" class="version"><select name="appln_version" class="appln_version"><option>Select Version</option></select><div class="flt_right icon_center"><a href="javascript:;"><img name="addApplnLayer" src="../themes/default/images/helios/plus_icon.png" border="0" alt=""></a> <a href="javascript:;"><img name="removeApplnLayer" src="../themes/default/images/helios/minus_icon.png" border="0" alt=""></a></div></td></tr>',
+			var self = this, dynamicValue, applicationlayer = '<tr class="applnLayer" name="staticApplnLayer" key="displayed"><td data-i18n="project.create.label.appcode" ></td><td class="applnappcode"><input type="text" class="appln-appcode"></td><td data-i18n="project.create.label.technology"></td><td name="technology" class="technology"><select name="appln_technology" class="appln_technology"><option>Select Technology</option>'+ self.getTechnology() +'</select></td><td data-i18n="project.create.label.applicationversion"></td><td colspan="3" name="version" class="version"><select name="appln_version" class="appln_version"><option>Select Version</option></select><div class="flt_right icon_center"><a href="javascript:;" name="addApplnLayer"><img src="../themes/default/images/helios/plus_icon.png" border="0" alt=""></a> <a href="javascript:;" name="removeApplnLayer"><img src="../themes/default/images/helios/minus_icon.png" border="0" alt=""></a></div></td></tr>',
 
-			weblayer ='<tr class="webLayer" name="staticWebLayer" key="displayed"><td data-i18n="project.create.label.appcode"></td><td class="webappcode"><input type="text" class="web-appcode"></td><td data-i18n="project.create.label.weblayer"></td><td name="web"><select name="weblayer"><option>Select Web Layer</option>'+self.getWidget() +'</select></td><td data-i18n="project.create.label.widget"></td><td name="widget" class="widget"><select name="web_widget" class="web_widget"> <option>Select Widget</option></select></td><td data-i18n="project.create.label.widgetversion"></td><td name="widgetversion" class="widgetversion"> <select name="web_version" class="web_version"><option>Select Version</option></select><div class="flt_right icon_center"><a href="javascript:;"><img name="addWebLayer" src="../themes/default/images/helios/plus_icon.png" border="0" alt=""></a> <a href="javascript:;"><img name="removeWebLayer" src="../themes/default/images/helios/minus_icon.png" border="0" alt=""></a></div></td></tr>',
+			weblayer ='<tr class="webLayer" name="staticWebLayer" key="displayed"><td data-i18n="project.create.label.appcode"></td><td class="webappcode"><input type="text" class="web-appcode"></td><td data-i18n="project.create.label.weblayer"></td><td name="web"><select name="weblayer"><option>Select Web Layer</option>'+self.getWidget() +'</select></td><td data-i18n="project.create.label.widget"></td><td name="widget" class="widget"><select name="web_widget" class="web_widget"> <option>Select Widget</option></select></td><td data-i18n="project.create.label.widgetversion"></td><td name="widgetversion" class="widgetversion"> <select name="web_version" class="web_version"><option>Select Version</option></select><div class="flt_right icon_center"><a href="javascript:;" name="addWebLayer"><img src="../themes/default/images/helios/plus_icon.png" border="0" alt=""></a> <a href="javascript:;" name="removeWebLayer"><img src="../themes/default/images/helios/minus_icon.png" border="0" alt=""></a></div></td></tr>',
 
-			mobilelayer = '<tr class="mobileLayer" name="staticMobileLayer"><td data-i18n="project.create.label.appcode"></td><td class="mobileappcode"><input type="text" class="mobile-appcode"></td><td data-i18n="project.create.label.mobile"></td><td name="mobile" class="mobile"><select name="mobile_layer" class="mobile_layer"><option>Select Model</option>'+self.getMobile() +'</select></td><td data-i18n="project.create.label.types"></td><td name="types" class="types"><select name="mobile_types" class="mobile_types"><option>Select Types</option></select></td><td data-i18n="project.create.label.mobileversion"></td><td name="mobileversion" class="mobileversion"><select name="mobile_version" class="mobile_version"><option>Select Version</option></select></td><td style="padding-right:0;"> <input type="checkbox"> <font data-i18n="project.create.label.mobile"></font> &nbsp;&nbsp;&nbsp;<input type="checkbox"> <font data-i18n="project.create.label.tablet"></font>&nbsp;&nbsp;&nbsp;<div class="flt_right icon_center"><a href="javascript:;"><img name="addMobileLayer" src="../themes/default/images/helios/plus_icon.png" border="0" alt=""></a> <a href="javascript:;"><img name="removeMobileLayer" src="../themes/default/images/helios/minus_icon.png" width="25" height="20" border="0" alt=""></a></div></td></tr>';
+			mobilelayer = '<tr class="mobileLayer" name="staticMobileLayer"><td data-i18n="project.create.label.appcode"></td><td class="mobileappcode"><input type="text" class="mobile-appcode"></td><td data-i18n="project.create.label.mobile"></td><td name="mobile" class="mobile"><select name="mobile_layer" class="mobile_layer"><option>Select Model</option>'+self.getMobile() +'</select></td><td data-i18n="project.create.label.types"></td><td name="types" class="types"><select name="mobile_types" class="mobile_types"><option>Select Types</option></select></td><td data-i18n="project.create.label.mobileversion"></td><td name="mobileversion" class="mobileversion"><select name="mobile_version" class="mobile_version"><option>Select Version</option></select></td><td style="padding-right:0;"> <input type="checkbox"> <font data-i18n="project.create.label.mobile"></font> &nbsp;&nbsp;&nbsp;<input type="checkbox"> <font data-i18n="project.create.label.tablet"></font>&nbsp;&nbsp;&nbsp;<div class="flt_right icon_center"><a href="javascript:;" name="addMobileLayer"><img src="../themes/default/images/helios/plus_icon.png" border="0" alt=""></a> <a href="javascript:;" name="removeMobileLayer"><img src="../themes/default/images/helios/minus_icon.png" border="0" alt=""></a></div></td></tr>';
 			
 			if (layerType === "addApplnLayer") {
 				dynamicValue = $(applicationlayer).insertAfter(whereToAppend);
 				if (dynamicValue.prev('tr').attr("name") !== "dynamicAppLayer") {
-					dynamicValue.prev('tr').find('img[name="addApplnLayer"]').removeAttr("src");
-					dynamicValue.prev('tr').find('img[name="removeApplnLayer"]').attr("src","../themes/default/images/helios/minus_icon.png");
+					dynamicValue.prev('tr').find('a[name="addApplnLayer"]').html('');
+					dynamicValue.prev('tr').find('a[name="removeApplnLayer"]').html(minusIcon);
 				} else {
-					dynamicValue.prev('tr').find('img[name="addApplnLayer"]').removeAttr("src");
+					dynamicValue.prev('tr').find('a[name="addApplnLayer"]').html('');
 				}
 
 			} else if (layerType === "addWebLayer") {
 				dynamicValue = $(weblayer).insertAfter(whereToAppend);
 				if (dynamicValue.prev('tr').attr("name") !== "dynamicWebLayer") {
-					dynamicValue.prev('tr').find('img[name="addWebLayer"]').removeAttr("src");
-					dynamicValue.prev('tr').find('img[name="removeWebLayer"]').attr("src","../themes/default/images/helios/minus_icon.png");
+					dynamicValue.prev('tr').find('a[name="addWebLayer"]').html('');
+					dynamicValue.prev('tr').find('a[name="removeWebLayer"]').html(minusIcon);
 				} else {
-					dynamicValue.prev('tr').find('img[name="addWebLayer"]').removeAttr("src");
+					dynamicValue.prev('tr').find('a[name="addWebLayer"]').html('');
 				}
 			} else {
 				dynamicValue = $(mobilelayer).insertAfter(whereToAppend);
 				if (dynamicValue.prev('tr').attr("name") !== "dynamicMobileLayer") {
-					dynamicValue.prev('tr').find('img[name="addMobileLayer"]').removeAttr("src");
-					dynamicValue.prev('tr').find('img[name="removeMobileLayer"]').attr("src","../themes/default/images/helios/minus_icon.png");
+					dynamicValue.prev('tr').find('a[name="addMobileLayer"]').html('');
+					dynamicValue.prev('tr').find('a[name="removeMobileLayer"]').html(minusIcon);
 				} else {
-					dynamicValue.prev('tr').find('img[name="addMobileLayer"]').removeAttr("src");
+					dynamicValue.prev('tr').find('a[name="addMobileLayer"]').html('');
 				}
 			}
 
 			
-			$("img[name=addApplnLayer]").unbind("click");
-			$("img[name=addWebLayer]").unbind("click");
-			$("img[name=addMobileLayer]").unbind("click");
+			$("a[name=addApplnLayer]").unbind("click");
+			$("a[name=addWebLayer]").unbind("click");
+			$("a[name=addMobileLayer]").unbind("click");
 			self.addLayersEvent();
-			$("img[name=removeApplnLayer]").unbind("click");
-			$("img[name=removeWebLayer]").unbind("click");
-			$("img[name=removeMobileLayer]").unbind("click");
+			$("a[name=removeApplnLayer]").unbind("click");
+			$("a[name=removeWebLayer]").unbind("click");
+			$("a[name=removeMobileLayer]").unbind("click");
 			self.removeLayersEvent();
 			$("select[name='appln_technology']").unbind('click');
 			$("select[name='weblayer']").unbind('click');
@@ -186,54 +194,54 @@ define(["framework/widget", "framework/widgetWithTemplate", "common/loading", "p
 		
 		addLayersEvent : function() {
 			var self=this, whereToAppend = '';
-			$("img[name=addApplnLayer]").click(function(){
+			$("a[name=addApplnLayer]").click(function(){
 				whereToAppend = $(this).parents('tr.applnLayer:last');
 				self.dynamicRenderLocales(commonVariables.contentPlaceholder);
 				self.addLayers($(this).attr('name'), whereToAppend);
 			});
 			
-			$("img[name=addWebLayer]").click(function(){
-				whereToAppend = $("img[name=addWebLayer]").parents('tr.webLayer:last');
+			$("a[name=addWebLayer]").click(function(){
+				whereToAppend = $("a[name=addWebLayer]").parents('tr.webLayer:last');
 				self.dynamicRenderLocales(commonVariables.contentPlaceholder);
 				self.addLayers($(this).attr('name'), whereToAppend);
 			});
 			
-			$("img[name=addMobileLayer]").click(function(){
-				whereToAppend = $("img[name=addMobileLayer]").parents('tr.mobileLayer:last');
+			$("a[name=addMobileLayer]").click(function(){
+				whereToAppend = $("a[name=addMobileLayer]").parents('tr.mobileLayer:last');
 				self.dynamicRenderLocales(commonVariables.contentPlaceholder);
 				self.addLayers($(this).attr('name'), whereToAppend);
 			});
 		},
 		
 		removeLayersEvent : function() {
-			var self=this;
-			$("img[name=removeApplnLayer]").click(function(){
-				$("img[name=addApplnLayer]").removeAttr('src');
-				$(this).parent().parent().parent().parent().remove();
-				$("img[name=removeApplnLayer]").parents('tr:last').find('img[name="addApplnLayer"]').attr("src", "../themes/default/images/helios/plus_icon.png");
-				if (($("img[name=removeApplnLayer]").parents('tr[name=staticApplnLayer]').length) === 1) {
-					$('tr[name=staticApplnLayer]').find('img[name="addApplnLayer"]').attr("src", "../themes/default/images/helios/plus_icon.png");
-					$("img[name=removeApplnLayer]").removeAttr('src');
+			var self=this, addIcon = '<img src="../themes/default/images/helios/plus_icon.png" border="0" alt="">';
+			$("a[name=removeApplnLayer]").click(function(){
+				$("a[name=addApplnLayer]").html('');
+				$(this).parent().parent().parent().remove();
+				$("a[name=removeApplnLayer]").parents('tr:last').find('a[name="addApplnLayer"]').html(addIcon);
+				if (($("a[name=removeApplnLayer]").parents('tr[name=staticApplnLayer]').length) === 1) {
+					$('tr[name=staticApplnLayer]').find('a[name="addApplnLayer"]').html(addIcon);
+					$("a[name=removeApplnLayer]").html('');
 				}
 			});
 
-			$("img[name=removeWebLayer]").click(function(){
-				$("img[name=addWebLayer]").removeAttr('src');
-				$(this).parent().parent().parent().parent().remove();
-				$("img[name=removeWebLayer]").parents('tr:last').find('img[name="addWebLayer"]').attr("src", "../themes/default/images/helios/plus_icon.png");
-				if (($("img[name=removeWebLayer]").parents('tr[name=staticWebLayer]').length) === 1) {
-					$('tr[name=staticWebLayer]').find('img[name="addWebLayer"]').attr("src", "../themes/default/images/helios/plus_icon.png");
-					$("img[name=removeWebLayer]").removeAttr('src');
+			$("a[name=removeWebLayer]").click(function(){
+				$("a[name=addWebLayer]").html('');
+				$(this).parent().parent().parent().remove();
+				$("a[name=removeWebLayer]").parents('tr:last').find('a[name="addWebLayer"]').html(addIcon);
+				if (($("a[name=removeWebLayer]").parents('tr[name=staticWebLayer]').length) === 1) {
+					$('tr[name=staticWebLayer]').find('a[name="addWebLayer"]').html(addIcon);
+					$("a[name=removeWebLayer]").html('');
 				}
 			});
 
-			$("img[name=removeMobileLayer]").click(function(){
-				$("img[name=addMobileLayer]").removeAttr('src');
-				$(this).parent().parent().parent().parent().remove();
-				$("img[name=removeMobileLayer]").parent().parent().parent().parent('tr:last').find('img[name="addMobileLayer"]').attr("src", "../themes/default/images/helios/plus_icon.png");
-				if (($("img[name=removeMobileLayer]").parents('tr[name=staticMobileLayer]').length) === 1) {
-					$('tr[name=staticMobileLayer]').find('img[name="addMobileLayer"]').attr("src", "../themes/default/images/helios/plus_icon.png");
-					$("img[name=removeMobileLayer]").removeAttr('src');
+			$("a[name=removeMobileLayer]").click(function(){
+				$("a[name=addMobileLayer]").html('');
+				$(this).parent().parent().parent().remove();
+				$("a[name=removeMobileLayer]").parent().parent().parent('tr:last').find('a[name="addMobileLayer"]').html(addIcon);
+				if (($("a[name=removeMobileLayer]").parents('tr[name=staticMobileLayer]').length) === 1) {
+					$('tr[name=staticMobileLayer]').find('a[name="addMobileLayer"]').html(addIcon);
+					$("a[name=removeMobileLayer]").html('');
 				}
 			});
 		},
@@ -511,7 +519,7 @@ define(["framework/widget", "framework/widgetWithTemplate", "common/loading", "p
 		},
 		
 		editSeriveTechnolyEvent : function(getData) {
-			var self = this;
+			var self = this, addIcon = '<img src="../themes/default/images/helios/plus_icon.png" border="0" alt="">';;
 			$("#appLayaer").hide();
 			$("#webLayaer").hide();
 			$("#webLayaer").next('tr').hide();
@@ -523,27 +531,27 @@ define(["framework/widget", "framework/widgetWithTemplate", "common/loading", "p
 					$("#appLayaer").show();
 					var splitValue = value.appDirName;
 					var finalValue = splitValue.split("-");
-					var appendData = '<tr class="applnLayer" name="dynamicAppLayer"><td data-i18n="project.create.label.appcode"></td><td><input type="text" value="'+finalValue[0]+'" disabled></td><td data-i18n="project.create.label.technology"></td><td name="technology"><select name="appln_technology" disabled>'+ self.getTechnology(value.techInfo.id) +'</select></td><td data-i18n="project.create.label.applicationversion"></td><td colspan="3" name="version"><select name="appln_version" disabled><option>'+value.techInfo.version+'</option></select><div class="flt_right icon_center"><a href="javascript:;"><img name="addApplnLayer" border="0" alt=""></a> <a href="javascript:;"><img name="removeApplnLayer" border="0" alt=""></a></div></td></tr>';
+					var appendData = '<tr class="applnLayer" name="dynamicAppLayer"><td data-i18n="project.create.label.appcode"></td><td><input type="text" value="'+finalValue[0]+'" disabled></td><td data-i18n="project.create.label.technology"></td><td name="technology"><select name="appln_technology" disabled>'+ self.getTechnology(value.techInfo.id) +'</select></td><td data-i18n="project.create.label.applicationversion"></td><td colspan="3" name="version"><select name="appln_version" disabled><option>'+value.techInfo.version+'</option></select><div class="flt_right icon_center"><a href="javascript:;" name="addApplnLayer"></a> <a href="javascript:;" name="removeApplnLayer"></a></div></td></tr>';
 					$(appendData).insertAfter("#appLayaer:last");
-					$("tr[name=dynamicAppLayer]:last").find("img[name=addApplnLayer]").attr("src", "../themes/default/images/helios/plus_icon.png");
+					$("tr[name=dynamicAppLayer]:last").find("a[name=addApplnLayer]").html(addIcon);
 				} else if (value.techInfo.appTypeId == "web-layer") {
 					$("#webLayaer").show();
 					var splitValue = value.appDirName;
 					var finalValue = splitValue.split("-");
-					var appendData = '<tr class="webLayer" name="dynamicWebLayer"><td data-i18n="project.create.label.appcode"></td><td><input type="text" value="'+finalValue[0]+'" disabled></td><td data-i18n="project.create.label.weblayer"></td><td name="web"><select name="weblayer" disabled><option>'+value.techInfo.techGroupId+'</option></select></td><td data-i18n="project.create.label.widget"></td><td name="widget"><select name="web_widget" disabled> '+ self.editgetwidgettype(value.techInfo.id) +'</select></td><td data-i18n="project.create.label.widgetversion"></td><td name="widgetversion"> <select name="web_version" disabled><option>'+value.techInfo.version+'</option></select><div class="flt_right icon_center"><a href="javascript:;"><img name="addWebLayer" border="0" alt=""></a> <a href="javascript:;"><img name="removeWebLayer" border="0" alt=""></a></div></td></tr>';
+					var appendData = '<tr class="webLayer" name="dynamicWebLayer"><td data-i18n="project.create.label.appcode"></td><td><input type="text" value="'+finalValue[0]+'" disabled></td><td data-i18n="project.create.label.weblayer"></td><td name="web"><select name="weblayer" disabled><option>'+value.techInfo.techGroupId+'</option></select></td><td data-i18n="project.create.label.widget"></td><td name="widget"><select name="web_widget" disabled> '+ self.editgetwidgettype(value.techInfo.id) +'</select></td><td data-i18n="project.create.label.widgetversion"></td><td name="widgetversion"> <select name="web_version" disabled><option>'+value.techInfo.version+'</option></select><div class="flt_right icon_center"><a href="javascript:;" name="addWebLayer"><img border="0" alt=""></a> <a href="javascript:;" name="removeWebLayer"></a></div></td></tr>';
 					$(appendData).insertAfter("#webLayaer:last");
-					$("tr[name=dynamicWebLayer]:last").find("img[name=addWebLayer]").attr("src", "../themes/default/images/helios/plus_icon.png");
+					$("tr[name=dynamicWebLayer]:last").find("a[name=addWebLayer]").html(addIcon);
 				} else if (value.techInfo.appTypeId == "mobile-layer") {
 					$("#mobLayaer").show();
 					$("#mobLayaer").next('tr').show();
 					var splitValue = value.appDirName;
 					var finalValue = splitValue.split("-");
-					var appendData = '<tr class="mobileLayer" name="dynamicMobileLayer"><td data-i18n="project.create.label.appcode"></td><td class="mobileappcode"><input type="text" value="'+finalValue[0]+'" disabled></td> <td data-i18n="project.create.label.mobile"> </td><td><select disabled><option>'+self.getMobile(value.techInfo.techGroupId)+'</option></select></td><td data-i18n="project.create.label.types"></td><td><select class="mobile_types" disabled><option>'+self.editgetmobiletype(value.techInfo.id)+'</option></select></td><td data-i18n="project.create.label.mobileversion"></td><td><select disabled><option>'+value.techInfo.version+'</option></select></td><td style="padding-right:0;"> <input type="checkbox"> <font data-i18n="project.create.label.mobile"></font> &nbsp;&nbsp;&nbsp;<input type="checkbox"> <font data-i18n="project.create.label.tablet"></font>&nbsp;&nbsp;&nbsp;</td><td><div class="flt_right icon_center"><a href="javascript:;"><img name="addMobileLayer" border="0" alt=""></a> <a href="javascript:;"><img name="removeMobileLayer" border="0" alt=""></a></div></td></tr>';
+					var appendData = '<tr class="mobileLayer" name="dynamicMobileLayer"><td data-i18n="project.create.label.appcode"></td><td class="mobileappcode"><input type="text" value="'+finalValue[0]+'" disabled></td> <td data-i18n="project.create.label.mobile"> </td><td><select disabled><option>'+value.techInfo.techGroupId+'</option></select></td><td data-i18n="project.create.label.types"></td><td><select class="mobile_types" disabled><option>'+self.editgetmobiletype(value.techInfo.id)+'</option></select></td><td data-i18n="project.create.label.mobileversion"></td><td><select disabled><option>'+value.techInfo.version+'</option></select></td><td style="padding-right:0;"> <input type="checkbox"> <font data-i18n="project.create.label.mobile"></font> &nbsp;&nbsp;&nbsp;<input type="checkbox"> <font data-i18n="project.create.label.tablet"></font>&nbsp;&nbsp;&nbsp;<div class="flt_right icon_center"><a href="javascript:;" name="addMobileLayer"></a> <a href="javascript:;" name="removeMobileLayer"></a></div></td></tr>';
 					$("#mobileTable").append(appendData);
 				}
 			});
 			
-			$("#mobileTable tr:last").find("img[name=addMobileLayer]").attr("src", "../themes/default/images/helios/plus_icon.png");
+			$("#mobileTable tr:last").find("a[name=addMobileLayer]").html(addIcon);
 			self.addLayersEvent();
 		},
 
