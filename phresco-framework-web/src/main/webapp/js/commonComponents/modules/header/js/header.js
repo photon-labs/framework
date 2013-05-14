@@ -58,10 +58,11 @@ define(["framework/widgetWithTemplate", "header/listener/headerListener"] , func
 			});
 			
 			$(".header_left ul li").click(function(){
-				if($(this).text() != self.headerListener.currentTab){
+
+				//if(("#" + $(this).text()) != location.hash){
 					self.headerListener.currentTab = $(this).text();
 					self.onTabChangeEvent.dispatch();
-				}
+				//}
 			});
 			
 			$('a[name=customers]').click(function(){

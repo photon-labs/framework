@@ -35,6 +35,7 @@ define(["framework/widget", "common/loading", "header/api/headerAPI", "login/log
 			if(self.currentTab == "Dashboard"){
 			}else if(self.currentTab == "Projects"){
 				currentObj = commonVariables.navListener.getMyObj(commonVariables.projectlist);
+				commonVariables.navListener.currentTab = commonVariables.projectlist;
 			}else if(self.currentTab == "Settings"){
 			}else if(self.currentTab == "Downloads"){
 			}else if(self.currentTab == "Admin"){

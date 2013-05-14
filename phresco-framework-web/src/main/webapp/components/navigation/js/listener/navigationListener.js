@@ -149,6 +149,7 @@ define(["framework/widget", "navigation/api/navigationAPI", "projects/project", 
 			Clazz.navigationController.jQueryContainer = commonVariables.contentPlaceholder;
 			self.getMyObj(commonVariables.projectlist);
 			self.header.headerListener.currentTab = "Projects";
+			self.currentTab = commonVariables.projectlist;
 			Clazz.navigationController.push(self.projectlist, true);
 		},
 		
@@ -156,6 +157,7 @@ define(["framework/widget", "navigation/api/navigationAPI", "projects/project", 
 			var self = this, current;
 			Clazz.navigationController.jQueryContainer = commonVariables.contentPlaceholder;
 			current = self.getMyObj(contentObj);
+			self.currentTab = contentObj;
 			Clazz.navigationController.push(current, true);
 		},
 		
