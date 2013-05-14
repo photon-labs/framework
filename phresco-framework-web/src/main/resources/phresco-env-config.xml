@@ -36,11 +36,11 @@
 	
 		<WebService desc="" name="Webservice">
 			<protocol>http</protocol>
-			<host>localhost</host>
-			<port>3030</port>
+			<host>phresco.photoninfotech.com</host>
+			<port>80</port>
 			<username/>
 			<password/>
-			<context>service</context>
+			<context>service-2.0</context>
 			<additional_context>/rest/api</additional_context>
 		</WebService>
                  
