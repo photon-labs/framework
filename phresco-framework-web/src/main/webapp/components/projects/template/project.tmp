@@ -65,8 +65,8 @@
 							<option>Select Version</option>
 						</select>
 						<div class="flt_right icon_center">
-						  <a href="javascript:;"><img name="addApplnLayer" src="../themes/default/images/helios/plus_icon.png"  border="0" alt=""></a>
-						  <a href="javascript:;"><img name="removeApplnLayer" border="0" alt=""></a>
+						  <a href="javascript:;" name="addApplnLayer"><img src="../themes/default/images/helios/plus_icon.png"  border="0" alt=""></a>
+						  <a href="javascript:;" name="removeApplnLayer"></a>
 						</div>
 					  </td>
 					</tr>
@@ -101,8 +101,8 @@
                             <option>Select Version</option>
                         </select>
                         <div class="flt_right icon_center">
-							<a href="javascript:;"><img name="addWebLayer" src="../themes/default/images/helios/plus_icon.png"  border="0" alt=""> </a>
-							<a href="javascript:;"><img name="removeWebLayer" border="0" alt=""></a>
+							<a href="javascript:;" name="addWebLayer"><img  src="../themes/default/images/helios/plus_icon.png"  border="0" alt=""> </a>
+							<a href="javascript:;" name="removeWebLayer"></a>
 						</div>
                        </td>
                       </tr>
@@ -142,8 +142,8 @@
 									<td style="padding-right:0;">
 										  <input type="checkbox"> <font data-i18n="project.create.label.mobile"></font> &nbsp;&nbsp;&nbsp;<input type="checkbox"> <font data-i18n="project.create.label.tablet"></font>&nbsp;&nbsp;&nbsp;
 										<div class="flt_right icon_center">
-											<a href="javascript:;"><img name="addMobileLayer" src="../themes/default/images/helios/plus_icon.png"  border="0" alt=""></a> 
-											<a href="javascript:;"><img name="removeMobileLayer" border="0" alt=""></a>
+											<a href="javascript:;" name="addMobileLayer"><img src="../themes/default/images/helios/plus_icon.png"  border="0" alt=""></a> 
+											<a href="javascript:;" name="removeMobileLayer"></a>
 										</div> 
 									</td>
 							  </tr>
