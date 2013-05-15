@@ -584,9 +584,9 @@
 			hideDeployDir();
 			hideRemoteDeply();
 		} else {
-			if (FrameworkConstants.ADVANCE_UI.equals(uiType)) {
+			<% if (FrameworkConstants.ADVANCE_UI.equals(uiType)) { %>
 				$('#remoteDeploymentControl').show();
-			}
+			<% } %>
 			remoteDeplyChecked();
 		}
 	}

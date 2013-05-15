@@ -166,7 +166,7 @@
 	    
 		indexHandler();
 		checkAllReports();
-		
+		toCheckAll();
 		$('.parentCheck').click(function() { //index checkbox should be always checked and disabled
 			indexHandler();
 		});
@@ -176,11 +176,7 @@
 		});
 		
 		$('.parentCheck, .check').click(function() { // check all report and report's category wise
-			if ($('input:checkbox').length - 1 !== $('input:checkbox:checked').length) {
-				$('#checkAllReports').attr("checked", false);
-			} else {
-				$('#checkAllReports').attr("checked", true);
-			}
+			toCheckAll();
 		});
 		
 		$('.parentCheck').click(function() {
@@ -192,6 +188,14 @@
 		});
 		
 	});
+	
+	function toCheckAll() {
+		if ($('input:checkbox').length - 1 !== $('input:checkbox:checked').length) {
+			$('#checkAllReports').attr("checked", false);
+		} else {
+			$('#checkAllReports').attr("checked", true);
+		}
+	}
 	
 	function checkAllReports(checkStatus) {
 		$('input:checkbox').attr('checked', checkStatus);

@@ -68,12 +68,6 @@ public class SiteReport extends FrameworkBaseAction {
 			
 		    removeSessionAttribute(getAppId() + SESSION_APPINFO);//To remove the appInfo from the session
 		    List<Reports> selectedReports = getPomReports(getApplicationInfo());
-		    if (CollectionUtils.isNotEmpty(selectedReports)) {
-			    for (Reports reports : selectedReports) {
-			    	List<ReportCategories> selectedCategories = reports.getReportCategories();
-			    	setReqAttribute(REQ_SITE_SELECTD_CATEGORIES, selectedCategories);
-				}
-		    }
 		    setReqAttribute(REQ_SITE_SLECTD_REPORTS, selectedReports);
 		} catch (PhrescoException e) {
 			return showErrorPopup(e,  getText(EXCEPTION_REPORT_VIEW_SITE));

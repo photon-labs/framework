@@ -94,8 +94,7 @@
 	var isEnvSpecific = "<%= isEnvSpecific %>";
 	
 	$(document).ready(function() {
-		hideLoadingIcon();//To hide the loading icon
-		hideProgressBar();
+		$('#successmsg').hide();
 		$('#customerList').show();
 		var basicParams = getBasicParamsAsJson();
 		var fromPage = "<%= fromPage%>";

@@ -30,14 +30,32 @@
 <%
 	String appId = (String)request.getAttribute(FrameworkConstants.REQ_APP_ID);
     List<Reports> selectedReports = (List<Reports>) request.getAttribute(FrameworkConstants.REQ_SITE_SLECTD_REPORTS);
-	List<ReportCategories> selectedCategories = (List<ReportCategories>) request.getAttribute(FrameworkConstants.REQ_SITE_SELECTD_CATEGORIES);
 	String requestIp = (String) request.getAttribute(FrameworkConstants.REQ_REQUEST_IP);
 	String showIcons = (String) session.getAttribute(requestIp);
     String disabledStr = "";
-    if (CollectionUtils.isEmpty(selectedCategories)) {
-    	disabledStr = "disabled";
+    if (CollectionUtils.isNotEmpty(selectedReports)) {
+	    for (Reports reports : selectedReports) {
+    		if (FrameworkConstants.REQ_SITE_SLECTD_REPORTSCATEGORIES.equals(reports.getArtifactId())) {
+   				 disabledStr = "";
+%>
+				<script type="text/javascript">
+					$("#generate").addClass("btn-primary"); 
+		        	$("#generate").removeClass("disabled");
+				</script>
+		    		
+<% 			break;	
+			} else {
+   				disabledStr = "disabled";
+%>
+				<script type="text/javascript">
+					$("#generate").removeClass("btn-primary");
+			        $("#generate").addClass("disabled");
+				</script>
+<%
+    		}
+		}
     } else {
-        disabledStr = "";
+    	disabledStr = "disabled";
     }
 %>
 
@@ -60,18 +78,12 @@
 </form>
 
 <script>
-	/** To enable/disable the Generate button based on the site configured **/
-	<%  if (CollectionUtils.isEmpty(selectedCategories)) { %>
-	        $("#generate").removeClass("btn-primary");  
-	        $("#generate").addClass("disabled");
-	<% } else { %>
-	        $("#generate").addClass("btn-primary"); 
-	        $("#generate").removeClass("disabled");
-	<% } %>
-	
-	
-
     $(document).ready(function() {
+    	
+    	<% if (CollectionUtils.isEmpty(selectedReports)) { %>
+		    	$("#generate").removeClass("btn-primary");
+		        $("#generate").addClass("disabled");
+    	<% } %>
     	$('#configurePopup').click(function() {
     		hidePopuploadingIcon();
     		yesnoPopup('siteConfigure', '<s:text name="header.site.report.configure"/>', 'createReportConfig', '<s:text name="lbl.btn.ok"/>');
