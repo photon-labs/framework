@@ -4,7 +4,7 @@ define(["framework/base", "api/api"], function() {
 
 	Clazz.com.components.application.js.api.ApplicationAPI = Clazz.extend(Clazz.com.js.api.API, {
 
-		application : function(header, callbackFunction, errorHandler) {
+		appinfo : function(header, callbackFunction, errorHandler) {
 			this.ajaxRequest(header, callbackFunction, errorHandler);
 		}
 		

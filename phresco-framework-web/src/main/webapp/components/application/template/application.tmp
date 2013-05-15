@@ -1,7 +1,7 @@
 
     <section class="content_main create_proj" id="appinfo">
           <table class="table table-striped table_border table-bordered" cellpadding="0" cellspacing="0" border="0">  
-            <tbody> 
+            <tbody name="layercontents"> 
 			{{#each projectlist.appdetails.data.appInfos}}
             	<tr>
                     <td data-i18n="application.edit.name"><sup>*</sup></td>
@@ -35,10 +35,10 @@
                     </tr>
 					{{#each projectlist.appdetails.data.appInfos}}
 						{{#each selectedServers}}
-							 <tr class="servers">
+							 <tr class="servers" key="displayed">
 							
 							 <td data-i18n="application.edit.servers"></td>
-							  <td name="servers"><select name="appServers">
+							  <td name="servers" class="servers"><select name="appServers" class="appServers">
 								<option>Select Server</option>
 								{{#each ../../projectlist.serverData}}
 									{{{compare id ../artifactGroupId name}}}
@@ -46,8 +46,8 @@
 								  </select>
 							  </td>
 							  <td data-i18n="application.edit.versions"></td>
-							  <td colspan="4" name="version">
-									<select name="server_version">
+							  <td colspan="4" name="version"  class="version">
+									<select name="server_version" class="server_version">
 										<option>Select Version</option>
 										{{#each ../../projectlist.serverData}}
 											{{{compareversion id ../artifactGroupId artifactGroup ../artifactInfoIds}}}
@@ -63,9 +63,9 @@
 						{{/each}}
 					{{/each}}
 					
-					<tr class="servers">
+					<tr class="servers" key="displayed">
                       <td data-i18n="application.edit.servers"></td>
-                      <td name="servers"><select name="appServers">
+                      <td name="servers" class="servers"><select name="appServers" class="appServers">
 						<option>Select Server</option>
 						{{#each projectlist.serverData}}
                             <option value="{{id}}">{{name}}</option>
@@ -73,8 +73,8 @@
                           </select>
                       </td>
                       <td data-i18n="application.edit.versions"></td>
-                      <td colspan="4" name="version">
-							<select name="server_version">
+                      <td colspan="4" name="version" class="version">
+							<select name="server_version" class="server_version">
 								<option>Select Version</option>
 							</select>
 						  <div class="flt_right">
@@ -90,9 +90,9 @@
 					 
 					{{#each projectlist.appdetails.data.appInfos}}
 						{{#each selectedDatabases}}
-							  <tr class="database">
+							  <tr class="database" key="displayed">
 							  <td data-i18n="application.edit.database"></td>
-							  <td name="servers"><select name="databases">
+							  <td name="servers" class="databases"><select name="databases" class="databases">
 								<option>Select Database</option>
 								{{#each ../../projectlist.databaseData}}
 									{{{compare id ../artifactGroupId name}}}
@@ -100,8 +100,8 @@
 								  </select>
 							  </td>
 							  <td data-i18n="application.edit.versions"></td>
-							  <td colspan="4" name="version">
-									<select name="db_version">
+							  <td colspan="4" name="version" class="version">
+									<select name="db_version" class="db_version">
 										<option>Select Version</option>
 										{{#each ../../projectlist.databaseData}}
 											{{{compareversion id ../artifactGroupId artifactGroup ../artifactInfoIds}}}
@@ -115,9 +115,9 @@
 						{{/each}}
 					{{/each}}
 					
-					<tr class="database">
+					<tr class="database" key="displayed">
 					  <td data-i18n="application.edit.database"></td>
-					  <td name="servers"><select name="databases">
+					  <td name="servers" class="databases"><select name="databases" class="databases">
 						<option>Select Database</option>
 						{{#each projectlist.databaseData}}
 							<option value="{{id}}">{{name}}</option>
@@ -125,8 +125,8 @@
 						  </select>
 					  </td>
 					  <td data-i18n="application.edit.versions"></td>
-					  <td colspan="4" name="version">
-							<select name="db_version">
+					  <td colspan="4" name="version" class="version">
+							<select name="db_version" class="db_version">
 								<option>Select Version</option>
 						  </select>
 						   <div class="flt_right">

@@ -8,6 +8,7 @@ define(["framework/widgetWithTemplate", "application/listener/applicationListene
 		editApplicationListener: null,
 		name : commonVariables.editApplication,
 		addServerEvent : null,
+		applicationAPI : null,
 		renderData : {},
 		header: {
 			contentType: null,
@@ -25,7 +26,7 @@ define(["framework/widgetWithTemplate", "application/listener/applicationListene
 		initialize : function(globalConfig){
 			var self = this;
 			self.editApplicationListener = new Clazz.com.components.application.js.listener.ApplicationListener(globalConfig);
-			self.applicationAPI = applicationAPI = new Clazz.com.components.application.js.api.ApplicationAPI();
+			self.applicationAPI =  new Clazz.com.components.application.js.api.ApplicationAPI();
 			self.registerEvents(self.editApplicationListener);
 		},
 		
@@ -88,7 +89,7 @@ define(["framework/widgetWithTemplate", "application/listener/applicationListene
 		preRender: function(whereToRender, renderFunction){
 			var self = this;
 			setTimeout(function() {
-				self.editApplicationListener.getAppInfo(self.editApplicationListener.getRequestHeader(self.appDirName), function(response) {
+				self.editApplicationListener.getAppInfo(self.editApplicationListener.getRequestHeader(self.appDirName , "getappinfo"), function(response) {
 					var projectlist = {};
 					projectlist.projectlist = response;
 					self.renderData = response;
