@@ -31,7 +31,6 @@ define(["framework/widget", "common/loading", "header/api/headerAPI", "login/log
 		loadTab : function(){
 			var self = this, currentObj = null;
 			Clazz.navigationController.jQueryContainer = commonVariables.contentPlaceholder;
-<<<<<<< Updated upstream
 			
 			if(self.currentTab == "Dashboard"){
 			}else if(self.currentTab == "Projects"){
@@ -45,11 +44,6 @@ define(["framework/widget", "common/loading", "header/api/headerAPI", "login/log
 			if(currentObj != null){
 				Clazz.navigationController.push(currentObj, true);
 			}
-=======
-			self.projectListContent = new Clazz.com.components.projectlist.js.ProjectList();
-			Clazz.navigationController.push(self.projectListContent, true);
-			$("#navigation").css("display", "block");
->>>>>>> Stashed changes
 		},
 
 		removePlaceholder : function() {
