@@ -1,7 +1,6 @@
 package com.photon.phresco.framework.rest.api;
 
 
-import java.io.IOException;
 
 import com.photon.phresco.exception.PhrescoException;
 import com.photon.phresco.exception.PhrescoWebServiceException;
@@ -14,7 +13,7 @@ import com.photon.phresco.service.client.impl.ServiceManagerImpl;
 public class RestBase<T> {
 
 	protected ServiceManager getServiceManager(String userName, String password) {
-		ServiceManager serviceManager;
+		ServiceManager serviceManager = null;
 		try {
 			ServiceContext context = new ServiceContext();
 			FrameworkConfiguration configuration = PhrescoFrameworkFactory.getFrameworkConfig();
@@ -22,17 +21,14 @@ public class RestBase<T> {
 			context.put("phresco.service.username", userName);
 			context.put("phresco.service.password", password);
 			context.put("phresco.service.api.key", configuration.apiKey());
-			serviceManager = ServiceManagerMap.getServiceManager(userName);
+//			serviceManager = ServiceManagerMap.getServiceManager("sample");
 			if (serviceManager == null) {
 				serviceManager = new ServiceManagerImpl(context);
-//				ServiceManagerMap.putServiceManager(userName, serviceManager);
+				ServiceManagerMap.putServiceManager(userName, serviceManager);
 			}
-			System.out.println("user info in rest base  ::" + serviceManager.getUserInfo().getDisplayName());
 		} catch (PhrescoWebServiceException ex) {
 			throw new PhrescoWebServiceException(ex.getResponse());
 		} catch (PhrescoException e) {
-			throw new PhrescoWebServiceException(e);
-		} catch (IOException e) {
 			throw new PhrescoWebServiceException(e);
 		}
 
