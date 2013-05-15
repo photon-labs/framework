@@ -217,6 +217,7 @@ public class ProjectService extends RestBase implements FrameworkConstants {
 			applicationHandler.setDeletedFeatures(deletedFeatures);
 			
 			mojo.save();
+			
 			applicationInfo.setSelectedModules(selectedFeatures);
 			applicationInfo.setSelectedJSLibs(selectedJsLibs);
 			applicationInfo.setSelectedComponents(selectedComponents);
@@ -240,11 +241,11 @@ public class ProjectService extends RestBase implements FrameworkConstants {
 	@Path("/updateApplication")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response updateApplication( @QueryParam("oldAppDirName") String oldAppDirName , ProjectInfo projectInfo, @QueryParam("userId") String userId, @QueryParam("customerId") String customerId) {
+	public Response updateApplication( @QueryParam("oldAppDirName") String oldAppDirName , ApplicationInfo appInfo, @QueryParam("userId") String userId, @QueryParam("customerId") String customerId) {
 		ResponseInfo responseData = new ResponseInfo();
 		BufferedReader bufferedReader = null;
+		File filePath = null;
 		try {
-			ApplicationInfo appInfo = projectInfo.getAppInfos().get(0);
 			ServiceManager serviceManager = ServiceManagerMap.getServiceManager(userId);
 			if(serviceManager == null) {
 				ResponseInfo finalOutput = responseDataEvaluation(responseData, null, "UnAuthorized User", null);
@@ -256,8 +257,6 @@ public class ProjectService extends RestBase implements FrameworkConstants {
 
 			Gson gson = new Gson();
 
-			File filePath = null;
-			if (StringUtils.isNotEmpty(oldAppDirName)) {
 				StringBuilder sb = new StringBuilder(Utility.getProjectHome())
 				.append(oldAppDirName)
 				.append(File.separator)
@@ -265,18 +264,8 @@ public class ProjectService extends RestBase implements FrameworkConstants {
 				.append(File.separator)
 				.append(Constants.APPLICATION_HANDLER_INFO_FILE);
 				filePath = new File(sb.toString());
-			} else {
-				StringBuilder sb = new StringBuilder(Utility.getProjectHome())
-				.append(appInfo.getAppDirName())
-				.append(File.separator)
-				.append(Constants.DOT_PHRESCO_FOLDER)
-				.append(File.separator)
-				.append(Constants.APPLICATION_HANDLER_INFO_FILE);
-				filePath = new File(sb.toString());
-			}
 			MojoProcessor mojo = new MojoProcessor(filePath);
 			ApplicationHandler applicationHandler = mojo.getApplicationHandler();
-
 			//To write selected Database into phresco-application-Handler-info.xml
 			List<ArtifactGroupInfo> selectedDatabases = appInfo.getSelectedDatabases();
 			if (CollectionUtils.isNotEmpty(selectedDatabases)) {
@@ -349,17 +338,14 @@ public class ProjectService extends RestBase implements FrameworkConstants {
 
 			mojo.save();
 			StringBuilder sbs = null;
-			if(StringUtils.isNotEmpty(oldAppDirName)) {
+			if (StringUtils.isNotEmpty(oldAppDirName)) {
 				sbs = new StringBuilder(Utility.getProjectHome()).append(oldAppDirName).append(
-						File.separator).append(Constants.DOT_PHRESCO_FOLDER).append(File.separator).append("project.info");
-			} else {
-				sbs = new StringBuilder(Utility.getProjectHome()).append(appInfo.getAppDirName()).append(
 						File.separator).append(Constants.DOT_PHRESCO_FOLDER).append(File.separator).append("project.info");
 			}
 			bufferedReader = new BufferedReader(new FileReader(sbs.toString()));
 			Type type = new TypeToken<ProjectInfo>() {}.getType();
-			ProjectInfo projectinfo = gson.fromJson(bufferedReader, type);
-			ApplicationInfo applicationInfo = projectinfo.getAppInfos().get(0);
+			ProjectInfo projectInfo = gson.fromJson(bufferedReader, type);
+			ApplicationInfo applicationInfo = projectInfo.getAppInfos().get(0);
 
 			bufferedReader.close();
 			deleteSqlFolder(applicationInfo, selectedDatabases, serviceManager, oldAppDirName);
