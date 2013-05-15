@@ -82,6 +82,37 @@ define(["framework/widgetWithTemplate", "projectlist/listener/projectListListene
 			var self = this;
 			$(".tooltiptop").tooltip();
 			$(".dyn_popup").hide();
+			
+			var w1 = $(".scrollContent tr:nth-child(2) td:first-child").width();
+			var w2 = $(".scrollContent tr:nth-child(2) td:nth-child(2)").width();
+			var w3 = $(".scrollContent tr:nth-child(2) td:nth-child(3)").width();
+			var w4 = $(".scrollContent tr:nth-child(2) td:nth-child(4)").width();
+			var w5 = $(".scrollContent tr:nth-child(2) td:nth-child(5)").width();
+			var w6 = $(".scrollContent tr:nth-child(2) td:nth-child(6)").width();
+			
+			$(".fixedHeader tr th:first-child").css("width",w1);
+			$(".fixedHeader tr th:nth-child(2)").css("width",w2);
+			$(".fixedHeader tr th:nth-child(3)").css("width",w3);
+			$(".fixedHeader tr th:nth-child(4)").css("width",w4);
+			$(".fixedHeader tr th:nth-child(5)").css("width",w5);
+			$(".fixedHeader tr th:nth-child(6)").css("width",w6);
+			
+			$(window).resize(function() {
+				var w1 = $(".scrollContent tr:nth-child(2) td:first-child").width();
+				var w2 = $(".scrollContent tr:nth-child(2) td:nth-child(2)").width();
+				var w3 = $(".scrollContent tr:nth-child(2) td:nth-child(3)").width();
+				var w4 = $(".scrollContent tr:nth-child(2) td:nth-child(4)").width();
+				var w5 = $(".scrollContent tr:nth-child(2) td:nth-child(5)").width();
+				var w6 = $(".scrollContent tr:nth-child(2) td:nth-child(6)").width();
+				
+				$(".fixedHeader tr th:first-child").css("width",w1);
+				$(".fixedHeader tr th:nth-child(2)").css("width",w2);
+				$(".fixedHeader tr th:nth-child(3)").css("width",w3);
+				$(".fixedHeader tr th:nth-child(4)").css("width",w4);
+				$(".fixedHeader tr th:nth-child(5)").css("width",w5);
+				$(".fixedHeader tr th:nth-child(6)").css("width",w6);
+			});
+			
 			$("#applicationedit").css("display", "none");
 			$("#editprojectTab").css("display", "none");
 			$("img[name=editproject]").unbind("click");

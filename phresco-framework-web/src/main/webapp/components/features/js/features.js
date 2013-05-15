@@ -116,7 +116,11 @@ define(["framework/widgetWithTemplate", "features/listener/featuresListener"], f
 		 */
 		bindUI : function(){
 			var self=this;
-			$(".dyn_popup").hide();
+			$(window).resize(function() {
+				$(".dyn_popup").hide();
+				var height = $(this).height();
+				$('.box_div').height(height - 306);
+			  });
 			//$('.switch').css('background', 'url("../themes/default/images/helios/on_off_switch.png")');
 			//$('.on_off').css('display','none');
 

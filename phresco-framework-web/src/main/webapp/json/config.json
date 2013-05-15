@@ -71,6 +71,11 @@
 		"build" : {
 			"moduleName":"build",
 			"path" : "../components/build/js"
+		},
+		
+		"unittest" : {
+			"moduleName":"unittest",
+			"path" : "../components/unittest/js"
 		}
 	}
 }

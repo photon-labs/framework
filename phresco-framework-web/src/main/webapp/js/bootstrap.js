@@ -36,6 +36,8 @@ var commonVariables = {
 	
 	configuration : "configuration",
 	
+	unittest : "unittest",
+	
 	customerTheme : null,
 	defaultcustomer : "Photon",
 	customerInfoContext : "technology/customerinfo?customerName=",
