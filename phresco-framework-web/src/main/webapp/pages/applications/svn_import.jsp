@@ -257,8 +257,7 @@
 		hideShowTestCheckoutDiv();
 		$("#repoUrl").focus();
 		$('#logDiv').hide();
-		$('#testImportDivControl').hide();
-		 // when clicking on save button, popup should not hide
+		// when clicking on save button, popup should not hide
         $('.popupOk').attr("data-dismiss", "");
 		 
 		// svn import already selected value display
