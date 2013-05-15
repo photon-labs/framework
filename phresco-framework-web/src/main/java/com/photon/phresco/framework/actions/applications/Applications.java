@@ -642,6 +642,22 @@ public class Applications extends FrameworkBaseAction implements Constants {
 		try {
 			revision = !HEAD_REVISION.equals(revision) ? revisionVal : revision;
 			SCMManagerImpl scmi = new SCMManagerImpl();
+			String authForAppln = checkAuthentication(repoUrl, userName, password);
+			
+			if (!SUCCESS.equalsIgnoreCase(authForAppln)) {
+				errorString = "Application Repository Url/Credentials does not match!!!";
+				errorFlag = false;
+				return SUCCESS;
+			}
+			if (testClone) {
+				String authForTest = checkAuthentication(testRepoUrl, testUserName, testPassword);
+
+				if (!SUCCESS.equalsIgnoreCase(authForTest)) {
+					errorString = "TestCheckout Repository Url/Credentials does not match!!!";
+					errorFlag = false;
+					return SUCCESS;
+				}
+			}
 			
 			ApplicationInfo importProject = scmi.importProject(SVN, repoUrl, userName, password, null, revision);
 			if (importProject != null) {
@@ -674,7 +690,7 @@ public class Applications extends FrameworkBaseAction implements Constants {
 				S_LOGGER.error(e.getLocalizedMessage());
 			}
 			errorFlag = false;
-			errorString = getText(INVALID_CREDENTIALS);
+			errorString = getText(APPLN_INVALID_CREDENTIALS);
 		} catch (SVNException e) {
 			if(s_debugEnabled){
 				S_LOGGER.error(e.getLocalizedMessage());
@@ -703,7 +719,7 @@ public class Applications extends FrameworkBaseAction implements Constants {
 			if(s_debugEnabled){
 				S_LOGGER.error(e.getLocalizedMessage());
 			}
-			errorString = getText(IMPORT_PROJECT_FAIL);
+			errorString = getText(e.getLocalizedMessage());
 			errorFlag = false;
 		}
 		return SUCCESS;
@@ -760,7 +776,6 @@ public class Applications extends FrameworkBaseAction implements Constants {
 			errorString = getText(IMPORT_PROJECT_FAIL);
 			errorFlag = false;
 		}
-		
 		return SUCCESS;
 	}
 	
@@ -1150,6 +1165,31 @@ public class Applications extends FrameworkBaseAction implements Constants {
 			} 
 		}
 		return Messages;
+	}
+	
+	private String checkAuthentication(String repoUrl, String userName, String passsword) {
+		try {
+			String authString = userName + COLON + passsword;
+			byte[] authEncBytes = Base64.encodeBase64(authString.getBytes());
+			String authStringEnc = new String(authEncBytes);
+
+			URL url = new URL(repoUrl);
+			URLConnection urlConnection = url.openConnection();
+			urlConnection.setRequestProperty(AUTHORIZATION, BASIC_SPACE + authStringEnc);
+			InputStream is = urlConnection.getInputStream();
+			InputStreamReader isr = new InputStreamReader(is);
+
+			int numCharsRead;
+			char[] charArray = new char[1024];
+			StringBuffer sb = new StringBuffer();
+			while ((numCharsRead = isr.read(charArray)) > 0) {
+				sb.append(charArray, 0, numCharsRead);
+			}
+		
+		} catch (Exception e) {
+			return e.getLocalizedMessage();
+		}
+		return SUCCESS;
 	}
 	
 	/**

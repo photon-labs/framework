@@ -257,6 +257,7 @@
 		hideShowTestCheckoutDiv();
 		$("#repoUrl").focus();
 		$('#logDiv').hide();
+		$('#testImportDivControl').hide();
 		 // when clicking on save button, popup should not hide
         $('.popupOk').attr("data-dismiss", "");
 		 
@@ -479,10 +480,7 @@
     	if (repoUrl.indexOf('insight.photoninfotech.com') != -1) {
 			$('#credentials').attr("checked", false);
 	        svnCredentialMark();
-       	} else if(!isBlank(repoUrl) && (repoUrl != "http://")) {
-			$('#credentials').attr("checked", true);
-	        svnCredentialMark();
-        }
+       	} 
 	}
 	
 	function testUrlBasedAction() {
@@ -490,10 +488,7 @@
     	if (repoUrl.indexOf('insight.photoninfotech.com') != -1) {
 			$('#testCredentials').attr("checked", false);
 			svnCredentialTestMark();
-       	} else if(!isBlank(repoUrl) && (repoUrl != "http://")) {
-			$('#testCredentials').attr("checked", true);
-			svnCredentialTestMark();
-        }
+       	}
 	}
 
 	function svnCredentialMark() {
@@ -558,27 +553,27 @@
 		var repoUrl = $("input[name='repoUrl']").val();
 		
 		if (isBlank(repoUrl)) {
-			$("#errMsg").html("URL is missing");
+			$("#errMsg").html("Application Repository URL is missing");
 			$("#repoUrl").focus();
 			return false;
 		}
 		
 		if ($("[name=repoType]").val() != 'bitkeeper' && isValidUrl(repoUrl)) {
-			$("#errMsg").html("Invalid URL");
+			$("#errMsg").html("Invalid Application Repository URL");
 			$("#repoUrl").focus();
 			return false;
 		}
 		
 		if ($("[name=repoType]").val() == 'svn') {
 			if (isBlank($.trim($("input[name='username']").val()))) {
-				$("#errMsg").html("Username is missing");
+				$("#errMsg").html("Application Repository Username is missing");
 				$("#userName").focus();
 				$("#userName").val("");
 				return false;
 			}
 			
 			if (isBlank($.trim($("input[name='password']").val()))) {
-				$("#errMsg").html("Password is missing");
+				$("#errMsg").html("Application Repository Password is missing");
 				$("#password").focus();
 				$("#password").val("");
 				return false;
@@ -586,7 +581,7 @@
 			
 // 			the revision have to be validated
 			if ($('input:radio[name=revision]:checked').val() == "revision" && (isBlank($.trim($('#revisionVal').val())))) {
-				$("#errMsg").html("Revision is missing");
+				$("#errMsg").html("Application Repository Revision is missing");
 				$("#revisionVal").focus();
 				$("#revisionVal").val("");
 				return false;
@@ -607,27 +602,27 @@
 			var testRepoUrl = $("input[name='testRepoUrl']").val();
 			
 			if (isBlank(testRepoUrl)) {
-				$("#errMsg").html("URL(TestClone) is missing");
+				$("#errMsg").html("TestCheckout Repository URL is missing");
 				$("#testRepoUrl").focus();
 				return false;
 			}
 			
 			if ($("[name=repoType]").val() != 'bitkeeper' && isValidUrl(testRepoUrl)) {
-				$("#errMsg").html("Invalid URL(TestClone)");
+				$("#errMsg").html("Invalid TestCheckout Repository URL");
 				$("#testRepoUrl").focus();
 				return false;
 			}
 			
 			if ($("[name=repoType]").val() == 'svn') {
 				if (isBlank($.trim($("input[name='testUserName']").val()))) {
-					$("#errMsg").html("Username(TestClone) is missing");
+					$("#errMsg").html("TestCheckout Repository Username is missing");
 					$("#testUserName").focus();
 					$("#testUserName").val("");
 					return false;
 				}
 				
 				if (isBlank($.trim($("input[name='testPassword']").val()))) {
-					$("#errMsg").html("Password(TestClone) is missing");
+					$("#errMsg").html("TestCheckout Repository Password is missing");
 					$("#testPassword").focus();
 					$("#testPassword").val("");
 					return false;
@@ -635,7 +630,7 @@
 				
 //	 			the revision have to be validated
 				if ($('input:radio[name=testRevision]:checked').val() == "revision" && (isBlank($.trim($('#testRevisionVal').val())))) {
-					$("#errMsg").html("Revision(TestClone) is missing");
+					$("#errMsg").html("TestCheckout Repository Revision is missing");
 					$("#testRevisionVal").focus();
 					$("#testRevisionVal").val("");
 					return false;

@@ -1123,6 +1123,8 @@ public interface FrameworkConstants {
     String UPDATE_PROJECT = "Project {0} updated successfully";
     String FAILURE_PROJECT = "Project {0} creation failed";
     String IMPORT_SUCCESS_PROJECT = "Project imported successfully";
+    String AUTHORIZATION = "Authorization";
+    String BASIC_SPACE = "Basic ";
     String BUILD_WARNING_MESSAGE = "Build might take few minutes to generate.Do not do any action or refresh";     
     /*
      * Delete Project keys
@@ -1139,6 +1141,7 @@ public interface FrameworkConstants {
     String IMPORT_PROJECT_FAIL = "import.project.fail";
     String UPDATE_PROJECT_FAIL = "update.project.fail";
     String INVALID_CREDENTIALS = "import.invalid.credential";
+    String APPLN_INVALID_CREDENTIALS = "import.appln.invalid.credential";
     String INVALID_FOLDER = "import.invalid.folder";
     String PROJECT_ALREADY = "import.project.already";
     String SVN_FAILED = "failed";
