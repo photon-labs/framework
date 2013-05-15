@@ -363,7 +363,8 @@ public class ProjectService extends RestBase implements FrameworkConstants {
 		} finally {
 			Utility.closeReader(bufferedReader);
 		}
-		return null;
+		ResponseInfo finalOutput = responseDataEvaluation(responseData, null, "Application updated successfully", null);
+		return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
 	}
 	
 	@GET
