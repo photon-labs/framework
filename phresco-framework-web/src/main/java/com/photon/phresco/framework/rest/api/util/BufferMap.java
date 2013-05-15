@@ -9,7 +9,7 @@ import java.util.Map;
 public class BufferMap {
 	
 		
-		public static Map<String, BufferedReader> BufferReaderMap = new HashMap<String, BufferedReader>();
+		private static Map<String, BufferedReader> BufferReaderMap = new HashMap<String, BufferedReader>();
 
 		public static String readBufferReader(String key) throws IOException {
 			String line="";
@@ -29,6 +29,11 @@ public class BufferMap {
 		public static void removeBufferReader(String key) {
 			
 			BufferReaderMap.remove(key);
+		}
+		
+		public static BufferedReader getBufferReader(String key) {
+			
+			return BufferReaderMap.get(key);
 		}
 		
 

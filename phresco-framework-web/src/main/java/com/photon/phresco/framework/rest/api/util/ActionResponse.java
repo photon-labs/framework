@@ -5,14 +5,21 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 @SuppressWarnings("restriction")
 @XmlRootElement
-public class MavenResponse {
+public class ActionResponse {
 
 	String status;
 	String log;
 	String service_exception;
 	String uniquekey;
+	boolean connectionAlive = false;
 	
 	
+	public boolean isConnectionAlive() {
+		return connectionAlive;
+	}
+	public void setConnectionAlive(boolean connectionAlive) {
+		this.connectionAlive = connectionAlive;
+	}
 	public String getUniquekey() {
 		return uniquekey;
 	}
