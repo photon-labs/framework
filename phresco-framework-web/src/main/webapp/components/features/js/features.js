@@ -54,6 +54,21 @@ define(["framework/widgetWithTemplate", "features/listener/featuresListener"], f
 				});
 				return fieldset;
 			});
+			
+			Handlebars.registerHelper('versionShowHide', function(versions) {
+				var fieldset;
+				$.each(versions, function(index, value){
+					$.each(value.appliesTo, function(index, value){
+						if(value.required == true){
+							fieldset = '<div class="flt_right" style="display:block;">';
+						}else{							
+							fieldset = '<div class="flt_right" style="display:none;">';
+						}
+					});					
+				});
+				return fieldset;
+			});
+			
 		},
 
 
@@ -157,6 +172,7 @@ define(["framework/widgetWithTemplate", "features/listener/featuresListener"], f
            	});
 
            	$('#switchoffbutton').on("click", function(event) {
+				console.info("inside..of");
            		$("#moduleContent li").hide();
            		$("ul li fieldset").each(function() {
            			if($(this).attr("class") == "switch switchOn"){
@@ -165,7 +181,17 @@ define(["framework/widgetWithTemplate", "features/listener/featuresListener"], f
            			}     			
            		});           		
            	});
+			
+			$('label.on').click(function() {
+				$(this).parent().next('div').show();	      		
+           	});
+			
+			$('label.off').click(function() {
+				$(this).parent().next('div').hide();	      		
+           	});
+			
            	$('#switchonbutton').on("click", function(event) {
+				console.info("inside..on");
            		$("ul li").show();
            		self.scrollbarUpdate();
            	});
