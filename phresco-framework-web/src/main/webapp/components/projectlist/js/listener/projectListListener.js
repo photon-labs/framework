@@ -144,12 +144,13 @@ define(["framework/widget", "framework/widgetWithTemplate", "projectlist/api/pro
 		},
 
 		
-		editApplication : function(value) {
+		editApplication : function(value, techid) {
 			var self = this;
 			Clazz.navigationController.jQueryContainer = commonVariables.contentPlaceholder;
 			self.editAplnContent = commonVariables.navListener.getMyObj(commonVariables.editApplication);
 			self.editAplnContent.appDirName = value;
             self.projectListAPI.localVal.setJson('appDirName', value);			
+            self.projectListAPI.localVal.setJson('techid', techid);			
 			Clazz.navigationController.push(self.editAplnContent, true);
 			$("#applicationedit").css("display", "block");
 			$("#aplntitle").html("Edit - "+value);

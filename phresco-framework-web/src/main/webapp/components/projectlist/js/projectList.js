@@ -35,7 +35,7 @@ define(["framework/widgetWithTemplate", "projectlist/listener/projectListListene
 		 */
 		loadPage :function() {
 			var self = this;
-			Clazz.navigationController.push(this);
+			Clazz.navigationController.push(this, true);
 		},
 		
 		registerEvents : function(projectslistListener,repositoryListener) {
@@ -71,7 +71,8 @@ define(["framework/widgetWithTemplate", "projectlist/listener/projectListListene
 		getAction : function(actionBody, action, callback) {
 			var self = this;
 			self.projectslistListener.projectListAction(self.projectslistListener.getActionHeader(actionBody, action), function(response) {
-				self.preRender(commonVariables.contentPlaceholder,$.proxy(self.renderTemplate, self));
+				//self.preRender(commonVariables.contentPlaceholder,$.proxy(self.renderTemplate, self));
+				self.loadPage();
 			});
 		},
 		
@@ -125,8 +126,9 @@ define(["framework/widgetWithTemplate", "projectlist/listener/projectListListene
 			$("#myTab li a").removeClass("act");
 			$('a[name=editApplication]').click(function(){
 				var value = $(this).closest("tr").attr("class");
+				var techid = $(this).closest("tr").attr("techid");
 				$("#myTab li#appinfo a").addClass("act");
-				self.onProjectsEvent.dispatch(value);
+				self.onProjectsEvent.dispatch(value , techid);
 			});
 
 			$(".tooltiptop").unbind("click");
@@ -155,9 +157,9 @@ define(["framework/widgetWithTemplate", "projectlist/listener/projectListListene
 				   if(classname != "proj_title") {
 				        currentRow = currentRow.next('tr');
 				        projectnameArray.push(classname);
-				        self.getAction(projectnameArray,"delete");
 				   }else {currentRow = null}
 				}
+				self.getAction(projectnameArray,"delete");
 			});			
 		}
 	});
