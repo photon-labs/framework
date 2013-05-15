@@ -58,6 +58,8 @@ define(["framework/widgetWithTemplate", "projectlist/listener/projectListListene
 		},
 
 		preRender: function(whereToRender, renderFunction){
+			$("#projectList").show();
+			$("#createProject").hide();
 			var self = this;
 			self.projectslistListener.getProjectList(self.projectslistListener.getRequestHeader(self.projectRequestBody, ''), function(response) {
 				var projectlist = {};

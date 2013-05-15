@@ -60,6 +60,8 @@ define(["framework/widgetWithTemplate", "projects/listener/projectsListener", "p
 		},
 		
 		preRender : function(whereToRender, renderFunction) {
+			$("#projectList").hide();
+			$("#createProject").show();
 			var self=this;
 			self.setTechnologyData(function(bCheck){
 				if(bCheck){
@@ -109,6 +111,7 @@ define(["framework/widgetWithTemplate", "projects/listener/projectsListener", "p
 			self.projectsListener.addLayersEvent();
 			self.projectsListener.removeLayersEvent();
 			self.projectsListener.technologyAndVersionChangeEvent();
+			self.projectsListener.pilotprojectsEvent();
 			self.setDateTimePicker();
 			
 			$("img[name='close']").unbind('click');
