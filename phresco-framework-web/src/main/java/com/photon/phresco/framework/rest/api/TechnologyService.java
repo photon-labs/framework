@@ -1,7 +1,13 @@
 package com.photon.phresco.framework.rest.api;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
@@ -9,6 +15,11 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+
+import org.codehaus.plexus.util.StringUtils;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
 
 import com.photon.phresco.commons.model.ApplicationType;
 import com.photon.phresco.commons.model.Customer;
@@ -63,10 +74,94 @@ public class TechnologyService extends RestBase {
 	        ClientResponse response = resource.get(ClientResponse.class);
 	        GenericType<Customer> genericType = new GenericType<Customer>() {};
 	        Customer customer = response.getEntity(genericType);
-			ResponseInfo<Customer> finalOutput = responseDataEvaluation(responseData, null, "customer returned successfully", customer);
+	        if (!customerName.equalsIgnoreCase("Photon")) {
+		        Map<String, String> theme = customer.getFrameworkTheme();
+				String brandingColor = theme.get("brandingColor");
+				String accordionBackGroundColor =  theme.get("accordionBackGroundColor");
+				String bodyBackGroundColor =  theme.get("bodyBackGroundColor");
+				String buttonColor =  theme.get("ButtonColor");
+				String pageHeaderColor =  theme.get("PageHeaderColor");
+				String copyRightColor =  theme.get("CopyRightColor");
+				String labelColor =  theme.get("LabelColor");
+				String menufontColor =  theme.get("MenufontColor"); 
+				String menuBackGround =  theme.get("MenuBackGround");
+//				String subMenuBackGround =  theme.get("SubMenuBackGround");
+				String copyRight =  theme.get("CopyRight");
+				String disabledLabelColor =  theme.get("DisabledLabelColor");
+				String loginLogo =  theme.get("loginlogo");
+				String logoPadding =  theme.get("logopadding");
+			
+			    InputStream stream =   this.getClass().getClassLoader().getResourceAsStream("customercss.xml");
+			    String result = getStringFromInputStream(stream);
+				
+			    JSONParser parser = new JSONParser();
+				JSONObject jsonObject = (JSONObject) parser.parse(result);
+			
+				Set keySet = jsonObject.keySet();
+				for (Object object : keySet) {
+					JSONObject fields = (JSONObject)jsonObject.get(object.toString());
+					Set fieldSet = fields.keySet();
+					for (Object key : fieldSet) {
+						Object value = fields.get(key);
+						String customercolor = value.toString();
+						if (customercolor.contains("brandingColor") && StringUtils.isNotEmpty(brandingColor)) {
+							fields.put(key,  customercolor.replace("brandingColor", brandingColor) + " !important");
+						}
+						if (customercolor.equals("menuBackGround") && StringUtils.isNotEmpty(menuBackGround)) {
+							fields.put(key,  customercolor.replace("menuBackGround", menuBackGround) + " !important");
+						}
+						if (customercolor.contains("backgroundColor") && StringUtils.isNotEmpty(bodyBackGroundColor)) {
+							fields.put(key,  customercolor.replace("backgroundColor", bodyBackGroundColor) + " !important");
+						}
+						if (customercolor.contains("accordionBackGroundColor") && StringUtils.isNotEmpty(accordionBackGroundColor)) {
+							fields.put(key,  customercolor.replace("accordionBackGroundColor", accordionBackGroundColor) + " !important");
+						}
+						if (customercolor.contains("bodyBackGroundColor") && StringUtils.isNotEmpty(bodyBackGroundColor)) {
+							fields.put(key,  customercolor.replace("bodyBackGroundColor", bodyBackGroundColor) + " !important");
+						}
+						if (customercolor.contains("buttonColor") && StringUtils.isNotEmpty(buttonColor)) {
+							fields.put(key,  customercolor.replace("buttonColor", buttonColor) + " !important");
+						}
+						if (customercolor.contains("pageHeaderColor") && StringUtils.isNotEmpty(pageHeaderColor)) {
+							fields.put(key,  customercolor.replace("pageHeaderColor", pageHeaderColor) + " !important");
+						}
+						if (customercolor.contains("copyRightColor") && StringUtils.isNotEmpty(copyRightColor)) {
+							fields.put(key,  customercolor.replace("copyRightColor", copyRightColor) + " !important");
+						}
+						if (customercolor.contains("labelColor") && StringUtils.isNotEmpty(labelColor)) {
+							fields.put(key,  customercolor.replace("labelColor", labelColor) + " !important");
+						}
+						if (customercolor.contains("menufontColor") && StringUtils.isNotEmpty(menufontColor)) {
+							fields.put(key,  customercolor.replace("menufontColor", menufontColor) + " !important");
+						}
+						if (customercolor.contains("copyRight") && StringUtils.isNotEmpty(copyRight)) {
+							fields.put(key,  customercolor.replace("copyRight", copyRight) + " !important");
+						}
+						if (customercolor.contains("disabledLabelColor") && StringUtils.isNotEmpty(disabledLabelColor)) {
+							fields.put(key,  customercolor.replace("disabledLabelColor", disabledLabelColor) + " !important");
+						}
+						if (customercolor.contains("loginlogo") && StringUtils.isNotEmpty(loginLogo)) {
+							fields.put(key,  customercolor.replace("loginlogo", loginLogo) + " !important");
+						}
+						if (customercolor.contains("logopadding")&& StringUtils.isNotEmpty(logoPadding)) {
+							fields.put(key,  customercolor.replace("logopadding", logoPadding) + " !important");
+						}
+					}
+				}
+			
+				Map<String, String> customerThemeMap = new HashMap<String, String>();
+				customerThemeMap.put("customerTheme", jsonObject.toJSONString());
+				customer.setFrameworkTheme(customerThemeMap);
+				
+	        }
+	        
+	        ResponseInfo<Customer> finalOutput = responseDataEvaluation(responseData, null, "customer returned successfully", customer);
 			return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
 			
 		} catch (PhrescoException e) {
+			ResponseInfo<Customer> finalOutput = responseDataEvaluation(responseData, e, "CustomerInfo not fetched", null);
+			return Response.status(Status.BAD_REQUEST).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
+		} catch (ParseException e) {
 			ResponseInfo<Customer> finalOutput = responseDataEvaluation(responseData, e, "CustomerInfo not fetched", null);
 			return Response.status(Status.BAD_REQUEST).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
 		}
@@ -97,4 +192,30 @@ public class TechnologyService extends RestBase {
 		}
 	}
 
+	private static String getStringFromInputStream(InputStream is) {
+		BufferedReader br = null;
+		StringBuilder sb = new StringBuilder();
+		String line;
+		try {
+			br = new BufferedReader(new InputStreamReader(is));
+			while ((line = br.readLine()) != null) {
+				sb.append(line);
+			}
+ 
+		} catch (IOException e) {
+			e.printStackTrace();
+		} finally {
+			if (br != null) {
+				try {
+					br.close();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
+		}
+		return sb.toString();
+	}
+ 
+	
+	
 }
