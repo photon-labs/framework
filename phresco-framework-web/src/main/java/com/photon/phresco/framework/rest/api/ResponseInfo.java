@@ -3,21 +3,22 @@ package com.photon.phresco.framework.rest.api;
 import javax.xml.bind.annotation.XmlRootElement;
 
 @XmlRootElement
-public class ResponseInfo {
+public class ResponseInfo<T> {
 	private String message;
-	private Object data;
+	private T data;
 	private Exception exception;
 	private Integer response;
+	
 	public String getMessage() {
 		return message;
 	}
 	public void setMessage(String message) {
 		this.message = message;
 	}
-	public Object getData() {
+	public T getData() {
 		return data;
 	}
-	public void setData(Object data) {
+	public void setData(T data) {
 		this.data = data;
 	}
 	public Exception getException() {

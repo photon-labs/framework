@@ -53,20 +53,20 @@ import com.phresco.pom.exception.PhrescoPomException;
 import com.sun.jersey.api.client.ClientResponse.Status;
 
 @Path("/project")
-public class ProjectService implements FrameworkConstants {
+public class ProjectService extends RestBase implements FrameworkConstants {
 
 	@GET
 	@Path("/list")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response list(@QueryParam("customerId") String customer) {
-		ResponseInfo responseData = new ResponseInfo();
+		ResponseInfo<List<ProjectInfo>> responseData = new ResponseInfo<List<ProjectInfo>>();
 		try {
 			ProjectManager projectManager = PhrescoFrameworkFactory.getProjectManager();
 			List<ProjectInfo> projects = projectManager.discover(customer);
-			ResponseInfo finalOutput = ServiceManagerMap.responseDataEvaluation(responseData, null, "Project List Successfully", projects);
+			ResponseInfo<List<ProjectInfo>> finalOutput = responseDataEvaluation(responseData, null, "Project List Successfully", projects);
 			return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
 		} catch (PhrescoException e) {
-			ResponseInfo finalOutput = ServiceManagerMap.responseDataEvaluation(responseData, e, "Project List failed", null);
+			ResponseInfo<List<ProjectInfo>> finalOutput = responseDataEvaluation(responseData, e, "Project List failed", null);
 			return Response.status(Status.BAD_REQUEST).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
 		}
 	}
@@ -76,19 +76,22 @@ public class ProjectService implements FrameworkConstants {
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response createProject(ProjectInfo projectinfo, @QueryParam("userId") String userId) {
-		ResponseInfo responseData = new ResponseInfo();
+		ResponseInfo<ProjectInfo> responseData = new ResponseInfo<ProjectInfo>();
 		try {
-			ServiceManager serviceManager = ServiceManagerMap.CONTEXT_MANAGER_MAP.get(userId);
+			ServiceManager serviceManager = ServiceManagerMap.getServiceManager(userId);
 			if(serviceManager == null) {
-				ResponseInfo finalOutput = ServiceManagerMap.responseDataEvaluation(responseData, null, "UnAuthorized User", null);
+				ResponseInfo<ProjectInfo> finalOutput = responseDataEvaluation(responseData, null, "UnAuthorized User", null);
 				return Response.status(Status.BAD_REQUEST).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
 			}
 			ProjectInfo projectInfo = PhrescoFrameworkFactory.getProjectManager().create(projectinfo,
 					serviceManager);
-			ResponseInfo finalOutput = ServiceManagerMap.responseDataEvaluation(responseData, null, "Project created Successfully", projectInfo);
+			ResponseInfo<ProjectInfo> finalOutput = responseDataEvaluation(responseData, null, "Project created Successfully", projectInfo);
 			return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
 		} catch (PhrescoException e) {
-			ResponseInfo finalOutput = ServiceManagerMap.responseDataEvaluation(responseData, e, "Project creation failed", null);
+			ResponseInfo<ProjectInfo> finalOutput = responseDataEvaluation(responseData, e, "Project creation failed", null);
+			return Response.status(Status.BAD_REQUEST).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
+		} catch (IOException e) {
+			ResponseInfo<ProjectInfo> finalOutput = responseDataEvaluation(responseData, e, "Project creation failed", null);
 			return Response.status(Status.BAD_REQUEST).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
 		}
 	}
@@ -98,14 +101,14 @@ public class ProjectService implements FrameworkConstants {
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response editProject(@QueryParam("projectId") String projectId, @QueryParam("customerId") String customerId ) {
 		ProjectInfo projectInfo = null;
-		ResponseInfo responseData = new ResponseInfo();
+		ResponseInfo<ProjectInfo> responseData = new ResponseInfo<ProjectInfo>();
 		try {
 			ProjectManager projectManager = PhrescoFrameworkFactory.getProjectManager();
 			projectInfo = projectManager.getProject(projectId, customerId);	
-			ResponseInfo finalOutput = ServiceManagerMap.responseDataEvaluation(responseData, null, "Project edit Successfully", projectInfo);
+			ResponseInfo<ProjectInfo> finalOutput = responseDataEvaluation(responseData, null, "Project edit Successfully", projectInfo);
 			return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
 		} catch (PhrescoException e) {
-			ResponseInfo finalOutput = ServiceManagerMap.responseDataEvaluation(responseData, e, "Project edit failed", null);
+			ResponseInfo<ProjectInfo> finalOutput = responseDataEvaluation(responseData, e, "Project edit failed", null);
 			return Response.status(Status.BAD_REQUEST).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
 		}
 	}
@@ -115,18 +118,21 @@ public class ProjectService implements FrameworkConstants {
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response updateProject(ProjectInfo projectinfo, @QueryParam("userId") String userId) {
-		ResponseInfo responseData = new ResponseInfo();
+		ResponseInfo<ProjectInfo> responseData = new ResponseInfo<ProjectInfo>();
 		try {
-			ServiceManager serviceManager = ServiceManagerMap.CONTEXT_MANAGER_MAP.get(userId);
+			ServiceManager serviceManager = ServiceManagerMap.getServiceManager(userId);
 			if(serviceManager == null) {
-				ResponseInfo finalOutput = ServiceManagerMap.responseDataEvaluation(responseData, null, "UnAuthorized User", null);
+				ResponseInfo<ProjectInfo> finalOutput = responseDataEvaluation(responseData, null, "UnAuthorized User", null);
 				return Response.status(Status.BAD_REQUEST).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
 			}
 			ProjectInfo projectInfo = PhrescoFrameworkFactory.getProjectManager().update(projectinfo, serviceManager, null);
-			ResponseInfo finalOutput = ServiceManagerMap.responseDataEvaluation(responseData, null, "Project update Successfully", projectInfo);
+			ResponseInfo<ProjectInfo> finalOutput = responseDataEvaluation(responseData, null, "Project update Successfully", projectInfo);
 			return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
 		} catch (PhrescoException e) {
-			ResponseInfo finalOutput = ServiceManagerMap.responseDataEvaluation(responseData, e, "Project update failed", null);
+			ResponseInfo<ProjectInfo> finalOutput = responseDataEvaluation(responseData, e, "Project update failed", null);
+			return Response.status(Status.BAD_REQUEST).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
+		} catch (IOException e) {
+			ResponseInfo<ProjectInfo> finalOutput = responseDataEvaluation(responseData, e, "Project update failed", null);
 			return Response.status(Status.BAD_REQUEST).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
 		}
 	}
@@ -145,9 +151,9 @@ public class ProjectService implements FrameworkConstants {
 		List<String> selectedComponents = new ArrayList<String>();
 		List<ArtifactGroup> listArtifactGroup = new ArrayList<ArtifactGroup>();
 		try {
-			ServiceManager serviceManager = ServiceManagerMap.CONTEXT_MANAGER_MAP.get(userId);
+			ServiceManager serviceManager = ServiceManagerMap.getServiceManager(userId);
 			if(serviceManager == null) {
-				ResponseInfo finalOutput = ServiceManagerMap.responseDataEvaluation(responseData, null, "UnAuthorized User", null);
+				ResponseInfo finalOutput = responseDataEvaluation(responseData, null, "UnAuthorized User", null);
 				return Response.status(Status.BAD_REQUEST).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
 			}
 			StringBuilder sbs = null;
@@ -217,13 +223,13 @@ public class ProjectService implements FrameworkConstants {
 			
 			projectinfo.setAppInfos(Collections.singletonList(applicationInfo));
 		} catch (FileNotFoundException e) {
-			ResponseInfo finalOutput = ServiceManagerMap.responseDataEvaluation(responseData, e, "update Feature failed", null);
+			ResponseInfo finalOutput = responseDataEvaluation(responseData, e, "update Feature failed", null);
 			return Response.status(Status.BAD_REQUEST).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
 		} catch (PhrescoException e) {
-			ResponseInfo finalOutput = ServiceManagerMap.responseDataEvaluation(responseData, e, "update Feature failed", null);
+			ResponseInfo finalOutput = responseDataEvaluation(responseData, e, "update Feature failed", null);
 			return Response.status(Status.BAD_REQUEST).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
 		} catch (IOException e) {
-			ResponseInfo finalOutput = ServiceManagerMap.responseDataEvaluation(responseData, e, "update Feature failed", null);
+			ResponseInfo finalOutput = responseDataEvaluation(responseData, e, "update Feature failed", null);
 			return Response.status(Status.BAD_REQUEST).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
 		}
 		return null;
@@ -239,9 +245,9 @@ public class ProjectService implements FrameworkConstants {
 		BufferedReader bufferedReader = null;
 		try {
 			ApplicationInfo appInfo = projectInfo.getAppInfos().get(0);
-			ServiceManager serviceManager = ServiceManagerMap.CONTEXT_MANAGER_MAP.get(userId);
+			ServiceManager serviceManager = ServiceManagerMap.getServiceManager(userId);
 			if(serviceManager == null) {
-				ResponseInfo finalOutput = ServiceManagerMap.responseDataEvaluation(responseData, null, "UnAuthorized User", null);
+				ResponseInfo finalOutput = responseDataEvaluation(responseData, null, "UnAuthorized User", null);
 				return Response.status(Status.BAD_REQUEST).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
 			}
 //			List<String> allJsonData = getJsonData();
@@ -381,19 +387,19 @@ public class ProjectService implements FrameworkConstants {
 		File projectInfoFile = new File(Utility.getProjectHome() + appDirName + 
 				File.separator + ".phresco" + File.separator + "project.info");
 		BufferedReader reader = null;
-		ResponseInfo responseData = new ResponseInfo();
+		ResponseInfo<ProjectInfo> responseData = new ResponseInfo<ProjectInfo>();
 		try {
 			reader = new BufferedReader(new FileReader(projectInfoFile));
 			ProjectInfo projectInfo = (ProjectInfo) new Gson().fromJson(reader, ProjectInfo.class);
 			List<ApplicationInfo> appInfos = projectInfo.getAppInfos();
 			for (ApplicationInfo applicationInfo : appInfos) {
 				if(applicationInfo.getAppDirName().equals(appDirName)) {
-					ResponseInfo finalOutput = ServiceManagerMap.responseDataEvaluation(responseData, null, "Application edit Successfully", projectInfo);
+					ResponseInfo<ProjectInfo> finalOutput = responseDataEvaluation(responseData, null, "Application edit Successfully", projectInfo);
 					return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
 				}
 			}
 		} catch (FileNotFoundException e) {
-			ResponseInfo finalOutput = ServiceManagerMap.responseDataEvaluation(responseData, e, "Application edit Successfully", null);
+			ResponseInfo<ProjectInfo> finalOutput = responseDataEvaluation(responseData, e, "Application edit Successfully", null);
 			return Response.status(Status.NOT_FOUND).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
 		}
 		return null;
@@ -424,7 +430,7 @@ public class ProjectService implements FrameworkConstants {
 						int port = Integer.parseInt(configInfo.getServerPort());
 						boolean connectionAlive = Utility.isConnectionAlive(HTTP_PROTOCOL, LOCALHOST, port);
 						if(connectionAlive) {
-							ResponseInfo finalOutput = ServiceManagerMap.responseDataEvaluation(responseData, null, "Application unable to delete", null);
+							ResponseInfo finalOutput = responseDataEvaluation(responseData, null, "Application unable to delete", null);
 							return Response.status(Status.BAD_REQUEST).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
 						}
 					}
@@ -432,13 +438,13 @@ public class ProjectService implements FrameworkConstants {
 			}
 			projectManager.delete(appDirnames);
 		}catch (PhrescoException e) {
-			ResponseInfo finalOutput = ServiceManagerMap.responseDataEvaluation(responseData, e, "Application unable to delete", null);
+			ResponseInfo finalOutput = responseDataEvaluation(responseData, e, "Application unable to delete", null);
 			return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
 		} catch (FileNotFoundException e) {
-			ResponseInfo finalOutput = ServiceManagerMap.responseDataEvaluation(responseData, e,"Application unable to delete", null);
+			ResponseInfo finalOutput = responseDataEvaluation(responseData, e,"Application unable to delete", null);
 			return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
 		}
-		ResponseInfo finalOutput = ServiceManagerMap.responseDataEvaluation(responseData, null, "Application delete Successfully", null);
+		ResponseInfo finalOutput = responseDataEvaluation(responseData, null, "Application delete Successfully", null);
 		return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
 	}
 
