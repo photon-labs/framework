@@ -181,56 +181,59 @@ define(["framework/base", "framework/animationProvider"], function() {
 				
 				$(self.jQueryContainer).append(newDiv);
 
-				if(bCheck) {
 					view.doMore = function(element) {
-						var animationProviderMain = new Clazz.AnimationProvider( {
-							isNative: self.isNative,
-							container: newDiv
-						});
-						
-						animationProviderMain.animate(self.pushAnimationTypeForGoingIn, function(container) {
-							container.show();
-							container.css("z-index", 4);
-							self.removeClasses(container);
-						});
-
-						if(self.stack.length > 0) {
-							var topPage = self.stack[self.stack.length-1];
+						if(bCheck) {
+							if(self.stack.length > 0) {
+								var topPage = self.stack[self.stack.length-1];
+								
+								// call onPause to save the state of this page
+								if(topPage.view.onPause) {
+									topPage.view.onPause();
+								}
+								
+								var animationProviderSub = new Clazz.AnimationProvider( {
+									isNative: self.isNative,
+									container: topPage.element
+								});
 							
-							// call onPause to save the state of this page
-							if(topPage.view.onPause) {
-								topPage.view.onPause();
+								animationProviderSub.animate(self.pushAnimationTypeForGoingOut, function(container) {
+									container.hide('slow', function(){
+										container.css("z-index", 3);
+										$(container).remove();
+									});
+								});
+								
+								self.stack.pop(self.stack.length-1);
 							}
 							
-							var animationProviderSub = new Clazz.AnimationProvider( {
+							var animationProviderMain = new Clazz.AnimationProvider( {
 								isNative: self.isNative,
-								container: topPage.element
+								container: newDiv
 							});
-						
-							animationProviderSub.animate(self.pushAnimationTypeForGoingOut, function(container) {
-								container.hide();
-								container.css("z-index", 3);
-								$(container).remove();
-								self.removeClasses(container);
+							
+							animationProviderMain.animate(self.pushAnimationTypeForGoingIn, function(container) {
+								container.show('slow', function(){
+									container.css("z-index", 4);
+									self.removeClasses(container, function(callback){});
+								});
 							});
+							
+							// update browser history
+							var title = "#page" + self.stack.length;
+							var name = view.name ? "#"  + view.name : title;
+							// push into the stack
+							var data = {
+								view : view,
+								element : newDiv
+							};
+							
+							self.stack.push(data);
+							self.currentIndex = self.stack.length - 1;
+							self.indexMapping[name] = self.stack.length - 1;
+							history.pushState({}, name, name);
 						}
-						
-						// update browser history
-						var title = "#page" + self.stack.length;
-						var name = view.name ? "#"  + view.name : title;
-						// push into the stack
-						var data = {
-							view : view,
-							element : newDiv
-						};
-						
-						self.stack.push(data);
-						self.currentIndex = self.stack.length - 1;
-						self.indexMapping[name] = self.stack.length - 1;
-						history.pushState({}, name, name);
 					};
-				}
-				
+
 				// render in its default container
 				view.render(newDiv);
 			},
