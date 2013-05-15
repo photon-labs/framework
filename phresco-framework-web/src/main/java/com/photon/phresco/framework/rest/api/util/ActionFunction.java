@@ -3,12 +3,14 @@ package com.photon.phresco.framework.rest.api.util;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.StringWriter;
 import java.text.SimpleDateFormat;
@@ -27,6 +29,7 @@ import javax.xml.parsers.DocumentBuilderFactory;
 
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.codehaus.plexus.util.cli.CommandLineException;
@@ -53,11 +56,12 @@ import com.photon.phresco.framework.FrameworkConfiguration;
 import com.photon.phresco.framework.PhrescoFrameworkFactory;
 import com.photon.phresco.framework.api.ActionType;
 import com.photon.phresco.framework.api.ApplicationManager;
+import com.photon.phresco.framework.api.CIManager;
 import com.photon.phresco.framework.api.ProjectManager;
 import com.photon.phresco.framework.commons.FrameworkUtil;
 import com.photon.phresco.framework.impl.ProjectManagerImpl;
 import com.photon.phresco.framework.rest.api.ServiceManagerMap;
-import com.photon.phresco.framework.rest.api.util.MavenServiceConstants;
+import com.photon.phresco.framework.rest.api.util.ActionServiceConstant;
 import com.photon.phresco.impl.ConfigManagerImpl;
 import com.photon.phresco.plugins.model.Mojos.ApplicationHandler;
 import com.photon.phresco.plugins.model.Mojos.Mojo.Configuration.Parameters.Parameter;
@@ -70,13 +74,17 @@ import com.photon.phresco.service.client.api.ServiceManager;
 import com.photon.phresco.service.client.factory.ServiceClientFactory;
 import com.photon.phresco.util.Constants;
 import com.photon.phresco.util.Credentials;
+import com.photon.phresco.util.HubConfiguration;
+import com.photon.phresco.util.NodeConfig;
+import com.photon.phresco.util.NodeConfiguration;
 import com.photon.phresco.util.PhrescoDynamicLoader;
 import com.photon.phresco.util.Utility;
+import com.phresco.pom.exception.PhrescoPomException;
 import com.phresco.pom.util.PomProcessor;
 
 
 
-public class MavenFunctions implements Constants ,FrameworkConstants,MavenServiceConstants {
+public class ActionFunction implements Constants ,FrameworkConstants,ActionServiceConstant {
 	
 
 	
@@ -87,178 +95,59 @@ public class MavenFunctions implements Constants ,FrameworkConstants,MavenServic
     public static final java.lang.String SERVICE_API_KEY = "phresco.service.api.key";
     public static final String SUCCESS = "success";
     
-	private static final Logger S_LOGGER= Logger.getLogger(MavenFunctions.class);
-	private static boolean isInfoEnabled = S_LOGGER.isInfoEnabled();
+	private static final Logger S_LOGGER= Logger.getLogger(ActionFunction.class);
 	private static boolean isDebugEnabled = S_LOGGER.isDebugEnabled();
 	
     
-	String appId="";
-	String projectId="";
-	String customerId="";
-	String selectedFiles="";
-	String phase="";
-	String username="";
-	
+	private String appId="";
+	private String projectId="";
+	private String customerId="";
+	private String selectedFiles="";
+	private String phase="";
+	private String username="";
 	private String testAgainst = "";
 	private String testName = "";
 	private String resultJson = "";
 	private String isFromCI = "";
-	
 	private List<String> minifyFileNames = null;
-	
-
-
 	private String minifyAll = "";
-	
-	
-	/*String uniquekey="";*/
-	
+	private String projectModule = "";
+	private String fromPage = "";
+	private String reportDataType = "";
+	boolean connectionAlive = false;
+	private ServiceManager serviceManager = null;
 	HttpServletRequest request;
 	
-	private ServiceManager serviceManager = null;
-	
-	
-	/*public String getUniquekey() {
-		return uniquekey;
-	}
-	public void setUniquekey(String uniquekey) {
-		this.uniquekey = uniquekey;
-	}*/
-	
-	public HttpServletRequest getHttpRequest(){
-		
-		return request;
-		
-	}
-	
-	public List<String> getMinifyFileNames() {
-		return minifyFileNames;
-	}
-	public void setMinifyFileNames(List<String> minifyFileNames) {
-		this.minifyFileNames = minifyFileNames;
-	}
-	
-	public String getMinifyAll() {
-		return minifyAll;
-	}
-	public void setMinifyAll(String minifyAll) {
-		this.minifyAll = minifyAll;
-	}
-	
-	
-	public String getIsFromCI() {
-		return isFromCI;
-	}
-	public void setIsFromCI(String isFromCI) {
-		this.isFromCI = isFromCI;
-	}
-	
-	public String getResultJson() {
-		return resultJson;
-	}
-	public void setResultJson(String resultJson) {
-		this.resultJson = resultJson;
-	}
-	
-	public String getTestAgainst() {
-		return testAgainst;
-	}
-	public void setTestAgainst(String testAgainst) {
-		this.testAgainst = testAgainst;
-	}
-	public String getTestName() {
-		return testName;
-	}
-	public void setTestName(String testName) {
-		this.testName = testName;
-	}
-	
-	public String getUsername() {
-		return username;
-	}
-	public void setUsername(String username) {
-		this.username = username;
-	}
-	public String getPhase() {
-		return phase;
-	}
-	public void setPhase(String phase) {
-		this.phase = phase;
-	}
-	public String getAppId() {
-		return appId;
-	}
-	public void setAppId(String appId) {
-		this.appId = appId;
-	}
-	public String getCustomerId() {
-		return customerId;
-	}
-	public void setCustomerId(String customerId) {
-		this.customerId = customerId;
-	}
-	public String getProjectId() {
-		return projectId;
-	}
-	public void setProjectId(String projectId) {
-		this.projectId = projectId;
-	}
-	public String getSelectedFiles() {
-		return selectedFiles;
-	}
-	public void setSelectedFiles(String selectedFiles) {
-		this.selectedFiles = selectedFiles;
-	}
 	
 	public void prePopulateModelData(HttpServletRequest request) throws PhrescoException {
 		
-		
 		try {
-			
 			this.request = request;
 			
-			
-			/*if( !("".equalsIgnoreCase(request.getParameter(UNIQUE_KEY))) && (request.getParameter(UNIQUE_KEY) != null) && !("null".equalsIgnoreCase(request.getParameter(UNIQUE_KEY))) )
-			{
-				setUniquekey(request.getParameter(UNIQUE_KEY));	
-			}
-			else
-			{
-				throw new PhrescoException("No valid Unique Key is passed");
-			}*/
-			
-			if( !("".equalsIgnoreCase(request.getParameter(APP_ID))) && (request.getParameter(APP_ID) != null) && !("null".equalsIgnoreCase(request.getParameter(APP_ID))) )
-			{
+			if( !("".equalsIgnoreCase(request.getParameter(APP_ID))) && (request.getParameter(APP_ID) != null) && !("null".equalsIgnoreCase(request.getParameter(APP_ID))) ) {
 				setAppId(request.getParameter(APP_ID));	
 			}
-			else
-			{
+			else {
 				throw new PhrescoException("No valid App Id Passed");
 			}
 			
-			if( !("".equalsIgnoreCase(request.getParameter(PROJECT_ID))) && (request.getParameter(PROJECT_ID) != null) && !("null".equalsIgnoreCase(request.getParameter(PROJECT_ID))) )
-			{
+			if( !("".equalsIgnoreCase(request.getParameter(PROJECT_ID))) && (request.getParameter(PROJECT_ID) != null) && !("null".equalsIgnoreCase(request.getParameter(PROJECT_ID))) ) {
 				setProjectId(request.getParameter(PROJECT_ID));
 			}
-			else
-			{
+			else {
 				throw new PhrescoException("No valid Project Id Passed");
 			}
 			
-			if( !("".equalsIgnoreCase(request.getParameter(CUSTOMER_ID))) && (request.getParameter(CUSTOMER_ID) != null) && !("null".equalsIgnoreCase(request.getParameter(CUSTOMER_ID))) )
-			{
+			if( !("".equalsIgnoreCase(request.getParameter(CUSTOMER_ID))) && (request.getParameter(CUSTOMER_ID) != null) && !("null".equalsIgnoreCase(request.getParameter(CUSTOMER_ID))) ) {
 				setCustomerId(request.getParameter(CUSTOMER_ID));
 			}
-			else
-			{
+			else {
 				throw new PhrescoException("No valid Customer Id Passed");
 			}
-			if( !("".equalsIgnoreCase(request.getParameter(USERNAME))) && (request.getParameter(USERNAME) != null) && !("null".equalsIgnoreCase(request.getParameter(USERNAME))) )
-			{
+			if( !("".equalsIgnoreCase(request.getParameter(USERNAME))) && (request.getParameter(USERNAME) != null) && !("null".equalsIgnoreCase(request.getParameter(USERNAME))) ) {
 				setUsername(request.getParameter(USERNAME));
 			}
-			else
-			{
+			else {
 				throw new PhrescoException("No User Id passed");
 			}
 			
@@ -271,40 +160,30 @@ public class MavenFunctions implements Constants ,FrameworkConstants,MavenServic
 	
 	public void prePopulatePerformanceTestData(HttpServletRequest request) throws PhrescoException {
 		
-		
 		try {
 			
-			
-			if( !("".equalsIgnoreCase(request.getParameter(TEST_AGAINST))) && (request.getParameter(TEST_AGAINST) != null) && !("null".equalsIgnoreCase(request.getParameter(TEST_AGAINST))) )
-			{
+			if( !("".equalsIgnoreCase(request.getParameter(TEST_AGAINST))) && (request.getParameter(TEST_AGAINST) != null) && !("null".equalsIgnoreCase(request.getParameter(TEST_AGAINST))) ) {
 				setTestAgainst(request.getParameter(TEST_AGAINST));	
 			}
-			else
-			{
+			else {
 				throw new PhrescoException("No valid TEST_AGAINST Passed");
 			}
 			
-			if( !("".equalsIgnoreCase(request.getParameter(TEST_NAME))) && (request.getParameter(TEST_NAME) != null) && !("null".equalsIgnoreCase(request.getParameter(TEST_NAME))) )
-			{
+			if( !("".equalsIgnoreCase(request.getParameter(TEST_NAME))) && (request.getParameter(TEST_NAME) != null) && !("null".equalsIgnoreCase(request.getParameter(TEST_NAME))) ) {
 				setTestName(request.getParameter(TEST_NAME));	
 			}
-			else
-			{
+			else {
 				throw new PhrescoException("No valid TEST_NAME Passed");
 			}
 			
-			if( !("".equalsIgnoreCase(request.getParameter(RESULT_JSON))) && (request.getParameter(RESULT_JSON) != null) && !("null".equalsIgnoreCase(request.getParameter(RESULT_JSON))) )
-			{
+			if( !("".equalsIgnoreCase(request.getParameter(RESULT_JSON))) && (request.getParameter(RESULT_JSON) != null) && !("null".equalsIgnoreCase(request.getParameter(RESULT_JSON))) ) {
 				setResultJson(request.getParameter(RESULT_JSON));	
 			}
-			else
-			{
+			else {
 				throw new PhrescoException("No valid RESULT_JSON Passed");
 			}
-			
 			//To avoid null pointer exception incase of normal performance test.
 			setIsFromCI("");
-			
 			
 		} catch (Exception e) {
 			throw new PhrescoException(e.getMessage());
@@ -316,15 +195,12 @@ public class MavenFunctions implements Constants ,FrameworkConstants,MavenServic
 	
 	public void prePopulateMinificationData(HttpServletRequest request) throws PhrescoException {
 		
-		
 		try {
 			
-			if( (request.getParameterValues(MINIFY_FILE_NAMES) != null) )
-			{
+			if( (request.getParameterValues(MINIFY_FILE_NAMES) != null) ) {
 				String[] minify_file_names = request.getParameterValues(MINIFY_FILE_NAMES);
 				List<String> minifyFileNames_local= new ArrayList<String>();
-				for(String temp : minify_file_names)
-				{
+				for(String temp : minify_file_names) {
 					minifyFileNames_local.add(temp);
 				}
 				if(minifyFileNames_local.size() != 0) {
@@ -334,17 +210,14 @@ public class MavenFunctions implements Constants ,FrameworkConstants,MavenServic
 					throw new PhrescoException("No valid MINIFYFILENAMES Passed");
 				}
 			}
-			else
-			{
+			else {
 				throw new PhrescoException("No valid MINIFYFILENAMES Passed");
 			}
 			
-			if( !("".equalsIgnoreCase(request.getParameter(MINIFY_ALL))) && (request.getParameter(MINIFY_ALL) != null) && !("null".equalsIgnoreCase(request.getParameter(MINIFY_ALL))) )
-			{
+			if( !("".equalsIgnoreCase(request.getParameter(MINIFY_ALL))) && (request.getParameter(MINIFY_ALL) != null) && !("null".equalsIgnoreCase(request.getParameter(MINIFY_ALL))) ) {
 				setMinifyAll(request.getParameter(MINIFY_ALL));	
 			}
-			else
-			{
+			else {
 				//To avoid parser exception incase minifyall is not selected.
 				setMinifyAll("false");
 			}
@@ -352,150 +225,368 @@ public class MavenFunctions implements Constants ,FrameworkConstants,MavenServic
 		} catch (Exception e) {
 			throw new PhrescoException(e.getMessage());
 		}
-	
-		
-	
-		
 	}
 	
-	
-    public MavenResponse processRequest(HttpServletRequest request,String Command){
-
-		boolean continue_status = true;
-		MavenResponse response = new MavenResponse();
+	public void prePopulateFunctionalTestData(HttpServletRequest request) throws PhrescoException {
 		
-			try {
-			
-					try	{
-			
-						prePopulateModelData(request);
-					
-					}catch (PhrescoException e) {
-			
-						S_LOGGER.error(e.getMessage());
-						continue_status = false;
-						
-						response.setStatus(ERROR);
-						response.setLog("");
-						response.setService_exception(FrameworkUtil.getStackTraceAsString(e));
-						response.setUniquekey("");
-					}
-					
-					
-					if(continue_status)
-					{
-							
-						if (isDebugEnabled) {
-							S_LOGGER.debug("APPP ID received :"+getAppId());
-							S_LOGGER.debug("PROJECT ID received :"+getProjectId());
-							S_LOGGER.debug("CUSTOMER ID received :"+getCustomerId());
-							S_LOGGER.debug("USERNAME  received :"+getUsername());
-						}
-						
-		            	try {
-		            		
-		            		BufferedReader server_logs=null;
-		            		
-		            		if(Command.equalsIgnoreCase(MavenServiceConstants.BUILDPROJECT)){
-		            			
-		            			server_logs = build(getUsername());
-		            		}
-		            		else if(Command.equalsIgnoreCase(MavenServiceConstants.DEPLOYPROJECT)){
-		            			
-		            			server_logs = deploy();
-		            		}
-		            		else if(Command.equalsIgnoreCase(MavenServiceConstants.UNIT_TEST)){
-		            			
-		            			server_logs = runUnitTest();
-		            		}
-		            		else if(Command.equalsIgnoreCase(MavenServiceConstants.CODE_VALIDATE)){
-		            			
-		            			server_logs = codeValidate();
-		            		}
-		            		else if(Command.equalsIgnoreCase(MavenServiceConstants.RUN_AGAINST_SOURCE)){
-		            			
-		            			server_logs = runAgainstSource();
-		            		}
-		            		else if(Command.equalsIgnoreCase(MavenServiceConstants.STOP_SERVER)){
-		            			
-		            			server_logs = stopServer();
-		            		}
-		            		else if(Command.equalsIgnoreCase(MavenServiceConstants.RESTART_SERVER)){
-		            			
-		            			server_logs = restartServer();
-		            		}
-		            		else if(Command.equalsIgnoreCase(MavenServiceConstants.PERFORMANCE_TEST)){
-		            			
-		            			prePopulatePerformanceTestData(request);
-		            			server_logs = performanceTest();
-		            		}
-		            		else if(Command.equalsIgnoreCase(MavenServiceConstants.LOAD_TEST)){
-		            			
-		            			server_logs = loadTest();
-		            		}
-		            		else if(Command.equalsIgnoreCase(MavenServiceConstants.MINIFY)){
-		            			
-		            			prePopulateMinificationData(request);
-		            			server_logs = minification();
-		            		}
-		            		
-		            		if(server_logs != null){
-		            			
-		            			 UUID uniqueKey = UUID.randomUUID();
-							     String unique_key = uniqueKey.toString();
-							     BufferMap.addBufferReader(unique_key, server_logs);
-							     
-							     	response.setStatus(STARTED);
-									response.setLog(STARTED);
-									response.setService_exception("");
-									response.setUniquekey(unique_key);
-		            		}
-		            		else{
-		            			
-		            			throw new PhrescoException("No build logs obatined");
-		            		}
-		            		
-						     
-						     
-						     /*String line="";
-				                while((line=server_logs.readLine())!=null) {
-				                	
-				                	System.out.println(line);
-				                }*/
-						} catch (PhrescoException e) {
-							
-							response.setStatus(ERROR);
-							response.setLog("");
-							response.setService_exception(FrameworkUtil.getStackTraceAsString(e));
-							response.setUniquekey("");
-							S_LOGGER.error(e.getMessage());
-						} catch (Exception e) {
-							
-							response.setStatus(ERROR);
-							response.setLog("");
-							response.setService_exception(FrameworkUtil.getStackTraceAsString(e));
-							response.setUniquekey("");
-							S_LOGGER.error(e.getMessage());
-						}
-						            	
-					}
-				            
-	        
-			}catch(Exception e){
-				
-				response.setStatus(ERROR);
-				response.setLog("");
-				response.setService_exception(FrameworkUtil.getStackTraceAsString(e));
-				response.setUniquekey("");
-				S_LOGGER.error(e.getMessage());
+		try {
+			if( !("".equalsIgnoreCase(request.getParameter(PROJECT_MODULE))) && (request.getParameter(PROJECT_MODULE) != null) && !("null".equalsIgnoreCase(request.getParameter(PROJECT_MODULE))) ) {
+				setProjectModule(request.getParameter(PROJECT_MODULE));	
+			}
+			else {
+				//To avoid parser exception in case ProjectModule is not selected.
+				setProjectModule("");
+			}
+		} catch (Exception e) {
+			throw new PhrescoException(e.getMessage());
 		}
+	}
+	
+	public void prePopulatePrintAsPDFData(HttpServletRequest request) throws PhrescoException {
+		
+		try {
+			if( !("".equalsIgnoreCase(request.getParameter(REPORT_DATA_TYPE))) && (request.getParameter(REPORT_DATA_TYPE) != null) && !("null".equalsIgnoreCase(request.getParameter(REPORT_DATA_TYPE))) ) {
+				setReportDataType(request.getParameter(REPORT_DATA_TYPE));	
+			}
+			else {
+				throw new PhrescoException("No valid REPORT_DATA_TYPE param Passed");
+			}
+			
+			if( !("".equalsIgnoreCase(request.getParameter(FROM_PAGE))) && (request.getParameter(FROM_PAGE) != null) && !("null".equalsIgnoreCase(request.getParameter(FROM_PAGE))) ) {
+				setFromPage(request.getParameter(FROM_PAGE));	
+			}
+			else {
+				throw new PhrescoException("No valid FROM_PAGE param Passed");
+			}
+			
+		} catch (Exception e) {
+			throw new PhrescoException(e.getMessage());
+		}
+	}
+	
+		private void printLogs()
+		{
+			if (isDebugEnabled) {
+				S_LOGGER.debug("APPP ID received :"+getAppId());
+				S_LOGGER.debug("PROJECT ID received :"+getProjectId());
+				S_LOGGER.debug("CUSTOMER ID received :"+getCustomerId());
+				S_LOGGER.debug("USERNAME  received :"+getUsername());
+			}
+		}
+		
+		private ActionResponse generateResponse(BufferedReader server_logs) {
+			ActionResponse response = new ActionResponse();
+			UUID uniqueKey = UUID.randomUUID();
+		    String unique_key = uniqueKey.toString();
+		    BufferMap.addBufferReader(unique_key, server_logs);
+		     
+		    response.setStatus(STARTED);
+			response.setLog(STARTED);
+			response.setService_exception("");
+			response.setUniquekey(unique_key);
 			
 			return response;
-    }
+		}
 	
-
 	
-	public BufferedReader build(String username) throws PhrescoException, IOException {
+    	public ActionResponse build(HttpServletRequest request) throws PhrescoException, IOException {
+    			
+				printLogs();
+        		BufferedReader server_logs=null;
+        		server_logs = build(getUsername());
+        		if(server_logs != null) {
+        			return generateResponse(server_logs);
+        		}
+        		else {
+        			throw new PhrescoException("No build logs obatined");
+        		}
+    	}
+    
+    
+    	public ActionResponse deploy(HttpServletRequest request) throws PhrescoException {
+    		
+    		printLogs();
+    		BufferedReader server_logs=null;
+    		server_logs = deploy();
+    		if(server_logs != null) {
+    			return generateResponse(server_logs);
+    		}
+    		else {
+    			throw new PhrescoException("No Deploy logs obatined");
+    		}
+    	}
+    	
+    	
+    	public ActionResponse runUnitTest(HttpServletRequest request) throws PhrescoException {
+    		
+    		printLogs();
+    		BufferedReader server_logs=null;
+    		server_logs = runUnitTest();
+    		if(server_logs != null) {
+    			return generateResponse(server_logs);
+    		}
+    		else {
+    			throw new PhrescoException("No unit test logs obatined");
+    		}
+    	}
+    	
+    	public ActionResponse codeValidate(HttpServletRequest request) throws PhrescoException {
+    		
+    		printLogs();
+    		BufferedReader server_logs=null;
+    		server_logs = codeValidate();
+    		if(server_logs != null) {
+    			return generateResponse(server_logs);
+    		}
+    		else {
+    			throw new PhrescoException("No code validate logs obatined");
+    		}
+    	}
+    	
+    	public ActionResponse runAgainstSource(HttpServletRequest request) throws PhrescoException, IOException {
+    		
+    		printLogs();
+    		BufferedReader server_logs=null;
+    		server_logs = runAgainstSource();
+    		if(server_logs != null) {
+    			return generateResponse(server_logs);
+    		}
+    		else {
+    			throw new PhrescoException("No run against source logs obatined");
+    		}
+    	}
+    	
+    	public ActionResponse stopServer(HttpServletRequest request) throws PhrescoException {
+    		
+    		printLogs();
+    		BufferedReader server_logs=null;
+    		server_logs = stopServer();
+    		if(server_logs != null) {
+    			return generateResponse(server_logs);
+    		}
+    		else {
+    			throw new PhrescoException("No stopServer logs obatined");
+    		}
+    	}
+    	
+    	public ActionResponse restartServer(HttpServletRequest request) throws PhrescoException, IOException {
+    		
+    		printLogs();
+    		BufferedReader server_logs=null;
+    		server_logs = restartServer();
+    		if(server_logs != null) {
+    			return generateResponse(server_logs);
+    		}
+    		else {
+    			throw new PhrescoException("No restart server logs obatined");
+    		}
+    	}
+    	
+    	public ActionResponse performanceTest(HttpServletRequest request) throws PhrescoException, IOException {
+    		
+    		printLogs();
+    		BufferedReader server_logs=null;
+    		server_logs = performanceTest();
+    		if(server_logs != null) {
+    			return generateResponse(server_logs);
+    		}
+    		else {
+    			throw new PhrescoException("No performance test logs obatined");
+    		}
+    	}
+    	
+    	public ActionResponse loadTest(HttpServletRequest request) throws PhrescoException, IOException {
+    		
+    		printLogs();
+    		BufferedReader server_logs=null;
+    		server_logs = loadTest();
+    		if(server_logs != null) {
+    			return generateResponse(server_logs);
+    		}
+    		else {
+    			throw new PhrescoException("No loadtest logs obatined");
+    		}
+    	}
+    	
+    	public ActionResponse minification(HttpServletRequest request) throws PhrescoException, IOException {
+    		
+    		printLogs();
+    		BufferedReader server_logs=null;
+    		server_logs = minification();
+    		if(server_logs != null) {
+    			return generateResponse(server_logs);
+    		}
+    		else {
+    			throw new PhrescoException("No minification logs obatined");
+    		}
+    	}
+    	
+    	public ActionResponse startHub(HttpServletRequest request) throws PhrescoException, IOException {
+    		
+    		printLogs();
+    		BufferedReader server_logs=null;
+    		server_logs = startHub();
+    		if(server_logs != null) {
+    			return generateResponse(server_logs);
+    		}
+    		else {
+    			throw new PhrescoException("No startHub logs obatined");
+    		}
+    	}
+    	
+    	public ActionResponse startNode(HttpServletRequest request) throws PhrescoException, IOException {
+    		
+    		printLogs();
+    		BufferedReader server_logs=null;
+    		server_logs = startNode();
+    		if(server_logs != null) {
+    			return generateResponse(server_logs);
+    		}
+    		else {
+    			throw new PhrescoException("No startHub logs obatined");
+    		}
+    	}
+    	
+    	public ActionResponse runFunctionalTest(HttpServletRequest request) throws PhrescoException, IOException {
+    		
+    		printLogs();
+    		BufferedReader server_logs=null;
+    		server_logs = runFunctionalTest();
+    		if(server_logs != null) {
+    			return generateResponse(server_logs);
+    		}
+    		else {
+    			throw new PhrescoException("No startHub logs obatined");
+    		}
+    	}
+    	
+    	public ActionResponse stopHub(HttpServletRequest request) throws PhrescoException, IOException {
+    		
+    		printLogs();
+    		BufferedReader server_logs=null;
+    		server_logs = stopHub();
+    		if(server_logs != null) {
+    			return generateResponse(server_logs);
+    		}
+    		else {
+    			throw new PhrescoException("No startHub logs obatined");
+    		}
+    	}
+    	
+    	public ActionResponse stopNode(HttpServletRequest request) throws PhrescoException, IOException {
+    		
+    		printLogs();
+    		BufferedReader server_logs=null;
+    		server_logs = stopNode();
+    		if(server_logs != null) {
+    			return generateResponse(server_logs);
+    		}
+    		else {
+    			throw new PhrescoException("No startHub logs obatined");
+    		}
+    	}
+    	
+    	public ActionResponse showStartedHubLog(HttpServletRequest request) throws PhrescoException, IOException {
+    		
+    		printLogs();
+    		BufferedReader server_logs=null;
+    		server_logs = showStartedHubLog();
+    		if(server_logs != null) {
+    			return generateResponse(server_logs);
+    		}
+    		else {
+    			throw new PhrescoException("No startHub logs obatined");
+    		}
+    	}
+    	
+    	public ActionResponse showStartedNodeLog(HttpServletRequest request) throws PhrescoException, IOException {
+    		
+    		printLogs();
+    		BufferedReader server_logs=null;
+    		server_logs = showStartedNodeLog();
+    		if(server_logs != null) {
+    			return generateResponse(server_logs);
+    		}
+    		else {
+    			throw new PhrescoException("No startHub logs obatined");
+    		}
+    	}
+    	
+    	public ActionResponse checkForHub(HttpServletRequest request) throws PhrescoException, IOException {
+    		
+    		printLogs();
+    		ActionResponse response = new ActionResponse();
+    		return checkForHub(response);
+    	}
+    	
+    	public ActionResponse checkForNode(HttpServletRequest request) throws PhrescoException, IOException {
+    		
+    		printLogs();
+    		ActionResponse response = new ActionResponse();
+    		return checkForNode(response);
+    	}
+    	
+    	public ActionResponse generateSiteReport(HttpServletRequest request) throws PhrescoException, IOException {
+    		
+    		printLogs();
+    		BufferedReader server_logs=null;
+    		server_logs = generateSiteReport();
+    		if(server_logs != null) {
+    			return generateResponse(server_logs);
+    		}
+    		else {
+    			throw new PhrescoException("No generateSiteReport logs obatined");
+    		}
+    	}
+    	
+    	
+    	public ActionResponse ciSetup(HttpServletRequest request) throws PhrescoException, IOException {
+    		
+    		printLogs();
+    		BufferedReader server_logs=null;
+    		server_logs = ciSetup();
+    		if(server_logs != null) {
+    			return generateResponse(server_logs);
+    		}
+    		else {
+    			throw new PhrescoException("No setup logs obatined");
+    		}
+    	}
+    	
+    	public ActionResponse ciStart(HttpServletRequest request) throws PhrescoException, IOException {
+    		
+    		printLogs();
+    		BufferedReader server_logs=null;
+    		server_logs = ciStart();
+    		if(server_logs != null) {
+    			return generateResponse(server_logs);
+    		}
+    		else {
+    			throw new PhrescoException("No ci startup logs obatined");
+    		}
+    	}
+    	
+    	public ActionResponse ciStop(HttpServletRequest request) throws PhrescoException, IOException {
+    		
+    		printLogs();
+    		BufferedReader server_logs=null;
+    		server_logs = ciStop();
+    		if(server_logs != null) {
+    			return generateResponse(server_logs);
+    		}
+    		else {
+    			throw new PhrescoException("No ci stop logs obatined");
+    		}
+    	}
+    	
+    	public ActionResponse printAsPdf(HttpServletRequest request) throws PhrescoException, IOException {
+    		
+    		printLogs();
+    		ActionResponse response = new ActionResponse();
+    		return printAsPdf(getUsername(),response);
+    	}
+    
+    	public BufferedReader build(String username) throws PhrescoException, IOException {
 
 		BufferedReader reader=null;
 		try {
@@ -514,12 +605,12 @@ public class MavenFunctions implements Constants ,FrameworkConstants,MavenServic
 			reader = applicationManager.performAction(projectInfo, ActionType.BUILD, buildArgCmds, workingDirectory);
 			
 		} catch (PhrescoException e) {
-			e.printStackTrace();
-			throw new PhrescoException("Exception occured in the build process");
+			S_LOGGER.error(FrameworkUtil.getStackTraceAsString(e));
+			throw new PhrescoException("Exception occured in the build process"+e.getMessage());
 		}
 		 catch (Exception e) {
-			e.printStackTrace();
-			throw new PhrescoException("Exception occured in the build process");
+			 S_LOGGER.error(FrameworkUtil.getStackTraceAsString(e));
+			throw new PhrescoException("Exception occured in the build process"+e.getMessage());
 			}
 
 		return reader;
@@ -802,6 +893,533 @@ public class MavenFunctions implements Constants ,FrameworkConstants,MavenServic
 		
 		return reader;
 	}
+	
+	public BufferedReader startHub() throws PhrescoException {
+		
+		BufferedReader reader = null;
+		if (isDebugEnabled) {
+			S_LOGGER.debug("Entering Method MavenFunctions.startHub()");
+		}
+
+		try {
+			ApplicationInfo appInfo = getApplicationInfo();
+			MojoProcessor mojo = new MojoProcessor(new File(getPhrescoPluginInfoFilePath(PHASE_START_HUB)));
+			persistValuesToXml(mojo, PHASE_START_HUB);
+			ApplicationManager applicationManager = PhrescoFrameworkFactory.getApplicationManager();
+			ProjectInfo projectInfo = getProjectInfo();
+			String workingDirectory = getAppDirectoryPath(appInfo);
+			List<Parameter> parameters = getMojoParameters(mojo, PHASE_START_HUB);
+            List<String> buildArgCmds = getMavenArgCommands(parameters);
+            buildArgCmds.add(HYPHEN_N);
+			reader = applicationManager.performAction(projectInfo, ActionType.START_HUB, buildArgCmds, workingDirectory);
+		} catch (PhrescoException e) {
+	    		S_LOGGER.error("Entered into catch block of MavenFunctions.startHub()"+ FrameworkUtil.getStackTraceAsString(e));
+	    		throw new PhrescoException("Exception occured in the MavenFunctions.startHub process");
+		}
+
+		return reader;
+	}
+	
+	
+	public BufferedReader startNode() throws PhrescoException {
+		
+		BufferedReader reader = null;
+		if (isDebugEnabled) {
+            S_LOGGER.debug("Entering Method MavenFunctions.startNode()");
+        }
+		
+        try {
+        	ApplicationInfo appInfo = getApplicationInfo();
+			MojoProcessor mojo = new MojoProcessor(new File(getPhrescoPluginInfoFilePath(PHASE_START_NODE)));
+			persistValuesToXml(mojo, PHASE_START_NODE);
+			List<Parameter> parameters = getMojoParameters(mojo, PHASE_START_NODE);
+            List<String> buildArgCmds = getMavenArgCommands(parameters);
+            buildArgCmds.add(HYPHEN_N);
+			ApplicationManager applicationManager = PhrescoFrameworkFactory.getApplicationManager();
+			ProjectInfo projectInfo = getProjectInfo();
+			String workingDirectory = getAppDirectoryPath(appInfo);
+			reader = applicationManager.performAction(projectInfo, ActionType.START_NODE, buildArgCmds, workingDirectory);
+        } catch (PhrescoException e) {
+	    		S_LOGGER.error("Entered into catch block of MavenFunctions.startNode()"+ FrameworkUtil.getStackTraceAsString(e));
+	    		throw new PhrescoException("Exception occured in the MavenFunctions.startNode process");
+        }
+        
+        return reader;
+    }
+	
+	
+	public BufferedReader runFunctionalTest() throws PhrescoException {
+		
+		BufferedReader reader = null;
+		
+	    if (isDebugEnabled) {
+	        S_LOGGER.debug("Entering Method MavenFunctions.runFunctionalTest()");
+	    }
+	    
+	    try {
+	        ApplicationInfo appInfo = getApplicationInfo();
+	        StringBuilder workingDirectory = new StringBuilder(getAppDirectoryPath(appInfo));
+	        if (StringUtils.isNotEmpty(getProjectModule())) {
+	            workingDirectory.append(File.separator);
+	            workingDirectory.append(getProjectModule());
+	        }
+	        MojoProcessor mojo = new MojoProcessor(new File(getPhrescoPluginInfoFilePath(PHASE_FUNCTIONAL_TEST)));
+	        FrameworkUtil frameworkUtil = FrameworkUtil.getInstance();
+            String seleniumToolType = frameworkUtil.getSeleniumToolType(appInfo);
+	        persistValuesToXml(mojo, PHASE_FUNCTIONAL_TEST + HYPHEN + seleniumToolType);
+	        List<Parameter> parameters = getMojoParameters(mojo, PHASE_FUNCTIONAL_TEST + HYPHEN + seleniumToolType);
+            List<String> buildArgCmds = getMavenArgCommands(parameters);
+            buildArgCmds.add(HYPHEN_N);
+	        ApplicationManager applicationManager = PhrescoFrameworkFactory.getApplicationManager();
+	        reader = applicationManager.performAction(getProjectInfo(), ActionType.FUNCTIONAL_TEST, buildArgCmds, workingDirectory.toString());
+	        
+	    } catch (PhrescoException e) {
+	    	
+	    		S_LOGGER.error("Entered into catch block of Quality.runFunctionalTest()"+ FrameworkUtil.getStackTraceAsString(e));
+	    		throw new PhrescoException("Exception occured in the MavenFunctions.startNode process");
+	    		
+	        //return showErrorPopup(e, getText(EXCEPTION_QUALITY_FUNCTIONAL_RUN));
+	    } catch (PhrescoPomException e) {
+	    	
+                S_LOGGER.error("Entered into catch block of Quality.runFunctionalTest()"+ FrameworkUtil.getStackTraceAsString(e));
+                throw new PhrescoException("Exception occured in the MavenFunctions.startNode process");
+            //return showErrorPopup(new PhrescoException(e), getText(EXCEPTION_QUALITY_FUNCTIONAL_RUN));
+        }
+
+	    return reader;
+	}
+	
+	
+	public BufferedReader stopHub() throws PhrescoException {
+		
+		BufferedReader reader = null;
+        if (isDebugEnabled) {
+            S_LOGGER.debug("Entering Method MavenFunctions.stopHub()");
+        }
+
+        try {
+            ApplicationInfo appInfo = getApplicationInfo();
+            ApplicationManager applicationManager = PhrescoFrameworkFactory.getApplicationManager();
+            ProjectInfo projectInfo = getProjectInfo();
+            String workingDirectory = getAppDirectoryPath(appInfo);
+            List<String> buildArgCmds = new ArrayList<String>();
+            buildArgCmds.add(HYPHEN_N);
+            reader = applicationManager.performAction(projectInfo, ActionType.STOP_HUB, buildArgCmds, workingDirectory);
+        } catch (PhrescoException e) {
+                S_LOGGER.error("Entered into catch block of MavenFunctions.stopHub()"+ FrameworkUtil.getStackTraceAsString(e));
+                throw new PhrescoException("Entered into catch block of MavenFunctions.stopHub()");
+            //return showErrorPopup(e, getText(EXCEPTION_QUALITY_FUNCTIONAL_STOP_HUB));
+        }
+
+        return reader;
+    }
+	
+	
+	public BufferedReader stopNode() throws PhrescoException {
+		
+		BufferedReader reader = null;
+		
+        if (isDebugEnabled) {
+            S_LOGGER.debug("Entering Method MavenFunctions.stopNode()");
+        }
+
+        try {
+            ApplicationInfo appInfo = getApplicationInfo();
+            ApplicationManager applicationManager = PhrescoFrameworkFactory.getApplicationManager();
+            ProjectInfo projectInfo = getProjectInfo();
+            String workingDirectory = getAppDirectoryPath(appInfo);
+            List<String> buildArgCmds = new ArrayList<String>();
+            buildArgCmds.add(HYPHEN_N);
+            reader = applicationManager.performAction(projectInfo, ActionType.STOP_NODE, buildArgCmds, workingDirectory);
+        } catch (PhrescoException e) {
+                S_LOGGER.error("Entered into catch block of MavenFunctions.stopNode()"+ FrameworkUtil.getStackTraceAsString(e));
+                throw new PhrescoException("Entered into catch block of MavenFunctions.stopNode()");
+            //return showErrorPopup(e, getText(EXCEPTION_QUALITY_FUNCTIONAL_STOP_NODE));
+        }
+
+        return reader;
+    }
+	
+	
+	public ActionResponse checkForHub(ActionResponse response) throws PhrescoException {
+	    if (isDebugEnabled) {
+            S_LOGGER.debug("Entering Method MavenFunctions.checkForHub()");
+        }
+	    
+	    try {
+	        HubConfiguration hubConfig = getHubConfig();
+            if (hubConfig != null) {
+                String host = hubConfig.getHost();
+                int port = hubConfig.getPort();
+                setConnectionAlive(Utility.isConnectionAlive(HTTP_PROTOCOL, host, port));
+                response.setStatus(ActionServiceConstant.SUCCESS);
+				response.setService_exception("");
+				response.setConnectionAlive(isConnectionAlive());
+            }
+        } catch (Exception e) {
+        		response.setStatus(ERROR);
+        		response.setService_exception(FrameworkUtil.getStackTraceAsString(e));
+        		response.setConnectionAlive(false);
+                S_LOGGER.error("Entered into catch block of MavenFunctions.checkForHub()"+ FrameworkUtil.getStackTraceAsString(e));
+                throw new PhrescoException("Entered into catch block of MavenFunctions.checkForHub()");
+        }
+	    
+	    return response;
+	}
+	
+	
+	public ActionResponse checkForNode(ActionResponse response) throws PhrescoException {
+        if (isDebugEnabled) {
+            S_LOGGER.debug("Entering Method MavenFunctions.checkForNode()");
+        }
+        
+        BufferedReader reader = null;
+        try {
+            FrameworkUtil frameworkUtil = FrameworkUtil.getInstance();
+            String functionalTestDir = frameworkUtil.getFunctionalTestDir(getApplicationInfo());
+            StringBuilder sb = new StringBuilder(getApplicationHome());
+            sb.append(functionalTestDir)
+			.append(File.separator)
+			.append(Constants.NODE_CONFIG_JSON);
+            File hubConfigFile = new File(sb.toString());
+            Gson gson = new Gson();
+            reader = new BufferedReader(new FileReader(hubConfigFile));
+            NodeConfiguration nodeConfiguration = gson.fromJson(reader, NodeConfiguration.class);
+            if (nodeConfiguration != null) {
+                String host = nodeConfiguration.getConfiguration().getHost();
+                int port = nodeConfiguration.getConfiguration().getPort();
+                setConnectionAlive(Utility.isConnectionAlive(HTTP_PROTOCOL, host, port));
+                response.setStatus(ActionServiceConstant.SUCCESS);
+				response.setService_exception("");
+				response.setConnectionAlive(isConnectionAlive());
+            }
+        } catch (PhrescoException e) {
+        		response.setStatus(ERROR);
+        		response.setService_exception(FrameworkUtil.getStackTraceAsString(e));
+        		response.setConnectionAlive(false);
+                S_LOGGER.error("Entered into catch block of MavenFunctions.checkForNode()"+ FrameworkUtil.getStackTraceAsString(e));
+                throw new PhrescoException("Entered into catch block of MavenFunctions.checkForNode()");
+            //return showErrorPopup(e, getText(EXCEPTION_QUALITY_FUNCTIONAL_NODE_CONNECTION));
+            
+        } catch (PhrescoPomException e) {
+        		response.setStatus(ERROR);
+        		response.setService_exception(FrameworkUtil.getStackTraceAsString(e));
+        		response.setConnectionAlive(false);
+                S_LOGGER.error("Entered into catch block of MavenFunctions.checkForNode()"+ FrameworkUtil.getStackTraceAsString(e));
+                throw new PhrescoException("Entered into catch block of MavenFunctions.checkForNode()");
+            //return showErrorPopup(new PhrescoException(e), getText(EXCEPTION_QUALITY_FUNCTIONAL_NODE_CONNECTION));
+            
+        } catch (FileNotFoundException e) {
+        		response.setStatus(ERROR);
+        		response.setService_exception(FrameworkUtil.getStackTraceAsString(e));
+        		response.setConnectionAlive(false);
+                S_LOGGER.error("Entered into catch block of MavenFunctions.checkForNode()"+ FrameworkUtil.getStackTraceAsString(e));
+                throw new PhrescoException("Entered into catch block of MavenFunctions.checkForNode()");
+            //return showErrorPopup(new PhrescoException(e), getText(EXCEPTION_QUALITY_FUNCTIONAL_NODE_CONNECTION));
+            
+        } finally {
+            Utility.closeStream(reader);
+        }
+        
+        return response;
+    }
+	
+	
+	public BufferedReader showStartedHubLog() throws PhrescoException {
+		BufferedReader reader = null;
+	    if (isDebugEnabled) {
+            S_LOGGER.debug("Entering Method MavenFunctions.showStartedHubLog()");
+        }
+	    
+	    try {
+	        HubConfiguration hubConfig = getHubConfig();
+	        String host = hubConfig.getHost();
+	        int port = hubConfig.getPort();
+	        String str = "Hub is already running in " + host + ":" + port;
+	        InputStream is = new ByteArrayInputStream(str.getBytes());
+	        reader = new BufferedReader(new InputStreamReader(is));
+        } catch (PhrescoException e) {
+                S_LOGGER.error("Entered into catch block of MavenFunctions.showStartedHubLog()"+ FrameworkUtil.getStackTraceAsString(e));
+                throw new PhrescoException("Entered into catch block of MavenFunctions.stopNode()"+ FrameworkUtil.getStackTraceAsString(e));
+                //return showErrorPopup(e, getText(EXCEPTION_QUALITY_FUNCTIONAL_HUB_LOG));
+        }
+	    
+	    return reader;
+	}
+	
+	
+	public BufferedReader showStartedNodeLog() throws PhrescoException {
+		BufferedReader reader = null;
+		
+        if (isDebugEnabled) {
+            S_LOGGER.debug("Entering Method MavenFunctions.showStartedNodeLog()");
+        }
+        
+        try {
+            NodeConfiguration nodeConfig = getNodeConfig();
+            NodeConfig configuration = nodeConfig.getConfiguration();
+            String host = configuration.getHost();
+            int port = configuration.getPort();
+            String str = "Node is already running in " + host + COLON + port;
+            InputStream is = new ByteArrayInputStream(str.getBytes());
+            reader = new BufferedReader(new InputStreamReader(is));
+            
+        } catch (PhrescoException e) {
+                S_LOGGER.error("Entered into catch block of MavenFunctions.showStartedNodeLog()"+ FrameworkUtil.getStackTraceAsString(e));
+                throw new PhrescoException("Entered into catch block of MavenFunctions.showStartedNodeLog()"+ FrameworkUtil.getStackTraceAsString(e));
+            //return showErrorPopup(e, getText(EXCEPTION_QUALITY_FUNCTIONAL_NODE_LOG));
+        }
+        
+        return reader;
+    }
+	
+	public BufferedReader generateSiteReport() throws PhrescoException {
+		BufferedReader reader = null;
+		if (isDebugEnabled) {
+			S_LOGGER.debug("Entering Method  MavenFunctions.generateReport()");
+		}
+		
+		try {
+			ActionType actionType = null;
+			ProjectManager projectManager = PhrescoFrameworkFactory.getProjectManager();
+			ProjectInfo projectInfo = projectManager.getProject(getProjectId(), getCustomerId());
+			actionType = ActionType.SITE_REPORT;
+			ApplicationManager applicationManager = PhrescoFrameworkFactory.getApplicationManager();
+			ApplicationInfo applicationInfo = getApplicationInfo();
+			String appDirectoryPath = getAppDirectoryPath(applicationInfo);
+			reader = applicationManager.performAction(projectInfo, actionType, null, appDirectoryPath);
+		} catch (PhrescoException e) {
+				S_LOGGER.error("Entered into catch block of MavenFunctions.generateSiteReport()"
+					+ FrameworkUtil.getStackTraceAsString(e));
+				throw new PhrescoException("exception occured in the generate site report");
+		}
+		return reader;
+	}
+	
+	
+	public BufferedReader ciSetup() throws PhrescoException {
+		BufferedReader reader = null;
+		
+		if (isDebugEnabled) {
+		S_LOGGER.debug("Entering Method  MavenFunctions CI setup()");
+		}
+		try {
+			CIManager ciManager = PhrescoFrameworkFactory.getCIManager();
+			ProjectInfo projectInfo = getProjectInfo();
+			if (isDebugEnabled) {
+				S_LOGGER.debug("Jenkins Home " + Utility.getJenkinsHome().toString());
+			}
+
+			List<String> buildArgCmds = new ArrayList<String>(1);
+			buildArgCmds.add(SKIP_TESTS);
+			String workingDirectory = Utility.getJenkinsHome();
+			reader = ciManager.setup(projectInfo, ActionType.INSTALL, buildArgCmds , workingDirectory);
+			
+		} catch (PhrescoException e) {
+				S_LOGGER.error("Entered into catch block of MavenFunctions CI setup()" + FrameworkUtil.getStackTraceAsString(e));
+				throw new PhrescoException("exception occured in the CI Setup ");
+		}
+		return reader;
+	}
+	
+	
+	public BufferedReader ciStart() throws PhrescoException {
+		BufferedReader reader = null;
+		
+		if (isDebugEnabled) {
+			S_LOGGER.debug("Entering Method  MavenFunctions .startJenkins()");
+		}
+		try {
+			CIManager ciManager = PhrescoFrameworkFactory.getCIManager();
+			ProjectInfo projectInfo = getProjectInfo();
+			if (isDebugEnabled) {
+				S_LOGGER.debug("Jenkins Home " + Utility.getJenkinsHome().toString());
+			}
+			
+			List<String> buildArgCmds = null;
+			String workingDirectory = Utility.getJenkinsHome();
+
+			reader = ciManager.start(projectInfo, ActionType.START, buildArgCmds , workingDirectory);
+			
+		} catch (PhrescoException e) {
+			S_LOGGER.error("Entered into catch block of CI.startJenkins()" + FrameworkUtil.getStackTraceAsString(e));
+			throw new PhrescoException("exception occured in the CI Start up ");
+		}
+		return reader;
+	}
+	
+	public BufferedReader ciStop() throws PhrescoException {
+		
+		BufferedReader reader=null;		
+		if (isDebugEnabled) {
+			S_LOGGER.debug("Entering Method  MavenFunctions .stopJenkins()");
+		}
+		try {
+			CIManager ciManager = PhrescoFrameworkFactory.getCIManager();
+			ProjectInfo projectInfo = getProjectInfo();
+			if (isDebugEnabled) {
+				S_LOGGER.debug("Jenkins Home " + Utility.getJenkinsHome().toString());
+			}
+			
+			List<String> buildArgCmds = null;
+			String workingDirectory = Utility.getJenkinsHome();
+			reader = ciManager.stop(projectInfo, ActionType.STOP, buildArgCmds , workingDirectory);
+			
+		} catch (PhrescoException e) {
+			S_LOGGER.error("Entered into catch block of CI.stopJenkins()" + FrameworkUtil.getStackTraceAsString(e));
+			throw new PhrescoException("exception occured in the CI stop functionality");
+		}
+		return reader;
+	}
+	
+	
+	public ActionResponse printAsPdf (String username,ActionResponse response) throws PhrescoException {
+        S_LOGGER.debug("Entering Method Quality.printAsPdf()");
+        try {
+			ApplicationManager applicationManager = PhrescoFrameworkFactory.getApplicationManager();
+			ProjectInfo projectInfo = getProjectInfo();
+			
+			ApplicationInfo applicationInfo = getApplicationInfo();
+			MojoProcessor mojo = new MojoProcessor(new File(getPhrescoPluginInfoFilePath(PHASE_PDF_REPORT)));
+			List<Parameter> parameters = getMojoParameters(mojo, PHASE_PDF_REPORT);
+			//String sonarUrl = (String) getReqAttribute(REQ_SONAR_URL);
+	        if (CollectionUtils.isNotEmpty(parameters)) {
+	            for (Parameter parameter : parameters) {
+	            	String key = parameter.getKey();
+	            	if (REQ_REPORT_TYPE.equals(key)) {
+	            		parameter.setValue(reportDataType);
+	            	} else if (REQ_TEST_TYPE.equals(key)) {
+	            		if (StringUtils.isEmpty(fromPage)) {
+	            			setFromPage(FROMPAGE_ALL);
+	            		}
+	            		parameter.setValue(getFromPage());
+	            	} /*else if (REQ_SONAR_URL.equals(key)) {
+	            		parameter.setValue(sonarUrl);
+	            	}*/ else if ("logo".equals(key)) {
+	            		parameter.setValue(getLogoImageString(username));
+	            	} else if ("theme".equals(key)) {
+	            		parameter.setValue(getThemeColorJson(username));
+	            	}
+	            }
+	        }
+	        mojo.save();
+	        
+			List<String> buildArgCmds = getMavenArgCommands(parameters);
+			buildArgCmds.add(HYPHEN_N);
+			String workingDirectory = getAppDirectoryPath(applicationInfo);
+			BufferedReader reader = applicationManager.performAction(projectInfo, ActionType.PDF_REPORT, buildArgCmds, workingDirectory);
+			String line;
+			line = reader.readLine();
+			while (line != null) {
+				line = reader.readLine();
+				System.out.println("Restart Start Console : " + line);
+			}
+        } catch (Exception e) {
+        	S_LOGGER.error("Entered into catch block of ActionFunction.printAsPdf()"+ e);
+        	response.setStatus(ERROR);
+            response.setLog(ERROR);
+			response.setService_exception(FrameworkUtil.getStackTraceAsString(e));
+			response.setUniquekey("");
+        	throw new PhrescoException("exception occured in the Print As PDF functionality");
+        }
+        response.setStatus(ActionServiceConstant.SUCCESS);
+        response.setLog(ActionServiceConstant.SUCCESS);
+        return response;
+    }
+	
+	 protected String getThemeColorJson(String username) throws PhrescoException {
+	    	String themeJsonStr = "";
+	    	try {
+	    		//User user = (User) getSessionAttribute(SESSION_USER_INFO);
+	    		User user = (User)getServiceManager(username).getUserInfo();
+	    		List<Customer> customers = user.getCustomers();
+	    		for (Customer customer : customers) {
+					if (customer.getId().equals(getCustomerId())) {
+						Map<String, String> frameworkTheme = customer.getFrameworkTheme();
+						if (frameworkTheme != null) {
+							Gson gson = new Gson();
+							themeJsonStr = gson.toJson(frameworkTheme);
+						}
+					}
+				}
+			} catch (Exception e) {
+				throw new PhrescoException(e);
+			}
+	    	return themeJsonStr;
+	    }
+	
+    protected String getLogoImageString(String username) throws PhrescoException {
+    	String encodeImg = "";
+    	try {
+        	InputStream fileInputStream = null;
+    		//fileInputStream = getServiceManager().getIcon(getCustomerId());
+        	fileInputStream = getServiceManager(username).getIcon(getCustomerId());
+    		if (fileInputStream != null) {
+        		byte[] imgByte = null;
+        		imgByte = IOUtils.toByteArray(fileInputStream);
+        	    byte[] encodedImage = Base64.encodeBase64(imgByte);
+                encodeImg = new String(encodedImage);
+    		}
+		} catch (Exception e) {
+			throw new PhrescoException(e);
+		}
+    	return encodeImg;
+    }
+	
+	private NodeConfiguration getNodeConfig() throws PhrescoException {
+        BufferedReader reader = null;
+        NodeConfiguration nodeConfig = null;
+        try {
+            FrameworkUtil frameworkUtil = FrameworkUtil.getInstance();
+            String functionalTestDir = frameworkUtil.getFunctionalTestDir(getApplicationInfo());
+            StringBuilder sb = new StringBuilder(getApplicationHome());
+            sb.append(functionalTestDir)
+            .append(File.separator)
+            .append(Constants.NODE_CONFIG_JSON);
+            File hubConfigFile = new File(sb.toString());
+            Gson gson = new Gson();
+            reader = new BufferedReader(new FileReader(hubConfigFile));
+            nodeConfig = gson.fromJson(reader, NodeConfiguration.class);
+        } catch (PhrescoException e) {
+            throw new PhrescoException(e);
+        } catch (PhrescoPomException e) {
+            throw new PhrescoException(e);
+        } catch (FileNotFoundException e) {
+            throw new PhrescoException(e);
+        } finally {
+            Utility.closeReader(reader);
+        }
+
+        return nodeConfig;
+    }
+	
+	private HubConfiguration getHubConfig() throws PhrescoException {
+	    BufferedReader reader = null;
+	    HubConfiguration hubConfig = null;
+	    try {
+	        FrameworkUtil frameworkUtil = FrameworkUtil.getInstance();
+	        String functionalTestDir = frameworkUtil.getFunctionalTestDir(getApplicationInfo());
+	        StringBuilder sb = new StringBuilder(getApplicationHome());
+	        sb.append(functionalTestDir)
+	        .append(File.separator)
+	        .append(Constants.HUB_CONFIG_JSON);
+	        File hubConfigFile = new File(sb.toString());
+	        Gson gson = new Gson();
+	        reader = new BufferedReader(new FileReader(hubConfigFile));
+	        hubConfig = gson.fromJson(reader, HubConfiguration.class);
+	    } catch (PhrescoException e) {
+	        throw new PhrescoException(e);
+	    } catch (PhrescoPomException e) {
+	        throw new PhrescoException(e);
+	    } catch (FileNotFoundException e) {
+	        throw new PhrescoException(e);
+	    } finally {
+	        Utility.closeReader(reader);
+	    }
+
+	    return hubConfig;
+	}
+	
 	
 	/**
 	 * To create Aggregations tag in Pom.xml with minification details
@@ -1385,14 +2003,114 @@ public class MavenFunctions implements Constants ,FrameworkConstants,MavenServic
 	    }
 	 
 	 
-	protected ServiceManager getServiceManager(String username) throws PhrescoException {
-		try {
-			this.serviceManager = ServiceManagerMap.getServiceManager(username);
-			return serviceManager;
-		} catch (IOException e) {
-			throw new PhrescoException(e);
+	 protected ServiceManager getServiceManager(String username) throws PhrescoException {
+		this.serviceManager = ServiceManagerMap.CONTEXT_MANAGER_MAP.get(username);
+		return serviceManager;
 		}
-	}
+	 
+	 
+	 public HttpServletRequest getHttpRequest(){
+			return request;
+		}
+		public boolean isConnectionAlive() {
+			return connectionAlive;
+		}
+		public void setConnectionAlive(boolean connectionAlive) {
+			this.connectionAlive = connectionAlive;
+		}
+		public String getProjectModule() {
+			return projectModule;
+		}
+		public void setProjectModule(String projectModule) {
+			this.projectModule = projectModule;
+		}
+		public List<String> getMinifyFileNames() {
+			return minifyFileNames;
+		}
+		public void setMinifyFileNames(List<String> minifyFileNames) {
+			this.minifyFileNames = minifyFileNames;
+		}
+		public String getMinifyAll() {
+			return minifyAll;
+		}
+		public void setMinifyAll(String minifyAll) {
+			this.minifyAll = minifyAll;
+		}
+		public String getIsFromCI() {
+			return isFromCI;
+		}
+		public void setIsFromCI(String isFromCI) {
+			this.isFromCI = isFromCI;
+		}
+		public String getResultJson() {
+			return resultJson;
+		}
+		public void setResultJson(String resultJson) {
+			this.resultJson = resultJson;
+		}
+		public String getTestAgainst() {
+			return testAgainst;
+		}
+		public void setTestAgainst(String testAgainst) {
+			this.testAgainst = testAgainst;
+		}
+		public String getTestName() {
+			return testName;
+		}
+		public void setTestName(String testName) {
+			this.testName = testName;
+		}
+		public String getUsername() {
+			return username;
+		}
+		public void setUsername(String username) {
+			this.username = username;
+		}
+		public String getPhase() {
+			return phase;
+		}
+		public void setPhase(String phase) {
+			this.phase = phase;
+		}
+		public String getAppId() {
+			return appId;
+		}
+		public void setAppId(String appId) {
+			this.appId = appId;
+		}
+		public String getCustomerId() {
+			return customerId;
+		}
+		public void setCustomerId(String customerId) {
+			this.customerId = customerId;
+		}
+		public String getProjectId() {
+			return projectId;
+		}
+		public void setProjectId(String projectId) {
+			this.projectId = projectId;
+		}
+		public String getSelectedFiles() {
+			return selectedFiles;
+		}
+		public void setSelectedFiles(String selectedFiles) {
+			this.selectedFiles = selectedFiles;
+		}
+		public String getFromPage() {
+			return fromPage;
+		}
+
+		public void setFromPage(String fromPage) {
+			this.fromPage = fromPage;
+		}
+
+		public String getReportDataType() {
+			return reportDataType;
+		}
+
+		public void setReportDataType(String reportDataType) {
+			this.reportDataType = reportDataType;
+		}
 	 
 	 //------------ Will be replaced by reusing the login service coding .
 	 

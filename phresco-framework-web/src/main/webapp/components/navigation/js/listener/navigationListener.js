@@ -1,4 +1,4 @@
-define(["framework/widget", "navigation/api/navigationAPI", "projects/project", "projects/editproject", "application/application", "features/features", "codequality/codequality", "configuration/configuration", "build/build"], function() {
+define(["framework/widget", "navigation/api/navigationAPI", "projects/project", "projects/editproject", "application/application", "features/features", "codequality/codequality", "configuration/configuration", "build/build", "unittest/unittest"], function() {
 
 	Clazz.createPackage("com.components.navigation.js.listener");
 
@@ -17,6 +17,7 @@ define(["framework/widget", "navigation/api/navigationAPI", "projects/project", 
 		build : null,
 		currentTab : null,
 		editproject : null,
+		unittest : null,
 		
 		/***
 		 * Called in initialization time of this class 
@@ -130,6 +131,14 @@ define(["framework/widget", "navigation/api/navigationAPI", "projects/project", 
 							
 						retuenObj = self.editproject;
 						break;
+						
+					case commonVariables.unittest :
+						
+						if(self.unittest === null)
+							self.unittest = new Clazz.com.components.unittest.js.UnitTest();
+							
+						retuenObj = self.unittest;
+						break;
 				
 				}
 			
@@ -183,6 +192,19 @@ define(["framework/widget", "navigation/api/navigationAPI", "projects/project", 
 				currentObj = self.getMyObj(commonVariables.build);
 			}
 
+			if(currentObj != undefined && currentObj != null){
+				self.currentTab = keyword;
+				Clazz.navigationController.jQueryContainer = commonVariables.contentPlaceholder;
+				Clazz.navigationController.push(currentObj, true);
+			}
+		},
+		
+		onQualitytab : function(keyword) {
+			var self=this, currentObj;
+			if (keyword === commonVariables.unittest){	
+				currentObj = self.getMyObj(commonVariables.unittest);
+			}
+			
 			if(currentObj != undefined && currentObj != null){
 				self.currentTab = keyword;
 				Clazz.navigationController.jQueryContainer = commonVariables.contentPlaceholder;

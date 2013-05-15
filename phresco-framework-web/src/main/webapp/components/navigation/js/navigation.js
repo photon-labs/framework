@@ -39,8 +39,10 @@ define(["framework/widgetWithTemplate", "navigation/listener/navigationListener"
 			var self = this;
 			self.onAddNewProjectEvent = new signals.Signal();
 			self.onMytabEvent = new signals.Signal();
+			self.onQualitytabEvent = new signals.Signal();
 			self.onAddNewProjectEvent.add(navigationListener.onAddProject, navigationListener); 
 			self.onMytabEvent.add(navigationListener.onMytabEvent, navigationListener); 
+			self.onQualitytabEvent.add(navigationListener.onQualitytab, navigationListener); 
 		},
 		
 		/***
@@ -70,6 +72,10 @@ define(["framework/widgetWithTemplate", "navigation/listener/navigationListener"
 				$("#myTab li a").removeClass("act");
 				$(this).children().addClass("act");
 				self.onMytabEvent.dispatch(this.id);
+			});
+			
+			$("#qualityAssurance li").click(function() {
+				self.onQualitytabEvent.dispatch(this.id);
 			});
 			
 			Clazz.navigationController.mainContainer = commonVariables.contentPlaceholder;

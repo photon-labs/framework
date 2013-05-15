@@ -8,6 +8,7 @@ define(["framework/widgetWithTemplate", "application/listener/applicationListene
 		editApplicationListener: null,
 		name : commonVariables.editApplication,
 		addServerEvent : null,
+		renderData : {},
 		header: {
 			contentType: null,
 			requestMethod: null,
@@ -24,15 +25,45 @@ define(["framework/widgetWithTemplate", "application/listener/applicationListene
 		initialize : function(globalConfig){
 			var self = this;
 			self.editApplicationListener = new Clazz.com.components.application.js.listener.ApplicationListener(globalConfig);
+			self.applicationAPI = applicationAPI = new Clazz.com.components.application.js.api.ApplicationAPI();
 			self.registerEvents(self.editApplicationListener);
 		},
 		
 		registerEvents : function(editApplicationListener) {
 			var self = this;
 			self.onCancelEvent = new signals.Signal();
+			self.appConfig = new signals.Signal();
+			self.updateApp = new signals.Signal();
 			self.onCancelEvent.add(editApplicationListener.onCancelUpdate, editApplicationListener); 
+			self.appConfig.add(editApplicationListener.getAppConfig, editApplicationListener); 
+			self.updateApp.add(editApplicationListener.updateApplication, editApplicationListener); 
+			
+			Handlebars.registerHelper('compare', function(val1, val2, val3) {
+				if(val1 == val2){
+					return '<option value="'+ val1 +'" selected="selected">'+ val3 +'</option>';
+				}else{
+					return '<option value="'+ val1 +'">'+ val3 +'</option>';
+				}
+			});
+			
+			Handlebars.registerHelper('compareversion', function(val1, val2, artfgroup, selectedVersion) {
+				if(val1 == val2){
+					//console.info(artfgroup);
+					var option = '';
+					$.each(artfgroup.versions, function(index, value){
+						//console.info('value = ' , value.version);
+						//console.info('value = ' , value.id , selectedVersion);
+						if(selectedVersion[0] == value.id){
+							option +='<option selected="selected" value='+value.id+'>'+ value.version +'</option>';
+						}else{
+							option +='<option value='+value.id+'>'+ value.version +'</option>';
+						}
+					});
+					return option;
+				}
+			});
 		},
-		
+		 
 		
 		/***
 		 * Called in once the login is success
@@ -50,8 +81,23 @@ define(["framework/widgetWithTemplate", "application/listener/applicationListene
 		 * @element: Element as the result of the template + data binding
 		 */
 		postRender : function(element) {			
+			var self = this;
+			//self.editApplicationListener.renderServer(self.renderData);
 		},
 		
+		preRender: function(whereToRender, renderFunction){
+			var self = this;
+			setTimeout(function() {
+				self.editApplicationListener.getAppInfo(self.editApplicationListener.getRequestHeader(self.appDirName), function(response) {
+					var projectlist = {};
+					projectlist.projectlist = response;
+					self.renderData = response;
+					//console.info('response = ' , response);
+					renderFunction(projectlist, whereToRender);
+				});
+			}, 200);	
+		},
+				
 		/***
 		 * Bind the action listeners. The bindUI() is called automatically after the render is complete 
 		 *
@@ -63,9 +109,14 @@ define(["framework/widgetWithTemplate", "application/listener/applicationListene
 			$('#cancelbutton').click(function(){
 				self.onCancelEvent.dispatch();
 			}); 
-			
+			self.editApplicationListener.serverDBChangeEvent();
 			self.editApplicationListener.addServerDatabaseEvent();
 			self.editApplicationListener.removeServerDatabaseEvent();
+			
+			$("#updatebutton").unbind('click');
+			$("#updatebutton").bind('click', function(){
+				self.updateApp.dispatch(self.renderData);
+			});			
 		}
 	});
 

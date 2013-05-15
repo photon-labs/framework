@@ -1,6 +1,6 @@
 package com.photon.phresco.framework.rest.api.util;
 
-public interface MavenServiceConstants {
+public interface ActionServiceConstant {
 	
 	
 	
@@ -14,6 +14,9 @@ public interface MavenServiceConstants {
 	public String  RESULT_JSON= "resultJson";
 	public String  MINIFY_FILE_NAMES= "minifyFileNames";
 	public String  MINIFY_ALL= "minifyAll";
+	public String  PROJECT_MODULE= "projectModule";
+	public String  REPORT_DATA_TYPE= "reportDataType";
+	public String  FROM_PAGE= "fromPage";
 	
 	
 	
@@ -31,6 +34,7 @@ public interface MavenServiceConstants {
 	public String INPROGRESS ="INPROGRESS";
 	public String COMPLETED ="COMPLETED";
 	public String ERROR ="ERROR";
+	public String SUCCESS ="SUCCESS";
 	
 	public String BUILDPROJECT="BUILD";
 	public String DEPLOYPROJECT="DEPLOY";
@@ -42,6 +46,16 @@ public interface MavenServiceConstants {
 	public String PERFORMANCE_TEST="PERFORMANCE_TEST";
 	public String LOAD_TEST="LOAD_TEST";
 	public String MINIFY="MINIFY";
+	public String START_HUB="START_HUB";
+	public String START_NODE="START_NODE";
+	public String FUNCTIONAL_TEST="FUNCTIONAL_TEST";
+	public String STOP_HUB="STOP_HUB";
+	public String STOP_NODE="STOP_NODE";
+	public String CHECK_HUB_STATUS="CHECK_HUB_STATUS";
+	public String CHECK_NODE_STATUS="CHECK_NODE_STATUS";
+	public String SHOW_STARTED_HUB_LOG="SHOW_STARTED_HUB_LOG";
+	public String SHOW_STARTED_NODE_LOG="SHOW_STARTED_NODE_LOG";
+	public String SITE_REPORT="SITE_REPORT";
 	
 
 }
