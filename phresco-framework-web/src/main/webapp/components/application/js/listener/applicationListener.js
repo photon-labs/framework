@@ -27,9 +27,9 @@ define(["framework/widget", "framework/widgetWithTemplate", "application/api/app
 		},
 		
 		addServerDatabase : function(appType, whereToAppend) {
-			var self = this, dynamicValue, server = '<tr class="servers" key="displayed"> <td data-i18n="application.edit.servers"></td><td name="servers" class="servers"><select name="appServers" class="appServers"><option>Select Servers</option>'+ self.getOptionData('serverData') +'</select></td><td data-i18n="application.edit.versions"></td><td colspan="3" name="version" class="version"><select name="server_version" class="server_version"><option>Select Version</option></select> <div class="flt_right"><a href="javascript:;"><img name="addServer" src="../themes/default/images/helios/plus_icon.png" border="0" alt=""></a> <a href="javascript:;"><img name="removeServer" src="../themes/default/images/helios/minus_icon.png"  border="0" alt=""></a></div></td></tr>',
+			var self = this, dynamicValue, server = '<tr class="servers" key="displayed"> <td data-i18n="application.edit.servers"></td><td name="servers" class="servers"><select name="appServers" class="appServers"><option>Select Servers</option>'+ self.getOptionData('serverData') +'</select></td><td data-i18n="application.edit.versions"></td><td colspan="4" name="version" class="version"><select name="server_version" class="server_version"><option>Select Version</option></select> <div class="flt_right"><a href="javascript:;"><img name="addServer" src="../themes/default/images/helios/plus_icon.png" border="0" alt=""></a> <a href="javascript:;"><img name="removeServer" src="../themes/default/images/helios/minus_icon.png"  border="0" alt=""></a></div></td></tr>',
 			
-			database ='<tr class="database" key="displayed"><td data-i18n="application.edit.database"></td><td name="servers" class="databases"><select name="databases" class="databases"><option>Select Database</option>'+ self.getOptionData('databaseData') +'</select></td><td data-i18n="application.edit.versions"></td> <td colspan="3" name="version" class="version"><select name="db_version" class="db_version"> <option>Select Version</option></select><div class="flt_right"><a href="javascript:;"><img src="../themes/default/images/helios/plus_icon.png" name="addDatabase" border="0" alt=""></a> <a href="javascript:;"><img src="../themes/default/images/helios/minus_icon.png" name="removeDatabase" border="0" alt=""></a></div></td></tr>';
+			database ='<tr class="database" key="displayed"><td data-i18n="application.edit.database"></td><td name="servers" class="databases"><select name="databases" class="databases"><option>Select Database</option>'+ self.getOptionData('databaseData') +'</select></td><td data-i18n="application.edit.versions"></td> <td colspan="4" name="version" class="version"><select name="db_version" class="db_version"> <option>Select Version</option></select><div class="flt_right"><a href="javascript:;"><img src="../themes/default/images/helios/plus_icon.png" name="addDatabase" border="0" alt=""></a> <a href="javascript:;"><img src="../themes/default/images/helios/minus_icon.png" name="removeDatabase" border="0" alt=""></a></div></td></tr>';
 			if (appType === "addServer") {
 				dynamicValue = $(server).insertAfter(whereToAppend);
 				dynamicValue.prev('tr').find('img[name="addServer"]').removeAttr("src");
@@ -334,7 +334,9 @@ define(["framework/widget", "framework/widgetWithTemplate", "application/api/app
 				self.loadingScreen.showLoading();
 				self.applicationAPI.appinfo(header,
 					function(response) {
+					console.info('response1 = ' , response);
 						if (response !== null) {
+							console.info('response = ' , response);
 							callback(response);
 							self.loadingScreen.removeLoading();
 						} else {

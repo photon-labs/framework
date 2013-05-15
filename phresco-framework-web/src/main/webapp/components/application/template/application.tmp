@@ -54,7 +54,8 @@
 										{{/each}}
 									</select>
 								  <div class="flt_right">
-									<a href="javascript:;"><img name="addServer" src="../themes/default/images/helios/plus_icon.png" border="0" alt=""> </a> <a href="javascript:;"><img name="removeServer" border="0" alt=""></a>
+									
+									<a href="javascript:;"><img name="removeServer" src="../themes/default/images/helios/minus_icon.png"  border="0" alt=""></a>
 								</div>
 							  </td>
 							
@@ -108,7 +109,7 @@
 										{{/each}}										
 								  </select>
 								   <div class="flt_right">
-										<a href="javascript:;"><img src="../themes/default/images/helios/plus_icon.png" name="addDatabase" border="0" alt=""></a> <a href="javascript:;"><img name="removeDatabase" border="0" alt=""></a>
+										<a href="javascript:;"><img src="../themes/default/images/helios/minus_icon.png" name="removeDatabase" border="0" alt=""></a>
 									</div>
 							  </td>
 							</tr>
@@ -130,7 +131,7 @@
 								<option>Select Version</option>
 						  </select>
 						   <div class="flt_right">
-								<a href="javascript:;"><img src="../themes/default/images/helios/plus_icon.png" name="addDatabase" border="0" alt=""></a> <a href="javascript:;"><img name="removeDatabase" border="0" alt=""></a>
+								<a href="javascript:;"><img src="../themes/default/images/helios/plus_icon.png" name="addDatabase" border="0" alt=""></a>
 							</div>
 					  </td>
 					</tr>
