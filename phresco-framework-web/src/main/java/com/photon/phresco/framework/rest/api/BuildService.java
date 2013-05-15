@@ -499,9 +499,13 @@ public class BuildService implements Constants ,FrameworkConstants,BuildServiceC
 	    }
 	 
 	 
-	 protected ServiceManager getServiceManager(String username) {
-		this.serviceManager = ServiceManagerMap.CONTEXT_MANAGER_MAP.get(username);
-		return serviceManager;
+	 protected ServiceManager getServiceManager(String username) throws PhrescoException {
+		try {
+			this.serviceManager = ServiceManagerMap.getServiceManager(username);
+			return serviceManager;
+		} catch (IOException e) {
+			 throw new PhrescoException(e);
+		}
 		}
 	 
 	 //------------ Will be replaced by reusing the login service coding .

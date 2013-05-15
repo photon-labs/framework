@@ -1,5 +1,6 @@
 package com.photon.phresco.framework.rest.api;
 
+import java.io.IOException;
 import java.util.List;
 
 import javax.ws.rs.GET;
@@ -15,25 +16,28 @@ import com.photon.phresco.service.client.api.ServiceManager;
 import com.sun.jersey.api.client.ClientResponse.Status;
 
 @Path("/pilot")
-public class PilotService {
+public class PilotService extends RestBase {
 
 	@GET
 	@Path("/list")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response list(@QueryParam("customerId") String customer, @QueryParam("techId") String techId, 
 			@QueryParam("userId") String userId ) {
-		ResponseInfo responseData = new ResponseInfo();
+		ResponseInfo<List<ApplicationInfo>> responseData = new ResponseInfo<List<ApplicationInfo>>();
 		try {
-			ServiceManager serviceManager = ServiceManagerMap.CONTEXT_MANAGER_MAP.get(userId);
+			ServiceManager serviceManager = ServiceManagerMap.getServiceManager(userId);
 			if(serviceManager == null) {
-				ResponseInfo finalOutput = ServiceManagerMap.responseDataEvaluation(responseData, null, "UnAuthorized User", null);
+				ResponseInfo<List<ApplicationInfo>> finalOutput = responseDataEvaluation(responseData, null, "UnAuthorized User", null);
 	        	return Response.status(Status.BAD_REQUEST).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
 			}
 			List<ApplicationInfo> pilotProjects = serviceManager.getPilotProjects(customer, techId);
-			ResponseInfo finalOutput = ServiceManagerMap.responseDataEvaluation(responseData, null, "Application pilot listed successfully", pilotProjects);
+			ResponseInfo<List<ApplicationInfo>> finalOutput = responseDataEvaluation(responseData, null, "Application pilot listed successfully", pilotProjects);
 			return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
 		} catch (PhrescoException e) {
-			ResponseInfo finalOutput = ServiceManagerMap.responseDataEvaluation(responseData, e, "Application pilot list not fetched", null);
+			ResponseInfo<List<ApplicationInfo>> finalOutput = responseDataEvaluation(responseData, e, "Application pilot list not fetched", null);
+			return Response.status(Status.BAD_REQUEST).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
+		} catch (IOException e) {
+			ResponseInfo<List<ApplicationInfo>> finalOutput = responseDataEvaluation(responseData, e, "Application pilot list not fetched", null);
 			return Response.status(Status.BAD_REQUEST).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
 		}
 	}

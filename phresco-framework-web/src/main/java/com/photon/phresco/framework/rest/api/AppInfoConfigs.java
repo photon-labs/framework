@@ -1,5 +1,6 @@
 package com.photon.phresco.framework.rest.api;
 
+import java.io.IOException;
 import java.util.List;
 
 import javax.ws.rs.GET;
@@ -17,21 +18,28 @@ import com.sun.jersey.api.client.ClientResponse;
 import com.sun.jersey.api.client.ClientResponse.Status;
 
 @Path("/appConfig")
-public class AppInfoConfigs {
+public class AppInfoConfigs extends RestBase {
 	
 	@GET
 	@Path("/list")
 	@Produces (MediaType.APPLICATION_JSON)
 	public Response getDownloadInfos(@QueryParam("customerId") String customerId, @QueryParam("tech-id") String techId,
 			@QueryParam("type") String type, @QueryParam("platform") String platform, @QueryParam("userId") String userId) {
-		ResponseInfo responseData = new ResponseInfo();
+		ResponseInfo<List<DownloadInfo>> responseData = new ResponseInfo<List<DownloadInfo>>();
 		try {
-			ServiceManager serviceManager = ServiceManagerMap.CONTEXT_MANAGER_MAP.get(userId);
+			ServiceManager serviceManager = ServiceManagerMap.getServiceManager(userId);
+			if(serviceManager == null) {
+				ResponseInfo finalOutput = responseDataEvaluation(responseData, null, "UnAuthorized User", null);
+				return Response.status(Status.BAD_REQUEST).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
+			}
 			List<DownloadInfo> downloadInfos = serviceManager.getDownloads(customerId, techId, type, platform);
-			ResponseInfo finalOutput = ServiceManagerMap.responseDataEvaluation(responseData, null, " Configuration listed successfully", downloadInfos);
+			ResponseInfo<List<DownloadInfo>> finalOutput = responseDataEvaluation(responseData, null, " Configuration listed successfully", downloadInfos);
 			return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
 		} catch (PhrescoException e) {
-			ResponseInfo finalOutput = ServiceManagerMap.responseDataEvaluation(responseData, e, "Configuration not fetched", null);
+			ResponseInfo<List<DownloadInfo>> finalOutput = responseDataEvaluation(responseData, e, "Configuration not fetched", null);
+			return Response.status(Status.BAD_REQUEST).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
+		} catch (IOException e) {
+			ResponseInfo<List<DownloadInfo>> finalOutput = responseDataEvaluation(responseData, e, "Configuration not fetched", null);
 			return Response.status(Status.BAD_REQUEST).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
 		}
 	}
@@ -40,14 +48,21 @@ public class AppInfoConfigs {
 	@Path("/webservices")
 	@Produces (MediaType.APPLICATION_JSON)
 	public Response getWebServices(@QueryParam("userId") String userId) {
-		ResponseInfo responseData = new ResponseInfo();
+		ResponseInfo<List<WebService>> responseData = new ResponseInfo<List<WebService>>();
 		try {
-			ServiceManager serviceManager = ServiceManagerMap.CONTEXT_MANAGER_MAP.get(userId);
+			ServiceManager serviceManager = ServiceManagerMap.getServiceManager(userId);
+			if(serviceManager == null) {
+				ResponseInfo finalOutput = responseDataEvaluation(responseData, null, "UnAuthorized User", null);
+				return Response.status(Status.BAD_REQUEST).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
+			}
 			List<WebService> webServices = serviceManager.getWebServices();
-			ResponseInfo finalOutput = ServiceManagerMap.responseDataEvaluation(responseData, null, " Configuration listed successfully", webServices);
+			ResponseInfo<List<WebService>> finalOutput = responseDataEvaluation(responseData, null, " Configuration listed successfully", webServices);
 			return Response.status(ClientResponse.Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
 		} catch (PhrescoException e) {
-			ResponseInfo finalOutput = ServiceManagerMap.responseDataEvaluation(responseData, e, "Webservice configuration not fetched", null);
+			ResponseInfo<List<WebService>> finalOutput = responseDataEvaluation(responseData, e, "Webservice configuration not fetched", null);
+			return Response.status(Status.BAD_REQUEST).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
+		} catch (IOException e) {
+			ResponseInfo<List<WebService>> finalOutput = responseDataEvaluation(responseData, e, "Webservice configuration not fetched", null);
 			return Response.status(Status.BAD_REQUEST).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
 		}
 	}

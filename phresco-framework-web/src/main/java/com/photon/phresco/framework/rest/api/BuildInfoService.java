@@ -30,21 +30,21 @@ import com.photon.phresco.util.Utility;
 import com.sun.jersey.api.client.ClientResponse.Status;
 
 @Path("/buildinfo")
-public class BuildInfoService implements FrameworkConstants {
+public class BuildInfoService extends RestBase implements FrameworkConstants {
 	@GET
 	@Path("/list")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response list(@QueryParam("appDirName") String appDirName) {
-		ResponseInfo responseData = new ResponseInfo();
+		ResponseInfo<List<BuildInfo>> responseData = new ResponseInfo<List<BuildInfo>>();
 		try {
 			File buildInfoFile = new File(Utility.getProjectHome() + appDirName + File.separator + BUILD_DIR
 					+ File.separator + BUILD_INFO_FILE_NAME);
 			ApplicationManager applicationManager = PhrescoFrameworkFactory.getApplicationManager();
 			List<BuildInfo> builds = applicationManager.getBuildInfos(buildInfoFile);
-			ResponseInfo finalOutput = ServiceManagerMap.responseDataEvaluation(responseData, null,"Buildinfo return Successfully", builds);
+			ResponseInfo<List<BuildInfo>> finalOutput = responseDataEvaluation(responseData, null,"Buildinfo return Successfully", builds);
 			return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
 		} catch (PhrescoException e) {
-			ResponseInfo finalOutput = ServiceManagerMap.responseDataEvaluation(responseData, e,"Buildinfo return Failed", null);
+			ResponseInfo<List<BuildInfo>> finalOutput = responseDataEvaluation(responseData, e,"Buildinfo return Failed", null);
 			return Response.status(Status.NOT_FOUND).entity(finalOutput).header("Access-Control-Allow-Origin", "*")
 			.build();
 		}
@@ -92,10 +92,10 @@ public class BuildInfoService implements FrameworkConstants {
 				return Response.status(Status.OK).entity(fileInputStream).header("Access-Control-Allow-Origin", "*").build();
 			}
 		} catch (FileNotFoundException e) {
-			ResponseInfo finalOutput = ServiceManagerMap.responseDataEvaluation(responseData, e, "Zip Download Failed", null);
+			ResponseInfo finalOutput = responseDataEvaluation(responseData, e, "Zip Download Failed", null);
 			return Response.status(Status.NOT_FOUND).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
 		} catch (PhrescoException e) {
-			ResponseInfo finalOutput = ServiceManagerMap.responseDataEvaluation(responseData, e, "Zip Download Failed", null);
+			ResponseInfo finalOutput = responseDataEvaluation(responseData, e, "Zip Download Failed", null);
 			return Response.status(Status.NOT_FOUND).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
 		}
 		return null;
@@ -117,10 +117,10 @@ public class BuildInfoService implements FrameworkConstants {
 			ApplicationManager applicationManager = PhrescoFrameworkFactory.getApplicationManager();
 			applicationManager.deleteBuildInfos(project, buildInts);
 		} catch (PhrescoException e) {
-			ResponseInfo finalOutput = ServiceManagerMap.responseDataEvaluation(responseData, e, "Build delete Failed", null);
+			ResponseInfo finalOutput = responseDataEvaluation(responseData, e, "Build delete Failed", null);
 			return Response.status(Status.NOT_FOUND).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
 		}
-		ResponseInfo finalOutput = ServiceManagerMap.responseDataEvaluation(responseData, null, "Build deleted Successfully", null);
+		ResponseInfo finalOutput = responseDataEvaluation(responseData, null, "Build deleted Successfully", null);
 		return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
 	}
 }

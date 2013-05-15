@@ -38,24 +38,24 @@ import com.photon.phresco.util.Utility;
 import com.sun.jersey.api.client.ClientResponse.Status;
 
 @Path("/parameter")
-public class ParameterService {
+public class ParameterService extends RestBase {
 
 	@GET
 	@Path("/dynamic")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response getParameter(@QueryParam("appName") String appName, @QueryParam("goal") String goal) {
-		ResponseInfo responseData = new ResponseInfo();
+		ResponseInfo<List<Parameter>> responseData = new ResponseInfo<List<Parameter>>();
 		try {
 			List<Parameter> parameter = null;
 			String filePath = Utility.getProjectHome() + appName + "/.phresco/phresco-"+ goal +"-info.xml";
 			File file = new File(filePath);
 			MojoProcessor mojo = new MojoProcessor(file);
 			parameter = mojo.getParameters(goal);
-			ResponseInfo finalOutput = ServiceManagerMap.responseDataEvaluation(responseData, null, "Parameter returned successfully", parameter);
+			ResponseInfo<List<Parameter>> finalOutput = responseDataEvaluation(responseData, null, "Parameter returned successfully", parameter);
 			return Response.ok(finalOutput).header("Access-Control-Allow-Origin", "*").build();
 
 		} catch (Exception e) {
-			ResponseInfo finalOutput = ServiceManagerMap.responseDataEvaluation(responseData, e, "Parameter not fetched", null);
+			ResponseInfo<List<Parameter>> finalOutput = responseDataEvaluation(responseData, e, "Parameter not fetched", null);
 			return Response.status(Status.BAD_REQUEST).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
 		}
 	}
@@ -69,10 +69,10 @@ public class ParameterService {
 			String filePath = Utility.getProjectHome() + appName + "/.phresco/phresco-"+ goal +"-info.xml";
 			File file = new File(filePath);
 			String xml = IOUtils.toString(new FileInputStream(file));
-			ResponseInfo finalOutput = ServiceManagerMap.responseDataEvaluation(responseData, null, "Parameter returned successfully", xml);
+			ResponseInfo finalOutput = responseDataEvaluation(responseData, null, "Parameter returned successfully", xml);
 			return Response.status(200).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
 		} catch (Exception e) {
-			ResponseInfo finalOutput = ServiceManagerMap.responseDataEvaluation(responseData, e, "Parameter not fetched", null);
+			ResponseInfo finalOutput = responseDataEvaluation(responseData, e, "Parameter not fetched", null);
 			return Response.status(Status.BAD_REQUEST).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
 		}
 	}
@@ -83,7 +83,7 @@ public class ParameterService {
 	@Consumes(MediaType.APPLICATION_JSON)
 	public Response getPossibleValue(@QueryParam("appName") String appName, @QueryParam("customerId") String customerId, @QueryParam("goal") String goal, 
 			@QueryParam("key") String key) {
-		ResponseInfo responseData = new ResponseInfo();
+		ResponseInfo<PossibleValues> responseData = new ResponseInfo<PossibleValues>();
 		PossibleValues possibleValues = null;
 		try {
 			String filePath = Utility.getProjectHome() + appName + "/.phresco/phresco-"+ goal +"-info.xml";
@@ -93,10 +93,10 @@ public class ParameterService {
 			if (StringUtils.isNotEmpty(dependency)) {
 				possibleValues = getPossibleValues(processor, goal, dependency, appName, customerId);
 			}
-			ResponseInfo finalOutput = ServiceManagerMap.responseDataEvaluation(responseData, null, "Dependency returned successfully", possibleValues);
+			ResponseInfo<PossibleValues> finalOutput = responseDataEvaluation(responseData, null, "Dependency returned successfully", possibleValues);
 			return Response.ok(finalOutput).header("Access-Control-Allow-Origin", "*").build();
 		} catch (PhrescoException e) {
-			ResponseInfo finalOutput = ServiceManagerMap.responseDataEvaluation(responseData, e, "Dependency not fetched", null);
+			ResponseInfo<PossibleValues> finalOutput = responseDataEvaluation(responseData, e, "Dependency not fetched", null);
 			return Response.status(Status.BAD_REQUEST).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
 		}
 	}
