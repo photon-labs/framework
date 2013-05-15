@@ -138,7 +138,6 @@ $(document).ready(function(){
 			//Apply customer based theme
 			//location.href
 			$.get(commonVariables.webserviceurl + commonVariables.customerInfoContext + commonVariables.defaultcustomer, function(themeData){
-				var customerTheme = JSON.parse(themeData.data.frameworkTheme.customerTheme);
 				JSS.css(customerTheme);
 			});
 			
