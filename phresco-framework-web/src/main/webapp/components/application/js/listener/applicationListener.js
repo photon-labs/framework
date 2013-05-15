@@ -7,6 +7,7 @@ define(["framework/widget", "framework/widgetWithTemplate", "application/api/app
 		basePlaceholder :  window.commonVariables.basePlaceholder,
 		applicationAPI : null,
 		projectlistContent : null,
+		appInfos : [],
 
 		/***
 		 * Called in initialization time of this class 
@@ -15,6 +16,7 @@ define(["framework/widget", "framework/widgetWithTemplate", "application/api/app
 		 */
 		initialize : function(config) {
 				this.applicationAPI = new Clazz.com.components.application.js.api.ApplicationAPI();
+				this.loadingScreen = new Clazz.com.js.widget.common.Loading();
 		},
 		
 		onCancelUpdate : function() {
@@ -25,9 +27,9 @@ define(["framework/widget", "framework/widgetWithTemplate", "application/api/app
 		},
 		
 		addServerDatabase : function(appType, whereToAppend) {
-			var self = this, dynamicValue, server = '<tr class="servers"> <td data-i18n="application.edit.servers"></td><td><select><option>Select Servers</option></select></td><td data-i18n="application.edit.versions"></td><td colspan="3"><select><option>Select Version</option></select> <div class="flt_right"><a href="javascript:;"><img name="addServer" src="../themes/default/images/helios/plus_icon.png" width="25" height="20" border="0" alt=""></a> <a href="javascript:;"><img name="removeServer" src="../themes/default/images/helios/minus_icon.png"  width="25" height="20" border="0" alt=""></a></div></td></tr>',
+			var self = this, dynamicValue, server = '<tr class="servers"> <td data-i18n="application.edit.servers"></td><td name="servers"><select name="appServers"><option>Select Servers</option>'+ self.getOptionData('serverData') +'</select></td><td data-i18n="application.edit.versions"></td><td colspan="3" name="version"><select name="server_version"><option>Select Version</option></select> <div class="flt_right"><a href="javascript:;"><img name="addServer" src="../themes/default/images/helios/plus_icon.png" border="0" alt=""></a> <a href="javascript:;"><img name="removeServer" src="../themes/default/images/helios/minus_icon.png"  border="0" alt=""></a></div></td></tr>',
 			
-			database ='<tr class="database"><td data-i18n="application.edit.database"></td><td><select><option>Select Database</option></select></td><td data-i18n="application.edit.versions"></td> <td colspan="3"><select> <option>Select Version</option></select><div class="flt_right"><a href="javascript:;"><img src="../themes/default/images/helios/plus_icon.png" name="addDatabase" width="25" height="20" border="0" alt=""></a> <a href="javascript:;"><img src="../themes/default/images/helios/minus_icon.png" name="removeDatabase" width="25" height="20" border="0" alt=""></a></div></td></tr>';
+			database ='<tr class="database"><td data-i18n="application.edit.database"></td><td name="servers"><select name="databases"><option>Select Database</option>'+ self.getOptionData('databaseData') +'</select></td><td data-i18n="application.edit.versions"></td> <td colspan="3" name="version"><select name="db_version"> <option>Select Version</option></select><div class="flt_right"><a href="javascript:;"><img src="../themes/default/images/helios/plus_icon.png" name="addDatabase" border="0" alt=""></a> <a href="javascript:;"><img src="../themes/default/images/helios/minus_icon.png" name="removeDatabase" border="0" alt=""></a></div></td></tr>';
 			if (appType === "addServer") {
 				dynamicValue = $(server).insertAfter(whereToAppend);
 				dynamicValue.prev('tr').find('img[name="addServer"]').removeAttr("src");
@@ -43,6 +45,7 @@ define(["framework/widget", "framework/widgetWithTemplate", "application/api/app
 			$("img[name=removeServer]").unbind("click");
 			$("img[name=removeDatabase]").unbind("click");
 			self.removeServerDatabaseEvent();
+			self.serverDBChangeEvent();
 			
 		},
 
@@ -82,6 +85,186 @@ define(["framework/widget", "framework/widgetWithTemplate", "application/api/app
 					$("img[name=removeDatabase]").removeAttr('src');
 				}
 			});
+		},
+		
+		serverDBChangeEvent : function() {
+			var self=this;
+			$("select[name='appServers']").bind('change', function(){
+				var currentData = $(this).val();
+				self.getVersions($(this), currentData, 'serverData', 'server');
+			});			
+			
+			$("select[name='databases']").bind('change', function(){
+				var currentData = $(this).val();
+				self.getVersions($(this), currentData, 'databaseData', 'db');
+			});
+		},
+
+		getVersions : function(object, currentData, technology, type) {
+			var self=this, option, version, versionplaceholder;
+			version = object.parents("td[name='servers']");
+			versionplaceholder = $(version).siblings("td[name='version']").children("select[name="+type+"_version]");
+
+			var applicationlayerData = self.applicationAPI.localVal.getJson(technology);
+			$.each(applicationlayerData, function(index, value){
+				if(value.id === currentData){
+					option = '';
+					$.each(value.artifactGroup.versions, function(index, value){
+						option += '<option>'+ value.version +'</option>'
+					});	
+					$(versionplaceholder).html(option);
+				}
+			});
+		}, 
+		
+		getOptionData : function(technology) {
+			var self=this, option;
+			var applicationlayerData = self.applicationAPI.localVal.getJson(technology);
+			option = '';
+			$.each(applicationlayerData, function(index, value){
+			    option += '<option value='+ value.id +'>'+ value.name +'</option>';
+			});
+			return option;
+		},
+		
+		getAppInfo : function(header, callback) {
+			var self = this;
+			try {
+				self.loadingScreen.showLoading();
+				self.applicationAPI.appinfo(header,
+					function(response) {
+						if (response !== null) {
+						var data = {};
+							data.appdetails = response;
+							self.getAppConfig(response , 'SERVER', function(appInfo){
+								data.serverData = appInfo.data;
+								self.applicationAPI.localVal.setJson('serverData', appInfo.data);
+								self.getAppConfig(response , 'DATABASE', function(appInfo){
+									data.databaseData = appInfo.data;
+									self.applicationAPI.localVal.setJson('databaseData', appInfo.data);
+									self.getWSConfig(response, function(appInfo){
+										data.webserviceData = appInfo.data;
+										self.applicationAPI.localVal.setJson('webserviceData', appInfo.data);
+										self.loadingScreen.removeLoading();
+										callback(data);
+									});	
+								});
+							});
+						} else {
+						self.loadingScreen.removeLoading();
+							callback({ "status" : "service failure"});
+						}
+
+					},
+
+					function(textStatus) {
+						
+					}
+				);
+			} catch(exception) {
+				
+			}
+		},
+		
+		getAppConfig : function(appInfo , type, callback){
+			var self=this, header, data = {}, userId, techId, customerId;
+			userId = self.applicationAPI.localVal.getSession('username');
+			techId = appInfo.data.appInfos[0].techInfo.id;
+			customerId = appInfo.data.customerIds[0];
+			header = {
+				contentType: "application/json",
+				requestMethod: "GET",
+				dataType: "json",
+				webserviceurl: ''
+			}
+			
+			header.webserviceurl = commonVariables.webserviceurl+ "appConfig/list?techId="+techId+"&customerId="+customerId+"&type="+type+"&platform=Windows64&userId="+userId;
+			try {
+				self.applicationAPI.appinfo(header,
+					function(response) {
+						if (response !== null) {
+							//console.info('response data= ' , response.data);
+							callback(response);
+						} else {
+							callback({ "status" : "service failure"});
+						}
+
+					},
+
+					function(textStatus) {
+						
+					}
+				);
+			} catch(exception) {
+				
+			}	
+		},
+		
+		updateApplication : function(renderData){
+			var self = this;
+			self.appInfos = [];
+			var appInfo = {};
+			var techInfo = {};
+			appInfo.code = $("input[name='appCode']").val();
+			appInfo.appDirName = $("input[name='appDirName']").val();
+			appInfo.version = $("input[name='appVersion']").val();
+			appInfo.name = $("input[name='appName']").val();
+			techInfo.id = $("input[name='technology']").val();
+			techInfo.version = $("input[name='techVersion']").val();
+			if (appInfo.code !== '') {
+				appInfo.techInfo = renderData.appdetails.data.appInfos[0].techInfo;
+				self.appInfos.push(appInfo);
+			}
+			
+			console.info('renderData = ' , renderData);
+			console.info('appInfos = ' , appInfo);
+			
+		},
+		
+		getWSConfig : function(appInfo , callback){
+			var self=this, header, data = {}, userId, techId, customerId;
+			userId = self.applicationAPI.localVal.getSession('username');
+			techId = appInfo.data.appInfos[0].techInfo.id;
+			customerId = appInfo.data.customerIds[0];
+			header = {
+				contentType: "application/json",
+				requestMethod: "GET",
+				dataType: "json",
+				webserviceurl: ''
+			}
+			
+			header.webserviceurl = commonVariables.webserviceurl+ "appConfig/webservices?userId="+userId;
+			try {
+				self.applicationAPI.appinfo(header,
+					function(response) {
+						if (response !== null) {
+							callback(response);
+						} else {
+							callback({ "status" : "service failure"});
+						}
+
+					},
+
+					function(textStatus) {
+						
+					}
+				);
+			} catch(exception) {
+				
+			}	
+		},
+		
+		getRequestHeader : function(appDirName) {
+			var self=this, header, data = {}, userId;
+			header = {
+				contentType: "application/json",
+				requestMethod: "GET",
+				dataType: "json",
+				webserviceurl: ''
+			}
+			//header.webserviceurl = "http://localhost:8080/framework/rest/api/project/editApplication?appDirName=1-jwsandhtmljquery-html5multichanneljquerywidget"
+			header.webserviceurl = commonVariables.webserviceurl+"project/editApplication?appDirName="+appDirName;
+			return header;
 		},
 		
 		dynamicRenderLocales : function(contentPlaceholder) {

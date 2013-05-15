@@ -83,6 +83,7 @@ define(["framework/widgetWithTemplate", "projectlist/listener/projectListListene
 			$(".tooltiptop").tooltip();
 			$(".dyn_popup").hide();
 			$("#applicationedit").css("display", "none");
+			$("#editprojectTab").css("display", "none");
 			$("img[name=editproject]").unbind("click");
 			$("img[name=editproject]").click(function(){
 				self.onProjectEditEvent.dispatch($(this).attr('key'));
@@ -90,7 +91,7 @@ define(["framework/widgetWithTemplate", "projectlist/listener/projectListListene
 			
 			$("#myTab li a").removeClass("act");
 			$('a[name=editApplication]').click(function(){
-				var value = $(this).text();
+				var value = $(this).closest("tr").attr("class");
 				$("#myTab li#appinfo a").addClass("act");
 				self.onProjectsEvent.dispatch(value);
 			});
