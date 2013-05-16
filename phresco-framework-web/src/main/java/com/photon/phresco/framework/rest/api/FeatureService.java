@@ -75,11 +75,11 @@ public class FeatureService extends RestBase implements ServiceConstants {
 		}
 	}
 	
-	@GET
+	@POST
 	@Path("/dependencyFeature")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response getDependencyFeature(@QueryParam("userId") String userId, ArtifactInfo artifactInfo) throws PhrescoException {
+	public Response getDependencyFeature(@QueryParam("userId") String userId, ArtifactInfo artifactInfo) {
 		List<String> dependencyIds = artifactInfo.getDependencyIds();
 		ResponseInfo<List<ArtifactGroup>> responseData = new ResponseInfo<List<ArtifactGroup>>();
 		try {
@@ -98,6 +98,9 @@ public class FeatureService extends RestBase implements ServiceConstants {
 			ResponseInfo<List<ArtifactGroup>> finalOutput = responseDataEvaluation(responseData, null, " Dependency Features listed successfully", atArtifactGroups);
 			return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
 		} catch (IOException e) {
+			ResponseInfo<ArtifactGroup> finalOutput = responseDataEvaluation(responseData, e, "Dependency Features not fetched", null);
+			return Response.status(Status.BAD_REQUEST).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
+		} catch (PhrescoException e) {
 			ResponseInfo<ArtifactGroup> finalOutput = responseDataEvaluation(responseData, e, "Dependency Features not fetched", null);
 			return Response.status(Status.BAD_REQUEST).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
 		}
