@@ -2537,6 +2537,7 @@ public class Quality extends DynamicParameterAction implements Constants {
 							unitTechReports = frameworkUtil.getUnitTestReportDir(appInfo, unitTestTech);
 							if (StringUtils.isNotEmpty(unitTechReports)) {
 								file = new File(sb.toString() + unitTechReports);
+								xmlResultsAvailable = xmlFileSearch(file, xmlResultsAvailable);
 							}
 						}
 					}
