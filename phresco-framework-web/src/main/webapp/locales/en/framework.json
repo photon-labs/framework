@@ -145,7 +145,7 @@
 		}
 	},
 	"features" : {
-		"show" : "Show Selected Features",
+		"show" : "Show Selected",
 		"btn" : {
 			"update" : "Update",
 			"cancel" : "Cancel",
@@ -156,7 +156,7 @@
 			"jslibraries" : "JS Libraries",
 			"components" : "Components"
 		},
-		"placeholder" : "Enter here to Search"
+		"placeholder" : "Search"
 	},
 	"edit" : {
 		"label" : {
