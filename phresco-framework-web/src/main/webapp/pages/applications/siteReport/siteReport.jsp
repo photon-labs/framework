@@ -88,7 +88,7 @@
 			$("#generate").removeClass("btn-primary").addClass("btn-disabled");
 	<%
 		} else {
-			if (CollectionUtils.isEmpty(selectedCategories)) {
+			if (CollectionUtils.isEmpty(selectedReports)) {
 	%>
 		        $("#generate").removeClass("btn-primary").addClass("btn-disabled");
 	<%
