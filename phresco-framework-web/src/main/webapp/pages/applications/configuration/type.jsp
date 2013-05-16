@@ -213,6 +213,14 @@
 						sb.append(customParamElement);
 						firstRow = false;
 					}
+					if(firstRow){
+						pm.setValue("");
+						List<Object> values = new ArrayList<Object>();
+						values.add("");
+						pm.setObjectValue(values);
+						StringTemplate customParamElement = FrameworkUtil.constructCustomParameters(pm);
+						sb.append(customParamElement);
+					}
 				}
 	        } else if (!propertyTemplate.isMultiple() && CollectionUtils.isNotEmpty(possibleValues)) {
 	        	pm.setObjectValue(possibleValues);
@@ -384,6 +392,14 @@
 						sb.append(customParamElement);
 						firstRow = false;
 					}
+				}
+				if(firstRow){
+					pm.setValue("");
+					List<Object> values = new ArrayList<Object>();
+					values.add("");
+					pm.setObjectValue(values);
+					StringTemplate customParamElement = FrameworkUtil.constructCustomParameters(pm);
+					sb.append(customParamElement);
 				}
 			}
 		}

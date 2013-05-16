@@ -1518,9 +1518,9 @@ function addRow(obj) {
 	if(!(columnsTag.indexOf(minusIcon) != -1)) {
 		newRow.append(removeIconTd);
 	}
-	newRow.appendTo("#propTempTbodyForHeader");
-	$(newRow).find($('input[name=headerKey]')).val("");
-	$(newRow).find($('input[name=headerValue]')).val("");
+	newRow.appendTo($(obj).closest('#propTempTbodyForHeader'));
+	$(newRow).find($('input:text[name=key]')).val("");
+	$(newRow).find($('input:text[name=value]')).val("");
 	$(".removeImage").show();
 }
 
