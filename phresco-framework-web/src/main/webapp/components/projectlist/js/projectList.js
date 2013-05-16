@@ -16,7 +16,6 @@ define(["framework/widgetWithTemplate", "projectlist/listener/projectListListene
 		onProjectEditEvent : null,
 		registerEvents : null,
 		repositoryEvent : null,
-		deletearray : [],
 		
 		/***
 		 * Called in initialization time of this class 
@@ -61,7 +60,7 @@ define(["framework/widgetWithTemplate", "projectlist/listener/projectListListene
 			$("#projectList").show();
 			$("#createProject").hide();
 			var self = this;
-			self.projectslistListener.getProjectList(self.projectslistListener.getRequestHeader(self.projectRequestBody, ''), function(response) {
+			self.projectslistListener.getProjectList(self.projectslistListener.getActionHeader(self.projectRequestBody, "get"), function(response) {
 				var projectlist = {};
 				projectlist.projectlist = response.data;				
 				renderFunction(projectlist, whereToRender);
@@ -71,7 +70,6 @@ define(["framework/widgetWithTemplate", "projectlist/listener/projectListListene
 		getAction : function(actionBody, action, callback) {
 			var self = this;
 			self.projectslistListener.projectListAction(self.projectslistListener.getActionHeader(actionBody, action), function(response) {
-				//self.preRender(commonVariables.contentPlaceholder,$.proxy(self.renderTemplate, self));
 				self.loadPage();
 			});
 		},
@@ -133,7 +131,8 @@ define(["framework/widgetWithTemplate", "projectlist/listener/projectListListene
 
 			$(".tooltiptop").unbind("click");
 			$(".tooltiptop").click(function() {
-				self.opencc(this, $(this).attr('name'));
+				var currentPrjName = $(this).closest("tr").attr("class");
+				self.opencc(this, $(this).attr('name'), currentPrjName);
 			});
 			
 			$("a[name = 'updatesvn']").unbind("click");
@@ -142,10 +141,10 @@ define(["framework/widgetWithTemplate", "projectlist/listener/projectListListene
 			});
 			$("input[name='deleteConfirm']").unbind('click');
 			$("input[name='deleteConfirm']").click(function(e) {
-				var deleteproject = $(this).closest("tr").attr("class");
-				self.deletearray.push(deleteproject);
-				console.info("deletearray", self.deletearray);		
-				self.getAction(self.deletearray,"delete");
+				var deletearray = [];
+				var deleteproject = $(this).parent().parent().attr('currentPrjName');
+				deletearray.push(deleteproject);
+				self.getAction(deletearray,"delete");
 			});
 
 			$("input[name='holeDelete']").unbind('click');

@@ -92,20 +92,20 @@ define(["framework/widget", "features/api/featuresAPI", "features/features",  "a
 		getRequestHeader : function(projectRequestBody, type, descid) {
 			var url;
 			var userId = JSON.parse(self.featuresAPI.localVal.getSession("userInfo"));
-			if(type != ""){
-				url = commonVariables.webserviceurl+commonVariables.featurePageContext+"/list?customerId=photon&techId=tech-java-webservice&type="+type+"&userId="+userId.id;
-			}
-			else {
-				url = commonVariables.webserviceurl+commonVariables.featurePageContext+"/desc?customerId=photon&artifactGroupId="+descid+"&userId="+userId.id;
-			}
-			
+			var appDirName = self.featuresAPI.localVal.getJson("appDirName");
 			var header = {
 				contentType: "application/json",
-				requestMethod: "GET",
-				dataType: "json",
-				webserviceurl: url
+				dataType: "json"
 			};
-
+			if(type != ""){
+				header.requestMethod = "GET";
+				header.webserviceurl = commonVariables.webserviceurl+commonVariables.featurePageContext+"/list?customerId=photon&techId=tech-java-webservice&type="+type+"&userId="+userId.id;
+			}
+			else {
+				header.requestMethod = "PUT";
+				header.requestPostBody = JSON.stringify(projectRequestBody);
+				header.webserviceurl = commonVariables.webserviceurl+commonVariables.projectlistContext + "/updateFeature?customerId=photon&artifactGroupId="+descid+"&userId="+userId.id+"&appDirName="+appDirName;
+			}
 			return header;
 		}
 		

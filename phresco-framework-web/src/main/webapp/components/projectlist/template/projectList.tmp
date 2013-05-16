@@ -28,7 +28,7 @@
                       <tr class="{{appDirName}}" techid="{{techInfo.id}}">
                         <td><a name="editApplication" href="javascript:;">{{name}}</a></td>
                         <td>{{description}}</td>
-                        <td>{{techInfo.id}}</td>
+                        <td>{{../description}}</td>
                        <td><a name="pdf_report" class="tooltiptop" title="" data-placement="top" data-t="tooltip" href="#" data-original-title="PDF Report"><img src="../themes/default/images/helios/pdf_icon.png" width="14" height="16" border="0" alt=""></a>
                   
               <div id="pdf_report" class="dyn_popup">

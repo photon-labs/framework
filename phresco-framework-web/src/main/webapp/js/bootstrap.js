@@ -55,8 +55,8 @@ var commonVariables = {
 	footerPlaceholder : $("<footer\\:widget></footer\\:widget>"),
 
 
-	openccmini : function(e,place) {
-			
+	/* openccmini : function(e,place) {
+		console.info("test boostrap");
 		var clicked = $(e);
 		var target = $("#" + place);
 		var twowidth = window.innerWidth/1.5;;
@@ -94,7 +94,7 @@ var commonVariables = {
 		$('.dyn_popup_close').click( function() {
 			$("#" + place).hide();
 		});
-	}
+	} */
 
 };
 

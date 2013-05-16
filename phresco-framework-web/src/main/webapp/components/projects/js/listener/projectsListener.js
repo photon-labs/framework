@@ -92,13 +92,12 @@ define(["framework/widget", "framework/widgetWithTemplate", "common/loading", "p
 					contentType: "application/json",
 					requestMethod: "GET",
 					dataType: "json",
-					requestPostBody : '',
 					webserviceurl: commonVariables.webserviceurl + "project/edit?userId="+userId+"&customerId=photon&projectId="+id
 				}
 
-				if(projectRequestBody != "") {
+				/* if(projectRequestBody != "") {
 					header.requestPostBody = JSON.stringify(projectRequestBody);
-				}
+				} */
 				
 				if(action == "projectlist"){
 					header.requestMethod = "GET";
@@ -107,11 +106,14 @@ define(["framework/widget", "framework/widgetWithTemplate", "common/loading", "p
 
 				if(action == "update"){
 					header.requestMethod = "PUT";
+					header.requestPostBody = JSON.stringify(projectRequestBody);
 					header.webserviceurl = commonVariables.webserviceurl + "project/updateproject?userId="+userId;
 				}
 				
 				if(action == "create"){
+					
 					header.requestMethod = "POST";
+					header.requestPostBody = JSON.stringify(projectRequestBody);
 					header.webserviceurl = commonVariables.webserviceurl + "project/create?userId="+userId;
 				}
 				

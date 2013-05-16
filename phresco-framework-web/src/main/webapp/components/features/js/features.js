@@ -172,14 +172,7 @@ define(["framework/widgetWithTemplate", "features/listener/featuresListener"], f
            	});
 
            	$('#switchoffbutton').on("click", function(event) {
-				console.info("inside..of");
-           		$("#moduleContent li").hide();
-           		$("ul li fieldset").each(function() {
-           			if($(this).attr("class") == "switch switchOn"){
-           				$(this).parent().show();
-						self.scrollbarUpdate();
-           			}     			
-           		});           		
+           		self.showSelected();
            	});
 			
 			$('label.on').click(function() {
@@ -187,11 +180,14 @@ define(["framework/widgetWithTemplate", "features/listener/featuresListener"], f
            	});
 			
 			$('label.off').click(function() {
-				$(this).parent().next('div').hide();	      		
+				$(this).parent().next('div').hide();
+				var value = $('#switchoffbutton').parent().attr('class');
+				if (value === "switch switchOn") {
+					self.showSelected();	      		
+				}
            	});
 			
            	$('#switchonbutton').on("click", function(event) {
-				console.info("inside..on");
            		$("ul li").show();
            		self.scrollbarUpdate();
            	});
@@ -212,7 +208,49 @@ define(["framework/widgetWithTemplate", "features/listener/featuresListener"], f
 					$("#"+descid).show();
 				});
            	});
+			
+			$('#featureUpdate').on("click", function() {
+				var featureUpdatedataArray = [];
+				$(".switchOn").each(function(index, currentVal) {
+					var featureUpdatedata = {};
+					featureUpdatedata.name = $(currentVal).parent().attr("type");
+					featureUpdatedata.dispName = $(currentVal).parent().attr("dispName");
+					featureUpdatedata.dispName = $(currentVal).parent().attr("dispName");
+					featureUpdatedata.packaging = $(currentVal).parent().attr("packaging");
+					featureUpdatedata.type = $(currentVal).parent().attr("type");
+					/* console.info("$(currentVal).parent()", $(currentVal).parent().children('div.flt_right').children('select.input-mini').find(':selected').val());
+					console.info("$(currentVal).parent()", $(currentVal).parent().children('div.flt_right').children('select.input-mini').find(':selected').attr("scope"));
+					console.info("$(currentVal).parent()", $(currentVal).parent().children('div.flt_right').children('select.input-mini').find(':selected').text()); */
+					//featureUpdatedata.defaultModule = $(currentVal).next().children().eq(0).attr("defaultmodule");
+					featureUpdatedata.defaultModule = true;
+					featureUpdatedata.scope = $(currentVal).parent().children('div.flt_right').children('select.input-mini').find(':selected').attr("scope");
+					featureUpdatedata.versionID = $(currentVal).parent().children('div.flt_right').children('select.input-mini').find(':selected').val();
+					featureUpdatedata.dispValue = $(currentVal).parent().children('div.flt_right').children('select.input-mini').find(':selected').text();
+					var moduleId = $(currentVal).parent().children('div.flt_right').children('.moduleId').val();
+					featureUpdatedata.moduleId = moduleId; 
+					featureUpdatedata.artifactGroupId = moduleId;
+					console.info("featureUpdatedata", featureUpdatedata);
+					featureUpdatedataArray.push(featureUpdatedata);	
+					//console.info("featureUpdatedataArray", featureUpdatedataArray);					
+				});
+				//console.info("featureUpdatedataArray::::" + JSON.stringify(featureUpdatedataArray));
+				self.featuresListener.getFeaturesList(self.featuresListener.getRequestHeader(featureUpdatedataArray, "", ""), function(response) {
+					//console.info("response", response);
+				});
+			});
 		},
+		
+		showSelected : function() {
+			var self = this;
+			$("#moduleContent li").hide();
+			$("ul li fieldset").each(function() {
+				if($(this).attr("class") == "switch switchOn"){
+					$(this).parent().show();
+					self.scrollbarUpdate();
+				}     			
+			});   
+		},
+		
 		scrollbarEnable : function(){
 			$("#content_1").mCustomScrollbar({
 				autoHideScrollbar:true,

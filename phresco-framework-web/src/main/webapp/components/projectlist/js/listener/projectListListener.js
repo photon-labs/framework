@@ -101,32 +101,14 @@ define(["framework/widget", "framework/widgetWithTemplate", "projectlist/api/pro
 		 * @synonymRequestBody: request body of synonym
 		 * @return: returns the contructed header
 		 */
-		getRequestHeader : function(projectRequestBody, id) {
+		getActionHeader : function(projectRequestBody, action) {
 			var self=this, header, data = {}, userId;
 			var customerId = self.getCustomer();
 			customerId = (customerId == "") ? "photon" : customerId;
 			data = JSON.parse(self.projectListAPI.localVal.getSession('userInfo'));
 			userId = data.id;
-			
 			header = {
-				contentType: "application/json",
-				requestMethod: "GET",
-				dataType: "json",
-				requestPostBody: JSON.stringify(projectRequestBody),
-				webserviceurl: ''
-			}
-			if (id == '') {
-				header.webserviceurl = commonVariables.webserviceurl + commonVariables.projectlistContext + "/list?customerId="+customerId;
-			} else {
-				header.webserviceurl = commonVariables.webserviceurl+"project/edit?userId="+userId+"&customerId="+ customerId +"&projectId="+id;
-			}
-			return header;
-		},
-
-		getActionHeader : function(projectRequestBody, action) {
-			var self = this, header = {
-				contentType: "application/json",
-				requestMethod: "DELETE",
+				contentType: "application/json",				
 				dataType: "json",
 				requestPostBody: '',
 				webserviceurl: ''
@@ -139,7 +121,11 @@ define(["framework/widget", "framework/widgetWithTemplate", "projectlist/api/pro
 			if(action == "delete") {
 				header.requestMethod = "DELETE";
 				header.webserviceurl = commonVariables.webserviceurl + commonVariables.projectlistContext + "/delete";
-			} 
+			}
+			if(action == "get") {
+				header.requestMethod = "GET";
+				header.webserviceurl = commonVariables.webserviceurl + commonVariables.projectlistContext + "/list?customerId="+customerId;				
+			}
 			return header;
 		},
 

@@ -123,7 +123,7 @@ define(["framework/widget", "framework/templateProvider"], function() {
 				});
 			},
 			
-			opencc : function(ee,placeId) {
+			opencc : function(ee,placeId, currentPrjName) {
 				var self=this;
 				$(".dyn_popup").hide();
 				
@@ -134,7 +134,8 @@ define(["framework/widget", "framework/templateProvider"], function() {
 				var t= clicked.offset().top + 33;
 				var halfheight= window.innerHeight/2;
 				var halfwidth= window.innerWidth/2;
-			
+				$(target).attr('currentPrjName',currentPrjName);
+				
 				if (clicked.offset().top < halfheight && clicked.offset().left < halfwidth) {
 					$(target).css({"left":clicked.offset().left ,"margin-top":10,"right": "auto"});
 					$(target).toggle();

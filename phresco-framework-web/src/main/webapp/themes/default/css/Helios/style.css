@@ -454,7 +454,7 @@ html, body {
 	background: -ms-linear-gradient(top,  #3e3e3e 0%,#1b1b1b 100%); /* IE10+ */
 	background: linear-gradient(to bottom,  #3e3e3e 0%,#1b1b1b 100%); /* W3C */
 	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#3e3e3e', endColorstr='#1b1b1b',GradientType=0 ); /* IE6-9 */
-	z-index:1;
+	z-index:4;
 }
 
 /* ********************************************** CSS related to Customer change Dropdown ************************************************************************************** */
