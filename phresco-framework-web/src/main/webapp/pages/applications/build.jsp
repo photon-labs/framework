@@ -22,16 +22,12 @@
 <%@ page import="java.util.List"%>
 
 <%@ page import="org.apache.commons.lang.StringUtils"%>
+<%@ page import="org.apache.commons.collections.CollectionUtils"%>
 
 <%@ page import="com.photon.phresco.commons.FrameworkConstants" %>
 <%@ page import="com.photon.phresco.commons.model.ApplicationInfo"%>
 <%@ page import="com.photon.phresco.util.Constants"%>
-
-<script type="text/javascript" src="js/delete.js" ></script>
-<script type="text/javascript" src="js/confirm-dialog.js" ></script>
-<script type="text/javascript" src="js/loading.js" ></script>
-<script type="text/javascript" src="js/home-header.js" ></script>
-<script type="text/javascript" src="js/reader.js" ></script>
+<%@ page import="com.photon.phresco.framework.model.Permissions"%>
 
 <%
 	ApplicationInfo applicationInfo = (ApplicationInfo) request.getAttribute(FrameworkConstants.REQ_APPINFO);
@@ -40,11 +36,8 @@
 		appId = applicationInfo.getId();
 	}
 	
-	//TODO:Need to handle
 	String projectCode = applicationInfo.getAppDirName();
-// 	 technology =applicationInfo.getTechInfo().getVersion();
 	
-//     List<BuildInfo> buildInfos = (List<BuildInfo>) request.getAttribute(FrameworkConstants.REQ_BUILD);
     String selectedAppType = (String) request.getAttribute(FrameworkConstants.REQ_SELECTED_APP_TYPE);
     String testType = (String) request.getAttribute(FrameworkConstants.REQ_TEST_TYPE);
   	StringBuilder sbBuildPath = new StringBuilder();
@@ -80,7 +73,15 @@
 	String iconClass = "";
 	if (!Boolean.parseBoolean(showIcons))  {
 		iconClass = "hideIcons";
-	}	
+	}
+	
+	Permissions permissions = (Permissions) session.getAttribute(FrameworkConstants.SESSION_PERMISSIONS);
+	String per_disabledStr = "";
+	String per_disabledClass = "btn-primary";
+	if (permissions != null && !permissions.canManageBuilds()) {
+		per_disabledStr = "disabled";
+		per_disabledClass = "btn-disabled";
+	}
 %>
 
 <s:if test="hasActionMessages()">
@@ -96,7 +97,7 @@
 <form action="deleteBuild" method="post" autocomplete="off" id="deleteObjects" class="build_form">
     <div class="operation build">
     	<div class="build_delete_btn_div">
-		    <a id="generateBuild" class="btn btn-primary" additionalParam="from=generateBuild"><s:text name='label.generatebuild'/></a>
+		    <input type="button" id="generateBuild" class="btn <%= per_disabledClass %>" <%= per_disabledStr %> additionalParam="from=generateBuild" value="<s:text name='label.generatebuild'/>">
 			<input id="deleteButton" type="button" value="<s:text name="label.delete"/>" class="btn" disabled="disabled" data-toggle="modal" href="#popupPage"/>
 			<%
 				if (optionIds != null && optionIds.contains(FrameworkConstants.MINIFICATION_KEY)) {

@@ -30,8 +30,11 @@
 <%@ page import="com.photon.phresco.commons.model.ProjectInfo"%>
 <%@ page import="com.photon.phresco.commons.model.ApplicationInfo"%>
 <%@ page import="com.photon.phresco.framework.actions.applications.Projects"%>
+<%@ page import="com.photon.phresco.framework.model.Permissions"%>
 
 <%
+	Permissions permissions = (Permissions) session.getAttribute(FrameworkConstants.SESSION_PERMISSIONS);
+
     Projects projectsObj = new Projects(); 
 	List<ProjectInfo> projects = (List<ProjectInfo>) request.getAttribute(FrameworkConstants.REQ_PROJECTS);
 	String recentProjectId = (String) request.getAttribute(FrameworkConstants.REQ_RECENT_PROJECT_ID);
@@ -52,20 +55,34 @@
 
 <form id="formProjectList" class="projectList">
 	<div class="operation">
-		<input type="button" class="btn btn-primary" name="addProject" id="addProject" value="<s:text name='lbl.projects.add'/>"/>
+		<%
+			String per_disabledStr = "";
+			String per_disabledClass = "btn-primary";
+			if (permissions != null && !permissions.canManageApplication()) {
+				per_disabledStr = "disabled";
+				per_disabledClass = "btn-disabled";
+			}
+		%>
+		<input type="button" class="btn <%= per_disabledClass %>" <%= per_disabledStr %> name="addProject" id="addProject" 
+			value="<s:text name='lbl.projects.add'/>"/>
 
-		<input type="button" class="btn btn-primary" name="importAppln" id="importAppln" value="<s:text name='lbl.app.import'/>"/>
-		         
+		<%
+			if (permissions != null && !permissions.canImportApplication() && !permissions.canManageApplication()) {
+				per_disabledStr = "disabled";
+				per_disabledClass = "btn-disabled";
+			} else {
+				per_disabledStr = "";
+				per_disabledClass = "btn-primary";				
+			}
+		%>
+		<input type="button" class="btn <%= per_disabledClass %>" <%= per_disabledStr %> name="importAppln" id="importAppln" 
+			value="<s:text name='lbl.app.import'/>"/>
+
 		<input type="button" class="btn" id="deleteBtn" disabled value="<s:text name='lbl.delete'/>" data-toggle="modal" href="#popupPage"/>
 			
 		<s:if test="hasActionMessages()">
 			<div class="alert alert-success alert-message" id="successmsg" >
 				<s:actionmessage />
-			</div>
-		</s:if>
-		<s:if test="hasActionErrors()">
-			<div class="alert alert-error"  id="errormsg">
-				<s:actionerror />
 			</div>
 		</s:if>
 	</div>
@@ -87,8 +104,15 @@
 								<span class="siteaccordion closereg">
 									<div>
 										<img src="images/r_arrowclose.png" class ="accImg" id="<%= project.getId() %>" onclick="accordionClickOperation(this);">
+										<%
+											if (permissions != null && !permissions.canManageApplication()) {
+												per_disabledStr = "disabled";
+											} else {
+												per_disabledStr = "";
+											}
+										%>
 										<input type="checkbox" <%= checkedStr %> id="<%= project.getId() %>" class="accordianChkBox" 
-											onclick="checkAllEvent(this, $('.<%= project.getId() %>'), false);"/>
+											onclick="checkAllEvent(this, $('.<%= project.getId() %>'), false);" <%= per_disabledStr %>/>
 										<a class="vAlignSub" onclick="editProject('<%= project.getId() %>');"><%= project.getName() %></a>
 									</div>
 								</span>
@@ -125,8 +149,15 @@
 													%>
 																<tr>
 																	<td class="no-left-bottom-border table-pad">
-																		<input type="checkbox" class="check <%= project.getId() %>" appId="<%= appInfo.getId() %>" name="selectedAppInfo" value='<%= gson.toJson(appInfo) %>'
-																			<%= checkedStr %> onclick="checkboxEvent($('.<%= project.getId() %>'), $('input[id=<%= project.getId() %>]'));">
+																		<%
+																			if (permissions != null && !permissions.canManageApplication()) {
+																				per_disabledStr = "disabled";
+																			} else {
+																				per_disabledStr = "";
+																			}
+																		%>
+																		<input type="checkbox" class="check <%= project.getId() %>" appId="<%= appInfo.getId() %>" name="selectedAppInfo" <%= per_disabledStr %> 
+																			value='<%= gson.toJson(appInfo) %>' <%= checkedStr %> onclick="checkboxEvent($('.<%= project.getId() %>'), $('#<%= project.getId() %>'));">
 																	</td>
 																	<td class="no-left-bottom-border table-pad">
 																		<a href="#" id="appNameInHover" onclick="editApplication('<%= project.getId() %>', '<%= appInfo.getId() %>');" name="edit">
@@ -149,16 +180,34 @@
 																	</td>
 																	<td class="no-left-bottom-border table-pad repo-tab-width repoTd <%= uiTypeClass %>">
 																		<a href="#" id="repoImport">
-																			<img id="<%= appInfo.getCode() %>" class="addProject" src="images/icons/add_icon.png"
-																				 additionalParam="projectId=<%= project.getId() %>&appId=<%= appInfo.getId() %>&action=add" title="Add to repo" class="iconSizeinList"/>
+																			<%
+																				String addImgUrl = "images/icons/add_icon.png";
+																				if (permissions != null && !permissions.canManageRepo() && !permissions.canManageApplication()) {
+																					addImgUrl = "images/icons/add_icon_off.png";	
+																				}
+																			%>
+																			<img id="<%= appInfo.getCode() %>" class="addProject" src="<%= addImgUrl %>" class="iconSizeinList"
+																				 additionalParam="projectId=<%= project.getId() %>&appId=<%= appInfo.getId() %>&action=add" title="Add to repo" />
 																		</a>
 																		<a href="#" id="repoImport">
-																			<img id="<%= appInfo.getCode() %>" class="commitProject" src="images/icons/commit_icon.png"
-																				 additionalParam="projectId=<%= project.getId() %>&appId=<%= appInfo.getId() %>&action=commit" title="Commit" class="iconSizeinList"/>
+																			<%
+																				String commitImgUrl = "images/icons/commit_icon.png";
+																				if (permissions != null && !permissions.canManageRepo() && !permissions.canManageApplication()) {
+																					commitImgUrl = "images/icons/commit_icon_off.png";	
+																				}
+																			%>
+																			<img id="<%= appInfo.getCode() %>" class="commitProject" src="<%= commitImgUrl %>" class="iconSizeinList"
+																				 additionalParam="projectId=<%= project.getId() %>&appId=<%= appInfo.getId() %>&action=commit" title="Commit"/>
 																		</a>
 																		<a href="#" id="projectUpdate">
-																			<img id="<%= appInfo.getCode() %>" class="projectUpdate" src="images/icons/refresh.png"
-																				 additionalParam="projectId=<%= project.getId() %>&appId=<%= appInfo.getId() %>&action=update" title="Update" class="iconSizeinList"/>
+																			<%
+																				String updateImgUrl = "images/icons/refresh.png";
+																				if (permissions != null && !permissions.canUpdateRepo() && !permissions.canManageApplication()) {
+																					updateImgUrl = "images/icons/refresh_off.png";	
+																				}
+																			%>
+																			<img id="<%= appInfo.getCode() %>" class="projectUpdate" src="<%= updateImgUrl %>" class="iconSizeinList"
+																				 additionalParam="projectId=<%= project.getId() %>&appId=<%= appInfo.getId() %>&action=update" title="Update"/>
 																		</a>
 																	</td>
 																</tr>
@@ -198,7 +247,13 @@
 		$("." + recentProjectId).each(function () {
 			if ($(this).attr("appId") === recentAppId) {
 				$(this).attr("checked", true);
-				checkboxEvent($('.' + recentProjectId), parentCheckBox);
+				<%
+					if (permissions != null && permissions.canManageApplication()) {
+				%>
+						checkboxEvent($('.' + recentProjectId), $('#' + recentProjectId));
+				<%
+					}
+				%>
 				return false;
 			}
 		});
@@ -217,7 +272,13 @@
 		hideLoadingIcon();
 		hideProgressBar();
 		toDisableCheckAll();
-		deleteButtonStatus();
+		<%
+			if (permissions != null && permissions.canManageApplication()) {
+		%>
+				deleteButtonStatus();
+		<%
+			}
+		%>
 		
 		$("td a[id ='appNameInHover']").text(function(index) {
 	        return textTrim($(this), 45);
@@ -234,24 +295,54 @@
 			yesnoPopup('importAppln', '<s:text name="lbl.app.import"/>', 'importUpdateAppln','<s:text name="lbl.btn.ok"/>', '', params);
     	});
 		
-		$('.projectUpdate').click(function() {
-			showLoadingIcon();
-			var params = $(this).attr("additionalParam");
-			loadContent('repoExistCheckForUpdate', $('#formCustomers'), '', params, true);	
+		$('.projectUpdate').click(function(e) {
+			<%
+				if (permissions != null && !permissions.canUpdateRepo() && !permissions.canManageApplication()) {
+			%>
+			 		e.preventDefault();
+	 		<%
+				} else {
+			%>
+					showLoadingIcon();
+					var params = $(this).attr("additionalParam");
+					loadContent('repoExistCheckForUpdate', $('#formCustomers'), '', params, true);
+			<%
+				}
+			%>
     	});
 		
-		$('.addProject').click(function() {
-			var params = $(this).attr("additionalParam");
-			yesnoPopup('updateProjectPopup', '<s:text name="lbl.app.add.to.repo"/>', 'importUpdateAppln','<s:text name="lbl.app.add.to.repo"/>', '', params);
+		$('.addProject').click(function(e) {
+			<%
+				if (permissions != null && !permissions.canManageRepo() && !permissions.canManageApplication()) {
+			%>
+			 		e.preventDefault();
+	 		<%
+				} else {
+			%>
+					var params = $(this).attr("additionalParam");
+					yesnoPopup('updateProjectPopup', '<s:text name="lbl.app.add.to.repo"/>', 'importUpdateAppln','<s:text name="lbl.app.add.to.repo"/>', '', params);
+			<%
+	 			}
+ 			%>
     	});
 		
-		$('.commitProject').click(function() {
-			showLoadingIcon();
-			var params = $(this).attr("additionalParam");
-			loadContent('repoExistCheckForCommit', $('#formCustomers'), '', params, true);		
+		$('.commitProject').click(function(e) {
+			<%
+				if (permissions != null && !permissions.canManageRepo() && !permissions.canManageApplication()) {
+			%>
+			 		e.preventDefault();
+	 		<%
+				} else {
+			%>
+					showLoadingIcon();
+					var params = $(this).attr("additionalParam");
+					loadContent('repoExistCheckForCommit', $('#formCustomers'), '', params, true);					
+			<%
+				}
+			%>
     	});
 		
-    	$('.pdfCreation').click(function() {
+    	$('.pdfCreation').click(function(e) {
     		var params = $(this).attr("additionalParam");
     		params = params.concat("&actionType=");
     		params = params.concat("AllPdfReport");
@@ -370,7 +461,7 @@
 				$('.popupClose').show();
 				hidePopuploadingIcon();
 			}
-		} else if(pageUrl == "importSVNProject" || pageUrl == "importGITProject" || pageUrl == "importBitKeeperProject" || pageUrl == "updateSVNProject" || pageUrl == "updateGITProject"
+		} else if (pageUrl == "importSVNProject" || pageUrl == "importGITProject" || pageUrl == "importBitKeeperProject" || pageUrl == "updateSVNProject" || pageUrl == "updateGITProject"
 			|| pageUrl == "updateBitKeeperProject" || pageUrl == "addSVNProject" || pageUrl == "addGITProject" || pageUrl == "commitSVNProject" || pageUrl == "commitBitKeeperProject" || pageUrl == "commitGITProject") {
 			checkError(pageUrl, data);
 		} else if(pageUrl == 'fetchLogMessages') {

@@ -30,6 +30,7 @@
 <%@ page import="com.photon.phresco.configuration.Environment" %>
 <%@ page import="com.photon.phresco.commons.FrameworkConstants"%>
 <%@ page import="com.photon.phresco.commons.model.Technology" %>
+<%@ page import="com.photon.phresco.framework.model.Permissions"%>
 
 <% 
    	List<Environment> environments = (List<Environment>) request.getAttribute(FrameworkConstants.REQ_ENVIRONMENTS);
@@ -39,6 +40,14 @@
 	boolean isEnvSpecific = (Boolean) request.getAttribute(FrameworkConstants.REQ_ENV_SPECIFIC);
 	Gson gson = new Gson();
 	List<String> selectedappliesToTechs = null;
+	
+	Permissions permissions = (Permissions) session.getAttribute(FrameworkConstants.SESSION_PERMISSIONS);
+	String per_disabledStr = "";
+	String per_disabledClass = "btn-primary";
+	if (permissions != null && !permissions.canManageConfiguration()) {
+		per_disabledStr = "disabled";
+		per_disabledClass = "btn-disabled";
+	}
 %>
 
 <form id="formEnvironment" class="form-horizontal">
@@ -106,7 +115,6 @@
                 	int i = 1;
                 	for (Environment environment : environments) {
                 	String envJson = gson.toJson(environment);
-                	
 				%>
 	       			<li>
 						<input type="checkbox" name="envNames" onclick="checkboxClickEvent(this)" class="check techCheck" 
@@ -160,8 +168,7 @@ $(document).ready(function() {
     });
 	
 	hidePopuploadingIcon();
-	document.getElementById('createEnvironment').disabled = true; 
-	$("#createEnvironment").removeClass("btn-primary");
+	disablePopupOkButton();
 	$('#errMsg').empty();
 	
 	$('input[name="envNames"]').change(function() {
@@ -174,7 +181,9 @@ $(document).ready(function() {
 					$(this).attr("checked", true);
 				}
 			});
+			
 			toEnableSetAsDefault();
+			
 			$("#envName").val(envData.name);
 			$("#envDesc").val(envData.desc);
 		} else {
@@ -193,7 +202,7 @@ $(document).ready(function() {
 		var returnVal = true;
 		name =($.trim($('#envName').val()));
 		desc = $("#envDesc").val();
-		if(name == "") {
+		if (name == "") {
 			$("#errMsg").html("<s:text name='popup.err.msg.empty.env.name'/>");
 			$("#envName").focus();
 			$("#envName").val("");
@@ -213,25 +222,21 @@ $(document).ready(function() {
 						return false;
 					}
 				}
-				document.getElementById('createEnvironment').disabled = false;
-				$("#createEnvironment").addClass("btn-primary");
+				enablePopupOkButton();
 			});
 		}
 		<% if (FrameworkConstants.SETTINGS.equals(fromPage)) { %>
 				var selecedAppliesToSize = $('#multiselectAppliesTo :checked').size();
-				document.getElementById('createEnvironment').disabled = true;
-				$("#createEnvironment").removeClass("btn-primary");
+				disablePopupOkButton();
 				if(name == "") {
-					document.getElementById('createEnvironment').disabled = true;
-					$("#createEnvironment").removeClass("btn-primary");
+					disablePopupOkButton();
 					setTimeOut();
 				} else if (selecedAppliesToSize < 1) {
 					$("#errMsg").html("<s:text name='popup.err.msg.select.one.appliesTo'/>");
 					setTimeOut();
 					return false;
 				} else {
-					document.getElementById('createEnvironment').disabled = false;
-					$("#createEnvironment").addClass("btn-primary");
+					enablePopupOkButton();
 				}
         <% } %>
 		
@@ -258,8 +263,7 @@ $(document).ready(function() {
 	        	allCheckboxVal.defaultEnv = "false";
 				var finalEnvData = JSON.stringify(allCheckboxVal);
 				$(this).val(finalEnvData);
-				document.getElementById('createEnvironment').disabled = false;
-				$("#createEnvironment").addClass("btn-primary");
+				enablePopupOkBtn();
 	        });
 	       	
 	        $('#multiselect :checked').each( function() {
@@ -311,16 +315,14 @@ $(document).ready(function() {
 			if (!env && configLength <= 0) {
 				$(this).parent().remove();
 			}
-			document.getElementById('createEnvironment').disabled = false;
-			$("#createEnvironment").addClass("btn-primary");
+			enablePopupOkBtn();
         });
         disableOkBtn();
     });
 	
 	$('#up').click(function () {
 		$('.selected').each(function() {
-			document.getElementById('createEnvironment').disabled = false;
-			$("#createEnvironment").addClass("btn-primary");
+			enablePopupOkBtn();
 			$(this).prev().before($(this));
 		});
 	});
@@ -328,8 +330,7 @@ $(document).ready(function() {
 	$('#down').click(function () {
 		var length = $('.selected').length;
 		$('.selected').each(function() {
-			document.getElementById('createEnvironment').disabled = false;
-			$("#createEnvironment").addClass("btn-primary");
+			enablePopupOkBtn();
 			var element = $(this); 
 			for (var i=0; i<length; i++) {
 				element = element.next(); 
@@ -417,8 +418,7 @@ $(document).ready(function() {
 	
 	function toEnableSetAsDefault() {
 		$("input[name=setAsDefault]").removeAttr("disabled");
-		$("#setAsDefault").addClass("btn-primary");
-		$("#setAsDefault").removeClass("btn-disabled");
+		$("#setAsDefault").removeClass("btn-disabled").addClass("btn-primary");
 	}
 	
 	function toDisableSetAsDefault() {
@@ -439,13 +439,23 @@ $(document).ready(function() {
 		$("#popupPage").modal('hide');
 	}
 	
-	
 	function disableOkBtn() {
 		var envlistSize = $('#multiselect :checkbox').size();
 		var btnValue = $('#add').val();
 		if (envlistSize < 1 && btnValue == 'Add') {
-			document.getElementById('createEnvironment').disabled = true;
-			$("#createEnvironment").removeClass("btn-primary");
+			disablePopupOkButton();
 		}
+	}
+	
+	function enablePopupOkButton() {
+		<% if (permissions != null && permissions.canManageConfiguration()) { %>
+			$('#createEnvironment').attr("disabled", false);
+			$("#createEnvironment").addClass("btn-primary");
+		<% } %>
+	}
+	
+	function disablePopupOkButton() {
+		$('#createEnvironment').attr("disabled", true);
+		$("#createEnvironment").removeClass("btn-primary");
 	}
 </script>

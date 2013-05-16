@@ -29,6 +29,7 @@
 <%@ page import="com.photon.phresco.util.Constants"%>
 <%@ page import="com.photon.phresco.commons.model.ApplicationInfo"%>
 <%@ page import="com.photon.phresco.commons.model.BuildInfo"%>
+<%@ page import="com.photon.phresco.framework.model.Permissions"%>
 
 <style type="text/css">
    	table th {
@@ -64,6 +65,12 @@
 	if (optionsObj != null) {
 		optionIds  = (List<String>) optionsObj;
 	}
+	
+	Permissions permissions = (Permissions) session.getAttribute(FrameworkConstants.SESSION_PERMISSIONS);
+	String per_disabledStr = "";
+	if (permissions != null && !permissions.canManageBuilds()) {
+		per_disabledStr = "disabled";
+	}
 %>
 
 <% if (CollectionUtils.isEmpty(buildInfos)) { %>
@@ -80,7 +87,7 @@
 				            <tr>
 								<th class="first">
 				                	<div class="th-inner">
-				                		<input type="checkbox" value="" id="checkAllAuto" name="checkAllAuto">
+				                		<input type="checkbox" value="" <%= per_disabledStr %> id="checkAllAuto" name="checkAllAuto">
 				                	</div>
 				              	</th>
 				              	<th class="second">
@@ -110,7 +117,7 @@
 						%>
 			            	<tr>
 			              		<td class="checkbox_list">
-			              			<input type="checkbox" class="check" name="build-number" value="<%= buildInfo.getBuildNo() %>">
+			              			<input type="checkbox" <%= per_disabledStr %> class="check" name="build-number" value="<%= buildInfo.getBuildNo() %>">
 			              		</td>
 			              		<td><%= buildInfo.getBuildNo() %></td>
 			              		<td style="width: 40%;">
@@ -159,12 +166,15 @@
 									if (optionIds != null && optionIds.contains(FrameworkConstants.DEPLOY_KEY)) {
 								%>
 		              			<td>
-		              				<a class="deploy" title="Deploy" additionalParam="from=deploy&buildNumber=<%= buildInfo.getBuildNo() %>">
-		              				 	<img src="images/icons/deploy.png" />
-		              				</a>
-	                                <%-- <a id="buildNumberHref#<%= buildInfo.getBuildNo() %>" href="#" value="<%= buildInfo.getBuildNo() %>" onClick="deploy(this);">
-	                                    <img src="images/icons/deploy.png" />
-	                                </a> --%>
+		              				<% if (permissions != null && !permissions.canManageBuilds()) { %>
+		              					<a href="#">
+			              				 	<img src="images/icons/deploy_off.png" />
+			              				</a>
+	              					<% } else { %>
+			              				<a class="deploy" additionalParam="from=deploy&buildNumber=<%= buildInfo.getBuildNo() %>">
+			              				 	<img src="images/icons/deploy.png" />
+			              				</a>
+		              				<% } %>
 			              		</td>
 			              		<%
 									}

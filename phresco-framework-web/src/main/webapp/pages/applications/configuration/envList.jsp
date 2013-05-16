@@ -44,6 +44,7 @@
 <%@ page import="com.photon.phresco.framework.model.PropertyInfo"%>
 <%@ page import="com.photon.phresco.framework.model.SettingsInfo"%>
 <%@ page import="com.photon.phresco.commons.model.ApplicationInfo"%>
+<%@ page import="com.photon.phresco.framework.model.Permissions"%>
 
 <%
 	List<Environment> envs = (List<Environment>) request.getAttribute(FrameworkConstants.REQ_ENVIRONMENTS);
@@ -52,6 +53,11 @@
 	String fromPage = (String) request.getAttribute(FrameworkConstants.REQ_FROM_PAGE);
 	ActionSupport actionSupport = new ActionSupport();
 	List<Configuration> configurations = null;
+	Permissions permissions = (Permissions) session.getAttribute(FrameworkConstants.SESSION_PERMISSIONS);
+	String per_disabledStr = "";
+	if (permissions != null && !permissions.canManageConfiguration()) {
+		per_disabledStr = "disabled";
+	}
 %>
 
     <% if (CollectionUtils.isEmpty(envs)) { %>
@@ -84,8 +90,8 @@
 						<section class="lft_menus_container">
 							<span class="siteaccordion">
 								<div>
-									<img src="images/r_arrowclose.png" class ="accImg" id="<%=env.getName() %>" onclick="accordionClickOperation(this);">
-									<input type="checkbox" value='<%= envJson %>' id="<%=env.getName() %>" <%= checkedStr %> class="accordianChkBox" name="checkEnv" onclick="checkAllEvent(this,$('.<%=env.getName() %>'), false);"/>
+									<img src="images/r_arrowclose.png" class ="accImg" id="<%= env.getName() %>" onclick="accordionClickOperation(this);">
+									<input type="checkbox" <%= per_disabledStr %> value='<%= envJson %>' id="<%= env.getName() %>" <%= checkedStr %> class="accordianChkBox" name="checkEnv" onclick="checkAllEvent(this,$('.<%=env.getName() %>'), false);"/>
 									<a class="vAlignSub"><%= env.getName() %></a>
 								</div>
 							</span>
@@ -132,7 +138,7 @@
 											%>
 															<tr>
 																<td class="no-left-bottom-border table-pad">
-																	<input type="checkbox" class="check <%=env.getName() %>" name="checkedConfig" value='<%= configJson %>'>
+																	<input type="checkbox" <%= per_disabledStr %> class="check <%=env.getName() %>" name="checkedConfig" value='<%= configJson %>'>
 																</td>
 																<td class="no-left-bottom-border table-pad">
 																	<a href="#" onclick="editConfiguration('<%= env.getName() %>', '<%= configuration.getType() %>','<%= configuration.getName() %>');" 
@@ -204,7 +210,9 @@
 		hideProgressBar();
 		$('#successmsg').show();
 		accordionOperation();
-		deleteButtonStatus();
+		<% if (permissions != null && permissions.canManageConfiguration()) { %>
+			deleteButtonStatus();
+		<% } %>
 		
 		$('.mfbox').find("input[type='checkbox']").change(function() {
 			if ($('.mfbox').find("input[type='checkbox']").length != $('.mfbox').find("input[type='checkbox']:checked").length) {
@@ -223,15 +231,14 @@
 			$("#configAdd").removeClass("btn-primary"); 
 	        $("#configAdd").addClass("btn-disabled");
 	        $('#envSuccessmsg').css("margin-top", "-86px");
-		<% } else { %>
+		<% } else if (permissions != null && permissions.canManageConfiguration()) { %>
 		  	$("input[name=configAdd]").removeAttr("disabled");
-		  	$("#configAdd").addClass("btn-primary");
-			$("#configAdd").removeClass("btn-disabled");
+		  	$("#configAdd").addClass("btn-primary").removeClass("btn-disabled");
 		<% } %>
 		
 		<% 
 			if(urls != null) {
-	    	Iterator iterator = urls.keySet().iterator();  
+	    		Iterator iterator = urls.keySet().iterator();  
 				while (iterator.hasNext()) {
 				String id = iterator.next().toString();  
 				String url = urls.get(id).toString();

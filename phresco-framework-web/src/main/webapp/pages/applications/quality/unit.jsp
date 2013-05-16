@@ -29,7 +29,7 @@
 <%@ page import="com.photon.phresco.plugins.model.Mojos.Mojo.Configuration.Parameters.Parameter"%>
 <%@ page import="com.photon.phresco.util.TechnologyTypes" %>
 <%@ page import="com.photon.phresco.util.Constants"%>
-<%@ page import="org.apache.commons.collections.CollectionUtils"%>
+<%@ page import="com.photon.phresco.framework.model.Permissions"%>
 
 <script src="js/reader.js" ></script>
 
@@ -75,7 +75,16 @@
 		
 		<ul id="display-inline-block-example">
 			<li id="first">
-				<a id="unitTest" class="btn btn-primary"><s:text name='lbl.test'/></a>
+				<%
+					Permissions permissions = (Permissions) session.getAttribute(FrameworkConstants.SESSION_PERMISSIONS);
+					String per_disabledStr = "";
+					String per_disabledClass = "btn-primary";
+					if (permissions != null && !permissions.canManageTests()) {
+						per_disabledStr = "disabled";
+						per_disabledClass = "btn-disabled";
+					}
+				%>
+				<input type="button" id="unitTest" class="btn <%= per_disabledClass %>" <%= per_disabledStr %> value="<s:text name='lbl.test'/>">
 			</li>
 			<% 
 				boolean buttonRow = false;
@@ -96,8 +105,6 @@
 
 			<%  
 				}
-// 				if (TechnologyTypes.HTML5_MULTICHANNEL_JQUERY_WIDGET.contains(techId) || TechnologyTypes.HTML5_WIDGET.contains(techId) || 
-// 					TechnologyTypes.HTML5_MOBILE_WIDGET.contains(techId) || TechnologyTypes.JAVA_WEBSERVICE.contains(techId)) {
 				if (CollectionUtils.isNotEmpty(unitTestReportOptions)) {
 					buttonRow = true;
 			%>
@@ -105,10 +112,6 @@
 				&nbsp;<strong><s:text name="label.technolgies"/></strong> 
 			</li>
 			<li>
-<%-- 				<select id="techReport" name="techReport">  --%>
-<!-- 					<option value="java" id="java" >Java</option> -->
-<!-- 				  	<option value="javascript" id="javascript" >Java Script</option> -->
-<%-- 				</select> --%>
 				<select id="techReport" name="techReport"> 
 					<% for (String unitTestReportOption : unitTestReportOptions) { %>
 						<option value="<%= unitTestReportOption %>" id="<%= unitTestReportOption %>" ><%= unitTestReportOption %></option>
@@ -174,21 +177,6 @@ $(document).ready(function() {
 	var tblheight = ($("#subTabcontainer").height() - $("#form_test").height());
 	$('.responsiveTableDisplay').css("height", parseInt((tblheight/($("#subTabcontainer").height()))*100) +'%');
 	
-	<%-- $('#testbtn').click(function() {
-	 	<% if (TechnologyTypes.ANDROIDS.contains(techId)) { %>
-			openAndroidPopup();
-		<% } else if (TechnologyTypes.IPHONES.contains(techId)) { %>
-			openIphoneNativeUnitTestPopup();
-		<% } else { %>
-			// If the project is having modules it have to display modules after that it have to display unit test progress
-			<% if (CollectionUtils.isNotEmpty(projectModules)) { %>
-				openUnitTestPopup();
-			<% } else { %>
-				unitTestProgress();
-			<% } %>
-		<% } %>
-    }); --%>
-    
     $('#openFolder').click(function() {
 		openFolder('<%= appDirName %><%= path %>');
 	});
@@ -204,13 +192,6 @@ $(document).ready(function() {
 		yesnoPopup('showGeneratePdfPopup', '<s:text name="lbl.app.generatereport"/>', 'printAsPdf','<s:text name="lbl.app.generate"/>', '', params);
     });
        
-	$('#closeGenerateTest, #closeGenTest').click(function() {
-		changeTesting("unit", "testGenerated");
-		enableScreen();
-		$("#popup_div").css("display","none");
-		$("#popup_div").empty();
-	});
-	
 	$('#projectModule, #techReport').change(function() {
 		loadTestSuites();
 	});

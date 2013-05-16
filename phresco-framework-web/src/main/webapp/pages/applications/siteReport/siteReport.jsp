@@ -24,6 +24,7 @@
 <%@ page import="org.apache.commons.collections.CollectionUtils"%>
 <%@ page import="com.phresco.pom.site.Reports"%>
 <%@ page import="com.phresco.pom.site.ReportCategories"%>
+<%@ page import="com.photon.phresco.framework.model.Permissions"%>
 
 <script src="js/reader.js" ></script>
 
@@ -57,6 +58,8 @@
     } else {
     	disabledStr = "disabled";
     }
+
+    Permissions permissions = (Permissions) session.getAttribute(FrameworkConstants.SESSION_PERMISSIONS);
 %>
 
 <form id="formReportList" class="reportList">
@@ -78,6 +81,25 @@
 </form>
 
 <script>
+	// To enable/disable the Generate button based on the site configured
+	<%
+		if (permissions != null && !permissions.canManageMavenReports()) {
+	%>
+			$("#generate").removeClass("btn-primary").addClass("btn-disabled");
+	<%
+		} else {
+			if (CollectionUtils.isEmpty(selectedCategories)) {
+	%>
+		        $("#generate").removeClass("btn-primary").addClass("btn-disabled");
+	<%
+			} else {
+	%>
+		        $("#generate").removeClass("btn-disabled").addClass("btn-primary");
+	<%
+			}
+		}
+	%>
+	
     $(document).ready(function() {
     	
     	<% if (CollectionUtils.isEmpty(selectedReports)) { %>
@@ -123,5 +145,4 @@
 		    loadContent('veiwSiteReport', $('#formReportList'), $('#subcontainer'), params, '', true);
 		}
 	}
-    
 </script>

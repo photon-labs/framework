@@ -31,6 +31,7 @@
 <%@ page import="org.apache.commons.lang.StringUtils"%>
 <%@ page import="com.photon.phresco.plugins.model.Mojos.Mojo.Configuration.Parameters.Parameter"%>
 <%@ page import="com.photon.phresco.util.Constants"%>
+<%@ page import="com.photon.phresco.framework.model.Permissions"%>
 
 <%
 	ApplicationInfo appInfo = (ApplicationInfo)request.getAttribute(FrameworkConstants.REQ_APPINFO);
@@ -43,6 +44,13 @@
 		iconClass = "hideIcons";
 	}
 	
+	Permissions permissions = (Permissions) session.getAttribute(FrameworkConstants.SESSION_PERMISSIONS);
+	String per_disabledStr = "";
+	String per_disabledClass = "btn-primary";
+	if (permissions != null && !permissions.canManageTests()) {
+		per_disabledStr = "disabled";
+		per_disabledClass = "btn-disabled";
+	}
 %>
 <form id="manualTestCases" class="marginBottomZero" style="height: 114%;overflow-x: hidden;overflow-y: hidden	;margin-top: 1px;">
 		<div>
@@ -56,7 +64,9 @@
 		
 		<ul id="display-inline-block-example">
 			<li id="first">
-				<a id="addTest" class="btn btn-primary" style="margin-left: 8%;"><s:text name='lbl.btn.add'/></a> </li>
+				<input type="button" id="addTest" class="btn <%= per_disabledClass %>" <%= per_disabledStr %> style="margin-left: 8%;" 
+					value="<s:text name='lbl.btn.add'/>">
+			</li>
 			<li id="label">
 				&nbsp;<strong class="hideCtrl" id="testResultLbl"><s:text name="lbl.test.suite"/></strong> 
 			</li>

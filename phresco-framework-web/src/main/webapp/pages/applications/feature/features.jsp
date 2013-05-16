@@ -17,13 +17,13 @@
     limitations under the License.
 
 --%>
-<%@page import="org.apache.commons.lang.BooleanUtils"%>
 <%@ taglib uri="/struts-tags" prefix="s"%>
 
 <%@ page import="java.util.List"%>
 
 <%@ page import="org.apache.commons.collections.CollectionUtils"%>
 <%@ page import="org.apache.commons.lang.StringUtils"%>
+<%@ page import="org.apache.commons.lang.BooleanUtils"%>
 
 <%@ page import="com.google.gson.Gson" %>
 
@@ -33,6 +33,7 @@
 <%@ page import="com.photon.phresco.commons.model.SelectedFeature"%>
 <%@ page import="com.photon.phresco.commons.model.ProjectInfo"%>
 <%@ page import="com.photon.phresco.commons.FrameworkConstants"%>
+<%@ page import="com.photon.phresco.framework.model.Permissions"%>
 
 <%
 	List<SelectedFeature> features = (List<SelectedFeature>)session.getAttribute(FrameworkConstants.REQ_SELECTED_FEATURES);
@@ -60,7 +61,7 @@
 	boolean hasComponents = (Boolean) request.getAttribute(FrameworkConstants.REQ_HAS_COMPONENTS);	
 	boolean hasJsLibs = (Boolean) request.getAttribute(FrameworkConstants.REQ_HAS_JSLIBS);	
 	String hideClass = "";
-	if(!hasModules && !hasJsLibs && !hasComponents) {		
+	if (!hasModules && !hasJsLibs && !hasComponents) {		
 		hideClass = "hideContent";
 	}
 %> 
@@ -164,8 +165,17 @@
 	<div class="features_actions">
 		<input type="button" id="previous" value="<s:text name="label.previous"/>" class="btn btn-primary" 
 			onclick="showAppInfoPage();">
-		<input id="finish" type="button" value="<s:text name="lbl.update"/>"  class="btn btn-primary"
-			onclick="updateApplication();"/>
+		<%
+			Permissions permissions = (Permissions) session.getAttribute(FrameworkConstants.SESSION_PERMISSIONS);
+			String per_disabledStr = "";
+			String per_disabledClass = "btn-primary";
+			if (permissions != null && !permissions.canManageApplication()) {
+				per_disabledStr = "disabled";
+				per_disabledClass = "btn-disabled";
+			}
+		%>
+		<input id="finish" type="button" value="<s:text name="lbl.update"/>"  class="btn <%= per_disabledClass %>"
+			<%= per_disabledStr %> onclick="updateApplication();"/>
 		<input type="button" id="cancel" value="<s:text name="lbl.btn.cancel"/>" class="btn btn-primary" 
 			onclick="loadContent('applications', $('#formCustomers'), $('#container'), '', '', true);">
 	</div>

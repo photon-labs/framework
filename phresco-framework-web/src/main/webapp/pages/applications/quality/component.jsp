@@ -29,7 +29,7 @@
 <%@ page import="com.photon.phresco.plugins.model.Mojos.Mojo.Configuration.Parameters.Parameter"%>
 <%@ page import="com.photon.phresco.util.TechnologyTypes" %>
 <%@ page import="com.photon.phresco.util.Constants"%>
-<%@ page import="org.apache.commons.collections.CollectionUtils"%>
+<%@ page import="com.photon.phresco.framework.model.Permissions"%>
 
 <script src="js/reader.js" ></script>
 
@@ -60,7 +60,16 @@
 		
 		<ul id="display-inline-block-example">
 			<li id="first">
-				<a id="componentTest" class="btn btn-primary"><s:text name='lbl.test'/></a>
+				<%
+					Permissions permissions = (Permissions) session.getAttribute(FrameworkConstants.SESSION_PERMISSIONS);
+					String per_disabledStr = "";
+					String per_disabledClass = "btn-primary";
+					if (permissions != null && !permissions.canManageTests()) {
+						per_disabledStr = "disabled";
+						per_disabledClass = "btn-disabled";
+					}
+				%>
+				<input type="button" id="componentTest" class="btn <%= per_disabledClass %>" <%= per_disabledStr %> value="<s:text name='lbl.test'/>">
 			</li>
 			<% 
 				boolean buttonRow = false;

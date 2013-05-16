@@ -17,7 +17,6 @@
     limitations under the License.
 
 --%>
-<%@page import="org.apache.xalan.xsltc.compiler.sym"%>
 <%@ taglib uri="/struts-tags" prefix="s"%>
 
 <%@ page import="java.util.List"%>
@@ -29,8 +28,7 @@
 <%@ page import="org.apache.commons.lang.StringUtils" %>
 
 <%@ page import="com.photon.phresco.commons.FrameworkConstants"%>
-
-<script src="js/reader.js" ></script>
+<%@ page import="com.photon.phresco.framework.model.Permissions"%>
 
 <%
     String testType = (String) request.getAttribute(FrameworkConstants.REQ_TEST_TYPE);
@@ -174,17 +172,29 @@
 //      $("#reportPopupTbl").scrollbars();
     }
     
+    <%
+    	Permissions permissions = (Permissions) session.getAttribute(FrameworkConstants.SESSION_PERMISSIONS);
+		if (permissions != null && (permissions.canManagePdfReports() || permissions.canManageTests())) {
+    %>
+		    if (!<%= isReportAvailable %>) {
+		        hidePopuploadingIcon();
+		        $('#printAsPdf').attr("disabled", "disabled");
+		        $('#printAsPdf').removeClass("btn-primary");
+		        $("#errMsg").css("display", "block");
+		        $("#errMsg").html("<s:text name='label.pdf.report.notification'/>");
+		    } else {
+		        printPdfPostActions();
+		    }
+    <%
+		} else {
+    %>
+    		hidePopuploadingIcon();
+			$("#printAsPdf").removeClass("btn-primary").addClass("btn-disabled").attr("disabled", true);    
+    <%
+		}
+    %>
+    
     $(document).ready(function() {
-       if (!<%= isReportAvailable %>) {
-            hidePopuploadingIcon();
-            $('#printAsPdf').attr("disabled", "disabled");
-            $('#printAsPdf').removeClass("btn-primary");
-            $("#errMsg").css("display", "block");
-            $("#errMsg").html("<s:text name='label.pdf.report.notification'/>");
-        } else {
-            printPdfPostActions();
-        }
-       
         // when clicking on save button, popup should not hide
         $('.backdrop > fade > in').attr('display', 'block');
         $('.popupOk').attr("data-dismiss", "");

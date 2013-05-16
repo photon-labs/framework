@@ -41,6 +41,7 @@
 <%@ page import="com.photon.phresco.framework.model.PropertyInfo"%>
 <%@ page import="com.photon.phresco.framework.model.SettingsInfo"%>
 <%@ page import="com.photon.phresco.commons.model.ApplicationInfo"%>
+<%@ page import="com.photon.phresco.framework.model.Permissions"%>
 
 <%
 	List<Environment> envs = (List<Environment>) request.getAttribute(FrameworkConstants.REQ_ENVIRONMENTS);
@@ -52,13 +53,19 @@
 	boolean isEnvSpecific = (Boolean) request.getAttribute(FrameworkConstants.REQ_ENV_SPECIFIC);
 	boolean fromFavouriteConfig = (Boolean) request.getAttribute(FrameworkConstants.REQ_FROM_FAVOURITE_CONFIG);
 	String favouriteConfigId = (String) request.getAttribute(FrameworkConstants.REQ_FAVOURITE_CONFIG_ID);
+	Permissions permissions = (Permissions) session.getAttribute(FrameworkConstants.SESSION_PERMISSIONS);
+	String per_disabledStr = "";
+	String per_disabledClass = "btn-primary";
+	if (permissions != null && !permissions.canManageConfiguration()) {
+		per_disabledStr = "disabled";
+		per_disabledClass = "btn-disabled";
+	}
 %>
 
 <form id="formConfigList" class="configList">
-    
     <div class="operation">
     	<!-- Add Configuration Button --> 
-		<input type="button" class="btn btn-primary" name="configAdd" id="configAdd" value="<s:text name='lbl.btn.add'/>"/>
+		<input type="button" class="btn <%= per_disabledClass %>" name="configAdd" id="configAdd" <%= per_disabledStr %> value="<s:text name='lbl.btn.add'/>"/>
 
 		<!-- Delete Configuration Button -->	
 		<input type="button" class="btn" name="deleteBtn" id="deleteBtn" disabled value="<s:text name='lbl.delete'/>" data-toggle="modal" href="#popupPage"/>

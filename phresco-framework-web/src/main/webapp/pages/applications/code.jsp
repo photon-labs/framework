@@ -28,10 +28,9 @@
 <%@ page import="com.photon.phresco.commons.FrameworkConstants"%>
 <%@ page import="com.photon.phresco.commons.model.ApplicationInfo"%>
 <%@ page import="com.photon.phresco.plugins.model.Mojos.Mojo.Configuration.Parameters.Parameter.PossibleValues.Value"%>
+<%@ page import="com.photon.phresco.framework.model.Permissions"%>
 
-<script src="js/reader.js" ></script>
-
- <%
+<%
 	ApplicationInfo appInfo = (ApplicationInfo) request.getAttribute(FrameworkConstants.REQ_APP_INFO);
 	String appId = (String) appInfo.getId();
 	List<Value> validateAgainstValues = (List<Value>) request.getAttribute(FrameworkConstants.REQ_VALIDATE_AGAINST_VALUES);
@@ -39,12 +38,6 @@
 	String sonarError = (String) request.getAttribute(FrameworkConstants.REQ_ERROR);
 	String clangReport =  (String) request.getAttribute(FrameworkConstants.CLANG_REPORT);
 	List<String> projectModules = (List<String>) request.getAttribute(FrameworkConstants.REQ_PROJECT_MODULES);
-	String disabledStr = "";
-	// when this is iphone tech there will be a path in clangReport request
-	if (StringUtils.isEmpty(clangReport) && StringUtils.isNotEmpty(sonarError)) {
-        disabledStr = "disabled";
-    }
-	
 	String requestIp = (String) request.getAttribute(FrameworkConstants.REQ_REQUEST_IP);
 	String showIcons = (String) session.getAttribute(requestIp);
     String iconClass = "";
@@ -55,7 +48,16 @@
 
 <form id="code" class="codeList">
 	<div class="operation">
-        <input type="button" id="codeValidatePopup" class="btn btn-primary" <%= disabledStr %> style=" float: left;" value="<s:text name='lbl.validate'/>" />
+		<%
+			Permissions permissions = (Permissions) session.getAttribute(FrameworkConstants.SESSION_PERMISSIONS);
+			String per_disabledStr = "";
+			String per_disabledClass = "btn-primary";
+			if (permissions != null && !permissions.canManageCodeValidation()) {
+				per_disabledStr = "disabled";
+				per_disabledClass = "btn-disabled";
+			}
+		%>
+   		<input type="button" id="codeValidatePopup" class="btn <%= per_disabledClass %>" <%= per_disabledStr %> style=" float: left;" value="<s:text name='lbl.validate'/>" />
 		
 		<%
 			if (CollectionUtils.isNotEmpty(projectModules)) {
@@ -85,12 +87,11 @@
 			%>
 					</optgroup>
 			<%
-				if (validateAgainstValues.size() > 1) {
+					if (validateAgainstValues.size() > 1) {
 			%>
-				<option value="<%= validateAgainstValues.get(1).getKey() %>"><%= validateAgainstValues.get(1).getValue() %></option>
-			<%	} 
-               
-               } else if (CollectionUtils.isNotEmpty(validateAgainstValues)) {
+						<option value="<%= validateAgainstValues.get(1).getKey() %>"><%= validateAgainstValues.get(1).getValue() %></option>
+			<%		}
+                } else if (CollectionUtils.isNotEmpty(validateAgainstValues)) {
                     for (Value value : validateAgainstValues) {
             %>
             			<option value="<%= value.getKey() %>"><%= value.getValue() %></option>
@@ -122,15 +123,22 @@ $('.control-group').addClass("valReportLbl");
     		validateDynamicParam('showCodeValidatePopup', '<s:text name="popup.hdr.code.validate"/>', 'codeValidate','<s:text name="lbl.btn.ok"/>', '', '<%= Constants.PHASE_VALIDATE_CODE %>');
     	});
 
-    	// To enable/disable the validate button based on the sonar startup
-    	<% if (StringUtils.isNotEmpty(sonarError)) { %>
-	    	$("#codeValidatePopup").removeClass("btn-primary"); 
-	        $("#codeValidatePopup").addClass("btn-disabled");
-	        hideLoadingIcon();
+    	<% if (permissions != null && permissions.canManageCodeValidation()) { %>
+	    	// To enable/disable the validate button based on the sonar startup
+	    	<% if (StringUtils.isNotEmpty(sonarError)) { %>
+		    	$("#codeValidatePopup").removeClass("btn-primary").addClass("btn-disabled"); 
+		        hideLoadingIcon();
+	    	<% } else { %>
+		    	$("#codeValidatePopup").removeClass("btn-disabled").addClass("btn-primary"); 
+		        sonarReport();
+	    	<% } %>
+	    	
+	    	// when this is iphone tech there will be a path in clangReport request
+	    	<% if (StringUtils.isEmpty(clangReport) && StringUtils.isNotEmpty(sonarError)) { %>
+				$("#codeValidatePopup").attr("disabled", true);
+	    	<% } %>
     	<% } else { %>
-	    	$("#codeValidatePopup").addClass("btn-primary"); 
-	        $("#codeValidatePopup").removeClass("btn-disabled");
-	        sonarReport();
+    		sonarReport();
     	<% } %>
     	
 		$('#validateAgainst, #projectModule').change(function() {

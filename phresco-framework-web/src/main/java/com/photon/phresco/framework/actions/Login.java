@@ -46,6 +46,8 @@ import com.photon.phresco.commons.model.User;
 import com.photon.phresco.exception.PhrescoException;
 import com.photon.phresco.exception.PhrescoWebServiceException;
 import com.photon.phresco.framework.actions.applications.Projects;
+import com.photon.phresco.framework.commons.FrameworkUtil;
+import com.photon.phresco.framework.model.Permissions;
 import com.photon.phresco.util.Credentials;
 import com.photon.phresco.util.Utility;
 
@@ -112,6 +114,7 @@ public class Login extends FrameworkBaseAction {
         	removeSessionAttribute(user.getId());
         	removeSessionAttribute(SESSION_USER_INFO);
         	removeSessionAttribute(SESSION_CUSTOMERS);
+        	removeSessionAttribute(SESSION_PERMISSION_IDS);
         	s_optionsMap.clear();
         	s_encodeImgMap.clear();
         	s_themeMap.clear();
@@ -155,7 +158,11 @@ public class Login extends FrameworkBaseAction {
     		Collections.sort(customers, sortCusNameInAlphaOrder());
         	setSessionAttribute(SESSION_CUSTOMERS, customers);
         	setSessionAttribute(SESSION_USER_INFO, user);
-
+        	
+        	FrameworkUtil frameworkUtil = FrameworkUtil.getInstance();
+        	Permissions permissions = frameworkUtil.getUserPermissions(user);
+        	setSessionAttribute(SESSION_PERMISSIONS, permissions);
+        	
         	//encode the password
         	byte[] encodedPwd = Base64.encodeBase64(getPassword().getBytes());
         	String encodedString = new String(encodedPwd);
@@ -202,7 +209,10 @@ public class Login extends FrameworkBaseAction {
         	return showErrorPopup(new PhrescoException(e), getText(EXCEPTION_FRAMEWORKSTREAM));
 		} catch (ParseException e) {
 			return showErrorPopup(new PhrescoException(e), getText(EXCEPTION_FRAMEWORKSTREAM));
+		} catch (PhrescoException e) {
+			return showErrorPopup(new PhrescoException(e), getText(EXCEPTION_FRAMEWORKSTREAM));
 		}
+		
         return SUCCESS;
     }
     

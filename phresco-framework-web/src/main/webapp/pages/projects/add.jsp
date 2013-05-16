@@ -30,6 +30,7 @@
 <%@ page import="com.photon.phresco.commons.model.TechnologyGroup"%>
 <%@ page import="com.photon.phresco.commons.model.TechnologyInfo"%>
 <%@ page import="com.photon.phresco.commons.model.ProjectInfo"%>
+<%@ page import="com.photon.phresco.framework.model.Permissions"%>
 
 <script src="js/project.js" ></script>
 
@@ -42,6 +43,15 @@
 	if (FrameworkConstants.SIMPLE_UI.equals(uiType)) {
 		uiTypeClass = "hideContent";
 	}
+
+	Permissions permissions = (Permissions) session.getAttribute(FrameworkConstants.SESSION_PERMISSIONS);
+	String per_disabledStr = "";
+	String per_disabledClass = "btn-primary";
+	if (permissions != null && !permissions.canManageApplication()) {
+		per_disabledStr = "disabled";
+		per_disabledClass = "btn-disabled";
+	}
+	
 	List<TechnologyGroup> appLayerTechGroups = null;
 	List<TechnologyGroup> webLayerTechGroups = null;
 	List<TechnologyGroup> mobileLayerTechGroups = null;
@@ -721,7 +731,7 @@
 	<%if (projectInfo == null) { %>
 		<input type="button" id="createProject" value="<s:text name="lbl.btn.create"/>" class="btn btn-primary">
 	<% } else { %>
-		<input type="button" id="updateProject" value="<s:text name="lbl.btn.update"/>" class="btn btn-primary">
+		<input type="button" id="updateProject" value="<s:text name="lbl.btn.update"/>" class="btn <%= per_disabledClass %>" <%= per_disabledStr %>>
 	<% } %>
 	<input type="button" id="cancel" value="<s:text name="lbl.btn.cancel"/>" class="btn btn-primary" 
 		onclick="loadContent('applications', $('#formCustomers'), $('#container'), '', '', true);"> 

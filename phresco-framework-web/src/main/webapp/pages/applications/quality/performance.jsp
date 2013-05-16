@@ -32,6 +32,7 @@
 <%@ page import="com.photon.phresco.plugins.model.Mojos.Mojo.Configuration.Parameters.Parameter"%>
 <%@ page import="com.photon.phresco.plugins.model.Mojos.Mojo.Configuration.Parameters.Parameter.PossibleValues"%>
 <%@ page import="com.photon.phresco.plugins.model.Mojos.Mojo.Configuration.Parameters.Parameter.PossibleValues.Value"%>
+<%@ page import="com.photon.phresco.framework.model.Permissions"%>
 
 <%
 	ApplicationInfo appInfo = (ApplicationInfo)request.getAttribute(FrameworkConstants.REQ_APPINFO);
@@ -46,6 +47,14 @@
     String iconClass = "";
 	if (!Boolean.parseBoolean(showIcons))  {
 		iconClass = "hideIcons";
+	}
+	
+	Permissions permissions = (Permissions) session.getAttribute(FrameworkConstants.SESSION_PERMISSIONS);
+	String per_disabledStr = "";
+	String per_disabledClass = "btn-primary";
+	if (permissions != null && !permissions.canManageTests()) {
+		per_disabledStr = "disabled";
+		per_disabledClass = "btn-disabled";
 	}
 %>
 
@@ -77,7 +86,7 @@
    		<%
            	}
 		%> --%>
-	    <input id="performanceTest" type="button" value="<s:text name='lbl.test'/>" class="btn btn-primary">
+	    <input id="performanceTest" type="button" value="<s:text name='lbl.test'/>" class="btn <%= per_disabledClass %>" <%= per_disabledStr %>>
 	    <div class="perOpenAndCopyPath">
 	    	<a href="#" id="pdfPopup" style="display: none;"><img id="pdfCreation" src="images/icons/print_pdf.png" title="generate pdf" style="height: 20px; width: 20px;"/></a>
 			<a href="#" class="<%= iconClass %>" id="openFolder"><img id="folderIcon" src="images/icons/open-folder.png" title="Open folder"/></a>

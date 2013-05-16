@@ -34,6 +34,7 @@
 <%@ page import="com.photon.phresco.framework.commons.FrameworkUtil" %>
 <%@ page import="com.photon.phresco.configuration.Configuration" %>
 <%@ page import="com.photon.phresco.framework.actions.util.FrameworkActionUtil"%>
+<%@ page import="com.photon.phresco.framework.model.Permissions"%>
 
 <%
     String selectedStr = "";
@@ -67,6 +68,8 @@
 	String buttonLbl = FrameworkActionUtil.getButtonLabel(fromPage);
 	String pageUrl = FrameworkActionUtil.getPageUrl(FrameworkConstants.CONFIG, fromPage);
 	String progessTxt = FrameworkActionUtil.getProgressTxt(FrameworkConstants.CONFIG, fromPage);
+	
+	Permissions permissions = (Permissions) session.getAttribute(FrameworkConstants.SESSION_PERMISSIONS);
 	
 	Gson gson = new Gson();
 	String container = "subcontainer"; //load for configuration
@@ -228,7 +231,15 @@
 	</div>
 	
 	<div class="bottom_button">
-		<input type="button" id="<%= pageUrl %>" class="btn btn-primary" value='<%= buttonLbl %>' />
+		<%
+			String per_disabledStr = "";
+			String per_disabledClass = "btn-primary";
+			if (permissions != null && !permissions.canManageConfiguration()) {
+				per_disabledStr = "disabled";
+				per_disabledClass = "btn-disabled";
+			}
+		%>
+		<input type="button" id="<%= pageUrl %>" class="btn <%= per_disabledClass %>" <%= per_disabledStr %> value='<%= buttonLbl %>' />
 		<input type="button" id="cancel" class="btn btn-primary" value="<s:text name='lbl.btn.cancel'/>" /> 
 	</div>
 	

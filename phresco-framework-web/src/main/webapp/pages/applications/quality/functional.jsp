@@ -28,6 +28,7 @@
 <%@ page import="com.photon.phresco.commons.model.ApplicationInfo"%>
 <%@ page import="com.photon.phresco.util.TechnologyTypes" %>
 <%@ page import="com.photon.phresco.util.Constants"%>
+<%@ page import="com.photon.phresco.framework.model.Permissions"%>
 
 <%
 	ApplicationInfo appInfo = (ApplicationInfo)request.getAttribute(FrameworkConstants.REQ_APPINFO);
@@ -71,28 +72,51 @@
 		</div>
 		
 		<ul id="display-inline-block-example">
-			<% if (FrameworkConstants.SELENIUM_GRID.equalsIgnoreCase(functioanlTestTool)) {
-					boolean hubStatus = (Boolean) request.getAttribute(FrameworkConstants.REQ_HUB_STATUS);
-					String disabledStr = "disabled";
-					if (hubStatus) {
-					    disabledStr = "";
+			<%
+				Permissions permissions = (Permissions) session.getAttribute(FrameworkConstants.SESSION_PERMISSIONS);
+				String disabledStr = "disabled";
+				String disabledClass = "btn-disabled";
+				if (FrameworkConstants.SELENIUM_GRID.equalsIgnoreCase(functioanlTestTool)) {
+					String per_testBtn_disabledStr = "";
+					String per_testBtn_classStr = "btn-primary";
+					String per_hubNodeBtn_disabledStr = "";
+					String per_hubNodeBtn_classStr = "btn-primary";
+					if (permissions != null && !permissions.canManageTests()) {
+						per_testBtn_disabledStr = "disabled";
+						per_testBtn_classStr = "btn-disabled";
+						per_hubNodeBtn_disabledStr = "disabled";
+						per_hubNodeBtn_classStr = "btn-disabled";
+					} else {
+						boolean hubStatus = (Boolean) request.getAttribute(FrameworkConstants.REQ_HUB_STATUS);
+						if (hubStatus) {
+						    disabledStr = "";
+						    disabledClass = "btn-primary";
+						}
 					}
 			%>
 					<li id="first" style="width: auto;">
-						<input type="button" id="functionalTest" class="btn <%= StringUtils.isNotEmpty(disabledStr) ? "" : "btn-primary"%>" 
-							<%= disabledStr %> value="<s:text name='lbl.test'/>">
+						<input type="button" id="functionalTest" class="btn <%= disabledClass %> <%= per_testBtn_disabledStr %>" 
+							<%= disabledStr %> <%= per_testBtn_classStr %> value="<s:text name='lbl.test'/>">
 					</li>
 					<li id="first" style="width: auto;">
-						<input type="button" id="startHubBtn" class="btn btn-primary" value="<s:text name='lbl.functional.start.hub'/>">
+						<input type="button" id="startHubBtn" class="btn <%= per_hubNodeBtn_classStr %>" <%= per_hubNodeBtn_disabledStr %> 
+							value="<s:text name='lbl.functional.start.hub'/>">
 					</li>
 					<li id="first">
-						<input type="button" id="startNodeBtn" class="btn btn-primary" value="<s:text name='lbl.functional.start.node'/>">
+						<input type="button" id="startNodeBtn" class="btn <%= per_hubNodeBtn_classStr %>" <%= per_hubNodeBtn_disabledStr %> 
+							value="<s:text name='lbl.functional.start.node'/>">
 					</li>
 			<%
 				} else {
+					String per_disabledStr = "";
+					String per_disabledClass = "btn-primary";
+					if (permissions != null && !permissions.canManageTests()) {
+						per_disabledStr = "disabled";
+						per_disabledClass = "btn-disabled";
+					}
 			%>
 					<li id="first" style="width: auto;">
-						<input type="button" id="functionalTest" class="btn btn-primary" value="<s:text name='lbl.test'/>">
+						<input type="button" id="functionalTest" class="btn <%= per_disabledClass %>" <%= per_disabledStr %> value="<s:text name='lbl.test'/>">
 					</li>
 			<%
 				}
