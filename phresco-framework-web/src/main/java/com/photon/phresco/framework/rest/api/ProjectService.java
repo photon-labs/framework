@@ -177,11 +177,13 @@ public class ProjectService extends RestBase implements FrameworkConstants {
 						artifactGroup.setVersions(Collections.singletonList(artifactInfo));
 					}
 					List<CoreOption> appliesTo = artifactGroup.getAppliesTo();
-					for (CoreOption coreOption : appliesTo) {
-						if (coreOption.getTechId().equals(applicationInfo.getTechInfo().getId())) {
-							artifactGroup.setAppliesTo(Collections.singletonList(coreOption));
-							listArtifactGroup.add(artifactGroup);
-							break;
+					if (CollectionUtils.isNotEmpty(appliesTo)) {
+						for (CoreOption coreOption : appliesTo) {
+							if (coreOption.getTechId().equals(applicationInfo.getTechInfo().getId())) {
+								artifactGroup.setAppliesTo(Collections.singletonList(coreOption));
+								listArtifactGroup.add(artifactGroup);
+								break;
+							}
 						}
 					}
 					if (selectedFeatureFromUI.getType().equals(ArtifactGroup.Type.FEATURE.name())) {
@@ -223,6 +225,8 @@ public class ProjectService extends RestBase implements FrameworkConstants {
 			applicationInfo.setSelectedComponents(selectedComponents);
 			
 			projectinfo.setAppInfos(Collections.singletonList(applicationInfo));
+			ProjectManager projectManager = PhrescoFrameworkFactory.getProjectManager();
+			projectManager.update(projectinfo, serviceManager, appDirName);
 		} catch (FileNotFoundException e) {
 			ResponseInfo finalOutput = responseDataEvaluation(responseData, e, "update Feature failed", null);
 			return Response.status(Status.BAD_REQUEST).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
