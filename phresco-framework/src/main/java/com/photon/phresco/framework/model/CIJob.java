@@ -150,6 +150,7 @@ public class CIJob {
     private String testType = "";
     private String logo = "";
     private String sonarUrl = "";
+    private String reportName = "";
     
 	// Load Test CI integration
 	//  private String testAgainst = "";
@@ -1064,5 +1065,13 @@ public class CIJob {
 
 	public String getLoadContextUrl() {
 		return loadContextUrl;
+	}
+	
+	public String getReportName() {
+		return reportName;
+	}
+
+	public void setReportName(String reportName) {
+		this.reportName = reportName;
 	}
 }

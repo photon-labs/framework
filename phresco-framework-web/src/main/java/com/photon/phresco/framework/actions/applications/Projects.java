@@ -506,8 +506,8 @@ public class Projects extends FrameworkBaseAction {
      			String techVersion = versionStr[0];//tech version
      			Technology technology = getServiceManager().getTechnology(techId);
      	        String techName = technology.getName().replaceAll("\\s", "").toLowerCase();
-     	        String dirName = applnCode + HYPHEN + techName;
-     	        String appName = getProjectName() + HYPHEN + applnCode + HYPHEN + techName;
+     	        String dirName = applnCode + HYPHEN + techName + techVersion;
+     	        String appName = getProjectName() + HYPHEN + applnCode + HYPHEN + techName + techVersion;
      	        appInfos.add(getAppInfo(appName, dirName, techId, techVersion, false, false, technology.getAppTypeId()));
      		}
     	}
@@ -831,9 +831,10 @@ public class Projects extends FrameworkBaseAction {
 	       			if (!ArrayUtils.isEmpty(techIdVersion) && StringUtils.isNotEmpty(techIdVersion[0])) {
 	       				String techId = techIdVersion[0];//tech id
 	       				String[] rowCount = techIdVersion[1].split(ROW_SEPERATOR);
+	         			String techVersion = rowCount[0];//tech version
 		       			Technology technology = getServiceManager().getTechnology(techId);
 		       	        String techName = technology.getName().replaceAll("\\s", "").toLowerCase();
-		       	        String currentAppCode = applnCode + HYPHEN + techName;
+		       	        String currentAppCode = applnCode + HYPHEN + techName + techVersion;
 			       	     for(ProjectInfo project : projects) {//iterate all project  infos
 		       	    	 	List<ApplicationInfo> appInfos = project.getAppInfos();
 		       	    	 	for (ApplicationInfo appInfo : appInfos) {//iterate all app infos

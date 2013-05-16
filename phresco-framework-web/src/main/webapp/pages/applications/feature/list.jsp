@@ -68,7 +68,7 @@
 						<img src="images/r_arrowclose.png" class ="accImg" id="" onclick="accordionClickOperation(this);">
 						<input class="feature_checkbox" type="checkbox" defaultModule="<%= defaultModule %>" canConfigure="<%= canConfigure %>" 
 							value="<%= artifactGroup.getName() %>" dispName="<%= artifactGroup.getDisplayName() %>" scope="compile" packaging="<%= artifactGroup.getPackaging() %>" onclick="checkboxEvent($('.feature_checkbox'), $('#checkAllAuto'));"/>
-						<a style="float: left; margin-left:2%;" href="#"><%= artifactGroup.getDisplayName() %></a>
+						<div style="float: left; margin-left:2%;"><%= artifactGroup.getDisplayName() %></div>
 						
 						<select class="input-mini features_ver_sel" id="<%= artifactGrpName %>" artifactGroupId="<%= artifactGroup.getId() %>" moduleId="<%= artifactGroup.getId() %>" name="<%=artifactGroup.getName() %>" >
 							<%

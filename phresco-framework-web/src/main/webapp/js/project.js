@@ -151,10 +151,12 @@ function getWebLayerWidgets(layerId, widgetObjName) {
 var map = {};
 //Success event functions
 function successEvent(pageUrl, data) {
+	
 	hideLoadingIcon();
 	//To fill the versions for the selected app technology --- used select control's ID to update corresponding row
 	if (pageUrl == "fetchTechVersions") {
 		fillSelectbox($("select[id='"+ objName +"']"), data.versions, "No Versions available");
+		checkDuplicateCode();
 	}
 	
 	//To fill the versions for the selected mobile technology

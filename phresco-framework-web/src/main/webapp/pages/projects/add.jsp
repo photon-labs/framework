@@ -831,6 +831,7 @@
 	});
 	
 	var objName; //select box object name
+	var selectObj;
 	//To get the versions of the selected mobile technologies
 	function getTechVersions(layerId, techGroupId, toBeFilledCtrlName, techId, obj) {
 		showLoadingIcon();
@@ -865,10 +866,14 @@
 		loadContent(pageUrl, $('#formCreateProject'), '', params, true, true);
 				
 		if (obj != undefined && !isBlank(obj)) {
-			checkForApplnDuplicate(obj);			
+			selectObj = obj;
+			//checkForApplnDuplicate(obj);			
 		}
 	}
 	
+	function checkDuplicateCode() {
+		checkForApplnDuplicate(selectObj);
+	}
 	//Creats app layer row
 	var count = 2;
 	function addAppLayer(obj) {
@@ -933,7 +938,7 @@
 							"<select class='input-medium' name='app-layerTechnology' temp='"+ count +"' id='" + count + "_App_Technology' layer='" + applayer + "' onchange='getAppLayerTechVersions(this);'>" +
 							"<option value='' selected disabled>Select Technology</option></select></div>" +
 							"<div class='float-left'><label class='control-label autoWidth'><s:text name='lbl.version'/></label>" +
-							"<select class='input-medium' name='Version' id='"+count+"_App_Version'> <option value='' selected disabled>Select Version</option></select></div>" + 
+							"<select class='input-medium' name='app-layerVersion' id='"+count+"_App_Version'> <option value='' selected disabled>Select Version</option></select></div>" + 
 							"<div class='float-left'><img class='appLayerAdd imagealign'src='images/icons/add_icon.png' onclick='addAppLayer(this)'>" +
 							"<img id='deleteIcon' class='hideContent appLayerMinus imagealign' src='images/icons/minus_icon.png' style='margin-left: 5px;' onclick='removeAppLayer(this);'></div></div>");
 		newAppLayerRow.appendTo("#appLayerContent");
@@ -1015,10 +1020,12 @@
 			showErrorInAccordion($("#appLayerControl"), $('#appLayerHeading'), $("#appLayerError"), '<s:text name='err.msg.app.code.invalid'/>');
 		} else {
 			var tech = $(obj).parent().parent().find('select[name=app-layerTechnology]').val();
-			var currentVal = currentAppCode + tech;
+			var ver = $(obj).parent().parent().find('select[name=app-layerVersion]').val();
+			var currentVal = currentAppCode + tech + ver;
 			$('.'+inputClass).each(function() {
 				if (currentVal != "" && !isBlank(currentVal)) {
-					var existingVal = $(this).val() + $(this).parent().parent().find('select[name=app-layerTechnology]').val();
+					var exVer =$(this).parent().parent().find('select[name=app-layerVersion]').val();
+					var existingVal = $(this).val() + $(this).parent().parent().find('select[name=app-layerTechnology]').val() + exVer;
 					//To match app code with current row with other rows, and check for duplication
 					if ($(obj).attr("temp") !== $(this).attr("temp") && currentVal.toLowerCase() === existingVal.toLowerCase()) {
 						$(obj).val("");
@@ -1038,16 +1045,18 @@
 	//Check for App Code Id
 	 function checkForAppCodeId(params) {
 		var hasAppCodeId;
-		 if($('input[value=app-layer]').is(':checked') && ($("input[class='appLayerProjName']").val().length > 0)) {
-			 	hasAppCodeId = true;
-				params = params.concat("&hasAppCodeId=");
-				params = params.concat(hasAppCodeId); 
-
-		} else {
-				hasAppCodeId = false;
-				params = params.concat("&hasAppCodeId=");
-				params = params.concat(hasAppCodeId); 
-		}
+		<% if (hasAppLayer) { %>	
+			 if(($("input[class='appLayerProjName']").val().length > 0)) {
+				 	hasAppCodeId = true;
+					params = params.concat("&hasAppCodeId=");
+					params = params.concat(hasAppCodeId); 
+	
+			} else {
+					hasAppCodeId = false;
+					params = params.concat("&hasAppCodeId=");
+					params = params.concat(hasAppCodeId); 
+			}
+	 	<% } %>
 		 return params;
 	 }
 </script>
