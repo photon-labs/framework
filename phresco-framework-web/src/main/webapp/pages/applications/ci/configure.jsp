@@ -27,10 +27,12 @@
 <%@ page import="java.util.Enumeration"%>
 <%@ page import="org.apache.commons.collections.CollectionUtils"%>
 <%@	page import="org.apache.commons.lang.StringUtils"%>
+<%@ page import="org.apache.commons.codec.binary.Base64"%>
 
 <%@ page import="com.photon.phresco.framework.model.CIJob" %>
 <%@ page import="com.photon.phresco.commons.FrameworkConstants" %>
 <%@ page import="com.photon.phresco.commons.model.ApplicationInfo"%>
+<%@ page import="com.photon.phresco.commons.model.User"%>
 
 <%
 	String showSettings = (String) request.getAttribute(FrameworkConstants.REQ_SHOW_SETTINGS);
@@ -66,7 +68,12 @@
 	if (optionsObj != null) {
 		optionIds  = (List<String>) optionsObj;
 	}
-
+	
+	User userInfo = (User)session.getAttribute(FrameworkConstants.SESSION_USER_INFO);
+	String LoginId = "";
+    if (userInfo != null) {
+        LoginId = userInfo.getName();
+    }
 %>
 <form id="configureForm" name="ciDetails" action="<%= actionStr %>" method="post" class="ci_form form-horizontal">
 	<div class="theme_accordion_container clearfix" style="float: none;">
@@ -246,7 +253,7 @@
 										
 									}
 								%>
-								
+							<div id="triggerOptions">
 								<div class="control-group">
 									<label class="control-label labelbold popupLbl">
 										<s:text name='lbl.schedule' />
@@ -259,7 +266,7 @@
 								</div>
 								
 								
-							<div class="clearfix">
+								<div class="clearfix">
 										<div  id='Daily' style="text-align: center; margin-bottom: 5px;"> <!-- class="schedulerWidth" -->
 										<div><s:text name="lbl.every"/> &nbsp;&nbsp;&nbsp;&nbsp;	<s:text name="lbl.hours"/> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <s:text name="lbl.minutes"/></div>
 										<div class="dailyInnerDiv">
@@ -416,7 +423,7 @@
 									<div class="controls" id="cronValidation">
 									</div>
 								</div>
-				
+							</div>
 								<!-- Down stream projects specification -->
 								<div class="control-group">
 									<label class="control-label labelbold popupLbl">
@@ -765,6 +772,9 @@
 	loadSchedule(selectedSchedule);
 	
 	$(document).ready(function() {
+		//
+		urlBasedAction();
+
 		$('.siteaccordion').unbind('click');
 		accordionOperation();
 		
@@ -846,9 +856,22 @@
 			}
 		%>
 	    
+		$("#svnurl").blur(function(event) {
+      		urlBasedAction();
+		});
+		
 		// show hide downstream project based on the criteria
 		
 		credentialsDisp();
+		
+		checkTrigger();
+		
+		$('#buildPeriodically').click(function() {
+			checkTrigger();
+		});
+		$('#pollSCM').click(function() {
+			checkTrigger();
+		});
 		
 		$('input:radio[name=enableBuildRelease]').click(function() {
 			enableDisableCollabNet();
@@ -1283,4 +1306,25 @@
     	loadContent('cronValidation','', $('#cronValidation'), params, false, true);
     	
     }
+    
+    function checkTrigger() {
+    	if (($('#buildPeriodically').is(':checked')) || ($('#pollSCM').is(':checked')) ) {
+    		 $('#triggerOptions').show();
+    	} else {
+    		 $('#triggerOptions').hide();
+    	}
+    }
+
+    function urlBasedAction() {
+		var svnurl = $("input[name='svnurl']").val();
+		if (svnurl.indexOf('insight.photoninfotech.com') != -1) {
+ 			$("#username").val("<%= LoginId %>"); 
+			<%
+				String encodedpassword = (String) session.getAttribute(FrameworkConstants.SESSION_USER_PASSWORD);
+				String decryptedPass = new String(Base64.decodeBase64(encodedpassword.getBytes()));
+			%>
+			$("#password").val("<%= decryptedPass %>");
+     	} 
+   	}
+    
 </script>
