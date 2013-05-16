@@ -75,7 +75,7 @@ public class FeatureService extends RestBase implements ServiceConstants {
 		}
 	}
 	
-	@POST
+	@GET
 	@Path("/dependencyFeature")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
@@ -84,7 +84,6 @@ public class FeatureService extends RestBase implements ServiceConstants {
 		ResponseInfo<List<ArtifactGroup>> responseData = new ResponseInfo<List<ArtifactGroup>>();
 		try {
 			List<ArtifactGroup> atArtifactGroups = new ArrayList<ArtifactGroup>();
-			Gson gson = new Gson();
 			ServiceManager serviceManager = ServiceManagerMap.getServiceManager(userId);
 			if(serviceManager == null) {
 				ResponseInfo finalOutput = responseDataEvaluation(responseData, null, "UnAuthorized User", null);
