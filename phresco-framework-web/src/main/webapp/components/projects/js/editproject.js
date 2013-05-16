@@ -68,9 +68,9 @@ define(["framework/widgetWithTemplate", "projects/listener/projectsListener", "p
 				self.templateData.mobilelayerData = self.mobilelayerData;
 				self.projectsListener.getEditProject(self.projectsListener.getRequestHeader(self.projectRequestBody, commonVariables.projectId), function(response) {
 					self.templateData.editProject = response.data;	
-					self.getData = self.templateData.editProject.appInfos;				
+					self.getData = self.templateData.editProject.appInfos;	
+					renderFunction(self.templateData, whereToRender);
 				});
-				renderFunction(self.templateData, whereToRender);
 			} else {
 				self.setTechnologyData(function(bCheck){
 				if(bCheck){
@@ -82,9 +82,9 @@ define(["framework/widgetWithTemplate", "projects/listener/projectsListener", "p
 					self.templateData.mobilelayerData = self.mobilelayerData;
 					self.projectsListener.getEditProject(self.projectsListener.getRequestHeader(self.projectRequestBody, commonVariables.projectId), function(response) {
 						self.templateData.editProject = response.data;	
-						self.getData = self.templateData.editProject.appInfos;				
+						self.getData = self.templateData.editProject.appInfos;	
+						renderFunction(self.templateData, whereToRender);						
 					});
-					renderFunction(self.templateData, whereToRender);
 				}
 			});
 			}
