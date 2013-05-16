@@ -62,11 +62,14 @@ import com.photon.phresco.commons.model.ArtifactGroup;
 import com.photon.phresco.commons.model.ArtifactInfo;
 import com.photon.phresco.commons.model.Customer;
 import com.photon.phresco.commons.model.RepoInfo;
+import com.photon.phresco.commons.model.Role;
 import com.photon.phresco.commons.model.TestCase;
+import com.photon.phresco.commons.model.User;
 import com.photon.phresco.exception.PhrescoException;
 import com.photon.phresco.framework.FrameworkConfiguration;
 import com.photon.phresco.framework.PhrescoFrameworkFactory;
 import com.photon.phresco.framework.actions.FrameworkBaseAction;
+import com.photon.phresco.framework.model.Permissions;
 import com.photon.phresco.framework.model.TestSuite;
 import com.photon.phresco.plugins.model.Mojos.Mojo.Configuration.Parameters.Parameter;
 import com.photon.phresco.plugins.model.Mojos.Mojo.Configuration.Parameters.Parameter.PossibleValues.Value;
@@ -1261,6 +1264,73 @@ public class FrameworkUtil extends FrameworkBaseAction implements Constants {
         return csvString;
     }
     
+    public Permissions getUserPermissions(User user) {
+    	Permissions permissions = new Permissions();
+    	try {
+    		List<String> roleIds = user.getRoleIds();
+			if (CollectionUtils.isNotEmpty(roleIds)) {
+				List<String> permissionIds = new ArrayList<String>();
+				for (String roleId : roleIds) {
+					Role role = getServiceManager().getRole(roleId);
+					permissionIds.addAll(role.getPermissionIds());
+				}
+				
+				if (CollectionUtils.isNotEmpty(permissionIds)) {
+					if (permissionIds.contains(FrameworkConstants.PER_MANAGE_APPLICATIONS)) {
+						permissions.setManageApplication(true);
+					}
+					
+					if (permissionIds.contains(FrameworkConstants.PER_MANAGE_REPO)) {
+						permissions.setManageApplication(true);
+					}
+					
+					if (permissionIds.contains(FrameworkConstants.PER_MANAGE_REPO)) {
+						permissions.setManageRepo(true);
+					}
+					
+					if (permissionIds.contains(FrameworkConstants.PER_IMPORT_APPLICATIONS)) {
+						permissions.setManageRepo(true);
+					}
+					
+					if (permissionIds.contains(FrameworkConstants.PER_MANAGE_PDF_REPORTS)) {
+						permissions.setManagePdfReports(true);
+					}
+					
+					if (permissionIds.contains(FrameworkConstants.PER_MANAGE_CODE_VALIDATION)) {
+						permissions.setManageCodeValidation(true);
+					}
+					
+					if (permissionIds.contains(FrameworkConstants.PER_MANAGE_CONFIGURATIONS)) {
+						permissions.setManageConfiguration(true);
+					}
+					
+					if (permissionIds.contains(FrameworkConstants.PER_MANAGE_BUILDS)) {
+						permissions.setManageBuilds(true);
+					}
+					
+					if (permissionIds.contains(FrameworkConstants.PER_MANAGE_TEST)) {
+						permissions.setManageTests(true);
+					}
+					
+					if (permissionIds.contains(FrameworkConstants.PER_MANAGE_CI_JOBS)) {
+						permissions.setManageCIJobs(true);
+					}
+					
+					if (permissionIds.contains(FrameworkConstants.PER_EXECUTE_CI_JOBS)) {
+						permissions.setExecuteCIJobs(true);
+					}
+					
+					if (permissionIds.contains(FrameworkConstants.PER_MANAGE_MAVEN_REPORTS)) {
+						permissions.setManageMavenReports(true);
+					}
+				}
+			}
+		} catch (Exception e) {
+			// TODO: handle exception
+		}
+		
+		return permissions;
+    }
 
 	public List<TestSuite> readManualTestSuiteFile(String filePath, String testSuiteName, float success, float failures, float notExecuted, float total) {
 		List<TestSuite> testSuites = readTestSuites(filePath, testSuiteName, success, failures, notExecuted, total);

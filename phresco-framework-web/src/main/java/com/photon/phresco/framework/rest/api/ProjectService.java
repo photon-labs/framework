@@ -233,7 +233,8 @@ public class ProjectService extends RestBase implements FrameworkConstants {
 			ResponseInfo finalOutput = responseDataEvaluation(responseData, e, "update Feature failed", null);
 			return Response.status(Status.BAD_REQUEST).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
 		}
-		return null;
+		ResponseInfo finalOutput = responseDataEvaluation(responseData, null, "Features updated successfully", null);
+		return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
 		
 	}
 	

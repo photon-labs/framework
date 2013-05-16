@@ -1775,4 +1775,30 @@ public interface FrameworkConstants {
 	    String FAILURE_THEME_BUILDER_CREATE = "Theme Builder Creation Failed";
 	    String SUCCESS_THEME_BUILDER_DELETE = "Theme(s) Deleted Successfully";
 	    String REQ_BROWSE_THEME_IMAGE = "themeBuilderImage";
+		/*****************************
+	     * Permission Constants
+	     * String PER_XXX
+	     *****************************/
+	    String PER_MANAGE_APPLICATIONS = "manage_applications";
+	    String PER_VIEW_APPLICATIONS = "view_applications";
+	    String PER_IMPORT_APPLICATIONS = "import_applications";
+	    String PER_MANAGE_REPO = "manage_repo";
+	    String PER_ADD_TO_REPO = "add_to_repository";
+	    String PER_COMMIT_TO_REPO = "commit_to_repository";
+	    String PER_UPDATE_REPO = "update_repository";
+	    String PER_MANAGE_PDF_REPORTS = "manage_pdf_reports";
+	    String PER_VIEW_PDF_REPORTS = "view_pdf_reports";
+	    String PER_MANAGE_CODE_VALIDATION = "manage_code_validation";
+	    String PER_VIEW_CODE_VALIDATION = "view_code_validation";
+	    String PER_MANAGE_CONFIGURATIONS = "manage_configurations";
+	    String PER_VIEW_CONFIGURATIONS = "view_configurations";
+	    String PER_MANAGE_BUILDS = "manage_builds";
+	    String PER_VIEW_BUILDS = "view_builds";
+	    String PER_MANAGE_TEST = "manage_test";
+	    String PER_VIEW_TEST = "view_test";
+	    String PER_MANAGE_CI_JOBS = "manage_ci_jobs";
+	    String PER_VIEW_CI_JOBS = "view_ci_jobs";
+	    String PER_EXECUTE_CI_JOBS = "execute_ci_jobs";
+	    String PER_MANAGE_MAVEN_REPORTS = "manage_maven_reports";
+	    String PER_VIEW_MAVEN_REPORTS = "view_maven_reports";
 }
