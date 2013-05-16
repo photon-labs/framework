@@ -179,6 +179,9 @@ define(["framework/base", "framework/animationProvider"], function() {
 				// add absolute positioning
 				newDiv.addClass("widget-maincontent-div");
 				
+				//if(bCheck)
+				//	$(commonVariables.contentPlaceholder).children().remove();
+					
 				$(self.jQueryContainer).append(newDiv);
 
 					view.doMore = function(element) {
@@ -197,16 +200,15 @@ define(["framework/base", "framework/animationProvider"], function() {
 								});
 							
 								animationProviderSub.animate(self.pushAnimationTypeForGoingOut, function(container) {
-									container.hide('slow', function(){
-										container.css("z-index", 3);
+									container.css("z-index", 3);
+									container.hide('fast', function(){
 										$(container).remove();
 									});
 								});
-								
 								self.stack.pop(self.stack.length-1);
 							}
 							
-							var animationProviderMain = new Clazz.AnimationProvider( {
+							var animationProviderMain = new Clazz.AnimationProvider({
 								isNative: self.isNative,
 								container: newDiv
 							});
@@ -267,7 +269,7 @@ define(["framework/base", "framework/animationProvider"], function() {
 				} 
 			},
 			
-			removeClasses : function(container){
+			removeClasses : function(container, callback){
 				setTimeout(function(){
 					$(container).css("left", "0px");
 					$(container).removeClass("slide in");
@@ -276,6 +278,7 @@ define(["framework/base", "framework/animationProvider"], function() {
 					$(container).removeClass("flip out");
 					$(container).removeClass("slidedown in");
 					$(container).removeClass("slidedown out");
+					callback(true);
 				},800);
 			}
 		}
