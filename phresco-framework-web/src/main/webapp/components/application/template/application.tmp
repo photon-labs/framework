@@ -31,7 +31,7 @@
 				
                 <tr class="proj_title">
                       <td colspan="3" data-i18n="application.edit.servers"></td>
-                      <td colspan="4"><img src="../themes/default/images/helios/close_icon.png"  border="0" alt=""></td>
+                      <td colspan="4"><img name="close" id="servers"src="../themes/default/images/helios/close_icon.png"  border="0" alt=""></td>
                     </tr>
 					{{#each projectlist.appdetails.data.appInfos}}
 						{{#each selectedServers}}
@@ -87,7 +87,7 @@
                     
                     <tr class="proj_title">
                       <td colspan="3" data-i18n="application.edit.database"></td>
-                      <td colspan="4"><img src="../themes/default/images/helios/close_icon.png"  border="0" alt=""></td>
+                      <td colspan="4"><img name="close" id="database" src="../themes/default/images/helios/close_icon.png"  border="0" alt=""></td>
                      </tr>
 					 
 					{{#each projectlist.appdetails.data.appInfos}}
@@ -141,7 +141,7 @@
 						
                     <tr class="proj_title">
                       <td colspan="3" data-i18n="application.edit.webservice"></td>
-                      <td colspan="4"><img src="../themes/default/images/helios/close_icon.png"  border="0" alt=""></td>
+                      <td colspan="4"><img  name="close" id="webservice" src="../themes/default/images/helios/close_icon.png"  border="0" alt=""></td>
                      </tr>
                      <tr>
                        <td colspan="7">
@@ -194,6 +194,11 @@
     	<!--content_main div ends here -->
     </section>
     <section class="content_end">
+		<div class="flt_left">
+        	<input type="submit" name="servers" value="Server" class="btn btn_style server_btn" style="display:none;">
+            <input type="submit" name="database" value="Database" class="btn btn_style database_btn"  style="display:none;">
+            <input type="submit" name="webservice" value="Webservice" class="btn btn_style webservice_btn" style="display:none;">
+        </div>
         <div class="flt_right">
 			<input type="submit" data-i18n="[value]application.btn.update;" id="updatebutton" class="btn btn_style update_btn">
             <input type="submit" data-i18n="[value]application.btn.cancel;" id="cancelbutton" class="btn btn_style cancel_icon_btn">

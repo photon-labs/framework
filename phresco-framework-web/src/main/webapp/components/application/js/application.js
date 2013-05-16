@@ -9,6 +9,8 @@ define(["framework/widgetWithTemplate", "application/listener/applicationListene
 		name : commonVariables.editApplication,
 		addServerEvent : null,
 		applicationAPI : null,
+		onRemoveLayerEvent : null,
+		onAddLayerEvent : null,
 		renderData : {},
 		header: {
 			contentType: null,
@@ -32,6 +34,10 @@ define(["framework/widgetWithTemplate", "application/listener/applicationListene
 		
 		registerEvents : function(editApplicationListener) {
 			var self = this;
+			self.onRemoveLayerEvent = new signals.Signal();
+			self.onAddLayerEvent = new signals.Signal();
+			self.onRemoveLayerEvent.add(editApplicationListener.removelayer, editApplicationListener);
+			self.onAddLayerEvent.add(editApplicationListener.addlayer, editApplicationListener);
 			self.onCancelEvent = new signals.Signal();
 			self.appConfig = new signals.Signal();
 			self.updateApp = new signals.Signal();
@@ -105,7 +111,16 @@ define(["framework/widgetWithTemplate", "application/listener/applicationListene
 		 */
 		bindUI : function(){
 			var self = this;
+			$("img[name='close']").unbind('click');
+			$("img[name='close']").bind('click', function(){
+				self.onRemoveLayerEvent.dispatch($(this));
+			});
 			
+			$(".content_end input").unbind('click');
+			$(".content_end input").bind('click', function(){
+				self.onAddLayerEvent.dispatch($(this));
+				return false;
+			});
 			$('#cancelbutton').unbind('click');
 			$('#cancelbutton').click(function(){
 				self.onCancelEvent.dispatch();

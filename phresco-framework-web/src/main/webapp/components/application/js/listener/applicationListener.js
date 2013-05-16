@@ -25,6 +25,21 @@ define(["framework/widget", "framework/widgetWithTemplate", "application/api/app
 			self.projectlistContent = commonVariables.navListener.getMyObj(commonVariables.projectlist);
 			Clazz.navigationController.push(self.projectlistContent, true);
 		},
+		removelayer : function(object) {
+			var layerId = object.attr('id');
+			object.closest('tr').next().attr('name', layerId + "content");
+			object.closest('tr').next().hide();
+			object.closest('tr').attr('name', layerId);
+			object.closest('tr').hide();
+			$("input[name="+layerId+"]").toggle();
+		},
+		
+		addlayer : function(object) {
+			var layerType = object.attr('name');
+			$("input[name="+layerType+"]").toggle();
+			$("tr[name="+ layerType +"]").show();
+			$("tr[name="+ layerType+"content]").show();
+		},
 		
 		addServerDatabase : function(appType, whereToAppend) {
 			var self = this, dynamicValue, server = '<tr class="servers" key="displayed"> <td data-i18n="application.edit.servers"></td><td name="servers" class="servers"><select name="appServers" class="appServers"><option>Select Servers</option>'+ self.getOptionData('serverData') +'</select></td><td data-i18n="application.edit.versions"></td><td colspan="4" name="version" class="version"><select name="server_version" class="server_version"><option>Select Version</option></select> <div class="flt_right"><a href="javascript:;" name="addServer"><img src="../themes/default/images/helios/plus_icon.png" border="0" alt=""></a> <a href="javascript:;" name="removeServer"><img src="../themes/default/images/helios/minus_icon.png"  border="0" alt=""></a></div></td></tr>',
