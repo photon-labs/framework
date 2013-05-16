@@ -993,8 +993,8 @@
  			// show popup loading icon
  			showPopuploadingIcon();
  			loadContent(url, $('#configureForm, #generateBuildForm'), $('#subcontainer'), getBasicParams(), false, true);
+ 			disableCiFormControls();
  		}
-		disableCiFormControls();
 	}
 	
 	function disableCiFormControls() {

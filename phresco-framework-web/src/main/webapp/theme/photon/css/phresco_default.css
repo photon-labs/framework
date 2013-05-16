@@ -6770,3 +6770,7 @@ input, button, select, textarea, label {
 .parameterPlus {
 	margin-right:11px;
 }
+
+optgroup {
+   font-family: 'luxi_sansregular' ! important ;
+}

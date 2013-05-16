@@ -25,8 +25,8 @@
 	</div>	
 
 	<div class="abt_content">
-		Helios is a next-generation development framework of frameworks.It is a platform for creating next generation web, mobile 
-		and multi channel presences leveraging existing investments combined with accepted industry best practices.		
+		HeliOS is a platform for creating next generation web, mobile, and multi channel presences 
+		leveraging your existing investments combined with accepted industry best practices.	
 	</div>
 </div>
 
