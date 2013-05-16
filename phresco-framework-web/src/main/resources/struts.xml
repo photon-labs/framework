@@ -844,7 +844,7 @@
             <result name="success">/pages/applications/reader.jsp</result>
         </action>
         
-        <action name="performanceJsonWriter" method="performanceJsonWriter" class="com.photon.phresco.framework.actions.applications.Quality">
+        <action name="loadPerformanceJsonWriter" method="loadOrPerformanceJsonWriter" class="com.photon.phresco.framework.actions.applications.Quality">
         	<result type="json" />  	
         </action>
         

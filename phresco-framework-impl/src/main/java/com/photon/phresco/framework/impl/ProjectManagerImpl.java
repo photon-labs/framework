@@ -80,13 +80,11 @@ public class ProjectManagerImpl implements ProjectManager, FrameworkConstants, C
 	
 	private static final Logger S_LOGGER= Logger.getLogger(ProjectManagerImpl.class);
 	private static boolean isDebugEnabled = S_LOGGER.isDebugEnabled();
-	private Map<String, ProjectInfo> projectInfosMap = null;
 	
 	public List<ProjectInfo> discover(String customerId) throws PhrescoException {
 		if (isDebugEnabled) {
 			S_LOGGER.debug("Entering Method ProjectManagerImpl.discover(String CustomerId)");
 		}
-
 		File projectsHome = new File(Utility.getProjectHome());
 		if (isDebugEnabled) {
 			S_LOGGER.debug("discover( )  projectHome = "+projectsHome);
@@ -94,7 +92,7 @@ public class ProjectManagerImpl implements ProjectManager, FrameworkConstants, C
 		if (!projectsHome.exists()) {
 			return null;
 		}
-		projectInfosMap = new HashMap<String, ProjectInfo>();
+		Map<String, ProjectInfo> projectInfosMap = new HashMap<String, ProjectInfo>();
 		List<ProjectInfo> projectInfos = new ArrayList<ProjectInfo>();
 	    File[] appDirs = projectsHome.listFiles();
 	    for (File appDir : appDirs) {
@@ -108,15 +106,14 @@ public class ProjectManagerImpl implements ProjectManager, FrameworkConstants, C
 	            if (ArrayUtils.isEmpty(dotProjectFiles)) {
 	                throw new PhrescoException("project.info file not found in .phresco of project " + dotPhrescoFolders[0].getParent());
 	            }
-	            fillProjects(dotProjectFiles[0], projectInfos, customerId);
+	            projectInfosMap = fillProjects(dotProjectFiles[0], projectInfos, customerId, projectInfosMap);
 	        }
 	    }
-	    
+
 	    Iterator<Entry<String, ProjectInfo>> iterator = projectInfosMap.entrySet().iterator();
         while (iterator.hasNext()) {
             projectInfos.add(iterator.next().getValue());
         }
-
         return projectInfos;
 	}
 	
@@ -464,7 +461,7 @@ public class ProjectManagerImpl implements ProjectManager, FrameworkConstants, C
 		return deletionSuccess;
 	}
 	
-    private void fillProjects(File dotProjectFile, List<ProjectInfo> projectInfos, String customerId) throws PhrescoException {
+    private Map<String, ProjectInfo> fillProjects(File dotProjectFile, List<ProjectInfo> projectInfos, String customerId, Map<String, ProjectInfo> projectInfosMap) throws PhrescoException {
         S_LOGGER.debug("Entering Method ProjectManagerImpl.fillProjects(File[] dotProjectFiles, List<Project> projects)");
 
         Gson gson = new Gson();
@@ -486,6 +483,7 @@ public class ProjectManagerImpl implements ProjectManager, FrameworkConstants, C
         } finally {
             Utility.closeStream(reader);
         }
+        return projectInfosMap;
     }
     
     private ProjectInfo getProjectInfo(File dotProjectFile, String projectId, String customerId, String appId) throws PhrescoException {

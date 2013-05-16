@@ -963,7 +963,7 @@
 	}
 	
 	// after validation success, show loading icon and creates job
-	function configureJob(url) {
+	function configureJob(url, operation) {
 		isCiRefresh = true;
 		var isFromCi = $('#isFromCI').val();		
 // 		getCurrentCSS();	
@@ -972,8 +972,13 @@
 		$('#configureForm :input').attr('disabled', false);
 		var callLoadContent = true;
 		if (isFromCi) {			
+			var redirct;
 			// ci specification need to be specified
-			var redirct = mandatoryValidation('runPerformanceTest', $("#generateBuildForm"), '', 'performance-test', 'performance-test');
+			if ('performanceTest' == operation) {
+				redirct = mandatoryValidation('runPerformanceTest', $("#generateBuildForm"), '', 'performance-test', 'performance-test');
+			} else if ('loadTest' == operation) {
+				redirct = mandatoryValidation('runLoadTest', $("#generateBuildForm"), '', 'load-test', 'load-test');
+			}
 			
 			//validation of templates in performance test .
 			if(redirct == false) {

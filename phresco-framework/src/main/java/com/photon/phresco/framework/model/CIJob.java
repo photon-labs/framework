@@ -166,6 +166,7 @@ public class CIJob {
 	private String loopCount = "";
 	private String contextUrls = "";
 	private String dbContextUrls = "";
+	private String loadContextUrl = "";
 	private String isFromCI = ""; 
 	private boolean coberturaPlugin = false;
   
@@ -1057,5 +1058,11 @@ public class CIJob {
 		this.confluenceOther = confluenceOther;
 	}
 
-	
+	public void setLoadContextUrl(String loadContextUrl) {
+		this.loadContextUrl = loadContextUrl;
+	}
+
+	public String getLoadContextUrl() {
+		return loadContextUrl;
+	}
 }

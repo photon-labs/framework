@@ -92,7 +92,7 @@
             String chartTitle = "";
             String chartUnit = "";
             if (graphFor.equals("responseTime")) {
-            	chartTitle = "Avg Response Time";
+            	chartTitle = "Aggr Response Time";
             	chartUnit = "ms";
             } else if (graphFor.equals("throughPut")) {
             	chartTitle = "Throughput";

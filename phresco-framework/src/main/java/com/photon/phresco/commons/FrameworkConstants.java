@@ -339,6 +339,7 @@ public interface FrameworkConstants {
     String IMPORT_PROPERTY ="importsql.property";
     String TEMP_FOLDER ="temp";
     String NODEJS_RUN_AGAINST = "nodeJS_runAgnSrc";
+    String PHASE_RUNGAINST_SRC = "runAgainstSource";
     String JAVA_RUN_AGAINST = "runAgnSrc";
     String CERTIFICATES = "certificates";
     String KEY_CERTIFICATE = "certificate";
