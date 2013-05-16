@@ -1028,7 +1028,7 @@
 	//Check for App Code Id
 	 function checkForAppCodeId(params) {
 		var hasAppCodeId;
-		 if(($("input[class='appLayerProjName']").val().length > 0)) {
+		 if($('input[value=app-layer]').is(':checked') && ($("input[class='appLayerProjName']").val().length > 0)) {
 			 	hasAppCodeId = true;
 				params = params.concat("&hasAppCodeId=");
 				params = params.concat(hasAppCodeId); 

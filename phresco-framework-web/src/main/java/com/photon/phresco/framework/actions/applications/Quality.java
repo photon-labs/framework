@@ -210,6 +210,7 @@ public class Quality extends DynamicParameterAction implements Constants {
     boolean updateCache;
     
     private String isFromCI = "";
+    private String testAction = "";
 	
 	private static Map<String, Map<String, NodeList>> testSuiteMap = Collections.synchronizedMap(new HashMap<String, Map<String, NodeList>>(8));
 	
@@ -1578,7 +1579,7 @@ public class Quality extends DynamicParameterAction implements Constants {
     		String workingDirectory = getAppDirectoryPath(applicationInfo);  
     		
     		//
-            performanceJsonWriter();    			
+            loadOrPerformanceJsonWriter();    			
     		BufferedReader reader = applicationManager.performAction(projectInfo, ActionType.PERFORMANCE_TEST, buildArgCmds, workingDirectory);
     		setSessionAttribute(getAppId() + PERFORMANCE_TEST, reader);
     		setReqAttribute(REQ_APP_ID, getAppId());
@@ -1590,18 +1591,25 @@ public class Quality extends DynamicParameterAction implements Constants {
     	return SUCCESS;
     }
 
-	public String performanceJsonWriter() throws PhrescoException {
+	public String loadOrPerformanceJsonWriter() throws PhrescoException {
 		
 		FileWriter fw = null;
-		
+		String property = "";
 		try {
 			if(StringUtils.isNotEmpty(getTestAgainst())) {
+				if (LOAD.equals(getTestAction())) {
+					property = POM_PROP_KEY_LOADTEST_DIR;
+				} else {
+					property = POM_PROP_KEY_PERFORMANCETEST_DIR;					
+				}
+				
 				ApplicationInfo applicationInfo = getApplicationInfo();
-				PomProcessor processor = new PomProcessor(getPOMFile(applicationInfo));					
-		        String performTestDir = processor.getProperty(POM_PROP_KEY_PERFORMANCETEST_DIR);	        
+				File pomFile = getPOMFile(applicationInfo);
+				PomProcessor processor = new PomProcessor(pomFile);					
+		        String performTestDir = processor.getProperty(property);	        
 				FileOutputStream fop;
 				boolean success = false;
-				if(getIsFromCI().equalsIgnoreCase("true")) {				
+				if(getIsFromCI().equalsIgnoreCase("true")) {	
 					StringBuilder filepath = new StringBuilder(Utility.getProjectHome())
 					.append(applicationInfo.getAppDirName())
 					.append(performTestDir)
@@ -1612,7 +1620,6 @@ public class Quality extends DynamicParameterAction implements Constants {
 //					.append(File.separator)
 //					.append("CITemp");					
 					success = new File(filepath.toString()).mkdirs();
-					
 					filepath.append(File.separator)
 					.append(getTestName())
 					.append(DOT_JSON);
@@ -1638,7 +1645,7 @@ public class Quality extends DynamicParameterAction implements Constants {
 					.append(File.separator)
 					.append("ci")
 					.append(".info");					
-					file = new File(infofilepath.toString());					
+					file = new File(infofilepath.toString());	
 					if (!file.exists()) {
 						file.createNewFile();
 						fw = new FileWriter(file);
@@ -1651,7 +1658,7 @@ public class Quality extends DynamicParameterAction implements Constants {
 						fw.write(jsonFileName.toString()+DOT_JSON);						
 					}
 					
-				} else {					
+				} else {		
 					StringBuilder filepath = new StringBuilder(Utility.getProjectHome())
 					.append(applicationInfo.getAppDirName())
 					.append(performTestDir)
@@ -1688,6 +1695,7 @@ public class Quality extends DynamicParameterAction implements Constants {
         .append(appInfo.getAppDirName())
         .append(File.separatorChar)
         .append(Utility.getPomFileName(appInfo));
+
         return new File(builder.toString());
     }
     
@@ -1840,6 +1848,7 @@ public class Quality extends DynamicParameterAction implements Constants {
 				buildArgCmds.add(Constants.HYPHEN_F);
 				buildArgCmds.add(pomFileName);
 			}
+            loadOrPerformanceJsonWriter();
             ApplicationManager applicationManager = PhrescoFrameworkFactory.getApplicationManager();
             BufferedReader reader = applicationManager.performAction(getProjectInfo(), ActionType.LOAD_TEST, buildArgCmds, workingDirectory.toString());
             setSessionAttribute(getAppId() + LOAD, reader);
@@ -3655,5 +3664,13 @@ public class Quality extends DynamicParameterAction implements Constants {
 
 	public void setFeatureIdError(String featureIdError) {
 		this.featureIdError = featureIdError;
+	}
+
+	public void setTestAction(String testAction) {
+		this.testAction = testAction;
+	}
+
+	public String getTestAction() {
+		return testAction;
 	}
 }

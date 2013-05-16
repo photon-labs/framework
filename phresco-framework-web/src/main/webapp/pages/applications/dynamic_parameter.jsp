@@ -370,7 +370,9 @@
 		$('.jecEditableOption').click(function() {
 	       $('.jecEditableOption').text("");
 	    });
-		
+		$('#executeSql').click(function(){
+			sqlEvent();
+		});
 		$('#buildName').live('input propertychange', function(e) {
 			var str = $(this).val();
 			str = checkForSplChrExceptDot(str);
@@ -553,15 +555,9 @@
 		});
 		
 		<% 
-			if (FrameworkConstants.REQ_DEPLOY.equals(from)) {
+			if (FrameworkConstants.REQ_DEPLOY.equals(from) || FrameworkConstants.PHASE_RUNGAINST_SRC.equals(from)) {
 		%>
-				if($('#executeSql').is(":checked")) {
-					$('#dataBaseControl').show();
-					$('#fetchSqlControl').show();
-				} else {
-					$('#dataBaseControl').hide();
-					$('#fetchSqlControl').hide();
-				}
+			sqlEvent();
 		<%
 			}
 		%>
@@ -579,6 +575,16 @@
 	$("#signing").bind('click', function() {
 		singingEvent();
 	});
+	
+	function sqlEvent() {
+		if($('#executeSql').is(":checked")) {
+			$('#dataBaseControl').show();
+			$('#fetchSqlControl').show();
+		} else {
+			$('#dataBaseControl').hide();
+			$('#fetchSqlControl').hide();
+		}
+	}
 	
 	function changeEveDependancyListener(selectedOption, currentParamKey) {
 		var params = getBasicParams();
@@ -747,7 +753,7 @@
 		var	key = $(obj).parents('fieldset').find($('input[class*=key]')).val();
 		var	value = $(obj).parents('fieldset').find($('input[class*=value]')).val();
 		if ((key != undefined && !isBlank(key)) && (value != undefined && !isBlank(value))) {
-			$(obj).closest('fieldset').append('<div id="headerkeyId" class="headers" style="background-color: #bbbbbb; width: 40%; margin-bottom:2px; height: auto; border-radius: 6px; '+
+			$(obj).closest('fieldset').append('<div id="headerkeyId" class="headers" style="background-color: #bbbbbb; width: 52%; margin-left: 2px; margin-bottom:2px; height: auto; border-radius: 6px; '+
 						'padding: 0 0 0 10px; position: relative"><a href="#" style="text-decoration: none; margin-right: 10px; color: #000000; '+
 						'margin-left: 92%;" onclick="removeHeader(this);">&times;</a><div style="cursor: pointer; color: #000000; height: auto; '+
 						'position: relative; width: 90%; line-height: 17px; margin-top: -14px; padding: 0 0 6px 1px;">'+ key + " : " + value + 
@@ -817,7 +823,7 @@
 		}
 	}
 	
-	function templateMandatoryVal(showIcon) {		
+	function performanceTemplateMandatoryVal(showIcon) {		
 		var testAgainst = $("#testAgainst").val();
 		var redirect = false;		
 		if (testAgainst != undefined && (testAgainst == "server" || testAgainst == "webservice")) {
@@ -830,12 +836,28 @@
 	
 		if (redirect) {
 			$('.yesNoPopupErr').empty();
-			runPerformanceTest(showIcon);
+			runLoadOrPerformanceTest(showIcon, 'performance');
 		}		
 		return redirect;
 	} 
 	
-	function runPerformanceTest(showIcon) {		
+	function loadTemplateMandatoryVal(showIcon) {
+		var testAgainst = $("#testAgainst").val();
+		var redirect = false;		
+		if (testAgainst != undefined && (testAgainst == "server" || testAgainst == "webservice")) {
+			redirect = loadContextUrlMandatoryVal();
+		} else if (testAgainst == undefined) { 			
+			redirect = true; // added for CI android performance return			
+		}
+	
+		if (redirect) {
+			$('.yesNoPopupErr').empty();
+			runLoadOrPerformanceTest(showIcon, 'load');
+		}		
+		return redirect;
+	}
+	
+	function runLoadOrPerformanceTest(showIcon, from) {		
 		var formJsonObject = $('#generateBuildForm').toJSON();
 		var formJsonStr = JSON.stringify(formJsonObject);
 		var templateFunction = new Array();
@@ -859,16 +881,29 @@
 		var fromCi = $('#isFromCI').val();
 		var ciOperation = $('#operation').val();		
 		
- 		if (fromCi && testAgainst != undefined) {	
- 			//write json for performance in ci			
- 			loadContent('performanceJsonWriter', $('#generateBuildForm'), '', getBasicParams(), false, true);
- 		} else if (fromCi && testAgainst == undefined) {
- 			// ci performance for android technology
- 		} else {
- 			//performance test
- 			$('#popupPage').modal('hide');
-			progressPopupAsSecPopup('runPerformanceTest', '<%= appId %>', "performance-test", $('#generateBuildForm'), params, '', '', showIcon);
- 		}
+		if ('load' == from) {//for load
+			params = params.concat("&testAction=load");
+			if(fromCi && testAgainst != undefined) {
+				loadContent('loadPerformanceJsonWriter', $('#generateBuildForm'), '', params, false, true);
+			} else if (fromCi && testAgainst == undefined) {
+	 			// ci performance for android technology
+	 		} else {
+	 			$('#popupPage').modal('hide');
+				progressPopupAsSecPopup('runLoadTest', '<%= appId %>', "load", $('#generateBuildForm'), params, '', '', showIcon);
+			}
+		} else {//for performance
+			params = params.concat("&testAction=performance");
+			if (fromCi && testAgainst != undefined) {
+	 			//write json for performance in ci		
+	 			loadContent('loadPerformanceJsonWriter', $('#generateBuildForm'), '', params, false, true);
+	 		} else if (fromCi && testAgainst == undefined) {
+	 			// ci performance for android technology
+	 		} else {
+	 			//performance test
+	 			$('#popupPage').modal('hide');
+				progressPopupAsSecPopup('runPerformanceTest', '<%= appId %>', "performance-test", $('#generateBuildForm'), params, '', '', showIcon);
+	 		}			
+		}
 	}
 	
 	function addRowInPackageBrowse(obj) {

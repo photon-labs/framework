@@ -284,6 +284,7 @@ public class Build extends DynamicParameterAction implements Constants {
             setReqAttribute(REQ_DYNAMIC_PARAMETERS, parameters);
             setReqAttribute(REQ_GOAL, PHASE_RUNGAINST_SRC_START);
             setReqAttribute(REQ_PHASE, PHASE_RUNGAINST_SRC_START);
+            setReqAttribute(REQ_FROM, PHASE_RUNGAINST_SRC);
 		} catch (PhrescoException e) {
 			return showErrorPopup(e, getText("excep.hdr.runagainstsource.popup"));
 		}

@@ -123,7 +123,7 @@
 			&nbsp;&nbsp;
 			<strong id="lblType" class="noTestAvail"><s:text name="label.based.on"/></strong>
 			<select  name="showGraphFor" id="showGraphFor" onchange="changeGraph(this.options[this.selectedIndex].value)"  style="width :210px;">
-				<option value="responseTime"><s:text name="lbl.performance.avg.response.time"/></option>
+				<option value="responseTime"><s:text name="lbl.performance.aggr.response.time"/></option>
 				<option value="throughPut"><s:text name="lbl.performance.throughput"/></option>
 				<option value="minResponseTime"><s:text name="lbl.performance.min.res.time"/></option>
 				<option value="maxResponseTime"><s:text name="lbl.performance.max.res.time"/></option>

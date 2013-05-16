@@ -668,6 +668,8 @@ function popupOnOk(obj) {
 function redirectCiConfigure() {
 	var collabnet = $("input:radio[name=enableBuildRelease][value='true']").is(':checked');
 	var confluence = $("input:radio[name=enableConfluence][value='true']").is(':checked')
+	var ciOperation = $('#operation').val();
+	console.log('ciOperation.......',ciOperation);
 	if (validation) {
 		var colabStatus = false;
 		var conflStatus = false;
@@ -686,15 +688,15 @@ function redirectCiConfigure() {
 			
 			if (collabnet && colabStatus) {
 				if (confluence && conflStatus) {
-					configureJob(okUrl);
+					configureJob(okUrl, ciOperation);
 				} else if ((collabnet && colabStatus) && !confluence) {
-					configureJob(okUrl);
+					configureJob(okUrl, ciOperation);
 				}
 			} else if ((confluence && conflStatus) && !collabnet) {
-				configureJob(okUrl);
+				configureJob(okUrl, ciOperation);
 			} 
 		} else {
-			configureJob(okUrl);
+			configureJob(okUrl, ciOperation);
 		}
 	}
 

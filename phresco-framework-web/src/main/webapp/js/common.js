@@ -188,11 +188,13 @@ function mandatoryValidation(pageUrl, form, additionalParams, phase, goal, actio
 				} else if (pageUrl == "startNode" || pageUrl == "startHub") {//start-hub, start-node
 					$("#popupPage").modal('hide');
 					progressPopupAsSecPopup(pageUrl, appId, actionType, form, params, stopBtnAction, '', showIcon);
-				} else if (pageUrl == "codeValidate" || pageUrl == "runLoadTest" || pageUrl == "runFunctionalTest") {//codevalidate, loadtest,functional test
+				} else if (pageUrl == "codeValidate" || pageUrl == "runFunctionalTest") {//codevalidate, functional test
 					$("#popupPage").modal('hide');
 					progressPopupAsSecPopup(pageUrl, appId, actionType, form, params, '', '', showIcon);
+				} else if (pageUrl == "runLoadTest") {//load test
+					flagValue = loadTemplateMandatoryVal(showIcon);					
 				} else if (pageUrl == "runPerformanceTest") {//performance test
-					flagValue = templateMandatoryVal(showIcon);					
+					flagValue = performanceTemplateMandatoryVal(showIcon);					
 				} else if (pageUrl == "saveJob" || pageUrl == "updateJob") {					
 					redirectCiConfigure();
 				} else if(pageUrl == "processBuild") {
@@ -1000,12 +1002,11 @@ function constructElements(data, pushToElement, isMultiple, controlType, paramet
 }
 
 function constructFieldsetOptions(dependentValues, pushToElement) {
+	//to clear fielset values
+	$("#avaliableSourceScript").empty();
+	$("#selectedSourceScript").empty(); 
 	if (dependentValues != undefined && !isBlank(dependentValues)) {
 		var fileName, filePath;
-		//to clear fielset values
-		$("#avaliableSourceScript").empty();
-		$("#selectedSourceScript").empty();
-		
 		for(i in dependentValues) {
 			fileName = dependentValues[i].value.substring(dependentValues[i].value.lastIndexOf('#') + 1);
 			filePath = dependentValues[i].value.replace('#SEP#','/');
@@ -1014,7 +1015,7 @@ function constructFieldsetOptions(dependentValues, pushToElement) {
 			$("#avaliableSourceScript").append(optionElement);
 		}
 		addSelectedSourceScripts();
-	}
+	} 
 }
 
 // When the selects the sql files for deployment, the values need to be retained when the popup shows again
@@ -1048,7 +1049,7 @@ function constructSingleSelectOptions(dependentValues, pushToElement, parameterT
 		var dynamicFirstValue = dependentValues[0].value;
 		var isEditableCombo = false;
 		if (editbleComboClass == "jecEditableOption") {//convert to editable combobox
-			var optionElement = "<option class='jecEditableOption'>Type or Select from list</option>";
+			var optionElement = "<option class='jecEditableOption'>Type or Select from the list</option>";
 			$("#" + pushToElement).append(optionElement);
 			isEditableCombo = true;
 		}
@@ -1072,7 +1073,7 @@ function constructSingleSelectOptions(dependentValues, pushToElement, parameterT
 	} else if (parameterType.toLowerCase() != "list".toLowerCase()) {
 		$("#" + pushToElement).empty();
 		if (editbleComboClass == "jecEditableOption") {//convert to editable combobox
-			var optionElement = "<option class='jecEditableOption'>Type or Select from list</option>";
+			var optionElement = "<option class='jecEditableOption'>Type or Select from the list</option>";
 			$("#" + pushToElement).append(optionElement);
 		}
 	} 

@@ -45,13 +45,20 @@ public class PerformanceTestResultNamesImpl implements DynamicParameter, Constan
 		PossibleValues possibleValues = new PossibleValues();
 		ApplicationInfo applicationInfo = (ApplicationInfo) paramMap.get(KEY_APP_INFO);
 		String testAgainst = (String) paramMap.get(KEY_TEST_AGAINST);
-		String testDirPath = getTestDirPath(applicationInfo, testAgainst);
+		String goal = (String) paramMap.get(KEY_GOAL);
+		String testDirPath = getTestDirPath(applicationInfo, testAgainst, goal);
 		String dependencyStr = "";
-		if ("database".equalsIgnoreCase(testAgainst)) {
-			dependencyStr = "dbContextUrls";
+		
+		if (PHASE_LOAD_TEST.equals(goal)) {
+			dependencyStr = "loadContextUrl";
 		} else {
-			dependencyStr = "contextUrls";
+			if ("database".equalsIgnoreCase(testAgainst)) {
+				dependencyStr = "dbContextUrls";
+			} else {
+				dependencyStr = "contextUrls";
+			}
 		}
+		
 		File file = new File(testDirPath);
 		File[] testFiles = file.listFiles(new XmlNameFileFilter(FrameworkConstants.JSON));
 		if (testFiles.length != 0) {
@@ -74,11 +81,17 @@ public class PerformanceTestResultNamesImpl implements DynamicParameter, Constan
 		return possibleValues;
 	}
 	
-	private String getTestDirPath(ApplicationInfo appInfo, String testAgainst) throws PhrescoException {
+	private String getTestDirPath(ApplicationInfo appInfo, String testAgainst, String goal) throws PhrescoException {
 		StringBuilder builder = new StringBuilder(Utility.getProjectHome());
 		try {
+			String property = "";
+			if (PHASE_LOAD_TEST.equals(goal)) {
+				property = POM_PROP_KEY_LOADTEST_DIR;
+			} else {
+				property = POM_PROP_KEY_PERFORMANCETEST_DIR;
+			}
 			PomProcessor processor = new PomProcessor(getPOMFile(appInfo));
-			String performDir = processor.getProperty(POM_PROP_KEY_PERFORMANCETEST_DIR);
+			String performDir = processor.getProperty(property);
 			builder.append(appInfo.getAppDirName())
 			.append(performDir)
 			.append(File.separator)

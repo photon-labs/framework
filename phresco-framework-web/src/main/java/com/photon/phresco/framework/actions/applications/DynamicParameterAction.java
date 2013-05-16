@@ -742,7 +742,7 @@ public class DynamicParameterAction extends FrameworkBaseAction implements Const
 		String value = getReqParameter(parameter.getKey());
 		value = value.replaceAll("\\s+", "").toLowerCase();
 		
-		if (StringUtils.isEmpty(value) || "typeorselectfromlist".equalsIgnoreCase(value)) {
+		if (StringUtils.isEmpty(value) || "typeorselectfromthelist".equalsIgnoreCase(value)) {
 			setErrorFound(true);
 			setErrorMsg(lableTxt + " " +getText(EXCEPTION_MANDAOTRY_MSG));
 			returnFlag = true;
