@@ -2,6 +2,7 @@ package com.photon.phresco.framework.rest.api;
 
 import java.io.File;
 import java.lang.reflect.Type;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
@@ -13,6 +14,9 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.StringUtils;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -50,12 +54,23 @@ public class ConfigurationService extends RestBase {
 	
 	@GET
 	@Produces (MediaType.APPLICATION_JSON)
-	public Response listEnvironments(@QueryParam("appDirName") String appDirName) {
+	public Response listEnvironments(@QueryParam("appDirName") String appDirName, @QueryParam("envName") String envName) {
 		ResponseInfo<Environment> responseData = new ResponseInfo<Environment>();
 		try {
 			String configFileDir = getConfigFileDir(appDirName);
 			ConfigManager configManager = new ConfigManagerImpl(new File(configFileDir));
-			List<Environment> environments = configManager.getEnvironments();
+			if(StringUtils.isNotEmpty(envName)) {
+				List<Environment> environments = configManager.getEnvironments(Arrays.asList(envName));
+				if(CollectionUtils.isNotEmpty(environments)) {
+					Environment environment = environments.get(0);
+					ResponseInfo<Environment> finalOuptut = responseDataEvaluation(responseData, null, "Environments Listed", environment);
+					return Response.ok(finalOuptut).header("Access-Control-Allow-Origin", "*").build();
+				} else {
+					ResponseInfo<Environment> finalOuptut = responseDataEvaluation(responseData, null, "Environments Failed to List for envName : " + envName, null);
+					return Response.status(Status.EXPECTATION_FAILED).entity(finalOuptut).header("Access-Control-Allow-Origin", "*").build();
+				}
+			}
+			List<Environment> environments = configManager.getEnvironmentsAlone();
 			ResponseInfo<Environment> finalOuptut = responseDataEvaluation(responseData, null, "Environments Listed", environments);
 			return Response.ok(finalOuptut).header("Access-Control-Allow-Origin", "*").build();
 		} catch (ConfigurationException e) {
@@ -91,33 +106,6 @@ public class ConfigurationService extends RestBase {
 		.append(File.separatorChar)
 		.append(Constants.CONFIGURATION_INFO_FILE);
 		return builder.toString();
-	}
-	
-	@GET
-	@Path("/get")
-	@Produces (MediaType.APPLICATION_JSON)
-	public Response get() {
-		File configFile = new File("D:\\phresco_adaption\\framework\\phresco-framework-web\\src\\main\\resources\\phresco-env-config.xml");
-		try {
-			ConfigManager configManager = PhrescoFrameworkFactory.getConfigManager(configFile);
-//			Configuration configuration = configManager.getConfiguration("Production", "Server", "server");
-			List<Environment> environments = configManager.getEnvironments();
-			System.out.println(environments);
-			Gson gson = new Gson();
-			for (Environment environment : environments) {
-				Type jsonType = new TypeToken<Collection<Configuration>>(){}.getType();
-				String envJson = gson.toJson(environment.getConfigurations(), jsonType);
-				System.out.println(envJson);
-			}
-			return Response.ok(environments).header("Access-Control-Allow-Origin", "*").build();
-		} catch (PhrescoException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (ConfigurationException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		return Response.status(Status.EXPECTATION_FAILED).entity("").header("Access-Control-Allow-Origin", "*").build();
 	}
 }
 
