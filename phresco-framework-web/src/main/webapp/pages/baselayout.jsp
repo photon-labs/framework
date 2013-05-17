@@ -107,7 +107,8 @@
 		<script type="text/javascript" src="js/windowResizer_default.js" id="windowResizer"></script>
 		
 		<!-- jquery editable combobox -->
-		<script src="js/jquery.editable.combobox.js"></script>
+		<script src="js/customComboBox.js"></script>
+		
 		<script src="js/jss.min.js"></script>
 		
 		<!-- Color picker -->
