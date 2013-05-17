@@ -214,13 +214,8 @@ define(["framework/widgetWithTemplate", "features/listener/featuresListener"], f
 					var featureUpdatedata = {};
 					featureUpdatedata.name = $(currentVal).parent().attr("type");
 					featureUpdatedata.dispName = $(currentVal).parent().attr("dispName");
-					featureUpdatedata.dispName = $(currentVal).parent().attr("dispName");
 					featureUpdatedata.packaging = $(currentVal).parent().attr("packaging");
-					featureUpdatedata.type = $(currentVal).parent().attr("type");
-					/* console.info("$(currentVal).parent()", $(currentVal).parent().children('div.flt_right').children('select.input-mini').find(':selected').val());
-					console.info("$(currentVal).parent()", $(currentVal).parent().children('div.flt_right').children('select.input-mini').find(':selected').attr("scope"));
-					console.info("$(currentVal).parent()", $(currentVal).parent().children('div.flt_right').children('select.input-mini').find(':selected').text()); */
-					//featureUpdatedata.defaultModule = $(currentVal).next().children().eq(0).attr("defaultmodule");
+					featureUpdatedata.type = $(currentVal).parent().attr("type");					
 					featureUpdatedata.defaultModule = true;
 					featureUpdatedata.scope = $(currentVal).parent().children('div.flt_right').children('select.input-mini').find(':selected').attr("scope");
 					featureUpdatedata.versionID = $(currentVal).parent().children('div.flt_right').children('select.input-mini').find(':selected').val();
@@ -228,12 +223,10 @@ define(["framework/widgetWithTemplate", "features/listener/featuresListener"], f
 					var moduleId = $(currentVal).parent().children('div.flt_right').children('.moduleId').val();
 					featureUpdatedata.moduleId = moduleId; 
 					featureUpdatedata.artifactGroupId = moduleId;
-					console.info("featureUpdatedata", featureUpdatedata);
 					featureUpdatedataArray.push(featureUpdatedata);	
-					//console.info("featureUpdatedataArray", featureUpdatedataArray);					
 				});
-				//console.info("featureUpdatedataArray::::" + JSON.stringify(featureUpdatedataArray));
-				self.featuresListener.getFeaturesList(self.featuresListener.getRequestHeader(featureUpdatedataArray, "", ""), function(response) {
+				
+				self.featuresListener.getFeaturesUpdate(self.featuresListener.getRequestHeader(featureUpdatedataArray, "", ""), function(response) {
 					//console.info("response", response);
 				});
 			});
