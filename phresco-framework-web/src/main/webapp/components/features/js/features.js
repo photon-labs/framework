@@ -30,7 +30,6 @@ define(["framework/widgetWithTemplate", "features/listener/featuresListener"], f
 			self.registerHandlebars();
 		},
 		
-		
 		registerEvents : function () {
 			var self = this;
 
