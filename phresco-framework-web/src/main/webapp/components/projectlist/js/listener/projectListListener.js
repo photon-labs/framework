@@ -110,12 +110,7 @@ define(["framework/widget", "framework/widgetWithTemplate", "projectlist/api/pro
 			header = {
 				contentType: "application/json",				
 				dataType: "json",
-				requestPostBody: '',
 				webserviceurl: ''
-			}
-
-			if(projectRequestBody != "") {
-				header.requestPostBody = JSON.stringify(projectRequestBody);
 			}
 					
 			if(action == "delete") {
