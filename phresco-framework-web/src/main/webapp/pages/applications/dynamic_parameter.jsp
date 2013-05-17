@@ -194,9 +194,6 @@
 						}
 					}
 			
-					if ("edit".equalsIgnoreCase(parameter.getEditable())) {
-						parameterModel.setOptionOnclickFunction("jecOptionChange();");
-					}
 					parameterModel.setOnChangeFunction(onChangeFunction);
 					parameterModel.setObjectValue(psblValues);
 					parameterModel.setMultiple(Boolean.parseBoolean(parameter.getMultiple()));
@@ -207,15 +204,12 @@
 	<%				if ("edit".equalsIgnoreCase(parameter.getEditable())) {
 	%>
 					<script type="text/javascript">
-						$("#" + '<%= parameter.getKey() %>').jec();
-						$('.jecEditableOption').text("Type or select from the list");
-						<%-- $("#"+'<%= parameter.getKey() %>'+" .jecEditableOption").prop("selected", true); --%>
-						$("#" + '<%= parameter.getKey() %>').click(function() {
-							var optionClass = $("#"+'<%= parameter.getKey() %>'+" :selected").attr("class");
-							if (optionClass != undefined && optionClass == "jecEditableOption") {
-								 $('.jecEditableOption').text("");
-							}
-						});
+						$("#" + '<%= parameter.getKey() %>').customComboBox({
+	                        tipText : "Type or select from the list",
+	                        allowed : /[A-Za-z0-9\$\._\-\s]/,
+	                        notallowed : /[\<\>\$]/,
+	                        index : 'first',
+	                    });
 					</script>
 		
 	<%				}
@@ -249,9 +243,6 @@
 					} else {
 					    onChangeFunction = "";
 					}
-					if ("edit".equalsIgnoreCase(parameter.getEditable())) {
-						parameterModel.setOptionOnclickFunction("jecOptionChange();");
-					}
 					parameterModel.setOnChangeFunction(onChangeFunction);
 					parameterModel.setObjectValue(dynamicPsblValues);
 					parameterModel.setMultiple(Boolean.parseBoolean(parameter.getMultiple()));
@@ -263,15 +254,12 @@
 	<%				if ("edit".equalsIgnoreCase(parameter.getEditable())) {
 	%>
 					<script type="text/javascript">
-						$("#" + '<%= parameter.getKey() %>').jec();
-						$('.jecEditableOption').text("Type or select from the list");
-						<%-- $("#"+'<%= parameter.getKey() %>'+" .jecEditableOption").prop("selected", true); --%>
-						$("#" + '<%= parameter.getKey() %>').focus(function() {
-							var optionClass = $("#"+'<%= parameter.getKey() %>'+" :selected").attr("class");
-							if (optionClass != undefined && optionClass == "jecEditableOption") {
-								 $('.jecEditableOption').text("");
-							}
-						});
+						$("#" + '<%= parameter.getKey() %>').customComboBox({
+	                        tipText : "Type or select from the list",
+	                        allowed : /[A-Za-z0-9\$\._\-\s]/,
+	                        notallowed : /[\<\>\$]/,
+	                        index : 'first',
+	                    });
 					</script>
 		
 	<%				}
@@ -366,10 +354,7 @@
 	$(document).ready(function() {
 		showParameters();//To show the parameters based on the dependency
 		hidePopuploadingIcon();
-		$('.jecEditableOption').click(function() {
-	       $('.jecEditableOption').text("");
-	    });
-		
+				
 		$('#buildName').live('input propertychange', function(e) {
 			var str = $(this).val();
 			str = checkForSplChrExceptDot(str);
@@ -391,10 +376,7 @@
 		$("input[name=buildNumber]").val('<%= buildNumber %>');
 	<% } %>
 	
-	function jecOptionChange() {
-		 $('.jecEditableOption').text("Type or select from the list");
-	}
-	
+		
 	function buildValidateSuccess(lclURL, lclReaderSession) {
 		url = lclURL;
 		readerSession = lclReaderSession;
@@ -457,64 +439,67 @@
 		if (obj.options != undefined || obj.options != null) {
 			jecClass = obj.options[obj.selectedIndex].getAttribute('class');
 		}
-		var selectedOption = $(obj).val();
-		$(obj).blur();//To remove the focus from the current element
-		var dependencyAttr;
 		
-		var controlType = $(obj).prop('tagName');
-		if (controlType === 'INPUT') {
-			selectedOption = $(obj).is(':checked');
-			dependencyAttr = $(obj).attr('additionalParam');
-		} else if (controlType === 'SELECT') {
-			var previousDependencyAttr = $(obj).attr('additionalparam');//get the previvous dependency keys from additionalParam attr
-			var csvPreviousDependency = previousDependencyAttr.substring(previousDependencyAttr.indexOf('=') + 1);
-			dependencyAttr =  obj.options[obj.selectedIndex].getAttribute('additionalparam'); //$('option:selected', obj).attr('additionalParam'); 
+		if (jecClass != "jecEditableOption") {
+			var selectedOption = $(obj).val();
+			$(obj).blur();//To remove the focus from the current element
+			var dependencyAttr;
 			
-			if (csvPreviousDependency !== undefined && !isBlank(csvPreviousDependency) && 
-					csvPreviousDependency !==  dependencyAttr) {//hide event of all the dependencies of the previuos dependencies
-				var csvDependencies = getAllDependencies(csvPreviousDependency);
-				var previousDependencyArr = new Array();
-				previousDependencyArr = csvDependencies.split(',');
-				if (jecClass != 'jecEditableOption') {
-					hideControl(previousDependencyArr);					
+			var controlType = $(obj).prop('tagName');
+			if (controlType === 'INPUT') {
+				selectedOption = $(obj).is(':checked');
+				dependencyAttr = $(obj).attr('additionalParam');
+			} else if (controlType === 'SELECT') {
+				var previousDependencyAttr = $(obj).attr('additionalparam');//get the previvous dependency keys from additionalParam attr
+				var csvPreviousDependency = previousDependencyAttr.substring(previousDependencyAttr.indexOf('=') + 1);
+				dependencyAttr =  obj.options[obj.selectedIndex].getAttribute('additionalparam'); //$('option:selected', obj).attr('additionalParam'); 
+				
+				if (csvPreviousDependency !== undefined && !isBlank(csvPreviousDependency) && 
+						csvPreviousDependency !==  dependencyAttr) {//hide event of all the dependencies of the previuos dependencies
+					var csvDependencies = getAllDependencies(csvPreviousDependency);
+					var previousDependencyArr = new Array();
+					previousDependencyArr = csvDependencies.split(',');
+					if (jecClass != 'jecEditableOption') {
+						hideControl(previousDependencyArr);					
+					}
 				}
 			}
-		}
-		var csvDependencies;
-		changeEveDependancyListener(selectedOption, currentParamKey); // update the watcher while changing the drop down
-		if (dependencyAttr !== undefined && dependencyAttr != null) {
-			csvDependencies = dependencyAttr.substring(dependencyAttr.indexOf('=') + 1);
-			csvDependencies = getAllDependencies(csvDependencies);
-			var dependencyArr = new Array();
-			dependencyArr = csvDependencies.split(',');
-			for (var i = 0; i < dependencyArr.length; i+=1) {
-				$('#' + $.trim(dependencyArr[i]) + 'Control').show();
-				$('.' + $.trim(dependencyArr[i]) + 'PerformanceDivClass').show();//for performance context urls
-					
-				updateDependancy(dependencyArr[i]);
-			}
-			
-			//If the dependent child is select box, hide controls based on selected options - for on change event
-			for (var i = 0; i < dependencyArr.length; i+=1) {
-				var curId = $.trim(dependencyArr[i]);
-				var dependentCtrl = $("#"+curId).prop('tagName');
-					if (dependentCtrl === 'SELECT') {
-						var hideOptionDependency = $('#'+curId).find(":selected").attr('hide');
-						if (hideOptionDependency !== undefined && !isBlank(hideOptionDependency)) {
-							var hideOptionDependencyArr = new Array();
-							hideOptionDependencyArr = hideOptionDependency.split(',');
-							hideControl(hideOptionDependencyArr);
+			var csvDependencies;
+			changeEveDependancyListener(selectedOption, currentParamKey); // update the watcher while changing the drop down
+			if (dependencyAttr !== undefined && dependencyAttr != null) {
+				csvDependencies = dependencyAttr.substring(dependencyAttr.indexOf('=') + 1);
+				csvDependencies = getAllDependencies(csvDependencies);
+				var dependencyArr = new Array();
+				dependencyArr = csvDependencies.split(',');
+				for (var i = 0; i < dependencyArr.length; i+=1) {
+					$('#' + $.trim(dependencyArr[i]) + 'Control').show();
+					$('.' + $.trim(dependencyArr[i]) + 'PerformanceDivClass').show();//for performance context urls
+						
+					updateDependancy(dependencyArr[i]);
+				}
+				
+				//If the dependent child is select box, hide controls based on selected options - for on change event
+				for (var i = 0; i < dependencyArr.length; i+=1) {
+					var curId = $.trim(dependencyArr[i]);
+					var dependentCtrl = $("#"+curId).prop('tagName');
+						if (dependentCtrl === 'SELECT') {
+							var hideOptionDependency = $('#'+curId).find(":selected").attr('hide');
+							if (hideOptionDependency !== undefined && !isBlank(hideOptionDependency)) {
+								var hideOptionDependencyArr = new Array();
+								hideOptionDependencyArr = hideOptionDependency.split(',');
+								hideControl(hideOptionDependencyArr);
+							}
 						}
-					}
+					}	
+				}
+			
+			if ($(obj).attr("type") === 'checkbox' && showHideFlag === "false") {
+				if (!selectedOption) {
+					var previousDependencyArr = new Array();
+					previousDependencyArr = csvDependencies.split(',');
+					hideControl(previousDependencyArr);
 				}	
 			}
-		
-		if ($(obj).attr("type") === 'checkbox' && showHideFlag === "false") {
-			if (!selectedOption) {
-				var previousDependencyArr = new Array();
-				previousDependencyArr = csvDependencies.split(',');
-				hideControl(previousDependencyArr);
-			}	
 		}
 	}
 	

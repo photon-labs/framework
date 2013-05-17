@@ -1033,7 +1033,7 @@ function constructSingleSelectOptions(dependentValues, pushToElement, parameterT
 		var dynamicFirstValue = dependentValues[0].value;
 		var isEditableCombo = false;
 		if (editbleComboClass == "jecEditableOption") {//convert to editable combobox
-			var optionElement = "<option class='jecEditableOption'>Type or Select from list</option>";
+			var optionElement = "<option class='jecEditableOption'>Type or select from the list</option>";
 			$("#" + pushToElement).append(optionElement);
 			isEditableCombo = true;
 		}
@@ -1057,7 +1057,7 @@ function constructSingleSelectOptions(dependentValues, pushToElement, parameterT
 	} else if (parameterType.toLowerCase() != "list".toLowerCase()) {
 		$("#" + pushToElement).empty();
 		if (editbleComboClass == "jecEditableOption") {//convert to editable combobox
-			var optionElement = "<option class='jecEditableOption'>Type or Select from list</option>";
+			var optionElement = "<option class='jecEditableOption'>Type or select from the list</option>";
 			$("#" + pushToElement).append(optionElement);
 		}
 	} 
