@@ -78,10 +78,11 @@
 				</tr>
 			  </thead>
 			  <tbody>
+				{{#configurationList}}
 			  <tr>
-				<td>Production (Default)</td>  
-				<td>Lorem Ipsum Dummy Text</td>
-				<td><a><img src="../themes/default/images/helios/configure_icon.png" width="15" height="16" border="0" alt=""></a></td>
+				<td>{{name}}</td>  
+				<td>{{desc}}</td>
+				<td><a href="#" name="editConfiguration" key={{name}}><img src="../themes/default/images/helios/configure_icon.png" width="15" height="16" border="0" alt=""></a></td>
 				<td>
 					<a class="tooltiptop" href="#" data-toggle="tooltip" data-original-title="Clone" name="clone_pop"><img src="../themes/default/images/helios/clone_icon.png" width="20" height="18" border="0" alt=""></a>
 					<div id="clone_pop" class="dyn_popup popup_bg" style="display:none;">
@@ -146,30 +147,10 @@
 				</td>
 				<td><a class="tooltiptop" title="" data-placement="top" data-toggle="tooltip" href="#" data-original-title="Delete Row"><img src="../themes/default/images/helios/delete_row_icon.png" width="29" height="23" border="0" alt=""></a></td>
 			  </tr>
-			  <tr>
-				<td>Testing</td>  
-				<td>Lorem Ipsum Dummy Text</td>
-				<td><a><img src="../themes/default/images/helios/configure_icon.png" width="15" height="16" border="0" alt=""></a></td>
-				<td><a name="clone_pop" class="tooltiptop" href="#" data-toggle="tooltip" data-original-title="Clone"><img src="../themes/default/images/helios/clone_icon.png" width="20" height="18" border="0" alt=""></a></td>
-				<td><a class="tooltiptop" title="" data-placement="top" data-toggle="tooltip" href="#" data-original-title="Delete Row"><img src="../themes/default/images/helios/delete_row_icon.png" width="29" height="23" border="0" alt=""></a></td>
-			  </tr>
-			  <tr>
-				<td>Staging</td>  
-				<td>Lorem Ipsum Dummy Text</td>
-				<td><a><img src="../themes/default/images/helios/configure_icon.png" width="15" height="16" border="0" alt=""></a></td>
-				<td><a name="clone_pop" class="tooltiptop" href="#" data-toggle="tooltip" data-original-title="Clone"><img src="../themes/default/images/helios/clone_icon.png" width="20" height="18" border="0" alt=""></a></td>
-				<td><a class="tooltiptop" title="" data-placement="top" data-toggle="tooltip" href="#" data-original-title="Delete Row"><img src="../themes/default/images/helios/delete_row_icon.png" width="29" height="23" border="0" alt=""></a></td>
-			  </tr>
-			  <tr>
-				<td>Test</td>  
-				<td>Lorem Ipsum Dummy Text</td>
-				<td><a><img src="../themes/default/images/helios/configure_icon.png" width="15" height="16" border="0" alt=""></a></td>
-				<td><a name="clone_pop" class="tooltiptop" href="#" data-toggle="tooltip" data-original-title="Clone"><img src="../themes/default/images/helios/clone_icon.png" width="20" height="18" border="0" alt=""></a></td>
-				<td><a class="tooltiptop" title="" data-placement="top" data-toggle="tooltip" href="#" data-original-title="Delete Row"><img src="../themes/default/images/helios/delete_row_icon.png" width="29" height="23" border="0" alt=""></a></td>
-			  </tr>
-		   
+			{{/configurationList}}
 			  </tbody>
 		</table>
 		<!--features_content_main div ends here -->
 	</section>
+
 </div>	

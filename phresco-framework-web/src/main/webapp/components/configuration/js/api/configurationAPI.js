@@ -17,5 +17,5 @@ define(["framework/base", "api/api"], function() {
 		
 	});
 
-	return Clazz.com.components.configuration.js.api.LoginAPI;
+	return Clazz.com.components.configuration.js.api.ConfigurationAPI;
 });

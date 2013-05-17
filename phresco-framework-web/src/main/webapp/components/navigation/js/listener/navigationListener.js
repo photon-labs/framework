@@ -1,4 +1,4 @@
-define(["framework/widget", "navigation/api/navigationAPI", "projects/project", "projects/editproject", "application/application", "features/features", "codequality/codequality", "configuration/configuration", "build/build", "unittest/unittest"], function() {
+define(["framework/widget", "navigation/api/navigationAPI", "projects/project", "projects/editproject", "application/application", "features/features", "codequality/codequality", "configuration/configuration", "build/build", "unittest/unittest", "configuration/editConfiguration"], function() {
 
 	Clazz.createPackage("com.components.navigation.js.listener");
 
@@ -18,6 +18,7 @@ define(["framework/widget", "navigation/api/navigationAPI", "projects/project", 
 		currentTab : null,
 		editproject : null,
 		unittest : null,
+		editConfiguration : null,
 		
 		/***
 		 * Called in initialization time of this class 
@@ -138,6 +139,14 @@ define(["framework/widget", "navigation/api/navigationAPI", "projects/project", 
 							self.unittest = new Clazz.com.components.unittest.js.UnitTest();
 							
 						retuenObj = self.unittest;
+						break;
+					
+					case commonVariables.editConfiguration :
+						
+						if(self.editConfiguration === null)
+							self.editConfiguration = new Clazz.com.components.configuration.js.EditConfiguration();
+							
+						retuenObj = self.editConfiguration;
 						break;
 				
 				}

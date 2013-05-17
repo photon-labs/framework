@@ -11,7 +11,9 @@ var commonVariables = {
 	
 	footer : "footer",
 	footerContext : "",
-		
+	
+	environmentName : "",
+	
 	login : "login",
 	loginContext : "login",
 
@@ -35,6 +37,7 @@ var commonVariables = {
 	codequality : "codequality",
 	
 	configuration : "configuration",
+	editConfiguration : "editConfiguration",
 	
 	unittest : "unittest",
 	

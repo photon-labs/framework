@@ -1,0 +1,210 @@
+<section class="add_config">
+		<div class="second_title">
+				<!--<input type="submit" value="Add Environment" class="btn btn_style"> -->
+				
+				<div class="navbar navbar-static flt_right">
+					<ul class="nav">
+						<li id="fat-menu" class="dropdown">
+						  <a href="#" id="drop3" role="button" class="dropdown-toggle drop-qual" data-toggle="dropdown"><input type="submit" value="Add Configuration" class="btn btn_style"></a>
+						  <div class="dropdown-menu cust_sel fix_height" role="menu" aria-labelledby="drop3">
+							<ul>
+								<li><a href="#">Server</a></li>
+								<li><a href="#">Database</a></li>
+								<li><a href="#">LDAP</a></li>
+								<li><a href="#">Testing</a></li>
+								<li><a href="#">Email</a></li>
+							</ul>
+						  </div>
+						</li>
+					</ul>
+				</div>
+				
+			<!--second_title div ends here -->
+		</div>
+		
+		<section class="features_content_main tab_line">
+			<table class="table table_border table-bordered" cellpadding="0" cellspacing="0" border="0">  
+				<tbody> 
+					<tr>
+						{{#configurations}}
+							<td>Name</td>
+							<td><input type="text" value="{{name}}"/></td>
+							<td>Description</td>
+							<td colspan="3"><input type="text" value="{{desc}}"/></td>
+						{{/configurations}}
+					</tr>
+					<tr class="row_bg">
+						<td colspan="3">Servers</td>
+						<td colspan="3"><img src="../themes/default/images/helios/close_icon.png"  width="25" height="20" border="0" alt="" class="flt_right"></td>
+					</tr>
+					<tr>
+						<td>Name <sup>*</sup></td>
+						<td><input type="text" placeholder="Configuration Name"/></td>
+						<td>Type <sup>*</sup></td>
+						<td>
+							<select>
+								<option>Database</option>
+							</select>
+						</td>
+						<td>Description</td>
+						<td><input type="text" placeholder="Environment Description"/></td>
+					</tr>
+					<tr>
+						<td>Port <sup>*</sup></td>
+						<td><input type="text" /></td>
+						<td>Host <sup>*</sup></td>
+						<td><input type="text"></td>
+						<td>Username <sup>*</sup></td>
+						<td><input type="text"/></td>
+					</tr>
+					<tr>
+						<td>Password <sup>*</sup></td>
+						<td><input type="password" /></td>
+						<td>DB Name <sup>*</sup></td>
+						<td><input type="text"></td>
+						<td>DB Type <sup>*</sup></td>
+						<td><input type="text"/></td>
+					</tr>
+					<tr>
+						<td>Version <sup>*</sup></td>
+						<td>
+							<select>
+								<option>1.0</option>
+							</select>
+						</td>
+					</tr>
+					<tr class="row_bg">
+						<td colspan="3">Database</td>
+						<td colspan="3"><img src="../themes/default/images/helios/close_icon.png"  width="25" height="20" border="0" alt="" class="flt_right"></td>
+					</tr>
+					<tr>
+						<td>Name <sup>*</sup></td>
+						<td><input type="text" placeholder="Configuration Name"/></td>
+						<td>Type <sup>*</sup></td>
+						<td>
+							<select>
+								<option>Database</option>
+							</select>
+						</td>
+						<td>Description</td>
+						<td><input type="text" placeholder="Environment Description"/></td>
+					</tr>
+					<tr>
+						<td>Port <sup>*</sup></td>
+						<td><input type="text" /></td>
+						<td>Host <sup>*</sup></td>
+						<td><input type="text"></td>
+						<td>Username <sup>*</sup></td>
+						<td><input type="text"/></td>
+					</tr>
+					<tr>
+						<td>Password <sup>*</sup></td>
+						<td><input type="password" /></td>
+						<td>DB Name <sup>*</sup></td>
+						<td><input type="text"></td>
+						<td>DB Type <sup>*</sup></td>
+						<td><input type="text"/></td>
+					</tr>
+					<tr>
+						<td>Version <sup>*</sup></td>
+						<td>
+							<select>
+								<option>1.0</option>
+							</select>
+						</td>
+					</tr>
+					<tr class="row_bg">
+						<td colspan="3">LDAP</td>
+						<td colspan="3"><img src="../themes/default/images/helios/close_icon.png"  width="25" height="20" border="0" alt="" class="flt_right"></td>
+					</tr>
+					<tr>
+						<td>Name <sup>*</sup></td>
+						<td><input type="text" placeholder="Configuration Name"/></td>
+						<td>Type <sup>*</sup></td>
+						<td>
+							<select>
+								<option>Database</option>
+							</select>
+						</td>
+						<td>Description</td>
+						<td><input type="text" placeholder="Environment Description"/></td>
+					</tr>
+					<tr>
+						<td>Port <sup>*</sup></td>
+						<td><input type="text" /></td>
+						<td>Host <sup>*</sup></td>
+						<td><input type="text"></td>
+						<td>Username <sup>*</sup></td>
+						<td><input type="text"/></td>
+					</tr>
+					<tr>
+						<td>Password <sup>*</sup></td>
+						<td><input type="password" /></td>
+						<td>DB Name <sup>*</sup></td>
+						<td><input type="text"></td>
+						<td>DB Type <sup>*</sup></td>
+						<td><input type="text"/></td>
+					</tr>
+					<tr>
+						<td>Version <sup>*</sup></td>
+						<td>
+							<select>
+								<option>1.0</option>
+							</select>
+						</td>
+					</tr>
+					<tr class="row_bg">
+						<td colspan="3">Testing</td>
+						<td colspan="3"><img src="../themes/default/images/helios/close_icon.png"  width="25" height="20" border="0" alt="" class="flt_right"></td>
+					</tr>
+					<tr>
+						<td>Name <sup>*</sup></td>
+						<td><input type="text" placeholder="Configuration Name"/></td>
+						<td>Type <sup>*</sup></td>
+						<td>
+							<select>
+								<option>Database</option>
+							</select>
+						</td>
+						<td>Description</td>
+						<td><input type="text" placeholder="Environment Description"/></td>
+					</tr>
+					<tr>
+						<td>Port <sup>*</sup></td>
+						<td><input type="text" /></td>
+						<td>Host <sup>*</sup></td>
+						<td><input type="text"></td>
+						<td>Username <sup>*</sup></td>
+						<td><input type="text"/></td>
+					</tr>
+					<tr>
+						<td>Password <sup>*</sup></td>
+						<td><input type="password" /></td>
+						<td>DB Name <sup>*</sup></td>
+						<td><input type="text"></td>
+						<td>DB Type <sup>*</sup></td>
+						<td><input type="text"/></td>
+					</tr>
+					<tr>
+						<td>Version <sup>*</sup></td>
+						<td>
+							<select>
+								<option>1.0</option>
+							</select>
+						</td>
+					</tr>
+				</tbody>
+			</table>
+			
+			
+			
+			<!--features_content_main div ends here -->
+		</section>
+		<section class="content_end">
+			<div class="flt_right">
+				<input type="submit" value="Update" class="btn btn_style update_btn">
+				<input id="cancelEditConfig"" type="submit" value="Cancel" class="btn btn_style cancel_icon_btn">
+			</div>
+			<!--content_title ends here -->
+		</section>
+	</section> 

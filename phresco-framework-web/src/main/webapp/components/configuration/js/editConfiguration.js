@@ -1,14 +1,14 @@
 define(["framework/widgetWithTemplate", "configuration/listener/configurationListener"], function() {
 	Clazz.createPackage("com.components.configuration.js");
 
-	Clazz.com.components.configuration.js.Configuration = Clazz.extend(Clazz.WidgetWithTemplate, {
+	Clazz.com.components.configuration.js.EditConfiguration = Clazz.extend(Clazz.WidgetWithTemplate, {
 		
 		// template URL, used to indicate where to get the template
-		templateUrl: commonVariables.contexturl + "/components/configuration/template/configuration.tmp",
+		templateUrl: commonVariables.contexturl + "/components/configuration/template/editConfiguration.tmp",
 		configUrl: "../components/configuration/config/config.json",
-		name : commonVariables.configuration,
+		name : commonVariables.editConfiguration,
 		configurationlistener : null,
-		editConfigurationEvent : null,
+		cancelEditConfiguationEvent : null,
 		configRequestBody : null,
 		templateData : {},
 		
@@ -33,11 +33,11 @@ define(["framework/widgetWithTemplate", "configuration/listener/configurationLis
 		
 		preRender: function(whereToRender, renderFunction){
 			var self = this;
-			self.configurationlistener.getConfigurationList(self.configurationlistener.getRequestHeader(self.configRequestBody, "list"), function(response) {
-					self.templateData.configurationList = response.data;	
+			self.configurationlistener.getConfigurationList(self.configurationlistener.getRequestHeader(self.configRequestBody, "edit"), function(response) {
+					self.templateData.configurations = response.data;	
 					renderFunction(self.templateData, whereToRender);
 				});			
-		}, 
+		},
 		/***
 		 * Called after the preRender() and bindUI() completes. 
 		 * Override and add any preRender functionality here
@@ -49,8 +49,8 @@ define(["framework/widgetWithTemplate", "configuration/listener/configurationLis
 		
 		registerEvents : function(configurationlistener) {
 			var self=this;
-			self.editConfigurationEvent = new signals.Signal();
-			self.editConfigurationEvent.add(configurationlistener.editConfiguration, configurationlistener);
+			self.cancelEditConfiguationEvent = new signals.Signal();
+			self.cancelEditConfiguationEvent.add(configurationlistener.cancelEditConfiguation, configurationlistener);
 		},
 
 		/***
@@ -60,24 +60,12 @@ define(["framework/widgetWithTemplate", "configuration/listener/configurationLis
 		bindUI : function() {
 			var self = this;
 			$(".tooltiptop").tooltip();
-			$("a[name=clone_pop]").unbind("click");
-			$("a[name=clone_pop]").click(function() {
-				self.opencc(this, $(this).attr('name'));
-			});
 			
-			$("input[name=env_pop]").unbind("click");
-			$("input[name=env_pop]").click(function() {
-				self.opencc(this, $(this).attr('name'));
+			$("#cancelEditConfig").click(function() {
+				self.cancelEditConfiguationEvent.dispatch();
 			});
-			
-			$("a[name=editConfiguration]").unbind("click");
-			$("a[name=editConfiguration]").click(function() {
-				self.editConfigurationEvent.dispatch($(this).attr('key'));
-			});
-			
-			Clazz.navigationController.mainContainer = commonVariables.contentPlaceholder;
 		}
 	});
 
-	return Clazz.com.components.configuration.js.Configuration;
+	return Clazz.com.components.configuration.js.EditConfiguration;
 });
