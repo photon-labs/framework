@@ -123,7 +123,6 @@ define(["framework/widget", "framework/widgetWithTemplate", "projectlist/api/pro
 			}
 			return header;
 		},
-
 		
 		editApplication : function(value, techid) {
 			var self = this;
