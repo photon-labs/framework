@@ -125,6 +125,7 @@ define(["framework/widgetWithTemplate", "projectlist/listener/projectListListene
 			$('a[name=editApplication]').click(function(){
 				var value = $(this).closest("tr").attr("class");
 				var techid = $(this).closest("tr").attr("techid");
+				commonVariables.techId = techid;
 				$("#myTab li#appinfo a").addClass("act");
 				self.onProjectsEvent.dispatch(value , techid);
 			});

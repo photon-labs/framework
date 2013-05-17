@@ -13,6 +13,7 @@ var commonVariables = {
 	footerContext : "",
 	
 	environmentName : "",
+	techId : "",
 	
 	login : "login",
 	loginContext : "login",

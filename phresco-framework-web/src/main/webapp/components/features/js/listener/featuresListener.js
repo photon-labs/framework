@@ -118,13 +118,14 @@ define(["framework/widget", "features/api/featuresAPI", "features/features",  "a
 			var url;
 			var userId = JSON.parse(self.featuresAPI.localVal.getSession("userInfo"));
 			var appDirName = self.featuresAPI.localVal.getJson("appDirName");
+			var techId = commonVariables.techId;
 			var header = {
 				contentType: "application/json",
 				dataType: "json"
 			};
 			if(type != ""){
 				header.requestMethod = "GET";
-				header.webserviceurl = commonVariables.webserviceurl+commonVariables.featurePageContext+"/list?customerId=photon&techId=tech-java-webservice&type="+type+"&userId="+userId.id;
+				header.webserviceurl = commonVariables.webserviceurl+commonVariables.featurePageContext+"/list?customerId=photon&techId="+ techId +"&type="+type+"&userId="+userId.id;
 			}
 			else {
 				header.requestMethod = "PUT";
