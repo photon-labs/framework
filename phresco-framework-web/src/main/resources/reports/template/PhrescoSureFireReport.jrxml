@@ -125,7 +125,7 @@
 					<textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
 				</textField>
 				<textField>
-					<reportElement style="PSFRTitleLabelValue" x="290" y="69" width="100" height="20"/>
+					<reportElement style="PSFRTitleLabelValue" x="290" y="69" width="257" height="20"/>
 					<textElement verticalAlignment="Middle">
 						<font fontName="Times New Roman" size="11" isBold="true"/>
 					</textElement>

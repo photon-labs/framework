@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="PhrescoXmlReport" pageWidth="555" pageHeight="842" columnWidth="555" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<import value="org.apache.commons.codec.binary.Base64"/>
+	<style name="PMSFRTitle"/>
+	<style name="PMSFRTitleRect"/>
+	<style name="PMSFRTitleRectLogo"/>
+	<style name="PMSFRTitleRectDetail"/>
+	<style name="PMSFRTitleLabel"/>
+	<style name="PMSFRTitleLabelValue"/>
+	<style name="PMSFRCopyRight"/>
+	<style name="PMSFRCopyRightPageNo"/>
+	<style name="PMSFRHeading"/>
+	<style name="PMSFRHeadingLabel"/>
+	<style name="PMSFRHeadingLabelValue"/>
+	<style name="PMSFRHeadingRow"/>
+	<style name="PMSFRHeadingRowLabel"/>
+	<style name="PMSFRHeadingRowLabelValue"/>
+	<parameter name="testType" class="java.lang.String" isForPrompting="false"/>
+	<parameter name="reportsDataType" class="java.lang.String"/>
+	<parameter name="SUBREPORT_DIR" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="isClassEmpty" class="java.lang.Boolean"/>
+	<field name="moduleOrTechName" class="java.lang.String"/>
+	<field name="moduleOrTechLabel" class="java.lang.String"/>
+	<field name="sureFireReport" class="java.util.List"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<detail>
+		<band height="81">
+			<frame>
+				<reportElement x="0" y="0" width="555" height="81"/>
+				<rectangle radius="10">
+					<reportElement style="PMSFRHeadingRow" x="1" y="10" width="552" height="20"/>
+				</rectangle>
+				<textField>
+					<reportElement style="PMSFRHeadingRowLabelValue" x="232" y="10" width="88" height="20"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Times New Roman" size="11" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{moduleOrTechLabel} +" :"]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement style="PMSFRHeadingRowLabelValue" x="324" y="10" width="229" height="20"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Times New Roman" size="11" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{moduleOrTechName}]]></textFieldExpression>
+				</textField>
+				<subreport>
+					<reportElement x="1" y="31" width="553" height="50"/>
+					<subreportParameter name="testType">
+						<subreportParameterExpression><![CDATA[$P{testType}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="reportsDataType">
+						<subreportParameterExpression><![CDATA[$P{reportsDataType}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="isClassEmpty">
+						<subreportParameterExpression><![CDATA[$P{isClassEmpty}]]></subreportParameterExpression>
+					</subreportParameter>
+					<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource($F{sureFireReport})]]></dataSourceExpression>
+					<subreportExpression><![CDATA["PhrescoModuleUnitCumulativeSummaryReport.jasper"]]></subreportExpression>
+				</subreport>
+				<textField>
+					<reportElement style="PMSFRTitleLabel" x="18" y="10" width="214" height="20" forecolor="#FFFFFF"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Times New Roman" size="11" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$P{testType}.toUpperCase() + " TEST REPORT"]]></textFieldExpression>
+				</textField>
+			</frame>
+		</band>
+	</detail>
+</jasperReport>

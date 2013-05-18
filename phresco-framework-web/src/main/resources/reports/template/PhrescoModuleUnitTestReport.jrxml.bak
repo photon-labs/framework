@@ -3,15 +3,15 @@
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="0"/>
-	<style name="FCRTitle"/>
-	<style name="FCRTitleRect"/>
-	<style name="FCRTitleRectLogo"/>
-	<style name="FCRTitleRectDetail"/>
-	<style name="FCRTitleLabel"/>
-	<style name="FCRTitleLabelValue"/>
-	<style name="FCRHeading"/>
-	<style name="FCRHeadingLabel"/>
-	<style name="FCRHeadingLabelValue"/>
+	<style name="UCRTitle"/>
+	<style name="UCRTitleRect"/>
+	<style name="UCRTitleRectLogo"/>
+	<style name="UCRTitleRectDetail"/>
+	<style name="UCRTitleLabel"/>
+	<style name="UCRTitleLabelValue"/>
+	<style name="UCRHeading"/>
+	<style name="UCRHeadingLabel"/>
+	<style name="UCRHeadingLabelValue"/>
 	<parameter name="reportsDataType" class="java.lang.String"/>
 	<parameter name="testType" class="java.lang.String"/>
 	<parameter name="isClassEmpty" class="java.lang.Boolean"/>
@@ -24,32 +24,14 @@
 	<background>
 		<band splitType="Stretch"/>
 	</background>
-	<pageHeader>
-		<band height="28">
-			<frame>
-				<reportElement style="FCRHeading" mode="Opaque" x="0" y="0" width="555" height="24">
-					<printWhenExpression><![CDATA[$P{testType}.contains("functional") && !$F{testSuites}.isEmpty() || $P{testType}.contains("functional") && !$F{allTestSuites}.isEmpty()]]></printWhenExpression>
-				</reportElement>
-				<staticText>
-					<reportElement x="5" y="4" width="286" height="20" forecolor="#FFFFFF" backcolor="#FFFFFF"/>
-					<textElement>
-						<font fontName="Times New Roman" size="14" isBold="true"/>
-					</textElement>
-					<text><![CDATA[Functional Test Report]]></text>
-				</staticText>
-			</frame>
-		</band>
-	</pageHeader>
 	<detail>
-		<band height="217">
+		<band height="202">
 			<frame>
-				<reportElement x="0" y="6" width="555" height="211" isRemoveLineWhenBlank="true">
-					<printWhenExpression><![CDATA[$P{testType}.contains("functional") && !$F{testSuites}.isEmpty()]]></printWhenExpression>
+				<reportElement x="0" y="5" width="555" height="197" isRemoveLineWhenBlank="true">
+					<printWhenExpression><![CDATA[!$F{testSuites}.isEmpty()]]></printWhenExpression>
 				</reportElement>
 				<subreport>
-					<reportElement x="0" y="0" width="555" height="211" isRemoveLineWhenBlank="true">
-						<printWhenExpression><![CDATA[$P{reportsDataType}.equals("detail")]]></printWhenExpression>
-					</reportElement>
+					<reportElement x="0" y="0" width="555" height="197" isRemoveLineWhenBlank="true"/>
 					<subreportParameter name="testType">
 						<subreportParameterExpression><![CDATA[$P{testType}]]></subreportParameterExpression>
 					</subreportParameter>

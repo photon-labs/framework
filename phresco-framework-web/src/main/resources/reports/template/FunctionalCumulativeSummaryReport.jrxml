@@ -41,26 +41,22 @@
 		</band>
 	</pageHeader>
 	<detail>
-		<band height="217">
+		<band height="213" splitType="Stretch">
+			<printWhenExpression><![CDATA[$P{testType}.equals( "functional" )]]></printWhenExpression>
 			<frame>
-				<reportElement x="0" y="6" width="555" height="211" isRemoveLineWhenBlank="true">
-					<printWhenExpression><![CDATA[$P{testType}.contains("functional") && !$F{testSuites}.isEmpty()]]></printWhenExpression>
+				<reportElement x="0" y="0" width="555" height="211" isRemoveLineWhenBlank="true">
+					<printWhenExpression><![CDATA[$P{testType}.contains("functional") && !$F{allTestSuites}.isEmpty() || $P{testType}.contains("functional") && !$F{testSuites}.isEmpty()]]></printWhenExpression>
 				</reportElement>
 				<subreport>
-					<reportElement x="0" y="0" width="555" height="211" isRemoveLineWhenBlank="true">
-						<printWhenExpression><![CDATA[$P{reportsDataType}.equals("detail")]]></printWhenExpression>
-					</reportElement>
-					<subreportParameter name="testType">
-						<subreportParameterExpression><![CDATA[$P{testType}]]></subreportParameterExpression>
+					<reportElement x="0" y="0" width="555" height="211" isRemoveLineWhenBlank="true"/>
+					<subreportParameter name="allTestSuites">
+						<subreportParameterExpression><![CDATA[$F{allTestSuites}]]></subreportParameterExpression>
 					</subreportParameter>
 					<subreportParameter name="reportsDataType">
 						<subreportParameterExpression><![CDATA[$P{reportsDataType}]]></subreportParameterExpression>
 					</subreportParameter>
-					<subreportParameter name="isClassEmpty">
-						<subreportParameterExpression><![CDATA[$P{isClassEmpty}]]></subreportParameterExpression>
-					</subreportParameter>
-					<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource($F{testSuites})]]></dataSourceExpression>
-					<subreportExpression><![CDATA["PhrescoSureFireDetailReport.jasper"]]></subreportExpression>
+					<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.JREmptyDataSource()]]></dataSourceExpression>
+					<subreportExpression><![CDATA["PhrescoSureFireReport_subreport1.jasper"]]></subreportExpression>
 				</subreport>
 			</frame>
 		</band>

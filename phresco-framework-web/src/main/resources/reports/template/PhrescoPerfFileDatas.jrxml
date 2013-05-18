@@ -72,6 +72,7 @@
 	<parameter name="totalAvgBytes" class="java.lang.String"/>
 	<parameter name="reportsDataType" class="java.lang.String"/>
 	<parameter name="jmeterTestResult" class="java.util.List"/>
+	<parameter name="showGraphs" class="java.lang.Boolean" isForPrompting="false"/>
 	<detail>
 		<band height="50">
 			<frame>
@@ -439,6 +440,7 @@
 	</detail>
 	<summary>
 		<band height="231">
+			<printWhenExpression><![CDATA[$P{showGraphs}.booleanValue()]]></printWhenExpression>
 			<frame>
 				<reportElement x="1" y="0" width="554" height="229"/>
 				<subreport>

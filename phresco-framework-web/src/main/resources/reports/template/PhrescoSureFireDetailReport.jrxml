@@ -67,7 +67,9 @@
 				</textField>
 			</frame>
 			<frame>
-				<reportElement x="0" y="50" width="555" height="272" isRemoveLineWhenBlank="true"/>
+				<reportElement x="0" y="50" width="555" height="272" isRemoveLineWhenBlank="true">
+					<printWhenExpression><![CDATA[!$F{testCases}.isEmpty()]]></printWhenExpression>
+				</reportElement>
 				<subreport>
 					<reportElement x="0" y="0" width="555" height="272" isRemoveLineWhenBlank="true"/>
 					<subreportParameter name="testType">

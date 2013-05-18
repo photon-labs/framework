@@ -18,6 +18,7 @@
 	<parameter name="testType" class="java.lang.String" isForPrompting="false"/>
 	<parameter name="projectCode" class="java.lang.String" isForPrompting="false"/>
 	<parameter name="reportsDataType" class="java.lang.String"/>
+	<parameter name="showGraphs" class="java.lang.Boolean" isForPrompting="false"/>
 	<field name="fileName" class="java.lang.String"/>
 	<field name="deviceReport" class="java.util.List"/>
 	<background>
@@ -28,7 +29,7 @@
 			<frame>
 				<reportElement style="PAPCRHeading" mode="Opaque" x="0" y="0" width="555" height="24"/>
 				<staticText>
-					<reportElement x="5" y="3" width="313" height="17" forecolor="#FFFFFF"/>
+					<reportElement style="PAPCRTitleLabel" x="5" y="3" width="313" height="17"/>
 					<textElement>
 						<font fontName="Times New Roman" size="12" isBold="true"/>
 					</textElement>
@@ -58,6 +59,9 @@
 					<reportElement x="0" y="26" width="555" height="36" isRemoveLineWhenBlank="true"/>
 					<subreportParameter name="reportsDataType">
 						<subreportParameterExpression><![CDATA[$P{reportsDataType}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="showGraphs">
+						<subreportParameterExpression><![CDATA[$P{showGraphs}]]></subreportParameterExpression>
 					</subreportParameter>
 					<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource($F{deviceReport})]]></dataSourceExpression>
 					<subreportExpression><![CDATA["PhrescoAndroidPerfFiles.jasper"]]></subreportExpression>

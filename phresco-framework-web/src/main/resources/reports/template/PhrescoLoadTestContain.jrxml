@@ -31,6 +31,10 @@
 	<parameter name="copyRights" class="java.lang.String"/>
 	<field name="fileName" class="java.lang.String"/>
 	<field name="testResults" class="java.util.List"/>
+	<variable name="isShowGraphs" class="java.lang.Boolean">
+		<variableExpression><![CDATA[Boolean.TRUE]]></variableExpression>
+		<initialValueExpression><![CDATA[Boolean.TRUE]]></initialValueExpression>
+	</variable>
 	<title>
 		<band height="154" splitType="Stretch">
 			<frame>
@@ -124,7 +128,7 @@
 					<textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
 				</textField>
 				<textField>
-					<reportElement style="PLTCTitleLabelValue" x="290" y="69" width="100" height="20"/>
+					<reportElement style="PLTCTitleLabelValue" x="290" y="69" width="257" height="20"/>
 					<textElement verticalAlignment="Middle">
 						<font fontName="Times New Roman" size="11" isBold="true"/>
 					</textElement>
@@ -178,6 +182,9 @@
 					</subreportParameter>
 					<subreportParameter name="testResults">
 						<subreportParameterExpression><![CDATA[$F{testResults}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="showGraphs">
+						<subreportParameterExpression><![CDATA[$V{isShowGraphs}]]></subreportParameterExpression>
 					</subreportParameter>
 					<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.JREmptyDataSource()]]></dataSourceExpression>
 					<subreportExpression><![CDATA["PhrescoLoadTestSepDatas.jasper"]]></subreportExpression>

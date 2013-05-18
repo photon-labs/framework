@@ -42,25 +42,6 @@
 		</band>
 	</pageHeader>
 	<detail>
-		<band height="213" splitType="Stretch">
-			<printWhenExpression><![CDATA[$P{testType}.contains("unit")]]></printWhenExpression>
-			<frame>
-				<reportElement x="0" y="0" width="555" height="211" isRemoveLineWhenBlank="true">
-					<printWhenExpression><![CDATA[$P{testType}.contains("unit") && !$F{allTestSuites}.isEmpty()]]></printWhenExpression>
-				</reportElement>
-				<subreport>
-					<reportElement x="0" y="0" width="555" height="211" isRemoveLineWhenBlank="true"/>
-					<subreportParameter name="allTestSuites">
-						<subreportParameterExpression><![CDATA[$F{allTestSuites}]]></subreportParameterExpression>
-					</subreportParameter>
-					<subreportParameter name="reportsDataType">
-						<subreportParameterExpression><![CDATA[$P{reportsDataType}]]></subreportParameterExpression>
-					</subreportParameter>
-					<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.JREmptyDataSource()]]></dataSourceExpression>
-					<subreportExpression><![CDATA["PhrescoSureFireReport_subreport1.jasper"]]></subreportExpression>
-				</subreport>
-			</frame>
-		</band>
 		<band height="217">
 			<frame>
 				<reportElement x="0" y="5" width="555" height="211" isRemoveLineWhenBlank="true">

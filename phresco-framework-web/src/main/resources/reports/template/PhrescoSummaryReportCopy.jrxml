@@ -1,0 +1,206 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="PhrescoXmlReport" pageWidth="555" pageHeight="842" columnWidth="555" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<import value="org.apache.commons.codec.binary.Base64"/>
+	<style name="PSRTitle"/>
+	<style name="PSRTitleRect"/>
+	<style name="PSRTitleRectLogo"/>
+	<style name="PSRTitleRectDetail"/>
+	<style name="PSRTitleLabel"/>
+	<style name="PSRTitleLabelValue"/>
+	<style name="PSRCopyRight"/>
+	<style name="PSRCopyRightPageNo"/>
+	<style name="PSRHeading"/>
+	<style name="PSRHeadingLabel"/>
+	<style name="PSRHeadingLabelValue"/>
+	<style name="PSRHeadingRow"/>
+	<style name="PSRHeadingRowLabel"/>
+	<style name="PSRHeadingRowLabelValue"/>
+	<parameter name="SUBREPORT_DIR" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="projectCode" class="java.lang.String"/>
+	<parameter name="reportsDataType" class="java.lang.String"/>
+	<parameter name="performanceSpecialHandle" class="java.lang.Boolean"/>
+	<parameter name="unitTestReports" class="java.util.Collection">
+		<defaultValueExpression><![CDATA[!$P{unitTestReports}.isEmpty()]]></defaultValueExpression>
+	</parameter>
+	<parameter name="functionalTestReports" class="java.util.Collection">
+		<defaultValueExpression><![CDATA[!$P{functionalTestReports}.isEmpty()]]></defaultValueExpression>
+	</parameter>
+	<parameter name="performanceTestReports" class="java.util.Collection"/>
+	<parameter name="loadTestReports" class="java.util.Collection"/>
+	<parameter name="projectName" class="java.lang.String"/>
+	<parameter name="techName" class="java.lang.String"/>
+	<parameter name="sonarReport" class="java.util.Collection"/>
+	<parameter name="version" class="java.lang.String"/>
+	<parameter name="logo" class="java.lang.String"/>
+	<parameter name="logoBase64Img" class="java.io.InputStream">
+		<defaultValueExpression><![CDATA[new ByteArrayInputStream(new Base64().decodeBase64($P{logo}.getBytes("UTF-8")))]]></defaultValueExpression>
+	</parameter>
+	<parameter name="isMultiModuleProject" class="java.lang.Boolean"/>
+	<parameter name="multiModuleUnitTestReports" class="java.util.List"/>
+	<parameter name="copyRights" class="java.lang.String"/>
+	<parameter name="isClassEmpty" class="java.lang.Boolean"/>
+	<parameter name="componentTestReports" class="java.util.Collection"/>
+	<field name="moduleOrTechName" class="java.lang.String"/>
+	<field name="moduleOrTechLabel" class="java.lang.String"/>
+	<field name="sureFireReport" class="java.util.List"/>
+	<variable name="isShowGraphs" class="java.lang.Boolean">
+		<variableExpression><![CDATA[Boolean.FALSE]]></variableExpression>
+		<initialValueExpression><![CDATA[Boolean.FALSE]]></initialValueExpression>
+	</variable>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="36">
+			<staticText>
+				<reportElement x="0" y="10" width="169" height="18"/>
+				<textElement>
+					<font fontName="Times New Roman" size="14" isBold="true" isItalic="false" isUnderline="true"/>
+				</textElement>
+				<text><![CDATA[Summary Report]]></text>
+			</staticText>
+		</band>
+	</title>
+	<detail>
+		<band height="50">
+			<frame>
+				<reportElement x="0" y="0" width="555" height="50" isRemoveLineWhenBlank="true">
+					<printWhenExpression><![CDATA[$P{isMultiModuleProject}.booleanValue() && !$P{multiModuleUnitTestReports}.isEmpty()]]></printWhenExpression>
+				</reportElement>
+				<subreport>
+					<reportElement x="0" y="0" width="555" height="50" isRemoveLineWhenBlank="true"/>
+					<subreportParameter name="testType">
+						<subreportParameterExpression><![CDATA["unit"]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="multiModuleUnitTestReports">
+						<subreportParameterExpression><![CDATA[$P{multiModuleUnitTestReports}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="reportsDataType">
+						<subreportParameterExpression><![CDATA[$P{reportsDataType}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="isClassEmpty">
+						<subreportParameterExpression><![CDATA[$P{isClassEmpty}]]></subreportParameterExpression>
+					</subreportParameter>
+					<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource($P{multiModuleUnitTestReports})]]></dataSourceExpression>
+					<subreportExpression><![CDATA["PhrescoModuleSureFireSummaryReport.jasper"]]></subreportExpression>
+				</subreport>
+			</frame>
+		</band>
+		<band height="50">
+			<printWhenExpression><![CDATA[!$P{unitTestReports}.isEmpty() && !$P{isMultiModuleProject}.booleanValue()]]></printWhenExpression>
+			<frame>
+				<reportElement x="0" y="0" width="555" height="50" isRemoveLineWhenBlank="true"/>
+				<subreport>
+					<reportElement x="0" y="0" width="555" height="50" isRemoveLineWhenBlank="true"/>
+					<subreportParameter name="testType">
+						<subreportParameterExpression><![CDATA["unit"]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="reportsDataType">
+						<subreportParameterExpression><![CDATA[$P{reportsDataType}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="isClassEmpty">
+						<subreportParameterExpression><![CDATA[$P{isClassEmpty}]]></subreportParameterExpression>
+					</subreportParameter>
+					<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource($P{unitTestReports})]]></dataSourceExpression>
+					<subreportExpression><![CDATA["UnitCumulativeSummaryReport.jasper"]]></subreportExpression>
+				</subreport>
+			</frame>
+		</band>
+		<band height="50">
+			<printWhenExpression><![CDATA[!$P{componentTestReports}.isEmpty()]]></printWhenExpression>
+			<frame>
+				<reportElement x="0" y="0" width="555" height="50" isRemoveLineWhenBlank="true"/>
+				<subreport>
+					<reportElement x="0" y="0" width="555" height="50" isRemoveLineWhenBlank="true"/>
+					<subreportParameter name="testType">
+						<subreportParameterExpression><![CDATA["component"]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="reportsDatatype">
+						<subreportParameterExpression><![CDATA[$P{reportsDataType}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="isClassEmpty">
+						<subreportParameterExpression><![CDATA[$P{isClassEmpty}]]></subreportParameterExpression>
+					</subreportParameter>
+					<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource($P{componentTestReports})]]></dataSourceExpression>
+					<subreportExpression><![CDATA["ComponentCumulativeSummaryReport.jasper"]]></subreportExpression>
+				</subreport>
+			</frame>
+		</band>
+		<band height="50">
+			<printWhenExpression><![CDATA[!$P{functionalTestReports}.isEmpty()]]></printWhenExpression>
+			<frame>
+				<reportElement x="0" y="0" width="555" height="50" isRemoveLineWhenBlank="true"/>
+				<subreport>
+					<reportElement x="0" y="0" width="555" height="50" isRemoveLineWhenBlank="true"/>
+					<subreportParameter name="testType">
+						<subreportParameterExpression><![CDATA["functional"]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="reportsDataType">
+						<subreportParameterExpression><![CDATA[$P{reportsDataType}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="isClassEmpty">
+						<subreportParameterExpression><![CDATA[$P{isClassEmpty}]]></subreportParameterExpression>
+					</subreportParameter>
+					<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource($P{functionalTestReports})]]></dataSourceExpression>
+					<subreportExpression><![CDATA["FunctionalCumulativeSummaryReport.jasper"]]></subreportExpression>
+				</subreport>
+			</frame>
+		</band>
+		<band height="50">
+			<printWhenExpression><![CDATA[!$P{performanceSpecialHandle}.booleanValue() && $P{reportsDataType}.equals("detail") && !$P{performanceTestReports}.isEmpty()]]></printWhenExpression>
+			<frame>
+				<reportElement x="0" y="0" width="555" height="50" isRemoveLineWhenBlank="true"/>
+				<subreport>
+					<reportElement x="0" y="0" width="555" height="50" isRemoveLineWhenBlank="true"/>
+					<subreportParameter name="reportsDataType">
+						<subreportParameterExpression><![CDATA[$P{reportsDataType}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="showGraphs">
+						<subreportParameterExpression><![CDATA[$V{isShowGraphs}]]></subreportParameterExpression>
+					</subreportParameter>
+					<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource($P{performanceTestReports})]]></dataSourceExpression>
+					<subreportExpression><![CDATA["PhrescoPerfCumulativeReport.jasper"]]></subreportExpression>
+				</subreport>
+			</frame>
+		</band>
+		<band height="50">
+			<printWhenExpression><![CDATA[$P{performanceSpecialHandle}.booleanValue() && $P{reportsDataType}.equals("detail")]]></printWhenExpression>
+			<frame>
+				<reportElement x="0" y="0" width="555" height="50" isRemoveLineWhenBlank="true"/>
+				<subreport>
+					<reportElement x="0" y="0" width="555" height="50" isRemoveLineWhenBlank="true"/>
+					<subreportParameter name="reportsDataType">
+						<subreportParameterExpression><![CDATA[$P{reportsDataType}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="showGraphs">
+						<subreportParameterExpression><![CDATA[$V{isShowGraphs}]]></subreportParameterExpression>
+					</subreportParameter>
+					<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource($P{performanceTestReports})]]></dataSourceExpression>
+					<subreportExpression><![CDATA["PhrescoAndroidPerfCumulativeReport.jasper"]]></subreportExpression>
+				</subreport>
+			</frame>
+		</band>
+		<band height="50">
+			<printWhenExpression><![CDATA[!$P{loadTestReports}.isEmpty() && $P{reportsDataType}.equals("detail")]]></printWhenExpression>
+			<frame>
+				<reportElement x="0" y="0" width="555" height="50" isRemoveLineWhenBlank="true"/>
+				<subreport>
+					<reportElement x="0" y="0" width="555" height="50" isRemoveLineWhenBlank="true"/>
+					<subreportParameter name="showGraphss">
+						<subreportParameterExpression><![CDATA[$V{isShowGraphs}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="reportsDataType">
+						<subreportParameterExpression><![CDATA[$P{reportsDataType}]]></subreportParameterExpression>
+					</subreportParameter>
+					<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource($P{loadTestReports})]]></dataSourceExpression>
+					<subreportExpression><![CDATA["PhrescoLoadCumulativeTest.jasper"]]></subreportExpression>
+				</subreport>
+			</frame>
+		</band>
+	</detail>
+</jasperReport>

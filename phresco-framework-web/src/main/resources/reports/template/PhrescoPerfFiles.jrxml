@@ -19,6 +19,7 @@
 		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
 	</parameter>
 	<parameter name="reportsDataType" class="java.lang.String"/>
+	<parameter name="showGraphs" class="java.lang.Boolean" isForPrompting="false"/>
 	<field name="fileName" class="java.lang.String"/>
 	<field name="totalThroughput" class="java.lang.String"/>
 	<field name="totalStdDev" class="java.lang.String"/>
@@ -71,11 +72,11 @@
 					<subreportParameter name="totalThroughput">
 						<subreportParameterExpression><![CDATA[$F{totalThroughput}]]></subreportParameterExpression>
 					</subreportParameter>
-					<subreportParameter name="jmeterTestResult">
-						<subreportParameterExpression><![CDATA[$F{jmeterTestResult}]]></subreportParameterExpression>
-					</subreportParameter>
 					<subreportParameter name="totalStdDev">
 						<subreportParameterExpression><![CDATA[$F{totalStdDev}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="jmeterTestResult">
+						<subreportParameterExpression><![CDATA[$F{jmeterTestResult}]]></subreportParameterExpression>
 					</subreportParameter>
 					<subreportParameter name="totalErr">
 						<subreportParameterExpression><![CDATA[$F{totalErr}]]></subreportParameterExpression>
@@ -83,11 +84,14 @@
 					<subreportParameter name="reportsDataType">
 						<subreportParameterExpression><![CDATA[$P{reportsDataType}]]></subreportParameterExpression>
 					</subreportParameter>
-					<subreportParameter name="totalAvg">
-						<subreportParameterExpression><![CDATA[$F{totalAvg}]]></subreportParameterExpression>
+					<subreportParameter name="showGraphs">
+						<subreportParameterExpression><![CDATA[$P{showGraphs}]]></subreportParameterExpression>
 					</subreportParameter>
 					<subreportParameter name="totalNoOfSample">
 						<subreportParameterExpression><![CDATA[$F{totalNoOfSample}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="totalAvg">
+						<subreportParameterExpression><![CDATA[$F{totalAvg}]]></subreportParameterExpression>
 					</subreportParameter>
 					<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.JREmptyDataSource()]]></dataSourceExpression>
 					<subreportExpression><![CDATA["PhrescoPerfFileDatas.jasper"]]></subreportExpression>

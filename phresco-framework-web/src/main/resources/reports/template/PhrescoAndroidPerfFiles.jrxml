@@ -19,6 +19,7 @@
 		<defaultValueExpression><![CDATA["/Users/kaleeswaran/root/branches/agra/framework/trunk/phresco-framework-web/src/main/resources/reports/template/"]]></defaultValueExpression>
 	</parameter>
 	<parameter name="reportsDataType" class="java.lang.String"/>
+	<parameter name="showGraphs" class="java.lang.Boolean" isForPrompting="false"/>
 	<field name="fileName" class="java.lang.String"/>
 	<field name="totalThroughput" class="java.lang.String"/>
 	<field name="totalStdDev" class="java.lang.String"/>
@@ -65,11 +66,11 @@
 					<subreportParameter name="totalAvgBytes">
 						<subreportParameterExpression><![CDATA[$F{totalAvgBytes}]]></subreportParameterExpression>
 					</subreportParameter>
-					<subreportParameter name="totalKbPerSec">
-						<subreportParameterExpression><![CDATA[$F{totalKbPerSec}]]></subreportParameterExpression>
-					</subreportParameter>
 					<subreportParameter name="totalThroughput">
 						<subreportParameterExpression><![CDATA[$F{totalThroughput}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="totalKbPerSec">
+						<subreportParameterExpression><![CDATA[$F{totalKbPerSec}]]></subreportParameterExpression>
 					</subreportParameter>
 					<subreportParameter name="jmeterTestResult">
 						<subreportParameterExpression><![CDATA[$F{jmeterTestResult}]]></subreportParameterExpression>
@@ -88,6 +89,9 @@
 					</subreportParameter>
 					<subreportParameter name="totalNoOfSample">
 						<subreportParameterExpression><![CDATA[$F{totalNoOfSample}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="showGraphs">
+						<subreportParameterExpression><![CDATA[$P{showGraphs}]]></subreportParameterExpression>
 					</subreportParameter>
 					<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.JREmptyDataSource()]]></dataSourceExpression>
 					<subreportExpression><![CDATA["PhrescoPerfFileDatas.jasper"]]></subreportExpression>
