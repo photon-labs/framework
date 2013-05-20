@@ -34,7 +34,12 @@ define(["framework/widgetWithTemplate", "login/listener/loginListener"], functio
 		 *
 		 * @element: Element as the result of the template + data binding
 		 */
-		postRender : function(element) {			
+		postRender : function(element) {	
+			var self = this;
+			if(self.loginListener.loginAPI.localVal.getSession('loggedout') == "true"){
+				$(".login_error_msg").text('Logged out');
+			}
+			self.loginListener.loginAPI.localVal.deleteSession('loggedout');
 		},
 
 		/***

@@ -16,6 +16,7 @@ define(["framework/widget", "common/loading", "header/api/headerAPI", "login/log
 			this.clearSession();
 			Clazz.navigationController.jQueryContainer = commonVariables.basePlaceholder;
 			this.removePlaceholder();
+			this.headerAPI.localVal.setSession('loggedout', 'true');
 			location.hash = '';
 			location.reload();
 		},
