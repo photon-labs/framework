@@ -209,8 +209,8 @@ define(["framework/widgetWithTemplate", "features/listener/featuresListener"], f
 			
 			$('#featureUpdate').on("click", function() {
 				var featureUpdatedataArray = [];
+				var featureUpdatedata = {};
 				$(".switchOn").each(function(index, currentVal) {
-					var featureUpdatedata = {};
 					featureUpdatedata.name = $(currentVal).parent().attr("type");
 					featureUpdatedata.dispName = $(currentVal).parent().attr("dispName");
 					featureUpdatedata.packaging = $(currentVal).parent().attr("packaging");
@@ -222,7 +222,8 @@ define(["framework/widgetWithTemplate", "features/listener/featuresListener"], f
 					var moduleId = $(currentVal).parent().children('div.flt_right').children('.moduleId').val();
 					featureUpdatedata.moduleId = moduleId; 
 					featureUpdatedata.artifactGroupId = moduleId;
-					featureUpdatedataArray.push(featureUpdatedata);	
+					featureUpdatedataArray.push(featureUpdatedata);
+					console.info("featureUpdatedataArray", featureUpdatedataArray);
 				});
 				
 				self.featuresListener.getFeaturesUpdate(self.featuresListener.getRequestHeader(featureUpdatedataArray, "", ""), function(response) {
