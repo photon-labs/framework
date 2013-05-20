@@ -164,7 +164,7 @@
 						<subreportParameterExpression><![CDATA[$V{isShowGraphs}]]></subreportParameterExpression>
 					</subreportParameter>
 					<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource($P{performanceTestReports})]]></dataSourceExpression>
-					<subreportExpression><![CDATA["PhrescoPerfCumulativeReport.jasper"]]></subreportExpression>
+					<subreportExpression><![CDATA["PhrescoPerfCumulativeSummaryReport.jasper"]]></subreportExpression>
 				</subreport>
 			</frame>
 		</band>
