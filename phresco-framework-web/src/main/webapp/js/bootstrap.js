@@ -48,6 +48,34 @@ var commonVariables = {
 	
 	build : "build",
 	
+	mevanService : "mevanService",
+	mevanServiceContext : "mevanService",
+	
+	/******* mvn Context *********/
+	
+	mvnlogService : "app/readlog",
+	mvnBuild : "app/build",
+	mvnDeploy : "app/deploy",
+	mvnUnitTest : "app/runUnitTest",
+	mvnCodeValidation : "app/codeValidate",
+	mvnRunagainstSource : "app/runAgainstSource",
+	mvnStopServer : "app/stopServer",
+	mvnRestartServer : "app/restartServer",
+	mvnPerformanceTest : "app/performanceTest",
+	mvnLoadTest : "app/loadTest",
+	mvnFunctionalTest : "app/runFunctionalTest",
+	mvnMinification : "app/minification",
+	mvnStartHub : "app/startHub",
+	mvnStopHub : "app/stopHub",
+	mvnCheckHub : "app/checkForHub",
+	mvnShowStartedHub : "app/showStartedHubLog",
+	mvnStartNode : "app/startNode",
+	mvnStopNode : "app/stopNode",
+	mvnCheckNode : "app/checkForNode",
+	mvnShowStartedNode : "app/showStartedNodeLog",
+	
+	/******** mvn Context end****/
+	
 	edit : "Edit",
 	create : "Create",
 	deleted : "Delete",
@@ -58,48 +86,11 @@ var commonVariables = {
 	contentPlaceholder : $("<content\\:widget></content\\:widget>"),
 	footerPlaceholder : $("<footer\\:widget></footer\\:widget>"),
 
-
-	/* openccmini : function(e,place) {
-		console.info("test boostrap");
-		var clicked = $(e);
-		var target = $("#" + place);
-		var twowidth = window.innerWidth/1.5;;
-
-		if (clicked.offset().left < twowidth) {	
-			$(target).toggle();
-			var t=clicked.offset().top - target.height()/2 + 10;
-			var l=clicked.offset().left + clicked.width()+ 15;
-			$(target).offset({
-				top: t,
-				left: l
-			});
-			
-			$(target).addClass('speakstyleleft').removeClass('speakstyleright');
-		}
-		else {
-			$(target).toggle();
-			var t=clicked.offset().top - target.height()/2 + 10;
-			var l=clicked.offset().left - (target.width()+15);
-			$(target).offset({
-				top: t,
-				left: l
-			});
-			
-			$(target).addClass('speakstyleright').removeClass('speakstyleleft');
-
-		}
-		
-		$(document).keyup(function(e) {
-			if(e.which == 27){
-				$("#" + place).hide();
-			}
-		});
-		
-		$('.dyn_popup_close').click( function() {
-			$("#" + place).hide();
-		});
-	} */
-
+	getParameterByName : function (name) {
+		name = name.replace(/[\[]/, "\\\[").replace(/[\]]/, "\\\]");
+		var regex = new RegExp("[\\?&]" + name + "=([^&#]*)"),	results = regex.exec(location.search);
+		return results == null ? "" : decodeURIComponent(results[1].replace(/\+/g, " "));
+	}
 };
 
 $(document).ready(function(){
@@ -140,10 +131,10 @@ $(document).ready(function(){
 			});
 
 			//Apply customer based theme
-			//location.href
-			$.get(commonVariables.webserviceurl + commonVariables.customerInfoContext + commonVariables.defaultcustomer, function(themeData){
-				JSS.css(themeData.data.frameworkTheme);
-			});
+			//$.get(commonVariables.webserviceurl + commonVariables.customerInfoContext + commonVariables.defaultcustomer, function(themeData){
+			if(localStorage.getItem('customertheme') != null && localStorage.getItem('customertheme') != "")
+				JSS.css(eval('(' + localStorage.getItem('customertheme') + ')'));
+			//});
 			
 			app.initialize();
 		});

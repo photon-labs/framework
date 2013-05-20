@@ -36,7 +36,7 @@ define(["framework/base", "api/localStorageAPI"], function(){
 				contentType : header.contentType,
 				data : header.requestPostBody,
 				timeout: 1000000,
-				//crossDomain: true,
+				crossDomain: true,
 				cache: true,
 				async: true,
 				

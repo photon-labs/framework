@@ -13,3 +13,5 @@ phresco-framework/.classpath
 *.jasper
 
 logs/phresco-framework.log
+
+/phresco-framework-web/src/main/webapp/lib

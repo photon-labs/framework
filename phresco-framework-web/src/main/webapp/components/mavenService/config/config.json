@@ -1,0 +1,15 @@
+{
+    "info":{
+        "widgetId":"111",
+        "widgetName":"mevanService"
+    },
+    "components":{
+        "login":{
+            "moduleName":"mevanService",
+            "host":"http://localhost",
+            "port":"2020"
+        }
+    },
+	
+	"theme" : "default"
+}
