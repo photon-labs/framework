@@ -93,6 +93,7 @@ define(["framework/widgetWithTemplate", "features/listener/featuresListener"], f
 			var collection = {};
 			self.featuresListener.showLoad();
 			self.getFeatures(collection, function(responseData){
+				console.info("responseData", responseData);
 				renderFunction(responseData, whereToRender);
 				self.featuresListener.hideLoad();
 			});
@@ -109,7 +110,7 @@ define(["framework/widgetWithTemplate", "features/listener/featuresListener"], f
 
 		getLibraries : function(collection, callback){
 			var self = this;
-			self.featuresListener.getFeaturesList(self.featuresListener.getRequestHeader(self.featureRequestBody, "JSLIBRARIES"), function(response) {
+			self.featuresListener.getFeaturesList(self.featuresListener.getRequestHeader(self.featureRequestBody, "JAVASCRIPT"), function(response) {
 				collection.jsibrarielist = response.data;	
 				self.getComponents(collection, callback);
 			});
@@ -117,7 +118,7 @@ define(["framework/widgetWithTemplate", "features/listener/featuresListener"], f
 
 		getComponents : function(collection, callback){
 			var self = this;
-			self.featuresListener.getFeaturesList(self.featuresListener.getRequestHeader(self.featureRequestBody, "COMPONENTS"), function(response) {
+			self.featuresListener.getFeaturesList(self.featuresListener.getRequestHeader(self.featureRequestBody, "COMPONENT"), function(response) {
 				collection.componentList = response.data;	
 				callback(collection);
 			});
@@ -135,8 +136,6 @@ define(["framework/widgetWithTemplate", "features/listener/featuresListener"], f
 				var height = $(this).height();
 				$('.box_div').height(height - 306);
 			  });
-			//$('.switch').css('background', 'url("../themes/default/images/helios/on_off_switch.png")');
-			//$('.on_off').css('display','none');
 
 			$('.switch').css('background', 'url("../themes/default/images/helios/on_off_switch.png")');
 			$("label[name=on_off]").click(function() {
@@ -164,9 +163,9 @@ define(["framework/widgetWithTemplate", "features/listener/featuresListener"], f
            	});
 
            	$('#components').keyup(function(event) {
+				console.info("test");
 				var txtSearch = $('#components').val();
 				var divId = "componentsContent";
-				//search(txtSearch, divId);
 				self.onSearchEvent.dispatch(txtSearch, divId);
            	});
 
@@ -235,12 +234,15 @@ define(["framework/widgetWithTemplate", "features/listener/featuresListener"], f
 		showSelected : function() {
 			var self = this;
 			$("#moduleContent li").hide();
+			$("#jsibrariesContent li").hide();
+			$("#componentsContent li").hide();
+
 			$("ul li fieldset").each(function() {
 				if($(this).attr("class") == "switch switchOn"){
 					$(this).parent().show();
 					self.scrollbarUpdate();
 				}     			
-			});   
+			});
 		},
 		
 		scrollbarEnable : function(){

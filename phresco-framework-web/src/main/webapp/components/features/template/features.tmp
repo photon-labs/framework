@@ -64,7 +64,7 @@
                 <div class="clear"></div>
                 <div class="box_div" id="content_2">
                    <ul id="jsibrariesContent">
-                    {{#each featureslist}}
+                    {{#each jsibrarielist}}
                         <li name="{{name}}" dispName="{{dispName}}" packaging="{{packaging}}" type="{{type}}">
                         <span class="flt_right" ><a class="featureinfo_img" value="{{id}}"> 
                         <img src="../themes/default/images/helios/info_icon.png" width="15" height="16" border="0" alt=""></a></span>
@@ -105,8 +105,8 @@
                 <input type="text" class="flt_right" data-i18n="[placeholder]features.placeholder" id="components">
                 <div class="clear"></div>
                 <div class="box_div" id="content_3">
-                    <ul id="jsibrariesContent">
-                    {{#each featureslist}}
+                    <ul id="componentsContent">
+                    {{#each componentList}}
                         <li name="{{name}}" dispName="{{dispName}}" packaging="{{packaging}}" type="{{type}}">
                         <span class="flt_right" ><a class="featureinfo_img" value="{{id}}"> 
                         <img src="../themes/default/images/helios/info_icon.png" width="15" height="16" border="0" alt=""></a></span>
