@@ -73,6 +73,11 @@
 			"path" : "../components/build/js"
 		},
 		
+		"mavenService" : {
+			"moduleName":"mavenService",
+			"path" : "../components/mavenService/js"
+		},
+		
 		"unittest" : {
 			"moduleName":"unittest",
 			"path" : "../components/unittest/js"
