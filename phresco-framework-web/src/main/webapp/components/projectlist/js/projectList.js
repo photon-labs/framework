@@ -112,6 +112,12 @@ define(["framework/widgetWithTemplate", "projectlist/listener/projectListListene
 				$(".fixedHeader tr th:nth-child(4)").css("width",w4);
 				$(".fixedHeader tr th:nth-child(5)").css("width",w5);
 				$(".fixedHeader tr th:nth-child(6)").css("width",w6);
+			});			
+			
+			$(".proj_list .scrollContent").mCustomScrollbar({
+				autoHideScrollbar:true,
+				theme:"light-thin",
+				advanced:{ updateOnContentResize: true}
 			});
 			
 			$("#applicationedit").css("display", "none");
