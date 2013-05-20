@@ -164,7 +164,7 @@
 						<subreportParameterExpression><![CDATA[$V{isShowGraphs}]]></subreportParameterExpression>
 					</subreportParameter>
 					<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource($P{performanceTestReports})]]></dataSourceExpression>
-					<subreportExpression><![CDATA["PhrescoPerfCumulativeReport.jasper"]]></subreportExpression>
+					<subreportExpression><![CDATA["PhrescoPerfCumulativeSummaryReport.jasper"]]></subreportExpression>
 				</subreport>
 			</frame>
 		</band>
@@ -198,7 +198,7 @@
 						<subreportParameterExpression><![CDATA[$P{reportsDataType}]]></subreportParameterExpression>
 					</subreportParameter>
 					<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource($P{loadTestReports})]]></dataSourceExpression>
-					<subreportExpression><![CDATA["PhrescoLoadCumulativeTest.jasper"]]></subreportExpression>
+					<subreportExpression><![CDATA["PhrescoLoadCumulativeSummaryTest.jasper"]]></subreportExpression>
 				</subreport>
 			</frame>
 		</band>
