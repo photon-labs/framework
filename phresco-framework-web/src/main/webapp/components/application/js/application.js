@@ -12,6 +12,7 @@ define(["framework/widgetWithTemplate", "application/listener/applicationListene
 		onRemoveLayerEvent : null,
 		onAddLayerEvent : null,
 		renderData : {},
+		positionCounter : 0,
 		header: {
 			contentType: null,
 			requestMethod: null,
@@ -69,6 +70,29 @@ define(["framework/widgetWithTemplate", "application/listener/applicationListene
 					return option;
 				}
 			});
+			
+			
+			Handlebars.registerHelper('position', function(indexVal) {
+				indexVal = indexVal+1;
+				return indexVal++;
+			});
+								
+			Handlebars.registerHelper('positionouter', function(selectedServers) {
+				if(selectedServers[0].selectedServers != undefined ){
+					return selectedServers[0].selectedServers.length+1;
+				} else {
+					return 1;
+				}	
+			});								
+		
+			Handlebars.registerHelper('dbouter', function(selectedDatabases) {
+				if(selectedDatabases[0].selectedDatabases != undefined ){
+					return selectedDatabases[0].selectedDatabases.length+1;
+				} else {
+					return 1;
+				}	
+			});
+						
 		},
 		 
 		

@@ -37,7 +37,7 @@
 						{{#each selectedServers}}
 							 <tr class="servers" key="displayed">
 							
-							 <td data-i18n="application.edit.servers"></td>
+							 <td><span data-i18n="application.edit.servers"></span>&nbsp;<span class="paid">{{position @index}}</span></td>
 							  <td name="servers" class="servers"><select name="appServers" class="appServers">
 								<option>Select Server</option>
 								{{#each ../../projectlist.serverData}}
@@ -47,7 +47,7 @@
 							  </td>
 							  <td data-i18n="application.edit.versions"></td>
 							  <td colspan="4" name="version"  class="version">
-									<select name="server_version" class="server_version">
+									<select name="server_version" class="server_version" multiple>
 										<option>Select Version</option>
 										{{#each ../../projectlist.serverData}}
 											{{{compareversion id ../artifactGroupId artifactGroup ../artifactInfoIds}}}
@@ -66,7 +66,7 @@
 					{{/each}}
 					
 					<tr class="servers" key="displayed">
-                      <td data-i18n="application.edit.servers"></td>
+                      <td><span data-i18n="application.edit.servers"></span>&nbsp;<span class="paid">{{positionouter projectlist.appdetails.data.appInfos}}</span></td>
                       <td name="servers" class="servers"><select name="appServers" class="appServers">
 						<option>Select Server</option>
 						{{#each projectlist.serverData}}
@@ -76,7 +76,7 @@
                       </td>
                       <td data-i18n="application.edit.versions"></td>
                       <td colspan="4" name="version" class="version">
-							<select name="server_version" class="server_version">
+							<select name="server_version" class="server_version" multiple>
 								<option>Select Version</option>
 							</select>
 						  <div class="flt_right">
@@ -93,7 +93,7 @@
 					{{#each projectlist.appdetails.data.appInfos}}
 						{{#each selectedDatabases}}
 							  <tr class="database" key="displayed">
-							  <td data-i18n="application.edit.database"></td>
+							  <td><span data-i18n="application.edit.database"></span>&nbsp;<span class="paid">{{position @index}}</span></td>
 							  <td name="servers" class="databases"><select name="databases" class="databases">
 								<option>Select Database</option>
 								{{#each ../../projectlist.databaseData}}
@@ -103,7 +103,7 @@
 							  </td>
 							  <td data-i18n="application.edit.versions"></td>
 							  <td colspan="4" name="version" class="version">
-									<select name="db_version" class="db_version">
+									<select name="db_version" class="db_version" multiple>
 										<option>Select Version</option>
 										{{#each ../../projectlist.databaseData}}
 											{{{compareversion id ../artifactGroupId artifactGroup ../artifactInfoIds}}}
@@ -119,7 +119,7 @@
 					{{/each}}
 					
 					<tr class="database" key="displayed">
-					  <td data-i18n="application.edit.database"></td>
+					  <td><span data-i18n="application.edit.database"></span>&nbsp;<span class="paid">{{dbouter projectlist.appdetails.data.appInfos}}</span></td>
 					  <td name="servers" class="databases"><select name="databases" class="databases">
 						<option>Select Database</option>
 						{{#each projectlist.databaseData}}
@@ -129,7 +129,7 @@
 					  </td>
 					  <td data-i18n="application.edit.versions"></td>
 					  <td colspan="4" name="version" class="version">
-							<select name="db_version" class="db_version">
+							<select name="db_version" class="db_version" multiple>
 								<option>Select Version</option>
 						  </select>
 						   <div class="flt_right">

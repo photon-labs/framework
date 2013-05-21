@@ -41,10 +41,10 @@ define(["framework/widget", "framework/widgetWithTemplate", "application/api/app
 			$("tr[name="+ layerType+"content]").show();
 		},
 		
-		addServerDatabase : function(appType, whereToAppend) {
-			var self = this, dynamicValue, server = '<tr class="servers" key="displayed"> <td data-i18n="application.edit.servers"></td><td name="servers" class="servers"><select name="appServers" class="appServers"><option>Select Servers</option>'+ self.getOptionData('serverData') +'</select></td><td data-i18n="application.edit.versions"></td><td colspan="4" name="version" class="version"><select name="server_version" class="server_version"><option>Select Version</option></select> <div class="flt_right"><a href="javascript:;" name="addServer"><img src="../themes/default/images/helios/plus_icon.png" border="0" alt=""></a> <a href="javascript:;" name="removeServer"><img src="../themes/default/images/helios/minus_icon.png"  border="0" alt=""></a></div></td></tr>',
+		addServerDatabase : function(appType, whereToAppend, rowId) {
+			var self = this, dynamicValue, server = '<tr class="servers" key="displayed"> <td><span data-i18n="application.edit.servers"></span>&nbsp;<span class="paid">'+rowId+'</span></td><td name="servers" class="servers"><select name="appServers" class="appServers"><option>Select Server</option>'+ self.getOptionData('serverData') +'</select></td><td data-i18n="application.edit.versions"></td><td colspan="4" name="version" class="version"><select multiple name="server_version" class="server_version"><option>Select Version</option></select> <div class="flt_right"><a href="javascript:;" name="addServer"><img src="../themes/default/images/helios/plus_icon.png" border="0" alt=""></a> <a href="javascript:;" name="removeServer"><img src="../themes/default/images/helios/minus_icon.png"  border="0" alt=""></a></div></td></tr>',
 			
-			database ='<tr class="database" key="displayed"><td data-i18n="application.edit.database"></td><td name="servers" class="databases"><select name="databases" class="databases"><option>Select Database</option>'+ self.getOptionData('databaseData') +'</select></td><td data-i18n="application.edit.versions"></td> <td colspan="4" name="version" class="version"><select name="db_version" class="db_version"> <option>Select Version</option></select><div class="flt_right"><a href="javascript:;" name="addDatabase"><img src="../themes/default/images/helios/plus_icon.png"  border="0" alt=""></a> <a href="javascript:;" name="removeDatabase"><img src="../themes/default/images/helios/minus_icon.png" border="0" alt=""></a></div></td></tr>';
+			database ='<tr class="database" key="displayed"><td><span data-i18n="application.edit.database"></span>&nbsp;<span class="paid">'+rowId+'</span></td><td name="servers" class="databases"><select name="databases" class="databases"><option>Select Database</option>'+ self.getOptionData('databaseData') +'</select></td><td data-i18n="application.edit.versions"></td> <td colspan="4" name="version" class="version"><select multiple name="db_version" class="db_version"> <option>Select Version</option></select><div class="flt_right"><a href="javascript:;" name="addDatabase"><img src="../themes/default/images/helios/plus_icon.png"  border="0" alt=""></a> <a href="javascript:;" name="removeDatabase"><img src="../themes/default/images/helios/minus_icon.png" border="0" alt=""></a></div></td></tr>';
 			if (appType === "addServer") {
 				dynamicValue = $(server).insertAfter(whereToAppend);
 				dynamicValue.prev('tr').find('a[name="addServer"]').html('');
@@ -65,17 +65,21 @@ define(["framework/widget", "framework/widgetWithTemplate", "application/api/app
 		},
 
 		addServerDatabaseEvent : function(){
-			var self=this, whereToAppend = '';
+			var self=this, whereToAppend = '', serverRow, dbRow;
 			$("a[name=addServer]").click(function(){
+				//console.info('this = ' , $(this).closest('tr').find('span.paid').text());
+				serverRow = Number($(this).closest('tr').find('span.paid').text()) + Number(1);
 				whereToAppend = $("a[name=addServer]").parents('tr.servers:last');
 				self.dynamicRenderLocales(commonVariables.contentPlaceholder);
-				self.addServerDatabase($(this).attr('name'), whereToAppend);
+				self.addServerDatabase($(this).attr('name'), whereToAppend, serverRow);
 			});
 			
 			$("a[name=addDatabase]").click(function(){
+				//console.info('addDatabase = ' , $(this).closest('tr').find('span.paid').text());
+				dbRow = Number($(this).closest('tr').find('span.paid').text()) + Number(1);
 				whereToAppend = $("a[name=addDatabase]").parents('tr.database:last');
 				self.dynamicRenderLocales(commonVariables.contentPlaceholder);
-				self.addServerDatabase($(this).attr('name'), whereToAppend);
+				self.addServerDatabase($(this).attr('name'), whereToAppend, dbRow);
 			});
 		},
 		
@@ -247,7 +251,7 @@ define(["framework/widget", "framework/widgetWithTemplate", "application/api/app
 					var tech = $(value).children("td.servers").children("select.appServers");
 					var selSerId = $(tech).find(":selected").val();
 					var selVersion = $(value).children("td.version").children("select.server_version").val();
-					
+					//console.info('selVersion = ' , selVersion);
 					serverId.artifactGroupId = selSerId;
 					artifactInfoIds.push(selVersion);
 					serverId.artifactInfoIds = artifactInfoIds;
@@ -270,13 +274,16 @@ define(["framework/widget", "framework/widgetWithTemplate", "application/api/app
 				
 			});
 			if (appInfo.code !== '') {
-				appInfo.techInfo = renderData.appdetails.data.appInfos[0].techInfo;
+				appInfo.techInfo.appTypeId = renderData.appdetails.data.appInfos[0].techInfo.appTypeId;
+				appInfo.techInfo.version = renderData.appdetails.data.appInfos[0].techInfo.version;
+				appInfo.techInfo.id = renderData.appdetails.data.appInfos[0].techInfo.id;
+				appInfo.techInfo.system = renderData.appdetails.data.appInfos[0].techInfo.system;
 				appInfo.selectedDatabases = selectedDatabases;
 				appInfo.selectedServers = selectedServers;
 			}
 				console.info('appInfos = ' , JSON.stringify(appInfo));
 			
-				self.editAppInfo(self.getRequestHeader(appInfo, "editApplication"), function(response) {
+				self.editAppInfo(self.getRequestHeader(JSON.stringify(appInfo), "editApplication"), function(response) {
 					appInfo = {};
 					self.getAppInfo(self.getRequestHeader(self.appDirName, "getappinfo"), function(response) {
 						self.pageRefresh(response);
