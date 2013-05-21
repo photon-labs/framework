@@ -157,25 +157,25 @@ define(["framework/widget", "framework/widgetWithTemplate", "common/loading", "p
 			   if(name == ""){
 					$("input[name='projectname']").focus();
 					$("input[name='projectname']").attr('placeholder','Enter Name');
-					$("input[name='projectname']").addClass("err");
+					$("input[name='projectname']").addClass("errormessage");
 					$("input[name='projectname']").bind('keypress', function() {
-						$(this).removeClass("err");
+						$(this).removeClass("errormessage");
 					});
 					self.hasError = true;
 			   } else if(code == ""){
 					$("input[name='projectcode']").focus();
 					$("input[name='projectcode']").attr('placeholder','Enter Code');
-					$("input[name='projectcode']").addClass("err");
+					$("input[name='projectcode']").addClass("errormessage");
 					$("input[name='projectcode']").bind('keypress', function() {
-						$(this).removeClass("err");
+						$(this).removeClass("errormessage");
 					});
 					self.hasError = true;
 			   } else if(labelversion == ""){
 					$("input[name='projectversion']").focus();
 					$("input[name='projectversion']").attr('placeholder','Enter Version');
-					$("input[name='projectversion']").addClass("err");
+					$("input[name='projectversion']").addClass("errormessage");
 					$("input[name='projectversion']").bind('keypress', function() {
-						$(this).removeClass("err");
+						$(this).removeClass("errormessage");
 					});
 					self.hasError = true;
 			   } else {
@@ -189,12 +189,12 @@ define(["framework/widget", "framework/widgetWithTemplate", "common/loading", "p
 							}
 							else 	
 							{	
-								$(this).addClass("err");
-								var errorItem1 = $(".err:first");
+								$(this).addClass("errormessage");
+								var errorItem1 = $(".errormessage:first");
 								errorItem1.focus();
 								errorItem1.attr('placeholder','Enter AppCode');
 								errorItem1.bind('keypress', function() {
-									$(this).removeClass("err");
+									$(this).removeClass("errormessage");
 								});
 								flag1=1;	
 							}
@@ -215,12 +215,12 @@ define(["framework/widget", "framework/widgetWithTemplate", "common/loading", "p
 								}
 								else
 								{	
-									$(this).addClass("err");
-									var errorItem2 = $(".err:first");
+									$(this).addClass("errormessage");
+									var errorItem2 = $(".errormessage:first");
 									errorItem2.focus();
 									errorItem2.attr('placeholder','Enter AppCode');
 									errorItem2.bind('keypress', function() {
-											$(this).removeClass("err");
+											$(this).removeClass("errormessage");
 									});
 									flag2=1;
 								}		
@@ -243,12 +243,12 @@ define(["framework/widget", "framework/widgetWithTemplate", "common/loading", "p
 									}
 									else
 									{	
-										$(this).addClass("err");
-										var errorItem3 = $(".err:first");
+										$(this).addClass("errormessage");
+										var errorItem3 = $(".errormessage:first");
 										errorItem3.focus();
 										errorItem3.attr('placeholder','Enter AppCode');
 										errorItem3.bind('keypress', function() {
-											$(this).removeClass("err");
+											$(this).removeClass("errormessage");
 										});
 										flag3=1;	
 									}	

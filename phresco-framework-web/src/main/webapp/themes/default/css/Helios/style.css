@@ -40,6 +40,10 @@ html,body {
     font-style: normal;
 }
 
+select, textarea, input[type="text"], input[type="password"], input[type="datetime"], input[type="datetime-local"], input[type="date"], input[type="month"], input[type="time"], input[type="week"], input[type="number"], input[type="email"], input[type="url"], input[type="search"], input[type="tel"], input[type="color"], .uneditable-input {
+	font-size: 12px !important;	
+}
+
 header, aside, figure, footer, ul, li {
 	display:block;
 	padding:0;
@@ -553,6 +557,11 @@ ul.nav li.dropdown:hover > .test_options{
 	margin-top:10px !important;
 }
 
+.errormessage {
+	background: none repeat scroll 0 0 #FC8986 !important;
+    color: #FFFFFF !important;
+	border: 1px solid red !important;
+}
 /* ********************************************** CSS related to Icons in all buttons ************************************************************************************** */
 
 .add_icon_btn {
@@ -753,6 +762,10 @@ ul.nav li.dropdown:hover > .test_options{
 	margin-top: -3px;
 }
 
+#svn_update input[type="checkbox"] {
+	margin: 4px 0 12px 2px;
+}
+
 #svn_update tr:last-child td input[type="radio"] {
 	margin-top: -18px !important;
 }
@@ -774,6 +787,21 @@ ul.nav li.dropdown:hover > .test_options{
 }
 .adv_ui {
 	color: #ffffff;
+}
+
+#project_list_import table tr td {
+	border-top: none;
+	padding: 2px !important;	
+}
+
+#project_list_import table {
+	margin-bottom: 0;	
+}
+
+#deleteproj_msg {
+	color: #000 !important;
+	font-weight:normal !important;
+	font-size:12px;	
 }
 
 /* ******************************************************************* CSS related to create project page ********************************************************************** */
@@ -1215,6 +1243,9 @@ ul.nav li.dropdown:hover > .test_options{
 	padding: 10px;
 }
 
+.dyn_popup table tr td {
+	width: auto !important;	
+}
 
 .dyn_popup ul {
 	margin: 0;
@@ -2018,7 +2049,7 @@ html>body tbody.scrollContent {
 /* Project_list page fixed header*/
 
 .proj_list table tbody.scrollContent td {
-	width: 18%;
+	width: 25%;
 }
 
 /* quality_unit page fixed header*/
@@ -2289,3 +2320,114 @@ html>body tbody.scrollContent {
   width: 16px;
   height: 16px;
 }
+
+
+/* *************************************************************** STYLES FOR CI PAGE ************************************************************************************ */
+
+#ci_configure select {
+	width: 132px;
+	margin-bottom: 0;	
+}
+
+#ci_configure input[type=text] {
+	width: 118px;
+	margin-bottom: 0;	
+}
+
+#ci_configure table:first-child td {
+	border-top: none;	
+}
+
+#ci_configure table {
+	margin-bottom: 10px !important;	
+}
+
+#ci_configure table:nth-child(3) select{
+	width: 64px;	
+}
+
+#ci_configure input[type=radio] {
+	margin: -3px 3px 0 15px;
+}
+
+.type_test
+{
+	width:24%;
+	float:left;
+	border:1px solid #cdcdcd;
+	border-radius:7px;
+	overflow:auto;
+	margin-right:1%;
+	cursor:move;
+	height:430px;
+	margin-top:15px;
+	padding:0;
+	margin:0;
+}
+
+.type_test li
+{
+	padding:10px;
+	line-height:25px;
+	border-bottom:1px solid #d8d8d8;
+	background:background: rgb(247,247,247); /* Old browsers */
+	background: -moz-linear-gradient(top,  rgba(247,247,247,1) 0%, rgba(232,232,232,1) 54%); /* FF3.6+ */
+	background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,rgba(247,247,247,1)), color-stop(54%,rgba(232,232,232,1))); /* Chrome,Safari4+ */
+	background: -webkit-linear-gradient(top,  rgba(247,247,247,1) 0%,rgba(232,232,232,1) 54%); /* Chrome10+,Safari5.1+ */
+	background: -o-linear-gradient(top,  rgba(247,247,247,1) 0%,rgba(232,232,232,1) 54%); /* Opera 11.10+ */
+	background: -ms-linear-gradient(top,  rgba(247,247,247,1) 0%,rgba(232,232,232,1) 54%); /* IE10+ */
+	background: linear-gradient(to bottom,  rgba(247,247,247,1) 0%,rgba(232,232,232,1) 54%); /* W3C */
+	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#f7f7f7', endColorstr='#e8e8e8',GradientType=0 ); /* IE6-9 */
+}
+
+.code_content .type_test:first-child {
+	margin-right: 1%;	
+}
+
+.type_test li a
+{
+	float:right;
+}
+
+.controls label {
+	float:left;
+	margin-right: 15px;	
+}
+
+.controls label input[type="radio"], #code_validation input[type="checkbox"] {
+	margin: -2px 3px 0 0;
+}
+
+#code_validation {
+	cursor: default !important;	
+}
+
+#code_validation table input[type="text"], #code_validation table input[type="password"], #code_validation table select {
+	width: 132px;
+	margin-bottom: 0;	
+}
+
+#code_validation table {
+	margin-bottom: 10px;	
+}
+
+.z_index_ci {
+	z-index: 6;	
+}
+
+.proj_list table tr td:nth-child(4) {
+	width: 7%;	
+}
+
+.proj_list table tr td:nth-child(5) {
+	width: 12%;	
+}
+
+.proj_list table tr td:nth-child(6) {
+	width: 14%;	
+}
+
+.proj_list table tr td:nth-child(7) {
+	width: 10px;	
+}
+
