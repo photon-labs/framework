@@ -23,6 +23,9 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.net.InetAddress;
+import java.net.NetworkInterface;
+import java.net.SocketException;
+import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -157,20 +160,30 @@ public class Projects extends FrameworkBaseAction {
 		try {
 			String requestIp = getHttpRequest().getRemoteAddr();
 			InetAddress byName = InetAddress.getByName(requestIp);
-			String nameFromRequest = byName.getHostName();
-
 			String localmachine = FALSE;
-			if (LOCALHOST.equalsIgnoreCase(nameFromRequest)) {
+			if (isRequestFromLocalMachine(byName)) {
 				localmachine = TRUE;
 			}
-
 			setSessionAttribute(requestIp, localmachine);
 		} catch (Exception e) {
 			throw new PhrescoException(e);
 		}
 	}
     
-    private void setRecentProjectIdInReq() throws PhrescoException {
+    private boolean isRequestFromLocalMachine(InetAddress addr) {
+    	// Check if the address is a valid special local or loop back
+        if (addr.isAnyLocalAddress() || addr.isLoopbackAddress())
+            return true;
+
+        // Check if the address is defined on any interface
+        try {
+            return NetworkInterface.getByInetAddress(addr) != null;
+        } catch (SocketException e) {
+            return false;
+        }
+	}
+
+	private void setRecentProjectIdInReq() throws PhrescoException {
         FileReader reader = null;
         try {
             File tempPath = new File(Utility.getPhrescoTemp() + File.separator + USER_PROJECT_JSON);
