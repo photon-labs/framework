@@ -1,0 +1,69 @@
+<section id="addproject">   
+	
+     <section class="content_main create_proj">
+          <table class="table table-striped table_border table-bordered create_edit_table" cellpadding="0" cellspacing="0" border="0">  
+            <tbody name="layercontents"> 
+				{{#editProject}}
+            	<tr>
+                    <td data-i18n="project.create.label.name"><sup>*</sup></td>
+                    <td><input type="text" value="{{name}}" name="projectname" placeholder="Project Name" disabled/></td>
+                    <td data-i18n="project.create.label.code"><sup>*</sup></td>
+                    <td><input type="text" value="{{projectCode}}" name="projectcode" placeholder="Project Code" disabled/></td>
+                    <td data-i18n="project.create.label.version"></td>
+                    <td><input type="text" name="projectversion" value="{{version}}" disabled/></td>
+                     <td data-i18n="project.create.label.description"></td>
+                    <td><input type="text" name="projectdescription" value="{{description}}" placeholder="Description" disabled/></td>
+                </tr>
+                <tr>
+					<td colspan="2">
+                        <select class="custon_dropdown">
+                            <option>Pre Built</option>
+                            <option>Custom</option>
+                        </select>
+                        <select class="custon_dropdown">
+                            <option>Select</option>
+                        </select>
+                    </td>
+					
+                    <td data-i18n="project.create.label.startdate" name="startdate-lbl"></td>
+                    <td class="startdate" name="startdateholder"><input name="startdate" type="text" id="startDate"><span class="add-on"><img src="../themes/default/images/helios/cal_icon.png" border="0" alt=""></span></td>
+                    <td data-i18n="project.create.label.enddate" name="enddate-lbl"></td>
+                    <td class="enddate" name="enddateholder"><input name="enddate" id="endDate" type="text"><span class="add-on"><span class="add-on"><img src="../themes/default/images/helios/cal_icon.png" border="0" alt=""></span></span></td>
+                    
+                    <td data-i18n="project.create.label.pilotprojects"></td>
+                    <td>
+						<input type="text" name="pilotprojects" value="EShop" disabled></input>
+                    </td>
+                </tr>
+			{{/editProject}}
+               <tr id="appLayaer" class="proj_title">
+                  <td colspan="4">{{applicationlayerData.name}}</td>
+                  <td colspan="4"><img name="close" border="0" alt=""></td>
+                </tr>
+                     <tr id="webLayaer" class="proj_title">
+                      <td colspan="4">{{weblayerData.name}}</td>
+                      <td colspan="4"><img name="close" border="0" alt=""></td>
+                     </tr>
+    
+                    <tr id="mobLayaer" class="proj_title">
+                      <td colspan="4">{{mobilelayerData.name}}</td>
+                      <td colspan="4"><img name="close"  border="0" alt=""></td>
+                     </tr>
+                     <tr class="mobLayer" key="displayed">
+						<td colspan="8" class="mob">
+						<table width="100%" cellpadding="0" cellspacing="0" border="0" class="mob-table" id="mobileTable">
+                          </table>
+                      </td>	
+                    </tr>
+              	</tbody>
+            </table>
+    	<!--content_main div ends here -->
+    </section>
+    <section class="content_end">
+        <div class="flt_right">
+        	<input type="submit" value="Update" id="updateProject" class="btn btn_style add_icon_btn">
+            <input type="submit" value="Cancel" id="cancelUpdate" class="btn btn_style cancel_icon_btn">
+        </div>
+    	<!--content_title ends here -->
+    </section>
+</section>	
