@@ -15,11 +15,7 @@
                     <td><input type="text" name="projectdescription" value="{{description}}" placeholder="Description" disabled/></td>
                 </tr>
                 <tr>
-                    <td data-i18n="project.create.label.startdate"></td>
-                    <td class="startdate"><input type="text" name="startdate" ><img src="../themes/default/images/helios/cal_icon.png" border="0" alt=""></td>
-                    <td data-i18n="project.create.label.enddate"></td>
-                    <td class="enddate"><input type="text" name="enddate"><img src="../themes/default/images/helios/cal_icon.png"  border="0" alt=""></td>
-                    <td colspan="2">
+					<td colspan="2">
                         <select class="custon_dropdown">
                             <option>Pre Built</option>
                             <option>Custom</option>
@@ -28,13 +24,15 @@
                             <option>Select</option>
                         </select>
                     </td>
+					
+                    <td data-i18n="project.create.label.startdate" name="startdate-lbl"></td>
+                    <td class="startdate" name="startdateholder"><input name="startdate" type="text" id="startDate"><span class="add-on"><img src="../themes/default/images/helios/cal_icon.png" border="0" alt=""></span></td>
+                    <td data-i18n="project.create.label.enddate" name="enddate-lbl"></td>
+                    <td class="enddate" name="enddateholder"><input name="enddate" id="endDate" type="text"><span class="add-on"><span class="add-on"><img src="../themes/default/images/helios/cal_icon.png" border="0" alt=""></span></span></td>
+                    
                     <td data-i18n="project.create.label.pilotprojects"></td>
                     <td>
-                        <select>
-                            <option>Select Pilot Projects</option>
-                            <option>Select Pilot Projects</option>
-                            <option>Select Pilot Projects</option>
-                        </select>
+						<input type="text" name="pilotprojects" value="EShop" disabled></input>
                     </td>
                 </tr>
 			{{/editProject}}
