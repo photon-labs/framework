@@ -16,9 +16,10 @@ define(["framework/widget", "framework/widgetWithTemplate", "common/loading", "p
 		appInfosweb : [],
 		appInfosmobile : [],
 		projectRequestBody : {},
+		hasError: false,
 		contentContainer : commonVariables.contentPlaceholder,
 		projectlistContent : null,
-		hasError : null,
+		counter:null,
 		
 		/***
 		 * Called in initialization time of this class 
@@ -39,21 +40,33 @@ define(["framework/widget", "framework/widgetWithTemplate", "common/loading", "p
 		},
 		
 		removelayer : function(object) {
-			var layerId = object.attr('id');
-			object.closest('tr').next().attr('name', layerId + "content");
-			object.closest('tr').next().attr('key', 'hidden');
-			object.closest('tr').next().hide('slow');
-			object.closest('tr').attr('name', layerId);
-			object.closest('tr').hide('slow');
-			$("input[name="+layerId+"]").show();
+			var self=this;
+		 	if(self.counter!=2){
+		 	var layerId = object.attr('id');
+		 	var findclass=object.closest('tr').next().attr('class');
+		 		object.closest('tr').next().attr('name', layerId + "content");
+		 		$("tr[class="+findclass+"]").each(function() {
+		 			$(this).attr('key', 'hidden');
+		 			$(this).hide('slow');
+		 		});
+		 		object.closest('tr').attr('name', layerId);
+		 		object.closest('tr').hide('slow');
+		 		$("input[name="+layerId+"]").show();
+		 		self.counter=self.counter+1;
+		 	}
 		},
 		
 		addlayer : function(object) {
-			var layerType = object.attr('name');
-			$("input[name="+layerType+"]").hide();
-			$("tr[name="+ layerType +"]").show('slow');
-			$("tr[name="+ layerType+"content]").show('slow');
-			$("tr[name="+ layerType+"content]").attr('key', 'displayed');
+			var self=this;
+		 	var layerType = object.attr('name');
+		 	$("input[name="+layerType+"]").hide();
+		 	$("tr[name="+ layerType +"]").show('slow');
+		 	var clasname=$("tr[name="+ layerType +"]").closest('tr').next().attr('class');
+		 	$("tr[class="+clasname+"]").each(function() {
+		 		$(this).show('slow');
+		 		$(this).attr('key', 'displayed');
+		 	});
+		 	self.counter--;
 		},
 		
 		getEditProject : function(header, callback) {
@@ -125,89 +138,212 @@ define(["framework/widget", "framework/widgetWithTemplate", "common/loading", "p
 				return header;
 		},
 		
-		/*validation : function() {
-			var self = this;
-			var name = $("input[name='projectname']").val();;
-			var code = $("input[name='projectcode']").val();
-			var labelversion = $("input[name='projectversion']").val();
-			var startdate = $("input[name='startdate']").val();
-			var enddate = $("input[name='enddate']").val();
+		validation : function() {
+		
+			 var flag1=0,flag2=0,flag3=0;
+			 var name = $("input[name='projectname']").val();
+			 var code = $("input[name='projectcode']").val();
+			 var labelversion = $("input[name='projectversion']").val();
+			 var appcode = $("#appcode").val();
+			 var webappcode = $("#webappcode").val();
+			 var mobileappcode = $("#mobileappcode").val();
+			 var startdate = $("input[name='startdate']").val();
+			 var enddate = $("input[name='enddate']").val();
+			  
+			   /* $('#name,.edit').alphanumeric({allow:"- "});
+			   $('#code,#appcode,#labelversion,#webappcode,#mobileappcode').numeric();
+			   $('.appln-appcode,.web-appcode,.mobile-appcode').numeric(); */
+			   
+			   if(name == ""){
+					$("input[name='projectname']").focus();
+					$("input[name='projectname']").attr('placeholder','Enter Name');
+					$("input[name='projectname']").addClass("err");
+					$("input[name='projectname']").bind('keypress', function() {
+						$(this).removeClass("err");
+					});
+					self.hasError = true;
+			   } else if(code == ""){
+					$("input[name='projectcode']").focus();
+					$("input[name='projectcode']").attr('placeholder','Enter Code');
+					$("input[name='projectcode']").addClass("err");
+					$("input[name='projectcode']").bind('keypress', function() {
+						$(this).removeClass("err");
+					});
+					self.hasError = true;
+			   } else if(labelversion == ""){
+					$("input[name='projectversion']").focus();
+					$("input[name='projectversion']").attr('placeholder','Enter Version');
+					$("input[name='projectversion']").addClass("err");
+					$("input[name='projectversion']").bind('keypress', function() {
+						$(this).removeClass("err");
+					});
+					self.hasError = true;
+			   } else {
+
+					$('.appln-appcode').each(function() {
+
+						if($(this).val()=='') {
+							var keyy4=$("tr[class='applnLayer']").attr('key');
+							if(keyy4=='hidden') {
+								self.hasError=false;
+							}
+							else 	
+							{	
+								$(this).addClass("err");
+								var errorItem1 = $(".err:first");
+								errorItem1.focus();
+								errorItem1.attr('placeholder','Enter AppCode');
+								errorItem1.bind('keypress', function() {
+									$(this).removeClass("err");
+								});
+								flag1=1;	
+							}
+						}	
+					});		
+
+					if(flag1==1) {
+						return true;
+					} else {
+
+						$('.web-appcode').each(function() {
+
+							if($(this).val()=='') {
+								var keyy5=$("tr[class='webLayer']").attr('key');
+								if(keyy5=='hidden')
+								{
+									self.hasError=false;
+								}
+								else
+								{	
+									$(this).addClass("err");
+									var errorItem2 = $(".err:first");
+									errorItem2.focus();
+									errorItem2.attr('placeholder','Enter AppCode');
+									errorItem2.bind('keypress', function() {
+											$(this).removeClass("err");
+									});
+									flag2=1;
+								}		
+							}
+
+
+						});	
+
+						if(flag2==1) {
+							return true;
+						} else {
+
+							$('.mobile-appcode').each(function() {
+								if($(this).val()=='')
+								{
+									var keyy6=$("tr[class='mobLayer']").attr('key');
+									if(keyy6=='hidden')
+									{
+										self.hasError=false;
+									}
+									else
+									{	
+										$(this).addClass("err");
+										var errorItem3 = $(".err:first");
+										errorItem3.focus();
+										errorItem3.attr('placeholder','Enter AppCode');
+										errorItem3.bind('keypress', function() {
+											$(this).removeClass("err");
+										});
+										flag3=1;	
+									}	
+								}
+
+							});	
+
+							if(flag3==1)
+								return true;
+							else
+							{
+								var arr1=[],arr2=[],arr3=[];
+								var count1=0,count2=0,count3=0;
+								var appcodeval,techval,widgetval,layerval,typeval,mobappcodeval;
+								$('.applnLayer').each(function() {
+									appcodeval=$(this).find('.appln-appcode').val();
+									techval=$(this).find('.appln_technology').val();
+									arr1[count1]=appcodeval+techval;
+									$(this).next();
+									count1++;
+								});
+								
+								for (var i = 0; i < arr1.length; i++) {
+									for(var j=i+1;j<arr1.length;j++) {
+										if(arr1[i]==arr1[j]) {
+											//$("#errmsg").show();
+											//$("#errmsg").text("Both application layers cannot be the same.");
+											setTimeout(function() {
+												//$("#errmsg").hide();
+											}, 5000);
+											return true;
+										}	
+									};	
+
+								};
+
+								$('.webLayer').each(function() {
+									appcodeval=$(this).find('.web-appcode').val();
+									techval=$(this).find('.weblayer').val();
+									widgetval=$(this).find('.web_widget').val();
+									
+									arr2[count2]=appcodeval+techval+widgetval;
+									$(this).next();
+									count2++;
+								});	
+								for (var i = 0; i < arr2.length; i++) {
+									for(var j=i+1;j<arr2.length;j++) {
+										if(arr2[i]==arr2[j]) {
+											//$("#errmsg").show();
+											//$("#errmsg").text("Both web layers cannot be the same.");
+											setTimeout(function() {
+												//$("#errmsg").hide();
+											}, 5000);
+											return true;
+										}	
+									};	
+
+								};
+
+								$('.mobileLayer').each(function() {
+									mobappcodeval=$(this).find('.mobile-appcode').val();
+									layerval=$(this).find('.mobile_layer').val();
+									typeval=$(this).find('.mobile_types').val();
+									
+									arr3[count3]=mobappcodeval+layerval+typeval;
+									$(this).next();
+									count3++;
+								});	
+								
+								for (var i = 0; i < arr3.length; i++) {
+									for(var j=i+1;j<arr3.length;j++) {
+										if(arr3[i]==arr3[j]) {
+											//$("#errmsg").show();
+											//$("#errmsg").text("Both mobile layers cannot be the same.");
+											setTimeout(function() {
+												//$("#errmsg").hide();
+											}, 5000);
+											return true;
+										}	
+									};	
+
+								};
+
+								self.hasError=false;
+								return self.hasError;
+
+							}
+
+						}
+
+					}	
+		 	  }	
 			
-		    $("input[name='projectname'],input[name='projectcode']").alphanumeric({allow:"-"});
-		    $("input[name='projectversion']").numeric(); 
-			self.hasError = false;
-			if(name == "") {
-				$("input[name='projectname']").focus();
-				$("input[name='projectname']").attr('placeholder','Enter Name');
-				$("input[name='projectname']").addClass("loginuser_error");
-				$("input[name='projectname']").bind('keypress', function() {
-					$(this).removeClass("loginuser_error");
-				});
-				self.hasError = true;
-			} else if(code == "") {
-				$("input[name='projectcode']").focus();
-				$("input[name='projectcode']").attr('placeholder','Enter Code');
-				$("input[name='projectcode']").addClass("loginuser_error");
-				$("input[name='projectcode']").bind('keypress', function() {
-					$(this).removeClass("loginuser_error");
-				});
-				self.hasError = true;
-			} else if(labelversion == ""){
-				$("input[name='projectversion']").focus();
-				$("input[name='projectversion']").attr('placeholder','Enter Version');
-				$("input[name='projectversion']").addClass("loginuser_error");
-				$("input[name='projectversion']").bind('keypress', function() {
-					$(this).removeClass("loginuser_error");
-				});
-				self.hasError = true;
-			}  else {
-				console.info("appln-appcode:::" + self.hasError);
-				$(".appln-appcode").each(function() {
-					if ($(this).val() == "") {
-						$(this).focus();
-						$(this).attr('placeholder','Enter AppCode');
-						$(this).addClass("loginuser_error");;
-						$(this).bind('keypress', function() {
-							$(this).removeClass("loginuser_error");
-						});
-						self.hasError = true;
-						return false;
-					}
-				});
-				console.info("web-appcode:::" + self.hasError);
-				if (!self.hasError) {
-					$(".web-appcode").each(function() {
-						if ($(this).val() == "") {
-							$(this).focus();
-							$(this).attr('placeholder','Enter AppCode');
-							$(this).addClass("loginuser_error");;
-							$(this).bind('keypress', function() {
-								$(this).removeClass("loginuser_error");
-							});
-							self.hasError = true;
-							return false;
-						}
-					});
-				}
-				console.info("mobile-appcode:::" + self.hasError);
-				if (!self.hasError) {
-					$(".mobile-appcode").each(function() {
-						if ($(this).val() == "") {
-							$(this).focus();
-							$(this).attr('placeholder','Enter AppCode');
-							$(this).addClass("loginuser_error");;
-							$(this).bind('keypress', function() {
-								$(this).removeClass("loginuser_error");
-							});
-							self.hasError = true;
-							return false;
-						}
-					});
-				}
-			}
-			console.info("final hasError",self.hasError);
-			return self.hasError;
-		},*/
+			  return self.hasError;	
+		},
 
 		getCustomer : function() {
 			var selectedcustomer = $("#selectedCustomer").text();
@@ -678,13 +814,13 @@ define(["framework/widget", "framework/widgetWithTemplate", "common/loading", "p
 		
 		createproject : function(projectId, action) {
 			
-			var self=this;
-			//if(!self.validation()) {
+			var self = this;
+			if(!self.validation()) {
 			
 				var projectname = $("input[name='projectname']").val();
 				var projectcode = $("input[name='projectcode']").val();
 				var projectversion = $("input[name='projectversion']").val();
-				var projectdescription = $("input[name='projectdescription']").val();
+				var projectdescription = $("textarea[name='projectdescription']").val();
 				var startdate = $("input[name='startdate']").val();
 				var enddate = $("input[name='enddate']").val();
 				var count = 0;
@@ -718,7 +854,8 @@ define(["framework/widget", "framework/widgetWithTemplate", "common/loading", "p
 						appInfo.version = projectversion;
 						appInfo.name = projectname + "-" + techName; 
 						techInfo.id = $(value).children("td.technology").children("select.appln_technology").val();
-						techInfo.appTypeId = "app-layer"
+						techInfo.appTypeId = "app-layer";
+						techInfo.name = $(value).children("td.technology").children("select.appln_technology").find(":selected").text();
 						techInfo.version = $(value).children("td.version").children("select.appln_version").val();
 						if (appInfo.code !== undefined+"-") {
 							appInfo.techInfo = techInfo;
@@ -739,6 +876,7 @@ define(["framework/widget", "framework/widgetWithTemplate", "common/loading", "p
 						techInfo.appTypeId = "web-layer";
 						techInfo.techGroupId = $(value).children("td.web").children("select.weblayer").find(":selected").text();
 						techInfo.version = $(value).children("td.widgetversion").children("select.web_version").find(":selected").text();
+						techInfo.name = $(value).children("td.widget").children("select.web_widget").find(":selected").text();
 						if (appInfo.code !== undefined+"-") {
 							appInfo.techInfo = techInfo;
 							self.appInfos.push(appInfo);
@@ -762,6 +900,7 @@ define(["framework/widget", "framework/widgetWithTemplate", "common/loading", "p
 							techInfo.id = $(value).children("td.types").children("select.mobile_types").find(':selected').val();
 							techInfo.appTypeId = "mobile-layer";
 							techInfo.techGroupId = $(value).children("td.mobile").children("select.mobile_layer").find(':selected').text();
+							techInfo.name = $(value).children("td.types").children("select.mobile_types").find(':selected').text();
 							if(versionText == "No Versions available") {
 								techInfo.version = "";
 							} else {
@@ -793,7 +932,7 @@ define(["framework/widget", "framework/widgetWithTemplate", "common/loading", "p
 					});
 				});
 			}
-		//}
+		}
 	});
 
 	return Clazz.com.components.projects.js.listener.projectsListener;

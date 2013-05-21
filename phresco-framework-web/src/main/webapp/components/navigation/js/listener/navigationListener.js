@@ -1,4 +1,4 @@
-define(["framework/widget", "navigation/api/navigationAPI", "projects/project", "projects/editproject", "application/application", "features/features", "codequality/codequality", "configuration/configuration", "build/build", "unittest/unittest", "configuration/editConfiguration"], function() {
+define(["framework/widget", "navigation/api/navigationAPI", "projects/addproject", "projects/editproject", "application/application", "features/features", "codequality/codequality", "configuration/configuration", "build/build", "unittest/unittest", "configuration/editConfiguration"], function() {
 
 	Clazz.createPackage("com.components.navigation.js.listener");
 
@@ -9,7 +9,7 @@ define(["framework/widget", "navigation/api/navigationAPI", "projects/project", 
 		header : null,
 		footer : null,
 		projectlist : null,
-		project : null,
+		addproject : null,
 		editApplication : null,
 		featurelist : null,
 		codequality : null,
@@ -32,9 +32,9 @@ define(["framework/widget", "navigation/api/navigationAPI", "projects/project", 
 		
 		onAddProject : function() {
 			var self = this;
-			self.getMyObj(commonVariables.project);
+			self.getMyObj(commonVariables.addproject);
 			Clazz.navigationController.jQueryContainer = commonVariables.contentPlaceholder;
-			Clazz.navigationController.push(self.project, true);
+			Clazz.navigationController.push(self.addproject, true);
 		},
 		
 		landingPage : function(currentContent){
@@ -117,12 +117,12 @@ define(["framework/widget", "navigation/api/navigationAPI", "projects/project", 
 						retuenObj = self.build;
 						break;
 						
-					case commonVariables.project :
+					case commonVariables.addproject :
 						
-						if(self.project === null)
-							self.project = new Clazz.com.components.projects.js.Project();
+						if(self.addproject === null)
+							self.addproject = new Clazz.com.components.projects.js.addProject();
 							
-						retuenObj = self.project;
+						retuenObj = self.addproject;
 						break;
 					
 					case commonVariables.editproject :

@@ -4,7 +4,7 @@ define(["framework/widgetWithTemplate", "projects/listener/projectsListener", "p
 
 	Clazz.com.components.projects.js.EditProject = Clazz.extend(Clazz.WidgetWithTemplate, {
 		projectsEvent : null,
-		templateUrl: commonVariables.contexturl + "/components/projects/template/editproject.tmp",
+		templateUrl: commonVariables.contexturl + "/components/projects/template/editProject.tmp",
 		configUrl: "../components/projects/config/config.json",
 		name : commonVariables.editproject,
 		projectsListener : null,

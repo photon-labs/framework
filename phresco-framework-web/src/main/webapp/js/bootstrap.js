@@ -21,7 +21,7 @@ var commonVariables = {
 	projectlist : "projectlist",
 	projectlistContext : "project",
 
-	projects : "projects",
+	addproject : "addproject",
 	projectContext : "projects",
 	editproject : "editproject",
 	

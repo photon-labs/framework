@@ -2,11 +2,11 @@ define(["framework/widgetWithTemplate", "projects/listener/projectsListener", "p
 
 	Clazz.createPackage("com.components.projects.js");
 
-	Clazz.com.components.projects.js.Project = Clazz.extend(Clazz.WidgetWithTemplate, {
+	Clazz.com.components.projects.js.addProject = Clazz.extend(Clazz.WidgetWithTemplate, {
 		projectsEvent : null,
-		templateUrl: commonVariables.contexturl + "/components/projects/template/project.tmp",
+		templateUrl: commonVariables.contexturl + "/components/projects/template/addProject.tmp",
 		configUrl: "../components/projects/config/config.json",
-		name : commonVariables.projects,
+		name : commonVariables.addproject,
 		projectsListener : null,
 		projectAPI : null,
 		applicationlayerData : null,
@@ -137,5 +137,5 @@ define(["framework/widgetWithTemplate", "projects/listener/projectsListener", "p
 		}
 	});
 
-	return Clazz.com.components.projects.js.Project;
+	return Clazz.com.components.projects.js.addProject;
 });

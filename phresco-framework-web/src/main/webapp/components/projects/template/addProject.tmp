@@ -34,7 +34,7 @@
 					</tr>
 					<tr class="applnLayer" name="staticApplnLayer" key="displayed">
 					  <td><span data-i18n="project.create.label.appcode"></span><sup>*</sup></td>	
-					  <td class="applnappcode"><input type="text" class="appln-appcode"></td>
+					  <td class="applnappcode"><input type="text" id="appcode" class="appln-appcode"></td>
 					  <td data-i18n="project.create.label.technology"></td>
 					  <td name="technology" class="technology">
 						  <select name="appln_technology" class="appln_technology">
@@ -65,7 +65,7 @@
                      </tr>
                      <tr class="webLayer" name="staticWebLayer" key="displayed">
                       <td><span data-i18n="project.create.label.appcode"></span><sup>*</sup></td>	
-	                  <td class="webappcode"><input type="text" class="web-appcode"></td>
+	                  <td class="webappcode"><input type="text" id="webappcode" class="web-appcode"></td>
                       <td data-i18n="project.create.label.weblayer"></td>	
                       <td name="web" class="web">
                       	  <select name="weblayer" class="weblayer">
@@ -104,7 +104,7 @@
                           <table width="100%" cellpadding="0" cellspacing="0" border="0" class="mob-table">
 							  <tr class="mobileLayer" name="staticMobileLayer">
 									<td><span data-i18n="project.create.label.appcode"></span><sup>*</sup></td>	
-									<td class="mobileappcode"><input type="text" class="mobile-appcode"></td>
+									<td class="mobileappcode"><input type="text" id="mobileappcode" class="mobile-appcode"></td>
 									<td data-i18n="project.create.label.mobile"></td>		
 									<td name="mobile" class="mobile">
 										<select name="mobile_layer" class="mobile_layer">
