@@ -1,12 +1,11 @@
 package com.photon.phresco.framework.rest.api;
 
 import java.io.File;
-import java.lang.reflect.Type;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.List;
 
 import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -18,14 +17,10 @@ import javax.ws.rs.core.Response;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
 import com.photon.phresco.api.ConfigManager;
 import com.photon.phresco.configuration.Configuration;
 import com.photon.phresco.configuration.Environment;
 import com.photon.phresco.exception.ConfigurationException;
-import com.photon.phresco.exception.PhrescoException;
-import com.photon.phresco.framework.PhrescoFrameworkFactory;
 import com.photon.phresco.impl.ConfigManagerImpl;
 import com.photon.phresco.util.Constants;
 import com.photon.phresco.util.Utility;
@@ -93,6 +88,41 @@ public class ConfigurationService extends RestBase {
 			return Response.ok(finalOuptut).header("Access-Control-Allow-Origin", "*").build();
 		} catch (ConfigurationException e) {
 			ResponseInfo<Configuration> finalOuptut = responseDataEvaluation(responseData, e, "Cofiguration Failed to add", null);
+			return Response.status(Status.EXPECTATION_FAILED).entity(finalOuptut).header("Access-Control-Allow-Origin", "*").build();
+		}
+	}
+	
+	@DELETE
+	@Path ("/deleteEnv")
+	@Produces (MediaType.APPLICATION_JSON)
+	public Response deleteEnv(@QueryParam("appDirName") String appDirName, @QueryParam("envName") String envName) {
+		String configFile = getConfigFileDir(appDirName);
+		ResponseInfo<Environment> responseData = new ResponseInfo<Environment>();
+		try {
+			ConfigManager configManager = new ConfigManagerImpl(new File(configFile));
+			configManager.deleteEnvironment(envName);
+			ResponseInfo<Environment> finalOuptut = responseDataEvaluation(responseData, null, "Environment Deleted successfully", null);
+			return Response.ok(finalOuptut).header("Access-Control-Allow-Origin", "*").build();
+		} catch (ConfigurationException e) {
+			ResponseInfo<Environment> finalOuptut = responseDataEvaluation(responseData, e, "Environment Failed to Delete", null);
+			return Response.status(Status.EXPECTATION_FAILED).entity(finalOuptut).header("Access-Control-Allow-Origin", "*").build();
+		}
+	}
+	
+	@DELETE
+	@Path ("/deleteConfig")
+	@Produces (MediaType.APPLICATION_JSON)
+	@Consumes (MediaType.APPLICATION_JSON)
+	public Response deleteConfig(@QueryParam("appDirName") String appDirName, @QueryParam("envName") String envName, List<String> configurations) {
+		String configFile = getConfigFileDir(appDirName);
+		ResponseInfo<Configuration> responseData = new ResponseInfo<Configuration>();
+		try {
+			ConfigManager configManager = new ConfigManagerImpl(new File(configFile));
+			configManager.deleteConfigurations(envName, configurations);
+			ResponseInfo<Configuration> finalOuptut = responseDataEvaluation(responseData, null, "Configurations Deleted successfully", null);
+			return Response.ok(finalOuptut).header("Access-Control-Allow-Origin", "*").build();
+		} catch (ConfigurationException e) {
+			ResponseInfo<Configuration> finalOuptut = responseDataEvaluation(responseData, e, "Configurations Failed to Delete", null);
 			return Response.status(Status.EXPECTATION_FAILED).entity(finalOuptut).header("Access-Control-Allow-Origin", "*").build();
 		}
 	}

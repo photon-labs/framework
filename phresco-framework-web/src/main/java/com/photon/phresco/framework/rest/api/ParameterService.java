@@ -11,6 +11,7 @@ import java.util.Map;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
+import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
@@ -20,6 +21,7 @@ import javax.xml.parsers.ParserConfigurationException;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.poi.util.ArrayUtil;
 import org.xml.sax.SAXException;
 
 import com.photon.phresco.api.DynamicParameter;
@@ -78,18 +80,18 @@ public class ParameterService extends RestBase {
 		}
 	}
 	
-	@GET
+	@POST
 	@Path("/dependency")
 	@Produces(MediaType.APPLICATION_JSON)
 	@Consumes(MediaType.APPLICATION_JSON)
-	public Response getPossibleValue(@QueryParam("appDirName") String appDirName, @QueryParam("customerId") String customerId, @QueryParam("goal") String goal, 
-			@QueryParam("key") String key) {
+	public Response getPossibleValue(ApplicationInfo appInfo, @QueryParam("customerId") String customerId, @QueryParam("goal") String goal, 
+			@QueryParam("key") String key, @QueryParam("value") String value) {
 		ResponseInfo<PossibleValues> responseData = new ResponseInfo<PossibleValues>();
 		PossibleValues possibleValues = null;
 		try {
-			String filePath = getInfoFileDir(appDirName, goal);
+			String filePath = getInfoFileDir(appInfo.getAppDirName(), goal);
 			MojoProcessor processor = new MojoProcessor(new File(filePath));
-			possibleValues = getPossibleValues(processor, goal, key, appDirName, customerId);
+			possibleValues = getPossibleValues(processor, goal, key, value, appInfo, customerId);
 			ResponseInfo<PossibleValues> finalOutput = responseDataEvaluation(responseData, null, "Dependency returned successfully", possibleValues);
 			return Response.ok(finalOutput).header("Access-Control-Allow-Origin", "*").build();
 		} catch (PhrescoException e) {
@@ -98,9 +100,12 @@ public class ParameterService extends RestBase {
 		}
 	}
 
-	private static PossibleValues getPossibleValues(MojoProcessor processor, String goal, String key,
-			String appDirName, String customerId) throws PhrescoException {
+	private static PossibleValues getPossibleValues(MojoProcessor processor, String goal, String key, String value,
+			ApplicationInfo appInfo, String customerId) throws PhrescoException {
 		Parameter parameter = processor.getParameter(goal, key);
+		if(StringUtils.isNotEmpty(parameter.getDependency())) {
+			parameter = processor.getParameter(goal, parameter.getDependency());
+		}
 		if ("DynamicParameter".equals(parameter.getType())) {
 			Dependency dependency = parameter.getDynamicParameter().getDependencies().getDependency();
 			String clazz = parameter.getDynamicParameter().getClazz();
@@ -116,11 +121,10 @@ public class ParameterService extends RestBase {
 			PhrescoDynamicLoader loader = new PhrescoDynamicLoader(repoInfo, plugins);
 			DynamicParameter dynamicParameter = loader.getDynamicParameter(clazz);
 			Map<String, Object> map = new HashMap<String, Object>();
-			ApplicationInfo appInfo = new ApplicationInfo();
-			appInfo.setAppDirName(appDirName);
 			map.put(DynamicParameter.KEY_APP_INFO, appInfo);
 			map.put(DynamicParameter.KEY_MOJO, processor);
 			map.put(DynamicParameter.KEY_CUSTOMER_ID, customerId);
+			map.put(key, value);
 			try {
 				PossibleValues values = dynamicParameter.getValues(map);
 				return values;
