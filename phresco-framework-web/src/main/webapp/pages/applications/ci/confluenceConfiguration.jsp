@@ -35,14 +35,14 @@
 	JSONArray jsonArray = (JSONArray)request.getAttribute("confluenceConfigurations");
 %>
 <form id="configureConfluenceForm" name="ciDetails" action="" method="post" class="ci_form form-horizontal">
+ <fieldset>
 	<div class="baseWrapper">
 		<% if (jsonArray != null) {
 	 		for (int i = 0; i < jsonArray.length(); i++ ) {
 	 			JSONObject json = (JSONObject)jsonArray.get(i);
 				%>
 				
-				<fieldset class="fieldSet">
-				<legend>Confluence Configuration</legend>
+				<fieldset>
 					<div class = "wrapperDiv" style="border-width: 0.01px; border-spacing: 5%;">		
 						<div class="control-group">
 							<label class="control-label labelbold popupLbl">
@@ -72,12 +72,12 @@
 							</div>
 						</div>
 					</div>
+					<br>
 					</fieldset>	
 			<%	}
 			 } else  { 
 			 %>
-			 <fieldset class="fieldSet">
-			 <legend>Confluence Configuration</legend>
+			 <fieldset>
 					<div class = "wrapperDiv" style="border-width: 0.01px; border-spacing: 5%;">		
 						<div class="control-group">
 							<label class="control-label labelbold popupLbl">
@@ -110,10 +110,10 @@
 					</fieldset>
 			 <% } %>
 		 </div>
+		 </fieldset>
 	
 		 <div class="baseWrapperRes">
-		 <fieldset class="fieldSet">
-		 <legend>Confluence Configuration</legend>
+		 <fieldset>
 				<div class = "wrapperDiv" style="border-width: 0.01px; border-spacing: 5%;">		
 					<div class="control-group">
 						<label class="control-label labelbold popupLbl">
@@ -143,6 +143,7 @@
 						</div>
 					</div>
 				</div>	
+				<br>
 				</fieldset>
 			</div>
 			
@@ -151,8 +152,7 @@
 						
 					</label>
 					<div class="controls">
-						<input id="addOneMore" type="button" value="Add One More Confluence" />
-<!-- 						<img src="images/icons/add_icon.png" id="addOneMore"> -->
+					 	<input id="addOneMore" type="button" value="<s:text name="lbl.add.one.more.confluence.configuration"/>" class="btn btn-primary">
 					</div>
 		</div>
 </form>
@@ -168,7 +168,7 @@
 		});
 		
 		$('.removeMe').live('click',function() {
-				$(this).closest(".fieldSet").remove();
+			$(this).closest(".wrapperDiv").parent().remove();
 		});
 		
 	});

@@ -337,14 +337,14 @@
 		  	} else if($("[name=repoType]").val() == 'git') {
 		  		$(".mandatory").hide();
 		  		$("#commitMsgSpan").hide();
-		  		$('#testImportDivControl').hide();
+		  		changeRepoActions();
 		  	}
 		  	
 		  	if ($("[name=repoType]").val() == 'bitkeeper') {
 		  		$(".mandatory").hide();
 		  		$("#repoUrl").val('');
 		  		$("#commitMsgSpan").show();
-		  		$('#testImportDivControl').hide();
+		  		changeRepoActions();
 			}
 		});
 			  
@@ -410,6 +410,13 @@
   		} else {
   			$('#testImportDiv').hide();
   		}
+	}
+	
+	function changeRepoActions() {
+		$('#testImportDivControl').hide();
+  		$('#testClone').attr('checked', false);
+  		changeChckBoxValue($('#testClone'));
+  		$('#testImportDiv').hide();
 	}
 	
 	function showSelect() {
