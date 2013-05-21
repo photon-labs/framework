@@ -335,6 +335,9 @@ public class ProjectManagerImpl implements ProjectManager, FrameworkConstants, C
 						//For Pdf Document Creation In Docs Folder
 						DocumentGenerator documentGenerator = PhrescoFrameworkFactory.getDocumentGenerator();
 						documentGenerator.generate(appInfo, projectInfoFile, artifactGroups, serviceManager);
+						if(! appInfo.getAppDirName().equals(oldAppDirName)) {
+							documentGenerator.deleteOldDocument(projectInfoFile, oldAppDirName);
+						}
 						// Dynamic Class Loading
 						PhrescoDynamicLoader dynamicLoader = new PhrescoDynamicLoader(repoInfo, plugins);
 						ApplicationProcessor applicationProcessor = dynamicLoader

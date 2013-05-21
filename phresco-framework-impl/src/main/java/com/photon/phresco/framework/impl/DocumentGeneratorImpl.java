@@ -39,6 +39,7 @@ import com.photon.phresco.framework.docs.impl.DocConvertor;
 import com.photon.phresco.framework.docs.impl.DocumentUtil;
 import com.photon.phresco.framework.docs.impl.PdfInput;
 import com.photon.phresco.service.client.api.ServiceManager;
+import com.photon.phresco.util.FileUtil;
 import com.photon.phresco.util.Utility;
 
 /**
@@ -69,7 +70,7 @@ public class DocumentGeneratorImpl implements DocumentGenerator {
             if (isDebugEnabled) {
                 S_LOGGER.debug("generate() ProjectCode=" + info.getCode());
             }
-            String path = folderPath + File.separator + info.getName()
+            String path = folderPath + File.separator + info.getAppDirName()
                     + "_doc.pdf";
             os = new FileOutputStream(new File(path));
 
@@ -124,5 +125,11 @@ public class DocumentGeneratorImpl implements DocumentGenerator {
             Utility.closeStream(fos);
         }
     }
+
+	public void deleteOldDocument(File filePath, String oldAppDirName)
+			throws PhrescoException {
+		String pdfFilePath = filePath.toString() + File.separator + "docs" + File.separator + oldAppDirName + "_doc.pdf";
+		FileUtil.delete(new File(pdfFilePath));
+	}
 
 }
