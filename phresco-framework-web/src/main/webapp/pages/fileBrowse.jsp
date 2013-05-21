@@ -104,7 +104,9 @@
 				fileTypes: '<%= fileTypes %>',
 				fileOrFolder: '<%= fileorfolder %>',
 				from: '<%= from %>',
-				minifiedFiles: '<%= minifiedFiles %>'
+				minifiedFiles: '<%= minifiedFiles %>',
+				expandEasing: 'easeOutBounce', 
+				collapseEasing: 'easeOutBounce'
 			}, function(file) {
 				$('#browseSelectedLocation').val(removeBackSlash(file));
 			});
