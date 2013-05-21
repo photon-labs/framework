@@ -131,7 +131,7 @@
 			<span class="red">*</span> <s:text name="label.repository.url"/>
 		</label>
 		<div class="controls">
-			<input type="text" name="repoUrl" class="input-xlarge" id="repoUrl" value="<%= StringUtils.isEmpty(repoUrl) ? "http://" : repoUrl %>">&nbsp;&nbsp;<span id="missingURL" class="missingData"></span>
+			<input type="text" name="repoUrl" class="input-xlarge" id="repoUrl" value="<%= StringUtils.isEmpty(repoUrl) ? "" : repoUrl %>">&nbsp;&nbsp;<span id="missingURL" class="missingData"></span>
 		</div>
 	</div>
 	
@@ -340,14 +340,14 @@
 		  	} else if($("[name=repoType]").val() == 'git') {
 		  		$(".mandatory").hide();
 		  		$("#commitMsgSpan").hide();
-		  		$('#testImportDivControl').hide();
+		  		changeRepoActions();
 		  	}
 		  	
 		  	if ($("[name=repoType]").val() == 'bitkeeper') {
 		  		$(".mandatory").hide();
 		  		$("#repoUrl").val('');
 		  		$("#commitMsgSpan").show();
-		  		$('#testImportDivControl').hide();
+		  		changeRepoActions();
 			}
 		});
 			  
@@ -413,6 +413,13 @@
   		} else {
   			$('#testImportDiv').hide();
   		}
+	}
+	
+	function changeRepoActions() {
+		$('#testImportDivControl').hide();
+  		$('#testClone').attr('checked', false);
+  		changeChckBoxValue($('#testClone'));
+  		$('#testImportDiv').hide();
 	}
 	
 	function showSelect() {
