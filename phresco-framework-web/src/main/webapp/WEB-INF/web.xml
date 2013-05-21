@@ -26,6 +26,16 @@
     <description>
         Architype
     </description>
+    
+    <filter>
+	   <filter-name>clientidentify</filter-name>
+	   <filter-class>com.photon.phresco.framework.commons.ClientIdentifyFilter</filter-class>
+	</filter>
+	<filter-mapping>
+	   <filter-name>clientidentify</filter-name>
+	   <url-pattern>*</url-pattern>
+	</filter-mapping>
+	
 	<servlet>
 		<servlet-name>jersey-servlet</servlet-name>
 		<servlet-class>com.sun.jersey.spi.container.servlet.ServletContainer</servlet-class>
@@ -75,7 +85,7 @@
         <servlet-name>cometd</servlet-name>
         <url-pattern>/cometd/*</url-pattern>
     </servlet-mapping>
- 
+    
  	<filter>
         <filter-name>continuation</filter-name>
         <filter-class>org.eclipse.jetty.continuation.ContinuationFilter</filter-class>
@@ -93,6 +103,8 @@
         <filter-name>cross-origin</filter-name>
         <url-pattern>/cometd/*</url-pattern>
     </filter-mapping>
+    
+    
 	
 	<!-- [INSERT FRAGMENT HERE] -->
 </web-app>
