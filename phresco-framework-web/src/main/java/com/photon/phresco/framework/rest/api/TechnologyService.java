@@ -43,7 +43,7 @@ public class TechnologyService extends RestBase {
 	public Response listApptypes(@QueryParam("userId") String userId, @QueryParam("customerId") String customerId) {
 		ResponseInfo<List<ApplicationType>> responseData = new ResponseInfo<List<ApplicationType>>();
 		try {
-			ServiceManager serviceManager = ServiceManagerMap.getServiceManager(userId);
+			ServiceManager serviceManager = RestBase.CONTEXT_MANAGER_MAP.get(userId);
 			if(serviceManager == null) {
 				ResponseInfo<List<ApplicationType>> finalOutput = responseDataEvaluation(responseData, null, "UnAuthorized User", null);
 	        	return Response.status(Status.BAD_REQUEST).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
@@ -52,9 +52,6 @@ public class TechnologyService extends RestBase {
 			ResponseInfo<List<ApplicationType>> finalOutput = responseDataEvaluation(responseData, null, "Apptypes listed successfully", applicationTypes);
 			return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
 		} catch (PhrescoException e) {
-			ResponseInfo<List<ApplicationType>> finalOutput = responseDataEvaluation(responseData, e, "appTypes not fetched", null);
-			return Response.status(Status.BAD_REQUEST).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
-		} catch (IOException e) {
 			ResponseInfo<List<ApplicationType>> finalOutput = responseDataEvaluation(responseData, e, "appTypes not fetched", null);
 			return Response.status(Status.BAD_REQUEST).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
 		}
@@ -174,7 +171,7 @@ public class TechnologyService extends RestBase {
 			@QueryParam("appTypeId") String appTypeId, @QueryParam("userId") String userId) {
 		ResponseInfo<List<TechnologyGroup>> responseData = new ResponseInfo<List<TechnologyGroup>>();
 		try {
-			ServiceManager serviceManager = ServiceManagerMap.getServiceManager(userId);
+			ServiceManager serviceManager = CONTEXT_MANAGER_MAP.get(userId);
 			if (serviceManager == null) {
 				ResponseInfo<List<TechnologyGroup>> finalOutput = responseDataEvaluation(responseData, null,	"UnAuthorized User", null);
 				return Response.status(Status.BAD_REQUEST).entity(finalOutput).header("Access-Control-Allow-Origin","*").build();
@@ -184,9 +181,6 @@ public class TechnologyService extends RestBase {
 					"technologyGroups of customer returned successfully", technologyGroups);
 			return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
 		} catch (PhrescoException e) {
-			ResponseInfo<List<TechnologyGroup>> finalOutput = responseDataEvaluation(responseData, e,"technologyGroups of customer not fetched", null);
-			return Response.status(Status.BAD_REQUEST).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
-		} catch (IOException e) {
 			ResponseInfo<List<TechnologyGroup>> finalOutput = responseDataEvaluation(responseData, e,"technologyGroups of customer not fetched", null);
 			return Response.status(Status.BAD_REQUEST).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
 		}

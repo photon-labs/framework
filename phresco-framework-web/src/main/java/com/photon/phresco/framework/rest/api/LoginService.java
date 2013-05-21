@@ -77,7 +77,7 @@ public class LoginService extends RestBase {
 	        	writer.write(userjson.toString());
 	        	writer.close();
 	        	
-			ResponseInfo<User> finalOuptut = responseDataEvaluation(responseData, null, "Login Successfull", user);
+			ResponseInfo<User> finalOuptut = responseDataEvaluation(responseData, null, "Login Success", user);
 			return Response.ok(finalOuptut).header("Access-Control-Allow-Origin", "*").build();
 			
 	        } catch (PhrescoWebServiceException e) {

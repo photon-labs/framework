@@ -2,6 +2,9 @@ package com.photon.phresco.framework.rest.api;
 
 
 
+import java.util.HashMap;
+import java.util.Map;
+
 import com.photon.phresco.exception.PhrescoException;
 import com.photon.phresco.exception.PhrescoWebServiceException;
 import com.photon.phresco.framework.FrameworkConfiguration;
@@ -11,20 +14,21 @@ import com.photon.phresco.service.client.api.ServiceManager;
 import com.photon.phresco.service.client.impl.ServiceManagerImpl;
 
 public class RestBase<T> {
-
-	protected ServiceManager getServiceManager(String userName, String password) {
+	
+	public static final Map<String, ServiceManager> CONTEXT_MANAGER_MAP = new HashMap<String, ServiceManager>();
+	
+	protected ServiceManager getServiceManager(String userId, String password) {
 		ServiceManager serviceManager = null;
 		try {
 			ServiceContext context = new ServiceContext();
 			FrameworkConfiguration configuration = PhrescoFrameworkFactory.getFrameworkConfig();
 			context.put("phresco.service.url", configuration.getServerPath());
-			context.put("phresco.service.username", userName);
+			context.put("phresco.service.username", userId);
 			context.put("phresco.service.password", password);
 			context.put("phresco.service.api.key", configuration.apiKey());
-//			serviceManager = ServiceManagerMap.getServiceManager("sample");
 			if (serviceManager == null) {
 				serviceManager = new ServiceManagerImpl(context);
-				ServiceManagerMap.putServiceManager(userName, serviceManager);
+				CONTEXT_MANAGER_MAP.put(userId, serviceManager);
 			}
 		} catch (PhrescoWebServiceException ex) {
 			throw new PhrescoWebServiceException(ex.getResponse());

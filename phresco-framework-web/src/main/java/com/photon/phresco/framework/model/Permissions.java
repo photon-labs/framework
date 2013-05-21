@@ -1,113 +1,148 @@
 package com.photon.phresco.framework.model;
 
-public class Permissions {
+import java.io.Serializable;
 
-	private boolean manageApplication = false;
-    private boolean importApplication = false;
-    private boolean manageRepo = false;
-    private boolean updateRepo = false;
-    private boolean managePdfReports = false;
-    private boolean manageCodeValidation = false;
-    private boolean manageConfiguration = false;
-    private boolean manageBuilds = false;
-    private boolean manageTests = false;
-    private boolean manageCIJobs = false;
-    private boolean executeCIJobs = false;
-    private boolean manageMavenReports = false;
-    
-    public void setManageApplication(boolean manageApplication) {
+import javax.xml.bind.annotation.XmlRootElement;
+
+import org.apache.commons.lang.builder.ToStringBuilder;
+import org.apache.commons.lang.builder.ToStringStyle;
+import org.codehaus.jackson.annotate.JsonIgnoreProperties;
+
+@XmlRootElement
+@JsonIgnoreProperties(ignoreUnknown = true)
+public class Permissions implements Serializable  {
+
+	private static final long serialVersionUID = 1L;
+
+	public Permissions() {
+		super();
+	}
+
+	private boolean manageApplication;
+    private boolean importApplication;
+    private boolean manageRepo;
+    private boolean updateRepo;
+    private boolean managePdfReports;
+    private boolean manageCodeValidation;
+    private boolean manageConfiguration;
+    private boolean manageBuilds;
+    private boolean manageTests;
+    private boolean manageCIJobs;
+    private boolean executeCIJobs;
+    private boolean manageMavenReports;
+  
+	public boolean isManageApplication() {
+		return manageApplication;
+	}
+
+	public void setManageApplication(boolean manageApplication) {
 		this.manageApplication = manageApplication;
 	}
 
-	public boolean canManageApplication() {
-		return manageApplication;
+	public boolean isImportApplication() {
+		return importApplication;
 	}
 
 	public void setImportApplication(boolean importApplication) {
 		this.importApplication = importApplication;
 	}
 
-	public boolean canImportApplication() {
-		return importApplication;
+	public boolean isManageRepo() {
+		return manageRepo;
 	}
 
 	public void setManageRepo(boolean manageRepo) {
 		this.manageRepo = manageRepo;
 	}
 
-	public boolean canManageRepo() {
-		return manageRepo;
+	public boolean isUpdateRepo() {
+		return updateRepo;
 	}
 
 	public void setUpdateRepo(boolean updateRepo) {
 		this.updateRepo = updateRepo;
 	}
 
-	public boolean canUpdateRepo() {
-		return updateRepo;
+	public boolean isManagePdfReports() {
+		return managePdfReports;
 	}
 
 	public void setManagePdfReports(boolean managePdfReports) {
 		this.managePdfReports = managePdfReports;
 	}
 
-	public boolean canManagePdfReports() {
-		return managePdfReports;
+	public boolean isManageCodeValidation() {
+		return manageCodeValidation;
 	}
 
 	public void setManageCodeValidation(boolean manageCodeValidation) {
 		this.manageCodeValidation = manageCodeValidation;
 	}
 
-	public boolean canManageCodeValidation() {
-		return manageCodeValidation;
+	public boolean isManageConfiguration() {
+		return manageConfiguration;
 	}
 
 	public void setManageConfiguration(boolean manageConfiguration) {
 		this.manageConfiguration = manageConfiguration;
 	}
 
-	public boolean canManageConfiguration() {
-		return manageConfiguration;
+	public boolean isManageBuilds() {
+		return manageBuilds;
 	}
 
 	public void setManageBuilds(boolean manageBuilds) {
 		this.manageBuilds = manageBuilds;
 	}
 
-	public boolean canManageBuilds() {
-		return manageBuilds;
+	public boolean isManageTests() {
+		return manageTests;
 	}
 
 	public void setManageTests(boolean manageTests) {
 		this.manageTests = manageTests;
 	}
 
-	public boolean canManageTests() {
-		return manageTests;
+	public boolean isManageCIJobs() {
+		return manageCIJobs;
 	}
 
 	public void setManageCIJobs(boolean manageCIJobs) {
 		this.manageCIJobs = manageCIJobs;
 	}
 
-	public boolean canManageCIJobs() {
-		return manageCIJobs;
+	public boolean isExecuteCIJobs() {
+		return executeCIJobs;
 	}
 
 	public void setExecuteCIJobs(boolean executeCIJobs) {
 		this.executeCIJobs = executeCIJobs;
 	}
 
-	public boolean canExecuteCIJobs() {
-		return executeCIJobs;
+	public boolean isManageMavenReports() {
+		return manageMavenReports;
 	}
 
 	public void setManageMavenReports(boolean manageMavenReports) {
 		this.manageMavenReports = manageMavenReports;
 	}
-
-	public boolean canManageMavenReports() {
-		return manageMavenReports;
-	}
+	
+	public String toString() {
+        return new ToStringBuilder(this,
+                ToStringStyle.DEFAULT_STYLE)
+                .append(super.toString())
+                .append("manageApplication", isManageApplication())
+                .append("importApplication", isImportApplication())
+                .append("manageRepo", isManageRepo())
+                .append("updateRepo", isUpdateRepo())
+                .append("managePdfReports", isManagePdfReports())
+                .append("manageCodeValidation", isManageCodeValidation())
+                .append("manageConfiguration", isManageConfiguration())
+                .append("manageBuilds", isManageBuilds())
+                .append("manageTests", isManageTests())
+                .append("manageCIJobs", isManageCIJobs())
+                .append("executeCIJobs", isExecuteCIJobs())
+                .append("manageMavenReports", isManageMavenReports())
+                .toString();
+    }
 }

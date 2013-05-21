@@ -74,6 +74,7 @@ import com.photon.phresco.framework.model.Permissions;
 import com.photon.phresco.framework.model.TestSuite;
 import com.photon.phresco.plugins.model.Mojos.Mojo.Configuration.Parameters.Parameter;
 import com.photon.phresco.plugins.model.Mojos.Mojo.Configuration.Parameters.Parameter.PossibleValues.Value;
+import com.photon.phresco.service.client.api.ServiceManager;
 import com.photon.phresco.util.Constants;
 import com.photon.phresco.util.PhrescoDynamicLoader;
 import com.photon.phresco.util.Utility;
@@ -1265,14 +1266,14 @@ public class FrameworkUtil extends FrameworkBaseAction implements Constants {
         return csvString;
     }
     
-    public Permissions getUserPermissions(User user) {
+    public Permissions getUserPermissions(ServiceManager serviceManager, User user) throws PhrescoException {
     	Permissions permissions = new Permissions();
     	try {
     		List<String> roleIds = user.getRoleIds();
 			if (CollectionUtils.isNotEmpty(roleIds)) {
 				List<String> permissionIds = new ArrayList<String>();
 				for (String roleId : roleIds) {
-					Role role = getServiceManager().getRole(roleId);
+					Role role = serviceManager.getRole(roleId);
 					permissionIds.addAll(role.getPermissionIds());
 				}
 				
@@ -1327,7 +1328,7 @@ public class FrameworkUtil extends FrameworkBaseAction implements Constants {
 				}
 			}
 		} catch (Exception e) {
-			// TODO: handle exception
+			throw new PhrescoException(e);
 		}
 		
 		return permissions;

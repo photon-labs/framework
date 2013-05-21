@@ -41,10 +41,10 @@ public class BuildInfoService extends RestBase implements FrameworkConstants {
 					+ File.separator + BUILD_INFO_FILE_NAME);
 			ApplicationManager applicationManager = PhrescoFrameworkFactory.getApplicationManager();
 			List<BuildInfo> builds = applicationManager.getBuildInfos(buildInfoFile);
-			ResponseInfo<List<BuildInfo>> finalOutput = responseDataEvaluation(responseData, null,"Buildinfo return Successfully", builds);
+			ResponseInfo<List<BuildInfo>> finalOutput = responseDataEvaluation(responseData, null,"Buildinfo listed Successfully", builds);
 			return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
 		} catch (PhrescoException e) {
-			ResponseInfo<List<BuildInfo>> finalOutput = responseDataEvaluation(responseData, e,"Buildinfo return Failed", null);
+			ResponseInfo<List<BuildInfo>> finalOutput = responseDataEvaluation(responseData, e,"Buildinfo list Failed", null);
 			return Response.status(Status.NOT_FOUND).entity(finalOutput).header("Access-Control-Allow-Origin", "*")
 			.build();
 		}
@@ -117,7 +117,7 @@ public class BuildInfoService extends RestBase implements FrameworkConstants {
 			ApplicationManager applicationManager = PhrescoFrameworkFactory.getApplicationManager();
 			applicationManager.deleteBuildInfos(project, buildInts);
 		} catch (PhrescoException e) {
-			ResponseInfo finalOutput = responseDataEvaluation(responseData, e, "Build delete Failed", null);
+			ResponseInfo finalOutput = responseDataEvaluation(responseData, e, "Deletion of build Failed", null);
 			return Response.status(Status.NOT_FOUND).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
 		}
 		ResponseInfo finalOutput = responseDataEvaluation(responseData, null, "Build deleted Successfully", null);

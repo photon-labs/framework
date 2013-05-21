@@ -500,12 +500,8 @@ public class BuildService implements Constants ,FrameworkConstants,BuildServiceC
 	 
 	 
 	 protected ServiceManager getServiceManager(String username) throws PhrescoException {
-		try {
-			this.serviceManager = ServiceManagerMap.getServiceManager(username);
-			return serviceManager;
-		} catch (IOException e) {
-			 throw new PhrescoException(e);
-		}
+		this.serviceManager = RestBase.CONTEXT_MANAGER_MAP.get(username);
+		return serviceManager;
 		}
 	 
 	 //------------ Will be replaced by reusing the login service coding .
