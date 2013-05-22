@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<mojos>
+    <mojo>
+      <goal>start</goal>
+      <description>Goal which starts the HTML5-Jquery project</description>
+      <requiresDirectInvocation>false</requiresDirectInvocation>
+      <requiresProject>true</requiresProject>
+      <requiresReports>false</requiresReports>
+      <aggregator>false</aggregator>
+      <requiresOnline>false</requiresOnline>
+      <inheritedByDefault>true</inheritedByDefault>
+      <implementation>
+           <dependency>
+               <groupId>com.photon.phresco.plugins</groupId>
+               <artifactId>java-phresco-plugin</artifactId>
+               <type>jar</type>
+               <version>2.3.0.4001</version>
+               <class>com.photon.phresco.plugins.java.JavaPlugin</class>
+           </dependency>
+       </implementation>
+      <language>java</language>
+      <instantiationStrategy>per-lookup</instantiationStrategy>
+      <executionStrategy>once-per-session</executionStrategy>
+      <threadSafe>false</threadSafe>
+	  <configuration>
+      <parameters>
+        <parameter>
+			<name>
+				<value lang="en">Environment</value>
+			</name>
+			<type>DynamicParameter</type>
+			<dynamicParameter>
+				<class>com.photon.phresco.impl.EnvironmentsParameterImpl</class>
+				<dependencies>
+					<dependency>
+						<groupId>com.photon.phresco.commons</groupId>
+						<artifactId>phresco-commons</artifactId>
+						<type>jar</type>
+						<version>2.3.0.4001</version>
+					</dependency>
+				</dependencies>
+			</dynamicParameter>
+			<required>true</required>
+			<editable>true</editable>
+			<key>environmentName</key>
+			<multiple>false</multiple>
+			<sort>false</sort>
+			<show>true</show>
+			<value></value>
+		</parameter>
+          </parameters>
+      </configuration>
+    </mojo>
+    <mojo>
+      <goal>stop</goal>
+      <description>Goal which stops the HTML5-Jquery project</description>
+      <requiresDirectInvocation>false</requiresDirectInvocation>
+      <requiresProject>true</requiresProject>
+      <requiresReports>false</requiresReports>
+      <aggregator>false</aggregator>
+      <requiresOnline>false</requiresOnline>
+      <inheritedByDefault>true</inheritedByDefault>
+      <implementation>
+           <dependency>
+               <groupId>com.photon.phresco.plugins</groupId>
+               <artifactId>java-phresco-plugin</artifactId>
+               <type>jar</type>
+               <version>2.3.0.4001</version>
+               <class>com.photon.phresco.plugins.java.JavaPlugin</class>
+           </dependency>
+       </implementation>
+      <language>java</language>
+      <instantiationStrategy>per-lookup</instantiationStrategy>
+      <executionStrategy>once-per-session</executionStrategy>
+      <threadSafe>false</threadSafe>
+    </mojo>
+</mojos>
