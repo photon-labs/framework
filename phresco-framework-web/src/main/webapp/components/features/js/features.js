@@ -197,7 +197,7 @@ define(["framework/widgetWithTemplate", "features/listener/featuresListener"], f
           	$('.featureinfo_img').on("click", function(event) {				
 				var descid = $(this).attr("value");
 				var currentObj = this;				
-				self.featuresListener.getFeaturesList(self.featuresListener.getRequestHeader(self.featureRequestBody, "", descid), function(response) {
+				self.featuresListener.getFeaturesList(self.featuresListener.getRequestHeader(self.featureRequestBody, "desc", descid), function(response) {
 					var divhtml = '<div id="'+descid+'" class="dyn_popup featureinfo"><h1>Description</h1><a href="#" class="dyn_popup_close">X</a><div class="features_cont"><span><img src="../themes/default/images/helios/feature_info_logo.png" width="42" height="42" border="0" alt=""></span>'+response.data+'</div></div>';
 					$("#desc").children().remove();
 					$("#desc").append(divhtml);
