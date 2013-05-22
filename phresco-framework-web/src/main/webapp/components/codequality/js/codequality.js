@@ -7,13 +7,7 @@ define(["framework/widgetWithTemplate", "codequality/listener/codequalityListene
 		configUrl: "../components/projects/config/config.json",
 		name : commonVariables.codequality,
 		codequalityListener: null,
-		header: {
-			contentType: null,
-			requestMethod: null,
-			dataType: null,
-			requestPostBody: null,
-			webserviceurl: null
-		},
+		dynamicpage : null,
 	
 		/***
 		 * Called in initialization time of this class 
@@ -22,6 +16,7 @@ define(["framework/widgetWithTemplate", "codequality/listener/codequalityListene
 		 */
 		initialize : function(globalConfig){
 			var self = this;
+			self.dynamicpage = commonVariables.navListener.getMyObj(commonVariables.dynamicPage);
 			self.codequalityListener = new Clazz.com.components.codequality.js.listener.CodequalityListener(globalConfig);
 		},
 		
@@ -33,7 +28,6 @@ define(["framework/widgetWithTemplate", "codequality/listener/codequalityListene
 		 *
 		 */
 		loadPage :function(){
-			
 			Clazz.navigationController.push(this);
 		},
 		
@@ -43,8 +37,22 @@ define(["framework/widgetWithTemplate", "codequality/listener/codequalityListene
 		 *
 		 * @element: Element as the result of the template + data binding
 		 */
-		postRender : function(element) {			
+		postRender : function(element) {
+			var self = this; 
+			var appDirName = commonVariables.appDirName;
+			var goal = "validate-code";
+			self.dynamicpage.getHtml(appDirName, goal, function(response){
+				$("#dynamicContent").html(response);
+				//self.dynamicEvent();
+			});
 		},
+		
+		/* dynamicEvent : function() {
+			var self = this; 
+			var dependency = '';
+			dependency = $("select[name='sonar']").find(':selected').attr('dependency');
+				
+		}, */
 
 		/***
 		 * Bind the action listeners. The bindUI() is called automatically after the render is complete 
@@ -57,6 +65,8 @@ define(["framework/widgetWithTemplate", "codequality/listener/codequalityListene
 			$("#codeAnalysis").click(function() {
 				self.opencc(this,'code_popup');
 			});
+			
+			
 			
 		}
 	});
