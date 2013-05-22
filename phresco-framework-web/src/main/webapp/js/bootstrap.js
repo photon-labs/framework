@@ -5,6 +5,7 @@ var commonVariables = {
 	contexturl : "..",
 	
 	navListener : null,
+	appDirName : null,
 	
 	header : "header",
 	headerContext : "",
@@ -26,7 +27,10 @@ var commonVariables = {
 	editproject : "editproject",
 	
 	dynamicPage : "dynamicPage",
-	dynamicPageContext : "dynamicPage",
+	dynamicPageContext : "dynamic",
+	
+	paramaterContext : "parameter",
+	dependencyContext : "dependency",	
 
 	featurePage : "features",
 	featurePageContext : "features",
