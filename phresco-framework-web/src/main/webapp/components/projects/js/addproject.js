@@ -133,6 +133,19 @@ define(["framework/widgetWithTemplate", "projects/listener/projectsListener", "p
 			$("input[name='Cancel']").bind('click', function(){
 				self.onCancelCreateEvent.dispatch();
 			});
+			
+			$("#endDate").blur(function(){
+				if($('.applnLayer').attr('key')=='displayed')
+					$("#appcode").focus();	
+				else if($('.webLayer').attr('key')=='displayed')
+					$("#webappcode").focus();
+				else
+					$("#mobileappcode").focus();
+			});
+
+			$("input[name='projectname']").on('keyup',function() {
+				$("input[name='projectcode']").val($(this).val());
+			});
 			 
 		}
 	});

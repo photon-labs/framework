@@ -134,7 +134,7 @@
 			"versions" : "Versions",
 			"code" : "Code",
 			"name" : "Name",
-			"servers" : "Servers",
+			"servers" : "Server",
 			"description" : "Description",
 			"pilotproject" : "Pilot Project",
 			"appdirectory" : "App Directory",
