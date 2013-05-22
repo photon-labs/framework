@@ -28,15 +28,15 @@ define(["framework/widgetWithTemplate", "configuration/listener/configurationLis
 		 *
 		 */
 		loadPage : function(){
-			Clazz.navigationController.push(this);
+			Clazz.navigationController.push(this, true);
 		},
 		
 		preRender: function(whereToRender, renderFunction){
 			var self = this;
 			self.configurationlistener.getConfigurationList(self.configurationlistener.getRequestHeader(self.configRequestBody, "list"), function(response) {
-					self.templateData.configurationList = response.data;	
-					renderFunction(self.templateData, whereToRender);
-				});			
+				self.templateData.configurationList = response.data;	
+				renderFunction(self.templateData, whereToRender);
+			});			
 		}, 
 		/***
 		 * Called after the preRender() and bindUI() completes. 
@@ -52,7 +52,14 @@ define(["framework/widgetWithTemplate", "configuration/listener/configurationLis
 			self.editConfigurationEvent = new signals.Signal();
 			self.editConfigurationEvent.add(configurationlistener.editConfiguration, configurationlistener);
 		},
-
+		
+		getAction : function(configRequestBody, action, deleteEnvironment) {
+			var self=this;
+			self.configurationlistener.getConfigurationList(self.configurationlistener.getRequestHeader(self.configRequestBody, action, deleteEnvironment), function(response) {
+				self.loadPage();
+			});	
+		},
+		
 		/***
 		 * Bind the action listeners. The bindUI() is called automatically after the render is complete 
 		 *
@@ -60,14 +67,27 @@ define(["framework/widgetWithTemplate", "configuration/listener/configurationLis
 		bindUI : function() {
 			var self = this;
 			$(".tooltiptop").tooltip();
+			$(".dyn_popup").hide();
 			$("a[name=clone_pop]").unbind("click");
 			$("a[name=clone_pop]").click(function() {
+				self.opencc(this, $(this).attr('name'));
+			});
+			
+			$(".tooltiptop").unbind("click");
+			$(".tooltiptop").click(function() {
 				self.opencc(this, $(this).attr('name'));
 			});
 			
 			$("input[name=env_pop]").unbind("click");
 			$("input[name=env_pop]").click(function() {
 				self.opencc(this, $(this).attr('name'));
+			});
+			
+			$("input[name='deleteEnv']").unbind('click');
+			$("input[name='deleteEnv']").click(function(e) {
+				deleteEnvironment = $(this).parent().parent().attr('id');
+				self.configRequestBody = {};
+				self.getAction(self.configRequestBody, 'delete', deleteEnvironment);
 			});
 			
 			$("a[name=editConfiguration]").unbind("click");

@@ -58,7 +58,7 @@ define(["framework/widget","configuration/api/configurationAPI"], function() {
 
 		},
 		
-		getRequestHeader : function(configRequestBody, action) {
+		getRequestHeader : function(configRequestBody, action, deleteEnv) {
 			var self=this, header, appDirName;
 			appDirName = self.configurationAPI.localVal.getJson("appDirName");
 			header = {
@@ -71,6 +71,9 @@ define(["framework/widget","configuration/api/configurationAPI"], function() {
 				header.webserviceurl = commonVariables.webserviceurl+commonVariables.configuration+"?appDirName="+appDirName;
 			} else if (action === "edit") {
 				header.webserviceurl = commonVariables.webserviceurl+commonVariables.configuration+"?appDirName="+appDirName+"&envName="+commonVariables.environmentName;
+			} else if (action === "delete") {
+				header.requestMethod = "DELETE";
+				header.webserviceurl = commonVariables.webserviceurl+commonVariables.configuration+"/deleteEnv?appDirName="+appDirName+"&envName="+deleteEnv;
 			}
 			return header;
 		}

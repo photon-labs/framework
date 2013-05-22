@@ -19,6 +19,7 @@ define(["framework/widget", "navigation/api/navigationAPI", "dynamicPage/dynamic
 		editproject : null,
 		unittest : null,
 		dynamicpage : null,
+		editConfiguration : null,
 		
 		/***
 		 * Called in initialization time of this class 

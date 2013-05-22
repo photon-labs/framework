@@ -90,7 +90,8 @@
 			"configure" : "Configure",
 			"description" : "Description",
 			"name" : "Name",
-			"clone" : "Clone"
+			"clone" : "Clone",
+			"delete" : "Delete"
 		}
 	},
 	"login" : {

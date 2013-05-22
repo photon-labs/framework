@@ -123,11 +123,13 @@ define(["framework/widget", "features/api/featuresAPI", "features/features",  "a
 				contentType: "application/json",
 				dataType: "json"
 			};
-			if(type != ""){
+			if(type === "FEATURE" || type === "JAVASCRIPT" || type === "COMPONENT"){
 				header.requestMethod = "GET";
 				header.webserviceurl = commonVariables.webserviceurl+commonVariables.featurePageContext+"/list?customerId=photon&techId="+ techId +"&type="+type+"&userId="+userId.id;
-			}
-			else {
+			} else if (type === "desc") {
+				header.requestMethod = "GET";
+				header.webserviceurl = commonVariables.webserviceurl+commonVariables.featurePageContext+"/desc?&artifactGroupId="+descid+"&userId="+userId.id;
+			} else {
 				header.requestMethod = "PUT";
 				header.requestPostBody = JSON.stringify(projectRequestBody);
 				header.webserviceurl = commonVariables.webserviceurl+commonVariables.projectlistContext + "/updateFeature?customerId=photon&artifactGroupId="+descid+"&userId="+userId.id+"&appDirName="+appDirName;

@@ -74,6 +74,7 @@
 				  <th data-i18n="configuration.label.description"></th>
 				  <th data-i18n="configuration.label.configure"></th>
 				  <th data-i18n="configuration.label.clone"></th>
+				  <th data-i18n="configuration.label.delete"></th>
 				  <th>&nbsp;</th>
 				</tr>
 			  </thead>
@@ -145,7 +146,14 @@
                 <!--env_pop div ends here -->	
             </div>
 				</td>
-				<td><a class="tooltiptop" title="" data-placement="top" data-toggle="tooltip" href="#" data-original-title="Delete Row"><img src="../themes/default/images/helios/delete_row_icon.png" width="29" height="23" border="0" alt=""></a></td>
+				<td><a name="{{name}}" class="tooltiptop" title="" data-placement="top" data-toggle="tooltip" href="#" data-original-title="Delete Row"><img src="../themes/default/images/helios/delete_row_icon.png" width="29" height="23" border="0" alt=""></a>
+				<div id="{{name}}" class="dyn_popup"> Are you sure to delete this ?
+					<div>
+						<input type="button" value="Yes" class="btn btn_style" name="deleteEnv">
+						<input type="button" value="No" class="btn btn_style dyn_popup_close">
+					</div>
+				</div>
+				</td>
 			  </tr>
 			{{/configurationList}}
 			  </tbody>
