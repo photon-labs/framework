@@ -1,4 +1,4 @@
-define(["framework/widget", "navigation/api/navigationAPI", "projects/addproject", "projects/editproject", "application/application", "features/features", "codequality/codequality", "configuration/configuration", "build/build", "unittest/unittest", "configuration/editConfiguration"], function() {
+define(["framework/widget", "navigation/api/navigationAPI", "dynamicPage/dynamicPage", "projects/addproject", "projects/editproject", "application/application", "features/features", "codequality/codequality", "configuration/configuration", "build/build", "unittest/unittest", "configuration/editConfiguration"], function() {
 
 	Clazz.createPackage("com.components.navigation.js.listener");
 
@@ -18,7 +18,7 @@ define(["framework/widget", "navigation/api/navigationAPI", "projects/addproject
 		currentTab : null,
 		editproject : null,
 		unittest : null,
-		editConfiguration : null,
+		dynamicpage : null,
 		
 		/***
 		 * Called in initialization time of this class 
@@ -147,6 +147,14 @@ define(["framework/widget", "navigation/api/navigationAPI", "projects/addproject
 							self.editConfiguration = new Clazz.com.components.configuration.js.EditConfiguration();
 							
 						retuenObj = self.editConfiguration;
+						break;
+
+					case commonVariables.dynamicPage :
+						
+					   if(self.dynamicpage === null)
+							self.dynamicpage = new Clazz.com.components.dynamicPage.js.DynamicPage();
+							
+						retuenObj = self.dynamicpage;
 						break;
 				
 				}

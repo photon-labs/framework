@@ -129,6 +129,7 @@ define(["framework/widgetWithTemplate", "projectlist/listener/projectListListene
 			
 			$("#myTab li a").removeClass("act");
 			$('a[name=editApplication]').click(function(){
+				commonVariables.appDirName = $(this).closest("tr").attr("class");
 				var value = $(this).closest("tr").attr("class");
 				var techid = $(this).closest("tr").attr("techid");
 				commonVariables.techId = techid;

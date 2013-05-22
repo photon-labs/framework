@@ -1,4 +1,4 @@
-define(["framework/widgetWithTemplate", "login/listener/dynamicPageListener"], function() {
+define(["framework/widgetWithTemplate", "dynamicPage/listener/dynamicPageListener"], function() {
 	Clazz.createPackage("com.components.dynamicPage.js");
 
 	Clazz.com.components.dynamicPage.js.DynamicPage = Clazz.extend(Clazz.WidgetWithTemplate, {
@@ -37,9 +37,9 @@ define(["framework/widgetWithTemplate", "login/listener/dynamicPageListener"], f
 		},
 		
 		
-		getHtml : function(params, callback){
+		getHtml : function(appDirName, goal, callback){
 			var self = this;
-			self.dynamicPageListener.getServiceContent(params,callback);
+			self.dynamicPageListener.getServiceContent(appDirName, goal, callback);
 		},
 
 		/***
