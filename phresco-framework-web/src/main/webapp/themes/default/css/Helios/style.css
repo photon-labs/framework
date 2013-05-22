@@ -53,7 +53,7 @@ header, aside, figure, footer, ul, li {
 .flt_left { float:left; }
 .flt_right { float:right; }
 .clear { clear:both; line-height:0; height:0; }
-.widget-maincontent-div{position: absolute; display: block; left: 0; width: 100%;}
+.widget-maincontent-div{position: absolute; display: block; left: 0; width: 100%; height: 100%;}
 .btn_style {
 	padding: 6px 12px !important;
 	background: #ef7b43 !important;
@@ -166,6 +166,8 @@ to {
 .btnClshide{
 	display: none !important;
 }
+
+textarea { resize: none; }
 
 /*=== End of Loading ===*/
 
@@ -331,7 +333,7 @@ html, body {
 	color:#FFFFFF;
 	position:fixed;
 	top:0;
-	z-index:6;
+	z-index:7;
 }
 
 .header_left {
@@ -557,11 +559,6 @@ ul.nav li.dropdown:hover > .test_options{
 	margin-top:10px !important;
 }
 
-.errormessage {
-	background: none repeat scroll 0 0 #FC8986 !important;
-    color: #FFFFFF !important;
-	border: 1px solid red !important;
-}
 /* ********************************************** CSS related to Icons in all buttons ************************************************************************************** */
 
 .add_icon_btn {
@@ -2321,8 +2318,83 @@ html>body tbody.scrollContent {
   height: 16px;
 }
 
-
 /* *************************************************************** STYLES FOR CI PAGE ************************************************************************************ */
+
+
+.create_job_btn
+{
+	margin-top:5px;
+}
+
+#job_template {
+	z-index: 1;	
+}
+
+#job_template table tr td
+{
+	border-top:none;
+}
+
+#job_template table tr td input[type="checkbox"]
+{
+	margin-top:-3px;
+	margin-right:5px;
+}
+#job_template .table:first-child tr td {
+	padding: 2px !important;
+	padding-bottom:0;
+}
+#job_template table tr td input[type="text"]
+{
+	width:178px !important;
+	margin: 0 5px 0 0 !important;
+}
+#job_template table tr td select
+{
+	width:178px !important;
+	margin-bottom: 0;
+}
+
+#job_template table tr:nth-child(4) {
+	line-height:24px;	
+}
+
+#job_template .popuptextarea {
+	border: 1px solid #c7c7c7;
+	overflow-y: auto;
+	border-radius: 4px;
+	padding: 1% 3%;
+	line-height: 24px;
+}
+
+#job_template table
+{
+	margin-bottom:10px !important;
+}
+.table_template tr td
+{
+	padding:0 !important;
+	line-height: 24px;
+}
+.table_template tr td select
+{
+	float:right;
+	margin-bottom:0;
+	height: 24px;
+	padding: 2px;
+}
+.jobs_table tr td
+{
+	border-top:1px solid #e2e2e2 !important;
+}
+	
+.table_template tr td:first-child {
+	padding-left: 15px !important;	
+}
+
+
+
+/* *************************************************************** STYLES FOR CI-PIPELINE PAGE ************************************************************************************ */
 
 #ci_configure select {
 	width: 132px;
@@ -2365,19 +2437,26 @@ html>body tbody.scrollContent {
 	margin:0;
 }
 
+.type_test ul:last-child {
+	margin-right: 0 !important;	
+}
+
 .type_test li
 {
-	padding:10px;
-	line-height:25px;
+	padding-left: 10px;
+	line-height: 32px;
 	border-bottom:1px solid #d8d8d8;
-	background:background: rgb(247,247,247); /* Old browsers */
-	background: -moz-linear-gradient(top,  rgba(247,247,247,1) 0%, rgba(232,232,232,1) 54%); /* FF3.6+ */
-	background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,rgba(247,247,247,1)), color-stop(54%,rgba(232,232,232,1))); /* Chrome,Safari4+ */
-	background: -webkit-linear-gradient(top,  rgba(247,247,247,1) 0%,rgba(232,232,232,1) 54%); /* Chrome10+,Safari5.1+ */
-	background: -o-linear-gradient(top,  rgba(247,247,247,1) 0%,rgba(232,232,232,1) 54%); /* Opera 11.10+ */
-	background: -ms-linear-gradient(top,  rgba(247,247,247,1) 0%,rgba(232,232,232,1) 54%); /* IE10+ */
-	background: linear-gradient(to bottom,  rgba(247,247,247,1) 0%,rgba(232,232,232,1) 54%); /* W3C */
-	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#f7f7f7', endColorstr='#e8e8e8',GradientType=0 ); /* IE6-9 */
+	background:#f7f7f7; /* Old browsers */
+}
+
+.type_test div.sorthead {
+	padding-left: 10px;
+	line-height: 32px;
+	background: url(../../images/helios/content_title_bg.jpg) repeat-x;
+	font-size:14px;
+	font-weight: bold;
+	color: #ef7b43;
+	cursor: default !important;
 }
 
 .code_content .type_test:first-child {
@@ -2387,6 +2466,7 @@ html>body tbody.scrollContent {
 .type_test li a
 {
 	float:right;
+	padding-right: 10px;
 }
 
 .controls label {
@@ -2394,25 +2474,60 @@ html>body tbody.scrollContent {
 	margin-right: 15px;	
 }
 
-.controls label input[type="radio"], #code_validation input[type="checkbox"] {
+.controls label input[type="radio"], #cont_delivery input[type="checkbox"] {
 	margin: -2px 3px 0 0;
 }
 
-#code_validation {
-	cursor: default !important;	
-}
 
-#code_validation table input[type="text"], #code_validation table input[type="password"], #code_validation table select {
-	width: 132px;
-	margin-bottom: 0;	
-}
-
-#code_validation table {
-	margin-bottom: 10px;	
-}
 
 .z_index_ci {
-	z-index: 6;	
+	z-index: 7;	
+}
+
+.ci_envtable table:first-child {
+	width: 24%;
+	float:left;	
+}
+
+.ci_envtable table:last-child {
+	width: 24%;
+	margin-left: 1%;	
+}
+
+.ci_envtable table td {
+	border-top: none;	
+}
+
+.ci_envtable table td:first-child {
+	text-align:right;	
+}
+
+.ci_envtable table:last-child td:first-child {
+	padding-left: 8%;
+}
+
+.ci_envtable table:first-child td:last-child {
+	width: 84%;	
+}
+
+.ci_envtable table:last-child td:last-child {
+	width: 69%;	
+}
+
+.ci_envtable table td input[type="text"] {
+	width: 100%;	
+}
+
+.ci_envtable .popuptextarea {
+	border: 1px solid #c7c7c7;
+	overflow-y: auto;
+	border-radius: 4px;
+	padding: 1% 3%;
+	width: 100%;
+}
+
+.ci_envtable .popuptextarea input[type="checkbox"] {
+	margin: -3px 5px 0 0;	
 }
 
 .proj_list table tr td:nth-child(4) {
@@ -2431,3 +2546,76 @@ html>body tbody.scrollContent {
 	width: 10px;	
 }
 
+#cont_delivery {
+	cursor: default !important;	
+}
+
+#cont_delivery table input[type="text"], #cont_delivery table input[type="password"], #cont_delivery table select {
+	width: 132px;
+	margin-bottom: 0;	
+}
+
+#cont_delivery table {
+	margin-bottom: 10px;	
+}
+.build_trigger
+{
+	line-height:22px;
+}
+.build_trigger input
+{
+	margin-right:6px !important;
+}
+.build_trigger span
+{
+	margin-right:12px;
+}
+.every_select select
+{
+	width:70px !important;
+	margin-bottom:0;
+}
+.mail_settings input[type="text"], .mail_settings input[type="password"]
+{
+	width:90px !important;
+	margin-bottom:0;
+}
+
+#cont_delivery table:nth-child(3) tr:last-child td {
+	padding-top : 0px;
+	border-top: none;	
+}
+
+#code_build
+{
+	cursor:default;
+}
+#code_build table input[type="text"], #code_build table input[type="password"], #code_build table select {
+	width: 132px;
+	margin-bottom: 0;	
+}
+#code_build table {
+	margin-bottom: 10px;	
+}
+#code_build table:nth-child(2) tr td {
+	border-top: none;
+}
+#code_build table:nth-child(2) tr:nth-child(1) td:first-child {
+	padding-bottom:0;
+}
+#code_build table:nth-child(2) tr:nth-child(2) td {
+	padding-bottom:0;
+}
+#code_build table:nth-child(2) tr:nth-child(1) td:first-child input{
+	margin-left:10px;
+}
+#code_build table:nth-child(3) tr td {
+	border-top: none;
+}
+#code_build table:nth-child(3) tr:nth-child(1) td
+{
+	padding-bottom:0px;
+}
+#code_build input[type="radio"], #code_build input[type="checkbox"] {
+	margin: -2px 3px 0 0;
+}
