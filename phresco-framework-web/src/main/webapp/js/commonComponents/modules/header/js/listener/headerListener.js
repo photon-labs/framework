@@ -25,7 +25,7 @@ define(["framework/widget", "common/loading", "header/api/headerAPI", "login/log
 			if(this.headerAPI.localVal.getSession('rememberMe') == "true"){
 				this.headerAPI.localVal.deleteSession('userInfo');
 			}else{
-				this.headerAPI.localVal.clearSession();
+				//this.headerAPI.localVal.clearSession();
 			}
 		},
 		

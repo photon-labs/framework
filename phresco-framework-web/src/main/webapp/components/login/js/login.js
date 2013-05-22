@@ -36,6 +36,14 @@ define(["framework/widgetWithTemplate", "login/listener/loginListener"], functio
 		 */
 		postRender : function(element) {	
 			var self = this;
+			
+			if(self.loginListener.loginAPI.localVal.getSession('customerlogo') != null &&
+				self.loginListener.loginAPI.localVal.getSession('customerlogo') != ""){
+				$('#loginlogo').attr("src", "data:image/png;base64," + self.loginListener.loginAPI.localVal.getSession('customerlogo'));
+			} else {
+				$('#loginlogo').attr("src", "../themes/default/images/helios/logo_login.png");
+			}
+			
 			if(self.loginListener.loginAPI.localVal.getSession('loggedout') == "true"){
 				$(".login_error_msg").text('Logged out');
 			}

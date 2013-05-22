@@ -28,6 +28,13 @@ define(["framework/widgetWithTemplate", "header/listener/headerListener"] , func
 		 * 
 		 */
 		postRender : function(element) {
+			var self = this;
+			if(self.headerListener.headerAPI.localVal.getSession('customerlogo') != null &&
+				self.headerListener.headerAPI.localVal.getSession('customerlogo') != ""){
+				$('#bannerlogo').attr("src", "data:image/png;base64," + self.headerListener.headerAPI.localVal.getSession('customerlogo'));
+			} else {
+				$('#bannerlogo').attr("src", "../themes/default/images/helios/helios_logo.png");
+			}
 		},
 		
 		/***
