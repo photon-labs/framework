@@ -21,23 +21,31 @@ import javax.xml.parsers.ParserConfigurationException;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.poi.util.ArrayUtil;
 import org.xml.sax.SAXException;
 
 import com.photon.phresco.api.DynamicParameter;
+import com.photon.phresco.commons.FrameworkConstants;
 import com.photon.phresco.commons.model.ApplicationInfo;
 import com.photon.phresco.commons.model.ArtifactGroup;
 import com.photon.phresco.commons.model.ArtifactInfo;
 import com.photon.phresco.commons.model.RepoInfo;
 import com.photon.phresco.exception.ConfigurationException;
 import com.photon.phresco.exception.PhrescoException;
+import com.photon.phresco.framework.actions.applications.DynamicParameterAction;
+import com.photon.phresco.framework.commons.FrameworkUtil;
+import com.photon.phresco.framework.model.CodeValidationReportType;
+import com.photon.phresco.framework.param.impl.IosTargetParameterImpl;
+import com.photon.phresco.framework.rest.api.util.FrameworkServiceUtil;
 import com.photon.phresco.plugins.model.Mojos.Mojo.Configuration.Parameters.Parameter;
 import com.photon.phresco.plugins.model.Mojos.Mojo.Configuration.Parameters.Parameter.DynamicParameter.Dependencies.Dependency;
 import com.photon.phresco.plugins.model.Mojos.Mojo.Configuration.Parameters.Parameter.PossibleValues;
+import com.photon.phresco.plugins.model.Mojos.Mojo.Configuration.Parameters.Parameter.PossibleValues.Value;
 import com.photon.phresco.plugins.util.MojoProcessor;
 import com.photon.phresco.util.Constants;
 import com.photon.phresco.util.PhrescoDynamicLoader;
 import com.photon.phresco.util.Utility;
+import com.phresco.pom.exception.PhrescoPomException;
+import com.phresco.pom.util.PomProcessor;
 import com.sun.jersey.api.client.ClientResponse.Status;
 
 @Path("/parameter")
@@ -98,6 +106,75 @@ public class ParameterService extends RestBase {
 			ResponseInfo<PossibleValues> finalOutput = responseDataEvaluation(responseData, e, "Dependency not fetched", null);
 			return Response.status(Status.BAD_REQUEST).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
 		}
+	}
+	
+	@GET
+	@Path("/codeValidationReportTypes")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response getCodeValidationReportTypes(@QueryParam("appDirName") String appDirName, @QueryParam("goal") String goal) {
+		ResponseInfo<PossibleValues> responseData = new ResponseInfo<PossibleValues>();
+		try {
+		String infoFileDir = getInfoFileDir(appDirName, goal);
+		ApplicationInfo appInfo = FrameworkServiceUtil.getApplivationInfo(appDirName);
+		List<CodeValidationReportType> codeValidationReportTypes = new ArrayList<CodeValidationReportType>();
+		
+		//To get parameter values for Iphone technology
+		PomProcessor pomProcessor = FrameworkServiceUtil.getPomProcessor(appDirName);
+		String validateReportUrl = pomProcessor.getProperty(Constants.POM_PROP_KEY_VALIDATE_REPORT);
+			if(StringUtils.isNotEmpty(validateReportUrl)) {
+				CodeValidationReportType codeValidationReportType = new CodeValidationReportType();
+				List<Value> clangReports = getClangReports(appInfo);
+				for (Value value : clangReports) {
+					codeValidationReportType.setValidateAgainst(value);
+				}
+				codeValidationReportTypes.add(codeValidationReportType);
+			}
+			MojoProcessor processor = new MojoProcessor(new File(infoFileDir));
+			Parameter parameter = processor.getParameter(Constants.PHASE_VALIDATE_CODE, "sonar");
+			PossibleValues possibleValues = parameter.getPossibleValues();
+			List<Value> values = possibleValues.getValue();
+			for (Value value : values) {
+				CodeValidationReportType codeValidationReportType = new CodeValidationReportType();
+				String key = value.getKey();
+				Parameter depParameter = processor.getParameter(Constants.PHASE_VALIDATE_CODE, key);
+				if (depParameter != null && depParameter.getPossibleValues() != null) {
+					PossibleValues depPossibleValues = depParameter.getPossibleValues();
+					List<Value> depValues = depPossibleValues.getValue();
+					codeValidationReportType.setOptions(depValues);
+				}
+				codeValidationReportType.setValidateAgainst(value);
+				codeValidationReportTypes.add(codeValidationReportType);
+			}
+			ResponseInfo<CodeValidationReportType> finalOutput = responseDataEvaluation(responseData, null, "Dependency returned successfully", codeValidationReportTypes);
+			return Response.ok(finalOutput).header("Access-Control-Allow-Origin", "*").build();
+		} catch (PhrescoException e) {
+			ResponseInfo<PossibleValues> finalOutput = responseDataEvaluation(responseData, e, "Dependency not fetched", null);
+			return Response.status(Status.BAD_REQUEST).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
+		} catch (PhrescoPomException e) {
+			ResponseInfo<PossibleValues> finalOutput = responseDataEvaluation(responseData, e, "Dependency not fetched", null);
+			return Response.status(Status.BAD_REQUEST).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
+		}
+	}
+	
+	private List<Value> getClangReports(ApplicationInfo appInfo) throws PhrescoException {
+		try {
+			IosTargetParameterImpl targetImpl = new IosTargetParameterImpl();
+			Map<String, Object> paramMap = new HashMap<String, Object>();
+			paramMap.put(FrameworkConstants.KEY_APP_INFO, appInfo);
+			PossibleValues possibleValues = targetImpl.getValues(paramMap);
+			List<Value> values = possibleValues.getValue();
+			return values;
+		} catch (IOException e) {
+           throw new PhrescoException(e);
+        } catch (ParserConfigurationException e) {
+            throw new PhrescoException(e);
+        } catch (SAXException e) {
+            throw new PhrescoException(e);
+        } catch (ConfigurationException e) {
+            throw new PhrescoException(e);
+        } catch (PhrescoException e) {
+            throw new PhrescoException(e);
+        }
 	}
 
 	private static PossibleValues getPossibleValues(MojoProcessor processor, String goal, String key, String value,
