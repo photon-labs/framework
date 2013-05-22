@@ -18,10 +18,13 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 
 import com.photon.phresco.api.ConfigManager;
+import com.photon.phresco.commons.model.SettingsTemplate;
 import com.photon.phresco.configuration.Configuration;
 import com.photon.phresco.configuration.Environment;
 import com.photon.phresco.exception.ConfigurationException;
+import com.photon.phresco.exception.PhrescoException;
 import com.photon.phresco.impl.ConfigManagerImpl;
+import com.photon.phresco.service.client.api.ServiceManager;
 import com.photon.phresco.util.Constants;
 import com.photon.phresco.util.Utility;
 import com.sun.jersey.api.client.ClientResponse.Status;
@@ -124,6 +127,26 @@ public class ConfigurationService extends RestBase {
 		} catch (ConfigurationException e) {
 			ResponseInfo<Configuration> finalOuptut = responseDataEvaluation(responseData, e, "Configurations Failed to Delete", null);
 			return Response.status(Status.EXPECTATION_FAILED).entity(finalOuptut).header("Access-Control-Allow-Origin", "*").build();
+		}
+	}
+	
+	@GET
+	@Path ("/settingsTemplate")
+	@Produces (MediaType.APPLICATION_JSON)
+	public Response getSettingsTemplate(@QueryParam("customerId") String customerId, @QueryParam("userId") String userId, @QueryParam("type") String type) {
+		ResponseInfo<List<SettingsTemplate>> responseData = new ResponseInfo<List<SettingsTemplate>>();
+		try {
+			ServiceManager serviceManager = CONTEXT_MANAGER_MAP.get(userId);
+			if(serviceManager == null) {
+				ResponseInfo<List<SettingsTemplate>> finalOutput = responseDataEvaluation(responseData, null, "UnAuthorized User", null);
+	        	return Response.status(Status.BAD_REQUEST).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
+			}
+			SettingsTemplate settingsTemplate = serviceManager.getConfigTemplateByType(customerId, type);
+			ResponseInfo<List<SettingsTemplate>> finalOutput = responseDataEvaluation(responseData, null, "confuguration Template Fetched successfully", settingsTemplate);
+			return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
+		} catch (PhrescoException e) {
+			ResponseInfo<List<SettingsTemplate>> finalOutput = responseDataEvaluation(responseData, e, "confuguration Template not Fetched", null);
+			return Response.status(Status.BAD_REQUEST).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
 		}
 	}
 	
