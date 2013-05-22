@@ -67,7 +67,7 @@
 %> 
 <form id="formFeatures" class="featureForm">
 
-	<div class="alert alert-success alert-message hideContent" id="envSuccessmsg" style= "margin-top: -13px; margin-left: 360px; width: 44%;" >
+	<div class="alert alert-success alert-message hideContent" id="appSuccessmsg" style= "margin-left: 370px; margin-top: 2px; width: 44%;" >
 		<s:text name="update.application.success"/>
 	</div>
 

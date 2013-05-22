@@ -450,7 +450,7 @@ function loadData(data, tag, pageUrl, callSuccessEvent, callbackFunction) {
 	}
 	if (pageUrl == "featuresUpdate") {
 		hideLoadingIcon();
-		$("#envSuccessmsg").show();
+		$("#appSuccessmsg").show();
 		setTimeOut();
 	}
 }

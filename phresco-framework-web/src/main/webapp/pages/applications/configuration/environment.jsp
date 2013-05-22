@@ -183,14 +183,12 @@ $(document).ready(function() {
 			});
 			
 			toEnableSetAsDefault();
-			
 			$("#envName").val(envData.name);
 			$("#envDesc").val(envData.desc);
 		} else {
 			toDisableSetAsDefault();
 			$('input[name="addBtn"]').val("<s:text name='lbl.btn.add'/>");
-			$("#envName").val("");
-			$("#envDesc").val("");
+			toEmptyNameAndDesc();
 			$('#multiselectAppliesTo ul li input[type=checkbox]').each(function() {
 				$(this).attr("checked", false);
 			});
@@ -214,12 +212,24 @@ $(document).ready(function() {
 				var jsonData = $(this).val();
 				var envs = $.parseJSON(jsonData);
 				var envName = envs.name;
-				if(checkToAdd == "Add") {
+				if (checkToAdd == "Add") {
 					if (name.trim().toLowerCase() == envName.trim().toLowerCase()) {
 						$("#errMsg").html("<s:text name='popup.err.msg.env.name.exists'/>");
 						setTimeOut();
 						returnVal = false;
 						return false;
+					}
+				} else {
+					var currentVal = $('#multiselect :checked').val();
+					var currentObj = $.parseJSON(currentVal);
+					var currentEnvName = currentObj.name;
+					if (currentEnvName !== name.trim().toLowerCase()) {
+						if (name.trim().toLowerCase() == envName.trim().toLowerCase()) {
+							$("#errMsg").html("<s:text name='popup.err.msg.env.name.exists'/>");
+							setTimeOut();
+							returnVal = false;
+							return false;
+						}
 					}
 				}
 				enablePopupOkButton();
@@ -263,7 +273,7 @@ $(document).ready(function() {
 	        	allCheckboxVal.defaultEnv = "false";
 				var finalEnvData = JSON.stringify(allCheckboxVal);
 				$(this).val(finalEnvData);
-				enablePopupOkBtn();
+				enablePopupOkButton();
 	        });
 	       	
 	        $('#multiselect :checked').each( function() {
@@ -314,23 +324,28 @@ $(document).ready(function() {
 			
 			if (!env && configLength <= 0) {
 				$(this).parent().remove();
+				toEmptyNameAndDesc();
+				toUncheckCheckBox();
+				$('input[name="addBtn"]').val("<s:text name='lbl.btn.add'/>");
 			}
-			enablePopupOkBtn();
+			enablePopupOkButton();
         });
         disableOkBtn();
     });
 	
 	$('#up').click(function () {
+		selectEnv();
 		$('.selected').each(function() {
-			enablePopupOkBtn();
+			enablePopupOkButton();
 			$(this).prev().before($(this));
 		});
 	});
 	
 	$('#down').click(function () {
+		selectEnv();
 		var length = $('.selected').length;
 		$('.selected').each(function() {
-			enablePopupOkBtn();
+			enablePopupOkButton();
 			var element = $(this); 
 			for (var i=0; i<length; i++) {
 				element = element.next(); 
@@ -387,18 +402,25 @@ $(document).ready(function() {
 			}
 		}
 		
-		$("#envName").val("");
-		$("#envDesc").val("");
-		
+		toEmptyNameAndDesc();
+		toUncheckCheckBox();
 		if ($('input[name="envNames"]:checkbox').is(':checked')) {
 			$('input[name="envNames"]:checked').prop('checked', false);
 			$('input[name="addBtn"]').val("<s:text name='lbl.btn.add'/>");
 		}
+	}
+
+	function toEmptyNameAndDesc() {
+		$("#envName").val("");
+		$("#envDesc").val("");
+	}
+	
+	function toUncheckCheckBox() {
 		if ($('#multiselectAppliesTo :checkbox').is(':checked')) {
 			$('#multiselectAppliesTo :checked').prop('checked', false);
 		}
 	}
-
+	
 	function selectEnv() {
 		var checkedEnvsSize = $('#multiselect :checked').size();
 		if (checkedEnvsSize < 1) {
