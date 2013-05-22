@@ -1328,6 +1328,7 @@ public interface FrameworkConstants {
     String ERROR_DB_VER_MISSING = "err.db.ver.missing";
     String ERROR_DB_MISSING = "err.db.missing";
     String ERROR_WS_MISSING = "err.ws.missing";
+    String ERROR_FUNCTIONAL_FRAMEWORK = "err.functional.framework";
 	String ERROR_TYPE = "err.msg.empty.type";
     String ERROR_LAYER = "err.msg.empty.layer";
     String ERROR_TECHNOLOGY = "err.msg.empty.technology";
