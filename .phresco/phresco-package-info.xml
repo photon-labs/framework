@@ -34,7 +34,7 @@
                     <description></description>
                     <key>buildName</key>
                     <multiple>false</multiple>
-                    <value>Success</value>
+                    <value></value>
                     <sort>false</sort>
                     <show>true</show>
                 </parameter>

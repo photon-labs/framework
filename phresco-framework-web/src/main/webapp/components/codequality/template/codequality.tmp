@@ -23,19 +23,7 @@
                 
                       <div id="code_popup" class="dyn_popup">
                         <ul>
-                            <li data-i18n="codequality.codeanalysis.against"><br/></li>
-                            <li>
-                            	<select>
-                            		<option>Source</option>
-                          		</select>
-                            </li>
-                            <li data-i18n="codequality.codeanalysis.technology"><br/></li>
-                            <li>
-                            	<select>
-                            		<option>JS</option>
-                          		</select>
-                            <li><input type="checkbox">&nbsp;<font data-i18n="codequality.codeanalysis.skipunittest"></font>&nbsp;</li>
-                            </li>
+								<table><tbody id="dynamicContent"></tbody></table>
                             <li>
                             	<div class="flt_left">
                                 	<input type="button" data-i18n="[value]codequality.btn.validate" class="btn btn_style">

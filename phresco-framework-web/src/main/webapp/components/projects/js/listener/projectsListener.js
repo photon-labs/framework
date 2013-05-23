@@ -741,10 +741,11 @@ define(["framework/widget", "framework/widgetWithTemplate", "common/loading", "p
 		},
 		
 		pilotprojectsEvent : function() {
+			$("select[name='prebuiltapps']").hide();
 			$("select[name='builtmyself']").bind('change', function(){
 				var selectedText = $(this).find(':selected').text();
 				if(selectedText == "Pre Built"){
-					 $("select[name='prebuiltapps']").attr('disabled', false);
+					 $("select[name='prebuiltapps']").show();
 					 $("td[name='startdate-lbl']").hide();
 					 $("td[name='startdateholder']").hide();
 					 $("td[name='enddate-lbl']").hide();
@@ -753,7 +754,7 @@ define(["framework/widget", "framework/widgetWithTemplate", "common/loading", "p
 					 $("#weblayer").hide();
 					 $("#mobilelayer").hide();
 				} else {
-					 $("select[name='prebuiltapps']").attr('disabled', true);
+					 $("select[name='prebuiltapps']").hide();
 					 $("td[name='startdate-lbl']").show();
 					 $("td[name='startdateholder']").show();
 					 $("td[name='enddate-lbl']").show();

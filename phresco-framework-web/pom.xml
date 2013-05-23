@@ -4,7 +4,7 @@
     <parent>
         <groupId>com.photon.phresco.framework</groupId>
         <artifactId>phresco-framework-root</artifactId>
-        <version>2.1.0.4001-SNAPSHOT</version>
+        <version>3.0.0.10001-SNAPSHOT</version>
         <relativePath>../</relativePath>
     </parent>
    
@@ -566,7 +566,7 @@
                 </configuration>
             </plugin> 
             
-          <plugin>
+         <!--  <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>tomcat-maven-plugin</artifactId>
                 <version>${tomcat-maven-plugin.version}</version>
@@ -574,6 +574,21 @@
                     <port>${server.port}</port>
 					<path>/${project.build.finalName}</path>
 					<server>dev-server</server>
+                </configuration>
+            </plugin> -->
+			
+			  <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>tomcat-maven-plugin</artifactId>
+                <version>1.1</version>
+                <configuration>
+                    <port>${server.port}</port>
+                    <username>${server.username}</username>
+                    <password>${server.password}</password>
+                    <url>http://${server.host}:${server.port}/manager/html</url>
+                    <path>/${project.build.finalName}</path>
+                    <argLine>-Xmx512m</argLine>
+                    <warFile>${project.basedir}/do_not_checkin/build/temp/${project.build.finalName}.war</warFile>
                 </configuration>
             </plugin>
             
@@ -614,10 +629,10 @@
                 </dependencies>
             </plugin>
 			
-			<plugin>
+	    		<plugin>
 				<groupId>net.awired.jstest</groupId>
 				<artifactId>jstest-maven-plugin</artifactId>
-				<version>2.1.0.4001-SNAPSHOT</version>
+				<version>3.0.0.10001-SNAPSHOT</version>
 				<executions>
 					<execution>
 						<goals>

@@ -194,6 +194,19 @@ define(["framework/widget", "framework/templateProvider"], function() {
 				var checkout = $('#endDate').datepicker({
 					onRender: function(date) {return date.valueOf() <= checkin.date.valueOf() ? 'disabled' : '';}
 				}).on('changeDate', function(ev) {checkout.hide();}).data('datepicker');
+				$("#startDate").bind('keydown', function(e) { 
+  					var keyCode = e.keyCode || e.which; 
+ 			 		if (keyCode == 9) 
+					checkin.hide();
+				});
+
+				$("#endDate").bind('keydown', function(e) { 
+  					var keyCode = e.keyCode || e.which; 
+ 			 		if (keyCode == 9) 
+					checkout.hide();
+				});
+				
+				
 			}
 		}
 	);

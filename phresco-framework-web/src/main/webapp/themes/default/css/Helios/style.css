@@ -421,7 +421,7 @@ html, body {
 	padding-left:1%;
 	padding-right:1%;
 	position:fixed;
-	z-index:6;
+	z-index:5;
 }
 
 .content_title h1 {

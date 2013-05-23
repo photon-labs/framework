@@ -2,10 +2,10 @@
     <environment default="true" desc="Production Environment is used for Development purpose only" name="Production">
         <Server desc="" name="server">
             <context>framework</context>
-            <deploy_dir>C:\apache-tomcat-7.0.21\webapps</deploy_dir>
+            <deploy_dir>D:/phresco/phresco auth service/apache-tomcat-6.0.33/apache-tomcat-6.0.33/webapps/</deploy_dir>
             <admin_username/>
             <additional_context/>
-            <port>8080</port>
+            <port>4040</port>
             <admin_password/>
             <version>7.0.x</version>
             <type>Apache Tomcat</type>
