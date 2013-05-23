@@ -133,9 +133,9 @@ require(["framework/base"], function() {
                 var container =  $(this.container);
                 if(!this.isNative) {
                     container.animate({
-                        left: "-=1250px"
+                        left: "-=1350px"
                     }, {
-                        duration : 400, 
+                        duration : 1000, 
                         complete: function() {
                             callback(container);
                         }		
@@ -219,7 +219,7 @@ require(["framework/base"], function() {
                     container.animate({
                         opacity: 1
                     }, {
-                        duration : 1800, 
+                        duration : 500, 
                         complete: function() {
                             callback(container);
                         }		

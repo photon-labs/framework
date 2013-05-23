@@ -173,71 +173,85 @@ define(["framework/base", "framework/animationProvider"], function() {
 			push : function(view, bCheck) {
 				var self = this;
 				
+				//make old content as inactive
+				/* if(bCheck){
+					$.each($(commonVariables.contentPlaceholder).find('.widget-maincontent-div'), function(index, current){
+						$(current).attr('active', 'false');
+					});
+				} */
+				
 				// create top element for pushing
 				var newDiv = $("<div></div>");
 				
 				// add absolute positioning
 				newDiv.addClass("widget-maincontent-div");
-				
-				//if(bCheck)
-				//	$(commonVariables.contentPlaceholder).children().remove();
 					
 				$(self.jQueryContainer).append(newDiv);
+				
+				view.doMore = function(element) {
+					if(bCheck) {
 
-					view.doMore = function(element) {
-						if(bCheck) {
-							if(self.stack.length > 0) {
-								var topPage = self.stack[self.stack.length-1];
-								
-								// call onPause to save the state of this page
-								if(topPage.view.onPause) {
-									topPage.view.onPause();
-								}
-								
-								var animationProviderSub = new Clazz.AnimationProvider( {
-									isNative: self.isNative,
-									container: topPage.element
-								});
-							
-								animationProviderSub.animate(self.pushAnimationTypeForGoingOut, function(container) {
-									container.css("z-index", 3);
-									container.hide('fast', function(){
-										$(container).remove();
-									});
-								});
-								self.stack.pop(self.stack.length-1);
-							}
-							
-							var animationProviderMain = new Clazz.AnimationProvider({
-								isNative: self.isNative,
-								container: newDiv
-							});
-							
-							animationProviderMain.animate(self.pushAnimationTypeForGoingIn, function(container) {
-								container.show('slow', function(){
-									container.css("z-index", 4);
-									self.removeClasses(container, function(callback){});
+						var animationProviderMain = new Clazz.AnimationProvider({
+							isNative: self.isNative,
+							container: newDiv
+						});
+						
+						animationProviderMain.animate(self.pushAnimationTypeForGoingIn, function(container) {
+							container.show('slow', function(){
+								container.css("z-index", 4);
+								self.removeClasses(container, function(callback){
+									//remove old content if exist
+									/* $.each($(commonVariables.contentPlaceholder).find('.widget-maincontent-div'), function(index, current){
+										if($(current).attr('active') == "false"){
+											$(current).remove();
+										}
+									}); */
 								});
 							});
-							
-							// update browser history
-							var title = "#page" + self.stack.length;
-							var name = view.name ? "#"  + view.name : title;
-							// push into the stack
-							var data = {
-								view : view,
-								element : newDiv
-							};
-							
-							self.stack.push(data);
-							self.currentIndex = self.stack.length - 1;
-							self.indexMapping[name] = self.stack.length - 1;
-							history.pushState({}, name, name);
-						}
-					};
-
-				// render in its default container
-				view.render(newDiv);
+						});
+						
+						// update browser history
+						var title = "#page" + self.stack.length;
+						var name = view.name ? "#"  + view.name : title;
+						// push into the stack
+						var data = {
+							view : view,
+							element : newDiv
+						};
+						
+						self.stack.push(data);
+						self.currentIndex = self.stack.length - 1;
+						self.indexMapping[name] = self.stack.length - 1;
+						history.pushState({}, name, name);
+					}
+				};
+				
+				if(bCheck && self.stack.length > 0){
+					var topPage = self.stack[self.stack.length-1];
+					
+					// call onPause to save the state of this page
+					if(topPage.view.onPause) {
+						topPage.view.onPause();
+					}
+					
+					var animationProviderSub = new Clazz.AnimationProvider( {
+						isNative: self.isNative,
+						container: topPage.element
+					});
+				
+					animationProviderSub.animate(self.pushAnimationTypeForGoingOut, function(container) {
+						container.css("z-index", 3);
+						container.hide('fast', function(){
+							$(container).remove();
+							// render in its default container
+							view.render(newDiv);
+						});
+					});
+					self.stack.pop(self.stack.length - 1);
+				}else{
+					// render in its default container
+					view.render(newDiv);
+				}
 			},
 			
 			getView: function(locationHash) {
@@ -279,7 +293,7 @@ define(["framework/base", "framework/animationProvider"], function() {
 					$(container).removeClass("slidedown in");
 					$(container).removeClass("slidedown out");
 					callback(true);
-				},800);
+				},100);
 			}
 		}
 	);
