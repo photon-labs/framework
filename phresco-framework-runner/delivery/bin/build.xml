@@ -87,7 +87,7 @@
     <target name="copy-framework-config">
 		<echo message="copying framework.config into conf"/>
 		<copy file="${phresco.home}/conf/service.properties" 
-			tofile="${tomcat.home}/webapps/phresco/WEB-INF/classes/framework.config" 
+			tofile="${tomcat.home}/webapps/helios/WEB-INF/classes/framework.config" 
 			overwrite="true"
 		/>
 	</target>
