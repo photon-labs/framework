@@ -788,11 +788,11 @@ public class Projects extends FrameworkBaseAction {
   	            for (String layerTypeId : getLayer()) {
   	                String techId = getReqParameter(layerTypeId + REQ_PARAM_NAME_TECHNOLOGY);
   	                if (LAYER_APP_ID.equals(layerTypeId) && StringUtils.isEmpty(techId)) {
-						if (hasAppCodeId) {
-							setAppTechError(getText(ERROR_SELECT_TECHNOLOGY));
-						} else {
-							setAppTechError(getText(ERROR_APP_CODE_MISSING));
-						}
+						if (!hasAppCodeId && ADVANCE_UI.equals(getUiType())) {
+								setAppTechError(getText(ERROR_APP_CODE_MISSING));
+							} else {
+								setAppTechError(getText(ERROR_SELECT_TECHNOLOGY));
+							}
 	                }
   	                
   	                if (LAYER_WEB_ID.equals(layerTypeId) && StringUtils.isEmpty(techId)) {

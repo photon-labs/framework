@@ -6672,7 +6672,7 @@ color: #313131;
 }
 
 
-.feature select {
+#result select {
 	margin-left: 15px;
     margin-top: 4px;
 	width: 73px !important;

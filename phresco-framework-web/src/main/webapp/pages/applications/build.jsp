@@ -114,7 +114,7 @@
 				if (optionIds != null && optionIds.contains(FrameworkConstants.RUN_AGAINST_KEY)) {
 			%>
 			<div id="nodeJS_btndiv" class="nodeJS_div">
-				<input type="button" class="btn <%= per_disabledClass %>" id="runAgainstSourceStart" value="<s:text name='label.runagainsrc'/>"/>
+				<input type="button" class="btn <%= per_disabledClass %>"  <%= per_disabledStr %> id="runAgainstSourceStart" value="<s:text name='label.runagainsrc'/>"/>
 		    	<input type="button" class="btn" id="runAgainstSourceStop" value="<s:text name='lbl.stop'/>" disabled onclick="stopServer();"/>
 		    	<input type="button" class="btn" id="runAgainstSourceRestart" value="<s:text name='label.restart'/>" disabled onclick="restartServer();"/>
 			</div>
@@ -159,11 +159,13 @@
 </form>
 
 <script type="text/javascript">
-	if (<%=serverStatus%> && <%=logFileExists%> ) {
-		runAgainstSrcServerRunning();
-	} else {
-		runAgainstSrcServerDown();
-	}
+	<% if (permissions != null && permissions.canManageBuilds()) { %>
+			if (<%=serverStatus%> && <%=logFileExists%> ) {
+				runAgainstSrcServerRunning();
+			} else {
+				runAgainstSrcServerDown();
+			}
+	<% } %>
 	
     $(document).ready(function() {
     	hideProgressBar();
@@ -189,7 +191,7 @@
     	refreshTable();
     	
         if (($('#database option').length == 0) && ($('#server option').length == 0)) {
-                 $('#buildbtn').prop("disabled", true);
+			$('#buildbtn').prop("disabled", true);
         }
         
         $('#showSettings').click(function(){
@@ -228,42 +230,34 @@
     
     // When  server is  running disable run against source button
     function runAgainstSrcServerRunning() {
-    	<% if (permissions != null && !permissions.canManageBuilds()) { %>
-	    	disableButton($("#runAgainstSourceStart"));
-	    	enableButton($("#runAgainstSourceStop"));
-	    	enableButton($("#runAgainstSourceRestart"));
-    	<% } %>
+    	disableButton($("#runAgainstSourceStart"));
+    	enableButton($("#runAgainstSourceStop"));
+    	enableButton($("#runAgainstSourceRestart"));
 	}
     	
  	// When server is not running enable run against source button
     function runAgainstSrcServerDown() {
-    	<% if (permissions != null && !permissions.canManageBuilds()) { %>
-	    	disableButton($("#runAgainstSourceStop"));
-	    	disableButton($("#runAgainstSourceRestart"));
-	    	enableButton($("#runAgainstSourceStart"));
-    	<% } %>
+    	disableButton($("#runAgainstSourceStop"));
+    	disableButton($("#runAgainstSourceRestart"));
+    	enableButton($("#runAgainstSourceStart"));
     }
  	
  	// when server is restarted in run against source 
  	function restartServer() {
- 		<% if (permissions != null && !permissions.canManageBuilds()) { %>
-	 		$("#console_div").empty();
-	 		$("#console_div").html("Server is restarting...");
-	 		disableButton($("#runAgainstSourceStop"));
-			disableButton($("#runAgainstSourceRestart"));
-			readerHandlerSubmit('restartServer', '<%= appId %>', '<%= FrameworkConstants.REQ_RE_START %>', '', false, getBasicParams(), $("#console_div"));
-		<% } %>
+ 		$("#console_div").empty();
+ 		$("#console_div").html("Server is restarting...");
+ 		disableButton($("#runAgainstSourceStop"));
+		disableButton($("#runAgainstSourceRestart"));
+		readerHandlerSubmit('restartServer', '<%= appId %>', '<%= FrameworkConstants.REQ_RE_START %>', '', false, getBasicParams(), $("#console_div"));
  	}
  	
  	// when server is stopped in run against source 
 	function stopServer() {
-		<% if (permissions != null && !permissions.canManageBuilds()) { %>
-			$("#console_div").empty();
-			$("#console_div").html("Server is stopping...");
-			disableButton($("#runAgainstSourceStop"));
-			disableButton($("#runAgainstSourceRestart"));
-			readerHandlerSubmit('stopServer', '<%= appId %>', '<%= FrameworkConstants.REQ_STOP %>', '', true, getBasicParams(), $("#console_div"));
-		<% } %>
+		$("#console_div").empty();
+		$("#console_div").html("Server is stopping...");
+		disableButton($("#runAgainstSourceStop"));
+		disableButton($("#runAgainstSourceRestart"));
+		readerHandlerSubmit('stopServer', '<%= appId %>', '<%= FrameworkConstants.REQ_STOP %>', '', true, getBasicParams(), $("#console_div"));
  	}
 	
 	function popupOnOk(obj) {

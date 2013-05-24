@@ -30,6 +30,9 @@ import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.io.FileDeleteStrategy;
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.codehaus.plexus.util.cli.CommandLineException;
@@ -48,6 +51,7 @@ import com.photon.phresco.framework.api.ApplicationManager;
 import com.photon.phresco.framework.api.ProjectManager;
 import com.photon.phresco.service.client.api.ServiceManager;
 import com.photon.phresco.util.Constants;
+import com.photon.phresco.util.FileUtil;
 import com.photon.phresco.util.Utility;
 import com.sun.jersey.api.client.ClientResponse;
 
@@ -213,13 +217,7 @@ public class ApplicationManagerImpl implements ApplicationManager {
 			 buildInfos.add(buildInfo);
 		 }
 		 
-		 //Delete the build archives
-		 try {
-			 deleteBuildArchive(project, buildInfos);
-		 } catch (IOException e) {
-			 throw new PhrescoException(e);
-		 }
-		 //Delete the entry from build.info
+		 deleteBuildArchive(project, buildInfos);
 		 
 		 
 		 for (BuildInfo selectedInfo : buildInfos) {
@@ -240,16 +238,26 @@ public class ApplicationManagerImpl implements ApplicationManager {
 		 }
 	 }
 	 
-	 private void deleteBuildArchive(ProjectInfo project, List<BuildInfo> selectedInfos) throws IOException {
+	 private void deleteBuildArchive(ProjectInfo project, List<BuildInfo> selectedInfos) throws PhrescoException {
 		 S_LOGGER.debug("Entering Method AppliacationmanagerImpl.deleteBuildArchive(ProjectInfo project, List<BuildInfo> selectedInfos)");
 		 File file = null;
-		 String delFilename = null;
-		 for (BuildInfo selectedInfo : selectedInfos) {
-			 //Delete zip file
-			 delFilename = selectedInfo.getBuildName();
-			 file = new File(getBuildInfoHome(project) + delFilename);
-			 file.delete();
-		 }
+		 try {
+			String delFilename = null;
+			 for (BuildInfo selectedInfo : selectedInfos) {
+				 //Delete zip file
+				 delFilename = selectedInfo.getBuildName();
+				 file = new File(getBuildInfoHome(project) + delFilename);
+				 FilenameUtils.removeExtension(file.getName());
+				 File temp = new File(getBuildInfoHome(project) + file.getName().substring(0, file.getName().length() - 4));
+				 file.delete(); 
+				 if (temp.exists()) {
+					FileUtil.delete(temp);
+				 }
+			 }
+			 
+		} catch (Exception e) {
+			throw new PhrescoException(e);
+		}
 	 }
 	 
 	 private String getBuildInfoHome(ProjectInfo project) {
