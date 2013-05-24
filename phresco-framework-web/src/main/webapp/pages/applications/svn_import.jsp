@@ -24,6 +24,8 @@
 <%@ page import="org.apache.commons.collections.CollectionUtils" %>
 <%@ page import="java.io.File"%>
 <%@ page import="java.util.List"%>
+<%@ page import="java.util.Enumeration"%>
+<%@ page import="java.util.Properties"%>
 <%@ page import="com.photon.phresco.commons.model.User"%>
 <%@ page import="org.tmatesoft.svn.core.wc.SVNStatus"%>
 <%@ page import="org.tmatesoft.svn.core.wc.SVNStatusType"%>
@@ -42,13 +44,16 @@
 	User userInfo = (User)session.getAttribute(FrameworkConstants.SESSION_USER_INFO);
 	Object commitableFilesObj = request.getAttribute(FrameworkConstants.REQ_COMMITABLE_FILES);
 	List<String> Messages = (List<String>)request.getAttribute(FrameworkConstants.REQ_LOG_MESSAGES);
-
+	String repo = (String) request.getAttribute(FrameworkConstants.REPO);
+	Object gitCommitableFiles = request.getAttribute(FrameworkConstants.REQ_GIT_COMMITABLE_FILES);
 	List<SVNStatus> commitableFiles = null;
-	if (commitableFilesObj != null) {
+	Properties CommitableGITFiles = new Properties();
+	if (FrameworkConstants.COMMIT.equals(action) && repo.equalsIgnoreCase("svn") && commitableFilesObj != null) {
 		commitableFiles = (List<SVNStatus>) commitableFilesObj;
-	}
-	
-    String LoginId = "";
+	} else if (FrameworkConstants.COMMIT.equals(action) && repo.equalsIgnoreCase("git") && gitCommitableFiles != null) {
+		CommitableGITFiles = (Properties) gitCommitableFiles;
+ 	}
+	String LoginId = "";
     if (userInfo != null) {
         LoginId = userInfo.getName();
     }
@@ -58,7 +63,8 @@
 <form id="repoDetails" name="repoDetails" action="import" method="post" autocomplete="off" class="repo_form form-horizontal">
 
 		<%
- 			if (FrameworkConstants.COMMIT.equals(action) && CollectionUtils.isNotEmpty(commitableFiles)) {
+ 			if (FrameworkConstants.COMMIT.equals(action)) {
+ 				if (CollectionUtils.isNotEmpty(commitableFiles) || !CommitableGITFiles.isEmpty()) {
  		%>
 			<div class="validate-container" style="padding-top: 0px;padding-bottom: 10px;">
 	      		<div class="header-background"> </div>
@@ -80,6 +86,7 @@
 			
 			          	<tbody>
 			          		<% 
+			          		if (repo.equalsIgnoreCase("svn") && CollectionUtils.isNotEmpty(commitableFiles)){
 			          			for(SVNStatus commitableFile : commitableFiles) {
 			          				SVNStatusType statusType = commitableFile.getContentsStatus();
 			          		%>
@@ -100,12 +107,38 @@
 			            	</tr>
 			            <%
  							}
+ 						 } else if(repo.equalsIgnoreCase("git") && !CommitableGITFiles.isEmpty()){
+ 						
+			          			Enumeration en = CommitableGITFiles.propertyNames();
+			          			while (en.hasMoreElements()) {
+			          				String key = (String) en.nextElement();
+			          				String value = CommitableGITFiles.getProperty(key);
+			          		%>
+			            	<tr>
+			            		<td>
+			            			<input type="checkbox" class="check" name="commitableFiles" value="<%= key %> " checked onclick="return false"/>
+			            		</td>
+			              		<td>
+				              		<div class = "validateMsg" style="color: #000000; width: 350px;">
+				              			<%= key.replace(FrameworkConstants.FORWARD_SLASH, FrameworkConstants.BACK_SLASH) %>
+				              		</div>
+			              		</td>
+			              		<td>
+			              		<div class = "validateStatus" style="color: #000000;">
+			              				<%=  value %>
+					   				</div>
+			              		</td>
+			            	</tr>
+			            <%
+ 							}
+						}
  						%>
 			          	</tbody>
 			        </table>
 	      		</div>
     		</div>
-	    <% } %> 
+	    <% }
+		}	%> 
  			
 	<!--   import src from type -->
 	<div id="typeInfo">
@@ -157,23 +190,25 @@
 	</div>
 	
 	<% if (!FrameworkConstants.FROM_PAGE_ADD.equals(action) && !FrameworkConstants.COMMIT.equals(action)) { %>
-	<div id="svnRevisionInfo">
-		<div class="control-group">
-			<label  class="control-label labelbold popupLbl"><span class="red">*</span> <s:text name="label.revision"/></label> 
-			<div class="controls">
-				<input id="revisionHead" type="radio" name="revision" value="HEAD" checked/>&nbsp; HEAD Revision 
-			</div>
-			<div class="controls">
-				<input id="revision" type="radio" name="revision" value="revision"/> &nbsp;Revision &nbsp; &nbsp; &nbsp; &nbsp;<input id="revisionVal" type="text" name="revisionVal" maxLength="10" title="10 Characters only" disabled> 
-			</div>
-			<div class="controls">
-				<span id="missingRevision" class="missingData"></span> 
+		<div id="svnRevisionInfo">
+			<div class="control-group">
+				<label  class="control-label labelbold popupLbl"><span class="red">*</span> <s:text name="label.revision"/></label> 
+				<div class="controls">
+					<input id="revisionHead" type="radio" name="revision" value="HEAD" checked/>&nbsp; HEAD Revision 
+				</div>
+				<div class="controls">
+					<input id="revision" type="radio" name="revision" value="revision"/> &nbsp;Revision &nbsp; &nbsp; &nbsp; &nbsp;<input id="revisionVal" type="text" name="revisionVal" maxLength="10" title="10 Characters only" disabled> 
+				</div>
+				<div class="controls">
+					<span id="missingRevision" class="missingData"></span> 
+				</div>
 			</div>
 		</div>
-	</div>
 	<% } %>
 	
-	<% if (!FrameworkConstants.FROM_PAGE_ADD.equals(action) && !FrameworkConstants.COMMIT.equals(action) && !FrameworkConstants.UPDATE.equals(action)) { %>
+	<% 
+		if (!FrameworkConstants.FROM_PAGE_ADD.equals(action) && !FrameworkConstants.COMMIT.equals(action) && !FrameworkConstants.UPDATE.equals(action)) { 
+	%>
 	<div class="control-group" id="testImportDivControl">
 		<label  class="control-label labelbold popupLbl"> <s:text name="label.test.clone"/></label>
 		<div class="controls">
@@ -213,26 +248,30 @@
 			</div>
 		</div>
 		
-		<% if (!FrameworkConstants.FROM_PAGE_ADD.equals(action) && !FrameworkConstants.COMMIT.equals(action)) { %>
-		<div id="testSvnRevisionInfo">
-			<div class="control-group">
-				<label  class="control-label labelbold popupLbl"><span class="red">*</span> <s:text name="label.revision"/></label> 
-				<div class="controls">
-					<input id="testRevisionHead" type="radio" name="testRevision" value="HEAD" checked/>&nbsp; HEAD Revision 
-				</div>
-				<div class="controls">
-					<input id="testRevision" type="radio" name="testRevision" value="revision"/> &nbsp;Revision &nbsp; &nbsp; &nbsp; &nbsp;<input id="testRevisionVal" type="text" name="testRevisionVal" maxLength="10" title="10 Characters only" disabled> 
-				</div>
-				<div class="controls">
-					<span id="missingTestRevision" class="missingTestData"></span> 
+		<% 
+			if (!FrameworkConstants.FROM_PAGE_ADD.equals(action) && !FrameworkConstants.COMMIT.equals(action)) { 
+		%>
+			<div id="testSvnRevisionInfo">
+				<div class="control-group">
+					<label  class="control-label labelbold popupLbl"><span class="red">*</span> <s:text name="label.revision"/></label> 
+					<div class="controls">
+						<input id="testRevisionHead" type="radio" name="testRevision" value="HEAD" checked/>&nbsp; HEAD Revision 
+					</div>
+					<div class="controls">
+						<input id="testRevision" type="radio" name="testRevision" value="revision"/> &nbsp;Revision &nbsp; &nbsp; &nbsp; &nbsp;<input id="testRevisionVal" type="text" name="testRevisionVal" maxLength="10" title="10 Characters only" disabled> 
+					</div>
+					<div class="controls">
+						<span id="missingTestRevision" class="missingTestData"></span> 
+					</div>
 				</div>
 			</div>
-		</div>
 		<% } %>
 	</div>
 	<% } %>
 	
-	<% if (FrameworkConstants.FROM_PAGE_ADD.equals(action) || FrameworkConstants.COMMIT.equals(action)) { %>
+	<% 
+		if (FrameworkConstants.FROM_PAGE_ADD.equals(action) || FrameworkConstants.COMMIT.equals(action)) { 
+	%>
 		<div class="control-group">
 			<label  class="control-label labelbold popupLbl"><span class="red hideContent" id="commitMsgSpan">*</span> <s:text name="lbl.commit.message"/></label> 
 			<div class="controls">
@@ -354,6 +393,9 @@
 		<% if (StringUtils.isNotEmpty(repoUrl) && repoUrl.contains(FrameworkConstants.GIT)) {%>
 		  	$("[name=repoType] option[value='git']").attr('selected', 'selected');
 		  	$('#typeInfo').show();
+		  	if(getAction().contains("updateGITProject")) {
+		  		$(".mandatory").hide();
+		  	}
 		  	$("#commitMsgSpan").hide();
 	  	<% } else if (StringUtils.isNotEmpty(repoUrl) && repoUrl.contains(FrameworkConstants.BITKEEPER)) {%>
 		  	$("[name=repoType] option[value='bitkeeper']").attr('selected', 'selected');
@@ -390,22 +432,36 @@
 			if($("#repoDetails .check:checked").length > 0) {
 				enableButton($(".popupOk"));
 			} else {
-				disableButton($(".popupOk"));
+				var action = "<%= action %>";
+				if ($("[name=repoType]").val() != 'git' &&  action == 'commit') {
+					disableButton($(".popupOk"));
+				}
 			}
 	    });
 	    
 	    // by default for commit opeartion disable button
-	    <% if (FrameworkConstants.COMMIT.equals(action) && StringUtils.isNotEmpty(repoUrl) && !repoUrl.contains(FrameworkConstants.BITKEEPER)) { %> 
-	    	disableButton($(".popupOk"));
-	    <% } %>
+	    <% if (FrameworkConstants.COMMIT.equals(action) && StringUtils.isNotEmpty(repoUrl) && !repoUrl.contains(FrameworkConstants.BITKEEPER)) {%> 
+			disableButton($(".popupOk"));
+	    	$('#repoUrl').attr('readOnly', 'readOnly');
+	    <% } else if (FrameworkConstants.UPDATE.equals(action) && StringUtils.isNotEmpty(repoUrl) && !repoUrl.contains(FrameworkConstants.BITKEEPER)) { %> 
+    		$('#repoUrl').attr('readOnly', 'readOnly');
+   		<% } %>
 	    
 		<%
-			if (FrameworkConstants.COMMIT.equals(action) && CollectionUtils.isEmpty(commitableFiles) && 
-			        StringUtils.isNotEmpty(repoUrl) && !repoUrl.contains(FrameworkConstants.BITKEEPER)) {
-		%>
-				$("#errMsg").html("<s:text name='lbl.no.change'/>");
+			if (FrameworkConstants.COMMIT.equals(action) && (CollectionUtils.isEmpty(commitableFiles) && CommitableGITFiles.isEmpty()) &&
+				StringUtils.isNotEmpty(repoUrl) && !repoUrl.contains(FrameworkConstants.BITKEEPER)) {
+		%>		
+			$("#errMsg").html("<s:text name='lbl.no.change'/>");
 		<% } %>
+		 enableButtonForGit();
+		 hideSelectAllCheckBox();
 	});
+	
+	function enableButtonForGit() {
+		 if ($("[name=repoType]").val() == 'git') {
+		    	enableButton($(".popupOk"));
+			}
+	}
 	
 	function hideShowTestCheckoutDiv() {
 		if ($('#testClone').is(':checked')) {
@@ -422,6 +478,12 @@
   		$('#testImportDiv').hide();
 	}
 	
+	function hideSelectAllCheckBox() {
+		if ($("[name=repoType]").val() == 'git') {
+			$('#selectAll').hide();
+		}
+	}
+
 	function showSelect() {
 		var selectList = document.getElementById("logMessages");
 		if (selectList.options.length > 1) { 

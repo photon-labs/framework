@@ -23,10 +23,13 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Properties;
+import java.util.Set;
 import java.util.UUID;
 
 import org.apache.commons.collections.CollectionUtils;
@@ -34,10 +37,30 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.filefilter.FileFilterUtils;
 import org.apache.commons.io.filefilter.TrueFileFilter;
 import org.apache.log4j.Logger;
+import org.eclipse.jgit.api.AddCommand;
+import org.eclipse.jgit.api.CheckoutCommand;
 import org.eclipse.jgit.api.CloneCommand;
+import org.eclipse.jgit.api.CommitCommand;
+import org.eclipse.jgit.api.FetchCommand;
 import org.eclipse.jgit.api.Git;
+import org.eclipse.jgit.api.InitCommand;
 import org.eclipse.jgit.api.ListBranchCommand.ListMode;
+import org.eclipse.jgit.api.ResetCommand.ResetType;
+import org.eclipse.jgit.api.PullCommand;
+import org.eclipse.jgit.api.PushCommand;
+import org.eclipse.jgit.api.ResetCommand;
+import org.eclipse.jgit.api.RevertCommand;
+import org.eclipse.jgit.api.Status;
+import org.eclipse.jgit.api.errors.CheckoutConflictException;
+import org.eclipse.jgit.api.errors.GitAPIException;
+import org.eclipse.jgit.lib.ObjectId;
 import org.eclipse.jgit.lib.Ref;
+import org.eclipse.jgit.lib.Repository;
+import org.eclipse.jgit.lib.StoredConfig;
+import org.eclipse.jgit.revwalk.RevCommit;
+import org.eclipse.jgit.revwalk.RevWalk;
+import org.eclipse.jgit.storage.file.FileRepositoryBuilder;
+import org.eclipse.jgit.transport.CredentialsProvider;
 import org.eclipse.jgit.transport.UsernamePasswordCredentialsProvider;
 import org.tmatesoft.svn.core.SVNCommitInfo;
 import org.tmatesoft.svn.core.SVNDepth;
@@ -208,6 +231,7 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 			}
 			Git git = Git.open(updateDir); // checkout is the folder with .git
 			git.pull().call(); // succeeds
+			git.getRepository().close();
 			if(debugEnabled){
 				S_LOGGER.debug("Updated!");
 			}
@@ -633,7 +657,7 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 				// checkout to get .svn folder
 				checkoutImportedApp(appendedUrl, appInfo, username, password);
 			} else if (GIT.equals(type)) {
-				importToGITRepo();
+				importToGITRepo(url,appInfo, username, password, dir, commitMessage);
 			}
 		} catch (Exception e) {
 			throw e;
@@ -711,12 +735,101 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 		// update connection url in pom.xml
 		updateSCMConnection(appInfo, svnURL.toDecodedString());
 	}
-	
-	private void importToGITRepo() throws Exception {
+
+	private void importToGITRepo(String url,ApplicationInfo appInfo, String username, String password, File appDir, String commitMessage) throws Exception {
 		if(debugEnabled){
 			S_LOGGER.debug("Entering Method  SCMManagerImpl.importToGITRepo()");
 		}
-		// TODO :: Need to implement
+		boolean gitExists = false;
+		if(new File(appDir.getPath() + FORWARD_SLASH + DOT + GIT).exists()) {
+			gitExists = true;
+		}
+		try {
+			CredentialsProvider cp = new UsernamePasswordCredentialsProvider(username, password);
+			FileRepositoryBuilder builder = new FileRepositoryBuilder();
+			Repository repository = builder.setGitDir(appDir).readEnvironment().findGitDir().build();
+			String dirPath = appDir.getPath();
+			File gitignore = new File(dirPath + GITIGNORE_FILE);
+			gitignore.createNewFile();
+			
+			if (gitignore.exists()) {
+				String contents = FileUtils.readFileToString(gitignore);
+				if (!contents.isEmpty() && !contents.contains(DO_NOT_CHECKIN_DIR)) {
+					String source = NEWLINE + DO_NOT_CHECKIN_DIR + NEWLINE;
+					OutputStream out = new FileOutputStream((dirPath + GITIGNORE_FILE), true);
+					byte buf[] = source.getBytes();
+					out.write(buf);
+					out.close();
+				} else if (contents.isEmpty()){
+				String source = NEWLINE + DO_NOT_CHECKIN_DIR + NEWLINE;
+				OutputStream out = new FileOutputStream((dirPath + GITIGNORE_FILE), true);
+				byte buf[] = source.getBytes();
+				out.write(buf);
+				out.close();
+				}
+			}
+		
+			Git git = new Git(repository);
+		
+			InitCommand initCommand = Git.init();
+			initCommand.setDirectory(appDir);
+			git = initCommand.call();
+		
+			AddCommand add = git.add();
+			add.addFilepattern(".");
+			add.call();
+
+			CommitCommand commit = git.commit().setAll(true);
+			commit.setMessage(commitMessage).call();
+			StoredConfig config = git.getRepository().getConfig();
+
+			config.setString(REMOTE, ORIGIN, URL, url);
+			config.setString(REMOTE, ORIGIN, FETCH, REFS_HEADS_REMOTE_ORIGIN);
+			config.setString(BRANCH, MASTER, REMOTE, ORIGIN);
+			config.setString(BRANCH, MASTER, MERGE, REF_HEAD_MASTER);
+			config.save();
+
+			try {
+				PushCommand pc = git.push();
+				pc.setCredentialsProvider(cp).setForce(true);
+				pc.setPushAll().call();
+			} catch (Exception e){
+				git.getRepository().close();
+				throw e;
+			}
+		
+			if (appInfo != null) {
+				updateSCMConnection(appInfo, url);
+			}
+			git.getRepository().close();
+		} catch (Exception e) {
+			Exception s = e;
+			resetLocalCommit(appDir, gitExists, e);
+			throw s;
+		}
+	}
+
+	private void resetLocalCommit(File appDir, boolean gitExists, Exception e) throws PhrescoException {
+		try {
+			if(gitExists == true && e.getLocalizedMessage().contains("not authorized")) {
+				FileRepositoryBuilder builder = new FileRepositoryBuilder();
+				Repository repository = builder.setGitDir(appDir).readEnvironment().findGitDir().build();
+				Git git = new Git(repository);
+
+				InitCommand initCommand = Git.init();
+				initCommand.setDirectory(appDir);
+				git = initCommand.call();
+			
+				ResetCommand reset = git.reset();
+				ResetType mode = ResetType.SOFT;
+				reset.setRef("HEAD~1").setMode(mode);
+				reset.call();
+						
+				git.getRepository().close();
+			}
+		} catch (Exception pe) {
+			new PhrescoException(pe);
+		}
 	}
 
 	public boolean commitToRepo(String type, String url, String username, String password, String branch, String revision, File dir, String commitMessage) throws Exception {
@@ -727,7 +840,7 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 			if (SVN.equals(type)) {
 				commitDirectoryContentToSubversion(url, dir.getPath(), username, password, commitMessage);
 			} else if (GIT.equals(type)) {
-				importToGITRepo();
+				importToGITRepo(url, null, username, password, dir, commitMessage);
 			} else if (BITKEEPER.equals(type)) {
 			    return commitToBitKeeperRepo(url, dir.getPath(), commitMessage);
 			}
@@ -832,6 +945,72 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 	    return allSVNStatus;
 	}
 	
+	public Properties getGITCommitableFiles(File path) throws IOException, GitAPIException
+	{
+		FileRepositoryBuilder builder = new FileRepositoryBuilder();
+		Repository repository = builder.setGitDir(path).readEnvironment().findGitDir().build(); 
+				
+		Git git = new Git(repository);
+
+		InitCommand initCommand = Git.init();
+		initCommand.setDirectory(path);
+		git = initCommand.call();
+		Status status = git.status().call();
+		
+		Properties prop = new Properties();
+		Set<String> added = status.getAdded();
+		Set<String> changed = status.getChanged();
+		Set<String> conflicting = status.getConflicting();
+		Set<String> missing= status.getMissing();
+		Set<String> modified = status.getModified();
+		Set<String> removed = status.getRemoved();
+		Set<String> untracked = status.getUntracked();
+		
+		if (!added.isEmpty()) {
+			for (String add : added) {
+				prop.put(path + BACK_SLASH + add, "A");
+			}
+		}
+
+		if (!changed.isEmpty()) {
+			for (String change : changed) {
+				prop.put(path + BACK_SLASH + change, "M");
+			}
+		}
+
+		if (!conflicting.isEmpty()) {
+			for (String conflict : conflicting) {
+				prop.put(path + BACK_SLASH + conflict, "C");
+			}
+		}
+
+		if (!missing.isEmpty()) {
+			for (String miss : missing) {
+				prop.put(path + BACK_SLASH + miss, "!");
+			}
+		}
+
+		if (!modified.isEmpty()) {
+			for (String modify : modified) {
+				prop.put(path + BACK_SLASH + modify, "M");
+			}
+		}
+
+		if (!removed.isEmpty()) {
+			for (String remove : removed) {
+				prop.put(path + BACK_SLASH + remove, "D");
+			}
+		}
+
+		if (!untracked.isEmpty()) {
+			for (String untrack : untracked) {
+				prop.put(path + BACK_SLASH + untrack, "?");
+			}
+		}
+		git.getRepository().close();
+		return prop;
+	}
+
 	public List<String> getSvnLogMessages(String Url, String userName, String Password) throws PhrescoException {
 		setupLibrary();
 		long startRevision = 0;
