@@ -54,6 +54,10 @@
 		  <fileset dir="${ios-sim.home}">
 		    <include name="**/*"/>
 		  </fileset>
+          
+          <fileset dir="${waxsim.home}">
+		    <include name="**/*"/>
+		  </fileset>
 		</chmod>
 	</target>
 
@@ -208,7 +212,8 @@
     <target name="start-waxsim">
 	 	<echo message="waxsim startup"/>
         <exec dir="${waxsim.home}" executable="xcodebuild" osfamily="mac">
-        <arg value="install DSTROOT=\"> </arg>
+        <arg value="install"> </arg>
+        <arg value="DSTROOT="> </arg>
         </exec>
     </target>
     
