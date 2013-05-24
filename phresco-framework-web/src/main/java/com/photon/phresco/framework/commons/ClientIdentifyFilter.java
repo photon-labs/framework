@@ -29,6 +29,7 @@ import javax.ws.rs.core.Response;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
+import org.codehaus.jackson.jaxrs.JacksonJsonProvider;
 import org.codehaus.plexus.util.StringUtils;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -42,6 +43,7 @@ import com.photon.phresco.exception.PhrescoException;
 import com.photon.phresco.framework.FrameworkConfiguration;
 import com.photon.phresco.framework.PhrescoFrameworkFactory;
 import com.photon.phresco.framework.actions.util.ClientIdentifyFilterConstants;
+import com.photon.phresco.framework.model.ClientIdentifyModel;
 import com.photon.phresco.framework.rest.api.ResponseInfo;
 import com.photon.phresco.framework.rest.api.util.ActionFunction;
 import com.photon.phresco.service.client.impl.ClientHelper;
@@ -49,8 +51,14 @@ import com.photon.phresco.service.client.impl.RestClient;
 import com.sun.jersey.api.client.Client;
 import com.sun.jersey.api.client.ClientResponse;
 import com.sun.jersey.api.client.GenericType;
+import com.sun.jersey.api.client.UniformInterfaceException;
 import com.sun.jersey.api.client.WebResource;
 import com.sun.jersey.api.client.ClientResponse.Status;
+import com.sun.jersey.api.client.config.ClientConfig;
+import com.sun.jersey.api.client.config.DefaultClientConfig;
+import com.sun.jersey.multipart.BodyPart;
+import com.sun.jersey.multipart.MultiPart;
+import com.sun.jersey.multipart.MultiPartMediaTypes;
 
 public class ClientIdentifyFilter implements Filter , ClientIdentifyFilterConstants{
 	
@@ -63,87 +71,138 @@ public class ClientIdentifyFilter implements Filter , ClientIdentifyFilterConsta
 	public void doFilter(ServletRequest request, ServletResponse response,
 			FilterChain chain) throws IOException, ServletException {
 		
-			HttpServletRequest req = null;
-			String url="";
-			if (request instanceof HttpServletRequest) {
-				req = (HttpServletRequest)request;
-				url = req.getRequestURL().toString();
+			try {
+				HttpServletRequest req = null;
+				String url="";
+				if (request instanceof HttpServletRequest) {
+					req = (HttpServletRequest)request;
+					url = req.getRequestURL().toString();
 
-				if (isDebugEnabled) {
-    				S_LOGGER.debug("url : "+url);
-    			}
-			}
-		
-            if(	(url.contains(LOCALES)) || (url.contains(JSON)) || (url.contains(INDEX_HTML)) || (url.contains(REST_CALL)) || (url.contains(COMPONENTS)) || (url.contains(JS)) || (url.contains(LIB)) || (url.contains(THEMES))) {
-            	chain.doFilter(req, response);
-            }
-            else {
-            	
-            	String forcompare = url;
-             	int location = forcompare.lastIndexOf("/");
-             	String cutomername = forcompare.substring(location);
-             	cutomername = cutomername.substring(1);
-             	
-             	JSONObject cutomer_theme = listApptypeTechInfo(cutomername);
-        		PrintWriter  out = response.getWriter();
-        		if(cutomer_theme != null) {
-        			
-	        		String customer_json_theme = "";
-	        		customer_json_theme = new Gson().toJson(cutomer_theme);
-	        		
-	        		if(!("".equalsIgnoreCase(customer_json_theme))) {
-	        			
-	        			if (isDebugEnabled) {
-	        				S_LOGGER.debug("<script type=\"text/javascript\"> localStorage.setItem(\"customertheme\",JSON.stringify("+customer_json_theme+")); </script> ");
-	        			}
-	        			
-	        			out.print("<script type=\"text/javascript\"> localStorage.setItem(\""+ THEME_KEY +"\",JSON.stringify("+ customer_json_theme +")); </script> ");
-	        		
-	        		}
-	        		
-	        		String customer_logo="";
-	        		try {
-	        			
-	        			customer_logo = getimage((String)cutomer_theme.get("customerid"));
-	        			
-					} catch (PhrescoException e) {
-						
-						S_LOGGER.error(e.getMessage());
+					if (isDebugEnabled) {
+						S_LOGGER.debug("url : "+url);
 					}
-	        		if(!("".equalsIgnoreCase(customer_logo))) {
-	        			
-	        			if (isDebugEnabled) {
-	        				S_LOGGER.debug("<script type=\"text/javascript\"> localStorage.setItem(\"customertheme\",JSON.stringify("+customer_json_theme+")); </script> ");
-	        			}
-	        			
-	        			out.print("<script type=\"text/javascript\"> localStorage.setItem(\""+ LOGO_KEY +"\",\""+ customer_logo +"\"); </script> ");	
-	        		}
-        		}
-        		
-        		req.getRequestDispatcher(ROUTE_URL).include(req, response);
-             	
-            }
-		
-		
-		
+				}
+
+				if(	(url.contains(LOCALES)) || (url.contains(JSON)) || (url.contains(INDEX_HTML)) || (url.contains(REST_CALL)) || (url.contains(COMPONENTS)) || (url.contains(JS)) || (url.contains(LIB)) || (url.contains(THEMES))) {
+					chain.doFilter(req, response);
+				}
+				else {
+					
+					String forcompare = url;
+				 	int location = forcompare.lastIndexOf("/");
+				 	String cutomername = forcompare.substring(location);
+				 	cutomername = cutomername.substring(1);
+					try {
+						PrintWriter  out = response.getWriter();
+						out.print("<script type=\"text/javascript\"> localStorage.removeItem(\""+ THEME_KEY +"\"); </script> ");
+						out.print("<script type=\"text/javascript\"> localStorage.removeItem(\""+ LOGO_KEY +"\"); </script> ");
+						out.print("<script type=\"text/javascript\"> localStorage.removeItem(\""+ STATUS_MESSAGE +"\"); </script> ");
+						ClientIdentifyModel customerdetails = getCustomerProperties(cutomername);
+				    	if(customerdetails.getStatus()) {
+				    		JSONObject cutomer_theme = processCustomerProperties(customerdetails.getCustomer());
+				        	String customer_json_theme = new Gson().toJson(cutomer_theme);
+				        	String customer_logo= customerdetails.getCustomerlogo();
+				    		out.print("<script type=\"text/javascript\"> localStorage.setItem(\""+ THEME_KEY +"\",JSON.stringify("+ customer_json_theme +")); </script> ");
+				    		out.print("<script type=\"text/javascript\"> localStorage.setItem(\""+ LOGO_KEY +"\",\""+ customer_logo +"\"); </script> ");	
+				    	}
+				    	else {
+				    			out.print("<script type=\"text/javascript\"> localStorage.setItem(\""+ STATUS_MESSAGE +"\",\""+ customerdetails.getMessage() +"\"); </script> ");	
+				    	}
+					} catch (PhrescoException e) {
+						S_LOGGER.error("Exception occured in the Client properties obatining process"+e.getMessage());
+					} catch (Exception e) {
+						S_LOGGER.error("Exception occured in the Client properties obatining process"+e.getMessage());
+						e.printStackTrace();
+					}
+					req.getRequestDispatcher(ROUTE_URL).include(req, response);
+				}
+			} catch (Exception e) {
+				S_LOGGER.error("A major exception occured in the Client identify filter "+e.getMessage());
+				chain.doFilter(request, response);
+			}
 	}
 	
+	public ClientIdentifyModel getCustomerProperties(String cutomername) throws PhrescoException, IOException
+	{
+		FrameworkConfiguration configuration = PhrescoFrameworkFactory.getFrameworkConfig();
+		ClientConfig config = new DefaultClientConfig();
+        config.getClasses().add(JacksonJsonProvider.class);
+		Client c = Client.create(config);
+	    WebResource resource = c.resource(configuration.getServerPath() +REST_API_CUSTOMER_PROPERTIES);
+	    resource = resource.queryParam("context", cutomername);
+	    resource.accept(MultiPartMediaTypes.MULTIPART_MIXED);
+	    MultiPart result = null;
+		result = resource.get(MultiPart.class);
+		String status = result.getHeaders().getFirst("status");
+		if((Response.Status.OK.getReasonPhrase()).equals(status)) {
+				
+				BodyPart part1 = result.getBodyParts().get(0);
+			    BodyPart part2 = result.getBodyParts().get(1);
+		        Customer customer = part1.getEntityAs(Customer.class);
+		        if (isDebugEnabled) {
+					S_LOGGER.debug("Response Status -->  CustomerID : " + customer.getId());
+				}
+		        InputStream fileInputStream = part2.getEntityAs(InputStream.class);
+		        if(fileInputStream == null) {
+		        	throw new PhrescoException("exception occured while reading the customer image");
+		        }
+				byte[] imgByte = null;
+				imgByte = IOUtils.toByteArray(fileInputStream);
+			    byte[] encodedImage = Base64.encodeBase64(imgByte);
+		        String encodeImg = new String(encodedImage);
+		        ClientIdentifyModel data = new ClientIdentifyModel();
+		        data.setCustomer(customer);
+		        data.setCustomerlogo(encodeImg);
+		        data.setStatus(true);
+		        return data;
+		}
+		else if((Response.Status.NOT_FOUND.getReasonPhrase()).equals(status)) {
+		
+			if (isDebugEnabled) {
+					S_LOGGER.debug("Response Status :"+Response.Status.NOT_FOUND.getReasonPhrase());
+			}
+	       ClientIdentifyModel data = new ClientIdentifyModel();
+	       data.setStatus(false);
+	       data.setMessage(INVALID_CUSTOMER);
+	       return data;
+		}
+		else if((Response.Status.NO_CONTENT.getReasonPhrase()).equals(status)) {
+				
+			if (isDebugEnabled) {
+				S_LOGGER.debug("Response Status :"+Response.Status.NO_CONTENT.getReasonPhrase());
+			}
+		    ClientIdentifyModel data = new ClientIdentifyModel();
+		    data.setStatus(false);
+		    data.setMessage(NO_IMAGE);
+		    return data;
+		}
+		else if((Response.Status.PRECONDITION_FAILED.getReasonPhrase()).equals(status)) {
+			if (isDebugEnabled) {
+				S_LOGGER.debug("Response Status :"+Response.Status.PRECONDITION_FAILED.getReasonPhrase());
+			}
+			ClientIdentifyModel data = new ClientIdentifyModel();
+		    data.setStatus(false);
+		    data.setMessage(NO_ID);
+		    return data;
+		}
+		else {
+			if (isDebugEnabled) {
+				S_LOGGER.debug("Response Status :"+INVALID);
+			}
+			ClientIdentifyModel data = new ClientIdentifyModel();
+		    data.setStatus(false);
+		    data.setMessage(INVALID);
+			return null;
+			}
+	}
 	
-	
-	public JSONObject listApptypeTechInfo(String customerName) {
-		ResponseInfo<Customer> responseData = new ResponseInfo<Customer>();
+	public JSONObject processCustomerProperties(Customer customer) {
+		
+		String customerName = customer.getName();
 		try {
-			Client client = ClientHelper.createClient();
-			FrameworkConfiguration configuration = PhrescoFrameworkFactory.getFrameworkConfig();
-	        WebResource resource = client.resource(configuration.getServerPath() + "/admin/customers");
-	        System.out.println("url hit is -->"+configuration.getServerPath() + "/admin/customers");
-	        resource = resource.queryParam("customerName", customerName);
-	        resource.accept(MediaType.APPLICATION_JSON);
-	        ClientResponse response = resource.get(ClientResponse.class);
-	        GenericType<Customer> genericType = new GenericType<Customer>() {};
-	        Customer customer = response.getEntity(genericType);
 	        if (!customerName.equalsIgnoreCase("Photon")) {
-		        Map<String, String> theme = customer.getFrameworkTheme();
+		        
+	        	Map<String, String> theme = customer.getFrameworkTheme();
 				String brandingColor = theme.get("brandingColor");
 				String accordionBackGroundColor =  theme.get("accordionBackGroundColor");
 				String bodyBackGroundColor =  theme.get("bodyBackGroundColor");
@@ -216,13 +275,9 @@ public class ClientIdentifyFilter implements Filter , ClientIdentifyFilterConsta
 						}
 					}
 				}
-				
 				jsonObject.put("customerid", customer.getId());
-				
 				return jsonObject;
-				
 	        }
-	        
 		} catch (PhrescoException e) {
 			S_LOGGER.error(e.getMessage());
 		} catch (ParseException e) {
