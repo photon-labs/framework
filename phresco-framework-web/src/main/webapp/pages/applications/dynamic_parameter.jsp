@@ -416,6 +416,10 @@
 			$("#warningmsg").show();
 			$("#console_div").html("Generating build...");
 		} else if(url == "deploy") {
+			var num = $('#buildNumber').val();
+			$('.buildNo').find($('input[value="' +num + '"]')).attr("title", "Deploy in progress ..."); 
+			$('.buildNo').find($('input[value="' +num + '"]')).prop("disabled",true);
+			$('.buildNo').find($('input[value="' +num + '"]')).prop("checked", false);
 			$("#popupPage").modal('hide');
 			$("#console_div").html("Deploying project...");
 		}

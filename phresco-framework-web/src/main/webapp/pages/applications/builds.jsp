@@ -116,11 +116,11 @@
 			        		for (BuildInfo buildInfo : buildInfos) {
 						%>
 			            	<tr>
-			              		<td class="checkbox_list">
+			              		<td class="buildNo" width="17px">
 			              			<input type="checkbox" <%= per_disabledStr %> class="check" name="build-number" value="<%= buildInfo.getBuildNo() %>">
 			              		</td>
 			              		<td><%= buildInfo.getBuildNo() %></td>
-			              		<td style="width: 40%;">
+			              		<td class="buildName" style="width: 40%;">
 	              					<label class="bldLable" title="Configured with <%= buildInfo.getEnvironments() %>"><%= buildInfo.getTimeStamp() %></label>
 			              		</td>
 			              		<td>
@@ -188,8 +188,8 @@
 	      		</div>
     		</div>
 		</div>
-	<% } %> 
-<script src="js/delete.js" ></script>
+	<% } %>
+	<input type="hidden" id="deployAddParam"> 
 
 <script type="text/javascript">
 	//To check whether the device is ipad or not and then apply jquery scrollbar
@@ -201,8 +201,9 @@
 		hideLoadingIcon();//To hide the loading icon
 		
 		$('.deploy').click(function() {
+			checkForLock('<%= FrameworkConstants.REQ_FROM_TAB_DEPLOY %>');
 			var additionalParam = $(this).attr('additionalParam'); //additional params if any
-    		validateDynamicParam('showDeploy', '<s:text name="label.deploy"/>', 'deploy','<s:text name="lbl.btn.ok"/>', '', '<%= Constants.PHASE_DEPLOY %>', true, additionalParam);
+			$("#deployAddParam").val(additionalParam);
     	});
 		
 		$('.processBuild').click(function() {
@@ -212,6 +213,10 @@
 			params = params.concat(additionalParam);
 			validateDynamicParam('showProcessBuild', '<s:text name="label.process.build"/>', 'processBuild','<s:text name="label.process.build"/>', '', '<%= Constants.PHASE_PROCESS_BUILD %>', true, additionalParam);
     	});
+		$(".buildName").text(function(index) {
+		    return textTrim($(this), 20);
+	    });
+	
 	});
 	
 	// By default disable all Run buttons under builds

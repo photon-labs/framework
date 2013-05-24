@@ -204,6 +204,14 @@ public interface FrameworkConstants {
     String SVN = "svn";
     String MASTER = "master";
     String UPDATE = "update";
+    String REMOTE = "remote";
+    String ORIGIN = "origin";
+    String FETCH = "fetch";
+    String BRANCH = "branch";
+    String MERGE = "merge";
+    String REF_HEAD_MASTER = "refs/heads/master";
+    String REFS_HEADS_REMOTE_ORIGIN = "+refs/heads/*:refs/remotes/origin/*";
+    String URL = "url";
     String ADD = "add";
     String REPO_URL = "repoUrl";
     String TEST_REPO_URL = "testRepoUrl";
@@ -247,6 +255,7 @@ public interface FrameworkConstants {
     String GIT = "git";
     String BITKEEPER = "bitkeeper";
     String REPO_TYPE = "repoType";
+    String REPO = "repo";
     String IS_NOT_WORKING_COPY = "is not a working copy";
     String UPDATE_SVN_PROJECT = "updateProject";
     String SVN_TYPE = "svnType";
@@ -309,6 +318,8 @@ public interface FrameworkConstants {
     String PROTOCOL_POSTFIX = "://";
     String SPLIT_DOT = "\\.";
     String FORWARD_SLASH = "/";
+    String BACK_SLASH = "\\";
+    String GITIGNORE_FILE = "/.gitignore";
     String LOCALHOST = "localhost";
     String JENKINS_START = "JenkinsStart";
     String JENKINS_STOP = "JenkinsStop";
@@ -870,6 +881,7 @@ public interface FrameworkConstants {
     String REQ_TEST_SHOW_ALL_GRAPH = "all";
     String REQ_ACTION= "action";
     String REQ_COMMITABLE_FILES= "commitableFiles";
+    String REQ_GIT_COMMITABLE_FILES= "commitableGITFiles";
     String REQ_BUILD_TEST= "build";
     String REQ_DEPLOY = "deploy";
     String REQ_OLD_APPDIR = "oldAppDirName";
@@ -1021,6 +1033,8 @@ public interface FrameworkConstants {
 	String REQ_CONFIG_SERVER_NAMES = "configServerNames";
 	String REQ_CONFIG_DB_NAMES = "configDbNames";
 	String REQ_SRC = "src";
+	
+	String REQ_LOCAL_DISK = "Local Disk";
 	
     /*
      * REST url
@@ -1328,6 +1342,7 @@ public interface FrameworkConstants {
     String ERROR_DB_VER_MISSING = "err.db.ver.missing";
     String ERROR_DB_MISSING = "err.db.missing";
     String ERROR_WS_MISSING = "err.ws.missing";
+    String ERROR_FUNCTIONAL_FRAMEWORK = "err.functional.framework";
 	String ERROR_TYPE = "err.msg.empty.type";
     String ERROR_LAYER = "err.msg.empty.layer";
     String ERROR_TECHNOLOGY = "err.msg.empty.technology";
@@ -1867,6 +1882,7 @@ public interface FrameworkConstants {
 	    String TO_DIRECTORY = "toDirectory";
 	    String FILES = "files";
 	    String FILE = "file";
+	    String LOCK_FILE = "process.lock";
 	    
 	    /**
 	     * BitKeeper Commands

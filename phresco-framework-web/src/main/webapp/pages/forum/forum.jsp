@@ -39,7 +39,7 @@
 	String disabledLabelColor = (String) request.getAttribute(FrameworkConstants.CUST_DISABLED_LABEL_COLOR);
 	String customerId = (String) request.getAttribute(FrameworkConstants.REQ_CUSTOMER_ID);
 %>
-<div class="page-header"><h1><s:text name="label.phresco.forum"/></h1></div>
+<div class="page-header"><h1><s:text name="label.helios.forum"/></h1></div>
 <%
 	if(error != null ) {
 %>

@@ -93,6 +93,8 @@ Width <= 1024
 	}
 	.tabs {
 		width: 132px;
+		height: 490px;
+		overflow-y: auto;
 	}
 	.menuarrow img {
 		width: 25px;
@@ -261,6 +263,11 @@ Width <= 1024
 	.app_add_form {
 	    height: 100%;
 	    padding-top: 6px;
+	}
+	
+	#appSuccessmsg {
+		margin-top: 0px !important;
+		margin-left: 343px !important;
 	}
 	
 	.settings_add_form {
@@ -1272,6 +1279,11 @@ Width >= 1152 and < 1280
      	padding: 4px 6px;
      	margin-top: 5px;
      }
+     
+     #appSuccessmsg {
+     	margin-left: 355px !important;
+    	margin-top: 3px !important;
+     }
 	
 	.custom_features {
 		border-radius: 12px 12px 6px 6px;
@@ -1667,7 +1679,7 @@ Width <= 1280 and height <= 800
 		}
 	}
 	.tabs {
-		height: 494px !important;
+		height: 390px !important;
 		overflow-y: auto;
 	}
 }
@@ -1762,6 +1774,11 @@ Width <= 1280 and height <= 800
 		position: relative;
 		top: 0;
 		width: 98%;
+	}
+	
+	#appSuccessmsg {
+		margin-left: 370px !important;
+    	margin-top: 2px !important;
 	}
 	
 	#container {

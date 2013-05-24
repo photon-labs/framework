@@ -33,6 +33,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Properties;
 
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.collections.CollectionUtils;
@@ -40,8 +41,12 @@ import org.apache.commons.io.FileExistsException;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.eclipse.jgit.api.Git;
+import org.eclipse.jgit.api.InitCommand;
+import org.eclipse.jgit.api.errors.GitAPIException;
 import org.eclipse.jgit.api.errors.InvalidRemoteException;
 import org.eclipse.jgit.api.errors.TransportException;
+import org.eclipse.jgit.lib.Config;
 import org.tmatesoft.svn.core.SVNAuthenticationException;
 import org.tmatesoft.svn.core.SVNException;
 import org.tmatesoft.svn.core.wc.SVNStatus;
@@ -70,6 +75,7 @@ import com.photon.phresco.framework.actions.FrameworkBaseAction;
 import com.photon.phresco.framework.api.ProjectManager;
 import com.photon.phresco.framework.commons.FrameworkUtil;
 import com.photon.phresco.framework.impl.SCMManagerImpl;
+import com.photon.phresco.framework.model.LockDetail;
 import com.photon.phresco.plugins.model.Mojos.ApplicationHandler;
 import com.photon.phresco.plugins.util.MojoProcessor;
 import com.photon.phresco.service.client.api.ServiceManager;
@@ -104,6 +110,7 @@ public class Applications extends FrameworkBaseAction implements Constants {
     private boolean testClone;
     private String commitMessage = "";
     private List<String> commitableFiles = null;
+	private Properties commitableGITFiles = null;
     private List<DownloadInfo> servers = null;
     List<String> restrictedLogs =  null;
 
@@ -126,8 +133,13 @@ public class Applications extends FrameworkBaseAction implements Constants {
     private String actionType = "";
     private String customerId = "";
     private String projectId = "";
-    private String appId = "";
-    private String pomVersion ="";
+    private String pomVersion = "";
+    private int selectedServersCount;
+    private int selectedDatabasesCount;
+    
+    private boolean locked = false;
+    private String lockedBy = "";
+    private String lockedDate = "";
 
     public String loadMenu() {
         if (s_debugEnabled) {
@@ -317,6 +329,27 @@ public class Applications extends FrameworkBaseAction implements Constants {
             	Collections.sort(downloadInfos, sortdownloadInfoInAlphaOrder());
             }
 			setDownloadInfos(downloadInfos);
+			ProjectInfo projectInfo = null;
+			projectInfo = (ProjectInfo)getSessionAttribute(getAppId() + SESSION_APPINFO);
+			ApplicationInfo appInfo = projectInfo.getAppInfos().get(0);
+			
+        	int selectedServersCount;
+			if(appInfo.getSelectedServers()!=null){
+				selectedServersCount = appInfo.getSelectedServers().size();
+				setSelectedServersCount(selectedServersCount);
+			}else{
+				selectedServersCount = -1;
+				setSelectedServersCount(selectedServersCount);
+			}
+			
+			int selectedDatabasesCount;
+			if(appInfo.getSelectedDatabases() != null){
+				selectedDatabasesCount = appInfo.getSelectedDatabases().size();
+				setSelectedDatabasesCount(selectedDatabasesCount);
+			}else{
+				selectedDatabasesCount = -1;
+				setSelectedDatabasesCount(selectedDatabasesCount);
+			}
         } catch (PhrescoException e) {
             return showErrorPopup(e, getText(EXCEPTION_DOWNLOADINFOS));
         }
@@ -841,13 +874,55 @@ public class Applications extends FrameworkBaseAction implements Constants {
 		}
 		return APP_IMPORT;
 	}
-	
-	public String repoExistCheckForCommit() {
-		updateProjectPopup();
 
+	public String repoExistCheckForCommit() throws PhrescoException {
+		if(getConnectionUrl().startsWith("bk")) {
+			setRepoExistForCommit(true);
+		} else {	
+			checkGitProject();
+			if(getConnectionUrl().endsWith(".git")) {
+				updateProjectPopup();
+			}
+			if (!isRepoExistForCommit) {
+				updateProjectPopup();
+			}
+		}
 		return SUCCESS;
 	}
-	
+
+	private void checkGitProject() throws PhrescoException {
+		setRepoExistForCommit(true);
+		String url = "";
+		String Path = "";
+		ApplicationInfo applicationInfo = getApplicationInfo();
+		if (applicationInfo != null) {
+			String appDirName = applicationInfo.getAppDirName();
+			Path = Utility.getProjectHome() + appDirName;
+		}
+		File projectPath = new File(Path);
+		InitCommand initCommand = Git.init();
+		initCommand.setDirectory(projectPath);
+		Git git = null;
+		try {
+			git = initCommand.call();
+		} catch (GitAPIException e) {
+			throw new PhrescoException(e);
+		}
+		
+		Config storedConfig = git.getRepository().getConfig();
+		url = storedConfig.getString(REMOTE, ORIGIN, URL);
+		if (StringUtils.isEmpty(url)) {
+			File toDelete = git.getRepository().getDirectory();
+			try {
+				FileUtils.deleteDirectory(toDelete);
+			} catch (IOException e) {
+				throw new PhrescoException(e);
+			}
+			setRepoExistForCommit(false);
+		}
+		git.getRepository().close();
+	}
+
 	private String getConnectionUrl() {
 		try {
 			ApplicationInfo applicationInfo = getApplicationInfo();
@@ -881,12 +956,28 @@ public class Applications extends FrameworkBaseAction implements Constants {
 			S_LOGGER.debug("Entering Method  Applications.updateProjectPopup()");
 		}
 		try {
-			isRepoExistForCommit = true;
+			setRepoExistForCommit(true);
 			List<SVNStatus> commitableFiles = null;
-			if (COMMIT.equals(action) && !getConnectionUrl().contains(BITKEEPER)) {
+			String repo = "";
+			commitableGITFiles = new Properties();
+			//getting commitable files for SVN repo
+			if (COMMIT.equals(action)
+					&& !getConnectionUrl().contains(BITKEEPER)
+					&& !getConnectionUrl().contains(GIT)) {
 				commitableFiles = svnCommitableFiles();
+				repo = SVN;
+			//getting commitable files for Git repo
+			} else if (COMMIT.equals(action)
+					&& !getConnectionUrl().contains(BITKEEPER)
+					&& !getConnectionUrl().contains(SVN)) {
+				commitableGITFiles = gitCommitableFiles();
+				repo = GIT;
 			}
+			setReqAttribute(REPO, repo);
 			setReqAttribute(REQ_COMMITABLE_FILES, commitableFiles);
+			if (repo.equalsIgnoreCase(GIT)) {
+				setReqAttribute(REQ_GIT_COMMITABLE_FILES, commitableGITFiles);
+			}
 			setReqAttribute(REQ_APP_ID, getAppId());
 			setReqAttribute(REQ_PROJECT_ID, getProjectId());
 			setReqAttribute(REQ_CUSTOMER_ID, getCustomerId());
@@ -1073,15 +1164,26 @@ public class Applications extends FrameworkBaseAction implements Constants {
 		}
 		return SUCCESS;
 	}
-	
-	public String addGITProject() {
-		if(s_debugEnabled) {
+
+	public String addGitProject() {
+		if (s_debugEnabled) {
 			S_LOGGER.debug("Entering Method  Applications.addGITProject()");
 		}
 		try {
-			// TODO : need to handle
+			SCMManagerImpl scmi = new SCMManagerImpl();
+			scmi.importToRepo(GIT, repoUrl, userName, password, null, null,
+					getApplicationInfo(), commitMessage);
+			errorString = getText(ADD_PROJECT_SUCCESS);
+			errorFlag = true;
+			updateLatestProject();
 		} catch (Exception e) {
-			e.printStackTrace();
+			if(e.getLocalizedMessage().contains("git-receive-pack not found")) {
+				errorString = "this Git repository does not exist";
+				errorFlag = false;
+			} else {
+				errorString = e.getLocalizedMessage();
+				errorFlag = false;
+			}
 		}
 		return SUCCESS;
 	}
@@ -1102,7 +1204,23 @@ public class Applications extends FrameworkBaseAction implements Constants {
 		}
 		return commitableFiles;
 	}
-	
+
+	public Properties gitCommitableFiles() throws PhrescoException {
+		if (s_debugEnabled) {
+			S_LOGGER.debug("Entering Method  Applications.getCommitableFiles()");
+		}
+		Properties prop = new Properties();
+		try {
+			SCMManagerImpl scmi = new SCMManagerImpl();
+			String applicationHome = getApplicationHome();
+			File appDir = new File(applicationHome);
+			prop = scmi.getGITCommitableFiles(appDir);
+		} catch (Exception e) {
+			throw new PhrescoException(e);
+		}
+		return prop;
+	}
+
 	public String commitSVNProject() {
 		if(s_debugEnabled) {
 			S_LOGGER.debug("Entering Method  Applications.commitSVNProject()");
@@ -1127,7 +1245,28 @@ public class Applications extends FrameworkBaseAction implements Constants {
 		}
 		return SUCCESS;
 	}
-	
+
+	public String commitGitProject() {
+		if (s_debugEnabled) {
+			S_LOGGER.debug("Entering Method  Applications.commitGITProject()");
+		}
+		try {
+			if (!commitableFiles.isEmpty()) {
+				SCMManagerImpl scmi = new SCMManagerImpl();
+				String applicationHome = getApplicationHome();
+				File appDir = new File(applicationHome);
+				scmi.commitToRepo(repoType, repoUrl, userName, password, null,
+						null, appDir, commitMessage);
+			}
+			errorString = getText(COMMIT_PROJECT_SUCCESS);
+			errorFlag = true;
+		} catch (Exception e) {
+			errorString = e.getLocalizedMessage();
+			errorFlag = false;
+		}
+		return SUCCESS;
+	}
+
 	/**
 	 * To commit the changes to the bitkeeper repo
 	 * @return 
@@ -1211,6 +1350,73 @@ public class Applications extends FrameworkBaseAction implements Constants {
 		} catch (Exception e) {
 			return e.getLocalizedMessage();
 		}
+		return SUCCESS;
+	}
+	
+	/**
+	 * To remove the lock once the initiated operation has been completed
+	 * @throws PhrescoException
+	 */
+	public void removeLock() throws PhrescoException {
+		try {
+			List<LockDetail> lockDetails = FrameworkUtil.getLockDetails();
+			if (CollectionUtils.isNotEmpty(lockDetails)) {
+				List<LockDetail> availableLockDetails = new ArrayList<LockDetail>();
+				for (LockDetail lockDetail : lockDetails) {
+					if (!lockDetail.getActionType().equalsIgnoreCase(getActionType())) {
+						availableLockDetails.add(lockDetail);
+					}
+				}
+				FrameworkUtil.generateLock(availableLockDetails, false);
+			}
+		} catch (PhrescoException e) {
+			throw e;
+		}
+	}
+	
+	/**
+	 * To check whether lock exists for the current process
+	 * @return
+	 */
+	public String checkForLock() {
+		try {
+			List<LockDetail> lockDetails = FrameworkUtil.getLockDetails();
+			if (CollectionUtils.isNotEmpty(lockDetails)) {
+				List<String> actionTypesToCheck = new ArrayList<String>();
+				if (getActionType().equals(REQ_CODE)) {
+					actionTypesToCheck.add(BUILD);
+					actionTypesToCheck.add(REQ_START);
+					actionTypesToCheck.equals(UNIT);
+				} else if (getActionType().equals(BUILD)) {
+					actionTypesToCheck.add(BUILD);
+					actionTypesToCheck.add(REQ_CODE);
+					actionTypesToCheck.add(REQ_START);
+				} else if (getActionType().equals(REQ_START)) {
+					actionTypesToCheck.add(BUILD);
+					actionTypesToCheck.add(REQ_CODE);
+				} else if (getActionType().equals(UNIT)) {
+					actionTypesToCheck.add(BUILD);
+					actionTypesToCheck.add(REQ_CODE);
+					actionTypesToCheck.add(REQ_START);
+				} else if (getActionType().equals(REQ_FROM_TAB_DEPLOY)) {
+					actionTypesToCheck.add(BUILD);
+					actionTypesToCheck.add(REQ_FROM_TAB_DEPLOY);
+				} else {
+					actionTypesToCheck.add(getActionType());
+				}
+				for (LockDetail lockDetail : lockDetails) {
+					if (lockDetail.getAppId().equals(getAppId()) && actionTypesToCheck.contains(lockDetail.getActionType())) {
+						setLocked(true);
+						setLockedBy(lockDetail.getUserName());
+						setLockedDate(lockDetail.getStartedDate().toString());
+						break;
+					}
+				}
+			}
+		} catch (Exception e) {
+			// TODO: handle exception
+		}
+
 		return SUCCESS;
 	}
 	
@@ -1420,14 +1626,6 @@ public class Applications extends FrameworkBaseAction implements Constants {
 		this.projectId = projectId;
 	}
 
-	public String getAppId() {
-		return appId;
-	}
-
-	public void setAppId(String appId) {
-		this.appId = appId;
-	}
-
 	public List<String> getRestrictedLogs() {
 		return restrictedLogs;
 	}
@@ -1452,6 +1650,13 @@ public class Applications extends FrameworkBaseAction implements Constants {
 		this.isRepoExistForCommit = isRepoExistForCommit;
 	}
 
+	public Properties getCommitableGITFiles() {
+		return commitableGITFiles;
+	}
+
+	public void setCommitableGITFiles(Properties commitableGITFiles) {
+		this.commitableGITFiles = commitableGITFiles;
+	}
 	public void setLogMessage(String logMessage) {
 		this.logMessage = logMessage;
 	}
@@ -1514,5 +1719,45 @@ public class Applications extends FrameworkBaseAction implements Constants {
 
 	public void setPomVersion(String pomVersion) {
 		this.pomVersion = pomVersion;
+	}
+
+	public void setLocked(boolean locked) {
+		this.locked = locked;
+	}
+
+	public boolean isLocked() {
+		return locked;
+	}
+
+	public void setLockedBy(String lockedBy) {
+		this.lockedBy = lockedBy;
+	}
+
+	public String getLockedBy() {
+		return lockedBy;
+	}
+
+	public void setLockedDate(String lockedDate) {
+		this.lockedDate = lockedDate;
+	}
+
+	public String getLockedDate() {
+		return lockedDate;
+	}
+
+	public int getSelectedServersCount() {
+		return selectedServersCount;
+	}
+
+	public void setSelectedServersCount(int selectedServersCount) {
+		this.selectedServersCount = selectedServersCount;
+	}
+
+	public int getSelectedDatabasesCount() {
+		return selectedDatabasesCount;
+	}
+
+	public void setSelectedDatabasesCount(int selectedDatabasesCount) {
+		this.selectedDatabasesCount = selectedDatabasesCount;
 	}
 }

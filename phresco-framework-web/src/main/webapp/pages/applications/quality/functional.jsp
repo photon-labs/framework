@@ -195,7 +195,7 @@ $(document).ready(function() {
 	loadTestSuites();
 	
 	$('#functionalTest').click(function() {
-		validateDynamicParam('showFunctionalTestPopUp', '<s:text name="lbl.functional.test"/>', 'runFunctionalTest','<s:text name="lbl.test"/>', '', '<%= Constants.PHASE_FUNCTIONAL_TEST + FrameworkConstants.HYPHEN + functioanlTestTool %>');
+		checkForLock('<%= FrameworkConstants.FUNCTIONAL %>');
 	});
 	
 	$('#startHubBtn').click(function() {
@@ -215,13 +215,6 @@ $(document).ready(function() {
 	// table resize
 	var tblheight = (($("#subTabcontainer").height() - $("#form_test").height()));
 	$('.responsiveTableDisplay').css("height", parseInt((tblheight/($("#subTabcontainer").height()))*100) +'%');
-				
-	$('#closeGenerateTest, #closeGenTest').click(function() {
-		changeTesting("functional", "testGenerated");
-		$(".wel_come").show().css("display","none");
-		$("#popup_div").css("display","none");
-		$("#popup_div").empty();
-	});
 				
 	$('#testbtn').click(function() {
 		$("#popup_div").empty();
@@ -313,6 +306,41 @@ function successEvent(pageUrl, data) {
 	} else if (pageUrl === "stopHub") {
 		hideLoadingIcon();
 		reloadFunctionalPage();
+	
+	} else if (pageUrl === "checkLockForfunctional") {
+		if (!data.locked) {
+			validateDynamicParam('showFunctionalTestPopUp', '<s:text name="lbl.functional.test"/>', 'runFunctionalTest','<s:text name="lbl.test"/>', '', '<%= Constants.PHASE_FUNCTIONAL_TEST + FrameworkConstants.HYPHEN + functioanlTestTool %>');
+		} else {
+			showFunctionalWarningMsg(data);
+		}
+	} else if (pageUrl === "checkLockForstopHub") {
+		if (!data.locked) {
+			var params = getBasicParams();
+			$(".popupStop").hide();
+			$("#popup_progress_div").empty();
+			showPopuploadingIcon();
+			readerHandlerSubmit('stopHub', '<%= appId %>', '<%= FrameworkConstants.STOP_HUB %>', '', '', params, $("#popup_progress_div"));
+		} else {
+			$('#progressPopup').modal('hide');
+			setTimeout(function () {
+				$('#popupPage').modal('show');
+		    }, 600);
+			showFunctionalWarningMsg(data);
+		}
+	} else if (pageUrl === "checkLockForstopNode") {
+		if (!data.locked) {
+			var params = getBasicParams();
+			$(".popupStop").hide();
+			$("#popup_progress_div").empty();
+			showPopuploadingIcon();
+			readerHandlerSubmit('stopNode', '<%= appId %>', '<%= FrameworkConstants.STOP_NODE %>', '', '', params, $("#popup_progress_div"));
+		} else {
+			$('#progressPopup').modal('hide');
+			setTimeout(function () {
+				$('#popupPage').modal('show');
+		    }, 600);
+			showFunctionalWarningMsg(data);
+		}
 	} else {
    		if ((data != undefined || !isBlank(data)) && data != "") {
 			if (data.validated != undefined && data.validated) {
@@ -334,19 +362,17 @@ function successEvent(pageUrl, data) {
    	}
 }
 
+function showFunctionalWarningMsg(data) {
+	var warningMsg = '<s:text name="lbl.app.warnin.msg"/> ' + data.lockedBy + ' at ' + data.lockedDate +".";
+	showWarningMsg('<s:text name="lbl.app.warnin.title"/>', warningMsg);
+}
+
 function popupOnStop(obj) {
 	var url = $(obj).attr("id");
-	var params = getBasicParams();
 	if (url === "stopHub") {
-		$(".popupStop").hide();
-		$("#popup_progress_div").empty();
-		showPopuploadingIcon();
-		readerHandlerSubmit(url, '<%= appId %>', '<%= FrameworkConstants.STOP_HUB %>', '', '', params, $("#popup_progress_div"));
+		checkForLock('<%= FrameworkConstants.STOP_HUB %>');
 	} else if (url === "stopNode") {
-		$(".popupStop").hide();
-		$("#popup_progress_div").empty();
-		showPopuploadingIcon();
-		readerHandlerSubmit(url, '<%= appId %>', '<%= FrameworkConstants.STOP_NODE %>', '', '', params, $("#popup_progress_div"));
+		checkForLock('<%= FrameworkConstants.STOP_NODE %>');
 	}
 }
 
@@ -441,7 +467,7 @@ function reloadFunctionalPage() {
 	var theme = localStorage["color"];
 	if (theme == undefined || theme == "theme/photon/css/photon_theme.css") {
 		loadContent("functional", '', $("#subcontainer"), params, '', true);
-	} else if (theme == "themes/photon/css/red.css" || theme == "theme/red_blue/css/blue.css"){
+	} else if (theme == "themes/photon/css/red.css" || theme == "theme/red_blue/css/blue.css") {
 		loadContent("functional", '', $("#subTabcontainer"), params, '', true);	
 	}
 }
@@ -451,5 +477,12 @@ function popupOnCancel(obj) {
 	params = params.concat("&actionType=");
 	params = params.concat("functionalPdfReport");
 	loadContent("killProcess", '', '', params);
+}
+
+function checkForLock(actionType) {
+	var params = getBasicParams();
+	params = params.concat("&actionType=");
+	params = params.concat('<%= FrameworkConstants.FUNCTIONAL %>');
+	loadContent('checkLockFor' + actionType, '', '', params, true, true);
 }
 </script> 

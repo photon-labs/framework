@@ -3670,12 +3670,11 @@ div.submit_input {
     width: auto;
     padding: 2px;
 	color:#FFFFFF;
+	z-index: 2001;
 }
 .username {
 	cursor: pointer;
 }
-
-
 
 /* .userInfo {
      margin-left: 10px;
@@ -5930,7 +5929,7 @@ input[class*='chckBxAlign'] {
     margin-bottom: 0px;
 }
 
-#envSuccessmsg {
+#envSuccessmsg ,#appSuccessmsg {
 	height: 16px;
 	margin-left: 226px;
 	margin-top: -8px;
@@ -6673,7 +6672,7 @@ color: #313131;
 }
 
 
-.feature select {
+#result select {
 	margin-left: 15px;
     margin-top: 4px;
 	width: 73px !important;
@@ -6753,6 +6752,7 @@ color: #313131;
 
 #updateMsg a {
 	color : #000000;
+	cursor: pointer;
 }
 
 .config_subTab .th-inner {

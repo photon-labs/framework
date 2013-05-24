@@ -26,6 +26,7 @@ import java.net.MalformedURLException;
 import javax.imageio.ImageIO;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.struts2.ServletActionContext;
 
@@ -98,9 +99,15 @@ public class ImgStreaming extends FrameworkBaseAction implements FrameworkConsta
     		FrameworkUtil frameworkUtil = FrameworkUtil.getInstance();
     		sbuilder.append(Utility.getProjectHome());
     		sbuilder.append(applicationInfo.getAppDirName());
-    		sbuilder.append(frameworkUtil.getFunctionalTestReportDir(applicationInfo));
-    		sbuilder.append(File.separator);
-    		sbuilder.append(SCREENSHOT_DIR);
+    		String sceenShotDir = frameworkUtil.getSceenShotDir(applicationInfo);
+        	if(StringUtils.isEmpty(sceenShotDir)) {
+        		sbuilder.append(frameworkUtil.getFunctionalTestReportDir(applicationInfo));
+        		sbuilder.append(File.separator);
+        		sbuilder.append(SCREENSHOT_DIR);
+        	} else {
+        		sbuilder.append(sceenShotDir);
+        	}
+    		
     		sbuilder.append(File.separator);
     		sbuilder.append(testCaseName);
     		sbuilder.append(DOT + IMG_PNG_TYPE);

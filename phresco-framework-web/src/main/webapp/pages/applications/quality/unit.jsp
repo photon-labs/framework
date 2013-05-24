@@ -162,7 +162,10 @@ $(document).ready(function() {
 	showLoadingIcon();
 	
 	$('#unitTest').click(function() {
-		validateDynamicParam('showUnitTestPopUp', '<s:text name="lbl.unit.test"/>', 'runUnitTest','<s:text name="lbl.test"/>', '', '<%= Constants.PHASE_UNIT_TEST %>', true);
+		var params = getBasicParams();
+		params = params.concat("&actionType=");
+		params = params.concat('<%= FrameworkConstants.UNIT %>');
+		loadContent("checkForLock", '', '', params, true, true);
 	});
 	
 	loadTestSuites();
@@ -239,6 +242,13 @@ function successEvent(pageUrl, data) {
 				testReport();
 			}
 		}		
+	} else if (pageUrl == "checkForLock") {
+		if (!data.locked) {
+			validateDynamicParam('showUnitTestPopUp', '<s:text name="lbl.unit.test"/>', 'runUnitTest','<s:text name="lbl.test"/>', '', '<%= Constants.PHASE_UNIT_TEST %>', true);
+		} else {
+			var warningMsg = '<s:text name="lbl.app.warnin.msg"/> ' + data.lockedBy + ' at ' + data.lockedDate +".";
+			showWarningMsg('<s:text name="lbl.app.warnin.title"/>', warningMsg);
+		}
 	}
 }
 
@@ -254,7 +264,7 @@ function changeView() {
 	if (resultView == 'graphical') {
 		$("#graphicalView").show();
 		$("#tabularView").hide();
-	} else  {
+	} else {
 		$("#graphicalView").hide();
 		$("#tabularView").show();
 	}
@@ -291,17 +301,4 @@ function popupOnCancel(obj) {
 	params = params.concat("unitPdfReport");
 	loadContent("killProcess", '', '', params);
 }
-	    
-function openIphoneNativeUnitTestPopup() {
-	var params = "testType=";
-	params = params.concat("unit");
-	popup('testIphone', params, $('#popup_div'));
-}
-		
-function openUnitTestPopup() {
-	showPopup();
-	var params = "testType=";
-	params = params.concat("unit");
-	popup('generateUnitTest', params, $('#popup_div'));
-} 
 </script>

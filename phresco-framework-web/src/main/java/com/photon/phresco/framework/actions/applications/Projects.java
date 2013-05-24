@@ -268,8 +268,11 @@ public class Projects extends FrameworkBaseAction {
             if (CollectionUtils.isNotEmpty(techInfos)) {
                 for (TechnologyInfo techInfo : techInfos) {
                     if (techInfo.getId().equals(techId)) {
-                        setVersions(techInfo.getTechVersions());
-                        break;
+                    	if(CollectionUtils.isNotEmpty(techInfo.getTechVersions())) {
+                    		Collections.sort(techInfo.getTechVersions(), sortValuesinDescOrder());
+                    		setVersions(techInfo.getTechVersions());
+                    		break;
+                    	}
                     }
                 }
             }
@@ -315,7 +318,7 @@ public class Projects extends FrameworkBaseAction {
      * @throws PhrescoException 
      */
     private ApplicationType filterLayer(String layerId) throws PhrescoException {
-    	if (s_layerMap.get(layerId) == null) {
+    	if (s_layerMap.get(layerId + getCustomerId()) == null) {
     		User user = (User) getSessionAttribute(SESSION_USER_INFO);
     		List<Customer> customers = user.getCustomers();
     		for (Customer customer : customers) {
@@ -323,7 +326,7 @@ public class Projects extends FrameworkBaseAction {
     				List<ApplicationType> layers = customer.getApplicableAppTypes();
     				if (CollectionUtils.isNotEmpty(layers)) {
     					for (ApplicationType layer : layers) {    						
-    						s_layerMap.put(layer.getId(), layer);
+    						s_layerMap.put(layer.getId() + customer.getId(), layer);
     					}
     				}
     				break;
@@ -331,7 +334,7 @@ public class Projects extends FrameworkBaseAction {
     		}    		
     	}
 
-    	return s_layerMap.get(layerId);
+    	return s_layerMap.get(layerId + getCustomerId());
     }
 
     /**
@@ -342,14 +345,14 @@ public class Projects extends FrameworkBaseAction {
      */
     private TechnologyGroup filterTechnologyGroup(List<TechnologyGroup> technologyGroups, String id) {    
         if (CollectionUtils.isNotEmpty(technologyGroups)) {
-            if (s_technologyGroupMap.get(id) == null) {
+            if (s_technologyGroupMap.get(id + getCustomerId()) == null) {
                 for (TechnologyGroup technologyGroup : technologyGroups) {                
-                    s_technologyGroupMap.put(technologyGroup.getId(), technologyGroup);
+                    s_technologyGroupMap.put(technologyGroup.getId() + getCustomerId(), technologyGroup);
                 }
             }
         }
 
-        return s_technologyGroupMap.get(id);
+        return s_technologyGroupMap.get(id + getCustomerId());
     }
     
     public String editProject() {
@@ -788,11 +791,11 @@ public class Projects extends FrameworkBaseAction {
   	            for (String layerTypeId : getLayer()) {
   	                String techId = getReqParameter(layerTypeId + REQ_PARAM_NAME_TECHNOLOGY);
   	                if (LAYER_APP_ID.equals(layerTypeId) && StringUtils.isEmpty(techId)) {
-						if (hasAppCodeId) {
-							setAppTechError(getText(ERROR_SELECT_TECHNOLOGY));
-						} else {
-							setAppTechError(getText(ERROR_APP_CODE_MISSING));
-						}
+						if (!hasAppCodeId && ADVANCE_UI.equals(getUiType())) {
+								setAppTechError(getText(ERROR_APP_CODE_MISSING));
+							} else {
+								setAppTechError(getText(ERROR_SELECT_TECHNOLOGY));
+							}
 	                }
   	                
   	                if (LAYER_WEB_ID.equals(layerTypeId) && StringUtils.isEmpty(techId)) {

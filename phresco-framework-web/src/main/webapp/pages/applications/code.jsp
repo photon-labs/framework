@@ -120,7 +120,10 @@ $('.control-group').addClass("valReportLbl");
     	showLoadingIcon();
     	
     	$('#codeValidatePopup').click(function() {
-    		validateDynamicParam('showCodeValidatePopup', '<s:text name="popup.hdr.code.validate"/>', 'codeValidate','<s:text name="lbl.btn.ok"/>', '', '<%= Constants.PHASE_VALIDATE_CODE %>');
+    		var params = getBasicParams();
+    		params = params.concat("&actionType=");
+    		params = params.concat('<%= FrameworkConstants.UNIT %>');
+    		loadContent("checkForLock", '', '', params, true, true);
     	});
 
     	<% if (permissions != null && permissions.canManageCodeValidation()) { %>
@@ -180,5 +183,16 @@ $('.control-group').addClass("valReportLbl");
 		params = params.concat("&actionType=");
 		params = params.concat(closeUrl);
 		loadContent("code", '', $("#subcontainer"), params, '', true);
+	}
+	
+	function successEvent(pageUrl, data) {
+		if (pageUrl == "checkForLock") {
+			if (!data.locked) {
+				validateDynamicParam('showCodeValidatePopup', '<s:text name="popup.hdr.code.validate"/>', 'codeValidate','<s:text name="lbl.btn.ok"/>', '', '<%= Constants.PHASE_VALIDATE_CODE %>');
+			} else {
+				var warningMsg = '<s:text name="lbl.app.warnin.msg"/> ' + data.lockedBy + ' at ' + data.lockedDate +".";
+				showWarningMsg('<s:text name="lbl.app.warnin.title"/>', warningMsg);
+			}
+		}
 	}
 </script>

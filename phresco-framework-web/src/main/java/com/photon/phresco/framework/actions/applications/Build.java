@@ -28,8 +28,6 @@ import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.net.InetAddress;
-import java.net.UnknownHostException;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -150,8 +148,6 @@ public class Build extends DynamicParameterAction implements Constants {
 	private String configuration = ""; 
 	private String platform = "";
 	
-	private static Map<String, String> sqlFolderPathMap = new HashMap<String, String>();
-
 	// DbWithSqlFiles
 	private String fetchSql = null;
 	
@@ -370,6 +366,10 @@ public class Build extends DynamicParameterAction implements Constants {
 			String workingDirectory = getAppDirectoryPath(applicationInfo);
 			getApplicationProcessor().preBuild(getApplicationInfo());
 			BufferedReader reader = applicationManager.performAction(projectInfo, ActionType.BUILD, buildArgCmds, workingDirectory);
+			
+			//To generate the lock for the particular operation
+			FrameworkUtil.generateLock(Collections.singletonList(getLockDetail(applicationInfo.getId(), REQ_BUILD)), true);
+			
 			setSessionAttribute(getAppId() + REQ_BUILD, reader);
 			setReqAttribute(REQ_APP_ID, getAppId());
 			setReqAttribute(REQ_ACTION_TYPE, REQ_BUILD);
@@ -467,6 +467,10 @@ public class Build extends DynamicParameterAction implements Constants {
 			}
 			String workingDirectory = getAppDirectoryPath(applicationInfo);
 			BufferedReader reader = applicationManager.performAction(projectInfo, ActionType.DEPLOY, buildArgCmds, workingDirectory);
+			
+			//To generate the lock for the particular operation
+			FrameworkUtil.generateLock(Collections.singletonList(getLockDetail(applicationInfo.getId(), REQ_FROM_TAB_DEPLOY)), true);
+			
 			setSessionAttribute(getAppId() + REQ_FROM_TAB_DEPLOY, reader);
 			setReqAttribute(REQ_APP_ID, getAppId());
 			setReqAttribute(REQ_ACTION_TYPE, REQ_FROM_TAB_DEPLOY);
@@ -638,6 +642,11 @@ public class Build extends DynamicParameterAction implements Constants {
 				String environmentName = configs.get(ENVIRONMENT_NAME);
 				reader = startServer(environmentName);
 			}
+			
+			//To generate the lock for the particular operation
+			ApplicationInfo appInfo = getApplicationInfo();
+			FrameworkUtil.generateLock(Collections.singletonList(getLockDetail(appInfo.getId(), REQ_START)), true);
+			
 			setSessionAttribute(getAppId() + REQ_START, reader);
 			setReqAttribute(REQ_APP_ID, getAppId());
 			setReqAttribute(REQ_ACTION_TYPE, REQ_START);

@@ -41,7 +41,11 @@
 	String fromPage = (String) request.getAttribute(FrameworkConstants.REQ_FROM_PAGE);
 	List<Parameter> parameters = (List<Parameter>) request.getAttribute(FrameworkConstants.REQ_DYNAMIC_PARAMETERS);
 	String requestIp = (String) request.getAttribute(FrameworkConstants.REQ_REQUEST_IP);
-    String showOpenFolderIcon = (String) session.getAttribute(requestIp);
+    String showIcons = (String) session.getAttribute(requestIp);
+    String iconClass = "";
+	if (!Boolean.parseBoolean(showIcons))  {
+		iconClass = "hideIcons";
+	}
 %>
 
 <form autocomplete="off" class="marginBottomZero" id="form_test">
@@ -50,12 +54,10 @@
 			<a href="#" id="pdfPopup" style="display: none;">
 				<img id="pdfCreation" src="images/icons/print_pdf.png" title="Generate pdf" style="height: 20px; width: 20px;"/>
 			</a>
-		 <% if (Boolean.parseBoolean(showOpenFolderIcon))  {%>
-			<a href="#" id="openFolder">
+			<a href="#" class="<%= iconClass %>" id="openFolder">
 				<img id="folderIcon" src="images/icons/open-folder.png" title="Open folder"/>
 			</a>
-		 <% } %>	
-			<a href="#" id="copyPath"><img src="images/icons/copy-path.png" title="Copy path"/></a>
+			<a href="#" class="<%= iconClass %>" id="copyPath"><img src="images/icons/copy-path.png" title="Copy path"/></a>
 		</div>
 		
 		<ul id="display-inline-block-example">
@@ -115,7 +117,10 @@ $(document).ready(function() {
 	showLoadingIcon();
 	
 	$('#componentTest').click(function() {
-		validateDynamicParam('showComponentTestPopUp', '<s:text name="lbl.component.test"/>', 'runComponentTest','<s:text name="lbl.test"/>', '', '<%= Constants.PHASE_COMPONENT_TEST %>', true);
+		var params = getBasicParams();
+		params = params.concat("&actionType=");
+		params = params.concat('<%= FrameworkConstants.COMPONENT %>');
+		loadContent("checkForLock", '', '', params, true, true);
 	});
 	
 	loadTestSuites();
@@ -187,7 +192,14 @@ function successEvent(pageUrl, data) {
 				fillSelectbox($('#testSuite'), testSuiteNames, 'All', 'All');
 				testReport();
 			}
-		}		
+		}
+	} else if (pageUrl == "checkForLock") {
+		if (!data.locked) {
+			validateDynamicParam('showComponentTestPopUp', '<s:text name="lbl.component.test"/>', 'runComponentTest','<s:text name="lbl.test"/>', '', '<%= Constants.PHASE_COMPONENT_TEST %>', true);
+		} else {
+			var warningMsg = '<s:text name="lbl.app.warnin.msg"/> ' + data.lockedBy + ' at ' + data.lockedDate +".";
+			showWarningMsg('<s:text name="lbl.app.warnin.title"/>', warningMsg);
+		}
 	}
 }
 
@@ -235,5 +247,10 @@ function popupOnCancel(obj) {
 	params = params.concat("&actionType=");
 	params = params.concat("componentPdfReport");
 	loadContent("killProcess", '', '', params);
+}
+
+//This method will be called when there is no dynamic param
+function runComponentTest() {
+ 	progressPopup('runComponentTest', '<%= appId %>', '<%= FrameworkConstants.COMPONENT %>', '', '', getBasicParams(), '', '', '<%= showIcons %>');
 }
 </script>

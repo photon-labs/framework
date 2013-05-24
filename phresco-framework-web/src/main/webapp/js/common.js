@@ -304,11 +304,12 @@ function validateDynamicParam(successUrl, title, okUrl, okLabel, form, goal, nee
 function yesnoPopup(url, title, okUrl, okLabel, form, additionalParam) {
 	$("#popupPage").css("width", "560");
 	$('#popupPage').modal('show');//To show the popup
+	$('.popupOk').attr("onclick", "popupOnOk(this)");
 	showPopuploadingIcon();
 	$('.popupClose').hide();
 	$('#popupTitle').html(title); // Title for the popup
 	$('.popupClose').hide(); //no need close button since yesno popup
-	$('.popupOk, #popupCancel').show(); // show ok & cancel button
+	$('.popupOk, .popupCancel').show(); // show ok & cancel button
 	enableButton($(".popupOk")); // enable button
 	$('.popupCancel').val("Cancel");
 
@@ -392,6 +393,7 @@ function add_popupCancel(obj) {
 		$('#additionalPopup').modal('hide');
 	} else {
 		$("#popupPage").css("width", "560");
+		$('.popupOk').attr("onclick", "popupOnOk(this)");
 		setTimeout(function () {
 			$('#popupPage').modal('show');
 		}, 600);
@@ -450,7 +452,7 @@ function loadData(data, tag, pageUrl, callSuccessEvent, callbackFunction) {
 	}
 	if (pageUrl == "featuresUpdate") {
 		hideLoadingIcon();
-		$("#envSuccessmsg").show();
+		$("#appSuccessmsg").show();
 		setTimeOut();
 	}
 }
@@ -1579,11 +1581,11 @@ function zipAlignEvent() {
 		$("#signing").prop("checked", true);
 		$("#signing").val(true);
 	} else {
-		var paramArray = 'keystore,storepass,keypass,alias'.split(',');
-		$("#signing").prop("checked", false);
-		$("#signing").val(false);
+		var paramArray = 'keystore,storepass,keypass,alias,signing'.split(',');
+		$("#signing").prop("checked", true);
+		$("#signing").val(true);
 		$("#signingControl").show();
-		hideControl(paramArray);
+		showControl(paramArray);
 		
 	}
 }
@@ -1592,8 +1594,8 @@ function singingEvent() {
 	if($("#signing").is(":checked")) {
 		var paramArray = 'keystore,storepass,keypass,alias'.split(',');
 		showControl(paramArray);
-		$("#zipAlign").prop("checked", true);
-		$("#zipAlign").val(true);
+		//$("#zipAlign").prop("checked", true);
+		//$("#zipAlign").val(true);
 	} else {
 		var paramArray = 'keystore,storepass,keypass,alias'.split(',');
 		hideControl(paramArray);
@@ -1609,6 +1611,10 @@ function accordionOperation() {
     $('.mfbox').css('display','none');
 }
 
+function open_win() {
+	window.open("http://www.photon.in");
+}
+
 function accordionClickOperation(thisObj) {
 	var _tempIndex = $('.accImg').index(thisObj)
 	$('.mfbox').eq(_tempIndex).slideToggle(300,function() {
@@ -1620,4 +1626,19 @@ function accordionClickOperation(thisObj) {
 		}
 		  
 	});	
+}
+
+function showWarningMsg(popupTitle, warningMsg) {
+	$('#popuploadingIcon').hide();
+	$('#popupPage').modal('show');
+	$('#errMsg').html("");
+	$('#successMsg').html("");
+	$('#updateMsg').html("");
+	$('#popupTitle').html(popupTitle);
+	$('#popup_div').empty();
+	$('#popup_div').html(warningMsg);
+	$('.popupOk').hide();
+	$('.popupCancel').hide();
+	$('.popupClose').show();
+	$('.popupClose').prop("onclick", '');
 }

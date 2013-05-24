@@ -114,7 +114,7 @@
 				if (optionIds != null && optionIds.contains(FrameworkConstants.RUN_AGAINST_KEY)) {
 			%>
 			<div id="nodeJS_btndiv" class="nodeJS_div">
-				<input type="button" class="btn <%= per_disabledClass %>" id="runAgainstSourceStart" value="<s:text name='label.runagainsrc'/>"/>
+				<input type="button" class="btn <%= per_disabledClass %>"  <%= per_disabledStr %> id="runAgainstSourceStart" value="<s:text name='label.runagainsrc'/>"/>
 		    	<input type="button" class="btn" id="runAgainstSourceStop" value="<s:text name='lbl.stop'/>" disabled onclick="stopServer();"/>
 		    	<input type="button" class="btn" id="runAgainstSourceRestart" value="<s:text name='label.restart'/>" disabled onclick="restartServer();"/>
 			</div>
@@ -159,22 +159,24 @@
 </form>
 
 <script type="text/javascript">
-	if (<%=serverStatus%> && <%=logFileExists%> ) {
-		runAgainstSrcServerRunning();
-	} else {
-		runAgainstSrcServerDown();
-	}
+	<% if (permissions != null && permissions.canManageBuilds()) { %>
+			if (<%=serverStatus%> && <%=logFileExists%> ) {
+				runAgainstSrcServerRunning();
+			} else {
+				runAgainstSrcServerDown();
+			}
+	<% } %>
 	
     $(document).ready(function() {
     	hideProgressBar();
     	confirmDialog($("#deleteButton"), '<s:text name="lbl.hdr.confirm.dialog"/>', '<s:text name="modal.body.text.del.builds"/>', 'deleteBuild','<s:text name="lbl.btn.ok"/>');
     	
     	$('#generateBuild').click(function() {
-    		validateDynamicParam('generateBuild', '<s:text name="label.generatebuild"/>', 'build','<s:text name="lbl.btn.ok"/>', '', '<%= Constants.PHASE_PACKAGE %>');
+    		checkForLock('<%= FrameworkConstants.BUILD %>');
     	});
     	
     	$('#runAgainstSourceStart').click(function() {
-    		validateDynamicParam('showRunAgainstSourcePopup', '<s:text name="label.runagainstsource"/>', 'startServer','<s:text name="label.run"/>', '', '<%= Constants.PHASE_RUNGAINST_SRC_START %>');
+    		checkForLock('<%= FrameworkConstants.REQ_START %>');
     	});
     	
     	$('#minifyButton').click(function(){
@@ -189,19 +191,13 @@
     	refreshTable();
     	
         if (($('#database option').length == 0) && ($('#server option').length == 0)) {
-                 $('#buildbtn').prop("disabled", true);
+			$('#buildbtn').prop("disabled", true);
         }
         
         $('#showSettings').click(function(){
             $('.build_form').attr("action", "buildView");
             $('.build_form').submit();
         });
-        
-        /* $('#deleteButton').click(function() {
-			$("#confirmationText").html("Do you want to delete the selected build(s)");
-		    dialog('block');
-		    escBlockPopup();
-        }); */
         
         $('form').submit(function() {
 			showProgessBar("Deleting Build (s)", 100);
@@ -228,42 +224,34 @@
     
     // When  server is  running disable run against source button
     function runAgainstSrcServerRunning() {
-    	<% if (permissions != null && !permissions.canManageBuilds()) { %>
-	    	disableButton($("#runAgainstSourceStart"));
-	    	enableButton($("#runAgainstSourceStop"));
-	    	enableButton($("#runAgainstSourceRestart"));
-    	<% } %>
+    	disableButton($("#runAgainstSourceStart"));
+    	enableButton($("#runAgainstSourceStop"));
+    	enableButton($("#runAgainstSourceRestart"));
 	}
     	
  	// When server is not running enable run against source button
     function runAgainstSrcServerDown() {
-    	<% if (permissions != null && !permissions.canManageBuilds()) { %>
-	    	disableButton($("#runAgainstSourceStop"));
-	    	disableButton($("#runAgainstSourceRestart"));
-	    	enableButton($("#runAgainstSourceStart"));
-    	<% } %>
+    	disableButton($("#runAgainstSourceStop"));
+    	disableButton($("#runAgainstSourceRestart"));
+    	enableButton($("#runAgainstSourceStart"));
     }
  	
  	// when server is restarted in run against source 
  	function restartServer() {
- 		<% if (permissions != null && !permissions.canManageBuilds()) { %>
-	 		$("#console_div").empty();
-	 		$("#console_div").html("Server is restarting...");
-	 		disableButton($("#runAgainstSourceStop"));
-			disableButton($("#runAgainstSourceRestart"));
-			readerHandlerSubmit('restartServer', '<%= appId %>', '<%= FrameworkConstants.REQ_RE_START %>', '', false, getBasicParams(), $("#console_div"));
-		<% } %>
+ 		$("#console_div").empty();
+ 		$("#console_div").html("Server is restarting...");
+ 		disableButton($("#runAgainstSourceStop"));
+		disableButton($("#runAgainstSourceRestart"));
+		readerHandlerSubmit('restartServer', '<%= appId %>', '<%= FrameworkConstants.REQ_RE_START %>', '', false, getBasicParams(), $("#console_div"));
  	}
  	
  	// when server is stopped in run against source 
 	function stopServer() {
-		<% if (permissions != null && !permissions.canManageBuilds()) { %>
-			$("#console_div").empty();
-			$("#console_div").html("Server is stopping...");
-			disableButton($("#runAgainstSourceStop"));
-			disableButton($("#runAgainstSourceRestart"));
-			readerHandlerSubmit('stopServer', '<%= appId %>', '<%= FrameworkConstants.REQ_STOP %>', '', true, getBasicParams(), $("#console_div"));
-		<% } %>
+		$("#console_div").empty();
+		$("#console_div").html("Server is stopping...");
+		disableButton($("#runAgainstSourceStop"));
+		disableButton($("#runAgainstSourceRestart"));
+		readerHandlerSubmit('stopServer', '<%= appId %>', '<%= FrameworkConstants.REQ_STOP %>', '', true, getBasicParams(), $("#console_div"));
  	}
 	
 	function popupOnOk(obj) {
@@ -329,7 +317,29 @@
 			updateHiddenField(data.jsFinalName, data.selectedJs, data.browseLocation);
     	} else if (pageUrl == "filesToMinify") {
     		updateMinifyData(data.compressName, data.selectedFilesToMinify, data.browseLocation);
-    	}
+    	} else if (pageUrl == "checkLockForbuild") {
+    		if (!data.locked) {
+    			validateDynamicParam('generateBuild', '<s:text name="label.generatebuild"/>', 'build','<s:text name="lbl.btn.ok"/>', '', '<%= Constants.PHASE_PACKAGE %>');
+    		} else {
+    			var warningMsg = '<s:text name="lbl.app.warnin.msg"/> ' + data.lockedBy + ' at ' + data.lockedDate +".";
+    			showWarningMsg('<s:text name="lbl.app.warnin.title"/>', warningMsg);
+    		}
+    	} else if (pageUrl === "checkLockForStart") {
+    		if (!data.locked) {
+				validateDynamicParam('showRunAgainstSourcePopup', '<s:text name="label.runagainstsource"/>', 'startServer','<s:text name="label.run"/>', '', '<%= Constants.PHASE_RUNGAINST_SRC_START %>');
+    		} else {
+    			var warningMsg = '<s:text name="lbl.app.warnin.msg"/> ' + data.lockedBy + ' at ' + data.lockedDate +".";
+    			showWarningMsg('<s:text name="lbl.app.warnin.title"/>', warningMsg);
+    		}
+		} else if (pageUrl === "checkLockForDeploy") {
+    		if (!data.locked) {
+    			var additionalParam = $("#deployAddParam").val();
+    			validateDynamicParam('showDeploy', '<s:text name="label.deploy"/>', 'deploy','<s:text name="lbl.btn.ok"/>', '', '<%= Constants.PHASE_DEPLOY %>', true, additionalParam);
+    		} else {
+    			var warningMsg = '<s:text name="lbl.app.warnin.msg"/> ' + data.lockedBy + ' at ' + data.lockedDate +".";
+    			showWarningMsg('<s:text name="lbl.app.warnin.title"/>', warningMsg);
+    		}
+		}
     }
 	
 	function deploy(additionalParam) {
@@ -341,5 +351,12 @@
 	
 	function popupOnCancel(obj) {
 		$("#popupPage").modal('hide');
+	}
+	
+	function checkForLock(actionType) {
+		var params = getBasicParams();
+		params = params.concat("&actionType=");
+		params = params.concat(actionType);
+		loadContent('checkLockFor' + actionType, '', '', params, true, true);
 	}
 </script>

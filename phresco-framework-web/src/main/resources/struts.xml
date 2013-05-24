@@ -1037,7 +1037,36 @@
         <action name="uploadThemeBundle" method="themeBundleUpload" class="com.photon.phresco.framework.actions.applications.Configurations">
             <result type="json" />        
         </action>
-        
         <!-- Theme builder ends -->
+        
+        <action name="removeLock" method="removeLock" class="com.photon.phresco.framework.actions.applications.Applications"/>
+        
+        <action name="checkForLock" method="checkForLock" class="com.photon.phresco.framework.actions.applications.Applications">
+            <result type="json" />        
+        </action>
+        
+        <action name="checkLockForfunctional" method="checkForLock" class="com.photon.phresco.framework.actions.applications.Applications">
+            <result type="json" />        
+        </action>
+        
+        <action name="checkLockForstopHub" method="checkForLock" class="com.photon.phresco.framework.actions.applications.Applications">
+            <result type="json" />        
+        </action>
+        
+        <action name="checkLockForstopNode" method="checkForLock" class="com.photon.phresco.framework.actions.applications.Applications">
+            <result type="json" />        
+        </action>
+        
+        <action name="checkLockForbuild" method="checkForLock" class="com.photon.phresco.framework.actions.applications.Applications">
+            <result type="json" />        
+        </action>
+        
+        <action name="checkLockForStart" method="checkForLock" class="com.photon.phresco.framework.actions.applications.Applications">
+            <result type="json" />        
+        </action>
+        
+        <action name="checkLockForDeploy" method="checkForLock" class="com.photon.phresco.framework.actions.applications.Applications">
+            <result type="json" />        
+        </action>
     </package>
 </struts>

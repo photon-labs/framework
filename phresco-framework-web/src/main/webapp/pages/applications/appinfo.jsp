@@ -225,10 +225,11 @@
 		
 		<!-- Functional test framework start -->
 		<% 
-		  	if (CollectionUtils.isNotEmpty(funcTestFrameworks)) {
+		  if (optionIds != null && optionIds.contains(FrameworkConstants.FUNCTIONAL_TEST_KEY) 
+		  		&& CollectionUtils.isNotEmpty(funcTestFrameworks)) {
 		%>
 			<div class="control-group <%= uiTypeClass %>" id="funcFrameworkControl">
-				<label class="accordion-control-label labelbold"><s:text name='lbl.functional.test.framework'/></label>
+				<label class="accordion-control-label labelbold"><span class="red">*</span>&nbsp;<s:text name='lbl.functional.test.framework'/></label>
 				<div class="controls">
 					<select class="input-xlarge" name="functionalFramework" id="functionalFramework">
 						<option value="" selected disabled><s:text name='lbl.default.opt.select.func.framework'/></option>
@@ -239,15 +240,16 @@
 									selectedStr = "selected";
 								}
 	                    %>
-                  					<option value = "<%= funcTestFramework.getName() %>" <%= selectedStr %>><%= funcTestFramework.getDisplayName() %></option>
+                  				<option value = "<%= funcTestFramework.getName() %>" <%= selectedStr %>><%= funcTestFramework.getDisplayName() %></option>
 						<% 	 
 							}
 						%> 
 					</select>
+					<span class="help-inline" id="functionFrameworkError"></span>
 				</div>
 			</div>
 		<% 
-			}
+		  }
 		%>
 		<!-- Functional test framework end -->
 		
@@ -576,6 +578,12 @@
 			isError = true;
 		} else {
 			hideError($("#webserviceLayerControl") , $("#webserviceError"));
+		}
+		
+		if (!isBlank(data.functionFrameworkError)) {
+			showError($("#funcFrameworkControl"), $("#functionFrameworkError"), data.functionFrameworkError);
+		} else {
+			hideError($("#funcFrameworkControl"), $("#functionFrameworkError"));
 		}
 		
 		if (isError) {
@@ -944,33 +952,42 @@
 			selectedData = data.selectedDownloadInfo;
 			selectedDataVersion = data.selectedDownloadInfoVersion;
 			
-			//To make server as selected if it is single
+			//To make server/db as selected if it is single
 			if ($(data.downloadInfos).size() == 1) {
-				selectBoxobj.append($("<option></option>").attr("value", data.downloadInfos[0].id).text(data.downloadInfos[0].name).attr("selected", "selected"));
-				var versions = data.downloadInfos[0].artifactGroup.versions;
-				map[data.downloadInfos[0].id] = versions;
 				
-				if ($(versions).size() == 1 && downloadInfoType === "SERVER") {
-					$('#serverControl').find(".imagealign").hide();
-				}
-				
-				if ($(versions).size() == 1 && downloadInfoType === "DATABASE") {
-					$('#databaseControl').find(".imagealign").hide();
-				}
-				
-				if (downloadInfoType === "DATABASE") {
-					getDatabaseVersions(selectBoxobj, '', '#databaseLayerControl', $('input[value=databaseLayer]'), 'checkAll2');
-				}
-				if (downloadInfoType === "SERVER") {
+				/*  If appinfo is visited for first time , data.selectedServersCount will be -1
+					After update with single server, data.selectedServersCount will be 1  					
+				*/
+				if (downloadInfoType === "SERVER" && (data.selectedServersCount == -1 || data.selectedServersCount == 1)) {
+					selectBoxobj.append($("<option></option>").attr("value", data.downloadInfos[0].id).text(data.downloadInfos[0].name).attr("selected", "selected"));
+					var versions = data.downloadInfos[0].artifactGroup.versions;
+					map[data.downloadInfos[0].id] = versions;
+					hidePlusIcon($(versions).size(), $('#serverControl'));
 					getServerVersions(selectBoxobj, '', '#serverLayerControl', $('input[value=serverLayer]'), 'checkAll1');
+				} else if (downloadInfoType === "SERVER" && data.selectedServersCount == 0) {
+					//if selectedServersCount is 0, fill server & version , without expanding accordian
+					var versions = fillDownloadInfos(data.downloadInfos, selectBoxobj);
+					hidePlusIcon($(versions).size(), $('#serverControl'));
+				}
+				
+				/*  If appinfo is visited for first time , data.selectedDatabasesCount will be -1
+					After update with single db, data.selectedDatabasesCount will be 1  					
+				*/
+				if(downloadInfoType === "DATABASE" && (data.selectedDatabasesCount == -1 || data.selectedDatabasesCount == 1)) {
+					selectBoxobj.append($("<option></option>").attr("value", data.downloadInfos[0].id).text(data.downloadInfos[0].name).attr("selected", "selected"));
+					var versions = data.downloadInfos[0].artifactGroup.versions;
+					map[data.downloadInfos[0].id] = versions;
+					hidePlusIcon($(versions).size(), $('#databaseControl'));
+					getDatabaseVersions(selectBoxobj, '', '#databaseLayerControl', $('input[value=databaseLayer]'), 'checkAll2');
+				} else if (downloadInfoType === "DATABASE" && data.selectedDatabasesCount == 0) {
+					//if selectedDatabasesCount is 0, fill db & version , without expanding accordian
+					var versions = fillDownloadInfos(data.downloadInfos, selectBoxobj);
+					hidePlusIcon($(versions).size(), $('#databaseControl'));
 				}
 			} else {
-				for (i in data.downloadInfos) {
-					fillOptions(selectBoxobj, data.downloadInfos[i].id, data.downloadInfos[i].name);
-					var versions = data.downloadInfos[i].artifactGroup.versions;
-					map[data.downloadInfos[i].id] = versions;
-				}
+				fillDownloadInfos(data.downloadInfos, selectBoxobj);
 			}
+
 			if (selectedData != undefined && downloadInfoType==="DATABASE") {
 				selectBoxobj.find('option').each(function() {
  					if (selectedData === $(this).val()) {
@@ -990,6 +1007,22 @@
  				});
 			}
 		}
+	}
+	
+	function hidePlusIcon(size, obj) {
+		if (size == 1) {
+			$(obj).find(".imagealign").hide();
+		}
+	}
+	
+	function fillDownloadInfos(downloadInfos, selectBoxobj) {
+		for (i in downloadInfos) {
+			fillOptions(selectBoxobj, downloadInfos[i].id, downloadInfos[i].name);
+			var versions = downloadInfos[i].artifactGroup.versions;
+			map[downloadInfos[i].id] = versions;
+		}
+
+		return versions;
 	}
 	
 	function getServerVersions(obj, selectedDataVersion, layerControlObj, inputValueObj, checkboxId) {

@@ -29,6 +29,12 @@ function readerHandler(data, appId, actionType, pageUrl, progressConsoleObj) {
 		if(actionType == "build") {
 			refreshTable(appId);
 		}
+		if(actionType == "Deploy") {
+			enableButton($('.check'));
+			$('.check').attr("title", ""); 
+		}
+		removeLock(actionType);
+
 		return;
 	}
 	
@@ -72,6 +78,13 @@ function asyncHandler(appId, actionType, pageUrl, progressConsoleObj) {
             readerHandler(data, appId, actionType, pageUrl, progressConsoleObj); 
         }
     });
+}
+
+function removeLock(actionType) {
+	var params = getBasicParams();
+	params = params.concat("&actionType=");
+	params = params.concat(actionType);
+	loadContent('removeLock', '', $('#build-body-container'), params, true);
 }
 
 function refreshTable() {

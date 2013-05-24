@@ -110,4 +110,18 @@ public class Permissions {
 	public boolean canManageMavenReports() {
 		return manageMavenReports;
 	}
+
+	@Override
+	public String toString() {
+		return "Permissions [manageApplication=" + manageApplication
+				+ ", importApplication=" + importApplication + ", manageRepo="
+				+ manageRepo + ", updateRepo=" + updateRepo
+				+ ", managePdfReports=" + managePdfReports
+				+ ", manageCodeValidation=" + manageCodeValidation
+				+ ", manageConfiguration=" + manageConfiguration
+				+ ", manageBuilds=" + manageBuilds + ", manageTests="
+				+ manageTests + ", manageCIJobs=" + manageCIJobs
+				+ ", executeCIJobs=" + executeCIJobs + ", manageMavenReports="
+				+ manageMavenReports + "]";
+	}
 }

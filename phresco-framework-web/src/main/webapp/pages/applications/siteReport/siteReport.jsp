@@ -33,40 +33,20 @@
     List<Reports> selectedReports = (List<Reports>) request.getAttribute(FrameworkConstants.REQ_SITE_SLECTD_REPORTS);
 	String requestIp = (String) request.getAttribute(FrameworkConstants.REQ_REQUEST_IP);
 	String showIcons = (String) session.getAttribute(requestIp);
-    String disabledStr = "";
-    if (CollectionUtils.isNotEmpty(selectedReports)) {
-	    for (Reports reports : selectedReports) {
-    		if (FrameworkConstants.REQ_SITE_SLECTD_REPORTSCATEGORIES.equals(reports.getArtifactId())) {
-   				 disabledStr = "";
-%>
-				<script type="text/javascript">
-					$("#generate").addClass("btn-primary"); 
-		        	$("#generate").removeClass("disabled");
-				</script>
-		    		
-<% 			break;	
-			} else {
-   				disabledStr = "disabled";
-%>
-				<script type="text/javascript">
-					$("#generate").removeClass("btn-primary");
-			        $("#generate").addClass("disabled");
-				</script>
-<%
-    		}
-		}
-    } else {
-    	disabledStr = "disabled";
-    }
-
     Permissions permissions = (Permissions) session.getAttribute(FrameworkConstants.SESSION_PERMISSIONS);
+    String per_disabledStr = "";
+	String per_disabledClass = "btn-primary";
+	if (permissions != null && !permissions.canManageMavenReports()) {
+		per_disabledStr = "disabled";
+		per_disabledClass = "btn-disabled";
+	}
 %>
 
 <form id="formReportList" class="reportList">
 	<div class="operation">
 		<!-- Generate Report Button --> 
-		 <input type="button" name="generate" id="generate" class="btn btn-primary" additionalParam="getBasicParams();" value="<s:text name='lbl.site.report.generate'/>"<%= disabledStr %>/>
-		 <a class="btn btn-primary" id="configurePopup" additionalParam="getBasicParams();"><s:text name='lbl.configure'/></a>        
+		 <input type="button" name="generate" id="generate" class="btn" additionalParam="getBasicParams();" value="<s:text name='lbl.site.report.generate'/>"/>
+		 <input type="button" class="btn <%= per_disabledClass %>"  <%= per_disabledStr %> id="configurePopup" additionalParam="getBasicParams();" value="<s:text name='lbl.configure'/>"/>        
 	</div>
 	
 	<s:if test="hasActionMessages()">
@@ -82,30 +62,30 @@
 
 <script>
 	// To enable/disable the Generate button based on the site configured
-	<%
-		if (permissions != null && !permissions.canManageMavenReports()) {
-	%>
-			$("#generate").removeClass("btn-primary").addClass("btn-disabled");
-	<%
-		} else {
+	<% if (permissions != null && !permissions.canManageMavenReports()) { %>
+			toDisableGenerateBtn();
+	<% } else {	
 			if (CollectionUtils.isEmpty(selectedReports)) {
 	%>
-		        $("#generate").removeClass("btn-primary").addClass("btn-disabled");
+				toDisableGenerateBtn();
 	<%
 			} else {
+				for (Reports reports : selectedReports) {
+					if (FrameworkConstants.REQ_SITE_SLECTD_REPORTSCATEGORIES.equals(reports.getArtifactId())) {
 	%>
-		        $("#generate").removeClass("btn-disabled").addClass("btn-primary");
+						toEnableGenerateBtn();
 	<%
+					break;
+					} else {
+	%>
+						toDisableGenerateBtn();						
+	<%				}
+			    }
 			}
 		}
 	%>
 	
     $(document).ready(function() {
-    	
-    	<% if (CollectionUtils.isEmpty(selectedReports)) { %>
-		    	$("#generate").removeClass("btn-primary");
-		        $("#generate").addClass("disabled");
-    	<% } %>
     	$('#configurePopup').click(function() {
     		hidePopuploadingIcon();
     		yesnoPopup('siteConfigure', '<s:text name="header.site.report.configure"/>', 'createReportConfig', '<s:text name="lbl.btn.ok"/>');
@@ -120,9 +100,20 @@
     	checkForSiteReport();
     });
     
-   	function checkForSiteReport() {
+    
+    function toEnableGenerateBtn() {
+    	$("#generate").removeAttr("disabled", true);
+    	$("#generate").removeClass("btn-disabled").addClass("btn-primary");
+    }
+    
+	function toDisableGenerateBtn() {
+		$("#generate").attr("disabled", true);
+        $("#generate").removeClass("btn-primary").addClass("btn-disabled");
+    }
+	
+	function checkForSiteReport() {
     	$("#site_report").empty();
-    	 var params = getBasicParams();
+    	var params = getBasicParams();
     	loadContent('checkForSiteReport', '', $('#site_report'), params, '', true);
     } 
     

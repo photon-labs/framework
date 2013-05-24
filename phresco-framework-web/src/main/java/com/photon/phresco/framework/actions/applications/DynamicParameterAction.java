@@ -561,10 +561,27 @@ public class DynamicParameterAction extends FrameworkBaseAction implements Const
 							break;
 						}
 					} else if(TYPE_STRING.equalsIgnoreCase(parameter.getType()) && BUILD_NAME.equalsIgnoreCase(parameter.getKey())) {
+						List<String> platforms = new ArrayList<String>(); 
 						String buildName = getReqParameter(parameter.getKey());
+						String platform = getReqParameter(PLATFORM);
+						if (StringUtils.isNotEmpty(platform)) {
+							String[] split = platform.split(COMMA);
+							for (String plaform : split) {
+								platforms.add(plaform.replaceAll("\\s+", "") + METRO_BUILD_SEPARATOR + buildName);
+							}
+						}
+
 						if(!buildName.isEmpty()) {
 							for (BuildInfo build : builds) {
-								if(buildName.equalsIgnoreCase(FilenameUtils.removeExtension(build.getBuildName()))) {
+								String bldName = FilenameUtils.removeExtension(build.getBuildName());
+								if (bldName .contains(METRO_BUILD_SEPARATOR) && CollectionUtils.isNotEmpty(platforms)) {	
+									for (String name : platforms) {
+										if (name.equalsIgnoreCase(bldName)) {	
+											setErrorFound(true);
+											setErrorMsg(getText(BUILDNAME_ALREADY_EXIST));
+										}
+									}
+								} else if(buildName.equalsIgnoreCase(FilenameUtils.removeExtension(build.getBuildName()))) {
 									setErrorFound(true);
 									setErrorMsg(getText(BUILDNAME_ALREADY_EXIST));
 								}

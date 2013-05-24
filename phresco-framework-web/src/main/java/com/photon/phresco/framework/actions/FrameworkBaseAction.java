@@ -73,6 +73,7 @@ import com.photon.phresco.framework.api.ProjectManager;
 import com.photon.phresco.framework.commons.FrameworkActions;
 import com.photon.phresco.framework.commons.FrameworkUtil;
 import com.photon.phresco.framework.commons.LogErrorReport;
+import com.photon.phresco.framework.model.LockDetail;
 import com.photon.phresco.plugins.model.Mojos.ApplicationHandler;
 import com.photon.phresco.plugins.util.MojoProcessor;
 import com.photon.phresco.service.client.api.ServiceClientConstant;
@@ -529,6 +530,17 @@ public class FrameworkBaseAction extends ActionSupport implements FrameworkConst
 		};
 	}
     
+    public Comparator sortValuesinDescOrder() {
+		return new Comparator() {
+			public int compare(Object firstObject, Object secondObject) {
+				String val1 = (String) firstObject;
+		    	String val2 = (String) secondObject;
+				return val2.compareToIgnoreCase(val1);				
+			}
+		};
+    	
+    }
+    
     public void updateLatestProject() throws PhrescoException {
         try {
             File tempPath = new File(Utility.getPhrescoTemp() + File.separator + USER_PROJECT_JSON);
@@ -580,6 +592,16 @@ public class FrameworkBaseAction extends ActionSupport implements FrameworkConst
     	builder.append(File.separator);
     	builder.append(PHRESCO_CONFIG_FILE_NAME);
     	return builder.toString();
+    }
+    
+    public LockDetail getLockDetail(String appid, String phase) throws PhrescoException {
+    	try {
+    		User user = (User) getSessionAttribute(SESSION_USER_INFO);
+        	LockDetail lockDetail = new LockDetail(appid, phase, user.getDisplayName());
+        	return lockDetail;
+		} catch (Exception e) {
+			throw new PhrescoException(e);
+		}
     }
 
     public String getPath() {
