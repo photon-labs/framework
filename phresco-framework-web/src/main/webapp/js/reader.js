@@ -29,6 +29,10 @@ function readerHandler(data, appId, actionType, pageUrl, progressConsoleObj) {
 		if(actionType == "build") {
 			refreshTable(appId);
 		}
+		if(actionType == "Deploy") {
+			enableButton($('.check'));
+			$('.check').attr("title", ""); 
+		}
 		return;
 	}
 	

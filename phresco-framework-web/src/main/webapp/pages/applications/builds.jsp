@@ -116,11 +116,11 @@
 			        		for (BuildInfo buildInfo : buildInfos) {
 						%>
 			            	<tr>
-			              		<td class="checkbox_list">
+			              		<td class="buildNo" width="17px">
 			              			<input type="checkbox" <%= per_disabledStr %> class="check" name="build-number" value="<%= buildInfo.getBuildNo() %>">
 			              		</td>
 			              		<td><%= buildInfo.getBuildNo() %></td>
-			              		<td style="width: 40%;">
+			              		<td class="buildName" style="width: 40%;">
 	              					<label class="bldLable" title="Configured with <%= buildInfo.getEnvironments() %>"><%= buildInfo.getTimeStamp() %></label>
 			              		</td>
 			              		<td>
@@ -212,6 +212,10 @@
 			params = params.concat(additionalParam);
 			validateDynamicParam('showProcessBuild', '<s:text name="label.process.build"/>', 'processBuild','<s:text name="label.process.build"/>', '', '<%= Constants.PHASE_PROCESS_BUILD %>', true, additionalParam);
     	});
+		$(".buildName").text(function(index) {
+		    return textTrim($(this), 20);
+	    });
+	
 	});
 	
 	// By default disable all Run buttons under builds
