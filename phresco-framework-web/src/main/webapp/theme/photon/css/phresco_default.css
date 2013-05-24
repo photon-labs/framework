@@ -6752,6 +6752,7 @@ color: #313131;
 
 #updateMsg a {
 	color : #000000;
+	cursor: pointer;
 }
 
 .config_subTab .th-inner {

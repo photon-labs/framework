@@ -303,7 +303,6 @@ function validateDynamicParam(successUrl, title, okUrl, okLabel, form, goal, nee
 
 function yesnoPopup(url, title, okUrl, okLabel, form, additionalParam) {
 	$("#popupPage").css("width", "560");
-	$('.popupClose').prop("onclick", 'popupOnClose(this);');
 	$('#popupPage').modal('show');//To show the popup
 	$('.popupOk').attr("onclick", "popupOnOk(this)");
 	showPopuploadingIcon();
@@ -1582,11 +1581,11 @@ function zipAlignEvent() {
 		$("#signing").prop("checked", true);
 		$("#signing").val(true);
 	} else {
-		var paramArray = 'keystore,storepass,keypass,alias'.split(',');
-		$("#signing").prop("checked", false);
-		$("#signing").val(false);
+		var paramArray = 'keystore,storepass,keypass,alias,signing'.split(',');
+		$("#signing").prop("checked", true);
+		$("#signing").val(true);
 		$("#signingControl").show();
-		hideControl(paramArray);
+		showControl(paramArray);
 		
 	}
 }
@@ -1595,8 +1594,8 @@ function singingEvent() {
 	if($("#signing").is(":checked")) {
 		var paramArray = 'keystore,storepass,keypass,alias'.split(',');
 		showControl(paramArray);
-		$("#zipAlign").prop("checked", true);
-		$("#zipAlign").val(true);
+		//$("#zipAlign").prop("checked", true);
+		//$("#zipAlign").val(true);
 	} else {
 		var paramArray = 'keystore,storepass,keypass,alias'.split(',');
 		hideControl(paramArray);
@@ -1610,6 +1609,10 @@ function accordionOperation() {
 	var showContent = 0;	
     $('.siteaccordion').removeClass('openreg').addClass('closereg');
     $('.mfbox').css('display','none');
+}
+
+function open_win() {
+	window.open("http://www.photon.in");
 }
 
 function accordionClickOperation(thisObj) {

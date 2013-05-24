@@ -530,6 +530,17 @@ public class FrameworkBaseAction extends ActionSupport implements FrameworkConst
 		};
 	}
     
+    public Comparator sortValuesinDescOrder() {
+		return new Comparator() {
+			public int compare(Object firstObject, Object secondObject) {
+				String val1 = (String) firstObject;
+		    	String val2 = (String) secondObject;
+				return val2.compareToIgnoreCase(val1);				
+			}
+		};
+    	
+    }
+    
     public void updateLatestProject() throws PhrescoException {
         try {
             File tempPath = new File(Utility.getPhrescoTemp() + File.separator + USER_PROJECT_JSON);
