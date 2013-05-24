@@ -476,6 +476,10 @@ public class Quality extends DynamicParameterAction implements Constants {
 			}
             ApplicationManager applicationManager = PhrescoFrameworkFactory.getApplicationManager();
             BufferedReader reader = applicationManager.performAction(getProjectInfo(), ActionType.UNIT_TEST, buildArgCmds, workingDirectory.toString());
+            
+            //To generate the lock for the particular operation
+			FrameworkUtil.generateLock(Collections.singletonList(getLockDetail(appInfo.getId(), UNIT)), true);
+			
             setSessionAttribute(getAppId() + UNIT, reader);
             setReqAttribute(REQ_APP_ID, getAppId());
             setReqAttribute(REQ_ACTION_TYPE, UNIT);
@@ -509,6 +513,10 @@ public class Quality extends DynamicParameterAction implements Constants {
 			}
             ApplicationManager applicationManager = PhrescoFrameworkFactory.getApplicationManager();
             BufferedReader reader = applicationManager.performAction(getProjectInfo(), ActionType.COMPONENT_TEST, buildArgCmds, workingDirectory.toString());
+            
+            //To generate the lock for the particular operation
+			FrameworkUtil.generateLock(Collections.singletonList(getLockDetail(appInfo.getId(), COMPONENT)), true);
+			
             setSessionAttribute(getAppId() + COMPONENT, reader);
             setReqAttribute(REQ_APP_ID, getAppId());
             setReqAttribute(REQ_ACTION_TYPE, COMPONENT);
@@ -718,6 +726,10 @@ public class Quality extends DynamicParameterAction implements Constants {
 			}
 	        ApplicationManager applicationManager = PhrescoFrameworkFactory.getApplicationManager();
 	        BufferedReader reader = applicationManager.performAction(getProjectInfo(), ActionType.FUNCTIONAL_TEST, buildArgCmds, workingDirectory.toString());
+	        
+	        //To generate the lock for the particular operation
+	        FrameworkUtil.generateLock(Collections.singletonList(getLockDetail(appInfo.getId(), FUNCTIONAL)), true);
+			
 	        setSessionAttribute(getAppId() + FUNCTIONAL, reader);
 	        setReqAttribute(REQ_APP_ID, getAppId());
 	        setReqAttribute(REQ_ACTION_TYPE, FUNCTIONAL);
@@ -1581,6 +1593,10 @@ public class Quality extends DynamicParameterAction implements Constants {
     		//
             loadOrPerformanceJsonWriter();    			
     		BufferedReader reader = applicationManager.performAction(projectInfo, ActionType.PERFORMANCE_TEST, buildArgCmds, workingDirectory);
+    		
+    		//To generate the lock for the particular operation
+			FrameworkUtil.generateLock(Collections.singletonList(getLockDetail(applicationInfo.getId(), PERFORMANCE_TEST)), true);
+			
     		setSessionAttribute(getAppId() + PERFORMANCE_TEST, reader);
     		setReqAttribute(REQ_APP_ID, getAppId());
     		setReqAttribute(REQ_ACTION_TYPE, PERFORMANCE_TEST);
@@ -1592,7 +1608,6 @@ public class Quality extends DynamicParameterAction implements Constants {
     }
 
 	public String loadOrPerformanceJsonWriter() throws PhrescoException {
-		
 		FileWriter fw = null;
 		String property = "";
 		try {
@@ -1851,6 +1866,10 @@ public class Quality extends DynamicParameterAction implements Constants {
             loadOrPerformanceJsonWriter();
             ApplicationManager applicationManager = PhrescoFrameworkFactory.getApplicationManager();
             BufferedReader reader = applicationManager.performAction(getProjectInfo(), ActionType.LOAD_TEST, buildArgCmds, workingDirectory.toString());
+            
+            //To generate the lock for the particular operation
+			FrameworkUtil.generateLock(Collections.singletonList(getLockDetail(appInfo.getId(), LOAD)), true);
+			
             setSessionAttribute(getAppId() + LOAD, reader);
             setReqAttribute(REQ_APP_ID, getAppId());
             setReqAttribute(REQ_ACTION_TYPE, LOAD);

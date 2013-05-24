@@ -37,11 +37,8 @@
 <%@ page import="com.photon.phresco.framework.api.Project" %>
 <%@ page import="com.photon.phresco.framework.model.CIBuild"%>
 <%@ page import="com.photon.phresco.commons.model.ApplicationInfo"%>
+<%@ page import="com.photon.phresco.framework.model.Permissions"%>
 <%@ page import="com.photon.phresco.framework.actions.util.FrameworkActionUtil"%>
-
-<script src="js/reader.js" ></script>
-<script type="text/javascript" src="js/delete.js" ></script>
-<script type="text/javascript" src="js/home-header.js" ></script>
 
 <style type="text/css">
     #warningmsg {
@@ -55,7 +52,6 @@
      	float: right;
      	font-weight: bold;
     }
-    
 </style>
 
 <%
@@ -70,6 +66,7 @@
     boolean isAtleastOneJobIsInProgress = false;
     String isBuildTriggeredFromUI = request.getAttribute(FrameworkConstants.CI_BUILD_TRIGGERED_FROM_UI).toString();
     String functioanlTestTool = (String) request.getAttribute(FrameworkConstants.REQ_FUNCTEST_SELENIUM_TOOL);
+    Permissions permissions = (Permissions) session.getAttribute(FrameworkConstants.SESSION_PERMISSIONS);
 %>
 
 <s:if test="hasActionMessages()">
@@ -85,15 +82,24 @@
 <form action="CIBuildDelete" name="ciBuilds" id="deleteObjects" method="post" class="configurations_list_form ciFormJob">
     <div class="operation ciOperationDiv">
     	<div class="ciOperationEleme">
-	        <input id="setup" type="button" value="<s:text name="lbl.setup"/>" class="btn btn-primary">
-	        <input id="startJenkins" type="button" value="<s:text name="lbl.start"/>" class="btn btn-primary" >
+    		<%
+	    		String per_disabledStr = "";
+				String per_disabledClass = "btn-primary";
+				if (permissions != null && !permissions.canManageCIJobs()) {
+					per_disabledStr = "disabled";
+					per_disabledClass = "btn-disabled";
+				}
+    		%>
+    		
+	        <input id="setup" type="button" value="<s:text name="lbl.setup"/>" class="btn <%= per_disabledClass %>" <%= per_disabledStr %>>
+	        <input id="startJenkins" type="button" value="<s:text name="lbl.start"/>" class="btn <%= per_disabledClass %>" <%= per_disabledStr %>>
 	        <input id="stopJenkins" type="button" value="<s:text name="lbl.stop"/>" class="btn" disabled="disabled" >
-	        <input id="configure" type="button" value="<s:text name="lbl.configure"/>" class="btn btn-primary">
+	        <input id="configure" type="button" value="<s:text name="lbl.configure"/>" class="btn <%= per_disabledClass %>" <%= per_disabledStr %>>
 	        <input id="build" type="button" value="<s:text name="lbl.build"/>" class="btn" disabled="disabled" onclick="buildCI();">
 	        <input id="deleteBuild" type="button" value="<s:text name="lbl.deletebuild"/>" class="btn" disabled="disabled">
 	        <input id="deleteJobBtn" type="button" value="<s:text name="lbl.deletejob"/>" class="btn"  disabled="disabled" data-toggle="modal" href="#popupPage"/>
-	        <input id="emailConfiguration" type="button" value="<s:text name="lbl.email.configuration"/>" class="btn btn-primary">
-	        <input id="confluenceConfiguration" type="button" value="<s:text name="lbl.confluence.configuration"/>" class="btn btn-primary">
+	        <input id="emailConfiguration" type="button" value="<s:text name="lbl.email.configuration"/>" class="btn <%= per_disabledClass %>" <%= per_disabledStr %>>
+	        <input id="confluenceConfiguration" type="button" value="<s:text name="lbl.confluence.configuration"/>" class="btn <%= per_disabledClass %>" <%= per_disabledStr %>>
         </div>
     </div>
     
@@ -130,7 +136,16 @@
 			                <span class="siteaccordion" id="siteaccordion_active">
 			                	<div>
 			                		<img src="images/r_arrowclose.png" class ="accImg" id="" onclick="accordionClickOperation(this);">
-	                				<input type="checkbox" class="<%= jobName %>Job" name="Jobs" id="checkBox" value="<%= jobName %>" <%= new Boolean(request.getAttribute(FrameworkConstants.CI_BUILD_JENKINS_ALIVE + jobName).toString()).booleanValue() ? "" : "disabled" %>>
+			                		<%
+							    		per_disabledStr = "disabled";
+										per_disabledClass = "btn-disabled";
+										if (permissions != null && (permissions.canManageCIJobs() || permissions.canExecuteCIJobs())) {
+											per_disabledStr = "";
+											per_disabledClass = "btn-primary";
+										}
+						    		%>
+	                				<input type="checkbox" class="<%= jobName %>Job" name="Jobs" id="checkBox" <%= per_disabledStr %> value="<%= jobName %>" 
+	                					<%= new Boolean(request.getAttribute(FrameworkConstants.CI_BUILD_JENKINS_ALIVE + jobName).toString()).booleanValue() ? "" : "disabled" %>>
 			                		&nbsp;&nbsp;<%= jobName %> &nbsp;&nbsp;
 								</div>
 			                </span>
@@ -144,7 +159,15 @@
 				                        	<thead>
 				                            	<tr class="download_tbl_header">
 				                            		<th>
-														<input type="checkbox" value="<%= jobName %>" class="<%= jobName %>AllBuild" name="allBuilds">
+				                            			<%
+												    		per_disabledStr = "disabled";
+															per_disabledClass = "btn-disabled";
+															if (permissions != null && (permissions.canManageCIJobs() || permissions.canExecuteCIJobs())) {
+																per_disabledStr = "";
+																per_disabledClass = "btn-primary";
+															}
+											    		%>
+														<input type="checkbox" value="<%= jobName %>" class="<%= jobName %>AllBuild" name="allBuilds" <%= per_disabledStr %>>
 				                            		</th>
 				                            		<th>#</th>
 			                            			<th><s:text name="lbl.url"/></th>
@@ -160,7 +183,15 @@
 				                        		%>
 						                    		<tr>
 						                    			<td>
-						                    				<input type="checkbox" value="<%= jobName %>,<%= build.getNumber() %>" class="<%= jobName %>" name="builds">
+						                    				<%
+													    		per_disabledStr = "disabled";
+																per_disabledClass = "btn-disabled";
+																if (permissions != null && (permissions.canManageCIJobs() || permissions.canExecuteCIJobs())) {
+																	per_disabledStr = "";
+																	per_disabledClass = "btn-primary";
+																}
+												    		%>
+						                    				<input type="checkbox" <%= per_disabledStr %> value="<%= jobName %>,<%= build.getNumber() %>" class="<%= jobName %>" name="builds">
 						                    			</td>
 						                    			<td><%= build.getNumber() %></td>
 						                    			<td><a href="<%= build.getUrl() %>" target="_blank"><%= build.getUrl().replace("%20", " ") %></a></td>
@@ -276,21 +307,25 @@ $(document).ready(function() {
 	$("input:checkbox[name='allBuilds']").click(function() {
 		$("input:checkbox[class='" + $(this).val() +"']").attr('checked', $(this).is(':checked'));
 		$("input:checkbox[value='" + $(this).val() +"']").attr('checked', $(this).is(':checked'));
-		
-		enableDisableDeleteButton($(this).val());
+		<% if (permissions != null && permissions.canManageCIJobs()) { %>
+			enableDisableDeleteButton($(this).val());				
+		<% } %>
 	});
 	
 	$("input:checkbox[name='builds']").click(function() {
 		var isAllChecked = isAllCheckBoxCheked($(this).attr("class"));
 		$("input:checkbox[value='" + $(this).attr("class") +"']").attr('checked', isAllChecked);
-		
-		enableDisableDeleteButton($(this).attr("class"));
+		<% if (permissions != null && permissions.canManageCIJobs()) { %>
+			enableDisableDeleteButton($(this).attr("class"));
+		<% } %>
 	});
 	
 	$("input:checkbox[name='Jobs']").click(function() {
 		$("input:checkbox[class='" + $(this).val() +"']").attr('checked', $(this).is(':checked'));
 		$("input:checkbox[value='" + $(this).val() +"']").attr('checked', $(this).is(':checked'));
-		enableDisableDeleteButton($(this).val());
+		<% if (permissions != null && permissions.canManageCIJobs()) { %>
+			enableDisableDeleteButton($(this).val());
+		<% } %>
 	});
 	
 	$('#configure').click(function() {
@@ -331,20 +366,22 @@ $(document).ready(function() {
     confirmDialog($("#deleteBuild"), '<s:text name="lbl.hdr.confirm.dialog"/>', '<s:text name="modal.body.text.del.builds"/>', 'deleteBuild','<s:text name="lbl.btn.ok"/>');
     confirmDialog($("#deleteJobBtn"), '<s:text name="lbl.hdr.confirm.dialog"/>', '<s:text name="modal.body.text.del.jobs"/>', 'deleteJob','<s:text name="lbl.btn.ok"/>');
     
-    if(<%= jenkinsAlive %>) {
-    	console.log("jenkins alive , enable configure button ");
-    	enableStart();
-    	enableButton($("#configure"));
-    	enableButton($("#emailConfiguration"));
-    	enableButton($("confluenceConfiguration"));
-    	disableButton($("#setup"));
-    } else {
-    	console.log("Jenkins down , disabled configure button ");
-    	enableStop();
-    	disableButton($("#configure"));
-    	disableButton($("#emailConfiguration"));
-    	disableButton($("#confluenceConfiguration"));
-    }
+    <% if (permissions != null && permissions.canManageCIJobs()) { %>
+	    if (<%= jenkinsAlive %>) {
+	    	console.log("jenkins alive , enable configure button ");
+	    	enableStart();
+	    	enableButton($("#configure"));
+	    	enableButton($("#emailConfiguration"));
+	    	enableButton($("confluenceConfiguration"));
+	    	disableButton($("#setup"));
+	    } else {
+	    	console.log("Jenkins down , disabled configure button ");
+	    	enableStop();
+	    	disableButton($("#configure"));
+	    	disableButton($("#emailConfiguration"));
+	    	disableButton($("#confluenceConfiguration"));
+	    }
+    <% } %>
     
 	// when checking on more than one job, configure button should be disabled. it can not show already created job info for more than one job
 	$("input[type=checkbox][name='Jobs']").click(function() {
@@ -386,8 +423,9 @@ function repopulateConfiurePopup(showText) {
 		if (refreshCi) {
 			disableButton($("#configure"));
 		}
-		
-		enableButton($("#configure"));
+		<% if (permissions != null && permissions.canManageCIJobs()) { %>
+			enableButton($("#configure"));
+		<% } %>
 		return true;
 	}
 }
@@ -556,7 +594,9 @@ function enableDisableDeleteButton(atleastOneCheckBoxVal) {
 	}
 	
 	if ($("input[type=checkbox][name='Jobs']:checked").length > 0) {
-		enableButton($("#deleteJobBtn"));
+		<% if (permissions != null && permissions.canManageCIJobs()) { %>
+			enableButton($("#deleteJobBtn"));
+		<% } %>
 		enableButton($("#build"));
 	} else {
 		disableButton($("#deleteJobBtn"));

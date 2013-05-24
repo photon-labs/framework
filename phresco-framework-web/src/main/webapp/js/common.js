@@ -303,12 +303,14 @@ function validateDynamicParam(successUrl, title, okUrl, okLabel, form, goal, nee
 
 function yesnoPopup(url, title, okUrl, okLabel, form, additionalParam) {
 	$("#popupPage").css("width", "560");
+	$('.popupClose').prop("onclick", 'popupOnClose(this);');
 	$('#popupPage').modal('show');//To show the popup
+	$('.popupOk').attr("onclick", "popupOnOk(this)");
 	showPopuploadingIcon();
 	$('.popupClose').hide();
 	$('#popupTitle').html(title); // Title for the popup
 	$('.popupClose').hide(); //no need close button since yesno popup
-	$('.popupOk, #popupCancel').show(); // show ok & cancel button
+	$('.popupOk, .popupCancel').show(); // show ok & cancel button
 	enableButton($(".popupOk")); // enable button
 	$('.popupCancel').val("Cancel");
 
@@ -392,6 +394,7 @@ function add_popupCancel(obj) {
 		$('#additionalPopup').modal('hide');
 	} else {
 		$("#popupPage").css("width", "560");
+		$('.popupOk').attr("onclick", "popupOnOk(this)");
 		setTimeout(function () {
 			$('#popupPage').modal('show');
 		}, 600);
@@ -1620,4 +1623,19 @@ function accordionClickOperation(thisObj) {
 		}
 		  
 	});	
+}
+
+function showWarningMsg(popupTitle, warningMsg) {
+	$('#popuploadingIcon').hide();
+	$('#popupPage').modal('show');
+	$('#errMsg').html("");
+	$('#successMsg').html("");
+	$('#updateMsg').html("");
+	$('#popupTitle').html(popupTitle);
+	$('#popup_div').empty();
+	$('#popup_div').html(warningMsg);
+	$('.popupOk').hide();
+	$('.popupCancel').hide();
+	$('.popupClose').show();
+	$('.popupClose').prop("onclick", '');
 }

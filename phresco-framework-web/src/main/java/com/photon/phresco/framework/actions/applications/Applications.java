@@ -75,6 +75,7 @@ import com.photon.phresco.framework.actions.FrameworkBaseAction;
 import com.photon.phresco.framework.api.ProjectManager;
 import com.photon.phresco.framework.commons.FrameworkUtil;
 import com.photon.phresco.framework.impl.SCMManagerImpl;
+import com.photon.phresco.framework.model.LockDetail;
 import com.photon.phresco.plugins.model.Mojos.ApplicationHandler;
 import com.photon.phresco.plugins.util.MojoProcessor;
 import com.photon.phresco.service.client.api.ServiceManager;
@@ -132,8 +133,11 @@ public class Applications extends FrameworkBaseAction implements Constants {
     private String actionType = "";
     private String customerId = "";
     private String projectId = "";
-    private String appId = "";
-    private String pomVersion ="";
+    private String pomVersion = "";
+    
+    private boolean locked = false;
+    private String lockedBy = "";
+    private String lockedDate = "";
 
     public String loadMenu() {
         if (s_debugEnabled) {
@@ -1327,6 +1331,73 @@ public class Applications extends FrameworkBaseAction implements Constants {
 	}
 	
 	/**
+	 * To remove the lock once the initiated operation has been completed
+	 * @throws PhrescoException
+	 */
+	public void removeLock() throws PhrescoException {
+		try {
+			List<LockDetail> lockDetails = FrameworkUtil.getLockDetails();
+			if (CollectionUtils.isNotEmpty(lockDetails)) {
+				List<LockDetail> availableLockDetails = new ArrayList<LockDetail>();
+				for (LockDetail lockDetail : lockDetails) {
+					if (!lockDetail.getActionType().equalsIgnoreCase(getActionType())) {
+						availableLockDetails.add(lockDetail);
+					}
+				}
+				FrameworkUtil.generateLock(availableLockDetails, false);
+			}
+		} catch (PhrescoException e) {
+			throw e;
+		}
+	}
+	
+	/**
+	 * To check whether lock exists for the current process
+	 * @return
+	 */
+	public String checkForLock() {
+		try {
+			List<LockDetail> lockDetails = FrameworkUtil.getLockDetails();
+			if (CollectionUtils.isNotEmpty(lockDetails)) {
+				List<String> actionTypesToCheck = new ArrayList<String>();
+				if (getActionType().equals(REQ_CODE)) {
+					actionTypesToCheck.add(BUILD);
+					actionTypesToCheck.add(REQ_START);
+					actionTypesToCheck.equals(UNIT);
+				} else if (getActionType().equals(BUILD)) {
+					actionTypesToCheck.add(BUILD);
+					actionTypesToCheck.add(REQ_CODE);
+					actionTypesToCheck.add(REQ_START);
+				} else if (getActionType().equals(REQ_START)) {
+					actionTypesToCheck.add(BUILD);
+					actionTypesToCheck.add(REQ_CODE);
+				} else if (getActionType().equals(UNIT)) {
+					actionTypesToCheck.add(BUILD);
+					actionTypesToCheck.add(REQ_CODE);
+					actionTypesToCheck.add(REQ_START);
+				} else if (getActionType().equals(REQ_FROM_TAB_DEPLOY)) {
+					actionTypesToCheck.add(BUILD);
+					actionTypesToCheck.add(REQ_FROM_TAB_DEPLOY);
+				} else {
+					actionTypesToCheck.add(getActionType());
+				}
+				for (LockDetail lockDetail : lockDetails) {
+					if (lockDetail.getAppId().equals(getAppId()) && actionTypesToCheck.contains(lockDetail.getActionType())) {
+						setLocked(true);
+						setLockedBy(lockDetail.getUserName());
+						setLockedDate(lockDetail.getStartedDate().toString());
+						break;
+					}
+				}
+			}
+		} catch (Exception e) {
+			// TODO: handle exception
+		}
+
+		return SUCCESS;
+	}
+	
+	/**
 	 * To remove the reader from the session
 	 * @return
 	 */
@@ -1532,14 +1603,6 @@ public class Applications extends FrameworkBaseAction implements Constants {
 		this.projectId = projectId;
 	}
 
-	public String getAppId() {
-		return appId;
-	}
-
-	public void setAppId(String appId) {
-		this.appId = appId;
-	}
-
 	public List<String> getRestrictedLogs() {
 		return restrictedLogs;
 	}
@@ -1633,5 +1696,29 @@ public class Applications extends FrameworkBaseAction implements Constants {
 
 	public void setPomVersion(String pomVersion) {
 		this.pomVersion = pomVersion;
+	}
+
+	public void setLocked(boolean locked) {
+		this.locked = locked;
+	}
+
+	public boolean isLocked() {
+		return locked;
+	}
+
+	public void setLockedBy(String lockedBy) {
+		this.lockedBy = lockedBy;
+	}
+
+	public String getLockedBy() {
+		return lockedBy;
+	}
+
+	public void setLockedDate(String lockedDate) {
+		this.lockedDate = lockedDate;
+	}
+
+	public String getLockedDate() {
+		return lockedDate;
 	}
 }

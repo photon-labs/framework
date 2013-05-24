@@ -172,11 +172,11 @@
     	confirmDialog($("#deleteButton"), '<s:text name="lbl.hdr.confirm.dialog"/>', '<s:text name="modal.body.text.del.builds"/>', 'deleteBuild','<s:text name="lbl.btn.ok"/>');
     	
     	$('#generateBuild').click(function() {
-    		validateDynamicParam('generateBuild', '<s:text name="label.generatebuild"/>', 'build','<s:text name="lbl.btn.ok"/>', '', '<%= Constants.PHASE_PACKAGE %>');
+    		checkForLock('<%= FrameworkConstants.BUILD %>');
     	});
     	
     	$('#runAgainstSourceStart').click(function() {
-    		validateDynamicParam('showRunAgainstSourcePopup', '<s:text name="label.runagainstsource"/>', 'startServer','<s:text name="label.run"/>', '', '<%= Constants.PHASE_RUNGAINST_SRC_START %>');
+    		checkForLock('<%= FrameworkConstants.REQ_START %>');
     	});
     	
     	$('#minifyButton').click(function(){
@@ -198,12 +198,6 @@
             $('.build_form').attr("action", "buildView");
             $('.build_form').submit();
         });
-        
-        /* $('#deleteButton').click(function() {
-			$("#confirmationText").html("Do you want to delete the selected build(s)");
-		    dialog('block');
-		    escBlockPopup();
-        }); */
         
         $('form').submit(function() {
 			showProgessBar("Deleting Build (s)", 100);
@@ -323,7 +317,29 @@
 			updateHiddenField(data.jsFinalName, data.selectedJs, data.browseLocation);
     	} else if (pageUrl == "filesToMinify") {
     		updateMinifyData(data.compressName, data.selectedFilesToMinify, data.browseLocation);
-    	}
+    	} else if (pageUrl == "checkLockForbuild") {
+    		if (!data.locked) {
+    			validateDynamicParam('generateBuild', '<s:text name="label.generatebuild"/>', 'build','<s:text name="lbl.btn.ok"/>', '', '<%= Constants.PHASE_PACKAGE %>');
+    		} else {
+    			var warningMsg = '<s:text name="lbl.app.warnin.msg"/> ' + data.lockedBy + ' at ' + data.lockedDate +".";
+    			showWarningMsg('<s:text name="lbl.app.warnin.title"/>', warningMsg);
+    		}
+    	} else if (pageUrl === "checkLockForStart") {
+    		if (!data.locked) {
+				validateDynamicParam('showRunAgainstSourcePopup', '<s:text name="label.runagainstsource"/>', 'startServer','<s:text name="label.run"/>', '', '<%= Constants.PHASE_RUNGAINST_SRC_START %>');
+    		} else {
+    			var warningMsg = '<s:text name="lbl.app.warnin.msg"/> ' + data.lockedBy + ' at ' + data.lockedDate +".";
+    			showWarningMsg('<s:text name="lbl.app.warnin.title"/>', warningMsg);
+    		}
+		} else if (pageUrl === "checkLockForDeploy") {
+    		if (!data.locked) {
+    			var additionalParam = $("#deployAddParam").val();
+    			validateDynamicParam('showDeploy', '<s:text name="label.deploy"/>', 'deploy','<s:text name="lbl.btn.ok"/>', '', '<%= Constants.PHASE_DEPLOY %>', true, additionalParam);
+    		} else {
+    			var warningMsg = '<s:text name="lbl.app.warnin.msg"/> ' + data.lockedBy + ' at ' + data.lockedDate +".";
+    			showWarningMsg('<s:text name="lbl.app.warnin.title"/>', warningMsg);
+    		}
+		}
     }
 	
 	function deploy(additionalParam) {
@@ -335,5 +351,12 @@
 	
 	function popupOnCancel(obj) {
 		$("#popupPage").modal('hide');
+	}
+	
+	function checkForLock(actionType) {
+		var params = getBasicParams();
+		params = params.concat("&actionType=");
+		params = params.concat(actionType);
+		loadContent('checkLockFor' + actionType, '', '', params, true, true);
 	}
 </script>

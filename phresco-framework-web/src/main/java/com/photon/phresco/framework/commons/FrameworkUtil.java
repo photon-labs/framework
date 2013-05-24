@@ -18,21 +18,21 @@
 package com.photon.phresco.framework.commons;
 
 import java.io.BufferedReader;
-import java.io.DataInputStream;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.FilenameFilter;
 import java.io.IOException;
-import java.io.FileInputStream;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.io.StringReader;
 import java.io.StringWriter;
-import java.lang.reflect.Type;
 import java.math.BigDecimal;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -73,11 +73,11 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.jopendocument.dom.ODPackage;
-import org.jopendocument.dom.spreadsheet.MutableCell;
 import org.jopendocument.dom.spreadsheet.SpreadSheet;
 import org.w3c.dom.Element;
 
 import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.photon.phresco.commons.FrameworkConstants;
 import com.photon.phresco.commons.model.ApplicationInfo;
 import com.photon.phresco.commons.model.ArtifactGroup;
@@ -91,6 +91,7 @@ import com.photon.phresco.exception.PhrescoException;
 import com.photon.phresco.framework.FrameworkConfiguration;
 import com.photon.phresco.framework.PhrescoFrameworkFactory;
 import com.photon.phresco.framework.actions.FrameworkBaseAction;
+import com.photon.phresco.framework.model.LockDetail;
 import com.photon.phresco.framework.model.Permissions;
 import com.photon.phresco.framework.model.TestSuite;
 import com.photon.phresco.plugins.model.Mojos.Mojo.Configuration.Parameters.Parameter;
@@ -1433,6 +1434,63 @@ public class FrameworkUtil extends FrameworkBaseAction implements Constants {
 		}
 		
 		return permissions;
+    }
+    
+    public static void generateLock(List<LockDetail> lockDetails, boolean toGenerate) throws PhrescoException {
+    	BufferedWriter out = null;
+		FileWriter fstream = null;
+		try {
+			List<LockDetail> availableLockDetails = getLockDetails();
+			if (toGenerate && CollectionUtils.isNotEmpty(availableLockDetails)) {
+				lockDetails.addAll(availableLockDetails);
+			}
+			
+			Gson gson = new Gson();
+			String infoJSON = gson.toJson(lockDetails);
+			fstream = new FileWriter(getLockFilePath());
+			out = new BufferedWriter(fstream);
+			out.write(infoJSON);
+		} catch (IOException e) {
+			throw new PhrescoException(e);
+		} finally {
+			try {
+				if (out != null) {
+					out.close();
+				}
+				if (fstream != null) {
+					fstream.close();
+				}
+			} catch (IOException e) {
+				throw new PhrescoException(e);
+			}
+		}
+    }
+    
+    public static List<LockDetail> getLockDetails() throws PhrescoException {
+		FileReader reader = null;
+		try {
+			File file = new File(getLockFilePath());
+			if (file.exists()) {
+				reader = new FileReader(file);
+				Gson gson = new Gson();
+				List<LockDetail> lockDetails = gson.fromJson(reader, new TypeToken<List<LockDetail>>(){}.getType());
+				return lockDetails;
+			}
+		} catch (FileNotFoundException e) {
+			throw new PhrescoException(e);
+		} finally {
+			Utility.closeStream(reader);
+		}
+		return null;
+	}
+    
+    private static String getLockFilePath() {
+    	StringBuilder sb = new StringBuilder(Utility.getPhrescoHome())
+		.append(File.separator)
+		.append(PROJECTS_WORKSPACE)
+		.append(File.separator)
+    	.append(LOCK_FILE);
+    	return sb.toString();
     }
 
 	public List<TestSuite> readManualTestSuiteFile(String filePath) {

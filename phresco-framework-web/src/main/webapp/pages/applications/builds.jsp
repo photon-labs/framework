@@ -188,8 +188,8 @@
 	      		</div>
     		</div>
 		</div>
-	<% } %> 
-<script src="js/delete.js" ></script>
+	<% } %>
+	<input type="hidden" id="deployAddParam"> 
 
 <script type="text/javascript">
 	//To check whether the device is ipad or not and then apply jquery scrollbar
@@ -201,8 +201,9 @@
 		hideLoadingIcon();//To hide the loading icon
 		
 		$('.deploy').click(function() {
+			checkForLock('<%= FrameworkConstants.REQ_FROM_TAB_DEPLOY %>');
 			var additionalParam = $(this).attr('additionalParam'); //additional params if any
-    		validateDynamicParam('showDeploy', '<s:text name="label.deploy"/>', 'deploy','<s:text name="lbl.btn.ok"/>', '', '<%= Constants.PHASE_DEPLOY %>', true, additionalParam);
+			$("#deployAddParam").val(additionalParam);
     	});
 		
 		$('.processBuild').click(function() {

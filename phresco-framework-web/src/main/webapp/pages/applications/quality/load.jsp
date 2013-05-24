@@ -124,7 +124,10 @@
 	    	isLoadResultFileAvailbale(); //check for load result files;
 	    	hideLoadingIcon();
 	    	$('#loadTestBtn').click(function() {
-	    		validateDynamicParam('showLoadTestPopup', '<s:text name="label.load.test"/>', 'runLoadTest','<s:text name="label.test"/>', '', '<%= Constants.PHASE_LOAD_TEST %>', true);
+	    		var params = getBasicParams();
+	    		params = params.concat("&actionType=");
+	    		params = params.concat('<%= FrameworkConstants.LOAD %>');
+	    		loadContent("checkForLock", '', '', params, true, true);
 	    	});
 	    	
 	    	//Disable test button for load
@@ -175,6 +178,13 @@
 		       	}
 			} else if (pageUrl == "fetchLoadTestResultFiles") {
 				successLoadTestResultsFiles(data);
+			} else if (pageUrl == "checkForLock") {
+				if (!data.locked) {
+					validateDynamicParam('showLoadTestPopup', '<s:text name="label.load.test"/>', 'runLoadTest','<s:text name="label.test"/>', '', '<%= Constants.PHASE_LOAD_TEST %>', true);
+				} else {
+					var warningMsg = '<s:text name="lbl.app.warnin.msg"/> ' + data.lockedBy + ' at ' + data.lockedDate +".";
+					showWarningMsg('<s:text name="lbl.app.warnin.title"/>', warningMsg);
+				}
 			}
 	    }
 	    

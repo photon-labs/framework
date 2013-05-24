@@ -1880,6 +1880,7 @@ public interface FrameworkConstants {
 	    String TO_DIRECTORY = "toDirectory";
 	    String FILES = "files";
 	    String FILE = "file";
+	    String LOCK_FILE = "process.lock";
 	    
 	    /**
 	     * BitKeeper Commands

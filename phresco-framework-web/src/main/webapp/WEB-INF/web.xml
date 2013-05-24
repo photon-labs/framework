@@ -19,7 +19,12 @@
 
 -->
 <web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://java.sun.com/xml/ns/javaee" xmlns:web="http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" id="WebApp_ID" version="2.5">
- 
+ 	<servlet>
+        <servlet-name>RemoveLockFile</servlet-name>
+        <servlet-class>com.photon.phresco.framework.servlets.RemoveLockFile</servlet-class>
+		<load-on-startup>100</load-on-startup>
+    </servlet>
+    
 	<filter>
         <filter-name>struts</filter-name>
         <filter-class>org.apache.struts2.dispatcher.FilterDispatcher</filter-class>

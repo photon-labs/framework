@@ -23,12 +23,12 @@ import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.InetAddress;
 import java.net.URL;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
-import javax.net.ssl.HttpsURLConnection;
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.apache.commons.collections.MapUtils;
@@ -400,6 +400,10 @@ public class Code extends DynamicParameterAction implements Constants {
 			ApplicationManager applicationManager = PhrescoFrameworkFactory.getApplicationManager();
 			
 			BufferedReader reader = applicationManager.performAction(projectInfo, ActionType.CODE_VALIDATE, buildArgCmds, workingDirectory);
+			
+			//To generate the lock for the particular operation
+			FrameworkUtil.generateLock(Collections.singletonList(getLockDetail(applicationInfo.getId(), REQ_CODE)), true);
+			
 			setSessionAttribute(getAppId() + REQ_CODE, reader);
 			setReqAttribute(REQ_APP_ID, getAppId());
 			setReqAttribute(REQ_ACTION_TYPE, REQ_CODE);

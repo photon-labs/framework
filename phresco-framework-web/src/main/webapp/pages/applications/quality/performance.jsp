@@ -157,8 +157,10 @@
     	isResultFileAvailbale();//Check for the performance test result
     	
     	$('#performanceTest').click(function() {
-    		$('#popupPage').css("width", "675px");
-    		validateDynamicParam('showPerformanceTestPopUp', '<s:text name="lbl.performance.test"/>', 'runPerformanceTest','<s:text name="lbl.test"/>', '', '<%= Constants.PHASE_PERFORMANCE_TEST  %>');
+    		var params = getBasicParams();
+    		params = params.concat("&actionType=");
+    		params = params.concat('<%= FrameworkConstants.PERFORMANCE_TEST %>');
+    		loadContent("checkForLock", '', '', params, true, true);
     	});
     	
 		$(".noTestAvail").hide();// When there is no result table, it hides everything except test button
@@ -348,6 +350,14 @@
 			successEnvValidation(data);
 		} else if (pageUrl == "getPerfTestJSONData") {
 			fillJSONData(data);
+		} else if (pageUrl == "checkForLock") {
+			if (!data.locked) {
+				$('#popupPage').css("width", "675px");
+	    		validateDynamicParam('showPerformanceTestPopUp', '<s:text name="lbl.performance.test"/>', 'runPerformanceTest','<s:text name="lbl.test"/>', '', '<%= Constants.PHASE_PERFORMANCE_TEST  %>');
+			} else {
+				var warningMsg = '<s:text name="lbl.app.warnin.msg"/> ' + data.lockedBy + ' at ' + data.lockedDate +".";
+				showWarningMsg('<s:text name="lbl.app.warnin.title"/>', warningMsg);
+			}
 		}
 	}
 	
