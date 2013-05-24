@@ -663,6 +663,8 @@ public class Features extends DynamicParameterModule {
 					appInfo.setSelectedServers(selectedServers);
 				}
 			}
+		} else {
+			appInfo.setSelectedServers(selectedServers);
 		}
     	
 		if (CollectionUtils.isNotEmpty(appInfo.getSelectedDatabases())) {
@@ -680,6 +682,8 @@ public class Features extends DynamicParameterModule {
 					appInfo.setSelectedDatabases(selectedDatabases);
 				}
 			}
+		}else {
+			appInfo.setSelectedDatabases(selectedDatabases);
 		}
     	
     	if (CollectionUtils.isNotEmpty(appInfo.getSelectedWebservices())) {

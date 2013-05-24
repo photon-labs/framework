@@ -134,6 +134,8 @@ public class Applications extends FrameworkBaseAction implements Constants {
     private String customerId = "";
     private String projectId = "";
     private String pomVersion = "";
+    private int selectedServersCount;
+    private int selectedDatabasesCount;
     
     private boolean locked = false;
     private String lockedBy = "";
@@ -327,6 +329,27 @@ public class Applications extends FrameworkBaseAction implements Constants {
             	Collections.sort(downloadInfos, sortdownloadInfoInAlphaOrder());
             }
 			setDownloadInfos(downloadInfos);
+			ProjectInfo projectInfo = null;
+			projectInfo = (ProjectInfo)getSessionAttribute(getAppId() + SESSION_APPINFO);
+			ApplicationInfo appInfo = projectInfo.getAppInfos().get(0);
+			
+        	int selectedServersCount;
+			if(appInfo.getSelectedServers()!=null){
+				selectedServersCount = appInfo.getSelectedServers().size();
+				setSelectedServersCount(selectedServersCount);
+			}else{
+				selectedServersCount = -1;
+				setSelectedServersCount(selectedServersCount);
+			}
+			
+			int selectedDatabasesCount;
+			if(appInfo.getSelectedDatabases() != null){
+				selectedDatabasesCount = appInfo.getSelectedDatabases().size();
+				setSelectedDatabasesCount(selectedDatabasesCount);
+			}else{
+				selectedDatabasesCount = -1;
+				setSelectedDatabasesCount(selectedDatabasesCount);
+			}
         } catch (PhrescoException e) {
             return showErrorPopup(e, getText(EXCEPTION_DOWNLOADINFOS));
         }
@@ -1720,5 +1743,21 @@ public class Applications extends FrameworkBaseAction implements Constants {
 
 	public String getLockedDate() {
 		return lockedDate;
+	}
+
+	public int getSelectedServersCount() {
+		return selectedServersCount;
+	}
+
+	public void setSelectedServersCount(int selectedServersCount) {
+		this.selectedServersCount = selectedServersCount;
+	}
+
+	public int getSelectedDatabasesCount() {
+		return selectedDatabasesCount;
+	}
+
+	public void setSelectedDatabasesCount(int selectedDatabasesCount) {
+		this.selectedDatabasesCount = selectedDatabasesCount;
 	}
 }

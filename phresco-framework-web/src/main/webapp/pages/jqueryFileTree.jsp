@@ -22,6 +22,8 @@
 <%@ page import="java.util.Arrays"%>
 <%@ page import="java.util.List"%>
 
+<%@ page import="javax.swing.filechooser.FileSystemView"%>
+
 <%@ page import="org.apache.commons.lang.StringUtils" %>
 
 <%@ page import="com.photon.phresco.commons.FrameworkConstants"%>
@@ -60,11 +62,15 @@
 	//If dir is empty , file browse popup wil lists all root directories
 	if(!new File(dir).exists()) {
 		File[] roots = File.listRoots();
-		for (int i=0; i < roots.length; i++) {
+		FileSystemView fsv = FileSystemView.getFileSystemView();
+		
+		for(File root:roots) {
+			if(fsv.getSystemTypeDescription(root).equals(FrameworkConstants.REQ_LOCAL_DISK)) {
 			out.print("<ul class=\"jqueryFileTree\" style=\"display: none;\">");
-			out.print("<li class=\"directory collapsed\"><a href=\"#\" rel=\"" + dir + roots[i].toString() + "/\">"
-					+ roots[i].toString() + "</a></li>");
+			out.print("<li class=\"directory collapsed\"><a href=\"#\" rel=\"" + dir + root + "/\">"
+					+ root + "</a></li>");
 			out.print("</ul>");
+			}
 		}
 	}
 	
@@ -73,7 +79,6 @@
 		    File rootFile = new File(dir);
 		    File[] files = rootFile.listFiles();
 		    out.print("<ul class=\"jqueryFileTree\" style=\"display: none;\">");
-		    
 		    //To list all the directories
 		    for (File file : files) {
 			    if (file.isDirectory()) {
@@ -142,7 +147,7 @@
 							}
 							out.print("<li><input type=checkbox name=filesToMinify id=\""+file+"\" value=\""+file+"\" "+checkedStr+"><span class=jsmin-span >"
 									+ file + "</li>"); 
-						} else {
+						} else if(!fromPage.equals(FrameworkConstants.REQ_AGAINST_JAR)) {
 							out.print("<li class=\"file ext_" + ext + "\"><a href=\"#\" rel=\"" + dir + file + "\">"
 									+ file + "</a></li>");
 						}

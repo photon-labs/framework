@@ -1034,6 +1034,8 @@ public interface FrameworkConstants {
 	String REQ_CONFIG_DB_NAMES = "configDbNames";
 	String REQ_SRC = "src";
 	
+	String REQ_LOCAL_DISK = "Local Disk";
+	
     /*
      * REST url
      */
