@@ -189,7 +189,7 @@
 								                            <%  
 								                            	}  else {
 									                        %>
-								                                <img src="images/icons/wrong_icon.png" title="Not available"/>
+								                                <img src="images/icons/downloadFailure.png" title="Not available"/>
 								                            <%  
 								                            	}
 										              		%>
@@ -207,7 +207,7 @@
 								                            <%
 								                                } else { 
 								                            %>
-								                                <img src="images/icons/failure.png" title="Failure">
+								                                <img src="images/icons/error.png" title="Failure">
 								                            <%  } 
 								                            %>
 						                    			</td>
