@@ -443,6 +443,7 @@ public class FrameworkUtil extends FrameworkBaseAction implements Constants {
     	if (DEPLOY_DIR.equals(pm.getId())) {
 	    	String btn = "&nbsp;&nbsp;<input type='button' class='btn btn-primary' value='Browse' onclick='browseDeployDir();'/>"; 
 	    	inputElement.setAttribute("btnElement", new StringTemplate(btn));
+	    	inputElement.setAttribute("readonly", "readonly");
     	}
     	controlGroupElement.setAttribute("lable", lableElmnt);
     	controlGroupElement.setAttribute("controls", inputElement);
@@ -1148,7 +1149,7 @@ public class FrameworkUtil extends FrameworkBaseAction implements Constants {
     	StringBuilder sb = new StringBuilder();
     	sb.append("<div class='controls'>")
     	.append("<input type=\"$type$\" class=\"input-xlarge $class$\" id=\"$id$\" maxlength=\"$maxlength$\" ")
-    	.append("name=\"$name$\" placeholder=\"$placeholder$\" value=\"$value$\">$btnElement$")
+    	.append("name=\"$name$\" placeholder=\"$placeholder$\" $readonly$ value=\"$value$\">$btnElement$")
     	.append("<span class='help-inline' id=\"$ctrlsId$\"></span></div>");
     	
     	return sb.toString();
@@ -1526,7 +1527,7 @@ public class FrameworkUtil extends FrameworkBaseAction implements Constants {
 		   	     	            	}
 		   	     	            }
 		   	     	            readTestSuitesFromXLS(excels, sb);
-	   	     	            } else {
+	   	     	            } /*else {
 		   	     	            FilenameFilter filterOds = new PhrescoFileFilter("", "ods");
 		   	     	            File[] odsListFiles = testDir.listFiles(filterOds);
 		   	     	            for(File file2 : odsListFiles) {
@@ -1536,7 +1537,7 @@ public class FrameworkUtil extends FrameworkBaseAction implements Constants {
 		   	     	            	}
 		   	     	            }
 	   	     	            	readTestSuiteFromODS(sb, excels);
-	   	     	            }
+	   	     	            }*/
 	   	                }
        	        	}
                     
@@ -1591,7 +1592,7 @@ public class FrameworkUtil extends FrameworkBaseAction implements Constants {
 		}
 	}
     
-	private void readTestSuiteFromODS(StringBuilder sb, List<TestSuite> testSuites) throws PhrescoException {
+	/*private void readTestSuiteFromODS(StringBuilder sb, List<TestSuite> testSuites) throws PhrescoException {
 		File file = new File(sb.toString());
 		org.jopendocument.dom.spreadsheet.Sheet sheet;
 		try {
@@ -1668,7 +1669,7 @@ public class FrameworkUtil extends FrameworkBaseAction implements Constants {
     	}
     	
     	return testSuite;
-	}
+	}*/
 	private static TestSuite createObject(Row next) throws UnknownHostException, PhrescoException{
     	TestSuite testSuite = new TestSuite();
     	if(next.getCell(2) != null) {
@@ -1788,7 +1789,7 @@ public class FrameworkUtil extends FrameworkBaseAction implements Constants {
 						    	         }
 						        	 }
 						         }
-	   	     	            } else {
+	   	     	            }/* else {
 		   	     	            FilenameFilter odsFilter = new PhrescoFileFilter("", "ods");
 		   	     	            File[] odsListFiles = testDir.listFiles(odsFilter);
 			   	     	        for(File file2 : odsListFiles) {
@@ -1799,7 +1800,7 @@ public class FrameworkUtil extends FrameworkBaseAction implements Constants {
 		   	     	            }
 			   	     	        testCases = readTestCasesFormODS(sb, testCases, fileName, tstCase);
 				   	     	   
-	   	     	            }
+	   	     	            }*/
    	                }
     	        }
     	 } catch (Exception e) {
@@ -1979,7 +1980,7 @@ public class FrameworkUtil extends FrameworkBaseAction implements Constants {
 			}
 	}
 
-	private List<TestCase> readTestCasesFormODS(StringBuilder sb, List<TestCase> testCases, String sheetName, com.photon.phresco.commons.model.TestCase tstCase) throws PhrescoException {
+	/*private List<TestCase> readTestCasesFormODS(StringBuilder sb, List<TestCase> testCases, String sheetName, com.photon.phresco.commons.model.TestCase tstCase) throws PhrescoException {
 		File file = new File(sb.toString());
 		org.jopendocument.dom.spreadsheet.Sheet sheet;
 		try {
@@ -2121,8 +2122,8 @@ public class FrameworkUtil extends FrameworkBaseAction implements Constants {
 		}
 		return testCases;
 	}
-
-	private TestCase readTestCasesFromODS(int nRowIndex,
+*/
+	/*private TestCase readTestCasesFromODS(int nRowIndex,
 			org.jopendocument.dom.spreadsheet.Sheet sheet) {
 		TestCase testcase = new TestCase();
 		org.jopendocument.dom.spreadsheet.Cell cell = null;
@@ -2177,7 +2178,7 @@ public class FrameworkUtil extends FrameworkBaseAction implements Constants {
     	}
     	return testcase;
 	}
-
+*/
 	private void updateIndex(float totalPass, float totalFail,
 			float totalNotApplicable, float totalBlocked, Row next1) {
 		Cell successCell=next1.getCell(3);
@@ -2462,7 +2463,7 @@ public class FrameworkUtil extends FrameworkBaseAction implements Constants {
    	     	            File[] xlsListFiles = testDir.listFiles(xlsFilter);
    	     	            if (xlsListFiles.length != 0) {
    	     	            	addTestSuiteToXLS(cellValue, cellno, tryStyle, sheetName, sb, xlsListFiles);
-	       	        	}else {
+	       	        	}/*else {
 	       	        		FilenameFilter odsFilter = new PhrescoFileFilter("", "ods");
 	   	     	            File[] odsListFiles = testDir.listFiles(odsFilter);
 		   	     	        for (File file1 : odsListFiles) {
@@ -2473,14 +2474,14 @@ public class FrameworkUtil extends FrameworkBaseAction implements Constants {
 							}
 		   	     	        File file = new File(sb.toString());
 			   	     	    addTestSuiteToOds(file, cellValue);
-	       	        	}
+	       	        	}*/
    	        	}
    	        }
 		} catch (Exception e) {
 		}
 	}
 
-	private static void addTestSuiteToOds(File file, String cellValue[]) throws IOException {
+	/*private static void addTestSuiteToOds(File file, String cellValue[]) throws IOException {
 		org.jopendocument.dom.spreadsheet.Sheet sheet;
 		try {
 			ODPackage createFromFile = ODPackage.createFromFile(file);
@@ -2515,7 +2516,7 @@ public class FrameworkUtil extends FrameworkBaseAction implements Constants {
 		} catch(Exception e) {
 			
 		}
-	}
+	}*/
    
 	private static void addTestSuiteToXLS(String[] cellValue, int cellno,
 			CellStyle[] tryStyle, String sheetName, StringBuilder sb,
@@ -2657,7 +2658,7 @@ public class FrameworkUtil extends FrameworkBaseAction implements Constants {
 	     	            	}
 	     	            }
 	     	            writeTestCaseToXLS(testSuiteName, cellValue, status, numCol, cellno, tryStyle, sb);
-     	           } else {
+     	           } /*else {
      	        	   	FilenameFilter odsFilter = new PhrescoFileFilter("", "ods");
        	            	File[] odsListFiles = testDir.listFiles(odsFilter);
        	            	if (odsListFiles.length != 0) {
@@ -2669,7 +2670,7 @@ public class FrameworkUtil extends FrameworkBaseAction implements Constants {
 	  	     	            }
 	  	     	            writeTestCasesToODS(testSuiteName, cellValue, sb, status);
        	            	}
-     	           }
+     	           }*/
                 }
    	        }
 		} catch (Exception e) {
@@ -2677,7 +2678,7 @@ public class FrameworkUtil extends FrameworkBaseAction implements Constants {
 		}
 	}
 
-	private void writeTestCasesToODS(String testSuiteName, String[] cellValue, StringBuilder sb, String status) throws PhrescoException {
+	/*private void writeTestCasesToODS(String testSuiteName, String[] cellValue, StringBuilder sb, String status) throws PhrescoException {
 		org.jopendocument.dom.spreadsheet.Sheet sheet;
 		File file = new File(sb.toString());
 		try {
@@ -2800,7 +2801,7 @@ public class FrameworkUtil extends FrameworkBaseAction implements Constants {
 			//e.printStackTrace();
 		}
 	}
-
+*/
 	private void writeTestCasesToXLSX(String testSuiteName, String[] cellValue,
 			String status, int numCol, int cellno, CellStyle[] tryStyle,
 			StringBuilder sb) throws FileNotFoundException,

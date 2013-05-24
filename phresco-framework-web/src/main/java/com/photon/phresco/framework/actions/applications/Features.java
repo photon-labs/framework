@@ -137,6 +137,7 @@ public class Features extends DynamicParameterModule {
 	private String appDirError = "";
 	private boolean errorFound = false;
 	private String applicationVersionError = "";
+	private String functionFrameworkError = "";
 	private String serverError = "";
 	private String databaseError = "";
 	private String serverName = "";
@@ -566,6 +567,12 @@ public class Features extends DynamicParameterModule {
 	            hasError = true;
 	    	}
 	    	
+	    	List<String> optionIds =(List<String>) getSessionAttribute(REQ_OPTION_ID);
+	    	
+	    	if (optionIds.contains(FUNCTIONAL_TEST_KEY) && ADVANCE_UI.equals(getUiType()) && StringUtils.isEmpty(getFunctionalFramework())) {
+    			setFunctionFrameworkError(getText(ERROR_FUNCTIONAL_FRAMEWORK));
+    			hasError = true;
+	    	}
 	    	if (StringUtils.isNotEmpty(getWebserviceLayer()) && CollectionUtils.isEmpty(getWebservice())) {
 				setWebServiceError(getText(ERROR_WS_MISSING));
 				hasError = true;
@@ -1568,5 +1575,13 @@ public class Features extends DynamicParameterModule {
 
 	public String getFunctionalFramework() {
 		return functionalFramework;
+	}
+
+	public String getFunctionFrameworkError() {
+		return functionFrameworkError;
+	}
+
+	public void setFunctionFrameworkError(String functionFrameworkError) {
+		this.functionFrameworkError = functionFrameworkError;
 	}
 }

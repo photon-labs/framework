@@ -1381,9 +1381,15 @@ public class Quality extends DynamicParameterAction implements Constants {
         	StringBuilder screenShotDir = new StringBuilder(getApplicationHome());
         	screenShotDir.append(File.separator);
         	FrameworkUtil frameworkUtil = FrameworkUtil.getInstance();
-        	screenShotDir.append(frameworkUtil.getFunctionalTestReportDir(getApplicationInfo()));
-        	screenShotDir.append(File.separator);
-        	screenShotDir.append(SCREENSHOT_DIR);
+        	ApplicationInfo applicationInfo = getApplicationInfo();
+        	String sceenShotDir = frameworkUtil.getSceenShotDir(applicationInfo);
+        	if(StringUtils.isEmpty(sceenShotDir)) {
+        		screenShotDir.append(frameworkUtil.getFunctionalTestReportDir(applicationInfo));
+            	screenShotDir.append(File.separator);
+            	screenShotDir.append(SCREENSHOT_DIR);
+        	} else {
+        		screenShotDir.append(sceenShotDir);
+        	}
         	screenShotDir.append(File.separator);
         	
         	int failureTestCases = 0;

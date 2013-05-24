@@ -67,7 +67,7 @@
 			Pdf Report Name
 		</label>
 		<div class="controls">
-			 <input class="input-xlarge" id="reportName" name="reportName" type="text"/>
+			 <input class="input-xlarge" id="reportName" name="reportName" type="text" maxlength="60" title="<s:text name="title.60.chars"/>"/>
 		</div>
 	</div>
 	<%

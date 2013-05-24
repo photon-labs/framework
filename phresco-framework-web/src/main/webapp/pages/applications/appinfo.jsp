@@ -225,10 +225,11 @@
 		
 		<!-- Functional test framework start -->
 		<% 
-		  	if (CollectionUtils.isNotEmpty(funcTestFrameworks)) {
+		  if (optionIds != null && optionIds.contains(FrameworkConstants.FUNCTIONAL_TEST_KEY) 
+		  		&& CollectionUtils.isNotEmpty(funcTestFrameworks)) {
 		%>
 			<div class="control-group <%= uiTypeClass %>" id="funcFrameworkControl">
-				<label class="accordion-control-label labelbold"><s:text name='lbl.functional.test.framework'/></label>
+				<label class="accordion-control-label labelbold"><span class="red">*</span>&nbsp;<s:text name='lbl.functional.test.framework'/></label>
 				<div class="controls">
 					<select class="input-xlarge" name="functionalFramework" id="functionalFramework">
 						<option value="" selected disabled><s:text name='lbl.default.opt.select.func.framework'/></option>
@@ -239,15 +240,16 @@
 									selectedStr = "selected";
 								}
 	                    %>
-                  					<option value = "<%= funcTestFramework.getName() %>" <%= selectedStr %>><%= funcTestFramework.getDisplayName() %></option>
+                  				<option value = "<%= funcTestFramework.getName() %>" <%= selectedStr %>><%= funcTestFramework.getDisplayName() %></option>
 						<% 	 
 							}
 						%> 
 					</select>
+					<span class="help-inline" id="functionFrameworkError"></span>
 				</div>
 			</div>
 		<% 
-			}
+		  }
 		%>
 		<!-- Functional test framework end -->
 		
@@ -576,6 +578,12 @@
 			isError = true;
 		} else {
 			hideError($("#webserviceLayerControl") , $("#webserviceError"));
+		}
+		
+		if (!isBlank(data.functionFrameworkError)) {
+			showError($("#funcFrameworkControl"), $("#functionFrameworkError"), data.functionFrameworkError);
+		} else {
+			hideError($("#funcFrameworkControl"), $("#functionFrameworkError"));
 		}
 		
 		if (isError) {
