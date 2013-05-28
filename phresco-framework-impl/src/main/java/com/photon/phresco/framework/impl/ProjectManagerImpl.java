@@ -56,6 +56,8 @@ import com.photon.phresco.commons.model.RepoInfo;
 import com.photon.phresco.configuration.Environment;
 import com.photon.phresco.exception.PhrescoException;
 import com.photon.phresco.framework.PhrescoFrameworkFactory;
+import com.photon.phresco.framework.api.ActionType;
+import com.photon.phresco.framework.api.ApplicationManager;
 import com.photon.phresco.framework.api.DocumentGenerator;
 import com.photon.phresco.framework.api.ProjectManager;
 import com.photon.phresco.plugins.model.Mojos.ApplicationHandler;
@@ -78,13 +80,11 @@ public class ProjectManagerImpl implements ProjectManager, FrameworkConstants, C
 	
 	private static final Logger S_LOGGER= Logger.getLogger(ProjectManagerImpl.class);
 	private static boolean isDebugEnabled = S_LOGGER.isDebugEnabled();
-	private Map<String, ProjectInfo> projectInfosMap = null;
 	
 	public List<ProjectInfo> discover(String customerId) throws PhrescoException {
 		if (isDebugEnabled) {
 			S_LOGGER.debug("Entering Method ProjectManagerImpl.discover(String CustomerId)");
 		}
-
 		File projectsHome = new File(Utility.getProjectHome());
 		if (isDebugEnabled) {
 			S_LOGGER.debug("discover( )  projectHome = "+projectsHome);
@@ -92,28 +92,28 @@ public class ProjectManagerImpl implements ProjectManager, FrameworkConstants, C
 		if (!projectsHome.exists()) {
 			return null;
 		}
-		projectInfosMap = new HashMap<String, ProjectInfo>();
+		Map<String, ProjectInfo> projectInfosMap = new HashMap<String, ProjectInfo>();
 		List<ProjectInfo> projectInfos = new ArrayList<ProjectInfo>();
 	    File[] appDirs = projectsHome.listFiles();
 	    for (File appDir : appDirs) {
-	        if (appDir.isDirectory()) { 
+	        if (appDir.isDirectory()) { // Only check the folders not files
 	            File[] dotPhrescoFolders = appDir.listFiles(new PhrescoFileNameFilter(FOLDER_DOT_PHRESCO));
 	            if (ArrayUtils.isEmpty(dotPhrescoFolders)) {
 	            	continue;
+//	                throw new PhrescoException(".phresco folder not found in project " + appDir.getName());
 	            }
 	            File[] dotProjectFiles = dotPhrescoFolders[0].listFiles(new PhrescoFileNameFilter(PROJECT_INFO_FILE));
 	            if (ArrayUtils.isEmpty(dotProjectFiles)) {
 	                throw new PhrescoException("project.info file not found in .phresco of project " + dotPhrescoFolders[0].getParent());
 	            }
-	            fillProjects(dotProjectFiles[0], projectInfos, customerId);
+	            projectInfosMap = fillProjects(dotProjectFiles[0], projectInfos, customerId, projectInfosMap);
 	        }
 	    }
-	    
+
 	    Iterator<Entry<String, ProjectInfo>> iterator = projectInfosMap.entrySet().iterator();
         while (iterator.hasNext()) {
             projectInfos.add(iterator.next().getValue());
         }
-
         return projectInfos;
 	}
 	
@@ -132,10 +132,11 @@ public class ProjectManagerImpl implements ProjectManager, FrameworkConstants, C
 		List<ProjectInfo> projectInfos = new ArrayList<ProjectInfo>();
 	    File[] appDirs = projectsHome.listFiles();
 	    for (File appDir : appDirs) {
-	        if (appDir.isDirectory()) { 
+	        if (appDir.isDirectory()) { // Only check the folders not files
 	            File[] dotPhrescoFolders = appDir.listFiles(new PhrescoFileNameFilter(FOLDER_DOT_PHRESCO));
 	            if (ArrayUtils.isEmpty(dotPhrescoFolders)) {
 	            	continue;
+//	                throw new PhrescoException(".phresco folder not found in project " + appDir.getName());
 	            }
 	            File[] dotProjectFiles = dotPhrescoFolders[0].listFiles(new PhrescoFileNameFilter(PROJECT_INFO_FILE));
 	            if (ArrayUtils.isEmpty(dotProjectFiles)) {
@@ -178,9 +179,10 @@ public class ProjectManagerImpl implements ProjectManager, FrameworkConstants, C
 	public ProjectInfo getProject(String projectId, String customerId, String appId) throws PhrescoException {
 		File[] appDirs = new File(Utility.getProjectHome()).listFiles();
 	    for (File appDir : appDirs) {
-	        if (appDir.isDirectory()) { 
+	        if (appDir.isDirectory()) { // Only check the folders not files
 	            File[] dotPhrescoFolders = appDir.listFiles(new PhrescoFileNameFilter(FOLDER_DOT_PHRESCO));
 	            if (ArrayUtils.isEmpty(dotPhrescoFolders)) {
+//	                throw new PhrescoException(".phresco folder not found in project " + appDir.getName());
 	            	continue;
 	            }
 	            File[] dotProjectFiles = dotPhrescoFolders[0].listFiles(new PhrescoFileNameFilter(PROJECT_INFO_FILE));
@@ -229,7 +231,15 @@ public class ProjectManagerImpl implements ProjectManager, FrameworkConstants, C
 						applicationProcessor.postCreate(appInfo);
 					}
 					if (isCallEclipsePlugin(appInfo)) {
-					    Utility.executeCommand(MVN_COMMAND + STR_BLANK_SPACE + MVN_GOAL_ECLIPSE, Utility.getProjectHome() + File.separator + appInfo.getAppDirName());
+						ApplicationManager applicationManager = PhrescoFrameworkFactory.getApplicationManager();
+						String baseDir = Utility.getProjectHome() + File.separator + appInfo.getAppDirName();
+						List<String> buildArgCmds = new ArrayList<String>();
+			            String pomFileName = Utility.getPomFileName(appInfo);
+						if(!POM_NAME.equals(pomFileName)) {
+							buildArgCmds.add(HYPHEN_F);
+							buildArgCmds.add(pomFileName);
+						}
+						applicationManager.performAction(projectInfo, ActionType.ECLIPSE, buildArgCmds, baseDir);
 					}
 
 				}
@@ -249,7 +259,7 @@ public class ProjectManagerImpl implements ProjectManager, FrameworkConstants, C
 	}
 	
 	private boolean isCallEclipsePlugin(ApplicationInfo appInfo) throws PhrescoException {
-		String pomFile = Utility.getProjectHome() + File.separator + appInfo.getAppDirName() + File.separator + POM_NAME;
+		String pomFile = Utility.getProjectHome() + File.separator + appInfo.getAppDirName() + File.separator + Utility.getPomFileName(appInfo);
 		try {
 			PomProcessor processor = new PomProcessor(new File(pomFile));
 			String eclipsePlugin = processor.getProperty(POM_PROP_KEY_PHRESCO_ECLIPSE);
@@ -274,7 +284,7 @@ public class ProjectManagerImpl implements ProjectManager, FrameworkConstants, C
 				.append(DOT_PHRESCO_FOLDER)
 				.append(File.separator)
 				.append(PROJECT_INFO_FILE);
-				ProjectUtils.updateProjectInfo(projectInfo, new File(sb.toString()));
+				ProjectUtils.updateProjectInfo(projectInfo, new File(sb.toString()));// To update the project.info file
 			}
 		} else {
 			ClientResponse response = serviceManager.updateProject(projectInfo);
@@ -296,7 +306,7 @@ public class ProjectManagerImpl implements ProjectManager, FrameworkConstants, C
 					oldDir.renameTo(projectInfoFile);
 					
 					extractArchive(response, projectInfo);
-					updateProjectPom(projectInfo, newAppDirSb.toString());// To update project pom.xml
+					updateProjectPom(projectInfo);// To update project pom.xml
 					StringBuilder dotPhrescoPathSb = new StringBuilder(projectInfoFile.getPath());
 					dotPhrescoPathSb.append(File.separator);
 					dotPhrescoPathSb.append(DOT_PHRESCO_FOLDER);
@@ -325,6 +335,9 @@ public class ProjectManagerImpl implements ProjectManager, FrameworkConstants, C
 						//For Pdf Document Creation In Docs Folder
 						DocumentGenerator documentGenerator = PhrescoFrameworkFactory.getDocumentGenerator();
 						documentGenerator.generate(appInfo, projectInfoFile, artifactGroups, serviceManager);
+						if(! appInfo.getAppDirName().equals(oldAppDirName)) {
+							documentGenerator.deleteOldDocument(projectInfoFile, oldAppDirName);
+						}
 						// Dynamic Class Loading
 						PhrescoDynamicLoader dynamicLoader = new PhrescoDynamicLoader(repoInfo, plugins);
 						ApplicationProcessor applicationProcessor = dynamicLoader
@@ -335,7 +348,15 @@ public class ProjectManagerImpl implements ProjectManager, FrameworkConstants, C
 						ProjectUtils.updateProjectInfo(projectInfo, projectInfoPath);// To update the project.info file
 					}
 					if (isCallEclipsePlugin(appInfo)) {
-                        Utility.executeCommand(MVN_COMMAND + STR_BLANK_SPACE + MVN_GOAL_ECLIPSE, Utility.getProjectHome() + File.separator + appInfo.getAppDirName());
+						ApplicationManager applicationManager = PhrescoFrameworkFactory.getApplicationManager();
+						String baseDir = Utility.getProjectHome() + File.separator + appInfo.getAppDirName();
+						List<String> buildArgCmds = new ArrayList<String>();
+			            String pomFileName = Utility.getPomFileName(appInfo);
+						if(!POM_NAME.equals(pomFileName)) {
+							buildArgCmds.add(HYPHEN_F);
+							buildArgCmds.add(pomFileName);
+						}
+						applicationManager.performAction(projectInfo, ActionType.ECLIPSE, buildArgCmds, baseDir);
                     }
 				} catch (FileNotFoundException e) {
 					throw new PhrescoException(e);
@@ -353,7 +374,7 @@ public class ProjectManagerImpl implements ProjectManager, FrameworkConstants, C
 			}
 			createEnvConfigXml(projectInfo, serviceManager);
 		}
-		return projectInfo;
+		return null;
 	}
 
 	private void createEnvConfigXml(ProjectInfo projectInfo, ServiceManager serviceManager) throws PhrescoException {
@@ -393,15 +414,15 @@ public class ProjectManagerImpl implements ProjectManager, FrameworkConstants, C
 		}
 	}
 	
-	private void updateProjectPom(ProjectInfo projectInfo, String newAppDirSb) throws PhrescoException {
-		File pomFile = new File(newAppDirSb, "pom.xml");
+	private void updateProjectPom(ProjectInfo projectInfo) throws PhrescoException {
+		ApplicationInfo applicationInfo = projectInfo.getAppInfos().get(0);
+		File pomFile = new File(Utility.getProjectHome() + applicationInfo.getAppDirName() + File.separatorChar + Utility.getPomFileName(applicationInfo));
 		if(!pomFile.exists()) {
 			return;
 		}
 		PomProcessor pomProcessor;
 		try {
 			pomProcessor = new PomProcessor(pomFile);
-			ApplicationInfo applicationInfo = projectInfo.getAppInfos().get(0);
 			pomProcessor.setArtifactId(applicationInfo.getCode());
 			pomProcessor.setName(applicationInfo.getName());
 			pomProcessor.setVersion(applicationInfo.getVersion());
@@ -435,8 +456,9 @@ public class ProjectManagerImpl implements ProjectManager, FrameworkConstants, C
 		}
 		return deletionSuccess;
 	}
+
 	
-    private void fillProjects(File dotProjectFile, List<ProjectInfo> projectInfos, String customerId) throws PhrescoException {
+    private Map<String, ProjectInfo> fillProjects(File dotProjectFile, List<ProjectInfo> projectInfos, String customerId, Map<String, ProjectInfo> projectInfosMap) throws PhrescoException {
         S_LOGGER.debug("Entering Method ProjectManagerImpl.fillProjects(File[] dotProjectFiles, List<Project> projects)");
 
         Gson gson = new Gson();
@@ -458,6 +480,7 @@ public class ProjectManagerImpl implements ProjectManager, FrameworkConstants, C
         } finally {
             Utility.closeStream(reader);
         }
+        return projectInfosMap;
     }
     
     private ProjectInfo getProjectInfo(File dotProjectFile, String projectId, String customerId, String appId) throws PhrescoException {
@@ -509,7 +532,7 @@ public class ProjectManagerImpl implements ProjectManager, FrameworkConstants, C
 	throws PhrescoException {
 		String dbName = "";
 		try {
-			File pomPath = new File(Utility.getProjectHome() + appInfo.getAppDirName() + File.separator + POM_FILE);
+			File pomPath = new File(Utility.getProjectHome() + appInfo.getAppDirName() + File.separator + Utility.getPomFileName(appInfo));
 			PomProcessor pompro = new PomProcessor(pomPath);
 			String sqlFolderPath = pompro.getProperty(POM_PROP_KEY_SQL_FILE_DIR);
 			File mysqlFolder = new File(path, sqlFolderPath + Constants.DB_MYSQL);
@@ -596,7 +619,7 @@ public class ProjectManagerImpl implements ProjectManager, FrameworkConstants, C
 		 builder.append(File.separator);
 		 builder.append(FOLDER_DOT_PHRESCO);
 		 builder.append(File.separator);
-		 builder.append(CONFIGURATION_INFO_FILE_NAME);
+		 builder.append(PHRESCO_ENV_CONFIG_FILE_NAME);
 
 		 return builder;
 	 }

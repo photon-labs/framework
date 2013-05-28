@@ -31,7 +31,7 @@
 					<printWhenExpression><![CDATA[$P{testType}.contains("functional") && !$F{testSuites}.isEmpty() || $P{testType}.contains("functional") && !$F{allTestSuites}.isEmpty()]]></printWhenExpression>
 				</reportElement>
 				<staticText>
-					<reportElement x="5" y="4" width="158" height="20" forecolor="#FFFFFF" backcolor="#FFFFFF"/>
+					<reportElement x="5" y="4" width="286" height="20" forecolor="#FFFFFF" backcolor="#FFFFFF"/>
 					<textElement>
 						<font fontName="Times New Roman" size="14" isBold="true"/>
 					</textElement>
@@ -45,7 +45,7 @@
 			<printWhenExpression><![CDATA[$P{testType}.equals( "functional" )]]></printWhenExpression>
 			<frame>
 				<reportElement x="0" y="0" width="555" height="211" isRemoveLineWhenBlank="true">
-					<printWhenExpression><![CDATA[$P{testType}.contains("functional") && !$F{allTestSuites}.isEmpty()]]></printWhenExpression>
+					<printWhenExpression><![CDATA[$P{testType}.contains("functional") && !$F{allTestSuites}.isEmpty() || $P{testType}.contains("functional") && !$F{testSuites}.isEmpty()]]></printWhenExpression>
 				</reportElement>
 				<subreport>
 					<reportElement x="0" y="0" width="555" height="211" isRemoveLineWhenBlank="true"/>
@@ -69,6 +69,9 @@
 					<reportElement x="0" y="0" width="555" height="211" isRemoveLineWhenBlank="true">
 						<printWhenExpression><![CDATA[$P{reportsDataType}.equals("detail")]]></printWhenExpression>
 					</reportElement>
+					<subreportParameter name="testType">
+						<subreportParameterExpression><![CDATA[$P{testType}]]></subreportParameterExpression>
+					</subreportParameter>
 					<subreportParameter name="reportsDataType">
 						<subreportParameterExpression><![CDATA[$P{reportsDataType}]]></subreportParameterExpression>
 					</subreportParameter>

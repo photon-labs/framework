@@ -20,6 +20,8 @@ package com.photon.phresco.framework.api;
 import java.io.*;
 import java.util.*;
 
+import org.codehaus.jettison.json.JSONArray;
+
 import com.photon.phresco.commons.model.*;
 import com.photon.phresco.exception.*;
 import com.photon.phresco.framework.model.*;
@@ -83,7 +85,7 @@ public interface CIManager {
 	 * @param job
 	 * @throws PhrescoException
 	 */
-	void createJob(ApplicationInfo appInfo, CIJob job) throws PhrescoException;
+	boolean createJob(ApplicationInfo appInfo, CIJob job) throws PhrescoException;
 
 	/**
 	 * Updates jobs in Jenkins.
@@ -91,7 +93,7 @@ public interface CIManager {
 	 * @param job
 	 * @throws PhrescoException
 	 */
-	void updateJob(ApplicationInfo appInfo, CIJob job) throws PhrescoException;
+	boolean updateJob(ApplicationInfo appInfo, CIJob job) throws PhrescoException;
 
 	/**
 	 * triggers build on jobs
@@ -155,6 +157,16 @@ public interface CIManager {
 	void saveMailConfiguration(String jenkinsPort, String senderEmailId, String senderEmailPassword) throws PhrescoException;
 	
 	/**
+	 * Configure confluence configuration on jenkins
+	 * @param confluenceUrl
+	 * @param confluenceUserName
+	 * @param confluencePassword
+	 * @return
+	 * @throws PhrescoException
+	 */
+	void saveConfluenceConfiguration(String confluenceUrl, String confluenceUserName, String confluencePassword) throws PhrescoException;
+	
+	/**
 	 * Get Configured email configuration
 	 * @param jenkinsPort
 	 * @param senderEmailId
@@ -163,4 +175,39 @@ public interface CIManager {
 	 * @throws PhrescoException
 	 */
 	String getMailConfiguration(String tag) throws PhrescoException;
+	
+	/**
+	 * Get Configured confluence configuration
+	 * @return JSONArray
+	 * @throws PhrescoException
+	 */
+	JSONArray getConfluenceConfiguration() throws PhrescoException;
+	
+	/**
+	 * clear confluence configuration nodes
+	 * @return 
+	 * @throws PhrescoException
+	 */
+	public void clearConfluenceSitesNodes() throws PhrescoException;
+	
+	/**
+	 * get confluence sites 
+	 * @return List<String>
+	 * @throws PhrescoException
+	 */
+	public List<String> getConfluenceSites() throws PhrescoException;
+	
+	/**
+	 * encrypt String 
+	 * @return encrypted String
+	 * @throws PhrescoException
+	 */
+	public String encyPassword(String password) throws PhrescoException;
+	
+	/**
+	 * decrypt String 
+	 * @return decrypted String
+	 * @throws PhrescoException
+	 */
+	public String decyPassword(String encryptedText) throws PhrescoException;
 }

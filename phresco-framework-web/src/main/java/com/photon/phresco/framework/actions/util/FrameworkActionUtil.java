@@ -22,7 +22,7 @@ import com.photon.phresco.commons.FrameworkConstants;
 
 public class FrameworkActionUtil implements FrameworkConstants {
 	
-	private static ActionSupport actionSupport = new ActionSupport();
+	static ActionSupport actionSupport = new ActionSupport();
 	
 	public static String getTitle(String page, String from) {
 		String propKey = getPropKey(LBL, page, from);

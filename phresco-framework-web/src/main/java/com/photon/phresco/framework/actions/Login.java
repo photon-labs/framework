@@ -26,11 +26,13 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections.MapUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -44,6 +46,8 @@ import com.photon.phresco.commons.model.User;
 import com.photon.phresco.exception.PhrescoException;
 import com.photon.phresco.exception.PhrescoWebServiceException;
 import com.photon.phresco.framework.actions.applications.Projects;
+import com.photon.phresco.framework.commons.FrameworkUtil;
+import com.photon.phresco.framework.model.Permissions;
 import com.photon.phresco.util.Credentials;
 import com.photon.phresco.util.Utility;
 
@@ -64,6 +68,7 @@ public class Login extends FrameworkBaseAction {
     private String bodyBackGroundColor = "";
 	private String accordionBackGroundColor = "";
 	private String menuBackGround = "";
+	private String subMenuBackGround = "";
 	private String menufontColor = "";
 	private String buttonColor = "";
 	private String pageHeaderColor = "";
@@ -75,7 +80,11 @@ public class Login extends FrameworkBaseAction {
 	
 	private List<String> customerOptions = null;
 	private List<String> customerAllOptions = null;
-    
+	
+	private static Map<String, List<String>> s_optionsMap = new HashMap<String, List<String>>();
+	private static Map<String, Map<String, String>> s_themeMap = new HashMap<String, Map<String, String>>();
+	private static Map<String, String> s_encodeImgMap = new HashMap<String, String>();
+	
     public String login() throws IOException {
         if (isDebugEnabled) {
             S_LOGGER.debug("Entering Method  Login.login()");
@@ -102,11 +111,16 @@ public class Login extends FrameworkBaseAction {
         }
         User user = (User) getSessionAttribute(SESSION_USER_INFO);
         if (user != null) {
-            removeSessionAttribute(user.getId());
-            removeSessionAttribute(SESSION_USER_INFO);
-            removeSessionAttribute(SESSION_CUSTOMERS);
+        	removeSessionAttribute(user.getId());
+        	removeSessionAttribute(SESSION_USER_INFO);
+        	removeSessionAttribute(SESSION_CUSTOMERS);
+        	removeSessionAttribute(SESSION_PERMISSION_IDS);
+        	s_optionsMap.clear();
+        	s_encodeImgMap.clear();
+        	s_themeMap.clear();
+        	String requestIp = getHttpRequest().getRemoteAddr();
+        	removeSessionAttribute(requestIp);
         }
-
         String errorTxt = (String) getSessionAttribute(REQ_LOGIN_ERROR);
         if (StringUtils.isNotEmpty(errorTxt)) {
             setReqAttribute(REQ_LOGIN_ERROR, getText(errorTxt));
@@ -144,7 +158,11 @@ public class Login extends FrameworkBaseAction {
     		Collections.sort(customers, sortCusNameInAlphaOrder());
         	setSessionAttribute(SESSION_CUSTOMERS, customers);
         	setSessionAttribute(SESSION_USER_INFO, user);
-
+        	
+        	FrameworkUtil frameworkUtil = FrameworkUtil.getInstance();
+//        	Permissions permissions = frameworkUtil.getUserPermissions(user);
+//        	setSessionAttribute(SESSION_PERMISSIONS, permissions);
+        	
         	//encode the password
         	byte[] encodedPwd = Base64.encodeBase64(getPassword().getBytes());
         	String encodedString = new String(encodedPwd);
@@ -159,7 +177,9 @@ public class Login extends FrameworkBaseAction {
         	if (tempPath.exists()) {
         		FileReader reader = new FileReader(tempPath);
         		userjson = (JSONObject)parser.parse(reader);
-        		customerId = (String) userjson.get(userId);
+        		if (userjson.get(userId) != null) {
+        			customerId = (String) userjson.get(userId);
+        		}
         		reader.close();
         	} 
         	userjson.put(userId, customerId);
@@ -168,7 +188,7 @@ public class Login extends FrameworkBaseAction {
         	for (Customer c : customers) {
 				customerList.add(c.getId());
 			}
-        	
+        	//If photon is present in customer list , then ui should load with photon customer
         	if ((StringUtils.isEmpty(customerId) || PHOTON.equals(customerId)) && customerList.contains(PHOTON)) {
         		customerId = PHOTON;
         	}
@@ -189,7 +209,10 @@ public class Login extends FrameworkBaseAction {
         	return showErrorPopup(new PhrescoException(e), getText(EXCEPTION_FRAMEWORKSTREAM));
 		} catch (ParseException e) {
 			return showErrorPopup(new PhrescoException(e), getText(EXCEPTION_FRAMEWORKSTREAM));
+		} catch (PhrescoException e) {
+			return showErrorPopup(new PhrescoException(e), getText(EXCEPTION_FRAMEWORKSTREAM));
 		}
+		
         return SUCCESS;
     }
     
@@ -224,32 +247,41 @@ public class Login extends FrameworkBaseAction {
     public String fetchLogoImgUrl() {
     	InputStream fileInputStream = null;
     	try {
-    		fileInputStream = getServiceManager().getIcon(getCustomerId());
-    		byte[] imgByte = null;
-    		imgByte = IOUtils.toByteArray(fileInputStream);
-    	    byte[] encodedImage = Base64.encodeBase64(imgByte);
-            String encodeImg = new String(encodedImage);
+    		String encodeImg = s_encodeImgMap.get(getCustomerId());
+    		if (StringUtils.isEmpty(encodeImg)) {
+    			fileInputStream = getServiceManager().getIcon(getCustomerId());
+    			byte[] imgByte = null;
+    			imgByte = IOUtils.toByteArray(fileInputStream);
+    			byte[] encodedImage = Base64.encodeBase64(imgByte);
+    			encodeImg = new String(encodedImage);
+    			s_encodeImgMap.put(getCustomerId(), encodeImg);
+    		}
             setLogoImgUrl(encodeImg);
-    		
-    		User user = (User) getSessionAttribute(SESSION_USER_INFO);
-    		List<Customer> customers = user.getCustomers();
-    		for (Customer customer : customers) {
-				if (customer.getId().equals(getCustomerId())) {
-					Map<String, String> theme = customer.getFrameworkTheme();
-					setBrandingColor(theme.get(BRANDING_COLOR));
-					setAccordionBackGroundColor(theme.get(ACCORDION_BACKGROUND_COLOR));
-					setBodyBackGroundColor(theme.get(BODYBACKGROUND_COLOR));
-					setButtonColor(theme.get(BUTTON_COLOR));
-					setPageHeaderColor(theme.get(PAGEHEADER_COLOR));
-					setCopyRightColor(theme.get(COPYRIGHT_COLOR));
-					setLabelColor(theme.get(LABEL_COLOR));
-					setMenuBackGround(theme.get(MENU_BACKGROUND_COLOR));
-					setMenufontColor(theme.get(MENU_FONT_COLOR));
-					setDisabledLabelColor(theme.get(DISABLED_LABEL_COLOR));
-					setCopyRight(theme.get(COPYRIGHT));
-					break;
-				}
-			}
+            
+            Map<String, String> themeMap = s_themeMap.get(getCustomerId());
+            if (MapUtils.isEmpty(s_themeMap.get(getCustomerId()))) {
+            	User user = (User) getSessionAttribute(SESSION_USER_INFO);
+            	List<Customer> customers = user.getCustomers();
+            	for (Customer customer : customers) {
+            		if (customer.getId().equals(getCustomerId())) {
+            			themeMap = customer.getFrameworkTheme();
+            			s_themeMap.put(getCustomerId(), themeMap);
+            			break;
+            		}
+            	}
+            }
+            setBrandingColor(themeMap.get(BRANDING_COLOR));
+			setAccordionBackGroundColor(themeMap.get(ACCORDION_BACKGROUND_COLOR));
+			setBodyBackGroundColor(themeMap.get(BODYBACKGROUND_COLOR));
+			setButtonColor(themeMap.get(BUTTON_COLOR));
+			setPageHeaderColor(themeMap.get(PAGEHEADER_COLOR));
+			setCopyRightColor(themeMap.get(COPYRIGHT_COLOR));
+			setLabelColor(themeMap.get(LABEL_COLOR));
+			setMenuBackGround(themeMap.get(MENU_BACKGROUND_COLOR));
+			setSubMenuBackGround(themeMap.get(SUB_MENU_BACKGROUND_COLOR));
+			setMenufontColor(themeMap.get(MENU_FONT_COLOR));
+			setDisabledLabelColor(themeMap.get(DISABLED_LABEL_COLOR));
+			setCopyRight(themeMap.get(COPYRIGHT));
     	} catch (PhrescoException e) {
     		return showErrorPopup(e, getText(EXCEPTION_FETCHLOGO_IMAGE));
     	} catch (IOException e) {
@@ -270,24 +302,27 @@ public class Login extends FrameworkBaseAction {
     @SuppressWarnings("unchecked")
 	public String fetchCustomerId() {
     	try {
-			File tempPath = new File(Utility.getPhrescoTemp() + File.separator + USER_JSON);
-			User user = (User) getSessionAttribute(SESSION_USER_INFO);
-			JSONObject userjson = null;
-			JSONParser parser = new JSONParser();
-			String userId = user.getId();
-			String customerId = getCustomerId();
-			if (tempPath.exists()) {
-				FileReader reader = new FileReader(tempPath);
-				userjson = (JSONObject)parser.parse(reader);
-				reader.close();
-			} else {
-				userjson = new JSONObject();
-			}
-			
-			userjson.put(userId, customerId);
-			FileWriter  writer = new FileWriter(tempPath);
-			writer.write(userjson.toString());
-			writer.close();
+    		User user = (User) getSessionAttribute(SESSION_USER_INFO);
+    		String userId = user.getId();
+    		String customerId = (String) getSessionAttribute(userId);
+    		if (!customerId.equals(getCustomerId())) {
+    			File tempPath = new File(Utility.getPhrescoTemp() + File.separator + USER_JSON);
+    			JSONObject userjson = null;
+    			JSONParser parser = new JSONParser();
+    			customerId = getCustomerId();
+    			if (tempPath.exists()) {
+    				FileReader reader = new FileReader(tempPath);
+    				userjson = (JSONObject)parser.parse(reader);
+    				reader.close();
+    			} else {
+    				userjson = new JSONObject();
+    			}
+
+    			userjson.put(userId, customerId);
+    			FileWriter  writer = new FileWriter(tempPath);
+    			writer.write(userjson.toString());
+    			writer.close();
+    		}
 			setSessionAttribute(userId, customerId);
 		} catch (IOException e) {
 			return showErrorPopup(new PhrescoException(e), getText(EXCEPTION_FRAMEWORKSTREAM));
@@ -300,21 +335,30 @@ public class Login extends FrameworkBaseAction {
     public String fetchCustomerOptions() {
         try {
             User user = (User) getSessionAttribute(SESSION_USER_INFO);
-            List<String> customerOptions = new ArrayList<String>();
-            for (Customer customer : user.getCustomers()) {
-                if (customer.getId().equals(getCustomerId())) {
-                    customerOptions = customer.getOptions();
-                    break;
-                }
+            
+            List<String> customerOptions = s_optionsMap.get(getCustomerId());
+            if (CollectionUtils.isEmpty(customerOptions)) {
+            	customerOptions = new ArrayList<String>();
+	            for (Customer customer : user.getCustomers()) {
+	                if (customer.getId().equals(getCustomerId())) {
+	                    customerOptions = customer.getOptions();
+	                    break;
+	                }
+	            }
             }
+            s_optionsMap.put(getCustomerId(), customerOptions);
             setCustomerOptions(customerOptions);
-            List<TechnologyOptions> technologyOptions = getServiceManager().getCustomerOptions();
-            List<String> customerAllOptions = new ArrayList<String>();
-            if (CollectionUtils.isNotEmpty(technologyOptions)) {
-                for (TechnologyOptions technologyOption : technologyOptions) {
-                    customerAllOptions.add(technologyOption.getId());
-                }
+            List<String> customerAllOptions = s_optionsMap.get("customerAllOptions");
+            if (CollectionUtils.isEmpty(customerAllOptions)) {
+            	List<TechnologyOptions> technologyOptions = getServiceManager().getCustomerOptions();
+            	if (CollectionUtils.isNotEmpty(technologyOptions)) {
+            		customerAllOptions = new ArrayList<String>();
+            		for (TechnologyOptions technologyOption : technologyOptions) {
+            			customerAllOptions.add(technologyOption.getId());
+            		}
+            	}
             }
+            s_optionsMap.put("customerAllOptions", customerAllOptions);
             setCustomerAllOptions(customerAllOptions);
         } catch (Exception e) {
             // TODO: handle exception
@@ -474,5 +518,13 @@ public class Login extends FrameworkBaseAction {
     public List<String> getCustomerAllOptions() {
         return customerAllOptions;
     }
+
+	public void setSubMenuBackGround(String subMenuBackGround) {
+		this.subMenuBackGround = subMenuBackGround;
+	}
+
+	public String getSubMenuBackGround() {
+		return subMenuBackGround;
+	}
 
 }

@@ -76,8 +76,8 @@ public class Win8MetroCofigFileParser implements FrameworkConstants {
 			Element project = (Element) object;
 			List children = project.getChildren();
 			for (Object object2 : children) {
-				Element propertyGroup = (Element) object2;
-				findChild(propertyGroup,info, ns);
+				Element PropertyGroup = (Element) object2;
+				findChild(PropertyGroup,info, ns);
 			}
 		}
 	}

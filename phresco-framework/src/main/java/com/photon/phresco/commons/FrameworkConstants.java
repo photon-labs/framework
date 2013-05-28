@@ -74,6 +74,7 @@ public interface FrameworkConstants {
     int JOB_STATUS_NOTOK = -1;
     String FOLDER_DOT_PHRESCO = ".phresco";
     String RUNAGNSRC_INFO_FILE = "runagainstsource.info";
+    String CONFIGURATION_INFO_FILE_NAME = "phresco-env-config.xml";
     String PHRESCO_HOME = "PHRESCO_HOME";
     String USER_HOME = "user.home";
     String PROJECTS_HOME = "projects";
@@ -82,7 +83,8 @@ public interface FrameworkConstants {
     String ANDROID_FORMAT = ".apk";
     String IPA_FORMAT = ".ipa";
     String SETTINGS_INFO_FILE_NAME = "settings.xml";
-    String CONFIGURATION_INFO_FILE_NAME = "phresco-env-config.xml";
+    String PHRESCO_ENV_CONFIG_FILE_NAME = "phresco-env-config.xml";
+    String PHRESCO_CONFIG_FILE_NAME = "phresco-fav-config.xml";
     String BUILD_INFO_FILE_NAME = "build.info";
     String PROJECT_INFO = "project.info";
     String GIT_IMPORT_TEMP_DIR = "gitImportTemp";
@@ -101,10 +103,12 @@ public interface FrameworkConstants {
     String REQ_RECENT_PROJECT_ID = "recentProjectId";
     String REQ_RECENT_APP_ID = "recentAppId";
     String REQ_APP_ID = "appId";
+    String REQ_POM_VERSION = "pomVersion";
     String REQ_PILOT_PROJECTS = "pilotProjects";
     String REQ_CURRENT_APP_NAME = "currentAppName";
     String REQ_DEFAULT_SCOPE = "compile";
     String REQ_SELECTED_FEATURES = "selectedFeatures";
+    String REQ_LOG_MESSAGES = "logMessages";
     String REQ_SELECTED_DOWNLOADINFO = "selectedDownloadInfo";
     String REQ_DEFAULT_FEATURES = "defaultFeatures";
     String REQ_HAS_MODULES = "hasModules";
@@ -119,6 +123,7 @@ public interface FrameworkConstants {
     String REQ_PARAM_NAME_TECH_GROUP = "TechGroup";
     String REQ_PARAM_NAME_TECHNOLOGY = "Technology";
     String REQ_APP_LAYER_INFOS = "appLayerInfos";
+    String REQ_APP_CODE_ID = "hasAppCodeId";
     String REQ_PARAM_NAME_TECH__ID = "techId";
     String REQ_PARAM_NAME_VERSION = "Version";
     String REQ_PARAM_NAME_PHONE = "Phone";
@@ -142,6 +147,7 @@ public interface FrameworkConstants {
     String REQ_VALUE = "value";
     
     String DO_NOT_CHECKIN_DIR = "do_not_checkin";
+    String FETCH_LOG_MESSAGES = "fetchLogMessages";
     String SETTINGS_XML = "-settings.xml";
     String ARCHIVES = "archives";
     String CUMULATIVE = "cumulativeReports";
@@ -153,6 +159,7 @@ public interface FrameworkConstants {
     String UNDERSCORE = "_";
     String PDF = "pdf";
     String XML = "xml";
+    String JSON = "json";
     String POM_XML = "pom.xml";
     String STATIC_ANALYSIS_REPORT = "static-analysis-report";
     String INDEX_HTML = "index.html";
@@ -161,6 +168,9 @@ public interface FrameworkConstants {
 	String APKLIB  = "apklib";
 	String APK  = "apk";
     
+	 /*
+     * CI constants
+     */
     String JENKINS_HOME = "JENKINS_HOME";
     String CI_BUILD_NAME = "PHR_ci_build";
     String CI_JOB_INFO_NAME = "cijob.info";
@@ -191,12 +201,21 @@ public interface FrameworkConstants {
     String TIMER_TRIGGER = "TimerTrigger";
     String CLASS = "class";
     String SCM = "scm";
+	String ZIP_FILE = "zip";
     String SVN = "svn";
-    String ZIP_FILE = "zip";
     String MASTER = "master";
     String UPDATE = "update";
+    String REMOTE = "remote";
+    String ORIGIN = "origin";
+    String FETCH = "fetch";
+    String BRANCH = "branch";
+    String MERGE = "merge";
+    String REF_HEAD_MASTER = "refs/heads/master";
+    String REFS_HEADS_REMOTE_ORIGIN = "+refs/heads/*:refs/remotes/origin/*";
+    String URL = "url";
     String ADD = "add";
     String REPO_URL = "repoUrl";
+    String TEST_REPO_URL = "testRepoUrl";
     String PROJECT_UPDATE_POPUP = "projectUpdatePopup";
     String CLONED_WORKSPACE = "clonedWorkspace";
 	String CI_SCM = "scm";
@@ -237,6 +256,7 @@ public interface FrameworkConstants {
     String GIT = "git";
     String BITKEEPER = "bitkeeper";
     String REPO_TYPE = "repoType";
+    String REPO = "repo";
     String IS_NOT_WORKING_COPY = "is not a working copy";
     String UPDATE_SVN_PROJECT = "updateProject";
     String SVN_TYPE = "svnType";
@@ -290,6 +310,7 @@ public interface FrameworkConstants {
 	String MAVEN_NAME_NODE = "mavenName";
 	String TARGETS_NODE = "targets";
 	String HUDSON_TASKS_MAVEN_NODE = "hudson.tasks.Maven";
+	String HUDSON_TASKS_SHELL = "hudson.tasks.Shell";
 	String POST_BUILDERS_NODE = "postbuilders";
 	String PRE_BUILDERS_NODE = "prebuilders";
     String CI_FILE_RELEASE_PUBLISHER_NODE="publishers";
@@ -298,6 +319,8 @@ public interface FrameworkConstants {
     String PROTOCOL_POSTFIX = "://";
     String SPLIT_DOT = "\\.";
     String FORWARD_SLASH = "/";
+    String BACK_SLASH = "\\";
+    String GITIGNORE_FILE = "/.gitignore";
     String LOCALHOST = "localhost";
     String JENKINS_START = "JenkinsStart";
     String JENKINS_STOP = "JenkinsStop";
@@ -328,10 +351,64 @@ public interface FrameworkConstants {
     String IMPORT_PROPERTY ="importsql.property";
     String TEMP_FOLDER ="temp";
     String NODEJS_RUN_AGAINST = "nodeJS_runAgnSrc";
+    String PHASE_RUNGAINST_SRC = "runAgainstSource";
     String JAVA_RUN_AGAINST = "runAgnSrc";
     String CERTIFICATES = "certificates";
     String KEY_CERTIFICATE = "certificate";
-	
+    String WWW_AUTHENTICATE = "WWW-Authenticate";
+    String LT_HTTPS_COLON_BACKSLASH = "<https://";
+    String COLON_443_GT_SPACE = ":443> ";
+    String CREDENTIAL_ENTRY_STRING = "//credentials/entry/string";
+    String SITES_CONFLUENCE= "//sites";
+    String USERNAME = "userName";
+    String CONFLUENCE_USERNAME = "username";
+    String ENTRY_TAG = "entry";
+    String CONFLUENCE_SITE_NODE="com.myyearbook.hudson.plugins.confluence.ConfluenceSite";
+    String CONFLUENCE_SITE_URL="url";
+    String HYPEN_PASSWORDCREDENIAL_TAG = "hudson.scm.SubversionSCM_-DescriptorImpl_-PasswordCredential";
+    String STRING_TAG = "string";
+    String YES = "yes";
+    String SITE_NAME = "siteName";
+    String ATTACH_ARCHIVED_ARTIFACTS = "attachArchivedArtifacts";
+    String BUILD_IF_UNSTABLE = "buildIfUnstable";
+    String FILE_SET = "fileSet";
+    String SPACE_NAME = "spaceName";
+    String PAGE_NAME = "pageName";
+    String EDITORS = "editors";
+    String HUDSON_COBERTURA_PUBLISHER = "hudson.plugins.cobertura.CoberturaPublisher";
+    String COBERTURA_REPORT_FILE = "coberturaReportFile";
+    String COVERAGE_XML = "**/coverage.xml";
+    String ONLY_STABLE = "onlyStable";
+    String FAIL_UNHEALTHY = "failUnhealthy";
+    String FAIL_UNSTABLE = "failUnstable";
+    String AUTO_UPDATE_HEALTH = "autoUpdateHealth";
+    String AUTO_UPDATE_STABILITY = "autoUpdateStability";
+    String ZOOM_COVERAGE_CHART = "zoomCoverageChart";
+    String FAIL_NO_REPORTS = "failNoReports";
+    String HEALTHY_TARGET = "healthyTarget";
+    String UNHEALTHY_TARGET = "unhealthyTarget";
+    String FAILING_TARGET = "failingTarget";
+    String TARGETS = "targets";
+    String ENUM_MAP= "enum-map";
+    String ENUM_TYPE = "enum-type";
+    String HUDSON_COBERTURA_TARGETS_COVERAGEMETRIC = "hudson.plugins.cobertura.targets.CoverageMetric";
+    String INT = "int";
+    String CONDITIONAL = "CONDITIONAL";
+    String LINE = "LINE";
+    String METHOD = "METHOD";
+    String SOURCE_ENCODING = "sourceEncoding";
+    String ASCII = "ASCII";
+    String HUDSON_TRIGGER_TIMER = "hudson.triggers.TimerTrigger";
+    String HUDSON_TRIGGER_SCMTRIGGER = "hudson.triggers.SCMTrigger";
+    String SPEC = "spec";
+    String SITES_CONFLUENCESITE_URL = "//sites/com.myyearbook.hudson.plugins.confluence.ConfluenceSite/url";
+    String CONFLUENCECONFIGURATION = "confluenceConfigurations";
+    String CONFLUENCE_URL_KEY = "confluenceUrl";
+    String CONFLUENCE_USERNAME_KEY = "confluenceUsername";
+    String CONFLUENCE_PASSWORD_KEY = "confluencePassword";
+    String VALUES_KEY = "values";
+    String MAVEN_SEP_COBER = "mvn#SEP#cobertura:cobertura";
+
     String JAVA_STAND_ALONE = "tech-java-standalone";
     String MAINCLASSNAME = "mainClassName";
     String JARNAME = "jarName";
@@ -353,6 +430,7 @@ public interface FrameworkConstants {
 	String PDF_REPORT = "pdfReport";
 	String LOAD_TEST = "loadTest";
 	String PERFORMANCE_TEST_CI = "performanceTest";
+	String COMPONENT_TEST_CI = "componentTest";
 	String REQ_FUNCTEST_SELENIUM_TOOL = "functionalTestSeleniumTool";
 	String SELENIUM_GRID = "grid";
 	String SELENIUM_WEBDRIVER = "webdriver";
@@ -393,6 +471,7 @@ public interface FrameworkConstants {
     String JMETER_REPORTS = "jmeter-reports";
     String FUNCTIONAL = "functional";
     String UNIT = "unit";
+    String COMPONENT = "component";
     String LOAD = "load";
     String PERFORMACE = "performance";
     String WEBSERVICE = "WebService";
@@ -410,6 +489,9 @@ public interface FrameworkConstants {
     String CODE_404 = "404";
     String CI_PRE_BUILD_STEP = "phresco:ci-prestep -DjobName=${env.JOB_NAME}";
     
+    String MAVEN = "mvn";
+    String SHELL = "shell";
+    String COMMAND = "command";
     String SKIP_TESTS = "-DskipTests=true";
     String TEST_DIRECTORY = "dir_type";
     String MVN_TEST_COMMAND = "mvn clean test";
@@ -487,12 +569,14 @@ public interface FrameworkConstants {
 	/*
 	 * Technology based Key
 	 */
-	String HELP_KEY = "Help";
+	String HOME_KEY = "Home";
 	String SETTINGS_KEY = "Settings";
 	String DOWNLOAD_KEY = "Download";
+	String HELP_KEY = "Help";
 	String CODE_KEY = "Code";
 	String BUILD_KEY = "Build";
 	String UNIT_TEST_KEY = "Unit_Test";
+	String COMPONENT_TEST_KEY = "Component_Test";
 	String FUNCTIONAL_TEST_KEY = "Functional_Test";
 	String PERFORMANCE_TEST_KEY = "Performance_Test";
 	String LOAD_TEST_KEY = "Load_Test";
@@ -507,6 +591,9 @@ public interface FrameworkConstants {
 	String FEATURES_KEY = "Feature_Config";
 	String COMPONENT_CONFIG = "Component_Config";
 	String THEME_BUILDER_KEY = "Theme_Builder";
+	
+	String SIMPLE_UI = "simpleUI";
+	String ADVANCE_UI = "advanceUI";
     
 	/*
 	 * Dynamic parameters
@@ -557,6 +644,7 @@ public interface FrameworkConstants {
     String CI_SECRET_KEY_FILE = "secret.key";
     String CI_MAVEN_HOME_XML = "hudson.tasks.Maven.xml";
     String CI_CREDENTIAL_XML = "hudson.scm.SubversionSCM.xml";
+    String CI_CONFLUENCE_XML = "com.myyearbook.hudson.plugins.confluence.ConfluencePublisher.xml";
     String CI_MAILER_XML = "hudson.tasks.Mailer.xml";
     String CI_MAIL_EXT_PLUGIN = "email-ext.hpi";
     String CI_HUDSONURL = "hudsonUrl";
@@ -594,11 +682,19 @@ public interface FrameworkConstants {
     String SESSION_SERVER_HOST_VALUE ="serverHost";
     String SESSION_SERVER_PROTOCOL_VALUE ="serverProtocol";
     String SESSION_ENV_NAME = "environment";
+    String SESSION_PERMISSION_IDS = "sessionPermissionIds";
+    String SESSION_PERMISSIONS = "sessionPermissions";
+    
     /*
      * Request Constants
      * Ex: REQ_XXX
      */
     String SESSION_CUSTOMERS = "listOfCustomers";
+    String REQ_UI_TYPE	= "uiType";
+    String REQ_FAVOURITE_CONFIGS = "favouriteConfigs";
+    String REQ_FAVOURITE_CONFIG_ID = "favouriteConfigId";
+    String REQ_FROM_FAVOURITE_CONFIG = "fromFavouriteConfig";
+    String REQ_ENV_SPECIFIC = "envSpecific";
     String REQ_APPINFO	= "appInfo";
     String REQ_TESTCASE = "testCase";
     String REQ_TESTSUITE = "testSuite";
@@ -620,6 +716,7 @@ public interface FrameworkConstants {
     String REQ_TOTAL_THROUGHPUT = "totalThroughput";
     String REQ_TOTAL_STD_DEV = "totalStdDev";
     String REQ_TECHNOLOGY = "technology";
+    String REQ_FUNCTIONAL_TEST_FRAMEWORKS = "funcTestFrameworks";
     String REQ_TECH_HAS_SERVER = "hasServer";
     String REQ_TECH_HAS_DB = "hasDb";
     String REQ_TECH_HAS_WEBSERVICE = "hasWebservice";
@@ -715,7 +812,7 @@ public interface FrameworkConstants {
 	String REQ_REPORT_TYPE = "reportType";
     String REQ_ACTION_TYPE = "actionType";
     String REQ_TEST_EXE = "testExecuted";
-    String CHECK_REPORT_AVAILABILITY = "checkReportAvailability";
+	String CHECK_REPORT_AVAILABILITY = "checkReportAvailability";
     String REQ_REPORT_STATUS = "reportStatus";
     String REQ_REPORT_DELETE_STATUS = "reportDeleteStatus";
     String REQ_SELECTEDPROJECTS = "selectedProjects";
@@ -736,6 +833,7 @@ public interface FrameworkConstants {
     String REQ_TEST_UNIT = "unit";
     String REQ_PROJECT_MODULES = "projectModules";
     String REQ_UNIT_TEST_REPORT_OPTIONS = "unitTestReportOptions";
+    String REQ_COMPONENT_TEST_REPORT_OPTIONS = "comoponentTestReportOptions";
     String REQ_TEST_FUNCTIONAL = "functional";
     String REQ_TEST_PERFORMANCE = "performance";
     String PERFORMANCE_TEST_REPORTS = "performanceTestReports";
@@ -784,6 +882,7 @@ public interface FrameworkConstants {
     String REQ_TEST_SHOW_ALL_GRAPH = "all";
     String REQ_ACTION= "action";
     String REQ_COMMITABLE_FILES= "commitableFiles";
+    String REQ_GIT_COMMITABLE_FILES= "commitableGITFiles";
     String REQ_BUILD_TEST= "build";
     String REQ_DEPLOY = "deploy";
     String REQ_OLD_APPDIR = "oldAppDirName";
@@ -813,9 +912,10 @@ public interface FrameworkConstants {
     String REQ_HEADER = "header";
     String REQ_HEADER_TYPE = "headerType";
     String REQ_FROM	= "from";
+    String REQ_REQUEST_IP = "requestIp";
     String REQ_GOAL = "goal";
-    String REQ_SERVICE_MANAGER = "serviceManager";
     String REQ_PHASE = "phase";
+	String REQ_SERVICE_MANAGER = "serviceManager";
     String REQ_MOJO = "mojo";
     String REQ_ATTRNAME	= "attrName";
     String SETTINGS_PARAMS = "SETTINGS_PARAMS";
@@ -829,6 +929,7 @@ public interface FrameworkConstants {
 	String REQ_TECH_NAME = "techName";
 	String REQ_PROJECT_NAME = "projectName";
     
+	String REQ_CONFLUENCE_SITES = "ConfluenceSites";
     String REQ_EXISTING_JOB = "existingJob";
     String REQ_EXISTING_CLONNED_JOBS = "existingClonedJobs";
     String REQ_EXISTING_JOBS = "existingJobs";
@@ -876,6 +977,7 @@ public interface FrameworkConstants {
 	String REQ_JAVA_STOP = "javaStop";
 	String REQ_START = "Start";
 	String REQ_STOP = "Stop";
+	String REQ_RE_START = "reStart";
 	
 	String START_NODE = "startNode";
 	String START_HUB = "startHub";
@@ -932,6 +1034,8 @@ public interface FrameworkConstants {
 	String REQ_CONFIG_SERVER_NAMES = "configServerNames";
 	String REQ_CONFIG_DB_NAMES = "configDbNames";
 	String REQ_SRC = "src";
+	
+	String REQ_LOCAL_DISK = "Local Disk";
 	
     /*
      * REST url
@@ -1046,6 +1150,8 @@ public interface FrameworkConstants {
     String UPDATE_PROJECT = "Project {0} updated successfully";
     String FAILURE_PROJECT = "Project {0} creation failed";
     String IMPORT_SUCCESS_PROJECT = "Project imported successfully";
+    String AUTHORIZATION = "Authorization";
+    String BASIC_SPACE = "Basic ";
     String BUILD_WARNING_MESSAGE = "Build might take few minutes to generate.Do not do any action or refresh";     
     /*
      * Delete Project keys
@@ -1062,6 +1168,7 @@ public interface FrameworkConstants {
     String IMPORT_PROJECT_FAIL = "import.project.fail";
     String UPDATE_PROJECT_FAIL = "update.project.fail";
     String INVALID_CREDENTIALS = "import.invalid.credential";
+    String APPLN_INVALID_CREDENTIALS = "import.appln.invalid.credential";
     String INVALID_FOLDER = "import.invalid.folder";
     String PROJECT_ALREADY = "import.project.already";
     String SVN_FAILED = "failed";
@@ -1218,6 +1325,7 @@ public interface FrameworkConstants {
     String ERROR_DUPLICATE_ENV_IN_SETTINGS = "Environment {0} already exists in global settings";
     String ERROR_NO_CONFIG = "environment.config.not.available";
     String ERROR_NAME = "err.msg.empty.name";
+    String ERROR_INVALID_NAME = "err.msg.invalid.name";
     String ERROR_THEME_PATH_MISSING = "err.msg.empty.path";
     String ERROR_THEME_EXISTS = "err.msg.theme.name.exists";
     String PROP_TEMP_MISSING = " is missing";
@@ -1225,6 +1333,7 @@ public interface FrameworkConstants {
     String ERROR_NAME_EXISTS = "err.msg.project.name.exists";
     String ERROR_CODE_EXISTS = "err.msg.project.code.exists";
     String ERROR_APP_CODE_EXISTS = "err.msg.app.code.exists";
+    String ERROR_APP_CODE_MISSING ="err.msg.app.code.missing";
     String ERROR_CODE = "err.msg.empty.code";
     String ERROR_EMAIL_ID = "err.msg.invalid.email";
     String ERROR_EMAIL_ID_EMPTY = "err.msg.empty.email";
@@ -1234,8 +1343,11 @@ public interface FrameworkConstants {
     String ERROR_DB_VER_MISSING = "err.db.ver.missing";
     String ERROR_DB_MISSING = "err.db.missing";
     String ERROR_WS_MISSING = "err.ws.missing";
+    String ERROR_FUNCTIONAL_FRAMEWORK = "err.functional.framework";
+	String ERROR_TYPE = "err.msg.empty.type";
     String ERROR_LAYER = "err.msg.empty.layer";
     String ERROR_TECHNOLOGY = "err.msg.empty.technology";
+    String ERROR_SELECT_TECHNOLOGY ="err.msg.select.technology";
     String ERROR_ENV = "err.msg.empty.environment";
     String ERROR_CONFIG_TYPE = "err.msg.empty.config.type";
     String ERROR_APPLIES_TO = "err.msg.empty.applies.to";
@@ -1250,7 +1362,6 @@ public interface FrameworkConstants {
     String ERROR_DUPLICATE_NAME_IN_SETTINGS = "Name already exists in global settings";
     String ERROR_PRODUCTION_EXISTS_IN_CONFIGURATIONS= "Production is application specific environment";
     String ERROR_DUPLICATE_NAME_IN_CONFIGURATIONS = "Name already exists in configurations of the {0} project";
-    String ERROR_INVALID_NAME = "Invalid Name";
     String ERROR_SELECT = "Select database and server";
     String ERROR_TEST_SUITE = "Test result is not available for this project";
     String ERROR_PARSE_EXCEPTION = "quality.xml.parse.error";
@@ -1258,6 +1369,7 @@ public interface FrameworkConstants {
     String ERROR_MANDATORY_FIELDS = "Some mandatory values are not filled";
     String ERROR_SETTINGS = "ERROR_SETTINGS";
     String ERROR_UNIT_TEST = "unittest.not.executed";
+    String ERROR_COMPONENT_TEST = "componenttest.not.executed";
     String ERROR_FUNCTIONAL_TEST = "functionaltest.not.executed";
     String ERROR_PERFORMANCE_TEST = "performancetest.not.executed";
     String ERROR_LOAD_TEST = "loadtest.not.executed";
@@ -1266,6 +1378,11 @@ public interface FrameworkConstants {
     String ERROR_PORT = "Invalid Port Number";
     String ERROR_EMAIL = "Enter Valid Email";
     String NO_SETTINGS_ENV = "settings.error.message";
+    String ERROR_TESTCASE_ID_EXISTS = "err.msg.testCase.id.exists";
+    String ERROR_TEST_SCENARIO_NAME_EXISTS = "err.msg.test.suite.name.exists";
+    String ERROR_TESTCASE_ID_MISSING = "err.testCase.id.missing";
+    String ERROR_TEST_SCENARIO_NAME_MISSING = "err.test.suite.name.missing";
+	String ERROR_FEATURE_ID_MISSING = "err.feature.id.missing";
     
     /*
      * Delete Environment keys
@@ -1325,6 +1442,7 @@ public interface FrameworkConstants {
      */
     String TEST_SLASH_PERFORMANCE = "/test/performance/";
     String RESULTS_SLASH_JMETER = "/results/jmeter/";
+    String SLASH_JSON = "/json";
     
     /* CI Keys */
     String SUCCESS_JOB = "ci.create.success";
@@ -1334,6 +1452,7 @@ public interface FrameworkConstants {
     String SUCCESS_UPDATE = "ci.update.success";
     String FAILURE_UPDATE = "ci.update.failure";
     String CI_MAIL_CONFIGURE_SUCCESS = "ci.mail.configure.success";
+    String CI_CONFLUENCE_CONFIGURE_SUCCESS = "ci.confluence.configure.success";
     
     /* About Keys */
     String ABOUT_SUCCESS_UPDATE = "abt.update.success";
@@ -1384,6 +1503,7 @@ public interface FrameworkConstants {
    String REQ_SITE_REPORTS = "reports";
    String REQ_SITE_SLECTD_REPORTS = "selectedReports";
    String REQ_SITE_SLECTD_REPORTSCATEGORIES = "maven-project-info-reports-plugin";
+   String REQ_SITE_SELECTD_CATEGORIES = "selectedCategories";
    String REQ_SONAR_REPORT = "sonarReport";
    
    
@@ -1553,6 +1673,7 @@ public interface FrameworkConstants {
 		  String IIS_SERVER = "IIS";
 		  String NODEJS_SERVER = "NodeJs";
 		  String NODEJS_MAC_SERVER = "NodeJs Mac";
+		  String SHAREPOINT_SERVER= "Sharepoint Server";
 		  
 	  /* Resolutions */ 
 		String _1600_900 = "1600*900";
@@ -1582,8 +1703,12 @@ public interface FrameworkConstants {
 		String EXCEPTION_TECHNOLOGY = "excep.hdr.tech";
 		String EXCEPTION_PROJECT_WEB_LAYER_WIDGETS = "excep.hdr.proj.web.layer.widgets";
 		String EXCEPTION_QUALITY_UNIT_LOAD = "excep.hdr.quality.unit.load";
+		String EXCEPTION_QUALITY_COMPONENT_LOAD = "excep.hdr.quality.component.load";
+		String EXCEPTION_QUALITY_COMPONENT_TESTSUITES = "excep.hdr.quality.component.load.testsuites";
+		String EXCEPTION_QUALITY_COMPONENT_PARAMS = "excep.hdr.quality.component.load.params";
 		String EXCEPTION_QUALITY_UNIT_TESTSUITES = "excep.hdr.quality.unit.load.testsuites";
 		String EXCEPTION_QUALITY_UNIT_RUN = "excep.hdr.quality.unit.run";
+		String EXCEPTION_QUALITY_COMPONENT_RUN = "excep.hdr.quality.component.run";
 		String EXCEPTION_QUALITY_UNIT_PARAMS = "excep.hdr.quality.unit.load.params";
 		String EXCEPTION_QUALITY_FUNCTIONAL_LOAD = "excep.hdr.quality.functional.load";
 		String EXCEPTION_QUALITY_FUNCTIONAL_TESTSUITES = "excep.hdr.quality.functional.load.testsuites";
@@ -1648,6 +1773,8 @@ public interface FrameworkConstants {
 		String EXCEPTION_FEATURE_CONFIGURATION = "excep.hdr.feature.configuration";
 		String EXCEPTION_MANDAOTRY_MSG = "except.mandatory.msg";
 		String EXCEPTION_LOG_FILE_DOWNLOAD_NOT_AVAILABLE = "excep.hdr.func.log.download.not.available";
+		String BUILDNAME_ALREADY_EXIST = "excep.build.name.exist";
+		String BUILDNUMBER_ALREADY_EXIST = "excep.build.number.exist";
 		
 		/*****************************
 	     * Success Action Messages
@@ -1655,6 +1782,7 @@ public interface FrameworkConstants {
 	     * String ACT_SUCC_XXX
 	     *****************************/
 		String ACT_SUCC_PROJECT_CREATE = "succ.project.create";
+		String ACT_SUCC_PROJECT_UPDATE = "succ.project.update";
 		String ACT_SUCC_PROJECT_DELETE = "succ.project.delete";
 		String ACT_SUCC_CONFIG_ADD = "succ.config.create";
 		String ACT_SUCC_CONFIG_UPDATE = "succ.config.update";
@@ -1662,6 +1790,7 @@ public interface FrameworkConstants {
 		String ACT_SUCC_SETTINGS_ADD = "succ.setting.create";
 		String ACT_SUCC_SETTINGS_UPDATE = "succ.setting.update";
 		String ACT_SUCC_ENV_ADD = "succ.env.create";
+		String ACT_SUCC_NON_CONFIG_DEL = "succ.non.config.delete";
 		String ACT_SUCC_ENV_DELETE = "succ.env.delete";
 		String ACT_SUCC_FEATURE_CONFIGURE = "succ.feature.configure";
 		String ACT_SUCC_CONFIG_CLONE = "succ.config.clone";
@@ -1739,6 +1868,7 @@ public interface FrameworkConstants {
 	    String LABEL_COLOR = "LabelColor";
 	    String MENU_FONT_COLOR = "MenufontColor"; 
 	    String MENU_BACKGROUND_COLOR = "MenuBackGround";
+	    String SUB_MENU_BACKGROUND_COLOR = "SubMenuBackGround";
 	    String COPYRIGHT = "CopyRight";
 	    String DISABLED_LABEL_COLOR = "DisabledLabelColor";
 	    String USER_JSON = "user.json";
@@ -1753,6 +1883,7 @@ public interface FrameworkConstants {
 	    String TO_DIRECTORY = "toDirectory";
 	    String FILES = "files";
 	    String FILE = "file";
+	    String LOCK_FILE = "process.lock";
 	    
 	    /**
 	     * BitKeeper Commands
@@ -1775,7 +1906,9 @@ public interface FrameworkConstants {
 	    String FAILURE_THEME_BUILDER_CREATE = "Theme Builder Creation Failed";
 	    String SUCCESS_THEME_BUILDER_DELETE = "Theme(s) Deleted Successfully";
 	    String REQ_BROWSE_THEME_IMAGE = "themeBuilderImage";
-		/*****************************
+	    String REQ_THEME_UPLOAD_RESULT = "uploadResultMap";
+	    
+	    /*****************************
 	     * Permission Constants
 	     * String PER_XXX
 	     *****************************/

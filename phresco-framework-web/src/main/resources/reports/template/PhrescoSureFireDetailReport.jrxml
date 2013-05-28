@@ -19,6 +19,7 @@
 		<defaultValueExpression><![CDATA["/Users/kaleeswaran/work/master-plugin/report-phresco-plugin/src/main/resources/"]]></defaultValueExpression>
 	</parameter>
 	<parameter name="isClassEmpty" class="java.lang.Boolean"/>
+	<parameter name="testType" class="java.lang.String"/>
 	<field name="name" class="java.lang.String"/>
 	<field name="file" class="java.lang.String"/>
 	<field name="assertions" class="java.lang.String"/>
@@ -68,7 +69,10 @@
 			<frame>
 				<reportElement x="0" y="50" width="555" height="272"/>
 				<subreport>
-					<reportElement x="0" y="0" width="555" height="272"/>
+					<reportElement x="0" y="0" width="555" height="272" isRemoveLineWhenBlank="true"/>
+					<subreportParameter name="testType">
+						<subreportParameterExpression><![CDATA[$P{testType}]]></subreportParameterExpression>
+					</subreportParameter>
 					<subreportParameter name="testCases">
 						<subreportParameterExpression><![CDATA[$F{testCases}]]></subreportParameterExpression>
 					</subreportParameter>

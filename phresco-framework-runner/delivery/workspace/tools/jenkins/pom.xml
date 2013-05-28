@@ -69,7 +69,7 @@
 		  <version>1.0</version>
 		  <type>hpi</type>
 		</dependency>
-		
+
 		<dependency>
 		  <groupId>confluence</groupId>
 		  <artifactId>confluence-publisher</artifactId>

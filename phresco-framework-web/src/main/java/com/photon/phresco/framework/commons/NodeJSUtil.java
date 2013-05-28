@@ -87,6 +87,11 @@ public class NodeJSUtil {
 			cl.setWorkingDirectory(projLocation); 
 			Process proc = cl.execute(); 
 			BufferedReader input = new BufferedReader(new InputStreamReader(proc.getInputStream()));
+			// FileWriter fstream = new FileWriter(LOG_FILE_NAME, true);
+			// LogWriterThread logWriterThread = new LogWriterThread(input,
+			// fstream, "Input");
+			// logWriterThread.start();
+			// System.out.println("Testing...");
 			return input;
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -221,6 +226,9 @@ public class NodeJSUtil {
 			FileInputStream fstream = new FileInputStream(LOG_FILE_NAME);
 			in = new DataInputStream(fstream);
 			BufferedReader br = new BufferedReader(new InputStreamReader(in));
+			String line = null;
+			while ((line = br.readLine()) != null) {
+			}
 			return br;
 		} catch (Exception e) {
 			throw new PhrescoException(e);
@@ -391,6 +399,9 @@ public class NodeJSUtil {
 	// TODO: Not working, need to investigate
 	private void stopNodeJSInWindows1() throws CommandLineException,
 			IOException {
+		// Commandline cl = new Commandline(WIN_PROCESS_KILL_CMD);
+		// String[] args1 = {"/F", "/IM", "node.exe"};
+		// cl.addArguments(args1);
 		Commandline cl = new Commandline(WIN_PROCESS_KILL_CMD
 				+ " /F /IM node.exe");
 		cl.setWorkingDirectory(project.getApplicationInfo().getCode()
@@ -416,11 +427,14 @@ public class NodeJSUtil {
 		Process execute = cl.execute();
 		BufferedReader in = new BufferedReader(new InputStreamReader(
 				execute.getErrorStream()));
+		String line = null;
+		while ((line = in.readLine()) != null) {
+		}
 	}
 
 	class LogWriterThread extends Thread {
-		private BufferedReader in;
-		private FileWriter fstream;
+		BufferedReader in;
+		FileWriter fstream;
 
 		public LogWriterThread(BufferedReader in, FileWriter fstream,
 				String name) {

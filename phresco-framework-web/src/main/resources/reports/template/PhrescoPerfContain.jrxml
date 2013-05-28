@@ -142,11 +142,11 @@
 				<reportElement style="PPCTitleRectLogo" x="0" y="127" width="554" height="23"/>
 			</rectangle>
 			<textField>
-				<reportElement x="4" y="130" width="258" height="20"/>
+				<reportElement x="4" y="130" width="344" height="20" forecolor="#FFFFFF"/>
 				<textElement>
 					<font fontName="Times New Roman" size="15" isBold="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$P{testType}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$P{testType} + " TEST REPORT"]]></textFieldExpression>
 			</textField>
 		</band>
 	</title>
@@ -169,21 +169,21 @@
 				<rectangle radius="10">
 					<reportElement style="PPCHeadingRow" x="0" y="5" width="554" height="20"/>
 				</rectangle>
+				<textField>
+					<reportElement style="PPCHeadingRowLabelValue" x="83" y="5" width="377" height="20"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Times New Roman" size="11" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{type}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement style="PPCHeadingRowLabelValue" x="15" y="5" width="68" height="19" forecolor="#FFFFFF"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Times New Roman" size="11" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Test Type :]]></text>
+				</staticText>
 			</frame>
-			<textField>
-				<reportElement style="PPCHeadingRowLabelValue" x="83" y="5" width="420" height="20"/>
-				<textElement verticalAlignment="Middle">
-					<font fontName="Times New Roman" size="11" isBold="true"/>
-				</textElement>
-				<textFieldExpression><![CDATA[$F{type}]]></textFieldExpression>
-			</textField>
-			<staticText>
-				<reportElement style="PPCHeadingRowLabel" x="15" y="5" width="68" height="20" forecolor="#000000"/>
-				<textElement verticalAlignment="Middle">
-					<font fontName="Times New Roman" size="11" isBold="true"/>
-				</textElement>
-				<text><![CDATA[Test Type :]]></text>
-			</staticText>
 		</band>
 	</detail>
 	<pageFooter>

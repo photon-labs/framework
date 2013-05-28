@@ -95,7 +95,7 @@ $myObject:{ obj |
 					</tr>
 				</table>
 				$contextUrlsObj.headers: { headersObj |
-					<div id="headerkeyId" class="headers" style="background-color: #bbbbbb; width: 40%; margin-bottom:2px; height: auto; border-radius: 6px; padding: 0 0 0 10px; position: relative" ><a onclick="removeHeader(this);" style="text-decoration: none; margin-right: 10px; color: #000000; margin-left: 92%;" href="#">&times;</a><div style="cursor: pointer; color: #000000; height: auto; position: relative; width: 90%; line-height: 17px; margin-top: -14px; padding: 0 0 6px 1px;">$headersObj.key$ : $headersObj.value$</div><input type="hidden" value="$headersObj.key$" name="headerKey"><input type="hidden" value="$headersObj.value$" name="headerValue"></div>
+					<div id="headerkeyId" class="headers" style="background-color: #bbbbbb; width: 52%; margin-left: 2px;  margin-bottom:2px; height: auto; border-radius: 6px; padding: 0 0 0 10px; position: relative" ><a onclick="removeHeader(this);" style="text-decoration: none; margin-right: 10px; color: #000000; margin-left: 92%;" href="#">&times;</a><div style="cursor: pointer; color: #000000; height: auto; position: relative; width: 90%; line-height: 17px; margin-top: -14px; padding: 0 0 6px 1px;">$headersObj.key$ : $headersObj.value$</div><input type="hidden" value="$headersObj.key$" name="headerKey"><input type="hidden" value="$headersObj.value$" name="headerValue"></div>
 				}$
 			</fieldset>
 			

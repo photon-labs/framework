@@ -18,8 +18,8 @@
 package com.photon.phresco.framework.model;
 
 public class CIJobStatus {
-	private int code;
-	private String message;
+    int code;
+    String message;
     
     public CIJobStatus() {
         super();

@@ -31,6 +31,7 @@ import com.photon.phresco.commons.model.ApplicationInfo;
 import com.photon.phresco.commons.model.ProjectInfo;
 import com.photon.phresco.exception.PhrescoException;
 import com.photon.phresco.framework.PhrescoFrameworkFactory;
+import com.photon.phresco.framework.api.ActionType;
 import com.photon.phresco.framework.api.ApplicationManager;
 import com.photon.phresco.framework.api.ProjectManager;
 
@@ -46,8 +47,8 @@ public class BlackberryHybridProjectTest extends BaseTest{
 	public void setUp() throws PhrescoException {
 		projectInfo = getProjectInfo("tech-blackberry-hybrid", "tech-blackberry-hybrid" , "Sample-blackberryhybrid-1" , "Sample-blackberryhybrid-2", "PHR_blackberryhybrid");
 		ApplicationInfo appInfo = getAppInfo("BLACKBERRY_HYBRID", "tech-blackberry-hybrid");
-		appDirNames.add("BLACKBERRY_HYBRID");
 		appInfos.add(appInfo);
+		appDirNames.add("BLACKBERRY_HYBRID");
 		if ((projectManager == null) && (applicationManager == null)) {
 			projectManager = PhrescoFrameworkFactory.getProjectManager();
 			applicationManager=PhrescoFrameworkFactory.getApplicationManager();

@@ -23,12 +23,12 @@ import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.InetAddress;
 import java.net.URL;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
-import javax.net.ssl.HttpsURLConnection;
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.apache.commons.collections.MapUtils;
@@ -78,9 +78,12 @@ public class Code extends DynamicParameterAction implements Constants {
 		}
 		
 		try {
-		    removeSessionAttribute(getAppId() + SESSION_APPINFO);
+		    removeSessionAttribute(getAppId() + SESSION_APPINFO);//To remove the appInfo from the session
         	ApplicationInfo appInfo = getApplicationInfo();
-        	
+        	//To get ip of request machine
+        	String requestIp = getHttpRequest().getRemoteAddr();
+			setReqAttribute(REQ_REQUEST_IP, requestIp);
+			
         	// TO kill the Process
         	String baseDir = Utility.getProjectHome()+ appInfo.getAppDirName();
         	Utility.killProcess(baseDir, getActionType());
@@ -131,7 +134,7 @@ public class Code extends DynamicParameterAction implements Constants {
 		try {
             StringBuilder builder = new StringBuilder(getApplicationHome());
             builder.append(File.separator);
-            builder.append(POM_XML);
+            builder.append(Utility.getPomFileName(getApplicationInfo()));
             File pomPath = new File(builder.toString());
             return pomPath;
         } catch (PhrescoException e) {
@@ -148,19 +151,13 @@ public class Code extends DynamicParameterAction implements Constants {
 		try {
 			URL sonarURL = new URL(frameworkUtil.getSonarURL());
 			String protocol = sonarURL.getProtocol();
-			HttpURLConnection connection = null;
-			HttpsURLConnection connectionHttps = null; 
+			HttpURLConnection connection = null;			
 			int responseCode;			
-			if(protocol.equals("http")) {				
+			if(protocol.equals("http")) {	
 				connection = (HttpURLConnection) sonarURL.openConnection();
-				responseCode = connection.getResponseCode();				
+				responseCode = connection.getResponseCode();	
 			} else {
-				try {
-					connectionHttps = (HttpsURLConnection) sonarURL.openConnection();
-					responseCode = connectionHttps.getResponseCode();
-				} catch (IOException e) {					
-					responseCode = 200;
-				}
+				responseCode = FrameworkUtil.getHttpsResponse(frameworkUtil.getSonarURL());
 			}			
 			if (responseCode != 200) {
 				setReqAttribute(REQ_ERROR, getText(SONAR_NOT_STARTED));
@@ -212,7 +209,7 @@ public class Code extends DynamicParameterAction implements Constants {
             
         	File pomPath = getPOMFile();
             PomProcessor processor = new PomProcessor(pomPath);
-            String validateAgainst = getReqParameter(REQ_VALIDATE_AGAINST); 
+            String validateAgainst = getReqParameter(REQ_VALIDATE_AGAINST); //getHttpRequest().getParameter("validateAgainst");
             String validateReportUrl = processor.getProperty(POM_PROP_KEY_VALIDATE_REPORT);
             
             //Check whether iphone Technology or not
@@ -269,7 +266,12 @@ public class Code extends DynamicParameterAction implements Constants {
 					reportPath.append(frameworkUtil.getFunctionalTestDir(applicationInfo));
                 }
 				reportPath.append(File.separatorChar);
-				reportPath.append(POM_XML);
+				File pomFile = new File(reportPath.toString() + Utility.getPomFileName(applicationInfo));
+				if (pomFile.exists()) {
+					reportPath.append(Utility.getPomFileName(applicationInfo));
+				} else {
+					reportPath.append(POM_NAME);
+				}
 				File file = new File(reportPath.toString());
 				processor = new PomProcessor(file);
 				String groupId = processor.getModel().getGroupId();
@@ -290,8 +292,15 @@ public class Code extends DynamicParameterAction implements Constants {
 	    				S_LOGGER.debug("Url to access API " + sb.toString());
 	    			}
 					URL sonarURL = new URL(sb.toString());
-					HttpURLConnection connection = (HttpURLConnection) sonarURL.openConnection();
-					int responseCode = connection.getResponseCode();
+					String protocol = sonarURL.getProtocol();
+					HttpURLConnection connection;
+					int responseCode;
+					if(protocol.equals("http")) {
+						connection = (HttpURLConnection) sonarURL.openConnection();
+						responseCode = connection.getResponseCode();
+					} else {
+						responseCode = FrameworkUtil.getHttpsResponse(sb.toString());						
+					} 
 					if (s_debugEnabled) {
 	    				S_LOGGER.debug("Response code value " + responseCode);
 		    		}
@@ -382,10 +391,19 @@ public class Code extends DynamicParameterAction implements Constants {
 			List<Parameter> parameters = getMojoParameters(mojo, PHASE_VALIDATE_CODE);
 			List<String> buildArgCmds = getMavenArgCommands(parameters);
 			buildArgCmds.add(HYPHEN_N);
+			String pomFileName = Utility.getPomFileName(applicationInfo);
+			if(!POM_NAME.equals(pomFileName)) {
+				buildArgCmds.add(HYPHEN_F);
+				buildArgCmds.add(pomFileName);
+			}
 			String workingDirectory = getAppDirectoryPath(applicationInfo);
 			ApplicationManager applicationManager = PhrescoFrameworkFactory.getApplicationManager();
 			
 			BufferedReader reader = applicationManager.performAction(projectInfo, ActionType.CODE_VALIDATE, buildArgCmds, workingDirectory);
+			
+			//To generate the lock for the particular operation
+			FrameworkUtil.generateLock(Collections.singletonList(getLockDetail(applicationInfo.getId(), REQ_CODE)), true);
+			
 			setSessionAttribute(getAppId() + REQ_CODE, reader);
 			setReqAttribute(REQ_APP_ID, getAppId());
 			setReqAttribute(REQ_ACTION_TYPE, REQ_CODE);

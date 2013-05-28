@@ -162,9 +162,9 @@ public class BuildService implements Constants ,FrameworkConstants,BuildServiceC
 			{
 				throw new PhrescoException("no valid customer id passed");
 			}
-			if( !("".equalsIgnoreCase(data.get(USERNAME).toString())) && (data.get(USERNAME).toString() != null) && !("null".equalsIgnoreCase(data.get(USERNAME).toString())) )
+			if( !("".equalsIgnoreCase(data.get(BuildServiceConstants.USERNAME).toString())) && (data.get(BuildServiceConstants.USERNAME).toString() != null) && !("null".equalsIgnoreCase(data.get(BuildServiceConstants.USERNAME).toString())) )
 			{
-				setUsername(data.get(USERNAME).toString());
+				setUsername(data.get(BuildServiceConstants.USERNAME).toString());
 			}
 			else
 			{
@@ -233,7 +233,7 @@ public class BuildService implements Constants ,FrameworkConstants,BuildServiceC
 						S_LOGGER.info("APPP ID received :"+data.get(APP_ID));
 						S_LOGGER.info("PROJECT ID received :"+data.get(PROJECT_ID));
 						S_LOGGER.info("CUSTOMER ID received :"+data.get(CUSTOMER_ID));
-						S_LOGGER.info("USERNAME  received :"+data.get(USERNAME));
+						S_LOGGER.info("USERNAME  received :"+data.get(BuildServiceConstants.USERNAME));
 						S_LOGGER.info("Starting The Thread With name -->"+thread_name);
 					}
 					

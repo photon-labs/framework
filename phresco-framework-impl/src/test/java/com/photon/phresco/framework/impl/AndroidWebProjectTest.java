@@ -18,8 +18,8 @@
 //TODO Has To be Fixed
 package com.photon.phresco.framework.impl;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.ArrayList;
 
 import junit.framework.Assert;
 
@@ -31,6 +31,7 @@ import com.photon.phresco.commons.model.ApplicationInfo;
 import com.photon.phresco.commons.model.ProjectInfo;
 import com.photon.phresco.exception.PhrescoException;
 import com.photon.phresco.framework.PhrescoFrameworkFactory;
+import com.photon.phresco.framework.api.ActionType;
 import com.photon.phresco.framework.api.ApplicationManager;
 import com.photon.phresco.framework.api.ProjectManager;
 public class AndroidWebProjectTest extends BaseTest{
@@ -39,15 +40,15 @@ public class AndroidWebProjectTest extends BaseTest{
 	private static ProjectManager projectManager = null;
 	private static ApplicationManager applicationManager = null;
 	private ProjectInfo projectInfo;
-	private List<ApplicationInfo> appInfos = new ArrayList<ApplicationInfo>();
 	private List<String> appDirNames = new ArrayList<String>();
+	private List<ApplicationInfo> appInfos = new ArrayList<ApplicationInfo>();
 	
 	@Before
 	public void setUp() throws PhrescoException {
 		ApplicationInfo appInfo = getAppInfo("ANDROID_WEB", "tech-android-web");
-		appDirNames.add("ANDROID_WEB");
 		appInfos.add(appInfo);
 		projectInfo = getProjectInfo("tech-android-web", "tech-android-web" , "Sample-androidweb-1" , "Sample-androidweb-2", "PHR_androidweb");
+		appDirNames.add("ANDROID_WEB");
 		if ((projectManager == null) && (applicationManager == null)) {
 			projectManager = PhrescoFrameworkFactory.getProjectManager();
 			applicationManager=PhrescoFrameworkFactory.getApplicationManager();

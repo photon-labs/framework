@@ -41,6 +41,7 @@ import com.photon.phresco.framework.api.ActionType;
 import com.photon.phresco.framework.api.ApplicationManager;
 import com.photon.phresco.framework.api.ProjectManager;
 import com.photon.phresco.framework.commons.FrameworkUtil;
+import com.photon.phresco.util.Constants;
 import com.photon.phresco.util.Utility;
 import com.phresco.pom.site.ReportCategories;
 import com.phresco.pom.site.Reports;
@@ -61,7 +62,11 @@ public class SiteReport extends FrameworkBaseAction {
 		}
 		
 		try {
-		    removeSessionAttribute(getAppId() + SESSION_APPINFO);
+			//To get ip of request machine
+			String requestIp = getHttpRequest().getRemoteAddr();
+			setReqAttribute(REQ_REQUEST_IP, requestIp);
+			
+		    removeSessionAttribute(getAppId() + SESSION_APPINFO);//To remove the appInfo from the session
 		    List<Reports> selectedReports = getPomReports(getApplicationInfo());
 		    setReqAttribute(REQ_SITE_SLECTD_REPORTS, selectedReports);
 		} catch (PhrescoException e) {
@@ -125,7 +130,13 @@ public class SiteReport extends FrameworkBaseAction {
 			ApplicationManager applicationManager = PhrescoFrameworkFactory.getApplicationManager();
 			ApplicationInfo applicationInfo = getApplicationInfo();
 			String appDirectoryPath = getAppDirectoryPath(applicationInfo);
-			BufferedReader reader = applicationManager.performAction(projectInfo, actionType, null, appDirectoryPath);
+			List<String> buildArgCmds = new ArrayList<String>();
+			String pomFileName = Utility.getPomFileName(applicationInfo);
+			if(!Constants.POM_NAME.equals(pomFileName)) {
+				buildArgCmds.add(Constants.HYPHEN_F);
+				buildArgCmds.add(pomFileName);
+			}
+			BufferedReader reader = applicationManager.performAction(projectInfo, actionType, buildArgCmds, appDirectoryPath);
 			setSessionAttribute(getAppId() + REQ_SITE_REPORT, reader);
 			setReqAttribute(REQ_APP_ID, getAppId());
 			setReqAttribute(REQ_ACTION_TYPE, REQ_SITE_REPORT);
@@ -148,12 +159,12 @@ public class SiteReport extends FrameworkBaseAction {
 		try {
 			String techId = getTechId();
 			ApplicationInfo appInfo = getApplicationInfo();
-			List<Reports> siteReports = getServiceManager().getReports(techId);
-			if (CollectionUtils.isNotEmpty(siteReports)) {
-				Collections.sort(siteReports, sortReportByNameInAlphaOrder());
+			List<Reports> reports = getServiceManager().getReports(techId);
+			if (CollectionUtils.isNotEmpty(reports)) {
+				Collections.sort(reports, sortReportByNameInAlphaOrder());
 			}
 			List<Reports> selectedReports = getPomReports(appInfo);
-			setReqAttribute(REQ_SITE_REPORTS, siteReports);
+			setReqAttribute(REQ_SITE_REPORTS, reports);
 			setReqAttribute(REQ_SITE_SLECTD_REPORTS, selectedReports);
 		} catch (PhrescoException e) {
 			if (s_debugEnabled) {
@@ -234,9 +245,9 @@ public class SiteReport extends FrameworkBaseAction {
 		try {
 			SiteConfigurator configurator = new SiteConfigurator();
 			File file = new File(getAppPom());
-			List<Reports> pomReport = configurator.getReports(file);
+			List<Reports> reports = configurator.getReports(file);
 			
-			return pomReport;
+			return reports;
 		} catch (PhrescoException ex) {
 			throw new PhrescoException(ex);
 		}

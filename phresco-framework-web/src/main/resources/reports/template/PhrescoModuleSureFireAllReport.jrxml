@@ -31,9 +31,9 @@
 		<band splitType="Stretch"/>
 	</background>
 	<detail>
-		<band height="127">
+		<band height="124">
 			<frame>
-				<reportElement x="0" y="0" width="555" height="124"/>
+				<reportElement x="0" y="0" width="555" height="120"/>
 				<rectangle radius="10">
 					<reportElement style="PMSFRHeadingRow" x="1" y="10" width="554" height="20"/>
 				</rectangle>
@@ -52,7 +52,7 @@
 					<textFieldExpression><![CDATA[$F{moduleOrTechName}]]></textFieldExpression>
 				</textField>
 				<subreport>
-					<reportElement x="2" y="35" width="553" height="89"/>
+					<reportElement x="0" y="30" width="553" height="89"/>
 					<subreportParameter name="testType">
 						<subreportParameterExpression><![CDATA[$P{testType}]]></subreportParameterExpression>
 					</subreportParameter>
