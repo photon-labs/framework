@@ -64,11 +64,11 @@
 	<target name="run-phresco">
 		<echo message="starting helios deployment from ${phresco.home}"/>
 		<antcall target="set-execute-permissions"/>
-        <antcall target="delete-old-framework-context"/>
-		<antcall target="clean-sonar"/>
-		<antcall target="copy-phresco"/>
+        <antcall target="clean-tomcat-webapps"/>
+	<!-- 	<antcall target="clean-sonar"/> -->
+        <antcall target="copy-phresco"/>
         <antcall target="copy-security"/>
-		<antcall target="copy-framework-config"/>
+	<!-- 	<antcall target="copy-framework-config"/> -->
         <antcall target="start-waxsim"/>
 		<parallel>
 			<antcall target="tomcat-start"/>
@@ -217,15 +217,14 @@
         </exec>
     </target>
     
-    <target name="delete-old-framework-context">
-        <echo message="deleting old framework context"/>
+    <target name="clean-tomcat-webapps">
+        <echo message="deleting sonar and older framework contexts in webapps"/>
         <delete includeemptydirs="true">  
           <fileset dir="${tomcat.home}/webapps">  
-            <include name="**/*"/>  
-            <exclude name="host-manager"/>  
-            <exclude name="manager"/>  
-            <exclude name="ROOT"/>  
-            <exclude name="${framework.context}"/>  
+            <exclude name="host-manager/**"/>  
+            <exclude name="manager/**"/>  
+            <exclude name="ROOT/**"/>  
+            <exclude name="${framework.context}/**"/>  
           </fileset>  
         </delete> 
     </target>
