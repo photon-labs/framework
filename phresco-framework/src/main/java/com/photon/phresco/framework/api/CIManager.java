@@ -129,7 +129,15 @@ public interface CIManager {
 	 * @throws PhrescoException
 	 */
 	List<CIBuild> getBuilds(CIJob job) throws PhrescoException;
-
+	
+	/**
+	 * Gets required range of builds for a job from the jenkins.
+	 * @param job
+	 * @return
+	 * @throws PhrescoException
+	 */
+	List<CIBuild> getLimitedBuilds(CIJob job, int start, int stop) throws PhrescoException;
+	 
 	/**
 	 * Checks whether job is in progress
 	 * @param ciJob
@@ -210,4 +218,11 @@ public interface CIManager {
 	 * @throws PhrescoException
 	 */
 	public String decyPassword(String encryptedText) throws PhrescoException;
+
+	/**
+	 * buildsize
+	 * @return buildsize 
+	 * @throws PhrescoException
+	 */
+	int getBuildSize(CIJob ciJob) throws PhrescoException;
 }

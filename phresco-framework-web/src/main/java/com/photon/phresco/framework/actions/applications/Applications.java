@@ -25,7 +25,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.lang.reflect.Type;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.ArrayList;
@@ -1386,7 +1385,7 @@ public class Applications extends FrameworkBaseAction implements Constants {
 				if (getActionType().equals(REQ_CODE)) {
 					actionTypesToCheck.add(BUILD);
 					actionTypesToCheck.add(REQ_START);
-					actionTypesToCheck.equals(UNIT);
+					actionTypesToCheck.add(UNIT);
 				} else if (getActionType().equals(BUILD)) {
 					actionTypesToCheck.add(BUILD);
 					actionTypesToCheck.add(REQ_CODE);

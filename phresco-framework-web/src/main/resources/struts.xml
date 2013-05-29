@@ -347,6 +347,10 @@
              <result type="json"/>
         </action>
         
+        <action name="fetchBuildsList" method="fetchBuildsList" class="com.photon.phresco.framework.actions.applications.CI">
+             <result type="json"/>
+        </action>
+        
         <action name="CIBuildDownload" method="CIBuildDownload" class="com.photon.phresco.framework.actions.applications.CI">
             <result name="success" type="stream">
                 <param name="contentType">${contentType}</param>

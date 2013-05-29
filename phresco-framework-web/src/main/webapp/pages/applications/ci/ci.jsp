@@ -52,6 +52,34 @@
      	float: right;
      	font-weight: bold;
     }
+    
+    a {
+	  color:white;
+	  text-decoration: none;
+	  border: 1px;
+	}
+	
+	a:hover {
+	  color:black;
+	  text-decoration: underline;
+	}
+	
+	.checkboxDiv {
+		width : 85%;	
+	}
+    
+    .pagination {
+    	width:15%;
+    	height: 3px;
+    	margin-left: 85%;
+    	align:right;
+    	margin-top: -2%;
+    }
+    
+    .pagination a {
+    	border: 1px solid white;
+    	line-height:18px;
+    }
 </style>
 
 <%
@@ -106,7 +134,7 @@
     <% 
 	    boolean isExistJob = true;
         int noOfJobsIsinProgress = Integer.parseInt(request.getAttribute(FrameworkConstants.CI_NO_OF_JOBS_IN_PROGRESS).toString());
-        Map<String, List<CIBuild>> existingJobs = (Map<String, List<CIBuild>>)request.getAttribute(FrameworkConstants.REQ_EXISTING_JOBS);
+        Map<String, Integer> existingJobs = (Map<String, Integer>)request.getAttribute(FrameworkConstants.REQ_EXISTING_JOBS);
         // when no job's jenkins is alive , have to display no jobs available
         if (MapUtils.isEmpty(existingJobs) ) {
         	isExistJob = false;
@@ -127,14 +155,14 @@
 				        	Iterator iterator = existingJobs.keySet().iterator();  
 					    	while (iterator.hasNext()) {
 					    	   String jobName = iterator.next().toString();  
-					    	   List<CIBuild> builds = existingJobs.get(jobName);
+					    	   int builds = existingJobs.get(jobName);
 					    	   if(new Boolean(request.getAttribute(FrameworkConstants.CI_BUILD_IS_IN_PROGRESS + jobName).toString()).booleanValue()) {
 					    		   isAtleastOneJobIsInProgress = true;
 					    	   }
 			        	%>
 			            <section class="lft_menus_container">
 			                <span class="siteaccordion" id="siteaccordion_active">
-			                	<div>
+			                	<div id="<%= jobName %>Accordion">
 			                		<img src="images/r_arrowclose.png" class ="accImg" id="" onclick="accordionClickOperation(this);">
 			                		<%
 							    		per_disabledStr = "disabled";
@@ -148,14 +176,20 @@
 	                					<%= new Boolean(request.getAttribute(FrameworkConstants.CI_BUILD_JENKINS_ALIVE + jobName).toString()).booleanValue() ? "" : "disabled" %>>
 			                		&nbsp;&nbsp;<%= jobName %> &nbsp;&nbsp;
 								</div>
+								<div class="pagination" id="paginate<%= jobName %>" count = 0> 
+		  							<ul>
+									    <li class = "Prev<%= jobName %>"><a  href="#" onclick="prev(this)">Prev</a></li>
+									    <li class = "Next<%= jobName %>"><a  href="#" onclick="next(this)">Next</a></li>
+			 				 		</ul>
+								</div> 
 			                </span>
 			                <div class="mfbox siteinnertooltiptxt">
 			                    <div class="scrollpanel">
 			                        <section class="scrollpanel_inner">
 			                        	<%
-			                        		if (CollectionUtils.isNotEmpty(builds)) {
-			                        	%>
-			                        	<table class="download_tbl">
+ 			                        		if (builds != 0) {
+  			                        	%>  
+			                        	<table id="<%= jobName %>Table" class="download_tbl">
 				                        	<thead>
 				                            	<tr class="download_tbl_header">
 				                            		<th>
@@ -178,84 +212,16 @@
 				                            </thead>
 				                            
 				                        	<tbody id="<%= jobName %>" class="jobBuildsList">
-				                        		<%
-				                        			for (CIBuild build : builds) {
-				                        		%>
-						                    		<tr>
-						                    			<td>
-						                    				<%
-													    		per_disabledStr = "disabled";
-																per_disabledClass = "btn-disabled";
-																if (permissions != null && (permissions.canManageCIJobs() || permissions.canExecuteCIJobs())) {
-																	per_disabledStr = "";
-																	per_disabledClass = "btn-primary";
-																}
-												    		%>
-						                    				<input type="checkbox" <%= per_disabledStr %> value="<%= jobName %>,<%= build.getNumber() %>" class="<%= jobName %>" name="builds">
-						                    			</td>
-						                    			<td><%= build.getNumber() %></td>
-						                    			<td><a href="<%= build.getUrl() %>" target="_blank"><%= build.getUrl().replace("%20", " ") %></a></td>
-						                    			<td style="padding-left: 3%;">
-						                    				<%
-								                                if(build.getStatus().equals(FrameworkConstants.INPROGRESS))  {
-								                            %>
-								                                <img src="images/icons/inprogress.png" title="In progress"/>
-										              		<% 
-								                                } else if(build.getStatus().equals(FrameworkConstants.CI_SUCCESS_FLAG) && StringUtils.isNotEmpty(build.getDownload())) {
-								                                	String downloadUrl = build.getUrl()+ FrameworkConstants.CI_JOB_BUILD_ARTIFACT;
-								                                	if (StringUtils.isNotEmpty(build.getDownload())) {
-								                                		downloadUrl = downloadUrl + FrameworkConstants.FORWARD_SLASH + build.getDownload().replaceAll("\"","");								                                		
-								                                	}
-								                            %>
-										                		<a href="<s:url action='CIBuildDownload'>
-												          		     <s:param name="buildDownloadUrl"><%= downloadUrl %></s:param>
-												          		     <s:param name="appId"><%= appId %></s:param>
-												          		     <s:param name="customerId"><%= customerId %></s:param>
-												          		     <s:param name="projectId"><%= projectId %></s:param>
-												          		     <s:param name="buildNumber"><%= build.getNumber() %></s:param>
-												          		     <s:param name="downloadJobName"><%= jobName %></s:param>
-												          		     </s:url>"><img src="images/icons/download.png" title="Download"/>
-									                            </a>
-						
-								                            <%  
-								                            	}  else {
-									                        %>
-								                                <img src="images/icons/downloadFailure.png" title="Not available"/>
-								                            <%  
-								                            	}
-										              		%>
-														</td>
-						                    			<td><%= build.getTimeStamp() %></td>
-						                    			<td>
-						                    				<% 
-								                                if(build.getStatus().equals(FrameworkConstants.CI_SUCCESS_FLAG)) {
-								                            %>
-								                                <img src="images/icons/success.png" title="Success">
-								                           	<%
-								                                } else if(build.getStatus().equals(FrameworkConstants.INPROGRESS))  { 
-								                            %>
-								                                <img src="images/icons/inprogress.png" title="In progress"/>
-								                            <%
-								                                } else { 
-								                            %>
-								                                <img src="images/icons/error.png" title="Failure">
-								                            <%  } 
-								                            %>
-						                    			</td>
-						                    		</tr>
-					                    		<% 
-					                    			}
-				                        		%>
 				                    		</tbody>
 			                        	</table>
-			                        	<% 
-			                        		} else {
-			                        	%>
+			                        	<%  
+			                        		} else { 
+		                        		%>  
 			                        	    <div class="alert-message block-message warning" >
-			                        	    	<%  
-			                        	    		String jobAliveStatus = request.getAttribute(FrameworkConstants.CI_BUILD_JENKINS_ALIVE + jobName).toString();
-			                        	    		String title = FrameworkActionUtil.getTitle(FrameworkConstants.CI_ERROR + jobAliveStatus + FrameworkConstants.CI_MESSAGE, FrameworkConstants.CI);
-			                        	    	%>
+		                        	    	<%  
+			                        	    		String jobAliveStatus = request.getAttribute(FrameworkConstants.CI_BUILD_JENKINS_ALIVE + jobName).toString(); 
+			                        	    		String title = FrameworkActionUtil.getTitle(FrameworkConstants.CI_ERROR + jobAliveStatus + FrameworkConstants.CI_MESSAGE, FrameworkConstants.CI); 
+		                        	    	%> 
 		                        	    		<div class="alert alert-block" style="margin-top: 0px;">
 			                        	    		<center class="errorMsgLbl">
 			                        	    			<%= title %>
@@ -292,9 +258,8 @@ if(!isiPad()){
 var refreshCi = false;
 var isJenkinsAlive = false;
 var isJenkinsReady = false;
-
 $(document).ready(function() {
-	
+	$(".pagination").hide();
 	$('.siteaccordion').unbind('click');
 	accordionOperation();
 	// hide popup
@@ -312,7 +277,7 @@ $(document).ready(function() {
 		<% } %>
 	});
 	
-	$("input:checkbox[name='builds']").click(function() {
+	$("input:checkbox[name='builds']").live('change', function(e) {
 		var isAllChecked = isAllCheckBoxCheked($(this).attr("class"));
 		$("input:checkbox[value='" + $(this).attr("class") +"']").attr('checked', isAllChecked);
 		<% if (permissions != null && permissions.canManageCIJobs()) { %>
@@ -580,6 +545,8 @@ function successEvent(pageUrl, data) {
 			showProgressBar("Deleting job (s)");	
 	 	 	loadContent('CIJobDelete',$('#deleteObjects'), $('#subcontainer'), getBasicParams(), false, true);
 		}
+	} else if(pageUrl == 'fetchBuildsList') { 
+		appendBuildList(data);
 	} else if (pageUrl == 'saveConfluenceConfiguration'){
 		hidePopuploadingIcon();
 		$('#popupPage').modal('hide');
@@ -739,6 +706,179 @@ function redirectCiConfigure() {
 			configureJob(okUrl, ciOperation);
 		}
 	}
-
 }
+
+//get next n builds
+function next(obj) {
+	var jobName = $(obj).closest('span').find('input:checkbox:first').val();
+	//get the count value, increment and reassign it to same attr 
+	var prevCount = $('#paginate'+jobName).attr('count');
+	var increment = parseInt(prevCount,10);
+	var currentCount = increment + 1;
+	$('#paginate'+jobName).attr('count', currentCount);
+	var params = getBasicParams();
+	params = params.concat('&name=');
+  	params = params.concat(jobName);
+  	params = params.concat('&pageNo=');
+  	params = params.concat(currentCount);
+  	loadContent('fetchBuildsList', '', '', params, true);	
+}
+
+//get previous n builds
+function prev(obj) {
+	var jobName = $(obj).closest('span').find('input:checkbox:first').val();
+	//get the count value, decrement and reassign it to same attr 
+	var prevCount = $('#paginate'+jobName).attr('count');
+	var increment = parseInt(prevCount,10);
+	var currentCount = increment - 1;
+	$('#paginate'+jobName).attr('count', currentCount);
+	var params = getBasicParams();
+	params = params.concat('&name=');
+  	params = params.concat(jobName);
+	params = params.concat('&pageNo=');
+  	params = params.concat(currentCount);
+  	loadContent('fetchBuildsList', '', '', params, true);
+}
+
+//hide/show pagination buttons
+function navigatorControl(data) {
+	// change this value for items per page in buildList pagination
+	var itemsPerPage = 3;
+	//uncheckin checkboxes while changing pages
+	$('.'+data.name+'AllBuild').removeAttr('checked');
+	$('.'+data.name+'Job').removeAttr('checked');
+
+	var countValue = $('#paginate'+data.name).attr('count');
+	//hide prev button when pageNo is 0
+	if (countValue < 1) {
+		$('.Prev'+ data.name).css("visibility", "hidden");
+	} else {
+		$('.Prev'+ data.name).css("visibility", "visible");
+	}
+	
+	console.log("hideValue:: "+data.totalBuildSize/itemsPerPage+ " <=   count:: "+(countValue++));
+	//hide next button when totalPages <= count
+	if ((data.totalBuildSize/itemsPerPage) <= (countValue++)) {
+		$('.Next'+data.name).css("visibility", "hidden");
+	} else {
+		$('.Next'+data.name).css("visibility", "visible");
+	}
+	
+	//hide pagination div when buildlist size < itemsperpage
+	if (data.totalBuildSize <= itemsPerPage) {
+		$(":checkbox[value='"+data.name+"']").closest('span').find('div.pagination').hide();
+	} else {
+		$(":checkbox[value='"+data.name+"']").closest('span').find('div.pagination').show();
+	}
+	//to hide pagination div when accordion is closed
+	var image = $('#'+data.name+'Accordion').find('img').attr('src');
+	if (image != "images/r_arrowopen.png") {
+		$('#paginate'+data.name).hide();
+	} 
+}
+
+//to construct Build List dynamically
+function appendBuildList(data) {
+	//this will do all navigator show/hide process
+	navigatorControl(data);
+	//appendin new td's to tr
+	var builds = data.limitedBuilds;
+	if (builds == null) {
+		$('#'+data.name+'Table').hide();
+	} else {
+		$('#'+data.name+'Table').show();
+	}
+	
+	var per_disabledStr = "disabled"; 
+	<% 
+		if ( permissions  != null && ( permissions.canManageCIJobs()  ||  permissions.canExecuteCIJobs() )) { 
+	%> 
+		per_disabledStr = ""; 
+	<%
+		}
+	%>
+	
+	$("#"+data.name).find("tr").remove();
+	for (i in builds) {
+		var buildNumber = builds[i].number;
+		var buildUrl = builds[i].url;
+		var buildStatus = builds[i].status;
+		var buildTime = builds[i].timeStamp;
+		var buildDownload = builds[i].download;
+		var value = data.name+","+buildNumber;
+		var appId = '<%= appId %>';
+		var projectId = '<%= projectId %>';
+		var customerId = '<%= customerId %>';
+			
+		var newRow = $('<tr>');
+	
+		var checkbox_td = $('<td>');
+		checkbox_td.append('<input class="'+data.name+'" type="checkbox" name="builds" value="'+value+'" '+per_disabledStr+'>');	
+		
+		var buildNumber_td = $('<td>');
+		buildNumber_td.text(buildNumber);
+		
+		var url_td = $('<td>');
+		url_td.append('<a target="_blank" href="'+buildUrl+'">'+buildUrl+'</a>');
+		
+	
+		var download_td = $('<td style="padding-left: 3%;">');
+		if (buildStatus == 'INPROGRESS') {
+			download_td.append('<img src="images/icons/inprogress.png" title="In progress"/>');
+		} else if ((buildStatus == 'SUCCESS') && (buildDownload != '')) {
+			downloadUrl = buildUrl + 'artifact';
+			downloadUrl = downloadUrl + "/" + buildDownload.replace(/\"/g, ""); 
+			downloadUrl = encodeURIComponent(downloadUrl);
+			download_td.append('<a href=" /framework/CIBuildDownload.action?buildDownloadUrl='+downloadUrl+'&appId='+appId+'&customerId='+customerId+'&projectId='+projectId+'&buildNumber='+buildNumber+'&downloadJobName='+data.name+'"><img title="Download" src="images/icons/download.png"></a>');
+		} else {
+			download_td.append('<img src="images/icons/wrong_icon.png" title="Not available"/>');
+		}
+		
+		var timeStamp_td = $('<td>');
+		timeStamp_td.text(buildTime);
+		
+		var status_td = $('<td>');
+		if (buildStatus == 'SUCCESS') {
+			status_td.append('<img src="images/icons/success.png" title="Success">');
+		} else if (buildStatus == 'INPROGRESS') {
+			status_td.append('<img src="images/icons/inprogress.png" title="In progress"/>');
+		} else {
+			status_td.append('<img src="images/icons/failure.png" title="Failure">');
+		}
+		
+		newRow.append(checkbox_td);
+		newRow.append(buildNumber_td);
+		newRow.append(url_td);
+		newRow.append(download_td);
+		newRow.append(timeStamp_td);
+		newRow.append(status_td);
+	
+		$("#"+data.name).append(newRow);
+	}
+}
+
+function accordionClickOperation(thisObj) {
+	//hide pagination buttons
+	$(thisObj).closest('span').find('div.pagination').hide();
+	var jobName = $(thisObj).closest('span').find('input:checkbox:first').val();
+	$('#paginate'+jobName).attr('count', 0);
+	var params = getBasicParams();
+  	params = params.concat('&name=');
+  	params = params.concat(jobName);
+  	params = params.concat('&pageNo=');
+  	params = params.concat(0);
+// 	var count = $('#paginate'+jobName).attr('count');
+	var _tempIndex = $('.accImg').index(thisObj)
+	$('.mfbox').eq(_tempIndex).slideToggle(300, function() {
+		var image = $(thisObj).attr("src");
+		if (image != "images/r_arrowopen.png") {
+		  	$(thisObj).attr("src","images/r_arrowopen.png");
+		  	loadContent('fetchBuildsList', '', '', params, true);
+		} else {
+			$(thisObj).attr("src","images/r_arrowclose.png");
+			loadContent('fetchBuildsList', '', '', params, true);
+		}
+	});	
+}
+
 </script>

@@ -122,7 +122,7 @@ $('.control-group').addClass("valReportLbl");
     	$('#codeValidatePopup').click(function() {
     		var params = getBasicParams();
     		params = params.concat("&actionType=");
-    		params = params.concat('<%= FrameworkConstants.UNIT %>');
+    		params = params.concat('<%= FrameworkConstants.REQ_CODE %>');
     		loadContent("checkForLock", '', '', params, true, true);
     	});
 
