@@ -44,8 +44,9 @@ public class RepositoryService extends RestBase implements FrameworkConstants {
 	@Path("/importApplication")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response importApplication(@QueryParam("type") String type, RepoDetail repodetail) {
+	public Response importApplication(RepoDetail repodetail) {
 		Response response = null;
+		String type = repodetail.getType();
 		if(type.equals(SVN)){
 			response = importSVNApplication(type, repodetail);
 		} else if (type.equals(GIT)) {
@@ -164,11 +165,12 @@ public class RepositoryService extends RestBase implements FrameworkConstants {
 	@Path("/updateImportedApplication")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response updateImportedApplicaion(@QueryParam("type") String type, @QueryParam("appDirName") String appDirName, RepoDetail repodetail) {
+	public Response updateImportedApplicaion(@QueryParam("appDirName") String appDirName, RepoDetail repodetail) {
 		Response response = null;
 		ResponseInfo responseData = new ResponseInfo();
 		try {
 			ApplicationInfo applicationInfo = FrameworkServiceUtil.getApplicationInfo(appDirName);
+			String type = repodetail.getType();
 			if(type.equals(SVN)){
 				response = updateSVNProject(responseData, type, applicationInfo, repodetail);
 			} else if (type.equals(GIT)) {
@@ -293,8 +295,9 @@ public class RepositoryService extends RestBase implements FrameworkConstants {
 	@Path("/addProjectToRepo")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response addProjectToRepo(@QueryParam("type") String type, @QueryParam("appDirName") String appDirName, RepoDetail repodetail, @QueryParam("userId") String userId, @QueryParam("projectId") String projectId, @QueryParam("appId") String appId) {
+	public Response addProjectToRepo(@QueryParam("appDirName") String appDirName, RepoDetail repodetail, @QueryParam("userId") String userId, @QueryParam("projectId") String projectId, @QueryParam("appId") String appId) {
 		Response response = null;
+		String type = repodetail.getType();
 		if(type.equals(SVN)){
 			response = addSVNProject(appDirName, repodetail, userId, projectId, appId, type);
 		} else if (type.equals(GIT)) {
@@ -345,8 +348,9 @@ public class RepositoryService extends RestBase implements FrameworkConstants {
 	@Path("/commitProjectToRepo")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response commitImportedProject(RepoDetail repodetail, @QueryParam("type") String type, @QueryParam("appDirName") String appDirName) {
+	public Response commitImportedProject(RepoDetail repodetail, @QueryParam("appDirName") String appDirName) {
 		Response response = null;
+		String type = repodetail.getType();
 		if(type.equals(SVN)){
 			response = commitSVNProject(repodetail);
 		} else if (type.equals(GIT)) {
