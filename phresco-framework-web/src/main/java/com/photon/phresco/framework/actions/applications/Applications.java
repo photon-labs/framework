@@ -1386,7 +1386,7 @@ public class Applications extends FrameworkBaseAction implements Constants {
 				if (getActionType().equals(REQ_CODE)) {
 					actionTypesToCheck.add(BUILD);
 					actionTypesToCheck.add(REQ_START);
-					actionTypesToCheck.equals(UNIT);
+					actionTypesToCheck.add(UNIT);
 				} else if (getActionType().equals(BUILD)) {
 					actionTypesToCheck.add(BUILD);
 					actionTypesToCheck.add(REQ_CODE);
