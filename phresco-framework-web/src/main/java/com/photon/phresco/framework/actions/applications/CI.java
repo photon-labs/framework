@@ -46,6 +46,7 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.codehaus.jettison.json.JSONArray;
 import org.quartz.CronExpression;
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
@@ -60,6 +61,7 @@ import com.photon.phresco.framework.api.ActionType;
 import com.photon.phresco.framework.api.CIManager;
 import com.photon.phresco.framework.commons.ApplicationsUtil;
 import com.photon.phresco.framework.commons.FrameworkUtil;
+import com.photon.phresco.framework.impl.ProjectManagerImpl;
 import com.photon.phresco.framework.model.CIBuild;
 import com.photon.phresco.framework.model.CIJob;
 import com.photon.phresco.framework.model.CIJobStatus;
@@ -93,13 +95,15 @@ public class CI extends DynamicParameterAction implements FrameworkConstants {
 	private String senderEmailId = null;
 	private String senderEmailPassword = null;
 	private int totalBuildSize;
-	private boolean buildInProgress = false;
+	boolean buildInProgress = false;
 	private String contentType = null;
 	private String fileType = null;
+	private String from = "";
+	private boolean coberturaPlugin = false;
 
 	private List<String> triggers = null;
 	private String buildNumber = null;
-	private CIJob job = null;
+	CIJob job = null;
 	private String oldJobName = null;
 	private int numberOfJobsInProgress = 0;
 	private String downloadJobName = null;
@@ -116,6 +120,15 @@ public class CI extends DynamicParameterAction implements FrameworkConstants {
 	private String collabNetPackage = "";
 	private String collabNetRelease = "";
 	private boolean collabNetoverWriteFiles = false;
+	
+	//confluence implementation
+	private boolean enableConfluence = false;
+	private String confluenceSite = "";
+	private boolean confluencePublish = false;
+	private String confluenceSpace = "";
+	private String confluencePage = "";
+	private boolean confluenceArtifacts = false;
+	private String confluenceOther = "";
 
 	// Test automation in jenkins
 	private String usedClonnedWorkspace = "";
@@ -134,13 +147,14 @@ public class CI extends DynamicParameterAction implements FrameworkConstants {
     private String logo = "";
     private String sonarUrl = "";
     private boolean isDownStreamAvailable;
+    private String values = "";
     
 	public String ci() {
 		if (debugEnabled) {
 			S_LOGGER.debug("Entering Method CI.ci()");
 		}	
 		try {
-		    removeSessionAttribute(getAppId() + SESSION_APPINFO);
+		    removeSessionAttribute(getAppId() + SESSION_APPINFO);//To remove the appInfo from the session
 			boolean jenkinsAlive = false;
 			// Other methods like build() will call this after triggered build,
 			// it will set trigger_from_ui=true, we need to set value when this
@@ -294,32 +308,40 @@ public class CI extends DynamicParameterAction implements FrameworkConstants {
 			}
 
 			CIManager ciManager = PhrescoFrameworkFactory.getCIManager();
+			ProjectManagerImpl pm = new ProjectManagerImpl();
 			ApplicationInfo appInfo = getApplicationInfo();
 			setReqAttribute(REQ_APPINFO, appInfo);
-			
-			List<String> clonedWorkspaces = null;
-			List<String> existingJobsNames = null;
+			ProjectInfo project = pm.getProject(getProjectId(), getCustomerId());
+			List<ApplicationInfo> appInfos = null;
+			List<String> clonedWorkspaces = new ArrayList<String>();
+			List<Properties> existingJobsNames = new ArrayList<Properties>();
+			if (project != null) {
+				appInfos = project.getAppInfos();
+			}
 			CIJob existJob = ciManager.getJob(appInfo, jobName);
-			List<CIJob> existJobs = ciManager.getJobs(appInfo);
-			if (CollectionUtils.isNotEmpty(existJobs)) {
-				clonedWorkspaces = new ArrayList<String>(existJobs.size());
-				existingJobsNames = new ArrayList<String>(existJobs.size());
-				for (CIJob ciJob : existJobs) {
-					if (debugEnabled) {
-						S_LOGGER.debug("Exist jobs size ... " + existJobs.size());
-					}
-					if (ciJob.isCloneWorkspace()) {
+			for (ApplicationInfo appsInfo : appInfos) {
+				List<CIJob> existJobs = ciManager.getJobs(appsInfo);
+				if (CollectionUtils.isNotEmpty(existJobs)) {
+					Properties properties = new Properties();
+					for (CIJob ciJob : existJobs) {
 						if (debugEnabled) {
-							S_LOGGER.debug("Cloned names .... " + ciJob.getName());
+							S_LOGGER.debug("Exist jobs size ... " + existJobs.size());
 						}
-						clonedWorkspaces.add(ciJob.getName());
+						if (appInfo.getName().equalsIgnoreCase(appsInfo.getName()) && ciJob.isCloneWorkspace()) {
+							if (debugEnabled) {
+								S_LOGGER.debug("Cloned names .... " + ciJob.getName());
+							}
+							clonedWorkspaces.add(ciJob.getName());
+						}
+						if (debugEnabled) {
+							S_LOGGER.debug("existJob names in code .... " + existJob);
+						}
+						properties.setProperty(ciJob.getName(), appsInfo.getName());
 					}
-					if (debugEnabled) {
-						S_LOGGER.debug("existJob names in code .... " + existJob);
-					}
-					existingJobsNames.add(ciJob.getName());
+					existingJobsNames.add(properties);
 				}
 			}
+
 			if (existJob != null && StringUtils.isNotEmpty(existJob.getCollabNetpassword())) {
 				existJob.setCollabNetpassword(CIPasswordScrambler.unmask(existJob.getCollabNetpassword()));
 			}
@@ -330,6 +352,7 @@ public class CI extends DynamicParameterAction implements FrameworkConstants {
 				// restore values in popup
 				restoreValues(existJob, appInfo);
 			}
+			setReqAttribute(REQ_CONFLUENCE_SITES, ciManager.getConfluenceSites());
 			setReqAttribute(REQ_EXISTING_JOB, existJob);
 			setReqAttribute(REQ_EXISTING_JOBS_NAMES, existingJobsNames);
 			setReqAttribute(REQ_EXISTING_CLONNED_JOBS, clonedWorkspaces);
@@ -353,7 +376,28 @@ public class CI extends DynamicParameterAction implements FrameworkConstants {
 			String smtpAuthUsername = ciManager.getMailConfiguration(SMTP_AUTH_USERNAME);
 			String smtpAuthPassword = ciManager.getMailConfiguration(SMTP_AUTH_PASSWORD);
 			setReqAttribute(REQ_SENDER_EMAILID, smtpAuthUsername);
-			setReqAttribute(REQ_SENDER_EMAIL_PASSWORD, smtpAuthPassword);
+			setReqAttribute(REQ_SENDER_EMAIL_PASSWORD, ciManager.decyPassword(smtpAuthPassword));
+		} catch (PhrescoException e) {
+			if (debugEnabled) {
+				S_LOGGER.error("Entered into catch block of CI.showEmailConfiguration()" + FrameworkUtil.getStackTraceAsString(e));
+			}
+			return showErrorPopup(e, getText(EXCEPTION_CI_MAIL_CONFIGURE_POPUP));
+		}
+		return SUCCESS;
+	}
+	
+	public String showConfluenceConfiguration() {
+		if (debugEnabled) {
+			S_LOGGER.debug("Entering Method  CI.showEmailConfiguration()");
+		}
+		try {
+			CIManager ciManager = PhrescoFrameworkFactory.getCIManager();
+			ApplicationInfo appInfo = getApplicationInfo();
+			setReqAttribute(REQ_APPINFO, appInfo);
+			JSONArray confluenceConfiguration = ciManager.getConfluenceConfiguration();
+			if (confluenceConfiguration != null) {
+				setReqAttribute(CONFLUENCECONFIGURATION, confluenceConfiguration);
+			}
 		} catch (PhrescoException e) {
 			if (debugEnabled) {
 				S_LOGGER.error("Entered into catch block of CI.showEmailConfiguration()" + FrameworkUtil.getStackTraceAsString(e));
@@ -373,12 +417,51 @@ public class CI extends DynamicParameterAction implements FrameworkConstants {
 			setReqAttribute(REQ_APPINFO, appInfo);
 			String jenkinsPort = getPortNo(Utility.getJenkinsHome());
 			ciManager.saveMailConfiguration(jenkinsPort, senderEmailId, senderEmailPassword);
-			restartJenkins(); 
+			restartJenkins(); // reload config
 			addActionMessage(getText(CI_MAIL_CONFIGURE_SUCCESS));
 		} catch (PhrescoException e) {
-			S_LOGGER.error("Entered into catch block of CI.doUpdateSave()" + FrameworkUtil.getStackTraceAsString(e));
+			if (debugEnabled) {
+				S_LOGGER.error("Entered into catch block of CI.doUpdateSave()" + FrameworkUtil.getStackTraceAsString(e));
+			}
 			addActionMessage(getText(CI_EMAIL_SAVE_UPDATE_FAILED, e.getLocalizedMessage()));
 		}
+		return ci();
+	}
+	
+	public String saveConfluenceConfiguration() throws PhrescoException {
+		if (debugEnabled) {
+			S_LOGGER.debug("Entering Method  CI.saveEmailConfiguration()");
+		}
+		try {
+			CIManager ciManager = PhrescoFrameworkFactory.getCIManager();
+			ApplicationInfo appInfo = getApplicationInfo();
+			setReqAttribute(REQ_APPINFO, appInfo);
+			
+			String jenkinsJobHome = System.getenv(FrameworkConstants.JENKINS_HOME);
+    		StringBuilder jenkinsHome = new StringBuilder(jenkinsJobHome);
+    		jenkinsHome.append(File.separator);
+    		File confluenceHomeXml = new File(jenkinsHome.toString() + CI_CONFLUENCE_XML);
+    		if (confluenceHomeXml.exists()) {
+    			ciManager.clearConfluenceSitesNodes();
+    		}
+			org.codehaus.jettison.json.JSONObject jsonObj = new org.codehaus.jettison.json.JSONObject(values);
+			JSONArray jsonArray = jsonObj.getJSONArray(VALUES_KEY);
+			 for (int i=0; i < jsonArray.length(); i++) {
+				 org.codehaus.jettison.json.JSONObject item = jsonArray.getJSONObject(i);
+				 String confluenceUrl = item.getString(CONFLUENCE_URL_KEY);
+				 String confluenceUsername = item.getString(CONFLUENCE_USERNAME_KEY);
+				 String confluencePassword = item.getString(CONFLUENCE_PASSWORD_KEY);
+				 ciManager.saveConfluenceConfiguration(confluenceUrl, confluenceUsername, confluencePassword);
+			 }
+			 restartJenkins();
+			 addActionMessage(getText(CI_CONFLUENCE_CONFIGURE_SUCCESS));
+		} catch (Exception e) {
+			if (debugEnabled) {
+				S_LOGGER.error("Entered into catch block of CI.saveConfluenceConfiguration()" + FrameworkUtil.getStackTraceAsString(e));
+			}
+			throw new PhrescoException(e);
+		} 
+		
 		return ci();
 	}
 	
@@ -387,32 +470,35 @@ public class CI extends DynamicParameterAction implements FrameworkConstants {
 			// restore values
 			MojoProcessor mojo = new MojoProcessor(new File(getPhrescoPluginInfoFilePath(Constants.PHASE_CI)));
 			String phase = "";
-			String selectedOperation = ciJob.getOperation();
-			if (BUILD.equals(selectedOperation)) {
+			String operation = ciJob.getOperation();
+			if (BUILD.equals(operation)) {
 				phase = PHASE_PACKAGE;
 	        	restoreValuesToXml(mojo, phase, ciJob);
-	        } else if (DEPLOY.equals(selectedOperation)) { 
+	        } else if (DEPLOY.equals(operation)) { 
 	        	phase = PHASE_DEPLOY;
 	        	restoreValuesToXml(mojo, phase, ciJob);
-	        } else if (PDF_REPORT.equals(selectedOperation)) { 
+	        } else if (PDF_REPORT.equals(operation)) { 
 	        	phase = PHASE_PDF_REPORT;
 	        	restoreValuesToXml(mojo, phase, ciJob);
-	        } else if (CODE_VALIDATION.equals(selectedOperation)) { 
+	        } else if (CODE_VALIDATION.equals(operation)) { 
 	        	phase = PHASE_VALIDATE_CODE;
 	        	restoreValuesToXml(mojo, phase, ciJob);
-	        } else if (UNIT_TEST.equals(selectedOperation)) { 
+	        } else if (UNIT_TEST.equals(operation)) { 
 	        	phase = PHASE_UNIT_TEST;
 	        	restoreValuesToXml(mojo, phase, ciJob);
-	        } else if (FUNCTIONAL_TEST.equals(selectedOperation)) {
+	        } else if (FUNCTIONAL_TEST.equals(operation)) {
 				FrameworkUtil frameworkUtil = FrameworkUtil.getInstance();
 				String seleniumToolType = frameworkUtil.getSeleniumToolType(appInfo);
 				phase =  PHASE_FUNCTIONAL_TEST + HYPHEN + seleniumToolType;
 	        	restoreValuesToXml(mojo, phase, ciJob);
-	        } else if (LOAD_TEST.equals(selectedOperation)) {
+	        } else if (LOAD_TEST.equals(operation)) {
 	        	phase = PHASE_LOAD_TEST;
 	        	restoreValuesToXml(mojo, phase, ciJob);
-	        } else if (PERFORMANCE_TEST_CI.equals(selectedOperation)) {
+	        } else if (PERFORMANCE_TEST_CI.equals(operation)) {
 	        	phase = PHASE_PERFORMANCE_TEST;
+	        	restoreValuesToXml(mojo, phase, ciJob);
+	        }  else if (COMPONENT_TEST_CI.equals(operation)) {
+	        	phase = PHASE_COMPONENT_TEST;
 	        	restoreValuesToXml(mojo, phase, ciJob);
 	        }
 		} catch (Exception e) {
@@ -458,6 +544,7 @@ public class CI extends DynamicParameterAction implements FrameworkConstants {
                 goal = PHASE_PACKAGE;
                 setReqAttribute(REQ_PHASE, PHASE_CI);
                 setReqAttribute(REQ_GOAL, goal);
+                setReqAttribute(REQ_FROM, goal);
             } else if (DEPLOY.equals(operation)) {
                 parameters = getMojoParameters(mojo, PHASE_DEPLOY);
                 setReqAttribute(REQ_PHASE, PHASE_CI);
@@ -495,6 +582,11 @@ public class CI extends DynamicParameterAction implements FrameworkConstants {
             	parameters = getMojoParameters(mojo, PHASE_PERFORMANCE_TEST);
             	setReqAttribute(REQ_PHASE, PHASE_CI);
             	goal = PHASE_PERFORMANCE_TEST;
+            	setReqAttribute(REQ_GOAL, goal);
+            } else if (COMPONENT_TEST_CI.equals(operation)) {
+            	parameters = getMojoParameters(mojo, PHASE_COMPONENT_TEST);
+            	setReqAttribute(REQ_PHASE, PHASE_CI);
+            	goal = PHASE_COMPONENT_TEST;
             	setReqAttribute(REQ_GOAL, goal);
             }
             
@@ -634,6 +726,8 @@ public class CI extends DynamicParameterAction implements FrameworkConstants {
 			}
 			InetAddress thisIp = InetAddress.getLocalHost();
 			// basic information
+			String pomFileName = Utility.getPomFileName(appInfo);
+			existJob.setPomLocation(pomFileName);
 			existJob.setName(name);
 			existJob.setSvnUrl(svnurl);
 			existJob.setUserName(username);
@@ -641,14 +735,15 @@ public class CI extends DynamicParameterAction implements FrameworkConstants {
 			existJob.setJenkinsUrl(thisIp.getHostAddress());
 			existJob.setJenkinsPort(getPortNo(Utility.getJenkinsHome()));
 			existJob.setTriggers(triggers);
-			Map<String, String> emailMesage = new HashMap<String, String>(2);
-			emailMesage.put(REQ_KEY_SUCCESS_EMAILS, successEmailIds);
-			emailMesage.put(REQ_KEY_FAILURE_EMAILS, failureEmailIds);
-			existJob.setEmail(emailMesage);
+			Map<String, String> emails = new HashMap<String, String>(2);
+			emails.put(REQ_KEY_SUCCESS_EMAILS, successEmailIds);
+			emails.put(REQ_KEY_FAILURE_EMAILS, failureEmailIds);
+			existJob.setEmail(emails);
 			existJob.setScheduleType(schedule);
 			existJob.setScheduleExpression(cronExpression);
 			existJob.setBranch(branch);
 			existJob.setRepoType(svnType);
+			existJob.setCoberturaPlugin(coberturaPlugin);
 			
 			// collabNet file release plugin imple
 			existJob.setEnableBuildRelease(enableBuildRelease);
@@ -660,6 +755,15 @@ public class CI extends DynamicParameterAction implements FrameworkConstants {
 			existJob.setCollabNetRelease(collabNetRelease);
 			existJob.setCollabNetoverWriteFiles(collabNetoverWriteFiles);
 
+			// confluence file release plugin imple
+			existJob.setEnableConfluence(enableConfluence);
+			existJob.setConfluenceSite(confluenceSite);
+			existJob.setConfluencePublish(confluencePublish);
+			existJob.setConfluenceSpace(confluenceSpace);
+			existJob.setConfluencePage(confluencePage);
+			existJob.setConfluenceArtifacts(confluenceArtifacts);
+			existJob.setConfluenceOther(confluenceOther);
+			
 			// Automate values
 			existJob.setCloneWorkspace(cloneWorkspace);
 			existJob.setUsedClonnedWorkspace(usedClonnedWorkspace);
@@ -701,6 +805,9 @@ public class CI extends DynamicParameterAction implements FrameworkConstants {
 				ActionType actionType = ActionType.BUILD;
 				mvncmd =  actionType.getActionType().toString();
 				String buildPrebuildCmd = CI_PRE_BUILD_STEP + " -Dgoal=" + Constants.PHASE_CI + " -Dphase=" + Constants.PHASE_PACKAGE;
+				if(!POM_NAME.equals(pomFileName)) {
+					buildPrebuildCmd = buildPrebuildCmd + " -f " + pomFileName; 
+				}
 				// To handle multi module project
 				buildPrebuildCmd = buildPrebuildCmd + FrameworkConstants.SPACE + HYPHEN_N;
 				preBuildStepCmds.add(buildPrebuildCmd);
@@ -719,6 +826,9 @@ public class CI extends DynamicParameterAction implements FrameworkConstants {
 				mvncmd =  actionType.getActionType().toString();
 				
 				String deployPreBuildCmd = CI_PRE_BUILD_STEP + " -Dgoal=" + Constants.PHASE_CI + " -Dphase=" + Constants.PHASE_DEPLOY;
+				if(!POM_NAME.equals(pomFileName)) {
+					deployPreBuildCmd = deployPreBuildCmd + " -f " + pomFileName; 
+				}
 				// To handle multi module project
 				deployPreBuildCmd = deployPreBuildCmd + FrameworkConstants.SPACE + HYPHEN_N;
 				preBuildStepCmds.add(deployPreBuildCmd);
@@ -741,7 +851,7 @@ public class CI extends DynamicParameterAction implements FrameworkConstants {
 				String attachPattern = "do_not_checkin/archives/" + attacheMentPattern + "/*.pdf";
 				existJob.setAttachmentsPattern(attachPattern); //do_not_checkin/archives/cumulativeReports/*.pdf
 				// if the enable build release option is choosed in UI, the file pattenr value will be used
-				existJob.setCollabNetFileReleasePattern(attachPattern); 
+				existJob.setCollabNetFileReleasePattern(attachPattern);
 				
 				// here we can set necessary values in request and we can change object value as well...
 				// getting sonar url
@@ -772,6 +882,9 @@ public class CI extends DynamicParameterAction implements FrameworkConstants {
 				mvncmd =  actionType.getActionType().toString();
 				
 				String deployPreBuildCmd = CI_PRE_BUILD_STEP + " -Dgoal=" + Constants.PHASE_CI + " -Dphase=" + Constants.PHASE_PDF_REPORT;
+				if(!POM_NAME.equals(pomFileName)) {
+					deployPreBuildCmd = deployPreBuildCmd + " -f " + pomFileName; 
+				}
 				// To handle multi module project
 				deployPreBuildCmd = deployPreBuildCmd + FrameworkConstants.SPACE + HYPHEN_N;
 				preBuildStepCmds.add(deployPreBuildCmd);
@@ -790,6 +903,9 @@ public class CI extends DynamicParameterAction implements FrameworkConstants {
 				mvncmd =  actionType.getActionType().toString();
 				
 				String deployPreBuildCmd = CI_PRE_BUILD_STEP + " -Dgoal=" + Constants.PHASE_CI + " -Dphase=" + Constants.PHASE_VALIDATE_CODE;
+				if(!POM_NAME.equals(pomFileName)) {
+					deployPreBuildCmd = deployPreBuildCmd + " -f " + pomFileName; 
+				}
 				// To handle multi module project
 				deployPreBuildCmd = deployPreBuildCmd + FrameworkConstants.SPACE + HYPHEN_N;
 				preBuildStepCmds.add(deployPreBuildCmd);
@@ -808,9 +924,21 @@ public class CI extends DynamicParameterAction implements FrameworkConstants {
 				mvncmd =  actionType.getActionType().toString();
 				
 				String unitTestPreBuildCmd = CI_PRE_BUILD_STEP + " -Dgoal=" + Constants.PHASE_CI + " -Dphase=" + Constants.PHASE_UNIT_TEST;
+				if(!POM_NAME.equals(pomFileName)) {
+					unitTestPreBuildCmd = unitTestPreBuildCmd + " -f " + pomFileName; 
+				}
 				// To handle multi module project
 				unitTestPreBuildCmd = unitTestPreBuildCmd + FrameworkConstants.SPACE + HYPHEN_N;
 				preBuildStepCmds.add(unitTestPreBuildCmd);
+				if (coberturaPlugin) {
+					existJob.setEnablePostBuildStep(true);
+					List<String> postBuildStepCmds = new ArrayList<String>();
+					postBuildStepCmds.add(MAVEN_SEP_COBER);
+					postBuildStepCmds.add("shell#SEP#cd BASEDIR='${JENKINS_HOME}/workspace/"+name+"/src' GCOVR='${GCOV_HOME}' -r BASEDIR='${JENKINS_HOME}/workspace/"+name+"/src' -x -o coverage.xml");
+					if (CollectionUtils.isNotEmpty(postBuildStepCmds)) {
+						existJob.setPostbuildStepCommands(postBuildStepCmds);
+					}
+				}
 			} else if (FUNCTIONAL_TEST.equals(operation)) {
 				if (debugEnabled) {
 					S_LOGGER.debug("Functional test operation!!!!!");
@@ -830,6 +958,9 @@ public class CI extends DynamicParameterAction implements FrameworkConstants {
 				ActionType actionType = ActionType.FUNCTIONAL_TEST;
 				mvncmd =  actionType.getActionType().toString();
 				String functionalTestPrebuildCmd = CI_PRE_BUILD_STEP + " -Dgoal=" + Constants.PHASE_CI + " -Dphase=" + Constants.PHASE_FUNCTIONAL_TEST;
+				if(!POM_NAME.equals(pomFileName)) {
+					functionalTestPrebuildCmd = functionalTestPrebuildCmd + " -f " + pomFileName; 
+				}
 				// To handle multi module project
 				functionalTestPrebuildCmd = functionalTestPrebuildCmd + FrameworkConstants.SPACE + HYPHEN_N;
 				preBuildStepCmds.add(functionalTestPrebuildCmd);
@@ -848,6 +979,9 @@ public class CI extends DynamicParameterAction implements FrameworkConstants {
 				mvncmd =  actionType.getActionType().toString();
 				
 				String loadTestPreBuildCmd = CI_PRE_BUILD_STEP + " -Dgoal=" + Constants.PHASE_CI + " -Dphase=" + Constants.PHASE_LOAD_TEST;
+				if(!POM_NAME.equals(pomFileName)) {
+					loadTestPreBuildCmd = loadTestPreBuildCmd + " -f " + pomFileName; 
+				}
 				// To handle multi module project
 				loadTestPreBuildCmd = loadTestPreBuildCmd + FrameworkConstants.SPACE + HYPHEN_N;
 				preBuildStepCmds.add(loadTestPreBuildCmd);
@@ -865,13 +999,39 @@ public class CI extends DynamicParameterAction implements FrameworkConstants {
 				mvncmd =  actionType.getActionType().toString();
 				
 				String performanceTestPreBuildCmd = CI_PRE_BUILD_STEP + " -Dgoal=" + Constants.PHASE_CI + " -Dphase=" + Constants.PHASE_PERFORMANCE_TEST;
+				if(!POM_NAME.equals(pomFileName)) {
+					performanceTestPreBuildCmd = performanceTestPreBuildCmd + " -f " + pomFileName; 
+				}
 				// To handle multi module project
 				performanceTestPreBuildCmd = performanceTestPreBuildCmd + FrameworkConstants.SPACE + HYPHEN_N;
 				preBuildStepCmds.add(performanceTestPreBuildCmd);
+			} else if (COMPONENT_TEST_CI.equals(operation)) {
+				if (debugEnabled) {
+					S_LOGGER.debug("Component test operation!!!!!!");
+				}				
+				MojoProcessor mojo = new MojoProcessor(new File(getPhrescoPluginInfoFilePath(Constants.PHASE_CI)));
+				persistValuesToXml(mojo, Constants.PHASE_COMPONENT_TEST);
+				constructCiJobObj(mojo, Constants.PHASE_COMPONENT_TEST, existJob);
+				
+				//To get maven build arguments
+				parameters = getMojoParameters(mojo, Constants.PHASE_COMPONENT_TEST);
+				ActionType actionType = ActionType.COMPONENT_TEST;
+				mvncmd =  actionType.getActionType().toString();
+				
+				String componentTestPreBuildCmd = CI_PRE_BUILD_STEP + " -Dgoal=" + Constants.PHASE_CI + " -Dphase=" + Constants.PHASE_COMPONENT_TEST;
+				if(!POM_NAME.equals(pomFileName)) {
+					componentTestPreBuildCmd = componentTestPreBuildCmd + " -f " + pomFileName; 
+				}
+				// To handle multi module project
+				componentTestPreBuildCmd = componentTestPreBuildCmd + FrameworkConstants.SPACE + HYPHEN_N;
+				preBuildStepCmds.add(componentTestPreBuildCmd);
 			}
 			
 			List<String> buildArgCmds = getMavenArgCommands(parameters);
-			
+			if(!POM_NAME.equals(pomFileName)) {
+				buildArgCmds.add(HYPHEN_F);
+				buildArgCmds.add(pomFileName);
+			}
 			if (!CollectionUtils.isEmpty(buildArgCmds)) {
 				for (String buildArgCmd : buildArgCmds) {
 					mvncmd = mvncmd + FrameworkConstants.SPACE + buildArgCmd;
@@ -895,18 +1055,20 @@ public class CI extends DynamicParameterAction implements FrameworkConstants {
 			existJob.setEnablePreBuildStep(true);
 			
 			existJob.setPrebuildStepCommands(preBuildStepCmds);
-			
+			boolean isRestart = false;
 			// configure job here
 			if (CI_CREATE_JOB_COMMAND.equals(jobType)) {
-				ciManager.createJob(appInfo, existJob);
+				isRestart = ciManager.createJob(appInfo, existJob);
 				addActionMessage(getText(SUCCESS_JOB));
 			} else if (CI_UPDATE_JOB_COMMAND.equals(jobType)) {
-				ciManager.updateJob(appInfo, existJob);
+				isRestart = ciManager.updateJob(appInfo, existJob);
 				addActionMessage(getText(SUCCESS_UPDATE));
 			}
 			
 			if(!CLONED_WORKSPACE.equals(svnType)) {
-			restartJenkins(); 
+				if (!isRestart) {
+					restartJenkins(); // reload config
+				}
 			}
 
 			setReqAttribute(REQ_SELECTED_MENU, APPLICATIONS);
@@ -1159,7 +1321,7 @@ public class CI extends DynamicParameterAction implements FrameworkConstants {
 			HttpServletRequest request = getHttpRequest();
 			String cronBy = request.getParameter(REQ_CRON_BY);
 			String jobName = "Job Name";
-			String cronExpresion = "";
+			String cronExpression = "";
 			Date[] dates = null;
 
 			if (REQ_CRON_BY_DAILY.equals(cronBy)) {
@@ -1169,28 +1331,28 @@ public class CI extends DynamicParameterAction implements FrameworkConstants {
 
 				if ("false".equals(every)) {
 					if ("*".equals(hours) && "*".equals(minutes)) {
-						cronExpresion = "0 * * * * ?";
+						cronExpression = "0 * * * * ?";
 					} else if ("*".equals(hours) && !"*".equals(minutes)) {
-						cronExpresion = "0 " + minutes + " 0 * * ?";
+						cronExpression = "0 " + minutes + " 0 * * ?";
 					} else if (!"*".equals(hours) && "*".equals(minutes)) {
-						cronExpresion = "0 0 " + hours + " * * ?";
+						cronExpression = "0 0 " + hours + " * * ?";
 					} else if (!"*".equals(hours) && !"*".equals(minutes)) {
-						cronExpresion = "0 " + minutes + " " + hours
+						cronExpression = "0 " + minutes + " " + hours
 								+ " * * ?";
 					}
 				} else {
 					if ("*".equals(hours) && "*".equals(minutes)) {
-						cronExpresion = "0 * * * * ?";
+						cronExpression = "0 * * * * ?";
 					} else if ("*".equals(hours) && !"*".equals(minutes)) {
-						cronExpresion = "0 " + "*/" + minutes + " * * * ?"; 
+						cronExpression = "0 " + "*/" + minutes + " * * * ?"; // 0 replace with *
 					} else if (!"*".equals(hours) && "*".equals(minutes)) {
-						cronExpresion = "0 0 " + "*/" + hours + " * * ?"; 
+						cronExpression = "0 0 " + "*/" + hours + " * * ?"; // 0 replace with *
 					} else if (!"*".equals(hours) && !"*".equals(minutes)) {
-						cronExpresion = "0 " + minutes + " */" + hours
-								+ " * * ?"; 
+						cronExpression = "0 " + minutes + " */" + hours
+								+ " * * ?"; // 0 replace with *
 					}
 				}
-				dates = testCronExpression(cronExpresion);
+				dates = testCronExpression(cronExpression);
 
 			} else if (REQ_CRON_BY_WEEKLY.equals(cronBy)) {
 				String hours = request.getParameter(REQ_HOURS);
@@ -1198,8 +1360,8 @@ public class CI extends DynamicParameterAction implements FrameworkConstants {
 				String week = request.getParameter(REQ_CRON_BY_WEEK);
 				hours = ("*".equals(hours)) ? "0" : hours;
 				minutes = ("*".equals(minutes)) ? "0" : minutes;
-				cronExpresion = "0 " + minutes + " " + hours + " ? * " + week;
-				dates = testCronExpression(cronExpresion);
+				cronExpression = "0 " + minutes + " " + hours + " ? * " + week;
+				dates = testCronExpression(cronExpression);
 
 			} else if (REQ_CRON_BY_MONTHLY.equals(cronBy)) {
 				String hours = request.getParameter(REQ_HOURS);
@@ -1208,26 +1370,28 @@ public class CI extends DynamicParameterAction implements FrameworkConstants {
 				String day = request.getParameter(REQ_DAY);
 				hours = ("*".equals(hours)) ? "0" : hours;
 				minutes = ("*".equals(minutes)) ? "0" : minutes;
-				cronExpresion = "0 " + minutes + " " + hours + " " + day + " "
+				cronExpression = "0 " + minutes + " " + hours + " " + day + " "
 						+ month + " ?";
-				dates = testCronExpression(cronExpresion);
+				dates = testCronExpression(cronExpression);
 			}
 
 			if (dates != null) {
-				cronExpresion = cronExpresion.replace('?', '*');
-				cronExpresion = cronExpresion.substring(2);
-				setReqAttribute(REQ_CRON_EXPRESSION, cronExpresion);
+				cronExpression = cronExpression.replace('?', '*');
+				cronExpression = cronExpression.substring(2);
+				setReqAttribute(REQ_CRON_EXPRESSION, cronExpression);
 				setReqAttribute(REQ_CRON_DATES, dates);
 				setReqAttribute(REQ_JOB_NAME, jobName);
 				return CRON_VALIDATION;
 			}
 
+			setReqAttribute(REQ_FROM, getFrom());
 		} catch (PhrescoException e) {
 			if (debugEnabled) {
 				S_LOGGER.error("Entered into catch block of CI.cronValidation()"
 						+ FrameworkUtil.getStackTraceAsString(e));
 			}
 		}
+		
 		return CRON_VALIDATION;
 	}
 
@@ -1238,11 +1402,11 @@ public class CI extends DynamicParameterAction implements FrameworkConstants {
 				S_LOGGER.debug("Entering Method  CI.testCronExpression(String expression)");
 				S_LOGGER.debug("testCronExpression() Expression = " + expression);
 			}
-			final CronExpression cronExpresion = new CronExpression(expression);
-			final Date nextValidDate1 = cronExpresion.getNextValidTimeAfter(new Date());
-			final Date nextValidDate2 = cronExpresion.getNextValidTimeAfter(nextValidDate1);
-			final Date nextValidDate3 = cronExpresion.getNextValidTimeAfter(nextValidDate2);
-			final Date nextValidDate4 = cronExpresion.getNextValidTimeAfter(nextValidDate3);
+			final CronExpression cronExpression = new CronExpression(expression);
+			final Date nextValidDate1 = cronExpression.getNextValidTimeAfter(new Date());
+			final Date nextValidDate2 = cronExpression.getNextValidTimeAfter(nextValidDate1);
+			final Date nextValidDate3 = cronExpression.getNextValidTimeAfter(nextValidDate2);
+			final Date nextValidDate4 = cronExpression.getNextValidTimeAfter(nextValidDate3);
 			dates = new Date[] { nextValidDate1, nextValidDate2, nextValidDate3, nextValidDate4 };
 		} catch (Exception e) {
 			if (debugEnabled) {
@@ -1389,11 +1553,7 @@ public class CI extends DynamicParameterAction implements FrameworkConstants {
 	}
 
 	public void setEmails(String[] email) {
-		if(email == null) {
-			this.emails = new String[0];
-		} else {
-			this.emails = Arrays.copyOf(email, email.length);
-		}
+		this.emails = email;
 	}
 
 	public String getSuccessEmailIds() {
@@ -1738,5 +1898,85 @@ public class CI extends DynamicParameterAction implements FrameworkConstants {
 
 	public void setFileType(String fileType) {
 		this.fileType = fileType;
+	}
+
+	public String getFrom() {
+		return from;
+	}
+
+	public void setFrom(String from) {
+		this.from = from;
+	}
+
+	public void setCoberturaPlugin(boolean coberturaPlugin) {
+		this.coberturaPlugin = coberturaPlugin;
+	}
+
+	public boolean isCoberturaPlugin() {
+		return coberturaPlugin;
+	}
+
+	public void setValues(String values) {
+		this.values = values;
+	}
+
+	public String getValues() {
+		return values;
+	}
+
+	public void setEnableConfluence(boolean enableConfluence) {
+		this.enableConfluence = enableConfluence;
+	}
+
+	public boolean isEnableConfluence() {
+		return enableConfluence;
+	}
+
+	public void setConfluencePublish(boolean confluencePublish) {
+		this.confluencePublish = confluencePublish;
+	}
+
+	public boolean isConfluencePublish() {
+		return confluencePublish;
+	}
+
+	public void setConfluenceSpace(String confluenceSpace) {
+		this.confluenceSpace = confluenceSpace;
+	}
+
+	public String getConfluenceSpace() {
+		return confluenceSpace;
+	}
+
+	public void setConfluencePage(String confluencePage) {
+		this.confluencePage = confluencePage;
+	}
+
+	public String getConfluencePage() {
+		return confluencePage;
+	}
+
+	public void setConfluenceArtifacts(boolean confluenceArtifacts) {
+		this.confluenceArtifacts = confluenceArtifacts;
+	}
+
+	public boolean isConfluenceArtifacts() {
+		return confluenceArtifacts;
+	}
+
+	public void setConfluenceSite(String confluenceSite) {
+		this.confluenceSite = confluenceSite;
+	}
+
+	public String getConfluenceSite() {
+		return confluenceSite;
+	}
+
+	public void setConfluenceOther(String confluenceOther) {
+		this.confluenceOther = confluenceOther;
+	}
+
+	public String getConfluenceOther() {
+		return confluenceOther;
 	}
 }

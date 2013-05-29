@@ -27,7 +27,7 @@ public class ContextUrls {
     private String encodingType;
     private boolean redirectAutomatically;
     private boolean followRedirects;
-	private boolean keepAlive;
+    private boolean keepAlive;
     private boolean multipartData;
     private boolean compatibleHeaders;
     private List<Headers> headers;

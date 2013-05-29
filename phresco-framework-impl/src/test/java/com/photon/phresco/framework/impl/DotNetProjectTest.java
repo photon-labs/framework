@@ -46,8 +46,8 @@ public class DotNetProjectTest extends BaseTest {
 	@Before
 	public void setUp() throws PhrescoException {
 		ApplicationInfo appInfo = getAppInfo("DOTNET", "tech-dotnet");
-		appDirNames.add("DOTNET");
 		appInfos.add(appInfo);
+		appDirNames.add("DOTNET");
 		projectInfo = getProjectInfo("tech-dotnet", "tech-dotnet" , "Sample-dotnet-1" , "Sample-dotnet-2", "PHR_dotnet");
 		if ((projectManager == null) && (applicationManager == null)) {
 			projectManager = PhrescoFrameworkFactory.getProjectManager();

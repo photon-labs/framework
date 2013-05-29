@@ -163,6 +163,41 @@ define(["framework/widget", "navigation/api/navigationAPI", "dynamicPage/dynamic
 			return retuenObj;
 		},
 		
+		showHideControls : function(keyword) {
+			var self = this;
+			switch(keyword) {
+				case commonVariables.projectlist :
+					$("#projectList").show();
+					$("#createProject").hide();
+					self.applyRBAC(keyword);
+					break;
+					
+				case commonVariables.editApplication :
+					$("#applicationedit").show();
+			}
+		},
+		
+		applyRBAC : function(keyword) {
+			var self = this;
+			var userPermissions = JSON.parse(self.navAPI.localVal.getSession('userPermissions'));
+			switch(keyword) {
+				case commonVariables.projectlist :
+					if (!userPermissions.importApplication) {
+						$("#importApp").prop("disabled", true);
+					}
+					if (!userPermissions.manageApplication) {
+						$("#addproject").prop("disabled", true);
+					}
+					break;
+					
+				case commonVariables.configuration :
+					if (!userPermissions.manageConfiguration) {
+						$("input[name=env_pop]").prop("disabled", true);
+					}
+					break;
+			}
+		},
+		
 		renderHeader : function() {
 			var self = this;
 			Clazz.navigationController.jQueryContainer = commonVariables.headerPlaceholder;

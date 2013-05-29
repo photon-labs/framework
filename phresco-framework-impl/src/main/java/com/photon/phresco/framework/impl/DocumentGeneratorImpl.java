@@ -24,7 +24,9 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.List;
 
+import org.apache.bcel.generic.GETSTATIC;
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
 import com.itextpdf.text.pdf.PdfCopy;
@@ -33,8 +35,11 @@ import com.photon.phresco.commons.model.ArtifactGroup;
 import com.photon.phresco.commons.model.Technology;
 import com.photon.phresco.exception.PhrescoException;
 import com.photon.phresco.framework.api.DocumentGenerator;
+import com.photon.phresco.framework.docs.impl.DocConvertor;
 import com.photon.phresco.framework.docs.impl.DocumentUtil;
+import com.photon.phresco.framework.docs.impl.PdfInput;
 import com.photon.phresco.service.client.api.ServiceManager;
+import com.photon.phresco.util.FileUtil;
 import com.photon.phresco.util.Utility;
 
 /**
@@ -65,7 +70,7 @@ public class DocumentGeneratorImpl implements DocumentGenerator {
             if (isDebugEnabled) {
                 S_LOGGER.debug("generate() ProjectCode=" + info.getCode());
             }
-            String path = folderPath + File.separator + info.getName()
+            String path = folderPath + File.separator + info.getAppDirName()
                     + "_doc.pdf";
             os = new FileOutputStream(new File(path));
 
@@ -77,8 +82,20 @@ public class DocumentGeneratorImpl implements DocumentGenerator {
             DocumentUtil.addPages(titleSection, pdfCopy);
             String techId = info.getTechInfo().getId();
             Technology technology = serviceManager.getTechnology(techId);
+            if(StringUtils.isNotEmpty(technology.getDescription())) {
+            	
+            }
             InputStream stringAsPDF = DocumentUtil.getStringAsPDF(technology.getDescription());
             DocumentUtil.addPages(stringAsPDF, pdfCopy);
+//			if (StringUtils.isNotEmpty(technology.getDescription())) {
+//				PdfInput convertToPdf = DocConvertor.convertToPdf(technology
+//						.getDescription());
+//				if (convertToPdf != null) {
+//					DocumentUtil.addPages(convertToPdf.getInputStream(),
+//							pdfCopy);
+//				}
+//			} else {
+//			}
             
             if(CollectionUtils.isNotEmpty(artifacts)) {
             	DocumentUtil.addPages(artifacts, pdfCopy);
@@ -108,5 +125,11 @@ public class DocumentGeneratorImpl implements DocumentGenerator {
             Utility.closeStream(fos);
         }
     }
+
+	public void deleteOldDocument(File filePath, String oldAppDirName)
+			throws PhrescoException {
+		String pdfFilePath = filePath.toString() + File.separator + "docs" + File.separator + oldAppDirName + "_doc.pdf";
+		FileUtil.delete(new File(pdfFilePath));
+	}
 
 }

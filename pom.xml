@@ -1,226 +1,184 @@
-<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+    <!-- <parent>
+        <groupId>com.photon.phresco</groupId>
+        <artifactId>phresco-parent</artifactId>
+        <version>3.0.0.10001-SNAPSHOT</version>
+        <relativePath>../</relativePath>
+    </parent> -->
+    
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.photon.phresco.framework</groupId>
     <artifactId>phresco-framework-root</artifactId>
 	 <version>3.0.0.10001-SNAPSHOT</version>
     <packaging>pom</packaging>
     <name>Phresco Framework Root</name>
-    <description>phresco-framework-root</description>
     <url>http://www.phresco.org</url>
-    <build>
-        <sourceDirectory>${phresco.source.directory}</sourceDirectory>
-        <testSourceDirectory>${testSourceDirectory}</testSourceDirectory>
-        <finalName>helios2helios</finalName>
-        <pluginManagement>
-            <plugins>
-                <plugin>
-                    <groupId>org.eclipse.m2e</groupId>
-                    <artifactId>lifecycle-mapping</artifactId>
-                    <version>1.0.0</version>
-                    <configuration>
-                        <lifecycleMappingMetadata xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-                            <pluginExecutions>
-								<pluginExecution>
-									<pluginExecutionFilter>
-										<groupId>org.apache.geronimo.genesis.plugins</groupId>
-										<artifactId>tools-maven-plugin</artifactId>
-										<versionRange>[1.1,)</versionRange>
-										<goals>
-											<goal>copy-legal-files</goal>
-										</goals>
-							</pluginExecutionFilter>
-							<action>
-								<ignore/>
-							</action>
-								</pluginExecution>
-								<pluginExecution>
-									<pluginExecutionFilter>
-										<groupId>org.codehaus.mojo</groupId>
-										<artifactId>jasperreports-maven-plugin</artifactId>
-										<versionRange>[1.0-beta-2,)</versionRange>
-										<goals>
-											<goal>compile-reports</goal>
-										</goals>
-									</pluginExecutionFilter>
-									<action>
-										<ignore/>
-									</action>
-								</pluginExecution>
-							</pluginExecutions>
-						</lifecycleMappingMetadata>
-                    </configuration>
-                </plugin>
-            </plugins>
-        </pluginManagement>
-        <plugins>
-            <plugin>
-                <groupId>com.photon.phresco.plugins</groupId>
-                <artifactId>phresco-maven-plugin</artifactId>
-                <version>2.3.0.4001</version>
-                <extensions>true</extensions>
-            </plugin>
-        </plugins>
-    </build>
-    <profiles>
-        <profile>
-            <id>js</id>
-            <properties>
-                <sonar.branch xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">js</sonar.branch>
-                <sonar.language xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">js</sonar.language>
-                <phresco.source.directory xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">src/main/webapp/js</phresco.source.directory>
-                <testSourceDirectory xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">src/test/webapp</testSourceDirectory>
-                <sonar.exclusions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">**/lib/**</sonar.exclusions>
-                <sonar.exclusions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">excanvas.compressed.js</sonar.exclusions>
-                <js.skipTest>false</js.skipTest>
-            </properties>
-        </profile>
-        <profile>
-            <id>java</id>
-            <activation>
-                <activeByDefault>true</activeByDefault>
-            </activation>
-            <properties>
-                <sonar.branch xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">java</sonar.branch>
-                <sonar.language xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">java</sonar.language>
-                <testSourceDirectory xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">src/test/java</testSourceDirectory>
-                <phresco.source.directory xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">src/main/java</phresco.source.directory>
-                <js.skipTest>true</js.skipTest>
-            </properties>
-        </profile>
-        <profile>
-            <id>web</id>
-            <properties>
-                <sonar.branch xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">web</sonar.branch>
-                <sonar.language xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">web</sonar.language>
-                <sonar.dynamicAnalysis xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">false</sonar.dynamicAnalysis>
-                <phresco.source.directory xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">src/main/webapp</phresco.source.directory>
-            </properties>
-        </profile>
-    </profiles>
-    <modules>
-        <module>phresco-framework</module>
-        <module>phresco-framework-impl</module>
-        <module>phresco-framework-web</module>
-        <module>phresco-framework-runner</module>
-    </modules>
-    <dependencies>
-        <dependency>
-            <groupId>jslibraries.files</groupId>
-            <artifactId>jslib_jquery-amd</artifactId>
-            <version>1.7.1-alpha-1</version>
-            <type>js</type>
-        </dependency>
-        <dependency>
-            <groupId>jslibraries.files</groupId>
-            <artifactId>jslib_jquery-ui-amd</artifactId>
-            <version>1.8.16-alpha-1</version>
-            <type>js</type>
-        </dependency>
-        <dependency>
-            <groupId>jslibraries.files</groupId>
-            <artifactId>jslib_jsonpath-amd</artifactId>
-            <version>0.8.0</version>
-            <type>js</type>
-        </dependency>
-        <dependency>
-            <groupId>jslibraries.files</groupId>
-            <artifactId>jslib_xml2json-amd</artifactId>
-            <version>1.1</version>
-            <type>js</type>
-        </dependency>
-    </dependencies>
-    <distributionManagement>
-        <repository>
-            <id>${releases.repo.id}</id>
-            <url>${releases.repo.url}</url>
-        </repository>
-        <snapshotRepository>
-            <id>${snapshots.repo.id}</id>
-            <url>${snapshots.repo.url}</url>
-        </snapshotRepository>
+    <description>phresco-framework-root</description>  
+     <distributionManagement>
+            <repository>
+                <id>${releases.repo.id}</id>
+                <url>${releases.repo.url}</url>
+            </repository>
+            <snapshotRepository>
+                <id>${snapshots.repo.id}</id>
+                <url>${snapshots.repo.url}</url>
+            </snapshotRepository>
         <site>
             <id>phresco.framework</id>
             <name>Phresco Framework</name>
             <url>${siteBaseUrl}/framework/</url>
         </site>
     </distributionManagement>
-    <properties>
-        <phresco.env.config.xml xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">/src/main/webapp/WEB-INF/resources/phresco-env-config.xml</phresco.env.config.xml>
-        <phresco.env.test.config.xml xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">/src/test/webapp/resources/phresco-env-config.xml</phresco.env.test.config.xml>
-        <sonar.language xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">js</sonar.language>
-        <phresco.unitTest xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">js,java</phresco.unitTest>
-        <phresco.unitTest.js.report.dir xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">/do_not_checkin/target/jstest/report</phresco.unitTest.js.report.dir>
-        <phresco.unitTest.js.testsuite.xpath xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">/testsuite</phresco.unitTest.js.testsuite.xpath>
-        <phresco.unitTest.js.testcase.path xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">/testcase</phresco.unitTest.js.testcase.path>
-        <phresco.manualTest.testcase.path xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">/test/manual</phresco.manualTest.testcase.path>
-        <phresco.unitTest.java.report.dir xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">/do_not_checkin/target/surefire-reports</phresco.unitTest.java.report.dir>
-        <phresco.unitTest.java.testsuite.xpath xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">/testsuite</phresco.unitTest.java.testsuite.xpath>
-        <phresco.unitTest.java.testcase.path xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">/testcase</phresco.unitTest.java.testcase.path>
-        <sonar.javascript.jstest.reportsfolder xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">do_not_checkin/target/jstest/report/emulator-0</sonar.javascript.jstest.reportsfolder>
-        <sonar.javascript.testframework xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">jstest</sonar.javascript.testframework>
-        <phresco.jslibs.source.dir xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">/src/main/webapp/lib</phresco.jslibs.source.dir>
-        <phresco.source.resource.dir xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">/src/main/webapp/WEB-INF/resources</phresco.source.resource.dir>
-        <phresco.components.source.dir xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">/src/main/webapp/components</phresco.components.source.dir>
-        <phresco.eclipse xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">true</phresco.eclipse>
-        <phresco.functionalTest.selenium.tool xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">grid</phresco.functionalTest.selenium.tool>
-        <phresco.functionalTest.dir xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">/test/functional</phresco.functionalTest.dir>
-        <phresco.functionalTest.report.dir xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">/test/functional/target/surefire-reports</phresco.functionalTest.report.dir>
-        <phresco.functionalTest.testsuite.xpath xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">/testsuite</phresco.functionalTest.testsuite.xpath>
-        <phresco.functionalTest.testcase.path xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">/testcase</phresco.functionalTest.testcase.path>
-        <phresco.functionalTest.adapt.config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">/test/functional/src/main/resources/phresco-env-config.xml</phresco.functionalTest.adapt.config>
-        <phresco.performanceTest.dir xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">/test/performance</phresco.performanceTest.dir>
-        <phresco.performanceTest.report.dir xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">/test/performance/dir_type/results/jmeter</phresco.performanceTest.report.dir>
-        <phresco.loadTest.dir xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">/test/load</phresco.loadTest.dir>
-        <phresco.loadTest.report.dir xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">/test/load/dir_type/results/jmeter</phresco.loadTest.report.dir>
-        <phresco.theme.builder.path xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">/src/main/webapp/css</phresco.theme.builder.path>
-        <phresco.theme.builder.image.path xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">/src/main/webapp/images</phresco.theme.builder.image.path>
-        <phresco.theme.file.extension xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">.css</phresco.theme.file.extension>
-        <phresco.theme.bundle.upload.dir xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">/src/main/webapp/css</phresco.theme.bundle.upload.dir>
-        <siteBaseUrl xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">file://C:/apache-tomcat-7.0.26/webapps/ROOT/phresco-site/</siteBaseUrl>
-        <log4j.version xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">1.2.16</log4j.version>
-        <jersey-version xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">1.9-ea07</jersey-version>
-        <ddmlib.version xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">r10</ddmlib.version>
-        <svnkit.version xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">1.3.5</svnkit.version>
-        <trilead-ssh2.version xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">build212-hudson-5</trilead-ssh2.version>
-        <maven-jar-plugin.version xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">2.3.2</maven-jar-plugin.version>
-        <tools-maven-plugin.version xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">1.1</tools-maven-plugin.version>
-        <jersey-client.version xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">1.12</jersey-client.version>
-        <jersey-json.version xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">1.12</jersey-json.version>
-        <cli.version xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">1.442</cli.version>
-        <gson.version xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">1.7.1</gson.version>
-        <commons-lang.version xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">2.2</commons-lang.version>
-        <commons-collections.version xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">3.2.1</commons-collections.version>
-        <commons-io.version xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">2.0.1</commons-io.version>
-        <plexus-utils.version xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">3.0</plexus-utils.version>
-        <junit.version xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">4.9</junit.version>
-        <jdom.version xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">1.1.2</jdom.version>
-        <httpclient.version xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">4.1.2</httpclient.version>
-        <maven-jar-plugin.version xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">2.3.2</maven-jar-plugin.version>
-        <maven-assembly-plugin.version xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">2.2-beta-5</maven-assembly-plugin.version>
-        <maven-upload-plugin.version xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">1.1</maven-upload-plugin.version>
-        <struts2-core.version xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">2.2.3.1</struts2-core.version>
-        <struts.version xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">1.2.9</struts.version>
-        <servlet-api.version xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">2.4</servlet-api.version>
-        <struts2-tiles-plugin.version xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">2.1.6</struts2-tiles-plugin.version>
-        <tiles-compat.version xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">2.1.2</tiles-compat.version>
-        <tiles-core.version xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">2.1.2</tiles-core.version>
-        <tiles-jsp.version xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">2.1.2</tiles-jsp.version>
-        <tiles-servlet.version xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">2.1.2</tiles-servlet.version>
-        <xalan.version xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">2.7.1</xalan.version>
-        <struts2-json-plugin.version xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">2.2.3.1</struts2-json-plugin.version>
-        <quartz-all.version xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">1.6.3</quartz-all.version>
-        <mysql-connector-java.version xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">5.1.18</mysql-connector-java.version>
-        <json.version xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">20090211</json.version>
-        <itextpdf.version xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">5.1.2</itextpdf.version>
-        <itext-xtra.version xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">5.1.2</itext-xtra.version>
-        <jasperreports.version xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">4.5.0</jasperreports.version>
-        <struts2-jasperreports-plugin.version xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">2.2.3.1</struts2-jasperreports-plugin.version>
-        <itext.version xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">2.1.7</itext.version>
-        <jasperreports-maven-plugin.version xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">1.0-beta-2</jasperreports-maven-plugin.version>
-        <tomcat-maven-plugin.version xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">1.1</tomcat-maven-plugin.version>
-        <lifecycle-mapping.version xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">1.0.0</lifecycle-mapping.version>
-        <java-maven-plugin.version xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">2.0.0.10002</java-maven-plugin.version>
-        <json-simple xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">1.1</json-simple>
-    </properties>
+
+    <modules>
+        <module>phresco-framework</module>
+        <module>phresco-framework-impl</module>
+        <module>phresco-framework-web</module>
+        <module>phresco-framework-runner</module>
+    </modules>
+	
+	<profiles>
+		<profile>   
+			<id>js</id>			
+	         <properties>
+				<sonar.branch>js</sonar.branch>
+				<sonar.language>js</sonar.language>
+				<phresco.source.directory>src/main/webapp/js</phresco.source.directory>
+				<sonar.exclusions>**/lib/**</sonar.exclusions>
+				<sonar.exclusions>excanvas.compressed.js</sonar.exclusions>
+			 </properties> 
+		</profile>
+		
+		<profile>   
+			<id>java</id>
+			<activation>
+				<activeByDefault>true</activeByDefault>
+			 </activation>
+			<properties>
+				<sonar.branch>java</sonar.branch>
+				<sonar.language>java</sonar.language>
+				<phresco.source.directory>src/main/java</phresco.source.directory>
+				</properties> 
+		</profile>
+		
+		<profile>   
+			<id>web</id>
+			<properties>
+				<sonar.branch>web</sonar.branch>
+				<sonar.language>web</sonar.language>
+				<sonar.dynamicAnalysis>false</sonar.dynamicAnalysis>
+				<phresco.source.directory>src/main/webapp</phresco.source.directory>
+				</properties> 
+		</profile>
+	</profiles>
+	
+	
+	<properties>
+		<siteBaseUrl>file://C:/apache-tomcat-7.0.26/webapps/ROOT/phresco-site/</siteBaseUrl>
+		<log4j.version>1.2.16</log4j.version>
+		<jersey-version>1.9-ea07</jersey-version>
+		<ddmlib.version>r10</ddmlib.version>
+		<svnkit.version>1.3.5</svnkit.version>
+		<trilead-ssh2.version>build212-hudson-5</trilead-ssh2.version>
+		<maven-jar-plugin.version>2.3.2</maven-jar-plugin.version>
+		<tools-maven-plugin.version>1.1</tools-maven-plugin.version>
+		<jersey-client.version>1.12</jersey-client.version>
+		<jersey-json.version>1.12</jersey-json.version>
+		<cli.version>1.442</cli.version>
+		<gson.version>1.7.1</gson.version>
+		<commons-lang.version>2.2</commons-lang.version>
+		<commons-collections.version>3.2.1</commons-collections.version>
+		<commons-io.version>2.0.1</commons-io.version>
+		<plexus-utils.version>3.0</plexus-utils.version>
+		<junit.version>4.9</junit.version>
+		<jdom.version>1.1.2</jdom.version>
+		<httpclient.version>4.1.2</httpclient.version>
+		<maven-jar-plugin.version>2.3.2</maven-jar-plugin.version>
+		<maven-assembly-plugin.version>2.2-beta-5</maven-assembly-plugin.version>
+		<maven-upload-plugin.version>1.1</maven-upload-plugin.version>
+		<struts2-core.version>2.2.3.1</struts2-core.version>
+		<struts.version>1.2.9</struts.version>
+		<servlet-api.version>2.4</servlet-api.version>
+		<struts2-tiles-plugin.version>2.1.6</struts2-tiles-plugin.version>
+		<tiles-compat.version>2.1.2</tiles-compat.version>
+		<tiles-core.version>2.1.2</tiles-core.version>
+		<tiles-jsp.version>2.1.2</tiles-jsp.version>
+		<tiles-servlet.version>2.1.2</tiles-servlet.version>
+		<xalan.version>2.7.1</xalan.version>
+		<struts2-json-plugin.version>2.2.3.1</struts2-json-plugin.version>
+		<quartz-all.version>1.6.3</quartz-all.version>
+		<mysql-connector-java.version>5.1.18</mysql-connector-java.version>
+		<json.version>20090211</json.version>
+		<itextpdf.version>5.1.2</itextpdf.version>
+		<itext-xtra.version>5.1.2</itext-xtra.version>
+		<jasperreports.version>4.5.0</jasperreports.version>
+		<struts2-jasperreports-plugin.version>2.2.3.1</struts2-jasperreports-plugin.version>
+		<itext.version>2.1.7</itext.version>
+		<jasperreports-maven-plugin.version>1.0-beta-2</jasperreports-maven-plugin.version>
+		<tomcat-maven-plugin.version>1.1</tomcat-maven-plugin.version>
+		<lifecycle-mapping.version>1.0.0</lifecycle-mapping.version>
+		<java-maven-plugin.version>2.0.0.10002</java-maven-plugin.version>
+		<json-simple>1.1</json-simple>
+	</properties>
+
+	<build>
+		<pluginManagement>
+			<plugins>
+				<!--This plugin's configuration is used to store Eclipse m2e settings only. It has no influence on the Maven build itself.-->
+				<plugin>
+					<groupId>org.eclipse.m2e</groupId>
+					<artifactId>lifecycle-mapping</artifactId>
+					<version>1.0.0</version>
+					<configuration>
+						<lifecycleMappingMetadata>
+							<pluginExecutions>
+								<pluginExecution>
+									<pluginExecutionFilter>
+										<groupId>
+											org.apache.geronimo.genesis.plugins
+										</groupId>
+										<artifactId>
+											tools-maven-plugin
+										</artifactId>
+										<versionRange>
+											[1.1,)
+										</versionRange>
+										<goals>
+											<goal>
+												copy-legal-files
+											</goal>
+										</goals>
+									</pluginExecutionFilter>
+									<action>
+										<ignore></ignore>
+									</action>
+								</pluginExecution>
+								<pluginExecution>
+									<pluginExecutionFilter>
+										<groupId>
+											org.codehaus.mojo
+										</groupId>
+										<artifactId>
+											jasperreports-maven-plugin
+										</artifactId>
+										<versionRange>
+											[1.0-beta-2,)
+										</versionRange>
+										<goals>
+											<goal>compile-reports</goal>
+										</goals>
+									</pluginExecutionFilter>
+									<action>
+										<ignore></ignore>
+									</action>
+								</pluginExecution>
+							</pluginExecutions>
+						</lifecycleMappingMetadata>
+					</configuration>
+				</plugin>
+			</plugins>
+		</pluginManagement>
+	</build>
 </project>

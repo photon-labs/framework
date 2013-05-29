@@ -45,15 +45,22 @@ public class PerformanceTestResultNamesImpl implements DynamicParameter, Constan
 		PossibleValues possibleValues = new PossibleValues();
 		ApplicationInfo applicationInfo = (ApplicationInfo) paramMap.get(KEY_APP_INFO);
 		String testAgainst = (String) paramMap.get(KEY_TEST_AGAINST);
-		String testDirPath = getTestDirPath(applicationInfo.getAppDirName(), testAgainst);
+		String goal = (String) paramMap.get(KEY_GOAL);
+		String testDirPath = getTestDirPath(applicationInfo, testAgainst, goal);
 		String dependencyStr = "";
-		if ("database".equalsIgnoreCase(testAgainst)) {
-			dependencyStr = "dbContextUrls";
+		
+		if (PHASE_LOAD_TEST.equals(goal)) {
+			dependencyStr = "loadContextUrl";
 		} else {
-			dependencyStr = "contextUrls";
+			if ("database".equalsIgnoreCase(testAgainst)) {
+				dependencyStr = "dbContextUrls";
+			} else {
+				dependencyStr = "contextUrls";
+			}
 		}
+		
 		File file = new File(testDirPath);
-		File[] testFiles = file.listFiles(new XmlNameFileFilter(FrameworkConstants.XML));
+		File[] testFiles = file.listFiles(new XmlNameFileFilter(FrameworkConstants.JSON));
 		if (testFiles.length != 0) {
 			for (File testFile : testFiles) {
 				int lastDot = testFile.getName().lastIndexOf(".");
@@ -64,37 +71,43 @@ public class PerformanceTestResultNamesImpl implements DynamicParameter, Constan
 				value.setDependency(dependencyStr);
 				possibleValues.getValue().add(value);
 			}
-		} else {
+		} /*else {
 			Value value = new Value();
 			value.setKey("");
 			value.setValue("");
 			possibleValues.getValue().add(value);
-		}
+		}*/
 
 		return possibleValues;
 	}
 	
-	private String getTestDirPath(String AppDirName, String testAgainst) throws PhrescoException {
+	private String getTestDirPath(ApplicationInfo appInfo, String testAgainst, String goal) throws PhrescoException {
 		StringBuilder builder = new StringBuilder(Utility.getProjectHome());
 		try {
-			PomProcessor processor = new PomProcessor(getPOMFile(AppDirName));
-			String performDir = processor.getProperty(POM_PROP_KEY_PERFORMANCETEST_DIR);
-			builder.append(AppDirName)
+			String property = "";
+			if (PHASE_LOAD_TEST.equals(goal)) {
+				property = POM_PROP_KEY_LOADTEST_DIR;
+			} else {
+				property = POM_PROP_KEY_PERFORMANCETEST_DIR;
+			}
+			PomProcessor processor = new PomProcessor(getPOMFile(appInfo));
+			String performDir = processor.getProperty(property);
+			builder.append(appInfo.getAppDirName())
 			.append(performDir)
 			.append(File.separator)
 			.append(testAgainst.toString())
-			.append(FrameworkConstants.RESULTS_SLASH_JMETER);
+			.append(FrameworkConstants.SLASH_JSON);
 			return builder.toString();
 		} catch (PhrescoPomException e) {
     		throw new PhrescoException(e); 
     	}
 	}
 	
-	private File getPOMFile(String appDirName) {
+	private File getPOMFile(ApplicationInfo appInfo) {
         StringBuilder builder = new StringBuilder(Utility.getProjectHome())
-        .append(appDirName)
+        .append(appInfo.getAppDirName())
         .append(File.separatorChar)
-        .append(POM_NAME);
+        .append(Utility.getPomFileName(appInfo));
         return new File(builder.toString());
     }
 	

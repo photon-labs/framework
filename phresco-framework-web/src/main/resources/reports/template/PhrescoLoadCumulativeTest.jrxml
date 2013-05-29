@@ -67,9 +67,9 @@
 	<pageHeader>
 		<band height="30">
 			<frame>
-				<reportElement style="PLCTHeading" mode="Opaque" x="0" y="0" width="555" height="24" isRemoveLineWhenBlank="true"/>
+				<reportElement style="PLCTHeading" mode="Opaque" x="0" y="0" width="555" height="24"/>
 				<staticText>
-					<reportElement x="5" y="4" width="191" height="15" forecolor="#FFFFFF"/>
+					<reportElement x="5" y="4" width="301" height="18" forecolor="#FFFFFF"/>
 					<textElement>
 						<font fontName="Times New Roman" size="12" isBold="true"/>
 					</textElement>
@@ -96,7 +96,7 @@
 					<text><![CDATA[File Name :]]></text>
 				</staticText>
 				<textField>
-					<reportElement style="PLCTHeadingRowLabelValue" x="88" y="5" width="410" height="15"/>
+					<reportElement style="PLCTHeadingRowLabelValue" x="88" y="5" width="456" height="15"/>
 					<textElement>
 						<font fontName="Times New Roman" size="12" isBold="true"/>
 					</textElement>

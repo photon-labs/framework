@@ -19,12 +19,12 @@ package com.photon.phresco.framework.model;
 
 public class TestResult {
 
-	private int time;
-	private int latencyTime;
-    private String timeStamp;
-    private boolean success;
-    private String label;
-    private String threadName;
+	int time;
+	int latencyTime;
+    String timeStamp;
+    boolean success;
+    String label;
+    String threadName;
     
     public int getTime() {
         return time;

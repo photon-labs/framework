@@ -132,7 +132,6 @@ define(["framework/widget", "framework/widgetWithTemplate", "projectlist/api/pro
             self.projectListAPI.localVal.setJson('appDirName', value);			
             self.projectListAPI.localVal.setJson('techid', techid);			
 			Clazz.navigationController.push(self.editAplnContent, true);
-			$("#applicationedit").css("display", "block");
 			$("#aplntitle").html("Edit - "+value);
 		},
 		

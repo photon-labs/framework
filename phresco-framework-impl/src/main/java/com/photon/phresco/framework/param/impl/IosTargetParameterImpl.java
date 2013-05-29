@@ -52,8 +52,6 @@ public class IosTargetParameterImpl implements DynamicParameter {
     private static final String XCODE_PROJECT_TARGETS = "Targets:";
     private static final String XCODE_WORKSPACE_TARGETS = "Schemes:";
 
-    private static final String POM = "pom.xml";
-    
     @Override
     public PossibleValues getValues(Map<String, Object> paramMap) throws IOException, ParserConfigurationException, 
              SAXException, ConfigurationException, PhrescoException {
@@ -65,7 +63,7 @@ public class IosTargetParameterImpl implements DynamicParameter {
             builder.append(appDirName);
             builder.append(File.separatorChar);
             
-            File pomPath = new File(builder.toString(), POM);
+            File pomPath = new File(builder.toString(), Utility.getPomFileName(applicationInfo));
             PomProcessor pomProcessor = new PomProcessor(pomPath);
             File sourceDir = null;
             String sourceDirectory = pomProcessor.getSourceDirectory();
@@ -99,12 +97,12 @@ public class IosTargetParameterImpl implements DynamicParameter {
             boolean isTarget = false;
             
             while ((line = reader.readLine()) != null) {   
-                if (line.trim().equals(XCODE_PROJECT_TARGETS) || line.trim().equals(XCODE_WORKSPACE_TARGETS)) {
+                if (line.trim().equals(XCODE_PROJECT_TARGETS) || line.trim().equals(XCODE_WORKSPACE_TARGETS)) { // getting only target
                 	// For iphone projects both targets and Schemes will be displayed, If target is avilable, take target alone else schemes
                 	if (CollectionUtils.isEmpty(possibleValues.getValue())) {
                 		isTarget = true;
                 	}
-                } else if (line.trim().contains(":")) { 
+                } else if (line.trim().contains(":")) { // omitt all other configurations
                     isTarget = false;
                 }
                     

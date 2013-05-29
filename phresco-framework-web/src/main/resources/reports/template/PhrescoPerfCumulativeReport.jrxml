@@ -25,7 +25,7 @@
 			<frame>
 				<reportElement style="PPCRHeading" mode="Opaque" x="0" y="0" width="555" height="24" isRemoveLineWhenBlank="true"/>
 				<staticText>
-					<reportElement x="5" y="4" width="190" height="15" forecolor="#FFFFFF"/>
+					<reportElement x="5" y="4" width="354" height="18" forecolor="#FFFFFF"/>
 					<textElement>
 						<font fontName="Times New Roman" size="12" isBold="true"/>
 					</textElement>

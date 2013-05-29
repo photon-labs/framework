@@ -52,17 +52,17 @@ define(["framework/widgetWithTemplate", "projectlist/listener/projectListListene
 		 *
 		 * @element: Element as the result of the template + data binding
 		 */
-		postRender : function(element) {	
-			
+		postRender : function(element) {
+			commonVariables.navListener.showHideControls(commonVariables.projectlist);
 		},
 
 		preRender: function(whereToRender, renderFunction){
-			$("#projectList").show();
-			$("#createProject").hide();
 			var self = this;
 			self.projectslistListener.getProjectList(self.projectslistListener.getActionHeader(self.projectRequestBody, "get"), function(response) {
 				var projectlist = {};
-				projectlist.projectlist = response.data;				
+				projectlist.projectlist = response.data;
+				var userPermissions = JSON.parse(self.projectslistListener.projectListAPI.localVal.getSession('userPermissions'));
+				projectlist.userPermissions = userPermissions;
 				renderFunction(projectlist, whereToRender);
 			});
 		},

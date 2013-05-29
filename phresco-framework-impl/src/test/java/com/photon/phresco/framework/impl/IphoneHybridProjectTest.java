@@ -40,8 +40,8 @@ public class IphoneHybridProjectTest extends BaseTest {
 	private static ProjectManager projectManager = null;
 	private static ApplicationManager applicationManager = null;
 	private List<ApplicationInfo> appInfos = new ArrayList<ApplicationInfo>();
-	private List<String> appDirNames = new ArrayList<String>();
 	private ProjectInfo projectInfo;	
+	private List<String> appDirNames = new ArrayList<String>();
 	
 	@Before
 	public void setUp() throws PhrescoException {

@@ -32,7 +32,9 @@
 	<property name="phresco.file.server.home" value="${phresco.home}/workspace/projects"/>
 	<property name="phresco.file.server" value="PhrescoFileServer"/>
     <property file = "${phresco.home}/conf/service.properties"/>
-	<property name="phresco.url" value="http://localhost:2468/helios"/>
+    <property file = "${phresco.home}/bin/framework.properties"/>
+	<property name="phresco.url" value="http://localhost:${framework.http.port}/${framework.context}"/>
+    <property name="waxsim.home" value="${phresco.home}/workspace/tools/waxsim"/>
 	
 	<target name="init">
 		<available property="phresco.upgraded" file="${phresco.upgrade.file}"/>
@@ -52,16 +54,22 @@
 		  <fileset dir="${ios-sim.home}">
 		    <include name="**/*"/>
 		  </fileset>
+          
+          <fileset dir="${waxsim.home}">
+		    <include name="**/*"/>
+		  </fileset>
 		</chmod>
 	</target>
 
 	<target name="run-phresco">
 		<echo message="starting helios deployment from ${phresco.home}"/>
 		<antcall target="set-execute-permissions"/>
-		<antcall target="clean-sonar"/>
-		<antcall target="copy-phresco"/>
+        <antcall target="clean-tomcat-webapps"/>
+	<!-- 	<antcall target="clean-sonar"/> -->
+        <antcall target="copy-phresco"/>
         <antcall target="copy-security"/>
-		<antcall target="copy-framework-config"/>
+	<!-- 	<antcall target="copy-framework-config"/> -->
+        <antcall target="start-waxsim"/>
 		<parallel>
 			<antcall target="tomcat-start"/>
 			<antcall target="copy-sonar"/>
@@ -71,7 +79,7 @@
 
 	<target name="copy-phresco">
 		<echo message="copying helios war into tomcat"/>
-		<copy todir="${tomcat.home}/webapps/helios">
+		<copy todir="${tomcat.home}/webapps/${framework.context}">
 			<fileset dir="${phresco.war.dir}"/>
 		</copy>
 	</target>
@@ -87,7 +95,7 @@
     <target name="copy-framework-config">
 		<echo message="copying framework.config into conf"/>
 		<copy file="${phresco.home}/conf/service.properties" 
-			tofile="${tomcat.home}/webapps/helios/WEB-INF/classes/framework.config" 
+			tofile="${tomcat.home}/webapps/${framework.context}/WEB-INF/classes/framework.config" 
 			overwrite="true"
 		/>
 	</target>
@@ -146,8 +154,8 @@
 	
 	<target name="clean-phresco" depends="init" if="phresco.upgraded">
 		<echo message="removing older version of helios war from tomcat"/>
-		<delete dir="${tomcat.home}/webapps/phresco"/>
-		<delete dir="${tomcat.home}/work/Catalina/localhost/phresco"/>
+		<delete dir="${tomcat.home}/webapps/${framework.context}"/>
+		<delete dir="${tomcat.home}/work/Catalina/localhost/${framework.context}"/>
 		<delete dir="${phresco.war.dir}"/>
 		<delete file="${phresco.upgrade.file}"/>
 	</target>
@@ -159,9 +167,9 @@
 		classname="org.apache.catalina.startup.Bootstrap"
 		fork="true">
 			<jvmarg value="-Dcatalina.home=${tomcat.home}"/>
-			<jvmarg value="-Dtomcat.http.port=2468"/>
+			<jvmarg value="-Dtomcat.http.port=${framework.http.port}"/>
 			<jvmarg value="-Dtomcat.ajp.port=2469"/>
-			<jvmarg value="-Dtomcat.redirect.port=2470"/>
+			<jvmarg value="-Dtomcat.redirect.port=${framework.https.port}"/>
 			<jvmarg value="-Dtomcat.shudown.port=2471"/>			
 			<jvmarg value="-Xmx1024m"/>
 			<jvmarg value="-XX:MaxPermSize=256M"/>
@@ -181,7 +189,7 @@
 	</target>
 
 	<target name="file-server-start">
-		<echo message="Starting helios file server on port"/>
+		<echo message="Starting Helios file server on port"/>
 		<echo message="${phresco.file.server.port.num}"/>
 		<echo message="Starting phresco file server "/>
 		<echo message="${phresco.file.server.home}"/>
@@ -200,5 +208,25 @@
 			 </classpath>
 		</java>
 	</target>
+     
+    <target name="start-waxsim">
+	 	<echo message="waxsim startup"/>
+        <exec dir="${waxsim.home}" executable="xcodebuild" osfamily="mac">
+        <arg value="install"> </arg>
+        <arg value="DSTROOT="> </arg>
+        </exec>
+    </target>
+    
+    <target name="clean-tomcat-webapps">
+        <echo message="deleting sonar and older framework contexts in webapps"/>
+        <delete includeemptydirs="true">  
+          <fileset dir="${tomcat.home}/webapps">  
+            <exclude name="host-manager/**"/>  
+            <exclude name="manager/**"/>  
+            <exclude name="ROOT/**"/>  
+            <exclude name="${framework.context}/**"/>  
+          </fileset>  
+        </delete> 
+    </target>
   
 </project>

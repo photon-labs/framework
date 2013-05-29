@@ -34,6 +34,7 @@ public class LogErrorReport extends FrameworkBaseAction {
         e.printStackTrace(new PrintWriter(sw));
         String stacktrace = sw.toString();
         //TODO:Need to handle this
+//        LogInfo log = new LogInfo(e.getLocalizedMessage(), stacktrace, action, ((User)getHttpSession().getAttribute(REQ_USER_INFO)).getUserName());
         LogInfo log = null;
         getHttpRequest().setAttribute("logReport", log);
         addActionError(e.getLocalizedMessage());

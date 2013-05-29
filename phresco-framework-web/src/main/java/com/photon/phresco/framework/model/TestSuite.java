@@ -27,6 +27,8 @@ public class TestSuite {
 	private float tests;
 	private float failures;
 	private float errors;
+	private float notApplicable;
+	private float blocked;
 	private float total;
 	private float testCoverage;
 	private String time;
@@ -134,6 +136,22 @@ public class TestSuite {
 	public void setTestSteps(
 			List<com.photon.phresco.commons.model.TestCase> testSteps) {
 		this.testSteps = testSteps;
+	}
+
+	public float getNotApplicable() {
+		return notApplicable;
+	}
+
+	public void setNotApplicable(float notApplicable) {
+		this.notApplicable = notApplicable;
+	}
+
+	public float getBlocked() {
+		return blocked;
+	}
+
+	public void setBlocked(float blocked) {
+		this.blocked = blocked;
 	}
 
 }

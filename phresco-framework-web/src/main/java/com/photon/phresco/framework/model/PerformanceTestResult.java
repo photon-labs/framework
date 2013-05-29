@@ -25,24 +25,24 @@ import org.apache.commons.lang.builder.ToStringStyle;
 
 public class PerformanceTestResult {
 
-	private int min;
-	private int max;
-	private double err;
-	private int lastTime;
-	private double avgBytes;
-	private int noOfSamples;
-	private long totalTime;
-	private long totalBytes;
-	private double maxTs;
-	private double minTs;
-	private double avg;
-	private double stdDev;
-	private double throughtPut;
-	private double kbPerSec;
-	private String label;
-	private List<Integer> times = new ArrayList<Integer>(100);
-	private double totalStdDev;
-	private double totalThroughput;
+	int min;
+	int max;
+	double err;
+	int lastTime;
+	double avgBytes;
+	int noOfSamples;
+	long totalTime;
+	long totalBytes;
+	double maxTs;
+	double minTs;
+	double avg;
+	double stdDev;
+	double throughtPut;
+	double kbPerSec;
+	String label;
+	List<Integer> times = new ArrayList<Integer>(100);
+	double totalStdDev;
+	double totalThroughput;
 	
 	public double getTotalThroughput() {
 		return totalThroughput;

@@ -1,44 +1,25 @@
-====
-    Framework Runner
-
-    Copyright (C) 1999-2013 Photon Infotech Inc.
-
-    Licensed under the Apache License, Version 2.0 (the "License");
-    you may not use this file except in compliance with the License.
-    You may obtain a copy of the License at
-
-            http://www.apache.org/licenses/LICENSE-2.0
-
-    Unless required by applicable law or agreed to in writing, software
-    distributed under the License is distributed on an "AS IS" BASIS,
-    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-    See the License for the specific language governing permissions and
-    limitations under the License.
-====
-
 Introduction:
 
 ---------------
 
-Phresco framework can be run on any platform. It requires Java to be present on the machine. Check if JAVA_HOME ( E.g., Dir:\Java\jdk1.6.0_18) is set and Java bin is included in the PATH (Dir:\Java\jdk1.6.0_18\bin).
+HeliOS framework can be run on any platform. It requires Java to be present on the machine. Check if JAVA_HOME ( E.g., Dir:\Java\jdk1.6.0_18) is set and Java bin is included in the PATH (Dir:\Java\jdk1.6.0_18\bin).
 
 
-Steps to start the Phresco Framework
+Steps to start the HeliOS Framework
 
 -------------------------------------
 
 In Windows,
 
-	1.Unzip Phresco-build-<version>.zip containing Service war, Mongo DB dump and Phresco Framework -<version>.zip  
-	2.Unzip the Phresco-framework -<version>.zip
-	2.Open the command prompt and run the batch script , Dir:\phresco\phresco-framework\bin>start-framework-server.bat
+	1.Unzip HeliOS-build-<version>.zip containing the HeliOS Framework   
+	2.Open the command prompt and run the batch script , Dir:\HeliOS\HeliOS-framework\bin>start-framework-server.bat
         to start the framework.
 
 In Mac or Linux,
 
-	1.Unzip Phresco-build-<version>.zip containing Service war, Mongo DB dump and Phresco Framework -<version>.zip  
-	2.Unzip the Phresco-framework -<version>.zip
-	2. Open the terminal and run the shell script , i.e., "sh /Users/admin/phresco/phresco-framework/bin/start-framework        -server.sh" to start the framework
+	1.Unzip HeliOS-build-<version>.zip containing the HeliOS Framework 
+	2.Open the terminal and run the shell script , 
+	i.e., "sh/Users/admin/HeliOS/HeliOS-framework/bin/start-framework-server.sh" to start the framework
 
 For Android development,
 
@@ -49,7 +30,7 @@ For Android development,
 
 For Nodejs development,
 
-	Install the correct version of nodejs from the phresco downloads.
+	Install the correct version of nodejs from the HeliOS downloads.
 
 For Iphone development,
 
@@ -57,15 +38,15 @@ For Iphone development,
 
 For Blackberry:
 
-	Refer to section "5.17 Blackberry prerequisites" in the Phresco Framework 2.0 user guide.
+	Refer to section "5.17 Blackberry prerequisites" in the HeliOS Framework 2.1 user guide.
 	
 For Windows Phone:
 
-	Refer to section "5.18 Prerequisites for Windows Phone " in the Phresco Framework 2.0 user guide.
+	Refer to section "5.18 Prerequisites for Windows Phone " in the HeliOS Framework 2.1 user guide.
 
 For Windows Metro:
 
-	Refer to section "5.19 Prerequisites for Windows Metro" in the Phresco Framework 2.0 user guide.
+	Refer to section "5.19 Prerequisites for Windows Metro" in the HeliOS Framework 2.1 user guide.
 	
 
 Pear Setup:
@@ -91,7 +72,7 @@ In Mac & Linux,
 
 Drupal & Wordpress Standards:
 
-	1. Go to phresco downloads and download Drupal & Wordpress standards which is mandatory for performing code validation. This is applicable for both Windows and Mac.
+	1. Go to HeliOS downloads and download Drupal & Wordpress standards which is mandatory for performing code validation. This is applicable for both Windows and Mac.
 
 In Windows,
 

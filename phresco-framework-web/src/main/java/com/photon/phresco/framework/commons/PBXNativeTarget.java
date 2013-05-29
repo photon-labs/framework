@@ -25,7 +25,7 @@ public class PBXNativeTarget {
     private String productName;
     private String appName;
     private String type;
-    private List<XCBuildConfiguration> buildConfigurations;
+    List<XCBuildConfiguration> buildConfigurations;
 
     public PBXNativeTarget(String name, String productName, String appName, String type, List<XCBuildConfiguration> buildConfigurations) {
         this.name = name;

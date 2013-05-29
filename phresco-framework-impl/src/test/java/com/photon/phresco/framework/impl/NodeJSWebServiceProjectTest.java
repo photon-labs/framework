@@ -41,6 +41,7 @@ public class NodeJSWebServiceProjectTest extends BaseTest{
 	private static ApplicationManager applicationManager = null;
 	private List<ApplicationInfo> appInfos = new ArrayList<ApplicationInfo>();
 	private List<String> appDirNames = new ArrayList<String>();
+	
 	private ProjectInfo projectInfo;
 		
 	@Before

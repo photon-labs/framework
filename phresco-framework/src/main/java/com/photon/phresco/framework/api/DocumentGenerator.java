@@ -29,5 +29,7 @@ public interface DocumentGenerator {
 
 	void generate(ApplicationInfo info, File filePath, List<ArtifactGroup> artifacts, 
 			ServiceManager serviceManager) throws PhrescoException;
-
+	
+	void deleteOldDocument(File filePath, String oldAppDirName) throws PhrescoException;
+	
 }
