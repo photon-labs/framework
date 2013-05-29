@@ -32,6 +32,7 @@ import com.photon.phresco.commons.model.ProjectInfo;
 import com.photon.phresco.commons.model.RequiredOption;
 import com.photon.phresco.commons.model.SelectedFeature;
 import com.photon.phresco.exception.PhrescoException;
+import com.photon.phresco.framework.rest.api.util.FrameworkServiceUtil;
 import com.photon.phresco.plugins.model.Mojos.ApplicationHandler;
 import com.photon.phresco.plugins.util.MojoProcessor;
 import com.photon.phresco.service.client.api.ServiceManager;
@@ -116,26 +117,15 @@ public class FeatureService extends RestBase implements ServiceConstants,Constan
 	@Path("/selectedFeature")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response selectedFeatures(@QueryParam("userId") String userId, @QueryParam("appDirName") String appDirName) throws PhrescoException {
-		System.out.println("inside sercvice ...");
 		ResponseInfo<List<SelectedFeature>> responseData = new ResponseInfo<List<SelectedFeature>>();
 		List<SelectedFeature> listFeatures = new ArrayList<SelectedFeature>();
-		BufferedReader bufferedReader = null;
-		Gson gson = new Gson();
 		try {
 			ServiceManager serviceManager =  CONTEXT_MANAGER_MAP.get(userId);
 			if(serviceManager == null) {
 				ResponseInfo<List<SelectedFeature>> finalOutput = responseDataEvaluation(responseData, null, "UnAuthorized User", null);
 				return Response.status(Status.BAD_REQUEST).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
 			}
-			StringBuilder sbs = null;
-			if(StringUtils.isNotEmpty(appDirName)) {
-				sbs = new StringBuilder(Utility.getProjectHome()).append(appDirName).append(
-						File.separator).append(Constants.DOT_PHRESCO_FOLDER).append(File.separator).append(PROJECT_INFO);
-			} 
-			bufferedReader = new BufferedReader(new FileReader(sbs.toString()));
-			Type type = new TypeToken<ProjectInfo>() {}.getType();
-			ProjectInfo projectinfo = gson.fromJson(bufferedReader, type);
-			ApplicationInfo appInfo = projectinfo.getAppInfos().get(0);
+			ApplicationInfo appInfo = FrameworkServiceUtil.getApplicationInfo(appDirName);
 		    String selectedTechId = appInfo.getTechInfo().getId();
 			List<String> selectedModules = appInfo.getSelectedModules();
 			if (CollectionUtils.isNotEmpty(selectedModules)) {
@@ -186,7 +176,6 @@ public class FeatureService extends RestBase implements ServiceConstants,Constan
 		slctFeature.setArtifactGroupId(artifactGroupInfo.getId());
 		slctFeature.setPackaging(artifactGroupInfo.getPackaging());
 		getScope(appInfo, artifactInfo.getId(), slctFeature);
-		System.out.println("atrifact group info ::: " + artifactGroupInfo.getAppliesTo());
 		List<CoreOption> appliesTo = artifactGroupInfo.getAppliesTo();
 		for (CoreOption coreOption : appliesTo) {
 		    if (coreOption.getTechId().equals(techId) && !coreOption.isCore() && !slctFeature.getType().equals(REQ_JAVASCRIPT_TYPE_MODULE) && artifactGroupInfo.getPackaging().equalsIgnoreCase(ZIP_FILE)) {
