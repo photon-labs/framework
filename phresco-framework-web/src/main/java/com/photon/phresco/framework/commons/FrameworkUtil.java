@@ -213,6 +213,14 @@ public class FrameworkUtil extends FrameworkBaseAction implements Constants {
         return getPomProcessor(appinfo).getProperty(POM_PROP_KEY_PERFORMANCETEST_DIR);
     }
     
+    public String getPerformanceUploadJmxDir(ApplicationInfo appinfo) throws PhrescoException, PhrescoPomException {
+        return getPomProcessor(appinfo).getProperty(POM_PROP_KEY_PERFORMANCETEST_JMX_UPLOAD_DIR);
+    }
+    
+    public String getPerformanceResultFileExtension(ApplicationInfo appinfo) throws PhrescoException, PhrescoPomException {
+        return getPomProcessor(appinfo).getProperty(POM_PROP_KEY_PERFORMANCETEST_RESULT_EXTENSION);
+    }
+    
     public String getPerformanceTestShowDevice(ApplicationInfo appinfo) throws PhrescoException, PhrescoPomException {
         return getPomProcessor(appinfo).getProperty(POM_PROP_KEY_PERF_SHOW_DEVICE);
     }
@@ -235,6 +243,14 @@ public class FrameworkUtil extends FrameworkBaseAction implements Constants {
 	
 	public String getThemeFileExtension(ApplicationInfo appinfo) throws PhrescoException, PhrescoPomException {
         return getPomProcessor(appinfo).getProperty(POM_PROP_KEY_THEME_EXT);
+    }
+	
+	public String getThemeBuilderPath(ApplicationInfo appinfo) throws PhrescoException, PhrescoPomException {
+        return getPomProcessor(appinfo).getProperty(POM_PROP_KEY_THEME_BUILDER);
+    }
+	
+	public String getThemeBuilderBrowsePath(ApplicationInfo appinfo) throws PhrescoException, PhrescoPomException {
+        return getPomProcessor(appinfo).getProperty(POM_PROP_KEY_THEME_BROWSE_BUILDER);
     }
 
 	public String getHubConfigFile(ApplicationInfo appInfo) throws PhrescoException, PhrescoPomException {

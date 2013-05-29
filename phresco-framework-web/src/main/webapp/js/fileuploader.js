@@ -279,12 +279,12 @@ qq.FileUploaderBasic = function(o){
         onProgress: function(id, fileName, loaded, total){
         	
         },
-        onComplete: function(id, fileName, responseJSON){
+        onComplete: function(id, fileName, responseJSON) {
         	if (!responseJSON.success) {
         		findError(responseJSON);
         		enableUploadButton($(o.element));
         		disableButton($("#validateContent, #validateTheme"));
-        	} else if (o.type != "themeBundle" && responseJSON.success) {
+        	} else if (o.type != "themeBundle" && o.action != "dynamicUploadFile" && responseJSON.success) {
         		findError(responseJSON);
         		disableUploadButton($(o.element));
         		enableButton($("#validateContent, #validateTheme"));
@@ -295,6 +295,16 @@ qq.FileUploaderBasic = function(o){
         		hideLoadingIcon();
         		loadContent("themeBuilderList", $('#formAppMenu, #formCustomers'), $("#subcontainer"), '', false, true);
         	} 
+        	//to add uploaded file name to hidden field of the dynamic upload paramter
+        	if (o.action == "dynamicUploadFile" && o.key == "uploadJMX") {
+        		$("#"+o.key+"file-uploader").find(".qq-upload-list").remove();
+        		var dependencies = new Array();
+        		dependencies = o.dependency.split(',');
+        		for (var i = 0; i < dependencies.length; i+=1) {
+					updateDependancy(dependencies[i]);
+					//$("#" + dependencies[i] + "Control").show();
+				}
+        	}
     	},
         onCancel: function(id, fileName){},
         // messages                
@@ -1262,6 +1272,7 @@ qq.extend(qq.UploadHandlerXhr.prototype, {
         xhr.setRequestHeader("customerId", customerId);
         xhr.setRequestHeader("envName", environment);
         xhr.setRequestHeader("configName", configName);
+        xhr.setRequestHeader("customTestAgainst", $("#customTestAgainst").val());
         xhr.send(file);
     },
     _onComplete: function(id, xhr){

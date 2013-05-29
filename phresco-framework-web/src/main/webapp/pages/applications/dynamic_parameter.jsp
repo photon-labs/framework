@@ -324,6 +324,48 @@
     %>
     				<%= template %>
     <%
+				} else if (FrameworkConstants.TYPE_FILE.equals(parameter.getType())) {
+					
+	%>
+				<div class="control-group hideContent" id="<%= parameter.getKey() %>Control" style="">
+					<label class="control-label labelbold" id="<%= parameter.getKey() %>fileControlLabel"> 
+					 	
+					</label>
+					<div class="controls">
+						<div id="<%= parameter.getKey() %>file-uploader" class="file-uploader">
+							<noscript>
+								<p>Please enable JavaScript to use file uploader.</p>
+								<!-- or put a simple form for upload here -->
+							</noscript>
+						</div>
+					</div>
+					<input type="hidden" name="<%= parameter.getKey() %>" value=""/>
+				</div>
+				<script type="text/javascript">
+	   				createFileUploader('<%= parameter.getKey() %>');
+	   				
+	   				function createFileUploader(mandatory, controlLabel) {
+	   					$('#<%= parameter.getKey() %>fileControl').show();
+	   					var imgUploader = new qq.FileUploader ({
+	   			            element : document.getElementById('<%= parameter.getKey() %>file-uploader'),
+	   			            action : 'dynamicUploadFile',
+	   			            multiple : false,
+	   			         	allowedExtensions : ['<%= parameter.getFileType() %>'],
+	   			            buttonLabel : '<%= lableTxt %>',
+	   			            typeError : '<s:text name="err.invalid.file.type" />',
+	   			            key : '<%= parameter.getKey() %>',
+	   			            dependency : '<%= StringUtils.isNotEmpty(parameter.getDependency()) ? parameter.getDependency() : "" %>',
+   			        		params : {
+   			        			goal : '<%= goal %>',
+   			        			customerId : '<%= customerId %>',
+   			        			appId : '<%= appId %>',
+   			        			projectId : $("input[name=projectId]").val(),
+		   					},
+	   			            debug: true
+	   			        });
+	   				}
+	   			</script>
+	<%
 				}
 	%>
 			<script type="text/javascript">
@@ -514,8 +556,11 @@
 		$(':input', '#generateBuildForm').each(function() {
 			var currentObjType = $(this).prop('tagName');
 			var multipleAttr = $(this).attr('multiple');
-			if (currentObjType === "SELECT" && multipleAttr === undefined && this.options[this.selectedIndex] !== undefined ) {
+			var id = $(this).attr('id');
+			var block = $("#" + id + "Control").css("display");
+			if (currentObjType === "SELECT" && multipleAttr === undefined && this.options[this.selectedIndex] !== undefined && "block" == block) {
 				var dependencyAttr =  this.options[this.selectedIndex].getAttribute('additionalparam');
+				
 				if (dependencyAttr !== null) {
 					var csvDependencies = dependencyAttr.substring(dependencyAttr.indexOf('=') + 1);
 					csvDependencies = getAllDependencies(csvDependencies);
@@ -531,7 +576,7 @@
 					hideOptionDependencyArr = hideOptionDependency.split(',');
 					hideControl(hideOptionDependencyArr);
 				}
-			} else if(currentObjType === "SELECT" && multipleAttr === undefined && $(this).attr('dependencyAttr') != undefined) {
+			} else if(currentObjType === "SELECT" && multipleAttr === undefined && $(this).attr('dependencyAttr') != undefined && "block" == block) {
 				var dependencyAttr =  $(this).attr('dependencyAttr');
 				if (dependencyAttr != null && !isBlank(dependencyAttr)) {
 					var csvDependencies = getAllDependencies(dependencyAttr);
@@ -811,16 +856,31 @@
 		}
 	}
 	
-	function performanceTemplateMandatoryVal(showIcon) {		
+	function performanceTemplateMandatoryVal(showIcon) {
+		var testBasis = $("#testBasis").val();
 		var testAgainst = $("#testAgainst").val();
+		
 		var redirect = false;		
-		if (testAgainst != undefined && (testAgainst == "server" || testAgainst == "webservice")) {
-			redirect = contextUrlsMandatoryVal();
-		} else if (testAgainst != undefined && testAgainst == "database") {
-			redirect = dbContextUrlsMandatoryVal();
-		} else if (testAgainst == undefined) { 			
-			redirect = true; // added for CI android performance return			
-		}
+		
+		//if performance test is triggered against parameters
+		if (testAgainst != undefined && testBasis !=undefined && testBasis == "parameters") {
+			//call template mandatory fn for server or webservice
+			if (testAgainst != undefined && (testAgainst == "server" || testAgainst == "webservice")) {
+				redirect = contextUrlsMandatoryVal();
+			} else if (testAgainst != undefined && testAgainst == "database") {//call template mandatory fn for database
+				redirect = dbContextUrlsMandatoryVal();
+			} 
+		} else if (testBasis !=undefined && testBasis == "customise") {//if performance test is triggered against customise
+			redirect = true; 
+		} else if (testBasis ==undefined && testAgainst != undefined) {//if test basis not available and tests against available
+			if (testAgainst == "server" || testAgainst == "webservice") {
+				redirect = contextUrlsMandatoryVal();
+			} else if (testAgainst != undefined && testAgainst == "database") {
+				redirect = dbContextUrlsMandatoryVal();
+			} 
+		} else if (testBasis == undefined && testAgainst == undefined) { 			
+			redirect = true; // added for  android performance return			
+		} 
 	
 		if (redirect) {
 			$('.yesNoPopupErr').empty();
@@ -911,5 +971,4 @@
 			$(".minus_icon").hide();
 		}
 	}
-	
 </script>

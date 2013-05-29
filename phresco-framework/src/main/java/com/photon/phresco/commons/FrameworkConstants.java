@@ -32,6 +32,7 @@ public interface FrameworkConstants {
     String PHRESCO_DOT_EXTRACT_DOT = "phresco.extract.";
     
     String HYPHEN_N = "-N";
+    String DOT_JMX = ".jmx";
 
 	String CSV_PATTERN = "\\s*,\\s*";
     
@@ -513,6 +514,7 @@ public interface FrameworkConstants {
     String SETTINGS = "settings";
     String SETTINGS_HEADER = "Settings";
     String FILE_EXTENSION_XML = "xml";
+    String FILE_EXTENSION_JTL = "jtl";
     String SEMI_COLON = ";";
     String SQUARE_CLOSE = "]";
     String SQUARE_OPEN = "[";
@@ -608,6 +610,7 @@ public interface FrameworkConstants {
 	String REQ_CLASS_NAME = "className";
 	String REQ_VALUES_FROM_JSON = "valuesFromJson";
 	String PERFORMANCE_TEST = "performance-test";
+	String REQ_CUSTOM_TEST_AGAINST = "customTestAgainst";
 
 	
     /*
@@ -800,6 +803,7 @@ public interface FrameworkConstants {
     String REQ_FROM_PAGE = "fromPage";
     String REQ_THEME_FILES = "themeList";
     String REQ_THEME_FILES_MAP = "themeListMap";
+    String REQ_THEME_PATH_FROM_POM = "defaultThemeBuilderPath";
     String REQ_CSS_JSON = "cssJson";
     String REQ_AGAINST_JAR = "funcTestAgaistJar";
     String REQ_SETTINGS_PATH = "settingsPath";
@@ -1824,6 +1828,7 @@ public interface FrameworkConstants {
 		String TYPE_PACKAGE_FILE_BROWSE = "packageFileBrowse";
 		String PLUGIN_PARAMETER_FRAMEWORK = "framework";
 		String REQ_DYNAMIC_PARAMETERS = "dynamicParameters";
+		String REQ_PARAMETERS = "parameters";
 		String REQ_DYNAMIC_PAGE_PARAMETER  = "dynamicPageParameter";
 		String REQ_DYNAMIC_POSSIBLE_VALUES = "possibleValues";
 		String SESSION_WATCHER_MAP = "sessionDynamicParamMap";
@@ -1905,6 +1910,7 @@ public interface FrameworkConstants {
 	    String FAILURE_THEME_BUILDER_CREATE = "Theme Builder Creation Failed";
 	    String SUCCESS_THEME_BUILDER_DELETE = "Theme(s) Deleted Successfully";
 	    String REQ_BROWSE_THEME_IMAGE = "themeBuilderImage";
+	    String REQ_FROM_THEME_BUILDER = "themeBuilder";
 	    String REQ_THEME_UPLOAD_RESULT = "uploadResultMap";
 	    
 	    /*****************************

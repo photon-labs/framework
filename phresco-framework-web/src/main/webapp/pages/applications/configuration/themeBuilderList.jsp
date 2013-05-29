@@ -86,7 +86,7 @@
 				          				<input type="checkbox" class="checkBoxTheme" name="checkedThemes" value="<%= map.get(file) %>" onclick="checkboxEvent($('.checkBoxTheme'), $('#checkAllTheme'));" value="">
 				          			</td>
 				          			<td class="">
-				          				<a href="#" path="<%= map.get(file) %>"  file="<%= file %>">
+				          				<a href="#" path="<%= map.get(file) %>"  file="<%= file %>" onclick="editThemeBuilder(this);">
 											<%= file %>
 										</a>
 				          			</td>
@@ -158,7 +158,7 @@ function createUploader() {
 
 $("#themeBuilderAdd").click(function() {
 	showLoadingIcon();
-	loadContent("themeBuilderAdd", $("#themeBuilderList"), $("#subcontainer"), '', false, true);	
+	loadContent("themeBuilderAdd", $("#themeBuilderList"), $("#subcontainer"), getBasicParams(), false, true);	
 });
 
 function showUploadResultMsg(flag, msg) {

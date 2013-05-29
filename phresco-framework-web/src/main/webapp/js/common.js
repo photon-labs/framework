@@ -1061,11 +1061,19 @@ function constructSingleSelectOptions(dependentValues, pushToElement, parameterT
 			} else {
 				selectedStr = "";
 			}
+			
+			var optionValue = "";
+			if (dependentValues[i].key != undefined && !isBlank(dependentValues[i].key)) {
+				optionValue = dependentValues[i].key;
+			} else {
+				optionValue = dependentValues[i].value;
+			}
+			
 			if (dependentValues[i].dependency != undefined && !isBlank(dependentValues[i].dependency)) {
 				var dynamicDependency = "dependency=" + dependentValues[i].dependency;
-				$("<option></option>", {value: dependentValues[i].value, text: dependentValues[i].value, additionalParam: dynamicDependency}).appendTo("#" + pushToElement);	
+				$("<option></option>", {value: optionValue, text: dependentValues[i].value, additionalParam: dynamicDependency}).appendTo("#" + pushToElement);	
 			} else {
-				$("<option></option>", {value: dependentValues[i].value, text: dependentValues[i].value, additionalParam: additionalParam}).appendTo("#" + pushToElement);			
+				$("<option></option>", {value: optionValue, text: dependentValues[i].value, additionalParam: additionalParam}).appendTo("#" + pushToElement);			
 			}
 		}
 		

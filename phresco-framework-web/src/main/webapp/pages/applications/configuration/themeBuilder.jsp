@@ -19,21 +19,30 @@
 --%>
 <%@ taglib uri="/struts-tags" prefix="s" %>
 
+<%@ page import="java.io.File"%>
+
 <%@ page import="com.photon.phresco.commons.FrameworkConstants" %>
+<%@ page import="com.photon.phresco.util.Constants"%>
+
 <%@ page import="org.codehaus.jettison.json.JSONObject" %>
 <%@ page import="org.codehaus.jettison.json.JSONArray"%>
 
 
 <%
 	String from = (String) request.getAttribute(FrameworkConstants.REQ_FROM_PAGE);
+	String fileName = "";
+	String filePath = (String) request.getAttribute(Constants.THEME_PATH);
 	JSONObject json = new JSONObject(); 
+	String oldThemeName = "";
 	if (FrameworkConstants.EDIT.equals(from)) {
 		json = (JSONObject) request.getAttribute(FrameworkConstants.REQ_CSS_JSON);
-	}
+		fileName = (String) request.getAttribute(Constants.THEME_NAME);
+		oldThemeName = fileName;
+	} 
 %>
 
 <form id="form_themeBuilder" autocomplete="off" class="form-horizontal" autofocus="autofocus" style="height:99%;">
-	<div class="content_adder">
+	<div class="content_adder" style="overflow:hidden;">
 		<div class="operation">
 			<ul id="display-inline-block-example">
 				<li id="first" style="width: auto;">
@@ -44,9 +53,31 @@
 				</li>
 			</ul>
 		</div>
+		<div class="control-group" id="themeNameControl">
+			<label class="control-label labelbold">
+				<span class="mandatory">*</span>&nbsp;<s:text name='lbl.name' />
+			</label>
+			<div class="controls">
+				<input placeholder="<s:text name="place.hldr.theme.name"/>" class="input-xlarge" type="text" 
+					value="<%= fileName %>" name="themeName" maxlength="30" 
+					id="themeName" title="<s:text name="title.30.chars"/>">
+				<span class="help-inline" id="themeNameError"></span>
+			</div>
+		</div>
+		<div class="control-group" id="themePathControl">
+			<label class="control-label labelbold">
+				<span class="mandatory">*</span>&nbsp;<s:text name='lbl.theme.path' />
+			</label>
+			<div class="controls">
+				<input type="text" name="themePath" class="input-xlarge" value="<%= filePath %>" id="themePath" readonly="readonly" style="float:left;">
+				<input type="button" id="" class="btn btn-primary themePathBrowse"  value="Browse" onclick="browseThemePath(this);">
+					<span class="help-inline" id="themePathError"></span>
+			</div>
+		</div>
 		<div class="parserWholeDiv"  style="height:90%; overflow:auto;">
 		<% if (FrameworkConstants.EDIT.equals(from) && json != null) { //For edit 
 			JSONArray jsonArray = json.getJSONArray("css");
+			if (jsonArray != null) {
 			for (int i=0; i < jsonArray.length(); i++) {
 				JSONObject item = jsonArray.getJSONObject(i);
 	    	    String selector = item.getString("selector");
@@ -141,30 +172,9 @@
 				</table>
 	    	</fieldset>
 	    
-	    <%	    
+	    <%	    }
 			}
 		 } else { //For add %>
-		 	<div class="control-group" id="themeNameControl">
-				<label class="control-label labelbold">
-					<span class="mandatory">*</span>&nbsp;<s:text name='lbl.name' />
-				</label>
-				<div class="controls">
-					<input placeholder="<s:text name="place.hldr.theme.name"/>" class="input-xlarge" type="text" 
-						value="" name="themeName" maxlength="30" 
-						id="themeName" title="<s:text name="title.30.chars"/>">
-					<span class="help-inline" id="themeNameError"></span>
-				</div>
-			</div>
-			<div class="control-group" id="themePathControl">
-				<label class="control-label labelbold">
-					<span class="mandatory">*</span>&nbsp;<s:text name='lbl.theme.path' />
-				</label>
-				<div class="controls">
-					<input type="text" name="themePath" class="input-xlarge" id="themePath" disabled="" style="float:left;">
-					<input type="button" id="" class="btn btn-primary themePathBrowse"  value="Browse" onclick="browseThemePath(this);">
-						<span class="help-inline" id="themePathError"></span>
-				</div>
-			</div>
 			<fieldset class="popup-fieldset cssParserFieldset">			
 				<legend class="themeBuilderfieldSetLegend">
 					<input type="checkbox" class="cssRule" onclick="enableDisableDeleteRule(this);" >
@@ -223,6 +233,7 @@
 		<% } %>	
 		</div>	
 	</div>
+	<input type="hidden" name="oldThemeName" value="<%= oldThemeName %>"/>
 </form>
 <div class="actions">
 	<input type="button" id="" value="Save" class="btn btn-primary" onclick="themeBuilderValidate();">
@@ -276,11 +287,11 @@
 			triggerColorPicker($(obj).closest("tr").find(".colorPicker"));
 		} else if (selectedVal == "image") {
 			$(obj).closest("tr").find(".valueTD")
-			.append('<input type="button" id="'+imgId +'" name="browseThemeImage" class="btn btn-primary" style="float:left;"' + 
+			.append('<input type="button" id="'+imgId +'" name="browseThemeImage" class="btn btn-primary" style="float:left;width:56px;"' + 
 				'fileType="png,jpg" from="themeBuilderImage" value="Browse" onclick="browseImage(this);">' +
-				'<input type="text" name="themeImageName" disabled id="themeImageName" title="" value="" class="input-medium themeImageName">' + 
-				'<input type="hidden" name="themeImagePath" id="themeImagePath" title="" value="" class="input-medium">'+
-				'<a><img class="removeThemeImg del" onclick="clearImageDetails(this);" src="images/smalldelete.png"></a>');
+				'<div  name="themeImageName" id="themeImageName" title="" class="input-medium themeImageName" onclick="imagePreview(this);"><label class="themeImageNameLbl"></label></div>' + 
+				'<input type="hidden" name="themeImagePath" id="themeImagePath" title="" value="">'+
+				'<a class="removeThemeAnchor" style="display:none;"><img class="removeThemeImg del" onclick="clearImageDetails(this);" src="images/smalldelete.png"></a>');
 			count++;
 		}
 	}
@@ -339,13 +350,12 @@
 	function themeBuilderValidate() {
 		var params = "";
 		params = params.concat(getBasicParams());
-		params = params.concat("&themeName=");
-		params = params.concat($("#themeName").val());
-		params = params.concat("&themePath=");
-		params = params.concat($("#themePath").val());
+		params = params.concat("&fromPage=");
+		params = params.concat('<%= from %>');
+		
 		$(".themeBuilderErr").empty();
 		
-		loadContent("themeBuilderValidate", '', '', params, true, true, "showThemeBuilderErrors"); 
+		loadContent("themeBuilderValidate", $('#form_themeBuilder'), '', params, true, true, "showThemeBuilderErrors"); 
 	}
 	
 	function showThemeBuilderErrors(data) {
@@ -453,7 +463,7 @@
 					value = $(this).find('input[name=colorPicker]').val();
 				} else if (selectedValue == "image") {
 					value = $(this).find('input[name=themeImagePath]').val();
-					var imageName = $(this).find('input[name=themeImageName]').val();
+					var imageName = $(this).find($('.themeImageNameLbl')).text();
 					propertyValues.image = imageName;
 				}
 				propertyValues.property = property;
@@ -471,26 +481,23 @@
 	function cssParser(value) {
 		var css = escape(value);
 		var params = "";
+		params = params.concat(getBasicParams());
 		params = params.concat("&themeBuilderJson=");
 		params = params.concat(css);
-		params = params.concat("&themeName=");
-		params = params.concat($("#themeName").val());
-		params = params.concat("&themePath=");
-		params = params.concat($("#themePath").val());
-		
-		loadContent('themeBuilderSave', $('#formAppMenu, #formCustomers'), $("#subcontainer"), params, false, true);
+
+		loadContent('themeBuilderSave', $('#form_themeBuilder'), $("#subcontainer"), params, false, true);
 	}
 	
 	function themeBuilderCancel() {
 		showLoadingIcon();
-		loadContent("themeBuilderList", $('#formAppMenu, #formCustomers'), $("#subcontainer"), '', false, true); 
+		loadContent("themeBuilderList", '', $("#subcontainer"), getBasicParams(), false, true); 
 	}
 	
 	function browseThemePath(obj) {
 		var params = "";
-		params = params.concat("themeBuilder");
 		params = params.concat("&fileOrFolder=Folder");
-		
+		params = params.concat("&from=themeBuilder");
+
 		additionalPopup('openBrowseFileTree','Browse', 'themeBuilderPath', 'Browse', '', params, true);
 	}
 	
@@ -506,12 +513,38 @@
 	}
 	
 	function updateImageDetails(imagePath, imageName, browseBtnId) {
-		$("#" + browseBtnId).parent().find("#themeImageName").val(imageName);
+		$("#" + browseBtnId).parent().find($('.themeImageNameLbl')).text(trimImgName(imageName));
+		$("#" + browseBtnId).parent().find($('.themeImageNameLbl')).attr("title","Click here to preview " + imageName);
+		$("#" + browseBtnId).parent().find($('.themeImageNameLbl')).attr("imagename", imageName);
 		$("#" + browseBtnId).parent().find("#themeImagePath").val(imagePath);
+		$("#" + browseBtnId).parent().find(".removeThemeAnchor").show();
 	}
 	
 	function clearImageDetails(obj) {
-		$(obj).parent().parent().find("#themeImageName").val("");
+		$(obj).parent().parent().find($('.themeImageNameLbl')).empty();
 		$(obj).parent().parent().find("#themeImagePath").val("");
+		$(obj).parent().hide();
+	}
+	
+	//trim the long content
+	function trimImgName(val) {
+	    var len = val.length;
+	    if(len > 14) {
+	        val = val.substr(0, 10) + "...";
+	        return val;
+	    }
+	    return val;
+	}
+	
+	function imagePreview(obj) {
+		var path = $(obj).parent().find("#themeImagePath").val();
+		var imageName = $(obj).parent().find(".themeImageNameLbl").attr("imagename");
+		var params = "";
+		params = params.concat("previewPath=");
+		params = params.concat(path);
+		params = params.concat("&previewImage=");
+		params = params.concat(imageName);
+		
+		yesnoPopup('previewImage', imageName, 'previewImage', '', '', params);
 	}
 </script>

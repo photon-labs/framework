@@ -372,7 +372,7 @@
 			
 			</div>
 			<div class="modal-footer">
-				<input type="text" class="xlarge javastd hideContent" id="browseSelectedLocation" name="browseLocation"/>
+				<input type="text" class="xlarge javastd hideContent" id="browseSelectedLocation" readonly="readonly" name="browseLocation"/>
 				<label for="xlInput" class="labelbold compressNameLbl hideContent" id="compressNameLbl">
 					<span class="red">*</span>&nbsp;<s:text name="lbl.compress.name"/>
 				</label>
