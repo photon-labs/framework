@@ -4,21 +4,26 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
-import java.lang.reflect.Type;
+import java.util.ArrayList;
+import java.util.List;
+
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.StringUtils;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonIOException;
 import com.google.gson.JsonSyntaxException;
-import com.google.gson.reflect.TypeToken;
+import com.photon.phresco.commons.FrameworkConstants;
 import com.photon.phresco.commons.model.ApplicationInfo;
 import com.photon.phresco.commons.model.ProjectInfo;
 import com.photon.phresco.exception.PhrescoException;
 import com.photon.phresco.util.Constants;
 import com.photon.phresco.util.Utility;
 import com.phresco.pom.exception.PhrescoPomException;
+import com.phresco.pom.model.Model.Modules;
 import com.phresco.pom.util.PomProcessor;
 
-public class FrameworkServiceUtil implements Constants {
+public class FrameworkServiceUtil implements Constants, FrameworkConstants {
 	
 	public static ApplicationInfo getApplivationInfo(String appDirName) throws PhrescoException {
 		StringBuilder builder  = new StringBuilder();
@@ -57,4 +62,36 @@ public class FrameworkServiceUtil implements Constants {
 		}
 	}
 
+	public static List<String> getProjectModules(String appDirName) throws PhrescoException {
+    	try {
+            PomProcessor processor = getPomProcessor(appDirName);
+    		Modules pomModule = processor.getPomModule();
+    		if (pomModule != null) {
+    			return pomModule.getModule();
+    		}
+    	} catch (PhrescoPomException e) {
+    		 throw new PhrescoException(e);
+    	}
+    	
+    	return null;
+    }
+	
+	public static List<String> getWarProjectModules(String appDirName) throws PhrescoException {
+    	try {
+			List<String> projectModules = getProjectModules(appDirName);
+			List<String> warModules = new ArrayList<String>(5);
+			if (CollectionUtils.isNotEmpty(projectModules)) {
+				for (String projectModule : projectModules) {
+					PomProcessor processor = getPomProcessor(appDirName);
+					String packaging = processor.getModel().getPackaging();
+					if (StringUtils.isNotEmpty(packaging) && WAR.equalsIgnoreCase(packaging)) {
+						warModules.add(projectModule);
+					}
+				}
+			}
+			return warModules;
+		} catch (PhrescoException e) {
+			throw new PhrescoException(e);
+		}
+    }
 }

@@ -47,7 +47,6 @@ import com.photon.phresco.exception.PhrescoException;
 import com.photon.phresco.exception.PhrescoWebServiceException;
 import com.photon.phresco.framework.actions.applications.Projects;
 import com.photon.phresco.framework.commons.FrameworkUtil;
-import com.photon.phresco.framework.model.Permissions;
 import com.photon.phresco.util.Credentials;
 import com.photon.phresco.util.Utility;
 

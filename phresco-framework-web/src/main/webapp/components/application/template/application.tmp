@@ -200,7 +200,11 @@
             <input type="submit" name="webservice" value="Webservice" class="btn btn_style webservice_btn" style="display:none;">
         </div>
         <div class="flt_right">
-			<input type="submit" data-i18n="[value]application.btn.update;" id="updatebutton" class="btn btn_style update_btn">
+        	{{#if userPermissions.manageApplication}}
+				<input type="submit" data-i18n="[value]application.btn.update;" id="updatebutton" class="btn btn_style update_btn">
+			{{else}}
+				<input type="submit" data-i18n="[value]application.btn.update;" id="updatebutton" class="btn btn_style update_btn" disabled>
+			{{/if}}
             <input type="submit" data-i18n="[value]application.btn.cancel;" id="cancelbutton" class="btn btn_style cancel_icon_btn">
         </div>
     	<!--content_title ends here -->

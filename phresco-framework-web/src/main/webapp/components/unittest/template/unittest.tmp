@@ -16,22 +16,24 @@
                 <input type="submit" value="Open Folder" class="btn btn_style openfolder_icon_btn">
                 <input type="submit" value="Copy Path" class="btn btn_style copypath_icon_btn">
             </div>
-            <div class="code_report">
-            	Technology
-            </div>
-            <div class="navbar navbar-static code_func">
-                <ul class="nav">
-                    <li id="fat-menu" class="dropdown">
-                      <a href="#" id="drop5" role="button" class="dropdown-toggle" data-toggle="dropdown">Java<b class="caret"></b></a>
-                      <div class="dropdown-menu cust_sel code_test_opt" role="menu" aria-labelledby="drop5">
-                      	<ul>
-                        	<li><a href="#">Java</a></li>
-                            <li><a href="#">JS</a></li>
-                        </ul>
-                      </div>
-                    </li>
-                </ul>
-            </div>
+            
+            {{#if reportOptions}}
+	            <div class="code_report">
+	            	Technology
+	            </div>
+	            <div class="navbar navbar-static code_func">
+	                <ul class="nav">
+	                    <li id="fat-menu" class="dropdown">
+	                      <a href="#" id="drop5" role="button" class="dropdown-toggle" data-toggle="dropdown">{{#report reportOptions true}}{{/report}}<b class="caret"></b></a>
+	                      <div class="dropdown-menu cust_sel code_test_opt" role="menu" aria-labelledby="drop5">
+	                      	<ul>
+	                      		{{#report reportOptions false}}{{/report}}
+	                        </ul>
+	                      </div>
+	                    </li>
+	                </ul>
+	            </div>
+            {{/if}}
            
             <div class="code_anal">
                 <input type="submit" value="Test"  name="unitTest" class="btn btn_style">

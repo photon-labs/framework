@@ -29,7 +29,6 @@ import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.io.StringReader;
 import java.io.StringWriter;
@@ -72,8 +71,6 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import org.jopendocument.dom.ODPackage;
-import org.jopendocument.dom.spreadsheet.SpreadSheet;
 import org.w3c.dom.Element;
 
 import com.google.gson.Gson;
@@ -87,12 +84,12 @@ import com.photon.phresco.commons.model.RepoInfo;
 import com.photon.phresco.commons.model.Role;
 import com.photon.phresco.commons.model.TestCase;
 import com.photon.phresco.commons.model.User;
+import com.photon.phresco.commons.model.UserPermissions;
 import com.photon.phresco.exception.PhrescoException;
 import com.photon.phresco.framework.FrameworkConfiguration;
 import com.photon.phresco.framework.PhrescoFrameworkFactory;
 import com.photon.phresco.framework.actions.FrameworkBaseAction;
 import com.photon.phresco.framework.model.LockDetail;
-import com.photon.phresco.framework.model.Permissions;
 import com.photon.phresco.framework.model.TestSuite;
 import com.photon.phresco.plugins.model.Mojos.Mojo.Configuration.Parameters.Parameter;
 import com.photon.phresco.plugins.model.Mojos.Mojo.Configuration.Parameters.Parameter.PossibleValues.Value;
@@ -106,7 +103,7 @@ import com.phresco.pom.model.Model.Profiles;
 import com.phresco.pom.model.Profile;
 import com.phresco.pom.util.PomProcessor;
 
-public class FrameworkUtil extends FrameworkBaseAction implements Constants {
+public class FrameworkUtil extends FrameworkBaseAction implements Constants, FrameworkConstants {
 
 	private static final String PHRESCO_SQL_PATH = "phresco.sql.path";
 	private static final String PHRESCO_UNIT_TEST = "phresco.unitTest";
@@ -1371,72 +1368,68 @@ public class FrameworkUtil extends FrameworkBaseAction implements Constants {
         return csvString;
     }
     
-    public Permissions getUserPermissions(ServiceManager serviceManager, User user) throws PhrescoException {
-    	Permissions permissions = new Permissions();
+    public static UserPermissions getUserPermissions(ServiceManager serviceManager, User user) throws PhrescoException {
+    	UserPermissions permissions = new UserPermissions();
     	try {
     		List<String> roleIds = user.getRoleIds();
-    		if (CollectionUtils.isNotEmpty(roleIds)) {
-    			List<String> permissionIds = new ArrayList<String>();
-    			for (String roleId : roleIds) {
-    				Role role = serviceManager.getRole(roleId);
-    				permissionIds.addAll(role.getPermissionIds());
-    			}
-
-    			if (CollectionUtils.isNotEmpty(permissionIds)) {
-    				if (permissionIds.contains(FrameworkConstants.PER_MANAGE_APPLICATIONS)) {
-    					permissions.setManageApplication(true);
-    				}
-
-    				if (permissionIds.contains(FrameworkConstants.PER_MANAGE_REPO)) {
-    					permissions.setManageApplication(true);
-    				}
-
-    				if (permissionIds.contains(FrameworkConstants.PER_MANAGE_REPO)) {
-    					permissions.setManageRepo(true);
-    				}
-
-    				if (permissionIds.contains(FrameworkConstants.PER_IMPORT_APPLICATIONS)) {
-    					permissions.setManageRepo(true);
-    				}
-
-    				if (permissionIds.contains(FrameworkConstants.PER_MANAGE_PDF_REPORTS)) {
-    					permissions.setManagePdfReports(true);
-    				}
-
-    				if (permissionIds.contains(FrameworkConstants.PER_MANAGE_CODE_VALIDATION)) {
-    					permissions.setManageCodeValidation(true);
-    				}
-
-    				if (permissionIds.contains(FrameworkConstants.PER_MANAGE_CONFIGURATIONS)) {
-    					permissions.setManageConfiguration(true);
-    				}
-
-    				if (permissionIds.contains(FrameworkConstants.PER_MANAGE_BUILDS)) {
-    					permissions.setManageBuilds(true);
-    				}
-
-    				if (permissionIds.contains(FrameworkConstants.PER_MANAGE_TEST)) {
-    					permissions.setManageTests(true);
-    				}
-
-    				if (permissionIds.contains(FrameworkConstants.PER_MANAGE_CI_JOBS)) {
-    					permissions.setManageCIJobs(true);
-    				}
-
-    				if (permissionIds.contains(FrameworkConstants.PER_EXECUTE_CI_JOBS)) {
-    					permissions.setExecuteCIJobs(true);
-    				}
-
-    				if (permissionIds.contains(FrameworkConstants.PER_MANAGE_MAVEN_REPORTS)) {
-    					permissions.setManageMavenReports(true);
-    				}
-    			}
-    		}
-    	} catch (Exception e) {
-    		throw new PhrescoException(e);
-    	}
-
-    	return permissions;
+			if (CollectionUtils.isNotEmpty(roleIds)) {
+				List<String> permissionIds = new ArrayList<String>();
+				for (String roleId : roleIds) {
+					Role role = serviceManager.getRole(roleId);
+					permissionIds.addAll(role.getPermissionIds());
+				}
+				
+				if (CollectionUtils.isNotEmpty(permissionIds)) {
+					if (permissionIds.contains(FrameworkConstants.PER_MANAGE_APPLICATIONS)) {
+						permissions.setManageApplication(true);
+					}
+					
+					if (permissionIds.contains(FrameworkConstants.PER_MANAGE_REPO)) {
+						permissions.setManageRepo(true);
+					}
+					
+					if (permissionIds.contains(FrameworkConstants.PER_IMPORT_APPLICATIONS)) {
+						permissions.setImportApplication(true);
+					}
+					
+					if (permissionIds.contains(FrameworkConstants.PER_MANAGE_PDF_REPORTS)) {
+						permissions.setManagePdfReports(true);
+					}
+					
+					if (permissionIds.contains(FrameworkConstants.PER_MANAGE_CODE_VALIDATION)) {
+						permissions.setManageCodeValidation(true);
+					}
+					
+					if (permissionIds.contains(FrameworkConstants.PER_MANAGE_CONFIGURATIONS)) {
+						permissions.setManageConfiguration(true);
+					}
+					
+					if (permissionIds.contains(FrameworkConstants.PER_MANAGE_BUILDS)) {
+						permissions.setManageBuilds(true);
+					}
+					
+					if (permissionIds.contains(FrameworkConstants.PER_MANAGE_TEST)) {
+						permissions.setManageTests(true);
+					}
+					
+					if (permissionIds.contains(FrameworkConstants.PER_MANAGE_CI_JOBS)) {
+						permissions.setManageCIJobs(true);
+					}
+					
+					if (permissionIds.contains(FrameworkConstants.PER_EXECUTE_CI_JOBS)) {
+						permissions.setExecuteCIJobs(true);
+					}
+					
+					if (permissionIds.contains(FrameworkConstants.PER_MANAGE_MAVEN_REPORTS)) {
+						permissions.setManageMavenReports(true);
+					}
+				}
+			}
+		} catch (PhrescoException e) {
+			throw e;
+		}
+		
+		return permissions;
     }
 
     

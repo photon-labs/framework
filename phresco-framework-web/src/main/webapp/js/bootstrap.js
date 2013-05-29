@@ -44,6 +44,8 @@ var commonVariables = {
 	configuration : "configuration",
 	editConfiguration : "editConfiguration",
 	
+	qualityContext : "quality",
+	unit : "unit",
 	unittest : "unittest",
 	
 	customerTheme : null,

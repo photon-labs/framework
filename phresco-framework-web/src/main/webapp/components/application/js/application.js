@@ -113,6 +113,7 @@ define(["framework/widgetWithTemplate", "application/listener/applicationListene
 		 */
 		postRender : function(element) {			
 			var self = this;
+			commonVariables.navListener.showHideControls(commonVariables.editApplication);
 			//self.editApplicationListener.renderServer(self.renderData);
 		},
 		
@@ -122,8 +123,9 @@ define(["framework/widgetWithTemplate", "application/listener/applicationListene
 				self.editApplicationListener.getAppInfo(self.editApplicationListener.getRequestHeader(self.appDirName , "getappinfo"), function(response) {
 					var projectlist = {};
 					projectlist.projectlist = response;
+					var userPermissions = JSON.parse(self.editApplicationListener.applicationAPI.localVal.getSession('userPermissions'));
+					projectlist.userPermissions = userPermissions;
 					self.renderData = response;
-					//console.info('response = ' , response);
 					renderFunction(projectlist, whereToRender);
 				});
 			}, 200);	

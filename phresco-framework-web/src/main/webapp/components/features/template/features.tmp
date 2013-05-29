@@ -156,8 +156,12 @@
     </div>
     <section class="content_end">
         <div class="flt_right">
-        	<input type="submit" data-i18n="[value]features.btn.update" class="btn btn_style update_btn" id="featureUpdate">
-            <input type="submit" id="cancelUpdateFeature" data-i18n="[value]features.btn.cancel" class="btn btn_style cancel_icon_btn">
+        	{{#if userPermissions.manageApplication}}
+        		<input type="submit" data-i18n="[value]features.btn.update" class="btn btn_style update_btn" id="featureUpdate">
+    		{{else}}
+            	<input type="submit" data-i18n="[value]features.btn.update" class="btn btn_style update_btn" id="featureUpdate" disabled>
+        	{{/if}}
+        	<input type="submit" id="cancelUpdateFeature" data-i18n="[value]features.btn.cancel" class="btn btn_style cancel_icon_btn">
         </div>
     	<!--content_title ends here -->
     </section>

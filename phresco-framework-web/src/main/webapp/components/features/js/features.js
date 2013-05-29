@@ -7,6 +7,7 @@ define(["framework/widgetWithTemplate", "features/listener/featuresListener"], f
 		configUrl: "../components/projects/config/config.json",
 		name : commonVariables.featurelist,
 		featuresListener: null,
+		featuresAPI: null,
 		onPreviousEvent: null,
 		onSearchEvent: null,
 		featureRequestBody: {},
@@ -26,6 +27,7 @@ define(["framework/widgetWithTemplate", "features/listener/featuresListener"], f
 		initialize : function(globalConfig){
 			var self = this;
 			self.featuresListener = new Clazz.com.components.features.js.listener.FeaturesListener(globalConfig);
+			self.featuresAPI = new Clazz.com.components.features.js.api.FeaturesAPI();
 			self.registerEvents();
 			self.registerHandlebars();
 		},
@@ -93,7 +95,6 @@ define(["framework/widgetWithTemplate", "features/listener/featuresListener"], f
 			var collection = {};
 			self.featuresListener.showLoad();
 			self.getFeatures(collection, function(responseData){
-				console.info("responseData", responseData);
 				renderFunction(responseData, whereToRender);
 				self.featuresListener.hideLoad();
 			});
@@ -103,7 +104,9 @@ define(["framework/widgetWithTemplate", "features/listener/featuresListener"], f
 		getFeatures : function(collection, callback){
 			var self = this;
 			self.featuresListener.getFeaturesList(self.featuresListener.getRequestHeader(self.featureRequestBody, "FEATURE"), function(response) {
-				collection.featureslist = response.data;	
+				collection.featureslist = response.data;
+				var userPermissions = JSON.parse(self.featuresListener.featuresAPI.localVal.getSession('userPermissions'));
+				collection.userPermissions = userPermissions;
 				self.getLibraries(collection, callback);
 			});
 		},

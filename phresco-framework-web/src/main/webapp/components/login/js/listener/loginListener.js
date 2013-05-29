@@ -69,6 +69,7 @@ define(["framework/widget", "login/api/loginAPI", "common/loading", "footer/foot
 			self.loginAPI.localVal.setSession("password",$("#password").val());
 			self.loginAPI.localVal.setSession("rememberMe",$("#rememberMe").is(":checked"));
 			self.loginAPI.localVal.setSession("userInfo",userInfo);
+			self.loginAPI.localVal.setSession("userPermissions", JSON.stringify(data.permissions));
 		},
 		
 		loginValidation : function(){
