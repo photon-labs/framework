@@ -4,16 +4,16 @@
             <tbody name="layercontents"> 
 			{{#each projectlist.appdetails.data.appInfos}}
             	<tr>
-                    <td data-i18n="application.edit.name"><sup>*</sup></td>
+                    <td><span data-i18n="application.edit.name"></span><sup>*</sup></td>
                     <td><input type="text" name="appName" placeholder="Dr-Drupal7" value="{{name}}"/></td>
-                    <td data-i18n="application.edit.code"><sup>*</sup></td>
+                    <td><span data-i18n="application.edit.code"></span><sup>*</sup></td>
                     <td><input type="text" placeholder="Application Code" name="appCode" value="{{code}}"/></td>
                     <td class="desc" rowspan="3" data-i18n="application.edit.description"></td>
-                    <td class="descdata" rowspan="3"><textarea rows="5" name="appDesc">{{description}}</textarea></td>
+                    <td class="descdata" rowspan="3"><textarea rows="5" name="appDesc" id="appDesc">{{description}}</textarea></td>
 					<td colspan="2"></td>
                 </tr>
                 <tr>
-                	<td data-i18n="application.edit.appdirectory"></td>
+                	<td><span data-i18n="application.edit.appdirectory"></span><sup>*</sup></td>
                     <td><input type="text" placeholder="1.0" name="appDirName" value="{{appDirName}}"/></td>
                     <td data-i18n="application.edit.version"><sup>*</sup></td>
                     <td><input type="text" placeholder="2.0" readonly value="{{version}}" name="appVersion"/></td>
@@ -39,7 +39,7 @@
 							
 							 <td><span data-i18n="application.edit.servers"></span>&nbsp;<span class="paid">{{position @index}}</span></td>
 							  <td name="servers" class="servers"><select name="appServers" class="appServers">
-								<option>Select Server</option>
+								<option value=0>Select Server</option>
 								{{#each ../../projectlist.serverData}}
 									{{{compare id ../artifactGroupId name}}}
 								{{/each}}
@@ -48,7 +48,7 @@
 							  <td data-i18n="application.edit.versions"></td>
 							  <td colspan="4" name="version"  class="version">
 									<select name="server_version" class="server_version" multiple>
-										<option>Select Version</option>
+										<option value=0>Select Version</option>
 										{{#each ../../projectlist.serverData}}
 											{{{compareversion id ../artifactGroupId artifactGroup ../artifactInfoIds}}}
 										{{/each}}
@@ -68,7 +68,7 @@
 					<tr class="servers" key="displayed">
                       <td><span data-i18n="application.edit.servers"></span>&nbsp;<span class="paid">{{positionouter projectlist.appdetails.data.appInfos}}</span></td>
                       <td name="servers" class="servers"><select name="appServers" class="appServers">
-						<option>Select Server</option>
+						<option value=0>Select Server</option>
 						{{#each projectlist.serverData}}
                             <option value="{{id}}">{{name}}</option>
 						{{/each}}
@@ -77,7 +77,7 @@
                       <td data-i18n="application.edit.versions"></td>
                       <td colspan="4" name="version" class="version">
 							<select name="server_version" class="server_version" multiple>
-								<option>Select Version</option>
+								<option value=0>Select Version</option>
 							</select>
 						  <div class="flt_right">
 							<a href="javascript:;" name="addServer"><img src="../themes/default/images/helios/plus_icon.png" border="0" alt=""> </a> <a href="javascript:;" name="removeServer"></a>
@@ -89,13 +89,13 @@
                       <td colspan="3" data-i18n="application.edit.database"></td>
                       <td colspan="4"><img name="close" id="database" src="../themes/default/images/helios/close_icon.png"  border="0" alt=""></td>
                      </tr>
-					 
+
 					{{#each projectlist.appdetails.data.appInfos}}
 						{{#each selectedDatabases}}
 							  <tr class="database" key="displayed">
 							  <td><span data-i18n="application.edit.database"></span>&nbsp;<span class="paid">{{position @index}}</span></td>
 							  <td name="servers" class="databases"><select name="databases" class="databases">
-								<option>Select Database</option>
+								<option value=0>Select Database</option>
 								{{#each ../../projectlist.databaseData}}
 									{{{compare id ../artifactGroupId name}}}
 								{{/each}}
@@ -104,7 +104,7 @@
 							  <td data-i18n="application.edit.versions"></td>
 							  <td colspan="4" name="version" class="version">
 									<select name="db_version" class="db_version" multiple>
-										<option>Select Version</option>
+										<option value=0>Select Version</option>
 										{{#each ../../projectlist.databaseData}}
 											{{{compareversion id ../artifactGroupId artifactGroup ../artifactInfoIds}}}
 										{{/each}}										
@@ -121,7 +121,7 @@
 					<tr class="database" key="displayed">
 					  <td><span data-i18n="application.edit.database"></span>&nbsp;<span class="paid">{{dbouter projectlist.appdetails.data.appInfos}}</span></td>
 					  <td name="servers" class="databases"><select name="databases" class="databases">
-						<option>Select Database</option>
+						<option value=0>Select Database</option>
 						{{#each projectlist.databaseData}}
 							<option value="{{id}}">{{name}}</option>
 						{{/each}}
@@ -130,7 +130,7 @@
 					  <td data-i18n="application.edit.versions"></td>
 					  <td colspan="4" name="version" class="version">
 							<select name="db_version" class="db_version" multiple>
-								<option>Select Version</option>
+								<option value=0>Select Version</option>
 						  </select>
 						   <div class="flt_right">
 								<a href="javascript:;" name="addDatabase"><img src="../themes/default/images/helios/plus_icon.png" border="0" alt=""></a>

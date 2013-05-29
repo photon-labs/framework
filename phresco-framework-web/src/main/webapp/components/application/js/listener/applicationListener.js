@@ -8,6 +8,7 @@ define(["framework/widget", "framework/widgetWithTemplate", "application/api/app
 		applicationAPI : null,
 		projectlistContent : null,
 		appInfos : [],
+		hasError: false,
 
 		/***
 		 * Called in initialization time of this class 
@@ -15,8 +16,8 @@ define(["framework/widget", "framework/widgetWithTemplate", "application/api/app
 		 * @config: configurations for this listener
 		 */
 		initialize : function(config) {
-				this.applicationAPI = new Clazz.com.components.application.js.api.ApplicationAPI();
-				this.loadingScreen = new Clazz.com.js.widget.common.Loading();
+			this.applicationAPI = new Clazz.com.components.application.js.api.ApplicationAPI();
+			this.loadingScreen = new Clazz.com.js.widget.common.Loading();
 		},
 		
 		onCancelUpdate : function() {
@@ -42,9 +43,9 @@ define(["framework/widget", "framework/widgetWithTemplate", "application/api/app
 		},
 		
 		addServerDatabase : function(appType, whereToAppend, rowId) {
-			var self = this, dynamicValue, server = '<tr class="servers" key="displayed"> <td><span data-i18n="application.edit.servers"></span>&nbsp;<span class="paid">'+rowId+'</span></td><td name="servers" class="servers"><select name="appServers" class="appServers"><option>Select Server</option>'+ self.getOptionData('serverData') +'</select></td><td data-i18n="application.edit.versions"></td><td colspan="4" name="version" class="version"><select multiple name="server_version" class="server_version"><option>Select Version</option></select> <div class="flt_right"><a href="javascript:;" name="addServer"><img src="../themes/default/images/helios/plus_icon.png" border="0" alt=""></a> <a href="javascript:;" name="removeServer"><img src="../themes/default/images/helios/minus_icon.png"  border="0" alt=""></a></div></td></tr>',
+			var self = this, dynamicValue, server = '<tr class="servers" key="displayed"> <td><span data-i18n="application.edit.servers"></span>&nbsp;<span class="paid">'+rowId+'</span></td><td name="servers" class="servers"><select name="appServers" class="appServers"><option value=0>Select Server</option>'+ self.getOptionData('serverData') +'</select></td><td data-i18n="application.edit.versions"></td><td colspan="4" name="version" class="version"><select multiple name="server_version" class="server_version"><option value=0>Select Version</option></select> <div class="flt_right"><a href="javascript:;" name="addServer"><img src="../themes/default/images/helios/plus_icon.png" border="0" alt=""></a> <a href="javascript:;" name="removeServer"><img src="../themes/default/images/helios/minus_icon.png"  border="0" alt=""></a></div></td></tr>',
 			
-			database ='<tr class="database" key="displayed"><td><span data-i18n="application.edit.database"></span>&nbsp;<span class="paid">'+rowId+'</span></td><td name="servers" class="databases"><select name="databases" class="databases"><option>Select Database</option>'+ self.getOptionData('databaseData') +'</select></td><td data-i18n="application.edit.versions"></td> <td colspan="4" name="version" class="version"><select multiple name="db_version" class="db_version"> <option>Select Version</option></select><div class="flt_right"><a href="javascript:;" name="addDatabase"><img src="../themes/default/images/helios/plus_icon.png"  border="0" alt=""></a> <a href="javascript:;" name="removeDatabase"><img src="../themes/default/images/helios/minus_icon.png" border="0" alt=""></a></div></td></tr>';
+			database ='<tr class="database" key="displayed"><td><span data-i18n="application.edit.database"></span>&nbsp;<span class="paid">'+rowId+'</span></td><td name="servers" class="databases"><select name="databases" class="databases"><option value=0>Select Database</option>'+ self.getOptionData('databaseData') +'</select></td><td data-i18n="application.edit.versions"></td> <td colspan="4" name="version" class="version"><select multiple name="db_version" class="db_version"> <option value=0>Select Version</option></select><div class="flt_right"><a href="javascript:;" name="addDatabase"><img src="../themes/default/images/helios/plus_icon.png"  border="0" alt=""></a> <a href="javascript:;" name="removeDatabase"><img src="../themes/default/images/helios/minus_icon.png" border="0" alt=""></a></div></td></tr>';
 			if (appType === "addServer") {
 				dynamicValue = $(server).insertAfter(whereToAppend);
 				dynamicValue.prev('tr').find('a[name="addServer"]').html('');
@@ -67,7 +68,6 @@ define(["framework/widget", "framework/widgetWithTemplate", "application/api/app
 		addServerDatabaseEvent : function(){
 			var self=this, whereToAppend = '', serverRow, dbRow;
 			$("a[name=addServer]").click(function(){
-				//console.info('this = ' , $(this).closest('tr').find('span.paid').text());
 				serverRow = Number($(this).closest('tr').find('span.paid').text()) + Number(1);
 				whereToAppend = $("a[name=addServer]").parents('tr.servers:last');
 				self.dynamicRenderLocales(commonVariables.contentPlaceholder);
@@ -75,7 +75,6 @@ define(["framework/widget", "framework/widgetWithTemplate", "application/api/app
 			});
 			
 			$("a[name=addDatabase]").click(function(){
-				//console.info('addDatabase = ' , $(this).closest('tr').find('span.paid').text());
 				dbRow = Number($(this).closest('tr').find('span.paid').text()) + Number(1);
 				whereToAppend = $("a[name=addDatabase]").parents('tr.database:last');
 				self.dynamicRenderLocales(commonVariables.contentPlaceholder);
@@ -155,6 +154,7 @@ define(["framework/widget", "framework/widgetWithTemplate", "application/api/app
 						if (response !== null) {
 						var data = {};
 							data.appdetails = response;
+							self.applicationAPI.localVal.setJson('appdetails', response);
 							self.getAppConfig(response , 'SERVER', function(appInfo){
 								data.serverData = appInfo.data;
 								self.applicationAPI.localVal.setJson('serverData', appInfo.data);
@@ -202,7 +202,6 @@ define(["framework/widget", "framework/widgetWithTemplate", "application/api/app
 				self.applicationAPI.appinfo(header,
 					function(response) {
 						if (response !== null) {
-							//console.info('response data= ' , response.data);
 							callback(response);
 						} else {
 							callback({ "status" : "service failure"});
@@ -222,73 +221,79 @@ define(["framework/widget", "framework/widgetWithTemplate", "application/api/app
 		updateApplication : function(renderData){
 			var self = this;
 			self.appInfos = [];
-			var appInfo = {};
-			var techInfo = {};
-			appInfo.code = $("input[name='appCode']").val();
-			appInfo.appDirName = $("input[name='appDirName']").val();
-			appInfo.version = $("input[name='appVersion']").val();
-			appInfo.name = $("input[name='appName']").val();
-			appInfo.selectedFrameworks = renderData.appdetails.data.appInfos[0].selectedFrameworks;
-			appInfo.emailSupported = renderData.appdetails.data.appInfos[0].emailSupported;
-			appInfo.phoneEnabled = renderData.appdetails.data.appInfos[0].phoneEnabled;
-			appInfo.tabletEnabled = renderData.appdetails.data.appInfos[0].tabletEnabled;
-			appInfo.pilot = renderData.appdetails.data.appInfos[0].pilot;
-			appInfo.used = renderData.appdetails.data.appInfos[0].used;
-			appInfo.system = renderData.appdetails.data.appInfos[0].system;
-			appInfo.id = renderData.appdetails.data.appInfos[0].id;
-			appInfo.description = "";
-			appInfo.status = renderData.appdetails.data.appInfos[0].status;
 			
-			var selectedDatabases = [];
-			var selectedServers = [];
-			var databasesJson = {};
-			var serversJson = {};
-			$.each($("tbody[name='layercontents']").children(), function(index, value){
-			
-				if($(value).attr('class') == "servers" && $(value).attr('key') == "displayed") {
-					var serverId = {};
-					var artifactInfoIds = [];
-					var tech = $(value).children("td.servers").children("select.appServers");
-					var selSerId = $(tech).find(":selected").val();
-					var selVersion = $(value).children("td.version").children("select.server_version").val();
-					//console.info('selVersion = ' , selVersion);
-					serverId.artifactGroupId = selSerId;
-					artifactInfoIds.push(selVersion);
-					serverId.artifactInfoIds = artifactInfoIds;
-					
-					selectedServers.push(serverId)
-				}
+			if(!self.validation()) {
+				var appInfo = {};
+				var techInfo = {};
+				appInfo.code = $("input[name='appCode']").val();
+				appInfo.appDirName = $("input[name='appDirName']").val();
+				appInfo.version = $("input[name='appVersion']").val();
+				appInfo.name = $("input[name='appName']").val();
+				//appInfo.selectedFrameworks = renderData.appdetails.data.appInfos[0].selectedFrameworks;
+				appInfo.emailSupported = renderData.appdetails.data.appInfos[0].emailSupported;
+				appInfo.phoneEnabled = renderData.appdetails.data.appInfos[0].phoneEnabled;
+				appInfo.tabletEnabled = renderData.appdetails.data.appInfos[0].tabletEnabled;
+				appInfo.pilot = renderData.appdetails.data.appInfos[0].pilot;
+				appInfo.id = renderData.appdetails.data.appInfos[0].id;
+				appInfo.description = $("#appDesc").val();;
 				
-				if($(value).attr('class') == "database" && $(value).attr('key') == "displayed") {
-					var serverId = {};
-					var artifactInfoIds = [];
-					var tech = $(value).children("td.databases").children("select.databases");
-					var selSerId = $(tech).find(":selected").val();
-					var selVersion = $(value).children("td.version").children("select.db_version").val();
-					
-					serverId.artifactGroupId = selSerId;
-					artifactInfoIds.push(selVersion);
-					serverId.artifactInfoIds = artifactInfoIds;
-					selectedDatabases.push(serverId)
-				}
+				var selectedDatabases = [];
+				var selectedServers = [];
+				var databasesJson = {};
+				var serversJson = {};
+				$.each($("tbody[name='layercontents']").children(), function(index, value){
 				
-			});
-			if (appInfo.code !== '') {
-				appInfo.techInfo.appTypeId = renderData.appdetails.data.appInfos[0].techInfo.appTypeId;
-				appInfo.techInfo.version = renderData.appdetails.data.appInfos[0].techInfo.version;
-				appInfo.techInfo.id = renderData.appdetails.data.appInfos[0].techInfo.id;
-				appInfo.techInfo.system = renderData.appdetails.data.appInfos[0].techInfo.system;
-				appInfo.selectedDatabases = selectedDatabases;
-				appInfo.selectedServers = selectedServers;
-			}
-				console.info('appInfos = ' , JSON.stringify(appInfo));
-			
+					if($(value).attr('class') == "servers" && $(value).attr('key') == "displayed") {
+						var serverId = {};
+						var artifactInfoIds = [];
+						var tech = $(value).children("td.servers").children("select.appServers");
+						var selSerId = $(tech).find(":selected").val();
+						var selVersion = $(value).children("td.version").children("select.server_version").val();
+						if(selSerId != 0){
+							serverId.artifactGroupId = selSerId;
+							//artifactInfoIds.push(selVersion);
+							serverId.artifactInfoIds = selVersion;
+							selectedServers.push(serverId);
+						}
+						
+					}
+					
+					if($(value).attr('class') == "database" && $(value).attr('key') == "displayed") {
+						var serverId = {};
+						var artifactInfoIds = [];
+						var tech = $(value).children("td.databases").children("select.databases");
+						var selSerId = $(tech).find(":selected").val();
+						var selVersion = $(value).children("td.version").children("select.db_version").val();
+						if(selSerId != 0){
+							serverId.artifactGroupId = selSerId;
+							//artifactInfoIds.push(selVersion);
+							serverId.artifactInfoIds = selVersion;
+							selectedDatabases.push(serverId);
+						}	
+						
+					}
+				});
+				if (appInfo.code !== '') {
+					appInfo.techInfo = renderData.appdetails.data.appInfos[0].techInfo;
+					appInfo.selectedDatabases = selectedDatabases;
+					appInfo.selectedServers = selectedServers;
+				}
 				self.editAppInfo(self.getRequestHeader(JSON.stringify(appInfo), "editApplication"), function(response) {
-					appInfo = {};
-					self.getAppInfo(self.getRequestHeader(self.appDirName, "getappinfo"), function(response) {
-						self.pageRefresh(response);
-					});
-				});			
+					if(response.message == "Application updated successfully"){
+						self.editAplnContent = commonVariables.navListener.getMyObj(commonVariables.editApplication);
+						self.editAplnContent.appDirName = response.data.appDirName;
+						commonVariables.appDirName = response.data.appDirName;
+ 						self.applicationAPI.localVal.setSession('appDirName', response.data.appDirName);
+						self.applicationAPI.localVal.setJson('appdetails', response.data.appInfos);
+						
+						Clazz.navigationController.push(self.editAplnContent, true);
+						 
+						/* self.getAppInfo(self.getRequestHeader(response.data.appDirName, "getappinfo"), function(response) {
+							self.pageRefresh(response);
+						});  */
+					}
+				});	
+			}
 		},
 		
 		getWSConfig : function(appInfo , callback){
@@ -327,8 +332,7 @@ define(["framework/widget", "framework/widgetWithTemplate", "application/api/app
 		getRequestHeader : function(appDirName , action) {
 			var self=this, header, data = {}, userId, oldAppDirName;
 			userId = self.applicationAPI.localVal.getSession('username');
-			oldAppDirName = self.applicationAPI.localVal.getJson("appDirName");
-			console.info('oldAppDirName = ' ,oldAppDirName);
+			oldAppDirName = self.applicationAPI.localVal.getSession("appDirName");
 			header = {
 				contentType: "application/json",
 				requestMethod: "GET",
@@ -337,13 +341,11 @@ define(["framework/widget", "framework/widgetWithTemplate", "application/api/app
 				data: ''
 			}
 			if(action == 'getappinfo'){
-				//header.webserviceurl = "http://localhost:8080/framework/rest/api/project/editApplication?appDirName=1-jwsandhtmljquery-html5multichanneljquerywidget"
 				header.webserviceurl = commonVariables.webserviceurl+"project/editApplication?appDirName="+appDirName;
 			}	
 			if(action == 'editApplication'){
 				header.requestMethod ="PUT";
-				header.data = appDirName;
-				console.info('data = ' , header.data);
+				header.requestPostBody = appDirName;
 				header.webserviceurl = commonVariables.webserviceurl+"project/updateApplication?userId="+userId+"&oldAppDirName="+oldAppDirName+"&customerId=photon";
 			}
 			return header;
@@ -356,9 +358,7 @@ define(["framework/widget", "framework/widgetWithTemplate", "application/api/app
 				self.loadingScreen.showLoading();
 				self.applicationAPI.appinfo(header,
 					function(response) {
-					console.info('response1 = ' , response);
 						if (response !== null) {
-							console.info('response = ' , response);
 							callback(response);
 							self.loadingScreen.removeLoading();
 						} else {
@@ -381,7 +381,44 @@ define(["framework/widget", "framework/widgetWithTemplate", "application/api/app
 		dynamicRenderLocales : function(contentPlaceholder) {
 			var self=this;
 			self.renderlocales(contentPlaceholder);
+		},
+		
+		validation : function() {
+		
+			 var flag1=0,flag2=0,flag3=0;
+			 var name = $("input[name='appName']").val();
+			 var code = $("input[name='appCode']").val();
+			 var appDirName = $("input[name='appDirName']").val();
+			 self.hasError = false;
+
+			 if(name == ""){
+					$("input[name='appName']").focus();
+					$("input[name='appName']").attr('placeholder','Enter Name');
+					$("input[name='appName']").addClass("errormessage");
+					$("input[name='appName']").bind('keypress', function() {
+						$(this).removeClass("errormessage");
+					});
+					self.hasError = true;
+			   } else if(code == ""){
+					$("input[name='appCode']").focus();
+					$("input[name='appCode']").attr('placeholder','Enter Code');
+					$("input[name='appCode']").addClass("errormessage");
+					$("input[name='appCode']").bind('keypress', function() {
+						$(this).removeClass("errormessage");
+					});
+					self.hasError = true;
+			   } else if(appDirName == ""){
+					$("input[name='appDirName']").focus();
+					$("input[name='appDirName']").attr('placeholder','Enter app directory');
+					$("input[name='appDirName']").addClass("errormessage");
+					$("input[name='appDirName']").bind('keypress', function() {
+						$(this).removeClass("errormessage");
+					});
+					self.hasError = true;
+			   }
+			  return self.hasError;	
 		}
+		
 		
 	});
 

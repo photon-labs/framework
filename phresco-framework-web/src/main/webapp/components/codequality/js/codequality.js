@@ -18,10 +18,13 @@ define(["framework/widgetWithTemplate", "codequality/listener/codequalityListene
 			var self = this;
 			self.dynamicpage = commonVariables.navListener.getMyObj(commonVariables.dynamicPage);
 			self.codequalityListener = new Clazz.com.components.codequality.js.listener.CodequalityListener(globalConfig);
+			self.registerEvents(self.codequalityListener);
 		},
 		
-		
-		registerEvents : function () {
+		registerEvents : function (codequalityListener) {
+			var self = this;
+			self.readLogEvent = new signals.Signal();
+			self.readLogEvent.add(codequalityListener.codeValidate, codequalityListener);
 		},
 		/***
 		 * Called in once the login is success
@@ -62,9 +65,16 @@ define(["framework/widgetWithTemplate", "codequality/listener/codequalityListene
 			var self = this;
 			$(".tooltiptop").tooltip();
 			$(".dyn_popup").hide();
+			
 			$("#codeAnalysis").click(function() {
 				self.opencc(this,'code_popup');
 			});
+			
+			$("#validate").click(function() {
+				self.readLogEvent.dispatch();
+				$(".dyn_popup").hide();
+			});
+			
 			
 			
 			
