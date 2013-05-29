@@ -25,7 +25,7 @@ import com.phresco.pom.util.PomProcessor;
 
 public class FrameworkServiceUtil implements Constants, FrameworkConstants {
 	
-	public static ApplicationInfo getApplivationInfo(String appDirName) throws PhrescoException {
+	public static ApplicationInfo getApplicationInfo(String appDirName) throws PhrescoException {
 		StringBuilder builder  = new StringBuilder();
 		builder.append(Utility.getProjectHome())
 		.append(appDirName)
@@ -60,6 +60,12 @@ public class FrameworkServiceUtil implements Constants, FrameworkConstants {
 		} catch (PhrescoPomException e) {
 			throw new PhrescoException(e);
 		}
+	}
+
+	public static String getApplicationHome(String appDirName) throws PhrescoException {
+        StringBuilder builder = new StringBuilder(Utility.getProjectHome());
+        builder.append(appDirName);
+        return builder.toString();
 	}
 
 	public static List<String> getProjectModules(String appDirName) throws PhrescoException {

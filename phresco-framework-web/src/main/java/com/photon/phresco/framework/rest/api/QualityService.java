@@ -39,7 +39,7 @@ public class QualityService extends RestBase implements ServiceConstants, Framew
 	
 	private List<String> getUnitReportOptions(String appDirName) throws PhrescoException {
         try {
-	        ApplicationInfo appInfo = FrameworkServiceUtil.getApplivationInfo(appDirName);
+	        ApplicationInfo appInfo = FrameworkServiceUtil.getApplicationInfo(appDirName);
 	        FrameworkUtil frameworkUtil = FrameworkUtil.getInstance();
 	        String unitTestReportOptions = frameworkUtil.getUnitTestReportOptions(appInfo);
 	        if (StringUtils.isNotEmpty(unitTestReportOptions)) {
