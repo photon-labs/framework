@@ -1,0 +1,1568 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<mojos>
+    <mojo>
+      <goal>validate-code</goal>
+      <description>Goal which validates the HTML5 - Jquery project</description>
+      <requiresDirectInvocation>false</requiresDirectInvocation>
+      <requiresProject>true</requiresProject>
+      <requiresReports>false</requiresReports>
+      <aggregator>false</aggregator>
+      <requiresOnline>false</requiresOnline>
+      <inheritedByDefault>true</inheritedByDefault>
+      <language>java</language>
+      <instantiationStrategy>per-lookup</instantiationStrategy>
+      <executionStrategy>once-per-session</executionStrategy>
+      <threadSafe>false</threadSafe>
+      <configuration>
+      <parameters>
+        <parameter>
+            <name>
+                <value lang="en">Validate Against</value>
+            </name>
+            <type>List</type>
+            <required>false</required>
+            <editable>true</editable>
+            <description></description>
+            <key>sonar</key>
+            <possibleValues>
+                <value key="src" dependency="src,skipTests,showSettings,environmentName">Source</value>
+                <value key="functional">Functional Test</value>
+            </possibleValues>
+            <multiple>false</multiple>
+            <sort>false</sort>
+            <show>true</show>
+          <value></value>
+        </parameter>
+        <parameter>
+        <pluginParameter>plugin</pluginParameter>
+            <name>
+                <value lang="en">Technology</value>
+            </name>
+            <mavenCommands>
+                <mavenCommand>
+                    <key>js</key>
+                    <value>-Pjs</value>
+                </mavenCommand>
+                <mavenCommand>
+                    <key>java</key>
+                    <value>-Pjava</value>
+                </mavenCommand>
+                <mavenCommand>
+                    <key>html</key>
+                    <value>-Phtml</value>
+                </mavenCommand>
+                <mavenCommand>
+                    <key>web</key>
+                    <value>-Pweb</value>
+                </mavenCommand>
+            </mavenCommands>
+          <type>List</type>
+          <required>false</required>
+          <editable>true</editable>
+          <description></description>
+          <key>src</key>
+            <possibleValues>
+                <value key="js" dependency="showSettings,environmentName">js</value>
+                <value key="java">java</value>
+                <value key="html">html</value>
+                <value key="web">jsp/jsf</value>
+            </possibleValues>
+            <multiple>false</multiple>
+            <sort>false</sort>
+            <show>false</show>
+          <value></value>
+        </parameter>
+      <parameter>
+            <pluginParameter>plugin</pluginParameter>
+            <mavenCommands>
+                <mavenCommand>
+                    <key>true</key>
+                    <value>-DskipTests=true -Dmaven.test.skip=true</value>
+                </mavenCommand>
+                <mavenCommand>
+                    <key>false</key>
+                    <value>-DskipTests=false</value>
+                </mavenCommand>
+            </mavenCommands>
+            <name>
+                <value lang="en">Skip Unit Test</value>
+            </name>
+            <type>Boolean</type>
+            <required>false</required>
+            <editable>true</editable>
+            <description></description>
+            <key>skipTests</key>
+            <multiple>false</multiple>
+            <sort>false</sort>
+            <show>false</show>
+            <value>false</value>
+      </parameter>
+		<parameter>
+			<name>
+				<value lang="en">Show Settings</value>
+			</name>
+			<type>Boolean</type>
+			<required>false</required>
+			<editable>true</editable>
+			<description></description>
+			<key>showSettings</key>
+			<multiple>false</multiple>
+			<value>false</value>
+			<sort>false</sort>
+			<show>false</show>
+			<dependency>environmentName</dependency>
+		</parameter>
+	   <parameter>
+			<name>
+				<value lang="en">Environment</value>
+			</name>
+			<type>DynamicParameter</type>
+			<dynamicParameter>
+				<class>com.photon.phresco.impl.EnvironmentsParameterImpl</class>
+				<dependencies>
+					<dependency>
+						<groupId>com.photon.phresco.commons</groupId>
+						<artifactId>phresco-commons</artifactId>
+						<type>jar</type>
+						<version>2.3.0.4001</version>
+					</dependency>
+				</dependencies>
+			</dynamicParameter>
+			<required>true</required>
+			<editable>true</editable>
+			<key>environmentName</key>
+			<multiple>false</multiple>
+			<value></value>
+			<sort>false</sort>
+			<show>true</show>
+		</parameter>
+      </parameters>
+      </configuration>
+    </mojo>
+    <mojo>
+        <goal>package</goal>
+        <description>Goal which packages the HTML5-Jquery project</description>
+        <requiresDirectInvocation>false</requiresDirectInvocation>
+        <requiresProject>true</requiresProject>
+        <requiresReports>false</requiresReports>
+        <aggregator>false</aggregator>
+        <requiresOnline>false</requiresOnline>
+        <inheritedByDefault>true</inheritedByDefault>
+        <implementation>
+           <dependency>
+               <groupId>com.photon.phresco.plugins</groupId>
+               <artifactId>java-phresco-plugin</artifactId>
+               <type>jar</type>
+               <version>2.3.0.4001</version>
+               <class>com.photon.phresco.plugins.java.JavaPlugin</class>
+           </dependency>
+       </implementation>
+        <language>java</language>
+        <instantiationStrategy>per-lookup</instantiationStrategy>
+        <executionStrategy>once-per-session</executionStrategy>
+        <threadSafe>false</threadSafe>
+        <configuration>
+            <parameters>
+                <parameter>
+                    <name>
+                        <value lang="en">Build Name</value>
+                    </name>
+                    <type>String</type>
+                    <required>false</required>
+                    <editable>true</editable>
+                    <description></description>
+                    <key>buildName</key>
+                    <multiple>false</multiple>
+                    <sort>false</sort>
+                    <show>true</show>
+                    <value></value>
+                </parameter>
+                <parameter>
+                    <name>
+                        <value lang="en">Build Number</value>
+                    </name>
+                    <type>Hidden</type>
+                    <required>false</required>
+                    <editable>true</editable>
+                    <description></description>
+                    <key>buildNumber</key>
+                    <multiple>false</multiple>
+                    <sort>false</sort>
+                    <show>false</show>
+                    <value>1</value>
+                </parameter>
+                <parameter>
+                    <name>
+                        <value lang="en">Show Settings</value>
+                    </name>
+                    <type>Boolean</type>
+                    <required>false</required>
+                    <editable>true</editable>
+                    <description></description>
+                    <key>showSettings</key>
+                    <multiple>false</multiple>
+                    <sort>false</sort>
+                    <show>true</show>
+                    <value>false</value>
+                    <dependency>environmentName</dependency>
+                </parameter>
+                <parameter>
+                    <name>
+                        <value lang="en">Environment</value>
+                    </name>
+                    <type>DynamicParameter</type>
+                    <dynamicParameter>
+                        <class>com.photon.phresco.impl.EnvironmentsParameterImpl</class>
+                        <dependencies>
+                            <dependency>
+                                <groupId>com.photon.phresco.commons</groupId>
+                                <artifactId>phresco-commons</artifactId>
+                                <type>jar</type>
+                                <version>2.3.0.4001</version>
+                            </dependency>
+                        </dependencies>
+                    </dynamicParameter>
+                    <required>true</required>
+                    <editable>true</editable>
+                    <key>environmentName</key>
+                    <multiple>true</multiple>
+                    <sort>false</sort>
+                    <show>true</show>
+                    <value></value>
+                </parameter>
+                <parameter>
+                    <pluginParameter>framework</pluginParameter>
+                    <mavenCommands>
+                        <mavenCommand>
+                            <key>true</key>
+                            <value>-DskipTests=true</value>
+                        </mavenCommand>
+                        <mavenCommand>
+                            <key>false</key>
+                            <value>-DskipTests=false</value>
+                        </mavenCommand>
+                    </mavenCommands>
+                    <name>
+                        <value lang="en">Skip Unit Test</value>
+                    </name>
+                    <type>Boolean</type>
+                    <required>false</required>
+                    <editable>true</editable>
+                    <description></description>
+                    <key>skipTest</key>
+                    <multiple>false</multiple>
+                    <sort>false</sort>
+                    <show>true</show>
+                    <value>false</value>
+                </parameter>
+                <parameter>
+                    <pluginParameter>framework</pluginParameter>
+                    <mavenCommands>
+                        <mavenCommand>
+                            <key>showErrors</key>
+                            <value>-e</value>
+                        </mavenCommand>
+                        <mavenCommand>
+                            <key>hideLogs</key>
+                            <value>-q</value>
+                        </mavenCommand>
+                        <mavenCommand>
+                            <key>showDebug</key>
+                            <value>-X</value>
+                        </mavenCommand>
+                    </mavenCommands>
+                    <name>
+                        <value lang="en">Logs</value>
+                    </name>
+                    <type>List</type>
+                    <required>false</required>
+                    <editable>true</editable>
+                    <key>logs</key>
+                    <possibleValues>
+                        <value key="showErrors">Show Errors</value>
+                        <value key="hideLogs">Hide Logs</value>
+                        <value key="showDebug">Show Debug</value>
+                    </possibleValues>
+                    <multiple>false</multiple>
+                    <sort>false</sort>
+                    <show>true</show>
+                    <value></value>
+                </parameter>
+                <parameter>
+                    <pluginParameter>framework</pluginParameter>
+                        <mavenCommands>
+                            <mavenCommand>
+                                <key>true</key>
+                                <value>-Dmaven.yuicompressor.skip=true</value>
+                            </mavenCommand>
+                        <mavenCommand>
+                            <key>false</key>
+                            <value>-Dmaven.yuicompressor.skip=false</value>
+                        </mavenCommand>
+                        </mavenCommands>
+                    <name>
+                        <value lang="en">Minify</value>
+                    </name>
+                    <type>Hidden</type>
+                    <required>false</required>
+                    <editable>true</editable>
+                    <description></description>
+                    <key>minify</key>
+                    <multiple>false</multiple>
+                    <value>true</value>
+                    <sort>false</sort>
+                    <show>false</show>
+                </parameter>
+                <parameter>
+                    <name>
+                        <value lang="en">Package File Browse</value>
+                    </name>
+                    <type>packageFileBrowse</type>
+                    <required>false</required>
+                    <editable>true</editable>
+                    <description></description>
+                    <key>packageFileBrowse</key>
+                    <multiple>false</multiple>
+                    <value></value>
+                    <sort>false</sort>
+                    <show>true</show>
+                </parameter>
+            </parameters>
+        </configuration>
+    </mojo>
+    <mojo>
+        <goal>deploy</goal>
+        <description>Goal which deploys the HTML5-Jquery project</description>
+        <requiresDirectInvocation>false</requiresDirectInvocation>
+        <requiresProject>true</requiresProject>
+        <requiresReports>false</requiresReports>
+        <aggregator>false</aggregator>
+        <requiresOnline>false</requiresOnline>
+        <inheritedByDefault>true</inheritedByDefault>
+        <implementation>
+           <dependency>
+               <groupId>com.photon.phresco.plugins</groupId>
+               <artifactId>java-phresco-plugin</artifactId>
+               <type>jar</type>
+               <version>2.3.0.4001</version>
+               <class>com.photon.phresco.plugins.java.JavaPlugin</class>
+           </dependency>
+       </implementation>
+        <language>java</language>
+        <instantiationStrategy>per-lookup</instantiationStrategy>
+        <executionStrategy>once-per-session</executionStrategy>
+        <threadSafe>false</threadSafe>
+        <configuration>
+            <parameters>
+                <parameter>
+                    <name>
+                        <value lang="en">Build Number</value>
+                    </name>
+                    <type>Hidden</type>
+                    <required>false</required>
+                    <editable>true</editable>
+                    <description></description>
+                    <key>buildNumber</key>
+                    <multiple>false</multiple>
+                    <sort>false</sort>
+                    <show>false</show>
+                    <value>1</value>
+                </parameter>
+				<parameter>
+                    <name>
+                        <value lang="en">Show Settings</value>
+                    </name>
+                    <type>Boolean</type>
+                    <required>false</required>
+                    <editable>true</editable>
+                    <description></description>
+                    <key>showSettings</key>
+                    <multiple>false</multiple>
+                    <sort>false</sort>
+                    <show>true</show>
+                    <value>false</value>
+                    <dependency>environmentName</dependency>
+                </parameter>
+                <parameter>
+                    <name>
+                        <value lang="en">Environment</value>
+                        <value lang="cv">Envit</value>
+                    </name>
+                    <type>DynamicParameter</type>
+                    <dynamicParameter>
+                        <class>com.photon.phresco.impl.EnvironmentsParameterImpl</class>
+                        <dependencies>
+                            <dependency>
+                                <groupId>com.photon.phresco.commons</groupId>
+                                <artifactId>phresco-commons</artifactId>
+                                <type>jar</type>
+                                <version>2.3.0.4001</version>
+                            </dependency>
+                        </dependencies>
+                    </dynamicParameter>
+                    <required>true</required>
+                    <editable>true</editable>
+                    <key>environmentName</key>
+                    <multiple>false</multiple>
+                    <sort>false</sort>
+                    <show>true</show>
+                    <value></value>
+                </parameter>
+                <parameter>
+                    <pluginParameter>framework</pluginParameter>
+                    <mavenCommands>
+                        <mavenCommand>
+                            <key>showErrors</key>
+                            <value>-e</value>
+                        </mavenCommand>
+                        <mavenCommand>
+                            <key>hideLogs</key>
+                            <value>-q</value>
+                        </mavenCommand>
+                        <mavenCommand>
+                            <key>showDebug</key>
+                            <value>-X</value>
+                        </mavenCommand>
+                    </mavenCommands>
+                    <name>
+                        <value lang="en">Logs</value>
+                    </name>
+                    <type>List</type>
+                    <required>false</required>
+                    <editable>true</editable>
+                    <key>logs</key>
+                    <possibleValues>
+                        <value key="showErrors">Show Errors</value>
+                        <value key="hideLogs">Hide Logs</value>
+                        <value key="showDebug">Show Debug</value>
+                    </possibleValues>
+                    <multiple>false</multiple>
+                    <sort>false</sort>
+                    <show>true</show>
+                    <value></value>
+                </parameter>
+            </parameters>
+        </configuration>
+    </mojo>
+    <mojo>
+        <goal>unit-test</goal>
+        <description>Goal which packages the HTML5-Jquery project</description>
+        <requiresDirectInvocation>false</requiresDirectInvocation>
+        <requiresProject>true</requiresProject>
+        <requiresReports>false</requiresReports>
+        <aggregator>false</aggregator>
+        <requiresOnline>false</requiresOnline>
+        <inheritedByDefault>true</inheritedByDefault>
+        <implementation>
+            <dependency>
+                <groupId>com.photon.phresco.plugins</groupId>
+                <artifactId>java-phresco-plugin</artifactId>
+                <type>jar</type>
+                <version>2.3.0.4001</version>
+                <class>com.photon.phresco.plugins.java.JavaPlugin</class>
+            </dependency>
+        </implementation>
+        <language>java</language>
+        <instantiationStrategy>per-lookup</instantiationStrategy>
+        <executionStrategy>once-per-session</executionStrategy>
+        <threadSafe>false</threadSafe>
+        <configuration>
+            <parameters>
+                <parameter>
+                    <pluginParameter>plugin</pluginParameter>
+                    <mavenCommands>
+                        <mavenCommand>
+                            <key>java</key>
+                            <value>-Pjava</value>
+                        </mavenCommand>
+                        <mavenCommand>
+                            <key>js</key>
+                            <value>-Pjs -DskipTests</value>
+                        </mavenCommand>
+                    </mavenCommands>
+                    <name>
+                        <value lang="en">Test Against</value>
+                    </name>
+                    <type>List</type>
+                    <required>true</required>
+                    <editable>true</editable>
+                    <key>testAgainst</key>
+                    <possibleValues>
+                        <value key="java">java</value>
+                        <value key="js" dependency="showSettings,environmentName">js</value>
+                    </possibleValues>
+                    <multiple>false</multiple>
+                    <value></value>
+                    <sort>false</sort>
+                    <show>true</show>
+                </parameter>
+				<parameter>
+                    <name>
+                        <value lang="en">Show Settings</value>
+                    </name>
+                    <type>Boolean</type>
+                    <required>false</required>
+                    <editable>true</editable>
+                    <description></description>
+                    <key>showSettings</key>
+                    <multiple>false</multiple>
+                    <value>false</value>
+                    <sort>false</sort>
+                    <show>false</show>
+                    <dependency>environmentName</dependency>
+                </parameter>
+				<parameter>
+                    <name>
+                        <value lang="en">Environment</value>
+                    </name>
+                    <type>DynamicParameter</type>
+                    <dynamicParameter>
+                        <class>com.photon.phresco.impl.EnvironmentsParameterImpl</class>
+                        <dependencies>
+                            <dependency>
+								<groupId>com.photon.phresco.commons</groupId>
+								<artifactId>phresco-commons</artifactId>
+								<type>jar</type>
+								<version>2.3.0.4001</version>
+                            </dependency>
+                        </dependencies>
+                    </dynamicParameter>
+                    <required>true</required>
+                    <editable>true</editable>
+                    <key>environmentName</key>
+                    <multiple>false</multiple>
+                    <value></value>
+                    <sort>false</sort>
+                    <show>true</show>
+                </parameter>
+            </parameters>
+        </configuration>
+    </mojo>
+    <mojo>
+        <goal>functional-test-webdriver</goal>
+        <description>Goal which functionalTest-webdriver the HTML5-Jquery project</description>
+        <requiresDirectInvocation>false</requiresDirectInvocation>
+        <requiresProject>true</requiresProject>
+        <requiresReports>false</requiresReports>
+        <aggregator>false</aggregator>
+        <requiresOnline>false</requiresOnline>
+        <inheritedByDefault>true</inheritedByDefault>
+        <language>java</language>
+        <instantiationStrategy>per-lookup</instantiationStrategy>
+        <executionStrategy>once-per-session</executionStrategy>
+        <threadSafe>false</threadSafe>
+        <configuration>
+        <parameters>
+            <parameter>
+                <name>
+                    <value lang="en">Test Against</value>
+                </name>
+                <type>List</type>
+                <required>false</required>
+                <editable>true</editable>
+                <description></description>
+                <key>testAgainst</key>
+                <possibleValues>
+                    <value key="server" dependency="showSettings">Server</value>
+				</possibleValues>
+                <value></value>
+                <sort>false</sort>
+                <show>true</show>
+            </parameter>
+            <parameter>
+                <name>
+                    <value lang="en">Browser</value>
+                </name>
+                <type>List</type>
+                <required>false</required>
+                <editable>true</editable>
+                <description></description>
+                <key>browser</key>
+                <possibleValues>
+                    <value key="firefox">Firefox</value>
+                    <value key="safari">Safari</value>
+                    <value key="opera">Opera</value>
+                    <value key="internetExplorer">Internet Explorer</value>
+                    <value key="chrome">Chrome</value>
+                </possibleValues>
+                <multiple>false</multiple>
+                <value></value>
+                <sort>false</sort>
+                <show>true</show>
+            </parameter>
+            <parameter>
+                <name>
+                    <value lang="en">Resolution</value>
+                </name>
+                <type>EditableList</type>
+                <required>false</required>
+                <editable>true</editable>
+                <description></description>
+                <key>resolution</key>
+                <possibleValues>
+                    <value key="320x480">320x480</value>
+                    <value key="1024x768">1024x768</value>
+                    <value key="1280x800">1280x800</value>
+                    <value key="1280x960">1280x960</value>
+                    <value key="1280x1024">1280x1024</value>
+                    <value key="1360x768">1360x768</value>
+                    <value key="1440x900">1440x900</value>
+                    <value key="1600x900">1600x900</value>
+                </possibleValues>
+                <multiple>false</multiple>
+                <value></value>
+                <sort>false</sort>
+                <show>true</show>
+            </parameter>
+            <parameter>
+                <name>
+                    <value lang="en">Show Settings</value>
+                </name>
+                <type>Boolean</type>
+                <required>false</required>
+                <editable>true</editable>
+                <description></description>
+                <key>showSettings</key>
+                <multiple>false</multiple>
+                <value>false</value>
+                <sort>false</sort>
+                <show>false</show>
+                <dependency>environmentName</dependency>
+            </parameter>
+            <parameter>
+                <name>
+                    <value lang="en">Environment</value>
+                </name>
+                <type>DynamicParameter</type>
+                <dynamicParameter>
+                <class>com.photon.phresco.impl.EnvironmentsParameterImpl</class>
+                <dependencies>
+                    <dependency>
+                        <groupId>com.photon.phresco.commons</groupId>
+                        <artifactId>phresco-commons</artifactId>
+                        <type>jar</type>
+                        <version>2.3.0.4001</version>
+                    </dependency>
+                </dependencies>
+                </dynamicParameter>
+                <required>true</required>
+                <editable>true</editable>
+                <key>environmentName</key>
+                <multiple>false</multiple>
+                <value></value>
+                <sort>false</sort>
+                <show>true</show>
+            </parameter>
+        </parameters>
+    </configuration>
+    </mojo>
+    <mojo>
+        <goal>functional-test-grid</goal>
+        <description>Goal which deploys the Html5-Jquery project</description>
+        <requiresDirectInvocation>false</requiresDirectInvocation>
+        <requiresProject>true</requiresProject>
+        <requiresReports>false</requiresReports>
+        <aggregator>false</aggregator>
+        <requiresOnline>false</requiresOnline>
+        <inheritedByDefault>true</inheritedByDefault>
+        <implementation>
+           <dependency>
+               <groupId>com.photon.phresco.plugins</groupId>
+               <artifactId>java-phresco-plugin</artifactId>
+               <type>jar</type>
+               <version>2.3.0.4001</version>
+               <class>com.photon.phresco.plugins.java.JavaPlugin</class>
+           </dependency>
+       </implementation>
+        <language>java</language>
+        <instantiationStrategy>per-lookup</instantiationStrategy>
+        <executionStrategy>once-per-session</executionStrategy>
+        <threadSafe>false</threadSafe>
+        <configuration>
+            <parameters>
+                <parameter>
+                    <name>
+                        <value lang="en">Test Against</value>
+                    </name>
+                    <type>List</type>
+                    <required>false</required>
+                    <editable>true</editable>
+                    <description></description>
+                    <key>testAgainst</key>
+                    <possibleValues>
+                        <value key="server" dependency="showSettings">Server</value>
+                    </possibleValues>
+                    <value></value>
+                    <sort>false</sort>
+                    <show>true</show>
+                </parameter>
+                <parameter>
+                    <name>
+                        <value lang="en">Show Settings</value>
+                    </name>
+                    <type>Boolean</type>
+                    <required>false</required>
+                    <editable>true</editable>
+                    <description></description>
+                    <key>showSettings</key>
+                    <multiple>false</multiple>
+                    <value>false</value>
+                    <sort>false</sort>
+                    <show>false</show>
+                    <dependency>environmentName</dependency>
+                </parameter>
+                <parameter>
+                    <name>
+                        <value lang="en">Environment</value>
+                    </name>
+                    <type>DynamicParameter</type>
+                    <dynamicParameter>
+                        <class>com.photon.phresco.impl.EnvironmentsParameterImpl</class>
+                        <dependencies>
+                            <dependency>
+                                <groupId>com.photon.phresco.commons</groupId>
+                                <artifactId>phresco-commons</artifactId>
+                                <type>jar</type>
+                                <version>2.3.0.4001</version>
+                            </dependency>
+                        </dependencies>
+                    </dynamicParameter>
+                    <required>true</required>
+                    <editable>true</editable>
+                    <key>environmentName</key>
+                    <multiple>false</multiple>
+                    <sort>false</sort>
+                    <show>true</show>
+                </parameter>
+				<parameter>
+					<name>
+						<value lang="en">Resolution</value>
+					</name>
+					<type>List</type>
+					<required>false</required>
+					<editable>edit</editable>
+					<description></description>
+					<key>resolution</key>
+					<possibleValues>
+						<value key="320x480">320x480</value>
+						<value key="1024x768">1024x768</value>
+						<value key="1280x800">1280x800</value>
+						<value key="1280x960">1280x960</value>
+						<value key="1280x1024">1280x1024</value>
+						<value key="1360x768">1360x768</value>
+						<value key="1440x900">1440x900</value>
+						<value key="1600x900">1600x900</value>
+					</possibleValues>
+					<multiple>false</multiple>
+					<value></value>
+					<sort>false</sort>
+					<show>true</show>
+				</parameter>
+            </parameters>
+        </configuration>
+    </mojo>
+	<mojo>
+        <goal>functional-test-cucumber</goal>
+        <description>Goal which functional-test-cucumber the Html-5 project</description>
+        <requiresDirectInvocation>false</requiresDirectInvocation>
+        <requiresProject>true</requiresProject>
+        <requiresReports>false</requiresReports>
+        <aggregator>false</aggregator>
+        <requiresOnline>false</requiresOnline>
+        <inheritedByDefault>true</inheritedByDefault>
+        <language>java</language>
+        <instantiationStrategy>per-lookup</instantiationStrategy>
+        <executionStrategy>once-per-session</executionStrategy>
+        <threadSafe>false</threadSafe>
+        <configuration>
+            <parameters>
+                <parameter>
+                    <name>
+                        <value lang="en">Test Against</value>
+                    </name>
+                    <type>List</type>
+                    <required>false</required>
+                    <editable>true</editable>
+                    <description></description>
+                    <key>testAgainst</key>
+                    <possibleValues>
+                        <value key="server" dependency="showSettings">Server</value>
+                    </possibleValues>
+                    <value></value>
+                    <sort>false</sort>
+                    <show>true</show>
+                    <dependency>environmentName</dependency>
+                </parameter>
+                <parameter>
+                    <name>
+                        <value lang="en">Show Settings</value>
+                    </name>
+                    <type>Boolean</type>
+                    <required>false</required>
+                    <editable>true</editable>
+                    <description></description>
+                    <key>showSettings</key>
+                    <multiple>false</multiple>
+                    <value>false</value>
+                    <sort>false</sort>
+                    <show>false</show>
+                    <dependency>environmentName</dependency>
+                </parameter>
+                <parameter>
+                    <name>
+                        <value lang="en">Environment</value>
+                    </name>
+                    <type>DynamicParameter</type>
+                    <dynamicParameter>
+                        <class>com.photon.phresco.impl.FunctionalTestEnvironmentImpl</class>
+                        <dependencies>
+                            <dependency>
+<groupId>com.photon.phresco.commons</groupId>
+<artifactId>phresco-commons</artifactId>
+<type>jar</type>
+<version>2.3.0.4001</version>
+                            </dependency>
+                        </dependencies>
+                    </dynamicParameter>
+                    <required>true</required>
+                    <editable>true</editable>
+                    <key>environmentName</key>
+                    <multiple>false</multiple>
+                    <value></value>
+                    <sort>false</sort>
+                    <show>true</show>
+                </parameter>
+                <parameter>
+                    <name>
+                        <value lang="en">Browser</value>
+                    </name>
+                    <type>List</type>
+                    <required>false</required>
+                    <editable>true</editable>
+                    <description></description>
+                    <key>browser</key>
+                    <possibleValues>
+                        <value key="firefox">Firefox</value>
+                        <value key="safari">Safari</value>
+                        <value key="opera">Opera</value>
+                        <value key="internetExplorer">Internet Explorer</value>
+                        <value key="chrome">Chrome</value>
+                    </possibleValues>
+                    <multiple>false</multiple>
+                    <value></value>
+                    <sort>false</sort>
+                    <show>true</show>
+                </parameter>
+            </parameters>
+        </configuration>
+    </mojo>
+    <mojo>
+        <goal>functional-test-capybara</goal>
+        <description>Goal which functional-test-capybara the Html-5 project</description>
+        <requiresDirectInvocation>false</requiresDirectInvocation>
+        <requiresProject>true</requiresProject>
+        <requiresReports>false</requiresReports>
+        <aggregator>false</aggregator>
+        <requiresOnline>false</requiresOnline>
+        <inheritedByDefault>true</inheritedByDefault>
+        <language>java</language>
+        <instantiationStrategy>per-lookup</instantiationStrategy>
+        <executionStrategy>once-per-session</executionStrategy>
+        <threadSafe>false</threadSafe>
+        <configuration>
+            <parameters>
+                <parameter>
+                    <name>
+                        <value lang="en">Test Against</value>
+                    </name>
+                    <type>List</type>
+                    <required>false</required>
+                    <editable>true</editable>
+                    <description></description>
+                    <key>testAgainst</key>
+                    <possibleValues>
+                        <value key="server" dependency="showSettings">Server</value>
+                    </possibleValues>
+                    <value>server</value>
+                    <sort>false</sort>
+                    <show>true</show>
+                    <dependency>environmentName</dependency>
+                </parameter>
+                <parameter>
+                    <name>
+                        <value lang="en">Show Settings</value>
+                    </name>
+                    <type>Boolean</type>
+                    <required>false</required>
+                    <editable>true</editable>
+                    <description></description>
+                    <key>showSettings</key>
+                    <multiple>false</multiple>
+                    <value>false</value>
+                    <sort>false</sort>
+                    <show>false</show>
+                    <dependency>environmentName</dependency>
+                </parameter>
+                <parameter>
+                    <name>
+                        <value lang="en">Environment</value>
+                    </name>
+                    <type>DynamicParameter</type>
+                    <dynamicParameter>
+                        <class>com.photon.phresco.impl.FunctionalTestEnvironmentImpl</class>
+                        <dependencies>
+                            <dependency>
+<groupId>com.photon.phresco.commons</groupId>
+<artifactId>phresco-commons</artifactId>
+<type>jar</type>
+<version>2.3.0.4001</version>
+                            </dependency>
+                        </dependencies>
+                    </dynamicParameter>
+                    <required>true</required>
+                    <editable>true</editable>
+                    <key>environmentName</key>
+                    <multiple>false</multiple>
+                    <value>Production</value>
+                    <sort>false</sort>
+                    <show>true</show>
+                </parameter>
+                <parameter>
+                    <name>
+                        <value lang="en">Browser</value>
+                    </name>
+                    <type>List</type>
+                    <required>false</required>
+                    <editable>true</editable>
+                    <description></description>
+                    <key>browser</key>
+                    <possibleValues>
+                        <value key="firefox">Firefox</value>
+                        <value key="safari">Safari</value>
+                        <value key="opera">Opera</value>
+                        <value key="internetExplorer">Internet Explorer</value>
+                        <value key="chrome">Chrome</value>
+                    </possibleValues>
+                    <multiple>false</multiple>
+                    <value>firefox</value>
+                    <sort>false</sort>
+                    <show>true</show>
+                </parameter>
+            </parameters>
+        </configuration>
+    </mojo>
+    <mojo>
+        <goal>pdf-report</goal>
+        <description>Goal which generates pdf report for the project</description>
+        <requiresDirectInvocation>false</requiresDirectInvocation>
+        <requiresProject>true</requiresProject>
+        <requiresReports>false</requiresReports>
+        <aggregator>false</aggregator>
+        <requiresOnline>false</requiresOnline>
+        <inheritedByDefault>true</inheritedByDefault>
+        <implementation>
+            <dependency>
+                <groupId>com.photon.phresco.plugins</groupId>
+                <artifactId>report-phresco-plugin</artifactId>
+                <type>jar</type>
+                <version>2.3.0.4001</version>
+                <class>com.photon.phresco.plugins.ReportPlugin</class>
+            </dependency>
+        </implementation>
+        <language>java</language>
+        <instantiationStrategy>per-lookup</instantiationStrategy>
+        <executionStrategy>once-per-session</executionStrategy>
+        <threadSafe>false</threadSafe>
+        <configuration>
+            <parameters>
+                <parameter>
+                    <name>
+                        <value lang="en">Report Type</value>
+                    </name>
+                    <type>List</type>
+                    <required>false</required>
+                    <editable>true</editable>
+                    <description></description>
+                    <key>reportType</key>
+                    <possibleValues>
+                        <value key="crisp">Overall</value>
+                        <value key="detail">Detailed</value>
+                    </possibleValues>
+                    <multiple>false</multiple>
+                    <value></value>
+                    <sort>false</sort>
+                    <show>true</show>
+                </parameter>
+                <parameter>
+                    <name>
+                        <value lang="en">Test Type</value>
+                    </name>
+                    <type>List</type>
+                    <required>false</required>
+                    <editable>true</editable>
+                    <description></description>
+                    <key>testType</key>
+                    <possibleValues>
+                        <value key="All">All</value>
+                        <value key="unit">unit</value>
+                        <value key="functional">functional</value>
+                        <value key="performance">performance</value>
+                        <value key="load">load</value>
+                    </possibleValues>
+                    <multiple>false</multiple>
+                    <value></value>
+                    <sort>false</sort>
+                    <show>true</show>
+                </parameter>
+                <parameter>
+                    <name>
+                        <value lang="en">Sonar Url</value>
+                    </name>
+                    <type>Hidden</type>
+                    <required>false</required>
+                    <editable>true</editable>
+                    <description></description>
+                    <key>sonarUrl</key>
+                    <multiple>false</multiple>
+                    <value></value>
+                    <sort>false</sort>
+                    <show>false</show>
+                </parameter>
+                <parameter>
+                    <name>
+                        <value lang="en">Logo</value>
+                    </name>
+                    <type>Hidden</type>
+                    <required>false</required>
+                    <editable>true</editable>
+                    <description></description>
+                    <key>logo</key>
+                    <multiple>false</multiple>
+                    <value></value>
+                    <sort>false</sort>
+                    <show>false</show>
+                </parameter>
+                <parameter>
+                    <name>
+                        <value lang="en">Theme</value>
+                    </name>
+                    <type>Hidden</type>
+                    <required>false</required>
+                    <editable>true</editable>
+                    <description></description>
+                    <key>theme</key>
+                    <multiple>false</multiple>
+                    <value></value>
+                    <sort>false</sort>
+                    <show>false</show>
+                </parameter>
+            </parameters>
+        </configuration>
+    </mojo>
+	<mojo>
+		<goal>load-test</goal>
+		<description>Goal which load Test to the Html5 - Jquery project</description>
+		<requiresDirectInvocation>false</requiresDirectInvocation>
+		<requiresProject>true</requiresProject>
+		<requiresReports>false</requiresReports>
+		<aggregator>false</aggregator>
+		<requiresOnline>false</requiresOnline>
+		<inheritedByDefault>true</inheritedByDefault>
+		<language>java</language>
+		<instantiationStrategy>per-lookup</instantiationStrategy>
+		<executionStrategy>once-per-session</executionStrategy>
+		<threadSafe>false</threadSafe>
+			<configuration>
+			<parameters>
+				<parameter>
+                   <name>
+                       <value lang="en">Test Against</value>
+                   </name>
+                   <type>List</type>
+                   <required>false</required>
+                   <editable>true</editable>
+                   <description></description>
+                   <key>testAgainst</key>
+                   <possibleValues>
+                       <value key="server">Server</value>
+                       <value key="webservice">Web Services</value>
+                   </possibleValues>
+                   <multiple>false</multiple>
+                   <value></value>
+                   <sort>false</sort>
+                   <show>true</show>
+                   <dependency>configurations</dependency>
+				</parameter>
+				<parameter>
+					<name>
+						<value lang="en">Show Settings</value>
+					</name>
+					<type>Boolean</type>
+					<required>false</required>
+					<editable>true</editable>
+					<description></description>
+					<key>showSettings</key>
+					<multiple>false</multiple>
+					<value>false</value>
+					<sort>false</sort>
+					<show>true</show>
+					<dependency>environmentName</dependency>
+				</parameter>
+				<parameter>
+					<name>
+						<value lang="en">Environment</value>
+					</name>
+					<type>DynamicParameter</type>
+					<dynamicParameter>
+						<class>com.photon.phresco.impl.EnvironmentsParameterImpl</class>
+						<dependencies>
+							<dependency>
+								<groupId>com.photon.phresco.commons</groupId>
+								<artifactId>phresco-commons</artifactId>
+								<type>jar</type>
+								<version>2.3.0.4001</version>
+							</dependency>
+						</dependencies>
+					</dynamicParameter>
+					<required>true</required>
+					<editable>true</editable>
+					<key>environmentName</key>
+					<multiple>false</multiple>
+					<value></value>
+					<sort>false</sort>
+					<show>true</show>
+					<dependency>configurations</dependency>
+				</parameter>
+				<parameter>
+                   <name>
+                       <value lang="en">Configurations</value>
+                   </name>
+                   <type>DynamicParameter</type>
+                   <dynamicParameter>
+                       <class>com.photon.phresco.framework.param.impl.PerformanceConfigurationsImpl</class>
+						<dependencies>
+                           <dependency>
+								<groupId>com.photon.phresco.framework</groupId>
+								<artifactId>phresco-framework-impl</artifactId>
+								<type>jar</type>
+								<version>2.3.0.4001</version>
+                           </dependency>
+                       </dependencies>
+                   </dynamicParameter>
+                   <required>true</required>
+                   <editable>true</editable>
+                   <description></description>
+                   <key>configurations</key>
+                   <multiple>false</multiple>
+                   <value></value>
+                   <sort>false</sort>
+                   <show>true</show>
+                </parameter>
+				<parameter>
+					<name>
+						<value lang="en">Test Result Name</value>
+					</name>
+					<type>String</type>
+					<required>true</required>
+					<editable>true</editable>
+					<description></description>
+					<key>testName</key>
+					<multiple>false</multiple>
+					<value></value>
+					<sort>false</sort>
+					<show>true</show>
+				</parameter>
+				<parameter>
+					<name>
+						<value lang="en">NoOfUsers</value>
+					</name>
+					<type>Number</type>
+					<required>true</required>
+					<editable>true</editable>
+					<description></description>
+					<key>noOfUsers</key>
+					<multiple>false</multiple>
+					<value></value>
+					<sort>false</sort>
+					<show>true</show>
+				</parameter>
+				<parameter>
+					<name>
+						<value lang="en">Ramp-Up Period</value>
+					</name>
+					<type>Number</type>
+					<required>true</required>
+					<editable>true</editable>
+					<description></description>
+					<key>rampUpPeriod</key>
+					<multiple>false</multiple>
+					<value></value>
+					<sort>false</sort>
+					<show>true</show>
+				</parameter>
+				<parameter>
+					<name>
+						<value lang="en">Loop Count</value>
+					</name>
+					<type>Number</type>
+					<required>true</required>
+					<editable>true</editable>
+					<description></description>
+					<key>loopCount</key>
+					<multiple>false</multiple>
+					<value></value>
+					<sort>false</sort>
+					<show>true</show>
+				</parameter>
+				<parameter>
+                    <name>
+                        <value lang="en">Headers</value>
+                    </name>
+                    <type>map</type>
+                    <childs>
+                        <child>
+                            <name>
+								<value lang="en">Key</value>
+                            </name>
+                            <type>String</type>
+                            <key>headerKey</key>
+                            <required>true</required>
+                            <description>add header key</description>
+                        </child>
+                        <child>
+                            <name>
+								<value lang="en">Value</value>
+                            </name>
+                            <type>String</type>
+                            <key>headerValue</key>
+                            <required>true</required>
+                            <description>header value</description>
+                        </child>
+                    </childs>
+                    <required>true</required>
+                    <editable>true</editable>
+                    <description></description>
+                    <key>addHeader</key>
+                    <multiple>false</multiple>
+                    <value></value>
+                    <sort>false</sort>
+                    <show>true</show>
+                </parameter>
+			</parameters>
+		</configuration>
+	</mojo>
+	<mojo>
+        <goal>performance-test</goal>
+        <description>Goal which execute the jMeter performance test</description>
+        <requiresDirectInvocation>false</requiresDirectInvocation>
+        <requiresProject>true</requiresProject>
+        <requiresReports>false</requiresReports>
+        <aggregator>false</aggregator>
+        <requiresOnline>false</requiresOnline>
+        <inheritedByDefault>true</inheritedByDefault>
+        <language>java</language>
+        <instantiationStrategy>per-lookup</instantiationStrategy>
+        <executionStrategy>once-per-session</executionStrategy>
+        <threadSafe>false</threadSafe>
+        <configuration>
+            <parameters>
+                <parameter>
+                    <name>
+                        <value lang="en">Test Against</value>
+                    </name>
+                    <type>List</type>
+                    <required>true</required>
+                    <editable>true</editable>
+                    <description></description>
+                    <key>testAgainst</key>
+                    <possibleValues>
+                        <value key="server" dependency="contextUrls">Server</value>
+                        <value key="webservice" dependency="contextUrls">Web Services</value>
+                        <value key="database" dependency="dbContextUrls">Database</value>
+                    </possibleValues>
+                    <multiple>false</multiple>
+                    <value></value>
+                    <sort>false</sort>
+                    <show>true</show>
+                    <dependency>configurations,testName</dependency>
+                </parameter>
+                <parameter>
+                    <name>
+                        <value lang="en">Show Settings</value>
+                    </name>
+                    <type>Boolean</type>
+                    <required>false</required>
+                    <editable>true</editable>
+                    <description></description>
+                    <key>showSettings</key>
+                    <multiple>false</multiple>
+                    <value>false</value>
+                    <sort>false</sort>
+                    <show>true</show>
+                    <dependency>environmentName</dependency>
+                </parameter>
+                <parameter>
+                    <name>
+                        <value lang="en">Environment</value>
+                    </name>
+                    <type>DynamicParameter</type>
+                    <dynamicParameter>
+                        <class>com.photon.phresco.impl.EnvironmentsParameterImpl</class>
+                        <dependencies>
+                            <dependency>
+								<groupId>com.photon.phresco.commons</groupId>
+								<artifactId>phresco-commons</artifactId>
+								<type>jar</type>
+								<version>2.3.0.4001</version>
+                            </dependency>
+                        </dependencies>
+                    </dynamicParameter>
+                    <required>true</required>
+                    <editable>true</editable>
+                    <key>environmentName</key>
+                    <multiple>false</multiple>
+                    <value></value>
+                    <sort>false</sort>
+                    <show>true</show>
+                    <dependency>configurations</dependency>
+                </parameter>
+                <parameter>
+                    <name>
+                        <value lang="en">Configurations</value>
+                    </name>
+                    <type>DynamicParameter</type>
+                    <dynamicParameter>
+                        <class>com.photon.phresco.framework.param.impl.PerformanceConfigurationsImpl</class>
+                        <dependencies>
+                            <dependency>
+								<groupId>com.photon.phresco.framework</groupId>
+								<artifactId>phresco-framework-impl</artifactId>
+								<type>jar</type>
+								<version>2.3.0.4001</version>
+                            </dependency>
+                        </dependencies>
+                    </dynamicParameter>
+                    <required>false</required>
+                    <editable>true</editable>
+                    <description></description>
+                    <key>configurations</key>
+                    <multiple>false</multiple>
+                    <value></value>
+                    <sort>false</sort>
+                    <show>true</show>
+                </parameter>
+                <parameter>
+                    <name>
+                        <value lang="en">Test Result Name</value>
+                    </name>
+                    <type>DynamicParameter</type>
+                    <dynamicParameter>
+                        <class>com.photon.phresco.framework.param.impl.PerformanceTestResultNamesImpl</class>
+                        <dependencies>
+                            <dependency>
+								<groupId>com.photon.phresco.framework</groupId>
+								<artifactId>phresco-framework-impl</artifactId>
+								<type>jar</type>
+								<version>2.3.0.4001</version>
+                            </dependency>
+                        </dependencies>
+                    </dynamicParameter>
+                    <required>true</required>
+                    <editable>edit</editable>
+                    <description></description>
+                    <key>testName</key>
+                    <multiple>false</multiple>
+                    <value></value>
+                    <sort>false</sort>
+                    <show>true</show>
+                </parameter>
+                <parameter>
+                    <name>
+                        <value lang="en">No of Users</value>
+                    </name>
+                    <type>Number</type>
+                    <required>true</required>
+                    <editable>true</editable>
+                    <description></description>
+                    <key>noOfUsers</key>
+                    <multiple>false</multiple>
+                    <value></value>
+                    <sort>false</sort>
+                    <show>true</show>
+                </parameter>
+                <parameter>
+                    <name>
+                        <value lang="en">Ramp-Up Period</value>
+                    </name>
+                    <type>Number</type>
+                    <required>true</required>
+                    <editable>true</editable>
+                    <description></description>
+                    <key>rampUpPeriod</key>
+                    <multiple>false</multiple>
+                    <value></value>
+                    <sort>false</sort>
+                    <show>true</show>
+                </parameter>
+                <parameter>
+                    <name>
+                        <value lang="en">Loop Count</value>
+                    </name>
+                    <type>Number</type>
+                    <required>true</required>
+                    <editable>true</editable>
+                    <description></description>
+                    <key>loopCount</key>
+                    <multiple>false</multiple>
+                    <value></value>
+                    <sort>false</sort>
+                    <show>true</show>
+                </parameter>
+                <parameter>
+                    <name>
+                        <value lang="en">IsFromCI?</value>
+                    </name>
+                    <type>Hidden</type>
+                    <required>false</required>
+                    <editable>true</editable>
+                    <description></description>
+                    <key>isFromCI</key>
+                    <multiple>false</multiple>
+                    <value>true</value>
+                    <sort>false</sort>
+                    <show>false</show>
+                </parameter>
+                <parameter>
+                    <name>
+                        <value lang="en">Context URLs</value>
+                    </name>
+                    <type>DynamicPageParameter</type>
+                    <dynamicParameter>
+                        <class>com.photon.phresco.framework.param.impl.PerformanceTestDetailsImpl</class>
+                        <dependencies>
+                            <dependency>
+								<groupId>com.photon.phresco.framework</groupId>
+								<artifactId>phresco-framework-impl</artifactId>
+								<type>jar</type>
+								<version>2.3.0.4001</version>
+                            </dependency>
+                        </dependencies>
+                    </dynamicParameter>
+                    <required>false</required>
+                    <editable>true</editable>
+                    <description></description>
+                    <key>contextUrls</key>
+                    <multiple>false</multiple>
+                    <value></value>
+                    <sort>false</sort>
+                    <show>false</show>
+                </parameter>
+                <parameter>
+                    <name>
+                        <value lang="en">DB Context URLs</value>
+                    </name>
+                    <type>DynamicPageParameter</type>
+                    <dynamicParameter>
+                        <class>com.photon.phresco.framework.param.impl.PerformanceTestDetailsImpl</class>
+                        <dependencies>
+                            <dependency>
+								<groupId>com.photon.phresco.framework</groupId>
+								<artifactId>phresco-framework-impl</artifactId>
+								<type>jar</type>
+								<version>2.3.0.4001</version>
+                            </dependency>
+                        </dependencies>
+                    </dynamicParameter>
+                    <required>false</required>
+                    <editable>true</editable>
+                    <description></description>
+                    <key>dbContextUrls</key>
+                    <multiple>false</multiple>
+                    <value></value>
+                    <sort>false</sort>
+                    <show>false</show>
+                </parameter>
+            </parameters>
+        </configuration>
+    </mojo>
+    <mojo>
+        <goal>CIPrebuildStep</goal>
+        <description>Goal which do's CI pre build step</description>
+        <requiresDirectInvocation>false</requiresDirectInvocation>
+        <requiresProject>true</requiresProject>
+        <requiresReports>false</requiresReports>
+        <aggregator>false</aggregator>
+        <requiresOnline>false</requiresOnline>
+        <inheritedByDefault>true</inheritedByDefault>
+        <implementation>
+           <dependency>
+               <groupId>com.photon.phresco.plugins</groupId>
+               <artifactId>ci-phresco-plugin</artifactId>
+               <type>jar</type>
+               <version>2.3.0.4001</version>
+               <class>com.photon.phresco.plugins.CIPlugin</class>
+           </dependency>
+       </implementation>
+        <language>java</language>
+        <instantiationStrategy>per-lookup</instantiationStrategy>
+        <executionStrategy>once-per-session</executionStrategy>
+        <threadSafe>false</threadSafe>
+    </mojo>
+	<mojo>
+        <goal>component-test</goal>
+        <description>Goal for Component test</description>
+        <requiresDirectInvocation>false</requiresDirectInvocation>
+        <requiresProject>true</requiresProject>
+        <requiresReports>false</requiresReports>
+        <aggregator>false</aggregator>
+        <requiresOnline>false</requiresOnline>
+        <inheritedByDefault>true</inheritedByDefault>
+        <language>java</language>
+        <instantiationStrategy>per-lookup</instantiationStrategy>
+        <executionStrategy>once-per-session</executionStrategy>
+        <threadSafe>false</threadSafe>
+        <configuration>
+            <parameters>
+                <parameter>
+                    <name>
+                        <value lang="en">Show Settings</value>
+                    </name>
+                    <type>Boolean</type>
+                    <required>false</required>
+                    <editable>true</editable>
+                    <description></description>
+                    <key>showSettings</key>
+                    <multiple>false</multiple>
+                    <value>false</value>
+                    <sort>false</sort>
+                    <show>true</show>
+                    <dependency>environmentName</dependency>
+                </parameter>
+                <parameter>
+                    <name>
+                        <value lang="en">Environment</value>
+                    </name>
+                    <type>DynamicParameter</type>
+                    <dynamicParameter>
+                        <class>com.photon.phresco.impl.EnvironmentsParameterImpl</class>
+                        <dependencies>
+                            <dependency>
+								<groupId>com.photon.phresco.commons</groupId>
+								<artifactId>phresco-commons</artifactId>
+								<type>jar</type>
+								<version>2.3.0.1002-SNAPSHOT</version>
+                            </dependency>
+                        </dependencies>
+                    </dynamicParameter>
+                    <required>true</required>
+                    <editable>true</editable>
+                    <key>environmentName</key>
+                    <multiple>false</multiple>
+                    <value></value>
+                    <sort>false</sort>
+                    <show>true</show>
+                </parameter>
+            </parameters>
+        </configuration>
+    </mojo>
+</mojos>
