@@ -35,7 +35,7 @@
 					</tr>
 					<tr class="row_bg">
 						<td colspan="3">Servers</td>
-						<td colspan="3"><img src="../themes/default/images/helios/close_icon.png"  width="25" height="20" border="0" alt="" class="flt_right"></td>
+						<td colspan="3"><img src="themes/default/images/helios/close_icon.png"  width="25" height="20" border="0" alt="" class="flt_right"></td>
 					</tr>
 					<tr>
 						<td>Name <sup>*</sup></td>
@@ -75,7 +75,7 @@
 					</tr>
 					<tr class="row_bg">
 						<td colspan="3">Database</td>
-						<td colspan="3"><img src="../themes/default/images/helios/close_icon.png"  width="25" height="20" border="0" alt="" class="flt_right"></td>
+						<td colspan="3"><img src="themes/default/images/helios/close_icon.png"  width="25" height="20" border="0" alt="" class="flt_right"></td>
 					</tr>
 					<tr>
 						<td>Name <sup>*</sup></td>
@@ -115,7 +115,7 @@
 					</tr>
 					<tr class="row_bg">
 						<td colspan="3">LDAP</td>
-						<td colspan="3"><img src="../themes/default/images/helios/close_icon.png"  width="25" height="20" border="0" alt="" class="flt_right"></td>
+						<td colspan="3"><img src="themes/default/images/helios/close_icon.png"  width="25" height="20" border="0" alt="" class="flt_right"></td>
 					</tr>
 					<tr>
 						<td>Name <sup>*</sup></td>
@@ -155,7 +155,7 @@
 					</tr>
 					<tr class="row_bg">
 						<td colspan="3">Testing</td>
-						<td colspan="3"><img src="../themes/default/images/helios/close_icon.png"  width="25" height="20" border="0" alt="" class="flt_right"></td>
+						<td colspan="3"><img src="themes/default/images/helios/close_icon.png"  width="25" height="20" border="0" alt="" class="flt_right"></td>
 					</tr>
 					<tr>
 						<td>Name <sup>*</sup></td>

@@ -30,6 +30,7 @@ define(["framework/base", "framework/animationProvider"], function() {
 			
 			jQueryContainer : null,
 			transitionType : null,
+			cancelTransitionType : null,
 
 			initialize : function(config) {
 				
@@ -38,6 +39,7 @@ define(["framework/base", "framework/animationProvider"], function() {
 				
 				if(config.transitionType) {
 					this.transitionType = config.transitionType;
+					this.cancelTransitionType = config.cancelTransitionType;
 				}
 				if(config.isNative) {
 					this.isNative = config.isNative;
@@ -170,23 +172,21 @@ define(["framework/base", "framework/animationProvider"], function() {
 				}
 			},
 			
-			push : function(view, bCheck) {
+			push : function(view, bCheck, animationtype) {
 				var self = this;
-				
+
 				//make old content as inactive
-				/* if(bCheck){
+				if(bCheck){
 					$.each($(commonVariables.contentPlaceholder).find('.widget-maincontent-div'), function(index, current){
 						$(current).attr('active', 'false');
 					});
-				} */
+				}
 				
 				// create top element for pushing
 				var newDiv = $("<div></div>");
 				
 				// add absolute positioning
 				newDiv.addClass("widget-maincontent-div");
-					
-				$(self.jQueryContainer).append(newDiv);
 				
 				view.doMore = function(element) {
 					if(bCheck) {
@@ -200,12 +200,16 @@ define(["framework/base", "framework/animationProvider"], function() {
 							container.show('slow', function(){
 								container.css("z-index", 4);
 								self.removeClasses(container, function(callback){
+								
+									if(animationtype != undefined && animationtype != null && animationtype == true){
+										self.setAnimation(self.transitionType);
+									}
 									//remove old content if exist
-									/* $.each($(commonVariables.contentPlaceholder).find('.widget-maincontent-div'), function(index, current){
+									$.each($(commonVariables.contentPlaceholder).find('.widget-maincontent-div'), function(index, current){
 										if($(current).attr('active') == "false"){
 											$(current).remove();
 										}
-									}); */
+									});
 								});
 							});
 						});
@@ -227,6 +231,11 @@ define(["framework/base", "framework/animationProvider"], function() {
 				};
 				
 				if(bCheck && self.stack.length > 0){
+				
+					if(animationtype != undefined && animationtype != null && animationtype == true){
+						self.setAnimation(self.cancelTransitionType);
+					}
+
 					var topPage = self.stack[self.stack.length-1];
 					
 					// call onPause to save the state of this page
@@ -243,13 +252,16 @@ define(["framework/base", "framework/animationProvider"], function() {
 						container.css("z-index", 3);
 						container.hide('fast', function(){
 							$(container).remove();
+							
 							// render in its default container
+							$(self.jQueryContainer).append(newDiv);
 							view.render(newDiv);
 						});
 					});
 					self.stack.pop(self.stack.length - 1);
 				}else{
 					// render in its default container
+					$(self.jQueryContainer).append(newDiv);
 					view.render(newDiv);
 				}
 			},

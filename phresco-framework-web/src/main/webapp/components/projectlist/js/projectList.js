@@ -5,8 +5,8 @@ define(["framework/widgetWithTemplate", "projectlist/listener/projectListListene
 	Clazz.com.components.projectlist.js.ProjectList = Clazz.extend(Clazz.WidgetWithTemplate, {
 		projectsEvent : null,
 		projectsHeader : null,
-		templateUrl: commonVariables.contexturl + "/components/projectlist/template/projectList.tmp",
-		configUrl: "../components/projectlist/config/config.json",
+		templateUrl: commonVariables.contexturl + "components/projectlist/template/projectList.tmp",
+		configUrl: "components/projectlist/config/config.json",
 		name : commonVariables.projectlist,
 		contentContainer : commonVariables.contentPlaceholder,
 		projectslistListener : null,

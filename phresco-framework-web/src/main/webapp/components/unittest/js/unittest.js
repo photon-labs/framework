@@ -4,8 +4,8 @@ define(["framework/widgetWithTemplate", "unittest/listener/unittestListener"], f
 	Clazz.com.components.unittest.js.UnitTest = Clazz.extend(Clazz.WidgetWithTemplate, {
 		
 		// template URL, used to indicate where to get the template
-		templateUrl: commonVariables.contexturl + "/components/unittest/template/unittest.tmp",
-		configUrl: "../components/unittest/config/config.json",
+		templateUrl: commonVariables.contexturl + "components/unittest/template/unittest.tmp",
+		configUrl: "components/unittest/config/config.json",
 		name : commonVariables.unittest,
 		unittestlistener : null,
 		

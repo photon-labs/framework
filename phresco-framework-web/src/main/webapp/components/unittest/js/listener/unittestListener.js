@@ -28,7 +28,7 @@ define(["framework/widget"], function() {
 			$("#uniTestDesc").hide();
 			$("#graphView").show();
 			$("a[name=unitTestGraph]").html('')
-			$("a[name=unitTestGraph]").html('<img src="../themes/default/images/helios/quality_graph_on.png" width="25" height="25" border="0" alt=""><b>Graph View</b>');
+			$("a[name=unitTestGraph]").html('<img src="themes/default/images/helios/quality_graph_on.png" width="25" height="25" border="0" alt=""><b>Graph View</b>');
 		}
 		
 	});

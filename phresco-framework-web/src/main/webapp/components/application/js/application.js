@@ -3,8 +3,8 @@ define(["framework/widgetWithTemplate", "application/listener/applicationListene
 
 	Clazz.com.components.application.js.Application = Clazz.extend(Clazz.WidgetWithTemplate, {
 		// template URL, used to indicate where to get the template
-		templateUrl: commonVariables.contexturl + "/components/application/template/application.tmp",
-		configUrl: "../components/projects/config/config.json",
+		templateUrl: commonVariables.contexturl + "components/application/template/application.tmp",
+		configUrl: "components/projects/config/config.json",
 		editApplicationListener: null,
 		name : commonVariables.editApplication,
 		addServerEvent : null,

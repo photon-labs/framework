@@ -4,8 +4,8 @@ define(["framework/widgetWithTemplate", "build/listener/buildListener"], functio
 	Clazz.com.components.build.js.Build = Clazz.extend(Clazz.WidgetWithTemplate, {
 		
 		// template URL, used to indicate where to get the template
-		templateUrl: commonVariables.contexturl + "/components/build/template/build.tmp",
-		configUrl: "../components/build/config/config.json",
+		templateUrl: commonVariables.contexturl + "components/build/template/build.tmp",
+		configUrl: "components/build/config/config.json",
 		name : commonVariables.build,
 		buildListener : null,
 		onProgressEvent : null,

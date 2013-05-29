@@ -24,7 +24,7 @@
                     {{#each featureslist}}
                         <li name="{{name}}" dispName="{{dispName}}" packaging="{{packaging}}" type="{{type}}">
                         <span class="flt_right" ><a class="featureinfo_img" value="{{id}}"> 
-                        <img src="../themes/default/images/helios/info_icon.png" width="15" height="16" border="0" alt=""></a></span>
+                        <img src="themes/default/images/helios/info_icon.png" width="15" height="16" border="0" alt=""></a></span>
                                 {{#versiondata versions}}{{/versiondata}} 
 								{{#versionShowHide versions}}{{/versionShowHide}} 
 								{{#each versions}}
@@ -67,7 +67,7 @@
                     {{#each jsibrarielist}}
                         <li name="{{name}}" dispName="{{dispName}}" packaging="{{packaging}}" type="{{type}}">
                         <span class="flt_right" ><a class="featureinfo_img" value="{{id}}"> 
-                        <img src="../themes/default/images/helios/info_icon.png" width="15" height="16" border="0" alt=""></a></span>
+                        <img src="themes/default/images/helios/info_icon.png" width="15" height="16" border="0" alt=""></a></span>
                                 {{#versiondata versions}}{{/versiondata}} 
 								{{#versionShowHide versions}}{{/versionShowHide}} 
 								{{#each versions}}
@@ -109,7 +109,7 @@
                     {{#each componentList}}
                         <li name="{{name}}" dispName="{{dispName}}" packaging="{{packaging}}" type="{{type}}">
                         <span class="flt_right" ><a class="featureinfo_img" value="{{id}}"> 
-                        <img src="../themes/default/images/helios/info_icon.png" width="15" height="16" border="0" alt=""></a></span>
+                        <img src="themes/default/images/helios/info_icon.png" width="15" height="16" border="0" alt=""></a></span>
                                 {{#versiondata versions}}{{/versiondata}} 
 								{{#versionShowHide versions}}{{/versionShowHide}} 
 								{{#each versions}}
@@ -150,7 +150,7 @@
     <div id="repgen_info" class="dyn_popup featureinfo">
         <h1>Description</h1><a href="#" class="dyn_popup_close">X</a>
         <div class="features_cont">
-        	<span><img src="../themes/default/images/helios/feature_info_logo.png" width="42" height="42" border="0" alt=""></span>
+        	<span><img src="themes/default/images/helios/feature_info_logo.png" width="42" height="42" border="0" alt=""></span>
             Cordova provides a set of uniform JavaScript libraries that can be invoked, with device-specific native backing.
         </div> 
     </div>

@@ -3,8 +3,8 @@ define(["framework/widgetWithTemplate", "codequality/listener/codequalityListene
 
 	Clazz.com.components.codequality.js.CodeQuality = Clazz.extend(Clazz.WidgetWithTemplate, {
 		// template URL, used to indicate where to get the template
-		templateUrl: commonVariables.contexturl + "/components/codequality/template/codequality.tmp",
-		configUrl: "../components/projects/config/config.json",
+		templateUrl: commonVariables.contexturl + "components/codequality/template/codequality.tmp",
+		configUrl: "components/projects/config/config.json",
 		name : commonVariables.codequality,
 		codequalityListener: null,
 		dynamicpage : null,

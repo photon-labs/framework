@@ -42,17 +42,17 @@ define(["framework/widget", "framework/widgetWithTemplate", "application/api/app
 		},
 		
 		addServerDatabase : function(appType, whereToAppend, rowId) {
-			var self = this, dynamicValue, server = '<tr class="servers" key="displayed"> <td><span data-i18n="application.edit.servers"></span>&nbsp;<span class="paid">'+rowId+'</span></td><td name="servers" class="servers"><select name="appServers" class="appServers"><option>Select Server</option>'+ self.getOptionData('serverData') +'</select></td><td data-i18n="application.edit.versions"></td><td colspan="4" name="version" class="version"><select multiple name="server_version" class="server_version"><option>Select Version</option></select> <div class="flt_right"><a href="javascript:;" name="addServer"><img src="../themes/default/images/helios/plus_icon.png" border="0" alt=""></a> <a href="javascript:;" name="removeServer"><img src="../themes/default/images/helios/minus_icon.png"  border="0" alt=""></a></div></td></tr>',
+			var self = this, dynamicValue, server = '<tr class="servers" key="displayed"> <td><span data-i18n="application.edit.servers"></span>&nbsp;<span class="paid">'+rowId+'</span></td><td name="servers" class="servers"><select name="appServers" class="appServers"><option>Select Server</option>'+ self.getOptionData('serverData') +'</select></td><td data-i18n="application.edit.versions"></td><td colspan="4" name="version" class="version"><select multiple name="server_version" class="server_version"><option>Select Version</option></select> <div class="flt_right"><a href="javascript:;" name="addServer"><img src="themes/default/images/helios/plus_icon.png" border="0" alt=""></a> <a href="javascript:;" name="removeServer"><img src="themes/default/images/helios/minus_icon.png"  border="0" alt=""></a></div></td></tr>',
 			
-			database ='<tr class="database" key="displayed"><td><span data-i18n="application.edit.database"></span>&nbsp;<span class="paid">'+rowId+'</span></td><td name="servers" class="databases"><select name="databases" class="databases"><option>Select Database</option>'+ self.getOptionData('databaseData') +'</select></td><td data-i18n="application.edit.versions"></td> <td colspan="4" name="version" class="version"><select multiple name="db_version" class="db_version"> <option>Select Version</option></select><div class="flt_right"><a href="javascript:;" name="addDatabase"><img src="../themes/default/images/helios/plus_icon.png"  border="0" alt=""></a> <a href="javascript:;" name="removeDatabase"><img src="../themes/default/images/helios/minus_icon.png" border="0" alt=""></a></div></td></tr>';
+			database ='<tr class="database" key="displayed"><td><span data-i18n="application.edit.database"></span>&nbsp;<span class="paid">'+rowId+'</span></td><td name="servers" class="databases"><select name="databases" class="databases"><option>Select Database</option>'+ self.getOptionData('databaseData') +'</select></td><td data-i18n="application.edit.versions"></td> <td colspan="4" name="version" class="version"><select multiple name="db_version" class="db_version"> <option>Select Version</option></select><div class="flt_right"><a href="javascript:;" name="addDatabase"><img src="themes/default/images/helios/plus_icon.png"  border="0" alt=""></a> <a href="javascript:;" name="removeDatabase"><img src="themes/default/images/helios/minus_icon.png" border="0" alt=""></a></div></td></tr>';
 			if (appType === "addServer") {
 				dynamicValue = $(server).insertAfter(whereToAppend);
 				dynamicValue.prev('tr').find('a[name="addServer"]').html('');
-				dynamicValue.prev('tr').find('a[name="removeServer"]').html('<img src="../themes/default/images/helios/minus_icon.png" border="0" alt="">');
+				dynamicValue.prev('tr').find('a[name="removeServer"]').html('<img src="themes/default/images/helios/minus_icon.png" border="0" alt="">');
 			} else {
 				dynamicValue = $(database).insertAfter(whereToAppend);
 				dynamicValue.prev('tr').find('a[name="addDatabase"]').html('');
-				dynamicValue.prev('tr').find('a[name="removeDatabase"]').html('<img src="../themes/default/images/helios/minus_icon.png" border="0" alt="">');
+				dynamicValue.prev('tr').find('a[name="removeDatabase"]').html('<img src="themes/default/images/helios/minus_icon.png" border="0" alt="">');
 			}
 			$("a[name=addServer]").unbind("click");
 			$("a[name=addDatabase]").unbind("click");
@@ -88,9 +88,9 @@ define(["framework/widget", "framework/widgetWithTemplate", "application/api/app
 			$("a[name=removeServer]").click(function(){
 				$("a[name=addServer]").html('');
 				$(this).parent().parent().parent().remove();
-				$("a[name=removeServer]").parents('tr:last').find('a[name="addServer"]').html('<img src="../themes/default/images/helios/plus_icon.png" border="0" alt="">');
+				$("a[name=removeServer]").parents('tr:last').find('a[name="addServer"]').html('<img src="themes/default/images/helios/plus_icon.png" border="0" alt="">');
 				if (($("a[name=removeServer]").parents('tr.servers').length) === 1) {
-					$("a[name=addServer]").html('<img src="../themes/default/images/helios/plus_icon.png" border="0" alt="">');
+					$("a[name=addServer]").html('<img src="themes/default/images/helios/plus_icon.png" border="0" alt="">');
 					$("a[name=removeServer]").html('');
 				}
 			});
@@ -98,9 +98,9 @@ define(["framework/widget", "framework/widgetWithTemplate", "application/api/app
 			$("a[name=removeDatabase]").click(function(){
 				$("a[name=addDatabase]").html('');
 				$(this).parent().parent().parent().remove();
-				$("a[name=removeDatabase]").parents('tr:last').find('a[name="addDatabase"]').html('<img src="../themes/default/images/helios/plus_icon.png" border="0" alt="">');
+				$("a[name=removeDatabase]").parents('tr:last').find('a[name="addDatabase"]').html('<img src="themes/default/images/helios/plus_icon.png" border="0" alt="">');
 				if (($("a[name=removeDatabase]").parents('tr.database').length) === 1) {
-					$("a[name=addDatabase]").html('<img src="../themes/default/images/helios/plus_icon.png" border="0" alt="">');
+					$("a[name=addDatabase]").html('<img src="themes/default/images/helios/plus_icon.png" border="0" alt="">');
 					$("a[name=removeDatabase]").html('');
 				}
 			});

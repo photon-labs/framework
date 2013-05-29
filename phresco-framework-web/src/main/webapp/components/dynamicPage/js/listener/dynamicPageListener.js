@@ -292,7 +292,7 @@ define(["framework/widget", "dynamicPage/api/dynamicPageAPI", "common/loading"],
 									multiple = ""
 								}
 								
-								htmlTag += '<table class="table table-striped table_border table-bordered" cellpadding="0" cellspacing="0" border="0"><thead><tr><th>Target Folder</th><th>File/Folder</th></tr><tbody><tr><td><input type="text"></td><td><input type="text"><input type="button" value="Browse" class="btn btn_style"><a href="#"><img src="../themes/default/images/helios/plus_icon.png" alt=""></a></td></tr></tbody></table>';
+								htmlTag += '<table class="table table-striped table_border table-bordered" cellpadding="0" cellspacing="0" border="0"><thead><tr><th>Target Folder</th><th>File/Folder</th></tr><tbody><tr><td><input type="text"></td><td><input type="text"><input type="button" value="Browse" class="btn btn_style"><a href="#"><img src="themes/default/images/helios/plus_icon.png" alt=""></a></td></tr></tbody></table>';
 								
 							}
 							
