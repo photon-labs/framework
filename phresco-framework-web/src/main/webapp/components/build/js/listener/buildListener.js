@@ -37,7 +37,7 @@ define(["framework/widget", "build/api/buildAPI"], function() {
 				self.buildAPI.build(header,
 					function(response) {
 						if (response !== null) {
-							callback(response);
+							callback(response.data);
 						} else {
 							callback({ "status" : "service failure"});
 						}
@@ -59,15 +59,19 @@ define(["framework/widget", "build/api/buildAPI"], function() {
 		 * @return: returns the contructed header
 		 */
 		getRequestHeader : function(projectRequestBody) {
-			var self=this, header;
+			var self=this, header, appdirName = '';
+			
+			if(self.buildAPI.localVal.getSession('appDirName') != null){
+				appdirName = self.buildAPI.localVal.getSession('appDirName');
+			}
 			
 			header = {
 				contentType: "application/json",
 				requestMethod: "GET",
 				dataType: "json",
-				webserviceurl: ''
+				webserviceurl: 'buildinfo/list?appDirName=' + appdirName
 			}
-			
+			console.info('header',header);
 			return header;
 		}
 	});
