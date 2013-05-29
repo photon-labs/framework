@@ -22,9 +22,10 @@ public class RepoDetail implements Serializable {
 	private String revisionVal;
 	private String commitMessage;
 	private List<String>commitableFiles;
+	private String type;
 	
 	public RepoDetail(String revision, String repoUrl, String userName, String password, String revisionVal,
-			String commitMessage, List<String> commitableFiles) {
+			String commitMessage, List<String> commitableFiles, String type) {
 		super();
 		this.revision = revision;
 		this.repoUrl = repoUrl;
@@ -33,6 +34,7 @@ public class RepoDetail implements Serializable {
 		this.revisionVal = revisionVal;
 		this.commitMessage = commitMessage;
 		this.commitableFiles = commitableFiles;
+		this.type = type;
 	}
 
 	public String getRevision() {
@@ -91,6 +93,14 @@ public class RepoDetail implements Serializable {
 		this.commitableFiles = commitableFiles;
 	}
 
+	public void setType(String type) {
+		this.type = type;
+	}
+
+	public String getType() {
+		return type;
+	}
+
 	public String toString() {
 		 return new ToStringBuilder(this,
 	                ToStringStyle.DEFAULT_STYLE)
@@ -101,7 +111,8 @@ public class RepoDetail implements Serializable {
 	                .append("password", getPassword())
 	                .append("revisionVal", getRevisionVal())
 	                .append("commitMessage", getCommitMessage())
-	                 .append("commitableFiles", getCommitableFiles())
+	                .append("commitableFiles", getCommitableFiles())
+	                .append("type", getType())
 	                .toString();
 	}
 }
