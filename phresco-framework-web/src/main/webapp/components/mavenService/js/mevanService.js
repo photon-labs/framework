@@ -6,8 +6,8 @@ define(["framework/widgetWithTemplate", "mevanService/listener/mevanServiceListe
 		mevanServiceListener : null,
 		
 		// template URL, used to indicate where to get the template
-		templateUrl: commonVariables.contexturl + "/components/mevanService/template/mevanService.tmp",
-		configUrl: "../components/mevanService/config/config.json",
+		templateUrl: commonVariables.contexturl + "components/mevanService/template/mevanService.tmp",
+		configUrl: "components/mevanService/config/config.json",
 		name : commonVariables.mevanService,
 		localConfig: null,
 

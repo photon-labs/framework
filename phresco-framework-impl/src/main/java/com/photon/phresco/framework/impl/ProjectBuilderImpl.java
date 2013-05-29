@@ -121,6 +121,11 @@ public class ProjectBuilderImpl {
 			BuildInfo buildInfo = new BuildInfo();
 			buildInfo.setBuildNo(nextBuildNo);
 			buildInfo.setTimeStamp(getTimeStampForDisplay());
+			/*if (isBuildSuccess) {
+				buildInfo.setBuildStatus(SUCCESS);
+			} else {
+				buildInfo.setBuildStatus(FAILURE);
+			}*/
 			buildInfo.setBuildStatus(SUCCESS);
 			if (DebugEnabled) {
 				S_LOGGER.debug("generateBuild()  Build Status = "+ buildInfo.getBuildStatus());
@@ -211,9 +216,9 @@ public class ProjectBuilderImpl {
 			count++;
 		}
 		
-		Arrays.sort(buildArray); 
+		Arrays.sort(buildArray); //sort to the array to find the max build no
 		
-		nextBuildNo = buildArray[buildArray.length-1]+1; 
+		nextBuildNo = buildArray[buildArray.length-1]+1; //increment 1 to the max in the build list
 		return nextBuildNo;
 	}
 

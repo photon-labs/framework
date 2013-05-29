@@ -4,10 +4,11 @@ define(["framework/widgetWithTemplate", "unittest/listener/unittestListener"], f
 	Clazz.com.components.unittest.js.UnitTest = Clazz.extend(Clazz.WidgetWithTemplate, {
 		
 		// template URL, used to indicate where to get the template
-		templateUrl: commonVariables.contexturl + "/components/unittest/template/unittest.tmp",
-		configUrl: "../components/unittest/config/config.json",
+		templateUrl: commonVariables.contexturl + "components/unittest/template/unittest.tmp",
+		configUrl: "components/unittest/config/config.json",
 		name : commonVariables.unittest,
 		unittestlistener : null,
+		unitTestAPI : null,
 		
 		/***
 		 * Called in initialization time of this class 
@@ -17,6 +18,7 @@ define(["framework/widgetWithTemplate", "unittest/listener/unittestListener"], f
 		initialize : function(globalConfig){
 			var self = this;
 			self.unittestlistener = new Clazz.com.components.unittest.js.listener.UnitTestlistener();
+			self.unitTestAPI =  new Clazz.com.components.unittest.js.api.UnitTestAPI();
 			self.registerEvents(self.unittestlistener);
 		},
 		
@@ -28,6 +30,18 @@ define(["framework/widgetWithTemplate", "unittest/listener/unittestListener"], f
 			self.onUnitTestResultEvent.add(unittestlistener.onUnitTestResult, unittestlistener); 
 			self.onUnitTestDescEvent.add(unittestlistener.onUnitTestDesc, unittestlistener); 
 			self.onUnitTestGraphEvent.add(unittestlistener.onUnitTestGraph, unittestlistener); 
+			
+			Handlebars.registerHelper('report', function(data, firstVal) {
+				var returnVal = "";
+				if (firstVal) {
+					returnVal = data[0];
+				} else {
+					$.each(data, function(index, current){
+						returnVal += '<li class="reportOption"><a href="#">'+ current +'</a></li>';
+					});
+				}
+				return returnVal;
+			});
 		},
 		
 		/***
@@ -45,6 +59,17 @@ define(["framework/widgetWithTemplate", "unittest/listener/unittestListener"], f
 		 * @element: Element as the result of the template + data binding
 		 */
 		postRender : function(element) {			
+		},
+		
+		preRender: function(whereToRender, renderFunction){
+			var self = this;
+			self.unittestlistener.getUnitTestReportOptions(self.unittestlistener.getActionHeader(self.projectRequestBody, "get"), function(response) {
+				var unitTestOptions = {};
+				unitTestOptions.reportOptions = response.data;
+				var userPermissions = JSON.parse(self.unittestlistener.unitTestAPI.localVal.getSession('userPermissions'));
+				unitTestOptions.userPermissions = userPermissions;
+				renderFunction(unitTestOptions, whereToRender);
+			});
 		},
 		
 		/***
@@ -99,8 +124,8 @@ define(["framework/widgetWithTemplate", "unittest/listener/unittestListener"], f
 					var rv = $(this).height();
 					resultvalue = resultvalue + rv; 
 				});
-					var footervalue = $('.footer_section').height();
-					resultvalue = resultvalue + footervalue + 200;
+				var footervalue = $('.footer_section').height();
+				resultvalue = resultvalue + footervalue + 200;
 
 				$('.mainContent .scrollContent').height(height - resultvalue);
 
@@ -110,7 +135,6 @@ define(["framework/widgetWithTemplate", "unittest/listener/unittestListener"], f
 			$("input[name=unitTest]").click(function() {
 				self.opencc(this,'code_popup');
 			});
-			
 			
 			$("#uniTestResultTab").css("display", "none");
 			$("#uniTestDesc").css("display", "none");
@@ -135,6 +159,11 @@ define(["framework/widgetWithTemplate", "unittest/listener/unittestListener"], f
 			});
 			
 			Clazz.navigationController.mainContainer = commonVariables.contentPlaceholder;
+			
+			//Change event of the report type to get the report
+			$('.reportOption').click(function() {
+				$('#drop5').html($(this).children().text() + '<b class="caret"></b>');
+			});
 		}
 	});
 

@@ -42,6 +42,8 @@ html,body {
 
 select, textarea, input[type="text"], input[type="password"], input[type="datetime"], input[type="datetime-local"], input[type="date"], input[type="month"], input[type="time"], input[type="week"], input[type="number"], input[type="email"], input[type="url"], input[type="search"], input[type="tel"], input[type="color"], .uneditable-input {
 	font-size: 12px !important;	
+	border-color:#CCCCCC !important;
+	box-shadow:none !important;
 }
 
 header, aside, figure, footer, ul, li {
@@ -421,7 +423,7 @@ html, body {
 	padding-left:1%;
 	padding-right:1%;
 	position:fixed;
-	z-index:5;
+	z-index:6;
 }
 
 .content_title h1 {
@@ -786,13 +788,50 @@ ul.nav li.dropdown:hover > .test_options{
 	color: #ffffff;
 }
 
-#project_list_import table tr td {
-	border-top: none;
-	padding: 2px !important;	
+.project_list_popup
+{
+	height: 260px;
+	overflow-y: auto;
+	margin-bottom: 10px;
 }
 
-#project_list_import table {
+#project_list_import table:first-child {
+	margin-bottom: 0px;	
+}
+
+#project_list_import table tr td {
+	border-top: none;
+	padding: 4px 0;
+}
+
+#project_list_import table tr td:first-child input[type="text"], #project_list_import table tr td:first-child select {
+	margin-right: 10px;	
+}
+
+#project_list_import .seperatetd {
+	padding: 8px 0 0px 0;	
+}
+
+#project_list_import input[type="text"], #project_list_import input[type="password"] {
+	width: 165px;
+	margin-bottom:0;
+}
+
+#project_list_import input[type="checkbox"] {
+	margin: 4px 0 5px 10px;
+}
+
+#project_list_import input[type="radio"] {
+	margin: 0px 5px 0px 0;
+}
+
+#project_list_import select {
+	width: 177px;
 	margin-bottom: 0;	
+}
+
+#project_list_import .revtext {
+	margin-left: 12px !important;
 }
 
 #deleteproj_msg {
@@ -1954,6 +1993,68 @@ ul.nav li.dropdown:hover > .test_options{
 	float:right;
 }
 
+.croninput {
+	width: 180px;	
+}
+
+#cron_expression table tr td
+{
+	padding:5px;
+}
+#cron_expression table tr td select
+{
+	width: 80px;
+	height:27px;
+}
+#cron_expression table tr td input[type="radio"]
+{
+	margin: -2px 6px 0px 0px;
+}
+#cron_expression table tr td input[type="checkbox"]
+{
+	margin: -1px 0 0 6px;
+}
+#cron_expression table tr td:first-child label
+{
+	float: left;
+	margin-right: 8px;
+	font-size:12px;
+}
+#cron_expression table tr td img
+{
+	padding-left:6px;
+	padding-bottom:4px;
+}
+
+#crone_triggered table tr td
+{
+	border-top:1px solid #DDDDDD !important;
+	padding:8px;
+}
+#crone_triggered table
+{
+	margin-bottom:10px;
+}
+#cron_expression table tr td input[type="password"]
+{
+	width:145px;
+}
+
+#cron_expression table {
+	margin-bottom: 10px;	
+}
+
+#crone_triggered {
+	z-index: 1;
+	width:34%;
+}
+
+#crone_triggered span
+{
+	font-weight:bold;
+	font-size:13px;
+	color:#000;
+}
 
 /* *************************************************************************** STYLES FOR SETTINGS & ADD SETTINGS ************************************************************************** */
 
@@ -2394,7 +2495,7 @@ html>body tbody.scrollContent {
 
 
 
-/* *************************************************************** STYLES FOR CI-PIPELINE PAGE ************************************************************************************ */
+/* *************************************************************** STYLES FOR CI-CON_DELIVERY PAGE ************************************************************************************ */
 
 #ci_configure select {
 	width: 132px;
@@ -2618,4 +2719,104 @@ html>body tbody.scrollContent {
 }
 #code_build input[type="radio"], #code_build input[type="checkbox"] {
 	margin: -2px 3px 0 0;
+}
+
+
+
+.pipeline_box
+{
+	line-height:24px;
+	border-radius:8px;
+	width: 24%;
+	float: left;
+	margin-right: 1%;
+}
+.pipeline_box h5
+{
+	background:#515151;
+	color:#FFF;
+	padding: 5px 8px;
+	border-top-left-radius:8px;
+	border-top-right-radius:8px;
+	margin:0;
+}
+.pipeline_box h5 img
+{
+	float:right;
+	margin: 3px 1px;
+}
+.pipeline_box div:nth-child(3)
+{
+	float: right;
+	padding: 0 7px 3px 0;
+}
+.pipeline_box div:nth-child(2)
+{
+	color:#000;
+	padding: 8px;
+}
+.pipeline_green
+{
+	background:#7cbf46;
+}
+.pipeline_yellow
+{
+	background:#f2f058;
+}
+.pipeline_pink
+{
+	background:#ff9696;
+}
+.pipeline_grey
+{
+	background:#eaeaea;
+}
+
+#datetime_status table {
+	margin-bottom: 10px;	
+}
+
+#datetime_status table tr th:last-child
+{
+	padding-right:15px;
+}
+#datetime_status table tr td:first-child
+{
+	padding-right:55px;
+}
+#datetime_status table tr td:last-child
+{
+	padding-left:20px;
+}
+
+.widget_testing h4 {
+	line-height: 42px;
+	border-top-left-radius: 12px;
+	border-top-right-radius: 12px;
+	font-size: 14px;
+	margin: 0px;
+	background:url(../../images/helios/thead_bg.jpg) repeat-x left bottom;
+	color:#323232 !important;
+	padding-left: 12px;	
+}
+
+.widget_testing h4 span {
+	float: right;
+	margin-right: 20px;	
+}
+
+.widget_testing_env {
+	padding: 10px;	
+	border: 1px solid #d3d3d3;
+	margin-bottom:20px;
+}
+
+/* *************************************************************** STYLES FOR DOWNLOAD PAGE ************************************************************************************ */
+
+.download_list table tbody.scrollContent td {
+	width: 7%;
+}
+
+.download_list .table_border tr.proj_title td:last-child {
+	text-align: left !important;	
 }

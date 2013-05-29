@@ -32,6 +32,7 @@ import org.antlr.stringtemplate.StringTemplate;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
+import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
@@ -40,10 +41,13 @@ import com.photon.phresco.api.DynamicParameter;
 import com.photon.phresco.commons.model.ApplicationInfo;
 import com.photon.phresco.commons.model.ArtifactGroup;
 import com.photon.phresco.commons.model.ArtifactInfo;
+import com.photon.phresco.commons.model.BuildInfo;
 import com.photon.phresco.commons.model.Customer;
 import com.photon.phresco.commons.model.RepoInfo;
 import com.photon.phresco.exception.PhrescoException;
+import com.photon.phresco.framework.PhrescoFrameworkFactory;
 import com.photon.phresco.framework.actions.FrameworkBaseAction;
+import com.photon.phresco.framework.api.ApplicationManager;
 import com.photon.phresco.framework.commons.FrameworkUtil;
 import com.photon.phresco.framework.commons.ParameterModel;
 import com.photon.phresco.framework.model.DependantParameters;
@@ -187,7 +191,7 @@ public class DynamicParameterAction extends FrameworkBaseAction implements Const
         try {
             if (CollectionUtils.isNotEmpty(parameters)) {
                 StringBuilder paramBuilder = new StringBuilder();
-                ServiceManager serviceManager = getServiceManager();
+				ServiceManager serviceManager = getServiceManager();
                 for (Parameter parameter : parameters) {
                     String parameterKey = parameter.getKey();
                     if (TYPE_DYNAMIC_PARAMETER.equalsIgnoreCase(parameter.getType()) && parameter.getDynamicParameter() != null) { 
@@ -195,7 +199,7 @@ public class DynamicParameterAction extends FrameworkBaseAction implements Const
                         Map<String, Object> constructMapForDynVals = constructMapForDynVals(appInfo, watcherMap, parameterKey);
                         constructMapForDynVals.put(REQ_MOJO, mojo);
                         constructMapForDynVals.put(REQ_GOAL, goal);
-                        constructMapForDynVals.put(REQ_SERVICE_MANAGER, serviceManager);
+						constructMapForDynVals.put(REQ_SERVICE_MANAGER, serviceManager);
                         // Get the values from the dynamic parameter class
                         List<Value> dynParamPossibleValues = getDynamicPossibleValues(constructMapForDynVals, parameter);
                         addValueDependToWatcher(watcherMap, parameterKey, dynParamPossibleValues, parameter.getValue());
@@ -347,6 +351,21 @@ public class DynamicParameterAction extends FrameworkBaseAction implements Const
         return paramMap;
     }
 
+   /* protected void setDependencyToWatcher(Map<String, DependantParameters> watcherMap, List<String> dependencyKeys,  
+            String parentParamKey, String parentParamValue) {
+        for (String dependentKey : dependencyKeys) {
+            DependantParameters dependantParameters;
+            if (watcherMap.containsKey(dependentKey)) {
+                dependantParameters = (DependantParameters) watcherMap.get(dependentKey);
+            } else {
+                dependantParameters = new DependantParameters();
+            }
+            dependantParameters.getParentMap().put(parentParamKey, parentParamValue);
+            System.out.println("adding watcher " + dependentKey);
+            watcherMap.put(dependentKey, dependantParameters);
+        }
+    }*/
+
     /**
      * To set List of Possible values as Dynamic parameter in request
      * @param watcherMap
@@ -363,8 +382,13 @@ public class DynamicParameterAction extends FrameworkBaseAction implements Const
 	private PossibleValues getDynamicValues(Map<String, Object> watcherMap, Parameter parameter) throws PhrescoException {
 		try {
 			String className = parameter.getDynamicParameter().getClazz();
+			String grpId = parameter.getDynamicParameter().getDependencies().getDependency().getGroupId();
+			String artfId = parameter.getDynamicParameter().getDependencies().getDependency().getArtifactId();
+			String jarVersion = parameter.getDynamicParameter().getDependencies().getDependency().getVersion();
+			
 			DynamicParameter dynamicParameter;
-			PhrescoDynamicLoader phrescoDynamicLoader = pdlMap.get(getCustomerId());
+			PhrescoDynamicLoader phrescoDynamicLoader = pdlMap.get(getCustomerId() + grpId + artfId + jarVersion);
+			
 			if (MapUtils.isNotEmpty(pdlMap) && phrescoDynamicLoader != null) {
 				dynamicParameter = phrescoDynamicLoader.getDynamicParameter(className);
 			} else {
@@ -374,13 +398,13 @@ public class DynamicParameterAction extends FrameworkBaseAction implements Const
 				//To set groupid,artfid,type infos to List<ArtifactGroup>
 				List<ArtifactGroup> artifactGroups = new ArrayList<ArtifactGroup>();
 				ArtifactGroup artifactGroup = new ArtifactGroup();
-				artifactGroup.setGroupId(parameter.getDynamicParameter().getDependencies().getDependency().getGroupId());
-				artifactGroup.setArtifactId(parameter.getDynamicParameter().getDependencies().getDependency().getArtifactId());
+				artifactGroup.setGroupId(grpId);
+				artifactGroup.setArtifactId(artfId);
 				artifactGroup.setPackaging(parameter.getDynamicParameter().getDependencies().getDependency().getType());
 				//to set version
 				List<ArtifactInfo> artifactInfos = new ArrayList<ArtifactInfo>();
 		        ArtifactInfo artifactInfo = new ArtifactInfo();
-		        artifactInfo.setVersion(parameter.getDynamicParameter().getDependencies().getDependency().getVersion());
+		        artifactInfo.setVersion(jarVersion);
 				artifactInfos.add(artifactInfo);
 		        artifactGroup.setVersions(artifactInfos);
 				artifactGroups.add(artifactGroup);
@@ -388,7 +412,7 @@ public class DynamicParameterAction extends FrameworkBaseAction implements Const
 				//dynamically loads specified Class
 				phrescoDynamicLoader = new PhrescoDynamicLoader(repoInfo, artifactGroups);
 				dynamicParameter = phrescoDynamicLoader.getDynamicParameter(className);
-				pdlMap.put(getCustomerId(), phrescoDynamicLoader);
+				pdlMap.put(getCustomerId() + grpId + artfId + jarVersion, phrescoDynamicLoader);
 			}
 			
 			return dynamicParameter.getValues(watcherMap);
@@ -489,8 +513,10 @@ public class DynamicParameterAction extends FrameworkBaseAction implements Const
 	    }
 	}
 
-	public String mandatoryValidation() {
+	public String mandatoryValidation() throws PhrescoException {
 		try {
+			ApplicationManager applicationManager = PhrescoFrameworkFactory.getApplicationManager();
+			List<BuildInfo> builds = applicationManager.getBuildInfos(new File(getBuildInfosFilePath(getApplicationInfo())));
 			File infoFile = new File(getPhrescoPluginInfoFilePath(getPhase()));
 			MojoProcessor mojo = new MojoProcessor(infoFile);
 			List<Parameter> parameters = getMojoParameters(mojo, getGoal());
@@ -513,8 +539,7 @@ public class DynamicParameterAction extends FrameworkBaseAction implements Const
 							List<Value> values = parameter.getPossibleValues().getValue();
 							String allPossibleValueDependencies = fetchAllPossibleValueDependencies(values);
 							eventDependencies = Arrays.asList(allPossibleValueDependencies.toString().split(CSV_PATTERN));
-							//add psbl value dependency keys to map
-							validateMap.put(parameter.getKey(), eventDependencies);
+							validateMap.put(parameter.getKey(), eventDependencies);//add psbl value dependency keys to map
 							for (Value value : values) {
 								dropDownDependencies = new ArrayList<String>();
 								if (value.getKey().equalsIgnoreCase(getReqParameter(parameter.getKey())) 
@@ -535,11 +560,48 @@ public class DynamicParameterAction extends FrameworkBaseAction implements Const
 						if ((parameter.isShow() || !alreadyValidated) && paramsMandatoryCheck(parameter)) {
 							break;
 						}
-					}
+					} else if(TYPE_STRING.equalsIgnoreCase(parameter.getType()) && BUILD_NAME.equalsIgnoreCase(parameter.getKey())) {
+						List<String> platforms = new ArrayList<String>(); 
+						String buildName = getReqParameter(parameter.getKey());
+						String platform = getReqParameter(PLATFORM);
+						if (StringUtils.isNotEmpty(platform)) {
+							String[] split = platform.split(COMMA);
+							for (String plaform : split) {
+								platforms.add(plaform.replaceAll("\\s+", "") + METRO_BUILD_SEPARATOR + buildName);
+							}
+						}
+
+						if(!buildName.isEmpty()) {
+							for (BuildInfo build : builds) {
+								String bldName = FilenameUtils.removeExtension(build.getBuildName());
+								if (bldName .contains(METRO_BUILD_SEPARATOR) && CollectionUtils.isNotEmpty(platforms)) {	
+									for (String name : platforms) {
+										if (name.equalsIgnoreCase(bldName)) {	
+											setErrorFound(true);
+											setErrorMsg(getText(BUILDNAME_ALREADY_EXIST));
+										}
+									}
+								} else if(buildName.equalsIgnoreCase(FilenameUtils.removeExtension(build.getBuildName()))) {
+									setErrorFound(true);
+									setErrorMsg(getText(BUILDNAME_ALREADY_EXIST));
+								}
+							}
+						}
+					} else if(TYPE_NUMBER.equalsIgnoreCase(parameter.getType()) && BUILD_NUMBER.equalsIgnoreCase(parameter.getKey())) {
+						String buildNumber = getReqParameter(parameter.getKey());
+						if(!buildNumber.isEmpty()) {
+							for (BuildInfo build : builds) {
+								if(Integer.parseInt(buildNumber) == build.getBuildNo()) {
+									setErrorFound(true);
+									setErrorMsg(getText(BUILDNUMBER_ALREADY_EXIST));
+								}
+							}
+						}
+					} 
 				}
 			}
 		} catch (Exception e) {
-			// TODO: handle exception
+			throw new PhrescoException(e);
 		}
 
 		return SUCCESS;
@@ -694,12 +756,14 @@ public class DynamicParameterAction extends FrameworkBaseAction implements Const
 	
 	private boolean editableComboValidate(Parameter parameter,
 			boolean returnFlag, String lableTxt) {
-		if (StringUtils.isEmpty(getReqParameter(parameter.getKey())) || 
-				"Type or select from the list".equalsIgnoreCase(getReqParameter(parameter.getKey()))) {
+		String value = getReqParameter(parameter.getKey());
+		value = value.replaceAll("\\s+", "").toLowerCase();
+		
+		if (StringUtils.isEmpty(value) || "typeorselectfromthelist".equalsIgnoreCase(value)) {
 			setErrorFound(true);
 			setErrorMsg(lableTxt + " " +getText(EXCEPTION_MANDAOTRY_MSG));
 			returnFlag = true;
-		}
+		} 
 		
 		return returnFlag;
 	}
@@ -750,8 +814,7 @@ public class DynamicParameterAction extends FrameworkBaseAction implements Const
             S_LOGGER.debug("Entering Method Quality.changeEveDependancyListener()");
         }
         
-        Map<String, DependantParameters> watcherMap = (Map<String, DependantParameters>) 
-                getSessionAttribute(getAppId() + getGoal() + SESSION_WATCHER_MAP);
+        Map<String, DependantParameters> watcherMap = (Map<String, DependantParameters>) getSessionAttribute(getAppId() + getGoal() + SESSION_WATCHER_MAP);
         DependantParameters currentParameters = watcherMap.get(getCurrentParamKey());
         if (currentParameters == null) {
             currentParameters = new DependantParameters();
@@ -798,8 +861,8 @@ public class DynamicParameterAction extends FrameworkBaseAction implements Const
 	                        DependantParameters dependantParameters = (DependantParameters) watcherMap.get(getDependency());
 	                        dependantParameters.setValue(dependentPossibleValues.get(0).getValue());
 	                    } else {
-	                    	 DependantParameters dependantParameters = (DependantParameters) watcherMap.get(getDependency());
-		                     dependantParameters.setValue("");
+	                    	DependantParameters dependantParameters = (DependantParameters) watcherMap.get(getDependency());
+		                    dependantParameters.setValue("");
 	                    }
 	                    if (CollectionUtils.isNotEmpty(dependentPossibleValues) && watcherMap.containsKey(dependentPossibleValues.get(0).getDependency())) {
 	                        addValueDependToWatcher(watcherMap, dependentParameter.getKey(), dependentPossibleValues, "");
@@ -876,6 +939,8 @@ public class DynamicParameterAction extends FrameworkBaseAction implements Const
 			setReqAttribute(REQ_PROJECT_LOCATION, getAppDirectoryPath(applicationInfo).replace(File.separator, FORWARD_SLASH));
 			setReqAttribute(REQ_FROM, getReqParameter(REQ_FROM_PAGE));
 		}
+		
+		
 		return SUCCESS;
 	}
     

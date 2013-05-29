@@ -40,8 +40,8 @@ public class Html5MobileWidgetProjectTest extends BaseTest {
 	private static ProjectManager projectManager = null;
 	private static ApplicationManager applicationManager = null;
 	private ProjectInfo projectInfo;
-	private List<ApplicationInfo> appInfos = new ArrayList<ApplicationInfo>();
 	private List<String> appDirNames = new ArrayList<String>();
+	private List<ApplicationInfo> appInfos = new ArrayList<ApplicationInfo>();
 	
 	@Before
 	public void setUp() throws PhrescoException {

@@ -39,7 +39,7 @@ public class IosSdkParameterImpl implements DynamicParameter {
 		PossibleValues possibleValues = new PossibleValues();
 		List<String> iphoneSdks = IosSdkUtil.getMacSdks(MacSdkType.iphoneos);
 		iphoneSdks.addAll(IosSdkUtil.getMacSdks(MacSdkType.iphonesimulator));
-		iphoneSdks.addAll(IosSdkUtil.getMacSdks(MacSdkType.macosx));
+//		iphoneSdks.addAll(IosSdkUtil.getMacSdks(MacSdkType.macosx));
 		for (String iphoneSdkValue : iphoneSdks) {
 				Value value = new Value();
 				value.setValue(iphoneSdkValue);

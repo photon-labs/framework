@@ -26,9 +26,9 @@
                     </td>
 					
                     <td data-i18n="project.create.label.startdate" name="startdate-lbl"></td>
-                    <td class="startdate" name="startdateholder"><input name="startdate" type="text" id="startDate"><span class="add-on"><img src="../themes/default/images/helios/cal_icon.png" border="0" alt=""></span></td>
+                    <td class="startdate" name="startdateholder"><input name="startdate" type="text" id="startDate"><span class="add-on"><img src="themes/default/images/helios/cal_icon.png" border="0" alt=""></span></td>
                     <td data-i18n="project.create.label.enddate" name="enddate-lbl"></td>
-                    <td class="enddate" name="enddateholder"><input name="enddate" id="endDate" type="text"><span class="add-on"><span class="add-on"><img src="../themes/default/images/helios/cal_icon.png" border="0" alt=""></span></span></td>
+                    <td class="enddate" name="enddateholder"><input name="enddate" id="endDate" type="text"><span class="add-on"><span class="add-on"><img src="themes/default/images/helios/cal_icon.png" border="0" alt=""></span></span></td>
                     
                     <td data-i18n="project.create.label.pilotprojects"></td>
                     <td>
@@ -61,7 +61,11 @@
     </section>
     <section class="content_end">
         <div class="flt_right">
-        	<input type="submit" value="Update" id="updateProject" class="btn btn_style add_icon_btn">
+        	{{#if userPermissions.manageApplication}}
+        		<input type="submit" value="Update" id="updateProject" class="btn btn_style add_icon_btn">
+        	{{else}}
+        		<input type="submit" value="Update" id="updateProject" class="btn btn_style add_icon_btn" disabled>
+    		{{/if}}
             <input type="submit" value="Cancel" id="cancelUpdate" class="btn btn_style cancel_icon_btn">
         </div>
     	<!--content_title ends here -->

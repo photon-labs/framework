@@ -23,14 +23,14 @@
                         </select>
                     </td>
 					<td data-i18n="project.create.label.startdate" name="startdate-lbl"></td>
-                    <td class="startdate" name="startdateholder"><input name="startdate" type="text" id="startDate"><span class="add-on"><img src="../themes/default/images/helios/cal_icon.png" border="0" alt=""></span></td>
+                    <td class="startdate" name="startdateholder"><input name="startdate" type="text" id="startDate"><span class="add-on"><img src="themes/default/images/helios/cal_icon.png" border="0" alt=""></span></td>
                     <td data-i18n="project.create.label.enddate" name="enddate-lbl"></td>
-                    <td class="enddate" name="enddateholder"><input name="enddate" id="endDate" type="text"><span class="add-on"><span class="add-on"><img src="../themes/default/images/helios/cal_icon.png" border="0" alt=""></span></span></td>
+                    <td class="enddate" name="enddateholder"><input name="enddate" id="endDate" type="text"><span class="add-on"><span class="add-on"><img src="themes/default/images/helios/cal_icon.png" border="0" alt=""></span></span></td>
                 </tr>
 				{{#if applicationlayerData.techGroups}}
 					<tr class="proj_title">
 					  <td colspan="4">{{applicationlayerData.name}}</td>
-					  <td colspan="4"><img name="close" id="applicationlayer" src="../themes/default/images/helios/close_icon.png"  border="0" alt=""></td>
+					  <td colspan="4"><img name="close" id="applicationlayer" src="themes/default/images/helios/close_icon.png"  border="0" alt=""></td>
 					</tr>
 					<tr class="applnLayer" name="staticApplnLayer" key="displayed">
 					  <td><span data-i18n="project.create.label.appcode"></span><sup>*</sup></td>	
@@ -52,7 +52,7 @@
 							<option>Select Version</option>
 						</select>
 						<div class="flt_right icon_center">
-						  <a href="javascript:;" name="addApplnLayer"><img src="../themes/default/images/helios/plus_icon.png"  border="0" alt=""></a>
+						  <a href="javascript:;" name="addApplnLayer"><img src="themes/default/images/helios/plus_icon.png"  border="0" alt=""></a>
 						  <a href="javascript:;" name="removeApplnLayer"></a>
 						</div>
 					  </td>
@@ -61,7 +61,7 @@
 				 {{#if weblayerData.techGroups}}
                      <tr class="proj_title">
                       <td colspan="4">{{weblayerData.name}}</td>
-                      <td colspan="4"><img name="close" id="weblayer" src="../themes/default/images/helios/close_icon.png"   border="0" alt=""></td>
+                      <td colspan="4"><img name="close" id="weblayer" src="themes/default/images/helios/close_icon.png"   border="0" alt=""></td>
                      </tr>
                      <tr class="webLayer" name="staticWebLayer" key="displayed">
                       <td><span data-i18n="project.create.label.appcode"></span><sup>*</sup></td>	
@@ -74,7 +74,7 @@
 								<option value="{{id}}">{{name}}</option>
 							{{/each}}
                           </select>
-                          <span class="loading_bar" style="display:none;"><img src="../themes/default/images/helios/loading.gif" width="16" height="16" border="0"></span>
+                          <span class="loading_bar" style="display:none;"><img src="themes/default/images/helios/loading.gif" width="16" height="16" border="0"></span>
                       </td>
                       <td data-i18n="project.create.label.widget"></td>
                       <td name="widget" class="widget">
@@ -88,7 +88,7 @@
                             <option>Select Version</option>
                         </select>
                         <div class="flt_right icon_center">
-							<a href="javascript:;" name="addWebLayer"><img  src="../themes/default/images/helios/plus_icon.png"  border="0" alt=""> </a>
+							<a href="javascript:;" name="addWebLayer"><img  src="themes/default/images/helios/plus_icon.png"  border="0" alt=""> </a>
 							<a href="javascript:;" name="removeWebLayer"></a>
 						</div>
                        </td>
@@ -97,7 +97,7 @@
 				{{#if mobilelayerData.techGroups}}
                     <tr class="proj_title">
                       <td colspan="4">{{mobilelayerData.name}}</td>
-                      <td colspan="4"><img name="close" id="mobilelayer" src="../themes/default/images/helios/close_icon.png"  border="0" alt=""></td>
+                      <td colspan="4"><img name="close" id="mobilelayer" src="themes/default/images/helios/close_icon.png"  border="0" alt=""></td>
                      </tr>
                      <tr class="mobLayer" key="displayed">
                       <td colspan="8" class="mob">
@@ -129,7 +129,7 @@
 									<td style="padding-right:0;">
 										  <input type="checkbox"> <font data-i18n="project.create.label.mobile"></font> &nbsp;&nbsp;&nbsp;<input type="checkbox"> <font data-i18n="project.create.label.tablet"></font>&nbsp;&nbsp;&nbsp;
 										<div class="flt_right">
-											<a href="javascript:;" name="addMobileLayer"><img src="../themes/default/images/helios/plus_icon.png"  border="0" alt=""></a> 
+											<a href="javascript:;" name="addMobileLayer"><img src="themes/default/images/helios/plus_icon.png"  border="0" alt=""></a> 
 											<a href="javascript:;" name="removeMobileLayer"></a>
 										</div> 
 									</td>

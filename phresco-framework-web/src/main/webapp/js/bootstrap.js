@@ -1,8 +1,8 @@
 
 var commonVariables = {
 	globalconfig : "",
-	webserviceurl : "../rest/api/",
-	contexturl : "..",
+	webserviceurl : "rest/api/",
+	contexturl : "",
 	
 	navListener : null,
 	appDirName : null,
@@ -44,6 +44,8 @@ var commonVariables = {
 	configuration : "configuration",
 	editConfiguration : "editConfiguration",
 	
+	qualityContext : "quality",
+	unit : "unit",
 	unittest : "unittest",
 	
 	customerTheme : null,
@@ -144,7 +146,7 @@ $(document).ready(function(){
 		configJson = {
 			// comment out the below line for production, this one is so require doesn't cache the result
 			urlArgs: "time=" +  (new Date()).getTime(),
-			baseUrl: "../js/",
+			baseUrl: "js",
 			
 			paths : {
 				framework : "framework",
@@ -172,15 +174,14 @@ $(document).ready(function(){
 			Clazz.navigationController = new Clazz.NavigationController({
 				mainContainer : "basepage\\:widget",
 				transitionType : Clazz.config.navigation.transitionType,
+				cancelTransitionType : Clazz.config.navigation.cancelTransitionType,
 				isNative : Clazz.config.navigation.isNative
 			});
 
 			//Apply customer based theme
-			//$.get(commonVariables.webserviceurl + commonVariables.customerInfoContext + commonVariables.defaultcustomer, function(themeData){
-			if(localStorage.getItem('customertheme') != null && localStorage.getItem('customertheme') != "")
+			if(localStorage.getItem('customertheme') != null && localStorage.getItem('customertheme') != ""){
 				JSS.css(eval('(' + localStorage.getItem('customertheme') + ')'));
-			//});
-			
+			}
 			app.initialize();
 		});
 	}, "json");

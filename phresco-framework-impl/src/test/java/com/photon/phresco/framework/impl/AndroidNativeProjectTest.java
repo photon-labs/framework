@@ -30,6 +30,7 @@ import com.photon.phresco.commons.model.ApplicationInfo;
 import com.photon.phresco.commons.model.ProjectInfo;
 import com.photon.phresco.exception.PhrescoException;
 import com.photon.phresco.framework.PhrescoFrameworkFactory;
+import com.photon.phresco.framework.api.ActionType;
 import com.photon.phresco.framework.api.ApplicationManager;
 import com.photon.phresco.framework.api.ProjectManager;
 
@@ -45,9 +46,9 @@ public final class AndroidNativeProjectTest extends BaseTest {
 	@Before
 	public void setUp() throws PhrescoException {
 		ApplicationInfo appInfo = getAppInfo("ANDROID_NATIVE", "tech-android-native");
-		appDirNames.add("ANDROID_NATIVE");
 		appInfos.add(appInfo);
 		projectInfo = getProjectInfo("tech-android-native", "tech-android-native" , "Sample-androidnative-1" , "Sample-androidnative-2", "PHR_androidnative");
+		appDirNames.add("ANDROID_NATIVE");
 		if ((projectManager == null) && (applicationManager == null)) {
 			projectManager = PhrescoFrameworkFactory.getProjectManager();
 			applicationManager=PhrescoFrameworkFactory.getApplicationManager();

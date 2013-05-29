@@ -6,8 +6,8 @@ define(["framework/widgetWithTemplate", "footer/listener/footerListener"] , func
 		headerEvent : null,
 		
 		// template URL, used to indicate where to get the template
-		templateUrl:  commonVariables.contexturl + "/js/commonComponents/modules/footer/template/footer.tmp",
-		configUrl: "../../js/commonComponents/modules/footer/config/config.json",
+		templateUrl:  commonVariables.contexturl + "js/commonComponents/modules/footer/template/footer.tmp",
+		configUrl: "js/commonComponents/modules/footer/config/config.json",
 		name : "footer",
 		
 		initialize : function(globalConfig){

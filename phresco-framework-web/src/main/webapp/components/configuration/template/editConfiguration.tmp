@@ -5,7 +5,13 @@
 				<div class="navbar navbar-static flt_right">
 					<ul class="nav">
 						<li id="fat-menu" class="dropdown">
-						  <a href="#" id="drop3" role="button" class="dropdown-toggle drop-qual" data-toggle="dropdown"><input type="submit" value="Add Configuration" class="btn btn_style"></a>
+							<a href="#" id="drop3" role="button" class="dropdown-toggle drop-qual" data-toggle="dropdown">
+								{{#if userPermissions.manageConfiguration}}
+							  		<input type="submit" value="Add Configuration" class="btn btn_style">
+						  		{{else}}
+					  				<input type="submit" value="Add Configuration" class="btn btn_style" disabled>
+					  			{{/if}}
+					  		</a>
 						  <div class="dropdown-menu cust_sel fix_height" role="menu" aria-labelledby="drop3">
 							<ul>
 								<li><a href="#">Server</a></li>
@@ -35,7 +41,7 @@
 					</tr>
 					<tr class="row_bg">
 						<td colspan="3">Servers</td>
-						<td colspan="3"><img src="../themes/default/images/helios/close_icon.png"  width="25" height="20" border="0" alt="" class="flt_right"></td>
+						<td colspan="3"><img src="themes/default/images/helios/close_icon.png"  width="25" height="20" border="0" alt="" class="flt_right"></td>
 					</tr>
 					<tr>
 						<td>Name <sup>*</sup></td>
@@ -75,7 +81,7 @@
 					</tr>
 					<tr class="row_bg">
 						<td colspan="3">Database</td>
-						<td colspan="3"><img src="../themes/default/images/helios/close_icon.png"  width="25" height="20" border="0" alt="" class="flt_right"></td>
+						<td colspan="3"><img src="themes/default/images/helios/close_icon.png"  width="25" height="20" border="0" alt="" class="flt_right"></td>
 					</tr>
 					<tr>
 						<td>Name <sup>*</sup></td>
@@ -115,7 +121,7 @@
 					</tr>
 					<tr class="row_bg">
 						<td colspan="3">LDAP</td>
-						<td colspan="3"><img src="../themes/default/images/helios/close_icon.png"  width="25" height="20" border="0" alt="" class="flt_right"></td>
+						<td colspan="3"><img src="themes/default/images/helios/close_icon.png"  width="25" height="20" border="0" alt="" class="flt_right"></td>
 					</tr>
 					<tr>
 						<td>Name <sup>*</sup></td>
@@ -155,7 +161,7 @@
 					</tr>
 					<tr class="row_bg">
 						<td colspan="3">Testing</td>
-						<td colspan="3"><img src="../themes/default/images/helios/close_icon.png"  width="25" height="20" border="0" alt="" class="flt_right"></td>
+						<td colspan="3"><img src="themes/default/images/helios/close_icon.png"  width="25" height="20" border="0" alt="" class="flt_right"></td>
 					</tr>
 					<tr>
 						<td>Name <sup>*</sup></td>
@@ -202,7 +208,11 @@
 		</section>
 		<section class="content_end">
 			<div class="flt_right">
-				<input type="submit" value="Update" class="btn btn_style update_btn">
+				{{#if userPermissions.manageConfiguration}}
+					<input type="submit" value="Update" class="btn btn_style update_btn">
+				{{else}}
+					<input type="submit" value="Update" class="btn btn_style update_btn" disabled>
+				{{/if}}
 				<input id="cancelEditConfig"" type="submit" value="Cancel" class="btn btn_style cancel_icon_btn">
 			</div>
 			<!--content_title ends here -->

@@ -27,6 +27,8 @@ import java.security.Principal;
 import java.security.PrivateKey;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
+import java.util.Enumeration;
+import java.util.StringTokenizer;
 
 import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.KeyManager;
@@ -38,6 +40,8 @@ import javax.net.ssl.TrustManagerFactory;
 import javax.net.ssl.X509KeyManager;
 import javax.net.ssl.X509TrustManager;
 import javax.ws.rs.core.UriBuilder;
+
+import org.codehaus.plexus.personality.plexus.lifecycle.phase.Suspendable;
 
 import com.sun.jersey.api.client.Client;
 import com.sun.jersey.api.client.ClientRequest;
@@ -55,15 +59,15 @@ import com.sun.jersey.client.urlconnection.HTTPSProperties;
  */
 public class SslClient {
 	
-	private static String path;
+	public static String path;
     
     private static final String truststore_path = "D:/work/projects/phresco/trunk/framework/trunk/phresco-framework-runner/delivery/bin/phresco.jks";
     private static final String truststore_password = "photon";
     private static final String keystore_path = "D:/work/projects/phresco/trunk/framework/trunk/phresco-framework-runner/delivery/bin/phresco.jks";
     private static final String keystore_password = "photon";
     private static final String url = "https://localhost:8443";
-    private static String public_key;
-    private static String public_key1;
+    public static String public_key;
+    public static String public_key1;
     public static void main(String[] args) {
         
         try {
@@ -142,7 +146,7 @@ public class SslClient {
           * decisions to it, and fall back to the logic in this class if the
           * default X509TrustManager doesn't trust it.
           */
-    	private X509TrustManager pkixTrustManager;
+         X509TrustManager pkixTrustManager;
 
          MyX509TrustManager(String trustStore, char[] password) throws Exception {
              this(new File(trustStore), password);
@@ -160,11 +164,13 @@ public class SslClient {
              TrustManagerFactory tmf = TrustManagerFactory.getInstance("PKIX");
              tmf.init(ks);
              
+             //System.out.println(ks.getCertificate("phresco").getPublicKey());
              System.out.println(ks.getCertificate("key"));
              public_key = ks.getCertificate("key").getPublicKey().toString();
              
              
                           
+             //System.out.println(ks.containsAlias("phresco"));
 
              TrustManager tms [] = tmf.getTrustManagers();
              
@@ -234,7 +240,7 @@ public class SslClient {
           * decisions to it, and fall back to the logic in this class if the
           * default X509KeyManager doesn't trust it.
           */
-    	private X509KeyManager pkixKeyManager;
+         X509KeyManager pkixKeyManager;
 
          MyX509KeyManager(String keyStore, char[] password) throws Exception {
              this(new File(keyStore), password);
@@ -255,6 +261,7 @@ public class SslClient {
             	 System.out.println("false");
              }
              System.out.println("--------------------------------------------------------------------");
+            // System.out.println(ks.getCertificate("phresco"));
              KeyManagerFactory kmf = KeyManagerFactory.getInstance("SunX509", "SunJSSE");
              kmf.init(ks, password);
              

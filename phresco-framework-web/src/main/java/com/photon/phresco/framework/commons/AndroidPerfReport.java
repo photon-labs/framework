@@ -19,6 +19,8 @@ package com.photon.phresco.framework.commons;
 
 import java.util.List;
 
+import com.photon.phresco.framework.model.TestSuite;
+
 public class AndroidPerfReport {
 	private String fileName;
 	private List<JmeterReport> deviceReport;

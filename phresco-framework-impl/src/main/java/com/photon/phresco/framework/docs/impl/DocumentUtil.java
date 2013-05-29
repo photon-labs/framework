@@ -102,7 +102,7 @@ public final class DocumentUtil {
 			paragraph = new Paragraph();
 			addBlankLines(paragraph, MAGICNUMBER.DOCLINES);
 			paragraph.setAlignment(Element.ALIGN_CENTER);
-			paragraph.add(DocumentMessages.getString("Documents.version.name") + getVersion(info)); 
+			paragraph.add(DocumentMessages.getString("Documents.version.name") + getVersion(info)); //$NON-NLS-1$
 			addBlankLines(paragraph, MAGICNUMBER.BLANKLINESSEVEN);
 			docu.add(paragraph);
 			
@@ -120,6 +120,7 @@ public final class DocumentUtil {
 			//Create an inputstream to return.
 			return new ByteArrayInputStream(os.toByteArray());
 		} catch (DocumentException e) {
+			e.printStackTrace();
 			throw new PhrescoException(e);
 		}
 
@@ -139,7 +140,7 @@ public final class DocumentUtil {
 		}
     	String version = "";
         if(org.apache.commons.lang.StringUtils.isEmpty(version)){
-            return DocumentMessages.getString("Documents.default.version");
+            return DocumentMessages.getString("Documents.default.version"); //$NON-NLS-1$
         }
         return version;
     }
@@ -162,9 +163,9 @@ public final class DocumentUtil {
 			Paragraph paragraph = new Paragraph();
 			paragraph.setAlignment(Element.ALIGN_LEFT);
 			paragraph.setFirstLineIndent(MAGICNUMBER.INDENTLINE);
-			paragraph.add("\n"); 
+			paragraph.add("\n"); //$NON-NLS-1$
 			paragraph.add(string);
-			paragraph.add("\n\n");
+			paragraph.add("\n\n"); //$NON-NLS-1$
 			docu.add(paragraph);
 
 			docu.close();
@@ -172,6 +173,7 @@ public final class DocumentUtil {
 			//Create an inputstream to return.
 			return new ByteArrayInputStream(os.toByteArray());
 		} catch (DocumentException e) {
+			e.printStackTrace();
 			throw new PhrescoException(e);
 		}
 
@@ -230,6 +232,7 @@ public final class DocumentUtil {
 			    return new ByteArrayInputStream(os.toByteArray());
 			}
 		} catch (DocumentException e) {
+			e.printStackTrace();
 			throw new PhrescoException(e);
 		}
 		return null;
@@ -258,8 +261,24 @@ public final class DocumentUtil {
 		         addBlankLines(para, 2);
 		         docu.add(para);
 		    }
+//		    Documentation document = tupleBean.getDoc(DocumentationType.DESCRIPTION);
+//		    if (document != null) {
+//		        if(!StringUtils.isEmpty(document.getUrl())){
+//		            PdfInput convertToPdf = DocConvertor.convertToPdf(document.getUrl());
+//		            if(convertToPdf != null) {
+//		                DocumentUtil.addPages(convertToPdf.getInputStream(), writer, docu);
+//		            }
+//		        } else {
+//		            para = new Paragraph();
+//		            para.setFont(DocConstants.BODY_FONT);
+//		            para.add(document.getContent());
+//		            addBlankLines(para, 2);
+//		            docu.add(para);
+//		        }
+//		    }
 		}
 		} catch (DocumentException e) {
+			e.printStackTrace();
 			throw new PhrescoException(e);
 		}
 	}
@@ -280,7 +299,7 @@ public final class DocumentUtil {
 		}
     	StringBuffer sb =new StringBuffer();
         for (int i = 0; i < noOfLines; i++) {
-            sb.append("\n"); 
+            sb.append("\n"); //$NON-NLS-1$
         }
         p.add(sb.toString());
     }
@@ -304,6 +323,7 @@ public final class DocumentUtil {
 			}
 			pdfCopy.freeReader(reader);
 		} catch (BadPdfFormatException e) {
+			e.printStackTrace();
 			throw new PhrescoException(e);
 		} catch (IOException e) {
 			throw new PhrescoException(e);
@@ -333,6 +353,7 @@ public final class DocumentUtil {
 			    docu.newPage();
 			}
 		} catch (IOException e) {
+			e.printStackTrace();
 			throw new PhrescoException(e);
 		}
     }
@@ -370,14 +391,14 @@ public final class DocumentUtil {
     		S_LOGGER.debug("getIndexHtml() folder=" + folder.getPath());
 		}
     	StringBuffer sb = new StringBuffer();
-        sb.append("<html>"); 
-        sb.append("<body>"); 
-        sb.append("<h1>");  
-        sb.append(DocumentMessages.getString("Documents.document.index.title")); 
-        sb.append("</h1>");  
+        sb.append("<html>"); //$NON-NLS-1$
+        sb.append("<body>"); //$NON-NLS-1$
+        sb.append("<h1>");  //$NON-NLS-1$
+        sb.append(DocumentMessages.getString("Documents.document.index.title")); //$NON-NLS-1$
+        sb.append("</h1>");  //$NON-NLS-1$
         listFiles(folder, sb);
-        sb.append("</body>"); 
-        sb.append("</html>"); 
+        sb.append("</body>"); //$NON-NLS-1$
+        sb.append("</html>"); //$NON-NLS-1$
         return sb.toString();
     }
 
@@ -386,18 +407,29 @@ public final class DocumentUtil {
     		S_LOGGER.debug("Entering Method DocumentUtil.listFiles(File file,StringBuffer sb)");
 		}
     	String[] list = file.list();
-        sb.append("<ul>"); 
+        sb.append("<ul>"); //$NON-NLS-1$
         for (String fileOrFolder : list) {
             File newFile = new File(file.toString() + File.separator + fileOrFolder);
             if(newFile.isHidden()) { continue; }
-                sb.append("<li>");
-                sb.append("<a href="+"\""+"./"); 
+            /*if(newFile.isDirectory()){
+                sb.append("<li>"); //$NON-NLS-1$
+                sb.append("<a href=./"); //$NON-NLS-1$
                 sb.append(newFile.getName());
-                sb.append("\">"); 
+                sb.append("\">"); //$NON-NLS-1$
+                sb.append(newFile.getPath());
+                sb.append("</a>"); //$NON-NLS-1$
+                sb.append("</li>"); //$NON-NLS-1$
+                listFiles(newFile, sb);
+            } else {*/
+                sb.append("<li>"); //$NON-NLS-1$
+                sb.append("<a href="+"\""+"./"); //$NON-NLS-1$
                 sb.append(newFile.getName());
-                sb.append("</a>"); 
-                sb.append("</li>"); 
+                sb.append("\">"); //$NON-NLS-1$
+                sb.append(newFile.getName());
+                sb.append("</a>"); //$NON-NLS-1$
+                sb.append("</li>"); //$NON-NLS-1$
+//            }
         }
-        sb.append("</ul>"); 
+        sb.append("</ul>"); //$NON-NLS-1$
     }
 }

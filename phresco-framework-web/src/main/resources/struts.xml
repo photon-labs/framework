@@ -123,8 +123,8 @@
         <action name="createProject" method="createProject" class="com.photon.phresco.framework.actions.applications.Projects">
 			<result name="list">/pages/projects/list.jsp</result>
         </action>
-        
-        <action name="killProcess" method="killProcess" class="com.photon.phresco.framework.actions.applications.Projects">
+		
+		<action name="killProcess" method="killProcess" class="com.photon.phresco.framework.actions.applications.Projects">
            	<result type="json"/>
         </action>
         
@@ -186,7 +186,15 @@
             <result name="updateApplication">/pages/applications/svn_import.jsp</result>
         </action>
         
-        <action name="repoExistCheck" method="repoExistCheck" class="com.photon.phresco.framework.actions.applications.Applications">
+         <action name="fetchLogMessages" method="fetchLogMessages" class="com.photon.phresco.framework.actions.applications.Applications">
+           <result type="json"/>
+        </action>
+        
+        <action name="repoExistCheckForCommit" method="repoExistCheckForCommit" class="com.photon.phresco.framework.actions.applications.Applications">
+            <result type="json"/>
+        </action>
+        
+        <action name="repoExistCheckForUpdate" method="repoExistCheckForUpdate" class="com.photon.phresco.framework.actions.applications.Applications">
             <result type="json"/>
         </action>
         
@@ -274,7 +282,7 @@
         <action name="quality" method="quality" class="com.photon.phresco.framework.actions.applications.Quality">
             <result name="quality">/pages/applications/quality/menu.jsp</result>
         </action>
-		
+        
 		<action name="ci" method="ci" class="com.photon.phresco.framework.actions.applications.CI">
             <result name="ci">/pages/applications/ci/ci.jsp</result>
         </action>
@@ -288,8 +296,18 @@
             <result name="success">/pages/applications/ci/emailConfiguration.jsp</result>
         </action>
         
+<!--         Show Confluence configuration on CI -->
+         <action name="showconfluenceConfiguration" method="showConfluenceConfiguration" class="com.photon.phresco.framework.actions.applications.CI">
+            <result name="success">/pages/applications/ci/confluenceConfiguration.jsp</result>
+        </action>
+        
 <!--         Save email configuration on CI -->
         <action name="saveEmailConfiguration" method="saveEmailConfiguration" class="com.photon.phresco.framework.actions.applications.CI">
+            <result name="ci">/pages/applications/ci/ci.jsp</result>
+        </action>
+        
+<!--         Save Confluence configuration on CI -->
+        <action name="saveConfluenceConfiguration" method="saveConfluenceConfiguration" class="com.photon.phresco.framework.actions.applications.CI">
             <result name="ci">/pages/applications/ci/ci.jsp</result>
         </action>
         
@@ -467,11 +485,16 @@
         </action>
         
         <action name="envList" method="envList" class="com.photon.phresco.framework.actions.applications.Configurations">
+        	<result name="configList">/pages/applications/configuration/configList.jsp</result>
             <result name="envList">/pages/applications/configuration/envList.jsp</result>
         </action>
         
         <action name="deleteConfigurations" method="delete" class="com.photon.phresco.framework.actions.applications.Configurations">
         	<result name="envList">/pages/applications/configuration/envList.jsp</result>
+        </action>
+        
+        <action name="deleteNonEnvConfigurations" method="deleteNonEnvConfigurations" class="com.photon.phresco.framework.actions.applications.Configurations">
+        	<result name="configList">/pages/applications/configuration/configList.jsp</result>
         </action>
         
         <action name="addConfiguration" method="add" class="com.photon.phresco.framework.actions.applications.Configurations">
@@ -652,6 +675,22 @@
         	<result name="reader">/pages/applications/reader.jsp</result>
         </action>
         
+        <action name="component" method="component" class="com.photon.phresco.framework.actions.applications.Quality">
+        	<result name="component">/pages/applications/quality/component.jsp</result>
+		</action>
+		
+		<action name="fetchComponentTestSuites" method="fetchComponentTestSuites" class="com.photon.phresco.framework.actions.applications.Quality">
+        	<result type="json" />
+        </action>
+        
+		<action name="showComponentTestPopUp" method="showComponentTestPopUp" class="com.photon.phresco.framework.actions.applications.Quality">
+			<result name="success">/pages/applications/dynamic_parameter.jsp</result>
+        </action>
+		
+		<action name="runComponentTest" method="runComponentTest" class="com.photon.phresco.framework.actions.applications.Quality">
+        	<result name="reader">/pages/applications/reader.jsp</result>
+        </action>
+        
 		<action name="manualTestCases" method="fetchManualTestSuites" class="com.photon.phresco.framework.actions.applications.Quality">
         	<result type="json" />
 		</action>
@@ -698,6 +737,14 @@
 		
 		<action name="saveTestCases" method="saveTestCases" class="com.photon.phresco.framework.actions.applications.Quality">
         	<result name="manual">/pages/applications/quality/manualTestCase.jsp</result>
+		</action>
+		
+		<action name="saveTestCasesValidate" method="validateform" class="com.photon.phresco.framework.actions.applications.Quality">
+        	<result type="json" />
+		</action>
+		
+		<action name="saveTestSuitesValidate" method="validateTestSuite" class="com.photon.phresco.framework.actions.applications.Quality">
+        	<result type="json" />
 		</action>
 		
         <action name="functional" method="functional" class="com.photon.phresco.framework.actions.applications.Quality">
@@ -797,7 +844,7 @@
             <result name="success">/pages/applications/reader.jsp</result>
         </action>
         
-        <action name="performanceJsonWriter" method="performanceJsonWriter" class="com.photon.phresco.framework.actions.applications.Quality">
+        <action name="loadPerformanceJsonWriter" method="loadOrPerformanceJsonWriter" class="com.photon.phresco.framework.actions.applications.Quality">
         	<result type="json" />  	
         </action>
         
@@ -806,6 +853,11 @@
         </action>
         
         <action name="fetchUnitTestReport" method="fetchUnitTestReport" class="com.photon.phresco.framework.actions.applications.Quality">
+        	<result name="testReport">/pages/applications/quality/testSuite.jsp</result>
+            <result name="allTestReport">/pages/applications/quality/allTestSuiteResult.jsp</result>
+        </action>
+        
+        <action name="fetchComponentTestReport" method="fetchComponentTestReport" class="com.photon.phresco.framework.actions.applications.Quality">
         	<result name="testReport">/pages/applications/quality/testSuite.jsp</result>
             <result name="allTestReport">/pages/applications/quality/allTestSuiteResult.jsp</result>
         </action>
@@ -915,7 +967,7 @@
             <result name="success" type="stream">
                 <param name="contentType">application/octet-stream</param>
                 <param name="inputName">fileInputStream</param>
-                <param name="contentDisposition">attachment;filename="${fileName}.pdf"</param>
+                <param name="contentDisposition">attachment;filename="${fileName}"</param>
                 <param name="bufferSize">1024</param>
             </result>
         </action>
@@ -981,11 +1033,40 @@
         <action name="deleteThemes" method="deleteThemes" class="com.photon.phresco.framework.actions.applications.Configurations">
         	<result name="success">/pages/applications/themeBuilderList.jsp</result>
         </action>
-		
-		<action name="uploadThemeBundle" method="themeBundleUpload" class="com.photon.phresco.framework.actions.applications.Configurations">
+        
+        <action name="uploadThemeBundle" method="themeBundleUpload" class="com.photon.phresco.framework.actions.applications.Configurations">
+            <result type="json" />        
+        </action>
+        <!-- Theme builder ends -->
+        
+        <action name="removeLock" method="removeLock" class="com.photon.phresco.framework.actions.applications.Applications"/>
+        
+        <action name="checkForLock" method="checkForLock" class="com.photon.phresco.framework.actions.applications.Applications">
             <result type="json" />        
         </action>
         
-        <!-- Theme builder ends -->
+        <action name="checkLockForfunctional" method="checkForLock" class="com.photon.phresco.framework.actions.applications.Applications">
+            <result type="json" />        
+        </action>
+        
+        <action name="checkLockForstopHub" method="checkForLock" class="com.photon.phresco.framework.actions.applications.Applications">
+            <result type="json" />        
+        </action>
+        
+        <action name="checkLockForstopNode" method="checkForLock" class="com.photon.phresco.framework.actions.applications.Applications">
+            <result type="json" />        
+        </action>
+        
+        <action name="checkLockForbuild" method="checkForLock" class="com.photon.phresco.framework.actions.applications.Applications">
+            <result type="json" />        
+        </action>
+        
+        <action name="checkLockForStart" method="checkForLock" class="com.photon.phresco.framework.actions.applications.Applications">
+            <result type="json" />        
+        </action>
+        
+        <action name="checkLockForDeploy" method="checkForLock" class="com.photon.phresco.framework.actions.applications.Applications">
+            <result type="json" />        
+        </action>
     </package>
 </struts>

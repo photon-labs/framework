@@ -17,37 +17,77 @@
  */
 package com.photon.phresco.framework.impl;
 
-import hudson.cli.*;
+import hudson.cli.CLI;
 
-import java.io.*;
-import java.lang.reflect.*;
-import java.net.*;
-import java.text.*;
-import java.util.*;
+import java.io.BufferedReader;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.UnsupportedEncodingException;
+import java.lang.reflect.Type;
+import java.net.InetAddress;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLConnection;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
-import org.apache.commons.collections.*;
-import org.apache.commons.lang.*;
-import org.apache.http.client.*;
-import org.apache.http.client.methods.*;
-import org.apache.http.impl.client.*;
-import org.apache.log4j.*;
-import org.jdom.*;
+import javax.crypto.Cipher;
+import javax.crypto.SecretKey;
+import javax.crypto.spec.SecretKeySpec;
 
-import com.google.gson.*;
-import com.google.gson.reflect.*;
-import com.photon.phresco.commons.*;
-import com.photon.phresco.commons.model.*;
-import com.photon.phresco.exception.*;
-import com.photon.phresco.framework.*;
-import com.photon.phresco.framework.api.*;
-import com.photon.phresco.framework.model.*;
-import com.photon.phresco.util.*;
-import com.sun.jersey.api.client.*;
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.StringUtils;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.ResponseHandler;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.BasicResponseHandler;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.log4j.Logger;
+import org.codehaus.jettison.json.JSONArray;
+import org.codehaus.plexus.util.FileUtils;
+import org.jdom.JDOMException;
+
+import com.google.gson.Gson;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
+import com.google.gson.reflect.TypeToken;
+import com.photon.phresco.commons.FrameworkConstants;
+import com.photon.phresco.commons.model.ApplicationInfo;
+import com.photon.phresco.commons.model.ProjectInfo;
+import com.photon.phresco.exception.PhrescoException;
+import com.photon.phresco.framework.PhrescoFrameworkFactory;
+import com.photon.phresco.framework.api.ActionType;
+import com.photon.phresco.framework.api.ApplicationManager;
+import com.photon.phresco.framework.api.CIManager;
+import com.photon.phresco.framework.model.CIBuild;
+import com.photon.phresco.framework.model.CIJob;
+import com.photon.phresco.framework.model.CIJobStatus;
+import com.photon.phresco.util.Utility;
+import com.sun.jersey.api.client.ClientHandlerException;
+import com.trilead.ssh2.crypto.Base64;
 
 public class CIManagerImpl implements CIManager, FrameworkConstants {
 
 	private static final Logger S_LOGGER = Logger.getLogger(CIManagerImpl.class);
 	private static Boolean debugEnabled = S_LOGGER.isDebugEnabled();
+	private static boolean credExist = false;
 	
     private CLI cli = null;
     
@@ -81,7 +121,7 @@ public class CIManagerImpl implements CIManager, FrameworkConstants {
 		}
 	} 
 	
-	 public void createJob(ApplicationInfo appInfo, CIJob job) throws PhrescoException {
+	 public boolean createJob(ApplicationInfo appInfo, CIJob job) throws PhrescoException {
 		 if (debugEnabled) {
 			 S_LOGGER.debug("Entering Method ProjectAdministratorImpl.createJob(Project project, CIJob job)");
 		 }
@@ -109,9 +149,10 @@ public class CIManagerImpl implements CIManager, FrameworkConstants {
 				 }
 			 }
 		 }
+		 return credExist;
 	 }
 
-	 public void updateJob(ApplicationInfo appInfo, CIJob job) throws PhrescoException {
+	 public boolean updateJob(ApplicationInfo appInfo, CIJob job) throws PhrescoException {
 		 if (debugEnabled) {
 			 S_LOGGER.debug("Entering Method ProjectAdministratorImpl.updateJob(Project project, CIJob job)");
 		 }
@@ -141,6 +182,7 @@ public class CIManagerImpl implements CIManager, FrameworkConstants {
 				 }
 			 }
 		 }
+		 return credExist;
 	 }
 	
     private CIJobStatus configureJob(CIJob job, String jobType) throws PhrescoException {
@@ -179,7 +221,7 @@ public class CIManagerImpl implements CIManager, FrameworkConstants {
             }
             //when svn is selected credential value has to set
             if(SVN.equals(job.getRepoType())) {
-            	setSvnCredential(job);
+            	credExist = setSvnCredential(job);
             }
             
             return new CIJobStatus(result, message);
@@ -204,31 +246,56 @@ public class CIManagerImpl implements CIManager, FrameworkConstants {
         }
     }
     
-    private void setSvnCredential(CIJob job) throws JDOMException, IOException {
-       	S_LOGGER.debug("Entering Method CIManagerImpl.setSvnCredential");
-        try {
-            String jenkinsTemplateDir = Utility.getJenkinsTemplateDir();
-            String credentialFilePath = jenkinsTemplateDir + job.getRepoType() + HYPHEN + CREDENTIAL_XML;
-            if (debugEnabled) {
-            	S_LOGGER.debug("credentialFilePath ... " + credentialFilePath);
-            }
-            File credentialFile = new File(credentialFilePath);
-            
-            SvnProcessor processor = new SvnProcessor(credentialFile);
-            
-            processor.changeNodeValue("credentials/entry//userName", job.getUserName());
-            processor.changeNodeValue("credentials/entry//password", job.getPassword());
-            processor.writeStream(new File(Utility.getJenkinsHome() + File.separator + job.getName()));
-            
-            //jenkins home location
-			String jenkinsJobHome = System.getenv(JENKINS_HOME);
-            StringBuilder builder = new StringBuilder(jenkinsJobHome);
-            builder.append(File.separator);
-            
-            processor.writeStream(new File(builder.toString() + CI_CREDENTIAL_XML));
-		} catch (Exception e) {
-       		S_LOGGER.error("Entered into the catch block of CIManagerImpl.setSvnCredential " + e.getLocalizedMessage());
-		}
+    public boolean setSvnCredential(CIJob job) throws JDOMException, IOException {
+    	S_LOGGER.debug("Entering Method CIManagerImpl.setSvnCredential");
+    	try {
+    		String jenkinsJobHome = System.getenv(JENKINS_HOME);
+    		StringBuilder jenkinsHome = new StringBuilder(jenkinsJobHome);
+    		jenkinsHome.append(File.separator);
+    		File file = new File(jenkinsHome.toString() + CI_CREDENTIAL_XML);
+    		if(!file.exists()) {
+    			String jenkinsTemplateDir = Utility.getJenkinsTemplateDir();
+    			String credentialFilePath = jenkinsTemplateDir + job.getRepoType() + HYPHEN + CREDENTIAL_XML;
+    			File credentialFile = new File(credentialFilePath);
+    			FileUtils.copyFile(credentialFile, file);
+    		}
+    		String svnUrl = job.getSvnUrl();
+    		String stringValue = getRealm(svnUrl);
+    		SvnProcessor svn = new SvnProcessor(file);
+    		return svn.writeSvnXml(stringValue, job);
+    	} catch (Exception e) {
+    		S_LOGGER.error("Entered into the catch block of CIManagerImpl.setSvnCredential " + e.getLocalizedMessage());
+    		return false;
+    	}
+    }
+
+
+    private String getRealm(String repoUrl) throws PhrescoException {
+    	if (debugEnabled) {
+    		S_LOGGER.debug("Entering Method CIManagerImpl.getRealm(String repoUrl)");
+    	}
+    	URLConnection openedUrl;
+    	String stringValue = "";
+    	try {
+    		URL url = new URL(repoUrl);
+    		String host = url.getHost();
+    		openedUrl = url.openConnection();
+
+    		Map<String, List<String>> hf = openedUrl.getHeaderFields();
+    		for (String key : hf.keySet()) {
+    			if (WWW_AUTHENTICATE.equalsIgnoreCase(key)) {
+    				String headerField = openedUrl.getHeaderField(key);
+    				String[] split = headerField.split("\"");
+    				stringValue = LT_HTTPS_COLON_BACKSLASH+host+COLON_443_GT_SPACE+split[1];
+    			}
+    		}
+    	} catch (IOException e) {
+    		if (debugEnabled) {
+    			S_LOGGER.error("Entered into the catch block of CIManagerImpl.getRealm " + e.getLocalizedMessage());
+    		}
+    		throw new PhrescoException(e);
+    	}
+    	return stringValue;
     }
     
     public void saveMailConfiguration(String jenkinsPort, String senderEmailId, String senderEmailPassword) throws PhrescoException {
@@ -249,7 +316,7 @@ public class CIManagerImpl implements CIManager, FrameworkConstants {
 			InetAddress ownIP = InetAddress.getLocalHost();
 			processor.changeNodeValue(CI_HUDSONURL, HTTP_PROTOCOL + PROTOCOL_POSTFIX + ownIP.getHostAddress() + COLON + jenkinsPort + FORWARD_SLASH + CI + FORWARD_SLASH);
             processor.changeNodeValue("smtpAuthUsername", senderEmailId);
-            processor.changeNodeValue("smtpAuthPassword", senderEmailPassword);
+            processor.changeNodeValue("smtpAuthPassword", encyPassword(senderEmailPassword));
             processor.changeNodeValue("adminAddress", senderEmailId);
             
             //jenkins home location
@@ -260,6 +327,105 @@ public class CIManagerImpl implements CIManager, FrameworkConstants {
             processor.writeStream(new File(builder.toString() + CI_MAILER_XML));
 		} catch (Exception e) {
        		S_LOGGER.error("Entered into the catch block of CIManagerImpl.saveMailConfiguration " + e.getLocalizedMessage());
+		}
+    }
+    
+    public void saveConfluenceConfiguration(String confluenceUrl, String confluenceUsername, String confluencePassword) throws PhrescoException {
+        if (debugEnabled) {
+        	S_LOGGER.debug("Entering Method CIManagerImpl.saveMailConfiguration");
+        }
+        try {
+        	String jenkinsJobHome = System.getenv(JENKINS_HOME);
+    		StringBuilder jenkinsHome = new StringBuilder(jenkinsJobHome);
+    		jenkinsHome.append(File.separator);
+    		File conluenceHomeXml = new File(jenkinsHome.toString() + CI_CONFLUENCE_XML);
+    		if (!conluenceHomeXml.exists()) {
+				String jenkinsTemplateDir = Utility.getJenkinsTemplateDir();
+				String confluenceTemplateXml = jenkinsTemplateDir + CI_CONFLUENCE_XML;
+				File confluenceFile = new File(confluenceTemplateXml);
+				FileUtils.copyFile(confluenceFile, conluenceHomeXml);
+    		}
+    		SvnProcessor svn = new SvnProcessor(conluenceHomeXml);
+    		svn.writeConfluenceXml(confluenceUrl, confluenceUsername, encyPassword(confluencePassword));
+		} catch (Exception e) {
+			if (debugEnabled) {
+				S_LOGGER.error("Entered into the catch block of CIManagerImpl.saveConfluenceConfiguration " + e.getLocalizedMessage());
+			}
+       		throw new PhrescoException(e);
+		}
+    }
+    
+    
+	public String encyPassword(String password) throws PhrescoException {
+		if (debugEnabled) {
+	        	S_LOGGER.debug("Entering Method CIManagerImpl.encyPassword");
+	    }
+		String encString = "";
+		try {
+			Cipher cipher = Cipher.getInstance(AES_ALGO);
+			cipher.init(Cipher.ENCRYPT_MODE, getAes128Key(CI_SECRET_KEY));
+			encString = new String(Base64.encode(cipher.doFinal((password+CI_ENCRYPT_MAGIC).getBytes(CI_UTF8))));
+		} catch (Exception e) {
+			if (debugEnabled) {
+				S_LOGGER.error("Entered into the catch block of CIManagerImpl.encyPassword " + e.getLocalizedMessage());
+			}
+			throw new PhrescoException(e);
+		}
+		return encString;
+	}
+	
+	public String decyPassword(String encryptedText) throws PhrescoException {
+	    	if (debugEnabled) {
+				S_LOGGER.error("Entered Method SvnProcessor.decyPassword");
+			}
+	        String plainText = "";
+	        try {
+	            Cipher cipher = Cipher.getInstance(AES_ALGO);
+	            cipher.init(Cipher.DECRYPT_MODE, getAes128Key(CI_SECRET_KEY));
+	            byte[] decode = Base64.decode(encryptedText.toCharArray());
+	            plainText = new String(cipher.doFinal(decode));
+	            plainText = plainText.replace(CI_ENCRYPT_MAGIC, "");
+	        } catch (javax.crypto.IllegalBlockSizeException e) {
+				return encryptedText;
+	        } catch (Exception e) {
+	        	if (debugEnabled) {
+	    			S_LOGGER.error("Entered catch block of SvnProcessor.decyPassword "+e.getLocalizedMessage());
+	    		}
+	            throw new PhrescoException(e);
+	        }
+	        return plainText;
+    }
+	
+	private static SecretKey getAes128Key(String s) {
+        try {
+            MessageDigest digest = MessageDigest.getInstance(SHA_ALGO);
+            digest.reset();
+            digest.update(s.getBytes(CI_UTF8));
+            return new SecretKeySpec(digest.digest(),0,128/8, AES_ALGO);
+        } catch (NoSuchAlgorithmException e) {
+            throw new Error(e);
+        } catch (UnsupportedEncodingException e) {
+            throw new Error(e);
+        }
+    }
+	
+    public void clearConfluenceSitesNodes() throws PhrescoException {
+    	if (debugEnabled) {
+    		S_LOGGER.debug("Entering Method CIManagerImpl.clearConfluenceSitesNodes");
+    	}
+    	String jenkinsJobHome = System.getenv(JENKINS_HOME);
+		StringBuilder jenkinsHome = new StringBuilder(jenkinsJobHome);
+		jenkinsHome.append(File.separator);
+		File confluenceHomeXml = new File(jenkinsHome.toString() + CI_CONFLUENCE_XML);
+    	SvnProcessor svn;
+		try {
+			svn = new SvnProcessor(confluenceHomeXml);
+			svn.clearSitesNodes();
+		} catch (Exception e) {
+			if (debugEnabled) {
+				S_LOGGER.error("Entered into the catch block of CIManagerImpl.clearConfluenceSitesNodes " + e.getLocalizedMessage());
+			}
+			throw new PhrescoException(e);
 		}
     }
     
@@ -284,9 +450,56 @@ public class CIManagerImpl implements CIManager, FrameworkConstants {
             SvnProcessor processor = new SvnProcessor(mailFile);
 			return processor.getNodeValue(tag);
 		} catch (Exception e) {
-       		S_LOGGER.error("Entered into the catch block of CIManagerImpl.saveMailConfiguration " + e.getLocalizedMessage());
+			if (debugEnabled) {
+				S_LOGGER.error("Entered into the catch block of CIManagerImpl.saveMailConfiguration " + e.getLocalizedMessage());
+			}
 		}
 		return null;
+    }
+    
+    //Confluence plugin
+    public JSONArray getConfluenceConfiguration() throws PhrescoException {
+    	if (debugEnabled) {
+    		S_LOGGER.debug("Entering Method CIManagerImpl.getConfluenceConfiguration()");
+    	}
+    	try {
+    		String jenkinsJobHome = System.getenv(JENKINS_HOME);
+    		StringBuilder jenkinsHome = new StringBuilder(jenkinsJobHome);
+    		jenkinsHome.append(File.separator);
+    		File confluenceHomeXml = new File(jenkinsHome.toString() + CI_CONFLUENCE_XML);
+    		if (confluenceHomeXml.exists()) {
+    			SvnProcessor processor = new SvnProcessor(confluenceHomeXml);
+    			return processor.readConfluenceXml();
+    		}
+    	} catch (Exception e) {
+    		if (debugEnabled) {
+				S_LOGGER.error("Entered into the catch block of CIManagerImpl.getConfluenceConfiguration " + e.getLocalizedMessage());
+			}
+    		throw new PhrescoException(e);
+    	}
+    	return null;
+    }
+    
+    public List<String> getConfluenceSites() throws PhrescoException {
+    	if (debugEnabled) {
+    		S_LOGGER.debug("Entering Method CIManagerImpl.getConfluenceSites()");
+    	}
+    	try {
+    		String jenkinsJobHome = System.getenv(JENKINS_HOME);
+    		StringBuilder jenkinsHome = new StringBuilder(jenkinsJobHome);
+    		jenkinsHome.append(File.separator);
+    		File confluenceHomeXml = new File(jenkinsHome.toString() + CI_CONFLUENCE_XML);
+    		if (confluenceHomeXml.exists()) {
+    			SvnProcessor processor = new SvnProcessor(confluenceHomeXml);
+    			return processor.readConfluenceSites();
+    		} 
+    		return null;
+    	} catch(Exception e) {
+    		if (debugEnabled) {
+				S_LOGGER.error("Entered into the catch block of CIManagerImpl.getConfluenceSites " + e.getLocalizedMessage());
+			}
+    		throw new PhrescoException(e);
+    	}
     }
     
     private CIJobStatus buildJob(CIJob job) throws PhrescoException {
@@ -323,6 +536,9 @@ public class CIManagerImpl implements CIManager, FrameworkConstants {
     }
     
     private JsonArray getBuildsArray(CIJob job) throws PhrescoException {
+    	if (debugEnabled) {
+    		S_LOGGER.debug("Entering Method CIManagerImpl.getBuildsArray");
+    	}
     	try {
         	String jenkinsUrl = "http://" + job.getJenkinsUrl() + ":" + job.getJenkinsPort() + "/ci/";
         	String jobNameUtf8 = job.getName().replace(" ", "%20");
@@ -338,6 +554,9 @@ public class CIManagerImpl implements CIManager, FrameworkConstants {
             
             return jsonArray;
 		} catch (Exception e) {
+			if (debugEnabled) {
+	    		S_LOGGER.debug("Entering catch block of CIManagerImpl.getBuildsArray "+e.getLocalizedMessage());
+	    	}
 			throw new PhrescoException(e);
 		}
     }
@@ -360,8 +579,7 @@ public class CIManagerImpl implements CIManager, FrameworkConstants {
                 setBuildStatus(ciBuild, job);
         		String buildUrl = ciBuild.getUrl();
         		String jenkinUrl = job.getJenkinsUrl() + ":" + job.getJenkinsPort();
-        		// when displaying url it should display setup machine ip
-        		buildUrl = buildUrl.replaceAll("localhost:" + job.getJenkinsPort(), jenkinUrl); 
+        		buildUrl = buildUrl.replaceAll("localhost:" + job.getJenkinsPort(), jenkinUrl); // when displaying url it should display setup machine ip
         		ciBuild.setUrl(buildUrl);
                 ciBuilds.add(ciBuild);
             }
@@ -378,7 +596,7 @@ public class CIManagerImpl implements CIManager, FrameworkConstants {
    		S_LOGGER.debug("setBuildStatus()  url = "+ ciBuild.getUrl());
 		String buildUrl = ciBuild.getUrl();
 		String jenkinsUrl = job.getJenkinsUrl() + ":" + job.getJenkinsPort();
-		buildUrl = buildUrl.replaceAll("localhost:" + job.getJenkinsPort(), jenkinsUrl); 
+		buildUrl = buildUrl.replaceAll("localhost:" + job.getJenkinsPort(), jenkinsUrl); // display the jenkins running url in ci list
     	String response = getJsonResponse(buildUrl + API_JSON);
         JsonParser parser = new JsonParser();
         JsonElement jsonElement = parser.parse(response);
@@ -389,9 +607,9 @@ public class CIManagerImpl implements CIManager, FrameworkConstants {
         JsonElement timeJson = jsonObject.get(FrameworkConstants.CI_JOB_BUILD_TIME_STAMP);
         JsonArray asJsonArray = jsonObject.getAsJsonArray(FrameworkConstants.CI_JOB_BUILD_ARTIFACTS);
         
-        if(jsonObject.get(FrameworkConstants.CI_JOB_BUILD_RESULT).toString().equals(STRING_NULL)) { 
+        if(jsonObject.get(FrameworkConstants.CI_JOB_BUILD_RESULT).toString().equals(STRING_NULL)) { // when build is result is not known
         	ciBuild.setStatus(INPROGRESS);
-        } else if(BUILD.equals(job.getOperation()) && resultJson.getAsString().equals(CI_SUCCESS_FLAG) && asJsonArray.size() < 1) { 
+        } else if(BUILD.equals(job.getOperation()) && resultJson.getAsString().equals(CI_SUCCESS_FLAG) && asJsonArray.size() < 1) { // when build is success and zip relative path is not added in json
             ciBuild.setStatus(INPROGRESS);
         } else {
         	ciBuild.setStatus(resultJson.getAsString());
@@ -498,11 +716,28 @@ public class CIManagerImpl implements CIManager, FrameworkConstants {
         //Recipients customization
         Map<String, String> emails = job.getEmail();
         processor.setEmailPublisher(emails, job.getAttachmentsPattern());
+//        //Failure Reception list
+//        processor.changeNodeValue(TRIGGER_FAILURE_EMAIL_RECIPIENT_LIST, (String)email.get(FAILURE_EMAILS));
+//        
+//        //Success Reception list
+//        processor.changeNodeValue(TRIGGER_SUCCESS__EMAIL_RECIPIENT_LIST, (String)email.get(SUCCESS_EMAILS));
         
         //enable collabnet file release plugin integration
         if (job.isEnableBuildRelease()) {
         	S_LOGGER.debug("Enablebling collabnet file release plugin ");
         	processor.enableCollabNetBuildReleasePlugin(job);
+        }
+        
+        //enable Cobertura file release plugin integration
+        if (job.isCoberturaPlugin()) {
+        	S_LOGGER.debug("Enablebling cobertura report file release plugin ");
+        	processor.enableCoberturaReleasePlugin(job);
+        }
+        
+        //enable confluence file release plugin integration
+        if (job.isEnableConfluence()) {
+        	S_LOGGER.debug("Enablebling confluence file release plugin ");
+        	processor.enableConfluenceReleasePlugin(job);
         }
 
         // use clonned scm
@@ -547,20 +782,19 @@ public class CIManagerImpl implements CIManager, FrameworkConstants {
         }
         
         if (job.isEnablePostBuildStep()) {
-        	String mvnCommand = job.getMvnCommand();
-			String[] ciAdapted = mvnCommand.split(CI_FUNCTIONAL_ADAPT); 
-			for (String ciCommand : ciAdapted) {
-				S_LOGGER.debug("ciCommand...." + ciCommand);
-			}
-			// iterate over loop
-        	processor.enablePostBuildStep(job.getPomLocation(), ciAdapted[1]);
+//        	String mvnCommand = job.getMvnCommand();
+        	List<String> postBuildStepCommands = job.getPostbuildStepCommands(); 
+        	for (String postBuildStepCommand : postBuildStepCommands) {
+        		processor.enablePostBuildStep(job.getPomLocation(), postBuildStepCommand);
+        	}
         }
         
         if (job.isEnablePreBuildStep()) {
         	//iterate over loop
-        	List<String> prebuildStepCommands = job.getPrebuildStepCommands();
-        	for (String prebuildStepCommand : prebuildStepCommands) {
-        		processor.enablePreBuildStep(job.getPomLocation(), prebuildStepCommand);
+        	List<String> preBuildStepCommands = job.getPrebuildStepCommands(); // clean install, clean package
+//        	shell#SEP#cmd, mvn#SEP#clean install
+        	for (String preBuildStepCommand : preBuildStepCommands) {
+        		processor.enablePreBuildStep(job.getPomLocation(), preBuildStepCommand); // shell#SEP#cmd, mvn#SEP#clean install
 			}
         }
         
@@ -574,13 +808,13 @@ public class CIManagerImpl implements CIManager, FrameworkConstants {
         List<String> argList = new ArrayList<String>();
         S_LOGGER.debug("job name " + job.getName());
         S_LOGGER.debug("Builds " + builds);
-        if(CollectionUtils.isEmpty(builds)) {	
+        if(CollectionUtils.isEmpty(builds)) {	// delete job
         	S_LOGGER.debug("Job deletion started");
         	S_LOGGER.debug("Command " + FrameworkConstants.CI_JOB_DELETE_COMMAND);
         	deleteType = DELETE_TYPE_JOB;
         	argList.add(FrameworkConstants.CI_JOB_DELETE_COMMAND);
             argList.add(job.getName());
-        } else {								
+        } else {								// delete Build
         	S_LOGGER.debug("Build deletion started");
         	deleteType = DELETE_TYPE_BUILD;
         	argList.add(FrameworkConstants.CI_BUILD_DELETE_COMMAND);
@@ -647,7 +881,7 @@ public class CIManagerImpl implements CIManager, FrameworkConstants {
 			 S_LOGGER.debug("Going to get existing jobs to relocate!!!!!");
 			 if(existJob != null) {
 				 S_LOGGER.debug("Existing job found " + existJob.getName());
-				 deleteCIJobFile(appInfo);
+				 boolean deleteExistJob = deleteCIJobFile(appInfo);
 				 Gson gson = new Gson();
 				 List<CIJob> existingJobs = new ArrayList<CIJob>();
 				 existingJobs.addAll(Arrays.asList(existJob));
@@ -737,6 +971,7 @@ public class CIManagerImpl implements CIManager, FrameworkConstants {
 			 if (CollectionUtils.isEmpty(selectedJobs)) {
 				 return;
 			 }
+			 Gson gson = new Gson();
 			 List<CIJob> jobs = getJobs(appInfo);
 			 if (CollectionUtils.isEmpty(jobs)) {
 				 return;
@@ -908,7 +1143,7 @@ public class CIManagerImpl implements CIManager, FrameworkConstants {
 					return jsonArray.size();
 				}
 			} else {
-				return -1; 
+				return -1; // When the project is build first time,
 			}
 		} catch (ClientHandlerException ex) {
 			S_LOGGER.error(ex.getLocalizedMessage());

@@ -73,10 +73,9 @@ public class IosShowFunctionalDeviceIdValidationImpl implements DynamicParameter
             	boolean createIpa = MapUtils.getBooleanValue(buildInfo.getOptions(), CAN_CREATE_IPA);
             	boolean deviceDeploy = MapUtils.getBooleanValue(buildInfo.getOptions(), DEVICE_DEPLOY);
             	
-            	// if it is simulator, show popup for following dependency else if it is device, it should return null and should not show any popup
-            	if (!createIpa && !deviceDeploy) { 
+            	if (!createIpa && !deviceDeploy) { // if it is simulator, show popup for following dependency
                     return "";
-            	} else { 
+            	} else { // if it is device, it should return null and should not show any popup
             		return DEVICE_ID;
             	}
             }

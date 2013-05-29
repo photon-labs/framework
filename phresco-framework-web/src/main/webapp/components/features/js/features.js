@@ -3,10 +3,11 @@ define(["framework/widgetWithTemplate", "features/listener/featuresListener"], f
 
 	Clazz.com.components.features.js.Features = Clazz.extend(Clazz.WidgetWithTemplate, {
 		// template URL, used to indicate where to get the template
-		templateUrl: commonVariables.contexturl + "/components/features/template/features.tmp",
-		configUrl: "../components/projects/config/config.json",
+		templateUrl: commonVariables.contexturl + "components/features/template/features.tmp",
+		configUrl: "components/projects/config/config.json",
 		name : commonVariables.featurelist,
 		featuresListener: null,
+		featuresAPI: null,
 		onPreviousEvent: null,
 		onSearchEvent: null,
 		featureRequestBody: {},
@@ -26,6 +27,7 @@ define(["framework/widgetWithTemplate", "features/listener/featuresListener"], f
 		initialize : function(globalConfig){
 			var self = this;
 			self.featuresListener = new Clazz.com.components.features.js.listener.FeaturesListener(globalConfig);
+			self.featuresAPI = new Clazz.com.components.features.js.api.FeaturesAPI();
 			self.registerEvents();
 			self.registerHandlebars();
 		},
@@ -93,7 +95,6 @@ define(["framework/widgetWithTemplate", "features/listener/featuresListener"], f
 			var collection = {};
 			self.featuresListener.showLoad();
 			self.getFeatures(collection, function(responseData){
-				console.info("responseData", responseData);
 				renderFunction(responseData, whereToRender);
 				self.featuresListener.hideLoad();
 			});
@@ -103,7 +104,9 @@ define(["framework/widgetWithTemplate", "features/listener/featuresListener"], f
 		getFeatures : function(collection, callback){
 			var self = this;
 			self.featuresListener.getFeaturesList(self.featuresListener.getRequestHeader(self.featureRequestBody, "FEATURE"), function(response) {
-				collection.featureslist = response.data;	
+				collection.featureslist = response.data;
+				var userPermissions = JSON.parse(self.featuresListener.featuresAPI.localVal.getSession('userPermissions'));
+				collection.userPermissions = userPermissions;
 				self.getLibraries(collection, callback);
 			});
 		},
@@ -137,7 +140,7 @@ define(["framework/widgetWithTemplate", "features/listener/featuresListener"], f
 				$('.box_div').height(height - 306);
 			  });
 
-			$('.switch').css('background', 'url("../themes/default/images/helios/on_off_switch.png")');
+			$('.switch').css('background', 'url("themes/default/images/helios/on_off_switch.png")');
 			$("label[name=on_off]").click(function() {
 				self.bcheck(this);
 			});
@@ -198,7 +201,7 @@ define(["framework/widgetWithTemplate", "features/listener/featuresListener"], f
 				var descid = $(this).attr("value");
 				var currentObj = this;				
 				self.featuresListener.getFeaturesList(self.featuresListener.getRequestHeader(self.featureRequestBody, "desc", descid), function(response) {
-					var divhtml = '<div id="'+descid+'" class="dyn_popup featureinfo"><h1>Description</h1><a href="#" class="dyn_popup_close">X</a><div class="features_cont"><span><img src="../themes/default/images/helios/feature_info_logo.png" width="42" height="42" border="0" alt=""></span>'+response.data+'</div></div>';
+					var divhtml = '<div id="'+descid+'" class="dyn_popup featureinfo"><h1>Description</h1><a href="#" class="dyn_popup_close">X</a><div class="features_cont"><span><img src="themes/default/images/helios/feature_info_logo.png" width="42" height="42" border="0" alt=""></span>'+response.data+'</div></div>';
 					$("#desc").children().remove();
 					$("#desc").append(divhtml);
 					commonVariables.temp = currentObj;

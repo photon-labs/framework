@@ -42,6 +42,7 @@ public interface FrameworkActions {
      *****************************/
 	String APP_LIST = "list";
 	String APP_ENV_LIST = "envList";
+	String APP_CONFIG_LIST = "configList";
 	String APP_ADD_APPLICATION = "add";
 	String APP_TYPE = "applicationType";
 	String APP_TECHNOLOGY = "technology";
@@ -63,6 +64,7 @@ public interface FrameworkActions {
     String APP_CONFIG_ADD = "addConfiguration";
     String APP_CONFIG_EDIT = "editConfiguration";
     String APP_UNIT_TEST = "unit";
+    String APP_COMPONENT_TEST = "component";
     String APP_FUNCTIONAL_TEST = "functional";
     String APP_PERFORMANCE_TEST = "performance";
 	String APP_LOAD_TEST = "load";

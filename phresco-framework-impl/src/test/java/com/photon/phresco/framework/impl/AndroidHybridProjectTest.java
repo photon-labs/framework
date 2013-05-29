@@ -47,8 +47,8 @@ public class AndroidHybridProjectTest extends BaseTest {
 	public void setUp() throws PhrescoException {
 		projectInfo = getProjectInfo("tech-android-hybrid", "tech-android-hybrid" , "Sample-androidhybrid-1" , "Sample-androidhybrid-2", "PHR_androidhybrid");
 		ApplicationInfo appInfo = getAppInfo("ANDROID_HYBRID_TEST", "tech-android-hybrid");
-		appInfos.add(appInfo);
 		appDirNames.add("ANDROID_HYBRID_TEST");
+		appInfos.add(appInfo);
 		if ((projectManager == null) && (applicationManager == null)) {
 			projectManager = PhrescoFrameworkFactory.getProjectManager();
 			applicationManager=PhrescoFrameworkFactory.getApplicationManager();

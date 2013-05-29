@@ -4,8 +4,8 @@ define(["framework/widgetWithTemplate", "projects/listener/projectsListener", "p
 
 	Clazz.com.components.projects.js.EditProject = Clazz.extend(Clazz.WidgetWithTemplate, {
 		projectsEvent : null,
-		templateUrl: commonVariables.contexturl + "/components/projects/template/editProject.tmp",
-		configUrl: "../components/projects/config/config.json",
+		templateUrl: commonVariables.contexturl + "components/projects/template/editProject.tmp",
+		configUrl: "components/projects/config/config.json",
 		name : commonVariables.editproject,
 		projectsListener : null,
 		onProjectsEvent : null,
@@ -66,6 +66,8 @@ define(["framework/widgetWithTemplate", "projects/listener/projectsListener", "p
 				self.templateData.applicationlayerData = self.applicationlayerData;
 				self.templateData.weblayerData = self.weblayerData;
 				self.templateData.mobilelayerData = self.mobilelayerData;
+				var userPermissions = JSON.parse(self.projectsListener.projectAPI.localVal.getSession('userPermissions'));
+				self.templateData.userPermissions = userPermissions;
 				self.projectsListener.getEditProject(self.projectsListener.getRequestHeader(self.projectRequestBody, commonVariables.projectId), function(response) {
 					self.templateData.editProject = response.data;	
 					self.getData = self.templateData.editProject.appInfos;	
@@ -80,6 +82,8 @@ define(["framework/widgetWithTemplate", "projects/listener/projectsListener", "p
 					self.templateData.applicationlayerData = self.applicationlayerData;
 					self.templateData.weblayerData = self.weblayerData;
 					self.templateData.mobilelayerData = self.mobilelayerData;
+					var userPermissions = JSON.parse(self.projectsListener.projectAPI.localVal.getSession('userPermissions'));
+					self.templateData.userPermissions = userPermissions;
 					self.projectsListener.getEditProject(self.projectsListener.getRequestHeader(self.projectRequestBody, commonVariables.projectId), function(response) {
 						self.templateData.editProject = response.data;	
 						self.getData = self.templateData.editProject.appInfos;	

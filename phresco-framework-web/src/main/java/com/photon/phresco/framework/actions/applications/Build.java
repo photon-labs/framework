@@ -148,27 +148,28 @@ public class Build extends DynamicParameterAction implements Constants {
 	private String configuration = ""; 
 	private String platform = "";
 	
-	private static Map<String, String> sqlFolderPathMap = new HashMap<String, String>();
-
 	// DbWithSqlFiles
 	private String fetchSql = null;
 	
 	//Dynamic parameter related
 	private String from = "";
-	private List<Value> dependentValues = null; 
+	private List<Value> dependentValues = null; //Value for dependancy parameters
 	private String dependantKey = ""; 
 	private String dependantValue = "";
 	private String goal = "";
 	
 	public String view() throws PhrescoException {
-		if (debugEnabled) {
+		if (debugEnabled)
 			S_LOGGER.debug("Entering Method  Build.view()");
-		}
 		try {
-			removeSessionAttribute(getAppId() + SESSION_APPINFO);
-			ApplicationManager applicationManager = PhrescoFrameworkFactory.getApplicationManager();
-			ApplicationInfo applicationInfo = applicationManager.getApplicationInfo(getCustomerId(), getProjectId(), getAppId());
-			setReqAttribute(REQ_APPINFO, applicationInfo);
+        	//To get ip of request machine
+			String requestIp = getHttpRequest().getRemoteAddr();
+			setReqAttribute(REQ_REQUEST_IP, requestIp);
+			
+		    removeSessionAttribute(getAppId() + SESSION_APPINFO);//To remove the appInfo from the session
+		   	ApplicationManager applicationManager = PhrescoFrameworkFactory.getApplicationManager();
+		   	ApplicationInfo applicationInfo = applicationManager.getApplicationInfo(getCustomerId(), getProjectId(), getAppId());
+		   	setReqAttribute(REQ_APPINFO, applicationInfo);
 			String readLogFile = "";
 			boolean tempConnectionAlive = false;
 			int serverPort = 0;
@@ -179,7 +180,7 @@ public class Build extends DynamicParameterAction implements Constants {
 				String runAgainstInfoEnv = readRunAgainstInfo();
 				if (StringUtils.isNotEmpty(runAgainstInfoEnv)) {
 					List<com.photon.phresco.configuration.Configuration> configurations = getConfiguration(runAgainstInfoEnv, Constants.SETTINGS_TEMPLATE_SERVER);
-					if (CollectionUtils.isNotEmpty(configurations)) {
+				if (CollectionUtils.isNotEmpty(configurations)) {
 						for (com.photon.phresco.configuration.Configuration serverConfiguration : configurations) {
 							serverProtocol = serverConfiguration.getProperties().getProperty(Constants.SERVER_PROTOCOL);
 							serverHost = serverConfiguration.getProperties().getProperty(Constants.SERVER_HOST);
@@ -188,33 +189,34 @@ public class Build extends DynamicParameterAction implements Constants {
 						}
 					}
 				}
-			}
-			if (StringUtils.isNotEmpty(serverPortStr)) {
-				serverPort = Integer.parseInt(serverPortStr);
-			}
-
-			if (StringUtils.isNotEmpty(serverProtocol) && StringUtils.isNotEmpty(serverHost) && serverPort != 0) {
-				tempConnectionAlive = Utility.isConnectionAlive(serverProtocol, serverHost, serverPort);
-				setSessionAttribute(getAppId() + SESSION_SERVER_STATUS, tempConnectionAlive);
-			}
-			if (tempConnectionAlive) {
-				readLogFile = readRunAgsSrcLogFile();
-				File runAgsLogfile = new File(getLogFolderPath() + File.separator + RUN_AGS_LOG_FILE) ;
-				if (runAgsLogfile.exists()) {
-					setReqAttribute(REQ_LOG_FILE_EXISTS, true);
+		 }
+				if (StringUtils.isNotEmpty(serverPortStr)) {
+					serverPort = Integer.parseInt(serverPortStr);
 				}
-			} else {
-				deleteLogFile();
-				readLogFile = "";
-				setReqAttribute(REQ_LOG_FILE_EXISTS, false);
-			}
-			setReqAttribute(REQ_SERVER_LOG, readLogFile);
+				
+				if (StringUtils.isNotEmpty(serverProtocol) && StringUtils.isNotEmpty(serverHost) && serverPort != 0) {
+					tempConnectionAlive = Utility.isConnectionAlive(serverProtocol, serverHost, serverPort);
+					setSessionAttribute(getAppId() + SESSION_SERVER_STATUS, tempConnectionAlive);
+				}
+				if (tempConnectionAlive) {
+					readLogFile = readRunAgsSrcLogFile();
+					File runAgsLogfile = new File(getLogFolderPath() + File.separator + RUN_AGS_LOG_FILE) ;
+					if (runAgsLogfile.exists()) {
+						setReqAttribute(REQ_LOG_FILE_EXISTS, true);
+					}
+				} else {
+					deleteLogFile();
+					readLogFile = "";
+					setReqAttribute(REQ_LOG_FILE_EXISTS, false);
+				}
+				setReqAttribute(REQ_SERVER_LOG, readLogFile);
+
 		} catch (PhrescoException e) {
 			if (debugEnabled) {
 				S_LOGGER.error("Entered into catch block of Build.view()" + FrameworkUtil.getStackTraceAsString(e));
 			}
 			return showErrorPopup(new PhrescoException(e), getText("excep.hdr.proj.view"));
-		}
+		} 
 		return APP_BUILD;
 	}
 	
@@ -244,6 +246,7 @@ public class Build extends DynamicParameterAction implements Constants {
             setReqAttribute(REQ_DYNAMIC_PARAMETERS, parameters);
             setReqAttribute(REQ_GOAL, PHASE_PACKAGE);
             setReqAttribute(REQ_PHASE, PHASE_PACKAGE);
+            setReqAttribute(REQ_FROM, PHASE_PACKAGE);
 		} catch (PhrescoException e) {
 			return showErrorPopup(e, getText(EXCEPTION_BUILD_POPUP));
 		}
@@ -277,6 +280,7 @@ public class Build extends DynamicParameterAction implements Constants {
             setReqAttribute(REQ_DYNAMIC_PARAMETERS, parameters);
             setReqAttribute(REQ_GOAL, PHASE_RUNGAINST_SRC_START);
             setReqAttribute(REQ_PHASE, PHASE_RUNGAINST_SRC_START);
+            setReqAttribute(REQ_FROM, PHASE_RUNGAINST_SRC);
 		} catch (PhrescoException e) {
 			return showErrorPopup(e, getText("excep.hdr.runagainstsource.popup"));
 		}
@@ -315,9 +319,9 @@ public class Build extends DynamicParameterAction implements Constants {
 	}
 	
 	public String builds() throws PhrescoException {
-		if (debugEnabled) {
+		if (debugEnabled)
 			S_LOGGER.debug("Entering Method  Build.builds()");
-		}
+
 		try {
 			ApplicationManager applicationManager = PhrescoFrameworkFactory.getApplicationManager();
 			ApplicationInfo applicationInfo = getApplicationInfo();
@@ -354,9 +358,18 @@ public class Build extends DynamicParameterAction implements Constants {
 			List<Parameter> parameters = getMojoParameters(mojo, PHASE_PACKAGE);
 			List<String> buildArgCmds = getMavenArgCommands(parameters);
 			buildArgCmds.add(HYPHEN_N);
+			String pomFileName = Utility.getPomFileName(applicationInfo);
+			if(!POM_NAME.equals(pomFileName)) {
+				buildArgCmds.add(HYPHEN_F);
+				buildArgCmds.add(pomFileName);
+			}
 			String workingDirectory = getAppDirectoryPath(applicationInfo);
 			getApplicationProcessor().preBuild(getApplicationInfo());
 			BufferedReader reader = applicationManager.performAction(projectInfo, ActionType.BUILD, buildArgCmds, workingDirectory);
+			
+			//To generate the lock for the particular operation
+			FrameworkUtil.generateLock(Collections.singletonList(getLockDetail(applicationInfo.getId(), REQ_BUILD)), true);
+			
 			setSessionAttribute(getAppId() + REQ_BUILD, reader);
 			setReqAttribute(REQ_APP_ID, getAppId());
 			setReqAttribute(REQ_ACTION_TYPE, REQ_BUILD);
@@ -412,7 +425,13 @@ public class Build extends DynamicParameterAction implements Constants {
 			persistValuesToXml(mojo, PHASE_PROCESS_BUILD);
 			
 			String workingDirectory = getAppDirectoryPath(applicationInfo);
-			BufferedReader reader = applicationManager.performAction(projectInfo, ActionType.PROCESS_BUILD, null, workingDirectory);
+			List<String> buildArgCmds = new ArrayList<String>();
+            String pomFileName = Utility.getPomFileName(applicationInfo);
+			if(!Constants.POM_NAME.equals(pomFileName)) {
+				buildArgCmds.add(Constants.HYPHEN_F);
+				buildArgCmds.add(pomFileName);
+			}
+			BufferedReader reader = applicationManager.performAction(projectInfo, ActionType.PROCESS_BUILD, buildArgCmds, workingDirectory);
 			setSessionAttribute(getAppId() + REQ_PROCESS_BUILD, reader);
 			setReqAttribute(REQ_APP_ID, getAppId());
 			setReqAttribute(REQ_ACTION_TYPE, REQ_PROCESS_BUILD);
@@ -441,8 +460,17 @@ public class Build extends DynamicParameterAction implements Constants {
 			List<Parameter> parameters = getMojoParameters(mojo, PHASE_DEPLOY);
 			List<String> buildArgCmds = getMavenArgCommands(parameters);
 			buildArgCmds.add(HYPHEN_N);
+			String pomFileName = Utility.getPomFileName(applicationInfo);
+			if(!POM_NAME.equals(pomFileName)) {
+				buildArgCmds.add(HYPHEN_F);
+				buildArgCmds.add(pomFileName);
+			}
 			String workingDirectory = getAppDirectoryPath(applicationInfo);
 			BufferedReader reader = applicationManager.performAction(projectInfo, ActionType.DEPLOY, buildArgCmds, workingDirectory);
+			
+			//To generate the lock for the particular operation
+			FrameworkUtil.generateLock(Collections.singletonList(getLockDetail(applicationInfo.getId(), REQ_FROM_TAB_DEPLOY)), true);
+			
 			setSessionAttribute(getAppId() + REQ_FROM_TAB_DEPLOY, reader);
 			setReqAttribute(REQ_APP_ID, getAppId());
 			setReqAttribute(REQ_ACTION_TYPE, REQ_FROM_TAB_DEPLOY);
@@ -555,11 +583,10 @@ public class Build extends DynamicParameterAction implements Constants {
 				throw new PhrescoException("Build Number is empty ");
 			}
 			String ipaFileName = applicationInfo.getName();
-			String buildName = applicationManager.getBuildInfo(Integer.parseInt(buildNumber), getBuildInfosFilePath(applicationInfo)).getBuildName();
+			String buildName = applicationManager.getBuildInfo(Integer.parseInt(buildNumber), getBuildInfosFilePath(applicationInfo)).getDeployLocation();
 			String workingDirectory = getAppDirectoryPath(applicationInfo);
 			String buildNameSubstring = buildName.substring(0, buildName.lastIndexOf(FILE_SEPARATOR));
 			String appBuildName = buildNameSubstring.substring(buildNameSubstring.lastIndexOf(FILE_SEPARATOR) + 1);
-			
 			List<String> buildArgCmds = new ArrayList<String>();
 			buildArgCmds.add("-Dapplication.name=" + ipaFileName);
 			buildArgCmds.add("-Dapp.path=" + buildName);
@@ -568,7 +595,7 @@ public class Build extends DynamicParameterAction implements Constants {
 			while (reader.readLine() != null) {
 				System.out.println(reader.readLine());
 			}
-			String ipaPath = applicationManager.getBuildInfo(Integer.parseInt(buildNumber), getBuildInfosFilePath(applicationInfo)).getBuildName();
+			String ipaPath = applicationManager.getBuildInfo(Integer.parseInt(buildNumber), getBuildInfosFilePath(applicationInfo)).getDeployLocation();
 			ipaPath = ipaPath.substring(0, ipaPath.lastIndexOf(FILE_SEPARATOR)) + FILE_SEPARATOR + ipaFileName + IPA_FORMAT;
 			fileInputStream = new FileInputStream(new File(ipaPath));
 			fileName = ipaFileName + IPA_FORMAT;
@@ -608,8 +635,18 @@ public class Build extends DynamicParameterAction implements Constants {
 			if (StringUtils.isNotEmpty(line) && line.startsWith("[INFO] BUILD FAILURE")) {
 				reader = new BufferedReader(new FileReader(getLogFilePath()));
 			} else {
-				reader = startServer();
+				MojoProcessor mojo = new MojoProcessor(new File(getPhrescoPluginInfoFilePath(PHASE_RUNGAINST_SRC_START)));
+				persistValuesToXml(mojo, PHASE_RUNGAINST_SRC_START);
+				com.photon.phresco.plugins.model.Mojos.Mojo.Configuration config = mojo.getConfiguration(PHASE_RUNGAINST_SRC_START);
+				Map<String, String> configs = MojoUtil.getAllValues(config);
+				String environmentName = configs.get(ENVIRONMENT_NAME);
+				reader = startServer(environmentName);
 			}
+			
+			//To generate the lock for the particular operation
+			ApplicationInfo appInfo = getApplicationInfo();
+			FrameworkUtil.generateLock(Collections.singletonList(getLockDetail(appInfo.getId(), REQ_START)), true);
+			
 			setSessionAttribute(getAppId() + REQ_START, reader);
 			setReqAttribute(REQ_APP_ID, getAppId());
 			setReqAttribute(REQ_ACTION_TYPE, REQ_START);
@@ -669,11 +706,11 @@ public class Build extends DynamicParameterAction implements Constants {
 			if (line != null && line.startsWith("[INFO] BUILD FAILURE")) {
 				reader = new BufferedReader(new FileReader(getLogFilePath()));
 			} else {
-				reader = startServer();
+				reader = startServer(null);
 			}
-			setSessionAttribute(getAppId() + REQ_START, reader);
+			setSessionAttribute(getAppId() + REQ_RE_START, reader);
 			setReqAttribute(REQ_APP_ID, getAppId());
-			setReqAttribute(REQ_ACTION_TYPE, REQ_START);
+			setReqAttribute(REQ_ACTION_TYPE, REQ_RE_START);
 		} catch (PhrescoException e) {
 			return showErrorPopup(e, getText(EXCEPTION_RUNAGNSRC_SERVER_RESTART));
 		}
@@ -681,7 +718,7 @@ public class Build extends DynamicParameterAction implements Constants {
 		return APP_ENVIRONMENT_READER;
 	}
 
-	private BufferedReader startServer() throws PhrescoException {
+	private BufferedReader startServer(String environmentName) throws PhrescoException {
 		if (debugEnabled) {
 			S_LOGGER.debug("Entering Method Build.startServer()");
 		}
@@ -691,11 +728,9 @@ public class Build extends DynamicParameterAction implements Constants {
 		BufferedReader reader = null;
 		try {
 			ApplicationInfo applicationInfo = getApplicationInfo();
-			MojoProcessor mojo = new MojoProcessor(new File(getPhrescoPluginInfoFilePath(PHASE_RUNGAINST_SRC_START)));
-			persistValuesToXml(mojo, PHASE_RUNGAINST_SRC_START);
-			com.photon.phresco.plugins.model.Mojos.Mojo.Configuration config = mojo.getConfiguration(PHASE_RUNGAINST_SRC_START);
-			Map<String, String> configs = MojoUtil.getAllValues(config);
-			String environmentName = configs.get(ENVIRONMENT_NAME);
+			if(StringUtils.isEmpty(environmentName)) {
+				environmentName = readRunAgainstInfo();
+			}
 			List<com.photon.phresco.configuration.Configuration> configurations = getConfiguration(environmentName, Constants.SETTINGS_TEMPLATE_SERVER);
 			if (CollectionUtils.isNotEmpty(configurations)) {
 				for (com.photon.phresco.configuration.Configuration serverConfiguration : configurations) {
@@ -710,19 +745,25 @@ public class Build extends DynamicParameterAction implements Constants {
 			ApplicationManager applicationManager = PhrescoFrameworkFactory.getApplicationManager();
 			ProjectInfo projectInfo = getProjectInfo();
 			String workingDirectory = getAppDirectoryPath(applicationInfo);
-			reader = applicationManager.performAction(projectInfo, ActionType.RUNAGAINSTSOURCE, null, workingDirectory);
+			List<String> buildArgCmds = new ArrayList<String>();
+            String pomFileName = Utility.getPomFileName(applicationInfo);
+			if(!Constants.POM_NAME.equals(pomFileName)) {
+				buildArgCmds.add(Constants.HYPHEN_F);
+				buildArgCmds.add(pomFileName);
+			}
+			reader = applicationManager.performAction(projectInfo, ActionType.RUNAGAINSTSOURCE, buildArgCmds, workingDirectory);
 			boolean connectionStatus = Utility.isConnectionAlive(serverProtocol, serverHost, serverPort);
 			setSessionAttribute(getAppId() + SESSION_SERVER_STATUS, connectionStatus);
 			setSessionAttribute(getAppId() + SESSION_SERVER_PROTOCOL_VALUE, serverProtocol);
 			setSessionAttribute(getAppId() + SESSION_SERVER_HOST_VALUE, serverHost);
 			setSessionAttribute(getAppId() + SESSION_SERVER_PORT_VALUE, new Integer(serverPort).toString());
+
 		} catch (PhrescoException e) {
 			if (debugEnabled) {
 				S_LOGGER.error("Entered into catch block of Build.startServer()" + FrameworkUtil.getStackTraceAsString(e));
 			}
 			throw new PhrescoException(e);
 		}
-		
 		return reader;
 	}
 
@@ -767,7 +808,13 @@ public class Build extends DynamicParameterAction implements Constants {
 			ApplicationInfo applicationInfo = getApplicationInfo();
 			ApplicationManager applicationManager = PhrescoFrameworkFactory.getApplicationManager();
 			String workingDirectory = getAppDirectoryPath(applicationInfo);
-			reader = applicationManager.performAction(getProjectInfo(), ActionType.STOPSERVER, null, workingDirectory);
+			List<String> buildArgCmds = new ArrayList<String>();
+            String pomFileName = Utility.getPomFileName(getApplicationInfo());
+			if(!Constants.POM_NAME.equals(pomFileName)) {
+				buildArgCmds.add(Constants.HYPHEN_F);
+				buildArgCmds.add(pomFileName);
+			}
+			reader = applicationManager.performAction(getProjectInfo(), ActionType.STOPSERVER, buildArgCmds, workingDirectory);
 			if (readData) {
 				while (StringUtils.isNotEmpty(reader.readLine())) {}
 			}
@@ -916,7 +963,7 @@ public class Build extends DynamicParameterAction implements Constants {
 	/* minification starts */
 	public String minifyPopup() throws PhrescoException, PhrescoPomException {
 		ApplicationInfo applicationInfo = getApplicationInfo();
-		String pomPath = getAppDirectoryPath(applicationInfo) + File.separator + POM_FILE;
+		String pomPath = getAppDirectoryPath(applicationInfo) + File.separator + Utility.getPomFileName(applicationInfo);
 		PomProcessor pomProcessor = new PomProcessor(new File(pomPath));
 		com.phresco.pom.model.Plugin.Configuration pluginConfig = pomProcessor.getPlugin(MINIFY_PLUGIN_GROUPID,MINIFY_PLUGIN_ARTFACTID).getConfiguration();
 		//To check for availability of minification plugin in pom.xml
@@ -924,7 +971,7 @@ public class Build extends DynamicParameterAction implements Constants {
 			List<Element> elements = pluginConfig.getAny();
 			if (elements != null) {
 				for (Element element : elements) {
-					includesFiles(element, applicationInfo);
+					includesFiles(element, applicationInfo);//To read already minified details from pom
 				}
 			}
 		}
@@ -944,7 +991,7 @@ public class Build extends DynamicParameterAction implements Constants {
 					NodeList includeList = childNode.getElementsByTagName(POM_INCLUDES).item(0).getChildNodes();
 					StringBuilder csvFileNames = new StringBuilder(); 
 					String sep = "";
-					for (int j = 0; j < includeList.getLength()-1; j++) {
+					for (int j = 0; j < includeList.getLength()-1; j++) {//To convert select files to Comma seperated value
 						Element include = (Element) includeList.item(j);
 						String file = include.getTextContent().substring(include.getTextContent().lastIndexOf(FILE_SEPARATOR)+1);
 						csvFileNames.append(sep);
@@ -954,23 +1001,19 @@ public class Build extends DynamicParameterAction implements Constants {
 					Element outputElement = (Element) childNode.getElementsByTagName(POM_OUTPUT).item(0);
 					//To get compressed name with extension
 					String opFileName = outputElement.getTextContent().substring(outputElement.getTextContent().lastIndexOf(FILE_SEPARATOR)+1);
-					//To get only the compressed name without extension
-					String compresedName = opFileName.substring(0, opFileName.indexOf("."));
-					//To get extension of compressed file
-					String compressedExtension = opFileName.substring(opFileName.lastIndexOf(DOT)+1);
+					String compressName = opFileName.substring(0, opFileName.indexOf("."));//To get only the compressed name without extension
+					String compressedExtension = opFileName.substring(opFileName.lastIndexOf(DOT)+1);//To get extension of compressed file
 					opFileLoc = outputElement.getTextContent().substring(0, outputElement.getTextContent().lastIndexOf(FILE_SEPARATOR)+1);
 					opFileLoc = opFileLoc.replace(MINIFY_OUTPUT_DIRECTORY, getAppDirectoryPath(applicationInfo).replace(File.separator, FORWARD_SLASH));
-
-					//if extension is js , add minified details to jsMap
-					if (JS.equals(compressedExtension)) {
+					
+					if (JS.equals(compressedExtension)) {//if extension is js , add minified details to jsMap
 						Map<String, String> jsValuesMap = new HashMap<String, String>();
-						//add minifed files list and its location details to jsValuesMap
-						jsValuesMap.put(csvFileNames.toString().replace(HYPHEN_MIN, ""), opFileLoc);
-						jsMap.put(compresedName, jsValuesMap);	
-					} else {
+						jsValuesMap.put(csvFileNames.toString().replace(HYPHEN_MIN, ""), opFileLoc);//add minifed files list and its location details to jsValuesMap
+						jsMap.put(compressName, jsValuesMap);	
+					} else {//if extension is CSS , add minified details to cssMap
 						Map<String, String> cssValuesMap = new HashMap<String, String>();
-						cssValuesMap.put(csvFileNames.toString().replace(HYPHEN_MIN, ""), opFileLoc);
-						cssMap.put(compresedName, cssValuesMap);
+						cssValuesMap.put(csvFileNames.toString().replace(HYPHEN_MIN, ""), opFileLoc);//add minifed files list and its location to cssValuesMap
+						cssMap.put(compressName, cssValuesMap);
 					}
 				}
 			}
@@ -1012,7 +1055,7 @@ public class Build extends DynamicParameterAction implements Constants {
 			ApplicationManager applicationManager = PhrescoFrameworkFactory.getApplicationManager();
 			ApplicationInfo applicationInfo = getApplicationInfo();
 			ProjectInfo projectInfo = getProjectInfo();
-			String pomPath = Utility.getProjectHome() + File.separator + applicationInfo.getAppDirName() + File.separator + POM_FILE;
+			String pomPath = Utility.getProjectHome() + File.separator + applicationInfo.getAppDirName() + File.separator + Utility.getPomFileName(applicationInfo);
 			PomProcessor pomProcessor = new PomProcessor(new File(pomPath));
 			DocumentBuilderFactory dbfac = DocumentBuilderFactory.newInstance();
 			DocumentBuilder docBuilder = dbfac.newDocumentBuilder();
@@ -1020,14 +1063,14 @@ public class Build extends DynamicParameterAction implements Constants {
 			List<Element> configList = new ArrayList<Element>();
 			List<String> files = getMinifyFileNames();
 			createExcludesTagInPom(doc, configList);
-			if (Boolean.parseBoolean(getMinifyAll()) && CollectionUtils.isEmpty(files)) { 
+			if (Boolean.parseBoolean(getMinifyAll()) && CollectionUtils.isEmpty(files)) { // Only Minify all is selected
 				configList.add(createElement(doc, POM_OUTPUTDIR, POM_SOURCE_DIRECTORY));
 			} else if (CollectionUtils.isNotEmpty(files)) {
 				String dynamicIncludeDir = "";
-				if (Boolean.parseBoolean(getMinifyAll())) {
+				if (Boolean.parseBoolean(getMinifyAll())) {//if Minify all is selected
 					dynamicIncludeDir = POM_SOURCE_DIRECTORY;
 					configList.add(createElement(doc, POM_OUTPUTDIR, POM_SOURCE_DIRECTORY));
-				} else {
+				} else {//if Minify all not is selected
 					dynamicIncludeDir = POM_OUTPUT_DIRECTORY;
 					configList.add(createElement(doc, POM_OUTPUTDIR, POM_OUTPUT_DIRECTORY));
 				}
@@ -1037,8 +1080,13 @@ public class Build extends DynamicParameterAction implements Constants {
 			pomProcessor.save();
 			
 			String workingDirectory = getAppDirectoryPath(applicationInfo);
-			
-			BufferedReader reader = applicationManager.performAction(projectInfo, ActionType.MINIFY, null, workingDirectory);
+			List<String> buildArgCmds = new ArrayList<String>();
+            String pomFileName = Utility.getPomFileName(getApplicationInfo());
+			if(!Constants.POM_NAME.equals(pomFileName)) {
+				buildArgCmds.add(Constants.HYPHEN_F);
+				buildArgCmds.add(pomFileName);
+			}
+			BufferedReader reader = applicationManager.performAction(projectInfo, ActionType.MINIFY, buildArgCmds, workingDirectory);
 			setSessionAttribute(getAppId() + REQ_MINIFY, reader);
 			setReqAttribute(REQ_APP_ID, getAppId());
 			setReqAttribute(REQ_ACTION_TYPE, REQ_MINIFY);
@@ -1128,7 +1176,7 @@ public class Build extends DynamicParameterAction implements Constants {
 			StringBuilder builder = new StringBuilder(Utility.getProjectHome());
 			builder.append(projectCode);
 			builder.append(File.separatorChar);
-			builder.append(POM_XML);
+			builder.append(Utility.getPomFileName(getApplicationInfo()));
 			File pomPath = new File(builder.toString());
 
 			AndroidPomProcessor processor = new AndroidPomProcessor(pomPath);
@@ -1142,9 +1190,9 @@ public class Build extends DynamicParameterAction implements Constants {
 
 			PluginExecution execution = new PluginExecution();
 			execution.setId(ANDROID_EXECUTION_ID);
-			Goals goals = new Goals();
-			goals.getGoal().add(GOAL_SIGN);
-			execution.setGoals(goals);
+			Goals goal = new Goals();
+			goal.getGoal().add(GOAL_SIGN);
+			execution.setGoals(goal);
 			execution.setPhase(PHASE_PACKAGE);
 			execution.setInherited(TRUE);
 
@@ -1233,7 +1281,7 @@ public class Build extends DynamicParameterAction implements Constants {
 		}
 		return null;
 	}
-	
+
 	class DumpFileNameFilter implements FilenameFilter {
 
 		public boolean accept(File dir, String name) {

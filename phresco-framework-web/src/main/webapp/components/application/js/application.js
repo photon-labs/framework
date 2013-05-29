@@ -3,8 +3,8 @@ define(["framework/widgetWithTemplate", "application/listener/applicationListene
 
 	Clazz.com.components.application.js.Application = Clazz.extend(Clazz.WidgetWithTemplate, {
 		// template URL, used to indicate where to get the template
-		templateUrl: commonVariables.contexturl + "/components/application/template/application.tmp",
-		configUrl: "../components/projects/config/config.json",
+		templateUrl: commonVariables.contexturl + "components/application/template/application.tmp",
+		configUrl: "components/projects/config/config.json",
 		editApplicationListener: null,
 		name : commonVariables.editApplication,
 		addServerEvent : null,
@@ -113,6 +113,7 @@ define(["framework/widgetWithTemplate", "application/listener/applicationListene
 		 */
 		postRender : function(element) {			
 			var self = this;
+			commonVariables.navListener.showHideControls(commonVariables.editApplication);
 			//self.editApplicationListener.renderServer(self.renderData);
 		},
 		
@@ -122,8 +123,9 @@ define(["framework/widgetWithTemplate", "application/listener/applicationListene
 				self.editApplicationListener.getAppInfo(self.editApplicationListener.getRequestHeader(self.appDirName , "getappinfo"), function(response) {
 					var projectlist = {};
 					projectlist.projectlist = response;
+					var userPermissions = JSON.parse(self.editApplicationListener.applicationAPI.localVal.getSession('userPermissions'));
+					projectlist.userPermissions = userPermissions;
 					self.renderData = response;
-					//console.info('response = ' , response);
 					renderFunction(projectlist, whereToRender);
 				});
 			}, 200);	

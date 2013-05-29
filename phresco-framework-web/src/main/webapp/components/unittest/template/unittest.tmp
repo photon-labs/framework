@@ -5,33 +5,35 @@
         <div class="flt_right">
 			<div class="unit_view" style="display:none;">
                 <span>
-                	<a href="#"><img src="../themes/default/images/helios/quality_table_on.png" width="25" height="25" border="0" alt=""></a>
+                	<a href="#"><img src="themes/default/images/helios/quality_table_on.png" width="25" height="25" border="0" alt=""></a>
                     <a href="#"><b>Table View</b></a>
                 </span>
                 <span>
-                	<a name="unitTestGraph" href="#"><img src="../themes/default/images/helios/quality_graph_off.png" width="26" height="24" border="0" alt="">Graph View</a>
+                	<a name="unitTestGraph" href="#"><img src="themes/default/images/helios/quality_graph_off.png" width="26" height="24" border="0" alt="">Graph View</a>
                 </span>    
             </div>
         	<div class="unit_path">
                 <input type="submit" value="Open Folder" class="btn btn_style openfolder_icon_btn">
                 <input type="submit" value="Copy Path" class="btn btn_style copypath_icon_btn">
             </div>
-            <div class="code_report">
-            	Technology
-            </div>
-            <div class="navbar navbar-static code_func">
-                <ul class="nav">
-                    <li id="fat-menu" class="dropdown">
-                      <a href="#" id="drop5" role="button" class="dropdown-toggle" data-toggle="dropdown">Java<b class="caret"></b></a>
-                      <div class="dropdown-menu cust_sel code_test_opt" role="menu" aria-labelledby="drop5">
-                      	<ul>
-                        	<li><a href="#">Java</a></li>
-                            <li><a href="#">JS</a></li>
-                        </ul>
-                      </div>
-                    </li>
-                </ul>
-            </div>
+            
+            {{#if reportOptions}}
+	            <div class="code_report">
+	            	Technology
+	            </div>
+	            <div class="navbar navbar-static code_func">
+	                <ul class="nav">
+	                    <li id="fat-menu" class="dropdown">
+	                      <a href="#" id="drop5" role="button" class="dropdown-toggle" data-toggle="dropdown">{{#report reportOptions true}}{{/report}}<b class="caret"></b></a>
+	                      <div class="dropdown-menu cust_sel code_test_opt" role="menu" aria-labelledby="drop5">
+	                      	<ul>
+	                      		{{#report reportOptions false}}{{/report}}
+	                        </ul>
+	                      </div>
+	                    </li>
+	                </ul>
+	            </div>
+            {{/if}}
            
             <div class="code_anal">
                 <input type="submit" value="Test"  name="unitTest" class="btn btn_style">
@@ -87,7 +89,7 @@
                     <td>1</td>
                     <td>0</td>
                     <td>0</td>
-                    <td><a name="unittestResult" href="#"><img src="../themes/default/images/helios/quality_result.png" width="16" height="14" border="0" alt=""></a></td>
+                    <td><a name="unittestResult" href="#"><img src="themes/default/images/helios/quality_result.png" width="16" height="14" border="0" alt=""></a></td>
                   </tr>
                   <tr>
                     <td>18/Mar/2013 10:40:32</td>  
@@ -96,7 +98,7 @@
                     <td>1</td>
                     <td>0</td>
                     <td>0</td>
-                    <td><aname="unittestResult" href="#"><img src="../themes/default/images/helios/quality_result.png" width="16" height="14" border="0" alt=""></a></td>
+                    <td><aname="unittestResult" href="#"><img src="themes/default/images/helios/quality_result.png" width="16" height="14" border="0" alt=""></a></td>
                   </tr>
                   <tr>
                     <td>18/Mar/2013 10:40:32</td>  
@@ -105,7 +107,7 @@
                     <td>1</td>
                     <td>0</td>
                     <td>0</td>
-                    <td><a name="unittestResult" href="#"><img src="../themes/default/images/helios/quality_result.png" width="16" height="14" border="0" alt=""></a></td>
+                    <td><a name="unittestResult" href="#"><img src="themes/default/images/helios/quality_result.png" width="16" height="14" border="0" alt=""></a></td>
                   </tr>
                   <tr>
                     <td>18/Mar/2013 10:40:32</td>  
@@ -114,7 +116,7 @@
                     <td>1</td>
                     <td>0</td>
                     <td>0</td>
-                    <td><a name="unittestResult" href="#"><img src="../themes/default/images/helios/quality_result.png" width="16" height="14" border="0" alt=""></a></td>
+                    <td><a name="unittestResult" href="#"><img src="themes/default/images/helios/quality_result.png" width="16" height="14" border="0" alt=""></a></td>
                   </tr>
                   <tr>
                     <td>18/Mar/2013 10:40:32</td>  
@@ -123,7 +125,7 @@
                     <td>1</td>
                     <td>0</td>
                     <td>0</td>
-                    <td><a name="unittestResult" href="#"><img src="../themes/default/images/helios/quality_result.png" width="16" height="14" border="0" alt=""></a></td>
+                    <td><a name="unittestResult" href="#"><img src="themes/default/images/helios/quality_result.png" width="16" height="14" border="0" alt=""></a></td>
                   </tr>
                   <tr>
                     <td>18/Mar/2013 10:40:32</td>  
@@ -132,7 +134,7 @@
                     <td>1</td>
                     <td>0</td>
                     <td>0</td>
-                    <td><a name="unittestResult" href="#"><img src="../themes/default/images/helios/quality_result.png" width="16" height="14" border="0" alt=""></a></td>
+                    <td><a name="unittestResult" href="#"><img src="themes/default/images/helios/quality_result.png" width="16" height="14" border="0" alt=""></a></td>
                   </tr>
                   <tr>
                     <td>18/Mar/2013 10:40:32</td>  
@@ -141,7 +143,7 @@
                     <td>1</td>
                     <td>0</td>
                     <td>0</td>
-                    <td><a name="unittestResult" href="#"><img src="../themes/default/images/helios/quality_result.png" width="16" height="14" border="0" alt=""></a></td>
+                    <td><a name="unittestResult" href="#"><img src="themes/default/images/helios/quality_result.png" width="16" height="14" border="0" alt=""></a></td>
                   </tr>
                   <tr>
                     <td>18/Mar/2013 10:40:32</td>  
@@ -150,7 +152,7 @@
                     <td>1</td>
                     <td>0</td>
                     <td>0</td>
-                    <td><a name="unittestResult" href="#"><img src="../themes/default/images/helios/quality_result.png" width="16" height="14" border="0" alt=""></a></td>
+                    <td><a name="unittestResult" href="#"><img src="themes/default/images/helios/quality_result.png" width="16" height="14" border="0" alt=""></a></td>
                   </tr>
                   <tr>
                     <td>18/Mar/2013 10:40:32</td>  
@@ -159,7 +161,7 @@
                     <td>1</td>
                     <td>0</td>
                     <td>0</td>
-                    <td><a name="unittestResult" href="#"><img src="../themes/default/images/helios/quality_result.png" width="16" height="14" border="0" alt=""></a></td>
+                    <td><a name="unittestResult" href="#"><img src="themes/default/images/helios/quality_result.png" width="16" height="14" border="0" alt=""></a></td>
                   </tr>
                   <tr>
                     <td>18/Mar/2013 10:40:32</td>  
@@ -168,7 +170,7 @@
                     <td>1</td>
                     <td>0</td>
                     <td>0</td>
-                    <td><a name="unittestResult" href="#"><img src="../themes/default/images/helios/quality_result.png" width="16" height="14" border="0" alt=""></a></td>
+                    <td><a name="unittestResult" href="#"><img src="themes/default/images/helios/quality_result.png" width="16" height="14" border="0" alt=""></a></td>
                   </tr>
                   <tr>
                     <td>18/Mar/2013 10:40:32</td>  
@@ -177,7 +179,7 @@
                     <td>1</td>
                     <td>0</td>
                     <td>0</td>
-                    <td><a name="unittestResult" href="#"><img src="../themes/default/images/helios/quality_result.png" width="16" height="14" border="0" alt=""></a></td>
+                    <td><a name="unittestResult" href="#"><img src="themes/default/images/helios/quality_result.png" width="16" height="14" border="0" alt=""></a></td>
                   </tr>
                   <tr>
                     <td>18/Mar/2013 10:40:32</td>  
@@ -186,7 +188,7 @@
                     <td>1</td>
                     <td>0</td>
                     <td>0</td>
-                    <td><a name="unittestResult" href="#"><img src="../themes/default/images/helios/quality_result.png" width="16" height="14" border="0" alt=""></a></td>
+                    <td><a name="unittestResult" href="#"><img src="themes/default/images/helios/quality_result.png" width="16" height="14" border="0" alt=""></a></td>
                   </tr>
                   <tr>
                     <td>18/Mar/2013 10:40:32</td>  
@@ -195,7 +197,7 @@
                     <td>1</td>
                     <td>0</td>
                     <td>0</td>
-                    <td><a name="unittestResult" href="#"><img src="../themes/default/images/helios/quality_result.png" width="16" height="14" border="0" alt=""></a></td>
+                    <td><a name="unittestResult" href="#"><img src="themes/default/images/helios/quality_result.png" width="16" height="14" border="0" alt=""></a></td>
                   </tr>
                   <tr>
                     <td>18/Mar/2013 10:40:32</td>  
@@ -204,7 +206,7 @@
                     <td>1</td>
                     <td>0</td>
                     <td>0</td>
-                    <td><a name="unittestResult" href="#"><img src="../themes/default/images/helios/quality_result.png" width="16" height="14" border="0" alt=""></a></td>
+                    <td><a name="unittestResult" href="#"><img src="themes/default/images/helios/quality_result.png" width="16" height="14" border="0" alt=""></a></td>
                   </tr>
                   <tr>
                     <td>18/Mar/2013 10:40:32</td>  
@@ -213,7 +215,7 @@
                     <td>1</td>
                     <td>0</td>
                     <td>0</td>
-                    <td><a name="unittestResult" href="#"><img src="../themes/default/images/helios/quality_result.png" width="16" height="14" border="0" alt=""></a></td>
+                    <td><a name="unittestResult" href="#"><img src="themes/default/images/helios/quality_result.png" width="16" height="14" border="0" alt=""></a></td>
                   </tr>
                   <tr>
                     <td>18/Mar/2013 10:40:32</td>  
@@ -222,7 +224,7 @@
                     <td>1</td>
                     <td>0</td>
                     <td>0</td>
-                    <td><a name="unittestResult" href="#"><img src="../themes/default/images/helios/quality_result.png" width="16" height="14" border="0" alt=""></a></td>
+                    <td><a name="unittestResult" href="#"><img src="themes/default/images/helios/quality_result.png" width="16" height="14" border="0" alt=""></a></td>
                   </tr>
               </tbody>
         </table>
@@ -307,8 +309,8 @@
                     <td>com.photon.phresco.service.TestCase</td>  
                     <td>com.photon.phresco.service..</td>
                     <td>2.20</td>
-                    <td><a href="#"><img src="../themes/default/images/helios/status_ok.png" width="16" height="13" border="0" alt=""></a></td>
-                    <td><a href="#"><img src="../themes/default/images/helios/log_icon.png" width="14" height="19" border="0" alt=""></a></td>
+                    <td><a href="#"><img src="themes/default/images/helios/status_ok.png" width="16" height="13" border="0" alt=""></a></td>
+                    <td><a href="#"><img src="themes/default/images/helios/log_icon.png" width="14" height="19" border="0" alt=""></a></td>
                   </tr>
               </tbody>
         </table>

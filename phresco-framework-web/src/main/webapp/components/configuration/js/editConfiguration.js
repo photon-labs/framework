@@ -4,8 +4,8 @@ define(["framework/widgetWithTemplate", "configuration/listener/configurationLis
 	Clazz.com.components.configuration.js.EditConfiguration = Clazz.extend(Clazz.WidgetWithTemplate, {
 		
 		// template URL, used to indicate where to get the template
-		templateUrl: commonVariables.contexturl + "/components/configuration/template/editConfiguration.tmp",
-		configUrl: "../components/configuration/config/config.json",
+		templateUrl: commonVariables.contexturl + "components/configuration/template/editConfiguration.tmp",
+		configUrl: "components/configuration/config/config.json",
 		name : commonVariables.editConfiguration,
 		configurationlistener : null,
 		cancelEditConfiguationEvent : null,
@@ -34,7 +34,9 @@ define(["framework/widgetWithTemplate", "configuration/listener/configurationLis
 		preRender: function(whereToRender, renderFunction){
 			var self = this;
 			self.configurationlistener.getConfigurationList(self.configurationlistener.getRequestHeader(self.configRequestBody, "edit"), function(response) {
-					self.templateData.configurations = response.data;	
+					self.templateData.configurations = response.data;
+					var userPermissions = JSON.parse(self.configurationlistener.configurationAPI.localVal.getSession('userPermissions'));
+					self.templateData.userPermissions = userPermissions;
 					renderFunction(self.templateData, whereToRender);
 				});			
 		},

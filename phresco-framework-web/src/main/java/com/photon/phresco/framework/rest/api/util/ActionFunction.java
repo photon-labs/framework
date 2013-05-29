@@ -134,8 +134,8 @@ public class ActionFunction implements Constants ,FrameworkConstants,ActionServi
 			else {
 				throw new PhrescoException("No valid Customer Id Passed");
 			}
-			if( !("".equalsIgnoreCase(request.getParameter(USERNAME))) && (request.getParameter(USERNAME) != null) && !("null".equalsIgnoreCase(request.getParameter(USERNAME))) ) {
-				setUsername(request.getParameter(USERNAME));
+			if( !("".equalsIgnoreCase(request.getParameter(BuildServiceConstants.USERNAME))) && (request.getParameter(BuildServiceConstants.USERNAME) != null) && !("null".equalsIgnoreCase(request.getParameter(BuildServiceConstants.USERNAME))) ) {
+				setUsername(request.getParameter(BuildServiceConstants.USERNAME));
 			}
 			else {
 				throw new PhrescoException("No User Id passed");

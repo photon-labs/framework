@@ -28,6 +28,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.ArrayList;
@@ -39,7 +40,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import org.apache.commons.codec.binary.*;
+import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
@@ -49,11 +50,10 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
-import com.google.gson.*;
+import com.google.gson.Gson;
 import com.opensymphony.xwork2.ActionContext;
 import com.opensymphony.xwork2.ActionSupport;
 import com.photon.phresco.api.ApplicationProcessor;
-import com.photon.phresco.api.ConfigManager;
 import com.photon.phresco.commons.FrameworkConstants;
 import com.photon.phresco.commons.model.ApplicationInfo;
 import com.photon.phresco.commons.model.ArtifactGroup;
@@ -64,7 +64,6 @@ import com.photon.phresco.commons.model.ProjectInfo;
 import com.photon.phresco.commons.model.RepoInfo;
 import com.photon.phresco.commons.model.TechnologyInfo;
 import com.photon.phresco.commons.model.User;
-import com.photon.phresco.exception.ConfigurationException;
 import com.photon.phresco.exception.PhrescoException;
 import com.photon.phresco.exception.PhrescoWebServiceException;
 import com.photon.phresco.framework.FrameworkConfiguration;
@@ -74,7 +73,7 @@ import com.photon.phresco.framework.api.ProjectManager;
 import com.photon.phresco.framework.commons.FrameworkActions;
 import com.photon.phresco.framework.commons.FrameworkUtil;
 import com.photon.phresco.framework.commons.LogErrorReport;
-import com.photon.phresco.impl.ConfigManagerImpl;
+import com.photon.phresco.framework.model.LockDetail;
 import com.photon.phresco.plugins.model.Mojos.ApplicationHandler;
 import com.photon.phresco.plugins.util.MojoProcessor;
 import com.photon.phresco.service.client.api.ServiceClientConstant;
@@ -105,6 +104,7 @@ public class FrameworkBaseAction extends ActionSupport implements FrameworkConst
     private String envName = "";
     private String configName = "";
     private String fromConfig = "";
+    private String uiType = "";
     
     private static ServiceManager serviceManager = null;
     
@@ -131,10 +131,12 @@ public class FrameworkBaseAction extends ActionSupport implements FrameworkConst
 		try {
 			if (Desktop.isDesktopSupported()) {
 				File dir = new File(Utility.getProjectHome() + path);
-				if(dir.exists()){
-	    		Desktop.getDesktop().open(new File(Utility.getProjectHome() + path));
-				}else{
-					Desktop.getDesktop().open(new File(Utility.getProjectHome()));
+				if (dir.exists()) {
+					Desktop.getDesktop().open(new File(Utility.getProjectHome() + path));
+				} else {
+					StringBuilder sbOpenPath = new StringBuilder(Utility.getProjectHome());
+					sbOpenPath.append(getApplicationInfo().getAppDirName());
+					Desktop.getDesktop().open(new File(sbOpenPath.toString()));
 				}
 	    	}
 		} catch (Exception e) {
@@ -149,16 +151,25 @@ public class FrameworkBaseAction extends ActionSupport implements FrameworkConst
     	if (debugEnabled) {
     		S_LOGGER.debug("Entered FrameworkBaseAction.copyPath");
     	}
-    	File dir = new File(Utility.getProjectHome() + path);
-    	if(dir.exists()){
-    		copyToClipboard = Utility.getProjectHome() + path;
-    	}else{
-    		copyToClipboard = Utility.getProjectHome();
-    	}
-    	copyToClipboard ();
+    	try {
+	    	File dir = new File(Utility.getProjectHome() + path);
+	    	if (dir.exists()) {
+	    		copyToClipboard = Utility.getProjectHome() + path;
+	    	} else {
+	    		StringBuilder sbCopyPath = new StringBuilder(Utility.getProjectHome());
+	    		sbCopyPath.append(getApplicationInfo().getAppDirName());
+	    		copyToClipboard = sbCopyPath.toString();
+	    	}
+	    	copyToClipboard();
+    	} catch (PhrescoException e) {
+    		if (debugEnabled) {
+				S_LOGGER.error("Unable to Copy the Path, " + FrameworkUtil.getStackTraceAsString(e));
+				new LogErrorReport(e, "Copy Path");
+			}
+		}
     }
     
-    public void copyToClipboard () {
+    public void copyToClipboard() {
     	S_LOGGER.debug("Entered FrameworkBaseAction.copyToClipboard");
     	Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
     	clipboard.setContents(new StringSelection(copyToClipboard.replaceAll("(?m)^[ \t]*\r?\n", "")), null);
@@ -168,17 +179,25 @@ public class FrameworkBaseAction extends ActionSupport implements FrameworkConst
     	try {
             StringBuilder builder = getProjectHome(appDirName);
             builder.append(File.separatorChar);
-            builder.append(POM_XML);
+            builder.append(Utility.getPomFileName(getApplicationInfo()));
     		File pomPath = new File(builder.toString());
     		PomProcessor processor = new PomProcessor(pomPath);
     		Modules pomModule = processor.getPomModule();
+    		List<String> moduleList = new ArrayList<String>();
     		if (pomModule != null) {
-    			return pomModule.getModule();
+    			List<String> modules = pomModule.getModule();
+    			for (String module : modules) {
+					String[] split = module.split("/");
+					if(split != null) {
+						module = split[0];
+					}
+					moduleList.add(module);
+				}
+    			return moduleList;
     		}
     	} catch (PhrescoPomException e) {
     		 throw new PhrescoException(e);
     	}
-    	
     	return null;
     }
 
@@ -199,7 +218,7 @@ public class FrameworkBaseAction extends ActionSupport implements FrameworkConst
 					pathBuilder.append(File.separatorChar);
 					pathBuilder.append(projectModule);
 					pathBuilder.append(File.separatorChar);
-					pathBuilder.append(POM_XML);
+					pathBuilder.append(Utility.getPomFileName(getApplicationInfo()));
 					PomProcessor processor = new PomProcessor(new File(pathBuilder.toString()));
 					String packaging = processor.getModel().getPackaging();
 					if (StringUtils.isNotEmpty(packaging) && WAR.equalsIgnoreCase(packaging)) {
@@ -223,6 +242,29 @@ public class FrameworkBaseAction extends ActionSupport implements FrameworkConst
 			connection.connect();
 		} catch (Exception e) {
 			isAlive = false;
+		}
+		return isAlive;
+	}
+	
+	public static boolean isConnectionAlive(String Url) {
+		boolean isAlive = false;
+		try {
+			FrameworkUtil frameworkUtil = FrameworkUtil.getInstance();
+			URL sonarURL = new URL(Url);
+			String protocol = sonarURL.getProtocol();
+			HttpURLConnection connection = null;			
+			int responseCode;			
+			if(protocol.equals("http")) {	
+				connection = (HttpURLConnection) sonarURL.openConnection();
+				responseCode = connection.getResponseCode();	
+			} else {
+				responseCode = FrameworkUtil.getHttpsResponse(frameworkUtil.getSonarURL());
+			}
+			if (responseCode == 200) {
+				isAlive = true;
+			}
+		} catch (Exception e) {
+			return isAlive;
 		}
 		return isAlive;
 	}
@@ -306,7 +348,7 @@ public class FrameworkBaseAction extends ActionSupport implements FrameworkConst
     public String getAppPom() throws PhrescoException {
         StringBuilder builder = new StringBuilder(getApplicationHome());
         builder.append(File.separator);
-        builder.append(POM_FILE);
+        builder.append(Utility.getPomFileName(getApplicationInfo()));
         return builder.toString();
     }
     
@@ -488,6 +530,17 @@ public class FrameworkBaseAction extends ActionSupport implements FrameworkConst
 		};
 	}
     
+    public Comparator sortValuesinDescOrder() {
+		return new Comparator() {
+			public int compare(Object firstObject, Object secondObject) {
+				String val1 = (String) firstObject;
+		    	String val2 = (String) secondObject;
+				return val2.compareToIgnoreCase(val1);				
+			}
+		};
+    	
+    }
+    
     public void updateLatestProject() throws PhrescoException {
         try {
             File tempPath = new File(Utility.getPhrescoTemp() + File.separator + USER_PROJECT_JSON);
@@ -512,8 +565,8 @@ public class FrameworkBaseAction extends ActionSupport implements FrameworkConst
             throw new PhrescoException(e);
         }
     }
-    
-    public String getGlobalSettingsPath() throws PhrescoException {
+	
+	public String getGlobalSettingsPath() throws PhrescoException {
     	StringBuilder builder = new StringBuilder(Utility.getProjectHome());
     	builder.append(getCustomerId());
 		builder.append("-");
@@ -527,10 +580,30 @@ public class FrameworkBaseAction extends ActionSupport implements FrameworkConst
     	builder.append(File.separator);
     	builder.append(FOLDER_DOT_PHRESCO);
     	builder.append(File.separator);
-    	builder.append(CONFIGURATION_INFO_FILE_NAME);
+    	builder.append(PHRESCO_ENV_CONFIG_FILE_NAME);
     	return builder.toString();
     }
     
+    public String getNonEnvConfigPath() throws PhrescoException {
+    	StringBuilder builder = new StringBuilder(Utility.getProjectHome());
+    	builder.append(getApplicationInfo().getAppDirName());
+    	builder.append(File.separator);
+    	builder.append(FOLDER_DOT_PHRESCO);
+    	builder.append(File.separator);
+    	builder.append(PHRESCO_CONFIG_FILE_NAME);
+    	return builder.toString();
+    }
+    
+    public LockDetail getLockDetail(String appid, String phase) throws PhrescoException {
+    	try {
+    		User user = (User) getSessionAttribute(SESSION_USER_INFO);
+        	LockDetail lockDetail = new LockDetail(appid, phase, user.getDisplayName());
+        	return lockDetail;
+		} catch (Exception e) {
+			throw new PhrescoException(e);
+		}
+    }
+
     public String getPath() {
     	return path;
     }
@@ -610,4 +683,12 @@ public class FrameworkBaseAction extends ActionSupport implements FrameworkConst
     public String getFromConfig() {
         return fromConfig;
     }
+
+	public void setUiType(String uiType) {
+		this.uiType = uiType;
+	}
+
+	public String getUiType() {
+		return uiType;
+	}
 }

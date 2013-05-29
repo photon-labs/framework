@@ -37,18 +37,16 @@ import com.photon.phresco.commons.model.ArtifactInfo;
 import com.photon.phresco.commons.model.CoreOption;
 import com.photon.phresco.commons.model.DownloadInfo;
 import com.photon.phresco.commons.model.ProjectInfo;
-import com.photon.phresco.commons.model.Role;
 import com.photon.phresco.commons.model.SelectedFeature;
 import com.photon.phresco.commons.model.User;
+import com.photon.phresco.commons.model.UserPermissions;
 import com.photon.phresco.commons.model.WebService;
 import com.photon.phresco.configuration.ConfigurationInfo;
 import com.photon.phresco.exception.PhrescoException;
 import com.photon.phresco.exception.PhrescoWebServiceException;
 import com.photon.phresco.framework.PhrescoFrameworkFactory;
-import com.photon.phresco.framework.actions.FrameworkBaseAction;
 import com.photon.phresco.framework.api.ProjectManager;
 import com.photon.phresco.framework.commons.FrameworkUtil;
-import com.photon.phresco.framework.model.Permissions;
 import com.photon.phresco.plugins.model.Mojos.ApplicationHandler;
 import com.photon.phresco.plugins.util.MojoProcessor;
 import com.photon.phresco.service.client.api.ServiceManager;
@@ -136,7 +134,7 @@ public class ProjectService extends RestBase implements FrameworkConstants {
 			return Response.status(Status.BAD_REQUEST).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
 		}
 	}
-	
+
 	@PUT
 	@Path("/updateFeature")
 	@Consumes(MediaType.APPLICATION_JSON)
@@ -159,7 +157,7 @@ public class ProjectService extends RestBase implements FrameworkConstants {
 			StringBuilder sbs = null;
 			if(StringUtils.isNotEmpty(appDirName)) {
 				sbs = new StringBuilder(Utility.getProjectHome()).append(appDirName).append(
-						File.separator).append(Constants.DOT_PHRESCO_FOLDER).append(File.separator).append("project.info");
+						File.separator).append(Constants.DOT_PHRESCO_FOLDER).append(File.separator).append(PROJECT_INFO);
 			} 
 			bufferedReader = new BufferedReader(new FileReader(sbs.toString()));
 			Type type = new TypeToken<ProjectInfo>() {}.getType();
@@ -195,15 +193,15 @@ public class ProjectService extends RestBase implements FrameworkConstants {
 					}
 				}
 			}
-				if (StringUtils.isNotEmpty(appDirName)) {
-					StringBuilder sb = new StringBuilder(Utility.getProjectHome())
-					.append(appDirName)
-					.append(File.separator)
-					.append(Constants.DOT_PHRESCO_FOLDER)
-					.append(File.separator)
-					.append(Constants.APPLICATION_HANDLER_INFO_FILE);
-					filePath = new File(sb.toString());
-				}
+			if (StringUtils.isNotEmpty(appDirName)) {
+				StringBuilder sb = new StringBuilder(Utility.getProjectHome())
+				.append(appDirName)
+				.append(File.separator)
+				.append(Constants.DOT_PHRESCO_FOLDER)
+				.append(File.separator)
+				.append(Constants.APPLICATION_HANDLER_INFO_FILE);
+				filePath = new File(sb.toString());
+			}
 			MojoProcessor mojo = new MojoProcessor(filePath);
 			ApplicationHandler applicationHandler = mojo.getApplicationHandler();
 			//To write selected Features into phresco-application-Handler-info.xml
@@ -215,13 +213,13 @@ public class ProjectService extends RestBase implements FrameworkConstants {
 			Type jsonType = new TypeToken<Collection<ArtifactGroup>>(){}.getType();
 			String deletedFeatures = gson.toJson(removedModules, jsonType);
 			applicationHandler.setDeletedFeatures(deletedFeatures);
-			
+
 			mojo.save();
-			
+
 			applicationInfo.setSelectedModules(selectedFeatures);
 			applicationInfo.setSelectedJSLibs(selectedJsLibs);
 			applicationInfo.setSelectedComponents(selectedComponents);
-			
+
 			projectinfo.setAppInfos(Collections.singletonList(applicationInfo));
 			ProjectManager projectManager = PhrescoFrameworkFactory.getProjectManager();
 			projectManager.update(projectinfo, serviceManager, appDirName);
@@ -237,9 +235,9 @@ public class ProjectService extends RestBase implements FrameworkConstants {
 		}
 		ResponseInfo finalOutput = responseDataEvaluation(responseData, null, "Features updated successfully", null);
 		return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
-		
+
 	}
-	
+
 	@PUT
 	@Path("/updateApplication")
 	@Consumes(MediaType.APPLICATION_JSON)
@@ -259,13 +257,13 @@ public class ProjectService extends RestBase implements FrameworkConstants {
 
 			Gson gson = new Gson();
 
-				StringBuilder sb = new StringBuilder(Utility.getProjectHome())
-				.append(oldAppDirName)
-				.append(File.separator)
-				.append(Constants.DOT_PHRESCO_FOLDER)
-				.append(File.separator)
-				.append(Constants.APPLICATION_HANDLER_INFO_FILE);
-				filePath = new File(sb.toString());
+			StringBuilder sb = new StringBuilder(Utility.getProjectHome())
+			.append(oldAppDirName)
+			.append(File.separator)
+			.append(Constants.DOT_PHRESCO_FOLDER)
+			.append(File.separator)
+			.append(Constants.APPLICATION_HANDLER_INFO_FILE);
+			filePath = new File(sb.toString());
 			MojoProcessor mojo = new MojoProcessor(filePath);
 			ApplicationHandler applicationHandler = mojo.getApplicationHandler();
 			//To write selected Database into phresco-application-Handler-info.xml
@@ -374,7 +372,7 @@ public class ProjectService extends RestBase implements FrameworkConstants {
 		ResponseInfo<ApplicationInfo> finalOutput = responseDataEvaluation(responseData, null, "Application updated successfully", appInfo);
 		return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
 	}
-	
+
 	@GET
 	@Path("/editApplication")
 	@Produces(MediaType.APPLICATION_JSON)
@@ -442,28 +440,28 @@ public class ProjectService extends RestBase implements FrameworkConstants {
 		ResponseInfo finalOutput = responseDataEvaluation(responseData, null, "Application deleted Successfully", null);
 		return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
 	}
-	
+
 	@GET
 	@Path("/getPermission")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response getPermission(@QueryParam("userId") String userId) {
-		ResponseInfo<Permissions> responseData = new ResponseInfo<Permissions>();
+		ResponseInfo<UserPermissions> responseData = new ResponseInfo<UserPermissions>();
 		try {
 			ServiceManager serviceManager = CONTEXT_MANAGER_MAP.get(userId);
 			User user = ServiceManagerImpl.USERINFO_MANAGER_MAP.get(userId);
 			FrameworkUtil futil = new FrameworkUtil();
-			Permissions userPermissions = futil.getUserPermissions(serviceManager, user);
-			ResponseInfo<Permissions> finalOutput = responseDataEvaluation(responseData, null, "Permission for user returned Successfully", userPermissions);
+			UserPermissions userPermissions = futil.getUserPermissions(serviceManager, user);
+			ResponseInfo<UserPermissions> finalOutput = responseDataEvaluation(responseData, null, "Permission for user returned Successfully", userPermissions);
 			return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
 		} catch (PhrescoWebServiceException e) {
-			ResponseInfo<Permissions> finalOutput = responseDataEvaluation(responseData, e,"Permission for user not fetched", null);
+			ResponseInfo<UserPermissions> finalOutput = responseDataEvaluation(responseData, e,"Permission for user not fetched", null);
 			return Response.status(Status.EXPECTATION_FAILED).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
 		} catch (PhrescoException e) {
-			ResponseInfo<Permissions> finalOutput = responseDataEvaluation(responseData, e,"Permission for user not fetched", null);
+			ResponseInfo<UserPermissions> finalOutput = responseDataEvaluation(responseData, e,"Permission for user not fetched", null);
 			return Response.status(Status.EXPECTATION_FAILED).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
 		}
 	}
-	
+
 	public Comparator sortByNameInAlphaOrder() {
 		return new Comparator() {
 			public int compare(Object firstObject, Object secondObject) {

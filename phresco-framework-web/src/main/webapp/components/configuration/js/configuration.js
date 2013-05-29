@@ -4,9 +4,10 @@ define(["framework/widgetWithTemplate", "configuration/listener/configurationLis
 	Clazz.com.components.configuration.js.Configuration = Clazz.extend(Clazz.WidgetWithTemplate, {
 		
 		// template URL, used to indicate where to get the template
-		templateUrl: commonVariables.contexturl + "/components/configuration/template/configuration.tmp",
-		configUrl: "../components/configuration/config/config.json",
+		templateUrl: commonVariables.contexturl + "components/configuration/template/configuration.tmp",
+		configUrl: "components/configuration/config/config.json",
 		name : commonVariables.configuration,
+		configurationAPI : null,
 		configurationlistener : null,
 		editConfigurationEvent : null,
 		configRequestBody : null,
@@ -20,6 +21,7 @@ define(["framework/widgetWithTemplate", "configuration/listener/configurationLis
 		initialize : function(globalConfig){
 			var self = this;
 			self.configurationlistener = new Clazz.com.components.configuration.js.listener.ConfigurationListener(globalConfig);
+			self.configurationAPI = 
 			self.registerEvents(self.configurationlistener);
 		},
 
@@ -34,7 +36,9 @@ define(["framework/widgetWithTemplate", "configuration/listener/configurationLis
 		preRender: function(whereToRender, renderFunction){
 			var self = this;
 			self.configurationlistener.getConfigurationList(self.configurationlistener.getRequestHeader(self.configRequestBody, "list"), function(response) {
-				self.templateData.configurationList = response.data;	
+				self.templateData.configurationList = response.data;
+				var userPermissions = JSON.parse(self.configurationlistener.configurationAPI.localVal.getSession('userPermissions'));
+				self.templateData.userPermissions = userPermissions;
 				renderFunction(self.templateData, whereToRender);
 			});			
 		}, 
@@ -44,7 +48,8 @@ define(["framework/widgetWithTemplate", "configuration/listener/configurationLis
 		 *
 		 * @element: Element as the result of the template + data binding
 		 */
-		postRender : function(element) {			
+		postRender : function(element) {
+			commonVariables.navListener.applyRBAC(commonVariables.configuration);
 		},
 		
 		registerEvents : function(configurationlistener) {

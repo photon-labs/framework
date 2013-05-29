@@ -42,7 +42,7 @@ import com.photon.phresco.util.Utility;
 
 public class ArchetypeValidator implements Validator, FrameworkConstants {
 
-	private DocumentBuilder dBuilder = null;
+	DocumentBuilder dBuilder = null;
 
 	public ArchetypeValidator() throws PhrescoException {
 		try {

@@ -5,8 +5,8 @@ define(["framework/widgetWithTemplate", "login/listener/loginListener"], functio
 		onLoginEvent : null,
 		loginListener : null,
 		// template URL, used to indicate where to get the template
-		templateUrl: commonVariables.contexturl + "/components/login/template/login.tmp",
-		configUrl: "../components/login/config/config.json",
+		templateUrl: commonVariables.contexturl + "components/login/template/login.tmp",
+		configUrl: "components/login/config/config.json",
 		name : commonVariables.login,
 		localConfig: null,
 
@@ -41,13 +41,17 @@ define(["framework/widgetWithTemplate", "login/listener/loginListener"], functio
 				self.loginListener.loginAPI.localVal.getSession('customerlogo') != ""){
 				$('#loginlogo').attr("src", "data:image/png;base64," + self.loginListener.loginAPI.localVal.getSession('customerlogo'));
 			} else {
-				$('#loginlogo').attr("src", "../themes/default/images/helios/logo_login.png");
+				$('#loginlogo').attr("src", "themes/default/images/helios/logo_login.png");
 			}
 			
 			if(self.loginListener.loginAPI.localVal.getSession('loggedout') == "true"){
 				$(".login_error_msg").text('Logged out');
 			}
 			self.loginListener.loginAPI.localVal.deleteSession('loggedout');
+			
+			if(self.loginListener.loginAPI.localVal.getSession('statusmsg') != null){
+				$(".login_error_msg").text(self.loginListener.loginAPI.localVal.getSession('statusmsg'));
+			}
 		},
 
 		/***
