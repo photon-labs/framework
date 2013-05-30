@@ -47,7 +47,7 @@ define(["framework/widget", "unittest/api/unittestAPI"], function() {
 			var self=this, header, data = {}, userId;
 			data = JSON.parse(self.unitTestAPI.localVal.getSession('userInfo'));
 			userId = data.id;
-			appDirName = self.unitTestAPI.localVal.getJson("appDirName");
+			appDirName = self.unitTestAPI.localVal.getSession("appDirName");
 			header = {
 				contentType: "application/json",				
 				dataType: "json",

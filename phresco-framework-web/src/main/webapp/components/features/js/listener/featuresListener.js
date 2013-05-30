@@ -117,7 +117,7 @@ define(["framework/widget", "features/api/featuresAPI", "features/features",  "a
 		getRequestHeader : function(projectRequestBody, type, descid) {
 			var url;
 			var userId = JSON.parse(self.featuresAPI.localVal.getSession("userInfo"));
-			var appDirName = self.featuresAPI.localVal.getJson("appDirName");
+			var appDirName = self.featuresAPI.localVal.getSession("appDirName");
 			var techId = commonVariables.techId;
 			var header = {
 				contentType: "application/json",
