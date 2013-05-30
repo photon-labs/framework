@@ -455,7 +455,18 @@
 		<% } %>
 		 enableButtonForGit();
 		 hideSelectAllCheckBox();
+		 
+		$(".close").click(function() {
+			removeLock('<%= FrameworkConstants.ADD_TO_REPO %>');
+		});
 	});
+	
+	document.onkeydown = function(evt) {
+		evt = evt || window.event;
+	    if (evt.keyCode == 27) {
+	    	removeLock('<%= FrameworkConstants.ADD_TO_REPO %>');
+	    }
+	};
 	
 	function enableButtonForGit() {
 		 if ($("[name=repoType]").val() == 'git') {
@@ -781,6 +792,6 @@
 	}
 	
 	function popupOnCancel(obj) {
-
+		removeLock('<%= FrameworkConstants.ADD_TO_REPO %>');
 	}
 </script>

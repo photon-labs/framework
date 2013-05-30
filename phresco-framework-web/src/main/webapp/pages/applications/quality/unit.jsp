@@ -202,6 +202,10 @@ $(document).ready(function() {
 	$('#testSuite').change(function() {
 		testReport();
 	});
+	
+	$(".close").click(function() {
+		removeLock('<%= FrameworkConstants.UNIT %>');
+	});
 });
 
 //To get the testsuites
@@ -287,6 +291,7 @@ function popupOnOk(obj) {
 function popupOnClose(obj) {
 	var closeUrl = $(obj).attr("id");
 	loadTestSuites("true");
+	removeLock('<%= FrameworkConstants.UNIT %>');
 }
 
 //This method will be called when there is no dynamic param

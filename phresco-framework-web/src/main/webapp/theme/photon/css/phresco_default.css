@@ -3670,7 +3670,6 @@ div.submit_input {
     width: auto;
     padding: 2px;
 	color:#FFFFFF;
-	z-index: 2001;
 }
 .username {
 	cursor: pointer;

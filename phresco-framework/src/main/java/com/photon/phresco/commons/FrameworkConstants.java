@@ -215,6 +215,7 @@ public interface FrameworkConstants {
     String URL = "url";
     String ADD = "add";
     String REPO_URL = "repoUrl";
+    String ADD_TO_REPO = "addToRepo";
     String TEST_REPO_URL = "testRepoUrl";
     String PROJECT_UPDATE_POPUP = "projectUpdatePopup";
     String CLONED_WORKSPACE = "clonedWorkspace";

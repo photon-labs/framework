@@ -1545,6 +1545,13 @@ function removeRow(obj) {
 	}
 }
 
+function removeLock(actionType) {
+	var params = getBasicParams();
+	params = params.concat("&actionType=");
+	params = params.concat(actionType);
+	loadContent('removeLock', '', $('#build-body-container'), params, true);
+}
+
 function disableUploadButton(controlObj) {
 	controlObj.find("input[type='file']").attr('disabled', 'disabled');
 	controlObj.find($(".qq-upload-button")).removeClass("btn-primary qq-upload-button").addClass("disabled");
