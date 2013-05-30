@@ -314,7 +314,7 @@ public class RepositoryService extends RestBase implements FrameworkConstants {
 			ApplicationInfo applicationInfo = FrameworkServiceUtil.getApplicationInfo(appDirName);
 			scmi.importToRepo(type, repodetail.getRepoUrl(), repodetail.getUserName(), repodetail.getPassword(), null, null, applicationInfo, repodetail.getCommitMessage());
 			User user = ServiceManagerImpl.USERINFO_MANAGER_MAP.get(userId);
-			updateLatestProject(user, projectId, appId);
+		//	updateLatestProject(user, projectId, appId);
 			ResponseInfo finalOutput = responseDataEvaluation(responseData, null, "SVN project added Successfully", null);
 			return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
 		} catch (Exception e) {
@@ -330,7 +330,7 @@ public class RepositoryService extends RestBase implements FrameworkConstants {
 			ApplicationInfo applicationInfo = FrameworkServiceUtil.getApplicationInfo(appDirName);
 			scmi.importToRepo(type, repodetail.getRepoUrl(), repodetail.getUserName(), repodetail.getPassword(), null, null,	applicationInfo, repodetail.getCommitMessage());
 			User user = ServiceManagerImpl.USERINFO_MANAGER_MAP.get(userId);
-			updateLatestProject(user, projectId, appId);
+		//	updateLatestProject(user, projectId, appId);
 			ResponseInfo finalOutput = responseDataEvaluation(responseData, null, "GIT project added Successfully", null);
 			return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
 		} catch (Exception e) {
@@ -442,5 +442,4 @@ public class RepositoryService extends RestBase implements FrameworkConstants {
 			throw new PhrescoException(e);
 		}
 	}
-
-}
+}		
