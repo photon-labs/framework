@@ -36,10 +36,10 @@ import com.photon.phresco.commons.model.ArtifactGroupInfo;
 import com.photon.phresco.commons.model.ArtifactInfo;
 import com.photon.phresco.commons.model.CoreOption;
 import com.photon.phresco.commons.model.DownloadInfo;
-import com.photon.phresco.commons.model.UserPermissions;
 import com.photon.phresco.commons.model.ProjectInfo;
 import com.photon.phresco.commons.model.SelectedFeature;
 import com.photon.phresco.commons.model.User;
+import com.photon.phresco.commons.model.UserPermissions;
 import com.photon.phresco.commons.model.WebService;
 import com.photon.phresco.configuration.ConfigurationInfo;
 import com.photon.phresco.exception.PhrescoException;
@@ -157,7 +157,7 @@ public class ProjectService extends RestBase implements FrameworkConstants {
 			StringBuilder sbs = null;
 			if(StringUtils.isNotEmpty(appDirName)) {
 				sbs = new StringBuilder(Utility.getProjectHome()).append(appDirName).append(
-						File.separator).append(Constants.DOT_PHRESCO_FOLDER).append(File.separator).append("project.info");
+						File.separator).append(Constants.DOT_PHRESCO_FOLDER).append(File.separator).append(PROJECT_INFO);
 			} 
 			bufferedReader = new BufferedReader(new FileReader(sbs.toString()));
 			Type type = new TypeToken<ProjectInfo>() {}.getType();

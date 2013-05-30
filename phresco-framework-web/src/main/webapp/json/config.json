@@ -4,11 +4,12 @@
 			"name":"dev",
 			"default" :true
 		},
-		"locales" : "../locales/en/framework.json"
+		"locales" : "locales/en/framework.json"
 	},
 	
 	"navigation" : {
 		"transitionType" : 1,
+		"cancelTransitionType" : 2,
 		"isNative" : false
 	},
 

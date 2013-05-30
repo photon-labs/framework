@@ -6,8 +6,8 @@ define(["framework/widgetWithTemplate", "navigation/listener/navigationListener"
 		navigationEvent : null,
 		navigationHeader : null,
 		// template URL, used to indicate where to get the template
-		templateUrl: commonVariables.contexturl + "/components/navigation/template/navigation.tmp",
-		configUrl: "../components/navigation/config/config.json",
+		templateUrl: commonVariables.contexturl + "components/navigation/template/navigation.tmp",
+		configUrl: "components/navigation/config/config.json",
 		name : window.commonVariables.navigation,
 		navigationListener : null,
 		onAddNewProjectEvent : null,

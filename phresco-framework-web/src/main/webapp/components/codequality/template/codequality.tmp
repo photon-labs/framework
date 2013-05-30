@@ -26,8 +26,8 @@
 								<table><tbody id="dynamicContent"></tbody></table>
                             <li>
                             	<div class="flt_left">
-                                	<input type="button" data-i18n="[value]codequality.btn.validate" class="btn btn_style">
-                                    <input type="button" data-i18n="[value]codequality.btn.close" class="btn btn_style dyn_popup_close">
+                                	<input type="button" data-i18n="[value]codequality.btn.validate" class="btn btn_style" name="validate" id="validate">
+                                    <input type="button" data-i18n="[value]codequality.btn.close" class="btn btn_style dyn_popup_close" name="close">
                                 </div>
                             </li>
                         </ul>
@@ -35,7 +35,7 @@
              </div>
                     
         </div>
-        <div class="code_report_icon"><a class="tooltiptop" title="" data-placement="bottom" data-toggle="tooltip" href="#" data-original-title="PDF Report"><img src="../themes/default/images/helios/code_pdf_icon.png" width="28" height="29" border="0" alt=""></a></div>
+        <div class="code_report_icon"><a class="tooltiptop" title="" data-placement="bottom" data-toggle="tooltip" href="#" data-original-title="PDF Report"><img src="themes/default/images/helios/code_pdf_icon.png" width="28" height="29" border="0" alt=""></a></div>
     </section>
 	
     <section class="content_main create_proj code_content">
@@ -55,7 +55,7 @@
                 </ul>
             </div>
             <div class="codeval_content">
-            	<font data-i18n="codequality.sonarreport">Sonar Report will appear here</font>
+            	<font data-i18n="codequality.sonarreport" id="logDiv">Sonar Report will appear here</font>
             </div>
         </div>
     	<!--content_main div ends here -->

@@ -129,8 +129,8 @@ define(["framework/widget", "framework/widgetWithTemplate", "projectlist/api/pro
 			Clazz.navigationController.jQueryContainer = commonVariables.contentPlaceholder;
 			self.editAplnContent = commonVariables.navListener.getMyObj(commonVariables.editApplication);
 			self.editAplnContent.appDirName = value;
-            self.projectListAPI.localVal.setJson('appDirName', value);			
-            self.projectListAPI.localVal.setJson('techid', techid);			
+            self.projectListAPI.localVal.setSession('appDirName', value);
+            self.projectListAPI.localVal.setSession('techid', techid);	
 			Clazz.navigationController.push(self.editAplnContent, true);
 			$("#aplntitle").html("Edit - "+value);
 		},

@@ -4,8 +4,8 @@ define(["framework/widgetWithTemplate", "build/listener/buildListener"], functio
 	Clazz.com.components.build.js.Build = Clazz.extend(Clazz.WidgetWithTemplate, {
 		
 		// template URL, used to indicate where to get the template
-		templateUrl: commonVariables.contexturl + "/components/build/template/build.tmp",
-		configUrl: "../components/build/config/config.json",
+		templateUrl: commonVariables.contexturl + "components/build/template/build.tmp",
+		configUrl: "components/build/config/config.json",
 		name : commonVariables.build,
 		buildListener : null,
 		onProgressEvent : null,
@@ -37,11 +37,11 @@ define(["framework/widgetWithTemplate", "build/listener/buildListener"], functio
 		
 		preRender: function(whereToRender, renderFunction){
 			var self = this;
-			/* self.buildListener.getBuildInfo(self.buildListener.getRequestHeader(self.projectRequestBody), function(response) {
+			self.buildListener.getBuildInfo(self.buildListener.getRequestHeader(self.projectRequestBody), function(response) {
 				renderFunction(response, whereToRender);
-			}); */
+			});
 			
-			var buildInfo = {"buildInfo":[
+			/* var buildInfo = {"buildInfo":[
 				{"version" : "1000", "datetime":"18/Mar/2013 10:51:43"},
 				{"version" : "1001", "datetime":"19/Mar/2013 10:23:43"},
 				{"version" : "1002", "datetime":"20/Mar/2013 10:45:43"},
@@ -49,7 +49,7 @@ define(["framework/widgetWithTemplate", "build/listener/buildListener"], functio
 				{"version" : "1004", "datetime":"23/Mar/2013 10:33:43"},
 				{"version" : "1005", "datetime":"24/Mar/2013 10:55:43"}
 			]};
-			renderFunction(buildInfo, whereToRender);
+			renderFunction(buildInfo, whereToRender); */
 		},
 
 		

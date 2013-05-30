@@ -5,8 +5,8 @@ define(["framework/widgetWithTemplate", "header/listener/headerListener"] , func
 	Clazz.com.commonComponents.modules.header.js.Header = Clazz.extend(Clazz.WidgetWithTemplate, {
 		headerEvent : null,
 		// template URL, used to indicate where to get the template
-		templateUrl: commonVariables.contexturl + "/js/commonComponents/modules/header/template/header.tmp",
-		configUrl: "../../js/commonComponents/modules/header/config/config.json",
+		templateUrl: commonVariables.contexturl + "js/commonComponents/modules/header/template/header.tmp",
+		configUrl: "js/commonComponents/modules/header/config/config.json",
 		name : "header",
 		//Events, to fire a function
 		onButtonClick: null,
@@ -33,7 +33,7 @@ define(["framework/widgetWithTemplate", "header/listener/headerListener"] , func
 				self.headerListener.headerAPI.localVal.getSession('customerlogo') != ""){
 				$('#bannerlogo').attr("src", "data:image/png;base64," + self.headerListener.headerAPI.localVal.getSession('customerlogo'));
 			} else {
-				$('#bannerlogo').attr("src", "../themes/default/images/helios/helios_logo.png");
+				$('#bannerlogo').attr("src", "themes/default/images/helios/helios_logo.png");
 			}
 		},
 		

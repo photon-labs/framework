@@ -5,8 +5,8 @@ define(["framework/widgetWithTemplate", "dynamicPage/listener/dynamicPageListene
 		ondynamicPageEvent : null,
 		dynamicPageListener : null,
 		// template URL, used to indicate where to get the template
-		templateUrl: commonVariables.contexturl + "/components/dynamicPage/template/dynamicPage.tmp",
-		configUrl: "../components/dynamicPage/config/config.json",
+		templateUrl: commonVariables.contexturl + "components/dynamicPage/template/dynamicPage.tmp",
+		configUrl: "components/dynamicPage/config/config.json",
 		name : commonVariables.dynamicPage,
 		localConfig: null,
 

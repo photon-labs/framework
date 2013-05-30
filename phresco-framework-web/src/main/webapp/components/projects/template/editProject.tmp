@@ -26,9 +26,9 @@
                     </td>
 					
                     <td data-i18n="project.create.label.startdate" name="startdate-lbl"></td>
-                    <td class="startdate" name="startdateholder"><input name="startdate" type="text" id="startDate"><span class="add-on"><img src="../themes/default/images/helios/cal_icon.png" border="0" alt=""></span></td>
+                    <td class="startdate" name="startdateholder"><input name="startdate" type="text" id="startDate"><span class="add-on"><img src="themes/default/images/helios/cal_icon.png" border="0" alt=""></span></td>
                     <td data-i18n="project.create.label.enddate" name="enddate-lbl"></td>
-                    <td class="enddate" name="enddateholder"><input name="enddate" id="endDate" type="text"><span class="add-on"><span class="add-on"><img src="../themes/default/images/helios/cal_icon.png" border="0" alt=""></span></span></td>
+                    <td class="enddate" name="enddateholder"><input name="enddate" id="endDate" type="text"><span class="add-on"><span class="add-on"><img src="themes/default/images/helios/cal_icon.png" border="0" alt=""></span></span></td>
                     
                     <td data-i18n="project.create.label.pilotprojects"></td>
                     <td>

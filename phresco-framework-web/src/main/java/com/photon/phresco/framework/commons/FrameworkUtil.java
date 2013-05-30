@@ -54,6 +54,7 @@ import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLSession;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
+import javax.servlet.http.HttpServletRequest;
 
 import org.antlr.stringtemplate.StringTemplate;
 import org.apache.commons.codec.binary.Base64;
@@ -111,6 +112,7 @@ public class FrameworkUtil extends FrameworkBaseAction implements Constants, Fra
 	private static final long serialVersionUID = 1L;
 	private static FrameworkUtil frameworkUtil = null;
     private static final Logger S_LOGGER = Logger.getLogger(FrameworkUtil.class);
+    private static HttpServletRequest request;
     
 	public static FrameworkUtil getInstance() throws PhrescoException {
         if (frameworkUtil == null) {
@@ -118,6 +120,14 @@ public class FrameworkUtil extends FrameworkBaseAction implements Constants, Fra
         }
         return frameworkUtil;
     }
+	
+	public FrameworkUtil() {
+		// TODO Auto-generated constructor stub
+	}
+	
+	public FrameworkUtil(HttpServletRequest request) {
+		this.request = request;
+	}
 	
 	public String getSqlFilePath(String oldAppDirName) throws PhrescoException, PhrescoPomException {
 		return getPomProcessor(oldAppDirName).getProperty(PHRESCO_SQL_PATH);
@@ -315,10 +325,11 @@ public class FrameworkUtil extends FrameworkBaseAction implements Constants, Fra
 	    	serverUrl = frameworkConfig.getSonarUrl();
 	    	S_LOGGER.debug("if condition serverUrl  " + serverUrl);
 	    } else {
-	    	serverUrl = getHttpRequest().getRequestURL().toString();
+	    	serverUrl = request.getRequestURL().toString();
 	    	StringBuilder tobeRemoved = new StringBuilder();
-	    	tobeRemoved.append(getHttpRequest().getContextPath());
-	    	tobeRemoved.append(getHttpRequest().getServletPath());
+	    	tobeRemoved.append(request.getContextPath());
+	    	tobeRemoved.append(request.getServletPath());
+	    	tobeRemoved.append(request.getPathInfo());
 
 	    	Pattern pattern = Pattern.compile(tobeRemoved.toString());
 	    	Matcher matcher = pattern.matcher(serverUrl);

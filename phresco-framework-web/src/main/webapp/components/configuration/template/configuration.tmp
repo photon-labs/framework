@@ -83,15 +83,16 @@
 			  <tr>
 				<td>{{name}}</td>  
 				<td>{{desc}}</td>
-				<td><a href="#" name="editConfiguration" key={{name}}><img src="../themes/default/images/helios/configure_icon.png" width="15" height="16" border="0" alt=""></a></td>
+				<td><a href="#" name="editConfiguration" key={{name}}><img src="themes/default/images/helios/configure_icon.png" width="15" height="16" border="0" alt=""></a></td>
 				<td>
 					{{#if ../userPermissions.manageConfiguration}}
 						<a class="tooltiptop" href="#" data-toggle="tooltip" data-original-title="Clone" name="clone_pop">
-							<img src="../themes/default/images/helios/clone_icon.png" width="20" height="18" border="0" alt="">
+							<img src="themes/default/images/helios/clone_icon.png" width="20" height="18" border="0" alt="">
 						</a>
 					{{else}}
-						<img src="../themes/default/images/helios/clone_icon_off.png" width="20" height="18" border="0" alt="">
+						<img src="themes/default/images/helios/clone_icon_off.png" width="20" height="18" border="0" alt="">
 					{{/if}}
+					
 					<div id="clone_pop" class="dyn_popup popup_bg" style="display:none;">
                 <table width="100%" border="0" cellspacing="0" cellpadding="5">
                 <tr>
@@ -155,10 +156,10 @@
 				<td>
 					{{#if ../userPermissions.manageConfiguration}}
 						<a name="{{name}}" class="tooltiptop" title="" data-placement="top" data-toggle="tooltip" href="#" data-original-title="Delete Row">
-							<img src="../themes/default/images/helios/delete_row_icon.png" width="29" height="23" border="0" alt="">
+							<img src="themes/default/images/helios/delete_row_icon.png" width="29" height="23" border="0" alt="">
 						</a>
 					{{else}}
-						<img src="../themes/default/images/helios/delete_row_icon_off.png" width="29" height="23" border="0" alt="">
+						<img src="themes/default/images/helios/delete_row_icon_off.png" width="29" height="23" border="0" alt="">
 					{{/if}}
 				<div id="{{name}}" class="dyn_popup"> Are you sure to delete this ?
 					<div>

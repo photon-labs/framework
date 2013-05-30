@@ -1,6 +1,7 @@
 package com.photon.phresco.framework.rest.api;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -146,6 +147,32 @@ public class ConfigurationService extends RestBase {
 			return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
 		} catch (PhrescoException e) {
 			ResponseInfo<List<SettingsTemplate>> finalOutput = responseDataEvaluation(responseData, e, "confuguration Template not Fetched", null);
+			return Response.status(Status.BAD_REQUEST).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
+		}
+	}
+	
+	@GET
+	@Path ("/types")
+	@Produces (MediaType.APPLICATION_JSON)
+	public Response getConfigTypes(@QueryParam("customerId") String customerId, @QueryParam("userId") String userId, @QueryParam("techId") String techId) {
+		ResponseInfo<List<String>> responseData = new ResponseInfo<List<String>>();
+		try {
+			ServiceManager serviceManager = CONTEXT_MANAGER_MAP.get(userId);
+			if(serviceManager == null) {
+				ResponseInfo<List<String>> finalOutput = responseDataEvaluation(responseData, null, "UnAuthorized User", null);
+				return Response.status(Status.BAD_REQUEST).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
+			}
+			List<String> settingsTypes = new ArrayList<String>();
+			List<SettingsTemplate> settingsTemplates = serviceManager.getConfigTemplates(customerId, techId);
+			if(CollectionUtils.isNotEmpty(settingsTemplates)) {
+				for (SettingsTemplate settingsTemplate : settingsTemplates) {
+					settingsTypes.add(settingsTemplate.getName());
+				}
+			}
+			ResponseInfo<List<String>> finalOutput = responseDataEvaluation(responseData, null, "confuguration Template Fetched successfully", settingsTypes);
+			return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
+		} catch (PhrescoException e) {
+			ResponseInfo<List<String>> finalOutput = responseDataEvaluation(responseData, e, "confuguration Template not Fetched", null);
 			return Response.status(Status.BAD_REQUEST).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
 		}
 	}

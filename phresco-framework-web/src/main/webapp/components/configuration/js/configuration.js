@@ -4,8 +4,8 @@ define(["framework/widgetWithTemplate", "configuration/listener/configurationLis
 	Clazz.com.components.configuration.js.Configuration = Clazz.extend(Clazz.WidgetWithTemplate, {
 		
 		// template URL, used to indicate where to get the template
-		templateUrl: commonVariables.contexturl + "/components/configuration/template/configuration.tmp",
-		configUrl: "../components/configuration/config/config.json",
+		templateUrl: commonVariables.contexturl + "components/configuration/template/configuration.tmp",
+		configUrl: "components/configuration/config/config.json",
 		name : commonVariables.configuration,
 		configurationAPI : null,
 		configurationlistener : null,
