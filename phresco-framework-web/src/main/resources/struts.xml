@@ -1068,5 +1068,17 @@
         <action name="checkLockForDeploy" method="checkForLock" class="com.photon.phresco.framework.actions.applications.Applications">
             <result type="json" />        
         </action>
+       
+        <action name="checkLockForAddToRepo" method="checkForLock" class="com.photon.phresco.framework.actions.applications.Applications">
+            <result type="json" />        
+        </action>
+        
+        <action name="checkLockForCommit" method="checkForLock" class="com.photon.phresco.framework.actions.applications.Applications">
+            <result type="json" />        
+        </action>
+        
+        <action name="checkLockForUpdate" method="checkForLock" class="com.photon.phresco.framework.actions.applications.Applications">
+            <result type="json" />        
+        </action>
     </package>
 </struts>
