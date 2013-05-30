@@ -1934,4 +1934,11 @@ public interface FrameworkConstants {
 	    String PER_EXECUTE_CI_JOBS = "execute_ci_jobs";
 	    String PER_MANAGE_MAVEN_REPORTS = "manage_maven_reports";
 	    String PER_VIEW_MAVEN_REPORTS = "view_maven_reports";
+	    
+	    String TEST_UNIT = "unitTest";
+	    String TEST_FUNCTIONAL = "functionalTest";
+	    String TEST_COMPONENT = "componentTest";
+	    String TEST_MANUAL = "manualTest";
+	    String TEST_LOAD = "loadTest";
+	    String TEST_PERFORMANCE = "performanceTest";
 }

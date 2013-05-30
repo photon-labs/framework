@@ -163,6 +163,7 @@ define(["framework/widget", "navigation/api/navigationAPI", "dynamicPage/dynamic
 			return retuenObj;
 		},
 		
+		//To show/hide controls based on the component 
 		showHideControls : function(keyword) {
 			var self = this;
 			switch(keyword) {
@@ -177,6 +178,7 @@ define(["framework/widget", "navigation/api/navigationAPI", "dynamicPage/dynamic
 			}
 		},
 		
+		//To apply the RBAC to the users
 		applyRBAC : function(keyword) {
 			var self = this;
 			var userPermissions = JSON.parse(self.navAPI.localVal.getSession('userPermissions'));
@@ -196,6 +198,18 @@ define(["framework/widget", "navigation/api/navigationAPI", "dynamicPage/dynamic
 					}
 					break;
 			}
+		},
+		
+		//Handles the open folder action
+		openFolder : function(actionBody) {
+			var self = this;
+			self.navigationAction(self.getActionHeader(actionBody, "openFolder"), function(response) {});
+		},
+		
+		//Handles the copy path action
+		copyPath : function(actionBody) {
+			var self = this;
+			self.navigationAction(self.getActionHeader(actionBody, "copyPath"), function(response) {});
 		},
 		
 		renderHeader : function() {
@@ -263,7 +277,50 @@ define(["framework/widget", "navigation/api/navigationAPI", "dynamicPage/dynamic
 				Clazz.navigationController.jQueryContainer = commonVariables.contentPlaceholder;
 				Clazz.navigationController.push(currentObj, true);
 			}
-		}
+		},
+		
+		/***
+		 * provides the request header
+		 *
+		 * @synonymRequestBody: request body of synonym
+		 * @return: returns the contructed header
+		 */
+		getActionHeader : function(requestBody, action) {
+			var self=this, header, data = {}, userId;
+			var type = requestBody.type;
+			var appDirName = self.navAPI.localVal.getJson("appDirName");
+			header = {
+				contentType: "application/json",				
+				dataType: "json",
+				webserviceurl: ''
+			}
+					
+			if (action == "openFolder") {
+				header.requestMethod = "GET";
+				header.webserviceurl = commonVariables.webserviceurl + commonVariables.openFolderContext + "?type=" + type + "&appDirName=" + appDirName;				
+			} else if (action == "copyPath") {
+				header.requestMethod = "GET";
+				header.webserviceurl = commonVariables.webserviceurl + commonVariables.copyPathContext + "?type=" + type + "&appDirName=" + appDirName;
+			}
+			return header;
+		},
+		
+		navigationAction : function(header, callback) {
+			var self = this;			
+			try {
+				self.navAPI.donavigation(header,
+					function(response) {
+						if (response != null ) {
+							callback(response);						
+						} else {
+							callback({ "status" : "service failure"});
+						}
+					}
+				);
+			} catch(exception) {
+				self.loadingScreen.removeLoading();
+			}
+		},
 	});
 
 	return Clazz.com.components.navigation.js.listener.navigationListener;

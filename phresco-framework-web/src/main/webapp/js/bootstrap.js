@@ -57,6 +57,18 @@ var commonVariables = {
 	mevanService : "mevanService",
 	mevanServiceContext : "mevanService",
 	
+	openFolderContext : "util/openFolder",
+	copyPathContext : "util/copyPath",
+	
+	/******* Open folder and copy path constants *******/
+	typeBuild : "build",
+	typeUnitTest : "unitTest",
+	typeFunctionalTest : "functionalTest",
+	typeManualTest : "manualTest",
+	typeLoadTest : "loadTest",
+	typePerformanceTest : "performanceTest",
+	typeComponentTest : "componentTest",
+			
 	/******* mvn Context *********/
 	
 	mvnlogService : "app/readlog",

@@ -25,6 +25,12 @@ import com.phresco.pom.util.PomProcessor;
 
 public class FrameworkServiceUtil implements Constants, FrameworkConstants {
 	
+	/**
+	 * To get the application info of the given appDirName
+	 * @param appDirName
+	 * @return
+	 * @throws PhrescoException
+	 */
 	public static ApplicationInfo getApplicationInfo(String appDirName) throws PhrescoException {
 		StringBuilder builder  = new StringBuilder();
 		builder.append(Utility.getProjectHome())
@@ -49,6 +55,12 @@ public class FrameworkServiceUtil implements Constants, FrameworkConstants {
 		}
 	}
 	
+	/**
+	 * To get the PomProcessor instance for the given application
+	 * @param appDirName
+	 * @return
+	 * @throws PhrescoException
+	 */
 	public static PomProcessor getPomProcessor(String appDirName) throws PhrescoException {
 		try {
 			StringBuilder builder  = new StringBuilder();
@@ -62,12 +74,24 @@ public class FrameworkServiceUtil implements Constants, FrameworkConstants {
 		}
 	}
 
+	/**
+	 * To get the application home for the given appDirName
+	 * @param appDirName
+	 * @return
+	 * @throws PhrescoException
+	 */
 	public static String getApplicationHome(String appDirName) throws PhrescoException {
         StringBuilder builder = new StringBuilder(Utility.getProjectHome());
         builder.append(appDirName);
         return builder.toString();
 	}
 
+	/**
+	 * To get the modules of the given application
+	 * @param appDirName
+	 * @return
+	 * @throws PhrescoException
+	 */
 	public static List<String> getProjectModules(String appDirName) throws PhrescoException {
     	try {
             PomProcessor processor = getPomProcessor(appDirName);
@@ -82,6 +106,12 @@ public class FrameworkServiceUtil implements Constants, FrameworkConstants {
     	return null;
     }
 	
+	/**
+	 * To get the war project modules of the given application
+	 * @param appDirName
+	 * @return
+	 * @throws PhrescoException
+	 */
 	public static List<String> getWarProjectModules(String appDirName) throws PhrescoException {
     	try {
 			List<String> projectModules = getProjectModules(appDirName);
@@ -99,5 +129,84 @@ public class FrameworkServiceUtil implements Constants, FrameworkConstants {
 		} catch (PhrescoException e) {
 			throw new PhrescoException(e);
 		}
+    }
+	
+	/**
+	 * To ge the unit test directory
+	 * @param appDirName
+	 * @return
+	 * @throws PhrescoException
+	 * @throws PhrescoPomException
+	 */
+	public static String getUnitTestDir(String appDirName) throws PhrescoException, PhrescoPomException {
+        return getPomProcessor(appDirName).getProperty(POM_PROP_KEY_UNITTEST_DIR);
+    }
+	
+	/**
+	 * To get the functional test directory
+	 * @param appDirName
+	 * @return
+	 * @throws PhrescoException
+	 * @throws PhrescoPomException
+	 */
+	public static String getFunctionalTestDir(String appDirName) throws PhrescoException, PhrescoPomException {
+		return getPomProcessor(appDirName).getProperty(POM_PROP_KEY_FUNCTEST_DIR);
+	}
+	
+	/**
+	 * To get the component test directory
+	 * @param appinfo
+	 * @return
+	 * @throws PhrescoException
+	 * @throws PhrescoPomException
+	 */
+	public static String getComponentTestDir(String appDirName) throws PhrescoException, PhrescoPomException {
+        return getPomProcessor(appDirName).getProperty(POM_PROP_KEY_COMPONENTTEST_DIR);
+    }
+	
+	/**
+	 * To get the load test directory
+	 * @param appDirName
+	 * @return
+	 * @throws PhrescoException
+	 * @throws PhrescoPomException
+	 */
+	public static String getLoadTestDir(String appDirName) throws PhrescoException, PhrescoPomException {
+    	return getPomProcessor(appDirName).getProperty(POM_PROP_KEY_LOADTEST_DIR);
+    }
+	
+	/**
+	 * To get the performance test directory
+	 * @param appDirName
+	 * @return
+	 * @throws PhrescoException
+	 * @throws PhrescoPomException
+	 */
+	public static String getPerformanceTestDir(String appDirName) throws PhrescoException, PhrescoPomException {
+        return getPomProcessor(appDirName).getProperty(POM_PROP_KEY_PERFORMANCETEST_DIR);
+    }
+	
+	/**
+	 * To get the manual test directory
+	 * @param appDirName
+	 * @return
+	 * @throws PhrescoException
+	 * @throws PhrescoPomException
+	 */
+	public static String getManualTestDir(String appDirName) throws PhrescoException, PhrescoPomException {
+        return getPomProcessor(appDirName).getProperty(POM_PROP_KEY_MANUALTEST_DIR);
+    }
+	
+	/**
+	 * To get the build test directory
+	 * @param appDirName
+	 * @return
+	 * @throws PhrescoException
+	 */
+	public static String getBuildDir(String appDirName) throws PhrescoException {
+		StringBuilder builder = new StringBuilder(getApplicationHome(appDirName))
+		.append(File.separator)
+		.append(BUILD_DIR);
+        return builder.toString();
     }
 }
