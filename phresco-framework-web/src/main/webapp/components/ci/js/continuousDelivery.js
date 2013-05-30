@@ -3,8 +3,8 @@ define(["framework/widgetWithTemplate", "ci/listener/ciListener"], function() {
 
 	Clazz.com.components.ci.js.ContinuousDelivery = Clazz.extend(Clazz.WidgetWithTemplate, {
 		// template URL, used to indicate where to get the template
-		templateUrl: commonVariables.contexturl + "/components/ci/template/continuousDelivery.tmp",
-		configUrl: "../components/projects/config/config.json",
+		templateUrl: commonVariables.contexturl + "components/ci/template/continuousDelivery.tmp",
+		configUrl: "components/projects/config/config.json",
 		name : commonVariables.continuousDelivery,
 		ciListener: null,
 		dynamicpage : null,
@@ -52,11 +52,47 @@ define(["framework/widgetWithTemplate", "ci/listener/ciListener"], function() {
 		 * Bind the action listeners. The bindUI() is called automatically after the render is complete 
 		 *
 		 */
-		bindUI : function(){
+		bindUI : function() {
 			var self = this;
-			$(".dyn_popup").hide();
-			$("input[name=jobTemplate]").click(function() {
-   				self.opencc(this, $(this).attr('name'));
+   			$(".dyn_popup").hide();
+	  		$(window).resize(function() {
+				$(".dyn_popup").hide();
+	  		});
+	  		$(".first_list").find("span").hide();
+
+			$(function() {
+			    $( "#sortable1, #sortable2" ).sortable({
+			      connectWith: ".connectedSortable",
+				  items: "> li",
+				  start: function( event, ui ) {
+					  $("#sortable1 li.ui-state-default a").hide();
+					  $("#sortable2 li.ui-state-default a").show();	
+					  $(".dyn_popup").hide();
+					  },
+				  stop: function( event, ui ) {
+					  $("#sortable2 li.ui-state-default a").show();
+					  $("#sortable1 li.ui-state-default a").hide();	
+					  $(".dyn_popup").hide();
+					  }	  
+			    }).disableSelection();
+			 }); 
+
+	  		$(function () {
+				$(".tooltiptop").tooltip();
+			});
+		
+			$(".code_content .scrollContent").mCustomScrollbar({
+				autoHideScrollbar:true,
+				theme:"light-thin",
+				advanced:{
+						updateOnContentResize: true
+				}
+			});
+		
+			$("#sortable1 li.ui-state-default a").hide();
+
+			$("input[name=cont_delivery]", "input[name=code_build]").click(function() {
+   				self.openccmini(this, $(this).attr('name'));
    			});
 		}
 	});

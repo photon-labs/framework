@@ -3,8 +3,8 @@ define(["framework/widgetWithTemplate", "ci/listener/ciListener"], function() {
 
 	Clazz.com.components.ci.js.JobTemplates = Clazz.extend(Clazz.WidgetWithTemplate, {
 		// template URL, used to indicate where to get the template
-		templateUrl: commonVariables.contexturl + "/components/ci/template/jobTemplates.tmp",
-		configUrl: "../components/projects/config/config.json",
+		templateUrl: commonVariables.contexturl + "components/ci/template/jobTemplates.tmp",
+		configUrl: "components/projects/config/config.json",
 		name : commonVariables.jobTemplates,
 		ciListener: null,
 		dynamicpage : null,

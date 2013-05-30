@@ -1,6 +1,6 @@
     <section class="optiontitle qual_unit">
-        <div class="unit_text">
-            Jobs
+      <div class="unit_text">
+          Job Templates
         </div>
         <div class="flt_right">
         <input type="submit" value="Create a Job Template" name="jobTemplate" class="btn btn_style create_job_btn">
@@ -8,13 +8,13 @@
                         <table class="table" cellpadding="0" cellspacing="0" border="0">
                             <tbody>
                                 <tr>
-                                    <td>Name</td>
+                                  <td>Name</td>
                                     <td>Job Type</td>
                                 </tr>
                                 <tr>
-                                    <td><input type="text" placeholder="Job Name"></td>
+                                  <td><input type="text" placeholder="Job Name"></td>
                                     <td><select>
-                                                <option>Code Validation</option>
+                                              <option>Code Validation</option>
                                                 <option>Build</option>
                                                 <option>Deploy</option>
                                                 <option>Functional Test</option>
@@ -23,12 +23,12 @@
                                     </td>
                                 </tr>
                                 <tr>
-                                    <td>Application<sup>*</sup></td>
+                                  <td>Application<sup>*</sup></td>
                                 </tr>
                                  <tr>
-                                    <td colspan="3">
-                                        <div class="popuptextarea">
-                                            <input type="checkbox">JQW - Jquery Widget<br>
+                                  <td colspan="3">
+                                      <div class="popuptextarea">
+                                          <input type="checkbox">JQW - Jquery Widget<br>
                                             <input type="checkbox">Native_eshop-androidnative<br>
                                             <input type="checkbox">ds-nodejswebservice
                                         </div>
@@ -41,7 +41,7 @@
                                 <tr>
                                     <td><input type="checkbox">Repo</td>
                                     <td><select>
-                                                <option>SVN</option>
+                                              <option>SVN</option>
                                                 <option>Git</option>
                                                 <option>Bitkeeper</option>
                                         </select>
@@ -64,10 +64,10 @@
                             <input type="button" value="Close" class="btn btn_style dyn_popup_close">
                          </div>
         </div>
-    </div>
+  </div>
     </section>
     <section class="features_content_main create_proj">
-            <table class="table table-striped table_border table-bordered jobs_table" cellpadding="0" cellspacing="0" border="0">
+          <table class="table table-striped table_border table-bordered jobs_table" cellpadding="0" cellspacing="0" border="0">
               <thead>
                 <tr>
                   <th>Name</th>
@@ -105,6 +105,6 @@
               </tbody>
         </table>
         </div>
-        <!--content_main div ends here -->
+      <!--content_main div ends here -->
 
     </section>

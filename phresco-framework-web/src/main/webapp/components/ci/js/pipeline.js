@@ -3,8 +3,8 @@ define(["framework/widgetWithTemplate", "ci/listener/ciListener"], function() {
 
 	Clazz.com.components.ci.js.Pipeline = Clazz.extend(Clazz.WidgetWithTemplate, {
 		// template URL, used to indicate where to get the template
-		templateUrl: commonVariables.contexturl + "/components/ci/template/pipeline.tmp",
-		configUrl: "../components/projects/config/config.json",
+		templateUrl: commonVariables.contexturl + "components/ci/template/pipeline.tmp",
+		configUrl: "components/projects/config/config.json",
 		name : commonVariables.pipeline,
 		ciListener: null,
 		dynamicpage : null,

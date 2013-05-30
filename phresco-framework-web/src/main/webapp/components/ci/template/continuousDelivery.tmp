@@ -1,37 +1,37 @@
     <section class="optiontitle qual_unit">
-      <div class="unit_text">
-          Continuous Delivery
+        <div class="unit_text">
+            Continuous Delivery
         </div>      
     </section>
-  
+    
     <section class="content_main code_content">
-      <div class="ci_envtable">
-          <table class="table">
-              <tbody>
-                  <tr>
-                      <td>Name</td>
+        <div class="ci_envtable">
+            <table class="table">
+                <tbody>
+                    <tr>
+                        <td>Name</td>
                         <td><input type="text"></td>
                     </tr>
                 </tbody>
             </table>
             <table class="table">
-              <tbody>
-                  <tr>
-                      <td rowspan="3">Environment</td>
+                <tbody>
+                    <tr>
+                        <td rowspan="3">Environment</td>
                         <td>
-                          <div class="popuptextarea">
-                                <input type="checkbox">Testing<br>
-                                <input type="checkbox">Staging<br>
-                                <input type="checkbox">Production
-                            </div>
+                            <select>
+                                <option>Testing</option>
+                                <option>Staging</option>
+                                <option>Production</option>
+                            </select>
                         </td>
                     </tr>
                 </tbody>
             </table>
         </div>    
-      <div class="sortablecont">
+        <div class="sortablecont">
                 <ul id="sortable1" class="connectedSortable type_test">
-                  <div class="sorthead">Web Service</div>
+                    <div class="sorthead">Web Service</div>
                     <li class="ui-state-default">Webservice - Unit Test</li>
                     <li class="ui-state-default">Webservice - Build</li>
                     <li class="ui-state-default">Webservice - Code Validation</li>
@@ -41,7 +41,7 @@
                     <li class="ui-state-default">JQWidget - Deploy</li>
                     <li class="ui-state-default">JQWidget - Code Validation</li>
                     <div class="sorthead">YUI Multichannel</div>
-                    <li class="ui-state-default">YUI - Code Validation<a href="javascript:;" class="validate_icon" onClick="openccmini(this,'cont_delivery');"><img src="../themes/default/images/helios/validate_image.png" width="19" height="19" border="0"></a></li>
+                    <li class="ui-state-default">YUI - Code Validation<a href="javascript:;" class="validate_icon" name="cont_delivery"><img src="../themes/default/images/helios/validate_image.png" width="19" height="19" border="0"></a></li>
                     
                     <div id="cont_delivery" class="dyn_popup popup_bg">
                         <table class="clonetable" width="100%" border="0" cellspacing="0" cellpadding="0">
@@ -74,27 +74,27 @@
                             <tbody>
                                 <tr>
                                     <td>Schedule <br>
-                                          <select>
-                                              <option>Daily</option>
-                                          </select>
+                                            <select>
+                                                <option>Daily</option>
+                                            </select>
                                     </td>
                                     <td>At Every
                                     <div class="every_select">
-                                      <select>
-                                              <option>Hrs</option>
+                                        <select>
+                                                <option>Hrs</option>
                                         </select>
                                         <select>
-                                              <option>Mins</option>
+                                                <option>Mins</option>
                                         </select>
                                     </div>
                                     </td>
                                     <td>Cron <br>
-                                      <input type="password" placeholder="Password">
+                                        <input type="password" placeholder="Password">
                                     </td>
                                 </tr>
                                 <tr>
-                                  <td colspan="3">
-                                      <div class="build_trigger">
+                                    <td colspan="3">
+                                        <div class="build_trigger">
                                             Build Triggers <br>
                                                 <input type="checkbox"><span> Build Priodically</span>
                                                 <input type="checkbox">Pol SCM
@@ -136,13 +136,13 @@
                             </tbody>
                         </table>
                         <div class="flt_right">
-              <input class="btn btn_style" type="button" value="Configure">
-              <input class="btn btn_style dyn_popup_close" type="button" value="Close">
-            </div>
+                            <input class="btn btn_style" type="button" value="Configure">
+                            <input class="btn btn_style dyn_popup_close" type="button" value="Close">
+                        </div>
                    </div>
     
-                    <li class="ui-state-default">YUI - Build <a href="javascript:;" class="validate_icon" onClick="openccmini(this,'code_build');"><img src="../themes/default/images/helios/validate_image.png" width="19" height="19" border="0"></a></li>
-                      
+                    <li class="ui-state-default">YUI - Build <a href="javascript:;" class="validate_icon" name="code_build"><img src="../themes/default/images/helios/validate_image.png" width="19" height="19" border="0"></a></li>
+                        
                         <div id="code_build" class="dyn_popup popup_bg">
                         <table class="clonetable" width="100%" border="0" cellspacing="0" cellpadding="0">
                             <tbody>
@@ -160,7 +160,7 @@
                             <tbody>
                                 <tr>
                                     <td colspan="3">Overwrite Files ?
-                                      <input type="radio" name="fileoption" checked>Yes
+                                        <input type="radio" name="fileoption" checked>Yes
                                         <input type="radio" name="fileoption">No
                                     </td>
                                 </tr>
@@ -190,7 +190,7 @@
                                 </tr>
                                 <tr>
                                     <td> 
-                                      <input type="text">
+                                        <input type="text">
                                     </td>
                                     <td>
                                         <select>
@@ -198,28 +198,28 @@
                                         </select>
                                     </td>
                                     <td>
-                                      <input type="checkbox"> Show Settings
+                                        <input type="checkbox"> Show Settings
                                     </td>
                                 </tr>
                             </tbody>
                         </table>
                         <div class="flt_right">
-              <input class="btn btn_style" type="button" value="Configure">
-              <input class="btn btn_style dyn_popup_close" type="button" value="Close">
-            </div>
+                            <input class="btn btn_style" type="button" value="Configure">
+                            <input class="btn btn_style dyn_popup_close" type="button" value="Close">
+                        </div>
                    </div>
                 </ul>
                 <ul id="sortable2" class="connectedSortable type_test">
                   
-              </ul>
+                </ul>
         </div>
-      <!--content_main div ends here -->
+        <!--content_main div ends here -->
     </section>
     
     <section class="content_end">
         <div class="flt_right">
-            <a href="ci_pipeline.html"><input type="submit" value="Save" class="btn btn_style add_icon_btn"></a>
+            <a href="ci_pipeline.html"><input type="submit" value="Add" class="btn btn_style add_icon_btn"></a>
             <input type="submit" value="Cancel" class="btn btn_style cancel_icon_btn">
         </div>
-      <!--content_title ends here -->
+        <!--content_title ends here -->
     </section>
