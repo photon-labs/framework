@@ -6,6 +6,7 @@ var commonVariables = {
 	
 	navListener : null,
 	appDirName : null,
+	goal : null,
 	
 	header : "header",
 	headerContext : "",
