@@ -90,6 +90,7 @@ define(["framework/widget", "dynamicPage/api/dynamicPageAPI", "common/loading"],
 			var dependencyVal = "";
 			var psblDependency = "";
 			var showFlag = "";
+			var enableOnchangeFunction = "";
 			
 			if(response.data.length !== 0) {
 				
@@ -278,42 +279,58 @@ define(["framework/widget", "dynamicPage/api/dynamicPageAPI", "common/loading"],
 							
 							if(type === "DynamicParameter"){
 							
-								if(value.show === false){
-									show = ' style="display:none;"';
-								} else {
-									show = "";
-								} 
-								
-								if(value.required === "true"){
-									required = "<sup>*</sup>";
-								} else {
-									required = "";
-								}
-								
-								if(value.editable === "false"){
-									editable = "readonly=readonly";
-								} else {
-									editable = "";
-								}
-								
-								if(value.multiple === "true"){
-									multiple = "multiple=true";
-								} else {
-									multiple = ""
-								}
-								
-								var option = '';
-								self.dynamicPageAPI.getContent(self.getRequestHeader(self.projectRequestBody, value.key, "", "dependency"), function(response) {
-								
-									$.each(response.data.value, function(index, value){
-										option += '<option value='+value.key+'>'+value.value+'</option>';
-									}); 
+								if(!value.sort) {
+									if(value.show === false){
+										show = ' style="display:none;"';
+									} else {
+										show = "";
+									} 
 									
-									$('select[name='+ value.key+']').html(option);
+									if(value.required === "true"){
+										required = "<sup>*</sup>";
+									} else {
+										required = "";
+									}
 									
-								}); 
-								
-								htmlTag += '<tr'+ show +' id="'+value.key+'Control" name="chkCnt"><td>'+getName()+''+ required +'</td><td><select name="'+ value.key +'" id="'+ value.key +'"'+ editable +''+ multiple +'></select></td></tr>';
+									if(value.editable === "false"){
+										editable = "readonly=readonly";
+									} else {
+										editable = "";
+									}
+									
+									if(value.multiple === "true"){
+										multiple = "multiple=true";
+									} else {
+										multiple = ""
+									}
+									
+									var option = '';
+									self.dynamicPageAPI.getContent(self.getRequestHeader(self.projectRequestBody, value.key, "", "dependency"), function(response) {
+									
+										$.each(response.data.value, function(index, value){
+											console.info("value", value);
+											if(value !== undefined && value !== null) {
+												option += '<option value='+value.key+'>'+value.value+'</option>';
+											}
+										}); 
+										
+										$('select[name='+ value.key+']').html(option);
+										
+									});
+									
+									/* if(value.possibleValues !== undefined && value.possibleValues !== null){
+										$.each(value.possibleValues.value, function(index, value){
+											if(value.dependency !== undefined && value.dependency !== null){
+												psblDependency = value.dependency;
+												return false;
+											} 
+										});
+									} */
+
+									htmlTag += '<tr'+ show +' id="'+value.key+'Control" name="chkCnt"><td>'+getName()+''+ required +'</td><td><select name="'+ value.key +'" id="'+ value.key +'"'+ editable +''+ multiple +'></select></td></tr>';	
+							   } else {
+							   
+							   }
 								
 							} 
 							
@@ -371,7 +388,7 @@ define(["framework/widget", "dynamicPage/api/dynamicPageAPI", "common/loading"],
 									multiple = ""
 								}
 								
-								htmlTag += '<tr id="'+value.key+'Control" name="chkCnt"><table class="table table-striped table_border table-bordered" cellpadding="0" cellspacing="0" border="0"><thead><tr><th>Target Folder</th><th>File/Folder</th></tr><tbody><tr><td><input type="text"></td><td><input type="text"><input type="button" value="Browse" class="btn btn_style"><a href="#"><img src="../themes/default/images/helios/plus_icon.png" alt=""></a></td></tr></tbody></table></tr>';
+								htmlTag += '<tr id="'+value.key+'Control" name="chkCnt"><td colspan="2"><table class="table table-striped table_border table-bordered" cellpadding="0" cellspacing="0" border="0"><thead><tr><th>Target Folder</th><th>File/Folder</th></tr><tbody><tr><td><input type="text"></td><td><input type="text"><input type="button" value="Browse" class="btn btn_style"><a href="#"><img src="../themes/default/images/helios/plus_icon.png" alt=""></a></td></tr></tbody></table></td></tr>';
 								
 							}
 							
@@ -547,7 +564,7 @@ define(["framework/widget", "dynamicPage/api/dynamicPageAPI", "common/loading"],
 					
 					var dependencyAttr =  this.options[this.selectedIndex].getAttribute('additionalparam');
 					
-					if (dependencyAttr !== null) {
+					if (dependencyAttr !== null && dependencyAttr !== "") {
 						var csvDependencies = dependencyAttr.substring(dependencyAttr.indexOf('=') + 1);
 						csvDependencies = self.getAllDependencies(csvDependencies);
 						var dependencyArr = new Array();
@@ -557,7 +574,7 @@ define(["framework/widget", "dynamicPage/api/dynamicPageAPI", "common/loading"],
 					
 					//If the dependent child is select box, hide controls based on selected options - while popup loading
 					var hideOptionDependency = this.options[this.selectedIndex].getAttribute('hide');
-					if (hideOptionDependency !== undefined && !self.isBlank(hideOptionDependency)) {
+					if (hideOptionDependency !== undefined && hideOptionDependency !== "" && !self.isBlank(hideOptionDependency)) {
 						var hideOptionDependencyArr = new Array();
 						hideOptionDependencyArr = hideOptionDependency.split(',');
 						self.hideControl(hideOptionDependencyArr);
@@ -565,7 +582,7 @@ define(["framework/widget", "dynamicPage/api/dynamicPageAPI", "common/loading"],
 					
 				} else if(currentObjType === "SELECT" && multipleAttr === undefined && $(this).attr('dependencyAttr') != undefined) {
 					var dependencyAttr =  $(this).attr('dependencyAttr');
-					if (dependencyAttr != null && !self.isBlank(dependencyAttr)) {
+					if (dependencyAttr != null && dependencyAttr != "" && !self.isBlank(dependencyAttr)) {
 						var csvDependencies = self.getAllDependencies(dependencyAttr);
 						var dependencyArr = new Array();
 						dependencyArr = csvDependencies.split(',');
