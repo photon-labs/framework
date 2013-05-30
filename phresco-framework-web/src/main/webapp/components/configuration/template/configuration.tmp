@@ -10,9 +10,9 @@
                     <td>&nbsp;</td>
                 </tr>
                 <tr>
-                	<td><input type="text" class="pop_txt" placeholder="Environment Name"></td>
-                    <td><input type="text" class="pop_txt" placeholder="Environment Description"></td>
-                    <td><input type="button" class="btn btn_style" value="Add"></td>
+                	<td><input type="text" class="pop_txt" name="envName" placeholder="Environment Name"></td>
+                    <td><input type="text" class="pop_txt" name="envDesc" placeholder="Environment Description"></td>
+                    <td><input type="button" class="btn btn_style" name="addEnv" value="Add"></td>
                 </tr>
                 <tr>
                 	<td colspan="3">
@@ -27,23 +27,18 @@
                             <tbody>
                                 <tr>
                                     <td colspan="2">
-                                        <ul class="connected list" id="content_1">
-                                            <li>
-                                                <div><input type="radio" name="optionsRadiosfd" checked></div>
-                                                <div>Production (Default)</div>
-                                            </li>
-                                            <li>
-                                                <div><input type="radio" name="optionsRadiosfd"></div>
-                                                <div>Testing</div>
-                                            </li>
-                                            <li>
-                                                <div><input type="radio" name="optionsRadiosfd"></div>
-                                                <div>Staging</div>
-                                            </li>
-                                            <li>
-                                                <div><input type="radio" name="optionsRadiosfd"></div>
-                                                <div>Test</div>
-                                            </li>
+										<ul class="connected list" id="content_1" name="envList">
+											{{#configurationList}}
+												{{#if name}}
+													<li>
+														<div><input type="radio" name="optionsRadiosfd" checked></div>
+														<div name="envListName" class="envlistname">{{name}}</div>
+														<input type="hidden" name="envListDesc" value="{{desc}}">
+													</li>
+													{{else}}
+													<div>No Environments available</div>
+												{{/if}}
+											{{/configurationList}}
                                         </ul>
                                     </td>
                                 </tr>
@@ -53,7 +48,7 @@
                             <!--env_border div ends here -->	
                         </div>
                         <div class="flt_right">
-                            <input type="button" value="Ok" class="btn btn_style">
+                            <input type="button" value="Ok" name="saveEnvironment" class="btn btn_style">
                             <input type="button" value="Close" class="btn btn_style dyn_popup_close">
                         </div>
                     </td>
@@ -121,7 +116,7 @@
                                         <ul class="connected list" id="content_1">
                                             <li>
                                                 <div><input type="radio" name="optionsRadiosfd" checked></div>
-                                                <div>Production (Default)</div>
+                                                <div>Production</div>
                                             </li>
                                             <li>
                                                 <div><input type="radio" name="optionsRadiosfd"></div>

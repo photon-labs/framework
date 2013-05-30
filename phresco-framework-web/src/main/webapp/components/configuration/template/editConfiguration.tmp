@@ -13,12 +13,11 @@
 					  			{{/if}}
 					  		</a>
 						  <div class="dropdown-menu cust_sel fix_height" role="menu" aria-labelledby="drop3">
-							<ul>
-								<li><a href="#">Server</a></li>
-								<li><a href="#">Database</a></li>
-								<li><a href="#">LDAP</a></li>
-								<li><a href="#">Testing</a></li>
-								<li><a href="#">Email</a></li>
+							<ul name="configurations">
+								{{#configType}}
+								<li name="{{this}}"><a href="#">{{this}}</a></li>
+								{{/configType}}
+								<li name="Other"><a href="#">Other</a></li>
 							</ul>
 						  </div>
 						</li>
@@ -34,170 +33,10 @@
 					<tr>
 						{{#configurations}}
 							<td>Name</td>
-							<td><input type="text" value="{{name}}"/></td>
+							<td><input type="text" name="EnvName" value="{{name}}"/></td>
 							<td>Description</td>
 							<td colspan="3"><input type="text" value="{{desc}}"/></td>
 						{{/configurations}}
-					</tr>
-					<tr class="row_bg">
-						<td colspan="3">Servers</td>
-						<td colspan="3"><img src="themes/default/images/helios/close_icon.png"  width="25" height="20" border="0" alt="" class="flt_right"></td>
-					</tr>
-					<tr>
-						<td>Name <sup>*</sup></td>
-						<td><input type="text" placeholder="Configuration Name"/></td>
-						<td>Type <sup>*</sup></td>
-						<td>
-							<select>
-								<option>Database</option>
-							</select>
-						</td>
-						<td>Description</td>
-						<td><input type="text" placeholder="Environment Description"/></td>
-					</tr>
-					<tr>
-						<td>Port <sup>*</sup></td>
-						<td><input type="text" /></td>
-						<td>Host <sup>*</sup></td>
-						<td><input type="text"></td>
-						<td>Username <sup>*</sup></td>
-						<td><input type="text"/></td>
-					</tr>
-					<tr>
-						<td>Password <sup>*</sup></td>
-						<td><input type="password" /></td>
-						<td>DB Name <sup>*</sup></td>
-						<td><input type="text"></td>
-						<td>DB Type <sup>*</sup></td>
-						<td><input type="text"/></td>
-					</tr>
-					<tr>
-						<td>Version <sup>*</sup></td>
-						<td>
-							<select>
-								<option>1.0</option>
-							</select>
-						</td>
-					</tr>
-					<tr class="row_bg">
-						<td colspan="3">Database</td>
-						<td colspan="3"><img src="themes/default/images/helios/close_icon.png"  width="25" height="20" border="0" alt="" class="flt_right"></td>
-					</tr>
-					<tr>
-						<td>Name <sup>*</sup></td>
-						<td><input type="text" placeholder="Configuration Name"/></td>
-						<td>Type <sup>*</sup></td>
-						<td>
-							<select>
-								<option>Database</option>
-							</select>
-						</td>
-						<td>Description</td>
-						<td><input type="text" placeholder="Environment Description"/></td>
-					</tr>
-					<tr>
-						<td>Port <sup>*</sup></td>
-						<td><input type="text" /></td>
-						<td>Host <sup>*</sup></td>
-						<td><input type="text"></td>
-						<td>Username <sup>*</sup></td>
-						<td><input type="text"/></td>
-					</tr>
-					<tr>
-						<td>Password <sup>*</sup></td>
-						<td><input type="password" /></td>
-						<td>DB Name <sup>*</sup></td>
-						<td><input type="text"></td>
-						<td>DB Type <sup>*</sup></td>
-						<td><input type="text"/></td>
-					</tr>
-					<tr>
-						<td>Version <sup>*</sup></td>
-						<td>
-							<select>
-								<option>1.0</option>
-							</select>
-						</td>
-					</tr>
-					<tr class="row_bg">
-						<td colspan="3">LDAP</td>
-						<td colspan="3"><img src="themes/default/images/helios/close_icon.png"  width="25" height="20" border="0" alt="" class="flt_right"></td>
-					</tr>
-					<tr>
-						<td>Name <sup>*</sup></td>
-						<td><input type="text" placeholder="Configuration Name"/></td>
-						<td>Type <sup>*</sup></td>
-						<td>
-							<select>
-								<option>Database</option>
-							</select>
-						</td>
-						<td>Description</td>
-						<td><input type="text" placeholder="Environment Description"/></td>
-					</tr>
-					<tr>
-						<td>Port <sup>*</sup></td>
-						<td><input type="text" /></td>
-						<td>Host <sup>*</sup></td>
-						<td><input type="text"></td>
-						<td>Username <sup>*</sup></td>
-						<td><input type="text"/></td>
-					</tr>
-					<tr>
-						<td>Password <sup>*</sup></td>
-						<td><input type="password" /></td>
-						<td>DB Name <sup>*</sup></td>
-						<td><input type="text"></td>
-						<td>DB Type <sup>*</sup></td>
-						<td><input type="text"/></td>
-					</tr>
-					<tr>
-						<td>Version <sup>*</sup></td>
-						<td>
-							<select>
-								<option>1.0</option>
-							</select>
-						</td>
-					</tr>
-					<tr class="row_bg">
-						<td colspan="3">Testing</td>
-						<td colspan="3"><img src="themes/default/images/helios/close_icon.png"  width="25" height="20" border="0" alt="" class="flt_right"></td>
-					</tr>
-					<tr>
-						<td>Name <sup>*</sup></td>
-						<td><input type="text" placeholder="Configuration Name"/></td>
-						<td>Type <sup>*</sup></td>
-						<td>
-							<select>
-								<option>Database</option>
-							</select>
-						</td>
-						<td>Description</td>
-						<td><input type="text" placeholder="Environment Description"/></td>
-					</tr>
-					<tr>
-						<td>Port <sup>*</sup></td>
-						<td><input type="text" /></td>
-						<td>Host <sup>*</sup></td>
-						<td><input type="text"></td>
-						<td>Username <sup>*</sup></td>
-						<td><input type="text"/></td>
-					</tr>
-					<tr>
-						<td>Password <sup>*</sup></td>
-						<td><input type="password" /></td>
-						<td>DB Name <sup>*</sup></td>
-						<td><input type="text"></td>
-						<td>DB Type <sup>*</sup></td>
-						<td><input type="text"/></td>
-					</tr>
-					<tr>
-						<td>Version <sup>*</sup></td>
-						<td>
-							<select>
-								<option>1.0</option>
-							</select>
-						</td>
 					</tr>
 				</tbody>
 			</table>
@@ -209,9 +48,9 @@
 		<section class="content_end">
 			<div class="flt_right">
 				{{#if userPermissions.manageConfiguration}}
-					<input type="submit" value="Update" class="btn btn_style update_btn">
+					<input type="submit" name="UpdateConfig" value="Update" class="btn btn_style update_btn">
 				{{else}}
-					<input type="submit" value="Update" class="btn btn_style update_btn" disabled>
+					<input type="submit" name="UpdateConfig" value="Update" class="btn btn_style update_btn" disabled>
 				{{/if}}
 				<input id="cancelEditConfig"" type="submit" value="Cancel" class="btn btn_style cancel_icon_btn">
 			</div>

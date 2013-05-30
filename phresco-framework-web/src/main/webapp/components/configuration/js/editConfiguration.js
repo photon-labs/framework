@@ -9,8 +9,11 @@ define(["framework/widgetWithTemplate", "configuration/listener/configurationLis
 		name : commonVariables.editConfiguration,
 		configurationlistener : null,
 		cancelEditConfiguationEvent : null,
+		addConfiguationEvent : null,
 		configRequestBody : null,
 		templateData : {},
+		removeConfiguationEvent : null,
+		configType : null,
 		
 		/***
 		 * Called in initialization time of this class 
@@ -34,11 +37,24 @@ define(["framework/widgetWithTemplate", "configuration/listener/configurationLis
 		preRender: function(whereToRender, renderFunction){
 			var self = this;
 			self.configurationlistener.getConfigurationList(self.configurationlistener.getRequestHeader(self.configRequestBody, "edit"), function(response) {
-					self.templateData.configurations = response.data;
-					var userPermissions = JSON.parse(self.configurationlistener.configurationAPI.localVal.getSession('userPermissions'));
-					self.templateData.userPermissions = userPermissions;
-					renderFunction(self.templateData, whereToRender);
-				});			
+				$.each(response.data.configurations, function(index, value){
+					if (value.type !== "Other") {
+						self.configurationlistener.getConfigurationList(self.configurationlistener.getRequestHeader(self.configRequestBody, "template", value.type), function(response) {
+							self.configurationlistener.constructHtml(response, value);
+						});
+					} else {
+						setTimeout(function(){
+							self.configurationlistener.htmlForOhter(value);
+						},800);
+					}
+				});
+				self.templateData.configurations = response.data;
+				self.templateData.configType = self.configType;
+				var userPermissions = JSON.parse(self.configurationlistener.configurationAPI.localVal.getSession('userPermissions'));
+				self.templateData.userPermissions = userPermissions;
+				renderFunction(self.templateData, whereToRender);
+			});		
+			
 		},
 		/***
 		 * Called after the preRender() and bindUI() completes. 
@@ -46,13 +62,19 @@ define(["framework/widgetWithTemplate", "configuration/listener/configurationLis
 		 *
 		 * @element: Element as the result of the template + data binding
 		 */
-		postRender : function(element) {			
+		postRender : function(element) {	
+			var self = this;
+			commonVariables.navListener.currentTab = self.name;
 		},
 		
 		registerEvents : function(configurationlistener) {
 			var self=this;
 			self.cancelEditConfiguationEvent = new signals.Signal();
+			self.addConfiguationEvent = new signals.Signal();
+			self.UpdateConfigEvent = new signals.Signal();
 			self.cancelEditConfiguationEvent.add(configurationlistener.cancelEditConfiguation, configurationlistener);
+			self.addConfiguationEvent.add(configurationlistener.addConfiguation, configurationlistener);
+			self.UpdateConfigEvent.add(configurationlistener.UpdateConfig, configurationlistener);
 		},
 
 		/***
@@ -65,6 +87,14 @@ define(["framework/widgetWithTemplate", "configuration/listener/configurationLis
 			
 			$("#cancelEditConfig").click(function() {
 				self.cancelEditConfiguationEvent.dispatch();
+			});
+			
+			$("ul[name=configurations] li").click(function() {
+				self.addConfiguationEvent.dispatch($(this).attr('name'));
+			});
+			
+			$("input[name=UpdateConfig]").click(function() {
+				self.UpdateConfigEvent.dispatch();
 			});
 		}
 	});

@@ -10,7 +10,9 @@ define(["framework/widgetWithTemplate", "configuration/listener/configurationLis
 		configurationAPI : null,
 		configurationlistener : null,
 		editConfigurationEvent : null,
-		configRequestBody : null,
+		addEnvrEvent : null,
+		saveEnvEvent : null,
+		configRequestBody : {},
 		templateData : {},
 		
 		/***
@@ -21,7 +23,6 @@ define(["framework/widgetWithTemplate", "configuration/listener/configurationLis
 		initialize : function(globalConfig){
 			var self = this;
 			self.configurationlistener = new Clazz.com.components.configuration.js.listener.ConfigurationListener(globalConfig);
-			self.configurationAPI = 
 			self.registerEvents(self.configurationlistener);
 		},
 
@@ -55,7 +56,11 @@ define(["framework/widgetWithTemplate", "configuration/listener/configurationLis
 		registerEvents : function(configurationlistener) {
 			var self=this;
 			self.editConfigurationEvent = new signals.Signal();
+			self.addEnvrEvent = new signals.Signal();
+			self.saveEnvEvent = new signals.Signal();
 			self.editConfigurationEvent.add(configurationlistener.editConfiguration, configurationlistener);
+			self.addEnvrEvent.add(configurationlistener.addEnvrEvent, configurationlistener);
+			self.saveEnvEvent.add(configurationlistener.saveEnvEvent, configurationlistener);
 		},
 		
 		getAction : function(configRequestBody, action, deleteEnvironment) {
@@ -76,6 +81,19 @@ define(["framework/widgetWithTemplate", "configuration/listener/configurationLis
 			$("a[name=clone_pop]").unbind("click");
 			$("a[name=clone_pop]").click(function() {
 				self.opencc(this, $(this).attr('name'));
+			});
+			
+			$("input[name=addEnv]").unbind("click");
+			$("input[name=addEnv]").click(function() {
+				self.addEnvrEvent.dispatch();
+			});
+			
+			$("input[name=saveEnvironment]").unbind("click");
+			$("input[name=saveEnvironment]").click(function() {
+				self.saveEnvEvent.dispatch(function(response){
+					self.configRequestBody = response;
+					self.getAction(self.configRequestBody, 'saveEnv', '');
+				});
 			});
 			
 			$(".tooltiptop").unbind("click");
