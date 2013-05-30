@@ -73,7 +73,7 @@
 			<li>
 				<select id="testSuite" name="testSuite" onchange='reportList(this);' class="hideContent"></select>
 			</li>
-			<li id="label">
+			<li id="label" class="viewLable">
 				&nbsp;<strong class="hideCtrl" id="testResultLbl"><s:text name="lbl.test.result.view"/></strong> 
 			</li>
 			<li>
@@ -433,6 +433,13 @@ $(document).ready(function() {
 				"<td class='width-ten-percent loadTestPopupBold'>"+totalTestCases+"</td>"+ 
 				"<td class='width-ten-percent loadTestPopupBold'>"+Math.round(totalCovrge)+"</td>")
 	 	totalRow.appendTo("#total");	
+		if (totalPass === 0 && totalFail === 0) {
+			$('.viewLable').hide();
+			$('#resultView').hide();
+		} else {
+			$('.viewLable').show();
+			$('#resultView').show();
+		}
 	}
 	
 	function getReport(obj, val) {
