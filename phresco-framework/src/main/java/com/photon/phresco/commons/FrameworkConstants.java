@@ -807,6 +807,7 @@ public interface FrameworkConstants {
     String REQ_CONFIG_PATH = "configPath";
     String REQ_APPLICATION_TYPE = "applicationType";
     String REQ_OLD_CONFIG_NAME = "configName";
+	String REQ_DEPLOY_DIR = "deployDir";
     String REQ_TEST_TYPE = "testType";
     String REQ_SONAR_URL = "sonarUrl";
 	String REQ_REPORT_TYPE = "reportType";

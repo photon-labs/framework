@@ -1181,7 +1181,7 @@ public class FrameworkUtil extends FrameworkBaseAction implements Constants, Fra
     	sb.append("<div class='controls'>")
     	.append("<input type='text' class=\"$class$\" value=\"$path$\" id='fileLocation' readonly='readonly' style='margin-right:5px;'")
     	.append("name=\"$name$\" >")
-    	.append("<input id='browseButton' readonly='readonly' class='btn-primary btn_browse browseFileLocation'")
+    	.append("<input id='browseButton' class='btn-primary btn_browse browseFileLocation'")
     	.append("value='Browse' type='button' fileTypes=\"$fileTypes$\" onclick='browseFiles(this);'></div>");
     	
     	return sb.toString();
