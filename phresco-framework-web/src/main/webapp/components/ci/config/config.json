@@ -1,0 +1,15 @@
+{
+    "info":{
+        "widgetId":"101",
+        "widgetName":"ci"
+    },
+    "components":{
+        "login":{
+            "moduleName":"ci",
+            "host":"http://localhost",
+            "port":"2020"
+        }
+    },
+	
+	"theme" : "default"
+}
