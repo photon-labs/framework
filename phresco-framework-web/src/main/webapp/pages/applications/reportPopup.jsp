@@ -208,6 +208,13 @@
             }
         %>
 		
+        $('input[name=reportName]').live('input propertychange', function(e) {
+        	var str = $(this).val();
+        	str = checkForSplChrExceptDot(str);
+        	str = removeSpaces(str);
+        	$(this).val(str);
+        });	
+        
 		$('.pdfDelete').click(function() {
 			showPopuploadingIcon();
 			var params = "reportFileName=";
