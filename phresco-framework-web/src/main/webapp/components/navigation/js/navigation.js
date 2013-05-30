@@ -67,7 +67,13 @@ define(["framework/widgetWithTemplate", "navigation/listener/navigationListener"
 			$('#addproject').click(function(){
 				self.onAddNewProjectEvent.dispatch();
 			}); 
-			
+			 
+			$("#editprojectTab li").click(function() {
+				$("#editprojectTab li a").removeClass("act");
+				$(this).children().addClass("act");
+				self.onMytabEvent.dispatch(this.id);
+			});
+
 			$("#myTab li").click(function() {
 				$("#myTab li a").removeClass("act");
 				$(this).children().addClass("act");

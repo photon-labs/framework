@@ -81,6 +81,11 @@
 		"unittest" : {
 			"moduleName":"unittest",
 			"path" : "../components/unittest/js"
+		},
+
+		"ci" : {
+			"moduleName":"ci",
+			"path" : "../components/ci/js"
 		}
 	}
 }

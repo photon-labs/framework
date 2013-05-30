@@ -47,6 +47,11 @@ var commonVariables = {
 	qualityContext : "quality",
 	unit : "unit",
 	unittest : "unittest",
+
+	ci : "ci",
+	jobTemplates : "jobTemplates",
+	continuousDelivery : "continuousDelivery",
+	pipeline : "pipeline",
 	
 	customerTheme : null,
 	defaultcustomer : "Photon",

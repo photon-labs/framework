@@ -1,4 +1,4 @@
-define(["framework/widget", "navigation/api/navigationAPI", "dynamicPage/dynamicPage", "projects/addproject", "projects/editproject", "application/application", "features/features", "codequality/codequality", "configuration/configuration", "build/build", "unittest/unittest", "configuration/editConfiguration"], function() {
+define(["framework/widget", "navigation/api/navigationAPI", "dynamicPage/dynamicPage", "projects/addproject", "projects/editproject", "application/application", "features/features", "codequality/codequality", "configuration/configuration", "build/build", "unittest/unittest", "configuration/editConfiguration", "ci/continuousDelivery", "ci/jobTemplates"], function() {
 
 	Clazz.createPackage("com.components.navigation.js.listener");
 
@@ -20,6 +20,9 @@ define(["framework/widget", "navigation/api/navigationAPI", "dynamicPage/dynamic
 		unittest : null,
 		dynamicpage : null,
 		editConfiguration : null,
+		jobTemplates : null,
+		continuousDelivery : null,
+		pipeline : null,
 		
 		/***
 		 * Called in initialization time of this class 
@@ -49,7 +52,7 @@ define(["framework/widget", "navigation/api/navigationAPI", "dynamicPage/dynamic
 			self.renderFooter();
 		},
 
-		getMyObj : function(keyword){
+		getMyObj : function(keyword) {
 			var self=this, retuenObj;
 
 				switch(keyword){
@@ -157,6 +160,27 @@ define(["framework/widget", "navigation/api/navigationAPI", "dynamicPage/dynamic
 							
 						retuenObj = self.dynamicpage;
 						break;
+
+					case commonVariables.jobTemplates :
+						if(self.jobTemplates === null)
+							self.jobTemplates = new Clazz.com.components.ci.js.JobTemplates();
+							
+						retuenObj = self.jobTemplates;
+						break;
+
+					case commonVariables.continuousDelivery :
+						if(self.continuousDelivery === null)
+							self.continuousDelivery = new Clazz.com.components.ci.js.ContinuousDelivery();
+							
+						retuenObj = self.continuousDelivery;
+						break;
+
+					case commonVariables.pipeline :
+						if(self.pipeline === null)
+							self.pipeline = new Clazz.com.components.ci.js.Pipeline();
+							
+						retuenObj = self.pipeline;
+						break;
 				
 				}
 			
@@ -232,17 +256,22 @@ define(["framework/widget", "navigation/api/navigationAPI", "dynamicPage/dynamic
 		
 		onMytabEvent : function(keyword) {
 			var self=this, currentObj;
-			
 			if (self.currentTab !== commonVariables.editApplication && keyword === commonVariables.editApplication){
 				currentObj = self.getMyObj(commonVariables.editApplication);
-			}else if (self.currentTab !== commonVariables.featurelist && keyword === commonVariables.featurelist){
+			} else if (self.currentTab !== commonVariables.featurelist && keyword === commonVariables.featurelist) {
 				currentObj = self.getMyObj(commonVariables.featurelist);
-			}else if (self.currentTab !== commonVariables.codequality && keyword === commonVariables.codequality){
+			} else if (self.currentTab !== commonVariables.codequality && keyword === commonVariables.codequality) {
 				currentObj = self.getMyObj(commonVariables.codequality);
-			}else if (self.currentTab !== commonVariables.configuration && keyword === commonVariables.configuration){
+			} else if (self.currentTab !== commonVariables.configuration && keyword === commonVariables.configuration) {
 				currentObj = self.getMyObj(commonVariables.configuration);
-			}else if (self.currentTab !== commonVariables.build && keyword === commonVariables.build){
+			} else if (self.currentTab !== commonVariables.build && keyword === commonVariables.build) {
 				currentObj = self.getMyObj(commonVariables.build);
+			} else if (self.currentTab !== commonVariables.jobTemplates && keyword === commonVariables.jobTemplates) {
+				currentObj = self.getMyObj(commonVariables.jobTemplates);
+			} else if (self.currentTab !== commonVariables.continuousDelivery && keyword === commonVariables.continuousDelivery) {
+				currentObj = self.getMyObj(commonVariables.continuousDelivery);
+			}  else if (self.currentTab !== commonVariables.pipeline && keyword === commonVariables.pipeline) {
+				currentObj = self.getMyObj(commonVariables.pipeline);
 			}
 
 			if(currentObj != undefined && currentObj != null){
