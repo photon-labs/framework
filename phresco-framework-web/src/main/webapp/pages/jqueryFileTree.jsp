@@ -26,6 +26,7 @@
 
 <%@ page import="org.apache.commons.lang.StringUtils" %>
 
+<%@ page import="com.photon.phresco.util.Constants"%>
 <%@ page import="com.photon.phresco.commons.FrameworkConstants"%>
 
 <%
@@ -60,19 +61,26 @@
 	final String[] includeFileTypes = fileTypes.split(",");
 	
 	//If dir is empty , file browse popup wil lists all root directories
-	if(!new File(dir).exists()) {
-		File[] roots = File.listRoots();
-		FileSystemView fsv = FileSystemView.getFileSystemView();
-		
-		for(File root:roots) {
-			if(fsv.getSystemTypeDescription(root).equals(FrameworkConstants.REQ_LOCAL_DISK)) {
-			out.print("<ul class=\"jqueryFileTree\" style=\"display: none;\">");
-			out.print("<li class=\"directory collapsed\"><a href=\"#\" rel=\"" + dir + root + "/\">"
-					+ root + "</a></li>");
-			out.print("</ul>");
-			}
-		}
-	}
+	 if(!new File(dir).exists()) {
+        File[] roots = File.listRoots();
+        FileSystemView fsv = FileSystemView.getFileSystemView();
+       
+        for(File root:roots) {
+            if (System.getProperty(Constants.OSNAME).startsWith(Constants.WINDOWS) ) {
+                if (fsv.getSystemTypeDescription(root).equals(FrameworkConstants.REQ_LOCAL_DISK)) {
+            out.print("<ul class=\"jqueryFileTree\" style=\"display: none;\">");
+            out.print("<li class=\"directory collapsed\"><a href=\"#\" rel=\"" + dir + root + "/\">"
+                    + root + "</a></li>");
+            out.print("</ul>");
+                }
+            } else {
+                out.print("<ul class=\"jqueryFileTree\" style=\"display: none;\">");
+                out.print("<li class=\"directory collapsed\"><a href=\"#\" rel=\"" + dir + root + "/\">"
+                        + root + "</a></li>");
+                out.print("</ul>");
+            }
+        }
+    }
 	
 	if (FrameworkConstants.PACKAGE.equals(fromPage)) {
 		if (new File(dir).exists()) {
@@ -147,7 +155,7 @@
 							}
 							out.print("<li><input type=checkbox name=filesToMinify id=\""+file+"\" value=\""+file+"\" "+checkedStr+"><span class=jsmin-span >"
 									+ file + "</li>"); 
-						} else if(!fromPage.equals(FrameworkConstants.REQ_AGAINST_JAR)) {
+						} else if(!fromPage.equals(FrameworkConstants.REQ_DEPLOY_DIR)){
 							out.print("<li class=\"file ext_" + ext + "\"><a href=\"#\" rel=\"" + dir + file + "\">"
 									+ file + "</a></li>");
 						}

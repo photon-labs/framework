@@ -806,6 +806,7 @@ public interface FrameworkConstants {
     String REQ_THEME_PATH_FROM_POM = "defaultThemeBuilderPath";
     String REQ_CSS_JSON = "cssJson";
     String REQ_AGAINST_JAR = "funcTestAgaistJar";
+    String REQ_DEPLOY_DIR = "deployDir";
     String REQ_SETTINGS_PATH = "settingsPath";
     String REQ_CONFIG_PATH = "configPath";
     String REQ_APPLICATION_TYPE = "applicationType";

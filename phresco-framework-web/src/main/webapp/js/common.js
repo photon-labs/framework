@@ -614,7 +614,7 @@ function hideErrorInAccordion(tag, headingObj, span) {
 
 function setTimeOut() {
 	setTimeout(function() {
-		$('#successmsg, #envSuccessmsg').fadeOut("slow", function () {
+		$('#successmsg, #envSuccessmsg, #appSuccessmsg').fadeOut("slow", function () {
 			$('#successmsg').hide();
 		});
 	}, 5000);
