@@ -6,6 +6,7 @@ define(["framework/widget", "ci/api/ciAPI"], function() {
 		
 		basePlaceholder :  window.commonVariables.basePlaceholder,
 		ciAPI : null,
+		continuousDeliveryConfigure : null,
 
 		/***
 		 * Called in initialization time of this class 
@@ -16,8 +17,10 @@ define(["framework/widget", "ci/api/ciAPI"], function() {
 				this.ciAPI = new Clazz.com.components.ci.js.api.CIAPI();
 		},
 		
-		onProjects : function() {
-		
+		loadContinuousDeliveryConfigure : function() {
+			var self=this;
+			self.continuousDeliveryConfigure = commonVariables.navListener.getMyObj(commonVariables.continuousDeliveryConfigure); 
+			Clazz.navigationController.push(self.continuousDeliveryConfigure, true);
 		}
 		
 	});
