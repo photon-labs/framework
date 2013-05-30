@@ -207,6 +207,19 @@ define(["framework/widget", "framework/templateProvider"], function() {
 				});
 				
 				
+			},
+			
+			getCustomer : function() {
+				var selectedcustomer = $("#selectedCustomer").text();
+				var customerId = "";
+				$.each($("#customer").children(), function(index, value){
+					var customerText = $(value).children().text();
+					if(customerText === selectedcustomer){
+						customerId = $(value).children().attr('id');
+					}
+				});
+				
+				return customerId;
 			}
 		}
 	);
