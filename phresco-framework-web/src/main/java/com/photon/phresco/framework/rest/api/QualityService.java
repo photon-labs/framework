@@ -8,10 +8,12 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
@@ -28,6 +30,7 @@ import javax.xml.xpath.XPathExpression;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
@@ -39,10 +42,13 @@ import org.xml.sax.SAXException;
 
 import com.photon.phresco.commons.FileListFilter;
 import com.photon.phresco.commons.FrameworkConstants;
-import com.photon.phresco.commons.model.ApplicationInfo;
 import com.photon.phresco.exception.PhrescoException;
 import com.photon.phresco.framework.commons.FrameworkUtil;
 import com.photon.phresco.framework.commons.QualityUtil;
+import com.photon.phresco.framework.model.TestCase;
+import com.photon.phresco.framework.model.TestCaseError;
+import com.photon.phresco.framework.model.TestCaseFailure;
+import com.photon.phresco.framework.model.TestReportResult;
 import com.photon.phresco.framework.model.TestSuite;
 import com.photon.phresco.framework.rest.api.util.FrameworkServiceUtil;
 import com.photon.phresco.util.Constants;
@@ -56,7 +62,10 @@ import com.sun.jersey.api.client.ClientResponse.Status;
 public class QualityService extends RestBase implements ServiceConstants, FrameworkConstants {
 	
 	private static Map<String, Map<String, NodeList>> testSuiteMap = Collections.synchronizedMap(new HashMap<String, Map<String, NodeList>>(8));
-	private boolean updateCache;
+	private int setFailureTestCases;
+	private int errorTestCases;
+	private int nodeLength;
+	private String testSuite = "";
 	
 	@GET
 	@Path("/unit")
@@ -75,18 +84,6 @@ public class QualityService extends RestBase implements ServiceConstants, Framew
 			ResponseInfo<List<String>> finalOutput = responseDataEvaluation(responseData, e, "Unable to get unit test report options", null);
 			return Response.status(Status.BAD_REQUEST).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
 		}
-	}
-	
-	private List<String> getUnitReportOptions(String appDirName) throws PhrescoException {
-        try {
-	        String unitTestReportOptions = getUnitTestReportOptions(appDirName);
-	        if (StringUtils.isNotEmpty(unitTestReportOptions)) {
-	        	return Arrays.asList(unitTestReportOptions.split(","));
-	        }
-		} catch (Exception e) {
-            throw new PhrescoException(e);
-		}
-		return null;
 	}
 	
 	@GET
@@ -111,6 +108,333 @@ public class QualityService extends RestBase implements ServiceConstants, Framew
 		} 
 		ResponseInfo<List<String>> finalOutput = responseDataEvaluation(responseData, null, "Test Suites listed successfully", resultTestSuiteNames);
 		return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
+	}
+	
+	@GET
+	@Path("/testreports")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response getTestReports(@QueryParam("appDirName") String appDirName, @QueryParam("testType") String testType,
+			@QueryParam("techReport") String techReport, @QueryParam("moduleName") String moduleName, 
+			@QueryParam("testSuite") String testSuite) throws PhrescoException {
+        String testSuitePath = "";
+        String testCasePath = "";
+        try {
+        	testSuitePath = getTestSuitePath(appDirName, testType, techReport);
+        	testCasePath = getTestCasePath(appDirName, testType, techReport);
+        	return testReport(appDirName, moduleName, testType, moduleName, techReport, testSuitePath, testCasePath, testSuite);
+        } catch (Exception e) {
+        	throw new PhrescoException(e);
+		}
+	}
+	
+	private String getTestCasePath(String appDirName, String testType, String techReport) throws PhrescoException {
+		String testCasePath = "";
+		if(testType.equals("unit")) {
+			if (StringUtils.isNotEmpty(techReport)) {
+				testCasePath = getUnitTestCasePath(appDirName, techReport);
+			} else {
+				testCasePath = getUnitTestCasePath(appDirName);
+			}
+		} else if(testType.equals("functional")) {
+			testCasePath = getFunctionalTestCasePath(appDirName);
+		} 
+		return testCasePath;
+	}
+	
+	private Response testReport(String appDirName, String moduleName, String testType, String module, String techReport, 
+			String testSuitePath, String testCasePath, String testSuite) throws PhrescoException {
+		setTestSuite(testSuite);
+		ResponseInfo<TestReportResult> responseDataAll = new ResponseInfo<TestReportResult>();
+		ResponseInfo<List<TestCase>> responseData = new ResponseInfo<List<TestCase>>();
+    	try {
+    		String testSuitesMapKey = appDirName + testType + module + techReport;
+    		if(MapUtils.isEmpty(testSuiteMap)) {
+    			String testResultPath = getTestResultPath(appDirName, moduleName, testType, techReport);
+    			getTestSuiteNames(appDirName, testType, moduleName, techReport, testResultPath, testSuitePath);
+    		}
+        	Map<String, NodeList> testResultNameMap = testSuiteMap.get(testSuitesMapKey);
+            NodeList testSuites = testResultNameMap.get(testSuite);
+    		if (ALL.equals(testSuite)) {
+    			Map<String, String> testSuitesResultMap = new HashMap<String, String>();
+    			float totalTestSuites = 0;
+    			float successTestSuites = 0;
+    			float failureTestSuites = 0;
+    			float errorTestSuites = 0;
+    			// get all nodelist of testType of a project
+    			Collection<NodeList> allTestResultNodeLists = testResultNameMap.values();
+    			for (NodeList allTestResultNodeList : allTestResultNodeLists) {
+        			if (allTestResultNodeList.getLength() > 0 ) {
+    	    			List<TestSuite> allTestSuites = getTestSuite(allTestResultNodeList);
+    	    			if (CollectionUtils.isNotEmpty(allTestSuites)) {
+    		    			for (TestSuite tstSuite : allTestSuites) {
+    		    				//testsuite values are set before calling getTestCases value
+    		    				setTestSuite(tstSuite.getName());
+    							getTestCases(appDirName, allTestResultNodeList, testSuitePath, testCasePath);
+    				            float tests = 0;
+    				            float failures = 0;
+    				            float errors = 0;
+    				            tests = Float.parseFloat(String.valueOf(getNodeLength()));
+    				            failures = Float.parseFloat(String.valueOf(getSetFailureTestCases()));
+    				            errors = Float.parseFloat(String.valueOf(getErrorTestCases()));
+    				            float success = 0;
+    				            
+    				            if (failures != 0 && errors == 0) {
+    				                if (failures > tests) {
+    				                    success = failures - tests;
+    				                } else {
+    				                    success = tests - failures;
+    				                }
+    				            } else if (failures == 0 && errors != 0) {
+    				                if (errors > tests) {
+    				                    success = errors - tests;
+    				                } else {
+    				                    success = tests - errors;
+    				                }
+    				            } else if (failures != 0 && errors != 0) {
+    				                float failTotal = (failures + errors);
+    				                if (failTotal > tests) {
+    				                    success = failTotal - tests;
+    				                } else {
+    				                    success = tests - failTotal;
+    				                }
+    				            } else {
+    				            	success = tests;
+    				            }
+    				            
+    				            totalTestSuites = totalTestSuites + tests;
+    				            failureTestSuites = failureTestSuites + failures;
+    				            errorTestSuites = errorTestSuites + errors;
+    				            successTestSuites = successTestSuites + success;
+    				            String rstValues = tests + "," + success + "," + failures + "," + errors;
+    				            testSuitesResultMap.put(tstSuite.getName(), rstValues);
+    						}
+    	    			}
+        			}
+				}
+    			TestReportResult result = new TestReportResult();
+    			result.setTestReports(testSuitesResultMap);
+    			createTestReportResult(testSuitesResultMap, result);
+    			ResponseInfo<TestReportResult> finalOutput = responseDataEvaluation(responseDataAll, null, "Test Cases listed successfully", result);
+    			return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
+    		} else {
+	            if (testSuites.getLength() > 0 ) {
+	            	List<TestCase> testCases;
+					testCases = getTestCases(appDirName, testSuites, testSuitePath, testCasePath);
+					if (CollectionUtils.isEmpty(testCases)) {
+						ResponseInfo<List<TestCase>> finalOutput = responseDataEvaluation(responseData, null, "TestCase Not Available", testCases);
+						return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
+					} else {
+						boolean isClassEmpty = false;
+						//to check whether class attribute is there or not
+						for (TestCase testCase : testCases) {
+							if (testCase.getTestClass() == null) {
+								isClassEmpty = true;
+							}
+						}
+//		            		setReqAttribute(IS_CLASS_EMPTY, isClassEmpty);
+						ResponseInfo<List<TestCase>> finalOutput = responseDataEvaluation(responseData, null, "TestCase Listed Successfully", testCases);
+						return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
+					}
+	            }
+    		}
+        } catch (PhrescoException e) {
+        	throw new PhrescoException(e);
+        }
+		return null;
+    }
+	
+	private void createTestReportResult(Map<String, String> testSuitesResultMap, TestReportResult result) {
+		Set<String> keySet = testSuitesResultMap.keySet();
+		int totalValue = keySet.size();
+  		// All testSuite total colum value calculation
+  		int totalTstCases = 0;
+  		int totalSuccessTstCases = 0;
+  		int totalFailureTstCases = 0;
+  		int totalErrorTstCases = 0;
+  		
+  		for (String key : keySet) {
+  			String csvResults = testSuitesResultMap.get(key);
+  			String[] results = csvResults.split(",");
+  			float total = Float.parseFloat(results[0]);
+  			float success = Float.parseFloat(results[1]);
+  			float failure = Float.parseFloat(results[2]);
+  			float error = Float.parseFloat(results[3]);
+  			totalTstCases = totalTstCases + (int)total;
+  			totalSuccessTstCases = totalSuccessTstCases + (int)success;
+  			totalFailureTstCases = totalFailureTstCases + (int)failure;
+  			totalErrorTstCases = totalErrorTstCases + (int)error;
+  		}
+  		result.setTotalTestError(totalErrorTstCases);
+  		result.setTotalTestFailure(totalFailureTstCases);
+  		result.setTotalTestSuccess(totalSuccessTstCases);
+  		result.setTotalTestResults(totalValue);
+	}
+
+	private List<TestCase> getTestCases(String appDirName, NodeList testSuites, String testSuitePath, String testCasePath) 
+		throws PhrescoException {
+    	try {
+            StringBuilder sb = new StringBuilder(); //testsuites/testsuite[@name='yyy']/testcase
+            sb.append(testSuitePath);
+            sb.append(NAME_FILTER_PREFIX);
+            sb.append(getTestSuite());
+            sb.append(NAME_FILTER_SUFIX);
+            sb.append(testCasePath);
+            
+            XPath xpath = XPathFactory.newInstance().newXPath();
+            NodeList nodeList = (NodeList) xpath.evaluate(sb.toString(), testSuites.item(0).getParentNode(), XPathConstants.NODESET);
+            // For tehnologies like php and drupal duoe to plugin change xml testcase path modified
+            if (nodeList.getLength() == 0) {
+                StringBuilder sbMulti = new StringBuilder();
+                sbMulti.append(testSuitePath);
+                sbMulti.append(NAME_FILTER_PREFIX);
+                sbMulti.append(getTestSuite());
+                sbMulti.append(NAME_FILTER_SUFIX);
+                sbMulti.append(XPATH_TESTSUTE_TESTCASE);
+                nodeList = (NodeList) xpath.evaluate(sbMulti.toString(), testSuites.item(0).getParentNode(), XPathConstants.NODESET);
+            }
+            
+            // For technology sharepoint
+            if (nodeList.getLength() == 0) {
+                StringBuilder sbMulti = new StringBuilder(); //testsuites/testsuite[@name='yyy']/testcase
+                sbMulti.append(XPATH_MULTIPLE_TESTSUITE);
+                sbMulti.append(NAME_FILTER_PREFIX);
+                sbMulti.append(getTestSuite());
+                sbMulti.append(NAME_FILTER_SUFIX);
+                sbMulti.append(testCasePath);
+                nodeList = (NodeList) xpath.evaluate(sbMulti.toString(), testSuites.item(0).getParentNode(), XPathConstants.NODESET);
+            }
+
+            List<TestCase> testCases = new ArrayList<TestCase>();
+            
+        	StringBuilder screenShotDir = new StringBuilder(Utility.getProjectHome() + appDirName);
+        	screenShotDir.append(File.separator);
+        	String sceenShotDir = getSceenShotDir(appDirName);
+        	if(StringUtils.isEmpty(sceenShotDir)) {
+        		screenShotDir.append(getFunctionalTestReportDir(appDirName));
+            	screenShotDir.append(File.separator);
+            	screenShotDir.append(SCREENSHOT_DIR);
+        	} else {
+        		screenShotDir.append(sceenShotDir);
+        	}
+        	screenShotDir.append(File.separator);
+        	
+        	int failureTestCases = 0;
+            int errorTestCases = 0;
+            for (int i = 0; i < nodeList.getLength(); i++) {
+                Node node = nodeList.item(i);
+                NodeList childNodes = node.getChildNodes();
+                NamedNodeMap nameNodeMap = node.getAttributes();
+                TestCase testCase = new TestCase();
+                for (int k = 0; k < nameNodeMap.getLength(); k++) {
+                    Node attribute = nameNodeMap.item(k);
+                    String attributeName = attribute.getNodeName();
+                    String attributeValue = attribute.getNodeValue();
+                    if (ATTR_NAME.equals(attributeName)) {
+                        testCase.setName(attributeValue);
+                    } else if (ATTR_CLASS.equals(attributeName) || ATTR_CLASSNAME.equals(attributeName)) {
+                        testCase.setTestClass(attributeValue);
+                    } else if (ATTR_FILE.equals(attributeName)) {
+                        testCase.setFile(attributeValue);
+                    } else if (ATTR_LINE.equals(attributeName)) {
+                        testCase.setLine(Float.parseFloat(attributeValue));
+                    } else if (ATTR_ASSERTIONS.equals(attributeName)) {
+                        testCase.setAssertions(Float.parseFloat(attributeValue));
+                    } else if (ATTR_TIME.equals(attributeName)) {
+                        testCase.setTime(attributeValue);
+                    }
+                }
+                
+                if (childNodes != null && childNodes.getLength() > 0) {
+                    for (int j = 0; j < childNodes.getLength(); j++) {
+                        Node childNode = childNodes.item(j);
+                        if (ELEMENT_FAILURE.equals(childNode.getNodeName())) {
+                        	failureTestCases++;
+                            TestCaseFailure failure = getFailure(childNode);
+                            if (failure != null) {
+                            	File file = new File(screenShotDir.toString() + testCase.getName() + FrameworkConstants.DOT + IMG_PNG_TYPE);
+                            	if (file.exists()) {
+                            		failure.setHasFailureImg(true);
+                            	}
+                                testCase.setTestCaseFailure(failure);
+                            } 
+                        }
+
+                        if (ELEMENT_ERROR.equals(childNode.getNodeName())) {
+                        	errorTestCases++;
+                            TestCaseError error = getError(childNode);
+                            if (error != null) {
+                            	File file = new File(screenShotDir.toString() + testCase.getName() + FrameworkConstants.DOT + IMG_PNG_TYPE);
+                            	if (file.exists()) {
+                            		error.setHasErrorImg(true);
+                            	}
+                                testCase.setTestCaseError(error);
+                            }
+                        }
+                    }
+                }
+                testCases.add(testCase);
+            }
+            setSetFailureTestCases(failureTestCases);
+            setErrorTestCases(errorTestCases);
+            setNodeLength(nodeList.getLength());
+            return testCases;
+        } catch (PhrescoException e) {
+            throw e;
+        } catch (XPathExpressionException e) {
+            throw new PhrescoException(e);
+		}
+    }
+	
+	private static TestCaseFailure getFailure(Node failureNode) {
+        TestCaseFailure failure = new TestCaseFailure();
+        failure.setDescription(failureNode.getTextContent());
+		failure.setFailureType(REQ_TITLE_EXCEPTION);
+		NamedNodeMap nameNodeMap = failureNode.getAttributes();
+
+		if (nameNodeMap != null && nameNodeMap.getLength() > 0) {
+		    for (int k = 0; k < nameNodeMap.getLength(); k++){
+		        Node attribute = nameNodeMap.item(k);
+		        String attributeName = attribute.getNodeName();
+		        String attributeValue = attribute.getNodeValue();
+
+		        if (ATTR_TYPE.equals(attributeName)) {
+		            failure.setFailureType(attributeValue);
+		        }
+		    }
+		}
+        return failure;
+    }
+
+    private static TestCaseError getError(Node errorNode) {
+        TestCaseError tcError = new TestCaseError();
+        tcError.setDescription(errorNode.getTextContent());
+        tcError.setErrorType(REQ_TITLE_ERROR);
+        NamedNodeMap nameNodeMap = errorNode.getAttributes();
+        if (nameNodeMap != null && nameNodeMap.getLength() > 0) {
+            for (int k = 0; k < nameNodeMap.getLength(); k++){
+                Node attribute = nameNodeMap.item(k);
+                String attributeName = attribute.getNodeName();
+                String attributeValue = attribute.getNodeValue();
+
+                if (ATTR_TYPE.equals(attributeName)) {
+                    tcError.setErrorType(attributeValue);
+                }
+            }
+        }
+        return tcError;
+    }
+
+    
+	private List<String> getUnitReportOptions(String appDirName) throws PhrescoException {
+        try {
+	        String unitTestReportOptions = getUnitTestReportOptions(appDirName);
+	        if (StringUtils.isNotEmpty(unitTestReportOptions)) {
+	        	return Arrays.asList(unitTestReportOptions.split(","));
+	        }
+		} catch (Exception e) {
+            throw new PhrescoException(e);
+		}
+		return null;
 	}
 	
 	private String getTestResultPath(String appDirName, String moduleName, String testType, String techReport) throws PhrescoException {
@@ -183,8 +507,6 @@ public class QualityService extends RestBase implements ServiceConstants, Framew
             sb.append(getFunctionalTestReportDir(appDirName));
         } catch (PhrescoException e) {
             throw new PhrescoException(e);
-        } catch (PhrescoPomException e) {
-            throw new PhrescoException(e);
         }
         
         return sb.toString();
@@ -195,7 +517,7 @@ public class QualityService extends RestBase implements ServiceConstants, Framew
 		String testSuitesMapKey = appDirName + testType +  moduleName + techReport;
 		Map<String, NodeList> testResultNameMap = testSuiteMap.get(testSuitesMapKey);
 		List<String> resultTestSuiteNames = null;
-		if (MapUtils.isEmpty(testResultNameMap) || updateCache) {
+		if (MapUtils.isEmpty(testResultNameMap)) {
 			File[] resultFiles = getTestResultFiles(testResultPath);
 			if (!ArrayUtils.isEmpty(resultFiles)) {
 				QualityUtil.sortResultFile(resultFiles);
@@ -354,15 +676,84 @@ public class QualityService extends RestBase implements ServiceConstants, Framew
 		}
     }
 	
-	private String getFunctionalTestReportDir(String appDirName) throws PhrescoPomException, PhrescoException {
+	private String getFunctionalTestReportDir(String appDirName) throws PhrescoException {
         try {
 			return FrameworkUtil.getInstance().getPomProcessor(appDirName).getProperty(Constants.POM_PROP_KEY_FUNCTEST_RPT_DIR);
-		} catch (PhrescoException e) {
+		} catch (PhrescoPomException e) {
 			throw new PhrescoException(e);
 		}
     }
 	
-	private String getUnitTestReportOptions(String appDirName) throws PhrescoException, PhrescoPomException {
-		return FrameworkUtil.getInstance().getPomProcessor(appDirName).getProperty(Constants.PHRESCO_UNIT_TEST);
+	private String getUnitTestReportOptions(String appDirName) throws PhrescoException {
+		try {
+			return FrameworkUtil.getInstance().getPomProcessor(appDirName).getProperty(Constants.PHRESCO_UNIT_TEST);
+		} catch (PhrescoPomException e) {
+			throw new PhrescoException(e);
+		}
 	}
+	
+	private String getUnitTestCasePath(String appDirName, String option) throws PhrescoException {
+        try {
+			return FrameworkUtil.getInstance().getPomProcessor(appDirName).getProperty(Constants.POM_PROP_KEY_UNITTEST_TESTCASE_PATH_START + 
+					option + Constants.POM_PROP_KEY_UNITTEST_TESTCASE_PATH_END);
+		} catch (PhrescoPomException e) {
+			throw new PhrescoException(e);
+		}
+    }
+	
+	private  String getUnitTestCasePath(String appDirName) throws PhrescoException {
+        try {
+			return FrameworkUtil.getInstance().getPomProcessor(appDirName).getProperty(Constants.POM_PROP_KEY_UNITTEST_TESTCASE_PATH);
+		} catch (PhrescoPomException e) {
+			throw new PhrescoException(e);
+		}
+    }
+	
+	public  String getFunctionalTestCasePath(String appDirName) throws PhrescoException {
+        try {
+			return FrameworkUtil.getInstance().getPomProcessor(appDirName).getProperty(Constants.POM_PROP_KEY_FUNCTEST_TESTCASE_PATH);
+		} catch (PhrescoPomException e) {
+			throw new PhrescoException(e);
+		}
+    }
+	
+	public String getSceenShotDir(String appDirName) throws PhrescoException {
+        try {
+			return FrameworkUtil.getInstance().getPomProcessor(appDirName).getProperty(Constants.POM_PROP_KEY_SCREENSHOT_DIR);
+		} catch (PhrescoPomException e) {
+			throw new PhrescoException(e);
+		}
+    }
+
+	public void setSetFailureTestCases(int setFailureTestCases) {
+		this.setFailureTestCases = setFailureTestCases;
+	}
+
+	public int getSetFailureTestCases() {
+		return setFailureTestCases;
+	}
+
+	public void setErrorTestCases(int errorTestCases) {
+		this.errorTestCases = errorTestCases;
+	}
+
+	public int getErrorTestCases() {
+		return errorTestCases;
+	}
+
+	public void setNodeLength(int nodeLength) {
+		this.nodeLength = nodeLength;
+	}
+
+	public int getNodeLength() {
+		return nodeLength;
+	}
+	
+	public String getTestSuite() {
+        return testSuite;
+    }
+
+    public void setTestSuite(String testSuite) {
+        this.testSuite = testSuite;
+    }
 }
