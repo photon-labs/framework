@@ -318,6 +318,8 @@ qq.FileUploaderBasic = function(o){
         showMessage: function(message){
         	if (o.type == "themeBundle") {
         		showThemeBundleError(message);
+        	} else if (o.action == "dynamicUploadFile")  {
+        		$(".yesNoPopupErr").text(message);
         	}
 //    		fileError(message, o.type);
         }
@@ -526,6 +528,14 @@ qq.FileUploader = function(o){
 	var type = o.type || o.fileType;
 	var btnId = o.element.getAttribute('id');
 	var propName = o.propName;
+	var hideClass = "";
+	
+	if (o.action == "dynamicUploadFile" && o.key == "uploadJMX") {
+		hideClass = "display:none";
+	} else {
+		hideClass = "";
+	}
+
 	// call parent constructor
     qq.FileUploaderBasic.apply(this, arguments);
     // additional options    
@@ -547,7 +557,7 @@ qq.FileUploader = function(o){
                 '<span class="qq-upload-size"></span>' +
                 '<a class="qq-upload-cancel" href="#">Cancel</a>' +
                 '<span class="qq-upload-failed-text">Failed</span>' +
-                '<img class="qq-upload-remove" src="images/icons/delete.png" style="cursor:pointer;" alt="Remove" eleAttr="'+ btnId +'" tempAttr="'+ type +'"  onclick="removeUploadedFile(this);"/>' +
+                '<img class="qq-upload-remove" src="images/icons/delete.png" style="cursor:pointer; '+hideClass+'" alt="Remove" eleAttr="'+ btnId +'" tempAttr="'+ type +'"  onclick="removeUploadedFile(this);"/>' +
                 '<input type="hidden" class="hidden-fileName" propName="' + propName + '" \>' +
             '</li>',        
         

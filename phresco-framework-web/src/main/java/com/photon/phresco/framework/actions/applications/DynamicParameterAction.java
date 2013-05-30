@@ -1006,20 +1006,21 @@ public class DynamicParameterAction extends FrameworkBaseAction implements Const
 			 //create zip file from inputstream
 			 File tempZipFile = FileUtil.writeFileFromInputStream(inputStream, tempZipPath);
 			
-			 
+			 String folder = FileUtils.removeExtension(tempZipPath.replace(tempDirectory.getPath() + File.separator, ""));
 			 //extract the zip file inside temp directory
-			 boolean unzipped = ArchiveUtil.unzip(tempZipPath, tempDirectory.getPath());
+			 boolean unzipped = ArchiveUtil.unzip(tempZipPath, tempDirectory.getPath(), folder);
 			 
 			 //after extracting, delete that zip file
 			 FileUtil.delete(tempZipFile);
-			 
 			 if (unzipped) {
-				 File extractedFile = new File(tempDirectory.getPath() + File.separator + FileUtils.removeExtension(zipfileName));
+				 File extractedFile = new File(tempDirectory.getPath() + File.separator + Constants.PROJECTS_TEMP + folder);
 				 if (extractedFile.exists()) {
 					 FileUtil.copyFolder(extractedFile, new File(uploadJmxDir.toString()));
 				 }
+				 writer.print(SUCCESS_TRUE);
+			 } else {
+				 writer.print(SUCCESS_FALSE);
 			 }
-			writer.print(SUCCESS_TRUE);
 		} catch (Exception e) {
 			writer.print(SUCCESS_FALSE);
 			throw new PhrescoException(e);

@@ -352,7 +352,7 @@
 	   			            multiple : false,
 	   			         	allowedExtensions : ['<%= parameter.getFileType() %>'],
 	   			            buttonLabel : '<%= lableTxt %>',
-	   			            typeError : '<s:text name="err.invalid.file.type" />',
+	   			            typeError : '<s:text name="err.upload.only" />' + " " + '<%= parameter.getFileType() %>',
 	   			            key : '<%= parameter.getKey() %>',
 	   			            dependency : '<%= StringUtils.isNotEmpty(parameter.getDependency()) ? parameter.getDependency() : "" %>',
    			        		params : {
@@ -629,7 +629,7 @@
 		params = params.concat(currentParamKey);
 		params = params.concat("&selectedOption=");
 		params = params.concat(selectedOption);
-		
+
 		loadContent('changeEveDependancyListener', '', '', params, true, false);
 	}
 	
@@ -641,11 +641,12 @@
 		params = params.concat('<%= phase %>');
 		params = params.concat("&dependency=");
 		params = params.concat(dependency);
-		
+		showPopuploadingIcon();
 		loadContent('updateDependancy', '', '', params, true, false, 'updateDependancySuccEvent');
 	}
 	
 	function updateDependancySuccEvent(data) {
+		hidePopuploadingIcon();
 		if (data.dynamicPageParameterDesign != undefined && !isBlank(data.dynamicPageParameterDesign)) {
 			$('.' + data.dependency + "PerformanceDivClass").empty();
 			$('.' + data.dependency + "PerformanceDivClass").append(data.dynamicPageParameterDesign);
