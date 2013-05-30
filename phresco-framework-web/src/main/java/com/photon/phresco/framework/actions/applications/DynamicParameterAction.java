@@ -953,7 +953,6 @@ public class DynamicParameterAction extends FrameworkBaseAction implements Const
 				setReqAttribute(REQ_FROM, getReqParameter(REQ_FROM_PAGE));
 			}
 		} catch (Exception e) {
-			e.printStackTrace();
 			throw new PhrescoException(e);
 		}
 		
