@@ -926,12 +926,12 @@ public class DynamicParameterAction extends FrameworkBaseAction implements Const
 		setReqAttribute(FILE_TYPES, getFileType());
 		setReqAttribute(FILE_BROWSE, getFileOrFolder());
 		ApplicationInfo applicationInfo = getApplicationInfo();
-		if (REQ_JAR.equalsIgnoreCase(getFileType()) || DEPLOY_DIR.equals(getFromDeployDir())) {
+		if (REQ_JAR.equalsIgnoreCase(getFileType())) {
 			setReqAttribute(REQ_PROJECT_LOCATION, "");
 			setReqAttribute(REQ_FROM, REQ_AGAINST_JAR);
-//		} else if(REQ_XLSX.equalsIgnoreCase(getFileType())) {
-//			setReqAttribute(REQ_PROJECT_LOCATION, "");
-//			setReqAttribute(REQ_FROM, REQ_MANUAL_XLSX);
+		} else if(DEPLOY_DIR.equals(getFromDeployDir())) {
+				setReqAttribute(REQ_PROJECT_LOCATION, "");
+				setReqAttribute(REQ_FROM, REQ_DEPLOY_DIR);
 		} else if (REQ_BROWSE_THEME_IMAGE.equals(getFrom())) {
 			setReqAttribute(REQ_PROJECT_LOCATION, "");
 			setReqAttribute(REQ_FROM, getFrom());

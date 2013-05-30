@@ -13,9 +13,27 @@
                 </span>    
             </div>
         	<div class="unit_path">
-                <input type="submit" value="Open Folder" class="btn btn_style openfolder_icon_btn">
-                <input type="submit" value="Copy Path" class="btn btn_style copypath_icon_btn">
+                <input type="button" value="Open Folder" class="btn btn_style openfolder_icon_btn" id="openFolder">
+                <input type="button" value="Copy Path" class="btn btn_style copypath_icon_btn" id="copyPath">
             </div>
+            
+            {{#if projectModules}}
+	            <div class="code_report">
+	            	Module
+	            </div>
+	            <div class="navbar navbar-static code_func module">
+	                <ul class="nav">
+	                    <li id="fat-menu" class="dropdown">
+	                      <a href="#" id="modulesDrop" role="button" class="dropdown-toggle" data-toggle="dropdown">{{#modules projectModules true}}{{/modules}}<b class="caret"></b></a>
+	                      <div class="dropdown-menu cust_sel code_test_opt" role="menu" aria-labelledby="modulesDrop">
+	                      	<ul>
+	                      		{{#modules projectModules false}}{{/modules}}
+	                        </ul>
+	                      </div>
+	                    </li>
+	                </ul>
+	            </div>
+            {{/if}}
             
             {{#if reportOptions}}
 	            <div class="code_report">
@@ -24,8 +42,8 @@
 	            <div class="navbar navbar-static code_func">
 	                <ul class="nav">
 	                    <li id="fat-menu" class="dropdown">
-	                      <a href="#" id="drop5" role="button" class="dropdown-toggle" data-toggle="dropdown">{{#report reportOptions true}}{{/report}}<b class="caret"></b></a>
-	                      <div class="dropdown-menu cust_sel code_test_opt" role="menu" aria-labelledby="drop5">
+	                      <a href="#" id="reportOptionsDrop" role="button" class="dropdown-toggle" data-toggle="dropdown">{{#report reportOptions true}}{{/report}}<b class="caret"></b></a>
+	                      <div class="dropdown-menu cust_sel code_test_opt" role="menu" aria-labelledby="reportOptionsDrop">
 	                      	<ul>
 	                      		{{#report reportOptions false}}{{/report}}
 	                        </ul>

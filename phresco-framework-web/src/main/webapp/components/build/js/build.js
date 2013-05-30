@@ -133,6 +133,22 @@ define(["framework/widgetWithTemplate", "build/listener/buildListener"], functio
 				theme:"light-thin"
 			});
 			
+			//To open the build directory
+			$('#openFolder').unbind('click');
+			$("#openFolder").click(function() {
+				var paramJson = {};
+				paramJson.type = commonVariables.typeBuild;
+				commonVariables.navListener.openFolder(paramJson);
+			});
+			
+			//To copy the path of build directory
+			$('#copyPath').unbind('click');
+			$("#copyPath").click(function() {
+				var paramJson = {};
+				paramJson.type = commonVariables.typeBuild;
+				commonVariables.navListener.copyPath(paramJson);
+			});
+			
 			Clazz.navigationController.mainContainer = commonVariables.contentPlaceholder;
 		}
 	});

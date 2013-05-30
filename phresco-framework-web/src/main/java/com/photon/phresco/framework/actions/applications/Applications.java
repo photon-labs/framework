@@ -1003,6 +1003,9 @@ public class Applications extends FrameworkBaseAction implements Constants {
 		}
 		SCMManagerImpl scmi = new SCMManagerImpl();
 		try {
+			//To generate the lock for the particular operation
+			FrameworkUtil.generateLock(Collections.singletonList(getLockDetail(getApplicationInfo().getId(), UPDATE)), true);
+			
 			ApplicationInfo applicationInfo = getApplicationInfo();
 			scmi.updateProject(GIT, repoUrl, userName, password, MASTER , null, applicationInfo);
 			errorString = getText(SUCCESS_PROJECT_UPDATE);
@@ -1055,6 +1058,12 @@ public class Applications extends FrameworkBaseAction implements Constants {
 			}
 			errorString = getText(UPDATE_PROJECT_FAIL);
 			errorFlag = false;
+		} finally {
+			try {
+				removeLock();
+			} catch (PhrescoException e) {
+				
+			}
 		}
 
 		return SUCCESS;
@@ -1067,6 +1076,9 @@ public class Applications extends FrameworkBaseAction implements Constants {
 		SCMManagerImpl scmi = new SCMManagerImpl();
 		revision = !HEAD_REVISION.equals(revision) ? revisionVal : revision;
 		try {
+			//To generate the lock for the particular operation
+			FrameworkUtil.generateLock(Collections.singletonList(getLockDetail(getApplicationInfo().getId(), UPDATE)), true);
+			
 			ApplicationInfo applicationInfo = getApplicationInfo();
 			scmi.updateProject(SVN, repoUrl, userName, password, null, revision, applicationInfo);
 			errorString = getText(SUCCESS_PROJECT_UPDATE);
@@ -1122,6 +1134,12 @@ public class Applications extends FrameworkBaseAction implements Constants {
 			}
 			errorString = getText(UPDATE_PROJECT_FAIL);
 			errorFlag = false;
+		} finally {
+			try {
+				removeLock();
+			} catch (PhrescoException e) {
+				
+			}
 		}
 		return SUCCESS;
 	}
@@ -1129,6 +1147,9 @@ public class Applications extends FrameworkBaseAction implements Constants {
 	public String updateBitKeeperProject() {
 	    SCMManagerImpl scmi = new SCMManagerImpl();
         try {
+        	//To generate the lock for the particular operation
+			FrameworkUtil.generateLock(Collections.singletonList(getLockDetail(getApplicationInfo().getId(), UPDATE)), true);
+			
             ApplicationInfo applicationInfo = getApplicationInfo();
             scmi.updateProject(BITKEEPER, getRepoUrl(), getUsername(), getPassword(), null, getRevision(), applicationInfo);
             errorString = getText(SUCCESS_PROJECT_UPDATE);
@@ -1143,7 +1164,13 @@ public class Applications extends FrameworkBaseAction implements Constants {
         } catch (Exception e) {
             errorString = getText(UPDATE_PROJECT_FAIL);
             errorFlag = false;
-        }
+        } finally {
+			try {
+				removeLock();
+			} catch (PhrescoException e) {
+
+			}
+		}
         
         return SUCCESS;
 	}
@@ -1153,6 +1180,9 @@ public class Applications extends FrameworkBaseAction implements Constants {
 			S_LOGGER.debug("Entering Method  Applications.addSVNProject()");
 		}
 		try {
+			//To generate the lock for the particular operation
+			FrameworkUtil.generateLock(Collections.singletonList(getLockDetail(getApplicationInfo().getId(), ADD_TO_REPO)), true);
+			
 			SCMManagerImpl scmi = new SCMManagerImpl();
 			scmi.importToRepo(SVN, repoUrl, userName, password, null, null, getApplicationInfo(), commitMessage);
 			errorString = getText(ADD_PROJECT_SUCCESS);
@@ -1161,6 +1191,12 @@ public class Applications extends FrameworkBaseAction implements Constants {
 		} catch (Exception e) {
 			errorString = e.getLocalizedMessage();
 			errorFlag = false;
+		} finally {
+			try {
+				removeLock();
+			} catch (PhrescoException e) {
+
+			}
 		}
 		return SUCCESS;
 	}
@@ -1170,9 +1206,12 @@ public class Applications extends FrameworkBaseAction implements Constants {
 			S_LOGGER.debug("Entering Method  Applications.addGITProject()");
 		}
 		try {
+			//To generate the lock for the particular operation
+			FrameworkUtil.generateLock(Collections.singletonList(getLockDetail(getApplicationInfo().getId(), ADD_TO_REPO)), true);
+			
 			SCMManagerImpl scmi = new SCMManagerImpl();
-			scmi.importToRepo(GIT, repoUrl, userName, password, null, null,
-					getApplicationInfo(), commitMessage);
+			scmi.importToRepo(GIT, repoUrl, userName, password, null, null, getApplicationInfo(), commitMessage);
+			
 			errorString = getText(ADD_PROJECT_SUCCESS);
 			errorFlag = true;
 			updateLatestProject();
@@ -1183,6 +1222,12 @@ public class Applications extends FrameworkBaseAction implements Constants {
 			} else {
 				errorString = e.getLocalizedMessage();
 				errorFlag = false;
+			}
+		} finally {
+			try {
+				removeLock();
+			} catch (PhrescoException e) {
+
 			}
 		}
 		return SUCCESS;
@@ -1231,6 +1276,10 @@ public class Applications extends FrameworkBaseAction implements Constants {
 				for (String commitableFile : commitableFiles) {
 					listModifiedFiles.add(new File(commitableFile));
 				}
+				
+				//To generate the lock for the particular operation
+				FrameworkUtil.generateLock(Collections.singletonList(getLockDetail(getApplicationInfo().getId(), COMMIT)), true);
+				
 				SCMManagerImpl scmi = new SCMManagerImpl();
 				String applicationHome = getApplicationHome();
 				File appDir = new File(applicationHome);
@@ -1242,6 +1291,12 @@ public class Applications extends FrameworkBaseAction implements Constants {
 		} catch (Exception e) {
 			errorString = e.getLocalizedMessage();
 			errorFlag = false;
+		} finally {
+			try {
+				removeLock();
+			} catch (PhrescoException e) {
+
+			}
 		}
 		return SUCCESS;
 	}
@@ -1251,6 +1306,9 @@ public class Applications extends FrameworkBaseAction implements Constants {
 			S_LOGGER.debug("Entering Method  Applications.commitGITProject()");
 		}
 		try {
+			//To generate the lock for the particular operation
+			FrameworkUtil.generateLock(Collections.singletonList(getLockDetail(getApplicationInfo().getId(), COMMIT)), true);
+			
 			if (!commitableFiles.isEmpty()) {
 				SCMManagerImpl scmi = new SCMManagerImpl();
 				String applicationHome = getApplicationHome();
@@ -1263,6 +1321,12 @@ public class Applications extends FrameworkBaseAction implements Constants {
 		} catch (Exception e) {
 			errorString = e.getLocalizedMessage();
 			errorFlag = false;
+		} finally {
+			try {
+				removeLock();
+			} catch (PhrescoException e) {
+
+			}
 		}
 		return SUCCESS;
 	}
@@ -1270,12 +1334,16 @@ public class Applications extends FrameworkBaseAction implements Constants {
 	/**
 	 * To commit the changes to the bitkeeper repo
 	 * @return 
+	 * @throws PhrescoException 
 	 */
 	public String commitBitKeeperProject() {
 	    if (s_debugEnabled) {
             S_LOGGER.debug("Entering Method  Applications.commitBitKeeperProject()");
         }
 	    try {
+	    	//To generate the lock for the particular operation
+			FrameworkUtil.generateLock(Collections.singletonList(getLockDetail(getApplicationInfo().getId(), COMMIT)), true);
+	    	
 	        SCMManagerImpl scmi = new SCMManagerImpl();
             File appDir = new File(getApplicationHome());
             scmi.commitToRepo(BITKEEPER, getRepoUrl(), getUsername(), getPassword(),  null, null, appDir, getCommitMessage());
@@ -1291,7 +1359,13 @@ public class Applications extends FrameworkBaseAction implements Constants {
         } catch (Exception e) {
             errorString = getText(COMMIT_PROJECT_FAIL);
             errorFlag = false;
-        }
+        } finally {
+			try {
+				removeLock();
+			} catch (PhrescoException e) {
+
+			}
+		}
         
         return SUCCESS;
 	}
@@ -1363,7 +1437,7 @@ public class Applications extends FrameworkBaseAction implements Constants {
 			if (CollectionUtils.isNotEmpty(lockDetails)) {
 				List<LockDetail> availableLockDetails = new ArrayList<LockDetail>();
 				for (LockDetail lockDetail : lockDetails) {
-					if (!lockDetail.getActionType().equalsIgnoreCase(getActionType())) {
+					if (!lockDetail.getActionType().equalsIgnoreCase(getActionType()) && lockDetail.getAppId().equals(getAppId())) {
 						availableLockDetails.add(lockDetail);
 					}
 				}
@@ -1384,23 +1458,59 @@ public class Applications extends FrameworkBaseAction implements Constants {
 			if (CollectionUtils.isNotEmpty(lockDetails)) {
 				List<String> actionTypesToCheck = new ArrayList<String>();
 				if (getActionType().equals(REQ_CODE)) {
+					actionTypesToCheck.add(ADD_TO_REPO);
+					actionTypesToCheck.add(COMMIT);
+					actionTypesToCheck.add(UPDATE);
 					actionTypesToCheck.add(BUILD);
 					actionTypesToCheck.add(REQ_START);
 					actionTypesToCheck.add(UNIT);
 				} else if (getActionType().equals(BUILD)) {
+					actionTypesToCheck.add(ADD_TO_REPO);
+					actionTypesToCheck.add(COMMIT);
+					actionTypesToCheck.add(UPDATE);
 					actionTypesToCheck.add(BUILD);
 					actionTypesToCheck.add(REQ_CODE);
 					actionTypesToCheck.add(REQ_START);
 				} else if (getActionType().equals(REQ_START)) {
 					actionTypesToCheck.add(BUILD);
 					actionTypesToCheck.add(REQ_CODE);
+					actionTypesToCheck.add(ADD_TO_REPO);
+					actionTypesToCheck.add(COMMIT);
+					actionTypesToCheck.add(UPDATE);
 				} else if (getActionType().equals(UNIT)) {
+					actionTypesToCheck.add(ADD_TO_REPO);
+					actionTypesToCheck.add(COMMIT);
+					actionTypesToCheck.add(UPDATE);
 					actionTypesToCheck.add(BUILD);
 					actionTypesToCheck.add(REQ_CODE);
 					actionTypesToCheck.add(REQ_START);
 				} else if (getActionType().equals(REQ_FROM_TAB_DEPLOY)) {
 					actionTypesToCheck.add(BUILD);
 					actionTypesToCheck.add(REQ_FROM_TAB_DEPLOY);
+				} else if (getActionType().equals(ADD_TO_REPO)) {
+					actionTypesToCheck.add(ADD_TO_REPO);
+					actionTypesToCheck.add(UPDATE);
+					actionTypesToCheck.add(COMMIT);
+					actionTypesToCheck.add(BUILD);
+					actionTypesToCheck.add(REQ_CODE);
+					actionTypesToCheck.add(UNIT);
+					actionTypesToCheck.add(REQ_START);
+				} else if (getActionType().equals(COMMIT)) {
+					actionTypesToCheck.add(ADD_TO_REPO);
+					actionTypesToCheck.add(UPDATE);
+					actionTypesToCheck.add(COMMIT);
+					actionTypesToCheck.add(BUILD);
+					actionTypesToCheck.add(REQ_CODE);
+					actionTypesToCheck.add(UNIT);
+					actionTypesToCheck.add(REQ_START);
+				} else if (getActionType().equals(UPDATE)) {
+					actionTypesToCheck.add(ADD_TO_REPO);
+					actionTypesToCheck.add(COMMIT);
+					actionTypesToCheck.add(UPDATE);
+					actionTypesToCheck.add(BUILD);
+					actionTypesToCheck.add(REQ_CODE);
+					actionTypesToCheck.add(UNIT);
+					actionTypesToCheck.add(REQ_START);
 				} else {
 					actionTypesToCheck.add(getActionType());
 				}

@@ -42,6 +42,18 @@ define(["framework/widgetWithTemplate", "unittest/listener/unittestListener"], f
 				}
 				return returnVal;
 			});
+			
+			Handlebars.registerHelper('modules', function(data, firstVal) {
+				var returnVal = "";
+				if (firstVal) {
+					returnVal = data[0];
+				} else {
+					$.each(data, function(index, current){
+						returnVal += '<li class="projectModule"><a href="#">'+ current +'</a></li>';
+					});
+				}
+				return returnVal;
+			});
 		},
 		
 		/***
@@ -64,8 +76,10 @@ define(["framework/widgetWithTemplate", "unittest/listener/unittestListener"], f
 		preRender: function(whereToRender, renderFunction){
 			var self = this;
 			self.unittestlistener.getUnitTestReportOptions(self.unittestlistener.getActionHeader(self.projectRequestBody, "get"), function(response) {
+				var responseData = response.data;
 				var unitTestOptions = {};
-				unitTestOptions.reportOptions = response.data;
+				unitTestOptions.reportOptions = responseData.reportOptions;
+				unitTestOptions.projectModules = responseData.projectModules;
 				var userPermissions = JSON.parse(self.unittestlistener.unitTestAPI.localVal.getSession('userPermissions'));
 				unitTestOptions.userPermissions = userPermissions;
 				renderFunction(unitTestOptions, whereToRender);
@@ -161,8 +175,29 @@ define(["framework/widgetWithTemplate", "unittest/listener/unittestListener"], f
 			Clazz.navigationController.mainContainer = commonVariables.contentPlaceholder;
 			
 			//Change event of the report type to get the report
+			$('.projectModule').click(function() {
+				$('#modulesDrop').html($(this).children().text() + '<b class="caret"></b>');
+			});
+			
+			//Change event of the report type to get the report
 			$('.reportOption').click(function() {
-				$('#drop5').html($(this).children().text() + '<b class="caret"></b>');
+				$('#reportOptionsDrop').html($(this).children().text() + '<b class="caret"></b>');
+			});
+			
+			//To open the unit test directory
+			$('#openFolder').unbind('click');
+			$("#openFolder").click(function() {
+				var paramJson = {};
+				paramJson.type =  commonVariables.typeUnitTest;
+				commonVariables.navListener.openFolder(paramJson);
+			});
+			
+			//To copy the path of unit test directory
+			$('#copyPath').unbind('click');
+			$("#copyPath").click(function() {
+				var paramJson = {};
+				paramJson.type =  commonVariables.typeUnitTest;
+				commonVariables.navListener.copyPath(paramJson);
 			});
 		}
 	});

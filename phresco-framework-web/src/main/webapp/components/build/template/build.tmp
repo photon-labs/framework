@@ -1,7 +1,7 @@
  <section class="optiontitle buildtitle">
 		<div class="flt_left">
-        	<input type="submit" data-i18n="[value]build.label.openfolder" class="btn btn_style openfolder_icon_btn">
-			<input type="submit" data-i18n="[value]build.label.copypath" class="btn btn_style copypath_icon_btn">
+        	<input type="button" data-i18n="[value]build.label.openfolder" class="btn btn_style openfolder_icon_btn" id="openFolder">
+			<input type="button" data-i18n="[value]build.label.copypath" class="btn btn_style copypath_icon_btn" id="copyPath">
         </div>
         <div class="alert_div">
             Build in progress... Do not perform any action or refresh the page.

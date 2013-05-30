@@ -62,10 +62,14 @@ public class QualityService extends RestBase implements ServiceConstants, Framew
 	@Path("/unit")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response unit(@QueryParam("appDirName") String appDirName, @QueryParam("userId") String userId) {
-		ResponseInfo<List<String>> responseData = new ResponseInfo<List<String>>();
+		ResponseInfo<Map> responseData = new ResponseInfo<Map>();
 		try {
 			List<String> unitReportOptions = getUnitReportOptions(appDirName);
-			ResponseInfo<List<String>> finalOutput = responseDataEvaluation(responseData, null, "Parameter returned successfully", unitReportOptions);
+			List<String> projectModules = FrameworkServiceUtil.getProjectModules(appDirName);
+			Map<String, List<String>> unitTestOptionsMap = new HashMap<String, List<String>>();
+			unitTestOptionsMap.put("reportOptions", unitReportOptions);
+			unitTestOptionsMap.put("projectModules", projectModules);
+			ResponseInfo<List<String>> finalOutput = responseDataEvaluation(responseData, null, "Parameter returned successfully", unitTestOptionsMap);
 			return Response.ok(finalOutput).header("Access-Control-Allow-Origin", "*").build();
 		} catch (PhrescoException e) {
 			ResponseInfo<List<String>> finalOutput = responseDataEvaluation(responseData, e, "Unable to get unit test report options", null);

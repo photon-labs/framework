@@ -2186,7 +2186,12 @@ html>body tbody.scrollContent {
 }
 
 .qual_unit .code_func {
-	width: 48px;
+	padding: 4px 10px 0 8px;
+    width: auto;
+}
+
+.qual_unit .code_func.module {
+	margin-right: 5px !important;
 }
 
 

@@ -215,6 +215,7 @@ public interface FrameworkConstants {
     String URL = "url";
     String ADD = "add";
     String REPO_URL = "repoUrl";
+    String ADD_TO_REPO = "addToRepo";
     String TEST_REPO_URL = "testRepoUrl";
     String PROJECT_UPDATE_POPUP = "projectUpdatePopup";
     String CLONED_WORKSPACE = "clonedWorkspace";
@@ -807,6 +808,7 @@ public interface FrameworkConstants {
     String REQ_CONFIG_PATH = "configPath";
     String REQ_APPLICATION_TYPE = "applicationType";
     String REQ_OLD_CONFIG_NAME = "configName";
+	String REQ_DEPLOY_DIR = "deployDir";
     String REQ_TEST_TYPE = "testType";
     String REQ_SONAR_URL = "sonarUrl";
 	String REQ_REPORT_TYPE = "reportType";
@@ -1934,4 +1936,11 @@ public interface FrameworkConstants {
 	    String PER_EXECUTE_CI_JOBS = "execute_ci_jobs";
 	    String PER_MANAGE_MAVEN_REPORTS = "manage_maven_reports";
 	    String PER_VIEW_MAVEN_REPORTS = "view_maven_reports";
+	    
+	    String TEST_UNIT = "unitTest";
+	    String TEST_FUNCTIONAL = "functionalTest";
+	    String TEST_COMPONENT = "componentTest";
+	    String TEST_MANUAL = "manualTest";
+	    String TEST_LOAD = "loadTest";
+	    String TEST_PERFORMANCE = "performanceTest";
 }
