@@ -51,8 +51,8 @@ var commonVariables = {
 
 	ci : "ci",
 	jobTemplates : "jobTemplates",
-	continuousDelivery : "continuousDelivery",
-	pipeline : "pipeline",
+	continuousDeliveryView : "continuousDeliveryView",
+	continuousDeliveryConfigure : "continuousDeliveryConfigure",
 	
 	customerTheme : null,
 	defaultcustomer : "Photon",

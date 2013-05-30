@@ -1,4 +1,4 @@
-define(["framework/widget", "navigation/api/navigationAPI", "dynamicPage/dynamicPage", "projects/addproject", "projects/editproject", "application/application", "features/features", "codequality/codequality", "configuration/configuration", "build/build", "unittest/unittest", "configuration/editConfiguration", "ci/continuousDelivery", "ci/jobTemplates"], function() {
+define(["framework/widget", "navigation/api/navigationAPI", "dynamicPage/dynamicPage", "projects/addproject", "projects/editproject", "application/application", "features/features", "codequality/codequality", "configuration/configuration", "build/build", "unittest/unittest", "configuration/editConfiguration", "ci/continuousDeliveryConfigure", "ci/continuousDeliveryView", "ci/jobTemplates"], function() {
 
 	Clazz.createPackage("com.components.navigation.js.listener");
 
@@ -21,8 +21,8 @@ define(["framework/widget", "navigation/api/navigationAPI", "dynamicPage/dynamic
 		dynamicpage : null,
 		editConfiguration : null,
 		jobTemplates : null,
-		continuousDelivery : null,
-		pipeline : null,
+		continuousDeliveryView : null,
+		continuousDeliveryConfigure : null,
 		
 		/***
 		 * Called in initialization time of this class 
@@ -168,20 +168,19 @@ define(["framework/widget", "navigation/api/navigationAPI", "dynamicPage/dynamic
 						retuenObj = self.jobTemplates;
 						break;
 
-					case commonVariables.continuousDelivery :
-						if(self.continuousDelivery === null)
-							self.continuousDelivery = new Clazz.com.components.ci.js.ContinuousDelivery();
+					case commonVariables.continuousDeliveryConfigure :
+						if(self.continuousDeliveryConfigure === null)
+							self.continuousDeliveryConfigure = new Clazz.com.components.ci.js.ContinuousDeliveryConfigure();
 							
-						retuenObj = self.continuousDelivery;
+						retuenObj = self.continuousDeliveryConfigure;
 						break;
 
-					case commonVariables.pipeline :
-						if(self.pipeline === null)
-							self.pipeline = new Clazz.com.components.ci.js.Pipeline();
+					case commonVariables.continuousDeliveryView :
+						if(self.continuousDeliveryView === null)
+							self.continuousDeliveryView = new Clazz.com.components.ci.js.ContinuousDeliveryView();
 							
-						retuenObj = self.pipeline;
+						retuenObj = self.continuousDeliveryView;
 						break;
-				
 				}
 			
 			return retuenObj;
@@ -282,10 +281,10 @@ define(["framework/widget", "navigation/api/navigationAPI", "dynamicPage/dynamic
 				currentObj = self.getMyObj(commonVariables.build);
 			} else if (self.currentTab !== commonVariables.jobTemplates && keyword === commonVariables.jobTemplates) {
 				currentObj = self.getMyObj(commonVariables.jobTemplates);
-			} else if (self.currentTab !== commonVariables.continuousDelivery && keyword === commonVariables.continuousDelivery) {
-				currentObj = self.getMyObj(commonVariables.continuousDelivery);
-			}  else if (self.currentTab !== commonVariables.pipeline && keyword === commonVariables.pipeline) {
-				currentObj = self.getMyObj(commonVariables.pipeline);
+			} else if (self.currentTab !== commonVariables.continuousDeliveryView && keyword === commonVariables.continuousDeliveryView) {
+				currentObj = self.getMyObj(commonVariables.continuousDeliveryView);
+			} else if (self.currentTab !== commonVariables.continuousDeliveryConfigure && keyword === commonVariables.continuousDeliveryConfigure) {
+				currentObj = self.getMyObj(commonVariables.continuousDeliveryConfigure);
 			}
 
 			if(currentObj != undefined && currentObj != null){

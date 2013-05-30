@@ -81,25 +81,25 @@
                     <td>Code Validation Template</a></td>  
                     <td>Code Validation</td>
                     <td>Native_eshop-androidnative</td>
-                    <td><a class="tooltiptop" title="" data-placement="top" data-toggle="tooltip" href="#" data-original-title="Delete"><img src="../themes/default/images/helios/delete_row.png" width="14" height="18" border="0" alt=""></a></td>
+                    <td><a class="tooltiptop" title="" data-placement="top" data-toggle="tooltip" href="#" data-original-title="Delete"><img src="themes/default/images/helios/delete_row.png" width="14" height="18" border="0" alt=""></a></td>
                   </tr>
                   <tr>
                     <td>Build Template</a></td>  
                     <td>Build</td>
                     <td>ds-nodejswebservice</td>
-                    <td><a class="tooltiptop" title="" data-placement="top" data-toggle="tooltip" href="#" data-original-title="Delete"><img src="../themes/default/images/helios/delete_row.png" width="14" height="18" border="0" alt=""></a></td>
+                    <td><a class="tooltiptop" title="" data-placement="top" data-toggle="tooltip" href="#" data-original-title="Delete"><img src="themes/default/images/helios/delete_row.png" width="14" height="18" border="0" alt=""></a></td>
                   </tr>
                   <tr>
                     <td>Build Template</a></td>  
                     <td>Build</td>
                     <td>Dr-drupal7</td>
-                    <td><a class="tooltiptop" title="" data-placement="top" data-toggle="tooltip" href="#" data-original-title="Delete"><img src="../themes/default/images/helios/delete_row.png" width="14" height="18" border="0" alt=""></a></td>
+                    <td><a class="tooltiptop" title="" data-placement="top" data-toggle="tooltip" href="#" data-original-title="Delete"><img src="themes/default/images/helios/delete_row.png" width="14" height="18" border="0" alt=""></a></td>
                   </tr>
                   <tr>
                     <td>Deploy Template</a></td>  
                     <td>Deploy</td>
                     <td>Testapp-php</td>
-                    <td><a class="tooltiptop" title="" data-placement="top" data-toggle="tooltip" href="#" data-original-title="Delete"><img src="../themes/default/images/helios/delete_row.png" width="14" height="18" border="0" alt=""></a></td>
+                    <td><a class="tooltiptop" title="" data-placement="top" data-toggle="tooltip" href="#" data-original-title="Delete"><img src="themes/default/images/helios/delete_row.png" width="14" height="18" border="0" alt=""></a></td>
                   </tr>
                   <tr>
               </tbody>
