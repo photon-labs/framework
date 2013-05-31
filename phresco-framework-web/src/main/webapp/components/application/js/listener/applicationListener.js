@@ -329,7 +329,7 @@ define(["framework/widget", "framework/widgetWithTemplate", "application/api/app
 			}	
 		},
 		
-		getRequestHeader : function(appDirName , action) {
+		getRequestHeader : function(appDirName, action, techId) {
 			var self=this, header, data = {}, userId, oldAppDirName;
 			userId = self.applicationAPI.localVal.getSession('username');
 			oldAppDirName = self.applicationAPI.localVal.getSession("appDirName");
@@ -347,6 +347,10 @@ define(["framework/widget", "framework/widgetWithTemplate", "application/api/app
 				header.requestMethod ="PUT";
 				header.requestPostBody = appDirName;
 				header.webserviceurl = commonVariables.webserviceurl+"project/updateApplication?userId="+userId+"&oldAppDirName="+oldAppDirName+"&customerId=photon";
+			}
+			if (action == 'getApplicableOptions') {
+				header.requestMethod ="GET";
+				header.webserviceurl = commonVariables.webserviceurl+"util/techOptions?userId="+userId+"&techId="+techId;
 			}
 			return header;
 		},
@@ -417,9 +421,27 @@ define(["framework/widget", "framework/widgetWithTemplate", "application/api/app
 					self.hasError = true;
 			   }
 			  return self.hasError;	
+		},
+		
+		getApplicableOptions : function(header, callback) {
+			var self = this;
+			try {
+				self.applicationAPI.appinfo(header,
+					function(response) {
+						if (response !== null) {
+							callback(response);
+							self.loadingScreen.removeLoading();
+						} else {
+							self.loadingScreen.removeLoading();
+							callback({ "status" : "service failure"});
+						}
+
+					}
+				);
+			} catch(exception) {
+				
+			}
 		}
-		
-		
 	});
 
 	return Clazz.com.components.application.js.listener.ApplicationListener;

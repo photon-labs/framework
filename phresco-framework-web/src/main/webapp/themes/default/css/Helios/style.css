@@ -50,6 +50,7 @@ header, aside, figure, footer, ul, li {
 	display:block;
 	padding:0;
 	margin:0;
+	font-size:12px;
 }
 #main { width:100%; height:100%; }
 .flt_left { float:left; }
@@ -664,6 +665,7 @@ ul.nav li.dropdown:hover > .test_options{
 
 .table_border a {
 	color:#747474;
+	font-size:12px;
 }
 
 .table_border a:hover {
@@ -671,8 +673,9 @@ ul.nav li.dropdown:hover > .test_options{
 	text-decoration:none;
 }
 
-.table_border th, .table_border td {
+.table_border th, .table_border td, table td {
     border-left:none !important;
+	font-size:12px;
 }
 
 .table_border thead {
@@ -1656,7 +1659,7 @@ ul.nav li.dropdown:hover > .test_options{
 /* vertical scrollbar */
 .mCSB_container{
 	width:auto;
-	overflow:hidden;
+	overflow:visible;
 }
 .mCSB_container.mCS_no_scrollbar{
 	margin-right:0;

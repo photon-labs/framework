@@ -74,9 +74,30 @@ var commonVariables = {
 	typeLoadTest : "loadTest",
 	typePerformanceTest : "performanceTest",
 	typeComponentTest : "componentTest",
-			
-	/******* mvn Context *********/
 	
+	/******* Technology options constants *******/
+	optionsCode : "Code",
+	optionsReports : "Reports",
+	optionsUnitTest : "Unit_Test",
+	optionsComponentTest : "Component_Test",
+	optionsFunctionalTest : "Functional_Test",
+	optionsPerformanceTest : "Performance_Test",
+	optionsLoadTest : "Load_Test",
+	optionsManualTest : "Manual_Test",
+	optionsCI : "CI",
+	optionsRunAgainstSrc : "Run_Against_Source",
+	optionsMinification : "Minification",
+	optionsBuild : "Build",
+	optionsDeploy : "Deploy",
+	optionsExeDownload : "Exe_Download",
+	optionsFeatureConfig : "Feature_Config",
+	optionsComponentConfig : "Component_Config",
+	optionsProcessBuild : "Process_Build",
+	optionsRemoteDeployment : "Remote_Deployment",
+	optionsEmbedApplication : "Embed_Application",
+	optionsThemeBuilder : "Theme_Builder",
+	
+	/******* mvn Context *********/
 	mvnlogService : "app/readlog",
 	mvnBuild : "app/build",
 	mvnDeploy : "app/deploy",

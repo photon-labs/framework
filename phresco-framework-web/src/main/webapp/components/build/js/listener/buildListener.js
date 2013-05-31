@@ -23,7 +23,7 @@ define(["framework/widget", "build/api/buildAPI"], function() {
 				$('.build_close').animate({right: '0px'},500);
 				$(clicked).attr('data-flag','false');
 			} else {
-				$('.build_info').animate({width: window.innerWidth/2.5},500);
+				$('.build_info').animate({width: window.innerWidth/1.6},500);
 				$('.build_progress').animate({right: '10px'},500);
 				$('.build_close').animate({right: value1+10},500);
 				$(clicked).attr('data-flag','true');

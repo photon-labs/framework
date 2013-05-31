@@ -223,6 +223,74 @@ define(["framework/widget", "navigation/api/navigationAPI", "dynamicPage/dynamic
 			}
 		},
 		
+		//To show hide the options like build, deploy based on the applicable options for the technology
+		showHideTechOptions : function() {
+			var self = this;
+			var applicableOptions = JSON.parse(self.navAPI.localVal.getSession('applicableOptions'));
+			if (jQuery.inArray(commonVariables.optionsCode, applicableOptions) == -1) {
+				$("#codequality").hide();
+			}
+			if (jQuery.inArray(commonVariables.optionsReports, applicableOptions) == -1) {
+				$("#mavenReport").hide();
+			}
+			if (jQuery.inArray(commonVariables.optionsUnitTest, applicableOptions) == -1) {
+				$("#unittest").hide();
+			}
+			if (jQuery.inArray(commonVariables.optionsComponentTest, applicableOptions) == -1) {
+				$("#componenttest").hide();
+			}
+			if (jQuery.inArray(commonVariables.optionsFunctionalTest, applicableOptions) == -1) {
+				$("#functionaltest").hide();
+			}
+			if (jQuery.inArray(commonVariables.optionsPerformanceTest, applicableOptions) == -1) {
+				$("#performancetest").hide();
+			}
+			if (jQuery.inArray(commonVariables.optionsLoadTest, applicableOptions) == -1) {
+				$("#loadtest").hide();
+			}
+			if (jQuery.inArray(commonVariables.optionsManualTest, applicableOptions) == -1) {
+				$("#manualtest").hide();
+			}
+			if (jQuery.inArray(commonVariables.optionsCI, applicableOptions) == -1) {
+				$("#continuousDeliveryView").hide();
+			}
+			if (jQuery.inArray(commonVariables.optionsRunAgainstSrc, applicableOptions) == -1) {
+				$("#runAgainstSrc").hide();
+				$("#stop").hide();
+				$("#restart").hide();
+			}
+			if (jQuery.inArray(commonVariables.optionsMinification, applicableOptions) == -1) {
+				$("#minifier").hide();
+			}
+			if (jQuery.inArray(commonVariables.optionsBuild, applicableOptions) == -1) {
+
+			}
+			if (jQuery.inArray(commonVariables.optionsDeploy, applicableOptions) == -1) {
+
+			}
+			if (jQuery.inArray(commonVariables.optionsExeDownload, applicableOptions) == -1) { 
+
+			}
+			if (jQuery.inArray(commonVariables.optionsFeatureConfig, applicableOptions) == -1) {
+
+			}
+			if (jQuery.inArray(commonVariables.optionsComponentConfig, applicableOptions) == -1) {
+
+			}
+			if (jQuery.inArray(commonVariables.optionsProcessBuild, applicableOptions) == -1) {
+
+			}
+			if (jQuery.inArray(commonVariables.optionsRemoteDeployment, applicableOptions) == -1) {
+
+			}
+			if (jQuery.inArray(commonVariables.optionsEmbedApplication, applicableOptions) == -1) {
+
+			}
+			if (jQuery.inArray(commonVariables.optionsThemeBuilder, applicableOptions) == -1) {
+
+			}
+		},
+		
 		//Handles the open folder action
 		openFolder : function(actionBody) {
 			var self = this;
@@ -316,7 +384,7 @@ define(["framework/widget", "navigation/api/navigationAPI", "dynamicPage/dynamic
 		getActionHeader : function(requestBody, action) {
 			var self=this, header, data = {}, userId;
 			var type = requestBody.type;
-			var appDirName = self.navAPI.localVal.getJson("appDirName");
+			var appDirName = self.navAPI.localVal.getSession("appDirName");
 			header = {
 				contentType: "application/json",				
 				dataType: "json",

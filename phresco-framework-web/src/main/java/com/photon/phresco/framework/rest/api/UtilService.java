@@ -5,6 +5,7 @@ import java.awt.Toolkit;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
 import java.io.File;
+import java.util.List;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
@@ -15,8 +16,10 @@ import javax.ws.rs.core.Response;
 
 import com.photon.phresco.commons.FrameworkConstants;
 import com.photon.phresco.commons.model.ProjectInfo;
+import com.photon.phresco.commons.model.Technology;
 import com.photon.phresco.exception.PhrescoException;
 import com.photon.phresco.framework.rest.api.util.FrameworkServiceUtil;
+import com.photon.phresco.service.client.api.ServiceManager;
 import com.photon.phresco.util.Utility;
 import com.sun.jersey.api.client.ClientResponse.Status;
 
@@ -67,6 +70,23 @@ public class UtilService extends RestBase implements FrameworkConstants {
 			return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
 		} catch (Exception e) {
 			ResponseInfo<ProjectInfo> finalOutput = responseDataEvaluation(responseData, e, "Copy path failed", null);
+			return Response.status(Status.BAD_REQUEST).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
+		}
+	}
+	
+	@GET
+	@Path("/techOptions")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response getTecnologyOptions(@QueryParam("userId") String userId, @QueryParam("techId") String techId) {
+		ResponseInfo<List<String>> responseData = new ResponseInfo<List<String>>();
+		try {
+			ServiceManager serviceManager = CONTEXT_MANAGER_MAP.get(userId);
+			Technology technology = serviceManager.getTechnology(techId);
+			List<String> archetypeFeatures = technology.getOptions();
+			ResponseInfo<List<String>> finalOutput = responseDataEvaluation(responseData, null, "Technology options fetched successfully", archetypeFeatures);
+			return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
+		} catch (PhrescoException e) {
+			ResponseInfo<ProjectInfo> finalOutput = responseDataEvaluation(responseData, e, "Failed to get Technology options", null);
 			return Response.status(Status.BAD_REQUEST).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
 		}
 	}
