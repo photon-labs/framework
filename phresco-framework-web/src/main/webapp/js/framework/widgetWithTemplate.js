@@ -160,6 +160,78 @@ define(["framework/widget", "framework/templateProvider"], function() {
 
 				self.closeAll(placeId);
 			},
+
+			opencctime : function(ee, placeId) {
+				var self=this;
+				$('.content_main').addClass('z_index_ci');
+				
+				var clicked = $(ee);
+				var target = $("#" + placeId);
+				var twowidth = window.innerWidth/1.5;
+			
+				if (clicked.offset().left < twowidth) {	
+					$(target).toggle();
+					var a = target.height()/2;
+					var b = clicked.height()/2;
+					var t=clicked.offset().top + (b+12) - (a+12) ;
+					var l=clicked.offset().left + clicked.width()+ 4;
+					$(target).offset({
+						top: t,
+						left: l
+					});
+					
+					$(target).addClass('speakstyleleft').removeClass('speakstyleright');
+				} else {
+					$(target).toggle();
+					var t=clicked.offset().top - target.height()/2;
+					var l=clicked.offset().left - (target.width()+clicked.width()+15);
+					$(target).offset({
+						top: t,
+						left: l
+					});
+					
+					$(target).addClass('speakstyleright').removeClass('speakstyleleft');
+			
+				}
+				
+				self.closeAll(placeId);
+			},
+
+			openccwait : function(ee, placeId) {
+				var self=this;
+				$('.content_main').addClass('z_index_ci');
+				
+				var clicked = $(ee);
+				var target = $("#" + placeId);
+				var twowidth = window.innerWidth/1.5;
+			
+				if (clicked.offset().left < twowidth) {	
+					$(target).toggle();
+					var a = target.height()/2;
+					var b = clicked.height()/2;
+					var t=clicked.offset().top + (b+12) - (a+20) ;
+					var l=clicked.offset().left + clicked.width()+ 5;
+					$(target).offset({
+						top: t,
+						left: l
+					});
+					
+					$(target).addClass('speakstyleleft').removeClass('speakstyleright');
+				} else {
+					$(target).toggle();
+					var t=clicked.offset().top - target.height()/2;
+					var l=clicked.offset().left - (target.width()+clicked.width()+15);
+					$(target).offset({
+						top: t,
+						left: l
+					});
+					
+					$(target).addClass('speakstyleright').removeClass('speakstyleleft');
+			
+				}
+				
+				self.closeAll(placeId);
+			},
 			
 			closeAll : function(placeId) {
 				$(document).keyup(function(e) {
