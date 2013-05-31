@@ -215,15 +215,14 @@ define(["framework/widget", "dynamicPage/api/dynamicPageAPI", "common/loading"],
 								}
 								
 								if(value.multiple === "true"){
-									multiple = "ismultiple=true";
+									multiple = "isMultiple=true";
 								} else {
-									multiple = "ismultiple=false";
+									multiple = "isMultiple=false";
 								}
 								
 								if(value.dependency !== undefined && value.dependency !== null) {
 									dependencyVal = value.dependency;
 								} else if(value.possibleValues !== undefined && value.possibleValues !== null) {
-									var addOnChangeEvent = false;
 									$.each(value.possibleValues.value, function(index, value){
 										if(value.dependency !== undefined && value.dependency !== null){
 											psblDependency = value.dependency;
@@ -272,7 +271,7 @@ define(["framework/widget", "dynamicPage/api/dynamicPageAPI", "common/loading"],
 									additionalparam = ""
 								}
 								
-								htmlTag += '<tr'+ show +' id="'+value.key+'Control" name="chkCnt"><td>'+getName()+''+ required +'</td><td><input type="checkbox" name="'+ value.key +'" id="'+ value.key +'"'+ checked +' additionalparam="'+additionalparam+'" dependency="'+dependency+'" showFlag="'+showStatus(dependency)+'"></td></tr>';
+								htmlTag += '<tr'+ show +' id="'+value.key+'Control" name="chkCnt"><td>'+getName()+''+ required +'</td><td><input type="checkbox" name="'+ value.key +'" id="'+ value.key +'"'+ checked +' additionalparam="'+additionalparam+'" dependency="'+dependency+'" showFlag="'+showStatus(dependency)+'" value="'+ value.value +'"></td></tr>';
 								
 							} 	
 							
@@ -280,6 +279,8 @@ define(["framework/widget", "dynamicPage/api/dynamicPageAPI", "common/loading"],
 							if(type === "DynamicParameter"){
 							
 								if(!value.sort) {
+								
+									var Key = value.key;
 									if(value.show === false){
 										show = ' style="display:none;"';
 									} else {
@@ -299,35 +300,33 @@ define(["framework/widget", "dynamicPage/api/dynamicPageAPI", "common/loading"],
 									}
 									
 									if(value.multiple === "true"){
-										multiple = "multiple=true";
+										multiple = "isMultiple=true";
 									} else {
-										multiple = ""
+										multiple = "isMultiple=false";
 									}
 									
 									var option = '';
+									var enableOnchangeFunction = false;
+									var possbldependency = "";
 									self.dynamicPageAPI.getContent(self.getRequestHeader(self.projectRequestBody, value.key, "", "dependency"), function(response) {
-									
-										$.each(response.data.value, function(index, value){
-											console.info("value", value);
-											if(value !== undefined && value !== null) {
-												option += '<option value='+value.key+'>'+value.value+'</option>';
-											}
-										}); 
-										
-										$('select[name='+ value.key+']').html(option);
-										
+										if(response.data.value !== null && response.data.value !== undefined) {
+											possbldependency = response.data.value[0].dependency;	
+											$.each(response.data.value, function(index, value){
+												psblDependency = value.dependency;
+												if (psblDependency !== undefined && psblDependency !== null) {
+													enableOnchangeFunction = true;
+													return false;
+												}
+												if(value !== undefined && value !== null) {
+													option += '<option value='+ Key +'>'+value.value+'</option>';
+												}
+											}); 
+											
+											$('select[name='+ value.key+']').html(option);
+										}
 									});
 									
-									/* if(value.possibleValues !== undefined && value.possibleValues !== null){
-										$.each(value.possibleValues.value, function(index, value){
-											if(value.dependency !== undefined && value.dependency !== null){
-												psblDependency = value.dependency;
-												return false;
-											} 
-										});
-									} */
-
-									htmlTag += '<tr'+ show +' id="'+value.key+'Control" name="chkCnt"><td>'+getName()+''+ required +'</td><td><select name="'+ value.key +'" id="'+ value.key +'"'+ editable +''+ multiple +'></select></td></tr>';	
+									htmlTag += '<tr'+ show +' id="'+value.key+'Control" name="chkCnt"><td>'+getName()+''+ required +'</td><td><select dynamicParam="true" name="'+ value.key +'" id="'+ value.key +'"'+ editable +''+ multiple +' psblDependency="'+ psblDependency +'" dependency="'+ possbldependency +'" enableOnchangeFunction="'+ enableOnchangeFunction +'"></select></td></tr>';	
 							   } else {
 							   
 							   }
@@ -444,11 +443,22 @@ define(["framework/widget", "dynamicPage/api/dynamicPageAPI", "common/loading"],
 						self.changeChckBoxValue($(controls));
 					}
 				} else if(controlType === 'SELECT') {
-					if(dependency !== undefined && dependency !== null && dependency !== ''){
-						self.selectBoxOnChangeEvent($(controls), key, dependency);
-					} else if(psblValues !== undefined && psblValues !== null && psblValues !== ''){
-						self.selectBoxOnChangeEvent($(controls), key);
-					}
+					console.info("dynamicParam", $(controlType).attr('dynamicParam'));
+					if($(controlType).attr('dynamicParam') === true) {
+						if(dependency !== undefined && dependency !== null && dependency !== ''){
+							self.selectBoxOnChangeEvent($(controls), key);
+						} else if(psblValues !== undefined && psblValues !== null && psblValues !== ''){
+							self.selectBoxOnChangeEvent($(controls), key);
+						} else if(!$(controlType).attr('isMultiple') && $(controlType).attr('enableOnchangeFunction') === "true"){
+							self.selectBoxOnChangeEvent($(controls), key);
+						}
+					} else {
+						if(dependency !== undefined && dependency !== null && dependency !== ''){
+							self.selectBoxOnChangeEvent($(controls), key, dependency);
+						} else if(psblValues !== undefined && psblValues !== null && psblValues !== ''){
+							self.selectBoxOnChangeEvent($(controls), key);
+						}
+					}	
 				}
 			});
 			
@@ -501,7 +511,7 @@ define(["framework/widget", "dynamicPage/api/dynamicPageAPI", "common/loading"],
 				
 				var csvDependencies;
 				self.changeEveDependancyListener(selectedOption, currentParamKey);  // update the watcher while changing the drop down
-				if (dependencyAttr !== undefined && dependencyAttr != null) {
+				if (dependencyAttr !== undefined && dependencyAttr != null && dependencyAttr != '') {
 					csvDependencies = dependencyAttr.substring(dependencyAttr.indexOf('=') + 1);
 					csvDependencies = self.getAllDependencies(csvDependencies);
 					var dependencyArr = new Array();
@@ -542,6 +552,150 @@ define(["framework/widget", "dynamicPage/api/dynamicPageAPI", "common/loading"],
 			var self = this;
 			self.dynamicPageAPI.getContent(self.getRequestHeader(self.projectRequestBody, currentParamKey, selectedOption, "dependency"), function(response) {
 			});
+		},
+		
+		updateDependancy : function(dependency) {
+			var self = this;
+			self.dynamicPageAPI.getContent(self.getRequestHeader(self.projectRequestBody, dependency, "", "dependency"), function(response) {
+				if(response.data.value !== null) {
+					self.updateDependancySuccEvent(response.data.value, dependency);
+				}
+			});
+		},
+		
+		updateDependancySuccEvent : function(data, dependency) {
+			var self = this;
+			
+			if (dependency != undefined && dependency !== "" && !self.isBlank(dependency)) {
+				var isMultiple = $('#' + dependency).attr("isMultiple");
+				var controlType = $('#' + dependency).attr('type');
+				self.constructElements(data, dependency, isMultiple, controlType);
+			}
+		},
+		
+		//to dynamically update dependancy data into controls 
+		constructElements : function(data, pushToElement, isMultiple, controlType) {
+			var self=this;
+			if ($("#"+pushToElement+"Control").prop('tagName') == 'FIELDSET') {
+				self.constructFieldsetOptions(data, pushToElement+"Control");
+			} else if (isMultiple === undefined && controlType === undefined) {
+				self.constructMultiSelectOptions(data, pushToElement);
+			} else if (isMultiple === "false") {
+				self.constructSingleSelectOptions(data, pushToElement);
+			} else if (controlType !== undefined ) {
+				//other controls ( text box)
+			}
+		},
+		
+		constructFieldsetOptions : function(dependentValues, pushToElement) {
+			//to clear fielset values
+			/* $("#avaliableSourceScript").empty();
+			$("#selectedSourceScript").empty(); 
+			if (dependentValues != undefined && !isBlank(dependentValues)) {
+				var fileName, filePath;
+				for(i in dependentValues) {
+					fileName = dependentValues[i].value.substring(dependentValues[i].value.lastIndexOf('#') + 1);
+					filePath = dependentValues[i].value.replace('#SEP#','/');
+					
+					var optionElement = "<option value='"+ filePath +"'>"+fileName+"</option>";
+					$("#avaliableSourceScript").append(optionElement);
+				}
+				addSelectedSourceScripts();
+			} */ 
+		},
+
+		// When the selects the sql files for deployment, the values need to be retained when the popup shows again
+		addSelectedSourceScripts : function() {
+			// selected source scripts
+			/* var db = $('#dataBase').val();
+			var hiddenValue = $('#fetchSql').val();
+			var allFiles = jQuery.parseJSON(hiddenValue);
+			if (allFiles != undefined && !isBlank(allFiles) && allFiles != null) {
+				var dbFiles = allFiles[db];
+				if (dbFiles != undefined ) {
+					$.each(dbFiles, function(i, dbFile) {
+						var tokens = dbFile.split("/");
+						var optionElement = "<option value='"+ dbFile +"'>"+tokens[tokens.length-1]+"</option>";
+						$("#selectedSourceScript").append(optionElement);
+						$("#avaliableSourceScript option[value='" + dbFile + "']").remove();
+					});
+				}
+			} */
+		},
+
+		constructSingleSelectOptions : function(dependentValues, pushToElement) {
+			var self = this;
+			var editbleComboClass = $('#'+ pushToElement + ' option').attr('class');
+			$("#" + pushToElement).empty();
+			if (dependentValues !== undefined && dependentValues !== null && !self.isBlank(dependentValues)) {
+				var control = $('#'+ pushToElement + ' option:selected');
+				var selected = control.val();
+				var additionalParam = control.attr('additionalParam'); 
+				
+				$("#" + pushToElement).empty();
+				var selectedStr = "";
+				var dynamicFirstValue = dependentValues[0].value;
+				
+				var isEditableCombo = false;
+				if (editbleComboClass == "jecEditableOption") {				//convert to editable combobox
+					var optionElement = "<option class='jecEditableOption'>Type or select from the list</option>";
+					$("#" + pushToElement).append(optionElement);
+					isEditableCombo = true;
+				}
+				for(i in dependentValues) {
+					if(dependentValues[i].value === selected) {
+						selectedStr = "selected";
+					} else {
+						selectedStr = "";
+					}
+					if (dependentValues[i].dependency != undefined && !self.isBlank(dependentValues[i].dependency)) {
+						var dynamicDependency = "dependency=" + dependentValues[i].dependency;
+						$("<option></option>", {value: dependentValues[i].value, text: dependentValues[i].value, additionalParam: dynamicDependency}).appendTo("#" + pushToElement);	
+					} else {
+						$("<option></option>", {value: dependentValues[i].value, text: dependentValues[i].value, additionalParam: additionalParam}).appendTo("#" + pushToElement);			
+					}
+				}
+				
+				if (isEditableCombo && !self.isBlank(dynamicFirstValue)) {		// execute only for jec combo box
+					$('#'+ pushToElement + ' option[value="'+ dynamicFirstValue +'"]').prop("selected","selected");//To preselect select first value
+				}
+			} else if (parameterType.toLowerCase() != "list".toLowerCase()) {
+				$("#" + pushToElement).empty();
+				if (editbleComboClass == "jecEditableOption") {		//convert to editable combobox
+					var optionElement = "<option class='jecEditableOption'>Type or select from the list</option>";
+					$("#" + pushToElement).append(optionElement);
+				}
+			}  
+		},
+
+		constructMultiSelectOptions : function(dependentValues, pushToElement) {
+			/* var self = this;
+			if (dependentValues != undefined && !self.isBlank(dependentValues)) {
+				//See step 1
+				var selected = new Array();
+				$('#'+pushToElement+' input:checked').each(function() {
+					selected.push($(this).val());
+				});
+				//See step 2
+				$("#" + pushToElement).empty();
+				//See step 3
+				var ulElement =$(document.createElement('ul'));
+				var checkedStr = "";
+				//See step 4
+				for (i in dependentValues) {
+					//See step 5
+					if($.inArray(dependentValues[i].value, selected) > -1){
+						checkedStr = "checked";
+					} else {
+						checkedStr = "";
+					}
+					//See step 6
+					var liElement = "<li><input type='checkbox' name='"+ pushToElement +"' value='" + dependentValues[i].value + "' class='popUpChckBox'"+checkedStr+">"+dependentValues[i].value+"</li>";
+					ulElement.append(liElement);
+				}
+				//See step 7
+				$("#"+pushToElement).append(ulElement);
+			} */
 		},
 		
 		setPreviousDependent : function(self) {
@@ -708,14 +862,14 @@ define(["framework/widget", "dynamicPage/api/dynamicPageAPI", "common/loading"],
 		showControl : function(controls) {
 			for (i in controls) {
 				$('#' + controls[i] + 'Control').show();
-				//$('.' + controls[i] + 'PerformanceDivClass').show();//for performance context urls
+				$('.' + controls[i] + 'PerformanceDivClass').show();//for performance context urls
 			}
 		},
 		
 		hideControl : function(controls) {
 			for (i in controls) {
 				$('#' + controls[i] + 'Control').hide();
-				//$('.' + controls[i] + 'PerformanceDivClass').hide();
+				$('.' + controls[i] + 'PerformanceDivClass').hide();
 			}
 		},
 		
