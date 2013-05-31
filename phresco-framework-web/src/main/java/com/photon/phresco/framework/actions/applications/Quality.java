@@ -1618,8 +1618,8 @@ public class Quality extends DynamicParameterAction implements Constants {
 		FileWriter fw = null;
 		String property = "";
 		try {
-			if(StringUtils.isNotEmpty(getTestBasis()) && REQ_PARAMETERS.equalsIgnoreCase(getTestBasis()) 
-					|| StringUtils.isNotEmpty(getTestAgainst())) {
+			if(REQ_PARAMETERS.equalsIgnoreCase(getTestBasis()) && StringUtils.isNotEmpty(getTestAgainst())
+					|| (StringUtils.isEmpty(getTestBasis()) && StringUtils.isNotEmpty(getTestAgainst()))) {
 				if (LOAD.equals(getTestAction())) {
 					property = POM_PROP_KEY_LOADTEST_DIR;
 				} else {
