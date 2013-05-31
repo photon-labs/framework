@@ -114,7 +114,7 @@ define(["framework/widgetWithTemplate", "build/listener/buildListener"], functio
 				$(".dyn_popup").hide();
 
 				var height = $(this).height();
-				var twowidth = window.innerWidth/2.5;
+				var twowidth = window.innerWidth/1.6;
 				var onewidth = window.innerWidth - (twowidth+70);
 				
 				$('.features_content_main').height(height - 230);
