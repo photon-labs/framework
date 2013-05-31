@@ -41,6 +41,7 @@
 <%@ page import="com.photon.phresco.framework.model.PropertyInfo"%>
 <%@ page import="com.photon.phresco.framework.model.SettingsInfo"%>
 <%@ page import="com.photon.phresco.commons.model.ApplicationInfo"%>
+<%@ page import="com.photon.phresco.framework.model.Permissions"%>
 
 <%
 	List<Environment> envs = (List<Environment>) request.getAttribute(FrameworkConstants.REQ_ENVIRONMENTS);
@@ -49,6 +50,13 @@
 	String fromPage = (String) request.getAttribute(FrameworkConstants.REQ_FROM_PAGE);
 	String configPath = (String) request.getAttribute(FrameworkConstants.REQ_SETTINGS_PATH);
 	boolean isEnvSpecific = (Boolean) request.getAttribute(FrameworkConstants.REQ_ENV_SPECIFIC);
+	Permissions permissions = (Permissions) session.getAttribute(FrameworkConstants.SESSION_PERMISSIONS);
+	String per_disabledStr = "";
+	String per_disabledClass = "btn-primary";
+	if (permissions != null && !permissions.canManageConfiguration()) {
+		per_disabledStr = "disabled";
+		per_disabledClass = "btn-disabled";
+	}
 	ActionSupport actionSupport = new ActionSupport();
 	String disabledStr = "";
 	if (CollectionUtils.isEmpty(envs)) {
@@ -66,13 +74,14 @@
     
     <div class="operation">
     	<!-- Add Configuration Button --> 
-		<input type="button" class="btn btn-primary" name="configAdd" id="configAdd" value="<s:text name='lbl.btn.add'/>" <%=disabledStr %>/>
+    	
+		<input type="button" class="btn <%= per_disabledClass %>" name="configAdd" id="configAdd" <%= per_disabledStr %> value="<s:text name='lbl.btn.add'/>" <%=disabledStr %>/>
 
 		<!-- Delete Configuration Button -->	
 		<input type="button" class="btn" name="deleteBtn" id="deleteBtn" disabled value="<s:text name='lbl.delete'/>" data-toggle="modal" href="#popupPage"/>
 
 		<!-- Environment Buttton -->
-	    <a id="addEnvironments" class="btn btn-primary"><s:text name='lbl.app.config.environments'/></a>
+		<input type="button" id="addEnvironments" class="btn <%= per_disabledClass %>" <%= per_disabledStr %> value="<s:text name='lbl.app.config.environments'/>"/>
 		         
 		<s:if test="hasActionMessages()">
 			<div class="alert alert-success alert-message" id="successmsg" >
