@@ -7,8 +7,10 @@ define(["framework/widgetWithTemplate", "codequality/listener/codequalityListene
 		configUrl: "components/projects/config/config.json",
 		name : commonVariables.codequality,
 		codequalityListener: null,
+		codequalityAPI : null,
 		dynamicpage : null,
 		dynamicPageListener : null,
+		renderedData : {},
 	
 		/***
 		 * Called in initialization time of this class 
@@ -20,6 +22,7 @@ define(["framework/widgetWithTemplate", "codequality/listener/codequalityListene
 			self.dynamicpage = commonVariables.navListener.getMyObj(commonVariables.dynamicPage);
 			self.dynamicPageListener = new Clazz.com.components.dynamicPage.js.listener.DynamicPageListener();
 			self.codequalityListener = new Clazz.com.components.codequality.js.listener.CodequalityListener(globalConfig);
+			self.codequalityAPI = new Clazz.com.components.codequality.js.api.CodeQualityAPI();			
 			self.registerEvents(self.codequalityListener);
 		},
 		
@@ -36,24 +39,45 @@ define(["framework/widgetWithTemplate", "codequality/listener/codequalityListene
 			Clazz.navigationController.push(this);
 		},
 		
+		
+		preRender: function(whereToRender, renderFunction){
+			var self = this;
+			var appDirName = self.codequalityListener.codequalityAPI.localVal.getSession('appDirName');
+			var goal = "validate-code";
+			commonVariables.goal = goal;
+			
+			setTimeout(function() {
+				self.codequalityListener.getReportTypes(self.codequalityListener.getRequestHeader(self.appDirName , "reporttypes"), function(response) {
+					var projectlist = {};
+					projectlist.projectlist = response;	
+					self.renderedData = response;
+					if(response.message == "Dependency returned successfully"){
+						self.dynamicpage.getHtml(function(response){
+							$("#dynamicContent").html(response);
+							self.dynamicpage.showParameters();
+							self.dynamicPageListener.controlEvent();
+						});
+						renderFunction(projectlist, whereToRender);
+					}else{
+						 renderFunction(projectlist, whereToRender); 
+					}
+				});
+			}, 200);	
+		}, 
+
 		/***
 		 * Called after the preRender() and bindUI() completes. 
 		 * Override and add any preRender functionality here
 		 *
 		 * @element: Element as the result of the template + data binding
 		 */
+		 
 		postRender : function(element) {
 			var self = this; 
-			var appDirName = commonVariables.appDirName;
-			var goal = "validate-code";
-			commonVariables.goal = goal;
-			self.dynamicpage.getHtml(function(response){
-				$("#dynamicContent").html(response);
-				self.dynamicpage.showParameters();
-				self.dynamicPageListener.controlEvent();
-			});
-		},
-		
+			self.codequalityListener.constructHtml(self.renderedData);
+
+			},
+
 		/***
 		 * Bind the action listeners. The bindUI() is called automatically after the render is complete 
 		 *

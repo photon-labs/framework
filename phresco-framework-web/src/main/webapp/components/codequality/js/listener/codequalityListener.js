@@ -19,16 +19,16 @@ define(["framework/widget", "codequality/api/codequalityAPI"], function() {
 		
 		codeValidate : function() {
 			var self = this;
-			var appdetails = self.codequalityAPI.localVal.getJson('appdetails');
-			self.codequalityAPI.codequality(self.getRequestHeader(appdetails , "validate-code"), function(response) {
-				$('#logDiv').html('');
-				$('#logDiv').append(response.log);
-				$('#logDiv').append("<br>") ;
+			var ipjson = $("#codeValidateForm").serialize();
+			self.codequalityAPI.codequality(self.getRequestHeader(ipjson , "validate-code"), function(response) {
+				$('#iframePart').html('');
+				$('#iframePart').append(response.log);
+				$('#iframePart').append("<br>") ;
 				if(response.status == "STARTED"){
 					self.readLog(response);
 				}			
 				else if(response.status == 'ERROR'){
-					$('#logDiv').append(response.service_exception) ;
+					$('#iframePart').append(response.service_exception) ;
 				}
 			});
 		},
@@ -36,11 +36,21 @@ define(["framework/widget", "codequality/api/codequalityAPI"], function() {
 		readLog : function(resDatt){
 			var self = this;
 			self.codequalityAPI.codequality(self.getRequestHeader(resDatt , "readlog"), function(response) {
-				$('#logDiv').append(response.log) ;
-				$('#logDiv').append("<br>") ;
+				$('#iframePart').append(response.log) ;
+				$('#iframePart').append("<br>");
 				if(response.status == 'INPROGRESS'){
 					self.readLog(resDatt);
-				}			
+				}else if(response.status == 'COMPLETED'){
+					var validateAgainst = $("#sonar").val();
+					self.codequalityAPI.codequality(self.getRequestHeader(validateAgainst , "iframereport"), function(iframereport) {
+						if(iframereport.data != null){
+							var iframedata = "<iframe src="+iframereport.data+" width=98% height=100%></iframe>";
+							$('#iframePart').html(iframedata);
+						}else{
+							$('#iframePart').html(iframereport.message);
+						}
+					});
+				}
 			});
 		},
 		
@@ -59,17 +69,81 @@ define(["framework/widget", "codequality/api/codequalityAPI"], function() {
 				projectId = appdetails.data.id;
 				customerId = appdetails.data.customerIds[0];
 				username = self.codequalityAPI.localVal.getSession('username');
-
+				
 				header.requestMethod ="POST";
-				header.webserviceurl = commonVariables.webserviceurl+"app/codeValidate?username="+username+"&appId="+appId+"&customerId="+customerId+"&goal=validate-code&phase=validate-code&projectId="+projectId+"&resultJson=&sonar=src&stFileFunction=";
-//header.webserviceurl =   "http://localhost:8080/framework/rest/api/app/codeValidate?username=sudhakar_rag&appId=5e579649-0971-4d67-87db-15d9b91e0eff&customerId=photon&goal=validate-code&phase=validate-code&projectId=df807574-879e-4547-9236-551b7daf723c&resultJson=&resultJson=&sonar=src&sonar=src&stFileFunction=&stFileFunction=";
+				header.webserviceurl = commonVariables.webserviceurl+"app/codeValidate?username="+username+"&appId="+appId+"&customerId="+customerId+"&goal=validate-code&phase=validate-code&projectId="+projectId+"&"+inputData;
 			}
 			if(action == "readlog"){
 				var uniquekey = inputData.uniquekey;
 				header.webserviceurl = commonVariables.webserviceurl+"app/readlog?uniquekey="+uniquekey;
 			}
+			
+			if(action == "reporttypes"){
+				var appDirName = this.codequalityAPI.localVal.getSession('appDirName');
+				console.info('appDirName = ' , appDirName);
+				header.webserviceurl = commonVariables.webserviceurl+"parameter/codeValidationReportTypes?appDirName="+appDirName+"&goal=validate-code";
+			}
+			
+			if(action == "iframereport"){
+				var appDirName = this.codequalityAPI.localVal.getSession('appDirName');
+				//console.info('appDirName = ' , appDirName + 'inputData = '  + inputData);
+				username = self.codequalityAPI.localVal.getSession('username');
+				header.webserviceurl = commonVariables.webserviceurl+"parameter/iFrameReport?appDirName="+appDirName+"&validateAgainst="+inputData+"&customerId=photon&userId="+username;
+			}
 
 			return header;
+		},
+				
+		getReportTypes : function(header, callback) {
+			var self = this;
+			try {
+				self.loadingScreen.showLoading();
+				self.codequalityAPI.codequality(header,
+					function(response) {
+						if (response !== null) {
+							callback(response);
+							self.loadingScreen.removeLoading();
+						} else {
+							self.loadingScreen.removeLoading();
+							callback({ "status" : "service failure"});
+						}
+					},
+
+					function(textStatus) {
+						self.loadingScreen.removeLoading();
+					}
+				);
+			} catch(exception) {
+				self.loadingScreen.removeLoading();
+			}
+		},
+
+		constructHtml : function(response){
+			var self = this;
+			if(response.message == "Dependency returned successfully"){
+				var typeLi = '';
+				$.each(response.data, function(index, resdata) {
+					var innerUl = '';
+					if(resdata.options == null){
+						typeLi += "<li>"+resdata.validateAgainst.value+"</li>";
+					}else{
+						$.each(resdata.options, function(index, optvalue) {
+							innerUl += "<li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"+optvalue.value+"</li>";
+						});
+						typeLi += "<li disabled='disabled'>"+resdata.validateAgainst.value+'<ul>'+innerUl+"</ul></li>";
+					}
+				});
+				var dropdownLi = '<ul class="nav"><li id="fat-menu" class="dropdown"><a href="#" id="drop5" role="button" class="dropdown-toggle" data-toggle="dropdown">'+response.data[0].validateAgainst.value+'<b class="caret"></b></a> <div class="dropdown-menu cust_sel code_test_opt" role="menu" aria-labelledby="drop5"> <ul>'+typeLi+'</ul></div></li></ul>';
+				$("#codereportTypes").append(dropdownLi);
+				self.codequalityAPI.codequality(self.getRequestHeader(response.data[0].validateAgainst.key , "iframereport"), function(iframereport) {
+					if(iframereport.data != null){
+						var iframedata = "<iframe src="+iframereport.data+" width=98% height=100%></iframe>";
+						$('#iframePart').html(iframedata);
+					}else{
+						$('#iframePart').html(iframereport.message);
+					}
+				});
+			}
 		},
 		
 		onProjects : function() {
