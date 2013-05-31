@@ -124,6 +124,12 @@ define(["framework/widgetWithTemplate", "projects/listener/projectsListener", "p
 				self.onAddLayerEvent.dispatch($(this));
 			});
 			
+			$("#appcode").bind('input', function(){
+				var str = $(this).val();
+				str = str.replace(/\s/g, "");
+				$(this).val(str);
+			});
+			
 			$("input[name='Create']").unbind('click');
 			$("input[name='Create']").bind('click', function(){
 				self.onCreateEvent.dispatch('', 'create');

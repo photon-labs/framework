@@ -147,6 +147,12 @@ define(["framework/widgetWithTemplate", "application/listener/applicationListene
 				self.onRemoveLayerEvent.dispatch($(this));
 			});
 			
+			$("input[name='appDirName']").bind('input', function(){
+				var str = $(this).val();
+				str = str.replace(/\s/g, "");
+				$(this).val(str);
+			});
+			
 			$(".content_end input").unbind('click');
 			$(".content_end input").bind('click', function(){
 				self.onAddLayerEvent.dispatch($(this));

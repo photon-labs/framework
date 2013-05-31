@@ -115,6 +115,7 @@ define(["framework/widget", "framework/widgetWithTemplate", "projectlist/api/pro
 					
 			if(action == "delete") {
 				header.requestMethod = "DELETE";
+				header.requestPostBody = JSON.stringify(projectRequestBody);
 				header.webserviceurl = commonVariables.webserviceurl + commonVariables.projectlistContext + "/delete";
 			}
 			if(action == "get") {
