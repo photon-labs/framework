@@ -1,0 +1,225 @@
+    <section class="optiontitle qual_unit">
+        <div class="unit_text">
+            Continuous Delivery
+        </div>      
+    </section>
+    
+    <section class="content_main code_content">
+        <div class="ci_envtable">
+            <table class="table">
+                <tbody>
+                    <tr>
+                        <td>Name</td>
+                        <td><input type="text"></td>
+                    </tr>
+                </tbody>
+            </table>
+            <table class="table">
+                <tbody>
+                    <tr>
+                        <td rowspan="3">Environment</td>
+                        <td>
+                            <select>
+                                <option>Testing</option>
+                                <option>Staging</option>
+                                <option>Production</option>
+                            </select>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>    
+        <div class="sortablecont">
+                <ul id="sortable1" class="connectedSortable type_test">
+                    <div class="sorthead">Web Service</div>
+                    <li class="ui-state-default">Webservice - Unit Test</li>
+                    <li class="ui-state-default">Webservice - Build</li>
+                    <li class="ui-state-default">Webservice - Code Validation</li>
+                    <div class="sorthead">Jquery Widget</div>
+                    <li class="ui-state-default">JQWidget - Unit Test</li>
+                    <li class="ui-state-default">JQWidget - Build</li>
+                    <li class="ui-state-default">JQWidget - Deploy</li>
+                    <li class="ui-state-default">JQWidget - Code Validation</li>
+                    <div class="sorthead">YUI Multichannel</div>
+                    <li class="ui-state-default">YUI - Code Validation<a href="javascript:;" class="validate_icon" name="cont_delivery"><img src="themes/default/images/helios/validate_image.png" width="19" height="19" border="0"></a></li>
+                    
+                    <div id="cont_delivery" class="dyn_popup popup_bg">
+                        <table class="clonetable" width="100%" border="0" cellspacing="0" cellpadding="0">
+                            <tbody>
+                                    <tr>
+                                        <td><input type="text" placeholder="Job Name"></td>
+                                    </tr>
+                             </tbody>
+                         </table>
+                         <table class="table table-striped table_border table-bordered" cellpadding="0" cellspacing="0" border="0">
+                            <thead>
+                                <tr>
+                                    <th colspan="3">Repo</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><input type="text" placeholder="SVN Url"></td>
+                                    <td><input type="text" placeholder="Username"></td>
+                                    <td><input type="password" placeholder="Password"></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <table class="table table-striped table_border table-bordered" cellpadding="0" cellspacing="0" border="0">
+                            <thead>
+                                <tr>
+                                    <th colspan="3">Scheduler</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Schedule <br>
+                                            <select>
+                                                <option>Daily</option>
+                                            </select>
+                                    </td>
+                                    <td>At Every
+                                    <div class="every_select">
+                                        <select>
+                                                <option>Hrs</option>
+                                        </select>
+                                        <select>
+                                                <option>Mins</option>
+                                        </select>
+                                    </div>
+                                    </td>
+                                    <td>Cron <br>
+                                        <input type="password" placeholder="Password">
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td colspan="3">
+                                        <div class="build_trigger">
+                                            Build Triggers <br>
+                                                <input type="checkbox"><span> Build Priodically</span>
+                                                <input type="checkbox">Pol SCM
+                                        </div>
+                                    </td>
+                                </tr>                               
+                            </tbody>
+                        </table>
+                        <table class="table table-striped table_border table-bordered mail_settings" cellpadding="0" cellspacing="0" border="0">
+                            <thead>
+                                <tr>
+                                    <th colspan="2">Sender Mail Settings</th>
+                                    <th colspan="2">Recipents Mail Settings</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><input type="text" placeholder="Email"></td>
+                                    <td><input type="password" placeholder="Password"></td>
+                                    <td><input type="text" placeholder="When Success"></td>
+                                    <td><input type="text" placeholder="When Faliure"></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <table class="table table-striped table_border table-bordered" cellpadding="0" cellspacing="0" border="0">
+                            <thead>
+                                <tr>
+                                    <th colspan="3">Configuration for Code Validation</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><select>
+                                            <option>Source</option>
+                                        </select>
+                                    </td>
+                                    <td><input type="checkbox">Skip Unit Test</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <div class="flt_right">
+                            <input class="btn btn_style" type="button" value="Configure">
+                            <input class="btn btn_style dyn_popup_close" type="button" value="Close">
+                        </div>
+                   </div>
+    
+                    <li class="ui-state-default">YUI - Build <a href="javascript:;" class="validate_icon" name="code_build"><img src="themes/default/images/helios/validate_image.png" width="19" height="19" border="0"></a></li>
+                        
+                        <div id="code_build" class="dyn_popup popup_bg">
+                        <table class="clonetable" width="100%" border="0" cellspacing="0" cellpadding="0">
+                            <tbody>
+                                    <tr>
+                                        <td><input type="text" placeholder="Job Name"></td>
+                                    </tr>
+                             </tbody>
+                         </table>
+                         <table class="table table-striped table_border table-bordered" cellpadding="0" cellspacing="0" border="0">
+                            <thead>
+                                <tr>
+                                    <th colspan="3">Upload Settings</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td colspan="3">Overwrite Files ?
+                                        <input type="radio" name="fileoption" checked>Yes
+                                        <input type="radio" name="fileoption">No
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td><input type="text" placeholder="Url"></td>
+                                    <td><input type="text" placeholder="Username"></td>
+                                    <td><input type="password" placeholder="Password"></td>
+                                </tr>
+                                <tr>
+                                    <td><input type="text" placeholder="Project"></td>
+                                    <td><input type="text" placeholder="Package"></td>
+                                    <td><input type="text" placeholder="Release"></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <table class="table table-striped table_border table-bordered" cellpadding="0" cellspacing="0" border="0">
+                            <thead>
+                                <tr>
+                                    <th colspan="3">Build Configuration</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Build Name</td>
+                                    <td>Logs</td>
+                                    <td></td>
+                                </tr>
+                                <tr>
+                                    <td> 
+                                        <input type="text">
+                                    </td>
+                                    <td>
+                                        <select>
+                                            <option>Show Errors</option>
+                                        </select>
+                                    </td>
+                                    <td>
+                                        <input type="checkbox"> Show Settings
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <div class="flt_right">
+                            <input class="btn btn_style" type="button" value="Configure">
+                            <input class="btn btn_style dyn_popup_close" type="button" value="Close">
+                        </div>
+                   </div>
+                </ul>
+                <ul id="sortable2" class="connectedSortable type_test">
+                  
+                </ul>
+        </div>
+        <!--content_main div ends here -->
+    </section>
+    
+    <section class="content_end">
+        <div class="flt_right">
+            <a href="ci_pipeline.html"><input type="submit" value="Add" class="btn btn_style add_icon_btn"></a>
+            <input type="submit" value="Cancel" class="btn btn_style cancel_icon_btn">
+        </div>
+        <!--content_title ends here -->
+    </section>
