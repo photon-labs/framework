@@ -1882,6 +1882,11 @@ ul.nav li.dropdown:hover > .test_options{
 	padding:0px 0 0px 10px;
 	line-height: 30px;
 }
+
+.env_border ul li .envlistname {
+	padding-left: 64px;
+}
+
 .env_border ul:first-child li {
 	border-right: 1px solid #d8d8d8;
 }
@@ -1914,7 +1919,7 @@ ul.nav li.dropdown:hover > .test_options{
 }
 
 .add_env .connected li div input{
-	margin-top:0 !important;
+	margin-top:9px !important;
 }
 
 .add_env .connected li div:last-child{

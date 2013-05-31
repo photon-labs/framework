@@ -6,11 +6,14 @@ define(["framework/widget", "framework/widgetWithTemplate", "configuration/api/c
 		basePlaceholder :  window.commonVariables.basePlaceholder,
 		configurationAPI : null,
 		editConfiguration : null,
-		configList : null,
+		configList : [],
 		cancelEditConfiguration : null,
 		configRequestBody : {},
 		envJson : [],
+		configTemName : [],
 		bcheck : null,
+		count : 0,
+	
 		/***
 		 * Called in initialization time of this class 
 		 *
@@ -134,11 +137,23 @@ define(["framework/widget", "framework/widgetWithTemplate", "configuration/api/c
 					configName = configuration.name;
 					configDesc = configuration.desc;
 				}
+				if ($.isEmptyObject(self.configTemName)) {
+					self.configTemName.push(configTemplate.data.name);
+				} else {
+					var found = $.inArray(configTemplate.data.name, self.configTemName) > -1;
+					if (found === false) {
+						self.configTemName.push(configTemplate.data.name);
+					} else {
+						self.count++;
+					}
+				}
 				
-				var headerTr = '<tr class="row_bg"><td colspan="3" name="ConfigName" configName="'+configTemplate.data.name+'">' + configTemplate.data.name + '</td><td colspan="3">'+'<a href="javascript:;" name="removeConfig"><img src="themes/default/images/helios/close_icon.png" width="25" height="20" border="0" alt="" class="flt_right"/></a></td></tr>';
+				if (self.count == 0) {
+					self.count = "";
+				}
+				var headerTr = '<tr type="'+configTemplate.data.name+self.count+'" class="row_bg"><td colspan="3">' + configTemplate.data.name + '</td><td colspan="3">'+'<a href="javascript:;" name="removeConfig"><img src="themes/default/images/helios/close_icon.png" width="25" height="20" border="0" alt="" class="flt_right"/></a></td></tr>';
 				content = content.concat(headerTr);
-				var defaultTd = '<tr><td>Name <sup>*</sup></td><td><input type="text" name="configName" placeholder= "Configuration Name"'+
-					'value="'+ configName +'"/></td><td>Description</td><td><input type="text" name="configDesc" placeholder= "Configuration Description" value="'+ configDesc +'"/></td>';
+				var defaultTd = '<tr name="'+configTemplate.data.name+'" class="'+configTemplate.data.name+self.count+'"><td class="labelTd">Name <sup>*</sup></td><td><input type="text" class="configName" placeholder= "Configuration Name"/></td><td class="labelTd">Description</td><td><input type="text" class="configDesc" placeholder= "Configuration Description"/></td>';
 				content = content.concat(defaultTd);
 				var count = 2;
 				var i = 2;
@@ -162,13 +177,13 @@ define(["framework/widget", "framework/widgetWithTemplate", "configuration/api/c
 					}
 					var control = "";
 					if  (count % 3 == 0) {
-						control = '<tr><td>' + label + mandatoryCtrl + '</td><td>';
+						control = '<tr name="'+configTemplate.data.name+'" class="'+configTemplate.data.name+self.count+'"><td class="labelTd">' + label + mandatoryCtrl + '</td><td>';
 					} else {
-						control = '<td>' + label + mandatoryCtrl + '</td><td>';
+						control = '<td class="labelTd">' + label + mandatoryCtrl + '</td><td>';
 					}
 					var inputCtrl = "";
 					if (value.possibleValues !== null &&  value.possibleValues.length !== 0) {
-						inputCtrl = '<select name="' + value.key + '">';
+						inputCtrl = '<select class="'+configTemplate.data.name+self.count+'Configuration" name="' + value.key + '">';
 						var possibleValues = value.possibleValues;
 						var options = "";
 						for (j in possibleValues) {
@@ -185,11 +200,11 @@ define(["framework/widget", "framework/widgetWithTemplate", "configuration/api/c
 						}
 						inputCtrl = inputCtrl.concat("</tr>");
 					} else if (type == "Password") {
-						inputCtrl = '<input value="'+ configValue +'" name="'+key+'" type="password" placeholder=""/>';
+						inputCtrl = '<input value="'+ configValue +'" class="'+configTemplate.data.name+self.count+'Configuration" name="'+key+'" type="password" placeholder=""/>';
 					} else if (type == "FileType") {
 						inputCtrl = '<div id="'+key+'file-uploader" class="file-uploader" propTempName="'+key+'"></div>';
 					} else {
-						inputCtrl = '<input value="'+ configValue +'" name="'+key+'" type="text" placeholder=""/>';
+						inputCtrl = '<input value="'+ configValue +'" class="'+configTemplate.data.name+self.count+'Configuration" name="'+key+'" type="text" placeholder=""/>';
 					}
 					control = control.concat(inputCtrl);
 					content = content.concat(control);
@@ -267,7 +282,6 @@ define(["framework/widget", "framework/widgetWithTemplate", "configuration/api/c
 			self.envJson = [];
 			$.each($("ul[name=envList]").children(), function(index, value) {
 				var envNameDesc = {};
-				console.info("index", index);
 				envNameDesc.name = $(value).find("div[name=envListName]").html();
 				envNameDesc.desc = $(value).find("input[name=envListDesc]").val();
 				envNameDesc.configurations = [];
@@ -309,31 +323,37 @@ define(["framework/widget", "framework/widgetWithTemplate", "configuration/api/c
 			});
 		},
 		
-		UpdateConfig : function(){
-			var self = this, configJson = {}, properties = {};
-			configJson.name = $("input[name=configName]").val();
-			properties.host = $("input[name=host]").val();
-			properties.deploy_dir = $("input[name=deploy_dir]").val();
-			properties.admin_username = $("input[name=admin_username]").val();
-			properties.additional_context = $("input[name=additional_context]").val();
-			properties.port = $("input[name=port]").val();
-			properties.admin_password = $("input[name=admin_password]").val();
-			properties.certificate = $("input[name=certificate]").val();
-			properties.type = $("input[name=type]").val();
-			properties.remoteDeployment = $("input[name=remoteDeployment]").val();
-			properties.protocol = $("select[name=protocol]").val();
-			configJson.properties = properties;
-			configJson.desc = $("input[name=configDesc]").val();
-			configJson.type = $("td[name=ConfigName]").attr('configName');
-			configJson.envName = $("input[name=EnvName]").val();
-			self.configRequestBody = configJson;
+		UpdateConfig : function() {
+			var self=this, configJson = {}, properties = {};
+			self.configList = [];
+			$.each($(".row_bg"), function(index, value) {
+				var configuration = {};
+				properties = {};
+				configJson = {};
+				var type = $(this).attr("type");
+				$("." + type).each(function() {
+					if ($(this).children().find('.configName').val() !== undefined) {
+						configJson.name = $(this).children().find('.configName').val();
+					}
+					if ($(this).children().find('.configDesc').val() !== undefined) {
+						configJson.desc = $(this).children().find('.configDesc').val();
+					}
+					$(this).find("." + type + "Configuration").each(function() {
+						var proValue = $(this).attr("name");
+						properties[proValue] = $(this).val();
+					});
+					configJson.properties = properties;
+					configJson.type = $(this).attr("name");
+				});
+				self.configList.push(configJson);
+			});
+			self.configRequestBody = self.configList;
 			self.getConfigurationList(self.getRequestHeader(self.configRequestBody, "saveConfig"), function(response) {
 				Clazz.navigationController.jQueryContainer = commonVariables.contentPlaceholder;
 				self.configList = commonVariables.navListener.getMyObj(commonVariables.configuration);
 				Clazz.navigationController.push(self.configList, true);
 			});
 		}
-		
 	});
 
 	return Clazz.com.components.configuration.js.listener.ConfigurationListener;

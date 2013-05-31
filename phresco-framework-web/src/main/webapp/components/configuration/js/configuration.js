@@ -76,6 +76,11 @@ define(["framework/widgetWithTemplate", "configuration/listener/configurationLis
 		 */
 		bindUI : function() {
 			var self = this;
+			
+			$('.connected').sortable({
+				connectWith: '.connected'
+			});
+
 			$(".tooltiptop").tooltip();
 			$(".dyn_popup").hide();
 			$("a[name=clone_pop]").unbind("click");
