@@ -114,6 +114,7 @@ define(["framework/widgetWithTemplate", "application/listener/applicationListene
 		postRender : function(element) {			
 			var self = this;
 			commonVariables.navListener.showHideControls(commonVariables.editApplication);
+			commonVariables.navListener.showHideTechOptions();
 			//self.editApplicationListener.renderServer(self.renderData);
 		},
 		
@@ -126,7 +127,11 @@ define(["framework/widgetWithTemplate", "application/listener/applicationListene
 					var userPermissions = JSON.parse(self.editApplicationListener.applicationAPI.localVal.getSession('userPermissions'));
 					projectlist.userPermissions = userPermissions;
 					self.renderData = response;
-					renderFunction(projectlist, whereToRender);
+					var techId = response.appdetails.data.appInfos[0].techInfo.id;
+					self.editApplicationListener.getApplicableOptions(self.editApplicationListener.getRequestHeader(self.appDirName, "getApplicableOptions", techId), function(response) {
+						self.editApplicationListener.applicationAPI.localVal.setSession("applicableOptions", JSON.stringify(response.data));
+						renderFunction(projectlist, whereToRender);
+					});
 				});
 			}, 200);	
 		},

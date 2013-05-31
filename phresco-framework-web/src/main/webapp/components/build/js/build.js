@@ -59,7 +59,8 @@ define(["framework/widgetWithTemplate", "build/listener/buildListener"], functio
 		 *
 		 * @element: Element as the result of the template + data binding
 		 */
-		postRender : function(element) {			
+		postRender : function(element) {
+			commonVariables.navListener.showHideTechOptions();
 		},
 		
 		registerEvents : function(configurationlistener) {

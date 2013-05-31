@@ -12,7 +12,9 @@
 			"codequality" : "Code Quality",
 			"report" : "Report",
 			"performance" : "Performance",
-			"unit" : "Unit"
+			"unit" : "Unit",
+			"manual" : "Manual",
+			"component" : "Component"
 		}
 	},
 	"codequality" : {
