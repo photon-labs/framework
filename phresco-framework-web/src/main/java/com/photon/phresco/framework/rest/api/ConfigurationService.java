@@ -1,6 +1,8 @@
 package com.photon.phresco.framework.rest.api;
 
 import java.io.File;
+import java.net.URL;
+import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -17,6 +19,7 @@ import javax.ws.rs.core.Response;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
 
 import com.photon.phresco.api.ConfigManager;
 import com.photon.phresco.commons.model.SettingsTemplate;
@@ -24,6 +27,7 @@ import com.photon.phresco.configuration.Configuration;
 import com.photon.phresco.configuration.Environment;
 import com.photon.phresco.exception.ConfigurationException;
 import com.photon.phresco.exception.PhrescoException;
+import com.photon.phresco.framework.commons.FrameworkUtil;
 import com.photon.phresco.impl.ConfigManagerImpl;
 import com.photon.phresco.service.client.api.ServiceManager;
 import com.photon.phresco.util.Constants;
@@ -32,6 +36,9 @@ import com.sun.jersey.api.client.ClientResponse.Status;
 
 @Path("/configuration")
 public class ConfigurationService extends RestBase {
+	
+	private static final Logger S_LOGGER = Logger.getLogger(ConfigurationService.class);
+    private static Boolean is_debugEnabled  = S_LOGGER.isDebugEnabled();
 
 	
 	@POST
@@ -175,6 +182,81 @@ public class ConfigurationService extends RestBase {
 			ResponseInfo<List<String>> finalOutput = responseDataEvaluation(responseData, e, "confuguration Template not Fetched", null);
 			return Response.status(Status.BAD_REQUEST).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
 		}
+	}
+	
+	@GET
+	@Path ("/connectionAliveCheck")
+	@Produces (MediaType.APPLICATION_JSON)
+	public Response connectionAliveCheck(@QueryParam("url") String url) {
+		if (is_debugEnabled) {
+			S_LOGGER.debug("Entering Method  Configurationservice.connectionAliveCheck()");
+		}
+
+		if(url == null || ("".equals(url)) == true ) {
+			return Response.status(Status.BAD_REQUEST).entity(null).header("Access-Control-Allow-Origin", "*").build();
+		}
+
+		boolean connection_status = false;
+		try {
+			String[] results = url.split(",");
+			String lprotocol = results[0];
+			String lhost = results[1];
+			int lport = Integer.parseInt(results[2]);
+			boolean tempConnectionAlive = isConnectionAlive(lprotocol, lhost, lport);
+			connection_status = tempConnectionAlive == true ? true : false;
+		} catch (Exception e) {
+			S_LOGGER.error("Entered into catch block of Configurationservice.connectionAliveCheck()" + FrameworkUtil.getStackTraceAsString(e));
+			return Response.status(Status.BAD_REQUEST).entity(null).header("Access-Control-Allow-Origin", "*").build();
+		}
+
+		return Response.status(Status.OK).entity(connection_status).header("Access-Control-Allow-Origin", "*").build();
+	}
+	
+	@POST
+    @Path ("/updateConfig")
+	@Produces (MediaType.APPLICATION_JSON)
+	@Consumes (MediaType.APPLICATION_JSON)
+	public Response updateConfiguration(@QueryParam("appDirName") String appDirName,@QueryParam("envName") String envName, List<Configuration> configurationlist) {
+
+		String configFile = getConfigFileDir(appDirName);
+		ResponseInfo<Configuration> responseData = new ResponseInfo<Configuration>();
+		try {
+			
+			ConfigManager configManager = new ConfigManagerImpl(new File(configFile));
+			List<Configuration> listofconfiguration = configManager.getConfigurations(envName);
+			List<String> configuration_names = new ArrayList<String>();
+			for(Configuration configuration_temp : listofconfiguration) {
+				
+				configuration_names.add(configuration_temp.getName());
+			}
+			configManager.deleteConfigurations(envName, configuration_names);
+			configManager.createConfiguration(envName, configurationlist);
+			ResponseInfo<String> finalOuptut = responseDataEvaluation(responseData, null, "Configurations Updated Successfully", "Success");
+			return Response.ok(finalOuptut).header("Access-Control-Allow-Origin", "*").build();
+		} catch (ConfigurationException e) {
+			ResponseInfo<Configuration> finalOuptut = responseDataEvaluation(responseData, e, "Configurations failed to be updated for the Environment", "Failure");
+			return Response.status(Status.EXPECTATION_FAILED).entity(finalOuptut).header("Access-Control-Allow-Origin", "*").build();
+		} catch (PhrescoException e) {
+			ResponseInfo<Configuration> finalOuptut = responseDataEvaluation(responseData, e, "Configurations failed to be updated for the Environment", "Failure");
+			return Response.status(Status.EXPECTATION_FAILED).entity(finalOuptut).header("Access-Control-Allow-Origin", "*").build();
+		} catch (Exception e) {
+			ResponseInfo<Configuration> finalOuptut = responseDataEvaluation(responseData, e, "Configurations failed to be updated for the Environment", "Failure");
+			return Response.status(Status.EXPECTATION_FAILED).entity(finalOuptut).header("Access-Control-Allow-Origin", "*").build();
+		}
+		
+	}
+		
+	public boolean isConnectionAlive(String protocol, String host, int port) {
+		boolean isAlive = true;
+		try {
+			URL url = new URL(protocol, host, port, "");
+			URLConnection connection = url.openConnection();
+			connection.connect();
+		} catch (Exception e) {
+			isAlive = false;
+		}
+		
+		return isAlive;
 	}
 	
 	private String getConfigFileDir(String appDirName) {
