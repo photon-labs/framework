@@ -190,6 +190,7 @@
 		</div>
 	<% } %>
 	<input type="hidden" id="deployAddParam"> 
+<script src="js/delete.js" ></script>
 
 <script type="text/javascript">
 	//To check whether the device is ipad or not and then apply jquery scrollbar
