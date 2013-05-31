@@ -17,8 +17,16 @@
  */
 package com.photon.phresco.framework.actions.applications;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -33,9 +41,12 @@ import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.codehaus.plexus.util.FileUtils;
 
+import com.photon.phresco.api.ApplicationProcessor;
 import com.photon.phresco.api.DynamicPageParameter;
 import com.photon.phresco.api.DynamicParameter;
 import com.photon.phresco.commons.model.ApplicationInfo;
@@ -58,9 +69,12 @@ import com.photon.phresco.plugins.model.Mojos.Mojo.Configuration.Parameters.Para
 import com.photon.phresco.plugins.model.Mojos.Mojo.Configuration.Parameters.Parameter.PossibleValues.Value;
 import com.photon.phresco.plugins.util.MojoProcessor;
 import com.photon.phresco.service.client.api.ServiceManager;
+import com.photon.phresco.util.ArchiveUtil;
 import com.photon.phresco.util.Constants;
+import com.photon.phresco.util.FileUtil;
 import com.photon.phresco.util.PhrescoDynamicLoader;
 import com.photon.phresco.util.Utility;
+import com.phresco.pom.exception.PhrescoPomException;
 
 public class DynamicParameterAction extends FrameworkBaseAction implements Constants {
 
@@ -552,8 +566,10 @@ public class DynamicParameterAction extends FrameworkBaseAction implements Const
 					} else if (Boolean.parseBoolean(parameter.getRequired())) {
 						//comes here for other controls
 						boolean alreadyValidated = fetchAlreadyValidatedKeys(validateMap, parameter);
-						if ((parameter.isShow() || !alreadyValidated) && paramsMandatoryCheck(parameter)) {
-							break;
+						if ((parameter.isShow() || !alreadyValidated)) {
+							if (paramsMandatoryCheck(parameter)) {
+								break;
+							}
 						}
 					} else if(TYPE_STRING.equalsIgnoreCase(parameter.getType()) && BUILD_NAME.equalsIgnoreCase(parameter.getKey())) {
 						String buildName = getReqParameter(parameter.getKey());
@@ -734,12 +750,14 @@ public class DynamicParameterAction extends FrameworkBaseAction implements Const
 	
 	private boolean editableComboValidate(Parameter parameter,
 			boolean returnFlag, String lableTxt) {
-		if (StringUtils.isEmpty(getReqParameter(parameter.getKey())) || 
-				"Type or select from the list".equalsIgnoreCase(getReqParameter(parameter.getKey()))) {
+		String value = getReqParameter(parameter.getKey());
+		value = value.replaceAll("\\s+", "").toLowerCase();
+		
+		if (StringUtils.isEmpty(value) || "typeorselectfromthelist".equalsIgnoreCase(value)) {
 			setErrorFound(true);
 			setErrorMsg(lableTxt + " " +getText(EXCEPTION_MANDAOTRY_MSG));
 			returnFlag = true;
-		}
+		} 
 		
 		return returnFlag;
 	}
@@ -902,23 +920,106 @@ public class DynamicParameterAction extends FrameworkBaseAction implements Const
 		setReqAttribute(FILE_TYPES, getFileType());
 		setReqAttribute(FILE_BROWSE, getFileOrFolder());
 		ApplicationInfo applicationInfo = getApplicationInfo();
-		if (REQ_JAR.equalsIgnoreCase(getFileType()) || DEPLOY_DIR.equals(getFromDeployDir())) {
-			setReqAttribute(REQ_PROJECT_LOCATION, "");
-			setReqAttribute(REQ_FROM, REQ_AGAINST_JAR);
-//		} else if(REQ_XLSX.equalsIgnoreCase(getFileType())) {
-//			setReqAttribute(REQ_PROJECT_LOCATION, "");
-//			setReqAttribute(REQ_FROM, REQ_MANUAL_XLSX);
-		} else if (REQ_BROWSE_THEME_IMAGE.equals(getFrom())) {
-			setReqAttribute(REQ_PROJECT_LOCATION, "");
-			setReqAttribute(REQ_FROM, getFrom());
-		} else {
-			setReqAttribute(REQ_PROJECT_LOCATION, getAppDirectoryPath(applicationInfo).replace(File.separator, FORWARD_SLASH));
-			setReqAttribute(REQ_FROM, getReqParameter(REQ_FROM_PAGE));
+		try {
+			if (REQ_JAR.equalsIgnoreCase(getFileType()) || DEPLOY_DIR.equals(getFromDeployDir())) {
+				setReqAttribute(REQ_PROJECT_LOCATION, "");
+				setReqAttribute(REQ_FROM, REQ_AGAINST_JAR);
+	//		} else if(REQ_XLSX.equalsIgnoreCase(getFileType())) {
+	//			setReqAttribute(REQ_PROJECT_LOCATION, "");
+	//			setReqAttribute(REQ_FROM, REQ_MANUAL_XLSX);
+			} else if (REQ_BROWSE_THEME_IMAGE.equals(getFrom())) {
+				setReqAttribute(REQ_PROJECT_LOCATION, "");
+				setReqAttribute(REQ_FROM, getFrom());
+			} else if (REQ_FROM_THEME_BUILDER.equals(getFrom())) {
+				FrameworkUtil fu = FrameworkUtil.getInstance();
+				String themeBuilderPath = fu.getThemeBuilderBrowsePath(applicationInfo);
+				StringBuilder defaultThemeBuilderPath = new StringBuilder();
+				defaultThemeBuilderPath.append(Utility.getProjectHome())
+				.append(applicationInfo.getAppDirName());
+				if (StringUtils.isNotEmpty(themeBuilderPath)) {
+					defaultThemeBuilderPath.append(themeBuilderPath);
+				}
+				setReqAttribute(REQ_PROJECT_LOCATION, defaultThemeBuilderPath.toString().replace(File.separator, FORWARD_SLASH));
+				setReqAttribute(REQ_FROM, REQ_FROM_THEME_BUILDER);
+			}  else {
+				setReqAttribute(REQ_PROJECT_LOCATION, getAppDirectoryPath(applicationInfo).replace(File.separator, FORWARD_SLASH));
+				setReqAttribute(REQ_FROM, getReqParameter(REQ_FROM_PAGE));
+			}
+		} catch (Exception e) {
+			throw new PhrescoException(e);
 		}
-		
 		
 		return SUCCESS;
 	}
+    
+    public String dynamicUploadFile() throws PhrescoException {
+    	PrintWriter writer = null;
+		try {
+			ApplicationInfo applicationInfo = getApplicationInfo();
+			writer = getHttpResponse().getWriter();
+			InputStream is = getHttpRequest().getInputStream();
+			String uploadedFileName = getHttpRequest().getHeader(X_FILE_NAME);
+			if (PERFORMANCE_TEST.equals(getGoal()) && applicationInfo != null &&  StringUtils.isNotEmpty(uploadedFileName)) {
+				uploadFileForPerformance(writer, applicationInfo, is, uploadedFileName);
+			}
+		} catch (Exception e) {
+			writer.print(SUCCESS_FALSE);
+		} finally {
+			writer.flush();
+			writer.close();
+		}
+    	
+    	return SUCCESS;
+    }
+
+    private void uploadFileForPerformance(PrintWriter writer, ApplicationInfo applicationInfo, InputStream inputStream, String zipfileName) throws PhrescoException {
+    	File tempDirectory = null;
+    	try {
+    		FrameworkUtil instance = FrameworkUtil.getInstance();
+			StringBuilder uploadJmxDir = new StringBuilder(Utility.getProjectHome())
+			.append(applicationInfo.getAppDirName())
+			.append(instance.getPerformanceTestDir(applicationInfo))
+			.append(File.separator)
+			.append(getHttpRequest().getHeader(REQ_CUSTOM_TEST_AGAINST))
+			.append(instance.getPerformanceUploadJmxDir(applicationInfo));
+			
+			StringBuilder temp = new StringBuilder(uploadJmxDir);
+			temp.append(File.separator)
+			.append(Constants.PROJECTS_TEMP);
+
+			tempDirectory = new File(temp.toString());
+			
+			if (!tempDirectory.exists()) {
+				tempDirectory.mkdir();
+			}
+			
+			 String tempZipPath = tempDirectory.getPath() + File.separator + zipfileName;
+
+			 //create zip file from inputstream
+			 File tempZipFile = FileUtil.writeFileFromInputStream(inputStream, tempZipPath);
+			
+			 String folder = FileUtils.removeExtension(tempZipPath.replace(tempDirectory.getPath() + File.separator, ""));
+			 //extract the zip file inside temp directory
+			 boolean unzipped = ArchiveUtil.unzip(tempZipPath, tempDirectory.getPath(), folder);
+			 
+			 //after extracting, delete that zip file
+			 FileUtil.delete(tempZipFile);
+			 if (unzipped) {
+				 File extractedFile = new File(tempDirectory.getPath() + File.separator + Constants.PROJECTS_TEMP + folder);
+				 if (extractedFile.exists()) {
+					 FileUtil.copyFolder(extractedFile, new File(uploadJmxDir.toString()));
+				 }
+				 writer.print(SUCCESS_TRUE);
+			 } else {
+				 writer.print(SUCCESS_FALSE);
+			 }
+		} catch (Exception e) {
+			writer.print(SUCCESS_FALSE);
+			throw new PhrescoException(e);
+		} finally {
+			 FileUtil.delete(tempDirectory);
+		}
+    }
     
     public List<Value> getDependentValues() {
         return dependentValues;

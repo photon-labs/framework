@@ -154,6 +154,7 @@ public class Quality extends DynamicParameterAction implements Constants {
 	
 	//Below variables gets the value of performance test Url, Context and TestName
 	private String resultJson = "";
+	private String testBasis = "";
 	private PerformanceDetails performanceDetails = null;
     private String testName = "";
     
@@ -1595,7 +1596,7 @@ public class Quality extends DynamicParameterAction implements Constants {
 		FileWriter fw = null;
 		
 		try {
-			if(StringUtils.isNotEmpty(getTestAgainst())) {
+			if(REQ_PARAMETERS.equalsIgnoreCase(getTestBasis()) && StringUtils.isNotEmpty(getTestAgainst())) {
 				ApplicationInfo applicationInfo = getApplicationInfo();
 				PomProcessor processor = new PomProcessor(getPOMFile(applicationInfo));					
 		        String performTestDir = processor.getProperty(POM_PROP_KEY_PERFORMANCETEST_DIR);	        
@@ -1933,7 +1934,9 @@ public class Quality extends DynamicParameterAction implements Constants {
                     sb.append(performanceReportDir); 
                 }
                 File file = new File(sb.toString());
-                File[] children = file.listFiles(new XmlNameFileFilter(FILE_EXTENSION_XML));
+                
+                String resultExtension = frameworkUtil.getPerformanceResultFileExtension(appInfo);
+                File[] children = file.listFiles(new XmlNameFileFilter(resultExtension));
                 if (!ArrayUtils.isEmpty(children)) {
                     setResultFileAvailable(true);
                     break;
@@ -1954,9 +1957,10 @@ public class Quality extends DynamicParameterAction implements Constants {
         }
 
         try {
+        	ApplicationInfo applicationInfo = getApplicationInfo();
             StringBuilder sb = new StringBuilder(getApplicationHome());
             FrameworkUtil frameworkUtil = FrameworkUtil.getInstance();
-            String performanceReportDir = frameworkUtil.getPerformanceTestReportDir(getApplicationInfo());
+            String performanceReportDir = frameworkUtil.getPerformanceTestReportDir(applicationInfo);
 
             if (s_debugEnabled) {
                 S_LOGGER.debug("test type performance test Report directory " + performanceReportDir);
@@ -1971,7 +1975,7 @@ public class Quality extends DynamicParameterAction implements Constants {
             }
             
             //for android - test type will not be available --- to get device id from result xml
-            String performanceTestShowDevice = frameworkUtil.getPerformanceTestShowDevice(getApplicationInfo());
+            String performanceTestShowDevice = frameworkUtil.getPerformanceTestShowDevice(applicationInfo);
             if (StringUtils.isNotEmpty(performanceTestShowDevice) && Boolean.parseBoolean(performanceTestShowDevice)) {
             	sb.append(performanceReportDir);
             }
@@ -1980,9 +1984,9 @@ public class Quality extends DynamicParameterAction implements Constants {
                 S_LOGGER.debug("test type performance test Report directory & Type " + sb.toString() + " Type " + getTestResultsType());
             }
             
-
+            String resultExtension = frameworkUtil.getPerformanceResultFileExtension(applicationInfo);
             File file = new File(sb.toString());
-            File[] resultFiles = file.listFiles(new XmlNameFileFilter(FILE_EXTENSION_XML));
+            File[] resultFiles = file.listFiles(new XmlNameFileFilter(resultExtension));
             if (!ArrayUtils.isEmpty(resultFiles)) {
                 QualityUtil.sortResultFile(resultFiles);
                 for (File resultFile : resultFiles) {
@@ -3655,5 +3659,13 @@ public class Quality extends DynamicParameterAction implements Constants {
 
 	public void setFeatureIdError(String featureIdError) {
 		this.featureIdError = featureIdError;
+	}
+	
+	public void setTestBasis(String testBasis) {
+		this.testBasis = testBasis;
+	}
+
+	public String getTestBasis() {
+		return testBasis;
 	}
 }
