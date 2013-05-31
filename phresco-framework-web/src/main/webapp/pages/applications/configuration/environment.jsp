@@ -50,7 +50,7 @@
 	}
 %>
 
-<form id="formEnvironment" class="form-horizontal">
+<form id="formEnvironment" method="post" class="form-horizontal">
 	<div class="control-group">
 		<label class="control-label labelbold modallbl-color">
 			<span class="mandatory">*</span>&nbsp;<s:text name='lbl.name' />
@@ -158,6 +158,10 @@
 <script type="text/javascript">
 
 $(document).ready(function() {
+	
+	$('#formEnvironment').submit(function(e) {
+	    e.preventDefault();
+	});
 	
 	$("#multiselectAppliesTo").scrollbars(); //JQuery scroll bar
 	
