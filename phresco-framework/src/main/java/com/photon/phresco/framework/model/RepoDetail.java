@@ -24,6 +24,10 @@ public class RepoDetail implements Serializable {
 	private List<String>commitableFiles;
 	private String type;
 	
+	public RepoDetail() {
+		super();
+	}
+
 	public RepoDetail(String revision, String repoUrl, String userName, String password, String revisionVal,
 			String commitMessage, List<String> commitableFiles, String type) {
 		super();

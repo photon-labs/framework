@@ -6,6 +6,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Properties;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.POST;
@@ -24,22 +25,25 @@ import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 import org.tmatesoft.svn.core.SVNAuthenticationException;
 import org.tmatesoft.svn.core.SVNException;
+import org.tmatesoft.svn.core.wc.SVNStatus;
 
 import com.photon.phresco.commons.FrameworkConstants;
 import com.photon.phresco.commons.model.ApplicationInfo;
 import com.photon.phresco.commons.model.User;
 import com.photon.phresco.exception.PhrescoException;
+import com.photon.phresco.framework.commons.FrameworkUtil;
 import com.photon.phresco.framework.impl.SCMManagerImpl;
 import com.photon.phresco.framework.model.RepoDetail;
 import com.photon.phresco.framework.rest.api.util.FrameworkServiceUtil;
 import com.photon.phresco.service.client.impl.ServiceManagerImpl;
 import com.photon.phresco.util.Constants;
 import com.photon.phresco.util.Utility;
+import com.phresco.pom.model.Scm;
+import com.phresco.pom.util.PomProcessor;
 import com.sun.jersey.api.client.ClientResponse.Status;
 
 @Path("/repository")
 public class RepositoryService extends RestBase implements FrameworkConstants {
-
 	@POST
 	@Path("/importApplication")
 	@Consumes(MediaType.APPLICATION_JSON)
@@ -53,6 +57,62 @@ public class RepositoryService extends RestBase implements FrameworkConstants {
 			response = importGITApplication( type, repodetail);
 		}else if(type.equals(BITKEEPER)){
 			response = importBitKeeperApplication(type, repodetail);
+		}
+		return response;
+	}
+	
+	@POST
+	@Path("/updateImportedApplication")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response updateImportedApplicaion(@QueryParam("appDirName") String appDirName, RepoDetail repodetail) {
+		Response response = null;
+		ResponseInfo responseData = new ResponseInfo();
+		try {
+			ApplicationInfo applicationInfo = FrameworkServiceUtil.getApplicationInfo(appDirName);
+			String type = repodetail.getType();
+			if(type.equals(SVN)){
+				response = updateSVNProject(responseData, type, applicationInfo, repodetail);
+			} else if (type.equals(GIT)) {
+				response =  updateGitProject(responseData, type, applicationInfo, repodetail);
+			}else if(type.equals(BITKEEPER)){
+				response = updateBitKeeperProject(type, applicationInfo, repodetail);
+			}
+			return response;
+		} catch (PhrescoException e) {
+			ResponseInfo finalOutput = responseDataEvaluation(responseData, e, UPDATE_PROJECT_FAIL, null);
+			return Response.status(Status.BAD_REQUEST).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
+		}
+	}
+	
+	@POST
+	@Path("/addProjectToRepo")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response addProjectToRepo(@QueryParam("appDirName") String appDirName, RepoDetail repodetail, @QueryParam("userId") String userId, @QueryParam("projectId") String projectId, @QueryParam("appId") String appId) {
+		Response response = null;
+		String type = repodetail.getType();
+		if(type.equals(SVN)){
+			response = addSVNProject(appDirName, repodetail, userId, projectId, appId, type);
+		} else if (type.equals(GIT)) {
+			response = addGitProject(userId, projectId, appId, appDirName, repodetail, type);
+		}
+		return response;
+	}
+	
+	@POST
+	@Path("/commitProjectToRepo")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response commitImportedProject(RepoDetail repodetail, @QueryParam("appDirName") String appDirName) {
+		Response response = null;
+		String type = repodetail.getType();
+		if(type.equals(SVN)){
+			response = commitSVNProject(repodetail);
+		} else if (type.equals(GIT)) {
+			response = commitGitProject(appDirName, repodetail, type);
+		}else if(type.equals(BITKEEPER)){
+			response = commitBitKeeperProject(appDirName, repodetail, type);
 		}
 		return response;
 	}
@@ -160,31 +220,6 @@ public class RepositoryService extends RestBase implements FrameworkConstants {
 		return Response.status(Status.BAD_REQUEST).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
 	}
 
-
-	@POST
-	@Path("/updateImportedApplication")
-	@Consumes(MediaType.APPLICATION_JSON)
-	@Produces(MediaType.APPLICATION_JSON)
-	public Response updateImportedApplicaion(@QueryParam("appDirName") String appDirName, RepoDetail repodetail) {
-		Response response = null;
-		ResponseInfo responseData = new ResponseInfo();
-		try {
-			ApplicationInfo applicationInfo = FrameworkServiceUtil.getApplicationInfo(appDirName);
-			String type = repodetail.getType();
-			if(type.equals(SVN)){
-				response = updateSVNProject(responseData, type, applicationInfo, repodetail);
-			} else if (type.equals(GIT)) {
-				response =  updateGitProject(responseData, type, applicationInfo, repodetail);
-			}else if(type.equals(BITKEEPER)){
-				response = updateBitKeeperProject(type, applicationInfo, repodetail);
-			}
-			return response;
-		} catch (PhrescoException e) {
-			ResponseInfo finalOutput = responseDataEvaluation(responseData, e, UPDATE_PROJECT_FAIL, null);
-			return Response.status(Status.BAD_REQUEST).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
-		}
-	}
-
 	private Response updateGitProject(ResponseInfo responseData, String type, ApplicationInfo applicationInfo, RepoDetail repodetail) {
 		SCMManagerImpl scmi = new SCMManagerImpl();
 		try {
@@ -290,22 +325,6 @@ public class RepositoryService extends RestBase implements FrameworkConstants {
 			return Response.status(Status.BAD_REQUEST).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
 		}
 	}
-	
-	@POST
-	@Path("/addProjectToRepo")
-	@Consumes(MediaType.APPLICATION_JSON)
-	@Produces(MediaType.APPLICATION_JSON)
-	public Response addProjectToRepo(@QueryParam("appDirName") String appDirName, RepoDetail repodetail, @QueryParam("userId") String userId, @QueryParam("projectId") String projectId, @QueryParam("appId") String appId) {
-		Response response = null;
-		String type = repodetail.getType();
-		if(type.equals(SVN)){
-			response = addSVNProject(appDirName, repodetail, userId, projectId, appId, type);
-		} else if (type.equals(GIT)) {
-			response = addGitProject(userId, projectId, appId, appDirName, repodetail, type);
-		}
-		return response;
-	}
-	
 
 	private Response addSVNProject(String appDirName, RepoDetail repodetail, String userId, String projectId, String appId, String type) {
 		SCMManagerImpl scmi = new SCMManagerImpl();
@@ -342,23 +361,6 @@ public class RepositoryService extends RestBase implements FrameworkConstants {
 				return Response.status(Status.BAD_REQUEST).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
 			}
 		}
-	}
-	
-	@POST
-	@Path("/commitProjectToRepo")
-	@Consumes(MediaType.APPLICATION_JSON)
-	@Produces(MediaType.APPLICATION_JSON)
-	public Response commitImportedProject(RepoDetail repodetail, @QueryParam("appDirName") String appDirName) {
-		Response response = null;
-		String type = repodetail.getType();
-		if(type.equals(SVN)){
-			response = commitSVNProject(repodetail);
-		} else if (type.equals(GIT)) {
-			response = commitGitProject(appDirName, repodetail, type);
-		}else if(type.equals(BITKEEPER)){
-			response = commitBitKeeperProject(appDirName, repodetail, type);
-		}
-		return response;
 	}
 	
 	public Response commitSVNProject(RepoDetail repodetail) {
