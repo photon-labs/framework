@@ -210,4 +210,76 @@ public interface CIManager {
 	 * @throws PhrescoException
 	 */
 	public String decyPassword(String encryptedText) throws PhrescoException;
+	
+	/**
+	 * Checks if the jobTemplate name already used
+	 * @param jobTemplateName
+	 * @return boolean
+	 * @throws PhrescoException
+	 */
+	boolean isJobTemplateNameExists(String jobTemplateName) throws PhrescoException;
+	
+	/**
+	 * creates job template configuration
+	 * @param ciJobTemplates
+	 * @param createNewFile
+	 * @return boolean
+	 * @throws PhrescoException
+	 */
+	boolean createJobTemplates(List<CIJobTemplate> ciJobTemplates, boolean createNewFile) throws PhrescoException;
+	
+	/**
+	 * Lists all job templates
+	 * @return CIJobTemplate
+	 * @throws PhrescoException
+	 */
+	List<CIJobTemplate> getJobTemplates() throws PhrescoException;
+	
+	/**
+	 * Lists job template by appId
+	 * @param appId
+	 * @return CIJobTemplate
+	 * @throws PhrescoException
+	 */
+	List<CIJobTemplate> getJobTemplatesByAppId(String appId) throws PhrescoException;
+	
+	/**
+	 * Lists job template by projId
+	 * @param projId
+	 * @return CIJobTemplate
+	 * @throws PhrescoException
+	 */
+	List<CIJobTemplate> getJobTemplatesByProjId(String projId) throws PhrescoException;
+	
+	/**
+	 * Lists job template by job template name
+	 * @param jobTemplateName
+	 * @return CIJobTemplate
+	 * @throws PhrescoException
+	 */
+	CIJobTemplate getJobTemplateByName(String jobTemplateName) throws PhrescoException;
+	
+	/**
+	 * Update jobTemplate
+	 * @param ciJobTemplate
+	 * @return boolean
+	 * @throws PhrescoException
+	 */
+	boolean updateJobTemplate(CIJobTemplate ciJobTemplate) throws PhrescoException;
+	
+	/**
+	 * Deletes list of job templates
+	 * @param CIJobTemplate ciJobTemplates
+	 * @return boolean
+	 * @throws PhrescoException
+	 */
+	boolean deleteJobTemplates(List<CIJobTemplate> ciJobTemplates) throws PhrescoException;
+	
+	/**
+	 * Deletes job template by name
+	 * @param jobTemplateName
+	 * @return boolean
+	 * @throws PhrescoException
+	 */
+	boolean deleteJobTemplate(String jobTemplateName) throws PhrescoException;
 }
