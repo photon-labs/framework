@@ -20,6 +20,7 @@ package com.photon.phresco.framework.impl;
 import hudson.cli.CLI;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -79,6 +80,7 @@ import com.photon.phresco.framework.api.CIManager;
 import com.photon.phresco.framework.model.CIBuild;
 import com.photon.phresco.framework.model.CIJob;
 import com.photon.phresco.framework.model.CIJobStatus;
+import com.photon.phresco.framework.model.CIJobTemplate;
 import com.photon.phresco.util.Utility;
 import com.sun.jersey.api.client.ClientHandlerException;
 import com.trilead.ssh2.crypto.Base64;
@@ -1012,6 +1014,312 @@ public class CIManagerImpl implements CIManager, FrameworkConstants {
 		 builder.append(CI_JOB_INFO_NAME);
 		 return builder.toString();
 	 }
+	 
+	 public boolean isJobTemplateNameExists(String jobTemplateName)  throws PhrescoException {
+		if (debugEnabled) {
+			S_LOGGER.debug("Entering Method CIManagerImpl.isjobTemplateNameExists()");
+		}
+		try {
+			List<CIJobTemplate> jobTemplates = getJobTemplates();
+			if (CollectionUtils.isNotEmpty(jobTemplates)) {
+				for (CIJobTemplate ciJobTemplate : jobTemplates) {
+					if (ciJobTemplate.getName().equals(jobTemplateName)) {
+						return true;
+					}
+				}
+			}
+		} catch (Exception e) {
+			if (debugEnabled) {
+				S_LOGGER.error("Entered into catch block of CI.isjobTemplateNameExists()" + e.getLocalizedMessage());
+			}
+			throw new PhrescoException(e);
+		}
+		return false;
+	 }
+	 
+	public boolean createJobTemplates(List<CIJobTemplate> ciJobTemplates, boolean createNewFile) throws PhrescoException {
+		if (debugEnabled) {
+			S_LOGGER.debug("Entering Method CIManagerImpl.createJobTemplate()");
+		}
+		FileWriter fw = null;
+		BufferedWriter bw = null;
+		try {
+			File jobTemplateFile = getJobTemplateFile();
+			if (ciJobTemplates == null) {
+				return false;
+			}
+
+			List<CIJobTemplate> jobTemplates = getJobTemplates();
+			if (CollectionUtils.isEmpty(jobTemplates) || createNewFile) {
+				jobTemplates = new ArrayList<CIJobTemplate>();
+			}
+			jobTemplates.addAll(ciJobTemplates);
+
+			Gson gson = new Gson();
+			fw = new FileWriter(jobTemplateFile);
+			bw = new BufferedWriter(fw);
+			String templatesJson = gson.toJson(jobTemplates);
+			bw.write(templatesJson);
+			bw.flush();
+			return true;
+		} catch (Exception e) {
+			if (debugEnabled) {
+				S_LOGGER.error("Entered into catch block of CI.createJobTemplate()"
+						+ e.getLocalizedMessage());
+			}
+			throw new PhrescoException(e);
+		} finally {
+			try {
+				if (bw != null) {
+					bw.close();
+				}
+			} catch (IOException e) {
+				throw new PhrescoException(e);
+			}
+			Utility.closeStream(fw);
+		}
+	}
+
+	public List<CIJobTemplate> getJobTemplates() throws PhrescoException {
+		if (debugEnabled) {
+			S_LOGGER.debug("Entering Method CIManagerImpl.getJobTemplates()");
+		}
+		FileReader jobTemplateFileReader = null;
+		BufferedReader br = null;
+		List<CIJobTemplate> ciJobTemplates = null;
+		try {
+			File jobTemplateFile = getJobTemplateFile();
+			if (!jobTemplateFile.exists()) {
+				// If file not found return empty object
+				return ciJobTemplates;
+			}
+
+			jobTemplateFileReader = new FileReader(jobTemplateFile);
+			br = new BufferedReader(jobTemplateFileReader);
+
+			Type type = new TypeToken<List<CIJobTemplate>>() {
+			}.getType();
+			Gson gson = new Gson();
+			ciJobTemplates = gson.fromJson(br, type);
+		} catch (Exception e) {
+			if (debugEnabled) {
+				S_LOGGER.error("Entered into catch block of CI.getJobTemplates()"
+						+ e.getLocalizedMessage());
+			}
+			throw new PhrescoException(e);
+		} finally {
+			Utility.closeStream(br);
+			Utility.closeStream(jobTemplateFileReader);
+		}
+		return ciJobTemplates;
+	}
+
+	public List<CIJobTemplate> getJobTemplatesByAppId(String appId) throws PhrescoException {
+		if (debugEnabled) {
+			S_LOGGER.debug("Entering Method CIManagerImpl.getJobTemplatesByAppid()");
+		}
+		List<CIJobTemplate> ciJobTemplates = null;
+		try {
+			if (StringUtils.isEmpty(appId)) {
+				return ciJobTemplates;
+			}
+
+			List<CIJobTemplate> jobTemplates = getJobTemplates();
+			if (CollectionUtils.isEmpty(jobTemplates)) {
+				return ciJobTemplates;
+			}
+
+			ciJobTemplates = new ArrayList<CIJobTemplate>(jobTemplates.size());
+
+			for (CIJobTemplate ciJobTemplate : jobTemplates) {
+				List<String> appIds = ciJobTemplate.getAppIds();
+				for (String selAppId : appIds) {
+					if (appId.equals(selAppId)) {
+						ciJobTemplates.add(ciJobTemplate);
+					}
+				}
+			}
+		} catch (Exception e) {
+			if (debugEnabled) {
+				S_LOGGER.error("Entered into catch block of CI.getJobTemplatesByAppid()"
+						+ e.getLocalizedMessage());
+			}
+			throw new PhrescoException(e);
+		}
+		return ciJobTemplates;
+	}
+
+	public List<CIJobTemplate> getJobTemplatesByProjId(String projId)
+			throws PhrescoException {
+		if (debugEnabled) {
+			S_LOGGER.debug("Entering Method CIManagerImpl.getJobTemplatesByProjId()");
+		}
+		List<CIJobTemplate> ciJobTemplates = null;
+		try {
+			if (StringUtils.isEmpty(projId)) {
+				return ciJobTemplates;
+			}
+
+			List<CIJobTemplate> jobTemplates = getJobTemplates();
+			if (CollectionUtils.isEmpty(jobTemplates)) {
+				return ciJobTemplates;
+			}
+
+			ciJobTemplates = new ArrayList<CIJobTemplate>(jobTemplates.size());
+
+			for (CIJobTemplate ciJobTemplate : jobTemplates) {
+				String selProjId = ciJobTemplate.getProjId();
+				if (projId.equals(selProjId)) {
+					ciJobTemplates.add(ciJobTemplate);
+				}
+			}
+		} catch (Exception e) {
+			if (debugEnabled) {
+				S_LOGGER.error("Entered into catch block of CI.getJobTemplatesByProjId()"
+						+ e.getLocalizedMessage());
+			}
+			throw new PhrescoException(e);
+		}
+		return ciJobTemplates;
+	}
+
+	public CIJobTemplate getJobTemplateByName(String jobTemplateName)
+			throws PhrescoException {
+		if (debugEnabled) {
+			S_LOGGER.debug("Entering Method CIManagerImpl.getJobTemplate()");
+		}
+		CIJobTemplate ciJobTemplates = null;
+		try {
+			if (StringUtils.isEmpty(jobTemplateName)) {
+				return ciJobTemplates;
+			}
+
+			List<CIJobTemplate> jobTemplates = getJobTemplates();
+			if (CollectionUtils.isEmpty(jobTemplates)) {
+				return ciJobTemplates;
+			}
+
+			for (CIJobTemplate ciJobTemplate : jobTemplates) {
+				String selJobTemplateName = ciJobTemplate.getName();
+				if (jobTemplateName.equals(selJobTemplateName)) {
+					return ciJobTemplate;
+				}
+			}
+		} catch (Exception e) {
+			if (debugEnabled) {
+				S_LOGGER.error("Entered into catch block of CI.getJobTemplate()"
+						+ e.getLocalizedMessage());
+			}
+			throw new PhrescoException(e);
+		}
+		return ciJobTemplates;
+	}
+
+	public boolean updateJobTemplate(CIJobTemplate ciJobTemplate) throws PhrescoException {
+		if (debugEnabled) {
+			S_LOGGER.debug("Entering Method CIManagerImpl.updateJobTemplate()");
+		}
+		try {
+			String jobTemplateName = ciJobTemplate.getName();
+			if (StringUtils.isEmpty(jobTemplateName)) {
+				return false;
+			}
+			
+			CIJobTemplate jobTemplateByName = getJobTemplateByName(jobTemplateName);
+			boolean deleteJobTemplate = deleteJobTemplate(jobTemplateByName.getName());
+			if (deleteJobTemplate) {
+				boolean createJobTemplates = createJobTemplates(Arrays.asList(ciJobTemplate), false);
+				return createJobTemplates;
+			}
+			return false;
+		} catch (Exception e) {
+			if (debugEnabled) {
+				S_LOGGER.error("Entered into catch block of CI.updateJobTemplate()"
+						+ e.getLocalizedMessage());
+			}
+			throw new PhrescoException(e);
+		}
+	}
+
+	public boolean deleteJobTemplates(List<CIJobTemplate> ciJobTemplates) throws PhrescoException {
+		if (debugEnabled) {
+			S_LOGGER.debug("Entering Method CIManagerImpl.deleteJobTemplates()");
+		}
+		try {
+			if (CollectionUtils.isEmpty(ciJobTemplates)) {
+				return false; // Empty collection received
+			}
+			
+			List<CIJobTemplate> jobTemplates = getJobTemplates();
+			Iterator<CIJobTemplate> jobTemplatesIterator = jobTemplates.iterator();
+			
+			for (CIJobTemplate ciJobTemplate : ciJobTemplates) {
+				while (jobTemplatesIterator.hasNext()) {
+					CIJobTemplate jobTemplate = (CIJobTemplate) jobTemplatesIterator.next();
+					if (jobTemplate.getName().equals(ciJobTemplate.getName())) {
+						jobTemplatesIterator.remove();
+						break;
+					}
+				 }
+			}
+			
+			boolean deleteJobTemplates = createJobTemplates(jobTemplates, true);
+			return deleteJobTemplates;
+		} catch (Exception e) {
+			if (debugEnabled) {
+				S_LOGGER.error("Entered into catch block of CI.deleteJobTemplates()"
+						+ e.getLocalizedMessage());
+			}
+			throw new PhrescoException(e);
+		}
+	}
+	
+	public boolean deleteJobTemplate(String jobTemplateName) throws PhrescoException {
+		if (debugEnabled) {
+			S_LOGGER.debug("Entering Method CIManagerImpl.deleteJobTemplates()");
+		}
+		try {
+			if (StringUtils.isEmpty(jobTemplateName)) {
+				return false; // Empty collection received
+			}
+			
+			List<CIJobTemplate> jobTemplates = getJobTemplates();
+			Iterator<CIJobTemplate> jobTemplateIterator = jobTemplates.iterator();
+			while (jobTemplateIterator.hasNext()) {
+				CIJobTemplate jobTemplate = (CIJobTemplate) jobTemplateIterator.next();
+				if (jobTemplate.getName().equals(jobTemplateName)) {
+					jobTemplateIterator.remove();
+					break;
+				}
+			}
+			
+			boolean deleteJobTemplates = createJobTemplates(jobTemplates, true);
+			return deleteJobTemplates;
+		} catch (Exception e) {
+			if (debugEnabled) {
+				S_LOGGER.error("Entered into catch block of CI.deleteJobTemplates()"
+						+ e.getLocalizedMessage());
+			}
+			throw new PhrescoException(e);
+		}
+	}
+
+	private String getJobTemplatePath() {
+		StringBuilder builder = new StringBuilder(Utility.getProjectHome());
+		// builder.append(appInfo.getAppDirName());
+		// builder.append(File.separator);
+		// builder.append(FOLDER_DOT_PHRESCO);
+		// builder.append(File.separator);
+		builder.append(CI_JOB_TEMPLATE_NAME);
+		return builder.toString();
+	}
+	 
+	private File getJobTemplateFile() {
+		File jobTemplateFile = null;
+		String jobTemplatePath = getJobTemplatePath();
+		jobTemplateFile = new File(jobTemplatePath);
+		return jobTemplateFile;
+	}
 	 
 	 public CIJobStatus buildJobs(ApplicationInfo appInfo, List<String> jobsName) throws PhrescoException {
 		 try {

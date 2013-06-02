@@ -24,18 +24,24 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.input.SAXBuilder;
 import org.jdom.output.XMLOutputter;
 import org.junit.After;
+import org.junit.Assert;
 import org.junit.Before;
+import org.junit.Test;
 
+import com.google.gson.Gson;
 import com.photon.phresco.commons.FrameworkConstants;
-import com.photon.phresco.framework.model.CIBuild;
 import com.photon.phresco.framework.model.CIJob;
+import com.photon.phresco.framework.model.CIJobTemplate;
 import com.photon.phresco.service.client.api.ServiceManager;
 
 public class CIManagerImplTest implements FrameworkConstants{
@@ -47,13 +53,13 @@ public class CIManagerImplTest implements FrameworkConstants{
     private Element root_ = null;
     private String SvnType = "git"; //clonedWorkspace
     
+    // Job template variable
+    
 	@Before
 	public void setUp() throws Exception {
 		try {
-			System.out.println("before1111111111111111 !!!!!!!!!");
 //			serviceManager = PhrescoFrameworkFactory.getServiceManager();
 			ciManager = new CIManagerImpl();
-			System.out.println("Initialized!!!!");
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -62,13 +68,125 @@ public class CIManagerImplTest implements FrameworkConstants{
 
 	@After
 	public void tearDown() throws Exception {
-		System.out.println("Tear down!!!!!");
 //	    if (serviceManager != null) {
 //	        serviceManager = null;
 //	    }
 	    if (ciManager != null) {
 	    	ciManager = null;
 	    }
+	}
+	
+	@Test
+	public void testAddJobTemplates() throws Exception {
+		System.out.println("Add job template ");
+		CIJobTemplate ciJobTemplate = new CIJobTemplate();
+		ciJobTemplate.setName("Test");
+		ciJobTemplate.setType("build");
+		
+		List<String> appIds = new ArrayList<String>(2);
+		appIds.add("a123");
+		appIds.add("a456");
+		ciJobTemplate.setAppIds(appIds);
+		
+		ciJobTemplate.setProjId("p123");
+		
+		ciJobTemplate.setEnableRepo(true);
+		List<String> repoTypes = new ArrayList<String>(2);
+		repoTypes.add("svn");
+		ciJobTemplate.setRepoTypes(repoTypes);
+		
+		ciJobTemplate.setEnableSheduler(true);
+		ciJobTemplate.setEnableEmailSettings(true);
+		ciJobTemplate.setEnableUploadSettings(true);
+		
+		List<String> uploadTypes = new ArrayList<String>(2);
+		uploadTypes.add("confluence");
+		uploadTypes.add("insight");
+		ciJobTemplate.setUploadTypes(uploadTypes);
+		
+		List<CIJobTemplate> ciJobTemplats = Arrays.asList(ciJobTemplate);
+		Gson gson = new Gson();
+		String jsonStr = gson.toJson(ciJobTemplats);
+		System.out.println(jsonStr);
+		
+		boolean createJobTemplates = ciManager.createJobTemplates(ciJobTemplats, true); // True should passed only for testing purpose
+		Assert.assertTrue(createJobTemplates);
+	}
+	
+	@Test
+	public void testListAllJobTemplates() throws Exception {
+		System.out.println("ListAll job template ");
+		List<CIJobTemplate> jobTemplates = ciManager.getJobTemplates();
+		if (CollectionUtils.isEmpty(jobTemplates)) {
+			Assert.assertTrue(false);
+		}
+		int size = jobTemplates.size();
+		System.out.println("Size => " + size);
+		Assert.assertTrue(size > 0 && size < 2);
+	}
+	
+	@Test
+	public void testpListByNameJobTemplates() throws Exception {
+		System.out.println("ListByName job template ");
+		String name = "Test";
+		CIJobTemplate jobTemplate = ciManager.getJobTemplateByName(name);
+		System.out.println("jobTemplate.getName() name => " + jobTemplate.getName());
+		Assert.assertTrue(name.equals(jobTemplate.getName()));
+	}
+	
+//	@Test
+//	public void testpListByTypeJobTemplates() throws Exception {
+//		System.out.println("ListByType job template ");
+//		String type = "build";
+//	}
+	
+	@Test
+	public void testpListByAppIdJobTemplates() throws Exception {
+		System.out.println("ListByAppId job template ");
+		String appId = "a123";
+		List<CIJobTemplate> jobTemplatesByAppId = ciManager.getJobTemplatesByAppId(appId);
+		System.out.println("jobTemplatesByAppId size " + jobTemplatesByAppId.size());
+		Assert.assertTrue(jobTemplatesByAppId.size() > 0 && jobTemplatesByAppId.size() < 2);
+		
+	}
+	
+	@Test
+	public void testpListByProjIdJobTemplates() throws Exception {
+		System.out.println("ListByProjId job template ");
+		String projId = "p123";
+		List<CIJobTemplate> jobTemplatesByProjId = ciManager.getJobTemplatesByProjId(projId);
+		Assert.assertTrue(jobTemplatesByProjId.size() > 0 && jobTemplatesByProjId.size() < 2);
+	}
+	
+	
+//	@Test
+//	public void testpListByCustomerIdJobTemplates() throws Exception {
+//		System.out.println("ListByCustomerId job template ");
+//		
+//	}
+	
+	
+	@Test
+	public void testUpdateJobTemplates() throws Exception {
+		System.out.println("Update job template ");
+		String name = "Test";
+		CIJobTemplate jobTemplate = ciManager.getJobTemplateByName(name);
+		jobTemplate.setEnableEmailSettings(false);
+		boolean updateJobTemplate = ciManager.updateJobTemplate(jobTemplate);
+//		Assert.assertTrue(updateJobTemplate);
+		
+		CIJobTemplate jobTemplateByName = ciManager.getJobTemplateByName(name);
+		Assert.assertTrue(!jobTemplateByName.isEnableEmailSettings()); // retrive obje vallue and check
+	}
+	
+	@Test
+	public void testDeleteJobTemplates() throws Exception {
+		System.out.println("Delete job template ");
+		String name = "Test";
+		boolean deleteJobTemplate = ciManager.deleteJobTemplate(name);
+//		Assert.assertTrue(deleteJobTemplate);
+		CIJobTemplate jobTemplateByName = ciManager.getJobTemplateByName(name);
+		Assert.assertTrue(jobTemplateByName == null); // retrive obje vallue and check
 	}
 
 	//@Test
