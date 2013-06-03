@@ -22,6 +22,7 @@ define(["framework/widget", "navigation/api/navigationAPI", "dynamicPage/dynamic
 		editConfiguration : null,
 		jobTemplates : null,
 		continuousDeliveryView : null,
+		mavenService : null,
 		continuousDeliveryConfigure : null,
 		
 		/***
@@ -180,6 +181,13 @@ define(["framework/widget", "navigation/api/navigationAPI", "dynamicPage/dynamic
 							self.continuousDeliveryView = new Clazz.com.components.ci.js.ContinuousDeliveryView();
 							
 						retuenObj = self.continuousDeliveryView;
+						break;
+						
+					case commonVariables.mavenService :
+						if(self.mavenService === null)
+							self.mavenService = new Clazz.com.components.mavenService.js.MavenService();
+							
+						retuenObj = self.mavenService;
 						break;
 				}
 			

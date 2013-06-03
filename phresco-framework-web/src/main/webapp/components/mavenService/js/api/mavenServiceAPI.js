@@ -1,8 +1,8 @@
 define(["framework/base", "api/api"], function() {
 
-	Clazz.createPackage("com.components.mevanService.js.api");
+	Clazz.createPackage("com.components.mavenService.js.api");
 
-	Clazz.com.components.mevanService.js.api.MevanServiceAPI = Clazz.extend(Clazz.com.js.api.API, {
+	Clazz.com.components.mavenService.js.api.MavenServiceAPI = Clazz.extend(Clazz.com.js.api.API, {
         /***
          * Called in for mvnSer ajax call 
          *
@@ -15,5 +15,5 @@ define(["framework/base", "api/api"], function() {
 		}
 	});
 
-	return Clazz.com.components.mevanService.js.api.MevanServiceAPI;
+	return Clazz.com.components.mavenService.js.api.MavenServiceAPI;
 });

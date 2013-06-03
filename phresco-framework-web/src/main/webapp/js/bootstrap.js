@@ -60,8 +60,8 @@ var commonVariables = {
 	
 	build : "build",
 	
-	mevanService : "mevanService",
-	mevanServiceContext : "mevanService",
+	mavenService : "mavenService",
+	mavenServiceContext : "mavenService",
 	
 	openFolderContext : "util/openFolder",
 	copyPathContext : "util/copyPath",

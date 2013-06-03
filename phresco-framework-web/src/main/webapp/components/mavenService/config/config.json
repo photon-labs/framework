@@ -1,11 +1,11 @@
 {
     "info":{
         "widgetId":"111",
-        "widgetName":"mevanService"
+        "widgetName":"mavenService"
     },
     "components":{
         "login":{
-            "moduleName":"mevanService",
+            "moduleName":"mavenService",
             "host":"http://localhost",
             "port":"2020"
         }
