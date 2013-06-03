@@ -57,9 +57,7 @@ define(["framework/widget", "framework/widgetWithTemplate", "projectlist/api/pro
 							self.loadingScreen.removeLoading();
 							callback({ "status" : "service failure"});
 						}
-
 					},
-
 					function(textStatus) {
 						self.loadingScreen.removeLoading();
 					}
@@ -84,8 +82,7 @@ define(["framework/widget", "framework/widgetWithTemplate", "projectlist/api/pro
 							self.loadingScreen.removeLoading();
 							callback({ "status" : "service failure"});
 						}
-					},
-					
+					},					
 					function(textStatus) {
 						self.loadingScreen.removeLoading();	
 					}
@@ -124,38 +121,28 @@ define(["framework/widget", "framework/widgetWithTemplate", "projectlist/api/pro
 			}
 			if(action == "repoget") {
 				header.requestMethod = "POST";
-				console.info("projectRequestBody", projectRequestBody);
 				var addrepo ={};
 				addrepo.type = projectRequestBody.type;
 				addrepo.repoUrl = projectRequestBody.repoUrl;
-				//addrepo.userName = projectRequestBody.userName;
-				addrepo.userName = "santhosh_ja";
-				//addrepo.password = projectRequestBody.password;
-				addrepo.password = "santJ!23";
+				addrepo.userName = projectRequestBody.userName;
+				addrepo.password = projectRequestBody.password;
 				addrepo.commitMessage = projectRequestBody.commitMessage;
-				header.requestPostBody = JSON.stringify(addrepo);
-				userId = "santhosh_ja";				
+				header.requestPostBody = JSON.stringify(addrepo);			
 				header.webserviceurl = commonVariables.webserviceurl + "repository/addProjectToRepo?appDirName="+projectRequestBody.appdirname+"&userId="+userId+"&appId="+projectRequestBody.appid+"&projectId="+projectRequestBody.projectid;				
 			}
 			if(action == "commitget") {
 				header.requestMethod = "POST";
-				console.info("projectRequestBody", projectRequestBody);
 				var addcommit ={};
 				addcommit.type = projectRequestBody.type;
 				addcommit.repoUrl = projectRequestBody.repoUrl;
-				//addrepo.userName = projectRequestBody.userName;
-				addcommit.userName = "santhosh_ja";
-				//addrepo.password = projectRequestBody.password;
-				addcommit.password = "santJ!23";
+				addrepo.userName = projectRequestBody.userName;
+				addrepo.password = projectRequestBody.password;
 				addcommit.commitMessage = projectRequestBody.commitMessage;
 				addcommit.commitableFiles = projectRequestBody.commitableFiles;
 				header.requestPostBody = JSON.stringify(addcommit);
-				userId = "santhosh_ja";
-				console.info("addcommit", addcommit);
 				header.webserviceurl = commonVariables.webserviceurl + "repository/commitProjectToRepo?appDirName="+projectRequestBody.appdirname;
 			}
 			if(action == "updateget") {
-				console.info("projectRequestBody", projectRequestBody);
 				var addupdate ={};
 				addupdate.type = projectRequestBody.type;
 				addupdate.repoUrl = projectRequestBody.repoUrl;
@@ -165,12 +152,9 @@ define(["framework/widget", "framework/widgetWithTemplate", "projectlist/api/pro
 				addupdate.password = "santJ!23";
 				addupdate.version = projectRequestBody.revision;
 				header.requestPostBody = JSON.stringify(addupdate);
-				userId = "santhosh_ja";
-				console.info("addupdate", addupdate);
 				header.webserviceurl = commonVariables.webserviceurl + "repository/updateImportedApplication?appDirName="+projectRequestBody.appdirname;
 			}
 			if(action == "reportget") {
-				console.info("update");
 				header.requestMethod = "POST";
 				//header.webserviceurl = commonVariables.webserviceurl + "/app/printAsPdf/username="+data.name+"&appId="+appId+"&customerId="+customerId+"&fromPage="+fromPage+"&isReportAvailable=true&projectId="+projectId+"&reportDataType=detail&sonarUrl="+fromPage;		
 			} 
@@ -196,7 +180,6 @@ define(["framework/widget", "framework/widgetWithTemplate", "projectlist/api/pro
 			var self = this;
 			var repodata = {}, actionBody, action;
 			//if(!self.validation()) {
-				console.info("test");
 				repodata.type = $("#type_"+dynid).val();
 				repodata.repoUrl = $("#repourl_"+dynid).val();
 				repodata.userName = $("#uname_"+dynid).val();
@@ -223,7 +206,6 @@ define(["framework/widget", "framework/widgetWithTemplate", "projectlist/api/pro
 				commitdata.commitMessage = $("#commitMessage_"+dynid).val();
 				commitdata.commitableFiles = arrayCommitableFiles;
 				commitdata.appDirName = obj.parent("div").attr("appDirName");
-				console.info("commitdata", commitdata);
 				actionBody = commitdata;
 				action = "commitget";
 				self.projectListAction(self.getActionHeader(actionBody, action), function(response){
@@ -250,7 +232,6 @@ define(["framework/widget", "framework/widgetWithTemplate", "projectlist/api/pro
 				updatedata.password = $("#updatePassword_"+dynid).val();
 				updatedata.revision = revision;
 				updatedata.appdirname = obj.parent("div").attr("appDirName");
-				console.info("updatedata", updatedata);
 				actionBody = updatedata;
 				action = "updateget";
 				self.projectListAction(self.getActionHeader(actionBody, action), function(response){

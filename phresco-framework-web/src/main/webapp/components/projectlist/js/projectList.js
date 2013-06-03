@@ -265,10 +265,8 @@ define(["framework/widgetWithTemplate", "projectlist/listener/projectListListene
 			
 			$("input[name='revision']").unbind("click");
 			$("input[name='revision']").click(function() {
-				console.info("test");
 				if($(this).is(':checked')) {
 					var value = $(this).val();
-					alert(value);
 				}
 			});
 			
