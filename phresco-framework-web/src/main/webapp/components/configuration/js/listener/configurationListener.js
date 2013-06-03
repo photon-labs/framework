@@ -110,7 +110,7 @@ define(["framework/widget", "framework/widgetWithTemplate", "configuration/api/c
 			} else if (action === "saveConfig") {
 					header.requestMethod = "POST";
 					header.requestPostBody = JSON.stringify(configRequestBody);
-					header.webserviceurl = commonVariables.webserviceurl+commonVariables.configuration+"/saveConfig?appDirName="+appDirName;
+					header.webserviceurl = commonVariables.webserviceurl+commonVariables.configuration+"/updateConfig?appDirName="+appDirName+"&envName="+deleteEnv;
 			}
 			return header;
 		},
@@ -151,9 +151,9 @@ define(["framework/widget", "framework/widgetWithTemplate", "configuration/api/c
 				if (self.count == 0) {
 					self.count = "";
 				}
-				var headerTr = '<tr type="'+configTemplate.data.name+self.count+'" class="row_bg"><td colspan="3">' + configTemplate.data.name + '</td><td colspan="3">'+'<a href="javascript:;" name="removeConfig"><img src="themes/default/images/helios/close_icon.png" width="25" height="20" border="0" alt="" class="flt_right"/></a></td></tr>';
+				var headerTr = '<tr type="'+configTemplate.data.name+self.count+'" class="row_bg"><td colspan="3">' + configTemplate.data.name + '</td><td colspan="3">'+'<a href="javascript:;" name="removeConfig"><img src="themes/default/images/helios/close_icon.png" border="0" alt="" class="flt_right"/></a></td></tr>';
 				content = content.concat(headerTr);
-				var defaultTd = '<tr name="'+configTemplate.data.name+'" class="'+configTemplate.data.name+self.count+'"><td class="labelTd">Name <sup>*</sup></td><td><input type="text" class="configName" placeholder= "Configuration Name"/></td><td class="labelTd">Description</td><td><input type="text" class="configDesc" placeholder= "Configuration Description"/></td>';
+				var defaultTd = '<tr name="'+configTemplate.data.name+'" class="'+configTemplate.data.name+self.count+'"><td class="labelTd">Name <sup>*</sup></td><td><input type="text" class="configName" value="'+configName+'" placeholder= "Configuration Name"/></td><td class="labelTd">Description</td><td><input type="text" class="configDesc" value="'+configDesc+'" placeholder= "Configuration Description"/></td>';
 				content = content.concat(defaultTd);
 				var count = 2;
 				var i = 2;
@@ -196,9 +196,9 @@ define(["framework/widget", "framework/widgetWithTemplate", "configuration/api/c
 						inputCtrl = inputCtrl.concat(options);
 						inputCtrl = inputCtrl.concat("</select></td>");
 						if  (count % 3 == 0) {
-							inputCtrl = inputCtrl.concat("</tr>");
+							//inputCtrl = inputCtrl.concat("</tr>");
 						}
-						inputCtrl = inputCtrl.concat("</tr>");
+						//inputCtrl = inputCtrl.concat("</tr>");
 					} else if (type == "Password") {
 						inputCtrl = '<input value="'+ configValue +'" class="'+configTemplate.data.name+self.count+'Configuration" name="'+key+'" type="password" placeholder=""/>';
 					} else if (type == "FileType") {
@@ -272,7 +272,10 @@ define(["framework/widget", "framework/widgetWithTemplate", "configuration/api/c
 			var self = this;
 			var envName = $("input[name=envName]").val();
 			var envDesc = $("input[name=envDesc]").val();
-			$("ul[name=envList]").append('<li><div><input type="radio" name="optionsRadiosfd"></div><div name="envListName">'+envName+'</div><input type="hidden" name="envListDesc" value="'+envDesc+'"></li>');
+			$("ul[name=envList]").append('<li><div><input type="radio" name="optionsRadiosfd"></div><div  class="envlistname" name="envListName">'+envName+'</div><input type="hidden" name="envListDesc" value="'+envDesc+'"></li>');
+			$('.connected').sortable({
+				connectWith: '.connected'
+			});
 			$("input[name=envName]").val('')
 			$("input[name=envDesc]").val('')
 		},
@@ -347,8 +350,9 @@ define(["framework/widget", "framework/widgetWithTemplate", "configuration/api/c
 				});
 				self.configList.push(configJson);
 			});
+			var envrName = $('input[name=EnvName]').val();
 			self.configRequestBody = self.configList;
-			self.getConfigurationList(self.getRequestHeader(self.configRequestBody, "saveConfig"), function(response) {
+			self.getConfigurationList(self.getRequestHeader(self.configRequestBody, "saveConfig", envrName), function(response) {
 				Clazz.navigationController.jQueryContainer = commonVariables.contentPlaceholder;
 				self.configList = commonVariables.navListener.getMyObj(commonVariables.configuration);
 				Clazz.navigationController.push(self.configList, true);
