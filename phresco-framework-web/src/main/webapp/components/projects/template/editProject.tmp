@@ -12,28 +12,20 @@
                     <td data-i18n="project.create.label.version"></td>
                     <td><input type="text" name="projectversion" value="{{version}}" disabled/></td>
                      <td data-i18n="project.create.label.description"></td>
-                    <td><input type="text" name="projectdescription" value="{{description}}" placeholder="Description" disabled/></td>
+                    <td><textarea>type="text" name="projectdescription" value="{{description}}" placeholder="Description" disabled</textarea></td>
                 </tr>
                 <tr>
 					<td colspan="2">
-                        <select class="custon_dropdown">
+                        <select class="custon_dropdown" disabled>
                             <option>Pre Built</option>
                             <option>Custom</option>
-                        </select>
-                        <select class="custon_dropdown">
-                            <option>Select</option>
                         </select>
                     </td>
 					
                     <td data-i18n="project.create.label.startdate" name="startdate-lbl"></td>
                     <td class="startdate" name="startdateholder"><input name="startdate" type="text" id="startDate"><span class="add-on"><img src="themes/default/images/helios/cal_icon.png" border="0" alt=""></span></td>
                     <td data-i18n="project.create.label.enddate" name="enddate-lbl"></td>
-                    <td class="enddate" name="enddateholder"><input name="enddate" id="endDate" type="text"><span class="add-on"><span class="add-on"><img src="themes/default/images/helios/cal_icon.png" border="0" alt=""></span></span></td>
-                    
-                    <td data-i18n="project.create.label.pilotprojects"></td>
-                    <td>
-						<input type="text" name="pilotprojects" value="EShop" disabled></input>
-                    </td>
+                    <td class="enddate" name="enddateholder"><input name="enddate" id="endDate" type="text"><span class="add-on"><span class="add-on"><img class="cal_img1" src="themes/default/images/helios/cal_icon.png" border="0" alt=""></span></span></td>
                 </tr>
 			{{/editProject}}
                <tr id="appLayaer" class="proj_title">
