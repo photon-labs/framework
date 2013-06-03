@@ -48,9 +48,9 @@
 		<section class="content_end">
 			<div class="flt_right">
 				{{#if userPermissions.manageConfiguration}}
-					<input type="submit" name="UpdateConfig" value="Update" class="btn btn_style update_btn">
+					<input type="submit" name="UpdateConfiguration" value="Update" class="btn btn_style update_btn">
 				{{else}}
-					<input type="submit" name="UpdateConfig" value="Update" class="btn btn_style update_btn" disabled>
+					<input type="submit" name="UpdateConfiguration" value="Update" class="btn btn_style update_btn" disabled>
 				{{/if}}
 				<input id="cancelEditConfig"" type="submit" value="Cancel" class="btn btn_style cancel_icon_btn">
 			</div>

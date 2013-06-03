@@ -210,7 +210,7 @@ define(["framework/widget", "framework/widgetWithTemplate", "configuration/api/c
 					content = content.concat(control);
 					i = count++;
 				});
-				$("tbody").append(content);
+				$("tbody[name=ConfigurationLists]").append(content);
 				$("a[name=removeConfig]").unbind("click");
 				self.removeConfiguation();
 			}
@@ -225,7 +225,7 @@ define(["framework/widget", "framework/widgetWithTemplate", "configuration/api/c
 				}
 				
 				headerTr = '<tr class="row_bg"><div class="row"><td colspan="3">' + type + '</td><td colspan="3">'+
-				'<a href="javascript:;" name="removeConfig"><img src="themes/default/images/helios/close_icon.png" width="25" height="20" border="0" alt="" class="flt_right"/></a></td></div></tr>';
+				'<a href="javascript:;" name="removeConfig"><img src="themes/default/images/helios/close_icon.png" border="0" alt="" class="flt_right"/></a></td></div></tr>';
 				content = content.concat(headerTr);
 				textBox = '<tr class="otherConfig"><td></td><td><input type="text" placeholder= "key" value="'+apiKey+'"/><td><input type="text" placeholder= "value" value="'+keyValue+'"/></td><td><div class="flt_right icon_center"><a href="javascript:;" name="addOther"><img src="themes/default/images/helios/plus_icon.png" border="0" alt=""></a> <a href="javascript:;" name="removeOther"></a></div></td></tr>';
 				content = content.concat(textBox);
@@ -272,7 +272,7 @@ define(["framework/widget", "framework/widgetWithTemplate", "configuration/api/c
 			var self = this;
 			var envName = $("input[name=envName]").val();
 			var envDesc = $("input[name=envDesc]").val();
-			$("ul[name=envList]").append('<li><div><input type="radio" name="optionsRadiosfd"></div><div  class="envlistname" name="envListName">'+envName+'</div><input type="hidden" name="envListDesc" value="'+envDesc+'"></li>');
+			$("ul[name=envList]").append('<li draggable="true"><div><input type="radio" name="optionsRadiosfd"></div><div  class="envlistname" name="envListName">'+envName+'</div><input type="hidden" name="envListDesc" value="'+envDesc+'"></li>');
 			$('.connected').sortable({
 				connectWith: '.connected'
 			});
@@ -330,7 +330,6 @@ define(["framework/widget", "framework/widgetWithTemplate", "configuration/api/c
 			var self=this, configJson = {}, properties = {};
 			self.configList = [];
 			$.each($(".row_bg"), function(index, value) {
-				var configuration = {};
 				properties = {};
 				configJson = {};
 				var type = $(this).attr("type");
