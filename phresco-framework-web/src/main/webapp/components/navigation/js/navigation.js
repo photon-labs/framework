@@ -13,6 +13,8 @@ define(["framework/widgetWithTemplate", "navigation/listener/navigationListener"
 		onAddNewProjectEvent : null,
 		onMytabEvent : null,
 		currentContent : null,
+		onImportEvent : null,
+		 
 	
 		/***
 		 * Called in initialization time of this class 
@@ -42,7 +44,9 @@ define(["framework/widgetWithTemplate", "navigation/listener/navigationListener"
 			self.onQualitytabEvent = new signals.Signal();
 			self.onAddNewProjectEvent.add(navigationListener.onAddProject, navigationListener); 
 			self.onMytabEvent.add(navigationListener.onMytabEvent, navigationListener); 
-			self.onQualitytabEvent.add(navigationListener.onQualitytab, navigationListener); 
+			self.onQualitytabEvent.add(navigationListener.onQualitytab, navigationListener); 			
+			self.onImportEvent = new signals.Signal();
+			self.onImportEvent.add(navigationListener.addImportEvent, navigationListener);
 		},
 		
 		/***
@@ -82,6 +86,42 @@ define(["framework/widgetWithTemplate", "navigation/listener/navigationListener"
 			
 			$("#qualityAssurance li").click(function() {
 				self.onQualitytabEvent.dispatch(this.id);
+			});
+
+			$("#importApp").click(function() {
+				var currentPrjName = "";
+				self.opencc(this, "project_list_import", currentPrjName);
+			});
+			
+			$(".gitdata").hide();
+			$(".importselect select").change(function () {
+				if($(this).val() == "Bitkeeper") {
+					$(".svndata").hide();
+					$(".gitdata").show();
+				}
+
+				else if($(this).val() == "Git") {
+					$(".svndata").hide();
+					$(".gitdata").show();	
+				}
+
+				else if($(this).val() == "SVN") {
+					$(".svndata").show();
+					$(".gitdata").hide();	
+				}
+			});
+			
+			$("input[name='importbtn']").unbind("click");
+			$("input[name='importbtn']").click(function() {
+				var  revision;
+				var revision = $("input[name='headoption']:checked").val();
+				if(revision !== ""){
+					revision = revision;
+				} else{
+					revision = $("#revision").val();
+					console.info("revision", revision);
+				}
+				self.onImportEvent.dispatch(revision);				
 			});
 			
 			Clazz.navigationController.mainContainer = commonVariables.contentPlaceholder;

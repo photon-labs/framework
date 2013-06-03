@@ -1,4 +1,4 @@
-define(["framework/widgetWithTemplate", "projectlist/listener/projectListListener"], function() {
+define(["framework/widgetWithTemplate", "projectlist/listener/projectListListener", "projectlist/api/projectListAPI"], function() {
 	
 	Clazz.createPackage("com.components.projectlist.js");
 
@@ -16,6 +16,11 @@ define(["framework/widgetWithTemplate", "projectlist/listener/projectListListene
 		onProjectEditEvent : null,
 		registerEvents : null,
 		repositoryEvent : null,
+		projectListAPI : null,
+		onAddRepoEvent : null,
+		onAddCommitEvent : null,
+		onAddUpdateEvent : null,
+		onAddReportEvent : null,
 		
 		/***
 		 * Called in initialization time of this class 
@@ -26,6 +31,8 @@ define(["framework/widgetWithTemplate", "projectlist/listener/projectListListene
 			var self = this;
 			self.projectslistListener = new Clazz.com.components.projectlist.js.listener.ProjectsListListener;
 			self.registerEvents(self.projectslistListener);
+			self.projectListAPI = new Clazz.com.components.projectlist.js.api.ProjectsListAPI();
+			
 		},
 
 		/*** 
@@ -42,7 +49,19 @@ define(["framework/widgetWithTemplate", "projectlist/listener/projectListListene
 			self.onProjectsEvent = new signals.Signal();
 			self.onProjectEditEvent = new signals.Signal();
 			self.onProjectEditEvent.add(projectslistListener.onEditProject, projectslistListener);			
-			self.onProjectsEvent.add(projectslistListener.editApplication, projectslistListener); 
+			self.onProjectsEvent.add(projectslistListener.editApplication, projectslistListener);
+			
+			self.onAddRepoEvent = new signals.Signal();
+			self.onAddRepoEvent.add(projectslistListener.addRepoEvent, projectslistListener);
+			
+			self.onAddCommitEvent = new signals.Signal();
+			self.onAddCommitEvent.add(projectslistListener.addCommitEvent, projectslistListener);
+			
+			self.onAddUpdateEvent = new signals.Signal();
+			self.onAddUpdateEvent.add(projectslistListener.addUpdateEvent, projectslistListener);
+			
+			self.onAddReportEvent = new signals.Signal();
+			self.onAddReportEvent.add(projectslistListener.addReportEvent, projectslistListener);
 
 		},
 		
@@ -141,6 +160,16 @@ define(["framework/widgetWithTemplate", "projectlist/listener/projectListListene
 			$(".tooltiptop").click(function() {
 				var currentPrjName = $(this).closest("tr").attr("class");
 				self.opencc(this, $(this).attr('name'), currentPrjName);
+				var data = JSON.parse(self.projectListAPI.localVal.getSession('userInfo'));
+				userId = data.id;
+				$('#uname').val(data.id);
+				$('#pwd').val(data.password);
+				
+				$('#commitUsername').val(data.id);
+				$('#commitPassword').val(data.password);
+				
+				$('#updateUsername').val(data.id);
+				$('#updatePassword').val(data.password);
 			});
 			
 			$("a[name = 'updatesvn']").unbind("click");
@@ -168,6 +197,82 @@ define(["framework/widgetWithTemplate", "projectlist/listener/projectListListene
 				}
 				self.getAction(projectnameArray,"delete");
 			});			
+			
+			$("#repocredential").unbind("click");
+			$("#repocredential").click(function() {
+				if ($('#repocredential').is(':checked')) {
+					$("#uname").val('');
+					$("#pwd").val('');
+				} else {
+					var data = JSON.parse(self.projectListAPI.localVal.getSession('userInfo'));
+					$('#uname').val(data.id);
+					$('#pwd').val(data.password);
+				}
+			});			
+					
+			$("input[name='addrepobtn']").unbind("click");
+			$("input[name='addrepobtn']").click(function() {
+				var dynid = $(this).attr('id');
+				self.onAddRepoEvent.dispatch($(this), dynid);				
+			});			
+			
+			$("#commitCredential").click(function() {
+				if ($('#commitCredential').is(':checked')) {
+					$("#commitUsername").val('');
+					$("#commitPassword").val('');
+				} else {
+					var data = JSON.parse(self.projectListAPI.localVal.getSession('userInfo'));
+					$('#commitUsername').val(data.id);
+					$('#commitPassword').val(data.password);
+				}
+			});
+			
+			$("input[name='commitbtn']").unbind("click");
+			$("input[name='commitbtn']").click(function() {
+				var dynid = $(this).attr('id');
+				self.onAddCommitEvent.dispatch($(this), dynid);				
+				
+			});
+			
+			$("#updateCredential").click(function() {
+				if ($('#updateCredential').is(':checked')) {
+					$("#updateUsername").val('');
+					$("#updatePassword").val('');
+				} else {
+					var data = JSON.parse(self.projectListAPI.localVal.getSession('userInfo'));
+					$('#updateUsername').val(data.id);
+					$('#updatePassword').val(data.password);
+				}
+			});
+			
+			$("input[name='updatebtn']").unbind("click");
+			$("input[name='updatebtn']").click(function() {
+				var dynid, revision
+				dynid = $(this).attr('id');
+				var revision = $("input[name='revision']:checked").val();
+				if(revision !== ""){
+					revision = revision;
+				} else{
+					revision = $("#revision_"+dynid).val();
+				}				
+				self.onAddUpdateEvent.dispatch($(this), dynid, revision);				
+			});
+
+			$("input[name='generate']").unbind("click");
+			$("input[name='generate']").click(function() {
+				self.onAddReportEvent.dispatch();				
+			});
+			
+			$("input[name='revision']").unbind("click");
+			$("input[name='revision']").click(function() {
+				console.info("test");
+				if($(this).is(':checked')) {
+					var value = $(this).val();
+					alert(value);
+				}
+			});
+			
+			
 		}
 	});
 

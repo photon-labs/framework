@@ -24,6 +24,7 @@ import java.util.List;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.log4j.Logger;
 
+import com.photon.phresco.commons.model.Category;
 import com.photon.phresco.commons.model.DownloadInfo;
 import com.photon.phresco.exception.PhrescoException;
 import com.photon.phresco.framework.actions.FrameworkBaseAction;
@@ -47,32 +48,32 @@ public class Download extends FrameworkBaseAction {
     	    ServiceManager serviceManager = getServiceManager();
 			String platform = FrameworkUtil.findPlatform();
 			
-			List<DownloadInfo> serverDownloadInfo = serviceManager.getDownloads(getCustomerId(), "", DownloadInfo.Category.SERVER.name(), platform);
+			List<DownloadInfo> serverDownloadInfo = serviceManager.getDownloads(getCustomerId(), "", Category.SERVER.name(), platform);
 			if (CollectionUtils.isNotEmpty(serverDownloadInfo)) {
 				Collections.sort(serverDownloadInfo, sortDownloadsInAlphaOrder());
 			}
 			setReqAttribute(REQ_SERVER_DOWNLOAD_INFO, serverDownloadInfo);
 			
-			List<DownloadInfo> dbDownloadInfo = serviceManager.getDownloads(getCustomerId(), "", DownloadInfo.Category.DATABASE.name(), platform);
+			List<DownloadInfo> dbDownloadInfo = serviceManager.getDownloads(getCustomerId(), "", Category.DATABASE.name(), platform);
 			if (CollectionUtils.isNotEmpty(dbDownloadInfo)) {
 				Collections.sort(dbDownloadInfo, sortDownloadsInAlphaOrder());
 			}
 			
 			setReqAttribute(REQ_DB_DOWNLOAD_INFO, dbDownloadInfo);
 			
-			List<DownloadInfo> editorDownloadInfo = serviceManager.getDownloads(getCustomerId(), "", DownloadInfo.Category.EDITOR.name(), platform);
+			List<DownloadInfo> editorDownloadInfo = serviceManager.getDownloads(getCustomerId(), "", Category.EDITOR.name(), platform);
 			if (CollectionUtils.isNotEmpty(editorDownloadInfo)) {
 				Collections.sort(editorDownloadInfo, sortDownloadsInAlphaOrder());
 			}
 			setReqAttribute(REQ_EDITOR_DOWNLOAD_INFO, editorDownloadInfo);
 			
-			List<DownloadInfo> toolsDownloadInfo = serviceManager.getDownloads(getCustomerId(), "", DownloadInfo.Category.TOOLS.name(), platform);
+			List<DownloadInfo> toolsDownloadInfo = serviceManager.getDownloads(getCustomerId(), "", Category.TOOLS.name(), platform);
 			if (CollectionUtils.isNotEmpty(toolsDownloadInfo)) {
 				Collections.sort(toolsDownloadInfo, sortDownloadsInAlphaOrder());
 			}
 			setReqAttribute(REQ_TOOLS_DOWNLOAD_INFO, toolsDownloadInfo);
 			
-			List<DownloadInfo> othersDownloadInfo = serviceManager.getDownloads(getCustomerId(), "", DownloadInfo.Category.OTHERS.name(), platform);
+			List<DownloadInfo> othersDownloadInfo = serviceManager.getDownloads(getCustomerId(), "", Category.OTHERS.name(), platform);
 			if (CollectionUtils.isNotEmpty(othersDownloadInfo)) {
 				Collections.sort(othersDownloadInfo, sortDownloadsInAlphaOrder());
 			}
