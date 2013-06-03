@@ -390,13 +390,16 @@ define(["framework/widget", "navigation/api/navigationAPI", "dynamicPage/dynamic
 				dataType: "json",
 				webserviceurl: ''
 			}
-					
 			if (action == "openFolder") {
 				header.requestMethod = "GET";
 				header.webserviceurl = commonVariables.webserviceurl + commonVariables.openFolderContext + "?type=" + type + "&appDirName=" + appDirName;				
 			} else if (action == "copyPath") {
 				header.requestMethod = "GET";
 				header.webserviceurl = commonVariables.webserviceurl + commonVariables.copyPathContext + "?type=" + type + "&appDirName=" + appDirName;
+			} else if(action == "importpost") {
+				header.requestMethod = "POST";				
+				header.requestPostBody = JSON.stringify(requestBody);		
+				header.webserviceurl = commonVariables.webserviceurl + "repository/importApplication";				
 			}
 			return header;
 		},
@@ -416,6 +419,23 @@ define(["framework/widget", "navigation/api/navigationAPI", "dynamicPage/dynamic
 			} catch(exception) {
 				self.loadingScreen.removeLoading();
 			}
+		},
+		addImportEvent : function(revision){
+			var self = this;
+			var importdata = {}, actionBody, action;
+			//if(!self.validation()) {
+				importdata.type = $("#importType").val();
+				importdata.repoUrl = $("#importRepourl").val();
+				importdata.userName = $("#importUserName").val();
+				importdata.password = $("#importPassword").val();
+				importdata.revision = revision;
+				console.info("importdata", importdata);
+				actionBody = importdata;
+				action = "importpost";
+				self.navigationAction(self.getActionHeader(actionBody, action), function(response){
+					console.info("response", response);
+				});
+			//}
 		},
 	});
 

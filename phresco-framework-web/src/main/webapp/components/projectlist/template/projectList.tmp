@@ -16,11 +16,11 @@
                       <tr class="proj_title"> 
                         <td colspan="4">{{name}}</td>  
                         <td colspan="3" align="right" class="delimages">
-                        	<a href="#" class="tooltiptop" title="" data-placement="top" data-toggle="tooltip"  data-original-title="Edit Project">
+                        	<a href="#" class="tooltiptop" title="" data-placement="bottom" data-toggle="tooltip"  data-original-title="Edit Project">
                         		<img name="editproject" key="{{id}}" src="themes/default/images/helios/edit_row_icon.png" width="29" height="23" border="0" alt="">
                     		</a> 
                     		{{#if ../userPermissions.manageApplication}}
-	                    		<a name="{{id}}" class="tooltiptop" title="" data-placement="top" data-toggle="tooltip" href="#" data-original-title="Delete Row">
+	                    		<a name="{{id}}" class="tooltiptop" title="" data-placement="bottom" data-toggle="tooltip" href="#" data-original-title="Delete Row">
 	                    			<img src="themes/default/images/helios/delete_row_icon.png" width="29" height="23" border="0" alt="0">
 	                			</a>
                 			{{else}}
@@ -66,28 +66,28 @@
                         <tr>
                             <td>Report Type</td>
                             <td>
-                                <select>
-                                    <option>Detailed Report</option>
-                                    <option>Overall Report</option>
+                                <select id="reportType">
+                                    <option value="detailedReport">Detailed Report</option>
+                                    <option value="overallReport">Overall Report</option>
                                 </select>
                             </td>
                         </tr>
                     </tbody>
                    </table>
                <div class="flt_right">
-                 <input type="button" value="Generate" class="btn btn_style">
+                 <input type="button" value="Generate" class="btn btn_style" name="generate">
                  <input type="button" value="Close" class="btn btn_style dyn_popup_close">
                </div>
                 <!--pdf_report div ends here -->  
              </div> 
                   </td>
                         <td>
-						{{#if ../../userPermissions.manageRepo}}
-							<a name="add_repo" class="tooltiptop" title="" data-placement="top" data-toggle="tooltip" href="#" data-original-title="Add Repo">
+                        {{#if ../../userPermissions.manageRepo}}
+							<a name="add_repo{{id}}" class="tooltiptop" title="" data-placement="top" data-toggle="tooltip" href="#" data-original-title="Add Repo">
 								<img src="themes/default/images/helios/add_repo_icon.png" width="18" height="15" border="0" alt="">
 							</a> 
 
-                        	<a name="commit" class="tooltiptop" title="" data-placement="top" data-toggle="tooltip" href="#" data-original-title="Commit">
+                        	<a name="commit{{id}}" class="tooltiptop" title="" data-placement="top" data-toggle="tooltip" href="#" data-original-title="Commit">
                         		<img src="themes/default/images/helios/commit_icon.png" width="16" height="15" border="0" alt="">
                     		</a> 
 						{{else}}
@@ -96,20 +96,20 @@
                         {{/if}}
                         
                         {{#if ../../userPermissions.manageRepo}}
-                        	<a name="svn_update" class="tooltiptop" title="" data-placement="top" data-toggle="tooltip" href="#" data-original-title="SVN Update">
+                        	<a name="svn_update{{id}}" class="tooltiptop" title="" data-placement="top" data-toggle="tooltip" href="#" data-original-title="SVN Update">
                         		<img src="themes/default/images/helios/update_svn_icon.png" width="22" height="15" border="0" alt="">
                     		</a>
               			{{else}}
               				<img src="themes/default/images/helios/update_svn_icon_off.png" width="22" height="15" border="0" alt="">
               			{{/if}}
                   
-                  <div id="add_repo" class="dyn_popup">
+                  <div id="add_repo{{id}}" class="dyn_popup">
                       <table width="100%" border="0" cellspacing="0" cellpadding="0">
                         <tbody>
                             <tr>
                                 <td><sup>*</sup>Type</td>
                                 <td>
-                                  <select>
+                                  <select id="type_{{id}}">
                                       <option>svn</option>
                                     </select>
                                 </td>
@@ -117,43 +117,43 @@
                             <tr>
                                 <td><sup>*</sup>Repository URL</td>
                                 <td>
-                                  <input type="text">
+                                  <input type="text" id="repourl_{{id}}">
                                 </td>
                             </tr>
                             <tr>
                                 <td>Other Credential</td>
                                 <td>
-                                  <input type="checkbox" checked="true">
+                                  <input type="checkbox" id="repocredential_{{id}}">
                                 </td>
                             </tr>
                             <tr>
                                 <td><sup>*</sup>Username</td>
                                 <td>
-                                  <input type="text">
+                                  <input type="text" id="uname_{{id}}">
                                 </td>
                             </tr>
                             <tr>
                                 <td><sup>*</sup>Password</td>
                                 <td>
-                                  <input type="text">
+                                  <input type="password" id="pwd_{{id}}">
                                 </td>
                             </tr>
                             <tr>
                                 <td>Message</td>
                                 <td>
-                                  <textarea></textarea>
+                                  <textarea id="repomessage_{{id}}"></textarea>
                                 </td>
                             </tr>
                         </tbody>
                      </table>               
                      <!--add_repo div ends here --> 
-                     <div class="flt_right">
-                        <input type="button" value="Add To Repo" class="btn btn_style">
+                     <div class="flt_right" appId="{{id}}" projectId = "{{../id}}" appDirName="{{appDirName}}">
+                        <input type="button" name="addrepobtn" id="{{id}}" value="Add To Repo" class="btn btn_style">
                         <input type="button" value="Cancel" class="btn btn_style dyn_popup_close">
                      </div> 
                   </div>
                   
-                  <div id="commit" class="dyn_popup popup_bg">
+                  <div id="commit{{id}}" class="dyn_popup popup_bg">
                       <div class="commit_data">
                             <table width="100%" border="0" cellspacing="0" cellpadding="5">
                                 <thead>
@@ -192,7 +192,7 @@
                                     <tr>
                                         <td><sup>*</sup>Type</td>
                                         <td>
-                                            <select>
+                                            <select id="commitType_{{id}}">
                                                 <option>svn</option>
                                             </select>
                                         </td>
@@ -200,50 +200,50 @@
                                     <tr>
                                         <td><sup>*</sup>Repository URL</td>
                                         <td>
-                                            <input type="text">
+                                            <input type="text" id="commitRepourl_{{id}}">
                                         </td>
                                     </tr>
                                     <tr>
                                         <td>Other Credential</td>
                                         <td>
-                                            <input type="checkbox" checked="true">
+                                            <input type="checkbox" id="commitCredential_{{id}}">
                                         </td>
                                     </tr>
                                     <tr>
                                         <td><sup>*</sup>Username</td>
                                         <td>
-                                            <input type="text">
+                                            <input type="text" id="commitUsername_{{id}}">
                                         </td>
                                     </tr>
                                     <tr>
                                         <td><sup>*</sup>Password</td>
                                         <td>
-                                            <input type="text">
+                                            <input type="password" id="commitPassword_{{id}}">
                                         </td>
                                     </tr>
                                     <tr>
                                         <td>Message</td>
                                         <td>
-                                            <textarea></textarea>
+                                            <textarea id="commitMessage_{{id}}"></textarea>
                                         </td>
                                     </tr>
                                 </tbody>
                              </table> 
                          </div>       
-                         <div class="flt_right roll_data">
-                          <input type="button" value="Commit" class="btn btn_style">
+                         <div class="flt_right roll_data" appDirName="{{appDirName}}">
+                          <input type="button" value="Commit" class="btn btn_style" id="{{id}}" name="commitbtn">
                             <input type="button" value="Cancel" class="btn btn_style dyn_popup_close">
                          </div>
                     <!--commit div ends here -->  
                   </div>
                   
-                  <div id="svn_update" class="dyn_popup popup_bg">
+                  <div id="svn_update{{id}}" class="dyn_popup popup_bg">
                   <table width="100%" border="0" cellspacing="0" cellpadding="0">
                         <tbody>
                             <tr>
                                 <td><sup>*</sup>Type</td>
                                 <td>
-                                  <select>
+                                  <select id="updateType_{{id}}">
                                       <option>svn</option>
                                     </select>
                                 </td>
@@ -251,45 +251,45 @@
                             <tr>
                                 <td><sup>*</sup>Repository URL</td>
                                 <td>
-                                  <input type="text">
+                                  <input type="text" id="updateRepourl_{{id}}">
                                 </td>
                             </tr>
                             <tr>
                                 <td>Other Credential</td>
                                 <td>
-                                  <input type="checkbox" checked="true">
+                                  <input type="checkbox" id="updateCredential_{{id}}">
                                 </td>
                             </tr>
                             <tr>
                                 <td><sup>*</sup>Username</td>
                                 <td>
-                                  <input type="text">
+                                  <input type="text" id="updateUsername">
                                 </td>
                             </tr>
                             <tr>
                                 <td><sup>*</sup>Password</td>
                                 <td>
-                                  <input type="text">
+                                  <input type="password" id="updatePassword_{{id}}">
                                 </td>
                             </tr>
                             <tr>
                                 <td>Revision</td>
-                                <td><input type="radio"> HEAD Revision</td>
+                                <td><input type="radio" name="revision" class="radioBtnClass" value="head"> HEAD Revision</td>
                             </tr>
                             <tr>
                               <td></td>
-                                <td><input type="radio"> Revision &nbsp; <input type="text"></td>
+                                <td><input type="radio" name="revision" class="radioBtnClass" value=""> Revision &nbsp; <input type="text" id="revision_{{id}}"></td>
                             </tr>
                         </tbody>
                      </table> 
-                     <div class="flt_right">
-                         <input type="button" value="Update Application" class="btn btn_style">
+                     <div class="flt_right" appDirName="{{appDirName}}">
+                         <input type="button" value="Update Application" id="{{id}}" class="btn btn_style" name="updatebtn">
                          <input type="button" value="Cancel" class="btn btn_style dyn_popup_close">
                      </div>                
                     <!--svn_update div ends here -->  
                   </div>
                   </td>
-				  <td>
+                  <td>
                   	{{#if ../../userPermissions.manageApplication}}
 	                  	<a name="{{creationDate}}" class="tooltiptop" title="" data-placement="top" data-toggle="tooltip" href="#" data-original-title="Delete Row">
 	                  		<img name="delete" src="themes/default/images/helios/delete_row.png" width="14" height="18" border="0" alt="">
@@ -299,7 +299,7 @@
               		{{/if}}
                     <div id="{{creationDate}}" class="dyn_popup ">
                       Are you sure to delete ?
-                        <div>
+                        <div >
                             <input type="button" value="Yes" class="btn btn_style" name="deleteConfirm">
                             <input type="button" value="No" class="btn btn_style dyn_popup_close">
                         </div>
