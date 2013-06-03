@@ -128,7 +128,7 @@ define(["framework/widget", "mavenService/api/mavenServiceAPI", "common/loading"
 					function(response){
 						if(response != undefined && response != null){
 							if(response.status == 'STARTED'){
-								mvnlogService(response.uniquekey, divId);
+								self.mvnlogService(response.uniquekey, divId);
 								callbackData = true;
 							}else if(response.status == 'INPROGRESS'){
 								callbackData = true;

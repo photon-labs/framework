@@ -80,7 +80,12 @@ define(["framework/widgetWithTemplate", "mavenService/mavenService", "build/api/
 		deployBuild : function(buildNo, callback){},
 		
 		buildProject : function(queryString, callback){
-			var self = this;
+			var self = this, appInfo = self.buildAPI.localVal.getJson('appdetails');
+			
+			if(appInfo != null){
+				queryString +=	'&customerId='+ self.getCustomer() +'&appId='+ appInfo.data.appInfos[0].id +'&projectId=' + appInfo.data.id + '&username=' + self.buildAPI.localVal.getSession('username');
+			}
+			
 			$('#logContent').html();
 			self.mavenServiceListener.mvnBuild(queryString, '#logContent', function(returnVal){
 				callback(returnVal);
@@ -134,7 +139,7 @@ define(["framework/widgetWithTemplate", "mavenService/mavenService", "build/api/
 				if(appInfo != null){
 					url = 'buildinfo/deletebuild?customerId='+ self.getCustomer() +'&appId='+ appInfo.data.appInfos[0].id +'&projectId=' + appInfo.data.id;
 				}
-			}
+			} 
 			
 			header = {
 				contentType: "application/json",

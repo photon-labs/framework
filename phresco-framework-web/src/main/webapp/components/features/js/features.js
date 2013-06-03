@@ -151,7 +151,7 @@ define(["framework/widgetWithTemplate", "features/listener/featuresListener"], f
 				if(button == 'on'){ $(this).closest('fieldset').css('background-position', 'left'); }	
 			});
 
-			self.scrollbarEnable();
+			self.featuresListener.scrollbarEnable();
 			
 			$('#module').keyup(function(event) {
 				var txtSearch = $('#module').val();
@@ -189,7 +189,7 @@ define(["framework/widgetWithTemplate", "features/listener/featuresListener"], f
 			
            	$('#switchonbutton').on("click", function(event) {
            		$("ul li").show();
-           		self.scrollbarUpdate();
+           		self.featuresListener.scrollbarUpdate();
            	});
 
        		$('#cancelUpdateFeature').click(function() {
@@ -242,12 +242,12 @@ define(["framework/widgetWithTemplate", "features/listener/featuresListener"], f
 			$("ul li fieldset").each(function() {
 				if($(this).attr("class") == "switch switchOn"){
 					$(this).parent().show();
-					self.scrollbarUpdate();
+					self.featuresListener.scrollbarUpdate();
 				}     			
 			});
 		},
 		
-		scrollbarEnable : function(){
+		/* scrollbarEnable : function(){
 			$("#content_1").mCustomScrollbar({
 				autoHideScrollbar:true,
 				theme:"light-thin",
@@ -268,7 +268,7 @@ define(["framework/widgetWithTemplate", "features/listener/featuresListener"], f
 			$("#content_1").mCustomScrollbar("update"); 
 			$("#content_2").mCustomScrollbar("update"); 
 			$("#content_3").mCustomScrollbar("update"); 
-		},
+		}, */
 
 		bcheck : function(obj){
 			var button = $(obj).attr("value");
