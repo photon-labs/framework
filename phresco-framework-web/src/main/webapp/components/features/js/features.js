@@ -166,7 +166,6 @@ define(["framework/widgetWithTemplate", "features/listener/featuresListener"], f
            	});
 
            	$('#components').keyup(function(event) {
-				console.info("test");
 				var txtSearch = $('#components').val();
 				var divId = "componentsContent";
 				self.onSearchEvent.dispatch(txtSearch, divId);
@@ -226,7 +225,6 @@ define(["framework/widgetWithTemplate", "features/listener/featuresListener"], f
 					featureUpdatedata.moduleId = moduleId; 
 					featureUpdatedata.artifactGroupId = moduleId;
 					featureUpdatedataArray.push(featureUpdatedata);
-					console.info("featureUpdatedataArray", featureUpdatedataArray);
 				});
 				
 				self.featuresListener.getFeaturesUpdate(self.featuresListener.getRequestHeader(featureUpdatedataArray, "", ""), function(response) {
