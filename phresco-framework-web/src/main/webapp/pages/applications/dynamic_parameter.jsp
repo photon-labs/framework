@@ -323,48 +323,6 @@
     %>
     				<%= template %>
     <%
-				} else if (FrameworkConstants.TYPE_FILE.equals(parameter.getType())) {
-					
-	%>
-				<div class="control-group hideContent" id="<%= parameter.getKey() %>Control" style="">
-					<label class="control-label labelbold" id="<%= parameter.getKey() %>fileControlLabel"> 
-					 	
-					</label>
-					<div class="controls">
-						<div id="<%= parameter.getKey() %>file-uploader" class="file-uploader">
-							<noscript>
-								<p>Please enable JavaScript to use file uploader.</p>
-								<!-- or put a simple form for upload here -->
-							</noscript>
-						</div>
-					</div>
-					<input type="hidden" name="<%= parameter.getKey() %>" value=""/>
-				</div>
-				<script type="text/javascript">
-	   				createFileUploader('<%= parameter.getKey() %>');
-	   				
-	   				function createFileUploader(mandatory, controlLabel) {
-	   					$('#<%= parameter.getKey() %>fileControl').show();
-	   					var imgUploader = new qq.FileUploader ({
-	   			            element : document.getElementById('<%= parameter.getKey() %>file-uploader'),
-	   			            action : 'dynamicUploadFile',
-	   			            multiple : false,
-	   			         	allowedExtensions : ['<%= parameter.getFileType() %>'],
-	   			            buttonLabel : '<%= lableTxt %>',
-	   			            typeError : '<s:text name="err.upload.only" />' + " " + '<%= parameter.getFileType() %>',
-	   			            key : '<%= parameter.getKey() %>',
-	   			            dependency : '<%= StringUtils.isNotEmpty(parameter.getDependency()) ? parameter.getDependency() : "" %>',
-   			        		params : {
-   			        			goal : '<%= goal %>',
-   			        			customerId : '<%= customerId %>',
-   			        			appId : '<%= appId %>',
-   			        			projectId : $("input[name=projectId]").val(),
-		   					},
-	   			            debug: true
-	   			        });
-	   				}
-	   			</script>
-	<%
 				}
 	%>
 			<script type="text/javascript">
@@ -550,9 +508,7 @@
 		$(':input', '#generateBuildForm').each(function() {
 			var currentObjType = $(this).prop('tagName');
 			var multipleAttr = $(this).attr('multiple');
-			var id = $(this).attr('id');
-			var block = $("#" + id + "Control").css("display");
-			if (currentObjType === "SELECT" && multipleAttr === undefined && this.options[this.selectedIndex] !== undefined && "block" == block) {
+			if (currentObjType === "SELECT" && multipleAttr === undefined && this.options[this.selectedIndex] !== undefined ) {
 				var dependencyAttr =  this.options[this.selectedIndex].getAttribute('additionalparam');
 				if (dependencyAttr !== null) {
 					var csvDependencies = dependencyAttr.substring(dependencyAttr.indexOf('=') + 1);
@@ -569,7 +525,7 @@
 					hideOptionDependencyArr = hideOptionDependency.split(',');
 					hideControl(hideOptionDependencyArr);
 				}
-			} else if(currentObjType === "SELECT" && multipleAttr === undefined && $(this).attr('dependencyAttr') != undefined && "block" == block) {
+			} else if(currentObjType === "SELECT" && multipleAttr === undefined && $(this).attr('dependencyAttr') != undefined) {
 				var dependencyAttr =  $(this).attr('dependencyAttr');
 				if (dependencyAttr != null && !isBlank(dependencyAttr)) {
 					var csvDependencies = getAllDependencies(dependencyAttr);
@@ -630,12 +586,11 @@
 		params = params.concat('<%= phase %>');
 		params = params.concat("&dependency=");
 		params = params.concat(dependency);
-		showPopuploadingIcon();
+		
 		loadContent('updateDependancy', '', '', params, true, false, 'updateDependancySuccEvent');
 	}
 	
 	function updateDependancySuccEvent(data) {
-		hidePopuploadingIcon();
 		if (data.dynamicPageParameterDesign != undefined && !isBlank(data.dynamicPageParameterDesign)) {
 			$('.' + data.dependency + "PerformanceDivClass").empty();
 			$('.' + data.dependency + "PerformanceDivClass").append(data.dynamicPageParameterDesign);
@@ -848,16 +803,12 @@
 	
 	function templateMandatoryVal(showIcon) {		
 		var testAgainst = $("#testAgainst").val();
-		var testBasis = $("#testBasis").val();
-		
 		var redirect = false;		
-		if (testBasis !=undefined && testBasis == "parameters" && testAgainst != undefined && (testAgainst == "server" || testAgainst == "webservice")) {
+		if (testAgainst != undefined && (testAgainst == "server" || testAgainst == "webservice")) {
 			redirect = contextUrlsMandatoryVal();
-		} else if (testBasis !=undefined && testBasis == "parameters" && testAgainst != undefined && testAgainst == "database") {
+		} else if (testAgainst != undefined && testAgainst == "database") {
 			redirect = dbContextUrlsMandatoryVal();
-		} else if (testBasis !=undefined && testBasis == "customise") { 			
-			redirect = true; // added for CI android performance return			
-		} else if (testBasis == undefined && testAgainst == undefined) { 			
+		} else if (testAgainst == undefined) { 			
 			redirect = true; // added for CI android performance return			
 		}
 	

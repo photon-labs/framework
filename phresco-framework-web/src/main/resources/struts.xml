@@ -779,10 +779,6 @@
 			<result type="json" />
         </action>
         
-        <action name="dynamicUploadFile" method="dynamicUploadFile" class="com.photon.phresco.framework.actions.applications.DynamicParameterAction">
-        	<result type="json" />
-        </action>
-        
         <action name="checkForHub" method="checkForHub" class="com.photon.phresco.framework.actions.applications.Quality">
 			<result type="json" />
         </action>
