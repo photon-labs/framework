@@ -113,15 +113,25 @@ define(["framework/widgetWithTemplate", "navigation/listener/navigationListener"
 			
 			$("input[name='importbtn']").unbind("click");
 			$("input[name='importbtn']").click(function() {
-				var  revision;
-				var revision = $("input[name='headoption']:checked").val();
-				if(revision !== ""){
-					revision = revision;
-				} else{
-					revision = $("#revision").val();
-					console.info("revision", revision);
+				var importRepourl = $("#importRepourl").val();
+				if(importRepourl == ""){
+					$("#importRepourl").focus();
+					$("#importRepourl").attr('placeholder','Enter Repourl');
+					$("#importRepourl").addClass("errormessage");
 				}
-				self.onImportEvent.dispatch(revision);				
+				else
+				{	
+					var  revision;
+					var revision = $("input[name='headoption']:checked").val();
+					if(revision !== ""){
+						revision = revision;
+					} else{
+						revision = $("#revision").val();
+						console.info("revision", revision);
+					}
+					self.onImportEvent.dispatch(revision);				
+				}
+				//self.onImportEvent.dispatch(revision);				
 			});
 			
 			Clazz.navigationController.mainContainer = commonVariables.contentPlaceholder;

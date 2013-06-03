@@ -172,7 +172,20 @@ to {
 
 textarea { resize: none; }
 
+select, textarea, input[type="text"], input[type="password"], input[type="datetime"], input[type="datetime-local"], input[type="date"], input[type="month"], input[type="time"], input[type="week"], input[type="number"], input[type="email"], input[type="url"], input[type="search"], input[type="tel"], input[type="color"], .uneditable-input {
+    border-radius: 4px 4px 4px 4px;
+    color: #555555;
+    display: inline-block;
+    font-size: 14px;
+    height: 30px;
+    line-height: 20px;
+    margin-bottom: 10px;
+    padding: 4px 6px;
+    vertical-align: middle;
+}
+
 /*=== End of Loading ===*/
+
 
 /* *************************************************************************** LOGIN PAGE STYLES ************************************************************************** */
 
@@ -718,41 +731,51 @@ ul.nav li.dropdown:hover > .test_options{
 	color: #000000;
 }
 
-#delete_msg input, #deleteall_msg input{
-	margin-left: 8px;
-	margin-top: 8px;	
-}
-
-#add_repo tbody>tr:nth-child(odd)>td, #add_repo tbody>tr:nth-child(odd)>th {
+.add_repo tbody>tr:nth-child(odd)>td, .add_repo tbody>tr:nth-child(odd)>th {
 	background: none !important;
 }
 
-#add_repo tbody>tr td, #commit table:last-child tr td, #svn_update table tr td {
+.add_repo tbody>tr td, .commit table:last-child tr td, .svn_update table tr td {
 	border-top: none !important;
 }
 
-.report_type tr td, #commit table:last-child tr td, #svn_update table tr td {
+.report_type tr td, .commit table:last-child tr td, .svn_update table tr td {
 	background:none !important;
 }
 
-#commit table:first-child tbody tr td:nth-child(2) {
+.commit table:first-child tbody tr td:nth-child(2) {
 	width:250px;
 	word-wrap: break-word; word-break: break-all; white-space: -moz-pre-wrap !important; white-space: -o-pre-wrap;
 }
 
-#add_repo input[type="checkbox"] {
-	margin: -2px 0 0 20px !important;
+.add_repo input[type="checkbox"] {
+	margin: -2px 0 0 0px !important;
 	width: 20px;
 }
 
-#add_repo input[type="text"], #add_repo textarea  {
-	width: 150px;
-	margin-left: 20px;
+.commit .seperatetd input[type="checkbox"] {
+	margin: 3px 0 8px 3px !important;
+	width: 20px;	
 }
 
-#add_repo select {
+.add_repo input[type="text"], .add_repo input[type="password"] {
+	width: 150px;
+}
+
+.add_repo select {
 	width: 164px;
-	margin-left: 20px;
+}
+
+.add_repo textarea {
+	width: 96%;	
+}
+
+.commit textarea {
+	width: 94%;	
+}
+
+.add_repo table tbody>tr:nth-child(even)>td {
+	background-color: #ffffff;
 }
 
 .commit_data {
@@ -764,19 +787,23 @@ ul.nav li.dropdown:hover > .test_options{
 	padding-top: 10px;	
 }
 
-#svn_update input[type="radio"] {
-	margin-top: -3px;
+.svn_update select {
+	width: 172px;	
 }
 
-#svn_update input[type="checkbox"] {
-	margin: 4px 0 12px 2px;
+.svn_update input[type="checkbox"] {
+	margin: 4px 0 5px 2px;
 }
 
-#svn_update tr:last-child td input[type="radio"] {
-	margin-top: -18px !important;
+.svn_update tr:last-child td input[type="radio"] {
+	margin : 0 3px ;
 }
 
-#pdf_report table:first-child, #commit table:first-child {
+.svn_update input[type="text"], .svn_update input[type="password"] {
+	width: 158px;	
+}
+
+#pdf_report table:first-child, .commit table:first-child {
 	border: 1px solid #cdcdcd;
 	border-radius:6px;
 }
@@ -785,7 +812,20 @@ ul.nav li.dropdown:hover > .test_options{
 	font-size: 12px !important;	
 }
 
-.commit_data table:last-child tr td, #svn_update table tr td, #add_repo table tr td {
+.commit_data input[type="text"], .commit_data input[type="password"] {
+	width: 250px;	
+} 
+
+.commit_data select {
+	width: 262px;	
+}
+
+.add_repo table tr td.proj_msg {
+	float: right !important;
+	padding-right: 5px !important;	
+}
+
+.commit_data table:last-child tr td, .svn_update table tr td, .add_repo table tr td {
 	padding: 2px !important;
 }
 .ui_switch {
@@ -837,14 +877,24 @@ ul.nav li.dropdown:hover > .test_options{
 	margin-bottom: 0;	
 }
 
-#project_list_import .revtext {
-	margin-left: 12px !important;
+#project_list_import .revtext, .svn_update .revtext {
+	margin-left: 10px !important;
 }
 
 #deleteproj_msg {
 	color: #000 !important;
 	font-weight:normal !important;
 	font-size:12px;	
+}
+
+#deleteproj_msg div input, #delete_msg div input {
+	padding: 0px 8px !important;
+	margin-top: 3px;
+	font-size: 11px;		
+}
+
+#deleteproj_msg div, #delete_msg div {
+	text-align: right;	
 }
 
 /* ******************************************************************* CSS related to create project page ********************************************************************** */
@@ -949,7 +999,13 @@ ul.nav li.dropdown:hover > .test_options{
 	text-decoration: none;
 }
 .custon_dropdown {
-	width:146px !important;
+	width:308px !important;
+}
+
+select[name=prebuiltapps] {
+	margin-left: 92px;
+    position: absolute;
+	display: inline-block;
 }
 
 .loading_bar {
@@ -1495,7 +1551,7 @@ ul.nav li.dropdown:hover > .test_options{
 	width: 85px;	
 }
 
- .create_proj table tr td select {
+ .create_proj table tr td select, .bootstrap-select .btn {
 	width: 99px; 
  }
  
@@ -1504,7 +1560,11 @@ ul.nav li.dropdown:hover > .test_options{
 }
 
 .create_proj select {
-	width: 87px !important;
+	width: 163px !important;
+}
+
+select[name=prebuiltapps] {
+	margin-left: 22px;
 }
 
 .title_nav ul a {
@@ -1543,7 +1603,7 @@ ul.nav li.dropdown:hover > .test_options{
 	width: 125px;	
 }
 
- .create_proj table tr td select {
+ .create_proj table tr td select, .bootstrap-select .btn {
 	width: 134px; 
  }
  
@@ -1552,7 +1612,11 @@ ul.nav li.dropdown:hover > .test_options{
 }
 
 .create_proj select {
-	width: 111px !important;
+	width: 200px !important;
+}
+
+select[name=prebuiltapps] {
+	margin-left: 20px;
 }
 
 .title_nav ul a {
@@ -1587,12 +1651,16 @@ ul.nav li.dropdown:hover > .test_options{
 	width: 150px;	
 }
 
- .create_proj table tr td select {
+ .create_proj table tr td select, .bootstrap-select .btn {
 	width: 162px; 
  }
  
 .custon_dropdown {
-	width:125px !important;
+	width:246px !important;
+}
+
+select[name=prebuiltapps] {
+	margin-left: 65px;
 }
 
 .title_nav ul a {
@@ -1628,12 +1696,16 @@ ul.nav li.dropdown:hover > .test_options{
 	width: 170px;	
 }
 
- .create_proj table tr td select {
+ .create_proj table tr td select, .bootstrap-select .btn {
 	width: 183px; 
  }
  
  .custon_dropdown {
-	width: 127px !important;
+	width: 264px !important;
+}
+
+select[name=prebuiltapps] {
+	margin-left: 70px;
 }
 }
 
@@ -1648,7 +1720,7 @@ ul.nav li.dropdown:hover > .test_options{
 	width: 182px;	
 }
 
- .create_proj table tr td select {
+ .create_proj table tr td select, .bootstrap-select .btn {
 	width: 195px; 
  }
  
@@ -1989,8 +2061,17 @@ ul.nav li.dropdown:hover > .test_options{
 	margin: 0!important;
 }
 .clonetable {
-	margin-bottom: 6px;
+	margin-bottom: -8px;
 }
+
+.clonetable tr:nth-child(3) td:last-child {
+	text-align: right !important;	
+}
+
+.clonetable tbody>tr:nth-child(even)>td {
+	background-color: #ffffff;
+}
+
 .table_border table.deploy_pop td {
 	padding:3px 0 !important;
 }
@@ -2548,7 +2629,6 @@ html>body tbody.scrollContent {
 	border-radius:7px;
 	overflow:auto;
 	margin-right:1%;
-	cursor:move;
 	height:430px;
 	margin-top:15px;
 	padding:0;
@@ -2565,6 +2645,7 @@ html>body tbody.scrollContent {
 	line-height: 32px;
 	border-bottom:1px solid #d8d8d8;
 	background:#f7f7f7; /* Old browsers */
+	cursor:move;
 }
 
 .type_test div.sorthead {
@@ -2617,7 +2698,8 @@ html>body tbody.scrollContent {
 }
 
 .ci_envtable table td:first-child {
-	text-align:right;	
+	text-align:right;
+	vertical-align: middle;	
 }
 
 .ci_envtable table:last-child td:first-child {
@@ -2632,8 +2714,9 @@ html>body tbody.scrollContent {
 	width: 69%;	
 }
 
-.ci_envtable table td input[type="text"] {
-	width: 100%;	
+.ci_envtable table td input[type="text"], .ci_envtable table td select {
+	width: 100%;
+	margin-bottom: 0px;
 }
 
 .ci_envtable .popuptextarea {
@@ -2742,11 +2825,28 @@ html>body tbody.scrollContent {
 
 .pipeline_box
 {
-	line-height:24px;
 	border-radius:8px;
-	width: 24%;
 	float: left;
-	margin-right: 1%;
+	margin-right: 0.7%;
+	margin-bottom:0.7%;
+	border:1px solid #d4d4d4;
+	font-weight:bold;
+	padding: 5px;
+	min-width: 120px;
+	line-height: 21px;
+}
+.pipeline_box a:first-child
+{
+	float:right;
+	margin-left:3px;
+}
+.pipeline_box a:last-child
+{
+	float:right;
+}
+.pipeline_box .img_process
+{
+	padding: 0 5px 4px 0;
 }
 .pipeline_box h5
 {
@@ -2770,7 +2870,6 @@ html>body tbody.scrollContent {
 .pipeline_box div:nth-child(2)
 {
 	color:#000;
-	padding: 8px;
 }
 .pipeline_green
 {
@@ -2789,8 +2888,18 @@ html>body tbody.scrollContent {
 	background:#eaeaea;
 }
 
+.completedinfo {
+	color: green;
+	font-weight: bold;	
+}
+
+.progressinfo {
+	color: yellow;
+	font-weight: bold;	
+}
+
 #datetime_status table {
-	margin-bottom: 10px;	
+	margin-bottom: 0px;	
 }
 
 #datetime_status table tr th:last-child
@@ -2823,10 +2932,41 @@ html>body tbody.scrollContent {
 }
 
 .widget_testing_env {
-	padding: 10px;	
+	padding: 1% 1% 0;
 	border: 1px solid #d3d3d3;
 	margin-bottom:20px;
+	border-bottom-left-radius:12px;
+	border-bottom-right-radius:12px;
 }
+
+.widget_testing h4 span a:first-child
+{
+	padding-right:5px;
+}
+
+.ci_inner_info
+{
+	border:1px solid #cdcdcd;
+	border-radius:8px;
+}
+
+.ci_inner_info h1
+{
+	font-size:13px;
+	background:#d8d8d8;
+	margin:0px;
+	border-top-left-radius:8px;
+	border-top-right-radius:8px;
+	line-height:35px;
+	padding-left:10px;
+}
+
+.ci_inner_info div
+{
+	padding: 5px 50px 1px 10px;
+	line-height: 22px;
+}
+
 
 /* *************************************************************** STYLES FOR DOWNLOAD PAGE ************************************************************************************ */
 
