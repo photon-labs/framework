@@ -54,6 +54,7 @@ import com.photon.phresco.commons.model.ArtifactInfo.Scope;
 import com.photon.phresco.commons.model.CoreOption;
 import com.photon.phresco.commons.model.DownloadInfo;
 import com.photon.phresco.commons.model.Element;
+import com.photon.phresco.commons.model.FunctionalFramework;
 import com.photon.phresco.commons.model.ProjectInfo;
 import com.photon.phresco.commons.model.PropertyTemplate;
 import com.photon.phresco.commons.model.RequiredOption;
@@ -568,8 +569,9 @@ public class Features extends DynamicParameterModule {
 	    	}
 	    	
 	    	List<String> optionIds =(List<String>) getSessionAttribute(REQ_OPTION_ID);
-	    	
-	    	if (optionIds.contains(FUNCTIONAL_TEST_KEY) && ADVANCE_UI.equals(getUiType()) && StringUtils.isEmpty(getFunctionalFramework())) {
+	    	List<FunctionalFramework> functionalFrameworks = (List<FunctionalFramework>)getSessionAttribute(REQ_FUNCTIONAL_TEST_FRAMEWORKS);
+	    	if (optionIds.contains(FUNCTIONAL_TEST_KEY) && ADVANCE_UI.equals(getUiType()) && StringUtils.isEmpty(getFunctionalFramework()) 
+	    			&& CollectionUtils.isNotEmpty(functionalFrameworks)) {
     			setFunctionFrameworkError(getText(ERROR_FUNCTIONAL_FRAMEWORK));
     			hasError = true;
 	    	}
