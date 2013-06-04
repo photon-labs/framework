@@ -1,4 +1,4 @@
-define(["framework/widgetWithTemplate", "mavenService/listener/mavenServiceListener"], function() {
+define(["mavenService/listener/mavenServiceListener"], function() {
 	Clazz.createPackage("com.components.mavenService.js");
 
 	Clazz.com.components.mavenService.js.MavenService = Clazz.extend(Clazz.WidgetWithTemplate, {
@@ -17,7 +17,9 @@ define(["framework/widgetWithTemplate", "mavenService/listener/mavenServiceListe
 		initialize : function(){
 			var self = this;
 			self.mavenServiceEvent = new signals.Signal();
-			self.mavenServiceListener = new Clazz.com.components.mavenService.js.listener.MavenServiceListener();
+			
+			if(self.mavenServiceListener === null)
+				self.mavenServiceListener = new Clazz.com.components.mavenService.js.listener.MavenServiceListener();
 		},
 
 		/***

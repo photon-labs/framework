@@ -1,4 +1,4 @@
-define(["framework/widgetWithTemplate", "mavenService/mavenService", "build/api/buildAPI"], function() {
+define(["build/api/buildAPI"], function() {
 
 	Clazz.createPackage("com.components.build.js.listener");
 
@@ -11,9 +11,15 @@ define(["framework/widgetWithTemplate", "mavenService/mavenService", "build/api/
 		 * @config: configurations for this listener
 		 */
 		initialize : function(config) {
-			this.buildAPI = new Clazz.com.components.build.js.api.BuildAPI();
-			var mvnService = commonVariables.navListener.getMyObj(commonVariables.mavenService);
-			this.mavenServiceListener = mvnService.mavenServiceListener;
+			var self = this;
+			
+			if(self.buildAPI === null)
+				self.buildAPI = new Clazz.com.components.build.js.api.BuildAPI();
+			
+			if(self.mavenServiceListener === null)	{
+				self.mavenServiceListener = commonVariables.navListener.getMyObj(commonVariables.mavenService, function(retVal){
+				});
+			}
 		},
 		
 		onPrgoress : function(clicked) {
@@ -87,9 +93,19 @@ define(["framework/widgetWithTemplate", "mavenService/mavenService", "build/api/
 			}
 			
 			$('#logContent').html();
-			self.mavenServiceListener.mvnBuild(queryString, '#logContent', function(returnVal){
-				callback(returnVal);
-			});
+			if(self.mavenServiceListener === null)	{
+				commonVariables.navListener.getMyObj(commonVariables.mavenService, function(retVal){
+					self.mavenServiceListener = retVal;
+					
+					self.mavenServiceListener.mvnBuild(queryString, '#logContent', function(returnVal){
+						callback(returnVal);
+					});
+				});
+			}else{
+				self.mavenServiceListener.mvnBuild(queryString, '#logContent', function(returnVal){
+					callback(returnVal);
+				});
+			}
 		},
 
 		deleteBuild : function(buildNo, callback){

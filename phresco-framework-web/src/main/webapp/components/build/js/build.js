@@ -1,4 +1,4 @@
-define(["framework/widgetWithTemplate", "build/listener/buildListener", "dynamicPage/listener/dynamicPageListener"], function() {
+define(["build/listener/buildListener"], function() {
 	Clazz.createPackage("com.components.build.js");
 
 	Clazz.com.components.build.js.Build = Clazz.extend(Clazz.WidgetWithTemplate, {
@@ -23,19 +23,33 @@ define(["framework/widgetWithTemplate", "build/listener/buildListener", "dynamic
 		 */
 		initialize : function(globalConfig){
 			var self = this;
-			self.buildListener = new Clazz.com.components.build.js.listener.BuildListener(globalConfig);
-			self.dynamicpage = commonVariables.navListener.getMyObj(commonVariables.dynamicPage);
-			self.dynamicPageListener = new Clazz.com.components.dynamicPage.js.listener.DynamicPageListener();
-			self.registerEvents();
+			
+			if(self.buildListener === null)
+				self.buildListener = new Clazz.com.components.build.js.listener.BuildListener();
+			
+			if(self.dynamicpage === null){
+				commonVariables.navListener.getMyObj(commonVariables.dynamicPage, function(retVal){
+					self.dynamicPage = retVal;
+					self.dynamicPageListener = self.dynamicPage.dynamicPageListener;
+					self.registerEvents();
+				});
+			}else{self.registerEvents();}
 		},
 		
 		registerEvents : function(){
 			var self = this;
-			self.onProgressEvent = new signals.Signal();
-			self.onDownloadEvent = new signals.Signal();
-			self.onDeleteEvent = new signals.Signal();
-			self.onDeployEvent = new signals.Signal();
-			self.onBuildEvent = new signals.Signal();
+			
+			if(self.onProgressEvent === null)
+				self.onProgressEvent = new signals.Signal();
+			if(self.onDownloadEvent === null)	
+				self.onDownloadEvent = new signals.Signal();
+			if(self.onDeleteEvent === null)
+				self.onDeleteEvent = new signals.Signal();
+			if(self.onDeployEvent === null)
+				self.onDeployEvent = new signals.Signal();
+			if(self.onBuildEvent === null)
+				self.onBuildEvent = new signals.Signal();
+				
 			self.onProgressEvent.add(self.buildListener.onPrgoress, self.buildListener);
 			self.onDownloadEvent.add(self.buildListener.downloadBuild, self.buildListener);
 			self.onDeleteEvent.add(self.buildListener.deleteBuild, self.buildListener);
@@ -55,10 +69,21 @@ define(["framework/widgetWithTemplate", "build/listener/buildListener", "dynamic
 			var self = this;
 			self.buildListener.getBuildInfo(self.buildListener.getRequestHeader("", '', 'getList'), function(response) {
 				commonVariables.goal = "package";
-				self.dynamicpage.getHtml(function(callbackVal){
-					self.generateBuildContent = callbackVal;
-					renderFunction(response, whereToRender);
-				});
+				if(self.dynamicpage === null){
+					commonVariables.navListener.getMyObj(commonVariables.dynamicPage, function(retVal){
+						self.dynamicPage = retVal;
+						self.dynamicPageListener = self.dynamicPage.dynamicPageListener;
+						self.loadDynamicContent(response, whereToRender);
+					});
+				}else{self.loadDynamicContent(response, whereToRender);}
+			});
+		},
+		
+		loadDynamicContent : function(response, whereToRender){
+			var self = this;
+			self.dynamicpage.getHtml(function(callbackVal){
+				self.generateBuildContent = callbackVal;
+				renderFunction(response, whereToRender);
 			});
 		},
 		
@@ -71,8 +96,22 @@ define(["framework/widgetWithTemplate", "build/listener/buildListener", "dynamic
 		postRender : function(element) {
 			var self = this;
 			$("tbody[name='dynamicContent']").html(self.generateBuildContent);
-			self.dynamicpage.showParameters();
-			self.dynamicPageListener.controlEvent();
+			self.loadPostContent();
+		},
+		
+		loadPostContent : function(){
+			var self = this;
+			if(self.dynamicpage === null){
+				commonVariables.navListener.getMyObj(commonVariables.dynamicPage, function(retVal){
+					self.dynamicPage = retVal;
+					self.dynamicPageListener = self.dynamicPage.dynamicPageListener;
+					self.dynamicpage.showParameters();
+					self.dynamicPageListener.controlEvent();					
+				});
+			}else{
+				self.dynamicpage.showParameters();
+				self.dynamicPageListener.controlEvent();
+			}
 		},
 
 		/***

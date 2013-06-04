@@ -1,10 +1,10 @@
-define(["framework/widget", "mavenService/api/mavenServiceAPI", "common/loading"], function() {
+define(["mavenService/api/mavenServiceAPI"], function() {
 
 	Clazz.createPackage("com.components.mavenService.js.listener");
 
 	Clazz.com.components.mavenService.js.listener.MavenServiceListener = Clazz.extend(Clazz.Widget, {
 		localStorageAPI : null,
-		loadingScreen : null,
+		//loadingScreen : null,
 		mavenServiceAPI : null,
 		//self : this,
 		/***
@@ -13,8 +13,10 @@ define(["framework/widget", "mavenService/api/mavenServiceAPI", "common/loading"
 		 * @config: configurations for this listener
 		 */
 		initialize : function(config) {
-			this.loadingScreen = new Clazz.com.js.widget.common.Loading();
-			this.mavenServiceAPI = new Clazz.com.components.mavenService.js.api.MavenServiceAPI();
+			//this.loadingScreen = new Clazz.com.js.widget.common.Loading();
+			
+			if(this.mavenServiceAPI === null)
+				this.mavenServiceAPI = new Clazz.com.components.mavenService.js.api.MavenServiceAPI();
 		},
 
 		mvnBuild : function(paramData, divId, callback){
@@ -119,11 +121,11 @@ define(["framework/widget", "mavenService/api/mavenServiceAPI", "common/loading"
 			var self = this, header = self.getRequestHeader("POST", "", commonVariables.mvnShowStartedNode, paramData);
 			self.mvnService(header, divId, callback);
 		},
-		
+
 		mvnService : function(header, divId, callback){
 			try{
 				var self = this, callbackData = null;
-				self.loadingScreen.showLoading();
+				commonVariables.loadingScreen.showLoading();
 				self.mavenServiceAPI.mvnSer(header, 
 					function(response){
 						if(response != undefined && response != null){
@@ -140,20 +142,20 @@ define(["framework/widget", "mavenService/api/mavenServiceAPI", "common/loading"
 							}else if(response.status == 'SUCCESS'){
 								callbackData = response.connectionAlive;
 							}
-							self.loadingScreen.removeLoading();
+							commonVariables.loadingScreen.removeLoading();
 							callback(callbackData);
 						}else {
-							self.loadingScreen.removeLoading();
+							commonVariables.loadingScreen.removeLoading();
 							callback(callbackData);
 						}
 					}, 
 					function(serviceerror){
-						self.loadingScreen.removeLoading();
+						commonVariables.loadingScreen.removeLoading();
 						callback('Service Connection Exception');
 					});
 			}catch(exception){
 				//Exception
-				self.loadingScreen.removeLoading();
+				commonVariables.loadingScreen.removeLoading();
 				callback('Service Exception');
 			}
 		},

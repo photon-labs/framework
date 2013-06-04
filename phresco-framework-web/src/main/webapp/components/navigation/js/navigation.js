@@ -1,4 +1,4 @@
-define(["framework/widgetWithTemplate", "navigation/listener/navigationListener"], function() {
+define(["navigation/listener/navigationListener"], function() {
 	
 	Clazz.createPackage("com.components.navigation.js");
 
@@ -23,8 +23,11 @@ define(["framework/widgetWithTemplate", "navigation/listener/navigationListener"
 		 */
 		initialize : function(globalConfig){
 			var self = this;
-			commonVariables.navListener = new Clazz.com.components.navigation.js.listener.navigationListener();
-			self.navigationListener = commonVariables.navListener;
+			
+			if(self.navigationListener == null){
+				commonVariables.navListener = new Clazz.com.components.navigation.js.listener.navigationListener();
+				self.navigationListener = commonVariables.navListener;
+			}
 			self.registerEvents(self.navigationListener);
 		},
 
@@ -33,19 +36,30 @@ define(["framework/widgetWithTemplate", "navigation/listener/navigationListener"
 		 *
 		 */
 		loadPage : function(){
-			commonVariables.navListener = new Clazz.com.components.navigation.js.listener.navigationListener();
-			self.navigationListener = commonVariables.navListener;
+			if(self.navigationListener == null){
+				commonVariables.navListener = new Clazz.com.components.navigation.js.listener.navigationListener();
+				self.navigationListener = commonVariables.navListener;
+			}
 		},
 		
 		registerEvents : function(navigationListener) {
 			var self = this;
-			self.onAddNewProjectEvent = new signals.Signal();
-			self.onMytabEvent = new signals.Signal();
-			self.onQualitytabEvent = new signals.Signal();
+			
+			if(self.onAddNewProjectEvent == null)
+				self.onAddNewProjectEvent = new signals.Signal();
+				
+			if(self.onMytabEvent == null)
+				self.onMytabEvent = new signals.Signal();
+			
+			if(self.onQualitytabEvent == null)
+				self.onQualitytabEvent = new signals.Signal();
+			
+			if(self.onImportEvent == null)
+				self.onImportEvent = new signals.Signal();
+			
 			self.onAddNewProjectEvent.add(navigationListener.onAddProject, navigationListener); 
 			self.onMytabEvent.add(navigationListener.onMytabEvent, navigationListener); 
 			self.onQualitytabEvent.add(navigationListener.onQualitytab, navigationListener); 			
-			self.onImportEvent = new signals.Signal();
 			self.onImportEvent.add(navigationListener.addImportEvent, navigationListener);
 		},
 		

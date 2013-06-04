@@ -1,10 +1,10 @@
-define(["framework/widget", "login/api/loginAPI", "common/loading", "footer/footer", "header/header", "projectlist/projectList", "navigation/navigation"], function() {
+define(["login/api/loginAPI"], function() {
 
 	Clazz.createPackage("com.components.login.js.listener");
 
 	Clazz.com.components.login.js.listener.LoginListener = Clazz.extend(Clazz.Widget, {
 		localStorageAPI : null,
-		loadingScreen : null,
+		//loadingScreen : null,
 		headerContent : null,
 		footerContent : null,
 		navigationContent : null,
@@ -16,8 +16,13 @@ define(["framework/widget", "login/api/loginAPI", "common/loading", "footer/foot
 		 * @config: configurations for this listener
 		 */
 		initialize : function(config) {
-			this.loadingScreen = new Clazz.com.js.widget.common.Loading();
-			this.loginAPI = new Clazz.com.components.login.js.api.LoginAPI();
+			var self = this;
+			
+		/* 	if(self.loadingScreen == null)
+				self.loadingScreen = new Clazz.com.js.widget.common.Loading(); */
+				
+			if(self.loginAPI == null)
+				self.loginAPI = new Clazz.com.components.login.js.api.LoginAPI();
 		},
 		
 		/***
@@ -31,7 +36,7 @@ define(["framework/widget", "login/api/loginAPI", "common/loading", "footer/foot
 				var self = this, header = self.getRequestHeader();
 			
 				if(self.loginValidation()){
-					self.loadingScreen.showLoading();
+					commonVariables.loadingScreen.showLoading();
 					//TODO: call login service here and call appendPlaceholder in the success function
 					self.loginAPI.doLogin(header, 
 						function(response){
@@ -41,19 +46,19 @@ define(["framework/widget", "login/api/loginAPI", "common/loading", "footer/foot
 								self.renderNavigation();
 							} else {
 								//authentication failed
-								self.loadingScreen.removeLoading();
+								commonVariables.loadingScreen.removeLoading();
 							}
 						}, 
 						function(serviceError){
 							//service access failed
-							self.loadingScreen.removeLoading();
+							commonVariables.loadingScreen.removeLoading();
 							$(".login_error_msg").text('authentication failed');
 						}
 					);
 				}
 			}catch(error){
 				//Exception
-				self.loadingScreen.removeLoading();
+				commonVariables.loadingScreen.removeLoading();
 			}
 		},
 		
@@ -132,9 +137,12 @@ define(["framework/widget", "login/api/loginAPI", "common/loading", "footer/foot
 		renderNavigation : function(contentObj) {
 			var self = this;
 			Clazz.navigationController.jQueryContainer = commonVariables.navigationPlaceholder;
-			self.navigationContent = new Clazz.com.components.navigation.js.navigation();
-			self.navigationContent.currentContent = contentObj;
-			Clazz.navigationController.push(self.navigationContent, false);
+
+			require(["navigation/navigation"], function(){
+				self.navigationContent = new Clazz.com.components.navigation.js.navigation();
+				self.navigationContent.currentContent = contentObj;
+				Clazz.navigationController.push(self.navigationContent, false);	
+			});
 		}
 	});
 
