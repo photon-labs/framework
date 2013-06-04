@@ -3,8 +3,9 @@
           Job Templates
         </div>
         <div class="flt_right">
-        <input type="submit" value="Create a Job Template" name="jobTemplate" class="btn btn_style create_job_btn">
-        <div id="jobTemplate" class="dyn_popup">
+        <input type="submit" value="Create a Job Template" name="jobTemplatePopup" class="btn btn_style create_job_btn">
+        <div id="jobTemplatePopup" class="dyn_popup">
+          <form id="jobTemplate">
                         <table class="table" cellpadding="0" cellspacing="0" border="0">
                             <tbody>
                                 <tr>
@@ -12,8 +13,8 @@
                                     <td>Job Type</td>
                                 </tr>
                                 <tr>
-                                  <td><input type="text" placeholder="Job Name"></td>
-                                    <td><select>
+                                  <td><input type="text" placeholder="Job Name" name="name" value=""></td>
+                                    <td><select name="type">
                                               <option>Code Validation</option>
                                                 <option>Build</option>
                                                 <option>Deploy</option>
@@ -28,41 +29,42 @@
                                  <tr>
                                   <td colspan="3">
                                       <div class="popuptextarea">
-                                          <input type="checkbox">JQW - Jquery Widget<br>
-                                            <input type="checkbox">Native_eshop-androidnative<br>
-                                            <input type="checkbox">ds-nodejswebservice
+                                            <input type="checkbox" name="appIds" value="jqueryWidgetApp">JQW - Jquery Widget<br>
+                                            <input type="checkbox" name="appIds" value="NativeEshopApp">Native_eshop-androidnative<br>
+                                            <input type="checkbox" name="appIds" value="NodeJsApp">ds-nodejswebservice
                                         </div>
                                     </td>
                                  </tr>
                             </tbody>
                          </table>
-                         <table class="table table_template" cellpadding="0" cellspacing="0" border="0">
+                         <table id="features" class="table table_template" cellpadding="0" cellspacing="0" border="0">
                             <tbody>
                                 <tr>
-                                    <td><input type="checkbox">Repo</td>
-                                    <td><select>
+                                    <td><input name="enableRepo" type="checkbox">Repo</td>
+                                    <td><select name="repoTypes">
                                               <option>SVN</option>
-                                                <option>Git</option>
-                                                <option>Bitkeeper</option>
+                                              <option>Git</option>
+                                              <option>Bitkeeper</option>
                                         </select>
                                     </td>
                                 </tr>
                                 <tr>
-                                    <td><input type="checkbox">Scheduler</td>
+                                    <td><input type="checkbox" name="enableSheduler">Scheduler</td>
                                 </tr>
                                 <tr>
-                                    <td><input type="checkbox">Email Settings</td>
+                                    <td><input type="checkbox" name="enableEmailSettings">Email Settings</td>
                                 </tr>
                                 <tr>
-                                    <td><input type="checkbox">Uplaod Settings</td>
+                                    <td><input type="checkbox" name="enableUploadSettings">Uplaod Settings</td>
                                 </tr>
                             </tbody>
                           </table>
                          
                           <div class="flt_right">
-                            <input type="button" value="Create" class="btn btn_style">
+                            <input type="button" value="Create" name="save" class="btn btn_style">
                             <input type="button" value="Close" class="btn btn_style dyn_popup_close">
                          </div>
+            </form>
         </div>
   </div>
     </section>

@@ -13,7 +13,7 @@ public class CIJobTemplate {
 	private String projId;
 
 	private boolean enableRepo;
-	private List<String> repoTypes;
+	private String repoTypes;
 	private boolean enableSheduler;
 	private boolean enableEmailSettings;
 	private boolean enableUploadSettings;
@@ -109,18 +109,18 @@ public class CIJobTemplate {
 		this.enableRepo = enableRepo;
 	}
 
+
 	/**
 	 * @return the repoTypes
 	 */
-	public List<String> getRepoTypes() {
+	public String getRepoTypes() {
 		return repoTypes;
 	}
 
 	/**
-	 * @param repoTypes
-	 *            the repoTypes to set
+	 * @param repoTypes the repoTypes to set
 	 */
-	public void setRepoTypes(List<String> repoTypes) {
+	public void setRepoTypes(String repoTypes) {
 		this.repoTypes = repoTypes;
 	}
 

@@ -93,7 +93,7 @@ public class CIManagerImplTest implements FrameworkConstants{
 		ciJobTemplate.setEnableRepo(true);
 		List<String> repoTypes = new ArrayList<String>(2);
 		repoTypes.add("svn");
-		ciJobTemplate.setRepoTypes(repoTypes);
+		ciJobTemplate.setRepoTypes("svn");
 		
 		ciJobTemplate.setEnableSheduler(true);
 		ciJobTemplate.setEnableEmailSettings(true);

@@ -1167,12 +1167,12 @@ public class CIManagerImpl implements CIManager, FrameworkConstants {
 
 			ciJobTemplates = new ArrayList<CIJobTemplate>(jobTemplates.size());
 
-			for (CIJobTemplate ciJobTemplate : jobTemplates) {
-				String selProjId = ciJobTemplate.getProjId();
-				if (projId.equals(selProjId)) {
-					ciJobTemplates.add(ciJobTemplate);
-				}
-			}
+//			for (CIJobTemplate ciJobTemplate : jobTemplates) {
+//				String selProjId = ciJobTemplate.getProjId();
+//				if (projId.equals(selProjId)) {
+//					ciJobTemplates.add(ciJobTemplate);
+//				}
+//			}
 		} catch (Exception e) {
 			if (debugEnabled) {
 				S_LOGGER.error("Entered into catch block of CI.getJobTemplatesByProjId()"

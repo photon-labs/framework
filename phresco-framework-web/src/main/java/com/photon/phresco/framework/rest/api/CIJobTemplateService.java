@@ -22,7 +22,7 @@ import com.sun.jersey.api.client.ClientResponse.Status;
 
 import fr.opensagres.xdocreport.utils.StringUtils;
 
-@Path("/jobTemplate")
+@Path("/jobTemplates")
 public class CIJobTemplateService extends RestBase {
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
