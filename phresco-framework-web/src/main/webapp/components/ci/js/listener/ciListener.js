@@ -29,7 +29,7 @@ define(["framework/widget", "ci/api/ciAPI"], function() {
 			Clazz.navigationController.push(self.continuousDeliveryConfigure, true);
 		},
 
-		getRequestHeader : function(ciRequestBody, action) {
+		getRequestHeader : function(ciRequestBody, action, params) {
 			// var self = this, header, appDirName;
 			// var customerId = self.getCustomer();
 			// customerId = (customerId == "") ? "photon" : customerId;
@@ -38,6 +38,7 @@ define(["framework/widget", "ci/api/ciAPI"], function() {
 			// var userId = data.id;
 			// var techId = commonVariables.techId;
 			// self.bcheck = false;
+			alert("params" + params);
 			header = {
 				contentType: "application/json",
 				dataType: "json",
@@ -50,6 +51,9 @@ define(["framework/widget", "ci/api/ciAPI"], function() {
 					alert("Request body is undefined... ");
 				}
 				header.webserviceurl = commonVariables.webserviceurl + commonVariables.jobTemplates;
+				if (params !== null && params !== undefined && params !== '') {
+					header.webserviceurl = header.webserviceurl + "?" + params;
+				}
 			} else if (action === "add") {
 				//var jsonString = $.toJSON(myObj);
 				//$('#formCustomers').toJSON(); for POST and PUT
@@ -66,6 +70,9 @@ define(["framework/widget", "ci/api/ciAPI"], function() {
 					alert("Request body is undefined... ");
 				}
 				header.webserviceurl = commonVariables.webserviceurl + commonVariables.jobTemplates;
+				if (params !== null && params !== undefined && params !== '') {
+					header.webserviceurl = header.webserviceurl + "?" + params;
+				}
 			} 
 
 			return header;

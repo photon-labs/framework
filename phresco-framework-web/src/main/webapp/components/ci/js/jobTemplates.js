@@ -91,8 +91,11 @@ define(["framework/widgetWithTemplate", "ci/listener/ciListener"], function() {
 		 */
 		bindUI : function(){
 			var self = this;
+
+			$(".tooltiptop").tooltip();
 			$(".dyn_popup").hide();
 			// Open job template popup
+			$("input[name=jobTemplatePopup]").unbind("click");
 			$("input[name=jobTemplatePopup]").click(function() {
    				self.opencc(this, $(this).attr('name'));
    			});
@@ -108,6 +111,7 @@ define(["framework/widgetWithTemplate", "ci/listener/ciListener"], function() {
    			});
 
    			// Edit job template
+   			$("input[name=edit]").unbind("click");
 			$("input[name=edit]").click(function() {
 				alert("edit");
 				self.editEvent.dispatch(function(response){
@@ -117,6 +121,7 @@ define(["framework/widgetWithTemplate", "ci/listener/ciListener"], function() {
    			});
 
    			// Update job template
+   			$("input[name=update]").unbind("click");
    			$("input[name=update]").click(function() {
    				alert("update");
    				self.updateEvent.dispatch(function(response){
@@ -126,12 +131,14 @@ define(["framework/widgetWithTemplate", "ci/listener/ciListener"], function() {
    			});
 
    			// Delete job template
+   			$("input[name=delete]").unbind("click");
    			$("input[name=delete]").click(function() {
    				alert("delete");
-   				self.deleteEvent.dispatch(function(response){
-					self.ciRequestBody = response;
-					self.getAction(self.ciRequestBody, 'delete', '');
-				});
+   				var jobTemplateName = {};
+				jobTemplateName.name = $(this).parent().parent().attr('id');
+				jobTemplateName = $.param(jobTemplateName);
+				self.configRequestBody = {};
+				self.getAction(self.configRequestBody, 'delete', jobTemplateName);
    			});
 		}
 	});
