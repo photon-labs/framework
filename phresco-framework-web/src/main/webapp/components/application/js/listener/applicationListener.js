@@ -23,8 +23,10 @@ define(["framework/widget", "framework/widgetWithTemplate", "application/api/app
 		onCancelUpdate : function() {
 			var self = this;
 			Clazz.navigationController.jQueryContainer = commonVariables.contentPlaceholder;
-			self.projectlistContent = commonVariables.navListener.getMyObj(commonVariables.projectlist);
-			Clazz.navigationController.push(self.projectlistContent, true);
+			commonVariables.navListener.getMyObj(commonVariables.projectlist, function(retVal){
+				self.projectlistContent = retVal;
+				Clazz.navigationController.push(self.projectlistContent, true);
+			});
 		},
 		removelayer : function(object) {
 			var layerId = object.attr('id');
@@ -280,14 +282,15 @@ define(["framework/widget", "framework/widgetWithTemplate", "application/api/app
 				}
 				self.editAppInfo(self.getRequestHeader(JSON.stringify(appInfo), "editApplication"), function(response) {
 					if(response.message == "Application updated successfully"){
-						self.editAplnContent = commonVariables.navListener.getMyObj(commonVariables.editApplication);
-						self.editAplnContent.appDirName = response.data.appDirName;
-						commonVariables.appDirName = response.data.appDirName;
- 						self.applicationAPI.localVal.setSession('appDirName', response.data.appDirName);
-						self.applicationAPI.localVal.setJson('appdetails', response.data.appInfos);
-						
-						Clazz.navigationController.push(self.editAplnContent, true);
-						 
+						commonVariables.navListener.getMyObj(commonVariables.editApplication, function(retVal){
+							self.editAplnContent = retVal;
+							self.editAplnContent.appDirName = response.data.appDirName;
+							commonVariables.appDirName = response.data.appDirName;
+							self.applicationAPI.localVal.setSession('appDirName', response.data.appDirName);
+							self.applicationAPI.localVal.setJson('appdetails', response.data.appInfos);
+							
+							Clazz.navigationController.push(self.editAplnContent, true);
+						 });
 						/* self.getAppInfo(self.getRequestHeader(response.data.appDirName, "getappinfo"), function(response) {
 							self.pageRefresh(response);
 						});  */

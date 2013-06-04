@@ -120,6 +120,7 @@ define(["framework/widgetWithTemplate", "application/listener/applicationListene
 		
 		preRender: function(whereToRender, renderFunction){
 			var self = this;
+			console.info('app name= ' , self.appDirName);
 			setTimeout(function() {
 				self.editApplicationListener.getAppInfo(self.editApplicationListener.getRequestHeader(self.appDirName , "getappinfo"), function(response) {
 					var projectlist = {};
