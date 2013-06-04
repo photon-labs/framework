@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -14,6 +15,7 @@ import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
@@ -241,6 +243,37 @@ public class ConfigurationService extends RestBase {
 			return Response.status(Status.EXPECTATION_FAILED).entity(finalOuptut).header("Access-Control-Allow-Origin", "*").build();
 		} catch (Exception e) {
 			ResponseInfo<Configuration> finalOuptut = responseDataEvaluation(responseData, e, "Configurations failed to be updated for the Environment", "Failure");
+			return Response.status(Status.EXPECTATION_FAILED).entity(finalOuptut).header("Access-Control-Allow-Origin", "*").build();
+		}
+		
+	}
+	
+	
+	@POST
+    @Path ("/cloneEnvironment")
+	@Produces (MediaType.APPLICATION_JSON)
+	@Consumes (MediaType.APPLICATION_JSON)
+	public Response cloneEnvironment(@QueryParam("appDirName") String appDirName,@QueryParam("envName") String envName, Environment cloneEnvironment) {
+		
+		String configFile = getConfigFileDir(appDirName);
+		Environment clonedEnvironment= null;
+		ResponseInfo<Configuration> responseData = new ResponseInfo<Configuration>();
+		try {
+			ConfigManager configManager = new ConfigManagerImpl(new File(configFile));
+			clonedEnvironment = configManager.cloneEnvironment(envName, cloneEnvironment );
+			ResponseInfo<String> finalOuptut = responseDataEvaluation(responseData, null, "Clone Environment Done Successfully", clonedEnvironment);
+			return Response.ok(finalOuptut).header("Access-Control-Allow-Origin", "*").build();
+			
+		} catch (ConfigurationException e) {
+			ResponseInfo<Configuration> finalOuptut = responseDataEvaluation(responseData, e, "Clone Environment Failed", clonedEnvironment);
+			return Response.status(Status.EXPECTATION_FAILED).entity(finalOuptut).header("Access-Control-Allow-Origin", "*").build();
+			
+		} catch (PhrescoException e) {
+			ResponseInfo<Configuration> finalOuptut = responseDataEvaluation(responseData, e, "Clone Environment Failed", clonedEnvironment);
+			return Response.status(Status.EXPECTATION_FAILED).entity(finalOuptut).header("Access-Control-Allow-Origin", "*").build();
+			
+		} catch (Exception e) {
+			ResponseInfo<Configuration> finalOuptut = responseDataEvaluation(responseData, e, "Clone Environment Failed", clonedEnvironment);
 			return Response.status(Status.EXPECTATION_FAILED).entity(finalOuptut).header("Access-Control-Allow-Origin", "*").build();
 		}
 		
