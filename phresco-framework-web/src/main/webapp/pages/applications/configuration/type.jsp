@@ -257,7 +257,7 @@
 	        	pm.setInputType(propertyTemplate.getType());
 	        	pm.setPlaceHolder(propertyTemplate.getHelpText());
 	        	pm.setValue(value);
-	            StringTemplate inputControl = FrameworkUtil.constructInputElement(pm);
+	            StringTemplate inputControl = FrameworkUtil.constructConfigurationInputElement(pm);
 				sb.append(inputControl); 
 		%>
 				<script type="text/javascript">

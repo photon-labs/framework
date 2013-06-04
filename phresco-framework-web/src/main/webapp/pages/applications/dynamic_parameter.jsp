@@ -140,7 +140,7 @@
 				} else if (FrameworkConstants.TYPE_PASSWORD.equalsIgnoreCase(parameter.getType())) {
 					
 					parameterModel.setInputType(parameter.getType());
-					parameterModel.setValue("");
+					parameterModel.setValue(StringUtils.isNotEmpty(parameter.getValue()) ? parameter.getValue():"");
 					
 					StringTemplate txtInputElement = FrameworkUtil.constructInputElement(parameterModel);
 	%> 	
@@ -509,6 +509,26 @@
 					previousDependencyArr = csvDependencies.split(',');
 					if (jecClass != 'jecEditableOption') {
 						hideControl(previousDependencyArr);					
+						
+						for (var i = 0; i < previousDependencyArr.length; i+=1) {
+							var controlTag = $("#" + previousDependencyArr[i]).prop('tagName');
+							var controlType = $("#" + previousDependencyArr[i]).attr('type');
+							//iterate previous dependecies & if its checkbox, then hide checkbox's dependency
+							if (controlTag === 'INPUT' && controlType === 'checkbox') {
+								var id = $("#" + previousDependencyArr[i]).attr('id');
+								
+								if ("authManager" == id) {
+									$("#" + previousDependencyArr[i]).val(false);
+									$("#" + previousDependencyArr[i]).prop("checked", false);
+								}
+								
+								var c = $("#" + previousDependencyArr[i]).attr('additionalparam');
+								var csvDep = c.substring(c.indexOf('=') + 1);
+								var csvDepArr = new Array();
+								csvDepArr = csvDep.split(',');
+								hideControl(csvDepArr);
+							}
+						}
 					}
 				}
 			}
@@ -530,12 +550,27 @@
 				for (var i = 0; i < dependencyArr.length; i+=1) {
 					var curId = $.trim(dependencyArr[i]);
 					var dependentCtrl = $("#"+curId).prop('tagName');
+					var controlType = $("#" + dependencyArr[i]).attr('type');
 						if (dependentCtrl === 'SELECT') {
 							var hideOptionDependency = $('#'+curId).find(":selected").attr('hide');
 							if (hideOptionDependency !== undefined && !isBlank(hideOptionDependency)) {
 								var hideOptionDependencyArr = new Array();
 								hideOptionDependencyArr = hideOptionDependency.split(',');
 								hideControl(hideOptionDependencyArr);
+							}
+						} else if (dependentCtrl == 'INPUT' && controlType=='checkbox') {
+							var selectedOption = $("#" + dependencyArr[i]).is(':checked');
+							if (selectedOption) {
+								var c = $("#" + dependencyArr[i]).attr('additionalparam');
+								var csvDep = c.substring(c.indexOf('=') + 1);
+								var csvDepArr = new Array();
+								csvDepArr = csvDep.split(',');
+								for (var j = 0; j < csvDepArr.length; j+=1) {
+									var showHide = $("#" + csvDepArr[j]).attr('showHide');
+									if (showHide == 'false') {
+										$("#" + csvDepArr[j] + "Control").show();
+									} 
+								} 
 							}
 						}
 					}	
@@ -566,7 +601,28 @@
 					csvDependencies = getAllDependencies(csvDependencies);
 					var dependencyArr = new Array();
 					dependencyArr = csvDependencies.split(',');
-					showControl(dependencyArr);					
+					showControl(dependencyArr);
+					//To show checkbox's dependencies
+					for (var i = 0; i < dependencyArr.length; i+=1) {
+						var controlTag = $("#" + dependencyArr[i]).prop('tagName');
+						var controlType = $("#" + dependencyArr[i]).attr('type');
+						
+						if (controlTag === 'INPUT' && controlType === 'checkbox') {
+							var selectedOption = $("#" + dependencyArr[i]).is(':checked');
+							if (selectedOption) {
+								var c = $("#" + dependencyArr[i]).attr('additionalparam');
+								var csvDep = c.substring(c.indexOf('=') + 1);
+								var csvDepArr = new Array();
+								csvDepArr = csvDep.split(',');
+								for (var j = 0; j < csvDepArr.length; j+=1) {
+									var showHide = $("#" + csvDepArr[j]).attr('showHide');
+									if (showHide == 'false') {
+										$("#" + csvDepArr[j] + "Control").show();
+									} 
+								} 	
+							} 
+						}
+					}
 				}
 				
 				//If the dependent child is select box, hide controls based on selected options - while popup loading

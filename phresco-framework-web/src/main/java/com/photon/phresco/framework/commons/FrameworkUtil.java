@@ -29,7 +29,6 @@ import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.io.StringReader;
 import java.io.StringWriter;
@@ -72,8 +71,6 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import org.jopendocument.dom.ODPackage;
-import org.jopendocument.dom.spreadsheet.SpreadSheet;
 import org.w3c.dom.Element;
 
 import com.google.gson.Gson;
@@ -445,13 +442,21 @@ public class FrameworkUtil extends FrameworkBaseAction implements Constants {
     	} else if(!TYPE_SCHEDULER.equals(type)) {
     		inputElement = new StringTemplate(getInputTemplate());
     	}
+    	
+    	String value = "";
+    	if (TYPE_PASSWORD.equalsIgnoreCase(pm.getInputType())) {
+    		value = decryptString(pm.getValue());
+    	} else {
+    		value = pm.getValue();
+    	}
     	inputElement.setAttribute("type", type);
     	inputElement.setAttribute("class", pm.getCssClass());
     	inputElement.setAttribute("id", pm.getId());
     	inputElement.setAttribute("name", pm.getName());
     	inputElement.setAttribute("placeholder", pm.getPlaceHolder());
-    	inputElement.setAttribute("value", pm.getValue());
+    	inputElement.setAttribute("value", value);
     	inputElement.setAttribute("ctrlsId", pm.getControlId());
+    	inputElement.setAttribute("showHide", pm.isShow());
     	
     	if (TYPE_NUMBER.equalsIgnoreCase(pm.getInputType()) && BUILD_NUMBER.equals(pm.getId())) {
     		inputElement.setAttribute("maxlength", 8);
@@ -466,7 +471,49 @@ public class FrameworkUtil extends FrameworkBaseAction implements Constants {
     	
 		return controlGroupElement;
     }
-
+    
+    public static StringTemplate constructConfigurationInputElement(ParameterModel pm) {
+    	StringTemplate controlGroupElement = new StringTemplate(getControlGroupTemplate());
+    	controlGroupElement.setAttribute("ctrlGrpId", pm.getControlGroupId());
+    	
+    	String ctrlGrpClass = pm.getControlGroupClass();
+    	if (!pm.isShow()) {
+    		ctrlGrpClass = ctrlGrpClass + " hideContent";
+    	}
+    	controlGroupElement.setAttribute("ctrlGrpClass", ctrlGrpClass);
+    	
+    	StringTemplate lableElmnt = constructLabelElement(pm.isMandatory(), pm.getLableClass(), pm.getLableText());
+    	String type = getInputType(pm.getInputType());
+    	StringTemplate inputElement = null;
+    	if(TYPE_SCHEDULER.equals(type)) {
+    		inputElement = new StringTemplate(getSchedulerTemplate());
+    	} else if(!TYPE_SCHEDULER.equals(type)) {
+    		inputElement = new StringTemplate(getInputTemplate());
+    	}
+    	
+    	inputElement.setAttribute("type", type);
+    	inputElement.setAttribute("class", pm.getCssClass());
+    	inputElement.setAttribute("id", pm.getId());
+    	inputElement.setAttribute("name", pm.getName());
+    	inputElement.setAttribute("placeholder", pm.getPlaceHolder());
+    	inputElement.setAttribute("value", pm.getValue());
+    	inputElement.setAttribute("ctrlsId", pm.getControlId());
+    	inputElement.setAttribute("showHide", pm.isShow());
+    	
+    	if (TYPE_NUMBER.equalsIgnoreCase(pm.getInputType()) && BUILD_NUMBER.equals(pm.getId())) {
+    		inputElement.setAttribute("maxlength", 8);
+    	}
+    	if (DEPLOY_DIR.equals(pm.getId())) {
+	    	String btn = "&nbsp;&nbsp;<input type='button' class='btn btn-primary' value='Browse' onclick='browseDeployDir();'/>"; 
+	    	inputElement.setAttribute("btnElement", new StringTemplate(btn));
+	    	inputElement.setAttribute("readonly", "readonly");
+    	}
+    	controlGroupElement.setAttribute("lable", lableElmnt);
+    	controlGroupElement.setAttribute("controls", inputElement);
+    	
+		return controlGroupElement;
+    }
+    
 	/**
 	 * @param inputType
 	 * @return
@@ -642,7 +689,7 @@ public class FrameworkUtil extends FrameworkBaseAction implements Constants {
     	checkboxElement.setAttribute("name", pm.getName());
     	checkboxElement.setAttribute("onClickFunction", pm.getOnClickFunction());
     	checkboxElement.setAttribute("onChangeFunction", pm.getOnChangeFunction());
-    	
+    	checkboxElement.setAttribute("showHide", pm.isShow());
     	if (StringUtils.isNotEmpty(pm.getValue())) {
     		checkboxElement.setAttribute("value", pm.getValue());	
     	} else {
@@ -736,6 +783,7 @@ public class FrameworkUtil extends FrameworkBaseAction implements Constants {
     	selectElement.setAttribute("isMultiple", pm.isMultiple());
     	selectElement.setAttribute("ctrlsId", pm.getControlId());
     	selectElement.setAttribute("onChangeFunction", pm.getOnChangeFunction());
+    	selectElement.setAttribute("showHide", pm.isShow());
     	
     	controlGroupElement.setAttribute("lable", lableElmnt);
     	controlGroupElement.setAttribute("controls", selectElement);
@@ -1155,7 +1203,7 @@ public class FrameworkUtil extends FrameworkBaseAction implements Constants {
     	.append("additionalParam=\"\" ")
     	.append("onfocus=\"setPreviousDependent(this);\" ")
     	.append("onchange=\"$onChangeFunction$\">")
-    	.append("$options$</select>")
+    	.append("$options$ showHide=\"$showHide$\" </select>")
     	.append("<span class='help-inline' id=\"$ctrlsId$\"></span></div>");
     	
     	return sb.toString();
@@ -1165,7 +1213,7 @@ public class FrameworkUtil extends FrameworkBaseAction implements Constants {
     	StringBuilder sb = new StringBuilder();
     	sb.append("<div class='controls'>")
     	.append("<input type=\"$type$\" class=\"input-xlarge $class$\" id=\"$id$\" maxlength=\"$maxlength$\" ")
-    	.append("name=\"$name$\" placeholder=\"$placeholder$\" $readonly$ value=\"$value$\">$btnElement$")
+    	.append("name=\"$name$\" showHide=\"$showHide$\" placeholder=\"$placeholder$\" $readonly$ value=\"$value$\">$btnElement$")
     	.append("<span class='help-inline' id=\"$ctrlsId$\"></span></div>");
     	
     	return sb.toString();
@@ -1280,7 +1328,7 @@ public class FrameworkUtil extends FrameworkBaseAction implements Constants {
     	StringBuilder sb = new StringBuilder();
     	sb.append("<div class='controls'>")
     	.append("<input type='checkbox' class=\"$class$\" id=\"$id$\" ")
-    	.append("name=\"$name$\" value=\"$value$\" $checked$ onchange=\"$onChangeFunction$\" onclick=\"$onClickFunction$\" $additionalParam$/>")
+    	.append("name=\"$name$\" value=\"$value$\" $checked$ showHide=\"$showHide$\" onchange=\"$onChangeFunction$\" onclick=\"$onClickFunction$\" $additionalParam$/>")
     	.append("<span class='help-inline' id=\"$ctrlsId$\"></span></div>");
     	return sb.toString();
     }

@@ -173,6 +173,12 @@ public class CIJob {
 	private String customTestAgainst = "";
 	private String availableJmx = "";
 	private boolean coberturaPlugin = false;
+	private String authManager = "";
+	private String authorizationUrl;
+	private String authorizationUserName;
+	private String authorizationPassword;
+	private String authorizationDomain;
+	private String authorizationRealm;
   
 	// Android functional test
 	private String deviceList = "";
@@ -1100,5 +1106,65 @@ public class CIJob {
 
 	public String getAvailableJmx() {
 		return availableJmx;
+	}
+
+	public String getAuthManager() {
+		return authManager;
+	}
+
+	public void setAuthManager(String authManager) {
+		this.authManager = authManager;
+	}
+
+	public String getAuthorizationUrl() {
+		return authorizationUrl;
+	}
+
+	public void setAuthorizationUrl(String authorizationUrl) {
+		this.authorizationUrl = authorizationUrl;
+	}
+
+	public String getAuthorizationUserName() {
+		return authorizationUserName;
+	}
+
+	public void setAuthorizationUserName(String authorizationUserName) {
+		this.authorizationUserName = authorizationUserName;
+	}
+
+	public String getAuthorizationPassword() {
+		return authorizationPassword;
+	}
+
+	public void setAuthorizationPassword(String authorizationPassword) {
+		byte[] encodeBase64 = org.apache.commons.codec.binary.Base64.encodeBase64(authorizationPassword.getBytes());
+		String encodedString = new String(encodeBase64);
+		this.authorizationPassword = encodedString;
+	}
+
+	public String getAuthorizationDomain() {
+		return authorizationDomain;
+	}
+
+	public void setAuthorizationDomain(String authorizationDomain) {
+		this.authorizationDomain = authorizationDomain;
+	}
+
+	public String getAuthorizationRealm() {
+		return authorizationRealm;
+	}
+
+	public void setAuthorizationRealm(String authorizationRealm) {
+		this.authorizationRealm = authorizationRealm;
+	}
+
+	@Override
+	public String toString() {
+		return "CIJob [name=" + name + ", authManager=" + authManager
+				+ ", authorizationUrl=" + authorizationUrl
+				+ ", authorizationUserName=" + authorizationUserName
+				+ ", authorizationPassword=" + authorizationPassword
+				+ ", authorizationDomain=" + authorizationDomain
+				+ ", authorizationRealm=" + authorizationRealm + "]";
 	}
 }
