@@ -47,6 +47,12 @@
 		<field name="time" class="java.lang.String"/>
 		<field name="testCaseFailure" class="java.lang.Object"/>
 		<field name="testCaseError" class="java.lang.Object"/>
+		<field name="bugComment" class="java.lang.String"/>
+		<field name="featureId" class="java.lang.String"/>
+		<field name="testCaseId" class="java.lang.String"/>
+		<field name="expectedResult" class="java.lang.String"/>
+		<field name="actualResult" class="java.lang.String"/>
+		<field name="status" class="java.lang.String"/>
 		<variable name="NoOfSuccess" class="java.lang.Integer" calculation="Count">
 			<variableExpression><![CDATA[((($F{testCaseFailure} == null) && ($F{testCaseError} == null))? "" : null )]]></variableExpression>
 		</variable>
@@ -426,6 +432,127 @@
 										<font fontName="Times New Roman" size="12"/>
 									</textElement>
 									<textFieldExpression><![CDATA[( $F{testCaseFailure} != null ? "Failure" : ($F{testCaseError} != null ? "Error" : "Success") )]]></textFieldExpression>
+								</textField>
+							</jr:detailCell>
+						</jr:column>
+					</jr:table>
+				</componentElement>
+			</frame>
+		</band>
+		<band height="55">
+			<frame>
+				<reportElement x="0" y="0" width="555" height="55"/>
+				<componentElement>
+					<reportElement key="table" style="table" x="0" y="0" width="555" height="55"/>
+					<jr:table xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd">
+						<datasetRun subDataset="Table Dataset 1">
+							<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource($P{testCases})]]></dataSourceExpression>
+						</datasetRun>
+						<jr:column width="108">
+							<jr:columnHeader style="table_CH" height="31" rowSpan="1">
+								<staticText>
+									<reportElement style="table_CH_Label" x="4" y="0" width="104" height="30"/>
+									<textElement verticalAlignment="Middle">
+										<font fontName="Times New Roman" isBold="true"/>
+									</textElement>
+									<text><![CDATA[Feature Id]]></text>
+								</staticText>
+							</jr:columnHeader>
+							<jr:detailCell style="table_TD" height="30" rowSpan="1">
+								<textField>
+									<reportElement x="0" y="0" width="108" height="30"/>
+									<textElement/>
+									<textFieldExpression><![CDATA[$F{featureId}]]></textFieldExpression>
+								</textField>
+							</jr:detailCell>
+						</jr:column>
+						<jr:column width="91">
+							<jr:columnHeader style="table_CH" height="31" rowSpan="1">
+								<staticText>
+									<reportElement style="table_CH_Label" x="4" y="0" width="85" height="30"/>
+									<textElement verticalAlignment="Middle">
+										<font fontName="Times New Roman" size="12" isBold="true"/>
+									</textElement>
+									<text><![CDATA[Test Case Id]]></text>
+								</staticText>
+							</jr:columnHeader>
+							<jr:detailCell style="table_TD" height="30" rowSpan="1">
+								<textField>
+									<reportElement x="0" y="0" width="91" height="30"/>
+									<textElement/>
+									<textFieldExpression><![CDATA[$F{testCaseId}]]></textFieldExpression>
+								</textField>
+							</jr:detailCell>
+						</jr:column>
+						<jr:column width="119">
+							<jr:columnHeader style="table_CH" height="31" rowSpan="1">
+								<staticText>
+									<reportElement style="table_CH_Label" x="4" y="0" width="115" height="30"/>
+									<textElement verticalAlignment="Middle">
+										<font fontName="Times New Roman" size="12" isBold="true"/>
+									</textElement>
+									<text><![CDATA[Expected Result]]></text>
+								</staticText>
+							</jr:columnHeader>
+							<jr:detailCell style="table_TD" height="30" rowSpan="1">
+								<textField>
+									<reportElement x="0" y="0" width="119" height="30"/>
+									<textElement/>
+									<textFieldExpression><![CDATA[$F{expectedResult}]]></textFieldExpression>
+								</textField>
+							</jr:detailCell>
+						</jr:column>
+						<jr:column width="124">
+							<jr:columnHeader style="table_CH" height="31" rowSpan="1">
+								<staticText>
+									<reportElement style="table_CH_Label" x="0" y="0" width="124" height="31"/>
+									<textElement verticalAlignment="Middle">
+										<font fontName="Times New Roman" isBold="true"/>
+									</textElement>
+									<text><![CDATA[Actual Result]]></text>
+								</staticText>
+							</jr:columnHeader>
+							<jr:detailCell style="table_TD" height="30" rowSpan="1">
+								<textField>
+									<reportElement x="0" y="0" width="124" height="30"/>
+									<textElement/>
+									<textFieldExpression><![CDATA[$F{actualResult}]]></textFieldExpression>
+								</textField>
+							</jr:detailCell>
+						</jr:column>
+						<jr:column width="90">
+							<jr:columnHeader style="table_CH" height="31" rowSpan="1">
+								<staticText>
+									<reportElement style="table_CH_Label" x="0" y="0" width="90" height="31"/>
+									<textElement verticalAlignment="Middle">
+										<font fontName="Times New Roman" isBold="true"/>
+									</textElement>
+									<text><![CDATA[Status]]></text>
+								</staticText>
+							</jr:columnHeader>
+							<jr:detailCell style="table_TD" height="30" rowSpan="1">
+								<textField>
+									<reportElement x="0" y="0" width="90" height="30"/>
+									<textElement/>
+									<textFieldExpression><![CDATA[$F{status}]]></textFieldExpression>
+								</textField>
+							</jr:detailCell>
+						</jr:column>
+						<jr:column width="90">
+							<jr:columnHeader style="table_CH" height="31" rowSpan="1">
+								<staticText>
+									<reportElement style="table_CH_Label" x="0" y="0" width="90" height="31"/>
+									<textElement verticalAlignment="Middle">
+										<font fontName="Times New Roman" isBold="true"/>
+									</textElement>
+									<text><![CDATA[Bug ID/comments]]></text>
+								</staticText>
+							</jr:columnHeader>
+							<jr:detailCell style="table_TD" height="30" rowSpan="1">
+								<textField>
+									<reportElement x="0" y="0" width="90" height="30"/>
+									<textElement/>
+									<textFieldExpression><![CDATA[$F{bugComment}]]></textFieldExpression>
 								</textField>
 							</jr:detailCell>
 						</jr:column>

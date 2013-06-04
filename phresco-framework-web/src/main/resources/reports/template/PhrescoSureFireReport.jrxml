@@ -2,7 +2,7 @@
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="PhrescoXmlReport" pageWidth="595" pageHeight="842" columnWidth="535" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20">
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="101"/>
+	<property name="ireport.y" value="0"/>
 	<import value="org.apache.commons.codec.binary.Base64"/>
 	<style name="PSFRTitle"/>
 	<style name="PSFRTitleRect"/>
@@ -135,6 +135,16 @@
 					<reportElement x="4" y="5" width="170" height="108"/>
 					<imageExpression><![CDATA[$P{logoBase64Img}]]></imageExpression>
 				</image>
+				<textField>
+					<reportElement x="408" y="40" width="100" height="20"/>
+					<textElement/>
+					<textFieldExpression><![CDATA[$P{isClassEmpty}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="407" y="10" width="100" height="20"/>
+					<textElement/>
+					<textFieldExpression><![CDATA[$P{testType}]]></textFieldExpression>
+				</textField>
 			</frame>
 			<rectangle>
 				<reportElement style="PSFRTitleRectLogo" x="0" y="128" width="555" height="20"/>
@@ -145,6 +155,16 @@
 					<font fontName="Times New Roman" size="14" isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{testType}.toUpperCase() + " TEST REPORT"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="308" y="130" width="100" height="20"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$P{testType}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="431" y="130" width="100" height="20"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$P{isClassEmpty}]]></textFieldExpression>
 			</textField>
 		</band>
 	</title>

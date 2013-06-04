@@ -85,9 +85,9 @@
 		</ul>
 	</div>
 	<div class="icon_fun_div printAsPdf" style="margin-top: -35px;">
-			<!-- <a href="#" id="pdfPopup" >
+			<a href="#" id="pdfPopup" >
 				<img id="pdfCreation" src="images/icons/print_pdf.png" title="Generate pdf" style="height: 20px; width: 20px;"/>
-			</a> -->
+			</a>
 			<a href="#" class="<%= iconClass %>" id="openFolder">
 				<img id="folderIcon" src="images/icons/open-folder.png" title="Open folder"/>
 			</a>
