@@ -1761,11 +1761,14 @@ public class Quality extends DynamicParameterAction implements Constants {
                     loadReportDir = matcher.replaceAll(testResultsType);
                     sb.append(loadReportDir); 
                 }
-                File file = new File(sb.toString());
-                File[] children = file.listFiles(new XmlNameFileFilter(FILE_EXTENSION_XML));
-                if (!ArrayUtils.isEmpty(children)) {
-                    setResultFileAvailable(true);
-                    break;
+                String resultExtension = frameworkUtil.getLoadResultFileExtension(appInfo);
+                if (StringUtils.isNotEmpty(resultExtension)) {
+                	File file = new File(sb.toString());
+                	File[] children = file.listFiles(new XmlNameFileFilter(resultExtension));
+                	if (!ArrayUtils.isEmpty(children)) {
+                		setResultFileAvailable(true);
+                		break;
+                	}
                 }
             }
         } catch(Exception e) {
@@ -1783,9 +1786,10 @@ public class Quality extends DynamicParameterAction implements Constants {
         }
 
         try {
+        	ApplicationInfo applicationInfo = getApplicationInfo();
             StringBuilder sb = new StringBuilder(getApplicationHome());
             FrameworkUtil frameworkUtil = FrameworkUtil.getInstance();
-            String loadReportDir = frameworkUtil.getLoadTestReportDir(getApplicationInfo());
+            String loadReportDir = frameworkUtil.getLoadTestReportDir(applicationInfo);
 
             if (s_debugEnabled) {
                 S_LOGGER.debug("test type performance test Report directory " + loadReportDir);
@@ -1801,16 +1805,18 @@ public class Quality extends DynamicParameterAction implements Constants {
             if (s_debugEnabled) {
                 S_LOGGER.debug("test type performance test Report directory & Type " + sb.toString() + " Type " + getTestResultsType());
             }
-
-            File file = new File(sb.toString());
-            File[] resultFiles = file.listFiles(new XmlNameFileFilter(FILE_EXTENSION_XML));
-            if (!ArrayUtils.isEmpty(resultFiles)) {
-                QualityUtil.sortResultFile(resultFiles);
-                for (File resultFile : resultFiles) {
-                    if (resultFile.isFile()) {
-                        testResultFiles.add(resultFile.getName());
-                    }
-                }
+            String resultExtension = frameworkUtil.getLoadResultFileExtension(applicationInfo);
+            if (StringUtils.isNotEmpty(resultExtension)) {
+            	File file = new File(sb.toString());
+            	File[] resultFiles = file.listFiles(new XmlNameFileFilter(resultExtension));
+            	if (!ArrayUtils.isEmpty(resultFiles)) {
+            		QualityUtil.sortResultFile(resultFiles);
+            		for (File resultFile : resultFiles) {
+            			if (resultFile.isFile()) {
+            				testResultFiles.add(resultFile.getName());
+            			}
+            		}
+            	}
             }
         } catch(PhrescoException e) {
             if (s_debugEnabled) {
@@ -1967,10 +1973,12 @@ public class Quality extends DynamicParameterAction implements Constants {
                 File file = new File(sb.toString());
                 
                 String resultExtension = frameworkUtil.getPerformanceResultFileExtension(appInfo);
-                File[] children = file.listFiles(new XmlNameFileFilter(resultExtension));
-                if (!ArrayUtils.isEmpty(children)) {
-                    setResultFileAvailable(true);
-                    break;
+                if (StringUtils.isNotEmpty(resultExtension)) {
+                	File[] children = file.listFiles(new XmlNameFileFilter(resultExtension));
+                	if (!ArrayUtils.isEmpty(children)) {
+                		setResultFileAvailable(true);
+                		break;
+                	}
                 }
             }
         } catch(Exception e) {
@@ -2017,14 +2025,17 @@ public class Quality extends DynamicParameterAction implements Constants {
             
             String resultExtension = frameworkUtil.getPerformanceResultFileExtension(applicationInfo);
             File file = new File(sb.toString());
-            File[] resultFiles = file.listFiles(new XmlNameFileFilter(resultExtension));
-            if (!ArrayUtils.isEmpty(resultFiles)) {
-                QualityUtil.sortResultFile(resultFiles);
-                for (File resultFile : resultFiles) {
-                    if (resultFile.isFile()) {
-                        testResultFiles.add(resultFile.getName());
-                    }
-                }
+            
+            if (StringUtils.isNotEmpty(resultExtension)) {
+            	File[] resultFiles = file.listFiles(new XmlNameFileFilter(resultExtension));
+            	if (!ArrayUtils.isEmpty(resultFiles)) {
+            		QualityUtil.sortResultFile(resultFiles);
+            		for (File resultFile : resultFiles) {
+            			if (resultFile.isFile()) {
+            				testResultFiles.add(resultFile.getName());
+            			}
+            		}
+            	}
             }
         } catch(PhrescoException e) {
             if (s_debugEnabled) {
