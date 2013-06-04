@@ -535,7 +535,7 @@ public class CIManagerImpl implements CIManager, FrameworkConstants {
         }
     }
     
-    private JsonArray getBuildsArray(CIJob job) throws PhrescoException {
+    public JsonArray getBuildsArray(CIJob job) throws PhrescoException {
     	if (debugEnabled) {
     		S_LOGGER.debug("Entering Method CIManagerImpl.getBuildsArray");
     	}
@@ -575,6 +575,44 @@ public class CIManagerImpl implements CIManager, FrameworkConstants {
             Gson gson = new Gson();
             CIBuild ciBuild = null;
             for (int i = 0; i < jsonArray.size(); i++) {
+                ciBuild = gson.fromJson(jsonArray.get(i), CIBuild.class);
+                setBuildStatus(ciBuild, job);
+        		String buildUrl = ciBuild.getUrl();
+        		String jenkinUrl = job.getJenkinsUrl() + ":" + job.getJenkinsPort();
+        		buildUrl = buildUrl.replaceAll("localhost:" + job.getJenkinsPort(), jenkinUrl); // when displaying url it should display setup machine ip
+        		ciBuild.setUrl(buildUrl);
+                ciBuilds.add(ciBuild);
+            }
+        } catch(Exception e) {
+        	if (debugEnabled) {
+        		S_LOGGER.debug("Entering Method CIManagerImpl.getCIBuilds(CIJob job) " + e.getLocalizedMessage());
+        	}
+        }
+        return ciBuilds;
+    }
+    
+    public int getBuildSize(CIJob job) throws PhrescoException {
+    	if (debugEnabled) {
+    		S_LOGGER.debug("Entering Method CIManagerImpl.getBuildSize(CIJob job)");
+    	}
+    	 JsonArray jsonArray = getBuildsArray(job);
+    	 return jsonArray.size();
+    }
+    
+    public List<CIBuild> getLimitedBuilds(CIJob job, int start, int stop) throws PhrescoException {
+    	if (debugEnabled) {
+    		S_LOGGER.debug("Entering Method CIManagerImpl.getLimitedBuilds(CIJob job, int start, int stop)");
+    	}
+    	List<CIBuild> ciBuilds = null;
+        try {
+        	if (debugEnabled) {
+        		S_LOGGER.debug("getCIBuilds()  JobName = "+ job.getName());
+        	}
+            JsonArray jsonArray = getBuildsArray(job);
+            ciBuilds = new ArrayList<CIBuild>(jsonArray.size());
+            Gson gson = new Gson();
+            CIBuild ciBuild = null;
+            for (int i = start; i < stop; i++) {
                 ciBuild = gson.fromJson(jsonArray.get(i), CIBuild.class);
                 setBuildStatus(ciBuild, job);
         		String buildUrl = ciBuild.getUrl();

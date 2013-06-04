@@ -72,7 +72,7 @@
 		
 		<% if (isEnvSpecific) { %>
 			<!-- Environment Buttton -->
-		    <a id="addEnvironments" class="btn btn-primary"><s:text name='lbl.app.config.environments'/></a>
+		    <input type="button" id="addEnvironments" class="btn <%= per_disabledClass %>" <%= per_disabledStr %> value="<s:text name='lbl.app.config.environments'/>"/>
 	    <% } %>
 		         
 		<s:if test="hasActionMessages()">

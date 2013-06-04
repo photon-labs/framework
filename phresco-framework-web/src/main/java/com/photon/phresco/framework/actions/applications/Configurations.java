@@ -19,9 +19,12 @@ package com.photon.phresco.framework.actions.applications;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FilenameFilter;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -34,12 +37,16 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.codehaus.jettison.json.JSONException;
 
 import com.photon.phresco.api.ApplicationProcessor;
 import com.photon.phresco.api.ConfigManager;
@@ -162,7 +169,10 @@ public class Configurations extends FrameworkBaseAction {
     private String themePath = "";
     private String themeNameError = "";
     private String themePathError = "";
+    private String oldThemeName = "";
     private List<String> checkedThemes = null;
+    private String previewPath = "";
+    private String imageAsStream = "";
     
     private static Map<Boolean, String> uploadResultMap = new HashMap<Boolean, String>();
     
@@ -2005,8 +2015,15 @@ public class Configurations extends FrameworkBaseAction {
 
 
 	public String themeBuilderAdd() throws PhrescoException {
-		setReqAttribute(REQ_FROM_PAGE, FROM_PAGE_ADD);
-
+		try {
+			//REQ_THEME_PATH_FROM_POM
+			StringBuilder defaultThemeBuilderPath = getThemeBuilderPathFromPom();
+			setReqAttribute(Constants.THEME_PATH, defaultThemeBuilderPath.toString().replace(File.separator, FORWARD_SLASH));
+			setReqAttribute(REQ_FROM_PAGE, FROM_PAGE_ADD);
+		} catch (Exception e) {
+			throw new PhrescoException(e);
+		}
+		
 		return SUCCESS;
 	}
 
@@ -2014,12 +2031,30 @@ public class Configurations extends FrameworkBaseAction {
 		try {
 			ApplicationProcessor applicationProcessor = getApplicationProcessor();
 			org.codehaus.jettison.json.JSONObject jsonObj = applicationProcessor.themeBuilderEdit(getApplicationInfo(), getThemeFilePath());
+			setReqAttribute(Constants.THEME_NAME, FilenameUtils.removeExtension(getThemeBuilderFile()));
+			String fileDir = getThemeFilePath().substring(0, getThemeFilePath().lastIndexOf(File.separator) + 1);
+			setReqAttribute(Constants.THEME_PATH, fileDir.replace(File.separator, FORWARD_SLASH));
 			setReqAttribute(REQ_FROM_PAGE, FROM_PAGE_EDIT);
 			setReqAttribute(REQ_CSS_JSON, jsonObj);
-		} catch (PhrescoException e) {
-			//TODO: throw error
+		} catch (Exception e) {
+			throw new PhrescoException(e); 
 		}
+		
 		return SUCCESS;
+	}
+	
+	private StringBuilder getThemeBuilderPathFromPom() throws PhrescoException, PhrescoPomException {
+		FrameworkUtil fu = FrameworkUtil.getInstance();
+		ApplicationInfo applicationInfo = getApplicationInfo();
+		String themeBuilderPath = fu.getThemeBuilderPath(applicationInfo);
+		StringBuilder defaultThemeBuilderPath = new StringBuilder();
+		defaultThemeBuilderPath.append(Utility.getProjectHome())
+		.append(applicationInfo.getAppDirName());
+		if (StringUtils.isNotEmpty(themeBuilderPath)) {
+			defaultThemeBuilderPath.append(themeBuilderPath)
+			.append(File.separator);
+		}
+		return defaultThemeBuilderPath;
 	}
 	
 	public String themeBuilderValidate() throws PhrescoException {
@@ -2033,7 +2068,9 @@ public class Configurations extends FrameworkBaseAction {
 		}
 		
 		if (StringUtils.isNotEmpty(getThemeName()) && StringUtils.isNotEmpty(getThemePath())) {
-			validateThemeNameDuplication(getApplicationInfo());
+			if (FROM_PAGE_ADD.equals(getFromPage()) || (FROM_PAGE_EDIT.equals(getFromPage()) && (!getOldThemeName().equalsIgnoreCase(getThemeName())))) {
+				validateThemeNameDuplication(getApplicationInfo());
+			}
 		}
 		return SUCCESS;
 	}
@@ -2050,11 +2087,12 @@ public class Configurations extends FrameworkBaseAction {
 						existingFiles.add(child.getName().toLowerCase());
 					}
 				}
+				
 				if (CollectionUtils.isNotEmpty(existingFiles) && existingFiles.contains((getThemeName()+themeFileExtension).toLowerCase())) {
 					setErrorFound(true);
 					setThemeNameError(getText(ERROR_THEME_EXISTS));
 				}
-			}
+			} 
 		} catch (PhrescoPomException e) {
 			throw new PhrescoException(e);
 		} 
@@ -2118,6 +2156,26 @@ public class Configurations extends FrameworkBaseAction {
 		}
 		writer.flush();
 		writer.close();
+		
+		return SUCCESS;
+	}
+	
+	public String previewImage() throws PhrescoException {
+		try {
+			File imageFile = new File(getPreviewPath());
+			if (imageFile.exists()) {
+				InputStream imageStream = new FileInputStream(imageFile);
+				byte[] imgByte = null;
+    			imgByte = IOUtils.toByteArray(imageStream);
+    			byte[] encodedImage = Base64.encodeBase64(imgByte);
+    			String string = new String(encodedImage);
+    			setImageAsStream(string);
+    			setReqAttribute("imgStream", string);
+    			setReqAttribute("imgName", getReqParameter("previewImage"));
+			}
+		} catch (Exception e) {
+			throw new PhrescoException(e);
+		}
 		
 		return SUCCESS;
 	}
@@ -2688,5 +2746,29 @@ public class Configurations extends FrameworkBaseAction {
 
 	public List<String> getNonEnvConfigNames() {
 		return nonEnvConfigNames;
+	}
+
+	public String getOldThemeName() {
+		return oldThemeName;
+	}
+
+	public void setOldThemeName(String oldThemeName) {
+		this.oldThemeName = oldThemeName;
+	}
+
+	public String getPreviewPath() {
+		return previewPath;
+	}
+
+	public void setPreviewPath(String previewPath) {
+		this.previewPath = previewPath;
+	}
+
+	public String getImageAsStream() {
+		return imageAsStream;
+	}
+
+	public void setImageAsStream(String imageAsStream) {
+		this.imageAsStream = imageAsStream;
 	}
 }

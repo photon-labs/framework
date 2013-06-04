@@ -122,7 +122,7 @@ $('.control-group').addClass("valReportLbl");
     	$('#codeValidatePopup').click(function() {
     		var params = getBasicParams();
     		params = params.concat("&actionType=");
-    		params = params.concat('<%= FrameworkConstants.UNIT %>');
+    		params = params.concat('<%= FrameworkConstants.REQ_CODE %>');
     		loadContent("checkForLock", '', '', params, true, true);
     	});
 
@@ -147,6 +147,10 @@ $('.control-group').addClass("valReportLbl");
 		$('#validateAgainst, #projectModule').change(function() {
 			sonarReport();
   		});
+		
+		$(".close").click(function() {
+			removeLock('<%= FrameworkConstants.REQ_CODE %>');
+		});
     });
     
     function popupOnOk(obj) {
@@ -178,6 +182,7 @@ $('.control-group').addClass("valReportLbl");
 	}
 	
 	function popupOnClose(obj) {
+		removeLock('<%= FrameworkConstants.REQ_CODE %>');
 		var closeUrl = $(obj).attr("id");
 		var params = getBasicParams();
 		params = params.concat("&actionType=");

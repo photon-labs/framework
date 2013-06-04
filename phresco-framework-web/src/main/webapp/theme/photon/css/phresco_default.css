@@ -3670,7 +3670,6 @@ div.submit_input {
     width: auto;
     padding: 2px;
 	color:#FFFFFF;
-	z-index: 2001;
 }
 .username {
 	cursor: pointer;
@@ -6718,16 +6717,22 @@ color: #313131;
 	float: right !important;
 }	
 
-.removeThemeImg {
-	height: 12px;
-	width: 12px;
-	vertical-align: middle;
-	margin-left: 4px;
+.removeThemeAnchor {
+	float: left;
+    padding: 3px;
 }
 
 .themeImageName {
-	margin-left: 5px;
+	float: left;
+    margin-left: 5px;
+    padding: 3px;
+    width: 78px;
 }
+
+.themeImageNameLbl {
+	margin-bottom:0px !important;
+	cursor: pointer;
+}	
 
 .themePathBrowse {
 	float: left;

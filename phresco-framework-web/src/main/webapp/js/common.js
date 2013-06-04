@@ -614,7 +614,7 @@ function hideErrorInAccordion(tag, headingObj, span) {
 
 function setTimeOut() {
 	setTimeout(function() {
-		$('#successmsg, #envSuccessmsg').fadeOut("slow", function () {
+		$('#successmsg, #envSuccessmsg, #appSuccessmsg').fadeOut("slow", function () {
 			$('#successmsg').hide();
 		});
 	}, 5000);
@@ -1061,11 +1061,19 @@ function constructSingleSelectOptions(dependentValues, pushToElement, parameterT
 			} else {
 				selectedStr = "";
 			}
+			
+			var optionValue = "";
+			if (dependentValues[i].key != undefined && !isBlank(dependentValues[i].key)) {
+				optionValue = dependentValues[i].key;
+			} else {
+				optionValue = dependentValues[i].value;
+			}
+			
 			if (dependentValues[i].dependency != undefined && !isBlank(dependentValues[i].dependency)) {
 				var dynamicDependency = "dependency=" + dependentValues[i].dependency;
-				$("<option></option>", {value: dependentValues[i].value, text: dependentValues[i].value, additionalParam: dynamicDependency}).appendTo("#" + pushToElement);	
+				$("<option></option>", {value: optionValue, text: dependentValues[i].value, additionalParam: dynamicDependency}).appendTo("#" + pushToElement);	
 			} else {
-				$("<option></option>", {value: dependentValues[i].value, text: dependentValues[i].value, additionalParam: additionalParam}).appendTo("#" + pushToElement);			
+				$("<option></option>", {value: optionValue, text: dependentValues[i].value, additionalParam: additionalParam}).appendTo("#" + pushToElement);			
 			}
 		}
 		
@@ -1535,6 +1543,13 @@ function removeRow(obj) {
 	}else{
 		$(".removeImage").hide();
 	}
+}
+
+function removeLock(actionType) {
+	var params = getBasicParams();
+	params = params.concat("&actionType=");
+	params = params.concat(actionType);
+	loadContent('removeLock', '', $('#build-body-container'), params, true);
 }
 
 function disableUploadButton(controlObj) {

@@ -231,7 +231,7 @@
 
 <script type="text/javascript">
 	accordionOperation();//To create the accordion
-	
+	var globalParams = "";
 	confirmDialog($("#deleteBtn"), '<s:text name="lbl.hdr.confirm.dialog"/>', '<s:text name="modal.body.text.del.project"/>', 'deleteProject','<s:text name="lbl.btn.ok"/>');
 	
 	//To open the recently opened project's accordion and check the check boxes accordingly
@@ -303,9 +303,12 @@
 	 		<%
 				} else {
 			%>
-					showLoadingIcon();
-					var params = $(this).attr("additionalParam");
-					loadContent('repoExistCheckForUpdate', $('#formCustomers'), '', params, true);
+					var params = getBasicParams();
+					globalParams = $(this).attr("additionalParam");
+					params = params.concat(globalParams);
+					params = params.concat("&actionType=");
+					params = params.concat('<%= FrameworkConstants.UPDATE %>');
+					loadContent("checkLockForUpdate", '', '', params, true, true);
 			<%
 				}
 			%>
@@ -319,8 +322,12 @@
 	 		<%
 				} else {
 			%>
-					var params = $(this).attr("additionalParam");
-					yesnoPopup('updateProjectPopup', '<s:text name="lbl.app.add.to.repo"/>', 'importUpdateAppln','<s:text name="lbl.app.add.to.repo"/>', '', params);
+					var params = getBasicParams();
+					globalParams = $(this).attr("additionalParam");
+					params = params.concat(globalParams);
+					params = params.concat("&actionType=");
+					params = params.concat('<%= FrameworkConstants.ADD_TO_REPO %>');
+					loadContent("checkLockForAddToRepo", '', '', params, true, true);
 			<%
 	 			}
  			%>
@@ -334,9 +341,12 @@
 	 		<%
 				} else {
 			%>
-					showLoadingIcon();
-					var params = $(this).attr("additionalParam");
-					loadContent('repoExistCheckForCommit', $('#formCustomers'), '', params, true);					
+					var params = getBasicParams();
+					globalParams = $(this).attr("additionalParam");
+					params = params.concat(globalParams);
+					params = params.concat("&actionType=");
+					params = params.concat('<%= FrameworkConstants.COMMIT %>');
+					loadContent("checkLockForCommit", '', '', params, true, true);
 			<%
 				}
 			%>
@@ -422,27 +432,43 @@
 	}
 	
 	function successEvent(pageUrl, data) {
+		//to check lock for add to repo
+		if (pageUrl == "checkLockForAddToRepo") {
+			if (!data.locked) {
+				yesnoPopup('updateProjectPopup', '<s:text name="lbl.app.add.to.repo"/>', 'importUpdateAppln','<s:text name="lbl.app.add.to.repo"/>', '', globalParams);
+			} else {
+    			var warningMsg = '<s:text name="lbl.app.warnin.msg"/> ' + data.lockedBy + ' at ' + data.lockedDate +".";
+    			showWarningMsg('<s:text name="lbl.app.warnin.title"/>', warningMsg);
+    		}
+		}
+		//to check lock for commit
+		if (pageUrl == "checkLockForCommit") {
+			if (!data.locked) {
+				loadContent('repoExistCheckForCommit', $('#formCustomers'), '', globalParams, true);
+			} else {
+    			var warningMsg = '<s:text name="lbl.app.warnin.msg"/> ' + data.lockedBy + ' at ' + data.lockedDate +".";
+    			showWarningMsg('<s:text name="lbl.app.warnin.title"/>', warningMsg);
+    		}
+		}
+		//to check lock for update
+		if (pageUrl == "checkLockForUpdate") {
+			if (!data.locked) {
+				loadContent('repoExistCheckForUpdate', $('#formCustomers'), '', globalParams, true);
+			} else {
+    			var warningMsg = '<s:text name="lbl.app.warnin.msg"/> ' + data.lockedBy + ' at ' + data.lockedDate +".";
+    			showWarningMsg('<s:text name="lbl.app.warnin.title"/>', warningMsg);
+    		}
+		}
+		
 		//to check for project already checked-in for commit
 		if (pageUrl == 'repoExistCheckForCommit' || pageUrl == 'repoExistCheckForUpdate') {
 			//if already exists
 			if (data.repoExistForCommit) {
-				var params = "projectId=";
-				params = params.concat(data.projectId);
-				params = params.concat("&appId=");
-				params = params.concat(data.appId);
-				params = params.concat("&action=");
-				params = params.concat(data.action);
 				hideLoadingIcon();
-				yesnoPopup('updateProjectPopup', '<s:text name="lbl.app.commit"/>', 'importUpdateAppln','<s:text name="lbl.app.commit"/>', '', params);
+				yesnoPopup('updateProjectPopup', '<s:text name="lbl.app.commit"/>', 'importUpdateAppln','<s:text name="lbl.app.commit"/>', '', globalParams);
 			} else if (data.repoExistForUpdate) {
-				var params = "projectId=";
-				params = params.concat(data.projectId);
-				params = params.concat("&appId=");
-				params = params.concat(data.appId);
-				params = params.concat("&action=");
-				params = params.concat(data.action);
 				hideLoadingIcon();
-				yesnoPopup('updateProjectPopup', '<s:text name="lbl.app.update"/>', 'importUpdateAppln','<s:text name="lbl.app.update"/>', '', params);
+				yesnoPopup('updateProjectPopup', '<s:text name="lbl.app.update"/>', 'importUpdateAppln','<s:text name="lbl.app.update"/>', '', globalParams);
 			} else {//warning message if not exist
 				hideLoadingIcon();
 				$('#popupPage').modal('show');

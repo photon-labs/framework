@@ -80,13 +80,6 @@ function asyncHandler(appId, actionType, pageUrl, progressConsoleObj) {
     });
 }
 
-function removeLock(actionType) {
-	var params = getBasicParams();
-	params = params.concat("&actionType=");
-	params = params.concat(actionType);
-	loadContent('removeLock', '', $('#build-body-container'), params, true);
-}
-
 function refreshTable() {
 	loadContent('builds', '', $('#build-body-container'), getBasicParams());
 }
@@ -104,5 +97,6 @@ document.onkeydown = function(evt) {
     	}
     	$("#popupPage, #progressPopup").modal('hide');
     	loadContent("removeReaderFromSession", '', '', sessionParam, true, true, '');
+    	removeLock('<%= FrameworkConstants.UNIT %>');
     }
 };

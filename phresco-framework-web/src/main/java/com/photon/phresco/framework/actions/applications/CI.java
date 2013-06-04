@@ -51,6 +51,7 @@ import org.quartz.CronExpression;
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
 
+import com.google.gson.JsonArray;
 import com.photon.phresco.commons.CIPasswordScrambler;
 import com.photon.phresco.commons.FrameworkConstants;
 import com.photon.phresco.commons.model.ApplicationInfo;
@@ -61,6 +62,7 @@ import com.photon.phresco.framework.api.ActionType;
 import com.photon.phresco.framework.api.CIManager;
 import com.photon.phresco.framework.commons.ApplicationsUtil;
 import com.photon.phresco.framework.commons.FrameworkUtil;
+import com.photon.phresco.framework.impl.CIManagerImpl;
 import com.photon.phresco.framework.impl.ProjectManagerImpl;
 import com.photon.phresco.framework.model.CIBuild;
 import com.photon.phresco.framework.model.CIJob;
@@ -122,6 +124,7 @@ public class CI extends DynamicParameterAction implements FrameworkConstants {
 	private boolean collabNetoverWriteFiles = false;
 	
 	//confluence implementation
+	private String values = "";
 	private boolean enableConfluence = false;
 	private String confluenceSite = "";
 	private boolean confluencePublish = false;
@@ -147,9 +150,12 @@ public class CI extends DynamicParameterAction implements FrameworkConstants {
     private String logo = "";
     private String sonarUrl = "";
     private boolean isDownStreamAvailable;
-    private String values = "";
-    
-	public String ci() {
+   
+    //for getting buildList 
+    private List<CIBuild> limitedBuilds = null;
+    private int pageNo;
+	
+    public String ci() {
 		if (debugEnabled) {
 			S_LOGGER.debug("Entering Method CI.ci()");
 		}	
@@ -198,12 +204,12 @@ public class CI extends DynamicParameterAction implements FrameworkConstants {
 			if (debugEnabled) {
 				S_LOGGER.debug("Return jobs got in CI ");
 			}
-			Map<String, List<CIBuild>> ciJobsAndBuilds = new HashMap<String, List<CIBuild>>();
+			Map<String, Integer> ciJobsAndBuilds = new HashMap<String, Integer>();
 			if (existingJobs != null) {
 				for (CIJob ciJob : existingJobs) {
 					boolean buildJenkinsAlive = false;
 					boolean isJobCreatingBuild = false;
-					List<CIBuild> builds = null;
+					int builds = 0;
 					buildInProgress = false;
 					buildJenkinsAlive = Utility.isConnectionAlive(HTTP_PROTOCOL, ciJob.getJenkinsUrl(), Integer.parseInt(ciJob.getJenkinsPort()));
 					isJobCreatingBuild = ciManager.isJobCreatingBuild(ciJob);
@@ -215,7 +221,7 @@ public class CI extends DynamicParameterAction implements FrameworkConstants {
 					setReqAttribute(CI_BUILD_JENKINS_ALIVE + ciJob.getName(), buildJenkinsAlive);
 					setReqAttribute(CI_BUILD_IS_IN_PROGRESS + ciJob.getName(), isJobCreatingBuild);
 					if (buildJenkinsAlive == true) {
-						builds = ciManager.getBuilds(ciJob);
+						builds = ciManager.getBuildSize(ciJob);
 					}
 					if (debugEnabled) {
 						S_LOGGER.debug("ciJob.getName() builds .... " + builds);
@@ -1488,7 +1494,42 @@ public class CI extends DynamicParameterAction implements FrameworkConstants {
 		}
 		return SUCCESS;
 	}
-
+	
+	//to fetch buildList on demand through pagination
+	public String fetchBuildsList() throws PhrescoException {
+		try {
+			// change this value for items per page in buildList pagination
+			int itemsPerPage = 3;
+			ApplicationInfo appInfo = getApplicationInfo();
+			if (appInfo != null ) {
+				CIManagerImpl ci = new CIManagerImpl();
+				CIJob job = ci.getJob(appInfo, name);
+				int size = 0;
+				if(job != null) {
+					JsonArray jsonArray = ci.getBuildsArray(job);
+					if (jsonArray != null) {
+						size = jsonArray.size();
+					}
+				}
+				setTotalBuildSize(size);
+				if ((size > itemsPerPage) && (pageNo < 1)) { // size > items_per_page
+					setLimitedBuilds(ci.getLimitedBuilds(job, size - itemsPerPage, size));
+				} else if ((size > itemsPerPage) && (pageNo > 0)) { // if pageNo > 0, do calculation
+					int index = pageNo * itemsPerPage;
+					//console.log("size-(index+items_per_page) >= 0 ? size-(index+items_per_page) : 0 "+ (size-(index+items_per_page) >= 0 ? size-(index+items_per_page) : 0));
+					setLimitedBuilds(ci.getLimitedBuilds(job, size-(index+itemsPerPage) >= 0 ? size-(index+itemsPerPage) : 0, (size-index) > 0 ? size-index:1));
+				} else if (size == 0) { //size == 0, return immediately
+					return SUCCESS;
+				} else { //size < items_per_page
+					setLimitedBuilds(ci.getLimitedBuilds(job, 0, size));
+				}
+			} 
+		} catch(Exception e) {
+			throw new PhrescoException(e);
+		}
+		return SUCCESS;
+	}
+	
 	public String localJenkinsLocalAlive() {
 		if (debugEnabled) {
 			S_LOGGER.debug("Entering Method CI.localJenkinsLocalAlive()");
@@ -1978,5 +2019,21 @@ public class CI extends DynamicParameterAction implements FrameworkConstants {
 
 	public String getConfluenceOther() {
 		return confluenceOther;
+	}
+
+	public void setLimitedBuilds(List<CIBuild> limitedBuilds) {
+		this.limitedBuilds = limitedBuilds;
+	}
+
+	public List<CIBuild> getLimitedBuilds() {
+		return limitedBuilds;
+	}
+
+	public void setPageNo(int pageNo) {
+		this.pageNo = pageNo;
+	}
+
+	public int getPageNo() {
+		return pageNo;
 	}
 }

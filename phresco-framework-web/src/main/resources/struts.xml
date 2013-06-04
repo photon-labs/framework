@@ -347,6 +347,10 @@
              <result type="json"/>
         </action>
         
+        <action name="fetchBuildsList" method="fetchBuildsList" class="com.photon.phresco.framework.actions.applications.CI">
+             <result type="json"/>
+        </action>
+        
         <action name="CIBuildDownload" method="CIBuildDownload" class="com.photon.phresco.framework.actions.applications.CI">
             <result name="success" type="stream">
                 <param name="contentType">${contentType}</param>
@@ -784,6 +788,10 @@
 			<result type="json" />
         </action>
         
+        <action name="dynamicUploadFile" method="dynamicUploadFile" class="com.photon.phresco.framework.actions.applications.DynamicParameterAction">
+        	<result type="json" />
+        </action>
+        
         <action name="checkForHub" method="checkForHub" class="com.photon.phresco.framework.actions.applications.Quality">
 			<result type="json" />
         </action>
@@ -1015,23 +1023,23 @@
         </action> 
         
         <action name="themeBuilderList" method="themeBuilderList" class="com.photon.phresco.framework.actions.applications.Configurations">
-        	<result name="success">/pages/applications/themeBuilderList.jsp</result>
+        	<result name="success">/pages/applications/configuration/themeBuilderList.jsp</result>
         </action> 
         
          <action name="themeBuilderEdit" method="themeBuilderEdit" class="com.photon.phresco.framework.actions.applications.Configurations">
-        	<result name="success">/pages/applications/themeBuilder.jsp</result>
+        	<result name="success">/pages/applications/configuration/themeBuilder.jsp</result>
         </action>  
         
          <action name="themeBuilderAdd" method="themeBuilderAdd" class="com.photon.phresco.framework.actions.applications.Configurations">
-        	<result name="success">/pages/applications/themeBuilder.jsp</result>
+        	<result name="success">/pages/applications/configuration/themeBuilder.jsp</result>
         </action> 
 
         <action name="themeBuilderSave" method="themeBuilderSave" class="com.photon.phresco.framework.actions.applications.Configurations">
-        	<result name="success">/pages/applications/themeBuilderList.jsp</result>
+        	<result name="success">/pages/applications/configuration/themeBuilderList.jsp</result>
         </action> 
         
         <action name="deleteThemes" method="deleteThemes" class="com.photon.phresco.framework.actions.applications.Configurations">
-        	<result name="success">/pages/applications/themeBuilderList.jsp</result>
+        	<result name="success">/pages/applications/configuration/themeBuilderList.jsp</result>
         </action>
         
         <action name="uploadThemeBundle" method="themeBundleUpload" class="com.photon.phresco.framework.actions.applications.Configurations">
@@ -1066,6 +1074,18 @@
         </action>
         
         <action name="checkLockForDeploy" method="checkForLock" class="com.photon.phresco.framework.actions.applications.Applications">
+            <result type="json" />        
+        </action>
+       
+        <action name="checkLockForAddToRepo" method="checkForLock" class="com.photon.phresco.framework.actions.applications.Applications">
+            <result type="json" />        
+        </action>
+        
+        <action name="checkLockForCommit" method="checkForLock" class="com.photon.phresco.framework.actions.applications.Applications">
+            <result type="json" />        
+        </action>
+        
+        <action name="checkLockForUpdate" method="checkForLock" class="com.photon.phresco.framework.actions.applications.Applications">
             <result type="json" />        
         </action>
     </package>

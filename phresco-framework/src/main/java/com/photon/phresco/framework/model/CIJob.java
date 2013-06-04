@@ -169,6 +169,9 @@ public class CIJob {
 	private String dbContextUrls = "";
 	private String loadContextUrl = "";
 	private String isFromCI = ""; 
+	private String testBasis = "";
+	private String customTestAgainst = "";
+	private String availableJmx = "";
 	private boolean coberturaPlugin = false;
   
 	// Android functional test
@@ -1073,5 +1076,29 @@ public class CIJob {
 
 	public void setReportName(String reportName) {
 		this.reportName = reportName;
+	}
+
+	public void setTestBasis(String testBasis) {
+		this.testBasis = testBasis;
+	}
+
+	public String getTestBasis() {
+		return testBasis;
+	}
+
+	public void setCustomTestAgainst(String customTestAgainst) {
+		this.customTestAgainst = customTestAgainst;
+	}
+
+	public String getCustomTestAgainst() {
+		return customTestAgainst;
+	}
+
+	public void setAvailableJmx(String availableJmx) {
+		this.availableJmx = availableJmx;
+	}
+
+	public String getAvailableJmx() {
+		return availableJmx;
 	}
 }
