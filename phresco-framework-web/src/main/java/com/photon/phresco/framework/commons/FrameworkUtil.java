@@ -1448,9 +1448,11 @@ public class FrameworkUtil extends FrameworkBaseAction implements Constants, Fra
     	BufferedWriter out = null;
 		FileWriter fstream = null;
 		try {
+			List<LockDetail> newLockDetails = new ArrayList<LockDetail>();
+			newLockDetails.addAll(lockDetails);
 			List<LockDetail> availableLockDetails = getLockDetails();
 			if (toGenerate && CollectionUtils.isNotEmpty(availableLockDetails)) {
-				lockDetails.addAll(availableLockDetails);
+				newLockDetails.addAll(availableLockDetails);
 			}
 			
 			Gson gson = new Gson();
