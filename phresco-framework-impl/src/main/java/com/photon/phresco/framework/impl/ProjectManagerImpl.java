@@ -200,7 +200,12 @@ public class ProjectManagerImpl implements ProjectManager, FrameworkConstants, C
 		if (isDebugEnabled) {
 			S_LOGGER.debug("Entering Method ProjectManagerImpl.create(ProjectInfo projectInfo)");
 		}
-		ClientResponse response = serviceManager.createProject(projectInfo);
+		ClientResponse response = null;
+		try {
+			response = serviceManager.createProject(projectInfo);
+		} catch (Exception e) {
+			throw new PhrescoException(e);
+		}
 
 		if (isDebugEnabled) {
 			S_LOGGER.debug("createProject response code " + response.getStatus());
@@ -458,6 +463,7 @@ public class ProjectManagerImpl implements ProjectManager, FrameworkConstants, C
 				deletionSuccess = true;
 			} catch (IOException e) {
 				deletionSuccess = false;
+	            throw new PhrescoException(e);
 			}
 		}
 		

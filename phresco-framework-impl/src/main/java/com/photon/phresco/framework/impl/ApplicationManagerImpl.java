@@ -68,7 +68,12 @@ public class ApplicationManagerImpl implements ApplicationManager {
 					"ProjectInfo projectInfo, ServiceManager serviceManager)");
 			S_LOGGER.debug("performAction() ProjectInformation = "+ projectInfo.getAppInfos().get(0));
 		}
-		ClientResponse response = serviceManager.updateProject(projectInfo);
+		ClientResponse response = null;
+		try {
+			response = serviceManager.updateProject(projectInfo);
+		} catch (Exception e) {
+			throw new PhrescoException(e);
+		}
 		if (response.getStatus() == 200) {
 				//TODO Define post update object and execute the corresponding technology implementation
 //				updateProjectPOM(projectInfo);
