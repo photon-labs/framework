@@ -954,12 +954,21 @@ public class DynamicParameterAction extends FrameworkBaseAction implements Const
     	PrintWriter writer = null;
 		try {
 			ApplicationInfo applicationInfo = getApplicationInfo();
+			FrameworkUtil frameworkUtil = FrameworkUtil.getInstance();
 			writer = getHttpResponse().getWriter();
 			InputStream is = getHttpRequest().getInputStream();
 			String uploadedFileName = getHttpRequest().getHeader(X_FILE_NAME);
-			if (PERFORMANCE_TEST.equals(getGoal()) && applicationInfo != null &&  StringUtils.isNotEmpty(uploadedFileName)) {
-				uploadFileForPerformance(writer, applicationInfo, is, uploadedFileName);
-			}
+			if (applicationInfo != null &&  StringUtils.isNotEmpty(uploadedFileName)) {
+				if (PERFORMANCE_TEST.equals(getGoal())) {
+					String performanceTestDir = frameworkUtil.getPerformanceTestDir(applicationInfo);
+					String performanceUploadJmxDir = frameworkUtil.getPerformanceUploadJmxDir(applicationInfo);
+					uploadFileForPerformanceLoad(writer, applicationInfo, is, performanceTestDir, performanceUploadJmxDir,uploadedFileName);
+				} else if (Constants.PHASE_LOAD_TEST.equals(getGoal())) {
+					String loadTestDir = frameworkUtil.getLoadTestDir(applicationInfo);
+					String loadUploadJmxDir = frameworkUtil.getLoadUploadJmxDir(applicationInfo);
+					uploadFileForPerformanceLoad(writer, applicationInfo, is, loadTestDir, loadUploadJmxDir,uploadedFileName);
+				}
+			} 
 		} catch (Exception e) {
 			writer.print(SUCCESS_FALSE);
 		} finally {
@@ -970,16 +979,16 @@ public class DynamicParameterAction extends FrameworkBaseAction implements Const
     	return SUCCESS;
     }
 
-    private void uploadFileForPerformance(PrintWriter writer, ApplicationInfo applicationInfo, InputStream inputStream, String zipfileName) throws PhrescoException {
+    private void uploadFileForPerformanceLoad(PrintWriter writer, ApplicationInfo applicationInfo, InputStream inputStream, String testDirectory, String jmxUploadDir, String zipfileName) throws PhrescoException {
     	File tempDirectory = null;
     	try {
-    		FrameworkUtil instance = FrameworkUtil.getInstance();
+    		
 			StringBuilder uploadJmxDir = new StringBuilder(Utility.getProjectHome())
 			.append(applicationInfo.getAppDirName())
-			.append(instance.getPerformanceTestDir(applicationInfo))
+			.append(testDirectory)
 			.append(File.separator)
 			.append(getHttpRequest().getHeader(REQ_CUSTOM_TEST_AGAINST))
-			.append(instance.getPerformanceUploadJmxDir(applicationInfo));
+			.append(jmxUploadDir);
 			
 			StringBuilder temp = new StringBuilder(uploadJmxDir);
 			temp.append(File.separator)
@@ -1026,6 +1035,7 @@ public class DynamicParameterAction extends FrameworkBaseAction implements Const
 			 FileUtil.delete(tempDirectory);
 		}
     }
+    
     
     public List<Value> getDependentValues() {
         return dependentValues;
