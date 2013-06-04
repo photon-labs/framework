@@ -206,6 +206,10 @@ public class FrameworkUtil extends FrameworkBaseAction implements Constants {
     	return getPomProcessor(appinfo).getProperty(POM_PROP_KEY_LOADTEST_RPT_DIR);
     }
     
+    public String getLoadUploadJmxDir(ApplicationInfo appinfo) throws PhrescoException, PhrescoPomException {
+        return getPomProcessor(appinfo).getProperty(POM_PROP_KEY_LOADTEST_JMX_UPLOAD_DIR);
+    }
+    
     public String getPerformanceTestDir(ApplicationInfo appinfo) throws PhrescoException, PhrescoPomException {
         return getPomProcessor(appinfo).getProperty(POM_PROP_KEY_PERFORMANCETEST_DIR);
     }
@@ -216,6 +220,10 @@ public class FrameworkUtil extends FrameworkBaseAction implements Constants {
     
     public String getPerformanceResultFileExtension(ApplicationInfo appinfo) throws PhrescoException, PhrescoPomException {
         return getPomProcessor(appinfo).getProperty(POM_PROP_KEY_PERFORMANCETEST_RESULT_EXTENSION);
+    }
+    
+    public String getLoadResultFileExtension(ApplicationInfo appinfo) throws PhrescoException, PhrescoPomException {
+        return getPomProcessor(appinfo).getProperty(POM_PROP_KEY_LOADTEST_RESULT_EXTENSION);
     }
     
     public String getPerformanceTestShowDevice(ApplicationInfo appinfo) throws PhrescoException, PhrescoPomException {

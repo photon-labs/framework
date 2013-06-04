@@ -947,14 +947,27 @@
 	} 
 	
 	function loadTemplateMandatoryVal(showIcon) {
+		var testBasis = $("#testBasis").val();
 		var testAgainst = $("#testAgainst").val();
 		var redirect = false;		
-		if (testAgainst != undefined && (testAgainst == "server" || testAgainst == "webservice")) {
-			redirect = loadContextUrlMandatoryVal();
-		} else if (testAgainst == undefined) { 			
-			redirect = true; // added for CI android performance return			
-		}
-	
+		
+		
+		//if load test is triggered against parameters
+		if (testAgainst != undefined && testBasis !=undefined && testBasis == "parameters") {
+			//call template mandatory fn for server or webservice
+			if (testAgainst != undefined && (testAgainst == "server" || testAgainst == "webservice")) {
+				redirect = loadContextUrlMandatoryVal();
+			} 
+		} else if (testBasis !=undefined && testBasis == "customise") {//if load test is triggered against customise
+			redirect = true; 
+		} else if (testBasis ==undefined && testAgainst != undefined) {//if test basis not available and tests against available
+			if (testAgainst == "server" || testAgainst == "webservice") {
+				redirect = loadContextUrlMandatoryVal();
+			} 
+		} else if (testBasis == undefined && testAgainst == undefined) { 			
+			redirect = true; // added for  android load return			
+		} 
+		
 		if (redirect) {
 			$('.yesNoPopupErr').empty();
 			runLoadOrPerformanceTest(showIcon, 'load');
