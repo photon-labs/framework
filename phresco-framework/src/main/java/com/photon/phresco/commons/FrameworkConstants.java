@@ -605,6 +605,7 @@ public interface FrameworkConstants {
 	/**
 	 * Performance related
 	 */
+	String CUSTOM = "custom";
 	String TYPE_GET = "get";
 	String ARRAY_LIST = "java.util.List";
 	String REQ_OBJECT_CLASS = "objectClass";

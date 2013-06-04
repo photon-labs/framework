@@ -17,15 +17,9 @@
  */
 package com.photon.phresco.framework.actions.applications;
 
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.ArrayList;
@@ -41,12 +35,10 @@ import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.io.FilenameUtils;
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.codehaus.plexus.util.FileUtils;
 
-import com.photon.phresco.api.ApplicationProcessor;
 import com.photon.phresco.api.DynamicPageParameter;
 import com.photon.phresco.api.DynamicParameter;
 import com.photon.phresco.commons.model.ApplicationInfo;
@@ -74,7 +66,6 @@ import com.photon.phresco.util.Constants;
 import com.photon.phresco.util.FileUtil;
 import com.photon.phresco.util.PhrescoDynamicLoader;
 import com.photon.phresco.util.Utility;
-import com.phresco.pom.exception.PhrescoPomException;
 
 public class DynamicParameterAction extends FrameworkBaseAction implements Constants {
 
@@ -1009,12 +1000,20 @@ public class DynamicParameterAction extends FrameworkBaseAction implements Const
 			 //extract the zip file inside temp directory
 			 boolean unzipped = ArchiveUtil.unzip(tempZipPath, tempDirectory.getPath(), folder);
 			 
+			 uploadJmxDir = uploadJmxDir.append(File.separator)
+			 .append(CUSTOM);
+			 
+			 File destination = new File(uploadJmxDir.toString());
+			 if (!destination.exists()) {
+				 destination.mkdir();
+			 }
+			 
 			 //after extracting, delete that zip file
 			 FileUtil.delete(tempZipFile);
 			 if (unzipped) {
 				 File extractedFile = new File(tempDirectory.getPath() + File.separator + Constants.PROJECTS_TEMP + folder);
 				 if (extractedFile.exists()) {
-					 FileUtil.copyFolder(extractedFile, new File(uploadJmxDir.toString()));
+					 FileUtil.copyFolder(extractedFile, destination);
 				 }
 				 writer.print(SUCCESS_TRUE);
 			 } else {
