@@ -1004,7 +1004,7 @@ public class Applications extends FrameworkBaseAction implements Constants {
 		try {
 			//To generate the lock for the particular operation
 			FrameworkUtil.generateLock(Collections.singletonList(getLockDetail(getApplicationInfo().getId(), UPDATE)), true);
-			
+			setActionType(UPDATE);
 			ApplicationInfo applicationInfo = getApplicationInfo();
 			scmi.updateProject(GIT, repoUrl, userName, password, MASTER , null, applicationInfo);
 			errorString = getText(SUCCESS_PROJECT_UPDATE);
@@ -1077,7 +1077,7 @@ public class Applications extends FrameworkBaseAction implements Constants {
 		try {
 			//To generate the lock for the particular operation
 			FrameworkUtil.generateLock(Collections.singletonList(getLockDetail(getApplicationInfo().getId(), UPDATE)), true);
-			
+			setActionType(UPDATE);
 			ApplicationInfo applicationInfo = getApplicationInfo();
 			scmi.updateProject(SVN, repoUrl, userName, password, null, revision, applicationInfo);
 			errorString = getText(SUCCESS_PROJECT_UPDATE);
@@ -1148,7 +1148,7 @@ public class Applications extends FrameworkBaseAction implements Constants {
         try {
         	//To generate the lock for the particular operation
 			FrameworkUtil.generateLock(Collections.singletonList(getLockDetail(getApplicationInfo().getId(), UPDATE)), true);
-			
+			setActionType(UPDATE);
             ApplicationInfo applicationInfo = getApplicationInfo();
             scmi.updateProject(BITKEEPER, getRepoUrl(), getUsername(), getPassword(), null, getRevision(), applicationInfo);
             errorString = getText(SUCCESS_PROJECT_UPDATE);
@@ -1181,7 +1181,7 @@ public class Applications extends FrameworkBaseAction implements Constants {
 		try {
 			//To generate the lock for the particular operation
 			FrameworkUtil.generateLock(Collections.singletonList(getLockDetail(getApplicationInfo().getId(), ADD_TO_REPO)), true);
-			
+			setActionType(ADD_TO_REPO);
 			SCMManagerImpl scmi = new SCMManagerImpl();
 			scmi.importToRepo(SVN, repoUrl, userName, password, null, null, getApplicationInfo(), commitMessage);
 			errorString = getText(ADD_PROJECT_SUCCESS);
@@ -1210,7 +1210,7 @@ public class Applications extends FrameworkBaseAction implements Constants {
 			
 			SCMManagerImpl scmi = new SCMManagerImpl();
 			scmi.importToRepo(GIT, repoUrl, userName, password, null, null, getApplicationInfo(), commitMessage);
-			
+			setActionType(ADD_TO_REPO);
 			errorString = getText(ADD_PROJECT_SUCCESS);
 			errorFlag = true;
 			updateLatestProject();
@@ -1278,7 +1278,7 @@ public class Applications extends FrameworkBaseAction implements Constants {
 				
 				//To generate the lock for the particular operation
 				FrameworkUtil.generateLock(Collections.singletonList(getLockDetail(getApplicationInfo().getId(), COMMIT)), true);
-				
+				setActionType(COMMIT);
 				SCMManagerImpl scmi = new SCMManagerImpl();
 				String applicationHome = getApplicationHome();
 				File appDir = new File(applicationHome);
@@ -1307,7 +1307,7 @@ public class Applications extends FrameworkBaseAction implements Constants {
 		try {
 			//To generate the lock for the particular operation
 			FrameworkUtil.generateLock(Collections.singletonList(getLockDetail(getApplicationInfo().getId(), COMMIT)), true);
-			
+			setActionType(COMMIT);
 			if (!commitableFiles.isEmpty()) {
 				SCMManagerImpl scmi = new SCMManagerImpl();
 				String applicationHome = getApplicationHome();
@@ -1342,7 +1342,7 @@ public class Applications extends FrameworkBaseAction implements Constants {
 	    try {
 	    	//To generate the lock for the particular operation
 			FrameworkUtil.generateLock(Collections.singletonList(getLockDetail(getApplicationInfo().getId(), COMMIT)), true);
-	    	
+			setActionType(COMMIT);
 	        SCMManagerImpl scmi = new SCMManagerImpl();
             File appDir = new File(getApplicationHome());
             scmi.commitToRepo(BITKEEPER, getRepoUrl(), getUsername(), getPassword(),  null, null, appDir, getCommitMessage());
