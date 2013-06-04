@@ -182,6 +182,7 @@
 	}
 	
 	function constructJsonString() {
+		if (validateConfigurations()) {
 		$('.baseWrapperRes').remove();
 		var properties = [];
 		$(".wrapperDiv").each(function() {
@@ -199,7 +200,38 @@
 		params = params.concat("&values=");
 		params = params.concat(values);
 		loadContent('saveConfluenceConfiguration', '', $('#subcontainer'), params, true, false);
+		} 
 	}
 	
+	function validateConfigurations() {
+		var boolValue = true;
+		var RegExp = /(ftp|http|https|git):\/\/(\w+:{0,1}\w*@@)?(\S+)(:[0-9]+)?(\/|\/([\w#!:.?+=&%@@!\-\/]))?/;
+		var obj = $(".baseWrapper").find('.wrapperDiv');
+		obj.each(function() { // list of input element
+			var url = $(this).find('input[name=confluenceUrl]').val();
+			var username = $(this).find('input[name=confluenceUsername]').val();
+			var password = $(this).find('input[name=confluencePassword]').val();
+			if (!RegExp.test(url)) {
+				boolValue = false;
+				$('#errMsg').html("Invalid Url");
+				hidePopuploadingIcon();
+				$(this).find('input[name=confluenceUrl]').focus();
+				return false;
+			} else if (isBlank(username)) {
+				boolValue = false;
+				$('#errMsg').html("Username is empty");
+				hidePopuploadingIcon();
+				$(this).find('input[name=confluenceUsername]').focus();
+				return false;
+			} else if (isBlank(password)) {
+				boolValue = false;
+				$('#errMsg').html("Password is empty");
+				hidePopuploadingIcon();
+				$(this).find('input[name=confluencePassword]').focus();
+				return false;
+			}
+		});
+		return boolValue;
+	}
 	
 </script>
