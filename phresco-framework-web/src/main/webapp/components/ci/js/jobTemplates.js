@@ -13,6 +13,7 @@ define(["framework/widgetWithTemplate", "ci/listener/ciListener"], function() {
 		updateEvent : null,
 		deleteEvent : null,
 		ciRequestBody : {},
+		templateData : {},
 	
 		/***
 		 * Called in initialization time of this class 
@@ -48,10 +49,17 @@ define(["framework/widgetWithTemplate", "ci/listener/ciListener"], function() {
 			Clazz.navigationController.push(this);
 		},
 		
-		// preRender: function(whereToRender, renderFunction){
-		// 	var self = this;
-		// 	alert("CI pre render ... ");		
-		// },
+		preRender: function(whereToRender, renderFunction){
+			var self = this;
+			console.log("CI pre render ... " + whereToRender);
+			self.ciListener.listJobTemplate(self.ciListener.getRequestHeader(self.ciRequestBody, "list"), function(response) {
+				console.log(JSON.stringify(response.data));
+				self.templateData.jobTemplates = response.data;
+				// var userPermissions = JSON.parse(self.configurationlistener.configurationAPI.localVal.getSession('userPermissions'));
+				// self.templateData.userPermissions = userPermissions;
+				renderFunction(self.templateData, whereToRender);
+			});			
+		},
 
 		/***
 		 * Called after the preRender() and bindUI() completes. 
