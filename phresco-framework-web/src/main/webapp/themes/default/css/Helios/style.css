@@ -172,20 +172,7 @@ to {
 
 textarea { resize: none; }
 
-select, textarea, input[type="text"], input[type="password"], input[type="datetime"], input[type="datetime-local"], input[type="date"], input[type="month"], input[type="time"], input[type="week"], input[type="number"], input[type="email"], input[type="url"], input[type="search"], input[type="tel"], input[type="color"], .uneditable-input {
-    border-radius: 4px 4px 4px 4px;
-    color: #555555;
-    display: inline-block;
-    font-size: 14px;
-    height: 30px;
-    line-height: 20px;
-    margin-bottom: 10px;
-    padding: 4px 6px;
-    vertical-align: middle;
-}
-
 /*=== End of Loading ===*/
-
 
 /* *************************************************************************** LOGIN PAGE STYLES ************************************************************************** */
 
@@ -285,7 +272,7 @@ select, textarea, input[type="text"], input[type="password"], input[type="dateti
 }
 
 .logintext input {
-	width: 195px;
+	width: 215px;
 	padding: 0px 10px !important;
 	height: 44px !important;
 	border: none !important;
@@ -668,6 +655,24 @@ ul.nav li.dropdown:hover > .test_options{
 	padding-right:8px !important;
 }
 
+/* ********************************************** CSS related to MODAL ************************************************************************************** */
+
+#simplemodal-overlay {background-color:#000;}
+
+.successpop {
+	padding: 8px 8px 0px 8px;
+	border: 1px solid green;
+	background: #0C6;
+	border-radius: 6px;
+	color: #fff;
+	font-size: 14px;
+	font-weight: bold;
+	text-align: center;
+	min-width: 400px;	
+}
+
+
+
 /* ********************************************** CSS related to Project list page ************************************************************************************** */
 
 .table-bordered {
@@ -888,7 +893,7 @@ ul.nav li.dropdown:hover > .test_options{
 }
 
 #deleteproj_msg div input, #delete_msg div input {
-	padding: 0px 8px !important;
+	padding: 3px 8px !important;
 	margin-top: 3px;
 	font-size: 11px;		
 }
@@ -898,6 +903,18 @@ ul.nav li.dropdown:hover > .test_options{
 }
 
 /* ******************************************************************* CSS related to create project page ********************************************************************** */
+
+.datepicker  {
+	width :214px;
+}
+
+.table th, .table td {
+	padding: 6px;
+}
+
+img[name="close"] {
+	cursor: pointer;
+}
 
 .create_proj {
 	padding-bottom:62px !important;
@@ -933,7 +950,7 @@ ul.nav li.dropdown:hover > .test_options{
 }
 
 .startdate input, .enddate input {
-	width: 178px;
+	width: 182px;
 	margin-right: 4px;
 }
 
@@ -999,13 +1016,14 @@ ul.nav li.dropdown:hover > .test_options{
 	text-decoration: none;
 }
 .custon_dropdown {
-	width:308px !important;
+	width:137px !important;
 }
 
-select[name=prebuiltapps] {
-	margin-left: 92px;
+.optional_dropdown {
+	margin-left: 16px;
     position: absolute;
 	display: inline-block;
+	width:145px;
 }
 
 .loading_bar {
@@ -1543,28 +1561,29 @@ select[name=prebuiltapps] {
 }
 
 .startdate input, .enddate input {
-	width: 85px !important;
+	width: 120px !important;
 	margin-right: 4px;
 }
 
 .create_proj table tr td input[type=text] {
-	width: 85px;	
+	width: 144px;
 }
 
  .create_proj table tr td select, .bootstrap-select .btn {
-	width: 99px; 
+	width: 137px; 
  }
  
-.custon_dropdown {
+select[name="builtmyself"] {
+	width:109px !important;
+}
+ 
+.custon_dropdown  {
 	width:100px !important;
 }
 
-.create_proj select {
-	width: 163px !important;
-}
-
-select[name=prebuiltapps] {
-	margin-left: 22px;
+.optional_dropdown  {
+	margin-left: 6px;
+	width:110px !important;
 }
 
 .title_nav ul a {
@@ -1595,28 +1614,25 @@ select[name=prebuiltapps] {
 }
 
 .startdate input, .enddate input {
-	width: 95px !important;
+	width: 163px !important;
 	margin-right: 4px;
 }
 
 .create_proj table tr td input[type=text] {
-	width: 125px;	
+	width: 187px;	
 }
 
  .create_proj table tr td select, .bootstrap-select .btn {
-	width: 134px; 
+	width: 145px; 
  }
- 
- .custon_dropdown {
-	width:106px !important;
+
+select[name="builtmyself"] {
+	width: 112px !important;
 }
 
-.create_proj select {
-	width: 200px !important;
-}
-
-select[name=prebuiltapps] {
-	margin-left: 20px;
+.optional_dropdown {
+	margin-left: 9px;
+	width: 138px !important;
 }
 
 .title_nav ul a {
@@ -1643,24 +1659,25 @@ select[name=prebuiltapps] {
 }
 
 .startdate input, .enddate input {
-	width: 120px !important;
+	width: 161px !important;
 	margin-right: 4px;
 }
 
 .create_proj table tr td input[type=text] {
-	width: 150px;	
+	 width: 186px;
 }
 
  .create_proj table tr td select, .bootstrap-select .btn {
-	width: 162px; 
+	width: 186px; 
  }
- 
-.custon_dropdown {
-	width:246px !important;
+
+select[name="builtmyself"] {
+	width: 115px !important;
 }
 
-select[name=prebuiltapps] {
-	margin-left: 65px;
+.optional_dropdown {
+	margin-left: 11px;
+	width: 141px !important;
 }
 
 .title_nav ul a {
@@ -1688,24 +1705,25 @@ select[name=prebuiltapps] {
 }
 
 .startdate input, .enddate input {
-	width: 140px !important;
+	width: 160px !important;
 	margin-right: 4px;
 }
 
 .create_proj table tr td input[type=text] {
-	width: 170px;	
+	width: 184px;	
 }
 
  .create_proj table tr td select, .bootstrap-select .btn {
 	width: 183px; 
  }
  
- .custon_dropdown {
-	width: 264px !important;
+select[name="builtmyself"] {
+	width : 115px !important;
 }
 
-select[name=prebuiltapps] {
-	margin-left: 70px;
+.optional_dropdown  {
+	margin-left: 10px;
+	width : 145px !important;
 }
 }
 
@@ -2380,6 +2398,7 @@ html>body tbody.scrollContent {
 .datepicker table {
   width: 100%;
   margin: 0;
+  font-size: 12px;
 }
 .datepicker td,
 .datepicker th {
@@ -2976,4 +2995,26 @@ html>body tbody.scrollContent {
 
 .download_list .table_border tr.proj_title td:last-child {
 	text-align: left !important;	
+}
+
+
+
+
+/* *************************************************************** STYLES FOR DOWNLOAD PAGE ************************************************************************************ */
+
+
+.features_box .box_div ul li span {
+padding-top: 12px;
+}
+
+select, textarea, input[type="text"], input[type="password"], input[type="datetime"], input[type="datetime-local"], input[type="date"], input[type="month"], input[type="time"], input[type="week"], input[type="number"], input[type="email"], input[type="url"], input[type="search"], input[type="tel"], input[type="color"], .uneditable-input {
+border-radius: 4px 4px 4px 4px;
+color: #555555;
+display: inline-block;
+font-size: 14px;
+height: 30px;
+line-height: 20px;
+margin-bottom: 10px;
+padding: 4px 6px;
+vertical-align: middle;
 }
