@@ -805,8 +805,9 @@ define(["projects/api/projectsAPI"], function() {
          * @response: response from the service
          */
         pageRefresh : function(response) {
-			var projectlist = commonVariables.navListener.getMyObj(commonVariables.projectlist);
-			projectlist.loadPage();
+			commonVariables.navListener.getMyObj(commonVariables.projectlist, function(projectlistObj){
+				projectlistObj.loadPage();
+			});
 		},
 		
 		createproject : function(projectId, action) {
