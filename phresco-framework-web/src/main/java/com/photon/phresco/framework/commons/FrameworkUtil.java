@@ -185,10 +185,6 @@ public class FrameworkUtil extends FrameworkBaseAction implements Constants, Fra
         return getPomProcessor(appInfo.getAppDirName()).getProperty(POM_PROP_KEY_UNITTEST_TESTCASE_PATH_START + option + POM_PROP_KEY_UNITTEST_TESTCASE_PATH_END);
     }
     
-    public String getManualTestDir(ApplicationInfo appinfo) throws PhrescoException, PhrescoPomException {
-        return getPomProcessor(appinfo.getAppDirName()).getProperty(POM_PROP_KEY_MANUALTEST_DIR);
-    }
-    
     public String getSeleniumToolType(ApplicationInfo appInfo) throws PhrescoException, PhrescoPomException {
         return getPomProcessor(appInfo.getAppDirName()).getProperty(POM_PROP_KEY_FUNCTEST_SELENIUM_TOOL);
     }
