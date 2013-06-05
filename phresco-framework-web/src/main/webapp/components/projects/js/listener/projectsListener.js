@@ -77,16 +77,20 @@ define(["projects/api/projectsAPI"], function() {
 					function(response) {
 						if (response !== null) {
 							callback(response);
+							commonVariables.loadingScreen.removeLoading();
 						} else {
 							callback({ "status" : "service failure"});
+							commonVariables.loadingScreen.removeLoading();
 						}
 
 					},
 
 					function(textStatus) {
+						commonVariables.loadingScreen.removeLoading();
 					}
 				);
 			} catch(exception) {
+				commonVariables.loadingScreen.removeLoading();
 			}
 
 		},
@@ -805,8 +809,9 @@ define(["projects/api/projectsAPI"], function() {
          * @response: response from the service
          */
         pageRefresh : function(response) {
-			var projectlist = commonVariables.navListener.getMyObj(commonVariables.projectlist);
-			projectlist.loadPage();
+			commonVariables.navListener.getMyObj(commonVariables.projectlist, function(projectlistObj){
+				projectlistObj.loadPage();
+			});
 		},
 		
 		createproject : function(projectId, action) {

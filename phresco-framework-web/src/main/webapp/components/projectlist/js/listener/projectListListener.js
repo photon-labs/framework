@@ -50,23 +50,23 @@ define(["projectlist/api/projectListAPI"], function() {
 		getProjectList : function(header, callback) {
 			var self = this;
 			try {
-				//commonVariables.loadingScreen.showLoading();
+				commonVariables.loadingScreen.showLoading();
 				self.projectListAPI.projectslist(header,
 					function(response) {
 						if (response !== null) {
-							//commonVariables.loadingScreen.removeLoading();
+							commonVariables.loadingScreen.removeLoading();
 							callback(response);
 						} else {
-							//commonVariables.loadingScreen.removeLoading();
+							commonVariables.loadingScreen.removeLoading();
 							callback({ "status" : "service failure"});
 						}
 					},
 					function(textStatus) {
-						//self.loadingScreen.removeLoading();
+						commonVariables.loadingScreen.removeLoading();
 					}
 				);
 			} catch(exception) {
-				self.loadingScreen.removeLoading();
+				commonVariables.loadingScreen.removeLoading();
 			}
 
 		},
@@ -79,19 +79,19 @@ define(["projectlist/api/projectListAPI"], function() {
 				self.projectListAPI.projectslist(header,
 					function(response) {
 						if(response != null ){
-							//self.loadingScreen.removeLoading();
+							commonVariables.loadingScreen.removeLoading();
 							callback(response);						
 						} else {
-							//self.loadingScreen.removeLoading();
+							commonVariables.loadingScreen.removeLoading();
 							callback({ "status" : "service failure"});
 						}
 					},					
 					function(textStatus) {
-						//self.loadingScreen.removeLoading();	
+						commonVariables.loadingScreen.removeLoading();	
 					}
 				);
 			} catch(exception) {
-				//self.loadingScreen.removeLoading();
+				commonVariables.loadingScreen.removeLoading();
 			}
 		},
 
