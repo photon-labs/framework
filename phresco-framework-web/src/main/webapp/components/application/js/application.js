@@ -1,4 +1,4 @@
-define(["framework/widgetWithTemplate", "application/listener/applicationListener"], function() {
+define(["application/listener/applicationListener"], function() {
 	Clazz.createPackage("com.components.application.js");
 
 	Clazz.com.components.application.js.Application = Clazz.extend(Clazz.WidgetWithTemplate, {
@@ -8,7 +8,6 @@ define(["framework/widgetWithTemplate", "application/listener/applicationListene
 		editApplicationListener: null,
 		name : commonVariables.editApplication,
 		addServerEvent : null,
-		applicationAPI : null,
 		onRemoveLayerEvent : null,
 		onAddLayerEvent : null,
 		renderData : {},
@@ -28,9 +27,10 @@ define(["framework/widgetWithTemplate", "application/listener/applicationListene
 		 */
 		initialize : function(globalConfig){
 			var self = this;
-			self.editApplicationListener = new Clazz.com.components.application.js.listener.ApplicationListener(globalConfig);
-			self.applicationAPI =  new Clazz.com.components.application.js.api.ApplicationAPI();
-			self.registerEvents(self.editApplicationListener);
+			if(self.editApplicationListener === null)
+				self.editApplicationListener = new Clazz.com.components.application.js.listener.ApplicationListener(globalConfig);
+
+				self.registerEvents(self.editApplicationListener);
 		},
 		
 		registerEvents : function(editApplicationListener) {
@@ -59,8 +59,6 @@ define(["framework/widgetWithTemplate", "application/listener/applicationListene
 					//console.info(artfgroup);
 					var option = '';
 					$.each(artfgroup.versions, function(index, value){
-						//console.info('value = ' , value.version);
-						//console.info('value = ' , value.id , selectedVersion);
 						if(selectedVersion[0] == value.id){
 							option +='<option selected="selected" value='+value.id+'>'+ value.version +'</option>';
 						}else{
@@ -115,7 +113,7 @@ define(["framework/widgetWithTemplate", "application/listener/applicationListene
 			self.multiselect();
 			commonVariables.navListener.showHideControls(commonVariables.editApplication);
 			commonVariables.navListener.showHideTechOptions();
-			//self.editApplicationListener.renderServer(self.renderData);
+
 		},
 		
 		preRender: function(whereToRender, renderFunction){

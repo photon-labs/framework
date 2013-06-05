@@ -167,14 +167,23 @@ define(["projectlist/api/projectListAPI"], function() {
 		editApplication : function(value, techid) {
 			var self = this;
 			Clazz.navigationController.jQueryContainer = commonVariables.contentPlaceholder;
-			commonVariables.navListener.getMyObj(commonVariables.editApplication, function(returnVal){
-				self.editAplnContent = returnVal;
-				self.editAplnContent.appDirName = value;
-				self.projectListAPI.localVal.setSession('appDirName', value);
-				self.projectListAPI.localVal.setSession('techid', techid);
-				Clazz.navigationController.push(self.editAplnContent, true);
-				$("#aplntitle").html("Edit - "+value);
-			});	
+			if(self.editAplnContent === null){
+				commonVariables.navListener.getMyObj(commonVariables.editApplication, function(returnVal){
+					self.editAplnContent = returnVal;
+					self.loadAppInfo(value, techid);
+				});	
+			} else {
+				self.loadAppInfo(value, techid);
+			}	
+		},
+		
+		loadAppInfo : function(value, techid){
+			var self = this;
+			self.editAplnContent.appDirName = value;
+			self.projectListAPI.localVal.setSession('appDirName', value);
+			self.projectListAPI.localVal.setSession('techid', techid);
+			Clazz.navigationController.push(self.editAplnContent, true);
+			$("#aplntitle").html("Edit - "+value);
 		},
 		
 		dynamicrenderlocales : function(contentPlaceholder) {

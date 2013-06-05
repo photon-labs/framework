@@ -1,4 +1,4 @@
-define(["framework/widget", "codequality/api/codequalityAPI"], function() {
+define(["codequality/api/codequalityAPI"], function() {
 
 	Clazz.createPackage("com.components.codequality.js.listener");
 
@@ -13,8 +13,9 @@ define(["framework/widget", "codequality/api/codequalityAPI"], function() {
 		 * @config: configurations for this listener
 		 */
 		initialize : function(config) {
-			this.codequalityAPI = new Clazz.com.components.codequality.js.api.CodeQualityAPI();
-			this.loadingScreen = new Clazz.com.js.widget.common.Loading();
+			var self = this;
+			if(self.codequalityAPI === null)
+				self.codequalityAPI = new Clazz.com.components.codequality.js.api.CodeQualityAPI();
 		},
 		
 		codeValidate : function() {
@@ -98,24 +99,24 @@ define(["framework/widget", "codequality/api/codequalityAPI"], function() {
 		getReportTypes : function(header, callback) {
 			var self = this;
 			try {
-				self.loadingScreen.showLoading();
+				commonVariables.loadingScreen.showLoading();
 				self.codequalityAPI.codequality(header,
 					function(response) {
 						if (response !== null) {
 							callback(response);
-							self.loadingScreen.removeLoading();
+							commonVariables.loadingScreen.removeLoading();
 						} else {
-							self.loadingScreen.removeLoading();
+							commonVariables.loadingScreen.removeLoading();
 							callback({ "status" : "service failure"});
 						}
 					},
 
 					function(textStatus) {
-						self.loadingScreen.removeLoading();
+						commonVariables.loadingScreen.removeLoading();
 					}
 				);
 			} catch(exception) {
-				self.loadingScreen.removeLoading();
+				commonVariables.loadingScreen.removeLoading();
 			}
 		},
 
