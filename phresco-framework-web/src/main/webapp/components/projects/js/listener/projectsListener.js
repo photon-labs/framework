@@ -73,6 +73,7 @@ define(["projects/api/projectsAPI"], function() {
 		getEditProject : function(header, callback) {
 			var self = this;
 			try {
+				commonVariables.loadingScreen.showLoading();
 				self.projectAPI.projects(header,
 					function(response) {
 						if (response !== null) {
