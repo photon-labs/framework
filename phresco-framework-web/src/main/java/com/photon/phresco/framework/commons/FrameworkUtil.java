@@ -142,7 +142,11 @@ public class FrameworkUtil extends FrameworkBaseAction implements Constants, Fra
     }
     
     public String getComponentTestDir(ApplicationInfo appinfo) throws PhrescoException, PhrescoPomException {
-        return getPomProcessor(appinfo.getAppDirName()).getProperty(POM_PROP_KEY_COMPONENTTEST_DIR);
+        return getPomProcessor(appInfo.getAppDirName()).getProperty(POM_PROP_KEY_COMPONENTTEST_DIR);
+    }
+    
+    public String getManualTestReportDir(ApplicationInfo appinfo) throws PhrescoException, PhrescoPomException {
+        return getPomProcessor(appInfo.getAppDirName()).getProperty(POM_PROP_KEY_MANUALTEST_RPT_DIR);
     }
     
     public String getUnitTestReportDir(ApplicationInfo appInfo) throws PhrescoPomException, PhrescoException {
