@@ -28,7 +28,8 @@ define(["projectlist/listener/projectListListener"], function() {
 		 */
 		initialize : function(globalConfig){
 			var self = this;
-			self.projectslistListener = new Clazz.com.components.projectlist.js.listener.ProjectsListListener;
+			if(self.projectslistListener === null)
+				self.projectslistListener = new Clazz.com.components.projectlist.js.listener.ProjectsListListener;
 			self.registerEvents(self.projectslistListener);
 		},
 
