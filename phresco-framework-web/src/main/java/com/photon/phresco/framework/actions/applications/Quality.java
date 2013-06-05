@@ -1578,7 +1578,6 @@ public class Quality extends DynamicParameterAction implements Constants {
 
     public String performanceTest() throws PhrescoException {
     	try {
-    		FileOutputStream fop = null;
     		ApplicationManager applicationManager = PhrescoFrameworkFactory.getApplicationManager();
     		ProjectInfo projectInfo = getProjectInfo();
     		ApplicationInfo applicationInfo = getApplicationInfo();
@@ -2323,7 +2322,7 @@ public class Quality extends DynamicParameterAction implements Constants {
 		ApplicationInfo appInfo = getApplicationInfo();
 		setReqAttribute(REQ_APPINFO, appInfo);
 		FrameworkUtil frameworkUtil = FrameworkUtil.getInstance();
-		setReqAttribute(PATH, frameworkUtil.getManualTestDir(appInfo));
+		setReqAttribute(PATH, frameworkUtil.getManualTestReportDir(appInfo));
 		
 		return MANUAL;
 	   }
@@ -2337,7 +2336,7 @@ public class Quality extends DynamicParameterAction implements Constants {
 		try {
 			ApplicationInfo appInfo = getApplicationInfo();
 			final FrameworkUtil frameworkUtil = FrameworkUtil.getInstance();
-			String manualTestDir = frameworkUtil.getManualTestDir(appInfo);
+			String manualTestDir = frameworkUtil.getManualTestReportDir(appInfo);
 			final StringBuilder sb = new StringBuilder(Utility.getProjectHome())
 			.append(appInfo.getAppDirName())
 			.append(manualTestDir);
@@ -2485,7 +2484,7 @@ public class Quality extends DynamicParameterAction implements Constants {
 		setReqAttribute(REQ_REQUEST_IP, requestIp);
 		setReqAttribute(REQ_APPINFO, appInfo);
 		FrameworkUtil frameworkUtil = FrameworkUtil.getInstance();
-		String path = frameworkUtil.getManualTestDir(appInfo);
+		String path = frameworkUtil.getManualTestReportDir(appInfo);
 		setReqAttribute(PATH, path);
 		StringBuilder sb = new StringBuilder(Utility.getProjectHome())
 		.append(appInfo.getAppDirName())
@@ -2504,7 +2503,7 @@ public class Quality extends DynamicParameterAction implements Constants {
 		setReqAttribute(REQ_REQUEST_IP, requestIp);
 		setReqAttribute(REQ_APPINFO, appInfo);
 		FrameworkUtil frameworkUtil = FrameworkUtil.getInstance();
-		String path = frameworkUtil.getManualTestDir(appInfo);
+		String path = frameworkUtil.getManualTestReportDir(appInfo);
 		setReqAttribute(PATH, path);
 		StringBuilder sb = new StringBuilder(Utility.getProjectHome())
 		.append(appInfo.getAppDirName())
@@ -2537,7 +2536,7 @@ public class Quality extends DynamicParameterAction implements Constants {
 			} else {
 				ApplicationInfo appInfo = getApplicationInfo();
 				FrameworkUtil frameworkUtil = FrameworkUtil.getInstance();
-				String manualTestDir = frameworkUtil.getManualTestDir(appInfo);
+				String manualTestDir = frameworkUtil.getManualTestReportDir(appInfo);
 				StringBuilder sb = new StringBuilder(Utility.getProjectHome())
 				.append(appInfo.getAppDirName())
 				.append(manualTestDir);
@@ -2569,7 +2568,6 @@ public class Quality extends DynamicParameterAction implements Constants {
     
     public class FileNameFileFilter implements FilenameFilter {
         private String filter_;
-        private String startWith_;
         public FileNameFileFilter(String filter) {
             filter_ = filter;
         }
@@ -2881,13 +2879,6 @@ public class Quality extends DynamicParameterAction implements Constants {
 				S_LOGGER.debug("check unit Test xml Availablity ==>" + xmlResultsAvailable);
 			}
 		
-			// functional xml check 
-			if(!xmlResultsAvailable) {
-				file = new File(sb.toString() + frameworkUtil.getFunctionalTestReportDir(appInfo));
-				xmlResultsAvailable = xmlFileSearch(file, xmlResultsAvailable);
-	            S_LOGGER.debug("check functional Test xml Availablity ==>" + xmlResultsAvailable);
-			}
-			
 			// component xml check 
 			if(!xmlResultsAvailable) {
 				String componentDir = frameworkUtil.getComponentTestReportDir(appInfo);
@@ -2896,6 +2887,20 @@ public class Quality extends DynamicParameterAction implements Constants {
 					xmlResultsAvailable = xmlFileSearch(file, xmlResultsAvailable);
 		            S_LOGGER.debug("check component Test xml Availablity ==>" + xmlResultsAvailable);
 				}
+			}
+			
+			// functional xml check 
+			if(!xmlResultsAvailable) {
+				file = new File(sb.toString() + frameworkUtil.getFunctionalTestReportDir(appInfo));
+				xmlResultsAvailable = xmlFileSearch(file, xmlResultsAvailable);
+	            S_LOGGER.debug("check functional Test xml Availablity ==>" + xmlResultsAvailable);
+			}
+			
+			// manual ods, xlsx, xls file check 
+			if(!xmlResultsAvailable) {
+				file = new File(sb.toString() + frameworkUtil.getManualTestReportDir(appInfo));
+				xmlResultsAvailable = spreadSheetFileSearch(file, xmlResultsAvailable);
+	            S_LOGGER.debug("check functional Test xml Availablity ==>" + xmlResultsAvailable);
 			}
 			
 			// performance xml check
@@ -2927,10 +2932,38 @@ public class Quality extends DynamicParameterAction implements Constants {
 	}
 
 	private boolean xmlFileSearch(File file, boolean xmlResultsAvailable) {
-		File[] children = file.listFiles(new XmlNameFileFilter(FILE_EXTENSION_XML));
-        if(children != null && children.length > 0) {
-        	xmlResultsAvailable = true;
-        }
+		try {
+			if (file.exists()) {
+				File[] children = file.listFiles(new XmlNameFileFilter(FILE_EXTENSION_XML));
+		        if(children != null && children.length > 0) {
+		        	xmlResultsAvailable = true;
+		        }
+			}
+		} catch (Exception e) {
+			S_LOGGER.error("File location is invalid -->" + file);
+		}
+		return xmlResultsAvailable;
+	}
+	
+	private boolean spreadSheetFileSearch(File file, boolean xmlResultsAvailable) {
+		try {
+			if (file.exists()) {
+				File[] listFiles = file.listFiles();
+				for (File listFile : listFiles) {
+					String fileName = listFile.getName();
+					String extension = fileName.substring(fileName.lastIndexOf(".") + 1, fileName.length());
+					if (extension.equals(XLSX)) {
+						xmlResultsAvailable = true;
+					} else if (extension.equals(XLS)) {
+						xmlResultsAvailable = true;
+					} else if (extension.equals(ODS)) {
+						xmlResultsAvailable = true;
+					}
+				}
+			}
+		} catch (Exception e) {
+			S_LOGGER.error("File location is invalid -->" + file);
+		}
 		return xmlResultsAvailable;
 	}
 
@@ -2953,7 +2986,7 @@ public class Quality extends DynamicParameterAction implements Constants {
 		    File[] children = pdfFileDir.listFiles(new FileNameFileFilter(DOT + PDF));
 		    QualityUtil util = new QualityUtil();
 		    if(children != null) {
-		    	util.sortResultFile(children);
+		    	QualityUtil.sortResultFile(children);
 		    }
 		    jsonarray = new JSONArray();
 			for (File child : children) {
