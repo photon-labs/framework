@@ -77,16 +77,20 @@ define(["projects/api/projectsAPI"], function() {
 					function(response) {
 						if (response !== null) {
 							callback(response);
+							commonVariables.loadingScreen.removeLoading();
 						} else {
 							callback({ "status" : "service failure"});
+							commonVariables.loadingScreen.removeLoading();
 						}
 
 					},
 
 					function(textStatus) {
+						commonVariables.loadingScreen.removeLoading();
 					}
 				);
 			} catch(exception) {
+				commonVariables.loadingScreen.removeLoading();
 			}
 
 		},
