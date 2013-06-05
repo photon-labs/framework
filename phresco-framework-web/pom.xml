@@ -232,6 +232,20 @@
 		
 		<dependency>
 			<groupId>jslibraries.files</groupId>
+			<artifactId>bootstrap_select</artifactId>
+			<version>1.0</version>
+			<type>js</type>
+		</dependency>
+		
+		<dependency>
+			<groupId>jslibraries.files</groupId>
+			<artifactId>bootstrap_select_min</artifactId>
+			<version>1.0</version>
+			<type>js</type>
+		</dependency>
+
+		<dependency>
+			<groupId>jslibraries.files</groupId>
 			<artifactId>jslib_jquery_alphanumeric_pack</artifactId>
 			<version>1.0</version>
 			<type>js</type>

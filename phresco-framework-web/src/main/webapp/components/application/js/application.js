@@ -101,7 +101,6 @@ define(["framework/widgetWithTemplate", "application/listener/applicationListene
 		 *
 		 */
 		loadPage :function(){
-			
 			Clazz.navigationController.push(this);
 		},
 		
@@ -113,6 +112,7 @@ define(["framework/widgetWithTemplate", "application/listener/applicationListene
 		 */
 		postRender : function(element) {			
 			var self = this;
+			self.multiselect();
 			commonVariables.navListener.showHideControls(commonVariables.editApplication);
 			commonVariables.navListener.showHideTechOptions();
 			//self.editApplicationListener.renderServer(self.renderData);

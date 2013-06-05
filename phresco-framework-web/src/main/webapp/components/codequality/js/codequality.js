@@ -54,6 +54,7 @@ define(["framework/widgetWithTemplate", "codequality/listener/codequalityListene
 					if(response.message == "Dependency returned successfully"){
 						self.dynamicpage.getHtml(function(response){
 							$("#dynamicContent").html(response);
+							self.multiselect();
 							self.dynamicpage.showParameters();
 							self.dynamicPageListener.controlEvent();
 						});

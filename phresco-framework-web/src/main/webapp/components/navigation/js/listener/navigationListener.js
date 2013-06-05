@@ -39,9 +39,10 @@ define(["navigation/api/navigationAPI"], function() {
 		
 		onAddProject : function() {
 			var self = this;
-			self.getMyObj(commonVariables.addproject);
-			Clazz.navigationController.jQueryContainer = commonVariables.contentPlaceholder;
-			Clazz.navigationController.push(self.addproject, true);
+			self.getMyObj(commonVariables.addproject, function(addProjectObj){
+				Clazz.navigationController.jQueryContainer = commonVariables.contentPlaceholder;
+				Clazz.navigationController.push(addProjectObj, true);
+			});
 		},
 		
 		landingPage : function(currentContent){

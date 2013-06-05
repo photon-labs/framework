@@ -1,4 +1,4 @@
-define(["framework/widget", "framework/widgetWithTemplate", "projectlist/api/projectListAPI"], function() {
+define(["projectlist/api/projectListAPI"], function() {
 
 	Clazz.createPackage("com.components.projectlist.js.listener");
 
@@ -19,18 +19,18 @@ define(["framework/widget", "framework/widgetWithTemplate", "projectlist/api/pro
 		 */
 		initialize : function(config) {
 			var self = this;
-			this.loadingScreen = new Clazz.com.js.widget.common.Loading();
 			self.projectListAPI = new Clazz.com.components.projectlist.js.api.ProjectsListAPI();
-			self.editproject = commonVariables.navListener.getMyObj(commonVariables.editproject);
 		},
 		
 		onEditProject : function(projectId) {
 			var self = this;
 			commonVariables.projectId = projectId;
-			Clazz.navigationController.jQueryContainer = commonVariables.contentPlaceholder;
-			Clazz.navigationController.push(self.editproject, true);
-			$("#editprojectTab").css("display", "block");
-			self.dynamicrenderlocales(commonVariables.contentPlaceholder);
+			commonVariables.navListener.getMyObj(commonVariables.editproject, function(editprojectObject) {
+				Clazz.navigationController.jQueryContainer = commonVariables.contentPlaceholder;
+				Clazz.navigationController.push(editprojectObject, true);
+				$("#editprojectTab").css("display", "block");
+				self.dynamicrenderlocales(commonVariables.contentPlaceholder);
+			});
 		},
 		
 		getCustomer : function() {
@@ -50,19 +50,19 @@ define(["framework/widget", "framework/widgetWithTemplate", "projectlist/api/pro
 		getProjectList : function(header, callback) {
 			var self = this;
 			try {
-				self.loadingScreen.showLoading();
+				//commonVariables.loadingScreen.showLoading();
 				self.projectListAPI.projectslist(header,
 					function(response) {
 						if (response !== null) {
-							self.loadingScreen.removeLoading();
+							//commonVariables.loadingScreen.removeLoading();
 							callback(response);
 						} else {
-							self.loadingScreen.removeLoading();
+							//commonVariables.loadingScreen.removeLoading();
 							callback({ "status" : "service failure"});
 						}
 					},
 					function(textStatus) {
-						self.loadingScreen.removeLoading();
+						//self.loadingScreen.removeLoading();
 					}
 				);
 			} catch(exception) {
@@ -75,23 +75,23 @@ define(["framework/widget", "framework/widgetWithTemplate", "projectlist/api/pro
 		projectListAction : function(header, callback) {
 			var self = this;			
 			try {
-				self.loadingScreen.showLoading();
+				commonVariables.loadingScreen.showLoading();
 				self.projectListAPI.projectslist(header,
 					function(response) {
 						if(response != null ){
-							self.loadingScreen.removeLoading();
+							//self.loadingScreen.removeLoading();
 							callback(response);						
 						} else {
-							self.loadingScreen.removeLoading();
+							//self.loadingScreen.removeLoading();
 							callback({ "status" : "service failure"});
 						}
 					},					
 					function(textStatus) {
-						self.loadingScreen.removeLoading();	
+						//self.loadingScreen.removeLoading();	
 					}
 				);
 			} catch(exception) {
-				self.loadingScreen.removeLoading();
+				//self.loadingScreen.removeLoading();
 			}
 		},
 

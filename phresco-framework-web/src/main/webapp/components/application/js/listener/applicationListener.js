@@ -128,14 +128,21 @@ define(["framework/widget", "framework/widgetWithTemplate", "application/api/app
 			var applicationlayerData = self.applicationAPI.localVal.getJson(technology);
 			$.each(applicationlayerData, function(index, value){
 				if(value.id === currentData){
-					option = '';
-					$.each(value.artifactGroup.versions, function(index, value){
-						option += '<option value='+value.id+'>'+ value.version +'</option>'
-					});	
-					$(versionplaceholder).html(option);
+					self.getOptions(value, versionplaceholder, function(){
+						$(versionplaceholder).selectpicker('refresh');
+					});
 				}
 			});
-		}, 
+		},
+
+		getOptions : function(appData, versionplaceholder, callback){
+			var option = '';
+			$.each(appData.artifactGroup.versions, function(index, value){
+				//option += '<option value='+value.id+'>'+ value.version +'</option>'
+				$("<option>").val(value.id).text(value.version).appendTo(versionplaceholder);	
+			});
+			callback();
+		},	
 		
 		getOptionData : function(technology) {
 			var self=this, option;
