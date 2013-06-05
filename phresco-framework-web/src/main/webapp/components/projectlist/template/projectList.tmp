@@ -103,49 +103,42 @@
               				<img src="themes/default/images/helios/update_svn_icon_off.png" width="22" height="15" border="0" alt="">
               			{{/if}}
                   
-                  <div id="add_repo{{id}}" class="dyn_popup">
+                  <div id="add_repo{{id}}" class="add_repo dyn_popup">
                       <table width="100%" border="0" cellspacing="0" cellpadding="0">
                         <tbody>
                             <tr>
-                                <td><sup>*</sup>Type</td>
+                                <td>Type<sup>*</sup></td>
+                                <td>Application Repo URL<sup>*</sup></td>
+                            </tr>
+                            <tr>
                                 <td>
-                                  <select id="type_{{id}}">
-                                      <option>svn</option>
+                                    <select id="type_{{id}}">
+                                        <option value="svn">SVN</option>
+                                        <option value="bitkeeper">Bitkeeper</option>
+                                        <option value="git">Git</option>
                                     </select>
                                 </td>
+                                <td><input type="text" id="repourl_{{id}}"></td>
                             </tr>
                             <tr>
-                                <td><sup>*</sup>Repository URL</td>
-                                <td>
-                                  <input type="text" id="repourl_{{id}}">
-                                </td>
+                                <td class="seperatetd">Other Credential<input type="checkbox" id="repocredential_{{id}}"></td>
+                                <td></td>
                             </tr>
                             <tr>
-                                <td>Other Credential</td>
-                                <td>
-                                  <input type="checkbox" id="repocredential_{{id}}">
-                                </td>
+                                <td>Username</td>
+                                <td>Password</td>
                             </tr>
                             <tr>
-                                <td><sup>*</sup>Username</td>
-                                <td>
-                                  <input type="text" id="uname_{{id}}">
-                                </td>
+                                <td><input type="text" placeholder="username" id="uname_{{id}}"></td>
+                                <td><input type="password" placeholder="*******" id="pwd_{{id}}"></td>
                             </tr>
                             <tr>
-                                <td><sup>*</sup>Password</td>
-                                <td>
-                                  <input type="password" id="pwd_{{id}}">
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>Message</td>
-                                <td>
-                                  <textarea id="repomessage_{{id}}"></textarea>
+                                <td colspan="2">
+                                    <textarea placeholder="Message" id="repomessage_{{id}}"></textarea>
                                 </td>
                             </tr>
                         </tbody>
-                     </table>               
+                     </table> 
                      <!--add_repo div ends here --> 
                      <div class="flt_right" appId="{{id}}" projectId = "{{../id}}" appDirName="{{appDirName}}">
                         <input type="button" name="addrepobtn" id="{{id}}" value="Add To Repo" class="btn btn_style">
@@ -153,7 +146,7 @@
                      </div> 
                   </div>
                   
-                  <div id="commit{{id}}" class="dyn_popup popup_bg">
+                  <div id="commit{{id}}" class="commit dyn_popup popup_bg">
                       <div class="commit_data">
                             <table width="100%" border="0" cellspacing="0" cellpadding="5">
                                 <thead>
@@ -190,41 +183,34 @@
                             <table width="100%" border="0" cellspacing="0" cellpadding="0">
                                 <tbody>
                                     <tr>
-                                        <td><sup>*</sup>Type</td>
+                                        <td>Type<sup>*</sup></td>
+                                        <td>Application Repo URL<sup>*</sup></td>
+                                    </tr>
+                                    <tr>
                                         <td>
                                             <select id="commitType_{{id}}">
-                                                <option>svn</option>
+                                                <option value="svn">SVN</option>
+                                                <option value="bitkeeper">Bitkeeper</option>
+                                                <option value="git">Git</option>
                                             </select>
                                         </td>
+                                        <td><input type="text" id="commitRepourl_{{id}}"></td>
                                     </tr>
                                     <tr>
-                                        <td><sup>*</sup>Repository URL</td>
-                                        <td>
-                                            <input type="text" id="commitRepourl_{{id}}">
-                                        </td>
+                                        <td class="seperatetd">Other Credential<input type="checkbox" id="commitCredential_{{id}}"></td>
+                                        <td></td>
                                     </tr>
                                     <tr>
-                                        <td>Other Credential</td>
-                                        <td>
-                                            <input type="checkbox" id="commitCredential_{{id}}">
-                                        </td>
+                                        <td>Username</td>
+                                        <td>Password</td>
                                     </tr>
                                     <tr>
-                                        <td><sup>*</sup>Username</td>
-                                        <td>
-                                            <input type="text" id="commitUsername_{{id}}">
-                                        </td>
+                                        <td><input type="text" placeholder="admin" id="commitUsername_{{id}}"></td>
+                                        <td><input type="password" placeholder="*******" id="commitPassword_{{id}}"></td>
                                     </tr>
                                     <tr>
-                                        <td><sup>*</sup>Password</td>
-                                        <td>
-                                            <input type="password" id="commitPassword_{{id}}">
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>Message</td>
-                                        <td>
-                                            <textarea id="commitMessage_{{id}}"></textarea>
+                                        <td colspan="2">
+                                            <textarea placeholder="Message" id="commitMessage_{{id}}"></textarea>
                                         </td>
                                     </tr>
                                 </tbody>
@@ -234,59 +220,52 @@
                           <input type="button" value="Commit" class="btn btn_style" id="{{id}}" name="commitbtn">
                             <input type="button" value="Cancel" class="btn btn_style dyn_popup_close">
                          </div>
-                    <!--commit div ends here -->  
+                    <!--commit div ends here -->	
                   </div>
                   
-                  <div id="svn_update{{id}}" class="dyn_popup popup_bg">
-                  <table width="100%" border="0" cellspacing="0" cellpadding="0">
+                  <div id="svn_update{{id}}" class="svn_update dyn_popup popup_bg">
+					<table width="100%" border="0" cellspacing="0" cellpadding="0">
                         <tbody>
-                            <tr>
-                                <td><sup>*</sup>Type</td>
-                                <td>
-                                  <select id="updateType_{{id}}">
-                                      <option>svn</option>
-                                    </select>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td><sup>*</sup>Repository URL</td>
-                                <td>
-                                  <input type="text" id="updateRepourl_{{id}}">
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>Other Credential</td>
-                                <td>
-                                  <input type="checkbox" id="updateCredential_{{id}}">
-                                </td>
-                            </tr>
-                            <tr>
-                                <td><sup>*</sup>Username</td>
-                                <td>
-                                  <input type="text" id="updateUsername">
-                                </td>
-                            </tr>
-                            <tr>
-                                <td><sup>*</sup>Password</td>
-                                <td>
-                                  <input type="password" id="updatePassword_{{id}}">
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>Revision</td>
-                                <td><input type="radio" name="revision" class="radioBtnClass" value="head"> HEAD Revision</td>
-                            </tr>
-                            <tr>
-                              <td></td>
-                                <td><input type="radio" name="revision" class="radioBtnClass" value=""> Revision &nbsp; <input type="text" id="revision_{{id}}"></td>
-                            </tr>
-                        </tbody>
+                                    <tr>
+                                        <td>Type<sup>*</sup></td>
+                                        <td>Application Repo URL<sup>*</sup></td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <select id="updateType_{{id}}">
+                                                <option value="svn">SVN</option>
+                                                <option value="bitkeeper">Bitkeeper</option>
+                                                <option value="git">Git</option>
+                                            </select>
+                                        </td>
+                                        <td><input type="text" id="updateRepourl_{{id}}"></td>
+                                    </tr>
+                                    <tr>
+                                        <td class="seperatetd">Other Credential<input type="checkbox" id="updateCredential_{{id}}"></td>
+                                        <td></td>
+                                    </tr>
+                                    <tr>
+                                        <td>Username</td>
+                                        <td>Password</td>
+                                    </tr>
+                                    <tr>
+                                        <td><input type="text" placeholder="admin" id="updateUsername_{{id}}"></td>
+                                        <td><input type="password" placeholder="*******" id="updatePassword_{{id}}"></td>
+                                    </tr>
+                                    <tr>
+                                        <td colspan="2">Revision</td>
+                                    </tr>
+                                    <tr>
+                                        <td><input type="radio" name="revision" class="radioBtnClass" value="head">Head Revision<input type="radio" name="revision" class="radioBtnClass" value="">Revision</td>
+                                        <td><input type="text"></td>
+                                    </tr>
+                                </tbody>
                      </table> 
                      <div class="flt_right" appDirName="{{appDirName}}">
                          <input type="button" value="Update Application" id="{{id}}" class="btn btn_style" name="updatebtn">
                          <input type="button" value="Cancel" class="btn btn_style dyn_popup_close">
-                     </div>                
-                    <!--svn_update div ends here -->  
+                     </div>               
+                    <!--svn_update div ends here -->	
                   </div>
                   </td>
                   <td>

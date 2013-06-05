@@ -1,4 +1,4 @@
-define(["framework/widget", "common/loading", "header/api/headerAPI", "login/login", "projectlist/projectList"], function() {
+define(["header/api/headerAPI"], function() {
 
 	Clazz.createPackage("com.commonComponents.modules.header.js.listener");
 
@@ -9,7 +9,8 @@ define(["framework/widget", "common/loading", "header/api/headerAPI", "login/log
 		currentTab : null,
 		
 		initialize : function(config){
-			 this.headerAPI = new Clazz.com.commonComponents.modules.header.js.api.HeaderAPI;
+			if(this.headerAPI === null)
+				this.headerAPI = new Clazz.com.commonComponents.modules.header.js.api.HeaderAPI;
 		},
 		
 		doLogout : function(){
@@ -22,10 +23,14 @@ define(["framework/widget", "common/loading", "header/api/headerAPI", "login/log
 		},
 		
 		clearSession : function(){
-			if(this.headerAPI.localVal.getSession('rememberMe') == "true"){
-				this.headerAPI.localVal.deleteSession('userInfo');
-			}else{
-				//this.headerAPI.localVal.clearSession();
+			var username = this.headerAPI.localVal.getSession('username'), password = this.headerAPI.localVal.getSession('password'), rememberMe = this.headerAPI.localVal.getSession('rememberMe');
+			
+			this.headerAPI.localVal.clearSession();
+			
+			if(rememberMe == "true"){
+				this.headerAPI.localVal.setSession('username', username);
+				this.headerAPI.localVal.setSession('password', password);
+				this.headerAPI.localVal.setSession('rememberMe', "true");
 			}
 		},
 		
@@ -35,8 +40,6 @@ define(["framework/widget", "common/loading", "header/api/headerAPI", "login/log
 			
 			if(self.currentTab == "Dashboard"){
 			}else if(self.currentTab == "Projects"){
-				currentObj = commonVariables.navListener.getMyObj(commonVariables.projectlist);
-				commonVariables.navListener.currentTab = commonVariables.projectlist;
 			}else if(self.currentTab == "Settings"){
 			}else if(self.currentTab == "Downloads"){
 			}else if(self.currentTab == "Admin"){

@@ -120,7 +120,7 @@ define(["framework/widgetWithTemplate", "projects/listener/projectsListener", "p
 		bindUI : function(){
 		
 			var self=this;
-			
+			self.setDateTimePicker();
 			self.projectsListener.addLayersEvent();
 			self.projectsListener.removeLayersEvent();
 			self.projectsListener.technologyAndVersionChangeEvent();

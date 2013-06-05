@@ -594,10 +594,10 @@ public class FrameworkBaseAction extends ActionSupport implements FrameworkConst
     	return builder.toString();
     }
     
-    public LockDetail getLockDetail(String appid, String phase) throws PhrescoException {
+    public LockDetail getLockDetail(String appid, String actionType) throws PhrescoException {
     	try {
     		User user = (User) getSessionAttribute(SESSION_USER_INFO);
-        	LockDetail lockDetail = new LockDetail(appid, phase, user.getDisplayName());
+        	LockDetail lockDetail = new LockDetail(appid, actionType, user.getDisplayName());
         	return lockDetail;
 		} catch (Exception e) {
 			throw new PhrescoException(e);

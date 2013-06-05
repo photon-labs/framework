@@ -1,12 +1,13 @@
-define(["framework/widget", "footer/api/footerAPI"], function() {
+define(["footer/api/footerAPI"], function() {
 
 	Clazz.createPackage("com.commonComponents.modules.footer.js.listener");
 
 	Clazz.com.commonComponents.modules.footer.js.listener.FooterListener = Clazz.extend(Clazz.Widget, {
-		loadingScreen : null,
+		footerAPI : null,
 
 		initialize : function(config){
-			this.footerAPI = new Clazz.com.components.footer.js.api.FooterAPI();
+			if(this.footerAPI === null)
+				this.footerAPI = new Clazz.com.components.footer.js.api.FooterAPI();
 		}
 	});
 

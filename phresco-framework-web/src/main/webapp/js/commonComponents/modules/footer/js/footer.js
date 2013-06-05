@@ -1,9 +1,9 @@
-define(["framework/widgetWithTemplate", "footer/listener/footerListener"] , function(template) {
+define(["footer/listener/footerListener"] , function(template) {
 
 	Clazz.createPackage("com.commonComponents.modules.footer");
 
 	Clazz.com.commonComponents.modules.footer.js.Footer = Clazz.extend(Clazz.WidgetWithTemplate, {
-		headerEvent : null,
+		footerListener : null,
 		
 		// template URL, used to indicate where to get the template
 		templateUrl:  commonVariables.contexturl + "js/commonComponents/modules/footer/template/footer.tmp",
@@ -15,7 +15,8 @@ define(["framework/widgetWithTemplate", "footer/listener/footerListener"] , func
 		},
 		
 		loadPage :function(){
-			var footerListener = new Clazz.com.commonComponents.modules.footer.js.listener.FooterListener();
+			if(this.footerListener === null)
+				this.footerListener = new Clazz.com.commonComponents.modules.footer.js.listener.FooterListener();
 		},
 		
 		/***

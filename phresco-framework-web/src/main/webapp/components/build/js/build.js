@@ -1,4 +1,4 @@
-define(["framework/widgetWithTemplate", "build/listener/buildListener"], function() {
+define(["build/listener/buildListener"], function() {
 	Clazz.createPackage("com.components.build.js");
 
 	Clazz.com.components.build.js.Build = Clazz.extend(Clazz.WidgetWithTemplate, {
@@ -9,7 +9,13 @@ define(["framework/widgetWithTemplate", "build/listener/buildListener"], functio
 		name : commonVariables.build,
 		buildListener : null,
 		onProgressEvent : null,
-		
+		onDownloadEvent : null,
+		onDeleteEvent : null,
+		onDeployEvent : null,
+		onBuildEvent : null,
+		dynamicpage : null,
+		dynamicPageListener : null,
+		generateBuildContent : "",
 		/***
 		 * Called in initialization time of this class 
 		 *
@@ -17,14 +23,38 @@ define(["framework/widgetWithTemplate", "build/listener/buildListener"], functio
 		 */
 		initialize : function(globalConfig){
 			var self = this;
-			self.buildListener = new Clazz.com.components.build.js.listener.BuildListener(globalConfig);
-			self.registerEvents();
+			
+			if(self.buildListener === null)
+				self.buildListener = new Clazz.com.components.build.js.listener.BuildListener();
+			
+			if(self.dynamicpage === null){
+				commonVariables.navListener.getMyObj(commonVariables.dynamicPage, function(retVal){
+					self.dynamicPage = retVal;
+					self.dynamicPageListener = self.dynamicPage.dynamicPageListener;
+					self.registerEvents();
+				});
+			}else{self.registerEvents();}
 		},
 		
-		registerEvents : function () {
+		registerEvents : function(){
 			var self = this;
-			self.onProgressEvent = new signals.Signal();
+			
+			if(self.onProgressEvent === null)
+				self.onProgressEvent = new signals.Signal();
+			if(self.onDownloadEvent === null)	
+				self.onDownloadEvent = new signals.Signal();
+			if(self.onDeleteEvent === null)
+				self.onDeleteEvent = new signals.Signal();
+			if(self.onDeployEvent === null)
+				self.onDeployEvent = new signals.Signal();
+			if(self.onBuildEvent === null)
+				self.onBuildEvent = new signals.Signal();
+				
 			self.onProgressEvent.add(self.buildListener.onPrgoress, self.buildListener);
+			self.onDownloadEvent.add(self.buildListener.downloadBuild, self.buildListener);
+			self.onDeleteEvent.add(self.buildListener.deleteBuild, self.buildListener);
+			self.onDeployEvent.add(self.buildListener.deployBuild, self.buildListener);
+			self.onBuildEvent.add(self.buildListener.buildProject, self.buildListener);
 		},
 		
 		/***
@@ -32,26 +62,30 @@ define(["framework/widgetWithTemplate", "build/listener/buildListener"], functio
 		 *
 		 */
 		loadPage : function(){
-			Clazz.navigationController.push(this);
+			Clazz.navigationController.push(this, true);
 		},
 		
 		preRender: function(whereToRender, renderFunction){
 			var self = this;
-			self.buildListener.getBuildInfo(self.buildListener.getRequestHeader(self.projectRequestBody), function(response) {
+			self.buildListener.getBuildInfo(self.buildListener.getRequestHeader("", '', 'getList'), function(response) {
+				commonVariables.goal = "package";
+				if(self.dynamicpage === null){
+					commonVariables.navListener.getMyObj(commonVariables.dynamicPage, function(retVal){
+						self.dynamicPage = retVal;
+						self.dynamicPageListener = self.dynamicPage.dynamicPageListener;
+						self.loadDynamicContent(response, whereToRender);
+					});
+				}else{self.loadDynamicContent(response, whereToRender);}
+			});
+		},
+		
+		loadDynamicContent : function(response, whereToRender){
+			var self = this;
+			self.dynamicpage.getHtml(function(callbackVal){
+				self.generateBuildContent = callbackVal;
 				renderFunction(response, whereToRender);
 			});
-			
-			/* var buildInfo = {"buildInfo":[
-				{"version" : "1000", "datetime":"18/Mar/2013 10:51:43"},
-				{"version" : "1001", "datetime":"19/Mar/2013 10:23:43"},
-				{"version" : "1002", "datetime":"20/Mar/2013 10:45:43"},
-				{"version" : "1003", "datetime":"21/Mar/2013 10:11:43"},
-				{"version" : "1004", "datetime":"23/Mar/2013 10:33:43"},
-				{"version" : "1005", "datetime":"24/Mar/2013 10:55:43"}
-			]};
-			renderFunction(buildInfo, whereToRender); */
 		},
-
 		
 		/***
 		 * Called after the preRender() and bindUI() completes. 
@@ -60,11 +94,24 @@ define(["framework/widgetWithTemplate", "build/listener/buildListener"], functio
 		 * @element: Element as the result of the template + data binding
 		 */
 		postRender : function(element) {
-			commonVariables.navListener.showHideTechOptions();
+			var self = this;
+			$("tbody[name='dynamicContent']").html(self.generateBuildContent);
+			self.loadPostContent();
 		},
 		
-		registerEvents : function(configurationlistener) {
-			var self=this;
+		loadPostContent : function(){
+			var self = this;
+			if(self.dynamicpage === null){
+				commonVariables.navListener.getMyObj(commonVariables.dynamicPage, function(retVal){
+					self.dynamicPage = retVal;
+					self.dynamicPageListener = self.dynamicPage.dynamicPageListener;
+					self.dynamicpage.showParameters();
+					self.dynamicPageListener.controlEvent();					
+				});
+			}else{
+				self.dynamicpage.showParameters();
+				self.dynamicPageListener.controlEvent();
+			}
 		},
 
 		/***
@@ -89,15 +136,42 @@ define(["framework/widgetWithTemplate", "build/listener/buildListener"], functio
 				self.opencc(this, $(this).attr('name'));
 			});
 			
-			$("#buildclose").click(function() {
-				self.buildListener.onPrgoress(this);
+			$("#buildConsole").click(function() {
+				self.onProgressEvent.dispatch(this);
 			});
 			
 			$("img[name=downloadBuild]").click(function(){
-				console.info("download clicked");
+				self.onDownloadEvent.dispatch($(this).parent().parent().siblings(":first").text(), function(response){
+					console.info('download',response);
+				});
+			});
+			
+			$("img[name=deployBuild]").click(function(){
+				var divId = $(this).closest('tr').find('td:eq(0)').text();
+				commonVariables.openccmini(this,'deploye_' + divId);
+			});
+			
+			$("input[name=deploy]").click(function(){
+				self.onDeployEvent.dispatch(function(response){
+					console.info('deploy',response);
+				});
+			});
+			
+			
+			$('input[name=buildDelete]').click(function(){
+				var divId = $(this).closest('tr').find('td:eq(0)').text();
+				self.onDeleteEvent.dispatch(divId, function(response){
+					self.loadPage();
+				});
 			});
 			
 			$("#buildRun").click(function(){
+				self.onBuildEvent.dispatch($('form[name=buildForm]').serialize(), function(response){
+					console.info("Build run clicked", response);
+				});
+			});
+			
+			$("#runSource").click(function(){
 				console.info("Build run clicked");
 			});
 			

@@ -40,12 +40,14 @@ define(["framework/widget", "features/api/featuresAPI", "features/features",  "a
 						hasRecord = true;
 						i++;
 					}
-				});					
+				});
+				
 			}
 			else {
 				
 				$("#"+divId+" li").show();
 			}
+			self.scrollbarUpdate();
        	},
 
        	getFeaturesList : function(header, callback) {
@@ -100,6 +102,29 @@ define(["framework/widget", "features/api/featuresAPI", "features/features",  "a
 		showLoad : function(){
 			var self = this;
 			self.loadingScreen.showLoading();
+		},
+		
+		scrollbarEnable : function(){
+			$("#content_1").mCustomScrollbar({
+				autoHideScrollbar:true,
+				theme:"light-thin",
+				updateOnContentResize: true
+			});
+			
+			$("#content_2").mCustomScrollbar({
+				autoHideScrollbar:true,
+				theme:"light-thin"
+			});
+			
+			$("#content_3").mCustomScrollbar({
+				autoHideScrollbar:true,
+				theme:"light-thin"
+			});
+		},
+		scrollbarUpdate : function(){
+			$("#content_1").mCustomScrollbar("update"); 
+			$("#content_2").mCustomScrollbar("update"); 
+			$("#content_3").mCustomScrollbar("update"); 
 		},
 
 		hideLoad : function(){

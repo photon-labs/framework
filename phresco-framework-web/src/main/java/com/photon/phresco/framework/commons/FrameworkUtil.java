@@ -1448,9 +1448,11 @@ public class FrameworkUtil extends FrameworkBaseAction implements Constants, Fra
     	BufferedWriter out = null;
 		FileWriter fstream = null;
 		try {
+			List<LockDetail> newLockDetails = new ArrayList<LockDetail>();
+			newLockDetails.addAll(lockDetails);
 			List<LockDetail> availableLockDetails = getLockDetails();
 			if (toGenerate && CollectionUtils.isNotEmpty(availableLockDetails)) {
-				lockDetails.addAll(availableLockDetails);
+				newLockDetails.addAll(availableLockDetails);
 			}
 			
 			Gson gson = new Gson();
@@ -2469,7 +2471,108 @@ public class FrameworkUtil extends FrameworkBaseAction implements Constants, Fra
    	                	FilenameFilter xlsFilter = new PhrescoFileFilter("", "xls");
    	     	            File[] xlsListFiles = testDir.listFiles(xlsFilter);
    	     	            if (xlsListFiles.length != 0) {
-   	     	            	addTestSuiteToXLS(cellValue, cellno, tryStyle, sheetName, sb, xlsListFiles);
+		   	     	            for(File file2 : xlsListFiles) {
+		   	     				if (file2.isFile()) {
+		   	     					sb.append(File.separator);
+		   	     			    	sb.append(file2.getName());
+		   	     				}
+		   	     			}
+		   	     			FileInputStream myInput = new FileInputStream(sb.toString());
+		   	     			HSSFWorkbook myWorkBook = new HSSFWorkbook(myInput);
+		
+		   	     			HSSFSheet mySheet = myWorkBook.getSheetAt(0);
+		   	     			rowIterator = mySheet.rowIterator();
+			   	     		numCol = 13;
+							Row next;
+							for (Cell cell : mySheet.getRow((mySheet.getLastRowNum()) - 2)) {
+								tryStyle[cellno] = cell.getCellStyle();
+								cellno = cellno + 1;
+							}
+							do {
+	
+								int flag = 0;
+								next = rowIterator.next();
+								if (mySheet.getSheetName().equalsIgnoreCase("Index")
+										&& ((mySheet.getLastRowNum() - next.getRowNum()) < 3)) {
+									for (Cell cell : next) {
+										cell.setCellType(1);
+										if (cell.getStringCellValue().equalsIgnoreCase("total")) {
+											mySheet.shiftRows((mySheet.getLastRowNum() - 1),
+													(mySheet.getPhysicalNumberOfRows() - 1), 1);
+											flag = 1;
+										}
+										if (flag == 1)
+											break;
+									}
+									if (flag == 1)
+										break;
+								}
+							} while (rowIterator.hasNext());
+	
+							Row r = null;
+							if (mySheet.getSheetName().equalsIgnoreCase("Index")) {
+								r = mySheet.createRow(mySheet.getLastRowNum() - 2);
+							} else {
+								r = mySheet.createRow(next.getRowNum() + 1);
+							}
+							for (int i = 0; i < numCol; i++) {
+								Cell cell = r.createCell(i);
+								cell.setCellValue(cellValue[i]);
+								// used only when sheet is 'index'
+								if (i == 2)
+									sheetName = cellValue[i];
+	
+								cell.setCellStyle(tryStyle[i]);
+							}
+							if (mySheet.getSheetName().equalsIgnoreCase("Index")) {
+								Sheet fromSheet = myWorkBook.getSheetAt((myWorkBook
+										.getNumberOfSheets() - 1));
+								Sheet toSheet = myWorkBook.createSheet(sheetName);
+								int i = 0;
+								Iterator<Row> copyFrom = fromSheet.rowIterator();
+								Row fromRow, toRow;
+								CellStyle newSheetStyle[] = new CellStyle[20];
+								Integer newSheetType[] = new Integer[100];
+								String newSheetValue[] = new String[100];
+								do {
+									fromRow = copyFrom.next();
+									if (fromRow.getRowNum() == 24) {
+										break;
+									}
+									toRow = toSheet.createRow(i);
+									int numCell = 0;
+									for (Cell cell : fromRow) {
+										Cell newCell = toRow.createCell(numCell);
+	
+										cell.setCellType(1);
+	
+										newSheetStyle[numCell] = cell.getCellStyle();
+										newCell.setCellStyle(newSheetStyle[numCell]);
+	
+										newSheetType[numCell] = cell.getCellType();
+										newCell.setCellType(newSheetType[numCell]);
+										if (fromRow.getCell(0).getStringCellValue().length() != 1
+												&& fromRow.getCell(0).getStringCellValue()
+														.length() != 2
+												&& fromRow.getCell(0).getStringCellValue()
+														.length() != 3) {
+											newSheetValue[numCell] = cell.getStringCellValue();
+											newCell.setCellValue(newSheetValue[numCell]);
+										}
+	
+										numCell = numCell + 1;
+										if(numCell == 15) {
+											break;
+										}
+									}
+									i = i + 1;
+								} while (copyFrom.hasNext());
+							}
+							// write to file
+							FileOutputStream fileOut = new FileOutputStream(sb.toString());
+							myWorkBook.write(fileOut);
+							myInput.close();
+							fileOut.close();
 	       	        	}/*else {
 	       	        		FilenameFilter odsFilter = new PhrescoFileFilter("", "ods");
 	   	     	            File[] odsListFiles = testDir.listFiles(odsFilter);
@@ -2525,114 +2628,6 @@ public class FrameworkUtil extends FrameworkBaseAction implements Constants, Fra
 		}
 	}*/
    
-	private static void addTestSuiteToXLS(String[] cellValue, int cellno,
-			CellStyle[] tryStyle, String sheetName, StringBuilder sb,
-			File[] listFiles1) throws FileNotFoundException, IOException {
-		int numCol;
-		Iterator<Row> rowIterator;
-		for(File file2 : listFiles1) {
-			if (file2.isFile()) {
-				sb.append(File.separator);
-		    	sb.append(file2.getName());
-			}
-		}
-		FileInputStream myInput = new FileInputStream(sb.toString());
-		HSSFWorkbook myWorkBook = new HSSFWorkbook(myInput);
-
-		HSSFSheet mySheet = myWorkBook.getSheetAt(0);
-		rowIterator = mySheet.rowIterator();
-		numCol = 13;
-		Row next;
-		for (Cell cell : mySheet.getRow((mySheet.getLastRowNum()) - 4)) {
-			tryStyle[cellno] = cell.getCellStyle();
-			cellno = cellno + 1;
-		}
-		do {
-
-			int flag = 0;
-			next = rowIterator.next();
-			if (mySheet.getSheetName().equalsIgnoreCase("Index")
-					&& ((mySheet.getLastRowNum() - next.getRowNum()) < 3)) {
-				for (Cell cell : next) {
-					cell.setCellType(1);
-					if (cell.getStringCellValue().equalsIgnoreCase("total")) {
-						mySheet.shiftRows((mySheet.getLastRowNum() - 1),
-								(mySheet.getPhysicalNumberOfRows() - 1), 1);
-						flag = 1;
-					}
-					if (flag == 1)
-						break;
-				}
-				if (flag == 1)
-					break;
-			}
-		} while (rowIterator.hasNext());
-		Row r = null;
-		if (mySheet.getSheetName().equalsIgnoreCase("Index")) {
-			r = mySheet.createRow(next.getRowNum() - 1);
-		} else {
-			r = mySheet.createRow(next.getRowNum() + 1);
-		}
-		for (int i = 0; i < numCol; i++) {
-			Cell cell = r.createCell(i);
-			if(StringUtils.isNotEmpty(cellValue[i])) {
-				cell.setCellValue(cellValue[i]);
-				// used only when sheet is 'index'
-				if (i == 2) {
-					sheetName = cellValue[i];
-				}
-				if (tryStyle[i] != null) {
-					cell.setCellStyle(tryStyle[i]);
-				}
-			}
-		}
-		if (mySheet.getSheetName().equalsIgnoreCase("Index")) {
-			Sheet fromSheet = myWorkBook.getSheetAt((myWorkBook
-					.getNumberOfSheets() - 1));
-			Sheet toSheet = myWorkBook.createSheet(sheetName);
-			int i = 0;
-			Iterator<Row> copyFrom = fromSheet.rowIterator();
-			Row fromRow, toRow;
-			CellStyle newSheetStyle[] = new CellStyle[20];
-			Integer newSheetType[] = new Integer[100];
-			String newSheetValue[] = new String[100];
-			do {
-				fromRow = copyFrom.next();
-				if (fromRow.getRowNum() == 24) {
-					break;
-				}
-				toRow = toSheet.createRow(i);
-				int numCell = 0;
-				for (Cell cell : fromRow) {
-					Cell newCell = toRow.createCell(numCell);
-
-					cell.setCellType(1);
-
-					newSheetStyle[numCell] = cell.getCellStyle();
-					newCell.setCellStyle(newSheetStyle[numCell]);
-
-					newSheetType[numCell] = cell.getCellType();
-					newCell.setCellType(newSheetType[numCell]);
-					if (fromRow.getCell(0).getStringCellValue().length() != 1
-							&& fromRow.getCell(0).getStringCellValue()
-									.length() != 2
-							&& fromRow.getCell(0).getStringCellValue()
-									.length() != 3) {
-						newSheetValue[numCell] = cell.getStringCellValue();
-						newCell.setCellValue(newSheetValue[numCell]);
-					}
-
-					numCell = numCell + 1;
-				}
-				i = i + 1;
-			} while (copyFrom.hasNext());
-		}
-		FileOutputStream fileOut = new FileOutputStream(sb.toString());
-		myWorkBook.write(fileOut);
-		myInput.close();
-		fileOut.close();
-	}
-	
 	public void addNewTestCase(String filePath, String testSuiteName,String cellValue[], String status) {
 		try {
 			int numCol = 14;
@@ -2925,6 +2920,9 @@ public class FrameworkUtil extends FrameworkBaseAction implements Constants, Fra
 					for (Cell cell : myHssfSheet.getRow((myHssfSheet.getLastRowNum()) - 2)) {
 						tryStyle[cellno] = cell.getCellStyle();
 						cellno = cellno + 1;
+						if(cellno == 16){
+							break;
+						}
 					}
 					float totalPass = 0;
 					float totalFail = 0;
