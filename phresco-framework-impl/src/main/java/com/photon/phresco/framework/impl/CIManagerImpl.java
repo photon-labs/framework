@@ -541,6 +541,7 @@ public class CIManagerImpl implements CIManager, FrameworkConstants {
     	if (debugEnabled) {
     		S_LOGGER.debug("Entering Method CIManagerImpl.getBuildsArray");
     	}
+    	JsonArray jsonArray = null;
     	try {
         	String jenkinsUrl = "http://" + job.getJenkinsUrl() + ":" + job.getJenkinsPort() + "/ci/";
         	String jobNameUtf8 = job.getName().replace(" ", "%20");
@@ -552,15 +553,14 @@ public class CIManagerImpl implements CIManager, FrameworkConstants {
             JsonObject jsonObject = jsonElement.getAsJsonObject();
             JsonElement element = jsonObject.get(FrameworkConstants.CI_JOB_JSON_BUILDS);
             
-            JsonArray jsonArray = element.getAsJsonArray();
+            jsonArray = element.getAsJsonArray();
             
-            return jsonArray;
 		} catch (Exception e) {
 			if (debugEnabled) {
 	    		S_LOGGER.debug("Entering catch block of CIManagerImpl.getBuildsArray "+e.getLocalizedMessage());
 	    	}
-			throw new PhrescoException(e);
 		}
+		return jsonArray;
     }
     
     public List<CIBuild> getBuilds(CIJob job) throws PhrescoException {
@@ -573,17 +573,19 @@ public class CIManagerImpl implements CIManager, FrameworkConstants {
         		S_LOGGER.debug("getCIBuilds()  JobName = "+ job.getName());
         	}
             JsonArray jsonArray = getBuildsArray(job);
-            ciBuilds = new ArrayList<CIBuild>(jsonArray.size());
-            Gson gson = new Gson();
-            CIBuild ciBuild = null;
-            for (int i = 0; i < jsonArray.size(); i++) {
-                ciBuild = gson.fromJson(jsonArray.get(i), CIBuild.class);
-                setBuildStatus(ciBuild, job);
-        		String buildUrl = ciBuild.getUrl();
-        		String jenkinUrl = job.getJenkinsUrl() + ":" + job.getJenkinsPort();
-        		buildUrl = buildUrl.replaceAll("localhost:" + job.getJenkinsPort(), jenkinUrl); // when displaying url it should display setup machine ip
-        		ciBuild.setUrl(buildUrl);
-                ciBuilds.add(ciBuild);
+            if (jsonArray != null) {
+	            ciBuilds = new ArrayList<CIBuild>(jsonArray.size());
+	            Gson gson = new Gson();
+	            CIBuild ciBuild = null;
+	            for (int i = 0; i < jsonArray.size(); i++) {
+	                ciBuild = gson.fromJson(jsonArray.get(i), CIBuild.class);
+	                setBuildStatus(ciBuild, job);
+	        		String buildUrl = ciBuild.getUrl();
+	        		String jenkinUrl = job.getJenkinsUrl() + ":" + job.getJenkinsPort();
+	        		buildUrl = buildUrl.replaceAll("localhost:" + job.getJenkinsPort(), jenkinUrl); // when displaying url it should display setup machine ip
+	        		ciBuild.setUrl(buildUrl);
+	                ciBuilds.add(ciBuild);
+	            }
             }
         } catch(Exception e) {
         	if (debugEnabled) {
@@ -1427,7 +1429,7 @@ public class CIManagerImpl implements CIManager, FrameworkConstants {
 			JsonArray jsonArray = getBuildsArray(job);
 			Gson gson = new Gson();
 			CIBuild ciBuild = null;
-			if (jsonArray.size() > 0) {
+			if (jsonArray != null && jsonArray.size() > 0) { //not null check
 				ciBuild = gson.fromJson(jsonArray.get(0), CIBuild.class);
 				String buildUrl = ciBuild.getUrl();
 				String jenkinsUrl = job.getJenkinsUrl() + ":" + job.getJenkinsPort();
