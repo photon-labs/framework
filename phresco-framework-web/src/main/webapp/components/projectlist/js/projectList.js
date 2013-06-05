@@ -135,6 +135,7 @@ define(["projectlist/listener/projectListListener"], function() {
 				$(".fixedHeader tr th:nth-child(4)").css("width",w4);
 				$(".fixedHeader tr th:nth-child(5)").css("width",w5);
 				$(".fixedHeader tr th:nth-child(6)").css("width",w6);
+				self.windowResize();
 			});			
 			
 			$(".proj_list .scrollContent").mCustomScrollbar({
@@ -273,7 +274,7 @@ define(["projectlist/listener/projectListListener"], function() {
 					var value = $(this).val();
 				}
 			});
-			
+			self.windowResize();
 			
 		}
 	});
