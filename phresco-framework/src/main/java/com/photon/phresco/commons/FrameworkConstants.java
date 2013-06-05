@@ -1944,4 +1944,11 @@ public interface FrameworkConstants {
 	    String TEST_MANUAL = "manualTest";
 	    String TEST_LOAD = "loadTest";
 	    String TEST_PERFORMANCE = "performanceTest";
+
+		 /**
+	    * Manual Test Extensions
+	    */
+	    final String ODS = "ods";
+		final String XLS = "xls";
+		final String XLSX = "xlsx";
 }
