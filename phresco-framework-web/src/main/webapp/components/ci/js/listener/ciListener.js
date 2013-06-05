@@ -1,4 +1,4 @@
-define(["framework/widget", "ci/api/ciAPI"], function() {
+define(["ci/api/ciAPI"], function() {
 
 	Clazz.createPackage("com.components.ci.js.listener");
 
@@ -19,13 +19,21 @@ define(["framework/widget", "ci/api/ciAPI"], function() {
 		 * @config: configurations for this listener
 		 */
 		initialize : function(config) {
-				this.ciAPI = new Clazz.com.components.ci.js.api.CIAPI();
-				this.loadingScreen = new Clazz.com.js.widget.common.Loading();
+			var self = this;
+			if (self.ciAPI === null) {
+				self.ciAPI = new Clazz.com.components.ci.js.api.CIAPI();
+			}
+			
+			if (self.loadingScreen === null) {
+				self.loadingScreen = new Clazz.com.js.widget.common.Loading();
+			}
 		},
 		
 		loadContinuousDeliveryConfigure : function() {
 			var self=this;
-			self.continuousDeliveryConfigure = commonVariables.navListener.getMyObj(commonVariables.continuousDeliveryConfigure); 
+			commonVariables.navListener.getMyObj(commonVariables.continuousDeliveryConfigure, function(retVal){
+				self.continuousDeliveryConfigure = 	retVal;
+			}); 
 			Clazz.navigationController.push(self.continuousDeliveryConfigure, true);
 		},
 
@@ -38,7 +46,6 @@ define(["framework/widget", "ci/api/ciAPI"], function() {
 			// var userId = data.id;
 			// var techId = commonVariables.techId;
 			// self.bcheck = false;
-			alert("params" + params);
 			header = {
 				contentType: "application/json",
 				dataType: "json",
@@ -48,7 +55,7 @@ define(["framework/widget", "ci/api/ciAPI"], function() {
 			if (action === "list") {
 				header.requestMethod = "GET";
 				if (ciRequestBody !== null && ciRequestBody !== undefined) { 
-					alert("Request body is undefined... ");
+					console.log("Request body is undefined... ");
 				}
 				header.webserviceurl = commonVariables.webserviceurl + commonVariables.jobTemplates;
 				if (params !== null && params !== undefined && params !== '') {
@@ -67,7 +74,7 @@ define(["framework/widget", "ci/api/ciAPI"], function() {
 			} else if (action === "delete") {
 				header.requestMethod = "DELETE";
 				if (ciRequestBody !== null && ciRequestBody !== undefined) { 
-					alert("Request body is undefined... ");
+					console.log("Request body is undefined... ");
 				}
 				header.webserviceurl = commonVariables.webserviceurl + commonVariables.jobTemplates;
 				if (params !== null && params !== undefined && params !== '') {
@@ -86,6 +93,13 @@ define(["framework/widget", "ci/api/ciAPI"], function() {
 			$('#jobTemplate #features :checkbox:checked').attr('value', true); // make checked checkbox value to true
 
 			var jobTemplate = $('#jobTemplate').serializeObject();
+
+			// Convert appIds to array
+			jobTemplate.appIds = [];
+			$("input[name=appIds]:checked").each(function() {
+			    jobTemplate.appIds.push(this.value);
+			});
+
 			// jobTemplate = $.makeArray(jobTemplate);
 			callback(jobTemplate);
 		},
@@ -93,31 +107,23 @@ define(["framework/widget", "ci/api/ciAPI"], function() {
 		listJobTemplate : function (header, callback) {
 			var self=this;
 			try {
-				if (self.bcheck === false) {
-					this.loadingScreen.showLoading();
-				}
 				self.ciAPI.ci(header,
 					function(response) {
 						if (response !== null) {
 							callback(response);
-							self.loadingScreen.removeLoading();
 						} else {
-							self.loadingScreen.removeLoading();
 							callback({ "status" : "service failure"});
 						}
 
 					},
 
 					function(textStatus) {
-						if (self.bcheck === false) {
-							self.loadingScreen.removeLoading();
-						}
+						console.info('textStatus',textStatus);
+						callback({ "status" : "Connection failure"});
 					}
 				);
 			} catch(exception) {
-				if (self.bcheck === false) {
-					self.loadingScreen.removeLoading();
-				}
+				callback({ "status" : "service exception"});
 			}
 		},
 

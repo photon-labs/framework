@@ -1,4 +1,4 @@
-define(["framework/widgetWithTemplate", "ci/listener/ciListener"], function() {
+define(["ci/listener/ciListener"], function() {
 	Clazz.createPackage("com.components.ci.js");
 
 	Clazz.com.components.ci.js.JobTemplates = Clazz.extend(Clazz.WidgetWithTemplate, {
@@ -22,8 +22,16 @@ define(["framework/widgetWithTemplate", "ci/listener/ciListener"], function() {
 		 */
 		initialize : function(globalConfig){
 			var self = this;
-			self.dynamicpage = commonVariables.navListener.getMyObj(commonVariables.dynamicPage);
-			self.ciListener = new Clazz.com.components.ci.js.listener.CIListener(globalConfig);
+			if (self.dynamicpage === null) {
+				commonVariables.navListener.getMyObj(commonVariables.dynamicPage, function(retVal) {
+					self.dynamicpage = retVal;
+				});
+			}
+
+			if (self.ciListener === null) {
+				self.ciListener = new Clazz.com.components.ci.js.listener.CIListener(globalConfig);
+			}
+
 			self.registerEvents(self.ciListener);
 		},
 		
@@ -31,10 +39,22 @@ define(["framework/widgetWithTemplate", "ci/listener/ciListener"], function() {
 		registerEvents : function (ciListener) {
 			var self=this;
 			// Register events
-			self.addEvent = new signals.Signal();
-			self.listEvent = new signals.Signal();
-			self.updateEvent = new signals.Signal();
-			self.deleteEvent = new signals.Signal();
+			if (self.addEvent === null) {
+				self.addEvent = new signals.Signal();
+			}
+
+			if (self.listEvent === null) {
+				self.listEvent = new signals.Signal();
+			}
+
+			if (self.updateEvent === null) {
+				self.updateEvent = new signals.Signal();
+			}
+
+			if (self.deleteEvent === null) {
+				self.deleteEvent = new signals.Signal();
+			}
+
 			// Trigger registered events
 			self.addEvent.add(ciListener.addJobTemplate, ciListener);
 			self.listEvent.add(ciListener.listJobTemplate, ciListener);
@@ -46,6 +66,7 @@ define(["framework/widgetWithTemplate", "ci/listener/ciListener"], function() {
 		 *
 		 */
 		loadPage :function(){
+			console.log("loadpage ");
 			Clazz.navigationController.push(this);
 		},
 		
@@ -70,18 +91,25 @@ define(["framework/widgetWithTemplate", "ci/listener/ciListener"], function() {
 		postRender : function(element) {
 			var self = this;
 		},
-		
-		/* dynamicEvent : function() {
-			var self = this; 
-			var dependency = '';
-			dependency = $("select[name='sonar']").find(':selected').attr('dependency');
-				
-		}, */
+
+		pageRefresh: function() {
+			var self = this;
+			self.ciListener.listJobTemplate(self.ciListener.getRequestHeader(self.ciRequestBody, "list"), function(response) {
+				console.log(JSON.stringify(response.data));
+				self.templateData.jobTemplates = response.data;
+				self.renderTemplate(self.templateData, commonVariables.contentPlaceholder);
+			});
+		},
 
 		getAction : function(ciRequestBody, action, param) {
 			var self=this;
+			// Content place holder for the Job template
+			// Clazz.navigationController.jQueryContainer = commonVariables.contentPlaceholder;
 			self.ciListener.listJobTemplate(self.ciListener.getRequestHeader(self.ciRequestBody, action, param), function(response) {
-				self.loadPage();
+				// self.loadPage();
+				self.pageRefresh();
+				// console.log("Sathya selvan ......."  + JSON.stringify(response.data));
+				//self.renderTemplate(response.data, commonVariables.contentPlaceholder);
 			});	
 		},
 
@@ -93,6 +121,7 @@ define(["framework/widgetWithTemplate", "ci/listener/ciListener"], function() {
 			var self = this;
 
 			$(".tooltiptop").tooltip();
+
 			$(".dyn_popup").hide();
 			// Open job template popup
 			$("input[name=jobTemplatePopup]").unbind("click");
@@ -103,7 +132,7 @@ define(["framework/widgetWithTemplate", "ci/listener/ciListener"], function() {
    			// Save job template
    			$("input[name=save]").unbind("click");
    			$("input[name=save]").click(function() {
-   				alert("Save");
+   				console.log("Save");
    				self.addEvent.dispatch(function(response) {
    					self.ciRequestBody = response;
 					self.getAction(self.ciRequestBody, 'add', '');
@@ -113,7 +142,7 @@ define(["framework/widgetWithTemplate", "ci/listener/ciListener"], function() {
    			// Edit job template
    			$("input[name=edit]").unbind("click");
 			$("input[name=edit]").click(function() {
-				alert("edit");
+				console.log("edit");
 				self.editEvent.dispatch(function(response){
 					self.ciRequestBody = response;
 					self.getAction(self.ciRequestBody, 'edit', '');
@@ -123,7 +152,7 @@ define(["framework/widgetWithTemplate", "ci/listener/ciListener"], function() {
    			// Update job template
    			$("input[name=update]").unbind("click");
    			$("input[name=update]").click(function() {
-   				alert("update");
+   				console.log("update");
    				self.updateEvent.dispatch(function(response){
 					self.ciRequestBody = response;
 					self.getAction(self.ciRequestBody, 'update', '');
@@ -133,13 +162,20 @@ define(["framework/widgetWithTemplate", "ci/listener/ciListener"], function() {
    			// Delete job template
    			$("input[name=delete]").unbind("click");
    			$("input[name=delete]").click(function() {
-   				alert("delete");
+   				console.log("delete " + $(this).parent().parent().attr('id'));
    				var jobTemplateName = {};
 				jobTemplateName.name = $(this).parent().parent().attr('id');
 				jobTemplateName = $.param(jobTemplateName);
 				self.configRequestBody = {};
 				self.getAction(self.configRequestBody, 'delete', jobTemplateName);
    			});
+
+   			// job template delete poppup
+   			$(".tooltiptop").unbind("click");
+			$(".tooltiptop").click(function() {
+				console.log("Deletion purpose ");
+				self.opencc(this, $(this).attr('name'));
+			});
 		}
 	});
 
