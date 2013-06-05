@@ -19,7 +19,8 @@ define(["projectlist/api/projectListAPI"], function() {
 		 */
 		initialize : function(config) {
 			var self = this;
-			self.projectListAPI = new Clazz.com.components.projectlist.js.api.ProjectsListAPI();
+			if(self.projectListAPI === null)
+				self.projectListAPI = new Clazz.com.components.projectlist.js.api.ProjectsListAPI();
 		},
 		
 		onEditProject : function(projectId) {
