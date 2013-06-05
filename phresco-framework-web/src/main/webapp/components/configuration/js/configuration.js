@@ -1,4 +1,4 @@
-define(["framework/widgetWithTemplate", "configuration/listener/configurationListener"], function() {
+define(["configuration/listener/configurationListener"], function() {
 	Clazz.createPackage("com.components.configuration.js");
 
 	Clazz.com.components.configuration.js.Configuration = Clazz.extend(Clazz.WidgetWithTemplate, {
@@ -58,9 +58,11 @@ define(["framework/widgetWithTemplate", "configuration/listener/configurationLis
 			self.editConfigurationEvent = new signals.Signal();
 			self.addEnvrEvent = new signals.Signal();
 			self.saveEnvEvent = new signals.Signal();
+			self.cloneEnvEvent = new signals.Signal();
 			self.editConfigurationEvent.add(configurationlistener.editConfiguration, configurationlistener);
 			self.addEnvrEvent.add(configurationlistener.addEnvrEvent, configurationlistener);
 			self.saveEnvEvent.add(configurationlistener.saveEnvEvent, configurationlistener);
+			self.cloneEnvEvent.add(configurationlistener.cloneEnv, configurationlistener);
 		},
 		
 		getAction : function(configRequestBody, action, deleteEnvironment) {
@@ -121,6 +123,15 @@ define(["framework/widgetWithTemplate", "configuration/listener/configurationLis
 			$("a[name=editConfiguration]").unbind("click");
 			$("a[name=editConfiguration]").click(function() {
 				self.editConfigurationEvent.dispatch($(this).attr('key'));
+			});
+			
+			$("input[name=cloneEnvr]").unbind("click");
+			$("input[name=cloneEnvr]").click(function() {
+				var envName = $(this).parent().attr('name');
+				self.cloneEnvEvent.dispatch(envName, function(response){
+					self.configRequestBody = response;
+					self.getAction(self.configRequestBody, 'cloneEnv', envName);
+				});
 			});
 			
 			Clazz.navigationController.mainContainer = commonVariables.contentPlaceholder;

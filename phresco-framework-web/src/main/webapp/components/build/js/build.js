@@ -29,8 +29,8 @@ define(["build/listener/buildListener"], function() {
 			
 			if(self.dynamicpage === null){
 				commonVariables.navListener.getMyObj(commonVariables.dynamicPage, function(retVal){
-					self.dynamicPage = retVal;
-					self.dynamicPageListener = self.dynamicPage.dynamicPageListener;
+					self.dynamicpage = retVal;
+					self.dynamicPageListener = self.dynamicpage.dynamicPageListener;
 					self.registerEvents();
 				});
 			}else{self.registerEvents();}
@@ -71,15 +71,17 @@ define(["build/listener/buildListener"], function() {
 				commonVariables.goal = "package";
 				if(self.dynamicpage === null){
 					commonVariables.navListener.getMyObj(commonVariables.dynamicPage, function(retVal){
-						self.dynamicPage = retVal;
-						self.dynamicPageListener = self.dynamicPage.dynamicPageListener;
-						self.loadDynamicContent(response, whereToRender);
+						self.dynamicpage = retVal;
+						self.dynamicPageListener = self.dynamicpage.dynamicPageListener;
+						self.loadDynamicContent(whereToRender, renderFunction, response);
 					});
-				}else{self.loadDynamicContent(response, whereToRender);}
+				}else{
+					self.loadDynamicContent(whereToRender, renderFunction, response);
+				}
 			});
 		},
 		
-		loadDynamicContent : function(response, whereToRender){
+		loadDynamicContent : function(whereToRender, renderFunction, response){
 			var self = this;
 			self.dynamicpage.getHtml(function(callbackVal){
 				self.generateBuildContent = callbackVal;

@@ -450,23 +450,51 @@ define(["navigation/api/navigationAPI"], function() {
 		onMytabEvent : function(keyword) {
 			var self=this, currentObj;
 			if (self.currentTab !== commonVariables.editApplication && keyword === commonVariables.editApplication){
-				currentObj = self.getMyObj(commonVariables.editApplication);
+				self.getMyObj(commonVariables.editApplication, function(returnVal){
+					currentObj = returnVal;
+					self.myTabRenderFunction(currentObj, keyword);
+				}); 
 			} else if (self.currentTab !== commonVariables.featurelist && keyword === commonVariables.featurelist) {
-				currentObj = self.getMyObj(commonVariables.featurelist);
+				self.getMyObj(commonVariables.featurelist, function(returnVal){
+					currentObj = returnVal;
+					self.myTabRenderFunction(currentObj, keyword);
+				}); 
 			} else if (self.currentTab !== commonVariables.codequality && keyword === commonVariables.codequality) {
-				currentObj = self.getMyObj(commonVariables.codequality);
+				self.getMyObj(commonVariables.codequality, function(returnVal){
+					currentObj = returnVal;
+					self.myTabRenderFunction(currentObj, keyword);
+				}); 
 			} else if (self.currentTab !== commonVariables.configuration && keyword === commonVariables.configuration) {
-				currentObj = self.getMyObj(commonVariables.configuration);
+				self.getMyObj(commonVariables.configuration, function(returnVal){
+					currentObj = returnVal;
+					self.myTabRenderFunction(currentObj, keyword);
+				});
 			} else if (self.currentTab !== commonVariables.build && keyword === commonVariables.build) {
-				currentObj = self.getMyObj(commonVariables.build);
+				self.getMyObj(commonVariables.build, function(returnVal){
+					currentObj = returnVal;
+					self.myTabRenderFunction(currentObj, keyword);
+				});
 			} else if (self.currentTab !== commonVariables.jobTemplates && keyword === commonVariables.jobTemplates) {
-				currentObj = self.getMyObj(commonVariables.jobTemplates);
+				self.getMyObj(commonVariables.jobTemplates, function(returnVal){
+					currentObj = returnVal;
+					self.myTabRenderFunction(currentObj, keyword);
+				});
 			} else if (self.currentTab !== commonVariables.continuousDeliveryView && keyword === commonVariables.continuousDeliveryView) {
-				currentObj = self.getMyObj(commonVariables.continuousDeliveryView);
+				self.getMyObj(commonVariables.continuousDeliveryView, function(returnVal){
+					currentObj = returnVal;
+					self.myTabRenderFunction(currentObj, keyword);
+				});
 			} else if (self.currentTab !== commonVariables.continuousDeliveryConfigure && keyword === commonVariables.continuousDeliveryConfigure) {
-				currentObj = self.getMyObj(commonVariables.continuousDeliveryConfigure);
+				self.getMyObj(commonVariables.continuousDeliveryConfigure, function(returnVal){
+					currentObj = returnVal;
+					self.myTabRenderFunction(currentObj, keyword);
+				});
 			}
 
+		},
+		
+		myTabRenderFunction : function(currentObj, keyword) {
+			var self = this;
 			if(currentObj != undefined && currentObj != null){
 				self.currentTab = keyword;
 				Clazz.navigationController.jQueryContainer = commonVariables.contentPlaceholder;
