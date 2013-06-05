@@ -194,7 +194,7 @@ public class FrameworkServiceUtil implements Constants, FrameworkConstants {
 	 * @throws PhrescoPomException
 	 */
 	public static String getManualTestDir(String appDirName) throws PhrescoException, PhrescoPomException {
-        return getPomProcessor(appDirName).getProperty(POM_PROP_KEY_MANUALTEST_DIR);
+        return getPomProcessor(appDirName).getProperty(POM_PROP_KEY_MANUALTEST_RPT_DIR);
     }
 	
 	/**
