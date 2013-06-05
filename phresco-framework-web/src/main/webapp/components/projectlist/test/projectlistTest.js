@@ -1,5 +1,5 @@
 
-define(["MockProjectList"], function(MockProjectList) {
+define(["projectlist/projectList"], function(ProjectList) {
 
 	return { runTests: function (configData) {
 		/**
@@ -7,19 +7,21 @@ define(["MockProjectList"], function(MockProjectList) {
 		 */
 		module("projectlist.js;projectlist");
 		
-		var mockprojectlist, mockFunc;
-		mockprojectlist = new MockProjectList();
+		var mockFunc, projectList = new ProjectList();
 		
 		mockFunc = mockFunction();
 		when(mockFunc)(anything()).then(function(arg) {
+			console.info('mocke....');
 			var projectlistReturn = "projectlist successfully rendered"; 		
 			return projectlistReturn;
 		});
 
-	   mockprojectlist.projectlist = mockFunc
+	   projectList.projectslistListener.getProjectList = mockFunc
 	   
 	   test("ProjectList Sample Test", function() {
-		   equal(mockprojectlist.projectlist(configData), "projectlist successfully rendered", "projectlist Test");
+		   projectList.loadPage();
+		   console.info(projectList.contentContainer);
+		   equal(projectList.contentContainer, "projectlist successfully rendered", "projectlist Test");
 	   });
 		  
 	}};

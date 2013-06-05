@@ -47,7 +47,7 @@
 							  </td>
 							  <td data-i18n="application.edit.versions"></td>
 							  <td colspan="4" name="version"  class="version">
-									<select name="server_version" class="server_version" multiple>
+									<select name="server_version" class="server_version selectpicker" multiple multiple data-selected-text-format="count>3">
 										<option value=0>Select Version</option>
 										{{#each ../../projectlist.serverData}}
 											{{{compareversion id ../artifactGroupId artifactGroup ../artifactInfoIds}}}
@@ -76,7 +76,7 @@
                       </td>
                       <td data-i18n="application.edit.versions"></td>
                       <td colspan="4" name="version" class="version">
-							<select name="server_version" class="server_version" multiple>
+							<select name="server_version" class="server_version selectpicker" multiple multiple data-selected-text-format="count>3">
 								<option value=0>Select Version</option>
 							</select>
 						  <div class="flt_right">
@@ -103,7 +103,7 @@
 							  </td>
 							  <td data-i18n="application.edit.versions"></td>
 							  <td colspan="4" name="version" class="version">
-									<select name="db_version" class="db_version" multiple>
+									<select name="db_version" class="db_version selectpicker" multiple data-selected-text-format="count>3">
 										<option value=0>Select Version</option>
 										{{#each ../../projectlist.databaseData}}
 											{{{compareversion id ../artifactGroupId artifactGroup ../artifactInfoIds}}}
@@ -129,7 +129,7 @@
 					  </td>
 					  <td data-i18n="application.edit.versions"></td>
 					  <td colspan="4" name="version" class="version">
-							<select name="db_version" class="db_version" multiple>
+							<select name="db_version" class="db_version selectpicker" multiple data-selected-text-format="count>3">
 								<option value=0>Select Version</option>
 						  </select>
 						   <div class="flt_right">

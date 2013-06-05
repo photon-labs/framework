@@ -1,4 +1,4 @@
-define(["framework/widget", "framework/widgetWithTemplate", "common/loading", "projects/api/projectsAPI"], function() {
+define(["projects/api/projectsAPI"], function() {
 
 	Clazz.createPackage("com.components.projects.js.listener");
 
@@ -6,7 +6,7 @@ define(["framework/widget", "framework/widgetWithTemplate", "common/loading", "p
 		
 		basePlaceholder : commonVariables.basePlaceholder,
 		loadingScreen : null,
-		projectsAPI : null,
+		projectAPI : null,
 		applicationlayerData : null,
 		weblayerData : null,
 		mobilelayerData : null,
@@ -28,15 +28,16 @@ define(["framework/widget", "framework/widgetWithTemplate", "common/loading", "p
 		 */
 		initialize : function(config) {
 			var self = this;
-			self.loadingScreen = new Clazz.com.js.widget.common.Loading();
-			self.projectAPI = new Clazz.com.components.projects.js.api.ProjectsAPI();
+			if(self.projectAPI === null)
+				self.projectAPI = new Clazz.com.components.projects.js.api.ProjectsAPI();
 		},
 		
 		cancelCreateproject : function() {
 			var self = this;
 			Clazz.navigationController.jQueryContainer = commonVariables.contentPlaceholder;
-			self.projectlistContent = commonVariables.navListener.getMyObj(commonVariables.projectlist);
-			Clazz.navigationController.push(self.projectlistContent, true, true);
+			commonVariables.navListener.getMyObj(commonVariables.projectlist, function(projectlistObj){
+				Clazz.navigationController.push(projectlistObj, true, true);
+			});
 		},
 		
 		removelayer : function(object) {
@@ -72,25 +73,20 @@ define(["framework/widget", "framework/widgetWithTemplate", "common/loading", "p
 		getEditProject : function(header, callback) {
 			var self = this;
 			try {
-				this.loadingScreen.showLoading();
 				self.projectAPI.projects(header,
 					function(response) {
 						if (response !== null) {
 							callback(response);
-							self.loadingScreen.removeLoading();
 						} else {
-							self.loadingScreen.removeLoading();
 							callback({ "status" : "service failure"});
 						}
 
 					},
 
 					function(textStatus) {
-						self.loadingScreen.removeLoading();
 					}
 				);
 			} catch(exception) {
-				self.loadingScreen.removeLoading();
 			}
 
 		},

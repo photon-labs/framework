@@ -4,6 +4,8 @@ var commonVariables = {
 	webserviceurl : "",
 	contexturl : "src",
 	
+	navListener : null,
+	
 	login : "login",
 	loginContext : "login",
 
@@ -15,11 +17,15 @@ var commonVariables = {
 	
 	navigation : "navigation",
 	navigationContext : "",
+    
+    projectlist : "projectlist",
+    projectlistContext : "project",
 
 	basePlaceholder : "basepage\\:widget",
-	headerPlaceholder : "header\\:widget",
+	headerPlaceholder : "<div id='header'></div>",
 	contentPlaceholder : "content\\:widget",
-	footerPlaceholder : "footer\\:widget"
+	footerPlaceholder : "<div id='footer'></div>",
+	navigationPlaceholder : "navigation\\:widget"
 };
 
 define(["jquery"], function($) {
@@ -45,10 +51,15 @@ define(["jquery"], function($) {
 					Clazz : "js/framework/class",
 					components: "components",
 					configData: data,
-					jshamcrest: "lib/jshamcrest-0.5.2-min",
-					jsmockito: "lib/jsmockito-1.0.3-min"
+					jshamcrest: "lib/jshamcrest-0.5.2",
+					jsmockito: "lib/jsmockito-1.0.3"
 				}
 			};
+            
+            commonVariables.headerPlaceholder=$("<div id='header'></div>");
+            commonVariables.contentPlaceholder="content\\:widget";
+            commonVariables.footerPlaceholder=$("<div id='footer'></div>");
+
 
 			$.each(commonVariables.globalconfig.components, function(index, value){
 				configJson.paths[index] = value.path;
@@ -59,17 +70,23 @@ define(["jquery"], function($) {
 			require(["lib/Signal-1.0.0", "lib/SignalBinding-1.0.0", "lib/i18next-1.6.0", "jquery_mCustomScrollbar_concat_min-2.8.1", "loginTest", "projectlistTest", "headerTest", "footerTest", "navigationTest", "projectTest", "applicationTest", "featuresTest", "codequalityTest", "configurationTest", "buildTest", "jshamcrest", "jsmockito"],	function (Signal, SignalBinding, next, mCustomScrollbar, loginTest, projectlistTest, headerTest, footerTest, navigationTest, projectTest,applicationTest, featuresTest, codequalityTest, configurationTest, buildTest){
 				JsHamcrest.Integration.JsTestDriver();
 				JsMockito.Integration.JsTestDriver();
-				loginTest.runTests(data);
-				navigationTest.runTests(data);
+				var status = loginTest.runTests(data/*, function() {
+					projectlistTest.runTests(data);
+				}*/);
+				if (status) {
+					//projectlistTest.runTests(data);
+				}
+				
+				/* navigationTest.runTests(data);
 				headerTest.runTests(data);
 				applicationTest.runTests(data);		
 				footerTest.runTests(data);
-				featuresTest.runTests(data);
-				projectlistTest.runTests(data);
-				projectTest.runTests(data);
+				featuresTest.runTests(data); */
+				
+				/* projectTest.runTests(data);
 				codequalityTest.runTests(data);	
 				configurationTest.runTests(data);
-				buildTest.runTests(data);
+				buildTest.runTests(data); */
 			});
 		}, "json");
 	});

@@ -302,6 +302,11 @@ define(["framework/widget", "framework/templateProvider"], function() {
 				});
 				
 				return customerId;
+			},
+			
+			multiselect : function() {
+				console.info("multiselect called");
+				$('.selectpicker').selectpicker();
 			}
 		}
 	);

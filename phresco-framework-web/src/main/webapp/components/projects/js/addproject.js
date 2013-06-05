@@ -1,4 +1,4 @@
-define(["framework/widgetWithTemplate", "projects/listener/projectsListener", "projects/api/projectsAPI"], function() {
+define(["projects/listener/projectsListener"], function() {
 
 	Clazz.createPackage("com.components.projects.js");
 
@@ -8,7 +8,6 @@ define(["framework/widgetWithTemplate", "projects/listener/projectsListener", "p
 		configUrl: "components/projects/config/config.json",
 		name : commonVariables.addproject,
 		projectsListener : null,
-		projectAPI : null,
 		applicationlayerData : null,
 		weblayerData : null,
 		mobilelayerData : null,
@@ -17,6 +16,7 @@ define(["framework/widgetWithTemplate", "projects/listener/projectsListener", "p
 		onRemoveLayerEvent : null,
 		onAddLayerEvent : null,
 		onCreateEvent : null,
+		onCancelCreateEvent : null,
 		
 			
 		/***
@@ -26,8 +26,8 @@ define(["framework/widgetWithTemplate", "projects/listener/projectsListener", "p
 		 */
 		initialize : function(globalConfig){
 			var self = this;
-			self.projectsListener = new Clazz.com.components.projects.js.listener.projectsListener();
-			self.projectAPI = new Clazz.com.components.projects.js.api.ProjectsAPI();
+			if(self.projectsListener === null)
+				self.projectsListener = new Clazz.com.components.projects.js.listener.projectsListener();
 			self.registerEvents(self.projectsListener);
 		},
 
@@ -38,11 +38,16 @@ define(["framework/widgetWithTemplate", "projects/listener/projectsListener", "p
 		 */
 		registerEvents : function (projectsListener) {
 			var self = this;
-			self.onProjectsEvent = new signals.Signal();
-			self.onRemoveLayerEvent = new signals.Signal();
-			self.onAddLayerEvent = new signals.Signal();
-			self.onCreateEvent = new signals.Signal();
-			self.onCancelCreateEvent = new signals.Signal();
+			if(self.onProjectsEvent === null)	
+				self.onProjectsEvent = new signals.Signal();
+			if(self.onRemoveLayerEvent === null)	
+				self.onRemoveLayerEvent = new signals.Signal();
+			if(self.onAddLayerEvent === null)
+				self.onAddLayerEvent = new signals.Signal();
+			if(self.onCreateEvent === null)
+				self.onCreateEvent = new signals.Signal();
+			if(self.onCancelCreateEvent === null)
+				self.onCancelCreateEvent = new signals.Signal();
 			self.onRemoveLayerEvent.add(projectsListener.removelayer, projectsListener);
 			self.onAddLayerEvent.add(projectsListener.addlayer, projectsListener);
 			self.onCreateEvent.add(projectsListener.createproject, projectsListener)
@@ -65,9 +70,9 @@ define(["framework/widgetWithTemplate", "projects/listener/projectsListener", "p
 			var self=this;
 			self.setTechnologyData(function(bCheck){
 				if(bCheck){
-					self.applicationlayerData = self.projectAPI.localVal.getJson("Application Layer");
-					self.weblayerData = self.projectAPI.localVal.getJson("Web Layer");
-					self.mobilelayerData = self.projectAPI.localVal.getJson("Mobile Layer");
+					self.applicationlayerData = self.projectsListener.projectAPI.localVal.getJson("Application Layer");
+					self.weblayerData = self.projectsListener.projectAPI.localVal.getJson("Web Layer");
+					self.mobilelayerData = self.projectsListener.projectAPI.localVal.getJson("Mobile Layer");
 					self.templateData.applicationlayerData = self.applicationlayerData;
 					self.templateData.weblayerData = self.weblayerData;
 					self.templateData.mobilelayerData = self.mobilelayerData;
@@ -88,11 +93,11 @@ define(["framework/widgetWithTemplate", "projects/listener/projectsListener", "p
 		
 		setTechnologyData : function(callback) {
 			var self=this;
-			self.userInfo = JSON.parse(self.projectAPI.localVal.getSession('userInfo'));
+			self.userInfo = JSON.parse(self.projectsListener.projectAPI.localVal.getSession('userInfo'));
 			self.projectsListener.getEditProject(self.projectsListener.getRequestHeader(self.projectRequestBody, '', 'apptypes'), function(response) {
 				$.each(response.data, function(index, value){
 					//console.info("index",index,"value",value);
-					self.projectAPI.localVal.setJson(value.name, value);
+					self.projectsListener.projectAPI.localVal.setJson(value.name, value);
 					
 					if(response.data.length == (index + 1)){
 						callback(true);

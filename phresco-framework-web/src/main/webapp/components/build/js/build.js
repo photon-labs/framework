@@ -96,6 +96,7 @@ define(["build/listener/buildListener"], function() {
 		postRender : function(element) {
 			var self = this;
 			$("tbody[name='dynamicContent']").html(self.generateBuildContent);
+			$("tbody[name='dynamicContent']").find(".selectpicker").selectpicker();
 			self.loadPostContent();
 		},
 		
