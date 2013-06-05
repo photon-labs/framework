@@ -14,6 +14,8 @@ define(["projects/listener/projectsListener"], function() {
 		onRemoveLayerEvent : null,
 		onAddLayerEvent : null,
 		getData : null,
+		onUpdateProjectsEvent : null,
+		onCancelUpdateEvent : null,
 			
 		/***
 		 * Called in initialization time of this class 
