@@ -40,6 +40,11 @@ define(["header/api/headerAPI"], function() {
 			
 			if(self.currentTab == "Dashboard"){
 			}else if(self.currentTab == "Projects"){
+				if (currentObj === null) {
+					commonVariables.navListener.getMyObj(commonVariables.projectlist, function(retVal) {
+						currentObj = retVal;
+					});
+				}
 			}else if(self.currentTab == "Settings"){
 			}else if(self.currentTab == "Downloads"){
 			}else if(self.currentTab == "Admin"){
