@@ -28,11 +28,34 @@
         <div class="code_report_icon"><a class="tooltiptop" title="" data-placement="bottom" data-toggle="tooltip" href="#" data-original-title="PDF Report"><img src="themes/default/images/helios/code_pdf_icon.png" width="28" height="29" border="0" alt=""></a></div>
     </section>
 	
-    <section class="content_main create_proj code_content">
+
+    <section class="features_content_main z_index">
+    	<div class="build_info" id="content_div">
+        </div>
+        
+            <div class="build_close"><a href="#" data-flag="true" id="codeValidateConsole"><img src="themes/default/images/helios/console_img.png" width="33" height="92" border="0" alt=""></a></div>  
+            <div class="build_progress">
+                <table class="table table-striped table_border table-bordered" cellpadding="0" cellspacing="0" border="0">
+                    <thead>
+                        <tr>
+                            <th>Progress</th>
+                            <td><img src="themes/default/images/helios/buildreport_icon.png" width="15" height="18" border="0" alt=""></td>
+                        </tr>
+                     </thead>
+                     <tbody>
+                        <tr>
+							<td id="iframePart"></td>
+						</tr>
+                     </tbody>
+                </table>
+            </div>
+    </section>
+	
+    <!--<section class="content_main create_proj code_content">
     	<div class="codeval_main" id="iframePart">
             <div class="codeval_content">
             	<font data-i18n="codequality.sonarreport" id="logDiv">{{projectlist.message}}</font>
             </div>
         </div>
-    	<!--content_main div ends here -->
-    </section>
+    	content_main div ends here
+    </section> -->

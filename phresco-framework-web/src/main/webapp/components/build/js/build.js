@@ -16,6 +16,7 @@ define(["build/listener/buildListener"], function() {
 		dynamicpage : null,
 		dynamicPageListener : null,
 		generateBuildContent : "",
+		
 		/***
 		 * Called in initialization time of this class 
 		 *
@@ -62,6 +63,7 @@ define(["build/listener/buildListener"], function() {
 		 *
 		 */
 		loadPage : function(){
+			Clazz.navigationController.mainContainer = commonVariables.contentPlaceholder;
 			Clazz.navigationController.push(this, true);
 		},
 		
@@ -169,8 +171,10 @@ define(["build/listener/buildListener"], function() {
 			});
 			
 			$("#buildRun").click(function(){
+				$('.alert_div').show();
 				self.onBuildEvent.dispatch($('form[name=buildForm]').serialize(), function(response){
-					console.info("Build run clicked", response);
+					$('.alert_div').hide();
+					self.loadPage();
 				});
 			});
 			
@@ -192,7 +196,7 @@ define(["build/listener/buildListener"], function() {
 				$(".dyn_popup").hide();
 
 				var height = $(this).height();
-				var twowidth = window.innerWidth/1.6;
+				var twowidth = window.innerWidth/1.7;
 				var onewidth = window.innerWidth - (twowidth+70);
 				
 				$('.features_content_main').height(height - 230);
@@ -209,6 +213,12 @@ define(["build/listener/buildListener"], function() {
 			$("#content_div").mCustomScrollbar({
 				autoHideScrollbar:true,
 				theme:"light-thin"
+			});
+			
+			$(".scrollContent").mCustomScrollbar({
+				autoHideScrollbar:true,
+				theme:"light-thin",
+				advanced:{ updateOnContentResize: true}
 			});
 			
 			//To open the build directory

@@ -17,8 +17,7 @@ define(["build/api/buildAPI"], function() {
 				self.buildAPI = new Clazz.com.components.build.js.api.BuildAPI();
 			
 			if(self.mavenServiceListener === null)	{
-				self.mavenServiceListener = commonVariables.navListener.getMyObj(commonVariables.mavenService, function(retVal){
-				});
+				commonVariables.navListener.getMyObj(commonVariables.mavenService, function(retVal){});
 			}
 		},
 		
@@ -32,7 +31,7 @@ define(["build/api/buildAPI"], function() {
 				$('.build_close').animate({right: '0px'},500);
 				$(clicked).attr('data-flag','false');
 			} else {
-				$('.build_info').animate({width: window.innerWidth/1.6},500);
+				$('.build_info').animate({width: window.innerWidth/1.7},500);
 				$('.build_progress').animate({right: '10px'},500);
 				$('.build_close').animate({right: value1+10},500);
 				$(clicked).attr('data-flag','true');
@@ -92,7 +91,6 @@ define(["build/api/buildAPI"], function() {
 				queryString +=	'&customerId='+ self.getCustomer() +'&appId='+ appInfo.data.appInfos[0].id +'&projectId=' + appInfo.data.id + '&username=' + self.buildAPI.localVal.getSession('username');
 			}
 			
-			$('#logContent').html();
 			if(self.mavenServiceListener === null)	{
 				commonVariables.navListener.getMyObj(commonVariables.mavenService, function(retVal){
 					self.mavenServiceListener = retVal;

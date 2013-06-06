@@ -124,29 +124,33 @@ define(["mavenService/api/mavenServiceAPI"], function() {
 
 		mvnService : function(header, divId, callback){
 			try{
-				var self = this, callbackData = null;
+				var self = this;
 				commonVariables.loadingScreen.showLoading();
+				$(divId).html('');
 				self.mavenServiceAPI.mvnSer(header, 
 					function(response){
 						if(response != undefined && response != null){
-							if(response.status == 'STARTED'){
-								self.mvnlogService(response.uniquekey, divId);
-								callbackData = true;
-							}else if(response.status == 'INPROGRESS'){
-								callbackData = true;
-							}else if(response.status == 'COMPLETED'){
-								callbackData = true;
-							}else if(response.status == 'ERROR'){
-								$(divId).append(response.service_exception);
-								callbackData = false;
-							}else if(response.status == 'SUCCESS'){
-								callbackData = response.connectionAlive;
-							}
 							commonVariables.loadingScreen.removeLoading();
-							callback(callbackData);
+							
+							if(response.status == 'STARTED'){
+								$(divId).append(response.status + '<br>');
+								self.mvnlogService(response.uniquekey, divId, function(retVal){
+									callback(retVal);
+								});
+							}else if(response.status == 'INPROGRESS'){
+								callback(true);
+							}else if(response.status == 'COMPLETED'){
+								callback(true);
+							}else if(response.status == 'ERROR'){
+								$(divId).append('<font style = "color:red">' + response.service_exception + '</font><br>');
+								callback(response.service_exception);
+							}else if(response.status == 'SUCCESS'){
+								callback(response.connectionAlive);
+							}
+							
 						}else {
 							commonVariables.loadingScreen.removeLoading();
-							callback(callbackData);
+							callback(false);
 						}
 					}, 
 					function(serviceerror){
@@ -160,24 +164,29 @@ define(["mavenService/api/mavenServiceAPI"], function() {
 			}
 		},
 		
-		mvnlogService : function(key, divId){
+		mvnlogService : function(key, divId, callback){
 			try{
 				var self = this, header = self.getRequestHeader("GET", '&uniquekey=' + key, commonVariables.mvnlogService, "");
 				self.mavenServiceAPI.mvnSer(header, 
 					function(response){
 						if(response != undefined && response != null){
 
-							$(divId).append(response.log);
+							$(divId).append('<font style = "color:' + self.logColor(response.log) + '">' + response.log + '</font><br>');
 						
 							if(response.status == 'STARTED'){
+								callback(true);
 							}else if(response.status == 'INPROGRESS'){
-								self.mvnlogService(response.uniquekey, divId);
+								self.mvnlogService(response.uniquekey, divId, callback);
 							}else if(response.status == 'COMPLETED'){
+								callback(true);
 							}else if(response.status == 'ERROR'){
-								$(divId).append(data.service_exception);
+								$(divId).append('<font style = "color:red">' + data.service_exception + '</font><br>');
+								callback(true);
 							}else if(response.status == 'SUCCESS'){
+								callback(true);
 							}
 						}else {
+							callback(true);
 						}
 					}, 
 					function(serviceerror){
@@ -201,7 +210,24 @@ define(["mavenService/api/mavenServiceAPI"], function() {
 			}
 
 			return header;
-		}
+		},
+		
+		logColor : function(logStr){
+		
+			if(logStr != null){
+				if(logStr.match("ERROR") || logStr.match("FAILURE")){
+					return "red";
+				}else if(logStr.match("WARNING")){
+					return "yellow";
+				}else if(logStr.match("SUCCESS")){
+					return "green";
+				}else{
+					return "block"
+				}
+			}else{
+				return "block"
+			}
+		},
 	});
 
 	return Clazz.com.components.mavenService.js.listener.MavenServiceListener;

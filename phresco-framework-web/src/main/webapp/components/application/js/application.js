@@ -108,7 +108,7 @@ define(["application/listener/applicationListener"], function() {
 		 *
 		 * @element: Element as the result of the template + data binding
 		 */
-		postRender : function(element) {			
+		postRender : function(element) {
 			var self = this;
 			self.multiselect();
 			commonVariables.navListener.showHideControls(commonVariables.editApplication);

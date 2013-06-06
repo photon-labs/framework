@@ -1850,6 +1850,7 @@ select[name="builtmyself"] {
 	border-radius: 6px;
 	background:#f7f7f7;
 	z-index: -1;
+	word-wrap: break-word; word-break: break-all; white-space: -moz-pre-wrap !important; white-space: -o-pre-wrap;
 }
 
 .build_info table,.build_progress table {
