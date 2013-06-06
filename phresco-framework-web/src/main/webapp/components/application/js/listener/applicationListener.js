@@ -1,4 +1,4 @@
-define(["framework/widget", "framework/widgetWithTemplate", "application/api/applicationAPI"], function() {
+define(["application/api/applicationAPI"], function() {
 
 	Clazz.createPackage("com.components.application.js.listener");
 
@@ -16,8 +16,9 @@ define(["framework/widget", "framework/widgetWithTemplate", "application/api/app
 		 * @config: configurations for this listener
 		 */
 		initialize : function(config) {
-			this.applicationAPI = new Clazz.com.components.application.js.api.ApplicationAPI();
-			this.loadingScreen = new Clazz.com.js.widget.common.Loading();
+			var self = this;
+			if(self.applicationAPI === null)
+				self.applicationAPI = new Clazz.com.components.application.js.api.ApplicationAPI();
 		},
 		
 		onCancelUpdate : function() {
@@ -157,7 +158,7 @@ define(["framework/widget", "framework/widgetWithTemplate", "application/api/app
 		getAppInfo : function(header, callback) {
 			var self = this;
 			try {
-				self.loadingScreen.showLoading();
+				commonVariables.loadingScreen.showLoading();
 				self.applicationAPI.appinfo(header,
 					function(response) {
 						if (response !== null) {
@@ -173,13 +174,13 @@ define(["framework/widget", "framework/widgetWithTemplate", "application/api/app
 									self.getWSConfig(response, function(appInfo){
 										data.webserviceData = appInfo.data;
 										self.applicationAPI.localVal.setJson('webserviceData', appInfo.data);
-										self.loadingScreen.removeLoading();
+										commonVariables.loadingScreen.removeLoading();
 										callback(data);
 									});	
 								});
 							});
 						} else {
-						self.loadingScreen.removeLoading();
+						commonVariables.loadingScreen.removeLoading();
 							callback({ "status" : "service failure"});
 						}
 
@@ -369,25 +370,25 @@ define(["framework/widget", "framework/widgetWithTemplate", "application/api/app
 		editAppInfo : function(header, callback) {
 			var self = this;
 			try {
-				self.loadingScreen.showLoading();
+				commonVariables.loadingScreen.showLoading();
 				self.applicationAPI.appinfo(header,
 					function(response) {
 						if (response !== null) {
 							callback(response);
-							self.loadingScreen.removeLoading();
+							commonVariables.loadingScreen.removeLoading();
 						} else {
-							self.loadingScreen.removeLoading();
+							commonVariables.loadingScreen.removeLoading();
 							callback({ "status" : "service failure"});
 						}
 
 					},
 
 					function(textStatus) {
-						self.loadingScreen.removeLoading();
+						commonVariables.loadingScreen.removeLoading();
 					}
 				);
 			} catch(exception) {
-				self.loadingScreen.removeLoading();
+				commonVariables.loadingScreen.removeLoading();
 			}
 
 		},
@@ -440,9 +441,9 @@ define(["framework/widget", "framework/widgetWithTemplate", "application/api/app
 					function(response) {
 						if (response !== null) {
 							callback(response);
-							self.loadingScreen.removeLoading();
+							commonVariables.loadingScreen.removeLoading();
 						} else {
-							self.loadingScreen.removeLoading();
+							commonVariables.loadingScreen.removeLoading();
 							callback({ "status" : "service failure"});
 						}
 

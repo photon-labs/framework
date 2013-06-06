@@ -26,6 +26,7 @@ public class TestSuite {
 	private String assertions;
 	private float tests;
 	private float failures;
+	private float success;
 	private float errors;
 	private float notApplicable;
 	private float blocked;
@@ -152,6 +153,14 @@ public class TestSuite {
 
 	public void setBlocked(float blocked) {
 		this.blocked = blocked;
+	}
+
+	public void setSuccess(float success) {
+		this.success = success;
+	}
+
+	public float getSuccess() {
+		return success;
 	}
 
 }

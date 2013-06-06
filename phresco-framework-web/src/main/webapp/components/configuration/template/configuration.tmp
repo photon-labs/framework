@@ -51,6 +51,7 @@
                             
                             <!--env_border div ends here -->	
                         </div>
+						<div class="flt_left" id="errdisplay" > </div>
                         <div class="flt_right">
                             <input type="button" value="Ok" name="saveEnvironment" class="btn btn_style">
                             <input type="button" value="Close" class="btn btn_style dyn_popup_close">

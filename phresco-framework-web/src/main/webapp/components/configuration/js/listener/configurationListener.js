@@ -107,7 +107,7 @@ define(["configuration/api/configurationAPI"], function() {
 				webserviceurl : ''
 			};
 			if (action === "list") {
-				header.webserviceurl = commonVariables.webserviceurl+commonVariables.configuration+"?appDirName="+appDirName;
+				header.webserviceurl = commonVariables.webserviceurl+commonVariables.configuration+"/allEnvironments?appDirName="+appDirName;
 			} else if (action === "edit") {
 				header.webserviceurl = commonVariables.webserviceurl+commonVariables.configuration+"?appDirName="+appDirName+"&envName="+commonVariables.environmentName;
 			}else if (action === "configTypes") {
@@ -308,7 +308,7 @@ define(["configuration/api/configurationAPI"], function() {
 			$("input[name=envDesc]").val('')
 		},
 		
-		saveEnvEvent : function(callback) {
+		saveEnvEvent : function(envWithConfig, callback) {
 			var self = this;
 			self.envJson = [];
 			$.each($("ul[name=envList]").children(), function(index, value) {
@@ -316,6 +316,13 @@ define(["configuration/api/configurationAPI"], function() {
 				envNameDesc.name = $(value).find("div[name=envListName]").html();
 				envNameDesc.desc = $(value).find("input[name=envListDesc]").val();
 				envNameDesc.configurations = [];
+				for (i=0; i<envWithConfig.length; i++) {
+					if(envWithConfig[i].name === envNameDesc.name) {
+						if (envWithConfig[i].configurations !== null) {
+							envNameDesc.configurations = envWithConfig[i].configurations;
+						}
+					}
+				}
 				envNameDesc.appliesTo = [""];
 				envNameDesc.defaultEnv = $(value).find("input[name=optionsRadiosfd]").is(':checked');
 				envNameDesc.delete = false;
@@ -389,11 +396,13 @@ define(["configuration/api/configurationAPI"], function() {
 			self.configRequestBody = self.configList;
 			self.getConfigurationList(self.getRequestHeader(self.configRequestBody, "saveConfig", envrName), function(response) {
 				Clazz.navigationController.jQueryContainer = commonVariables.contentPlaceholder;
-				if(self.configuration  === null) {
+				if(self.configListPage  === null) {
 					commonVariables.navListener.getMyObj(commonVariables.configuration, function(retVal) {
 						self.configListPage = retVal;
-						Clazz.navigationController.push(self.configList, true);
+						Clazz.navigationController.push(self.configListPage, true);
 					});
+				} else {
+					Clazz.navigationController.push(self.configListPage, true);
 				}
 			});
 		},

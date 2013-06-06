@@ -42,6 +42,7 @@ import org.xml.sax.SAXException;
 
 import com.photon.phresco.commons.FileListFilter;
 import com.photon.phresco.commons.FrameworkConstants;
+import com.photon.phresco.configuration.Configuration;
 import com.photon.phresco.exception.PhrescoException;
 import com.photon.phresco.framework.commons.FrameworkUtil;
 import com.photon.phresco.framework.commons.QualityUtil;
@@ -91,25 +92,109 @@ public class QualityService extends RestBase implements ServiceConstants, Framew
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response getTestSuites(@QueryParam("appDirName") String appDirName, @QueryParam("testType") String testType,
 			@QueryParam("techReport") String techReport, @QueryParam("moduleName") String moduleName) throws PhrescoException {
-		ResponseInfo<List<String>> responseData = new ResponseInfo<List<String>>();
-        // TO kill the Process
+		ResponseInfo<List<TestSuite>> responseData = new ResponseInfo<List<TestSuite>>();
+		// TO kill the Process
         String baseDir = Utility.getProjectHome()+ appDirName;
         Utility.killProcess(baseDir, testType);
         
-        String testResultPath = "";
-        String testSuitePath = "";
-        List<String> resultTestSuiteNames = null;
-		try {
-			testResultPath = getTestResultPath(appDirName, moduleName, testType, techReport);
-			testSuitePath = getTestSuitePath(appDirName, testType, techReport);
-			resultTestSuiteNames = getTestSuiteNames(appDirName, testType, moduleName, techReport, testResultPath, testSuitePath);
-		} catch (PhrescoException e) {
-			throw new PhrescoException(e);
-		} 
-		ResponseInfo<List<String>> finalOutput = responseDataEvaluation(responseData, null, "Test Suites listed successfully", resultTestSuiteNames);
+		String testSuitePath = getTestSuitePath(appDirName, testType, techReport);
+		String testCasePath = getTestCasePath(appDirName, testType, techReport);
+		List<TestSuite> testSuites = testSuites(appDirName, moduleName, testType, moduleName, techReport, testSuitePath, testCasePath, "All");
+		if(CollectionUtils.isEmpty(testSuites)) {
+			ResponseInfo<Configuration> finalOuptut = responseDataEvaluation(responseData, null, "Test Result "+ techReport + " not available", testSuites);
+			return Response.status(Status.EXPECTATION_FAILED).entity(finalOuptut).header("Access-Control-Allow-Origin", "*").build();
+		}
+		ResponseInfo<List<String>> finalOutput = responseDataEvaluation(responseData, null, "Test Suites listed successfully", testSuites);
 		return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
 	}
-	
+
+	private List<TestSuite> testSuites(String appDirName, String moduleName, String testType, String module, String techReport,
+			String testSuitePath, String testCasePath, String testSuite) throws PhrescoException {
+		setTestSuite(testSuite);
+		List<TestSuite> suites = new ArrayList<TestSuite>();
+		try {
+			String testSuitesMapKey = appDirName + testType + module + techReport;
+			if(MapUtils.isEmpty(testSuiteMap)) {
+				String testResultPath = getTestResultPath(appDirName, moduleName, testType, techReport);
+				File[] testResultFiles = getTestResultFiles(testResultPath);
+				if(ArrayUtils.isEmpty(testResultFiles)) {
+					return null;
+				}
+				getTestSuiteNames(appDirName, testType, moduleName, techReport, testResultPath, testSuitePath);
+			}
+			Map<String, NodeList> testResultNameMap = testSuiteMap.get(testSuitesMapKey);
+//			NodeList testSuites = testResultNameMap.get(testSuite);
+			Map<String, String> testSuitesResultMap = new HashMap<String, String>();
+			float totalTestSuites = 0;
+			float successTestSuites = 0;
+			float failureTestSuites = 0;
+			float errorTestSuites = 0;
+			// get all nodelist of testType of a project
+			Collection<NodeList> allTestResultNodeLists = testResultNameMap.values();
+			for (NodeList allTestResultNodeList : allTestResultNodeLists) {
+				if (allTestResultNodeList.getLength() > 0 ) {
+					List<TestSuite> allTestSuites = getTestSuite(allTestResultNodeList);
+					if (CollectionUtils.isNotEmpty(allTestSuites)) {
+						for (TestSuite tstSuite : allTestSuites) {
+							//testsuite values are set before calling getTestCases value
+							setTestSuite(tstSuite.getName());
+							getTestCases(appDirName, allTestResultNodeList, testSuitePath, testCasePath);
+							float tests = 0;
+							float failures = 0;
+							float errors = 0;
+							tests = Float.parseFloat(String.valueOf(getNodeLength()));
+							failures = Float.parseFloat(String.valueOf(getSetFailureTestCases()));
+							errors = Float.parseFloat(String.valueOf(getErrorTestCases()));
+							float success = 0;
+
+							if (failures != 0 && errors == 0) {
+								if (failures > tests) {
+									success = failures - tests;
+								} else {
+									success = tests - failures;
+								}
+							} else if (failures == 0 && errors != 0) {
+								if (errors > tests) {
+									success = errors - tests;
+								} else {
+									success = tests - errors;
+								}
+							} else if (failures != 0 && errors != 0) {
+								float failTotal = (failures + errors);
+								if (failTotal > tests) {
+									success = failTotal - tests;
+								} else {
+									success = tests - failTotal;
+								}
+							} else {
+								success = tests;
+							}
+
+							totalTestSuites = totalTestSuites + tests;
+							failureTestSuites = failureTestSuites + failures;
+							errorTestSuites = errorTestSuites + errors;
+							successTestSuites = successTestSuites + success;
+							String rstValues = tests + "," + success + "," + failures + "," + errors;
+							testSuitesResultMap.put(tstSuite.getName(), rstValues);
+
+							TestSuite suite = new TestSuite();
+							suite.setName(tstSuite.getName());
+							suite.setSuccess(success);
+							suite.setErrors(errors);
+							suite.setTime(tstSuite.getTime());
+							suite.setTotal(totalTestSuites);
+							suite.setTestCases(tstSuite.getTestCases());
+							suites.add(suite);
+						}
+					}
+				}
+			}
+		} catch (PhrescoException e) {
+			throw new PhrescoException(e);
+		}
+		return suites;
+	}
+
 	@GET
 	@Path("/testreports")
 	@Produces(MediaType.APPLICATION_JSON)
