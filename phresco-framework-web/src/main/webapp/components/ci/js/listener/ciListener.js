@@ -177,9 +177,6 @@ define(["ci/api/ciAPI"], function() {
 			// button name change
 			$('input[name=save]').prop("value", "Update");
 			$('input[name=save]').prop("name", "update");
-			// bind the update event
-			//$("input[name=save]").unbind("click");
-
 		},
 
 		deleteJobTemplate : function () {

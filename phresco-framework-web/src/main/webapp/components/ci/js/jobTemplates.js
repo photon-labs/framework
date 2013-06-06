@@ -140,7 +140,11 @@ define(["ci/listener/ciListener"], function() {
 			// Open job template popup
 			$("input[name=jobTemplatePopup]").unbind("click");
 			$("input[name=jobTemplatePopup]").click(function() {
+				//reset the form
 				self.resetForm($('#jobTemplate'));
+				// button name change
+				$('input[name=update]').prop("value", "Create");
+				$('input[name=update]').prop("name", "save");
    				self.opencc(this, $(this).attr('name'));
    			});
 
@@ -158,6 +162,8 @@ define(["ci/listener/ciListener"], function() {
    			// Edit job template
    			$("a[name=editpopup]").unbind("click");
 			$("a[name=editpopup]").click(function() {
+				//reset the form
+				self.resetForm($('#jobTemplate'));
 				console.log("edit " +  $(this).attr('value'));
 				var jobTemplateName = {};
 				var name = $(this).attr('value');
