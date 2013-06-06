@@ -94,6 +94,8 @@ import com.photon.phresco.commons.model.ApplicationInfo;
 import com.photon.phresco.commons.model.ProjectInfo;
 import com.photon.phresco.exception.PhrescoException;
 import com.photon.phresco.framework.api.SCMManager;
+import com.photon.phresco.framework.model.RepoDetail;
+import com.photon.phresco.framework.model.RepoFileInfo;
 import com.photon.phresco.util.FileUtil;
 import com.photon.phresco.util.Utility;
 import com.phresco.pom.util.PomProcessor;
@@ -929,35 +931,41 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 		return cm.getCommitClient().doCommit(new File[]{subVerDir}, false, commitMessage, null, null, false, true, SVNDepth.INFINITY);
     }
 	
-	public List<SVNStatus> getCommitableFiles(File path, String revision) throws SVNException {
+	public List<RepoFileInfo> getCommitableFiles(File path, String revision) throws SVNException {
+		
 	    SVNClientManager svnClientManager = SVNClientManager.newInstance();
-	    final List<SVNStatus> allSVNStatus = new ArrayList<SVNStatus>();
+	    final List<RepoFileInfo> filesList = new ArrayList<RepoFileInfo>();
 	    svnClientManager.getStatusClient().doStatus(path, SVNRevision.parse(revision), SVNDepth.INFINITY, false, false, false, false, new ISVNStatusHandler() {
 	        public void handleStatus(SVNStatus status) throws SVNException {
 	            SVNStatusType statusType = status.getContentsStatus();
 	            if (statusType != SVNStatusType.STATUS_NONE && statusType != SVNStatusType.STATUS_NORMAL
 	                    && statusType != SVNStatusType.STATUS_IGNORED) {
-		            allSVNStatus.add(status);
+	            	RepoFileInfo repoFileInfo = new RepoFileInfo();
+	            	String filePath = status.getFile().getPath();
+	            	 String FileStatus = Character.toString(statusType.getCode());
+	            	 repoFileInfo.setContentsStatus(statusType);
+	            	 repoFileInfo.setStatus(FileStatus);
+	            	 repoFileInfo.setCommitFilePath(filePath);
+	            	 filesList.add(repoFileInfo);
 	            }
 	        }
 	    }, null);
 	    
-	    return allSVNStatus;
+	    return filesList;
 	}
 	
-	public Properties getGITCommitableFiles(File path) throws IOException, GitAPIException
+	public List<RepoFileInfo> getGITCommitableFiles(File path) throws IOException, GitAPIException
 	{
 		FileRepositoryBuilder builder = new FileRepositoryBuilder();
 		Repository repository = builder.setGitDir(path).readEnvironment().findGitDir().build(); 
-				
 		Git git = new Git(repository);
-
+		List<RepoFileInfo> fileslist = new ArrayList<RepoFileInfo>();
+		RepoFileInfo repoFileInfo = new RepoFileInfo();
 		InitCommand initCommand = Git.init();
 		initCommand.setDirectory(path);
 		git = initCommand.call();
 		Status status = git.status().call();
 		
-		Properties prop = new Properties();
 		Set<String> added = status.getAdded();
 		Set<String> changed = status.getChanged();
 		Set<String> conflicting = status.getConflicting();
@@ -968,47 +976,68 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 		
 		if (!added.isEmpty()) {
 			for (String add : added) {
-				prop.put(path + BACK_SLASH + add, "A");
+				String filePath = path + BACK_SLASH + add;
+				repoFileInfo.setCommitFilePath(filePath);
+				repoFileInfo.setStatus("A");
+				fileslist.add(repoFileInfo);
 			}
 		}
 
 		if (!changed.isEmpty()) {
 			for (String change : changed) {
-				prop.put(path + BACK_SLASH + change, "M");
+				String filePath = path + BACK_SLASH + change;
+				repoFileInfo.setCommitFilePath(filePath);
+				repoFileInfo.setStatus("M");
+				fileslist.add(repoFileInfo);
 			}
 		}
 
 		if (!conflicting.isEmpty()) {
 			for (String conflict : conflicting) {
-				prop.put(path + BACK_SLASH + conflict, "C");
+				String filePath = path + BACK_SLASH + conflict;
+				repoFileInfo.setCommitFilePath(filePath);
+				repoFileInfo.setStatus("C");
+				fileslist.add(repoFileInfo);
 			}
 		}
 
 		if (!missing.isEmpty()) {
 			for (String miss : missing) {
-				prop.put(path + BACK_SLASH + miss, "!");
+				String filePath = path + BACK_SLASH + miss;
+				repoFileInfo.setCommitFilePath(filePath);
+				repoFileInfo.setStatus("!");
+				fileslist.add(repoFileInfo);
 			}
 		}
 
 		if (!modified.isEmpty()) {
 			for (String modify : modified) {
-				prop.put(path + BACK_SLASH + modify, "M");
+				String filePath = path + BACK_SLASH + modify;
+				repoFileInfo.setCommitFilePath(filePath);
+				repoFileInfo.setStatus("M");
+				fileslist.add(repoFileInfo);
 			}
 		}
 
 		if (!removed.isEmpty()) {
 			for (String remove : removed) {
-				prop.put(path + BACK_SLASH + remove, "D");
+				String filePath = path + BACK_SLASH + remove;
+				repoFileInfo.setCommitFilePath(filePath);
+				repoFileInfo.setStatus("D");
+				fileslist.add(repoFileInfo);
 			}
 		}
 
 		if (!untracked.isEmpty()) {
 			for (String untrack : untracked) {
-				prop.put(path + BACK_SLASH + untrack, "?");
+				String filePath = path + BACK_SLASH + untrack;
+				repoFileInfo.setCommitFilePath(filePath);
+				repoFileInfo.setStatus("?");
+				fileslist.add(repoFileInfo);
 			}
 		}
 		git.getRepository().close();
-		return prop;
+		return fileslist;
 	}
 
 	public List<String> getSvnLogMessages(String Url, String userName, String Password) throws PhrescoException {
@@ -1066,9 +1095,9 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 		//to List Unversioned Files 
 		List<File> unversionedFiles = new ArrayList<File>();
 		for (File file : comittableFiles) {
-			List<SVNStatus> status = getCommitableFiles(new File(file.getPath()), HEAD_REVISION);
+			List<RepoFileInfo> status = getCommitableFiles(new File(file.getPath()), HEAD_REVISION);
 			if (CollectionUtils.isNotEmpty(status)) {
-				SVNStatus svnStatus = status.get(0);
+				RepoFileInfo svnStatus = status.get(0);
 				SVNStatusType contentsStatus = svnStatus.getContentsStatus();
 				if(UNVERSIONED.equalsIgnoreCase(contentsStatus.toString())) {
 					unversionedFiles.add(file);

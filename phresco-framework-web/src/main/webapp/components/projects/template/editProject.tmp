@@ -12,7 +12,7 @@
                     <td data-i18n="project.create.label.version"></td>
                     <td><input type="text" name="projectversion" value="{{version}}" disabled/></td>
                     <td data-i18n="project.create.label.description"></td>
-                    <td rowspan="2"><textarea class="popuptextarea" type="text" name="projectdescription" value="{{description}}" placeholder="Description" disabled /></td>
+                    <td rowspan="2"><textarea class="popuptextarea" name="projectdescription" value="{{description}}" placeholder="Description" disabled /></td>
                 </tr>
                 <tr>
 					<td colspan="2">

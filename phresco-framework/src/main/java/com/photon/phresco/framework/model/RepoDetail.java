@@ -22,14 +22,17 @@ public class RepoDetail implements Serializable {
 	private String revisionVal;
 	private String commitMessage;
 	private List<String>commitableFiles;
+	private List<RepoFileInfo> repoInfoFile;
 	private String type;
-	
+	private boolean repoExist;
+
 	public RepoDetail() {
 		super();
 	}
-
+	
 	public RepoDetail(String revision, String repoUrl, String userName, String password, String revisionVal,
-			String commitMessage, List<String> commitableFiles, String type) {
+			String commitMessage, List<String> commitableFiles, List<RepoFileInfo> repoInfoFile, String type,
+			boolean repoExist) {
 		super();
 		this.revision = revision;
 		this.repoUrl = repoUrl;
@@ -38,7 +41,9 @@ public class RepoDetail implements Serializable {
 		this.revisionVal = revisionVal;
 		this.commitMessage = commitMessage;
 		this.commitableFiles = commitableFiles;
+		this.repoInfoFile = repoInfoFile;
 		this.type = type;
+		this.repoExist = repoExist;
 	}
 
 	public String getRevision() {
@@ -97,12 +102,28 @@ public class RepoDetail implements Serializable {
 		this.commitableFiles = commitableFiles;
 	}
 
+	public String getType() {
+		return type;
+	}
+
 	public void setType(String type) {
 		this.type = type;
 	}
 
-	public String getType() {
-		return type;
+	public List<RepoFileInfo> getRepoInfoFile() {
+		return repoInfoFile;
+	}
+
+	public void setRepoInfoFile(List<RepoFileInfo> repoInfoFile) {
+		this.repoInfoFile = repoInfoFile;
+	}
+
+	public boolean isRepoExist() {
+		return repoExist;
+	}
+
+	public void setRepoExist(boolean repoExist) {
+		this.repoExist = repoExist;
 	}
 
 	public String toString() {
@@ -117,6 +138,8 @@ public class RepoDetail implements Serializable {
 	                .append("commitMessage", getCommitMessage())
 	                .append("commitableFiles", getCommitableFiles())
 	                .append("type", getType())
+	                .append("repoInfoFile", getRepoInfoFile())
+	                .append("repoExist", isRepoExist())
 	                .toString();
 	}
 }

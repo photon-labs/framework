@@ -92,6 +92,7 @@ define(["projectlist/listener/projectListListener"], function() {
 
 		getAction : function(actionBody, action, callback) {
 			var self = this;
+			Clazz.navigationController.jQueryContainer = commonVariables.contentPlaceholder;
 			self.projectslistListener.projectListAction(self.projectslistListener.getActionHeader(actionBody, action), function(response) {
 				self.loadPage();
 			});
