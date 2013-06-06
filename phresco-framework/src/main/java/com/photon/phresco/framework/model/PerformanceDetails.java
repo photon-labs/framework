@@ -31,23 +31,34 @@ public class PerformanceDetails
 	private int noOfUsers;
 	private int rampUpPeriod;
 	private int loopCount;
+	private String authorizationUrl;
+	private String authorizationUserName;
+	private String authorizationPassword;
+	private String authorizationDomain;
+	private String authorizationRealm;
 
 	public PerformanceDetails()
 	{
 
 	}
 
-	public PerformanceDetails(String testAgainst,String showSettings,String setting,String testName , List<ContextUrls> contextUrls ,List<DbContextUrls> dbContextUrls,int noOfUsers, int rampUpPeriod, int loopCount)
-	{
+	public PerformanceDetails(String testAgainst, String showSettings, String setting, String testName, List<ContextUrls> contextUrls,
+			List<DbContextUrls> dbContextUrls, int noOfUsers, int rampUpPeriod, int loopCount, String authorizationUrl,
+			String authorizationUserName, String authorizationPassword, String authorizationDomain, String authorizationRealm) {
 		this.testAgainst = testAgainst;
 		this.showSettings = showSettings;
 		this.setting = setting;
+		this.testName = testName;
 		this.contextUrls = contextUrls;
 		this.dbContextUrls = dbContextUrls;
-		this.testName = testName; 
 		this.noOfUsers = noOfUsers;
 		this.rampUpPeriod = rampUpPeriod;
 		this.loopCount = loopCount;
+		this.authorizationUrl = authorizationUrl;
+		this.authorizationUserName = authorizationUserName;
+		this.authorizationPassword = authorizationPassword;
+		this.authorizationDomain = authorizationDomain;
+		this.authorizationRealm = authorizationRealm;
 	}
 
 	public String getTestAgainst() {
@@ -122,10 +133,48 @@ public class PerformanceDetails
 		this.dbContextUrls = dbContextUrls;
 	}
 
+	public String getAuthorizationUrl() {
+		return authorizationUrl;
+	}
+
+	public void setAuthorizationUrl(String authorizationUrl) {
+		this.authorizationUrl = authorizationUrl;
+	}
+
+	public String getAuthorizationUserName() {
+		return authorizationUserName;
+	}
+
+	public void setAuthorizationUserName(String authorizationUserName) {
+		this.authorizationUserName = authorizationUserName;
+	}
+
+	public String getAuthorizationPassword() {
+		return authorizationPassword;
+	}
+
+	public void setAuthorizationPassword(String authorizationPassword) {
+		this.authorizationPassword = authorizationPassword;
+	}
+
+	public String getAuthorizationDomain() {
+		return authorizationDomain;
+	}
+
+	public void setAuthorizationDomain(String authorizationDomain) {
+		this.authorizationDomain = authorizationDomain;
+	}
+
+	public String getAuthorizationRealm() {
+		return authorizationRealm;
+	}
+
+	public void setAuthorizationRealm(String authorizationRealm) {
+		this.authorizationRealm = authorizationRealm;
+	}
+
 	/*public String toString() {
 		return String.format("testAgainst:%s,showSettings:%s,setting:%s,testName:%s,name:%s,context:%s,contextType:%s,contextPostData:%s,encodingType:%s,noOfUsers:%d,rampUpPeriod:%d,loopCount:%d",testAgainst,showSettings,setting,testName,noOfUsers,rampUpPeriod,loopCount);
 	}*/
-	
-	
 }
 
