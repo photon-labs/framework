@@ -746,20 +746,14 @@ define(["projects/api/projectsAPI"], function() {
 			$("select[name='builtmyself']").bind('change', function(){
 				var selectedText = $(this).find(':selected').text();
 				if(selectedText == "Pre Built"){
-					 $("select[name='prebuiltapps']").show();
-					 $("td[name='startdate-lbl']").hide();
-					 $("td[name='startdateholder']").hide();
-					 $("td[name='enddate-lbl']").hide();
-					 $("td[name='enddateholder']").hide();
+					 $("select[name='prebuiltapps']").css('display' , 'inline-block');
+					 $("select[name='builtmyselfapps']").hide();
 					 $("#applicationlayer").hide();
 					 $("#weblayer").hide();
 					 $("#mobilelayer").hide();
 				} else {
+					 $("select[name='builtmyselfapps']").css('display' , 'inline-block');
 					 $("select[name='prebuiltapps']").hide();
-					 $("td[name='startdate-lbl']").show();
-					 $("td[name='startdateholder']").show();
-					 $("td[name='enddate-lbl']").show();
-					 $("td[name='enddateholder']").show();
 					 $("#applicationlayer").show();
 					 $("#weblayer").show();
 					 $("#mobilelayer").show();	
