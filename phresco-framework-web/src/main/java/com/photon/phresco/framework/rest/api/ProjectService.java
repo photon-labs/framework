@@ -67,12 +67,37 @@ public class ProjectService extends RestBase implements FrameworkConstants {
 		try {
 			ProjectManager projectManager = PhrescoFrameworkFactory.getProjectManager();
 			List<ProjectInfo> projects = projectManager.discover(customerId);
+//			if (CollectionUtils.isNotEmpty(projects)) {
+//            	Collections.sort(projects, sortByNameInAlphaOrder());
+//            }
 			ResponseInfo<List<ProjectInfo>> finalOutput = responseDataEvaluation(responseData, null, "Project List Successfully", projects);
 			return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
 		} catch (PhrescoException e) {
 			ResponseInfo<List<ProjectInfo>> finalOutput = responseDataEvaluation(responseData, e, "Project List failed", null);
 			return Response.status(Status.BAD_REQUEST).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
 		}
+	}
+	
+	@GET
+	@Path("/appinfos")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response appinfoList(@QueryParam("customerId") String customerId, @QueryParam("projectId") String projectId) {
+		ResponseInfo<List<ApplicationInfo>> responseData = new ResponseInfo<List<ApplicationInfo>>();
+		ProjectInfo projectInfo = null;
+		try {
+			ProjectManager projectManager = PhrescoFrameworkFactory.getProjectManager();
+			projectInfo = projectManager.getProject(projectId, customerId);	
+			if(projectInfo != null) {
+				List<ApplicationInfo> appInfos = projectInfo.getAppInfos();
+				ResponseInfo<List<ProjectInfo>> finalOutput = responseDataEvaluation(responseData, null, "Application infos returned Successfully", appInfos);
+				return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
+			}
+		} catch (PhrescoException e) {
+			ResponseInfo<List<ProjectInfo>> finalOutput = responseDataEvaluation(responseData, e, "Application info failed", null);
+			return Response.status(Status.BAD_REQUEST).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
+		}
+		ResponseInfo<List<ProjectInfo>> finalOutput = responseDataEvaluation(responseData, null, "No application to return", null);
+		return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
 	}
 
 	@POST
@@ -467,7 +492,7 @@ public class ProjectService extends RestBase implements FrameworkConstants {
 			public int compare(Object firstObject, Object secondObject) {
 				ProjectInfo projectInfo1 = (ProjectInfo) firstObject;
 				ProjectInfo projectInfo2 = (ProjectInfo) secondObject;
-				return projectInfo1.getName().compareToIgnoreCase(projectInfo2.getName());
+				return  projectInfo1.getCreationDate().compareTo(projectInfo2.getCreationDate());
 			}
 		};
 	}

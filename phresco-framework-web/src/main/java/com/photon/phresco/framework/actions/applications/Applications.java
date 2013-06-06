@@ -1242,7 +1242,7 @@ public class Applications extends FrameworkBaseAction implements Constants {
 			String applicationHome = getApplicationHome();
 			File appDir = new File(applicationHome);
 			revision = HEAD_REVISION;
-			commitableFiles = scmi.getCommitableFiles(appDir, revision);
+//			commitableFiles = scmi.getCommitableFiles(appDir, revision);
 		} catch (Exception e) {
 			throw new PhrescoException(e);
 		}
@@ -1258,7 +1258,7 @@ public class Applications extends FrameworkBaseAction implements Constants {
 			SCMManagerImpl scmi = new SCMManagerImpl();
 			String applicationHome = getApplicationHome();
 			File appDir = new File(applicationHome);
-			prop = scmi.getGITCommitableFiles(appDir);
+//			prop = scmi.getGITCommitableFiles(appDir);
 		} catch (Exception e) {
 			throw new PhrescoException(e);
 		}
