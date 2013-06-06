@@ -3,7 +3,7 @@
         	<input type="button" data-i18n="[value]build.label.openfolder" class="btn btn_style openfolder_icon_btn" id="openFolder">
 			<input type="button" data-i18n="[value]build.label.copypath" class="btn btn_style copypath_icon_btn" id="copyPath">
         </div>
-        <div class="alert_div"  style="display:none;">
+        <div class="alert_div" style="display:none;">
             Build in progress... Do not perform any action or refresh the page.
         </div>
         
@@ -197,9 +197,10 @@
                             <td><img src="themes/default/images/helios/buildreport_icon.png" width="15" height="18" border="0" alt=""></td>
                         </tr>
                      </thead>
-                     <tbody>
+                     <tbody class="scrollContent">
                         <tr>
-							<td id="logContent">  </td>
+							<td id="logContent" colspan="2">
+							</td>
 						</tr>
                      </tbody>
                 </table>
