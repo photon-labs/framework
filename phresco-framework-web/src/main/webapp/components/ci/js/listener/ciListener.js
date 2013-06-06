@@ -123,6 +123,13 @@ define(["ci/api/ciAPI"], function() {
 			}
 		},
 
+		openJobTemplate : function () {
+			var self = this;
+			console.log("update job template ");
+			var jobTemplate = self.constructJobTemplate();
+			console.log("update job template " + JSON.stringify(jobTemplate));
+		},
+
 		updateJobTemplate : function (callback) {
 			var self = this;
 			console.log("update job template ");

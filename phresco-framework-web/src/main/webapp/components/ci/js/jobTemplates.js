@@ -12,6 +12,7 @@ define(["ci/listener/ciListener"], function() {
 		listEvent : null,
 		updateEvent : null,
 		editEvent : null,
+		openEvent : null,
 		deleteEvent : null,
 		ciRequestBody : {},
 		templateData : {},
@@ -48,6 +49,10 @@ define(["ci/listener/ciListener"], function() {
 				self.listEvent = new signals.Signal();
 			}
 
+			if (self.openEvent === null) {
+				self.openEvent = new signals.Signal();
+			}
+
 			if (self.editEvent === null) {
 				self.editEvent = new signals.Signal();
 			}
@@ -60,6 +65,7 @@ define(["ci/listener/ciListener"], function() {
 			}
 
 			// Trigger registered events
+			self.openEvent.add(ciListener.openJobTemplate, ciListener);
 			self.addEvent.add(ciListener.addJobTemplate, ciListener);
 			self.listEvent.add(ciListener.listJobTemplate, ciListener);
 			self.updateEvent.add(ciListener.updateJobTemplate, ciListener);
@@ -135,8 +141,8 @@ define(["ci/listener/ciListener"], function() {
 			var self = this;
 
 			$(".tooltiptop").tooltip();
-
 			$(".dyn_popup").hide();
+			
 			// Open job template popup
 			$("input[name=jobTemplatePopup]").unbind("click");
 			$("input[name=jobTemplatePopup]").click(function() {
