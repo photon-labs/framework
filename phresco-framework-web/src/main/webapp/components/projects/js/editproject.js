@@ -1,4 +1,4 @@
-define(["framework/widgetWithTemplate", "projects/listener/projectsListener", "projects/api/projectsAPI"], function() {
+define(["projects/listener/projectsListener"], function() {
 
 	Clazz.createPackage("com.components.projects.js");
 
@@ -13,8 +13,9 @@ define(["framework/widgetWithTemplate", "projects/listener/projectsListener", "p
 		templateData : {},
 		onRemoveLayerEvent : null,
 		onAddLayerEvent : null,
-		projectAPI : null,
 		getData : null,
+		onUpdateProjectsEvent : null,
+		onCancelUpdateEvent : null,
 			
 		/***
 		 * Called in initialization time of this class 
@@ -23,15 +24,17 @@ define(["framework/widgetWithTemplate", "projects/listener/projectsListener", "p
 		 */
 		initialize : function(globalConfig){
 			var self = this;
-			self.projectsListener = new Clazz.com.components.projects.js.listener.projectsListener();
-			self.projectAPI = new Clazz.com.components.projects.js.api.ProjectsAPI();
+			if(self.projectsListener === null)
+				self.projectsListener = new Clazz.com.components.projects.js.listener.projectsListener();
 			self.registerEvents(self.projectsListener);
 		},
 		
 		registerEvents : function (projectsListener) {
 			var self = this;
-			self.onUpdateProjectsEvent = new signals.Signal();
-			self.onCancelUpdateEvent = new signals.Signal();
+			if(self.onUpdateProjectsEvent === null)
+				self.onUpdateProjectsEvent = new signals.Signal();
+			if(self.onCancelUpdateEvent === null)	
+				self.onCancelUpdateEvent = new signals.Signal();
 			self.onUpdateProjectsEvent.add(projectsListener.createproject, projectsListener);
 			self.onCancelUpdateEvent.add(projectsListener.cancelCreateproject, projectsListener);
 		},
@@ -59,9 +62,9 @@ define(["framework/widgetWithTemplate", "projects/listener/projectsListener", "p
 		 
 		preRender: function(whereToRender, renderFunction){
 			var self = this;
-				self.applicationlayerData = self.projectAPI.localVal.getJson("Application Layer");
-				self.weblayerData = self.projectAPI.localVal.getJson("Web Layer");
-				self.mobilelayerData = self.projectAPI.localVal.getJson("Mobile Layer");
+				self.applicationlayerData = self.projectsListener.projectAPI.localVal.getJson("Application Layer");
+				self.weblayerData = self.projectsListener.projectAPI.localVal.getJson("Web Layer");
+				self.mobilelayerData = self.projectsListener.projectAPI.localVal.getJson("Mobile Layer");
 			if (self.applicationlayerData != null && self.weblayerData != null && self.mobilelayerData != null) {
 				self.templateData.applicationlayerData = self.applicationlayerData;
 				self.templateData.weblayerData = self.weblayerData;
@@ -76,9 +79,9 @@ define(["framework/widgetWithTemplate", "projects/listener/projectsListener", "p
 			} else {
 				self.setTechnologyData(function(bCheck){
 				if(bCheck){
-					self.applicationlayerData = self.projectAPI.localVal.getJson("Application Layer");
-					self.weblayerData = self.projectAPI.localVal.getJson("Web Layer");
-					self.mobilelayerData = self.projectAPI.localVal.getJson("Mobile Layer");
+					self.applicationlayerData = self.projectsListener.projectAPI.localVal.getJson("Application Layer");
+					self.weblayerData = self.projectsListener.projectAPI.localVal.getJson("Web Layer");
+					self.mobilelayerData = self.projectsListener.projectAPI.localVal.getJson("Mobile Layer");
 					self.templateData.applicationlayerData = self.applicationlayerData;
 					self.templateData.weblayerData = self.weblayerData;
 					self.templateData.mobilelayerData = self.mobilelayerData;
@@ -99,7 +102,7 @@ define(["framework/widgetWithTemplate", "projects/listener/projectsListener", "p
 			self.projectsListener.getEditProject(self.projectsListener.getRequestHeader(self.projectRequestBody, '', 'apptypes'), function(response) {
 				$.each(response.data, function(index, value){
 					//console.info("index",index,"value",value);
-					self.projectAPI.localVal.setJson(value.name, value);
+					self.projectsListener.projectAPI.localVal.setJson(value.name, value);
 					
 					if(response.data.length == (index + 1)){
 						callback(true);
@@ -120,7 +123,7 @@ define(["framework/widgetWithTemplate", "projects/listener/projectsListener", "p
 		bindUI : function(){
 		
 			var self=this;
-			
+			self.setDateTimePicker();
 			self.projectsListener.addLayersEvent();
 			self.projectsListener.removeLayersEvent();
 			self.projectsListener.technologyAndVersionChangeEvent();

@@ -1,4 +1,4 @@
-define(["framework/widget", "framework/widgetWithTemplate", "application/api/applicationAPI"], function() {
+define(["application/api/applicationAPI"], function() {
 
 	Clazz.createPackage("com.components.application.js.listener");
 
@@ -16,15 +16,18 @@ define(["framework/widget", "framework/widgetWithTemplate", "application/api/app
 		 * @config: configurations for this listener
 		 */
 		initialize : function(config) {
-			this.applicationAPI = new Clazz.com.components.application.js.api.ApplicationAPI();
-			this.loadingScreen = new Clazz.com.js.widget.common.Loading();
+			var self = this;
+			if(self.applicationAPI === null)
+				self.applicationAPI = new Clazz.com.components.application.js.api.ApplicationAPI();
 		},
 		
 		onCancelUpdate : function() {
 			var self = this;
 			Clazz.navigationController.jQueryContainer = commonVariables.contentPlaceholder;
-			self.projectlistContent = commonVariables.navListener.getMyObj(commonVariables.projectlist);
-			Clazz.navigationController.push(self.projectlistContent, true);
+			commonVariables.navListener.getMyObj(commonVariables.projectlist, function(retVal){
+				self.projectlistContent = retVal;
+				Clazz.navigationController.push(self.projectlistContent, true);
+			});
 		},
 		removelayer : function(object) {
 			var layerId = object.attr('id');
@@ -43,17 +46,17 @@ define(["framework/widget", "framework/widgetWithTemplate", "application/api/app
 		},
 		
 		addServerDatabase : function(appType, whereToAppend, rowId) {
-			var self = this, dynamicValue, server = '<tr class="servers" key="displayed"> <td><span data-i18n="application.edit.servers"></span>&nbsp;<span class="paid">'+rowId+'</span></td><td name="servers" class="servers"><select name="appServers" class="appServers"><option value=0>Select Server</option>'+ self.getOptionData('serverData') +'</select></td><td data-i18n="application.edit.versions"></td><td colspan="4" name="version" class="version"><select multiple name="server_version" class="server_version"><option value=0>Select Version</option></select> <div class="flt_right"><a href="javascript:;" name="addServer"><img src="../themes/default/images/helios/plus_icon.png" border="0" alt=""></a> <a href="javascript:;" name="removeServer"><img src="../themes/default/images/helios/minus_icon.png"  border="0" alt=""></a></div></td></tr>',
+			var self = this, dynamicValue, server = '<tr class="servers" key="displayed"> <td><span data-i18n="application.edit.servers"></span>&nbsp;<span class="paid">'+rowId+'</span></td><td name="servers" class="servers"><select name="appServers" class="appServers"><option value=0>Select Server</option>'+ self.getOptionData('serverData') +'</select></td><td data-i18n="application.edit.versions"></td><td colspan="4" name="version" class="version"><select multiple name="server_version" class="server_version"><option value=0>Select Version</option></select> <div class="flt_right"><a href="javascript:;" name="addServer"><img src="themes/default/images/helios/plus_icon.png" border="0" alt=""></a> <a href="javascript:;" name="removeServer"><img src="themes/default/images/helios/minus_icon.png"  border="0" alt=""></a></div></td></tr>',
 			
-			database ='<tr class="database" key="displayed"><td><span data-i18n="application.edit.database"></span>&nbsp;<span class="paid">'+rowId+'</span></td><td name="servers" class="databases"><select name="databases" class="databases"><option value=0>Select Database</option>'+ self.getOptionData('databaseData') +'</select></td><td data-i18n="application.edit.versions"></td> <td colspan="4" name="version" class="version"><select multiple name="db_version" class="db_version"> <option value=0>Select Version</option></select><div class="flt_right"><a href="javascript:;" name="addDatabase"><img src="../themes/default/images/helios/plus_icon.png"  border="0" alt=""></a> <a href="javascript:;" name="removeDatabase"><img src="../themes/default/images/helios/minus_icon.png" border="0" alt=""></a></div></td></tr>';
+			database ='<tr class="database" key="displayed"><td><span data-i18n="application.edit.database"></span>&nbsp;<span class="paid">'+rowId+'</span></td><td name="servers" class="databases"><select name="databases" class="databases"><option value=0>Select Database</option>'+ self.getOptionData('databaseData') +'</select></td><td data-i18n="application.edit.versions"></td> <td colspan="4" name="version" class="version"><select multiple name="db_version" class="db_version"> <option value=0>Select Version</option></select><div class="flt_right"><a href="javascript:;" name="addDatabase"><img src="themes/default/images/helios/plus_icon.png"  border="0" alt=""></a> <a href="javascript:;" name="removeDatabase"><img src="themes/default/images/helios/minus_icon.png" border="0" alt=""></a></div></td></tr>';
 			if (appType === "addServer") {
 				dynamicValue = $(server).insertAfter(whereToAppend);
 				dynamicValue.prev('tr').find('a[name="addServer"]').html('');
-				dynamicValue.prev('tr').find('a[name="removeServer"]').html('<img src="../themes/default/images/helios/minus_icon.png" border="0" alt="">');
+				dynamicValue.prev('tr').find('a[name="removeServer"]').html('<img src="themes/default/images/helios/minus_icon.png" border="0" alt="">');
 			} else {
 				dynamicValue = $(database).insertAfter(whereToAppend);
 				dynamicValue.prev('tr').find('a[name="addDatabase"]').html('');
-				dynamicValue.prev('tr').find('a[name="removeDatabase"]').html('<img src="../themes/default/images/helios/minus_icon.png" border="0" alt="">');
+				dynamicValue.prev('tr').find('a[name="removeDatabase"]').html('<img src="themes/default/images/helios/minus_icon.png" border="0" alt="">');
 			}
 			$("a[name=addServer]").unbind("click");
 			$("a[name=addDatabase]").unbind("click");
@@ -87,9 +90,9 @@ define(["framework/widget", "framework/widgetWithTemplate", "application/api/app
 			$("a[name=removeServer]").click(function(){
 				$("a[name=addServer]").html('');
 				$(this).parent().parent().parent().remove();
-				$("a[name=removeServer]").parents('tr:last').find('a[name="addServer"]').html('<img src="../themes/default/images/helios/plus_icon.png" border="0" alt="">');
+				$("a[name=removeServer]").parents('tr:last').find('a[name="addServer"]').html('<img src="themes/default/images/helios/plus_icon.png" border="0" alt="">');
 				if (($("a[name=removeServer]").parents('tr.servers').length) === 1) {
-					$("a[name=addServer]").html('<img src="../themes/default/images/helios/plus_icon.png" border="0" alt="">');
+					$("a[name=addServer]").html('<img src="themes/default/images/helios/plus_icon.png" border="0" alt="">');
 					$("a[name=removeServer]").html('');
 				}
 			});
@@ -97,9 +100,9 @@ define(["framework/widget", "framework/widgetWithTemplate", "application/api/app
 			$("a[name=removeDatabase]").click(function(){
 				$("a[name=addDatabase]").html('');
 				$(this).parent().parent().parent().remove();
-				$("a[name=removeDatabase]").parents('tr:last').find('a[name="addDatabase"]').html('<img src="../themes/default/images/helios/plus_icon.png" border="0" alt="">');
+				$("a[name=removeDatabase]").parents('tr:last').find('a[name="addDatabase"]').html('<img src="themes/default/images/helios/plus_icon.png" border="0" alt="">');
 				if (($("a[name=removeDatabase]").parents('tr.database').length) === 1) {
-					$("a[name=addDatabase]").html('<img src="../themes/default/images/helios/plus_icon.png" border="0" alt="">');
+					$("a[name=addDatabase]").html('<img src="themes/default/images/helios/plus_icon.png" border="0" alt="">');
 					$("a[name=removeDatabase]").html('');
 				}
 			});
@@ -126,14 +129,21 @@ define(["framework/widget", "framework/widgetWithTemplate", "application/api/app
 			var applicationlayerData = self.applicationAPI.localVal.getJson(technology);
 			$.each(applicationlayerData, function(index, value){
 				if(value.id === currentData){
-					option = '';
-					$.each(value.artifactGroup.versions, function(index, value){
-						option += '<option value='+value.id+'>'+ value.version +'</option>'
-					});	
-					$(versionplaceholder).html(option);
+					self.getOptions(value, versionplaceholder, function(){
+						$(versionplaceholder).selectpicker('refresh');
+					});
 				}
 			});
-		}, 
+		},
+
+		getOptions : function(appData, versionplaceholder, callback){
+			var option = '';
+			$.each(appData.artifactGroup.versions, function(index, value){
+				//option += '<option value='+value.id+'>'+ value.version +'</option>'
+				$("<option>").val(value.id).text(value.version).appendTo(versionplaceholder);	
+			});
+			callback();
+		},	
 		
 		getOptionData : function(technology) {
 			var self=this, option;
@@ -148,7 +158,7 @@ define(["framework/widget", "framework/widgetWithTemplate", "application/api/app
 		getAppInfo : function(header, callback) {
 			var self = this;
 			try {
-				self.loadingScreen.showLoading();
+				commonVariables.loadingScreen.showLoading();
 				self.applicationAPI.appinfo(header,
 					function(response) {
 						if (response !== null) {
@@ -164,13 +174,13 @@ define(["framework/widget", "framework/widgetWithTemplate", "application/api/app
 									self.getWSConfig(response, function(appInfo){
 										data.webserviceData = appInfo.data;
 										self.applicationAPI.localVal.setJson('webserviceData', appInfo.data);
-										self.loadingScreen.removeLoading();
+										commonVariables.loadingScreen.removeLoading();
 										callback(data);
 									});	
 								});
 							});
 						} else {
-						self.loadingScreen.removeLoading();
+						commonVariables.loadingScreen.removeLoading();
 							callback({ "status" : "service failure"});
 						}
 
@@ -280,14 +290,15 @@ define(["framework/widget", "framework/widgetWithTemplate", "application/api/app
 				}
 				self.editAppInfo(self.getRequestHeader(JSON.stringify(appInfo), "editApplication"), function(response) {
 					if(response.message == "Application updated successfully"){
-						self.editAplnContent = commonVariables.navListener.getMyObj(commonVariables.editApplication);
-						self.editAplnContent.appDirName = response.data.appDirName;
-						commonVariables.appDirName = response.data.appDirName;
- 						self.applicationAPI.localVal.setSession('appDirName', response.data.appDirName);
-						self.applicationAPI.localVal.setJson('appdetails', response.data.appInfos);
-						
-						Clazz.navigationController.push(self.editAplnContent, true);
-						 
+						commonVariables.navListener.getMyObj(commonVariables.editApplication, function(retVal){
+							self.editAplnContent = retVal;
+							self.editAplnContent.appDirName = response.data.appDirName;
+							commonVariables.appDirName = response.data.appDirName;
+							self.applicationAPI.localVal.setSession('appDirName', response.data.appDirName);
+							self.applicationAPI.localVal.setJson('appdetails', response.data.appInfos);
+							
+							Clazz.navigationController.push(self.editAplnContent, true);
+						 });
 						/* self.getAppInfo(self.getRequestHeader(response.data.appDirName, "getappinfo"), function(response) {
 							self.pageRefresh(response);
 						});  */
@@ -359,25 +370,25 @@ define(["framework/widget", "framework/widgetWithTemplate", "application/api/app
 		editAppInfo : function(header, callback) {
 			var self = this;
 			try {
-				self.loadingScreen.showLoading();
+				commonVariables.loadingScreen.showLoading();
 				self.applicationAPI.appinfo(header,
 					function(response) {
 						if (response !== null) {
 							callback(response);
-							self.loadingScreen.removeLoading();
+							commonVariables.loadingScreen.removeLoading();
 						} else {
-							self.loadingScreen.removeLoading();
+							commonVariables.loadingScreen.removeLoading();
 							callback({ "status" : "service failure"});
 						}
 
 					},
 
 					function(textStatus) {
-						self.loadingScreen.removeLoading();
+						commonVariables.loadingScreen.removeLoading();
 					}
 				);
 			} catch(exception) {
-				self.loadingScreen.removeLoading();
+				commonVariables.loadingScreen.removeLoading();
 			}
 
 		},
@@ -430,9 +441,9 @@ define(["framework/widget", "framework/widgetWithTemplate", "application/api/app
 					function(response) {
 						if (response !== null) {
 							callback(response);
-							self.loadingScreen.removeLoading();
+							commonVariables.loadingScreen.removeLoading();
 						} else {
-							self.loadingScreen.removeLoading();
+							commonVariables.loadingScreen.removeLoading();
 							callback({ "status" : "service failure"});
 						}
 

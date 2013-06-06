@@ -215,9 +215,9 @@ define(["framework/widget", "dynamicPage/api/dynamicPageAPI", "common/loading"],
 								}
 								
 								if(value.multiple === "true"){
-									multiple = "isMultiple=true";
+									multiple = "multiple=true";
 								} else {
-									multiple = "isMultiple=false";
+									multiple = "";
 								}
 								
 								if(value.dependency !== undefined && value.dependency !== null) {
@@ -233,8 +233,12 @@ define(["framework/widget", "dynamicPage/api/dynamicPageAPI", "common/loading"],
 									
 								}
 								
-								htmlTag += '<tr'+ show +' id="'+value.key+'Control" name="chkCnt"><td>'+getName()+''+ required +'</td><td><select name="'+ value.key +'" id="'+ value.key +'"'+ editable +''+ multiple +' additionalparam = "'+ additionalparamSel +'" dependencyAttr="'+dependencyVal+'" psblDependency="'+ psblDependency +'">'+option+'</select></td></tr>';
-								
+								if(multiple === "multiple=true") {
+									htmlTag += '<tr'+ show +' id="'+value.key+'Control" name="chkCnt"><td>'+getName()+''+ required +'</td><td><select name="'+ value.key +'" class="selectpicker" data-selected-text-format="count>3" id="'+ value.key +'"'+ editable +''+ multiple +' additionalparam = "'+ additionalparamSel +'" dependencyAttr="'+dependencyVal+'" psblDependency="'+ psblDependency +'">'+option+'</select></td></tr>';
+									$(htmlTag).find('.selectpicker').selectpicker('refresh');
+								} else {
+									htmlTag += '<tr'+ show +' id="'+value.key+'Control" name="chkCnt"><td>'+getName()+''+ required +'</td><td><select name="'+ value.key +'" id="'+ value.key +'"'+ editable +''+ multiple +' additionalparam = "'+ additionalparamSel +'" dependencyAttr="'+dependencyVal+'" psblDependency="'+ psblDependency +'">'+option+'</select></td></tr>';
+								}
 							} 
 							
 							if(type === "Boolean"){
@@ -300,9 +304,9 @@ define(["framework/widget", "dynamicPage/api/dynamicPageAPI", "common/loading"],
 									}
 									
 									if(value.multiple === "true"){
-										multiple = "isMultiple=true";
+										multiple = "multiple=true";
 									} else {
-										multiple = "isMultiple=false";
+										multiple = "";
 									}
 									
 									var option = '';
@@ -323,10 +327,15 @@ define(["framework/widget", "dynamicPage/api/dynamicPageAPI", "common/loading"],
 											}); 
 											
 											$('select[name='+ value.key+']').html(option);
+											$('select[name='+ value.key+']').selectpicker('refresh');
 										}
 									});
-									
-									htmlTag += '<tr'+ show +' id="'+value.key+'Control" name="chkCnt"><td>'+getName()+''+ required +'</td><td><select dynamicParam="true" name="'+ value.key +'" id="'+ value.key +'"'+ editable +''+ multiple +' psblDependency="'+ psblDependency +'" dependency="'+ possbldependency +'" enableOnchangeFunction="'+ enableOnchangeFunction +'"></select></td></tr>';	
+									if(multiple === "multiple=true") {
+										htmlTag += '<tr'+ show +' id="'+value.key+'Control" name="chkCnt"><td>'+getName()+''+ required +'</td><td><select dynamicParam="true" name="'+ value.key +'" id="'+ value.key +'"'+ editable +''+ multiple +' psblDependency="'+ psblDependency +'" dependency="'+ possbldependency +'" enableOnchangeFunction="'+ enableOnchangeFunction +'" class="selectpicker" data-selected-text-format="count>3"></select></td></tr>';
+										$(htmlTag).find('.selectpicker').selectpicker('refresh');
+									} else {
+										htmlTag += '<tr'+ show +' id="'+value.key+'Control" name="chkCnt"><td>'+getName()+''+ required +'</td><td><select dynamicParam="true" name="'+ value.key +'" id="'+ value.key +'"'+ editable +''+ multiple +' psblDependency="'+ psblDependency +'" dependency="'+ possbldependency +'" enableOnchangeFunction="'+ enableOnchangeFunction +'"></select></td></tr>';
+									}										
 							   } else {
 							   
 							   }
@@ -387,7 +396,7 @@ define(["framework/widget", "dynamicPage/api/dynamicPageAPI", "common/loading"],
 									multiple = ""
 								}
 								
-								htmlTag += '<tr id="'+value.key+'Control" name="chkCnt"><td colspan="2"><table class="table table-striped table_border table-bordered" cellpadding="0" cellspacing="0" border="0"><thead><tr><th>Target Folder</th><th>File/Folder</th></tr><tbody><tr><td><input type="text"></td><td><input type="text"><input type="button" value="Browse" class="btn btn_style"><a href="#"><img src="../themes/default/images/helios/plus_icon.png" alt=""></a></td></tr></tbody></table></td></tr>';
+								htmlTag += '<tr id="'+value.key+'Control" name="chkCnt"><td colspan="2"><table class="table table-striped table_border table-bordered" cellpadding="0" cellspacing="0" border="0"><thead><tr><th>Target Folder</th><th>File/Folder</th></tr><tbody><tr><td><input type="text"></td><td><input type="text"><input type="button" value="Browse" class="btn btn_style"><a href="#"><img src="themes/default/images/helios/plus_icon.png" alt=""></a></td></tr></tbody></table></td></tr>';
 								
 							}
 							
@@ -437,19 +446,22 @@ define(["framework/widget", "dynamicPage/api/dynamicPageAPI", "common/loading"],
 				var dependency = $(controls).attr('dependency');
 				var key = $(controls).attr('id');
 				var psblValues = $(controls).attr('psblDependency');
+				var dynamicparam = $(controls).attr('dynamicparam');
+				var multiple = $(controls).attr('multiple');
+				var enableOnchangeFunction = $(controls).attr('enableOnchangeFunction');
+				
 				
 				if (controlType === 'INPUT' && type === "checkbox") {
 					if(dependency !== undefined && dependency !== null && dependency !== ''){
 						self.changeChckBoxValue($(controls));
 					}
 				} else if(controlType === 'SELECT') {
-					console.info("dynamicParam", $(controlType).attr('dynamicParam'));
-					if($(controlType).attr('dynamicParam') === true) {
+					if(dynamicparam === "true") {
 						if(dependency !== undefined && dependency !== null && dependency !== ''){
 							self.selectBoxOnChangeEvent($(controls), key);
 						} else if(psblValues !== undefined && psblValues !== null && psblValues !== ''){
 							self.selectBoxOnChangeEvent($(controls), key);
-						} else if(!$(controlType).attr('isMultiple') && $(controlType).attr('enableOnchangeFunction') === "true"){
+						} else if(!multiple && enableOnchangeFunction === "true"){
 							self.selectBoxOnChangeEvent($(controls), key);
 						}
 					} else {
@@ -567,7 +579,7 @@ define(["framework/widget", "dynamicPage/api/dynamicPageAPI", "common/loading"],
 			var self = this;
 			
 			if (dependency != undefined && dependency !== "" && !self.isBlank(dependency)) {
-				var isMultiple = $('#' + dependency).attr("isMultiple");
+				var isMultiple = $('#' + dependency).attr("multiple");
 				var controlType = $('#' + dependency).attr('type');
 				self.constructElements(data, dependency, isMultiple, controlType);
 			}

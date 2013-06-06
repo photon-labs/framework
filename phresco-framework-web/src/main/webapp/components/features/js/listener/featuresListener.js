@@ -1,4 +1,4 @@
-define(["framework/widget", "features/api/featuresAPI", "features/features",  "application/application",  "projectlist/projectList"], function() {
+define(["features/api/featuresAPI", "features/features",  "application/application",  "projectlist/projectList"], function() {
 
 	Clazz.createPackage("com.components.features.js.listener");
 
@@ -40,18 +40,47 @@ define(["framework/widget", "features/api/featuresAPI", "features/features",  "a
 						hasRecord = true;
 						i++;
 					}
-				});					
+					$("#norecord1").hide();
+					$("#norecord1").hide();
+					$("#norecord3").hide();
+				});
+				if (hasRecord == false) {
+					console.info("show divId", divId);
+					if(divId == "moduleContent"){
+						$("#norecord1").show();
+					} else if(divId == "jsibrariesContent"){
+						$("#norecord2").show();
+					} else if(divId == "componentsContent"){
+						$("#norecord3").show();
+					}					
+				} else {
+					if(divId == "moduleContent"){
+						$("#norecord1").hide();
+					} else if(divId == "jsibrariesContent"){
+						$("#norecord2").hide();
+					} else if(divId == "componentsContent"){
+						$("#norecord3").hide();
+					}
+				}
 			}
-			else {
-				
+			else {				
 				$("#"+divId+" li").show();
+				console.info("else divId divId", divId);
+				if(divId == "moduleContent"){
+					$("#norecord1").hide();
+				} else if(divId == "jsibrariesContent"){
+					$("#norecord2").hide();
+				} else if(divId == "componentsContent"){
+					$("#norecord3").hide();
+				}
+				
 			}
+			self.scrollbarUpdate();
        	},
 
        	getFeaturesList : function(header, callback) {
 			var self = this;
 			try {
-
 				self.featuresAPI.features(header,
 					function(response) {
 						if (response !== null) {
@@ -63,7 +92,7 @@ define(["framework/widget", "features/api/featuresAPI", "features/features",  "a
 					},
 
 					function(textStatus) {
-
+					
 					}
 				);
 			} catch(exception) {
@@ -100,6 +129,34 @@ define(["framework/widget", "features/api/featuresAPI", "features/features",  "a
 		showLoad : function(){
 			var self = this;
 			self.loadingScreen.showLoading();
+		},
+		
+		scrollbarEnable : function(){
+			$("#content_1").mCustomScrollbar({
+				autoHideScrollbar:true,
+				callbacks:{
+					onScrollStart: function(){
+						$(".dyn_popup").hide();		
+					}
+				},
+				theme:"light-thin",
+				updateOnContentResize: true
+			});
+			
+			$("#content_2").mCustomScrollbar({
+				autoHideScrollbar:true,
+				theme:"light-thin"
+			});
+			
+			$("#content_3").mCustomScrollbar({
+				autoHideScrollbar:true,
+				theme:"light-thin"
+			});
+		},
+		scrollbarUpdate : function(){
+			$("#content_1").mCustomScrollbar("update"); 
+			$("#content_2").mCustomScrollbar("update"); 
+			$("#content_3").mCustomScrollbar("update"); 
 		},
 
 		hideLoad : function(){

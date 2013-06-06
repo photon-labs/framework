@@ -1,4 +1,4 @@
-define(["framework/widgetWithTemplate", "login/listener/loginListener"], function() {
+define(["login/listener/loginListener"], function() {
 	Clazz.createPackage("com.components.login.js");
 
 	Clazz.com.components.login.js.Login = Clazz.extend(Clazz.WidgetWithTemplate, {
@@ -15,8 +15,12 @@ define(["framework/widgetWithTemplate", "login/listener/loginListener"], functio
 		 */
 		initialize : function(){
 			var self = this;
-			self.onLoginEvent = new signals.Signal();
-			self.loginListener = new Clazz.com.components.login.js.listener.LoginListener();
+			
+			if(self.onLoginEvent == null)
+				self.onLoginEvent = new signals.Signal();
+			
+			if(self.loginListener == null)
+				self.loginListener = new Clazz.com.components.login.js.listener.LoginListener();
 		},
 
 		/***

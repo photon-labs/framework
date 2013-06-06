@@ -31,7 +31,11 @@
 											{{#configurationList}}
 												{{#if name}}
 													<li>
+														{{#if defaultEnv}}
 														<div><input type="radio" name="optionsRadiosfd" checked></div>
+														{{else}}
+														<div><input type="radio" name="optionsRadiosfd"></div>
+														{{/if}}
 														<div name="envListName" class="envlistname">{{name}}</div>
 														<input type="hidden" name="envListDesc" value="{{desc}}">
 													</li>
@@ -47,6 +51,7 @@
                             
                             <!--env_border div ends here -->	
                         </div>
+						<div class="flt_left" id="errdisplay" > </div>
                         <div class="flt_right">
                             <input type="button" value="Ok" name="saveEnvironment" class="btn btn_style">
                             <input type="button" value="Close" class="btn btn_style dyn_popup_close">
@@ -81,14 +86,14 @@
 				<td><a href="#" name="editConfiguration" key={{name}}><img src="themes/default/images/helios/configure_icon.png" width="15" height="16" border="0" alt=""></a></td>
 				<td>
 					{{#if ../userPermissions.manageConfiguration}}
-						<a class="tooltiptop" href="#" data-toggle="tooltip" data-original-title="Clone" name="clone_pop">
+						<a class="tooltiptop" href="#" data-toggle="tooltip" data-original-title="Clone" name="clone_popup{{name}}">
 							<img src="themes/default/images/helios/clone_icon.png" width="20" height="18" border="0" alt="">
 						</a>
 					{{else}}
 						<img src="themes/default/images/helios/clone_icon_off.png" width="20" height="18" border="0" alt="">
 					{{/if}}
 					
-					<div id="clone_pop" class="dyn_popup popup_bg">
+					<div id="clone_popup{{name}}" type="{{name}}" class="dyn_popup popup_bg">
                         <table class="clonetable" width="100%" border="0" cellspacing="0" cellpadding="5">
                             <tr>
                                 <td>Name <sup>*</sup></td>
@@ -96,18 +101,17 @@
                                 <td>&nbsp;</td>
                             </tr>
                             <tr>
-                                <td><input type="text" class="pop_txt" placeholder="Environment Name"></td>
-                                <td><input type="text" class="pop_txt" placeholder="Environment Description"></td>
-                                <td><input type="button" class="btn btn_style" value="Clone"></td>
+                                <td><input type="text" class="cloneEnvName{{name}}" placeholder="Environment Name"></td>
+                                <td><input type="text" class="cloneEnvDesc{{name}}" placeholder="Environment Description"></td>
                             </tr>
                             <tr>
                                 <td>
-                                    <input type="button" class="btn btn_style" value="Set as Default">
+                                    <input type="checkbox" name="DefaultValue{{name}}" value="Set as Default">
                                 </td>
-                                <td>&nbsp;</td>
-                                <td>
-                                	<input type="button" class="btn btn_style" value="Ok">	
-                                    <input type="button" value="Close" class="btn btn_style dyn_popup_close">
+                                <!--<td>&nbsp;</td>-->
+                                <td name={{name}}>
+                                	<input type="button" name="cloneEnvr" class="btn btn_style" value="Clone">	
+                                    <input type="button" value="Cancel" class="btn btn_style dyn_popup_close">
                                 </td>    
                             </tr>
                         </table>
@@ -116,11 +120,16 @@
 				</td>
 				<td>
 					{{#if ../userPermissions.manageConfiguration}}
+					
+						{{#if defaultEnv}}
+							<img src="themes/default/images/helios/delete_row_off.png" border="0" alt="">
+						{{else}}
 						<a name="{{name}}" class="tooltiptop" title="" data-placement="top" data-toggle="tooltip" href="#" data-original-title="Delete Row">
-							<img src="themes/default/images/helios/delete_row_icon.png" width="29" height="23" border="0" alt="">
-						</a>
+							<img src="themes/default/images/helios/delete_row.png" border="0" alt=""></a>
+						{{/if}}	
 					{{else}}
-						<img src="themes/default/images/helios/delete_row_icon_off.png" width="29" height="23" border="0" alt="">
+					
+						<img src="themes/default/images/helios/delete_row_off.png" border="0" alt="">
 					{{/if}}
 				<div id="{{name}}" class="dyn_popup"> Are you sure to delete this ?
 					<div>
@@ -129,6 +138,7 @@
 					</div>
 				</div>
 				</td>
+				<td>&nbsp;</td>
 			  </tr>
 			{{/configurationList}}
 			  </tbody>

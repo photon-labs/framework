@@ -1,11 +1,11 @@
-define(["framework/widget", "mevanService/api/mevanServiceAPI", "common/loading"], function() {
+define(["mavenService/api/mavenServiceAPI"], function() {
 
-	Clazz.createPackage("com.components.mevanService.js.listener");
+	Clazz.createPackage("com.components.mavenService.js.listener");
 
-	Clazz.com.components.mevanService.js.listener.MevanServiceListener = Clazz.extend(Clazz.Widget, {
+	Clazz.com.components.mavenService.js.listener.MavenServiceListener = Clazz.extend(Clazz.Widget, {
 		localStorageAPI : null,
-		loadingScreen : null,
-		mevanServiceAPI : null,
+		//loadingScreen : null,
+		mavenServiceAPI : null,
 		//self : this,
 		/***
 		 * Called in initialization time of this class 
@@ -13,8 +13,10 @@ define(["framework/widget", "mevanService/api/mevanServiceAPI", "common/loading"
 		 * @config: configurations for this listener
 		 */
 		initialize : function(config) {
-			this.loadingScreen = new Clazz.com.js.widget.common.Loading();
-			this.mevanServiceAPI = new Clazz.com.components.login.js.api.LoginAPI();
+			//this.loadingScreen = new Clazz.com.js.widget.common.Loading();
+			
+			if(this.mavenServiceAPI === null)
+				this.mavenServiceAPI = new Clazz.com.components.mavenService.js.api.MavenServiceAPI();
 		},
 
 		mvnBuild : function(paramData, divId, callback){
@@ -119,16 +121,16 @@ define(["framework/widget", "mevanService/api/mevanServiceAPI", "common/loading"
 			var self = this, header = self.getRequestHeader("POST", "", commonVariables.mvnShowStartedNode, paramData);
 			self.mvnService(header, divId, callback);
 		},
-		
+
 		mvnService : function(header, divId, callback){
 			try{
 				var self = this, callbackData = null;
-				self.loadingScreen.showLoading();
-				self.mevanServiceAPI.mvnSer(header, 
+				commonVariables.loadingScreen.showLoading();
+				self.mavenServiceAPI.mvnSer(header, 
 					function(response){
 						if(response != undefined && response != null){
 							if(response.status == 'STARTED'){
-								mvnlogService(response.uniquekey, divId);
+								self.mvnlogService(response.uniquekey, divId);
 								callbackData = true;
 							}else if(response.status == 'INPROGRESS'){
 								callbackData = true;
@@ -140,28 +142,28 @@ define(["framework/widget", "mevanService/api/mevanServiceAPI", "common/loading"
 							}else if(response.status == 'SUCCESS'){
 								callbackData = response.connectionAlive;
 							}
-							self.loadingScreen.removeLoading();
+							commonVariables.loadingScreen.removeLoading();
 							callback(callbackData);
 						}else {
-							self.loadingScreen.removeLoading();
+							commonVariables.loadingScreen.removeLoading();
 							callback(callbackData);
 						}
 					}, 
 					function(serviceerror){
-						self.loadingScreen.removeLoading();
+						commonVariables.loadingScreen.removeLoading();
 						callback('Service Connection Exception');
 					});
 			}catch(exception){
 				//Exception
-				self.loadingScreen.removeLoading();
+				commonVariables.loadingScreen.removeLoading();
 				callback('Service Exception');
 			}
 		},
 		
 		mvnlogService : function(key, divId){
 			try{
-				var self = this, header = self.getRequestHeader("GET", '&uniquekey=' + key;, commonVariables.mvnlogService, "");
-				self.mevanServiceAPI.mvnSer(header, 
+				var self = this, header = self.getRequestHeader("GET", '&uniquekey=' + key, commonVariables.mvnlogService, "");
+				self.mavenServiceAPI.mvnSer(header, 
 					function(response){
 						if(response != undefined && response != null){
 
@@ -202,5 +204,5 @@ define(["framework/widget", "mevanService/api/mevanServiceAPI", "common/loading"
 		}
 	});
 
-	return Clazz.com.components.mevanService.js.listener.MevanServiceListener;
+	return Clazz.com.components.mavenService.js.listener.MavenServiceListener;
 });

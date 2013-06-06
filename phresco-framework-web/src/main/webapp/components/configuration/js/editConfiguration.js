@@ -93,7 +93,8 @@ define(["framework/widgetWithTemplate", "configuration/listener/configurationLis
 				self.addConfiguationEvent.dispatch($(this).attr('name'));
 			});
 			
-			$("input[name=UpdateConfig]").click(function() {
+			$("input[name=UpdateConfiguration]").unbind('click');
+			$("input[name=UpdateConfiguration]").click(function() {
 				self.UpdateConfigEvent.dispatch();
 			});
 		}

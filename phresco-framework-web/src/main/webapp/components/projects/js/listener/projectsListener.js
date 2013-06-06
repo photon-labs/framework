@@ -1,4 +1,4 @@
-define(["framework/widget", "framework/widgetWithTemplate", "common/loading", "projects/api/projectsAPI"], function() {
+define(["projects/api/projectsAPI"], function() {
 
 	Clazz.createPackage("com.components.projects.js.listener");
 
@@ -6,7 +6,7 @@ define(["framework/widget", "framework/widgetWithTemplate", "common/loading", "p
 		
 		basePlaceholder : commonVariables.basePlaceholder,
 		loadingScreen : null,
-		projectsAPI : null,
+		projectAPI : null,
 		applicationlayerData : null,
 		weblayerData : null,
 		mobilelayerData : null,
@@ -28,15 +28,16 @@ define(["framework/widget", "framework/widgetWithTemplate", "common/loading", "p
 		 */
 		initialize : function(config) {
 			var self = this;
-			self.loadingScreen = new Clazz.com.js.widget.common.Loading();
-			self.projectAPI = new Clazz.com.components.projects.js.api.ProjectsAPI();
+			if(self.projectAPI === null)
+				self.projectAPI = new Clazz.com.components.projects.js.api.ProjectsAPI();
 		},
 		
 		cancelCreateproject : function() {
 			var self = this;
 			Clazz.navigationController.jQueryContainer = commonVariables.contentPlaceholder;
-			self.projectlistContent = commonVariables.navListener.getMyObj(commonVariables.projectlist);
-			Clazz.navigationController.push(self.projectlistContent, true, true);
+			commonVariables.navListener.getMyObj(commonVariables.projectlist, function(projectlistObj){
+				Clazz.navigationController.push(projectlistObj, true, true);
+			});
 		},
 		
 		removelayer : function(object) {
@@ -72,25 +73,25 @@ define(["framework/widget", "framework/widgetWithTemplate", "common/loading", "p
 		getEditProject : function(header, callback) {
 			var self = this;
 			try {
-				this.loadingScreen.showLoading();
+				commonVariables.loadingScreen.showLoading();
 				self.projectAPI.projects(header,
 					function(response) {
 						if (response !== null) {
 							callback(response);
-							self.loadingScreen.removeLoading();
+							commonVariables.loadingScreen.removeLoading();
 						} else {
-							self.loadingScreen.removeLoading();
 							callback({ "status" : "service failure"});
+							commonVariables.loadingScreen.removeLoading();
 						}
 
 					},
 
 					function(textStatus) {
-						self.loadingScreen.removeLoading();
+						commonVariables.loadingScreen.removeLoading();
 					}
 				);
 			} catch(exception) {
-				self.loadingScreen.removeLoading();
+				commonVariables.loadingScreen.removeLoading();
 			}
 
 		},
@@ -745,20 +746,14 @@ define(["framework/widget", "framework/widgetWithTemplate", "common/loading", "p
 			$("select[name='builtmyself']").bind('change', function(){
 				var selectedText = $(this).find(':selected').text();
 				if(selectedText == "Pre Built"){
-					 $("select[name='prebuiltapps']").show();
-					 $("td[name='startdate-lbl']").hide();
-					 $("td[name='startdateholder']").hide();
-					 $("td[name='enddate-lbl']").hide();
-					 $("td[name='enddateholder']").hide();
+					 $("select[name='prebuiltapps']").css('display' , 'inline-block');
+					 $("select[name='builtmyselfapps']").hide();
 					 $("#applicationlayer").hide();
 					 $("#weblayer").hide();
 					 $("#mobilelayer").hide();
 				} else {
+					 $("select[name='builtmyselfapps']").css('display' , 'inline-block');
 					 $("select[name='prebuiltapps']").hide();
-					 $("td[name='startdate-lbl']").show();
-					 $("td[name='startdateholder']").show();
-					 $("td[name='enddate-lbl']").show();
-					 $("td[name='enddateholder']").show();
 					 $("#applicationlayer").show();
 					 $("#weblayer").show();
 					 $("#mobilelayer").show();	
@@ -809,8 +804,9 @@ define(["framework/widget", "framework/widgetWithTemplate", "common/loading", "p
          * @response: response from the service
          */
         pageRefresh : function(response) {
-			var projectlist = commonVariables.navListener.getMyObj(commonVariables.projectlist);
-			projectlist.loadPage();
+			commonVariables.navListener.getMyObj(commonVariables.projectlist, function(projectlistObj){
+				projectlistObj.loadPage();
+			});
 		},
 		
 		createproject : function(projectId, action) {

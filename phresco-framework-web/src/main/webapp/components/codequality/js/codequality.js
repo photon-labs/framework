@@ -1,4 +1,4 @@
-define(["framework/widgetWithTemplate", "codequality/listener/codequalityListener"], function() {
+define(["codequality/listener/codequalityListener"], function() {
 	Clazz.createPackage("com.components.codequality.js");
 
 	Clazz.com.components.codequality.js.CodeQuality = Clazz.extend(Clazz.WidgetWithTemplate, {
@@ -19,17 +19,24 @@ define(["framework/widgetWithTemplate", "codequality/listener/codequalityListene
 		 */
 		initialize : function(globalConfig){
 			var self = this;
-			self.dynamicpage = commonVariables.navListener.getMyObj(commonVariables.dynamicPage);
-			self.dynamicPageListener = new Clazz.com.components.dynamicPage.js.listener.DynamicPageListener();
-			self.codequalityListener = new Clazz.com.components.codequality.js.listener.CodequalityListener(globalConfig);
-			self.codequalityAPI = new Clazz.com.components.codequality.js.api.CodeQualityAPI();			
+
+			if(self.dynamicpage === null){
+				commonVariables.navListener.getMyObj(commonVariables.dynamicPage, function(retVal){
+				self.dynamicpage = retVal;
+				self.dynamicPageListener = self.dynamicpage.dynamicPageListener;
+				self.registerEvents();
+				});
+			}
+			if(self.codequalityListener === null)
+				self.codequalityListener = new Clazz.com.components.codequality.js.listener.CodequalityListener();
+
 			self.registerEvents(self.codequalityListener);
 		},
 		
 		registerEvents : function (codequalityListener) {
 			var self = this;
 			self.readLogEvent = new signals.Signal();
-			self.readLogEvent.add(codequalityListener.codeValidate, codequalityListener);
+			self.readLogEvent.add(self.codequalityListener.codeValidate, codequalityListener);
 		},
 		/***
 		 * Called in once the login is success
@@ -54,6 +61,7 @@ define(["framework/widgetWithTemplate", "codequality/listener/codequalityListene
 					if(response.message == "Dependency returned successfully"){
 						self.dynamicpage.getHtml(function(response){
 							$("#dynamicContent").html(response);
+							self.multiselect();
 							self.dynamicpage.showParameters();
 							self.dynamicPageListener.controlEvent();
 						});

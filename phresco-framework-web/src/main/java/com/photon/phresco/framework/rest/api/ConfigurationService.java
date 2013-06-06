@@ -5,7 +5,9 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
@@ -22,12 +24,17 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
 import com.photon.phresco.api.ConfigManager;
+import com.photon.phresco.commons.model.ApplicationInfo;
+import com.photon.phresco.commons.model.ArtifactGroup;
+import com.photon.phresco.commons.model.ArtifactGroupInfo;
+import com.photon.phresco.commons.model.ArtifactInfo;
 import com.photon.phresco.commons.model.SettingsTemplate;
 import com.photon.phresco.configuration.Configuration;
 import com.photon.phresco.configuration.Environment;
 import com.photon.phresco.exception.ConfigurationException;
 import com.photon.phresco.exception.PhrescoException;
 import com.photon.phresco.framework.commons.FrameworkUtil;
+import com.photon.phresco.framework.rest.api.util.FrameworkServiceUtil;
 import com.photon.phresco.impl.ConfigManagerImpl;
 import com.photon.phresco.service.client.api.ServiceManager;
 import com.photon.phresco.util.Constants;
@@ -77,6 +84,23 @@ public class ConfigurationService extends RestBase {
 				}
 			}
 			List<Environment> environments = configManager.getEnvironmentsAlone();
+			ResponseInfo<Environment> finalOuptut = responseDataEvaluation(responseData, null, "Environments Listed", environments);
+			return Response.ok(finalOuptut).header("Access-Control-Allow-Origin", "*").build();
+		} catch (ConfigurationException e) {
+			ResponseInfo<Environment> finalOuptut = responseDataEvaluation(responseData, e, "Environments Failed to List", null);
+			return Response.status(Status.EXPECTATION_FAILED).entity(finalOuptut).header("Access-Control-Allow-Origin", "*").build();
+		}
+	}
+	
+	@GET
+	@Path("allEnvironments")
+	@Produces (MediaType.APPLICATION_JSON)
+	public Response getAllEnvironments(@QueryParam("appDirName") String appDirName) {
+		ResponseInfo<Environment> responseData = new ResponseInfo<Environment>();
+		try {
+			String configFileDir = getConfigFileDir(appDirName);
+			ConfigManager configManager = new ConfigManagerImpl(new File(configFileDir));
+			List<Environment> environments = configManager.getEnvironments();
 			ResponseInfo<Environment> finalOuptut = responseDataEvaluation(responseData, null, "Environments Listed", environments);
 			return Response.ok(finalOuptut).header("Access-Control-Allow-Origin", "*").build();
 		} catch (ConfigurationException e) {
@@ -245,6 +269,37 @@ public class ConfigurationService extends RestBase {
 		}
 		
 	}
+	
+	
+	@POST
+    @Path ("/cloneEnvironment")
+	@Produces (MediaType.APPLICATION_JSON)
+	@Consumes (MediaType.APPLICATION_JSON)
+	public Response cloneEnvironment(@QueryParam("appDirName") String appDirName,@QueryParam("envName") String envName, Environment cloneEnvironment) {
+		
+		String configFile = getConfigFileDir(appDirName);
+		Environment clonedEnvironment= null;
+		ResponseInfo<Configuration> responseData = new ResponseInfo<Configuration>();
+		try {
+			ConfigManager configManager = new ConfigManagerImpl(new File(configFile));
+			clonedEnvironment = configManager.cloneEnvironment(envName, cloneEnvironment );
+			ResponseInfo<String> finalOuptut = responseDataEvaluation(responseData, null, "Clone Environment Done Successfully", clonedEnvironment);
+			return Response.ok(finalOuptut).header("Access-Control-Allow-Origin", "*").build();
+			
+		} catch (ConfigurationException e) {
+			ResponseInfo<Configuration> finalOuptut = responseDataEvaluation(responseData, e, "Clone Environment Failed", clonedEnvironment);
+			return Response.status(Status.EXPECTATION_FAILED).entity(finalOuptut).header("Access-Control-Allow-Origin", "*").build();
+			
+		} catch (PhrescoException e) {
+			ResponseInfo<Configuration> finalOuptut = responseDataEvaluation(responseData, e, "Clone Environment Failed", clonedEnvironment);
+			return Response.status(Status.EXPECTATION_FAILED).entity(finalOuptut).header("Access-Control-Allow-Origin", "*").build();
+			
+		} catch (Exception e) {
+			ResponseInfo<Configuration> finalOuptut = responseDataEvaluation(responseData, e, "Clone Environment Failed", clonedEnvironment);
+			return Response.status(Status.EXPECTATION_FAILED).entity(finalOuptut).header("Access-Control-Allow-Origin", "*").build();
+		}
+		
+	}
 		
 	public boolean isConnectionAlive(String protocol, String host, int port) {
 		boolean isAlive = true;
@@ -257,6 +312,44 @@ public class ConfigurationService extends RestBase {
 		}
 		
 		return isAlive;
+	}
+	
+	@GET
+	@Path ("/downloadInfo")
+	@Produces (MediaType.APPLICATION_JSON)
+	public Response getDownloadInfos(@QueryParam("appDirName") String appDirName, @QueryParam("userId") String userId, @QueryParam("type") String type) {
+		ResponseInfo<List<ArtifactGroupInfo>> responseData = new ResponseInfo<List<ArtifactGroupInfo>>();
+		try {
+			ApplicationInfo appInfo = FrameworkServiceUtil.getApplicationInfo(appDirName);
+			List<ArtifactGroupInfo> artifactGroupInfos = null;
+			ServiceManager serviceManager = CONTEXT_MANAGER_MAP.get(userId);
+			List<String> verstions = new ArrayList<String>();
+			Map<String, List<String>> nameMap = new HashMap<String, List<String>>();
+			if(serviceManager == null) {
+				ResponseInfo<List<String>> finalOutput = responseDataEvaluation(responseData, null, "UnAuthorized User", null);
+				return Response.status(Status.BAD_REQUEST).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
+			}
+			if(Constants.SETTINGS_TEMPLATE_SERVER.equals(type)) {
+				artifactGroupInfos = appInfo.getSelectedServers();
+			} else if(Constants.SETTINGS_TEMPLATE_DB.equals(type)) {
+				artifactGroupInfos = appInfo.getSelectedDatabases();
+			} if(CollectionUtils.isNotEmpty(artifactGroupInfos)) {
+				for (ArtifactGroupInfo artifactGroupInfo : artifactGroupInfos) {
+					ArtifactGroup artifactGroup = serviceManager.getArtifactGroupInfo(artifactGroupInfo.getArtifactGroupId());
+					List<String> artifactInfoIds = artifactGroupInfo.getArtifactInfoIds();
+					for (String artifactInfoId : artifactInfoIds) {
+						ArtifactInfo artifactInfo = serviceManager.getArtifactInfo(artifactInfoId);
+						verstions.add(artifactInfo.getVersion());
+					}
+					nameMap.put(artifactGroup.getName(), verstions);
+				}
+			}
+			ResponseInfo<List<ArtifactGroupInfo>> finalOutput = responseDataEvaluation(responseData, null, "Selected " + type + "Info Fetched successfully", nameMap);
+			return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
+		} catch (PhrescoException e) {
+			ResponseInfo<List<String>> finalOutput = responseDataEvaluation(responseData, e, "Information not Available", null);
+			return Response.status(Status.BAD_REQUEST).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
+		}
 	}
 	
 	private String getConfigFileDir(String appDirName) {

@@ -1,4 +1,4 @@
-define(["framework/widgetWithTemplate", "features/listener/featuresListener"], function() {
+define(["features/listener/featuresListener"], function() {
 	Clazz.createPackage("com.components.features.js");
 
 	Clazz.com.components.features.js.Features = Clazz.extend(Clazz.WidgetWithTemplate, {
@@ -7,9 +7,9 @@ define(["framework/widgetWithTemplate", "features/listener/featuresListener"], f
 		configUrl: "components/projects/config/config.json",
 		name : commonVariables.featurelist,
 		featuresListener: null,
-		featuresAPI: null,
 		onPreviousEvent: null,
 		onSearchEvent: null,
+		onCancelEvent: null,
 		featureRequestBody: {},
 		header: {
 			contentType: null,
@@ -26,18 +26,22 @@ define(["framework/widgetWithTemplate", "features/listener/featuresListener"], f
 		 */
 		initialize : function(globalConfig){
 			var self = this;
-			self.featuresListener = new Clazz.com.components.features.js.listener.FeaturesListener(globalConfig);
-			self.featuresAPI = new Clazz.com.components.features.js.api.FeaturesAPI();
+			if(self.featuresListener == null){
+				self.featuresListener = new Clazz.com.components.features.js.listener.FeaturesListener(globalConfig);
+			}
 			self.registerEvents();
 			self.registerHandlebars();
 		},
 		
 		registerEvents : function () {
 			var self = this;
-
-			self.onSearchEvent = new signals.Signal();
+			if(self.onSearchEvent == null ){
+				self.onSearchEvent = new signals.Signal();				
+			}
 			self.onSearchEvent.add(self.featuresListener.search, self.featuresListener);
-			self.onCancelEvent = new signals.Signal();
+			if(self.onCancelEvent == null ){
+				self.onCancelEvent = new signals.Signal();
+			}
 			self.onCancelEvent.add(self.featuresListener.cancelUpdate, self.featuresListener);
 		},
 
@@ -70,6 +74,11 @@ define(["framework/widgetWithTemplate", "features/listener/featuresListener"], f
 				return fieldset;
 			});
 			
+			Handlebars.registerHelper('idtrime', function(id) {
+				var uniqueid;
+				uniqueid = $.trim(id.replace(/ /g,''));
+				return uniqueid;
+			});			
 		},
 
 
@@ -151,7 +160,7 @@ define(["framework/widgetWithTemplate", "features/listener/featuresListener"], f
 				if(button == 'on'){ $(this).closest('fieldset').css('background-position', 'left'); }	
 			});
 
-			self.scrollbarEnable();
+			self.featuresListener.scrollbarEnable();
 			
 			$('#module').keyup(function(event) {
 				var txtSearch = $('#module').val();
@@ -166,7 +175,6 @@ define(["framework/widgetWithTemplate", "features/listener/featuresListener"], f
            	});
 
            	$('#components').keyup(function(event) {
-				console.info("test");
 				var txtSearch = $('#components').val();
 				var divId = "componentsContent";
 				self.onSearchEvent.dispatch(txtSearch, divId);
@@ -190,7 +198,7 @@ define(["framework/widgetWithTemplate", "features/listener/featuresListener"], f
 			
            	$('#switchonbutton').on("click", function(event) {
            		$("ul li").show();
-           		self.scrollbarUpdate();
+           		self.featuresListener.scrollbarUpdate();
            	});
 
        		$('#cancelUpdateFeature').click(function() {
@@ -198,15 +206,17 @@ define(["framework/widgetWithTemplate", "features/listener/featuresListener"], f
            	});
 
           	$('.featureinfo_img').on("click", function(event) {				
-				var descid = $(this).attr("value");
+				var descid = $(this).attr("artifactGroupId");
+				console.info("descid", descid);
 				var currentObj = this;				
 				self.featuresListener.getFeaturesList(self.featuresListener.getRequestHeader(self.featureRequestBody, "desc", descid), function(response) {
-					var divhtml = '<div id="'+descid+'" class="dyn_popup featureinfo"><h1>Description</h1><a href="#" class="dyn_popup_close">X</a><div class="features_cont"><span><img src="themes/default/images/helios/feature_info_logo.png" width="42" height="42" border="0" alt=""></span>'+response.data+'</div></div>';
+					var descriptionid = $.trim(descid.replace(/ /g,''));
+					var divhtml = '<div id="'+descriptionid+'" class="dyn_popup featureinfo"><h1>Description</h1><a href="#" class="dyn_popup_close">X</a><div class="features_cont"><span><img src="themes/default/images/helios/feature_info_logo.png" width="42" height="42" border="0" alt=""></span>'+response.data+'</div></div>';
 					$("#desc").children().remove();
 					$("#desc").append(divhtml);
 					commonVariables.temp = currentObj;
-					commonVariables.openccmini(currentObj,descid);
-					$("#"+descid).show();
+					commonVariables.openccmini(currentObj,descriptionid);
+					$("#"+descid).show();					
 				});
            	});
 			
@@ -226,7 +236,6 @@ define(["framework/widgetWithTemplate", "features/listener/featuresListener"], f
 					featureUpdatedata.moduleId = moduleId; 
 					featureUpdatedata.artifactGroupId = moduleId;
 					featureUpdatedataArray.push(featureUpdatedata);
-					console.info("featureUpdatedataArray", featureUpdatedataArray);
 				});
 				
 				self.featuresListener.getFeaturesUpdate(self.featuresListener.getRequestHeader(featureUpdatedataArray, "", ""), function(response) {
@@ -244,39 +253,15 @@ define(["framework/widgetWithTemplate", "features/listener/featuresListener"], f
 			$("ul li fieldset").each(function() {
 				if($(this).attr("class") == "switch switchOn"){
 					$(this).parent().show();
-					self.scrollbarUpdate();
+					self.featuresListener.scrollbarUpdate();
 				}     			
 			});
-		},
-		
-		scrollbarEnable : function(){
-			$("#content_1").mCustomScrollbar({
-				autoHideScrollbar:true,
-				theme:"light-thin",
-				updateOnContentResize: true
-			});
-			
-			$("#content_2").mCustomScrollbar({
-				autoHideScrollbar:true,
-				theme:"light-thin"
-			});
-			
-			$("#content_3").mCustomScrollbar({
-				autoHideScrollbar:true,
-				theme:"light-thin"
-			});
-		},
-		scrollbarUpdate : function(){
-			$("#content_1").mCustomScrollbar("update"); 
-			$("#content_2").mCustomScrollbar("update"); 
-			$("#content_3").mCustomScrollbar("update"); 
 		},
 
 		bcheck : function(obj){
 			var button = $(obj).attr("value");
 			$(obj).closest('fieldset').removeClass('switchOn'); 
-			$(obj).closest('fieldset').removeClass('switchOff'); 
-			
+			$(obj).closest('fieldset').removeClass('switchOff');			
 			if(button == 'false'){ 
 				$(obj).closest('fieldset').addClass('switchOff');
 				$(obj).closest('fieldset').attr('value', "false"); 

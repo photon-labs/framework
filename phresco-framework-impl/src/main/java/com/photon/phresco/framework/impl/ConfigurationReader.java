@@ -62,7 +62,7 @@ public class ConfigurationReader extends ConfigReader {
 	public Collection<String> getEnvironmentNames() {
 		return super.getEnviroments().keySet();
 	}
-	
+	/* 
 	public boolean canDelete(Element envElement) {
 		if (!envElement.hasChildNodes() || (envElement.getChildNodes().getLength() == 1 &&
 				envElement.getChildNodes().item(0).getNodeType() == Element.TEXT_NODE)) {
@@ -70,7 +70,7 @@ public class ConfigurationReader extends ConfigReader {
 		}
 		return false;
 	}
-	
+	 */
 	
 	public Element getEnvironment(String envName) {
 		return super.getEnviroments().get(envName);

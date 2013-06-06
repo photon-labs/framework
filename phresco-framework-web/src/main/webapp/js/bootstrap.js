@@ -60,8 +60,8 @@ var commonVariables = {
 	
 	build : "build",
 	
-	mevanService : "mevanService",
-	mevanServiceContext : "mevanService",
+	mavenService : "mavenService",
+	mavenServiceContext : "mavenService",
 	
 	openFolderContext : "util/openFolder",
 	copyPathContext : "util/copyPath",
@@ -124,6 +124,8 @@ var commonVariables = {
 	edit : "Edit",
 	create : "Create",
 	deleted : "Delete",
+	
+	loadingScreen : null,
 	
 	basePlaceholder : "basepage\\:widget",
 	headerPlaceholder : $("<header\\:widget></header\\:widget>"),
@@ -207,8 +209,8 @@ $(document).ready(function(){
 
 		// setup require.js
 		requirejs.config(configJson);
-
-		require(["framework/class", "framework/navigationController", "login/login"],	function () {
+		
+		require(["framework/class", "framework/widget", "common/loading", "framework/widgetWithTemplate", "framework/navigationController", "login/login"], function () {
 		 	Clazz.config = data;
 			Clazz.navigationController = new Clazz.NavigationController({
 				mainContainer : "basepage\\:widget",
@@ -221,6 +223,8 @@ $(document).ready(function(){
 			if(localStorage.getItem('customertheme') != null && localStorage.getItem('customertheme') != ""){
 				JSS.css(eval('(' + localStorage.getItem('customertheme') + ')'));
 			}
+			
+			commonVariables.loadingScreen =new Clazz.com.js.widget.common.Loading();
 			app.initialize();
 		});
 	}, "json");

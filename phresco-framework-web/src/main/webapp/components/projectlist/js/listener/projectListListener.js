@@ -1,4 +1,4 @@
-define(["framework/widget", "framework/widgetWithTemplate", "projectlist/api/projectListAPI"], function() {
+define(["projectlist/api/projectListAPI"], function() {
 
 	Clazz.createPackage("com.components.projectlist.js.listener");
 
@@ -9,6 +9,9 @@ define(["framework/widget", "framework/widgetWithTemplate", "projectlist/api/pro
 		editproject : null,
 		editAplnContent : null,
 		projectRequestBody : {},
+		flag1:null,
+		flag2:null,
+		flag3:null,
 		/***
 		 * Called in initialization time of this class 
 		 *
@@ -16,18 +19,19 @@ define(["framework/widget", "framework/widgetWithTemplate", "projectlist/api/pro
 		 */
 		initialize : function(config) {
 			var self = this;
-			this.loadingScreen = new Clazz.com.js.widget.common.Loading();
-			self.projectListAPI = new Clazz.com.components.projectlist.js.api.ProjectsListAPI();
-			self.editproject = commonVariables.navListener.getMyObj(commonVariables.editproject);
+			if(self.projectListAPI === null)
+				self.projectListAPI = new Clazz.com.components.projectlist.js.api.ProjectsListAPI();
 		},
 		
 		onEditProject : function(projectId) {
 			var self = this;
 			commonVariables.projectId = projectId;
-			Clazz.navigationController.jQueryContainer = commonVariables.contentPlaceholder;
-			Clazz.navigationController.push(self.editproject, true);
-			$("#editprojectTab").css("display", "block");
-			self.dynamicrenderlocales(commonVariables.contentPlaceholder);
+			commonVariables.navListener.getMyObj(commonVariables.editproject, function(editprojectObject) {
+				Clazz.navigationController.jQueryContainer = commonVariables.contentPlaceholder;
+				Clazz.navigationController.push(editprojectObject, true);
+				$("#editprojectTab").css("display", "block");
+				self.dynamicrenderlocales(commonVariables.contentPlaceholder);
+			});
 		},
 		
 		getCustomer : function() {
@@ -47,23 +51,23 @@ define(["framework/widget", "framework/widgetWithTemplate", "projectlist/api/pro
 		getProjectList : function(header, callback) {
 			var self = this;
 			try {
-				self.loadingScreen.showLoading();
+				commonVariables.loadingScreen.showLoading();
 				self.projectListAPI.projectslist(header,
 					function(response) {
 						if (response !== null) {
-							self.loadingScreen.removeLoading();
+							commonVariables.loadingScreen.removeLoading();
 							callback(response);
 						} else {
-							self.loadingScreen.removeLoading();
+							commonVariables.loadingScreen.removeLoading();
 							callback({ "status" : "service failure"});
 						}
 					},
 					function(textStatus) {
-						self.loadingScreen.removeLoading();
+						commonVariables.loadingScreen.removeLoading();
 					}
 				);
 			} catch(exception) {
-				self.loadingScreen.removeLoading();
+				commonVariables.loadingScreen.removeLoading();
 			}
 
 		},
@@ -72,23 +76,23 @@ define(["framework/widget", "framework/widgetWithTemplate", "projectlist/api/pro
 		projectListAction : function(header, callback) {
 			var self = this;			
 			try {
-				self.loadingScreen.showLoading();
+				commonVariables.loadingScreen.showLoading();
 				self.projectListAPI.projectslist(header,
 					function(response) {
 						if(response != null ){
-							self.loadingScreen.removeLoading();
+							commonVariables.loadingScreen.removeLoading();
 							callback(response);						
 						} else {
-							self.loadingScreen.removeLoading();
+							commonVariables.loadingScreen.removeLoading();
 							callback({ "status" : "service failure"});
 						}
 					},					
 					function(textStatus) {
-						self.loadingScreen.removeLoading();	
+						commonVariables.loadingScreen.removeLoading();	
 					}
 				);
 			} catch(exception) {
-				self.loadingScreen.removeLoading();
+				commonVariables.loadingScreen.removeLoading();
 			}
 		},
 
@@ -135,8 +139,8 @@ define(["framework/widget", "framework/widgetWithTemplate", "projectlist/api/pro
 				var addcommit ={};
 				addcommit.type = projectRequestBody.type;
 				addcommit.repoUrl = projectRequestBody.repoUrl;
-				addrepo.userName = projectRequestBody.userName;
-				addrepo.password = projectRequestBody.password;
+				addcommit.userName = projectRequestBody.userName;
+				addcommit.password = projectRequestBody.password;
 				addcommit.commitMessage = projectRequestBody.commitMessage;
 				addcommit.commitableFiles = projectRequestBody.commitableFiles;
 				header.requestPostBody = JSON.stringify(addcommit);
@@ -144,12 +148,11 @@ define(["framework/widget", "framework/widgetWithTemplate", "projectlist/api/pro
 			}
 			if(action == "updateget") {
 				var addupdate ={};
+				header.requestMethod = "POST";
 				addupdate.type = projectRequestBody.type;
 				addupdate.repoUrl = projectRequestBody.repoUrl;
-				//addrepo.userName = projectRequestBody.userName;
-				addupdate.userName = "santhosh_ja";
-				//addrepo.password = projectRequestBody.password;
-				addupdate.password = "santJ!23";
+				addupdate.userName = projectRequestBody.userName;
+				addupdate.password = projectRequestBody.password;
 				addupdate.version = projectRequestBody.revision;
 				header.requestPostBody = JSON.stringify(addupdate);
 				header.webserviceurl = commonVariables.webserviceurl + "repository/updateImportedApplication?appDirName="+projectRequestBody.appdirname;
@@ -164,10 +167,21 @@ define(["framework/widget", "framework/widgetWithTemplate", "projectlist/api/pro
 		editApplication : function(value, techid) {
 			var self = this;
 			Clazz.navigationController.jQueryContainer = commonVariables.contentPlaceholder;
-			self.editAplnContent = commonVariables.navListener.getMyObj(commonVariables.editApplication);
+			if(self.editAplnContent === null){
+				commonVariables.navListener.getMyObj(commonVariables.editApplication, function(returnVal){
+					self.editAplnContent = returnVal;
+					self.loadAppInfo(value, techid);
+				});	
+			} else {
+				self.loadAppInfo(value, techid);
+			}	
+		},
+		
+		loadAppInfo : function(value, techid){
+			var self = this;
 			self.editAplnContent.appDirName = value;
-            self.projectListAPI.localVal.setSession('appDirName', value);
-            self.projectListAPI.localVal.setSession('techid', techid);	
+			self.projectListAPI.localVal.setSession('appDirName', value);
+			self.projectListAPI.localVal.setSession('techid', techid);
 			Clazz.navigationController.push(self.editAplnContent, true);
 			$("#aplntitle").html("Edit - "+value);
 		},
@@ -179,7 +193,8 @@ define(["framework/widget", "framework/widgetWithTemplate", "projectlist/api/pro
 		addRepoEvent : function(obj, dynid){
 			var self = this;
 			var repodata = {}, actionBody, action;
-			//if(!self.validation()) {
+			self.flag1=1;
+			if(!self.validation(dynid)) {
 				repodata.type = $("#type_"+dynid).val();
 				repodata.repoUrl = $("#repourl_"+dynid).val();
 				repodata.userName = $("#uname_"+dynid).val();
@@ -192,25 +207,26 @@ define(["framework/widget", "framework/widgetWithTemplate", "projectlist/api/pro
 				action = "repoget";
 				self.projectListAction(self.getActionHeader(actionBody, action), function(response){
 				});
-			//}
+			}
 		},
 		
 		addCommitEvent : function(obj, dynid){
 			var self = this;
-			var commitdata = {}, actionBody, action, arrayCommitableFiles = ["C:/Documents and Settings/arunkumar_ve/workspace/projects/wordpress-WordPress/pom.xml","C:/Documents and Settings/arunkumar_ve/workspace/projects/wordpress-WordPress/source/wordpress/config/phresco-env-config.xml"];
-			//if(!self.validation()) {
+			var commitdata = {}, actionBody, action, arrayCommitableFiles = ["C:/Documents and Settings/arunkumar_ve/workspace/projects/new-HTML5 Multichannel YUI Widget/pom.xml","C:/Documents and Settings/arunkumar_ve/workspace/projects/new-HTML5 Multichannel YUI Widget/docs/README.txt"];
+			self.flag2=1;
+			if(!self.validation(dynid)) {
 				commitdata.type = $("#commitType_"+dynid).val();
 				commitdata.repoUrl = $("#commitRepourl_"+dynid).val();
 				commitdata.userName = $("#commitUsername_"+dynid).val();
 				commitdata.password = $("#commitPassword_"+dynid).val();
 				commitdata.commitMessage = $("#commitMessage_"+dynid).val();
 				commitdata.commitableFiles = arrayCommitableFiles;
-				commitdata.appDirName = obj.parent("div").attr("appDirName");
+				commitdata.appdirname = obj.parent("div").attr("appDirName");
 				actionBody = commitdata;
 				action = "commitget";
 				self.projectListAction(self.getActionHeader(actionBody, action), function(response){
 				});
-			//}
+			}
 		},
 		
 		addReportEvent : function(){
@@ -225,7 +241,8 @@ define(["framework/widget", "framework/widgetWithTemplate", "projectlist/api/pro
 		addUpdateEvent : function(obj, dynid, revision){
 			var self = this;
 			var updatedata = {}, actionBody, action;
-			//if(!self.validation()) {
+			self.flag3=1;
+			if(!self.validation(dynid)) {
 				updatedata.type = $("#updateType_"+dynid).val();
 				updatedata.repoUrl = $("#updateRepourl_"+dynid).val();
 				updatedata.userName = $("#updateUsername_"+dynid).val();
@@ -236,75 +253,94 @@ define(["framework/widget", "framework/widgetWithTemplate", "projectlist/api/pro
 				action = "updateget";
 				self.projectListAction(self.getActionHeader(actionBody, action), function(response){
 				});
-			//}
+			}
 		},
 		
-		validation : function() {		
-				var flag1=0,flag2=0,flag3=0,repourl, uname, pwd, commitRepourl, commitUsername, commitPassword, updateRepourl, updateUsername, updatePassword, revision;
-				repourl = $("#repourl").val();
-				uname = $("#uname").val();
-				pwd = $("#pwd").val();
+		validation : function(dynid) {	
+				var self=this;	
+				var repourl, uname, pwd, commitRepourl, commitUsername, commitPassword, updateRepourl, updateUsername, updatePassword, revision;
+				repourl = $("#repourl_"+dynid).val();
+				uname = $("#uname_"+dynid).val();
+				pwd = $("#pwd_"+dynid).val();
 				
-				commitRepourl = $("#commitRepourl").val();
-				commitUsername = $("#commitUsername").val();
-				commitPassword = $("#commitPassword").val();
+				commitRepourl = $("#commitRepourl_"+dynid).val();
+				commitUsername = $("#commitUsername_"+dynid).val();
+				commitPassword = $("#commitPassword_"+dynid).val();
 				
-				updateRepourl = $("#updateRepourl").val();
-				updateUsername= $("#updateUsername").val();
-				updatePassword = $("#updatePassword").val();
-				revision = $("#revision").val();
+				updateRepourl = $("#updateRepourl_"+dynid).val();
+				updateUsername= $("#updateUsername_"+dynid).val();
+				updatePassword = $("#updatePassword_"+dynid).val();
+				revision = $("#revision_"+dynid).val();
 				
-				if(repourl == ""){
-					$("#repourl").focus();
-					$("#repourl").attr('placeholder','Enter Repourl');
-					$("#repourl").addClass("errormessage");
-					self.hasError = true;
-				} else if(uname == ""){
-					$("#uname").focus();
-					$("#uname").attr('placeholder','Enter UserName');
-					$("#uname").addClass("errormessage");
-					self.hasError = true;
-				} else if(pwd == ""){
-					$("#pwd").focus();
-					$("#pwd").attr('placeholder','Enter Password');
-					$("#pwd").addClass("errormessage");
-					self.hasError = true;
+				if(self.flag1==1)
+				{	
+					if(repourl == ""){
+						$("#repourl_"+dynid).focus();
+						$("#repourl_"+dynid).attr('placeholder','Enter Repourl');
+						$("#repourl_"+dynid).addClass("errormessage");
+						self.hasError = true;
+					} else if(uname == ""){
+						$("#uname_"+dynid).focus();
+						$("#uname_"+dynid).attr('placeholder','Enter UserName');
+						$("#uname_"+dynid).addClass("errormessage");
+						self.hasError = true;
+					} else if(pwd == ""){
+						$("#pwd_"+dynid).focus();
+						$("#pwd_"+dynid).attr('placeholder','Enter Password');
+						$("#pwd_"+dynid).addClass("errormessage");
+						self.hasError = true;
+					} else
+						self.hasError=false;
+					self.flag1=0;
+					return self.hasError;
 				}
-				if(commitRepourl == ""){
-					$("#commitRepourl").focus();
-					$("#commitRepourl").attr('placeholder','Enter Repourl');
-					$("#commitRepourl").addClass("errormessage");
-					self.hasError = true;
-				} else if(commitUsername == ""){
-					$("#commitUsername").focus();
-					$("#commitUsername").attr('placeholder','Enter UserName');
-					$("#commitUsername").addClass("errormessage");
-					self.hasError = true;
-				} else if(commitPassword == ""){
-					$("#commitPassword").focus();
-					$("#commitPassword").attr('placeholder','Enter Password');
-					$("#commitPassword").addClass("errormessage");
-					self.hasError = true;
-				}
-				if(updateRepourl == ""){
-					$("#updateRepourl").focus();
-					$("#updateRepourl").attr('placeholder','Enter Repourl');
-					$("#updateRepourl").addClass("errormessage");
-					self.hasError = true;
-				} else if(updateUsername == ""){
-					$("#updateUsername").focus();
-					$("#updateUsername").attr('placeholder','Enter UserName');
-					$("#updateUsername").addClass("errormessage");
-					self.hasError = true;
-				} else if(updatePassword == ""){
-					$("#updatePassword").focus();
-					$("#updatePassword").attr('placeholder','Enter Password');
-					$("#updatePassword").addClass("errormessage");
-					self.hasError = true;
-				}				
-				return self.hasError;	
-		},
 
+				else if(self.flag2==1)
+				{
+					if(commitRepourl == ""){
+						$("#commitRepourl_"+dynid).focus();
+						$("#commitRepourl_"+dynid).attr('placeholder','Enter Repourl');
+						$("#commitRepourl_"+dynid).addClass("errormessage");
+						self.hasError = true;
+					} else if(commitUsername == ""){
+						$("#commitUsername_"+dynid).focus();
+						$("#commitUsername_"+dynid).attr('placeholder','Enter UserName');
+						$("#commitUsername_"+dynid).addClass("errormessage");
+						self.hasError = true;
+					} else if(commitPassword == ""){
+						$("#commitPassword_"+dynid).focus();
+						$("#commitPassword_"+dynid).attr('placeholder','Enter Password');
+						$("#commitPassword_"+dynid).addClass("errormessage");
+						self.hasError = true;
+					}else
+						self.hasError=false;
+					self.flag2=0;
+					return self.hasError;
+				}
+				
+				else if(self.flag3==1)
+				{	
+					if(updateRepourl == ""){
+						$("#updateRepourl_"+dynid).focus();
+						$("#updateRepourl_"+dynid).attr('placeholder','Enter Repourl');
+						$("#updateRepourl_"+dynid).addClass("errormessage");
+						self.hasError = true;
+					} else if(updateUsername == ""){
+						$("#updateUsername_"+dynid).focus();
+						$("#updateUsername_"+dynid).attr('placeholder','Enter UserName');
+						$("#updateUsername_"+dynid).addClass("errormessage");
+						self.hasError = true;
+					} else if(updatePassword == ""){
+						$("#updatePassword_"+dynid).focus();
+						$("#updatePassword_"+dynid).attr('placeholder','Enter Password');
+						$("#updatePassword_"+dynid).addClass("errormessage");
+						self.hasError = true;
+					}else
+						self.hasError=false;
+					self.flag3=0;
+					return self.hasError;
+				}
+		},
 	});
 
 	return Clazz.com.components.projectlist.js.listener.ProjectsListListener;

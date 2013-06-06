@@ -123,6 +123,16 @@ define(["framework/widget", "framework/templateProvider"], function() {
 				});
 			},
 			
+			windowResize : function(){
+				var resultvalue = 0;
+				$('.content_main').prevAll().each(function() {
+					resultvalue = resultvalue + $(this).height(); 
+				});
+				
+				resultvalue = resultvalue + $('.footer_section').height() + 65;
+				$('.content_main .scrollContent').height($(window).height() - (resultvalue + 155));
+			},
+			
 			opencc : function(ee, placeId, currentPrjName) {
 				var self=this;
 				$(".dyn_popup").hide();
@@ -292,6 +302,11 @@ define(["framework/widget", "framework/templateProvider"], function() {
 				});
 				
 				return customerId;
+			},
+			
+			multiselect : function() {
+				console.info("multiselect called");
+				$('.selectpicker').selectpicker();
 			}
 		}
 	);

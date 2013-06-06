@@ -1,4 +1,4 @@
-define(["framework/widgetWithTemplate", "projectlist/listener/projectListListener", "projectlist/api/projectListAPI"], function() {
+define(["projectlist/listener/projectListListener"], function() {
 	
 	Clazz.createPackage("com.components.projectlist.js");
 
@@ -16,7 +16,6 @@ define(["framework/widgetWithTemplate", "projectlist/listener/projectListListene
 		onProjectEditEvent : null,
 		registerEvents : null,
 		repositoryEvent : null,
-		projectListAPI : null,
 		onAddRepoEvent : null,
 		onAddCommitEvent : null,
 		onAddUpdateEvent : null,
@@ -29,10 +28,9 @@ define(["framework/widgetWithTemplate", "projectlist/listener/projectListListene
 		 */
 		initialize : function(globalConfig){
 			var self = this;
-			self.projectslistListener = new Clazz.com.components.projectlist.js.listener.ProjectsListListener;
+			if(self.projectslistListener === null)
+				self.projectslistListener = new Clazz.com.components.projectlist.js.listener.ProjectsListListener;
 			self.registerEvents(self.projectslistListener);
-			self.projectListAPI = new Clazz.com.components.projectlist.js.api.ProjectsListAPI();
-			
 		},
 
 		/*** 
@@ -46,21 +44,27 @@ define(["framework/widgetWithTemplate", "projectlist/listener/projectListListene
 		
 		registerEvents : function(projectslistListener,repositoryListener) {
 			var self = this;
-			self.onProjectsEvent = new signals.Signal();
-			self.onProjectEditEvent = new signals.Signal();
+			if(self.onProjectsEvent === null)
+				self.onProjectsEvent = new signals.Signal();
+			if(self.onProjectEditEvent === null)	
+				self.onProjectEditEvent = new signals.Signal();
 			self.onProjectEditEvent.add(projectslistListener.onEditProject, projectslistListener);			
 			self.onProjectsEvent.add(projectslistListener.editApplication, projectslistListener);
 			
-			self.onAddRepoEvent = new signals.Signal();
+			if(self.onAddRepoEvent === null)
+				self.onAddRepoEvent = new signals.Signal();
 			self.onAddRepoEvent.add(projectslistListener.addRepoEvent, projectslistListener);
 			
-			self.onAddCommitEvent = new signals.Signal();
+			if(self.onAddCommitEvent === null)
+				self.onAddCommitEvent = new signals.Signal();
 			self.onAddCommitEvent.add(projectslistListener.addCommitEvent, projectslistListener);
 			
-			self.onAddUpdateEvent = new signals.Signal();
+			if(self.onAddUpdateEvent === null)
+				self.onAddUpdateEvent = new signals.Signal();
 			self.onAddUpdateEvent.add(projectslistListener.addUpdateEvent, projectslistListener);
 			
-			self.onAddReportEvent = new signals.Signal();
+			if(self.onAddReportEvent === null)
+				self.onAddReportEvent = new signals.Signal();
 			self.onAddReportEvent.add(projectslistListener.addReportEvent, projectslistListener);
 
 		},
@@ -88,6 +92,7 @@ define(["framework/widgetWithTemplate", "projectlist/listener/projectListListene
 
 		getAction : function(actionBody, action, callback) {
 			var self = this;
+			Clazz.navigationController.jQueryContainer = commonVariables.contentPlaceholder;
 			self.projectslistListener.projectListAction(self.projectslistListener.getActionHeader(actionBody, action), function(response) {
 				self.loadPage();
 			});
@@ -131,6 +136,7 @@ define(["framework/widgetWithTemplate", "projectlist/listener/projectListListene
 				$(".fixedHeader tr th:nth-child(4)").css("width",w4);
 				$(".fixedHeader tr th:nth-child(5)").css("width",w5);
 				$(".fixedHeader tr th:nth-child(6)").css("width",w6);
+				self.windowResize();
 			});			
 			
 			$(".proj_list .scrollContent").mCustomScrollbar({
@@ -160,7 +166,7 @@ define(["framework/widgetWithTemplate", "projectlist/listener/projectListListene
 			$(".tooltiptop").click(function() {
 				var currentPrjName = $(this).closest("tr").attr("class");
 				self.opencc(this, $(this).attr('name'), currentPrjName);
-				var data = JSON.parse(self.projectListAPI.localVal.getSession('userInfo'));
+				var data = JSON.parse(self.projectslistListener.projectListAPI.localVal.getSession('userInfo'));
 				userId = data.id;
 				$('#uname').val(data.id);
 				$('#pwd').val(data.password);
@@ -204,7 +210,7 @@ define(["framework/widgetWithTemplate", "projectlist/listener/projectListListene
 					$("#uname").val('');
 					$("#pwd").val('');
 				} else {
-					var data = JSON.parse(self.projectListAPI.localVal.getSession('userInfo'));
+					var data = JSON.parse(self.projectslistListener.projectListAPI.localVal.getSession('userInfo'));
 					$('#uname').val(data.id);
 					$('#pwd').val(data.password);
 				}
@@ -221,7 +227,7 @@ define(["framework/widgetWithTemplate", "projectlist/listener/projectListListene
 					$("#commitUsername").val('');
 					$("#commitPassword").val('');
 				} else {
-					var data = JSON.parse(self.projectListAPI.localVal.getSession('userInfo'));
+					var data = JSON.parse(self.projectslistListener.projectListAPI.localVal.getSession('userInfo'));
 					$('#commitUsername').val(data.id);
 					$('#commitPassword').val(data.password);
 				}
@@ -239,7 +245,7 @@ define(["framework/widgetWithTemplate", "projectlist/listener/projectListListene
 					$("#updateUsername").val('');
 					$("#updatePassword").val('');
 				} else {
-					var data = JSON.parse(self.projectListAPI.localVal.getSession('userInfo'));
+					var data = JSON.parse(self.projectslistListener.projectListAPI.localVal.getSession('userInfo'));
 					$('#updateUsername').val(data.id);
 					$('#updatePassword').val(data.password);
 				}
@@ -269,7 +275,7 @@ define(["framework/widgetWithTemplate", "projectlist/listener/projectListListene
 					var value = $(this).val();
 				}
 			});
-			
+			self.windowResize();
 			
 		}
 	});

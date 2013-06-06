@@ -1,12 +1,13 @@
-define(["framework/widget", "framework/widgetWithTemplate", "configuration/api/configurationAPI"], function() {
+define(["configuration/api/configurationAPI"], function() {
 
 	Clazz.createPackage("com.components.configuration.js.listener");
 
 	Clazz.com.components.configuration.js.listener.ConfigurationListener = Clazz.extend(Clazz.WidgetWithTemplate, {
 		basePlaceholder :  window.commonVariables.basePlaceholder,
 		configurationAPI : null,
-		editConfiguration : null,
+		editConfigurations : null,
 		configList : [],
+		configListPage : null,
 		cancelEditConfiguration : null,
 		configRequestBody : {},
 		envJson : [],
@@ -29,18 +30,33 @@ define(["framework/widget", "framework/widgetWithTemplate", "configuration/api/c
 			var self=this;
 			commonVariables.environmentName = envName;
 			Clazz.navigationController.jQueryContainer = commonVariables.contentPlaceholder;
-			self.editConfiguration = commonVariables.navListener.getMyObj(commonVariables.editConfiguration);
-			self.getConfigurationList(self.getRequestHeader(self.configRequestBody, "configTypes"), function(response) {
-				self.editConfiguration.configType = response.data;
-			});
-			Clazz.navigationController.push(self.editConfiguration, true);
+			if(self.editConfigurations  === null) {
+				commonVariables.navListener.getMyObj(commonVariables.editConfiguration, function(retVal) {
+					self.editConfigurations = retVal;
+					self.getConfigurationList(self.getRequestHeader(self.configRequestBody, "configTypes"), function(response) {
+						self.editConfigurations.configType = response.data;
+					});
+					Clazz.navigationController.push(self.editConfigurations, true);
+				});
+			} else {
+				self.getConfigurationList(self.getRequestHeader(self.configRequestBody, "configTypes"), function(response) {
+					self.editConfigurations.configType = response.data;
+				});
+				Clazz.navigationController.push(self.editConfigurations, true);
+			}
 		},
 		
 		cancelEditConfiguation : function() {
 			var self=this;
 			Clazz.navigationController.jQueryContainer = commonVariables.contentPlaceholder;
-			self.cancelEditConfiguration = commonVariables.navListener.getMyObj(commonVariables.configuration);
-			Clazz.navigationController.push(self.cancelEditConfiguration, true, true);
+			if(self.cancelEditConfiguration  === null) {
+				commonVariables.navListener.getMyObj(commonVariables.configuration, function(retVal) {
+					self.cancelEditConfiguration = retVal;
+					Clazz.navigationController.push(self.cancelEditConfiguration, true, true);
+				});
+			} else {
+				Clazz.navigationController.push(self.cancelEditConfiguration, true, true);
+			}
 		},
 		
 		getConfigurationList : function(header, callback) {
@@ -91,7 +107,7 @@ define(["framework/widget", "framework/widgetWithTemplate", "configuration/api/c
 				webserviceurl : ''
 			};
 			if (action === "list") {
-				header.webserviceurl = commonVariables.webserviceurl+commonVariables.configuration+"?appDirName="+appDirName;
+				header.webserviceurl = commonVariables.webserviceurl+commonVariables.configuration+"/allEnvironments?appDirName="+appDirName;
 			} else if (action === "edit") {
 				header.webserviceurl = commonVariables.webserviceurl+commonVariables.configuration+"?appDirName="+appDirName+"&envName="+commonVariables.environmentName;
 			}else if (action === "configTypes") {
@@ -110,7 +126,11 @@ define(["framework/widget", "framework/widgetWithTemplate", "configuration/api/c
 			} else if (action === "saveConfig") {
 					header.requestMethod = "POST";
 					header.requestPostBody = JSON.stringify(configRequestBody);
-					header.webserviceurl = commonVariables.webserviceurl+commonVariables.configuration+"/saveConfig?appDirName="+appDirName;
+					header.webserviceurl = commonVariables.webserviceurl+commonVariables.configuration+"/updateConfig?appDirName="+appDirName+"&envName="+deleteEnv;
+			} else if (action === "cloneEnv") {
+					header.requestMethod = "POST";
+					header.requestPostBody = JSON.stringify(configRequestBody);
+					header.webserviceurl = commonVariables.webserviceurl+commonVariables.configuration+"/cloneEnvironment?appDirName="+appDirName+"&envName="+deleteEnv;
 			}
 			return header;
 		},
@@ -151,9 +171,9 @@ define(["framework/widget", "framework/widgetWithTemplate", "configuration/api/c
 				if (self.count == 0) {
 					self.count = "";
 				}
-				var headerTr = '<tr type="'+configTemplate.data.name+self.count+'" class="row_bg"><td colspan="3">' + configTemplate.data.name + '</td><td colspan="3">'+'<a href="javascript:;" name="removeConfig"><img src="themes/default/images/helios/close_icon.png" width="25" height="20" border="0" alt="" class="flt_right"/></a></td></tr>';
+				var headerTr = '<tr type="'+configTemplate.data.name+self.count+'" class="row_bg"><td colspan="3">' + configTemplate.data.name + '</td><td colspan="3">'+'<a href="javascript:;" name="removeConfig"><img src="themes/default/images/helios/close_icon.png" border="0" alt="" class="flt_right"/></a></td></tr>';
 				content = content.concat(headerTr);
-				var defaultTd = '<tr name="'+configTemplate.data.name+'" class="'+configTemplate.data.name+self.count+'"><td class="labelTd">Name <sup>*</sup></td><td><input type="text" class="configName" placeholder= "Configuration Name"/></td><td class="labelTd">Description</td><td><input type="text" class="configDesc" placeholder= "Configuration Description"/></td>';
+				var defaultTd = '<tr name="'+configTemplate.data.name+'" class="'+configTemplate.data.name+self.count+'"><td class="labelTd">Name <sup>*</sup></td><td><input type="text" class="configName" value="'+configName+'" placeholder= "Configuration Name"/></td><td class="labelTd">Description</td><td><input type="text" class="configDesc" value="'+configDesc+'" placeholder= "Configuration Description"/></td>';
 				content = content.concat(defaultTd);
 				var count = 2;
 				var i = 2;
@@ -196,9 +216,9 @@ define(["framework/widget", "framework/widgetWithTemplate", "configuration/api/c
 						inputCtrl = inputCtrl.concat(options);
 						inputCtrl = inputCtrl.concat("</select></td>");
 						if  (count % 3 == 0) {
-							inputCtrl = inputCtrl.concat("</tr>");
+							//inputCtrl = inputCtrl.concat("</tr>");
 						}
-						inputCtrl = inputCtrl.concat("</tr>");
+						//inputCtrl = inputCtrl.concat("</tr>");
 					} else if (type == "Password") {
 						inputCtrl = '<input value="'+ configValue +'" class="'+configTemplate.data.name+self.count+'Configuration" name="'+key+'" type="password" placeholder=""/>';
 					} else if (type == "FileType") {
@@ -210,26 +230,34 @@ define(["framework/widget", "framework/widgetWithTemplate", "configuration/api/c
 					content = content.concat(control);
 					i = count++;
 				});
-				$("tbody").append(content);
+				$("tbody[name=ConfigurationLists]").append(content);
 				$("a[name=removeConfig]").unbind("click");
 				self.removeConfiguation();
 			}
 		},
 			
 		htmlForOhter : function(value) {
-			var self = this, headerTr, content = '', textBox, apiKey = "", keyValue = "", type="Other";
+			var self = this, headerTr, content = '', textBox, apiKey = "", keyValue = "", type="Other", addIcon = '<img src="themes/default/images/helios/plus_icon.png" border="0" alt="">';
 				if (value !== null && value !== '') {
 					type = value.type;
-					apiKey = value.name;
-					keyValue = 	value.properties.apiKey;
 				}
 				
-				headerTr = '<tr class="row_bg"><div class="row"><td colspan="3">' + type + '</td><td colspan="3">'+
-				'<a href="javascript:;" name="removeConfig"><img src="themes/default/images/helios/close_icon.png" width="25" height="20" border="0" alt="" class="flt_right"/></a></td></div></tr>';
+				headerTr = '<tr class="row_bg" type="otherConfig"><div class="row"><td colspan="3">' + type + '</td><td colspan="3">'+
+				'<a href="javascript:;" name="removeConfig"><img src="themes/default/images/helios/close_icon.png" border="0" alt="" class="flt_right"/></a></td></div></tr>';
 				content = content.concat(headerTr);
-				textBox = '<tr class="otherConfig"><td></td><td><input type="text" placeholder= "key" value="'+apiKey+'"/><td><input type="text" placeholder= "value" value="'+keyValue+'"/></td><td><div class="flt_right icon_center"><a href="javascript:;" name="addOther"><img src="themes/default/images/helios/plus_icon.png" border="0" alt=""></a> <a href="javascript:;" name="removeOther"></a></div></td></tr>';
-				content = content.concat(textBox);
-				$("tbody").append(content);
+				if (value !== null && value !== '') {
+					$.each(value.properties, function(key, value){
+						textBox = '<tr class="otherConfig" name="'+type+'"><td></td><td><input type="text" placeholder= "key" class="otherKey" value="'+key+'"/><td><input type="text" placeholder= "value" class="otherKeyValue" value="'+value+'"/></td><td><div class="flt_right icon_center"><a href="javascript:;" name="addOther"></a> <a href="javascript:;" name="removeOther"><img src="themes/default/images/helios/minus_icon.png" border="0" alt=""></a></div></td></tr>';
+						content = content.concat(textBox);
+					});
+				} else {
+					textBox = '<tr class="otherConfig" name="'+type+'"><td></td><td><input type="text" placeholder= "key" class="otherKey"/><td><input type="text" placeholder= "value" class="otherKeyValue" /></td><td><div class="flt_right icon_center"><a href="javascript:;" name="addOther"><img src="themes/default/images/helios/plus_icon.png" border="0" alt=""></a> <a href="javascript:;" name="removeOther"></a></div></td></tr>';
+					content = content.concat(textBox);
+				}
+				$("tbody[name=ConfigurationLists]").append(content);
+				if (value !== null && value !== '') {
+					$("tr.otherConfig:last").find("a[name=addOther]").html(addIcon);
+				}
 				$("a[name=removeConfig]").unbind("click");
 				self.removeConfiguation();
 				self.addClick();
@@ -237,7 +265,7 @@ define(["framework/widget", "framework/widgetWithTemplate", "configuration/api/c
 		},
 		
 		addOtherConfig : function(toAppend){
-			var self = this, dynamicValue, textBox = '<tr class="otherConfig"><td></td><td><input type="text" placeholder= "key"/><td><input type="text" placeholder= "value"/></td><td><div class="flt_right icon_center"><a href="javascript:;" name="addOther"><img src="themes/default/images/helios/plus_icon.png" border="0" alt=""></a> <a href="javascript:;" name="removeOther"><img src="themes/default/images/helios/minus_icon.png" border="0" alt=""></a></div></td></tr>', minusIcon = '<img src="themes/default/images/helios/minus_icon.png" border="0" alt="">';
+			var self = this, dynamicValue, textBox = '<tr class="otherConfig" name="Other"><td></td><td><input type="text" class="otherKey" placeholder= "key"/><td><input type="text" placeholder= "value" class="otherKeyValue"/></td><td><div class="flt_right icon_center"><a href="javascript:;" name="addOther"><img src="themes/default/images/helios/plus_icon.png" border="0" alt=""></a> <a href="javascript:;" name="removeOther"><img src="themes/default/images/helios/minus_icon.png" border="0" alt=""></a></div></td></tr>', minusIcon = '<img src="themes/default/images/helios/minus_icon.png" border="0" alt="">';
 			dynamicValue = $(textBox).insertAfter(toAppend);
 			dynamicValue.prev('tr').find('a[name="addOther"]').html('');
 			dynamicValue.prev('tr').find('a[name="removeOther"]').html(minusIcon);
@@ -272,12 +300,15 @@ define(["framework/widget", "framework/widgetWithTemplate", "configuration/api/c
 			var self = this;
 			var envName = $("input[name=envName]").val();
 			var envDesc = $("input[name=envDesc]").val();
-			$("ul[name=envList]").append('<li><div><input type="radio" name="optionsRadiosfd"></div><div name="envListName">'+envName+'</div><input type="hidden" name="envListDesc" value="'+envDesc+'"></li>');
+			$("ul[name=envList]").append('<li draggable="true"><div><input type="radio" name="optionsRadiosfd"></div><div  class="envlistname" name="envListName">'+envName+'</div><input type="hidden" name="envListDesc" value="'+envDesc+'"></li>');
+			$('.connected').sortable({
+				connectWith: '.connected'
+			});
 			$("input[name=envName]").val('')
 			$("input[name=envDesc]").val('')
 		},
 		
-		saveEnvEvent : function(callback) {
+		saveEnvEvent : function(envWithConfig, callback) {
 			var self = this;
 			self.envJson = [];
 			$.each($("ul[name=envList]").children(), function(index, value) {
@@ -285,8 +316,15 @@ define(["framework/widget", "framework/widgetWithTemplate", "configuration/api/c
 				envNameDesc.name = $(value).find("div[name=envListName]").html();
 				envNameDesc.desc = $(value).find("input[name=envListDesc]").val();
 				envNameDesc.configurations = [];
+				for (i=0; i<envWithConfig.length; i++) {
+					if(envWithConfig[i].name === envNameDesc.name) {
+						if (envWithConfig[i].configurations !== null) {
+							envNameDesc.configurations = envWithConfig[i].configurations;
+						}
+					}
+				}
 				envNameDesc.appliesTo = [""];
-				envNameDesc.defaultEnv = false;
+				envNameDesc.defaultEnv = $(value).find("input[name=optionsRadiosfd]").is(':checked');
 				envNameDesc.delete = false;
 				if (envNameDesc.name !== undefined && envNameDesc.name !== null) {
 					self.envJson.push(envNameDesc);
@@ -327,7 +365,6 @@ define(["framework/widget", "framework/widgetWithTemplate", "configuration/api/c
 			var self=this, configJson = {}, properties = {};
 			self.configList = [];
 			$.each($(".row_bg"), function(index, value) {
-				var configuration = {};
 				properties = {};
 				configJson = {};
 				var type = $(this).attr("type");
@@ -342,18 +379,42 @@ define(["framework/widget", "framework/widgetWithTemplate", "configuration/api/c
 						var proValue = $(this).attr("name");
 						properties[proValue] = $(this).val();
 					});
-					configJson.properties = properties;
+					
+					var otherKey = $(this).children().find('.otherKey').val();
+					var otherKeyValue = $(this).children().find('.otherKeyValue').val();
+					if (otherKey !== undefined && otherKeyValue !== undefined) {
+						properties[otherKey] = otherKeyValue;
+						configJson.properties = properties;
+					} else {
+						configJson.properties = properties;
+					}
 					configJson.type = $(this).attr("name");
 				});
 				self.configList.push(configJson);
 			});
+			var envrName = $('input[name=EnvName]').val();
 			self.configRequestBody = self.configList;
-			self.getConfigurationList(self.getRequestHeader(self.configRequestBody, "saveConfig"), function(response) {
+			self.getConfigurationList(self.getRequestHeader(self.configRequestBody, "saveConfig", envrName), function(response) {
 				Clazz.navigationController.jQueryContainer = commonVariables.contentPlaceholder;
-				self.configList = commonVariables.navListener.getMyObj(commonVariables.configuration);
-				Clazz.navigationController.push(self.configList, true);
+				if(self.configListPage  === null) {
+					commonVariables.navListener.getMyObj(commonVariables.configuration, function(retVal) {
+						self.configListPage = retVal;
+						Clazz.navigationController.push(self.configListPage, true);
+					});
+				} else {
+					Clazz.navigationController.push(self.configListPage, true);
+				}
 			});
-		}
+		},
+		
+		cloneEnv : function(envName, callback) {
+			var self = this, envJson = {};
+			envJson.name = $(".cloneEnvName"+envName).val();
+			envJson.desc = $(".cloneEnvDesc"+envName).val();
+			envJson.defaultEnv = $('input[name=DefaultValue'+envName+']').is(':checked');
+			callback(envJson);
+		},
+		
 	});
 
 	return Clazz.com.components.configuration.js.listener.ConfigurationListener;

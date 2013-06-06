@@ -126,7 +126,7 @@ public class RepositoryService extends RestBase implements FrameworkConstants {
 			ApplicationInfo importProject = scmi.importProject(type, repodetail.getRepoUrl(), repodetail.getUserName(), repodetail.getPassword(), null, revision);
 			if (importProject != null) {
 				ResponseInfo finalOutput = responseDataEvaluation(responseData, null, IMPORT_SUCCESS_PROJECT, null);
-				return Response.status(Status.BAD_REQUEST).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
+				return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
 			} else {
 				ResponseInfo finalOutput = responseDataEvaluation(responseData, null, INVALID_FOLDER, null);
 				return Response.status(Status.BAD_REQUEST).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
@@ -164,7 +164,7 @@ public class RepositoryService extends RestBase implements FrameworkConstants {
 			ApplicationInfo importProject = scmi.importProject(type, repodetail.getRepoUrl(), repodetail.getUserName(), repodetail.getPassword(), MASTER ,repodetail.getRevision());
 			if (importProject != null) {
 				ResponseInfo finalOutput = responseDataEvaluation(responseData, null, IMPORT_SUCCESS_PROJECT, null);
-				return Response.status(Status.BAD_REQUEST).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
+				return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
 			} else {
 				ResponseInfo finalOutput = responseDataEvaluation(responseData, null, INVALID_FOLDER, null);
 				return Response.status(Status.BAD_REQUEST).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
@@ -202,7 +202,7 @@ public class RepositoryService extends RestBase implements FrameworkConstants {
 			ApplicationInfo importProject = scmi.importProject(type, repodetail.getRepoUrl(), repodetail.getUserName(), repodetail.getPassword(), null , null);
 			if (importProject != null) {
 				ResponseInfo finalOutput = responseDataEvaluation(responseData, null, IMPORT_SUCCESS_PROJECT, null);
-				return Response.status(Status.BAD_REQUEST).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
+				return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
 			}
 		} catch (Exception e) {
 			if ("Project already imported".equals(e.getLocalizedMessage())) {

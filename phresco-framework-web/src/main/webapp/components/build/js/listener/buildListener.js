@@ -1,16 +1,25 @@
-define(["framework/widget", "build/api/buildAPI"], function() {
+define(["build/api/buildAPI"], function() {
 
 	Clazz.createPackage("com.components.build.js.listener");
 
-	Clazz.com.components.build.js.listener.BuildListener = Clazz.extend(Clazz.Widget, {
+	Clazz.com.components.build.js.listener.BuildListener = Clazz.extend(Clazz.WidgetWithTemplate, {
 		buildAPI : null,		
+		mavenServiceListener : null,		
 		/***
 		 * Called in initialization time of this class 
 		 *
 		 * @config: configurations for this listener
 		 */
 		initialize : function(config) {
-			this.buildAPI = new Clazz.com.components.build.js.api.BuildAPI();
+			var self = this;
+			
+			if(self.buildAPI === null)
+				self.buildAPI = new Clazz.com.components.build.js.api.BuildAPI();
+			
+			if(self.mavenServiceListener === null)	{
+				self.mavenServiceListener = commonVariables.navListener.getMyObj(commonVariables.mavenService, function(retVal){
+				});
+			}
 		},
 		
 		onPrgoress : function(clicked) {
@@ -37,7 +46,7 @@ define(["framework/widget", "build/api/buildAPI"], function() {
 				self.buildAPI.build(header,
 					function(response) {
 						if (response !== null) {
-							callback(response.data);
+							callback(response);
 						} else {
 							callback({ "status" : "service failure"});
 						}
@@ -52,26 +61,109 @@ define(["framework/widget", "build/api/buildAPI"], function() {
 			}
 		},
 		
+		downloadBuild : function(buildNo, callback){
+			var self = this, header = self.getRequestHeader("", {'buildNo':buildNo}, 'download');
+			try {
+				self.buildAPI.build(header,
+					function(response) {
+						if (response !== null) {
+							callback(response);
+						} else {
+							callback({ "status" : "service failure"});
+						}
+					},
+
+					function(textStatus) {
+						console.info('textStatus',textStatus);
+						callback({ "status" : "Connection failure"});
+					}
+				);
+			} catch(exception) {
+				callback({ "status" : "service exception"});
+			}
+		},
+		
+		deployBuild : function(buildNo, callback){},
+		
+		buildProject : function(queryString, callback){
+			var self = this, appInfo = self.buildAPI.localVal.getJson('appdetails');
+			
+			if(appInfo != null){
+				queryString +=	'&customerId='+ self.getCustomer() +'&appId='+ appInfo.data.appInfos[0].id +'&projectId=' + appInfo.data.id + '&username=' + self.buildAPI.localVal.getSession('username');
+			}
+			
+			$('#logContent').html();
+			if(self.mavenServiceListener === null)	{
+				commonVariables.navListener.getMyObj(commonVariables.mavenService, function(retVal){
+					self.mavenServiceListener = retVal;
+					
+					self.mavenServiceListener.mvnBuild(queryString, '#logContent', function(returnVal){
+						callback(returnVal);
+					});
+				});
+			}else{
+				self.mavenServiceListener.mvnBuild(queryString, '#logContent', function(returnVal){
+					callback(returnVal);
+				});
+			}
+		},
+
+		deleteBuild : function(buildNo, callback){
+			var self = this, header = self.getRequestHeader(JSON.stringify([buildNo]), '', 'delete');
+			try {
+				self.buildAPI.build(header,
+					function(response) {
+						if (response !== null) {
+							callback(response);
+						} else {
+							callback({ "status" : "service failure"});
+						}
+					},
+
+					function(textStatus) {
+						callback({ "status" : "Connection failure"});
+					}
+				);
+			} catch(exception) {
+				callback({ "status" : "service exception"});
+			}
+		},
+		
+		
 		/***
 		 * provides the request header
 		 *
 		 * @BuildRequestBody: request body of Build
 		 * @return: returns the contructed header
 		 */
-		getRequestHeader : function(projectRequestBody) {
-			var self=this, header, appdirName = '';
+		getRequestHeader : function(BuildRequestBody, buildInfo, action) {
+			var self=this, header, appdirName = '', url = '', method = "GET", conte;
 			
 			if(self.buildAPI.localVal.getSession('appDirName') != null){
 				appdirName = self.buildAPI.localVal.getSession('appDirName');
 			}
 			
+			if(action == "getList"){
+				method = "GET"
+				url = 'buildinfo/list?appDirName=' + appdirName;
+			}else if(action == "download"){
+				method = "POST";
+				url = 'buildinfo/buildfile?appDirName=' + appdirName + '&buildNumber=' + buildInfo.buildNo;
+			}else if(action == "delete"){
+				method = "DELETE";
+				var appInfo = self.buildAPI.localVal.getJson('appdetails');
+				if(appInfo != null){
+					url = 'buildinfo/deletebuild?customerId='+ self.getCustomer() +'&appId='+ appInfo.data.appInfos[0].id +'&projectId=' + appInfo.data.id;
+				}
+			} 
+			
 			header = {
 				contentType: "application/json",
-				requestMethod: "GET",
+				requestMethod: method,
+				requestPostBody: BuildRequestBody,
 				dataType: "json",
-				webserviceurl: 'buildinfo/list?appDirName=' + appdirName
+				webserviceurl: commonVariables.webserviceurl + url
 			}
-			console.info('header',header);
 			return header;
 		}
 	});

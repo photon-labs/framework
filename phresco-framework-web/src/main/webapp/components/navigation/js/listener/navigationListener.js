@@ -1,4 +1,4 @@
-define(["framework/widget", "navigation/api/navigationAPI", "dynamicPage/dynamicPage", "projects/addproject", "projects/editproject", "application/application", "features/features", "codequality/codequality", "configuration/configuration", "build/build", "unittest/unittest", "configuration/editConfiguration", "ci/continuousDeliveryConfigure", "ci/continuousDeliveryView", "ci/jobTemplates"], function() {
+define(["navigation/api/navigationAPI"], function() {
 
 	Clazz.createPackage("com.components.navigation.js.listener");
 
@@ -22,6 +22,7 @@ define(["framework/widget", "navigation/api/navigationAPI", "dynamicPage/dynamic
 		editConfiguration : null,
 		jobTemplates : null,
 		continuousDeliveryView : null,
+		mavenService : null,
 		continuousDeliveryConfigure : null,
 		
 		/***
@@ -31,161 +32,263 @@ define(["framework/widget", "navigation/api/navigationAPI", "dynamicPage/dynamic
 		 */
 		initialize : function(config) {
 			var self = this;
-			self.navAPI = new Clazz.com.components.navigation.js.api.navigationAPI();
+			
+			if(self.navAPI == null)
+				self.navAPI = new Clazz.com.components.navigation.js.api.navigationAPI();
 		},
 		
 		onAddProject : function() {
 			var self = this;
-			self.getMyObj(commonVariables.addproject);
-			Clazz.navigationController.jQueryContainer = commonVariables.contentPlaceholder;
-			Clazz.navigationController.push(self.addproject, true);
+			self.getMyObj(commonVariables.addproject, function(addProjectObj){
+				Clazz.navigationController.jQueryContainer = commonVariables.contentPlaceholder;
+				Clazz.navigationController.push(addProjectObj, true);
+			});
 		},
 		
 		landingPage : function(currentContent){
 			var self = this;
-			self.renderHeader();
-			if(currentContent == undefined || currentContent == null){
-				self.renderContent();
-			} else if(currentContent != undefined && currentContent != null && currentContent != "") {
-				self.dynamicContent(currentContent);
-			}
-			self.renderFooter();
+			self.renderHeader(function(retVal){
+				if(currentContent == undefined || currentContent == null){
+					self.renderContent(function(retVal){
+						self.renderFooter(function(retVal){});
+					});
+				} else if(currentContent != undefined && currentContent != null && currentContent != "") {
+					self.dynamicContent(currentContent, function(retVal){
+						self.renderFooter(function(retVal){});
+					});
+				}
+			});
 		},
 
-		getMyObj : function(keyword) {
-			var self=this, retuenObj;
+		getMyObj : function(keyword, callback) {
+			var self=this, retuenObj, objInfo = "";
 
 				switch(keyword){
 				
 					case commonVariables.header :
+
+						if(self.header === null){
+							require(["header/header"], function(){
+								self.header = new Clazz.com.commonComponents.modules.header.js.Header();
+								callback(self.header);	
+							});
+						}else{
+							callback(self.header);
+						}
 						
-						if(self.header === null)
-							self.header = new Clazz.com.commonComponents.modules.header.js.Header();
-							
-						retuenObj = self.header;
 						break;
 						
 					case commonVariables.footer :
-						
-						if(self.footer === null)
-							self.footer = new Clazz.com.commonComponents.modules.footer.js.Footer();
-							
-						retuenObj = self.footer;
+					
+						if(self.footer === null){
+							require(["footer/footer"], function(){
+								self.footer = new Clazz.com.commonComponents.modules.footer.js.Footer();
+								callback(self.footer);	
+							});
+						}else{
+							callback(self.footer);
+						}
+					
 						break;
 						
 					case commonVariables.projectlist :
 						
-						if(self.projectlist === null)
-							self.projectlist = new Clazz.com.components.projectlist.js.ProjectList();
-							
-						retuenObj = self.projectlist;
+						if(self.projectlist === null){
+							require(["projectlist/projectList"], function(){
+								self.projectlist = new Clazz.com.components.projectlist.js.ProjectList();
+								callback(self.projectlist);	
+							});
+						}else{
+							callback(self.projectlist);
+						}
+
 						break;
 						
 					case commonVariables.editApplication :
 						
-						if(self.editApplication === null)
-							self.editApplication = new Clazz.com.components.application.js.Application();
-							
-						retuenObj = self.editApplication;
+						if(self.editApplication === null){
+							require(["application/application"], function(){
+								self.editApplication = new Clazz.com.components.application.js.Application();
+								callback(self.editApplication);	
+							});
+						}else{
+							callback(self.editApplication);
+						}
+
 						break;
 						
 					case commonVariables.featurelist :
-						
-						if(self.featurelist === null)
-							self.featurelist = new Clazz.com.components.features.js.Features();
-							
-						retuenObj = self.featurelist;
+					
+						if(self.featurelist === null){
+							require(["features/features"], function(){
+								self.featurelist = new Clazz.com.components.features.js.Features();
+								callback(self.featurelist);	
+							});
+						}else{
+							callback(self.featurelist);
+						}
+
 						break;
 						
 					case commonVariables.codequality :
 						
-						if(self.codequality === null)
-							self.codequality = new Clazz.com.components.codequality.js.CodeQuality();
-							
-						retuenObj = self.codequality;
+						if(self.codequality === null){
+							require(["codequality/codequality"], function(){
+								self.codequality = new Clazz.com.components.codequality.js.CodeQuality();
+								callback(self.codequality);	
+							});
+						}else{
+							callback(self.codequality);
+						}
+
 						break;
 						
 					case commonVariables.configuration :
 						
-						if(self.configuration === null)
-							self.configuration = new Clazz.com.components.configuration.js.Configuration();
-							
-						retuenObj = self.configuration;
+						if(self.configuration === null){
+							require(["configuration/configuration"], function(){
+								self.configuration = new Clazz.com.components.configuration.js.Configuration();
+								callback(self.configuration);	
+							});
+						}else{
+							callback(self.configuration);
+						}
+
 						break;
 						
 					case commonVariables.build :
 						
-						if(self.build === null)
-							self.build = new Clazz.com.components.build.js.Build();
-							
-						retuenObj = self.build;
+						if(self.build === null){
+							require(["build/build"], function(){
+								self.build = new Clazz.com.components.build.js.Build();
+								callback(self.build);	
+							});
+						}else{
+							callback(self.build);
+						}
+
 						break;
 						
 					case commonVariables.addproject :
 						
-						if(self.addproject === null)
-							self.addproject = new Clazz.com.components.projects.js.addProject();
-							
-						retuenObj = self.addproject;
+						if(self.addproject === null){
+							require(["projects/addproject"], function(){
+								self.addproject = new Clazz.com.components.projects.js.addProject();
+								callback(self.addproject);	
+							});
+						}else{
+							callback(self.addproject);
+						}
+						
 						break;
 					
 					case commonVariables.editproject :
 						
-						if(self.editproject === null)
-							self.editproject = new Clazz.com.components.projects.js.EditProject();
-							
-						retuenObj = self.editproject;
+						if(self.editproject === null){
+							require(["projects/editproject"], function(){
+								self.editproject = new Clazz.com.components.projects.js.EditProject();
+								callback(self.editproject);	
+							});
+						}else{
+							callback(self.editproject);
+						}
+						
 						break;
 						
 					case commonVariables.unittest :
 						
-						if(self.unittest === null)
-							self.unittest = new Clazz.com.components.unittest.js.UnitTest();
-							
-						retuenObj = self.unittest;
+						if(self.unittest === null){
+							require(["unittest/unittest"], function(){
+								self.unittest = new Clazz.com.components.unittest.js.UnitTest();
+								callback(self.unittest);	
+							});
+						}else{
+							callback(self.unittest);
+						}
+						
 						break;
 					
 					case commonVariables.editConfiguration :
 						
-						if(self.editConfiguration === null)
-							self.editConfiguration = new Clazz.com.components.configuration.js.EditConfiguration();
-							
-						retuenObj = self.editConfiguration;
+						if(self.editConfiguration === null){
+							require(["configuration/editConfiguration"], function(){
+								self.editConfiguration = new Clazz.com.components.configuration.js.EditConfiguration();
+								callback(self.editConfiguration);	
+							});
+						}else{
+							callback(self.editConfiguration);
+						}
+						
 						break;
 
 					case commonVariables.dynamicPage :
 						
-					   if(self.dynamicpage === null)
-							self.dynamicpage = new Clazz.com.components.dynamicPage.js.DynamicPage();
-							
-						retuenObj = self.dynamicpage;
+						if(self.dynamicpage === null){
+							require(["dynamicPage/dynamicPage"], function(){
+								self.dynamicpage = new Clazz.com.components.dynamicPage.js.DynamicPage();
+								callback(self.dynamicpage);	
+							});
+						}else{
+							callback(self.dynamicpage);
+						}
+						
 						break;
 
 					case commonVariables.jobTemplates :
-						if(self.jobTemplates === null)
-							self.jobTemplates = new Clazz.com.components.ci.js.JobTemplates();
-							
-						retuenObj = self.jobTemplates;
+						
+						if(self.jobTemplates === null){
+							require(["ci/jobTemplates"], function(){
+								self.jobTemplates = new Clazz.com.components.ci.js.JobTemplates();
+								callback(self.jobTemplates);	
+							});
+						}else{
+							callback(self.jobTemplates);
+						}
+						
 						break;
 
 					case commonVariables.continuousDeliveryConfigure :
-						if(self.continuousDeliveryConfigure === null)
-							self.continuousDeliveryConfigure = new Clazz.com.components.ci.js.ContinuousDeliveryConfigure();
-							
-						retuenObj = self.continuousDeliveryConfigure;
+						
+						if(self.continuousDeliveryConfigure === null){
+							require(["ci/continuousDeliveryConfigure"], function(){
+								self.continuousDeliveryConfigure = new Clazz.com.components.ci.js.ContinuousDeliveryConfigure();
+								callback(self.continuousDeliveryConfigure);	
+							});
+						}else{
+							callback(self.continuousDeliveryConfigure);
+						}
+						
 						break;
 
 					case commonVariables.continuousDeliveryView :
-						if(self.continuousDeliveryView === null)
-							self.continuousDeliveryView = new Clazz.com.components.ci.js.ContinuousDeliveryView();
-							
-						retuenObj = self.continuousDeliveryView;
+						
+						if(self.continuousDeliveryView === null){
+							require(["ci/continuousDeliveryView"], function(){
+								self.continuousDeliveryView = new Clazz.com.components.ci.js.ContinuousDeliveryView();
+								callback(self.continuousDeliveryView);	
+							});
+						}else{
+							callback(self.continuousDeliveryView);
+						}
+						
+						break;
+						
+					case commonVariables.mavenService :
+					
+						if(self.mavenService === null){
+							require(["mavenService/listener/mavenServiceListener"], function(){
+								self.mavenService = new Clazz.com.components.mavenService.js.listener.MavenServiceListener();
+								callback(self.mavenService);	
+							});
+						}else{
+							callback(self.mavenService);
+						}
+					
 						break;
 				}
-			
-			return retuenObj;
+			//return retuenObj;
 		},
-		
+
 		//To show/hide controls based on the component 
 		showHideControls : function(keyword) {
 			var self = this;
@@ -303,58 +406,95 @@ define(["framework/widget", "navigation/api/navigationAPI", "dynamicPage/dynamic
 			self.navigationAction(self.getActionHeader(actionBody, "copyPath"), function(response) {});
 		},
 		
-		renderHeader : function() {
+		renderHeader : function(callback) {
 			var self = this;
 			Clazz.navigationController.jQueryContainer = commonVariables.headerPlaceholder;
-			self.getMyObj(commonVariables.header);
-			self.header.data = JSON.parse(self.navAPI.localVal.getSession('userInfo'));
-			Clazz.navigationController.push(self.header, false);
+			self.getMyObj(commonVariables.header, function(returnVal){
+				self.header.data = JSON.parse(self.navAPI.localVal.getSession('userInfo'));
+				Clazz.navigationController.push(self.header, false);
+				callback(true);
+			});
 		},
 		
-		renderContent : function(){
+		renderContent : function(callback){
 			var self = this;
 			Clazz.navigationController.jQueryContainer = commonVariables.contentPlaceholder;
-			self.getMyObj(commonVariables.projectlist);
 			self.header.headerListener.currentTab = "Projects";
-			self.currentTab = commonVariables.projectlist;
-			Clazz.navigationController.push(self.projectlist, true);
+			self.getMyObj(commonVariables.projectlist, function(returnVal){
+				self.currentTab = commonVariables.projectlist;
+				Clazz.navigationController.push(self.projectlist, true);
+				callback(true);
+			});
 		},
 		
-		dynamicContent : function(contentObj){
-			var self = this, current;
+		dynamicContent : function(contentObj, callback){
+			var self = this;
 			Clazz.navigationController.jQueryContainer = commonVariables.contentPlaceholder;
-			current = self.getMyObj(contentObj);
-			self.currentTab = contentObj;
-			Clazz.navigationController.push(current, true);
+			
+			self.getMyObj(contentObj, function(returnVal){
+				self.currentTab = contentObj;
+				Clazz.navigationController.push(returnVal, true);
+				callback(true);
+			});
 		},
 		
-		renderFooter : function(){
+		renderFooter : function(callback){
 			var self = this;
 			Clazz.navigationController.jQueryContainer = commonVariables.footerPlaceholder;
-			self.getMyObj(commonVariables.footer);
-			Clazz.navigationController.push(self.footer, false);
+			self.getMyObj(commonVariables.footer, function(returnVal){
+				Clazz.navigationController.push(self.footer, false);
+				callback(true);
+			});
 		},
 		
 		onMytabEvent : function(keyword) {
 			var self=this, currentObj;
 			if (self.currentTab !== commonVariables.editApplication && keyword === commonVariables.editApplication){
-				currentObj = self.getMyObj(commonVariables.editApplication);
+				self.getMyObj(commonVariables.editApplication, function(returnVal){
+					currentObj = returnVal;
+					self.myTabRenderFunction(currentObj, keyword);
+				}); 
 			} else if (self.currentTab !== commonVariables.featurelist && keyword === commonVariables.featurelist) {
-				currentObj = self.getMyObj(commonVariables.featurelist);
+				self.getMyObj(commonVariables.featurelist, function(returnVal){
+					currentObj = returnVal;
+					self.myTabRenderFunction(currentObj, keyword);
+				}); 
 			} else if (self.currentTab !== commonVariables.codequality && keyword === commonVariables.codequality) {
-				currentObj = self.getMyObj(commonVariables.codequality);
+				self.getMyObj(commonVariables.codequality, function(returnVal){
+					currentObj = returnVal;
+					self.myTabRenderFunction(currentObj, keyword);
+				}); 
 			} else if (self.currentTab !== commonVariables.configuration && keyword === commonVariables.configuration) {
-				currentObj = self.getMyObj(commonVariables.configuration);
+				self.getMyObj(commonVariables.configuration, function(returnVal){
+					currentObj = returnVal;
+					self.myTabRenderFunction(currentObj, keyword);
+				});
 			} else if (self.currentTab !== commonVariables.build && keyword === commonVariables.build) {
-				currentObj = self.getMyObj(commonVariables.build);
+				self.getMyObj(commonVariables.build, function(returnVal){
+					currentObj = returnVal;
+					self.myTabRenderFunction(currentObj, keyword);
+				});
 			} else if (self.currentTab !== commonVariables.jobTemplates && keyword === commonVariables.jobTemplates) {
-				currentObj = self.getMyObj(commonVariables.jobTemplates);
+				self.getMyObj(commonVariables.jobTemplates, function(returnVal){
+					currentObj = returnVal;
+					self.myTabRenderFunction(currentObj, keyword);
+				});
 			} else if (self.currentTab !== commonVariables.continuousDeliveryView && keyword === commonVariables.continuousDeliveryView) {
-				currentObj = self.getMyObj(commonVariables.continuousDeliveryView);
+				self.getMyObj(commonVariables.continuousDeliveryView, function(returnVal){
+					currentObj = returnVal;
+					self.myTabRenderFunction(currentObj, keyword);
+				});
 			} else if (self.currentTab !== commonVariables.continuousDeliveryConfigure && keyword === commonVariables.continuousDeliveryConfigure) {
-				currentObj = self.getMyObj(commonVariables.continuousDeliveryConfigure);
+				self.getMyObj(commonVariables.continuousDeliveryConfigure, function(returnVal){
+					currentObj = returnVal;
+					self.myTabRenderFunction(currentObj, keyword);
+				});
 			}
 
+		},
+		
+		myTabRenderFunction : function(currentObj, keyword) {
+			var self = this;
 			if(currentObj != undefined && currentObj != null){
 				self.currentTab = keyword;
 				Clazz.navigationController.jQueryContainer = commonVariables.contentPlaceholder;
@@ -436,7 +576,7 @@ define(["framework/widget", "navigation/api/navigationAPI", "dynamicPage/dynamic
 					console.info("response", response);
 				});
 			//}
-		},
+		}	
 	});
 
 	return Clazz.com.components.navigation.js.listener.navigationListener;

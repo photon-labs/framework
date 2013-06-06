@@ -1,4 +1,4 @@
-define(["framework/base", "api/api"], function() {
+define(["api/api"], function() {
 
 	Clazz.createPackage("com.components.configuration.js.api");
 

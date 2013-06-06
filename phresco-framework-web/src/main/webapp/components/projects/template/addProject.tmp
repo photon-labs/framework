@@ -6,11 +6,11 @@
                     <td><span data-i18n="project.create.label.name"></span><sup>*</sup></td>
                     <td><input type="text" name="projectname" placeholder="Project Name"/></td>
                     <td><span data-i18n="project.create.label.code"></span><sup>*</sup></td>
-                    <td><input type="text" name="projectcode" placeholder="Project Code" disabled/></td>
+                    <td><input type="text" name="projectcode" placeholder="Project Code"/></td>
                     <td><span data-i18n="project.create.label.version"></span><sup>*</sup></td>
                     <td><input type="text" name="projectversion"/></td>
                     <td data-i18n="project.create.label.description"></td>
-                    <td rowspan="2"><textarea rows="3" name="projectdescription" data-i18n="[placeholder]project.create.label.description"/></td>
+                    <td rowspan="2"><textarea class="popuptextarea" name="projectdescription" data-i18n="[placeholder]project.create.label.description"/></td>
                 </tr>
                 <tr>
                     <td colspan="2">
@@ -18,8 +18,11 @@
                             <option>Build-it Myself</option>
                             <option>Pre Built</option>
                         </select>
-                        <select class="custon_dropdown" name="prebuiltapps">
+                        <select class="optional_dropdown" name="prebuiltapps">
                             <option>NodeJSandMySQL</option>
+                        </select>
+						<select class="optional_dropdown" name="builtmyselfapps" disabled>
+                            <option>Select</option>
                         </select>
                     </td>
 					<td data-i18n="project.create.label.startdate" name="startdate-lbl"></td>

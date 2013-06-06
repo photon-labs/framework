@@ -1,4 +1,4 @@
-define(["framework/widget", "codequality/api/codequalityAPI"], function() {
+define(["codequality/api/codequalityAPI"], function() {
 
 	Clazz.createPackage("com.components.codequality.js.listener");
 
@@ -13,8 +13,9 @@ define(["framework/widget", "codequality/api/codequalityAPI"], function() {
 		 * @config: configurations for this listener
 		 */
 		initialize : function(config) {
-			this.codequalityAPI = new Clazz.com.components.codequality.js.api.CodeQualityAPI();
-			this.loadingScreen = new Clazz.com.js.widget.common.Loading();
+			var self = this;
+			if(self.codequalityAPI === null)
+				self.codequalityAPI = new Clazz.com.components.codequality.js.api.CodeQualityAPI();
 		},
 		
 		codeValidate : function() {
@@ -42,14 +43,15 @@ define(["framework/widget", "codequality/api/codequalityAPI"], function() {
 					self.readLog(resDatt);
 				}else if(response.status == 'COMPLETED'){
 					var validateAgainst = $("#sonar").val();
-					self.codequalityAPI.codequality(self.getRequestHeader(validateAgainst , "iframereport"), function(iframereport) {
+					self.getIframeReport(validateAgainst);
+					/* self.codequalityAPI.codequality(self.getRequestHeader(validateAgainst , "iframereport"), function(iframereport) {
 						if(iframereport.data != null){
 							var iframedata = "<iframe src="+iframereport.data+" width=98% height=100%></iframe>";
 							$('#iframePart').html(iframedata);
 						}else{
 							$('#iframePart').html(iframereport.message);
 						}
-					});
+					}); */
 				}
 			});
 		},
@@ -97,24 +99,24 @@ define(["framework/widget", "codequality/api/codequalityAPI"], function() {
 		getReportTypes : function(header, callback) {
 			var self = this;
 			try {
-				self.loadingScreen.showLoading();
+				commonVariables.loadingScreen.showLoading();
 				self.codequalityAPI.codequality(header,
 					function(response) {
 						if (response !== null) {
 							callback(response);
-							self.loadingScreen.removeLoading();
+							commonVariables.loadingScreen.removeLoading();
 						} else {
-							self.loadingScreen.removeLoading();
+							commonVariables.loadingScreen.removeLoading();
 							callback({ "status" : "service failure"});
 						}
 					},
 
 					function(textStatus) {
-						self.loadingScreen.removeLoading();
+						commonVariables.loadingScreen.removeLoading();
 					}
 				);
 			} catch(exception) {
-				self.loadingScreen.removeLoading();
+				commonVariables.loadingScreen.removeLoading();
 			}
 		},
 
@@ -123,31 +125,45 @@ define(["framework/widget", "codequality/api/codequalityAPI"], function() {
 			if(response.message == "Dependency returned successfully"){
 				var typeLi = '';
 				$.each(response.data, function(index, resdata) {
+					console.info('resdata = ' , resdata);
 					var innerUl = '';
 					if(resdata.options == null){
-						typeLi += "<li>"+resdata.validateAgainst.value+"</li>";
+						typeLi += "<li name='selectType' key="+resdata.validateAgainst.key+" data="+resdata.validateAgainst.value+">"+resdata.validateAgainst.value+"</li>";
 					}else{
 						$.each(resdata.options, function(index, optvalue) {
-							innerUl += "<li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"+optvalue.value+"</li>";
+							innerUl += "<li name='selectType' key="+resdata.validateAgainst.key+" data="+resdata.validateAgainst.value+">"+optvalue.value+"</li>";
 						});
-						typeLi += "<li disabled='disabled'>"+resdata.validateAgainst.value+'<ul>'+innerUl+"</ul></li>";
+						typeLi += "<li disabled='disabled' key="+resdata.validateAgainst.key+" data="+resdata.validateAgainst.value+">"+resdata.validateAgainst.value+'<ul>'+innerUl+"</ul></li>";
 					}
 				});
-				var dropdownLi = '<ul class="nav"><li id="fat-menu" class="dropdown"><a href="#" id="drop5" role="button" class="dropdown-toggle" data-toggle="dropdown">'+response.data[0].validateAgainst.value+'<b class="caret"></b></a> <div class="dropdown-menu cust_sel code_test_opt" role="menu" aria-labelledby="drop5"> <ul>'+typeLi+'</ul></div></li></ul>';
+				var dropdownLi = '<ul class="nav"><li id="fat-menu" class="dropdown"><a href="#" id="drop5" role="button" class="dropdown-toggle" data-toggle="dropdown"><b id="repTypes" >'+response.data[0].validateAgainst.value+'</b><b class="caret"></b></a> <div class="dropdown-menu cust_sel code_test_opt" role="menu" aria-labelledby="drop5"> <ul id="reportUl">'+typeLi+'</ul></div></li></ul>';
 				$("#codereportTypes").append(dropdownLi);
-				self.codequalityAPI.codequality(self.getRequestHeader(response.data[0].validateAgainst.key , "iframereport"), function(iframereport) {
-					if(iframereport.data != null){
-						var iframedata = "<iframe src="+iframereport.data+" width=98% height=100%></iframe>";
-						$('#iframePart').html(iframedata);
-					}else{
-						$('#iframePart').html(iframereport.message);
-					}
-				});
+				self.onProjects();
+				self.getIframeReport(response.data[0].validateAgainst.key);
 			}
 		},
 		
 		onProjects : function() {
+			var self = this, validateAgainst ;
+			$("#reportUl li[name=selectType]").click(function() {
+				validateAgainst = $(this).attr('key');
+				$("#repTypes").html($(this).attr('data'));
+				self.getIframeReport(validateAgainst);
+			});
+		},
 		
+		getIframeReport : function(validateAgainst){
+			var self = this;
+			$('#iframePart').html('Sonar Report will appear here');
+			self.codequalityAPI.codequality(self.getRequestHeader(validateAgainst , "iframereport"), function(iframereport) {
+				console.info('iframereport = ' , iframereport);
+				if(iframereport.data != null){
+					var iframedata = "<iframe src="+iframereport.data+" width=98% height=100%></iframe>";
+					$('#iframePart').html(iframedata);
+				}else{
+					$('#iframePart').html(iframereport.message);
+				}
+			});
 		}
 		
 	});
