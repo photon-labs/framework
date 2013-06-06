@@ -62,15 +62,20 @@ define(["ci/api/ciAPI"], function() {
 					header.webserviceurl = header.webserviceurl + "?" + params;
 				}
 			} else if (action === "add") {
-				//var jsonString = $.toJSON(myObj);
-				//$('#formCustomers').toJSON(); for POST and PUT
 				header.requestMethod = "POST";
 				header.requestPostBody = JSON.stringify(ciRequestBody);
 				header.webserviceurl = commonVariables.webserviceurl + commonVariables.jobTemplates;
 			} else if (action === "update") {
 				header.requestMethod = "PUT";
 				header.requestPostBody = JSON.stringify(ciRequestBody);
+				console.log("log => " + JSON.stringify(ciRequestBody));
 				header.webserviceurl = commonVariables.webserviceurl + commonVariables.jobTemplates;
+			} else if (action === "edit") {
+				header.requestMethod = "GET";
+				header.webserviceurl = commonVariables.webserviceurl + commonVariables.jobTemplates;
+				if (params !== null && params !== undefined && params !== '') {
+					header.webserviceurl = header.webserviceurl + "/" + params.name;
+				}
 			} else if (action === "delete") {
 				header.requestMethod = "DELETE";
 				if (ciRequestBody !== null && ciRequestBody !== undefined) { 
@@ -87,24 +92,15 @@ define(["ci/api/ciAPI"], function() {
 
 		addJobTemplate : function (callback) {
 			var self=this;
-
-			var formObj = $("#jobTemplate"); // Object
-			$('#jobTemplate #features :checkbox:not(:checked)').attr('value', false); // make checked checkbox value to false
-			$('#jobTemplate #features :checkbox:checked').attr('value', true); // make checked checkbox value to true
-
-			var jobTemplate = $('#jobTemplate').serializeObject();
-
-			// Convert appIds to array
-			jobTemplate.appIds = [];
-			$("input[name=appIds]:checked").each(function() {
-			    jobTemplate.appIds.push(this.value);
-			});
+			console.log("add job template ");
+			var jobTemplate = self.constructJobTemplate();
 
 			// jobTemplate = $.makeArray(jobTemplate);
 			callback(jobTemplate);
 		},
 
 		listJobTemplate : function (header, callback) {
+			console.log("list templete");
 			var self=this;
 			try {
 				self.ciAPI.ci(header,
@@ -127,14 +123,68 @@ define(["ci/api/ciAPI"], function() {
 			}
 		},
 
-		updateJobTemplate : function () {
+		updateJobTemplate : function (callback) {
+			var self = this;
+			console.log("update job template ");
+			var jobTemplate = self.constructJobTemplate();
+			console.log("update job template " + JSON.stringify(jobTemplate));
+			// jobTemplate = $.makeArray(jobTemplate);
+			callback(jobTemplate);
+		},
+
+		constructJobTemplate : function () {
+			var formObj = $("#jobTemplate"); // Object
+			$('#jobTemplate #features :checkbox:not(:checked)').attr('value', false); // make checked checkbox value to false
+			$('#jobTemplate #features :checkbox:checked').attr('value', true); // make checked checkbox value to true
+
+			var jobTemplate = $('#jobTemplate').serializeObject();
+
+			// Convert appIds to array
+			jobTemplate.appIds = [];
+			$("input[name=appIds]:checked").each(function() {
+			    jobTemplate.appIds.push(this.value);
+			});
+			return jobTemplate;
+		},
+
+		editJobTemplate : function (data) {
 			var self=this;
-			alert("Add job template ");
+			console.log("edit job template " + JSON.stringify(data));
+			//$.each(data, function(key, value) {
+    			//display the key and value pair
+    			//console.log(key + ' is ' + value);
+    			//$("#elementId").is("input")
+    			// if ($.isArray(value)) {
+
+    			// } else {
+    			// 	$("input[name="+key+"]").val(value);
+    			// }
+			//});
+
+			$("[name=name]").val(data.name);
+			$("[name=type]").val(data.type);
+			$.each(data.appIds, function(index, value) {
+				//alert(index + ': ' + value);
+				$('[name=appIds][value='+ value +']').prop('checked', true);
+			});
+
+			$("[name=repoTypes]").val(data.repoTypes);
+
+			$('[name=enableRepo]').prop('checked', data.enableRepo);
+			$('[name=enableSheduler]').prop('checked', data.enableSheduler);
+			$('[name=enableEmailSettings]').prop('checked', data.enableEmailSettings);
+			$('[name=enableUploadSettings]').prop('checked', data.enableUploadSettings);
+			// button name change
+			$('input[name=save]').prop("value", "Update");
+			$('input[name=save]').prop("name", "update");
+			// bind the update event
+			//$("input[name=save]").unbind("click");
+
 		},
 
 		deleteJobTemplate : function () {
 			var self=this;
-			alert("Add job template ");
+			console.log("delete job template ");
 		}
 		
 	});

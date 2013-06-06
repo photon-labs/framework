@@ -16,7 +16,11 @@ define(["framework/widgetWithTemplate", "ci/listener/ciListener"], function() {
 		 */
 		initialize : function(globalConfig){
 			var self = this;
-			self.dynamicpage = commonVariables.navListener.getMyObj(commonVariables.dynamicPage);
+			if (self.dynamicpage === null) {
+				commonVariables.navListener.getMyObj(commonVariables.dynamicPage, function(retVal) {
+					self.dynamicpage = retVal;
+				});
+			}
 			self.ciListener = new Clazz.com.components.ci.js.listener.CIListener(globalConfig);
 		},
 		
