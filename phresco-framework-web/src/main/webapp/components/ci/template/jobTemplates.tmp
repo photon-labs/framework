@@ -28,7 +28,7 @@
                                 </tr>
                                  <tr>
                                   <td colspan="3">
-                                      <div class="popuptextarea">
+                                      <div class="popuptextarea" id="appIdsList">
                                             <input type="checkbox" name="appIds" value="jqueryWidgetApp">JQW - Jquery Widget<br>
                                             <input type="checkbox" name="appIds" value="NativeEshopApp">Native_eshop-androidnative<br>
                                             <input type="checkbox" name="appIds" value="NodeJsApp">ds-nodejswebservice

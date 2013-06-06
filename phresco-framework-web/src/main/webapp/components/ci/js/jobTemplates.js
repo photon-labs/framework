@@ -77,7 +77,8 @@ define(["ci/listener/ciListener"], function() {
 		 *
 		 */
 		loadPage :function(){
-			Clazz.navigationController.push(this);
+			Clazz.navigationController.jQueryContainer = commonVariables.contentPlaceholder;
+			Clazz.navigationController.push(this, true);
 		},
 		
 		preRender: function(whereToRender, renderFunction){
@@ -103,8 +104,10 @@ define(["ci/listener/ciListener"], function() {
 		pageRefresh: function() {
 			var self = this;
 			self.ciListener.listJobTemplate(self.ciListener.getRequestHeader(self.ciRequestBody, "list"), function(response) {
-				self.templateData.jobTemplates = response.data;
-				self.renderTemplate(self.templateData, commonVariables.contentPlaceholder);
+				//self.templateData.jobTemplates = response.data;
+				self.data.jobTemplates = response.data;
+				self.loadPage();		
+				//self.renderTemplate(self.templateData, commonVariables.contentPlaceholder);
 			});
 		},
 
@@ -113,14 +116,12 @@ define(["ci/listener/ciListener"], function() {
 			// Content place holder for the Job template
 			// Clazz.navigationController.jQueryContainer = commonVariables.contentPlaceholder;
 			self.ciListener.listJobTemplate(self.ciListener.getRequestHeader(self.ciRequestBody, action, param), function(response) {
-				// self.loadPage();
 				if (action === "edit") {
 					self.editEvent.dispatch(response.data);
 				} else {
 					self.pageRefresh();
 				}
-
-				// console.log(".."  + JSON.stringify(response.data));
+				// console.log(JSON.stringify(response.data));
 				//self.renderTemplate(response.data, commonVariables.contentPlaceholder);
 			});	
 		},
@@ -148,6 +149,7 @@ define(["ci/listener/ciListener"], function() {
 				$('input[name=update]').prop("value", "Create");
 				$('input[name=update]').prop("name", "save");
    				self.opencc(this, $(this).attr('name'));
+   				// need to add applications names
    			});
 
    			// Save job template
