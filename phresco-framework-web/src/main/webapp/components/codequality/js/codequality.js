@@ -11,6 +11,7 @@ define(["codequality/listener/codequalityListener"], function() {
 		dynamicpage : null,
 		dynamicPageListener : null,
 		renderedData : {},
+		onProgressEvent : null,
 	
 		/***
 		 * Called in initialization time of this class 
@@ -19,6 +20,9 @@ define(["codequality/listener/codequalityListener"], function() {
 		 */
 		initialize : function(globalConfig){
 			var self = this;
+			
+			if(self.codequalityListener === null)
+				self.codequalityListener = new Clazz.com.components.codequality.js.listener.CodequalityListener();
 
 			if(self.dynamicpage === null){
 				commonVariables.navListener.getMyObj(commonVariables.dynamicPage, function(retVal){
@@ -26,17 +30,19 @@ define(["codequality/listener/codequalityListener"], function() {
 				self.dynamicPageListener = self.dynamicpage.dynamicPageListener;
 				self.registerEvents();
 				});
+			}else{
+				self.registerEvents();
 			}
-			if(self.codequalityListener === null)
-				self.codequalityListener = new Clazz.com.components.codequality.js.listener.CodequalityListener();
-
-			self.registerEvents(self.codequalityListener);
 		},
 		
-		registerEvents : function (codequalityListener) {
+		registerEvents : function() {
 			var self = this;
+			if(self.onProgressEvent === null)
+				self.onProgressEvent = new signals.Signal();
+				
 			self.readLogEvent = new signals.Signal();
-			self.readLogEvent.add(self.codequalityListener.codeValidate, codequalityListener);
+			self.readLogEvent.add(self.codequalityListener.codeValidate, self.codequalityListener);
+			self.onProgressEvent.add(self.codequalityListener.onPrgoress, self.codequalityListener);
 		},
 		/***
 		 * Called in once the login is success
@@ -45,8 +51,7 @@ define(["codequality/listener/codequalityListener"], function() {
 		loadPage :function(){
 			Clazz.navigationController.push(this);
 		},
-		
-		
+
 		preRender: function(whereToRender, renderFunction){
 			var self = this;
 			var appDirName = self.codequalityListener.codequalityAPI.localVal.getSession('appDirName');
@@ -68,6 +73,8 @@ define(["codequality/listener/codequalityListener"], function() {
 						renderFunction(projectlist, whereToRender);
 					}else{
 						 renderFunction(projectlist, whereToRender); 
+						$('#iframePart').html('');
+						$('#iframePart').append(response.message);
 					}
 				});
 			}, 200);	
@@ -83,8 +90,7 @@ define(["codequality/listener/codequalityListener"], function() {
 		postRender : function(element) {
 			var self = this; 
 			self.codequalityListener.constructHtml(self.renderedData);
-
-			},
+		},
 
 		/***
 		 * Bind the action listeners. The bindUI() is called automatically after the render is complete 
@@ -104,8 +110,33 @@ define(["codequality/listener/codequalityListener"], function() {
 				$(".dyn_popup").hide();
 			});
 			
+			$("#codeValidateConsole").click(function() {
+				self.onProgressEvent.dispatch(this);
+			});
 			
+			$(window).resize(function() {
 			
+				$(".dyn_popup").hide();
+
+				var height = $(this).height();
+				var twowidth = window.innerWidth/1.6;
+				var onewidth = window.innerWidth - (twowidth+70);
+				
+				$('.features_content_main').height(height - 230);
+				$('.build_progress').height(height - 230);
+				
+				$('.build_info').css("width",twowidth);
+				$('.build_progress').css("width",onewidth);
+				$('.build_close').css("right",onewidth+10);
+				
+			});
+			
+			$(window).resize();
+		
+			$("#content_div").mCustomScrollbar({
+				autoHideScrollbar:true,
+				theme:"light-thin"
+			});			
 			
 		}
 	});

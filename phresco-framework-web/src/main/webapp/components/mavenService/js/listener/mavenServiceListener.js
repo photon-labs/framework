@@ -126,10 +126,12 @@ define(["mavenService/api/mavenServiceAPI"], function() {
 			try{
 				var self = this, callbackData = null;
 				commonVariables.loadingScreen.showLoading();
+				$(divId).html('');
 				self.mavenServiceAPI.mvnSer(header, 
 					function(response){
 						if(response != undefined && response != null){
 							if(response.status == 'STARTED'){
+								$(divId).append(response.status);
 								self.mvnlogService(response.uniquekey, divId);
 								callbackData = true;
 							}else if(response.status == 'INPROGRESS'){
@@ -166,8 +168,10 @@ define(["mavenService/api/mavenServiceAPI"], function() {
 				self.mavenServiceAPI.mvnSer(header, 
 					function(response){
 						if(response != undefined && response != null){
-
-							$(divId).append(response.log);
+							var logClass = self.logColor(response.log);
+							$(divId).append("<br>");
+							$(divId).append("<font style=color:"+logClass+">"+response.log+"</font>");
+							
 						
 							if(response.status == 'STARTED'){
 							}else if(response.status == 'INPROGRESS'){
@@ -201,7 +205,18 @@ define(["mavenService/api/mavenServiceAPI"], function() {
 			}
 
 			return header;
-		}
+		},
+		
+		logColor : function(logStr){
+			var logClass = "black";
+			if(logStr.match("ERROR")){
+				logClass = "red";
+			}else if(logStr.match("WARNING")){
+				logClass = "yellow";
+			}
+			
+			return logClass;
+		},
 	});
 
 	return Clazz.com.components.mavenService.js.listener.MavenServiceListener;
