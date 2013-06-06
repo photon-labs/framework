@@ -77,15 +77,12 @@ define(["ci/listener/ciListener"], function() {
 		 *
 		 */
 		loadPage :function(){
-			console.log("loadpage ");
 			Clazz.navigationController.push(this);
 		},
 		
 		preRender: function(whereToRender, renderFunction){
 			var self = this;
-			console.log("CI pre render ... " + whereToRender);
 			self.ciListener.listJobTemplate(self.ciListener.getRequestHeader(self.ciRequestBody, "list"), function(response) {
-				console.log(JSON.stringify(response.data));
 				self.templateData.jobTemplates = response.data;
 				// var userPermissions = JSON.parse(self.configurationlistener.configurationAPI.localVal.getSession('userPermissions'));
 				// self.templateData.userPermissions = userPermissions;
@@ -106,7 +103,6 @@ define(["ci/listener/ciListener"], function() {
 		pageRefresh: function() {
 			var self = this;
 			self.ciListener.listJobTemplate(self.ciListener.getRequestHeader(self.ciRequestBody, "list"), function(response) {
-				console.log(JSON.stringify(response.data));
 				self.templateData.jobTemplates = response.data;
 				self.renderTemplate(self.templateData, commonVariables.contentPlaceholder);
 			});
@@ -124,7 +120,7 @@ define(["ci/listener/ciListener"], function() {
 					self.pageRefresh();
 				}
 
-				// console.log("Sathya selvan ......."  + JSON.stringify(response.data));
+				// console.log(".."  + JSON.stringify(response.data));
 				//self.renderTemplate(response.data, commonVariables.contentPlaceholder);
 			});	
 		},
@@ -142,7 +138,7 @@ define(["ci/listener/ciListener"], function() {
 
 			$(".tooltiptop").tooltip();
 			$(".dyn_popup").hide();
-			
+
 			// Open job template popup
 			$("input[name=jobTemplatePopup]").unbind("click");
 			$("input[name=jobTemplatePopup]").click(function() {
@@ -158,7 +154,6 @@ define(["ci/listener/ciListener"], function() {
    			//$("input[name=save]").unbind("click");
    			//$("input[name=save]").click(function() {
    			$('#jobTemplate').on('click', '[name=save]', function(e) {
-   				console.log("Save");
    				self.addEvent.dispatch(function(response) {
    					self.ciRequestBody = response;
 					self.getAction(self.ciRequestBody, 'add', '');
@@ -170,7 +165,6 @@ define(["ci/listener/ciListener"], function() {
 			$("a[name=editpopup]").click(function() {
 				//reset the form
 				self.resetForm($('#jobTemplate'));
-				console.log("edit " +  $(this).attr('value'));
 				var jobTemplateName = {};
 				var name = $(this).attr('value');
 				jobTemplateName.name = name;
@@ -183,9 +177,7 @@ define(["ci/listener/ciListener"], function() {
    			//$("input[name=update]").unbind("click");
    			//$("input[name=update]").click(function() {
    			$('#jobTemplate').on('click', '[name=update]', function(e) {
-   				console.log("update");
    				self.updateEvent.dispatch(function(response) {
-   					console.log("req body content => " + response);
 					self.ciRequestBody = response;
 					self.getAction(self.ciRequestBody, 'update', '');
 				});
@@ -194,7 +186,6 @@ define(["ci/listener/ciListener"], function() {
    			// Delete job template
    			$("input[name=delete]").unbind("click");
    			$("input[name=delete]").click(function() {
-   				console.log("delete " + $(this).parent().parent().attr('name'));
    				var jobTemplateName = {};
 				jobTemplateName.name = $(this).parent().parent().attr('name');
 				jobTemplateName = $.param(jobTemplateName);
@@ -205,7 +196,6 @@ define(["ci/listener/ciListener"], function() {
    			// job template delete poppup
    			$("a[name=deleteconfirm]").unbind("click");
 			$("a[name=deleteconfirm]").click(function() {
-				console.log("Deletion purpose ");
 				self.opencc(this, "yesnopopup_" + $(this).attr('value'));
 			});
 		}

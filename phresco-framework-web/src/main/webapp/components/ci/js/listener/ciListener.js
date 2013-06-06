@@ -92,7 +92,6 @@ define(["ci/api/ciAPI"], function() {
 
 		addJobTemplate : function (callback) {
 			var self=this;
-			console.log("add job template ");
 			var jobTemplate = self.constructJobTemplate();
 
 			// jobTemplate = $.makeArray(jobTemplate);
@@ -100,7 +99,6 @@ define(["ci/api/ciAPI"], function() {
 		},
 
 		listJobTemplate : function (header, callback) {
-			console.log("list templete");
 			var self=this;
 			try {
 				self.ciAPI.ci(header,
@@ -125,16 +123,12 @@ define(["ci/api/ciAPI"], function() {
 
 		openJobTemplate : function () {
 			var self = this;
-			console.log("update job template ");
 			var jobTemplate = self.constructJobTemplate();
-			console.log("update job template " + JSON.stringify(jobTemplate));
 		},
 
 		updateJobTemplate : function (callback) {
 			var self = this;
-			console.log("update job template ");
 			var jobTemplate = self.constructJobTemplate();
-			console.log("update job template " + JSON.stringify(jobTemplate));
 			// jobTemplate = $.makeArray(jobTemplate);
 			callback(jobTemplate);
 		},
@@ -156,7 +150,6 @@ define(["ci/api/ciAPI"], function() {
 
 		editJobTemplate : function (data) {
 			var self=this;
-			console.log("edit job template " + JSON.stringify(data));
 			//$.each(data, function(key, value) {
     			//display the key and value pair
     			//console.log(key + ' is ' + value);
@@ -188,7 +181,6 @@ define(["ci/api/ciAPI"], function() {
 
 		deleteJobTemplate : function () {
 			var self=this;
-			console.log("delete job template ");
 		}
 		
 	});
