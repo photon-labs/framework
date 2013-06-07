@@ -67,11 +67,20 @@ define(["configuration/listener/configurationListener"], function() {
 			self.cloneEnvEvent.add(configurationlistener.cloneEnv, configurationlistener);
 		},
 		
-		getAction : function(configRequestBody, action, deleteEnvironment) {
+		getAction : function(configRequestBody, action, deleteEnvironment, value) {
 			var self=this;
 			self.configurationlistener.getConfigurationList(self.configurationlistener.getRequestHeader(self.configRequestBody, action, deleteEnvironment), function(response) {
-				self.loadPage();
-			});	
+				if (action === "delete") {
+					$(value).parent().parent().parent().parent().remove();
+					$("#content_Env li").each(function(){
+						if ($(this).attr('name') === deleteEnvironment) {
+							$(this).remove();
+						}
+					});
+				} else {
+					self.loadPage();
+				}
+			});
 		},
 		
 		/***
@@ -111,7 +120,7 @@ define(["configuration/listener/configurationListener"], function() {
 					}
 					else {
 						$("#errdisplay").show();
-						$("#errdisplay").text("Enter a unique Name.");
+						$("#errdisplay").text("Environment already Exist");
 						setTimeout(function() {
 							$("#errdisplay").hide();
 						}, 1000);
@@ -124,7 +133,7 @@ define(["configuration/listener/configurationListener"], function() {
 			$("input[name=saveEnvironment]").click(function() {
 				self.saveEnvEvent.dispatch(self.envWithConfig, function(response){
 					self.configRequestBody = response;
-					self.getAction(self.configRequestBody, 'saveEnv', '');
+					self.getAction(self.configRequestBody, 'saveEnv', '', '');
 				});
 			});
 			
@@ -142,7 +151,7 @@ define(["configuration/listener/configurationListener"], function() {
 			$("input[name='deleteEnv']").click(function(e) {
 				deleteEnvironment = $(this).parent().parent().attr('id');
 				self.configRequestBody = {};
-				self.getAction(self.configRequestBody, 'delete', deleteEnvironment);
+				self.getAction(self.configRequestBody, 'delete', deleteEnvironment, $(this));
 			});
 			
 			$("a[name=editConfiguration]").unbind("click");
