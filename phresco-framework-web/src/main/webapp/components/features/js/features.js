@@ -11,6 +11,8 @@ define(["features/listener/featuresListener"], function() {
 		onSearchEvent: null,
 		onCancelEvent: null,
 		featureRequestBody: {},
+		id : null,
+		featureUpdatedArray : null,
 		header: {
 			contentType: null,
 			requestMethod: null,
@@ -46,14 +48,16 @@ define(["features/listener/featuresListener"], function() {
 		},
 
 		registerHandlebars : function () {
-			Handlebars.registerHelper('versiondata', function(versions) {
+			var self = this;
+			Handlebars.registerHelper('versiondata', function(versions, id) {
+				var selectedList = self.featuresListener.featuresAPI.localVal.getSession("selectedFeatures");				
 				var fieldset;
 				$.each(versions, function(index, value){
 					$.each(value.appliesTo, function(index, value){
 						if(value.required == true){
-							fieldset = '<fieldset class="switch switchOn" value="false"><label class="off" name="on_off" value="false"></label><label class="on" name="on_off" value="true"></label></fieldset>';
-						}else{							
-							fieldset = '<fieldset class="switch switchOff" value="false"><label class="off" name="on_off" value="false"></label><label class="on" name="on_off" value="true"></label></fieldset>';
+							fieldset = '<fieldset class="switch switchOn" id="feature_'+ id +'" value="false"><label class="off" name="on_off" value="false"></label><label class="on" name="on_off" value="true"></label></fieldset>';
+						} else {							
+							fieldset = '<fieldset class="switch switchOff" id="feature_'+ id +'" value="false"><label class="off" name="on_off" value="false"></label><label class="on" name="on_off" value="true"></label></fieldset>';
 						}
 					});					
 				});
@@ -96,7 +100,13 @@ define(["features/listener/featuresListener"], function() {
 		 *
 		 * @element: Element as the result of the template + data binding
 		 */
-		postRender : function(element) {			
+		postRender : function(element) {
+			var self = this;
+			self.featuresListener.getFeaturesList(self.featuresListener.getRequestHeader(self.featureRequestBody, "SELECTED"), function(response) {
+				$.each(response.data, function(index, value){
+					$("#feature_"+this.moduleId).addClass("switchOn").removeClass("switchOff");;
+				});
+			}); 
 		},
 
 		preRender: function(whereToRender, renderFunction){
@@ -107,7 +117,7 @@ define(["features/listener/featuresListener"], function() {
 				renderFunction(responseData, whereToRender);
 				self.featuresListener.hideLoad();
 			});
-		},
+		},	
 
 
 		getFeatures : function(collection, callback){
@@ -132,6 +142,14 @@ define(["features/listener/featuresListener"], function() {
 			var self = this;
 			self.featuresListener.getFeaturesList(self.featuresListener.getRequestHeader(self.featureRequestBody, "COMPONENT"), function(response) {
 				collection.componentList = response.data;	
+				callback(collection);
+			});
+		},
+		
+		getSelectedFeatures : function(collection, callback){
+			var self = this;
+			self.featuresListener.getFeaturesList(self.featuresListener.getRequestHeader(self.featureRequestBody, "SELECTED"), function(response) {
+				collection.selectedlist = response.data;
 				callback(collection);
 			});
 		},
@@ -207,7 +225,6 @@ define(["features/listener/featuresListener"], function() {
 
           	$('.featureinfo_img').on("click", function(event) {				
 				var descid = $(this).attr("artifactGroupId");
-				console.info("descid", descid);
 				var currentObj = this;				
 				self.featuresListener.getFeaturesList(self.featuresListener.getRequestHeader(self.featureRequestBody, "desc", descid), function(response) {
 					var descriptionid = $.trim(descid.replace(/ /g,''));
@@ -221,26 +238,31 @@ define(["features/listener/featuresListener"], function() {
            	});
 			
 			$('#featureUpdate').on("click", function() {
-				var featureUpdatedataArray = [];
-				var featureUpdatedata = {};
+				var self = this;
+				self.featureUpdatedArray = [];
 				$(".switchOn").each(function(index, currentVal) {
-					featureUpdatedata.name = $(currentVal).parent().attr("type");
-					featureUpdatedata.dispName = $(currentVal).parent().attr("dispName");
-					featureUpdatedata.packaging = $(currentVal).parent().attr("packaging");
-					featureUpdatedata.type = $(currentVal).parent().attr("type");					
-					featureUpdatedata.defaultModule = true;
-					featureUpdatedata.scope = $(currentVal).parent().children('div.flt_right').children('select.input-mini').find(':selected').attr("scope");
-					featureUpdatedata.versionID = $(currentVal).parent().children('div.flt_right').children('select.input-mini').find(':selected').val();
-					featureUpdatedata.dispValue = $(currentVal).parent().children('div.flt_right').children('select.input-mini').find(':selected').text();
-					var moduleId = $(currentVal).parent().children('div.flt_right').children('.moduleId').val();
-					featureUpdatedata.moduleId = moduleId; 
-					featureUpdatedata.artifactGroupId = moduleId;
-					featureUpdatedataArray.push(featureUpdatedata);
+					var featureUpdatedata = {};
+					if($(currentVal).parent().attr("type") !== undefined){
+						featureUpdatedata.name = $(currentVal).parent().attr("type");
+						featureUpdatedata.dispName = $(currentVal).parent().attr("dispName");
+						featureUpdatedata.packaging = $(currentVal).parent().attr("packaging");
+						featureUpdatedata.type = $(currentVal).parent().attr("type");					
+						featureUpdatedata.defaultModule = true;
+						featureUpdatedata.scope = $(currentVal).parent().children('div.flt_right').children('select.input-mini').find(':selected').attr("scope");
+						featureUpdatedata.versionID = $(currentVal).parent().children('div.flt_right').children('select.input-mini').find(':selected').val();
+						featureUpdatedata.dispValue = $(currentVal).parent().children('div.flt_right').children('select.input-mini').find(':selected').text();
+						var moduleId = $(currentVal).parent().children('div.flt_right').children('.moduleId').val();
+						featureUpdatedata.moduleId = moduleId; 
+						featureUpdatedata.artifactGroupId = moduleId;
+						self.featureUpdatedArray.push(featureUpdatedata);
+						console.info("featureUpdatedArray", self.featureUpdatedArray);
+					}
 				});
 				
-				self.featuresListener.getFeaturesUpdate(self.featuresListener.getRequestHeader(featureUpdatedataArray, "", ""), function(response) {
-					//console.info("response", response);
-				});
+				
+			/* 	self.featuresListener.getFeaturesUpdate(self.featuresListener.getRequestHeader(featureUpdatedataArray, "UPDATE", ""), function(response) {
+				
+				}); */
 			});
 		},
 		
@@ -249,7 +271,6 @@ define(["features/listener/featuresListener"], function() {
 			$("#moduleContent li").hide();
 			$("#jsibrariesContent li").hide();
 			$("#componentsContent li").hide();
-
 			$("ul li fieldset").each(function() {
 				if($(this).attr("class") == "switch switchOn"){
 					$(this).parent().show();
@@ -268,7 +289,7 @@ define(["features/listener/featuresListener"], function() {
 			}else if(button == 'true'){ 
 				$(obj).closest('fieldset').addClass('switchOn');
 				$(obj).closest('fieldset').attr('value', "true");
-			}	 
+			}
 		}
 	});
 
