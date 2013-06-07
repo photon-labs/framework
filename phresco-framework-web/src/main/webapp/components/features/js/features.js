@@ -221,9 +221,10 @@ define(["features/listener/featuresListener"], function() {
        		$('#cancelUpdateFeature').click(function() {
 				self.onCancelEvent.dispatch();
            	});
-
+       		var flag=1,temp1,temp2;
           	$('.featureinfo_img').on("click", function(event) {				
 				var descid = $(this).attr("artifactGroupId");
+				temp2=descid;
 				var currentObj = this;				
 				self.featuresListener.getFeaturesList(self.featuresListener.getRequestHeader(self.featureRequestBody, "desc", descid), function(response) {
 					var descriptionid = $.trim(descid.replace(/ /g,''));
@@ -232,7 +233,17 @@ define(["features/listener/featuresListener"], function() {
 					$("#desc").append(divhtml);
 					commonVariables.temp = currentObj;
 					commonVariables.openccmini(currentObj,descriptionid);
-					$("#"+descid).show();					
+					 if(flag==1){
+						temp1=descid;
+						$("#"+descid).show();	
+						flag=0;
+					 }
+					else{					 
+						$("#"+descid).hide();	
+						flag=1;
+						if(temp1!=temp2)
+							$("#"+temp2).show();
+					}
 				});
            	});
 			
