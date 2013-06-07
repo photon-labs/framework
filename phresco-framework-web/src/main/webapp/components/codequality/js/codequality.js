@@ -24,11 +24,11 @@ define(["codequality/listener/codequalityListener"], function() {
 			if(self.codequalityListener === null)
 				self.codequalityListener = new Clazz.com.components.codequality.js.listener.CodequalityListener();
 
-			if(self.dynamicpage === null){
-				commonVariables.navListener.getMyObj(commonVariables.dynamicPage, function(retVal){
-				self.dynamicpage = retVal;
-				self.dynamicPageListener = self.dynamicpage.dynamicPageListener;
-				self.registerEvents();
+				if(self.dynamicpage === null){
+					commonVariables.navListener.getMyObj(commonVariables.dynamicPage, function(retVal){
+					self.dynamicpage = retVal;
+					self.dynamicPageListener = self.dynamicpage.dynamicPageListener;
+					self.registerEvents();
 				});
 			}else{
 				self.registerEvents();
@@ -52,9 +52,9 @@ define(["codequality/listener/codequalityListener"], function() {
 			Clazz.navigationController.push(this);
 		},
 
-		preRender: function(whereToRender, renderFunction){
+			/*preRender: function(whereToRender, renderFunction){
 			var self = this;
-			var appDirName = self.codequalityListener.codequalityAPI.localVal.getSession('appDirName');
+		 var appDirName = self.codequalityListener.codequalityAPI.localVal.getSession('appDirName');
 			var goal = "validate-code";
 			commonVariables.goal = goal;
 			
@@ -65,6 +65,7 @@ define(["codequality/listener/codequalityListener"], function() {
 					self.renderedData = response;
 					if(response.message == "Dependency returned successfully"){
 						self.dynamicpage.getHtml(function(response){
+						console.info('response = ' ,response);
 							$("#dynamicContent").html(response);
 							self.multiselect();
 							self.dynamicpage.showParameters();
@@ -77,8 +78,8 @@ define(["codequality/listener/codequalityListener"], function() {
 						$('#iframePart').append(response.message);
 					}
 				});
-			}, 200);	
-		}, 
+			}, 200);	 
+		}, */
 
 		/***
 		 * Called after the preRender() and bindUI() completes. 
@@ -89,7 +90,26 @@ define(["codequality/listener/codequalityListener"], function() {
 		 
 		postRender : function(element) {
 			var self = this; 
-			self.codequalityListener.constructHtml(self.renderedData);
+			var appDirName = self.codequalityListener.codequalityAPI.localVal.getSession('appDirName');
+			var goal = "validate-code";
+			commonVariables.goal = goal;
+			
+			setTimeout(function() {
+				self.codequalityListener.getReportTypes(self.codequalityListener.getRequestHeader(self.appDirName , "reporttypes"), function(response) {
+					var projectlist = {};
+					projectlist.projectlist = response;	
+					self.renderedData = response;
+					self.codequalityListener.constructHtml(self.renderedData);
+					if(response.message == "Dependency returned successfully"){
+						//renderFunction(projectlist, whereToRender);
+					}else{
+						// renderFunction(projectlist, whereToRender); 
+						$('#iframePart').html('');
+						$('#iframePart').append(response.message);
+					}
+				});
+			}, 200);				
+			
 		},
 
 		/***
@@ -102,6 +122,12 @@ define(["codequality/listener/codequalityListener"], function() {
 			$(".dyn_popup").hide();
 			
 			$("#codeAnalysis").click(function() {
+				self.dynamicpage.getHtml(function(response){
+					$("#dynamicContent").html(response);
+					self.multiselect();
+					self.dynamicpage.showParameters();
+					self.dynamicPageListener.controlEvent();
+				});			
 				self.opencc(this,'code_popup');
 			});
 			

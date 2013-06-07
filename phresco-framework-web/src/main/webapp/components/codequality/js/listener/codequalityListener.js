@@ -39,17 +39,28 @@ define(["codequality/api/codequalityAPI"], function() {
 				queryString ="username="+username+"&appId="+appId+"&customerId="+customerId+"&goal=validate-code&phase=validate-code&projectId="+projectId+"&"+ipjson;
 			}
 			$('#iframePart').html('');
+			$('#content_div').html('Sonar Report will appear here');
+			var value1 = $('.build_progress').width();
+			$('.build_info').animate({width: window.innerWidth/1.6},500);
+			$('.build_progress').animate({right: '10px'},500);
+			$('.build_close').animate({right: value1+10},500);
+			$(window).resize();
+
+				
 			if(self.mavenServiceListener === null)	{
 				commonVariables.navListener.getMyObj(commonVariables.mavenService, function(retVal){
 					self.mavenServiceListener = retVal;
 					
 					self.mavenServiceListener.mvnCodeValidation(queryString, '#iframePart', function(returnVal){
 						callback(returnVal);
+						var validateAgainst = $("#sonar").val();
+						self.getIframeReport(validateAgainst);
 					});
 				});
 			}else{
 				self.mavenServiceListener.mvnCodeValidation(queryString, '#iframePart', function(returnVal){
-					//callback(returnVal);
+					var validateAgainst = $("#sonar").val();
+					self.getIframeReport(validateAgainst);
 				});
 			}			
 			/*header.requestMethod ="POST";
@@ -156,8 +167,8 @@ define(["codequality/api/codequalityAPI"], function() {
 				self.codequalityAPI.codequality(header,
 					function(response) {
 						if (response !== null) {
-							callback(response);
 							commonVariables.loadingScreen.removeLoading();
+							callback(response);
 						} else {
 							commonVariables.loadingScreen.removeLoading();
 							callback({ "status" : "service failure"});
@@ -168,12 +179,11 @@ define(["codequality/api/codequalityAPI"], function() {
 						commonVariables.loadingScreen.removeLoading();
 						var data = $.parseJSON(textStatus);
 						$('#content_div').html(data.message);
-
 					}
 				);
 			} catch(exception) {
-				$('#content_div').html(exception);
 				commonVariables.loadingScreen.removeLoading();
+				$('#content_div').html(exception);
 			}
 		},
 
@@ -218,6 +228,10 @@ define(["codequality/api/codequalityAPI"], function() {
 				self.codequalityAPI.codequality(self.getRequestHeader(validateAgainst , "iframereport"), 
 					function(iframereport) {
 						if(iframereport.data != null){
+						var value1 = $('.build_progress').width();
+							$('.build_info').animate({width: '97%'},500);
+							$('.build_progress').animate({right: -value1},500);
+							$('.build_close').animate({right: '0px'},500);
 							var iframedata = "<iframe src="+iframereport.data+" width=98% height=100%></iframe>";
 							$('#content_div').html(iframedata);
 						}else{
