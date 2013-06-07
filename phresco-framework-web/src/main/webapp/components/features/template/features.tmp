@@ -26,7 +26,7 @@
                         <span class="flt_right" ><a class="featureinfo_img" value="{{#idtrime id}}{{/idtrime}}" artifactGroupId="{{id}}" > 
                         <img src="themes/default/images/helios/info_icon.png" width="15" height="16" border="0" alt=""></a></span>
                                 {{#versiondata versions id}}{{/versiondata}}
-								{{#versionShowHide versions}}{{/versionShowHide}} 
+								{{#versionShowHide versions id}}{{/versionShowHide}} 
 								{{#each versions}}
 									{{#each appliesTo}}
 										<input type="hidden" defaultModule="true">

@@ -106,21 +106,21 @@ define(["features/api/featuresAPI", "features/features",  "application/applicati
 				self.featuresAPI.features(header,
 					function(response) {
 						if (response !== null) {
-							self.loadingScreen.removeLoading();
+							//self.loadingScreen.removeLoading();
 							callback(response);
 						} else {
-							self.loadingScreen.removeLoading();
+							//self.loadingScreen.removeLoading();
 							callback({ "status" : "service failure"});
 						}
 
 					},
 
 					function(textStatus) {
-						self.loadingScreen.removeLoading();
+						//self.loadingScreen.removeLoading();
 					}
 				);
 			} catch(exception) {
-				self.loadingScreen.removeLoading();
+				//self.loadingScreen.removeLoading();
 			}
 		},
 		
@@ -165,10 +165,9 @@ define(["features/api/featuresAPI", "features/features",  "application/applicati
 		/***
 		 * provides the request header
 		 *
-		 * @synonymRequestBody: request body of synonym
+		 * @projectRequestBody: request body of synonym
 		 * @return: returns the contructed header
 		 */
-		 //header.webserviceurl: commonVariables.webserviceurl+commonVariables.featurePageContext+"//desc?customerId=photon&artifactGroupId="+type+"&userId="+userId.id*/
 		getRequestHeader : function(projectRequestBody, type, descid) {
 			var url;
 			var userId = JSON.parse(self.featuresAPI.localVal.getSession("userInfo"));
@@ -189,7 +188,6 @@ define(["features/api/featuresAPI", "features/features",  "application/applicati
 				header.webserviceurl = commonVariables.webserviceurl+commonVariables.featurePageContext+"/selectedFeature?&userId="+userId.id+"&appDirName="+appDirName;
 			} else if (type === "UPDATE") {
 				header.requestMethod = "PUT";
-				console.info("projectRequestBody", projectRequestBody);
 				header.requestPostBody = JSON.stringify(projectRequestBody);
 				header.webserviceurl = commonVariables.webserviceurl+commonVariables.projectlistContext + "/updateFeature?customerId=photon&userId="+userId.id+"&appDirName="+appDirName;
 			}

@@ -2,7 +2,7 @@ define(["ci/api/ciAPI"], function() {
 
 	Clazz.createPackage("com.components.ci.js.listener");
 
-	Clazz.com.components.ci.js.listener.CIListener = Clazz.extend(Clazz.Widget, {
+	Clazz.com.components.ci.js.listener.CIListener = Clazz.extend(Clazz.WidgetWithTemplate, {
 		
 		basePlaceholder :  window.commonVariables.basePlaceholder,
 		ciAPI : null,
@@ -38,14 +38,12 @@ define(["ci/api/ciAPI"], function() {
 		},
 
 		getRequestHeader : function(ciRequestBody, action, params) {
-			// var self = this, header, appDirName;
-			// var customerId = self.getCustomer();
-			// customerId = (customerId == "") ? "photon" : customerId;
-			// appDirName = self.configurationAPI.localVal.getSession("appDirName");
-			// data = JSON.parse(self.configurationAPI.localVal.getSession('userInfo'));
-			// var userId = data.id;
-			// var techId = commonVariables.techId;
-			// self.bcheck = false;
+			var self = this, header;
+			// basic params for job templates
+			var customerId = self.getCustomer();
+			customerId = (customerId == "") ? "photon" : customerId;
+			var projectId = self.ciAPI.localVal.getSession("projectId");
+
 			header = {
 				contentType: "application/json",
 				dataType: "json",
@@ -54,19 +52,21 @@ define(["ci/api/ciAPI"], function() {
 			};
 			if (action === "list") {
 				header.requestMethod = "GET";
-				if (ciRequestBody !== null && ciRequestBody !== undefined) { 
-					console.log("Request body is undefined... ");
-				}
-				header.webserviceurl = commonVariables.webserviceurl + commonVariables.jobTemplates;
+				header.webserviceurl = commonVariables.webserviceurl + commonVariables.jobTemplates + "?customerId="+ customerId + "&projectId=" + projectId;
 				if (params !== null && params !== undefined && params !== '') {
+					params = $.param(params);
 					header.webserviceurl = header.webserviceurl + "?" + params;
 				}
 			} else if (action === "add") {
 				header.requestMethod = "POST";
+				ciRequestBody.customerId = customerId;
+				ciRequestBody.projectId = projectId;
 				header.requestPostBody = JSON.stringify(ciRequestBody);
 				header.webserviceurl = commonVariables.webserviceurl + commonVariables.jobTemplates;
 			} else if (action === "update") {
 				header.requestMethod = "PUT";
+				ciRequestBody.customerId = customerId;
+				ciRequestBody.projectId = projectId;
 				header.requestPostBody = JSON.stringify(ciRequestBody);
 				console.log("log => " + JSON.stringify(ciRequestBody));
 				header.webserviceurl = commonVariables.webserviceurl + commonVariables.jobTemplates;
@@ -74,16 +74,22 @@ define(["ci/api/ciAPI"], function() {
 				header.requestMethod = "GET";
 				header.webserviceurl = commonVariables.webserviceurl + commonVariables.jobTemplates;
 				if (params !== null && params !== undefined && params !== '') {
-					header.webserviceurl = header.webserviceurl + "/" + params.name;
+					header.webserviceurl = header.webserviceurl + "/" + params.name + "?customerId="+ customerId + "&projectId=" + projectId;
 				}
 			} else if (action === "delete") {
+				console.log("Deleet params " + params);
 				header.requestMethod = "DELETE";
-				if (ciRequestBody !== null && ciRequestBody !== undefined) { 
-					console.log("Request body is undefined... ");
-				}
-				header.webserviceurl = commonVariables.webserviceurl + commonVariables.jobTemplates;
+				header.webserviceurl = commonVariables.webserviceurl + commonVariables.jobTemplates + "?customerId="+ customerId + "&projectId=" + projectId;
 				if (params !== null && params !== undefined && params !== '') {
-					header.webserviceurl = header.webserviceurl + "?" + params;
+					params = $.param(params);
+					header.webserviceurl = header.webserviceurl + "&" + params;
+				}
+			}  else if (action === "getAppInfos") {
+				header.requestMethod = "GET";
+				header.webserviceurl = commonVariables.webserviceurl + commonVariables.projectlistContext + "/appinfos" + "?customerId="+ customerId + "&projectId=" + projectId;
+				if (params !== null && params !== undefined && params !== '') {
+					params = $.param(params);
+					header.webserviceurl = header.webserviceurl + "&" + params;
 				}
 			} 
 
@@ -162,6 +168,7 @@ define(["ci/api/ciAPI"], function() {
 			//});
 
 			$("[name=name]").val(data.name);
+			// $("[name=oldname]").val(data.name);
 			$("[name=type]").val(data.type);
 			$.each(data.appIds, function(index, value) {
 				//alert(index + ': ' + value);

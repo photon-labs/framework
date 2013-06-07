@@ -93,7 +93,7 @@ define(["codequality/listener/codequalityListener"], function() {
 			var appDirName = self.codequalityListener.codequalityAPI.localVal.getSession('appDirName');
 			var goal = "validate-code";
 			commonVariables.goal = goal;
-			
+			console.info('customer = ' , self.getCustomer());
 			setTimeout(function() {
 				self.codequalityListener.getReportTypes(self.codequalityListener.getRequestHeader(self.appDirName , "reporttypes"), function(response) {
 					var projectlist = {};

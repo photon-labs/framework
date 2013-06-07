@@ -72,7 +72,9 @@ define(["projects/listener/projectsListener"], function() {
 				var userPermissions = JSON.parse(self.projectsListener.projectAPI.localVal.getSession('userPermissions'));
 				self.templateData.userPermissions = userPermissions;
 				self.projectsListener.getEditProject(self.projectsListener.getRequestHeader(self.projectRequestBody, commonVariables.projectId), function(response) {
-					self.templateData.editProject = response.data;	
+					self.templateData.editProject = response.data;
+					// Setting project id in local storage for future use in job templates
+					self.projectsListener.projectAPI.localVal.setSession("projectId", response.data.id);
 					self.getData = self.templateData.editProject.appInfos;	
 					renderFunction(self.templateData, whereToRender);
 				});
@@ -88,7 +90,9 @@ define(["projects/listener/projectsListener"], function() {
 					var userPermissions = JSON.parse(self.projectsListener.projectAPI.localVal.getSession('userPermissions'));
 					self.templateData.userPermissions = userPermissions;
 					self.projectsListener.getEditProject(self.projectsListener.getRequestHeader(self.projectRequestBody, commonVariables.projectId), function(response) {
-						self.templateData.editProject = response.data;	
+						self.templateData.editProject = response.data;
+						// Setting project id in local storage for future use in job templates
+						self.projectsListener.projectAPI.localVal.setSession("projectId", response.data.id);
 						self.getData = self.templateData.editProject.appInfos;	
 						renderFunction(self.templateData, whereToRender);						
 					});

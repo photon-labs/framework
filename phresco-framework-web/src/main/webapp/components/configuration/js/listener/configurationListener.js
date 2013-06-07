@@ -114,11 +114,12 @@ define(["configuration/api/configurationAPI"], function() {
 				self.bcheck = true;
 				header.webserviceurl = commonVariables.webserviceurl+commonVariables.configuration+"/types?customerId="+customerId+"&userId="+userId+"&techId="+techId;
 			} else if (action === "delete") {
+				self.bcheck = true;
 				header.requestMethod = "DELETE";
 				header.webserviceurl = commonVariables.webserviceurl+commonVariables.configuration+"/deleteEnv?appDirName="+appDirName+"&envName="+deleteEnv;
 			} else if (action === "template") {
 					self.bcheck = true;
-					header.webserviceurl = commonVariables.webserviceurl+commonVariables.configuration+"/settingsTemplate?customerId="+customerId+"&userId="+userId+"&type="+deleteEnv;
+					header.webserviceurl = commonVariables.webserviceurl+commonVariables.configuration+"/settingsTemplate?appDirName="+appDirName+"&customerId="+customerId+"&userId="+userId+"&type="+deleteEnv;
 			} else if (action === "saveEnv") {
 					header.requestMethod = "POST";
 					header.requestPostBody = JSON.stringify(configRequestBody);
@@ -135,7 +136,7 @@ define(["configuration/api/configurationAPI"], function() {
 			return header;
 		},
 		
-		constructHtml : function(configTemplate, configuration, currentConfig){
+		constructHtml : function(configTemplates, configuration, currentConfig){
 			
 			var htmlTag = "";
 			var key = "";
@@ -149,8 +150,9 @@ define(["configuration/api/configurationAPI"], function() {
 			var checked = "";
 			var configProperties = "";
 			var bCheck = false;
+			var configTemplate = configTemplates.data.settingsTemplate;
 			
-			if (configTemplate.data.length !== 0) {
+			if (configTemplate.length !== 0) {
 				var content = "";
 				var configName = "";
 				var configDesc = "";
@@ -159,11 +161,11 @@ define(["configuration/api/configurationAPI"], function() {
 					configDesc = configuration.desc;
 				}
 				if ($.isEmptyObject(self.configTemName)) {
-					self.configTemName.push(configTemplate.data.name);
+					self.configTemName.push(configTemplate.name);
 				} else {
-					var found = $.inArray(configTemplate.data.name, self.configTemName) > -1;
+					var found = $.inArray(configTemplate.name, self.configTemName) > -1;
 					if (found === false) {
-						self.configTemName.push(configTemplate.data.name);
+						self.configTemName.push(configTemplate.name);
 					} else {
 						self.count++;
 						$("tbody[name=ConfigurationLists]").children('tr.row_bg').each(function(){
@@ -186,16 +188,16 @@ define(["configuration/api/configurationAPI"], function() {
 					self.count = "";
 				}
 				
-				var headerTr = '<tr type="'+configTemplate.data.name+self.count+'" class="row_bg" configType="'+configTemplate.data.name+'"><td colspan="3">' + configTemplate.data.name + '</td><td colspan="3">'+'<a href="javascript:;" name="removeConfig"><img src="themes/default/images/helios/close_icon.png" border="0" alt="" class="flt_right"/></a></td></tr>';
+				var headerTr = '<tr type="'+configTemplate.name+self.count+'" class="row_bg" configType="'+configTemplate.name+'"><td colspan="3">' + configTemplate.name + '</td><td colspan="3">'+'<a href="javascript:;" name="removeConfig"><img src="themes/default/images/helios/close_icon.png" border="0" alt="" class="flt_right"/></a></td></tr>';
 				content = content.concat(headerTr);
-				var defaultTd = '<tr name="'+configTemplate.data.name+'" class="'+configTemplate.data.name+self.count+'"><td class="labelTd">Name <sup>*</sup></td><td><input type="text" id="Config'+configTemplate.data.name+self.count+'" mandatory="true" class="configName" value="'+configName+'" placeholder= "Configuration Name"/></td><td class="labelTd">Description</td><td><input type="text" class="configDesc" value="'+configDesc+'" placeholder= "Configuration Description"/></td>';
+				var defaultTd = '<tr name="'+configTemplate.name+'" class="'+configTemplate.name+self.count+'"><td class="labelTd">Name <sup>*</sup></td><td><input type="text" id="Config'+configTemplate.name+self.count+'" mandatory="true" class="configName" value="'+configName+'" placeholder= "Configuration Name"/></td><td class="labelTd">Description</td><td><input type="text" class="configDesc" value="'+configDesc+'" placeholder= "Configuration Description"/></td>';
 				content = content.concat(defaultTd);
 				var count = 2;
 				var i = 2;
 				if (configuration.properties !== undefined) {
 					configProperties = configuration.properties;
 				}
-				$.each(configTemplate.data.properties, function(index, value) {
+				$.each(configTemplate.properties, function(index, value) {
 					var key = value.key;
 					var label = value.name;
 					var type = value.type;
@@ -214,13 +216,13 @@ define(["configuration/api/configurationAPI"], function() {
 					}
 					var control = "";
 					if  (count % 3 == 0) {
-						control = '<tr name="'+configTemplate.data.name+'" class="'+configTemplate.data.name+self.count+'"><td class="labelTd">' + label + mandatoryCtrl + '</td><td>';
+						control = '<tr name="'+configTemplate.name+'" class="'+configTemplate.name+self.count+'"><td class="labelTd">' + label + mandatoryCtrl + '</td><td>';
 					} else {
 						control = '<td class="labelTd">' + label + mandatoryCtrl + '</td><td>';
 					}
 					var inputCtrl = "";
 					if (value.possibleValues !== null &&  value.possibleValues.length !== 0) {
-						inputCtrl = '<select mandatory="'+required+'" class="'+configTemplate.data.name+self.count+'Configuration" name="' + value.key + '">';
+						inputCtrl = '<select mandatory="'+required+'" class="'+configTemplate.name+self.count+'Configuration" name="' + value.key + '">';
 						var possibleValues = value.possibleValues;
 						var options = "";
 						for (j in possibleValues) {
@@ -237,11 +239,11 @@ define(["configuration/api/configurationAPI"], function() {
 						}
 						//inputCtrl = inputCtrl.concat("</tr>");
 					} else if (type == "Password") {
-						inputCtrl = '<input value="'+ configValue +'" class="'+configTemplate.data.name+self.count+'Configuration" name="'+key+'" mandatory="'+required+'" type="password" placeholder=""/>';
+						inputCtrl = '<input value="'+ configValue +'" class="'+configTemplate.name+self.count+'Configuration" name="'+key+'" mandatory="'+required+'" type="password" placeholder=""/>';
 					} else if (type == "FileType") {
 						inputCtrl = '<div id="'+key+'file-uploader" class="file-uploader" propTempName="'+key+'"></div>';
 					} else {
-						inputCtrl = '<input mandatory="'+required+'" value="'+ configValue +'" class="'+configTemplate.data.name+self.count+'Configuration" name="'+key+'" temp="'+configTemplate.data.name+key+self.count+'" type="text" placeholder=""/>';
+						inputCtrl = '<input mandatory="'+required+'" value="'+ configValue +'" class="'+configTemplate.name+self.count+'Configuration" name="'+key+'" temp="'+configTemplate.name+key+self.count+'" type="text" placeholder=""/>';
 					}
 					control = control.concat(inputCtrl);
 					content = content.concat(control);

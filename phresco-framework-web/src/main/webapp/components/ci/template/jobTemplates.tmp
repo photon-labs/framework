@@ -13,15 +13,21 @@
                                     <td>Job Type</td>
                                 </tr>
                                 <tr>
-                                  <td><input type="text" placeholder="Job Name" name="name" value=""></td>
-                                    <td><select name="type">
-                                              <option value="Code Validation">Code Validation</option>
-                                                <option value="Build">Build</option>
-                                                <option value="Deploy">Deploy</option>
-                                                <option value="Functional Test">Functional Test</option>
-                                                <option value="Unit Test">Unit Test</option>
-                                        </select>
-                                    </td>
+                                  <td>
+                                    <input type="text" placeholder="Job Name" name="name" value="">
+                                    <!--<input type="hidden" name="oldname" value="">-->
+                                  </td>
+                                  <td>
+                                      <select name="type">
+                                            <option value="Code Validation">Code Validation</option>
+                                            <option value="Build">Build</option>
+                                            <option value="Deploy">Deploy</option>
+                                            <option value="Unit Test">Unit Test</option>
+                                            <option value="Functional Test">Functional Test</option>
+                                            <option value="Performance Test">Performance Test</option>
+                                            <option value="Load Test">Load Test</option>
+                                      </select>
+                                  </td>
                                 </tr>
                                 <tr>
                                   <td>Application<sup>*</sup></td>
