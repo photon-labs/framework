@@ -148,6 +148,7 @@ define(["mavenService/api/mavenServiceAPI"], function() {
 								callback(response.connectionAlive);
 							}
 							
+							$(divId).mCustomScrollbar("update");
 						}else {
 							commonVariables.loadingScreen.removeLoading();
 							callback(false);
@@ -186,6 +187,8 @@ define(["mavenService/api/mavenServiceAPI"], function() {
 							}else if(response.status == 'SUCCESS'){
 								callback(response);
 							}
+							
+							$(divId).mCustomScrollbar("update");
 						}else {
 							callback(response);
 						}

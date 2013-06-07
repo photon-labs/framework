@@ -98,7 +98,7 @@ define(["codequality/api/codequalityAPI"], function() {
 			}
 		},
 		
-		readLog : function(resDatt){
+		/* readLog : function(resDatt){
 			var self = this;
 			self.codequalityAPI.codequality(self.getRequestHeader(resDatt , "readlog"), function(response) {
 				var logStr = response.log;
@@ -119,7 +119,7 @@ define(["codequality/api/codequalityAPI"], function() {
 				}
 			});
 		},
-		
+		 */
 		getRequestHeader : function(inputData, action) {
 			var self=this, header, username, appId, customerId, projectId;
 			header = {
@@ -169,6 +169,7 @@ define(["codequality/api/codequalityAPI"], function() {
 						if (response !== null) {
 							commonVariables.loadingScreen.removeLoading();
 							callback(response);
+							$('#codeAnalysis').show();
 						} else {
 							commonVariables.loadingScreen.removeLoading();
 							callback({ "status" : "service failure"});
@@ -179,11 +180,13 @@ define(["codequality/api/codequalityAPI"], function() {
 						commonVariables.loadingScreen.removeLoading();
 						var data = $.parseJSON(textStatus);
 						$('#content_div').html(data.message);
+						$('#codeAnalysis').hide();
 					}
 				);
 			} catch(exception) {
 				commonVariables.loadingScreen.removeLoading();
 				$('#content_div').html(exception);
+				$('#codeAnalysis').hide();
 			}
 		},
 
