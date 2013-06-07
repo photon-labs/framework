@@ -35,6 +35,12 @@ define(["features/listener/featuresListener"], function() {
 			self.registerHandlebars();
 		},
 		
+		loadPage :function() {
+			var self = this;
+			Clazz.navigationController.jQueryContainer = commonVariables.contentPlaceholder;
+			Clazz.navigationController.push(this, true);
+		},
+		
 		registerEvents : function () {
 			var self = this;
 			if(self.onSearchEvent == null ){
@@ -64,14 +70,14 @@ define(["features/listener/featuresListener"], function() {
 				return fieldset;
 			});
 			
-			Handlebars.registerHelper('versionShowHide', function(versions) {
+			Handlebars.registerHelper('versionShowHide', function(versions, id) {
 				var fieldset;
 				$.each(versions, function(index, value){
 					$.each(value.appliesTo, function(index, value){
 						if(value.required == true){
-							fieldset = '<div class="flt_right" style="display:block;">';
+							fieldset = '<div class="flt_right" id="version_'+ id +'" style="display:block;">';
 						}else{							
-							fieldset = '<div class="flt_right" style="display:none;">';
+							fieldset = '<div class="flt_right" id="version_'+ id +'" style="display:none;">';
 						}
 					});					
 				});
@@ -85,15 +91,6 @@ define(["features/listener/featuresListener"], function() {
 			});			
 		},
 
-
-
-
-		/***
-		 * Called in once the login is success */
-		loadPage :function(){			
-			Clazz.navigationController.push(this);
-		},
-		
 		/***
 		 * Called after the preRender() and bindUI() completes. 
 		 * Override and add any preRender functionality here
@@ -104,7 +101,8 @@ define(["features/listener/featuresListener"], function() {
 			var self = this;
 			self.featuresListener.getFeaturesList(self.featuresListener.getRequestHeader(self.featureRequestBody, "SELECTED"), function(response) {
 				$.each(response.data, function(index, value){
-					$("#feature_"+this.moduleId).addClass("switchOn").removeClass("switchOff");;
+					$("#feature_"+this.moduleId).addClass("switchOn").removeClass("switchOff");
+					$("#version_"+this.moduleId).show();					
 				});
 			}); 
 		},
@@ -165,6 +163,7 @@ define(["features/listener/featuresListener"], function() {
 				$(".dyn_popup").hide();
 				var height = $(this).height();
 				$('.box_div').height(height - 306);
+				self.windowResize();
 			  });
 
 			$('.switch').css('background', 'url("themes/default/images/helios/on_off_switch.png")');
@@ -254,14 +253,14 @@ define(["features/listener/featuresListener"], function() {
 						featureUpdatedata.moduleId = moduleId; 
 						featureUpdatedata.artifactGroupId = moduleId;
 						self.featureUpdatedArray.push(featureUpdatedata);
-						//console.info("featureUpdatedArray", self.featureUpdatedArray);
 					}
 				});				
 				
 				self.featuresListener.getFeaturesUpdate(self.featuresListener.getRequestHeader(self.featureUpdatedArray, "UPDATE", ""), function(response) {
-					
+					self.loadPage();
 				}); 
 			});
+			self.windowResize();
 		},
 		
 		showSelected : function() {
