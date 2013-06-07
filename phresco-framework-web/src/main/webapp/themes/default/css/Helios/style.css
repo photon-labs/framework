@@ -92,6 +92,7 @@ div, button, img { outline:none; }
     bottom: 0;
     display: none;
     background-color: rgba(0, 0, 0, .35);
+	position:absolute;
     z-index: 1000 !important;
 }
 .widget-mask-main {
