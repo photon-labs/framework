@@ -238,7 +238,6 @@ define(["features/listener/featuresListener"], function() {
            	});
 			
 			$('#featureUpdate').on("click", function() {
-				var self = this;
 				self.featureUpdatedArray = [];
 				$(".switchOn").each(function(index, currentVal) {
 					var featureUpdatedata = {};
@@ -255,14 +254,13 @@ define(["features/listener/featuresListener"], function() {
 						featureUpdatedata.moduleId = moduleId; 
 						featureUpdatedata.artifactGroupId = moduleId;
 						self.featureUpdatedArray.push(featureUpdatedata);
-						console.info("featureUpdatedArray", self.featureUpdatedArray);
+						//console.info("featureUpdatedArray", self.featureUpdatedArray);
 					}
-				});
+				});				
 				
-				
-			/* 	self.featuresListener.getFeaturesUpdate(self.featuresListener.getRequestHeader(featureUpdatedataArray, "UPDATE", ""), function(response) {
-				
-				}); */
+				self.featuresListener.getFeaturesUpdate(self.featuresListener.getRequestHeader(self.featureUpdatedArray, "UPDATE", ""), function(response) {
+					
+				}); 
 			});
 		},
 		
