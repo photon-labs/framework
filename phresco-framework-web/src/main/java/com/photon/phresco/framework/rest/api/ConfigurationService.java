@@ -5,6 +5,7 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -22,9 +23,11 @@ import javax.ws.rs.core.Response;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.quartz.CronExpression;
 
 import com.google.gson.Gson;
 import com.photon.phresco.api.ConfigManager;
+import com.photon.phresco.commons.FrameworkConstants;
 import com.photon.phresco.commons.model.ApplicationInfo;
 import com.photon.phresco.commons.model.ArtifactGroup;
 import com.photon.phresco.commons.model.ArtifactGroupInfo;
@@ -36,6 +39,7 @@ import com.photon.phresco.configuration.Environment;
 import com.photon.phresco.exception.ConfigurationException;
 import com.photon.phresco.exception.PhrescoException;
 import com.photon.phresco.framework.commons.FrameworkUtil;
+import com.photon.phresco.framework.model.CronExpressionInfo;
 import com.photon.phresco.framework.rest.api.util.FrameworkServiceUtil;
 import com.photon.phresco.impl.ConfigManagerImpl;
 import com.photon.phresco.service.client.api.ServiceManager;
@@ -44,7 +48,7 @@ import com.photon.phresco.util.Utility;
 import com.sun.jersey.api.client.ClientResponse.Status;
 
 @Path("/configuration")
-public class ConfigurationService extends RestBase {
+public class ConfigurationService extends RestBase implements FrameworkConstants {
 	
 	private static final Logger S_LOGGER = Logger.getLogger(ConfigurationService.class);
     private static Boolean is_debugEnabled  = S_LOGGER.isDebugEnabled();
@@ -318,6 +322,98 @@ public class ConfigurationService extends RestBase {
 			return Response.status(Status.EXPECTATION_FAILED).entity(finalOuptut).header("Access-Control-Allow-Origin", "*").build();
 		}
 		
+	}
+
+	@POST
+	@Path ("/cronExpression")
+	@Produces (MediaType.APPLICATION_JSON)
+	@Consumes (MediaType.APPLICATION_JSON)
+	public Response cronValidation(CronExpressionInfo cronExpInfo) {
+		ResponseInfo<String> responseData = new ResponseInfo<String>();
+		try {
+			String cronBy = cronExpInfo.getCronBy();
+			String cronExpression = "";
+			Date[] dates = null;
+
+			if (REQ_CRON_BY_DAILY.equals(cronBy)) {
+				String hours = cronExpInfo.getHours();
+				String minutes = cronExpInfo.getMinutes();
+				String every = cronExpInfo.getEvery();
+
+				if ("false".equals(every)) {
+					if ("*".equals(hours) && "*".equals(minutes)) {
+						cronExpression = "0 * * * * ?";
+					} else if ("*".equals(hours) && !"*".equals(minutes)) {
+						cronExpression = "0 " + minutes + " 0 * * ?";
+					} else if (!"*".equals(hours) && "*".equals(minutes)) {
+						cronExpression = "0 0 " + hours + " * * ?";
+					} else if (!"*".equals(hours) && !"*".equals(minutes)) {
+						cronExpression = "0 " + minutes + " " + hours
+						+ " * * ?";
+					}
+				} else {
+					if ("*".equals(hours) && "*".equals(minutes)) {
+						cronExpression = "0 * * * * ?";
+					} else if ("*".equals(hours) && !"*".equals(minutes)) {
+						cronExpression = "0 " + "*/" + minutes + " * * * ?"; // 0 replace with *
+					} else if (!"*".equals(hours) && "*".equals(minutes)) {
+						cronExpression = "0 0 " + "*/" + hours + " * * ?"; // 0 replace with *
+					} else if (!"*".equals(hours) && !"*".equals(minutes)) {
+						cronExpression = "0 " + minutes + " */" + hours
+						+ " * * ?"; // 0 replace with *
+					}
+				}
+				dates = testCronExpression(cronExpression);
+
+			} else if (REQ_CRON_BY_WEEKLY.equals(cronBy)) {
+				String hours = cronExpInfo.getHours();
+				String minutes = cronExpInfo.getMinutes();
+				String week = cronExpInfo.getWeek();
+				hours = ("*".equals(hours)) ? "0" : hours;
+				minutes = ("*".equals(minutes)) ? "0" : minutes;
+				cronExpression = "0 " + minutes + " " + hours + " ? * " + week;
+				dates = testCronExpression(cronExpression);
+
+			} else if (REQ_CRON_BY_MONTHLY.equals(cronBy)) {
+				String hours = cronExpInfo.getHours();
+				String minutes = cronExpInfo.getMinutes();
+				String month = cronExpInfo.getMonth();
+				String day = cronExpInfo.getDay();
+				hours = ("*".equals(hours)) ? "0" : hours;
+				minutes = ("*".equals(minutes)) ? "0" : minutes;
+				cronExpression = "0 " + minutes + " " + hours + " " + day + " "
+				+ month + " ?";
+				dates = testCronExpression(cronExpression);
+			}
+
+			if (dates != null) {
+				cronExpression = cronExpression.replace('?', '*');
+				cronExpression = cronExpression.substring(2);
+			}
+
+			ResponseInfo<String> finalOutput = responseDataEvaluation(responseData, null, "Cron Expression calculated successfully", cronExpression);
+			return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
+
+		} catch (PhrescoException e) {
+			ResponseInfo<String> finalOutput = responseDataEvaluation(responseData, e, "Cron Expression not Available", null);
+			return Response.status(Status.BAD_REQUEST).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
+		}
+	}
+	
+	
+	private Date[] testCronExpression(String expression) throws PhrescoException {
+		Date[] dates = null;
+		try {
+			final CronExpression cronExpression = new CronExpression(expression);
+			final Date nextValidDate1 = cronExpression.getNextValidTimeAfter(new Date());
+			final Date nextValidDate2 = cronExpression.getNextValidTimeAfter(nextValidDate1);
+			final Date nextValidDate3 = cronExpression.getNextValidTimeAfter(nextValidDate2);
+			final Date nextValidDate4 = cronExpression.getNextValidTimeAfter(nextValidDate3);
+			dates = new Date[] { nextValidDate1, nextValidDate2, nextValidDate3, nextValidDate4 };
+		} catch (Exception e) {
+			throw new PhrescoException(e);
+		}
+		return dates;
 	}
 		
 	public boolean isConnectionAlive(String protocol, String host, int port) {
