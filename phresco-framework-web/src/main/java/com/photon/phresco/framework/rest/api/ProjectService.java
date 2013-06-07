@@ -67,9 +67,9 @@ public class ProjectService extends RestBase implements FrameworkConstants {
 		try {
 			ProjectManager projectManager = PhrescoFrameworkFactory.getProjectManager();
 			List<ProjectInfo> projects = projectManager.discover(customerId);
-//			if (CollectionUtils.isNotEmpty(projects)) {
-//            	Collections.sort(projects, sortByNameInAlphaOrder());
-//            }
+			if (CollectionUtils.isNotEmpty(projects)) {
+            	Collections.sort(projects, sortByDateToLatest());
+            }
 			ResponseInfo<List<ProjectInfo>> finalOutput = responseDataEvaluation(responseData, null, "Project List Successfully", projects);
 			return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
 		} catch (PhrescoException e) {
@@ -380,7 +380,7 @@ public class ProjectService extends RestBase implements FrameworkConstants {
 			projectManager.update(projectInfo, serviceManager, oldAppDirName);
 			List<ProjectInfo> projects = projectManager.discover(customerId);
 			if (CollectionUtils.isNotEmpty(projects)) {
-				Collections.sort(projects, sortByNameInAlphaOrder());
+				Collections.sort(projects, sortByDateToLatest());
 			}
 		} catch (PhrescoException e) {
 			ResponseInfo<ApplicationInfo> finalOutput = responseDataEvaluation(responseData, e, "Application update Failed", null);
@@ -487,15 +487,15 @@ public class ProjectService extends RestBase implements FrameworkConstants {
 		}
 	}
 
-	public Comparator sortByNameInAlphaOrder() {
-		return new Comparator() {
-			public int compare(Object firstObject, Object secondObject) {
-				ProjectInfo projectInfo1 = (ProjectInfo) firstObject;
-				ProjectInfo projectInfo2 = (ProjectInfo) secondObject;
-				return  projectInfo1.getCreationDate().compareTo(projectInfo2.getCreationDate());
-			}
-		};
-	}
+	 public Comparator sortByDateToLatest() {
+			return new Comparator() {
+			    public int compare(Object firstObject, Object secondObject) {
+			    	ProjectInfo projectInfo1 = (ProjectInfo) firstObject;
+			    	ProjectInfo projectInfo2 = (ProjectInfo) secondObject;
+			    	 return projectInfo1.getCreationDate().compareTo(projectInfo2.getCreationDate()) * -1;
+			    }
+			};
+		}
 
 	public void deleteSqlFolder(ApplicationInfo applicationInfo, List<ArtifactGroupInfo> selectedDatabases, ServiceManager serviceManager, String oldAppDirName)
 	throws PhrescoException {
