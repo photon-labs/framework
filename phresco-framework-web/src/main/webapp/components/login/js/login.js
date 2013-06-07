@@ -54,7 +54,11 @@ define(["login/listener/loginListener"], function() {
 			self.loginListener.loginAPI.localVal.deleteSession('loggedout');
 			
 			if(self.loginListener.loginAPI.localVal.getSession('statusmsg') != null){
-				$(".login_error_msg").text(self.loginListener.loginAPI.localVal.getSession('statusmsg'));
+				if(self.loginListener.loginAPI.localVal.getSession('statusmsg') == "Customer Context Required"){
+					$("#contex_er").show();
+				}else{
+					$(".login_error_msg").text(self.loginListener.loginAPI.localVal.getSession('statusmsg'));
+				}
 			}
 		},
 
