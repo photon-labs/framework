@@ -122,6 +122,9 @@ define(["codequality/api/codequalityAPI"], function() {
 		 */
 		getRequestHeader : function(inputData, action) {
 			var self=this, header, username, appId, customerId, projectId;
+			var customerId = self.getCustomer();
+			customerId = (customerId == "") ? "photon" : customerId;
+			
 			header = {
 				contentType: "application/json",
 				requestMethod: "GET",
@@ -133,7 +136,7 @@ define(["codequality/api/codequalityAPI"], function() {
 				var appdetails = self.codequalityAPI.localVal.getJson('appdetails');
 				appId = appdetails.data.appInfos[0].id;
 				projectId = appdetails.data.id;
-				customerId = appdetails.data.customerIds[0];
+				//customerId = appdetails.data.customerIds[0];
 				username = self.codequalityAPI.localVal.getSession('username');
 				
 				header.requestMethod ="POST";
@@ -154,7 +157,7 @@ define(["codequality/api/codequalityAPI"], function() {
 				var appDirName = this.codequalityAPI.localVal.getSession('appDirName');
 				//console.info('appDirName = ' , appDirName + 'inputData = '  + inputData);
 				username = self.codequalityAPI.localVal.getSession('username');
-				header.webserviceurl = commonVariables.webserviceurl+"parameter/iFrameReport?appDirName="+appDirName+"&validateAgainst="+inputData+"&customerId=photon&userId="+username;
+				header.webserviceurl = commonVariables.webserviceurl+"parameter/iFrameReport?appDirName="+appDirName+"&validateAgainst="+inputData+"&customerId="+customerId+"&userId="+username;
 			}
 
 			return header;
@@ -250,7 +253,21 @@ define(["codequality/api/codequalityAPI"], function() {
 				//console.info('exception = ' , exception);
 				$('#content_div').html('tres');
 			}	
-		}
+		},
+		
+					
+			getCustomer : function() {
+				var selectedcustomer = $("#selectedCustomer").text();
+				var customerId = "";
+				$.each($("#customer").children(), function(index, value){
+					var customerText = $(value).children().text();
+					if(customerText === selectedcustomer){
+						customerId = $(value).children().attr('id');
+					}
+				});
+				
+				return customerId;
+			},
 		
 	});
 

@@ -56,12 +56,12 @@ define(["application/listener/applicationListener"], function() {
 			
 			Handlebars.registerHelper('compareversion', function(val1, val2, artfgroup, selectedVersion) {
 				if(val1 == val2){
-					//console.info(artfgroup);
 					var option = '';
 					$.each(artfgroup.versions, function(index, value){
-						if(selectedVersion[0] == value.id){
+						var inArray = $.inArray(value.id, selectedVersion);
+						if (inArray > -1) {
 							option +='<option selected="selected" value='+value.id+'>'+ value.version +'</option>';
-						}else{
+						} else {
 							option +='<option value='+value.id+'>'+ value.version +'</option>';
 						}
 					});
@@ -81,14 +81,47 @@ define(["application/listener/applicationListener"], function() {
 				} else {
 					return 1;
 				}	
-			});								
+			});		
+			
+			Handlebars.registerHelper('isLastRow', function(array, indexVal, options) {
+				if(array != undefined && array.length == indexVal + 1){
+					return options.fn(this);
+				} else {
+					return options.inverse(this);
+				}	
+			});	
 		
+			Handlebars.registerHelper('isNotSingleRow', function(array, options) {
+				if(array != undefined && array.length == 1){
+					return options.inverse(this);
+				} else {
+					return options.fn(this);
+				}	
+			});	
+			
+			Handlebars.registerHelper('getSuccessMsg', function(appDirName) {
+				var succesMsg = localStorage.getItem(appDirName + '_AppUpdateMsg');
+				localStorage.removeItem(appDirName + '_AppUpdateMsg');
+				setTimeout(function () {
+					$('.appSuccessMsg').fadeOut(2000);
+				}, 2200);
+				return succesMsg;
+			});
+			
 			Handlebars.registerHelper('dbouter', function(selectedDatabases) {
 				if(selectedDatabases[0].selectedDatabases != undefined ){
 					return selectedDatabases[0].selectedDatabases.length+1;
 				} else {
 					return 1;
 				}	
+			});
+			
+			Handlebars.registerHelper('isSelectedWebService', function(appInfos, webServiceId, options) {
+				if(appInfos[0].selectedWebservices != undefined && $.inArray(webServiceId, appInfos[0].selectedWebservices) > -1){
+					return options.fn(this);
+				} else {
+					return options.inverse(this);
+				}
 			});
 						
 		},
@@ -118,7 +151,6 @@ define(["application/listener/applicationListener"], function() {
 		
 		preRender: function(whereToRender, renderFunction){
 			var self = this;
-			console.info('app name= ' , self.appDirName);
 			setTimeout(function() {
 				self.editApplicationListener.getAppInfo(self.editApplicationListener.getRequestHeader(self.appDirName , "getappinfo"), function(response) {
 					var projectlist = {};
