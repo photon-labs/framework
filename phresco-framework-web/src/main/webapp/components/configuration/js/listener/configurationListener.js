@@ -8,7 +8,7 @@ define(["configuration/api/configurationAPI"], function() {
 		editConfigurations : null,
 		configList : [],
 		configListPage : null,
-		cancelEditConfiguration : null,
+		cancelEditConfigurations : null,
 		configRequestBody : {},
 		envJson : [],
 		configTemName : [],
@@ -46,16 +46,16 @@ define(["configuration/api/configurationAPI"], function() {
 			}
 		},
 		
-		cancelEditConfiguation : function() {
+		cancelEditConfiguration : function() {
 			var self=this;
 			Clazz.navigationController.jQueryContainer = commonVariables.contentPlaceholder;
-			if(self.cancelEditConfiguration  === null) {
+			if(self.cancelEditConfigurations  === null) {
 				commonVariables.navListener.getMyObj(commonVariables.configuration, function(retVal) {
-					self.cancelEditConfiguration = retVal;
-					Clazz.navigationController.push(self.cancelEditConfiguration, true, true);
+					self.cancelEditConfigurations = retVal;
+					Clazz.navigationController.push(self.cancelEditConfigurations, true, true);
 				});
 			} else {
-				Clazz.navigationController.push(self.cancelEditConfiguration, true, true);
+				Clazz.navigationController.push(self.cancelEditConfigurations, true, true);
 			}
 		},
 		
@@ -135,7 +135,7 @@ define(["configuration/api/configurationAPI"], function() {
 			return header;
 		},
 		
-		constructHtml : function(configTemplate, configuration){
+		constructHtml : function(configTemplate, configuration, currentConfig){
 			
 			var htmlTag = "";
 			var key = "";
@@ -148,6 +148,7 @@ define(["configuration/api/configurationAPI"], function() {
 			var multiple = "";
 			var checked = "";
 			var configProperties = "";
+			var bCheck = false;
 			
 			if (configTemplate.data.length !== 0) {
 				var content = "";
@@ -165,13 +166,27 @@ define(["configuration/api/configurationAPI"], function() {
 						self.configTemName.push(configTemplate.data.name);
 					} else {
 						self.count++;
+						$("tbody[name=ConfigurationLists]").children('tr.row_bg').each(function(){
+							if(currentConfig === 'Server') {
+								if($(this).attr('configType') === currentConfig) {
+									bCheck = true;
+								}
+							}
+							
+							if(currentConfig === 'Database') {
+								if($(this).attr('configType') === currentConfig) {
+									bCheck = true;
+								}
+							}
+						});
 					}
 				}
 				
 				if (self.count == 0) {
 					self.count = "";
 				}
-				var headerTr = '<tr type="'+configTemplate.data.name+self.count+'" class="row_bg"><td colspan="3">' + configTemplate.data.name + '</td><td colspan="3">'+'<a href="javascript:;" name="removeConfig"><img src="themes/default/images/helios/close_icon.png" border="0" alt="" class="flt_right"/></a></td></tr>';
+				
+				var headerTr = '<tr type="'+configTemplate.data.name+self.count+'" class="row_bg" configType="'+configTemplate.data.name+'"><td colspan="3">' + configTemplate.data.name + '</td><td colspan="3">'+'<a href="javascript:;" name="removeConfig"><img src="themes/default/images/helios/close_icon.png" border="0" alt="" class="flt_right"/></a></td></tr>';
 				content = content.concat(headerTr);
 				var defaultTd = '<tr name="'+configTemplate.data.name+'" class="'+configTemplate.data.name+self.count+'"><td class="labelTd">Name <sup>*</sup></td><td><input type="text" class="configName" value="'+configName+'" placeholder= "Configuration Name"/></td><td class="labelTd">Description</td><td><input type="text" class="configDesc" value="'+configDesc+'" placeholder= "Configuration Description"/></td>';
 				content = content.concat(defaultTd);
@@ -230,13 +245,15 @@ define(["configuration/api/configurationAPI"], function() {
 					content = content.concat(control);
 					i = count++;
 				});
-				$("tbody[name=ConfigurationLists]").append(content);
+				if (bCheck === false) {
+					$("tbody[name=ConfigurationLists]").append(content);
+				}
 				$("a[name=removeConfig]").unbind("click");
-				self.removeConfiguation();
+				self.removeConfiguration();
 			}
 		},
 			
-		htmlForOhter : function(value) {
+		htmlForOther : function(value) {
 			var self = this, headerTr, content = '', textBox, apiKey = "", keyValue = "", type="Other", addIcon = '<img src="themes/default/images/helios/plus_icon.png" border="0" alt="">';
 				if (value !== null && value !== '') {
 					type = value.type;
@@ -257,9 +274,12 @@ define(["configuration/api/configurationAPI"], function() {
 				$("tbody[name=ConfigurationLists]").append(content);
 				if (value !== null && value !== '') {
 					$("tr.otherConfig:last").find("a[name=addOther]").html(addIcon);
+					if ($("tr.otherConfig").length === 1) {
+						$("a[name=removeOther]").html('');
+					}
 				}
 				$("a[name=removeConfig]").unbind("click");
-				self.removeConfiguation();
+				self.removeConfiguration();
 				self.addClick();
 				self.removeClick();
 		},
@@ -296,7 +316,7 @@ define(["configuration/api/configurationAPI"], function() {
 			});
 		},
 		
-		addEnvrEvent : function() {
+		addEnvEvent : function() {
 			var self = this;
 			var envName = $("input[name=envName]").val();
 			var envDesc = $("input[name=envDesc]").val();
@@ -325,7 +345,7 @@ define(["configuration/api/configurationAPI"], function() {
 				}
 				envNameDesc.appliesTo = [""];
 				envNameDesc.defaultEnv = $(value).find("input[name=optionsRadiosfd]").is(':checked');
-				envNameDesc.delete = false;
+				//envNameDesc.delete = false;
 				if (envNameDesc.name !== undefined && envNameDesc.name !== null) {
 					self.envJson.push(envNameDesc);
 				}
@@ -333,18 +353,18 @@ define(["configuration/api/configurationAPI"], function() {
 			callback(self.envJson);
 		},
 		
-		addConfiguation : function(config) {
+		addConfiguration : function(config) {
 			var self=this;
 			if (config !== "Other") {
 				self.getConfigurationList(self.getRequestHeader(self.configRequestBody, "template", config), function(response) {
-					self.constructHtml(response, '');
+					self.constructHtml(response, '', config);
 				});
 			} else {
-				self.htmlForOhter('');
+				self.htmlForOther('');
 			}
 		},
 		
-		removeConfiguation : function() {
+		removeConfiguration : function() {
 			var self = this;
 			$("a[name=removeConfig]").click(function() {
 				var currentRow = $(this).parent().parent().next();
@@ -361,7 +381,7 @@ define(["configuration/api/configurationAPI"], function() {
 			});
 		},
 		
-		UpdateConfig : function() {
+		updateConfig : function() {
 			var self=this, configJson = {}, properties = {};
 			self.configList = [];
 			$.each($(".row_bg"), function(index, value) {
