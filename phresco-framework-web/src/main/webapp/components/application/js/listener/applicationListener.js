@@ -252,6 +252,7 @@ define(["application/api/applicationAPI"], function() {
 				
 				var selectedDatabases = [];
 				var selectedServers = [];
+				var selectedWebServices = [];
 				var databasesJson = {};
 				var serversJson = {};
 				$.each($("tbody[name='layercontents']").children(), function(index, value){
@@ -285,14 +286,22 @@ define(["application/api/applicationAPI"], function() {
 						}	
 						
 					}
+					if($(value).attr('class') == "webservice" && $(value).attr('key') == "displayed") {
+						$.each($(this).find(".webservice_chkbox:checked"), function() {
+							selectedWebServices.push($(this).val());
+						});
+					}
 				});
 				if (appInfo.code !== '') {
 					appInfo.techInfo = renderData.appdetails.data.appInfos[0].techInfo;
 					appInfo.selectedDatabases = selectedDatabases;
 					appInfo.selectedServers = selectedServers;
+					appInfo.selectedWebservices=selectedWebServices;
 				}
 				self.editAppInfo(self.getRequestHeader(JSON.stringify(appInfo), "editApplication"), function(response) {
 					if(response.message == "Application updated successfully"){
+						var appDir = self.applicationAPI.localVal.getSession('appDirName');
+						localStorage.setItem(appDir + '_AppUpdateMsg', response.message);
 						commonVariables.navListener.getMyObj(commonVariables.editApplication, function(retVal){
 							self.editAplnContent = retVal;
 							self.editAplnContent.appDirName = response.data.appDirName;
