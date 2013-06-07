@@ -164,6 +164,12 @@ define(["codequality/listener/codequalityListener"], function() {
 				theme:"light-thin"
 			});			
 			
+			$(".scrollContent").mCustomScrollbar({
+				autoHideScrollbar:true,
+				theme:"light-thin",
+				advanced:{ updateOnContentResize: true}
+			});
+						
 		}
 	});
 
