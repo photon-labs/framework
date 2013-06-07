@@ -138,6 +138,7 @@ define(["application/api/applicationAPI"], function() {
 
 		getOptions : function(appData, versionplaceholder, callback){
 			var option = '';
+			$(versionplaceholder).html('');
 			$.each(appData.artifactGroup.versions, function(index, value){
 				//option += '<option value='+value.id+'>'+ value.version +'</option>'
 				$("<option>").val(value.id).text(value.version).appendTo(versionplaceholder);	
