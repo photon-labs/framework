@@ -305,7 +305,6 @@ define(["framework/widget", "framework/templateProvider"], function() {
 			},
 			
 			multiselect : function() {
-				console.info("multiselect called");
 				$('.selectpicker').selectpicker();
 			}
 		}

@@ -83,11 +83,11 @@
                   </td>
                         <td>
                         {{#if ../../userPermissions.manageRepo}}
-							<a name="add_repo{{id}}" class="tooltiptop" title="" data-placement="top" data-toggle="tooltip" href="#" data-original-title="Add Repo">
+							<a name="addRepo_{{id}}" class="tooltiptop" title="" data-placement="top" data-toggle="tooltip" href="#" data-original-title="Add Repo" >
 								<img src="themes/default/images/helios/add_repo_icon.png" width="18" height="15" border="0" alt="">
 							</a> 
 
-                        	<a name="commit{{id}}" class="tooltiptop" title="" data-placement="top" data-toggle="tooltip" href="#" data-original-title="Commit">
+                        	<a name="commit{{id}}" class="tooltiptop" title="" data-placement="top" data-toggle="tooltip" href="#" data-original-title="Commit" >
                         		<img src="themes/default/images/helios/commit_icon.png" width="16" height="15" border="0" alt="">
                     		</a> 
 						{{else}}
@@ -96,14 +96,14 @@
                         {{/if}}
                         
                         {{#if ../../userPermissions.manageRepo}}
-                        	<a name="svn_update{{id}}" class="tooltiptop" title="" data-placement="top" data-toggle="tooltip" href="#" data-original-title="SVN Update">
+                        	<a name="svn_update{{id}}" class="tooltiptop" title="" data-placement="top" data-toggle="tooltip" href="#" data-original-title="SVN Update" >
                         		<img src="themes/default/images/helios/update_svn_icon.png" width="22" height="15" border="0" alt="">
                     		</a>
               			{{else}}
               				<img src="themes/default/images/helios/update_svn_icon_off.png" width="22" height="15" border="0" alt="">
               			{{/if}}
                   
-                  <div id="add_repo{{id}}" class="add_repo dyn_popup">
+                  <div id="addRepo_{{id}}" class="add_repo dyn_popup" name="addRepo">
                       <table width="100%" border="0" cellspacing="0" cellpadding="0">
                         <tbody>
                             <tr>
@@ -121,7 +121,7 @@
                                 <td><input type="text" id="repourl_{{id}}"></td>
                             </tr>
                             <tr>
-                                <td class="seperatetd">Other Credential<input type="checkbox" id="repocredential_{{id}}"></td>
+                                <td class="seperatetd">Other Credential<input type="checkbox" id="repocredential_{{id}}" repoDynid="{{id}}" class="credential"></td>
                                 <td></td>
                             </tr>
                             <tr>
@@ -129,8 +129,8 @@
                                 <td>Password</td>
                             </tr>
                             <tr>
-                                <td><input type="text" placeholder="username" id="uname_{{id}}"></td>
-                                <td><input type="password" placeholder="*******" id="pwd_{{id}}"></td>
+                                <td><input type="text" placeholder="username" id="uname_{{id}}" class="uname"></td>
+                                <td><input type="password" placeholder="*******" id="pwd_{{id}}" class="pwd"></td>
                             </tr>
                             <tr>
                                 <td colspan="2">
@@ -197,7 +197,7 @@
                                         <td><input type="text" id="commitRepourl_{{id}}"></td>
                                     </tr>
                                     <tr>
-                                        <td class="seperatetd">Other Credential<input type="checkbox" id="commitCredential_{{id}}"></td>
+                                        <td class="seperatetd">Other Credential<input type="checkbox" id="commitCredential_{{id}}" class="credential"></td>
                                         <td></td>
                                     </tr>
                                     <tr>
@@ -205,8 +205,8 @@
                                         <td>Password</td>
                                     </tr>
                                     <tr>
-                                        <td><input type="text" placeholder="admin" id="commitUsername_{{id}}"></td>
-                                        <td><input type="password" placeholder="*******" id="commitPassword_{{id}}"></td>
+                                        <td><input type="text" placeholder="admin" id="commitUsername_{{id}}" class="uname"></td>
+                                        <td><input type="password" placeholder="*******" id="commitPassword_{{id}}" class="pwd"></td>
                                     </tr>
                                     <tr>
                                         <td colspan="2">
@@ -241,7 +241,7 @@
                                         <td><input type="text" id="updateRepourl_{{id}}"></td>
                                     </tr>
                                     <tr>
-                                        <td class="seperatetd">Other Credential<input type="checkbox" id="updateCredential_{{id}}"></td>
+                                        <td class="seperatetd">Other Credential<input type="checkbox" id="updateCredential_{{id}}" class="credential"></td>
                                         <td></td>
                                     </tr>
                                     <tr>
@@ -249,8 +249,8 @@
                                         <td>Password</td>
                                     </tr>
                                     <tr>
-                                        <td><input type="text" placeholder="admin" id="updateUsername_{{id}}"></td>
-                                        <td><input type="password" placeholder="*******" id="updatePassword_{{id}}"></td>
+                                        <td><input type="text" placeholder="admin" id="updateUsername_{{id}}" class="uname"></td>
+                                        <td><input type="password" placeholder="*******" id="updatePassword_{{id}}" class="pwd"></td>
                                     </tr>
                                     <tr>
                                         <td colspan="2">Revision</td>
