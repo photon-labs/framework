@@ -70,8 +70,16 @@ define(["login/listener/loginListener"], function() {
 				self.onLoginEvent.dispatch();
 			});
 			
+			//Enter Key Press Event
+			document.onkeydown = function(evt) {
+				evt = evt || window.event;
+				if (evt.keyCode == 13) {
+					self.onLoginEvent.dispatch();
+				}
+			};
+			
 			//Key press Event
-			$('#username, #password, #login, #rememberMe').keypress(function(e){
+			$('#login, #rememberMe').keypress(function(e){
 				if(e.keyCode == 13)
 					self.onLoginEvent.dispatch();
 			});
