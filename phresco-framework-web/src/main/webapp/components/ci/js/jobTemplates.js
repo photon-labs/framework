@@ -131,7 +131,7 @@ define(["ci/listener/ciListener"], function() {
 		},
 	
 		resetForm: function($form) {
-			$form.find('input:text, input:password, input:hidden, input:file, select, textarea').val('');
+			$form.find('input:text, input:password, input:file, select, textarea').val('');
 			$form.find('input:radio, input:checkbox').removeAttr('checked').removeAttr('selected');
 		},
 
