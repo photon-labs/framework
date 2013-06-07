@@ -129,13 +129,9 @@ public class ParameterService extends RestBase implements FrameworkConstants {
 			@Context HttpServletRequest request) {
 		ResponseInfo<PossibleValues> responseData = new ResponseInfo<PossibleValues>();
 		try {
-			FrameworkUtil frameworkUtil = new FrameworkUtil(request);
-			String serverUrl = frameworkUtil.getSonarHomeURL();
-			URL sonarURL = new URL(serverUrl);
-			HttpURLConnection connection = (HttpURLConnection) sonarURL.openConnection();
-			int responseCode = connection.getResponseCode();
+			int responseCode = setSonarServerStatus(request);
 			if (responseCode != 200) {
-				ResponseInfo<PossibleValues> finalOutput = responseDataEvaluation(responseData, null, "Sonar not yet Started", null);
+				ResponseInfo<PossibleValues> finalOutput = responseDataEvaluation(responseData, null, "Sonar1 not yet Started", null);
 				return Response.status(Status.BAD_REQUEST).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
 			}
 			String infoFileDir = getInfoFileDir(appDirName, goal);
@@ -177,13 +173,7 @@ public class ParameterService extends RestBase implements FrameworkConstants {
 		} catch (PhrescoPomException e) {
 			ResponseInfo<PossibleValues> finalOutput = responseDataEvaluation(responseData, e, "Dependency not fetched", null);
 			return Response.status(Status.BAD_REQUEST).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
-		} catch (MalformedURLException e) {
-			ResponseInfo<PossibleValues> finalOutput = responseDataEvaluation(responseData, e, "Dependency not fetched", null);
-			return Response.status(Status.BAD_REQUEST).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
-		} catch (IOException e) {
-			ResponseInfo<PossibleValues> finalOutput = responseDataEvaluation(responseData, e, "Dependency not fetched", null);
-			return Response.status(Status.BAD_REQUEST).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
-		}
+		} 
 	}
 	
 	@GET
@@ -312,6 +302,25 @@ public class ParameterService extends RestBase implements FrameworkConstants {
         } catch (PhrescoException e) {
             throw new PhrescoException(e);
         }
+	}
+	
+	private int setSonarServerStatus(HttpServletRequest request) throws PhrescoException {		
+		FrameworkUtil frameworkUtil = new FrameworkUtil(request);
+		int responseCode = 0;
+		try {
+			URL sonarURL = new URL(frameworkUtil.getSonarHomeURL());
+			String protocol = sonarURL.getProtocol();
+			HttpURLConnection connection = null;			
+			if(protocol.equals("http")) {	
+				connection = (HttpURLConnection) sonarURL.openConnection();
+				responseCode = connection.getResponseCode();	
+			} else {
+				responseCode = FrameworkUtil.getHttpsResponse(frameworkUtil.getSonarURL());
+			}			
+			return responseCode;
+		} catch(Exception e) {
+			return responseCode;
+		}
 	}
 
 	private static PossibleValues getPossibleValues(MojoProcessor processor, String goal, String key, String value,
