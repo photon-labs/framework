@@ -138,9 +138,9 @@ define(["mavenService/api/mavenServiceAPI"], function() {
 									callback(retVal);
 								});
 							}else if(response.status == 'INPROGRESS'){
-								callback(true);
+								callback(response);
 							}else if(response.status == 'COMPLETED'){
-								callback(true);
+								callback(response);
 							}else if(response.status == 'ERROR'){
 								$(divId).append('<font style = "color:red">' + response.service_exception + '</font><br>');
 								callback(response.service_exception);
@@ -148,6 +148,7 @@ define(["mavenService/api/mavenServiceAPI"], function() {
 								callback(response.connectionAlive);
 							}
 							
+							$(divId).mCustomScrollbar("update");
 						}else {
 							commonVariables.loadingScreen.removeLoading();
 							callback(false);
@@ -170,23 +171,26 @@ define(["mavenService/api/mavenServiceAPI"], function() {
 				self.mavenServiceAPI.mvnSer(header, 
 					function(response){
 						if(response != undefined && response != null){
-
-							$(divId).append('<font style = "color:' + self.logColor(response.log) + '">' + response.log + '</font><br>');
+							
+							if(response.log != undefined && response.log != null)
+								$(divId).append('<font style = "color:' + self.logColor(response.log) + '">' + response.log + '</font><br>');
 						
 							if(response.status == 'STARTED'){
-								callback(true);
+								callback(response);
 							}else if(response.status == 'INPROGRESS'){
 								self.mvnlogService(response.uniquekey, divId, callback);
 							}else if(response.status == 'COMPLETED'){
-								callback(true);
+								callback(response);
 							}else if(response.status == 'ERROR'){
 								$(divId).append('<font style = "color:red">' + data.service_exception + '</font><br>');
-								callback(true);
+								callback(response);
 							}else if(response.status == 'SUCCESS'){
-								callback(true);
+								callback(response);
 							}
+							
+							$(divId).mCustomScrollbar("update");
 						}else {
-							callback(true);
+							callback(response);
 						}
 					}, 
 					function(serviceerror){
@@ -216,9 +220,9 @@ define(["mavenService/api/mavenServiceAPI"], function() {
 		
 			if(logStr != null){
 				if(logStr.match("ERROR") || logStr.match("FAILURE")){
-					return "red";
+					return "#B40404";
 				}else if(logStr.match("WARNING")){
-					return "yellow";
+					return "#FFBF00";
 				}else if(logStr.match("SUCCESS")){
 					return "green";
 				}else{

@@ -16,6 +16,7 @@ define(["build/listener/buildListener"], function() {
 		dynamicpage : null,
 		dynamicPageListener : null,
 		generateBuildContent : "",
+		logContent : '',
 		
 		/***
 		 * Called in initialization time of this class 
@@ -102,6 +103,9 @@ define(["build/listener/buildListener"], function() {
 			$("tbody[name='dynamicContent']").html(self.generateBuildContent);
 			$("tbody[name='dynamicContent']").find(".selectpicker").selectpicker();
 			self.loadPostContent();
+			
+			$('#logContent').html(self.logContent);
+			self.logContent = '';
 		},
 		
 		loadPostContent : function(){
@@ -174,6 +178,7 @@ define(["build/listener/buildListener"], function() {
 				$('.alert_div').show();
 				self.onBuildEvent.dispatch($('form[name=buildForm]').serialize(), function(response){
 					$('.alert_div').hide();
+					self.logContent = $('#logContent').html();
 					self.loadPage();
 				});
 			});

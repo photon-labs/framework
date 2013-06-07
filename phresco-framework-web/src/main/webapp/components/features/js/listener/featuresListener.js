@@ -45,7 +45,6 @@ define(["features/api/featuresAPI", "features/features",  "application/applicati
 					$("#norecord3").hide();
 				});
 				if (hasRecord == false) {
-					console.info("show divId", divId);
 					if(divId == "moduleContent"){
 						$("#norecord1").show();
 					} else if(divId == "jsibrariesContent"){
@@ -65,7 +64,6 @@ define(["features/api/featuresAPI", "features/features",  "application/applicati
 			}
 			else {				
 				$("#"+divId+" li").show();
-				console.info("else divId divId", divId);
 				if(divId == "moduleContent"){
 					$("#norecord1").hide();
 				} else if(divId == "jsibrariesContent"){
@@ -186,10 +184,14 @@ define(["features/api/featuresAPI", "features/features",  "application/applicati
 			} else if (type === "desc") {
 				header.requestMethod = "GET";
 				header.webserviceurl = commonVariables.webserviceurl+commonVariables.featurePageContext+"/desc?&artifactGroupId="+descid+"&userId="+userId.id;
-			} else {
+			} else if (type === "SELECTED") {
+				header.requestMethod = "GET";
+				header.webserviceurl = commonVariables.webserviceurl+commonVariables.featurePageContext+"/selectedFeature?&userId="+userId.id+"&appDirName="+appDirName;
+			} else if (type === "UPDATE") {
 				header.requestMethod = "PUT";
+				console.info("projectRequestBody", projectRequestBody);
 				header.requestPostBody = JSON.stringify(projectRequestBody);
-				header.webserviceurl = commonVariables.webserviceurl+commonVariables.projectlistContext + "/updateFeature?customerId=photon&artifactGroupId="+descid+"&userId="+userId.id+"&appDirName="+appDirName;
+				header.webserviceurl = commonVariables.webserviceurl+commonVariables.projectlistContext + "/updateFeature?customerId=photon&userId="+userId.id+"&appDirName="+appDirName;
 			}
 			return header;
 		}

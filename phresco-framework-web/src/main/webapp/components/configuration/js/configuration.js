@@ -10,7 +10,7 @@ define(["configuration/listener/configurationListener"], function() {
 		configurationAPI : null,
 		configurationlistener : null,
 		editConfigurationEvent : null,
-		addEnvrEvent : null,
+		addEnvEvent : null,
 		saveEnvEvent : null,
 		configRequestBody : {},
 		templateData : {},
@@ -58,20 +58,29 @@ define(["configuration/listener/configurationListener"], function() {
 		registerEvents : function(configurationlistener) {
 			var self=this;
 			self.editConfigurationEvent = new signals.Signal();
-			self.addEnvrEvent = new signals.Signal();
+			self.addEnvEvent = new signals.Signal();
 			self.saveEnvEvent = new signals.Signal();
 			self.cloneEnvEvent = new signals.Signal();
 			self.editConfigurationEvent.add(configurationlistener.editConfiguration, configurationlistener);
-			self.addEnvrEvent.add(configurationlistener.addEnvrEvent, configurationlistener);
+			self.addEnvEvent.add(configurationlistener.addEnvEvent, configurationlistener);
 			self.saveEnvEvent.add(configurationlistener.saveEnvEvent, configurationlistener);
 			self.cloneEnvEvent.add(configurationlistener.cloneEnv, configurationlistener);
 		},
 		
-		getAction : function(configRequestBody, action, deleteEnvironment) {
+		getAction : function(configRequestBody, action, deleteEnvironment, value) {
 			var self=this;
 			self.configurationlistener.getConfigurationList(self.configurationlistener.getRequestHeader(self.configRequestBody, action, deleteEnvironment), function(response) {
-				self.loadPage();
-			});	
+				if (action === "delete") {
+					$(value).parent().parent().parent().parent().remove();
+					$("#content_Env li").each(function(){
+						if ($(this).attr('name') === deleteEnvironment) {
+							$(this).remove();
+						}
+					});
+				} else {
+					self.loadPage();
+				}
+			});
 		},
 		
 		/***
@@ -107,11 +116,11 @@ define(["configuration/listener/configurationListener"], function() {
 				} else {							  
 					var found = $.inArray($("input[name='envName']").val(), arr) > -1;
 					if (found === false) {
-						self.addEnvrEvent.dispatch();
+						self.addEnvEvent.dispatch();
 					}
 					else {
 						$("#errdisplay").show();
-						$("#errdisplay").text("Enter a unique Name.");
+						$("#errdisplay").text("Environment already Exist");
 						setTimeout(function() {
 							$("#errdisplay").hide();
 						}, 1000);
@@ -124,7 +133,7 @@ define(["configuration/listener/configurationListener"], function() {
 			$("input[name=saveEnvironment]").click(function() {
 				self.saveEnvEvent.dispatch(self.envWithConfig, function(response){
 					self.configRequestBody = response;
-					self.getAction(self.configRequestBody, 'saveEnv', '');
+					self.getAction(self.configRequestBody, 'saveEnv', '', '');
 				});
 			});
 			
@@ -142,7 +151,7 @@ define(["configuration/listener/configurationListener"], function() {
 			$("input[name='deleteEnv']").click(function(e) {
 				deleteEnvironment = $(this).parent().parent().attr('id');
 				self.configRequestBody = {};
-				self.getAction(self.configRequestBody, 'delete', deleteEnvironment);
+				self.getAction(self.configRequestBody, 'delete', deleteEnvironment, $(this));
 			});
 			
 			$("a[name=editConfiguration]").unbind("click");

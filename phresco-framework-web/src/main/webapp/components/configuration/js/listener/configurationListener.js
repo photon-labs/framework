@@ -8,7 +8,7 @@ define(["configuration/api/configurationAPI"], function() {
 		editConfigurations : null,
 		configList : [],
 		configListPage : null,
-		cancelEditConfiguration : null,
+		cancelEditConfigurations : null,
 		configRequestBody : {},
 		envJson : [],
 		configTemName : [],
@@ -46,16 +46,16 @@ define(["configuration/api/configurationAPI"], function() {
 			}
 		},
 		
-		cancelEditConfiguation : function() {
+		cancelEditConfiguration : function() {
 			var self=this;
 			Clazz.navigationController.jQueryContainer = commonVariables.contentPlaceholder;
-			if(self.cancelEditConfiguration  === null) {
+			if(self.cancelEditConfigurations  === null) {
 				commonVariables.navListener.getMyObj(commonVariables.configuration, function(retVal) {
-					self.cancelEditConfiguration = retVal;
-					Clazz.navigationController.push(self.cancelEditConfiguration, true, true);
+					self.cancelEditConfigurations = retVal;
+					Clazz.navigationController.push(self.cancelEditConfigurations, true, true);
 				});
 			} else {
-				Clazz.navigationController.push(self.cancelEditConfiguration, true, true);
+				Clazz.navigationController.push(self.cancelEditConfigurations, true, true);
 			}
 		},
 		
@@ -114,11 +114,12 @@ define(["configuration/api/configurationAPI"], function() {
 				self.bcheck = true;
 				header.webserviceurl = commonVariables.webserviceurl+commonVariables.configuration+"/types?customerId="+customerId+"&userId="+userId+"&techId="+techId;
 			} else if (action === "delete") {
+				self.bcheck = true;
 				header.requestMethod = "DELETE";
 				header.webserviceurl = commonVariables.webserviceurl+commonVariables.configuration+"/deleteEnv?appDirName="+appDirName+"&envName="+deleteEnv;
 			} else if (action === "template") {
 					self.bcheck = true;
-					header.webserviceurl = commonVariables.webserviceurl+commonVariables.configuration+"/settingsTemplate?customerId="+customerId+"&userId="+userId+"&type="+deleteEnv;
+					header.webserviceurl = commonVariables.webserviceurl+commonVariables.configuration+"/settingsTemplate?appDirName="+appDirName+"&customerId="+customerId+"&userId="+userId+"&type="+deleteEnv;
 			} else if (action === "saveEnv") {
 					header.requestMethod = "POST";
 					header.requestPostBody = JSON.stringify(configRequestBody);
@@ -135,7 +136,7 @@ define(["configuration/api/configurationAPI"], function() {
 			return header;
 		},
 		
-		constructHtml : function(configTemplate, configuration){
+		constructHtml : function(configTemplates, configuration, currentConfig){
 			
 			var htmlTag = "";
 			var key = "";
@@ -148,8 +149,10 @@ define(["configuration/api/configurationAPI"], function() {
 			var multiple = "";
 			var checked = "";
 			var configProperties = "";
+			var bCheck = false;
+			var configTemplate = configTemplates.data.settingsTemplate;
 			
-			if (configTemplate.data.length !== 0) {
+			if (configTemplate.length !== 0) {
 				var content = "";
 				var configName = "";
 				var configDesc = "";
@@ -158,29 +161,43 @@ define(["configuration/api/configurationAPI"], function() {
 					configDesc = configuration.desc;
 				}
 				if ($.isEmptyObject(self.configTemName)) {
-					self.configTemName.push(configTemplate.data.name);
+					self.configTemName.push(configTemplate.name);
 				} else {
-					var found = $.inArray(configTemplate.data.name, self.configTemName) > -1;
+					var found = $.inArray(configTemplate.name, self.configTemName) > -1;
 					if (found === false) {
-						self.configTemName.push(configTemplate.data.name);
+						self.configTemName.push(configTemplate.name);
 					} else {
 						self.count++;
+						$("tbody[name=ConfigurationLists]").children('tr.row_bg').each(function(){
+							if(currentConfig === 'Server') {
+								if($(this).attr('configType') === currentConfig) {
+									bCheck = true;
+								}
+							}
+							
+							if(currentConfig === 'Database') {
+								if($(this).attr('configType') === currentConfig) {
+									bCheck = true;
+								}
+							}
+						});
 					}
 				}
 				
 				if (self.count == 0) {
 					self.count = "";
 				}
-				var headerTr = '<tr type="'+configTemplate.data.name+self.count+'" class="row_bg"><td colspan="3">' + configTemplate.data.name + '</td><td colspan="3">'+'<a href="javascript:;" name="removeConfig"><img src="themes/default/images/helios/close_icon.png" border="0" alt="" class="flt_right"/></a></td></tr>';
+				
+				var headerTr = '<tr type="'+configTemplate.name+self.count+'" class="row_bg" configType="'+configTemplate.name+'"><td colspan="3">' + configTemplate.name + '</td><td colspan="3">'+'<a href="javascript:;" name="removeConfig"><img src="themes/default/images/helios/close_icon.png" border="0" alt="" class="flt_right"/></a></td></tr>';
 				content = content.concat(headerTr);
-				var defaultTd = '<tr name="'+configTemplate.data.name+'" class="'+configTemplate.data.name+self.count+'"><td class="labelTd">Name <sup>*</sup></td><td><input type="text" class="configName" value="'+configName+'" placeholder= "Configuration Name"/></td><td class="labelTd">Description</td><td><input type="text" class="configDesc" value="'+configDesc+'" placeholder= "Configuration Description"/></td>';
+				var defaultTd = '<tr name="'+configTemplate.name+'" class="'+configTemplate.name+self.count+'"><td class="labelTd">Name <sup>*</sup></td><td><input type="text" id="Config'+configTemplate.name+self.count+'" mandatory="true" class="configName" value="'+configName+'" placeholder= "Configuration Name"/></td><td class="labelTd">Description</td><td><input type="text" class="configDesc" value="'+configDesc+'" placeholder= "Configuration Description"/></td>';
 				content = content.concat(defaultTd);
 				var count = 2;
 				var i = 2;
 				if (configuration.properties !== undefined) {
 					configProperties = configuration.properties;
 				}
-				$.each(configTemplate.data.properties, function(index, value) {
+				$.each(configTemplate.properties, function(index, value) {
 					var key = value.key;
 					var label = value.name;
 					var type = value.type;
@@ -192,18 +209,20 @@ define(["configuration/api/configurationAPI"], function() {
 					}
 					
 					var mandatoryCtrl = "";
+					var required = false;
 					if (value.required) {
 						mandatoryCtrl = ' <sup>*</sup>';
+						required = true;
 					}
 					var control = "";
 					if  (count % 3 == 0) {
-						control = '<tr name="'+configTemplate.data.name+'" class="'+configTemplate.data.name+self.count+'"><td class="labelTd">' + label + mandatoryCtrl + '</td><td>';
+						control = '<tr name="'+configTemplate.name+'" class="'+configTemplate.name+self.count+'"><td class="labelTd">' + label + mandatoryCtrl + '</td><td>';
 					} else {
 						control = '<td class="labelTd">' + label + mandatoryCtrl + '</td><td>';
 					}
 					var inputCtrl = "";
 					if (value.possibleValues !== null &&  value.possibleValues.length !== 0) {
-						inputCtrl = '<select class="'+configTemplate.data.name+self.count+'Configuration" name="' + value.key + '">';
+						inputCtrl = '<select mandatory="'+required+'" class="'+configTemplate.name+self.count+'Configuration" name="' + value.key + '">';
 						var possibleValues = value.possibleValues;
 						var options = "";
 						for (j in possibleValues) {
@@ -220,23 +239,26 @@ define(["configuration/api/configurationAPI"], function() {
 						}
 						//inputCtrl = inputCtrl.concat("</tr>");
 					} else if (type == "Password") {
-						inputCtrl = '<input value="'+ configValue +'" class="'+configTemplate.data.name+self.count+'Configuration" name="'+key+'" type="password" placeholder=""/>';
+						inputCtrl = '<input value="'+ configValue +'" class="'+configTemplate.name+self.count+'Configuration" name="'+key+'" mandatory="'+required+'" type="password" placeholder=""/>';
 					} else if (type == "FileType") {
 						inputCtrl = '<div id="'+key+'file-uploader" class="file-uploader" propTempName="'+key+'"></div>';
 					} else {
-						inputCtrl = '<input value="'+ configValue +'" class="'+configTemplate.data.name+self.count+'Configuration" name="'+key+'" type="text" placeholder=""/>';
+						inputCtrl = '<input mandatory="'+required+'" value="'+ configValue +'" class="'+configTemplate.name+self.count+'Configuration" name="'+key+'" temp="'+configTemplate.name+key+self.count+'" type="text" placeholder=""/>';
 					}
 					control = control.concat(inputCtrl);
 					content = content.concat(control);
 					i = count++;
 				});
-				$("tbody[name=ConfigurationLists]").append(content);
+				if (bCheck === false) {
+					$("tbody[name=ConfigurationLists]").append(content);
+				}
 				$("a[name=removeConfig]").unbind("click");
-				self.removeConfiguation();
+				self.removeConfiguration();
+				self.spclCharValidation();
 			}
 		},
 			
-		htmlForOhter : function(value) {
+		htmlForOther : function(value) {
 			var self = this, headerTr, content = '', textBox, apiKey = "", keyValue = "", type="Other", addIcon = '<img src="themes/default/images/helios/plus_icon.png" border="0" alt="">';
 				if (value !== null && value !== '') {
 					type = value.type;
@@ -257,9 +279,12 @@ define(["configuration/api/configurationAPI"], function() {
 				$("tbody[name=ConfigurationLists]").append(content);
 				if (value !== null && value !== '') {
 					$("tr.otherConfig:last").find("a[name=addOther]").html(addIcon);
+					if ($("tr.otherConfig").length === 1) {
+						$("a[name=removeOther]").html('');
+					}
 				}
 				$("a[name=removeConfig]").unbind("click");
-				self.removeConfiguation();
+				self.removeConfiguration();
 				self.addClick();
 				self.removeClick();
 		},
@@ -296,7 +321,7 @@ define(["configuration/api/configurationAPI"], function() {
 			});
 		},
 		
-		addEnvrEvent : function() {
+		addEnvEvent : function() {
 			var self = this;
 			var envName = $("input[name=envName]").val();
 			var envDesc = $("input[name=envDesc]").val();
@@ -325,7 +350,7 @@ define(["configuration/api/configurationAPI"], function() {
 				}
 				envNameDesc.appliesTo = [""];
 				envNameDesc.defaultEnv = $(value).find("input[name=optionsRadiosfd]").is(':checked');
-				envNameDesc.delete = false;
+				//envNameDesc.delete = false;
 				if (envNameDesc.name !== undefined && envNameDesc.name !== null) {
 					self.envJson.push(envNameDesc);
 				}
@@ -333,18 +358,18 @@ define(["configuration/api/configurationAPI"], function() {
 			callback(self.envJson);
 		},
 		
-		addConfiguation : function(config) {
+		addConfiguration : function(config) {
 			var self=this;
 			if (config !== "Other") {
 				self.getConfigurationList(self.getRequestHeader(self.configRequestBody, "template", config), function(response) {
-					self.constructHtml(response, '');
+					self.constructHtml(response, '', config);
 				});
 			} else {
-				self.htmlForOhter('');
+				self.htmlForOther('');
 			}
 		},
 		
-		removeConfiguation : function() {
+		removeConfiguration : function() {
 			var self = this;
 			$("a[name=removeConfig]").click(function() {
 				var currentRow = $(this).parent().parent().next();
@@ -361,7 +386,7 @@ define(["configuration/api/configurationAPI"], function() {
 			});
 		},
 		
-		UpdateConfig : function() {
+		updateConfig : function() {
 			var self=this, configJson = {}, properties = {};
 			self.configList = [];
 			$.each($(".row_bg"), function(index, value) {
@@ -394,16 +419,82 @@ define(["configuration/api/configurationAPI"], function() {
 			});
 			var envrName = $('input[name=EnvName]').val();
 			self.configRequestBody = self.configList;
-			self.getConfigurationList(self.getRequestHeader(self.configRequestBody, "saveConfig", envrName), function(response) {
-				Clazz.navigationController.jQueryContainer = commonVariables.contentPlaceholder;
-				if(self.configListPage  === null) {
-					commonVariables.navListener.getMyObj(commonVariables.configuration, function(retVal) {
-						self.configListPage = retVal;
+			if(self.validation()) {
+				self.getConfigurationList(self.getRequestHeader(self.configRequestBody, "saveConfig", envrName), function(response) {
+					Clazz.navigationController.jQueryContainer = commonVariables.contentPlaceholder;
+					if(self.configListPage  === null) {
+						commonVariables.navListener.getMyObj(commonVariables.configuration, function(retVal) {
+							self.configListPage = retVal;
+							Clazz.navigationController.push(self.configListPage, true);
+						});
+					} else {
 						Clazz.navigationController.push(self.configListPage, true);
+					}
+				});
+			}
+		},
+		
+		validation : function(){
+			var self = this, bCheck = false;
+			$.each($(".row_bg"), function(index, value) {
+				var type = $(this).attr("type");
+				$("." + type).each(function() {
+					$(this).find("." + type + "Configuration").each(function() {
+						$(".configName").each(function() {
+							var id = $(this).attr("id");
+							var val = $("#"+id).val();
+							if(val == undefined || val == null || $.trim(val) == ""){
+								bCheck = false;
+								$("#"+id).attr('placeholder','Enter Configuration Name');
+								$("#"+id).addClass("errormessage");
+								$("#"+id).focus();
+								return bCheck;
+							} else {
+								bCheck = true;
+							}
+						});
+						if(bCheck == false){
+							return bCheck;
+						}
+						var mandatory = $(this).attr("mandatory");
+						var val = $(this).attr("name");
+						if(mandatory == 'true') {
+							if($(this).val() != undefined && $(this).val() != null && $.trim($(this).val()) != ""){
+								bCheck = true;
+							} else{
+								bCheck = false;
+								var temp = $(this).attr("temp");
+								$("input[temp='"+temp+"']").attr('placeholder','Enter Value');
+								$("input[temp='"+temp+"']").addClass("errormessage");
+								$("input[temp='"+temp+"']").focus();
+								return bCheck;
+							}
+						}
 					});
-				} else {
-					Clazz.navigationController.push(self.configListPage, true);
+					if(bCheck == false){
+						return bCheck;
+					}
+				});
+				if(bCheck == false) {
+					return bCheck;
 				}
+			});
+			
+			return bCheck;
+		},
+		
+		spclCharValidation : function() {
+			var self = this;
+			$("input[name=port]").bind('input propertychange', function (e) {
+				var str = $(this).val();
+				str = str.replace(/[^0-9]+/g, '');
+				$(this).val(str);
+			});
+			
+			$("input[name=host]").bind('input propertychange', function (e) {
+				var str = $(this).val();
+				str = str.replace(/[^a-zA-Z 0-9\.\-\_]+/g, '');
+				$(this).val(str);
 			});
 		},
 		

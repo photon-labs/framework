@@ -42,9 +42,10 @@
                             <td><img src="themes/default/images/helios/buildreport_icon.png" width="15" height="18" border="0" alt=""></td>
                         </tr>
                      </thead>
-                     <tbody>
+                     <tbody class="scrollContent">
                         <tr>
-							<td id="iframePart"></td>
+							<td id="iframePart" colspan="2">
+							</td>
 						</tr>
                      </tbody>
                 </table>

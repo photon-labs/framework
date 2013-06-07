@@ -92,6 +92,7 @@ div, button, img { outline:none; }
     bottom: 0;
     display: none;
     background-color: rgba(0, 0, 0, .35);
+	position:absolute;
     z-index: 1000 !important;
 }
 .widget-mask-main {
@@ -920,6 +921,10 @@ img[name="close"] {
 	padding-bottom:62px !important;
 }
 
+.create_proj table {
+	margin-bottom: 10px;	
+}
+
 .create_proj table tr td input[type=text], .create_proj select {
 	margin-bottom:0px;
 	/*margin-left: 8px !important;*/
@@ -938,7 +943,16 @@ img[name="close"] {
 	color: #747474;
 	text-align:left;
 	border:none;
+	width: 5%;
 }
+
+.errormessage {
+	color: red;
+	border: 1px solid red !important;
+	background: #FC8986 !important;
+	color: #ffffff !important;
+}
+
 
 /*.create_proj table tbody tr:nth-child(-n+3) td {
 	background: none;
@@ -1048,6 +1062,18 @@ img[name="close"] {
 
 .table-striped tbody>tr:nth-child(even)>td {
 	background-color:#f9f9f9;
+}
+
+.btn.dropdown-toggle {
+	margin-bottom: -8px;	
+}
+
+.show-tick.open ul{
+	margin-top: 8px;	
+}
+
+.app_info_img {
+	margin-left: 10px;	
 }
 
 /* *************************************************************************** CSS for Quality selection dropdown ************************************************************************** */
@@ -1837,10 +1863,11 @@ select[name="builtmyself"] {
 	border-radius: 6px;
 	background:#f7f7f7;
 	overflow:hidden;
+	position: fixed;
 }
 
 .build_progress {
-	width: 56%;
+	width: 97%;
 	position:fixed;
 	right: 10px;
 	height:100%;
@@ -2168,6 +2195,19 @@ select[name="builtmyself"] {
 	color:#000;
 }
 
+#schedule_weekly span 
+{
+	padding-left:10px;
+}
+
+#schedule_monthly span {
+	padding-right: 10px;	
+}
+
+#schedule_monthly td:first-child select {
+	width: 60px;	
+}
+
 /* *************************************************************************** STYLES FOR SETTINGS & ADD SETTINGS ************************************************************************** */
 
 .settings_code {
@@ -2268,7 +2308,42 @@ html>body tbody.scrollContent {
 	width: 9%;
 }
 
+.code_content table.unit_result tbody.scrollContent td {
+	width: 6%;
+}
+
 /* ********************************************************************** STYLES FOR QUALITY_UNIT PAGE ************************************************************************************ */
+
+.unit_progress
+{
+	width: 56%;
+	position:fixed;
+	right: 10px;
+	height:72%;
+	float:right;
+	top: auto !important;
+	border: 1px solid #ddd;
+	border-radius: 6px;
+	background:#f7f7f7;
+	word-wrap: break-word; word-break: break-all; white-space: -moz-pre-wrap !important; white-space: -o-pre-wrap;
+}
+
+.unit_info
+{
+	height:100%;
+	float:left;
+	overflow:hidden;
+}
+
+.unit_close
+{
+	position: fixed;
+	margin: 38px 0 0 5px;
+}
+
+.unit_progress table thead tr td:last-child {
+	text-align:right;
+}
 
 .unit_text {
 	float:left;
@@ -2999,10 +3074,85 @@ html>body tbody.scrollContent {
 }
 
 
+/* *************************************************************** STYLES FOR QUALITY_FUNCTIONAL TEST PAGE ************************************************************************************ */
 
+.start_btn
+{
+	float:left;
+	margin: 7px 0px;
+}
 
-/* *************************************************************** STYLES FOR DOWNLOAD PAGE ************************************************************************************ */
+.start_btn input[type="submit"]
+{
+	padding: 4px !important;
+	font-size: 12px;
+}
 
+.start_btn input[type="submit"]:first-child
+{
+	margin-right: 3px;
+}
+
+.node_table
+{
+	margin-bottom:3px !important;
+}
+
+.node_table tr td
+{
+	border-top:none;
+	padding:0px 30px 0px 0px;
+}
+
+.node_table tr td [type="text"]
+{
+	width:178px !important;
+	margin: 3px 0px 7px 0px;
+}
+
+.node_table tr td [type="checkbox"]
+{
+	margin: 0px 6px 3px 2px;
+}
+
+.node_table tr td:last-child
+{
+	padding-right:0px !important;
+}
+
+.browser_table
+{
+	margin-bottom:10px !important;
+	margin-top:5px;
+}
+
+.browser_table tr td
+{
+	padding-bottom: 0px;
+}
+
+.browser_table tr td:last-child img
+{
+	padding: 0px 11px 7px 10px;
+}
+
+.browser_table tr td select
+{
+	width:184px;
+}
+
+.browser_table tr td [type="text"]
+{
+	width:108px;
+}
+
+#node_popup div:last-child [type="button"]:first-child, #hub_popup div:last-child [type="button"]:first-child
+{
+	margin-right:5px;
+}
+
+/* *************************************************************** STYLES FOR WIDGETS ************************************************************************************ */
+/*
 
 .features_box .box_div ul li span {
 padding-top: 12px;
@@ -3019,3 +3169,5 @@ margin-bottom: 10px;
 padding: 4px 6px;
 vertical-align: middle;
 }
+
+*/

@@ -23,11 +23,13 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
+import com.google.gson.Gson;
 import com.photon.phresco.api.ConfigManager;
 import com.photon.phresco.commons.model.ApplicationInfo;
 import com.photon.phresco.commons.model.ArtifactGroup;
 import com.photon.phresco.commons.model.ArtifactGroupInfo;
 import com.photon.phresco.commons.model.ArtifactInfo;
+import com.photon.phresco.commons.model.PropertyTemplate;
 import com.photon.phresco.commons.model.SettingsTemplate;
 import com.photon.phresco.configuration.Configuration;
 import com.photon.phresco.configuration.Environment;
@@ -165,8 +167,9 @@ public class ConfigurationService extends RestBase {
 	@GET
 	@Path ("/settingsTemplate")
 	@Produces (MediaType.APPLICATION_JSON)
-	public Response getSettingsTemplate(@QueryParam("customerId") String customerId, @QueryParam("userId") String userId, @QueryParam("type") String type) {
+	public Response getSettingsTemplate(@QueryParam("appDirName") String appDirName, @QueryParam("customerId") String customerId, @QueryParam("userId") String userId, @QueryParam("type") String type) {
 		ResponseInfo<List<SettingsTemplate>> responseData = new ResponseInfo<List<SettingsTemplate>>();
+		Map<String, Object> templateMap = new HashMap<String, Object>();
 		try {
 			ServiceManager serviceManager = CONTEXT_MANAGER_MAP.get(userId);
 			if(serviceManager == null) {
@@ -174,9 +177,15 @@ public class ConfigurationService extends RestBase {
 	        	return Response.status(Status.BAD_REQUEST).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
 			}
 			SettingsTemplate settingsTemplate = serviceManager.getConfigTemplateByType(customerId, type);
-			ResponseInfo<List<SettingsTemplate>> finalOutput = responseDataEvaluation(responseData, null, "confuguration Template Fetched successfully", settingsTemplate);
+			Map<String, List<String>> downloadInfo = getDownloadInfo(serviceManager, appDirName, userId, type);
+			templateMap.put("settingsTemplate", settingsTemplate);
+			templateMap.put("downloadInfo", downloadInfo);
+			ResponseInfo<List<SettingsTemplate>> finalOutput = responseDataEvaluation(responseData, null, "confuguration Template Fetched successfully", templateMap);
 			return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
 		} catch (PhrescoException e) {
+			ResponseInfo<List<SettingsTemplate>> finalOutput = responseDataEvaluation(responseData, e, "confuguration Template not Fetched", null);
+			return Response.status(Status.BAD_REQUEST).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
+		} catch (Exception e) {
 			ResponseInfo<List<SettingsTemplate>> finalOutput = responseDataEvaluation(responseData, e, "confuguration Template not Fetched", null);
 			return Response.status(Status.BAD_REQUEST).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
 		}
@@ -314,42 +323,29 @@ public class ConfigurationService extends RestBase {
 		return isAlive;
 	}
 	
-	@GET
-	@Path ("/downloadInfo")
-	@Produces (MediaType.APPLICATION_JSON)
-	public Response getDownloadInfos(@QueryParam("appDirName") String appDirName, @QueryParam("userId") String userId, @QueryParam("type") String type) {
-		ResponseInfo<List<ArtifactGroupInfo>> responseData = new ResponseInfo<List<ArtifactGroupInfo>>();
-		try {
-			ApplicationInfo appInfo = FrameworkServiceUtil.getApplicationInfo(appDirName);
-			List<ArtifactGroupInfo> artifactGroupInfos = null;
-			ServiceManager serviceManager = CONTEXT_MANAGER_MAP.get(userId);
-			List<String> verstions = new ArrayList<String>();
-			Map<String, List<String>> nameMap = new HashMap<String, List<String>>();
-			if(serviceManager == null) {
-				ResponseInfo<List<String>> finalOutput = responseDataEvaluation(responseData, null, "UnAuthorized User", null);
-				return Response.status(Status.BAD_REQUEST).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
-			}
-			if(Constants.SETTINGS_TEMPLATE_SERVER.equals(type)) {
-				artifactGroupInfos = appInfo.getSelectedServers();
-			} else if(Constants.SETTINGS_TEMPLATE_DB.equals(type)) {
-				artifactGroupInfos = appInfo.getSelectedDatabases();
-			} if(CollectionUtils.isNotEmpty(artifactGroupInfos)) {
-				for (ArtifactGroupInfo artifactGroupInfo : artifactGroupInfos) {
-					ArtifactGroup artifactGroup = serviceManager.getArtifactGroupInfo(artifactGroupInfo.getArtifactGroupId());
-					List<String> artifactInfoIds = artifactGroupInfo.getArtifactInfoIds();
-					for (String artifactInfoId : artifactInfoIds) {
-						ArtifactInfo artifactInfo = serviceManager.getArtifactInfo(artifactInfoId);
-						verstions.add(artifactInfo.getVersion());
-					}
-					nameMap.put(artifactGroup.getName(), verstions);
+	private Map<String, List<String>> getDownloadInfo(ServiceManager serviceManager, String appDirName,
+			String userId, String type)	throws PhrescoException {
+		ApplicationInfo appInfo = FrameworkServiceUtil.getApplicationInfo(appDirName);
+		List<ArtifactGroupInfo> artifactGroupInfos = null;
+		Map<String, List<String>> nameMap = new HashMap<String, List<String>>();
+		
+		if(Constants.SETTINGS_TEMPLATE_SERVER.equals(type)) {
+			artifactGroupInfos = appInfo.getSelectedServers();
+		} else if(Constants.SETTINGS_TEMPLATE_DB.equals(type)) {
+			artifactGroupInfos = appInfo.getSelectedDatabases();
+		} if(CollectionUtils.isNotEmpty(artifactGroupInfos)) {
+			for (ArtifactGroupInfo artifactGroupInfo : artifactGroupInfos) {
+				ArtifactGroup artifactGroup = serviceManager.getArtifactGroupInfo(artifactGroupInfo.getArtifactGroupId());
+				List<String> artifactInfoIds = artifactGroupInfo.getArtifactInfoIds();
+				List<String> verstions = new ArrayList<String>();
+				for (String artifactInfoId : artifactInfoIds) {
+					ArtifactInfo artifactInfo = serviceManager.getArtifactInfo(artifactInfoId);
+					verstions.add(artifactInfo.getVersion());
 				}
+				nameMap.put(artifactGroup.getName(), verstions);
 			}
-			ResponseInfo<List<ArtifactGroupInfo>> finalOutput = responseDataEvaluation(responseData, null, "Selected " + type + "Info Fetched successfully", nameMap);
-			return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
-		} catch (PhrescoException e) {
-			ResponseInfo<List<String>> finalOutput = responseDataEvaluation(responseData, e, "Information not Available", null);
-			return Response.status(Status.BAD_REQUEST).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
 		}
+		return nameMap;
 	}
 	
 	private String getConfigFileDir(String appDirName) {

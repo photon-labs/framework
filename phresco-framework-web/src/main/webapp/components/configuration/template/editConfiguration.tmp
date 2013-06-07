@@ -12,7 +12,7 @@
 					  				<input type="submit" value="Add Configuration" class="btn btn_style" disabled>
 					  			{{/if}}
 					  		</a>
-						  <div class="dropdown-menu cust_sel fix_height" role="menu" aria-labelledby="drop3">
+						  <div class="dropdown-menu cust_sel fix_height" role="menu" aria-labelledby="drop3" id="configurationListScroll">
 							<ul name="configurations">
 								{{#configType}}
 								<li name="{{this}}"><a href="#">{{this}}</a></li>

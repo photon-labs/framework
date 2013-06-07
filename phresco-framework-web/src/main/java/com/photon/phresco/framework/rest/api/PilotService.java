@@ -12,13 +12,14 @@ import javax.ws.rs.core.Response;
 import com.photon.phresco.commons.FrameworkConstants;
 import com.photon.phresco.commons.model.ApplicationInfo;
 import com.photon.phresco.commons.model.ArtifactGroupInfo;
+import com.photon.phresco.commons.model.ProjectInfo;
 import com.photon.phresco.exception.PhrescoException;
 import com.photon.phresco.service.client.api.ServiceManager;
 import com.sun.jersey.api.client.ClientResponse.Status;
 
 @Path("/pilot")
 public class PilotService extends RestBase {
-
+	
 	@GET
 	@Path("/list")
 	@Produces(MediaType.APPLICATION_JSON)
@@ -62,5 +63,25 @@ public class PilotService extends RestBase {
 		}
 		ResponseInfo<List<ArtifactGroupInfo>> finalOutput = responseDataEvaluation(responseData, null, "Application pilot list not fetched", null);
 		return Response.status(Status.BAD_REQUEST).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
+	}
+	
+	@GET
+	@Path("/prebuilt")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response preBuiltProjects(@QueryParam("userId") String userId, @QueryParam("customerId") String customerId) {
+		ResponseInfo<List<ProjectInfo>> responseData = new ResponseInfo<List<ProjectInfo>>();
+		try {
+			ServiceManager serviceManager = CONTEXT_MANAGER_MAP.get(userId);
+			if(serviceManager == null) {
+				ResponseInfo<List<ProjectInfo>> finalOutput = responseDataEvaluation(responseData, null, "UnAuthorized User", null);
+	        	return Response.status(Status.BAD_REQUEST).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
+			}
+			List<ProjectInfo> preBuilts = serviceManager.getPrebuiltProjects(customerId);
+			ResponseInfo<List<ProjectInfo>> finalOutput = responseDataEvaluation(responseData, null, "Application pilot listed successfully", preBuilts);
+			return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
+		} catch (PhrescoException e) {
+			ResponseInfo<List<ProjectInfo>> finalOutput = responseDataEvaluation(responseData, e, "Application pilot list not fetched", null);
+			return Response.status(Status.BAD_REQUEST).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
+		}
 	}
 }
