@@ -1,5 +1,7 @@
 package com.photon.phresco.framework.rest.api;
 
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import javax.ws.rs.GET;
@@ -8,6 +10,8 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+
+import org.apache.commons.collections.CollectionUtils;
 
 import com.photon.phresco.commons.model.DownloadInfo;
 import com.photon.phresco.commons.model.WebService;
@@ -32,6 +36,9 @@ public class AppInfoConfigs extends RestBase {
 				return Response.status(Status.BAD_REQUEST).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
 			}
 			List<DownloadInfo> downloadInfos = serviceManager.getDownloads(customerId, techId, type, platform);
+			 if (CollectionUtils.isNotEmpty(downloadInfos)) {
+	            	Collections.sort(downloadInfos, sortByNameInAlphaOrder());
+	            }
 			ResponseInfo<List<DownloadInfo>> finalOutput = responseDataEvaluation(responseData, null, " Configuration listed successfully", downloadInfos);
 			return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
 		} catch (PhrescoException e) {
@@ -59,4 +66,14 @@ public class AppInfoConfigs extends RestBase {
 			return Response.status(Status.BAD_REQUEST).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
 		}
 	}
+	
+	  public Comparator sortByNameInAlphaOrder() {
+			return new Comparator() {
+			    public int compare(Object firstObject, Object secondObject) {
+			    	DownloadInfo projectInfo1 = (DownloadInfo) firstObject;
+			    	DownloadInfo projectInfo2 = (DownloadInfo) secondObject;
+			       return projectInfo1.getName().compareToIgnoreCase(projectInfo2.getName());
+			    }
+			};
+		}
 }
