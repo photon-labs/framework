@@ -137,13 +137,23 @@ public class ConfigurationService extends RestBase {
 		ResponseInfo<Environment> responseData = new ResponseInfo<Environment>();
 		try {
 			ConfigManager configManager = new ConfigManagerImpl(new File(configFile));
-			configManager.deleteEnvironment(envName);
-			ResponseInfo<Environment> finalOuptut = responseDataEvaluation(responseData, null, "Environment Deleted successfully", null);
-			return Response.ok(finalOuptut).header("Access-Control-Allow-Origin", "*").build();
+			List<Environment> environments = configManager.getEnvironments(Arrays.asList(envName));
+			if(CollectionUtils.isNotEmpty(environments)) {
+				Environment environment = environments.get(0);
+				if(environment.isDefaultEnv()) {
+					ResponseInfo<Environment> finalOuptut = responseDataEvaluation(responseData, null, "Default Environment can not be deleted", null);
+					return Response.status(Status.EXPECTATION_FAILED).entity(finalOuptut).header("Access-Control-Allow-Origin", "*").build();
+				}
+				configManager.deleteEnvironment(envName);
+				ResponseInfo<Environment> finalOuptut = responseDataEvaluation(responseData, null, "Environment Deleted successfully", null);
+				return Response.ok(finalOuptut).header("Access-Control-Allow-Origin", "*").build();
+			}
 		} catch (ConfigurationException e) {
 			ResponseInfo<Environment> finalOuptut = responseDataEvaluation(responseData, e, "Environment Failed to Delete", null);
 			return Response.status(Status.EXPECTATION_FAILED).entity(finalOuptut).header("Access-Control-Allow-Origin", "*").build();
 		}
+		ResponseInfo<Environment> finalOuptut = responseDataEvaluation(responseData, null, "Environment Not available to Delete", null);
+		return Response.status(Status.EXPECTATION_FAILED).entity(finalOuptut).header("Access-Control-Allow-Origin", "*").build();
 	}
 	
 	@DELETE
@@ -183,10 +193,10 @@ public class ConfigurationService extends RestBase {
 			ResponseInfo<List<SettingsTemplate>> finalOutput = responseDataEvaluation(responseData, null, "confuguration Template Fetched successfully", templateMap);
 			return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
 		} catch (PhrescoException e) {
-			ResponseInfo<List<SettingsTemplate>> finalOutput = responseDataEvaluation(responseData, e, "confuguration Template not Fetched", null);
+			ResponseInfo<List<SettingsTemplate>> finalOutput = responseDataEvaluation(responseData, e, "confuguration Template Not Fetched", null);
 			return Response.status(Status.BAD_REQUEST).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
 		} catch (Exception e) {
-			ResponseInfo<List<SettingsTemplate>> finalOutput = responseDataEvaluation(responseData, e, "confuguration Template not Fetched", null);
+			ResponseInfo<List<SettingsTemplate>> finalOutput = responseDataEvaluation(responseData, e, "confuguration Template Not Fetched", null);
 			return Response.status(Status.BAD_REQUEST).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
 		}
 	}
