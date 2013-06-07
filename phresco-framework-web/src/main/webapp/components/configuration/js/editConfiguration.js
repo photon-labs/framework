@@ -8,12 +8,13 @@ define(["framework/widgetWithTemplate", "configuration/listener/configurationLis
 		configUrl: "components/configuration/config/config.json",
 		name : commonVariables.editConfiguration,
 		configurationlistener : null,
-		cancelEditConfiguationEvent : null,
-		addConfiguationEvent : null,
+		cancelEditConfigurationEvent : null,
+		addConfigurationEvent : null,
 		configRequestBody : null,
 		templateData : {},
 		removeConfiguationEvent : null,
 		configType : null,
+		updateConfigEvent : null,
 		
 		/***
 		 * Called in initialization time of this class 
@@ -40,11 +41,11 @@ define(["framework/widgetWithTemplate", "configuration/listener/configurationLis
 				$.each(response.data.configurations, function(index, value){
 					if (value.type !== "Other") {
 						self.configurationlistener.getConfigurationList(self.configurationlistener.getRequestHeader(self.configRequestBody, "template", value.type), function(response) {
-							self.configurationlistener.constructHtml(response, value);
+							self.configurationlistener.constructHtml(response, value, '');
 						});
 					} else {
 						setTimeout(function(){
-							self.configurationlistener.htmlForOhter(value);
+							self.configurationlistener.htmlForOther(value);
 						},800);
 					}
 				});
@@ -69,12 +70,12 @@ define(["framework/widgetWithTemplate", "configuration/listener/configurationLis
 		
 		registerEvents : function(configurationlistener) {
 			var self=this;
-			self.cancelEditConfiguationEvent = new signals.Signal();
-			self.addConfiguationEvent = new signals.Signal();
-			self.UpdateConfigEvent = new signals.Signal();
-			self.cancelEditConfiguationEvent.add(configurationlistener.cancelEditConfiguation, configurationlistener);
-			self.addConfiguationEvent.add(configurationlistener.addConfiguation, configurationlistener);
-			self.UpdateConfigEvent.add(configurationlistener.UpdateConfig, configurationlistener);
+			self.cancelEditConfigurationEvent = new signals.Signal();
+			self.addConfigurationEvent = new signals.Signal();
+			self.updateConfigEvent = new signals.Signal();
+			self.cancelEditConfigurationEvent.add(configurationlistener.cancelEditConfiguration, configurationlistener);
+			self.addConfigurationEvent.add(configurationlistener.addConfiguration, configurationlistener);
+			self.updateConfigEvent.add(configurationlistener.updateConfig, configurationlistener);
 		},
 
 		/***
@@ -86,17 +87,22 @@ define(["framework/widgetWithTemplate", "configuration/listener/configurationLis
 			$(".tooltiptop").tooltip();
 			
 			$("#cancelEditConfig").click(function() {
-				self.cancelEditConfiguationEvent.dispatch();
+				self.cancelEditConfigurationEvent.dispatch();
 			});
 			
 			$("ul[name=configurations] li").click(function() {
-				self.addConfiguationEvent.dispatch($(this).attr('name'));
+				self.addConfigurationEvent.dispatch($(this).attr('name'));
 			});
 			
 			$("input[name=UpdateConfiguration]").unbind('click');
 			$("input[name=UpdateConfiguration]").click(function() {
-				self.UpdateConfigEvent.dispatch();
+				self.updateConfigEvent.dispatch();
 			});
+			
+			/* $("#configurationListScroll").mCustomScrollbar({
+				autoHideScrollbar:true,
+				theme:"light-thin"
+			}); */
 		}
 	});
 

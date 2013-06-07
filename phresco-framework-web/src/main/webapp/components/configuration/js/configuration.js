@@ -10,7 +10,7 @@ define(["configuration/listener/configurationListener"], function() {
 		configurationAPI : null,
 		configurationlistener : null,
 		editConfigurationEvent : null,
-		addEnvrEvent : null,
+		addEnvEvent : null,
 		saveEnvEvent : null,
 		configRequestBody : {},
 		templateData : {},
@@ -58,11 +58,11 @@ define(["configuration/listener/configurationListener"], function() {
 		registerEvents : function(configurationlistener) {
 			var self=this;
 			self.editConfigurationEvent = new signals.Signal();
-			self.addEnvrEvent = new signals.Signal();
+			self.addEnvEvent = new signals.Signal();
 			self.saveEnvEvent = new signals.Signal();
 			self.cloneEnvEvent = new signals.Signal();
 			self.editConfigurationEvent.add(configurationlistener.editConfiguration, configurationlistener);
-			self.addEnvrEvent.add(configurationlistener.addEnvrEvent, configurationlistener);
+			self.addEnvEvent.add(configurationlistener.addEnvEvent, configurationlistener);
 			self.saveEnvEvent.add(configurationlistener.saveEnvEvent, configurationlistener);
 			self.cloneEnvEvent.add(configurationlistener.cloneEnv, configurationlistener);
 		},
@@ -107,7 +107,7 @@ define(["configuration/listener/configurationListener"], function() {
 				} else {							  
 					var found = $.inArray($("input[name='envName']").val(), arr) > -1;
 					if (found === false) {
-						self.addEnvrEvent.dispatch();
+						self.addEnvEvent.dispatch();
 					}
 					else {
 						$("#errdisplay").show();
