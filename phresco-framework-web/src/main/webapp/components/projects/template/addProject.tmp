@@ -8,7 +8,7 @@
                     <td><span data-i18n="project.create.label.code"></span><sup>*</sup></td>
                     <td><input type="text" name="projectcode" placeholder="Project Code"/></td>
                     <td><span data-i18n="project.create.label.version"></span><sup>*</sup></td>
-                    <td><input type="text" name="projectversion"/></td>
+                    <td><input type="text" name="projectversion" value="1.0"/></td>
                     <td data-i18n="project.create.label.description"></td>
                     <td rowspan="2"><textarea class="popuptextarea" name="projectdescription" data-i18n="[placeholder]project.create.label.description"/></td>
                 </tr>
@@ -28,7 +28,7 @@
 					<td data-i18n="project.create.label.startdate" name="startdate-lbl"></td>
                     <td class="startdate" name="startdateholder"><input name="startdate" type="text" id="startDate"><span class="add-on"><img src="themes/default/images/helios/cal_icon.png" border="0" alt=""></span></td>
                     <td data-i18n="project.create.label.enddate" name="enddate-lbl"></td>
-                    <td class="enddate" name="enddateholder"><input name="enddate" id="endDate" type="text"><span class="add-on"><span class="add-on"><img src="themes/default/images/helios/cal_icon.png" border="0" alt=""></span></span></td>
+                    <td colspan="2" class="enddate" name="enddateholder"><input name="enddate" id="endDate" type="text"><span class="add-on"><span class="add-on"><img src="themes/default/images/helios/cal_icon.png" border="0" alt=""></span></span></td>
                 </tr>
 				{{#if applicationlayerData.techGroups}}
 					<tr class="proj_title">
@@ -72,7 +72,7 @@
                       <td data-i18n="project.create.label.weblayer"></td>	
                       <td name="web" class="web">
                       	  <select name="weblayer" class="weblayer">
-                            <option>Select Web Layer</option>
+                            <option>Select Layer</option>
 							{{#each weblayerData.techGroups}}
 								<option value="{{id}}">{{name}}</option>
 							{{/each}}
@@ -130,7 +130,7 @@
 										</select>
 									</td>
 									<td style="padding-right:0;">
-										  <input type="checkbox"> <font data-i18n="project.create.label.mobile"></font> &nbsp;&nbsp;&nbsp;<input type="checkbox"> <font data-i18n="project.create.label.tablet"></font>&nbsp;&nbsp;&nbsp;
+										  <input type="checkbox" style="display:none;"> <font data-i18n="project.create.label.mobile" style="display:none;"></font> &nbsp;&nbsp;&nbsp;<input type="checkbox" style="display:none;"> <font data-i18n="project.create.label.tablet" style="display:none;"></font>&nbsp;&nbsp;&nbsp;
 										<div class="flt_right">
 											<a href="javascript:;" name="addMobileLayer"><img src="themes/default/images/helios/plus_icon.png"  border="0" alt=""></a> 
 											<a href="javascript:;" name="removeMobileLayer"></a>

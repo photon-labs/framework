@@ -89,11 +89,12 @@ define(["login/api/loginAPI"], function() {
 		},
 		
 		userNameValidation : function(){
-			if($("#username").val() == undefined || $("#username").val() == null || $.trim($("#username").val()) == ""){
+			
+			if ($("#username").val() == undefined || $("#username").val() == null || $.trim($("#username").val()) == ""){
+				$("#username").attr('placeholder','Enter Username');
 				$("#usernameDiv").addClass("loginuser_error");
 				return false;
-			}
-			else{
+			} else { 
 				$("#usernameDiv").removeClass("loginuser_error");
 				return true;
 			}
@@ -101,6 +102,7 @@ define(["login/api/loginAPI"], function() {
 		
 		passwordValidation : function(){
 			if($("#password").val() == undefined || $("#password").val() == null || $.trim($("#password").val()) == ""){
+				$("#password").attr('placeholder','Enter Password');
 				$("#passwordDiv").addClass("loginuser_error");
 				return false;
 			}

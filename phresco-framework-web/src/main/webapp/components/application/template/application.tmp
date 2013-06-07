@@ -23,7 +23,7 @@
                     <td data-i18n="application.edit.technology"></td>
                     <td><input type="text" placeholder="Android Hybrid" name="technology" value="{{techInfo.name}}" readonly/>
 						<input class="tech_ver" type="text" placeholder="4.0.3" name="techVersion" value="{{techInfo.version}}" readonly size="5"/></td>
-                    <td data-i18n="application.edit.pilotproject"></td>
+                    <td></td>
                     <td>   </td>
 					<td colspan="3"></td>
                 </tr>
