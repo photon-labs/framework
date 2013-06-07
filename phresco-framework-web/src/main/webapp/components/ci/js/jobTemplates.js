@@ -111,14 +111,18 @@ define(["ci/listener/ciListener"], function() {
 			});
 		},
 
-		getAction : function(ciRequestBody, action, param) {
+		getAction : function(ciRequestBody, action, param, callback) {
 			var self=this;
 			// Content place holder for the Job template
 			// Clazz.navigationController.jQueryContainer = commonVariables.contentPlaceholder;
 			self.ciListener.listJobTemplate(self.ciListener.getRequestHeader(self.ciRequestBody, action, param), function(response) {
 				if (action === "edit") {
+					// only for edit popup value population
 					self.editEvent.dispatch(response.data);
+				} else if (action === "getAppInfos") {
+					callback(response);
 				} else {
+					// For add, update and delete
 					self.pageRefresh();
 				}
 				// console.log(JSON.stringify(response.data));
@@ -127,14 +131,28 @@ define(["ci/listener/ciListener"], function() {
 		},
 	
 		resetForm: function($form) {
-			$form.find('input:text, input:password, input:file, select, textarea').val('');
+			$form.find('input:text, input:password, input:hidden, input:file, select, textarea').val('');
 			$form.find('input:radio, input:checkbox').removeAttr('checked').removeAttr('selected');
 		},
+
+		constructApplicationsHtml : function(callback) {
+				var self = this;
+				// show applications names in popup
+				self.getAction(self.ciRequestBody, 'getAppInfos', '', function(response) {
+					// empty the applist element
+					$('#appIdsList').empty();
+					$.each(response.data, function(key, value) {
+						$('#appIdsList').append('<input type="checkbox" value="'+ value.name +'" name="appIds">'+ value.name +'<br>');
+					});
+				});
+				callback();
+		},
+
 		/***
 		 * Bind the action listeners. The bindUI() is called automatically after the render is complete 
 		 *
 		 */
-		bindUI : function(){
+		bindUI : function() {
 			var self = this;
 
 			$(".tooltiptop").tooltip();
@@ -148,13 +166,12 @@ define(["ci/listener/ciListener"], function() {
 				// button name change
 				$('input[name=update]').prop("value", "Create");
 				$('input[name=update]').prop("name", "save");
+				// show applications names in popup
+				self.constructApplicationsHtml(function() {});
    				self.opencc(this, $(this).attr('name'));
-   				// need to add applications names
    			});
 
    			// Save job template
-   			//$("input[name=save]").unbind("click");
-   			//$("input[name=save]").click(function() {
    			$('#jobTemplate').on('click', '[name=save]', function(e) {
    				self.addEvent.dispatch(function(response) {
    					self.ciRequestBody = response;
@@ -165,19 +182,22 @@ define(["ci/listener/ciListener"], function() {
    			// Edit job template
    			$("a[name=editpopup]").unbind("click");
 			$("a[name=editpopup]").click(function() {
+				var thisElem = this;
 				//reset the form
 				self.resetForm($('#jobTemplate'));
 				var jobTemplateName = {};
 				var name = $(this).attr('value');
 				jobTemplateName.name = name;
-				// show edit popup
-				self.opencc(this, "jobTemplatePopup");
-				self.getAction(self.configRequestBody, 'edit', jobTemplateName);
+				// Construct applications names
+				self.constructApplicationsHtml(function() {
+					// Restore values
+					self.getAction(self.configRequestBody, 'edit', jobTemplateName);
+					// show edit popup
+					self.opencc(thisElem, "jobTemplatePopup");
+				});
    			});
 
    			// Update job template
-   			//$("input[name=update]").unbind("click");
-   			//$("input[name=update]").click(function() {
    			$('#jobTemplate').on('click', '[name=update]', function(e) {
    				self.updateEvent.dispatch(function(response) {
 					self.ciRequestBody = response;
@@ -190,7 +210,6 @@ define(["ci/listener/ciListener"], function() {
    			$("input[name=delete]").click(function() {
    				var jobTemplateName = {};
 				jobTemplateName.name = $(this).parent().parent().attr('name');
-				jobTemplateName = $.param(jobTemplateName);
 				self.configRequestBody = {};
 				self.getAction(self.configRequestBody, 'delete', jobTemplateName);
    			});
