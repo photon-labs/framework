@@ -96,6 +96,7 @@ public class RepositoryService extends RestBase implements FrameworkConstants {
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response addProjectToRepo(@QueryParam("appDirName") String appDirName, RepoDetail repodetail, @QueryParam("userId") String userId, @QueryParam("projectId") String projectId, @QueryParam("appId") String appId) {
+		System.out.println("daddd" + repodetail);
 		Response response = null;
 		String type = repodetail.getType();
 		if(type.equals(SVN)){
@@ -126,15 +127,57 @@ public class RepositoryService extends RestBase implements FrameworkConstants {
 	@GET
 	@Path("/popupValues")
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response fetchPopUpValues(@QueryParam("appDirName") String appDirName, @QueryParam("action") String action, @QueryParam("userId") String userId) throws PhrescoException {
+	public Response fetchPopUpValues(@QueryParam("appDirName") String appDirName, @QueryParam("action") String action, @QueryParam("userId") String userId) {
 		Response response = null;
-		ApplicationInfo applicationInfo = FrameworkServiceUtil.getApplicationInfo(appDirName);
 		if(action.equals(COMMIT)) {
-			response = repoExistCheckForCommit(applicationInfo, appDirName, action, userId);
+			response = repoExistCheckForCommit(appDirName, action, userId);
 		} else if(action.equals("update")) {
-			response = repoExistCheckForUpdate(applicationInfo, appDirName, action, userId);
+			response = repoExistCheckForUpdate(appDirName, action, userId);
 		}
 		return response;
+	}
+	
+	@POST
+	@Path("/logMessages")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response fetchLogMessages(RepoDetail repodetail) throws PhrescoException {
+		List<String> restrictedLogs = null;
+		ResponseInfo<List<String>> responseData = new ResponseInfo<List<String>>();
+		try {
+			SCMManagerImpl scmi = new SCMManagerImpl();
+			List<String> svnLogMessages = scmi.getSvnLogMessages(repodetail.getRepoUrl(), repodetail.getUserName(), repodetail.getPassword());
+			restrictedLogs = restrictLogs(svnLogMessages);
+		} catch (PhrescoException e) {
+			if (e.getLocalizedMessage().contains("Authorization Realm")) {
+				ResponseInfo<List<String>> finalOutput = responseDataEvaluation(responseData, e, "Invalid Credentials", null);
+				return Response.status(Status.BAD_REQUEST).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
+			} else if (e.getLocalizedMessage().contains("OPTIONS request failed on") || 
+					(e.getLocalizedMessage().contains("PROPFIND") && e.getLocalizedMessage().contains("405 Method Not Allowed")) 
+					|| e.getLocalizedMessage().contains("Repository moved temporarily to") ) {
+				ResponseInfo<List<String>> finalOutput = responseDataEvaluation(responseData, e, "Invalid Url or Repository moved temproarily", null);
+				return Response.status(Status.BAD_REQUEST).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
+			} else {
+				ResponseInfo<List<String>> finalOutput = responseDataEvaluation(responseData, e, "Fetch log message Failure", null);
+				return Response.status(Status.BAD_REQUEST).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
+			}
+		}
+		ResponseInfo<List<String>> finalOutput = responseDataEvaluation(responseData, null, "Log messages returned successfully", restrictedLogs);
+		return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
+	}
+	
+	private List<String> restrictLogs(List<String> svnLogMessages) {
+		List<String> Messages = new ArrayList<String>();
+		if (svnLogMessages.size() > 5) {
+			for(int i = svnLogMessages.size()-5; i<= svnLogMessages.size()-1; i++) {
+				Messages.add(svnLogMessages.get(i));
+			} 
+		} else {
+			for(int i = 0; i<= svnLogMessages.size()-1; i++) {
+				Messages.add(svnLogMessages.get(i));
+			} 
+		}
+		return Messages;
 	}
 
 	private Response importSVNApplication(String type, RepoDetail repodetail) {
@@ -454,45 +497,61 @@ public class RepositoryService extends RestBase implements FrameworkConstants {
 		return repoType;
 	}
 
-	private Response repoExistCheckForCommit(ApplicationInfo applicationInfo, String appDirName, String action, String userId) throws PhrescoException {
+	private Response repoExistCheckForCommit( String appDirName, String action, String userId) {
 		RepoDetail repodetail = new RepoDetail();
 		boolean setRepoExistForCommit = false;
-		ResponseInfo responseData = new ResponseInfo();
-		String repoUrl = getConnectionUrl(applicationInfo);
-		if(repoUrl.startsWith("bk")) {
-			setRepoExistForCommit = true;
-			repodetail.setRepoExist(setRepoExistForCommit);
-		} else if(repoUrl.endsWith(".git")) {	
-			setRepoExistForCommit = checkGitProject(applicationInfo, setRepoExistForCommit);
-			repodetail.setRepoExist(setRepoExistForCommit);
-			repodetail = updateProjectPopup(appDirName, action, repodetail);
-		} else if (!setRepoExistForCommit) {
-			repodetail = updateProjectPopup(appDirName, action, repodetail);
-		}
-		repodetail.setUserName(userId);
-		repodetail.setType(getRepoType(repoUrl));
-		repodetail.setRepoUrl(repoUrl);
+		ResponseInfo<RepoDetail> responseData = new ResponseInfo<RepoDetail>();
+		try {
+			ApplicationInfo applicationInfo = FrameworkServiceUtil.getApplicationInfo(appDirName);
+			String repoUrl = getConnectionUrl(applicationInfo);
+			if(repoUrl.startsWith("bk")) {
+				setRepoExistForCommit = true;
+				repodetail.setRepoExist(setRepoExistForCommit);
+			} else if(repoUrl.endsWith(".git")) {
+				setRepoExistForCommit = checkGitProject(applicationInfo, setRepoExistForCommit);
+				repodetail.setRepoExist(setRepoExistForCommit);
+				repodetail = updateProjectPopup(appDirName, action, repodetail);
+			} else if (!setRepoExistForCommit) {
+				repodetail = updateProjectPopup(appDirName, action, repodetail);
+			}
+			
+			repodetail.setUserName(userId);
+			repodetail.setType(getRepoType(repoUrl));
+			repodetail.setRepoUrl(repoUrl);
+			if(!repodetail.isRepoExist()) {
+				ResponseInfo<RepoDetail> finalOutput = responseDataEvaluation(responseData, null, "Repo Doesnot Exist for commit", repodetail);
+				return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
+			}
 
-		ResponseInfo finalOutput = responseDataEvaluation(responseData, null, "Repo Exist for commit", repodetail);
+		} catch (PhrescoException e) {
+			ResponseInfo<RepoDetail> finalOutput = responseDataEvaluation(responseData, e, "Repo Doesnot Exist", null);
+			return Response.status(Status.BAD_REQUEST).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
+		}
+		ResponseInfo<RepoDetail> finalOutput = responseDataEvaluation(responseData, null, "Repo Exist for commit", repodetail);
 		return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
 	}
 
-	private Response repoExistCheckForUpdate(ApplicationInfo applicationInfo, String appDirName, String action, String userId) {
+	private Response repoExistCheckForUpdate(String appDirName, String action, String userId) {
 		RepoDetail repodetail = new RepoDetail();
-		ResponseInfo responseData = new ResponseInfo();
+		ResponseInfo<RepoDetail> responseData = new ResponseInfo<RepoDetail>();
 		try {
+			ApplicationInfo applicationInfo = FrameworkServiceUtil.getApplicationInfo(appDirName);
 			String repoUrl = getConnectionUrl(applicationInfo);
 			repodetail = updateProjectPopup(appDirName, action, repodetail);
 			repodetail.setType(getRepoType(repoUrl));
 			repodetail.setRepoUrl(repoUrl);
 			repodetail.setUserName(userId);
-
+			if(!repodetail.isRepoExist()) {
+				ResponseInfo<RepoDetail> finalOutput = responseDataEvaluation(responseData, null, "Repo Doesnot Exist for update", repodetail);
+				return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
+			}
+			
 		} catch (PhrescoException e) {
-			ResponseInfo finalOutput = responseDataEvaluation(responseData, e, "Repo Doesnot Exist", null);
+			ResponseInfo<RepoDetail> finalOutput = responseDataEvaluation(responseData, e, "Repo Doesnot Exist", null);
 			return Response.status(Status.BAD_REQUEST).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
 		}
 
-		ResponseInfo finalOutput = responseDataEvaluation(responseData, null, "Repo Exist for update", repodetail);
+		ResponseInfo<RepoDetail> finalOutput = responseDataEvaluation(responseData, null, "Repo Exist for update", repodetail);
 		return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
 	}
 
