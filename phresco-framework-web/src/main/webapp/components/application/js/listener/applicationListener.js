@@ -127,15 +127,20 @@ define(["application/api/applicationAPI"], function() {
 			var self=this, option, version, versionplaceholder;
 			version = object.parents("td[name='servers']");
 			versionplaceholder = $(version).siblings("td[name='version']").children("select[name="+type+"_version]");
-
-			var applicationlayerData = self.applicationAPI.localVal.getJson(technology);
-			$.each(applicationlayerData, function(index, value){
-				if(value.id === currentData){
-					self.getOptions(value, versionplaceholder, function(){
-						$(versionplaceholder).selectpicker('refresh');
-					});
-				}
-			});
+			if(currentData === "0"){
+				$(versionplaceholder).html('');
+				$("<option>").val('Server Version').text('Select Version').appendTo(versionplaceholder);	
+				$(versionplaceholder).selectpicker('refresh');
+			}else {
+				var applicationlayerData = self.applicationAPI.localVal.getJson(technology);
+				$.each(applicationlayerData, function(index, value){
+					if(value.id === currentData){
+						self.getOptions(value, versionplaceholder, function(){
+							$(versionplaceholder).selectpicker('refresh');
+						});
+					}
+				});
+			}	
 		},
 
 		getOptions : function(appData, versionplaceholder, callback){
