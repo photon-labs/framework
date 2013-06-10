@@ -313,6 +313,29 @@ define(["ci/api/ciAPI"], function() {
 			var environment = $("select[name=environments]").val();
 			dataObj.environment = environment;
 			callback(dataObj);
+		},
+
+
+		getDynamicParams : function(thisObj) {
+			var self = this;
+			//commonVariables.goal = commonVariables.ciPhase;
+			commonVariables.goal = commonVariables.unitTestGoal;
+			commonVariables.appDirName = "wwwww-Java WebService";
+
+			commonVariables.navListener.getMyObj(commonVariables.dynamicPage, function(dynamicPageObject) {
+				self.dynamicPageListener = new Clazz.com.components.dynamicPage.js.listener.DynamicPageListener();
+				dynamicPageObject.getHtml(false, function(response) {
+					if ("No parameters available" == response) {
+						console.log("No parameters available ");
+					} else {
+						console.log("Parameters available ");
+						$("#dynamicContent").html(response);
+						dynamicPageObject.showParameters();
+						self.dynamicPageListener.controlEvent();
+						commonVariables.openccmini(thisObj, $(thisObj).attr("name"));
+					}
+				});
+			});
 		}
 		
 	});

@@ -112,7 +112,7 @@ define(["ci/listener/ciListener"], function() {
 		},
 
 		getAction : function(ciRequestBody, action, param, callback) {
-			var self=this;
+			var self = this;
 			// Content place holder for the Job template
 			// Clazz.navigationController.jQueryContainer = commonVariables.contentPlaceholder;
 			self.ciListener.listJobTemplate(self.ciListener.getRequestHeader(self.ciRequestBody, action, param), function(response) {

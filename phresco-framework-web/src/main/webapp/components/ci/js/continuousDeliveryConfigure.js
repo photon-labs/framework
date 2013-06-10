@@ -13,6 +13,7 @@ define(["framework/widgetWithTemplate", "ci/listener/ciListener"], function() {
 		onLoadEnvironmentEvent : null,
 		onConfigureEvent : null,
 		onLoadDynamicPageEvent : null,
+		onDynamicPageEvent : null,
 		onSaveEvent : null,
 	
 		/***
@@ -43,8 +44,13 @@ define(["framework/widgetWithTemplate", "ci/listener/ciListener"], function() {
 			 	self.onLoadEnvironmentEvent = new signals.Signal();
 			 }
 
+			 if (self.onDynamicPageEvent === null) {
+				self.onDynamicPageEvent = new signals.Signal();
+			 }
+				
 			 // Trigger registered events
 			 self.onLoadEnvironmentEvent.add(ciListener.loadEnvironmentEvent, ciListener);
+			 self.onDynamicPageEvent.add(self.ciListener.getDynamicParams, self.ciListener);
 		},
 		/***
 		 * Called in once the login is success
@@ -135,7 +141,9 @@ define(["framework/widgetWithTemplate", "ci/listener/ciListener"], function() {
 			$("#sortable1 li.ui-state-default a").hide();
 			
 			$("a[name=cont_delivery], a[name=code_build]").click(function() {
-   				commonVariables.openccmini(this, $(this).attr("name"));
+				// Show popup as well as dynamic popup
+   				//commonVariables.openccmini(this, $(this).attr("name"));
+   				self.onDynamicPageEvent.dispatch(this);
    			});
 		}
 	});
