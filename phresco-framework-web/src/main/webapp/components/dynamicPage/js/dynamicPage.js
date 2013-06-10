@@ -37,9 +37,9 @@ define(["framework/widgetWithTemplate", "dynamicPage/listener/dynamicPageListene
 		},
 		
 		
-		getHtml : function(callback){
+		getHtml : function(showLoading, callback){
 			var self = this;
-			self.dynamicPageListener.getServiceContent(callback);
+			self.dynamicPageListener.getServiceContent(showLoading, callback);
 		},
 		
 		showParameters : function() {

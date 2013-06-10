@@ -5,7 +5,6 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.InetAddress;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
@@ -43,7 +42,6 @@ import com.photon.phresco.exception.ConfigurationException;
 import com.photon.phresco.exception.PhrescoException;
 import com.photon.phresco.framework.FrameworkConfiguration;
 import com.photon.phresco.framework.PhrescoFrameworkFactory;
-import com.photon.phresco.framework.actions.applications.DynamicParameterAction;
 import com.photon.phresco.framework.commons.FrameworkUtil;
 import com.photon.phresco.framework.model.CodeValidationReportType;
 import com.photon.phresco.framework.param.impl.IosTargetParameterImpl;
@@ -72,8 +70,11 @@ public class ParameterService extends RestBase implements FrameworkConstants {
 		try {
 			List<Parameter> parameter = null;
 			String filePath = getInfoFileDir(appDirName, goal);
-			File file = new File(filePath);
-			MojoProcessor mojo = new MojoProcessor(file);
+			MojoProcessor mojo = new MojoProcessor(new File(filePath));
+			if ("functional-test".equals(goal)) {
+				String functionalTestFramework = FrameworkServiceUtil.getFunctionalTestFramework(appDirName);
+				goal = goal + "-" + functionalTestFramework;
+			}
 			parameter = mojo.getParameters(goal);
 			ResponseInfo<List<Parameter>> finalOutput = responseDataEvaluation(responseData, null, "Parameter returned successfully", parameter);
 			return Response.ok(finalOutput).header("Access-Control-Allow-Origin", "*").build();
@@ -113,10 +114,13 @@ public class ParameterService extends RestBase implements FrameworkConstants {
 			ApplicationInfo appInfo = FrameworkServiceUtil.getApplicationInfo(appDirName);
 			String filePath = getInfoFileDir(appDirName, goal);
 			MojoProcessor processor = new MojoProcessor(new File(filePath));
-			possibleValues = getPossibleValues(processor, goal, key, value, appInfo, customerId);
+			possibleValues = getPossibleValues(processor, goal, key, value, appInfo, customerId, appDirName);
 			ResponseInfo<PossibleValues> finalOutput = responseDataEvaluation(responseData, null, "Dependency returned successfully", possibleValues);
 			return Response.ok(finalOutput).header("Access-Control-Allow-Origin", "*").build();
 		} catch (PhrescoException e) {
+			ResponseInfo<PossibleValues> finalOutput = responseDataEvaluation(responseData, e, "Dependency not fetched", null);
+			return Response.status(Status.BAD_REQUEST).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
+		} catch (PhrescoPomException e) {
 			ResponseInfo<PossibleValues> finalOutput = responseDataEvaluation(responseData, e, "Dependency not fetched", null);
 			return Response.status(Status.BAD_REQUEST).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
 		}
@@ -131,7 +135,7 @@ public class ParameterService extends RestBase implements FrameworkConstants {
 		try {
 			int responseCode = setSonarServerStatus(request);
 			if (responseCode != 200) {
-				ResponseInfo<PossibleValues> finalOutput = responseDataEvaluation(responseData, null, "Sonar1 not yet Started", null);
+				ResponseInfo<PossibleValues> finalOutput = responseDataEvaluation(responseData, null, "Sonar not yet Started", null);
 				return Response.status(Status.BAD_REQUEST).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
 			}
 			String infoFileDir = getInfoFileDir(appDirName, goal);
@@ -324,7 +328,11 @@ public class ParameterService extends RestBase implements FrameworkConstants {
 	}
 
 	private static PossibleValues getPossibleValues(MojoProcessor processor, String goal, String key, String value,
-			ApplicationInfo appInfo, String customerId) throws PhrescoException {
+			ApplicationInfo appInfo, String customerId, String appDirName) throws PhrescoException, PhrescoPomException {
+		if ("functional-test".equals(goal)) {
+			String functionalTestFramework = FrameworkServiceUtil.getFunctionalTestFramework(appDirName);
+			goal = goal + "-" + functionalTestFramework;
+		}
 		Parameter parameter = processor.getParameter(goal, key);
 		if(StringUtils.isNotEmpty(parameter.getDependency())) {
 			parameter = processor.getParameter(goal, parameter.getDependency());

@@ -209,4 +209,8 @@ public class FrameworkServiceUtil implements Constants, FrameworkConstants {
 		.append(BUILD_DIR);
         return builder.toString();
     }
+	
+	public static String getFunctionalTestFramework(String appDirName) throws PhrescoException, PhrescoPomException {
+		return getPomProcessor(appDirName).getProperty(POM_PROP_KEY_FUNCTEST_SELENIUM_TOOL);
+	}
 }

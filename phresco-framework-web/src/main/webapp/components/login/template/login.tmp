@@ -41,6 +41,7 @@
 							<span data-i18n="login.label.txt.remember;"></span>
 						</label>
 						<div class="flt_right"><input type="button" id="login" data-i18n="[value]login.label.btn.login;" class="btn btn_style"></div>
+						<div id="contex_er" class="context_txt" style="display:none">Sample context : /Photon</div>
 					</div>
                 </form>
 	    		<!--login_right div ends here -->

@@ -1,8 +1,10 @@
 package com.photon.phresco.framework.rest.api;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
@@ -40,6 +42,7 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
+import com.google.gson.Gson;
 import com.photon.phresco.commons.FileListFilter;
 import com.photon.phresco.commons.FrameworkConstants;
 import com.photon.phresco.configuration.Configuration;
@@ -53,6 +56,7 @@ import com.photon.phresco.framework.model.TestReportResult;
 import com.photon.phresco.framework.model.TestSuite;
 import com.photon.phresco.framework.rest.api.util.FrameworkServiceUtil;
 import com.photon.phresco.util.Constants;
+import com.photon.phresco.util.HubConfiguration;
 import com.photon.phresco.util.ServiceConstants;
 import com.photon.phresco.util.Utility;
 import com.phresco.pom.exception.PhrescoPomException;
@@ -101,8 +105,8 @@ public class QualityService extends RestBase implements ServiceConstants, Framew
 		String testCasePath = getTestCasePath(appDirName, testType, techReport);
 		List<TestSuite> testSuites = testSuites(appDirName, moduleName, testType, moduleName, techReport, testSuitePath, testCasePath, "All");
 		if(CollectionUtils.isEmpty(testSuites)) {
-			ResponseInfo<Configuration> finalOuptut = responseDataEvaluation(responseData, null, "Test Result "+ techReport + " not available", testSuites);
-			return Response.status(Status.EXPECTATION_FAILED).entity(finalOuptut).header("Access-Control-Allow-Origin", "*").build();
+			ResponseInfo<Configuration> finalOuptut = responseDataEvaluation(responseData, null, "Test Result not available", testSuites);
+			return Response.status(Status.OK).entity(finalOuptut).header("Access-Control-Allow-Origin", "*").build();
 		}
 		ResponseInfo<List<String>> finalOutput = responseDataEvaluation(responseData, null, "Test Suites listed successfully", testSuites);
 		return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
@@ -114,15 +118,16 @@ public class QualityService extends RestBase implements ServiceConstants, Framew
 		List<TestSuite> suites = new ArrayList<TestSuite>();
 		try {
 			String testSuitesMapKey = appDirName + testType + module + techReport;
-			if(MapUtils.isEmpty(testSuiteMap)) {
-				String testResultPath = getTestResultPath(appDirName, moduleName, testType, techReport);
-				File[] testResultFiles = getTestResultFiles(testResultPath);
-				if(ArrayUtils.isEmpty(testResultFiles)) {
-					return null;
-				}
-				getTestSuiteNames(appDirName, testType, moduleName, techReport, testResultPath, testSuitePath);
+			String testResultPath = getTestResultPath(appDirName, moduleName, testType, techReport);
+			File[] testResultFiles = getTestResultFiles(testResultPath);
+			if(ArrayUtils.isEmpty(testResultFiles)) {
+				return null;
 			}
+			getTestSuiteNames(appDirName, testType, moduleName, techReport, testResultPath, testSuitePath);
 			Map<String, NodeList> testResultNameMap = testSuiteMap.get(testSuitesMapKey);
+			if (MapUtils.isEmpty(testResultNameMap)) {
+				return null;
+			}
 //			NodeList testSuites = testResultNameMap.get(testSuite);
 			Map<String, String> testSuitesResultMap = new HashMap<String, String>();
 			float totalTestSuites = 0;
@@ -212,6 +217,58 @@ public class QualityService extends RestBase implements ServiceConstants, Framew
 		}
 	}
 	
+	@GET
+	@Path("/functionalFramework")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response getFunctionalTestFramework(@QueryParam("appDirName") String appDirName) {
+		ResponseInfo<Map<String, Object>> responseData = new ResponseInfo<Map<String, Object>>();
+		try {
+			Map<String, Object> map = new HashMap<String, Object>();
+			String functionalTestFramework = FrameworkServiceUtil.getFunctionalTestFramework(appDirName);
+			map.put("functionalFramework", functionalTestFramework);
+			if (SELENIUM_GRID.equalsIgnoreCase(functionalTestFramework)) {
+                HubConfiguration hubConfig = getHubConfiguration(appDirName);
+                if (hubConfig != null) {
+                    String host = hubConfig.getHost();
+                    int port = hubConfig.getPort();
+                    boolean isConnectionAlive = Utility.isConnectionAlive(HTTP_PROTOCOL, host, port);
+                    map.put("hubStatus", isConnectionAlive);
+                }
+            }
+			ResponseInfo<Map<String, Object>> finalOutput = responseDataEvaluation(responseData, null, "Functional test framework fetched Successfully", map);
+			return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
+		} catch (Exception e) {
+			ResponseInfo<Map<String, Object>> finalOutput = responseDataEvaluation(responseData, e, "Failed to get the functional test framework", null);
+			return Response.status(Status.BAD_REQUEST).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
+		}
+	}
+	
+	private HubConfiguration getHubConfiguration(String appDirName) throws PhrescoException {
+	    BufferedReader reader = null;
+	    HubConfiguration hubConfig = null;
+	    try {
+	        String functionalTestDir = FrameworkServiceUtil.getFunctionalTestDir(appDirName);
+	        StringBuilder sb = new StringBuilder(FrameworkServiceUtil.getApplicationHome(appDirName));
+	        sb.append(functionalTestDir)
+	        .append(File.separator)
+	        .append(Constants.HUB_CONFIG_JSON);
+	        File hubConfigFile = new File(sb.toString());
+	        Gson gson = new Gson();
+	        reader = new BufferedReader(new FileReader(hubConfigFile));
+	        hubConfig = gson.fromJson(reader, HubConfiguration.class);
+	    } catch (PhrescoException e) {
+	        throw new PhrescoException(e);
+	    } catch (PhrescoPomException e) {
+	        throw new PhrescoException(e);
+	    } catch (FileNotFoundException e) {
+	        throw new PhrescoException(e);
+	    } finally {
+	        Utility.closeReader(reader);
+	    }
+
+	    return hubConfig;
+	}
+	
 	private String getTestCasePath(String appDirName, String testType, String techReport) throws PhrescoException {
 		String testCasePath = "";
 		if(testType.equals("unit")) {
@@ -222,7 +279,9 @@ public class QualityService extends RestBase implements ServiceConstants, Framew
 			}
 		} else if(testType.equals("functional")) {
 			testCasePath = getFunctionalTestCasePath(appDirName);
-		} 
+		} else if(testType.equals("component")) {
+			testCasePath = getComponentTestCasePath(appDirName);
+		}
 		return testCasePath;
 	}
 	
@@ -527,7 +586,9 @@ public class QualityService extends RestBase implements ServiceConstants, Framew
 		if(testType.equals("unit")) {
 			testResultPath = getUnitTestResultPath(appDirName, moduleName, techReport);
 		} else if(testType.equals("functional")) {
-			getFunctionalTestResultPath(appDirName, moduleName);
+			testResultPath = getFunctionalTestResultPath(appDirName, moduleName);
+		} else if(testType.equals("component")) {
+			testResultPath = getComponentTestResultPath(appDirName, moduleName);
 		} else if(testType.equals("performance")) {
 			
 		} else if(testType.equals("load")) {
@@ -544,6 +605,8 @@ public class QualityService extends RestBase implements ServiceConstants, Framew
 			} else {
 				testSuitePath = getUnitTestSuitePath(appDirName);
 			}
+		} else if (testType.equals("component")) {
+			testSuitePath = getComponentTestSuitePath(appDirName);
 		} else if (testType.equals("functional")) {
 			testSuitePath = getFunctionalTestSuitePath(appDirName);
 		} else if (testType.equals("performance")) {
@@ -597,6 +660,23 @@ public class QualityService extends RestBase implements ServiceConstants, Framew
         return sb.toString();
     }
 	
+	private String getComponentTestResultPath(String appDirName, String moduleName) throws PhrescoException {
+
+		StringBuilder sb = new StringBuilder();
+		try {
+			sb.append(Utility.getProjectHome() + appDirName);
+			if (StringUtils.isNotEmpty(moduleName)) {
+				sb.append(File.separatorChar);
+				sb.append(moduleName);
+			}
+			sb.append(getComponentTestReportDir(appDirName));
+		} catch (PhrescoException e) {
+			throw new PhrescoException(e);
+		}
+
+		return sb.toString();
+	}
+	
 	private List<String> getTestSuiteNames(String appDirName, String testType, 
 			String moduleName, String techReport, String testResultPath, String testSuitePath) throws PhrescoException {
 		String testSuitesMapKey = appDirName + testType +  moduleName + techReport;
@@ -615,7 +695,7 @@ public class QualityService extends RestBase implements ServiceConstants, Framew
 					testResultNameMap.keySet());
 		}
 		return resultTestSuiteNames;
-}
+	}
 	
 	private String getUnitTestReportDir(String appDirName, String option) throws PhrescoException {
         try {
@@ -761,9 +841,25 @@ public class QualityService extends RestBase implements ServiceConstants, Framew
 		}
     }
 	
+	private String getComponentTestSuitePath(String appDirName) throws PhrescoException {
+        try {
+			return FrameworkUtil.getInstance().getPomProcessor(appDirName).getProperty(Constants.POM_PROP_KEY_COMPONENTTEST_TESTSUITE_XPATH);
+		} catch (PhrescoPomException e) {
+			throw new PhrescoException(e);
+		}
+    }
+	
 	private String getFunctionalTestReportDir(String appDirName) throws PhrescoException {
         try {
 			return FrameworkUtil.getInstance().getPomProcessor(appDirName).getProperty(Constants.POM_PROP_KEY_FUNCTEST_RPT_DIR);
+		} catch (PhrescoPomException e) {
+			throw new PhrescoException(e);
+		}
+    }
+	
+	private String getComponentTestReportDir(String appDirName) throws PhrescoException {
+        try {
+			return FrameworkUtil.getInstance().getPomProcessor(appDirName).getProperty(Constants.POM_PROP_KEY_COMPONENTTEST_RPT_DIR);
 		} catch (PhrescoPomException e) {
 			throw new PhrescoException(e);
 		}
@@ -794,7 +890,7 @@ public class QualityService extends RestBase implements ServiceConstants, Framew
 		}
     }
 	
-	public  String getFunctionalTestCasePath(String appDirName) throws PhrescoException {
+	private  String getFunctionalTestCasePath(String appDirName) throws PhrescoException {
         try {
 			return FrameworkUtil.getInstance().getPomProcessor(appDirName).getProperty(Constants.POM_PROP_KEY_FUNCTEST_TESTCASE_PATH);
 		} catch (PhrescoPomException e) {
@@ -802,7 +898,15 @@ public class QualityService extends RestBase implements ServiceConstants, Framew
 		}
     }
 	
-	public String getSceenShotDir(String appDirName) throws PhrescoException {
+	private  String getComponentTestCasePath(String appDirName) throws PhrescoException {
+        try {
+			return FrameworkUtil.getInstance().getPomProcessor(appDirName).getProperty(Constants.POM_PROP_KEY_COMPONENTTEST_TESTCASE_PATH);
+		} catch (PhrescoPomException e) {
+			throw new PhrescoException(e);
+		}
+    }
+	
+	private String getSceenShotDir(String appDirName) throws PhrescoException {
         try {
 			return FrameworkUtil.getInstance().getPomProcessor(appDirName).getProperty(Constants.POM_PROP_KEY_SCREENSHOT_DIR);
 		} catch (PhrescoPomException e) {

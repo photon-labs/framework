@@ -51,15 +51,12 @@ define(["navigation/listener/navigationListener"], function() {
 			if(self.onMytabEvent == null)
 				self.onMytabEvent = new signals.Signal();
 			
-			if(self.onQualitytabEvent == null)
-				self.onQualitytabEvent = new signals.Signal();
-			
 			if(self.onImportEvent == null)
 				self.onImportEvent = new signals.Signal();
 			
 			self.onAddNewProjectEvent.add(navigationListener.onAddProject, navigationListener); 
 			self.onMytabEvent.add(navigationListener.onMytabEvent, navigationListener); 
-			self.onQualitytabEvent.add(navigationListener.onQualitytab, navigationListener); 			
+//			self.onQualitytabEvent.add(navigationListener.onQualitytab, navigationListener); 			
 			self.onImportEvent.add(navigationListener.addImportEvent, navigationListener);
 		},
 		
@@ -98,10 +95,6 @@ define(["navigation/listener/navigationListener"], function() {
 				self.onMytabEvent.dispatch(this.id);
 			});
 			
-			$("#qualityAssurance li").click(function() {
-				self.onQualitytabEvent.dispatch(this.id);
-			});
-
 			$("#importApp").click(function() {
 				var currentPrjName = "";
 				self.opencc(this, "project_list_import", currentPrjName);

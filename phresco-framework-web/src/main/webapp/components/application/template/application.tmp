@@ -84,6 +84,7 @@
 						  <td data-i18n="application.edit.versions"></td>
 						  <td colspan="4" name="version" class="version">
 								<select name="server_version" class="server_version selectpicker" title="Select Version" multiple data-selected-text-format="count>3">
+								<option value=0>Select Version</option>
 								</select>
 							  <div class="flt_right">
 								<a href="javascript:;" name="addServer"><img src="themes/default/images/helios/plus_icon.png" border="0" alt=""> </a> <a href="javascript:;" name="removeServer"></a>
@@ -145,7 +146,8 @@
 						  <td data-i18n="application.edit.versions"></td>
 						  <td colspan="4" name="version" class="version">
 								<select name="db_version" class="db_version selectpicker" title="Select Version" multiple data-selected-text-format="count>3">
-							  </select>
+								<option value=0>Select Version</option>
+							 	</select>
 							   <div class="flt_right">
 									<a href="javascript:;" name="addDatabase"><img src="themes/default/images/helios/plus_icon.png" border="0" alt=""></a>
 									<a href="javascript:;" name="removeDatabase"></a>

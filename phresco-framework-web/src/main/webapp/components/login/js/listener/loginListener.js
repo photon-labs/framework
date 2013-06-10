@@ -20,6 +20,10 @@ define(["login/api/loginAPI"], function() {
 			
 		/* 	if(self.loadingScreen == null)
 				self.loadingScreen = new Clazz.com.js.widget.common.Loading(); */
+			if(self.navigationContent == null)
+				require(["navigation/navigation"], function(){
+					self.navigationContent = new Clazz.com.components.navigation.js.navigation();	
+				});
 				
 			if(self.loginAPI == null)
 				self.loginAPI = new Clazz.com.components.login.js.api.LoginAPI();
@@ -140,11 +144,13 @@ define(["login/api/loginAPI"], function() {
 			var self = this;
 			Clazz.navigationController.jQueryContainer = commonVariables.navigationPlaceholder;
 
-			require(["navigation/navigation"], function(){
-				self.navigationContent = new Clazz.com.components.navigation.js.navigation();
+			//require(["navigation/navigation"], function(){
+				//if(self.navigationContent === null) {
+					//self.navigationContent = new Clazz.com.components.navigation.js.navigation();
+				//}
 				self.navigationContent.currentContent = contentObj;
 				Clazz.navigationController.push(self.navigationContent, false);	
-			});
+			//});
 		}
 	});
 

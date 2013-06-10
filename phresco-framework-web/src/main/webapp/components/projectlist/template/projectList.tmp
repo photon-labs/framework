@@ -40,11 +40,11 @@
                         <td><a name="editApplication" href="javascript:;">{{name}}</a></td>
                         <td>{{description}}</td>
                         <td>{{techInfo.name}}</td>
-                       <td><a name="pdf_report" class="tooltiptop" title="" data-placement="top" data-t="tooltip" href="#" data-original-title="PDF Report"><img src="themes/default/images/helios/pdf_icon.png" width="14" height="16" border="0" alt=""></a>
+                       <td><a name="pdf_report" fromPage="All" class="tooltiptop" title="" data-placement="top" data-t="tooltip" href="#" data-original-title="PDF Report"><img src="themes/default/images/helios/pdf_icon.png" width="14" height="16" border="0" alt=""></a>
                   
               <div id="pdf_report" class="dyn_popup">
                 <table width="100%" border="0" cellspacing="0" cellpadding="5">
-                  <thead>
+                  <thead name="pdfHeader">
                         <tr>
                             <th>Existing Reports</th>
                             <th>Type</th>
@@ -52,7 +52,7 @@
                             <th>Delete</th>
                         </tr>    
                     </thead>
-                    <tbody>
+                    <tbody name="generatedPdfs">
                         <tr>
                             <td>Apr 17 2013 12:51</td>
                             <td>Detailed</td>
@@ -74,8 +74,8 @@
                         </tr>
                     </tbody>
                    </table>
-               <div class="flt_right">
-                 <input type="button" value="Generate" class="btn btn_style" name="generate">
+                <div class="flt_right">
+                 <input type="button" fromPage="All" sonarUrl="http://localhost:9000/dashboard" value="Generate" class="btn btn_style" name="generate" appId="{{id}}" projectId = "{{../id}}">
                  <input type="button" value="Close" class="btn btn_style dyn_popup_close">
                </div>
                 <!--pdf_report div ends here -->  
@@ -83,11 +83,11 @@
                   </td>
                         <td>
                         {{#if ../../userPermissions.manageRepo}}
-							<a name="addRepo_{{id}}" class="tooltiptop" title="" data-placement="top" data-toggle="tooltip" href="#" data-original-title="Add Repo" >
+							<a name="addRepo_{{id}}" dynamicId="{{id}}" class="tooltiptop" title="" data-placement="top" data-toggle="tooltip" href="#" data-original-title="Add Repo" >
 								<img src="themes/default/images/helios/add_repo_icon.png" width="18" height="15" border="0" alt="">
 							</a> 
 
-                        	<a name="commit{{id}}" class="tooltiptop" title="" data-placement="top" data-toggle="tooltip" href="#" data-original-title="Commit" >
+                        	<a name="commit{{id}}" dynamicId="{{id}}" class="tooltiptop" title="" data-placement="top" data-toggle="tooltip" href="#" data-original-title="Commit" >
                         		<img src="themes/default/images/helios/commit_icon.png" width="16" height="15" border="0" alt="">
                     		</a> 
 						{{else}}
@@ -96,7 +96,7 @@
                         {{/if}}
                         
                         {{#if ../../userPermissions.manageRepo}}
-                        	<a name="svn_update{{id}}" class="tooltiptop" title="" data-placement="top" data-toggle="tooltip" href="#" data-original-title="SVN Update" >
+                        	<a name="svn_update{{id}}" dynamicId="{{id}}" class="tooltiptop" title="" data-placement="top" data-toggle="tooltip" href="#" data-original-title="SVN Update" >
                         		<img src="themes/default/images/helios/update_svn_icon.png" width="22" height="15" border="0" alt="">
                     		</a>
               			{{else}}
@@ -147,40 +147,12 @@
                   </div>
                   
                   <div id="commit{{id}}" class="commit dyn_popup popup_bg">
-                      <div class="commit_data">
-                            <table width="100%" border="0" cellspacing="0" cellpadding="5">
-                                <thead>
-                                    <tr>
-                                        <th><input type="checkbox"></th>
-                                        <th>File</th>
-                                        <th>Status</th>
-                                    </tr>    
-                                </thead>
-                                <tbody>
-                                    <tr>
-                                        <td><input type="checkbox"></td>
-                                        <td>C:\Documents and Settings\santhosh_ja\workspace\projects\TestProj-php\do_not_checkin</td>
-                                        <td>?</td>
-                                    </tr>
-                                    <tr>
-                                        <td><input type="checkbox"></td>
-                                        <td>C:\Documents and Settings\santhosh_ja\workspace\projects\TestProj-php\do_not_checkin</td>
-                                        <td>?</td>
-                                    </tr>
-                                    <tr>
-                                        <td><input type="checkbox"></td>
-                                        <td>C:\Documents and Settings\santhosh_ja\workspace\projects\TestProj-php\do_not_checkin</td>
-                                        <td>?</td>
-                                    </tr>
-                                    <tr>
-                                        <td><input type="checkbox"></td>
-                                        <td>C:\Documents and Settings\santhosh_ja\workspace\projects\TestProj-php\do_not_checkin</td>
-                                        <td>?</td>
-                                    </tr>
-                                </tbody>    
+                      <div class="commit_data_{{id}}">
+                            <table  class="commitable_files_{{id}}" width="100%" border="0" cellspacing="0" cellpadding="5">
+                                  
                             </table>   
                             <br>
-                            <table width="100%" border="0" cellspacing="0" cellpadding="0">
+                            <table class="commitData_{{id}}" width="100%" border="0" cellspacing="0" cellpadding="0">
                                 <tbody>
                                     <tr>
                                         <td>Type<sup>*</sup></td>
@@ -215,14 +187,20 @@
                                     </tr>
                                 </tbody>
                              </table> 
-                         </div>       
+							 
                          <div class="flt_right roll_data" appDirName="{{appDirName}}">
-                          <input type="button" value="Commit" class="btn btn_style" id="{{id}}" name="commitbtn">
+                          <input type="button" value="Commit" disabled class="btn" id="{{id}}" name="commitbtn">
                             <input type="button" value="Cancel" class="btn btn_style dyn_popup_close">
                          </div>
+					 </div> 
+					<div class="commitErr_{{id}}" width="100%" border="0" cellspacing="0" cellpadding="0">
+						This Project is not a working copy, add to repository and then try to commit.
+						<div >
+							<input type="button" value="Close" class="btn btn_style dyn_popup_close">
+						</div >		
+					 </div>	
                     <!--commit div ends here -->	
                   </div>
-                  
                   <div id="svn_update{{id}}" class="svn_update dyn_popup popup_bg">
 					<table width="100%" border="0" cellspacing="0" cellpadding="0">
                         <tbody>

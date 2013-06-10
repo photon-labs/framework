@@ -1,10 +1,14 @@
-define(["framework/widget", "unittest/api/unittestAPI"], function() {
+define(["unitTest/api/unitTestAPI"], function() {
 
-	Clazz.createPackage("com.components.unittest.js.listener");
+	Clazz.createPackage("com.components.unitTest.js.listener");
 
-	Clazz.com.components.unittest.js.listener.UnitTestlistener = Clazz.extend(Clazz.Widget, {
+	Clazz.com.components.unitTest.js.listener.UnitTestListener = Clazz.extend(Clazz.WidgetWithTemplate, {
 		
 		unitTestAPI : null,
+		testResultListener : null,
+		dynamicpage : null,
+		dynamicPageListener : null,
+		mavenServiceListener : null,
 		
 		/***
 		 * Called in initialization time of this class 
@@ -13,28 +17,27 @@ define(["framework/widget", "unittest/api/unittestAPI"], function() {
 		 */
 		initialize : function(config) {
 			var self = this;
-			self.unitTestAPI =  new Clazz.com.components.unittest.js.api.UnitTestAPI();
-			self.loadingScreen = new Clazz.com.js.widget.common.Loading();
+			if (self.unitTestAPI === null) {
+				self.unitTestAPI =  new Clazz.com.components.unitTest.js.api.UnitTestAPI();
+			}
+			if (self.testResultListener === null) {
+				self.testResultListener = new Clazz.com.components.testResult.js.listener.TestResultListener();
+			}
+			if (self.mavenServiceListener === null)	{
+				commonVariables.navListener.getMyObj(commonVariables.mavenService, function(retVal){
+					self.mavenServiceListener = retVal;
+				});
+			}
 		},
 		
-		onUnitTestResult : function() {
-			$("#uniTestResultTab").show();
-			$("#unitTestTab").hide();
-			$(".unit_view").css("display", "block");
+		onGraphicalView : function() {
+			var self = this;
+			self.testResultListener.showGraphicalView();
 		},
 		
-		onUnitTestDesc : function() {
-			$("#uniTestResultTab").hide();
-			$("#uniTestDesc").show();
-		},
-		
-		onUnitTestGraph : function() {
-			$("#uniTestResultTab").hide();
-			$("#uniTestDesc").hide();
-			$("#graphView").show();
-			$("a[name=unitTestGraph]").html('')
-
-			$("a[name=unitTestGraph]").html('<img src="themes/default/images/helios/quality_graph_on.png" width="25" height="25" border="0" alt=""><b>Graph View</b>');
+		onTabularView : function() {
+			var self = this;
+			self.testResultListener.showTabularView();
 		},
 		
 		/***
@@ -44,7 +47,7 @@ define(["framework/widget", "unittest/api/unittestAPI"], function() {
 		 * @return: returns the contructed header
 		 */
 		getActionHeader : function(requestBody, action) {
-			var self=this, header, data = {}, userId;
+			var self = this, header, data = {}, userId;
 			data = JSON.parse(self.unitTestAPI.localVal.getSession('userInfo'));
 			userId = data.id;
 			appDirName = self.unitTestAPI.localVal.getSession("appDirName");
@@ -64,29 +67,76 @@ define(["framework/widget", "unittest/api/unittestAPI"], function() {
 		getUnitTestReportOptions : function(header, callback) {
 			var self = this;
 			try {
-				self.loadingScreen.showLoading();
-				self.unitTestAPI.unittest(header,
+				commonVariables.loadingScreen.showLoading();
+				self.unitTestAPI.unitTest(header,
 					function(response) {
 						if (response !== null) {
-							self.loadingScreen.removeLoading();
+							commonVariables.loadingScreen.removeLoading();
 							callback(response);
 						} else {
 							self.loadingScreen.removeLoading();
-							callback({ "status" : "service failure"});
+							callback({"status" : "service failure"});
 						}
-
 					},
 
 					function(textStatus) {
-						self.loadingScreen.removeLoading();
+						commonVariables.loadingScreen.removeLoading();
 					}
 				);
 			} catch(exception) {
-				self.loadingScreen.removeLoading();
+				commonVariables.loadingScreen.removeLoading();
 			}
-
 		},
+		
+		getDynamicParams : function(thisObj) {
+			var self = this;
+			commonVariables.goal = commonVariables.unitTestGoal;
+			commonVariables.navListener.getMyObj(commonVariables.dynamicPage, function(dynamicPageObject) {
+				self.dynamicPageListener = new Clazz.com.components.dynamicPage.js.listener.DynamicPageListener();
+				dynamicPageObject.getHtml(false, function(response) {
+					if ("No parameters available" == response) {
+						self.runUnitTest();
+					} else {
+						$("#dynamicContent").html(response);
+	//					self.multiselect();
+						dynamicPageObject.showParameters();
+						self.dynamicPageListener.controlEvent();
+						self.opencc(thisObj, 'unit_popup');
+					}
+				});
+			});
+		},
+		
+		runUnitTest : function() {
+			var self = this;
+			var testData = $("#unitTestForm").serialize();
+			var appdetails = self.unitTestAPI.localVal.getJson('appdetails');
+			var queryString = '';
+			appId = appdetails.data.appInfos[0].id;
+			projectId = appdetails.data.id;
+			customerId = appdetails.data.customerIds[0];
+			username = self.unitTestAPI.localVal.getSession('username');
+						
+			if (appdetails != null) {
+				queryString ="username="+username+"&appId="+appId+"&customerId="+customerId+"&goal=validate-code&phase=validate-code&projectId="+projectId+"&"+testData;
+			}
+			$('#unitTestConsole').html('');
+				
+			if (self.mavenServiceListener === null) {
+				commonVariables.navListener.getMyObj(commonVariables.mavenService, function(retVal){
+					self.mavenServiceListener = retVal;
+					
+					self.mavenServiceListener.mvnUnitTest(queryString, '#unitTestConsole', function(response) {
+						
+					});
+				});
+			} else {
+				self.mavenServiceListener.mvnUnitTest(queryString, '#unitTestConsole', function(response) {
+					
+				});
+			}			
+		}
 	});
 
-	return Clazz.com.components.unittest.js.listener.UnitTestlistener;
+	return Clazz.com.components.unitTest.js.listener.UnitTestListener;
 });

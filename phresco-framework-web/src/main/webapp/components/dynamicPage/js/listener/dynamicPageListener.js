@@ -27,26 +27,36 @@ define(["framework/widget", "dynamicPage/api/dynamicPageAPI", "common/loading"],
 		 * 
 		 * @header: constructed header for each call
 		 */
-		getServiceContent : function(callback) {
+		getServiceContent : function(showLoading, callback) {
 			try{
 				
 				var self = this, header = self.getRequestHeader(self.projectRequestBody, "", "", "parameter");
 				var appDirName = commonVariables.appDirName;
 				var goal = commonVariables.goal;
 				
-				if(self.parameterValidation(appDirName, goal)){
-					self.loadingScreen.showLoading();
+				if (self.parameterValidation(appDirName, goal)) {
+					if (showLoading) {
+						self.loadingScreen.showLoading();
+					}
 					
 					self.dynamicPageAPI.getContent(header, 
 						function(response){
 							self.responseData = response.data;
-							if(response != undefined && response != null){
-								self.constructHtml(response, callback);
-								self.loadingScreen.removeLoading();
+							if (response != undefined && response != null) {
+								if (response.data == null) {
+									callback("No parameters available");
+								} else {
+									self.constructHtml(response, callback);
+									if (showLoading) {
+										self.loadingScreen.removeLoading();
+									}
+								}
 							} else {
 								//responce value failed
 								callback("Responce value failed");
-								self.loadingScreen.removeLoading();
+								if (showLoading) {
+									self.loadingScreen.removeLoading();
+								}
 							}
 						}, 
 						function(serviceError){
@@ -58,7 +68,9 @@ define(["framework/widget", "dynamicPage/api/dynamicPageAPI", "common/loading"],
 				}
 			}catch(error){
 				//Exception
-				self.loadingScreen.removeLoading();
+				if (showLoading) {
+					self.loadingScreen.removeLoading();
+				}
 			}
 		},
 

@@ -93,7 +93,7 @@ define(["codequality/listener/codequalityListener"], function() {
 			var appDirName = self.codequalityListener.codequalityAPI.localVal.getSession('appDirName');
 			var goal = "validate-code";
 			commonVariables.goal = goal;
-			console.info('customer = ' , self.getCustomer());
+			
 			setTimeout(function() {
 				self.codequalityListener.getReportTypes(self.codequalityListener.getRequestHeader(self.appDirName , "reporttypes"), function(response) {
 					var projectlist = {};
@@ -122,7 +122,7 @@ define(["codequality/listener/codequalityListener"], function() {
 			$(".dyn_popup").hide();
 			
 			$("#codeAnalysis").click(function() {
-				self.dynamicpage.getHtml(function(response){
+				self.dynamicpage.getHtml(false, function(response){
 					$("#dynamicContent").html(response);
 					self.multiselect();
 					self.dynamicpage.showParameters();

@@ -46,8 +46,18 @@ var commonVariables = {
 	editConfiguration : "editConfiguration",
 	
 	qualityContext : "quality",
+	testType : null,
 	unit : "unit",
-	unittest : "unittest",
+	unitTest : "unitTest",
+	component : "component",
+	componentTest : "componentTest",
+	functional : "functional",
+	functionalTest : "functionalTest",
+	from : null,
+	testSuiteName : null,
+	testSuites : null,
+	
+	testResult : "testResult",
 
 	ci : "ci",
 	jobTemplates : "jobTemplates",
@@ -97,11 +107,19 @@ var commonVariables = {
 	optionsEmbedApplication : "Embed_Application",
 	optionsThemeBuilder : "Theme_Builder",
 	
+	/******* Goals *********/
+	unitTestGoal : "unit-test",
+	componentTestGoal : "component-test",
+	functionalTestGoal : "functional-test",
+	startHubGoal : "start-hub",
+	startNodeGoal : "start-node",
+	
 	/******* mvn Context *********/
 	mvnlogService : "app/readlog",
 	mvnBuild : "app/build",
 	mvnDeploy : "app/deploy",
 	mvnUnitTest : "app/runUnitTest",
+	mvnComponentTest : "app/runComponentTest",
 	mvnCodeValidation : "app/codeValidate",
 	mvnRunagainstSource : "app/runAgainstSource",
 	mvnStopServer : "app/stopServer",
@@ -134,7 +152,6 @@ var commonVariables = {
 	footerPlaceholder : $("<footer\\:widget></footer\\:widget>"),
 	
 	openccmini : function(e,place) {
-		console.info("test boostrap");
 		var clicked = $(e);
 		var target = $("#" + place);
 		var twowidth = window.innerWidth/1.5;;

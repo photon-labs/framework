@@ -17,7 +17,10 @@ define(["navigation/api/navigationAPI"], function() {
 		build : null,
 		currentTab : null,
 		editproject : null,
-		unittest : null,
+		unitTest : null,
+		functionalTest : null,
+		componentTest : null,
+		testResult : null,
 		dynamicpage : null,
 		editConfiguration : null,
 		jobTemplates : null,
@@ -195,19 +198,57 @@ define(["navigation/api/navigationAPI"], function() {
 						
 						break;
 						
-					case commonVariables.unittest :
+					case commonVariables.unitTest :
 						
-						if(self.unittest === null){
-							require(["unittest/unittest"], function(){
-								self.unittest = new Clazz.com.components.unittest.js.UnitTest();
-								callback(self.unittest);	
+						if(self.unitTest === null){
+							require(["unitTest/unitTest"], function() {
+								self.unitTest = new Clazz.com.components.unitTest.js.UnitTest();
+								callback(self.unitTest);	
 							});
 						}else{
-							callback(self.unittest);
+							callback(self.unitTest);
 						}
 						
 						break;
-					
+						
+					case commonVariables.componentTest :
+						
+						if (self.componentTest === null) {
+							require(["componentTest/componentTest"], function() {
+								self.componentTest = new Clazz.com.components.componentTest.js.ComponentTest();
+								callback(self.componentTest);	
+							});
+						}else{
+							callback(self.componentTest);
+						}
+						
+						break;
+						
+					case commonVariables.functionalTest :
+						
+						if(self.functionalTest === null){
+							require(["functionalTest/functionalTest"], function() {
+								self.functionalTest = new Clazz.com.components.functionalTest.js.FunctionalTest();
+								callback(self.functionalTest);	
+							});
+						}else{
+							callback(self.functionalTest);
+						}
+						
+						break;
+						
+					case commonVariables.testResult :
+						
+						if (self.testResult === null) {
+							require(["testResult/testResult"], function() {
+								self.testResult = new Clazz.com.components.testResult.js.TestResult();
+								callback(self.testResult);	
+							});
+						} else {
+							callback(self.testResult);
+						}
+						
+						break;
 					case commonVariables.editConfiguration :
 						
 						if(self.editConfiguration === null){
@@ -337,28 +378,28 @@ define(["navigation/api/navigationAPI"], function() {
 				$("#mavenReport").hide();
 			}
 			if (jQuery.inArray(commonVariables.optionsUnitTest, applicableOptions) == -1) {
-				$("#unittest").hide();
+				$("#unitTest").hide();
 			}
 			if (jQuery.inArray(commonVariables.optionsComponentTest, applicableOptions) == -1) {
-				$("#componenttest").hide();
+				$("#componentTest").hide();
 			}
 			if (jQuery.inArray(commonVariables.optionsFunctionalTest, applicableOptions) == -1) {
-				$("#functionaltest").hide();
+				$("#functionalTest").hide();
 			}
 			if (jQuery.inArray(commonVariables.optionsPerformanceTest, applicableOptions) == -1) {
-				$("#performancetest").hide();
+				$("#performanceTest").hide();
 			}
 			if (jQuery.inArray(commonVariables.optionsLoadTest, applicableOptions) == -1) {
-				$("#loadtest").hide();
+				$("#loadTest").hide();
 			}
 			if (jQuery.inArray(commonVariables.optionsManualTest, applicableOptions) == -1) {
-				$("#manualtest").hide();
+				$("#manualTest").hide();
 			}
 			if (jQuery.inArray(commonVariables.optionsCI, applicableOptions) == -1) {
 				$("#continuousDeliveryView").hide();
 			}
 			if (jQuery.inArray(commonVariables.optionsRunAgainstSrc, applicableOptions) == -1) {
-				$("#runAgainstSrc").hide();
+				$("input[name=build_runagsource]").hide();
 				$("#stop").hide();
 				$("#restart").hide();
 			}
@@ -448,7 +489,7 @@ define(["navigation/api/navigationAPI"], function() {
 		},
 		
 		onMytabEvent : function(keyword) {
-			var self=this, currentObj;
+			var self = this, currentObj;
 			if (self.currentTab !== commonVariables.editApplication && keyword === commonVariables.editApplication){
 				self.getMyObj(commonVariables.editApplication, function(returnVal){
 					currentObj = returnVal;
@@ -489,25 +530,27 @@ define(["navigation/api/navigationAPI"], function() {
 					currentObj = returnVal;
 					self.myTabRenderFunction(currentObj, keyword);
 				});
+			} else if (keyword === commonVariables.unitTest) {
+				self.getMyObj(commonVariables.unitTest, function(returnVal){
+					currentObj = returnVal;
+					self.myTabRenderFunction(currentObj, keyword);
+				});
+			} else if (keyword === commonVariables.functionalTest) {
+				self.getMyObj(commonVariables.functionalTest, function(returnVal){
+					currentObj = returnVal;
+					self.myTabRenderFunction(currentObj, keyword);
+				});
+			} else if (keyword === commonVariables.componentTest) {
+				self.getMyObj(commonVariables.componentTest, function(returnVal){
+					currentObj = returnVal;
+					self.myTabRenderFunction(currentObj, keyword);
+				});
 			}
 
 		},
 		
 		myTabRenderFunction : function(currentObj, keyword) {
 			var self = this;
-			if(currentObj != undefined && currentObj != null){
-				self.currentTab = keyword;
-				Clazz.navigationController.jQueryContainer = commonVariables.contentPlaceholder;
-				Clazz.navigationController.push(currentObj, true);
-			}
-		},
-		
-		onQualitytab : function(keyword) {
-			var self=this, currentObj;
-			if (keyword === commonVariables.unittest){	
-				currentObj = self.getMyObj(commonVariables.unittest);
-			}
-			
 			if(currentObj != undefined && currentObj != null){
 				self.currentTab = keyword;
 				Clazz.navigationController.jQueryContainer = commonVariables.contentPlaceholder;
@@ -569,11 +612,9 @@ define(["navigation/api/navigationAPI"], function() {
 				importdata.userName = $("#importUserName").val();
 				importdata.password = $("#importPassword").val();
 				importdata.revision = revision;
-				console.info("importdata", importdata);
 				actionBody = importdata;
 				action = "importpost";
 				self.navigationAction(self.getActionHeader(actionBody, action), function(response){
-					console.info("response", response);
 				});
 			//}
 		}	
