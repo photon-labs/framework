@@ -167,7 +167,6 @@ define(["projectlist/listener/projectListListener"], function() {
 			$(".tooltiptop").click(function() {
 				var currentPrjName = $(this).closest("tr").attr("class");
 				var dynamicId = $(this).attr("dynamicId");
-				self.opencc(this, $(this).attr('name'), currentPrjName);
 				var data = JSON.parse(self.projectslistListener.projectListAPI.localVal.getSession('userInfo'));
 				userId = data.id;
 				/* $('#uname_'+dynamicId).val(data.id);
@@ -180,6 +179,20 @@ define(["projectlist/listener/projectListListener"], function() {
 				$('#updatePassword_'+dynamicId).val(data.password); */
 				$('.uname').val(data.id);
 				$('.pwd').val(data.password);
+				$('.commit').hide();
+				$('.add_repo').hide();
+				$('.svn_update').hide();
+				
+				var action = $(this).attr("data-original-title");
+				if (action == "Commit") {
+					var appDirName = $(this).parent().parent().attr("class");
+					var data = {};
+					data.appdirname = appDirName;
+					data.dynamicId = dynamicId;
+					self.projectslistListener.getCommitableFiles(data, this);
+				} else {
+					self.opencc(this, $(this).attr('name'), currentPrjName);
+				}	
 			});
 			
 			$("a[name = 'updatesvn']").unbind("click");
@@ -230,7 +243,6 @@ define(["projectlist/listener/projectListListener"], function() {
 			$("input[name='commitbtn']").click(function() {
 				var dynid = $(this).attr('id');
 				self.onAddCommitEvent.dispatch($(this), dynid);				
-				
 			});
 						
 			$("input[name='updatebtn']").unbind("click");

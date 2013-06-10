@@ -538,7 +538,7 @@ public class RepositoryService extends RestBase implements FrameworkConstants {
 			throw new PhrescoException(e);
 		}
 
-		return null;
+		return "";
 	}
 
 	private boolean checkGitProject(ApplicationInfo applicationInfo, boolean setRepoExistForCommit) throws PhrescoException {

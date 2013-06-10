@@ -118,12 +118,10 @@ define(["projectlist/api/projectListAPI"], function() {
 				header.requestMethod = "DELETE";
 				header.requestPostBody = JSON.stringify(projectRequestBody);
 				header.webserviceurl = commonVariables.webserviceurl + commonVariables.projectlistContext + "/delete";
-			}
-			if(action == "get") {
+			} else if(action == "get") {
 				header.requestMethod = "GET";
 				header.webserviceurl = commonVariables.webserviceurl + commonVariables.projectlistContext + "/list?customerId="+customerId;				
-			}
-			if(action == "repoget") {
+			} else if(action == "repoget") {
 				header.requestMethod = "POST";
 				var addrepo ={};
 				addrepo.type = projectRequestBody.type;
@@ -133,8 +131,7 @@ define(["projectlist/api/projectListAPI"], function() {
 				addrepo.commitMessage = projectRequestBody.commitMessage;
 				header.requestPostBody = JSON.stringify(addrepo);			
 				header.webserviceurl = commonVariables.webserviceurl + "repository/addProjectToRepo?appDirName="+projectRequestBody.appdirname+"&userId="+userId+"&appId="+projectRequestBody.appid+"&projectId="+projectRequestBody.projectid;				
-			}
-			if(action == "commitget") {
+			} else if(action == "commitget") {
 				header.requestMethod = "POST";
 				var addcommit ={};
 				addcommit.type = projectRequestBody.type;
@@ -145,8 +142,7 @@ define(["projectlist/api/projectListAPI"], function() {
 				addcommit.commitableFiles = projectRequestBody.commitableFiles;
 				header.requestPostBody = JSON.stringify(addcommit);
 				header.webserviceurl = commonVariables.webserviceurl + "repository/commitProjectToRepo?appDirName="+projectRequestBody.appdirname;
-			}
-			if(action == "updateget") {
+			} else if(action == "updateget") {
 				var addupdate ={};
 				header.requestMethod = "POST";
 				addupdate.type = projectRequestBody.type;
@@ -156,11 +152,14 @@ define(["projectlist/api/projectListAPI"], function() {
 				addupdate.version = projectRequestBody.revision;
 				header.requestPostBody = JSON.stringify(addupdate);
 				header.webserviceurl = commonVariables.webserviceurl + "repository/updateImportedApplication?appDirName="+projectRequestBody.appdirname;
-			}
-			if(action == "reportget") {
+			} else if(action == "reportget") {
 				header.requestMethod = "POST";
 				//header.webserviceurl = commonVariables.webserviceurl + "/app/printAsPdf/username="+data.name+"&appId="+appId+"&customerId="+customerId+"&fromPage="+fromPage+"&isReportAvailable=true&projectId="+projectId+"&reportDataType=detail&sonarUrl="+fromPage;		
-			} 
+			} else if (action == "getCommitableFiles") {
+				header.requestMethod = "GET";
+				header.webserviceurl = commonVariables.webserviceurl + "repository/popupValues?appDirName="+projectRequestBody.appdirname+"&userId=" + userId + "&action=commit";
+			}
+
 			return header;
 		},
 		
@@ -212,7 +211,7 @@ define(["projectlist/api/projectListAPI"], function() {
 		
 		addCommitEvent : function(obj, dynid){
 			var self = this;
-			var commitdata = {}, actionBody, action, arrayCommitableFiles = ["C:/Documents and Settings/arunkumar_ve/workspace/projects/new-HTML5 Multichannel YUI Widget/pom.xml","C:/Documents and Settings/arunkumar_ve/workspace/projects/new-HTML5 Multichannel YUI Widget/docs/README.txt"];
+			var commitdata = {}, actionBody, action, arrayCommitableFiles = [];
 			self.flag2=1;
 			if(!self.validation(dynid)) {
 				commitdata.type = $("#commitType_"+dynid).val();
@@ -220,6 +219,12 @@ define(["projectlist/api/projectListAPI"], function() {
 				commitdata.userName = $("#commitUsername_"+dynid).val();
 				commitdata.password = $("#commitPassword_"+dynid).val();
 				commitdata.commitMessage = $("#commitMessage_"+dynid).val();
+				$.each($('.commitChildChk_'+ dynid) , function(index, value){
+					if ($(this).is(':checked')) {
+						arrayCommitableFiles.push($(this).val());
+					}
+				});
+				
 				commitdata.commitableFiles = arrayCommitableFiles;
 				commitdata.appdirname = obj.parent("div").attr("appDirName");
 				actionBody = commitdata;
@@ -236,6 +241,35 @@ define(["projectlist/api/projectListAPI"], function() {
 				actionBody = reportdata;
 				action = "reportget";
 				self.projectListAction(self.getActionHeader(actionBody, action));
+		},
+		
+		getCommitableFiles : function(data, obj) {
+			var self = this;
+			var dynamicId = data.dynamicId;
+			self.projectListAction(self.getActionHeader(data, "getCommitableFiles"), function(response){
+				var commitableFiles = "";
+				self.opencc(obj, $(obj).attr('name'), '');
+				$('.commit_data_'+dynamicId).hide();
+				$('.commitErr_'+dynamicId).hide();				
+				if (response.data != undefined && !response.data.repoExist) {
+					$('.commitErr_'+dynamicId).show();
+				} else if (response.data != undefined && response.data.repoInfoFile != undefined) {
+					$('.commit_data_'+dynamicId).show();
+					$('#commitRepourl_'+dynamicId).val(response.data.repoUrl);
+					commitableFiles += '<thead><tr><th><input dynamicId="'+ dynamicId +'" class="commitParentChk_'+ dynamicId +'"  type="checkbox"></th><th>File</th><th>Status</th></tr></thead><tbody>';
+					$.each(response.data.repoInfoFile, function(index, value){
+						commitableFiles += '<tr><td><input dynamicId="'+ dynamicId +'" class="commitChildChk_' + dynamicId + '" type="checkbox" value="' + value.commitFilePath + '"></td>';
+						commitableFiles += '<td style="width:150px;" title="'+ value.commitFilePath +'">"' + self.trimValue(value.commitFilePath) + '"</td>';
+						commitableFiles += '<td>"' + value.status + '"</td></tr>';
+					});
+					$('.commitable_files_'+dynamicId).html(commitableFiles);
+					
+					$.each(response.data.repoInfoFile, function(index, value){
+						self.commitFileCheckBoxEvent($('.commitParentChk_'+dynamicId), $('.commitChildChk_'+dynamicId));
+					});
+					self.commitFileCheckAllEvent($('.commitParentChk_'+dynamicId), $('.commitChildChk_'+dynamicId));
+				}
+			});
 		},
 		
 		addUpdateEvent : function(obj, dynid, revision){
@@ -340,6 +374,50 @@ define(["projectlist/api/projectListAPI"], function() {
 					self.flag3=0;
 					return self.hasError;
 				}
+		},
+		
+		trimValue: function (value) {
+			var len = value.length;
+			if(len > 50) {
+			value = value.substr(0, 50) + "...";
+			return value;
+			}
+			return value;
+		},	
+		
+		commitFileCheckBoxEvent: function (parentObj, childObj) {
+			$(childObj).bind('click', function(){
+				var checkBoxClass = $(childObj).attr("class");
+				var checkedLength = $('.' + checkBoxClass + ':checked').size();
+				var totalCheckBoxes = $(childObj).size();
+				if (totalCheckBoxes == checkedLength) {
+					$(parentObj).prop("checked", true);
+				} else {
+					$(parentObj).prop("checked", false);
+				}
+				
+				if (checkedLength > 0) {
+					$('input[name=commitbtn]').prop("disabled", false);
+					$('input[name=commitbtn]').addClass("btn_style");
+				} else {
+					$('input[name=commitbtn]').prop("disabled", true);
+					$('input[name=commitbtn]').removeClass("btn_style");
+				}
+			});
+		},
+		
+		commitFileCheckAllEvent: function (parentObj, childObj) {
+			$(parentObj).bind('click', function(){
+				if ($(parentObj).is(':checked')) {
+					$(childObj).prop("checked", true);
+					$('input[name=commitbtn]').prop("disabled", false);
+					$('input[name=commitbtn]').addClass("btn_style");
+				} else {
+					$(childObj).prop("checked", false);
+					$('input[name=commitbtn]').prop("disabled", true);
+					$('input[name=commitbtn]').removeClass("btn_style");
+				}
+			});
 		},
 	});
 
