@@ -183,7 +183,7 @@ define(["application/api/applicationAPI"], function() {
 								});
 							});
 						} else {
-						commonVariables.loadingScreen.removeLoading();
+							commonVariables.loadingScreen.removeLoading();
 							callback({ "status" : "service failure"});
 						}
 

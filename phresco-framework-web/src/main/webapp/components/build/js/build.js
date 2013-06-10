@@ -23,7 +23,7 @@ define(["build/listener/buildListener"], function() {
 		 *
 		 * @globalConfig: global configurations for this class
 		 */
-		initialize : function(globalConfig){
+		initialize : function(globalConfig) {
 			var self = this;
 			
 			if(self.buildListener === null)
@@ -86,8 +86,10 @@ define(["build/listener/buildListener"], function() {
 		
 		loadDynamicContent : function(whereToRender, renderFunction, response){
 			var self = this;
-			self.dynamicpage.getHtml(function(callbackVal){
+			self.dynamicpage.getHtml(false, function(callbackVal){
 				self.generateBuildContent = callbackVal;
+				var userPermissions = JSON.parse(self.buildListener.buildAPI.localVal.getSession('userPermissions'));
+				response.userPermissions = userPermissions;
 				renderFunction(response, whereToRender);
 			});
 		},
@@ -100,6 +102,7 @@ define(["build/listener/buildListener"], function() {
 		 */
 		postRender : function(element) {
 			var self = this;
+			commonVariables.navListener.showHideTechOptions();
 			$("tbody[name='dynamicContent']").html(self.generateBuildContent);
 			$("tbody[name='dynamicContent']").find(".selectpicker").selectpicker();
 			self.loadPostContent();

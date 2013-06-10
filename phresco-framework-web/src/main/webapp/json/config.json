@@ -79,14 +79,29 @@
 			"path" : "../components/mavenService/js"
 		},
 		
-		"unittest" : {
-			"moduleName":"unittest",
-			"path" : "../components/unittest/js"
+		"unitTest" : {
+			"moduleName":"unitTest",
+			"path" : "../components/unitTest/js"
+		},
+		
+		"functionalTest" : {
+			"moduleName":"functionalTest",
+			"path" : "../components/functionalTest/js"
+		},
+		
+		"componentTest" : {
+			"moduleName":"componentTest",
+			"path" : "../components/componentTest/js"
 		},
 
 		"ci" : {
 			"moduleName":"ci",
 			"path" : "../components/ci/js"
+		},
+		
+		"testResult" : {
+			"moduleName":"testResult",
+			"path" : "../components/testResult/js"
 		}
 	}
 }

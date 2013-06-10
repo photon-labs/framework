@@ -34,6 +34,11 @@ define(["mavenService/api/mavenServiceAPI"], function() {
 			self.mvnService(header, divId, callback);
 		},
 		
+		mvnComponentTest : function(paramData, divId, callback){
+			var self = this, header = self.getRequestHeader("POST", "", commonVariables.mvnComponentTest, paramData);
+			self.mvnService(header, divId, callback);
+		},
+		
 		mvnCodeValidation : function(paramData, divId, callback){
 			var self = this, header = self.getRequestHeader("POST", "", commonVariables.mvnCodeValidation, paramData);
 			self.mvnService(header, divId, callback);

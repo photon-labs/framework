@@ -1,6 +1,6 @@
 <section class="optiontitle qual_unit">
 	<div class="unit_text">
-    	Unit Test
+    	Component Test
 	</div>
     <div class="flt_right">
 		<div class="unit_view" style="display:none;">
@@ -16,59 +16,21 @@
             <input type="button" value="Copy Path" class="btn btn_style copypath_icon_btn" id="copyPath">
         </div>
             
-        {{#if projectModules}}
-            <div class="code_report">
-            	Module
-            </div>
-            <div class="navbar navbar-static code_func module">
-                <ul class="nav">
-                    <li id="fat-menu" class="dropdown">
-						<a href="#" id="modulesDrop" role="button" class="dropdown-toggle" data-toggle="dropdown" 
-							value="{{#modules projectModules true}}{{/modules}}">{{#modules projectModules true}}{{/modules}}<b class="caret"></b></a>
-                      	<div class="dropdown-menu cust_sel code_test_opt" role="menu" aria-labelledby="modulesDrop">
-	                      	<ul>
-	                      		{{#modules projectModules false}}{{/modules}}
-                        	</ul>
-						</div>
-                    </li>
-                </ul>
-            </div>
-        {{/if}}
-    
-        {{#if reportOptions}}
-            <div class="code_report">
-            	Technology
-            </div>
-            <div class="navbar navbar-static code_func">
-                <ul class="nav">
-                    <li id="fat-menu" class="dropdown">
-						<a href="#" id="reportOptionsDrop" role="button" class="dropdown-toggle" data-toggle="dropdown" 
-							value="{{#report reportOptions true}}{{/report}}">{{#report reportOptions true}}{{/report}}<b class="caret"></b></a>
-						<div class="dropdown-menu cust_sel code_test_opt" role="menu" aria-labelledby="reportOptionsDrop">
-	                      	<ul>
-	                      		{{#report reportOptions false}}{{/report}}
-	                        </ul>
-						</div>
-                    </li>
-                </ul>
-            </div>
-        {{/if}}
-           
         <div class="code_anal">
         	{{#if userPermissions.manageTests}}
-            	<input type="button" value="Test" id="unitTestBtn" class="btn btn_style">
+            	<input type="button" value="Test" id="componentTestBtn" class="btn btn_style">
         	{{else}}
         		<input type="button" value="Test" class="btn btn_style" disabled>
         	{{/if}}
                 
-			<div id="unit_popup" class="dyn_popup" style="display:none;">
-				<form name="unitTestForm">
+			<div id="componentTest_popup" class="dyn_popup" style="display:none;">
+				<form name="componentTestForm">
 					<table class="table" cellpadding="0" cellspacing="0" border="0">
 						<tbody id="dynamicContent"></tbody>
 					</table>
 				</form>
                 <div class="flt_right">
-                    <input type="button" value="Test" class="btn btn_style" id="runUnitTest">
+                    <input type="button" value="Test" class="btn btn_style" id="runComponentTest">
                     <input type="button" value="Close" class="btn btn_style dyn_popup_close">
 				</div>
 			</div>
@@ -92,7 +54,7 @@
          </thead>
          <tbody class="scrollContent">
             <tr>
-				<td id="unitTestConsole" colspan="2">
+				<td id="componentTestConsole" colspan="2">
 				</td>
 			</tr>
          </tbody>

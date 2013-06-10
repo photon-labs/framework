@@ -1,8 +1,8 @@
 define(["framework/base", "api/api"], function() {
 
-	Clazz.createPackage("com.components.unitTest.js.api");
+	Clazz.createPackage("com.components.functionalTest.js.api");
 
-	Clazz.com.components.unitTest.js.api.UnitTestAPI = Clazz.extend(Clazz.com.js.api.API, {
+	Clazz.com.components.functionalTest.js.api.FunctionalTestAPI = Clazz.extend(Clazz.com.js.api.API, {
 
         /***
          * Called in for doLogin ajax call 
@@ -11,11 +11,11 @@ define(["framework/base", "api/api"], function() {
          * @callbackFunction: callback function to fire once gets the response
          * @errorHandler: error handler function of the response is not success
          */
-		unitTest : function(header, callbackFunction, errorHandler) {
+		functionalTest : function(header, callbackFunction, errorHandler) {
 			this.ajaxRequest(header, callbackFunction, errorHandler);
 		}
 		
 	});
 
-	return Clazz.com.components.unitTest.js.api.UnitTestAPI;
+	return Clazz.com.components.functionalTest.js.api.FunctionalTestAPI;
 });

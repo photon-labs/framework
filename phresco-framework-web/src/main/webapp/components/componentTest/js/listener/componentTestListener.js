@@ -1,10 +1,10 @@
-define(["unitTest/api/unitTestAPI"], function() {
+define(["componentTest/api/componentTestAPI"], function() {
 
-	Clazz.createPackage("com.components.unitTest.js.listener");
+	Clazz.createPackage("com.components.componentTest.js.listener");
 
-	Clazz.com.components.unitTest.js.listener.UnitTestListener = Clazz.extend(Clazz.WidgetWithTemplate, {
+	Clazz.com.components.componentTest.js.listener.ComponentTestListener = Clazz.extend(Clazz.Widget, {
 		
-		unitTestAPI : null,
+		componentTestAPI : null,
 		testResultListener : null,
 		dynamicpage : null,
 		dynamicPageListener : null,
@@ -17,8 +17,8 @@ define(["unitTest/api/unitTestAPI"], function() {
 		 */
 		initialize : function(config) {
 			var self = this;
-			if (self.unitTestAPI === null) {
-				self.unitTestAPI =  new Clazz.com.components.unitTest.js.api.UnitTestAPI();
+			if (self.componentTestAPI === null) {
+				self.componentTestAPI =  new Clazz.com.components.componentTest.js.api.ComponentTestAPI();
 			}
 			if (self.testResultListener === null) {
 				self.testResultListener = new Clazz.com.components.testResult.js.listener.TestResultListener();
@@ -48,27 +48,41 @@ define(["unitTest/api/unitTestAPI"], function() {
 		 */
 		getActionHeader : function(requestBody, action) {
 			var self = this, header, data = {}, userId;
-			data = JSON.parse(self.unitTestAPI.localVal.getSession('userInfo'));
+			data = JSON.parse(self.componentTestAPI.localVal.getSession('userInfo'));
 			userId = data.id;
-			appDirName = self.unitTestAPI.localVal.getSession("appDirName");
+			appDirName = self.componentTestAPI.localVal.getSession("appDirName");
 			header = {
 				contentType: "application/json",				
 				dataType: "json",
 				webserviceurl: ''
 			}
 					
-			if(action == "get") {
+			if (action == "getFunctionalTestOptions") {
 				header.requestMethod = "GET";
-				header.webserviceurl = commonVariables.webserviceurl + commonVariables.qualityContext + "/" + commonVariables.unit + "?userId="+userId+"&appDirName="+appDirName;				
+				header.webserviceurl = commonVariables.webserviceurl + commonVariables.qualityContext + "/functionalFramework?appDirName="+appDirName;				
 			}
 			return header;
 		},
 		
-		getUnitTestReportOptions : function(header, callback) {
+		getDynamicParams : function(goal) {
+			var self = this;
+			commonVariables.goal = goal;
+			commonVariables.navListener.getMyObj(commonVariables.dynamicPage, function(dynamicPageObject) {
+				self.dynamicPageListener = new Clazz.com.components.dynamicPage.js.listener.DynamicPageListener();
+				dynamicPageObject.getHtml(false, function(response) {
+					$("#dynamicContent").html(response);
+//					self.multiselect();
+					dynamicPageObject.showParameters();
+					self.dynamicPageListener.controlEvent();
+				});
+			});
+		},
+		
+		getFunctionalTestOptions : function(header, callback) {
 			var self = this;
 			try {
 				commonVariables.loadingScreen.showLoading();
-				self.unitTestAPI.unitTest(header,
+				self.componentTestAPI.componentTest(header,
 					function(response) {
 						if (response !== null) {
 							commonVariables.loadingScreen.removeLoading();
@@ -88,56 +102,36 @@ define(["unitTest/api/unitTestAPI"], function() {
 			}
 		},
 		
-		getDynamicParams : function(thisObj) {
+		runComponentTest : function() {
 			var self = this;
-			commonVariables.goal = commonVariables.unitTestGoal;
-			commonVariables.navListener.getMyObj(commonVariables.dynamicPage, function(dynamicPageObject) {
-				self.dynamicPageListener = new Clazz.com.components.dynamicPage.js.listener.DynamicPageListener();
-				dynamicPageObject.getHtml(false, function(response) {
-					if ("No parameters available" == response) {
-						self.runUnitTest();
-					} else {
-						$("#dynamicContent").html(response);
-	//					self.multiselect();
-						dynamicPageObject.showParameters();
-						self.dynamicPageListener.controlEvent();
-						self.opencc(thisObj, 'unit_popup');
-					}
-				});
-			});
-		},
-		
-		runUnitTest : function() {
-			var self = this;
-			$("#unit_popup").toggle();
-			var testData = $("#unitTestForm").serialize();
-			var appdetails = self.unitTestAPI.localVal.getJson('appdetails');
+			var testData = $("#componentTestForm").serialize();
+			var appdetails = self.componentTestAPI.localVal.getJson('appdetails');
 			var queryString = '';
 			appId = appdetails.data.appInfos[0].id;
 			projectId = appdetails.data.id;
 			customerId = appdetails.data.customerIds[0];
-			username = self.unitTestAPI.localVal.getSession('username');
+			username = self.componentTestAPI.localVal.getSession('username');
 						
 			if (appdetails != null) {
 				queryString ="username="+username+"&appId="+appId+"&customerId="+customerId+"&goal=validate-code&phase=validate-code&projectId="+projectId+"&"+testData;
 			}
-			$('#unitTestConsole').html('');
+			$('#componentTestConsole').html('');
 				
 			if (self.mavenServiceListener === null) {
 				commonVariables.navListener.getMyObj(commonVariables.mavenService, function(retVal){
 					self.mavenServiceListener = retVal;
 					
-					self.mavenServiceListener.mvnUnitTest(queryString, '#unitTestConsole', function(response){
-						
+					self.mavenServiceListener.mvnUnitTest(queryString, '#unitTestConsole', function(returnVal) {
+						callback(returnVal);
 					});
 				});
 			} else {
-				self.mavenServiceListener.mvnUnitTest(queryString, '#unitTestConsole', function(response){
+				self.mavenServiceListener.mvnComponentTest(queryString, '#componentTestConsole', function(returnVal) {
 					
 				});
 			}			
 		}
 	});
 
-	return Clazz.com.components.unitTest.js.listener.UnitTestListener;
+	return Clazz.com.components.componentTest.js.listener.ComponentTestlistener;
 });

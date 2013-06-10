@@ -3120,4 +3120,6 @@ padding: 4px 6px;
 vertical-align: middle;
 }
 
-
+.hideContent  {
+	display : none;
+}
