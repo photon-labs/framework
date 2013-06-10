@@ -87,14 +87,72 @@ define(["ci/api/ciAPI"], function() {
 					params = $.param(params);
 					header.webserviceurl = header.webserviceurl + "&" + params;
 				}
-			}  else if (action === "getAppInfos") {
+			} else if (action === "getAppInfos") {
 				header.requestMethod = "GET";
 				header.webserviceurl = commonVariables.webserviceurl + commonVariables.projectlistContext + "/appinfos" + "?customerId="+ customerId + "&projectId=" + projectId;
 				if (params !== null && params !== undefined && params !== '') {
 					params = $.param(params);
 					header.webserviceurl = header.webserviceurl + "&" + params;
 				}
-			} 
+			} else if (action === "getEnvironemntsByProjId") {
+				// get all the environments of a project, which lists all the application environments
+				header.requestMethod = "GET";
+				header.webserviceurl = commonVariables.webserviceurl + commonVariables.configuration + "/allEnvironments" + "?customerId="+ customerId + "&projectId=" + projectId;
+				// For Testing Purpose - Remove this when service calls get ready
+				header.webserviceurl = header.webserviceurl + "&appDirName=wwwww-Java WebService";		
+				if (params !== null && params !== undefined && params !== '') {
+					params = $.param(params);
+					header.webserviceurl = header.webserviceurl + "&" + params;
+				}
+			}  else if (action === "getJobTemplatesByEnvironemnt") {
+				// get job template info with appId
+				header.requestMethod = "GET";
+				header.webserviceurl = commonVariables.webserviceurl + commonVariables.projectlistContext + "/getJobTemplatesByEnvironemnt" + "?customerId="+ customerId + "&projectId=" + projectId;	
+				if (params !== null && params !== undefined && params !== '') {
+					params = $.param(params);
+					header.webserviceurl = header.webserviceurl + "&" + params;
+				}
+			} else if (action === "getDynamicPopupByAppId") {
+				// need to pass appId, operation and appId
+				header.requestMethod = "GET";
+				header.webserviceurl = commonVariables.webserviceurl + commonVariables.projectlistContext + "/getDynamicPopupByAppId" + "?customerId="+ customerId + "&projectId=" + projectId;
+				if (params !== null && params !== undefined && params !== '') {
+					params = $.param(params);
+					header.webserviceurl = header.webserviceurl + "&" + params;
+				}
+			} else if (action === "saveContinuousDelivery") {
+				// Save the continuos delivery with all the drag and dropped job templates
+				header.requestMethod = "POST";
+				header.webserviceurl = commonVariables.webserviceurl + commonVariables.projectlistContext + "/saveContinuousDelivery" + "?customerId="+ customerId + "&projectId=" + projectId;
+				if (params !== null && params !== undefined && params !== '') {
+					params = $.param(params);
+					header.webserviceurl = header.webserviceurl + "&" + params;
+				}
+			} else if (action === "updateContinuousDelivery") {
+				// update the continuos delivery with all the drag and dropped job templates
+				header.requestMethod = "PUT";
+				header.webserviceurl = commonVariables.webserviceurl + commonVariables.projectlistContext + "/updateContinuousDelivery" + "?customerId="+ customerId + "&projectId=" + projectId;
+				if (params !== null && params !== undefined && params !== '') {
+					params = $.param(params);
+					header.webserviceurl = header.webserviceurl + "&" + params;
+				}
+			} else if (action === "getContinuousDelivery") {
+				// getContinuousDelivery
+				header.requestMethod = "GET";
+				header.webserviceurl = commonVariables.webserviceurl + commonVariables.projectlistContext + "/getContinuousDelivery" + "?customerId="+ customerId + "&projectId=" + projectId;
+				if (params !== null && params !== undefined && params !== '') {
+					params = $.param(params);
+					header.webserviceurl = header.webserviceurl + "&" + params;
+				}
+			} else if (action === "deleteContinuousDelivery") {
+				// deleteContinuousDelivery
+				header.requestMethod = "DELETE";
+				header.webserviceurl = commonVariables.webserviceurl + commonVariables.projectlistContext + "/deleteContinuousDelivery" + "?customerId="+ customerId + "&projectId=" + projectId;
+				if (params !== null && params !== undefined && params !== '') {
+					params = $.param(params);
+					header.webserviceurl = header.webserviceurl + "&" + params;
+				}
+			}
 
 			return header;
 		},
@@ -146,8 +204,29 @@ define(["ci/api/ciAPI"], function() {
 		listJobTemplate : function (header, callback) {
 			var self=this;
 			try {
-				self.ciAPI.ci(header,
-					function(response) {
+				self.ciAPI.ci(header, function(response) {
+						if (response !== null) {
+							callback(response);
+						} else {
+							callback({ "status" : "service failure"});
+						}
+
+					},
+
+					function(textStatus) {
+						console.info('textStatus',textStatus);
+						callback({ "status" : "Connection failure"});
+					}
+				);
+			} catch(exception) {
+				callback({ "status" : "service exception"});
+			}
+		},
+
+		getHeaderResponse : function (header, callback) {
+			var self=this;
+			try {
+				self.ciAPI.ci(header, function(response) {
 						if (response !== null) {
 							callback(response);
 						} else {
@@ -227,6 +306,13 @@ define(["ci/api/ciAPI"], function() {
 
 		deleteJobTemplate : function () {
 			var self=this;
+		},
+
+		loadEnvironmentEvent : function (callback) {
+			var dataObj = {};
+			var environment = $("select[name=environments]").val();
+			dataObj.environment = environment;
+			callback(dataObj);
 		}
 		
 	});

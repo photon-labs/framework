@@ -19,10 +19,10 @@
                     <tr>
                         <td rowspan="3">Environment</td>
                         <td>
-                            <select>
-                                <option>Testing</option>
-                                <option>Staging</option>
-                                <option>Production</option>
+                            <select name="environments">
+                                {{#environments}}
+                                    <option>{{name}}</option>
+                                {{/environments}}
                             </select>
                         </td>
                     </tr>

@@ -7,7 +7,13 @@ define(["framework/widgetWithTemplate", "ci/listener/ciListener"], function() {
 		configUrl: "components/projects/config/config.json",
 		name : commonVariables.continuousDeliveryConfigure,
 		ciListener: null,
+		ciRequestBody : {},
+		templateData : {},
 		dynamicpage : null,
+		onLoadEnvironmentEvent : null,
+		onConfigureEvent : null,
+		onLoadDynamicPageEvent : null,
+		onSaveEvent : null,
 	
 		/***
 		 * Called in initialization time of this class 
@@ -25,11 +31,20 @@ define(["framework/widgetWithTemplate", "ci/listener/ciListener"], function() {
 			if (self.ciListener === null) {
 				self.ciListener = new Clazz.com.components.ci.js.listener.CIListener(globalConfig);
 			}
+
+			self.registerEvents(self.ciListener);
 		},
 		
 		
-		registerEvents : function () {
-			
+		registerEvents : function (ciListener) {
+			var self = this;
+			// Register events
+			 if (self.onLoadEnvironmentEvent === null) {
+			 	self.onLoadEnvironmentEvent = new signals.Signal();
+			 }
+
+			 // Trigger registered events
+			 self.onLoadEnvironmentEvent.add(ciListener.loadEnvironmentEvent, ciListener);
 		},
 		/***
 		 * Called in once the login is success
@@ -40,6 +55,16 @@ define(["framework/widgetWithTemplate", "ci/listener/ciListener"], function() {
 			Clazz.navigationController.push(this, true);
 		},
 		
+		preRender: function(whereToRender, renderFunction) {
+			var self = this;
+			console.log("Pre render .... ");
+			self.getAction(self.ciRequestBody, 'getEnvironemntsByProjId', '', function(response) {
+				console.log("get environement response =>  " + JSON.stringify(response.data));
+			 	self.templateData.environments = response.data;
+				renderFunction(self.templateData, whereToRender);
+			});		
+		},
+
 		/***
 		 * Called after the preRender() and bindUI() completes. 
 		 * Override and add any preRender functionality here
@@ -47,15 +72,24 @@ define(["framework/widgetWithTemplate", "ci/listener/ciListener"], function() {
 		 * @element: Element as the result of the template + data binding
 		 */
 		postRender : function(element) {
-			var self = this; 
+			var self = this;
+			console.log("Post render .... ");
+
+			// List job templates by environment from all applications
+			self.onLoadEnvironmentEvent.dispatch(function(params) {
+					self.getAction(self.ciRequestBody, 'getJobTemplatesByEnvironemnt', params, function(response) {
+						console.log("Populates job templates by environment ");
+					});
+			});
 		},
 		
-		/* dynamicEvent : function() {
-			var self = this; 
-			var dependency = '';
-			dependency = $("select[name='sonar']").find(':selected').attr('dependency');
-				
-		}, */
+		getAction : function(ciRequestBody, action, params, callback) {
+			var self = this;
+			console.log("Get action .... ");
+			self.ciListener.getHeaderResponse(self.ciListener.getRequestHeader(self.ciRequestBody, action, params), function(response) {
+				callback(response);
+			}); 
+		},
 
 		/***
 		 * Bind the action listeners. The bindUI() is called automatically after the render is complete 
