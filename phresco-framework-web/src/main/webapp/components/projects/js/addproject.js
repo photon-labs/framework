@@ -157,6 +157,14 @@ define(["projects/listener/projectsListener"], function() {
 			$("input[name='projectname']").on('keyup',function() {
 				$("input[name='projectcode']").val($(this).val());
 			});
+
+			$("#strdt").click(function() {
+				$("#startDate").focus();
+			});
+
+			$("#enddt").click(function() {
+				$("#endDate").focus();
+			});
 			 
 		}
 	});

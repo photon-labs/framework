@@ -68,8 +68,8 @@
                         <li name="{{name}}" dispName="{{dispName}}" packaging="{{packaging}}" type="{{type}}">
                         <span class="flt_right" ><a class="featureinfo_img" value="{{#idtrime id}}{{/idtrime}}" artifactGroupId="{{id}}"> 
                         <img src="themes/default/images/helios/info_icon.png" width="15" height="16" border="0" alt=""></a></span>
-                                {{#versiondata versions}}{{/versiondata}} 
-								{{#versionShowHide versions}}{{/versionShowHide}} 
+                                {{#versiondata versions id}}{{/versiondata}}
+								{{#versionShowHide versions id}}{{/versionShowHide}} 
 								{{#each versions}}
 									{{#each appliesTo}}
 										<input type="hidden" defaultModule="true">
@@ -111,8 +111,8 @@
                         <li name="{{name}}" dispName="{{dispName}}" packaging="{{packaging}}" type="{{type}}">
                         <span class="flt_right" ><a class="featureinfo_img" value="{{#idtrime id}}{{/idtrime}}" artifactGroupId="{{id}}"> 
                         <img src="themes/default/images/helios/info_icon.png" width="15" height="16" border="0" alt=""></a></span>
-                                {{#versiondata versions}}{{/versiondata}} 
-								{{#versionShowHide versions}}{{/versionShowHide}} 
+                                {{#versiondata versions id}}{{/versiondata}}
+								{{#versionShowHide versions id}}{{/versionShowHide}} 
 								{{#each versions}}
 									{{#each appliesTo}}
 										<input type="hidden" defaultModule="true">

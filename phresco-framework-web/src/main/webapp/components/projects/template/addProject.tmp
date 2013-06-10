@@ -26,9 +26,9 @@
                         </select>
                     </td>
 					<td data-i18n="project.create.label.startdate" name="startdate-lbl"></td>
-                    <td class="startdate" name="startdateholder"><input name="startdate" type="text" id="startDate"><span class="add-on"><img src="themes/default/images/helios/cal_icon.png" border="0" alt=""></span></td>
+                    <td class="startdate" name="startdateholder"><input name="startdate" type="text" id="startDate"><span class="add-on"><img id="strdt" src="themes/default/images/helios/cal_icon.png" border="0" alt=""></span></td>
                     <td data-i18n="project.create.label.enddate" name="enddate-lbl"></td>
-                    <td colspan="2" class="enddate" name="enddateholder"><input name="enddate" id="endDate" type="text"><span class="add-on"><span class="add-on"><img src="themes/default/images/helios/cal_icon.png" border="0" alt=""></span></span></td>
+                    <td class="enddate" name="enddateholder"><input name="enddate" id="endDate" type="text"><span class="add-on"><span class="add-on"><img id="enddt" src="themes/default/images/helios/cal_icon.png" border="0" alt=""></span></span></td>
                 </tr>
 				{{#if applicationlayerData.techGroups}}
 					<tr class="proj_title">

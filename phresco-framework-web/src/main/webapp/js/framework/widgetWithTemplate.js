@@ -259,12 +259,12 @@ define(["framework/widget", "framework/templateProvider"], function() {
 			setDateTimePicker : function(){
 				var nowTemp = new Date();
 				var now = new Date(nowTemp.getFullYear(), nowTemp.getMonth(), nowTemp.getDate(), 0, 0, 0, 0);
-				
+				var flag=1;
 				$(".datepicker").remove();
 				var checkin = $('#startDate').datepicker({
-					onRender: function(date) {return date.valueOf() < now.valueOf() ? 'disabled' : '';}
+					onRender: function(date) {return date.valueOf()}
 				}).on('changeDate', function(ev) {
-				   if (ev.date.valueOf() > checkout.date.valueOf()) {
+				   if ((ev.date.valueOf() > checkout.date.valueOf())||(flag==1)) {
 						var newDate = new Date(ev.date)
 						newDate.setDate(newDate.getDate() + 1);
 						checkout.setValue(newDate);
@@ -305,7 +305,6 @@ define(["framework/widget", "framework/templateProvider"], function() {
 			},
 			
 			multiselect : function() {
-				console.info("multiselect called");
 				$('.selectpicker').selectpicker();
 			}
 		}
