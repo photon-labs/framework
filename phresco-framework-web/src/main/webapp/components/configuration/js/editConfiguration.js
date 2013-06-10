@@ -41,7 +41,7 @@ define(["framework/widgetWithTemplate", "configuration/listener/configurationLis
 				$.each(response.data.configurations, function(index, value){
 					if (value.type !== "Other") {
 						self.configurationlistener.getConfigurationList(self.configurationlistener.getRequestHeader(self.configRequestBody, "template", value.type), function(response) {
-							self.configurationlistener.constructHtml(response, value, '');
+							self.configurationlistener.constructHtml(response, value, response.data.settingsTemplate.name);
 						});
 					} else {
 						setTimeout(function(){
