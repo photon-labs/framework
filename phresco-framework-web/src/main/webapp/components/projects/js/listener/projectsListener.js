@@ -850,8 +850,8 @@ define(["projects/api/projectsAPI"], function() {
 						tech = $(value).children("td.technology").children("select.appln_technology");
 						techName = $(tech).find(":selected").text();
 						code = $(value).children("td.applnappcode").children("input.appln-appcode").val();
-						appInfo.code = code + "-" + techName;
-						appInfo.appDirName = code + "-" + techName;
+						appInfo.code = code;
+						appInfo.appDirName = code;
 						appInfo.version = projectversion;
 						appInfo.name = projectname + "-" + techName; 
 						techInfo.id = $(value).children("td.technology").children("select.appln_technology").val();

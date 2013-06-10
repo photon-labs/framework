@@ -129,8 +129,9 @@ define(["projects/listener/projectsListener"], function() {
 				self.onAddLayerEvent.dispatch($(this));
 			});
 			
-			$("#appcode").bind('input', function(){
+			$("#appcode, #webappcode, #mobileappcode").bind('input', function(){
 				var str = $(this).val();
+				str = str.replace(/[^a-zA-Z 0-9\-\_]+/g, "");
 				str = str.replace(/\s/g, "");
 				$(this).val(str);
 			});
