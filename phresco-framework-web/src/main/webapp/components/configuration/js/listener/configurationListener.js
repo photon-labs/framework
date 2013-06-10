@@ -14,6 +14,8 @@ define(["configuration/api/configurationAPI"], function() {
 		configTemName : [],
 		bcheck : null,
 		count : 0,
+		serverTypeVersion : null,
+		databaseTypeVersion : null,
 	
 		/***
 		 * Called in initialization time of this class 
@@ -151,6 +153,13 @@ define(["configuration/api/configurationAPI"], function() {
 			var configProperties = "";
 			var bCheck = false;
 			var configTemplate = configTemplates.data.settingsTemplate;
+			if(currentConfig === 'Server') {
+				self.serverTypeVersion = configTemplates.data.downloadInfo;
+			}
+			
+			if(currentConfig === 'Database') {
+				self.databaseTypeVersion = configTemplates.data.downloadInfo;
+			}
 			
 			if (configTemplate.length !== 0) {
 				var content = "";
@@ -194,8 +203,10 @@ define(["configuration/api/configurationAPI"], function() {
 				content = content.concat(defaultTd);
 				var count = 2;
 				var i = 2;
+				var configPropertiesType = "";
 				if (configuration.properties !== undefined) {
 					configProperties = configuration.properties;
+					configPropertiesType = configProperties.type;
 				}
 				$.each(configTemplate.properties, function(index, value) {
 					var key = value.key;
@@ -243,7 +254,87 @@ define(["configuration/api/configurationAPI"], function() {
 					} else if (type == "FileType") {
 						inputCtrl = '<div id="'+key+'file-uploader" class="file-uploader" propTempName="'+key+'"></div>';
 					} else {
-						inputCtrl = '<input mandatory="'+required+'" value="'+ configValue +'" class="'+configTemplate.name+self.count+'Configuration" name="'+key+'" temp="'+configTemplate.name+key+self.count+'" type="text" placeholder=""/>';
+						if (key === 'type') {
+							inputCtrl = '<select mandatory="'+required+'" class="'+configTemplate.name+self.count+'Configuration" name="' + value.key + '">';
+							
+							var options1 = "";
+							if(currentConfig === 'Server') {
+								$.each(self.serverTypeVersion, function(key, value){
+									var selectedAttr = "";
+									if (key === configValue) {
+										selectedAttr = "selected";
+									}
+									options1 = options1.concat('<option value="' + key + '" '+selectedAttr+'>' + key + '</option>');
+								});
+							} else if(currentConfig === 'Database') {
+								$.each(self.databaseTypeVersion, function(key, value){
+									var selectedAttr = "";
+									if (key === configValue) {
+										selectedAttr = "selected";
+									}
+									options1 = options1.concat('<option value="' + key + '" '+selectedAttr+'>' + key + '</option>');
+								});
+							}
+							inputCtrl = inputCtrl.concat(options1);
+							inputCtrl = inputCtrl.concat("</select></td>");
+						} else if (key === 'version') {
+							inputCtrl = '<select mandatory="'+required+'" class="'+configTemplate.name+self.count+'Configuration" currentConfig="'+configTemplate.name+'" name="' + value.key + '">';
+							var options1 = "";
+							var i=0;
+							if(currentConfig === 'Server') {
+								if (configPropertiesType !== "") {
+									$.each(self.serverTypeVersion, function(key, value){
+										if (configPropertiesType === key) {
+											for(var k=0; k<value.length; k++) {
+												var selectedAttr = "";
+												if (value[k] === configValue) {
+													selectedAttr = "selected";
+												}
+												options1 = options1.concat('<option value="' + value[k] + '" '+selectedAttr+'>' + value[k] + '</option>');
+											}
+										} 
+									});
+								} else {
+									$.each(self.serverTypeVersion, function(key, value){
+										for(var k=0; k<value.length; k++) {
+											options1 = options1.concat('<option value="' + value[k] + '">' + value[k] + '</option>');
+										}
+										i++;
+										if (i === 1) {
+											return false;
+										}
+									});
+								}
+							} else if(currentConfig === 'Database') {
+								if (configPropertiesType !== "") {
+									$.each(self.databaseTypeVersion, function(key, value){
+										if (configPropertiesType === key) {
+											for(var k=0; k<value.length; k++) {
+												var selectedAttr = "";
+												if (value[k] === configValue) {
+													selectedAttr = "selected";
+												}
+												options1 = options1.concat('<option value="' + value[k] + '" '+selectedAttr+'>' + value[k] + '</option>');
+											}
+										} 
+									});
+								} else {
+									$.each(self.databaseTypeVersion, function(key, value){
+										for(var k=0; k<value.length; k++) {
+											options1 = options1.concat('<option value="' + value[k] + '">' + value[k] + '</option>');
+										}
+										i++;
+										if (i === 1) {
+											return false;
+										}
+									});
+								}
+							}
+							inputCtrl = inputCtrl.concat(options1);
+							inputCtrl = inputCtrl.concat("</select></td>"); 
+						} else {
+							inputCtrl = '<input mandatory="'+required+'" value="'+ configValue +'" class="'+configTemplate.name+self.count+'Configuration" name="'+key+'" temp="'+configTemplate.name+key+self.count+'" type="text" placeholder=""/>';
+						}
 					}
 					control = control.concat(inputCtrl);
 					content = content.concat(control);
@@ -251,13 +342,47 @@ define(["configuration/api/configurationAPI"], function() {
 				});
 				if (bCheck === false) {
 					$("tbody[name=ConfigurationLists]").append(content);
+					$("a[name=removeConfig]").unbind("change");
+					self.severDbOnChangeEvent();
+					
 				}
 				$("a[name=removeConfig]").unbind("click");
 				self.removeConfiguration();
 				self.spclCharValidation();
 			}
 		},
-			
+		
+		severDbOnChangeEvent : function () {
+			var self=this;
+			$('select[name=type]').change(function() {
+				var configtype = $(this).parent().parent().attr('name');
+				var configValue = $(this).val();
+				var options = "";
+				if(configtype === 'Server') {
+					$.each(self.serverTypeVersion, function(key, value) {
+						if (configValue === key) {
+							$('select[currentConfig='+configtype+']').html('');
+							for(var k=0; k<value.length; k++) {
+								options += '<option value="' + value[k] + '">' + value[k] + '</option>';
+							}
+							$('select[currentConfig='+configtype+']').append(options);
+						}
+					});
+				} 
+				if (configtype === 'Database') {
+					$.each(self.databaseTypeVersion, function(key, value) {
+						if (configValue === key) {
+							$('select[currentConfig='+configtype+']').html('');
+							for(var k=0; k<value.length; k++) {
+								options += '<option value="' + value[k] + '">' + value[k] + '</option>';
+							}
+							$('select[currentConfig='+configtype+']').append(options);
+						}
+					});
+				}
+			});
+		},
+		
 		htmlForOther : function(value) {
 			var self = this, headerTr, content = '', textBox, apiKey = "", keyValue = "", type="Other", addIcon = '<img src="themes/default/images/helios/plus_icon.png" border="0" alt="">';
 				if (value !== null && value !== '') {
