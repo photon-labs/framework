@@ -47,6 +47,7 @@ import com.photon.phresco.exception.PhrescoWebServiceException;
 import com.photon.phresco.framework.PhrescoFrameworkFactory;
 import com.photon.phresco.framework.api.ProjectManager;
 import com.photon.phresco.framework.commons.FrameworkUtil;
+import com.photon.phresco.framework.rest.api.util.FrameworkServiceUtil;
 import com.photon.phresco.plugins.model.Mojos.ApplicationHandler;
 import com.photon.phresco.plugins.util.MojoProcessor;
 import com.photon.phresco.service.client.api.ServiceManager;
@@ -83,12 +84,9 @@ public class ProjectService extends RestBase implements FrameworkConstants {
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response appinfoList(@QueryParam("customerId") String customerId, @QueryParam("projectId") String projectId) {
 		ResponseInfo<List<ApplicationInfo>> responseData = new ResponseInfo<List<ApplicationInfo>>();
-		ProjectInfo projectInfo = null;
 		try {
-			ProjectManager projectManager = PhrescoFrameworkFactory.getProjectManager();
-			projectInfo = projectManager.getProject(projectId, customerId);	
-			if(projectInfo != null) {
-				List<ApplicationInfo> appInfos = projectInfo.getAppInfos();
+			List<ApplicationInfo> appInfos = FrameworkServiceUtil.getAppInfos(customerId, projectId);
+			if(CollectionUtils.isNotEmpty(appInfos)) {
 				ResponseInfo<List<ProjectInfo>> finalOutput = responseDataEvaluation(responseData, null, "Application infos returned Successfully", appInfos);
 				return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
 			}

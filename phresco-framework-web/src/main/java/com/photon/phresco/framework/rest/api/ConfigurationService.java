@@ -7,8 +7,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
@@ -60,7 +62,7 @@ public class ConfigurationService extends RestBase implements FrameworkConstants
 	public Response addEnvironment(@QueryParam("appDirName") String appDirName, List<Environment> environments) {
 		ResponseInfo<Environment> responseData = new ResponseInfo<Environment>();
 		try {
-			String configFileDir = getConfigFileDir(appDirName);
+			String configFileDir = FrameworkServiceUtil.getConfigFileDir(appDirName);
 			ConfigManager configManager = new ConfigManagerImpl(new File(configFileDir));
 			configManager.addEnvironments(environments);
 			ResponseInfo<Environment> finalOuptut = responseDataEvaluation(responseData, null, "Environments added Successfully", environments);
@@ -76,7 +78,7 @@ public class ConfigurationService extends RestBase implements FrameworkConstants
 	public Response listEnvironments(@QueryParam("appDirName") String appDirName, @QueryParam("envName") String envName) {
 		ResponseInfo<Environment> responseData = new ResponseInfo<Environment>();
 		try {
-			String configFileDir = getConfigFileDir(appDirName);
+			String configFileDir = FrameworkServiceUtil.getConfigFileDir(appDirName);
 			ConfigManager configManager = new ConfigManagerImpl(new File(configFileDir));
 			if(StringUtils.isNotEmpty(envName)) {
 				List<Environment> environments = configManager.getEnvironments(Arrays.asList(envName));
@@ -104,7 +106,7 @@ public class ConfigurationService extends RestBase implements FrameworkConstants
 	public Response getAllEnvironments(@QueryParam("appDirName") String appDirName) {
 		ResponseInfo<Environment> responseData = new ResponseInfo<Environment>();
 		try {
-			String configFileDir = getConfigFileDir(appDirName);
+			String configFileDir = FrameworkServiceUtil.getConfigFileDir(appDirName);
 			ConfigManager configManager = new ConfigManagerImpl(new File(configFileDir));
 			List<Environment> environments = configManager.getEnvironments();
 			ResponseInfo<Environment> finalOuptut = responseDataEvaluation(responseData, null, "Environments Listed", environments);
@@ -122,7 +124,7 @@ public class ConfigurationService extends RestBase implements FrameworkConstants
 	public Response saveConfiguration(@QueryParam("appDirName") String appDirName, Configuration configuration) {
 		ResponseInfo<Configuration> responseData = new ResponseInfo<Configuration>();
 		try {
-			String configFileDir = getConfigFileDir(appDirName);
+			String configFileDir = FrameworkServiceUtil.getConfigFileDir(appDirName);
 			ConfigManager configManager = new ConfigManagerImpl(new File(configFileDir));
 			configManager.createConfiguration(configuration.getEnvName(), configuration);
 			ResponseInfo<Configuration> finalOuptut = responseDataEvaluation(responseData, null, "Environments Listed", configuration);
@@ -137,7 +139,7 @@ public class ConfigurationService extends RestBase implements FrameworkConstants
 	@Path ("/deleteEnv")
 	@Produces (MediaType.APPLICATION_JSON)
 	public Response deleteEnv(@QueryParam("appDirName") String appDirName, @QueryParam("envName") String envName) {
-		String configFile = getConfigFileDir(appDirName);
+		String configFile = FrameworkServiceUtil.getConfigFileDir(appDirName);
 		ResponseInfo<Environment> responseData = new ResponseInfo<Environment>();
 		try {
 			ConfigManager configManager = new ConfigManagerImpl(new File(configFile));
@@ -165,7 +167,7 @@ public class ConfigurationService extends RestBase implements FrameworkConstants
 	@Produces (MediaType.APPLICATION_JSON)
 	@Consumes (MediaType.APPLICATION_JSON)
 	public Response deleteConfig(@QueryParam("appDirName") String appDirName, @QueryParam("envName") String envName, List<String> configurations) {
-		String configFile = getConfigFileDir(appDirName);
+		String configFile = FrameworkServiceUtil.getConfigFileDir(appDirName);
 		ResponseInfo<Configuration> responseData = new ResponseInfo<Configuration>();
 		try {
 			ConfigManager configManager = new ConfigManagerImpl(new File(configFile));
@@ -265,7 +267,7 @@ public class ConfigurationService extends RestBase implements FrameworkConstants
 	@Consumes (MediaType.APPLICATION_JSON)
 	public Response updateConfiguration(@QueryParam("appDirName") String appDirName,@QueryParam("envName") String envName, List<Configuration> configurationlist) {
 
-		String configFile = getConfigFileDir(appDirName);
+		String configFile = FrameworkServiceUtil.getConfigFileDir(appDirName);
 		ResponseInfo<Configuration> responseData = new ResponseInfo<Configuration>();
 		try {
 			
@@ -300,7 +302,7 @@ public class ConfigurationService extends RestBase implements FrameworkConstants
 	@Consumes (MediaType.APPLICATION_JSON)
 	public Response cloneEnvironment(@QueryParam("appDirName") String appDirName,@QueryParam("envName") String envName, Environment cloneEnvironment) {
 		
-		String configFile = getConfigFileDir(appDirName);
+		String configFile = FrameworkServiceUtil.getConfigFileDir(appDirName);
 		Environment clonedEnvironment= null;
 		ResponseInfo<Configuration> responseData = new ResponseInfo<Configuration>();
 		try {
@@ -401,6 +403,39 @@ public class ConfigurationService extends RestBase implements FrameworkConstants
 	}
 	
 	
+	@GET
+	@Path("/listEnvironmentsByProjectId")
+	@Produces (MediaType.APPLICATION_JSON)
+	public Response listEnvironmentsByProjectId(@QueryParam("customerId") String customerId, @QueryParam("projectId") String projectId) {
+		ResponseInfo<String> responseData = new ResponseInfo<String>();
+		try {
+			List<ApplicationInfo> appInfos = FrameworkServiceUtil.getAppInfos(customerId, projectId);
+			Set<String> environmentSet = new HashSet<String>();
+			for (ApplicationInfo appInfo : appInfos) {
+				List<Environment> environments = getEnvironments(appInfo);
+				for (Environment environment : environments) {
+					environmentSet.add(environment.getName());
+				}
+			}
+			ResponseInfo<String> finalOutput = responseDataEvaluation(responseData, null, "Environments Listed successfully", environmentSet);
+			return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
+		} catch (PhrescoException e) {
+			ResponseInfo<String> finalOutput = responseDataEvaluation(responseData, e, "Environmets not Fetched", null);
+			return Response.status(Status.BAD_REQUEST).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
+		} catch (ConfigurationException e) {
+			ResponseInfo<String> finalOutput = responseDataEvaluation(responseData, e, "Environmets not Fetched", null);
+			return Response.status(Status.BAD_REQUEST).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
+		}
+	}
+
+	private List<Environment> getEnvironments(ApplicationInfo appInfo)
+	throws ConfigurationException {
+		String configFile = FrameworkServiceUtil.getConfigFileDir(appInfo.getAppDirName());
+		ConfigManager configManager = new ConfigManagerImpl(new File(configFile));
+		List<Environment> environments = configManager.getEnvironmentsAlone();
+		return environments;
+	}
+	
 	private Date[] testCronExpression(String expression) throws PhrescoException {
 		Date[] dates = null;
 		try {
@@ -452,17 +487,6 @@ public class ConfigurationService extends RestBase implements FrameworkConstants
 			}
 		}
 		return nameMap;
-	}
-	
-	private String getConfigFileDir(String appDirName) {
-		StringBuilder builder = new StringBuilder();
-		builder.append(Utility.getProjectHome())
-		.append(appDirName)
-		.append(File.separatorChar)
-		.append(Constants.DOT_PHRESCO_FOLDER)
-		.append(File.separatorChar)
-		.append(Constants.CONFIGURATION_INFO_FILE);
-		return builder.toString();
 	}
 }
 

@@ -1,7 +1,10 @@
 package com.photon.phresco.framework.rest.api;
 
+import java.io.File;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
@@ -15,9 +18,20 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import org.apache.commons.collections.CollectionUtils;
+
+import com.photon.phresco.api.ConfigManager;
+import com.photon.phresco.commons.model.ApplicationInfo;
+import com.photon.phresco.configuration.Environment;
+import com.photon.phresco.exception.ConfigurationException;
+import com.photon.phresco.exception.PhrescoException;
 import com.photon.phresco.framework.PhrescoFrameworkFactory;
 import com.photon.phresco.framework.api.CIManager;
 import com.photon.phresco.framework.model.CIJobTemplate;
+import com.photon.phresco.framework.rest.api.util.FrameworkServiceUtil;
+import com.photon.phresco.impl.ConfigManagerImpl;
+import com.photon.phresco.util.Constants;
+import com.photon.phresco.util.Utility;
 import com.sun.jersey.api.client.ClientResponse.Status;
 
 import fr.opensagres.xdocreport.utils.StringUtils;
@@ -110,5 +124,46 @@ public class CIJobTemplateService extends RestBase {
 			ResponseInfo<CIJobTemplate> finalOutput = responseDataEvaluation(responseData, e, "Job Templates deletion failed", null);
 			return Response.status(Status.EXPECTATION_FAILED).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
 		}
+	}
+	
+	@GET
+	@Path("/getJobTemplatesByEnvironemnt")
+	@Produces (MediaType.APPLICATION_JSON)
+	public Response getJobTemplatesByEnvironemnt(@QueryParam("customerId") String customerId, @QueryParam("projectId") String projectId,
+			@QueryParam("envName") String envName) {
+		ResponseInfo<CIJobTemplate> responseData = new ResponseInfo<CIJobTemplate>();
+		try {
+			List<ApplicationInfo> appInfos = FrameworkServiceUtil.getAppInfos(customerId, projectId);
+			CIManager ciManager = PhrescoFrameworkFactory.getCIManager();
+			Map<String, List<CIJobTemplate>> jobTemplateMap = new HashMap<String, List<CIJobTemplate>>();
+			for (ApplicationInfo appInfo : appInfos) {
+				String appId = appInfo.getName();
+				List<Environment> environments = getEnvironments(appInfo);
+				for (Environment environment : environments) {
+					if (envName.equals(environment.getName())) {
+						List<CIJobTemplate> jobTemplates = ciManager.getJobTemplatesByAppId(appId);
+						if (CollectionUtils.isNotEmpty(jobTemplates)) {
+							jobTemplateMap.put(appId, jobTemplates);
+						}
+					}
+				}
+			}
+			ResponseInfo<CIJobTemplate> finalOutput = responseDataEvaluation(responseData, null, "Job Templates Fetched Successfully", jobTemplateMap);
+			return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
+		} catch (PhrescoException e) {
+			ResponseInfo<CIJobTemplate> finalOutput = responseDataEvaluation(responseData, e, "Job Templates Failed to Fetch", null);
+			return Response.status(Status.EXPECTATION_FAILED).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
+		} catch (ConfigurationException e) {
+			ResponseInfo<CIJobTemplate> finalOutput = responseDataEvaluation(responseData, e, "Job Templates Failed to Fetch", null);
+			return Response.status(Status.EXPECTATION_FAILED).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
+		}
+	}
+	
+	private List<Environment> getEnvironments(ApplicationInfo appInfo)
+	throws ConfigurationException {
+		String configFile = FrameworkServiceUtil.getConfigFileDir(appInfo.getAppDirName());
+		ConfigManager configManager = new ConfigManagerImpl(new File(configFile));
+		List<Environment> environments = configManager.getEnvironmentsAlone();
+		return environments;
 	}
 }
