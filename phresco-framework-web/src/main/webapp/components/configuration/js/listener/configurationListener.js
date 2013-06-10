@@ -37,14 +37,14 @@ define(["configuration/api/configurationAPI"], function() {
 					self.editConfigurations = retVal;
 					self.getConfigurationList(self.getRequestHeader(self.configRequestBody, "configTypes"), function(response) {
 						self.editConfigurations.configType = response.data;
+						Clazz.navigationController.push(self.editConfigurations, true);
 					});
-					Clazz.navigationController.push(self.editConfigurations, true);
 				});
 			} else {
 				self.getConfigurationList(self.getRequestHeader(self.configRequestBody, "configTypes"), function(response) {
 					self.editConfigurations.configType = response.data;
+					Clazz.navigationController.push(self.editConfigurations, true);
 				});
-				Clazz.navigationController.push(self.editConfigurations, true);
 			}
 		},
 		
