@@ -98,7 +98,7 @@ public class PdfService extends RestBase implements FrameworkConstants,Constants
 				boolean reportDeleted = pdfFile.delete();
 				if(reportDeleted) {
 					ResponseInfo finalOutput = responseDataEvaluation(responseData, null, SUCCESS_REPORT_DELETE_STATUS, null);
-					return Response.status(Status.NOT_FOUND).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
+					return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
 				} else {
 					ResponseInfo finalOutput = responseDataEvaluation(responseData, null, ERROR_REPORT_DELETE_STATUS, null);
 					return Response.status(Status.NOT_FOUND).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();

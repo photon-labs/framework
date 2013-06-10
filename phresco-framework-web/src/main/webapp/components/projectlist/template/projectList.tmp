@@ -189,7 +189,7 @@
                              </table> 
 							 
                          <div class="flt_right roll_data" appDirName="{{appDirName}}">
-                          <input type="button" value="Commit" class="btn" id="{{id}}" name="commitbtn">
+                          <input type="button" value="Commit" disabled class="btn" id="{{id}}" name="commitbtn">
                             <input type="button" value="Cancel" class="btn btn_style dyn_popup_close">
                          </div>
 					 </div> 
