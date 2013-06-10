@@ -205,7 +205,15 @@ textarea { resize: none; }
 	float:left;
 	width:279px;
 	border-left:1px solid #e5e5e5;
-	padding:12px 0 12px 19px;
+	padding:12px 0 5px 19px;
+}
+
+.login_right label {
+	margin-bottom:0 !important;
+}
+
+.context_txt {
+	font-size:11px; color:#EF7B43; float:left;
 }
 
 .loginhead img {
@@ -662,8 +670,20 @@ ul.nav li.dropdown:hover > .test_options{
 
 .successpop {
 	padding: 8px 8px 0px 8px;
-	border: 1px solid green;
-	background: #0C6;
+	border: 1px solid 5befa5;
+	background: #5befa5;
+	border-radius: 6px;
+	color: #fff;
+	font-size: 14px;
+	font-weight: bold;
+	text-align: center;
+	min-width: 400px;	
+}
+
+.errorpop {
+	padding: 8px 8px 0px 8px;
+	border: 1px solid #eed3d7;
+	background: #f2dede;
 	border-radius: 6px;
 	color: #fff;
 	font-size: 14px;
@@ -1076,17 +1096,11 @@ img[name="close"] {
 	margin-left: 10px;	
 }
 
-.appSuccessMsg  {
-	color: green;
-    margin-right: 7px;
-    padding-top: 3px;
-    width: auto;
+.dropdown-menu > li > a:hover {
+background:#EF7B43 !important;
 }
 
-.appDesc {
-	height: 114px;
-	width: 200px;
-}
+
 /* *************************************************************************** CSS for Quality selection dropdown ************************************************************************** */
 
 .title_nav .cust_sel ul li a {
@@ -1244,7 +1258,7 @@ img[name="close"] {
 	line-height:38px;
 }
 .featureinfo {
-	z-index:1;
+	z-index:2;
 	width: 300px;
 	padding:0 !important;
 }
@@ -1571,26 +1585,6 @@ img[name="close"] {
 
 @media screen and (min-width: 978px) and (max-width: 1024px) {
 
-.build_info table.small thead.fixedHeader th {
-	width: 350px;
-}
-
-.build_info table.big thead.fixedHeader th:nth-child(2) {
-	width: 100px;
-}
-
-.build_info table.big thead.fixedHeader th:nth-child(3) {
-	width: 160px;
-}
-
-.build_info table.big thead.fixedHeader th:nth-child(4) {
-	width: 250px;
-}
-
-.build_info table.big thead.fixedHeader th:nth-child(5) {
-	width: 135px;
-}
-
 .optiontitle .alert_div {
 	font-size: 9px !important;
 	width: 28%;	
@@ -1630,25 +1624,6 @@ select[name="builtmyself"] {
 }
 @media screen and (min-width: 1025px) and (max-width: 1152px) {
 
-.build_info table.small thead.fixedHeader th {
-	width: 240px;
-}
-
-.build_info table.big thead.fixedHeader th:nth-child(2) {
-	width: 125px;
-}
-
-.build_info table.big thead.fixedHeader th:nth-child(3) {
-	width: 160px;
-}
-
-.build_info table.big thead.fixedHeader th:nth-child(4) {
-	width: 324px;
-}
-
-.build_info table.big thead.fixedHeader th:nth-child(5) {
-	width: 135px;
-}
 
 .startdate input, .enddate input {
 	width: 163px !important;
@@ -1679,22 +1654,6 @@ select[name="builtmyself"] {
 
 @media screen and (min-width: 1153px) and (max-width: 1280px) {
 
-.build_info table.small thead.fixedHeader th {
-	width: 190px;
-}
-
-.build_info table.big thead.fixedHeader th:nth-child(2) {
-	width: 175px;
-}
-
-.build_info table.big thead.fixedHeader th:nth-child(3) {
-	width: 160px;
-}
-
-.build_info table.big thead.fixedHeader th:nth-child(4) {
-	width: 324px;
-}
-
 .startdate input, .enddate input {
 	width: 161px !important;
 	margin-right: 4px;
@@ -1724,22 +1683,6 @@ select[name="builtmyself"] {
 }
 
 @media screen and (min-width: 1281px) and (max-width: 1360px) {
-
-.build_info table.small thead.fixedHeader th {
-	width: 170px;
-}
-
-.build_info table.big thead.fixedHeader th:nth-child(2) {
-	width: 175px;
-}
-
-.build_info table.big thead.fixedHeader th:nth-child(3) {
-	width: 214px;
-}
-
-.build_info table.big thead.fixedHeader th:nth-child(4) {
-	width: 324px;
-}
 
 .startdate input, .enddate input {
 	width: 160px !important;
@@ -1893,10 +1836,6 @@ select[name="builtmyself"] {
 
 .build_info table,.build_progress table {
 	border: none !important;
-}
-
-.build_info table tbody tr td:nth-of-type(n+3) {
-	padding-left: 30px;
 }
 
 .build_progress table thead tr td:last-child {
@@ -2256,7 +2195,7 @@ html>body tbody.scrollContent {
 
 .build_info table thead.fixedHeader th {
 	width: 140px;
-	text-align: center !important;
+	text-align: left !important;
 }
 
 .build_info table.small thead.fixedHeader th + th {
@@ -3163,6 +3102,7 @@ html>body tbody.scrollContent {
 }
 
 /* *************************************************************** STYLES FOR WIDGETS ************************************************************************************ */
+/*
 
 .features_box .box_div ul li span {
 padding-top: 12px;
@@ -3180,3 +3120,4 @@ padding: 4px 6px;
 vertical-align: middle;
 }
 
+*/
