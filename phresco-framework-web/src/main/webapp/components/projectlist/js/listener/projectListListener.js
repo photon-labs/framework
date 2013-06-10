@@ -169,7 +169,10 @@ define(["projectlist/api/projectListAPI"], function() {
 				header.requestMethod = "GET";
 				header.webserviceurl = commonVariables.webserviceurl + "pdf/downloadReport?appDirName="+projectRequestBody.appDir+"&reportFileName="+projectRequestBody.fileName+"&fromPage="+projectRequestBody.fromPage;		
 			} 
-			
+			if (action == "getCommitableFiles") {
+				header.requestMethod = "GET";
+				header.webserviceurl = commonVariables.webserviceurl + "repository/popupValues?appDirName="+projectRequestBody.appdirname+"&userId=" + userId + "&action=commit";
+			} 
 			return header;
 		},
 		
@@ -255,6 +258,36 @@ define(["projectlist/api/projectListAPI"], function() {
 				actionBody = reportdata;
 				action = "reportget";
 				self.projectListAction(self.getActionHeader(actionBody, action));
+		},
+		
+		getCommitableFiles : function(data, obj) {
+			var self = this;
+			var dynamicId = data.dynamicId;
+	      	self.projectListAction(self.getActionHeader(data, "getCommitableFiles"), function(response){
+				var commitableFiles = "";
+				self.opencc(obj, $(obj).attr('name'), '');
+				$('.commit_data_'+dynamicId).hide();
+				$('.commitErr_'+dynamicId).hide();      
+				if (response.data != undefined && !response.data.repoExist) {
+				  $('.commitErr_'+dynamicId).show();
+				} else if (response.data != undefined && response.data.repoInfoFile != undefined) {
+				 $('input[name=commitbtn]').prop("disabled", true);
+				 $('input[name=commitbtn]').removeClass("btn_style");		
+				  $('.commit_data_'+dynamicId).show();
+				  $('#commitRepourl_'+dynamicId).val(response.data.repoUrl);
+				  commitableFiles += '<thead><tr><th><input dynamicId="'+ dynamicId +'" class="commitParentChk_'+ dynamicId +'"  type="checkbox"></th><th>File</th><th>Status</th></tr></thead><tbody>';
+				  $.each(response.data.repoInfoFile, function(index, value){
+					commitableFiles += '<tr><td><input dynamicId="'+ dynamicId +'" class="commitChildChk_' + dynamicId + '" type="checkbox" value="' + value.commitFilePath + '"></td>';
+					commitableFiles += '<td style="width:150px;" title="'+ value.commitFilePath +'">"' + self.trimValue(value.commitFilePath) + '"</td>';
+					commitableFiles += '<td>"' + value.status + '"</td></tr>';
+				  });
+				  $('.commitable_files_'+dynamicId).html(commitableFiles); 
+				  $.each(response.data.repoInfoFile, function(index, value){
+					self.commitFileCheckBoxEvent($('.commitParentChk_'+dynamicId), $('.commitChildChk_'+dynamicId));
+				  });
+					self.commitFileCheckAllEvent($('.commitParentChk_'+dynamicId), $('.commitChildChk_'+dynamicId));
+				}
+			});
 		},
 		
 		getReportEvent : function(obj){
