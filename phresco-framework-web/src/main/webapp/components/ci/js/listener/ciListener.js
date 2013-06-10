@@ -30,11 +30,12 @@ define(["ci/api/ciAPI"], function() {
 		},
 		
 		loadContinuousDeliveryConfigure : function() {
-			var self=this;
+			var self = this;
+			Clazz.navigationController.jQueryContainer = commonVariables.contentPlaceholder;
 			commonVariables.navListener.getMyObj(commonVariables.continuousDeliveryConfigure, function(retVal){
 				self.continuousDeliveryConfigure = 	retVal;
+				Clazz.navigationController.push(self.continuousDeliveryConfigure, true);
 			}); 
-			Clazz.navigationController.push(self.continuousDeliveryConfigure, true);
 		},
 
 		getRequestHeader : function(ciRequestBody, action, params) {
@@ -69,7 +70,9 @@ define(["ci/api/ciAPI"], function() {
 				ciRequestBody.projectId = projectId;
 				header.requestPostBody = JSON.stringify(ciRequestBody);
 				console.log("log => " + JSON.stringify(ciRequestBody));
-				header.webserviceurl = commonVariables.webserviceurl + commonVariables.jobTemplates;
+				var oldname = $('[name="oldname"]').val();
+				console.log("oldname => " + oldname);
+				header.webserviceurl = commonVariables.webserviceurl + commonVariables.jobTemplates + "?oldname=" + oldname;
 			} else if (action === "edit") {
 				header.requestMethod = "GET";
 				header.webserviceurl = commonVariables.webserviceurl + commonVariables.jobTemplates;
@@ -95,6 +98,42 @@ define(["ci/api/ciAPI"], function() {
 
 			return header;
 		},
+
+		validation : function () {
+			try {
+				var self = this, bCheck = false;
+				if ($('input[name="name"]').val() == undefined || $('input[name="name"]').val() == null || $.trim($('input[name="name"]').val()) == "") {
+					$('input[name="name"]').attr('placeholder','Enter Username');
+					$('input[name="name"]').addClass("loginuser_error");
+					bCheck = false;
+				}
+
+				if($('#appIdsList').find('input[type=checkbox]:checked').length == 0) {
+        				alert('Please select atleast one application');
+    			}
+
+    			if($('#features').find('input[type=checkbox]:checked').length == 0) {
+        				alert('Please select atleast one feature');
+    			}
+
+			} catch (error) {
+				//Exception
+				console.log("Exception ");
+			}
+		},
+
+		isNameExists : function () {
+
+		},
+
+		// fieldValidate : function (obj) {
+		// 	if (obj.val() == undefined || obj.val() == null || $.trim(obj.val()) == "") {
+		// 		obj.attr('placeholder','Enter Username');
+		// 		obj.addClass("loginuser_error");
+		// 		return false;
+		// 	}
+		// 	return true;
+		// },
 
 		addJobTemplate : function (callback) {
 			var self=this;
@@ -144,7 +183,7 @@ define(["ci/api/ciAPI"], function() {
 			$('#jobTemplate #features :checkbox:not(:checked)').attr('value', false); // make checked checkbox value to false
 			$('#jobTemplate #features :checkbox:checked').attr('value', true); // make checked checkbox value to true
 
-			var jobTemplate = $('#jobTemplate').serializeObject();
+			var jobTemplate = $('#jobTemplate :input[name!=oldname]').serializeObject();
 
 			// Convert appIds to array
 			jobTemplate.appIds = [];
@@ -168,11 +207,11 @@ define(["ci/api/ciAPI"], function() {
 			//});
 
 			$("[name=name]").val(data.name);
-			// $("[name=oldname]").val(data.name);
+			$("[name=oldname]").val(data.name);
 			$("[name=type]").val(data.type);
 			$.each(data.appIds, function(index, value) {
 				//alert(index + ': ' + value);
-				$('[name=appIds][value='+ value +']').prop('checked', true);
+				$('[name=appIds][value="'+ value +'"]').prop('checked', true);
 			});
 
 			$("[name=repoTypes]").val(data.repoTypes);

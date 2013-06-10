@@ -15,7 +15,7 @@
                                 <tr>
                                   <td>
                                     <input type="text" placeholder="Job Name" name="name" value="">
-                                    <!--<input type="hidden" name="oldname" value="">-->
+                                    <input type="hidden" name="oldname" value="">
                                   </td>
                                   <td>
                                       <select name="type">

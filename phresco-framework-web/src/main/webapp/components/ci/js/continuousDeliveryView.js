@@ -22,14 +22,20 @@ define(["framework/widgetWithTemplate", "ci/listener/ciListener"], function() {
 					self.dynamicpage = retVal;
 				});
 			}
-			self.ciListener = new Clazz.com.components.ci.js.listener.CIListener(globalConfig);
+
+			if (self.ciListener === null) {
+				self.ciListener = new Clazz.com.components.ci.js.listener.CIListener(globalConfig);
+			}
 			self.registerEvents(self.ciListener);
 		},
 		
 		
 		registerEvents : function (ciListener) {
 			var self = this;
-			self.continuousDeliveryConfigureLoadEvent = new signals.Signal();
+			if (self.continuousDeliveryConfigureLoadEvent === null) {
+				self.continuousDeliveryConfigureLoadEvent = new signals.Signal();
+			}
+
 			self.continuousDeliveryConfigureLoadEvent.add(ciListener.loadContinuousDeliveryConfigure, ciListener);
 		},
 		/***
@@ -37,7 +43,8 @@ define(["framework/widgetWithTemplate", "ci/listener/ciListener"], function() {
 		 *
 		 */
 		loadPage :function(){
-			Clazz.navigationController.push(this);
+			Clazz.navigationController.jQueryContainer = commonVariables.contentPlaceholder;
+			Clazz.navigationController.push(this, true);
 		},
 		
 		/***

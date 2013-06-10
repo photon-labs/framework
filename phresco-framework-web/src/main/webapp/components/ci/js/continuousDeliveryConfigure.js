@@ -21,18 +21,23 @@ define(["framework/widgetWithTemplate", "ci/listener/ciListener"], function() {
 					self.dynamicpage = retVal;
 				});
 			}
-			self.ciListener = new Clazz.com.components.ci.js.listener.CIListener(globalConfig);
+
+			if (self.ciListener === null) {
+				self.ciListener = new Clazz.com.components.ci.js.listener.CIListener(globalConfig);
+			}
 		},
 		
 		
 		registerEvents : function () {
+			
 		},
 		/***
 		 * Called in once the login is success
 		 *
 		 */
 		loadPage :function(){
-			Clazz.navigationController.push(this);
+			Clazz.navigationController.jQueryContainer = commonVariables.contentPlaceholder;
+			Clazz.navigationController.push(this, true);
 		},
 		
 		/***
