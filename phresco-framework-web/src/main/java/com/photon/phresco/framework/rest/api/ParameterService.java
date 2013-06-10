@@ -70,8 +70,7 @@ public class ParameterService extends RestBase implements FrameworkConstants {
 		try {
 			List<Parameter> parameter = null;
 			String filePath = getInfoFileDir(appDirName, goal);
-			File file = new File(filePath);
-			MojoProcessor mojo = new MojoProcessor(file);
+			MojoProcessor mojo = new MojoProcessor(new File(filePath));
 			if ("functional-test".equals(goal)) {
 				String functionalTestFramework = FrameworkServiceUtil.getFunctionalTestFramework(appDirName);
 				goal = goal + "-" + functionalTestFramework;

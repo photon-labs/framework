@@ -192,6 +192,7 @@ define(["unitTest/listener/unitTestListener", "testResult/listener/testResultLis
 			$("#runUnitTest").unbind("click");
 			$("#runUnitTest").click(function() {
 				self.onRunUnitTestEvent.dispatch();
+				$("#unit_popup").toggle();
 			});
 		}
 	});

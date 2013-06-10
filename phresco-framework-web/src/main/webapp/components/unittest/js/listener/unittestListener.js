@@ -109,7 +109,6 @@ define(["unitTest/api/unitTestAPI"], function() {
 		
 		runUnitTest : function() {
 			var self = this;
-			$("#unit_popup").toggle();
 			var testData = $("#unitTestForm").serialize();
 			var appdetails = self.unitTestAPI.localVal.getJson('appdetails');
 			var queryString = '';
@@ -127,12 +126,12 @@ define(["unitTest/api/unitTestAPI"], function() {
 				commonVariables.navListener.getMyObj(commonVariables.mavenService, function(retVal){
 					self.mavenServiceListener = retVal;
 					
-					self.mavenServiceListener.mvnUnitTest(queryString, '#unitTestConsole', function(response){
+					self.mavenServiceListener.mvnUnitTest(queryString, '#unitTestConsole', function(response) {
 						
 					});
 				});
 			} else {
-				self.mavenServiceListener.mvnUnitTest(queryString, '#unitTestConsole', function(response){
+				self.mavenServiceListener.mvnUnitTest(queryString, '#unitTestConsole', function(response) {
 					
 				});
 			}			
