@@ -40,11 +40,11 @@
                         <td><a name="editApplication" href="javascript:;">{{name}}</a></td>
                         <td>{{description}}</td>
                         <td>{{techInfo.name}}</td>
-                       <td><a name="pdf_report" class="tooltiptop" title="" data-placement="top" data-t="tooltip" href="#" data-original-title="PDF Report"><img src="themes/default/images/helios/pdf_icon.png" width="14" height="16" border="0" alt=""></a>
+                       <td><a name="pdf_report" fromPage="All" class="tooltiptop" title="" data-placement="top" data-t="tooltip" href="#" data-original-title="PDF Report"><img src="themes/default/images/helios/pdf_icon.png" width="14" height="16" border="0" alt=""></a>
                   
               <div id="pdf_report" class="dyn_popup">
                 <table width="100%" border="0" cellspacing="0" cellpadding="5">
-                  <thead>
+                  <thead name="pdfHeader">
                         <tr>
                             <th>Existing Reports</th>
                             <th>Type</th>
@@ -52,7 +52,7 @@
                             <th>Delete</th>
                         </tr>    
                     </thead>
-                    <tbody>
+                    <tbody name="generatedPdfs">
                         <tr>
                             <td>Apr 17 2013 12:51</td>
                             <td>Detailed</td>
@@ -74,8 +74,8 @@
                         </tr>
                     </tbody>
                    </table>
-               <div class="flt_right">
-                 <input type="button" value="Generate" class="btn btn_style" name="generate">
+                <div class="flt_right">
+                 <input type="button" fromPage="All" sonarUrl="http://localhost:9000/dashboard" value="Generate" class="btn btn_style" name="generate" appId="{{id}}" projectId = "{{../id}}">
                  <input type="button" value="Close" class="btn btn_style dyn_popup_close">
                </div>
                 <!--pdf_report div ends here -->  

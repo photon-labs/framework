@@ -152,14 +152,24 @@ define(["projectlist/api/projectListAPI"], function() {
 				addupdate.version = projectRequestBody.revision;
 				header.requestPostBody = JSON.stringify(addupdate);
 				header.webserviceurl = commonVariables.webserviceurl + "repository/updateImportedApplication?appDirName="+projectRequestBody.appdirname;
-			} else if(action == "reportget") {
-				header.requestMethod = "POST";
-				//header.webserviceurl = commonVariables.webserviceurl + "/app/printAsPdf/username="+data.name+"&appId="+appId+"&customerId="+customerId+"&fromPage="+fromPage+"&isReportAvailable=true&projectId="+projectId+"&reportDataType=detail&sonarUrl="+fromPage;		
-			} else if (action == "getCommitableFiles") {
-				header.requestMethod = "GET";
-				header.webserviceurl = commonVariables.webserviceurl + "repository/popupValues?appDirName="+projectRequestBody.appdirname+"&userId=" + userId + "&action=commit";
 			}
-
+			if(action == "reportget") {
+				header.requestMethod = "POST";
+				header.webserviceurl = commonVariables.webserviceurl + "app/printAsPdf?username="+data.name+"&appId="+projectRequestBody.appid+"&customerId="+customerId+"&fromPage="+projectRequestBody.fromPage+"&isReportAvailable=true&projectId="+projectRequestBody.projectId+"&reportDataType=detail&sonarUrl="+projectRequestBody.sonarUrl;		
+			} 
+			if(action == "getreport") {
+				header.requestMethod = "GET";
+				header.webserviceurl = commonVariables.webserviceurl + "pdf/showPopUp?appDirName="+projectRequestBody.appDir+"&fromPage="+projectRequestBody.fromPage;		
+			} 
+			if(action == "deleteReport") {
+				header.requestMethod = "DELETE";
+				header.webserviceurl = commonVariables.webserviceurl + "pdf/deleteReport?appDirName="+projectRequestBody.appDir+"&reportFileName="+projectRequestBody.fileName+"&fromPage="+projectRequestBody.fromPage;		
+			} 
+			if(action == "downloadReport") {
+				header.requestMethod = "GET";
+				header.webserviceurl = commonVariables.webserviceurl + "pdf/downloadReport?appDirName="+projectRequestBody.appDir+"&reportFileName="+projectRequestBody.fileName+"&fromPage="+projectRequestBody.fromPage;		
+			} 
+			
 			return header;
 		},
 		
@@ -234,41 +244,68 @@ define(["projectlist/api/projectListAPI"], function() {
 			}
 		},
 		
-		addReportEvent : function(){
+		addReportEvent : function(obj){
 			var self = this;
 			var reportdata = {}, actionBody, action;		
 				reportdata.type = $("#reportType").val();
+				reportdata.fromPage = obj.attr("fromPage");
+				reportdata.appid = obj.attr("appId");
+				reportdata.projectId = obj.attr("projectId");
+				reportdata.sonarUrl = obj.attr("sonarUrl");
 				actionBody = reportdata;
 				action = "reportget";
 				self.projectListAction(self.getActionHeader(actionBody, action));
 		},
 		
-		getCommitableFiles : function(data, obj) {
+		getReportEvent : function(obj){
 			var self = this;
-			var dynamicId = data.dynamicId;
-			self.projectListAction(self.getActionHeader(data, "getCommitableFiles"), function(response){
-				var commitableFiles = "";
-				self.opencc(obj, $(obj).attr('name'), '');
-				$('.commit_data_'+dynamicId).hide();
-				$('.commitErr_'+dynamicId).hide();				
-				if (response.data != undefined && !response.data.repoExist) {
-					$('.commitErr_'+dynamicId).show();
-				} else if (response.data != undefined && response.data.repoInfoFile != undefined) {
-					$('.commit_data_'+dynamicId).show();
-					$('#commitRepourl_'+dynamicId).val(response.data.repoUrl);
-					commitableFiles += '<thead><tr><th><input dynamicId="'+ dynamicId +'" class="commitParentChk_'+ dynamicId +'"  type="checkbox"></th><th>File</th><th>Status</th></tr></thead><tbody>';
-					$.each(response.data.repoInfoFile, function(index, value){
-						commitableFiles += '<tr><td><input dynamicId="'+ dynamicId +'" class="commitChildChk_' + dynamicId + '" type="checkbox" value="' + value.commitFilePath + '"></td>';
-						commitableFiles += '<td style="width:150px;" title="'+ value.commitFilePath +'">"' + self.trimValue(value.commitFilePath) + '"</td>';
-						commitableFiles += '<td>"' + value.status + '"</td></tr>';
-					});
-					$('.commitable_files_'+dynamicId).html(commitableFiles);
+			var getreportdata = {}, actionBody, action;		
+				getreportdata.fromPage = obj.attr("fromPage");
+				getreportdata.appDir = obj.closest("tr").attr("class");
+				var temp  = obj.closest("tr").attr("class");
+				actionBody = getreportdata;
+				action = "getreport";
+				self.projectListAction(self.getActionHeader(actionBody, action), function(response) {
+					var content = "";
+					$("tbody[name=generatedPdfs]").empty();
+					if(response.length!=0 && response.length!=undefined) {
+						for(var i =0;i<response.length; i++) {
+							var headerTr = '<tr appdirname = "'+temp+'"><td>' + response[i].time + '</td><td>'+response[i].type+'</td>';
+							content = content.concat(headerTr);
+							headerTr = '<td><a class="tooltiptop" fileName="'+response[i].fileName+'" fromPage="All" href="#" data-toggle="tooltip" data-placement="top" name="downLoad" data-original-title="Download Pdf" title=""><img src="themes/default/images/helios/download_icon.png" width="15" height="18" border="0" alt="0"></a></td>';
+							content = content.concat(headerTr);
+							headerTr = '<td><a class="tooltiptop" fileName="'+response[i].fileName+'" fromPage="All" href="#" data-toggle="tooltip" data-placement="top" name="delete" data-original-title="Delete Pdf" title=""><img src="themes/default/images/helios/delete_row.png" width="14" height="18" border="0" alt="0"></a></td></tr>';
+							content = content.concat(headerTr);
+						}
+						$("tbody[name=generatedPdfs]").append(content);
+						self.clickFunction();
+					} else {
+						console.info("NO Reports Avilable.....");
+					}
 					
-					$.each(response.data.repoInfoFile, function(index, value){
-						self.commitFileCheckBoxEvent($('.commitParentChk_'+dynamicId), $('.commitChildChk_'+dynamicId));
-					});
-					self.commitFileCheckAllEvent($('.commitParentChk_'+dynamicId), $('.commitChildChk_'+dynamicId));
-				}
+				});
+		},
+		
+		clickFunction : function(){
+			var self = this;
+			$("a[name=delete]").click(function() {
+				var deletedata = {}, actionBody = {}, action;
+				deletedata.fileName = $(this).attr("fileName");
+				deletedata.fromPage = $(this).attr("frompage");
+				deletedata.appDir = $(this).closest('tr').attr("appdirname");
+				actionBody = deletedata;
+				self.projectListAction(self.getActionHeader(actionBody, "deleteReport"), function(response){
+				});
+			});
+			
+			$("a[name=downLoad]").click(function() {
+				var downloaddata = {}, actionBody = {}, action;
+				downloaddata.fileName = $(this).attr("fileName");
+				downloaddata.fromPage = $(this).attr("frompage");
+				downloaddata.appDir = $(this).closest('tr').attr("appdirname");
+				actionBody = downloaddata;
+				self.projectListAction(self.getActionHeader(actionBody, "downloadReport"), function(response){
+				});
 			});
 		},
 		

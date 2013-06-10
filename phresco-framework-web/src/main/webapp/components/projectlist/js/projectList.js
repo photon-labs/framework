@@ -20,6 +20,7 @@ define(["projectlist/listener/projectListListener"], function() {
 		onAddCommitEvent : null,
 		onAddUpdateEvent : null,
 		onAddReportEvent : null,
+		onGetReportEvent : null,
 		
 		/***
 		 * Called in initialization time of this class 
@@ -67,7 +68,11 @@ define(["projectlist/listener/projectListListener"], function() {
 			if(self.onAddReportEvent === null)
 				self.onAddReportEvent = new signals.Signal();
 			self.onAddReportEvent.add(projectslistListener.addReportEvent, projectslistListener);
-
+			
+			if(self.onGetReportEvent === null)
+				self.onGetReportEvent = new signals.Signal();
+			self.onGetReportEvent.add(projectslistListener.getReportEvent, projectslistListener);
+			
 		},
 		
 		/***
@@ -260,7 +265,11 @@ define(["projectlist/listener/projectListListener"], function() {
 
 			$("input[name='generate']").unbind("click");
 			$("input[name='generate']").click(function() {
-				self.onAddReportEvent.dispatch();				
+				self.onAddReportEvent.dispatch($(this));				
+			});
+			
+			$("a[name=pdf_report]").click(function() {
+				self.onGetReportEvent.dispatch($(this));
 			});
 			
 			$("input[name='revision']").unbind("click");
