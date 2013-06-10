@@ -2,7 +2,7 @@
 var commonVariables = {
 	globalconfig : "",
 	webserviceurl : "",
-	contexturl : "src",
+	contexturl : "src/",
 	
 	navListener : null,
 	
@@ -17,6 +17,8 @@ var commonVariables = {
 	
 	navigation : "navigation",
 	navigationContext : "",
+	
+	loadingScreen : null,
     
     projectlist : "projectlist",
     projectlistContext : "project",
@@ -57,7 +59,7 @@ define(["jquery"], function($) {
 			};
             
             commonVariables.headerPlaceholder=$("<div id='header'></div>");
-            commonVariables.contentPlaceholder="content\\:widget";
+            commonVariables.contentPlaceholder=$("<div id='content'></div>");
             commonVariables.footerPlaceholder=$("<div id='footer'></div>");
 
 
@@ -67,14 +69,31 @@ define(["jquery"], function($) {
 			// setup require.js
 			var requireConfig = requirejs.config(configJson);
 			
+			require(["framework/class", "framework/widget", "common/loading", "framework/widgetWithTemplate", "framework/navigationController", "login/login"], function () {
+				Clazz.config = data;
+				Clazz.navigationController = new Clazz.NavigationController({
+					mainContainer : "basepage\\:widget",
+					transitionType : Clazz.config.navigation.transitionType,
+					cancelTransitionType : Clazz.config.navigation.cancelTransitionType,
+					isNative : Clazz.config.navigation.isNative
+				});
+
+				//Apply customer based theme
+				if(localStorage.getItem('customertheme') != null && localStorage.getItem('customertheme') != ""){
+					JSS.css(eval('(' + localStorage.getItem('customertheme') + ')'));
+				}
+				
+				commonVariables.loadingScreen =new Clazz.com.js.widget.common.Loading();
+			});
+		
 			require(["lib/Signal-1.0.0", "lib/SignalBinding-1.0.0", "lib/i18next-1.6.0", "jquery_mCustomScrollbar_concat_min-2.8.1", "loginTest", "projectlistTest", "headerTest", "footerTest", "navigationTest", "projectTest", "applicationTest", "featuresTest", "codequalityTest", "configurationTest", "buildTest", "jshamcrest", "jsmockito"],	function (Signal, SignalBinding, next, mCustomScrollbar, loginTest, projectlistTest, headerTest, footerTest, navigationTest, projectTest,applicationTest, featuresTest, codequalityTest, configurationTest, buildTest){
 				JsHamcrest.Integration.JsTestDriver();
 				JsMockito.Integration.JsTestDriver();
-				var status = loginTest.runTests(data/*, function() {
-					projectlistTest.runTests(data);
-				}*/);
+				var status = loginTest.runTests(data);/*, function() {
+					projectlistTest.runTests(data);*/
+				//});
 				if (status) {
-					//projectlistTest.runTests(data);
+					projectlistTest.runTests(data);
 				}
 				
 				/* navigationTest.runTests(data);

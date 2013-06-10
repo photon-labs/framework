@@ -853,7 +853,7 @@ define(["projects/api/projectsAPI"], function() {
 						appInfo.code = code;
 						appInfo.appDirName = code;
 						appInfo.version = projectversion;
-						appInfo.name = projectname + "-" + techName; 
+						appInfo.name = projectname; 
 						techInfo.id = $(value).children("td.technology").children("select.appln_technology").val();
 						techInfo.appTypeId = "app-layer";
 						techInfo.name = $(value).children("td.technology").children("select.appln_technology").find(":selected").text();
@@ -869,10 +869,10 @@ define(["projects/api/projectsAPI"], function() {
 						tech = $(value).children("td.widget").children("select.web_widget");
 						techName = $(tech).find(":selected").text();
 						code = $(value).children("td.webappcode").children("input.web-appcode").val();
-						appInfo.code = code + "-" + techName;
-						appInfo.appDirName = code + "-" + techName;
+						appInfo.code = code;
+						appInfo.appDirName = code;
 						appInfo.version = projectversion;
-						appInfo.name = projectname + "-" + techName; 
+						appInfo.name = projectname; 
 						techInfo.id = $(value).children("td.widget").children("select.web_widget").val();
 						techInfo.appTypeId = "web-layer";
 						techInfo.techGroupId = $(value).children("td.web").children("select.weblayer").find(":selected").text();
@@ -894,10 +894,10 @@ define(["projects/api/projectsAPI"], function() {
 							tech = $(value).children("td.types").children("select.mobile_types");
 							techName = $(tech).find(":selected").text();
 							code = $(value).children("td.mobileappcode").children("input.mobile-appcode").val();
-							appInfo.code = code + "-" + techName;
-							appInfo.appDirName = code + "-" + techName; 
+							appInfo.code = code;
+							appInfo.appDirName = code; 
 							appInfo.version = projectversion;
-							appInfo.name = projectname + "-" + techName; 
+							appInfo.name = projectname; 
 							techInfo.id = $(value).children("td.types").children("select.mobile_types").find(':selected').val();
 							techInfo.appTypeId = "mobile-layer";
 							techInfo.techGroupId = $(value).children("td.mobile").children("select.mobile_layer").find(':selected').text();
