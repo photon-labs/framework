@@ -723,7 +723,7 @@ public class Applications extends FrameworkBaseAction implements Constants {
 						testFolder.mkdirs();
 					}
 					FileUtils.cleanDirectory(testFolder);
-					importTest = scmi.svnCheckout(testUserName, testPassword, testRepoUrl, testFolder.getPath());
+//					importTest = scmi.svnCheckout(testUserName, testPassword, testRepoUrl, testFolder.getPath());
 					if (SUCCESSFUL.equalsIgnoreCase(importTest)) {
 						errorString = getText(IMPORT_SUCCESS_PROJECT);
 						errorFlag = true;

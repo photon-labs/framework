@@ -829,6 +829,10 @@ ul.nav li.dropdown:hover > .test_options{
 	width: 158px;	
 }
 
+.testCheckoutData {
+	display : none;
+}	
+
 #pdf_report table:first-child, .commit table:first-child {
 	border: 1px solid #cdcdcd;
 	border-radius:6px;

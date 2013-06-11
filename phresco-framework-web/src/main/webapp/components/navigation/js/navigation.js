@@ -102,43 +102,66 @@ define(["navigation/listener/navigationListener"], function() {
 			
 			$(".gitdata").hide();
 			$(".importselect select").change(function () {
-				if($(this).val() == "Bitkeeper") {
+				if($(this).val() == "bitkeeper") {
 					$(".svndata").hide();
+					$(".svnusr").hide();
+					$(".svnpswd").hide();
 					$(".gitdata").show();
+					$(".testCheckoutData").hide();
 				}
 
-				else if($(this).val() == "Git") {
+				else if($(this).val() == "git") {
 					$(".svndata").hide();
-					$(".gitdata").show();	
+					$(".svnusr").hide();
+					$(".svnpswd").hide();
+					$(".gitdata").show();
+					$(".testCheckoutData").hide();
 				}
 
-				else if($(this).val() == "SVN") {
+				else if($(this).val() == "svn") {
 					$(".svndata").show();
-					$(".gitdata").hide();	
+					$(".svnusr").show();
+					$(".svnpswd").show();
+					$(".gitdata").hide();
+				}
+			});
+			
+			$("input[name=headoption]").change(function() {
+				$("#revision").removeClass("errormessage");
+				$("#revision").removeAttr("placeholder");
+				if("HEAD" == $(this).val()) {
+					$("#revision").attr("readonly", "readonly");
+				} else {
+					$("#revision").removeAttr("readonly");
+				}
+			});
+			
+			$("input[name=testHeadOption]").change(function() {
+				$("#testRevision").removeClass("errormessage");
+				$("#testRevision").removeAttr("placeholder");
+				if("HEAD" == $(this).val()) {
+					$("#testRevision").attr("readonly", "readonly");
+				} else {
+					$("#testRevision").removeAttr("readonly");
+				}
+			});
+			
+			$(".testCheckout").unbind("click");
+			$(".testCheckout").click(function() {
+				if ($(this).is(':checked')) {
+					$(".testCheckoutData").show();
+				} else {
+					$(".testCheckoutData").hide();
 				}
 			});
 			
 			$("input[name='importbtn']").unbind("click");
 			$("input[name='importbtn']").click(function() {
-				var importRepourl = $("#importRepourl").val();
-				if(importRepourl == ""){
-					$("#importRepourl").focus();
-					$("#importRepourl").attr('placeholder','Enter Repourl');
-					$("#importRepourl").addClass("errormessage");
-				}
-				else
-				{	
-					var  revision;
-					var revision = $("input[name='headoption']:checked").val();
-					if(revision !== ""){
-						revision = revision;
-					} else{
-						revision = $("#revision").val();
-						console.info("revision", revision);
+				self.navigationListener.validateImport(function(response) {
+					if (!response) {
+						self.onImportEvent.dispatch();
 					}
-					self.onImportEvent.dispatch(revision);				
-				}
-				//self.onImportEvent.dispatch(revision);				
+				});
 			});
 			
 			Clazz.navigationController.mainContainer = commonVariables.contentPlaceholder;

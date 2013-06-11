@@ -5,7 +5,6 @@ define(["navigation/api/navigationAPI"], function() {
 	Clazz.com.components.navigation.js.listener.navigationListener = Clazz.extend(Clazz.Widget, {
 		navAPI : null,
 		localStorageAPI : null,
-		loadingScreen : null,
 		header : null,
 		footer : null,
 		projectlist : null,
@@ -590,8 +589,10 @@ define(["navigation/api/navigationAPI"], function() {
 		navigationAction : function(header, callback) {
 			var self = this;			
 			try {
+				commonVariables.loadingScreen.showLoading();
 				self.navAPI.donavigation(header,
 					function(response) {
+						commonVariables.loadingScreen.removeLoading();
 						if (response != null ) {
 							callback(response);						
 						} else {
@@ -600,23 +601,117 @@ define(["navigation/api/navigationAPI"], function() {
 					}
 				);
 			} catch(exception) {
-				self.loadingScreen.removeLoading();
+				commonVariables.loadingScreen.removeLoading();
 			}
+		}, 
+		
+		validateImport : function (callback) {
+			var self = this;
+			var importType = $("#importType").val();
+			var importRepourl = $("#importRepourl").val().replace(/\s/g, '');
+			$("#importRepourl").removeClass("errormessage");
+			var error = false;
+			
+			if(importRepourl == "") {
+				error = true;
+				self.validateTextBox($("#importRepourl"), 'Enter Repourl');
+			}
+			
+			if ('svn' == importType && !error) {
+				$("#importUserName").removeClass("errormessage");
+				$("#importPassword").removeClass("errormessage");
+				$("#revision").removeClass("errormessage");
+				var userName = $("#importUserName").val().replace(/\s/g, '');
+				var pswd = $("#importPassword").val();
+				var revision = $("input[name='headoption']:checked").val();
+				if (userName == "") {
+					error = true;
+					self.validateTextBox($("#importUserName"), 'Enter user name');
+				} else if (pswd == "") {
+					error = true;
+					self.validateTextBox($("#importPassword"), 'Enter password');
+				} else if (revision == "revision" && $('#revision').val() == "") {
+					error = true;
+					self.validateTextBox($("#revision"), 'Enter revision');
+				} else if ($(".testCheckout").is(":checked")) {
+					$("#testRepoUrl").removeClass("errormessage");
+					$("#testImportUserName").removeClass("errormessage");
+					$("#testImportPassword").removeClass("errormessage");
+					
+					var testRepoUrl = $("#testRepoUrl").val().replace(/\s/g, '');
+					var testImportUserName = $("#testImportUserName").val().replace(/\s/g, '');
+					var testImportPassword = $("#testImportPassword").val();
+					var testRevision = $("input[name='testHeadOption']:checked").val();
+					if(testRepoUrl == "") {
+						error = true;
+						self.validateTextBox($("#testRepoUrl"), 'Enter Test Repourl');
+					} else if (testImportUserName == "") {
+						error = true;
+						self.validateTextBox($("#testImportUserName"), 'Enter user name');
+					} else if (testImportPassword == "") {
+						error = true;
+						self.validateTextBox($("#testImportPassword"), 'Enter password');
+					} else if (testRevision == "revision" && $('#testRevision').val() == "") {
+						error = true;
+						self.validateTextBox($("#testRevision"), 'Enter revision');
+					} 
+				}
+			}
+			
+			callback(error);
 		},
-		addImportEvent : function(revision){
+		
+		validateTextBox : function (textBoxObj, errormsg) {
+			textBoxObj.focus();
+			textBoxObj.attr('placeholder', errormsg);
+			textBoxObj.addClass("errormessage");
+		}, 
+		
+		addImportEvent : function(){
 			var self = this;
 			var importdata = {}, actionBody, action;
-			//if(!self.validation()) {
-				importdata.type = $("#importType").val();
-				importdata.repoUrl = $("#importRepourl").val();
-				importdata.userName = $("#importUserName").val();
-				importdata.password = $("#importPassword").val();
-				importdata.revision = revision;
-				actionBody = importdata;
-				action = "importpost";
-				self.navigationAction(self.getActionHeader(actionBody, action), function(response){
-				});
-			//}
+			
+			var revision = $("input[name='headoption']:checked").val();
+			if(revision !== ""){
+				revision = revision;
+			} else{
+				revision = $("#revision").val();
+			}
+			
+			var testRevision = $("input[name='testHeadOption']:checked").val();
+			if(testRevision !== ""){
+				testRevision = testRevision;
+			} else{
+				testRevision = $("#testRevision").val();
+			}
+			
+			importdata.type = $("#importType").val();
+			importdata.repoUrl = $("#importRepourl").val();
+			importdata.userName = $("#importUserName").val();
+			importdata.password = $("#importPassword").val();
+			importdata.revision = revision;
+			
+			if ('svn' == importdata.type && $(".testCheckout").is(":checked")) {
+				importdata.testCheckOut = true;
+				importdata.testRepoUrl = $("#testRepoUrl").val();
+				importdata.testUserName = $("#testImportUserName").val();
+				importdata.testPassword = $("#testImportPassword").val();
+				importdata.testRevision = testRevision;
+			} else {
+				importdata.testCheckOut = false;
+			}
+			
+			actionBody = importdata;
+			action = "importpost";
+			self.navigationAction(self.getActionHeader(actionBody, action), function(response){
+				if (response.exception == null) {
+					$("#project_list_import").hide();	
+					self.getMyObj(commonVariables.projectlist, function(returnVal){
+						self.projectlist = returnVal;
+						Clazz.navigationController.push(self.projectlist, true);
+					});
+				}
+			});
 		}	
 	});
 
