@@ -62,6 +62,15 @@ public class ConfigurationServiceTest extends RestBaseTest {
 		Assert.assertNotSame("CronExpression  not Matching", "23 5 * * 3" , entity.getData());
 	}
 	
+	@Test
+	public void listEnvironmentsByProjectId() {
+		String customerId = "photon";
+		String projectId = "09369f3e-366e-40fa-a983-6d7c753bfcc1";
+		Response response = configurationService.listEnvironmentsByProjectId(customerId, projectId);
+		System.out.println("Response : " + response.getEntity());
+		Assert.assertEquals(200, response.getStatus());
+	}
+	
 //	@Test
 	public void deleteEnvTest() {
 	String appDirName = "Pom-Mojo-Test-javawebservice";

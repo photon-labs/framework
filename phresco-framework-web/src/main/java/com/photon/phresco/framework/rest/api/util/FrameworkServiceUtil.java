@@ -17,6 +17,8 @@ import com.photon.phresco.commons.FrameworkConstants;
 import com.photon.phresco.commons.model.ApplicationInfo;
 import com.photon.phresco.commons.model.ProjectInfo;
 import com.photon.phresco.exception.PhrescoException;
+import com.photon.phresco.framework.PhrescoFrameworkFactory;
+import com.photon.phresco.framework.api.ProjectManager;
 import com.photon.phresco.util.Constants;
 import com.photon.phresco.util.Utility;
 import com.phresco.pom.exception.PhrescoPomException;
@@ -212,5 +214,29 @@ public class FrameworkServiceUtil implements Constants, FrameworkConstants {
 	
 	public static String getFunctionalTestFramework(String appDirName) throws PhrescoException, PhrescoPomException {
 		return getPomProcessor(appDirName).getProperty(POM_PROP_KEY_FUNCTEST_SELENIUM_TOOL);
+	}
+	
+	public static List<ApplicationInfo> getAppInfos(String customerId, String projectId) throws PhrescoException {
+		try {
+			ProjectManager projectManager = PhrescoFrameworkFactory.getProjectManager();
+			ProjectInfo projectInfo = projectManager.getProject(projectId, customerId);
+			if(projectInfo != null) {
+				return projectInfo.getAppInfos();
+			}
+		} catch (PhrescoException e) {
+			throw new PhrescoException(e);
+		}	
+		return new ArrayList<ApplicationInfo>();
+	}
+	
+	public static String getConfigFileDir(String appDirName) {
+		StringBuilder builder = new StringBuilder();
+		builder.append(Utility.getProjectHome())
+		.append(appDirName)
+		.append(File.separatorChar)
+		.append(Constants.DOT_PHRESCO_FOLDER)
+		.append(File.separatorChar)
+		.append(Constants.CONFIGURATION_INFO_FILE);
+		return builder.toString();
 	}
 }
