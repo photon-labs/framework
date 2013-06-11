@@ -123,7 +123,7 @@ define(["framework/widgetWithTemplate", "ci/listener/ciListener"], function() {
 					  $("#sortable1 li.ui-state-default a").hide();	
 					  $(".dyn_popup").hide();
 					  }	  
-			    }).disableSelection();
+			    })
 			 }); 
 
 	  		$(function () {
@@ -138,9 +138,10 @@ define(["framework/widgetWithTemplate", "ci/listener/ciListener"], function() {
 				}
 			});
 		
+			// By Default gear icon should not be displayed
 			$("#sortable1 li.ui-state-default a").hide();
 			
-			$("a[name=cont_delivery], a[name=code_build]").click(function() {
+			$("a[name=jobConfigure]").click(function() {
 				// Show popup as well as dynamic popup
    				//commonVariables.openccmini(this, $(this).attr("name"));
    				self.onDynamicPageEvent.dispatch(this);
