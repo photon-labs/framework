@@ -51,6 +51,18 @@ define(["framework/widgetWithTemplate", "ci/listener/ciListener"], function() {
 			 // Trigger registered events
 			 self.onLoadEnvironmentEvent.add(ciListener.loadEnvironmentEvent, ciListener);
 			 self.onDynamicPageEvent.add(self.ciListener.getDynamicParams, self.ciListener);
+
+			 // Handle bars
+			Handlebars.registerHelper('environment', function(data, flag) {
+				console.log("data environemnts => " + data);
+				var returnVal = "";
+				if (data != undefined) {
+					$.each(data, function(key, value) {
+						returnVal +=  '<option value="'+ value +'">'+ value +'</option>';
+					});
+				}
+				return returnVal;
+			});
 		},
 		/***
 		 * Called in once the login is success
@@ -83,8 +95,8 @@ define(["framework/widgetWithTemplate", "ci/listener/ciListener"], function() {
 
 			// List job templates by environment from all applications
 			self.onLoadEnvironmentEvent.dispatch(function(params) {
-					self.getAction(self.ciRequestBody, 'getJobTemplatesByEnvironemnt', params, function(response) {
-						console.log("Populates job templates by environment ");
+					self.getAction(self.ciRequestBody, 'getJobTemplatesByEnvironment', params, function(response) {
+						self.ciListener.constructJobTemplateViewByEnvironment(response);
 					});
 			});
 		},
@@ -133,18 +145,32 @@ define(["framework/widgetWithTemplate", "ci/listener/ciListener"], function() {
 			$(".code_content .scrollContent").mCustomScrollbar({
 				autoHideScrollbar:true,
 				theme:"light-thin",
-				advanced:{
-						updateOnContentResize: true
+				advanced: {
+					updateOnContentResize: true
 				}
 			});
 		
 			// By Default gear icon should not be displayed
 			$("#sortable1 li.ui-state-default a").hide();
 			
-			$("a[name=jobConfigure]").click(function() {
-				// Show popup as well as dynamic popup
-   				//commonVariables.openccmini(this, $(this).attr("name"));
+			// $("a[name=jobConfigure]").click(function() {
+			// 	// Show popup as well as dynamic popup
+   // 				self.onDynamicPageEvent.dispatch(this);
+   // 			});
+
+   			$('#sortable2').on('click', 'a[name=jobConfigure]', function() {
+   				// Show popup as well as dynamic popup
    				self.onDynamicPageEvent.dispatch(this);
+   			});
+
+   			// on change of environemnt change function
+   			$("[name=environments]").change(function() {
+   				// List job templates by environment from all applications
+				self.onLoadEnvironmentEvent.dispatch(function(params) {
+						self.getAction(self.ciRequestBody, 'getJobTemplatesByEnvironment', params, function(response) {
+							self.ciListener.constructJobTemplateViewByEnvironment(response);
+						});
+				});
    			});
 		}
 	});

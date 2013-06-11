@@ -306,6 +306,13 @@ define(["framework/widget", "framework/templateProvider"], function() {
 			
 			multiselect : function() {
 				$('.selectpicker').selectpicker();
+			},
+
+			isBlank : function (obj) {
+				if (obj !== null && obj !== undefined && obj !== '') {
+					return false;
+				}
+				return true;
 			}
 		}
 	);
