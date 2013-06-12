@@ -523,10 +523,12 @@
 								}
 								
 								var c = $("#" + previousDependencyArr[i]).attr('additionalparam');
-								var csvDep = c.substring(c.indexOf('=') + 1);
-								var csvDepArr = new Array();
-								csvDepArr = csvDep.split(',');
-								hideControl(csvDepArr);
+								if (c != undefined) {
+									var csvDep = c.substring(c.indexOf('=') + 1);
+									var csvDepArr = new Array();
+									csvDepArr = csvDep.split(',');
+									hideControl(csvDepArr);
+								}
 							}
 						}
 					}
@@ -562,15 +564,17 @@
 							var selectedOption = $("#" + dependencyArr[i]).is(':checked');
 							if (selectedOption) {
 								var c = $("#" + dependencyArr[i]).attr('additionalparam');
-								var csvDep = c.substring(c.indexOf('=') + 1);
-								var csvDepArr = new Array();
-								csvDepArr = csvDep.split(',');
-								for (var j = 0; j < csvDepArr.length; j+=1) {
-									var showHide = $("#" + csvDepArr[j]).attr('showHide');
-									if (showHide == 'false') {
-										$("#" + csvDepArr[j] + "Control").show();
-									} 
-								} 
+								if (c != undefined) {
+									var csvDep = c.substring(c.indexOf('=') + 1);
+									var csvDepArr = new Array();
+									csvDepArr = csvDep.split(',');
+									for (var j = 0; j < csvDepArr.length; j+=1) {
+										var showHide = $("#" + csvDepArr[j]).attr('showHide');
+										if (showHide == 'false') {
+											$("#" + csvDepArr[j] + "Control").show();
+										} 
+									}
+								}
 							}
 						}
 					}	
@@ -611,15 +615,17 @@
 							var selectedOption = $("#" + dependencyArr[i]).is(':checked');
 							if (selectedOption) {
 								var c = $("#" + dependencyArr[i]).attr('additionalparam');
-								var csvDep = c.substring(c.indexOf('=') + 1);
-								var csvDepArr = new Array();
-								csvDepArr = csvDep.split(',');
-								for (var j = 0; j < csvDepArr.length; j+=1) {
-									var showHide = $("#" + csvDepArr[j]).attr('showHide');
-									if (showHide == 'false') {
-										$("#" + csvDepArr[j] + "Control").show();
-									} 
-								} 	
+								if (c != undefined) {
+									var csvDep = c.substring(c.indexOf('=') + 1);
+									var csvDepArr = new Array();
+									csvDepArr = csvDep.split(',');
+									for (var j = 0; j < csvDepArr.length; j+=1) {
+										var showHide = $("#" + csvDepArr[j]).attr('showHide');
+										if (showHide == 'false') {
+											$("#" + csvDepArr[j] + "Control").show();
+										} 
+									}
+								}
 							} 
 						}
 					}

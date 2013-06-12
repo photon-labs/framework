@@ -829,7 +829,8 @@ function appendBuildList(data) {
 			downloadUrl = buildUrl + 'artifact';
 			downloadUrl = downloadUrl + "/" + buildDownload.replace(/\"/g, ""); 
 			downloadUrl = encodeURIComponent(downloadUrl);
-			download_td.append('<a href=" /framework/CIBuildDownload.action?buildDownloadUrl='+downloadUrl+'&appId='+appId+'&customerId='+customerId+'&projectId='+projectId+'&buildNumber='+buildNumber+'&downloadJobName='+data.name+'"><img title="Download" src="images/icons/download.png"></a>');
+			var context = '<%= request.getContextPath()%>';
+			download_td.append('<a href=" '+context+'/CIBuildDownload.action?buildDownloadUrl='+downloadUrl+'&appId='+appId+'&customerId='+customerId+'&projectId='+projectId+'&buildNumber='+buildNumber+'&downloadJobName='+data.name+'"><img title="Download" src="images/icons/download.png"></a>');
 		} else {
 			download_td.append('<img src="images/icons/wrong_icon.png" title="Not available"/>');
 		}

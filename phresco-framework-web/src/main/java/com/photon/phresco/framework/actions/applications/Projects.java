@@ -495,7 +495,7 @@ public class Projects extends FrameworkBaseAction {
                 String techName = technology.getName().replaceAll("\\s", "").toLowerCase();
                 String dirName = getProjectCode() + HYPHEN + techName;
                 String projectName = getProjectName() + HYPHEN + techName;
-                appInfos.add(getAppInfo(projectName, dirName, techId, version, phoneEnabled, tabletEnabled, technology.getAppTypeId()));
+                appInfos.add(getAppInfo(projectName, dirName, techId, version, phoneEnabled, tabletEnabled, technology.getAppTypeId(), techName));
             }
         }
 
@@ -524,7 +524,7 @@ public class Projects extends FrameworkBaseAction {
      	        String techName = technology.getName().replaceAll("\\s", "").toLowerCase();
      	        String dirName = applnCode + HYPHEN + techName + techVersion;
      	        String appName = getProjectName() + HYPHEN + applnCode + HYPHEN + techName + techVersion;
-     	        appInfos.add(getAppInfo(appName, dirName, techId, techVersion, false, false, technology.getAppTypeId()));
+     	        appInfos.add(getAppInfo(appName, dirName, techId, techVersion, false, false, technology.getAppTypeId(), techName));
      		}
     	}
 
@@ -538,7 +538,7 @@ public class Projects extends FrameworkBaseAction {
         String techName = technology.getName().replaceAll("\\s", "").toLowerCase();
         String dirName = getProjectCode() + HYPHEN + techName;
         String projectName = getProjectName() + HYPHEN + techName;
-        appInfos.add(getAppInfo(projectName, dirName, techId, version, false, false, technology.getAppTypeId()));
+        appInfos.add(getAppInfo(projectName, dirName, techId, version, false, false, technology.getAppTypeId(), techName));
 		
         return appInfos;
     }
@@ -553,12 +553,13 @@ public class Projects extends FrameworkBaseAction {
      * @throws PhrescoException
      */
     private ApplicationInfo getAppInfo(String projectName, String appDir, String techId, String version,
-            boolean phoneEnabled, boolean tabletEnabled, String appTypeId) throws PhrescoException {
+            boolean phoneEnabled, boolean tabletEnabled, String appTypeId, String techName) throws PhrescoException {
         ApplicationInfo applicationInfo = new ApplicationInfo();
         TechnologyInfo techInfo = new TechnologyInfo();
         techInfo.setId(techId);
         techInfo.setVersion(version);
         techInfo.setAppTypeId(appTypeId);
+        techInfo.setName(techName);
         applicationInfo.setTechInfo(techInfo);
         applicationInfo.setVersion(getProjectVersion());
         applicationInfo.setName(projectName);
