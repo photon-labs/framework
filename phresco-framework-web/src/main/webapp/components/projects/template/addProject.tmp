@@ -15,7 +15,7 @@
                 <tr>
                     <td colspan="2">
                         <select class="custon_dropdown" name="builtmyself">
-                            <option>Build-it Myself</option>
+                            <option>Custom</option>
                             <option>Pre Built</option>
                         </select>
                         <select class="optional_dropdown" name="prebuiltapps">

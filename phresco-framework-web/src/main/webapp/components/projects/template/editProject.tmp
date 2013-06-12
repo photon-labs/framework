@@ -23,9 +23,9 @@
                     </td>
 					
                     <td data-i18n="project.create.label.startdate" name="startdate-lbl"></td>
-                    <td class="startdate" name="startdateholder"><input name="startdate" type="text" id="startDate" disabled><span class="add-on"><img src="themes/default/images/helios/cal_icon.png" border="0" alt=""></span></td>
+                    <td class="startdate" name="startdateholder"><input name="startdate" type="text" value="{{startDate}}" id="startDate" disabled><span class="add-on"><img src="themes/default/images/helios/cal_icon.png" border="0" alt=""></span></td>
                     <td data-i18n="project.create.label.enddate" name="enddate-lbl"></td>
-                    <td colspan="2" class="enddate" name="enddateholder"><input name="enddate" id="endDate" type="text" disabled><span class="add-on"><span class="add-on"><img class="cal_img1" src="themes/default/images/helios/cal_icon.png" border="0" alt=""></span></span></td>
+                    <td colspan="2" class="enddate" name="enddateholder"><input name="enddate" value="{{endDate}}" id="endDate" type="text" disabled><span class="add-on"><span class="add-on"><img class="cal_img1" src="themes/default/images/helios/cal_icon.png" border="0" alt=""></span></span></td>
                 </tr>
 			{{/editProject}}
                <tr id="appLayaer" class="proj_title">

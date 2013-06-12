@@ -72,9 +72,30 @@ define(["projects/listener/projectsListener"], function() {
 				var userPermissions = JSON.parse(self.projectsListener.projectAPI.localVal.getSession('userPermissions'));
 				self.templateData.userPermissions = userPermissions;
 				self.projectsListener.getEditProject(self.projectsListener.getRequestHeader(self.projectRequestBody, commonVariables.projectId), function(response) {
-					self.templateData.editProject = response.data;
+					var responseData = response.data;
+					//To change start date into the format of (dd/mm/yyyy)
+					var startdate = responseData.startDate;
+					if (startdate !== null) {
+						var sd = new Date(startdate);
+						var startDateformat = [ sd.getMonth()+1, sd.getDate(), sd.getFullYear()].join('/');
+						responseData.startDate = startDateformat;
+					} else {
+						responseData.startDate = "";
+					}
+					
+					//To change end date into the format of (dd/mm/yyyy)
+					var enddate = responseData.endDate;
+					if (enddate !== null) {
+						var ed = new Date(enddate);
+						var endDateformat = [ ed.getMonth()+1, ed.getDate(), ed.getFullYear()].join('/');
+						responseData.endDate = endDateformat;
+					} else {
+						responseData.endDate = "";
+					}
+					
+					self.templateData.editProject = responseData;
 					// Setting project id in local storage for future use in job templates
-					self.projectsListener.projectAPI.localVal.setSession("projectId", response.data.id);
+					self.projectsListener.projectAPI.localVal.setSession("projectId", responseData.id);
 					self.getData = self.templateData.editProject.appInfos;	
 					renderFunction(self.templateData, whereToRender);
 				});
@@ -90,9 +111,30 @@ define(["projects/listener/projectsListener"], function() {
 					var userPermissions = JSON.parse(self.projectsListener.projectAPI.localVal.getSession('userPermissions'));
 					self.templateData.userPermissions = userPermissions;
 					self.projectsListener.getEditProject(self.projectsListener.getRequestHeader(self.projectRequestBody, commonVariables.projectId), function(response) {
-						self.templateData.editProject = response.data;
+						var responseData = response.data;
+						//To change start date into the format of (dd/mm/yyyy)
+						var startdate = responseData.startDate;
+						if (startdate !== null) {
+							var sd = new Date(startdate);
+							var startDateformat = [ sd.getMonth()+1, sd.getDate(), sd.getFullYear()].join('/');
+							responseData.startDate = startDateformat;
+						} else {
+							responseData.startDate = "";
+						}
+						
+						//To change end date into the format of (dd/mm/yyyy)
+						var enddate = responseData.endDate;
+						if (enddate !== null) {
+							var ed = new Date(enddate);
+							var endDateformat = [ ed.getMonth()+1, ed.getDate(), ed.getFullYear()].join('/');
+							responseData.endDate = endDateformat;
+						} else {
+							responseData.endDate = "";
+						}
+						
+						self.templateData.editProject = responseData;
 						// Setting project id in local storage for future use in job templates
-						self.projectsListener.projectAPI.localVal.setSession("projectId", response.data.id);
+						self.projectsListener.projectAPI.localVal.setSession("projectId", responseData.id);
 						self.getData = self.templateData.editProject.appInfos;	
 						renderFunction(self.templateData, whereToRender);						
 					});

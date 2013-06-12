@@ -960,6 +960,7 @@ img[name="close"] {
 
 .create_proj table tr td input[type=radio], .create_proj input[type=checkbox] { 
 	margin-top: -3px !important;
+	margin-right: 4px;
 }
 
 .create_proj table tr td {
@@ -1061,7 +1062,7 @@ img[name="close"] {
 	margin-left: 16px;
     position: absolute;
 	display: inline-block;
-	width:145px;
+	width:174px;
 }
 
 .loading_bar {
@@ -1092,6 +1093,10 @@ img[name="close"] {
 	margin-bottom: -8px;	
 }
 
+#appinfo .dropdown-menu {
+	max-height: 93px !important;
+}
+
 .show-tick.open ul{
 	margin-top: 8px;	
 }
@@ -1101,7 +1106,7 @@ img[name="close"] {
 }
 
 .dropdown-menu > li > a:hover {
-background:#EF7B43 !important;
+	background:#EF7B43 !important;
 }
 
 
@@ -1294,6 +1299,18 @@ background:#EF7B43 !important;
 	margin: -24px 10px;
 	color: #000000;
 	text-decoration:none;
+}
+
+.onefeature {
+	width:100%;
+}
+
+.twofeatures {
+	width:50%;
+}
+
+.threefeatures {
+	width:33%;
 }
 
 /* *************************************************************************** CSS for Code validation ************************************************************************** */
@@ -1589,6 +1606,10 @@ background:#EF7B43 !important;
 
 @media screen and (min-width: 978px) and (max-width: 1024px) {
 
+.func_framewrk {
+	width: 10% !important;
+}
+
 .optiontitle .alert_div {
 	font-size: 9px !important;
 	width: 28%;	
@@ -1609,7 +1630,7 @@ background:#EF7B43 !important;
  }
  
 select[name="builtmyself"] {
-	width:109px !important;
+	width:86px !important;
 }
  
 .custon_dropdown  {
@@ -1628,6 +1649,9 @@ select[name="builtmyself"] {
 }
 @media screen and (min-width: 1025px) and (max-width: 1152px) {
 
+.func_framewrk {
+	width: 8% !important;
+}
 
 .startdate input, .enddate input {
 	width: 163px !important;
@@ -1648,7 +1672,7 @@ select[name="builtmyself"] {
 
 .optional_dropdown {
 	margin-left: 9px;
-	width: 138px !important;
+	width: 128px !important;
 }
 
 .title_nav ul a {
@@ -1657,6 +1681,10 @@ select[name="builtmyself"] {
 }
 
 @media screen and (min-width: 1153px) and (max-width: 1280px) {
+
+.func_framewrk {
+	width: 6% !important;
+}
 
 .startdate input, .enddate input {
 	width: 161px !important;
@@ -1707,7 +1735,7 @@ select[name="builtmyself"] {
 
 .optional_dropdown  {
 	margin-left: 10px;
-	width : 145px !important;
+	width : 156px !important;
 }
 }
 
@@ -2176,6 +2204,11 @@ select[name="builtmyself"] {
 	max-height: 150px;
 	overflow-y: auto;
 }
+
+.hideContent {
+display : none;
+}
+
 
 
 /* *************************************************************************** STYLES FOR FIXED-HEADER ************************************************************************************ */
@@ -3105,8 +3138,11 @@ html>body tbody.scrollContent {
 	margin-right:5px;
 }
 
-/* *************************************************************** STYLES FOR WIDGETS ************************************************************************************ */
+.hideContent  {
+	display : none;
+}
 
+/* *************************************************************** STYLES FOR WIDGETS ************************************************************************************ */
 
 .features_box .box_div ul li span {
 padding-top: 12px;
@@ -3124,6 +3160,3 @@ padding: 4px 6px;
 vertical-align: middle;
 }
 
-.hideContent  {
-	display : none;
-}
