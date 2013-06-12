@@ -48,7 +48,7 @@
 <%-- 	                        <section class="scrollpanel_inner"> --%>
 				
 								<div class="control-group">
-									<label class="control-label labelbold popupLbl">
+									<label class="control-label labelbold popupLbl"><span class="red">* </span>
 										<s:text name='lbl.sender.mail' />
 									</label>
 									<div class="controls">
@@ -57,7 +57,7 @@
 								</div>
 								
 								<div class="control-group">
-									<label class="control-label labelbold popupLbl">
+									<label class="control-label labelbold popupLbl"><span class="red">* </span>
 										<s:text name='lbl.sender.pwd' />
 									</label>
 									<div class="controls">

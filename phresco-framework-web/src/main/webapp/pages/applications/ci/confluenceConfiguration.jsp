@@ -45,7 +45,7 @@
 				<fieldset>
 					<div class = "wrapperDiv" style="border-width: 0.01px; border-spacing: 5%;">		
 						<div class="control-group">
-							<label class="control-label labelbold popupLbl">
+							<label class="control-label labelbold popupLbl"><span class="red">* </span>
 								<s:text name='lbl.confluence.url' />
 							</label>
 							<div class="controls">
@@ -55,7 +55,7 @@
 						</div>
 						
 						<div class="control-group">
-							<label class="control-label labelbold popupLbl">
+							<label class="control-label labelbold popupLbl"><span class="red">* </span>
 								<s:text name='lbl.confluence.username' />
 							</label>
 							<div class="controls">
@@ -64,7 +64,7 @@
 						</div>
 						
 						<div class="control-group">
-							<label class="control-label labelbold popupLbl">
+							<label class="control-label labelbold popupLbl"><span class="red">* </span>
 								<s:text name='lbl.confluence.password' />
 							</label>
 							<div class="controls">
@@ -80,7 +80,7 @@
 			 <fieldset>
 					<div class = "wrapperDiv" style="border-width: 0.01px; border-spacing: 5%;">		
 						<div class="control-group">
-							<label class="control-label labelbold popupLbl">
+							<label class="control-label labelbold popupLbl"><span class="red">* </span>
 								<s:text name='lbl.confluence.url' />
 							</label>
 							<div class="controls">
@@ -90,7 +90,7 @@
 						</div>
 						
 						<div class="control-group">
-							<label class="control-label labelbold popupLbl">
+							<label class="control-label labelbold popupLbl"><span class="red">* </span>
 								<s:text name='lbl.confluence.username' />
 							</label>
 							<div class="controls">
@@ -99,7 +99,7 @@
 						</div>
 						
 						<div class="control-group">
-							<label class="control-label labelbold popupLbl">
+							<label class="control-label labelbold popupLbl"><span class="red">* </span>
 								<s:text name='lbl.confluence.password' />
 							</label>
 							<div class="controls">
@@ -116,7 +116,7 @@
 		 <fieldset>
 				<div class = "wrapperDiv" style="border-width: 0.01px; border-spacing: 5%;">		
 					<div class="control-group">
-						<label class="control-label labelbold popupLbl">
+						<label class="control-label labelbold popupLbl"><span class="red">* </span>
 							<s:text name='lbl.confluence.url' />
 						</label>
 						<div class="controls">
@@ -126,7 +126,7 @@
 					</div>
 					
 					<div class="control-group">
-						<label class="control-label labelbold popupLbl">
+						<label class="control-label labelbold popupLbl"><span class="red">* </span>
 							<s:text name='lbl.confluence.username' />
 						</label>
 						<div class="controls">
@@ -135,7 +135,7 @@
 					</div>
 					
 					<div class="control-group">
-						<label class="control-label labelbold popupLbl">
+						<label class="control-label labelbold popupLbl"><span class="red">* </span>
 							<s:text name='lbl.confluence.password' />
 						</label>
 						<div class="controls">
