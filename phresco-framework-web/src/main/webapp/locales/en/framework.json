@@ -83,7 +83,8 @@
 			"name" : "Name",
 			"report" : "Report",
 			"repository" : "Repository",
-			"description" : "Description"
+			"description" : "Description",
+			"nodata" : "No Projects Available"
 		}
 	},
 	"configuration" : {
