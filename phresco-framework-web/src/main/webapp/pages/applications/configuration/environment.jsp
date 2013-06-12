@@ -227,7 +227,7 @@ $(document).ready(function() {
 					var currentVal = $('#multiselect :checked').val();
 					var currentObj = $.parseJSON(currentVal);
 					var currentEnvName = currentObj.name;
-					if (currentEnvName !== name.trim().toLowerCase()) {
+					if (currentEnvName.toLowerCase() !== name.trim().toLowerCase()) {
 						if (name.trim().toLowerCase() == envName.trim().toLowerCase()) {
 							$("#errMsg").html("<s:text name='popup.err.msg.env.name.exists'/>");
 							setTimeOut();
