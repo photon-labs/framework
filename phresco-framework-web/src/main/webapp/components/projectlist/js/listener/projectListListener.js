@@ -76,26 +76,32 @@ define(["projectlist/api/projectListAPI"], function() {
 		projectListAction : function(header, callback) {
 			var self = this;			
 			try {
-				commonVariables.loadingScreen.showLoading();
+				self.showpopupLoad();
 				self.projectListAPI.projectslist(header,
 					function(response) {
 						if(response != null ){
-							commonVariables.loadingScreen.removeLoading();
+							self.hidePopupLoad();
 							callback(response);						
 						} else {
-							commonVariables.loadingScreen.removeLoading();
+							self.hidePopupLoad();
 							callback({ "status" : "service failure"});
 						}
 					},					
 					function(textStatus) {
-						commonVariables.loadingScreen.removeLoading();	
+						self.hidePopupLoad();
 					}
 				);
 			} catch(exception) {
-				commonVariables.loadingScreen.removeLoading();
+				self.hidePopupLoad();
 			}
 		},
-
+		showpopupLoad : function(){
+			$('.popuploading').show();
+		},
+		
+		hidePopupLoad : function(){
+			$('.popuploading').hide();
+		},
 		/***
 		 * provides the request header
 		 *
