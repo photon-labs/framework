@@ -153,11 +153,6 @@ define(["framework/widgetWithTemplate", "ci/listener/ciListener"], function() {
 			// By Default gear icon should not be displayed
 			$("#sortable1 li.ui-state-default a").hide();
 			
-			// $("a[name=jobConfigure]").click(function() {
-			// 	// Show popup as well as dynamic popup
-   // 				self.onDynamicPageEvent.dispatch(this);
-   // 			});
-
    			$('#sortable2').on('click', 'a[name=jobConfigure]', function() {
    				// Show popup as well as dynamic popup
    				self.onDynamicPageEvent.dispatch(this);
@@ -165,6 +160,8 @@ define(["framework/widgetWithTemplate", "ci/listener/ciListener"], function() {
 
    			// on change of environemnt change function
    			$("[name=environments]").change(function() {
+   				//Clear existing job templates of a environemnt, when the environment is changed
+   				$("#sortable2").empty();
    				// List job templates by environment from all applications
 				self.onLoadEnvironmentEvent.dispatch(function(params) {
 						self.getAction(self.ciRequestBody, 'getJobTemplatesByEnvironment', params, function(response) {

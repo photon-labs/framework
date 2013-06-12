@@ -173,6 +173,8 @@ define(["ci/listener/ciListener"], function() {
 
    			// Save job template
    			$('#jobTemplate').on('click', '[name=save]', function(e) {
+   				
+   				// Save call
    				self.addEvent.dispatch(function(response) {
    					self.ciRequestBody = response;
 					self.getAction(self.ciRequestBody, 'add', '');

@@ -346,24 +346,42 @@ define(["ci/api/ciAPI"], function() {
 			console.log(self.isBlank(data));
 			if (!self.isBlank(data)) {
 				// appinfo job templates
-				var continuousDeliveryJobTemplates = "";
+				//var continuousDeliveryJobTemplates = "";
 				$.each(data, function(key, value) {
 					console.log("key > " + JSON.stringify(key));
 					console.log("value > " + JSON.stringify(value));
-					continuousDeliveryJobTemplates = continuousDeliveryJobTemplates.concat('<div class="sorthead">'+ key +'</div>');
+					var jobTemplateApplicationName = '<div class="sorthead">'+ key +'</div>';
+					$("#sortable1").html(jobTemplateApplicationName);
 					if (!self.isBlank(data)) {
+
 						// job tesmplate key and value
 						$.each(value, function(jobTemplateKey, jobTemplateValue) {
 							console.log("jobTemplateValue > " + JSON.stringify(jobTemplateValue.name));
 							console.log("jobTemplateValue > " + JSON.stringify(jobTemplateValue.type));
-							var jobTemplateGearHtml = '<a href="javascript:;" class="validate_icon" jobTemplateName="'+ jobTemplateValue.name +'" correspondingApp="'+ key +'" name="jobConfigure" style="display: none;"><img src="themes/default/images/helios/validate_image.png" width="19" height="19" border="0"></a>';
+							
+							var jobTemplateGearHtml = '<a href="javascript:;" id="'+ jobTemplateValue.name +'" class="validate_icon" jobTemplateName="'+ jobTemplateValue.name +'" appName="'+ key +'" name="jobConfigure" style="display: none;"><img src="themes/default/images/helios/validate_image.png" width="19" height="19" border="0"></a>';
                     		var jobTemplateHtml = '<li class="ui-state-default">' + jobTemplateValue.name + ' - ' + jobTemplateValue.type + jobTemplateGearHtml + '</li>'
-							continuousDeliveryJobTemplates = continuousDeliveryJobTemplates.concat(jobTemplateHtml);
+                    		$("#sortable1").html(jobTemplateHtml);
+
+                    		// set json value on attribute
+                    		var jobTemplateJsonVal = jobTemplateValue;
+                    		console.log("jobTemplateJsonVal > " + jobTemplateJsonVal);
+                    		$('#'+ jobTemplateValue.name).data("json", jobTemplateJsonVal);
+
+                    		//var all = $("#Test123").data("json");
+							//console.log(all.name);
+
+							//var name = "Test123";
+							//var all = $("#Test123").data("json");
+							//console.log(all);
+
+							//var anims = $.parseJSON(all);
+							//console.log(anims.name);
+							//$("#Test123").data("json", anims);
 						});
 					}
 
 				});
-				$("#sortable1").html(continuousDeliveryJobTemplates);
 			}
 		}
 		
