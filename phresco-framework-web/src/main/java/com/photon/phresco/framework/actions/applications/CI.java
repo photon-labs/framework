@@ -940,7 +940,7 @@ public class CI extends DynamicParameterAction implements FrameworkConstants {
 					existJob.setEnablePostBuildStep(true);
 					List<String> postBuildStepCmds = new ArrayList<String>();
 					postBuildStepCmds.add(MAVEN_SEP_COBER);
-					postBuildStepCmds.add("shell#SEP#cd BASEDIR='${JENKINS_HOME}/workspace/"+name+"/src' GCOVR='${GCOV_HOME}' -r BASEDIR='${JENKINS_HOME}/workspace/"+name+"/src' -x -o coverage.xml");
+					postBuildStepCmds.add("shell#SEP#cd ${WORKSPACE}\n${GCOV_HOME} -r ${WORKSPACE} -x -o coverage.xml");
 					if (CollectionUtils.isNotEmpty(postBuildStepCmds)) {
 						existJob.setPostbuildStepCommands(postBuildStepCmds);
 					}
