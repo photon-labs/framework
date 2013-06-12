@@ -183,7 +183,7 @@ public class ConfigurationService extends RestBase implements FrameworkConstants
 	@GET
 	@Path ("/settingsTemplate")
 	@Produces (MediaType.APPLICATION_JSON)
-	public Response getSettingsTemplate(@QueryParam("appDirName") String appDirName, @QueryParam("customerId") String customerId, @QueryParam("userId") String userId, @QueryParam("type") String type) {
+	public Response getSettingsTemplate(@QueryParam("appDirName") String appDirName, @QueryParam("techId") String techId, @QueryParam("userId") String userId, @QueryParam("type") String type) {
 		ResponseInfo<List<SettingsTemplate>> responseData = new ResponseInfo<List<SettingsTemplate>>();
 		Map<String, Object> templateMap = new HashMap<String, Object>();
 		try {
@@ -192,7 +192,7 @@ public class ConfigurationService extends RestBase implements FrameworkConstants
 				ResponseInfo<List<SettingsTemplate>> finalOutput = responseDataEvaluation(responseData, null, "UnAuthorized User", null);
 	        	return Response.status(Status.BAD_REQUEST).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
 			}
-			SettingsTemplate settingsTemplate = serviceManager.getConfigTemplateByType(customerId, type);
+			SettingsTemplate settingsTemplate = serviceManager.getConfigTemplateByTechId(techId, type);
 			Map<String, List<String>> downloadInfo = getDownloadInfo(serviceManager, appDirName, userId, type);
 			templateMap.put("settingsTemplate", settingsTemplate);
 			templateMap.put("downloadInfo", downloadInfo);
