@@ -275,7 +275,7 @@ if (CollectionUtils.isNotEmpty(defaultfeatures)) {
         	var dispName = $(this).attr("dispName");
         	var packaging = $(this).attr('packaging');
         	var scope = $(this).attr('scope');
-        	var id = removeSpaces(name);
+        	var id = removeSpaces(name.replace(/\./g, ''));
         	var hiddenFieldVersion = $('#'+id).val();
         	var artifactGroupId = $('#'+id).attr('artifactGroupId');
         	var moduleId = $('#'+id).attr('moduleId');

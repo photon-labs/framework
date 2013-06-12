@@ -70,7 +70,7 @@
 							value="<%= artifactGroup.getName() %>" dispName="<%= artifactGroup.getDisplayName() %>" scope="compile" packaging="<%= artifactGroup.getPackaging() %>" onclick="checkboxEvent($('.feature_checkbox'), $('#checkAllAuto'));"/>
 						<div style="float: left; margin-left:2%;"><%= artifactGroup.getDisplayName() %></div>
 						
-						<select class="input-mini features_ver_sel" id="<%= artifactGrpName %>" artifactGroupId="<%= artifactGroup.getId() %>" moduleId="<%= artifactGroup.getId() %>" name="<%=artifactGroup.getName() %>" >
+						<select class="input-mini features_ver_sel" id="<%= artifactGrpName.replace(".","") %>" artifactGroupId="<%= artifactGroup.getId() %>" moduleId="<%= artifactGroup.getId() %>" name="<%=artifactGroup.getName() %>" >
 							<%
 								List<ArtifactInfo> artifactInfos = artifactGroup.getVersions();
 								for (ArtifactInfo artifactInfo : artifactInfos) {

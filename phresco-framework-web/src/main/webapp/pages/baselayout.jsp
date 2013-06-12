@@ -795,7 +795,8 @@
 			},
 			
 			'.download_tbl_header': {
-				'background': accordionBackGroundColor            // table header background color in when viewing  ex: server in download tab 
+				'background': brandingColor + "!important" ,           // table header background color in when viewing  ex: server in download tab 
+				'color':  menufontColor  + "!important"
 			},
 			
 			'.download_tbl': {
