@@ -90,9 +90,26 @@ public class ActionService implements ActionServiceConstant {
 			response.setUniquekey("");
 		}
 		return Response.status(Status.OK).entity(response).header("Access-Control-Allow-Origin", "*").build();
-		
 	}
 	
+	@POST
+	@Path("/runComponentTest")
+	@Produces(MediaType.APPLICATION_JSON)
+	 public Response runComponentTest(@Context HttpServletRequest request) throws PhrescoException  {
+		ActionFunction actionFunction = new ActionFunction();
+		ActionResponse response = new ActionResponse();
+		try	{
+			actionFunction.prePopulateModelData(request);
+			response = actionFunction.runComponentTest(request);
+		} catch (Exception e) {
+			S_LOGGER.error(e.getMessage());
+			response.setStatus(ERROR);
+			response.setLog("");
+			response.setService_exception(FrameworkUtil.getStackTraceAsString(e));
+			response.setUniquekey("");
+		}
+		return Response.status(Status.OK).entity(response).header("Access-Control-Allow-Origin", "*").build();
+	}
 	
 	@POST
 	@Path("/codeValidate")
