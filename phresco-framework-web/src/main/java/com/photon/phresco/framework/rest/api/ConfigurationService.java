@@ -11,6 +11,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
@@ -27,7 +29,6 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.quartz.CronExpression;
 
-import com.google.gson.Gson;
 import com.photon.phresco.api.ConfigManager;
 import com.photon.phresco.commons.FrameworkConstants;
 import com.photon.phresco.commons.model.ApplicationInfo;
@@ -46,7 +47,6 @@ import com.photon.phresco.framework.rest.api.util.FrameworkServiceUtil;
 import com.photon.phresco.impl.ConfigManagerImpl;
 import com.photon.phresco.service.client.api.ServiceManager;
 import com.photon.phresco.util.Constants;
-import com.photon.phresco.util.Utility;
 import com.sun.jersey.api.client.ClientResponse.Status;
 
 @Path("/configuration")
@@ -265,15 +265,18 @@ public class ConfigurationService extends RestBase implements FrameworkConstants
     @Path ("/updateConfig")
 	@Produces (MediaType.APPLICATION_JSON)
 	@Consumes (MediaType.APPLICATION_JSON)
-	public Response updateConfiguration(@QueryParam("appDirName") String appDirName,@QueryParam("envName") String envName, List<Configuration> configurationlist) {
-
+	public Response updateConfiguration(@QueryParam("userId") String userId,@QueryParam("customerId") String customerId,@QueryParam("appDirName") String appDirName,@QueryParam("envName") String envName, List<Configuration> configurationlist) {
+		if (is_debugEnabled) {
+			S_LOGGER.debug("Entering Method  Configurationservice.updateConfiguration()");
+		}
+		
 		String configFile = FrameworkServiceUtil.getConfigFileDir(appDirName);
 		ResponseInfo<Configuration> responseData = new ResponseInfo<Configuration>();
 		try {
-			
 			ConfigManager configManager = new ConfigManagerImpl(new File(configFile));
 			List<Configuration> listofconfiguration = configManager.getConfigurations(envName);
 			List<String> configuration_names = new ArrayList<String>();
+			validateConfiguration(userId,customerId,appDirName,configurationlist);
 			for(Configuration configuration_temp : listofconfiguration) {
 				
 				configuration_names.add(configuration_temp.getName());
@@ -283,12 +286,15 @@ public class ConfigurationService extends RestBase implements FrameworkConstants
 			ResponseInfo<String> finalOuptut = responseDataEvaluation(responseData, null, "Configurations Updated Successfully", "Success");
 			return Response.ok(finalOuptut).header("Access-Control-Allow-Origin", "*").build();
 		} catch (ConfigurationException e) {
+			S_LOGGER.error("Entered into Configuration catch block of Configurationservice.updateConfiguration()" + FrameworkUtil.getStackTraceAsString(e));
 			ResponseInfo<Configuration> finalOuptut = responseDataEvaluation(responseData, e, "Configurations failed to be updated for the Environment", "Failure");
 			return Response.status(Status.EXPECTATION_FAILED).entity(finalOuptut).header("Access-Control-Allow-Origin", "*").build();
 		} catch (PhrescoException e) {
-			ResponseInfo<Configuration> finalOuptut = responseDataEvaluation(responseData, e, "Configurations failed to be updated for the Environment", "Failure");
-			return Response.status(Status.EXPECTATION_FAILED).entity(finalOuptut).header("Access-Control-Allow-Origin", "*").build();
+			S_LOGGER.error("Entered into PhrescoException catch block of Configurationservice.updateConfiguration()" + FrameworkUtil.getStackTraceAsString(e));
+			ResponseInfo<Configuration> finalOuptut = responseDataEvaluation(responseData, e, e.getMessage(), "Failure");
+			return Response.status(Status.BAD_REQUEST).entity(finalOuptut).header("Access-Control-Allow-Origin", "*").build();
 		} catch (Exception e) {
+			S_LOGGER.error("Entered into catch block of Configurationservice.updateConfiguration()" + FrameworkUtil.getStackTraceAsString(e));
 			ResponseInfo<Configuration> finalOuptut = responseDataEvaluation(responseData, e, "Configurations failed to be updated for the Environment", "Failure");
 			return Response.status(Status.EXPECTATION_FAILED).entity(finalOuptut).header("Access-Control-Allow-Origin", "*").build();
 		}
@@ -296,6 +302,124 @@ public class ConfigurationService extends RestBase implements FrameworkConstants
 	}
 	
 	
+	private void validateConfiguration(String userId, String customerId, String appDirName, List<Configuration> configurationlist) throws PhrescoException {
+		ServiceManager serviceManager = CONTEXT_MANAGER_MAP.get(userId);
+		int serverCount = 0;
+		int emailCount = 0;
+		boolean serverTypeValidation = false;
+		boolean isRequired = false;
+		String techId = "";
+		String dynamicError = "";
+		for (int i = 0; i < configurationlist.size(); i++) {
+			if(StringUtils.isEmpty(configurationlist.get(i).getName())) {
+				throw new PhrescoException("Name is Empty");
+			} else{
+				String name = configurationlist.get(i).getName();
+				for (int j = 0; j < configurationlist.size(); j++) {
+					if(i != j){
+						if(name.equals(configurationlist.get(j).getName())) {
+							throw new PhrescoException("Name already Exists");
+						}
+					}
+				}
+			}
+		}
+		
+		for (Configuration configuration : configurationlist) {
+			SettingsTemplate configTemplateByType = serviceManager.getConfigTemplateByType(customerId, configuration.getType());
+			if(StringUtils.isEmpty(configuration.getType())) {
+				throw new PhrescoException("Configuration Type is Empty");
+			}
+			
+			if(FrameworkConstants.SERVER.equals(configuration.getType()) || FrameworkConstants.EMAIL.equals(configuration.getType())) {
+				if(FrameworkConstants.SERVER.equals(configuration.getType())) {
+					serverCount++;
+				} else {
+					String propertyEmail = configuration.getProperties().getProperty(FrameworkConstants.EMAIL_ID);
+					if(propertyEmail.isEmpty()) {
+						throw new PhrescoException("Email ID is Empty");
+					} else {
+						emailvalidation(propertyEmail);
+					}
+					emailCount++;
+				}
+			}
+			
+			if(serverCount > 1) {
+				throw new PhrescoException("Server Configuration type Already Exists");
+			}
+				
+			if(emailCount > 1) {
+				throw new PhrescoException("Email Configuration type Already Exists");
+			}
+			
+			if(!FrameworkConstants.OTHERS.equals(configuration.getType())) {
+				List<PropertyTemplate> properties = configTemplateByType.getProperties();
+				for (PropertyTemplate propertyTemplate : properties) {
+					String propKey = propertyTemplate.getKey();
+					String propValue = configuration.getProperties().getProperty(propKey);
+					if (FrameworkConstants.REQ_TYPE.equals(propKey) && FrameworkConstants.NODEJS_SERVER.equals(propValue) || FrameworkConstants.NODEJS_MAC_SERVER.equals(propValue) || FrameworkConstants.SHAREPOINT_SERVER.equals(propValue) || FrameworkConstants.IIS_SERVER.equals(propValue)) {
+						//If nodeJs and sharepoint server selected , there should not be validation for deploy dir.
+    					serverTypeValidation = true;
+    				}
+					
+					techId = FrameworkServiceUtil.getApplicationInfo(appDirName).getTechInfo().getId();
+					if(techId != null && techId.equals(FrameworkConstants.TECH_SITE_CORE)){
+						if(FrameworkConstants.DEPLOY_DIR.equals(propKey)) {
+							isRequired = false;
+						}
+					}
+					
+					if (serverTypeValidation && FrameworkConstants.DEPLOY_DIR.equals(propKey)) {
+						isRequired = false;
+    				}
+					
+					// validation for UserName & Password for RemoteDeployment
+					
+					if(FrameworkConstants.REMOTE_DEPLOYMENT.equals(propKey) && FrameworkConstants.TRUE.equals(propValue)) {
+						if (FrameworkConstants.ADMIN_USERNAME.equals(propKey) || FrameworkConstants.ADMIN_PASSWORD.equals(propKey)) {
+    						isRequired = true;
+    					}
+						if (FrameworkConstants.DEPLOY_DIR.equals(propKey)) {
+    						isRequired = false;
+    					}
+					}
+					
+					if (isRequired && StringUtils.isEmpty(propValue)) {
+    					String field = propertyTemplate.getName();
+    					dynamicError += propKey + Constants.STR_COLON + field + "is missing" + Constants.STR_COMMA;
+    				}
+    				
+    				if (StringUtils.isNotEmpty(dynamicError)) {
+    	    			dynamicError = dynamicError.substring(0, dynamicError.length() - 1);
+    	    			throw new PhrescoException(dynamicError);
+    	    		}
+					
+					//Version Validation for Server and Database configuration types
+					if(FrameworkConstants.SERVER.equals(configuration.getType()) || FrameworkConstants.DATABASE.equals(configuration.getType())) {
+						if(StringUtils.isEmpty(configuration.getProperties().getProperty(FrameworkConstants.VERSION))) {
+							throw new PhrescoException("Version is Empty");
+						}
+					}
+					//Site Core installation path check 
+					if(techId.equals(FrameworkConstants.TECH_SITE_CORE) && FrameworkConstants.SERVER.equals(configuration.getType()) && StringUtils.isEmpty(configuration.getProperties().getProperty(FrameworkConstants.SETTINGS_TEMP_SITECORE_INST_PATH))) {
+						throw new PhrescoException("SiteCore Installation path Location is missing");
+					}
+				}
+			}
+		}
+	}
+	
+	private void emailvalidation(String propertyEmail) throws PhrescoException {
+		Pattern p = Pattern.compile("^[_A-Za-z0-9-]+(\\.[_A-Za-z0-9-]+)*@[A-Za-z0-9]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$");
+		Matcher m = p.matcher(propertyEmail);
+		boolean b = m.matches();
+		if (!b) {
+			throw new PhrescoException("Email Format mismatch");
+		}
+		
+	}
+
 	@POST
     @Path ("/cloneEnvironment")
 	@Produces (MediaType.APPLICATION_JSON)

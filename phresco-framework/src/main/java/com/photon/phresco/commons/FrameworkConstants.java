@@ -168,6 +168,7 @@ public interface FrameworkConstants {
 	String PATH_SUREFIRE_REPORTS = "/target/surefire-reports";
 	String APKLIB  = "apklib";
 	String APK  = "apk";
+	String OTHERS = "Others";
     
 	 /*
      * CI constants
