@@ -280,7 +280,7 @@ qq.FileUploaderBasic = function(o){
         	
         },
         onComplete: function(id, fileName, responseJSON) {
-        	if (!responseJSON.success) {
+        	if (!responseJSON.success && o.action != "dynamicUploadFile") {
         		findError(responseJSON);
         		enableUploadButton($(o.element));
         		disableButton($("#validateContent, #validateTheme"));
@@ -290,14 +290,19 @@ qq.FileUploaderBasic = function(o){
         		enableButton($("#validateContent, #validateTheme"));
         	}
         	
+        	if (o.action == "dynamicUploadFile" && !responseJSON.success) {
+        		$("#"+o.key+"file-uploader").find(".qq-upload-list").empty();
+        		$(".yesNoPopupErr").text(responseJSON.errormsg)
+        	}
+        	
         	//redirect to list page after uploading theme bundle
         	if (o.type == "themeBundle") {
         		hideLoadingIcon();
         		loadContent("themeBuilderList", $('#formAppMenu, #formCustomers'), $("#subcontainer"), '', false, true);
         	} 
         	//to add uploaded file name to hidden field of the dynamic upload paramter
-        	if (o.action == "dynamicUploadFile" && o.key == "uploadJMX") {
-        		$("#"+o.key+"file-uploader").find(".qq-upload-list").remove();
+        	if (o.action == "dynamicUploadFile" && o.key == "uploadJMX" && responseJSON.success) {
+        		$("#"+o.key+"file-uploader").find(".qq-upload-list").empty();
         		var dependencies = new Array();
         		dependencies = o.dependency.split(',');
         		for (var i = 0; i < dependencies.length; i+=1) {

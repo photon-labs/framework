@@ -1008,25 +1008,40 @@ public class DynamicParameterAction extends FrameworkBaseAction implements Const
 			 String folder = FileUtils.removeExtension(tempZipPath.replace(tempDirectory.getPath() + File.separator, ""));
 			 //extract the zip file inside temp directory
 			 boolean unzipped = ArchiveUtil.unzip(tempZipPath, tempDirectory.getPath(), folder);
+			
+			 StringBuilder unzippedDir = new StringBuilder(tempDirectory.getPath());
+			 unzippedDir.append(File.separator)
+			 .append(Constants.PROJECTS_TEMP)
+			 .append(folder);
 			 
-			 uploadJmxDir = uploadJmxDir.append(File.separator)
-			 .append(CUSTOM);
-			 
-			 File destination = new File(uploadJmxDir.toString());
-			 if (!destination.exists()) {
-				 destination.mkdir();
+			 File extractedPath = new File(unzippedDir.toString()); 
+			 boolean fileExist = false;
+			 if (unzipped) {
+				 if(extractedPath.exists()) {
+					 fileExist = checkFileExist(extractedPath, DOT_JMX, fileExist);
+				 }
+			 } else {
+				 writer.print(UNABLE_TO_EXTRACT); 
 			 }
 			 
 			 //after extracting, delete that zip file
 			 FileUtil.delete(tempZipFile);
-			 if (unzipped) {
+			 if (fileExist) {
+				 uploadJmxDir = uploadJmxDir.append(File.separator)
+				 .append(CUSTOM);
+				 
+				 File destination = new File(uploadJmxDir.toString());
+				 if (!destination.exists()) {
+					 destination.mkdir();
+				 }
+				 
 				 File extractedFile = new File(tempDirectory.getPath() + File.separator + Constants.PROJECTS_TEMP + folder);
 				 if (extractedFile.exists()) {
 					 FileUtil.copyFolder(extractedFile, destination);
 				 }
 				 writer.print(SUCCESS_TRUE);
 			 } else {
-				 writer.print(SUCCESS_FALSE);
+				 writer.print(NO_JMX_EXISTS_ERROR);
 			 }
 		} catch (Exception e) {
 			writer.print(SUCCESS_FALSE);
@@ -1036,6 +1051,25 @@ public class DynamicParameterAction extends FrameworkBaseAction implements Const
 		}
     }
     
+    private boolean checkFileExist(File directory, String fileExtension, boolean flag) {
+    	File[] childs = directory.listFiles();
+		if (childs  != null && childs.length != 0) {
+			for (File child : childs) {
+				if (child.isDirectory() && !flag) {
+					flag = checkFileExist(child, fileExtension, flag);//recursive call if the child is a directory
+				} else if (child.getName().endsWith(fileExtension) && !flag) {
+					flag = true;
+					return flag;
+				}
+				
+				if (flag) {
+					break;
+				}
+			}
+		}
+		
+		return flag;
+	}
     
     public List<Value> getDependentValues() {
         return dependentValues;

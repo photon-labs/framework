@@ -63,6 +63,8 @@ public interface FrameworkConstants {
     String SUCCESS_TRUE = "{\"success\": true}";
     String SUCCESS_TRUE_NAME_ERR = "{\"success\": true,\"configNameError\":\"\"}";
     String SUCCESS_FALSE_NAME_ERR = "{\"success\": false,\"configNameError\":\"Name already exists\"}";
+    String NO_JMX_EXISTS_ERROR = "{\"success\": false,\"errormsg\":\"Zip has no jmx file\"}";
+    String UNABLE_TO_EXTRACT = "{\"success\": false,\"errormsg\":\"Unable to extract zip\"}";
     
     String VALIDATE_THEME = "validateTheme";
     String VALIDATE_CONTENT = "validateContent";
