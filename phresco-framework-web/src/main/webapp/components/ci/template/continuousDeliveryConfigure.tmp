@@ -6,15 +6,17 @@
     
     <section class="content_main code_content">
         <div class="ci_envtable">
-            <table class="table">
+
+            <table class="table" id="continuousDeliveryNameDiv">
                 <tbody>
                     <tr>
                         <td>Name</td>
-                        <td><input type="text"></td>
+                        <td><input name="continuousDeliveryName" type="text"></td>
                     </tr>
                 </tbody>
             </table>
-            <table class="table">
+
+            <table class="table" id="envornmentDiv">
                 <tbody>
                     <tr>
                         <td rowspan="3">Environment</td>
@@ -26,10 +28,12 @@
                     </tr>
                 </tbody>
             </table>
-        </div>    
+        </div> 
+
         <div class="sortablecont">
+                <!-- Drag Drop section 1 starts -->
                 <ul id="sortable1" class="connectedSortable type_test">
-                    <div class="sorthead">Web Service</div>
+<!--                     <div class="sorthead">Web Service</div>
                     <li class="ui-state-default">Webservice - Unit Test</li>
                     <li class="ui-state-default">Webservice - Build</li>
                     <li class="ui-state-default">Webservice - Code Validation</li>
@@ -48,24 +52,29 @@
                     </li>
                     <li class="ui-state-default">
                             YUI - Build <a href="javascript:;" class="validate_icon" name="jobConfigure"><img src="themes/default/images/helios/validate_image.png" width="19" height="19" border="0"></a>
-                    </li>
+                    </li> -->
                 </ul>
+                <!-- Drag Drop section 1 ends -->
 
+                <!-- Drag Drop section 2 starts -->
                 <ul id="sortable2" class="connectedSortable type_test">
                   
                 </ul>
+                <!-- Drag Drop section 2 ends -->
         </div>
+
         <!-- popup starts -->
         <div id="jobConfigure" class="dyn_popup popup_bg">
-        
+
             <table id="jobName" class="clonetable" width="100%" border="0" cellspacing="0" cellpadding="0">
                 <tbody>
                         <tr>
-                            <td><input name="name" type="text" placeholder="Job Name"></td>
+                            <td><input name="jobName" type="text" placeholder="Job Name"></td>
                         </tr>
                  </tbody>
              </table>
 
+             <!-- Basic Sttings starts here -->
              <table id="repoType" class="table table-striped table_border table-bordered" cellpadding="0" cellspacing="0" border="0">
                 <thead>
                     <tr>
@@ -74,7 +83,9 @@
                 </thead>
                 <tbody>
                     <tr>
-                        <td><input name="svnUrl" type="text" placeholder="SVN Url"></td>
+                        <td>
+                            <input name="svnUrl" type="text" placeholder="SVN Url">
+                        </td>
                         <td><input name="userName" type="text" placeholder="Username"></td>
                         <td><input name="password" type="password" placeholder="Password"></td>
                     </tr>
@@ -88,6 +99,16 @@
                     </tr>
                 </thead>
                 <tbody>
+                    <tr>
+                        <td colspan="3">
+                            <div class="build_trigger">
+                                    Build Triggers <br>
+                                    <input name="triggers" type="checkbox">
+                                    <span> Build Periodically</span>
+                                    <input name="triggers" type="checkbox">Pol SCM
+                            </div>
+                        </td>
+                    </tr> 
                     <tr>
                         <td>Schedule <br>
                                 <select>
@@ -108,62 +129,28 @@
                             <input name="scheduleExpression" type="text" placeholder="Cron expression">
                         </td>
                     </tr>
-                    <tr>
-                        <td colspan="3">
-                            <div class="build_trigger">
-                                        Build Triggers <br>
-                                    <input name="triggers" type="checkbox">
-                                        <span> Build Priodically</span>
-                                    <input name="triggers" type="checkbox">Pol SCM
-                            </div>
-                        </td>
-                    </tr>                               
                 </tbody>
             </table>
 
             <table id="mailSettings" class="table table-striped table_border table-bordered mail_settings" cellpadding="0" cellspacing="0" border="0">
                 <thead>
                     <tr>
-                        <th colspan="2">Sender Mail Settings</th>
+                        <!--<th colspan="2">Sender Mail Settings</th>-->
                         <th colspan="2">Recipents Mail Settings</th>
                     </tr>
                 </thead>
                 <tbody>
                     <tr>
-                        <td><input name="senderEmailId" type="text" placeholder="Email"></td>
-                        <td><input name="senderEmailPassword" type="password" placeholder="Password"></td>
+                        <!--<td><input name="senderEmailId" type="text" placeholder="Email"></td>
+                        <td><input name="senderEmailPassword" type="password" placeholder="Password"></td>-->
                         <td><input name="successEmailIds" type="text" placeholder="When Success"></td>
                         <td><input name="failureEmailIds" type="text" placeholder="When Faliure"></td>
                     </tr>
                 </tbody>
             </table>
+            <!-- Basic Sttings ends here -->
 
-            <table id="uploadSettings" class="table table-striped table_border table-bordered" cellpadding="0" cellspacing="0" border="0">
-                <thead>
-                    <tr>
-                        <th colspan="3">Upload Settings</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td colspan="3">Overwrite Files ?
-                            <input type="radio" name="collabNetoverWriteFiles" checked>Yes
-                            <input type="radio" name="collabNetoverWriteFiles">No
-                        </td>
-                    </tr>
-                    <tr>
-                        <td><input type="text" placeholder="Url"></td>
-                        <td><input type="text" placeholder="Username"></td>
-                        <td><input type="password" placeholder="Password"></td>
-                    </tr>
-                    <tr>
-                        <td><input name="collabNetProject" type="text" placeholder="Project"></td>
-                        <td><input name="collabNetPackage" type="text" placeholder="Package"></td>
-                        <td><input name="collabNetRelease" type="text" placeholder="Release"></td>
-                    </tr>
-                </tbody>
-            </table>
-            
+            <!-- Build configuration starts here -->
             <div id="dynamicContent">
                 <table class="table table-striped table_border table-bordered" cellpadding="0" cellspacing="0" border="0">
                     <thead>
@@ -209,17 +196,49 @@
                     </tbody>
                 </table>
             </div>
+            <!-- Build configuration ends here -->
 
+            <!-- Upload Settings starts here -->
+            <table id="collabNetuploadSettings" class="table table-striped table_border table-bordered" cellpadding="0" cellspacing="0" border="0">
+                <thead>
+                    <tr>
+                        <th colspan="3">Upload Settings</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td colspan="3">Overwrite Files ?
+                            <input type="radio" name="collabNetoverWriteFiles" checked>Yes
+                            <input type="radio" name="collabNetoverWriteFiles">No
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><input type="text" placeholder="Url"></td>
+                        <td><input type="text" placeholder="Username"></td>
+                        <td><input type="password" placeholder="Password"></td>
+                    </tr>
+                    <tr>
+                        <td><input name="collabNetProject" type="text" placeholder="Project"></td>
+                        <td><input name="collabNetPackage" type="text" placeholder="Package"></td>
+                        <td><input name="collabNetRelease" type="text" placeholder="Release"></td>
+                    </tr>
+                </tbody>
+            </table>
+            <!-- Upload Settings ends here -->
+
+            <!-- Job confiure buttons starts -->
             <div id="popupBtns" class="flt_right">
                 <input class="btn btn_style" type="button" value="Configure">
                 <input class="btn btn_style dyn_popup_close" type="button" value="Close">
             </div>
+            <!-- Job confiure buttons ends -->
        </div>
         <!-- popup ends -->
 
         <!--content_main div ends here -->
     </section>
     
+    <!-- Global buttons starts -->
     <section class="content_end">
         <div class="flt_right">
             <a href="ci_pipeline.html"><input type="submit" value="Add" class="btn btn_style add_icon_btn"></a>
@@ -227,3 +246,4 @@
         </div>
         <!--content_title ends here -->
     </section>
+    <!-- Global buttons ends -->

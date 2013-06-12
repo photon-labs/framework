@@ -225,7 +225,7 @@ define(["ci/api/ciAPI"], function() {
 		},
 
 		getHeaderResponse : function (header, callback) {
-			var self=this;
+			var self = this;
 			try {
 				self.ciAPI.ci(header, function(response) {
 						if (response !== null) {
@@ -318,7 +318,13 @@ define(["ci/api/ciAPI"], function() {
 
 
 		getDynamicParams : function(thisObj) {
+			//TODO: need to get downstream project as well as dynamic params from service
 			var self = this;
+			console.log("id sub => " + thisObj.id);
+			var all = $(thisObj).data("json");
+			console.log("json sub => " + all);
+			console.log("json sub name => " + all.name);
+
 			//commonVariables.goal = commonVariables.ciPhase;
 			commonVariables.goal = commonVariables.unitTestGoal;
 			commonVariables.appDirName = "wwwww-Java WebService";
@@ -347,25 +353,29 @@ define(["ci/api/ciAPI"], function() {
 			if (!self.isBlank(data)) {
 				// appinfo job templates
 				//var continuousDeliveryJobTemplates = "";
+				$("#sortable1").empty();
 				$.each(data, function(key, value) {
-					console.log("key > " + JSON.stringify(key));
-					console.log("value > " + JSON.stringify(value));
+					//console.log("key > " + JSON.stringify(key));
+					//console.log("value > " + JSON.stringify(value));
 					var jobTemplateApplicationName = '<div class="sorthead">'+ key +'</div>';
-					$("#sortable1").html(jobTemplateApplicationName);
+					//console.log("Title => " + jobTemplateApplicationName);
+					$("#sortable1").append(jobTemplateApplicationName);
 					if (!self.isBlank(data)) {
 
 						// job tesmplate key and value
 						$.each(value, function(jobTemplateKey, jobTemplateValue) {
-							console.log("jobTemplateValue > " + JSON.stringify(jobTemplateValue.name));
-							console.log("jobTemplateValue > " + JSON.stringify(jobTemplateValue.type));
-							
+							//console.log("jobTemplateValue > " + JSON.stringify(jobTemplateValue.name));
+							//console.log("jobTemplateValue > " + JSON.stringify(jobTemplateValue.type));
+
 							var jobTemplateGearHtml = '<a href="javascript:;" id="'+ jobTemplateValue.name +'" class="validate_icon" jobTemplateName="'+ jobTemplateValue.name +'" appName="'+ key +'" name="jobConfigure" style="display: none;"><img src="themes/default/images/helios/validate_image.png" width="19" height="19" border="0"></a>';
                     		var jobTemplateHtml = '<li class="ui-state-default">' + jobTemplateValue.name + ' - ' + jobTemplateValue.type + jobTemplateGearHtml + '</li>'
-                    		$("#sortable1").html(jobTemplateHtml);
+                    		//console.log("Appendin it => " + jobTemplateHtml);
+                    		$("#sortable1").append(jobTemplateHtml);
 
                     		// set json value on attribute
+                    		//var jobTemplateJsonVal = JSON.stringify(jobTemplateValue);
                     		var jobTemplateJsonVal = jobTemplateValue;
-                    		console.log("jobTemplateJsonVal > " + jobTemplateJsonVal);
+                    		//console.log("jobTemplateJsonVal > " + jobTemplateJsonVal);
                     		$('#'+ jobTemplateValue.name).data("json", jobTemplateJsonVal);
 
                     		//var all = $("#Test123").data("json");

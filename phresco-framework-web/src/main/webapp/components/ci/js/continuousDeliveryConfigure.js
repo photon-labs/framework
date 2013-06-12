@@ -117,7 +117,7 @@ define(["framework/widgetWithTemplate", "ci/listener/ciListener"], function() {
 			var self = this;
    			$(".dyn_popup").hide();
 	  		$(window).resize(function() {
-				$(".dyn_popup").hide();
+				//$(".dyn_popup").hide();
 	  		});
 	  		$(".first_list").find("span").hide();
 
@@ -155,6 +155,16 @@ define(["framework/widgetWithTemplate", "ci/listener/ciListener"], function() {
 			
    			$('#sortable2').on('click', 'a[name=jobConfigure]', function() {
    				// Show popup as well as dynamic popup
+   	// 			console.log("id main js  => " + this.id);
+   	// 			console.log("Id construcuction " + '#'+this.id);
+				// var all = $('#'+this.id).data("json");
+				// var test = $.parseJSON(all);
+				// console.log("json main js  => " + all);
+				// console.log("json main js  => " + all.name);
+
+				// console.log("tes json main js  => " + test);
+				// console.log("tes json main js  => " + test.name);
+
    				self.onDynamicPageEvent.dispatch(this);
    			});
 
