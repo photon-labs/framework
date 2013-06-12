@@ -34,7 +34,7 @@
                     <description></description>
                     <key>buildNumber</key>
                     <multiple>false</multiple>
-                    <value>2</value>
+                    <value>1</value>
                     <sort>false</sort>
                     <show>true</show>
                 </parameter>
@@ -59,7 +59,7 @@
                     <editable>true</editable>
                     <key>environmentName</key>
                     <multiple>false</multiple>
-                    <value>Production</value>
+                    <value>Testing</value>
                     <sort>false</sort>
                     <show>true</show>
                 </parameter>
