@@ -50,6 +50,7 @@ define(["login/listener/loginListener"], function() {
 			
 			if(self.loginListener.loginAPI.localVal.getSession('loggedout') == "true"){
 				$(".login_error_msg").text('Logged out');
+				$(".login_error_msg").css('color','green');
 			}
 			self.loginListener.loginAPI.localVal.deleteSession('loggedout');
 			
@@ -72,6 +73,8 @@ define(["login/listener/loginListener"], function() {
 			//Login btn click Event
 			$('#login').click(function(){
 				self.onLoginEvent.dispatch();
+				$(".login_error_msg").text('');
+				$(".login_error_msg").css('color','red');
 			});
 			
 			//Enter Key Press Event
