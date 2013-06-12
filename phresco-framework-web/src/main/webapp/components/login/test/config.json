@@ -100,7 +100,7 @@
 		},
 
 		"featuresTest" : {
-			"moduleName":"applicationTest",
+			"moduleName":"featuresTest",
 			"path" : "components/features/test/featuresTest"
 		},
 
