@@ -2522,7 +2522,7 @@ public class Quality extends DynamicParameterAction implements Constants {
 		.append(appInfo.getAppDirName())
 		.append(path);
 		if (!getFromTab().equals(EDIT)) {
-			String cellValue[] = {"",getFeatureId(),"",getTestCaseId(),getTestDescription(),getTestSteps(),"","",getExpectedResult(),getActualResult(),getStatus(),"","",getBugComment()};
+			String cellValue[] = {"",getFeatureId(),"",getTestCaseId(),getTestDescription(),"",getTestSteps(),"","",getExpectedResult(),getActualResult(),getStatus(),getBugComment()};
 			frameworkUtil.addNewTestCase(sb.toString(),getTestScenarioName(),cellValue, getStatus());
 		} else {
 			com.photon.phresco.commons.model.TestCase testCase =  new com.photon.phresco.commons.model.TestCase();

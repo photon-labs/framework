@@ -259,6 +259,7 @@ $(document).ready(function() {
 				$("#tabularViewForManual").hide();
 				$('#testCaseTable').hide();
 				$("#graphicalPieView").hide();
+				showPieView();
 			} else {
 				$("#graphicalView").hide();
 				$("#tabularViewForManual").hide();
@@ -285,23 +286,44 @@ $(document).ready(function() {
 	
 	var failurePercent;
 	var successPercent;
+	var notAppPercent;
+	var blockedPercent;
 	var name;
 	var total;
+	var notExePercent;
 	function showPieView() {
 		$("#graphicalPieView").show();
 		var testSuiteName = $("#testSuite").val();
-		failurePercent = "";
-		successPercent = "";
+		failurePercent = 0;
+		successPercent = 0;
+		notAppPercent = 0;
+		blockedPercent = 0;
+		notExePercent = 0;
 		name = "";
-		total = "";
+		total = 0;
 		name = testSuiteName;
+		
 		for (i in allValues.allTestSuite) {
 			if (allValues.allTestSuite[i].name === testSuiteName) {
-				failurePercent = allValues.allTestSuite[i].failures;
-				successPercent = allValues.allTestSuite[i].tests;
-				total = allValues.allTestSuite[i].total;
+				failurePercent = parseFloat(allValues.allTestSuite[i].failures);
+				successPercent = parseFloat(allValues.allTestSuite[i].tests);
+				notAppPercent = parseFloat(allValues.allTestSuite[i].notApplicable);
+				blockedPercent = parseFloat(allValues.allTestSuite[i].blocked);
+				total = parseFloat(allValues.allTestSuite[i].total);
+				notExePercent = parseFloat(total-(successPercent + failurePercent + notAppPercent + blockedPercent));
 				canvasInitPie();
+			} else {
+				failurePercent += parseFloat(allValues.allTestSuite[i].failures);
+				successPercent += parseFloat(allValues.allTestSuite[i].tests);
+				notAppPercent += parseFloat(allValues.allTestSuite[i].notApplicable);
+				blockedPercent += parseFloat(allValues.allTestSuite[i].blocked);
+				total += parseFloat(allValues.allTestSuite[i].total);
 			}
+		}
+		
+		if(name === "All") {
+			notExePercent = parseFloat(total-(successPercent + failurePercent + notAppPercent + blockedPercent));
+			canvasInit();
 		}
 		
 	}
@@ -501,6 +523,9 @@ $(document).ready(function() {
       	var successColor = "";
       	var failureColor = "";
       	var errorColor = "";
+      	var notExeColor = "";
+      	var notAppColor = "";
+      	var blockedColor = "";
 		if (theme == undefined || theme == "themes/photon/css/red.css") {
 	        chartTextColor = "white"; // axis text color
 	        chartGridColor = "white"; // grid
@@ -508,8 +533,11 @@ $(document).ready(function() {
 	        chartBarColor = "#B1121D"; //Bar color
 	        //line chart color
 	      	successColor = "#6f6";
-	      	failureColor = "orange";
+	      	failureColor = "red";
 	      	errorColor = "red";
+	      	notExeColor = "grey";
+	      	notAppColor = "#800000";
+	      	blockedColor = "orange";
 		} else {
 	        chartTextColor = "#4C4C4C";
 	        chartGridColor = "#4C4C4C";
@@ -517,17 +545,20 @@ $(document).ready(function() {
 	        chartBarColor = "#00A8F0";
 	      //line chart color
 	      	successColor = "#6f6";
-	      	failureColor = "orange";
+	      	failureColor = "red";
 	      	errorColor = "red";
+	      	notExeColor = "grey";
+	      	notAppColor = "#800000";
+	      	blockedColor = "orange";
 		}
 		
-        var bar1 = new RGraph.Bar('bar',[[totalPass,totalFail]]);
+        var bar1 = new RGraph.Bar('bar',[[ failurePercent, notExePercent, successPercent,notAppPercent, blockedPercent]]);
 		bar1.Set('chart.background.barcolor1', 'transparent');
 		bar1.Set('chart.background.barcolor2', 'transparent');
-		bar1.Set('chart.key', ['Success', 'Failure', 'Error']);
+		bar1.Set('chart.key', ['Failure','NotExecuted','Success','NotApplicable', 'Blocked']);
 		bar1.Set('chart.key.position.y', 35);
 		bar1.Set('chart.key.position', 'gutter');
-		bar1.Set('chart.colors', [successColor, failureColor, errorColor]);
+		bar1.Set('chart.colors', [failureColor, notExeColor, successColor, notAppColor, blockedColor]);
 		bar1.Set('chart.shadow', false);
 		bar1.Set('chart.shadow.blur', 0);
 		bar1.Set('chart.shadow.offsetx', 0);
@@ -547,10 +578,10 @@ $(document).ready(function() {
 	
 	function canvasInitPie() {
 	
-		var pie2 = new RGraph.Pie('pie2', [ failurePercent, '', successPercent]); // Create the pie object
+		var pie2 = new RGraph.Pie('pie2', [ failurePercent, notExePercent, successPercent,notAppPercent, blockedPercent]); // Create the pie object
 		pie2.Set('chart.gutter.left', 45);
-		pie2.Set('chart.colors', ['orange', 'red', '#6f6']);
-		pie2.Set('chart.key', ['Failures ('+failurePercent+')', '', 'Success ('+successPercent+')', 'Total ::'+total+ 'Tests)']);
+		pie2.Set('chart.colors', ['red', 'grey', '#6f6', '#800000','orange']);
+		pie2.Set('chart.key', ['Failures ('+failurePercent+')', 'NotExecuted ('+notExePercent+')','Success ('+successPercent+')', 'NotApplicable ('+notAppPercent+')','Blocked ('+blockedPercent+')', 'Total Tests ('+total+')']);
 		pie2.Set('chart.key.background', 'white');
 		pie2.Set('chart.strokestyle', 'white');
 		pie2.Set('chart.linewidth', 3);

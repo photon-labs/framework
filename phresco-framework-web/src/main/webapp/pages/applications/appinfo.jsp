@@ -139,7 +139,7 @@
 		    <div class="controls">
 				<input class="input-xlarge" id="code" name="code"
 		            type="text" maxlength="30" value ="<%= StringUtils.isNotEmpty(code) ? code : "" %>" title="<s:text name="title.30.chars"/>" 
-		            placeholder="<s:text name="place.hldr.app.edit.code"/>"/>
+		            placeholder="<s:text name="label.code.placeholder"/>"/>
 	            <span class="help-inline" id="codeError"></span>
 		    </div>
 		</div>
@@ -150,7 +150,7 @@
 		    <label class="accordion-control-label labelbold"><s:text name='lbl.AppDir'/></label>
 		    <div class="controls">
 				 <input class="input-xlarge" id="appDir" name="appDir" maxlength="30" title="<s:text name="title.30.chars"/>"
-		            type="text"  value ="<%= oldAppDirName %>" autofocus="autofocus" placeholder="<s:text name="label.name.placeholder"/>" />
+		            type="text"  value ="<%= oldAppDirName %>" autofocus="autofocus" placeholder="<s:text name="label.appdir.placeholder"/>" />
 		        <span class="help-inline" id="appDirError">
 		           
 		        </span>

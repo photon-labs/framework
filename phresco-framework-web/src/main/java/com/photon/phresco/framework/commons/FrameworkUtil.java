@@ -1906,19 +1906,19 @@ public class FrameworkUtil extends FrameworkBaseAction implements Constants {
 		     			TestCase createObject = readTest(next);
 		     			testCases.add(createObject);
 		     			if (tstCase != null && createObject.getTestCaseId().equals(tstCase.getTestCaseId())) {
-		     				Cell stepsCell=next.getCell(5);
+		     				Cell stepsCell=next.getCell(6);
 		     				stepsCell.setCellValue(tstCase.getSteps());
 		     				
-		     				Cell expectedCell=next.getCell(8);
+		     				Cell expectedCell=next.getCell(9);
 		     				expectedCell.setCellValue(tstCase.getExpectedResult());
 		     				
-		     				Cell actualCell=next.getCell(9);
+		     				Cell actualCell=next.getCell(10);
 		     				actualCell.setCellValue(tstCase.getActualResult());
 		     				
-		     				Cell statusCell=next.getCell(10);
+		     				Cell statusCell=next.getCell(11);
 		     				statusCell.setCellValue(tstCase.getStatus());
 		     				
-		     				Cell commentCell=next.getCell(13);
+		     				Cell commentCell=next.getCell(12);
 		     				commentCell.setCellValue(tstCase.getBugComment());
 		     			   
 		     			}
@@ -2297,19 +2297,19 @@ public class FrameworkUtil extends FrameworkBaseAction implements Constants {
 				TestCase createObject = readTest(next);
 				testCases.add(createObject);
 				if (tstCase != null && createObject.getTestCaseId().equals(tstCase.getTestCaseId())) {
-					Cell stepsCell=next.getCell(5);
+					Cell stepsCell=next.getCell(6);
 					stepsCell.setCellValue(tstCase.getSteps());
 					
-					Cell expectedCell=next.getCell(8);
+					Cell expectedCell=next.getCell(9);
 					expectedCell.setCellValue(tstCase.getExpectedResult());
 					
-					Cell actualCell=next.getCell(9);
+					Cell actualCell=next.getCell(10);
 					actualCell.setCellValue(tstCase.getActualResult());
 					
-					Cell statusCell=next.getCell(10);
+					Cell statusCell=next.getCell(11);
 					statusCell.setCellValue(tstCase.getStatus());
 					
-					Cell commentCell=next.getCell(13);
+					Cell commentCell=next.getCell(12);
 					commentCell.setCellValue(tstCase.getBugComment());
 				   
 				}
@@ -2341,36 +2341,36 @@ public class FrameworkUtil extends FrameworkBaseAction implements Constants {
     		}
     	}
     	
-    	if(next.getCell(5)!=null){
-    		Cell cell=next.getCell(5);
+    	if(next.getCell(6)!=null){
+    		Cell cell=next.getCell(6);
     		String value=getValue(cell);
     		if(StringUtils.isNotEmpty(value)) {
     			testcase.setSteps(value);
-    		}
-    	}
-    	if(next.getCell(8)!=null){
-    		Cell cell=next.getCell(8);
-    		String value=getValue(cell);
-    		if(StringUtils.isNotEmpty(value)) {
-    			testcase.setExpectedResult(value);
     		}
     	}
     	if(next.getCell(9)!=null){
     		Cell cell=next.getCell(9);
     		String value=getValue(cell);
     		if(StringUtils.isNotEmpty(value)) {
-    			testcase.setActualResult(value);
+    			testcase.setExpectedResult(value);
     		}
     	}
     	if(next.getCell(10)!=null){
     		Cell cell=next.getCell(10);
     		String value=getValue(cell);
     		if(StringUtils.isNotEmpty(value)) {
+    			testcase.setActualResult(value);
+    		}
+    	}
+    	if(next.getCell(11)!=null){
+    		Cell cell=next.getCell(11);
+    		String value=getValue(cell);
+    		if(StringUtils.isNotEmpty(value)) {
     			testcase.setStatus(value);
     		}
     	}
-    	if(next.getCell(13)!=null){
-    		Cell cell=next.getCell(13);
+    	if(next.getCell(12)!=null){
+    		Cell cell=next.getCell(12);
     		String value=getValue(cell);
     		if(StringUtils.isNotEmpty(value)) {
     			testcase.setBugComment(value);
@@ -2897,7 +2897,7 @@ public class FrameworkUtil extends FrameworkBaseAction implements Constants {
 				do {
 					next = rowIterator.next();
 					if (StringUtils.isNotEmpty(getValue(next.getCell(1))) && !getValue(next.getCell(0)).equalsIgnoreCase("S.NO")) {
-						String value = getValue(next.getCell(10));
+						String value = getValue(next.getCell(11));
 						if (StringUtils.isNotEmpty(value)) {
 							if (value.equalsIgnoreCase("pass") || value.equalsIgnoreCase("success")) {
 								totalPass = totalPass + 1;
@@ -2998,7 +2998,7 @@ public class FrameworkUtil extends FrameworkBaseAction implements Constants {
 					do {
 						next = rowIterator.next();
 						if (StringUtils.isNotEmpty(getValue(next.getCell(1))) && !getValue(next.getCell(0)).equalsIgnoreCase("S.NO")) {
-							String value = getValue(next.getCell(10));
+							String value = getValue(next.getCell(11));
 							if (StringUtils.isNotEmpty(value)) {
 								if (value.equalsIgnoreCase("pass") || value.equalsIgnoreCase("success")) {
 									totalPass = totalPass + 1;

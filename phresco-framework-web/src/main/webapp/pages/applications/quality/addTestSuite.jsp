@@ -36,7 +36,7 @@
 		<div class="control-group" id="nameControl">
 		    <label class="accordion-control-label labelbold"><span class="red">*</span>&nbsp;<s:text name="label.testsuite.name"/></label>
 		    <div class="controls">
-		       <input id="testSuiteName" placeholder="<s:text name='label.name.placeholder'/>" class="input-xlarge" name="testScenarioName" type="text" 
+		       <input id="testSuiteName" placeholder="<s:text name='label.test.name.placeholder'/>" class="input-xlarge" name="testScenarioName" type="text" 
 				    value="" maxlength="30" title="30 Characters only">
 					<span class="help-inline" id="nameError"></span>
 		    </div>
