@@ -37,6 +37,7 @@ define(["componentTest/listener/componentTestListener", "testResult/listener/tes
 				self.onTabularViewEvent = new signals.Signal();
 			}
 			self.onTabularViewEvent.add(self.componentTestListener.onTabularView, self.componentTestListener);
+			
 			if (self.onGraphicalViewEvent === null) {
 				self.onGraphicalViewEvent = new signals.Signal();
 			}
@@ -63,8 +64,9 @@ define(["componentTest/listener/componentTestListener", "testResult/listener/tes
 		 * Called in once the login is success
 		 *
 		 */
-		loadPage : function(){
-			Clazz.navigationController.push(this);
+		loadPage : function() {
+			Clazz.navigationController.mainContainer = '#testResult';
+			Clazz.navigationController.push(this, true);
 		},
 		
 		/***
@@ -75,24 +77,19 @@ define(["componentTest/listener/componentTestListener", "testResult/listener/tes
 		 */
 		postRender : function(element) {
 			var self = this;
-			commonVariables.navListener.getMyObj(commonVariables.testResult, function(retVal){
+			commonVariables.navListener.getMyObj(commonVariables.testResult, function(retVal) {
 				self.testResult = retVal;
 				Clazz.navigationController.jQueryContainer = '#testResult';
 				Clazz.navigationController.push(self.testResult, false);
-			});	
+			});
 		},
 		
 		preRender: function(whereToRender, renderFunction){
 			var self = this;
-			self.componentTestListener.getFunctionalTestOptions(self.componentTestListener.getActionHeader(self.projectRequestBody, "getFunctionalTestOptions"), function(response) {
-				var responseData = response.data;
-				var componentTestOptions = {};
-				componentTestOptions.functionalFramework = responseData.functionalFramework;
-				componentTestOptions.hubStatus = responseData.hubStatus;
-				var userPermissions = JSON.parse(self.componentTestListener.componentTestAPI.localVal.getSession('userPermissions'));
-				componentTestOptions.userPermissions = userPermissions;
-				renderFunction(componentTestOptions, whereToRender);
-			});
+			var data = {};
+			var userPermissions = JSON.parse(self.componentTestListener.componentTestAPI.localVal.getSession('userPermissions'));
+			data.userPermissions = userPermissions;
+			renderFunction(data, whereToRender);
 		},
 		
 		/***
@@ -105,8 +102,12 @@ define(["componentTest/listener/componentTestListener", "testResult/listener/tes
 			
 			$("#componentTestBtn").unbind("click");
 			$("#componentTestBtn").click(function() {
-				self.onDynamicPageEvent.dispatch(commonVariables.componentTestGoal);
-				self.opencc(this, 'componentTest_popup');
+				self.onDynamicPageEvent.dispatch(this, function() {
+					self.testResult.logContent = $('#testConsole').html();
+					$('#testResult').empty();
+					Clazz.navigationController.jQueryContainer = '#testResult';
+					Clazz.navigationController.push(self.testResult, false);
+				});
 			});
 			
 			$("#testSuites").css("display", "none");
@@ -115,20 +116,7 @@ define(["componentTest/listener/componentTestListener", "testResult/listener/tes
 			$(".unit_view").css("display", "none");
 			$("#graphView").css("display", "none");
 			
-			
-			$("a[name=unittestResult]").unbind("click");
-			$("a[name=unittestResult]").click(function() {
-				self.onUnitTestResultEvent.dispatch();
-			});
-			
-			$("a[name=unitTestDescription]").unbind("click");
-			$("a[name=unitTestDescription]").click(function() {
-				self.onUnitTestDescEvent.dispatch();
-			});
-			
-			Clazz.navigationController.mainContainer = commonVariables.contentPlaceholder;
-			
-			//To open the functional test directory
+			//To open the component test directory
 			$('#openFolder').unbind('click');
 			$("#openFolder").click(function() {
 				var paramJson = {};
@@ -136,7 +124,7 @@ define(["componentTest/listener/componentTestListener", "testResult/listener/tes
 				commonVariables.navListener.openFolder(paramJson);
 			});
 			
-			//To copy the path of functional test directory
+			//To copy the path of component test directory
 			$('#copyPath').unbind('click');
 			$("#copyPath").click(function() {
 				var paramJson = {};
@@ -159,8 +147,16 @@ define(["componentTest/listener/componentTestListener", "testResult/listener/tes
 			//To run the component test
 			$("#runComponentTest").unbind("click");
 			$("#runComponentTest").click(function() {
-				self.onRunComponentTestEvent.dispatch();
+				self.onRunComponentTestEvent.dispatch(function() {
+					self.testResult.logContent = $('#testConsole').html();
+					$('#testResult').empty();
+					Clazz.navigationController.jQueryContainer = '#testResult';
+					Clazz.navigationController.push(self.testResult, false);
+				});
+				$("#componentTest_popup").toggle();
 			});
+			
+			Clazz.navigationController.mainContainer = commonVariables.contentPlaceholder;
 		}
 	});
 

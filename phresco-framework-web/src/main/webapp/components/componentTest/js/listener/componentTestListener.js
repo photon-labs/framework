@@ -2,7 +2,7 @@ define(["componentTest/api/componentTestAPI"], function() {
 
 	Clazz.createPackage("com.components.componentTest.js.listener");
 
-	Clazz.com.components.componentTest.js.listener.ComponentTestListener = Clazz.extend(Clazz.Widget, {
+	Clazz.com.components.componentTest.js.listener.ComponentTestListener = Clazz.extend(Clazz.WidgetWithTemplate, {
 		
 		componentTestAPI : null,
 		testResultListener : null,
@@ -57,52 +57,35 @@ define(["componentTest/api/componentTestAPI"], function() {
 				webserviceurl: ''
 			}
 					
-			if (action == "getFunctionalTestOptions") {
+			if(action == "get") {
 				header.requestMethod = "GET";
-				header.webserviceurl = commonVariables.webserviceurl + commonVariables.qualityContext + "/functionalFramework?appDirName="+appDirName;				
+				header.webserviceurl = commonVariables.webserviceurl + commonVariables.qualityContext + "/" + commonVariables.component + "?userId="+userId+"&appDirName="+appDirName;				
 			}
 			return header;
 		},
 		
-		getDynamicParams : function(goal) {
+		getDynamicParams : function(thisObj, callback) {
 			var self = this;
-			commonVariables.goal = goal;
+			commonVariables.goal = commonVariables.componentTestGoal;
 			commonVariables.navListener.getMyObj(commonVariables.dynamicPage, function(dynamicPageObject) {
 				self.dynamicPageListener = new Clazz.com.components.dynamicPage.js.listener.DynamicPageListener();
 				dynamicPageObject.getHtml(false, function(response) {
-					$("#dynamicContent").html(response);
-//					self.multiselect();
-					dynamicPageObject.showParameters();
-					self.dynamicPageListener.controlEvent();
+					if ("No parameters available" == response) {
+						self.runComponentTest(function(responseData) {
+							callback(responseData);
+						});
+					} else {
+						$("#dynamicContent").html(response);
+	//					self.multiselect();
+						dynamicPageObject.showParameters();
+						self.dynamicPageListener.controlEvent();
+						self.opencc(thisObj, 'componentTest_popup');
+					}
 				});
 			});
 		},
 		
-		getFunctionalTestOptions : function(header, callback) {
-			var self = this;
-			try {
-				commonVariables.loadingScreen.showLoading();
-				self.componentTestAPI.componentTest(header,
-					function(response) {
-						if (response !== null) {
-							commonVariables.loadingScreen.removeLoading();
-							callback(response);
-						} else {
-							self.loadingScreen.removeLoading();
-							callback({"status" : "service failure"});
-						}
-					},
-
-					function(textStatus) {
-						commonVariables.loadingScreen.removeLoading();
-					}
-				);
-			} catch(exception) {
-				commonVariables.loadingScreen.removeLoading();
-			}
-		},
-		
-		runComponentTest : function() {
+		runComponentTest : function(callback) {
 			var self = this;
 			var testData = $("#componentTestForm").serialize();
 			var appdetails = self.componentTestAPI.localVal.getJson('appdetails');
@@ -113,25 +96,28 @@ define(["componentTest/api/componentTestAPI"], function() {
 			username = self.componentTestAPI.localVal.getSession('username');
 						
 			if (appdetails != null) {
-				queryString ="username="+username+"&appId="+appId+"&customerId="+customerId+"&goal=validate-code&phase=validate-code&projectId="+projectId+"&"+testData;
+				queryString ="username="+username+"&appId="+appId+"&customerId="+customerId+"&goal=component-test&phase=component-test&projectId="+projectId+"&"+testData;
 			}
-			$('#componentTestConsole').html('');
-				
+			
+			$('#testConsole').html('');
+			self.testResultListener.openConsole();//To open the console
+			
 			if (self.mavenServiceListener === null) {
 				commonVariables.navListener.getMyObj(commonVariables.mavenService, function(retVal){
 					self.mavenServiceListener = retVal;
-					
-					self.mavenServiceListener.mvnUnitTest(queryString, '#unitTestConsole', function(returnVal) {
-						callback(returnVal);
+					self.mavenServiceListener.mvnComponentTest(queryString, '#testConsole', function(response) {
+						self.testResultListener.closeConsole();
+						callback(response);
 					});
 				});
 			} else {
-				self.mavenServiceListener.mvnComponentTest(queryString, '#componentTestConsole', function(returnVal) {
-					
+				self.mavenServiceListener.mvnComponentTest(queryString, '#testConsole', function(response) {
+					self.testResultListener.closeConsole();
+					callback(response);
 				});
-			}			
+			}
 		}
 	});
 
-	return Clazz.com.components.componentTest.js.listener.ComponentTestlistener;
+	return Clazz.com.components.componentTest.js.listener.ComponentTestListener;
 });

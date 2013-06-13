@@ -127,7 +127,7 @@ public class CIJobTemplateService extends RestBase {
 	}
 	
 	@GET
-	@Path("/getJobTemplatesByEnvironemnt")
+	@Path("/getJobTemplatesByEnvironment")
 	@Produces (MediaType.APPLICATION_JSON)
 	public Response getJobTemplatesByEnvironemnt(@QueryParam("customerId") String customerId, @QueryParam("projectId") String projectId,
 			@QueryParam("envName") String envName) {
@@ -137,13 +137,13 @@ public class CIJobTemplateService extends RestBase {
 			CIManager ciManager = PhrescoFrameworkFactory.getCIManager();
 			Map<String, List<CIJobTemplate>> jobTemplateMap = new HashMap<String, List<CIJobTemplate>>();
 			for (ApplicationInfo appInfo : appInfos) {
-				String appId = appInfo.getName();
+				String appName = appInfo.getName();
 				List<Environment> environments = getEnvironments(appInfo);
 				for (Environment environment : environments) {
 					if (envName.equals(environment.getName())) {
-						List<CIJobTemplate> jobTemplates = ciManager.getJobTemplatesByAppId(appId);
+						List<CIJobTemplate> jobTemplates = ciManager.getJobTemplatesByAppId(appName);
 						if (CollectionUtils.isNotEmpty(jobTemplates)) {
-							jobTemplateMap.put(appId, jobTemplates);
+							jobTemplateMap.put(appName, jobTemplates);
 						}
 					}
 				}

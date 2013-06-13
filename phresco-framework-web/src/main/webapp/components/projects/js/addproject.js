@@ -60,7 +60,6 @@ define(["projects/listener/projectsListener"], function() {
 		 *
 		 */
 		loadPage :function(){
-			self.projectsListener = new Clazz.com.components.projects.js.listener.projectsListener();
 			Clazz.navigationController.push(this);
 		},
 		

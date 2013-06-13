@@ -86,16 +86,17 @@ define(["jquery"], function($) {
 				commonVariables.loadingScreen =new Clazz.com.js.widget.common.Loading();
 			});
 		
-			require(["lib/bootstrap_select-1.0", "lib/handlebars-1.0.0", "lib/Signal-1.0.0", "lib/SignalBinding-1.0.0", "lib/i18next-1.6.0", "jquery_mCustomScrollbar_concat_min-2.8.1", "loginTest", "projectlistTest", "headerTest", "footerTest", "navigationTest", "projectTest", "applicationTest", "featuresTest", "codequalityTest", "configurationTest", "buildTest", "jshamcrest", "jsmockito"],	function (Select, Handlebars, Signal, SignalBinding, next, mCustomScrollbar, loginTest, projectlistTest, headerTest, footerTest, navigationTest, projectTest,applicationTest, featuresTest, codequalityTest, configurationTest, buildTest){
+			require(["lib/bootstrap_select-1.0", "lib/handlebars-1.0.0", "lib/Signal-1.0.0", "lib/SignalBinding-1.0.0", "lib/i18next-1.6.0", "lib/jslib_jquery_sortable_min-1.0.0", "lib/bootstrap_min-2.3.1","jquery_mCustomScrollbar_concat_min-2.8.1", "loginTest", "projectlistTest", "headerTest", "footerTest", "navigationTest", "projectTest", "applicationTest", "featuresTest", "codequalityTest", "configurationTest", "buildTest", "jshamcrest", "jsmockito"],	function (Select, Handlebars, Signal, SignalBinding, next, sortable, bootrsap, mCustomScrollbar, loginTest, projectlistTest, headerTest, footerTest, navigationTest, projectTest,applicationTest, featuresTest, codequalityTest, configurationTest, buildTest){
 				JsHamcrest.Integration.JsTestDriver();
 				JsMockito.Integration.JsTestDriver();
 				var status = loginTest.runTests(data);/*, function() {
 					projectlistTest.runTests(data);*/
 				//});
-				//if (status) {
+				if (status) {
 					projectlistTest.runTests(data);
 					applicationTest.runTests(data);
-				//}
+					configurationTest.runTests(data);
+				}
 				
 				/* navigationTest.runTests(data);
 				headerTest.runTests(data);

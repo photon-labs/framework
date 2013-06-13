@@ -99,7 +99,9 @@ define(["configuration/api/configurationAPI"], function() {
 			customerId = (customerId == "") ? "photon" : customerId;
 			appDirName = self.configurationAPI.localVal.getSession("appDirName");
 			data = JSON.parse(self.configurationAPI.localVal.getSession('userInfo'));
-			var userId = data.id;
+			if(data !== null) {
+				var userId = data.id;
+			}
 			var techId = commonVariables.techId;
 			self.bcheck = false;
 			header = {
@@ -134,12 +136,17 @@ define(["configuration/api/configurationAPI"], function() {
 					header.requestMethod = "POST";
 					header.requestPostBody = JSON.stringify(configRequestBody);
 					header.webserviceurl = commonVariables.webserviceurl+commonVariables.configuration+"/cloneEnvironment?appDirName="+appDirName+"&envName="+deleteEnv;
+			} else if (action === "cronExpression") {
+					self.bcheck = true;
+					header.requestMethod = "POST";
+					header.requestPostBody = JSON.stringify(configRequestBody);
+					header.webserviceurl = commonVariables.webserviceurl+commonVariables.configuration+"/cronExpression";
 			}
 			return header;
 		},
 		
 		constructHtml : function(configTemplates, configuration, currentConfig){
-			
+			var flag = 0;
 			var htmlTag = "";
 			var key = "";
 			var self=this;
@@ -181,16 +188,26 @@ define(["configuration/api/configurationAPI"], function() {
 							if(currentConfig === 'Server') {
 								if($(this).attr('configType') === currentConfig) {
 									bCheck = true;
+									flag= 1;
 								}
 							}
 							
-							if(currentConfig === 'Database') {
+							if(currentConfig === 'Email') {
 								if($(this).attr('configType') === currentConfig) {
 									bCheck = true;
 								}
 							}
 						});
 					}
+				}
+				
+				if (flag== 1) {
+					//$("#msgdisplay").show();
+					//$("#msgdisplay").text("Server already exists.");
+						setTimeout(function() {
+							$("#msgdisplay").hide();
+						}, 1000);	
+						flag= 0;
 				}
 				
 				if (self.count == 0) {
@@ -253,6 +270,8 @@ define(["configuration/api/configurationAPI"], function() {
 						inputCtrl = '<input value="'+ configValue +'" class="'+configTemplate.name+self.count+'Configuration" name="'+key+'" mandatory="'+required+'" type="password" placeholder=""/>';
 					} else if (type == "FileType") {
 						inputCtrl = '<div id="'+key+'file-uploader" class="file-uploader" propTempName="'+key+'"></div>';
+					} else if (key == "scheduler") {
+						inputCtrl = '<input value="'+ configValue +'" class="'+configTemplate.name+self.count+'Configuration" name="'+key+'" mandatory="'+required+'" type="text" placeholder=""/><a name="cron_expression"><img src="themes/default/images/helios/settings_icon.png" width="23" height="22" border="0" alt=""></a><div id="cron_expression" class="dyn_popup" style="display:none"><table class="table table-striped table_border table-bordered" cellspacing="0" cellpadding="0" border="0"><thead><tr><th colspan="4">Schedule</th></tr></thead><tbody><tr id="scheduleExpression"><td colspan="4"><label><input type="radio" name="scheduleOption" value="Daily" checked>Daily</label><label><input type="radio" name="scheduleOption" value="Weekly">Weekly</label><label><input type="radio" name="scheduleOption" value="Monthly">Monthly</label></td></tr></tbody></table><table class="table table-striped table_border table-bordered" cellspacing="0" cellpadding="0" border="0"><thead><tr> <th colspan="2">Crone Expression</th></tr></thead><tbody><tr><td><input id="CroneExpressionValue" type="text"><a href="javascript:;" id="cronepassword"> <img src="themes/default/images/helios/question_mark.png"></a></td></tr></tbody></table> <div class="flt_right"><input class="btn btn_style" type="button" name="croneOk" value="Ok"><input class="btn btn_style dyn_popup_close" type="button" value="Close"></div></div><div id="crone_triggered" class="dyn_popup" style="display:none"><span>Your Schedule will be triggered using the following pattern<br>Daily Schedule</span><table class="table table-striped table_border table-bordered" border="0" cellpadding="0" cellspacing="0"><thead><tr><th>Date</th> </tr></thead><tbody><tr><td>Fri May 24 18:35:00 IST 2013</td></tr><tr><td>Fri May 24 18:36:00 IST 2013</td></tr><tr><td>Fri May 24 18:37:00 IST 2013</td></tr></tbody><tr> <td>Fri May 24 18:38:00 IST 2013...</td></tr></table><div class="flt_right"><input name="dyn_popupcon_close" class="btn btn_style dyn_popupcon_close" type="button" value="Close"></div></div>';
 					} else {
 						if (key === 'type') {
 							inputCtrl = '<select mandatory="'+required+'" class="'+configTemplate.name+self.count+'Configuration" name="' + value.key + '">';
@@ -344,6 +363,7 @@ define(["configuration/api/configurationAPI"], function() {
 					$("tbody[name=ConfigurationLists]").append(content);
 					$("a[name=removeConfig]").unbind("change");
 					self.severDbOnChangeEvent();
+					self.CroneExpression();
 					
 				}
 				$("a[name=removeConfig]").unbind("click");
@@ -353,7 +373,7 @@ define(["configuration/api/configurationAPI"], function() {
 		},
 		
 		severDbOnChangeEvent : function () {
-			var self=this;
+			var self=this;	
 			$('select[name=type]').change(function() {
 				var configtype = $(this).parent().parent().attr('name');
 				var configValue = $(this).val();
@@ -381,6 +401,181 @@ define(["configuration/api/configurationAPI"], function() {
 					});
 				}
 			});
+			
+		},
+		
+		CroneExpression : function() {
+			var self=this;
+			$('a[name=cron_expression]').click(function(){
+				self.opencc(this, $(this).attr('name'));
+			});
+			
+			$("#cronepassword").click(
+				function openccvar() {
+				
+				$('.content_main').addClass('z_index_ci');
+				
+				var clicked = $("#cronepassword");
+				var target = $("#crone_triggered");
+				var twowidth = window.innerWidth/1.5;
+			
+				if (clicked.offset().left < twowidth) {	
+					$(target).toggle();
+					var a = target.height()/2;
+					var b = clicked.height()/2;
+					var t=clicked.offset().top + (b+12) - (a+12) ;
+					var l=clicked.offset().left + clicked.width()+ 4;
+					$(target).offset({
+						top: t,
+						left: l
+					});
+					
+					$(target).addClass('speakstyleleft').removeClass('speakstyleright');
+				}
+				else {
+					$(target).toggle();
+					var t=clicked.offset().top - target.height()/2;
+					var l=clicked.offset().left - (target.width()+clicked.width()+15);
+					$(target).offset({
+						top: t,
+						left: l
+					});
+					
+					$(target).addClass('speakstyleright').removeClass('speakstyleleft');
+			
+				}
+
+			});
+			
+			$("input[name=dyn_popupcon_close]").click(function() {
+				$(this).parent().parent().hide();
+			});
+			
+			self.currentEvent($('input[name=scheduleOption]:checked').val());
+			$('input[name=scheduleOption]').bind('click', function() {
+				$(this).attr('checked', true);
+				self.currentEvent($(this).val());
+			});
+		},
+		  
+		currentEvent : function(value) {
+			var self=this, dailySchedule, weeklySchedule, monthlySchedule;
+			dailySchedule = '<tr id="schedule_daily" class="schedule_date"><td>Every At<input type="checkbox" name="everyAt"></td><td><select name="hours">'+self.hours()+'</select><span>Hrs</span></td> <td><select name="minutes">'+self.minutes()+'</select><span>Mins</span></td></tr>';
+			weeklySchedule = '<tr id="schedule_weekly" class="schedule_date"><td><select name="weeks">'+self.weeks()+'</select><span>Weeks</span> <span>at</span></td><td><select name="hours">'+self.hours()+'</select><span>Hrs</span></td> <td><select name="minutes">'+self.minutes()+'</select><span>Mins</span></td></tr>';
+			monthlySchedule = '<tr id="schedule_monthly" class="schedule_date"><td><span>Every</span><select name="days">'+self.days()+'</select></td><td><span>of</span><select name="months">'+self.months()+'</select><span>Months</span></td><td><span>at</span><select name="hours">'+self.hours()+'</select><span>Hrs</span></td> <td><select name="minutes">'+self.minutes()+'</select><span>Mins</span></td></tr>';
+			$('.schedule_date').remove();
+			if (value === 'Daily') {
+				$(dailySchedule).insertAfter('tr #scheduleExpression:last');
+			} else if (value === 'Weekly') {
+				$(weeklySchedule).insertAfter('tr #scheduleExpression:last');
+			} else {
+				$(monthlySchedule).insertAfter('tr #scheduleExpression:last');
+			}
+			self.cronExpressionValues(value);
+		},
+		
+		cronExpressionValues : function (value) {
+			var self=this, croneJson = {};
+			if (value === 'Daily') {
+				croneJson.cronBy = value;
+				croneJson.every = $('input[name=everyAt]').is(':checked');
+				croneJson.hours = $('select[name=hours]').val();
+				croneJson.minutes = $('select[name=minutes]').val();
+				self.cronExpressionLoad(croneJson);
+				$('input[name=everyAt], select[name=hours], select[name=minutes]').bind('click', function(){
+					croneJson.every = $('input[name=everyAt]').is(':checked');
+					croneJson.hours = $('select[name=hours]').val();
+					croneJson.minutes = $('select[name=minutes]').val();
+					self.cronExpressionLoad(croneJson);
+				});
+
+			} else if (value === 'Weekly') {
+				croneJson.cronBy = value;
+				croneJson.week = $('select[name=weeks]').val();
+				croneJson.hours = $('select[name=hours]').val();
+				croneJson.minutes = $('select[name=minutes]').val();
+				self.cronExpressionLoad(croneJson);
+				$('select[name=weeks], select[name=hours], select[name=minutes]').bind('change', function(){
+					croneJson.week = $('select[name=weeks]').val();
+					croneJson.hours = $('select[name=hours]').val();
+					croneJson.minutes = $('select[name=minutes]').val();
+					self.cronExpressionLoad(croneJson);
+				});
+			} else {
+				croneJson.cronBy = value;
+				croneJson.day = $('select[name=days]').val();
+				croneJson.month = $('select[name=months]').val();
+				croneJson.hours = $('select[name=hours]').val();
+				croneJson.minutes = $('select[name=minutes]').val();
+				self.cronExpressionLoad(croneJson);
+				$('select[name=days], select[name=months], select[name=hours], select[name=minutes]').bind('change', function(){
+					croneJson.day = $('select[name=days]').val();
+					croneJson.month = $('select[name=months]').val();
+					croneJson.hours = $('select[name=hours]').val();
+					croneJson.minutes = $('select[name=minutes]').val();
+					self.cronExpressionLoad(croneJson);
+				});
+			}
+		},
+		
+		cronExpressionLoad : function (croneJson) {
+			var self=this;
+			self.configRequestBody = croneJson;
+			self.getConfigurationList(self.getRequestHeader(self.configRequestBody, "cronExpression", ''), function(response) {
+				$("#CroneExpressionValue").val(response.data);
+			});
+			
+			$("input[name=croneOk]").click(function(){
+				$("#cron_expression").hide();
+				$("input[name=scheduler]").val($("#CroneExpressionValue").val());
+			});
+		},
+		
+		hours : function() {
+			var self=this, option='', i;
+				option = '<option>*</option>';
+			for(i=0; i<24; i++) {
+				option += '<option value='+i+'>'+i+'</option>';
+			}
+			return option;
+		},
+		
+		minutes : function() {
+			var self=this, option='', i;
+			option = '<option>*</option>';
+			for(i=0; i<60; i++) {
+				option += '<option value='+i+'>'+i+'</option>';
+			}
+			return option;
+		},
+		
+		days : function() {
+			var self=this, option='', i;
+			option = '<option>*</option>';
+			for(i=1; i<32; i++) {
+				option += '<option value='+i+'>'+i+'</option>';
+			}
+			return option;
+		},
+		
+		weeks : function () {
+			var self=this, option='', i, weeks = ['*', 'Sunday', 'Monday', 'Tuesday', 'Wendesday', 'Thursday', 'Friday', 'Saturday'];
+			
+			for(i=0; i<weeks.length; i++) {
+				var val = (i == 0) ? "*" : i;
+				option += '<option value='+val+'>'+weeks[i]+'</option>';
+			}
+			return option;
+		},
+		
+		months : function () {
+			var self=this, option='', i, months = ["*","January","February","March","April","May","June","July","August","September","October","November","December"];
+			
+			for(i=0; i<months.length; i++) {
+				var val = (i == 0) ? "*" : i;
+				option += '<option value='+val+'>'+months[i]+'</option>';
+			}
+			return option;
 		},
 		
 		htmlForOther : function(value) {
@@ -414,7 +609,7 @@ define(["configuration/api/configurationAPI"], function() {
 				self.removeClick();
 		},
 		
-		addOtherConfig : function(toAppend){
+		addOtherConfig : function(toAppend) {
 			var self = this, dynamicValue, textBox = '<tr class="otherConfig" name="Other"><td></td><td><input type="text" class="otherKey" placeholder= "key"/><td><input type="text" placeholder= "value" class="otherKeyValue"/></td><td><div class="flt_right icon_center"><a href="javascript:;" name="addOther"><img src="themes/default/images/helios/plus_icon.png" border="0" alt=""></a> <a href="javascript:;" name="removeOther"><img src="themes/default/images/helios/minus_icon.png" border="0" alt=""></a></div></td></tr>', minusIcon = '<img src="themes/default/images/helios/minus_icon.png" border="0" alt="">';
 			dynamicValue = $(textBox).insertAfter(toAppend);
 			dynamicValue.prev('tr').find('a[name="addOther"]').html('');
@@ -559,7 +754,7 @@ define(["configuration/api/configurationAPI"], function() {
 			}
 		},
 		
-		validation : function(){
+		validation : function() {
 			var self = this, bCheck = false;
 			$.each($(".row_bg"), function(index, value) {
 				var type = $(this).attr("type");

@@ -117,6 +117,8 @@ define(["configuration/listener/configurationListener"], function() {
 					var found = $.inArray($("input[name='envName']").val(), arr) > -1;
 					if (found === false) {
 						self.addEnvEvent.dispatch();
+						$("input[name='envName']").attr('placeholder','Environment Name');
+						$("input[name='envDesc']").attr('placeholder','Environment Description');
 					}
 					else {
 						$("#errdisplay").show();
@@ -161,12 +163,13 @@ define(["configuration/listener/configurationListener"], function() {
 			
 			$("input[name=cloneEnvr]").unbind("click");
 			$("input[name=cloneEnvr]").click(function() {
-				var envName = $(this).parent().attr('name');
-				self.cloneEnvEvent.dispatch(envName, function(response){
+				var envrName = $(this).parent().attr('name');
+				self.cloneEnvEvent.dispatch(envrName, function(response){
 					self.configRequestBody = response;
-					self.getAction(self.configRequestBody, 'cloneEnv', envName);
-				});
-			});
+					self.getAction(self.configRequestBody, 'cloneEnv', envrName);
+				});  
+				
+			}); 
 			
 			Clazz.navigationController.mainContainer = commonVariables.contentPlaceholder;
 		}

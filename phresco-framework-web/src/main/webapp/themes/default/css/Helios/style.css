@@ -83,7 +83,7 @@ sup { color:#FF0000; }
 
 div, button, img { outline:none; }
 /*=== Loading ===*/
-.widget-mask-main,.widget-mask-mid-content{
+.widget-mask-main,.widget-mask-mid-content,.mask{
     width: 100%;
     height: 100%;
     top: 0;
@@ -2295,6 +2295,10 @@ html>body tbody.scrollContent {
 	width: 9%;
 }
 
+.testSuiteTable table tbody.scrollContent td {
+    width: 1% !important;
+}
+
 .code_content table.unit_result tbody.scrollContent td {
 	width: 6%;
 }
@@ -2306,7 +2310,6 @@ html>body tbody.scrollContent {
 	width: 56%;
 	position:fixed;
 	right: 10px;
-	height:72%;
 	float:right;
 	top: auto !important;
 	border: 1px solid #ddd;
@@ -2330,6 +2333,10 @@ html>body tbody.scrollContent {
 
 .unit_progress table thead tr td:last-child {
 	text-align:right;
+}
+
+.unit_progress table {
+	border: none !important;	
 }
 
 .unit_text {
@@ -2607,40 +2614,40 @@ html>body tbody.scrollContent {
 	margin-top:5px;
 }
 
-#job_template {
+.job_template {
 	z-index: 1;	
 }
 
-#job_template table tr td
+.job_template table tr td
 {
 	border-top:none;
 }
 
-#job_template table tr td input[type="checkbox"]
+.job_template table tr td input[type="checkbox"]
 {
 	margin-top:-3px;
 	margin-right:5px;
 }
-#job_template .table:first-child tr td {
+.job_template .table:first-child tr td {
 	padding: 2px !important;
 	padding-bottom:0;
 }
-#job_template table tr td input[type="text"]
+.job_template table tr td input[type="text"]
 {
 	width:178px !important;
 	margin: 0 5px 0 0 !important;
 }
-#job_template table tr td select
+.job_template table tr td select
 {
 	width:178px !important;
 	margin-bottom: 0;
 }
 
-#job_template table tr:nth-child(4) {
+.job_template table tr:nth-child(4) {
 	line-height:24px;	
 }
 
-#job_template .popuptextarea {
+.job_template .popuptextarea {
 	border: 1px solid #c7c7c7;
 	overflow-y: auto;
 	border-radius: 4px;
@@ -2648,7 +2655,7 @@ html>body tbody.scrollContent {
 	line-height: 24px;
 }
 
-#job_template table
+.job_template table
 {
 	margin-bottom:10px !important;
 }
@@ -2673,6 +2680,17 @@ html>body tbody.scrollContent {
 	padding-left: 15px !important;	
 }
 
+.type_test li a {
+    padding-top: 6px;
+}
+
+#jobConfigure table td select {
+    margin-bottom: 0px;
+}
+
+#jobConfigure table td input[type="radio"], #jobConfigure table td input[type="checkbox"] {
+    margin: -3px 3px 0 !important;
+}
 
 
 /* *************************************************************** STYLES FOR CI-CON_DELIVERY PAGE ************************************************************************************ */
@@ -2807,6 +2825,12 @@ html>body tbody.scrollContent {
 	border-radius: 4px;
 	padding: 1% 3%;
 	width: 100%;
+}
+
+#jobConfigure {
+	height: 390px;
+    overflow-y: auto;
+    top: 3px;
 }
 
 .ci_envtable .popuptextarea input[type="checkbox"] {

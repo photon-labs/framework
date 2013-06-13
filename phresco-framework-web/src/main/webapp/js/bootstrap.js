@@ -107,6 +107,9 @@ var commonVariables = {
 	optionsEmbedApplication : "Embed_Application",
 	optionsThemeBuilder : "Theme_Builder",
 	
+	/******* Phase *********/
+	ciPhase : "ci",
+
 	/******* Goals *********/
 	unitTestGoal : "unit-test",
 	componentTestGoal : "component-test",

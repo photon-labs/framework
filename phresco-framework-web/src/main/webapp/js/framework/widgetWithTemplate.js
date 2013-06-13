@@ -170,7 +170,45 @@ define(["framework/widget", "framework/templateProvider"], function() {
 
 				self.closeAll(placeId);
 			},
+			
+			openccpl : function(ee, placeId, currentPrjName) {
+				var self=this;
+				$(".dyn_popup").hide();
+				
+				$('.features_content_main').removeClass('z_index');
+				
+				var clicked = $(ee);
+				var target = $("#" + placeId);
+				var t= clicked.offset().top + 33;
+				var halfheight= window.innerHeight/2;
+				var halfwidth= window.innerWidth/2;
+				$(target).attr('currentPrjName',currentPrjName);
+				
+				if (clicked.offset().top < halfheight && clicked.offset().left < halfwidth) {
+					$(target).css({"left":clicked.offset().left ,"margin-top":10,"right": "auto"});
+					$(target).toggle();
+					$(target).removeClass('speakstyletopright').removeClass('speakstylebottomright').removeClass('speakstylebottomleft').addClass('speakstyletopleft').addClass('dyn_popup');
+				} else if (clicked.offset().top < halfheight && clicked.offset().left > halfwidth){
+					var d= ($(window).width() - (clicked.offset().left + clicked.outerWidth())) - 18;
+					$(target).css({"right":d ,"margin-top":10,"left": "auto","top": "auto"});
+					$(target).toggle();
+					$(target).removeClass('speakstyletopleft').removeClass('speakstylebottomright').removeClass('speakstylebottomleft').addClass('speakstyletopright').addClass('dyn_popup');
+				} else if (clicked.offset().top > halfheight && clicked.offset().left < halfwidth){
+					var BottomHeight = clicked.position().top - (target.height() + 33 );
+					$(target).css({"left": clicked.offset().left,"top": BottomHeight ,"right": "auto"});
+					$(target).toggle();
+					$(target).removeClass('speakstyletopleft').removeClass('speakstylebottomright').removeClass('speakstyletopright').addClass('speakstylebottomleft').addClass('dyn_popup');	
+				} else if (clicked.offset().top > halfheight && clicked.offset().left > halfwidth){
+					var d= ($(window).width() - (clicked.offset().left + clicked.outerWidth())) - 15;
+					var BottomHeight = clicked.position().top - (target.height() + 28 );
+					$(target).css({"right":d ,"top":BottomHeight,"left": "auto"});
+					$(target).toggle();
+					$(target).removeClass('speakstyletopleft').removeClass('speakstyletopright').removeClass('speakstylebottomleft').addClass('speakstylebottomright').addClass('dyn_popup');	
+				} 
 
+				self.closeAll(placeId);
+			},
+			
 			opencctime : function(ee, placeId) {
 				var self=this;
 				$('.content_main').addClass('z_index_ci');
@@ -306,7 +344,96 @@ define(["framework/widget", "framework/templateProvider"], function() {
 			
 			multiselect : function() {
 				$('.selectpicker').selectpicker();
-			}
+			},
+
+			isBlank : function (obj) {
+				if (obj !== null && obj !== undefined && obj !== '') {
+					return false;
+				}
+				return true;
+			},
+		
+			showHideConsole : function() {
+				var self = this;
+				var check = $('#consoleImg').attr('data-flag');
+				if (check == "true") {
+					self.openConsole();
+				} else {
+					self.closeConsole();
+				}
+			},
+		
+			openConsole : function() {
+				$('.testSuiteTable').append('<div class="mask"></div>');
+				$('.mask').show();
+				$('.unit_close').css("z-index", 1001);
+				$('.unit_progress').css("z-index", 1001);
+				$('.unit_close').css("height", 0);
+				var value = $('.unit_info').width();
+				var value1 = $('.unit_progress').width();
+				$('.unit_info').animate({left: -value},500);
+				$('.unit_progress').animate({right: '10px'},500);
+				$('.unit_close').animate({right: value1+10},500);
+				$('.unit_info table').removeClass("big").addClass("small");
+				$('#consoleImg').attr('data-flag','false');
+				
+				var height = $(window).height();
+				var resultvalue = 0;
+				$('.mainContent').prevAll().each(function() {
+					var rv = $(this).height();
+					resultvalue = resultvalue + rv; 
+				});
+				var footervalue = $('.footer_section').height();
+				resultvalue = resultvalue + footervalue + 200;
+				finalHeight = height - resultvalue;
+				$(".unit_progress").css("height", finalHeight + 10);
+				$('.unit_progress').find('.scrollContent').css("height", finalHeight - 20);
+			},
+		
+			closeConsole : function() {
+				var value = $('.unit_info').width();
+				var value1 = $('.unit_progress').width();
+				$('.unit_info').animate({left: '20'},500);
+				$('.unit_progress').animate({right: -value1},500);
+				$('.unit_close').animate({right: '0px'},500);
+				$('.unit_info table').removeClass("small").addClass("big");
+				$('#consoleImg').attr('data-flag','true');
+				$('.mask').remove();
+			},
+			
+			checkBoxEvent: function (parentObj, childCheckBoxClass, buttonObj) {
+				$('.' + childCheckBoxClass).bind('click', function(){
+					var checkedLength = $('.' + childCheckBoxClass + ':checked').size();
+					var totalCheckBoxes = $('.' + childCheckBoxClass).size();
+					if (totalCheckBoxes == checkedLength) {
+						$(parentObj).prop("checked", true);
+					} else {
+						$(parentObj).prop("checked", false);
+					}
+					
+					if (checkedLength > 0) {
+						buttonObj.prop("disabled", false);
+						buttonObj.addClass("btn_style");
+					} else {
+						buttonObj.prop("disabled", true);
+						buttonObj.removeClass("btn_style");
+					}
+				});
+			},
+			
+			checkAllEvent: function (parentObj, childObj, buttonObj) {
+				$(parentObj).bind('click', function(){
+					if ($(parentObj).is(':checked')) {
+						$(childObj).prop("checked", true);
+						buttonObj.prop("disabled", false);
+						buttonObj.addClass("btn_style");
+					} else {
+						$(childObj).prop("checked", false);
+						buttonObj.prop("disabled", true);
+						buttonObj.removeClass("btn_style");
+					}
+				});
+			},
 		}
 	);
 

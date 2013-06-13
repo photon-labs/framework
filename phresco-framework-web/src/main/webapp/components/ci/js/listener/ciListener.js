@@ -11,6 +11,7 @@ define(["ci/api/ciAPI"], function() {
 		listJobTemplate : null,
 		updateJobTemplate : null,
 		deleteJobTemplate : null,
+		configureJob : null, // configuring the CI job
 		ciRequestBody : {},
 
 		/***
@@ -69,9 +70,7 @@ define(["ci/api/ciAPI"], function() {
 				ciRequestBody.customerId = customerId;
 				ciRequestBody.projectId = projectId;
 				header.requestPostBody = JSON.stringify(ciRequestBody);
-				console.log("log => " + JSON.stringify(ciRequestBody));
 				var oldname = $('[name="oldname"]').val();
-				console.log("oldname => " + oldname);
 				header.webserviceurl = commonVariables.webserviceurl + commonVariables.jobTemplates + "?oldname=" + oldname;
 			} else if (action === "edit") {
 				header.requestMethod = "GET";
@@ -80,21 +79,79 @@ define(["ci/api/ciAPI"], function() {
 					header.webserviceurl = header.webserviceurl + "/" + params.name + "?customerId="+ customerId + "&projectId=" + projectId;
 				}
 			} else if (action === "delete") {
-				console.log("Deleet params " + params);
 				header.requestMethod = "DELETE";
 				header.webserviceurl = commonVariables.webserviceurl + commonVariables.jobTemplates + "?customerId="+ customerId + "&projectId=" + projectId;
 				if (params !== null && params !== undefined && params !== '') {
 					params = $.param(params);
 					header.webserviceurl = header.webserviceurl + "&" + params;
 				}
-			}  else if (action === "getAppInfos") {
+			} else if (action === "getAppInfos") {
 				header.requestMethod = "GET";
 				header.webserviceurl = commonVariables.webserviceurl + commonVariables.projectlistContext + "/appinfos" + "?customerId="+ customerId + "&projectId=" + projectId;
 				if (params !== null && params !== undefined && params !== '') {
 					params = $.param(params);
 					header.webserviceurl = header.webserviceurl + "&" + params;
 				}
-			} 
+			} else if (action === "getEnvironemntsByProjId") {
+				// get all the environments of a project, which lists all the application environments
+				header.requestMethod = "GET";
+				//header.webserviceurl = commonVariables.webserviceurl + commonVariables.configuration + "/allEnvironments" + "?customerId="+ customerId + "&projectId=" + projectId;
+				header.webserviceurl = commonVariables.webserviceurl + commonVariables.configuration + "/listEnvironmentsByProjectId" + "?customerId="+ customerId + "&projectId=" + projectId;
+				// For Testing Purpose - Remove this when service calls get ready
+				//header.webserviceurl = header.webserviceurl + "&appDirName=wwwww-Java WebService";		
+				if (params !== null && params !== undefined && params !== '') {
+					params = $.param(params);
+					header.webserviceurl = header.webserviceurl + "&" + params;
+				}
+			}  else if (action === "getJobTemplatesByEnvironment") {
+				// get job template info with appId
+				header.requestMethod = "GET";
+				header.webserviceurl = commonVariables.webserviceurl + commonVariables.jobTemplates + "/getJobTemplatesByEnvironment" + "?customerId="+ customerId + "&projectId=" + projectId;	
+				if (params !== null && params !== undefined && params !== '') {
+					params = $.param(params);
+					header.webserviceurl = header.webserviceurl + "&" + params;
+				}
+			} else if (action === "getDynamicPopupByAppId") {
+				// need to pass appId, operation and appId
+				header.requestMethod = "GET";
+				header.webserviceurl = commonVariables.webserviceurl + commonVariables.jobTemplates + "/getDynamicPopupByAppId" + "?customerId="+ customerId + "&projectId=" + projectId;
+				if (params !== null && params !== undefined && params !== '') {
+					params = $.param(params);
+					header.webserviceurl = header.webserviceurl + "&" + params;
+				}
+			} else if (action === "saveContinuousDelivery") {
+				// Save the continuos delivery with all the drag and dropped job templates
+				header.requestMethod = "POST";
+				header.webserviceurl = commonVariables.webserviceurl + commonVariables.jobTemplates + "/saveContinuousDelivery" + "?customerId="+ customerId + "&projectId=" + projectId;
+				if (params !== null && params !== undefined && params !== '') {
+					params = $.param(params);
+					header.webserviceurl = header.webserviceurl + "&" + params;
+				}
+			} else if (action === "updateContinuousDelivery") {
+				// update the continuos delivery with all the drag and dropped job templates
+				header.requestMethod = "PUT";
+				header.webserviceurl = commonVariables.webserviceurl + commonVariables.jobTemplates + "/updateContinuousDelivery" + "?customerId="+ customerId + "&projectId=" + projectId;
+				if (params !== null && params !== undefined && params !== '') {
+					params = $.param(params);
+					header.webserviceurl = header.webserviceurl + "&" + params;
+				}
+			} else if (action === "getContinuousDelivery") {
+				// getContinuousDelivery
+				header.requestMethod = "GET";
+				header.webserviceurl = commonVariables.webserviceurl + commonVariables.jobTemplates + "/getContinuousDelivery" + "?customerId="+ customerId + "&projectId=" + projectId;
+				if (params !== null && params !== undefined && params !== '') {
+					params = $.param(params);
+					header.webserviceurl = header.webserviceurl + "&" + params;
+				}
+			} else if (action === "deleteContinuousDelivery") {
+				// deleteContinuousDelivery
+				header.requestMethod = "DELETE";
+				header.webserviceurl = commonVariables.webserviceurl + commonVariables.jobTemplates + "/deleteContinuousDelivery" + "?customerId="+ customerId + "&projectId=" + projectId;
+				if (params !== null && params !== undefined && params !== '') {
+					params = $.param(params);
+					header.webserviceurl = header.webserviceurl + "&" + params;
+				}
+			}
 
 			return header;
 		},
@@ -136,7 +193,7 @@ define(["ci/api/ciAPI"], function() {
 		// },
 
 		addJobTemplate : function (callback) {
-			var self=this;
+			var self = this;
 			var jobTemplate = self.constructJobTemplate();
 
 			// jobTemplate = $.makeArray(jobTemplate);
@@ -144,10 +201,31 @@ define(["ci/api/ciAPI"], function() {
 		},
 
 		listJobTemplate : function (header, callback) {
-			var self=this;
+			var self = this;
 			try {
-				self.ciAPI.ci(header,
-					function(response) {
+				self.ciAPI.ci(header, function(response) {
+						if (response !== null) {
+							callback(response);
+						} else {
+							callback({ "status" : "service failure"});
+						}
+
+					},
+
+					function(textStatus) {
+						console.info('textStatus',textStatus);
+						callback({ "status" : "Connection failure"});
+					}
+				);
+			} catch(exception) {
+				callback({ "status" : "service exception"});
+			}
+		},
+
+		getHeaderResponse : function (header, callback) {
+			var self = this;
+			try {
+				self.ciAPI.ci(header, function(response) {
 						if (response !== null) {
 							callback(response);
 						} else {
@@ -194,7 +272,7 @@ define(["ci/api/ciAPI"], function() {
 		},
 
 		editJobTemplate : function (data) {
-			var self=this;
+			var self = this;
 			//$.each(data, function(key, value) {
     			//display the key and value pair
     			//console.log(key + ' is ' + value);
@@ -226,7 +304,153 @@ define(["ci/api/ciAPI"], function() {
 		},
 
 		deleteJobTemplate : function () {
-			var self=this;
+			var self = this;
+		},
+
+		loadEnvironmentEvent : function (callback) {
+			var dataObj = {};
+			var environment = $("select[name=environments]").val();
+			dataObj.envName = environment;
+			callback(dataObj);
+		},
+
+
+		showConfigureJob : function(thisObj) {
+			//TODO: need to get downstream project as well as dynamic params from service
+			var self = this;
+			var templateJsonData = $(thisObj).data("templateJson");
+
+			// elements
+			var repoTypeElem = $("#repoType tbody tr");
+			var repoTypeTitleElem = $("#repoType thead tr th");
+
+			// Repo types
+			if (!self.isBlank(templateJsonData.repoTypes) && templateJsonData.repoTypes === "svn") {
+				// For svn
+				$(repoTypeElem).html('<td><input type="text" placeholder="SVN Url" name="url"></td>'+
+                        '<td><input type="text" placeholder="Username" name="userName"></td>'+
+                        '<td><input type="password" placeholder="Password" name="password"></td>');
+			} else if (!self.isBlank(templateJsonData.repoTypes) && templateJsonData.repoTypes === "git") {
+				// For GIT
+				$(repoTypeElem).html('<td><input type="text" placeholder="GIT Url" name="url"></td>'+
+                        '<td><input type="text" placeholder="Username" name="userName"></td>'+
+                        // '<td><input type="text" placeholder="Branch" name="branch"></td>'+
+                        '<td><input type="password" placeholder="Password" name="password"></td>');
+			} else {
+				// For clonned workspace
+				$(repoTypeElem).html('<select id="clonnedworkspaces" name="clonnedworkspaces"></select>');
+				// set label value
+				$(repoTypeTitleElem).html("Clonned workspace");
+			}
+
+			// Upload configurations
+			if (templateJsonData.enableUploadSettings) {
+				console.log("Upload settings design chnages and type need to get from UI");
+				//elements
+				var uploadSettingsElem = $("#uploadSettings");
+
+				$(uploadSettingsElem).empty();
+				// uploadType
+				if (templateJsonData.uploadType === "collabnet") {
+					var uploadSettingsHtml = '<table id="collabnetUploadSettings" class="table table-striped table_border table-bordered" cellpadding="0" cellspacing="0" border="0">'+
+                    '<thead><tr><th colspan="3">CollabNet Upload Settings</th></tr></thead>'+
+                    '<tbody>'+
+                    '<tr><td colspan="3">Overwrite Files ?<input type="radio" name="collabNetoverWriteFiles" checked>Yes<input type="radio" name="collabNetoverWriteFiles">No</td></tr>'+
+                    '<tr><td><input type="text" placeholder="Url"></td><td><input type="text" placeholder="Username"></td><td><input type="password" placeholder="Password"></td></tr>'+
+                    '<tr><td><input name="collabNetProject" type="text" placeholder="Project"></td><td><input name="collabNetPackage" type="text" placeholder="Package"></td><td><input name="collabNetRelease" type="text" placeholder="Release"></td></tr>'+
+                    '</tbody>'+
+                	'</table>';
+
+					$(uploadSettingsElem).html(uploadSettingsHtml);
+				} else if (templateJsonData.uploadType === "confluence") {
+					var uploadSettingsHtml = '<table id="collabnetUploadSettings" class="table table-striped table_border table-bordered" cellpadding="0" cellspacing="0" border="0">'+
+                    '<thead><tr><th colspan="3">CollabNet Upload Settings</th></tr></thead>'+
+                    '<tbody>'+
+                    '<tr><td colspan="3">Overwrite Files ?<input type="radio" name="collabNetoverWriteFiles" checked>Yes<input type="radio" name="collabNetoverWriteFiles">No</td></tr>'+
+                    '<tr><td><input type="text" placeholder="Url"></td><td><input type="text" placeholder="Username"></td><td><input type="password" placeholder="Password"></td></tr>'+
+                    '<tr><td><input name="collabNetProject" type="text" placeholder="Project"></td><td><input name="collabNetPackage" type="text" placeholder="Package"></td><td><input name="collabNetRelease" type="text" placeholder="Release"></td></tr>'+
+                    '</tbody>'+
+                	'</table>';
+					$(uploadSettingsElem).html();
+				}
+			}
+
+			// templateJsonData.type
+			// TODO: Based on type dynamic page have to render
+			var operation = templateJsonData.type;
+
+			// Get app name
+			var appName = $(thisObj).attr("appname");
+			var jobtemplatename = $(thisObj).attr("jobtemplatename");
+
+			// set corresponding job template name and their app name in configure button
+			$("[name=configure]").attr("appname", appName);
+			$("[name=configure]").attr("jobtemplatename", jobtemplatename);
+
+			// Dynamic param
+			//commonVariables.goal = commonVariables.ciPhase;
+			commonVariables.goal = commonVariables.unitTestGoal;
+			commonVariables.appDirName = "wwwww-Java WebService";
+
+			commonVariables.navListener.getMyObj(commonVariables.dynamicPage, function(dynamicPageObject) {
+				self.dynamicPageListener = new Clazz.com.components.dynamicPage.js.listener.DynamicPageListener();
+				dynamicPageObject.getHtml(false, function(response) {
+					if ("No parameters available" == response) {
+						console.log("No parameters available ");
+					} else {
+						console.log("Parameters available ");
+						$("#dynamicContent").html(response);
+						dynamicPageObject.showParameters();
+						self.dynamicPageListener.controlEvent();
+						// OPen popup
+						commonVariables.openccmini(thisObj, 'jobConfigure');
+					}
+				});
+			});
+		},
+
+		configureJob : function (thisObj) {
+			// Get app name
+			var appName = $(thisObj).attr("appname");
+			var jobtemplatename = $(thisObj).attr("jobtemplatename");
+
+			// append the configureJob json (jobJson) in  job template name id
+			var jobConfiguration = $('#jonConfiguration').serializeObject();
+
+			//Checking
+			$('[appname="'+ appName +'"][jobtemplatename="'+ jobtemplatename +'"]').data("jobJson", jobConfiguration);
+
+            // Hide popup
+            $(".dyn_popup").hide();
+		},
+
+		constructJobTemplateViewByEnvironment : function (response) {
+			var self = this;
+			var data = response.data;
+			if (!self.isBlank(data)) {
+				// appinfo job templates
+				//var continuousDeliveryJobTemplates = "";
+				$("#sortable1").empty();
+				$.each(data, function(key, value) {
+					var jobTemplateApplicationName = '<div class="sorthead">'+ key +'</div>';
+					$("#sortable1").append(jobTemplateApplicationName);
+
+					if (!self.isBlank(data)) {
+						// job tesmplate key and value
+						$.each(value, function(jobTemplateKey, jobTemplateValue) {
+
+							var jobTemplateGearHtml = '<a href="javascript:;" id="'+ jobTemplateValue.name +'" class="validate_icon" jobTemplateName="'+ jobTemplateValue.name +'" appName="'+ key +'" name="jobConfigurePopup" style="display: none;"><img src="themes/default/images/helios/validate_image.png" width="19" height="19" border="0"></a>';
+                    		var jobTemplateHtml = '<li class="ui-state-default">' + jobTemplateValue.name + ' - ' + jobTemplateValue.type + jobTemplateGearHtml + '</li>'
+                    		$("#sortable1").append(jobTemplateHtml);
+
+                    		// set json value on attribute
+                    		var jobTemplateJsonVal = jobTemplateValue;
+                    		$('#'+ jobTemplateValue.name).data("templateJson", jobTemplateJsonVal);
+						});
+					}
+
+				});
+			}
 		}
 		
 	});

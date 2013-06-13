@@ -372,65 +372,107 @@ define(["navigation/api/navigationAPI"], function() {
 			var applicableOptions = JSON.parse(self.navAPI.localVal.getSession('applicableOptions'));
 			if (jQuery.inArray(commonVariables.optionsCode, applicableOptions) == -1) {
 				$("#codequality").hide();
+			} else {
+				$("#codequality").show();
 			}
 			if (jQuery.inArray(commonVariables.optionsReports, applicableOptions) == -1) {
 				$("#mavenReport").hide();
+			} else {
+				$("#mavenReport").show();
 			}
 			if (jQuery.inArray(commonVariables.optionsUnitTest, applicableOptions) == -1) {
 				$("#unitTest").hide();
+			} else {
+				$("#unitTest").show();
 			}
 			if (jQuery.inArray(commonVariables.optionsComponentTest, applicableOptions) == -1) {
 				$("#componentTest").hide();
+			} else {
+				$("#componentTest").show();
 			}
 			if (jQuery.inArray(commonVariables.optionsFunctionalTest, applicableOptions) == -1) {
 				$("#functionalTest").hide();
+			} else {
+				$("#functionalTest").show();
 			}
 			if (jQuery.inArray(commonVariables.optionsPerformanceTest, applicableOptions) == -1) {
 				$("#performanceTest").hide();
+			} else {
+				$("#performanceTest").show();
 			}
 			if (jQuery.inArray(commonVariables.optionsLoadTest, applicableOptions) == -1) {
 				$("#loadTest").hide();
+			} else {
+				$("#loadTest").show();
 			}
 			if (jQuery.inArray(commonVariables.optionsManualTest, applicableOptions) == -1) {
 				$("#manualTest").hide();
+			} else {
+				$("#manualTest").show();
 			}
 			if (jQuery.inArray(commonVariables.optionsCI, applicableOptions) == -1) {
 				$("#continuousDeliveryView").hide();
+			} else {
+				$("#continuousDeliveryView").show();
 			}
 			if (jQuery.inArray(commonVariables.optionsRunAgainstSrc, applicableOptions) == -1) {
 				$("input[name=build_runagsource]").hide();
 				$("#stop").hide();
 				$("#restart").hide();
+			} else {
+				$("input[name=build_runagsource]").show();
+				$("#stop").show();
+				$("#restart").show();
 			}
 			if (jQuery.inArray(commonVariables.optionsMinification, applicableOptions) == -1) {
 				$("#minifier").hide();
+			} else {
+				$("#minifier").show();
 			}
 			if (jQuery.inArray(commonVariables.optionsBuild, applicableOptions) == -1) {
 
+			} else {
+				
 			}
 			if (jQuery.inArray(commonVariables.optionsDeploy, applicableOptions) == -1) {
 
+			} else {
+				
 			}
 			if (jQuery.inArray(commonVariables.optionsExeDownload, applicableOptions) == -1) { 
 
+			} else {
+				
 			}
 			if (jQuery.inArray(commonVariables.optionsFeatureConfig, applicableOptions) == -1) {
 
+			} else {
+				
 			}
 			if (jQuery.inArray(commonVariables.optionsComponentConfig, applicableOptions) == -1) {
 
+			} else {
+				
 			}
 			if (jQuery.inArray(commonVariables.optionsProcessBuild, applicableOptions) == -1) {
 
+			} else {
+				
 			}
 			if (jQuery.inArray(commonVariables.optionsRemoteDeployment, applicableOptions) == -1) {
 
+			} else {
+				
 			}
 			if (jQuery.inArray(commonVariables.optionsEmbedApplication, applicableOptions) == -1) {
 
+			} else {
+				
 			}
 			if (jQuery.inArray(commonVariables.optionsThemeBuilder, applicableOptions) == -1) {
 
+			} else {
+				
 			}
 		},
 		

@@ -224,6 +224,9 @@ define(["projectlist/api/projectListAPI"], function() {
 				actionBody = repodata;
 				action = "repoget";
 				self.projectListAction(self.getActionHeader(actionBody, action), function(response){
+					if (response.exception == null) {
+						$("#addRepo_"+dynid).hide();
+					}
 				});
 			}
 		},
@@ -249,6 +252,9 @@ define(["projectlist/api/projectListAPI"], function() {
 				actionBody = commitdata;
 				action = "commitget";
 				self.projectListAction(self.getActionHeader(actionBody, action), function(response){
+					if (response.exception == null) {
+						$("#commit"+dynid).hide();
+					}
 				});
 			}
 		},
@@ -269,14 +275,16 @@ define(["projectlist/api/projectListAPI"], function() {
 		getCommitableFiles : function(data, obj) {
 			var self = this;
 			var dynamicId = data.dynamicId;
+			commonVariables.loadingScreen.showLoading();
 	      	self.projectListAction(self.getActionHeader(data, "getCommitableFiles"), function(response){
+	      		commonVariables.loadingScreen.removeLoading();
 				var commitableFiles = "";
-				self.opencc(obj, $(obj).attr('name'), '');
+				self.openccpl(obj, $(obj).attr('name'), '');
 				$('.commit_data_'+dynamicId).hide();
 				$('.commitErr_'+dynamicId).hide();      
 				if (response.data != undefined && !response.data.repoExist) {
 				  $('.commitErr_'+dynamicId).show();
-				} else if (response.data != undefined && response.data.repoInfoFile != undefined) {
+				} else if (response.data != undefined && response.data.repoInfoFile.length != 0) {
 				 $('input[name=commitbtn]').prop("disabled", true);
 				 $('input[name=commitbtn]').removeClass("btn_style");		
 				  $('.commit_data_'+dynamicId).show();
@@ -289,9 +297,13 @@ define(["projectlist/api/projectListAPI"], function() {
 				  });
 				  $('.commitable_files_'+dynamicId).html(commitableFiles); 
 				  $.each(response.data.repoInfoFile, function(index, value){
-					self.commitFileCheckBoxEvent($('.commitParentChk_'+dynamicId), $('.commitChildChk_'+dynamicId));
+					self.checkBoxEvent($('.commitParentChk_'+dynamicId), 'commitChildChk_'+dynamicId, $('input[name=commitbtn]'));
 				  });
-					self.commitFileCheckAllEvent($('.commitParentChk_'+dynamicId), $('.commitChildChk_'+dynamicId));
+					self.checkAllEvent($('.commitParentChk_'+dynamicId), $('.commitChildChk_'+dynamicId), $('input[name=commitbtn]'));
+				}
+				
+				if (response.data.repoInfoFile.length == 0) {
+					$('.commit_data_'+dynamicId).show();
 				}
 			});
 		},
@@ -319,7 +331,6 @@ define(["projectlist/api/projectListAPI"], function() {
 						$("tbody[name=generatedPdfs]").append(content);
 						self.clickFunction();
 					} else {
-						console.info("NO Reports Avilable.....");
 					}
 					
 				});
@@ -362,6 +373,9 @@ define(["projectlist/api/projectListAPI"], function() {
 				actionBody = updatedata;
 				action = "updateget";
 				self.projectListAction(self.getActionHeader(actionBody, action), function(response){
+					if (response.exception == null) {
+						$("#svn_update"+dynid).hide();
+					}
 				});
 			}
 		},
@@ -459,42 +473,7 @@ define(["projectlist/api/projectListAPI"], function() {
 			return value;
 			}
 			return value;
-		},	
-		
-		commitFileCheckBoxEvent: function (parentObj, childObj) {
-			$(childObj).bind('click', function(){
-				var checkBoxClass = $(childObj).attr("class");
-				var checkedLength = $('.' + checkBoxClass + ':checked').size();
-				var totalCheckBoxes = $(childObj).size();
-				if (totalCheckBoxes == checkedLength) {
-					$(parentObj).prop("checked", true);
-				} else {
-					$(parentObj).prop("checked", false);
-				}
-				
-				if (checkedLength > 0) {
-					$('input[name=commitbtn]').prop("disabled", false);
-					$('input[name=commitbtn]').addClass("btn_style");
-				} else {
-					$('input[name=commitbtn]').prop("disabled", true);
-					$('input[name=commitbtn]').removeClass("btn_style");
-				}
-			});
-		},
-		
-		commitFileCheckAllEvent: function (parentObj, childObj) {
-			$(parentObj).bind('click', function(){
-				if ($(parentObj).is(':checked')) {
-					$(childObj).prop("checked", true);
-					$('input[name=commitbtn]').prop("disabled", false);
-					$('input[name=commitbtn]').addClass("btn_style");
-				} else {
-					$(childObj).prop("checked", false);
-					$('input[name=commitbtn]').prop("disabled", true);
-					$('input[name=commitbtn]').removeClass("btn_style");
-				}
-			});
-		},
+		}	
 	});
 
 	return Clazz.com.components.projectlist.js.listener.ProjectsListListener;

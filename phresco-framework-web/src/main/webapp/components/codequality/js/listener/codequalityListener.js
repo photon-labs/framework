@@ -2,7 +2,7 @@ define(["codequality/api/codequalityAPI"], function() {
 
 	Clazz.createPackage("com.components.codequality.js.listener");
 
-	Clazz.com.components.codequality.js.listener.CodequalityListener = Clazz.extend(Clazz.Widget, {
+	Clazz.com.components.codequality.js.listener.CodequalityListener = Clazz.extend(Clazz.WidgetWithTemplate, {
 		
 		basePlaceholder :  window.commonVariables.basePlaceholder,
 		codequalityAPI : null,
@@ -40,19 +40,20 @@ define(["codequality/api/codequalityAPI"], function() {
 			}
 			$('#iframePart').html('');
 			$('#content_div').html('Sonar Report will appear here');
-			var value1 = $('.build_progress').width();
+			self.openConsole();//To open the console
+			
+			/* var value1 = $('.build_progress').width();
 			$('.build_info').animate({width: window.innerWidth/1.6},500);
 			$('.build_progress').animate({right: '10px'},500);
 			$('.build_close').animate({right: value1+10},500);
-			$(window).resize();
+			$(window).resize(); */
 
 				
 			if(self.mavenServiceListener === null)	{
 				commonVariables.navListener.getMyObj(commonVariables.mavenService, function(retVal){
 					self.mavenServiceListener = retVal;
-					
 					self.mavenServiceListener.mvnCodeValidation(queryString, '#iframePart', function(returnVal){
-						callback(returnVal);
+						//callback(returnVal);
 						var validateAgainst = $("#sonar").val();
 						self.getIframeReport(validateAgainst);
 					});
@@ -78,27 +79,44 @@ define(["codequality/api/codequalityAPI"], function() {
 				}
 			}); */
 		},
-		
 
+
+		/* showHideConsole : function() {
+			var self = this;
+			alert('img');
+			var check = $('#consoleImg').attr('data-flag');
+			if (check == "true") {
+				alert('if');
+				self.openConsole();
+			} else {
+			alert('else');
+				self.closeConsole();
+			}
+		},
+		 */
 		onPrgoress : function(clicked) {
+			var self = this;
 			var check = $(clicked).attr('data-flag');
-			var value = $('.build_info').width();
-			var value1 = $('.build_progress').width();
+			/* var value = $('.build_info').width();
+			var value1 = $('.build_progress').width(); */
 			if(check == "true") {
-				$('.build_info').animate({width: '97%'},500);
+				/* $('.build_info').animate({width: '97%'},500);
 				$('.build_progress').animate({right: -value1},500);
-				$('.build_close').animate({right: '0px'},500);
+				$('.build_close').animate({right: '0px'},500); */
+				self.openConsole();
 				$(clicked).attr('data-flag','false');
 			} else {
-				$('.build_info').animate({width: window.innerWidth/1.6},500);
+				/* $('.build_info').animate({width: window.innerWidth/1.6},500);
 				$('.build_progress').animate({right: '10px'},500);
-				$('.build_close').animate({right: value1+10},500);
+				$('.build_close').animate({right: value1+10},500); */
+				self.closeConsole();
 				$(clicked).attr('data-flag','true');
 				$(window).resize();
 			}
 		},
 		
-		/* readLog : function(resDatt){
+		/*
+		readLog : function(resDatt){
 			var self = this;
 			self.codequalityAPI.codequality(self.getRequestHeader(resDatt , "readlog"), function(response) {
 				var logStr = response.log;
@@ -149,7 +167,7 @@ define(["codequality/api/codequalityAPI"], function() {
 			
 			if(action == "reporttypes"){
 				var appDirName = this.codequalityAPI.localVal.getSession('appDirName');
-				console.info('appDirName = ' , appDirName);
+				//console.info('appDirName = ' , appDirName);
 				header.webserviceurl = commonVariables.webserviceurl+"parameter/codeValidationReportTypes?appDirName="+appDirName+"&goal=validate-code";
 			}
 			
@@ -172,6 +190,7 @@ define(["codequality/api/codequalityAPI"], function() {
 						if (response !== null) {
 							commonVariables.loadingScreen.removeLoading();
 							callback(response);
+							//console.info('response = ' , response);
 							$('#codeAnalysis').show();
 						} else {
 							commonVariables.loadingScreen.removeLoading();
@@ -200,12 +219,12 @@ define(["codequality/api/codequalityAPI"], function() {
 				$.each(response.data, function(index, resdata) {
 					var innerUl = '';
 					if(resdata.options == null){
-						typeLi += "<li name='selectType' key="+resdata.validateAgainst.key+" data="+resdata.validateAgainst.value+">"+resdata.validateAgainst.value+"</li>";
+						typeLi += "<li name='selectType' key="+resdata.validateAgainst.key+" data="+resdata.validateAgainst.value+" style='padding-left:8px;cursor:pointer;'>"+resdata.validateAgainst.value+"</li>";
 					}else{
 						$.each(resdata.options, function(index, optvalue) {
-							innerUl += "<li name='selectType' key="+resdata.validateAgainst.key+" data="+resdata.validateAgainst.value+">"+optvalue.value+"</li>";
+							innerUl += "<li name='selectType' key="+resdata.validateAgainst.key+" data="+resdata.validateAgainst.value+" style='padding-left:8px;cursor:pointer;'>"+optvalue.value+"</li>";
 						});
-						typeLi += "<li disabled='disabled' key="+resdata.validateAgainst.key+" data="+resdata.validateAgainst.value+">"+resdata.validateAgainst.value+'<ul>'+innerUl+"</ul></li>";
+						typeLi += "<li disabled='disabled' key="+resdata.validateAgainst.key+" data="+resdata.validateAgainst.value+" style='padding-left:4px;'>"+resdata.validateAgainst.value+'<ul>'+innerUl+"</ul></li>";
 					}
 				});
 				var dropdownLi = '<ul class="nav"><li id="fat-menu" class="dropdown"><a href="#" id="drop5" role="button" class="dropdown-toggle" data-toggle="dropdown"><b id="repTypes" >'+response.data[0].validateAgainst.value+'</b><b class="caret"></b></a> <div class="dropdown-menu cust_sel code_test_opt" role="menu" aria-labelledby="drop5"> <ul id="reportUl">'+typeLi+'</ul></div></li></ul>';
@@ -230,15 +249,19 @@ define(["codequality/api/codequalityAPI"], function() {
 		getIframeReport : function(validateAgainst){
 			var self = this;
 			$('#content_div').html('Sonar Report will appear here');
+			self.closeConsole();
 			try {
 				self.codequalityAPI.codequality(self.getRequestHeader(validateAgainst , "iframereport"), 
 					function(iframereport) {
+						//console.info('iframereport = ' , iframereport);
 						if(iframereport.data != null){
-						var value1 = $('.build_progress').width();
+/* 						var value1 = $('.build_progress').width();
 							$('.build_info').animate({width: '97%'},500);
 							$('.build_progress').animate({right: -value1},500);
-							$('.build_close').animate({right: '0px'},500);
-							var iframedata = "<iframe src="+iframereport.data+" width=98% height=100%></iframe>";
+							$('.build_close').animate({right: '0px'},500); */
+							
+							var iframedata = "<iframe src="+iframereport.data+" style=width:98%;height:450px;padding-top:170px></iframe>";
+							//$('#content_div').html('<div class="widget-maincontent-div">'+iframedata+'</div>');
 							$('#content_div').html(iframedata);
 						}else{
 							$('#content_div').html(iframereport.message);
@@ -251,12 +274,13 @@ define(["codequality/api/codequalityAPI"], function() {
 				);
 			} catch(exception) {
 				//console.info('exception = ' , exception);
-				$('#content_div').html('tres');
+				//console.info('exception = ' , exception);
+				$('#content_div').html(exception);
 			}	
 		},
 		
 					
-			getCustomer : function() {
+			/* getCustomer : function() {
 				var selectedcustomer = $("#selectedCustomer").text();
 				var customerId = "";
 				$.each($("#customer").children(), function(index, value){
@@ -268,7 +292,7 @@ define(["codequality/api/codequalityAPI"], function() {
 				
 				return customerId;
 			},
-		
+		 */
 	});
 
 	return Clazz.com.components.codequality.js.listener.CodequalityListener;

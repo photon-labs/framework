@@ -190,16 +190,32 @@ define(["testResult/api/testResultAPI"], function() {
 		},
 		
 		constructTestReport : function(data) {
+			var self = this;
+			var currentTab = commonVariables.navListener.currentTab;
+			
 			var resultTemplate = '<table class="table table-striped table_border table-bordered" cellpadding="0" cellspacing="0" border="0">'+
-          							'<thead><tr><th>Name</th><th>Class</th><th>Time</th><th>Status</th><th>Log</th></tr></thead><tbody>';
+								'<thead class="fixedHeader"><tr><th>Name</th><th>Class</th><th>Time</th><th>Status</th><th>Log</th>';
+			if ("functionalTest" === currentTab) {
+				resultTemplate = resultTemplate.concat('<th>Screenshot</th>');
+			}
+			resultTemplate = resultTemplate.concat('</tr></thead><tbody class="scrollContent" style="height:475px;">');
 			for (i in data) {
 				var result = data[i];
-				resultData = '<tr><td>'+ result.name+'</td><td>'+ result.testClass+'</td><td>'+ result.time+'</td>'+
-							'<td><a href="#"><img src="themes/default/images/helios/status_ok.png" width="16" height="13" border="0" alt=""></a></td>'+
-	            			'<td><a href="#"><img src="themes/default/images/helios/log_icon.png" width="14" height="19" border="0" alt=""></a></td></tr>';
-				resultTemplate = resultTemplate.concat(resultData);
+				resultTemplate = resultTemplate.concat('<tr><td>'+ result.name +'</td>');
+				resultTemplate = resultTemplate.concat('<td>'+ result.testClass +'</td>');
+				resultTemplate = resultTemplate.concat('<td>'+ result.time +'</td>');
+				resultTemplate = resultTemplate.concat('<td><a href="#"><img src="themes/default/images/helios/status_ok.png" width="16" height="13" border="0" alt=""></a></td>');
+				resultTemplate = resultTemplate.concat('<td><a href="#"><img src="themes/default/images/helios/log_icon.png" width="16" height="13" border="0" alt=""></a></td>');
+				if ("functionalTest" === currentTab) {
+					resultTemplate = resultTemplate.concat('<td><a href="#"><img src="themes/default/images/helios/screenshot_icon.png" width="19" height="16" border="0" alt="" /></a></td>');
+				}
+				resultTemplate = resultTemplate.concat('</tr>');
 			}
-			$("#testReport").html(resultTemplate);
+			resultTemplate = resultTemplate.concat('</tbody></table>');
+			$("#testCases").html(resultTemplate);
+			setTimeout(function() {
+				self.resizeTestResultTable("testCases");
+			}, 400);	
 		},
 		
 		onUnitTestGraph : function() {
@@ -218,7 +234,7 @@ define(["testResult/api/testResultAPI"], function() {
 		 * @return: returns the contructed header
 		 */
 		getActionHeader : function(requestBody, action) {
-			var self = this; 
+			var self = this;
 			var header, userId;
 			var appDirName = self.testResultAPI.localVal.getSession('appDirName');
 			var techReport = $('#reportOptionsDrop').attr("value");
@@ -278,6 +294,80 @@ define(["testResult/api/testResultAPI"], function() {
 			} catch(exception) {
 				
 			}
+		},
+		
+		showHideConsole : function() {
+			var self = this;
+			var check = $('#consoleImg').attr('data-flag');
+			if (check == "true") {
+				self.openConsole();
+			} else {
+				self.closeConsole();
+			}
+		},
+		
+		openConsole : function() {
+			$('.testSuiteTable').append('<div class="mask"></div>');
+			$('.mask').show();
+			$('.unit_close').css("z-index", 1001);
+			$('.unit_progress').css("z-index", 1001);
+			$('.unit_close').css("height", 0);
+			var value = $('.unit_info').width();
+			var value1 = $('.unit_progress').width();
+			$('.unit_info').animate({left: -value},500);
+			$('.unit_progress').animate({right: '10px'},500);
+			$('.unit_close').animate({right: value1+10},500);
+			$('.unit_info table').removeClass("big").addClass("small");
+			$('#consoleImg').attr('data-flag','false');
+			
+			var height = $(window).height();
+			var resultvalue = 0;
+			$('.mainContent').prevAll().each(function() {
+				var rv = $(this).height();
+				resultvalue = resultvalue + rv; 
+			});
+			var footervalue = $('.footer_section').height();
+			resultvalue = resultvalue + footervalue + 200;
+			finalHeight = height - resultvalue;
+			$(".unit_progress").css("height", finalHeight + 10);
+			$('.unit_progress').find('.scrollContent').css("height", finalHeight - 20);
+		},
+		
+		closeConsole : function() {
+			var value = $('.unit_info').width();
+			var value1 = $('.unit_progress').width();
+			$('.unit_info').animate({left: '20'},500);
+			$('.unit_progress').animate({right: -value1},500);
+			$('.unit_close').animate({right: '0px'},500);
+			$('.unit_info table').removeClass("small").addClass("big");
+			$('#consoleImg').attr('data-flag','true');
+			$('.mask').remove();
+		},
+		
+		resizeTestResultTable : function(divId) {
+			var w1 = $("#" + divId + " .scrollContent tr td:first-child").width();
+			var w2 = $("#" + divId + " .scrollContent tr td:nth-child(2)").width();
+			var w3 = $("#" + divId + " .scrollContent tr td:nth-child(3)").width();
+			var w4 = $("#" + divId + " .scrollContent tr td:nth-child(4)").width();
+			var w5 = $("#" + divId + " .scrollContent tr td:nth-child(5)").width();
+			var w6 = $("#" + divId + " .scrollContent tr td:nth-child(6)").width();
+			
+			$("#" + divId + " .fixedHeader tr th:first-child").css("width", w1);
+			$("#" + divId + " .fixedHeader tr th:nth-child(2)").css("width", w2);
+			$("#" + divId + " .fixedHeader tr th:nth-child(3)").css("width", w3);
+			$("#" + divId + " .fixedHeader tr th:nth-child(4)").css("width", w4);
+			$("#" + divId + " .fixedHeader tr th:nth-child(5)").css("width", w5);
+			$("#" + divId + " .fixedHeader tr th:nth-child(6)").css("width", w6);
+		},
+		
+		resizeConsoleWindow : function() {
+			var twowidth = window.innerWidth-60;
+			var progwidth = window.innerWidth/2;
+			var onewidth = window.innerWidth - (twowidth+70);
+			$('.unit_info').css("width",twowidth);
+			$('.unit_progress').css("width",progwidth);
+			$('.unit_progress').css("right",-twowidth);
+			$('.unit_close').css("right",0);
 		}
 	});
 

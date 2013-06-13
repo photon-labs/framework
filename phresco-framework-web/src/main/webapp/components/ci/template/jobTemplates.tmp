@@ -4,7 +4,7 @@
         </div>
         <div class="flt_right">
         <input type="submit" value="Create a Job Template" name="jobTemplatePopup" class="btn btn_style create_job_btn">
-        <div id="jobTemplatePopup" class="dyn_popup">
+        <div id="jobTemplatePopup" class="dyn_popup job_template">
           <form id="jobTemplate">
                         <table class="table" cellpadding="0" cellspacing="0" border="0">
                             <tbody>

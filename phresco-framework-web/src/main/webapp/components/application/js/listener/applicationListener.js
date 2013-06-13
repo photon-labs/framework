@@ -32,23 +32,23 @@ define(["application/api/applicationAPI"], function() {
 		removelayer : function(object) {
 			var layerId = object.attr('id');
 			object.closest('tr').next().attr('name', layerId + "content");
-			object.closest('tr').next().hide();
 			object.closest('tr').attr('name', layerId);
-			object.closest('tr').hide();
+			object.closest('tr').hide('slow');
 			$("input[name="+layerId+"]").toggle();
+			$("tr[name="+layerId+"content]").hide('slow');
 		},
 		
 		addlayer : function(object) {
 			var layerType = object.attr('name');
 			$("input[name="+layerType+"]").toggle();
-			$("tr[name="+ layerType +"]").show();
-			$("tr[name="+ layerType+"content]").show();
+			$("tr[name="+ layerType +"]").show('slow');
+			$("tr[name="+ layerType+"content]").show('slow');
 		},
 		
 		addServerDatabase : function(appType, whereToAppend, rowId) {
-			var self = this, dynamicValue, server = '<tr class="servers" key="displayed"> <td><span data-i18n="application.edit.servers"></span>&nbsp;<span class="paid">'+rowId+'</span></td><td name="servers" class="servers"><select name="appServers" class="appServers"><option value=0>Select Server</option>'+ self.getOptionData('serverData') +'</select></td><td data-i18n="application.edit.versions"></td><td colspan="4" name="version" class="version"><select title="Select Version" multiple data-selected-text-format="count>3" name="server_version" class="server_version selectpicker"></select> <div class="flt_right"><a href="javascript:;" name="addServer"><img src="themes/default/images/helios/plus_icon.png" border="0" alt=""></a> <a href="javascript:;" name="removeServer"><img src="themes/default/images/helios/minus_icon.png"  border="0" alt=""></a></div></td></tr>',
+			var self = this, dynamicValue, server = '<tr class="servers" key="displayed" name="serverscontent"> <td><span data-i18n="application.edit.servers"></span>&nbsp;<span class="paid">'+rowId+'</span></td><td name="servers" class="servers"><select name="appServers" class="appServers selectpicker"><option value=0>Select Server</option>'+ self.getOptionData('serverData') +'</select></td><td data-i18n="application.edit.versions"></td><td colspan="4" name="version" class="version"><select title="Select Version" multiple data-selected-text-format="count>3" name="server_version" class="server_version selectpicker"></select> <div class="flt_right"><a href="javascript:;" name="addServer"><img src="themes/default/images/helios/plus_icon.png" border="0" alt=""></a> <a href="javascript:;" name="removeServer"><img src="themes/default/images/helios/minus_icon.png"  border="0" alt=""></a></div></td></tr>',
 			
-			database ='<tr class="database" key="displayed"><td><span data-i18n="application.edit.database"></span>&nbsp;<span class="paid">'+rowId+'</span></td><td name="servers" class="databases"><select name="databases" class="databases"><option value=0>Select Database</option>'+ self.getOptionData('databaseData') +'</select></td><td data-i18n="application.edit.versions"></td> <td colspan="4" name="version" class="version"><select title="Select Version" multiple data-selected-text-format="count>3" name="db_version" class="db_version selectpicker"></select><div class="flt_right"><a href="javascript:;" name="addDatabase"><img src="themes/default/images/helios/plus_icon.png"  border="0" alt=""></a> <a href="javascript:;" name="removeDatabase"><img src="themes/default/images/helios/minus_icon.png" border="0" alt=""></a></div></td></tr>';
+			database ='<tr class="database" key="displayed" name="databasecontent"><td><span data-i18n="application.edit.database"></span>&nbsp;<span class="paid">'+rowId+'</span></td><td name="servers" class="databases"><select name="databases" class="databases selectpicker"><option value=0>Select Database</option>'+ self.getOptionData('databaseData') +'</select></td><td data-i18n="application.edit.versions"></td> <td colspan="4" name="version" class="version"><select title="Select Version" multiple data-selected-text-format="count>3" name="db_version" class="db_version selectpicker"></select><div class="flt_right"><a href="javascript:;" name="addDatabase"><img src="themes/default/images/helios/plus_icon.png"  border="0" alt=""></a> <a href="javascript:;" name="removeDatabase"><img src="themes/default/images/helios/minus_icon.png" border="0" alt=""></a></div></td></tr>';
 			if (appType === "addServer") {
 				dynamicValue = $(server).insertAfter(whereToAppend);
 				dynamicValue.prev('tr').find('a[name="addServer"]').html('');
