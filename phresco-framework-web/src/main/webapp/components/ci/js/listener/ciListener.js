@@ -330,7 +330,7 @@ define(["ci/api/ciAPI"], function() {
 				$(repoTypeElem).html('<td><input type="text" placeholder="SVN Url" name="url"></td>'+
                         '<td><input type="text" placeholder="Username" name="userName"></td>'+
                         '<td><input type="password" placeholder="Password" name="password"></td>');
-			} else if (!isBlank(templateJsonData.repoTypes) && templateJsonData.repoTypes === "git") {
+			} else if (!self.isBlank(templateJsonData.repoTypes) && templateJsonData.repoTypes === "git") {
 				// For GIT
 				$(repoTypeElem).html('<td><input type="text" placeholder="GIT Url" name="url"></td>'+
                         '<td><input type="text" placeholder="Username" name="userName"></td>'+
@@ -432,39 +432,20 @@ define(["ci/api/ciAPI"], function() {
 				//var continuousDeliveryJobTemplates = "";
 				$("#sortable1").empty();
 				$.each(data, function(key, value) {
-					//console.log("key > " + JSON.stringify(key));
-					//console.log("value > " + JSON.stringify(value));
 					var jobTemplateApplicationName = '<div class="sorthead">'+ key +'</div>';
-					//console.log("Title => " + jobTemplateApplicationName);
 					$("#sortable1").append(jobTemplateApplicationName);
-					if (!self.isBlank(data)) {
 
+					if (!self.isBlank(data)) {
 						// job tesmplate key and value
 						$.each(value, function(jobTemplateKey, jobTemplateValue) {
-							//console.log("jobTemplateValue > " + JSON.stringify(jobTemplateValue.name));
-							//console.log("jobTemplateValue > " + JSON.stringify(jobTemplateValue.type));
 
 							var jobTemplateGearHtml = '<a href="javascript:;" id="'+ jobTemplateValue.name +'" class="validate_icon" jobTemplateName="'+ jobTemplateValue.name +'" appName="'+ key +'" name="jobConfigurePopup" style="display: none;"><img src="themes/default/images/helios/validate_image.png" width="19" height="19" border="0"></a>';
                     		var jobTemplateHtml = '<li class="ui-state-default">' + jobTemplateValue.name + ' - ' + jobTemplateValue.type + jobTemplateGearHtml + '</li>'
-                    		//console.log("Appendin it => " + jobTemplateHtml);
                     		$("#sortable1").append(jobTemplateHtml);
 
                     		// set json value on attribute
-                    		//var jobTemplateJsonVal = JSON.stringify(jobTemplateValue);
                     		var jobTemplateJsonVal = jobTemplateValue;
-                    		//console.log("jobTemplateJsonVal > " + jobTemplateJsonVal);
                     		$('#'+ jobTemplateValue.name).data("templateJson", jobTemplateJsonVal);
-
-                    		//var all = $("#Test123").data("json");
-							//console.log(all.name);
-
-							//var name = "Test123";
-							//var all = $("#Test123").data("json");
-							//console.log(all);
-
-							//var anims = $.parseJSON(all);
-							//console.log(anims.name);
-							//$("#Test123").data("json", anims);
 						});
 					}
 
