@@ -362,7 +362,40 @@ define(["framework/widget", "framework/templateProvider"], function() {
 				$('#consoleImg').attr('data-flag','true');
 				$('.mask').remove();
 			},
+			
+			checkBoxEvent: function (parentObj, childCheckBoxClass, buttonObj) {
+				$('.' + childCheckBoxClass).bind('click', function(){
+					var checkedLength = $('.' + childCheckBoxClass + ':checked').size();
+					var totalCheckBoxes = $('.' + childCheckBoxClass).size();
+					if (totalCheckBoxes == checkedLength) {
+						$(parentObj).prop("checked", true);
+					} else {
+						$(parentObj).prop("checked", false);
+					}
 					
+					if (checkedLength > 0) {
+						buttonObj.prop("disabled", false);
+						buttonObj.addClass("btn_style");
+					} else {
+						buttonObj.prop("disabled", true);
+						buttonObj.removeClass("btn_style");
+					}
+				});
+			},
+			
+			checkAllEvent: function (parentObj, childObj, buttonObj) {
+				$(parentObj).bind('click', function(){
+					if ($(parentObj).is(':checked')) {
+						$(childObj).prop("checked", true);
+						buttonObj.prop("disabled", false);
+						buttonObj.addClass("btn_style");
+					} else {
+						$(childObj).prop("checked", false);
+						buttonObj.prop("disabled", true);
+						buttonObj.removeClass("btn_style");
+					}
+				});
+			},
 		}
 	);
 

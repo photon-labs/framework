@@ -275,7 +275,9 @@ define(["projectlist/api/projectListAPI"], function() {
 		getCommitableFiles : function(data, obj) {
 			var self = this;
 			var dynamicId = data.dynamicId;
+			commonVariables.loadingScreen.showLoading();
 	      	self.projectListAction(self.getActionHeader(data, "getCommitableFiles"), function(response){
+	      		commonVariables.loadingScreen.removeLoading();
 				var commitableFiles = "";
 				self.opencc(obj, $(obj).attr('name'), '');
 				$('.commit_data_'+dynamicId).hide();
@@ -295,9 +297,9 @@ define(["projectlist/api/projectListAPI"], function() {
 				  });
 				  $('.commitable_files_'+dynamicId).html(commitableFiles); 
 				  $.each(response.data.repoInfoFile, function(index, value){
-					self.commitFileCheckBoxEvent($('.commitParentChk_'+dynamicId), $('.commitChildChk_'+dynamicId));
+					self.checkBoxEvent($('.commitParentChk_'+dynamicId), 'commitChildChk_'+dynamicId, $('input[name=commitbtn]'));
 				  });
-					self.commitFileCheckAllEvent($('.commitParentChk_'+dynamicId), $('.commitChildChk_'+dynamicId));
+					self.checkAllEvent($('.commitParentChk_'+dynamicId), $('.commitChildChk_'+dynamicId), $('input[name=commitbtn]'));
 				}
 				
 				if (response.data.repoInfoFile.length == 0) {
@@ -471,42 +473,7 @@ define(["projectlist/api/projectListAPI"], function() {
 			return value;
 			}
 			return value;
-		},	
-		
-		commitFileCheckBoxEvent: function (parentObj, childObj) {
-			$(childObj).bind('click', function(){
-				var checkBoxClass = $(childObj).attr("class");
-				var checkedLength = $('.' + checkBoxClass + ':checked').size();
-				var totalCheckBoxes = $(childObj).size();
-				if (totalCheckBoxes == checkedLength) {
-					$(parentObj).prop("checked", true);
-				} else {
-					$(parentObj).prop("checked", false);
-				}
-				
-				if (checkedLength > 0) {
-					$('input[name=commitbtn]').prop("disabled", false);
-					$('input[name=commitbtn]').addClass("btn_style");
-				} else {
-					$('input[name=commitbtn]').prop("disabled", true);
-					$('input[name=commitbtn]').removeClass("btn_style");
-				}
-			});
-		},
-		
-		commitFileCheckAllEvent: function (parentObj, childObj) {
-			$(parentObj).bind('click', function(){
-				if ($(parentObj).is(':checked')) {
-					$(childObj).prop("checked", true);
-					$('input[name=commitbtn]').prop("disabled", false);
-					$('input[name=commitbtn]').addClass("btn_style");
-				} else {
-					$(childObj).prop("checked", false);
-					$('input[name=commitbtn]').prop("disabled", true);
-					$('input[name=commitbtn]').removeClass("btn_style");
-				}
-			});
-		},
+		}	
 	});
 
 	return Clazz.com.components.projectlist.js.listener.ProjectsListListener;
