@@ -334,7 +334,7 @@ define(["ci/api/ciAPI"], function() {
 				// For GIT
 				$(repoTypeElem).html('<td><input type="text" placeholder="GIT Url" name="url"></td>'+
                         '<td><input type="text" placeholder="Username" name="userName"></td>'+
-                        '<td><input type="text" placeholder="Branch" name="branch"></td>'+
+                        // '<td><input type="text" placeholder="Branch" name="branch"></td>'+
                         '<td><input type="password" placeholder="Password" name="password"></td>');
 			} else {
 				// For clonned workspace
