@@ -161,7 +161,7 @@ define(["projectlist/api/projectListAPI"], function() {
 			}
 			if(action == "reportget") {
 				header.requestMethod = "POST";
-				header.webserviceurl = commonVariables.webserviceurl + "app/printAsPdf?username="+data.name+"&appId="+projectRequestBody.appid+"&customerId="+customerId+"&fromPage="+projectRequestBody.fromPage+"&isReportAvailable=true&projectId="+projectRequestBody.projectId+"&reportDataType=detail&sonarUrl="+projectRequestBody.sonarUrl;		
+				header.webserviceurl = commonVariables.webserviceurl + "app/printAsPdf?username="+data.name+"&appId="+projectRequestBody.appid+"&customerId="+customerId+"&fromPage="+projectRequestBody.fromPage+"&pdfName="+projectRequestBody.pdfName+"&isReportAvailable=true&projectId="+projectRequestBody.projectId+"&reportDataType=detail&sonarUrl="+projectRequestBody.sonarUrl;		
 			} 
 			if(action == "getreport") {
 				header.requestMethod = "GET";
@@ -265,6 +265,7 @@ define(["projectlist/api/projectListAPI"], function() {
 				reportdata.type = $("#reportType").val();
 				reportdata.fromPage = obj.attr("fromPage");
 				reportdata.appid = obj.attr("appId");
+				reportdata.pdfName =  $('input[name=pdfName]').val();
 				reportdata.projectId = obj.attr("projectId");
 				reportdata.sonarUrl = obj.attr("sonarUrl");
 				actionBody = reportdata;
@@ -320,8 +321,10 @@ define(["projectlist/api/projectListAPI"], function() {
 					var content = "";
 					$("tbody[name=generatedPdfs]").empty();
 					if(response.length!=0 && response.length!=undefined) {
+						$("#noReport").hide();
+						$("thead[name=pdfHeader]").show();
 						for(var i =0;i<response.length; i++) {
-							var headerTr = '<tr appdirname = "'+temp+'"><td>' + response[i].time + '</td><td>'+response[i].type+'</td>';
+							var headerTr = '<tr class="generatedRow" fileName="'+response[i].fileName+'" appdirname = "'+temp+'"><td>' + response[i].time + '</td><td>'+response[i].type+'</td>';
 							content = content.concat(headerTr);
 							headerTr = '<td><a class="tooltiptop" fileName="'+response[i].fileName+'" fromPage="All" href="#" data-toggle="tooltip" data-placement="top" name="downLoad" data-original-title="Download Pdf" title=""><img src="themes/default/images/helios/download_icon.png" width="15" height="18" border="0" alt="0"></a></td>';
 							content = content.concat(headerTr);
@@ -331,6 +334,9 @@ define(["projectlist/api/projectListAPI"], function() {
 						$("tbody[name=generatedPdfs]").append(content);
 						self.clickFunction();
 					} else {
+						$("thead[name=pdfHeader]").hide();
+						$("#noReport").show();
+						$("#noReport").html("No Report are Available");
 					}
 					
 				});
@@ -343,6 +349,18 @@ define(["projectlist/api/projectListAPI"], function() {
 				deletedata.fileName = $(this).attr("fileName");
 				deletedata.fromPage = $(this).attr("frompage");
 				deletedata.appDir = $(this).closest('tr').attr("appdirname");
+				$(".generatedRow").each(function() {
+					var pdfFileName = $(this).attr("fileName");
+					if(pdfFileName === deletedata.fileName){
+						$("tr[fileName='"+pdfFileName+"']").remove();
+					}
+				});
+				var size = $(".generatedRow").size();
+				if(size == 0) {
+					$("thead[name=pdfHeader]").hide();
+					$("#noReport").show();
+					$("#noReport").html("No Report are Available");
+				}
 				actionBody = deletedata;
 				self.projectListAction(self.getActionHeader(actionBody, "deleteReport"), function(response){
 				});

@@ -17,6 +17,7 @@ public interface ActionServiceConstant {
 	public String  PROJECT_MODULE= "projectModule";
 	public String  REPORT_DATA_TYPE= "reportDataType";
 	public String  FROM_PAGE= "fromPage";
+	public String REQ_PDF_NAME = "pdfName";
 	
 	
 	

@@ -817,6 +817,7 @@ public interface FrameworkConstants {
     String REQ_OLD_CONFIG_NAME = "configName";
 	String REQ_DEPLOY_DIR = "deployDir";
     String REQ_TEST_TYPE = "testType";
+    String REQ_REPORT_NAME = "reportName";
     String REQ_SONAR_URL = "sonarUrl";
 	String REQ_REPORT_TYPE = "reportType";
     String REQ_ACTION_TYPE = "actionType";

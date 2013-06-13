@@ -171,6 +171,10 @@ to {
 	display: none !important;
 }
 
+.highlight {
+    font-weight: bold;
+}
+
 textarea { resize: none; }
 
 /*=== End of Loading ===*/
@@ -874,6 +878,10 @@ ul.nav li.dropdown:hover > .test_options{
 
 #project_list_import table:first-child {
 	margin-bottom: 0px;	
+}
+
+.noReport {
+	margin-left: 23%;
 }
 
 #project_list_import table tr td {
