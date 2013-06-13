@@ -224,6 +224,9 @@ define(["projectlist/api/projectListAPI"], function() {
 				actionBody = repodata;
 				action = "repoget";
 				self.projectListAction(self.getActionHeader(actionBody, action), function(response){
+					if (response.exception == null) {
+						$("#addRepo_"+dynid).hide();
+					}
 				});
 			}
 		},
@@ -249,6 +252,9 @@ define(["projectlist/api/projectListAPI"], function() {
 				actionBody = commitdata;
 				action = "commitget";
 				self.projectListAction(self.getActionHeader(actionBody, action), function(response){
+					if (response.exception == null) {
+						$("#commit"+dynid).hide();
+					}
 				});
 			}
 		},
@@ -276,7 +282,7 @@ define(["projectlist/api/projectListAPI"], function() {
 				$('.commitErr_'+dynamicId).hide();      
 				if (response.data != undefined && !response.data.repoExist) {
 				  $('.commitErr_'+dynamicId).show();
-				} else if (response.data != undefined && response.data.repoInfoFile != undefined) {
+				} else if (response.data != undefined && response.data.repoInfoFile.length != 0) {
 				 $('input[name=commitbtn]').prop("disabled", true);
 				 $('input[name=commitbtn]').removeClass("btn_style");		
 				  $('.commit_data_'+dynamicId).show();
@@ -292,6 +298,10 @@ define(["projectlist/api/projectListAPI"], function() {
 					self.commitFileCheckBoxEvent($('.commitParentChk_'+dynamicId), $('.commitChildChk_'+dynamicId));
 				  });
 					self.commitFileCheckAllEvent($('.commitParentChk_'+dynamicId), $('.commitChildChk_'+dynamicId));
+				}
+				
+				if (response.data.repoInfoFile.length == 0) {
+					$('.commit_data_'+dynamicId).show();
 				}
 			});
 		},
@@ -319,7 +329,6 @@ define(["projectlist/api/projectListAPI"], function() {
 						$("tbody[name=generatedPdfs]").append(content);
 						self.clickFunction();
 					} else {
-						console.info("NO Reports Avilable.....");
 					}
 					
 				});
@@ -362,6 +371,9 @@ define(["projectlist/api/projectListAPI"], function() {
 				actionBody = updatedata;
 				action = "updateget";
 				self.projectListAction(self.getActionHeader(actionBody, action), function(response){
+					if (response.exception == null) {
+						$("#svn_update"+dynid).hide();
+					}
 				});
 			}
 		},
