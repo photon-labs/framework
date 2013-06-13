@@ -124,8 +124,8 @@ define(["projectlist/listener/projectListListener"], function() {
 			$(".fixedHeader tr th:first-child").css("width",w1);
 			$(".fixedHeader tr th:nth-child(2)").css("width",w2);
 			$(".fixedHeader tr th:nth-child(3)").css("width",w3);
-			$(".fixedHeader tr th:nth-child(4)").css("width",w4);
-			$(".fixedHeader tr th:nth-child(5)").css("width",w5);
+			$(".fixedHeader tr th:nth-child(4)").css("width",w4 + 13);
+			$(".fixedHeader tr th:nth-child(5)").css("width",w5 - 10);
 			$(".fixedHeader tr th:nth-child(6)").css("width",w6);
 			
 			$(window).resize(function() {
