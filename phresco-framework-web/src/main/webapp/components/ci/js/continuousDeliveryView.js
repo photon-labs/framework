@@ -8,6 +8,8 @@ define(["framework/widgetWithTemplate", "ci/listener/ciListener"], function() {
 		name : commonVariables.continuousDeliveryView,
 		ciListener: null,
 		dynamicpage : null,
+		ciRequestBody : {},
+		templateData : {},
 		continuousDeliveryConfigureLoadEvent : null,
 	
 		/***
@@ -47,6 +49,11 @@ define(["framework/widgetWithTemplate", "ci/listener/ciListener"], function() {
 			Clazz.navigationController.push(this, true);
 		},
 		
+		// preRender: function(whereToRender, renderFunction){
+		// 	var self = this;
+		// 	console.log("Pre render .... ");
+		// },
+
 		/***
 		 * Called after the preRender() and bindUI() completes. 
 		 * Override and add any preRender functionality here
@@ -57,12 +64,10 @@ define(["framework/widgetWithTemplate", "ci/listener/ciListener"], function() {
 			var self = this; 
 		},
 		
-		/* dynamicEvent : function() {
-			var self = this; 
-			var dependency = '';
-			dependency = $("select[name='sonar']").find(':selected').attr('dependency');
-				
-		}, */
+		getAction : function(ciRequestBody, action, param, callback) {
+			var self=this;
+			console.log("Get action .... "); 
+		},
 
 		/***
 		 * Bind the action listeners. The bindUI() is called automatically after the render is complete 

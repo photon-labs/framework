@@ -2680,6 +2680,17 @@ html>body tbody.scrollContent {
 	padding-left: 15px !important;	
 }
 
+.type_test li a {
+    padding-top: 6px;
+}
+
+#jobConfigure table td select {
+    margin-bottom: 0px;
+}
+
+#jobConfigure table td input[type="radio"], #jobConfigure table td input[type="checkbox"] {
+    margin: -3px 3px 0 !important;
+}
 
 
 /* *************************************************************** STYLES FOR CI-CON_DELIVERY PAGE ************************************************************************************ */
@@ -2814,6 +2825,12 @@ html>body tbody.scrollContent {
 	border-radius: 4px;
 	padding: 1% 3%;
 	width: 100%;
+}
+
+#jobConfigure {
+	height: 490px;
+    overflow-y: auto;
+    top: 3px;
 }
 
 .ci_envtable .popuptextarea input[type="checkbox"] {

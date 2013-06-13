@@ -76,6 +76,15 @@
 			<version>1.0.0</version>
 			<type>js</type>
 		</dependency>
+
+
+		<dependency>
+			<groupId>jslibraries.files</groupId>
+			<artifactId>jquery-ui</artifactId>
+			<version>1.10.3</version>
+			<type>js</type>
+		</dependency>
+		
 		
 		<dependency>
 			 <groupId>jslibraries.files</groupId>
