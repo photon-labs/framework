@@ -2614,40 +2614,40 @@ html>body tbody.scrollContent {
 	margin-top:5px;
 }
 
-#job_template {
+.job_template {
 	z-index: 1;	
 }
 
-#job_template table tr td
+.job_template table tr td
 {
 	border-top:none;
 }
 
-#job_template table tr td input[type="checkbox"]
+.job_template table tr td input[type="checkbox"]
 {
 	margin-top:-3px;
 	margin-right:5px;
 }
-#job_template .table:first-child tr td {
+.job_template .table:first-child tr td {
 	padding: 2px !important;
 	padding-bottom:0;
 }
-#job_template table tr td input[type="text"]
+.job_template table tr td input[type="text"]
 {
 	width:178px !important;
 	margin: 0 5px 0 0 !important;
 }
-#job_template table tr td select
+.job_template table tr td select
 {
 	width:178px !important;
 	margin-bottom: 0;
 }
 
-#job_template table tr:nth-child(4) {
+.job_template table tr:nth-child(4) {
 	line-height:24px;	
 }
 
-#job_template .popuptextarea {
+.job_template .popuptextarea {
 	border: 1px solid #c7c7c7;
 	overflow-y: auto;
 	border-radius: 4px;
@@ -2655,7 +2655,7 @@ html>body tbody.scrollContent {
 	line-height: 24px;
 }
 
-#job_template table
+.job_template table
 {
 	margin-bottom:10px !important;
 }
@@ -2828,7 +2828,7 @@ html>body tbody.scrollContent {
 }
 
 #jobConfigure {
-	height: 490px;
+	height: 390px;
     overflow-y: auto;
     top: 3px;
 }
