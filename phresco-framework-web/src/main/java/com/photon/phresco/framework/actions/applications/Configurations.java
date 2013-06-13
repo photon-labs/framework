@@ -1189,11 +1189,14 @@ public class Configurations extends FrameworkBaseAction {
 			}
             
             ConfigManager configManager = getConfigManager(getConfigPath());
-            Configuration configuration = configManager.getConfiguration(getSelectedEnv(), getSelectedType(), getSelectedConfigname());
+           
+            if ((EDIT_CONFIG.equals(getFromPage()) || EDIT_SETTINGS.equals(getFromPage()))) {
+            	Configuration configuration = configManager.getConfiguration(getSelectedEnv(), getSelectedType(), getSelectedConfigname());
             
-            if (configuration != null) {
-                Properties selectedProperties = configuration.getProperties();
-                setReqAttribute(REQ_PROPERTIES_INFO, selectedProperties);
+	            if (configuration != null) {
+	                Properties selectedProperties = configuration.getProperties();
+	                setReqAttribute(REQ_PROPERTIES_INFO, selectedProperties);
+	            }
             }
             if ((ADD_CONFIG.equals(getFromPage()) || EDIT_CONFIG.equals(getFromPage()))) {
             	Technology technology = getServiceManager().getTechnology(getTechId());

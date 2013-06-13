@@ -11,6 +11,8 @@ define(["testResult/listener/testResultListener"], function() {
 		testResultAPI : null,
 		requestBody : {},
 		onTestResultDescEvent : null,
+		onShowHideConsoleEvent : null,
+		logContent : "",
 		
 		/***
 		 * Called in initialization time of this class 
@@ -25,7 +27,12 @@ define(["testResult/listener/testResultListener"], function() {
 			if (self.testResultAPI === null) {
 				self.testResultAPI =  new Clazz.com.components.testResult.js.api.TestResultAPI();
 			}
-			commonVariables.from = "all";
+			
+			if (self.onShowHideConsoleEvent === null) {
+				self.onShowHideConsoleEvent = new signals.Signal();
+			}
+			self.onShowHideConsoleEvent.add(self.testResultListener.showHideConsole, self.testResultListener);
+			
 			self.registerEvents();
 		},
 		
@@ -37,16 +44,13 @@ define(["testResult/listener/testResultListener"], function() {
 			self.onTestResultDescEvent.add(self.testResultListener.onTestResultDesc, self.testResultListener);
 		},
 		
-		/***
-		 * Called in once the login is success
-		 *
-		 */
 		loadPage : function() {
 			Clazz.navigationController.push(this, false);
 		},
 		
 		preRender: function(whereToRender, renderFunction) {
 			var self = this;
+			commonVariables.from = "all";
 			commonVariables.loadingScreen.showLoading();
 			self.testResultListener.getTestResult(self.testResultListener.getActionHeader(self.requestBody, "getTestSuite"), function(response) {
 				var data = {};
@@ -74,6 +78,11 @@ define(["testResult/listener/testResultListener"], function() {
 		postRender : function(element) {
 			var self = this;
 			self.testResultListener.onTestResult();
+			self.testResultListener.resizeConsoleWindow();
+			self.testResultListener.resizeTestResultTable("testSuites");
+			
+			$('#testConsole').html(self.logContent);
+			self.logContent = '';
 		},
 		
 		/***
@@ -92,37 +101,12 @@ define(["testResult/listener/testResultListener"], function() {
 						}
 			});
 			
-			var w1 = $(".scrollContent tr:nth-child(2) td:first-child").width();
-			var w2 = $(".scrollContent tr:nth-child(2) td:nth-child(2)").width();
-			var w3 = $(".scrollContent tr:nth-child(2) td:nth-child(3)").width();
-			var w4 = $(".scrollContent tr:nth-child(2) td:nth-child(4)").width();
-			var w5 = $(".scrollContent tr:nth-child(2) td:nth-child(5)").width();
-			var w6 = $(".scrollContent tr:nth-child(2) td:nth-child(6)").width();
 			
-			$(".fixedHeader tr th:first-child").css("width",w1);
-			$(".fixedHeader tr th:nth-child(2)").css("width",w2);
-			$(".fixedHeader tr th:nth-child(3)").css("width",w3);
-			$(".fixedHeader tr th:nth-child(4)").css("width",w4);
-			$(".fixedHeader tr th:nth-child(5)").css("width",w5);
-			$(".fixedHeader tr th:nth-child(6)").css("width",w6);
 			
 			$(window).resize(function() {
-				var w1 = $(".scrollContent tr:nth-child(2) td:first-child").width();
-				var w2 = $(".scrollContent tr:nth-child(2) td:nth-child(2)").width();
-				var w3 = $(".scrollContent tr:nth-child(2) td:nth-child(3)").width();
-				var w4 = $(".scrollContent tr:nth-child(2) td:nth-child(4)").width();
-				var w5 = $(".scrollContent tr:nth-child(2) td:nth-child(5)").width();
-				var w6 = $(".scrollContent tr:nth-child(2) td:nth-child(6)").width();
-				
-				$(".fixedHeader tr th:first-child").css("width",w1);
-				$(".fixedHeader tr th:nth-child(2)").css("width",w2);
-				$(".fixedHeader tr th:nth-child(3)").css("width",w3);
-				$(".fixedHeader tr th:nth-child(4)").css("width",w4);
-				$(".fixedHeader tr th:nth-child(5)").css("width",w5);
-				$(".fixedHeader tr th:nth-child(6)").css("width",w6);
+				self.testResultListener.resizeTestResultTable();
 				
 				var height = $(this).height();
-				
 				var resultvalue = 0;
 				$('.mainContent').prevAll().each(function() {
 					var rv = $(this).height();
@@ -130,15 +114,15 @@ define(["testResult/listener/testResultListener"], function() {
 				});
 				var footervalue = $('.footer_section').height();
 				resultvalue = resultvalue + footervalue + 200;
-
+				
 				$('.mainContent .scrollContent').height(height - resultvalue);
-
+				self.testResultListener.resizeConsoleWindow();
 			});
 			
-			$("a[name=unittestResult]").unbind("click");
-			$("a[name=unittestResult]").click(function() {
-				self.onTestResultEvent.dispatch();
-			});
+//			$("a[name=unittestResult]").unbind("click");
+//			$("a[name=unittestResult]").click(function() {
+//				self.onTestResultEvent.dispatch();
+//			});
 			
 			$("a[name=testDescription]").unbind("click");
 			$("a[name=testDescription]").click(function() {
@@ -146,6 +130,11 @@ define(["testResult/listener/testResultListener"], function() {
 				commonVariables.from = "testsuite";
 				commonVariables.testSuiteName = $(this).text();
 				self.onTestResultDescEvent.dispatch();
+			});
+			
+			$('#consoleImg').unbind("click");
+			$('#consoleImg').click(function() {
+				self.onShowHideConsoleEvent.dispatch();
 			});
 			
 			Clazz.navigationController.mainContainer = commonVariables.contentPlaceholder;

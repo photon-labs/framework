@@ -824,6 +824,10 @@ define(["projects/api/projectsAPI"], function() {
 				var projectdescription = $("textarea[name='projectdescription']").val();
 				var startdate = $("input[name='startdate']").val();
 				var enddate = $("input[name='enddate']").val();
+				//To convert dd/mm//yyyy to (month date,year) format
+				var myStartDate = new Date(startdate);
+				var myEndDate = new Date(enddate);
+				
 				var count = 0;
 				self.customerIds = [];
 				self.appInfos = [];
@@ -834,6 +838,8 @@ define(["projects/api/projectsAPI"], function() {
 				self.projectInfo.name = projectname;
 				self.projectInfo.projectCode = projectcode;
 				self.projectInfo.description = projectdescription;
+				self.projectInfo.startDate = myStartDate;
+				self.projectInfo.endDate = myEndDate;
 				self.projectInfo.customerIds = self.customerIds;
 							
 				$.each( $("tbody[name='layercontents']").children(), function(index, value){

@@ -65,17 +65,20 @@ public class ParameterService extends RestBase implements FrameworkConstants {
 	@GET
 	@Path("/dynamic")
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response getParameter(@QueryParam("appDirName") String appDirName, @QueryParam("goal") String goal) {
+	public Response getParameter(@QueryParam("appDirName") String appDirName, @QueryParam("goal") String goal, @QueryParam("phase") String phase) {
 		ResponseInfo<List<Parameter>> responseData = new ResponseInfo<List<Parameter>>();
 		try {
 			List<Parameter> parameter = null;
-			String filePath = getInfoFileDir(appDirName, goal);
-			MojoProcessor mojo = new MojoProcessor(new File(filePath));
-			if ("functional-test".equals(goal)) {
-				String functionalTestFramework = FrameworkServiceUtil.getFunctionalTestFramework(appDirName);
-				goal = goal + "-" + functionalTestFramework;
+			String filePath = getInfoFileDir(appDirName, goal, phase);
+			File file = new File(filePath);
+			if (file.exists()) {
+				MojoProcessor mojo = new MojoProcessor(file);
+				if (Constants.PHASE_FUNCTIONAL_TEST.equals(goal)) {
+					String functionalTestFramework = FrameworkServiceUtil.getFunctionalTestFramework(appDirName);
+					goal = goal + HYPHEN + functionalTestFramework;
+				}
+				parameter = mojo.getParameters(goal);
 			}
-			parameter = mojo.getParameters(goal);
 			ResponseInfo<List<Parameter>> finalOutput = responseDataEvaluation(responseData, null, "Parameter returned successfully", parameter);
 			return Response.ok(finalOutput).header("Access-Control-Allow-Origin", "*").build();
 
@@ -88,10 +91,10 @@ public class ParameterService extends RestBase implements FrameworkConstants {
 	@GET
 	@Path("/file")
 	@Produces({ MediaType.APPLICATION_JSON })
-	public Response getFileAsString(@QueryParam("appDirName") String appDirName, @QueryParam("goal") String goal) {
+	public Response getFileAsString(@QueryParam("appDirName") String appDirName, @QueryParam("goal") String goal, @QueryParam("phase") String phase) {
 		ResponseInfo responseData = new ResponseInfo();
 		try {
-			String filePath = getInfoFileDir(appDirName, goal);
+			String filePath = getInfoFileDir(appDirName, goal, phase);
 			File file = new File(filePath);
 			String xml = IOUtils.toString(new FileInputStream(file));
 			ResponseInfo finalOutput = responseDataEvaluation(responseData, null, "Parameter returned successfully", xml);
@@ -107,12 +110,12 @@ public class ParameterService extends RestBase implements FrameworkConstants {
 	@Produces(MediaType.APPLICATION_JSON)
 	@Consumes(MediaType.APPLICATION_JSON)
 	public Response getPossibleValue(@QueryParam("appDirName") String appDirName, @QueryParam("customerId") String customerId, @QueryParam("goal") String goal, 
-			@QueryParam("key") String key, @QueryParam("value") String value) {
+			@QueryParam("key") String key, @QueryParam("value") String value, @QueryParam("phase") String phase) {
 		ResponseInfo<PossibleValues> responseData = new ResponseInfo<PossibleValues>();
 		PossibleValues possibleValues = null;
 		try {
 			ApplicationInfo appInfo = FrameworkServiceUtil.getApplicationInfo(appDirName);
-			String filePath = getInfoFileDir(appDirName, goal);
+			String filePath = getInfoFileDir(appDirName, goal, phase);
 			MojoProcessor processor = new MojoProcessor(new File(filePath));
 			possibleValues = getPossibleValues(processor, goal, key, value, appInfo, customerId, appDirName);
 			ResponseInfo<PossibleValues> finalOutput = responseDataEvaluation(responseData, null, "Dependency returned successfully", possibleValues);
@@ -130,7 +133,7 @@ public class ParameterService extends RestBase implements FrameworkConstants {
 	@Path("/codeValidationReportTypes")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response getCodeValidationReportTypes(@QueryParam("appDirName") String appDirName, @QueryParam("goal") String goal,
-			@Context HttpServletRequest request) {
+			@QueryParam("phase") String phase, @Context HttpServletRequest request) {
 		ResponseInfo<PossibleValues> responseData = new ResponseInfo<PossibleValues>();
 		try {
 			int responseCode = setSonarServerStatus(request);
@@ -138,7 +141,7 @@ public class ParameterService extends RestBase implements FrameworkConstants {
 				ResponseInfo<PossibleValues> finalOutput = responseDataEvaluation(responseData, null, "Sonar not yet Started", null);
 				return Response.status(Status.BAD_REQUEST).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
 			}
-			String infoFileDir = getInfoFileDir(appDirName, goal);
+			String infoFileDir = getInfoFileDir(appDirName, goal, phase);
 			ApplicationInfo appInfo = FrameworkServiceUtil.getApplicationInfo(appDirName);
 			List<CodeValidationReportType> codeValidationReportTypes = new ArrayList<CodeValidationReportType>();
 
@@ -329,9 +332,9 @@ public class ParameterService extends RestBase implements FrameworkConstants {
 
 	private static PossibleValues getPossibleValues(MojoProcessor processor, String goal, String key, String value,
 			ApplicationInfo appInfo, String customerId, String appDirName) throws PhrescoException, PhrescoPomException {
-		if ("functional-test".equals(goal)) {
+		if (Constants.PHASE_FUNCTIONAL_TEST.equals(goal)) {
 			String functionalTestFramework = FrameworkServiceUtil.getFunctionalTestFramework(appDirName);
-			goal = goal + "-" + functionalTestFramework;
+			goal = goal + HYPHEN + functionalTestFramework;
 		}
 		Parameter parameter = processor.getParameter(goal, key);
 		if(StringUtils.isNotEmpty(parameter.getDependency())) {
@@ -373,14 +376,18 @@ public class ParameterService extends RestBase implements FrameworkConstants {
 		return null;
 	}
 	
-	private String getInfoFileDir(String appDirName, String goal) {
+	private String getInfoFileDir(String appDirName, String goal, String phase) {
 		StringBuilder sb = new StringBuilder();
 		sb.append(Utility.getProjectHome())
 		.append(appDirName)
 		.append(File.separatorChar)
 		.append(Constants.DOT_PHRESCO_FOLDER)
-		.append(File.separatorChar)
-		.append("phresco-"+ goal +"-info.xml");
+		.append(File.separatorChar);
+		if (StringUtils.isNotEmpty(phase)) {
+			sb.append(Constants.PHRESCO + HYPHEN + phase + Constants.INFO_XML);
+		} else {
+			sb.append(Constants.PHRESCO + HYPHEN + goal + Constants.INFO_XML);
+		}
 		return sb.toString();
 	}
 }

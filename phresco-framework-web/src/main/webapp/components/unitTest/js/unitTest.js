@@ -37,14 +37,17 @@ define(["unitTest/listener/unitTestListener", "testResult/listener/testResultLis
 				self.onTabularViewEvent = new signals.Signal();
 			}
 			self.onTabularViewEvent.add(self.unitTestListener.onTabularView, self.unitTestListener);
+			
 			if (self.onGraphicalViewEvent === null) {
 				self.onGraphicalViewEvent = new signals.Signal();
 			}
 			self.onGraphicalViewEvent.add(self.unitTestListener.onGraphicalView, self.unitTestListener);
+			
 			if (self.onDynamicPageEvent === null) {
 				self.onDynamicPageEvent = new signals.Signal();
 			}
 			self.onDynamicPageEvent.add(self.unitTestListener.getDynamicParams, self.unitTestListener);
+			
 			if (self.onRunUnitTestEvent === null) {
 				self.onRunUnitTestEvent = new signals.Signal();
 			}
@@ -84,8 +87,9 @@ define(["unitTest/listener/unitTestListener", "testResult/listener/testResultLis
 		 * Called in once the login is success
 		 *
 		 */
-		loadPage : function(){
-			Clazz.navigationController.push(this);
+		loadPage : function() {
+			Clazz.navigationController.mainContainer = '#testResult';
+			Clazz.navigationController.push(this, true);
 		},
 		
 		/***
@@ -96,11 +100,11 @@ define(["unitTest/listener/unitTestListener", "testResult/listener/testResultLis
 		 */
 		postRender : function(element) {
 			var self = this;
-			commonVariables.navListener.getMyObj(commonVariables.testResult, function(retVal){
+			commonVariables.navListener.getMyObj(commonVariables.testResult, function(retVal) {
 				self.testResult = retVal;
 				Clazz.navigationController.jQueryContainer = '#testResult';
 				Clazz.navigationController.push(self.testResult, false);
-			});	
+			});
 		},
 		
 		preRender: function(whereToRender, renderFunction){
@@ -126,7 +130,12 @@ define(["unitTest/listener/unitTestListener", "testResult/listener/testResultLis
 			
 			$("#unitTestBtn").unbind("click");
 			$("#unitTestBtn").click(function() {
-				self.onDynamicPageEvent.dispatch(this);
+				self.onDynamicPageEvent.dispatch(this, function() {
+					self.testResult.logContent = $('#testConsole').html();
+					$('#testResult').empty();
+					Clazz.navigationController.jQueryContainer = '#testResult';
+					Clazz.navigationController.push(self.testResult, false);
+				});
 			});
 			
 			$("#testSuites").css("display", "none");
@@ -135,29 +144,24 @@ define(["unitTest/listener/unitTestListener", "testResult/listener/testResultLis
 			$(".unit_view").css("display", "none");
 			$("#graphView").css("display", "none");
 			
-			
-			$("a[name=unittestResult]").unbind("click");
-			$("a[name=unittestResult]").click(function() {
-				self.onUnitTestResultEvent.dispatch();
-			});
-			
-			$("a[name=unitTestDescription]").unbind("click");
-			$("a[name=unitTestDescription]").click(function() {
-				self.onUnitTestDescEvent.dispatch();
-			});
-			
-			Clazz.navigationController.mainContainer = commonVariables.contentPlaceholder;
-			
 			//Change event of the report type to get the report
 			$('.projectModule').click(function() {
 				$('#modulesDrop').attr("value", $(this).children().text());
 				$('#modulesDrop').html($(this).children().text() + '<b class="caret"></b>');
+				
+				$('#testResult').empty();
+				Clazz.navigationController.jQueryContainer = '#testResult';
+				Clazz.navigationController.push(self.testResult, false);
 			});
 			
 			//Change event of the report type to get the report
 			$('.reportOption').click(function() {
 				$('#reportOptionsDrop').attr("value", $(this).children().text());
 				$('#reportOptionsDrop').html($(this).children().text() + '<b class="caret"></b>');
+				
+				$('#testResult').empty();
+				Clazz.navigationController.jQueryContainer = '#testResult';
+				Clazz.navigationController.push(self.testResult, false);
 			});
 			
 			//To open the unit test directory
@@ -191,9 +195,16 @@ define(["unitTest/listener/unitTestListener", "testResult/listener/testResultLis
 			//To run the unit test
 			$("#runUnitTest").unbind("click");
 			$("#runUnitTest").click(function() {
-				self.onRunUnitTestEvent.dispatch();
+				self.onRunUnitTestEvent.dispatch(function() {
+					self.testResult.logContent = $('#testConsole').html();
+					$('#testResult').empty();
+					Clazz.navigationController.jQueryContainer = '#testResult';
+					Clazz.navigationController.push(self.testResult, false);
+				});
 				$("#unit_popup").toggle();
 			});
+			
+			Clazz.navigationController.mainContainer = commonVariables.contentPlaceholder;
 		}
 	});
 

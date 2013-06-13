@@ -195,7 +195,7 @@ define(["application/api/applicationAPI"], function() {
 					},
 
 					function(textStatus) {
-						
+						callback({ "status" : "service failure"});
 					}
 				);
 			} catch(exception) {
@@ -228,7 +228,7 @@ define(["application/api/applicationAPI"], function() {
 					},
 
 					function(textStatus) {
-						
+						callback({ "status" : "service failure"});
 					}
 				);
 			} catch(exception) {

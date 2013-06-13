@@ -88,14 +88,16 @@ define(["unitTest/api/unitTestAPI"], function() {
 			}
 		},
 		
-		getDynamicParams : function(thisObj) {
+		getDynamicParams : function(thisObj, callback) {
 			var self = this;
 			commonVariables.goal = commonVariables.unitTestGoal;
 			commonVariables.navListener.getMyObj(commonVariables.dynamicPage, function(dynamicPageObject) {
 				self.dynamicPageListener = new Clazz.com.components.dynamicPage.js.listener.DynamicPageListener();
 				dynamicPageObject.getHtml(false, function(response) {
 					if ("No parameters available" == response) {
-						self.runUnitTest();
+						self.runUnitTest(function(responseData) {
+							callback(responseData);
+						});
 					} else {
 						$("#dynamicContent").html(response);
 	//					self.multiselect();
@@ -107,7 +109,7 @@ define(["unitTest/api/unitTestAPI"], function() {
 			});
 		},
 		
-		runUnitTest : function() {
+		runUnitTest : function(callback) {
 			var self = this;
 			var testData = $("#unitTestForm").serialize();
 			var appdetails = self.unitTestAPI.localVal.getJson('appdetails');
@@ -118,23 +120,26 @@ define(["unitTest/api/unitTestAPI"], function() {
 			username = self.unitTestAPI.localVal.getSession('username');
 						
 			if (appdetails != null) {
-				queryString ="username="+username+"&appId="+appId+"&customerId="+customerId+"&goal=validate-code&phase=validate-code&projectId="+projectId+"&"+testData;
+				queryString ="username="+username+"&appId="+appId+"&customerId="+customerId+"&goal=unit-test&phase=unit-test&projectId="+projectId+"&"+testData;
 			}
-			$('#unitTestConsole').html('');
-				
+			
+			$('#testConsole').html('');
+			self.testResultListener.openConsole();//To open the console
+			
 			if (self.mavenServiceListener === null) {
 				commonVariables.navListener.getMyObj(commonVariables.mavenService, function(retVal){
 					self.mavenServiceListener = retVal;
-					
-					self.mavenServiceListener.mvnUnitTest(queryString, '#unitTestConsole', function(response) {
-						
+					self.mavenServiceListener.mvnUnitTest(queryString, '#testConsole', function(response) {
+						self.testResultListener.closeConsole();
+						callback(response);
 					});
 				});
 			} else {
-				self.mavenServiceListener.mvnUnitTest(queryString, '#unitTestConsole', function(response) {
-					
+				self.mavenServiceListener.mvnUnitTest(queryString, '#testConsole', function(response) {
+					self.testResultListener.closeConsole();
+					callback(response);
 				});
-			}			
+			}
 		}
 	});
 

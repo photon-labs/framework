@@ -5,7 +5,6 @@ define(["navigation/api/navigationAPI"], function() {
 	Clazz.com.components.navigation.js.listener.navigationListener = Clazz.extend(Clazz.Widget, {
 		navAPI : null,
 		localStorageAPI : null,
-		loadingScreen : null,
 		header : null,
 		footer : null,
 		projectlist : null,
@@ -373,65 +372,107 @@ define(["navigation/api/navigationAPI"], function() {
 			var applicableOptions = JSON.parse(self.navAPI.localVal.getSession('applicableOptions'));
 			if (jQuery.inArray(commonVariables.optionsCode, applicableOptions) == -1) {
 				$("#codequality").hide();
+			} else {
+				$("#codequality").show();
 			}
 			if (jQuery.inArray(commonVariables.optionsReports, applicableOptions) == -1) {
 				$("#mavenReport").hide();
+			} else {
+				$("#mavenReport").show();
 			}
 			if (jQuery.inArray(commonVariables.optionsUnitTest, applicableOptions) == -1) {
 				$("#unitTest").hide();
+			} else {
+				$("#unitTest").show();
 			}
 			if (jQuery.inArray(commonVariables.optionsComponentTest, applicableOptions) == -1) {
 				$("#componentTest").hide();
+			} else {
+				$("#componentTest").show();
 			}
 			if (jQuery.inArray(commonVariables.optionsFunctionalTest, applicableOptions) == -1) {
 				$("#functionalTest").hide();
+			} else {
+				$("#functionalTest").show();
 			}
 			if (jQuery.inArray(commonVariables.optionsPerformanceTest, applicableOptions) == -1) {
 				$("#performanceTest").hide();
+			} else {
+				$("#performanceTest").show();
 			}
 			if (jQuery.inArray(commonVariables.optionsLoadTest, applicableOptions) == -1) {
 				$("#loadTest").hide();
+			} else {
+				$("#loadTest").show();
 			}
 			if (jQuery.inArray(commonVariables.optionsManualTest, applicableOptions) == -1) {
 				$("#manualTest").hide();
+			} else {
+				$("#manualTest").show();
 			}
 			if (jQuery.inArray(commonVariables.optionsCI, applicableOptions) == -1) {
 				$("#continuousDeliveryView").hide();
+			} else {
+				$("#continuousDeliveryView").show();
 			}
 			if (jQuery.inArray(commonVariables.optionsRunAgainstSrc, applicableOptions) == -1) {
 				$("input[name=build_runagsource]").hide();
 				$("#stop").hide();
 				$("#restart").hide();
+			} else {
+				$("input[name=build_runagsource]").show();
+				$("#stop").show();
+				$("#restart").show();
 			}
 			if (jQuery.inArray(commonVariables.optionsMinification, applicableOptions) == -1) {
 				$("#minifier").hide();
+			} else {
+				$("#minifier").show();
 			}
 			if (jQuery.inArray(commonVariables.optionsBuild, applicableOptions) == -1) {
 
+			} else {
+				
 			}
 			if (jQuery.inArray(commonVariables.optionsDeploy, applicableOptions) == -1) {
 
+			} else {
+				
 			}
 			if (jQuery.inArray(commonVariables.optionsExeDownload, applicableOptions) == -1) { 
 
+			} else {
+				
 			}
 			if (jQuery.inArray(commonVariables.optionsFeatureConfig, applicableOptions) == -1) {
 
+			} else {
+				
 			}
 			if (jQuery.inArray(commonVariables.optionsComponentConfig, applicableOptions) == -1) {
 
+			} else {
+				
 			}
 			if (jQuery.inArray(commonVariables.optionsProcessBuild, applicableOptions) == -1) {
 
+			} else {
+				
 			}
 			if (jQuery.inArray(commonVariables.optionsRemoteDeployment, applicableOptions) == -1) {
 
+			} else {
+				
 			}
 			if (jQuery.inArray(commonVariables.optionsEmbedApplication, applicableOptions) == -1) {
 
+			} else {
+				
 			}
 			if (jQuery.inArray(commonVariables.optionsThemeBuilder, applicableOptions) == -1) {
 
+			} else {
+				
 			}
 		},
 		
@@ -590,8 +631,10 @@ define(["navigation/api/navigationAPI"], function() {
 		navigationAction : function(header, callback) {
 			var self = this;			
 			try {
+				commonVariables.loadingScreen.showLoading();
 				self.navAPI.donavigation(header,
 					function(response) {
+						commonVariables.loadingScreen.removeLoading();
 						if (response != null ) {
 							callback(response);						
 						} else {
@@ -600,23 +643,117 @@ define(["navigation/api/navigationAPI"], function() {
 					}
 				);
 			} catch(exception) {
-				self.loadingScreen.removeLoading();
+				commonVariables.loadingScreen.removeLoading();
 			}
+		}, 
+		
+		validateImport : function (callback) {
+			var self = this;
+			var importType = $("#importType").val();
+			var importRepourl = $("#importRepourl").val().replace(/\s/g, '');
+			$("#importRepourl").removeClass("errormessage");
+			var error = false;
+			
+			if(importRepourl == "") {
+				error = true;
+				self.validateTextBox($("#importRepourl"), 'Enter Repourl');
+			}
+			
+			if ('svn' == importType && !error) {
+				$("#importUserName").removeClass("errormessage");
+				$("#importPassword").removeClass("errormessage");
+				$("#revision").removeClass("errormessage");
+				var userName = $("#importUserName").val().replace(/\s/g, '');
+				var pswd = $("#importPassword").val();
+				var revision = $("input[name='headoption']:checked").val();
+				if (userName == "") {
+					error = true;
+					self.validateTextBox($("#importUserName"), 'Enter user name');
+				} else if (pswd == "") {
+					error = true;
+					self.validateTextBox($("#importPassword"), 'Enter password');
+				} else if (revision == "revision" && $('#revision').val() == "") {
+					error = true;
+					self.validateTextBox($("#revision"), 'Enter revision');
+				} else if ($(".testCheckout").is(":checked")) {
+					$("#testRepoUrl").removeClass("errormessage");
+					$("#testImportUserName").removeClass("errormessage");
+					$("#testImportPassword").removeClass("errormessage");
+					
+					var testRepoUrl = $("#testRepoUrl").val().replace(/\s/g, '');
+					var testImportUserName = $("#testImportUserName").val().replace(/\s/g, '');
+					var testImportPassword = $("#testImportPassword").val();
+					var testRevision = $("input[name='testHeadOption']:checked").val();
+					if(testRepoUrl == "") {
+						error = true;
+						self.validateTextBox($("#testRepoUrl"), 'Enter Test Repourl');
+					} else if (testImportUserName == "") {
+						error = true;
+						self.validateTextBox($("#testImportUserName"), 'Enter user name');
+					} else if (testImportPassword == "") {
+						error = true;
+						self.validateTextBox($("#testImportPassword"), 'Enter password');
+					} else if (testRevision == "revision" && $('#testRevision').val() == "") {
+						error = true;
+						self.validateTextBox($("#testRevision"), 'Enter revision');
+					} 
+				}
+			}
+			
+			callback(error);
 		},
-		addImportEvent : function(revision){
+		
+		validateTextBox : function (textBoxObj, errormsg) {
+			textBoxObj.focus();
+			textBoxObj.attr('placeholder', errormsg);
+			textBoxObj.addClass("errormessage");
+		}, 
+		
+		addImportEvent : function(){
 			var self = this;
 			var importdata = {}, actionBody, action;
-			//if(!self.validation()) {
-				importdata.type = $("#importType").val();
-				importdata.repoUrl = $("#importRepourl").val();
-				importdata.userName = $("#importUserName").val();
-				importdata.password = $("#importPassword").val();
-				importdata.revision = revision;
-				actionBody = importdata;
-				action = "importpost";
-				self.navigationAction(self.getActionHeader(actionBody, action), function(response){
-				});
-			//}
+			
+			var revision = $("input[name='headoption']:checked").val();
+			if(revision !== ""){
+				revision = revision;
+			} else{
+				revision = $("#revision").val();
+			}
+			
+			var testRevision = $("input[name='testHeadOption']:checked").val();
+			if(testRevision !== ""){
+				testRevision = testRevision;
+			} else{
+				testRevision = $("#testRevision").val();
+			}
+			
+			importdata.type = $("#importType").val();
+			importdata.repoUrl = $("#importRepourl").val();
+			importdata.userName = $("#importUserName").val();
+			importdata.password = $("#importPassword").val();
+			importdata.revision = revision;
+			
+			if ('svn' == importdata.type && $(".testCheckout").is(":checked")) {
+				importdata.testCheckOut = true;
+				importdata.testRepoUrl = $("#testRepoUrl").val();
+				importdata.testUserName = $("#testImportUserName").val();
+				importdata.testPassword = $("#testImportPassword").val();
+				importdata.testRevision = testRevision;
+			} else {
+				importdata.testCheckOut = false;
+			}
+			
+			actionBody = importdata;
+			action = "importpost";
+			self.navigationAction(self.getActionHeader(actionBody, action), function(response){
+				if (response.exception == null) {
+					$("#project_list_import").hide();	
+					self.getMyObj(commonVariables.projectlist, function(returnVal){
+						self.projectlist = returnVal;
+						Clazz.navigationController.push(self.projectlist, true);
+					});
+				}
+			});
 		}	
 	});
 

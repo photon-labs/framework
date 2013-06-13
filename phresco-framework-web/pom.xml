@@ -25,104 +25,7 @@
     </distributionManagement>
     
   <dependencies>
-    <dependency>
-		<groupId>javax.servlet</groupId>
-		<artifactId>servlet-api</artifactId>
-		<version>2.5</version>
-		<scope>provided</scope>
-	</dependency>
-	<dependency>
-		<groupId>org.cometd.java</groupId>
-		<artifactId>bayeux-api</artifactId>
-		<version>2.5.0-beta2</version>
-		<scope>compile</scope>
-	</dependency>
-	<dependency>
-		<groupId>org.cometd.javascript</groupId>
-		<artifactId>cometd-javascript-dojo</artifactId>
-		<version>2.5.0-beta2</version>
-		<type>war</type>
-		<scope>compile</scope>
-	</dependency>
-	<dependency>
-		<groupId>org.cometd.java</groupId>
-		<artifactId>cometd-java-server</artifactId>
-		<version>2.5.0-beta2</version>
-		<scope>compile</scope>
-	</dependency>
-	<dependency>
-		<groupId>org.cometd.java</groupId>
-		<artifactId>cometd-java-annotations</artifactId>
-		<version>2.5.0-beta2</version>
-		<scope>compile</scope>
-	</dependency>
-	<dependency>
-	<groupId>org.cometd.java</groupId>
-	<artifactId>cometd-websocket-jetty</artifactId>
-	<version>2.5.0-beta2</version>
-	<scope>compile</scope>
-		<exclusions>
-			<exclusion>
-				<artifactId>cometd-java-client</artifactId>
-				<groupId>org.cometd.java</groupId>
-			</exclusion>
-		</exclusions>
-	</dependency>
-	<dependency>
-		<groupId>org.eclipse.jetty</groupId>
-		<artifactId>jetty-util</artifactId>
-		<version>7.6.4.v20120524</version>
-		<scope>compile</scope>
-	</dependency>
-	<dependency>
-		<groupId>org.eclipse.jetty</groupId>
-		<artifactId>jetty-jmx</artifactId>
-		<version>7.6.4.v20120524</version>
-		<scope>compile</scope>
-	</dependency>
-	<dependency>
-		<groupId>org.eclipse.jetty</groupId>
-		<artifactId>jetty-continuation</artifactId>
-		<version>7.6.4.v20120524</version>
-		<scope>compile</scope>
-	</dependency>
-	<dependency>
-		<groupId>org.eclipse.jetty</groupId>
-		<artifactId>jetty-websocket</artifactId>
-		<version>7.6.4.v20120524</version>
-		<scope>compile</scope>
-	</dependency>
-	<dependency>
-		<groupId>org.eclipse.jetty</groupId>
-		<artifactId>jetty-servlets</artifactId>
-		<version>7.6.4.v20120524</version>
-		<scope>compile</scope>
-			<exclusions>
-				<exclusion>
-					<artifactId>jetty-client</artifactId>
-					<groupId>org.eclipse.jetty</groupId>
-				</exclusion>
-			</exclusions>
-	</dependency>
-	<dependency>
-		<groupId>org.slf4j</groupId>
-		<artifactId>slf4j-log4j12</artifactId>
-		<version>1.6.4</version>
-		<scope>compile</scope>
-	</dependency>
-	<dependency>
-		<groupId>org.codehaus.plexus</groupId>
-		<artifactId>plexus-archiver</artifactId>
-		<version>2.0.1</version>
-		<scope>compile</scope>
-			<exclusions>
-				<exclusion>
-					<artifactId>plexus-container-default</artifactId>
-					<groupId>org.codehaus.plexus</groupId>
-				</exclusion>
-			</exclusions>
-	</dependency>
-    
+  
 		<dependency>
 			<groupId>net.awired.js</groupId>
 			<artifactId>requirejs</artifactId>
@@ -139,12 +42,12 @@
 			<scope>test</scope>
 		</dependency>
 		
-		<dependency>
+		<!-- <dependency>
 			<groupId>net.awired.js</groupId>
 			<artifactId>jquery</artifactId>
 			<version>1.7.2</version>
 			<type>war</type>
-		</dependency>
+		</dependency> -->
 
 		<dependency>
 			<groupId>jslibraries.files</groupId>
@@ -309,40 +212,39 @@
 			<type>js</type>
 		</dependency>
 		
-		<!-- CometD insertions start -->
-	    
-	    <dependency>
-	      <groupId>javax.servlet</groupId>
-	      <artifactId>servlet-api</artifactId>
-	      <version>2.5</version>
-	      <scope>provided</scope>
-	    </dependency>
+		 <!-- CometD insertions start -->
+	   
+        
 	    <dependency>
 	      <groupId>org.cometd.java</groupId>
 	      <artifactId>bayeux-api</artifactId>
 	      <version>2.5.0-beta2</version>
 	      <scope>compile</scope>
 	    </dependency>
-	    <dependency>
+        
+	   <!--  <dependency>
 	      <groupId>org.cometd.javascript</groupId>
 	      <artifactId>cometd-javascript-dojo</artifactId>
 	      <version>2.5.0-beta2</version>
 	      <type>war</type>
 	      <scope>compile</scope>
-	    </dependency>
+	    </dependency> -->
+        
 	    <dependency>
 	      <groupId>org.cometd.java</groupId>
 	      <artifactId>cometd-java-server</artifactId>
 	      <version>2.5.0-beta2</version>
 	      <scope>compile</scope>
-	    </dependency>
-	    <dependency>
+	    </dependency> 
+        
+	   <dependency>
 	      <groupId>org.cometd.java</groupId>
 	      <artifactId>cometd-java-annotations</artifactId>
 	      <version>2.5.0-beta2</version>
 	      <scope>compile</scope>
 	    </dependency>
-	    <dependency>
+        
+        <dependency>
 	      <groupId>org.cometd.java</groupId>
 	      <artifactId>cometd-websocket-jetty</artifactId>
 	      <version>2.5.0-beta2</version>
@@ -354,30 +256,35 @@
 	        </exclusion>
 	      </exclusions>
 	    </dependency>
+        
 	    <dependency>
 	      <groupId>org.eclipse.jetty</groupId>
 	      <artifactId>jetty-util</artifactId>
 	      <version>7.6.4.v20120524</version>
 	      <scope>compile</scope>
 	    </dependency>
+        
 	    <dependency>
 	      <groupId>org.eclipse.jetty</groupId>
 	      <artifactId>jetty-jmx</artifactId>
 	      <version>7.6.4.v20120524</version>
 	      <scope>compile</scope>
 	    </dependency>
+        
 	    <dependency>
 	      <groupId>org.eclipse.jetty</groupId>
 	      <artifactId>jetty-continuation</artifactId>
 	      <version>7.6.4.v20120524</version>
 	      <scope>compile</scope>
 	    </dependency>
+        
 	    <dependency>
 	      <groupId>org.eclipse.jetty</groupId>
 	      <artifactId>jetty-websocket</artifactId>
 	      <version>7.6.4.v20120524</version>
 	      <scope>compile</scope>
 	    </dependency>
+        
 	    <dependency>
 	      <groupId>org.eclipse.jetty</groupId>
 	      <artifactId>jetty-servlets</artifactId>
@@ -390,12 +297,14 @@
 	        </exclusion>
 	      </exclusions>
 	    </dependency>
+        
 	    <dependency>
 	      <groupId>org.slf4j</groupId>
 	      <artifactId>slf4j-log4j12</artifactId>
 	      <version>1.6.4</version>
 	      <scope>compile</scope>
 	    </dependency>
+        
 	    <dependency>
 	      <groupId>org.codehaus.plexus</groupId>
 	      <artifactId>plexus-archiver</artifactId>
@@ -407,7 +316,7 @@
 	          <groupId>org.codehaus.plexus</groupId>
 	        </exclusion>
 	      </exclusions>
-	    </dependency>
+	    </dependency> 
 	    
 	    <!-- end of CometD insertion  -->
 
@@ -420,10 +329,10 @@
 		</dependency>
 		
 		<dependency>
-  <groupId>commons-httpclient</groupId>
-  <artifactId>commons-httpclient</artifactId>
-  <version>3.1</version>
-</dependency>
+          <groupId>commons-httpclient</groupId>
+          <artifactId>commons-httpclient</artifactId>
+          <version>3.1</version>
+        </dependency>
 
  		<dependency>
 		    <groupId>org.slf4j</groupId>
@@ -740,7 +649,7 @@
                 <configuration>
                     <webXml>do_not_checkin/target/jspweb.xml</webXml>
                     <warSourceExcludes>**/*.jsp</warSourceExcludes>
-					<webResources>
+					 <webResources>
 						<resource>
 							<filtering>true</filtering>
 							<targetPath>lib</targetPath>

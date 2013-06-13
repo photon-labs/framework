@@ -96,7 +96,6 @@ public class RepositoryService extends RestBase implements FrameworkConstants {
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response addProjectToRepo(@QueryParam("appDirName") String appDirName, RepoDetail repodetail, @QueryParam("userId") String userId, @QueryParam("projectId") String projectId, @QueryParam("appId") String appId) {
-		System.out.println("daddd" + repodetail);
 		Response response = null;
 		String type = repodetail.getType();
 		if(type.equals(SVN)){
@@ -185,9 +184,17 @@ public class RepositoryService extends RestBase implements FrameworkConstants {
 		ResponseInfo responseData = new ResponseInfo();
 		String revision = "";
 		try {
-			revision = !HEAD_REVISION.equals(repodetail.getRevision()) ? repodetail.getRevisionVal() : repodetail.getRevision();
-			ApplicationInfo importProject = scmi.importProject(type, repodetail.getRepoUrl(), repodetail.getUserName(), repodetail.getPassword(), null, revision);
+			ApplicationInfo importProject = scmi.importProject(type, repodetail.getRepoUrl(), repodetail.getUserName(), repodetail.getPassword(), null, repodetail.getRevision());
 			if (importProject != null) {
+				if (repodetail.isTestCheckOut()) {
+					String path = Utility.getProjectHome() + File.separator + importProject.getAppDirName() + File.separator;
+					File testFolder = new File(path, TEST);
+					if (!testFolder.exists()) {
+						testFolder.mkdirs();
+					}
+					FileUtils.cleanDirectory(testFolder);
+					String testSvnCheckout = scmi.svnCheckout(repodetail.getTestUserName(), repodetail.getTestPassword(), repodetail.getTestRepoUrl(), testFolder.getPath(), repodetail.getTestRevision());
+				}
 				ResponseInfo finalOutput = responseDataEvaluation(responseData, null, IMPORT_SUCCESS_PROJECT, null);
 				return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
 			} else {

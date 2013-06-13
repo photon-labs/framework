@@ -24,15 +24,22 @@ public class RepoDetail implements Serializable {
 	private List<String>commitableFiles;
 	private List<RepoFileInfo> repoInfoFile;
 	private String type;
+	private boolean testCheckOut;
+	private String testRepoUrl;
+	private String testUserName;
+	private String testPassword;
+	private String testRevision;
+	private String testRevisionVal;
+	
 	private boolean repoExist;
 
 	public RepoDetail() {
 		super();
 	}
 	
-	public RepoDetail(String revision, String repoUrl, String userName, String password, String revisionVal,
-			String commitMessage, List<String> commitableFiles, List<RepoFileInfo> repoInfoFile, String type,
-			boolean repoExist) {
+	public RepoDetail(String revision, String repoUrl, String userName, String password, String revisionVal, String commitMessage,
+			List<String> commitableFiles, List<RepoFileInfo> repoInfoFile, String type, boolean testCheckOut, String testRepoUrl,
+			String testUserName, String testPassword, String testRevision, boolean repoExist) {
 		super();
 		this.revision = revision;
 		this.repoUrl = repoUrl;
@@ -43,6 +50,11 @@ public class RepoDetail implements Serializable {
 		this.commitableFiles = commitableFiles;
 		this.repoInfoFile = repoInfoFile;
 		this.type = type;
+		this.testCheckOut = testCheckOut;
+		this.testRepoUrl = testRepoUrl;
+		this.testUserName = testUserName;
+		this.testPassword = testPassword;
+		this.testRevision = testRevision;
 		this.repoExist = repoExist;
 	}
 
@@ -124,6 +136,46 @@ public class RepoDetail implements Serializable {
 
 	public void setRepoExist(boolean repoExist) {
 		this.repoExist = repoExist;
+	}
+
+	public boolean isTestCheckOut() {
+		return testCheckOut;
+	}
+
+	public void setTestCheckOut(boolean testCheckOut) {
+		this.testCheckOut = testCheckOut;
+	}
+
+	public String getTestRepoUrl() {
+		return testRepoUrl;
+	}
+
+	public void setTestRepoUrl(String testRepoUrl) {
+		this.testRepoUrl = testRepoUrl;
+	}
+
+	public String getTestUserName() {
+		return testUserName;
+	}
+
+	public void setTestUserName(String testUserName) {
+		this.testUserName = testUserName;
+	}
+
+	public String getTestPassword() {
+		return testPassword;
+	}
+
+	public void setTestPassword(String testPassword) {
+		this.testPassword = testPassword;
+	}
+
+	public String getTestRevision() {
+		return testRevision;
+	}
+
+	public void setTestRevision(String testRevision) {
+		this.testRevision = testRevision;
 	}
 
 	public String toString() {

@@ -320,6 +320,19 @@ public class ActionFunction implements Constants ,FrameworkConstants,ActionServi
     		}
     	}
     	
+    	public ActionResponse runComponentTest(HttpServletRequest request) throws PhrescoException {
+    		
+    		printLogs();
+    		BufferedReader server_logs=null;
+    		server_logs = runComponentTest();
+    		if(server_logs != null) {
+    			return generateResponse(server_logs);
+    		}
+    		else {
+    			throw new PhrescoException("No component test logs obatined");
+    		}
+    	}
+    	
     	public ActionResponse codeValidate(HttpServletRequest request) throws PhrescoException {
     		
     		printLogs();
@@ -661,6 +674,34 @@ public class ActionFunction implements Constants ,FrameworkConstants,ActionServi
             if (isDebugEnabled) {
             	S_LOGGER.error("Exception occured in the unit test process()" + FrameworkUtil.getStackTraceAsString(e));
 				throw new PhrescoException("Exception occured in the unit test process");
+            }
+        }
+        
+        return reader;
+    }
+	
+	public BufferedReader runComponentTest() throws PhrescoException {
+		
+		BufferedReader reader=null;
+		
+        if (isDebugEnabled) {
+            S_LOGGER.debug("Entering Method MavenFunctions.runComponentTest:Entry");
+        }
+        
+        try {
+            ApplicationInfo appInfo = getApplicationInfo();
+            StringBuilder workingDirectory = new StringBuilder(getAppDirectoryPath(appInfo));
+            MojoProcessor mojo = new MojoProcessor(new File(getPhrescoPluginInfoFilePath(PHASE_COMPONENT_TEST)));
+            persistValuesToXml(mojo, PHASE_COMPONENT_TEST);
+            List<Parameter> parameters = getMojoParameters(mojo, PHASE_COMPONENT_TEST);
+            List<String> buildArgCmds = getMavenArgCommands(parameters);
+            buildArgCmds.add(HYPHEN_N);
+            ApplicationManager applicationManager = PhrescoFrameworkFactory.getApplicationManager();
+            reader = applicationManager.performAction(getProjectInfo(), ActionType.COMPONENT_TEST, buildArgCmds, workingDirectory.toString());
+        } catch (PhrescoException e) {
+            if (isDebugEnabled) {
+            	S_LOGGER.error("Exception occured in the Component test process()" + FrameworkUtil.getStackTraceAsString(e));
+				throw new PhrescoException("Exception occured in the Component test process");
             }
         }
         

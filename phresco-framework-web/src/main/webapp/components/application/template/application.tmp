@@ -9,7 +9,7 @@
                     <td><span data-i18n="application.edit.code"></span><sup>*</sup></td>
                     <td><input type="text" placeholder="Application Code" name="appCode" value="{{code}}"/></td>
                     <td class="desc" rowspan="3" data-i18n="application.edit.description"></td>
-                    <td class="descdata" rowspan="3"><textarea rows="5" name="appDesc" class="appDesc" id="appDesc">{{description}}</textarea></td>
+                    <td class="descdata" rowspan="3"><textarea name="appDesc" class="appDesc popuptextarea" id="appDesc">{{description}}</textarea></td>
 					<td colspan="2"></td>
                 </tr>
                 <tr>
@@ -21,8 +21,8 @@
                 </tr>
                 <tr>
                     <td data-i18n="application.edit.technology"></td>
-                    <td><input type="text" placeholder="Android Hybrid" name="technology" value="{{techInfo.name}}" readonly/>
-						<input class="tech_ver" type="text" placeholder="4.0.3" name="techVersion" value="{{techInfo.version}}" readonly size="5"/></td>
+                    <td><input type="text" placeholder="Android Hybrid" name="technology" value="{{techInfo.name}} - {{techInfo.version}}" readonly/>
+					</td>
                     <td></td>
                     <td>   </td>
 					<td colspan="3"></td>
@@ -38,7 +38,7 @@
 							 <tr class="servers" key="displayed">
 							
 							 <td><span data-i18n="application.edit.servers"></span>&nbsp;<span class="paid">{{position @index}}</span></td>
-							  <td name="servers" class="servers"><select name="appServers" class="appServers">
+							  <td name="servers" class="servers"><select name="appServers" class="appServers selectpicker">
 								<option value=0>Select Server</option>
 								{{#each ../../projectlist.serverData}}
 									{{{compare id ../artifactGroupId name}}}
@@ -74,7 +74,7 @@
 					{{#unless projectlist.appdetails.data.appInfos.0.selectedServers}}
 						<tr class="servers" key="displayed">
 						  <td><span data-i18n="application.edit.servers"></span>&nbsp;<span class="paid">{{positionouter projectlist.appdetails.data.appInfos}}</span></td>
-						  <td name="servers" class="servers"><select name="appServers" class="appServers">
+						  <td name="servers" class="servers"><select name="appServers" class="appServers selectpicker">
 							<option value=0>Select Server</option>
 							{{#each projectlist.serverData}}
 								<option value="{{id}}">{{name}}</option>
@@ -102,7 +102,7 @@
 						{{#each selectedDatabases}}
 							  <tr class="database" key="displayed">
 							  <td><span data-i18n="application.edit.database"></span>&nbsp;<span class="paid">{{position @index}}</span></td>
-							  <td name="servers" class="databases"><select name="databases" class="databases">
+							  <td name="servers" class="databases"><select name="databases" class="databases selectpicker">
 								<option value=0>Select Database</option>
 								{{#each ../../projectlist.databaseData}}
 									{{{compare id ../artifactGroupId name}}}
@@ -136,7 +136,7 @@
 					{{#unless projectlist.appdetails.data.appInfos.0.selectedDatabases}}
 						<tr class="database" key="displayed">
 						  <td><span data-i18n="application.edit.database"></span>&nbsp;<span class="paid">{{dbouter projectlist.appdetails.data.appInfos}}</span></td>
-						  <td name="servers" class="databases"><select name="databases" class="databases">
+						  <td name="servers" class="databases"><select name="databases" class="databases selectpicker">
 							<option value=0>Select Database</option>
 							{{#each projectlist.databaseData}}
 								<option value="{{id}}">{{name}}</option>
@@ -163,17 +163,16 @@
                      <tr class="webservice" key="displayed">
                        <td colspan="7">
                           <table width="100%" cellpadding="0" cellspacing="0" border="0">
-                          <tr>
-                          		<td data-i18n="application.edit.webservice"></td>
-									{{#each projectlist.webserviceData}}
-										{{#isSelectedWebService ../projectlist.appdetails.data.appInfos id}}
-											<td><input class="webservice_chkbox" checked type="checkbox" value="{{id}}"> {{name}}</td>
-										{{else}}
-											<td><input class="webservice_chkbox" type="checkbox" value="{{id}}"> {{name}}</td>
-										{{/isSelectedWebService}}
-									{{/each}}	
-                              	<td></td>
-                          </tr>
+							<tr>
+								{{#each projectlist.webserviceData}}
+									{{#isSelectedWebService ../projectlist.appdetails.data.appInfos id}}
+										<td><input class="webservice_chkbox" checked type="checkbox" value="{{id}}"> {{name}}</td>
+									{{else}}
+										<td><input class="webservice_chkbox" type="checkbox" value="{{id}}"> {{name}}</td>
+									{{/isSelectedWebService}}
+								{{/each}}	
+								<td></td>
+							</tr>
                           </table>
                       </td>
                       </tr>
@@ -182,9 +181,9 @@
                           <td colspan="4"><img name="close" id="testing" src="themes/default/images/helios/close_icon.png" border="0" alt=""></td>
                        </tr>
                        <tr>
-                            <td>Functional Framework</td>		
+                            <td class="func_framewrk">Functional Framework</td>		
                             <td>
-                                <select>
+                                <select class="func_framework selectpicker">
                                     <option>PHPunit</option>
                                     <option>Junit</option>
                                     <option>TestNG</option>
@@ -193,7 +192,7 @@
                             </td>
                             <td>Tools</td>
                             <td>
-                                <select>
+                                <select class="tools selectpicker">
                                     <option>Selenium Web Driver</option>
                                     <option>Selenium Grid</option>
                                     <option>Cucumber</option>
@@ -201,7 +200,7 @@
                             </td>
                             <td>Version</td>
                             <td>
-                                <select>
+                                <select class="tools_version selectpicker">
                                     <option>1.0</option>
                                     <option>2.0</option>
                                     <option>3.0</option>

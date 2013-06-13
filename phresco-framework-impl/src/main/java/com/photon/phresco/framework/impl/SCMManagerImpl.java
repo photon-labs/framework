@@ -113,7 +113,6 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 		if(debugEnabled){
 			S_LOGGER.debug("Entering Method  SCMManagerImpl.importProject()");
 		}
-		
 		if (SVN.equals(type)) {
 			if(debugEnabled){
 				S_LOGGER.debug("SVN type");
@@ -1116,7 +1115,7 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 		return commitInfo;
 	}
 	
-	public String svnCheckout(String userName, String Password, String repoUrl, String Path) {
+	public String svnCheckout(String userName, String Password, String repoUrl, String Path, String revision) {
 		DAVRepositoryFactory.setup();
 		SVNClientManager clientManager = SVNClientManager.newInstance();
 		ISVNAuthenticationManager authManager = new BasicAuthenticationManager(userName, Password);
@@ -1126,7 +1125,7 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 		{
 			File file = new File(Path);
 			SVNURL url = SVNURL.parseURIEncoded(repoUrl);
-			updateClient.doCheckout(url, file, SVNRevision.UNDEFINED, SVNRevision.HEAD, true);
+			updateClient.doCheckout(url, file, SVNRevision.UNDEFINED, SVNRevision.parse(revision), true);
 		}
 		catch (SVNException e) {
 			return e.getLocalizedMessage();

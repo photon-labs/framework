@@ -656,13 +656,17 @@ public class Features extends DynamicParameterModule {
 		
 		List<ArtifactGroupInfo> selectedServers = new ArrayList<ArtifactGroupInfo>();
 		if (StringUtils.isNotEmpty(getServerLayer()) && CollectionUtils.isNotEmpty(getServer())) {
+			List<String> tempListServerIds = new ArrayList<String>();
 			for (String serverId : getServer()) {
 				if(StringUtils.isNotEmpty(serverId)) {
-					ArtifactGroupInfo artifactGroupInfo = new ArtifactGroupInfo();
-					artifactGroupInfo.setArtifactGroupId(serverId);
-					artifactGroupInfo.setArtifactInfoIds(Arrays.asList(getReqParameterValues(serverId)));
-					selectedServers.add(artifactGroupInfo);
-					appInfo.setSelectedServers(selectedServers);
+					if(!(tempListServerIds.contains(serverId))) {
+						ArtifactGroupInfo artifactGroupInfo = new ArtifactGroupInfo();
+						artifactGroupInfo.setArtifactGroupId(serverId);
+						artifactGroupInfo.setArtifactInfoIds(Arrays.asList(getReqParameterValues(serverId)));
+						selectedServers.add(artifactGroupInfo);
+						appInfo.setSelectedServers(selectedServers);
+						tempListServerIds.add(serverId);
+					}
 				}
 			}
 		} else {
@@ -675,13 +679,17 @@ public class Features extends DynamicParameterModule {
 		
     	List<ArtifactGroupInfo> selectedDatabases = new ArrayList<ArtifactGroupInfo>();
     	if (StringUtils.isNotEmpty(getDbLayer()) && CollectionUtils.isNotEmpty(getDatabase())) {
+    		List<String> tempListDbIds = new ArrayList<String>();
 			for (String databaseId : getDatabase()) {
 				if(StringUtils.isNotEmpty(databaseId)) {
-					ArtifactGroupInfo artifactGroupInfo = new ArtifactGroupInfo();
-					artifactGroupInfo.setArtifactGroupId(databaseId);
-					artifactGroupInfo.setArtifactInfoIds(Arrays.asList(getReqParameterValues(databaseId)));
-					selectedDatabases.add(artifactGroupInfo);
-					appInfo.setSelectedDatabases(selectedDatabases);
+					if(!(tempListDbIds.contains(databaseId))) {
+						ArtifactGroupInfo artifactGroupInfo = new ArtifactGroupInfo();
+						artifactGroupInfo.setArtifactGroupId(databaseId);
+						artifactGroupInfo.setArtifactInfoIds(Arrays.asList(getReqParameterValues(databaseId)));
+						selectedDatabases.add(artifactGroupInfo);
+						appInfo.setSelectedDatabases(selectedDatabases);
+						tempListDbIds.add(databaseId);
+					}
 				}
 			}
 		}else {
