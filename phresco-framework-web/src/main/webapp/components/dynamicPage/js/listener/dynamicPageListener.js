@@ -117,7 +117,6 @@ define(["framework/widget", "dynamicPage/api/dynamicPageAPI", "common/loading"],
 				
 			
 				$.each(response.data, function(index, value) {
-					
 						var type = value.type;
 						var name = "";
 						
@@ -131,8 +130,7 @@ define(["framework/widget", "dynamicPage/api/dynamicPageAPI", "common/loading"],
 						
 						if(type !== "") {
 							
-							if(type === "String" || type === "Number"){
-								
+							if(type === "String" || type === "Number") {
 								if(value.show === false){
 									show = ' style="display:none;"';
 								} else {
@@ -157,7 +155,8 @@ define(["framework/widget", "dynamicPage/api/dynamicPageAPI", "common/loading"],
 									multiple = ""
 								}
 								
-								htmlTag += '<tr'+ show +' id="'+value.key+'Control" name="chkCnt"><td>'+getName()+''+ required +'</td><td><input type="textbox" name="'+ value.key +'" id="'+value.key+'"'+ editable +''+ multiple +'></td></tr>';
+								htmlTag += '<tr'+ show +' id="'+value.key+'Control" name="chkCnt"><td>'+getName()+''+ required +
+									'</td><td><input type="textbox" name="'+ value.key +'" id="'+value.key+'"'+ editable +''+ multiple +' value="'+value.value+'"></td></tr>';
 							}
 							
 							if(type === "List"){

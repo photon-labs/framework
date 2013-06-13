@@ -70,12 +70,15 @@ public class ParameterService extends RestBase implements FrameworkConstants {
 		try {
 			List<Parameter> parameter = null;
 			String filePath = getInfoFileDir(appDirName, goal, phase);
-			MojoProcessor mojo = new MojoProcessor(new File(filePath));
-			if (Constants.PHASE_FUNCTIONAL_TEST.equals(goal)) {
-				String functionalTestFramework = FrameworkServiceUtil.getFunctionalTestFramework(appDirName);
-				goal = goal + HYPHEN + functionalTestFramework;
+			File file = new File(filePath);
+			if (file.exists()) {
+				MojoProcessor mojo = new MojoProcessor(file);
+				if (Constants.PHASE_FUNCTIONAL_TEST.equals(goal)) {
+					String functionalTestFramework = FrameworkServiceUtil.getFunctionalTestFramework(appDirName);
+					goal = goal + HYPHEN + functionalTestFramework;
+				}
+				parameter = mojo.getParameters(goal);
 			}
-			parameter = mojo.getParameters(goal);
 			ResponseInfo<List<Parameter>> finalOutput = responseDataEvaluation(responseData, null, "Parameter returned successfully", parameter);
 			return Response.ok(finalOutput).header("Access-Control-Allow-Origin", "*").build();
 

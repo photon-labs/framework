@@ -83,7 +83,7 @@ sup { color:#FF0000; }
 
 div, button, img { outline:none; }
 /*=== Loading ===*/
-.widget-mask-main,.widget-mask-mid-content{
+.widget-mask-main,.widget-mask-mid-content,.mask{
     width: 100%;
     height: 100%;
     top: 0;
@@ -2295,6 +2295,10 @@ html>body tbody.scrollContent {
 	width: 9%;
 }
 
+.testSuiteTable table tbody.scrollContent td {
+    width: 1% !important;
+}
+
 .code_content table.unit_result tbody.scrollContent td {
 	width: 6%;
 }
@@ -2306,7 +2310,6 @@ html>body tbody.scrollContent {
 	width: 56%;
 	position:fixed;
 	right: 10px;
-	height:72%;
 	float:right;
 	top: auto !important;
 	border: 1px solid #ddd;
@@ -2330,6 +2333,10 @@ html>body tbody.scrollContent {
 
 .unit_progress table thead tr td:last-child {
 	text-align:right;
+}
+
+.unit_progress table {
+	border: none !important;	
 }
 
 .unit_text {

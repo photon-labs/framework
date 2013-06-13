@@ -114,12 +114,10 @@ define(["functionalTest/api/functionalTestAPI"], function() {
 			if (from === "startHub") {
 				$("#startHub_popup").toggle();
 				testData = $('#startHubForm').serialize();
-			}
-			if (from === "startNode") {
+			} else if (from === "startNode") {
 				$("#startNode_popup").toggle();
 				testData = $('#startNodeForm').serialize();
-			}
-			if (from === "runFunctionalTest") {
+			} else if (from === "runFunctionalTest") {
 				$("#functionalTest_popup").toggle();
 				testData = $('#functionalTestForm').serialize();
 			}
@@ -131,28 +129,30 @@ define(["functionalTest/api/functionalTestAPI"], function() {
 			username = self.functionalTestAPI.localVal.getSession('username');
 						
 			if (appdetails != null) {
-				queryString ="username="+username+"&appId="+appId+"&customerId="+customerId+"&goal=validate-code&phase=validate-code&projectId="+projectId+"&"+testData;
+				queryString ="username="+username+"&appId="+appId+"&customerId="+customerId+"&goal=functional-test&phase=functional-test&projectId="+projectId+"&"+testData;
 			}
-			$('#functionalTestConsole').html('');
+			
+			$('#testConsole').html('');
+			self.testResultListener.openConsole();//To open the console
 				
 			if (self.mavenServiceListener === null) {
 				commonVariables.navListener.getMyObj(commonVariables.mavenService, function(retVal){
 					self.mavenServiceListener = retVal;
 					if (from === "startHub") {
-						self.mavenServiceListener.mvnStartHub(queryString, '#functionalTestConsole');
+						self.mavenServiceListener.mvnStartHub(queryString, '#testConsole');
 					} else if (from === "startNode") {
-						self.mavenServiceListener.mvnStartNode(queryString, '#functionalTestConsole');
+						self.mavenServiceListener.mvnStartNode(queryString, '#testConsole');
 					} else if (from === "runFunctionalTest") {
-						self.mavenServiceListener.mvnFunctionalTest(queryString, '#functionalTestConsole');
+						self.mavenServiceListener.mvnFunctionalTest(queryString, '#testConsole');
 					}
 				});
 			} else {
 				if (from === "startHub") {
-					self.mavenServiceListener.mvnStartHub(queryString, '#functionalTestConsole');
+					self.mavenServiceListener.mvnStartHub(queryString, '#testConsole');
 				} else if (from === "startNode") {
-					self.mavenServiceListener.mvnStartNode(queryString, '#functionalTestConsole');
+					self.mavenServiceListener.mvnStartNode(queryString, '#testConsole');
 				} else if (from === "runFunctionalTest") {
-					self.mavenServiceListener.mvnFunctionalTest(queryString, '#functionalTestConsole');
+					self.mavenServiceListener.mvnFunctionalTest(queryString, '#testConsole');
 				}
 			}			
 		}
