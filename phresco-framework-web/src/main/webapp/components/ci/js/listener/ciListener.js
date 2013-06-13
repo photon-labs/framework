@@ -70,9 +70,7 @@ define(["ci/api/ciAPI"], function() {
 				ciRequestBody.customerId = customerId;
 				ciRequestBody.projectId = projectId;
 				header.requestPostBody = JSON.stringify(ciRequestBody);
-				console.log("log => " + JSON.stringify(ciRequestBody));
 				var oldname = $('[name="oldname"]').val();
-				console.log("oldname => " + oldname);
 				header.webserviceurl = commonVariables.webserviceurl + commonVariables.jobTemplates + "?oldname=" + oldname;
 			} else if (action === "edit") {
 				header.requestMethod = "GET";
@@ -81,7 +79,6 @@ define(["ci/api/ciAPI"], function() {
 					header.webserviceurl = header.webserviceurl + "/" + params.name + "?customerId="+ customerId + "&projectId=" + projectId;
 				}
 			} else if (action === "delete") {
-				console.log("Deleet params " + params);
 				header.requestMethod = "DELETE";
 				header.webserviceurl = commonVariables.webserviceurl + commonVariables.jobTemplates + "?customerId="+ customerId + "&projectId=" + projectId;
 				if (params !== null && params !== undefined && params !== '') {
@@ -321,10 +318,7 @@ define(["ci/api/ciAPI"], function() {
 		showConfigureJob : function(thisObj) {
 			//TODO: need to get downstream project as well as dynamic params from service
 			var self = this;
-			console.log("id sub => " + thisObj.id);
 			var templateJsonData = $(thisObj).data("templateJson");
-			console.log("json sub => " + templateJsonData);
-			console.log("json sub name => " + templateJsonData.name);
 
 			// elements
 			var repoTypeElem = $("#repoType tbody tr");
@@ -393,8 +387,6 @@ define(["ci/api/ciAPI"], function() {
 			$("[name=configure]").attr("appname", appName);
 			$("[name=configure]").attr("jobtemplatename", jobtemplatename);
 
-			console.log("App name => " + appName);
-
 			// Dynamic param
 			//commonVariables.goal = commonVariables.ciPhase;
 			commonVariables.goal = commonVariables.unitTestGoal;
@@ -423,30 +415,18 @@ define(["ci/api/ciAPI"], function() {
 			var jobtemplatename = $(thisObj).attr("jobtemplatename");
 
 			// append the configureJob json (jobJson) in  job template name id
-			var jobConfiguration = $('#jobConfigurePopup').serializeObject();
-			console.log("Form serialize value => " + JSON.stringify(jobConfiguration));
+			var jobConfiguration = $('#jonConfiguration').serializeObject();
 
-            $('[jobtemplatename="'+ appName +'""][appname="'+ jobtemplatename +'"]').data("jobJson", jobConfiguration);
-            console.log("JOb config json value => " + $('[jobtemplatename="'+ appName +'""][appname="'+ jobtemplatename +'"]').data("jobJson"));
+			//Checking
+			$('[appname="'+ appName +'"][jobtemplatename="'+ jobtemplatename +'"]').data("jobJson", jobConfiguration);
 
-// var appName ="dsdsdsd-Java WebService";
-// var jobtemplatename = "Test2345";
-
-// // append the configureJob json (jobJson) in  job template name id
-// var jobConfiguration = $('#jobConfigurePopup').serializeObject();
-// $('[appname='+ jobtemplatename +']').data("jobJson", jobConfiguration);
-// $('[appname='+ jobtemplatename +']').data("jobJson123", jobConfiguration);
-
-            // TESTING USE
-            //$("#choose1234[job=kalees]")
-            //[id=choose1234][job=kalees]
+            // Hide popup
+            $(".dyn_popup").hide();
 		},
 
 		constructJobTemplateViewByEnvironment : function (response) {
 			var self = this;
-			console.log("constructJobTemplateViewByEnvironment = > " + JSON.stringify(response.data));
 			var data = response.data;
-			console.log(self.isBlank(data));
 			if (!self.isBlank(data)) {
 				// appinfo job templates
 				//var continuousDeliveryJobTemplates = "";

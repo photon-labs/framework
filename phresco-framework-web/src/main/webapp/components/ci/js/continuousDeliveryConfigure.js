@@ -59,7 +59,6 @@ define(["framework/widgetWithTemplate", "ci/listener/ciListener"], function() {
 
 			 // Handle bars
 			Handlebars.registerHelper('environment', function(data, flag) {
-				console.log("data environemnts => " + data);
 				var returnVal = "";
 				if (data != undefined) {
 					$.each(data, function(key, value) {
@@ -80,9 +79,7 @@ define(["framework/widgetWithTemplate", "ci/listener/ciListener"], function() {
 		
 		preRender: function(whereToRender, renderFunction) {
 			var self = this;
-			console.log("Pre render .... ");
 			self.getAction(self.ciRequestBody, 'getEnvironemntsByProjId', '', function(response) {
-				console.log("get environement response =>  " + JSON.stringify(response.data));
 			 	self.templateData.environments = response.data;
 				renderFunction(self.templateData, whereToRender);
 			});		
@@ -96,7 +93,6 @@ define(["framework/widgetWithTemplate", "ci/listener/ciListener"], function() {
 		 */
 		postRender : function(element) {
 			var self = this;
-			console.log("Post render .... ");
 
 			// List job templates by environment from all applications
 			self.onLoadEnvironmentEvent.dispatch(function(params) {
@@ -108,7 +104,6 @@ define(["framework/widgetWithTemplate", "ci/listener/ciListener"], function() {
 		
 		getAction : function(ciRequestBody, action, params, callback) {
 			var self = this;
-			console.log("Get action .... ");
 			self.ciListener.getHeaderResponse(self.ciListener.getRequestHeader(self.ciRequestBody, action, params), function(response) {
 				callback(response);
 			}); 
@@ -178,7 +173,6 @@ define(["framework/widgetWithTemplate", "ci/listener/ciListener"], function() {
    			// on clicking configure button from job configuration
    			$("[name=configure]").click(function() {
    				// we can get the this element over here
-   				console.log("clicked configure job ");
    				self.onConfigureJobEvent.dispatch(this);
    			});
 		}
