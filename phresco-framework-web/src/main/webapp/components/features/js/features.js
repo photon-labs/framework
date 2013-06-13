@@ -100,23 +100,42 @@ define(["features/listener/featuresListener"], function() {
 		postRender : function(element) {
 			var self = this;
 			self.featuresListener.getFeaturesList(self.featuresListener.getRequestHeader(self.featureRequestBody, "SELECTED"), function(response) {
+				var responseData = response.data;
 				$.each(response.data, function(index, value){
 					$("#feature_"+this.moduleId).addClass("switchOn").removeClass("switchOff");
 					$("#version_"+this.moduleId).show();					
 				});
+				self.selectedCount();
 			}); 
+		},
+		
+		
+		selectedCount : function(){
+			var jsLibCount = $("#jsibrariesContent").find(".switchOn").size(), 
+			moduleCount = $("#moduleContent").find(".switchOn").size(),
+			componentCount = $("#componentsContent").find(".switchOn").size();
+
+			$(".totalModules").text(moduleCount);
+			$(".totalComponent").text(componentCount);
+			$(".totalJslibraries").text(jsLibCount);
 		},
 
 		preRender: function(whereToRender, renderFunction){
-			var self = this;
+			var self = this, moduleTotalCount;
 			var collection = {};
 			self.featuresListener.showLoad();
 			self.getFeatures(collection, function(responseData){
 				renderFunction(responseData, whereToRender);
 				self.featuresListener.hideLoad();
+				setTimeout(function(){
+					$(".ftotal").text(responseData.featureslist.length);
+					$(".jstotal").text(responseData.jsibrarielist.length);
+					$(".comptotal").text(responseData.componentList.length);			
+				},600);
+					
+				
 			});
-		},	
-
+		},
 
 		getFeatures : function(collection, callback){
 			var self = this;
@@ -151,6 +170,8 @@ define(["features/listener/featuresListener"], function() {
 				callback(collection);
 			});
 		},
+		
+		
 
 
 		/***
@@ -159,6 +180,7 @@ define(["features/listener/featuresListener"], function() {
 		 */
 		bindUI : function(){
 			var self=this;
+			var counter=0;
 			$(window).resize(function() {
 				$(".dyn_popup").hide();
 				var height = $(this).height();
@@ -272,6 +294,17 @@ define(["features/listener/featuresListener"], function() {
 				}); 
 			});
 			self.windowResize();
+
+
+			$('#featureTest').children('tbody').children('tr').children('td').each(function() {
+				counter++;
+			});
+			if(counter==1)
+				$('.features_box').parent('td').addClass('onefeature');
+			else if(counter==2)
+				$('.features_box').parent('td').addClass('twofeatures');
+			else if(counter==3)
+				$('.features_box').parent('td').addClass('threefeatures');
 		},
 		
 		showSelected : function() {

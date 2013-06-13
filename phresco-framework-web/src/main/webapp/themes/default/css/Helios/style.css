@@ -3184,3 +3184,11 @@ padding: 4px 6px;
 vertical-align: middle;
 }
 
+.popuploading{
+	background-image : url(../../images/helios/loading.gif);
+	background-repeat : no-repeat;
+}
+.value_features {
+	padding:3px 0px 0px 5px;
+	float:left;
+}

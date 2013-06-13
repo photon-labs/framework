@@ -70,7 +70,18 @@ define(["header/api/headerAPI"], function() {
 		},
 		
 		selectCoustomer : function(customerValue) {
+			var self=this,obj=null;
+			Clazz.navigationController.jQueryContainer = commonVariables.contentPlaceholder;
 			$("#selectedCustomer").text(customerValue);
+				if (obj === null) {
+					commonVariables.navListener.getMyObj(commonVariables.projectlist, function(retVal) {
+						obj = retVal;
+					});
+			}
+			$('.proj_list').children('table').each(function() {
+				if(obj != null)
+					Clazz.navigationController.push(obj, true);
+			});
 		}
 	});
 

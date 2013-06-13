@@ -285,11 +285,17 @@ define(["framework/widget", "framework/templateProvider"], function() {
 				$(document).keyup(function(e) {
 					if(e.which == 27){
 						$("#" + placeId).hide();
+						$(".dyn_popup_text").val("");
 					}
 				});
 				
 				$('.dyn_popup_close').click( function() {
 					$("#" + placeId).hide();
+					$(".dyn_popup_text").val("");
+					$("input[name='envrName']").attr('placeholder','Environment Name');
+					$(".repo_error1").hide();
+					$(".repo_error2").hide();
+					$(".repo_error3").hide();
 				});
 					
 			},
@@ -312,12 +318,16 @@ define(["framework/widget", "framework/templateProvider"], function() {
 				}).data('datepicker');
 				
 				var checkout = $('#endDate').datepicker({
-					onRender: function(date) {return date.valueOf() <= checkin.date.valueOf() ? 'disabled' : '';}
+					onRender: function(date) {return date.valueOf() <= checkin.date.valueOf() ? '' : '';}
 				}).on('changeDate', function(ev) {checkout.hide();}).data('datepicker');
 				$("#startDate").bind('keydown', function(e) { 
   					var keyCode = e.keyCode || e.which; 
  			 		if (keyCode == 9) 
 					checkin.hide();
+				});
+
+				$("#startDate").click(function() { 
+  			 		checkin.show();
 				});
 
 				$("#endDate").bind('keydown', function(e) { 
@@ -326,6 +336,9 @@ define(["framework/widget", "framework/templateProvider"], function() {
 					checkout.hide();
 				});
 				
+				$("#endDate").click(function() { 
+  			 		checkout.show();
+				});
 				
 			},
 			
