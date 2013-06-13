@@ -1463,6 +1463,7 @@ public class Applications extends FrameworkBaseAction implements Constants {
 					actionTypesToCheck.add(BUILD);
 					actionTypesToCheck.add(REQ_START);
 					actionTypesToCheck.add(UNIT);
+					actionTypesToCheck.add(REQ_CODE);
 				} else if (getActionType().equals(BUILD)) {
 					actionTypesToCheck.add(ADD_TO_REPO);
 					actionTypesToCheck.add(COMMIT);
@@ -1470,6 +1471,7 @@ public class Applications extends FrameworkBaseAction implements Constants {
 					actionTypesToCheck.add(BUILD);
 					actionTypesToCheck.add(REQ_CODE);
 					actionTypesToCheck.add(REQ_START);
+					actionTypesToCheck.add(UNIT);
 				} else if (getActionType().equals(REQ_START)) {
 					actionTypesToCheck.add(BUILD);
 					actionTypesToCheck.add(REQ_CODE);
@@ -1483,6 +1485,7 @@ public class Applications extends FrameworkBaseAction implements Constants {
 					actionTypesToCheck.add(BUILD);
 					actionTypesToCheck.add(REQ_CODE);
 					actionTypesToCheck.add(REQ_START);
+					actionTypesToCheck.add(UNIT);
 				} else if (getActionType().equals(REQ_FROM_TAB_DEPLOY)) {
 					actionTypesToCheck.add(BUILD);
 					actionTypesToCheck.add(REQ_FROM_TAB_DEPLOY);
