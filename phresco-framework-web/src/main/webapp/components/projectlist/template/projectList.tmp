@@ -97,7 +97,7 @@
                         {{/if}}
                         
                         {{#if ../../userPermissions.manageRepo}}
-                        	<a name="svn_update{{id}}" dynamicId="{{id}}" class="tooltiptop" title="" data-placement="top" data-toggle="tooltip" href="#" data-original-title="SVN Update" >
+                        	<a name="svn_update{{id}}" dynamicId="{{id}}" class="tooltiptop" title="" data-placement="top" data-toggle="tooltip" href="#" data-original-title="Update" >
                         		<img src="themes/default/images/helios/update_svn_icon.png" width="22" height="15" border="0" alt="">
                     		</a>
               			{{else}}

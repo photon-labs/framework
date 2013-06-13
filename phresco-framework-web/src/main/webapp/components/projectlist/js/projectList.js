@@ -100,6 +100,9 @@ define(["projectlist/listener/projectListListener"], function() {
 			var self = this;
 			
 			self.projectslistListener.projectListAction(self.projectslistListener.getActionHeader(actionBody, action), function(response) {
+				if ("delete" == action) {
+					commonVariables.loadingScreen.removeLoading();
+				}
 				self.loadPage();
 			});
 		},
@@ -209,6 +212,7 @@ define(["projectlist/listener/projectListListener"], function() {
 				var deletearray = [];
 				var deleteproject = $(this).parent().parent().attr('currentPrjName');
 				deletearray.push(deleteproject);
+				commonVariables.loadingScreen.showLoading();
 				self.getAction(deletearray,"delete");
 			});
 
@@ -223,6 +227,7 @@ define(["projectlist/listener/projectListListener"], function() {
 				        projectnameArray.push(classname);
 				   }else {currentRow = null}
 				}
+				commonVariables.loadingScreen.showLoading();
 				self.getAction(projectnameArray,"delete");
 			});			
 			
