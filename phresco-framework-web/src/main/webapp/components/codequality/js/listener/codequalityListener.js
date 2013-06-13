@@ -227,7 +227,7 @@ define(["codequality/api/codequalityAPI"], function() {
 						typeLi += "<li disabled='disabled' key="+resdata.validateAgainst.key+" data="+resdata.validateAgainst.value+" style='padding-left:4px;'>"+resdata.validateAgainst.value+'<ul>'+innerUl+"</ul></li>";
 					}
 				});
-				var dropdownLi = '<ul class="nav"><li id="fat-menu" class="dropdown"><a href="#" id="drop5" role="button" class="dropdown-toggle" data-toggle="dropdown"><b id="repTypes" >'+response.data[0].validateAgainst.value+'</b><b class="caret" style="margin-right:24px;"></b></a> <div class="dropdown-menu cust_sel code_test_opt" role="menu" aria-labelledby="drop5"> <ul id="reportUl">'+typeLi+'</ul></div></li></ul>';
+				var dropdownLi = '<ul class="nav"><li id="fat-menu" class="dropdown"><a href="#" id="drop5" role="button" class="dropdown-toggle" data-toggle="dropdown"><b id="repTypes" >'+response.data[0].validateAgainst.value+'</b><b class="caret"></b></a> <div class="dropdown-menu cust_sel code_test_opt" role="menu" aria-labelledby="drop5"> <ul id="reportUl">'+typeLi+'</ul></div></li></ul>';
 				$("#codereportTypes").append(dropdownLi);
 				self.onProjects();
 				self.getIframeReport(response.data[0].validateAgainst.key);
@@ -260,7 +260,7 @@ define(["codequality/api/codequalityAPI"], function() {
 							$('.build_progress').animate({right: -value1},500);
 							$('.build_close').animate({right: '0px'},500); */
 							
-							var iframedata = "<iframe src="+iframereport.data+" width=96% height=500px></iframe>";
+							var iframedata = "<iframe src="+iframereport.data+" style=width:98%;height:450px;padding-top:170px></iframe>";
 							//$('#content_div').html('<div class="widget-maincontent-div">'+iframedata+'</div>');
 							$('#content_div').html(iframedata);
 						}else{

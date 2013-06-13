@@ -3,7 +3,7 @@
             <div class="code_report">
             	<font data-i18n="codequality.report"></font>
             </div>
-            <div class="navbar navbar-static code_func" id="codereportTypes" style="width:75px;">
+            <div class="navbar navbar-static code_func" id="codereportTypes" style="width:80px;">
                 <ul class="nav"></ul>
             </div>
            
@@ -29,8 +29,9 @@
     </section>
 	
 <!--<div class="mainContent" id="content_div"></div>-->
- <section class="content_main code_content testSuiteTable">
     <div class="mainContent"><div class="widget-maincontent-div" id="content_div" style="padding-left:1%;"></div></div>
+
+ <section class="content_main code_content testSuiteTable">
         
 		<div class="unit_close">
 				<a href="#" data-flag="true" id="codeValidateConsole">
