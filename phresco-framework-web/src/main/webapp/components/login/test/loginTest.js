@@ -5,26 +5,6 @@ define(["jquery", "login/login"], function($, Login) {
 	return { runTests: function (configData) {
 		module("login.js;login");
 		var login = new Login();
-		asyncTest("Login UI Test", function() {
-			var output;
-			Clazz.config = configData;
-			Clazz.navigationController = new Clazz.NavigationController({
-				mainContainer : "basepage\\:widget",
-				transitionType : Clazz.config.navigation.transitionType,
-				isNative : Clazz.config.navigation.isNative
-			});
-
-			Clazz.navigationController.jQueryContainer = $("<div id='loginTest'></div>");
-			Clazz.navigationController.push(login, false);
-			
-			setTimeout(function() {
-				login.loadPage();
-				start();
-				output = $(Clazz.navigationController.jQueryContainer).find("#loginContent").attr('id');
-				equal("loginContent", output, "Login Rendered Successfully");
-				//runOtherTests();
-			}, 1500);
-		});
 		
 		asyncTest("Login Service Test", function() {
 			mockDoLogin = mockFunction();
@@ -63,7 +43,26 @@ define(["jquery", "login/login"], function($, Login) {
 			}, 1500);
 		});
 		
-		
+		asyncTest("Login UI Test", function() {
+			var output;
+			Clazz.config = configData;
+			Clazz.navigationController = new Clazz.NavigationController({
+				mainContainer : "basepage\\:widget",
+				transitionType : Clazz.config.navigation.transitionType,
+				isNative : Clazz.config.navigation.isNative
+			});
+
+			Clazz.navigationController.jQueryContainer = $("<div id='loginTest'></div>");
+			Clazz.navigationController.push(login, false);
+			
+			setTimeout(function() {
+				login.loadPage();
+				start();
+				output = $(Clazz.navigationController.jQueryContainer).find("#loginContent").attr('id');
+				equal("loginContent", output, "Login Rendered Successfully");
+				//runOtherTests();
+			}, 1500);
+		});
 		
 		
 	return true;}};
