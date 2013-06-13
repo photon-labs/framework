@@ -196,7 +196,7 @@ define(["projectlist/listener/projectListListener"], function() {
 					data.dynamicId = dynamicId;
 					self.projectslistListener.getCommitableFiles(data, this);
 				} else {
-					self.opencc(this, $(this).attr('name'), currentPrjName);
+					self.openccpl(this, $(this).attr('name'), currentPrjName);
 				}	
 			});
 			

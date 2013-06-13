@@ -170,7 +170,45 @@ define(["framework/widget", "framework/templateProvider"], function() {
 
 				self.closeAll(placeId);
 			},
+			
+			openccpl : function(ee, placeId, currentPrjName) {
+				var self=this;
+				$(".dyn_popup").hide();
+				
+				$('.features_content_main').removeClass('z_index');
+				
+				var clicked = $(ee);
+				var target = $("#" + placeId);
+				var t= clicked.offset().top + 33;
+				var halfheight= window.innerHeight/2;
+				var halfwidth= window.innerWidth/2;
+				$(target).attr('currentPrjName',currentPrjName);
+				
+				if (clicked.offset().top < halfheight && clicked.offset().left < halfwidth) {
+					$(target).css({"left":clicked.offset().left ,"margin-top":10,"right": "auto"});
+					$(target).toggle();
+					$(target).removeClass('speakstyletopright').removeClass('speakstylebottomright').removeClass('speakstylebottomleft').addClass('speakstyletopleft').addClass('dyn_popup');
+				} else if (clicked.offset().top < halfheight && clicked.offset().left > halfwidth){
+					var d= ($(window).width() - (clicked.offset().left + clicked.outerWidth())) - 18;
+					$(target).css({"right":d ,"margin-top":10,"left": "auto","top": "auto"});
+					$(target).toggle();
+					$(target).removeClass('speakstyletopleft').removeClass('speakstylebottomright').removeClass('speakstylebottomleft').addClass('speakstyletopright').addClass('dyn_popup');
+				} else if (clicked.offset().top > halfheight && clicked.offset().left < halfwidth){
+					var BottomHeight = clicked.position().top - (target.height() + 33 );
+					$(target).css({"left": clicked.offset().left,"top": BottomHeight ,"right": "auto"});
+					$(target).toggle();
+					$(target).removeClass('speakstyletopleft').removeClass('speakstylebottomright').removeClass('speakstyletopright').addClass('speakstylebottomleft').addClass('dyn_popup');	
+				} else if (clicked.offset().top > halfheight && clicked.offset().left > halfwidth){
+					var d= ($(window).width() - (clicked.offset().left + clicked.outerWidth())) - 15;
+					var BottomHeight = clicked.position().top - (target.height() + 28 );
+					$(target).css({"right":d ,"top":BottomHeight,"left": "auto"});
+					$(target).toggle();
+					$(target).removeClass('speakstyletopleft').removeClass('speakstyletopright').removeClass('speakstylebottomleft').addClass('speakstylebottomright').addClass('dyn_popup');	
+				} 
 
+				self.closeAll(placeId);
+			},
+			
 			opencctime : function(ee, placeId) {
 				var self=this;
 				$('.content_main').addClass('z_index_ci');

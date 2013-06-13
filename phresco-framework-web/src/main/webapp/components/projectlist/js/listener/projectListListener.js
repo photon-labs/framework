@@ -279,7 +279,7 @@ define(["projectlist/api/projectListAPI"], function() {
 	      	self.projectListAction(self.getActionHeader(data, "getCommitableFiles"), function(response){
 	      		commonVariables.loadingScreen.removeLoading();
 				var commitableFiles = "";
-				self.opencc(obj, $(obj).attr('name'), '');
+				self.openccpl(obj, $(obj).attr('name'), '');
 				$('.commit_data_'+dynamicId).hide();
 				$('.commitErr_'+dynamicId).hide();      
 				if (response.data != undefined && !response.data.repoExist) {
