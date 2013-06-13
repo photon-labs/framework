@@ -461,8 +461,8 @@ define(["configuration/api/configurationAPI"], function() {
 		currentEvent : function(value) {
 			var self=this, dailySchedule, weeklySchedule, monthlySchedule;
 			dailySchedule = '<tr id="schedule_daily" class="schedule_date"><td>Every At<input type="checkbox" name="everyAt"></td><td><select name="hours">'+self.hours()+'</select><span>Hrs</span></td> <td><select name="minutes">'+self.minutes()+'</select><span>Mins</span></td></tr>';
-			weeklySchedule = '<tr id="schedule_weekly" class="schedule_date"><td><select name="weeks">'+self.weeks()+'</select><span>at</span></td><td><select name="hours">'+self.hours()+'</select><span>Hrs</span></td> <td><select name="minutes">'+self.minutes()+'</select><span>Mins</span></td></tr>';
-			monthlySchedule = '<tr id="schedule_monthly" class="schedule_date"><td><span>Every</span><select name="days">'+self.days()+'</select></td><td><span>of</span><select name="months">'+self.months()+'</select</td><td><span>at</span><select name="hours">'+self.hours()+'</select><span>Hrs</span></td> <td><select name="minutes">'+self.minutes()+'</select><span>Mins</span></td></tr>';
+			weeklySchedule = '<tr id="schedule_weekly" class="schedule_date"><td><select name="weeks">'+self.weeks()+'</select><span>Weeks</span> <span>at</span></td><td><select name="hours">'+self.hours()+'</select><span>Hrs</span></td> <td><select name="minutes">'+self.minutes()+'</select><span>Mins</span></td></tr>';
+			monthlySchedule = '<tr id="schedule_monthly" class="schedule_date"><td><span>Every</span><select name="days">'+self.days()+'</select></td><td><span>of</span><select name="months">'+self.months()+'</select><span>Months</span></td><td><span>at</span><select name="hours">'+self.hours()+'</select><span>Hrs</span></td> <td><select name="minutes">'+self.minutes()+'</select><span>Mins</span></td></tr>';
 			$('.schedule_date').remove();
 			if (value === 'Daily') {
 				$(dailySchedule).insertAfter('tr #scheduleExpression:last');
