@@ -78,7 +78,7 @@ define(["header/api/headerAPI"], function() {
 						obj = retVal;
 					});
 			}
-			$('.proj_list').children('table').each(function() {
+			$('.proj_list').each(function() {
 				if(obj != null)
 					Clazz.navigationController.push(obj, true);
 			});
