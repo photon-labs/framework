@@ -11,9 +11,9 @@ define(["framework/widgetWithTemplate", "ci/listener/ciListener"], function() {
 		templateData : {},
 		dynamicpage : null,
 		onLoadEnvironmentEvent : null,
-		onConfigureEvent : null,
 		onLoadDynamicPageEvent : null,
-		onDynamicPageEvent : null,
+		onConfigureJobEvent : null,	// saving job template
+		onConfigureJobPopupEvent : null, // show configure popup from gear icon
 		onSaveEvent : null,
 	
 		/***
@@ -44,13 +44,18 @@ define(["framework/widgetWithTemplate", "ci/listener/ciListener"], function() {
 			 	self.onLoadEnvironmentEvent = new signals.Signal();
 			 }
 
-			 if (self.onDynamicPageEvent === null) {
-				self.onDynamicPageEvent = new signals.Signal();
+			 if (self.onConfigureJobPopupEvent === null) {
+				self.onConfigureJobPopupEvent = new signals.Signal();
+			 }
+
+			 if (self.onConfigureJobEvent === null) {
+			 	self.onConfigureJobEvent = new signals.Signal();
 			 }
 				
 			 // Trigger registered events
 			 self.onLoadEnvironmentEvent.add(ciListener.loadEnvironmentEvent, ciListener);
-			 self.onDynamicPageEvent.add(self.ciListener.getDynamicParams, self.ciListener);
+			 self.onConfigureJobPopupEvent.add(self.ciListener.showConfigureJob, self.ciListener);
+			 self.onConfigureJobEvent.add(self.ciListener.configureJob, self.ciListener);
 
 			 // Handle bars
 			Handlebars.registerHelper('environment', function(data, flag) {
@@ -153,19 +158,9 @@ define(["framework/widgetWithTemplate", "ci/listener/ciListener"], function() {
 			// By Default gear icon should not be displayed
 			$("#sortable1 li.ui-state-default a").hide();
 			
-   			$('#sortable2').on('click', 'a[name=jobConfigure]', function() {
+   			$('#sortable2').on('click', 'a[name=jobConfigurePopup]', function() {
    				// Show popup as well as dynamic popup
-   	// 			console.log("id main js  => " + this.id);
-   	// 			console.log("Id construcuction " + '#'+this.id);
-				// var all = $('#'+this.id).data("json");
-				// var test = $.parseJSON(all);
-				// console.log("json main js  => " + all);
-				// console.log("json main js  => " + all.name);
-
-				// console.log("tes json main js  => " + test);
-				// console.log("tes json main js  => " + test.name);
-
-   				self.onDynamicPageEvent.dispatch(this);
+   				self.onConfigureJobPopupEvent.dispatch(this);
    			});
 
    			// on change of environemnt change function
@@ -178,6 +173,13 @@ define(["framework/widgetWithTemplate", "ci/listener/ciListener"], function() {
 							self.ciListener.constructJobTemplateViewByEnvironment(response);
 						});
 				});
+   			});
+
+   			// on clicking configure button from job configuration
+   			$("[name=configure]").click(function() {
+   				// we can get the this element over here
+   				console.log("clicked configure job ");
+   				self.onConfigureJobEvent.dispatch(this);
    			});
 		}
 	});
