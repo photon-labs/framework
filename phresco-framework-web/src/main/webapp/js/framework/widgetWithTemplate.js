@@ -313,7 +313,56 @@ define(["framework/widget", "framework/templateProvider"], function() {
 					return false;
 				}
 				return true;
-			}
+			},
+		
+			showHideConsole : function() {
+				var self = this;
+				var check = $('#consoleImg').attr('data-flag');
+				if (check == "true") {
+					self.openConsole();
+				} else {
+					self.closeConsole();
+				}
+			},
+		
+			openConsole : function() {
+				$('.testSuiteTable').append('<div class="mask"></div>');
+				$('.mask').show();
+				$('.unit_close').css("z-index", 1001);
+				$('.unit_progress').css("z-index", 1001);
+				$('.unit_close').css("height", 0);
+				var value = $('.unit_info').width();
+				var value1 = $('.unit_progress').width();
+				$('.unit_info').animate({left: -value},500);
+				$('.unit_progress').animate({right: '10px'},500);
+				$('.unit_close').animate({right: value1+10},500);
+				$('.unit_info table').removeClass("big").addClass("small");
+				$('#consoleImg').attr('data-flag','false');
+				
+				var height = $(window).height();
+				var resultvalue = 0;
+				$('.mainContent').prevAll().each(function() {
+					var rv = $(this).height();
+					resultvalue = resultvalue + rv; 
+				});
+				var footervalue = $('.footer_section').height();
+				resultvalue = resultvalue + footervalue + 200;
+				finalHeight = height - resultvalue;
+				$(".unit_progress").css("height", finalHeight + 10);
+				$('.unit_progress').find('.scrollContent').css("height", finalHeight - 20);
+			},
+		
+			closeConsole : function() {
+				var value = $('.unit_info').width();
+				var value1 = $('.unit_progress').width();
+				$('.unit_info').animate({left: '20'},500);
+				$('.unit_progress').animate({right: -value1},500);
+				$('.unit_close').animate({right: '0px'},500);
+				$('.unit_info table').removeClass("small").addClass("big");
+				$('#consoleImg').attr('data-flag','true');
+				$('.mask').remove();
+			},
+					
 		}
 	);
 
