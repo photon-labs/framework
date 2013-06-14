@@ -108,26 +108,28 @@
                 <div class="box_div" id="content_3">
                     <ul id="componentsContent">
                     {{#each componentList}}
-                        <li name="{{name}}" dispName="{{dispName}}" packaging="{{packaging}}" type="{{type}}">{{#if displayName}}{{displayName}}{{else}}{{name}}{{/if}}
+                        <li name="{{name}}" dispName="{{dispName}}" packaging="{{packaging}}" type="{{type}}">
                         <span class="flt_right" ><a class="featureinfo_img" value="{{#idtrime id}}{{/idtrime}}" artifactGroupId="{{id}}"> 
                         <img src="themes/default/images/helios/info_icon.png" width="15" height="16" border="0" alt=""></a></span>
                                 {{#versiondata versions id}}{{/versiondata}}
-								{{#versionShowHide versions id}}{{/versionShowHide}}
-									{{#each versions}}
-										{{#each appliesTo}}
-											<input type="hidden" defaultModule="true">
-										{{/each}}
+								{{#versionShowHide versions id}}{{/versionShowHide}} 
+								{{#each versions}}
+									{{#each appliesTo}}
+										<input type="hidden" defaultModule="true">
 									{{/each}}
+								{{/each}}	
 								<input type="hidden" class="moduleId" value="{{id}}">
-								{{#if versions}}
-									<select class="input-mini">
-										{{#each versions}}										
-											<option value="{{id}}" scope="{{scope}}">{{version}}</option>  
-										{{/each}} 
-									</select>
-								{{/if}}
+                                <select class="input-mini">
+                                    {{#each versions}}										
+                                        <option value="{{id}}" scope="{{scope}}">{{version}}</option>  
+                                    {{/each}} 
+                                </select>
                             </div>
-                             
+                             {{#if displayName}}
+                                {{displayName}}
+                            {{else}}
+                                {{name}}
+                            {{/if}}
                             <div class="clear"></div>
                         </li>
                   {{/each}}
