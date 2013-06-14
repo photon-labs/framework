@@ -2,7 +2,7 @@ define(["navigation/api/navigationAPI"], function() {
 
 	Clazz.createPackage("com.components.navigation.js.listener");
 
-	Clazz.com.components.navigation.js.listener.navigationListener = Clazz.extend(Clazz.Widget, {
+	Clazz.com.components.navigation.js.listener.navigationListener = Clazz.extend(Clazz.WidgetWithTemplate, {
 		navAPI : null,
 		localStorageAPI : null,
 		header : null,
