@@ -355,6 +355,24 @@ define(["framework/widget", "framework/templateProvider"], function() {
 				return customerId;
 			},
 			
+			// popUp for success event to close auto
+			successMsgPopUp : function(msg) {
+				$('#myModal').css({top:'50%',left:'50%',margin:'-'+($('#myModal').height() / 2)+'px 0 0 -'+($('#myModal').width() / 2)+'px'});
+				$('#myModal').css('z-index', '1051');
+				$('#myModal').modal('show');
+				$('.modal-header').hide();
+				$('.modal-body').html(msg);
+				$('.modal-footer').hide();
+				setTimeout("$('#myModal').modal('hide')", 3000);
+			},
+			
+			// popUp onclick to open with dynamic content
+//			showPopUp : function(popUpheader,content) {
+//				$('#myModal').modal('show');
+//				$('#myModalLabel').html(popUpheader);
+//				$('.modal-body').html(content);
+//			},
+			
 			multiselect : function() {
 				$('.selectpicker').selectpicker();
 			},
