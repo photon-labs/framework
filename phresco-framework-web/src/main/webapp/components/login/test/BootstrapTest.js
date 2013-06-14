@@ -97,6 +97,7 @@ define(["jquery"], function($) {
 					projectTest.runTests(data);	
 					applicationTest.runTests(data);
 					configurationTest.runTests(data);
+					featuresTest.runTests(data);
 				}
 				
 				/* navigationTest.runTests(data);

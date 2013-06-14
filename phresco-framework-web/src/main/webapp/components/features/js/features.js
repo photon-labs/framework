@@ -58,30 +58,42 @@ define(["features/listener/featuresListener"], function() {
 			Handlebars.registerHelper('versiondata', function(versions, id) {
 				var selectedList = self.featuresListener.featuresAPI.localVal.getSession("selectedFeatures");				
 				var fieldset;
-				$.each(versions, function(index, value){
-					$.each(value.appliesTo, function(index, value){
-						if(value.required == true){
-							fieldset = '<fieldset class="switch switchOn" id="feature_'+ id +'" value="false"><label class="off" name="on_off" value="false"></label><label class="on" name="on_off" value="true"></label></fieldset>';
-						} else {							
+				if(versions.length > 0){
+					$.each(versions, function(index, value){
+						if(JSON.stringify(value.appliesTo) !== "null"){
+							$.each(value.appliesTo, function(index, value){
+								if(value.required == true){
+									fieldset = '<fieldset class="switch switchOn" id="feature_'+ id +'" value="false"><label class="off" name="on_off" value="false"></label><label class="on" name="on_off" value="true"></label></fieldset>';
+								} else {							
+									fieldset = '<fieldset class="switch switchOff" id="feature_'+ id +'" value="false"><label class="off" name="on_off" value="false"></label><label class="on" name="on_off" value="true"></label></fieldset>';
+								}
+							});							
+						}else {							
 							fieldset = '<fieldset class="switch switchOff" id="feature_'+ id +'" value="false"><label class="off" name="on_off" value="false"></label><label class="on" name="on_off" value="true"></label></fieldset>';
 						}
-					});					
-				});
+					});
+				}else {							
+					fieldset = '<fieldset class="switch switchOff" id="feature_'+ id +'" value="false"><label class="off" name="on_off" value="false"></label><label class="on" name="on_off" value="true"></label></fieldset>';
+				}
 				return fieldset;
 			});
 			
 			Handlebars.registerHelper('versionShowHide', function(versions, id) {
 				var fieldset;
-				$.each(versions, function(index, value){
-					$.each(value.appliesTo, function(index, value){
-						if(value.required == true){
-							fieldset = '<div class="flt_right" id="version_'+ id +'" style="display:block;">';
-						}else{							
-							fieldset = '<div class="flt_right" id="version_'+ id +'" style="display:none;">';
-						}
-					});					
-				});
-				return fieldset;
+				if(versions.length > 0){
+					$.each(versions, function(index, value){
+						if(JSON.stringify(value.appliesTo) !== "null"){
+							$.each(value.appliesTo, function(index, value){
+								if(value.required == true){
+									fieldset = '<div class="flt_right" id="version_'+ id +'" style="display:block;">';
+								}else{							
+									fieldset = '<div class="flt_right" id="version_'+ id +'" style="display:none;">';
+								}
+							});
+						}		
+					});
+					return fieldset;
+				}
 			});
 			
 			Handlebars.registerHelper('idtrime', function(id) {
@@ -114,7 +126,6 @@ define(["features/listener/featuresListener"], function() {
 			var jsLibCount = $("#jsibrariesContent").find(".switchOn").size(), 
 			moduleCount = $("#moduleContent").find(".switchOn").size(),
 			componentCount = $("#componentsContent").find(".switchOn").size();
-
 			$(".totalModules").text(moduleCount);
 			$(".totalComponent").text(componentCount);
 			$(".totalJslibraries").text(jsLibCount);
@@ -132,8 +143,6 @@ define(["features/listener/featuresListener"], function() {
 					$(".jstotal").text(responseData.jsibrarielist.length);
 					$(".comptotal").text(responseData.componentList.length);			
 				},600);
-					
-				
 			});
 		},
 
@@ -171,9 +180,6 @@ define(["features/listener/featuresListener"], function() {
 			});
 		},
 		
-		
-
-
 		/***
 		 * Bind the action listeners. The bindUI() is called automatically after the render is complete 
 		 *
@@ -206,7 +212,7 @@ define(["features/listener/featuresListener"], function() {
 				var divId = "moduleContent";
 				self.onSearchEvent.dispatch(txtSearch, divId);
            	});
-			
+
            	$('#jsibraries').keyup(function(event) {
 				var txtSearch = $('#jsibraries').val();
 				var divId = "jsibrariesContent";
