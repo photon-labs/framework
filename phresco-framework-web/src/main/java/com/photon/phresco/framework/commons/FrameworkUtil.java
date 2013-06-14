@@ -3055,6 +3055,9 @@ public class FrameworkUtil extends FrameworkBaseAction implements Constants {
 						r = myHssfSheet.createRow(next.getRowNum() + 1);
 					}
 					for (int i = 0; i < numCol; i++) {
+						if(i == 13){
+							break;
+						}
 						Cell cell = r.createCell(i);
 						cell.setCellValue(cellValue[i]);
 						if (tryStyle[i] != null) {
