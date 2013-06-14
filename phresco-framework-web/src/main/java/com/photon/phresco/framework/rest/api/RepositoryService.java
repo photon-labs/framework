@@ -613,7 +613,7 @@ public class RepositoryService extends RestBase implements FrameworkConstants, S
 					null);
 			return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
 		} catch (Exception e) {
-			ResponseInfo finalOutput = responseDataEvaluation(responseData, e, e.getLocalizedMessage(), null);
+			ResponseInfo finalOutput = responseDataEvaluation(responseData, null, e.getLocalizedMessage(), null);
 			return Response.status(Status.BAD_REQUEST).entity(finalOutput).header("Access-Control-Allow-Origin", "*")
 					.build();
 		}
