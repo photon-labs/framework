@@ -28,7 +28,7 @@
                 				<img src="themes/default/images/helios/delete_row_icon_off.png" width="29" height="23" border="0" alt="0">
                 			{{/if}}
 
-                            <div id="{{id}}" class="dyn_popup"> Are you sure to delete this ?
+                            <div id="{{id}}" class="dyn_popup deleteproj_msg"> Are you sure to delete this ?
                                 <div>
                                     <input type="button" value="Yes" class="btn btn_style" name="holeDelete">
                                     <input type="button" value="No" class="btn btn_style dyn_popup_close">
@@ -85,7 +85,7 @@
                    <div class="popuploading" id="pdfReportLoading_{{id}}">&nbsp</div>
                 <div class="flt_right">
                  <input type="button" fromPage="All" sonarUrl="http://localhost:9000/dashboard" value="Generate" class="btn btn_style" name="generate" appId="{{id}}" projectId = "{{../id}}">
-                 <input type="button" value="Cancel" class="btn btn_style dyn_popup_close">
+                 <input type="button" value="Close" class="btn btn_style dyn_popup_close">
                </div>
                 <!--pdf_report div ends here -->  
              </div> 
@@ -151,7 +151,7 @@
                      <div class="popuploading" id="addRepoLoading_{{id}}">&nbsp</div>
                      <div class="flt_right" appId="{{id}}" projectId = "{{../id}}" appDirName="{{appDirName}}">
                         <input type="button" name="addrepobtn" id="{{id}}" value="Add To Repo" class="btn btn_style">
-                        <input type="button" value="Cancel" class="btn btn_style dyn_popup_close">
+                        <input type="button" value="Close" class="btn btn_style dyn_popup_close">
                      </div> 
                   </div>
                   <!--add_repo div ends here --> 
@@ -200,12 +200,12 @@
 							 
                          <div class="flt_right roll_data" appDirName="{{appDirName}}">
                           <input type="button" value="Commit" disabled class="btn" id="{{id}}" name="commitbtn">
-                            <input type="button" value="Cancel" class="btn btn_style dyn_popup_close">
+                            <input type="button" value="Close" class="btn btn_style dyn_popup_close">
                          </div>
 					 </div> 
 				 	<div class="dummyCommit" id="dummyCommit_{{id}}"></div>
 				 	<div class="popuploading" id="commitLoading_{{id}}">&nbsp</div>
-					<div class="hideContent commitErr_{{id}}" width="100%" border="0" cellspacing="0" cellpadding="0">
+					<div class="hideContent commitErr_{{id}} commit_popup" width="100%" border="0" cellspacing="0" cellpadding="0">
 						<p>This Project is not a working copy, add to repository and then try to commit.</p>
 						<div class="popupCloseBtn">
 							<input type="button" value="Close" class="btn btn_style dyn_popup_close">
@@ -255,7 +255,7 @@
                      <div class="popuploading" id="updateRepoLoading_{{id}}">&nbsp</div>
                      <div class="flt_right" appDirName="{{appDirName}}">
                          <input type="button" value="Update Application" id="{{id}}" class="btn btn_style" name="updatebtn">
-                         <input type="button" value="Cancel" class="btn btn_style dyn_popup_close">
+                         <input type="button" value="Close" class="btn btn_style dyn_popup_close">
                      </div>               
                     <!--svn_update div ends here -->	
                   </div>
@@ -268,9 +268,9 @@
               		{{else}}
               			<img name="delete" src="themes/default/images/helios/delete_row_off.png" width="14" height="18" border="0" alt="">
               		{{/if}}
-                    <div id="{{creationDate}}" class="dyn_popup ">
+                    <div id="{{creationDate}}" class="dyn_popup delete_msg">
                       Are you sure to delete ?
-                        <div >
+                        <div>
                             <input type="button" value="Yes" class="btn btn_style" name="deleteConfirm">
                             <input type="button" value="No" class="btn btn_style dyn_popup_close">
                         </div>

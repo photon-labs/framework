@@ -115,7 +115,7 @@
                                 <!--<td>&nbsp;</td>-->
                                 <td name={{name}}>
                                 	<input type="button" name="cloneEnvr" class="btn btn_style" value="Clone">	
-                                    <input type="button" value="Cancel" class="btn btn_style dyn_popup_close">
+                                    <input type="button" value="Close" class="btn btn_style dyn_popup_close">
                                 </td>    
                             </tr>
                         </table>
@@ -135,7 +135,7 @@
 					
 						<img src="themes/default/images/helios/delete_row_off.png" border="0" alt="">
 					{{/if}}
-				<div id="{{name}}" class="dyn_popup"> Are you sure to delete this ?
+				<div id="{{name}}" class="dyn_popup delete_msg"> Are you sure to delete this ?
 					<div>
 						<input type="button" value="Yes" class="btn btn_style" name="deleteEnv">
 						<input type="button" value="No" class="btn btn_style dyn_popup_close">

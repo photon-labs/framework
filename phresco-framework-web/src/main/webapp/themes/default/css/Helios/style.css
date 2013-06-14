@@ -919,19 +919,19 @@ ul.nav li.dropdown:hover > .test_options{
 	margin-left: 10px !important;
 }
 
-#deleteproj_msg {
+.delete_msg , .deleteproj_msg{
 	color: #000 !important;
 	font-weight:normal !important;
 	font-size:12px;	
 }
 
-#deleteproj_msg div input, #delete_msg div input {
+.delete_msg div input, .deleteproj_msg div input {
 	padding: 3px 8px !important;
 	margin-top: 3px;
 	font-size: 11px;		
 }
 
-#deleteproj_msg div, #delete_msg div {
+.delete_msg div, .deleteproj_msg div , .commit_popup {
 	text-align: right;	
 }
 
@@ -1303,6 +1303,8 @@ img[name="close"] {
 
 .featureinfo .features_cont {
 	padding:8px;
+	max-height: 150px;
+	overflow-y: auto;
 }
 
 .featureinfo .dyn_popup_close, .featureinfo .dyn_popup_close:hover {

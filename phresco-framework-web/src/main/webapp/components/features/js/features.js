@@ -206,7 +206,7 @@ define(["features/listener/featuresListener"], function() {
 				var divId = "moduleContent";
 				self.onSearchEvent.dispatch(txtSearch, divId);
            	});
-
+			
            	$('#jsibraries').keyup(function(event) {
 				var txtSearch = $('#jsibraries').val();
 				var divId = "jsibrariesContent";
@@ -244,13 +244,13 @@ define(["features/listener/featuresListener"], function() {
 				self.onCancelEvent.dispatch();
            	});
        		var flag=1,temp1,temp2;
-          	$('.featureinfo_img').on("click", function(event) {				
+          	$('.featureinfo_img').on("click", function(event) {	
 				var descid = $(this).attr("artifactGroupId");
 				temp2=descid;
 				var currentObj = this;				
 				self.featuresListener.getFeaturesList(self.featuresListener.getRequestHeader(self.featureRequestBody, "desc", descid), function(response) {
 					var descriptionid = $.trim(descid.replace(/ /g,''));
-					var divhtml = '<div id="'+descriptionid+'" class="dyn_popup featureinfo"><h1>Description</h1><a href="#" class="dyn_popup_close">X</a><div class="features_cont"><span><img src="themes/default/images/helios/feature_info_logo.png" width="42" height="42" border="0" alt=""></span>'+response.data+'</div></div>';
+					var divhtml = '<div id="'+descriptionid+'" class="dyn_popup featureinfo"><h1>Description</h1><a href="#" class="dyn_popup_close">X</a><div class="features_cont"><span><img src="themes/default/images/helios/feature_info_logo.png" width="42" height="42" border="0" alt=""></span><span class="features_desc_content">'+response.data+'</span></div></div>';
 					$("#desc").children().remove();
 					$("#desc").append(divhtml);
 					commonVariables.temp = currentObj;
@@ -259,6 +259,7 @@ define(["features/listener/featuresListener"], function() {
 						temp1=descid;
 						$("#"+descid).show();	
 						flag=0;
+						self.featuresListener.scrollbarEnable();
 					 }
 					else{					 
 						$("#"+descid).hide();	

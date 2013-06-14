@@ -150,11 +150,17 @@ define(["features/api/featuresAPI", "features/features",  "application/applicati
 				autoHideScrollbar:true,
 				theme:"light-thin"
 			});
+
+			$(".features_cont").mCustomScrollbar({
+				autoHideScrollbar:true,
+				theme:"light-thin"
+			});
 		},
 		scrollbarUpdate : function(){
 			$("#content_1").mCustomScrollbar("update"); 
 			$("#content_2").mCustomScrollbar("update"); 
-			$("#content_3").mCustomScrollbar("update"); 
+			$("#content_3").mCustomScrollbar("update");
+			$(".features_cont").mCustomScrollbar("update"); 	
 		},
 
 		hideLoad : function(){
