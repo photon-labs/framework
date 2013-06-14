@@ -63,6 +63,7 @@
 				"startdate" : "Start Date",
 				"widget" : "Widget",
 				"technology" : "Technology",
+				"dependency" : "Dependency",
 				"version" : "Version",
 				"description" : "Description",
 				"appcode" : "App Code"

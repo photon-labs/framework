@@ -70,13 +70,16 @@ define(["header/api/headerAPI"], function() {
 		},
 		
 		selectCoustomer : function(customerValue) {
-			var self=this,obj=null;
+			var self=this, obj=null;
+			self.headerAPI.localVal.deleteSession("Application Layer");
+			self.headerAPI.localVal.deleteSession("Web Layer");
+			self.headerAPI.localVal.deleteSession("Mobile Layer");
 			Clazz.navigationController.jQueryContainer = commonVariables.contentPlaceholder;
 			$("#selectedCustomer").text(customerValue);
-				if (obj === null) {
-					commonVariables.navListener.getMyObj(commonVariables.projectlist, function(retVal) {
-						obj = retVal;
-					});
+			if (obj === null) {
+				commonVariables.navListener.getMyObj(commonVariables.projectlist, function(retVal) {
+					obj = retVal;
+				});
 			}
 			$('.proj_list').each(function() {
 				if(obj != null)

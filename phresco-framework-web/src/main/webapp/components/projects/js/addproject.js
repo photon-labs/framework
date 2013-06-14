@@ -67,17 +67,27 @@ define(["projects/listener/projectsListener"], function() {
 			$("#projectList").hide();
 			$("#createProject").show();
 			var self=this;
-			self.setTechnologyData(function(bCheck){
-				if(bCheck){
-					self.applicationlayerData = self.projectsListener.projectAPI.localVal.getJson("Application Layer");
-					self.weblayerData = self.projectsListener.projectAPI.localVal.getJson("Web Layer");
-					self.mobilelayerData = self.projectsListener.projectAPI.localVal.getJson("Mobile Layer");
-					self.templateData.applicationlayerData = self.applicationlayerData;
-					self.templateData.weblayerData = self.weblayerData;
-					self.templateData.mobilelayerData = self.mobilelayerData;
-					renderFunction(self.templateData, whereToRender);
-				}
-			});
+			self.applicationlayerData = self.projectsListener.projectAPI.localVal.getJson("Application Layer");
+			self.weblayerData = self.projectsListener.projectAPI.localVal.getJson("Web Layer");
+			self.mobilelayerData = self.projectsListener.projectAPI.localVal.getJson("Mobile Layer");
+			if(self.applicationlayerData !== null &&  self.applicationlayerData !== null && self.applicationlayerData !== null) {
+				self.templateData.applicationlayerData = self.applicationlayerData;
+				self.templateData.weblayerData = self.weblayerData;
+				self.templateData.mobilelayerData = self.mobilelayerData;
+				renderFunction(self.templateData, whereToRender);
+			} else {
+				self.setTechnologyData(function(bCheck){
+					if(bCheck){
+						self.applicationlayerData = self.projectsListener.projectAPI.localVal.getJson("Application Layer");
+						self.weblayerData = self.projectsListener.projectAPI.localVal.getJson("Web Layer");
+						self.mobilelayerData = self.projectsListener.projectAPI.localVal.getJson("Mobile Layer");
+						self.templateData.applicationlayerData = self.applicationlayerData;
+						self.templateData.weblayerData = self.weblayerData;
+						self.templateData.mobilelayerData = self.mobilelayerData;
+						renderFunction(self.templateData, whereToRender);
+					}
+				});
+			}	
 		},
 		
 		/***
@@ -164,6 +174,12 @@ define(["projects/listener/projectsListener"], function() {
 
 			$("#enddt").click(function() {
 				$("#endDate").focus();
+			});
+			
+			$(".create_proj .scrollContent").mCustomScrollbar({
+				autoHideScrollbar:true,
+				theme:"light-thin",
+				advanced:{ updateOnContentResize: true}
 			});
 			 
 		}

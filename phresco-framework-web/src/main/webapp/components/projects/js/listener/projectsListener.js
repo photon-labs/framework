@@ -363,11 +363,11 @@ define(["projects/api/projectsAPI"], function() {
 		addLayers :function(layerType, whereToAppend) {
 			var self=this, minusIcon = '<img src="themes/default/images/helios/minus_icon.png" border="0" alt="">';
 			
-			var self = this, dynamicValue, applicationlayer = '<tr class="applnlayercontent" name="staticApplnLayer"><td class="applnappcode"><input type="text" id="appcode" class="appln-appcode"></td><td name="technology" class="technology"><select name="appln_technology" class="appln_technology"><option>Select Technology</option>'+ self.getTechnology() +'</select></td><td colspan="3" name="version" class="version"><select name="appln_version" class="appln_version"><option>Select Version</option></select></td><td colspan="2"><select><option>Select Dependency</option></select></td><td><div class="flt_right icon_center"><a name="addApplnLayer"><img src="themes/default/images/helios/plus_icon.png" border="0" alt=""></a><a href="javascript:;" name="removeApplnLayer"><img src="themes/default/images/helios/minus_icon.png" border="0" alt=""></a></div></td></tr>',
+			var self = this, dynamicValue, applicationlayer = '<tr class="applnlayercontent" name="staticApplnLayer"><td class="applnappcode"><input type="text" id="appcode" class="appln-appcode"></td><td name="technology" class="technology"><select name="appln_technology" class="appln_technology"><option>Select Technology</option>'+ self.getTechnology() +'</select></td><td colspan="3" name="version" class="version"><select name="appln_version" class="appln_version"><option>Select Version</option></select></td><td colspan="2"><select><option>Select Dependency</option></select></td><td><div class="flt_right icon_center"><a name="addApplnLayer"><img src="themes/default/images/helios/plus_icon.png" border="0" alt=""></a> <a href="javascript:;" name="removeApplnLayer"><img src="themes/default/images/helios/minus_icon.png" border="0" alt=""></a></div></td></tr>',
 
-			weblayer ='<tr class="weblayercontent" name="staticWebLayer"><td class="webappcode"><input type="text" id="webappcode" class="web-appcode"></td><td name="web" class="web"><select name="weblayer" class="weblayer"><option>Select Layer</option>'+self.getWidget() +'</select></td><td name="widget" class="widget"><select name="web_widget" class="web_widget"><option>Select Widget</option> </select></td><td name="widgetversion" class="widgetversion"><select name="web_version" class="web_version"><option>Select Version</option></select></td><td><select><option>Select Dependency</option></select></td><td> <div class="flt_right icon_center"><a href="javascript:;" name="addWebLayer"><img src="themes/default/images/helios/plus_icon.png" border="0" alt=""></a><a href="javascript:;" name="removeWebLayer"><img src="themes/default/images/helios/minus_icon.png" border="0" alt=""></a></div></td></tr>',
+			weblayer ='<tr class="weblayercontent" name="staticWebLayer"><td class="webappcode"><input type="text" id="webappcode" class="web-appcode"></td><td name="web" class="web"><select name="weblayer" class="weblayer"><option>Select Layer</option>'+self.getWidget() +'</select></td><td name="widget" class="widget"><select name="web_widget" class="web_widget"><option>Select Widget</option> </select></td><td name="widgetversion" class="widgetversion"><select name="web_version" class="web_version"><option>Select Version</option></select></td><td><select><option>Select Dependency</option></select></td><td> <div class="flt_right icon_center"><a href="javascript:;" name="addWebLayer"><img src="themes/default/images/helios/plus_icon.png" border="0" alt=""></a> <a href="javascript:;" name="removeWebLayer"><img src="themes/default/images/helios/minus_icon.png" border="0" alt=""></a></div></td></tr>',
 
-			mobilelayer = '<tr class="mobilelayercontent" name="staticMobileLayer"><td class="mobileappcode"><input type="text" id="mobileappcode" class="mobile-appcode"></td><td name="mobile" class="mobile"><select name="mobile_layer" class="mobile_layer"><option>Select Model</option>'+self.getMobile() +'</select></td><td name="types" class="types"><select name="mobile_types" class="mobile_types"><option>Select Type</option></select></td><td colspan="2" name="mobileversion" class="mobileversion"><select name="mobile_version" class="mobile_version"><option>Select Version</option></select></td><td><div class="flt_right icon_center"><a href="javascript:;" name="addMobileLayer"><img src="themes/default/images/helios/plus_icon.png" border="0" alt=""></a><a href="javascript:;" name="removeMobileLayer"><img src="themes/default/images/helios/minus_icon.png" border="0" alt=""></a></div></td></tr>';
+			mobilelayer = '<tr class="mobilelayercontent" name="staticMobileLayer"><td class="mobileappcode"><input type="text" id="mobileappcode" class="mobile-appcode"></td><td name="mobile" class="mobile"><select name="mobile_layer" class="mobile_layer"><option>Select Model</option>'+self.getMobile() +'</select></td><td name="types" class="types"><select name="mobile_types" class="mobile_types"><option>Select Type</option></select></td><td colspan="2" name="mobileversion" class="mobileversion"><select name="mobile_version" class="mobile_version"><option>Select Version</option></select></td><td><div class="flt_right icon_center"><a href="javascript:;" name="addMobileLayer"><img src="themes/default/images/helios/plus_icon.png" border="0" alt=""></a> <a href="javascript:;" name="removeMobileLayer"><img src="themes/default/images/helios/minus_icon.png" border="0" alt=""></a></div></td></tr>';
 			
 			if (layerType === "addApplnLayer") {
 				dynamicValue = $(applicationlayer).insertAfter(whereToAppend);
@@ -419,19 +419,16 @@ define(["projects/api/projectsAPI"], function() {
 			var self=this, whereToAppend = '';
 			$("a[name=addApplnLayer]").click(function(){
 				whereToAppend = $(this).parents('tr.applnlayercontent:last');
-				self.dynamicRenderLocales(commonVariables.contentPlaceholder);
 				self.addLayers($(this).attr('name'), whereToAppend);
 			});
 			
 			$("a[name=addWebLayer]").click(function(){
 				whereToAppend = $("a[name=addWebLayer]").parents('tr.weblayercontent:last');
-				self.dynamicRenderLocales(commonVariables.contentPlaceholder);
 				self.addLayers($(this).attr('name'), whereToAppend);
 			});
 			
 			$("a[name=addMobileLayer]").click(function(){
 				whereToAppend = $("a[name=addMobileLayer]").parents('tr.mobilelayercontent:last');
-				self.dynamicRenderLocales(commonVariables.contentPlaceholder);
 				self.addLayers($(this).attr('name'), whereToAppend);
 			});
 		},
@@ -547,11 +544,6 @@ define(["projects/api/projectsAPI"], function() {
 				var mobileType = $(this).val();
 				self.getmobileversion($(this), mobileType);
 			});
-		},
-		
-		dynamicRenderLocales : function(contentPlaceholder) {
-			var self=this;
-			self.renderlocales(contentPlaceholder);
 		},
 		
 		getTechnology : function(id) {

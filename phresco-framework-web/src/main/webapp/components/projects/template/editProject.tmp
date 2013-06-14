@@ -40,9 +40,9 @@
 										<th><span data-i18n="project.create.label.appcode"></span><sup>*</sup></th>
 										<th><span data-i18n="project.create.label.technology"></span></th>
 										<th><span data-i18n="project.create.label.applicationversion"></span></th>
-										<th>Dependency</th>
 										<th></th>
 										<th></th>
+										<th colspan="3"><span data-i18n="project.create.label.dependency"></span></th>
 									</tr>
 								</thead>
 								<tbody class="applnlayer"></tbody>
@@ -62,7 +62,7 @@
 										<th><span data-i18n="project.create.label.weblayer"></span></td>
 										<th><span data-i18n="project.create.label.widget"></span></td>
 										<th><span data-i18n="project.create.label.widgetversion"></span></td>
-										<th>Dependency</th>
+										<th><span data-i18n="project.create.label.dependency"></span></th>
 										<th></th>
 									</tr>
 								</thead>

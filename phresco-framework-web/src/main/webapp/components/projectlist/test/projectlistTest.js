@@ -31,7 +31,6 @@ define(["projectlist/projectList"], function(ProjectList) {
 			
 			setTimeout(function() {
 				start();
-				console.info("html", $(commonVariables.contentPlaceholder).html());
 				equal("", "", "Project List Service Tested");
 			}, 1500);
 		});
