@@ -1,9 +1,26 @@
+/**
+ * Framework Web Archive
+ *
+ * Copyright (C) 1999-2013 Photon Infotech Inc.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *         http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package com.photon.phresco.framework.rest.api;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Properties;
 
@@ -12,11 +29,10 @@ import javax.ws.rs.core.Response;
 import junit.framework.Assert;
 
 import org.junit.Test;
-import org.junit.internal.runners.statements.Fail;
 
+import com.photon.phresco.configuration.Configuration;
 import com.photon.phresco.exception.PhrescoException;
 import com.photon.phresco.framework.model.CronExpressionInfo;
-import com.photon.phresco.configuration.Configuration;
 
 public class ConfigurationServiceTest extends RestBaseTest {
 	
@@ -44,12 +60,12 @@ public class ConfigurationServiceTest extends RestBaseTest {
 		cron.setEvery("false");
 		cron.setHours("5");
 		cron.setMinutes("23");
-		cron.setWeek("3");
-		cron.setMonth("9");
+		cron.setWeek(Arrays.asList("3"));
+		cron.setMonth(Arrays.asList("9"));
 		cron.setDay("8");
 		
 		Response cronValidation = configurationService.cronValidation(cron);
-		ResponseInfo<String> entity = (ResponseInfo<String>) cronValidation.getEntity();
+		ResponseInfo<CronExpressionInfo> entity = (ResponseInfo<CronExpressionInfo>) cronValidation.getEntity();
 		assertEquals("23 5 * * 3" , entity.getData());
 	}
 	
@@ -60,13 +76,29 @@ public class ConfigurationServiceTest extends RestBaseTest {
 		cron.setEvery("false");
 		cron.setHours("5");
 		cron.setMinutes("24");
-		cron.setWeek("3");
-		cron.setMonth("9");
+		cron.setWeek(Arrays.asList("3"));
+		cron.setMonth(Arrays.asList("9"));
 		cron.setDay("8");
 		
 		Response cronValidation = configurationService.cronValidation(cron);
-		ResponseInfo<String> entity = (ResponseInfo<String>) cronValidation.getEntity();
+		ResponseInfo<CronExpressionInfo> entity = (ResponseInfo<CronExpressionInfo>) cronValidation.getEntity();
 		Assert.assertNotSame("CronExpression  not Matching", "23 5 * * 3" , entity.getData());
+	}
+	
+	@Test
+	public void testDate() throws PhrescoException {
+		CronExpressionInfo cron = new CronExpressionInfo();
+		cron.setCronBy("Monthly");
+		cron.setEvery("false");
+		cron.setHours("2");
+		cron.setMinutes("12");
+		cron.setDay("5");
+		cron.setMonth(Arrays.asList("2,3"));
+		cron.setDay("8");
+		
+		Response cronValidation = configurationService.cronValidation(cron);
+		ResponseInfo<CronExpressionInfo> entity = (ResponseInfo<CronExpressionInfo>) cronValidation.getEntity();
+		Assert.assertEquals(4, entity.getData().getDates().size());
 	}
 	
 	//@Test
@@ -87,7 +119,7 @@ public class ConfigurationServiceTest extends RestBaseTest {
 	Assert.assertEquals(200, response.getStatus());
 	}
 
-	@Test
+//	@Test
 	public void configurationValidationTest() {
 		Properties propertiesServer = new Properties();
 		Properties propertiesEmail = new Properties();
@@ -176,6 +208,5 @@ public class ConfigurationServiceTest extends RestBaseTest {
 		System.out.println("Response for responsePass : " + responsePass.getEntity());
 		Assert.assertEquals(200, responsePass.getStatus());
 		
-	}	
-
+	}
 }

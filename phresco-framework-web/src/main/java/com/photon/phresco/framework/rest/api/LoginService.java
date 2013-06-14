@@ -1,3 +1,20 @@
+/**
+ * Framework Web Archive
+ *
+ * Copyright (C) 1999-2013 Photon Infotech Inc.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *         http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package com.photon.phresco.framework.rest.api;
 
 import java.io.File;
@@ -32,8 +49,18 @@ import com.photon.phresco.util.Credentials;
 import com.photon.phresco.util.Utility;
 import com.sun.jersey.api.client.ClientResponse.Status;
 
-@Path ("/login")
+/**
+ * The Class LoginService.
+ */
+@Path("/login")
 public class LoginService extends RestBase {
+	
+	/**
+	 * Authenticate User for login.
+	 *
+	 * @param credentials the credentials
+	 * @return the response
+	 */
 	@POST
 	@Produces(MediaType.APPLICATION_JSON)
 	@Consumes(MediaType.APPLICATION_JSON)
@@ -44,11 +71,13 @@ public class LoginService extends RestBase {
 			user = doLogin(credentials);
 			if (user == null) {
 				ResponseInfo<User> finalOuptut = responseDataEvaluation(responseData, null, "Login failed", null);
-				return Response.status(Status.EXPECTATION_FAILED).entity(finalOuptut).header("Access-Control-Allow-Origin", "*").build();
+				return Response.status(Status.EXPECTATION_FAILED).entity(finalOuptut).header(
+						"Access-Control-Allow-Origin", "*").build();
 			}
 			if (!user.isPhrescoEnabled()) {
 				ResponseInfo<User> finalOuptut = responseDataEvaluation(responseData, null, "Login failed", null);
-				return Response.status(Status.EXPECTATION_FAILED).entity(finalOuptut).header("Access-Control-Allow-Origin", "*").build();
+				return Response.status(Status.EXPECTATION_FAILED).entity(finalOuptut).header(
+						"Access-Control-Allow-Origin", "*").build();
 			}
 
 			List<Customer> customers = user.getCustomers();
@@ -61,7 +90,7 @@ public class LoginService extends RestBase {
 			String customerId = "photon";
 			if (tempPath.exists()) {
 				FileReader reader = new FileReader(tempPath);
-				userjson = (JSONObject)parser.parse(reader);
+				userjson = (JSONObject) parser.parse(reader);
 				customerId = (String) userjson.get(userId);
 				reader.close();
 			}
@@ -76,10 +105,10 @@ public class LoginService extends RestBase {
 				customerId = "photon";
 			}
 
-			FileWriter  writer = new FileWriter(tempPath);
+			FileWriter writer = new FileWriter(tempPath);
 			writer.write(userjson.toString());
 			writer.close();
-			
+
 			ServiceManager serviceManager = CONTEXT_MANAGER_MAP.get(credentials.getUsername());
 			UserPermissions userPermissions = FrameworkUtil.getUserPermissions(serviceManager, user);
 			user.setPermissions(userPermissions);
@@ -88,29 +117,44 @@ public class LoginService extends RestBase {
 			return Response.ok(finalOuptut).header("Access-Control-Allow-Origin", "*").build();
 		} catch (PhrescoWebServiceException e) {
 			ResponseInfo<User> finalOuptut = responseDataEvaluation(responseData, e, "Login failed", null);
-			return Response.status(Status.EXPECTATION_FAILED).entity(finalOuptut).header("Access-Control-Allow-Origin", "*").build();
+			return Response.status(Status.EXPECTATION_FAILED).entity(finalOuptut).header("Access-Control-Allow-Origin",
+					"*").build();
 		} catch (IOException e) {
 			ResponseInfo<User> finalOuptut = responseDataEvaluation(responseData, e, "Login failed", null);
-			return Response.status(Status.INTERNAL_SERVER_ERROR).entity(finalOuptut).header("Access-Control-Allow-Origin", "*").build();
+			return Response.status(Status.INTERNAL_SERVER_ERROR).entity(finalOuptut).header(
+					"Access-Control-Allow-Origin", "*").build();
 		} catch (ParseException e) {
 			ResponseInfo<User> finalOuptut = responseDataEvaluation(responseData, e, "Login failed", null);
-			return Response.status(Status.INTERNAL_SERVER_ERROR).entity(finalOuptut).header("Access-Control-Allow-Origin", "*").build();
+			return Response.status(Status.INTERNAL_SERVER_ERROR).entity(finalOuptut).header(
+					"Access-Control-Allow-Origin", "*").build();
 		} catch (PhrescoException e) {
 			ResponseInfo<User> finalOuptut = responseDataEvaluation(responseData, e, "Login failed", null);
-			return Response.status(Status.INTERNAL_SERVER_ERROR).entity(finalOuptut).header("Access-Control-Allow-Origin", "*").build();
+			return Response.status(Status.INTERNAL_SERVER_ERROR).entity(finalOuptut).header(
+					"Access-Control-Allow-Origin", "*").build();
 		}
 	}
 
+	/**
+	 * Do login.
+	 *
+	 * @param credentials the credentials
+	 * @return the user
+	 */
 	private User doLogin(Credentials credentials) {
 		ServiceManager serviceManager = null;
 		try {
 			serviceManager = getServiceManager(credentials.getUsername(), credentials.getPassword());
 		} catch (PhrescoWebServiceException ex) {
 			throw new PhrescoWebServiceException(ex.getResponse());
-		} 
+		}
 		return serviceManager.getUserInfo();
 	}
 
+	/**
+	 * Sort customer name in alphabetic order.
+	 *
+	 * @return the comparator
+	 */
 	private Comparator sortCusNameInAlphaOrder() {
 		return new Comparator() {
 			public int compare(Object firstObject, Object secondObject) {

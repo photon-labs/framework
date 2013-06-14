@@ -1,3 +1,20 @@
+/**
+ * Framework Web Archive
+ *
+ * Copyright (C) 1999-2013 Photon Infotech Inc.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *         http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package com.photon.phresco.framework.rest.api;
 
 import java.io.IOException;
@@ -21,12 +38,25 @@ import com.photon.phresco.framework.rest.api.util.ActionResponse;
 import com.photon.phresco.framework.rest.api.util.ActionServiceConstant;
 import com.sun.jersey.api.client.ClientResponse.Status;
 
+/**
+ * The Class ActionService.
+ */
 @Path ("/app")
 public class ActionService implements ActionServiceConstant {
 	
+	/** The Constant S_LOGGER. */
 	private static final Logger S_LOGGER= Logger.getLogger(ActionService.class);
+	
+	/** The is debug enabled. */
 	private static boolean isDebugEnabled = S_LOGGER.isDebugEnabled();
 	
+	/**
+	 * Builds the application.
+	 *
+	 * @param request the request
+	 * @return the response
+	 * @throws PhrescoException the phresco exception
+	 */
 	@POST
 	@Path("/build")
 	@Produces(MediaType.APPLICATION_JSON)
@@ -49,6 +79,13 @@ public class ActionService implements ActionServiceConstant {
 	}
 	
 	
+	/**
+	 * Deploy.
+	 *
+	 * @param request the request
+	 * @return the response
+	 * @throws PhrescoException the phresco exception
+	 */
 	@POST
 	@Path("/deploy")
 	@Produces(MediaType.APPLICATION_JSON)
@@ -72,6 +109,13 @@ public class ActionService implements ActionServiceConstant {
 	}
 	
 	
+	/**
+	 * Run unit test.
+	 *
+	 * @param request the request
+	 * @return the response
+	 * @throws PhrescoException the phresco exception
+	 */
 	@POST
 	@Path("/runUnitTest")
 	@Produces(MediaType.APPLICATION_JSON)
@@ -92,6 +136,13 @@ public class ActionService implements ActionServiceConstant {
 		return Response.status(Status.OK).entity(response).header("Access-Control-Allow-Origin", "*").build();
 	}
 	
+	/**
+	 * Run component test.
+	 *
+	 * @param request the request
+	 * @return the response
+	 * @throws PhrescoException the phresco exception
+	 */
 	@POST
 	@Path("/runComponentTest")
 	@Produces(MediaType.APPLICATION_JSON)
@@ -111,6 +162,13 @@ public class ActionService implements ActionServiceConstant {
 		return Response.status(Status.OK).entity(response).header("Access-Control-Allow-Origin", "*").build();
 	}
 	
+	/**
+	 * Code validate.
+	 *
+	 * @param request the request
+	 * @return the response
+	 * @throws PhrescoException the phresco exception
+	 */
 	@POST
 	@Path("/codeValidate")
 	@Produces(MediaType.APPLICATION_JSON)
@@ -132,6 +190,13 @@ public class ActionService implements ActionServiceConstant {
 	}
 	
 	
+	/**
+	 * Run against source.
+	 *
+	 * @param request the request
+	 * @return the response
+	 * @throws PhrescoException the phresco exception
+	 */
 	@POST
 	@Path("/runAgainstSource")
 	@Produces(MediaType.APPLICATION_JSON)
@@ -153,6 +218,13 @@ public class ActionService implements ActionServiceConstant {
 	}
 	
 	
+	/**
+	 * Start server.
+	 *
+	 * @param request the request
+	 * @return the response
+	 * @throws PhrescoException the phresco exception
+	 */
 	@POST
 	@Path("/stopServer")
 	@Produces(MediaType.APPLICATION_JSON)
@@ -175,6 +247,13 @@ public class ActionService implements ActionServiceConstant {
 		
 	}
 	
+	/**
+	 * Restart server.
+	 *
+	 * @param request the request
+	 * @return the response
+	 * @throws PhrescoException the phresco exception
+	 */
 	@POST
 	@Path("/restartServer")
 	@Produces(MediaType.APPLICATION_JSON)
@@ -195,6 +274,13 @@ public class ActionService implements ActionServiceConstant {
 		return Response.status(Status.OK).entity(response).header("Access-Control-Allow-Origin", "*").build();
 	}
 	
+	/**
+	 * Performance test.
+	 *
+	 * @param request the request
+	 * @return the response
+	 * @throws PhrescoException the phresco exception
+	 */
 	@POST
 	@Path("/performanceTest")
 	@Produces(MediaType.APPLICATION_JSON)
@@ -216,6 +302,13 @@ public class ActionService implements ActionServiceConstant {
 		return Response.status(Status.OK).entity(response).header("Access-Control-Allow-Origin", "*").build();
 	}
 	
+	/**
+	 * Load test.
+	 *
+	 * @param request the request
+	 * @return the response
+	 * @throws PhrescoException the phresco exception
+	 */
 	@POST
 	@Path("/loadTest")
 	@Produces(MediaType.APPLICATION_JSON)
@@ -236,6 +329,13 @@ public class ActionService implements ActionServiceConstant {
 		return Response.status(Status.OK).entity(response).header("Access-Control-Allow-Origin", "*").build();
 	}
 	
+	/**
+	 * Minification.
+	 *
+	 * @param request the request
+	 * @return the response
+	 * @throws PhrescoException the phresco exception
+	 */
 	@POST
 	@Path("/minification")
 	@Produces(MediaType.APPLICATION_JSON)
@@ -258,6 +358,13 @@ public class ActionService implements ActionServiceConstant {
 		
 	}
 	
+	/**
+	 * Start hub.
+	 *
+	 * @param request the request
+	 * @return the response
+	 * @throws PhrescoException the phresco exception
+	 */
 	@POST
 	@Path("/startHub")
 	@Produces(MediaType.APPLICATION_JSON)
@@ -279,6 +386,13 @@ public class ActionService implements ActionServiceConstant {
 		
 	}
 	
+	/**
+	 * Start node.
+	 *
+	 * @param request the request
+	 * @return the response
+	 * @throws PhrescoException the phresco exception
+	 */
 	@POST
 	@Path("/startNode")
 	@Produces(MediaType.APPLICATION_JSON)
@@ -300,6 +414,13 @@ public class ActionService implements ActionServiceConstant {
 	}
 	
 	
+	/**
+	 * Run functional test.
+	 *
+	 * @param request the request
+	 * @return the response
+	 * @throws PhrescoException the phresco exception
+	 */
 	@POST
 	@Path("/runFunctionalTest")
 	@Produces(MediaType.APPLICATION_JSON)
@@ -320,6 +441,13 @@ public class ActionService implements ActionServiceConstant {
 		return Response.status(Status.OK).entity(response).header("Access-Control-Allow-Origin", "*").build();
 	}
 	
+	/**
+	 * Stop hub.
+	 *
+	 * @param request the request
+	 * @return the response
+	 * @throws PhrescoException the phresco exception
+	 */
 	@POST
 	@Path("/stopHub")
 	@Produces(MediaType.APPLICATION_JSON)
@@ -340,6 +468,13 @@ public class ActionService implements ActionServiceConstant {
 		return Response.status(Status.OK).entity(response).header("Access-Control-Allow-Origin", "*").build();
 	}
 	
+	/**
+	 * Stop node.
+	 *
+	 * @param request the request
+	 * @return the response
+	 * @throws PhrescoException the phresco exception
+	 */
 	@POST
 	@Path("/stopNode")
 	@Produces(MediaType.APPLICATION_JSON)
@@ -360,6 +495,13 @@ public class ActionService implements ActionServiceConstant {
 		return Response.status(Status.OK).entity(response).header("Access-Control-Allow-Origin", "*").build();
 	}
 	
+	/**
+	 * Check for hub.
+	 *
+	 * @param request the request
+	 * @return the response
+	 * @throws PhrescoException the phresco exception
+	 */
 	@POST
 	@Path("/checkForHub")
 	@Produces(MediaType.APPLICATION_JSON)
@@ -383,6 +525,13 @@ public class ActionService implements ActionServiceConstant {
 	}
 	
 
+	/**
+	 * Check for node.
+	 *
+	 * @param request the request
+	 * @return the response
+	 * @throws PhrescoException the phresco exception
+	 */
 	@POST
 	@Path("/checkForNode")
 	@Produces(MediaType.APPLICATION_JSON)
@@ -405,6 +554,13 @@ public class ActionService implements ActionServiceConstant {
 	}
 	
 	
+	/**
+	 * Show started hub log.
+	 *
+	 * @param request the request
+	 * @return the response
+	 * @throws PhrescoException the phresco exception
+	 */
 	@POST
 	@Path("/showStartedHubLog")
 	@Produces(MediaType.APPLICATION_JSON)
@@ -425,6 +581,13 @@ public class ActionService implements ActionServiceConstant {
 		return Response.status(Status.OK).entity(response).header("Access-Control-Allow-Origin", "*").build();
 	}
 	
+	/**
+	 * Show started node log.
+	 *
+	 * @param request the request
+	 * @return the response
+	 * @throws PhrescoException the phresco exception
+	 */
 	@POST
 	@Path("/showStartedNodeLog")
 	@Produces(MediaType.APPLICATION_JSON)
@@ -445,6 +608,13 @@ public class ActionService implements ActionServiceConstant {
 		return Response.status(Status.OK).entity(response).header("Access-Control-Allow-Origin", "*").build();
 	}
 	
+	/**
+	 * Generate report.
+	 *
+	 * @param request the request
+	 * @return the response
+	 * @throws PhrescoException the phresco exception
+	 */
 	@POST
 	@Path("/generateReport")
 	@Produces(MediaType.APPLICATION_JSON)
@@ -465,6 +635,13 @@ public class ActionService implements ActionServiceConstant {
 		return Response.status(Status.OK).entity(response).header("Access-Control-Allow-Origin", "*").build();
 	}
 	
+	/**
+	 * Ci setup.
+	 *
+	 * @param request the request
+	 * @return the response
+	 * @throws PhrescoException the phresco exception
+	 */
 	@POST
 	@Path("/ciSetup")
 	@Produces(MediaType.APPLICATION_JSON)
@@ -485,6 +662,13 @@ public class ActionService implements ActionServiceConstant {
 		return Response.status(Status.OK).entity(response).header("Access-Control-Allow-Origin", "*").build();
 	}
 	
+	/**
+	 * Ci start.
+	 *
+	 * @param request the request
+	 * @return the response
+	 * @throws PhrescoException the phresco exception
+	 */
 	@POST
 	@Path("/ciStart")
 	@Produces(MediaType.APPLICATION_JSON)
@@ -505,6 +689,13 @@ public class ActionService implements ActionServiceConstant {
 		return Response.status(Status.OK).entity(response).header("Access-Control-Allow-Origin", "*").build();
 	}
 	
+	/**
+	 * Ci stop.
+	 *
+	 * @param request the request
+	 * @return the response
+	 * @throws PhrescoException the phresco exception
+	 */
 	@POST
 	@Path("/ciStop")
 	@Produces(MediaType.APPLICATION_JSON)
@@ -526,6 +717,13 @@ public class ActionService implements ActionServiceConstant {
 	}
 	
 	
+	/**
+	 * Prints the as pdf.
+	 *
+	 * @param request the request
+	 * @return the response
+	 * @throws PhrescoException the phresco exception
+	 */
 	@POST
 	@Path("/printAsPdf")
 	@Produces(MediaType.APPLICATION_JSON)
@@ -548,6 +746,13 @@ public class ActionService implements ActionServiceConstant {
 	}
 	
 	
+	/**
+	 * Read.
+	 *
+	 * @param request the request
+	 * @return the response
+	 * @throws PhrescoException the phresco exception
+	 */
 	@GET
 	@Path("/readlog")
 	@Produces(MediaType.APPLICATION_JSON)
@@ -598,6 +803,13 @@ public class ActionService implements ActionServiceConstant {
 		
 	}
 	
+	/**
+	 * Removes the log.
+	 *
+	 * @param request the request
+	 * @return the response
+	 * @throws PhrescoException the phresco exception
+	 */
 	@GET
 	@Path("/removereader")
 	@Produces(MediaType.APPLICATION_JSON)
