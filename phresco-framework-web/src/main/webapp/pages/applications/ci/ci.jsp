@@ -756,7 +756,6 @@ function navigatorControl(data) {
 		$('.Prev'+ data.name).css("visibility", "visible");
 	}
 	
-	console.log("hideValue:: "+data.totalBuildSize/itemsPerPage+ " <=   count:: "+(countValue++));
 	//hide next button when totalPages <= count
 	if ((data.totalBuildSize/itemsPerPage) <= (countValue++)) {
 		$('.Next'+data.name).css("visibility", "hidden");
@@ -825,7 +824,7 @@ function appendBuildList(data) {
 		var download_td = $('<td style="padding-left: 3%;">');
 		if (buildStatus == 'INPROGRESS') {
 			download_td.append('<img src="images/icons/inprogress.png" title="In progress"/>');
-		} else if ((buildStatus == 'SUCCESS') && (buildDownload != '')) {
+		} else if ((buildStatus == 'SUCCESS') && (!isBlank(buildDownload))) {
 			downloadUrl = buildUrl + 'artifact';
 			downloadUrl = downloadUrl + "/" + buildDownload.replace(/\"/g, ""); 
 			downloadUrl = encodeURIComponent(downloadUrl);
