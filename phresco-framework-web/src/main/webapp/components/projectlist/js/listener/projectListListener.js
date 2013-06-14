@@ -73,10 +73,12 @@ define(["projectlist/api/projectListAPI"], function() {
 		},
 
 
-		projectListAction : function(header, callback) {
+		projectListAction : function(header, loadingObj, callback) {
 			var self = this;			
 			try {
-				self.showpopupLoad();
+				if (!self.isBlank(loadingObj)) {
+					self.showpopupLoad(loadingObj);
+				}
 				self.projectListAPI.projectslist(header,
 					function(response) {
 						if(response != null ){
@@ -95,8 +97,8 @@ define(["projectlist/api/projectListAPI"], function() {
 				self.hidePopupLoad();
 			}
 		},
-		showpopupLoad : function(){
-			$('.popuploading').show();
+		showpopupLoad : function(loadingObj){
+			loadingObj.show();
 		},
 		
 		hidePopupLoad : function(){
@@ -223,7 +225,7 @@ define(["projectlist/api/projectListAPI"], function() {
 				repodata.projectid = obj.parent("div").attr("projectId");
 				actionBody = repodata;
 				action = "repoget";
-				self.projectListAction(self.getActionHeader(actionBody, action), function(response){
+				self.projectListAction(self.getActionHeader(actionBody, action), $("#addRepoLoading_"+dynid), function(response){
 					if (response.exception == null) {
 						$("#addRepo_"+dynid).hide();
 					}
@@ -251,7 +253,7 @@ define(["projectlist/api/projectListAPI"], function() {
 				commitdata.appdirname = obj.parent("div").attr("appDirName");
 				actionBody = commitdata;
 				action = "commitget";
-				self.projectListAction(self.getActionHeader(actionBody, action), function(response){
+				self.projectListAction(self.getActionHeader(actionBody, action), $('#commitLoading_'+dynid), function(response){
 					if (response.exception == null) {
 						$("#commit"+dynid).hide();
 					}
@@ -270,40 +272,41 @@ define(["projectlist/api/projectListAPI"], function() {
 				reportdata.sonarUrl = obj.attr("sonarUrl");
 				actionBody = reportdata;
 				action = "reportget";
-				self.projectListAction(self.getActionHeader(actionBody, action));
+				self.projectListAction(self.getActionHeader(actionBody, action), $('#pdfReportLoading_'+reportdata.appid), function(response){
+				});
 		},
 		
 		getCommitableFiles : function(data, obj) {
 			var self = this;
 			var dynamicId = data.dynamicId;
-			commonVariables.loadingScreen.showLoading();
-	      	self.projectListAction(self.getActionHeader(data, "getCommitableFiles"), function(response){
-	      		commonVariables.loadingScreen.removeLoading();
+			self.openccpl(obj, $(obj).attr('name'), '');
+			$('#commitLoading_'+dynamicId).show();
+	      	self.projectListAction(self.getActionHeader(data, "getCommitableFiles"), $('#commitLoading_'+dynamicId), function(response) {
+	      		$("#dummyCommit_"+dynamicId).css("height","0");
 				var commitableFiles = "";
-				self.openccpl(obj, $(obj).attr('name'), '');
 				$('.commit_data_'+dynamicId).hide();
 				$('.commitErr_'+dynamicId).hide();      
 				if (response.data != undefined && !response.data.repoExist) {
-				  $('.commitErr_'+dynamicId).show();
+					$('.commitErr_'+dynamicId).show();
 				} else if (response.data != undefined && response.data.repoInfoFile.length != 0) {
-				 $('input[name=commitbtn]').prop("disabled", true);
-				 $('input[name=commitbtn]').removeClass("btn_style");		
-				  $('.commit_data_'+dynamicId).show();
-				  $('#commitRepourl_'+dynamicId).val(response.data.repoUrl);
-				  commitableFiles += '<thead><tr><th><input dynamicId="'+ dynamicId +'" class="commitParentChk_'+ dynamicId +'"  type="checkbox"></th><th>File</th><th>Status</th></tr></thead><tbody>';
-				  $.each(response.data.repoInfoFile, function(index, value){
-					commitableFiles += '<tr><td><input dynamicId="'+ dynamicId +'" class="commitChildChk_' + dynamicId + '" type="checkbox" value="' + value.commitFilePath + '"></td>';
-					commitableFiles += '<td style="width:150px;" title="'+ value.commitFilePath +'">"' + self.trimValue(value.commitFilePath) + '"</td>';
-					commitableFiles += '<td>"' + value.status + '"</td></tr>';
-				  });
-				  $('.commitable_files_'+dynamicId).html(commitableFiles); 
-				  $.each(response.data.repoInfoFile, function(index, value){
-					self.checkBoxEvent($('.commitParentChk_'+dynamicId), 'commitChildChk_'+dynamicId, $('input[name=commitbtn]'));
-				  });
+					$('input[name=commitbtn]').prop("disabled", true);
+					$('input[name=commitbtn]').removeClass("btn_style");		
+					$('.commit_data_'+dynamicId).show();
+					$('#commitRepourl_'+dynamicId).val(response.data.repoUrl);
+					commitableFiles += '<thead><tr><th><input dynamicId="'+ dynamicId +'" class="commitParentChk_'+ dynamicId +'"  type="checkbox"></th><th>File</th><th>Status</th></tr></thead><tbody>';
+					$.each(response.data.repoInfoFile, function(index, value) {
+						commitableFiles += '<tr><td><input dynamicId="'+ dynamicId +'" class="commitChildChk_' + dynamicId + '" type="checkbox" value="' + value.commitFilePath + '"></td>';
+						commitableFiles += '<td style="width:150px;" title="'+ value.commitFilePath +'">"' + self.trimValue(value.commitFilePath) + '"</td>';
+						commitableFiles += '<td>"' + value.status + '"</td></tr>';
+					});
+					$('.commitable_files_'+dynamicId).html(commitableFiles); 
+					$.each(response.data.repoInfoFile, function(index, value) {
+						self.checkBoxEvent($('.commitParentChk_'+dynamicId), 'commitChildChk_'+dynamicId, $('input[name=commitbtn]'));
+					});
 					self.checkAllEvent($('.commitParentChk_'+dynamicId), $('.commitChildChk_'+dynamicId), $('input[name=commitbtn]'));
 				}
 				
-				if (response.data.repoInfoFile.length == 0) {
+				if (!self.isBlank(response.data.repoInfoFile) && response.data.repoInfoFile.length == 0) {
 					$('.commit_data_'+dynamicId).show();
 				}
 			});
@@ -317,13 +320,14 @@ define(["projectlist/api/projectListAPI"], function() {
 				var temp  = obj.closest("tr").attr("class");
 				actionBody = getreportdata;
 				action = "getreport";
-				self.projectListAction(self.getActionHeader(actionBody, action), function(response) {
+				var dynamicId = obj.attr("dynamicId");
+				self.projectListAction(self.getActionHeader(actionBody, action), $("#pdfReportLoading_"+dynamicId), function(response) {
 					var content = "";
 					$("tbody[name=generatedPdfs]").empty();
 					if(response.length!=0 && response.length!=undefined) {
 						$("#noReport").hide();
 						$("thead[name=pdfHeader]").show();
-						for(var i =0;i<response.length; i++) {
+						for(var i =0; i < response.length; i++) {
 							var headerTr = '<tr class="generatedRow" fileName="'+response[i].fileName+'" appdirname = "'+temp+'"><td>' + response[i].time + '</td><td>'+response[i].type+'</td>';
 							content = content.concat(headerTr);
 							headerTr = '<td><a class="tooltiptop" fileName="'+response[i].fileName+'" fromPage="All" href="#" data-toggle="tooltip" data-placement="top" name="downLoad" data-original-title="Download Pdf" title=""><img src="themes/default/images/helios/download_icon.png" width="15" height="18" border="0" alt="0"></a></td>';
@@ -362,7 +366,7 @@ define(["projectlist/api/projectListAPI"], function() {
 					$("#noReport").html("No Report are Available");
 				}
 				actionBody = deletedata;
-				self.projectListAction(self.getActionHeader(actionBody, "deleteReport"), function(response){
+				self.projectListAction(self.getActionHeader(actionBody, "deleteReport"), "", function(response){
 				});
 			});
 			
@@ -372,7 +376,7 @@ define(["projectlist/api/projectListAPI"], function() {
 				downloaddata.fromPage = $(this).attr("frompage");
 				downloaddata.appDir = $(this).closest('tr').attr("appdirname");
 				actionBody = downloaddata;
-				self.projectListAction(self.getActionHeader(actionBody, "downloadReport"), function(response){
+				self.projectListAction(self.getActionHeader(actionBody, "downloadReport"), "", function(response){
 				});
 			});
 		},
@@ -390,7 +394,7 @@ define(["projectlist/api/projectListAPI"], function() {
 				updatedata.appdirname = obj.parent("div").attr("appDirName");
 				actionBody = updatedata;
 				action = "updateget";
-				self.projectListAction(self.getActionHeader(actionBody, action), function(response){
+				self.projectListAction(self.getActionHeader(actionBody, action), $("#updateRepoLoading_"+dynid), function(response){
 					if (response.exception == null) {
 						$("#svn_update"+dynid).hide();
 					}

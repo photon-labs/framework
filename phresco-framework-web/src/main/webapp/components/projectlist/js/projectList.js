@@ -99,7 +99,7 @@ define(["projectlist/listener/projectListListener"], function() {
 		getAction : function(actionBody, action, callback) {
 			var self = this;
 			
-			self.projectslistListener.projectListAction(self.projectslistListener.getActionHeader(actionBody, action), function(response) {
+			self.projectslistListener.projectListAction(self.projectslistListener.getActionHeader(actionBody, action), "" , function(response) {
 				if ("delete" == action) {
 					commonVariables.loadingScreen.removeLoading();
 				}
@@ -177,26 +177,20 @@ define(["projectlist/listener/projectListListener"], function() {
 				var dynamicId = $(this).attr("dynamicId");
 				var data = JSON.parse(self.projectslistListener.projectListAPI.localVal.getSession('userInfo'));
 				userId = data.id;
-				/* $('#uname_'+dynamicId).val(data.id);
-				$('#pwd_'+dynamicId).val(data.password);
-				
-				$('#commitUsername_'+dynamicId).val(data.id);
-				$('#commitPassword_'+dynamicId).val(data.password);
-				
-				$('#updateUsername_'+dynamicId).val(data.id);
-				$('#updatePassword_'+dynamicId).val(data.password); */
 				$('.uname').val(data.id);
 				$('.pwd').val(data.password);
 				$('.commit').hide();
 				$('.add_repo').hide();
 				$('.svn_update').hide();
-				
+				$("#addRepoLoading_"+dynamicId).hide();
+				$("#updateRepoLoading_"+dynamicId).hide();
 				var action = $(this).attr("data-original-title");
 				if (action == "Commit") {
 					var appDirName = $(this).parent().parent().attr("class");
 					var data = {};
 					data.appdirname = appDirName;
 					data.dynamicId = dynamicId;
+					$("#dummyCommit_"+dynamicId).css("height","10px");
 					self.projectslistListener.getCommitableFiles(data, this);
 				} else {
 					self.openccpl(this, $(this).attr('name'), currentPrjName);
