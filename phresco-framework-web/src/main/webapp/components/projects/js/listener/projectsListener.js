@@ -263,75 +263,78 @@ define(["projects/api/projectsAPI"], function() {
 							{
 								var arr1=[],arr2=[],arr3=[];
 								var count1=0,count2=0,count3=0;
-								var appcodeval,techval,widgetval,layerval,typeval,mobappcodeval;
-								$('.applnLayer').each(function() {
-									appcodeval=$(this).find('.appln-appcode').val();
+								var techval,verval,tech2val,widgetval,webverval,layerval,typeval,mobverval;
+								$('.applnlayercontent').each(function() {
 									techval=$(this).find('.appln_technology').val();
-									arr1[count1]=appcodeval+techval;
+									verval=$(this).find('.appln_version').val();
+									arr1[count1]=techval+verval;
 									$(this).next();
 									count1++;
 								});
-								
-								for (var i = 0; i < arr1.length; i++) {
+								if($("tr[class='applnLayer']").attr('key')=='displayed'){	
+								  for (var i = 0; i < arr1.length; i++) {
 									for(var j=i+1;j<arr1.length;j++) {
 										if(arr1[i]==arr1[j]) {
-											//$("#errmsg").show();
-											//$("#errmsg").text("Both application layers cannot be the same.");
+											$(".errmsg1").show();
+											$(".errmsg1").text("Added Technology and Version already exists.");
 											setTimeout(function() {
-												//$("#errmsg").hide();
+												$(".errmsg1").hide();
 											}, 5000);
 											return true;
 										}	
 									};	
 
-								};
+								  };
+								}
 
-								$('.webLayer').each(function() {
-									appcodeval=$(this).find('.web-appcode').val();
-									techval=$(this).find('.weblayer').val();
+								$('.weblayercontent').each(function() {
+									tech2val=$(this).find('.weblayer').val();
 									widgetval=$(this).find('.web_widget').val();
-									
-									arr2[count2]=appcodeval+techval+widgetval;
+									webverval=$(this).find('.web_version').val();
+									arr2[count2]=tech2val+widgetval+webverval;
 									$(this).next();
 									count2++;
 								});	
-								for (var i = 0; i < arr2.length; i++) {
+								if($("tr[class='webLayer']").attr('key')=='displayed'){
+								   for (var i = 0; i < arr2.length; i++) {
 									for(var j=i+1;j<arr2.length;j++) {
 										if(arr2[i]==arr2[j]) {
-											//$("#errmsg").show();
-											//$("#errmsg").text("Both web layers cannot be the same.");
+											$(".errmsg2").show();
+											$(".errmsg2").text("Added Web Layer,Widget and Version already exists.");
 											setTimeout(function() {
-												//$("#errmsg").hide();
+												$(".errmsg2").hide();
 											}, 5000);
 											return true;
 										}	
 									};	
 
-								};
+								  };
+							    }
 
-								$('.mobileLayer').each(function() {
-									mobappcodeval=$(this).find('.mobile-appcode').val();
+								$('.mobilelayercontent').each(function() {
 									layerval=$(this).find('.mobile_layer').val();
 									typeval=$(this).find('.mobile_types').val();
-									
-									arr3[count3]=mobappcodeval+layerval+typeval;
+									mobverval=$(this).find('.mobile_version').val();
+									arr3[count3]=layerval+typeval+mobverval;
 									$(this).next();
 									count3++;
 								});	
-								
-								for (var i = 0; i < arr3.length; i++) {
+
+								if($("tr[class='mobLayer']").attr('key')=='displayed'){
+								  for (var i = 0; i < arr3.length; i++) {
 									for(var j=i+1;j<arr3.length;j++) {
 										if(arr3[i]==arr3[j]) {
-											//$("#errmsg").show();
-											//$("#errmsg").text("Both mobile layers cannot be the same.");
+											$(".errmsg3").show();
+											$(".errmsg3").text("Added Mobile,Type and Version already exists.");
 											setTimeout(function() {
-												//$("#errmsg").hide();
+												$(".errmsg3").hide();
 											}, 5000);
 											return true;
 										}	
 									};	
 
-								};
+								  };
+								}
 
 								self.hasError=false;
 								return self.hasError;
@@ -509,7 +512,8 @@ define(["projects/api/projectsAPI"], function() {
 			 */
 			$("select[name='appln_technology']").bind('change', function(){
 				var techId = $(this).val();
-				self.gettechnologyversion($(this), techId);
+				var versionplaceholder = $(this).parents("td[name='technology']").siblings("td[name='version']").children("select[name='appln_version']");
+				self.gettechnologyversion(techId, versionplaceholder);
 			});
 			
 			/***
@@ -517,7 +521,8 @@ define(["projects/api/projectsAPI"], function() {
 			 */
 			$("select[name='weblayer']").bind('change', function(){
 				var type = $(this).val();
-				self.getwidgettype($(this), type);
+				var widgetTypePlaceholder = $(this).parents("td[name='web']").siblings("td[name='widget']").children("select[name='web_widget']");
+				self.getwidgettype(type, widgetTypePlaceholder);
 			});
 			
 			/***
@@ -525,7 +530,8 @@ define(["projects/api/projectsAPI"], function() {
 			 */
 			$("select[name='web_widget']").bind('change', function(){
 				var widgetType = $(this).val();
-				self.getwidgetversion($(this), widgetType);
+				var widgetTypePlaceholder = $(this).parents("td[name='widget']").siblings("td[name='widgetversion']").children("select[name='web_version']");
+				self.getwidgetversion(widgetType, widgetTypePlaceholder);
 			});
 
 			/***
@@ -533,7 +539,8 @@ define(["projects/api/projectsAPI"], function() {
 			 */
 			$("select[name='mobile_layer']").bind('change', function(){
 				var mobile = $(this).val();
-				self.getmobiletype($(this), mobile);
+				var mobileTypePlaceholder = $(this).parents("td[name='mobile']").siblings("td[name='types']").children("select[name='mobile_types']");
+				self.getmobiletype(mobile, mobileTypePlaceholder);
 			});
 			
 			/***
@@ -542,7 +549,8 @@ define(["projects/api/projectsAPI"], function() {
 			$("select[name='mobile_types']").unbind('change');
 			$("select[name='mobile_types']").bind('change', function(){
 				var mobileType = $(this).val();
-				self.getmobileversion($(this), mobileType);
+				var mobileTypePlaceholder = $(this).parents("td[name='types']").siblings("td[name='mobileversion']").children("select[name='mobile_version']");
+				self.getmobileversion(mobileType, mobileTypePlaceholder);
 			});
 		},
 		
@@ -591,11 +599,8 @@ define(["projects/api/projectsAPI"], function() {
 			return option;
 		},
 		
-		gettechnologyversion : function(object, technologyId) {
-			var self=this, option, version, versionplaceholder;
-			version = object.parents("td[name='technology']");
-			versionplaceholder = $(version).siblings("td[name='version']").children("select[name='appln_version']");
-			
+		gettechnologyversion : function(technologyId, versionplaceholder) {
+			var self=this, option;
 			self.applicationlayerData = self.projectAPI.localVal.getJson("Application Layer");
 			$.each(self.applicationlayerData.techGroups, function(index, value){
 				$.each(value.techInfos, function(index, value){
@@ -611,11 +616,8 @@ define(["projects/api/projectsAPI"], function() {
 			});
 		},
 		
-		getwidgettype : function(object, type) {
-			var self=this, option, widget, widgetTypePlaceholder;
-			widget = object.parents("td[name='web']");
-			widgetTypePlaceholder = $(widget).siblings("td[name='widget']").children("select[name='web_widget']");
-			
+		getwidgettype : function(type, widgetTypePlaceholder) {
+			var self=this, option;
 			self.weblayerData = self.projectAPI.localVal.getJson("Web Layer");
 			$.each(self.weblayerData.techGroups, function(index, value){
 				if(value.id === type){
@@ -646,11 +648,8 @@ define(["projects/api/projectsAPI"], function() {
 			return option;
 		},
 		
-		getwidgetversion : function(object, widgettype) {
-			var self=this, option, widget, widgetTypePlaceholder;
-			widget = object.parents("td[name='widget']");
-			widgetTypePlaceholder = $(widget).siblings("td[name='widgetversion']").children("select[name='web_version']");
-			
+		getwidgetversion : function(widgettype, widgetTypePlaceholder) {
+			var self=this, option;
 			self.weblayerData = self.projectAPI.localVal.getJson("Web Layer");
 			$.each(self.weblayerData.techGroups, function(index, value){
 				$.each(value.techInfos, function(index, value){
@@ -666,11 +665,8 @@ define(["projects/api/projectsAPI"], function() {
 			});
 		},
 		
-		getmobiletype : function(object, mobile) {
-			var self=this, option, mobilediv, mobileTypePlaceholder;
-			mobilediv = object.parents("td[name='mobile']");
-			mobileTypePlaceholder = $(mobilediv).siblings("td[name='types']").children("select[name='mobile_types']");
-			
+		getmobiletype : function(mobile, mobileTypePlaceholder) {
+			var self=this, option;
 			self.mobilelayerData = self.projectAPI.localVal.getJson("Mobile Layer");
 			$.each(self.mobilelayerData.techGroups, function(index, value){
 				if(value.id === mobile){
@@ -701,11 +697,8 @@ define(["projects/api/projectsAPI"], function() {
 			return option;
 		},
 		
-		getmobileversion : function(object, mobileType) {
-			var self=this, option, mobilediv, mobileTypePlaceholder;
-			mobilediv = object.parents("td[name='types']");
-			mobileTypePlaceholder = $(mobilediv).siblings("td[name='mobileversion']").children("select[name='mobile_version']");
-			
+		getmobileversion : function(mobileType, mobileTypePlaceholder) {
+			var self=this, option;
 			self.mobilelayerData = self.projectAPI.localVal.getJson("Mobile Layer");
 			$.each(self.mobilelayerData.techGroups, function(index, value){
 				$.each(value.techInfos, function(index, value){
@@ -812,8 +805,7 @@ define(["projects/api/projectsAPI"], function() {
 		createproject : function(projectId, action) {
 			
 			var self = this;
-			//if(!self.validation()) {
-			
+			if(!self.validation()) {
 				var projectname = $("input[name='projectname']").val();
 				var projectcode = $("input[name='projectcode']").val();
 				var projectversion = $("input[name='projectversion']").val();
@@ -838,7 +830,7 @@ define(["projects/api/projectsAPI"], function() {
 				self.projectInfo.endDate = myEndDate;
 				self.projectInfo.customerIds = self.customerIds;
 							
-				$.each( $("tbody[name='layercontents']").children(), function(index, value){
+				$.each( $("tbody[name='layercontents'] > div.mCustomScrollBox > div.mCSB_container").children(), function(index, value){
 				
 					var techInfo = {};
 					var tech;
@@ -944,7 +936,7 @@ define(["projects/api/projectsAPI"], function() {
 						self.pageRefresh(response);
 					});
 				});
-			//}
+			}
 		}
 	});
 

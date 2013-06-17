@@ -31,14 +31,16 @@
                     <td colspan="2" class="enddate" name="enddateholder"><input name="enddate" id="endDate" type="text"><span class="add-on"><span class="add-on"><img id="enddt" src="themes/default/images/helios/cal_icon.png" border="0" alt=""></span></span></td>
                 </tr>
 				<tr>	
-                	<td colspan="2"><input type="checkbox"><b>&nbsp; Multi Module</b></td>
-                    <td colspan="2"><input type="text" placeholder="Artifact ID"></td>
+                	<td><input type="checkbox"><b>&nbsp; Multi Module</b></td>
+                    <td><input type="text" placeholder="Artifact ID"></td>
                     <td colspan="6"></td>
                 </tr>
 				{{#if applicationlayerData.techGroups}}
 					<tr class="proj_title">
-					  <td colspan="4">{{applicationlayerData.name}}</td>
-					  <td colspan="4"><img name="close" id="applicationlayer" src="themes/default/images/helios/close_icon.png"  border="0" alt=""></td>
+
+					 <td colspan="3">{{applicationlayerData.name}}</td>
+					 <td colspan="3"><span class="errmsg1"></span></td>
+					 <td colspan="2"><img name="close" id="applicationlayer" src="themes/default/images/helios/close_icon.png"  border="0" alt=""></td>
 					</tr>
 					<tr class="applnLayer" key="displayed">
 						<td colspan="8" class="appln">
@@ -50,7 +52,7 @@
 										<th><span data-i18n="project.create.label.applicationversion"></span></th>
 										<th></th>
 										<th></th>
-										<th colspan="3"></th>
+										<th colspan="3"><span data-i18n="project.create.label.dependency"></span></th>
 									</tr>
 								</thead>
 								<tbody class="applnlayer">
@@ -66,7 +68,7 @@
 												{{/each}}
 											</select>
 										 </td>
-										 <td name="version" class="version">
+										 <td colspan="3" name="version" class="version">
 											<select name="appln_version" class="appln_version">
 											   <option>Select Version</option>
 											</select>
@@ -87,8 +89,9 @@
 				 {{/if}}
 				 {{#if weblayerData.techGroups}}
                      <tr class="proj_title">
-                      <td colspan="4">{{weblayerData.name}}</td>
-                      <td colspan="4"><img name="close" id="weblayer" src="themes/default/images/helios/close_icon.png"   border="0" alt=""></td>
+                      <td colspan="3">{{weblayerData.name}}</td>
+                      <td colspan="3"><span class="errmsg2"></span></td>
+                      <td colspan="2"><img name="close" id="weblayer" src="themes/default/images/helios/close_icon.png"   border="0" alt=""></td>
                      </tr>
                      <tr class="webLayer" key="displayed">
 						  <td colspan="8" class="WebLayer">
@@ -140,8 +143,9 @@
 					{{/if}}
 				{{#if mobilelayerData.techGroups}}
                     <tr class="proj_title">
-                      <td colspan="4">{{mobilelayerData.name}}</td>
-                      <td colspan="4"><img name="close" id="mobilelayer" src="themes/default/images/helios/close_icon.png"  border="0" alt=""></td>
+                      <td colspan="3">{{mobilelayerData.name}}</td>
+                      <td colspan="3"><span class="errmsg3"></span></td>
+                      <td colspan="2"><img name="close" id="mobilelayer" src="themes/default/images/helios/close_icon.png"  border="0" alt=""></td>
                      </tr>
                      <tr class="mobLayer" key="displayed">
                       	<td colspan="8" class="mob">
