@@ -54,13 +54,13 @@ define(["codequality/api/codequalityAPI"], function() {
 					self.mavenServiceListener = retVal;
 					self.mavenServiceListener.mvnCodeValidation(queryString, '#iframePart', function(returnVal){
 						//callback(returnVal);
-						var validateAgainst = $("#sonar").val();
+						var validateAgainst = $("#src").find(':selected').val();
 						self.getIframeReport(validateAgainst);
 					});
 				});
 			}else{
 				self.mavenServiceListener.mvnCodeValidation(queryString, '#iframePart', function(returnVal){
-					var validateAgainst = $("#sonar").val();
+					var validateAgainst = $("#src").find(':selected').val();
 					self.getIframeReport(validateAgainst);
 				});
 			}			
@@ -115,29 +115,6 @@ define(["codequality/api/codequalityAPI"], function() {
 			}
 		},
 		
-		/*
-		readLog : function(resDatt){
-			var self = this;
-			self.codequalityAPI.codequality(self.getRequestHeader(resDatt , "readlog"), function(response) {
-				var logStr = response.log;
-				var logColor = "black";
-				if(logStr.match("ERROR")){
-					logColor = "red";
-				}else if(logStr.match("WARNING")){
-					logColor = "yellow";
-				}
-				
-				$('#iframePart').append("<font style=color:"+logColor+">"+response.log+"</font>") ;
-				$('#iframePart').append("<br>");
-				if(response.status == 'INPROGRESS'){
-					self.readLog(resDatt);
-				}else if(response.status == 'COMPLETED'){
-					var validateAgainst = $("#sonar").val();
-					self.getIframeReport(validateAgainst);
-				}
-			});
-		},
-		 */
 		getRequestHeader : function(inputData, action) {
 			var self=this, header, username, appId, customerId, projectId;
 			var customerId = self.getCustomer();
@@ -214,24 +191,29 @@ define(["codequality/api/codequalityAPI"], function() {
 
 		constructHtml : function(response){
 			var self = this;
-			console.info('response test = ' , response);
+			//console.info('response test = ' , response);
 			if(response.message == "Dependency returned successfully"){
 				var typeLi = '';
+				var validateAgainst = response.data[0].validateAgainst.key;
+				var repTypesData = response.data[0].validateAgainst.value;
 				$.each(response.data, function(index, resdata) {
 					var innerUl = '';
 					if(resdata.options == null){
 						typeLi += "<li name='selectType' key="+resdata.validateAgainst.key+" data="+resdata.validateAgainst.value+" style='padding-left:8px;cursor:pointer;'>"+resdata.validateAgainst.value+"</li>";
 					}else{
+						validateAgainst = resdata.options[0].key;
+						 repTypesData = resdata.options[0].value;
 						$.each(resdata.options, function(index, optvalue) {
 							innerUl += "<li name='selectType' key="+optvalue.key+" data="+optvalue.value+" style='padding-left:8px;cursor:pointer;'>"+optvalue.value+"</li>";
 						});
 						typeLi += "<li disabled='disabled' key="+resdata.validateAgainst.key+" data="+resdata.validateAgainst.value+" style='padding-left:4px;'>"+resdata.validateAgainst.value+'<ul>'+innerUl+"</ul></li>";
 					}
 				});
-				var dropdownLi = '<ul class="nav"><li id="fat-menu" class="dropdown"><a href="#" id="drop5" role="button" class="dropdown-toggle" data-toggle="dropdown"><b id="repTypes" >'+response.data[0].validateAgainst.value+'</b><b class="caret"></b></a> <div class="dropdown-menu cust_sel code_test_opt" role="menu" aria-labelledby="drop5"> <ul id="reportUl">'+typeLi+'</ul></div></li></ul>';
+				var dropdownLi = '<ul class="nav"><li id="fat-menu" class="dropdown"><a href="#" id="drop5" role="button" class="dropdown-toggle" data-toggle="dropdown"><b id="repTypes" >'+repTypesData+'</b><b class="caret"></b></a> <div class="dropdown-menu cust_sel code_test_opt" role="menu" aria-labelledby="drop5"> <ul id="reportUl">'+typeLi+'</ul></div></li></ul>';
 				$("#codereportTypes").append(dropdownLi);
+
 				self.onProjects();
-				self.getIframeReport(response.data[0].validateAgainst.key);
+				self.getIframeReport(validateAgainst);
 			}else {
 				$('#iframePart').html('');
 				$('#iframePart').append(response.log);			
@@ -254,7 +236,7 @@ define(["codequality/api/codequalityAPI"], function() {
 			try {
 				self.codequalityAPI.codequality(self.getRequestHeader(validateAgainst , "iframereport"), 
 					function(iframereport) {
-						console.info('iframereport = ' , JSON.stringify(iframereport));
+						//console.info('iframereport = ' , JSON.stringify(iframereport));
 						if(iframereport.data != null){
 /* 						var value1 = $('.build_progress').width();
 							$('.build_info').animate({width: '97%'},500);
