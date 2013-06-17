@@ -32,6 +32,7 @@ public class TestSuite {
 	private float blocked;
 	private float total;
 	private float testCoverage;
+	private float notExecuted;
 	private String time;
 	private List<TestCase> testCases;
 	private List<com.photon.phresco.commons.model.TestCase> testSteps;
@@ -161,6 +162,14 @@ public class TestSuite {
 
 	public float getSuccess() {
 		return success;
+	}
+
+	public void setNotExecuted(float notExecuted) {
+		this.notExecuted = notExecuted;
+	}
+
+	public float getNotExecuted() {
+		return notExecuted;
 	}
 
 }
