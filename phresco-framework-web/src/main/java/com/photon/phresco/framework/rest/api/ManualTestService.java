@@ -20,24 +20,25 @@ import javax.ws.rs.core.Response;
 
 import org.apache.commons.io.FileUtils;
 
-import com.photon.phresco.commons.model.ProjectInfo;
 import com.photon.phresco.exception.PhrescoException;
 import com.photon.phresco.framework.commons.FrameworkUtil;
 import com.photon.phresco.framework.model.ManualTestResult;
 import com.photon.phresco.framework.model.TestSuite;
 import com.photon.phresco.util.Constants;
+import com.photon.phresco.util.ServiceConstants;
 import com.photon.phresco.util.Utility;
 import com.phresco.pom.exception.PhrescoPomException;
 import com.phresco.pom.util.PomProcessor;
 import com.sun.jersey.api.client.ClientResponse.Status;
 
-@Path("/manual")
-public class ManualTestService extends RestBase {
+@Path(ServiceConstants.REST_API_MANUAL)
+public class ManualTestService extends RestBase implements ServiceConstants {
 	
 	@GET
-	@Path("/manualTemplate")
+	@Path(REST_API_MANUALTEMPLATE)
 	@Produces(MediaType.APPLICATION_OCTET_STREAM)
-	public Response getManualTemplate(@QueryParam("fileType") String fileType) throws PhrescoException {
+	public Response getManualTemplate(@QueryParam(REST_QUERY_FILETYPE) String fileType) throws PhrescoException {
+		ResponseInfo info = new ResponseInfo();
         try {
         	InputStream resourceStream = this.getClass().getClassLoader().getResourceAsStream("helios_manul_test_template." + fileType);
         	if(resourceStream == null) {
@@ -45,15 +46,19 @@ public class ManualTestService extends RestBase {
         	}
         	return Response.status(Status.OK).header("Access-Control-Allow-Origin", "*").entity(resourceStream).build();
         } catch (Exception e) {
-        	throw new PhrescoException(e);
+        	ResponseInfo finalOutput = responseDataEvaluation(info, e,
+					"Get Manual Template Failed", null);
+			return Response.status(Status.NOT_FOUND).entity(finalOutput).header("Access-Control-Allow-Origin", "*")
+					.build();
 		}
 	}
 	
 	@POST
-	@Path("/uploadTemplate")
+	@Path(REST_API_UPLOADTEMPLATE)
 	@Produces(MediaType.APPLICATION_OCTET_STREAM)
-	public Response uploadManualTemplate(@Context HttpServletRequest request, @QueryParam("appDirName") String appDirName) 
+	public Response uploadManualTemplate(@Context HttpServletRequest request, @QueryParam(REST_QUERY_APPDIR_NAME) String appDirName) 
 		throws PhrescoException {
+		ResponseInfo response = new ResponseInfo();
         try {
         	PomProcessor pomProcessor = FrameworkUtil.getInstance().getPomProcessor(appDirName);
         	String manualTestReportPath = pomProcessor.getProperty("phresco.manualTest.testcase.path");
@@ -65,15 +70,19 @@ public class ManualTestService extends RestBase {
     		File file = new File(builder.toString() + "/helios_manul_test_template.xls");
     		FileUtils.copyInputStreamToFile(inputStream, file);
         } catch (Exception e) {
-        	throw new PhrescoException(e);
+        	ResponseInfo finalOutput = responseDataEvaluation(response, e,
+					"Uploading Failed", null);
+			return Response.status(Status.NOT_FOUND).entity(finalOutput).header("Access-Control-Allow-Origin", "*")
+					.build();
 		}
-		return Response.status(Status.OK).build();
+        ResponseInfo responseData = responseDataEvaluation(response, null, "Uploaded SuccesFully", null);
+		return Response.status(Status.OK).header("Access-Control-Allow-Origin", "*").entity(responseData).build();
 	}
 	
 	@GET
-	@Path("/testsuites")
+	@Path(REST_API_TESTSUITES)
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response getTestSuites(@QueryParam("appDirName") String appDirName) throws PhrescoException {
+	public Response getTestSuites(@QueryParam(REST_QUERY_APPDIR_NAME) String appDirName) throws PhrescoException {
 		ResponseInfo<List<TestSuite>> responseData = new ResponseInfo<List<TestSuite>>();
 		List<TestSuite> readManualTestSuiteFile = new ArrayList<TestSuite>();
 		ManualTestResult createManualTestResult = null;
@@ -85,7 +94,8 @@ public class ManualTestService extends RestBase {
 				readManualTestSuiteFile = frameworkUtil.readManualTestSuiteFile(sb.toString());
 			} 
 			createManualTestResult = createManualTestResult(readManualTestSuiteFile);
-			ResponseInfo<List<TestSuite>> finalOutput = responseDataEvaluation(responseData, null, "Testsuites returned Successfully", createManualTestResult);
+			ResponseInfo<List<TestSuite>> finalOutput = 
+				responseDataEvaluation(responseData, null, "Testsuites returned Successfully", createManualTestResult);
 			return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
 		} catch (Exception e) {
 			ResponseInfo<List<TestSuite>> finalOutput = responseDataEvaluation(responseData, e, "Failed", null);
@@ -94,9 +104,10 @@ public class ManualTestService extends RestBase {
 	}
 	
 	@GET
-	@Path("/testcases")
+	@Path(REST_API_TESTCASES)
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response getTestCase(@QueryParam("appDirName") String appDirName, @QueryParam("testsuitename") String testsuitename) throws PhrescoException {
+	public Response getTestCase(@QueryParam(REST_QUERY_APPDIR_NAME) String appDirName, 
+			@QueryParam("testSuiteName") String testsuitename) throws PhrescoException {
 		ResponseInfo<List<com.photon.phresco.commons.model.TestCase>> responseData = new 
 			ResponseInfo<List<com.photon.phresco.commons.model.TestCase>>();
 		List<com.photon.phresco.commons.model.TestCase> readTestCase = null;
@@ -105,40 +116,47 @@ public class ManualTestService extends RestBase {
 			String manualTestDir = getManualTestReportDir(appDirName);
 			StringBuilder sb = new StringBuilder(Utility.getProjectHome()).append(appDirName).append(manualTestDir);
 			readTestCase = frameworkUtil.readManualTestCaseFile(sb.toString(), testsuitename, null);
-			ResponseInfo<List<com.photon.phresco.commons.model.TestCase>> finalOutput = responseDataEvaluation(responseData, null, "Testcases returned Successfully", readTestCase);
+			ResponseInfo<List<com.photon.phresco.commons.model.TestCase>> finalOutput = 
+				responseDataEvaluation(responseData, null, "Testcases returned Successfully", readTestCase);
 			return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
 		} catch (Exception e) {
-			ResponseInfo<List<com.photon.phresco.commons.model.TestCase>> finalOutput = responseDataEvaluation(responseData, e, "Failed", null);
+			ResponseInfo<List<com.photon.phresco.commons.model.TestCase>> finalOutput = 
+				responseDataEvaluation(responseData, e, "Failed", null);
 			return Response.status(Status.BAD_REQUEST).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
 		}
 	}
 	
 	@POST
-	@Path("/testsuitess")
+	@Path(REST_API_TESTSUITES)
 	@Produces(MediaType.APPLICATION_JSON)
 	@Consumes (MediaType.APPLICATION_JSON)
-	public Response createTestSuite(@QueryParam("testSuiteName") String testSuiteName, @QueryParam("appDirName") String appDirName) throws PhrescoException {
+	public Response createTestSuite(@QueryParam("testSuiteName") String testSuiteName, 
+			@QueryParam(REST_QUERY_APPDIR_NAME) String appDirName) throws PhrescoException {
 		FrameworkUtil frameworkUtil = FrameworkUtil.getInstance();
 		String path = getManualTestReportDir(appDirName);
 		StringBuilder sb = new StringBuilder(Utility.getProjectHome()).append(appDirName).append(path);
 		String cellValue[] = {"", "", testSuiteName, "", "", "", "", "", "", "", "", "", ""};
 		frameworkUtil.addNew(sb.toString(), testSuiteName, cellValue);
-		return Response.status(Status.OK).entity("TestSuite Added Successfully").build();
+		ResponseInfo response = new ResponseInfo();
+		ResponseInfo responseData = responseDataEvaluation(response, null, "Testsuite Added Successfully", null);
+		return Response.status(Status.OK).entity(responseData).build();
 	}
 	
 	@POST
-	@Path("/testcases")
+	@Path(REST_API_TESTCASES)
 	@Produces(MediaType.APPLICATION_JSON)
 	@Consumes (MediaType.APPLICATION_JSON)
 	public Response createTestCase(com.photon.phresco.commons.model.TestCase testCase, @QueryParam("testSuiteName") String testSuiteName,
-			@QueryParam("appDirName") String appDirName) throws PhrescoException {
+			@QueryParam(REST_QUERY_APPDIR_NAME) String appDirName) throws PhrescoException {
 		FrameworkUtil frameworkUtil = FrameworkUtil.getInstance();
 		String path = getManualTestReportDir(appDirName);
 		StringBuilder sb = new StringBuilder(Utility.getProjectHome()).append(appDirName).append(path);
 		String cellValue[] = {"", testCase.getFeatureId(), "",testCase.getTestCaseId(), testCase.getDescription(), testCase.getSteps(), "", "",
 				testCase.getExpectedResult(), testCase.getActualResult(), testCase.getStatus(), "", "", testCase.getBugComment()};
 		frameworkUtil.addNewTestCase(sb.toString(), testSuiteName,cellValue, testCase.getStatus());
-		return Response.status(Status.OK).entity("TestCase Added Successfully").build();
+		ResponseInfo response = new ResponseInfo();
+		ResponseInfo responseData = responseDataEvaluation(response, null, "Testcase Added Successfully", testCase);
+		return Response.status(Status.OK).entity(responseData).build();
 	}
 	
 	@PUT
@@ -146,12 +164,14 @@ public class ManualTestService extends RestBase {
 	@Produces(MediaType.APPLICATION_JSON)
 	@Consumes (MediaType.APPLICATION_JSON)
 	public Response updateTestCase(com.photon.phresco.commons.model.TestCase testCase, @QueryParam("testSuiteName") String testSuiteName,
-			@QueryParam("appDirName") String appDirName) throws PhrescoException {
+			@QueryParam(REST_QUERY_APPDIR_NAME) String appDirName) throws PhrescoException {
 		FrameworkUtil frameworkUtil = FrameworkUtil.getInstance();
 		String path = getManualTestReportDir(appDirName);
 		StringBuilder sb = new StringBuilder(Utility.getProjectHome()).append(appDirName).append(path);
 		frameworkUtil.readManualTestCaseFile(sb.toString(), testSuiteName, testCase);
-		return Response.status(Status.OK).entity("TestCase Updated Successfully").build();
+		ResponseInfo response = new ResponseInfo();
+		ResponseInfo responseData = responseDataEvaluation(response, null, "Testcase Updated Successfully", testCase);
+		return Response.status(Status.OK).entity(responseData).build();
 	}
 	
 	private ManualTestResult createManualTestResult(List<TestSuite> readManualTestSuiteFile) {

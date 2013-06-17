@@ -85,18 +85,18 @@ public class ManualTestServiceTest extends RestBaseTest {
 	public void testCreateTestSuite() throws PhrescoException {
 		ManualTestService service = new ManualTestService();
 		Response response = service.createTestSuite(testSuiteName, appDirName);
-		
+		ResponseInfo responseInfo = (ResponseInfo) response.getEntity();
 		Assert.assertEquals(200, response.getStatus());
-		Assert.assertEquals("TestSuite Added Successfully", (String) response.getEntity());
+		Assert.assertEquals("Testsuite Added Successfully", responseInfo.getMessage());
 	}
 
 	@Test
 	public void testCreateTestCase() throws PhrescoException {
 		ManualTestService service = new ManualTestService();
 		Response response = service.createTestCase(createTestCase() , testSuiteName, appDirName);
-		
+		ResponseInfo responseInfo = (ResponseInfo) response.getEntity();
 		Assert.assertEquals(200, response.getStatus());
-		Assert.assertEquals("TestCase Added Successfully", (String) response.getEntity());
+		Assert.assertEquals("Testcase Added Successfully", responseInfo.getMessage());
 	}
 
 	@Test
@@ -107,9 +107,10 @@ public class ManualTestServiceTest extends RestBaseTest {
 		testCase.setExpectedResult("Manual Test Expected Result Updated");
 		testCase.setFeatureId("Manual Test Feature ID Updated");
 		Response response = service.updateTestCase(testCase, testSuiteName, appDirName);
+		ResponseInfo responseInfo = (ResponseInfo) response.getEntity();
 		
 		Assert.assertEquals(200, response.getStatus());
-		Assert.assertEquals("TestCase Updated Successfully", (String) response.getEntity());
+		Assert.assertEquals("Testcase Updated Successfully", responseInfo.getMessage());
 	}
 	
 	private TestCase createTestCase() {
