@@ -8,6 +8,9 @@
     <version>3.0.0.13003-SNAPSHOT</version>
     <description>phresco-framework-root</description>
     <url>http://www.phresco.org</url>
+	<scm>
+        <connection>https://github.com/photon-infotech/framework.git</connection>
+    </scm>
     <build>
         <sourceDirectory>${phresco.source.directory}</sourceDirectory>
         <testSourceDirectory>${testSourceDirectory}</testSourceDirectory>
