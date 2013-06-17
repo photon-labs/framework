@@ -46,6 +46,11 @@ select, textarea, input[type="text"], input[type="password"], input[type="dateti
 	box-shadow:none !important;
 }
 
+select
+{
+	padding: 3px 6px 4px 2px !important;
+}
+
 header, aside, figure, footer, ul, li {
 	display:block;
 	padding:0;
@@ -931,7 +936,7 @@ ul.nav li.dropdown:hover > .test_options{
 	font-size: 11px;		
 }
 
-.delete_msg div, .deleteproj_msg div , .commit_popup {
+.delete_msg div, .deleteproj_msg div , .popup_btn {
 	text-align: right;	
 }
 
@@ -3178,6 +3183,232 @@ html>body tbody.scrollContent {
 .hideContent  {
 	display : none;
 }
+
+/* *************************************************************** STYLES FOR DYNAMIC PARAMETER STARTS ************************************************************************************ */
+
+.dynamic_cont ul {
+	padding:0;
+	margin:0;
+	list-style:none;
+}
+
+.dynamic_cont ul li {
+	float:left;
+	width:150px;
+	margin-right:10px;
+}
+
+.dynamic_cont ul li:nth-child(even) {
+	margin-right:0;
+}
+
+.dynamic_cont ul li input[type="text"] {
+	width:120px !important;
+}
+
+.dynamic_cont ul li select {
+	width:135px !important;
+}
+
+
+/* *************************************************************** STYLES FOR QUALITY_PERFORMANCE TEST PAGE ************************************************************************************ */
+
+
+/* *************************************************************** STYLES FOR QUALITY_PERFORMANCE TEST PAGE ************************************************************************************ */
+
+
+.type_report
+{
+	width:55px !important;
+}
+
+.pdf_icon
+{
+	float:left;
+}
+.logintest
+{
+	margin-right:6px !important;
+}
+
+#performance_test table tr td
+{
+	border-top:none;
+	padding:3px;
+}
+
+#performance_test table
+{
+	margin-bottom:0px !important;
+}
+
+#performance_test table tr td select
+{
+	width:180px !important;
+	height:28px;
+}
+
+#performance_test table tr:nth-child(2) td:first-child select
+{
+	margin-right: 10px;
+}
+
+.performance_result_test
+{
+	max-height:500px;
+	overflow:auto;
+}
+
+.performance_result_test table tr td
+{
+	border-top:none;
+	padding:3px;
+}
+
+.performance_result_test table
+{
+	margin-bottom:0px;
+}
+
+.performance_result_test table tr td [type="checkbox"]
+{
+	margin: 0px 5px 3px 0px;
+}
+
+.test_table tr td select
+{
+	width:242px !important;
+	height:26px;
+}
+
+.test_table tr:nth-child(4) td:first-child select
+{
+	margin-right:10px;
+}
+
+.test_table tr td [type="text"]
+{
+	width: 232px !important;
+	height: 15px;
+}
+
+.middle_div span:first-child
+{
+	float:left;
+	color:#ed7940;
+	font-weight:bold;
+}
+
+.middle_div span:last-child
+{
+	float:right;
+	margin: -7px 0px 6px 0px;
+}
+
+.context_table
+{
+	margin-bottom:10px !important;
+	padding-bottom:6px;
+}
+
+.context_table tr:first-child td:first-child, .context_table tr:nth-child(2) td:first-child
+{
+	padding-left:7px;
+}
+
+.context_table tr:first-child td:last-child, .context_table tr:nth-child(2) td:last-child
+{
+	padding-right:7px;
+}
+.context_table tr:nth-child(4) td, .context_table tr:nth-child(5) td
+{
+	padding-left: 7px;
+	padding-right: 7px;
+}
+
+.context_table tr td select
+{
+	width:110px !important;
+	height:25px;
+}
+
+.context_table tr td [type="text"]
+{
+	width:110px !important;
+	height:15px;
+}
+
+.delete_icon 
+{
+	float:right;
+}
+
+.delete_icon img
+{
+	padding-bottom:1px;
+}
+
+.check_test label
+{
+	float:left;
+}
+
+.add_remove_test
+{
+	float: left;
+	background: #ffe7db;
+	color: #db6b34;
+	border-radius: 6px;
+	margin-right: 5px;
+	padding: 4px 0px 0px 5px;
+}
+
+.add_remove_test img
+{
+	padding: 0px 0px 1px 10px !important;
+}
+
+img.add_test_icon
+{
+	float:right;
+	padding: 6px 0px;
+}
+
+.header_table tr td [type="text"]
+{
+	margin-right: 8px;
+}
+
+.header_table tr td [type="checkbox"]
+{
+	margin: 0px 5px 4px 0px !important;
+}
+
+.header_table tr td [type="button"]
+{
+	margin-bottom:2px;
+}
+
+.header_table tr td:first-child
+{
+	padding-top:6px;
+}
+
+.add_test
+{
+	margin: -4px 0px 28px 0px;
+}
+
+.alignright {
+	text-align: right;	
+}
+
+.performance_result_test input[type="text"], .performance_result_test select {
+	margin-bottom: 0px !important;	
+}
+
+/* *************************************************************** STYLES FOR DYNAMIC PARAMETER ENDS ************************************************************************************ */
+
 
 /* *************************************************************** STYLES FOR WIDGETS ************************************************************************************ */
 

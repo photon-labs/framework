@@ -10,7 +10,7 @@
 				<div class="code_anal">
 					<input type="submit" data-i18n="[value]codequality.codeanalysis.codeanalysis"  id="codeAnalysis" class="btn btn_style">
 						 <form id="codeValidateForm">
-						  <div id="code_popup" class="dyn_popup">
+						  <div id="code_popup" class="dyn_popup popup_btn">
 							<ul>
 									<table><tbody id="dynamicContent"></tbody></table>
 								<li>

@@ -205,7 +205,7 @@
 					 </div> 
 				 	<div class="dummyCommit" id="dummyCommit_{{id}}"></div>
 				 	<div class="popuploading" id="commitLoading_{{id}}">&nbsp</div>
-					<div class="hideContent commitErr_{{id}} commit_popup" width="100%" border="0" cellspacing="0" cellpadding="0">
+					<div class="hideContent commitErr_{{id}} popup_btn" width="100%" border="0" cellspacing="0" cellpadding="0">
 						<p>This Project is not a working copy, add to repository and then try to commit.</p>
 						<div class="popupCloseBtn">
 							<input type="button" value="Close" class="btn btn_style dyn_popup_close">

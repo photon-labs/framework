@@ -1169,12 +1169,12 @@ public class CIManagerImpl implements CIManager, FrameworkConstants {
 
 			ciJobTemplates = new ArrayList<CIJobTemplate>(jobTemplates.size());
 
-//			for (CIJobTemplate ciJobTemplate : jobTemplates) {
-//				String selProjId = ciJobTemplate.getProjId();
-//				if (projId.equals(selProjId)) {
-//					ciJobTemplates.add(ciJobTemplate);
-//				}
-//			}
+			for (CIJobTemplate ciJobTemplate : jobTemplates) {
+				String selProjId = ciJobTemplate.getProjectId();
+				if (projId.equals(selProjId)) {
+					ciJobTemplates.add(ciJobTemplate);
+				}
+			}
 		} catch (Exception e) {
 			if (debugEnabled) {
 				S_LOGGER.error("Entered into catch block of CI.getJobTemplatesByProjId()"
@@ -1217,18 +1217,15 @@ public class CIManagerImpl implements CIManager, FrameworkConstants {
 		return ciJobTemplates;
 	}
 
-	public boolean updateJobTemplate(CIJobTemplate ciJobTemplate) throws PhrescoException {
+	public boolean updateJobTemplate(CIJobTemplate ciJobTemplate, String oldName, String projId) throws PhrescoException {
 		if (debugEnabled) {
 			S_LOGGER.debug("Entering Method CIManagerImpl.updateJobTemplate()");
 		}
 		try {
-			String jobTemplateName = ciJobTemplate.getName();
-			if (StringUtils.isEmpty(jobTemplateName)) {
+			if (StringUtils.isEmpty(oldName)) {
 				return false;
 			}
-			
-			CIJobTemplate jobTemplateByName = getJobTemplateByName(jobTemplateName);
-			boolean deleteJobTemplate = deleteJobTemplate(jobTemplateByName.getName());
+			boolean deleteJobTemplate = deleteJobTemplate(oldName, projId);
 			if (deleteJobTemplate) {
 				boolean createJobTemplates = createJobTemplates(Arrays.asList(ciJobTemplate), false);
 				return createJobTemplates;
@@ -1276,7 +1273,7 @@ public class CIManagerImpl implements CIManager, FrameworkConstants {
 		}
 	}
 	
-	public boolean deleteJobTemplate(String jobTemplateName) throws PhrescoException {
+	public boolean deleteJobTemplate(String jobTemplateName, String projId) throws PhrescoException {
 		if (debugEnabled) {
 			S_LOGGER.debug("Entering Method CIManagerImpl.deleteJobTemplates()");
 		}
@@ -1289,7 +1286,7 @@ public class CIManagerImpl implements CIManager, FrameworkConstants {
 			Iterator<CIJobTemplate> jobTemplateIterator = jobTemplates.iterator();
 			while (jobTemplateIterator.hasNext()) {
 				CIJobTemplate jobTemplate = (CIJobTemplate) jobTemplateIterator.next();
-				if (jobTemplate.getName().equals(jobTemplateName)) {
+				if (jobTemplate.getName().equals(jobTemplateName) && jobTemplate.getProjectId().equalsIgnoreCase(projId)) {
 					jobTemplateIterator.remove();
 					break;
 				}
