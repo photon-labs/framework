@@ -13,6 +13,8 @@ define(["testResult/listener/testResultListener"], function() {
 		onTestResultDescEvent : null,
 		onShowHideConsoleEvent : null,
 		logContent : "",
+		onPrintPdfEvent : null,
+		onGeneratePdfEvent : null,
 		
 		/***
 		 * Called in initialization time of this class 
@@ -33,6 +35,16 @@ define(["testResult/listener/testResultListener"], function() {
 			}
 			self.onShowHideConsoleEvent.add(self.testResultListener.showHideConsole, self.testResultListener);
 			
+			if (self.onPrintPdfEvent === null) {
+				self.onPrintPdfEvent = new signals.Signal();
+			}
+			self.onPrintPdfEvent.add(self.testResultListener.getPdfReports, self.testResultListener);
+			
+			if (self.onGeneratePdfEvent === null) {
+				self.onGeneratePdfEvent = new signals.Signal();
+			}
+			self.onGeneratePdfEvent.add(self.testResultListener.generatePdfReport, self.testResultListener);
+			
 			self.registerEvents();
 		},
 		
@@ -52,7 +64,8 @@ define(["testResult/listener/testResultListener"], function() {
 			var self = this;
 			commonVariables.from = "all";
 			commonVariables.loadingScreen.showLoading();
-			self.testResultListener.getTestResult(self.testResultListener.getActionHeader(self.requestBody, "getTestSuite"), function(response) {
+			//To get the testsuites
+			self.testResultListener.performAction(self.testResultListener.getActionHeader(self.requestBody, "getTestSuite"), function(response) {
 				var data = {};
 				data.testSuites = response.data;
 				data.message = response.message
@@ -65,6 +78,13 @@ define(["testResult/listener/testResultListener"], function() {
 							self.testResultListener.createBarChart(graphData, testSuiteLabels);
 						});
 					}, 400);
+					$('#pdfDiv').show();
+				} else {
+					setTimeout(function() {
+						var noReportContent = '<div class="alert alert-block" style="text-align: center; margin: auto 0;">' + response.message + '</div>'
+						$('#graphView').html(noReportContent);
+					}, 400);
+					$('#pdfDiv').hide();
 				}
 			});
 		},
@@ -81,8 +101,20 @@ define(["testResult/listener/testResultListener"], function() {
 			self.testResultListener.resizeConsoleWindow();
 			self.testResultListener.resizeTestResultTable("testSuites");
 			
+			//To show the log after reloading the test result once the test execution is completed
 			$('#testConsole').html(self.logContent);
 			self.logContent = '';
+			
+			self.testResultListener.showTabularView();
+			
+			//To set the height of the test result section  
+			var windowHeight = $(document).height();
+			var marginTop = $('.testSuiteTable').css("margin-top");
+			marginTop = marginTop.substring(0, marginTop.length - 2);
+			var footerHeight = $('#footer').height();
+			var deductionHeight = Number(marginTop) + Number(footerHeight);
+			var finalHeight = windowHeight - deductionHeight - 5;
+			$('.testSuiteTable').height(finalHeight);
 		},
 		
 		/***
@@ -101,8 +133,6 @@ define(["testResult/listener/testResultListener"], function() {
 						}
 			});
 			
-			
-			
 			$(window).resize(function() {
 				self.testResultListener.resizeTestResultTable();
 				
@@ -119,11 +149,7 @@ define(["testResult/listener/testResultListener"], function() {
 				self.testResultListener.resizeConsoleWindow();
 			});
 			
-//			$("a[name=unittestResult]").unbind("click");
-//			$("a[name=unittestResult]").click(function() {
-//				self.onTestResultEvent.dispatch();
-//			});
-			
+			//To show the testcases of the selected testsuite
 			$("a[name=testDescription]").unbind("click");
 			$("a[name=testDescription]").click(function() {
 				commonVariables.loadingScreen.showLoading();
@@ -132,9 +158,29 @@ define(["testResult/listener/testResultListener"], function() {
 				self.onTestResultDescEvent.dispatch();
 			});
 			
+			//To show hide the console content when the console is clicked
 			$('#consoleImg').unbind("click");
 			$('#consoleImg').click(function() {
 				self.onShowHideConsoleEvent.dispatch();
+			});
+			
+			//To show the print as pdf popup
+			$('#pdfIcon').unbind("click");
+			$('#pdfIcon').click(function() {
+				self.onPrintPdfEvent.dispatch();
+				self.opencc(this, 'pdf_report');
+			});
+			
+			//To generate the pdf report
+			$('#generatePdf').unbind("click");
+			$('#generatePdf').click(function() {
+				self.onGeneratePdfEvent.dispatch();
+			});
+			
+			//To copy the console log content to the clip-board
+			$('#copyLog').unbind("click");
+			$('#copyLog').click(function() {
+				commonVariables.navListener.copyToClipboard($('#testConsole'));
 			});
 			
 			Clazz.navigationController.mainContainer = commonVariables.contentPlaceholder;

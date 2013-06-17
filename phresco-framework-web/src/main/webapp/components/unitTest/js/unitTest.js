@@ -107,7 +107,7 @@ define(["unitTest/listener/unitTestListener", "testResult/listener/testResultLis
 			});
 		},
 		
-		preRender: function(whereToRender, renderFunction){
+		preRender: function(whereToRender, renderFunction) {
 			var self = this;
 			self.unitTestListener.getUnitTestReportOptions(self.unitTestListener.getActionHeader(self.projectRequestBody, "get"), function(response) {
 				var responseData = response.data;

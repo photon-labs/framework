@@ -75,6 +75,7 @@ var commonVariables = {
 	
 	openFolderContext : "util/openFolder",
 	copyPathContext : "util/copyPath",
+	copyToClipboardContext : "util/copyToClipboard",
 	
 	/******* Open folder and copy path constants *******/
 	typeBuild : "build",

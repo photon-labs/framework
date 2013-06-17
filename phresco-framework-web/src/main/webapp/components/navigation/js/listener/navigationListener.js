@@ -621,9 +621,12 @@ define(["navigation/api/navigationAPI"], function() {
 				header.requestMethod = "GET";
 				header.webserviceurl = commonVariables.webserviceurl + commonVariables.copyPathContext + "?type=" + type + "&appDirName=" + appDirName;
 			} else if(action == "importpost") {
-				header.requestMethod = "POST";				
-				header.requestPostBody = JSON.stringify(requestBody);		
-				header.webserviceurl = commonVariables.webserviceurl + "repository/importApplication";				
+				header.requestMethod = "POST";
+				header.requestPostBody = JSON.stringify(requestBody);
+				header.webserviceurl = commonVariables.webserviceurl + "repository/importApplication";
+			} else if (action == "copyToClipboard") {
+				header.requestMethod = "GET";
+				header.webserviceurl = commonVariables.webserviceurl + commonVariables.copyToClipboardContext + "?log=" + requestBody.log;
 			}
 			return header;
 		},
@@ -754,7 +757,16 @@ define(["navigation/api/navigationAPI"], function() {
 					});
 				}
 			});
-		}	
+		},
+		
+		//To copy the console log content to the clip-board
+		copyToClipboard : function(consoleObj) {
+			var self = this;
+			var logContent = consoleObj.text();
+			var data = {};
+			data.log = escape(logContent);
+			self.navigationAction(self.getActionHeader(data, "copyToClipboard"), function(response) {});
+		}
 	});
 
 	return Clazz.com.components.navigation.js.listener.navigationListener;

@@ -114,6 +114,26 @@ public class UtilService extends RestBase implements FrameworkConstants, Service
 					.build();
 		}
 	}
+	
+	/**
+	 * To copy the console log to the clipboard
+	 * @param log
+	 * @return
+	 */
+	@GET
+	@Path("/copyToClipboard")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response copyLogToClipboard(@QueryParam("log") String log) {
+		ResponseInfo<String> responseData = new ResponseInfo<String>();
+		try {
+			copyToClipboard(log);
+			ResponseInfo<String> finalOutput = responseDataEvaluation(responseData, null, "Log copied successfully", null);
+			return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
+		} catch (Exception e) {
+			ResponseInfo<ProjectInfo> finalOutput = responseDataEvaluation(responseData, e, "Log copy failed", null);
+			return Response.status(Status.BAD_REQUEST).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
+		}
+	}
 
 	/**
 	 * Gets the tecnology options.

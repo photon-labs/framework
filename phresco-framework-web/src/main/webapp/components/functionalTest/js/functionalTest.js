@@ -205,6 +205,8 @@ define(["functionalTest/listener/functionalTestListener", "testResult/listener/t
 			$("#executeStartNode").click(function() {
 				self.onRunFunctionalTestEvent.dispatch("startNode");
 			});
+			
+			
 		}
 	});
 

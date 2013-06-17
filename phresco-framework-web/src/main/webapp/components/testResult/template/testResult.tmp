@@ -221,7 +221,9 @@
                 <tr>
                     <th>Progress</th>
 					<td>
-						<img src="themes/default/images/helios/buildreport_icon.png" width="15" height="18" border="0" alt="">
+						<a href="#" id="copyLog">
+							<img src="themes/default/images/helios/buildreport_icon.png" width="15" height="18" border="0" alt="">
+						</a>
 					</td>
 				</tr>
 			</thead>
