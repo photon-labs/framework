@@ -109,14 +109,16 @@ define(["configuration/listener/configurationListener"], function() {
 					arr[count]=$(this).text();
 					count++;
 				});
-				var name = $("input[name='envName']").val();
+				var name = $("input[name=envName]").val();
+				var envDesc = $("input[name=envDesc]").val();
 				if(name==""){	
 					$("input[name='envName']").focus();
 					$("input[name='envName']").attr('placeholder','Enter Environment Name');
 				} else {							  
 					var found = $.inArray($("input[name='envName']").val(), arr) > -1;
+					
 					if (found === false) {
-						self.addEnvEvent.dispatch();
+						self.addEnvEvent.dispatch(name, envDesc, '');
 						$("input[name='envName']").attr('placeholder','Environment Name');
 						$("input[name='envDesc']").attr('placeholder','Environment Description');
 					}
@@ -133,7 +135,7 @@ define(["configuration/listener/configurationListener"], function() {
 			
 			$("input[name=saveEnvironment]").unbind("click");
 			$("input[name=saveEnvironment]").click(function() {
-				self.saveEnvEvent.dispatch(self.envWithConfig, function(response){
+				self.saveEnvEvent.dispatch(self.envWithConfig, '', function(response){
 					self.configRequestBody = response;
 					self.getAction(self.configRequestBody, 'saveEnv', '', '');
 				});

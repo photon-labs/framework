@@ -119,6 +119,11 @@
 			"path" : "components/codequality/js"
 		},
 		
+		"editConfigurationTest" : {
+			"moduleName":"configurationTest",
+			"path" : "components/configuration/test/editConfigurationTest"
+		},
+		
 		"codequalityTest" : {
 			"moduleName":"applicationTest",
 			"path" : "components/codequality/test/codequalityTest"

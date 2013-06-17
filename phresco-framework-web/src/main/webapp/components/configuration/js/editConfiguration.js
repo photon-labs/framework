@@ -41,11 +41,11 @@ define(["framework/widgetWithTemplate", "configuration/listener/configurationLis
 				$.each(response.data.configurations, function(index, value){
 					if (value.type !== "Other") {
 						self.configurationlistener.getConfigurationList(self.configurationlistener.getRequestHeader(self.configRequestBody, "template", value.type), function(response) {
-							self.configurationlistener.constructHtml(response, value, response.data.settingsTemplate.name);
+							self.configurationlistener.constructHtml(response, value, response.data.settingsTemplate.name, '');
 						});
 					} else {
 						setTimeout(function(){
-							self.configurationlistener.htmlForOther(value);
+							self.configurationlistener.htmlForOther(value, '');
 						},800);
 					}
 				});
