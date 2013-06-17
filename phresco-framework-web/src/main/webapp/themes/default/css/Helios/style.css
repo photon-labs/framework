@@ -3073,6 +3073,13 @@ html>body tbody.scrollContent {
 	line-height: 22px;
 }
 
+#sortable1 li div {
+	float: none;
+}
+
+#sortable2 li div {
+	float: left;
+}
 
 /* *************************************************************** STYLES FOR DOWNLOAD PAGE ************************************************************************************ */
 

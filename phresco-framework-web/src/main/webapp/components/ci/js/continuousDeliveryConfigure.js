@@ -110,6 +110,14 @@ define(["framework/widgetWithTemplate", "ci/listener/ciListener"], function() {
 		},
 
 		/***
+		 * This method automatically manipulates upstream and downstream as well as validation
+		 *
+		 */
+		streamConfig : function(itemObj, thisObj) {
+
+		},
+
+		/***
 		 * Bind the action listeners. The bindUI() is called automatically after the render is complete 
 		 *
 		 */
@@ -122,20 +130,139 @@ define(["framework/widgetWithTemplate", "ci/listener/ciListener"], function() {
 	  		$(".first_list").find("span").hide();
 
 			$(function() {
-			    $( "#sortable1, #sortable2" ).sortable({
+				// sortable1 functionality
+			    $( "#sortable1" ).sortable({
 			      connectWith: ".connectedSortable",
 				  items: "> li",
 				  start: function( event, ui ) {
-					  $("#sortable1 li.ui-state-default a").hide();
-					  $("#sortable2 li.ui-state-default a").show();	
-					  $(".dyn_popup").hide();
-					  },
+				  		// For gear icons alone
+						$("#sortable1 li.ui-state-default a").hide();
+					  	$("#sortable2 li.ui-state-default a").show();	
+					  	$(".dyn_popup").hide();
+				  },
+
 				  stop: function( event, ui ) {
-					  $("#sortable2 li.ui-state-default a").show();
-					  $("#sortable1 li.ui-state-default a").hide();	
-					  $(".dyn_popup").hide();
-					  }	  
-			    })
+
+				  		// For gear icons alone
+					  	$("#sortable2 li.ui-state-default a").show();
+					  	$("#sortable1 li.ui-state-default a").hide();	
+					  	$(".dyn_popup").hide();
+					  	console.log("ui stop => " , ui);
+
+					  	//$(this).parent().data( 'sorting', true ); 
+					  	//alert("New position: " + ui.item.index());
+					  	//var itemText= ui.item.text();
+
+					  	// ui.children().each(function() {
+        // 					$(this).width($(this).width());
+    				// 	});
+						//var length = $('#selected ul > li').length
+				  },
+
+				  receive: function( event, ui ) {
+				  		// Remove application name text
+				  		var itemText = $(ui.item).find('div').text();
+				  		var anchorElem = $(ui.item).find('a');
+				  		var appName = $(anchorElem).attr("appname");
+				  		$(ui.item).find('div').text($(ui.item).find('div').text().replace(appName + " - ", ""));
+				  }
+
+			    });
+
+				// sortable2 functionality
+			    $( "#sortable2" ).sortable({
+			      connectWith: ".connectedSortable",
+				  items: "> li",
+				  start: function( event, ui ) {
+				  		// For gear icons alone
+						$("#sortable1 li.ui-state-default a").hide();
+					  	$("#sortable2 li.ui-state-default a").show();	
+					  	$(".dyn_popup").hide();
+
+				  		// var anchorElem = $(ui.item).find('a');
+				  		// var templateJsonData = $(anchorElem).data("templateJson");
+				  		// console.log("Template json data 2 => " + JSON.stringify(templateJsonData));
+
+				  		// var sortable2Len = $('#sortable2 > li').length;
+
+				  		// // Initial validation
+				  		// if (sortable2Len === 0 && !templateJsonData.enableRepo) {
+				  		// 	console.log("atleast one job on right side should be with url  2 ");
+				  		// 	$(ui.sender).sortable('cancel');
+				  		// }
+
+				  		// secons job parent and cloned workspace, check clonned workspace value set in 
+
+				  },
+
+				  stop: function( event, ui ) {
+
+				  		// For gear icons alone
+					  	$("#sortable2 li.ui-state-default a").show();
+					  	$("#sortable1 li.ui-state-default a").hide();	
+					  	$(".dyn_popup").hide();
+					  	console.log("ui stop 2 => " , ui);
+
+					  	//$(this).parent().data( 'sorting', true ); 
+					  	//alert("New position: " + ui.item.index());
+					  	//var itemText= ui.item.text();
+
+					  	// ui.children().each(function() {
+        // 					$(this).width($(this).width());
+    				// 	});
+						//var length = $('#selected ul > li').length
+				  },
+
+				  activate : function( event, ui ) {
+				  		console.log("activate2 => " , ui);
+				  },
+
+				  beforeStop: function( event, ui ) {
+				  		console.log("beforeStop2 => " , ui);
+				  },
+
+				  change: function( event, ui ) {
+				  		console.log("change2 => " , ui);
+				  },
+
+				  out: function( event, ui ) {
+				  		console.log("out2 => " , ui);
+				  },
+
+				  remove: function( event, ui ) {
+				  		console.log("remove2 => " , ui);
+				  },
+
+				  update: function( event, ui ) {
+						console.log("update2 => " , ui);
+				  },
+
+				  receive: function( event, ui ) {
+				  		// Append application name text
+				  		var itemText = $(ui.item).find('div').text();
+				  		var anchorElem = $(ui.item).find('a');
+				  		var templateJsonData = $(anchorElem).data("templateJson");
+
+				  		var appName = $(anchorElem).attr("appname");
+				  		$(ui.item).find('div').text(appName  + " - " + itemText);
+
+				  		console.log("Template json data1 => " + JSON.stringify(templateJsonData));
+
+				  		var sortable2Len = $('#sortable2 > li').length;
+				  		console.log("calc " + $(this).find('li').size());
+
+				  		// Initial validation
+				  		if (sortable2Len === 1 && !templateJsonData.enableRepo) {
+				  			alert("atleast one job on right side should be with url 1 ");
+				  			$(ui.sender).sortable('cancel');
+				  			$(ui.item).find('div').text(itemText);
+				  		}
+
+				  		// Construct upstream and downstream validations
+				  		
+				  }
+
+			    });
 			 }); 
 
 	  		$(function () {

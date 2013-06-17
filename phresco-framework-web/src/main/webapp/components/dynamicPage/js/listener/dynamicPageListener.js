@@ -33,6 +33,7 @@ define(["framework/widget", "dynamicPage/api/dynamicPageAPI", "common/loading"],
 				var self = this, header = self.getRequestHeader(self.projectRequestBody, "", "", "parameter");
 				var appDirName = commonVariables.appDirName;
 				var goal = commonVariables.goal;
+				var phase = commonVariables.phase;
 				
 				if (self.parameterValidation(appDirName, goal)) {
 					if (showLoading) {
@@ -903,16 +904,23 @@ define(["framework/widget", "dynamicPage/api/dynamicPageAPI", "common/loading"],
 		getRequestHeader : function(projectRequestBody, key, selectedOption, action) {
 			var appDirName = commonVariables.appDirName;
 			var goal = commonVariables.goal;
+			// Passing phase parameter
+			var phase = commonVariables.phase;
+			var phaseParam = "";
+
+			if (phase !== null && phase !== undefined && phase !== '') {
+				phaseParam = "&phase=" + phase + goal;
+			}
 			
 			var header = {
 				contentType: "application/json",
 				dataType: "json",
-				webserviceurl: commonVariables.webserviceurl + commonVariables.paramaterContext + "/" + commonVariables.dynamicPageContext + "?appDirName="+appDirName+"&goal="+ goal
+				webserviceurl: commonVariables.webserviceurl + commonVariables.paramaterContext + "/" + commonVariables.dynamicPageContext + "?appDirName="+appDirName+"&goal="+ goal + phaseParam
 			}
 			
-			if(action === "parameter"){
+			if(action === "parameter") {
 				header.requestMethod = "GET";
-				header.webserviceurl = commonVariables.webserviceurl + commonVariables.paramaterContext + "/" + commonVariables.dynamicPageContext + "?appDirName="+appDirName+"&goal="+ goal
+				header.webserviceurl = commonVariables.webserviceurl + commonVariables.paramaterContext + "/" + commonVariables.dynamicPageContext + "?appDirName="+appDirName+"&goal="+ goal + phaseParam;
 			}
 			
 			if(action === "dependency" && key !== ""){

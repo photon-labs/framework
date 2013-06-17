@@ -319,6 +319,7 @@ define(["ci/api/ciAPI"], function() {
 			//TODO: need to get downstream project as well as dynamic params from service
 			var self = this;
 			var templateJsonData = $(thisObj).data("templateJson");
+			var jobJsonData = $(thisObj).data("jobJson");
 
 			// elements
 			var repoTypeElem = $("#repoType tbody tr");
@@ -327,18 +328,18 @@ define(["ci/api/ciAPI"], function() {
 			// Repo types
 			if (!self.isBlank(templateJsonData.repoTypes) && templateJsonData.repoTypes === "svn") {
 				// For svn
-				$(repoTypeElem).html('<td><input type="text" placeholder="SVN Url" name="url"></td>'+
+				$(repoTypeElem).html('<td><input type="text" placeholder="SVN Url" name="url"><input name="repoType" type="hidden" value="'+ templateJsonData.repoTypes +'"></td>'+
                         '<td><input type="text" placeholder="Username" name="userName"></td>'+
                         '<td><input type="password" placeholder="Password" name="password"></td>');
 			} else if (!self.isBlank(templateJsonData.repoTypes) && templateJsonData.repoTypes === "git") {
 				// For GIT
-				$(repoTypeElem).html('<td><input type="text" placeholder="GIT Url" name="url"></td>'+
+				$(repoTypeElem).html('<td><input type="text" placeholder="GIT Url" name="url"><input name="repoType" type="hidden" value="'+ templateJsonData.repoTypes +'"></td>'+
                         '<td><input type="text" placeholder="Username" name="userName"></td>'+
                         // '<td><input type="text" placeholder="Branch" name="branch"></td>'+
                         '<td><input type="password" placeholder="Password" name="password"></td>');
 			} else {
 				// For clonned workspace
-				$(repoTypeElem).html('<select id="clonnedworkspaces" name="clonnedworkspaces"></select>');
+				$(repoTypeElem).html('<input name="repoType" type="hidden" value="clonedWorkspace"><select id="clonnedWorkspaceName" name="clonnedWorkspaceName"></select>');
 				// set label value
 				$(repoTypeTitleElem).html("Clonned workspace");
 			}
@@ -375,48 +376,141 @@ define(["ci/api/ciAPI"], function() {
 				}
 			}
 
-			// templateJsonData.type
-			// TODO: Based on type dynamic page have to render
-			var operation = templateJsonData.type;
-
 			// Get app name
 			var appName = $(thisObj).attr("appname");
+			var appDirName = $(thisObj).attr("appDirName");
 			var jobtemplatename = $(thisObj).attr("jobtemplatename");
 
 			// set corresponding job template name and their app name in configure button
 			$("[name=configure]").attr("appname", appName);
+			$("[name=configure]").attr("appDirName", appDirName);
 			$("[name=configure]").attr("jobtemplatename", jobtemplatename);
 
+
 			// Dynamic param
-			//commonVariables.goal = commonVariables.ciPhase;
-			commonVariables.goal = commonVariables.unitTestGoal;
-			commonVariables.appDirName = "wwwww-Java WebService";
+			var operation = templateJsonData.type;
+			console.log("operation > " + operation);
+
+			if ("Code Validation" === operation) {
+				commonVariables.goal = commonVariables.codeValidateGoal;
+			} else if ("Build" === operation) {
+				commonVariables.goal = commonVariables.packageGoal;
+			} else if ("Deploy" === operation) {
+				commonVariables.goal = commonVariables.deployGoal;
+			} else if ("Unit Test" === operation) {
+				commonVariables.goal = commonVariables.unitTestGoal;
+			} else if ("Component Test" === operation) {
+				commonVariables.goal = commonVariables.componentTestGoal;
+			} else if ("Functional Test" === operation) {
+				commonVariables.goal = commonVariables.functionalTestGoal;
+			} else if ("Performance Test" === operation) {
+				commonVariables.goal = commonVariables.performanceTestGoal;
+			} else if ("Load Test" === operation) {
+				commonVariables.goal = commonVariables.loadTestGoal;
+			} else if ("PDF Report" === operation) {
+				commonVariables.goal = commonVariables.pdfReportGoal;
+			}
+
+			commonVariables.phase = commonVariables.ciPhase;
+			commonVariables.appDirName = appDirName;
 
 			commonVariables.navListener.getMyObj(commonVariables.dynamicPage, function(dynamicPageObject) {
 				self.dynamicPageListener = new Clazz.com.components.dynamicPage.js.listener.DynamicPageListener();
 				dynamicPageObject.getHtml(false, function(response) {
+
 					if ("No parameters available" == response) {
 						console.log("No parameters available ");
+						$("#dynamicContent").empty();
 					} else {
 						console.log("Parameters available ");
 						$("#dynamicContent").html(response);
 						dynamicPageObject.showParameters();
 						self.dynamicPageListener.controlEvent();
-						// OPen popup
-						commonVariables.openccmini(thisObj, 'jobConfigure');
 					}
+
+					// Restore existing values
+					// get all the elemenst of the form and iterate through that, check for type and populate the value
+					if (!self.isBlank(jobJsonData)) {
+						self.restoreFormValues($("#jonConfiguration"), jobJsonData);
+					}
+
+					// Open popup
+					commonVariables.openccmini(thisObj, 'jobConfigure');
 				});
 			});
+		},
+
+		restoreFormValues : function (formObj, data) {
+			var self = this;
+
+		    if (!self.isBlank(formObj)) {
+		    	for ( var i = 0; i < $(formObj)[0].elements.length; i++ ) {
+
+			        var e = $(formObj)[0].elements[i];
+
+			        var key = e.name;
+			        var value = data[key];
+
+			        if (self.isBlank(e.name)) continue; // Shortcut, may not be suitable for values = 0 (considered as false)
+
+			        //console.log("Name => " + key + " :: Type => " + e.type  + " :: Value => " + value + " :: Value type => " + $.type(value));
+
+			        switch (e.type) {
+			            case 'text':
+			            	$('[name="'+ key +'"]').val(value);
+			            	break;
+			            case 'textarea':
+			            	$('[name="'+ key +'"]').text(value);
+			            	break;
+			            case 'password':
+			            	$('[name="'+ key +'"]').val(value);
+			            	break;
+			            case 'hidden':
+			            	$('[name="'+ key +'"]').val(value);
+			                break;
+			            case 'radio':
+			            	if ($.type() === "string") {
+			            		$('[name="'+ key +'"][value="'+ value +'"]').attr("checked", true);
+			            	}
+			            	break;
+			            case 'checkbox':
+			            	if ($.type(value) === "array") {
+			            	 	$.each(value, function (arrayKey, arrayValue) {
+			            	 		$('[name="'+ key +'"][value="'+ arrayValue +'"]').attr("checked", true);
+			            	 	});
+			            	} else if ($.type(value) === "string" && value === "true") {
+			            		$('[name="'+ key +'"]').prop('checked', true);
+			            	} else if ($.type(value) === "string" && value === "false") {
+			            		$('[name="'+ key +'"]').prop('checked', false);
+			            	} else if ($.type(value) === "string") { // other case
+			            	 	$('[name="'+ key +'"][value="'+ value +'"]').attr("checked", true);
+			            	}
+			                break;
+			            case 'select-one':
+			            	$('[name="'+ key +'"]').val(value);
+			                break;
+			            case 'select-multiple':
+							if ($.type(value) === "array") {
+			            		$('[name="'+ key +'"]').val(value);
+			            	} else if ($.type() === "string") {
+			            		$('[name="'+ key +'"]').val(value);
+			            	}
+			                break;
+			        }
+			    }
+		    }
 		},
 
 		configureJob : function (thisObj) {
 			// Get app name
 			var appName = $(thisObj).attr("appname");
+			var appDirName = $(thisObj).attr("appDirName");
 			var jobtemplatename = $(thisObj).attr("jobtemplatename");
 
 			// append the configureJob json (jobJson) in  job template name id
 			var jobConfiguration = $('#jonConfiguration').serializeObject();
 
+			console.log("Storing " + JSON.stringify(jobConfiguration));
 			//Checking
 			$('[appname="'+ appName +'"][jobtemplatename="'+ jobtemplatename +'"]').data("jobJson", jobConfiguration);
 
@@ -432,15 +526,25 @@ define(["ci/api/ciAPI"], function() {
 				//var continuousDeliveryJobTemplates = "";
 				$("#sortable1").empty();
 				$.each(data, function(key, value) {
-					var jobTemplateApplicationName = '<div class="sorthead">'+ key +'</div>';
+					console.log("Type key " + $.type(key));
+					console.log("Type value " + $.type(value));
+
+					console.log("key > " + JSON.stringify(key));
+					var parseJson = $.parseJSON(key);
+					console.log("appName " + parseJson.appName);
+					console.log("appDirName " + parseJson.appDirName);
+					var appName = parseJson.appName;
+					var appDirName = parseJson.appDirName;
+
+					var jobTemplateApplicationName = '<div class="sorthead">'+ appName +'</div>';
 					$("#sortable1").append(jobTemplateApplicationName);
 
 					if (!self.isBlank(data)) {
 						// job tesmplate key and value
 						$.each(value, function(jobTemplateKey, jobTemplateValue) {
 
-							var jobTemplateGearHtml = '<a href="javascript:;" id="'+ jobTemplateValue.name +'" class="validate_icon" jobTemplateName="'+ jobTemplateValue.name +'" appName="'+ key +'" name="jobConfigurePopup" style="display: none;"><img src="themes/default/images/helios/validate_image.png" width="19" height="19" border="0"></a>';
-                    		var jobTemplateHtml = '<li class="ui-state-default">' + jobTemplateValue.name + ' - ' + jobTemplateValue.type + jobTemplateGearHtml + '</li>'
+							var jobTemplateGearHtml = '<a href="javascript:;" id="'+ jobTemplateValue.name +'" class="validate_icon" jobTemplateName="'+ jobTemplateValue.name +'" appName="'+ appName +'" appDirName="'+ appDirName +'" name="jobConfigurePopup" style="display: none;"><img src="themes/default/images/helios/validate_image.png" width="19" height="19" border="0"></a>';
+                    		var jobTemplateHtml = '<li class="ui-state-default"><div>' + jobTemplateValue.name + ' - ' + jobTemplateValue.type + '</div>' + jobTemplateGearHtml + '</li>'
                     		$("#sortable1").append(jobTemplateHtml);
 
                     		// set json value on attribute

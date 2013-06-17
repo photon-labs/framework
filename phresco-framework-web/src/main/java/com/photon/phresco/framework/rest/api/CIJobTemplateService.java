@@ -19,6 +19,8 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.codehaus.jettison.json.JSONException;
+import org.codehaus.jettison.json.JSONObject;
 
 import com.photon.phresco.api.ConfigManager;
 import com.photon.phresco.commons.model.ApplicationInfo;
@@ -135,7 +137,7 @@ public class CIJobTemplateService extends RestBase {
 		try {
 			List<ApplicationInfo> appInfos = FrameworkServiceUtil.getAppInfos(customerId, projectId);
 			CIManager ciManager = PhrescoFrameworkFactory.getCIManager();
-			Map<String, List<CIJobTemplate>> jobTemplateMap = new HashMap<String, List<CIJobTemplate>>();
+			Map<JSONObject, List<CIJobTemplate>> jobTemplateMap = new HashMap<JSONObject, List<CIJobTemplate>>();
 			for (ApplicationInfo appInfo : appInfos) {
 				String appName = appInfo.getName();
 				List<Environment> environments = getEnvironments(appInfo);
@@ -143,7 +145,12 @@ public class CIJobTemplateService extends RestBase {
 					if (envName.equals(environment.getName())) {
 						List<CIJobTemplate> jobTemplates = ciManager.getJobTemplatesByAppId(appName);
 						if (CollectionUtils.isNotEmpty(jobTemplates)) {
-							jobTemplateMap.put(appName, jobTemplates);
+							JSONObject jsonObject = new JSONObject();
+							jsonObject.put("appName", appInfo.getName());
+							jsonObject.put("appDirName", appInfo.getAppDirName());
+							
+							jobTemplateMap.put(jsonObject, jobTemplates);
+//							jobTemplateMap.put(appName, jobTemplates);
 						}
 					}
 				}
@@ -154,6 +161,9 @@ public class CIJobTemplateService extends RestBase {
 			ResponseInfo<CIJobTemplate> finalOutput = responseDataEvaluation(responseData, e, "Job Templates Failed to Fetch", null);
 			return Response.status(Status.EXPECTATION_FAILED).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
 		} catch (ConfigurationException e) {
+			ResponseInfo<CIJobTemplate> finalOutput = responseDataEvaluation(responseData, e, "Job Templates Failed to Fetch", null);
+			return Response.status(Status.EXPECTATION_FAILED).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
+		} catch (JSONException e) {
 			ResponseInfo<CIJobTemplate> finalOutput = responseDataEvaluation(responseData, e, "Job Templates Failed to Fetch", null);
 			return Response.status(Status.EXPECTATION_FAILED).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
 		}

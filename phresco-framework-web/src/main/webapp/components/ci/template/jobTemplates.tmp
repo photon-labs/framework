@@ -23,9 +23,11 @@
                                             <option value="Build">Build</option>
                                             <option value="Deploy">Deploy</option>
                                             <option value="Unit Test">Unit Test</option>
+                                            <option value="Component Test">Component Test</option>
                                             <option value="Functional Test">Functional Test</option>
                                             <option value="Performance Test">Performance Test</option>
                                             <option value="Load Test">Load Test</option>
+                                            <option value="PDF Report">PDF Report</option>
                                       </select>
                                   </td>
                                 </tr>

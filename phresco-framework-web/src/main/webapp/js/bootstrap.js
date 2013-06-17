@@ -108,12 +108,19 @@ var commonVariables = {
 	optionsThemeBuilder : "Theme_Builder",
 	
 	/******* Phase *********/
-	ciPhase : "ci",
+	ciPhase : "ci-",
 
 	/******* Goals *********/
+	codeValidateGoal : "validate-code",
+	packageGoal : "package",
+	deployGoal : "deploy",
 	unitTestGoal : "unit-test",
 	componentTestGoal : "component-test",
 	functionalTestGoal : "functional-test",
+	performanceTestGoal : "performance-test",
+	loadTestGoal : "load-test",
+	pdfReportGoal : "pdf-report",
+
 	startHubGoal : "start-hub",
 	startNodeGoal : "start-node",
 	
