@@ -23,6 +23,10 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
@@ -34,6 +38,7 @@ import com.photon.phresco.commons.FrameworkConstants;
 import com.photon.phresco.commons.model.ApplicationInfo;
 import com.photon.phresco.commons.model.ProjectInfo;
 import com.photon.phresco.exception.PhrescoException;
+import com.photon.phresco.framework.FrameworkConfiguration;
 import com.photon.phresco.framework.PhrescoFrameworkFactory;
 import com.photon.phresco.framework.api.ProjectManager;
 import com.photon.phresco.util.Constants;
@@ -256,4 +261,35 @@ public class FrameworkServiceUtil implements Constants, FrameworkConstants {
 		.append(Constants.CONFIGURATION_INFO_FILE);
 		return builder.toString();
 	}
+	
+	 //get server Url for sonar
+    public static String getSonarURL(HttpServletRequest request) throws PhrescoException {
+    	FrameworkConfiguration frameworkConfig = PhrescoFrameworkFactory.getFrameworkConfig();
+    	String serverUrl = getSonarHomeURL(request);
+	    String sonarReportPath = frameworkConfig.getSonarReportPath();
+	    String[] sonar = sonarReportPath.split("/");
+	    serverUrl = serverUrl.concat(FORWARD_SLASH + sonar[1]);
+	    return serverUrl;
+    }
+    
+    //get server Url for sonar
+    public static String getSonarHomeURL(HttpServletRequest request) throws PhrescoException {
+    	FrameworkConfiguration frameworkConfig = PhrescoFrameworkFactory.getFrameworkConfig();
+    	String serverUrl = "";
+    	
+	    if (StringUtils.isNotEmpty(frameworkConfig.getSonarUrl())) {
+	    	serverUrl = frameworkConfig.getSonarUrl();
+	    } else {
+	    	serverUrl = request.getRequestURL().toString();
+	    	StringBuilder tobeRemoved = new StringBuilder();
+	    	tobeRemoved.append(request.getContextPath());
+	    	tobeRemoved.append(request.getServletPath());
+	    	tobeRemoved.append(request.getPathInfo());
+
+	    	Pattern pattern = Pattern.compile(tobeRemoved.toString());
+	    	Matcher matcher = pattern.matcher(serverUrl);
+	    	serverUrl = matcher.replaceAll("");
+	    }
+	    return serverUrl;
+    }
 }

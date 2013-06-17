@@ -37,6 +37,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
@@ -54,14 +55,16 @@ import com.photon.phresco.framework.commons.ApplicationsUtil;
 import com.photon.phresco.framework.model.CIBuild;
 import com.photon.phresco.framework.model.CIJob;
 import com.photon.phresco.framework.model.CIJobStatus;
+import com.photon.phresco.util.Constants;
 import com.photon.phresco.util.ServiceConstants;
 import com.photon.phresco.util.Utility;
+import com.sun.jersey.api.client.ClientResponse.Status;
 
 /**
  * The Class CIService.
  */
 @Path("/ci")
-public class CIService extends DynamicParameterAction implements FrameworkConstants, ServiceConstants {
+public class CIService extends RestBase implements FrameworkConstants, ServiceConstants,Constants {
 
 	/**
 	 * Gets the jobs.
@@ -76,18 +79,25 @@ public class CIService extends DynamicParameterAction implements FrameworkConsta
 	@Path("/jobs")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public List<CIJob> getJobs(@QueryParam(REST_QUERY_CUSTOMERID) String customerId,
+	public Response getJobs(@QueryParam(REST_QUERY_CUSTOMERID) String customerId,
 			@QueryParam(REST_QUERY_PROJECTID) String projectId, @QueryParam(REST_QUERY_APPID) String appId)
 			throws PhrescoException {
+		ResponseInfo<List<CIJob>> responseData = new ResponseInfo<List<CIJob>>();
 		try {
 			List<CIJob> jobs = null;
 			CIManager ciManager = PhrescoFrameworkFactory.getCIManager();
 			ApplicationManager applicationManager = PhrescoFrameworkFactory.getApplicationManager();
 			ApplicationInfo applicationInfo = applicationManager.getApplicationInfo(customerId, projectId, appId);
 			jobs = ciManager.getJobs(applicationInfo);
-			return jobs;
+			ResponseInfo<List<CIJob>> finalOutput = responseDataEvaluation(responseData, null, "Jobs returned successfully",
+					jobs);
+			return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*")
+					.build();
 		} catch (PhrescoException e) {
-			throw new PhrescoException(e);
+			ResponseInfo<List<CIJob>> finalOutput = responseDataEvaluation(responseData, e, "No jobs to return",
+					null);
+			return Response.status(Status.NOT_FOUND).entity(finalOutput).header("Access-Control-Allow-Origin", "*")
+					.build();
 		}
 	}
 
@@ -105,19 +115,26 @@ public class CIService extends DynamicParameterAction implements FrameworkConsta
 	@Path("/builds")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public List<CIBuild> getBuilds(@QueryParam(REST_QUERY_CUSTOMERID) String customerId,
+	public Response getBuilds(@QueryParam(REST_QUERY_CUSTOMERID) String customerId,
 			@QueryParam(REST_QUERY_PROJECTID) String projectId, @QueryParam(REST_QUERY_APPID) String appId,
 			@QueryParam(REST_QUERY_NAME) String name) throws PhrescoException {
+		ResponseInfo<List<CIBuild>> responseData = new ResponseInfo<List<CIBuild>>();
+		List<CIBuild> builds = null;
 		try {
-			List<CIBuild> builds = null;
 			ApplicationManager applicationManager = PhrescoFrameworkFactory.getApplicationManager();
 			ApplicationInfo applicationInfo = applicationManager.getApplicationInfo(customerId, projectId, appId);
 			CIManager ciManager = PhrescoFrameworkFactory.getCIManager();
 			CIJob job = ciManager.getJob(applicationInfo, name);
 			builds = ciManager.getBuilds(job);
-			return builds;
+			ResponseInfo<List<CIBuild>> finalOutput = responseDataEvaluation(responseData, null, "Builds returned successfully",
+					builds);
+			return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*")
+					.build();
 		} catch (PhrescoException e) {
-			throw new PhrescoException(e);
+			ResponseInfo<List<CIBuild>> finalOutput = responseDataEvaluation(responseData, e, "No Builds to return",
+					null);
+			return Response.status(Status.NOT_FOUND).entity(finalOutput).header("Access-Control-Allow-Origin", "*")
+					.build();
 		}
 	}
 
@@ -135,18 +152,31 @@ public class CIService extends DynamicParameterAction implements FrameworkConsta
 	@Path("/create")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public String createJob(CIJob job, @QueryParam(REST_QUERY_CUSTOMERID) String customerId,
+	public Response createJob(CIJob job, @QueryParam(REST_QUERY_CUSTOMERID) String customerId,
 			@QueryParam(REST_QUERY_PROJECTID) String projectId, @QueryParam(REST_QUERY_APPID) String appId)
 			throws PhrescoException {
+		ResponseInfo<Boolean> responseData = new ResponseInfo<Boolean>();
 		try {
 			ApplicationManager applicationManager = PhrescoFrameworkFactory.getApplicationManager();
 			ApplicationInfo applicationInfo = applicationManager.getApplicationInfo(customerId, projectId, appId);
 			CIManager ciManager = PhrescoFrameworkFactory.getCIManager();
-			ciManager.createJob(applicationInfo, job);
+			boolean createJob = ciManager.createJob(applicationInfo, job);
+			if(createJob){
+				ResponseInfo<Boolean> finalOutput = responseDataEvaluation(responseData, null, "Job created successfully",
+						null);
+				return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*")
+						.build();
+			}
+			ResponseInfo<Boolean> finalOutput = responseDataEvaluation(responseData, null, "Job creation Failed",
+					null);
+			return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*")
+					.build();
 		} catch (PhrescoException e) {
-			throw new PhrescoException(e);
+			ResponseInfo<Boolean> finalOutput = responseDataEvaluation(responseData, e, "Job creation Failed",
+					null);
+			return Response.status(Status.NOT_FOUND).entity(finalOutput).header("Access-Control-Allow-Origin", "*")
+					.build();
 		}
-		return SUCCESS;
 	}
 
 	/**
@@ -163,18 +193,31 @@ public class CIService extends DynamicParameterAction implements FrameworkConsta
 	@Path("/update")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public String updateJob(CIJob job, @QueryParam(REST_QUERY_CUSTOMERID) String customerId,
+	public Response updateJob(CIJob job, @QueryParam(REST_QUERY_CUSTOMERID) String customerId,
 			@QueryParam(REST_QUERY_PROJECTID) String projectId, @QueryParam(REST_QUERY_APPID) String appId)
 			throws PhrescoException {
+		ResponseInfo<Boolean> responseData = new ResponseInfo<Boolean>();
 		try {
 			CIManager ciManager = PhrescoFrameworkFactory.getCIManager();
 			ApplicationManager applicationManager = PhrescoFrameworkFactory.getApplicationManager();
 			ApplicationInfo applicationInfo = applicationManager.getApplicationInfo(customerId, projectId, appId);
-			ciManager.updateJob(applicationInfo, job);
+			boolean updateJob = ciManager.updateJob(applicationInfo, job);
+			if(updateJob){
+				ResponseInfo<Boolean> finalOutput = responseDataEvaluation(responseData, null, "Job updated successfully",
+						null);
+				return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*")
+						.build();
+			}
+			ResponseInfo<Boolean> finalOutput = responseDataEvaluation(responseData, null, "Job updation Failed",
+					null);
+			return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*")
+					.build();
 		} catch (PhrescoException e) {
-			throw new PhrescoException(e);
+			ResponseInfo<Boolean> finalOutput = responseDataEvaluation(responseData, e, "Job updation Failed",
+					null);
+			return Response.status(Status.NOT_FOUND).entity(finalOutput).header("Access-Control-Allow-Origin", "*")
+					.build();
 		}
-		return SUCCESS;
 	}
 
 	/**
@@ -191,16 +234,24 @@ public class CIService extends DynamicParameterAction implements FrameworkConsta
 	@Path("/deletejobs")
 	@Produces(MediaType.APPLICATION_JSON)
 	@Consumes(MediaType.APPLICATION_JSON)
-	public CIJobStatus deleteJobs(String[] jobNames, @QueryParam(REST_QUERY_CUSTOMERID) String customerId,
+	public Response deleteJobs(String[] jobNames, @QueryParam(REST_QUERY_CUSTOMERID) String customerId,
 			@QueryParam(REST_QUERY_PROJECTID) String projectId, @QueryParam(REST_QUERY_APPID) String appId)
 			throws PhrescoException {
+		ResponseInfo<CIJobStatus> responseData = new ResponseInfo<CIJobStatus>();
 		try {
 			CIManager ciManager = PhrescoFrameworkFactory.getCIManager();
 			ApplicationManager applicationManager = PhrescoFrameworkFactory.getApplicationManager();
 			ApplicationInfo applicationInfo = applicationManager.getApplicationInfo(customerId, projectId, appId);
-			return ciManager.deleteJobs(applicationInfo, Arrays.asList(jobNames));
+			CIJobStatus ciJobStatus = ciManager.deleteJobs(applicationInfo, Arrays.asList(jobNames));
+			ResponseInfo<CIJobStatus> finalOutput = responseDataEvaluation(responseData, null, "Job deleted successfully",
+					ciJobStatus);
+			return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*")
+					.build();
 		} catch (PhrescoException e) {
-			throw new PhrescoException(e);
+			ResponseInfo<CIJobStatus> finalOutput = responseDataEvaluation(responseData, e, "Job deletion Failed",
+					null);
+			return Response.status(Status.NOT_FOUND).entity(finalOutput).header("Access-Control-Allow-Origin", "*")
+					.build();
 		}
 	}
 
@@ -218,9 +269,10 @@ public class CIService extends DynamicParameterAction implements FrameworkConsta
 	@Path("/deletebuilds")
 	@Produces(MediaType.APPLICATION_JSON)
 	@Consumes(MediaType.APPLICATION_JSON)
-	public CIJobStatus deleteBuilds(String[] selectedBuilds, @QueryParam(REST_QUERY_CUSTOMERID) String customerId,
+	public Response deleteBuilds(String[] selectedBuilds, @QueryParam(REST_QUERY_CUSTOMERID) String customerId,
 			@QueryParam(REST_QUERY_PROJECTID) String projectId, @QueryParam(REST_QUERY_APPID) String appId)
 			throws PhrescoException {
+		ResponseInfo<CIJobStatus> responseData = new ResponseInfo<CIJobStatus>();
 		Map<String, List<String>> buildsTobeDeleted = new HashMap<String, List<String>>();
 		for (String build : selectedBuilds) {
 			String[] split = build.split(",");
@@ -239,9 +291,16 @@ public class CIService extends DynamicParameterAction implements FrameworkConsta
 			CIManager ciManager = PhrescoFrameworkFactory.getCIManager();
 			ApplicationManager applicationManager = PhrescoFrameworkFactory.getApplicationManager();
 			ApplicationInfo applicationInfo = applicationManager.getApplicationInfo(customerId, projectId, appId);
-			return ciManager.deleteBuilds(applicationInfo, buildsTobeDeleted);
+			CIJobStatus deleteBuilds = ciManager.deleteBuilds(applicationInfo, buildsTobeDeleted);
+			ResponseInfo<CIJobStatus> finalOutput = responseDataEvaluation(responseData, null, "Build deleted successfully",
+					deleteBuilds);
+			return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*")
+					.build();
 		} catch (PhrescoException e) {
-			throw new PhrescoException(e);
+			ResponseInfo<CIJobStatus> finalOutput = responseDataEvaluation(responseData, e, "Build deletion Failed",
+					null);
+			return Response.status(Status.NOT_FOUND).entity(finalOutput).header("Access-Control-Allow-Origin", "*")
+					.build();
 		}
 	}
 
@@ -258,9 +317,10 @@ public class CIService extends DynamicParameterAction implements FrameworkConsta
 	@Path("/mail")
 	@Produces(MediaType.APPLICATION_JSON)
 	@Consumes(MediaType.APPLICATION_JSON)
-	public String getEmailConfiguration(@QueryParam(REST_QUERY_CUSTOMERID) String customerId,
+	public Response getEmailConfiguration(@QueryParam(REST_QUERY_CUSTOMERID) String customerId,
 			@QueryParam(REST_QUERY_PROJECTID) String projectId, @QueryParam(REST_QUERY_APPID) String appId)
 			throws PhrescoException {
+		ResponseInfo responseData = new ResponseInfo();
 		try {
 			CIManager ciManager = PhrescoFrameworkFactory.getCIManager();
 			ApplicationManager applicationManager = PhrescoFrameworkFactory.getApplicationManager();
@@ -268,9 +328,13 @@ public class CIService extends DynamicParameterAction implements FrameworkConsta
 			String smtpAuthUsername = ciManager.getMailConfiguration(SMTP_AUTH_USERNAME);
 			String smtpAuthPassword = ciManager.getMailConfiguration(SMTP_AUTH_PASSWORD);
 		} catch (PhrescoException e) {
-			throw new PhrescoException(e);
+			ResponseInfo finalOutput = responseDataEvaluation(responseData, e, "Returned mail confiuration Failed",
+					null);
+			return Response.status(Status.NOT_FOUND).entity(finalOutput).header("Access-Control-Allow-Origin", "*")
+					.build();
 		}
-		return SUCCESS;
+//		return SUCCESS;
+		return null;
 	}
 
 	/**
@@ -288,19 +352,26 @@ public class CIService extends DynamicParameterAction implements FrameworkConsta
 	@Path("/savemail")
 	@Produces(MediaType.APPLICATION_JSON)
 	@Consumes(MediaType.APPLICATION_JSON)
-	public String saveEmailConfiguration(@QueryParam(REST_QUERY_SENDER_MAIL_ID) String senderEmailId,
+	public Response saveEmailConfiguration(@QueryParam(REST_QUERY_SENDER_MAIL_ID) String senderEmailId,
 			@QueryParam(REST_QUERY_SENDER_MAIL_PWD) String senderEmailPassword, @QueryParam(REST_QUERY_CUSTOMERID) String customerId,
 			@QueryParam(REST_QUERY_PROJECTID) String projectId, @QueryParam(REST_QUERY_APPID) String appId)
 			throws PhrescoException {
+		ResponseInfo responseData = new ResponseInfo();
 		try {
 			CIManager ciManager = PhrescoFrameworkFactory.getCIManager();
-			ApplicationManager applicationManager = PhrescoFrameworkFactory.getApplicationManager();
-			ApplicationInfo applicationInfo = applicationManager.getApplicationInfo(customerId, projectId, appId);
+//			ApplicationManager applicationManager = PhrescoFrameworkFactory.getApplicationManager();
+//			ApplicationInfo applicationInfo = applicationManager.getApplicationInfo(customerId, projectId, appId);
 			String jenkinsPort = getPortNo(Utility.getJenkinsHome());
 			ciManager.saveMailConfiguration(jenkinsPort, senderEmailId, senderEmailPassword);
-			return SUCCESS;
+			ResponseInfo finalOutput = responseDataEvaluation(responseData, null, "Mail Configuration saved successfully",
+					null);
+			return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*")
+					.build();
 		} catch (PhrescoException e) {
-			throw new PhrescoException(e);
+			ResponseInfo finalOutput = responseDataEvaluation(responseData, e, "Save mail Configuration failed",
+					null);
+			return Response.status(Status.NOT_FOUND).entity(finalOutput).header("Access-Control-Allow-Origin", "*")
+					.build();
 		}
 	}
 
@@ -318,9 +389,10 @@ public class CIService extends DynamicParameterAction implements FrameworkConsta
 	@Path("/downstream")
 	@Produces(MediaType.APPLICATION_JSON)
 	@Consumes(MediaType.APPLICATION_JSON)
-	public String downStreamCheck(String[] selectedJobs, @QueryParam(REST_QUERY_CUSTOMERID) String customerId,
+	public Response downStreamCheck(String[] selectedJobs, @QueryParam(REST_QUERY_CUSTOMERID) String customerId,
 			@QueryParam(REST_QUERY_PROJECTID) String projectId, @QueryParam(REST_QUERY_APPID) String appId)
 			throws PhrescoException {
+		ResponseInfo responseData = new ResponseInfo();
 		try {
 			boolean isDownStreamAvailable = false;
 			boolean streamCheck = false;
@@ -343,10 +415,17 @@ public class CIService extends DynamicParameterAction implements FrameworkConsta
 					isDownStreamAvailable = true;
 				}
 			}
+			ResponseInfo finalOutput = responseDataEvaluation(responseData, null, "Down stream checked successfully",
+					null);
+			return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*")
+					.build();
 		} catch (PhrescoException e) {
-			throw new PhrescoException(e);
+			ResponseInfo finalOutput = responseDataEvaluation(responseData, e, "Down stream check failed",
+					null);
+			return Response.status(Status.NOT_FOUND).entity(finalOutput).header("Access-Control-Allow-Origin", "*")
+					.build();
 		}
-		return SUCCESS;
+//		return SUCCESS;
 	}
 
 	/**
@@ -363,17 +442,24 @@ public class CIService extends DynamicParameterAction implements FrameworkConsta
 	@Path("/build")
 	@Produces(MediaType.APPLICATION_JSON)
 	@Consumes(MediaType.APPLICATION_JSON)
-	public CIJobStatus Build(String[] selectedJobs, @QueryParam(REST_QUERY_CUSTOMERID) String customerId,
+	public Response Build(String[] selectedJobs, @QueryParam(REST_QUERY_CUSTOMERID) String customerId,
 			@QueryParam(REST_QUERY_PROJECTID) String projectId, @QueryParam(REST_QUERY_APPID) String appId)
 			throws PhrescoException {
+		ResponseInfo<CIJobStatus> responseData = new ResponseInfo<CIJobStatus>();
 		try {
 			CIManager ciManager = PhrescoFrameworkFactory.getCIManager();
 			ApplicationManager applicationManager = PhrescoFrameworkFactory.getApplicationManager();
 			ApplicationInfo applicationInfo = applicationManager.getApplicationInfo(customerId, projectId, appId);
-
-			return ciManager.buildJobs(applicationInfo, Arrays.asList(selectedJobs));
+			CIJobStatus buildJobs = ciManager.buildJobs(applicationInfo, Arrays.asList(selectedJobs));
+			ResponseInfo<CIJobStatus> finalOutput = responseDataEvaluation(responseData, null, "Build successfully",
+					buildJobs);
+			return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*")
+					.build();
 		} catch (PhrescoException e) {
-			throw new PhrescoException(e);
+			ResponseInfo<CIJobStatus> finalOutput = responseDataEvaluation(responseData, e, "Build failed",
+					null);
+			return Response.status(Status.NOT_FOUND).entity(finalOutput).header("Access-Control-Allow-Origin", "*")
+					.build();
 		}
 	}
 
@@ -392,10 +478,11 @@ public class CIService extends DynamicParameterAction implements FrameworkConsta
 	@Path("/downloadBuild")
 	@Produces(MediaType.APPLICATION_JSON)
 	@Consumes(MediaType.APPLICATION_JSON)
-	public InputStream CIBuildDownload(@QueryParam(REST_QUERY_BUILD_DOWNLOAD_URL) String buildDownloadUrl,
+	public Response CIBuildDownload(@QueryParam(REST_QUERY_BUILD_DOWNLOAD_URL) String buildDownloadUrl,
 			@QueryParam(REST_QUERY_DOWNLOAD_JOB_NAME) String downloadJobName, @QueryParam(REST_QUERY_CUSTOMERID) String customerId,
 			@QueryParam(REST_QUERY_PROJECTID) String projectId, @QueryParam(REST_QUERY_APPID) String appId)
 			throws PhrescoException {
+		ResponseInfo responseData = new ResponseInfo();
 		InputStream fileInputStream = null;
 		String fileName = "";
 		String contentType = "";
@@ -413,13 +500,17 @@ public class CIService extends DynamicParameterAction implements FrameworkConsta
 			fileName = existJob.getName();
 			contentType = "application/octet-stream";
 			if (BUILD.equals(existJob.getOperation())) {
-				fileType = ZIP;
+				fileType = Constants.ZIP;
 			} else if (PDF_REPORT.equals(existJob.getOperation())) {
 				fileType = "pdf";
 			}
-			return fileInputStream;
+			return Response.status(Status.OK).entity(fileInputStream).header("Access-Control-Allow-Origin", "*")
+			.build();
 		} catch (Exception e) {
-			throw new PhrescoException(e);
+			ResponseInfo finalOutput = responseDataEvaluation(responseData, e, "Build Download failed",
+					null);
+			return Response.status(Status.NOT_FOUND).entity(finalOutput).header("Access-Control-Allow-Origin", "*")
+					.build();
 		}
 	}
 
@@ -436,9 +527,10 @@ public class CIService extends DynamicParameterAction implements FrameworkConsta
 	@Path("/progress")
 	@Produces(MediaType.APPLICATION_JSON)
 	@Consumes(MediaType.APPLICATION_JSON)
-	public int numberOfJobsIsInProgress(@QueryParam(REST_QUERY_CUSTOMERID) String customerId,
+	public Response numberOfJobsIsInProgress(@QueryParam(REST_QUERY_CUSTOMERID) String customerId,
 			@QueryParam(REST_QUERY_PROJECTID) String projectId, @QueryParam(REST_QUERY_APPID) String appId)
 			throws PhrescoException {
+		ResponseInfo<Integer> responseData = new ResponseInfo<Integer>();
 		int numberOfJobsInProgress = 0;
 		try {
 			CIManager ciManager = PhrescoFrameworkFactory.getCIManager();
@@ -453,10 +545,16 @@ public class CIService extends DynamicParameterAction implements FrameworkConsta
 					}
 				}
 			}
+			ResponseInfo<Integer> finalOutput = responseDataEvaluation(responseData, null, "Progress Jobs  returned successfully",
+					numberOfJobsInProgress);
+			return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*")
+					.build();
 		} catch (PhrescoException e) {
-			throw new PhrescoException(e);
+			ResponseInfo<Integer> finalOutput = responseDataEvaluation(responseData, e, "Progress Jobs  return failed",
+					null);
+			return Response.status(Status.NOT_FOUND).entity(finalOutput).header("Access-Control-Allow-Origin", "*")
+					.build();
 		}
-		return numberOfJobsInProgress;
 	}
 
 	/**
@@ -468,7 +566,8 @@ public class CIService extends DynamicParameterAction implements FrameworkConsta
 	@Path("/isAlive")
 	@Produces(MediaType.APPLICATION_JSON)
 	@Consumes(MediaType.APPLICATION_JSON)
-	public String localJenkinsLocalAlive() {
+	public Response localJenkinsLocalAlive() {
+		ResponseInfo<String> responseData = new ResponseInfo<String>();
 		String localJenkinsAlive = "";
 		try {
 			URL url = new URL(HTTP_PROTOCOL + PROTOCOL_POSTFIX + LOCALHOST + FrameworkConstants.COLON
@@ -479,10 +578,21 @@ public class CIService extends DynamicParameterAction implements FrameworkConsta
 			localJenkinsAlive = code + "";
 		} catch (ConnectException e) {
 			localJenkinsAlive = CODE_404;
+			ResponseInfo<String> finalOutput = responseDataEvaluation(responseData, null, "Progress Jobs  returned successfully",
+					localJenkinsAlive);
+			return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*")
+					.build();
 		} catch (Exception e) {
 			localJenkinsAlive = CODE_404;
+			ResponseInfo<String> finalOutput = responseDataEvaluation(responseData, null, "Progress Jobs  returned successfully",
+					localJenkinsAlive);
+			return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*")
+					.build();
 		}
-		return localJenkinsAlive;
+		ResponseInfo<String> finalOutput = responseDataEvaluation(responseData, null, "Progress Jobs  returned successfully",
+				localJenkinsAlive);
+		return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*")
+				.build();
 	}
 
 	/**

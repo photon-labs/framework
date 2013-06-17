@@ -31,11 +31,13 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
@@ -171,21 +173,27 @@ public class PdfService extends RestBase implements FrameworkConstants, Constant
 	@Path("/showPopUp")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response showGeneratePdfPopup(@QueryParam(REST_QUERY_APPDIR_NAME) String appDirName,
-			@QueryParam(REST_QUERY_FROM_PAGE) String fromPage) {
+			@QueryParam(REST_QUERY_FROM_PAGE) String fromPage, @Context HttpServletRequest request) {
 		ResponseInfo<JSONArray> responseData = new ResponseInfo<JSONArray>();
 		try {
+			JSONArray existingPDFs = null;
 			boolean isReportAvailable = false;
 			ApplicationInfo appInfo = FrameworkServiceUtil.getApplicationInfo(appDirName);
 			FrameworkUtil frameworkUtil = FrameworkUtil.getInstance();
-
+			
 			// is sonar report available
-			isReportAvailable = isSonarReportAvailable(frameworkUtil, appInfo);
+			if ((FrameworkConstants.ALL).equals(fromPage)) {
+			isReportAvailable = isSonarReportAvailable(frameworkUtil, appInfo, request);
+			}
 
 			// is test report available
 			if (!isReportAvailable) {
-				isReportAvailable = isTestReportAvailable(frameworkUtil, appInfo);
+				isReportAvailable = isTestReportAvailable(frameworkUtil, appInfo, fromPage);
 			}
-			JSONArray existingPDFs = getExistingPDFs(fromPage, appInfo);
+			
+			if (isReportAvailable) {
+				existingPDFs = getExistingPDFs(fromPage, appInfo);
+			}
 			if (existingPDFs != null) {
 				return Response.status(Status.OK).entity(existingPDFs).header("Access-Control-Allow-Origin", "*")
 						.build();
@@ -209,14 +217,14 @@ public class PdfService extends RestBase implements FrameworkConstants, Constant
 	 * @return true, if is sonar report available
 	 * @throws PhrescoException the phresco exception
 	 */
-	private boolean isSonarReportAvailable(FrameworkUtil frameworkUtil, ApplicationInfo appInfo)
+	private boolean isSonarReportAvailable(FrameworkUtil frameworkUtil, ApplicationInfo appInfo, HttpServletRequest request)
 			throws PhrescoException {
 		boolean isSonarReportAvailable = false;
 		try {
 			String isIphone = frameworkUtil.isIphoneTagExists(appInfo);
 			if (StringUtils.isEmpty(isIphone)) {
 				FrameworkConfiguration frameworkConfig = PhrescoFrameworkFactory.getFrameworkConfig();
-				String serverUrl = frameworkUtil.getSonarURL();
+				String serverUrl = 	FrameworkServiceUtil.getSonarURL(request);
 				String sonarReportPath = frameworkConfig.getSonarReportPath().replace(FrameworkConstants.FORWARD_SLASH + SONAR, "");
 				serverUrl = serverUrl + sonarReportPath;
 				PomProcessor processor = frameworkUtil.getPomProcessor(appInfo.getAppDirName());
@@ -431,7 +439,7 @@ public class PdfService extends RestBase implements FrameworkConstants, Constant
 	 * @return true, if is test report available
 	 * @throws PhrescoException the phresco exception
 	 */
-	private boolean isTestReportAvailable(FrameworkUtil frameworkUtil, ApplicationInfo appInfo) throws PhrescoException {
+	private boolean isTestReportAvailable(FrameworkUtil frameworkUtil, ApplicationInfo appInfo, String fromPage) throws PhrescoException {
 		boolean xmlResultsAvailable = false;
 		File file = null;
 		StringBuilder sb = new StringBuilder(Utility.getProjectHome());
@@ -439,7 +447,7 @@ public class PdfService extends RestBase implements FrameworkConstants, Constant
 		try {
 			String isIphone = frameworkUtil.isIphoneTagExists(appInfo);
 			// unit xml check
-			if (!xmlResultsAvailable) {
+			if ((FrameworkConstants.ALL).equals(fromPage) || fromPage.equals("unit")) {
 				List<String> moduleNames = new ArrayList<String>();
 				PomProcessor processor = frameworkUtil.getPomProcessor(appInfo.getAppDirName());
 				Modules pomModules = processor.getPomModule();
@@ -482,13 +490,13 @@ public class PdfService extends RestBase implements FrameworkConstants, Constant
 			}
 
 			// functional xml check
-			if (!xmlResultsAvailable) {
+			if ((FrameworkConstants.ALL).equals(fromPage) || fromPage.equals("functional")) {
 				file = new File(sb.toString() + frameworkUtil.getFunctionalTestReportDir(appInfo));
 				xmlResultsAvailable = xmlFileSearch(file, xmlResultsAvailable);
 			}
 
 			// component xml check
-			if (!xmlResultsAvailable) {
+			if ((FrameworkConstants.ALL).equals(fromPage) || fromPage.equals("component")) {
 				String componentDir = frameworkUtil.getComponentTestReportDir(appInfo);
 				if (StringUtils.isNotEmpty(componentDir)) {
 					file = new File(sb.toString() + componentDir);
@@ -498,21 +506,15 @@ public class PdfService extends RestBase implements FrameworkConstants, Constant
 
 			// performance xml check
 			if (StringUtils.isEmpty(isIphone)) {
-				if (!xmlResultsAvailable) {
-					boolean isResultFileAvailable = performanceTestResultAvail(appInfo);
-					if (isResultFileAvailable) {
-						xmlResultsAvailable = true;
-					}
+				if ((FrameworkConstants.ALL).equals(fromPage) || fromPage.equals("performance")) {
+					 xmlResultsAvailable = performanceTestResultAvail(appInfo);
 				}
 			}
 
 			// load xml check
 			if (StringUtils.isEmpty(isIphone)) {
-				if (!xmlResultsAvailable) {
-					boolean isResultFileAvailable = loadTestResultAvail(appInfo);
-					if (isResultFileAvailable) {
-						xmlResultsAvailable = true;
-					}
+				if ((FrameworkConstants.ALL).equals(fromPage) || fromPage.equals("load")) {
+					 xmlResultsAvailable = loadTestResultAvail(appInfo);
 				}
 			}
 		} catch (PhrescoException e) {
