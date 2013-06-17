@@ -52,7 +52,7 @@
 		per_disabledClass = "btn-disabled";
 	}
 %>
-<form id="manualTestCases" class="marginBottomZero" style="height: 114%;overflow-x: hidden;overflow-y: hidden	;margin-top: 1px;">
+<form id="manualTestCases" class="marginBottomZero" style="height: 100%;overflow-x: hidden;overflow-y: hidden	;margin-top: 1px;">
 		<div>
 			<ul id="display-inline-block-example">
 				 <li id="first">
