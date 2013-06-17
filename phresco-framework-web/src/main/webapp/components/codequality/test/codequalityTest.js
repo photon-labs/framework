@@ -1,30 +1,45 @@
-define(["jquery", "codequality/codequality", "framework/navigationController", "framework/widgetWithTemplate"], function($, Codequality) {
+define(["jquery", "codequality/codequality"], function($, Codequality) {
+
 	/**
 	 * Test that the setMainContent method sets the text in the MyCart-widget
 	 */
 	return { runTests: function (configData) {
-		module("Codequality.js;Codequality");
-		asyncTest("Codequality Test", function() {
+		module("codequality.js;Codequality");
+		var codequality = new Codequality();
 		
-			var codequality, output;
-			Clazz.config = configData;
-			Clazz.navigationController = new Clazz.NavigationController({
-				mainContainer : "basepage\\:widget",
-				transitionType : Clazz.config.navigation.transitionType,
-				isNative : Clazz.config.navigation.isNative
-			});
+		asyncTest("Codequality get reports test", function() {
+			mockgetReports = mockFunction();
+			when(mockgetReports)(anything()).then(function(arg) {
+				var response = {"response":null,"message":"Dependency returned successfully","exception":null,"data":[{"options":null,"validateAgainst":{"value":"Source","key":"src","dependency":"skipTests"}},{"options":null,"validateAgainst":{"value":"Functional Test","key":"functional","dependency":null}}]}
 
-			codequality = new Codequality();
-			Clazz.navigationController.jQueryContainer = $("<div id='applicationTest'></div>");
-			Clazz.navigationController.push(codequality, false);
+			 //{"response":null,"message":"Dependency returned successfully","exception":null,"data":[{"options":[{"value":"js","key":"js","dependency":"environmentName,showSettings"},{"value":"java","key":"java","dependency":null},{"value":"html","key":"html","dependency":null},{"value":"jsp/jsf","key":"web","dependency":null}],"validateAgainst":{"value":"Source","key":"src","dependency":"src,skipTests"}},{"options":null,"validateAgainst":{"value":"Functional Test","key":"functional","dependency":null}}]}
+				var projectlist = {};
+				projectlist.projectlist = response;					
+				codequality.renderedData = response;
+				codequality.renderTemplate(projectlist, commonVariables.contentPlaceholder);
+				codequality.codequalityListener.constructHtml(response);
+			});
+			
+			codequality.codequalityListener.codequalityAPI.codequality = mockgetReports;
+			
+			mockgetIframe = mockFunction();
+			when(mockgetIframe)(anything()).then(function(arg) {
+				var response =  {"response":null,"message":"Dependency returned successfully","exception":null,"data":"http://localhost:9000/dashboard/index/com.photon.phresco:node-test"}
+			});
+			codequality.codequalityListener.getIframeReport = mockgetIframe;
+			
+			codequality.loadPage();
 			
 			setTimeout(function() {
-				output = $(Clazz.navigationController.jQueryContainer).find("#codequalityContent").attr('id');
-				equal("codequalityContent", output, "Codequality Rendered Successfully");
 				start();
+				//output = $("#repTypes").val();
+				console.info('val = ' , $(commonVariables.contentPlaceholder).find("#codereportTypes"));
+				output = $(commonVariables.contentPlaceholder).find("#repTypes").val();
+				console.info('output = ' , output);
+				equal(output, "Source", "Codequality Service Tested");
+				//runOtherTests();
 			}, 1500);
-			
 		});
-	}};
+	return true;}};
 	
 });

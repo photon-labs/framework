@@ -99,6 +99,7 @@ define(["codequality/listener/codequalityListener"], function() {
 					var projectlist = {};
 					projectlist.projectlist = response;	
 					self.renderedData = response;
+					//console.info('response = ' , JSON.stringify(response));
 					self.codequalityListener.constructHtml(self.renderedData);
 					if(response.message == "Dependency returned successfully"){
 						//renderFunction(projectlist, whereToRender);

@@ -27,11 +27,12 @@
         </div>
         <div class="code_report_icon"><a class="tooltiptop" title="" data-placement="bottom" data-toggle="tooltip" href="#" data-original-title="PDF Report"><img src="themes/default/images/helios/code_pdf_icon.png" width="28" height="29" border="0" alt=""></a></div>
     </section>
-	
-<!--<div class="mainContent" id="content_div"></div>-->
-    <div class="mainContent"><div class="widget-maincontent-div" id="content_div" style="padding-left:1%;"></div></div>
+
+	<!--	<div style="clear:both"></div>
+<div class="mainContent" id="content_div"></div>-->
 
  <section class="content_main code_content testSuiteTable">
+    <div class="mainContent"><div class="widget-maincontent-div" id="content_div" style="padding-left:1%;"></div></div>
         
 		<div class="unit_close">
 				<a href="#" data-flag="true" id="codeValidateConsole">

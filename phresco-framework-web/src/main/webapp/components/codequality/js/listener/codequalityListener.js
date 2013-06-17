@@ -214,6 +214,7 @@ define(["codequality/api/codequalityAPI"], function() {
 
 		constructHtml : function(response){
 			var self = this;
+			console.info('response test = ' , response);
 			if(response.message == "Dependency returned successfully"){
 				var typeLi = '';
 				$.each(response.data, function(index, resdata) {
@@ -222,7 +223,7 @@ define(["codequality/api/codequalityAPI"], function() {
 						typeLi += "<li name='selectType' key="+resdata.validateAgainst.key+" data="+resdata.validateAgainst.value+" style='padding-left:8px;cursor:pointer;'>"+resdata.validateAgainst.value+"</li>";
 					}else{
 						$.each(resdata.options, function(index, optvalue) {
-							innerUl += "<li name='selectType' key="+resdata.validateAgainst.key+" data="+resdata.validateAgainst.value+" style='padding-left:8px;cursor:pointer;'>"+optvalue.value+"</li>";
+							innerUl += "<li name='selectType' key="+optvalue.key+" data="+optvalue.value+" style='padding-left:8px;cursor:pointer;'>"+optvalue.value+"</li>";
 						});
 						typeLi += "<li disabled='disabled' key="+resdata.validateAgainst.key+" data="+resdata.validateAgainst.value+" style='padding-left:4px;'>"+resdata.validateAgainst.value+'<ul>'+innerUl+"</ul></li>";
 					}
@@ -253,14 +254,14 @@ define(["codequality/api/codequalityAPI"], function() {
 			try {
 				self.codequalityAPI.codequality(self.getRequestHeader(validateAgainst , "iframereport"), 
 					function(iframereport) {
-						//console.info('iframereport = ' , iframereport);
+						console.info('iframereport = ' , JSON.stringify(iframereport));
 						if(iframereport.data != null){
 /* 						var value1 = $('.build_progress').width();
 							$('.build_info').animate({width: '97%'},500);
 							$('.build_progress').animate({right: -value1},500);
 							$('.build_close').animate({right: '0px'},500); */
 							
-							var iframedata = "<iframe src="+iframereport.data+" style=width:98%;height:450px;padding-top:170px></iframe>";
+							var iframedata = "<iframe src="+iframereport.data+" style=width:96%;height:450px;></iframe>";
 							//$('#content_div').html('<div class="widget-maincontent-div">'+iframedata+'</div>');
 							$('#content_div').html(iframedata);
 						}else{
@@ -269,6 +270,8 @@ define(["codequality/api/codequalityAPI"], function() {
 					},
 					function(textStatus) {
 						var data = $.parseJSON(textStatus);
+						//console.info('textStatus = ' , textStatus);
+						//console.info('data = ' , data);
 						$('#content_div').html(data.message);
 					}
 				);

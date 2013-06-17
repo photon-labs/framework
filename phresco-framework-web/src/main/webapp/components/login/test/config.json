@@ -120,7 +120,7 @@
 		},
 		
 		"codequalityTest" : {
-			"moduleName":"applicationTest",
+			"moduleName":"codequalityTest",
 			"path" : "components/codequality/test/codequalityTest"
 		},
 
