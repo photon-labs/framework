@@ -931,7 +931,7 @@ ul.nav li.dropdown:hover > .test_options{
 	font-size: 11px;		
 }
 
-.delete_msg div, .deleteproj_msg div , .commit_popup {
+.delete_msg div, .deleteproj_msg div , .popup_btn {
 	text-align: right;	
 }
 

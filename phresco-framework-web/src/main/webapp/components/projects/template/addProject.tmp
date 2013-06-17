@@ -31,8 +31,8 @@
                     <td colspan="2" class="enddate" name="enddateholder"><input name="enddate" id="endDate" type="text"><span class="add-on"><span class="add-on"><img id="enddt" src="themes/default/images/helios/cal_icon.png" border="0" alt=""></span></span></td>
                 </tr>
 				<tr>	
-                	<td><input type="checkbox"><b>&nbsp; Multi Module</b></td>
-                    <td><input type="text" placeholder="Artifact ID"></td>
+                	<td colspan="2"><input type="checkbox"><b>&nbsp; Multi Module</b></td>
+                    <td colspan="2"><input type="text" placeholder="Artifact ID"></td>
                     <td colspan="6"></td>
                 </tr>
 				{{#if applicationlayerData.techGroups}}
