@@ -145,7 +145,7 @@ define(["configuration/api/configurationAPI"], function() {
 			return header;
 		},
 		
-		constructHtml : function(configTemplates, configuration, currentConfig){
+		constructHtml : function(configTemplates, configuration, currentConfig, WhereToAppend){
 			var flag = 0;
 			var htmlTag = "";
 			var key = "";
@@ -159,6 +159,7 @@ define(["configuration/api/configurationAPI"], function() {
 			var checked = "";
 			var configProperties = "";
 			var bCheck = false;
+			var toAppend;
 			var configTemplate = configTemplates.data.settingsTemplate;
 			if(currentConfig === 'Server') {
 				self.serverTypeVersion = configTemplates.data.downloadInfo;
@@ -360,7 +361,12 @@ define(["configuration/api/configurationAPI"], function() {
 					i = count++;
 				});
 				if (bCheck === false) {
-					$("tbody[name=ConfigurationLists]").append(content);
+					if (WhereToAppend === "") {
+						toAppend = $("tbody[name=ConfigurationLists]");
+					} else {
+						toAppend = WhereToAppend;
+					}
+					toAppend.append(content);
 					$("a[name=removeConfig]").unbind("change");
 					self.severDbOnChangeEvent();
 					self.CroneExpression();
@@ -578,8 +584,8 @@ define(["configuration/api/configurationAPI"], function() {
 			return option;
 		},
 		
-		htmlForOther : function(value) {
-			var self = this, headerTr, content = '', textBox, apiKey = "", keyValue = "", type="Other", addIcon = '<img src="themes/default/images/helios/plus_icon.png" border="0" alt="">';
+		htmlForOther : function(value, WhereToAppend) {
+			var self = this, headerTr, content = '', textBox, apiKey = "", keyValue = "", type="Other", addIcon = '<img src="themes/default/images/helios/plus_icon.png" border="0" alt="">', toAppend;
 				if (value !== null && value !== '') {
 					type = value.type;
 				}
@@ -596,7 +602,12 @@ define(["configuration/api/configurationAPI"], function() {
 					textBox = '<tr class="otherConfig" name="'+type+'"><td></td><td><input type="text" placeholder= "key" class="otherKey"/><td><input type="text" placeholder= "value" class="otherKeyValue" /></td><td><div class="flt_right icon_center"><a href="javascript:;" name="addOther"><img src="themes/default/images/helios/plus_icon.png" border="0" alt=""></a> <a href="javascript:;" name="removeOther"></a></div></td></tr>';
 					content = content.concat(textBox);
 				}
-				$("tbody[name=ConfigurationLists]").append(content);
+				if (WhereToAppend === "") {
+						toAppend = $("tbody[name=ConfigurationLists]");
+					} else {
+						toAppend = WhereToAppend;
+					}
+				toAppend.append(content);
 				if (value !== null && value !== '') {
 					$("tr.otherConfig:last").find("a[name=addOther]").html(addIcon);
 					if ($("tr.otherConfig").length === 1) {
@@ -606,7 +617,6 @@ define(["configuration/api/configurationAPI"], function() {
 				$("a[name=removeConfig]").unbind("click");
 				self.removeConfiguration();
 				self.addClick();
-				self.removeClick();
 		},
 		
 		addOtherConfig : function(toAppend) {
@@ -617,7 +627,6 @@ define(["configuration/api/configurationAPI"], function() {
 			$("a[name=addOther]").unbind("click");
 			$("a[name=removeOther]").unbind("click");
 			self.addClick();
-			self.removeClick();
 		},
 		
 		addClick : function() {
@@ -626,26 +635,31 @@ define(["configuration/api/configurationAPI"], function() {
 				var toAppend = $(this).parents(".otherConfig:last");
 				self.addOtherConfig(toAppend);
 			});
+			
+			$("a[name=removeOther]").click(function(){
+				self.removeClick($(this));
+			});
 		},
 		
-		removeClick : function() {
+		removeClick : function(removeValue) {
 			var self=this, addIcon = '<img src="themes/default/images/helios/plus_icon.png" border="0" alt="">';
-			$("a[name=removeOther]").click(function(){
 				$("a[name=addOther]").html('');
-				$(this).parent().parent().parent().remove();
+				removeValue.parent().parent().parent().remove();
 				$("a[name=removeOther]").parents('tr:last').find('a[name="addOther"]').html(addIcon);
 				if (($("a[name=removeOther]").parents('tr.otherConfig').length) === 1) {
 					$('tr.otherConfig').find('a[name="addOther"]').html(addIcon);
 					$("a[name=removeOther]").html('');
 				}
-			});
 		},
 		
-		addEnvEvent : function() {
-			var self = this;
-			var envName = $("input[name=envName]").val();
-			var envDesc = $("input[name=envDesc]").val();
-			$("ul[name=envList]").append('<li draggable="true"><div><input type="radio" name="optionsRadiosfd"></div><div  class="envlistname" name="envListName">'+envName+'</div><input type="hidden" name="envListDesc" value="'+envDesc+'"></li>');
+		addEnvEvent : function(envName, envDesc, WhereToAppend) {
+			var self = this, toAppend;
+			if (WhereToAppend === "") {
+				toAppend = $("ul[name=envList]");
+			} else {
+				toAppend = WhereToAppend;
+			}
+			toAppend.append('<li draggable="true" name="'+envName+'"><div><input type="radio" name="optionsRadiosfd"></div><div  class="envlistname" name="envListName">'+envName+'</div><input type="hidden" name="envListDesc" value="'+envDesc+'"></li>');
 			$('.connected').sortable({
 				connectWith: '.connected'
 			});
@@ -653,10 +667,15 @@ define(["configuration/api/configurationAPI"], function() {
 			$("input[name=envDesc]").val('')
 		},
 		
-		saveEnvEvent : function(envWithConfig, callback) {
-			var self = this;
+		saveEnvEvent : function(envWithConfig, WhereToAppend, callback) {
+			var self = this, toAppend;
 			self.envJson = [];
-			$.each($("ul[name=envList]").children(), function(index, value) {
+			if (WhereToAppend === "") {
+				toAppend = $("ul[name=envList]");
+			} else {
+				toAppend = WhereToAppend;
+			}
+			$.each(toAppend.children(), function(index, value) {
 				var envNameDesc = {};
 				envNameDesc.name = $(value).find("div[name=envListName]").html();
 				envNameDesc.desc = $(value).find("input[name=envListDesc]").val();
@@ -682,28 +701,32 @@ define(["configuration/api/configurationAPI"], function() {
 			var self=this;
 			if (config !== "Other") {
 				self.getConfigurationList(self.getRequestHeader(self.configRequestBody, "template", config), function(response) {
-					self.constructHtml(response, '', config);
+					self.constructHtml(response, '', config, '');
 				});
 			} else {
-				self.htmlForOther('');
+				self.htmlForOther('', '');
 			}
 		},
 		
 		removeConfiguration : function() {
 			var self = this;
 			$("a[name=removeConfig]").click(function() {
-				var currentRow = $(this).parent().parent().next();
-				$(this).parent().parent().addClass('remove');				
-				while(currentRow != null && currentRow.length > 0) {
-				   if (currentRow.attr('class') !== "row_bg") {
-					   currentRow.addClass('remove');
-					   currentRow = currentRow.next('tr');
-				   } else {
-					currentRow = null;
-				   }
-				}
-				$('.remove').remove();
+				self.removeConfigFunction($(this));
 			});
+		},
+		
+		removeConfigFunction : function(removeValue) {
+			var currentRow = removeValue.parent().parent().next();
+			removeValue.parent().parent().addClass('remove');				
+			while(currentRow != null && currentRow.length > 0) {
+			   if (currentRow.attr('class') !== "row_bg") {
+				   currentRow.addClass('remove');
+				   currentRow = currentRow.next('tr');
+			   } else {
+				currentRow = null;
+			   }
+			}
+			$('.remove').remove();
 		},
 		
 		updateConfig : function() {

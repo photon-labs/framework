@@ -15,7 +15,7 @@ define(["features/api/featuresAPI", "features/features",  "application/applicati
 		 * @config: configurations for this listener
 		 */
 		initialize : function(config) {
-			self = this;	
+			var self = this;	
 			self.featuresAPI = new Clazz.com.components.features.js.api.FeaturesAPI();
 			this.loadingScreen = new Clazz.com.js.widget.common.Loading();
 		},
