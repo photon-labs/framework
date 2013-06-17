@@ -70,8 +70,8 @@ define(["ci/api/ciAPI"], function() {
 				ciRequestBody.customerId = customerId;
 				ciRequestBody.projectId = projectId;
 				header.requestPostBody = JSON.stringify(ciRequestBody);
-				var oldname = $('[name="oldname"]').val();
-				header.webserviceurl = commonVariables.webserviceurl + commonVariables.jobTemplates + "?oldname=" + oldname;
+				var oldname = $('[name="oldname"]').val();				
+				header.webserviceurl = commonVariables.webserviceurl + commonVariables.jobTemplates + "?oldname=" + oldname + "&projectId=" + projectId;
 			} else if (action === "edit") {
 				header.requestMethod = "GET";
 				header.webserviceurl = commonVariables.webserviceurl + commonVariables.jobTemplates;
@@ -92,6 +92,11 @@ define(["ci/api/ciAPI"], function() {
 					params = $.param(params);
 					header.webserviceurl = header.webserviceurl + "&" + params;
 				}
+			}  else if (action === "validate") {				
+				var name = $('input[name="name"]').val();
+				var oldname = $('[name="oldname"]').val();
+				header.requestMethod = "GET";
+				header.webserviceurl = commonVariables.webserviceurl + commonVariables.jobTemplates + "/validate" + "?customerId="+ customerId + "&oldname=" + oldname + "&projectId=" + projectId + "&name=" + name;				
 			} else if (action === "getEnvironemntsByProjId") {
 				// get all the environments of a project, which lists all the application environments
 				header.requestMethod = "GET";
@@ -182,6 +187,76 @@ define(["ci/api/ciAPI"], function() {
 		isNameExists : function () {
 
 		},
+		
+		validate : function (callback) {
+			$('#errMsg').html('');
+			var self=this;
+			var status = true;
+			$("#errMsg").removeClass("errormessage");
+			$('input[name=name]').removeClass("errormessage");	
+			$('#errMsg').html('');
+			var appIds = $('[name=appIds]:checked').length;
+			if(appIds === 0) {
+				$('#errMsg').html('Select atleast one application');
+				$("input[name='appIds']").focus();
+				$('#errMsg').addClass("errormessage");
+				status = false;	 											
+			}	
+			
+			var name = $("[name=name]").val();			
+			if(name === "") {				
+				$("input[name='name']").focus();
+				$("input[name='name']").attr('placeholder','Enter Name');
+				$("input[name='name']").addClass("errormessage");
+				$("input[name='name']").bind('keypress', function() {
+					$(this).removeClass("errormessage");
+				});
+				status = false;				
+			}
+						
+			return status;
+		},
+
+		
+		validateName : function(operation, thisObj, callback) {
+			var self = this;
+			// basci ui validation
+			var status = self.validate();
+			if (status) {
+				var self = this;
+				self.ciRequestBody = {};
+				self.getHeaderResponse(self.getRequestHeader(self.ciRequestBody, 'validate'), function (response) {
+					
+					// save or update operation
+					if (!self.isBlank(response) && response.data) {						
+						 if (operation === 'save') {
+							self.addJobTemplate(function(response) { // request body construction
+								self.ciRequestBody = response;
+								self.getHeaderResponse(self.getRequestHeader(self.ciRequestBody, 'add'), function(response){
+									callback(response); 
+								});
+							});	
+						} else if (operation === 'update') {
+							self.updateJobTemplate(function(response) {
+								self.ciRequestBody = response;
+								self.getHeaderResponse(self.getRequestHeader(self.ciRequestBody, 'update'), function(response) {
+									callback(response);
+								});								
+							});
+						} 
+					} else {
+						$("input[name='name']").focus();
+						$("input[name='name']").val('');
+						$("input[name='name']").attr('placeholder','Name Already Exists');
+						$("input[name='name']").addClass("errormessage");
+						$("input[name='name']").bind('keypress', function() {
+						$(this).removeClass("errormessage");
+				});
+					}
+					
+				});
+			}
+		}, 
 
 		// fieldValidate : function (obj) {
 		// 	if (obj.val() == undefined || obj.val() == null || $.trim(obj.val()) == "") {
@@ -203,21 +278,25 @@ define(["ci/api/ciAPI"], function() {
 		listJobTemplate : function (header, callback) {
 			var self = this;
 			try {
+				commonVariables.loadingScreen.showLoading();
 				self.ciAPI.ci(header, function(response) {
 						if (response !== null) {
+							commonVariables.loadingScreen.removeLoading();
 							callback(response);
 						} else {
+							commonVariables.loadingScreen.removeLoading();
 							callback({ "status" : "service failure"});
 						}
 
 					},
 
 					function(textStatus) {
-						console.info('textStatus',textStatus);
+						commonVariables.loadingScreen.removeLoading();
 						callback({ "status" : "Connection failure"});
 					}
 				);
 			} catch(exception) {
+				commonVariables.loadingScreen.removeLoading();
 				callback({ "status" : "service exception"});
 			}
 		},
@@ -234,8 +313,7 @@ define(["ci/api/ciAPI"], function() {
 
 					},
 
-					function(textStatus) {
-						console.info('textStatus',textStatus);
+					function(textStatus) {						
 						callback({ "status" : "Connection failure"});
 					}
 				);
@@ -258,7 +336,7 @@ define(["ci/api/ciAPI"], function() {
 
 		constructJobTemplate : function () {
 			var formObj = $("#jobTemplate"); // Object
-			$('#jobTemplate #features :checkbox:not(:checked)').attr('value', false); // make checked checkbox value to false
+			$('#jobTemplate #features :checkbox:not(:checked)').attr('value', false); // make unchecked checkbox value to false
 			$('#jobTemplate #features :checkbox:checked').attr('value', true); // make checked checkbox value to true
 
 			var jobTemplate = $('#jobTemplate :input[name!=oldname]').serializeObject();
@@ -287,9 +365,8 @@ define(["ci/api/ciAPI"], function() {
 			$("[name=name]").val(data.name);
 			$("[name=oldname]").val(data.name);
 			$("[name=type]").val(data.type);
-			$.each(data.appIds, function(index, value) {
-				//alert(index + ': ' + value);
-				$('[name=appIds][value="'+ value +'"]').prop('checked', true);
+			$.each(data.appIds, function(index, value) {			
+				$('[name=appIds][value="'+ value +'"]').prop('checked', true);				
 			});
 
 			$("[name=repoTypes]").val(data.repoTypes);
@@ -345,7 +422,6 @@ define(["ci/api/ciAPI"], function() {
 
 			// Upload configurations
 			if (templateJsonData.enableUploadSettings) {
-				console.log("Upload settings design chnages and type need to get from UI");
 				//elements
 				var uploadSettingsElem = $("#uploadSettings");
 
@@ -398,7 +474,6 @@ define(["ci/api/ciAPI"], function() {
 					if ("No parameters available" == response) {
 						console.log("No parameters available ");
 					} else {
-						console.log("Parameters available ");
 						$("#dynamicContent").html(response);
 						dynamicPageObject.showParameters();
 						self.dynamicPageListener.controlEvent();

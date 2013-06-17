@@ -65,9 +65,9 @@
                                 </tr>
                             </tbody>
                           </table>
-                         
-                          <div class="flt_right">
-                            <input type="button" value="Create" name="save" class="btn btn_style">
+						  <span id='errMsg' class="flt_left"/>						
+                          <div class="flt_right">							
+							<input type="button" value="Create" name="save" class="btn btn_style">
                             <input type="button" value="Close" class="btn btn_style dyn_popup_close">
                          </div>
             </form>
@@ -109,7 +109,7 @@
               </tbody>
         </table>
         {{else}}
-            <div>No Job templates available</div>
+            <div class="alert alert-block" style="text-align: center; margin: auto 0;">Job Templates not available</div>
         {{/if}}
         </div>
       <!--content_main div ends here -->

@@ -132,6 +132,16 @@
 		"buildTest" : {
 			"moduleName":"buildTest",
 			"path" : "components/build/test/buildTest"
+		},
+		
+		"ci" : {
+			"moduleName":"ci",
+			"path" : "components/ci/js"
+		},
+		
+		"jobTemplateListTest" : {
+			"moduleName":"jobTemplateListTest",
+			"path" : "components/ci/test/jobTemplateListTest"
 		}
 		
 	}

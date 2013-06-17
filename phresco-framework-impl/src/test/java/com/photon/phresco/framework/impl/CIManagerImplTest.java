@@ -170,9 +170,11 @@ public class CIManagerImplTest implements FrameworkConstants{
 	public void testUpdateJobTemplates() throws Exception {
 		System.out.println("Update job template ");
 		String name = "Test";
+		String projId = ""; //ur projId
+		String oldName = ""; //ur oldName here
 		CIJobTemplate jobTemplate = ciManager.getJobTemplateByName(name);
 		jobTemplate.setEnableEmailSettings(false);
-		boolean updateJobTemplate = ciManager.updateJobTemplate(jobTemplate);
+		boolean updateJobTemplate = ciManager.updateJobTemplate(jobTemplate, oldName, projId);
 //		Assert.assertTrue(updateJobTemplate);
 		
 		CIJobTemplate jobTemplateByName = ciManager.getJobTemplateByName(name);
@@ -183,7 +185,8 @@ public class CIManagerImplTest implements FrameworkConstants{
 	public void testDeleteJobTemplates() throws Exception {
 		System.out.println("Delete job template ");
 		String name = "Test";
-		boolean deleteJobTemplate = ciManager.deleteJobTemplate(name);
+		String projId = ""; //ur projId
+		boolean deleteJobTemplate = ciManager.deleteJobTemplate(name, projId);
 //		Assert.assertTrue(deleteJobTemplate);
 		CIJobTemplate jobTemplateByName = ciManager.getJobTemplateByName(name);
 		Assert.assertTrue(jobTemplateByName == null); // retrive obje vallue and check

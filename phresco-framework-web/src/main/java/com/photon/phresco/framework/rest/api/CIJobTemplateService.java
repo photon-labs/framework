@@ -36,6 +36,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.StringUtils;
 
 import com.photon.phresco.api.ConfigManager;
 import com.photon.phresco.commons.model.ApplicationInfo;
@@ -50,8 +51,6 @@ import com.photon.phresco.impl.ConfigManagerImpl;
 import com.photon.phresco.util.ServiceConstants;
 import com.sun.jersey.api.client.ClientResponse.Status;
 
-import fr.opensagres.xdocreport.utils.StringUtils;
-
 /**
  * The Class CIJobTemplateService.
  */
@@ -65,14 +64,13 @@ public class CIJobTemplateService extends RestBase implements ServiceConstants {
 	 */
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response list() {
+	public Response list(@QueryParam(REST_QUERY_PROJECTID) String projectId) {
 		ResponseInfo<List<CIJobTemplate>> responseData = new ResponseInfo<List<CIJobTemplate>>();
 		try {
 			CIManager ciManager = PhrescoFrameworkFactory.getCIManager();
 			List<CIJobTemplate> jobTemplates = null;
-			jobTemplates = ciManager.getJobTemplates();
-			ResponseInfo<List<CIJobTemplate>> finalOutput = responseDataEvaluation(responseData, null,
-					"Job Templates listed successfully", jobTemplates);
+			jobTemplates = ciManager.getJobTemplatesByProjId(projectId);
+			ResponseInfo<List<CIJobTemplate>> finalOutput = responseDataEvaluation(responseData, null, "Job Templates listed successfully", jobTemplates);
 			return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
 		} catch (Exception e) {
 			ResponseInfo<List<CIJobTemplate>> finalOutput = responseDataEvaluation(responseData, e,
@@ -101,18 +99,51 @@ public class CIJobTemplateService extends RestBase implements ServiceConstants {
 		ResponseInfo<CIJobTemplate> responseData = new ResponseInfo<CIJobTemplate>();
 		try {
 			CIManager ciManager = PhrescoFrameworkFactory.getCIManager();
-			CIJobTemplate jobTemplate = null;
+			List<CIJobTemplate> jobTemplates = null;
 			if (StringUtils.isNotEmpty(name)) {
-				jobTemplate = ciManager.getJobTemplateByName(name);
+				jobTemplates = ciManager.getJobTemplatesByProjId(projectId);
 			}
-			ResponseInfo<CIJobTemplate> finalOutput = responseDataEvaluation(responseData, null,
-					"Job Template retrived successfully", jobTemplate);
+			if (CollectionUtils.isNotEmpty(jobTemplates)) {
+				for (CIJobTemplate jobTemplate : jobTemplates) {
+					if (name.equalsIgnoreCase(jobTemplate.getName())) {
+						ResponseInfo<CIJobTemplate> finalOutput = responseDataEvaluation(responseData, null, "Job Template retrived successfully", jobTemplate);
+						return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
+					} 
+				}
+			}
+			ResponseInfo<CIJobTemplate> finalOutput = responseDataEvaluation(responseData, null, "Cannot Find jobTemplate", null);
 			return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
+			
 		} catch (Exception e) {
 			ResponseInfo<CIJobTemplate> finalOutput = responseDataEvaluation(responseData, e,
 					"Job Templates failed to retrive", null);
 			return Response.status(Status.EXPECTATION_FAILED).entity(finalOutput).header("Access-Control-Allow-Origin",
 					"*").build();
+		}
+	}
+
+	@GET
+	@Path("/validate")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response validateName(@QueryParam(REST_QUERY_PROJECTID) String projectId, @QueryParam(REST_QUERY_CUSTOMERID) String customerId, @QueryParam(REST_QUERY_NAME) String name, @QueryParam(REST_QUERY_OLDNAME) String oldName) {
+		ResponseInfo<Boolean> responseData = new ResponseInfo<Boolean>();
+		try {
+			boolean status = true;
+			CIManager ciManager = PhrescoFrameworkFactory.getCIManager();
+			List<CIJobTemplate> jobTemplates = null;
+			jobTemplates = ciManager.getJobTemplatesByProjId(projectId);
+			if (CollectionUtils.isNotEmpty(jobTemplates)) {
+				for (CIJobTemplate jobTemplate : jobTemplates) {
+					if (StringUtils.isNotEmpty(name) && name.equalsIgnoreCase(jobTemplate.getName()) && (!jobTemplate.getName().equalsIgnoreCase(oldName))) {
+						status = false;
+					}
+				}
+			}
+			ResponseInfo<Boolean> finalOutput = responseDataEvaluation(responseData, null, "", status);
+			return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
+		} catch (Exception e) {
+			ResponseInfo<Boolean> finalOutput = responseDataEvaluation(responseData, e, "", null);
+			return Response.status(Status.EXPECTATION_FAILED).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
 		}
 	}
 
@@ -151,13 +182,16 @@ public class CIJobTemplateService extends RestBase implements ServiceConstants {
 	@PUT
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response update(CIJobTemplate ciJobTemplate) {
+	public Response update(CIJobTemplate ciJobTemplate, @QueryParam(REST_QUERY_OLDNAME) String oldName, @QueryParam(REST_QUERY_PROJECTID) String projId ) {
 		ResponseInfo<CIJobTemplate> responseData = new ResponseInfo<CIJobTemplate>();
 		try {
 			CIManager ciManager = PhrescoFrameworkFactory.getCIManager();
-			boolean updateJobTemplate = ciManager.updateJobTemplate(ciJobTemplate);
-			ResponseInfo<CIJobTemplate> finalOutput = responseDataEvaluation(responseData, null,
-					"Job Template updated successfully", ciJobTemplate);
+			boolean updateJobTemplate = ciManager.updateJobTemplate(ciJobTemplate, oldName, projId);
+			if (!updateJobTemplate) {
+			ResponseInfo<CIJobTemplate> finalOutput = responseDataEvaluation(responseData, null, "Job Template updation failed", updateJobTemplate);
+			return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
+			} 			
+			ResponseInfo<CIJobTemplate> finalOutput = responseDataEvaluation(responseData, null, "Job Template updated successfully", updateJobTemplate);
 			return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
 		} catch (Exception e) {
 			ResponseInfo<CIJobTemplate> finalOutput = responseDataEvaluation(responseData, e,
@@ -175,12 +209,12 @@ public class CIJobTemplateService extends RestBase implements ServiceConstants {
 	 */
 	@DELETE
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response delete(@QueryParam(REST_QUERY_NAME) String name) {
+	public Response delete(@QueryParam(REST_QUERY_NAME) String name, @QueryParam(REST_QUERY_PROJECTID) String projId) {
 		ResponseInfo<CIJobTemplate> responseData = new ResponseInfo<CIJobTemplate>();
 		try {
 			CIJobTemplate ciJobTemplate = null;
 			CIManager ciManager = PhrescoFrameworkFactory.getCIManager();
-			boolean deleteJobTemplate = ciManager.deleteJobTemplate(name);
+			boolean deleteJobTemplate = ciManager.deleteJobTemplate(name, projId);
 			if (deleteJobTemplate) {
 				ResponseInfo<CIJobTemplate> finalOutput = responseDataEvaluation(responseData, null,
 						"Job Template deleted successfully", ciJobTemplate);

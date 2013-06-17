@@ -86,7 +86,7 @@ define(["jquery"], function($) {
 				commonVariables.loadingScreen =new Clazz.com.js.widget.common.Loading();
 			});
 		
-			require(["lib/jslib_bootstrap_datepicker-1.0.0", "lib/bootstrap_select_min-1.0", "lib/handlebars-1.0.0", "lib/Signal-1.0.0", "lib/SignalBinding-1.0.0", "lib/i18next-1.6.0", "lib/jslib_jquery_sortable_min-1.0.0", "lib/bootstrap_min-2.3.1","jquery_mCustomScrollbar_concat_min-2.8.1", "loginTest", "projectlistTest", "headerTest", "footerTest", "navigationTest", "projectTest", "applicationTest", "featuresTest", "codequalityTest", "configurationTest", "buildTest", "jshamcrest", "jsmockito"],	function (Datepicker, Select, Handlebars, Signal, SignalBinding, next, sortable, bootrsap, mCustomScrollbar, loginTest, projectlistTest, headerTest, footerTest, navigationTest, projectTest,applicationTest, featuresTest, codequalityTest, configurationTest, buildTest){
+			require(["lib/jslib_bootstrap_datepicker-1.0.0", "lib/bootstrap_select_min-1.0", "lib/handlebars-1.0.0", "lib/Signal-1.0.0", "lib/SignalBinding-1.0.0", "lib/i18next-1.6.0", "lib/jslib_jquery_sortable_min-1.0.0", "lib/bootstrap_min-2.3.1","jquery_mCustomScrollbar_concat_min-2.8.1", "loginTest", "projectlistTest", "headerTest", "footerTest", "navigationTest", "projectTest", "applicationTest", "featuresTest", "codequalityTest", "configurationTest", "buildTest", "jobTemplateListTest", "jshamcrest", "jsmockito"],	function (Datepicker, Select, Handlebars, Signal, SignalBinding, next, sortable, bootrsap, mCustomScrollbar, loginTest, projectlistTest, headerTest, footerTest, navigationTest, projectTest,applicationTest, featuresTest, codequalityTest, configurationTest, buildTest, jobTemplateListTest){
 				JsHamcrest.Integration.JsTestDriver();
 				JsMockito.Integration.JsTestDriver();
 				var status = loginTest.runTests(data);/*, function() {
@@ -98,6 +98,7 @@ define(["jquery"], function($) {
 					applicationTest.runTests(data);
 					configurationTest.runTests(data);
 					featuresTest.runTests(data);
+					jobTemplateListTest.runTests(data);
 				}
 				
 				/* navigationTest.runTests(data);
