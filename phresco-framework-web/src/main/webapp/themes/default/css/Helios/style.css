@@ -182,6 +182,10 @@ to {
 
 textarea { resize: none; }
 
+.features_content_main .alert, .content_main .alert {
+	padding:5px;
+}
+
 /*=== End of Loading ===*/
 
 /* *************************************************************************** LOGIN PAGE STYLES ************************************************************************** */
@@ -798,7 +802,7 @@ ul.nav li.dropdown:hover > .test_options{
 }
 
 .add_repo input[type="text"], .add_repo input[type="password"] {
-	width: 150px;
+	width: 164px;
 }
 
 .add_repo select {
@@ -806,7 +810,7 @@ ul.nav li.dropdown:hover > .test_options{
 }
 
 .add_repo textarea {
-	width: 96%;	
+	width: 100%;	
 }
 
 .commit textarea {
@@ -839,12 +843,29 @@ ul.nav li.dropdown:hover > .test_options{
 }
 
 .svn_update input[type="text"], .svn_update input[type="password"] {
-	width: 158px;	
+	width: 172px;	
 }
 
 .testCheckoutData {
 	display : none;
 }	
+
+.pdf_report {
+	 width: 380px !important;
+}
+
+.existing_report {
+	border: 1px solid #DDDDDD ! important;
+	margin-bottom: 6px;
+}
+
+#reportType , input[name=pdfName]{
+	width: 251px;
+}
+
+.report_type tr td {
+	border-top: medium none;
+}
 
 #pdf_report table:first-child, .commit table:first-child {
 	border: 1px solid #cdcdcd;
@@ -1264,7 +1285,7 @@ img[name="close"] {
 	height:23px;
 	font-size:11px;
 	width:70px !important;
-	margin-top:7px;
+	margin-top:9px;
 }
 
 .features_box .box_div ul li span {
@@ -2038,6 +2059,7 @@ select[name="builtmyself"] {
 	width: 54px;
 	text-align:center;
 	border-right: 1px solid #d8d8d8;
+	padding-bottom:8px;
 }
 
 .add_env .connected li div input{
