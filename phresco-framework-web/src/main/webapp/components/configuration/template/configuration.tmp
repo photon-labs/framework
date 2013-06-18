@@ -24,7 +24,7 @@
                                     <th>Environment</th>
                                 </tr>
                             </thead>
-                            <tbody>
+                            <tbody class="scrollContent">
                                 <tr>
                                     <td colspan="2">
 										<ul class="connected list" id="content_Env" name="envList">

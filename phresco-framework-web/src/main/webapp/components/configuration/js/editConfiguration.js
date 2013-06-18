@@ -98,11 +98,6 @@ define(["framework/widgetWithTemplate", "configuration/listener/configurationLis
 			$("input[name=UpdateConfiguration]").click(function() {
 				self.updateConfigEvent.dispatch();
 			});
-			
-			/* $("#configurationListScroll").mCustomScrollbar({
-				autoHideScrollbar:true,
-				theme:"light-thin"
-			}); */
 		}
 	});
 

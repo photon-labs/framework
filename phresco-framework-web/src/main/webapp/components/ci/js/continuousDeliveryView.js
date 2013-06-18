@@ -75,6 +75,21 @@ define(["framework/widgetWithTemplate", "ci/listener/ciListener"], function() {
 		 */
 		bindUI : function() {
 			var self = this;
+				alert("rajesh");
+				var resultvalue = 0;
+				$('.content_main').prevAll().each(function() {
+					resultvalue = resultvalue + $(this).height(); 
+				});
+				
+				resultvalue = resultvalue + $('.footer_section').height() + 65;
+				$('.content_main').height($(window).height() - (resultvalue + 155));
+
+				$(".content_main").mCustomScrollbar({
+				autoHideScrollbar:true,
+				theme:"light-thin",
+				advanced:{ updateOnContentResize: true}
+			});
+
    			$(".dyn_popup").hide();
 	  		
 	  		/*$(window).resize(function() {

@@ -173,13 +173,19 @@ define(["projects/listener/projectsListener"], function() {
 			self.projectsListener.addLayersEvent();
 			self.projectsListener.removeLayersEvent();
 			self.projectsListener.technologyAndVersionChangeEvent();
-			
+			self.windowResize();
 			$("#updateProject").click(function() {
 				self.onUpdateProjectsEvent.dispatch(commonVariables.projectId, "update");
 			});
 			
 			$("#cancelUpdate").click(function() {
 				self.onCancelUpdateEvent.dispatch();
+			});
+
+			$(".scrollContent").mCustomScrollbar({
+				autoHideScrollbar:true,
+				theme:"light-thin",
+				advanced:{ updateOnContentResize: true}
 			});
 			
 		}

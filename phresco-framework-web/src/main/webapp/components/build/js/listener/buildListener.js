@@ -13,9 +13,9 @@ define(["build/api/buildAPI"], function() {
 		initialize : function(config) {
 			var self = this;
 			
-			if(self.buildAPI === null)
+			if(self.buildAPI === null){
 				self.buildAPI = new Clazz.com.components.build.js.api.BuildAPI();
-			
+			}
 			if(self.mavenServiceListener === null)	{
 				commonVariables.navListener.getMyObj(commonVariables.mavenService, function(retVal){});
 			}
@@ -25,7 +25,7 @@ define(["build/api/buildAPI"], function() {
 			var check = $(clicked).attr('data-flag');
 			var value = $('.build_info').width();
 			var value1 = $('.build_progress').width();
-			if(check == "true") {
+			if(check === "true") {
 				$('.build_info').animate({width: '97%'},500);
 				$('.build_progress').animate({right: -value1},500);
 				$('.build_close').animate({right: '0px'},500);
@@ -87,7 +87,7 @@ define(["build/api/buildAPI"], function() {
 		buildProject : function(queryString, callback){
 			var self = this, appInfo = self.buildAPI.localVal.getJson('appdetails');
 			
-			if(appInfo != null){
+			if(appInfo !== null){
 				queryString +=	'&customerId='+ self.getCustomer() +'&appId='+ appInfo.data.appInfos[0].id +'&projectId=' + appInfo.data.id + '&username=' + self.buildAPI.localVal.getSession('username');
 			}
 			
@@ -137,20 +137,20 @@ define(["build/api/buildAPI"], function() {
 		getRequestHeader : function(BuildRequestBody, buildInfo, action) {
 			var self=this, header, appdirName = '', url = '', method = "GET", conte;
 			
-			if(self.buildAPI.localVal.getSession('appDirName') != null){
+			if(self.buildAPI.localVal.getSession('appDirName') !== null){
 				appdirName = self.buildAPI.localVal.getSession('appDirName');
 			}
 			
-			if(action == "getList"){
-				method = "GET"
+			if(action === "getList"){
+				method = "GET";
 				url = 'buildinfo/list?appDirName=' + appdirName;
-			}else if(action == "download"){
+			}else if(action === "download"){
 				method = "POST";
 				url = 'buildinfo/buildfile?appDirName=' + appdirName + '&buildNumber=' + buildInfo.buildNo;
-			}else if(action == "delete"){
+			}else if(action === "delete"){
 				method = "DELETE";
 				var appInfo = self.buildAPI.localVal.getJson('appdetails');
-				if(appInfo != null){
+				if(appInfo !== null){
 					url = 'buildinfo/deletebuild?customerId='+ self.getCustomer() +'&appId='+ appInfo.data.appInfos[0].id +'&projectId=' + appInfo.data.id;
 				}
 			} 
@@ -161,7 +161,7 @@ define(["build/api/buildAPI"], function() {
 				requestPostBody: BuildRequestBody,
 				dataType: "json",
 				webserviceurl: commonVariables.webserviceurl + url
-			}
+			};
 			return header;
 		}
 	});

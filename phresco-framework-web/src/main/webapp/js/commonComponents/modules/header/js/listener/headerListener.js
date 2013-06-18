@@ -9,8 +9,9 @@ define(["header/api/headerAPI"], function() {
 		currentTab : null,
 		
 		initialize : function(config){
-			if(this.headerAPI === null)
+			if(this.headerAPI === null){
 				this.headerAPI = new Clazz.com.commonComponents.modules.header.js.api.HeaderAPI;
+			}	
 		},
 		
 		doLogout : function(){
@@ -27,7 +28,7 @@ define(["header/api/headerAPI"], function() {
 			
 			this.headerAPI.localVal.clearSession();
 			
-			if(rememberMe == "true"){
+			if(rememberMe === "true"){
 				this.headerAPI.localVal.setSession('username', username);
 				this.headerAPI.localVal.setSession('password', password);
 				this.headerAPI.localVal.setSession('rememberMe', "true");
@@ -38,19 +39,19 @@ define(["header/api/headerAPI"], function() {
 			var self = this, currentObj = null;
 			Clazz.navigationController.jQueryContainer = commonVariables.contentPlaceholder;
 			
-			if(self.currentTab == "Dashboard"){
-			}else if(self.currentTab == "Projects"){
+			if(self.currentTab === "Dashboard"){
+			}else if(self.currentTab === "Projects"){
 				if (currentObj === null) {
 					commonVariables.navListener.getMyObj(commonVariables.projectlist, function(retVal) {
 						currentObj = retVal;
 					});
 				}
-			}else if(self.currentTab == "Settings"){
-			}else if(self.currentTab == "Downloads"){
-			}else if(self.currentTab == "Admin"){
+			}else if(self.currentTab === "Settings"){
+			}else if(self.currentTab === "Downloads"){
+			}else if(self.currentTab === "Admin"){
 			}	
 
-			if(currentObj != null){
+			if(currentObj !== null){
 				Clazz.navigationController.push(currentObj, true);
 			}
 		},
@@ -82,8 +83,9 @@ define(["header/api/headerAPI"], function() {
 				});
 			}
 			$('.proj_list').each(function() {
-				if(obj != null)
+				if(obj !== null){
 					Clazz.navigationController.push(obj, true);
+				}	
 			});
 		}
 	});

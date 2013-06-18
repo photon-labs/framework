@@ -1,4 +1,4 @@
- <section class="optiontitle" id="codequalityContent">
+ <section class="optiontitle qual_unit" id="codequalityContent">
         <div class="flt_right">
             <div class="code_report">
             	<font data-i18n="codequality.report"></font>
@@ -14,7 +14,7 @@
 							<ul>
 									<table><tbody id="dynamicContent"></tbody></table>
 								<li>
-									<div class="flt_left">
+									<div class="flt_right">
 										<input type="button" data-i18n="[value]codequality.btn.validate" class="btn btn_style" name="validate" id="validate">
 										<input type="button" data-i18n="[value]codequality.btn.close" class="btn btn_style dyn_popup_close" name="close">
 									</div>
@@ -28,12 +28,11 @@
         <div class="code_report_icon"><a class="tooltiptop" title="" data-placement="bottom" data-toggle="tooltip" href="#" data-original-title="PDF Report"><img src="themes/default/images/helios/code_pdf_icon.png" width="28" height="29" border="0" alt=""></a></div>
     </section>
 
-	<!--	<div style="clear:both"></div>
-<div class="mainContent" id="content_div"></div>-->
 
  <section class="content_main code_content testSuiteTable">
-    <div class="mainContent"><div class="widget-maincontent-div" id="content_div" style="padding-left:1%;"></div></div>
-        
+	<div class="qual_unit_main unit_info" id="testSuites">
+		<div class="widget-maincontent-div" id="content_div" style="padding-left:1%;"></div>
+	</div>
 		<div class="unit_close">
 				<a href="#" data-flag="true" id="codeValidateConsole">
 					<img src="themes/default/images/helios/console_img.png" width="33" height="92" border="0" alt="">

@@ -78,6 +78,7 @@ define(["configuration/listener/configurationListener"], function() {
 						}
 					});
 				} else {
+					self.successMsgPopUp(response.message);
 					self.loadPage();
 				}
 			});
@@ -111,7 +112,7 @@ define(["configuration/listener/configurationListener"], function() {
 				});
 				var name = $("input[name=envName]").val();
 				var envDesc = $("input[name=envDesc]").val();
-				if(name==""){	
+				if(name === ""){	
 					$("input[name='envName']").focus();
 					$("input[name='envName']").attr('placeholder','Enter Environment Name');
 				} else {							  
@@ -172,6 +173,14 @@ define(["configuration/listener/configurationListener"], function() {
 				});  
 				
 			}); 
+			self.windowResize();
+			
+			$(".scrollContent").mCustomScrollbar({
+				autoHideScrollbar:true,
+				theme:"light-thin",
+				advanced:{ updateOnContentResize: true}
+			});
+			
 			
 			Clazz.navigationController.mainContainer = commonVariables.contentPlaceholder;
 		}

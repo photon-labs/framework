@@ -32,8 +32,8 @@ define(["framework/widget", "framework/templateProvider"], function() {
 			postRender : function(element) {
 			
 			if (commonVariables.userInfo.role.name === "ROLE_ADMIN"){
-			$('.userpermissions').addclass('show'); 
-			}
+				$('.userpermissions').addclass('show'); 
+				}
 			},
 			 
 			/****
@@ -116,7 +116,7 @@ define(["framework/widget", "framework/templateProvider"], function() {
 					fallbackLng: 'en',
 					ns: { namespaces: ['framework'], defaultNs: 'framework'},
 					resGetPath: commonVariables.globalconfig.environments.locales,
-					useLocalStorage: false,
+					useLocalStorage: true,   // To avoid loading framework.json multiple times
 					debug: false
 				}, function() {
 					$(whereToRender).i18n();
@@ -283,7 +283,7 @@ define(["framework/widget", "framework/templateProvider"], function() {
 			
 			closeAll : function(placeId) {
 				$(document).keyup(function(e) {
-					if(e.which == 27){
+					if(e.which === 27){
 						$("#" + placeId).hide();
 						$(".dyn_popup_text").val("");
 					}
@@ -306,10 +306,10 @@ define(["framework/widget", "framework/templateProvider"], function() {
 				var flag=1;
 				$(".datepicker").remove();
 				var checkin = $('#startDate').datepicker({
-					onRender: function(date) {return date.valueOf()}
+					onRender: function(date) {return date.valueOf();}
 				}).on('changeDate', function(ev) {
-				   if ((ev.date.valueOf() > checkout.date.valueOf())||(flag==1)) {
-						var newDate = new Date(ev.date)
+				   if ((ev.date.valueOf() > checkout.date.valueOf())||(flag === 1)) {
+						var newDate = new Date(ev.date);
 						newDate.setDate(newDate.getDate() + 1);
 						checkout.setValue(newDate);
 					}
@@ -322,8 +322,9 @@ define(["framework/widget", "framework/templateProvider"], function() {
 				}).on('changeDate', function(ev) {checkout.hide();}).data('datepicker');
 				$("#startDate").bind('keydown', function(e) { 
   					var keyCode = e.keyCode || e.which; 
- 			 		if (keyCode == 9) 
-					checkin.hide();
+ 			 		if (keyCode === 9){
+						checkin.hide();
+					}	
 				});
 
 				$("#startDate").click(function() { 
@@ -332,8 +333,9 @@ define(["framework/widget", "framework/templateProvider"], function() {
 
 				$("#endDate").bind('keydown', function(e) { 
   					var keyCode = e.keyCode || e.which; 
- 			 		if (keyCode == 9) 
-					checkout.hide();
+ 			 		if (keyCode === 9){
+						checkout.hide();
+					}	
 				});
 				
 				$("#endDate").click(function() { 
@@ -367,11 +369,11 @@ define(["framework/widget", "framework/templateProvider"], function() {
 			},
 			
 			// popUp onclick to open with dynamic content
-//			showPopUp : function(popUpheader,content) {
-//				$('#myModal').modal('show');
-//				$('#myModalLabel').html(popUpheader);
-//				$('.modal-body').html(content);
-//			},
+			showPopUp : function(popUpheader,content) {
+				$('#myModal').modal('show');
+				$('#myModalLabel').html(popUpheader);
+				$('.modal-body').html(content);
+			},
 			
 			multiselect : function() {
 				$('.selectpicker').selectpicker();
@@ -387,7 +389,7 @@ define(["framework/widget", "framework/templateProvider"], function() {
 			showHideConsole : function() {
 				var self = this;
 				var check = $('#consoleImg').attr('data-flag');
-				if (check == "true") {
+				if (check === "true") {
 					self.openConsole();
 				} else {
 					self.closeConsole();
@@ -436,7 +438,7 @@ define(["framework/widget", "framework/templateProvider"], function() {
 				$('.' + childCheckBoxClass).bind('click', function(){
 					var checkedLength = $('.' + childCheckBoxClass + ':checked').size();
 					var totalCheckBoxes = $('.' + childCheckBoxClass).size();
-					if (totalCheckBoxes == checkedLength) {
+					if (totalCheckBoxes === checkedLength) {
 						$(parentObj).prop("checked", true);
 					} else {
 						$(parentObj).prop("checked", false);
