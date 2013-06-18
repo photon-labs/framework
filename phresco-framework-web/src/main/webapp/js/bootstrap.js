@@ -185,7 +185,7 @@ var commonVariables = {
 		}
 		
 		$(document).keyup(function(e) {
-			if(e.which == 27){
+			if(e.which === 27){
 				$("#" + place).hide();
 			}
 		});
@@ -198,7 +198,7 @@ var commonVariables = {
 	getParameterByName : function (name) {
 		name = name.replace(/[\[]/, "\\\[").replace(/[\]]/, "\\\]");
 		var regex = new RegExp("[\\?&]" + name + "=([^&#]*)"),	results = regex.exec(location.search);
-		return results == null ? "" : decodeURIComponent(results[1].replace(/\+/g, " "));
+		return results === null ? "" : decodeURIComponent(results[1].replace(/\+/g, " "));
 	}
 };
 
@@ -241,7 +241,7 @@ $(document).ready(function(){
 			});
 
 			//Apply customer based theme
-			if(localStorage.getItem('customertheme') != null && localStorage.getItem('customertheme') != ""){
+			if(localStorage.getItem('customertheme') !== null && localStorage.getItem('customertheme') !== ""){
 				JSS.css(eval('(' + localStorage.getItem('customertheme') + ')'));
 			}
 			
@@ -261,27 +261,24 @@ $(document).ready(function(){
         hasher.changed.add(this.handleChanges);
         hasher.init();
         if(!window.location.hash){
-         //   hasher.setHash('#login');
         }  
     },
     handleChanges: function(newHash, oldHash){
 		var flag=false;
-		//console.log('hashtag',newHash,oldHash);
 
-		if(newHash != undefined && newHash != null && newHash !=""){
-			if(localStorage.getItem("userInfo") == null){
+		if(newHash !== undefined && newHash !== null && newHash !==""){
+			if(localStorage.getItem("userInfo") === null){
 				location.hash = '';
 				var loginView = new Clazz.com.components.login.js.Login();
 				loginView.loadPage();
 			} else {
 				var loginlistenerObj = new Clazz.com.components.login.js.listener.LoginListener();
-				if(loginlistenerObj != undefined && loginlistenerObj != null && loginlistenerObj != ""){
-					//loginlistenerObj.pageRefresh(newHash);
+				if(loginlistenerObj !== undefined && loginlistenerObj !== null && loginlistenerObj !== ""){
 					loginlistenerObj.pageRefresh(commonVariables.projectlist);
 				}
 			}
-		}else if((newHash == undefined || newHash == null || newHash =="") && 
-		(oldHash == undefined || oldHash == null || oldHash =="")){
+		}else if((newHash === undefined || newHash === null || newHash === "") && 
+		(oldHash === undefined || oldHash === null || oldHash === "")){
 			var loginView = new Clazz.com.components.login.js.Login();
 			loginView.loadPage();
 		}

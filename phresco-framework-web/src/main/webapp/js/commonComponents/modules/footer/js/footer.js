@@ -15,8 +15,9 @@ define(["footer/listener/footerListener"] , function(template) {
 		},
 		
 		loadPage :function(){
-			if(this.footerListener === null)
+			if(this.footerListener === null){
 				this.footerListener = new Clazz.com.commonComponents.modules.footer.js.listener.FooterListener();
+			}	
 		},
 		
 		/***

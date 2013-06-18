@@ -27,9 +27,9 @@ define(["application/listener/applicationListener"], function() {
 		 */
 		initialize : function(globalConfig){
 			var self = this;
-			if(self.editApplicationListener === null)
+			if(self.editApplicationListener === null){
 				self.editApplicationListener = new Clazz.com.components.application.js.listener.ApplicationListener(globalConfig);
-
+			}
 				self.registerEvents(self.editApplicationListener);
 		},
 		
@@ -47,7 +47,7 @@ define(["application/listener/applicationListener"], function() {
 			self.updateApp.add(editApplicationListener.updateApplication, editApplicationListener); 
 			
 			Handlebars.registerHelper('compare', function(val1, val2, val3) {
-				if(val1 == val2){
+				if(val1 === val2){
 					return '<option value="'+ val1 +'" selected="selected">'+ val3 +'</option>';
 				}else{
 					return '<option value="'+ val1 +'">'+ val3 +'</option>';
@@ -55,7 +55,7 @@ define(["application/listener/applicationListener"], function() {
 			});
 			
 			Handlebars.registerHelper('compareversion', function(val1, val2, artfgroup, selectedVersion) {
-				if(val1 == val2){
+				if(val1 === val2){
 					var option = '';
 					$.each(artfgroup.versions, function(index, value){
 						var inArray = $.inArray(value.id, selectedVersion);
@@ -76,7 +76,7 @@ define(["application/listener/applicationListener"], function() {
 			});
 								
 			Handlebars.registerHelper('positionouter', function(selectedServers) {
-				if(selectedServers[0].selectedServers != undefined ){
+				if(selectedServers[0].selectedServers != undefined){
 					return selectedServers[0].selectedServers.length+1;
 				} else {
 					return 1;
@@ -84,7 +84,7 @@ define(["application/listener/applicationListener"], function() {
 			});		
 			
 			Handlebars.registerHelper('isLastRow', function(array, indexVal, options) {
-				if(array != undefined && array.length == indexVal + 1){
+				if(array !== undefined && array.length === indexVal + 1){
 					return options.fn(this);
 				} else {
 					return options.inverse(this);
@@ -92,7 +92,7 @@ define(["application/listener/applicationListener"], function() {
 			});	
 		
 			Handlebars.registerHelper('isNotSingleRow', function(array, options) {
-				if(array != undefined && array.length == 1){
+				if(array !== undefined && array.length === 1){
 					return options.inverse(this);
 				} else {
 					return options.fn(this);
@@ -117,7 +117,7 @@ define(["application/listener/applicationListener"], function() {
 			});
 			
 			Handlebars.registerHelper('isSelectedWebService', function(appInfos, webServiceId, options) {
-				if(appInfos[0].selectedWebservices != undefined && $.inArray(webServiceId, appInfos[0].selectedWebservices) > -1){
+				if(appInfos[0].selectedWebservices !== undefined && $.inArray(webServiceId, appInfos[0].selectedWebservices) > -1){
 					return options.fn(this);
 				} else {
 					return options.inverse(this);

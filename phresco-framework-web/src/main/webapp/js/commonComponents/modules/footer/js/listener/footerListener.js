@@ -6,8 +6,9 @@ define(["footer/api/footerAPI"], function() {
 		footerAPI : null,
 
 		initialize : function(config){
-			if(this.footerAPI === null)
+			if(this.footerAPI === null){
 				this.footerAPI = new Clazz.com.components.footer.js.api.FooterAPI();
+			}	
 		}
 	});
 

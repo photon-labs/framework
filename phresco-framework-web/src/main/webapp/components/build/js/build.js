@@ -26,8 +26,9 @@ define(["build/listener/buildListener"], function() {
 		initialize : function(globalConfig) {
 			var self = this;
 			
-			if(self.buildListener === null)
+			if(self.buildListener === null){
 				self.buildListener = new Clazz.com.components.build.js.listener.BuildListener();
+			}
 			
 			if(self.dynamicpage === null){
 				commonVariables.navListener.getMyObj(commonVariables.dynamicPage, function(retVal){
@@ -41,17 +42,22 @@ define(["build/listener/buildListener"], function() {
 		registerEvents : function(){
 			var self = this;
 			
-			if(self.onProgressEvent === null)
+			if(self.onProgressEvent === null){
 				self.onProgressEvent = new signals.Signal();
-			if(self.onDownloadEvent === null)	
+			}	
+			if(self.onDownloadEvent === null){
 				self.onDownloadEvent = new signals.Signal();
-			if(self.onDeleteEvent === null)
+			}
+			if(self.onDeleteEvent === null){
 				self.onDeleteEvent = new signals.Signal();
-			if(self.onDeployEvent === null)
+			}
+			if(self.onDeployEvent === null){
 				self.onDeployEvent = new signals.Signal();
-			if(self.onBuildEvent === null)
+			}
+			if(self.onBuildEvent === null){
 				self.onBuildEvent = new signals.Signal();
-				
+			}
+			
 			self.onProgressEvent.add(self.buildListener.onPrgoress, self.buildListener);
 			self.onDownloadEvent.add(self.buildListener.downloadBuild, self.buildListener);
 			self.onDeleteEvent.add(self.buildListener.deleteBuild, self.buildListener);
