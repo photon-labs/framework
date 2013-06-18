@@ -25,14 +25,19 @@ import java.io.FileReader;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
@@ -43,6 +48,7 @@ import javax.ws.rs.core.Response;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.TransformerException;
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpression;
@@ -62,16 +68,22 @@ import org.xml.sax.SAXException;
 import com.google.gson.Gson;
 import com.photon.phresco.commons.FileListFilter;
 import com.photon.phresco.commons.FrameworkConstants;
+import com.photon.phresco.commons.model.ApplicationInfo;
 import com.photon.phresco.configuration.Configuration;
 import com.photon.phresco.exception.PhrescoException;
 import com.photon.phresco.framework.commons.FrameworkUtil;
 import com.photon.phresco.framework.commons.QualityUtil;
+import com.photon.phresco.framework.model.PerformanceTestResult;
 import com.photon.phresco.framework.model.TestCase;
 import com.photon.phresco.framework.model.TestCaseError;
 import com.photon.phresco.framework.model.TestCaseFailure;
 import com.photon.phresco.framework.model.TestReportResult;
+import com.photon.phresco.framework.model.TestResult;
 import com.photon.phresco.framework.model.TestSuite;
 import com.photon.phresco.framework.rest.api.util.FrameworkServiceUtil;
+import com.photon.phresco.plugins.model.Mojos.Mojo.Configuration.Parameters.Parameter;
+import com.photon.phresco.plugins.model.Mojos.Mojo.Configuration.Parameters.Parameter.PossibleValues.Value;
+import com.photon.phresco.plugins.util.MojoProcessor;
 import com.photon.phresco.util.Constants;
 import com.photon.phresco.util.HubConfiguration;
 import com.photon.phresco.util.ServiceConstants;
@@ -85,7 +97,6 @@ import com.sun.jersey.api.client.ClientResponse.Status;
  */
 @Path("/quality")
 public class QualityService extends RestBase implements ServiceConstants, FrameworkConstants {
-
 	/** The test suite map. */
 	private static Map<String, Map<String, NodeList>> testSuiteMap = Collections
 			.synchronizedMap(new HashMap<String, Map<String, NodeList>>(8));
@@ -110,7 +121,7 @@ public class QualityService extends RestBase implements ServiceConstants, Framew
 	 * @return the response
 	 */
 	@GET
-	@Path("/unit")
+	@Path(REST_API_UNIT)
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response unit(@QueryParam(REST_QUERY_APPDIR_NAME) String appDirName,
 			@QueryParam(REST_QUERY_USERID) String userId) {
@@ -119,15 +130,15 @@ public class QualityService extends RestBase implements ServiceConstants, Framew
 			List<String> unitReportOptions = getUnitReportOptions(appDirName);
 			List<String> projectModules = FrameworkServiceUtil.getProjectModules(appDirName);
 			Map<String, List<String>> unitTestOptionsMap = new HashMap<String, List<String>>();
-			unitTestOptionsMap.put("reportOptions", unitReportOptions);
-			unitTestOptionsMap.put("projectModules", projectModules);
+			unitTestOptionsMap.put(REPORT_OPTIONS, unitReportOptions);
+			unitTestOptionsMap.put(PROJECT_MODULES, projectModules);
 			ResponseInfo<List<String>> finalOutput = responseDataEvaluation(responseData, null,
-					"Parameter returned successfully", unitTestOptionsMap);
-			return Response.ok(finalOutput).header("Access-Control-Allow-Origin", "*").build();
+					PARAMETER_RETURNED_SUCCESSFULLY, unitTestOptionsMap);
+			return Response.ok(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, "*").build();
 		} catch (PhrescoException e) {
 			ResponseInfo<List<String>> finalOutput = responseDataEvaluation(responseData, e,
 					"Unable to get unit test report options", null);
-			return Response.status(Status.BAD_REQUEST).entity(finalOutput).header("Access-Control-Allow-Origin", "*")
+			return Response.status(Status.BAD_REQUEST).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, "*")
 					.build();
 		}
 	}
@@ -143,7 +154,7 @@ public class QualityService extends RestBase implements ServiceConstants, Framew
 	 * @throws PhrescoException the phresco exception
 	 */
 	@GET
-	@Path("/testsuites")
+	@Path(REST_API_TEST_SUITES)
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response getTestSuites(@QueryParam(REST_QUERY_APPDIR_NAME) String appDirName,
 			@QueryParam(REST_QUERY_TEST_TYPE) String testType, @QueryParam(REST_QUERY_TECH_REPORT) String techReport,
@@ -156,15 +167,15 @@ public class QualityService extends RestBase implements ServiceConstants, Framew
 		String testSuitePath = getTestSuitePath(appDirName, testType, techReport);
 		String testCasePath = getTestCasePath(appDirName, testType, techReport);
 		List<TestSuite> testSuites = testSuites(appDirName, moduleName, testType, moduleName, techReport,
-				testSuitePath, testCasePath, "All");
+				testSuitePath, testCasePath, ALL);
 		if (CollectionUtils.isEmpty(testSuites)) {
 			ResponseInfo<Configuration> finalOuptut = responseDataEvaluation(responseData, null,
-					"Test Result not available", testSuites);
-			return Response.status(Status.OK).entity(finalOuptut).header("Access-Control-Allow-Origin", "*").build();
+					TEST_RESULT_NOT_AVAILABLE, testSuites);
+			return Response.status(Status.OK).entity(finalOuptut).header(ACCESS_CONTROL_ALLOW_ORIGIN, "*").build();
 		}
 		ResponseInfo<List<String>> finalOutput = responseDataEvaluation(responseData, null,
-				"Test Suites listed successfully", testSuites);
-		return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
+				TEST_SUITES_LISTED_SUCCESSFULLY, testSuites);
+		return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, "*").build();
 	}
 
 	/**
@@ -249,7 +260,7 @@ public class QualityService extends RestBase implements ServiceConstants, Framew
 							failureTestSuites = failureTestSuites + failures;
 							errorTestSuites = errorTestSuites + errors;
 							successTestSuites = successTestSuites + success;
-							String rstValues = tests + "," + success + "," + failures + "," + errors;
+							String rstValues = tests + Constants.COMMA + success + Constants.COMMA + failures + Constants.COMMA + errors;
 							testSuitesResultMap.put(tstSuite.getName(), rstValues);
 
 							TestSuite suite = new TestSuite();
@@ -282,7 +293,7 @@ public class QualityService extends RestBase implements ServiceConstants, Framew
 	 * @throws PhrescoException the phresco exception
 	 */
 	@GET
-	@Path("/testreports")
+	@Path(REST_API_TEST_REPORTS)
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response getTestReports(@QueryParam(REST_QUERY_APPDIR_NAME) String appDirName,
 			@QueryParam(REST_QUERY_TEST_TYPE) String testType, @QueryParam(REST_QUERY_TECH_REPORT) String techReport,
@@ -307,30 +318,30 @@ public class QualityService extends RestBase implements ServiceConstants, Framew
 	 * @return the functional test framework
 	 */
 	@GET
-	@Path("/functionalFramework")
+	@Path(REST_API_FUNCTIONAL_FRAMEWORK)
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response getFunctionalTestFramework(@QueryParam(REST_QUERY_APPDIR_NAME) String appDirName) {
 		ResponseInfo<Map<String, Object>> responseData = new ResponseInfo<Map<String, Object>>();
 		try {
 			Map<String, Object> map = new HashMap<String, Object>();
 			String functionalTestFramework = FrameworkServiceUtil.getFunctionalTestFramework(appDirName);
-			map.put("functionalFramework", functionalTestFramework);
+			map.put(FUNCTIONAL_FRAMEWORK, functionalTestFramework);
 			if (SELENIUM_GRID.equalsIgnoreCase(functionalTestFramework)) {
 				HubConfiguration hubConfig = getHubConfiguration(appDirName);
 				if (hubConfig != null) {
 					String host = hubConfig.getHost();
 					int port = hubConfig.getPort();
 					boolean isConnectionAlive = Utility.isConnectionAlive(HTTP_PROTOCOL, host, port);
-					map.put("hubStatus", isConnectionAlive);
+					map.put(HUB_STATUS, isConnectionAlive);
 				}
 			}
 			ResponseInfo<Map<String, Object>> finalOutput = responseDataEvaluation(responseData, null,
-					"Functional test framework fetched Successfully", map);
-			return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
+					FUNCTIONAL_TEST_FRAMEWORK_FETCHED_SUCCESSFULLY, map);
+			return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, "*").build();
 		} catch (Exception e) {
 			ResponseInfo<Map<String, Object>> finalOutput = responseDataEvaluation(responseData, e,
-					"Failed to get the functional test framework", null);
-			return Response.status(Status.BAD_REQUEST).entity(finalOutput).header("Access-Control-Allow-Origin", "*")
+					FAILED_TO_GET_FUNCTIONAL_FRAMEWORK, null);
+			return Response.status(Status.BAD_REQUEST).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, "*")
 					.build();
 		}
 	}
@@ -377,15 +388,15 @@ public class QualityService extends RestBase implements ServiceConstants, Framew
 	 */
 	private String getTestCasePath(String appDirName, String testType, String techReport) throws PhrescoException {
 		String testCasePath = "";
-		if (testType.equals("unit")) {
+		if (testType.equals(UNIT)) {
 			if (StringUtils.isNotEmpty(techReport)) {
 				testCasePath = getUnitTestCasePath(appDirName, techReport);
 			} else {
 				testCasePath = getUnitTestCasePath(appDirName);
 			}
-		} else if (testType.equals("functional")) {
+		} else if (testType.equals(FUNCTIONAL)) {
 			testCasePath = getFunctionalTestCasePath(appDirName);
-		} else if (testType.equals("component")) {
+		} else if (testType.equals(COMPONENT)) {
 			testCasePath = getComponentTestCasePath(appDirName);
 		}
 		return testCasePath;
@@ -470,7 +481,7 @@ public class QualityService extends RestBase implements ServiceConstants, Framew
 								failureTestSuites = failureTestSuites + failures;
 								errorTestSuites = errorTestSuites + errors;
 								successTestSuites = successTestSuites + success;
-								String rstValues = tests + "," + success + "," + failures + "," + errors;
+								String rstValues = tests + Constants.COMMA + success + Constants.COMMA + failures + Constants.COMMA + errors;
 								testSuitesResultMap.put(tstSuite.getName(), rstValues);
 							}
 						}
@@ -480,8 +491,8 @@ public class QualityService extends RestBase implements ServiceConstants, Framew
 				result.setTestReports(testSuitesResultMap);
 				createTestReportResult(testSuitesResultMap, result);
 				ResponseInfo<TestReportResult> finalOutput = responseDataEvaluation(responseDataAll, null,
-						"Test Cases listed successfully", result);
-				return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*")
+						TEST_CASES_LISTED_SUCCESSFULLY, result);
+				return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, "*")
 						.build();
 			} else {
 				if (testSuites.getLength() > 0) {
@@ -489,9 +500,9 @@ public class QualityService extends RestBase implements ServiceConstants, Framew
 					testCases = getTestCases(appDirName, testSuites, testSuitePath, testCasePath);
 					if (CollectionUtils.isEmpty(testCases)) {
 						ResponseInfo<List<TestCase>> finalOutput = responseDataEvaluation(responseData, null,
-								"TestCase Not Available", testCases);
+								TEST_CASE_NOT_AVAILABLE, testCases);
 						return Response.status(Status.OK).entity(finalOutput)
-								.header("Access-Control-Allow-Origin", "*").build();
+								.header(ACCESS_CONTROL_ALLOW_ORIGIN, "*").build();
 					} else {
 						boolean isClassEmpty = false;
 						// to check whether class attribute is there or not
@@ -502,9 +513,9 @@ public class QualityService extends RestBase implements ServiceConstants, Framew
 						}
 						// setReqAttribute(IS_CLASS_EMPTY, isClassEmpty);
 						ResponseInfo<List<TestCase>> finalOutput = responseDataEvaluation(responseData, null,
-								"TestCase Listed Successfully", testCases);
+								TEST_CASES_LISTED_SUCCESSFULLY, testCases);
 						return Response.status(Status.OK).entity(finalOutput)
-								.header("Access-Control-Allow-Origin", "*").build();
+								.header(ACCESS_CONTROL_ALLOW_ORIGIN, "*").build();
 					}
 				}
 			}
@@ -531,7 +542,7 @@ public class QualityService extends RestBase implements ServiceConstants, Framew
 
 		for (String key : keySet) {
 			String csvResults = testSuitesResultMap.get(key);
-			String[] results = csvResults.split(",");
+			String[] results = csvResults.split(Constants.COMMA);
 			float total = Float.parseFloat(results[0]);
 			float success = Float.parseFloat(results[1]);
 			float failure = Float.parseFloat(results[2]);
@@ -740,7 +751,7 @@ public class QualityService extends RestBase implements ServiceConstants, Framew
 		try {
 			String unitTestReportOptions = getUnitTestReportOptions(appDirName);
 			if (StringUtils.isNotEmpty(unitTestReportOptions)) {
-				return Arrays.asList(unitTestReportOptions.split(","));
+				return Arrays.asList(unitTestReportOptions.split(Constants.COMMA));
 			}
 		} catch (Exception e) {
 			throw new PhrescoException(e);
@@ -761,17 +772,14 @@ public class QualityService extends RestBase implements ServiceConstants, Framew
 	private String getTestResultPath(String appDirName, String moduleName, String testType, String techReport)
 			throws PhrescoException {
 		String testResultPath = "";
-		if (testType.equals("unit")) {
+		if (testType.equals(UNIT)) {
 			testResultPath = getUnitTestResultPath(appDirName, moduleName, techReport);
-		} else if (testType.equals("functional")) {
+		} else if (testType.equals(FUNCTIONAL)) {
 			testResultPath = getFunctionalTestResultPath(appDirName, moduleName);
-		} else if (testType.equals("component")) {
+		} else if (testType.equals(COMPONENT)) {
 			testResultPath = getComponentTestResultPath(appDirName, moduleName);
-		} else if (testType.equals("performance")) {
-
-		} else if (testType.equals("load")) {
-
-		}
+		} 
+		
 		return testResultPath;
 	}
 
@@ -786,21 +794,18 @@ public class QualityService extends RestBase implements ServiceConstants, Framew
 	 */
 	private String getTestSuitePath(String appDirName, String testType, String techReport) throws PhrescoException {
 		String testSuitePath = "";
-		if (testType.equals("unit")) {
+		if (testType.equals(UNIT)) {
 			if (StringUtils.isNotEmpty(techReport)) {
 				testSuitePath = getUnitTestSuitePath(appDirName, techReport);
 			} else {
 				testSuitePath = getUnitTestSuitePath(appDirName);
 			}
-		} else if (testType.equals("component")) {
+		} else if (testType.equals(COMPONENT)) {
 			testSuitePath = getComponentTestSuitePath(appDirName);
-		} else if (testType.equals("functional")) {
+		} else if (testType.equals(FUNCTIONAL)) {
 			testSuitePath = getFunctionalTestSuitePath(appDirName);
-		} else if (testType.equals("performance")) {
-
-		} else if (testType.equals("load")) {
-
-		}
+		} 
+		
 		return testSuitePath;
 	}
 
@@ -1123,7 +1128,7 @@ public class QualityService extends RestBase implements ServiceConstants, Framew
 	private File[] getTestResultFiles(String path) {
 		File testDir = new File(path);
 		if (testDir.isDirectory()) {
-			FilenameFilter filter = new FileListFilter("", "xml");
+			FilenameFilter filter = new FileListFilter("", XML);
 			return testDir.listFiles(filter);
 		}
 		return null;
@@ -1289,7 +1294,444 @@ public class QualityService extends RestBase implements ServiceConstants, Framew
 			throw new PhrescoException(e);
 		}
 	}
+	
+	/**
+	 * Performance.
+	 *
+	 * @param appDirName the app dir name
+	 * @param userId the user id
+	 * @return the response
+	 */
+	@GET
+	@Path(REST_API_PERFORMANCE)
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response performance(@QueryParam(REST_QUERY_APPDIR_NAME) String appDirName) {
+		ResponseInfo<Map> responseData = new ResponseInfo<Map>();
+		try {
+			FrameworkServiceUtil fsu = new FrameworkServiceUtil();
+			Map<String, Object> performanceMap = new HashMap<String, Object>();
+            MojoProcessor mojo = new MojoProcessor(new File(fsu.getPhrescoPluginInfoFilePath(Constants.PHASE_PERFORMANCE_TEST, 
+									Constants.PHASE_PERFORMANCE_TEST, appDirName)));
+            List<String> testAgainsts = new ArrayList<String>();
+            Parameter testAgainstParameter = mojo.getParameter(Constants.PHASE_PERFORMANCE_TEST, REQ_TEST_AGAINST);
+            if (testAgainstParameter != null && TYPE_LIST.equalsIgnoreCase(testAgainstParameter.getType())) {
+            	List<Value> values = testAgainstParameter.getPossibleValues().getValue();
+            	for (Value value : values) {
+            		testAgainsts.add(value.getKey());
+				}
+            }
+            boolean resutlAvailable = testResultAvail(appDirName, testAgainsts, Constants.PHASE_PERFORMANCE_TEST);
+            boolean showDevice = Boolean.parseBoolean(getPerformanceTestShowDevice(appDirName));
+            List<String> testResultFiles = new ArrayList<String>();
+            if (resutlAvailable) {
+            	testResultFiles = testResultFiles(appDirName, testAgainsts, showDevice, testResultFiles, Constants.PHASE_PERFORMANCE_TEST);
+            }
+            
+            Map<String, String> deviceMap = new HashMap<String, String>();
+            if (showDevice && CollectionUtils.isNotEmpty(testResultFiles) && StringUtils.isNotEmpty(testResultFiles.get(0))) { 
+        		String testResultPath = getLoadOrPerformanceTestResultPath(appDirName, "", testResultFiles.get(0), Constants.PHASE_PERFORMANCE_TEST);
+        		Document document = getDocument(new File(testResultPath)); 
+        		deviceMap = QualityUtil.getDeviceNames(document);
+            }
+            
+            performanceMap.put(RESUTL_AVAILABLE, resutlAvailable);
+            performanceMap.put(TEST_RESULT_FILES, testResultFiles);
+            performanceMap.put(SHOW_DEVICE, showDevice);
+            performanceMap.put(DEVICES, deviceMap);
+            
+			ResponseInfo<List<String>> finalOutput = responseDataEvaluation(responseData, null,
+					PARAMETER_RETURNED_SUCCESSFULLY, performanceMap);
+			return Response.ok(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, "*").build();
+		} catch (Exception e) {
+			ResponseInfo<List<String>> finalOutput = responseDataEvaluation(responseData, e,
+					UNABLE_TO_GET_PERFORMANCE_TEST_RESULT_OPTIONS, null);
+			return Response.status(Status.BAD_REQUEST).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, "*")
+					.build();
+		}
+	}
+	
+	public boolean testResultAvail(String appDirName, List<String> testAgainsts, String action) throws PhrescoException {
+		boolean resultAvailable = false;
+        try {
+       	 	// TO kill the Process
+//            String baseDir = Utility.getProjectHome()+ appDirName;
+//            Utility.killProcess(baseDir, getTestType());
+        	
+        	String reportDir = "";
+        	String resultExtension = "";
+        	if (Constants.PHASE_PERFORMANCE_TEST.equals(action)) {
+        		reportDir =FrameworkServiceUtil.getPerformanceTestReportDir(appDirName);
+        		resultExtension = FrameworkServiceUtil.getPerformanceResultFileExtension(appDirName);
+        	} else {
+        		reportDir = FrameworkServiceUtil.getLoadTestReportDir(appDirName);
+        		resultExtension = FrameworkServiceUtil.getLoadResultFileExtension(appDirName);
+        	}
+        	
+            for (String testAgainst: testAgainsts) {
+                StringBuilder sb = new StringBuilder(FrameworkServiceUtil.getApplicationHome(appDirName));
+                if (StringUtils.isNotEmpty(reportDir) && StringUtils.isNotEmpty(testAgainst)) {
+                    Pattern p = Pattern.compile(TEST_DIRECTORY);
+                    Matcher matcher = p.matcher(reportDir);
+                    reportDir = matcher.replaceAll(testAgainst);
+                    sb.append(reportDir); 
+                }
+                File file = new File(sb.toString());
+                if (StringUtils.isNotEmpty(resultExtension)) {
+                	File[] children = file.listFiles(new XmlNameFileFilter(resultExtension));
+                	if (!ArrayUtils.isEmpty(children)) {
+                		resultAvailable = true;
+                		break;
+                	}
+                }
+            }
+            
+            if (CollectionUtils.isEmpty(testAgainsts) && Constants.PHASE_PERFORMANCE_TEST.equals(action) 
+            			&& StringUtils.isNotEmpty(reportDir)) {
+            	 StringBuilder sb = new StringBuilder(FrameworkServiceUtil.getApplicationHome(appDirName));
+            	 sb.append(reportDir);
+            	 File file = new File(sb.toString());
+                 if (StringUtils.isNotEmpty(resultExtension)) {
+                 	File[] children = file.listFiles(new XmlNameFileFilter(resultExtension));
+                 	if (!ArrayUtils.isEmpty(children)) {
+                 		resultAvailable = true;
+                 	}
+                 }
+            }
+            
+        } catch(Exception e) {
+        	throw new PhrescoException(e);
+        }
 
+        return resultAvailable;
+    }
+	
+	private List<String> testResultFiles(String appDirName, List<String> testAgainsts, boolean showDevice, List<String> testResultFiles, String action) throws PhrescoException {
+        try {
+            StringBuilder sb = new StringBuilder(FrameworkServiceUtil.getApplicationHome(appDirName));
+            
+            String reportDir = "";
+        	String resultExtension = "";
+        	if (Constants.PHASE_PERFORMANCE_TEST.equals(action)) {
+        		reportDir =FrameworkServiceUtil.getPerformanceTestReportDir(appDirName);
+        		resultExtension = FrameworkServiceUtil.getPerformanceResultFileExtension(appDirName);
+        	} else {
+        		reportDir = FrameworkServiceUtil.getLoadTestReportDir(appDirName);
+        		resultExtension = FrameworkServiceUtil.getLoadResultFileExtension(appDirName);
+        	}
+        	
+            //test against will be available 
+            if (StringUtils.isNotEmpty(reportDir) && CollectionUtils.isNotEmpty(testAgainsts)) {
+                Pattern p = Pattern.compile(TEST_DIRECTORY);
+                Matcher matcher = p.matcher(reportDir);
+                reportDir = matcher.replaceAll(testAgainsts.get(0));
+                sb.append(reportDir);
+            }
+            
+            //for android - test type will not be available --- to get device id from result xml
+            if (Constants.PHASE_PERFORMANCE_TEST.equals(action) && showDevice) {
+            	sb.append(reportDir);
+            }
+            
+            File file = new File(sb.toString());
+
+            if (StringUtils.isNotEmpty(resultExtension)) {
+            	File[] resultFiles = file.listFiles(new XmlNameFileFilter(resultExtension));
+            	if (!ArrayUtils.isEmpty(resultFiles)) {
+            		QualityUtil.sortResultFile(resultFiles);
+            		for (File resultFile : resultFiles) {
+            			if (resultFile.isFile()) {
+            				testResultFiles.add(resultFile.getName());
+            			}
+            		}
+            	}
+            }
+        } catch(Exception e) {
+        	throw new PhrescoException(e);
+        } 
+
+        return testResultFiles;
+    }
+	
+	/**
+	 * Performance.
+	 *
+	 * @param appDirName the app dir name
+	 * @param userId the user id
+	 * @return the response
+	 */
+	@GET
+	@Path(REST_API_PERFORMANCE_RESULTS)
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response performanceTestResults(@QueryParam(REST_QUERY_APPDIR_NAME) String appDirName, @QueryParam(REST_QUERY_TEST_AGAINST) String testAgainst , 
+			@QueryParam(REST_QUERY_RESULT_FILE_NAME) String resultFileName, @QueryParam(REST_QUERY_DEVICE_ID) String deviceId, @QueryParam(REST_QUERY_SHOW_GRAPH_FOR) String showGraphFor) {
+		ResponseInfo<List<PerformanceTestResult>> responseData = new ResponseInfo<List<PerformanceTestResult>>();
+		Map<String, PerformanceTestResult> performanceTestResultMap = new HashMap<String, PerformanceTestResult>();
+        try {
+            ApplicationInfo appInfo = FrameworkServiceUtil.getApplicationInfo(appDirName);
+            String techId = appInfo.getTechInfo().getId();
+            if (StringUtils.isNotEmpty(resultFileName)) {
+            	String testResultPath = getLoadOrPerformanceTestResultPath(appDirName, testAgainst, resultFileName, Constants.PHASE_PERFORMANCE_TEST);
+                Document document = getDocument(new File(testResultPath)); 
+                performanceTestResultMap = QualityUtil.getPerformanceReport(document, techId, deviceId);
+
+                Set<String> keySet = performanceTestResultMap.keySet();
+                StringBuilder graphData = new StringBuilder("[");
+                StringBuilder label = new StringBuilder("[");
+                
+                List<Float> allMin = new ArrayList<Float>();
+                List<Float> allMax = new ArrayList<Float>();
+                List<Float> allAvg = new ArrayList<Float>();
+                int index = 0;
+                for (String key : keySet) {
+                    PerformanceTestResult performanceTestResult = performanceTestResultMap.get(key);
+                    if (REQ_TEST_SHOW_THROUGHPUT_GRAPH.equals(showGraphFor)) {
+                        graphData.append(performanceTestResult.getThroughtPut());	//for ThroughtPut
+                    } else if (REQ_TEST_SHOW_MIN_RESPONSE_GRAPH.equals(showGraphFor)) {
+                        graphData.append(performanceTestResult.getMin());	//for min response time
+                    } else if (REQ_TEST_SHOW_MAX_RESPONSE_GRAPH.equals(showGraphFor)) {
+                        graphData.append(performanceTestResult.getMax());	//for max response time
+                    } else if (REQ_TEST_SHOW_RESPONSE_TIME_GRAPH.equals(showGraphFor)) {
+                   	 	graphData.append(performanceTestResult.getAvg());	//for responseTime
+                    } else if (REQ_TEST_SHOW_ALL_GRAPH.equals(showGraphFor)) {
+                    	graphData.append(performanceTestResult.getThroughtPut());	//for ThroughtPut
+                    	allMin.add((float)performanceTestResult.getMin()/1000);
+                    	allMax.add((float)performanceTestResult.getMax()/1000);
+                    	allAvg.add((float) (performanceTestResult.getAvg())/1000);
+                    }
+                    
+                    label.append("'");
+                    label.append(performanceTestResult.getLabel());
+                    label.append("'");
+                    if (index < performanceTestResultMap.size() - 1) {
+                        graphData.append(Constants.COMMA);
+                        label.append(Constants.COMMA);
+                    }
+                    index++;
+                }
+                label.append("]");
+                graphData.append("]");
+            }
+            
+            List<PerformanceTestResult> performanceTestResults = new ArrayList<PerformanceTestResult>();
+            if (MapUtils.isNotEmpty(performanceTestResultMap)) {
+            	Set<String> keys = performanceTestResultMap.keySet();
+            	for (String key : keys) {
+            		performanceTestResults.add(performanceTestResultMap.get(key));
+				}
+            }
+            
+            ResponseInfo<Map<String, PerformanceTestResult>> finalOutput = responseDataEvaluation(responseData, null,
+					PARAMETER_RETURNED_SUCCESSFULLY, performanceTestResults);
+			return Response.ok(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, "*").build();
+		} catch (Exception e) {
+			ResponseInfo<List<String>> finalOutput = responseDataEvaluation(responseData, e,
+					UNABLE_TO_GET_PERFORMANCE_TEST_RESULTS, null);
+			return Response.status(Status.BAD_REQUEST).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, "*")
+					.build();
+		}
+    }
+	
+	private String getLoadOrPerformanceTestResultPath(String appDirName, String testAgainst, String resultFileName, String action) throws PhrescoException {
+		try {
+	        StringBuilder sb = new StringBuilder(FrameworkServiceUtil.getApplicationHome(appDirName));
+	        
+	        String reportDir = "";
+        	if (Constants.PHASE_PERFORMANCE_TEST.equals(action)) {
+        		reportDir =FrameworkServiceUtil.getPerformanceTestReportDir(appDirName);
+        	} else {
+        		reportDir = FrameworkServiceUtil.getLoadTestReportDir(appDirName);
+        	}
+	        
+	        //To change the dir_type based on the selected type
+	        Pattern p = Pattern.compile(TEST_DIRECTORY);
+	        Matcher matcher = p.matcher(reportDir);
+	        if (StringUtils.isNotEmpty(reportDir) && StringUtils.isNotEmpty(testAgainst) && matcher.find()) {
+	        	reportDir = matcher.replaceAll(testAgainst);
+	        }
+	        
+	        sb.append(reportDir);
+	        sb.append(File.separator);
+	        sb.append(resultFileName);
+	        
+	        return sb.toString();
+		} catch (Exception e) {
+			throw new PhrescoException(e);
+		}
+	}
+	
+	private String getPerformanceTestShowDevice(String appDirName) throws PhrescoException {
+		try {
+			return FrameworkUtil.getInstance().getPomProcessor(appDirName).getProperty(
+					Constants.POM_PROP_KEY_PERF_SHOW_DEVICE);
+		} catch (PhrescoPomException e) {
+			throw new PhrescoException(e);
+		}
+	}
+	
+	public class XmlNameFileFilter implements FilenameFilter {
+		private String filter_;
+		public XmlNameFileFilter(String filter) {
+			filter_ = filter;
+		}
+
+		public boolean accept(File dir, String name) {
+			return name.endsWith(filter_);
+		}
+	}
+	
+	
+	/**
+	 * load.
+	 *
+	 * @param appDirName the app dir name
+	 * @param userId the user id
+	 * @return the response
+	 */
+	@GET
+	@Path(REST_API_LOAD)
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response load(@QueryParam(REST_QUERY_APPDIR_NAME) String appDirName) {
+		ResponseInfo<Map> responseData = new ResponseInfo<Map>();
+		try {
+			FrameworkServiceUtil fsu = new FrameworkServiceUtil();
+			Map<String, Object> loadMap = new HashMap<String, Object>();
+            MojoProcessor mojo = new MojoProcessor(new File(fsu.getPhrescoPluginInfoFilePath(Constants.PHASE_LOAD_TEST, 
+									Constants.PHASE_LOAD_TEST, appDirName)));
+            List<String> testAgainsts = new ArrayList<String>();
+            Parameter testAgainstParameter = mojo.getParameter(Constants.PHASE_LOAD_TEST, REQ_TEST_AGAINST);
+            if (testAgainstParameter != null && TYPE_LIST.equalsIgnoreCase(testAgainstParameter.getType())) {
+            	List<Value> values = testAgainstParameter.getPossibleValues().getValue();
+            	for (Value value : values) {
+            		testAgainsts.add(value.getKey());
+				}
+            }
+            boolean resutlAvailable = testResultAvail(appDirName, testAgainsts, Constants.PHASE_LOAD_TEST);
+            List<String> testResultFiles = new ArrayList<String>();
+            if (resutlAvailable) {
+            	testResultFiles = testResultFiles(appDirName, testAgainsts, false, testResultFiles, Constants.PHASE_LOAD_TEST);
+            }
+            
+            loadMap.put(RESUTL_AVAILABLE, resutlAvailable);
+            loadMap.put(TEST_RESULT_FILES, testResultFiles);
+            
+			ResponseInfo<List<String>> finalOutput = responseDataEvaluation(responseData, null,
+					PARAMETER_RETURNED_SUCCESSFULLY, loadMap);
+			return Response.ok(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, "*").build();
+		} catch (Exception e) {
+			ResponseInfo<List<String>> finalOutput = responseDataEvaluation(responseData, e,
+					UNABLE_TO_GET_LOAD_TEST_RESULT_OPTIONS, null);
+			return Response.status(Status.BAD_REQUEST).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, "*")
+					.build();
+		}
+	}
+	
+	/**
+	 * load.
+	 *
+	 * @param appDirName the app dir name
+	 * @param userId the user id
+	 * @return the response
+	 */
+	@GET
+	@Path(REST_API_LOAD_RESULTS)
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response loadTestResults(@QueryParam(REST_QUERY_APPDIR_NAME) String appDirName, @QueryParam(REST_QUERY_TEST_AGAINST) String testAgainst, 
+			@QueryParam(REST_QUERY_RESULT_FILE_NAME) String resultFileName) {
+		ResponseInfo<List<TestResult>> responseData = new ResponseInfo<List<TestResult>>();
+		try {
+			List<TestResult> testResults = getLoadTestResult(appDirName, testAgainst, resultFileName, Constants.PHASE_LOAD_TEST);
+			Gson gson = new Gson();
+			StringBuilder jSon = new StringBuilder();
+			StringBuilder data = new StringBuilder();
+			jSon.append(GRAPH_JSON);
+			data.append(SQUARE_OPEN);
+			for (TestResult testResult : testResults) {
+				jSon.append(gson.toJson(testResult));
+				data.append(SQUARE_OPEN);
+				data.append(testResults.indexOf(testResult));
+				data.append(Constants.COMMA);
+				data.append(testResult.getTime());
+				data.append(SQUARE_CLOSE);
+				if(testResults.indexOf(testResult) < testResults.size() - 1) {
+					jSon.append(Constants.COMMA);
+					data.append(Constants.COMMA);
+				}
+			}
+			jSon.append(SQUARE_CLOSE);
+			jSon.append(SEMI_COLON);
+			data.append(SQUARE_CLOSE);
+			data.append(SEMI_COLON);
+			StringBuilder script = new StringBuilder();
+			script.append(SCRIPT_START);
+			script.append(jSon.toString());
+			script.append(GRAPH_DATA);
+			script.append(data.toString());
+			script.append(GRAPH_VOLUME_DATA);
+			script.append(data.toString());
+			script.append(GRAPH_SUMMARY_DATA);
+			script.append(data.toString());
+			script.append("var flagData = '';");
+			script.append(SCRIPT_END);
+			ResponseInfo<List<String>> finalOutput = responseDataEvaluation(responseData, null,
+					PARAMETER_RETURNED_SUCCESSFULLY, testResults);
+			return Response.ok(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, "*").build();
+		} catch (Exception e) {
+			ResponseInfo<List<String>> finalOutput = responseDataEvaluation(responseData, e,
+					UNABLE_TO_GET_LOAD_TEST_REULTS, null);
+			return Response.status(Status.BAD_REQUEST).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, "*")
+					.build();
+		}
+	}
+
+	private List<TestResult> getLoadTestResult(String appDirName, String testAgainst, String resultFileName, String action) throws TransformerException, PhrescoException, ParserConfigurationException, SAXException, IOException {
+		List<TestResult> testResults = new ArrayList<TestResult>(2);
+		try {
+			String testResultPath = getLoadOrPerformanceTestResultPath(appDirName, testAgainst, resultFileName, action);
+			
+			if (!new File(testResultPath).exists()) {
+				throw new PhrescoException(RESULT_FILE_NOT_FOUND);
+			} 
+			
+			Document doc = getDocument(new File(testResultPath)); 
+			NodeList nodeList = org.apache.xpath.XPathAPI.selectNodeList(doc, XPATH_TEST_RESULT);
+
+			TestResult testResult = null;
+
+			for (int i = 0; i < nodeList.getLength(); i++) {
+				testResult =  new TestResult();
+				Node node = nodeList.item(i);
+				NamedNodeMap nameNodeMap = node.getAttributes();
+
+				for (int k = 0; k < nameNodeMap.getLength(); k++) {
+					Node attribute = nameNodeMap.item(k);
+					String attributeName = attribute.getNodeName();
+					String attributeValue = attribute.getNodeValue();
+
+					if (ATTR_JM_TIME.equals(attributeName)) {
+						testResult.setTime(Integer.parseInt(attributeValue));
+					} else if (ATTR_JM_LATENCY_TIME.equals(attributeName)) {
+						testResult.setLatencyTime(Integer.parseInt(attributeValue));
+					} else if (ATTR_JM_TIMESTAMP.equals(attributeName)) {
+						Date date = new Date(Long.parseLong(attributeValue));
+						DateFormat format = new SimpleDateFormat(DATE_TIME_FORMAT);
+						String strDate = format.format(date);
+						testResult.setTimeStamp(strDate);
+					} else if (ATTR_JM_SUCCESS_FLAG.equals(attributeName)) {
+						testResult.setSuccess(Boolean.parseBoolean(attributeValue));
+					} else if (ATTR_JM_LABEL.equals(attributeName)) {
+						testResult.setLabel(attributeValue);
+					} else if (ATTR_JM_THREAD_NAME.equals(attributeName)) {
+						testResult.setThreadName(attributeValue);
+					}
+				}
+				testResults.add(testResult);
+			}
+		} catch (Exception e) {
+			throw new PhrescoException(e);
+		}
+		return testResults;
+	}
+	
 	/**
 	 * Sets the sets the failure test cases.
 	 *

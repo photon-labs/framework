@@ -438,7 +438,7 @@ public class QualityUtil {
 		return deviceList;
 	}
 
-	public static Map<String, PerformanceTestResult> getPerformanceReport(Document document, HttpServletRequest request, String techId, String deviceId) throws Exception {  // deviceid is the tag name for android
+	public static Map<String, PerformanceTestResult> getPerformanceReport(Document document, String techId, String deviceId) throws Exception {  // deviceid is the tag name for android
 		String xpath = "/*/*";	// For other technologies
 		String device = "*";
 		if(StringUtils.isNotEmpty(deviceId)) {
@@ -538,12 +538,12 @@ public class QualityUtil {
 		} else {
 			totalThroughput = 0.0;
 		}
-		request.setAttribute(FrameworkConstants.REQ_TOTAL_THROUGHPUT, totalThroughput);
-		setStdDevToResults(results, request);
+
+		setStdDevToResults(results);
 		return results;
 	}
 
-	private static void setStdDevToResults(Map<String, PerformanceTestResult> results,  HttpServletRequest request) {
+	private static void setStdDevToResults(Map<String, PerformanceTestResult> results) {
 		Set<String> keySet = results.keySet();
 		long xBar = 0;  		//XBar Calculation
 		long sumOfTime = 0;
@@ -584,7 +584,7 @@ public class QualityUtil {
 			sumMean += Math.pow(time - xBar, 2);
 		}
 		double stdDev = Math.sqrt(sumMean / totalSamples);
-		request.setAttribute(FrameworkConstants.REQ_TOTAL_STD_DEV, stdDev);
+//		request.setAttribute(FrameworkConstants.REQ_TOTAL_STD_DEV, stdDev);
 	}
 
 	public static void changeTestName(String performancePath, String testName) throws Exception {

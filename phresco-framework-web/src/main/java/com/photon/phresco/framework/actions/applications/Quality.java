@@ -2064,7 +2064,7 @@ public class Quality extends DynamicParameterAction implements Constants {
             if (StringUtils.isNotEmpty(getTestResultFile())) {
             	String testResultPath = getPerformanceTestResultPath(appInfo, getTestResultFile());
                 Document document = getDocument(new File(testResultPath)); 
-                Map<String, PerformanceTestResult> performanceTestResultMap = QualityUtil.getPerformanceReport(document, getHttpRequest(), techId, testResultDeviceId); // need to pass tech id and tag name
+                Map<String, PerformanceTestResult> performanceTestResultMap = new HashMap<String, PerformanceTestResult>();
                 setReqAttribute(REQ_TEST_RESULT, performanceTestResultMap);
 
                 Set<String> keySet = performanceTestResultMap.keySet();

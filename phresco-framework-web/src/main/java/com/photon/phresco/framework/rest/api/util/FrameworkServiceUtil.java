@@ -199,6 +199,29 @@ public class FrameworkServiceUtil implements Constants, FrameworkConstants {
     	return getPomProcessor(appDirName).getProperty(POM_PROP_KEY_LOADTEST_DIR);
     }
 	
+	
+	/**
+	 * To get the load test report directory
+	 * @param appDirName
+	 * @return
+	 * @throws PhrescoException
+	 * @throws PhrescoPomException
+	 */
+	public static String getLoadTestReportDir(String appDirName) throws PhrescoException, PhrescoPomException {
+    	return getPomProcessor(appDirName).getProperty(POM_PROP_KEY_LOADTEST_RPT_DIR);
+    }
+	
+	/**
+	 * To get the load test result file extension
+	 * @param appDirName
+	 * @return
+	 * @throws PhrescoException
+	 * @throws PhrescoPomException
+	 */
+	public static String getLoadResultFileExtension(String appDirName) throws PhrescoException, PhrescoPomException {
+			return getPomProcessor(appDirName).getProperty(Constants.POM_PROP_KEY_LOADTEST_RESULT_EXTENSION);
+	}
+	
 	/**
 	 * To get the performance test directory
 	 * @param appDirName
@@ -210,6 +233,27 @@ public class FrameworkServiceUtil implements Constants, FrameworkConstants {
         return getPomProcessor(appDirName).getProperty(POM_PROP_KEY_PERFORMANCETEST_DIR);
     }
 	
+	/**
+	 * To get the performance test result directory
+	 * @param appDirName
+	 * @return
+	 * @throws PhrescoException
+	 * @throws PhrescoPomException
+	 */
+	public static String getPerformanceTestReportDir(String appDirName) throws PhrescoException, PhrescoPomException {
+			return getPomProcessor(appDirName).getProperty(Constants.POM_PROP_KEY_PERFORMANCETEST_RPT_DIR);
+	}
+	
+	/**
+	 * To get the performance test result file extension
+	 * @param appDirName
+	 * @return
+	 * @throws PhrescoException
+	 * @throws PhrescoPomException
+	 */
+	public static String getPerformanceResultFileExtension(String appDirName) throws PhrescoException, PhrescoPomException {
+			return getPomProcessor(appDirName).getProperty(Constants.POM_PROP_KEY_PERFORMANCETEST_RESULT_EXTENSION);
+	}
 	/**
 	 * To get the manual test directory
 	 * @param appDirName
@@ -292,4 +336,31 @@ public class FrameworkServiceUtil implements Constants, FrameworkConstants {
 	    }
 	    return serverUrl;
     }
+	
+	/**
+	 * To the phresco plugin info file path based on the goal
+	 * @param goal
+	 * @return
+	 * @throws PhrescoException 
+	 */
+	public String getPhrescoPluginInfoFilePath(String goal, String phase, String appDirName) throws PhrescoException {
+		StringBuilder sb = new StringBuilder(getApplicationHome(appDirName));
+		sb.append(File.separator);
+		sb.append(FOLDER_DOT_PHRESCO);
+		sb.append(File.separator);
+		sb.append(PHRESCO_HYPEN);
+		// when phase is CI, it have to take ci info file for update dependency
+		if (PHASE_CI.equals(phase)) {
+			sb.append(phase);
+		} else if (StringUtils.isNotEmpty(goal) && goal.contains(FUNCTIONAL)) {
+			sb.append(PHASE_FUNCTIONAL_TEST);
+		} else if (PHASE_RUNGAINST_SRC_START.equals(goal)|| PHASE_RUNGAINST_SRC_STOP.equals(goal) ) {
+			sb.append(PHASE_RUNAGAINST_SOURCE);
+		} else {
+			sb.append(goal);
+		}
+		sb.append(INFO_XML);
+
+		return sb.toString();
+	}
 }
