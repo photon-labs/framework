@@ -39,7 +39,7 @@ define(["codequality/api/codequalityAPI"], function() {
 				queryString ="username="+username+"&appId="+appId+"&customerId="+customerId+"&goal=validate-code&phase=validate-code&projectId="+projectId+"&"+ipjson;
 			}
 			$('#iframePart').html('');
-			$('#content_div').html('Sonar Report will appear here');
+			//$('#content_div').html('Sonar Report will appear here');
 			self.openConsole();//To open the console
 			
 						
@@ -116,6 +116,7 @@ define(["codequality/api/codequalityAPI"], function() {
 				
 		getReportTypes : function(header, callback) {
 			var self = this;
+			self.closeConsole();
 			try {
 				commonVariables.loadingScreen.showLoading();
 				self.codequalityAPI.codequality(header,
@@ -185,7 +186,7 @@ define(["codequality/api/codequalityAPI"], function() {
 		
 		getIframeReport : function(validateAgainst){
 			var self = this;
-			$('#content_div').html('Sonar Report will appear here');
+			//$('#content_div').html('Sonar Report will appear here');
 			self.closeConsole();
 			try {
 				self.codequalityAPI.codequality(self.getRequestHeader(validateAgainst , "iframereport"), 
