@@ -123,7 +123,7 @@ define(["configuration/api/configurationAPI"], function() {
 				header.webserviceurl = commonVariables.webserviceurl+commonVariables.configuration+"/deleteEnv?appDirName="+appDirName+"&envName="+deleteEnv;
 			} else if (action === "template") {
 					self.bcheck = true;
-					header.webserviceurl = commonVariables.webserviceurl+commonVariables.configuration+"/settingsTemplate?appDirName="+appDirName+"&customerId="+customerId+"&userId="+userId+"&type="+deleteEnv;
+					header.webserviceurl = commonVariables.webserviceurl+commonVariables.configuration+"/settingsTemplate?appDirName="+appDirName+"&customerId="+customerId+"&userId="+userId+"&type="+deleteEnv+"&techId="+techId;
 			} else if (action === "saveEnv") {
 					header.requestMethod = "POST";
 					header.requestPostBody = JSON.stringify(configRequestBody);
@@ -131,7 +131,7 @@ define(["configuration/api/configurationAPI"], function() {
 			} else if (action === "saveConfig") {
 					header.requestMethod = "POST";
 					header.requestPostBody = JSON.stringify(configRequestBody);
-					header.webserviceurl = commonVariables.webserviceurl+commonVariables.configuration+"/updateConfig?appDirName="+appDirName+"&envName="+deleteEnv;
+					header.webserviceurl = commonVariables.webserviceurl+commonVariables.configuration+"/updateConfig?appDirName="+appDirName+"&envName="+deleteEnv+"&customerId="+customerId+"&userId="+userId;
 			} else if (action === "cloneEnv") {
 					header.requestMethod = "POST";
 					header.requestPostBody = JSON.stringify(configRequestBody);
@@ -189,24 +189,18 @@ define(["configuration/api/configurationAPI"], function() {
 							if(currentConfig === 'Server') {
 								if($(this).attr('configType') === currentConfig) {
 									bCheck = true;
-									flag = 1;
+									self.successMsgPopUp("Server Already Added");
 								}
 							}
 							
 							if(currentConfig === 'Email') {
 								if($(this).attr('configType') === currentConfig) {
 									bCheck = true;
+									self.successMsgPopUp("Email Already Added");
 								}
 							}
 						});
 					}
-				}
-				
-				if (flag === 1) {
-					setTimeout(function() {
-						$("#msgdisplay").hide();
-					}, 1000);	
-					flag= 0;
 				}
 				
 				if (self.count === 0) {
@@ -781,6 +775,7 @@ define(["configuration/api/configurationAPI"], function() {
 			if(self.validation()) {
 				self.getConfigurationList(self.getRequestHeader(self.configRequestBody, "saveConfig", envrName), function(response) {
 					Clazz.navigationController.jQueryContainer = commonVariables.contentPlaceholder;
+					self.successMsgPopUp(response.message);
 					if(self.configListPage === null) {
 						commonVariables.navListener.getMyObj(commonVariables.configuration, function(retVal) {
 							self.configListPage = retVal;
