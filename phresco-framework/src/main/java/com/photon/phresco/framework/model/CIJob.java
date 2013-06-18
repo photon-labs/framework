@@ -183,6 +183,9 @@ public class CIJob {
 	// Android functional test
 	private String deviceList = "";
 	
+	// package-type
+	private String packageType = "";
+
     public CIJob() {
         super();
     }
@@ -1156,6 +1159,14 @@ public class CIJob {
 
 	public void setAuthorizationRealm(String authorizationRealm) {
 		this.authorizationRealm = authorizationRealm;
+	}
+
+	public String getPackageType() {
+		return packageType;
+	}
+
+	public void setPackageType(String packageType) {
+		this.packageType = packageType;
 	}
 
 	@Override
