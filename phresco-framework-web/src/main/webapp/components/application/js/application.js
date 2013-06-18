@@ -200,7 +200,14 @@ define(["application/listener/applicationListener"], function() {
 			$("#updatebutton").unbind('click');
 			$("#updatebutton").bind('click', function(){
 				self.updateApp.dispatch(self.renderData);
-			});			
+			});
+					
+			$(".scrollContent").mCustomScrollbar({
+				autoHideScrollbar:true,
+				theme:"light-thin",
+				advanced:{ updateOnContentResize: true}
+			});
+			self.windowResize();	
 		}
 	});
 

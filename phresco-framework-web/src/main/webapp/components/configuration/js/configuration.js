@@ -172,6 +172,14 @@ define(["configuration/listener/configurationListener"], function() {
 				});  
 				
 			}); 
+			self.windowResize();
+			
+			$(".scrollContent").mCustomScrollbar({
+				autoHideScrollbar:true,
+				theme:"light-thin",
+				advanced:{ updateOnContentResize: true}
+			});
+			
 			
 			Clazz.navigationController.mainContainer = commonVariables.contentPlaceholder;
 		}

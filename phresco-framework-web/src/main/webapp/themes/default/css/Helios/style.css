@@ -463,6 +463,10 @@ html, body {
 	z-index:0;
 }
 
+.content_main table {
+	margin-bottom: 0 !important;
+}
+
 .footer_section {
 	width:99%;
 	padding-right:1%;

@@ -122,6 +122,14 @@ define(["functionalTest/listener/functionalTestListener", "testResult/listener/t
 		bindUI : function() {
 			var self = this;
 			$(".tooltiptop").tooltip();
+
+			self.windowResize();
+			
+			$(".scrollContent").mCustomScrollbar({
+				autoHideScrollbar:true,
+				theme:"light-thin",
+				advanced:{ updateOnContentResize: true}
+			});
 			
 			$("#functionalTestBtn").unbind("click");
 			$("#functionalTestBtn").click(function() {

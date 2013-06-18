@@ -120,13 +120,14 @@ define(["projects/listener/projectsListener"], function() {
 		 *
 		 */
 		bindUI : function(){
-		
 			var self=this;
 			self.projectsListener.addLayersEvent();
 			self.projectsListener.removeLayersEvent();
 			self.projectsListener.technologyAndVersionChangeEvent();
 			self.projectsListener.pilotprojectsEvent();
 			self.setDateTimePicker();
+			
+			self.windowResize();
 			
 			$("img[name='close']").unbind('click');
 			$("img[name='close']").bind('click', function(){

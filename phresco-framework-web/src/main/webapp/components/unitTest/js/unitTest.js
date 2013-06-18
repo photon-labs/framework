@@ -127,6 +127,14 @@ define(["unitTest/listener/unitTestListener", "testResult/listener/testResultLis
 		bindUI : function() {
 			var self = this;
 			$(".tooltiptop").tooltip();
+
+			self.windowResize();
+			
+			$(".scrollContent").mCustomScrollbar({
+				autoHideScrollbar:true,
+				theme:"light-thin",
+				advanced:{ updateOnContentResize: true}
+			});
 			
 			$("#unitTestBtn").unbind("click");
 			$("#unitTestBtn").click(function() {
