@@ -160,5 +160,33 @@ define(["configuration/editConfiguration"], function(EditConfiguration) {
 				equal(toAppend.find("tr.otherConfig").attr('name'), undefined, "Click to Remove For Other Configuration Tested");
 			}, 1500);
 		}); 
+		
+		asyncTest("Test - Crone Expression render Test", function() {
+		
+			mockEditConfigurationList = mockFunction();
+			when(mockEditConfigurationList)(anything()).then(function(arg) {
+				
+				var configurationListresponse = {"response":null,"message":"Environments Listed","exception":null,"data":{"defaultEnv":true,"appliesTo":[""],"delete":true,"name":"Production","desc":"Production Environment is used for Development purpose only","configurations":[]}};
+				var templateData = {};
+				templateData.configurations = configurationListresponse.data;
+				templateData.configType = ["Scheduler","Server","Database"];
+				editConfiguration.renderTemplate(templateData, commonVariables.contentPlaceholder);
+				
+			});
+			
+			editConfiguration.configurationlistener.configurationAPI.configuration = mockEditConfigurationList;
+			
+			var response = {"response":null,"message":"confuguration Template Fetched successfully","exception":null,"data":{"downloadInfo":{},"settingsTemplate":{"appliesToTechs":[{"creationDate":1357659881000,"helpText":null,"system":false,"name":"Android Hybrid","id":"tech-android-hybrid","displayName":null,"description":null,"status":null},{"creationDate":1357659882000,"helpText":null,"system":false,"name":"Android Library","id":"tech-android-library","displayName":null,"description":null,"status":null},{"creationDate":1357659882000,"helpText":null,"system":false,"name":"Android Native","id":"tech-android-native","displayName":null,"description":null,"status":null},{"creationDate":1357659882000,"helpText":null,"system":false,"name":"ASP.NET","id":"tech-dotnet","displayName":null,"description":null,"status":null},{"creationDate":1357659883000,"helpText":null,"system":false,"name":"Blackberry Hybrid","id":"tech-blackberry-hybrid","displayName":null,"description":null,"status":null},{"creationDate":1357659883000,"helpText":null,"system":false,"name":"Drupal6","id":"tech-phpdru6","displayName":null,"description":null,"status":null},{"creationDate":1357659883000,"helpText":null,"system":false,"name":"Drupal7","id":"tech-phpdru7","displayName":null,"description":null,"status":null},{"creationDate":1357659884000,"helpText":null,"system":false,"name":"HTML5 JQuery Mobile Widget","id":"tech-html5-jquery-mobile-widget","displayName":null,"description":null,"status":null},{"creationDate":1357659884000,"helpText":null,"system":false,"name":"HTML5 Multichannel JQuery Widget","id":"tech-html5-jquery-widget","displayName":null,"description":null,"status":null},{"creationDate":1357659884000,"helpText":null,"system":false,"name":"HTML5 Multichannel YUI Widget","id":"tech-html5","displayName":null,"description":null,"status":null},{"creationDate":1357659885000,"helpText":null,"system":false,"name":"HTML5 YUI Mobile Widget","id":"tech-html5-mobile-widget","displayName":null,"description":null,"status":null},{"creationDate":1357659885000,"helpText":null,"system":false,"name":"iPhone Hybrid","id":"tech-iphone-hybrid","displayName":null,"description":null,"status":null},{"creationDate":1357659885000,"helpText":null,"system":false,"name":"Iphone Library","id":"tech-iphone-library","displayName":null,"description":null,"status":null},{"creationDate":1357659886000,"helpText":null,"system":false,"name":"iPhone Native","id":"tech-iphone-native","displayName":null,"description":null,"status":null},{"creationDate":1357659886000,"helpText":null,"system":false,"name":"Iphone Workspace","id":"tech-iphone-workspace","displayName":null,"description":null,"status":null},{"creationDate":1357659886000,"helpText":null,"system":false,"name":"Java Standalone","id":"tech-java-standalone","displayName":null,"description":null,"status":null},{"creationDate":1357659887000,"helpText":null,"system":false,"name":"Java WebService","id":"tech-java-webservice","displayName":null,"description":null,"status":null},{"creationDate":1357659887000,"helpText":null,"system":false,"name":"Node JS Web Service","id":"tech-nodejs-webservice","displayName":null,"description":null,"status":null},{"creationDate":1357659887000,"helpText":null,"system":false,"name":"PHP","id":"tech-php","displayName":null,"description":null,"status":null},{"creationDate":1357659888000,"helpText":null,"system":false,"name":"Sharepoint","id":"tech-sharepoint","displayName":null,"description":null,"status":null},{"creationDate":1357659888000,"helpText":null,"system":false,"name":"Site Core","id":"tech-sitecore","displayName":null,"description":null,"status":null},{"creationDate":1357659888000,"helpText":null,"system":false,"name":"Windows Metro","id":"tech-win-metro","displayName":null,"description":null,"status":null},{"creationDate":1357659889000,"helpText":null,"system":false,"name":"Windows Phone","id":"tech-win-phone","displayName":null,"description":null,"status":null},{"creationDate":1357659889000,"helpText":null,"system":false,"name":"WordPress","id":"tech-wordpress","displayName":null,"description":null,"status":null},{"creationDate":1349685730000,"helpText":null,"system":false,"name":"Metlife html5 jquery archetype","id":"3bfc67a1-588d-41f0-9b8a-2807317d5c70","displayName":null,"description":null,"status":null}],"possibleTypes":null,"customProp":false,"favourite":false,"envSpecific":true,"properties":[{"required":true,"possibleValues":[],"multiple":false,"propertyTemplates":null,"key":"scheduler","type":"Scheduler","defaultValue":null,"creationDate":1357659889000,"helpText":"","system":false,"name":"Cron Expression","id":"cabe362d-146c-46bd-afe6-f675cd4312e8","displayName":null,"description":null,"status":null}],"type":null,"displayName":null,"customerIds":["photon","05c80933-95d4-46c8-a58d-ceceb4bcce48"],"used":false,"creationDate":1357659881000,"helpText":null,"system":true,"name":"Scheduler","id":"087d817f-6b87-4a3b-ad3e-0d854d7ea1f6","description":"CI Configuration","status":null}}};
+			
+			editConfiguration.loadPage();
+			
+			setTimeout(function() {
+				start();
+				var toAppend = $(commonVariables.contentPlaceholder).find("tbody[name=ConfigurationLists]");
+				$(commonVariables.contentPlaceholder).find("ul[name=configurations] li").click(editConfiguration.configurationlistener.constructHtml(response, '', "Server", toAppend));
+				toAppend.find('input[name=scheduleOption]').click(editConfiguration.configurationlistener.currentEvent('Weekly', toAppend.find('tr #scheduleExpression:last')));
+				equal(toAppend.find('#schedule_weekly').attr('id'), "schedule_weekly", "Crone Expression render");
+			}, 1500);
+		}); 
 	}};
 });

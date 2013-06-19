@@ -9,7 +9,8 @@
 	},
 	
 	"navigation" : {
-		"transitionType" : 7,
+		"transitionType" : 13,
+		"cancelTransitionType" : 2,
 		"isNative" : false
 	},
 

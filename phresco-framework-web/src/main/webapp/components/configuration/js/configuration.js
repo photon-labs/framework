@@ -35,6 +35,13 @@ define(["configuration/listener/configurationListener"], function() {
 			Clazz.navigationController.push(this, true);
 		},
 		
+		/***
+		* For Unit Tests
+		*/
+		loadPageTest : function(){
+			Clazz.navigationController.push(this);
+		},
+		
 		preRender: function(whereToRender, renderFunction){
 			var self = this;
 			self.configurationlistener.getConfigurationList(self.configurationlistener.getRequestHeader(self.configRequestBody, "list"), function(response) {
@@ -173,14 +180,6 @@ define(["configuration/listener/configurationListener"], function() {
 				});  
 				
 			}); 
-			self.windowResize();
-			
-			$(".scrollContent").mCustomScrollbar({
-				autoHideScrollbar:true,
-				theme:"light-thin",
-				advanced:{ updateOnContentResize: true}
-			});
-			
 			
 			Clazz.navigationController.mainContainer = commonVariables.contentPlaceholder;
 		}

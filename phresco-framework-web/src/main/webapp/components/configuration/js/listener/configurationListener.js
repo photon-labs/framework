@@ -456,8 +456,8 @@ define(["configuration/api/configurationAPI"], function() {
 		currentEvent : function(value, WhereToAppend) {
 			var self=this, dailySchedule, weeklySchedule, monthlySchedule, toAppend;
 			dailySchedule = '<tr id="schedule_daily" class="schedule_date"><td>Every At<input type="checkbox" name="everyAt"></td><td><select name="hours" class="selectpicker">'+self.hours()+'</select><span>Hrs</span></td> <td><select name="minutes" class="selectpicker">'+self.minutes()+'</select><span>Mins</span></td></tr>';
-			weeklySchedule = '<tr id="schedule_weekly" class="schedule_date"><td><select name="weeks" class="selectpicker" multiple>'+self.weeks()+'</select><span>Weeks</span> <span>at</span></td><td><select name="hours" class="selectpicker">'+self.hours()+'</select><span>Hrs</span></td> <td><select name="minutes" class="selectpicker">'+self.minutes()+'</select><span>Mins</span></td></tr>';
-			monthlySchedule = '<tr id="schedule_monthly" class="schedule_date"><td><span>Every</span><select name="days" class="selectpicker">'+self.days()+'</select></td><td><span>of</span><select name="months" class="selectpicker" multiple>'+self.months()+'</select><span>Months</span></td><td><span>at</span><select name="hours" class="selectpicker">'+self.hours()+'</select><span>Hrs</span></td> <td><select name="minutes" class="selectpicker">'+self.minutes()+'</select><span>Mins</span></td></tr>';
+			weeklySchedule = '<tr id="schedule_weekly" class="schedule_date"><td><select name="weeks" class="selectpicker" multiple data-selected-text-format="count>2">'+self.weeks()+'</select><span>Weeks</span> <span>at</span></td><td><select name="hours" class="selectpicker">'+self.hours()+'</select><span>Hrs</span></td> <td><select name="minutes" class="selectpicker">'+self.minutes()+'</select><span>Mins</span></td></tr>';
+			monthlySchedule = '<tr id="schedule_monthly" class="schedule_date"><td><span>Every</span><select name="days" class="selectpicker">'+self.days()+'</select></td><td><span>of</span><select name="months" class="selectpicker" multiple data-selected-text-format="count>2">'+self.months()+'</select><span>Months</span></td><td><span>at</span><select name="hours" class="selectpicker">'+self.hours()+'</select><span>Hrs</span></td> <td><select name="minutes" class="selectpicker">'+self.minutes()+'</select><span>Mins</span></td></tr>';
 			$('.schedule_date').remove();
 			if (WhereToAppend === "") {
 				toAppend = $('tr #scheduleExpression:last');
@@ -471,6 +471,7 @@ define(["configuration/api/configurationAPI"], function() {
 			} else {
 				$(monthlySchedule).insertAfter(toAppend);
 			}
+			self.multiselect();
 			self.cronExpressionValues(value);
 		},
 		
@@ -482,7 +483,7 @@ define(["configuration/api/configurationAPI"], function() {
 				croneJson.hours = $('select[name=hours]').val();
 				croneJson.minutes = $('select[name=minutes]').val();
 				self.cronExpressionLoad(croneJson);
-				$('input[name=everyAt], select[name=hours], select[name=minutes]').bind('click', function(){
+				$('input[name=everyAt], select[name=hours], select[name=minutes]').bind('change', function(){
 					croneJson.every = $('input[name=everyAt]').is(':checked');
 					croneJson.hours = $('select[name=hours]').val();
 					croneJson.minutes = $('select[name=minutes]').val();
@@ -519,8 +520,15 @@ define(["configuration/api/configurationAPI"], function() {
 				croneJson.minutes = $('select[name=minutes]').val();
 				self.cronExpressionLoad(croneJson);
 				$('select[name=days], select[name=months], select[name=hours], select[name=minutes]').bind('change', function(){
+					var months = [];
+					if ($('select[name=months]').val() === null) {
+						val = '*';
+						months.push(val);
+						croneJson.month = months;
+					} else {
+						croneJson.month = $('select[name=months]').val();
+					}
 					croneJson.day = $('select[name=days]').val();
-					croneJson.month = $('select[name=months]').val();
 					croneJson.hours = $('select[name=hours]').val();
 					croneJson.minutes = $('select[name=minutes]').val();
 					self.cronExpressionLoad(croneJson);

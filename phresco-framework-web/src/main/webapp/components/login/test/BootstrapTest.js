@@ -93,13 +93,15 @@ define(["jquery"], function($) {
 					projectlistTest.runTests(data);*/
 				//});
 				if (status) {
+					editConfigurationTest.runTests(data);
+					configurationTest.runTests(data);
+					projectTest.runTests(data);	
 					projectlistTest.runTests(data);
-					//projectTest.runTests(data);	
 					applicationTest.runTests(data);
 					featuresTest.runTests(data);
 					jobTemplateListTest.runTests(data);
-					codequalityTest.runTests(data);	
-					editConfigurationTest.runTests(data);
+					codequalityTest.runTests(data);
+					 
 				}
 				
 				/* configurationTest.runTests(data);

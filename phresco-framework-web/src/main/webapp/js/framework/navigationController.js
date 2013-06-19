@@ -226,7 +226,9 @@ define(["framework/base", "framework/animationProvider"], function() {
 						self.stack.push(data);
 						self.currentIndex = self.stack.length - 1;
 						self.indexMapping[name] = self.stack.length - 1;
-						history.pushState({}, name, name);
+						if (history.pushState !== undefined) {
+							history.pushState({}, name, name);
+						}
 					}
 				};
 				

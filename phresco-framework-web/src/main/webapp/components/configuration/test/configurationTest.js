@@ -7,7 +7,8 @@ define(["configuration/configuration"], function(Configuration) {
 		
 		var configuration = new Configuration();
 		asyncTest("Test - Configuration Page render", function() {
-		
+
+			
 			mockConfigurationList = mockFunction();
 			when(mockConfigurationList)(anything()).then(function(arg) {
 				
@@ -20,7 +21,7 @@ define(["configuration/configuration"], function(Configuration) {
 			
 			configuration.configurationlistener.configurationAPI.configuration = mockConfigurationList;
 			
-			configuration.loadPage();
+			configuration.loadPageTest();
 			
 			setTimeout(function() {
 				start();
@@ -42,7 +43,7 @@ define(["configuration/configuration"], function(Configuration) {
 			
 			configuration.configurationlistener.configurationAPI.configuration = mockConfigurationList;
 			
-			configuration.loadPage();
+			configuration.loadPageTest();
 			
 			setTimeout(function() {
 				start();
@@ -66,7 +67,7 @@ define(["configuration/configuration"], function(Configuration) {
 			
 			configuration.configurationlistener.configurationAPI.configuration = mockConfigurationList;
 			
-			configuration.loadPage();
+			configuration.loadPageTest();
 			
 			setTimeout(function() {
 				start();
@@ -75,5 +76,6 @@ define(["configuration/configuration"], function(Configuration) {
 				equal($(commonVariables.contentPlaceholder).find('ul[name=envList] li[name=test]').attr('name'), "test", "Save Environment Tested");
 			}, 1500);
 		});
+		
 	}};
 });
