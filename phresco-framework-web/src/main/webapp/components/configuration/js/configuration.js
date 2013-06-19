@@ -35,6 +35,13 @@ define(["configuration/listener/configurationListener"], function() {
 			Clazz.navigationController.push(this, true);
 		},
 		
+		/***
+		* For Unit Tests
+		*/
+		loadPageTest : function(){
+			Clazz.navigationController.push(this);
+		},
+		
 		preRender: function(whereToRender, renderFunction){
 			var self = this;
 			self.configurationlistener.getConfigurationList(self.configurationlistener.getRequestHeader(self.configRequestBody, "list"), function(response) {
@@ -78,6 +85,9 @@ define(["configuration/listener/configurationListener"], function() {
 						}
 					});
 				} else {
+					setTimeout(function(){
+						self.successMsgPopUp(response.message);			
+					},2500);
 					self.loadPage();
 				}
 			});
@@ -109,14 +119,18 @@ define(["configuration/listener/configurationListener"], function() {
 					arr[count]=$(this).text();
 					count++;
 				});
-				var name = $("input[name='envName']").val();
-				if(name==""){	
+				var name = $("input[name=envName]").val();
+				var envDesc = $("input[name=envDesc]").val();
+				if(name === ""){	
 					$("input[name='envName']").focus();
 					$("input[name='envName']").attr('placeholder','Enter Environment Name');
 				} else {							  
 					var found = $.inArray($("input[name='envName']").val(), arr) > -1;
+					
 					if (found === false) {
-						self.addEnvEvent.dispatch();
+						self.addEnvEvent.dispatch(name, envDesc, '');
+						$("input[name='envName']").attr('placeholder','Environment Name');
+						$("input[name='envDesc']").attr('placeholder','Environment Description');
 					}
 					else {
 						$("#errdisplay").show();
@@ -131,7 +145,7 @@ define(["configuration/listener/configurationListener"], function() {
 			
 			$("input[name=saveEnvironment]").unbind("click");
 			$("input[name=saveEnvironment]").click(function() {
-				self.saveEnvEvent.dispatch(self.envWithConfig, function(response){
+				self.saveEnvEvent.dispatch(self.envWithConfig, '', function(response){
 					self.configRequestBody = response;
 					self.getAction(self.configRequestBody, 'saveEnv', '', '');
 				});
@@ -161,12 +175,13 @@ define(["configuration/listener/configurationListener"], function() {
 			
 			$("input[name=cloneEnvr]").unbind("click");
 			$("input[name=cloneEnvr]").click(function() {
-				var envName = $(this).parent().attr('name');
-				self.cloneEnvEvent.dispatch(envName, function(response){
+				var envrName = $(this).parent().attr('name');
+				self.cloneEnvEvent.dispatch(envrName, function(response){
 					self.configRequestBody = response;
-					self.getAction(self.configRequestBody, 'cloneEnv', envName);
-				});
-			});
+					self.getAction(self.configRequestBody, 'cloneEnv', envrName);
+				});  
+				
+			}); 
 			
 			Clazz.navigationController.mainContainer = commonVariables.contentPlaceholder;
 		}

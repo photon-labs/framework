@@ -28,7 +28,7 @@ define(["features/listener/featuresListener"], function() {
 		 */
 		initialize : function(globalConfig){
 			var self = this;
-			if(self.featuresListener == null){
+			if(self.featuresListener === null){
 				self.featuresListener = new Clazz.com.components.features.js.listener.FeaturesListener(globalConfig);
 			}
 			self.registerEvents();
@@ -41,13 +41,18 @@ define(["features/listener/featuresListener"], function() {
 			Clazz.navigationController.push(this, true);
 		},
 		
+		loadPageTest :function() {
+			var self = this;
+			Clazz.navigationController.push(this);
+		},
+		
 		registerEvents : function () {
 			var self = this;
-			if(self.onSearchEvent == null ){
+			if(self.onSearchEvent === null ){
 				self.onSearchEvent = new signals.Signal();				
 			}
 			self.onSearchEvent.add(self.featuresListener.search, self.featuresListener);
-			if(self.onCancelEvent == null ){
+			if(self.onCancelEvent === null ){
 				self.onCancelEvent = new signals.Signal();
 			}
 			self.onCancelEvent.add(self.featuresListener.cancelUpdate, self.featuresListener);
@@ -58,37 +63,49 @@ define(["features/listener/featuresListener"], function() {
 			Handlebars.registerHelper('versiondata', function(versions, id) {
 				var selectedList = self.featuresListener.featuresAPI.localVal.getSession("selectedFeatures");				
 				var fieldset;
-				$.each(versions, function(index, value){
-					$.each(value.appliesTo, function(index, value){
-						if(value.required == true){
-							fieldset = '<fieldset class="switch switchOn" id="feature_'+ id +'" value="false"><label class="off" name="on_off" value="false"></label><label class="on" name="on_off" value="true"></label></fieldset>';
-						} else {							
+				if(versions.length > 0){
+					$.each(versions, function(index, value){
+						if(JSON.stringify(value.appliesTo) !== "null"){
+							$.each(value.appliesTo, function(index, value){
+								if(value.required === true){
+									fieldset = '<fieldset class="switch switchOn" id="feature_'+ id +'" value="false"><label class="off" name="on_off" value="false"></label><label class="on" name="on_off" value="true"></label></fieldset>';
+								} else {							
+									fieldset = '<fieldset class="switch switchOff" id="feature_'+ id +'" value="false"><label class="off" name="on_off" value="false"></label><label class="on" name="on_off" value="true"></label></fieldset>';
+								}
+							});							
+						}else {							
 							fieldset = '<fieldset class="switch switchOff" id="feature_'+ id +'" value="false"><label class="off" name="on_off" value="false"></label><label class="on" name="on_off" value="true"></label></fieldset>';
 						}
-					});					
-				});
+					});
+				}else {							
+					fieldset = '<fieldset class="switch switchOff" id="feature_'+ id +'" value="false"><label class="off" name="on_off" value="false"></label><label class="on" name="on_off" value="true"></label></fieldset>';
+				}
 				return fieldset;
 			});
 			
 			Handlebars.registerHelper('versionShowHide', function(versions, id) {
 				var fieldset;
-				$.each(versions, function(index, value){
-					$.each(value.appliesTo, function(index, value){
-						if(value.required == true){
-							fieldset = '<div class="flt_right" id="version_'+ id +'" style="display:block;">';
-						}else{							
-							fieldset = '<div class="flt_right" id="version_'+ id +'" style="display:none;">';
-						}
-					});					
-				});
-				return fieldset;
+				if(versions.length > 0){
+					$.each(versions, function(index, value){
+						if(JSON.stringify(value.appliesTo) !== "null"){
+							$.each(value.appliesTo, function(index, value){
+								if(value.required === true){
+									fieldset = '<div class="flt_right" id="version_'+ id +'" style="display:block;">';
+								}else{							
+									fieldset = '<div class="flt_right" id="version_'+ id +'" style="display:none;">';
+								}
+							});
+						}		
+					});
+					return fieldset;
+				}
 			});
 			
 			Handlebars.registerHelper('idtrime', function(id) {
 				var uniqueid;
 				uniqueid = $.trim(id.replace(/ /g,''));
 				return uniqueid;
-			});			
+			});
 		},
 
 		/***
@@ -100,23 +117,39 @@ define(["features/listener/featuresListener"], function() {
 		postRender : function(element) {
 			var self = this;
 			self.featuresListener.getFeaturesList(self.featuresListener.getRequestHeader(self.featureRequestBody, "SELECTED"), function(response) {
+				var responseData = response.data;
 				$.each(response.data, function(index, value){
 					$("#feature_"+this.moduleId).addClass("switchOn").removeClass("switchOff");
 					$("#version_"+this.moduleId).show();					
 				});
+				self.selectedCount();
 			}); 
+		},
+		
+		
+		selectedCount : function(){
+			var jsLibCount = $("#jsibrariesContent").find(".switchOn").size(), 
+			moduleCount = $("#moduleContent").find(".switchOn").size(),
+			componentCount = $("#componentsContent").find(".switchOn").size();
+			$(".totalModules").text(moduleCount);
+			$(".totalComponent").text(componentCount);
+			$(".totalJslibraries").text(jsLibCount);
 		},
 
 		preRender: function(whereToRender, renderFunction){
-			var self = this;
+			var self = this, moduleTotalCount;
 			var collection = {};
 			self.featuresListener.showLoad();
 			self.getFeatures(collection, function(responseData){
 				renderFunction(responseData, whereToRender);
 				self.featuresListener.hideLoad();
+				setTimeout(function(){
+					$(".ftotal").text(responseData.featureslist.length);
+					$(".jstotal").text(responseData.jsibrarielist.length);
+					$(".comptotal").text(responseData.componentList.length);			
+				},600);
 			});
-		},	
-
+		},
 
 		getFeatures : function(collection, callback){
 			var self = this;
@@ -151,14 +184,14 @@ define(["features/listener/featuresListener"], function() {
 				callback(collection);
 			});
 		},
-
-
+		
 		/***
 		 * Bind the action listeners. The bindUI() is called automatically after the render is complete 
 		 *
 		 */
 		bindUI : function(){
 			var self=this;
+			var counter=0;
 			$(window).resize(function() {
 				$(".dyn_popup").hide();
 				var height = $(this).height();
@@ -173,12 +206,10 @@ define(["features/listener/featuresListener"], function() {
 			 
 			$("input[name=on_off]").click(function() {
 				var button = $(this).val();
-				if(button == 'off'){ $(this).closest('fieldset').css('background-position', 'right'); }
-				if(button == 'on'){ $(this).closest('fieldset').css('background-position', 'left'); }	
+				if(button === 'off'){ $(this).closest('fieldset').css('background-position', 'right'); }
+				if(button === 'on'){ $(this).closest('fieldset').css('background-position', 'left'); }	
 			});
 
-			self.featuresListener.scrollbarEnable();
-			
 			$('#module').keyup(function(event) {
 				var txtSearch = $('#module').val();
 				var divId = "moduleContent";
@@ -199,6 +230,8 @@ define(["features/listener/featuresListener"], function() {
 
            	$('#switchoffbutton').on("click", function(event) {
            		self.showSelected();
+				$("#norecord1, #norecord2, #norecord3").hide();
+				
            	});
 			
 			$('label.on').click(function() {
@@ -216,43 +249,49 @@ define(["features/listener/featuresListener"], function() {
            	$('#switchonbutton').on("click", function(event) {
            		$("ul li").show();
            		self.featuresListener.scrollbarUpdate();
+				$("#norecord1, #norecord2, #norecord3").hide();; 
            	});
 
        		$('#cancelUpdateFeature').click(function() {
 				self.onCancelEvent.dispatch();
            	});
        		var flag=1,temp1,temp2;
-          	$('.featureinfo_img').on("click", function(event) {				
+          	$('.featureinfo_img').on("click", function(event) {	
 				var descid = $(this).attr("artifactGroupId");
 				temp2=descid;
 				var currentObj = this;				
 				self.featuresListener.getFeaturesList(self.featuresListener.getRequestHeader(self.featureRequestBody, "desc", descid), function(response) {
 					var descriptionid = $.trim(descid.replace(/ /g,''));
-					var divhtml = '<div id="'+descriptionid+'" class="dyn_popup featureinfo"><h1>Description</h1><a href="#" class="dyn_popup_close">X</a><div class="features_cont"><span><img src="themes/default/images/helios/feature_info_logo.png" width="42" height="42" border="0" alt=""></span>'+response.data+'</div></div>';
+					var divhtml = '<div id="'+descriptionid+'" class="dyn_popup featureinfo"><h1>Description</h1><a href="#" class="dyn_popup_close">X</a><div class="features_cont"><span><img src="themes/default/images/helios/feature_info_logo.png" width="42" height="42" border="0" alt=""></span><span class="features_desc_content">'+response.data+'</span></div></div>';
 					$("#desc").children().remove();
 					$("#desc").append(divhtml);
 					commonVariables.temp = currentObj;
 					commonVariables.openccmini(currentObj,descriptionid);
-					 if(flag==1){
+					 if(flag === 1){
 						temp1=descid;
 						$("#"+descid).show();	
-						flag=0;
+						flag = 0;
 					 }
 					else{					 
 						$("#"+descid).hide();	
-						flag=1;
-						if(temp1!=temp2)
+						flag = 1;
+						if(temp1 !== temp2){
 							$("#"+temp2).show();
+						}	
 					}
+					self.featuresListener.flagged = 1;
+					self.featuresListener.scrollbarEnable();
 				});
+				
            	});
-			
+			self.featuresListener.flagged = 2;
+			self.featuresListener.scrollbarEnable();
 			$('#featureUpdate').on("click", function() {
 				self.featureUpdatedArray = [];
 				$(".switchOn").each(function(index, currentVal) {
 					var featureUpdatedata = {};
 					if($(currentVal).parent().attr("type") !== undefined){
-						featureUpdatedata.name = $(currentVal).parent().attr("type");
+						featureUpdatedata.name = $(currentVal).parent().attr("name");
 						featureUpdatedata.dispName = $(currentVal).parent().attr("dispName");
 						featureUpdatedata.packaging = $(currentVal).parent().attr("packaging");
 						featureUpdatedata.type = $(currentVal).parent().attr("type");					
@@ -272,6 +311,17 @@ define(["features/listener/featuresListener"], function() {
 				}); 
 			});
 			self.windowResize();
+
+
+			$('#featureTest').children('tbody').children('tr').children('td').each(function() {
+				counter++;
+			});
+			if(counter === 1)
+				$('.features_box').parent('td').addClass('onefeature');
+			else if(counter === 2)
+				$('.features_box').parent('td').addClass('twofeatures');
+			else if(counter === 3)
+				$('.features_box').parent('td').addClass('threefeatures');
 		},
 		
 		showSelected : function() {
@@ -280,21 +330,22 @@ define(["features/listener/featuresListener"], function() {
 			$("#jsibrariesContent li").hide();
 			$("#componentsContent li").hide();
 			$("ul li fieldset").each(function() {
-				if($(this).attr("class") == "switch switchOn"){
+				if($(this).attr("class") === "switch switchOn"){
 					$(this).parent().show();
-					self.featuresListener.scrollbarUpdate();
-				}     			
+					self.featuresListener.scrollbarUpdate();					
+				}
 			});
+			
 		},
 
 		bcheck : function(obj){
 			var button = $(obj).attr("value");
 			$(obj).closest('fieldset').removeClass('switchOn'); 
 			$(obj).closest('fieldset').removeClass('switchOff');			
-			if(button == 'false'){ 
+			if(button === 'false'){ 
 				$(obj).closest('fieldset').addClass('switchOff');
 				$(obj).closest('fieldset').attr('value', "false"); 
-			}else if(button == 'true'){ 
+			}else if(button === 'true'){ 
 				$(obj).closest('fieldset').addClass('switchOn');
 				$(obj).closest('fieldset').attr('value', "true");
 			}

@@ -97,9 +97,9 @@ define(["testResult/api/testResultAPI"], function() {
 		
 		onTestResultDesc : function(callback) {
 			var self = this;
-			self.requestBody = {};
-			self.requestBody.testSuite = commonVariables.testSuiteName;
-			self.getTestResult(self.getActionHeader(self.requestBody, "getTestReport"), function(response) {
+			var requestBody = {};
+			requestBody.testSuite = commonVariables.testSuiteName;
+			self.performAction(self.getActionHeader(requestBody, "getTestReport"), function(response) {
 				$("#testSuites").hide();
 				$("#testCases").show();
 				self.constructTestReport(response.data);
@@ -236,6 +236,8 @@ define(["testResult/api/testResultAPI"], function() {
 		getActionHeader : function(requestBody, action) {
 			var self = this;
 			var header, userId;
+			var userInfo = JSON.parse(self.testResultAPI.localVal.getSession('userInfo'));
+			var userId = userInfo.id;
 			var appDirName = self.testResultAPI.localVal.getSession('appDirName');
 			var techReport = $('#reportOptionsDrop').attr("value");
 			var moduleName = $('#modulesDrop').attr("value");
@@ -256,28 +258,36 @@ define(["testResult/api/testResultAPI"], function() {
 			}
 			if (action == "getTestSuite") {
 				header.requestMethod = "GET";
-				header.webserviceurl = commonVariables.webserviceurl + commonVariables.qualityContext + "/testsuites?&appDirName=" + appDirName + "&testType=" + testType;
+				header.webserviceurl = commonVariables.webserviceurl + commonVariables.qualityContext + "/testsuites?appDirName=" + appDirName + "&testType=" + testType;
 				if (techReport != undefined) {
 					header.webserviceurl = header.webserviceurl.concat("&techReport=" + techReport);
 				}
 				if (moduleName != undefined) {
 					header.webserviceurl = header.webserviceurl.concat("&moduleName=" + moduleName);
 				}
-			}
-			if (action == "getTestReport") {
+			} else if (action == "getTestReport") {
 				header.requestMethod = "GET";
-				header.webserviceurl = commonVariables.webserviceurl + commonVariables.qualityContext + "/testreports?&appDirName=" + appDirName + "&testType=" + testType+ "&testSuite=" + requestBody.testSuite;
+				header.webserviceurl = commonVariables.webserviceurl + commonVariables.qualityContext + "/testreports?appDirName=" + appDirName +
+										"&testType=" + testType+ "&testSuite=" + requestBody.testSuite;
 				if (techReport != undefined) {
 					header.webserviceurl = header.webserviceurl.concat("&techReport=" + techReport);
 				}
 				if (moduleName != undefined) {
 					header.webserviceurl = header.webserviceurl.concat("&moduleName=" + moduleName);
 				}
+			} else if (action == "generatePdfReport") {
+				var data = $('#pdfReportForm').serialize();
+				header.requestMethod = "POST";
+				header.webserviceurl = commonVariables.webserviceurl + "app/printAsPdf?appDirName=" + appDirName + "&" + data + "&userId=" + userId;
+			} else if (action == "getPdfReports") {
+				var data = $('#pdfReportForm').serialize();
+				header.requestMethod = "GET";
+				header.webserviceurl = commonVariables.webserviceurl + "pdf/showPopUp?appDirName=" + appDirName + "&fromPage=" + testType;
 			}
 			return header;
 		},
 		
-		getTestResult : function(header, callback) {
+		performAction : function(header, callback) {
 			var self = this;
 			try {
 				self.testResultAPI.testResult(header,
@@ -307,7 +317,7 @@ define(["testResult/api/testResultAPI"], function() {
 		},
 		
 		openConsole : function() {
-			$('.testSuiteTable').append('<div class="mask"></div>');
+			$('.testSuiteTable').append('<div class="mask" style="display: block;"></div>');
 			$('.mask').show();
 			$('.unit_close').css("z-index", 1001);
 			$('.unit_progress').css("z-index", 1001);
@@ -341,7 +351,9 @@ define(["testResult/api/testResultAPI"], function() {
 			$('.unit_close').animate({right: '0px'},500);
 			$('.unit_info table').removeClass("small").addClass("big");
 			$('#consoleImg').attr('data-flag','true');
-			$('.mask').remove();
+			$('.mask').fadeOut(500, function() {
+				$('.mask').remove();
+			});
 		},
 		
 		resizeTestResultTable : function(divId) {
@@ -368,6 +380,45 @@ define(["testResult/api/testResultAPI"], function() {
 			$('.unit_progress').css("width",progwidth);
 			$('.unit_progress').css("right",-twowidth);
 			$('.unit_close').css("right",0);
+		},
+		
+		//To get the existing pdf reports
+		getPdfReports : function() {
+			var self = this;
+			var requestBody = {};
+			self.performAction(self.getActionHeader(requestBody, "getPdfReports"), function(response) {
+				var content = "";
+				var pdfReports = response.data; 
+				if (pdfReports != null && pdfReports.length > 0) {
+					$("#noReport").hide();
+					$("#availablePdfRptsTbl").show();
+					var content = "";
+					for (i in pdfReports) {
+						content = content.concat('<tr class="generatedRow"><td>' + pdfReports[i].time + '</td>');
+						content = content.concat('<td>' + pdfReports[i].type + '</td>');
+						content = content.concat('<td><a class="tooltiptop" fileName="' + pdfReports[i].fileName + '" href="#"');
+						content = content.concat(' data-toggle="tooltip" data-placement="top" name="downLoad" data-original-title="Download Pdf" title="">');
+						content = content.concat('<img src="themes/default/images/helios/download_icon.png" width="15" height="18" border="0" alt="0"></a></td>');
+						content = content.concat('<td><a class="tooltiptop" fileName="' + pdfReports[i].fileName + '" href="#"');
+						content = content.concat(' data-toggle="tooltip" data-placement="top" name="delete" data-original-title="Delete Pdf" title="">');
+						content = content.concat('<img src="themes/default/images/helios/delete_row.png" width="14" height="18" border="0" alt="0"></a></td></tr>');
+					}
+					$("#availablePdfRptsTbdy").html(content);
+				} else {
+					$("#availablePdfRptsTbl").hide();
+					$("#noReport").show();
+					$("#noReport").html("No Report are Available");
+				}
+			});
+		},
+		
+		//To generate the pdf report
+		generatePdfReport : function() {
+			var self = this;
+			var requestBody = {};
+			self.performAction(self.getActionHeader(requestBody, "generatePdfReport"), function(response) {
+				self.getPdfReports();
+			});
 		}
 	});
 

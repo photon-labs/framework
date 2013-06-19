@@ -1,7 +1,7 @@
 <section id="addproject">    
     <section class="content_main create_proj">
           <table class="table table-striped table_border table-bordered create_edit_table" cellpadding="0" cellspacing="0" border="0">  
-            <tbody name="layercontents"> 
+            <tbody class="scrollContent" name="layercontents"> 
             	<tr>
                     <td><span data-i18n="project.create.label.name"></span><sup>*</sup></td>
                     <td><input type="text" name="projectname" placeholder="Project Name"/></td>
@@ -30,116 +30,165 @@
                     <td data-i18n="project.create.label.enddate" name="enddate-lbl"></td>
                     <td colspan="2" class="enddate" name="enddateholder"><input name="enddate" id="endDate" type="text"><span class="add-on"><span class="add-on"><img id="enddt" src="themes/default/images/helios/cal_icon.png" border="0" alt=""></span></span></td>
                 </tr>
+				<tr>	
+                	<td colspan="2"><input type="checkbox"><b>&nbsp; Multi Module</b></td>
+                    <td colspan="2"><input type="text" placeholder="Artifact ID"></td>
+                    <td colspan="6"></td>
+                </tr>
 				{{#if applicationlayerData.techGroups}}
 					<tr class="proj_title">
-					  <td colspan="4">{{applicationlayerData.name}}</td>
-					  <td colspan="4"><img name="close" id="applicationlayer" src="themes/default/images/helios/close_icon.png"  border="0" alt=""></td>
+
+					 <td colspan="3">{{applicationlayerData.name}}</td>
+					 <td colspan="3"><span class="errmsg1"></span></td>
+					 <td colspan="2"><img name="close" id="applicationlayer" src="themes/default/images/helios/close_icon.png"  border="0" alt=""></td>
 					</tr>
-					<tr class="applnLayer" name="staticApplnLayer" key="displayed">
-					  <td><span data-i18n="project.create.label.appcode"></span><sup>*</sup></td>	
-					  <td class="applnappcode"><input type="text" id="appcode" class="appln-appcode"></td>
-					  <td data-i18n="project.create.label.technology"></td>
-					  <td name="technology" class="technology">
-						  <select name="appln_technology" class="appln_technology">
-							<option>Select Technology</option>
-							{{#each applicationlayerData.techGroups}}
-								{{#each techInfos}}
-								  <option value="{{id}}">{{name}}</option>
-								{{/each}}	
-							{{/each}}
-						  </select>
-					  </td>
-					  <td data-i18n="project.create.label.applicationversion"></td>
-					  <td colspan="3" name="version" class="version">
-						<select name="appln_version" class="appln_version">
-							<option>Select Version</option>
-						</select>
-						<div class="flt_right icon_center">
-						  <a href="javascript:;" name="addApplnLayer"><img src="themes/default/images/helios/plus_icon.png"  border="0" alt=""></a>
-						  <a href="javascript:;" name="removeApplnLayer"></a>
-						</div>
-					  </td>
+					<tr class="applnLayer" key="displayed">
+						<td colspan="8" class="appln">
+							<table class="table table-striped table_border table-bordered applnlayer" cellpadding="0" cellspacing="0" border="0">
+								<thead>
+									<tr>
+										<th><span data-i18n="project.create.label.appcode"></span><sup>*</sup></th>
+										<th><span data-i18n="project.create.label.technology"></span></th>
+										<th><span data-i18n="project.create.label.applicationversion"></span></th>
+										<th></th>
+										<th></th>
+										<th colspan="3"><span data-i18n="project.create.label.dependency"></span></th>
+									</tr>
+								</thead>
+								<tbody class="applnlayer">
+									<tr class="applnlayercontent" name="staticApplnLayer">
+										<td class="applnappcode"><input type="text" id="appcode" class="appln-appcode"></td>
+										<td name="technology" class="technology">
+											<select name="appln_technology" class="appln_technology">
+											   <option>Select Technology</option>
+											   {{#each applicationlayerData.techGroups}}
+													{{#each techInfos}}
+													  <option value="{{id}}">{{name}}</option>
+													{{/each}}	
+												{{/each}}
+											</select>
+										 </td>
+										 <td colspan="3" name="version" class="version">
+											<select name="appln_version" class="appln_version">
+											   <option>Select Version</option>
+											</select>
+										 </td>
+										 <td colspan="2">
+											<select>
+											   <option>Select Dependency</option>
+											</select>
+										 </td>
+										 <td>
+											<div class="flt_right icon_center"><a name="addApplnLayer"><img src="themes/default/images/helios/plus_icon.png" border="0" alt=""></a><a href="javascript:;" name="removeApplnLayer"></a></div>
+										 </td>
+								    </tr>
+							  </tbody>
+                           </table>
+						</td>
 					</tr>
 				 {{/if}}
 				 {{#if weblayerData.techGroups}}
                      <tr class="proj_title">
-                      <td colspan="4">{{weblayerData.name}}</td>
-                      <td colspan="4"><img name="close" id="weblayer" src="themes/default/images/helios/close_icon.png"   border="0" alt=""></td>
+                      <td colspan="3">{{weblayerData.name}}</td>
+                      <td colspan="3"><span class="errmsg2"></span></td>
+                      <td colspan="2"><img name="close" id="weblayer" src="themes/default/images/helios/close_icon.png"   border="0" alt=""></td>
                      </tr>
-                     <tr class="webLayer" name="staticWebLayer" key="displayed">
-                      <td><span data-i18n="project.create.label.appcode"></span><sup>*</sup></td>	
-	                  <td class="webappcode"><input type="text" id="webappcode" class="web-appcode"></td>
-                      <td data-i18n="project.create.label.weblayer"></td>	
-                      <td name="web" class="web">
-                      	  <select name="weblayer" class="weblayer">
-                            <option>Select Layer</option>
-							{{#each weblayerData.techGroups}}
-								<option value="{{id}}">{{name}}</option>
-							{{/each}}
-                          </select>
-                          <span class="loading_bar" style="display:none;"><img src="themes/default/images/helios/loading.gif" width="16" height="16" border="0"></span>
-                      </td>
-                      <td data-i18n="project.create.label.widget"></td>
-                      <td name="widget" class="widget">
-                      	 <select name="web_widget" class="web_widget">
-                            <option>Select Widget</option>
-                         </select>
-                      </td>
-                      <td data-i18n="project.create.label.widgetversion"></td>
-                      <td name="widgetversion" class="widgetversion">
-                      	<select name="web_version" class="web_version">
-                            <option>Select Version</option>
-                        </select>
-                        <div class="flt_right icon_center">
-							<a href="javascript:;" name="addWebLayer"><img  src="themes/default/images/helios/plus_icon.png"  border="0" alt=""> </a>
-							<a href="javascript:;" name="removeWebLayer"></a>
-						</div>
-                       </td>
+                     <tr class="webLayer" key="displayed">
+						  <td colspan="8" class="WebLayer">
+							<table class="table table-striped table_border table-bordered WebLayer" cellpadding="0" cellspacing="0" border="0">
+								<thead>
+									<tr>
+										<th><span data-i18n="project.create.label.appcode"></span><sup>*</sup></th>
+										<th><span data-i18n="project.create.label.weblayer"></span></td>
+										<th><span data-i18n="project.create.label.widget"></span></td>
+										<th><span data-i18n="project.create.label.widgetversion"></span></td>
+										<th><span data-i18n="project.create.label.dependency"></span></th>
+										<th></th>
+									</tr>
+								</thead>
+								<tbody class="WebLayer">
+									<tr class="weblayercontent" name="staticWebLayer">
+										<td class="webappcode"><input type="text" id="webappcode" class="web-appcode"></td>
+										<td name="web" class="web">
+											<select name="weblayer" class="weblayer">
+												<option>Select Layer</option>
+												{{#each weblayerData.techGroups}}
+													<option value="{{id}}">{{name}}</option>
+												{{/each}}
+											</select>
+										 </td>
+										 <td name="widget" class="widget">
+											<select name="web_widget" class="web_widget">
+												<option>Select Widget</option>
+											 </select>
+										 </td>
+										 <td name="widgetversion" class="widgetversion">
+											<select name="web_version" class="web_version">
+												<option>Select Version</option>
+											</select>
+										 </td>
+										 <td>
+											<select>
+											   <option>Select Dependency</option>
+											</select>
+										 </td>
+										 <td>
+											<div class="flt_right icon_center"><a href="javascript:;" name="addWebLayer"><img src="themes/default/images/helios/plus_icon.png" border="0" alt=""></a><a href="javascript:;" name="removeWebLayer"></a></div>
+										 </td>
+									</tr>
+								</tbody>
+                           </table>
+                        </td>	
                       </tr>
 					{{/if}}
 				{{#if mobilelayerData.techGroups}}
                     <tr class="proj_title">
-                      <td colspan="4">{{mobilelayerData.name}}</td>
-                      <td colspan="4"><img name="close" id="mobilelayer" src="themes/default/images/helios/close_icon.png"  border="0" alt=""></td>
+                      <td colspan="3">{{mobilelayerData.name}}</td>
+                      <td colspan="3"><span class="errmsg3"></span></td>
+                      <td colspan="2"><img name="close" id="mobilelayer" src="themes/default/images/helios/close_icon.png"  border="0" alt=""></td>
                      </tr>
                      <tr class="mobLayer" key="displayed">
-                      <td colspan="8" class="mob">
-                          <table width="100%" cellpadding="0" cellspacing="0" border="0" class="mob-table">
-							  <tr class="mobileLayer" name="staticMobileLayer">
-									<td><span data-i18n="project.create.label.appcode"></span><sup>*</sup></td>	
-									<td class="mobileappcode"><input type="text" id="mobileappcode" class="mobile-appcode"></td>
-									<td data-i18n="project.create.label.mobile"></td>		
-									<td name="mobile" class="mobile">
-										<select name="mobile_layer" class="mobile_layer">
-											<option>Select Model</option>
-											{{#each mobilelayerData.techGroups}}
-												<option value="{{id}}">{{name}}</option>
-											{{/each}}
-										</select>
-									</td>
-									<td data-i18n="project.create.label.types"></td>
-									<td name="types" class="types">       
-										<select name="mobile_types" class="mobile_types">
-											<option>Select Type</option>
-										</select>
-									</td>
-									<td data-i18n="project.create.label.mobileversion"></td>
-									<td name="mobileversion" class="mobileversion">      
-										<select name="mobile_version" class="mobile_version">
-											<option>Select Version</option>
-										</select>
-									</td>
-									<td style="padding-right:0;">
-										  <input type="checkbox" style="display:none;"> <font data-i18n="project.create.label.mobile" style="display:none;"></font> &nbsp;&nbsp;&nbsp;<input type="checkbox" style="display:none;"> <font data-i18n="project.create.label.tablet" style="display:none;"></font>&nbsp;&nbsp;&nbsp;
-										<div class="flt_right">
-											<a href="javascript:;" name="addMobileLayer"><img src="themes/default/images/helios/plus_icon.png"  border="0" alt=""></a> 
-											<a href="javascript:;" name="removeMobileLayer"></a>
-										</div> 
-									</td>
-							  </tr>
-                          </table>
-                      </td>	
-                    </tr>
+                      	<td colspan="8" class="mob">
+							<table class="table table-striped table_border table-bordered mob-table" cellpadding="0" cellspacing="0" border="0">
+								<thead>
+									<tr>
+										<th><span data-i18n="project.create.label.appcode"></span><sup>*</sup></th>
+										<th><span data-i18n="project.create.label.mobile"></span></th>
+										<th><span data-i18n="project.create.label.types"></span></th>
+										<th><span data-i18n="project.create.label.mobileversion"></span></th>
+										<th></th>
+										<th></th>
+									</tr>
+								</thead>
+								<tbody>
+									<tr class="mobilelayercontent" name="staticMobileLayer">
+										<td class="mobileappcode"><input type="text" id="mobileappcode" class="mobile-appcode"></td>
+										<td name="mobile" class="mobile">
+											<select name="mobile_layer" class="mobile_layer">
+											   <option>Select Model</option>
+											   {{#each mobilelayerData.techGroups}}
+												  <option value="{{id}}">{{name}}</option>
+											   {{/each}}
+											</select>
+										 </td>
+										 <td name="types" class="types">
+											<select name="mobile_types" class="mobile_types">
+											   <option>Select Type</option>
+											</select>
+										 </td>
+										 <td colspan="2" name="mobileversion" class="mobileversion">
+											<select name="mobile_version" class="mobile_version">
+											   <option>Select Version</option>
+											</select>
+										 </td>
+										 <td>
+											<div class="flt_right icon_center"><a href="javascript:;" name="addMobileLayer"><img src="themes/default/images/helios/plus_icon.png" border="0" alt=""></a><a href="javascript:;" name="removeMobileLayer"></a> </div>
+										 </td>
+									</tr>
+							   </tbody>
+                           </table>
+                        </td>
+                     </tr>
 					{{/if}}
               	</tbody>
             </table>

@@ -18,15 +18,14 @@ define(["login/api/loginAPI"], function() {
 		initialize : function(config) {
 			var self = this;
 			
-		/* 	if(self.loadingScreen == null)
-				self.loadingScreen = new Clazz.com.js.widget.common.Loading(); */
-			if(self.navigationContent == null)
+			if(self.navigationContent === null){
 				require(["navigation/navigation"], function(){
 					self.navigationContent = new Clazz.com.components.navigation.js.navigation();	
 				});
-				
-			if(self.loginAPI == null)
+			}	
+			if(self.loginAPI === null){
 				self.loginAPI = new Clazz.com.components.login.js.api.LoginAPI();
+			}	
 		},
 		
 		/***
@@ -44,7 +43,7 @@ define(["login/api/loginAPI"], function() {
 					//TODO: call login service here and call appendPlaceholder in the success function
 					self.loginAPI.doLogin(header, 
 						function(response){
-							if(response != undefined && response != null && response.data.validLogin == true){
+							if(response !== undefined && response !== null && response.data.validLogin === true){
 								self.setUserInfo(response.data);
 								self.appendPlaceholder();
 								self.renderNavigation();
@@ -84,17 +83,18 @@ define(["login/api/loginAPI"], function() {
 		loginValidation : function(){
 			var self = this, bCheck = false;
 			
-			if(self.userNameValidation())
+			if(self.userNameValidation()){
 				bCheck = self.passwordValidation();
-			else
+			}
+			else{
 				bCheck = false;
-
+			}
 			return bCheck;
 		},
 		
 		userNameValidation : function(){
 			
-			if ($("#username").val() == undefined || $("#username").val() == null || $.trim($("#username").val()) == ""){
+			if ($("#username").val() === undefined || $("#username").val() === null || $.trim($("#username").val()) === ""){
 				$("#username").attr('placeholder','Enter Username');
 				$("#usernameDiv").addClass("loginuser_error");
 				return false;
@@ -105,7 +105,7 @@ define(["login/api/loginAPI"], function() {
 		},
 		
 		passwordValidation : function(){
-			if($("#password").val() == undefined || $("#password").val() == null || $.trim($("#password").val()) == ""){
+			if($("#password").val() === undefined || $("#password").val() === null || $.trim($("#password").val()) === ""){
 				$("#password").attr('placeholder','Enter Password');
 				$("#passwordDiv").addClass("loginuser_error");
 				return false;
@@ -127,7 +127,7 @@ define(["login/api/loginAPI"], function() {
 				dataType: "json",
 				requestPostBody: JSON.stringify({"username" : $("#username").val(), "password" : $("#password").val()}),
 				webserviceurl: commonVariables.webserviceurl + commonVariables.loginContext
-			}
+			};
 
 			return header;
 		},
@@ -144,13 +144,8 @@ define(["login/api/loginAPI"], function() {
 			var self = this;
 			Clazz.navigationController.jQueryContainer = commonVariables.navigationPlaceholder;
 
-			//require(["navigation/navigation"], function(){
-				//if(self.navigationContent === null) {
-					//self.navigationContent = new Clazz.com.components.navigation.js.navigation();
-				//}
 				self.navigationContent.currentContent = contentObj;
 				Clazz.navigationController.push(self.navigationContent, false);	
-			//});
 		}
 	});
 

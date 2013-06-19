@@ -1,3 +1,20 @@
+/**
+ * Framework Web Archive
+ *
+ * Copyright (C) 1999-2013 Photon Infotech Inc.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *         http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package com.photon.phresco.framework.rest.api;
 
 import java.io.File;
@@ -26,40 +43,61 @@ import com.photon.phresco.exception.PhrescoException;
 import com.photon.phresco.framework.PhrescoFrameworkFactory;
 import com.photon.phresco.framework.api.ApplicationManager;
 import com.photon.phresco.framework.api.ProjectManager;
+import com.photon.phresco.util.ServiceConstants;
 import com.photon.phresco.util.Utility;
 import com.sun.jersey.api.client.ClientResponse.Status;
 
+/**
+ * The Class BuildInfoService.
+ */
 @Path("/buildinfo")
-public class BuildInfoService extends RestBase implements FrameworkConstants {
+public class BuildInfoService extends RestBase implements FrameworkConstants, ServiceConstants {
+	
+	/**
+	 * List of buildinfos.
+	 *
+	 * @param appDirName the app dir name
+	 * @return the response
+	 */
 	@GET
 	@Path("/list")
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response list(@QueryParam("appDirName") String appDirName) {
+	public Response list(@QueryParam(REST_QUERY_APPDIR_NAME) String appDirName) {
 		ResponseInfo<List<BuildInfo>> responseData = new ResponseInfo<List<BuildInfo>>();
 		try {
 			File buildInfoFile = new File(Utility.getProjectHome() + appDirName + File.separator + BUILD_DIR
 					+ File.separator + BUILD_INFO_FILE_NAME);
 			ApplicationManager applicationManager = PhrescoFrameworkFactory.getApplicationManager();
 			List<BuildInfo> builds = applicationManager.getBuildInfos(buildInfoFile);
-			ResponseInfo<List<BuildInfo>> finalOutput = responseDataEvaluation(responseData, null,"Buildinfo listed Successfully", builds);
+			ResponseInfo<List<BuildInfo>> finalOutput = responseDataEvaluation(responseData, null,
+					"Buildinfo listed Successfully", builds);
 			return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
 		} catch (PhrescoException e) {
-			ResponseInfo<List<BuildInfo>> finalOutput = responseDataEvaluation(responseData, e,"Buildinfo list Failed", null);
+			ResponseInfo<List<BuildInfo>> finalOutput = responseDataEvaluation(responseData, e,
+					"Buildinfo list Failed", null);
 			return Response.status(Status.NOT_FOUND).entity(finalOutput).header("Access-Control-Allow-Origin", "*")
-			.build();
+					.build();
 		}
 	}
 
+	/**
+	 * Builds the info zip.
+	 *
+	 * @param appDirName the app dir name
+	 * @param buildNumber the build number
+	 * @return the response
+	 */
 	@POST
 	@Path("/buildfile")
 	@Produces(MediaType.APPLICATION_OCTET_STREAM)
 	@Consumes(MediaType.APPLICATION_JSON)
-	public Response buildInfoZip(@QueryParam("appDirName") String appDirName, @QueryParam("buildNumber") int buildNumber) {
+	public Response buildInfoZip(@QueryParam(REST_QUERY_APPDIR_NAME) String appDirName,
+			@QueryParam(REST_QUERY_BUILD_NUMBER) int buildNumber) {
 		InputStream fileInputStream = null;
 		ResponseInfo responseData = new ResponseInfo();
 		try {
-			File buildInfoFile = new File(Utility.getProjectHome() + appDirName + 
-					File.separator + BUILD_DIR +  File.separator + BUILD_INFO_FILE_NAME);
+			File buildInfoFile = new File(Utility.getProjectHome() + appDirName + File.separator + BUILD_DIR
+					+ File.separator + BUILD_INFO_FILE_NAME);
 			ApplicationManager applicationManager = PhrescoFrameworkFactory.getApplicationManager();
 			BuildInfo buildInfo = applicationManager.getBuildInfo(buildNumber, buildInfoFile.toString());
 			if (buildInfo.getBuildNo() == buildNumber) {
@@ -79,7 +117,7 @@ public class BuildInfoService extends RestBase implements FrameworkConstants {
 					builder.append(buildInfo.getBuildName());
 				} else {
 					builder.append(buildInfo.getDeliverables());
-					fileName = fileName.substring(fileName.lastIndexOf(FORWARD_SLASH) + 1);
+					fileName = fileName.substring(fileName.lastIndexOf(FrameworkConstants.FORWARD_SLASH) + 1);
 					boolean status = fileName.endsWith(APKLIB) || fileName.endsWith(APK);
 					if (status) {
 						fileName = fileName.substring(0, fileName.lastIndexOf(".")) + ARCHIVE_FORMAT;
@@ -88,24 +126,36 @@ public class BuildInfoService extends RestBase implements FrameworkConstants {
 					}
 				}
 				fileInputStream = new FileInputStream(new File(builder.toString()));
-//			ResponseInfo finalOutput = ServiceManagerMap.responseDataEvalution(responseData, null, "Zip Download successfully", fileInputStream);
-				return Response.status(Status.OK).entity(fileInputStream).header("Access-Control-Allow-Origin", "*").build();
+				return Response.status(Status.OK).entity(fileInputStream).header("Access-Control-Allow-Origin", "*")
+						.build();
 			}
 		} catch (FileNotFoundException e) {
 			ResponseInfo finalOutput = responseDataEvaluation(responseData, e, "Zip Download Failed", null);
-			return Response.status(Status.NOT_FOUND).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
+			return Response.status(Status.NOT_FOUND).entity(finalOutput).header("Access-Control-Allow-Origin", "*")
+					.build();
 		} catch (PhrescoException e) {
 			ResponseInfo finalOutput = responseDataEvaluation(responseData, e, "Zip Download Failed", null);
-			return Response.status(Status.NOT_FOUND).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
+			return Response.status(Status.NOT_FOUND).entity(finalOutput).header("Access-Control-Allow-Origin", "*")
+					.build();
 		}
 		return null;
 	}
 
+	/**
+	 * Delete build.
+	 *
+	 * @param buildNumbers the build numbers
+	 * @param projectId the project id
+	 * @param customerId the customer id
+	 * @param appId the app id
+	 * @return the response
+	 */
 	@DELETE
 	@Path("/deletebuild")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response deleteBuild(String[] buildNumbers, @QueryParam("projectId") String projectId, @QueryParam("customerId") String customerId,  @QueryParam("appId") String appId ) {
+	public Response deleteBuild(String[] buildNumbers, @QueryParam(REST_QUERY_PROJECTID) String projectId,
+			@QueryParam(REST_QUERY_CUSTOMERID) String customerId, @QueryParam(REST_QUERY_APPID) String appId) {
 		ResponseInfo responseData = new ResponseInfo();
 		try {
 			int[] buildInts = new int[buildNumbers.length];
@@ -118,7 +168,8 @@ public class BuildInfoService extends RestBase implements FrameworkConstants {
 			applicationManager.deleteBuildInfos(project, buildInts);
 		} catch (PhrescoException e) {
 			ResponseInfo finalOutput = responseDataEvaluation(responseData, e, "Deletion of build Failed", null);
-			return Response.status(Status.NOT_FOUND).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
+			return Response.status(Status.NOT_FOUND).entity(finalOutput).header("Access-Control-Allow-Origin", "*")
+					.build();
 		}
 		ResponseInfo finalOutput = responseDataEvaluation(responseData, null, "Build deleted Successfully", null);
 		return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();

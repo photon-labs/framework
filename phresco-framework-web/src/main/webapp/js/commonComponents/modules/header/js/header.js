@@ -20,9 +20,9 @@ define(["header/listener/headerListener"] , function(template) {
 			var self = this;
 			self.globalConfig = globalConfig;
 			
-			if(self.headerListener === null)
+			if(self.headerListener === null){
 				self.headerListener = new Clazz.com.commonComponents.modules.header.js.listener.HeaderListener(); 
-				
+			}	
 			self.registerEvents(self.headerListener);
 		},
 		
@@ -35,8 +35,8 @@ define(["header/listener/headerListener"] , function(template) {
 		 */
 		postRender : function(element) {
 			var self = this;
-			if(self.headerListener.headerAPI.localVal.getSession('customerlogo') != null &&
-				self.headerListener.headerAPI.localVal.getSession('customerlogo') != ""){
+			if(self.headerListener.headerAPI.localVal.getSession('customerlogo') !== null &&
+				self.headerListener.headerAPI.localVal.getSession('customerlogo') !== ""){
 				$('#bannerlogo').attr("src", "data:image/png;base64," + self.headerListener.headerAPI.localVal.getSession('customerlogo'));
 			} else {
 				$('#bannerlogo').attr("src", "themes/default/images/helios/helios_logo.png");
@@ -51,15 +51,15 @@ define(["header/listener/headerListener"] , function(template) {
         registerEvents : function (headerListener) {
             var self = this;
 			
-			if(self.onLogoutEvent === null)
+			if(self.onLogoutEvent === null){
 				self.onLogoutEvent = new signals.Signal();
-				
-			if(self.onTabChangeEvent === null)
+			}	
+			if(self.onTabChangeEvent === null){
 				self.onTabChangeEvent = new signals.Signal();
-				
-			if(self.onSelectCustomerEvent === null)
+			}	
+			if(self.onSelectCustomerEvent === null){
 				self.onSelectCustomerEvent = new signals.Signal();
-			
+			}
 			self.onLogoutEvent.add(headerListener.doLogout, headerListener);
 			self.onTabChangeEvent.add(headerListener.loadTab, headerListener);
 			self.onSelectCustomerEvent.add(headerListener.selectCoustomer, headerListener);
@@ -78,10 +78,8 @@ define(["header/listener/headerListener"] , function(template) {
 			
 			$(".header_left ul li").click(function(){
 
-				//if(("#" + $(this).text()) != location.hash){
 					self.headerListener.currentTab = $(this).text();
 					self.onTabChangeEvent.dispatch();
-				//}
 			});
 			
 			$('a[name=customers]').click(function(){

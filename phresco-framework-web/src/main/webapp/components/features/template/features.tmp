@@ -16,13 +16,13 @@
             {{#if featureslist}}
             <td>
                 <div class="features_box">
-                <h1 data-i18n="features.list.modules"></h1>
+                <h1 data-i18n="features.list.modules"></h1><span class="value_features"> ( <span class="totalModules"></span>&nbsp; of <span class="ftotal"></span> )</span>
                 <input type="text" class="flt_right" data-i18n="[placeholder]features.placeholder" id="module">
                 <div class="clear"></div>
                 <div class="box_div" id="content_1">
                     <ul id="moduleContent">
                     {{#each featureslist}}
-                        <li name="{{name}}" dispName="{{dispName}}" packaging="{{packaging}}" type="{{type}}">
+                        <li name="{{name}}" dispName="{{dispName}}" packaging="{{packaging}}" type="{{type}}">{{#if displayName}}{{displayName}}{{else}}{{name}}{{/if}}
                         <span class="flt_right" ><a class="featureinfo_img" value="{{#idtrime id}}{{/idtrime}}" artifactGroupId="{{id}}" > 
                         <img src="themes/default/images/helios/info_icon.png" width="15" height="16" border="0" alt=""></a></span>
                                 {{#versiondata versions id}}{{/versiondata}}
@@ -38,15 +38,8 @@
                                         <option value="{{id}}" scope="{{scope}}">{{version}}</option>  
                                     {{/each}} 
                                 </select>
-                            </div>
-                             {{#if displayName}}
-                                {{displayName}}
-                            {{else}}
-                                {{name}}
-                            {{/if}}
-                            <div class="clear"></div>
                         </li>
-						
+						<div class="clear"></div>
                   {{/each}}  
 					<li id="norecord1" style="display:none" align="center">No records</li>				  
                     </ul>   
@@ -59,7 +52,7 @@
             {{#if jsibrarielist}}
             <td>
                 <div class="features_box">
-                <h1 data-i18n="features.list.jslibraries"></h1>
+                <h1 data-i18n="features.list.jslibraries"></h1><span class="value_features"> ( <span class="totalJslibraries"></span>&nbsp; of <span class="jstotal"></span> )</span>
                 <input type="text" class="flt_right" data-i18n="[placeholder]features.placeholder" id="jsibraries">
                 <div class="clear"></div>
                 <div class="box_div" id="content_2">
@@ -68,6 +61,7 @@
                         <li name="{{name}}" dispName="{{dispName}}" packaging="{{packaging}}" type="{{type}}">
                         <span class="flt_right" ><a class="featureinfo_img" value="{{#idtrime id}}{{/idtrime}}" artifactGroupId="{{id}}"> 
                         <img src="themes/default/images/helios/info_icon.png" width="15" height="16" border="0" alt=""></a></span>
+                             {{#if displayName}}{{displayName}}{{else}}{{name}}{{/if}}
                                 {{#versiondata versions id}}{{/versiondata}}
 								{{#versionShowHide versions id}}{{/versionShowHide}} 
 								{{#each versions}}
@@ -76,19 +70,15 @@
 									{{/each}}
 								{{/each}}	
 								<input type="hidden" class="moduleId" value="{{id}}">
-                                <select class="input-mini">
-                                    {{#each versions}}										
-                                        <option value="{{id}}" scope="{{scope}}">{{version}}</option>  
-                                    {{/each}} 
-                                </select>
-                            </div>
-                             {{#if displayName}}
-                                {{displayName}}
-                            {{else}}
-                                {{name}}
-                            {{/if}}
-                            <div class="clear"></div>
+                                {{#if versions}}
+									<select class="input-mini">
+										{{#each versions}}										
+											<option value="{{id}}" scope="{{scope}}">{{version}}</option>  
+										{{/each}} 
+									</select>
+								{{/if}}    
                         </li>
+						 <div class="clear"></div>
                   {{/each}}
 					<li id="norecord2" style="display:none" align="center">No records</li>
                     </ul>   
@@ -102,40 +92,35 @@
             {{#if componentList}}
             <td>
                 <div class="features_box">
-                <h1 data-i18n="features.list.components"></h1>
+                <h1 data-i18n="features.list.components"></h1><span class="value_features"> ( <span class="totalComponent"></span>&nbsp; of <span class="comptotal"></span> )</span>
                 <input type="text" class="flt_right" data-i18n="[placeholder]features.placeholder" id="components">
                 <div class="clear"></div>
                 <div class="box_div" id="content_3">
                     <ul id="componentsContent">
                     {{#each componentList}}
-                        <li name="{{name}}" dispName="{{dispName}}" packaging="{{packaging}}" type="{{type}}">
+                        <li name="{{name}}" dispName="{{dispName}}" packaging="{{packaging}}" type="{{type}}">{{#if displayName}}{{displayName}}{{else}}{{name}}{{/if}}
                         <span class="flt_right" ><a class="featureinfo_img" value="{{#idtrime id}}{{/idtrime}}" artifactGroupId="{{id}}"> 
                         <img src="themes/default/images/helios/info_icon.png" width="15" height="16" border="0" alt=""></a></span>
                                 {{#versiondata versions id}}{{/versiondata}}
-								{{#versionShowHide versions id}}{{/versionShowHide}} 
-								{{#each versions}}
-									{{#each appliesTo}}
-										<input type="hidden" defaultModule="true">
+								{{#versionShowHide versions id}}{{/versionShowHide}}
+									{{#each versions}}
+										{{#each appliesTo}}
+											<input type="hidden" defaultModule="true">
+										{{/each}}
 									{{/each}}
-								{{/each}}	
 								<input type="hidden" class="moduleId" value="{{id}}">
-                                <select class="input-mini">
-                                    {{#each versions}}										
-                                        <option value="{{id}}" scope="{{scope}}">{{version}}</option>  
-                                    {{/each}} 
-                                </select>
-                            </div>
-                             {{#if displayName}}
-                                {{displayName}}
-                            {{else}}
-                                {{name}}
-                            {{/if}}
-                            <div class="clear"></div>
+								{{#if versions}}
+									<select class="input-mini">
+										{{#each versions}}										
+											<option value="{{id}}" scope="{{scope}}">{{version}}</option>  
+										{{/each}} 
+									</select>
+								{{/if}}
                         </li>
+						<div class="clear"></div>
                   {{/each}}
 					<li id="norecord3" style="display:none" align="center">No records</li>
                     </ul>   
-                
                 </div>
                 <!--Components div ends here -->
             </div>
@@ -148,14 +133,6 @@
     </section>
 
     <div id="desc"></div>
-    
-    <div id="repgen_info" class="dyn_popup featureinfo">
-        <h1>Description</h1><a href="#" class="dyn_popup_close">X</a>
-        <div class="features_cont">
-        	<span><img src="themes/default/images/helios/feature_info_logo.png" width="42" height="42" border="0" alt=""></span>
-            Cordova provides a set of uniform JavaScript libraries that can be invoked, with device-specific native backing.
-        </div> 
-    </div>
     <section class="content_end">
         <div class="flt_right">
         	{{#if userPermissions.manageApplication}}

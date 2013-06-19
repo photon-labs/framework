@@ -21,9 +21,9 @@ define(["codequality/listener/codequalityListener"], function() {
 		initialize : function(globalConfig){
 			var self = this;
 			
-			if(self.codequalityListener === null)
+			if(self.codequalityListener === null){
 				self.codequalityListener = new Clazz.com.components.codequality.js.listener.CodequalityListener();
-
+			}
 				if(self.dynamicpage === null){
 					commonVariables.navListener.getMyObj(commonVariables.dynamicPage, function(retVal){
 					self.dynamicpage = retVal;
@@ -37,9 +37,9 @@ define(["codequality/listener/codequalityListener"], function() {
 		
 		registerEvents : function() {
 			var self = this;
-			if(self.onProgressEvent === null)
+			if(self.onProgressEvent === null){
 				self.onProgressEvent = new signals.Signal();
-				
+			}	
 			self.readLogEvent = new signals.Signal();
 			self.readLogEvent.add(self.codequalityListener.codeValidate, self.codequalityListener);
 			self.onProgressEvent.add(self.codequalityListener.onPrgoress, self.codequalityListener);
@@ -52,34 +52,6 @@ define(["codequality/listener/codequalityListener"], function() {
 			Clazz.navigationController.push(this);
 		},
 
-			/*preRender: function(whereToRender, renderFunction){
-			var self = this;
-		 var appDirName = self.codequalityListener.codequalityAPI.localVal.getSession('appDirName');
-			var goal = "validate-code";
-			commonVariables.goal = goal;
-			
-			setTimeout(function() {
-				self.codequalityListener.getReportTypes(self.codequalityListener.getRequestHeader(self.appDirName , "reporttypes"), function(response) {
-					var projectlist = {};
-					projectlist.projectlist = response;	
-					self.renderedData = response;
-					if(response.message == "Dependency returned successfully"){
-						self.dynamicpage.getHtml(function(response){
-						console.info('response = ' ,response);
-							$("#dynamicContent").html(response);
-							self.multiselect();
-							self.dynamicpage.showParameters();
-							self.dynamicPageListener.controlEvent();
-						});
-						renderFunction(projectlist, whereToRender);
-					}else{
-						 renderFunction(projectlist, whereToRender); 
-						$('#iframePart').html('');
-						$('#iframePart').append(response.message);
-					}
-				});
-			}, 200);	 
-		}, */
 
 		/***
 		 * Called after the preRender() and bindUI() completes. 
@@ -100,16 +72,22 @@ define(["codequality/listener/codequalityListener"], function() {
 					projectlist.projectlist = response;	
 					self.renderedData = response;
 					self.codequalityListener.constructHtml(self.renderedData);
-					if(response.message == "Dependency returned successfully"){
-						//renderFunction(projectlist, whereToRender);
+					if(response.message === "Dependency returned successfully"){
 					}else{
-						// renderFunction(projectlist, whereToRender); 
 						$('#iframePart').html('');
 						$('#iframePart').append(response.message);
 					}
 				});
 			}, 200);				
 			
+			//To set the height of the test result section  
+			var windowHeight = $(document).height();
+			var marginTop = $('.testSuiteTable').css("margin-top");
+			marginTop = marginTop.substring(0, marginTop.length - 2);
+			var footerHeight = $('#footer').height();
+			var deductionHeight = Number(marginTop) + Number(footerHeight);
+			var finalHeight = windowHeight - deductionHeight - 5;
+			$('.testSuiteTable').height(finalHeight);			
 		},
 
 		/***

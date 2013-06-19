@@ -1,20 +1,20 @@
- <section class="optiontitle" id="codequalityContent">
+ <section class="optiontitle qual_unit" id="codequalityContent">
         <div class="flt_right">
             <div class="code_report">
             	<font data-i18n="codequality.report"></font>
             </div>
-            <div class="navbar navbar-static code_func" id="codereportTypes">
+            <div class="navbar navbar-static code_func" id="codereportTypes" style="width:80px;">
                 <ul class="nav"></ul>
             </div>
            
 				<div class="code_anal">
 					<input type="submit" data-i18n="[value]codequality.codeanalysis.codeanalysis"  id="codeAnalysis" class="btn btn_style">
 						 <form id="codeValidateForm">
-						  <div id="code_popup" class="dyn_popup">
+						  <div id="code_popup" class="dyn_popup popup_btn">
 							<ul>
 									<table><tbody id="dynamicContent"></tbody></table>
 								<li>
-									<div class="flt_left">
+									<div class="flt_right">
 										<input type="button" data-i18n="[value]codequality.btn.validate" class="btn btn_style" name="validate" id="validate">
 										<input type="button" data-i18n="[value]codequality.btn.close" class="btn btn_style dyn_popup_close" name="close">
 									</div>
@@ -27,29 +27,34 @@
         </div>
         <div class="code_report_icon"><a class="tooltiptop" title="" data-placement="bottom" data-toggle="tooltip" href="#" data-original-title="PDF Report"><img src="themes/default/images/helios/code_pdf_icon.png" width="28" height="29" border="0" alt=""></a></div>
     </section>
-	
 
-    <section class="features_content_main z_index">
-    	<div class="build_info" id="content_div">
-        </div>
-        
-            <div class="build_close"><a href="#" data-flag="true" id="codeValidateConsole"><img src="themes/default/images/helios/console_img.png" width="33" height="92" border="0" alt=""></a></div>  
-            <div class="build_progress">
-                <table class="table table-striped table_border table-bordered" cellpadding="0" cellspacing="0" border="0">
-                    <thead>
-                        <tr>
-                            <th>Progress</th>
-                            <td><img src="themes/default/images/helios/buildreport_icon.png" width="15" height="18" border="0" alt=""></td>
-                        </tr>
-                     </thead>
-                     <tbody class="scrollContent">
-                        <tr>
-							<td id="iframePart" colspan="2">
-							</td>
-						</tr>
-                     </tbody>
-                </table>
-            </div>
+
+ <section class="content_main code_content testSuiteTable">
+	<div class="qual_unit_main unit_info" id="testSuites">
+		<div class="widget-maincontent-div" id="content_div" style="padding-left:1%;"></div>
+	</div>
+		<div class="unit_close">
+				<a href="#" data-flag="true" id="codeValidateConsole">
+					<img src="themes/default/images/helios/console_img.png" width="33" height="92" border="0" alt="">
+				</a>
+			</div>
+		<div class="unit_progress">
+			<table class="table table-striped table_border table-bordered" cellpadding="0" cellspacing="0" border="0">
+				<thead>
+					<tr>
+						<th>Progress</th>
+						<td>
+							<img src="themes/default/images/helios/buildreport_icon.png" width="15" height="18" border="0" alt="">
+						</td>
+					</tr>
+				</thead>
+				<tbody class="scrollContent">
+					<tr>
+						<td id="iframePart" colspan="2"></td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
     </section>
 	
     <!--<section class="content_main create_proj code_content">

@@ -28,7 +28,7 @@
                 				<img src="themes/default/images/helios/delete_row_icon_off.png" width="29" height="23" border="0" alt="0">
                 			{{/if}}
 
-                            <div id="{{id}}" class="dyn_popup"> Are you sure to delete this ?
+                            <div id="{{id}}" class="dyn_popup deleteproj_msg"> Are you sure to delete this ?
                                 <div>
                                     <input type="button" value="Yes" class="btn btn_style" name="holeDelete">
                                     <input type="button" value="No" class="btn btn_style dyn_popup_close">
@@ -41,10 +41,11 @@
                         <td><a name="editApplication" href="javascript:;">{{name}}</a></td>
                         <td>{{#if description }} {{description}} {{else}} &nbsp {{/if}}</td>
                         <td>{{techInfo.name}}</td>
-                       <td><a name="pdf_report" fromPage="All" class="tooltiptop" title="" data-placement="top" data-t="tooltip" href="#" data-original-title="PDF Report"><img src="themes/default/images/helios/pdf_icon.png" width="14" height="16" border="0" alt=""></a>
+                       <td><a name="pdf_report" fromPage="All" class="tooltiptop" title="" dynamicId="{{id}}" data-placement="top" data-t="tooltip" href="#" data-original-title="PDF Report"><img src="themes/default/images/helios/pdf_icon.png" width="14" height="16" border="0" alt=""></a>
                   
-              <div id="pdf_report" class="dyn_popup">
-                <table width="100%" border="0" cellspacing="0" cellpadding="5">
+              <div id="pdf_report" class="dyn_popup pdf_report">
+              <div id="noReport" class="noReport"></div>
+                <table class="existing_report" width="100%" border="0" cellspacing="0" cellpadding="5">
                   <thead name="pdfHeader">
                         <tr>
                             <th>Existing Reports</th>
@@ -73,8 +74,15 @@
                                 </select>
                             </td>
                         </tr>
+                         <tr>
+                            <td>Pdf Report Name</td>
+                            <td>
+                               <input type="text" placeholder="Pdf report name" name="pdfName">
+                            </td>
+                        </tr>
                     </tbody>
                    </table>
+                   <div class="popuploading" id="pdfReportLoading_{{id}}">&nbsp</div>
                 <div class="flt_right">
                  <input type="button" fromPage="All" sonarUrl="http://localhost:9000/dashboard" value="Generate" class="btn btn_style" name="generate" appId="{{id}}" projectId = "{{../id}}">
                  <input type="button" value="Close" class="btn btn_style dyn_popup_close">
@@ -97,7 +105,7 @@
                         {{/if}}
                         
                         {{#if ../../userPermissions.manageRepo}}
-                        	<a name="svn_update{{id}}" dynamicId="{{id}}" class="tooltiptop" title="" data-placement="top" data-toggle="tooltip" href="#" data-original-title="SVN Update" >
+                        	<a name="svn_update{{id}}" dynamicId="{{id}}" class="tooltiptop" title="" data-placement="top" data-toggle="tooltip" href="#" data-original-title="Update" >
                         		<img src="themes/default/images/helios/update_svn_icon.png" width="22" height="15" border="0" alt="">
                     		</a>
               			{{else}}
@@ -135,21 +143,21 @@
                             </tr>
                             <tr>
                                 <td colspan="2">
-                                    <textarea placeholder="Message" id="repomessage_{{id}}"></textarea>
+                                    <textarea class="popuptextarea" placeholder="Message" id="repomessage_{{id}}"></textarea>
                                 </td>
                             </tr>
                         </tbody>
                      </table> 
-                     <!--add_repo div ends here --> 
+                     <div class="popuploading" id="addRepoLoading_{{id}}">&nbsp</div>
                      <div class="flt_right" appId="{{id}}" projectId = "{{../id}}" appDirName="{{appDirName}}">
-						<div class="popuploading">&nbsp</div>
                         <input type="button" name="addrepobtn" id="{{id}}" value="Add To Repo" class="btn btn_style">
-                        <input type="button" value="Cancel" class="btn btn_style dyn_popup_close">
+                        <input type="button" value="Close" class="btn btn_style dyn_popup_close">
                      </div> 
                   </div>
+                  <!--add_repo div ends here --> 
                   
                   <div id="commit{{id}}" class="commit dyn_popup popup_bg">
-                      <div class="commit_data_{{id}}">
+                      <div class="hideContent commit_data_{{id}}">
                             <table  class="commitable_files_{{id}}" width="100%" border="0" cellspacing="0" cellpadding="5">
                                   
                             </table>   
@@ -184,7 +192,7 @@
                                     </tr>
                                     <tr>
                                         <td colspan="2">
-                                            <textarea placeholder="Message" id="commitMessage_{{id}}"></textarea>
+                                            <textarea class="popuptextarea" placeholder="Message" id="commitMessage_{{id}}"></textarea>
                                         </td>
                                     </tr>
                                 </tbody>
@@ -192,17 +200,20 @@
 							 
                          <div class="flt_right roll_data" appDirName="{{appDirName}}">
                           <input type="button" value="Commit" disabled class="btn" id="{{id}}" name="commitbtn">
-                            <input type="button" value="Cancel" class="btn btn_style dyn_popup_close">
+                            <input type="button" value="Close" class="btn btn_style dyn_popup_close">
                          </div>
 					 </div> 
-					<div class="commitErr_{{id}}" width="100%" border="0" cellspacing="0" cellpadding="0">
-						This Project is not a working copy, add to repository and then try to commit.
-						<div >
+				 	<div class="dummyCommit" id="dummyCommit_{{id}}"></div>
+				 	<div class="popuploading" id="commitLoading_{{id}}">&nbsp</div>
+					<div class="hideContent commitErr_{{id}} popup_btn" width="100%" border="0" cellspacing="0" cellpadding="0">
+						<p>This Project is not a working copy, add to repository and then try to commit.</p>
+						<div class="popupCloseBtn">
 							<input type="button" value="Close" class="btn btn_style dyn_popup_close">
-						</div >		
-					 </div>	
-                    <!--commit div ends here -->	
+						</div>		
+					 </div>
                   </div>
+                   <!--commit div ends here -->	
+                   
                   <div id="svn_update{{id}}" class="svn_update dyn_popup popup_bg">
 					<table width="100%" border="0" cellspacing="0" cellpadding="0">
                         <tbody>
@@ -241,9 +252,10 @@
                                     </tr>
                                 </tbody>
                      </table> 
+                     <div class="popuploading" id="updateRepoLoading_{{id}}">&nbsp</div>
                      <div class="flt_right" appDirName="{{appDirName}}">
                          <input type="button" value="Update Application" id="{{id}}" class="btn btn_style" name="updatebtn">
-                         <input type="button" value="Cancel" class="btn btn_style dyn_popup_close">
+                         <input type="button" value="Close" class="btn btn_style dyn_popup_close">
                      </div>               
                     <!--svn_update div ends here -->	
                   </div>
@@ -256,10 +268,10 @@
               		{{else}}
               			<img name="delete" src="themes/default/images/helios/delete_row_off.png" width="14" height="18" border="0" alt="">
               		{{/if}}
-                    <div id="{{creationDate}}" class="dyn_popup ">
+                    <div id="{{creationDate}}" class="dyn_popup delete_msg">
                       Are you sure to delete ?
-                        <div >
-                            <input type="button" value="Yes" class="btn btn_style" name="deleteConfirm">
+                        <div>
+                            <input type="button" value="Yes" class="btn btn_style dlt" name="deleteConfirm">
                             <input type="button" value="No" class="btn btn_style dyn_popup_close">
                         </div>
                     </div>

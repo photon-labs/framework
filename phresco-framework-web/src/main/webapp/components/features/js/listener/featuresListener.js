@@ -8,6 +8,7 @@ define(["features/api/featuresAPI", "features/features",  "application/applicati
 		featuresAPI : null,
 		appinfoContent : null,
 		projectListContent : null,
+		flagged:null,
 
 		/***
 		 * Called in initialization time of this class 
@@ -15,7 +16,7 @@ define(["features/api/featuresAPI", "features/features",  "application/applicati
 		 * @config: configurations for this listener
 		 */
 		initialize : function(config) {
-			self = this;	
+			var self = this;	
 			self.featuresAPI = new Clazz.com.components.features.js.api.FeaturesAPI();
 			this.loadingScreen = new Clazz.com.js.widget.common.Loading();
 		},
@@ -28,8 +29,9 @@ define(["features/api/featuresAPI", "features/features",  "application/applicati
 		},
 
 		search : function (txtSearch, divId){
+			var self = this;
        		var txtSearch = txtSearch.toLowerCase();           		
-			if (txtSearch != "") {
+			if (txtSearch !== "") {
 				$("#"+divId+" li").hide();//To hide all the ul
 				var hasRecord = false;				
 				var i=0;
@@ -40,41 +42,37 @@ define(["features/api/featuresAPI", "features/features",  "application/applicati
 						hasRecord = true;
 						i++;
 					}
-					$("#norecord1").hide();
-					$("#norecord1").hide();
-					$("#norecord3").hide();
+					
 				});
-				if (hasRecord == false) {
-					if(divId == "moduleContent"){
+				if (hasRecord === false) {
+					if(divId === "moduleContent"){
 						$("#norecord1").show();
-					} else if(divId == "jsibrariesContent"){
+					} if(divId === "jsibrariesContent"){
 						$("#norecord2").show();
-					} else if(divId == "componentsContent"){
+					} if(divId === "componentsContent"){
 						$("#norecord3").show();
 					}					
 				} else {
-					if(divId == "moduleContent"){
-						$("#norecord1").hide();
-					} else if(divId == "jsibrariesContent"){
-						$("#norecord2").hide();
-					} else if(divId == "componentsContent"){
-						$("#norecord3").hide();
-					}
+					self.norecordHide(divId);
 				}
 			}
 			else {				
 				$("#"+divId+" li").show();
-				if(divId == "moduleContent"){
-					$("#norecord1").hide();
-				} else if(divId == "jsibrariesContent"){
-					$("#norecord2").hide();
-				} else if(divId == "componentsContent"){
-					$("#norecord3").hide();
-				}
-				
+				self.norecordHide(divId);
 			}
 			self.scrollbarUpdate();
        	},
+	
+		norecordHide : function(divId) {
+			if(divId === "moduleContent"){
+				$("#norecord1").hide();
+				
+			} if(divId === "jsibrariesContent"){
+				$("#norecord2").hide();
+			} if(divId === "componentsContent"){
+				$("#norecord3").hide();
+			}
+		},
 
        	getFeaturesList : function(header, callback) {
 			var self = this;
@@ -130,23 +128,21 @@ define(["features/api/featuresAPI", "features/features",  "application/applicati
 		},
 		
 		scrollbarEnable : function(){
-			$("#content_1").mCustomScrollbar({
-				autoHideScrollbar:true,
-				callbacks:{
-					onScrollStart: function(){
-						$(".dyn_popup").hide();		
-					}
-				},
-				theme:"light-thin",
-				updateOnContentResize: true
-			});
+			var self=this;
+			if(self.flagged === 2) {
+				$("#content_1,#content_2,#content_3").mCustomScrollbar({
+					autoHideScrollbar:true,
+					callbacks:{
+						onScrollStart: function(){
+							$(".dyn_popup").hide();		
+						}
+					},
+					theme:"light-thin",
+					updateOnContentResize: true
+				});
+			}
 			
-			$("#content_2").mCustomScrollbar({
-				autoHideScrollbar:true,
-				theme:"light-thin"
-			});
-			
-			$("#content_3").mCustomScrollbar({
+			$(".features_cont").mCustomScrollbar({
 				autoHideScrollbar:true,
 				theme:"light-thin"
 			});
@@ -154,7 +150,8 @@ define(["features/api/featuresAPI", "features/features",  "application/applicati
 		scrollbarUpdate : function(){
 			$("#content_1").mCustomScrollbar("update"); 
 			$("#content_2").mCustomScrollbar("update"); 
-			$("#content_3").mCustomScrollbar("update"); 
+			$("#content_3").mCustomScrollbar("update");
+			$(".features_cont").mCustomScrollbar("update"); 	
 		},
 
 		hideLoad : function(){
@@ -169,7 +166,7 @@ define(["features/api/featuresAPI", "features/features",  "application/applicati
 		 * @return: returns the contructed header
 		 */
 		getRequestHeader : function(projectRequestBody, type, descid) {
-			var url;
+			var url, self = this;
 			var userId = JSON.parse(self.featuresAPI.localVal.getSession("userInfo"));
 			var appDirName = self.featuresAPI.localVal.getSession("appDirName");
 			var techId = commonVariables.techId;

@@ -103,6 +103,7 @@ public class ActionFunction implements Constants ,FrameworkConstants,ActionServi
 	private String minifyAll = "";
 	private String projectModule = "";
 	private String fromPage = "";
+	private String pdfName = "";
 	private String reportDataType = "";
 	boolean connectionAlive = false;
 	private ServiceManager serviceManager = null;
@@ -247,6 +248,10 @@ public class ActionFunction implements Constants ,FrameworkConstants,ActionServi
 			}
 			else {
 				throw new PhrescoException("No valid FROM_PAGE param Passed");
+			}
+			
+			if( !("".equalsIgnoreCase(request.getParameter(REQ_PDF_NAME))) && (request.getParameter(REQ_PDF_NAME) != null) && !("null".equalsIgnoreCase(request.getParameter(REQ_PDF_NAME))) ) {
+				setPdfName(request.getParameter(REQ_PDF_NAME));	
 			}
 			
 		} catch (Exception e) {
@@ -1330,6 +1335,8 @@ public class ActionFunction implements Constants ,FrameworkConstants,ActionServi
 	            		parameter.setValue(getLogoImageString(username));
 	            	} else if ("theme".equals(key)) {
 	            		parameter.setValue(getThemeColorJson(username));
+	            	} else if (REQ_REPORT_NAME.equals(key)) {
+	            		parameter.setValue(pdfName);
 	            	}
 	            }
 	        }
@@ -2141,6 +2148,14 @@ public class ActionFunction implements Constants ,FrameworkConstants,ActionServi
 
 		public void setReportDataType(String reportDataType) {
 			this.reportDataType = reportDataType;
+		}
+
+		public String getPdfName() {
+			return pdfName;
+		}
+
+		public void setPdfName(String pdfName) {
+			this.pdfName = pdfName;
 		}
 	 
 	 //------------ Will be replaced by reusing the login service coding .

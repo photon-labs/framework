@@ -1712,28 +1712,31 @@ public class FrameworkUtil extends FrameworkBaseAction implements Constants, Fra
     			testSuite.setName(value);
     		}
     	}
+    	float success = 0;
     	if(next.getCell(3)!=null){
     		Cell cell = next.getCell(3);
     		String value=getValue(cell);
     		if(StringUtils.isNotEmpty(value)) {
-	    		float pass=Float.parseFloat(value);
-	    		testSuite.setTests(pass);
+    			success =Float.parseFloat(value);
+	    		testSuite.setTests(success);
     		}
     	}
+    	float failure = 0;
     	if(next.getCell(4)!=null){
     		Cell cell = next.getCell(4);
     		String value=getValue(cell);
     		if(StringUtils.isNotEmpty(value)) {
-	    		float fail=Float.parseFloat(value);
-	    		testSuite.setFailures(fail);
+    			failure = Float.parseFloat(value);
+	    		testSuite.setFailures(failure);
     		}
     	}
+    	float notApplicable = 0;
     	if(next.getCell(5)!=null){
     		Cell cell = next.getCell(5);
     		String value=getValue(cell);
     		if(StringUtils.isNotEmpty(value)) {
-	    		float notApp=Float.parseFloat(value);
-	    		testSuite.setNotApplicable(notApp);
+    			notApplicable = Float.parseFloat(value);
+	    		testSuite.setNotApplicable(notApplicable);
     		}
     	}
     	if(next.getCell(6)!=null){
@@ -1744,19 +1747,21 @@ public class FrameworkUtil extends FrameworkBaseAction implements Constants, Fra
 	    		testSuite.setErrors(notExecuted);
     		}
     	}
+    	float blocked = 0;
     	if(next.getCell(7)!=null){
     		Cell cell = next.getCell(7);
     		String value=getValue(cell);
     		if(StringUtils.isNotEmpty(value)) {
-	    		float blocked=Float.parseFloat(value);
+    			blocked =Float.parseFloat(value);
 	    		testSuite.setBlocked(blocked);
     		}
     	}
+    	float total = 0;
     	if(next.getCell(8)!=null){
     		Cell cell = next.getCell(8);
     		String value=getValue(cell);
     		if(StringUtils.isNotEmpty(value)) {
-	    		float total=Float.parseFloat(value);
+	    		total=Float.parseFloat(value);
 	    		testSuite.setTotal(total);
     		}
     	}
@@ -1768,6 +1773,8 @@ public class FrameworkUtil extends FrameworkBaseAction implements Constants, Fra
 	    		testSuite.setTestCoverage(testCoverage);
     		}
     	}
+    	float notExecuted = total - (success + failure + notApplicable + blocked);
+    	testSuite.setNotExecuted(notExecuted);
     	return testSuite;
 	}
     

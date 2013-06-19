@@ -9,7 +9,8 @@
 	},
 	
 	"navigation" : {
-		"transitionType" : 7,
+		"transitionType" : 13,
+		"cancelTransitionType" : 2,
 		"isNative" : false
 	},
 
@@ -119,8 +120,13 @@
 			"path" : "components/codequality/js"
 		},
 		
+		"editConfigurationTest" : {
+			"moduleName":"configurationTest",
+			"path" : "components/configuration/test/editConfigurationTest"
+		},
+		
 		"codequalityTest" : {
-			"moduleName":"applicationTest",
+			"moduleName":"codequalityTest",
 			"path" : "components/codequality/test/codequalityTest"
 		},
 
@@ -132,6 +138,16 @@
 		"buildTest" : {
 			"moduleName":"buildTest",
 			"path" : "components/build/test/buildTest"
+		},
+		
+		"ci" : {
+			"moduleName":"ci",
+			"path" : "components/ci/js"
+		},
+		
+		"jobTemplateListTest" : {
+			"moduleName":"jobTemplateListTest",
+			"path" : "components/ci/test/jobTemplateListTest"
 		}
 		
 	}

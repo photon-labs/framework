@@ -63,6 +63,7 @@
 				"startdate" : "Start Date",
 				"widget" : "Widget",
 				"technology" : "Technology",
+				"dependency" : "Dependency",
 				"version" : "Version",
 				"description" : "Description",
 				"appcode" : "App Code"
@@ -83,7 +84,8 @@
 			"name" : "Name",
 			"report" : "Report",
 			"repository" : "Repository",
-			"description" : "Description"
+			"description" : "Description",
+			"nodata" : "No Projects Available"
 		}
 	},
 	"configuration" : {

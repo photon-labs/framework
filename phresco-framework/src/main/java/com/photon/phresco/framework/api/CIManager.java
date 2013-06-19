@@ -261,11 +261,11 @@ public interface CIManager {
 	
 	/**
 	 * Update jobTemplate
-	 * @param ciJobTemplate
+	 * @param ciJobTemplate, oldName, projId
 	 * @return boolean
 	 * @throws PhrescoException
 	 */
-	boolean updateJobTemplate(CIJobTemplate ciJobTemplate) throws PhrescoException;
+	boolean updateJobTemplate(CIJobTemplate ciJobTemplate, String oldName, String projId) throws PhrescoException;
 	
 	/**
 	 * Deletes list of job templates
@@ -281,5 +281,5 @@ public interface CIManager {
 	 * @return boolean
 	 * @throws PhrescoException
 	 */
-	boolean deleteJobTemplate(String jobTemplateName) throws PhrescoException;
+	boolean deleteJobTemplate(String jobTemplateName, String projId) throws PhrescoException;
 }

@@ -18,8 +18,9 @@ define(["mavenService/listener/mavenServiceListener"], function() {
 			var self = this;
 			self.mavenServiceEvent = new signals.Signal();
 			
-			if(self.mavenServiceListener === null)
+			if(self.mavenServiceListener === null){
 				self.mavenServiceListener = new Clazz.com.components.mavenService.js.listener.MavenServiceListener();
+			}	
 		},
 
 		/***

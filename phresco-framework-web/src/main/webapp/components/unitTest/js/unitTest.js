@@ -107,7 +107,7 @@ define(["unitTest/listener/unitTestListener", "testResult/listener/testResultLis
 			});
 		},
 		
-		preRender: function(whereToRender, renderFunction){
+		preRender: function(whereToRender, renderFunction) {
 			var self = this;
 			self.unitTestListener.getUnitTestReportOptions(self.unitTestListener.getActionHeader(self.projectRequestBody, "get"), function(response) {
 				var responseData = response.data;
@@ -127,6 +127,14 @@ define(["unitTest/listener/unitTestListener", "testResult/listener/testResultLis
 		bindUI : function() {
 			var self = this;
 			$(".tooltiptop").tooltip();
+
+			self.windowResize();
+			
+			$(".scrollContent").mCustomScrollbar({
+				autoHideScrollbar:true,
+				theme:"light-thin",
+				advanced:{ updateOnContentResize: true}
+			});
 			
 			$("#unitTestBtn").unbind("click");
 			$("#unitTestBtn").click(function() {

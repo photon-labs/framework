@@ -2,7 +2,7 @@ define(["codequality/api/codequalityAPI"], function() {
 
 	Clazz.createPackage("com.components.codequality.js.listener");
 
-	Clazz.com.components.codequality.js.listener.CodequalityListener = Clazz.extend(Clazz.Widget, {
+	Clazz.com.components.codequality.js.listener.CodequalityListener = Clazz.extend(Clazz.WidgetWithTemplate, {
 		
 		basePlaceholder :  window.commonVariables.basePlaceholder,
 		codequalityAPI : null,
@@ -15,9 +15,9 @@ define(["codequality/api/codequalityAPI"], function() {
 		 */
 		initialize : function(config) {
 			var self = this;
-			if(self.codequalityAPI === null)
+			if(self.codequalityAPI === null){
 				self.codequalityAPI = new Clazz.com.components.codequality.js.api.CodeQualityAPI();
-
+			}
 			if(self.mavenServiceListener === null)	{
 				commonVariables.navListener.getMyObj(commonVariables.mavenService, function(retVal){
 					self.mavenServiceListener = retVal;
@@ -35,91 +35,45 @@ define(["codequality/api/codequalityAPI"], function() {
 			customerId = appdetails.data.customerIds[0];
 			username = self.codequalityAPI.localVal.getSession('username');
 						
-			if(appdetails != null){
+			if(appdetails !== null){
 				queryString ="username="+username+"&appId="+appId+"&customerId="+customerId+"&goal=validate-code&phase=validate-code&projectId="+projectId+"&"+ipjson;
 			}
 			$('#iframePart').html('');
-			$('#content_div').html('Sonar Report will appear here');
-			var value1 = $('.build_progress').width();
-			$('.build_info').animate({width: window.innerWidth/1.6},500);
-			$('.build_progress').animate({right: '10px'},500);
-			$('.build_close').animate({right: value1+10},500);
-			$(window).resize();
-
-				
+			//$('#content_div').html('Sonar Report will appear here');
+			self.openConsole();//To open the console
+			
+						
 			if(self.mavenServiceListener === null)	{
 				commonVariables.navListener.getMyObj(commonVariables.mavenService, function(retVal){
 					self.mavenServiceListener = retVal;
-					
 					self.mavenServiceListener.mvnCodeValidation(queryString, '#iframePart', function(returnVal){
-						callback(returnVal);
-						var validateAgainst = $("#sonar").val();
+						var validateAgainst = $("#src").find(':selected').val();
 						self.getIframeReport(validateAgainst);
 					});
 				});
 			}else{
 				self.mavenServiceListener.mvnCodeValidation(queryString, '#iframePart', function(returnVal){
-					var validateAgainst = $("#sonar").val();
+					var validateAgainst = $("#src").find(':selected').val();
 					self.getIframeReport(validateAgainst);
 				});
 			}			
-			/*header.requestMethod ="POST";
-			header.webserviceurl = commonVariables.webserviceurl+"app/codeValidate?username="+username+"&appId="+appId+"&customerId="+customerId+"&goal=validate-code&phase=validate-code&projectId="+projectId+"&"+inputData;
 			
-			 self.codequalityAPI.codequality(self.getRequestHeader(ipjson , "validate-code"), function(response) {
-				$('#iframePart').html('');
-				$('#iframePart').append(response.log);
-				$('#iframePart').append("<br>") ;
-				if(response.status == "STARTED"){
-					self.readLog(response);
-				}			
-				else if(response.status == 'ERROR'){
-					$('#iframePart').append(response.service_exception) ;
-				}
-			}); */
 		},
-		
+
 
 		onPrgoress : function(clicked) {
+			var self = this;
 			var check = $(clicked).attr('data-flag');
-			var value = $('.build_info').width();
-			var value1 = $('.build_progress').width();
-			if(check == "true") {
-				$('.build_info').animate({width: '97%'},500);
-				$('.build_progress').animate({right: -value1},500);
-				$('.build_close').animate({right: '0px'},500);
+			if(check === "true") {
+				self.openConsole();
 				$(clicked).attr('data-flag','false');
 			} else {
-				$('.build_info').animate({width: window.innerWidth/1.6},500);
-				$('.build_progress').animate({right: '10px'},500);
-				$('.build_close').animate({right: value1+10},500);
+				self.closeConsole();
 				$(clicked).attr('data-flag','true');
 				$(window).resize();
 			}
 		},
 		
-		/* readLog : function(resDatt){
-			var self = this;
-			self.codequalityAPI.codequality(self.getRequestHeader(resDatt , "readlog"), function(response) {
-				var logStr = response.log;
-				var logColor = "black";
-				if(logStr.match("ERROR")){
-					logColor = "red";
-				}else if(logStr.match("WARNING")){
-					logColor = "yellow";
-				}
-				
-				$('#iframePart').append("<font style=color:"+logColor+">"+response.log+"</font>") ;
-				$('#iframePart').append("<br>");
-				if(response.status == 'INPROGRESS'){
-					self.readLog(resDatt);
-				}else if(response.status == 'COMPLETED'){
-					var validateAgainst = $("#sonar").val();
-					self.getIframeReport(validateAgainst);
-				}
-			});
-		},
-		 */
 		getRequestHeader : function(inputData, action) {
 			var self=this, header, username, appId, customerId, projectId;
 			var customerId = self.getCustomer();
@@ -131,31 +85,28 @@ define(["codequality/api/codequalityAPI"], function() {
 				dataType: "json",
 				webserviceurl: '',
 				data: ''
-			}
-			if(action == "validate-code"){
+			};
+			if(action === "validate-code"){
 				var appdetails = self.codequalityAPI.localVal.getJson('appdetails');
 				appId = appdetails.data.appInfos[0].id;
 				projectId = appdetails.data.id;
-				//customerId = appdetails.data.customerIds[0];
 				username = self.codequalityAPI.localVal.getSession('username');
 				
 				header.requestMethod ="POST";
 				header.webserviceurl = commonVariables.webserviceurl+"app/codeValidate?username="+username+"&appId="+appId+"&customerId="+customerId+"&goal=validate-code&phase=validate-code&projectId="+projectId+"&"+inputData;
 			}
-			if(action == "readlog"){
+			if(action === "readlog"){
 				var uniquekey = inputData.uniquekey;
 				header.webserviceurl = commonVariables.webserviceurl+"app/readlog?uniquekey="+uniquekey;
 			}
 			
-			if(action == "reporttypes"){
+			if(action === "reporttypes"){
 				var appDirName = this.codequalityAPI.localVal.getSession('appDirName');
-				console.info('appDirName = ' , appDirName);
 				header.webserviceurl = commonVariables.webserviceurl+"parameter/codeValidationReportTypes?appDirName="+appDirName+"&goal=validate-code";
 			}
 			
-			if(action == "iframereport"){
+			if(action === "iframereport"){
 				var appDirName = this.codequalityAPI.localVal.getSession('appDirName');
-				//console.info('appDirName = ' , appDirName + 'inputData = '  + inputData);
 				username = self.codequalityAPI.localVal.getSession('username');
 				header.webserviceurl = commonVariables.webserviceurl+"parameter/iFrameReport?appDirName="+appDirName+"&validateAgainst="+inputData+"&customerId="+customerId+"&userId="+username;
 			}
@@ -165,6 +116,7 @@ define(["codequality/api/codequalityAPI"], function() {
 				
 		getReportTypes : function(header, callback) {
 			var self = this;
+			self.closeConsole();
 			try {
 				commonVariables.loadingScreen.showLoading();
 				self.codequalityAPI.codequality(header,
@@ -195,23 +147,28 @@ define(["codequality/api/codequalityAPI"], function() {
 
 		constructHtml : function(response){
 			var self = this;
-			if(response.message == "Dependency returned successfully"){
+			if(response.message === "Dependency returned successfully"){
 				var typeLi = '';
+				var validateAgainst = response.data[0].validateAgainst.key;
+				var repTypesData = response.data[0].validateAgainst.value;
 				$.each(response.data, function(index, resdata) {
 					var innerUl = '';
-					if(resdata.options == null){
-						typeLi += "<li name='selectType' key="+resdata.validateAgainst.key+" data="+resdata.validateAgainst.value+">"+resdata.validateAgainst.value+"</li>";
+					if(resdata.options === null){
+						typeLi += "<li name='selectType' key="+resdata.validateAgainst.key+" data="+resdata.validateAgainst.value+" style='padding-left:8px;cursor:pointer;'>"+resdata.validateAgainst.value+"</li>";
 					}else{
+						validateAgainst = resdata.options[0].key;
+						 repTypesData = resdata.options[0].value;
 						$.each(resdata.options, function(index, optvalue) {
-							innerUl += "<li name='selectType' key="+resdata.validateAgainst.key+" data="+resdata.validateAgainst.value+">"+optvalue.value+"</li>";
+							innerUl += "<li name='selectType' key="+optvalue.key+" data="+optvalue.value+" style='padding-left:8px;cursor:pointer;'>"+optvalue.value+"</li>";
 						});
-						typeLi += "<li disabled='disabled' key="+resdata.validateAgainst.key+" data="+resdata.validateAgainst.value+">"+resdata.validateAgainst.value+'<ul>'+innerUl+"</ul></li>";
+						typeLi += "<li disabled='disabled' key="+resdata.validateAgainst.key+" data="+resdata.validateAgainst.value+" style='padding-left:4px;'>"+resdata.validateAgainst.value+'<ul>'+innerUl+"</ul></li>";
 					}
 				});
-				var dropdownLi = '<ul class="nav"><li id="fat-menu" class="dropdown"><a href="#" id="drop5" role="button" class="dropdown-toggle" data-toggle="dropdown"><b id="repTypes" >'+response.data[0].validateAgainst.value+'</b><b class="caret"></b></a> <div class="dropdown-menu cust_sel code_test_opt" role="menu" aria-labelledby="drop5"> <ul id="reportUl">'+typeLi+'</ul></div></li></ul>';
+				var dropdownLi = '<ul class="nav"><li id="fat-menu" class="dropdown"><a href="#" id="drop5" role="button" class="dropdown-toggle" data-toggle="dropdown"><b id="repTypes" >'+repTypesData+'</b><b class="caret"></b></a> <div class="dropdown-menu cust_sel code_test_opt" role="menu" aria-labelledby="drop5"> <ul id="reportUl">'+typeLi+'</ul></div></li></ul>';
 				$("#codereportTypes").append(dropdownLi);
+
 				self.onProjects();
-				self.getIframeReport(response.data[0].validateAgainst.key);
+				self.getIframeReport(validateAgainst);
 			}else {
 				$('#iframePart').html('');
 				$('#iframePart').append(response.log);			
@@ -229,16 +186,13 @@ define(["codequality/api/codequalityAPI"], function() {
 		
 		getIframeReport : function(validateAgainst){
 			var self = this;
-			$('#content_div').html('Sonar Report will appear here');
+			//$('#content_div').html('Sonar Report will appear here');
+			self.closeConsole();
 			try {
 				self.codequalityAPI.codequality(self.getRequestHeader(validateAgainst , "iframereport"), 
 					function(iframereport) {
-						if(iframereport.data != null){
-						var value1 = $('.build_progress').width();
-							$('.build_info').animate({width: '97%'},500);
-							$('.build_progress').animate({right: -value1},500);
-							$('.build_close').animate({right: '0px'},500);
-							var iframedata = "<iframe src="+iframereport.data+" width=98% height=100%></iframe>";
+						if(iframereport.data !== null){
+							var iframedata = "<iframe src="+iframereport.data+" style=width:96%;height:450px;></iframe>";
 							$('#content_div').html(iframedata);
 						}else{
 							$('#content_div').html(iframereport.message);
@@ -250,24 +204,9 @@ define(["codequality/api/codequalityAPI"], function() {
 					}
 				);
 			} catch(exception) {
-				//console.info('exception = ' , exception);
-				$('#content_div').html('tres');
+				$('#content_div').html(exception);
 			}	
 		},
-		
-					
-			getCustomer : function() {
-				var selectedcustomer = $("#selectedCustomer").text();
-				var customerId = "";
-				$.each($("#customer").children(), function(index, value){
-					var customerText = $(value).children().text();
-					if(customerText === selectedcustomer){
-						customerId = $(value).children().attr('id');
-					}
-				});
-				
-				return customerId;
-			},
 		
 	});
 

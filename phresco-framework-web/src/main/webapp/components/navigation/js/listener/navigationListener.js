@@ -2,7 +2,7 @@ define(["navigation/api/navigationAPI"], function() {
 
 	Clazz.createPackage("com.components.navigation.js.listener");
 
-	Clazz.com.components.navigation.js.listener.navigationListener = Clazz.extend(Clazz.Widget, {
+	Clazz.com.components.navigation.js.listener.navigationListener = Clazz.extend(Clazz.WidgetWithTemplate, {
 		navAPI : null,
 		localStorageAPI : null,
 		header : null,
@@ -35,8 +35,9 @@ define(["navigation/api/navigationAPI"], function() {
 		initialize : function(config) {
 			var self = this;
 			
-			if(self.navAPI == null)
+			if(self.navAPI === null){
 				self.navAPI = new Clazz.com.components.navigation.js.api.navigationAPI();
+			}	
 		},
 		
 		onAddProject : function() {
@@ -50,11 +51,11 @@ define(["navigation/api/navigationAPI"], function() {
 		landingPage : function(currentContent){
 			var self = this;
 			self.renderHeader(function(retVal){
-				if(currentContent == undefined || currentContent == null){
+				if(currentContent === undefined || currentContent === null){
 					self.renderContent(function(retVal){
 						self.renderFooter(function(retVal){});
 					});
-				} else if(currentContent != undefined && currentContent != null && currentContent != "") {
+				} else if(currentContent !== undefined && currentContent !== null && currentContent !== "") {
 					self.dynamicContent(currentContent, function(retVal){
 						self.renderFooter(function(retVal){});
 					});
@@ -326,7 +327,6 @@ define(["navigation/api/navigationAPI"], function() {
 					
 						break;
 				}
-			//return retuenObj;
 		},
 
 		//To show/hide controls based on the component 
@@ -370,52 +370,52 @@ define(["navigation/api/navigationAPI"], function() {
 		showHideTechOptions : function() {
 			var self = this;
 			var applicableOptions = JSON.parse(self.navAPI.localVal.getSession('applicableOptions'));
-			if (jQuery.inArray(commonVariables.optionsCode, applicableOptions) == -1) {
+			if (jQuery.inArray(commonVariables.optionsCode, applicableOptions) === -1) {
 				$("#codequality").hide();
 			} else {
 				$("#codequality").show();
 			}
-			if (jQuery.inArray(commonVariables.optionsReports, applicableOptions) == -1) {
+			if (jQuery.inArray(commonVariables.optionsReports, applicableOptions) === -1) {
 				$("#mavenReport").hide();
 			} else {
 				$("#mavenReport").show();
 			}
-			if (jQuery.inArray(commonVariables.optionsUnitTest, applicableOptions) == -1) {
+			if (jQuery.inArray(commonVariables.optionsUnitTest, applicableOptions) === -1) {
 				$("#unitTest").hide();
 			} else {
 				$("#unitTest").show();
 			}
-			if (jQuery.inArray(commonVariables.optionsComponentTest, applicableOptions) == -1) {
+			if (jQuery.inArray(commonVariables.optionsComponentTest, applicableOptions) === -1) {
 				$("#componentTest").hide();
 			} else {
 				$("#componentTest").show();
 			}
-			if (jQuery.inArray(commonVariables.optionsFunctionalTest, applicableOptions) == -1) {
+			if (jQuery.inArray(commonVariables.optionsFunctionalTest, applicableOptions) === -1) {
 				$("#functionalTest").hide();
 			} else {
 				$("#functionalTest").show();
 			}
-			if (jQuery.inArray(commonVariables.optionsPerformanceTest, applicableOptions) == -1) {
+			if (jQuery.inArray(commonVariables.optionsPerformanceTest, applicableOptions) === -1) {
 				$("#performanceTest").hide();
 			} else {
 				$("#performanceTest").show();
 			}
-			if (jQuery.inArray(commonVariables.optionsLoadTest, applicableOptions) == -1) {
+			if (jQuery.inArray(commonVariables.optionsLoadTest, applicableOptions) === -1) {
 				$("#loadTest").hide();
 			} else {
 				$("#loadTest").show();
 			}
-			if (jQuery.inArray(commonVariables.optionsManualTest, applicableOptions) == -1) {
+			if (jQuery.inArray(commonVariables.optionsManualTest, applicableOptions) === -1) {
 				$("#manualTest").hide();
 			} else {
 				$("#manualTest").show();
 			}
-			if (jQuery.inArray(commonVariables.optionsCI, applicableOptions) == -1) {
+			if (jQuery.inArray(commonVariables.optionsCI, applicableOptions) === -1) {
 				$("#continuousDeliveryView").hide();
 			} else {
 				$("#continuousDeliveryView").show();
 			}
-			if (jQuery.inArray(commonVariables.optionsRunAgainstSrc, applicableOptions) == -1) {
+			if (jQuery.inArray(commonVariables.optionsRunAgainstSrc, applicableOptions) === -1) {
 				$("input[name=build_runagsource]").hide();
 				$("#stop").hide();
 				$("#restart").hide();
@@ -424,52 +424,52 @@ define(["navigation/api/navigationAPI"], function() {
 				$("#stop").show();
 				$("#restart").show();
 			}
-			if (jQuery.inArray(commonVariables.optionsMinification, applicableOptions) == -1) {
+			if (jQuery.inArray(commonVariables.optionsMinification, applicableOptions) === -1) {
 				$("#minifier").hide();
 			} else {
 				$("#minifier").show();
 			}
-			if (jQuery.inArray(commonVariables.optionsBuild, applicableOptions) == -1) {
+			if (jQuery.inArray(commonVariables.optionsBuild, applicableOptions) === -1) {
 
 			} else {
 				
 			}
-			if (jQuery.inArray(commonVariables.optionsDeploy, applicableOptions) == -1) {
+			if (jQuery.inArray(commonVariables.optionsDeploy, applicableOptions) === -1) {
 
 			} else {
 				
 			}
-			if (jQuery.inArray(commonVariables.optionsExeDownload, applicableOptions) == -1) { 
+			if (jQuery.inArray(commonVariables.optionsExeDownload, applicableOptions) === -1) { 
 
 			} else {
 				
 			}
-			if (jQuery.inArray(commonVariables.optionsFeatureConfig, applicableOptions) == -1) {
+			if (jQuery.inArray(commonVariables.optionsFeatureConfig, applicableOptions) === -1) {
 
 			} else {
 				
 			}
-			if (jQuery.inArray(commonVariables.optionsComponentConfig, applicableOptions) == -1) {
+			if (jQuery.inArray(commonVariables.optionsComponentConfig, applicableOptions) === -1) {
 
 			} else {
 				
 			}
-			if (jQuery.inArray(commonVariables.optionsProcessBuild, applicableOptions) == -1) {
+			if (jQuery.inArray(commonVariables.optionsProcessBuild, applicableOptions) === -1) {
 
 			} else {
 				
 			}
-			if (jQuery.inArray(commonVariables.optionsRemoteDeployment, applicableOptions) == -1) {
+			if (jQuery.inArray(commonVariables.optionsRemoteDeployment, applicableOptions) === -1) {
 
 			} else {
 				
 			}
-			if (jQuery.inArray(commonVariables.optionsEmbedApplication, applicableOptions) == -1) {
+			if (jQuery.inArray(commonVariables.optionsEmbedApplication, applicableOptions) === -1) {
 
 			} else {
 				
 			}
-			if (jQuery.inArray(commonVariables.optionsThemeBuilder, applicableOptions) == -1) {
+			if (jQuery.inArray(commonVariables.optionsThemeBuilder, applicableOptions) === -1) {
 
 			} else {
 				
@@ -592,7 +592,7 @@ define(["navigation/api/navigationAPI"], function() {
 		
 		myTabRenderFunction : function(currentObj, keyword) {
 			var self = this;
-			if(currentObj != undefined && currentObj != null){
+			if(currentObj !== undefined && currentObj !== null){
 				self.currentTab = keyword;
 				Clazz.navigationController.jQueryContainer = commonVariables.contentPlaceholder;
 				Clazz.navigationController.push(currentObj, true);
@@ -613,17 +613,20 @@ define(["navigation/api/navigationAPI"], function() {
 				contentType: "application/json",				
 				dataType: "json",
 				webserviceurl: ''
-			}
-			if (action == "openFolder") {
+			};
+			if (action === "openFolder") {
 				header.requestMethod = "GET";
 				header.webserviceurl = commonVariables.webserviceurl + commonVariables.openFolderContext + "?type=" + type + "&appDirName=" + appDirName;				
-			} else if (action == "copyPath") {
+			} else if (action === "copyPath") {
 				header.requestMethod = "GET";
 				header.webserviceurl = commonVariables.webserviceurl + commonVariables.copyPathContext + "?type=" + type + "&appDirName=" + appDirName;
-			} else if(action == "importpost") {
-				header.requestMethod = "POST";				
-				header.requestPostBody = JSON.stringify(requestBody);		
-				header.webserviceurl = commonVariables.webserviceurl + "repository/importApplication";				
+			} else if(action === "importpost") {
+				header.requestMethod = "POST";
+				header.requestPostBody = JSON.stringify(requestBody);
+				header.webserviceurl = commonVariables.webserviceurl + "repository/importApplication";
+			} else if (action === "copyToClipboard") {
+				header.requestMethod = "GET";
+				header.webserviceurl = commonVariables.webserviceurl + commonVariables.copyToClipboardContext + "?log=" + requestBody.log;
 			}
 			return header;
 		},
@@ -635,7 +638,7 @@ define(["navigation/api/navigationAPI"], function() {
 				self.navAPI.donavigation(header,
 					function(response) {
 						commonVariables.loadingScreen.removeLoading();
-						if (response != null ) {
+						if (response !== null ) {
 							callback(response);						
 						} else {
 							callback({ "status" : "service failure"});
@@ -654,25 +657,25 @@ define(["navigation/api/navigationAPI"], function() {
 			$("#importRepourl").removeClass("errormessage");
 			var error = false;
 			
-			if(importRepourl == "") {
+			if(importRepourl === "") {
 				error = true;
 				self.validateTextBox($("#importRepourl"), 'Enter Repourl');
 			}
 			
-			if ('svn' == importType && !error) {
+			if ('svn' === importType && !error) {
 				$("#importUserName").removeClass("errormessage");
 				$("#importPassword").removeClass("errormessage");
 				$("#revision").removeClass("errormessage");
 				var userName = $("#importUserName").val().replace(/\s/g, '');
 				var pswd = $("#importPassword").val();
 				var revision = $("input[name='headoption']:checked").val();
-				if (userName == "") {
+				if (userName === "") {
 					error = true;
 					self.validateTextBox($("#importUserName"), 'Enter user name');
-				} else if (pswd == "") {
+				} else if (pswd === "") {
 					error = true;
 					self.validateTextBox($("#importPassword"), 'Enter password');
-				} else if (revision == "revision" && $('#revision').val() == "") {
+				} else if (revision === "revision" && $('#revision').val() === "") {
 					error = true;
 					self.validateTextBox($("#revision"), 'Enter revision');
 				} else if ($(".testCheckout").is(":checked")) {
@@ -684,16 +687,16 @@ define(["navigation/api/navigationAPI"], function() {
 					var testImportUserName = $("#testImportUserName").val().replace(/\s/g, '');
 					var testImportPassword = $("#testImportPassword").val();
 					var testRevision = $("input[name='testHeadOption']:checked").val();
-					if(testRepoUrl == "") {
+					if(testRepoUrl === "") {
 						error = true;
 						self.validateTextBox($("#testRepoUrl"), 'Enter Test Repourl');
-					} else if (testImportUserName == "") {
+					} else if (testImportUserName === "") {
 						error = true;
 						self.validateTextBox($("#testImportUserName"), 'Enter user name');
-					} else if (testImportPassword == "") {
+					} else if (testImportPassword === "") {
 						error = true;
 						self.validateTextBox($("#testImportPassword"), 'Enter password');
-					} else if (testRevision == "revision" && $('#testRevision').val() == "") {
+					} else if (testRevision === "revision" && $('#testRevision').val() === "") {
 						error = true;
 						self.validateTextBox($("#testRevision"), 'Enter revision');
 					} 
@@ -733,7 +736,7 @@ define(["navigation/api/navigationAPI"], function() {
 			importdata.password = $("#importPassword").val();
 			importdata.revision = revision;
 			
-			if ('svn' == importdata.type && $(".testCheckout").is(":checked")) {
+			if ('svn' === importdata.type && $(".testCheckout").is(":checked")) {
 				importdata.testCheckOut = true;
 				importdata.testRepoUrl = $("#testRepoUrl").val();
 				importdata.testUserName = $("#testImportUserName").val();
@@ -746,7 +749,7 @@ define(["navigation/api/navigationAPI"], function() {
 			actionBody = importdata;
 			action = "importpost";
 			self.navigationAction(self.getActionHeader(actionBody, action), function(response){
-				if (response.exception == null) {
+				if (response.exception === null) {
 					$("#project_list_import").hide();	
 					self.getMyObj(commonVariables.projectlist, function(returnVal){
 						self.projectlist = returnVal;
@@ -754,7 +757,16 @@ define(["navigation/api/navigationAPI"], function() {
 					});
 				}
 			});
-		}	
+		},
+		
+		//To copy the console log content to the clip-board
+		copyToClipboard : function(consoleObj) {
+			var self = this;
+			var logContent = consoleObj.text();
+			var data = {};
+			data.log = escape(logContent);
+			self.navigationAction(self.getActionHeader(data, "copyToClipboard"), function(response) {});
+		}
 	});
 
 	return Clazz.com.components.navigation.js.listener.navigationListener;

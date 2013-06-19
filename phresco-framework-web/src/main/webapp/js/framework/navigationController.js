@@ -81,21 +81,21 @@ define(["framework/base", "framework/animationProvider"], function() {
 					this.pushAnimationTypeForGoingOut = Clazz.ANIMATION_TYPE.FADE_OUT_QUICK;
 					this.popAnimationTypeForGoingOut = Clazz.ANIMATION_TYPE.FADE_OUT_QUICK;
 				
-				} else if(transitionType == Clazz.NAVIGATION_ANIMATION.WEBKIT_TRANSITION_RIGHT_LEFT) {
+				} else if(transitionType === Clazz.NAVIGATION_ANIMATION.WEBKIT_TRANSITION_RIGHT_LEFT) {
 					this.pushAnimationTypeForGoingIn = Clazz.ANIMATION_TYPE.WEBKIT_TRANSITION_LEFT;
 					this.pushAnimationTypeForGoingOut = Clazz.ANIMATION_TYPE.WEBKIT_TRANSITION_RIGHT;
 					
 					this.popAnimationTypeForGoingIn = Clazz.ANIMATION_TYPE.WEBKIT_TRANSITION_LEFT;
 					this.popAnimationTypeForGoingOut = Clazz.ANIMATION_TYPE.WEBKIT_TRANSITION_RIGHT;
 				
-				} else if(transitionType == Clazz.NAVIGATION_ANIMATION.WEBKIT_TRANSITION_LEFT_RIGHT) {
+				} else if(transitionType === Clazz.NAVIGATION_ANIMATION.WEBKIT_TRANSITION_LEFT_RIGHT) {
 					this.pushAnimationTypeForGoingIn = Clazz.ANIMATION_TYPE.WEBKIT_TRANSITION_RIGHT;
 					this.pushAnimationTypeForGoingOut =  Clazz.ANIMATION_TYPE.WEBKIT_TRANSITION_LEFT;
 					
 					this.popAnimationTypeForGoingIn = Clazz.ANIMATION_TYPE.WEBKIT_TRANSITION_RIGHT;
 					this.popAnimationTypeForGoingOut = Clazz.ANIMATION_TYPE.WEBKIT_TRANSITION_LEFT;
 				
-				} else if(transitionType == Clazz.NAVIGATION_ANIMATION.WEBKIT_TRANSITION_FLIP_IN_OUT) {
+				} else if(transitionType === Clazz.NAVIGATION_ANIMATION.WEBKIT_TRANSITION_FLIP_IN_OUT) {
 					this.pushAnimationTypeForGoingIn = Clazz.ANIMATION_TYPE.WEBKIT_TRANSITION_FLIP_IN;
 					this.pushAnimationTypeForGoingOut = Clazz.ANIMATION_TYPE.WEBKIT_TRANSITION_FLIP_OUT;
 					
@@ -105,7 +105,7 @@ define(["framework/base", "framework/animationProvider"], function() {
 				} 
 				
 				
-				else if(transitionType == Clazz.NAVIGATION_ANIMATION.WEBKIT_TRANSITION_FADE_IN_FLIP_OUT) {
+				else if(transitionType === Clazz.NAVIGATION_ANIMATION.WEBKIT_TRANSITION_FADE_IN_FLIP_OUT) {
 					this.pushAnimationTypeForGoingIn = Clazz.ANIMATION_TYPE.FADE_IN;
 					this.pushAnimationTypeForGoingOut = Clazz.ANIMATION_TYPE.WEBKIT_TRANSITION_FLIP_OUT;
 					
@@ -115,7 +115,7 @@ define(["framework/base", "framework/animationProvider"], function() {
 				} 
 				
 				
-				else if(transitionType == Clazz.NAVIGATION_ANIMATION.WEBKIT_TRANSITION_SLIDEDOWN_IN_OUT) {
+				else if(transitionType === Clazz.NAVIGATION_ANIMATION.WEBKIT_TRANSITION_SLIDEDOWN_IN_OUT) {
 					this.pushAnimationTypeForGoingIn = Clazz.ANIMATION_TYPE.WEBKIT_TRANSITION_SLIDEDOWN_IN;
 					this.pushAnimationTypeForGoingOut = Clazz.ANIMATION_TYPE.WEBKIT_TRANSITION_SLIDEDOWN_OUT;
 					
@@ -201,12 +201,12 @@ define(["framework/base", "framework/animationProvider"], function() {
 								container.css("z-index", 4);
 								self.removeClasses(container, function(callback){
 								
-									if(animationtype != undefined && animationtype != null && animationtype == true){
+									if(animationtype !== undefined && animationtype !== null && animationtype === true){
 										self.setAnimation(self.transitionType);
 									}
 									//remove old content if exist
 									$.each($(commonVariables.contentPlaceholder).find('.widget-maincontent-div'), function(index, current){
-										if($(current).attr('active') == "false"){
+										if($(current).attr('active') === "false"){
 											$(current).remove();
 										}
 									});
@@ -226,13 +226,15 @@ define(["framework/base", "framework/animationProvider"], function() {
 						self.stack.push(data);
 						self.currentIndex = self.stack.length - 1;
 						self.indexMapping[name] = self.stack.length - 1;
-						history.pushState({}, name, name);
+						if (history.pushState !== undefined) {
+							history.pushState({}, name, name);
+						}
 					}
 				};
 				
 				if(bCheck && self.stack.length > 0){
 				
-					if(animationtype != undefined && animationtype != null && animationtype == true){
+					if(animationtype !== undefined && animationtype !== null && animationtype === true){
 						self.setAnimation(self.cancelTransitionType);
 					}
 

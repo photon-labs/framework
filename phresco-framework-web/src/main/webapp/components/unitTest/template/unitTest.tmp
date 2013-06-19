@@ -4,6 +4,55 @@
 	</div>
     <div class="flt_right">
 		<div class="unit_view hideContent">
+			<div class="code_report_icon" id="pdfDiv">
+				<a id="pdfIcon" class="tooltiptop" title="" data-placement="bottom" data-toggle="tooltip" href="#" data-original-title="PDF Report">
+					<img src="themes/default/images/helios/code_pdf_icon.png" width="28" height="29" border="0" alt="">
+				</a>
+				<!--Pdf report popup starts here -->
+				<div id="pdf_report" class="dyn_popup hideContent">
+					<div id="noPdfReport" class="noReport"></div>
+                	<table width="100%" border="0" cellspacing="0" cellpadding="5" id="availablePdfRptsTbl">
+                		<thead>
+                        	<tr>
+	                            <th>Existing Reports</th>
+	                            <th>Type</th>
+	                            <th>Download</th>
+	                            <th>Delete</th>
+                        	</tr>    
+                    	</thead>
+                    	<tbody id="availablePdfRptsTbdy">
+                    	    
+                   	 	</tbody>    
+                	</table>
+                	<form id="pdfReportForm">
+	                   	<table class="report_type">
+	                    	<tbody>
+	                        	<tr>
+	                            	<td>Report Type</td>
+	                            	<td>
+	                                	<select name="reportDataType">
+	                                    	<option value="detail">Detailed Report</option>
+	                                    	<option value="crisp">Overall Report</option>
+	                                	</select>
+	                            	</td>
+	                        	</tr>
+								<tr>
+	                            	<td>Pdf Report Name</td>
+		                            <td>
+		                               <input type="text" placeholder="Pdf report name" name="pdfName">
+		                            </td>
+	                        	</tr>	                        	
+	                    	</tbody>
+	                   	</table>
+               		</form>
+	               	<div class="flt_right">
+	                 	<input type="button" value="Generate" class="btn btn_style" id="generatePdf">
+	                 	<input type="button" value="Close" class="btn btn_style dyn_popup_close">
+	               	</div>
+               		<input type="hidden" name="fromPage" value="unit"/>
+				</div>
+				<!--Pdf report popup ends here -->	
+			</div>
             <span>
             	<a id="tabularView" href="#"><img src="themes/default/images/helios/quality_table_on.png" width="25" height="25" border="0" alt=""><b>Table View</b></a>
             </span>
@@ -61,7 +110,7 @@
         		<input type="button" value="Test" class="btn btn_style" disabled>
         	{{/if}}
                 
-			<div id="unit_popup" class="dyn_popup" style="display:none;">
+			<div id="unit_popup" class="dyn_popup hideContent">
 				<form id="unitTestForm">
 					<table class="table" cellpadding="0" cellspacing="0" border="0">
 						<tbody id="dynamicContent"></tbody>

@@ -1,3 +1,20 @@
+/**
+ * Framework Web Archive
+ *
+ * Copyright (C) 1999-2013 Photon Infotech Inc.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *         http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package com.photon.phresco.framework.rest.api;
 
 import java.io.File;
@@ -54,18 +71,31 @@ import com.photon.phresco.plugins.util.MojoProcessor;
 import com.photon.phresco.service.client.api.ServiceManager;
 import com.photon.phresco.util.Constants;
 import com.photon.phresco.util.PhrescoDynamicLoader;
+import com.photon.phresco.util.ServiceConstants;
 import com.photon.phresco.util.Utility;
 import com.phresco.pom.exception.PhrescoPomException;
 import com.phresco.pom.util.PomProcessor;
 import com.sun.jersey.api.client.ClientResponse.Status;
 
+/**
+ * The Class ParameterService.
+ */
 @Path("/parameter")
-public class ParameterService extends RestBase implements FrameworkConstants {
+public class ParameterService extends RestBase implements FrameworkConstants, ServiceConstants {
 
+	/**
+	 * Gets the parameter.
+	 *
+	 * @param appDirName the app dir name
+	 * @param goal the goal
+	 * @param phase the phase
+	 * @return the parameter
+	 */
 	@GET
 	@Path("/dynamic")
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response getParameter(@QueryParam("appDirName") String appDirName, @QueryParam("goal") String goal, @QueryParam("phase") String phase) {
+	public Response getParameter(@QueryParam(REST_QUERY_APPDIR_NAME) String appDirName,
+			@QueryParam(REST_QUERY_GOAL) String goal, @QueryParam(REST_QUERY_PHASE) String phase) {
 		ResponseInfo<List<Parameter>> responseData = new ResponseInfo<List<Parameter>>();
 		try {
 			List<Parameter> parameter = null;
@@ -79,38 +109,65 @@ public class ParameterService extends RestBase implements FrameworkConstants {
 				}
 				parameter = mojo.getParameters(goal);
 			}
-			ResponseInfo<List<Parameter>> finalOutput = responseDataEvaluation(responseData, null, "Parameter returned successfully", parameter);
+			ResponseInfo<List<Parameter>> finalOutput = responseDataEvaluation(responseData, null,
+					"Parameter returned successfully", parameter);
 			return Response.ok(finalOutput).header("Access-Control-Allow-Origin", "*").build();
 
 		} catch (Exception e) {
-			ResponseInfo<List<Parameter>> finalOutput = responseDataEvaluation(responseData, e, "Parameter not fetched", null);
-			return Response.status(Status.BAD_REQUEST).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
+			ResponseInfo<List<Parameter>> finalOutput = responseDataEvaluation(responseData, e,
+					"Parameter not fetched", null);
+			return Response.status(Status.BAD_REQUEST).entity(finalOutput).header("Access-Control-Allow-Origin", "*")
+					.build();
 		}
 	}
 
+	/**
+	 * Gets the file as string.
+	 *
+	 * @param appDirName the app dir name
+	 * @param goal the goal
+	 * @param phase the phase
+	 * @return the file as string
+	 */
 	@GET
 	@Path("/file")
 	@Produces({ MediaType.APPLICATION_JSON })
-	public Response getFileAsString(@QueryParam("appDirName") String appDirName, @QueryParam("goal") String goal, @QueryParam("phase") String phase) {
+	public Response getFileAsString(@QueryParam(REST_QUERY_APPDIR_NAME) String appDirName,
+			@QueryParam(REST_QUERY_GOAL) String goal, @QueryParam(REST_QUERY_PHASE) String phase) {
 		ResponseInfo responseData = new ResponseInfo();
 		try {
 			String filePath = getInfoFileDir(appDirName, goal, phase);
 			File file = new File(filePath);
 			String xml = IOUtils.toString(new FileInputStream(file));
-			ResponseInfo finalOutput = responseDataEvaluation(responseData, null, "Parameter returned successfully", xml);
+			ResponseInfo finalOutput = responseDataEvaluation(responseData, null, "Parameter returned successfully",
+					xml);
 			return Response.status(200).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
 		} catch (Exception e) {
 			ResponseInfo finalOutput = responseDataEvaluation(responseData, e, "Parameter not fetched", null);
-			return Response.status(Status.BAD_REQUEST).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
+			return Response.status(Status.BAD_REQUEST).entity(finalOutput).header("Access-Control-Allow-Origin", "*")
+					.build();
 		}
 	}
-	
+
+	/**
+	 * Gets the possible value.
+	 *
+	 * @param appDirName the app dir name
+	 * @param customerId the customer id
+	 * @param goal the goal
+	 * @param key the key
+	 * @param value the value
+	 * @param phase the phase
+	 * @return the possible value
+	 */
 	@POST
 	@Path("/dependency")
 	@Produces(MediaType.APPLICATION_JSON)
 	@Consumes(MediaType.APPLICATION_JSON)
-	public Response getPossibleValue(@QueryParam("appDirName") String appDirName, @QueryParam("customerId") String customerId, @QueryParam("goal") String goal, 
-			@QueryParam("key") String key, @QueryParam("value") String value, @QueryParam("phase") String phase) {
+	public Response getPossibleValue(@QueryParam(REST_QUERY_APPDIR_NAME) String appDirName,
+			@QueryParam(REST_QUERY_CUSTOMERID) String customerId, @QueryParam(REST_QUERY_GOAL) String goal,
+			@QueryParam(REST_QUERY_KEY) String key, @QueryParam(REST_QUERY_VALUE) String value,
+			@QueryParam(REST_QUERY_PHASE) String phase) {
 		ResponseInfo<PossibleValues> responseData = new ResponseInfo<PossibleValues>();
 		PossibleValues possibleValues = null;
 		try {
@@ -118,37 +175,54 @@ public class ParameterService extends RestBase implements FrameworkConstants {
 			String filePath = getInfoFileDir(appDirName, goal, phase);
 			MojoProcessor processor = new MojoProcessor(new File(filePath));
 			possibleValues = getPossibleValues(processor, goal, key, value, appInfo, customerId, appDirName);
-			ResponseInfo<PossibleValues> finalOutput = responseDataEvaluation(responseData, null, "Dependency returned successfully", possibleValues);
+			ResponseInfo<PossibleValues> finalOutput = responseDataEvaluation(responseData, null,
+					"Dependency returned successfully", possibleValues);
 			return Response.ok(finalOutput).header("Access-Control-Allow-Origin", "*").build();
 		} catch (PhrescoException e) {
-			ResponseInfo<PossibleValues> finalOutput = responseDataEvaluation(responseData, e, "Dependency not fetched", null);
-			return Response.status(Status.BAD_REQUEST).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
+			ResponseInfo<PossibleValues> finalOutput = responseDataEvaluation(responseData, e,
+					"Dependency not fetched", null);
+			return Response.status(Status.BAD_REQUEST).entity(finalOutput).header("Access-Control-Allow-Origin", "*")
+					.build();
 		} catch (PhrescoPomException e) {
-			ResponseInfo<PossibleValues> finalOutput = responseDataEvaluation(responseData, e, "Dependency not fetched", null);
-			return Response.status(Status.BAD_REQUEST).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
+			ResponseInfo<PossibleValues> finalOutput = responseDataEvaluation(responseData, e,
+					"Dependency not fetched", null);
+			return Response.status(Status.BAD_REQUEST).entity(finalOutput).header("Access-Control-Allow-Origin", "*")
+					.build();
 		}
 	}
-	
+
+	/**
+	 * Gets the code validation report types.
+	 *
+	 * @param appDirName the app dir name
+	 * @param goal the goal
+	 * @param phase the phase
+	 * @param request the request
+	 * @return the code validation report types
+	 */
 	@GET
 	@Path("/codeValidationReportTypes")
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response getCodeValidationReportTypes(@QueryParam("appDirName") String appDirName, @QueryParam("goal") String goal,
-			@QueryParam("phase") String phase, @Context HttpServletRequest request) {
+	public Response getCodeValidationReportTypes(@QueryParam(REST_QUERY_APPDIR_NAME) String appDirName,
+			@QueryParam(REST_QUERY_GOAL) String goal, @QueryParam(REST_QUERY_PHASE) String phase,
+			@Context HttpServletRequest request) {
 		ResponseInfo<PossibleValues> responseData = new ResponseInfo<PossibleValues>();
 		try {
 			int responseCode = setSonarServerStatus(request);
 			if (responseCode != 200) {
-				ResponseInfo<PossibleValues> finalOutput = responseDataEvaluation(responseData, null, "Sonar not yet Started", null);
-				return Response.status(Status.BAD_REQUEST).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
+				ResponseInfo<PossibleValues> finalOutput = responseDataEvaluation(responseData, null,
+						"Sonar not yet Started", null);
+				return Response.status(Status.BAD_REQUEST).entity(finalOutput).header("Access-Control-Allow-Origin",
+						"*").build();
 			}
 			String infoFileDir = getInfoFileDir(appDirName, goal, phase);
 			ApplicationInfo appInfo = FrameworkServiceUtil.getApplicationInfo(appDirName);
 			List<CodeValidationReportType> codeValidationReportTypes = new ArrayList<CodeValidationReportType>();
 
-			//To get parameter values for Iphone technology
+			// To get parameter values for Iphone technology
 			PomProcessor pomProcessor = FrameworkServiceUtil.getPomProcessor(appDirName);
 			String validateReportUrl = pomProcessor.getProperty(Constants.POM_PROP_KEY_VALIDATE_REPORT);
-			if(StringUtils.isNotEmpty(validateReportUrl)) {
+			if (StringUtils.isNotEmpty(validateReportUrl)) {
 				CodeValidationReportType codeValidationReportType = new CodeValidationReportType();
 				List<Value> clangReports = getClangReports(appInfo);
 				for (Value value : clangReports) {
@@ -172,23 +246,38 @@ public class ParameterService extends RestBase implements FrameworkConstants {
 				codeValidationReportType.setValidateAgainst(value);
 				codeValidationReportTypes.add(codeValidationReportType);
 			}
-			ResponseInfo<CodeValidationReportType> finalOutput = responseDataEvaluation(responseData, null, "Dependency returned successfully", codeValidationReportTypes);
+			ResponseInfo<CodeValidationReportType> finalOutput = responseDataEvaluation(responseData, null,
+					"Dependency returned successfully", codeValidationReportTypes);
 			return Response.ok(finalOutput).header("Access-Control-Allow-Origin", "*").build();
 		} catch (PhrescoException e) {
-			ResponseInfo<PossibleValues> finalOutput = responseDataEvaluation(responseData, e, "Dependency not fetched", null);
-			return Response.status(Status.BAD_REQUEST).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
+			ResponseInfo<PossibleValues> finalOutput = responseDataEvaluation(responseData, e,
+					"Dependency not fetched", null);
+			return Response.status(Status.BAD_REQUEST).entity(finalOutput).header("Access-Control-Allow-Origin", "*")
+					.build();
 		} catch (PhrescoPomException e) {
-			ResponseInfo<PossibleValues> finalOutput = responseDataEvaluation(responseData, e, "Dependency not fetched", null);
-			return Response.status(Status.BAD_REQUEST).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
-		} 
+			ResponseInfo<PossibleValues> finalOutput = responseDataEvaluation(responseData, e,
+					"Dependency not fetched", null);
+			return Response.status(Status.BAD_REQUEST).entity(finalOutput).header("Access-Control-Allow-Origin", "*")
+					.build();
+		}
 	}
-	
+
+	/**
+	 * Gets the iframe report.
+	 *
+	 * @param customerId the customer id
+	 * @param userId the user id
+	 * @param appDirName the app dir name
+	 * @param validateAgainst the validate against
+	 * @param request the request
+	 * @return the iframe report
+	 */
 	@GET
 	@Path("/iFrameReport")
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response getIframeReport(@QueryParam("customerId") String customerId, @QueryParam("userId") String userId,
-			@QueryParam("appDirName") String appDirName, @QueryParam("validateAgainst") String validateAgainst,
-			@Context HttpServletRequest request) {
+	public Response getIframeReport(@QueryParam(REST_QUERY_CUSTOMERID) String customerId,
+			@QueryParam(REST_QUERY_USERID) String userId, @QueryParam(REST_QUERY_APPDIR_NAME) String appDirName,
+			@QueryParam(REST_QUERY_VALIDATE_AGAINST) String validateAgainst, @Context HttpServletRequest request) {
 		ResponseInfo<PossibleValues> responseData = new ResponseInfo<PossibleValues>();
 		StringBuilder sb = new StringBuilder();
 		try {
@@ -198,7 +287,7 @@ public class ParameterService extends RestBase implements FrameworkConstants {
 			FrameworkConfiguration frameworkConfig = PhrescoFrameworkFactory.getFrameworkConfig();
 			ServiceManager serviceManager = CONTEXT_MANAGER_MAP.get(userId);
 			Customer customer = serviceManager.getCustomer(customerId);
-			//Check whether iphone Technology or not
+			// Check whether iphone Technology or not
 			Properties sysProps = System.getProperties();
 			String phrescoFileServerNumber = sysProps.getProperty(PHRESCO_FILE_SERVER_PORT_NO);
 			if (StringUtils.isNotEmpty(validateReportUrl)) {
@@ -211,31 +300,34 @@ public class ParameterService extends RestBase implements FrameworkConstants {
 				if (indexPath.isFile() && StringUtils.isNotEmpty(phrescoFileServerNumber)) {
 					sb.append(HTTP_PROTOCOL);
 					sb.append(PROTOCOL_POSTFIX);
-					InetAddress thisIp =InetAddress.getLocalHost();
+					InetAddress thisIp = InetAddress.getLocalHost();
 					sb.append(thisIp.getHostAddress());
-					sb.append(COLON);
+					sb.append(FrameworkConstants.COLON);
 					sb.append(phrescoFileServerNumber);
-					sb.append(FORWARD_SLASH);
+					sb.append(FrameworkConstants.FORWARD_SLASH);
 					sb.append(appDirName);
 					sb.append(validateReportUrl);
 					sb.append(validateAgainst);
-					sb.append(FORWARD_SLASH);
+					sb.append(FrameworkConstants.FORWARD_SLASH);
 					sb.append(INDEX_HTML);
-					ResponseInfo<String> finalOutput = responseDataEvaluation(responseData, null, "Dependency returned successfully", sb.toString());
+					ResponseInfo<String> finalOutput = responseDataEvaluation(responseData, null,
+							"Dependency returned successfully", sb.toString());
 					return Response.ok(finalOutput).header("Access-Control-Allow-Origin", "*").build();
 				} else {
-					ResponseInfo<PossibleValues> finalOutput = responseDataEvaluation(responseData, null, "Dependency not fetched", null);
-					return Response.status(Status.BAD_REQUEST).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
+					ResponseInfo<PossibleValues> finalOutput = responseDataEvaluation(responseData, null,
+							"Dependency not fetched", null);
+					return Response.status(Status.BAD_REQUEST).entity(finalOutput).header(
+							"Access-Control-Allow-Origin", "*").build();
 				}
 			}
 			String serverUrl = "";
 			FrameworkUtil frameworkUtil = new FrameworkUtil(request);
-			serverUrl = frameworkUtil.getSonarHomeURL();	    		
+			serverUrl = frameworkUtil.getSonarHomeURL();
 			StringBuilder reportPath = new StringBuilder(FrameworkServiceUtil.getApplicationHome(appDirName));
-//			if (StringUtils.isNotEmpty(getSelectedModule())) {
-//				reportPath.append(File.separatorChar);
-//				reportPath.append(getSelectedModule());
-//			}
+			// if (StringUtils.isNotEmpty(getSelectedModule())) {
+			// reportPath.append(File.separatorChar);
+			// reportPath.append(getSelectedModule());
+			// }
 			if (StringUtils.isNotEmpty(validateAgainst) && FUNCTIONALTEST.equals(validateAgainst)) {
 				reportPath.append(frameworkUtil.getFunctionalTestDir(appInfo));
 			}
@@ -249,47 +341,64 @@ public class ParameterService extends RestBase implements FrameworkConstants {
 			sb.append(serverUrl);
 			sb.append(frameworkConfig.getSonarReportPath());
 			sb.append(groupId);
-			sb.append(COLON);
+			sb.append(FrameworkConstants.COLON);
 			sb.append(artifactId);
 
 			if (StringUtils.isNotEmpty(validateAgainst) && !REQ_SRC.equals(validateAgainst)) {
-				sb.append(COLON);
+				sb.append(FrameworkConstants.COLON);
 				sb.append(validateAgainst);
 			}
 			URL sonarURL = new URL(sb.toString());
 			HttpURLConnection connection = (HttpURLConnection) sonarURL.openConnection();
 			int responseCode = connection.getResponseCode();
 			if (responseCode != 200) {
-				ResponseInfo<PossibleValues> finalOutput = responseDataEvaluation(responseData, null, "Report not available", null);
-				return Response.status(Status.BAD_REQUEST).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
-            }
+				ResponseInfo<PossibleValues> finalOutput = responseDataEvaluation(responseData, null,
+						"Report not available", null);
+				return Response.status(Status.BAD_REQUEST).entity(finalOutput).header("Access-Control-Allow-Origin",
+						"*").build();
+			}
 			Map<String, String> theme = customer.getFrameworkTheme();
 			if (MapUtils.isNotEmpty(theme)) {
 				sb.append("?");
-				sb.append(CUST_BODY_BACK_GROUND_COLOR+"="+theme.get("bodyBackGroundColor"));
-				sb.append("&"+CUST_BRANDING_COLOR+"="+theme.get("brandingColor"));
-				sb.append("&"+CUST_MENU_BACK_GROUND+"="+theme.get("MenuBackGround"));
-				sb.append("&"+CUST_MENUFONT_COLOR+"="+theme.get("MenufontColor"));
-				sb.append("&"+CUST_DISABLED_LABEL_COLOR+"="+theme.get("DisabledLabelColor"));
-			} 
+				sb.append(CUST_BODY_BACK_GROUND_COLOR + "=" + theme.get("bodyBackGroundColor"));
+				sb.append("&" + CUST_BRANDING_COLOR + "=" + theme.get("brandingColor"));
+				sb.append("&" + CUST_MENU_BACK_GROUND + "=" + theme.get("MenuBackGround"));
+				sb.append("&" + CUST_MENUFONT_COLOR + "=" + theme.get("MenufontColor"));
+				sb.append("&" + CUST_DISABLED_LABEL_COLOR + "=" + theme.get("DisabledLabelColor"));
+			}
 		} catch (PhrescoException e) {
-			ResponseInfo<PossibleValues> finalOutput = responseDataEvaluation(responseData, e, "Dependency not fetched", null);
-			return Response.status(Status.BAD_REQUEST).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
+			ResponseInfo<PossibleValues> finalOutput = responseDataEvaluation(responseData, e,
+					"Dependency not fetched", null);
+			return Response.status(Status.BAD_REQUEST).entity(finalOutput).header("Access-Control-Allow-Origin", "*")
+					.build();
 		} catch (PhrescoPomException e) {
-			ResponseInfo<PossibleValues> finalOutput = responseDataEvaluation(responseData, e, "Dependency not fetched", null);
-			return Response.status(Status.BAD_REQUEST).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
+			ResponseInfo<PossibleValues> finalOutput = responseDataEvaluation(responseData, e,
+					"Dependency not fetched", null);
+			return Response.status(Status.BAD_REQUEST).entity(finalOutput).header("Access-Control-Allow-Origin", "*")
+					.build();
 		} catch (UnknownHostException e) {
-			ResponseInfo<PossibleValues> finalOutput = responseDataEvaluation(responseData, e, "Dependency not fetched", null);
-			return Response.status(Status.BAD_REQUEST).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
+			ResponseInfo<PossibleValues> finalOutput = responseDataEvaluation(responseData, e,
+					"Dependency not fetched", null);
+			return Response.status(Status.BAD_REQUEST).entity(finalOutput).header("Access-Control-Allow-Origin", "*")
+					.build();
 		} catch (IOException e) {
-			ResponseInfo<PossibleValues> finalOutput = responseDataEvaluation(responseData, e, "Dependency not fetched", null);
-			return Response.status(Status.BAD_REQUEST).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
+			ResponseInfo<PossibleValues> finalOutput = responseDataEvaluation(responseData, e,
+					"Dependency not fetched", null);
+			return Response.status(Status.BAD_REQUEST).entity(finalOutput).header("Access-Control-Allow-Origin", "*")
+					.build();
 		}
-		ResponseInfo<String> finalOutput = responseDataEvaluation(responseData, null, "Dependency returned successfully", sb.toString());
+		ResponseInfo<String> finalOutput = responseDataEvaluation(responseData, null,
+				"Dependency returned successfully", sb.toString());
 		return Response.ok(finalOutput).header("Access-Control-Allow-Origin", "*").build();
 	}
-	
-	
+
+	/**
+	 * Gets the clang reports.
+	 *
+	 * @param appInfo the app info
+	 * @return the clang reports
+	 * @throws PhrescoException the phresco exception
+	 */
 	private List<Value> getClangReports(ApplicationInfo appInfo) throws PhrescoException {
 		try {
 			IosTargetParameterImpl targetImpl = new IosTargetParameterImpl();
@@ -299,37 +408,58 @@ public class ParameterService extends RestBase implements FrameworkConstants {
 			List<Value> values = possibleValues.getValue();
 			return values;
 		} catch (IOException e) {
-           throw new PhrescoException(e);
-        } catch (ParserConfigurationException e) {
-            throw new PhrescoException(e);
-        } catch (SAXException e) {
-            throw new PhrescoException(e);
-        } catch (ConfigurationException e) {
-            throw new PhrescoException(e);
-        } catch (PhrescoException e) {
-            throw new PhrescoException(e);
-        }
+			throw new PhrescoException(e);
+		} catch (ParserConfigurationException e) {
+			throw new PhrescoException(e);
+		} catch (SAXException e) {
+			throw new PhrescoException(e);
+		} catch (ConfigurationException e) {
+			throw new PhrescoException(e);
+		} catch (PhrescoException e) {
+			throw new PhrescoException(e);
+		}
 	}
-	
-	private int setSonarServerStatus(HttpServletRequest request) throws PhrescoException {		
+
+	/**
+	 * Sets the sonar server status.
+	 *
+	 * @param request the request
+	 * @return the int
+	 * @throws PhrescoException the phresco exception
+	 */
+	private int setSonarServerStatus(HttpServletRequest request) throws PhrescoException {
 		FrameworkUtil frameworkUtil = new FrameworkUtil(request);
 		int responseCode = 0;
 		try {
 			URL sonarURL = new URL(frameworkUtil.getSonarHomeURL());
 			String protocol = sonarURL.getProtocol();
-			HttpURLConnection connection = null;			
-			if(protocol.equals("http")) {	
+			HttpURLConnection connection = null;
+			if (protocol.equals("http")) {
 				connection = (HttpURLConnection) sonarURL.openConnection();
-				responseCode = connection.getResponseCode();	
+				responseCode = connection.getResponseCode();
 			} else {
 				responseCode = FrameworkUtil.getHttpsResponse(frameworkUtil.getSonarURL());
-			}			
+			}
 			return responseCode;
-		} catch(Exception e) {
+		} catch (Exception e) {
 			return responseCode;
 		}
 	}
 
+	/**
+	 * Gets the possible values.
+	 *
+	 * @param processor the processor
+	 * @param goal the goal
+	 * @param key the key
+	 * @param value the value
+	 * @param appInfo the app info
+	 * @param customerId the customer id
+	 * @param appDirName the app dir name
+	 * @return the possible values
+	 * @throws PhrescoException the phresco exception
+	 * @throws PhrescoPomException the phresco pom exception
+	 */
 	private static PossibleValues getPossibleValues(MojoProcessor processor, String goal, String key, String value,
 			ApplicationInfo appInfo, String customerId, String appDirName) throws PhrescoException, PhrescoPomException {
 		if (Constants.PHASE_FUNCTIONAL_TEST.equals(goal)) {
@@ -337,7 +467,7 @@ public class ParameterService extends RestBase implements FrameworkConstants {
 			goal = goal + HYPHEN + functionalTestFramework;
 		}
 		Parameter parameter = processor.getParameter(goal, key);
-		if(StringUtils.isNotEmpty(parameter.getDependency())) {
+		if (StringUtils.isNotEmpty(parameter.getDependency())) {
 			parameter = processor.getParameter(goal, parameter.getDependency());
 		}
 		if ("DynamicParameter".equals(parameter.getType())) {
@@ -375,14 +505,19 @@ public class ParameterService extends RestBase implements FrameworkConstants {
 		}
 		return null;
 	}
-	
+
+	/**
+	 * Gets the info file dir.
+	 *
+	 * @param appDirName the app dir name
+	 * @param goal the goal
+	 * @param phase the phase
+	 * @return the info file dir
+	 */
 	private String getInfoFileDir(String appDirName, String goal, String phase) {
 		StringBuilder sb = new StringBuilder();
-		sb.append(Utility.getProjectHome())
-		.append(appDirName)
-		.append(File.separatorChar)
-		.append(Constants.DOT_PHRESCO_FOLDER)
-		.append(File.separatorChar);
+		sb.append(Utility.getProjectHome()).append(appDirName).append(File.separatorChar).append(
+				Constants.DOT_PHRESCO_FOLDER).append(File.separatorChar);
 		if (StringUtils.isNotEmpty(phase)) {
 			sb.append(Constants.PHRESCO + HYPHEN + phase + Constants.INFO_XML);
 		} else {

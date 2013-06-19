@@ -21,6 +21,8 @@ define(["projectlist/listener/projectListListener"], function() {
 		onAddUpdateEvent : null,
 		onAddReportEvent : null,
 		onGetReportEvent : null,
+		flagged: null,
+		flag:null,
 		
 		/***
 		 * Called in initialization time of this class 
@@ -29,8 +31,9 @@ define(["projectlist/listener/projectListListener"], function() {
 		 */
 		initialize : function(globalConfig){
 			var self = this;
-			if(self.projectslistListener === null)
+			if(self.projectslistListener === null){
 				self.projectslistListener = new Clazz.com.components.projectlist.js.listener.ProjectsListListener;
+			}
 			self.registerEvents(self.projectslistListener);
 		},
 
@@ -99,8 +102,15 @@ define(["projectlist/listener/projectListListener"], function() {
 		getAction : function(actionBody, action, callback) {
 			var self = this;
 			
-			self.projectslistListener.projectListAction(self.projectslistListener.getActionHeader(actionBody, action), function(response) {
-				self.loadPage();
+			self.projectslistListener.projectListAction(self.projectslistListener.getActionHeader(actionBody, action), "" , function(response) {
+				if ("delete" === action) {
+					callback();
+				}
+				
+				if(self.flagged!=1)
+					self.loadPage();
+				else
+					self.flagged=1;
 			});
 		},
 		
@@ -174,29 +184,23 @@ define(["projectlist/listener/projectListListener"], function() {
 				var dynamicId = $(this).attr("dynamicId");
 				var data = JSON.parse(self.projectslistListener.projectListAPI.localVal.getSession('userInfo'));
 				userId = data.id;
-				/* $('#uname_'+dynamicId).val(data.id);
-				$('#pwd_'+dynamicId).val(data.password);
-				
-				$('#commitUsername_'+dynamicId).val(data.id);
-				$('#commitPassword_'+dynamicId).val(data.password);
-				
-				$('#updateUsername_'+dynamicId).val(data.id);
-				$('#updatePassword_'+dynamicId).val(data.password); */
 				$('.uname').val(data.id);
 				$('.pwd').val(data.password);
 				$('.commit').hide();
 				$('.add_repo').hide();
 				$('.svn_update').hide();
-				
+				$("#addRepoLoading_"+dynamicId).hide();
+				$("#updateRepoLoading_"+dynamicId).hide();
 				var action = $(this).attr("data-original-title");
-				if (action == "Commit") {
+				if (action === "Commit") {
 					var appDirName = $(this).parent().parent().attr("class");
 					var data = {};
 					data.appdirname = appDirName;
 					data.dynamicId = dynamicId;
+					$("#dummyCommit_"+dynamicId).css("height","10px");
 					self.projectslistListener.getCommitableFiles(data, this);
 				} else {
-					self.opencc(this, $(this).attr('name'), currentPrjName);
+					self.openccpl(this, $(this).attr('name'), currentPrjName);
 				}	
 			});
 			
@@ -206,24 +210,59 @@ define(["projectlist/listener/projectListListener"], function() {
 			});
 			$("input[name='deleteConfirm']").unbind('click');
 			$("input[name='deleteConfirm']").click(function(e) {
-				var deletearray = [];
-				var deleteproject = $(this).parent().parent().attr('currentPrjName');
+				var deletearray = [], deleteproject, imgname1, imgname2;
+				deleteproject = $(this).parent().parent().attr('currentPrjName');
 				deletearray.push(deleteproject);
-				self.getAction(deletearray,"delete");
+				imgname1 = $("tr[class="+deleteproject+"]").next('tr').children('td:eq(5)').children('a').children('img').attr('name');
+				imgname2 = $("tr[class="+deleteproject+"]").prev('tr').children('td:eq(5)').children('a').children('img').attr('name');
+				self.flagged=1;
+				
+				self.getAction(deletearray,"delete",function(response) {
+					if(imgname1=='delete'|| imgname2=='delete') {	
+						$("tr[class="+deleteproject+"]").remove();
+					}	
+					else {
+						$("tr[class="+deleteproject+"]").prev('tr').remove();
+						$("tr[class="+deleteproject+"]").remove();
+					}
+					if(!($('tr.proj_title').length))
+						self.flagged=0;	
+				});	
+				self.closeAll($(this).attr('name'));
+				
 			});
 
 			$("input[name='holeDelete']").unbind('click');
 			$("input[name='holeDelete']").click(function(e) {
-				var projectnameArray = [];
-				var currentRow =  $(this).parents().parent("td.delimages").parent().next();
-				while(currentRow != null && currentRow.length > 0) {
-				   var classname = currentRow.attr("class");
-				   if(classname != "proj_title") {
+				var projectnameArray = [], cls, temp, temp1, temp2, classname, curr, currentRow;
+				temp = $(this).parents().parent("td.delimages").parent('tr');
+				curr =  $(this).parents().parent("td.delimages").parent().next('tr');
+				currentRow =  $(this).parents().parent("td.delimages").parent().next();
+				while(currentRow !== null && currentRow.length > 0) {
+				   classname = currentRow.attr("class");
+				   if(classname !== "proj_title") {
 				        currentRow = currentRow.next('tr');
 				        projectnameArray.push(classname);
 				   }else {currentRow = null}
 				}
-				self.getAction(projectnameArray,"delete");
+				self.flagged=1;
+				self.getAction(projectnameArray,"delete",function(response) {
+						while(curr !== null && curr.length !== 0) {
+							cls = curr.attr("class");
+							if(cls!="proj_title") {
+								temp1 = curr;
+								temp2 = curr.next('tr');
+								$(curr).remove();
+								curr = temp2;
+							}
+							else {
+								curr = null;
+							}
+						}	
+						$(temp).remove();
+						if(!($('tr.proj_title').length))
+							self.flagged=0;
+				});					
 			});			
 			
 			$(".credential").unbind("click");

@@ -24,7 +24,7 @@ define(["navigation/listener/navigationListener"], function() {
 		initialize : function(globalConfig){
 			var self = this;
 			
-			if(self.navigationListener == null){
+			if(self.navigationListener === null){
 				commonVariables.navListener = new Clazz.com.components.navigation.js.listener.navigationListener();
 				self.navigationListener = commonVariables.navListener;
 			}
@@ -36,7 +36,7 @@ define(["navigation/listener/navigationListener"], function() {
 		 *
 		 */
 		loadPage : function(){
-			if(self.navigationListener == null){
+			if(self.navigationListener === null){
 				commonVariables.navListener = new Clazz.com.components.navigation.js.listener.navigationListener();
 				self.navigationListener = commonVariables.navListener;
 			}
@@ -45,18 +45,17 @@ define(["navigation/listener/navigationListener"], function() {
 		registerEvents : function(navigationListener) {
 			var self = this;
 			
-			if(self.onAddNewProjectEvent == null)
+			if(self.onAddNewProjectEvent === null){
 				self.onAddNewProjectEvent = new signals.Signal();
-				
-			if(self.onMytabEvent == null)
+			}	
+			if(self.onMytabEvent === null){
 				self.onMytabEvent = new signals.Signal();
-			
-			if(self.onImportEvent == null)
+			}
+			if(self.onImportEvent === null){
 				self.onImportEvent = new signals.Signal();
-			
+			}
 			self.onAddNewProjectEvent.add(navigationListener.onAddProject, navigationListener); 
 			self.onMytabEvent.add(navigationListener.onMytabEvent, navigationListener); 
-//			self.onQualitytabEvent.add(navigationListener.onQualitytab, navigationListener); 			
 			self.onImportEvent.add(navigationListener.addImportEvent, navigationListener);
 		},
 		
@@ -102,7 +101,7 @@ define(["navigation/listener/navigationListener"], function() {
 			
 			$(".gitdata").hide();
 			$(".importselect select").change(function () {
-				if($(this).val() == "bitkeeper") {
+				if($(this).val() === "bitkeeper") {
 					$(".svndata").hide();
 					$(".svnusr").hide();
 					$(".svnpswd").hide();
@@ -110,7 +109,7 @@ define(["navigation/listener/navigationListener"], function() {
 					$(".testCheckoutData").hide();
 				}
 
-				else if($(this).val() == "git") {
+				else if($(this).val() === "git") {
 					$(".svndata").hide();
 					$(".svnusr").hide();
 					$(".svnpswd").hide();
@@ -118,7 +117,7 @@ define(["navigation/listener/navigationListener"], function() {
 					$(".testCheckoutData").hide();
 				}
 
-				else if($(this).val() == "svn") {
+				else if($(this).val() === "svn") {
 					$(".svndata").show();
 					$(".svnusr").show();
 					$(".svnpswd").show();
@@ -129,7 +128,7 @@ define(["navigation/listener/navigationListener"], function() {
 			$("input[name=headoption]").change(function() {
 				$("#revision").removeClass("errormessage");
 				$("#revision").removeAttr("placeholder");
-				if("HEAD" == $(this).val()) {
+				if("HEAD" === $(this).val()) {
 					$("#revision").attr("readonly", "readonly");
 				} else {
 					$("#revision").removeAttr("readonly");
@@ -139,7 +138,7 @@ define(["navigation/listener/navigationListener"], function() {
 			$("input[name=testHeadOption]").change(function() {
 				$("#testRevision").removeClass("errormessage");
 				$("#testRevision").removeAttr("placeholder");
-				if("HEAD" == $(this).val()) {
+				if("HEAD" === $(this).val()) {
 					$("#testRevision").attr("readonly", "readonly");
 				} else {
 					$("#testRevision").removeAttr("readonly");

@@ -17,8 +17,9 @@ define(["application/api/applicationAPI"], function() {
 		 */
 		initialize : function(config) {
 			var self = this;
-			if(self.applicationAPI === null)
+			if(self.applicationAPI === null){
 				self.applicationAPI = new Clazz.com.components.application.js.api.ApplicationAPI();
+			}	
 		},
 		
 		onCancelUpdate : function() {
@@ -32,23 +33,23 @@ define(["application/api/applicationAPI"], function() {
 		removelayer : function(object) {
 			var layerId = object.attr('id');
 			object.closest('tr').next().attr('name', layerId + "content");
-			object.closest('tr').next().hide();
 			object.closest('tr').attr('name', layerId);
-			object.closest('tr').hide();
+			object.closest('tr').hide('slow');
 			$("input[name="+layerId+"]").toggle();
+			$("tr[name="+layerId+"content]").hide('slow');
 		},
 		
 		addlayer : function(object) {
 			var layerType = object.attr('name');
 			$("input[name="+layerType+"]").toggle();
-			$("tr[name="+ layerType +"]").show();
-			$("tr[name="+ layerType+"content]").show();
+			$("tr[name="+ layerType +"]").show('slow');
+			$("tr[name="+ layerType+"content]").show('slow');
 		},
 		
 		addServerDatabase : function(appType, whereToAppend, rowId) {
-			var self = this, dynamicValue, server = '<tr class="servers" key="displayed"> <td><span data-i18n="application.edit.servers"></span>&nbsp;<span class="paid">'+rowId+'</span></td><td name="servers" class="servers"><select name="appServers" class="appServers selectpicker"><option value=0>Select Server</option>'+ self.getOptionData('serverData') +'</select></td><td data-i18n="application.edit.versions"></td><td colspan="4" name="version" class="version"><select title="Select Version" multiple data-selected-text-format="count>3" name="server_version" class="server_version selectpicker"></select> <div class="flt_right"><a href="javascript:;" name="addServer"><img src="themes/default/images/helios/plus_icon.png" border="0" alt=""></a> <a href="javascript:;" name="removeServer"><img src="themes/default/images/helios/minus_icon.png"  border="0" alt=""></a></div></td></tr>',
+			var self = this, dynamicValue, server = '<tr class="servers" key="displayed" name="serverscontent"> <td><span>Server</span>&nbsp;<span class="paid">'+rowId+'</span></td><td name="servers" class="servers"><select name="appServers" class="appServers selectpicker"><option value=0>Select Server</option>'+ self.getOptionData('serverData') +'</select></td><td>Versions</td><td colspan="4" name="version" class="version"><select title="Select Version" multiple data-selected-text-format="count>3" name="server_version" class="server_version selectpicker"></select> <div class="flt_right"><a href="javascript:;" name="addServer"><img src="themes/default/images/helios/plus_icon.png" border="0" alt=""></a> <a href="javascript:;" name="removeServer"><img src="themes/default/images/helios/minus_icon.png"  border="0" alt=""></a></div></td></tr>',
 			
-			database ='<tr class="database" key="displayed"><td><span data-i18n="application.edit.database"></span>&nbsp;<span class="paid">'+rowId+'</span></td><td name="servers" class="databases"><select name="databases" class="databases selectpicker"><option value=0>Select Database</option>'+ self.getOptionData('databaseData') +'</select></td><td data-i18n="application.edit.versions"></td> <td colspan="4" name="version" class="version"><select title="Select Version" multiple data-selected-text-format="count>3" name="db_version" class="db_version selectpicker"></select><div class="flt_right"><a href="javascript:;" name="addDatabase"><img src="themes/default/images/helios/plus_icon.png"  border="0" alt=""></a> <a href="javascript:;" name="removeDatabase"><img src="themes/default/images/helios/minus_icon.png" border="0" alt=""></a></div></td></tr>';
+			database ='<tr class="database" key="displayed" name="databasecontent"><td><span>Database</span>&nbsp;<span class="paid">'+rowId+'</span></td><td name="servers" class="databases"><select name="databases" class="databases selectpicker"><option value=0>Select Database</option>'+ self.getOptionData('databaseData') +'</select></td><td>Versions</td> <td colspan="4" name="version" class="version"><select title="Select Version" multiple data-selected-text-format="count>3" name="db_version" class="db_version selectpicker"></select><div class="flt_right"><a href="javascript:;" name="addDatabase"><img src="themes/default/images/helios/plus_icon.png"  border="0" alt=""></a> <a href="javascript:;" name="removeDatabase"><img src="themes/default/images/helios/minus_icon.png" border="0" alt=""></a></div></td></tr>';
 			if (appType === "addServer") {
 				dynamicValue = $(server).insertAfter(whereToAppend);
 				dynamicValue.prev('tr').find('a[name="addServer"]').html('');
@@ -147,7 +148,6 @@ define(["application/api/applicationAPI"], function() {
 			var option = '';
 			$(versionplaceholder).html('');
 			$.each(appData.artifactGroup.versions, function(index, value){
-				//option += '<option value='+value.id+'>'+ value.version +'</option>'
 				$("<option>").val(value.id).text(value.version).appendTo(versionplaceholder);	
 			});
 			callback();
@@ -247,7 +247,6 @@ define(["application/api/applicationAPI"], function() {
 				appInfo.appDirName = $("input[name='appDirName']").val();
 				appInfo.version = $("input[name='appVersion']").val();
 				appInfo.name = $("input[name='appName']").val();
-				//appInfo.selectedFrameworks = renderData.appdetails.data.appInfos[0].selectedFrameworks;
 				appInfo.emailSupported = renderData.appdetails.data.appInfos[0].emailSupported;
 				appInfo.phoneEnabled = renderData.appdetails.data.appInfos[0].phoneEnabled;
 				appInfo.tabletEnabled = renderData.appdetails.data.appInfos[0].tabletEnabled;
@@ -260,38 +259,36 @@ define(["application/api/applicationAPI"], function() {
 				var selectedWebServices = [];
 				var databasesJson = {};
 				var serversJson = {};
-				$.each($("tbody[name='layercontents']").children(), function(index, value){
+				$.each($("tbody[name='layercontents']").children().children().children(), function(index, value){
 				
-					if($(value).attr('class') == "servers" && $(value).attr('key') == "displayed") {
+					if($(value).attr('class') === "servers" && $(value).attr('key') === "displayed") {
 						var serverId = {};
 						var artifactInfoIds = [];
 						var tech = $(value).children("td.servers").children("select.appServers");
 						var selSerId = $(tech).find(":selected").val();
 						var selVersion = $(value).children("td.version").children("select.server_version").val();
-						if(selSerId != 0){
+						if(selSerId !== 0){
 							serverId.artifactGroupId = selSerId;
-							//artifactInfoIds.push(selVersion);
 							serverId.artifactInfoIds = selVersion;
 							selectedServers.push(serverId);
 						}
 						
 					}
 					
-					if($(value).attr('class') == "database" && $(value).attr('key') == "displayed") {
+					if($(value).attr('class') === "database" && $(value).attr('key') === "displayed") {
 						var serverId = {};
 						var artifactInfoIds = [];
 						var tech = $(value).children("td.databases").children("select.databases");
 						var selSerId = $(tech).find(":selected").val();
 						var selVersion = $(value).children("td.version").children("select.db_version").val();
-						if(selSerId != 0){
+						if(selSerId !== 0){
 							serverId.artifactGroupId = selSerId;
-							//artifactInfoIds.push(selVersion);
 							serverId.artifactInfoIds = selVersion;
 							selectedDatabases.push(serverId);
 						}	
 						
 					}
-					if($(value).attr('class') == "webservice" && $(value).attr('key') == "displayed") {
+					if($(value).attr('class') === "webservice" && $(value).attr('key') === "displayed") {
 						$.each($(this).find(".webservice_chkbox:checked"), function() {
 							selectedWebServices.push($(this).val());
 						});
@@ -301,10 +298,10 @@ define(["application/api/applicationAPI"], function() {
 					appInfo.techInfo = renderData.appdetails.data.appInfos[0].techInfo;
 					appInfo.selectedDatabases = selectedDatabases;
 					appInfo.selectedServers = selectedServers;
-					appInfo.selectedWebservices=selectedWebServices;
+					appInfo.selectedWebservices = selectedWebServices;
 				}
 				self.editAppInfo(self.getRequestHeader(JSON.stringify(appInfo), "editApplication"), function(response) {
-					if(response.message == "Application updated successfully"){
+					if(response.message === "Application updated successfully"){
 						var appDir = self.applicationAPI.localVal.getSession('appDirName');
 						localStorage.setItem(appDir + '_AppUpdateMsg', response.message);
 						commonVariables.navListener.getMyObj(commonVariables.editApplication, function(retVal){
@@ -313,14 +310,13 @@ define(["application/api/applicationAPI"], function() {
 							commonVariables.appDirName = response.data.appDirName;
 							self.applicationAPI.localVal.setSession('appDirName', response.data.appDirName);
 							self.applicationAPI.localVal.setJson('appdetails', response.data.appInfos);
-							
 							Clazz.navigationController.push(self.editAplnContent, true);
-						 });
-						/* self.getAppInfo(self.getRequestHeader(response.data.appDirName, "getappinfo"), function(response) {
-							self.pageRefresh(response);
-						});  */
+							setTimeout(function(){
+								self.successMsgPopUp(response.message);			
+							},3000);
+						});
 					}
-				});	
+				});
 			}
 		},
 		
@@ -368,15 +364,15 @@ define(["application/api/applicationAPI"], function() {
 				webserviceurl: '',
 				data: ''
 			}
-			if(action == 'getappinfo'){
+			if(action === 'getappinfo'){
 				header.webserviceurl = commonVariables.webserviceurl+"project/editApplication?appDirName="+appDirName;
 			}	
-			if(action == 'editApplication'){
+			if(action === 'editApplication'){
 				header.requestMethod ="PUT";
 				header.requestPostBody = appDirName;
 				header.webserviceurl = commonVariables.webserviceurl+"project/updateApplication?userId="+userId+"&oldAppDirName="+oldAppDirName+"&customerId=photon";
 			}
-			if (action == 'getApplicableOptions') {
+			if (action === 'getApplicableOptions') {
 				header.requestMethod ="GET";
 				header.webserviceurl = commonVariables.webserviceurl+"util/techOptions?userId="+userId+"&techId="+techId;
 			}
@@ -397,10 +393,11 @@ define(["application/api/applicationAPI"], function() {
 							commonVariables.loadingScreen.removeLoading();
 							callback({ "status" : "service failure"});
 						}
-
 					},
 
 					function(textStatus) {
+						var data = $.parseJSON(textStatus);
+						self.failureMsgPopUp(data.message);
 						commonVariables.loadingScreen.removeLoading();
 					}
 				);
@@ -423,7 +420,7 @@ define(["application/api/applicationAPI"], function() {
 			 var appDirName = $("input[name='appDirName']").val();
 			 self.hasError = false;
 
-			 if(name == ""){
+			 if(name === ""){
 					$("input[name='appName']").focus();
 					$("input[name='appName']").attr('placeholder','Enter Name');
 					$("input[name='appName']").addClass("errormessage");
@@ -431,7 +428,7 @@ define(["application/api/applicationAPI"], function() {
 						$(this).removeClass("errormessage");
 					});
 					self.hasError = true;
-			   } else if(code == ""){
+			   } else if(code === ""){
 					$("input[name='appCode']").focus();
 					$("input[name='appCode']").attr('placeholder','Enter Code');
 					$("input[name='appCode']").addClass("errormessage");
@@ -439,7 +436,7 @@ define(["application/api/applicationAPI"], function() {
 						$(this).removeClass("errormessage");
 					});
 					self.hasError = true;
-			   } else if(appDirName == ""){
+			   } else if(appDirName === ""){
 					$("input[name='appDirName']").focus();
 					$("input[name='appDirName']").attr('placeholder','Enter app directory');
 					$("input[name='appDirName']").addClass("errormessage");
