@@ -8,6 +8,7 @@ define(["features/api/featuresAPI", "features/features",  "application/applicati
 		featuresAPI : null,
 		appinfoContent : null,
 		projectListContent : null,
+		flagged:null,
 
 		/***
 		 * Called in initialization time of this class 
@@ -41,6 +42,7 @@ define(["features/api/featuresAPI", "features/features",  "application/applicati
 						hasRecord = true;
 						i++;
 					}
+					
 				});
 				if (hasRecord === false) {
 					if(divId === "moduleContent"){
@@ -126,18 +128,21 @@ define(["features/api/featuresAPI", "features/features",  "application/applicati
 		},
 		
 		scrollbarEnable : function(){
-			$("#content_1").mCustomScrollbar({
-				autoHideScrollbar:true,
-				callbacks:{
-					onScrollStart: function(){
-						$(".dyn_popup").hide();		
-					}
-				},
-				theme:"light-thin",
-				updateOnContentResize: true
-			});
+			var self=this;
+			if(self.flagged === 2) {
+				$("#content_1,#content_2,#content_3").mCustomScrollbar({
+					autoHideScrollbar:true,
+					callbacks:{
+						onScrollStart: function(){
+							$(".dyn_popup").hide();		
+						}
+					},
+					theme:"light-thin",
+					updateOnContentResize: true
+				});
+			}
 			
-			$("#content_2,#content_3,.features_cont").mCustomScrollbar({
+			$(".features_cont").mCustomScrollbar({
 				autoHideScrollbar:true,
 				theme:"light-thin"
 			});

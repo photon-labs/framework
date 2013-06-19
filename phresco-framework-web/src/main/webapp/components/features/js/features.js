@@ -230,6 +230,8 @@ define(["features/listener/featuresListener"], function() {
 
            	$('#switchoffbutton').on("click", function(event) {
            		self.showSelected();
+				$("#norecord1, #norecord2, #norecord3").hide();
+				
            	});
 			
 			$('label.on').click(function() {
@@ -247,6 +249,7 @@ define(["features/listener/featuresListener"], function() {
            	$('#switchonbutton').on("click", function(event) {
            		$("ul li").show();
            		self.featuresListener.scrollbarUpdate();
+				$("#norecord1, #norecord2, #norecord3").hide();; 
            	});
 
        		$('#cancelUpdateFeature').click(function() {
@@ -267,18 +270,21 @@ define(["features/listener/featuresListener"], function() {
 					 if(flag === 1){
 						temp1=descid;
 						$("#"+descid).show();	
-						flag=0;
+						flag = 0;
 					 }
 					else{					 
 						$("#"+descid).hide();	
-						flag=1;
-						if(temp1 !== temp2)
+						flag = 1;
+						if(temp1 !== temp2){
 							$("#"+temp2).show();
+						}	
 					}
+					self.featuresListener.flagged = 1;
 					self.featuresListener.scrollbarEnable();
 				});
 				
            	});
+			self.featuresListener.flagged = 2;
 			self.featuresListener.scrollbarEnable();
 			$('#featureUpdate').on("click", function() {
 				self.featureUpdatedArray = [];
@@ -326,9 +332,10 @@ define(["features/listener/featuresListener"], function() {
 			$("ul li fieldset").each(function() {
 				if($(this).attr("class") === "switch switchOn"){
 					$(this).parent().show();
-					self.featuresListener.scrollbarUpdate();
-				}     			
+					self.featuresListener.scrollbarUpdate();					
+				}
 			});
+			
 		},
 
 		bcheck : function(obj){
