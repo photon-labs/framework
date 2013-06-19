@@ -41,9 +41,6 @@ define(["features/api/featuresAPI", "features/features",  "application/applicati
 						hasRecord = true;
 						i++;
 					}
-					$("#norecord1").hide();
-					$("#norecord2").hide();
-					$("#norecord3").hide();
 				});
 				if (hasRecord === false) {
 					if(divId === "moduleContent"){
