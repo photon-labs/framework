@@ -319,6 +319,7 @@ define(["ci/api/ciAPI"], function() {
 			//TODO: need to get downstream project as well as dynamic params from service
 			var self = this;
 			var templateJsonData = $(thisObj).data("templateJson");
+
 			var jobJsonData = $(thisObj).data("jobJson");
 
 			// elements
@@ -345,12 +346,12 @@ define(["ci/api/ciAPI"], function() {
 			}
 
 			// Upload configurations
+			$("#uploadSettings").empty();
 			if (templateJsonData.enableUploadSettings) {
 				console.log("Upload settings design chnages and type need to get from UI");
 				//elements
 				var uploadSettingsElem = $("#uploadSettings");
 
-				$(uploadSettingsElem).empty();
 				// uploadType
 				if (templateJsonData.uploadType === "collabnet") {
 					var uploadSettingsHtml = '<table id="collabnetUploadSettings" class="table table-striped table_border table-bordered" cellpadding="0" cellspacing="0" border="0">'+
@@ -375,6 +376,19 @@ define(["ci/api/ciAPI"], function() {
 					$(uploadSettingsElem).html();
 				}
 			}
+
+			//scheduler
+			if (!templateJsonData.enableSheduler) {
+				$("#scheduler").remove();
+			}
+
+			//mail
+			if (!templateJsonData.enableEmailSettings) {
+				$("#mailSettings").remove();
+			}
+
+			//upstream config
+			$("#downstreamConfig").remove();
 
 			// Get app name
 			var appName = $(thisObj).attr("appname");
@@ -502,20 +516,45 @@ define(["ci/api/ciAPI"], function() {
 		},
 
 		configureJob : function (thisObj) {
+			var self = this;
 			// Get app name
 			var appName = $(thisObj).attr("appname");
 			var appDirName = $(thisObj).attr("appDirName");
 			var jobtemplatename = $(thisObj).attr("jobtemplatename");
 
-			// append the configureJob json (jobJson) in  job template name id
-			var jobConfiguration = $('#jonConfiguration').serializeObject();
+			var templateJsonData = $('[appname="'+ appName +'"][jobtemplatename="'+ jobtemplatename +'"]').data("templateJson");
 
-			console.log("Storing " + JSON.stringify(jobConfiguration));
-			//Checking
-			$('[appname="'+ appName +'"][jobtemplatename="'+ jobtemplatename +'"]').data("jobJson", jobConfiguration);
+			// validation starts
+			if (self.isBlank($("input[name=jobName]").val())) {
+				alert("Name is empty ");
+				return false;
+			}
 
-            // Hide popup
-            $(".dyn_popup").hide();
+			// when the repo is svn or git need validation
+			var emptyFound = false;
+			if (!self.isBlank(templateJsonData.repoTypes) && (templateJsonData.repoTypes === "svn" || templateJsonData.repoTypes === "git")) {
+				$('#repoType input').each(function() {
+			    	if (this.value == "") {
+			           //$("#error").show('slow');
+			           console.log("empty " + this.name);
+			           emptyFound = true;
+			           return false;
+			       	} 
+			    });
+			}
+			// validation ends
+
+			if (!emptyFound) {
+				// append the configureJob json (jobJson) in  job template name id
+				var jobConfiguration = $('#jonConfiguration').serializeObject();
+
+				console.log("Storing " + JSON.stringify(jobConfiguration));
+				//Checking
+				$('[appname="'+ appName +'"][jobtemplatename="'+ jobtemplatename +'"]').data("jobJson", jobConfiguration);
+
+	            // Hide popup
+	            $(".dyn_popup").hide();
+			}
 		},
 
 		constructJobTemplateViewByEnvironment : function (response) {
@@ -544,7 +583,7 @@ define(["ci/api/ciAPI"], function() {
 						$.each(value, function(jobTemplateKey, jobTemplateValue) {
 
 							var jobTemplateGearHtml = '<a href="javascript:;" id="'+ jobTemplateValue.name +'" class="validate_icon" jobTemplateName="'+ jobTemplateValue.name +'" appName="'+ appName +'" appDirName="'+ appDirName +'" name="jobConfigurePopup" style="display: none;"><img src="themes/default/images/helios/validate_image.png" width="19" height="19" border="0"></a>';
-                    		var jobTemplateHtml = '<li class="ui-state-default"><div>' + jobTemplateValue.name + ' - ' + jobTemplateValue.type + '</div>' + jobTemplateGearHtml + '</li>'
+                    		var jobTemplateHtml = '<li class="ui-state-default"><span>' + jobTemplateValue.name + ' - ' + jobTemplateValue.type + '</span>' + jobTemplateGearHtml + '</li>'
                     		$("#sortable1").append(jobTemplateHtml);
 
                     		// set json value on attribute
@@ -555,8 +594,46 @@ define(["ci/api/ciAPI"], function() {
 
 				});
 			}
+		},
+
+		saveContinuousDelivery : function (thisObj, callback) {
+			var self = this;
+			var jobs = {};
+
+			$("#sortable2 li").each(function(index) {
+				var thisAnchorElem = $(this).find('a');
+				console.log("elem span" + $(this).find('span').text());
+				var thisTemplateJsonData = $(thisAnchorElem).data("templateJson");
+				console.log("thisTemplateJsonData => " + JSON.stringify(thisTemplateJsonData));
+				var thisJobJsonData = $(thisAnchorElem).data("jobJson");
+			    console.log("jobJsonData => " + JSON.stringify(thisJobJsonData));
+				var thisAppName = $(thisAnchorElem).attr("appname");
+
+				// open the popup and ask the user to input the data, Once the popup is opened all the data will be validates
+				if (self.isBlank(thisJobJsonData)) {
+					self.showConfigureJob(thisAnchorElem);
+					alert("Fille the job template");
+					return false;
+				} else {
+					console.log("Validation starts here ");
+					// all the input text box should not be empty
+					if (isBlank(thisJobJsonData.name)) {
+						self.showConfigureJob(thisAnchorElem);
+					}
+					return false;
+				}
+
+			});
+
+			// construct the job json data here once all the data are validated
+			callback(jobs);
+		},
+
+		saveContinuousDeliveryValidation : function (thisObj, callback) {
+			var self = this;
+			callback();
 		}
-		
+				
 	});
 
 	return Clazz.com.components.ci.js.listener.CIListener;

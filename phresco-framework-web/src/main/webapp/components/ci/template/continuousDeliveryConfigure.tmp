@@ -186,8 +186,9 @@
                 <!-- Basic Sttings ends here -->
 
                 <!-- Clone and Downstream specification starts -->
-                <table class="table table-striped table_border table-bordered" border="0" cellspacing="0" cellpadding="0">
-                    <tbody>
+                <div id="downstreamConfig">
+                    <table class="table table-striped table_border table-bordered" border="0" cellspacing="0" cellpadding="0">
+                        <tbody>
                             <tr>
                                 <td>Downstream projects</td>
                                 <td>
@@ -213,8 +214,9 @@
                                     <input type="radio" name="cloneWorkspace" value="false" checked/>&nbsp; No
                                 </td>
                             </tr>
-                     </tbody>
+                        </tbody>
                  </table>
+             </div>
                 <!-- Clone and Downstream specification ends -->
 
                 <!-- Build configuration starts here -->
@@ -337,7 +339,7 @@
     <!-- Global buttons starts -->
     <section class="content_end">
         <div class="flt_right">
-            <a href="ci_pipeline.html"><input type="submit" value="Add" class="btn btn_style add_icon_btn"></a>
+            <a href="javascript:;"><input type="submit" value="Add" class="btn btn_style add_icon_btn"></a>
             <input type="submit" value="Cancel" class="btn btn_style cancel_icon_btn">
         </div>
         <!--content_title ends here -->
