@@ -47,9 +47,9 @@ define(["application/api/applicationAPI"], function() {
 		},
 		
 		addServerDatabase : function(appType, whereToAppend, rowId) {
-			var self = this, dynamicValue, server = '<tr class="servers" key="displayed" name="serverscontent"> <td><span data-i18n="application.edit.servers"></span>&nbsp;<span class="paid">'+rowId+'</span></td><td name="servers" class="servers"><select name="appServers" class="appServers selectpicker"><option value=0>Select Server</option>'+ self.getOptionData('serverData') +'</select></td><td data-i18n="application.edit.versions"></td><td colspan="4" name="version" class="version"><select title="Select Version" multiple data-selected-text-format="count>3" name="server_version" class="server_version selectpicker"></select> <div class="flt_right"><a href="javascript:;" name="addServer"><img src="themes/default/images/helios/plus_icon.png" border="0" alt=""></a> <a href="javascript:;" name="removeServer"><img src="themes/default/images/helios/minus_icon.png"  border="0" alt=""></a></div></td></tr>',
+			var self = this, dynamicValue, server = '<tr class="servers" key="displayed" name="serverscontent"> <td><span>Server</span>&nbsp;<span class="paid">'+rowId+'</span></td><td name="servers" class="servers"><select name="appServers" class="appServers selectpicker"><option value=0>Select Server</option>'+ self.getOptionData('serverData') +'</select></td><td>Versions</td><td colspan="4" name="version" class="version"><select title="Select Version" multiple data-selected-text-format="count>3" name="server_version" class="server_version selectpicker"></select> <div class="flt_right"><a href="javascript:;" name="addServer"><img src="themes/default/images/helios/plus_icon.png" border="0" alt=""></a> <a href="javascript:;" name="removeServer"><img src="themes/default/images/helios/minus_icon.png"  border="0" alt=""></a></div></td></tr>',
 			
-			database ='<tr class="database" key="displayed" name="databasecontent"><td><span data-i18n="application.edit.database"></span>&nbsp;<span class="paid">'+rowId+'</span></td><td name="servers" class="databases"><select name="databases" class="databases selectpicker"><option value=0>Select Database</option>'+ self.getOptionData('databaseData') +'</select></td><td data-i18n="application.edit.versions"></td> <td colspan="4" name="version" class="version"><select title="Select Version" multiple data-selected-text-format="count>3" name="db_version" class="db_version selectpicker"></select><div class="flt_right"><a href="javascript:;" name="addDatabase"><img src="themes/default/images/helios/plus_icon.png"  border="0" alt=""></a> <a href="javascript:;" name="removeDatabase"><img src="themes/default/images/helios/minus_icon.png" border="0" alt=""></a></div></td></tr>';
+			database ='<tr class="database" key="displayed" name="databasecontent"><td><span>Database</span>&nbsp;<span class="paid">'+rowId+'</span></td><td name="servers" class="databases"><select name="databases" class="databases selectpicker"><option value=0>Select Database</option>'+ self.getOptionData('databaseData') +'</select></td><td>Versions</td> <td colspan="4" name="version" class="version"><select title="Select Version" multiple data-selected-text-format="count>3" name="db_version" class="db_version selectpicker"></select><div class="flt_right"><a href="javascript:;" name="addDatabase"><img src="themes/default/images/helios/plus_icon.png"  border="0" alt=""></a> <a href="javascript:;" name="removeDatabase"><img src="themes/default/images/helios/minus_icon.png" border="0" alt=""></a></div></td></tr>';
 			if (appType === "addServer") {
 				dynamicValue = $(server).insertAfter(whereToAppend);
 				dynamicValue.prev('tr').find('a[name="addServer"]').html('');
@@ -259,7 +259,7 @@ define(["application/api/applicationAPI"], function() {
 				var selectedWebServices = [];
 				var databasesJson = {};
 				var serversJson = {};
-				$.each($("tbody[name='layercontents']").children(), function(index, value){
+				$.each($("tbody[name='layercontents']").children().children().children(), function(index, value){
 				
 					if($(value).attr('class') === "servers" && $(value).attr('key') === "displayed") {
 						var serverId = {};
@@ -298,7 +298,7 @@ define(["application/api/applicationAPI"], function() {
 					appInfo.techInfo = renderData.appdetails.data.appInfos[0].techInfo;
 					appInfo.selectedDatabases = selectedDatabases;
 					appInfo.selectedServers = selectedServers;
-					appInfo.selectedWebservices=selectedWebServices;
+					appInfo.selectedWebservices = selectedWebServices;
 				}
 				self.editAppInfo(self.getRequestHeader(JSON.stringify(appInfo), "editApplication"), function(response) {
 					if(response.message === "Application updated successfully"){
@@ -310,11 +310,13 @@ define(["application/api/applicationAPI"], function() {
 							commonVariables.appDirName = response.data.appDirName;
 							self.applicationAPI.localVal.setSession('appDirName', response.data.appDirName);
 							self.applicationAPI.localVal.setJson('appdetails', response.data.appInfos);
-							
 							Clazz.navigationController.push(self.editAplnContent, true);
-						 });
+							setTimeout(function(){
+								self.successMsgPopUp(response.message);			
+							},3000);
+						});
 					}
-				});	
+				});
 			}
 		},
 		
@@ -391,10 +393,11 @@ define(["application/api/applicationAPI"], function() {
 							commonVariables.loadingScreen.removeLoading();
 							callback({ "status" : "service failure"});
 						}
-
 					},
 
 					function(textStatus) {
+						var data = $.parseJSON(textStatus);
+						self.failureMsgPopUp(data.message);
 						commonVariables.loadingScreen.removeLoading();
 					}
 				);

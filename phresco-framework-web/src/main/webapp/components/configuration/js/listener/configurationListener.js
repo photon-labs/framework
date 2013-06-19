@@ -189,14 +189,18 @@ define(["configuration/api/configurationAPI"], function() {
 							if(currentConfig === 'Server') {
 								if($(this).attr('configType') === currentConfig) {
 									bCheck = true;
-									self.successMsgPopUp("Server Already Added");
+									setTimeout(function(){
+										self.successMsgPopUp("Server Already Added");		
+									},2500);
 								}
 							}
 							
 							if(currentConfig === 'Email') {
 								if($(this).attr('configType') === currentConfig) {
 									bCheck = true;
-									self.successMsgPopUp("Email Already Added");
+									setTimeout(function(){
+										self.successMsgPopUp("Email Already Added");		
+									},2500);
 								}
 							}
 						});
@@ -783,7 +787,9 @@ define(["configuration/api/configurationAPI"], function() {
 			if(self.validation()) {
 				self.getConfigurationList(self.getRequestHeader(self.configRequestBody, "saveConfig", envrName), function(response) {
 					Clazz.navigationController.jQueryContainer = commonVariables.contentPlaceholder;
-					self.successMsgPopUp(response.message);
+					setTimeout(function(){
+						self.successMsgPopUp(response.message);			
+					},2500);
 					if(self.configListPage === null) {
 						commonVariables.navListener.getMyObj(commonVariables.configuration, function(retVal) {
 							self.configListPage = retVal;

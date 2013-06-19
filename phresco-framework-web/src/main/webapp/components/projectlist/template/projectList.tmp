@@ -43,9 +43,9 @@
                         <td>{{techInfo.name}}</td>
                        <td><a name="pdf_report" fromPage="All" class="tooltiptop" title="" dynamicId="{{id}}" data-placement="top" data-t="tooltip" href="#" data-original-title="PDF Report"><img src="themes/default/images/helios/pdf_icon.png" width="14" height="16" border="0" alt=""></a>
                   
-              <div id="pdf_report" class="dyn_popup">
+              <div id="pdf_report" class="dyn_popup pdf_report">
               <div id="noReport" class="noReport"></div>
-                <table width="100%" border="0" cellspacing="0" cellpadding="5">
+                <table class="existing_report" width="100%" border="0" cellspacing="0" cellpadding="5">
                   <thead name="pdfHeader">
                         <tr>
                             <th>Existing Reports</th>
@@ -143,7 +143,7 @@
                             </tr>
                             <tr>
                                 <td colspan="2">
-                                    <textarea placeholder="Message" id="repomessage_{{id}}"></textarea>
+                                    <textarea class="popuptextarea" placeholder="Message" id="repomessage_{{id}}"></textarea>
                                 </td>
                             </tr>
                         </tbody>
@@ -192,7 +192,7 @@
                                     </tr>
                                     <tr>
                                         <td colspan="2">
-                                            <textarea placeholder="Message" id="commitMessage_{{id}}"></textarea>
+                                            <textarea class="popuptextarea" placeholder="Message" id="commitMessage_{{id}}"></textarea>
                                         </td>
                                     </tr>
                                 </tbody>

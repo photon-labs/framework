@@ -85,7 +85,9 @@ define(["configuration/listener/configurationListener"], function() {
 						}
 					});
 				} else {
-					self.successMsgPopUp(response.message);
+					setTimeout(function(){
+						self.successMsgPopUp(response.message);			
+					},2500);
 					self.loadPage();
 				}
 			});

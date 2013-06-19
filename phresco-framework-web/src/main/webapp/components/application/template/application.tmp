@@ -228,8 +228,5 @@
 			{{/if}}
             <input type="submit" data-i18n="[value]application.btn.cancel;" id="cancelbutton" class="btn btn_style cancel_icon_btn">
         </div>
-		<div class="flt_right appSuccessMsg">
-			{{getSuccessMsg projectlist.appdetails.data.appInfos.0.appDirName}}
-		</div>
     	<!--content_title ends here -->
     </section>
