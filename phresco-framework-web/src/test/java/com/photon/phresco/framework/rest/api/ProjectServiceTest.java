@@ -2,39 +2,29 @@ package com.photon.phresco.framework.rest.api;
 
 import static org.junit.Assert.assertEquals;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
 
-import org.junit.Before;
 import org.junit.Test;
 
+import com.opensymphony.xwork2.interceptor.annotations.Before;
 import com.photon.phresco.commons.model.ApplicationInfo;
 import com.photon.phresco.commons.model.ArtifactGroupInfo;
 import com.photon.phresco.commons.model.ProjectInfo;
 import com.photon.phresco.commons.model.SelectedFeature;
 import com.photon.phresco.commons.model.TechnologyInfo;
-import com.photon.phresco.util.FileUtil;
-import com.photon.phresco.util.Utility;
-import com.sun.jersey.api.client.Client;
-import com.sun.jersey.api.client.ClientResponse;
-import com.sun.jersey.api.client.GenericType;
-import com.sun.jersey.api.client.WebResource;
-import com.sun.jersey.core.util.MultivaluedMapImpl;
 
-public class ProjectServiceTest extends RestBaseTest {
+public class ProjectServiceTest extends LoginServiceTest {
 	
 	@Test
 	public void createProjectTest() {
 		ProjectInfo projectInfo = createProjectInfo();
 		ProjectService projectService = new ProjectService();
-		Response response = projectService.createProject(projectInfo, userName);
+		Response response = projectService.createProject(projectInfo, userId);
 		
 		assertEquals(200 , response.getStatus());
 	}
@@ -63,7 +53,7 @@ public class ProjectServiceTest extends RestBaseTest {
 	public void updateProjectTest() {
 		ProjectService projectService = new ProjectService();
 		ProjectInfo projectInfo = createProjectInfo();
-		Response response = projectService.updateProject(projectInfo, userName);
+		Response response = projectService.updateProject(projectInfo, userId);
 		ResponseInfo<ProjectInfo> resopnseInfo = (ResponseInfo<ProjectInfo>) response.getEntity();
 		assertEquals(200 , response.getStatus());
 		assertEquals("Project updated Successfully", resopnseInfo.getMessage());
@@ -79,7 +69,7 @@ public class ProjectServiceTest extends RestBaseTest {
 		info.setArtifactInfoIds(Arrays.asList("0e34ab53-1b9e-493d-aa72-6ecacddc5338", "146829e4-87bd-4b1b-9811-d3faa91009e5"));
 		selectedServers.add(info);
 		applicationInfo.setSelectedServers(selectedServers);
-		Response response = service.updateApplication(appDirName, applicationInfo, userName, customerId);
+		Response response = service.updateApplication(appDirName, applicationInfo, userId, customerId);
 		ResponseInfo<ApplicationInfo> responseInfo = (ResponseInfo<ApplicationInfo>) response.getEntity();
 		assertEquals(200 , response.getStatus());
 		assertEquals("Application updated successfully", responseInfo.getMessage());
@@ -95,7 +85,7 @@ public class ProjectServiceTest extends RestBaseTest {
 		assertEquals(200 , response.getStatus());
 	}
 	
-	@Test
+//	@Test
 	public void deleteprojectTest() {
 		ProjectService service = new ProjectService();
 		Response response = service.deleteproject(Arrays.asList(appDirName));
@@ -122,12 +112,12 @@ public class ProjectServiceTest extends RestBaseTest {
 		ApplicationInfo appInfo = new ApplicationInfo();
 		appInfo.setAppDirName(appDirName);
 		appInfo.setCode(appCode);
-		appInfo.setId("TestProject");
+		appInfo.setId(projectId);
 		appInfo.setName("TestProject");
 		appInfo.setVersion("1.0");
 		TechnologyInfo info = new TechnologyInfo();
 		info.setAppTypeId("web-layer");
-		info.setId("tech-java-webservice");
+		info.setId(techId);
 		info.setVersion("tech-java-webservice");
 		appInfo.setTechInfo(info);
 		return appInfo;

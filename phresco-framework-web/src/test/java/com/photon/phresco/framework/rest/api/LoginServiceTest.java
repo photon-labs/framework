@@ -13,14 +13,14 @@ public class LoginServiceTest extends RestBaseTest {
 	@Test
 	public void loginTest() {
 		LoginService service = new LoginService();
-		Credentials credentials = new Credentials(userName, password);
+		Credentials credentials = new Credentials(userId, password);
 		Response response = service.authenticate(credentials);
 		ResponseInfo<User> responseInfo = (ResponseInfo<User>) response.getEntity();
 		User user = responseInfo.getData();
-		serviceManager  = CONTEXT_MANAGER_MAP.get(userName);
+		serviceManager  = CONTEXT_MANAGER_MAP.get(userId);
 		Assert.assertNotNull(user);
 		Assert.assertEquals(200, response.getStatus());
-		Assert.assertEquals(userName, user.getId());
+		Assert.assertEquals(userId, user.getId());
 	}
 	
 }

@@ -173,33 +173,6 @@ public class ConfigurationService extends RestBase implements FrameworkConstants
 		}
 	}
 
-	/**
-	 * Save configuration.
-	 *
-	 * @param appDirName the app dir name
-	 * @param configuration the configuration
-	 * @return the response
-	 */
-	@POST
-	@Path("/saveConfig")
-	@Produces(MediaType.APPLICATION_JSON)
-	@Consumes(MediaType.APPLICATION_JSON)
-	public Response saveConfiguration(@QueryParam(REST_QUERY_APPDIR_NAME) String appDirName, Configuration configuration) {
-		ResponseInfo<Configuration> responseData = new ResponseInfo<Configuration>();
-		try {
-			String configFileDir = FrameworkServiceUtil.getConfigFileDir(appDirName);
-			ConfigManager configManager = new ConfigManagerImpl(new File(configFileDir));
-			configManager.createConfiguration(configuration.getEnvName(), configuration);
-			ResponseInfo<Configuration> finalOuptut = responseDataEvaluation(responseData, null, "Environments Listed",
-					configuration);
-			return Response.ok(finalOuptut).header("Access-Control-Allow-Origin", "*").build();
-		} catch (ConfigurationException e) {
-			ResponseInfo<Configuration> finalOuptut = responseDataEvaluation(responseData, e,
-					"Cofiguration Failed to add", null);
-			return Response.status(Status.EXPECTATION_FAILED).entity(finalOuptut).header("Access-Control-Allow-Origin",
-					"*").build();
-		}
-	}
 
 	/**
 	 * Delete environment.
@@ -241,36 +214,6 @@ public class ConfigurationService extends RestBase implements FrameworkConstants
 				"Environment Not available to Delete", null);
 		return Response.status(Status.EXPECTATION_FAILED).entity(finalOuptut)
 				.header("Access-Control-Allow-Origin", "*").build();
-	}
-
-	/**
-	 * Delete configuration of an environment.
-	 *
-	 * @param appDirName the app dir name
-	 * @param envName the env name
-	 * @param configurations the configurations
-	 * @return the response
-	 */
-	@DELETE
-	@Path("/deleteConfig")
-	@Produces(MediaType.APPLICATION_JSON)
-	@Consumes(MediaType.APPLICATION_JSON)
-	public Response deleteConfig(@QueryParam(REST_QUERY_APPDIR_NAME) String appDirName,
-			@QueryParam(REST_QUERY_ENV_NAME) String envName, List<String> configurations) {
-		String configFile = FrameworkServiceUtil.getConfigFileDir(appDirName);
-		ResponseInfo<Configuration> responseData = new ResponseInfo<Configuration>();
-		try {
-			ConfigManager configManager = new ConfigManagerImpl(new File(configFile));
-			configManager.deleteConfigurations(envName, configurations);
-			ResponseInfo<Configuration> finalOuptut = responseDataEvaluation(responseData, null,
-					"Configurations Deleted successfully", null);
-			return Response.ok(finalOuptut).header("Access-Control-Allow-Origin", "*").build();
-		} catch (ConfigurationException e) {
-			ResponseInfo<Configuration> finalOuptut = responseDataEvaluation(responseData, e,
-					"Configurations Failed to Delete", null);
-			return Response.status(Status.EXPECTATION_FAILED).entity(finalOuptut).header("Access-Control-Allow-Origin",
-					"*").build();
-		}
 	}
 
 	/**

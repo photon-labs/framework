@@ -19,6 +19,7 @@ package com.photon.phresco.framework.rest.api;
 
 import static org.junit.Assert.assertEquals;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -30,30 +31,74 @@ import junit.framework.Assert;
 
 import org.junit.Test;
 
+import com.photon.phresco.api.ConfigManager;
 import com.photon.phresco.configuration.Configuration;
+import com.photon.phresco.configuration.Environment;
+import com.photon.phresco.exception.ConfigurationException;
 import com.photon.phresco.exception.PhrescoException;
 import com.photon.phresco.framework.model.CronExpressionInfo;
+import com.photon.phresco.framework.rest.api.util.FrameworkServiceUtil;
+import com.photon.phresco.impl.ConfigManagerImpl;
 
-public class ConfigurationServiceTest extends RestBaseTest {
+public class ConfigurationServiceTest extends LoginServiceTest {
 	
 	ConfigurationService configurationService = new ConfigurationService();
 	
-	public ConfigurationServiceTest() {
-		super();
-	}
-	
-//	@Test
-	public void  getSettingsTemplateTest() {
-		String appDirName = "bar-WordPress";
-		String customerId = getCustomer().get(0);
-		String userId = "admin";
-		String type = "Server";
-		Response response = configurationService.getSettingsTemplate(appDirName, customerId, userId, type);
-		System.out.println("Response : " + response.getEntity());
+	@Test
+	public void getAllEnvironmentsTest() {
+		Response response = configurationService.getAllEnvironments(appDirName);
 		Assert.assertEquals(200, response.getStatus());
 	}
 	
-	//@Test
+	@Test
+	public void addEnvironmentTest() {
+		List<Environment> environments = new ArrayList<Environment>();
+		Environment env = new Environment();
+		env.setName("Production");
+		env.setDefaultEnv(true);
+		Environment environment = new Environment();
+		environment.setName("Testing");
+		environment.setDefaultEnv(false);
+		environments.add(env);
+		environments.add(environment);
+		Response response = configurationService.addEnvironment(appDirName, environments);
+		ResponseInfo<List<Environment>> environmentList = (ResponseInfo<List<Environment>>) configurationService.getAllEnvironments(appDirName).getEntity();
+		List<Environment> data = environmentList.getData();
+		Assert.assertEquals(200, response.getStatus());
+		Assert.assertEquals(2, data.size());
+	}
+	
+	@Test
+	public void listEnvironmentTest() {
+		Response response = configurationService.listEnvironments(appDirName, "Production");
+		ResponseInfo<Environment> responseInfo = (ResponseInfo<Environment>) response.getEntity();
+		Environment environment = responseInfo.getData();
+		Assert.assertEquals("Production", environment.getName());
+	}
+	
+	@Test
+	public void deleteEnvTestFail() {
+		String envName = "Production";
+		Response response = configurationService.deleteEnv(appDirName, envName);
+		ResponseInfo<Environment> responseInfo = (ResponseInfo<Environment>) response.getEntity();
+		Assert.assertEquals("Default Environment can not be deleted", responseInfo.getMessage());
+	}
+	
+	@Test
+	public void deleteEnvTest() {
+		String envName = "Testing";
+		Response response = configurationService.deleteEnv(appDirName, envName);
+		Assert.assertEquals(200, response.getStatus());
+	}
+	
+	@Test
+	public void  getSettingsTemplateTest() {
+		String type = "Server";
+		Response response = configurationService.getSettingsTemplate(appDirName, techId, userId, type);
+		Assert.assertEquals(200, response.getStatus());
+	}
+	
+	@Test
 	public void testCronExpressionSuccess() throws PhrescoException {
 		CronExpressionInfo cron = new CronExpressionInfo();
 		cron.setCronBy("Weekly");
@@ -66,10 +111,10 @@ public class ConfigurationServiceTest extends RestBaseTest {
 		
 		Response cronValidation = configurationService.cronValidation(cron);
 		ResponseInfo<CronExpressionInfo> entity = (ResponseInfo<CronExpressionInfo>) cronValidation.getEntity();
-		assertEquals("23 5 * * 3" , entity.getData());
+		assertEquals("23 5 * * 3" , entity.getData().getCronExpression());
 	}
 	
-	//@Test
+	@Test
 	public void testCronExpressionFailure() throws PhrescoException {
 		CronExpressionInfo cron = new CronExpressionInfo();
 		cron.setCronBy("Weekly");
@@ -82,7 +127,7 @@ public class ConfigurationServiceTest extends RestBaseTest {
 		
 		Response cronValidation = configurationService.cronValidation(cron);
 		ResponseInfo<CronExpressionInfo> entity = (ResponseInfo<CronExpressionInfo>) cronValidation.getEntity();
-		Assert.assertNotSame("CronExpression  not Matching", "23 5 * * 3" , entity.getData());
+		Assert.assertNotSame("CronExpression  not Matching", "23 5 * * 3" , entity.getData().getCronExpression());
 	}
 	
 	@Test
@@ -101,25 +146,22 @@ public class ConfigurationServiceTest extends RestBaseTest {
 		Assert.assertEquals(4, entity.getData().getDates().size());
 	}
 	
-	//@Test
+	@Test
 	public void listEnvironmentsByProjectId() {
-		String customerId = "photon";
-		String projectId = "09369f3e-366e-40fa-a983-6d7c753bfcc1";
 		Response response = configurationService.listEnvironmentsByProjectId(customerId, projectId);
-		System.out.println("Response : " + response.getEntity());
 		Assert.assertEquals(200, response.getStatus());
 	}
 	
-	//	@Test
-	public void deleteEnvTest() {
-	String appDirName = "Pom-Mojo-Test-javawebservice";
-	String envName = "Testing";
-	Response response = configurationService.deleteEnv(appDirName, envName);
-	System.out.println(response.getEntity());
-	Assert.assertEquals(200, response.getStatus());
+	@Test
+	public void getConfigTypeTest() {
+		Response response = configurationService.getConfigTypes(customerId, userId, techId);
+		ResponseInfo<List<String>> responseInfo = (ResponseInfo<List<String>>) response.getEntity();
+		List<String> data = responseInfo.getData();
+		Assert.assertEquals(200, response.getStatus());
+		Assert.assertNotSame(null, data);
 	}
-
-//	@Test
+	
+	@Test
 	public void configurationValidationTest() {
 		Properties propertiesServer = new Properties();
 		Properties propertiesEmail = new Properties();
@@ -175,6 +217,7 @@ public class ConfigurationServiceTest extends RestBaseTest {
 		configListEmail.add(configurationEmailDuplicate);
 		
 		configListSiteCore.add(configurationSiteCorePath);
+		configListSiteCore.add(configurationServer);
 		
 		configListPass.add(configurationServer);
 		configListPass.add(configurationEmail);
@@ -182,31 +225,61 @@ public class ConfigurationServiceTest extends RestBaseTest {
 		configListName.add(configurationServerName);
 		configListName.add(configurationServer);
 		
-		ConfigurationService configurationService = new ConfigurationService();
-		Response responseServer = configurationService.updateConfiguration("admin", "photon", "sample3-HTML5-JQuery-Mobile-Widget", "Production", configListServer);
+		Response responseServer = configurationService.updateConfiguration(userId, customerId, appDirName, "Production", configListServer);
 		
 		System.out.println("Response for responseServer : " + responseServer.getEntity());
 		Assert.assertEquals(400, responseServer.getStatus());
 		
-		Response responseEmail = configurationService.updateConfiguration("admin", "photon", "new1-drupal77.8", "Production", configListEmail);
+		Response responseEmail = configurationService.updateConfiguration(userId, customerId, appDirName, "Production", configListEmail);
 		
 		System.out.println("Response for responseEmail : " + responseEmail.getEntity());
 		Assert.assertEquals(400, responseEmail.getStatus());
 		
-		Response responseSiteCore = configurationService.updateConfiguration("admin", "photon", "siteCore1-sitecore3.5", "Production", configListSiteCore);
+		Response responseSiteCore = configurationService.updateConfiguration(userId, customerId, appDirName, "Production", configListSiteCore);
 		
 		System.out.println("Response for responseSiteCore : " + responseSiteCore.getEntity());
 		Assert.assertEquals(400, responseSiteCore.getStatus());
 		
-		Response responseName = configurationService.updateConfiguration("admin", "photon", "sample3-HTML5-JQuery-Mobile-Widget", "Production", configListName);
+		Response responseName = configurationService.updateConfiguration(userId, customerId, appDirName, "Production", configListName);
 		
 		System.out.println("Response for responseSiteCore : " + responseName.getEntity());
 		Assert.assertEquals(400, responseName.getStatus());
 		
-		Response responsePass = configurationService.updateConfiguration("admin", "photon", "new1-drupal77.8", "Production", configListPass);
+		Response responsePass = configurationService.updateConfiguration(userId, customerId, appDirName, "Production", configListPass);
 		
 		System.out.println("Response for responsePass : " + responsePass.getEntity());
 		Assert.assertEquals(200, responsePass.getStatus());
 		
+	}
+	
+	@Test
+	public void connectionAliveTest() throws PhrescoException {
+		String connectionUrl = getConnectionUrl("Production", "Server", "Server");
+		Response response = configurationService.connectionAliveCheck(connectionUrl);
+		Assert.assertEquals(false, response.getEntity());
+	}
+	
+	@Test
+	public void cloneEnvironmentTest() {
+		Environment cloneEnvironment = new Environment();
+		cloneEnvironment.setName("clone");
+		cloneEnvironment.setDefaultEnv(false);
+		Response response = configurationService.cloneEnvironment(appDirName, "Production", cloneEnvironment);
+		Assert.assertEquals(200, response.getStatus());
+	}
+	
+	private String getConnectionUrl(String envName, String type, String configName) throws PhrescoException {
+		String configFileDir = FrameworkServiceUtil.getConfigFileDir(appDirName);
+		try {
+			ConfigManager configManager = new ConfigManagerImpl(new File(configFileDir));
+			Configuration configuration = configManager.getConfiguration(envName, type, configName);
+			Properties properties = configuration.getProperties();
+			String protocol = properties.getProperty("protocol");
+			String host = properties.getProperty("host");
+			String port = properties.getProperty("port");
+			return protocol + "," +host + "," + port;
+		} catch (ConfigurationException e) {
+			throw new PhrescoException(e);
+		}
 	}
 }

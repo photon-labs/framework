@@ -30,19 +30,24 @@ import com.sun.jersey.api.client.config.DefaultClientConfig;
 public class RestBaseTest extends RestBase {
 	
 	protected static ServiceManager serviceManager = null;
-	protected String userName = "";
+	protected String userId = "";
 	protected String password = "";
 	protected String customerId = "";
 	protected String appDirName = "";
 	protected String appCode = "";
+	protected String techId = "";
+	protected String projectId = "";
 	
 	public RestBaseTest() {
-		userName = "admin";
+		userId = "admin";
 		password = "manage";
 		customerId = "photon";
-		serviceManager = getServiceManager(userName, password);
+		serviceManager = getServiceManager(userId, password);
 		appDirName = "TestProject";
 		appCode = "TestProject";
+		techId = "tech-java-webservice";
+		projectId = "TestProject";
+		
 	}
 	
 	protected List<String> getCustomer() {
