@@ -282,6 +282,11 @@ define(["framework/widget", "framework/templateProvider"], function() {
 			},
 			
 			closeAll : function(placeId) {
+
+				$('.dlt').click( function() {
+					$("#" + placeId).hide();
+				});	
+
 				$(document).keyup(function(e) {
 					if(e.which === 27){
 						$("#" + placeId).hide();
@@ -361,6 +366,19 @@ define(["framework/widget", "framework/templateProvider"], function() {
 			successMsgPopUp : function(msg) {
 				$('#myModal').css({top:'50%',left:'50%',margin:'-'+($('#myModal').height() / 2)+'px 0 0 -'+($('#myModal').width() / 2)+'px'});
 				$('#myModal').css('z-index', '1051');
+				$('#myModal').addClass('successpop');
+				$('#myModal').modal('show');
+				$('.modal-header').hide();
+				$('.modal-body').html(msg);
+				$('.modal-footer').hide();
+				setTimeout("$('#myModal').modal('hide')", 3000);
+			},
+
+			// popUp for success event to close auto
+			failureMsgPopUp : function(msg) {
+				$('#myModal').css({top:'50%',left:'50%',margin:'-'+($('#myModal').height() / 2)+'px 0 0 -'+($('#myModal').width() / 2)+'px'});
+				$('#myModal').css('z-index', '1051');
+				$('#myModal').addClass('errorpop');
 				$('#myModal').modal('show');
 				$('.modal-header').hide();
 				$('.modal-body').html(msg);
