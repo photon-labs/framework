@@ -28,8 +28,9 @@ define(["features/api/featuresAPI", "features/features",  "application/applicati
 		},
 
 		search : function (txtSearch, divId){
+			var self = this;
        		var txtSearch = txtSearch.toLowerCase();           		
-			if (txtSearch != "") {
+			if (txtSearch !== "") {
 				$("#"+divId+" li").hide();//To hide all the ul
 				var hasRecord = false;				
 				var i=0;
@@ -41,40 +42,38 @@ define(["features/api/featuresAPI", "features/features",  "application/applicati
 						i++;
 					}
 					$("#norecord1").hide();
-					$("#norecord1").hide();
+					$("#norecord2").hide();
 					$("#norecord3").hide();
 				});
-				if (hasRecord == false) {
-					if(divId == "moduleContent"){
+				if (hasRecord === false) {
+					if(divId === "moduleContent"){
 						$("#norecord1").show();
-					} else if(divId == "jsibrariesContent"){
+					} if(divId === "jsibrariesContent"){
 						$("#norecord2").show();
-					} else if(divId == "componentsContent"){
+					} if(divId === "componentsContent"){
 						$("#norecord3").show();
 					}					
 				} else {
-					if(divId == "moduleContent"){
-						$("#norecord1").hide();
-					} else if(divId == "jsibrariesContent"){
-						$("#norecord2").hide();
-					} else if(divId == "componentsContent"){
-						$("#norecord3").hide();
-					}
+					self.norecordHide(divId);
 				}
 			}
 			else {				
 				$("#"+divId+" li").show();
-				if(divId == "moduleContent"){
-					$("#norecord1").hide();
-				} else if(divId == "jsibrariesContent"){
-					$("#norecord2").hide();
-				} else if(divId == "componentsContent"){
-					$("#norecord3").hide();
-				}
-				
+				self.norecordHide(divId);
 			}
 			self.scrollbarUpdate();
        	},
+	
+		norecordHide : function(divId) {
+			if(divId === "moduleContent"){
+				$("#norecord1").hide();
+				
+			} if(divId === "jsibrariesContent"){
+				$("#norecord2").hide();
+			} if(divId === "componentsContent"){
+				$("#norecord3").hide();
+			}
+		},
 
        	getFeaturesList : function(header, callback) {
 			var self = this;
@@ -141,17 +140,7 @@ define(["features/api/featuresAPI", "features/features",  "application/applicati
 				updateOnContentResize: true
 			});
 			
-			$("#content_2").mCustomScrollbar({
-				autoHideScrollbar:true,
-				theme:"light-thin"
-			});
-			
-			$("#content_3").mCustomScrollbar({
-				autoHideScrollbar:true,
-				theme:"light-thin"
-			});
-
-			$(".features_cont").mCustomScrollbar({
+			$("#content_2,#content_3,.features_cont").mCustomScrollbar({
 				autoHideScrollbar:true,
 				theme:"light-thin"
 			});
@@ -175,7 +164,7 @@ define(["features/api/featuresAPI", "features/features",  "application/applicati
 		 * @return: returns the contructed header
 		 */
 		getRequestHeader : function(projectRequestBody, type, descid) {
-			var url;
+			var url, self = this;
 			var userId = JSON.parse(self.featuresAPI.localVal.getSession("userInfo"));
 			var appDirName = self.featuresAPI.localVal.getSession("appDirName");
 			var techId = commonVariables.techId;

@@ -29,8 +29,9 @@ define(["projectlist/listener/projectListListener"], function() {
 		 */
 		initialize : function(globalConfig){
 			var self = this;
-			if(self.projectslistListener === null)
+			if(self.projectslistListener === null){
 				self.projectslistListener = new Clazz.com.components.projectlist.js.listener.ProjectsListListener;
+			}
 			self.registerEvents(self.projectslistListener);
 		},
 
@@ -100,7 +101,7 @@ define(["projectlist/listener/projectListListener"], function() {
 			var self = this;
 			
 			self.projectslistListener.projectListAction(self.projectslistListener.getActionHeader(actionBody, action), "" , function(response) {
-				if ("delete" == action) {
+				if ("delete" === action) {
 					commonVariables.loadingScreen.removeLoading();
 				}
 				self.loadPage();
@@ -185,7 +186,7 @@ define(["projectlist/listener/projectListListener"], function() {
 				$("#addRepoLoading_"+dynamicId).hide();
 				$("#updateRepoLoading_"+dynamicId).hide();
 				var action = $(this).attr("data-original-title");
-				if (action == "Commit") {
+				if (action === "Commit") {
 					var appDirName = $(this).parent().parent().attr("class");
 					var data = {};
 					data.appdirname = appDirName;
@@ -214,9 +215,9 @@ define(["projectlist/listener/projectListListener"], function() {
 			$("input[name='holeDelete']").click(function(e) {
 				var projectnameArray = [];
 				var currentRow =  $(this).parents().parent("td.delimages").parent().next();
-				while(currentRow != null && currentRow.length > 0) {
+				while(currentRow !== null && currentRow.length > 0) {
 				   var classname = currentRow.attr("class");
-				   if(classname != "proj_title") {
+				   if(classname !== "proj_title") {
 				        currentRow = currentRow.next('tr');
 				        projectnameArray.push(classname);
 				   }else {currentRow = null}

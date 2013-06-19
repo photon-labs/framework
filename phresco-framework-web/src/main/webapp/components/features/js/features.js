@@ -28,7 +28,7 @@ define(["features/listener/featuresListener"], function() {
 		 */
 		initialize : function(globalConfig){
 			var self = this;
-			if(self.featuresListener == null){
+			if(self.featuresListener === null){
 				self.featuresListener = new Clazz.com.components.features.js.listener.FeaturesListener(globalConfig);
 			}
 			self.registerEvents();
@@ -41,13 +41,18 @@ define(["features/listener/featuresListener"], function() {
 			Clazz.navigationController.push(this, true);
 		},
 		
+		loadPageTest :function() {
+			var self = this;
+			Clazz.navigationController.push(this);
+		},
+		
 		registerEvents : function () {
 			var self = this;
-			if(self.onSearchEvent == null ){
+			if(self.onSearchEvent === null ){
 				self.onSearchEvent = new signals.Signal();				
 			}
 			self.onSearchEvent.add(self.featuresListener.search, self.featuresListener);
-			if(self.onCancelEvent == null ){
+			if(self.onCancelEvent === null ){
 				self.onCancelEvent = new signals.Signal();
 			}
 			self.onCancelEvent.add(self.featuresListener.cancelUpdate, self.featuresListener);
@@ -62,7 +67,7 @@ define(["features/listener/featuresListener"], function() {
 					$.each(versions, function(index, value){
 						if(JSON.stringify(value.appliesTo) !== "null"){
 							$.each(value.appliesTo, function(index, value){
-								if(value.required == true){
+								if(value.required === true){
 									fieldset = '<fieldset class="switch switchOn" id="feature_'+ id +'" value="false"><label class="off" name="on_off" value="false"></label><label class="on" name="on_off" value="true"></label></fieldset>';
 								} else {							
 									fieldset = '<fieldset class="switch switchOff" id="feature_'+ id +'" value="false"><label class="off" name="on_off" value="false"></label><label class="on" name="on_off" value="true"></label></fieldset>';
@@ -84,7 +89,7 @@ define(["features/listener/featuresListener"], function() {
 					$.each(versions, function(index, value){
 						if(JSON.stringify(value.appliesTo) !== "null"){
 							$.each(value.appliesTo, function(index, value){
-								if(value.required == true){
+								if(value.required === true){
 									fieldset = '<div class="flt_right" id="version_'+ id +'" style="display:block;">';
 								}else{							
 									fieldset = '<div class="flt_right" id="version_'+ id +'" style="display:none;">';
@@ -100,7 +105,7 @@ define(["features/listener/featuresListener"], function() {
 				var uniqueid;
 				uniqueid = $.trim(id.replace(/ /g,''));
 				return uniqueid;
-			});			
+			});
 		},
 
 		/***
@@ -201,12 +206,10 @@ define(["features/listener/featuresListener"], function() {
 			 
 			$("input[name=on_off]").click(function() {
 				var button = $(this).val();
-				if(button == 'off'){ $(this).closest('fieldset').css('background-position', 'right'); }
-				if(button == 'on'){ $(this).closest('fieldset').css('background-position', 'left'); }	
+				if(button === 'off'){ $(this).closest('fieldset').css('background-position', 'right'); }
+				if(button === 'on'){ $(this).closest('fieldset').css('background-position', 'left'); }	
 			});
 
-			self.featuresListener.scrollbarEnable();
-			
 			$('#module').keyup(function(event) {
 				var txtSearch = $('#module').val();
 				var divId = "moduleContent";
@@ -261,27 +264,28 @@ define(["features/listener/featuresListener"], function() {
 					$("#desc").append(divhtml);
 					commonVariables.temp = currentObj;
 					commonVariables.openccmini(currentObj,descriptionid);
-					 if(flag==1){
+					 if(flag === 1){
 						temp1=descid;
 						$("#"+descid).show();	
 						flag=0;
-						self.featuresListener.scrollbarEnable();
 					 }
 					else{					 
 						$("#"+descid).hide();	
 						flag=1;
-						if(temp1!=temp2)
+						if(temp1 !== temp2)
 							$("#"+temp2).show();
 					}
+					self.featuresListener.scrollbarEnable();
 				});
+				
            	});
-			
+			self.featuresListener.scrollbarEnable();
 			$('#featureUpdate').on("click", function() {
 				self.featureUpdatedArray = [];
 				$(".switchOn").each(function(index, currentVal) {
 					var featureUpdatedata = {};
 					if($(currentVal).parent().attr("type") !== undefined){
-						featureUpdatedata.name = $(currentVal).parent().attr("type");
+						featureUpdatedata.name = $(currentVal).parent().attr("name");
 						featureUpdatedata.dispName = $(currentVal).parent().attr("dispName");
 						featureUpdatedata.packaging = $(currentVal).parent().attr("packaging");
 						featureUpdatedata.type = $(currentVal).parent().attr("type");					
@@ -306,11 +310,11 @@ define(["features/listener/featuresListener"], function() {
 			$('#featureTest').children('tbody').children('tr').children('td').each(function() {
 				counter++;
 			});
-			if(counter==1)
+			if(counter === 1)
 				$('.features_box').parent('td').addClass('onefeature');
-			else if(counter==2)
+			else if(counter === 2)
 				$('.features_box').parent('td').addClass('twofeatures');
-			else if(counter==3)
+			else if(counter === 3)
 				$('.features_box').parent('td').addClass('threefeatures');
 		},
 		
@@ -320,7 +324,7 @@ define(["features/listener/featuresListener"], function() {
 			$("#jsibrariesContent li").hide();
 			$("#componentsContent li").hide();
 			$("ul li fieldset").each(function() {
-				if($(this).attr("class") == "switch switchOn"){
+				if($(this).attr("class") === "switch switchOn"){
 					$(this).parent().show();
 					self.featuresListener.scrollbarUpdate();
 				}     			
@@ -331,10 +335,10 @@ define(["features/listener/featuresListener"], function() {
 			var button = $(obj).attr("value");
 			$(obj).closest('fieldset').removeClass('switchOn'); 
 			$(obj).closest('fieldset').removeClass('switchOff');			
-			if(button == 'false'){ 
+			if(button === 'false'){ 
 				$(obj).closest('fieldset').addClass('switchOff');
 				$(obj).closest('fieldset').attr('value', "false"); 
-			}else if(button == 'true'){ 
+			}else if(button === 'true'){ 
 				$(obj).closest('fieldset').addClass('switchOn');
 				$(obj).closest('fieldset').attr('value', "true");
 			}

@@ -22,7 +22,7 @@
                 <div class="box_div" id="content_1">
                     <ul id="moduleContent">
                     {{#each featureslist}}
-                        <li name="{{name}}" dispName="{{dispName}}" packaging="{{packaging}}" type="{{type}}">
+                        <li name="{{name}}" dispName="{{dispName}}" packaging="{{packaging}}" type="{{type}}">{{#if displayName}}{{displayName}}{{else}}{{name}}{{/if}}
                         <span class="flt_right" ><a class="featureinfo_img" value="{{#idtrime id}}{{/idtrime}}" artifactGroupId="{{id}}" > 
                         <img src="themes/default/images/helios/info_icon.png" width="15" height="16" border="0" alt=""></a></span>
                                 {{#versiondata versions id}}{{/versiondata}}
@@ -38,15 +38,8 @@
                                         <option value="{{id}}" scope="{{scope}}">{{version}}</option>  
                                     {{/each}} 
                                 </select>
-                            </div>
-                             {{#if displayName}}
-                                {{displayName}}
-                            {{else}}
-                                {{name}}
-                            {{/if}}
-                            <div class="clear"></div>
                         </li>
-						
+						<div class="clear"></div>
                   {{/each}}  
 					<li id="norecord1" style="display:none" align="center">No records</li>				  
                     </ul>   
@@ -68,6 +61,7 @@
                         <li name="{{name}}" dispName="{{dispName}}" packaging="{{packaging}}" type="{{type}}">
                         <span class="flt_right" ><a class="featureinfo_img" value="{{#idtrime id}}{{/idtrime}}" artifactGroupId="{{id}}"> 
                         <img src="themes/default/images/helios/info_icon.png" width="15" height="16" border="0" alt=""></a></span>
+                             {{#if displayName}}{{displayName}}{{else}}{{name}}{{/if}}
                                 {{#versiondata versions id}}{{/versiondata}}
 								{{#versionShowHide versions id}}{{/versionShowHide}} 
 								{{#each versions}}
@@ -76,19 +70,15 @@
 									{{/each}}
 								{{/each}}	
 								<input type="hidden" class="moduleId" value="{{id}}">
-                                <select class="input-mini">
-                                    {{#each versions}}										
-                                        <option value="{{id}}" scope="{{scope}}">{{version}}</option>  
-                                    {{/each}} 
-                                </select>
-                            </div>
-                             {{#if displayName}}
-                                {{displayName}}
-                            {{else}}
-                                {{name}}
-                            {{/if}}
-                            <div class="clear"></div>
+                                {{#if versions}}
+									<select class="input-mini">
+										{{#each versions}}										
+											<option value="{{id}}" scope="{{scope}}">{{version}}</option>  
+										{{/each}} 
+									</select>
+								{{/if}}    
                         </li>
+						 <div class="clear"></div>
                   {{/each}}
 					<li id="norecord2" style="display:none" align="center">No records</li>
                     </ul>   
@@ -126,14 +116,11 @@
 										{{/each}} 
 									</select>
 								{{/if}}
-                            </div>
-                             
-                            <div class="clear"></div>
                         </li>
+						<div class="clear"></div>
                   {{/each}}
 					<li id="norecord3" style="display:none" align="center">No records</li>
                     </ul>   
-                
                 </div>
                 <!--Components div ends here -->
             </div>
