@@ -12,6 +12,7 @@ define(["projectlist/api/projectListAPI"], function() {
 		flag1:null,
 		flag2:null,
 		flag3:null,
+		act:null,
 		/***
 		 * Called in initialization time of this class 
 		 *
@@ -84,10 +85,13 @@ define(["projectlist/api/projectListAPI"], function() {
 					function(response) {
 						if(response !== null ){
 							self.hidePopupLoad();
-							callback(response);						
+							if(self.act=='delete')
+							self.successMsgPopUp(response.message);				
+							callback(response);		
 						} else {
 							self.hidePopupLoad();
 							callback({ "status" : "service failure"});
+							self.failureMsgPopUp(response.message);
 						}
 					},					
 					function(textStatus) {
@@ -122,6 +126,7 @@ define(["projectlist/api/projectListAPI"], function() {
 				dataType: "json",
 				webserviceurl: ''
 			}
+			self.act = action;
 					
 			if(action === "delete") {
 				header.requestMethod = "DELETE";

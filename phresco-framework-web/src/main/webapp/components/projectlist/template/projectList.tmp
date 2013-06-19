@@ -271,7 +271,7 @@
                     <div id="{{creationDate}}" class="dyn_popup delete_msg">
                       Are you sure to delete ?
                         <div>
-                            <input type="button" value="Yes" class="btn btn_style" name="deleteConfirm">
+                            <input type="button" value="Yes" class="btn btn_style dlt" name="deleteConfirm">
                             <input type="button" value="No" class="btn btn_style dyn_popup_close">
                         </div>
                     </div>
