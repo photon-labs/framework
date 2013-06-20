@@ -147,15 +147,16 @@ define(["ci/listener/ciListener"], function() {
 				self.getAction(self.ciRequestBody, 'getAppInfos', '', function(response) {
 					// empty the applist element
 					$('#appIdsList').empty();
-					
+
 					if (!self.isBlank(response.data)) {
 						$.each(response.data, function(key, value) {
 							$('#appIdsList').append('<input type="checkbox" value="'+ value.name +'" name="appIds">'+ value.name +'<br>');
 						});
-						if (jobTemplateName != '') {
-							// Restore values
-							self.getAction(self.configRequestBody, 'edit', jobTemplateName);
-						}
+					}
+					
+					if (jobTemplateName != '') {
+						// Restore values
+						self.getAction(self.configRequestBody, 'edit', jobTemplateName);
 					}
 				});
 				callback();

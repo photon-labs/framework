@@ -171,16 +171,16 @@ define(["ci/api/ciAPI"], function() {
 				}
 
 				if($('#appIdsList').find('input[type=checkbox]:checked').length == 0) {
-        				alert('Please select atleast one application');
+        				//console.log('Please select atleast one application');
     			}
 
     			if($('#features').find('input[type=checkbox]:checked').length == 0) {
-        				alert('Please select atleast one feature');
+        				//console.log('Please select atleast one feature');
     			}
 
 			} catch (error) {
 				//Exception
-				console.log("Exception ");
+				//console.log("Exception ");
 			}
 		},
 
@@ -479,7 +479,7 @@ define(["ci/api/ciAPI"], function() {
 
 			// Dynamic param
 			var operation = templateJsonData.type;
-			console.log("operation > " + operation);
+			//console.log("operation > " + operation);
 
 			if ("Code Validation" === operation) {
 				commonVariables.goal = commonVariables.codeValidateGoal;
@@ -509,7 +509,7 @@ define(["ci/api/ciAPI"], function() {
 				dynamicPageObject.getHtml(false, function(response) {
 
 					if ("No parameters available" == response) {
-						console.log("No parameters available ");
+						//console.log("No parameters available ");
 						$("#dynamicContent").empty();
 					} else {
 						$("#dynamicContent").html(response);
@@ -601,29 +601,36 @@ define(["ci/api/ciAPI"], function() {
 
 			// validation starts
 			if (self.isBlank($("input[name=jobName]").val())) {
-				alert("Name is empty ");
+				//console.log("Name is empty ");
 				return false;
 			}
 
 			// when the repo is svn or git need validation
 			var emptyFound = false;
+
+			//repo url validation
 			if (!self.isBlank(templateJsonData.repoTypes) && (templateJsonData.repoTypes === "svn" || templateJsonData.repoTypes === "git")) {
 				$('#repoType input').each(function() {
-			    	if (this.value == "") {
+			    	if (self.isBlank(this.value)) {
 			           //$("#error").show('slow');
-			           console.log("empty " + this.name);
+			           //console.log("empty " + this.name);
 			           emptyFound = true;
 			           return false;
 			       	} 
 			    });
 			}
+
+			//scheduler validation
+
+			//mail settings validation
+
 			// validation ends
 
 			if (!emptyFound) {
 				// append the configureJob json (jobJson) in  job template name id
 				var jobConfiguration = $('#jonConfiguration').serializeObject();
 
-				console.log("Storing " + JSON.stringify(jobConfiguration));
+				//console.log("Storing " + JSON.stringify(jobConfiguration));
 				//Checking
 				$('[appname="'+ appName +'"][jobtemplatename="'+ jobtemplatename +'"]').data("jobJson", jobConfiguration);
 
@@ -640,13 +647,13 @@ define(["ci/api/ciAPI"], function() {
 				//var continuousDeliveryJobTemplates = "";
 				$("#sortable1").empty();
 				$.each(data, function(key, value) {
-					console.log("Type key " + $.type(key));
-					console.log("Type value " + $.type(value));
+					//console.log("Type key " + $.type(key));
+					//console.log("Type value " + $.type(value));
 
-					console.log("key > " + JSON.stringify(key));
+					//console.log("key > " + JSON.stringify(key));
 					var parseJson = $.parseJSON(key);
-					console.log("appName " + parseJson.appName);
-					console.log("appDirName " + parseJson.appDirName);
+					//console.log("appName " + parseJson.appName);
+					//console.log("appDirName " + parseJson.appDirName);
 					var appName = parseJson.appName;
 					var appDirName = parseJson.appDirName;
 
@@ -671,38 +678,153 @@ define(["ci/api/ciAPI"], function() {
 			}
 		},
 
+		/***
+		 * This method automatically manipulates upstream and downstream as well as validation
+		 *
+		 */
+		streamConfig : function(thisObj, callback) {
+	  		// third Construct upstream and downstream validations
+	  		// all li elemnts of this
+	  		//console.log("upstream and sownstream construction ");
+			$($(thisObj).find('li').get().reverse()).each(function() {
+				//console.log("elem span" + $(thisObj).find('span').text());
+				    var anchorElem = $(thisObj).find('a');
+				    var appName = $(anchorElem).attr("appname");
+				    var templateJsonData = $(anchorElem).data("templateJson");
+				    //console.log("templateJsonData => " + JSON.stringify(templateJsonData));
+				    var jobJsonData = $(anchorElem).data("jobJson");
+				    //console.log("jobJsonData => " + JSON.stringify(jobJsonData));
+				    // upstream and downstream and clone workspace except last job
+				    
+				    var preli = $(thisObj).prev('li')
+				    var preAnchorElem = $(preli).find('a');
+				    var preTemplateJsonData = $(preAnchorElem).data("templateJson");
+				    var preJobJsonData = $(preAnchorElem).data("jobJson");
+				    //console.log("preJobJsonData > " + preJobJsonData);
+				    
+				    var nextli = $(thisObj).next('li');
+				    var nextAnchorElem = $(nextli).find('a');
+				    var nextTemplateJsonData = $(nextAnchorElem).data("templateJson");
+				    var nextJobJsonData = $(nextAnchorElem).data("jobJson");
+				    //console.log("nextJobJsonData > " + nextJobJsonData);
+
+
+				    if (jobJsonData != undefined && jobJsonData != null) {
+				        jobJsonData = {};
+				        //console.log("Erorr ... ");
+				    }
+
+				    // Downstream
+				    if (nextJobJsonData != undefined && nextJobJsonData != null) {
+				    	// downstream specifies the next job which needs to be triggered after this job
+				    	//console.log("Downstream job name => " + nextJobJsonData.name);
+				        jobJsonData.downstreamApplication = nextJobJsonData.name;
+				    } else {
+				    	//console.log("next job data not found ... ");
+				    }
+
+				    // No use parent job
+				    if (preJobJsonData != undefined && preJobJsonData != null) {
+				    	// upstream job specifies the from where this app will be triggered, this will be based on assumption, only for UI purpose
+				    	//console.log("Upstream job name => " + preJobJsonData.name);
+				        jobJsonData.upstreamApplication = preJobJsonData.name;
+				    } else {
+				    	//console.log("previous job data not found ... ");
+				    }
+
+				    //console.log("is previous App have to repo check");
+				    // Is parent app available for this app job
+				    var parentAppFound = false;
+				    var workspaceAppFound = false;
+				    // check for previous job to find its cloneJobName
+			  		$(thisObj).prevAll('li').each(function(index) {
+			  			// Corresponding element access
+					    var thisAnchorElem = $(thisObj).find('a');
+					    //console.log("elem span" + $(thisObj).find('span').text());
+			  			var thisTemplateJsonData = $(thisAnchorElem).data("templateJson");
+			  			var thisJobJsonData = $(thisAnchorElem).data("jobJson");
+			  			var thisAppName = $(thisAnchorElem).attr("appname");
+
+			  			if (thisAppName === appName && thisTemplateJsonData.enableRepo) {
+			  				parentAppFound = true;
+			  				//console.log("Parent project found ");
+			  			}
+
+			  			if (thisAppName === appName && !workspaceAppFound) {
+			  				workspaceAppFound = true;
+			  				// from where this jobs source code have to come from
+			  				//console.log("Applications clone job job found ");
+			  				// Upstream app
+			  				if (thisJobJsonData != undefined && thisJobJsonData != null) {
+				        		jobJsonData.cloneJobName = thisJobJsonData.name;
+				        		thisJobJsonData.clonetheWrokspace = true;
+				        		$(thisAnchorElem).data("jobJson", thisJobJsonData);
+				        		return false;
+				    		}
+			  			}
+					});
+					
+					if (!parentAppFound) {
+						//console.log("Not able to find its parent source app for this job");
+					}
+
+				    // Store value in data
+				    $(anchorElem).data("jobJson", jobJsonData);
+
+			});
+			callback();
+		},
+
+		/***
+		 * This method automatically constructs the jobs from each job, that are all on sortable2
+		 *
+		 */
+		constructJobsObj : function(thisObj) {
+			var self = this;
+		},
+
 		saveContinuousDelivery : function (thisObj, callback) {
 			var self = this;
 			var jobs = {};
+			var sortable2LiObj = $("#sortable2 li");
 
-			$("#sortable2 li").each(function(index) {
+			$(sortable2LiObj).each(function(index) {
 				var thisAnchorElem = $(this).find('a');
-				console.log("elem span" + $(this).find('span').text());
+				//console.log("elem span" + $(this).find('span').text());
 				var thisTemplateJsonData = $(thisAnchorElem).data("templateJson");
-				console.log("thisTemplateJsonData => " + JSON.stringify(thisTemplateJsonData));
+				//console.log("thisTemplateJsonData => " + JSON.stringify(thisTemplateJsonData));
 				var thisJobJsonData = $(thisAnchorElem).data("jobJson");
-			    console.log("jobJsonData => " + JSON.stringify(thisJobJsonData));
+			    //console.log("jobJsonData => " + JSON.stringify(thisJobJsonData));
 				var thisAppName = $(thisAnchorElem).attr("appname");
 
 				// open the popup and ask the user to input the data, Once the popup is opened all the data will be validates
 				if (self.isBlank(thisJobJsonData)) {
 					self.showConfigureJob(thisAnchorElem);
-					alert("Fille the job template");
+					//console.log("Fille the job template");
 					return false;
 				} else {
-					console.log("Validation starts here ");
+					//console.log("save continuous delivery validation starts here");
 					// all the input text box should not be empty
 					if (isBlank(thisJobJsonData.name)) {
 						self.showConfigureJob(thisAnchorElem);
+						return false;
 					}
-					return false;
-				}
 
+					// more validation can be added here
+
+				}
 			});
 
-			// construct the job json data here once all the data are validated
-			callback(jobs);
+			// Upstream and downstream config auto population goes here
+			self.streamConfig(sortable2LiObj, function() {
+
+
+				// construct the job json data here once all the data are validated
+				callback(jobs);
+			});
 		},
+
+
 
 		saveContinuousDeliveryValidation : function (thisObj, callback) {
 			var self = this;

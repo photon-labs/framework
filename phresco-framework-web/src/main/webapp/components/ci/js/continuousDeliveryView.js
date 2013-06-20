@@ -75,7 +75,6 @@ define(["framework/widgetWithTemplate", "ci/listener/ciListener"], function() {
 		 */
 		bindUI : function() {
 			var self = this;
-				alert("rajesh");
 				var resultvalue = 0;
 				$('.content_main').prevAll().each(function() {
 					resultvalue = resultvalue + $(this).height(); 
