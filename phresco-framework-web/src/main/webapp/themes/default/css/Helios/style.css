@@ -686,7 +686,7 @@ ul.nav li.dropdown:hover > .test_options{
 #simplemodal-overlay {background-color:#000;}
 
 .successpop {
-	padding: 0 8px;
+	padding: 8px 8px 0px 8px;
 	border: 1px solid 5befa5;
 	background: #5befa5;
 	border-radius: 6px;
@@ -698,7 +698,7 @@ ul.nav li.dropdown:hover > .test_options{
 }
 
 .errorpop {
-	padding: 0 8px;
+	padding: 8px 8px 0px 8px;
 	border: 1px solid #eed3d7;
 	background: #f2dede;
 	border-radius: 6px;
@@ -709,9 +709,6 @@ ul.nav li.dropdown:hover > .test_options{
 	min-width: 400px;	
 }
 
-.modal-body {
-	 padding: 4px;	
-}
 
 .active {
 	color:#088A29;
