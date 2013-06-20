@@ -2,11 +2,12 @@
  	"margin-top": "loginlogo"
 },
 ".header_section" :{
-"background": "brandingColor"
+"background": "linear-gradient(to bottom, gradientTop 1%,gradientBottom 100%) !important",
+"filter": "progid:DXImageTransform.Microsoft.gradient( startColorstr=gradientTop, endColorstr=gradientBottom,GradientType=0 ) !important"
 },
 ".header_left figure img": {
 	"padding-top":"logopadding"	
-},
+}, 
 ".header_right" :{
 "color": "labelColor"
 },
@@ -20,7 +21,8 @@
 "color":"brandingColor"
 },
 ".footer_section":{
-"background": "brandingColor"
+"background": "linear-gradient(to bottom, gradientTop 1%,gradientBottom 100%) !important",
+"filter": "progid:DXImageTransform.Microsoft.gradient( startColorstr=gradientTop, endColorstr=gradientBottom,GradientType=0 ) !important"
 },
 ".cust_sel ul li a.selected, .cust_sel ul li a:hover":{
  "background-color": "brandingColor"
