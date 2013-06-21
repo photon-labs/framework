@@ -20,8 +20,12 @@ package com.photon.phresco.framework.rest.api;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.InputStream;
+import java.net.URL;
+import java.net.URLConnection;
 import java.util.List;
+import java.util.Properties;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
@@ -35,14 +39,18 @@ import javax.ws.rs.core.Response;
 
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang.StringUtils;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
 
 import com.photon.phresco.commons.FrameworkConstants;
 import com.photon.phresco.commons.model.BuildInfo;
 import com.photon.phresco.commons.model.ProjectInfo;
+import com.photon.phresco.configuration.Configuration;
 import com.photon.phresco.exception.PhrescoException;
 import com.photon.phresco.framework.PhrescoFrameworkFactory;
 import com.photon.phresco.framework.api.ApplicationManager;
 import com.photon.phresco.framework.api.ProjectManager;
+import com.photon.phresco.framework.impl.ConfigurationReader;
 import com.photon.phresco.util.ServiceConstants;
 import com.photon.phresco.util.Utility;
 import com.sun.jersey.api.client.ClientResponse.Status;
@@ -51,6 +59,7 @@ import com.sun.jersey.api.client.ClientResponse.Status;
  * The Class BuildInfoService.
  */
 @Path("/buildinfo")
+@SuppressWarnings({ "unchecked", "rawtypes" })
 public class BuildInfoService extends RestBase implements FrameworkConstants, ServiceConstants {
 	
 	/**
@@ -174,4 +183,61 @@ public class BuildInfoService extends RestBase implements FrameworkConstants, Se
 		ResponseInfo finalOutput = responseDataEvaluation(responseData, null, "Build deleted Successfully", null);
 		return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
 	}
+
+	@GET
+	@Path("/checkstatus")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response checkStatus(@QueryParam("appDirName") String appDirName){
+		ResponseInfo<Boolean> responseData = new ResponseInfo<Boolean>();
+		String host = null, protocol = null, environmentName = null, port = null;
+		try {
+			File configurationInfo = new File(getDotPhrescoFolder(appDirName)+ File.separator + PHRESCO_ENV_CONFIG_FILE_NAME);
+			File runAgainsSourceInfo = new File(getDotPhrescoFolder(appDirName)+ File.separator + RUNAGNSRC_INFO_FILE);
+			if (runAgainsSourceInfo.exists() && configurationInfo.exists()) {
+				FileReader readers = new FileReader(runAgainsSourceInfo);
+				JSONObject jsonobject = new JSONObject();
+				JSONParser parser = new JSONParser();
+				jsonobject = (JSONObject)parser.parse(readers);
+				environmentName = (String)jsonobject.get(SESSION_ENV_NAME);
+				ConfigurationReader reader = new ConfigurationReader(configurationInfo);
+				List<Configuration> config = reader.getConfigurations(environmentName, FrameworkConstants.SERVER);
+				for (Configuration configs : config) {
+					Properties properties = configs.getProperties();
+					host = properties.getProperty(SERVER_HOST);
+					port = properties.getProperty(SERVER_PORT);
+					protocol = properties.getProperty(PROTOCOL);
+				}
+			}
+			Boolean connectionAlive = isConnectionAlive(protocol, host, Integer.parseInt(port));
+			if (connectionAlive) {
+				ResponseInfo<Boolean> finalOutput = responseDataEvaluation(responseData, null, "Connection Alive", connectionAlive);
+				return Response.status(Response.Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
+			} else {
+				ResponseInfo<Boolean> finalOutput = responseDataEvaluation(responseData, null, "Connection Not Alive", connectionAlive);
+				return Response.status(Response.Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
+			}
+
+		} catch (Exception e) {
+			ResponseInfo<Boolean> finalOutput = responseDataEvaluation(responseData, e, "Environment configuration  File or runagainstsource.info File or  Not found error", null);
+			return Response.status(Response.Status.BAD_REQUEST).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
+		}
+	}
+
+	private  boolean isConnectionAlive(String protocol, String host, int port) {
+		boolean isAlive = true;
+		try {
+			URL url = new URL(protocol, host, port, "");
+			URLConnection connection = url.openConnection();
+			connection.connect();
+		} catch (Exception e) {
+			isAlive = false;
+		}
+		return isAlive;
+	}
+
+	private String getDotPhrescoFolder(String appDirName) {
+		File dotPhrescoFolder = new File(Utility.getProjectHome() + File.separator +appDirName + File.separator + FrameworkConstants.FOLDER_DOT_PHRESCO);
+		return dotPhrescoFolder.getPath();
+	}
+
 }
