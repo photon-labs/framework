@@ -39,4 +39,12 @@ public class BuildInfoTest {
 		Response buildInfoList = buildInfoService.buildInfoZip(appDirName, buildnum);
 		Assert.assertEquals(200, buildInfoList.getStatus());
 	}
+	
+	@Test
+	public void  checkServerStatus() {
+		String appDirName = "NodeJSEshop1-nodejswebservice0.10.";
+		BuildInfoService buildInfoService = new BuildInfoService();
+		Response response = buildInfoService.checkStatus(appDirName);
+		Assert.assertEquals(200, response.getStatus());
+	}
 }

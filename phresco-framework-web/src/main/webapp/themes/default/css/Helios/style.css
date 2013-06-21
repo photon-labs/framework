@@ -710,6 +710,9 @@ ul.nav li.dropdown:hover > .test_options{
 }
 
 
+.active {
+	color:#088A29;
+}
 
 /* ********************************************** CSS related to Project list page ************************************************************************************** */
 
@@ -2166,11 +2169,24 @@ select[name="builtmyself"] {
 {
 	padding:5px;
 }
-#cron_expression table tr td select
+#cron_expression table tr#schedule_daily td button, #cron_expression table tr#schedule_weekly td button
 {
 	width: 80px;
 	height:27px;
+	margin-right: 10px;
 }
+
+#cron_expression table tr#schedule_monthly td button {
+	width: 80px;
+	height:27px;
+	margin-left: 10px;
+	margin-right: 10px;
+}
+
+#cron_expression table tr#schedule_weekly td:first-child button, #cron_expression table tr#schedule_monthly td:nth-child(2) button {
+	width: 180px !important;
+}
+
 #cron_expression table tr td input[type="radio"]
 {
 	margin: -2px 6px 0px 0px;
@@ -2221,18 +2237,6 @@ select[name="builtmyself"] {
 	color:#000;
 }
 
-#schedule_weekly span 
-{
-	padding-left:10px;
-}
-
-#schedule_monthly span {
-	padding-right: 10px;	
-}
-
-#schedule_monthly td:first-child select {
-	width: 60px;	
-}
 
 /* *************************************************************************** STYLES FOR SETTINGS & ADD SETTINGS ************************************************************************** */
 
