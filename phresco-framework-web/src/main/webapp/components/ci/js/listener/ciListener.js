@@ -161,31 +161,20 @@ define(["ci/api/ciAPI"], function() {
 			return header;
 		},
 
-		validation : function () {
-			try {
-				var self = this, bCheck = false;
-				if ($('input[name="name"]').val() == undefined || $('input[name="name"]').val() == null || $.trim($('input[name="name"]').val()) == "") {
-					$('input[name="name"]').attr('placeholder','Enter Username');
-					$('input[name="name"]').addClass("loginuser_error");
-					bCheck = false;
-				}
-
-				if($('#appIdsList').find('input[type=checkbox]:checked').length == 0) {
-        				alert('Please select atleast one application');
-    			}
-
-    			if($('#features').find('input[type=checkbox]:checked').length == 0) {
-        				alert('Please select atleast one feature');
-    			}
-
-			} catch (error) {
-				//Exception
-				console.log("Exception ");
+		showHideRepo : function(callback) {
+			if ($("input[name=enableRepo]").is(':checked')) {
+				$("select[name=repoTypes]").next().show();
+			} else {
+				$("select[name=repoTypes]").next().hide();
 			}
 		},
-
-		isNameExists : function () {
-
+		
+		showHideUpload : function(callback) {
+			if ($("input[name=enableUploadSettings]").is(':checked')) {
+				$("select[name=uploadTypes]").next().show();
+			} else {
+				$("select[name=uploadTypes]").next().hide();
+			}
 		},
 		
 		validate : function (callback) {
@@ -195,11 +184,25 @@ define(["ci/api/ciAPI"], function() {
 			$("#errMsg").removeClass("errormessage");
 			$('input[name=name]').removeClass("errormessage");	
 			$('#errMsg').html('');
-			var appIds = $('[name=appIds]:checked').length;
+			
+			var enableUpload = $('input[name=enableUploadSettings]').is(':checked');
+			if (enableUpload) {
+				var uploads = $('select[name=uploadTypes] :selected').length;
+				if (uploads == 0) {
+					$('#errMsg').html('Select atleast one Uploader');
+					$("select[name='uploadTypes']").focus();
+					$('#errMsg').addClass("errormessage");
+					$('select[name=uploadTypes]').next().find('button.dropdown-toggle').addClass("btn-danger");
+					status = false;	 
+				}
+			}
+			
+			var appIds = $('select[name=appIds] :selected').length;
 			if(appIds === 0) {
 				$('#errMsg').html('Select atleast one application');
-				$("input[name='appIds']").focus();
+				$("select[name='appIds']").focus();
 				$('#errMsg').addClass("errormessage");
+				$('select[name=appIds]').next().find('button.dropdown-toggle').addClass("btn-danger");
 				status = false;	 											
 			}	
 			
@@ -343,43 +346,92 @@ define(["ci/api/ciAPI"], function() {
 
 			// Convert appIds to array
 			jobTemplate.appIds = [];
-			$("input[name=appIds]:checked").each(function() {
-			    jobTemplate.appIds.push(this.value);
+			$('select[name=appIds] :selected').each(function(i, selected) {
+				jobTemplate.appIds.push(this.value);
 			});
+			
+			jobTemplate.uploadTypes = [];
+			if(jobTemplate.enableUploadSettings) {
+				$('select[name=uploadTypes] :selected').each(function(i, selected){ 
+					jobTemplate.uploadTypes.push(this.value);				
+				});
+			}
+			
 			return jobTemplate;
+		},
+
+		preOpen : function (callback) {
+			var self = this;
+			
+			$("select[name=repoTypes]").next().hide();
+			$("select[name=uploadTypes]").next().hide();
+			$('select[name=appIds]').selectpicker('deselectAll');
+			$('select[name=uploadTypes]').selectpicker('deselectAll');
+			$('.selectpicker').selectpicker('render');
+			self.removeDangerClass($('select[name=appIds]'));
+			self.removeDangerClass($('select[name=uploadTypes]'));
+			$("input[name=enableUploadSettings]").attr("disabled","disabled");
+			callback();
+		},
+
+		preEdit : function (callback) {
+			
+			var self = this;
+			$("#errMsg").removeClass("errormessage");
+			$('input[name=name]').removeClass("errormessage");	
+			$('#errMsg').html('');
+			$('select[name=appIds]').selectpicker('deselectAll');
+			$('select[name=uploadTypes]').selectpicker('deselectAll');
+			$('.selectpicker').selectpicker('render');
+			self.removeDangerClass($('select[name=appIds]'));
+			self.removeDangerClass($('select[name=uploadTypes]'));
+			callback();
+		},
+
+		changeUpload : function() {
+			var operation = $("select[name=type]").val();
+			if (operation === 'Build' || operation === 'PDF Report') {
+				$("input[name=enableUploadSettings]").removeAttr("disabled");
+			} else {
+				$("input[name=enableUploadSettings]").attr("checked", false);
+				$("input[name=enableUploadSettings]").attr("disabled","disabled");
+				$('select[name=uploadTypes]').selectpicker('deselectAll');
+				$('.selectpicker').selectpicker('render');
+				$("select[name=uploadTypes]").next().hide();
+			}
 		},
 
 		editJobTemplate : function (data) {
 			var self = this;
-			//$.each(data, function(key, value) {
-    			//display the key and value pair
-    			//console.log(key + ' is ' + value);
-    			//$("#elementId").is("input")
-    			// if ($.isArray(value)) {
-
-    			// } else {
-    			// 	$("input[name="+key+"]").val(value);
-    			// }
-			//});
-
 			$("[name=name]").val(data.name);
 			$("[name=oldname]").val(data.name);
-			$("[name=type]").val(data.type);
-			$.each(data.appIds, function(index, value) {			
-				$('[name=appIds][value="'+ value +'"]').prop('checked', true);				
-			});
-
+			$("[name=type]").selectpicker('val', data.type);
+			//AppIds
+			$("select[name=appIds]").selectpicker('val', data.appIds);
+			
 			$("[name=repoTypes]").val(data.repoTypes);
 
 			$('[name=enableRepo]').prop('checked', data.enableRepo);
 			$('[name=enableSheduler]').prop('checked', data.enableSheduler);
 			$('[name=enableEmailSettings]').prop('checked', data.enableEmailSettings);
 			$('[name=enableUploadSettings]').prop('checked', data.enableUploadSettings);
+			//Uploaders
+			$("select[name=uploadTypes]").selectpicker('val', data.uploadTypes);
+			$('.selectpicker').selectpicker('render');
+			
+			self.showHideRepo();
+			self.showHideUpload();
 			// button name change
 			$('input[name=save]').prop("value", "Update");
 			$('input[name=save]').prop("name", "update");
 		},
-
+				
+		//remove error class for multiselect
+		removeDangerClass : function(obj) {			
+			obj.next().find('button.dropdown-toggle').removeClass("btn btn-danger"); 
+			obj.next().find('button.dropdown-toggle').addClass("btn dropdown-toggle");			
+		},
+		
 		deleteJobTemplate : function () {
 			var self = this;
 		},

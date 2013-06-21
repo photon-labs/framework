@@ -17,6 +17,12 @@ define(["ci/listener/ciListener"], function() {
 		ciRequestBody : {},
 		templateData : {},
 		validateName : null,
+		preOpenEvent : null,
+		preEditEvent : null,
+		changeUploaderEvent : null,
+		showHideUploadEvent : null,
+		showHideRepoEvent : null,
+		removeDangerEvent : null,
 	
 		/***
 		 * Called in initialization time of this class 
@@ -69,6 +75,30 @@ define(["ci/listener/ciListener"], function() {
 				self.validateName = new signals.Signal();
 			}
 
+			if (self.preOpenEvent === null) {
+				self.preOpenEvent = new signals.Signal();
+			}
+
+			if (self.preEditEvent === null) {
+				self.preEditEvent = new signals.Signal();
+			}
+
+			if (self.changeUploaderEvent === null) {
+				self.changeUploaderEvent = new signals.Signal();
+			}
+
+			if (self.showHideUploadEvent === null) {
+				self.showHideUploadEvent = new signals.Signal();
+			}
+
+			if (self.showHideRepoEvent === null) {
+				self.showHideRepoEvent = new signals.Signal();
+			}
+
+			if (self.removeDangerEvent === null) {
+				self.removeDangerEvent = new signals.Signal();
+			}
+
 			// Trigger registered events
 			self.openEvent.add(ciListener.openJobTemplate, ciListener);
 			self.addEvent.add(ciListener.addJobTemplate, ciListener);
@@ -77,6 +107,12 @@ define(["ci/listener/ciListener"], function() {
 			self.editEvent.add(ciListener.editJobTemplate, ciListener);
 			self.deleteEvent.add(ciListener.deleteJobTemplate, ciListener);
 			self.validateName.add(ciListener.validateName, ciListener);
+			self.preOpenEvent.add(ciListener.preOpen, ciListener);
+			self.preEditEvent.add(ciListener.preEdit, ciListener);
+			self.changeUploaderEvent.add(ciListener.changeUpload, ciListener);
+			self.showHideUploadEvent.add(ciListener.showHideUpload, ciListener);
+			self.showHideRepoEvent.add(ciListener.showHideRepo, ciListener);
+			self.removeDangerEvent.add(ciListener.removeDangerClass, ciListener);
 		},
 		/***
 		 * Called in once the login is success
@@ -85,6 +121,10 @@ define(["ci/listener/ciListener"], function() {
 		loadPage :function(){
 			Clazz.navigationController.jQueryContainer = commonVariables.contentPlaceholder;
 			Clazz.navigationController.push(this, true);
+		},
+
+		loadPageTest :function(){
+			Clazz.navigationController.push(this);
 		},
 		
 		preRender: function(whereToRender, renderFunction){
@@ -105,6 +145,7 @@ define(["ci/listener/ciListener"], function() {
 		 */
 		postRender : function(element) {
 			var self = this;
+			self.multiselect();
 		},
 
 		pageRefresh: function() {
@@ -146,10 +187,15 @@ define(["ci/listener/ciListener"], function() {
 				// show applications names in popup
 				self.getAction(self.ciRequestBody, 'getAppInfos', '', function(response) {
 					// empty the applist element
-					$('#appIdsList').empty();
-					$.each(response.data, function(key, value) {
-						$('#appIdsList').append('<input type="checkbox" value="'+ value.name +'" name="appIds">'+ value.name +'<br>');
-					});
+					$('select[name=appIds]').html('');
+					$.each(response.data, function(key, value) { 
+						var obj = $('select[name=appIds]');
+						var opt = document.createElement("option");
+						opt.appendChild(document.createTextNode(value.name));
+						obj.append(opt);
+					}); 
+					//to refresh all bootstrap-select
+					$('.selectpicker').selectpicker('refresh');
 					if (jobTemplateName != '') {
 						// Restore values
 						self.getAction(self.configRequestBody, 'edit', jobTemplateName);
@@ -178,14 +224,16 @@ define(["ci/listener/ciListener"], function() {
 				self.resetForm($('#jobTemplate'));
 				// button name change
 				$('input[name=update]').prop("value", "Create");
-				$('input[name=update]').prop("name", "save");				
+				$('input[name=update]').prop("name", "save");			
 				// show applications names in popup
-				self.constructApplicationsHtml('', function() {});
-   				self.opencc(this, $(this).attr('name'));
+				self.constructApplicationsHtml('', function() {
+					self.preOpenEvent.dispatch( function() {});
+				});
+				self.opencc(this, $(this).attr('name'));				
    			});
-
-   			// Save job template
-   			$('#jobTemplate').on('click', '[name=save]', function(e) {				
+			
+			// Save job template
+   			$('#jobTemplate').on('click', '[name=save]', function(e) {	
 				self.validateName.dispatch('save', self, function() {
 					self.pageRefresh();
 				});
@@ -201,12 +249,11 @@ define(["ci/listener/ciListener"], function() {
 				var name = $(this).attr('value');
 				jobTemplateName.name = name;
 				// Construct applications names
-				self.constructApplicationsHtml(jobTemplateName, function() {	
-					$("#errMsg").removeClass("errormessage");
-					$('input[name=name]').removeClass("errormessage");	
-					$('#errMsg').html('');				
-					// show edit popup
-					self.opencc(thisElem, "jobTemplatePopup");
+				self.constructApplicationsHtml(jobTemplateName, function() {
+					self.preEditEvent.dispatch( function() {	
+						// show edit popup
+						self.openccci(thisElem, "jobTemplatePopup");
+					});
 				});
    			});
 
@@ -230,6 +277,36 @@ define(["ci/listener/ciListener"], function() {
    			$("a[name=deleteconfirm]").unbind("click");
 			$("a[name=deleteconfirm]").click(function() {
 				self.opencc(this, "yesnopopup_" + $(this).attr('value'));
+			});
+			
+			// show/hide repo types
+   			$("input[name=enableRepo]").unbind("click");
+			$("input[name=enableRepo]").click(function() {
+				self.showHideRepoEvent.dispatch();
+			});
+			
+			// show/hide upload types
+   			$("input[name=enableUploadSettings]").unbind("click");
+			$("input[name=enableUploadSettings]").click(function() {
+				self.showHideUploadEvent.dispatch();
+			});				
+			
+			//enable/disable uploads on type change
+			$("select[name=type]").unbind("change");
+			$("select[name=type]").on("change", function(){					
+				self.changeUploaderEvent.dispatch();
+			});
+
+			//remove danger class for uploads
+			$("select[name=uploadTypes]").unbind("change");
+			$("select[name=uploadTypes]").on("change", function(){				
+				self.removeDangerEvent.dispatch($("select[name=uploadTypes]"));			
+			});
+
+			//remove danger class for appIds
+			$("select[name=appIds]").unbind("change");
+			$("select[name=appIds]").on("change", function(){				
+				self.removeDangerEvent.dispatch($("select[name=appIds]"));			
 			});
 		}
 	});

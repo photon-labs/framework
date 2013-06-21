@@ -241,7 +241,7 @@ public class CIJobTemplateService extends RestBase implements ServiceConstants {
 	 * @return the job templates by environemnt
 	 */
 	@GET
-	@Path("/getJobTemplatesByEnvironemnt")
+	@Path("/getJobTemplatesByEnvironment")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response getJobTemplatesByEnvironemnt(@QueryParam(REST_QUERY_CUSTOMERID) String customerId,
 			@QueryParam(REST_QUERY_PROJECTID) String projectId, @QueryParam(REST_QUERY_EVN_NAME) String envName) {
