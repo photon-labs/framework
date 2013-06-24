@@ -1,5 +1,5 @@
 /**
- * Framework Web Archive
+ * Phresco Pom
  *
  * Copyright (C) 1999-2013 Photon Infotech Inc.
  *
@@ -17,26 +17,24 @@
  */
 package com.photon.phresco.framework.rest.api;
 
-import javax.ws.rs.core.Response;
+import org.junit.runner.RunWith;
+import org.junit.runners.Suite;
+import org.junit.runners.Suite.SuiteClasses;
 
-import junit.framework.Assert;
+@RunWith(Suite.class)
+@SuiteClasses({LoginServiceTest.class,
+	ProjectServiceTest.class,
+	ConfigurationServiceTest.class,
+	BuildInfoTest.class,
+	ParameterServiceTest.class,
+	PilotServiceTest.class,
+	UnitServiceTest.class,
+	ManualTestServiceTest.class,
+	CIJobTemplateServiceTest.class,
+	DownloadServiceTest.class,
+	RepositoryServiceTest.class}
+)
 
-import org.junit.Test;
-
-public class ParameterServiceTest extends RestBaseTest {
-	
-	ParameterService parameterService = new ParameterService();
-	
-	public ParameterServiceTest() {
-		super();
-	}
-	
-	@Test
-	public void getDynamicParameter() {
-//		String appDirName = "sample3-HTML5-JQuery-Mobile-Widget";
-		String goal = "package";
-		String phase = "ci";
-		Response response = parameterService.getParameter(appDirName, goal, phase);
-		Assert.assertEquals(200, response.getStatus());
-	}
+public class AllTest {
+	// intentionally blank. All tests were added via annotations
 }
