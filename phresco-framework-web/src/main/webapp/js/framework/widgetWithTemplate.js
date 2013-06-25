@@ -403,6 +403,7 @@ define(["framework/widget", "framework/templateProvider"], function() {
 			
 			// popUp for success event to close auto
 			successMsgPopUp : function(msg) {
+				$('#myModal').removeClass('errorpop');
 				$('#myModal').css({top:'50%',left:'50%',margin:'-'+($('#myModal').height() / 2)+'px 0 0 -'+($('#myModal').width() / 2)+'px'});
 				$('#myModal').css('z-index', '1051');
 				$('#myModal').modal('show');
@@ -413,6 +414,7 @@ define(["framework/widget", "framework/templateProvider"], function() {
 
 			// popUp for success event to close auto
 			failureMsgPopUp : function(msg) {
+				$('#myModal').removeClass('successpop');
 				$('#myModal').css({top:'50%',left:'50%',margin:'-'+($('#myModal').height() / 2)+'px 0 0 -'+($('#myModal').width() / 2)+'px'});
 				$('#myModal').css('z-index', '1051');
 				$('#myModal').modal('show');

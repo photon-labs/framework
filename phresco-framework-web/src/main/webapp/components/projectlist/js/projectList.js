@@ -41,11 +41,12 @@ define(["projectlist/listener/projectListListener"], function() {
 		 * Called in once the login is success
 		 *
 		 */
-		loadPage :function() {
+		loadPage :function(animationType) {
 			var self = this;
 			Clazz.navigationController.jQueryContainer = commonVariables.contentPlaceholder;
-			Clazz.navigationController.push(this, true);
+			Clazz.navigationController.push(this, animationType);
 		},
+		
 		
 		registerEvents : function(projectslistListener,repositoryListener) {
 			var self = this;
@@ -100,19 +101,41 @@ define(["projectlist/listener/projectListListener"], function() {
 		},
 
 		getAction : function(actionBody, action, callback) {
-			var self = this;
+			var self = this, animationType = true;
 			
 			self.projectslistListener.projectListAction(self.projectslistListener.getActionHeader(actionBody, action), "" , function(response) {
 				if ("delete" === action) {
 					callback();
-				}
-				
+				}				
 				if(self.flagged!=1)
-					self.loadPage();
+					self.loadPage(animationType);
 				else
 					self.flagged=1;
 			});
 		},
+		
+		deleteProjectfn : function(deletearray, imgname1, imgname2, deleteproject){
+			var self = this;
+			self.getAction(deletearray,"delete",function(response) {
+				commonVariables.loadingScreen.removeLoading();
+				self.deleterow(imgname1, imgname2, deleteproject);
+			});
+		},
+		
+		deleterow : function(imgname1, imgname2, deleteproject){
+			var self = this;
+			if(imgname1=='delete'|| imgname2=='delete') {	
+				$(commonVariables.contentPlaceholder).find("tr[class="+deleteproject+"]").remove();
+			}	
+			else {
+				$(commonVariables.contentPlaceholder).find("tr[class="+deleteproject+"]").prev('tr').remove();
+				$(commonVariables.contentPlaceholder).find("tr[class="+deleteproject+"]").remove();
+			}
+			if(!($(commonVariables.contentPlaceholder).find('tr.proj_title').length)){
+				self.flagged=0;	
+			}
+		},
+		
 		
 	
 		/***
@@ -216,18 +239,8 @@ define(["projectlist/listener/projectListListener"], function() {
 				imgname1 = $("tr[class="+deleteproject+"]").next('tr').children('td:eq(5)').children('a').children('img').attr('name');
 				imgname2 = $("tr[class="+deleteproject+"]").prev('tr').children('td:eq(5)').children('a').children('img').attr('name');
 				self.flagged=1;
-				
-				self.getAction(deletearray,"delete",function(response) {
-					if(imgname1=='delete'|| imgname2=='delete') {	
-						$("tr[class="+deleteproject+"]").remove();
-					}	
-					else {
-						$("tr[class="+deleteproject+"]").prev('tr').remove();
-						$("tr[class="+deleteproject+"]").remove();
-					}
-					if(!($('tr.proj_title').length))
-						self.flagged=0;	
-				});	
+				commonVariables.loadingScreen.showLoading();				
+				self.deleteProjectfn(deletearray, imgname1, imgname2, deleteproject);
 				self.closeAll($(this).attr('name'));
 				
 			});
@@ -246,7 +259,9 @@ define(["projectlist/listener/projectListListener"], function() {
 				   }else {currentRow = null}
 				}
 				self.flagged=1;
+				commonVariables.loadingScreen.showLoading();
 				self.getAction(projectnameArray,"delete",function(response) {
+					commonVariables.loadingScreen.removeLoading();
 						while(curr !== null && curr.length !== 0) {
 							cls = curr.attr("class");
 							if(cls!="proj_title") {

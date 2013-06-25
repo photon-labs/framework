@@ -86,7 +86,14 @@ define(["projectlist/api/projectListAPI"], function() {
 						if(response !== null ){
 							self.hidePopupLoad();
 							if(self.act=='delete')
-							self.successMsgPopUp(response.message);				
+								self.successMsgPopUp(response.message);		
+							else if(self.act=='updateget')
+								self.successMsgPopUp(response.message);
+							else if(self.act=='repoget')
+								self.successMsgPopUp(response.message);
+							else if(self.act=='commitget')
+								self.successMsgPopUp(response.message);
+							self.hidePopupLoad();
 							callback(response);		
 						} else {
 							self.hidePopupLoad();
@@ -95,6 +102,12 @@ define(["projectlist/api/projectListAPI"], function() {
 						}
 					},					
 					function(textStatus) {
+						if(self.act=='updateget')
+							self.failureMsgPopUp("Project Update Failed");
+						else if(self.act=='repoget')
+							self.failureMsgPopUp("Add To Repo Failed");
+						else if(self.act=='commitget')
+							self.failureMsgPopUp("Commit Failed");
 						self.hidePopupLoad();
 					}
 				);
@@ -120,7 +133,7 @@ define(["projectlist/api/projectListAPI"], function() {
 			var customerId = self.getCustomer();
 			customerId = (customerId === "") ? "photon" : customerId;
 			data = JSON.parse(self.projectListAPI.localVal.getSession('userInfo'));
-			userId = data.id;
+			if(data !== "") { userId = data.id; }
 			header = {
 				contentType: "application/json",				
 				dataType: "json",
