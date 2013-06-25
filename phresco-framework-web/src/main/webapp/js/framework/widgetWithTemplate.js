@@ -405,11 +405,9 @@ define(["framework/widget", "framework/templateProvider"], function() {
 			successMsgPopUp : function(msg) {
 				$('#myModal').css({top:'50%',left:'50%',margin:'-'+($('#myModal').height() / 2)+'px 0 0 -'+($('#myModal').width() / 2)+'px'});
 				$('#myModal').css('z-index', '1051');
-				$('#myModal').addClass('successpop');
 				$('#myModal').modal('show');
-				$('.modal-header').hide();
-				$('.modal-body').html(msg);
-				$('.modal-footer').hide();
+				$('#myModal').addClass('alert-success').removeClass('alert-error');
+				$('#myModal').html(msg);
 				setTimeout("$('#myModal').modal('hide')", 3000);
 			},
 
@@ -417,13 +415,12 @@ define(["framework/widget", "framework/templateProvider"], function() {
 			failureMsgPopUp : function(msg) {
 				$('#myModal').css({top:'50%',left:'50%',margin:'-'+($('#myModal').height() / 2)+'px 0 0 -'+($('#myModal').width() / 2)+'px'});
 				$('#myModal').css('z-index', '1051');
-				$('#myModal').addClass('errorpop');
 				$('#myModal').modal('show');
-				$('.modal-header').hide();
-				$('.modal-body').html(msg);
-				$('.modal-footer').hide();
+				$('#myModal').addClass('alert-error').removeClass('alert-success');
+				$('#myModal').html(msg);
 				setTimeout("$('#myModal').modal('hide')", 3000);
 			},
+
 			
 			// popUp onclick to open with dynamic content
 			showPopUp : function(popUpheader,content) {

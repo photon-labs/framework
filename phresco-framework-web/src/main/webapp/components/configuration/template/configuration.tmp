@@ -6,7 +6,7 @@
                 <table width="100%" border="0" cellspacing="0" cellpadding="5">
                 <tr>
                 	<td>Name <sup>*</sup></td>
-                    <td>Description <sup>*</sup></td>
+                    <td>Description</td>
                     <td>&nbsp;</td>
                 </tr>
                 <tr>
@@ -49,7 +49,7 @@
                             </tbody>
                           </table>
                             
-                            <!--env_border div ends here -->	
+							<!--env_border div ends here -->	
                         </div>
 						<div class="flt_left" id="errdisplay" > </div>
                         <div class="flt_right">
@@ -79,7 +79,7 @@
 				  <th>&nbsp;</th>
 				</tr>
 			  </thead>
-			  <tbody>
+			  <tbody name="EnvLists">
 				{{#configurationList}}
 			  <tr class="envlist">
 				<td name='envNames'>{{name}} {{#if defaultEnv}} (Default) {{else}} &nbsp; {{/if}}</td>  
@@ -99,7 +99,8 @@
                         <table class="clonetable" width="100%" border="0" cellspacing="0" cellpadding="5">
                             <tr>
                                 <td>Name <sup>*</sup></td>
-                                <td>Description <sup>*</sup></td>
+							<!--	<span class="display" style="display:none;"> <font style="vertical-align: -3px;"> &nbsp;&nbsp;&nbsp; Enter unique Name. </font></span>-->
+								<td>Description </td>
                                 <td>&nbsp;</td>
                             </tr>
                             <tr>
@@ -107,11 +108,10 @@
                                 <td><input type="text" class="cloneEnvDesc{{name}} dyn_popup_text" placeholder="Environment Description" name="envrDesc"></td>
                             </tr>
                             <tr>
-                                <td>
-                                    <input type="checkbox" name="DefaultValue{{name}}" value="Set as Default">
-								<span> <font style="vertical-align: -3px;"> &nbsp;&nbsp; Set as Default  </font></span>
-								<span id="display" style="display:none;"> <font style="vertical-align: -3px;"> &nbsp; Enter a unique Name. </font></span>
-								</td>
+                               <td>
+                                    <input type="button" class="btn btn_style default" value="Set as Default">
+                                </td>
+                                <td><span class="display" style="display:none;"> <font style="vertical-align: -3px;"> &nbsp;&nbsp;&nbsp; Enter unique Name. </font></span></td>
                                 <!--<td>&nbsp;</td>-->
                                 <td name={{name}}>
                                 	<input type="button" name="cloneEnvr" class="btn btn_style" value="Clone">	
@@ -148,7 +148,7 @@
 			  </tbody>
 		</table>
 		{{else}}
-		<div> No Environments Available </div>
+		<div class="alert" style="text-align: center;">No Environment Available</div>
 		{{/if}}
 		<!--features_content_main div ends here -->
 	</section>

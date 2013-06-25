@@ -31,16 +31,13 @@ define(["configuration/listener/configurationListener"], function() {
 		 * Called in once the login is success
 		 *
 		 */
-		loadPage : function(){
-			Clazz.navigationController.push(this, true);
+		loadPage : function(transitionType){
+			Clazz.navigationController.push(this, transitionType);
 		},
 		
 		/***
 		* For Unit Tests
 		*/
-		loadPageTest : function(){
-			Clazz.navigationController.push(this);
-		},
 		
 		preRender: function(whereToRender, renderFunction){
 			var self = this;
@@ -78,21 +75,24 @@ define(["configuration/listener/configurationListener"], function() {
 			var self=this;
 			self.configurationlistener.getConfigurationList(self.configurationlistener.getRequestHeader(self.configRequestBody, action, deleteEnvironment), function(response) {
 				if (action === "delete") {
-					$(value).parent().parent().parent().parent().remove();
-					$("#content_Env li").each(function(){
-						if ($(this).attr('name') === deleteEnvironment) {
-							$(this).remove();
-						}
-					});
+					self.deleteEnv(value);
 				} else {
 					setTimeout(function(){
 						self.successMsgPopUp(response.message);			
 					},2500);
-					self.loadPage();
+					self.loadPage(true);
 				}
 			});
 		},
 		
+		deleteEnv : function (value) {
+			$(value).parent().parent().parent().parent().remove();
+			$("#content_Env li").each(function(){
+				if ($(this).attr('name') === deleteEnvironment) {
+					$(this).remove();
+				}
+			});
+		},
 		/***
 		 * Bind the action listeners. The bindUI() is called automatically after the render is complete 
 		 *
@@ -103,7 +103,7 @@ define(["configuration/listener/configurationListener"], function() {
 			$('.connected').sortable({
 				connectWith: '.connected'
 			});
-
+			
 			$(".tooltiptop").tooltip();
 			$(".dyn_popup").hide();
 			$("a[name=clone_pop]").unbind("click");
@@ -173,18 +173,34 @@ define(["configuration/listener/configurationListener"], function() {
 				self.editConfigurationEvent.dispatch($(this).attr('key'));
 			});
 			
-			$("input[name=cloneEnvr]").unbind("click");
-			$("input[name=cloneEnvr]").click(function() {
+			$("input[name='cloneEnvr']").unbind("click");
+			$("input[name='cloneEnvr']").click(function() {
 				var envrName = $(this).parent().attr('name');
-				self.cloneEnvEvent.dispatch(envrName, function(response){
+				self.cloneEnvEvent.dispatch($(this), envrName, function(response){
 					self.configRequestBody = response;
 					self.getAction(self.configRequestBody, 'cloneEnv', envrName);
-				});  
-				
+				}); 
+			});
+			
+			var defaultVal = 0;
+			$(".default").unbind("click");
+			$(".default").click(function() {
+			
+				if (defaultVal === 1){
+					$(".default").attr('name','false');
+					$(".default").val("Set as Default");
+					defaultVal = 0;
+				}
+				else {
+					$(".default").attr('name','true');
+					$(".default").val("Default");
+					defaultVal = 1;
+				}		
 			}); 
 			
 			Clazz.navigationController.mainContainer = commonVariables.contentPlaceholder;
 		}
+		
 	});
 
 	return Clazz.com.components.configuration.js.Configuration;

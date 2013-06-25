@@ -162,6 +162,7 @@ define(["configuration/api/configurationAPI"], function() {
 			var checked = "";
 			var configProperties = "";
 			var bCheck = false;
+			var fCheck = false;
 			var toAppend;
 			var configTemplate = configTemplates.data.settingsTemplate;
 			if(currentConfig === 'Server') {
@@ -192,9 +193,8 @@ define(["configuration/api/configurationAPI"], function() {
 							if(currentConfig === 'Server') {
 								if($(this).attr('configType') === currentConfig) {
 									bCheck = true;
-									setTimeout(function(){
-										self.successMsgPopUp("Server Already Added");		
-									},2500);
+									self.successMsgPopUp("Server Already Added");		
+									flag = 1;
 								}
 							}
 							
@@ -266,7 +266,8 @@ define(["configuration/api/configurationAPI"], function() {
 					} else if (type === "Password") {
 						inputCtrl = '<input value="'+ configValue +'" class="'+configTemplate.name+self.count+'Configuration" name="'+key+'" mandatory="'+required+'" type="password" placeholder=""/>';
 					} else if (type === "FileType") {
-						inputCtrl = '<div id="'+key+'file-uploader" class="file-uploader" propTempName="'+key+'"></div>';
+						inputCtrl = '<div id="file-uploader-demo1" class="file-uploader" propTempName="'+key+'"><noscript><p>Please enable JavaScript to use file uploader.</p><!-- or put a simple form for upload here --></noscript>  </div>';
+						fCheck = true;
 					} else if (key === "scheduler") {
 						inputCtrl = '<input value="'+ configValue +'" class="'+configTemplate.name+self.count+'Configuration" name="'+key+'" mandatory="'+required+'" type="text" placeholder=""/><a name="cron_expression"><img src="themes/default/images/helios/settings_icon.png" width="23" height="22" border="0" alt=""></a><div id="cron_expression" class="dyn_popup" style="display:none"><table class="table table-striped table_border table-bordered" cellspacing="0" cellpadding="0" border="0"><thead><tr><th colspan="4">Schedule</th></tr></thead><tbody><tr id="scheduleExpression"><td colspan="4"><label><input type="radio" name="scheduleOption" value="Daily" checked>Daily</label><label><input type="radio" name="scheduleOption" value="Weekly">Weekly</label><label><input type="radio" name="scheduleOption" value="Monthly">Monthly</label></td></tr></tbody></table><table class="table table-striped table_border table-bordered" cellspacing="0" cellpadding="0" border="0"><thead><tr> <th colspan="2">Crone Expression</th></tr></thead><tbody><tr><td><input id="CroneExpressionValue" type="text"><a href="javascript:;" id="cronepassword"> <img src="themes/default/images/helios/question_mark.png"></a></td></tr></tbody></table> <div class="flt_right"><input class="btn btn_style" type="button" name="croneOk" value="Ok"><input class="btn btn_style dyn_popup_close" type="button" value="Close"></div></div><div id="crone_triggered" class="dyn_popup" style="display:none"><span>Your Schedule will be triggered using the following pattern<br>Daily Schedule</span><table class="table table-striped table_border table-bordered" border="0" cellpadding="0" cellspacing="0"><thead><tr><th>Date</th> </tr></thead><tbody name="scheduleDates"></tbody></table><div class="flt_right"><input name="dyn_popupcon_close" class="btn btn_style dyn_popupcon_close" type="button" value="Close"></div></div>';
 					} else {
@@ -282,6 +283,10 @@ define(["configuration/api/configurationAPI"], function() {
 									}
 									options1 = options1.concat('<option value="' + key + '" '+selectedAttr+'>' + key + '</option>');
 								});
+							
+								 if ((options1 === "") && (flag === 0)){ 
+									self.successMsgPopUp("Choose the Server Type from App Info");
+								} 
 							} else if(currentConfig === 'Database') {
 								$.each(self.databaseTypeVersion, function(key, value){
 									var selectedAttr = "";
@@ -290,6 +295,10 @@ define(["configuration/api/configurationAPI"], function() {
 									}
 									options1 = options1.concat('<option value="' + key + '" '+selectedAttr+'>' + key + '</option>');
 								});
+							
+								 if (options1 === ""){ 
+									self.successMsgPopUp("Choose the DB Type from App Info");
+								}
 							}
 							inputCtrl = inputCtrl.concat(options1);
 							inputCtrl = inputCtrl.concat("</select></td>");
@@ -365,27 +374,41 @@ define(["configuration/api/configurationAPI"], function() {
 					toAppend.append(content);
 					$("a[name=removeConfig]").unbind("change");
 					self.severDbOnChangeEvent();
-					var aliveJson = {};
 					
 					var host = $('input[temp='+configTemplate.name+key+'host'+self.count+']').val();
 					var port = $('input[temp='+configTemplate.name+key+'port'+self.count+']').val();
 					var protocol = $('select[temp='+configTemplate.name+key+'protocol'+self.count+'] option:selected').val();
+					var type = configTemplate.name+self.count;
 					if (protocol === undefined) {
 						protocol = "http";
 					}
-					aliveJson.host = host;
-					aliveJson.port = port;
-					aliveJson.type = configTemplate.name+self.count;
-					aliveJson.protocol = protocol;
-					self.isAliveCheck(aliveJson);
-					self.CroneExpression();
+					self.isAliveCheck(host, port, type, protocol);
+					if (currentConfig === 'Scheduler') {
+						self.CroneExpression();
+					}
 					
 				}
 				$("a[name=removeConfig]").unbind("click");
 				self.removeConfiguration();
 				self.spclCharValidation();
+				if (fCheck === true) {
+					self.createUploader();
+				}
 			}
 		},
+		
+		createUploader : function() {     
+			var self = this, appDirName;
+			appDirName = self.configurationAPI.localVal.getSession("appDirName");
+            var uploader = new qq.FileUploader({
+                element: document.getElementById('file-uploader-demo1'),
+                action: commonVariables.webserviceurl+commonVariables.configuration+'/upload',
+				actionType : "configuration",
+				appDirName : appDirName,
+				multiple: false,
+				debug: true
+            });           
+        },
 		
 		severDbOnChangeEvent : function () {
 			var self=this;	
@@ -418,27 +441,34 @@ define(["configuration/api/configurationAPI"], function() {
 			});
 			
 		},
-		isAliveCheck : function(aliveJson) {
-			var self=this;
-			self.configRequestBody = aliveJson;
-			self.getConfigurationList(self.getRequestHeader(self.configRequestBody, "isAliveCheck", ''), function(response) {
-				var typeMatch = aliveJson.type;
-				if(response === true) {
-					$(".row_bg").each(function() {
-						var type = $(this).attr("type");
-						if (type == typeMatch) {
-							$(this).find("td:first-child").after("<td class=active>Active</td>");
-						}
-					});
-				} else {
-					$(".row_bg").each(function() {
-						var type = $(this).attr("type");
-						if (type == typeMatch) {
-							$(this).find("td:first-child").after("<td>In Active</td>");
-						}
-					});
-				}
-			});
+		
+		isAliveCheck : function(host, port, type, protocol) {
+			var self=this, aliveJson = {};
+			if (host !== '' && host !== undefined && port !== '' && port !== undefined) {
+				aliveJson.host = host;
+				aliveJson.port = port;
+				aliveJson.type = type;
+				aliveJson.protocol = protocol;
+				self.configRequestBody = aliveJson;
+				self.getConfigurationList(self.getRequestHeader(self.configRequestBody, "isAliveCheck", ''), function(response) {
+					var typeMatch = aliveJson.type;
+					if(response === true) {
+						$(".row_bg").each(function() {
+							var type = $(this).attr("type");
+							if (type == typeMatch) {
+								$(this).find("td:first-child").after("<td class=active>Active</td>");
+							}
+						});
+					} else {
+						$(".row_bg").each(function() {
+							var type = $(this).attr("type");
+							if (type == typeMatch) {
+								$(this).find("td:first-child").after("<td>In Active</td>");
+							}
+						});
+					}
+				});
+			}
 			
 		},
 		
@@ -919,11 +949,48 @@ define(["configuration/api/configurationAPI"], function() {
 			});
 		},
 		
-		cloneEnv : function(envName, callback) {
+		cloneEnv : function(val, envName, callback) {
+			var self = this;
+			var ename = $(val).closest('tr').prev('tr').find('td:first').find('input').val();
+			var count = 0;
+			var flag = 1;
+			var arr = [];
+			var array = [];
+			  if(ename === "") {	
+				$("input[name='envrName']").focus();
+				$("input[name='envrName']").attr('placeholder','Enter Environment Name');
+			} else {
+				$('.envlist').each(function() {
+					arr[count]=$(this).find('td:first').text();
+					array[count] = (arr[count].replace(/\s*\(.*?\)\s*/g, ''));
+					count++;
+				});
+				for (var i=0; i<array.length; i++) {
+					if($.trim(ename) === $.trim(array[i])) {
+						flag = 0;
+					}		
+				};
+				if (flag === 0) {
+					$(".display").show();
+					setTimeout(function() {
+						$(".display").hide();
+					}, 1500);
+					$(val).closest('tr').prev('tr').find('td:first').find('input').focus(); 
+				} else {
+					var desc = $(".cloneEnvDesc"+envName).val();
+					var defaultEnv = $(".default").attr('name');
+					self.constructJson(ename, desc, defaultEnv, function(response){
+						callback(response); 
+					});
+				};
+			}
+		},
+		
+		constructJson : function (ename, desc, defaultEnv, callback) {
 			var self = this, envJson = {};
-			envJson.name = $(".cloneEnvName"+envName).val();
-			envJson.desc = $(".cloneEnvDesc"+envName).val();
-			envJson.defaultEnv = $('input[name=DefaultValue'+envName+']').is(':checked');
+			envJson.name = ename;
+			envJson.desc = desc;
+			envJson.defaultEnv = defaultEnv;
 			callback(envJson);
 		}
 		
