@@ -36,6 +36,8 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.codehaus.jettison.json.JSONException;
+import org.codehaus.jettison.json.JSONObject;
 import org.apache.commons.lang.StringUtils;
 
 import com.photon.phresco.api.ConfigManager;
@@ -241,7 +243,7 @@ public class CIJobTemplateService extends RestBase implements ServiceConstants {
 	 * @return the job templates by environemnt
 	 */
 	@GET
-	@Path("/getJobTemplatesByEnvironemnt")
+	@Path("/getJobTemplatesByEnvironment")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response getJobTemplatesByEnvironemnt(@QueryParam(REST_QUERY_CUSTOMERID) String customerId,
 			@QueryParam(REST_QUERY_PROJECTID) String projectId, @QueryParam(REST_QUERY_EVN_NAME) String envName) {
@@ -249,7 +251,7 @@ public class CIJobTemplateService extends RestBase implements ServiceConstants {
 		try {
 			List<ApplicationInfo> appInfos = FrameworkServiceUtil.getAppInfos(customerId, projectId);
 			CIManager ciManager = PhrescoFrameworkFactory.getCIManager();
-			Map<String, List<CIJobTemplate>> jobTemplateMap = new HashMap<String, List<CIJobTemplate>>();
+			Map<JSONObject, List<CIJobTemplate>> jobTemplateMap = new HashMap<JSONObject, List<CIJobTemplate>>();
 			for (ApplicationInfo appInfo : appInfos) {
 				String appName = appInfo.getName();
 				List<Environment> environments = getEnvironments(appInfo);
@@ -257,7 +259,12 @@ public class CIJobTemplateService extends RestBase implements ServiceConstants {
 					if (envName.equals(environment.getName())) {
 						List<CIJobTemplate> jobTemplates = ciManager.getJobTemplatesByAppId(appName);
 						if (CollectionUtils.isNotEmpty(jobTemplates)) {
-							jobTemplateMap.put(appName, jobTemplates);
+							JSONObject jsonObject = new JSONObject();
+							jsonObject.put("appName", appInfo.getName());
+							jsonObject.put("appDirName", appInfo.getAppDirName());
+							
+							jobTemplateMap.put(jsonObject, jobTemplates);
+//							jobTemplateMap.put(appName, jobTemplates);
 						}
 					}
 				}
@@ -271,10 +278,11 @@ public class CIJobTemplateService extends RestBase implements ServiceConstants {
 			return Response.status(Status.EXPECTATION_FAILED).entity(finalOutput).header("Access-Control-Allow-Origin",
 					"*").build();
 		} catch (ConfigurationException e) {
-			ResponseInfo<CIJobTemplate> finalOutput = responseDataEvaluation(responseData, e,
-					"Job Templates Failed to Fetch", null);
-			return Response.status(Status.EXPECTATION_FAILED).entity(finalOutput).header("Access-Control-Allow-Origin",
-					"*").build();
+			ResponseInfo<CIJobTemplate> finalOutput = responseDataEvaluation(responseData, e, "Job Templates Failed to Fetch", null);
+			return Response.status(Status.EXPECTATION_FAILED).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
+		} catch (JSONException e) {
+			ResponseInfo<CIJobTemplate> finalOutput = responseDataEvaluation(responseData, e, "Job Templates Failed to Fetch", null);
+			return Response.status(Status.EXPECTATION_FAILED).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
 		}
 	}
 

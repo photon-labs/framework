@@ -4,7 +4,7 @@
     <parent>
         <groupId>com.photon.phresco.framework</groupId>
         <artifactId>phresco-framework-root</artifactId>
-        <version>3.0.0.13005-SNAPSHOT</version>
+        <version>3.0.0.14002-SNAPSHOT</version>
         <relativePath>../</relativePath>
     </parent>
    
@@ -595,6 +595,21 @@
 		</dependency>
 		<!--  Times New Roman windows font  -->
         
+		 <dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-test</artifactId>
+			<version>2.5</version>
+		</dependency>
+		<dependency>
+			<groupId>spring</groupId>
+			<artifactId>spring-core</artifactId>
+			<version>1.0.2</version>
+		</dependency>
+		 <dependency>
+	        <groupId>springframework</groupId>
+	        <artifactId>spring</artifactId>
+	        <version>1.1.2</version>
+      </dependency>
      </dependencies>
     
     <build>

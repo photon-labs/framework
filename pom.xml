@@ -5,7 +5,7 @@
     <artifactId>phresco-framework-root</artifactId>
     <packaging>pom</packaging>
     <name>Phresco Framework root</name>
-    <version>3.0.0.13005-SNAPSHOT</version>
+    <version>3.0.0.14002-SNAPSHOT</version>
     <description>phresco-framework-root</description>
     <url>http://www.phresco.org</url>
     <scm>
@@ -178,6 +178,23 @@
                     <skip xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">true</skip>
                 </configuration>
             </plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<version>2.11</version>
+				<dependencies>
+					<dependency>
+					<groupId>org.apache.maven.surefire</groupId>
+					<artifactId>surefire-junit47</artifactId>
+					<version>2.12</version>
+					</dependency>
+				</dependencies>
+			<configuration>
+				<includes>
+				<include>**/AllTest.class</include>
+				</includes>
+			</configuration>
+			</plugin>
         </plugins>
     </build>
     <profiles>

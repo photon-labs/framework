@@ -34,9 +34,9 @@ define(["application/api/applicationAPI"], function() {
 			var layerId = object.attr('id');
 			object.closest('tr').next().attr('name', layerId + "content");
 			object.closest('tr').attr('name', layerId);
-			object.closest('tr').hide('slow');
+			object.closest('tr').hide();
 			$("input[name="+layerId+"]").toggle();
-			$("tr[name="+layerId+"content]").hide('slow');
+			$("tr[name="+layerId+"content]").hide();
 		},
 		
 		addlayer : function(object) {

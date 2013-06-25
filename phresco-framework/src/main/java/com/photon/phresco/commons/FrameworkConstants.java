@@ -337,6 +337,7 @@ public interface FrameworkConstants {
     String SERVER_PROTOCOL = "server.protocol";
     String SERVER_HOST = "host";
     String SERVER_PORT = "port";
+    String PROTOCOL = "protocol";
     String LOG_DIR = "log";
     String RUN_AGS_ENV_FILE = "runagainstsource.info";
     String LOG_FILE = "sourcecompile.log";

@@ -202,6 +202,10 @@ public class ClientIdentifyFilter implements Filter , ClientIdentifyFilterConsta
 				String disabledLabelColor =  theme.get("DisabledLabelColor");
 				String loginLogo =  theme.get("loginlogo");
 				String logoPadding =  theme.get("logopadding");
+				String gradientTop = theme.get("gradientTop");
+				String gradientBottom = theme.get("gradientBottom");
+				String gradientvar = "linear-gradient(to bottom, gradientTop 1%,gradientBottom 100%) !important";
+				String filter = "progid:DXImageTransform.Microsoft.gradient( startColorstr=gradientTop, endColorstr=gradientBottom,GradientType=0 ) !important";
 			
 			    InputStream stream =   this.getClass().getClassLoader().getResourceAsStream("customercss.xml");
 			    String result = getStringFromInputStream(stream);
@@ -257,6 +261,16 @@ public class ClientIdentifyFilter implements Filter , ClientIdentifyFilterConsta
 						}
 						if (customercolor.contains("logopadding")&& StringUtils.isNotEmpty(logoPadding)) {
 							fields.put(key,  customercolor.replace("logopadding", logoPadding) + " !important");
+						}
+						if (StringUtils.isNotEmpty(gradientTop) && StringUtils.isNotEmpty(gradientBottom)) {
+							if (customercolor.contains("gradientBottom") && StringUtils.isNotEmpty(gradientBottom) && 
+									(customercolor.contains("gradientTop") && StringUtils.isNotEmpty(gradientTop))) {
+								fields.put(key, customercolor.replace("gradientBottom", gradientBottom).replaceAll("gradientTop", gradientTop)) ;
+							}
+						} else if (customercolor.contains(gradientvar)) {
+							fields.put(key,  gradientvar.replace(gradientvar, brandingColor + " !important"));
+						} else if (customercolor.contains(filter)) {
+							fields.put(key,  filter.replace(filter,""));
 						}
 					}
 				}

@@ -161,31 +161,20 @@ define(["ci/api/ciAPI"], function() {
 			return header;
 		},
 
-		validation : function () {
-			try {
-				var self = this, bCheck = false;
-				if ($('input[name="name"]').val() == undefined || $('input[name="name"]').val() == null || $.trim($('input[name="name"]').val()) == "") {
-					$('input[name="name"]').attr('placeholder','Enter Username');
-					$('input[name="name"]').addClass("loginuser_error");
-					bCheck = false;
-				}
-
-				if($('#appIdsList').find('input[type=checkbox]:checked').length == 0) {
-        				alert('Please select atleast one application');
-    			}
-
-    			if($('#features').find('input[type=checkbox]:checked').length == 0) {
-        				alert('Please select atleast one feature');
-    			}
-
-			} catch (error) {
-				//Exception
-				console.log("Exception ");
+		showHideRepo : function(callback) {
+			if ($("input[name=enableRepo]").is(':checked')) {
+				$("select[name=repoTypes]").next().show();
+			} else {
+				$("select[name=repoTypes]").next().hide();
 			}
 		},
-
-		isNameExists : function () {
-
+		
+		showHideUpload : function(callback) {
+			if ($("input[name=enableUploadSettings]").is(':checked')) {
+				$("select[name=uploadTypes]").next().show();
+			} else {
+				$("select[name=uploadTypes]").next().hide();
+			}
 		},
 		
 		validate : function (callback) {
@@ -195,11 +184,25 @@ define(["ci/api/ciAPI"], function() {
 			$("#errMsg").removeClass("errormessage");
 			$('input[name=name]').removeClass("errormessage");	
 			$('#errMsg').html('');
-			var appIds = $('[name=appIds]:checked').length;
+			
+			var enableUpload = $('input[name=enableUploadSettings]').is(':checked');
+			if (enableUpload) {
+				var uploads = $('select[name=uploadTypes] :selected').length;
+				if (uploads == 0) {
+					$('#errMsg').html('Select atleast one Uploader');
+					$("select[name='uploadTypes']").focus();
+					$('#errMsg').addClass("errormessage");
+					$('select[name=uploadTypes]').next().find('button.dropdown-toggle').addClass("btn-danger");
+					status = false;	 
+				}
+			}
+			
+			var appIds = $('select[name=appIds] :selected').length;
 			if(appIds === 0) {
 				$('#errMsg').html('Select atleast one application');
-				$("input[name='appIds']").focus();
+				$("select[name='appIds']").focus();
 				$('#errMsg').addClass("errormessage");
+				$('select[name=appIds]').next().find('button.dropdown-toggle').addClass("btn-danger");
 				status = false;	 											
 			}	
 			
@@ -343,43 +346,92 @@ define(["ci/api/ciAPI"], function() {
 
 			// Convert appIds to array
 			jobTemplate.appIds = [];
-			$("input[name=appIds]:checked").each(function() {
-			    jobTemplate.appIds.push(this.value);
+			$('select[name=appIds] :selected').each(function(i, selected) {
+				jobTemplate.appIds.push(this.value);
 			});
+			
+			jobTemplate.uploadTypes = [];
+			if(jobTemplate.enableUploadSettings) {
+				$('select[name=uploadTypes] :selected').each(function(i, selected){ 
+					jobTemplate.uploadTypes.push(this.value);				
+				});
+			}
+			
 			return jobTemplate;
+		},
+
+		preOpen : function (callback) {
+			var self = this;
+			
+			$("select[name=repoTypes]").next().hide();
+			$("select[name=uploadTypes]").next().hide();
+			$('select[name=appIds]').selectpicker('deselectAll');
+			$('select[name=uploadTypes]').selectpicker('deselectAll');
+			$('.selectpicker').selectpicker('render');
+			self.removeDangerClass($('select[name=appIds]'));
+			self.removeDangerClass($('select[name=uploadTypes]'));
+			$("input[name=enableUploadSettings]").attr("disabled","disabled");
+			callback();
+		},
+
+		preEdit : function (callback) {
+			
+			var self = this;
+			$("#errMsg").removeClass("errormessage");
+			$('input[name=name]').removeClass("errormessage");	
+			$('#errMsg').html('');
+			$('select[name=appIds]').selectpicker('deselectAll');
+			$('select[name=uploadTypes]').selectpicker('deselectAll');
+			$('.selectpicker').selectpicker('render');
+			self.removeDangerClass($('select[name=appIds]'));
+			self.removeDangerClass($('select[name=uploadTypes]'));
+			callback();
+		},
+
+		changeUpload : function() {
+			var operation = $("select[name=type]").val();
+			if (operation === 'Build' || operation === 'PDF Report') {
+				$("input[name=enableUploadSettings]").removeAttr("disabled");
+			} else {
+				$("input[name=enableUploadSettings]").attr("checked", false);
+				$("input[name=enableUploadSettings]").attr("disabled","disabled");
+				$('select[name=uploadTypes]').selectpicker('deselectAll');
+				$('.selectpicker').selectpicker('render');
+				$("select[name=uploadTypes]").next().hide();
+			}
 		},
 
 		editJobTemplate : function (data) {
 			var self = this;
-			//$.each(data, function(key, value) {
-    			//display the key and value pair
-    			//console.log(key + ' is ' + value);
-    			//$("#elementId").is("input")
-    			// if ($.isArray(value)) {
-
-    			// } else {
-    			// 	$("input[name="+key+"]").val(value);
-    			// }
-			//});
-
 			$("[name=name]").val(data.name);
 			$("[name=oldname]").val(data.name);
-			$("[name=type]").val(data.type);
-			$.each(data.appIds, function(index, value) {			
-				$('[name=appIds][value="'+ value +'"]').prop('checked', true);				
-			});
-
+			$("[name=type]").selectpicker('val', data.type);
+			//AppIds
+			$("select[name=appIds]").selectpicker('val', data.appIds);
+			
 			$("[name=repoTypes]").val(data.repoTypes);
 
 			$('[name=enableRepo]').prop('checked', data.enableRepo);
 			$('[name=enableSheduler]').prop('checked', data.enableSheduler);
 			$('[name=enableEmailSettings]').prop('checked', data.enableEmailSettings);
 			$('[name=enableUploadSettings]').prop('checked', data.enableUploadSettings);
+			//Uploaders
+			$("select[name=uploadTypes]").selectpicker('val', data.uploadTypes);
+			$('.selectpicker').selectpicker('render');
+			
+			self.showHideRepo();
+			self.showHideUpload();
 			// button name change
 			$('input[name=save]').prop("value", "Update");
 			$('input[name=save]').prop("name", "update");
 		},
-
+				
+		//remove error class for multiselect
+		removeDangerClass : function(obj) {			
+			obj.next().find('button.dropdown-toggle').removeClass("btn btn-danger"); 
+			obj.next().find('button.dropdown-toggle').addClass("btn dropdown-toggle");			
+		},
+		
 		deleteJobTemplate : function () {
 			var self = this;
 		},
@@ -397,6 +449,8 @@ define(["ci/api/ciAPI"], function() {
 			var self = this;
 			var templateJsonData = $(thisObj).data("templateJson");
 
+			var jobJsonData = $(thisObj).data("jobJson");
+
 			// elements
 			var repoTypeElem = $("#repoType tbody tr");
 			var repoTypeTitleElem = $("#repoType thead tr th");
@@ -404,28 +458,28 @@ define(["ci/api/ciAPI"], function() {
 			// Repo types
 			if (!self.isBlank(templateJsonData.repoTypes) && templateJsonData.repoTypes === "svn") {
 				// For svn
-				$(repoTypeElem).html('<td><input type="text" placeholder="SVN Url" name="url"></td>'+
+				$(repoTypeElem).html('<td><input type="text" placeholder="SVN Url" name="url"><input name="repoType" type="hidden" value="'+ templateJsonData.repoTypes +'"></td>'+
                         '<td><input type="text" placeholder="Username" name="userName"></td>'+
                         '<td><input type="password" placeholder="Password" name="password"></td>');
 			} else if (!self.isBlank(templateJsonData.repoTypes) && templateJsonData.repoTypes === "git") {
 				// For GIT
-				$(repoTypeElem).html('<td><input type="text" placeholder="GIT Url" name="url"></td>'+
+				$(repoTypeElem).html('<td><input type="text" placeholder="GIT Url" name="url"><input name="repoType" type="hidden" value="'+ templateJsonData.repoTypes +'"></td>'+
                         '<td><input type="text" placeholder="Username" name="userName"></td>'+
                         // '<td><input type="text" placeholder="Branch" name="branch"></td>'+
                         '<td><input type="password" placeholder="Password" name="password"></td>');
 			} else {
 				// For clonned workspace
-				$(repoTypeElem).html('<select id="clonnedworkspaces" name="clonnedworkspaces"></select>');
+				$(repoTypeElem).html('<input name="repoType" type="hidden" value="clonedWorkspace"><select id="clonnedWorkspaceName" name="clonnedWorkspaceName"></select>');
 				// set label value
 				$(repoTypeTitleElem).html("Clonned workspace");
 			}
 
 			// Upload configurations
+			$("#uploadSettings").empty();
 			if (templateJsonData.enableUploadSettings) {
 				//elements
 				var uploadSettingsElem = $("#uploadSettings");
 
-				$(uploadSettingsElem).empty();
 				// uploadType
 				if (templateJsonData.uploadType === "collabnet") {
 					var uploadSettingsHtml = '<table id="collabnetUploadSettings" class="table table-striped table_border table-bordered" cellpadding="0" cellspacing="0" border="0">'+
@@ -451,52 +505,190 @@ define(["ci/api/ciAPI"], function() {
 				}
 			}
 
-			// templateJsonData.type
-			// TODO: Based on type dynamic page have to render
-			var operation = templateJsonData.type;
+			//scheduler
+			if (!templateJsonData.enableSheduler) {
+				$("#scheduler").remove();
+			}
+
+			//mail
+			if (!templateJsonData.enableEmailSettings) {
+				$("#mailSettings").remove();
+			}
+
+			//upstream config
+			$("#downstreamConfig").remove();
 
 			// Get app name
 			var appName = $(thisObj).attr("appname");
+			var appDirName = $(thisObj).attr("appDirName");
 			var jobtemplatename = $(thisObj).attr("jobtemplatename");
 
 			// set corresponding job template name and their app name in configure button
 			$("[name=configure]").attr("appname", appName);
+			$("[name=configure]").attr("appDirName", appDirName);
 			$("[name=configure]").attr("jobtemplatename", jobtemplatename);
 
+
 			// Dynamic param
-			//commonVariables.goal = commonVariables.ciPhase;
-			commonVariables.goal = commonVariables.unitTestGoal;
-			commonVariables.appDirName = "wwwww-Java WebService";
+			var operation = templateJsonData.type;
+			//console.log("operation > " + operation);
+
+			if ("Code Validation" === operation) {
+				commonVariables.goal = commonVariables.codeValidateGoal;
+			} else if ("Build" === operation) {
+				commonVariables.goal = commonVariables.packageGoal;
+			} else if ("Deploy" === operation) {
+				commonVariables.goal = commonVariables.deployGoal;
+			} else if ("Unit Test" === operation) {
+				commonVariables.goal = commonVariables.unitTestGoal;
+			} else if ("Component Test" === operation) {
+				commonVariables.goal = commonVariables.componentTestGoal;
+			} else if ("Functional Test" === operation) {
+				commonVariables.goal = commonVariables.functionalTestGoal;
+			} else if ("Performance Test" === operation) {
+				commonVariables.goal = commonVariables.performanceTestGoal;
+			} else if ("Load Test" === operation) {
+				commonVariables.goal = commonVariables.loadTestGoal;
+			} else if ("PDF Report" === operation) {
+				commonVariables.goal = commonVariables.pdfReportGoal;
+			}
+
+			commonVariables.phase = commonVariables.ciPhase;
+			commonVariables.appDirName = appDirName;
 
 			commonVariables.navListener.getMyObj(commonVariables.dynamicPage, function(dynamicPageObject) {
 				self.dynamicPageListener = new Clazz.com.components.dynamicPage.js.listener.DynamicPageListener();
 				dynamicPageObject.getHtml(false, function(response) {
+
 					if ("No parameters available" == response) {
-						console.log("No parameters available ");
+						//console.log("No parameters available ");
+						$("#dynamicContent").empty();
 					} else {
 						$("#dynamicContent").html(response);
 						dynamicPageObject.showParameters();
 						self.dynamicPageListener.controlEvent();
-						// OPen popup
-						commonVariables.openccmini(thisObj, 'jobConfigure');
 					}
+
+					// Restore existing values
+					// get all the elemenst of the form and iterate through that, check for type and populate the value
+					if (!self.isBlank(jobJsonData)) {
+						self.restoreFormValues($("#jonConfiguration"), jobJsonData);
+					}
+
+					// Open popup
+					commonVariables.openccmini(thisObj, 'jobConfigure');
 				});
 			});
 		},
 
+		restoreFormValues : function (formObj, data) {
+			var self = this;
+
+		    if (!self.isBlank(formObj)) {
+		    	for ( var i = 0; i < $(formObj)[0].elements.length; i++ ) {
+
+			        var e = $(formObj)[0].elements[i];
+
+			        var key = e.name;
+			        var value = data[key];
+
+			        if (self.isBlank(e.name)) continue; // Shortcut, may not be suitable for values = 0 (considered as false)
+
+			        //console.log("Name => " + key + " :: Type => " + e.type  + " :: Value => " + value + " :: Value type => " + $.type(value));
+
+			        switch (e.type) {
+			            case 'text':
+			            	$('[name="'+ key +'"]').val(value);
+			            	break;
+			            case 'textarea':
+			            	$('[name="'+ key +'"]').text(value);
+			            	break;
+			            case 'password':
+			            	$('[name="'+ key +'"]').val(value);
+			            	break;
+			            case 'hidden':
+			            	$('[name="'+ key +'"]').val(value);
+			                break;
+			            case 'radio':
+			            	if ($.type() === "string") {
+			            		$('[name="'+ key +'"][value="'+ value +'"]').attr("checked", true);
+			            	}
+			            	break;
+			            case 'checkbox':
+			            	if ($.type(value) === "array") {
+			            	 	$.each(value, function (arrayKey, arrayValue) {
+			            	 		$('[name="'+ key +'"][value="'+ arrayValue +'"]').attr("checked", true);
+			            	 	});
+			            	} else if ($.type(value) === "string" && value === "true") {
+			            		$('[name="'+ key +'"]').prop('checked', true);
+			            	} else if ($.type(value) === "string" && value === "false") {
+			            		$('[name="'+ key +'"]').prop('checked', false);
+			            	} else if ($.type(value) === "string") { // other case
+			            	 	$('[name="'+ key +'"][value="'+ value +'"]').attr("checked", true);
+			            	}
+			                break;
+			            case 'select-one':
+			            	$('[name="'+ key +'"]').val(value);
+			                break;
+			            case 'select-multiple':
+							if ($.type(value) === "array") {
+			            		$('[name="'+ key +'"]').val(value);
+			            	} else if ($.type() === "string") {
+			            		$('[name="'+ key +'"]').val(value);
+			            	}
+			                break;
+			        }
+			    }
+		    }
+		},
+
 		configureJob : function (thisObj) {
+			var self = this;
 			// Get app name
 			var appName = $(thisObj).attr("appname");
+			var appDirName = $(thisObj).attr("appDirName");
 			var jobtemplatename = $(thisObj).attr("jobtemplatename");
 
-			// append the configureJob json (jobJson) in  job template name id
-			var jobConfiguration = $('#jonConfiguration').serializeObject();
+			var templateJsonData = $('[appname="'+ appName +'"][jobtemplatename="'+ jobtemplatename +'"]').data("templateJson");
 
-			//Checking
-			$('[appname="'+ appName +'"][jobtemplatename="'+ jobtemplatename +'"]').data("jobJson", jobConfiguration);
+			// validation starts
+			if (self.isBlank($("input[name=jobName]").val())) {
+				//console.log("Name is empty ");
+				return false;
+			}
 
-            // Hide popup
-            $(".dyn_popup").hide();
+			// when the repo is svn or git need validation
+			var emptyFound = false;
+
+			//repo url validation
+			if (!self.isBlank(templateJsonData.repoTypes) && (templateJsonData.repoTypes === "svn" || templateJsonData.repoTypes === "git")) {
+				$('#repoType input').each(function() {
+			    	if (self.isBlank(this.value)) {
+			           //$("#error").show('slow');
+			           //console.log("empty " + this.name);
+			           emptyFound = true;
+			           return false;
+			       	} 
+			    });
+			}
+
+			//scheduler validation
+
+			//mail settings validation
+
+			// validation ends
+
+			if (!emptyFound) {
+				// append the configureJob json (jobJson) in  job template name id
+				var jobConfiguration = $('#jonConfiguration').serializeObject();
+
+				//console.log("Storing " + JSON.stringify(jobConfiguration));
+				//Checking
+				$('[appname="'+ appName +'"][jobtemplatename="'+ jobtemplatename +'"]').data("jobJson", jobConfiguration);
+
+	            // Hide popup
+	            $(".dyn_popup").hide();
+			}
 		},
 
 		constructJobTemplateViewByEnvironment : function (response) {
@@ -507,15 +699,25 @@ define(["ci/api/ciAPI"], function() {
 				//var continuousDeliveryJobTemplates = "";
 				$("#sortable1").empty();
 				$.each(data, function(key, value) {
-					var jobTemplateApplicationName = '<div class="sorthead">'+ key +'</div>';
+					//console.log("Type key " + $.type(key));
+					//console.log("Type value " + $.type(value));
+
+					//console.log("key > " + JSON.stringify(key));
+					var parseJson = $.parseJSON(key);
+					//console.log("appName " + parseJson.appName);
+					//console.log("appDirName " + parseJson.appDirName);
+					var appName = parseJson.appName;
+					var appDirName = parseJson.appDirName;
+
+					var jobTemplateApplicationName = '<div class="sorthead">'+ appName +'</div>';
 					$("#sortable1").append(jobTemplateApplicationName);
 
 					if (!self.isBlank(data)) {
 						// job tesmplate key and value
 						$.each(value, function(jobTemplateKey, jobTemplateValue) {
 
-							var jobTemplateGearHtml = '<a href="javascript:;" id="'+ jobTemplateValue.name +'" class="validate_icon" jobTemplateName="'+ jobTemplateValue.name +'" appName="'+ key +'" name="jobConfigurePopup" style="display: none;"><img src="themes/default/images/helios/validate_image.png" width="19" height="19" border="0"></a>';
-                    		var jobTemplateHtml = '<li class="ui-state-default">' + jobTemplateValue.name + ' - ' + jobTemplateValue.type + jobTemplateGearHtml + '</li>'
+							var jobTemplateGearHtml = '<a href="javascript:;" id="'+ jobTemplateValue.name +'" class="validate_icon" jobTemplateName="'+ jobTemplateValue.name +'" appName="'+ appName +'" appDirName="'+ appDirName +'" name="jobConfigurePopup" style="display: none;"><img src="themes/default/images/helios/validate_image.png" width="19" height="19" border="0"></a>';
+                    		var jobTemplateHtml = '<li class="ui-state-default"><span>' + jobTemplateValue.name + ' - ' + jobTemplateValue.type + '</span>' + jobTemplateGearHtml + '</li>'
                     		$("#sortable1").append(jobTemplateHtml);
 
                     		// set json value on attribute
@@ -526,8 +728,161 @@ define(["ci/api/ciAPI"], function() {
 
 				});
 			}
+		},
+
+		/***
+		 * This method automatically manipulates upstream and downstream as well as validation
+		 *
+		 */
+		streamConfig : function(thisObj, callback) {
+	  		// third Construct upstream and downstream validations
+	  		// all li elemnts of this
+	  		//console.log("upstream and sownstream construction ");
+			$($(thisObj).find('li').get().reverse()).each(function() {
+				//console.log("elem span" + $(thisObj).find('span').text());
+				    var anchorElem = $(thisObj).find('a');
+				    var appName = $(anchorElem).attr("appname");
+				    var templateJsonData = $(anchorElem).data("templateJson");
+				    //console.log("templateJsonData => " + JSON.stringify(templateJsonData));
+				    var jobJsonData = $(anchorElem).data("jobJson");
+				    //console.log("jobJsonData => " + JSON.stringify(jobJsonData));
+				    // upstream and downstream and clone workspace except last job
+				    
+				    var preli = $(thisObj).prev('li')
+				    var preAnchorElem = $(preli).find('a');
+				    var preTemplateJsonData = $(preAnchorElem).data("templateJson");
+				    var preJobJsonData = $(preAnchorElem).data("jobJson");
+				    //console.log("preJobJsonData > " + preJobJsonData);
+				    
+				    var nextli = $(thisObj).next('li');
+				    var nextAnchorElem = $(nextli).find('a');
+				    var nextTemplateJsonData = $(nextAnchorElem).data("templateJson");
+				    var nextJobJsonData = $(nextAnchorElem).data("jobJson");
+				    //console.log("nextJobJsonData > " + nextJobJsonData);
+
+
+				    if (jobJsonData != undefined && jobJsonData != null) {
+				        jobJsonData = {};
+				        //console.log("Erorr ... ");
+				    }
+
+				    // Downstream
+				    if (nextJobJsonData != undefined && nextJobJsonData != null) {
+				    	// downstream specifies the next job which needs to be triggered after this job
+				    	//console.log("Downstream job name => " + nextJobJsonData.name);
+				        jobJsonData.downstreamApplication = nextJobJsonData.name;
+				    } else {
+				    	//console.log("next job data not found ... ");
+				    }
+
+				    // No use parent job
+				    if (preJobJsonData != undefined && preJobJsonData != null) {
+				    	// upstream job specifies the from where this app will be triggered, this will be based on assumption, only for UI purpose
+				    	//console.log("Upstream job name => " + preJobJsonData.name);
+				        jobJsonData.upstreamApplication = preJobJsonData.name;
+				    } else {
+				    	//console.log("previous job data not found ... ");
+				    }
+
+				    //console.log("is previous App have to repo check");
+				    // Is parent app available for this app job
+				    var parentAppFound = false;
+				    var workspaceAppFound = false;
+				    // check for previous job to find its cloneJobName
+			  		$(thisObj).prevAll('li').each(function(index) {
+			  			// Corresponding element access
+					    var thisAnchorElem = $(thisObj).find('a');
+					    //console.log("elem span" + $(thisObj).find('span').text());
+			  			var thisTemplateJsonData = $(thisAnchorElem).data("templateJson");
+			  			var thisJobJsonData = $(thisAnchorElem).data("jobJson");
+			  			var thisAppName = $(thisAnchorElem).attr("appname");
+
+			  			if (thisAppName === appName && thisTemplateJsonData.enableRepo) {
+			  				parentAppFound = true;
+			  				//console.log("Parent project found ");
+			  			}
+
+			  			if (thisAppName === appName && !workspaceAppFound) {
+			  				workspaceAppFound = true;
+			  				// from where this jobs source code have to come from
+			  				//console.log("Applications clone job job found ");
+			  				// Upstream app
+			  				if (thisJobJsonData != undefined && thisJobJsonData != null) {
+				        		jobJsonData.cloneJobName = thisJobJsonData.name;
+				        		thisJobJsonData.clonetheWrokspace = true;
+				        		$(thisAnchorElem).data("jobJson", thisJobJsonData);
+				        		return false;
+				    		}
+			  			}
+					});
+					
+					if (!parentAppFound) {
+						//console.log("Not able to find its parent source app for this job");
+					}
+
+				    // Store value in data
+				    $(anchorElem).data("jobJson", jobJsonData);
+
+			});
+			callback();
+		},
+
+		/***
+		 * This method automatically constructs the jobs from each job, that are all on sortable2
+		 *
+		 */
+		constructJobsObj : function(thisObj) {
+			var self = this;
+		},
+
+		saveContinuousDelivery : function (thisObj, callback) {
+			var self = this;
+			var jobs = {};
+			var sortable2LiObj = $("#sortable2 li");
+
+			$(sortable2LiObj).each(function(index) {
+				var thisAnchorElem = $(this).find('a');
+				//console.log("elem span" + $(this).find('span').text());
+				var thisTemplateJsonData = $(thisAnchorElem).data("templateJson");
+				//console.log("thisTemplateJsonData => " + JSON.stringify(thisTemplateJsonData));
+				var thisJobJsonData = $(thisAnchorElem).data("jobJson");
+			    //console.log("jobJsonData => " + JSON.stringify(thisJobJsonData));
+				var thisAppName = $(thisAnchorElem).attr("appname");
+
+				// open the popup and ask the user to input the data, Once the popup is opened all the data will be validates
+				if (self.isBlank(thisJobJsonData)) {
+					self.showConfigureJob(thisAnchorElem);
+					//console.log("Fille the job template");
+					return false;
+				} else {
+					//console.log("save continuous delivery validation starts here");
+					// all the input text box should not be empty
+					if (isBlank(thisJobJsonData.name)) {
+						self.showConfigureJob(thisAnchorElem);
+						return false;
+					}
+
+					// more validation can be added here
+
+				}
+			});
+
+			// Upstream and downstream config auto population goes here
+			self.streamConfig(sortable2LiObj, function() {
+
+
+				// construct the job json data here once all the data are validated
+				callback(jobs);
+			});
+		},
+
+
+
+		saveContinuousDeliveryValidation : function (thisObj, callback) {
+			var self = this;
+			callback();
 		}
-		
+				
 	});
 
 	return Clazz.com.components.ci.js.listener.CIListener;

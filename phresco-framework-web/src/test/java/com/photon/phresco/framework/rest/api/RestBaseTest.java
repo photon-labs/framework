@@ -17,17 +17,26 @@
  */
 package com.photon.phresco.framework.rest.api;
 
+import static org.junit.Assert.fail;
+
 import java.util.Arrays;
 import java.util.List;
 
-import org.codehaus.jackson.jaxrs.JacksonJsonProvider;
+import javax.servlet.http.HttpServletRequest;
+import javax.ws.rs.core.Response;
 
+import org.codehaus.jackson.jaxrs.JacksonJsonProvider;
+import org.springframework.mock.web.MockHttpServletRequest;
+
+import com.photon.phresco.exception.PhrescoException;
+import com.photon.phresco.framework.rest.api.util.ActionResponse;
 import com.photon.phresco.service.client.api.ServiceManager;
 import com.sun.jersey.api.client.Client;
 import com.sun.jersey.api.client.config.ClientConfig;
 import com.sun.jersey.api.client.config.DefaultClientConfig;
 
 public class RestBaseTest extends RestBase {
+	ActionService actionservice = new ActionService();
 	
 	protected static ServiceManager serviceManager = null;
 	protected String userId = "";
@@ -59,5 +68,31 @@ public class RestBaseTest extends RestBase {
 		cfg.getClasses().add(JacksonJsonProvider.class);
 		Client client = Client.create(cfg);
 		return client;
+	}
+	
+	public Boolean readLog(String uniqueKey) throws PhrescoException {
+		MockHttpServletRequest request = new MockHttpServletRequest();
+		request.setParameter("uniquekey", uniqueKey);
+		HttpServletRequest httpServletRequest = (HttpServletRequest)request;
+		Response build = actionservice.read(httpServletRequest);
+		ActionResponse output = (ActionResponse) build.getEntity();
+		System.out.println(output.getLog());
+		if (output.getLog() != null) {
+
+			if (output.getLog().contains("BUILD FAILURE")) {
+				fail("Error occured ");
+			}
+			if ("INPROGRESS".equalsIgnoreCase(output.getStatus())) {
+				readLog(uniqueKey);
+				return true;
+			} else if ("COMPLETED".equalsIgnoreCase(output.getStatus())) {
+				System.out.println("***** Log finished ***********");
+				return true;
+			} else if ("ERROR".equalsIgnoreCase(output.getStatus())) {
+				fail("Error occured while retrieving the logs");
+				return false;
+			}
+		}
+		return false;
 	}
 }

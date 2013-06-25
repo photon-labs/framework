@@ -141,6 +141,9 @@ define(["configuration/api/configurationAPI"], function() {
 					header.requestMethod = "POST";
 					header.requestPostBody = JSON.stringify(configRequestBody);
 					header.webserviceurl = commonVariables.webserviceurl+commonVariables.configuration+"/cronExpression";
+			} else if (action === "isAliveCheck") {
+					header.requestMethod = "GET";
+					header.webserviceurl = commonVariables.webserviceurl+commonVariables.configuration+"/connectionAliveCheck?url="+configRequestBody.protocol+","+configRequestBody.host+","+configRequestBody.port;
 			}
 			return header;
 		},
@@ -247,7 +250,7 @@ define(["configuration/api/configurationAPI"], function() {
 					}
 					var inputCtrl = "";
 					if (value.possibleValues !== null &&  value.possibleValues.length !== 0) {
-						inputCtrl = '<select mandatory="'+required+'" class="'+configTemplate.name+self.count+'Configuration" name="' + value.key + '">';
+						inputCtrl = '<select mandatory="'+required+'" class="'+configTemplate.name+self.count+'Configuration" temp="'+configTemplate.name+key+self.count+'" name="' + value.key + '">';
 						var possibleValues = value.possibleValues;
 						var options = "";
 						for (j in possibleValues) {
@@ -362,6 +365,19 @@ define(["configuration/api/configurationAPI"], function() {
 					toAppend.append(content);
 					$("a[name=removeConfig]").unbind("change");
 					self.severDbOnChangeEvent();
+					var aliveJson = {};
+					
+					var host = $('input[temp='+configTemplate.name+key+'host'+self.count+']').val();
+					var port = $('input[temp='+configTemplate.name+key+'port'+self.count+']').val();
+					var protocol = $('select[temp='+configTemplate.name+key+'protocol'+self.count+'] option:selected').val();
+					if (protocol === undefined) {
+						protocol = "http";
+					}
+					aliveJson.host = host;
+					aliveJson.port = port;
+					aliveJson.type = configTemplate.name+self.count;
+					aliveJson.protocol = protocol;
+					self.isAliveCheck(aliveJson);
 					self.CroneExpression();
 					
 				}
@@ -396,6 +412,29 @@ define(["configuration/api/configurationAPI"], function() {
 								options += '<option value="' + value[k] + '">' + value[k] + '</option>';
 							}
 							$('select[currentConfig='+configtype+']').append(options);
+						}
+					});
+				}
+			});
+			
+		},
+		isAliveCheck : function(aliveJson) {
+			var self=this;
+			self.configRequestBody = aliveJson;
+			self.getConfigurationList(self.getRequestHeader(self.configRequestBody, "isAliveCheck", ''), function(response) {
+				var typeMatch = aliveJson.type;
+				if(response === true) {
+					$(".row_bg").each(function() {
+						var type = $(this).attr("type");
+						if (type == typeMatch) {
+							$(this).find("td:first-child").after("<td class=active>Active</td>");
+						}
+					});
+				} else {
+					$(".row_bg").each(function() {
+						var type = $(this).attr("type");
+						if (type == typeMatch) {
+							$(this).find("td:first-child").after("<td>In Active</td>");
 						}
 					});
 				}
@@ -828,7 +867,21 @@ define(["configuration/api/configurationAPI"], function() {
 						var val = $(this).attr("name");
 						if(mandatory === 'true') {
 							if($(this).val() !== undefined && $(this).val() !== null && $.trim($(this).val()) !== ""){
-								bCheck = true;
+								if(val == "emailid") {
+									var email = $("input[name=emailid]").val();
+									var emailMatcher = /^([a-zA-Z0-9_\.\-])+\@(([a-zA-Z0-9\-])+\.)+([a-zA-Z0-9]{2,4})+$/;
+									if (!emailMatcher.test(email)) {
+										$("input[name=emailid]").val("");
+										$("input[name=emailid]").attr('placeholder','Please Enter valid email address');
+										$("input[name=emailid]").addClass("errormessage");
+										bCheck = false;
+									} else {
+										bCheck = true;
+									}
+
+								} else {
+									bCheck = true;
+								}
 							} else{
 								bCheck = false;
 								var temp = $(this).attr("temp");
