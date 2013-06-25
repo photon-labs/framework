@@ -222,6 +222,14 @@
 	      <scope>compile</scope>
 	    </dependency>
         
+		<dependency>
+			<groupId>jslibraries.files</groupId>
+			<artifactId>fileuploader</artifactId>
+			<version>1.0</version>
+			<type>js</type>
+		</dependency>
+
+		
 	   <!--  <dependency>
 	      <groupId>org.cometd.javascript</groupId>
 	      <artifactId>cometd-javascript-dojo</artifactId>
