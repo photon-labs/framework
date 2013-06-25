@@ -31,7 +31,6 @@ import org.junit.runners.Suite.SuiteClasses;
 	UnitServiceTest.class,
 	ManualTestServiceTest.class,
 	CIJobTemplateServiceTest.class,
-	DownloadServiceTest.class,
 	RepositoryServiceTest.class}
 )
 
