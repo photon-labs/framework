@@ -26,6 +26,7 @@ define(["navigation/api/navigationAPI"], function() {
 		continuousDeliveryView : null,
 		mavenService : null,
 		continuousDeliveryConfigure : null,
+		act:null,
 		
 		/***
 		 * Called in initialization time of this class 
@@ -614,6 +615,7 @@ define(["navigation/api/navigationAPI"], function() {
 				dataType: "json",
 				webserviceurl: ''
 			};
+			self.act=action;
 			if (action === "openFolder") {
 				header.requestMethod = "GET";
 				header.webserviceurl = commonVariables.webserviceurl + commonVariables.openFolderContext + "?type=" + type + "&appDirName=" + appDirName;				
@@ -639,10 +641,17 @@ define(["navigation/api/navigationAPI"], function() {
 					function(response) {
 						commonVariables.loadingScreen.removeLoading();
 						if (response !== null ) {
+							if(self.act=='importpost')
+							self.successMsgPopUp(response.message);
 							callback(response);						
 						} else {
 							callback({ "status" : "service failure"});
 						}
+					},
+					function(textStatus) {
+						commonVariables.loadingScreen.removeLoading();
+						if(self.act=='importpost')
+							self.failureMsgPopUp("Project Import failed");
 					}
 				);
 			} catch(exception) {
