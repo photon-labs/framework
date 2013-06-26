@@ -143,6 +143,14 @@ define(["configuration/listener/configurationListener"], function() {
 				}
 			});
 			
+			$('input[name=envName]').keypress(function(e) {
+				if ((e.which >= 65 && e.which <= 90) ||(e.which >= 97 && e.which <= 122) || (e.which === 8)) {
+					return true;
+				} else {
+					e.preventDefault();
+				}
+			});
+			
 			$("input[name=saveEnvironment]").unbind("click");
 			$("input[name=saveEnvironment]").click(function() {
 				self.saveEnvEvent.dispatch(self.envWithConfig, '', function(response){
@@ -171,6 +179,14 @@ define(["configuration/listener/configurationListener"], function() {
 			$("a[name=editConfiguration]").unbind("click");
 			$("a[name=editConfiguration]").click(function() {
 				self.editConfigurationEvent.dispatch($(this).attr('key'));
+			});
+			
+			$('input[name=envrName]').keypress(function(e) {
+				if ((e.which >= 65 && e.which <= 90) ||(e.which >= 97 && e.which <= 122) || (e.which === 8)) {
+					return true;
+				} else {
+					e.preventDefault();
+				}
 			});
 			
 			$("input[name='cloneEnvr']").unbind("click");

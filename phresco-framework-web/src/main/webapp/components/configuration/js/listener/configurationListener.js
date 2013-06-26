@@ -47,6 +47,31 @@ define(["configuration/api/configurationAPI"], function() {
 				});
 			}
 		},
+
+		scrollbarEnable : function(){
+			$(".features_content_main").mCustomScrollbar({
+				autoHideScrollbar:true,
+				theme:"light-thin",
+				advanced:{ updateOnContentResize: true}
+			});
+
+			$(".fix_height").mCustomScrollbar({
+				autoHideScrollbar:true,
+				theme:"light-thin",
+				advanced:{ updateOnContentResize: true}
+			});
+
+		},
+
+		windowResize : function(){
+			var resultvalue = 0;
+			$('.features_content_main').prevAll().each(function() {
+				resultvalue = resultvalue + $(this).height(); 
+			});
+			
+			resultvalue = resultvalue + $('.footer_section').height() + 65;
+			$('.features_content_main').height($(window).height() - (resultvalue + 155));
+		},
 		
 		cancelEditConfiguration : function() {
 			var self=this;
@@ -303,7 +328,7 @@ define(["configuration/api/configurationAPI"], function() {
 							inputCtrl = inputCtrl.concat(options1);
 							inputCtrl = inputCtrl.concat("</select></td>");
 						} else if (key === 'version') {
-							inputCtrl = '<select mandatory="'+required+'" class="'+configTemplate.name+self.count+'Configuration" currentConfig="'+configTemplate.name+'" name="' + value.key + '">';
+							inputCtrl = '<select mandatory="'+required+'" class="'+configTemplate.name+self.count+'Configuration" currentConfig="'+configTemplate.name+self.count+'" name="' + value.key + '">';
 							var options1 = "";
 							var i=0;
 							if(currentConfig === 'Server') {
@@ -373,6 +398,7 @@ define(["configuration/api/configurationAPI"], function() {
 					}
 					toAppend.append(content);
 					$("a[name=removeConfig]").unbind("change");
+					$('select[name=type]').unbind("change");
 					self.severDbOnChangeEvent();
 					
 					var host = $('input[temp='+configTemplate.name+key+'host'+self.count+']').val();
@@ -413,28 +439,29 @@ define(["configuration/api/configurationAPI"], function() {
 		severDbOnChangeEvent : function () {
 			var self=this;	
 			$('select[name=type]').change(function() {
+				var configTypeClass = $(this).parent().parent().attr('class');
 				var configtype = $(this).parent().parent().attr('name');
 				var configValue = $(this).val();
 				var options = "";
 				if(configtype === 'Server') {
 					$.each(self.serverTypeVersion, function(key, value) {
 						if (configValue === key) {
-							$('select[currentConfig='+configtype+']').html('');
+							$('select[currentConfig='+configTypeClass+']').html('');
 							for(var k=0; k<value.length; k++) {
 								options += '<option value="' + value[k] + '">' + value[k] + '</option>';
 							}
-							$('select[currentConfig='+configtype+']').append(options);
+							$('select[currentConfig='+configTypeClass+']').append(options);
 						}
 					});
 				} 
 				if (configtype === 'Database') {
 					$.each(self.databaseTypeVersion, function(key, value) {
 						if (configValue === key) {
-							$('select[currentConfig='+configtype+']').html('');
+							$('select[currentConfig='+configTypeClass+']').html('');
 							for(var k=0; k<value.length; k++) {
 								options += '<option value="' + value[k] + '">' + value[k] + '</option>';
 							}
-							$('select[currentConfig='+configtype+']').append(options);
+							$('select[currentConfig='+configTypeClass+']').append(options);
 						}
 					});
 				}

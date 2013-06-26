@@ -84,6 +84,7 @@ define(["framework/widgetWithTemplate", "configuration/listener/configurationLis
 		 */
 		bindUI : function() {
 			var self = this;
+			self.configurationlistener.windowResize();
 			$(".tooltiptop").tooltip();
 			
 			$("#cancelEditConfig").click(function() {
@@ -98,6 +99,7 @@ define(["framework/widgetWithTemplate", "configuration/listener/configurationLis
 			$("input[name=UpdateConfiguration]").click(function() {
 				self.updateConfigEvent.dispatch();
 			});
+			self.configurationlistener.scrollbarEnable();
 		}
 	});
 
