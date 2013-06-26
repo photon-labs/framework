@@ -35,15 +35,10 @@ define(["features/listener/featuresListener"], function() {
 			self.registerHandlebars();
 		},
 		
-		loadPage :function() {
+		loadPage :function(animationType) {
 			var self = this;
 			Clazz.navigationController.jQueryContainer = commonVariables.contentPlaceholder;
-			Clazz.navigationController.push(this, true);
-		},
-		
-		loadPageTest :function() {
-			var self = this;
-			Clazz.navigationController.push(this);
+			Clazz.navigationController.push(this, animationType);
 		},
 		
 		registerEvents : function () {
@@ -118,8 +113,11 @@ define(["features/listener/featuresListener"], function() {
 			var self = this;
 			self.featuresListener.getFeaturesList(self.featuresListener.getRequestHeader(self.featureRequestBody, "SELECTED"), function(response) {
 				var responseData = response.data;
+				$(".switchOn").each(function(index, currentVal) {
+					$(currentVal).removeClass('switchOn').addClass('switchOff');
+				});
 				$.each(response.data, function(index, value){
-					$("#feature_"+this.moduleId).addClass("switchOn").removeClass("switchOff");
+					$("#feature_"+this.moduleId).addClass("switchOn").removeClass('switchOff');
 					$("#version_"+this.moduleId).show();					
 				});
 				self.selectedCount();
@@ -201,7 +199,7 @@ define(["features/listener/featuresListener"], function() {
 
 			$('.switch').css('background', 'url("themes/default/images/helios/on_off_switch.png")');
 			$("label[name=on_off]").click(function() {
-				self.bcheck(this);
+				self.featuresListener.bcheck(this);
 			});
 			 
 			$("input[name=on_off]").click(function() {
@@ -229,7 +227,8 @@ define(["features/listener/featuresListener"], function() {
            	});
 
            	$('#switchoffbutton').on("click", function(event) {
-           		self.showSelected();
+				
+           		self.featuresListener.showSelected('');
 				$("#norecord1, #norecord2, #norecord3").hide();
 				
            	});
@@ -242,7 +241,7 @@ define(["features/listener/featuresListener"], function() {
 				$(this).parent().next('div').hide();
 				var value = $('#switchoffbutton').parent().attr('class');
 				if (value === "switch switchOn") {
-					self.showSelected();	      		
+					self.featuresListener.showSelected('');	      		
 				}
            	});
 			
@@ -307,49 +306,22 @@ define(["features/listener/featuresListener"], function() {
 				});				
 				
 				self.featuresListener.getFeaturesUpdate(self.featuresListener.getRequestHeader(self.featureUpdatedArray, "UPDATE", ""), function(response) {
-					self.loadPage();
+					self.loadPage(true);
 				}); 
 			});
 			self.windowResize();
 
-
 			$('#featureTest').children('tbody').children('tr').children('td').each(function() {
 				counter++;
 			});
-			if(counter === 1)
+			if(counter === 1){
 				$('.features_box').parent('td').addClass('onefeature');
-			else if(counter === 2)
+			} else if(counter === 2){
 				$('.features_box').parent('td').addClass('twofeatures');
-			else if(counter === 3)
+			} else if(counter === 3){
 				$('.features_box').parent('td').addClass('threefeatures');
-		},
-		
-		showSelected : function() {
-			var self = this;
-			$("#moduleContent li").hide();
-			$("#jsibrariesContent li").hide();
-			$("#componentsContent li").hide();
-			$("ul li fieldset").each(function() {
-				if($(this).attr("class") === "switch switchOn"){
-					$(this).parent().show();
-					self.featuresListener.scrollbarUpdate();					
-				}
-			});
-			
-		},
-
-		bcheck : function(obj){
-			var button = $(obj).attr("value");
-			$(obj).closest('fieldset').removeClass('switchOn'); 
-			$(obj).closest('fieldset').removeClass('switchOff');			
-			if(button === 'false'){ 
-				$(obj).closest('fieldset').addClass('switchOff');
-				$(obj).closest('fieldset').attr('value', "false"); 
-			}else if(button === 'true'){ 
-				$(obj).closest('fieldset').addClass('switchOn');
-				$(obj).closest('fieldset').attr('value', "true");
 			}
-		}
+		}		
 	});
 
 	return Clazz.com.components.features.js.Features;
