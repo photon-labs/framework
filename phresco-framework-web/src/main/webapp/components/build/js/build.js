@@ -194,6 +194,7 @@ define(["build/listener/buildListener"], function() {
                 commonVariables.phase = "package";
                 //self.dynamicpage.getHtml(whereToRender, widgetObject, openccObject);
                 self.dynamicpage.getHtml(whereToRender, this, $(this).attr('name'));
+				self.openConsole();
 			});
 			
 			$("input[name=build_minifier]").unbind("click");
