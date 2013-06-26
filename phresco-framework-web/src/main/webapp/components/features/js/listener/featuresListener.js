@@ -65,8 +65,7 @@ define(["features/api/featuresAPI", "features/features",  "application/applicati
 	
 		norecordHide : function(divId) {
 			if(divId === "moduleContent"){
-				$("#norecord1").hide();
-				
+				$("#norecord1").hide();				
 			} if(divId === "jsibrariesContent"){
 				$("#norecord2").hide();
 			} if(divId === "componentsContent"){
@@ -104,21 +103,20 @@ define(["features/api/featuresAPI", "features/features",  "application/applicati
 				self.featuresAPI.features(header,
 					function(response) {
 						if (response !== null) {
-							//self.loadingScreen.removeLoading();
+							self.loadingScreen.removeLoading();
 							callback(response);
 						} else {
-							//self.loadingScreen.removeLoading();
+							self.loadingScreen.removeLoading();
 							callback({ "status" : "service failure"});
 						}
-
 					},
 
 					function(textStatus) {
-						//self.loadingScreen.removeLoading();
+						self.loadingScreen.removeLoading();
 					}
 				);
 			} catch(exception) {
-				//self.loadingScreen.removeLoading();
+				self.loadingScreen.removeLoading();
 			}
 		},
 		
@@ -152,6 +150,37 @@ define(["features/api/featuresAPI", "features/features",  "application/applicati
 			$("#content_2").mCustomScrollbar("update"); 
 			$("#content_3").mCustomScrollbar("update");
 			$(".features_cont").mCustomScrollbar("update"); 	
+		},
+		
+		showSelected : function(eachList) {
+			var self = this, val;
+			$("#moduleContent li").hide();
+			$("#jsibrariesContent li").hide();
+			$("#componentsContent li").hide();
+			if (eachList === '') {
+				val = $("ul li fieldset");
+			} else {
+				val = eachList;
+			}
+			val.each(function() {
+				if($(this).attr("class") === "switch switchOn"){
+					$(this).parent().show();
+					self.scrollbarUpdate();					
+				}
+			});			
+		},
+		
+		bcheck : function(obj){
+			var button = $(obj).attr("value");
+			$(obj).closest('fieldset').removeClass('switchOn'); 
+			$(obj).closest('fieldset').removeClass('switchOff');			
+			if(button === 'false'){ 
+				$(obj).closest('fieldset').addClass('switchOff');
+				$(obj).closest('fieldset').attr('value', "false"); 
+			}else if(button === 'true'){ 
+				$(obj).closest('fieldset').addClass('switchOn');
+				$(obj).closest('fieldset').attr('value', "true");
+			}
 		},
 
 		hideLoad : function(){
