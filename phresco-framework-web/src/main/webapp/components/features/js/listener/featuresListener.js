@@ -8,7 +8,7 @@ define(["features/api/featuresAPI", "features/features",  "application/applicati
 		featuresAPI : null,
 		appinfoContent : null,
 		projectListContent : null,
-		flagged:null,
+		flagged:null, 
 
 		/***
 		 * Called in initialization time of this class 
