@@ -17,6 +17,9 @@ define(["build/listener/buildListener"], function() {
 		dynamicPageListener : null,
 		generateBuildContent : "",
 		logContent : '',
+		onRASEvent : null,
+		onStopEvent : null,
+		onRestartEvent : null,
 		
 		/***
 		 * Called in initialization time of this class 
@@ -57,12 +60,24 @@ define(["build/listener/buildListener"], function() {
 			if(self.onBuildEvent === null){
 				self.onBuildEvent = new signals.Signal();
 			}
+			if(self.onRASEvent === null){
+				self.onRASEvent = new signals.Signal();
+			}
+			if(self.onStopEvent === null){
+				self.onStopEvent = new signals.Signal();
+			}
+			if(self.onRestartEvent === null){
+				self.onRestartEvent = new signals.Signal();
+			}
 			
 			self.onProgressEvent.add(self.buildListener.onPrgoress, self.buildListener);
 			self.onDownloadEvent.add(self.buildListener.downloadBuild, self.buildListener);
 			self.onDeleteEvent.add(self.buildListener.deleteBuild, self.buildListener);
 			self.onDeployEvent.add(self.buildListener.deployBuild, self.buildListener);
 			self.onBuildEvent.add(self.buildListener.buildProject, self.buildListener);
+			self.onRASEvent.add(self.buildListener.runAgainstSource, self.buildListener);
+			self.onStopEvent.add(self.buildListener.stopServer, self.buildListener);
+			self.onRestartEvent.add(self.buildListener.restartServer, self.buildListener);
 		},
 		
 		/***
@@ -72,6 +87,10 @@ define(["build/listener/buildListener"], function() {
 		loadPage : function(){
 			Clazz.navigationController.mainContainer = commonVariables.contentPlaceholder;
 			Clazz.navigationController.push(this, true);
+		},
+		
+		loadPageType : function(){
+			Clazz.navigationController.push(this , false);
 		},
 		
 		preRender: function(whereToRender, renderFunction){
@@ -91,12 +110,46 @@ define(["build/listener/buildListener"], function() {
 			var self = this;
             
 			$("#build_genbuild ul").find(".selectpicker").selectpicker();
+			self.buildListener.getBuildInfo(self.buildListener.getRequestHeader("", '', 'serverstatus'), function(response) {
+				self.changeBtnStatus(response , '');
+			});
 			self.loadPostContent();
 			
 			$('#logContent').html(self.logContent);
 			self.logContent = '';
+			
+
+			self.resizeConsoleWindow();
+			$('#logContent').html(self.logContent);
+			self.logContent = '';
+			self.closeConsole();
+			var windowHeight = $(document).height();
+			var marginTop = '';
+			marginTop = $('.testSuiteTable').css("margin-top");
+			if(marginTop !== undefined){
+				marginTop = marginTop.substring(0, marginTop.length - 2);
+			}	
+			var footerHeight = $('#footer').height();
+			var deductionHeight = Number(marginTop) + Number(footerHeight);
+			var finalHeight = windowHeight - deductionHeight - 5;
+			$('.testSuiteTable').height(finalHeight);					
 		},
 		
+		changeBtnStatus : function(response , btnName){
+			if(response.data === true){
+				if(btnName !== ''){
+					btnName.removeClass('btn_style');
+					btnName.addClass('btn_style_off');
+				}
+				$("input[name=build_runagsource]").removeClass('btn_style');
+				$("input[name=build_runagsource]").addClass('btn_style_off');
+				$("#stop").removeClass('btn_style_off');
+				$("#stop").addClass('btn_style');
+				$("#restart").removeClass('btn_style_off');
+				$("#restart").addClass('btn_style');
+			}
+		},
+
 		loadPostContent : function(){
 			var self = this;
 			if(self.dynamicpage === null){
@@ -116,7 +169,22 @@ define(["build/listener/buildListener"], function() {
 			
 			$("input[name=build_runagsource]").unbind("click");
 			$("input[name=build_runagsource]").click(function() {
-				self.opencc(this, $(this).attr('name'));
+				if($(this).attr("class") === "btn btn_style"){
+					commonVariables.goal = "start";
+					commonVariables.phase = "run-against-source";
+					/* self.dynamicpage.getHtml(false, function(response){
+						$("#rasdynamicContent").html(response);
+						self.multiselect();
+						self.dynamicpage.showParameters();
+						self.dynamicPageListener.controlEvent();
+					});				
+					self.opencc(this, $(this).attr('name'));
+					self.openConsole(); */
+					 var whereToRender = $('#build_runagsource ul');
+					self.dynamicpage.getHtml(whereToRender, this, $(this).attr('name'));
+					self.openConsole();
+					$("#buildConsole").attr('data-flag','false');
+				}	
 			});
 			
 			$("input[name=build_genbuild]").unbind("click");
@@ -134,6 +202,15 @@ define(["build/listener/buildListener"], function() {
 			});
 			
 			$("#buildConsole").click(function() {
+				var logContent = $('#logContent').text();
+				if(logContent.match("INFO: Starting Coyote HTTP/1.1")){
+					$("input[name=build_runagsource]").removeClass('btn_style');
+					$("input[name=build_runagsource]").addClass('btn_style_off');
+					$("#stop").removeClass('btn_style_off');
+					$("#stop").addClass('btn_style');
+					$("#restart").removeClass('btn_style_off');
+					$("#restart").addClass('btn_style');
+				}
 				self.onProgressEvent.dispatch(this);
 			});
 			
@@ -170,8 +247,38 @@ define(["build/listener/buildListener"], function() {
 			});
 			
 			$("#runSource").click(function(){
+				$(".dyn_popup").hide();
+				self.onRASEvent.dispatch($('form[name=runAgainstForm]').serialize(), function(response){
+					$('.alert_div').hide();
+					self.logContent = $('#logContent').html();
+					//self.loadPage();
+				});
 			});
 			
+			$("#stop").click(function() {
+				if($(this).attr("class") === "btn btn_style"){
+					self.openConsole();
+					$("#buildConsole").attr('data-flag','false');
+					self.onStopEvent.dispatch(function(response){
+						$('.alert_div').hide();
+						self.logContent = $('#logContent').html();
+						self.loadPage();
+					});					
+				}
+				
+			});		
+			
+			$("#restart").click(function() {
+				if($(this).attr("class") === "btn btn_style"){
+					self.openConsole();
+					$("#buildConsole").attr('data-flag','false');
+					self.onRestartEvent.dispatch(function(response){
+						$('.alert_div').hide();
+						self.logContent = $('#logContent').html();
+					});					
+				}
+				
+			});
 			$(".tooltiptop").unbind("click");
 			$(".tooltiptop").click(function() {
 				self.opencc(this, $(this).attr('name'));
@@ -191,7 +298,7 @@ define(["build/listener/buildListener"], function() {
 				
 				$('.features_content_main').height(height - 230);
 				$('.build_progress').height(height - 230);
-				
+				self.resizeConsoleWindow();
 				$('.build_info').css("width",twowidth);
 				$('.build_progress').css("width",onewidth);
 				$('.build_close').css("right",onewidth+10);

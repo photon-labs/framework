@@ -451,7 +451,7 @@ define(["framework/widget", "framework/templateProvider"], function() {
 					self.closeConsole();
 				}
 			},
-		
+			// Open console window - Added by sudhakar
 			openConsole : function() {
 				$('.testSuiteTable').append('<div class="mask"></div>');
 				$('.mask').show();
@@ -478,7 +478,7 @@ define(["framework/widget", "framework/templateProvider"], function() {
 				$(".unit_progress").css("height", finalHeight + 10);
 				$('.unit_progress').find('.scrollContent').css("height", finalHeight - 20);
 			},
-		
+			// Close console window - Added by sudhakar
 			closeConsole : function() {
 				var value = $('.unit_info').width();
 				var value1 = $('.unit_progress').width();
@@ -490,6 +490,17 @@ define(["framework/widget", "framework/templateProvider"], function() {
 				$('.mask').remove();
 			},
 			
+			// Resize window - Added by sudhakar
+			resizeConsoleWindow : function() {
+				var twowidth = window.innerWidth-60;
+				var progwidth = window.innerWidth/2;
+				var onewidth = window.innerWidth - (twowidth+70);
+				$('.unit_info').css("width",twowidth);
+				$('.unit_progress').css("width",progwidth);
+				$('.unit_progress').css("right",-twowidth);
+				$('.unit_close').css("right",0);
+			},
+						
 			checkBoxEvent: function (parentObj, childCheckBoxClass, buttonObj) {
 				$('.' + childCheckBoxClass).bind('click', function(){
 					var checkedLength = $('.' + childCheckBoxClass + ':checked').size();

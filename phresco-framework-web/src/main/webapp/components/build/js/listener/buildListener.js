@@ -23,17 +23,18 @@ define(["build/api/buildAPI"], function() {
 		
 		onPrgoress : function(clicked) {
 			var check = $(clicked).attr('data-flag');
-			var value = $('.build_info').width();
-			var value1 = $('.build_progress').width();
+			var self = this;
 			if(check === "true") {
-				$('.build_info').animate({width: '97%'},500);
+				/* $('.build_info').animate({width: '97%'},500);
 				$('.build_progress').animate({right: -value1},500);
-				$('.build_close').animate({right: '0px'},500);
+				$('.build_close').animate({right: '0px'},500); */
+				self.openConsole();
 				$(clicked).attr('data-flag','false');
 			} else {
-				$('.build_info').animate({width: window.innerWidth/1.7},500);
+				/* $('.build_info').animate({width: window.innerWidth/1.7},500);
 				$('.build_progress').animate({right: '10px'},500);
-				$('.build_close').animate({right: value1+10},500);
+				$('.build_close').animate({right: value1+10},500); */
+				self.closeConsole();
 				$(clicked).attr('data-flag','true');
 				$(window).resize();
 			}
@@ -41,6 +42,7 @@ define(["build/api/buildAPI"], function() {
 		
 		getBuildInfo : function(header, callback){
 			var self = this;
+			
 			try {
 				self.buildAPI.build(header,
 					function(response) {
@@ -73,7 +75,6 @@ define(["build/api/buildAPI"], function() {
 					},
 
 					function(textStatus) {
-						console.info('textStatus',textStatus);
 						callback({ "status" : "Connection failure"});
 					}
 				);
@@ -101,6 +102,70 @@ define(["build/api/buildAPI"], function() {
 				});
 			}else{
 				self.mavenServiceListener.mvnBuild(queryString, '#logContent', function(returnVal){
+					callback(returnVal);
+				});
+			}
+		},
+		
+		runAgainstSource : function(queryString, callback){
+			var self = this, appInfo = self.buildAPI.localVal.getJson('appdetails');
+			
+			if(appInfo !== null){
+				queryString +=	'&customerId='+ self.getCustomer() +'&appId='+ appInfo.data.appInfos[0].id +'&projectId=' + appInfo.data.id + '&username=' + self.buildAPI.localVal.getSession('username');
+			}
+
+			if(self.mavenServiceListener === null)	{
+				commonVariables.navListener.getMyObj(commonVariables.mavenService, function(retVal){
+					self.mavenServiceListener = retVal;
+					
+					self.mavenServiceListener.mvnRunagainstSource(queryString, '#logContent', function(returnVal){
+						callback(returnVal);
+					});
+				});
+			}else{
+				self.mavenServiceListener.mvnRunagainstSource(queryString, '#logContent', function(returnVal){
+					callback(returnVal);
+				});
+			}
+		},
+		
+		stopServer : function(callback){
+			var self = this, appInfo = self.buildAPI.localVal.getJson('appdetails');
+			if(appInfo !== null){
+				queryString =	'&customerId='+ self.getCustomer() +'&appId='+ appInfo.data.appInfos[0].id +'&projectId=' + appInfo.data.id + '&username=' + self.buildAPI.localVal.getSession('username');
+			}
+			
+			if(self.mavenServiceListener === null)	{
+				commonVariables.navListener.getMyObj(commonVariables.mavenService, function(retVal){
+					self.mavenServiceListener = retVal;
+					
+					self.mavenServiceListener.mvnStopServer(queryString, '#logContent', function(returnVal){
+						callback(returnVal);
+					});
+				});
+			}else{
+				self.mavenServiceListener.mvnStopServer(queryString, '#logContent', function(returnVal){
+					callback(returnVal);
+				});
+			}
+		},
+
+		restartServer : function(callback){
+			var self = this, appInfo = self.buildAPI.localVal.getJson('appdetails');
+			if(appInfo !== null){
+				queryString =	'&customerId='+ self.getCustomer() +'&appId='+ appInfo.data.appInfos[0].id +'&projectId=' + appInfo.data.id + '&username=' + self.buildAPI.localVal.getSession('username');
+			}
+			
+			if(self.mavenServiceListener === null)	{
+				commonVariables.navListener.getMyObj(commonVariables.mavenService, function(retVal){
+					self.mavenServiceListener = retVal;
+					
+					self.mavenServiceListener.mvnRestartServer(queryString, '#logContent', function(returnVal){
+						callback(returnVal);
+					});
+				});
+			}else{
+				self.mavenServiceListener.mvnRestartServer(queryString, '#logContent', function(returnVal){
 					callback(returnVal);
 				});
 			}
@@ -153,6 +218,9 @@ define(["build/api/buildAPI"], function() {
 				if(appInfo !== null){
 					url = 'buildinfo/deletebuild?customerId='+ self.getCustomer() +'&appId='+ appInfo.data.appInfos[0].id +'&projectId=' + appInfo.data.id;
 				}
+			} else if(action === "serverstatus"){
+				method = "GET";
+				url = 'buildinfo/checkstatus?appDirName=' + appdirName;
 			} 
 			
 			header = {
