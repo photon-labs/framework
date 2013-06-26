@@ -27,6 +27,15 @@
                     <td data-i18n="project.create.label.enddate" name="enddate-lbl"></td>
                     <td colspan="2" class="enddate" name="enddateholder"><input name="enddate" value="{{endDate}}" id="endDate" type="text" disabled><span class="add-on"><span class="add-on"><img class="cal_img1" src="themes/default/images/helios/cal_icon.png" border="0" alt=""></span></span></td>
                 </tr>
+				<tr>
+					{{#if editProject.multiModule}}
+                	   <td><input type="checkbox" name="multimodule" value="true" checked><b>&nbsp; Multi Module</b></td>
+					{{else}}
+						<td><input type="checkbox" name="multimodule" value="false"><b>&nbsp; Multi Module</b></td>
+					{{/if}}   
+                    <td><input type="text" placeholder="Artifact ID"></td>
+                    <td colspan="6"></td>
+                </tr>
 			{{/editProject}}
                <tr id="appLayaer" class="proj_title">
                   <td colspan="4">{{applicationlayerData.name}}</td>
@@ -96,6 +105,11 @@
     	<!--content_main div ends here -->
     </section>
     <section class="content_end">
+		<div class="flt_left">
+        	<input type="submit" name="applicationlayer" value="Application Layer" class="btn btn_style app_layer_icon_btn">
+            <input type="submit" name="weblayer" value="Web Layer" class="btn btn_style web_layer_icon_btn">
+            <input type="submit" name="mobilelayer" value="Mobile Layer" class="btn btn_style mobile_layer_icon_btn">
+        </div>
         <div class="flt_right">
         	{{#if userPermissions.manageApplication}}
         		<input type="submit" value="Update" id="updateProject" class="btn btn_style add_icon_btn">

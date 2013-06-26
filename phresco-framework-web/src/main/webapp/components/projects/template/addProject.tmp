@@ -31,8 +31,8 @@
                     <td colspan="2" class="enddate" name="enddateholder"><input name="enddate" id="endDate" type="text"><span class="add-on"><span class="add-on"><img id="enddt" src="themes/default/images/helios/cal_icon.png" border="0" alt=""></span></span></td>
                 </tr>
 				<tr>	
-                	<td colspan="2"><input type="checkbox"><b>&nbsp; Multi Module</b></td>
-                    <td colspan="2"><input type="text" placeholder="Artifact ID"></td>
+                	<td><input type="checkbox" name="multimodule" value="false"><b>&nbsp; Multi Module</b></td>
+                    <td><input type="text" placeholder="Artifact ID"></td>
                     <td colspan="6"></td>
                 </tr>
 				{{#if applicationlayerData.techGroups}}
@@ -52,7 +52,7 @@
 										<th><span data-i18n="project.create.label.applicationversion"></span></th>
 										<th></th>
 										<th></th>
-										<th colspan="3"><span data-i18n="project.create.label.dependency"></span></th>
+										<th colspan="3"><span name="appdependency" data-i18n="project.create.label.dependency" style="display:none;"></span></th>
 									</tr>
 								</thead>
 								<tbody class="applnlayer">
@@ -73,9 +73,9 @@
 											   <option>Select Version</option>
 											</select>
 										 </td>
-										 <td colspan="2">
-											<select>
-											   <option>Select Dependency</option>
+										 <td colspan="2" class="appdependencyTd">
+											<select class="selectpicker appdependencySelect" name="appdependencySelect" multiple>
+											   <option value="0">Select Dependency</option>
 											</select>
 										 </td>
 										 <td>
@@ -102,7 +102,7 @@
 										<th><span data-i18n="project.create.label.weblayer"></span></td>
 										<th><span data-i18n="project.create.label.widget"></span></td>
 										<th><span data-i18n="project.create.label.widgetversion"></span></td>
-										<th><span data-i18n="project.create.label.dependency"></span></th>
+										<th><span name="webdependency" data-i18n="project.create.label.dependency" style="display:none;"></span></th>
 										<th></th>
 									</tr>
 								</thead>
@@ -127,8 +127,8 @@
 												<option>Select Version</option>
 											</select>
 										 </td>
-										 <td>
-											<select>
+										 <td class="webdependencyTd">
+											<select class="selectpicker webdependencySelect" name="webdependencySelect" multiple>
 											   <option>Select Dependency</option>
 											</select>
 										 </td>

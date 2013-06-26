@@ -20,16 +20,14 @@ define(["projects/api/projectsAPI"], function() {
 		contentContainer : commonVariables.contentPlaceholder,
 		projectlistContent : null,
 		counter:null,
+		appDepsArray : [],
+		selectedVal : [],
 		
-		/***
-		 * Called in initialization time of this class 
-		 *
-		 * @config: configurations for this listener
-		 */
 		initialize : function(config) {
 			var self = this;
-			if(self.projectAPI === null)
+			if(self.projectAPI === null) {
 				self.projectAPI = new Clazz.com.components.projects.js.api.ProjectsAPI();
+			}	
 		},
 		
 		cancelCreateproject : function() {
@@ -42,9 +40,9 @@ define(["projects/api/projectsAPI"], function() {
 		
 		removelayer : function(object) {
 			var self=this;
-		 	if(self.counter!=2){
+		 	if(self.counter !== 2){
 		 	var layerId = object.attr('id');
-		 	var findclass=object.closest('tr').next().attr('class');
+		 	var findclass = object.closest('tr').next().attr('class');
 		 		object.closest('tr').next().attr('name', layerId + "content");
 		 		$("tr[class="+findclass+"]").each(function() {
 		 			$(this).attr('key', 'hidden');
@@ -62,7 +60,7 @@ define(["projects/api/projectsAPI"], function() {
 		 	var layerType = object.attr('name');
 		 	$("input[name="+layerType+"]").hide();
 		 	$("tr[name="+ layerType +"]").show('slow');
-		 	var clasname=$("tr[name="+ layerType +"]").closest('tr').next().attr('class');
+		 	var clasname = $("tr[name="+ layerType +"]").closest('tr').next().attr('class');
 		 	$("tr[class="+clasname+"]").each(function() {
 		 		$(this).show('slow');
 		 		$(this).attr('key', 'displayed');
@@ -109,22 +107,18 @@ define(["projects/api/projectsAPI"], function() {
 					webserviceurl: commonVariables.webserviceurl + "project/edit?userId="+userId+"&customerId=photon&projectId="+id
 				}
 
-				/* if(projectRequestBody != "") {
-					header.requestPostBody = JSON.stringify(projectRequestBody);
-				} */
-				
-				if(action == "projectlist"){
+				if(action === "projectlist"){
 					header.requestMethod = "GET";
 					header.webserviceurl = commonVariables.webserviceurl + commonVariables.projectlistContext +"/list?customerId=photon"
 				}
 
-				if(action == "update"){
+				if(action === "update"){
 					header.requestMethod = "PUT";
 					header.requestPostBody = JSON.stringify(projectRequestBody);
 					header.webserviceurl = commonVariables.webserviceurl + "project/updateproject?userId="+userId;
 				}
 				
-				if(action == "create"){
+				if(action === "create"){
 					
 					header.requestMethod = "POST";
 					header.requestPostBody = JSON.stringify(projectRequestBody);
@@ -141,21 +135,18 @@ define(["projects/api/projectsAPI"], function() {
 		
 		validation : function() {
 		
-			 var flag1=0,flag2=0,flag3=0;
-			 var name = $("input[name='projectname']").val();
-			 var code = $("input[name='projectcode']").val();
-			 var labelversion = $("input[name='projectversion']").val();
-			 var appcode = $("#appcode").val();
-			 var webappcode = $("#webappcode").val();
-			 var mobileappcode = $("#mobileappcode").val();
-			 var startdate = $("input[name='startdate']").val();
-			 var enddate = $("input[name='enddate']").val();
+		       var flag1=0,flag2=0,flag3=0;
+			   var name = $("input[name='projectname']").val();
+			   var code = $("input[name='projectcode']").val();
+			   var labelversion = $("input[name='projectversion']").val();
+			   var appcode = $("#appcode").val();
+			   var webappcode = $("#webappcode").val();
+			   var mobileappcode = $("#mobileappcode").val();
+			   var startdate = $("input[name='startdate']").val();
+			   var enddate = $("input[name='enddate']").val();
 			  
-			   /* $('#name,.edit').alphanumeric({allow:"- "});
-			   $('#code,#appcode,#labelversion,#webappcode,#mobileappcode').numeric();
-			   $('.appln-appcode,.web-appcode,.mobile-appcode').numeric(); */
 			   
-			   if(name == ""){
+			   if(name === ""){
 					$("input[name='projectname']").focus();
 					$("input[name='projectname']").attr('placeholder','Enter Name');
 					$("input[name='projectname']").addClass("errormessage");
@@ -163,7 +154,7 @@ define(["projects/api/projectsAPI"], function() {
 						$(this).removeClass("errormessage");
 					});
 					self.hasError = true;
-			   } else if(code == ""){
+			   } else if(code === ""){
 					$("input[name='projectcode']").focus();
 					$("input[name='projectcode']").attr('placeholder','Enter Code');
 					$("input[name='projectcode']").addClass("errormessage");
@@ -171,7 +162,7 @@ define(["projects/api/projectsAPI"], function() {
 						$(this).removeClass("errormessage");
 					});
 					self.hasError = true;
-			   } else if(labelversion == ""){
+			   } else if(labelversion === ""){
 					$("input[name='projectversion']").focus();
 					$("input[name='projectversion']").attr('placeholder','Enter Version');
 					$("input[name='projectversion']").addClass("errormessage");
@@ -183,13 +174,11 @@ define(["projects/api/projectsAPI"], function() {
 
 					$('.appln-appcode').each(function() {
 
-						if($(this).val()=='') {
+						if($(this).val() === '') {
 							var keyy4=$("tr[class='applnLayer']").attr('key');
-							if(keyy4=='hidden') {
+							if(keyy4 === 'hidden') {
 								self.hasError=false;
-							}
-							else 	
-							{	
+							} else {	
 								$(this).addClass("errormessage");
 								var errorItem1 = $(".errormessage:first");
 								errorItem1.focus();
@@ -202,20 +191,17 @@ define(["projects/api/projectsAPI"], function() {
 						}	
 					});		
 
-					if(flag1==1) {
+					if(flag1 === 1) {
 						return true;
 					} else {
 
 						$('.web-appcode').each(function() {
 
-							if($(this).val()=='') {
+							if($(this).val() === '') {
 								var keyy5=$("tr[class='webLayer']").attr('key');
-								if(keyy5=='hidden')
-								{
+								if(keyy5 === 'hidden') {
 									self.hasError=false;
-								}
-								else
-								{	
+								} else {	
 									$(this).addClass("errormessage");
 									var errorItem2 = $(".errormessage:first");
 									errorItem2.focus();
@@ -226,24 +212,17 @@ define(["projects/api/projectsAPI"], function() {
 									flag2=1;
 								}		
 							}
-
-
 						});	
 
-						if(flag2==1) {
+						if(flag2 === 1) {
 							return true;
 						} else {
-
 							$('.mobile-appcode').each(function() {
-								if($(this).val()=='')
-								{
+								if($(this).val() === '') {
 									var keyy6=$("tr[class='mobLayer']").attr('key');
-									if(keyy6=='hidden')
-									{
+									if(keyy6 === 'hidden') {
 										self.hasError=false;
-									}
-									else
-									{	
+									} else {	
 										$(this).addClass("errormessage");
 										var errorItem3 = $(".errormessage:first");
 										errorItem3.focus();
@@ -257,24 +236,25 @@ define(["projects/api/projectsAPI"], function() {
 
 							});	
 
-							if(flag3==1)
+							if(flag3 === 1) {
 								return true;
-							else
-							{
+							} else {
 								var arr1=[],arr2=[],arr3=[];
 								var count1=0,count2=0,count3=0;
-								var techval,verval,tech2val,widgetval,webverval,layerval,typeval,mobverval;
+								var textboxval,textbox2val,textbox3val,techval,verval,tech2val,widgetval,webverval,layerval,typeval,mobverval;
 								$('.applnlayercontent').each(function() {
+									textboxval=$(this).children('td:eq(0)').children().val();
 									techval=$(this).find('.appln_technology').val();
 									verval=$(this).find('.appln_version').val();
-									arr1[count1]=techval+verval;
+									arr1[count1]=textboxval+techval+verval;
 									$(this).next();
 									count1++;
 								});
+								
 								if($("tr[class='applnLayer']").attr('key')=='displayed'){	
 								  for (var i = 0; i < arr1.length; i++) {
 									for(var j=i+1;j<arr1.length;j++) {
-										if(arr1[i]==arr1[j]) {
+										if(arr1[i] === arr1[j]) {
 											$(".errmsg1").show();
 											$(".errmsg1").text("Added Technology and Version already exists.");
 											setTimeout(function() {
@@ -288,17 +268,19 @@ define(["projects/api/projectsAPI"], function() {
 								}
 
 								$('.weblayercontent').each(function() {
+									textbox2val=$(this).children('td:eq(0)').children().val();
 									tech2val=$(this).find('.weblayer').val();
 									widgetval=$(this).find('.web_widget').val();
 									webverval=$(this).find('.web_version').val();
-									arr2[count2]=tech2val+widgetval+webverval;
+									arr2[count2]=textbox2val+tech2val+widgetval+webverval;
 									$(this).next();
 									count2++;
 								});	
-								if($("tr[class='webLayer']").attr('key')=='displayed'){
+								
+								if($("tr[class='webLayer']").attr('key') === 'displayed'){
 								   for (var i = 0; i < arr2.length; i++) {
 									for(var j=i+1;j<arr2.length;j++) {
-										if(arr2[i]==arr2[j]) {
+										if(arr2[i] === arr2[j]) {
 											$(".errmsg2").show();
 											$(".errmsg2").text("Added Web Layer,Widget and Version already exists.");
 											setTimeout(function() {
@@ -312,18 +294,19 @@ define(["projects/api/projectsAPI"], function() {
 							    }
 
 								$('.mobilelayercontent').each(function() {
+									textbox3val=$(this).children('td:eq(0)').children().val();
 									layerval=$(this).find('.mobile_layer').val();
 									typeval=$(this).find('.mobile_types').val();
 									mobverval=$(this).find('.mobile_version').val();
-									arr3[count3]=layerval+typeval+mobverval;
+									arr3[count3]=textbox3val+layerval+typeval+mobverval;
 									$(this).next();
 									count3++;
 								});	
 
-								if($("tr[class='mobLayer']").attr('key')=='displayed'){
+								if($("tr[class='mobLayer']").attr('key') ==='displayed'){
 								  for (var i = 0; i < arr3.length; i++) {
 									for(var j=i+1;j<arr3.length;j++) {
-										if(arr3[i]==arr3[j]) {
+										if(arr3[i] === arr3[j]) {
 											$(".errmsg3").show();
 											$(".errmsg3").text("Added Mobile,Type and Version already exists.");
 											setTimeout(function() {
@@ -366,14 +349,20 @@ define(["projects/api/projectsAPI"], function() {
 		addLayers :function(layerType, whereToAppend) {
 			var self=this, minusIcon = '<img src="themes/default/images/helios/minus_icon.png" border="0" alt="">';
 			
-			var self = this, dynamicValue, applicationlayer = '<tr class="applnlayercontent" name="staticApplnLayer"><td class="applnappcode"><input type="text" id="appcode" class="appln-appcode"></td><td name="technology" class="technology"><select name="appln_technology" class="appln_technology"><option>Select Technology</option>'+ self.getTechnology() +'</select></td><td colspan="3" name="version" class="version"><select name="appln_version" class="appln_version"><option>Select Version</option></select></td><td colspan="2"><select><option>Select Dependency</option></select></td><td><div class="flt_right icon_center"><a name="addApplnLayer"><img src="themes/default/images/helios/plus_icon.png" border="0" alt=""></a> <a href="javascript:;" name="removeApplnLayer"><img src="themes/default/images/helios/minus_icon.png" border="0" alt=""></a></div></td></tr>',
+			var self = this, dynamicValue, applicationlayer = '<tr class="applnlayercontent" name="staticApplnLayer"><td class="applnappcode"><input type="text" id="appcode" class="appln-appcode"></td><td name="technology" class="technology"><select name="appln_technology" class="appln_technology"><option>Select Technology</option>'+ self.getTechnology() +'</select></td><td colspan="3" name="version" class="version"><select name="appln_version" class="appln_version"><option>Select Version</option></select></td><td class="appdependencyTd" colspan="2"><select class="selectpicker appdependencySelect" name="appdependencySelect" style="display:none" multiple><option value="0">Select Dependency</option></select></td><td><div class="flt_right icon_center"><a name="addApplnLayer"><img src="themes/default/images/helios/plus_icon.png" border="0" alt=""></a> <a href="javascript:;" name="removeApplnLayer"><img src="themes/default/images/helios/minus_icon.png" border="0" alt=""></a></div></td></tr>',
 
-			weblayer ='<tr class="weblayercontent" name="staticWebLayer"><td class="webappcode"><input type="text" id="webappcode" class="web-appcode"></td><td name="web" class="web"><select name="weblayer" class="weblayer"><option>Select Layer</option>'+self.getWidget() +'</select></td><td name="widget" class="widget"><select name="web_widget" class="web_widget"><option>Select Widget</option> </select></td><td name="widgetversion" class="widgetversion"><select name="web_version" class="web_version"><option>Select Version</option></select></td><td><select><option>Select Dependency</option></select></td><td> <div class="flt_right icon_center"><a href="javascript:;" name="addWebLayer"><img src="themes/default/images/helios/plus_icon.png" border="0" alt=""></a> <a href="javascript:;" name="removeWebLayer"><img src="themes/default/images/helios/minus_icon.png" border="0" alt=""></a></div></td></tr>',
+			weblayer ='<tr class="weblayercontent" name="staticWebLayer"><td class="webappcode"><input type="text" id="webappcode" class="web-appcode"></td><td name="web" class="web"><select name="weblayer" class="weblayer"><option>Select Layer</option>'+self.getWidget() +'</select></td><td name="widget" class="widget"><select name="web_widget" class="web_widget"><option>Select Widget</option> </select></td><td name="widgetversion" class="widgetversion"><select name="web_version" class="web_version"><option>Select Version</option></select></td><td class="webdependencyTd"><select class="selectpicker webdependencySelect" name="webdependencySelect" style="display:none" multiple><option>Select Dependency</option></select></td><td> <div class="flt_right icon_center"><a href="javascript:;" name="addWebLayer"><img src="themes/default/images/helios/plus_icon.png" border="0" alt=""></a> <a href="javascript:;" name="removeWebLayer"><img src="themes/default/images/helios/minus_icon.png" border="0" alt=""></a></div></td></tr>',
 
 			mobilelayer = '<tr class="mobilelayercontent" name="staticMobileLayer"><td class="mobileappcode"><input type="text" id="mobileappcode" class="mobile-appcode"></td><td name="mobile" class="mobile"><select name="mobile_layer" class="mobile_layer"><option>Select Model</option>'+self.getMobile() +'</select></td><td name="types" class="types"><select name="mobile_types" class="mobile_types"><option>Select Type</option></select></td><td colspan="2" name="mobileversion" class="mobileversion"><select name="mobile_version" class="mobile_version"><option>Select Version</option></select></td><td><div class="flt_right icon_center"><a href="javascript:;" name="addMobileLayer"><img src="themes/default/images/helios/plus_icon.png" border="0" alt=""></a> <a href="javascript:;" name="removeMobileLayer"><img src="themes/default/images/helios/minus_icon.png" border="0" alt=""></a></div></td></tr>';
 			
 			if (layerType === "addApplnLayer") {
 				dynamicValue = $(applicationlayer).insertAfter(whereToAppend);
+				self.multiselect();
+				if($("input[name=multimodule]").val() === "false") {
+					$(".appdependencyTd div.appdependencySelect").hide();
+				} else {
+					$(".appdependencyTd div.appdependencySelect").show();
+				}	
 				if (dynamicValue.prev('tr').attr("name") !== "dynamicAppLayer") {
 					dynamicValue.prev('tr').find('a[name="addApplnLayer"]').html('');
 					dynamicValue.prev('tr').find('a[name="removeApplnLayer"]').html(minusIcon);
@@ -383,6 +372,12 @@ define(["projects/api/projectsAPI"], function() {
 
 			} else if (layerType === "addWebLayer") {
 				dynamicValue = $(weblayer).insertAfter(whereToAppend);
+				self.multiselect();
+				if($("input[name=multimodule]").val() === "false") {
+					$(".webdependencyTd div.webdependencySelect").hide();
+				} else {
+					$(".webdependencyTd div.webdependencySelect").show();
+				}
 				if (dynamicValue.prev('tr').attr("name") !== "dynamicWebLayer") {
 					dynamicValue.prev('tr').find('a[name="addWebLayer"]').html('');
 					dynamicValue.prev('tr').find('a[name="removeWebLayer"]').html(minusIcon);
@@ -391,6 +386,7 @@ define(["projects/api/projectsAPI"], function() {
 				}
 			} else {
 				dynamicValue = $(mobilelayer).insertAfter(whereToAppend);
+				self.multiselect();
 				if (dynamicValue.prev('tr').attr("name") !== "dynamicMobileLayer") {
 					dynamicValue.prev('tr').find('a[name="addMobileLayer"]').html('');
 					dynamicValue.prev('tr').find('a[name="removeMobileLayer"]').html(minusIcon);
@@ -414,12 +410,19 @@ define(["projects/api/projectsAPI"], function() {
 			$("select[name='web_widget']").unbind('change');
 			$("select[name='mobile_layer']").unbind('change');
 			$("select[name='weblayer']").unbind('change');
-			
 			self.technologyAndVersionChangeEvent();
 		},
 		
 		addLayersEvent : function() {
 			var self=this, whereToAppend = '';
+			
+			$(".appln-appcode, .web-appcode, .mobile-appcode").bind('input', function(){
+				var str = $(this).val();
+				str = str.replace(/[^a-zA-Z 0-9\-\_]+/g, "");
+				str = str.replace(/\s/g, "");
+				$(this).val(str);
+			});
+
 			$("a[name=addApplnLayer]").click(function(){
 				whereToAppend = $(this).parents('tr.applnlayercontent:last');
 				self.addLayers($(this).attr('name'), whereToAppend);
@@ -438,7 +441,7 @@ define(["projects/api/projectsAPI"], function() {
 		
 		removeLayersEvent : function() {
 			var self=this, addIcon = '<img src="themes/default/images/helios/plus_icon.png" border="0" alt="">';
-			$("a[name=removeApplnLayer]").click(function(){;
+			$("a[name=removeApplnLayer]").click(function() {
 				$("a[name=addApplnLayer]").html('');
 				$(this).parent().parent().parent().remove();
 				$("a[name=removeApplnLayer]").parent().parent().parent('tr:last').find('a[name="addApplnLayer"]').html(addIcon);
@@ -446,6 +449,12 @@ define(["projects/api/projectsAPI"], function() {
 					$('tr[name=staticApplnLayer]').find('a[name="addApplnLayer"]').html(addIcon);
 					$("a[name=removeApplnLayer]").html('');
 				}
+				var removedAppcode = $(this).parents('tr.applnlayercontent').children('td.applnappcode').children('input.appln-appcode').val();
+				var index = $.inArray(removedAppcode, self.appDepsArray);
+				if (index >= 0) {
+				   self.appDepsArray.splice(index, 1);
+				}
+				self.removedLayerDependency(removedAppcode);
 			});
 
 			$("a[name=removeWebLayer]").click(function(){
@@ -468,7 +477,6 @@ define(["projects/api/projectsAPI"], function() {
 				}
 			});
 		},
-
 		
 		technologyAndVersionChangeEvent : function() {
 		
@@ -480,7 +488,7 @@ define(["projects/api/projectsAPI"], function() {
 			$("select[name='appln_technology']").bind('click', function(){
 				$("select[name='appln_technology'] option").each(function(index, value) {
 					if($(value).text() == "Select Technology"){
-						$(this).attr('disabled','disabled')
+						$(this).attr('disabled','disabled');
 					}	
 				});
 			});
@@ -491,7 +499,7 @@ define(["projects/api/projectsAPI"], function() {
 			$("select[name='weblayer']").bind('click', function(){
 				$("select[name='weblayer'] option").each(function(index, value) {
 					if($(value).text() == "Select Web Layer"){
-						$(this).attr('disabled','disabled')
+						$(this).attr('disabled','disabled');
 					}	
 				});
 			});
@@ -502,7 +510,7 @@ define(["projects/api/projectsAPI"], function() {
 			$("select[name='mobile_layer']").bind('click', function(){
 				$("select[name='mobile_layer'] option").each(function(index, value) {
 					if($(value).text() == "Select Model"){
-						$(this).attr('disabled','disabled')
+						$(this).attr('disabled','disabled');
 					}	
 				});
 			});
@@ -551,6 +559,51 @@ define(["projects/api/projectsAPI"], function() {
 				var mobileType = $(this).val();
 				var mobileTypePlaceholder = $(this).parents("td[name='types']").siblings("td[name='mobileversion']").children("select[name='mobile_version']");
 				self.getmobileversion(mobileType, mobileTypePlaceholder);
+			});
+			
+			/***
+			 **	AppLayer - Appcode Focus Event For Dependency 
+			 */
+			$("input.appln-appcode").bind('focusout', function(){
+				if($(this).val() !== null && $(this).val() !== ''){
+					var code = $(this).val();
+					self.constructDepsArray(code);
+					self.constructAppDependencyOptions();
+					self.depsOptionsClick();
+				} else {
+					$(this).focus();
+					$(this).attr('Placeholder', 'Enter Appcode');
+				}	
+			});
+			
+			$("input.web-appcode").bind('focusout', function(){
+				if($(this).val() !== null && $(this).val() !== ''){
+					var code = $(this).val();
+					self.constructWebDependencyOptions();
+					self.depsOptionsClick();
+				} else {
+					$(this).focus();
+					$(this).attr('Placeholder', 'Enter Appcode');
+				}	
+			});
+		},
+		
+		depsOptionsClick : function() {
+			var self = this;
+			$('.appdependencyTd .dropdown-menu li').unbind('click');
+			$('.appdependencyTd .dropdown-menu li').click(function(){
+				var selectedOption = $(this).find('span').text();
+				var selectedAppcode = $(this).parents('td.appdependencyTd').siblings('td.applnappcode').children('input.appln-appcode').val();
+				
+				if(selectedOption !== "" && jQuery.inArray(selectedOption, self.selectedVal) === -1){
+					self.selectedVal.push(selectedOption);
+				}
+				
+				if($(this).attr('class') !== "selected"){
+				   self.removeSelectedDependecy(selectedOption, selectedAppcode);
+				} else {
+					self.constructRemovedDependency(selectedOption, selectedAppcode);
+				}  	
 			});
 		},
 		
@@ -750,39 +803,291 @@ define(["projects/api/projectsAPI"], function() {
 			});
 		},
 		
+		multiModuleEvent : function(multimodule){
+			var self = this;
+			if(multimodule === "true"){
+				$("span[name=appdependency]").show();
+				$("span[name=webdependency]").show();
+				self.showDependency();
+			} else {
+				$("span[name=appdependency]").hide();
+				$("span[name=webdependency]").hide();
+				self.hideDependency();
+			}
+		},
+		
+		showDependency : function() {
+			var self = this, appdependencyDiv, webdependencyDiv;
+			$.each($("tbody[name='layercontents'] > div.mCustomScrollBox > div.mCSB_container").children(), function(index, value){
+				if($(value).attr('class') === "applnLayer" && $(value).attr('key') === "displayed") {
+					var applnlayerDiv = $(value).children('td.appln').children('table.applnlayer').children('tbody.applnlayer');
+					$.each($(applnlayerDiv).children(), function(index, value){
+						appdependencyDiv = $(value).children("td.appdependencyTd");
+						$(appdependencyDiv).find("div.appdependencySelect").show();
+					});
+				} else if($(value).attr('class') === "webLayer" && $(value).attr('key') === "displayed") {
+					var weblayerDiv = $(value).children('td.WebLayer').children('table.WebLayer').children('tbody.WebLayer');
+					$.each($(weblayerDiv).children(), function(index, value){
+						webdependencyDiv = $(value).children("td.webdependencyTd");
+						$(webdependencyDiv).find("div.webdependencySelect").show();
+					});
+				}
+			});
+		},
+
+		hideDependency : function() {
+			$.each($("tbody[name='layercontents'] > div.mCustomScrollBox > div.mCSB_container").children(), function(index, value){
+				if($(value).attr('class') === "applnLayer" && $(value).attr('key') === "displayed") {
+					var applnlayerDiv = $(value).children('td.appln').children('table.applnlayer').children('tbody.applnlayer');
+					$.each($(applnlayerDiv).children(), function(index, value){
+					var appdependencyDiv = $(value).children("td.appdependencyTd");
+					$(appdependencyDiv).find("div.appdependencySelect").hide();
+					});
+					} else if($(value).attr('class') === "webLayer" && $(value).attr('key') === "displayed") {
+					var weblayerDiv = $(value).children('td.WebLayer').children('table.WebLayer').children('tbody.WebLayer');
+					$.each($(weblayerDiv).children(), function(index, value){
+						var webdependencyDiv = $(value).children("td.webdependencyTd");
+						$(webdependencyDiv).find("div.webdependencySelect").hide();
+					});
+				}
+			});
+		},
+
+		
+		constructDepsArray : function(applnAppcode) {
+			var self = this;
+			$.each($("tbody[name='layercontents'] > div.mCustomScrollBox > div.mCSB_container").children(), function(index, value){
+				if($(value).attr('class') === "applnLayer" && $(value).attr('key') === "displayed") {
+					var applnlayerDiv = $(value).children('td.appln').children('table.applnlayer').children('tbody.applnlayer');
+					$.each($(applnlayerDiv).children(), function(index, value){
+						if(applnAppcode !== "" && jQuery.inArray(applnAppcode, self.appDepsArray) === -1){
+							self.appDepsArray.push(applnAppcode);
+						} 
+					});
+				}	
+			});
+		},
+		
+		constructAppDependencyOptions : function() {
+		
+			var self = this, depsSelectPlaceholder;
+			$.each($("tbody[name='layercontents'] > div.mCustomScrollBox > div.mCSB_container").children(), function(index, value){
+				if($(value).attr('class') === "applnLayer" && $(value).attr('key') === "displayed") {
+					var applnlayerDiv = $(value).children('td.appln').children('table.applnlayer').children('tbody.applnlayer');
+					$.each($(applnlayerDiv).children(), function(index, value){
+						var code = $(value).children("td.applnappcode").children("input.appln-appcode").val();
+						depsSelectPlaceholder = $(value).children('td.appdependencyTd').children("select.appdependencySelect");
+						if(depsSelectPlaceholder !== undefined && depsSelectPlaceholder !== null) {
+							var option = '';
+							$.each(self.appDepsArray, function(index, depsValue){
+								var exists = false;
+								$(depsSelectPlaceholder).find("option").each(function(index, value){
+									if($(value).val() !== 0){
+										if($(value).val() === depsValue) {
+											exists = true;
+											return false;
+										}
+									}
+								});
+								if(!exists && code !== depsValue) {
+									/* option += '<option value="'+depsValue+'">'+depsValue+'</option>';
+									$(depsSelectPlaceholder).html(option); */
+									$(depsSelectPlaceholder).append($('<option/>').attr('name','selectedVal').val(depsValue).text(depsValue));
+									$(depsSelectPlaceholder).selectpicker('refresh');
+								}
+							});	
+						}
+					});
+				}
+			});
+		},
+		
+		constructWebDependencyOptions : function(){
+		
+			var self = this, depsSelectPlaceholder;
+			$.each($("tbody[name='layercontents'] > div.mCustomScrollBox > div.mCSB_container").children(), function(index, value){
+				if($(value).attr('class') === "webLayer" && $(value).attr('key') === "displayed") {
+					var weblayerDiv = $(value).children('td.WebLayer').children('table.WebLayer').children('tbody.WebLayer');
+					$.each($(weblayerDiv).children(), function(index, value){
+						var code = $(value).children("td.webappcode").children("input.web-appcode").val();
+						depsSelectPlaceholder = $(value).children('td.webdependencyTd').children("select.webdependencySelect");
+						if(depsSelectPlaceholder !== undefined && depsSelectPlaceholder !== null) {
+							var option = '';
+							$.each(self.appDepsArray, function(index, depsValue){
+								var exists = false;
+								$(depsSelectPlaceholder).find("option").each(function(index, value){
+									if($(value).val() !== 0){
+										if($(value).val() === depsValue) {
+											exists = true;
+											return false;
+										}
+									}
+								});
+								if(!exists) {
+									/* option += '<option value="'+depsValue+'">'+depsValue+'</option>';
+									$(depsSelectPlaceholder).html(option); */
+									$(depsSelectPlaceholder).append($('<option/>').attr('name','selectedVal').val(depsValue).text(depsValue));
+									$(depsSelectPlaceholder).selectpicker('refresh');
+								}
+							});	
+						}
+					});
+				}
+			});
+		},
+		
+		removeSelectedDependecy : function(selectedOption, selectedAppcode){
+			
+			var self = this, depsSelectPlaceholder;
+			$.each($("tbody[name='layercontents'] > div.mCustomScrollBox > div.mCSB_container").children(), function(index, value){
+				if($(value).attr('class') === "applnLayer" && $(value).attr('key') === "displayed") {
+					var applnlayerDiv = $(value).children('td.appln').children('table.applnlayer').children('tbody.applnlayer');
+					$.each($(applnlayerDiv).children(), function(index, value){
+						var code = $(value).children("td.applnappcode").children("input.appln-appcode").val();
+						depsSelectPlaceholder = $(value).children('td.appdependencyTd').children("select.appdependencySelect");
+						if(depsSelectPlaceholder !== undefined && depsSelectPlaceholder !== null){
+							if(code === selectedOption){
+								$(depsSelectPlaceholder).find("option").each(function(index, value){
+									if($(value).val() !== 0){
+										if($(value).val() === selectedAppcode) {
+											$(value).remove();
+											$(depsSelectPlaceholder).selectpicker('refresh');
+											self.depsOptionsClick();
+										}
+									}
+								});
+							}
+						}
+					});
+				}	
+			});
+		},
+		
+		removedLayerDependency : function(removedAppcode){
+			
+			var self=this, depsSelectPlaceholder;
+			$.each($("tbody[name='layercontents'] > div.mCustomScrollBox > div.mCSB_container").children(), function(index, value){
+				if($(value).attr('class') === "applnLayer" && $(value).attr('key') === "displayed") {
+					var applnlayerDiv = $(value).children('td.appln').children('table.applnlayer').children('tbody.applnlayer');
+					$.each($(applnlayerDiv).children(), function(index, value){
+						var code = $(value).children("td.applnappcode").children("input.appln-appcode").val();
+						depsSelectPlaceholder = $(value).children('td.appdependencyTd').children("select.appdependencySelect");
+						if(depsSelectPlaceholder !== undefined && depsSelectPlaceholder !== null){
+							$(depsSelectPlaceholder).find("option").each(function(index, value){
+								if($(value).val() !== 0){
+									if($(value).val() === removedAppcode) {
+										$(value).remove();
+										$(depsSelectPlaceholder).selectpicker('refresh');
+										self.depsOptionsClick();
+									}
+								}
+							});
+						}
+					});
+				}
+				
+				if($(value).attr('class') === "webLayer" && $(value).attr('key') === "displayed") {
+					var weblayerDiv = $(value).children('td.WebLayer').children('table.WebLayer').children('tbody.WebLayer');
+					$.each($(weblayerDiv).children(), function(index, value){
+						var code = $(value).children("td.webappcode").children("input.web-appcode").val();
+						depsSelectPlaceholder = $(value).children('td.webdependencyTd').children("select.webdependencySelect");
+						if(depsSelectPlaceholder !== undefined && depsSelectPlaceholder !== null) {
+							$(depsSelectPlaceholder).find("option").each(function(index, value){
+								if($(value).val() !== 0){
+									if($(value).val() === removedAppcode) {
+										$(value).remove();
+										$(depsSelectPlaceholder).selectpicker('refresh');
+										self.depsOptionsClick();
+									}
+								}
+							});
+						}
+					});
+				}	
+			});
+		},
+		
+		constructRemovedDependency : function(selectedOption, selectedAppcode){
+			 
+			 var self = this, depsSelectPlaceholder;
+			 $.each($("tbody[name='layercontents'] > div.mCustomScrollBox > div.mCSB_container").children(), function(index, value){
+				if($(value).attr('class') === "applnLayer" && $(value).attr('key') === "displayed") {
+					var applnlayerDiv = $(value).children('td.appln').children('table.applnlayer').children('tbody.applnlayer');
+					$.each($(applnlayerDiv).children(), function(index, value){
+						var code = $(value).children("td.applnappcode").children("input.appln-appcode").val();
+						depsSelectPlaceholder = $(value).children('td.appdependencyTd').children("select.appdependencySelect");
+						if(code === selectedOption){
+							if(depsSelectPlaceholder !== undefined && depsSelectPlaceholder !== null) {
+								var exists = false;
+								$(depsSelectPlaceholder).find("option").each(function(index, value){
+									if($(value).val() !== 0){
+										if($(value).val() === selectedAppcode) {
+											exists = true;
+											return false;
+										}
+									}
+								});
+								if(!exists) {
+									$(depsSelectPlaceholder).append($('<option/>').attr('name','selectedVal').val(selectedAppcode).text(selectedAppcode));
+									self.depsOptionsClick();
+									var index = $.inArray(selectedOption, self.selectedVal);
+									 if (index >= 0) {
+										self.selectedVal.splice(index, 1);
+									 }
+									$(depsSelectPlaceholder).selectpicker('refresh');
+									self.depsOptionsClick();
+								}
+							}
+						}	
+					});
+			     }
+             }); 				
+		},
+		
 		editSeriveTechnolyEvent : function(getData) {
-			var self = this, addIcon = '<img src="themes/default/images/helios/plus_icon.png" border="0" alt="">';;
+			var self = this, addIcon = '<img src="themes/default/images/helios/plus_icon.png" border="0" alt="">';
 			$("#appLayaer").hide();
 			$("tr.applnLayer").hide();
 			$("#webLayers").hide();
-			$("tr.webLayaer").hide();
+			$("tr.webLayer").hide();
 			$("#mobLayers").hide();
 			$("tr.mobLayer").hide();
 
 			$.each(getData, function(index, value) {
+				console.info("value", value);
 				if (value.techInfo.appTypeId == "app-layer") {
 					$("#appLayaer").show();
 					$("tr.applnLayer").show();
-					var splitValue = value.appDirName;
-					var finalValue = splitValue.split("-");
-					
-					var appendData = '<tr class="applnlayercontent" name="dynamicAppLayer"><td><input type="text" value="'+finalValue[0]+'" disabled></td><td><select disabled>'+ self.getTechnology(value.techInfo.id) +'</select></td><td colspan="3"><select disabled><option>'+value.techInfo.version+'</option></select></td><td colspan="2"><select><option>Select Dependency</option></select></td><td><div class="flt_right icon_center"><a name="addApplnLayer"></a><a href="javascript:;" name="removeApplnLayer"></a></div></td></tr>';
+					var option = '';
+					if(value.dependentModules !== null) {
+						$.each(value.dependentModules, function(index, value){
+							option += '<option selected>'+ value +'</option>';
+						});
+					} else {
+						option = '';
+					}	
+					var appendData = '<tr class="applnlayercontent" name="dynamicAppLayer"><td><input type="text" value="'+value.code+'" disabled></td><td><select disabled>'+ self.getTechnology(value.techInfo.id) +'</select></td><td colspan="3"><select disabled><option>'+value.techInfo.version+'</option></select></td><td colspan="2"><select class="selectpicker"><option>Select Dependency</option>'+ option +'</select></td><td><div class="flt_right icon_center"><a name="addApplnLayer"></a><a href="javascript:;" name="removeApplnLayer"></a></div></td></tr>';
 					$("tbody.applnLayer").append(appendData);
+					self.multiselect();
 				} else if (value.techInfo.appTypeId == "web-layer") {
 					$("#webLayers").show();
 					$("tr.webLayaer").show();
-					var splitValue = value.appDirName;
-					var finalValue = splitValue.split("-");
-					var appendData = '<tr class="weblayercontent" name="dynamicWebLayer"><td><input type="text" value="'+finalValue[0]+'" disabled></td><td><select name="weblayer" disabled><option>'+value.techInfo.techGroupId+'</option></select></td><td name="widget"><select name="web_widget" disabled> '+ self.editgetwidgettype(value.techInfo.id) +'</select></td> <td name="widgetversion"><select name="web_version" disabled><option>'+value.techInfo.version+'</option></select></td><td><select><option>Select Dependency</option></select></td><td><div class="flt_right icon_center"><a href="javascript:;" name="addWebLayer"></a><a href="javascript:;" name="removeWebLayer"></a></div></td></tr>';
+					if(value.dependentModules !== null) {
+						$.each(value.dependentModules, function(index, value){
+							option += '<option selected>'+ value +'</option>';
+						});
+					} else {
+						option = '';
+					}
+					var appendData = '<tr class="weblayercontent" name="dynamicWebLayer"><td><input type="text" value="'+value.code+'" disabled></td><td><select name="weblayer" disabled><option>'+value.techInfo.techGroupId+'</option></select></td><td name="widget"><select name="web_widget" disabled> '+ self.editgetwidgettype(value.techInfo.id) +'</select></td> <td name="widgetversion"><select name="web_version" disabled><option>'+value.techInfo.version+'</option></select></td><td><select class="selectpicker" multiple><option>Select Dependency</option>'+ option +'</select></td><td><div class="flt_right icon_center"><a href="javascript:;" name="addWebLayer"></a><a href="javascript:;" name="removeWebLayer"></a></div></td></tr>';
 					$("tbody.WebLayer").append(appendData);
-					
+					self.multiselect();
 				} else if (value.techInfo.appTypeId == "mobile-layer") {
 					$("#mobLayers").show();
 					$("tr.mobLayer").show();
-					var splitValue = value.appDirName;
-					var finalValue = splitValue.split("-");
-					var appendData = '<tr class="mobilelayercontent" name="dynamicMobileLayer"><td><input type="text" value="'+finalValue[0]+'" disabled></td><td><select disabled><option>'+value.techInfo.techGroupId+'</option></select></td><td><select name="mobile_types" disabled>'+self.editgetmobiletype(value.techInfo.id)+'</select></td><td colspan="2"><select disabled><option>'+value.techInfo.version+'</option></select></td><td><div class="flt_right icon_center"><a href="javascript:;" name="addMobileLayer"></a><a href="javascript:;" name="removeMobileLayer"></a> </div></td></tr>';
+					var appendData = '<tr class="mobilelayercontent" name="dynamicMobileLayer"><td><input type="text" value="'+value.code+'" disabled></td><td><select disabled><option>'+value.techInfo.techGroupId+'</option></select></td><td><select name="mobile_types" disabled>'+self.editgetmobiletype(value.techInfo.id)+'</select></td><td colspan="2"><select disabled><option>'+value.techInfo.version+'</option></select></td><td><div class="flt_right icon_center"><a href="javascript:;" name="addMobileLayer"></a><a href="javascript:;" name="removeMobileLayer"></a> </div></td></tr>';
 					$("tbody.MobLayer").append(appendData);
+					self.multiselect();
 				}
 			});
 			$("tr[name=dynamicAppLayer]:last").find("a[name=addApplnLayer]").html(addIcon);
@@ -815,7 +1120,7 @@ define(["projects/api/projectsAPI"], function() {
 				//To convert dd/mm//yyyy to (month date,year) format
 				var myStartDate = new Date(startdate);
 				var myEndDate = new Date(enddate);
-				
+				var multimodule = $("input[name='multimodule']").val() === "true" ? true:false;
 				var count = 0;
 				self.customerIds = [];
 				self.appInfos = [];
@@ -828,19 +1133,21 @@ define(["projects/api/projectsAPI"], function() {
 				self.projectInfo.description = projectdescription;
 				self.projectInfo.startDate = myStartDate;
 				self.projectInfo.endDate = myEndDate;
+				self.projectInfo.multiModule = multimodule;
 				self.projectInfo.customerIds = self.customerIds;
 							
-				$.each( $("tbody[name='layercontents'] > div.mCustomScrollBox > div.mCSB_container").children(), function(index, value){
+				$.each($("tbody[name='layercontents'] > div.mCustomScrollBox > div.mCSB_container").children(), function(index, value){
 				
 					var techInfo = {};
 					var tech;
 					var techName = "";
 					var code = "";
+					var dependency = "";
 					var appInfo = {};
 					var mobdata = {};
 					var versionText = "";
 					
-					if($(value).attr('class') == "applnLayer" && $(value).attr('key') == "displayed") {
+					if($(value).attr('class') === "applnLayer" && $(value).attr('key') === "displayed") {
 						var applnlayerDiv = $(value).children('td.appln').children('table.applnlayer').children('tbody.applnlayer');
 						$.each($(applnlayerDiv).children(), function(index, value){
 							var appInfo = {};
@@ -848,10 +1155,14 @@ define(["projects/api/projectsAPI"], function() {
 							tech = $(value).children("td.technology").children("select.appln_technology");
 							techName = $(tech).find(":selected").text();
 							code = $(value).children("td.applnappcode").children("input.appln-appcode").val();
+							dependency = $(value).children('td.appdependencyTd').children("select.appdependencySelect").val();
 							appInfo.code = code;
 							appInfo.appDirName = code;
 							appInfo.version = projectversion;
-							appInfo.name = code; 
+							appInfo.name = code;
+							if(dependency !== null){
+								appInfo.dependentModules = dependency;
+							}	
 							techInfo.id = $(value).children("td.technology").children("select.appln_technology").val();
 							techInfo.appTypeId = "app-layer";
 							techInfo.name = $(value).children("td.technology").children("select.appln_technology").find(":selected").text();
@@ -864,7 +1175,7 @@ define(["projects/api/projectsAPI"], function() {
 						});	
 					} 
 					
-					if($(value).attr('class') == "webLayer" && $(value).attr('key') == "displayed") {
+					if($(value).attr('class') === "webLayer" && $(value).attr('key') === "displayed") {
 						var weblayerDiv = $(value).children('td.WebLayer').children('table.WebLayer').children('tbody.WebLayer');
 						$.each($(weblayerDiv).children(), function(index, value){
 							var appInfo = {};
@@ -872,10 +1183,14 @@ define(["projects/api/projectsAPI"], function() {
 							tech = $(value).children("td.widget").children("select.web_widget");
 							techName = $(tech).find(":selected").text();
 							code = $(value).children("td.webappcode").children("input.web-appcode").val();
+							dependency = $(value).children('td.webdependencyTd').children("select.webdependencySelect").val();
 							appInfo.code = code;
 							appInfo.appDirName = code;
 							appInfo.version = projectversion;
-							appInfo.name = code; 
+							appInfo.name = code;
+							if(dependency !== null){
+								appInfo.dependentModules = dependency;
+							}		
 							techInfo.id = $(value).children("td.widget").children("select.web_widget").val();
 							techInfo.appTypeId = "web-layer";
 							techInfo.techGroupId = $(value).children("td.web").children("select.weblayer").find(":selected").text();
@@ -889,7 +1204,7 @@ define(["projects/api/projectsAPI"], function() {
 						});	
 					}  
 
-					if($(value).attr('class') == "mobLayer" && $(value).attr('key') == "displayed") {
+					if($(value).attr('class') === "mobLayer" && $(value).attr('key') === "displayed") {
 						var mobilelayerDiv = $(value).children('td.mob').children('table.mob-table').children('tbody');
 						$.each($(mobilelayerDiv).children(), function(index, value){
 							var appInfo = {};
@@ -906,7 +1221,7 @@ define(["projects/api/projectsAPI"], function() {
 							techInfo.appTypeId = "mobile-layer";
 							techInfo.techGroupId = $(value).children("td.mobile").children("select.mobile_layer").find(':selected').text();
 							techInfo.name = $(value).children("td.types").children("select.mobile_types").find(':selected').text();
-							if(versionText == "No Versions available") {
+							if(versionText === "No Versions available") {
 								techInfo.version = "";
 							} else {
 								techInfo.version = $(value).children("td.mobileversion").children("select.mobile_version").find(":selected").text();
@@ -926,10 +1241,11 @@ define(["projects/api/projectsAPI"], function() {
 				self.projectInfo.appInfos = appInfos;
 				self.projectRequestBody = self.projectInfo;
 				
-				if(projectId != '') {
+				if(projectId !== '') {
 					self.projectInfo.id = projectId;
 				}
 				
+				self.appDepsArray = [];
 				self.getEditProject(self.getRequestHeader(self.projectRequestBody, "", action), function(response) {
 					self.projectRequestBody = {};
 					self.getEditProject(self.getRequestHeader(self.projectRequestBody, "", "projectlist"), function(response) {

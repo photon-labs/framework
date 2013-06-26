@@ -16,6 +16,8 @@ define(["projects/listener/projectsListener"], function() {
 		getData : null,
 		onUpdateProjectsEvent : null,
 		onCancelUpdateEvent : null,
+		onRemoveLayerEvent : null,
+		onAddLayerEvent : null,
 			
 		/***
 		 * Called in initialization time of this class 
@@ -24,17 +26,30 @@ define(["projects/listener/projectsListener"], function() {
 		 */
 		initialize : function(globalConfig){
 			var self = this;
-			if(self.projectsListener === null)
+			if(self.projectsListener === null){
 				self.projectsListener = new Clazz.com.components.projects.js.listener.projectsListener();
+			}
 			self.registerEvents(self.projectsListener);
 		},
 		
 		registerEvents : function (projectsListener) {
 			var self = this;
-			if(self.onUpdateProjectsEvent === null)
+			if(self.onUpdateProjectsEvent === null){
 				self.onUpdateProjectsEvent = new signals.Signal();
-			if(self.onCancelUpdateEvent === null)	
+			}	
+			if(self.onCancelUpdateEvent === null){	
 				self.onCancelUpdateEvent = new signals.Signal();
+			}
+			if(self.onAddLayerEvent === null) {
+				self.onAddLayerEvent = new signals.Signal();
+			}
+			
+			if(self.onCreateEvent === null) {
+				self.onCreateEvent = new signals.Signal();
+			}
+			
+			self.onRemoveLayerEvent.add(projectsListener.removelayer, projectsListener);
+			self.onAddLayerEvent.add(projectsListener.addlayer, projectsListener);
 			self.onUpdateProjectsEvent.add(projectsListener.createproject, projectsListener);
 			self.onCancelUpdateEvent.add(projectsListener.cancelCreateproject, projectsListener);
 		},
@@ -51,7 +66,7 @@ define(["projects/listener/projectsListener"], function() {
 		 *
 		 */
 		loadPage :function(){
-			Clazz.navigationController.push(this);
+			Clazz.navigationController.push(this, true);
 		},
 		/***
 		 * Called after the preRender() and bindUI() completes. 
@@ -65,7 +80,7 @@ define(["projects/listener/projectsListener"], function() {
 				self.applicationlayerData = self.projectsListener.projectAPI.localVal.getJson("Application Layer");
 				self.weblayerData = self.projectsListener.projectAPI.localVal.getJson("Web Layer");
 				self.mobilelayerData = self.projectsListener.projectAPI.localVal.getJson("Mobile Layer");
-			if (self.applicationlayerData != null && self.weblayerData != null && self.mobilelayerData != null) {
+			if (self.applicationlayerData !== null && self.weblayerData !== null && self.mobilelayerData !== null) {
 				self.templateData.applicationlayerData = self.applicationlayerData;
 				self.templateData.weblayerData = self.weblayerData;
 				self.templateData.mobilelayerData = self.mobilelayerData;
@@ -147,10 +162,8 @@ define(["projects/listener/projectsListener"], function() {
 			var self=this;
 			self.projectsListener.getEditProject(self.projectsListener.getRequestHeader(self.projectRequestBody, '', 'apptypes'), function(response) {
 				$.each(response.data, function(index, value){
-					//console.info("index",index,"value",value);
 					self.projectsListener.projectAPI.localVal.setJson(value.name, value);
-					
-					if(response.data.length == (index + 1)){
+					if(response.data.length === (index + 1)){
 						callback(true);
 					}
 				});
@@ -159,6 +172,7 @@ define(["projects/listener/projectsListener"], function() {
 		
 		postRender : function(element) {
 			var self=this;
+			self.multiselect();
 			self.projectsListener.editSeriveTechnolyEvent(self.getData);
 		},
 		
@@ -173,7 +187,9 @@ define(["projects/listener/projectsListener"], function() {
 			self.projectsListener.addLayersEvent();
 			self.projectsListener.removeLayersEvent();
 			self.projectsListener.technologyAndVersionChangeEvent();
+			self.projectsListener.multiModuleEvent();
 			self.windowResize();
+			
 			$("#updateProject").click(function() {
 				self.onUpdateProjectsEvent.dispatch(commonVariables.projectId, "update");
 			});
@@ -181,13 +197,22 @@ define(["projects/listener/projectsListener"], function() {
 			$("#cancelUpdate").click(function() {
 				self.onCancelUpdateEvent.dispatch();
 			});
-
-			$(".scrollContent").mCustomScrollbar({
+			
+			$(".create_proj .scrollContent").mCustomScrollbar({
 				autoHideScrollbar:true,
 				theme:"light-thin",
 				advanced:{ updateOnContentResize: true}
 			});
 			
+			$("img[name='close']").unbind('click');
+			$("img[name='close']").bind('click', function(){
+				self.onRemoveLayerEvent.dispatch($(this));
+			});
+			
+			$(".content_end input").unbind('click');
+			$(".content_end input").bind('click', function(){
+				self.onAddLayerEvent.dispatch($(this));
+			});
 		}
 	});
 
