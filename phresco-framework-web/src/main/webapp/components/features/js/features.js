@@ -13,6 +13,7 @@ define(["features/listener/featuresListener"], function() {
 		featureRequestBody: {},
 		id : null,
 		featureUpdatedArray : null,
+		updateFlag : null,
 		header: {
 			contentType: null,
 			requestMethod: null,
@@ -111,17 +112,19 @@ define(["features/listener/featuresListener"], function() {
 		 */
 		postRender : function(element) {
 			var self = this;
-			self.featuresListener.getFeaturesList(self.featuresListener.getRequestHeader(self.featureRequestBody, "SELECTED"), function(response) {
-				var responseData = response.data;
-				$(".switchOn").each(function(index, currentVal) {
-					$(currentVal).removeClass('switchOn').addClass('switchOff');
+			if(self.updateFlag === 1){
+				self.featuresListener.getFeaturesList(self.featuresListener.getRequestHeader(self.featureRequestBody, "SELECTED"), function(response) {
+					var responseData = response.data;
+					$(".switchOn").each(function(index, currentVal) {
+						$(currentVal).removeClass('switchOn').addClass('switchOff');
+					});
+					$.each(response.data, function(index, value){
+						$("#feature_"+this.moduleId).addClass("switchOn").removeClass('switchOff');
+						$("#version_"+this.moduleId).show();					
+					});
 				});
-				$.each(response.data, function(index, value){
-					$("#feature_"+this.moduleId).addClass("switchOn").removeClass('switchOff');
-					$("#version_"+this.moduleId).show();					
-				});
-				self.selectedCount();
-			}); 
+			}
+			self.selectedCount();			
 		},
 		
 		
@@ -302,6 +305,7 @@ define(["features/listener/featuresListener"], function() {
 						featureUpdatedata.moduleId = moduleId; 
 						featureUpdatedata.artifactGroupId = moduleId;
 						self.featureUpdatedArray.push(featureUpdatedata);
+						self.updateFlag = 1;
 					}
 				});				
 				
