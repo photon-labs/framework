@@ -7,6 +7,7 @@ var commonVariables = {
 	navListener : null,
 	appDirName : null,
 	goal : null,
+	phase : null,
 	
 	header : "header",
 	headerContext : "",
@@ -56,6 +57,10 @@ var commonVariables = {
 	from : null,
 	testSuiteName : null,
 	testSuites : null,
+	performance : "performance",
+	performanceTest : "performanceTest",
+	performanceTestResults : "performanceTestResults",
+	loadTest : "loadTest",
 	
 	testResult : "testResult",
 

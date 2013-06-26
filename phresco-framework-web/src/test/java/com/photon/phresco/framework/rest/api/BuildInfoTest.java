@@ -26,8 +26,11 @@ public class BuildInfoTest extends RestBaseTest {
 	
 	@Test
 	public void getBuildParams() {
-		Response parameter = parameterservice.getParameter(appDirName, "package", null);
-		assertEquals(200, parameter.getStatus());
+		String goal = "package";
+		String phase = "package";
+		
+		Response response = parameterservice.getParameter(appDirName, goal, phase, userId, customerId);
+		assertEquals(200, response.getStatus());
 	}
 	
 	@Test

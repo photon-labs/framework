@@ -523,6 +523,14 @@ define(["framework/widget", "framework/templateProvider"], function() {
 					}
 				});
 			},
+			
+			showDynamicPopupLoading : function () {
+				$('.dynamicPopupLoading').show();
+			},
+			
+			hideDynamicPopupLoading : function () {
+				$('.dynamicPopupLoading').hide();
+			},
 		}
 	);
 

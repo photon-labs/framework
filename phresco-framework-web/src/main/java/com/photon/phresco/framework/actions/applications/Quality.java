@@ -2597,7 +2597,7 @@ public class Quality extends DynamicParameterAction implements Constants {
             if (!testResultFile.equals("null")) {
             	String testResultPath = getTestResultPath(getApplicationInfo(), testResultFile);
                 Document document = getDocument(new File(testResultPath)); 
-        		deviceNames = QualityUtil.getDeviceNames(document);
+//        		deviceNames = QualityUtil.getDeviceNames(document);
             }
         } catch(Exception e) {
         	S_LOGGER.error("Entered into catch block of Quality.devices()"+ FrameworkUtil.getStackTraceAsString(e));

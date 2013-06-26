@@ -30,6 +30,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Consumes;
@@ -43,11 +44,13 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.xml.parsers.ParserConfigurationException;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.xml.sax.SAXException;
 
+import com.photon.phresco.api.DynamicPageParameter;
 import com.photon.phresco.api.DynamicParameter;
 import com.photon.phresco.commons.FrameworkConstants;
 import com.photon.phresco.commons.model.ApplicationInfo;
@@ -61,6 +64,7 @@ import com.photon.phresco.framework.FrameworkConfiguration;
 import com.photon.phresco.framework.PhrescoFrameworkFactory;
 import com.photon.phresco.framework.commons.FrameworkUtil;
 import com.photon.phresco.framework.model.CodeValidationReportType;
+import com.photon.phresco.framework.model.DependantParameters;
 import com.photon.phresco.framework.param.impl.IosTargetParameterImpl;
 import com.photon.phresco.framework.rest.api.util.FrameworkServiceUtil;
 import com.photon.phresco.plugins.model.Mojos.Mojo.Configuration.Parameters.Parameter;
@@ -83,6 +87,9 @@ import com.sun.jersey.api.client.ClientResponse.Status;
 @Path("/parameter")
 public class ParameterService extends RestBase implements FrameworkConstants, ServiceConstants {
 
+	private static Map<String, PhrescoDynamicLoader> pdlMap = new HashMap<String, PhrescoDynamicLoader>();
+	private static Map<String, Map<String, DependantParameters>> valueMap = new HashMap<String, Map<String, DependantParameters>>();
+	
 	/**
 	 * Gets the parameter.
 	 *
@@ -95,10 +102,12 @@ public class ParameterService extends RestBase implements FrameworkConstants, Se
 	@Path("/dynamic")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response getParameter(@QueryParam(REST_QUERY_APPDIR_NAME) String appDirName,
-			@QueryParam(REST_QUERY_GOAL) String goal, @QueryParam(REST_QUERY_PHASE) String phase) {
+			@QueryParam(REST_QUERY_GOAL) String goal, @QueryParam(REST_QUERY_PHASE) String phase, 
+			@QueryParam(REST_QUERY_USERID) String userId, @QueryParam(REST_QUERY_CUSTOMERID) String customerId) {
 		ResponseInfo<List<Parameter>> responseData = new ResponseInfo<List<Parameter>>();
 		try {
-			List<Parameter> parameter = null;
+			ApplicationInfo appInfo = FrameworkServiceUtil.getApplicationInfo(appDirName);
+			List<Parameter> parameters = null;
 			String filePath = getInfoFileDir(appDirName, goal, phase);
 			File file = new File(filePath);
 			if (file.exists()) {
@@ -107,10 +116,12 @@ public class ParameterService extends RestBase implements FrameworkConstants, Se
 					String functionalTestFramework = FrameworkServiceUtil.getFunctionalTestFramework(appDirName);
 					goal = goal + HYPHEN + functionalTestFramework;
 				}
-				parameter = mojo.getParameters(goal);
+				parameters = mojo.getParameters(goal);
+				Map<String, DependantParameters> watcherMap = new HashMap<String, DependantParameters>(8);
+				setPossibleValuesInReq(mojo, appInfo, parameters, watcherMap, goal, userId, customerId);
 			}
 			ResponseInfo<List<Parameter>> finalOutput = responseDataEvaluation(responseData, null,
-					"Parameter returned successfully", parameter);
+					"Parameter returned successfully", parameters);
 			return Response.ok(finalOutput).header("Access-Control-Allow-Origin", "*").build();
 
 		} catch (Exception e) {
@@ -148,7 +159,39 @@ public class ParameterService extends RestBase implements FrameworkConstants, Se
 					.build();
 		}
 	}
-
+	
+	/**
+	 * Update watcher map
+	 * 
+	 */
+	@POST
+	@Path("/updateWatcher")
+	@Produces(MediaType.APPLICATION_JSON)
+	@Consumes(MediaType.APPLICATION_JSON)
+	public Response updateWatcher(@QueryParam(REST_QUERY_APPDIR_NAME) String appDirName, @QueryParam(REST_QUERY_GOAL) String goal,
+			@QueryParam(REST_QUERY_KEY) String key, @QueryParam(REST_QUERY_VALUE) String value) {
+		ResponseInfo<String> responseData = new ResponseInfo<String>();
+		try {
+			ApplicationInfo applicationInfo = FrameworkServiceUtil.getApplicationInfo(appDirName);
+			Map<String, DependantParameters> watcherMap = valueMap.get(applicationInfo.getId() + goal);
+			DependantParameters currentParameters = watcherMap.get(key);
+			if (currentParameters == null) {
+				currentParameters = new DependantParameters();
+			}
+			currentParameters.setValue(value);
+			watcherMap.put(key, currentParameters);
+			valueMap.put(applicationInfo.getId() + goal, watcherMap);
+			ResponseInfo<String> finalOutput = responseDataEvaluation(responseData, null,
+					"Map updated successfully", "success");
+			return Response.ok(finalOutput).header("Access-Control-Allow-Origin", "*").build();
+		} catch (PhrescoException e) {
+			ResponseInfo<PossibleValues> finalOutput = responseDataEvaluation(responseData, e,
+					"Map not updated", "failure");
+			return Response.status(Status.BAD_REQUEST).entity(finalOutput).header("Access-Control-Allow-Origin", "*")
+					.build();
+		} 
+	}
+	
 	/**
 	 * Gets the possible value.
 	 *
@@ -164,31 +207,58 @@ public class ParameterService extends RestBase implements FrameworkConstants, Se
 	@Path("/dependency")
 	@Produces(MediaType.APPLICATION_JSON)
 	@Consumes(MediaType.APPLICATION_JSON)
-	public Response getPossibleValue(@QueryParam(REST_QUERY_APPDIR_NAME) String appDirName,
-			@QueryParam(REST_QUERY_CUSTOMERID) String customerId, @QueryParam(REST_QUERY_GOAL) String goal,
-			@QueryParam(REST_QUERY_KEY) String key, @QueryParam(REST_QUERY_VALUE) String value,
+	public Response getDependencyPossibleValue(@QueryParam(REST_QUERY_APPDIR_NAME) String appDirName,
+			@QueryParam(REST_QUERY_CUSTOMERID) String customerId, @QueryParam(REST_QUERY_USERID) String userId,
+			@QueryParam(REST_QUERY_GOAL) String goal, @QueryParam(REST_QUERY_KEY) String key, 
 			@QueryParam(REST_QUERY_PHASE) String phase) {
-		ResponseInfo<PossibleValues> responseData = new ResponseInfo<PossibleValues>();
+		ResponseInfo<List<Value>> responseData = new ResponseInfo<List<Value>>();
 		PossibleValues possibleValues = null;
 		try {
-			ApplicationInfo appInfo = FrameworkServiceUtil.getApplicationInfo(appDirName);
+			
+			ApplicationInfo applicationInfo = FrameworkServiceUtil.getApplicationInfo(appDirName);
+			Map<String, DependantParameters> watcherMap = valueMap.get(applicationInfo.getId() + goal);
+			Map<String, Object> constructMapForDynVals = constructMapForDynVals(applicationInfo, watcherMap, key, customerId);
 			String filePath = getInfoFileDir(appDirName, goal, phase);
-			MojoProcessor processor = new MojoProcessor(new File(filePath));
-			possibleValues = getPossibleValues(processor, goal, key, value, appInfo, customerId, appDirName);
+			MojoProcessor mojo = new MojoProcessor(new File(filePath));
+			Parameter dependentParameter = mojo.getParameter(goal, key);
+			constructMapForDynVals.put(REQ_MOJO, mojo);
+            constructMapForDynVals.put(REQ_GOAL, goal);
+            List<Value> dependentPossibleValues = new ArrayList<Value>();
+            if (TYPE_DYNAMIC_PARAMETER.equalsIgnoreCase(dependentParameter.getType()) && dependentParameter.getDynamicParameter() != null) {
+            	dependentPossibleValues = getDynamicPossibleValues(constructMapForDynVals, dependentParameter, userId, customerId);
+            }
+            
+            updateDynamicValuesToWathcer(goal, key, applicationInfo, watcherMap, dependentParameter, dependentPossibleValues);
+            
 			ResponseInfo<PossibleValues> finalOutput = responseDataEvaluation(responseData, null,
-					"Dependency returned successfully", possibleValues);
+					"Dependency returned successfully", dependentPossibleValues);
 			return Response.ok(finalOutput).header("Access-Control-Allow-Origin", "*").build();
 		} catch (PhrescoException e) {
 			ResponseInfo<PossibleValues> finalOutput = responseDataEvaluation(responseData, e,
 					"Dependency not fetched", null);
 			return Response.status(Status.BAD_REQUEST).entity(finalOutput).header("Access-Control-Allow-Origin", "*")
 					.build();
-		} catch (PhrescoPomException e) {
-			ResponseInfo<PossibleValues> finalOutput = responseDataEvaluation(responseData, e,
-					"Dependency not fetched", null);
-			return Response.status(Status.BAD_REQUEST).entity(finalOutput).header("Access-Control-Allow-Origin", "*")
-					.build();
 		}
+	}
+
+	private void updateDynamicValuesToWathcer(String goal, String key, ApplicationInfo applicationInfo, Map<String, DependantParameters> watcherMap,
+			Parameter dependentParameter, List<Value> dependentPossibleValues) {
+		if (CollectionUtils.isNotEmpty(dependentPossibleValues) && watcherMap.containsKey(key)) {
+		    DependantParameters dependantParameters = (DependantParameters) watcherMap.get(key);
+		    dependantParameters.setValue(dependentPossibleValues.get(0).getValue());
+		} else {
+			DependantParameters dependantParameters = (DependantParameters) watcherMap.get(key);
+		    dependantParameters.setValue("");
+		}
+		if (CollectionUtils.isNotEmpty(dependentPossibleValues) && watcherMap.containsKey(dependentPossibleValues.get(0).getDependency())) {
+		    addValueDependToWatcher(watcherMap, dependentParameter.getKey(), dependentPossibleValues, "");
+		    if (CollectionUtils.isNotEmpty(dependentPossibleValues)) {
+		    	addWatcher(watcherMap, dependentParameter.getDependency(), 
+		    			dependentParameter.getKey(), dependentPossibleValues.get(0).getValue());
+		    }
+		}
+		
+		valueMap.put(applicationInfo.getId() + goal, watcherMap);
 	}
 
 	/**
@@ -451,7 +521,7 @@ public class ParameterService extends RestBase implements FrameworkConstants, Se
 	 *
 	 * @param processor the processor
 	 * @param goal the goal
-	 * @param key the key
+	 * @param dependencyKey the key
 	 * @param value the value
 	 * @param appInfo the app info
 	 * @param customerId the customer id
@@ -460,17 +530,14 @@ public class ParameterService extends RestBase implements FrameworkConstants, Se
 	 * @throws PhrescoException the phresco exception
 	 * @throws PhrescoPomException the phresco pom exception
 	 */
-	private static PossibleValues getPossibleValues(MojoProcessor processor, String goal, String key, String value,
+	private PossibleValues getPossibleValues(MojoProcessor processor, String goal, String dependencyKey, String value,
 			ApplicationInfo appInfo, String customerId, String appDirName) throws PhrescoException, PhrescoPomException {
 		if (Constants.PHASE_FUNCTIONAL_TEST.equals(goal)) {
 			String functionalTestFramework = FrameworkServiceUtil.getFunctionalTestFramework(appDirName);
 			goal = goal + HYPHEN + functionalTestFramework;
 		}
-		Parameter parameter = processor.getParameter(goal, key);
-		if (StringUtils.isNotEmpty(parameter.getDependency())) {
-			parameter = processor.getParameter(goal, parameter.getDependency());
-		}
-		if ("DynamicParameter".equals(parameter.getType())) {
+		Parameter parameter = processor.getParameter(goal, dependencyKey);
+		if (TYPE_DYNAMIC_PARAMETER.equalsIgnoreCase(parameter.getType())) {
 			Dependency dependency = parameter.getDynamicParameter().getDependencies().getDependency();
 			String clazz = parameter.getDynamicParameter().getClazz();
 			List<ArtifactGroup> plugins = new ArrayList<ArtifactGroup>();
@@ -484,13 +551,19 @@ public class ParameterService extends RestBase implements FrameworkConstants, Se
 			RepoInfo repoInfo = new RepoInfo();
 			PhrescoDynamicLoader loader = new PhrescoDynamicLoader(repoInfo, plugins);
 			DynamicParameter dynamicParameter = loader.getDynamicParameter(clazz);
-			Map<String, Object> map = new HashMap<String, Object>();
-			map.put(DynamicParameter.KEY_APP_INFO, appInfo);
-			map.put(DynamicParameter.KEY_MOJO, processor);
-			map.put(DynamicParameter.KEY_CUSTOMER_ID, customerId);
-			map.put(key, value);
-			try {
-				PossibleValues values = dynamicParameter.getValues(map);
+			Map<String, DependantParameters> map = valueMap.get(appInfo.getId() + goal);
+			DependantParameters currentParameters = map.get(dependencyKey);
+			if (currentParameters == null) {
+	            currentParameters = new DependantParameters();
+	        }
+	        currentParameters.setValue(value);
+	        map.put(dependencyKey, currentParameters);
+	        
+	        Map<String, Object> constructMapForDynVals = constructMapForDynVals(appInfo, map, parameter.getKey(), customerId);
+	        constructMapForDynVals.put(DynamicParameter.KEY_MOJO, processor);
+	        
+	        try {
+				PossibleValues values = dynamicParameter.getValues(constructMapForDynVals);
 				return values;
 
 			} catch (IOException e) {
@@ -505,6 +578,319 @@ public class ParameterService extends RestBase implements FrameworkConstants, Se
 		}
 		return null;
 	}
+	
+	/**
+	 * To setPossibleValuesInReq
+	 * @param mojo
+	 * @param appInfo
+	 * @param parameters
+	 * @param watcherMap
+	 * @param goal
+	 * @throws PhrescoException
+	 */
+	private void setPossibleValuesInReq(MojoProcessor mojo, ApplicationInfo appInfo, List<Parameter> parameters, 
+    		Map<String, DependantParameters> watcherMap, String goal, String userId, String customerId) throws PhrescoException {
+        try {
+            if (CollectionUtils.isNotEmpty(parameters)) {
+                StringBuilder paramBuilder = new StringBuilder();
+				ServiceManager serviceManager = CONTEXT_MANAGER_MAP.get(userId);
+                for (Parameter parameter : parameters) {
+                    String parameterKey = parameter.getKey();
+                    if (TYPE_DYNAMIC_PARAMETER.equalsIgnoreCase(parameter.getType()) && parameter.getDynamicParameter() != null) { 
+                    	//Dynamic parameter
+                        Map<String, Object> constructMapForDynVals = constructMapForDynVals(appInfo, watcherMap, parameterKey, customerId);
+                        constructMapForDynVals.put(REQ_MOJO, mojo);
+                        constructMapForDynVals.put(REQ_GOAL, goal);
+						constructMapForDynVals.put(REQ_SERVICE_MANAGER, serviceManager);
+                        // Get the values from the dynamic parameter class
+                        List<Value> dynParamPossibleValues = getDynamicPossibleValues(constructMapForDynVals, parameter, userId, customerId);
+                        addValueDependToWatcher(watcherMap, parameterKey, dynParamPossibleValues, parameter.getValue());
+                        if (watcherMap.containsKey(parameterKey)) {
+                            DependantParameters dependantParameters = (DependantParameters) watcherMap.get(parameterKey);
+                            if (CollectionUtils.isNotEmpty(dynParamPossibleValues)) {
+                            	if (StringUtils.isNotEmpty(parameter.getValue())) {
+                                	dependantParameters.setValue(parameter.getValue());
+                                } else {
+                                	dependantParameters.setValue(dynParamPossibleValues.get(0).getValue());
+                                }
+                            }
+                        }
+                        
+                        PossibleValues possibleValues = new PossibleValues();
+                        possibleValues.getValue().addAll(dynParamPossibleValues);
+                        parameter.setPossibleValues(possibleValues);
+                        if (CollectionUtils.isNotEmpty(dynParamPossibleValues)) {
+                        	if (StringUtils.isNotEmpty(parameter.getValue())) {
+                        		addWatcher(watcherMap, parameter.getDependency(), parameterKey, parameter.getValue());
+                        	} else {
+                        		addWatcher(watcherMap, parameter.getDependency(), parameterKey, dynParamPossibleValues.get(0).getValue());
+                        	}
+                        }
+                        if (StringUtils.isNotEmpty(paramBuilder.toString())) {
+                            paramBuilder.append("&");
+                        }
+                        paramBuilder.append(parameterKey);
+                        paramBuilder.append("=");
+                        if (CollectionUtils.isNotEmpty(dynParamPossibleValues)) {
+                            paramBuilder.append(dynParamPossibleValues.get(0).getValue());
+                        }
+                    } else if (parameter.getPossibleValues() != null) { //Possible values
+                        List<Value> values = parameter.getPossibleValues().getValue();
+                        
+                        if (watcherMap.containsKey(parameterKey)) {
+                            DependantParameters dependantParameters = (DependantParameters) watcherMap.get(parameterKey);
+                            if (StringUtils.isNotEmpty(parameter.getValue())) {
+                            	dependantParameters.setValue(parameter.getValue());
+                            } else {
+                            	dependantParameters.setValue(values.get(0).getValue());
+                            }
+                        }
+                        
+                        addValueDependToWatcher(watcherMap, parameterKey, values, parameter.getValue());
+                        if (CollectionUtils.isNotEmpty(values)) {
+                        	if (StringUtils.isNotEmpty(parameter.getValue())) {
+                            	addWatcher(watcherMap, parameter.getDependency(), parameterKey, parameter.getValue());
+                            } else {
+                            	addWatcher(watcherMap, parameter.getDependency(), parameterKey, values.get(0).getKey());
+                            }
+                        }
+                        
+                        if (StringUtils.isNotEmpty(paramBuilder.toString())) {
+                            paramBuilder.append("&");
+                        }
+                        paramBuilder.append(parameterKey);
+                        paramBuilder.append("=");
+                        paramBuilder.append("");
+                    } else if (parameter.getType().equalsIgnoreCase(TYPE_BOOLEAN) && StringUtils.isNotEmpty(parameter.getDependency())) {
+                    	//Checkbox
+                        addWatcher(watcherMap, parameter.getDependency(), parameterKey, parameter.getValue());
+                        if (StringUtils.isNotEmpty(paramBuilder.toString())) {
+                            paramBuilder.append("&");
+                        }
+                        paramBuilder.append(parameterKey);
+                        paramBuilder.append("=");
+                        paramBuilder.append("");
+                    } else if(TYPE_DYNAMIC_PAGE_PARAMETER.equalsIgnoreCase(parameter.getType())) {
+            			Map<String, Object> dynamicPageParameterMap = getDynamicPageParameter(appInfo, watcherMap, parameter, userId, customerId);
+            			List<? extends Object> dynamicPageParameter = (List<? extends Object>) dynamicPageParameterMap.get(REQ_VALUES_FROM_JSON);
+            			String className = (String) dynamicPageParameterMap.get(REQ_CLASS_NAME);
+            		}
+                }
+                
+                valueMap.put(appInfo.getId() + goal, watcherMap);
+            }
+        } catch (Exception e) {
+        	e.printStackTrace();
+        }
+    }
+	
+	/**
+	 * gets the DynamicPageParameter
+	 * @param appInfo
+	 * @param watcherMap
+	 * @param parameter
+	 * @return
+	 * @throws PhrescoException
+	 */
+	private Map<String, Object> getDynamicPageParameter(ApplicationInfo appInfo, Map<String, DependantParameters> watcherMap, Parameter parameter, 
+			String userId, String customerId) throws PhrescoException {
+		String parameterKey = parameter.getKey();
+		Map<String, Object> paramsMap = constructMapForDynVals(appInfo, watcherMap, parameterKey, customerId);
+		String className = parameter.getDynamicParameter().getClazz();
+		DynamicPageParameter dynamicPageParameter;
+		PhrescoDynamicLoader phrescoDynamicLoader = pdlMap.get(customerId);
+		if (MapUtils.isNotEmpty(pdlMap) && phrescoDynamicLoader != null) {
+			dynamicPageParameter = phrescoDynamicLoader.getDynamicPageParameter(className);
+		} else {
+			//To get repo info from Customer object
+			ServiceManager serviceManager = CONTEXT_MANAGER_MAP.get(userId);
+			Customer customer = serviceManager.getCustomer(customerId);
+			RepoInfo repoInfo = customer.getRepoInfo();
+			//To set groupid,artfid,type infos to List<ArtifactGroup>
+			List<ArtifactGroup> artifactGroups = new ArrayList<ArtifactGroup>();
+			ArtifactGroup artifactGroup = new ArtifactGroup();
+			artifactGroup.setGroupId(parameter.getDynamicParameter().getDependencies().getDependency().getGroupId());
+			artifactGroup.setArtifactId(parameter.getDynamicParameter().getDependencies().getDependency().getArtifactId());
+			artifactGroup.setPackaging(parameter.getDynamicParameter().getDependencies().getDependency().getType());
+			//to set version
+			List<ArtifactInfo> artifactInfos = new ArrayList<ArtifactInfo>();
+	        ArtifactInfo artifactInfo = new ArtifactInfo();
+	        artifactInfo.setVersion(parameter.getDynamicParameter().getDependencies().getDependency().getVersion());
+			artifactInfos.add(artifactInfo);
+	        artifactGroup.setVersions(artifactInfos);
+			artifactGroups.add(artifactGroup);
+			
+			//dynamically loads specified Class
+			phrescoDynamicLoader = new PhrescoDynamicLoader(repoInfo, artifactGroups);
+			dynamicPageParameter = phrescoDynamicLoader.getDynamicPageParameter(className);
+			pdlMap.put(customerId, phrescoDynamicLoader);
+		}
+		
+		return dynamicPageParameter.getObjects(paramsMap);
+	}
+	
+	/**
+	 * constructMapForDynVals
+	 * @param appInfo
+	 * @param watcherMap
+	 * @param parameterKey
+	 * @return
+	 */
+	private Map<String, Object> constructMapForDynVals(ApplicationInfo appInfo, Map<String, DependantParameters> watcherMap, String parameterKey, String customerId) {
+        Map<String, Object> paramMap = new HashMap<String, Object>(8);
+        DependantParameters dependantParameters = watcherMap.get(parameterKey);
+        if (dependantParameters != null) {
+            paramMap.putAll(getDependantParameters(dependantParameters.getParentMap(), watcherMap));
+        }
+        paramMap.put(DynamicParameter.KEY_APP_INFO, appInfo);
+        paramMap.put(REQ_CUSTOMER_ID, customerId);
+        /*if (StringUtils.isNotEmpty(getReqParameter(BUILD_NUMBER))) {
+        	paramMap.put(DynamicParameter.KEY_BUILD_NO, getReqParameter(BUILD_NUMBER));
+        }*/
+        
+        return paramMap;
+    }
+	
+	/**
+	 * gets the DynamicPossibleValues
+	 * @param watcherMap
+	 * @param parameter
+	 * @return
+	 * @throws PhrescoException
+	 */
+	private List<Value> getDynamicPossibleValues(Map<String, Object> watcherMap, Parameter parameter, String userId, String customerId) throws PhrescoException {
+        PossibleValues possibleValue = getDynamicValues(watcherMap, parameter, userId, customerId);
+        List<Value> possibleValues = (List<Value>) possibleValue.getValue();
+        return possibleValues;
+    }
+	
+	/**
+	 * gets the DynamicValues
+	 * @param watcherMap
+	 * @param parameter
+	 * @return
+	 * @throws PhrescoException
+	 */
+	private PossibleValues getDynamicValues(Map<String, Object> watcherMap, Parameter parameter, String userId, String customerId) throws PhrescoException {
+		try {
+			String className = parameter.getDynamicParameter().getClazz();
+			String grpId = parameter.getDynamicParameter().getDependencies().getDependency().getGroupId();
+			String artfId = parameter.getDynamicParameter().getDependencies().getDependency().getArtifactId();
+			String jarVersion = parameter.getDynamicParameter().getDependencies().getDependency().getVersion();
+			DynamicParameter dynamicParameter;
+			PhrescoDynamicLoader phrescoDynamicLoader = pdlMap.get(customerId + grpId + artfId + jarVersion);
+			if (MapUtils.isNotEmpty(pdlMap) && phrescoDynamicLoader != null) {
+				dynamicParameter = phrescoDynamicLoader.getDynamicParameter(className);
+			} else {
+				//To get repo info from Customer object
+				ServiceManager serviceManager = CONTEXT_MANAGER_MAP.get(userId);
+				Customer customer = serviceManager.getCustomer(customerId);
+				RepoInfo repoInfo = customer.getRepoInfo();
+				//To set groupid,artfid,type infos to List<ArtifactGroup>
+				List<ArtifactGroup> artifactGroups = new ArrayList<ArtifactGroup>();
+				ArtifactGroup artifactGroup = new ArtifactGroup();
+				artifactGroup.setGroupId(grpId);
+				artifactGroup.setArtifactId(artfId);
+				artifactGroup.setPackaging(parameter.getDynamicParameter().getDependencies().getDependency().getType());
+				//to set version
+				List<ArtifactInfo> artifactInfos = new ArrayList<ArtifactInfo>();
+		        ArtifactInfo artifactInfo = new ArtifactInfo();
+		        artifactInfo.setVersion(jarVersion);
+				artifactInfos.add(artifactInfo);
+		        artifactGroup.setVersions(artifactInfos);
+				artifactGroups.add(artifactGroup);
+				
+				//dynamically loads specified Class
+				phrescoDynamicLoader = new PhrescoDynamicLoader(repoInfo, artifactGroups);
+				dynamicParameter = phrescoDynamicLoader.getDynamicParameter(className);
+				pdlMap.put(customerId + grpId + artfId + jarVersion, phrescoDynamicLoader);
+			}
+			
+			return dynamicParameter.getValues(watcherMap);
+		} catch (Exception e) {
+			throw new PhrescoException(e);
+		}
+	}
+	
+	/**
+	 * To addValueDependToWatcher
+	 * @param watcherMap
+	 * @param parameterKey
+	 * @param values
+	 * @param previousValue
+	 */
+	private void addValueDependToWatcher(Map<String, DependantParameters> watcherMap, String parameterKey, List<Value> values, String previousValue) {
+		for (Value value : values) {
+		    if (StringUtils.isNotEmpty(value.getDependency())) {
+		    	if (StringUtils.isNotEmpty(previousValue)) {
+		    		addWatcher(watcherMap, value.getDependency(), parameterKey, previousValue);
+		    	} else {
+		    		addWatcher(watcherMap, value.getDependency(), parameterKey, value.getKey());
+		    	}
+		    }
+		}
+	}
+	
+	/**
+	 * To addWatcher
+	 * @param watcherMap
+	 * @param dependency
+	 * @param parameterKey
+	 * @param parameterValue
+	 */
+	private void addWatcher(Map<String, DependantParameters> watcherMap, String dependency, String parameterKey, String parameterValue) {
+        if (StringUtils.isNotEmpty(dependency)) {
+            List<String> dependencyKeys = Arrays.asList(dependency.split(CSV_PATTERN));
+            for (String dependentKey : dependencyKeys) {
+            	DependantParameters dependantParameters;
+                if (watcherMap.containsKey(dependentKey)) {
+                    dependantParameters = (DependantParameters) watcherMap.get(dependentKey);
+                } else {
+                    dependantParameters = new DependantParameters();
+                }
+                dependantParameters.getParentMap().put(parameterKey, parameterValue);
+                watcherMap.put(dependentKey, dependantParameters);
+            }
+        }
+       
+        addParentToWatcher(watcherMap, parameterKey, parameterValue);
+    }
+	
+	/**
+	 * To addParentToWatcher
+	 * @param watcherMap
+	 * @param parameterKey
+	 * @param parameterValue
+	 */
+	private void addParentToWatcher(Map<String, DependantParameters> watcherMap, String parameterKey, String parameterValue) {
+
+		DependantParameters dependantParameters;
+		if (watcherMap.containsKey(parameterKey)) {
+			dependantParameters = (DependantParameters) watcherMap.get(parameterKey);
+		} else {
+			dependantParameters = new DependantParameters();
+		}
+		dependantParameters.setValue(parameterValue);
+		watcherMap.put(parameterKey, dependantParameters);
+	}
+	
+	/**
+	 * Gets the dependent parameter
+	 * @param parentMap
+	 * @param watcherMap
+	 * @return
+	 */
+	private Map<String, Object> getDependantParameters(Map<String, String> parentMap, Map<String, DependantParameters> watcherMap) {
+        Map<String, Object> paramMap = new HashMap<String, Object>(8);
+        Set<String> keySet = parentMap.keySet();
+        for (String key : keySet) {
+            if (watcherMap.get(key) != null) {
+                String value = ((DependantParameters) watcherMap.get(key)).getValue();
+                paramMap.put(key, value);
+            }
+        }
+        return paramMap;
+    }
 
 	/**
 	 * Gets the info file dir.

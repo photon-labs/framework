@@ -421,9 +421,9 @@ public class QualityUtil {
 		bufferedWriter.close();
 	}
 
-	public static Map<String, String> getDeviceNames(Document document)  throws Exception {
+	public static List<String> getDeviceNames(Document document)  throws Exception {
 		NodeList nodeList = org.apache.xpath.XPathAPI.selectNodeList(document, "/*/*");
-		Map<String, String> deviceList = new LinkedHashMap<String, String>(100);
+		List<String> deviceList = new ArrayList<String>();
 		for (int i = 0; i < nodeList.getLength(); i++) {
 			Node node = nodeList.item(i);
 			NamedNodeMap nameNodeMap = node.getAttributes();
@@ -433,7 +433,7 @@ public class QualityUtil {
 			deviceId = idAttr.getNodeValue();
 			Node nameAttr = nameNodeMap.getNamedItem(FrameworkConstants.ATTR_NAME);
 			deviceName = nameAttr.getNodeValue();
-			deviceList.put(deviceId, deviceName);
+			deviceList.add(deviceId + "#SEP#" + deviceName);
 		}
 		return deviceList;
 	}

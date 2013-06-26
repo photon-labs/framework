@@ -1745,7 +1745,7 @@ select[name="builtmyself"] {
 }
 
  .create_proj table tr td select, .bootstrap-select .btn {
-	width: 186px; 
+	width: 135px; 
  }
 
 select[name="builtmyself"] {
@@ -3226,15 +3226,20 @@ html>body tbody.scrollContent {
 
 /* *************************************************************** STYLES FOR DYNAMIC PARAMETER STARTS ************************************************************************************ */
 
-.dynamic_cont ul {
+.dynamic_cont .row {
 	padding:0;
 	margin:0;
 	list-style:none;
 }
 
-.dynamic_cont ul li {
+.dynamic_cont ul li.checkPos {
+	border: solid 1px red;
+    margin-top: -35px;
+}
+
+.dynamic_cont .row .ctrl {
 	float:left;
-	width:150px;
+	width:143px;
 	margin-right:10px;
 }
 
@@ -3242,15 +3247,17 @@ html>body tbody.scrollContent {
 	margin-right:0;
 }
 
-.dynamic_cont ul li input[type="text"] {
-	width:120px !important;
-}
-
-.dynamic_cont ul li select {
+.dynamic_cont input[type="text"] {
 	width:135px !important;
 }
 
+.dynamic_cont select {
+	width:135px !important;
+}
 
+.singleColumn {
+	width: 200px !important;
+}	
 /* *************************************************************** STYLES FOR QUALITY_PERFORMANCE TEST PAGE ************************************************************************************ */
 
 
@@ -3747,7 +3754,7 @@ padding: 4px 6px;
 vertical-align: middle;
 }
 
-.popuploading{
+.popuploading, .dynamicPopupLoading {
 	background-image : url(../../images/helios/loading.gif);
 	background-repeat : no-repeat;
 	position : absolute;

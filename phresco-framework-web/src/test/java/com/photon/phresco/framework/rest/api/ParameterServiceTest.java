@@ -23,7 +23,7 @@ import junit.framework.Assert;
 
 import org.junit.Test;
 
-public class ParameterServiceTest extends RestBaseTest {
+public class ParameterServiceTest extends LoginServiceTest {
 	
 	ParameterService parameterService = new ParameterService();
 	
@@ -33,10 +33,26 @@ public class ParameterServiceTest extends RestBaseTest {
 	
 	@Test
 	public void getDynamicParameter() {
-//		String appDirName = "sample3-HTML5-JQuery-Mobile-Widget";
 		String goal = "package";
-		String phase = "ci";
-		Response response = parameterService.getParameter(appDirName, goal, phase);
+		String phase = "package";
+		
+		Response response = parameterService.getParameter(appDirName, goal, phase, userId, customerId);
 		Assert.assertEquals(200, response.getStatus());
+	}
+	
+	@Test
+	public void updateWatcher() {
+		String goal = "package";
+		String key = "showSettings";
+		String value = "true";
+		parameterService.updateWatcher(appDirName, goal, key, value);
+	}
+	
+	@Test 
+	public void dependency() {
+		String goal = "package";
+		String phase = "package";
+		String key = "environmentName";
+		parameterService.getDependencyPossibleValue(appDirName, customerId, userId, goal, key, phase);
 	}
 }

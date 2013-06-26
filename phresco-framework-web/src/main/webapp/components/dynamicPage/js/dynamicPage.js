@@ -33,13 +33,13 @@ define(["framework/widgetWithTemplate", "dynamicPage/listener/dynamicPageListene
 		 *
 		 * @element: Element as the result of the template + data binding
 		 */
-		postRender : function(element) {			
+		postRender : function(element) {	
 		},
 		
 		
-		getHtml : function(showLoading, callback){
+		getHtml : function(whereToRender, widgetObj, openccObj){
 			var self = this;
-			self.dynamicPageListener.getServiceContent(showLoading, callback);
+			self.dynamicPageListener.getServiceContent(whereToRender, widgetObj, openccObj);
 		},
 		
 		showParameters : function() {

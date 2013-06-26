@@ -100,13 +100,17 @@ define(["codequality/listener/codequalityListener"], function() {
 			$(".dyn_popup").hide();
 			
 			$("#codeAnalysis").click(function() {
-				self.dynamicpage.getHtml(false, function(response){
+				 var whereToRender = $('#code_popup ul');
+	                commonVariables.goal = "validate-code";
+	                commonVariables.phase = "validate-code";
+	                self.dynamicpage.getHtml(whereToRender, this, 'code_popup');
+				/*self.dynamicpage.getHtml(false, function(response){
 					$("#dynamicContent").html(response);
 					self.multiselect();
 					self.dynamicpage.showParameters();
 					self.dynamicPageListener.controlEvent();
 				});			
-				self.opencc(this,'code_popup');
+				self.opencc(this,'code_popup');*/
 			});
 			
 			$("#validate").click(function() {

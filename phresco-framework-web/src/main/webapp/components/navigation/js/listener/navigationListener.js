@@ -250,6 +250,18 @@ define(["navigation/api/navigationAPI"], function() {
 						}
 						
 						break;
+						
+					case commonVariables.performanceTest : 
+						if (self.performanceTest == null) {
+							require(["performanceTest/performanceTest"], function() {
+								self.performanceTest = new Clazz.com.components.performanceTest.js.PerformanceTest();
+								callback(self.performanceTest);	
+							});
+						} else {
+							callback(self.performanceTest);	
+						}
+						break;
+						
 					case commonVariables.editConfiguration :
 						
 						if(self.editConfiguration === null){
@@ -584,6 +596,11 @@ define(["navigation/api/navigationAPI"], function() {
 				});
 			} else if (keyword === commonVariables.componentTest) {
 				self.getMyObj(commonVariables.componentTest, function(returnVal){
+					currentObj = returnVal;
+					self.myTabRenderFunction(currentObj, keyword);
+				});
+			} else if (keyword === commonVariables.performanceTest) {
+				self.getMyObj(commonVariables.performanceTest, function(returnVal){
 					currentObj = returnVal;
 					self.myTabRenderFunction(currentObj, keyword);
 				});

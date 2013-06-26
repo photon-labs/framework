@@ -11,15 +11,13 @@
 					<input type="submit" data-i18n="[value]codequality.codeanalysis.codeanalysis"  id="codeAnalysis" class="btn btn_style">
 						 <form id="codeValidateForm">
 						  <div id="code_popup" class="dyn_popup popup_btn">
-							<ul>
-									<table><tbody id="dynamicContent"></tbody></table>
-								<li>
-									<div class="flt_right">
-										<input type="button" data-i18n="[value]codequality.btn.validate" class="btn btn_style" name="validate" id="validate">
-										<input type="button" data-i18n="[value]codequality.btn.close" class="btn btn_style dyn_popup_close" name="close">
-									</div>
-								</li>
-							</ul>
+								<ul class="row dynamicControls">
+                       			</ul>
+                        		<div class="dynamicPopupLoading" style="display:none;">&nbsp</div>
+								<div class="flt_right">
+									<input type="button" data-i18n="[value]codequality.btn.validate" class="btn btn_style" name="validate" id="validate">
+									<input type="button" data-i18n="[value]codequality.btn.close" class="btn btn_style dyn_popup_close" name="close">
+								</div>
 						  </div>
 						</form>	
 				 </div>

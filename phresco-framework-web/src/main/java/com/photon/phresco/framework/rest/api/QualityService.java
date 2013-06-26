@@ -1320,6 +1320,7 @@ public class QualityService extends RestBase implements ServiceConstants, Framew
             		testAgainsts.add(value.getKey());
 				}
             }
+            
             boolean resutlAvailable = testResultAvail(appDirName, testAgainsts, Constants.PHASE_PERFORMANCE_TEST);
             boolean showDevice = Boolean.parseBoolean(getPerformanceTestShowDevice(appDirName));
             List<String> testResultFiles = new ArrayList<String>();
@@ -1327,17 +1328,18 @@ public class QualityService extends RestBase implements ServiceConstants, Framew
             	testResultFiles = testResultFiles(appDirName, testAgainsts, showDevice, testResultFiles, Constants.PHASE_PERFORMANCE_TEST);
             }
             
-            Map<String, String> deviceMap = new HashMap<String, String>();
+            List<String> devices = new ArrayList<String>();
             if (showDevice && CollectionUtils.isNotEmpty(testResultFiles) && StringUtils.isNotEmpty(testResultFiles.get(0))) { 
         		String testResultPath = getLoadOrPerformanceTestResultPath(appDirName, "", testResultFiles.get(0), Constants.PHASE_PERFORMANCE_TEST);
         		Document document = getDocument(new File(testResultPath)); 
-        		deviceMap = QualityUtil.getDeviceNames(document);
+        		devices = QualityUtil.getDeviceNames(document);
             }
             
-            performanceMap.put(RESUTL_AVAILABLE, resutlAvailable);
+            performanceMap.put(TEST_AGAINSTS, testAgainsts);
+            performanceMap.put(RESULT_AVAILABLE, resutlAvailable);
             performanceMap.put(TEST_RESULT_FILES, testResultFiles);
             performanceMap.put(SHOW_DEVICE, showDevice);
-            performanceMap.put(DEVICES, deviceMap);
+            performanceMap.put(DEVICES, devices);
             
 			ResponseInfo<List<String>> finalOutput = responseDataEvaluation(responseData, null,
 					PARAMETER_RETURNED_SUCCESSFULLY, performanceMap);
@@ -1368,13 +1370,20 @@ public class QualityService extends RestBase implements ServiceConstants, Framew
         	}
         	
             for (String testAgainst: testAgainsts) {
-                StringBuilder sb = new StringBuilder(FrameworkServiceUtil.getApplicationHome(appDirName));
+            	StringBuilder sb = new StringBuilder(FrameworkServiceUtil.getApplicationHome(appDirName));
+            	if (Constants.PHASE_PERFORMANCE_TEST.equals(action)) {
+            		reportDir =FrameworkServiceUtil.getPerformanceTestReportDir(appDirName);
+            	} else {
+            		reportDir = FrameworkServiceUtil.getLoadTestReportDir(appDirName);
+            	}
+               
                 if (StringUtils.isNotEmpty(reportDir) && StringUtils.isNotEmpty(testAgainst)) {
                     Pattern p = Pattern.compile(TEST_DIRECTORY);
                     Matcher matcher = p.matcher(reportDir);
                     reportDir = matcher.replaceAll(testAgainst);
                     sb.append(reportDir); 
                 }
+                
                 File file = new File(sb.toString());
                 if (StringUtils.isNotEmpty(resultExtension)) {
                 	File[] children = file.listFiles(new XmlNameFileFilter(resultExtension));
@@ -1520,11 +1529,11 @@ public class QualityService extends RestBase implements ServiceConstants, Framew
 				}
             }
             
-            ResponseInfo<Map<String, PerformanceTestResult>> finalOutput = responseDataEvaluation(responseData, null,
+            ResponseInfo<List<PerformanceTestResult>> finalOutput = responseDataEvaluation(responseData, null,
 					PARAMETER_RETURNED_SUCCESSFULLY, performanceTestResults);
 			return Response.ok(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, "*").build();
 		} catch (Exception e) {
-			ResponseInfo<List<String>> finalOutput = responseDataEvaluation(responseData, e,
+			ResponseInfo<List<PerformanceTestResult>> finalOutput = responseDataEvaluation(responseData, e,
 					UNABLE_TO_GET_PERFORMANCE_TEST_RESULTS, null);
 			return Response.status(Status.BAD_REQUEST).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, "*")
 					.build();
@@ -1611,7 +1620,7 @@ public class QualityService extends RestBase implements ServiceConstants, Framew
             	testResultFiles = testResultFiles(appDirName, testAgainsts, false, testResultFiles, Constants.PHASE_LOAD_TEST);
             }
             
-            loadMap.put(RESUTL_AVAILABLE, resutlAvailable);
+            loadMap.put(RESULT_AVAILABLE, resutlAvailable);
             loadMap.put(TEST_RESULT_FILES, testResultFiles);
             
 			ResponseInfo<List<String>> finalOutput = responseDataEvaluation(responseData, null,

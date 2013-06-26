@@ -77,25 +77,6 @@ define(["build/listener/buildListener"], function() {
 		preRender: function(whereToRender, renderFunction){
 			var self = this;
 			self.buildListener.getBuildInfo(self.buildListener.getRequestHeader("", '', 'getList'), function(response) {
-				commonVariables.goal = "package";
-				if(self.dynamicpage === null){
-					commonVariables.navListener.getMyObj(commonVariables.dynamicPage, function(retVal){
-						self.dynamicpage = retVal;
-						self.dynamicPageListener = self.dynamicpage.dynamicPageListener;
-						self.loadDynamicContent(whereToRender, renderFunction, response);
-					});
-				}else{
-					self.loadDynamicContent(whereToRender, renderFunction, response);
-				}
-			});
-		},
-		
-		loadDynamicContent : function(whereToRender, renderFunction, response){
-			var self = this;
-			self.dynamicpage.getHtml(false, function(callbackVal){
-				self.generateBuildContent = callbackVal;
-				var userPermissions = JSON.parse(self.buildListener.buildAPI.localVal.getSession('userPermissions'));
-				response.userPermissions = userPermissions;
 				renderFunction(response, whereToRender);
 			});
 		},
@@ -108,9 +89,8 @@ define(["build/listener/buildListener"], function() {
 		 */
 		postRender : function(element) {
 			var self = this;
-			commonVariables.navListener.showHideTechOptions();
-			$("tbody[name='dynamicContent']").html(self.generateBuildContent);
-			$("tbody[name='dynamicContent']").find(".selectpicker").selectpicker();
+            
+			$("#build_genbuild ul").find(".selectpicker").selectpicker();
 			self.loadPostContent();
 			
 			$('#logContent').html(self.logContent);
@@ -123,12 +103,7 @@ define(["build/listener/buildListener"], function() {
 				commonVariables.navListener.getMyObj(commonVariables.dynamicPage, function(retVal){
 					self.dynamicPage = retVal;
 					self.dynamicPageListener = self.dynamicPage.dynamicPageListener;
-					self.dynamicpage.showParameters();
-					self.dynamicPageListener.controlEvent();					
 				});
-			}else{
-				self.dynamicpage.showParameters();
-				self.dynamicPageListener.controlEvent();
 			}
 		},
 
@@ -146,7 +121,11 @@ define(["build/listener/buildListener"], function() {
 			
 			$("input[name=build_genbuild]").unbind("click");
 			$("input[name=build_genbuild]").click(function() {
-				self.opencc(this, $(this).attr('name'));
+                var whereToRender = $('#build_genbuild ul');
+                commonVariables.goal = "package";
+                commonVariables.phase = "package";
+                //self.dynamicpage.getHtml(whereToRender, widgetObject, openccObject);
+                self.dynamicpage.getHtml(whereToRender, this, $(this).attr('name'));
 			});
 			
 			$("input[name=build_minifier]").unbind("click");
@@ -160,7 +139,6 @@ define(["build/listener/buildListener"], function() {
 			
 			$("img[name=downloadBuild]").click(function(){
 				self.onDownloadEvent.dispatch($(this).parent().parent().siblings(":first").text(), function(response){
-					console.info('download',response);
 				});
 			});
 			
@@ -171,7 +149,6 @@ define(["build/listener/buildListener"], function() {
 			
 			$("input[name=deploy]").click(function(){
 				self.onDeployEvent.dispatch(function(response){
-					console.info('deploy',response);
 				});
 			});
 			
@@ -193,7 +170,6 @@ define(["build/listener/buildListener"], function() {
 			});
 			
 			$("#runSource").click(function(){
-				console.info("Build run clicked");
 			});
 			
 			$(".tooltiptop").unbind("click");

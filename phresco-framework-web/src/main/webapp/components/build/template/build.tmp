@@ -65,22 +65,18 @@
 			<input id="stop" type="submit" data-i18n="[value]build.label.stop" class="btn btn_style_off">
 			<input id="restart" type="submit" data-i18n="[value]build.label.restart" class="btn btn_style_off">
             <div class="build_genbuild">
-            	{{#if userPermissions.manageBuilds}}
-                	<input type="submit" data-i18n="[value]build.label.generatebuild" name="build_genbuild" class="btn btn_style">
-            	{{else}}
-            		<input type="button" data-i18n="[value]build.label.generatebuild" class="btn btn_style"  disabled>
-            	{{/if}}
-                      <div id="build_genbuild" class="dyn_popup" style="display:none;">
-						<form name="buildForm">
-							<table class="table" cellpadding="0" cellspacing="0" border="0">
-								<tbody name="dynamicContent"></tbody>
-							</table>
-						</form>
-                         <div class="flt_right">
+                <input type="submit" data-i18n="[value]build.label.generatebuild" name="build_genbuild" class="btn btn_style">
+                <form name="buildForm">
+                    <div id="build_genbuild" class="dyn_popup dynamic_cont" style="display:none;width:310px;">
+                        <ul class="row dynamicControls">
+                        </ul>
+                        <div class="dynamicPopupLoading" style="display:none;">&nbsp</div>
+                        <div class="flt_right">
                             <input id="buildRun" type="button" value="Build" class="btn btn_style dyn_popup_close">
                             <input type="button" value="Close" class="btn btn_style dyn_popup_close">
-                         </div>
-                      </div>
+                        </div>
+                    </div>
+                </form>
              </div>
              <div class="build_minifier">
                <input id="minifier" type="submit" data-i18n="[value]build.label.minifer"  name="build_minifier" class="btn btn_style">
@@ -145,11 +141,7 @@
 							</td>
 							<td>
 								<a href="#">
-									{{#if ../userPermissions.manageBuilds}}
-										<img name="deployBuild" src="themes/default/images/helios/deploy_icon.png" width="16" height="20" border="0" alt="">
-									{{else}}
-										<img src="themes/default/images/helios/deploy_icon_off.png" width="16" height="20" border="0" alt="">
-									{{/if}}
+									<img name="deployBuild" src="themes/default/images/helios/deploy_icon.png" width="16" height="20" border="0" alt="">
 								</a>
 								<div id="deploye_{{buildNo}}" class="dyn_popup popup_bg" style="display:none;">
 									<table class="clonetable deploy_pop" width="100%" border="0" cellspacing="0" cellpadding="0">
@@ -180,19 +172,15 @@
 								</div>
 							</td>
 							<td>
-								{{#if ../userPermissions.manageBuilds}}
-									<a name="delete_{{buildNo}}" class="tooltiptop" title="" data-placement="top" data-toggle="tooltip" href="#" data-original-title="Delete Row">
-										<img name="deleteBuild" src="themes/default/images/helios/delete_icon.png" width="16" height="20" border="0" alt="">
-									</a>
-									<div id="delete_{{buildNo}}" class="dyn_popup">Are you sure to delete this?
-										<div>
-											<input type="button" name="buildDelete" value="Delete" class="btn btn_style dyn_popup_close">
-											<input type="button" value="No" class="btn btn_style dyn_popup_close">
-										</div>
+								<a name="delete_{{buildNo}}" class="tooltiptop" title="" data-placement="top" data-toggle="tooltip" href="#" data-original-title="Delete Row">
+									<img name="deleteBuild" src="themes/default/images/helios/delete_icon.png" width="16" height="20" border="0" alt="">
+								</a>
+								<div id="delete_{{buildNo}}" class="dyn_popup">Are you sure to delete this?
+									<div>
+										<input type="button" name="buildDelete" value="Delete" class="btn btn_style dyn_popup_close">
+										<input type="button" value="No" class="btn btn_style dyn_popup_close">
 									</div>
-								{{else}}
-									<img src="themes/default/images/helios/delete_row_off.png" width="16" height="20" border="0" alt="">
-								{{/if}}
+								</div>
 							</td>
 						</tr>
 					{{/each}}
