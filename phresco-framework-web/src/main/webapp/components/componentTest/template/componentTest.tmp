@@ -3,7 +3,57 @@
     	Component Test
 	</div>
     <div class="flt_right">
-		<div class="unit_view" style="display:none;">
+		<div class="unit_view hideContent">
+			<div class="code_report_icon" id="pdfDiv">
+				<a id="pdfIcon" class="tooltiptop" title="" data-placement="bottom" data-toggle="tooltip" href="#" data-original-title="PDF Report">
+					<img src="themes/default/images/helios/code_pdf_icon.png" width="28" height="29" border="0" alt="">
+				</a>
+				<!--Pdf report popup starts here -->
+				<div id="pdf_report" class="dyn_popup hideContent">
+					<div id="noPdfReport" class="noReport"></div>
+                	<table class="table_border availablePdfRptsTbl hideContent" border="0" cellspacing="0" cellpadding="5" width="100%" id="availablePdfRptsTbl">
+                		<thead>
+                        	<tr>
+	                            <th>Existing Reports</th>
+	                            <th>Type</th>
+	                            <th>Download</th>
+	                            <th>Delete</th>
+                        	</tr>    
+                    	</thead>
+                    	<tbody id="availablePdfRptsTbdy">
+                    	    
+                   	 	</tbody>    
+                	</table>
+                	<form id="pdfReportForm">
+	                   	<table class="report_type">
+	                    	<tbody>
+	                        	<tr>
+	                            	<td>Report Type</td>
+	                            	<td>
+	                                	<select name="reportDataType">
+	                                    	<option value="detail">Detailed Report</option>
+	                                    	<option value="crisp">Overall Report</option>
+	                                	</select>
+	                            	</td>
+	                        	</tr>
+								<tr>
+	                            	<td>Pdf Report Name</td>
+		                            <td>
+		                               <input type="text" placeholder="Pdf report name" name="pdfName">
+		                            </td>
+	                        	</tr>	                        	
+	                    	</tbody>
+	                   	</table>
+	                   	<div class="popuploading" id="pdfReportLoading">&nbsp</div>
+		               	<div class="flt_right">
+		                 	<input type="button" value="Generate" class="btn btn_style" id="generatePdf">
+		                 	<input type="button" value="Close" class="btn btn_style dyn_popup_close">
+		               	</div>
+               			<input type="hidden" name="fromPage" value="component"/>
+           			</form>
+				</div>
+				<!--Pdf report popup ends here -->
+			</div>
             <span>
             	<a id="tabularView" href="#"><img src="themes/default/images/helios/quality_table_on.png" width="25" height="25" border="0" alt=""><b>Table View</b></a>
             </span>
@@ -20,20 +70,19 @@
         	{{#if userPermissions.manageTests}}
             	<input type="button" value="Test" id="componentTestBtn" class="btn btn_style">
         	{{else}}
-        		<input type="button" value="Test" class="btn btn_style" disabled>
+        		<input type="button" value="Test" id="componentTestBtn" class="btn btn_style" disabled>
         	{{/if}}
-                
-			<div id="componentTest_popup" class="dyn_popup" style="display:none;">
-				<form id="componentTestForm">
-					<table class="table" cellpadding="0" cellspacing="0" border="0">
-						<tbody id="dynamicContent"></tbody>
-					</table>
-				</form>
-                <div class="flt_right">
-                    <input type="button" value="Test" class="btn btn_style" id="runComponentTest">
-                    <input type="button" value="Close" class="btn btn_style dyn_popup_close">
+			<form id="componentTestForm">
+				<div id="componentTest_popup" class="dyn_popup hideContent dynamic_cont" style="width:310px;">
+					<ul class="row dynamicControls">
+					</ul>
+					<div class="dynamicPopupLoading" style="display:none;">&nbsp</div>
+					<div class="flt_right">
+						<input type="button" value="Test" class="btn btn_style" id="runComponentTest">
+						<input type="button" value="Close" class="btn btn_style dyn_popup_close">
+					</div>
 				</div>
-			</div>
+			</form>
 		</div>
 	</div>
 </section>

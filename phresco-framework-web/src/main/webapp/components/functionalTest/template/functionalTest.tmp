@@ -11,7 +11,7 @@
 				<!--Pdf report popup starts here -->
 				<div id="pdf_report" class="dyn_popup hideContent">
 					<div id="noPdfReport" class="noReport"></div>
-                	<table width="100%" border="0" cellspacing="0" cellpadding="5" id="availablePdfRptsTbl">
+                	<table class="table_border availablePdfRptsTbl hideContent" border="0" cellspacing="0" cellpadding="5" width="100%" id="availablePdfRptsTbl">
                 		<thead>
                         	<tr>
 	                            <th>Existing Reports</th>
@@ -41,15 +41,16 @@
 		                            <td>
 		                               <input type="text" placeholder="Pdf report name" name="pdfName">
 		                            </td>
-	                        	</tr>
+	                        	</tr>	                        	
 	                    	</tbody>
 	                   	</table>
-               		</form>
-	               	<div class="flt_right">
-	                 	<input type="button" value="Generate" class="btn btn_style" id="generatePdf">
-	                 	<input type="button" value="Close" class="btn btn_style dyn_popup_close">
-	               	</div>
-               		<input type="hidden" name="fromPage" value="functional"/>
+	                   	<div class="popuploading" id="pdfReportLoading">&nbsp</div>
+		               	<div class="flt_right">
+		                 	<input type="button" value="Generate" class="btn btn_style" id="generatePdf">
+		                 	<input type="button" value="Close" class="btn btn_style dyn_popup_close">
+		               	</div>
+               			<input type="hidden" name="fromPage" value="functional"/>
+           			</form>
 				</div>
 				<!--Pdf report popup ends here -->
 			</div>
@@ -70,7 +71,7 @@
         	<div id="startHub_popup" class="dyn_popup {{#showHide functionalFramework}}{{/showHide}}" style="display:none;">
 				<form id="startHubForm">
 					<table class="table" cellpadding="0" cellspacing="0" border="0">
-						<tbody id="startHubDynamicContent"></tbody>
+						<tbody class="scrollContent" id="startHubDynamicContent"></tbody>
 					</table>
 				</form>
                 <div class="flt_right">
@@ -83,7 +84,7 @@
         	<div id="startNode_popup" class="dyn_popup {{#showHide functionalFramework}}{{/showHide}}" style="display:none;">
 				<form id="startNodeForm">
 					<table class="table" cellpadding="0" cellspacing="0" border="0">
-						<tbody id="startNodeDynamicContent"></tbody>
+						<tbody class="scrollContent" id="startNodeDynamicContent"></tbody>
 					</table>
 				</form>
                 <div class="flt_right">
@@ -101,7 +102,7 @@
 			<div id="functionalTest_popup" class="dyn_popup hideContent">
 				<form id="functionalTestForm">
 					<table class="table" cellpadding="0" cellspacing="0" border="0">
-						<tbody id="dynamicContent"></tbody>
+						<tbody class="scrollContent" id="dynamicContent"></tbody>
 					</table>
 				</form>
                 <div class="flt_right">

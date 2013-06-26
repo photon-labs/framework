@@ -873,6 +873,28 @@ ul.nav li.dropdown:hover > .test_options{
 	border-top: medium none;
 }
 
+.availablePdfRptsTbl tbody tr td {
+	text-align: center;	
+}
+
+.unit_view #pdfReportForm table {
+	border: none !important;	
+}
+
+.unit_view #pdf_report table:first-child, .commit table:first-child {
+	margin-top: 10px;
+	border-radius:6px;
+}
+
+.unit_view form table td select {
+	width: 250px;	
+	margin-left: 10px;
+}
+
+.unit_view form table td input[type="text"] {
+	margin-left: 10px;
+}
+
 #pdf_report table:first-child, .commit table:first-child {
 	border: 1px solid #cdcdcd;
 	border-radius:6px;
@@ -2455,8 +2477,9 @@ html>body tbody.scrollContent {
 /* *************************************************************** STYLES FOR QUALITY_UNIT_GRAPH PAGE ************************************************************************************ */
 
 .graph_area {
-	width: 30%;
+	width: 55%;
 	margin: 0 auto;
+	text-align: center;
 }
 
 /* *************************************************************** STYLES FOR QUALITY_UNIT_DESC PAGE ************************************************************************************ */

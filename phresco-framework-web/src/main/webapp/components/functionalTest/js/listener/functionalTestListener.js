@@ -2,7 +2,7 @@ define(["functionalTest/api/functionalTestAPI"], function() {
 
 	Clazz.createPackage("com.components.functionalTest.js.listener");
 
-	Clazz.com.components.functionalTest.js.listener.FunctionalTestListener = Clazz.extend(Clazz.Widget, {
+	Clazz.com.components.functionalTest.js.listener.FunctionalTestListener = Clazz.extend(Clazz.WidgetWithTemplate, {
 		
 		functionalTestAPI : null,
 		testResultListener : null,
@@ -70,16 +70,34 @@ define(["functionalTest/api/functionalTestAPI"], function() {
 			commonVariables.navListener.getMyObj(commonVariables.dynamicPage, function(dynamicPageObject) {
 				self.dynamicPageListener = new Clazz.com.components.dynamicPage.js.listener.DynamicPageListener();
 				dynamicPageObject.getHtml(false, function(response) {
+					var height = $(".testSuiteTable").height();
 					if (goal == commonVariables.functionalTestGoal) {
 						$("#dynamicContent").html(response);
+						$('#functionalTest_popup').css("max-height", height - 40 + 'px');
+						$('#dynamicContent').css("max-height", height - 92 + 'px');
+						self.opencc($("#functionalTestBtn"), 'functionalTest_popup');
 					} else if (goal == commonVariables.startHubGoal) {
 						$("#startHubDynamicContent").html(response);
+						$('#startHub_popup').css("max-height", height - 40 + 'px');
+						$('#startHubDynamicContent').height("auto");
+						$('#startHubDynamicContent').css("max-height", height - 92 + 'px');
+						self.opencc($("#startHub"), 'startHub_popup');
 					} else if (goal == commonVariables.startNodeGoal) {
 						$("#startNodeDynamicContent").html(response);
+						$('#startNode_popup').css("max-height", height - 40 + 'px');
+						$('#startNodeDynamicContent').css("max-height", height - 92 + 'px');
+						$('#startNodeDynamicContent').height("auto");
+						self.opencc($("#startNode"), 'startNode_popup');
 					}
+					
 //					self.multiselect();
 					dynamicPageObject.showParameters();
 					self.dynamicPageListener.controlEvent();
+					$(".scrollContent").mCustomScrollbar({
+						autoHideScrollbar:true,
+						theme:"light-thin",
+						advanced:{ updateOnContentResize: true}
+					});
 				});
 			});
 		},

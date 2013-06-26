@@ -148,7 +148,31 @@
 		"jobTemplateListTest" : {
 			"moduleName":"jobTemplateListTest",
 			"path" : "components/ci/test/jobTemplateListTest"
-		}
+		},
 		
+		"testResult" : {
+			"moduleName":"testResult",
+			"path" : "components/testResult/js"
+		},
+		
+		"unitTest" : {
+			"moduleName":"unitTest",
+			"path" : "components/unitTest/js"
+		},
+		
+		"unitTestTest" : {
+			"moduleName":"unitTestTest",
+			"path" : "components/unitTest/test/unitTestTest"
+		},
+		
+		"componentTest" : {
+			"moduleName":"componentTest",
+			"path" : "components/componentTest/js"
+		},
+		
+		"componentTestTest" : {
+			"moduleName":"componentTestTest",
+			"path" : "components/componentTest/test/componentTestTest"
+		}
 	}
 }

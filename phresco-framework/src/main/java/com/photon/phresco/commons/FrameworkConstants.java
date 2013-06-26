@@ -692,12 +692,13 @@ public interface FrameworkConstants {
     String SESSION_ENV_NAME = "environment";
     String SESSION_PERMISSION_IDS = "sessionPermissionIds";
     String SESSION_PERMISSIONS = "sessionPermissions";
+    String SESSION_CUSTOMERS = "listOfCustomers";
     
     /*
      * Request Constants
      * Ex: REQ_XXX
      */
-    String SESSION_CUSTOMERS = "listOfCustomers";
+    String REQ_USER_ID = "userId";
     String REQ_UI_TYPE	= "uiType";
     String REQ_FAVOURITE_CONFIGS = "favouriteConfigs";
     String REQ_FAVOURITE_CONFIG_ID = "favouriteConfigId";

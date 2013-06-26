@@ -731,7 +731,6 @@ public class ActionService implements ActionServiceConstant {
 	 
 		ActionResponse response = new ActionResponse();
 		try	{
-			actionFunction.prePopulateModelData(request);
 			actionFunction.prePopulatePrintAsPDFData(request);
 			response = actionFunction.printAsPdf(request);
 		} catch (Exception e) {

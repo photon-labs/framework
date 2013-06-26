@@ -67,19 +67,14 @@ define(["componentTest/api/componentTestAPI"], function() {
 		getDynamicParams : function(thisObj, callback) {
 			var self = this;
 			commonVariables.goal = commonVariables.componentTestGoal;
+			commonVariables.phase = commonVariables.componentTestGoal;
 			commonVariables.navListener.getMyObj(commonVariables.dynamicPage, function(dynamicPageObject) {
 				self.dynamicPageListener = new Clazz.com.components.dynamicPage.js.listener.DynamicPageListener();
-				dynamicPageObject.getHtml(false, function(response) {
+				dynamicPageObject.getHtml($('.dynamicControls'), thisObj, 'componentTest_popup', function(response) {;
 					if ("No parameters available" == response) {
 						self.runComponentTest(function(responseData) {
 							callback(responseData);
 						});
-					} else {
-						$("#dynamicContent").html(response);
-	//					self.multiselect();
-						dynamicPageObject.showParameters();
-						self.dynamicPageListener.controlEvent();
-						self.opencc(thisObj, 'componentTest_popup');
 					}
 				});
 			});

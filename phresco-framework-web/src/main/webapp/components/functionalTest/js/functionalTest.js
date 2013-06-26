@@ -134,19 +134,16 @@ define(["functionalTest/listener/functionalTestListener", "testResult/listener/t
 			$("#functionalTestBtn").unbind("click");
 			$("#functionalTestBtn").click(function() {
 				self.onDynamicPageEvent.dispatch(commonVariables.functionalTestGoal);
-				self.opencc(this, 'functionalTest_popup');
 			});
 			
 			$("#startHub").unbind("click");
 			$("#startHub").click(function() {
 				self.onDynamicPageEvent.dispatch(commonVariables.startHubGoal);
-				self.opencc(this, 'startHub_popup');
 			});
 			
 			$("#startNode").unbind("click");
 			$("#startNode").click(function() {
 				self.onDynamicPageEvent.dispatch(commonVariables.startNodeGoal);
-				self.opencc(this, 'startNode_popup');
 			});
 			
 			$("#testSuites").css("display", "none");
@@ -213,8 +210,6 @@ define(["functionalTest/listener/functionalTestListener", "testResult/listener/t
 			$("#executeStartNode").click(function() {
 				self.onRunFunctionalTestEvent.dispatch("startNode");
 			});
-			
-			
 		}
 	});
 

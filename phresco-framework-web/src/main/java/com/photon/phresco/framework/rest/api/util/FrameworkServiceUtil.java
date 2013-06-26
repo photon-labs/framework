@@ -56,6 +56,22 @@ public class FrameworkServiceUtil implements Constants, FrameworkConstants {
 	 * @throws PhrescoException
 	 */
 	public static ApplicationInfo getApplicationInfo(String appDirName) throws PhrescoException {
+		try {
+			ProjectInfo projectInfo = getProjectInfo(appDirName);
+			ApplicationInfo applicationInfo = projectInfo.getAppInfos().get(0);
+			return applicationInfo;
+		} catch (JsonIOException e) {
+			throw new PhrescoException(e);
+		}
+	}
+	
+	/**
+	 * To get the project info of the given appDirName
+	 * @param appDirName
+	 * @return
+	 * @throws PhrescoException
+	 */
+	public static ProjectInfo getProjectInfo(String appDirName) throws PhrescoException {
 		StringBuilder builder  = new StringBuilder();
 		builder.append(Utility.getProjectHome())
 		.append(appDirName)
@@ -63,13 +79,11 @@ public class FrameworkServiceUtil implements Constants, FrameworkConstants {
 		.append(DOT_PHRESCO_FOLDER)
 		.append(File.separatorChar)
 		.append(PROJECT_INFO_FILE);
-		ApplicationInfo applicationInfo;
 		try {
 			BufferedReader bufferedReader = new BufferedReader(new FileReader(builder.toString()));
 			Gson gson = new Gson();
 			ProjectInfo projectInfo = gson.fromJson(bufferedReader, ProjectInfo.class);
-			applicationInfo = projectInfo.getAppInfos().get(0);
-			return applicationInfo;
+			return projectInfo;
 		} catch (JsonSyntaxException e) {
 			throw new PhrescoException(e);
 		} catch (JsonIOException e) {

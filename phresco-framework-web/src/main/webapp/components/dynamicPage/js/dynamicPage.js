@@ -37,9 +37,9 @@ define(["framework/widgetWithTemplate", "dynamicPage/listener/dynamicPageListene
 		},
 		
 		
-		getHtml : function(whereToRender, widgetObj, openccObj){
+		getHtml : function(whereToRender, btnObj, openccObj, callback){
 			var self = this;
-			self.dynamicPageListener.getServiceContent(whereToRender, widgetObj, openccObj);
+			self.dynamicPageListener.getServiceContent(whereToRender, btnObj, openccObj, callback);
 		},
 		
 		showParameters : function() {

@@ -64,9 +64,9 @@ define(["componentTest/listener/componentTestListener", "testResult/listener/tes
 		 * Called in once the login is success
 		 *
 		 */
-		loadPage : function() {
-			Clazz.navigationController.mainContainer = '#testResult';
-			Clazz.navigationController.push(this, true);
+		loadPage : function(needAnimation) {
+			Clazz.navigationController.mainContainer = commonVariables.contentPlaceholder;
+			Clazz.navigationController.push(this, needAnimation);
 		},
 		
 		/***
@@ -79,12 +79,12 @@ define(["componentTest/listener/componentTestListener", "testResult/listener/tes
 			var self = this;
 			commonVariables.navListener.getMyObj(commonVariables.testResult, function(retVal) {
 				self.testResult = retVal;
-				Clazz.navigationController.jQueryContainer = '#testResult';
+				Clazz.navigationController.jQueryContainer = $(commonVariables.contentPlaceholder).find('#testResult');
 				Clazz.navigationController.push(self.testResult, false);
 			});
 		},
 		
-		preRender: function(whereToRender, renderFunction){
+		preRender: function(whereToRender, renderFunction) {
 			var self = this;
 			var data = {};
 			var userPermissions = JSON.parse(self.componentTestListener.componentTestAPI.localVal.getSession('userPermissions'));

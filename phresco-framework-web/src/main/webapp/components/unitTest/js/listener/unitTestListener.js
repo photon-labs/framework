@@ -91,19 +91,14 @@ define(["unitTest/api/unitTestAPI"], function() {
 		getDynamicParams : function(thisObj, callback) {
 			var self = this;
 			commonVariables.goal = commonVariables.unitTestGoal;
+			commonVariables.phase = commonVariables.unitTestGoal;
 			commonVariables.navListener.getMyObj(commonVariables.dynamicPage, function(dynamicPageObject) {
 				self.dynamicPageListener = new Clazz.com.components.dynamicPage.js.listener.DynamicPageListener();
-				dynamicPageObject.getHtml(false, function(response) {
+				dynamicPageObject.getHtml($('.dynamicControls'), thisObj, 'unit_popup', function(response) {
 					if ("No parameters available" == response) {
 						self.runUnitTest(function(responseData) {
 							callback(responseData);
 						});
-					} else {
-						$("#dynamicContent").html(response);
-	//					self.multiselect();
-						dynamicPageObject.showParameters();
-						self.dynamicPageListener.controlEvent();
-						self.opencc(thisObj, 'unit_popup');
 					}
 				});
 			});

@@ -5,6 +5,7 @@ define(["testResult/api/testResultAPI"], function() {
 	Clazz.com.components.testResult.js.listener.TestResultListener = Clazz.extend(Clazz.Widget, {
 		
 		testResultAPI : null,
+		allTestCases : null,
 		
 		/***
 		 * Called in initialization time of this class 
@@ -102,6 +103,7 @@ define(["testResult/api/testResultAPI"], function() {
 			self.performAction(self.getActionHeader(requestBody, "getTestReport"), function(response) {
 				$("#testSuites").hide();
 				$("#testCases").show();
+				self.allTestCases = response.data;
 				self.constructTestReport(response.data);
 				commonVariables.loadingScreen.removeLoading();
 				self.getPieChartGraphData(function(graphData) {
@@ -204,17 +206,27 @@ define(["testResult/api/testResultAPI"], function() {
 				resultTemplate = resultTemplate.concat('<tr><td>'+ result.name +'</td>');
 				resultTemplate = resultTemplate.concat('<td>'+ result.testClass +'</td>');
 				resultTemplate = resultTemplate.concat('<td>'+ result.time +'</td>');
-				resultTemplate = resultTemplate.concat('<td><a href="#"><img src="themes/default/images/helios/status_ok.png" width="16" height="13" border="0" alt=""></a></td>');
-				resultTemplate = resultTemplate.concat('<td><a href="#"><img src="themes/default/images/helios/log_icon.png" width="16" height="13" border="0" alt=""></a></td>');
+				resultTemplate = resultTemplate.concat('<td>');
+				if (result.testCaseFailure != null) {
+					resultTemplate = resultTemplate.concat('<img src="themes/default/images/helios/cross_red.png" width="16" height="13" border="0" alt=""></td>');
+					resultTemplate = resultTemplate.concat('<td><a href="#" type="failure" testcaseName="'+ result.name +'" class="log"><img src="themes/default/images/helios/log_icon.png" width="16" height="13" border="0" alt=""></a></td>');
+				}  else if (result.testCaseError != null) {
+					resultTemplate = resultTemplate.concat('<img src="themes/default/images/helios/cross_red.png" width="16" height="13" border="0" alt=""></td>');
+					resultTemplate = resultTemplate.concat('<td><a href="#" type="error" testcaseName="'+ result.name +'" class="log"><img src="themes/default/images/helios/log_icon.png" width="16" height="13" border="0" alt=""></a></td>');
+				} else {
+					resultTemplate = resultTemplate.concat('<img src="themes/default/images/helios/tick_green.png" width="16" height="13" border="0" alt=""></td>');
+				}
+				
 				if ("functionalTest" === currentTab) {
 					resultTemplate = resultTemplate.concat('<td><a href="#"><img src="themes/default/images/helios/screenshot_icon.png" width="19" height="16" border="0" alt="" /></a></td>');
 				}
 				resultTemplate = resultTemplate.concat('</tr>');
 			}
 			resultTemplate = resultTemplate.concat('</tbody></table>');
-			$("#testCases").html(resultTemplate);
+			$(commonVariables.contentPlaceholder).find('#testCases').html(resultTemplate);
 			setTimeout(function() {
 				self.resizeTestResultTable("testCases");
+				self.showLog(data);
 			}, 400);	
 		},
 		
@@ -283,6 +295,9 @@ define(["testResult/api/testResultAPI"], function() {
 				var data = $('#pdfReportForm').serialize();
 				header.requestMethod = "GET";
 				header.webserviceurl = commonVariables.webserviceurl + "pdf/showPopUp?appDirName=" + appDirName + "&fromPage=" + testType;
+			} else if (action == "deletePdfReport") {
+				header.requestMethod = "DELETE";
+				header.webserviceurl = commonVariables.webserviceurl + "pdf/deleteReport?appDirName=" + appDirName + "&fromPage=" + testType + "&reportFileName=" + requestBody.fileName;
 			}
 			return header;
 		},
@@ -387,29 +402,36 @@ define(["testResult/api/testResultAPI"], function() {
 			var self = this;
 			var requestBody = {};
 			self.performAction(self.getActionHeader(requestBody, "getPdfReports"), function(response) {
-				var content = "";
-				var pdfReports = response.data; 
-				if (pdfReports != null && pdfReports.length > 0) {
-					$("#noReport").hide();
-					$("#availablePdfRptsTbl").show();
-					var content = "";
-					for (i in pdfReports) {
-						content = content.concat('<tr class="generatedRow"><td>' + pdfReports[i].time + '</td>');
-						content = content.concat('<td>' + pdfReports[i].type + '</td>');
-						content = content.concat('<td><a class="tooltiptop" fileName="' + pdfReports[i].fileName + '" href="#"');
-						content = content.concat(' data-toggle="tooltip" data-placement="top" name="downLoad" data-original-title="Download Pdf" title="">');
-						content = content.concat('<img src="themes/default/images/helios/download_icon.png" width="15" height="18" border="0" alt="0"></a></td>');
-						content = content.concat('<td><a class="tooltiptop" fileName="' + pdfReports[i].fileName + '" href="#"');
-						content = content.concat(' data-toggle="tooltip" data-placement="top" name="delete" data-original-title="Delete Pdf" title="">');
-						content = content.concat('<img src="themes/default/images/helios/delete_row.png" width="14" height="18" border="0" alt="0"></a></td></tr>');
-					}
-					$("#availablePdfRptsTbdy").html(content);
-				} else {
-					$("#availablePdfRptsTbl").hide();
-					$("#noReport").show();
-					$("#noReport").html("No Report are Available");
-				}
+				self.listPdfReports(response);
 			});
+		},
+		
+		//To list the generated PDF reports
+		listPdfReports : function(pdfReports) {
+			var self = this;
+			var content = "";
+			if (pdfReports != undefined && pdfReports != null && pdfReports.length > 0) {
+				$("#noReport").hide();
+				$("#availablePdfRptsTbl").show();
+				var content = "";
+				for (i in pdfReports) {
+					content = content.concat('<tr class="generatedRow"><td>' + pdfReports[i].time + '</td>');
+					content = content.concat('<td>' + pdfReports[i].type + '</td>');
+					content = content.concat('<td><a class="tooltiptop" fileName="' + pdfReports[i].fileName + '" href="#"');
+					content = content.concat(' data-toggle="tooltip" data-placement="top" name="downLoad" data-original-title="Download Pdf" title="">');
+					content = content.concat('<img src="themes/default/images/helios/download_icon.png" width="15" height="18" border="0" alt="0"></a></td>');
+					content = content.concat('<td><a class="tooltiptop deletePdf" fileName="' + pdfReports[i].fileName + '" href="#"');
+					content = content.concat(' data-toggle="tooltip" data-placement="top" name="delete" data-original-title="Delete Pdf" title="">');
+					content = content.concat('<img src="themes/default/images/helios/delete_row.png" width="14" height="18" border="0" alt="0"></a></td></tr>');
+				}
+				$(commonVariables.contentPlaceholder).find("#availablePdfRptsTbdy").html(content);
+				self.deletePdfReport();
+			} else {
+				$(commonVariables.contentPlaceholder).find("#availablePdfRptsTbl").hide();
+				$("#noReport").show();
+				$("#noReport").html("No Report are Available");
+			}
+			self.hidePopupLoading($('#pdfReportLoading'));
 		},
 		
 		//To generate the pdf report
@@ -418,6 +440,52 @@ define(["testResult/api/testResultAPI"], function() {
 			var requestBody = {};
 			self.performAction(self.getActionHeader(requestBody, "generatePdfReport"), function(response) {
 				self.getPdfReports();
+			});
+		},
+		
+		//To delete the selected pdf report
+		deletePdfReport : function() {
+			var self = this;
+			$('.deletePdf').on("click", function() {
+				self.showPopupLoading($('#pdfReportLoading'));
+				var requestBody = {};
+				requestBody.fileName = $(this).attr('fileName');
+				self.performAction(self.getActionHeader(requestBody, "deletePdfReport"), function(response) {
+					self.getPdfReports();
+				});
+			});
+		},
+		
+		showPopupLoading : function(obj) {
+			obj.show();
+		},
+		
+		hidePopupLoading : function(obj) {
+			obj.hide();
+		},
+		
+		//To show the failure/error log
+		showLog : function(data) {
+			$('.log').on("click", function() {
+				var testcaseName = $(this).attr("testcaseName");
+				var logType = $(this).attr("type");
+				var description = "";
+				var type = ""
+				if (data != null) {
+					for (i in data) {
+						var testcase = data[i];
+						if (testcaseName === testcase.name) {
+							if ("failure" === logType) {
+								description = testcase.testCaseFailure.description;
+								type = testcase.testCaseFailure.failureType;
+							} else if ("error" === logType) {
+								description = testcase.testCaseError.description;
+								type = testcase.testCaseError.errorType;
+							}
+							break;
+						}
+					}
+				}
 			});
 		}
 	});

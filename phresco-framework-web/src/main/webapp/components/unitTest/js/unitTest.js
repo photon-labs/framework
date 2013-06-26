@@ -87,9 +87,9 @@ define(["unitTest/listener/unitTestListener", "testResult/listener/testResultLis
 		 * Called in once the login is success
 		 *
 		 */
-		loadPage : function() {
-			Clazz.navigationController.mainContainer = '#testResult';
-			Clazz.navigationController.push(this, true);
+		loadPage : function(needAnimation) {
+			Clazz.navigationController.mainContainer = commonVariables.contentPlaceholder;
+			Clazz.navigationController.push(this, needAnimation);
 		},
 		
 		/***
@@ -102,7 +102,7 @@ define(["unitTest/listener/unitTestListener", "testResult/listener/testResultLis
 			var self = this;
 			commonVariables.navListener.getMyObj(commonVariables.testResult, function(retVal) {
 				self.testResult = retVal;
-				Clazz.navigationController.jQueryContainer = '#testResult';
+				Clazz.navigationController.jQueryContainer = $(commonVariables.contentPlaceholder).find('#testResult');
 				Clazz.navigationController.push(self.testResult, false);
 			});
 		},

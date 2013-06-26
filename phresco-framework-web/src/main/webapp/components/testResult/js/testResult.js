@@ -45,6 +45,11 @@ define(["testResult/listener/testResultListener"], function() {
 			}
 			self.onGeneratePdfEvent.add(self.testResultListener.generatePdfReport, self.testResultListener);
 			
+			if (self.onGeneratePdfEvent === null) {
+				self.onGeneratePdfEvent = new signals.Signal();
+			}
+			self.onGeneratePdfEvent.add(self.testResultListener.generatePdfReport, self.testResultListener);
+			
 			self.registerEvents();
 		},
 		
@@ -110,7 +115,9 @@ define(["testResult/listener/testResultListener"], function() {
 			//To set the height of the test result section  
 			var windowHeight = $(document).height();
 			var marginTop = $('.testSuiteTable').css("margin-top");
-			marginTop = marginTop.substring(0, marginTop.length - 2);
+			if (marginTop != undefined) {
+				marginTop = marginTop.substring(0, marginTop.length - 2);
+			}
 			var footerHeight = $('#footer').height();
 			var deductionHeight = Number(marginTop) + Number(footerHeight);
 			var finalHeight = windowHeight - deductionHeight - 5;
@@ -168,6 +175,7 @@ define(["testResult/listener/testResultListener"], function() {
 			$('#pdfIcon').unbind("click");
 			$('#pdfIcon').click(function() {
 				self.onPrintPdfEvent.dispatch();
+				self.testResultListener.showPopupLoading($('#pdfReportLoading'));
 				self.opencc(this, 'pdf_report');
 			});
 			
@@ -175,6 +183,7 @@ define(["testResult/listener/testResultListener"], function() {
 			$('#generatePdf').unbind("click");
 			$('#generatePdf').click(function() {
 				self.onGeneratePdfEvent.dispatch();
+				self.testResultListener.showPopupLoading($('#pdfReportLoading'));
 			});
 			
 			//To copy the console log content to the clip-board

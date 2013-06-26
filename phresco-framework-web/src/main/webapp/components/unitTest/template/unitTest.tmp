@@ -11,7 +11,7 @@
 				<!--Pdf report popup starts here -->
 				<div id="pdf_report" class="dyn_popup hideContent">
 					<div id="noPdfReport" class="noReport"></div>
-                	<table width="100%" border="0" cellspacing="0" cellpadding="5" id="availablePdfRptsTbl">
+                	<table class="table_border availablePdfRptsTbl hideContent" border="0" cellspacing="0" cellpadding="5" width="100%" id="availablePdfRptsTbl">
                 		<thead>
                         	<tr>
 	                            <th>Existing Reports</th>
@@ -44,12 +44,13 @@
 	                        	</tr>	                        	
 	                    	</tbody>
 	                   	</table>
-               		</form>
-	               	<div class="flt_right">
-	                 	<input type="button" value="Generate" class="btn btn_style" id="generatePdf">
-	                 	<input type="button" value="Close" class="btn btn_style dyn_popup_close">
-	               	</div>
-               		<input type="hidden" name="fromPage" value="unit"/>
+	                   	<div class="popuploading" id="pdfReportLoading">&nbsp</div>
+		               	<div class="flt_right">
+		                 	<input type="button" value="Generate" class="btn btn_style" id="generatePdf">
+		                 	<input type="button" value="Close" class="btn btn_style dyn_popup_close">
+		               	</div>
+               			<input type="hidden" name="fromPage" value="unit"/>
+           			</form>
 				</div>
 				<!--Pdf report popup ends here -->	
 			</div>
@@ -107,20 +108,20 @@
         	{{#if userPermissions.manageTests}}
             	<input type="button" value="Test" id="unitTestBtn" class="btn btn_style">
         	{{else}}
-        		<input type="button" value="Test" class="btn btn_style" disabled>
+        		<input type="button" value="Test" id="unitTestBtn" class="btn btn_style" disabled>
         	{{/if}}
-                
-			<div id="unit_popup" class="dyn_popup hideContent">
-				<form id="unitTestForm">
-					<table class="table" cellpadding="0" cellspacing="0" border="0">
-						<tbody id="dynamicContent"></tbody>
-					</table>
-				</form>
-                <div class="flt_right">
-                    <input type="button" value="Test" class="btn btn_style" id="runUnitTest">
-                    <input type="button" value="Close" class="btn btn_style dyn_popup_close">
+			
+			<form id="unitTestForm">
+				<div id="unit_popup" class="dyn_popup hideContent dynamic_cont" style="width:310px;">
+					<ul class="row dynamicControls">
+					</ul>
+					<div class="dynamicPopupLoading" style="display:none;">&nbsp</div>
+					<div class="flt_right">
+						<input type="button" value="Test" class="btn btn_style" id="runUnitTest">
+						<input type="button" value="Close" class="btn btn_style dyn_popup_close">
+					</div>
 				</div>
-			</div>
+			</form>
 		</div>
 	</div>
 </section>

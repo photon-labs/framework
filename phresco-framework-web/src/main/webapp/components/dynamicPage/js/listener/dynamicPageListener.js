@@ -27,7 +27,7 @@ define(["framework/widgetWithTemplate", "dynamicPage/api/dynamicPageAPI", "commo
 		 * 
 		 * @header: constructed header for each call
 		 */
-		getServiceContent : function(whereToRender, widgetObj, openccObj) {
+		getServiceContent : function(whereToRender, btnObj, openccObj, callback) {
 			try{
 				var self = this, header = self.getRequestHeader(self.projectRequestBody, "", "", "parameter");
 				var appDirName = commonVariables.appDirName;
@@ -39,8 +39,12 @@ define(["framework/widgetWithTemplate", "dynamicPage/api/dynamicPageAPI", "commo
 						function(response){
 							self.responseData = response.data;
 							if(response != undefined && response != null){
-								self.constructHtml(response, whereToRender, widgetObj, openccObj, goal);
-								self.loadingScreen.removeLoading();
+								if (response.data == null || response.data.length == 0) {
+									callback("No parameters available");
+								} else {
+									self.constructHtml(response, whereToRender, btnObj, openccObj, goal);
+									self.loadingScreen.removeLoading();
+								}
 							} else {
 								//responce value failed
 								callback("Responce value failed");
@@ -77,7 +81,7 @@ define(["framework/widgetWithTemplate", "dynamicPage/api/dynamicPageAPI", "commo
 		 * Constructs dynamic controls 
 		 * 
 		 */
-		constructHtml : function(response, whereToRender, widgetObj, openccObj, goal){
+		constructHtml : function(response, whereToRender, btnObj, openccObj, goal){
 			var self = this, show = "",  required = "", editable = "", multiple = "", sort = "", checked = "", additionalParam = "",
 				additionalparamSel = "", dependencyVal = "", psblDependency = "", showFlag = "", enableOnchangeFunction = "", columnClass = "";
 			
@@ -134,7 +138,7 @@ define(["framework/widgetWithTemplate", "dynamicPage/api/dynamicPageAPI", "commo
                     } 
                 });
                 whereToRender.append('<li></li>');
-                self.opencc(widgetObj, openccObj);
+                self.opencc(btnObj, openccObj);
                 whereToRender.find(".selectpicker").selectpicker();
                 self.controlEvent();
                 self.showParameters();
@@ -408,22 +412,24 @@ define(["framework/widgetWithTemplate", "dynamicPage/api/dynamicPageAPI", "commo
 					dependencyAttr = $(obj).attr('additionalParam');
 				} else if (controlType === 'SELECT') {
 					var previousDependencyAttr = $(obj).attr('additionalparam');    //get the previvous dependency keys from additionalParam attr
-					var csvPreviousDependency = previousDependencyAttr.substring(previousDependencyAttr.indexOf('=') + 1);
 					dependencyAttr =  obj.find(":selected").attr('additionalparam'); //$('option:selected', obj).attr('additionalParam');
-					if (csvPreviousDependency !== undefined && !self.isBlank(csvPreviousDependency) && 
-							csvPreviousDependency !==  dependencyAttr) {          //hide event of all the dependencies of the previuos dependencies
-						var csvDependencies = self.getAllDependencies(csvPreviousDependency);
-						var previousDependencyArr = new Array();
-						previousDependencyArr = csvDependencies.split(',');
-						if (jecClass != 'jecEditableOption') {
-							self.hideControl(previousDependencyArr);					
+					if (!self.isBlank(previousDependencyAttr)) {
+						var csvPreviousDependency = previousDependencyAttr.substring(previousDependencyAttr.indexOf('=') + 1);
+						if (csvPreviousDependency !== undefined && !self.isBlank(csvPreviousDependency) && 
+								csvPreviousDependency !==  dependencyAttr) {          //hide event of all the dependencies of the previuos dependencies
+							var csvDependencies = self.getAllDependencies(csvPreviousDependency);
+							var previousDependencyArr = new Array();
+							previousDependencyArr = csvDependencies.split(',');
+							if (jecClass != 'jecEditableOption') {
+								self.hideControl(previousDependencyArr);					
+							}
 						}
 					}
 				} 
 				
 				var csvDependencies;
 				self.changeEveDependancyListener(selectedOption, currentParamKey);  // update the watcher while changing the drop down
-				if (dependencyAttr !== undefined && dependencyAttr != null && dependencyAttr != '') {
+				if (!self.isBlank(dependencyAttr)) {
 					csvDependencies = dependencyAttr.substring(dependencyAttr.indexOf('=') + 1);
 					csvDependencies = self.getAllDependencies(csvDependencies);
 					var dependencyArr = new Array();
