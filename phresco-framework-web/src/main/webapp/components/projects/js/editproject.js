@@ -11,7 +11,6 @@ define(["projects/listener/projectsListener"], function() {
 		onProjectsEvent : null,
 		projectRequestBody : {},
 		templateData : {},
-		onRemoveLayerEvent : null,
 		onAddLayerEvent : null,
 		getData : null,
 		onUpdateProjectsEvent : null,
@@ -46,6 +45,14 @@ define(["projects/listener/projectsListener"], function() {
 			
 			if(self.onCreateEvent === null) {
 				self.onCreateEvent = new signals.Signal();
+			}
+			
+			if(self.onRemoveLayerEvent === null) {
+				self.onRemoveLayerEvent = new signals.Signal();
+			}
+			
+			if(self.onAddLayerEvent === null) {
+				self.onAddLayerEvent = new signals.Signal();
 			}
 			
 			self.onRemoveLayerEvent.add(projectsListener.removelayer, projectsListener);
@@ -187,7 +194,7 @@ define(["projects/listener/projectsListener"], function() {
 			self.projectsListener.addLayersEvent();
 			self.projectsListener.removeLayersEvent();
 			self.projectsListener.technologyAndVersionChangeEvent();
-			self.projectsListener.multiModuleEvent();
+			self.projectsListener.multiModuleEvent("false");
 			self.windowResize();
 			
 			$("#updateProject").click(function() {
@@ -212,6 +219,12 @@ define(["projects/listener/projectsListener"], function() {
 			$(".content_end input").unbind('click');
 			$(".content_end input").bind('click', function(){
 				self.onAddLayerEvent.dispatch($(this));
+			});
+			
+			$("input[name='multimodule']").click(function() {
+				$(this).is(':checked')?$(this).val(true):$(this).val(false);
+				var multimodule = $("input[name=multimodule]").val();
+				self.projectsListener.multiModuleEvent(multimodule);
 			});
 		}
 	});
