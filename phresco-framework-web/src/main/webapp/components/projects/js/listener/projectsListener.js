@@ -1103,7 +1103,7 @@ define(["projects/api/projectsAPI"], function() {
          */
         pageRefresh : function(response) {
 			commonVariables.navListener.getMyObj(commonVariables.projectlist, function(projectlistObj){
-				projectlistObj.loadPage();
+				projectlistObj.loadPage(true);
 			});
 		},
 		

@@ -29,6 +29,8 @@ define(["login/listener/loginListener"], function() {
 		 *
 		 */
 		loadPage : function(){
+			$(commonVariables.basePlaceholder).empty();
+			Clazz.navigationController.jQueryContainer = commonVariables.basePlaceholder;
 			this.onLoginEvent.add(this.loginListener.doLogin, this.loginListener);
 			Clazz.navigationController.push(this);
 		},
@@ -111,7 +113,7 @@ define(["login/listener/loginListener"], function() {
 			}
 			
 			$('#username').focus();
-			Clazz.navigationController.mainContainer = commonVariables.contentPlaceholder;
+			Clazz.navigationController.jQueryContainer = commonVariables.contentPlaceholder;
 		}
 	});
 

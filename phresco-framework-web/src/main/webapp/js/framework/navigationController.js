@@ -176,12 +176,8 @@ define(["framework/base", "framework/animationProvider"], function() {
 				var self = this;
 
 				//make old content as inactive
-				if(bCheck){
-					$.each($(commonVariables.contentPlaceholder).find('.widget-maincontent-div'), function(index, current){
-						$(current).attr('active', 'false');
-					});
-				}
-				
+				$(commonVariables.contentPlaceholder).find('div .widget-maincontent-div').attr('active', 'false');
+					
 				// create top element for pushing
 				var newDiv = $("<div></div>");
 				
@@ -205,8 +201,8 @@ define(["framework/base", "framework/animationProvider"], function() {
 										self.setAnimation(self.transitionType);
 									}
 									//remove old content if exist
-									$.each($(commonVariables.contentPlaceholder).find('.widget-maincontent-div'), function(index, current){
-										if($(current).attr('active') === "false"){
+									$.each($(commonVariables.contentPlaceholder).find('div .widget-maincontent-div'), function(index, current){
+										if($(current).attr('active') == "false"){
 											$(current).remove();
 										}
 									});
@@ -229,6 +225,13 @@ define(["framework/base", "framework/animationProvider"], function() {
 						if (history.pushState !== undefined) {
 							history.pushState({}, name, name);
 						}
+					}else{
+						//remove old content if exist
+						$.each($(commonVariables.contentPlaceholder).find('div .widget-maincontent-div'), function(index, current){
+							if($(current).attr('active') == "false"){
+								$(current).remove();
+							}
+						});
 					}
 				};
 				

@@ -4,7 +4,6 @@ define(["login/api/loginAPI"], function() {
 
 	Clazz.com.components.login.js.listener.LoginListener = Clazz.extend(Clazz.Widget, {
 		localStorageAPI : null,
-		//loadingScreen : null,
 		headerContent : null,
 		footerContent : null,
 		navigationContent : null,
@@ -17,7 +16,7 @@ define(["login/api/loginAPI"], function() {
 		 */
 		initialize : function(config) {
 			var self = this;
-			
+
 			if(self.navigationContent === null){
 				require(["navigation/navigation"], function(){
 					self.navigationContent = new Clazz.com.components.navigation.js.navigation();	
@@ -144,8 +143,18 @@ define(["login/api/loginAPI"], function() {
 			var self = this;
 			Clazz.navigationController.jQueryContainer = commonVariables.navigationPlaceholder;
 
-				self.navigationContent.currentContent = contentObj;
-				Clazz.navigationController.push(self.navigationContent, false);	
+			if(self.navigationContent === null){
+				require(["navigation/navigation"], function(){
+					self.navigationContent = new Clazz.com.components.navigation.js.navigation();
+					self.loadNavigationPage(contentObj);
+				});
+			}else{ self.loadNavigationPage(contentObj); }
+		},
+		
+		loadNavigationPage : function(contentObj){
+			var self = this;
+			self.navigationContent.currentContent = contentObj;
+			Clazz.navigationController.push(self.navigationContent, false);	
 		}
 	});
 

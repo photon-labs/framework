@@ -70,7 +70,8 @@ define(["projects/listener/projectsListener"], function() {
 		 *
 		 */
 		loadPage:function(){
-			Clazz.navigationController.push(this);
+			Clazz.navigationController.jQueryContainer = commonVariables.contentPlaceholder;
+			Clazz.navigationController.push(this, true);
 		},
 		
 		preRender : function(whereToRender, renderFunction) {
@@ -201,7 +202,7 @@ define(["projects/listener/projectsListener"], function() {
 				theme:"light-thin",
 				advanced:{ updateOnContentResize: true}
 			});
-			 
+			Clazz.navigationController.jQueryContainer = commonVariables.contentPlaceholder;
 		}
 	});
 

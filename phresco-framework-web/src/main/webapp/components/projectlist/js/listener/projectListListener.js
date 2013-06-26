@@ -13,6 +13,7 @@ define(["projectlist/api/projectListAPI"], function() {
 		flag2:null,
 		flag3:null,
 		act:null,
+
 		/***
 		 * Called in initialization time of this class 
 		 *
