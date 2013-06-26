@@ -93,6 +93,11 @@
 			"moduleName":"componentTest",
 			"path" : "../components/componentTest/js"
 		},
+		
+		"performanceTest" : {
+			"moduleName":"performanceTest",
+			"path" : "../components/performanceTest/js"
+		},
 
 		"ci" : {
 			"moduleName":"ci",
