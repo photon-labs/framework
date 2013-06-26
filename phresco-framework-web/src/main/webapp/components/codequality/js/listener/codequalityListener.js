@@ -145,7 +145,7 @@ define(["codequality/api/codequalityAPI"], function() {
 			}
 		},
 
-		constructHtml : function(response){
+		constructHtml : function(response, output){
 			var self = this;
 			if(response.message === "Dependency returned successfully"){
 				var typeLi = '';
@@ -165,8 +165,12 @@ define(["codequality/api/codequalityAPI"], function() {
 					}
 				});
 				var dropdownLi = '<ul class="nav"><li id="fat-menu" class="dropdown"><a href="#" id="drop5" role="button" class="dropdown-toggle" data-toggle="dropdown"><b id="repTypes" >'+repTypesData+'</b><b class="caret"></b></a> <div class="dropdown-menu cust_sel code_test_opt" role="menu" aria-labelledby="drop5"> <ul id="reportUl">'+typeLi+'</ul></div></li></ul>';
-				$("#codereportTypes").append(dropdownLi);
-
+				var codeReport = $("#codereportTypes").attr("class");
+				if(codeReport != undefined) {
+					$("#codereportTypes").append(dropdownLi);
+				} else {
+					$(output).append(dropdownLi)
+				}
 				self.onProjects();
 				self.getIframeReport(validateAgainst);
 			}else {

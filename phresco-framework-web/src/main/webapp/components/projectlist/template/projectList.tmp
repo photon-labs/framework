@@ -44,9 +44,9 @@
                        <td><a name="pdf_report" fromPage="All" class="tooltiptop" title="" dynamicId="{{id}}" data-placement="top" data-t="tooltip" href="#" data-original-title="PDF Report"><img src="themes/default/images/helios/pdf_icon.png" width="14" height="16" border="0" alt=""></a>
                   
               <div id="pdf_report" class="dyn_popup pdf_report">
-              <div id="noReport" class="noReport"></div>
+              <div id="noReport" class="alert noReport" style="text-align: center;"></div>
                 <table class="existing_report" width="100%" border="0" cellspacing="0" cellpadding="5">
-                  <thead name="pdfHeader">
+                  <thead name="pdfHeader" show="true">
                         <tr>
                             <th>Existing Reports</th>
                             <th>Type</th>
