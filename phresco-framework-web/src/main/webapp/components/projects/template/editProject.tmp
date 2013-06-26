@@ -106,9 +106,9 @@
     </section>
     <section class="content_end">
 		<div class="flt_left">
-        	<input type="submit" name="applicationlayer" value="Application Layer" class="btn btn_style app_layer_icon_btn">
-            <input type="submit" name="weblayer" value="Web Layer" class="btn btn_style web_layer_icon_btn">
-            <input type="submit" name="mobilelayer" value="Mobile Layer" class="btn btn_style mobile_layer_icon_btn">
+        	<input type="submit" name="applicationlayer" value="Application Layer" class="btn btn_style app_layer_icon_btn" style="display:none;">
+            <input type="submit" name="weblayer" value="Web Layer" class="btn btn_style web_layer_icon_btn" style="display:none;">
+            <input type="submit" name="mobilelayer" value="Mobile Layer" class="btn btn_style mobile_layer_icon_btn" style="display:none;">
         </div>
         <div class="flt_right">
         	{{#if userPermissions.manageApplication}}

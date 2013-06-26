@@ -124,7 +124,9 @@ define(["features/listener/featuresListener"], function() {
 					});
 				});
 			}
-			self.selectedCount();			
+			setTimeout(function(){
+					self.selectedCount();
+			},3000);			
 		},
 		
 		
@@ -132,6 +134,9 @@ define(["features/listener/featuresListener"], function() {
 			var jsLibCount = $("#jsibrariesContent").find(".switchOn").size(), 
 			moduleCount = $("#moduleContent").find(".switchOn").size(),
 			componentCount = $("#componentsContent").find(".switchOn").size();
+			console.info("moduleCount", moduleCount);
+			console.info("componentCount", componentCount);
+			console.info("jsLibCount", jsLibCount);
 			$(".totalModules").text(moduleCount);
 			$(".totalComponent").text(componentCount);
 			$(".totalJslibraries").text(jsLibCount);

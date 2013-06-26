@@ -1054,7 +1054,6 @@ define(["projects/api/projectsAPI"], function() {
 			$("tr.mobLayer").hide();
 
 			$.each(getData, function(index, value) {
-				console.info("value", value);
 				if (value.techInfo.appTypeId == "app-layer") {
 					$("#appLayaer").show();
 					$("tr.applnLayer").show();
@@ -1071,7 +1070,7 @@ define(["projects/api/projectsAPI"], function() {
 					self.multiselect();
 				} else if (value.techInfo.appTypeId == "web-layer") {
 					$("#webLayers").show();
-					$("tr.webLayaer").show();
+					$("tr.webLayer").show();
 					if(value.dependentModules !== null) {
 						$.each(value.dependentModules, function(index, value){
 							option += '<option selected>'+ value +'</option>';
