@@ -76,22 +76,25 @@ define(["features/api/featuresAPI", "features/features",  "application/applicati
        	getFeaturesList : function(header, callback) {
 			var self = this;
 			try {
+				self.loadingScreen.showLoading();
 				self.featuresAPI.features(header,
 					function(response) {
 						if (response !== null) {
+							self.loadingScreen.removeLoading();
 							callback(response);
 						} else {
+							self.loadingScreen.removeLoading();
 							callback({ "status" : "service failure"});
 						}
 
 					},
 
 					function(textStatus) {
-					
+						self.loadingScreen.removeLoading();
 					}
 				);
 			} catch(exception) {
-				
+				self.loadingScreen.removeLoading();
 			}
 
 		},
