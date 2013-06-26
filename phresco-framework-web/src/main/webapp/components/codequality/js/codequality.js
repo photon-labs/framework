@@ -83,7 +83,9 @@ define(["codequality/listener/codequalityListener"], function() {
 			//To set the height of the test result section  
 			var windowHeight = $(document).height();
 			var marginTop = $('.testSuiteTable').css("margin-top");
-			marginTop = marginTop.substring(0, marginTop.length - 2);
+			if(marginTop != undefined) {
+				marginTop = marginTop.substring(0, marginTop.length - 2);
+			}
 			var footerHeight = $('#footer').height();
 			var deductionHeight = Number(marginTop) + Number(footerHeight);
 			var finalHeight = windowHeight - deductionHeight - 5;

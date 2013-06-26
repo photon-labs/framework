@@ -530,7 +530,7 @@ define(["configuration/api/configurationAPI"], function() {
 				else {
 					$(target).toggle();
 					var t=clicked.offset().top - target.height()/2;
-					var l=clicked.offset().left - (target.width()+clicked.width()+15);
+					var l=clicked.offset().left - (target.width()+ 15);
 					$(target).offset({
 						top: t,
 						left: l
@@ -539,7 +539,8 @@ define(["configuration/api/configurationAPI"], function() {
 					$(target).addClass('speakstyleright').removeClass('speakstyleleft');
 			
 				}
-
+				self.closeAll(target);
+				
 			});
 			
 			$("input[name=dyn_popupcon_close]").click(function() {
@@ -552,7 +553,21 @@ define(["configuration/api/configurationAPI"], function() {
 				self.currentEvent($(this).val(), '');
 			});
 		},
-		  
+		  		
+		closeAll : function(placeId) {
+			
+			$(document).keyup(function(e) {
+				if(e.which === 27){
+					$(placeId).hide();
+				}
+			});
+			
+			$('.dyn_popup_close').click( function() {
+				$(placeId).hide();
+				$("#cron_expression").hide();
+			});
+				
+		},
 		currentEvent : function(value, WhereToAppend) {
 			var self=this, dailySchedule, weeklySchedule, monthlySchedule, toAppend;
 			dailySchedule = '<tr id="schedule_daily" class="schedule_date"><td>Every At<input type="checkbox" name="everyAt"></td><td><select name="hours" class="selectpicker">'+self.hours()+'</select><span>Hrs</span></td> <td><select name="minutes" class="selectpicker">'+self.minutes()+'</select><span>Mins</span></td></tr>';
@@ -712,6 +727,10 @@ define(["configuration/api/configurationAPI"], function() {
 				headerTr = '<tr class="row_bg" type="otherConfig"><div class="row"><td colspan="3">' + type + '</td><td colspan="3">'+
 				'<a href="javascript:;" name="removeConfig"><img src="themes/default/images/helios/close_icon.png" border="0" alt="" class="flt_right"/></a></td></div></tr>';
 				content = content.concat(headerTr);
+				
+				var defaultTd = '<tr name="configName" class="otherConfig" name="'+type+'"><td class="labelTd">Name <sup>*</sup></td><td><input type="text" id="ConfigOther" mandatory="true" class="configName" value="" placeholder= "Configuration Name"/></td><td class="labelTd">Description</td><td><input type="text" class="configDesc" value="" placeholder= "Configuration Description"/></td>';
+				content = content.concat(defaultTd);
+				
 				if (value !== null && value !== '') {
 					$.each(value.properties, function(key, value){
 						textBox = '<tr class="otherConfig" name="'+type+'"><td></td><td><input type="text" placeholder= "key" class="otherKey" value="'+key+'"/><td><input type="text" placeholder= "value" class="otherKeyValue" value="'+value+'"/></td><td><div class="flt_right icon_center"><a href="javascript:;" name="addOther"></a> <a href="javascript:;" name="removeOther"><img src="themes/default/images/helios/minus_icon.png" border="0" alt=""></a></div></td></tr>';
@@ -898,12 +917,72 @@ define(["configuration/api/configurationAPI"], function() {
 			}
 		},
 		
-		validation : function() {
-			var self = this, bCheck = false;
-			$.each($(".row_bg"), function(index, value) {
-				var type = $(this).attr("type");
-				$("." + type).each(function() {
-					$(this).find("." + type + "Configuration").each(function() {
+			validation : function() {
+				var self = this, bCheck = false;
+				$.each($(".row_bg"), function(index, value) {
+					var type = $(this).attr("type");
+					if (type !== "otherConfig") {
+						$("." + type).each(function() {
+							$(this).find("." + type + "Configuration").each(function() {
+								$(".configName").each(function() {
+									var id = $(this).attr("id");
+									var val = $("#"+id).val();
+									if(val === undefined || val === null || $.trim(val) === ""){
+										bCheck = false;
+										$("#"+id).attr('placeholder','Enter Configuration Name');
+										$("#"+id).addClass("errormessage");
+										$("#"+id).focus();
+										$("#"+id).bind('keypress', function() {
+										$(this).removeClass("errormessage");
+										});
+										return bCheck;
+									} else {
+										bCheck = true;
+									}
+								});
+								if(bCheck === false){
+									return bCheck;
+								}
+								var mandatory = $(this).attr("mandatory");
+								var val = $(this).attr("name");
+								if(mandatory === 'true') {
+									if($(this).val() !== undefined && $(this).val() !== null && $.trim($(this).val()) !== ""){
+										if(val == "emailid") {
+											var email = $("input[name=emailid]").val();
+											var emailMatcher = /^([a-zA-Z0-9_\.\-])+\@(([a-zA-Z0-9\-])+\.)+([a-zA-Z0-9]{2,4})+$/;
+											if (!emailMatcher.test(email)) {
+												$("input[name=emailid]").val("");
+												$("input[name=emailid]").attr('placeholder','Please Enter valid email address');
+												$("input[name=emailid]").addClass("errormessage");
+												$("input[name=emailid]").bind('keypress', function() {
+													$(this).removeClass("errormessage");
+												});
+												bCheck = false;
+											} else {
+												bCheck = true;
+											}
+								
+										} else {
+											bCheck = true;
+										}
+									} else{
+										bCheck = false;
+										var temp = $(this).attr("temp");
+										$("input[temp='"+temp+"']").attr('placeholder','Enter Value');
+										$("input[temp='"+temp+"']").addClass("errormessage");
+										$("input[temp='"+temp+"']").focus();
+										$("input[temp='"+temp+"']").bind('keypress', function() {
+											$(this).removeClass("errormessage");
+										});
+										return bCheck;
+									}
+								}
+							});
+							if(bCheck === false){
+								return bCheck;
+							}
+						});
+					} else {
 						$(".configName").each(function() {
 							var id = $(this).attr("id");
 							var val = $("#"+id).val();
@@ -912,6 +991,9 @@ define(["configuration/api/configurationAPI"], function() {
 								$("#"+id).attr('placeholder','Enter Configuration Name');
 								$("#"+id).addClass("errormessage");
 								$("#"+id).focus();
+								$("#"+id).bind('keypress', function() {
+								$(this).removeClass("errormessage");
+								});
 								return bCheck;
 							} else {
 								bCheck = true;
@@ -920,46 +1002,46 @@ define(["configuration/api/configurationAPI"], function() {
 						if(bCheck === false){
 							return bCheck;
 						}
-						var mandatory = $(this).attr("mandatory");
-						var val = $(this).attr("name");
-						if(mandatory === 'true') {
-							if($(this).val() !== undefined && $(this).val() !== null && $.trim($(this).val()) !== ""){
-								if(val == "emailid") {
-									var email = $("input[name=emailid]").val();
-									var emailMatcher = /^([a-zA-Z0-9_\.\-])+\@(([a-zA-Z0-9\-])+\.)+([a-zA-Z0-9]{2,4})+$/;
-									if (!emailMatcher.test(email)) {
-										$("input[name=emailid]").val("");
-										$("input[name=emailid]").attr('placeholder','Please Enter valid email address');
-										$("input[name=emailid]").addClass("errormessage");
-										bCheck = false;
-									} else {
-										bCheck = true;
-									}
-
-								} else {
-									bCheck = true;
-								}
-							} else{
+						
+						$('.otherKey').each(function() {
+							if($(this).val() != undefined && $(this).val() != null && $.trim($(this).val()) != "") {
+								bCheck = true;
+							} else {
 								bCheck = false;
-								var temp = $(this).attr("temp");
-								$("input[temp='"+temp+"']").attr('placeholder','Enter Value');
-								$("input[temp='"+temp+"']").addClass("errormessage");
-								$("input[temp='"+temp+"']").focus();
+								$(this).attr('placeholder','Enter Key');
+								$(this).addClass("errormessage");
+								$(this).focus();
 								return bCheck;
+								$(this).bind('keypress', function() {
+									$(this).removeClass("errormessage");
+								});
 							}
-						}
-					});
-					if(bCheck === false){
+						});
+			
+						$('.otherKeyValue').each(function() {
+							if($(this).val() != undefined && $(this).val() != null && $.trim($(this).val()) != "") {
+								bCheck = true;
+							} else {
+								bCheck = false;
+								$(this).attr('placeholder','Enter Value');
+								$(this).addClass("errormessage");
+								$(this).focus();
+								return bCheck;
+								$(this).bind('keypress', function() {
+									$(this).removeClass("errormessage");
+								});
+							}
+			
+						});
+					}
+					if(bCheck === false) {
 						return bCheck;
 					}
 				});
-				if(bCheck === false) {
-					return bCheck;
-				}
-			});
-			
-			return bCheck;
-		},
+	
+				return bCheck;
+			},
+
 		
 		spclCharValidation : function() {
 			var self = this;
