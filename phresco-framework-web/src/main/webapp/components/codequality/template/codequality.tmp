@@ -43,7 +43,7 @@
 					<tr>
 						<th>Progress</th>
 						<td>
-							<a href="#" id="copyLog">
+							<a href="#" id="codeLog">
 								<img src="themes/default/images/helios/buildreport_icon.png" width="15" height="18" border="0" alt="">
 							</a>	
 						</td>

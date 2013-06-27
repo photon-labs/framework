@@ -644,8 +644,9 @@ define(["navigation/api/navigationAPI"], function() {
 				header.requestPostBody = JSON.stringify(requestBody);
 				header.webserviceurl = commonVariables.webserviceurl + "repository/importApplication";
 			} else if (action === "copyToClipboard") {
-				header.requestMethod = "GET";
-				header.webserviceurl = commonVariables.webserviceurl + commonVariables.copyToClipboardContext + "?log=" + requestBody.log;
+				header.requestMethod = "POST";
+				header.webserviceurl = commonVariables.webserviceurl + commonVariables.copyToClipboardContext;
+				header.requestPostBody = requestBody.log;
 			}
 			return header;
 		},

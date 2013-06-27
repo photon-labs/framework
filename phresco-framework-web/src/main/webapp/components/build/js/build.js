@@ -328,6 +328,12 @@ define(["build/listener/buildListener"], function() {
 				commonVariables.navListener.copyPath(paramJson);
 			});
 			
+			//To copy the console log content to the clip-board
+			$('#buildCopyLog').unbind("click");
+			$('#buildCopyLog').click(function() {
+				commonVariables.navListener.copyToClipboard($('#logContent'));
+			});
+			
 			Clazz.navigationController.mainContainer = commonVariables.contentPlaceholder;
 		}
 	});
