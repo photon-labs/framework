@@ -125,7 +125,13 @@ define(["codequality/api/codequalityAPI"], function() {
 							commonVariables.loadingScreen.removeLoading();
 							callback(response);
 							$('#codeAnalysis').show();
+							$(".code_report").show();
+							$(".code_report_icon").show();
+							$("#codereportTypes").show();							
 						} else {
+							$(".code_report").hide();
+							$(".code_report_icon").hide();
+							$("#codereportTypes").hide();						
 							commonVariables.loadingScreen.removeLoading();
 							callback({ "status" : "service failure"});
 						}
@@ -136,6 +142,9 @@ define(["codequality/api/codequalityAPI"], function() {
 						var data = $.parseJSON(textStatus);
 						$('#content_div').html('<div class="alert" style="text-align: center; width:98%">'+data.message+'</div>');
 						$('#codeAnalysis').hide();
+						$(".code_report").hide();
+						$(".code_report_icon").hide();
+						$("#codereportTypes").hide();						
 					}
 				);
 			} catch(exception) {
