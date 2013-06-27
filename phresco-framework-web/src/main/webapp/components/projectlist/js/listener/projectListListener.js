@@ -181,9 +181,9 @@ define(["projectlist/api/projectListAPI"], function() {
 				header.requestPostBody = JSON.stringify(addupdate);
 				header.webserviceurl = commonVariables.webserviceurl + "repository/updateImportedApplication?appDirName="+projectRequestBody.appdirname;
 			}
-			if(action === "reportget") {
+			if(action === "generateReport") {
 				header.requestMethod = "POST";
-				header.webserviceurl = commonVariables.webserviceurl + "app/printAsPdf?username="+data.name+"&appId="+projectRequestBody.appid+"&customerId="+customerId+"&fromPage="+projectRequestBody.fromPage+"&pdfName="+projectRequestBody.pdfName+"&isReportAvailable=true&projectId="+projectRequestBody.projectId+"&reportDataType=detail&sonarUrl="+projectRequestBody.sonarUrl;		
+				header.webserviceurl = commonVariables.webserviceurl + "app/printAsPdf?appDirName=" + projectRequestBody.appDirName + "&" + projectRequestBody.data + "&userId=" + userId;
 			} 
 			if(action === "getreport") {
 				header.requestMethod = "GET";
@@ -281,19 +281,22 @@ define(["projectlist/api/projectListAPI"], function() {
 			}
 		},
 		
-		addReportEvent : function(obj){
+		generateReportEvent : function(obj){
 			var self = this;
 			var reportdata = {}, actionBody, action;		
-				reportdata.type = $("#reportType").val();
-				reportdata.fromPage = obj.attr("fromPage");
-				reportdata.appid = obj.attr("appId");
-				reportdata.pdfName =  $('input[name=pdfName]').val();
-				reportdata.projectId = obj.attr("projectId");
-				reportdata.sonarUrl = obj.attr("sonarUrl");
-				actionBody = reportdata;
-				action = "reportget";
-				self.projectListAction(self.getActionHeader(actionBody, action), $('#pdfReportLoading_'+reportdata.appid), function(response){
-				});
+			var appDir =  obj.attr("appDirName");
+			var dynamicId = obj.attr("appId");
+			reportdata.data = obj.closest("form").serialize();
+			reportdata.appDirName = appDir;
+			actionBody = reportdata;
+			action = "generateReport";
+			self.projectListAction(self.getActionHeader(actionBody, action), $('#pdfReportLoading_'+dynamicId), function(response){
+				if (response.service_exception != null) {
+					self.failureMsgPopUp(response.service_exception);
+				} else {
+					self.getReportEvent(response, appDir, "All", dynamicId);
+				}
+			});
 		},
 		
 		getCommitableFiles : function(data, obj) {
@@ -332,41 +335,82 @@ define(["projectlist/api/projectListAPI"], function() {
 			});
 		},
 		
-		getReportEvent : function(obj){
+		getReportEvent : function(obj, appDir, fromPage, dynamicId){
 			var self = this;
-			var getreportdata = {}, actionBody, action;		
+			var getreportdata = {}, actionBody, action, temp;	
+			if (fromPage != undefined && fromPage != null) {
+				getreportdata.fromPage = fromPage;
+			} else {
 				getreportdata.fromPage = obj.attr("fromPage");
-				getreportdata.appDir = obj.closest("tr").attr("class");
-				var temp  = obj.closest("tr").attr("class");
-				actionBody = getreportdata;
-				action = "getreport";
-				var dynamicId = obj.attr("dynamicId");
-				self.projectListAction(self.getActionHeader(actionBody, action), $("#pdfReportLoading_"+dynamicId), function(response) {
-					var content = "";
-					$("tbody[name=generatedPdfs]").empty();
-					if(response.length !== 0 && response.length !== undefined) {
-						$("#noReport").hide();
-						$("thead[name=pdfHeader]").show();
-						for(var i =0; i < response.length; i++) {
-							var headerTr = '<tr class="generatedRow" fileName="'+response[i].fileName+'" appdirname = "'+temp+'"><td>' + response[i].time + '</td><td>'+response[i].type+'</td>';
-							content = content.concat(headerTr);
-							headerTr = '<td><a class="tooltiptop" fileName="'+response[i].fileName+'" fromPage="All" href="#" data-toggle="tooltip" data-placement="top" name="downLoad" data-original-title="Download Pdf" title=""><img src="themes/default/images/helios/download_icon.png" width="15" height="18" border="0" alt="0"></a></td>';
-							content = content.concat(headerTr);
-							headerTr = '<td><a class="tooltiptop" fileName="'+response[i].fileName+'" fromPage="All" href="#" data-toggle="tooltip" data-placement="top" name="delete" data-original-title="Delete Pdf" title=""><img src="themes/default/images/helios/delete_row.png" width="14" height="18" border="0" alt="0"></a></td></tr>';
-							content = content.concat(headerTr);
-						}
-						$("tbody[name=generatedPdfs]").append(content);
-						self.clickFunction();
-					} else {
-						$("thead[name=pdfHeader]").hide();
-						$("#noReport").show();
-						$("#noReport").html("No Report are Available");
+			}
+			if (appDir != undefined && appDir != null) {
+				getreportdata.appDir = appDir;
+				temp = appDir;
+			} else {
+				temp  = obj.closest("tr").attr("class");
+				getreportdata.appDir = temp;
+			}
+			actionBody = getreportdata;
+			action = "getreport";
+			if (dynamicId === undefined || dynamicId === null) {
+				dynamicId = obj.attr("dynamicId");
+			}
+			self.projectListAction(self.getActionHeader(actionBody, action), $("#pdfReportLoading_"+dynamicId), function(response) {
+				/*var content = "";
+				$("tbody[name=generatedPdfs]").empty();
+				if(response.length !== 0 && response.length !== undefined) {
+					$("#noReport").hide();
+					$("thead[name=pdfHeader]").show();
+					for(var i =0; i < response.length; i++) {
+						var headerTr = '<tr class="generatedRow" fileName="'+response[i].fileName+'" appdirname = "'+temp+'"><td>' + response[i].time + '</td><td>'+response[i].type+'</td>';
+						content = content.concat(headerTr);
+						headerTr = '<td><a class="tooltiptop" fileName="'+response[i].fileName+'" fromPage="All" href="#" data-toggle="tooltip" data-placement="top" name="downLoad" data-original-title="Download Pdf" title=""><img src="themes/default/images/helios/download_icon.png" width="15" height="18" border="0" alt="0"></a></td>';
+						content = content.concat(headerTr);
+						headerTr = '<td><a class="tooltiptop" fileName="'+response[i].fileName+'" fromPage="All" href="#" data-toggle="tooltip" data-placement="top" name="delete" data-original-title="Delete Pdf" title=""><img src="themes/default/images/helios/delete_row.png" width="14" height="18" border="0" alt="0"></a></td></tr>';
+						content = content.concat(headerTr);
 					}
-					
-				});
+					$("tbody[name=generatedPdfs]").append(content);
+					self.clickFunction();
+				} else {
+					$("thead[name=pdfHeader]").hide();
+					$("#noReport").show();
+					$("#noReport").html("No Report are Available");
+				}
+				*/
+				self.listPdfReports(response, temp, dynamicId);
+				self.clickFunction(dynamicId);
+			});
 		},
 		
-		clickFunction : function(){
+		//To list the generated PDF reports
+		listPdfReports : function(response, temp, dynamicId) {
+			var self = this;
+			var content = "";
+			$("tbody[name=generatedPdfs_"+dynamicId+"]").empty();
+			if (response != undefined && response != null && response.length > 0) {
+				$("#noReport_"+dynamicId).addClass("hideContent");
+				$("#noReport_"+dynamicId).hide();
+				$("thead[name=pdfHeader_"+dynamicId+"]").removeClass("hideContent");
+				$("thead[name=pdfHeader_"+dynamicId+"]").show();
+				for(var i =0; i < response.length; i++) {
+					var headerTr = '<tr class="generatedRow" fileName="'+response[i].fileName+'" appdirname = "'+temp+'"><td>' + response[i].time + '</td><td>'+response[i].type+'</td>';
+					content = content.concat(headerTr);
+					headerTr = '<td><a class="tooltiptop" fileName="'+response[i].fileName+'" fromPage="All" href="#" data-toggle="tooltip" data-placement="top" name="downLoad" data-original-title="Download Pdf" title=""><img src="themes/default/images/helios/download_icon.png" width="15" height="18" border="0" alt="0"></a></td>';
+					content = content.concat(headerTr);
+					headerTr = '<td><a class="tooltiptop" fileName="'+response[i].fileName+'" fromPage="All" href="#" data-toggle="tooltip" data-placement="top" name="delete" data-original-title="Delete Pdf" title=""><img src="themes/default/images/helios/delete_row.png" width="14" height="18" border="0" alt="0"></a></td></tr>';
+					content = content.concat(headerTr);
+				}
+				$("tbody[name=generatedPdfs_"+dynamicId+"]").append(content);
+				//self.openccpl(obj, $(obj).attr('name'), '');
+			} else {
+				$("thead[name=pdfHeader_"+dynamicId+"]").hide();
+				$("#noReport_"+dynamicId).removeClass("hideContent");
+				$("#noReport_"+dynamicId).show();
+				$("#noReport_"+dynamicId).html("No Reports are Available");
+			}
+		},
+		
+		clickFunction : function(dynamicId){
 			var self = this;
 			$("a[name=delete]").click(function() {
 				var deletedata = {}, actionBody = {}, action;
@@ -381,9 +425,10 @@ define(["projectlist/api/projectListAPI"], function() {
 				});
 				var size = $(".generatedRow").size();
 				if(size === 0) {
-					$("thead[name=pdfHeader]").hide();
-					$("#noReport").show();
-					$("#noReport").html("No Report are Available");
+					$("thead[name=pdfHeader_"+dynamicId+"]").hide();
+					$("#noReport_"+dynamicId).removeClass("hideContent");
+					$("#noReport_"+dynamicId).show();
+					$("#noReport_"+dynamicId).html("No Reports are Available");
 				}
 				actionBody = deletedata;
 				self.projectListAction(self.getActionHeader(actionBody, "deleteReport"), "", function(response){

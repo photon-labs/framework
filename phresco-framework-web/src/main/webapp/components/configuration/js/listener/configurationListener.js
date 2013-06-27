@@ -908,10 +908,10 @@ define(["configuration/api/configurationAPI"], function() {
 					if(self.configListPage === null) {
 						commonVariables.navListener.getMyObj(commonVariables.configuration, function(retVal) {
 							self.configListPage = retVal;
-							Clazz.navigationController.push(self.configListPage, true);
+							Clazz.navigationController.push(self.configListPage, true, true);
 						});
 					} else {
-						Clazz.navigationController.push(self.configListPage, true);
+						Clazz.navigationController.push(self.configListPage, true, true);
 					}
 				});
 			}

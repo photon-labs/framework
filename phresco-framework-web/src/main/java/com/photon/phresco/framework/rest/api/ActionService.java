@@ -30,12 +30,14 @@ import javax.ws.rs.core.Response;
 
 import org.apache.log4j.Logger;
 
+import com.photon.phresco.commons.model.ApplicationInfo;
 import com.photon.phresco.exception.PhrescoException;
 import com.photon.phresco.framework.commons.FrameworkUtil;
 import com.photon.phresco.framework.rest.api.util.BufferMap;
 import com.photon.phresco.framework.rest.api.util.ActionFunction;
 import com.photon.phresco.framework.rest.api.util.ActionResponse;
 import com.photon.phresco.framework.rest.api.util.ActionServiceConstant;
+import com.photon.phresco.framework.rest.api.util.FrameworkServiceUtil;
 import com.sun.jersey.api.client.ClientResponse.Status;
 
 /**
@@ -732,7 +734,17 @@ public class ActionService implements ActionServiceConstant {
 		ActionResponse response = new ActionResponse();
 		try	{
 			actionFunction.prePopulatePrintAsPDFData(request);
-			response = actionFunction.printAsPdf(request);
+			FrameworkUtil frameworkUtil = FrameworkUtil.getInstance();
+			String appDirName = request.getParameter(APPDIR);
+			String fromPage = request.getParameter(FROM_PAGE);
+			ApplicationInfo appInfo = FrameworkServiceUtil.getApplicationInfo(appDirName);
+			boolean testReportAvailable = actionFunction.isTestReportAvailable(frameworkUtil, appInfo, fromPage);
+			if (testReportAvailable) {
+				response = actionFunction.printAsPdf(request);
+			} else {
+				response.setService_exception("Aleast one Test Report should be available Or Sonar report should be available");
+			}
+			
 		} catch (Exception e) {
 			S_LOGGER.error(e.getMessage());
 			response.setStatus(ERROR);

@@ -41,12 +41,12 @@
                         <td><a name="editApplication" href="javascript:;">{{name}}</a></td>
                         <td>{{#if description }} {{description}} {{else}} &nbsp {{/if}}</td>
                         <td>{{techInfo.name}}</td>
-                       <td><a name="pdf_report_{{id}}" fromPage="All" class="tooltiptop" title="" dynamicId="{{id}}" data-placement="top" data-t="tooltip" href="#" data-original-title="PDF Report"><img src="themes/default/images/helios/pdf_icon.png" width="14" height="16" border="0" alt=""></a>
+                       <td><a name="pdf_report_{{id}}" temp="pdf_report" fromPage="All" class="tooltiptop" title="" dynamicId="{{id}}" data-placement="top" data-t="tooltip" href="#" data-original-title="PDF Report"><img src="themes/default/images/helios/pdf_icon.png" width="14" height="16" border="0" alt=""></a>
                   
               <div id="pdf_report_{{id}}" class="dyn_popup pdf_report">
-              <div id="noReport" class="alert noReport" style="text-align: center;"></div>
+              <div id="noReport_{{id}}" class="alert noReport hideContent" style="text-align: center;"></div>
                 <table class="existing_report" width="100%" border="0" cellspacing="0" cellpadding="5">
-                  <thead name="pdfHeader" show="true">
+                  <thead class="hideContent" name="pdfHeader_{{id}}" show="true">
                         <tr>
                             <th>Existing Reports</th>
                             <th>Type</th>
@@ -54,26 +54,21 @@
                             <th>Delete</th>
                         </tr>    
                     </thead>
-                    <tbody name="generatedPdfs">
-                        <tr>
-                            <td>Apr 17 2013 12:51</td>
-                            <td>Detailed</td>
-                            <td><img src="themes/default/images/helios/download_icon.png" width="15" height="18" border="0" alt="0"></td>
-                            <td><img name="delete" src="themes/default/images/helios/delete_row.png" width="14" height="18" border="0" alt="0"></td>
-                        </tr>
+                    <tbody name="generatedPdfs_{{id}}">
                     </tbody>    
                 </table>
+                <form id="pdfReport">
                    <table class="report_type">
                     <tbody>
                         <tr>
-                            <td>Report Type</td>
-                            <td>
-                                <select id="reportType">
-                                    <option value="detailedReport">Detailed Report</option>
-                                    <option value="overallReport">Overall Report</option>
-                                </select>
-                            </td>
-                        </tr>
+                        	<td>Report Type</td>
+                        	<td>
+                            	<select name="reportDataType">
+                                	<option value="detail">Detailed Report</option>
+                                	<option value="crisp">Overall Report</option>
+                            	</select>
+                        	</td>
+                    	</tr>
                          <tr>
                             <td>Pdf Report Name</td>
                             <td>
@@ -84,9 +79,11 @@
                    </table>
                    <div class="popuploading" id="pdfReportLoading_{{id}}">&nbsp</div>
                 <div class="flt_right">
-                 <input type="button" fromPage="All" sonarUrl="http://localhost:9000/dashboard" value="Generate" class="btn btn_style" name="generate" appId="{{id}}" projectId = "{{../id}}">
+                 <input type="button" fromPage="All"  appDirName="{{appDirName}}" value="Generate" class="btn btn_style" name="generate" appId="{{id}}" projectId = "{{../id}}">
                  <input type="button" value="Close" class="btn btn_style dyn_popup_close">
                </div>
+               <input type="hidden" name="fromPage" value="All"/>
+               </form>
                 <!--pdf_report div ends here -->  
              </div> 
                   </td>

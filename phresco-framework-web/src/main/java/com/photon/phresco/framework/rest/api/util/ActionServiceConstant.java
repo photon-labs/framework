@@ -18,6 +18,7 @@ public interface ActionServiceConstant {
 	public String  REPORT_DATA_TYPE= "reportDataType";
 	public String  FROM_PAGE= "fromPage";
 	public String REQ_PDF_NAME = "pdfName";
+	public String APPDIR = "appDirName";
 	
 	
 	

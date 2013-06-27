@@ -27,7 +27,7 @@ define(["application/api/applicationAPI"], function() {
 			Clazz.navigationController.jQueryContainer = commonVariables.contentPlaceholder;
 			commonVariables.navListener.getMyObj(commonVariables.projectlist, function(retVal){
 				self.projectlistContent = retVal;
-				Clazz.navigationController.push(self.projectlistContent, true);
+				Clazz.navigationController.push(self.projectlistContent, true, true);
 			});
 		},
 		removelayer : function(object) {
