@@ -14,6 +14,7 @@
 								<ul class="row dynamicControls">
                        			</ul>
                         		<div class="dynamicPopupLoading" style="display:none;">&nbsp</div>
+								<div class="hiddenControls"></div>
 								<div class="flt_right">
 									<input type="button" data-i18n="[value]codequality.btn.validate" class="btn btn_style" name="validate" id="validate">
 									<input type="button" data-i18n="[value]codequality.btn.close" class="btn btn_style dyn_popup_close" name="close">
@@ -42,7 +43,9 @@
 					<tr>
 						<th>Progress</th>
 						<td>
-							<img src="themes/default/images/helios/buildreport_icon.png" width="15" height="18" border="0" alt="">
+							<a href="#" id="copyLog">
+								<img src="themes/default/images/helios/buildreport_icon.png" width="15" height="18" border="0" alt="">
+							</a>	
 						</td>
 					</tr>
 				</thead>

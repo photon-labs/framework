@@ -116,6 +116,7 @@
 					<ul class="row dynamicControls">
 					</ul>
 					<div class="dynamicPopupLoading" style="display:none;">&nbsp</div>
+					<div class="hiddenControls"></div>
 					<div class="flt_right">
 						<input type="button" value="Test" class="btn btn_style" id="runUnitTest">
 						<input type="button" value="Close" class="btn btn_style dyn_popup_close">

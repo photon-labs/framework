@@ -96,7 +96,11 @@ define(["build/listener/buildListener"], function() {
 		preRender: function(whereToRender, renderFunction){
 			var self = this;
 			self.buildListener.getBuildInfo(self.buildListener.getRequestHeader("", '', 'getList'), function(response) {
-				renderFunction(response, whereToRender);
+			var buildObject = {};
+			var userPermissions = JSON.parse(self.buildListener.buildAPI.localVal.getSession('userPermissions'));
+				buildObject.buildInfos = response.data;
+				buildObject.userPermissions = userPermissions;
+				renderFunction(buildObject, whereToRender);
 			});
 		},
 		
@@ -118,9 +122,7 @@ define(["build/listener/buildListener"], function() {
 			$('#logContent').html(self.logContent);
 			self.logContent = '';
 			
-
 			self.resizeConsoleWindow();
-			$('#logContent').html(self.logContent);
 			self.logContent = '';
 			self.closeConsole();
 			var windowHeight = $(document).height();
@@ -172,17 +174,8 @@ define(["build/listener/buildListener"], function() {
 				if($(this).attr("class") === "btn btn_style"){
 					commonVariables.goal = "start";
 					commonVariables.phase = "run-against-source";
-					/* self.dynamicpage.getHtml(false, function(response){
-						$("#rasdynamicContent").html(response);
-						self.multiselect();
-						self.dynamicpage.showParameters();
-						self.dynamicPageListener.controlEvent();
-					});				
-					self.opencc(this, $(this).attr('name'));
-					self.openConsole(); */
-					 var whereToRender = $('#build_runagsource ul');
+					var whereToRender = $('#build_runagsource ul');
 					self.dynamicpage.getHtml(whereToRender, this, $(this).attr('name'));
-					self.openConsole();
 					$("#buildConsole").attr('data-flag','false');
 				}	
 			});
@@ -192,9 +185,7 @@ define(["build/listener/buildListener"], function() {
                 var whereToRender = $('#build_genbuild ul');
                 commonVariables.goal = "package";
                 commonVariables.phase = "package";
-                //self.dynamicpage.getHtml(whereToRender, widgetObject, openccObject);
                 self.dynamicpage.getHtml(whereToRender, this, $(this).attr('name'));
-				self.openConsole();
 			});
 			
 			$("input[name=build_minifier]").unbind("click");
@@ -240,6 +231,7 @@ define(["build/listener/buildListener"], function() {
 			
 			$("#buildRun").click(function(){
 				$('.alert_div').show();
+				self.openConsole();
 				self.onBuildEvent.dispatch($('form[name=buildForm]').serialize(), function(response){
 					$('.alert_div').hide();
 					self.logContent = $('#logContent').html();
@@ -249,6 +241,7 @@ define(["build/listener/buildListener"], function() {
 			
 			$("#runSource").click(function(){
 				$(".dyn_popup").hide();
+				self.openConsole();
 				self.onRASEvent.dispatch($('form[name=runAgainstForm]').serialize(), function(response){
 					$('.alert_div').hide();
 					self.logContent = $('#logContent').html();

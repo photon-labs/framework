@@ -80,6 +80,14 @@ define(["codequality/listener/codequalityListener"], function() {
 				});
 			}, 200);
 			
+			//RBAC
+			var userPermissions = JSON.parse(self.codequalityListener.codequalityAPI.localVal.getSession('userPermissions'));
+			if (!userPermissions.manageCodeValidation) {
+				$("#codeAnalysis").prop("disabled", true);
+			} else {
+				$("#codeAnalysis").prop("disabled", false);
+			}
+			
 			//To set the height of the report result section  
 			var windowHeight = $(document).height();
 			var marginTop = '';

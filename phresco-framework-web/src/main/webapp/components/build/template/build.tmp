@@ -9,13 +9,17 @@
         
         <div class="flt_right">
             <div class="build_genbuild">
-            <input type="submit" data-i18n="[value]build.label.runagainstsource" name="build_runagsource" class="btn btn_style">
+			{{#if userPermissions.manageBuilds}}
+				<input type="submit" data-i18n="[value]build.label.runagainstsource" name="build_runagsource" class="btn btn_style">
+			{{else}}
+				<input type="submit" data-i18n="[value]build.label.runagainstsource" name="build_runagsource" class="btn btn_style" disabled>
+			{{/if}}	
 					  <form name="runAgainstForm">
                       <div id="build_runagsource" class="dyn_popup dynamic_cont" style="display:none;width:310px;">
                         <ul class="row dynamicControls">
                         </ul>
                         <div class="dynamicPopupLoading" style="display:none;">&nbsp</div>
-							
+						<div class="hiddenControls"></div>	
                          <div class="flt_right">
                             <input id="runSource" type="button" value="Run" class="btn btn_style">
                             <input type="button" value="Close" class="btn btn_style dyn_popup_close">
@@ -26,7 +30,11 @@
 			<input id="stop" type="submit" data-i18n="[value]build.label.stop" class="btn btn_style_off">
 			<input id="restart" type="submit" data-i18n="[value]build.label.restart" class="btn btn_style_off">
             <div class="build_genbuild">
+				{{#if userPermissions.manageBuilds}}
                 	<input type="submit" data-i18n="[value]build.label.generatebuild" name="build_genbuild" class="btn btn_style">
+				{{else}}	
+					<input type="submit" data-i18n="[value]build.label.generatebuild" name="build_genbuild" class="btn btn_style" disabled>
+				{{/if}}
 				<form name="buildForm">
                     <div id="build_genbuild" class="dyn_popup dynamic_cont" style="display:none;width:310px;">
                         <ul class="row dynamicControls">
@@ -41,7 +49,11 @@
                 </form>
              </div>
              <div class="build_minifier">
-               <input id="minifier" type="submit" data-i18n="[value]build.label.minifer"  name="build_minifier" class="btn btn_style">
+				{{#if userPermissions.manageBuilds}}	
+					<input id="minifier" type="submit" data-i18n="[value]build.label.minifer"  name="build_minifier" class="btn btn_style">
+				{{else}}	
+					<input id="minifier" type="submit" data-i18n="[value]build.label.minifer"  name="build_minifier" class="btn btn_style" disabled>
+				{{/if}}
 					  <div id="build_minifier" class="dyn_popup" style="display:none;">
                         <table class="table table-striped table_border table-bordered" cellpadding="0" cellspacing="0" border="0">
                             <thead>
@@ -92,7 +104,7 @@
                     </tr>    
                 </thead>  
         		<tbody> 
-					{{#each data}}
+					{{#each buildInfos}}
 						<tr>
 							<td name={{buildNo}}>{{buildNo}}</td>
 							<td>{{timeStamp}}</td>
@@ -161,12 +173,16 @@
         <div class="unit_close">
 		<a href="#" data-flag="true" id="buildConsole"><img src="themes/default/images/helios/console_img.png" width="33" height="92" border="0" alt=""></a>
 		</div>  
-        <div class="unit_progress">
+        <div class="unit_progress build_progress">
 			<table class="table table-striped table_border table-bordered" cellpadding="0" cellspacing="0" border="0">
 			<thead>
 				<tr>
 					<th>Progress</th>
-					<td><img src="themes/default/images/helios/buildreport_icon.png" width="15" height="18" border="0" alt=""></td>
+					<td>
+						<a href="#" id="buildCopyLog">
+							<img src="themes/default/images/helios/buildreport_icon.png" width="15" height="18" border="0" alt="">
+						</a>	
+					</td>
 				</tr>
 				 </thead>
 				 <tbody class="scrollContent">
