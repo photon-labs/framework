@@ -18,13 +18,17 @@
 package com.photon.phresco.framework.rest.api;
 
 import java.awt.Desktop;
+import java.awt.HeadlessException;
 import java.awt.Toolkit;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
 import java.io.File;
+import java.io.UnsupportedEncodingException;
 import java.util.List;
 
+import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
+import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
@@ -120,10 +124,11 @@ public class UtilService extends RestBase implements FrameworkConstants, Service
 	 * @param log
 	 * @return
 	 */
-	@GET
+	@POST
 	@Path("/copyToClipboard")
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response copyLogToClipboard(@QueryParam("log") String log) {
+	@Consumes(MediaType.APPLICATION_JSON)
+	public Response copyLogToClipboard(String log) {
 		ResponseInfo<String> responseData = new ResponseInfo<String>();
 		try {
 			copyToClipboard(log);
@@ -200,9 +205,15 @@ public class UtilService extends RestBase implements FrameworkConstants, Service
 	 * Copy to clipboard.
 	 *
 	 * @param content the content
+	 * @throws UnsupportedEncodingException 
 	 */
-	private void copyToClipboard(String content) {
-		Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
-		clipboard.setContents(new StringSelection(content.replaceAll("(?m)^[ \t]*\r?\n", "")), null);
+	private void copyToClipboard(String content) throws PhrescoException {
+		try {
+			Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+			String decodedContent = java.net.URLDecoder.decode(content, "UTF-8");
+			clipboard.setContents(new StringSelection(decodedContent.replaceAll("(?m)^[ \t]*\r?\n", "")), null);
+		} catch (Exception e) {
+			throw new PhrescoException(e);
+		}
 	}
 }

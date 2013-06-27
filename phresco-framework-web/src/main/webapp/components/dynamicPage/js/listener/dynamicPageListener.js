@@ -153,8 +153,8 @@ define(["framework/widgetWithTemplate", "dynamicPage/api/dynamicPageAPI", "commo
         	if (!self.isBlank(parameter.value)) {
         		textBoxValue = parameter.value;
         	} 
-            whereToRender.append('<li class="ctrl textCtrl '+columnClass+'" ' +optionalAttrs.show+' id="'+parameter.key+'Li"><label>'+parameter.name.value[0].value+optionalAttrs.required+'</label>' + 
-        						 '<input type="'+inputType+'" name="'+ parameter.key +'" value="'+textBoxValue+'" id="'+parameter.key+'" ' +optionalAttrs.editable+' /></li>');
+            whereToRender.append('<li class="ctrl textCtrl '+columnClass+'" ' +optionalAttrs.show+'  id="'+parameter.key+'Li"><label>'+parameter.name.value[0].value+optionalAttrs.required+'</label>' + 
+        						 '<input type="'+inputType+'" parameterType="'+ parameter.type+'" showHide="'+parameter.show+'" name="'+ parameter.key +'" value="'+textBoxValue+'" id="'+parameter.key+'" ' +optionalAttrs.editable+' /></li>');
         },
         
 		 constructHiddenCtrl : function(parameter, columnClass, optionalAttrs, whereToRender) {
@@ -178,9 +178,9 @@ define(["framework/widgetWithTemplate", "dynamicPage/api/dynamicPageAPI", "commo
             checked = parameter.value == "true" ? "checked" : "";
             
             if (liLastPrevId != undefined && liLastPrevId.indexOf('checkCtrl') !== -1) {
-                whereToRender.append('<li type="checkbox" class="ctrl checkCtrl '+columnClass+'" ' +optionalAttrs.show+' id="'+parameter.key+'Li"><input type="checkbox" name="'+ parameter.key +'" '+checked+' additionalparam="'+additionalparam+'" dependency="'+dependency+'" id="'+parameter.key+'" ' +optionalAttrs.editable+' > '+parameter.name.value[0].value+optionalAttrs.required+'</li>');
+                whereToRender.append('<li type="checkbox" class="ctrl checkCtrl '+columnClass+'" ' +optionalAttrs.show+' id="'+parameter.key+'Li"><input type="checkbox" showHide="'+parameter.show+'" parameterType="'+ parameter.type+'" name="'+ parameter.key +'" '+checked+' additionalparam="'+additionalparam+'" dependency="'+dependency+'" id="'+parameter.key+'" ' +optionalAttrs.editable+' > '+parameter.name.value[0].value+optionalAttrs.required+'</li>');
             } else {
-                whereToRender.append('<li type="checkbox" class="ctrl checkCtrl '+columnClass+'" ' +optionalAttrs.show+' id="'+parameter.key+'Li"><input type="checkbox" name="'+ parameter.key +'" '+checked+' additionalparam="'+additionalparam+'" dependency="'+dependency+'" id="'+parameter.key+'" ' +optionalAttrs.editable+' > '+parameter.name.value[0].value+optionalAttrs.required+'</li>');
+                whereToRender.append('<li type="checkbox" class="ctrl checkCtrl '+columnClass+'" ' +optionalAttrs.show+' id="'+parameter.key+'Li"><input type="checkbox" showHide="'+parameter.show+'" parameterType="'+ parameter.type+'" name="'+ parameter.key +'" '+checked+' additionalparam="'+additionalparam+'" dependency="'+dependency+'" id="'+parameter.key+'" ' +optionalAttrs.editable+' > '+parameter.name.value[0].value+optionalAttrs.required+'</li>');
             }
         },
         
@@ -230,7 +230,7 @@ define(["framework/widgetWithTemplate", "dynamicPage/api/dynamicPageAPI", "commo
             }
             
             li = $('<li type="selectbox" class="ctrl selectCtrl '+columnClass+'" ' +optionalAttrs.show+'  id="'+parameter.key+'Li"><label>'+parameter.name.value[0].value+optionalAttrs.required+'</label></li>');
-            select = $('<select '+selection+' id="'+parameter.key+'" dependencyAttr="'+parameterDependency+'" name="'+parameter.key+'" class="selectpicker" '+multiple+' ' + 
+            select = $('<select data-selected-text-format="count>1" '+selection+' id="'+parameter.key+'" showHide="'+parameter.show+'" dependencyAttr="'+parameterDependency+'" name="'+parameter.key+'" parameterType="'+ parameter.type+'" class="selectpicker" '+multiple+' ' + 
             		 'enableOnchangeFunction="'+ enableOnchangeFunction +'"  data-selected-text-format="count>2" ' +optionalAttrs.editable+' ></select>');
             li.append(select);
             whereToRender.append(li);
@@ -242,9 +242,9 @@ define(["framework/widgetWithTemplate", "dynamicPage/api/dynamicPageAPI", "commo
         
         //constructs select box option elements
         constructOptions : function(selectCtrl, possibleValues, previousValue, isMultiSelect, parameterDependency) {
-        	var self = this, selected, additionalParam = "";
+        	var self = this, selected;
             $.each(possibleValues, function(index, value){
-            	var optionValue = "";
+            	var optionValue = "", additionalParam = "";
             	if (!self.isBlank(value.key)) {
             		optionValue = value.key;
             	} else {
@@ -257,7 +257,6 @@ define(["framework/widgetWithTemplate", "dynamicPage/api/dynamicPageAPI", "commo
             		selected = self.getSelectedString(previousValue, value.key, value.value);
             	}
             	var params = self.getAdditionalParamForOptions(parameterDependency, value);
-            	
             	if (!self.isBlank(params)) {
             		additionalParam = "dependency=" + params;
             	}
@@ -292,7 +291,6 @@ define(["framework/widgetWithTemplate", "dynamicPage/api/dynamicPageAPI", "commo
         	if (!self.isBlank(parameterDependency)) {
 				additionalParam += parameterDependency;
    		 	}
-        	
 			if (!self.isBlank(value.dependency)) {
 				if (!self.isBlank(additionalParam)) {
 					additionalParam += ",";
@@ -506,9 +504,10 @@ define(["framework/widgetWithTemplate", "dynamicPage/api/dynamicPageAPI", "commo
 		
 		//to dynamically update dependancy data into controls 
 		constructElements : function(data, pushToElement, isMultiple, controlType, controlTag) {
-			var self=this, previousValue = $(pushToElement).val();
-			pushToElement.empty();
-			if ('SELECT' === controlTag) {
+			var self=this, previousValue = $(pushToElement).val(), parameterType = pushToElement.attr("parameterType");
+			
+			if ('SELECT' === controlTag && 'List' !== parameterType) {
+				pushToElement.empty();
 				self.updateSelectCtrl(pushToElement, data, previousValue);
 			}
 			self.hideDynamicPopupLoading();
@@ -538,30 +537,53 @@ define(["framework/widgetWithTemplate", "dynamicPage/api/dynamicPageAPI", "commo
 			$(':input, .dynamicControls > li').each(function(index, value) {
 				var currentObjType = $(this).prop('tagName');
 				var multipleAttr = $(this).attr('multiple');
-				
-				if (currentObjType === "SELECT" && multipleAttr === undefined && this.options[this.selectedIndex] !== undefined ) {
-					
+				var id = $(this).attr('id');
+				var block = $("#" + id + "Li").css("display");
+				if (currentObjType === "SELECT" && multipleAttr === undefined && this.options[this.selectedIndex] !== undefined && "block" == block) {
 					var dependencyAttr =  this.options[this.selectedIndex].getAttribute('additionalparam');
 					
-					if (dependencyAttr !== null && dependencyAttr !== "") {
+					if (!self.isBlank(dependencyAttr)) {
 						var csvDependencies = dependencyAttr.substring(dependencyAttr.indexOf('=') + 1);
 						csvDependencies = self.getAllDependencies(csvDependencies);
 						var dependencyArr = new Array();
 						dependencyArr = csvDependencies.split(',');
-						self.showControl(dependencyArr);					
+						self.showControl(dependencyArr);	
+						
+						//To show checkbox's dependencies
+						for (var i = 0; i < dependencyArr.length; i+=1) {
+							var controlTag = $("#" + dependencyArr[i]).prop('tagName');
+							var controlType = $("#" + dependencyArr[i]).attr('type');
+							if (controlTag === 'INPUT' && controlType === 'checkbox') {
+								var selectedOption = $("#" + dependencyArr[i]).is(':checked');
+								if (selectedOption) {
+									var c = $("#" + dependencyArr[i]).attr('additionalparam');
+									if (!isBlank(c)) {
+										var csvDep = c.substring(c.indexOf('=') + 1);
+										var csvDepArr = new Array();
+										csvDepArr = csvDep.split(',');
+										for (var j = 0; j < csvDepArr.length; j+=1) {
+											var showHide = $("#" + csvDepArr[j]).attr('showHide');
+											if (showHide == 'false') {
+												$("#" + csvDepArr[j] + "Li").show();
+											} 
+										}
+									}
+								} 
+							}
+						}
 					}
 					
 					//If the dependent child is select box, hide controls based on selected options - while popup loading
 					var hideOptionDependency = this.options[this.selectedIndex].getAttribute('hide');
-					if (hideOptionDependency !== undefined && hideOptionDependency !== "" && !self.isBlank(hideOptionDependency)) {
+					if (!self.isBlank(hideOptionDependency)) {
 						var hideOptionDependencyArr = new Array();
 						hideOptionDependencyArr = hideOptionDependency.split(',');
 						self.hideControl(hideOptionDependencyArr);
 					} 
 					
-				} else if(currentObjType === "SELECT" && multipleAttr === undefined && $(this).attr('dependencyAttr') != undefined) {
+				} else if(currentObjType === "SELECT" && multipleAttr === undefined && $(this).attr('dependencyAttr') != undefined  && "block" == block) {
 					var dependencyAttr =  $(this).attr('dependencyAttr');
-					if (dependencyAttr != null && dependencyAttr != "" && !self.isBlank(dependencyAttr)) {
+					if (!self.isBlank(dependencyAttr)) {
 						var csvDependencies = self.getAllDependencies(dependencyAttr);
 						var dependencyArr = new Array();
 						dependencyArr = csvDependencies.split(',');
