@@ -31,8 +31,9 @@
                     <td colspan="2" class="enddate" name="enddateholder"><input name="enddate" id="endDate" type="text"><span class="add-on"><span class="add-on"><img id="enddt" src="themes/default/images/helios/cal_icon.png" border="0" alt=""></span></span></td>
                 </tr>
 				<tr>	
-                	<td><input type="checkbox" name="multimodule" value="false"><b>&nbsp; Multi Module</b></td>
-                    <td><input type="text" placeholder="Artifact ID"></td>
+                	<td colspan="2"><input type="checkbox" name="multimodule" value="false"><b>&nbsp; Multi Module</b></td>
+                    <td><span name="artifactId-lbl" data-i18n="project.create.label.artifactId" style="display:none;"></span></td>
+					<td><input name="artifactId" type="text" placeholder="Artifact ID" style="display:none;"></td>
                     <td colspan="6"></td>
                 </tr>
 				{{#if applicationlayerData.techGroups}}
@@ -74,8 +75,8 @@
 											</select>
 										 </td>
 										 <td colspan="2" class="appdependencyTd">
-											<select class="selectpicker appdependencySelect" name="appdependencySelect" multiple>
-											   <option value="0">Select Dependency</option>
+											<select class="selectpicker appdependencySelect" name="appdependencySelect" multiple title="Select Dependency" data-selected-text-format="count>2">
+											   <option value="0" disabled>Select Dependency</option>
 											</select>
 										 </td>
 										 <td>
@@ -128,8 +129,8 @@
 											</select>
 										 </td>
 										 <td class="webdependencyTd">
-											<select class="selectpicker webdependencySelect" name="webdependencySelect" multiple>
-											   <option>Select Dependency</option>
+											<select class="selectpicker webdependencySelect" name="webdependencySelect" multiple data-selected-text-format="count>2" title="Select Dependency">
+											   <option disabled>Select Dependency</option>
 											</select>
 										 </td>
 										 <td>

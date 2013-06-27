@@ -29,11 +29,12 @@
                 </tr>
 				<tr>
 					{{#if editProject.multiModule}}
-                	   <td><input type="checkbox" name="multimodule" value="true" checked><b>&nbsp; Multi Module</b></td>
+                	   <td colspan="2"><input type="checkbox" name="multimodule" value="true" checked><b>&nbsp; Multi Module</b></td>
+					   <td><span name="artifactId-lbl" data-i18n="project.create.label.artifactId"></span></td>
+					   <td><input name="artifactId" type="text" placeholder="Artifact ID"></td>
 					{{else}}
-						<td><input type="checkbox" name="multimodule" value="false"><b>&nbsp; Multi Module</b></td>
+						<td colspan="2"><input type="checkbox" name="multimodule" value="false" style="display:none;"><b>&nbsp; Multi Module</b></td>
 					{{/if}}   
-                    <td><input type="text" placeholder="Artifact ID"></td>
                     <td colspan="6"></td>
                 </tr>
 			{{/editProject}}

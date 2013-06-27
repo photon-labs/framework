@@ -11,12 +11,11 @@ define(["projects/listener/projectsListener"], function() {
 		onProjectsEvent : null,
 		projectRequestBody : {},
 		templateData : {},
-		onAddLayerEvent : null,
 		getData : null,
 		onUpdateProjectsEvent : null,
 		onCancelUpdateEvent : null,
-		onRemoveLayerEvent : null,
-		onAddLayerEvent : null,
+		/* onRemoveLayerEvent : null,
+		onAddLayerEvent : null, */
 			
 		/***
 		 * Called in initialization time of this class 
@@ -39,15 +38,12 @@ define(["projects/listener/projectsListener"], function() {
 			if(self.onCancelUpdateEvent === null){	
 				self.onCancelUpdateEvent = new signals.Signal();
 			}
-			if(self.onAddLayerEvent === null) {
-				self.onAddLayerEvent = new signals.Signal();
-			}
 			
 			if(self.onCreateEvent === null) {
 				self.onCreateEvent = new signals.Signal();
 			}
 			
-			if(self.onRemoveLayerEvent === null) {
+			/* if(self.onRemoveLayerEvent === null) {
 				self.onRemoveLayerEvent = new signals.Signal();
 			}
 			
@@ -56,7 +52,7 @@ define(["projects/listener/projectsListener"], function() {
 			}
 			
 			self.onRemoveLayerEvent.add(projectsListener.removelayer, projectsListener);
-			self.onAddLayerEvent.add(projectsListener.addlayer, projectsListener);
+			self.onAddLayerEvent.add(projectsListener.addlayer, projectsListener); */
 			self.onUpdateProjectsEvent.add(projectsListener.createproject, projectsListener);
 			self.onCancelUpdateEvent.add(projectsListener.cancelCreateproject, projectsListener);
 		},
@@ -198,6 +194,7 @@ define(["projects/listener/projectsListener"], function() {
 			self.windowResize();
 			
 			$("#updateProject").click(function() {
+				console.info("update project clicked");
 				self.onUpdateProjectsEvent.dispatch(commonVariables.projectId, "update");
 			});
 			
@@ -211,7 +208,7 @@ define(["projects/listener/projectsListener"], function() {
 				advanced:{ updateOnContentResize: true}
 			});
 			
-			$("img[name='close']").unbind('click');
+			/* $("img[name='close']").unbind('click');
 			$("img[name='close']").bind('click', function(){
 				self.onRemoveLayerEvent.dispatch($(this));
 			});
@@ -219,7 +216,7 @@ define(["projects/listener/projectsListener"], function() {
 			$(".content_end input").unbind('click');
 			$(".content_end input").bind('click', function(){
 				self.onAddLayerEvent.dispatch($(this));
-			});
+			}); */
 			
 			$("input[name='multimodule']").click(function() {
 				$(this).is(':checked')?$(this).val(true):$(this).val(false);

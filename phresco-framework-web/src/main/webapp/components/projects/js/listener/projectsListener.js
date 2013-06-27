@@ -808,10 +808,14 @@ define(["projects/api/projectsAPI"], function() {
 			if(multimodule === "true"){
 				$("span[name=appdependency]").show();
 				$("span[name=webdependency]").show();
+				$("span[name=artifactId-lbl]").show();
+				$("input[name=artifactId]").show();
 				self.showDependency();
 			} else {
 				$("span[name=appdependency]").hide();
 				$("span[name=webdependency]").hide();
+				$("span[name=artifactId-lbl]").hide();
+				$("input[name=artifactId]").hide();
 				self.hideDependency();
 			}
 		},
