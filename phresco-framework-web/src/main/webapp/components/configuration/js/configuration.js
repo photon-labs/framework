@@ -115,6 +115,7 @@ define(["configuration/listener/configurationListener"], function() {
 			$("input[name=addEnv]").click(function() {
 				var arr=[];
 				var count=0;
+				var found = false;
 				$('.envlistname').each(function() {
 					arr[count]=$(this).text();
 					count++;
@@ -125,14 +126,19 @@ define(["configuration/listener/configurationListener"], function() {
 					$("input[name='envName']").focus();
 					$("input[name='envName']").attr('placeholder','Enter Environment Name');
 				} else {							  
-					var found = $.inArray($("input[name='envName']").val(), arr) > -1;
+					$('.envlistname').each(function() {
+						if ($(this).text().toLowerCase() == $("input[name='envName']").val().toLowerCase()) {
+							found = true;
+							return false;
+						}
+					});
+					//var found = $.inArray($("input[name='envName']").val(), arr) > -1;
 					
 					if (found === false) {
 						self.addEnvEvent.dispatch(name, envDesc, '');
 						$("input[name='envName']").attr('placeholder','Environment Name');
 						$("input[name='envDesc']").attr('placeholder','Environment Description');
-					}
-					else {
+					} else {
 						$("#errdisplay").show();
 						$("#errdisplay").text("Environment already Exist");
 						setTimeout(function() {
