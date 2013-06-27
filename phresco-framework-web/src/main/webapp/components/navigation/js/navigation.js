@@ -96,6 +96,8 @@ define(["navigation/listener/navigationListener"], function() {
 			
 			$("#importApp").click(function() {
 				var currentPrjName = "";
+				$('#importUserName').attr('readonly', true);
+				$('#importPassword').attr('readonly', true);
 				self.opencc(this, "project_list_import", currentPrjName);
 			});
 			
@@ -106,6 +108,7 @@ define(["navigation/listener/navigationListener"], function() {
 					$(".svnusr").hide();
 					$(".svnpswd").hide();
 					$(".gitdata").show();
+					$(".seperatetd").hide();
 					$(".testCheckoutData").hide();
 				}
 
@@ -114,11 +117,13 @@ define(["navigation/listener/navigationListener"], function() {
 					$(".svnusr").hide();
 					$(".svnpswd").hide();
 					$(".gitdata").show();
+					$(".seperatetd").hide();
 					$(".testCheckoutData").hide();
 				}
 
 				else if($(this).val() === "svn") {
 					$(".svndata").show();
+					$(".seperatetd").show();
 					$(".svnusr").show();
 					$(".svnpswd").show();
 					$(".gitdata").hide();
@@ -133,6 +138,18 @@ define(["navigation/listener/navigationListener"], function() {
 				} else {
 					$("#revision").removeAttr("readonly");
 				}
+			});
+			
+			var checkbox = $("#importCredential").find('input[type=checkbox]');
+			checkbox.unbind("change");
+			checkbox.on("change", function(){	
+				if(checkbox.is(':checked')) {
+					$('#importUserName').removeAttr('readonly');
+					$('#importPassword').removeAttr('readonly');
+				} else {
+					$('#importUserName').attr('readonly','readonly');
+					$('#importPassword').attr('readonly','readonly');
+				}	
 			});
 			
 			$("input[name=testHeadOption]").change(function() {

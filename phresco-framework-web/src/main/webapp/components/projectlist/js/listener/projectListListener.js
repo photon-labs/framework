@@ -316,7 +316,7 @@ define(["projectlist/api/projectListAPI"], function() {
 					$('input[name=commitbtn]').removeClass("btn_style");		
 					$('.commit_data_'+dynamicId).show();
 					$('#commitRepourl_'+dynamicId).val(response.data.repoUrl);
-					commitableFiles += '<thead><tr><th><input dynamicId="'+ dynamicId +'" class="commitParentChk_'+ dynamicId +'"  type="checkbox"></th><th>File</th><th>Status</th></tr></thead><tbody>';
+					commitableFiles += '<thead class="fixedHeader"><tr><th style="width: 5%;"><input dynamicId="'+ dynamicId +'" class="commitParentChk_'+ dynamicId +'"  type="checkbox"></th><th style="width: 71%;">File</th><th>Status</th></tr></thead><tbody class="commitFixed">';
 					$.each(response.data.repoInfoFile, function(index, value) {
 						commitableFiles += '<tr><td><input dynamicId="'+ dynamicId +'" class="commitChildChk_' + dynamicId + '" type="checkbox" value="' + value.commitFilePath + '"></td>';
 						commitableFiles += '<td style="width:150px;" title="'+ value.commitFilePath +'">"' + self.trimValue(value.commitFilePath) + '"</td>';
@@ -327,6 +327,15 @@ define(["projectlist/api/projectListAPI"], function() {
 						self.checkBoxEvent($('.commitParentChk_'+dynamicId), 'commitChildChk_'+dynamicId, $('input[name=commitbtn]'));
 					});
 					self.checkAllEvent($('.commitParentChk_'+dynamicId), $('.commitChildChk_'+dynamicId), $('input[name=commitbtn]'));
+					setTimeout(function() {
+						$('.commitable_files_'+dynamicId+" tbody").mCustomScrollbar({
+							autoHideScrollbar:true,
+							theme:"light-thin",
+							advanced: {
+								updateOnContentResize: true
+							}
+						});
+					}, 5);
 				}
 				
 				if (!self.isBlank(response.data.repoInfoFile) && response.data.repoInfoFile.length === 0) {
@@ -498,10 +507,14 @@ define(["projectlist/api/projectListAPI"], function() {
 				
 				if(self.flag1 === 1)
 				{	
-					if(repourl === ""){
+					if(!self.isValidUrl(repourl)){
 						$("#repourl_"+dynid).focus();
-						$("#repourl_"+dynid).attr('placeholder','Enter Repourl');
+						$("#repourl_"+dynid).val('');
+						$("#repourl_"+dynid).attr('placeholder','Invalid Repourl');
 						$("#repourl_"+dynid).addClass("errormessage");
+						setTimeout(function() { 
+							$("#repourl_"+dynid).val(repourl); 
+						}, 4000);
 						self.hasError = true;
 					} else if(uname === ""){
 						$("#uname_"+dynid).focus();
@@ -521,10 +534,14 @@ define(["projectlist/api/projectListAPI"], function() {
 
 				else if(self.flag2 === 1)
 				{
-					if(commitRepourl === ""){
+					if(!self.isValidUrl(commitRepourl)){
 						$("#commitRepourl_"+dynid).focus();
-						$("#commitRepourl_"+dynid).attr('placeholder','Enter Repourl');
+						$("#commitRepourl_"+dynid).val('');
+						$("#commitRepourl_"+dynid).attr('placeholder','Invalid Repourl');
 						$("#commitRepourl_"+dynid).addClass("errormessage");
+						setTimeout(function() { 
+							$("#commitRepourl_"+dynid).val(repourl); 
+						}, 4000);
 						self.hasError = true;
 					} else if(commitUsername === ""){
 						$("#commitUsername_"+dynid).focus();
@@ -544,10 +561,14 @@ define(["projectlist/api/projectListAPI"], function() {
 				
 				else if(self.flag3 === 1)
 				{	
-					if(updateRepourl === ""){
+					if(!self.isValidUrl(updateRepourl)){
 						$("#updateRepourl_"+dynid).focus();
-						$("#updateRepourl_"+dynid).attr('placeholder','Enter Repourl');
+						$("#updateRepourl_"+dynid).val('');
+						$("#updateRepourl_"+dynid).attr('placeholder','Invalid Repourl');
 						$("#updateRepourl_"+dynid).addClass("errormessage");
+						setTimeout(function() { 
+							$("#updateRepourl_"+dynid).val(updateRepourl); 
+						}, 4000);
 						self.hasError = true;
 					} else if(updateUsername === ""){
 						$("#updateUsername_"+dynid).focus();

@@ -118,7 +118,7 @@
                             </tr>
                             <tr>
                                 <td>
-                                    <select id="type_{{id}}">
+                                    <select id="type_{{id}}" class="ad_Select">
                                         <option value="svn">SVN</option>
                                         <option value="bitkeeper">Bitkeeper</option>
                                         <option value="git">Git</option>
@@ -157,8 +157,7 @@
                       <div class="hideContent commit_data_{{id}}">
                             <table  class="commitable_files_{{id}}" width="100%" border="0" cellspacing="0" cellpadding="5">
                                   
-                            </table>   
-                            <br>
+                            </table>                               
                             <table class="commitData_{{id}}" width="100%" border="0" cellspacing="0" cellpadding="0">
                                 <tbody>
                                     <tr>
@@ -167,7 +166,7 @@
                                     </tr>
                                     <tr>
                                         <td>
-                                            <select id="commitType_{{id}}">
+                                            <select id="commitType_{{id}}" class="co_Select">
                                                 <option value="svn">SVN</option>
                                                 <option value="bitkeeper">Bitkeeper</option>
                                                 <option value="git">Git</option>
@@ -220,7 +219,7 @@
                                     </tr>
                                     <tr>
                                         <td>
-                                            <select id="updateType_{{id}}">
+                                            <select id="updateType_{{id}}" class="up_Select">
                                                 <option value="svn">SVN</option>
                                                 <option value="bitkeeper">Bitkeeper</option>
                                                 <option value="git">Git</option>

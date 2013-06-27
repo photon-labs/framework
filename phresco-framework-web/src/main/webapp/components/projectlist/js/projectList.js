@@ -137,6 +137,24 @@ define(["projectlist/listener/projectListListener"], function() {
 			}
 		},
 		
+		hideShowCredentials : function(val){
+			if(val == 'svn') {
+				$(".seperatetd").parent().show();
+			} else {
+				$(".seperatetd").parent().hide();
+			}			
+		}, 
+		
+		makeCredReadOnly : function (checkObj, usrObj, pwdObj) {
+			if(!checkObj.is(':checked')) {
+				usrObj.attr('readonly','true');
+				pwdObj.attr('readonly','true');
+			} else {
+				usrObj.removeAttr('readonly');
+				pwdObj.removeAttr('readonly');
+			}
+		},
+		
 		
 	
 		/***
@@ -203,9 +221,45 @@ define(["projectlist/listener/projectListListener"], function() {
 			});
 
 			$(".tooltiptop").unbind("click");
-			$(".tooltiptop").click(function() {
+			$(".tooltiptop").click(function() {	
+				var selectObj;
+				var checkObj;
+				var usrObj;
+				var pwdObj;			
+				var action = $(this).attr("data-original-title");
 				var currentPrjName = $(this).closest("tr").attr("class");
 				var dynamicId = $(this).attr("dynamicId");
+				
+				if (action == "Add Repo") {
+					selectObj = $('.ad_Select');
+					checkObj = $("#repocredential_"+dynamicId);
+					usrObj = $("#uname_"+dynamicId);
+					pwdObj = $("#pwd_"+dynamicId);
+				} else if (action == "Commit") {
+					selectObj = $('.co_Select');
+					checkObj = $("#commitCredential_"+dynamicId);
+					usrObj = $("#commitUsername_"+dynamicId);
+					pwdObj = $("#commitPassword_"+dynamicId);
+				} else if (action == "Update") {
+					selectObj = $('.up_Select');
+					checkObj = $("#updateCredential_"+dynamicId);
+					usrObj = $("#updateUsername_"+dynamicId);
+					pwdObj = $("#updatePassword_"+dynamicId);
+				} 
+				
+				self.makeCredReadOnly(checkObj, usrObj, pwdObj);
+				
+				checkObj.unbind("change");
+				checkObj.on("change", function(){				
+					self.makeCredReadOnly(checkObj, usrObj, pwdObj);	
+				});
+				
+				self.hideShowCredentials(selectObj.val());
+				selectObj.unbind("change");
+				selectObj.on("change", function(){				
+					self.hideShowCredentials(selectObj.val());			
+				});
+				
 				var data = JSON.parse(self.projectslistListener.projectListAPI.localVal.getSession('userInfo'));
 				userId = data.id;
 				$('.uname').val(data.id);

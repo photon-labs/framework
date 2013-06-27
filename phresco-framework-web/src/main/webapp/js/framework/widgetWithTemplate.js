@@ -441,6 +441,15 @@ define(["framework/widget", "framework/templateProvider"], function() {
 				}
 				return true;
 			},
+			
+			isValidUrl : function (url) {
+				var urlPattern = /^(((ht|f){1}((tp|tps):[/][/]){1}))[-a-zA-Z0-9@:%_\+.~#!?&amp;//=]+$/;				
+				if( !urlPattern.test(url)) {
+					return false;
+				} else {
+					return true;
+				}
+			},
 		
 			showHideConsole : function() {
 				var self = this;

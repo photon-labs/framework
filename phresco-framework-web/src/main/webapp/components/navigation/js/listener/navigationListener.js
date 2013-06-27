@@ -684,9 +684,13 @@ define(["navigation/api/navigationAPI"], function() {
 			$("#importRepourl").removeClass("errormessage");
 			var error = false;
 			
-			if(importRepourl === "") {
+			if(!self.isValidUrl(importRepourl)) {
 				error = true;
-				self.validateTextBox($("#importRepourl"), 'Enter Repourl');
+				$("#importRepourl").val('');
+				self.validateTextBox($("#importRepourl"), 'Invalid Application Url');	
+				setTimeout(function() { 
+				$("#importRepourl").val(importRepourl); 
+				}, 4000);				
 			}
 			
 			if ('svn' === importType && !error) {
@@ -714,9 +718,13 @@ define(["navigation/api/navigationAPI"], function() {
 					var testImportUserName = $("#testImportUserName").val().replace(/\s/g, '');
 					var testImportPassword = $("#testImportPassword").val();
 					var testRevision = $("input[name='testHeadOption']:checked").val();
-					if(testRepoUrl === "") {
+					if(!self.isValidUrl(testRepoUrl)) {
 						error = true;
-						self.validateTextBox($("#testRepoUrl"), 'Enter Test Repourl');
+						$("#testRepoUrl").val('');
+						self.validateTextBox($("#testRepoUrl"), 'Invalid Test Repourl');
+						setTimeout(function() { 
+							$("#testRepoUrl").val(testRepoUrl); 
+						}, 4000)
 					} else if (testImportUserName === "") {
 						error = true;
 						self.validateTextBox($("#testImportUserName"), 'Enter user name');
