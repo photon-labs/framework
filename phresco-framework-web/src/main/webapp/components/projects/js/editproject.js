@@ -14,8 +14,8 @@ define(["projects/listener/projectsListener"], function() {
 		getData : null,
 		onUpdateProjectsEvent : null,
 		onCancelUpdateEvent : null,
-		/* onRemoveLayerEvent : null,
-		onAddLayerEvent : null, */
+		removeLayerEvent : null,
+		addLayerEvent : null,
 			
 		/***
 		 * Called in initialization time of this class 
@@ -43,16 +43,16 @@ define(["projects/listener/projectsListener"], function() {
 				self.onCreateEvent = new signals.Signal();
 			}
 			
-			/* if(self.onRemoveLayerEvent === null) {
-				self.onRemoveLayerEvent = new signals.Signal();
+			if(self.removeLayerEvent === null) {
+				self.removeLayerEvent = new signals.Signal();
 			}
 			
-			if(self.onAddLayerEvent === null) {
-				self.onAddLayerEvent = new signals.Signal();
+			if(self.addLayerEvent === null) {
+				self.addLayerEvent = new signals.Signal();
 			}
 			
-			self.onRemoveLayerEvent.add(projectsListener.removelayer, projectsListener);
-			self.onAddLayerEvent.add(projectsListener.addlayer, projectsListener); */
+			self.removeLayerEvent.add(projectsListener.removelayeredit, projectsListener);
+			self.addLayerEvent.add(projectsListener.addlayeredit, projectsListener);
 			self.onUpdateProjectsEvent.add(projectsListener.createproject, projectsListener);
 			self.onCancelUpdateEvent.add(projectsListener.cancelCreateproject, projectsListener);
 		},
@@ -177,6 +177,7 @@ define(["projects/listener/projectsListener"], function() {
 			var self=this;
 			self.multiselect();
 			self.projectsListener.editSeriveTechnolyEvent(self.getData);
+			self.projectsListener.enablebutton();
 		},
 		
 		/***
@@ -193,12 +194,13 @@ define(["projects/listener/projectsListener"], function() {
 			self.projectsListener.multiModuleEvent("false");
 			self.windowResize();
 			
-			$("#updateProject").click(function() {
-				console.info("update project clicked");
+			$("#updateProject").unbind('click');
+			$("#updateProject").bind('click', function() {
 				self.onUpdateProjectsEvent.dispatch(commonVariables.projectId, "update");
 			});
 			
-			$("#cancelUpdate").click(function() {
+			$("#cancelUpdate").unbind('click');
+			$("#cancelUpdate").bind('click', function() {
 				self.onCancelUpdateEvent.dispatch();
 			});
 			
@@ -208,15 +210,15 @@ define(["projects/listener/projectsListener"], function() {
 				advanced:{ updateOnContentResize: true}
 			});
 			
-			/* $("img[name='close']").unbind('click');
+			$("img[name='close']").unbind('click');
 			$("img[name='close']").bind('click', function(){
-				self.onRemoveLayerEvent.dispatch($(this));
+				self.removeLayerEvent.dispatch($(this));
 			});
 			
-			$(".content_end input").unbind('click');
-			$(".content_end input").bind('click', function(){
-				self.onAddLayerEvent.dispatch($(this));
-			}); */
+			$(".flt_left input").unbind('click');
+			$(".flt_left input").bind('click', function(){
+				self.addLayerEvent.dispatch($(this));
+			});
 			
 			$("input[name='multimodule']").click(function() {
 				$(this).is(':checked')?$(this).val(true):$(this).val(false);
