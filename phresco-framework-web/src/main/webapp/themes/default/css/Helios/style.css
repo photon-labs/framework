@@ -2845,7 +2845,7 @@ html>body tbody.scrollContent {
 	margin-right: 15px;	
 }
 
-.controls label input[type="radio"], #cont_delivery input[type="checkbox"] {
+.controls label input[type="radio"], .cont_delivery input[type="checkbox"] {
 	margin: -2px 3px 0 0;
 }
 
@@ -2899,10 +2899,13 @@ html>body tbody.scrollContent {
 	width: 100%;
 }
 
-#jobConfigure {
+#jonConfiguration {
+	margin-bottom: 0px !important;
+}
+
+.jobConfigure {
 	height: 390px;
     overflow-y: auto;
-    top: 3px;
 }
 
 .ci_envtable .popuptextarea input[type="checkbox"] {
@@ -2925,16 +2928,16 @@ html>body tbody.scrollContent {
 	width: 10px;	
 }
 
-#cont_delivery {
+.cont_delivery {
 	cursor: default !important;	
 }
 
-#cont_delivery table input[type="text"], #cont_delivery table input[type="password"], #cont_delivery table select {
+.cont_delivery table input[type="text"], .cont_delivery table input[type="password"], .cont_delivery table select {
 	width: 132px;
 	margin-bottom: 0;	
 }
 
-#cont_delivery table {
+.cont_delivery table {
 	margin-bottom: 10px;	
 }
 .build_trigger
@@ -2960,9 +2963,17 @@ html>body tbody.scrollContent {
 	margin-bottom:0;
 }
 
-#cont_delivery table:nth-child(3) tr:last-child td {
+.cont_delivery table:nth-child(3) tr:last-child td {
 	padding-top : 0px;
 	border-top: none;	
+}
+
+.jobName input {
+	margin-bottom: 10px !important;
+}
+
+#popupBtns input {
+	margin-top: 10px !important;
 }
 
 #code_build
