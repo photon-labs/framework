@@ -190,10 +190,14 @@ public class BuildInfoService extends RestBase implements FrameworkConstants, Se
 	public Response checkStatus(@QueryParam("appDirName") String appDirName){
 		ResponseInfo<Boolean> responseData = new ResponseInfo<Boolean>();
 		String host = null, protocol = null, environmentName = null, port = null;
+		Boolean connectionAlive = false;
 		try {
 			File configurationInfo = new File(getDotPhrescoFolder(appDirName)+ File.separator + PHRESCO_ENV_CONFIG_FILE_NAME);
 			File runAgainsSourceInfo = new File(getDotPhrescoFolder(appDirName)+ File.separator + RUNAGNSRC_INFO_FILE);
-			if (runAgainsSourceInfo.exists() && configurationInfo.exists()) {
+			if (!runAgainsSourceInfo.exists()) {
+			ResponseInfo<Boolean> finalOutput = responseDataEvaluation(responseData, null, "Run against source not yet performed", connectionAlive);
+			return Response.status(Response.Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
+			}
 				FileReader readers = new FileReader(runAgainsSourceInfo);
 				JSONObject jsonobject = new JSONObject();
 				JSONParser parser = new JSONParser();
@@ -207,8 +211,7 @@ public class BuildInfoService extends RestBase implements FrameworkConstants, Se
 					port = properties.getProperty(SERVER_PORT);
 					protocol = properties.getProperty(PROTOCOL);
 				}
-			}
-			Boolean connectionAlive = isConnectionAlive(protocol, host, Integer.parseInt(port));
+			connectionAlive = isConnectionAlive(protocol, host, Integer.parseInt(port));
 			if (connectionAlive) {
 				ResponseInfo<Boolean> finalOutput = responseDataEvaluation(responseData, null, "Connection Alive", connectionAlive);
 				return Response.status(Response.Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
@@ -218,7 +221,7 @@ public class BuildInfoService extends RestBase implements FrameworkConstants, Se
 			}
 
 		} catch (Exception e) {
-			ResponseInfo<Boolean> finalOutput = responseDataEvaluation(responseData, e, "Environment configuration  File or runagainstsource.info File or  Not found error", null);
+			ResponseInfo<Boolean> finalOutput = responseDataEvaluation(responseData, e, "runagainstsource.info File or  Not found error", null);
 			return Response.status(Response.Status.BAD_REQUEST).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
 		}
 	}

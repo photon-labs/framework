@@ -282,7 +282,7 @@ public class ParameterService extends RestBase implements FrameworkConstants, Se
 			if (responseCode != 200) {
 				ResponseInfo<PossibleValues> finalOutput = responseDataEvaluation(responseData, null,
 						"Sonar not yet Started", null);
-				return Response.status(Status.BAD_REQUEST).entity(finalOutput).header("Access-Control-Allow-Origin",
+				return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin",
 						"*").build();
 			}
 			String infoFileDir = getInfoFileDir(appDirName, goal, phase);
@@ -424,7 +424,7 @@ public class ParameterService extends RestBase implements FrameworkConstants, Se
 			if (responseCode != 200) {
 				ResponseInfo<PossibleValues> finalOutput = responseDataEvaluation(responseData, null,
 						"Report not available", null);
-				return Response.status(Status.BAD_REQUEST).entity(finalOutput).header("Access-Control-Allow-Origin",
+				return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin",
 						"*").build();
 			}
 			Map<String, String> theme = customer.getFrameworkTheme();
