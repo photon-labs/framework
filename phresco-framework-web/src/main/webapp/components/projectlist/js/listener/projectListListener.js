@@ -441,9 +441,22 @@ define(["projectlist/api/projectListAPI"], function() {
 				downloaddata.fromPage = $(this).attr("frompage");
 				downloaddata.appDir = $(this).closest('tr').attr("appdirname");
 				actionBody = downloaddata;
-				self.projectListAction(self.getActionHeader(actionBody, "downloadReport"), "", function(response){
-				});
+				var Url = self.getContextUrl();
+				finalUrl = Url + commonVariables.webserviceurl + "pdf/downloadReport?appDirName="+actionBody.appDir+"&reportFileName="+actionBody.fileName+"&fromPage="+actionBody.fromPage;
+				$(this).attr('href',finalUrl);
 			});
+			
+			// blocked the space and special characters from keyboard
+			$("input[name=pdfName]").keypress(function() {
+				$(this).limitkeypress({ rexp: /^[A-Za-z0-9-_]*$/ });
+			});
+		},
+		
+		// to get the context path
+		getContextUrl : function() {
+			var url = window.location.href;
+			url = url.substr(0,url.lastIndexOf("/"));
+			return url;
 		},
 		
 		addUpdateEvent : function(obj, dynid, revision){
