@@ -123,9 +123,11 @@ define(["framework/widgetWithTemplate", "dynamicPage/api/dynamicPageAPI", "commo
                         optionalAttrs.editable = "";
                     }
                     
-                    if(type === "String" || type === "Number" || type === "Password" || type === "Hidden"){
+                    if(type === "String" || type === "Number" || type === "Password"){
                         self.constructTxtCtrl(parameter, columnClass, optionalAttrs, whereToRender);
-                    } else if(type === "Boolean"){
+                    } else if (type === "Hidden") {
+						self.constructHiddenCtrl(parameter, columnClass, optionalAttrs, whereToRender);
+					} else if(type === "Boolean"){
                         self.constructCheckboxCtrl(parameter, columnClass, optionalAttrs, whereToRender);
                     } else if(type === "List"){
                         self.constructListCtrl(parameter, columnClass, parameter.possibleValues, optionalAttrs, whereToRender);
@@ -155,6 +157,14 @@ define(["framework/widgetWithTemplate", "dynamicPage/api/dynamicPageAPI", "commo
         						 '<input type="'+inputType+'" name="'+ parameter.key +'" value="'+textBoxValue+'" id="'+parameter.key+'" ' +optionalAttrs.editable+' /></li>');
         },
         
+		 constructHiddenCtrl : function(parameter, columnClass, optionalAttrs, whereToRender) {
+        	var self = this, textBoxValue = "";
+        	if (!self.isBlank(parameter.value)) {
+        		textBoxValue = parameter.value;
+        	} 
+			whereToRender.parent().find('.hiddenControls').append('<input type="hidden" name="'+ parameter.key +'" value="'+textBoxValue+'" id="'+parameter.key+'"/>');
+        },
+		
         constructCheckboxCtrl : function(parameter, columnClass, optionalAttrs, whereToRender) {
             var liLastPrevId = whereToRender.find("li:last").prev("li").attr("class"), additionalparam = "", dependency = "", checked;
             if(parameter.dependency !== undefined && parameter.dependency !== null){
@@ -168,7 +178,7 @@ define(["framework/widgetWithTemplate", "dynamicPage/api/dynamicPageAPI", "commo
             checked = parameter.value == "true" ? "checked" : "";
             
             if (liLastPrevId != undefined && liLastPrevId.indexOf('checkCtrl') !== -1) {
-                whereToRender.append('<li type="checkbox" class="ctrl checkCtrl checkPos '+columnClass+'" ' +optionalAttrs.show+' id="'+parameter.key+'Li"><input type="checkbox" name="'+ parameter.key +'" '+checked+' additionalparam="'+additionalparam+'" dependency="'+dependency+'" id="'+parameter.key+'" ' +optionalAttrs.editable+' > '+parameter.name.value[0].value+optionalAttrs.required+'</li>');
+                whereToRender.append('<li type="checkbox" class="ctrl checkCtrl '+columnClass+'" ' +optionalAttrs.show+' id="'+parameter.key+'Li"><input type="checkbox" name="'+ parameter.key +'" '+checked+' additionalparam="'+additionalparam+'" dependency="'+dependency+'" id="'+parameter.key+'" ' +optionalAttrs.editable+' > '+parameter.name.value[0].value+optionalAttrs.required+'</li>');
             } else {
                 whereToRender.append('<li type="checkbox" class="ctrl checkCtrl '+columnClass+'" ' +optionalAttrs.show+' id="'+parameter.key+'Li"><input type="checkbox" name="'+ parameter.key +'" '+checked+' additionalparam="'+additionalparam+'" dependency="'+dependency+'" id="'+parameter.key+'" ' +optionalAttrs.editable+' > '+parameter.name.value[0].value+optionalAttrs.required+'</li>');
             }

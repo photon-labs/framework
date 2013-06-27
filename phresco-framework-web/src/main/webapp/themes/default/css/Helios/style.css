@@ -268,6 +268,7 @@ textarea { resize: none; }
 .loginuser_error .logintext input {
 	background: #FC8986;
 	color: #ffffff !important;
+	border-radius:0 !important;
 }
 
 
@@ -720,7 +721,7 @@ ul.nav li.dropdown:hover > .test_options{
 /* ********************************************** CSS related to Project list page ************************************************************************************** */
 
 .table-bordered {
-    border-collapse: collapse;
+    /*border-collapse: collapse;*/
 }
 
 .table_border {
@@ -1692,14 +1693,10 @@ img[name="close"] {
 	margin-right: 4px;
 }
 
-.create_proj table tr td input[type=text] {
+.create_proj table tr td input[type=text], .features_content_main table tr td input[type=text], .features_content_main table tr td input[type=password], .bootstrap-select .btn, .features_content_main table tr td select {
 	width: 144px;
 }
 
- .create_proj table tr td select, .bootstrap-select .btn {
-	width: 137px; 
- }
- 
 select[name="builtmyself"] {
 	width:86px !important;
 }
@@ -1729,13 +1726,9 @@ select[name="builtmyself"] {
 	margin-right: 4px;
 }
 
-.create_proj table tr td input[type=text] {
+.create_proj table tr td input[type=text], .features_content_main table tr td input[type=text], .features_content_main table tr td input[type=password], .bootstrap-select .btn, .features_content_main table tr td select {
 	width: 187px;	
 }
-
- .create_proj table tr td select, .bootstrap-select .btn {
-	width: 145px; 
- }
 
 select[name="builtmyself"] {
 	width: 112px !important;
@@ -1762,13 +1755,9 @@ select[name="builtmyself"] {
 	margin-right: 4px;
 }
 
-.create_proj table tr td input[type=text] {
+.create_proj table tr td input[type=text], .features_content_main table tr td input[type=text], .features_content_main table tr td input[type=password], .bootstrap-select .btn, .features_content_main table tr td select {
 	 width: 186px;
 }
-
- .create_proj table tr td select, .bootstrap-select .btn {
-	width: 135px; 
- }
 
 select[name="builtmyself"] {
 	width: 115px !important;
@@ -1785,21 +1774,17 @@ select[name="builtmyself"] {
 }
 }
 
-@media screen and (min-width: 1281px) and (max-width: 1360px) {
+@media screen and (min-width: 1281px) and (max-width: 1366px) {
 
 .startdate input, .enddate input {
 	width: 160px !important;
 	margin-right: 4px;
 }
 
-.create_proj table tr td input[type=text] {
+.create_proj table tr td input[type=text], .features_content_main table tr td input[type=text], .features_content_main table tr td input[type=password], .bootstrap-select .btn, .features_content_main table tr td select {
 	width: 184px;	
 }
 
- .create_proj table tr td select, .bootstrap-select .btn {
-	width: 183px; 
- }
- 
 select[name="builtmyself"] {
 	width : 115px !important;
 }
@@ -1810,24 +1795,33 @@ select[name="builtmyself"] {
 }
 }
 
-@media screen and (min-width: 1361px) and (max-width: 1440px) {
+@media screen and (min-width: 1367px) and (max-width: 1440px) {
 
 .startdate input, .enddate input {
 	width: 152px !important;
 	margin-right: 4px;
 }
 
-.create_proj table tr td input[type=text] {
+.create_proj table tr td input[type=text], .features_content_main table tr td input[type=text], .features_content_main table tr td input[type=password], .bootstrap-select .btn, .features_content_main table tr td select {
 	width: 182px;	
 }
 
- .create_proj table tr td select, .bootstrap-select .btn {
-	width: 195px; 
+ , .bootstrap-select .btn,  {
+	width: 182px !important; 
+	border:1px solid red !important;
  }
  
  .custon_dropdown {
 	width: 141px !important;
 }
+
+}
+
+@media screen and (min-width: 1441px) and (max-width: 1680px) {
+
+	 .create_proj table tr td input[type=text], .features_content_main table tr td input[type=text], .features_content_main table tr td input[type=password], .bootstrap-select .btn, .features_content_main table tr td select {
+		width: 220px;	
+	}
 }
 
 /* *************************************************************************** STYLES FOR DIV SCROLL ************************************************************************** */
@@ -2244,6 +2238,10 @@ select[name="builtmyself"] {
 #cron_expression table tr td input[type="password"]
 {
 	width:145px;
+}
+
+#cron_expression div.flt_right input{
+margin-left: 10px;
 }
 
 #cron_expression table {
@@ -3255,32 +3253,40 @@ html>body tbody.scrollContent {
 	list-style:none;
 }
 
-.dynamic_cont ul li.checkPos {
-	border: solid 1px red;
-    margin-top: -35px;
-}
-
 .dynamic_cont .row .ctrl {
 	float:left;
 	width:143px;
-	margin-right:10px;
+	margin-right:15px;
 }
 
-.dynamic_cont ul li:nth-child(even) {
-	margin-right:0;
+.dynamic_cont .row .ctrl label  {
+	font-size:12px !important
+}
+
+.dynamic_cont .row .ctrl:nth-child(even) {
+	margin-right:0 !important;
+}
+
+.dynamic_cont input[type="text"], .dynamic_cont .bootstrap-select .btn {
+	width:151px !important;
+	margin-bottom:0 !important;
 }
 
 .dynamic_cont input[type="text"] {
-	width:135px !important;
-}
-
-.dynamic_cont select {
-	width:135px !important;
+	margin-bottom:10px !important;
 }
 
 .singleColumn {
-	width: 200px !important;
+	text-align:left;
 }	
+
+.singleColumn label  {
+	font-size:12px !important;
+}
+
+.singleColumn button, singleColumn input  {
+	margin-bottom:10px;
+}
 /* *************************************************************** STYLES FOR QUALITY_PERFORMANCE TEST PAGE ************************************************************************************ */
 
 
