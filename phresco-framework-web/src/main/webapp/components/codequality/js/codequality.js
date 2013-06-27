@@ -78,18 +78,20 @@ define(["codequality/listener/codequalityListener"], function() {
 						$('#iframePart').append(response.message);
 					}
 				});
-			}, 200);				
+			}, 200);
 			
-			//To set the height of the test result section  
+			//To set the height of the report result section  
 			var windowHeight = $(document).height();
-			var marginTop = $('.testSuiteTable').css("margin-top");
-			if(marginTop != undefined) {
+			var marginTop = '';
+			marginTop = $('.testSuiteTable').css("margin-top");
+			if(marginTop !== undefined){
 				marginTop = marginTop.substring(0, marginTop.length - 2);
-			}
+			}	
 			var footerHeight = $('#footer').height();
 			var deductionHeight = Number(marginTop) + Number(footerHeight);
 			var finalHeight = windowHeight - deductionHeight - 5;
-			$('.testSuiteTable').height(finalHeight);			
+			$('.testSuiteTable').height(finalHeight);					
+		
 		},
 
 		/***

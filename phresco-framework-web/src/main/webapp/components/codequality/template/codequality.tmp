@@ -1,4 +1,4 @@
- <section class="optiontitle qual_unit" id="codequalityContent">
+ <section class="optiontitle buildtitle" id="codequalityContent">
         <div class="flt_right">
             <div class="code_report">
             	<font data-i18n="codequality.report"></font>
@@ -28,8 +28,8 @@
 
 
  <section class="content_main code_content testSuiteTable">
-	<div class="qual_unit_main unit_info" id="testSuites">
-		<div class="widget-maincontent-div" id="content_div" style="padding-left:1%;"></div>
+	<div class="qual_unit_main unit_info" id="testSuites" style="width:98%">
+		<div id="content_div" style="padding-left:1%;"></div>
 	</div>
 		<div class="unit_close">
 				<a href="#" data-flag="true" id="codeValidateConsole">
@@ -54,12 +54,3 @@
 			</table>
 		</div>
     </section>
-	
-    <!--<section class="content_main create_proj code_content">
-    	<div class="codeval_main" id="iframePart">
-            <div class="codeval_content">
-            	<font data-i18n="codequality.sonarreport" id="logDiv">{{projectlist.message}}</font>
-            </div>
-        </div>
-    	content_main div ends here
-    </section> -->

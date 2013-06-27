@@ -134,13 +134,13 @@ define(["codequality/api/codequalityAPI"], function() {
 					function(textStatus) {
 						commonVariables.loadingScreen.removeLoading();
 						var data = $.parseJSON(textStatus);
-						$('#content_div').html(data.message);
+						$('#content_div').html('<div class="alert" style="text-align: center; width:98%">'+data.message+'</div>');
 						$('#codeAnalysis').hide();
 					}
 				);
 			} catch(exception) {
 				commonVariables.loadingScreen.removeLoading();
-				$('#content_div').html(exception);
+				$('#content_div').html('<div class="alert" style="text-align: center; width:98%">'+exception+'</div>');
 				$('#codeAnalysis').hide();
 			}
 		},
@@ -190,7 +190,6 @@ define(["codequality/api/codequalityAPI"], function() {
 		
 		getIframeReport : function(validateAgainst){
 			var self = this;
-			//$('#content_div').html('Sonar Report will appear here');
 			self.closeConsole();
 			try {
 				self.codequalityAPI.codequality(self.getRequestHeader(validateAgainst , "iframereport"), 
@@ -204,11 +203,11 @@ define(["codequality/api/codequalityAPI"], function() {
 					},
 					function(textStatus) {
 						var data = $.parseJSON(textStatus);
-						$('#content_div').html(data.message);
+						$('#content_div').html('<div class="alert" style="text-align: center; width:98%">'+data.message+'</div>');
 					}
 				);
 			} catch(exception) {
-				$('#content_div').html(exception);
+				$('#content_div').html('<div class="alert" style="text-align: center; width:98%">'+exception+'</div>');
 			}	
 		},
 		

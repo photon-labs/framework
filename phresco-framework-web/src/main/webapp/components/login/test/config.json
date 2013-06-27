@@ -173,6 +173,12 @@
 		"componentTestTest" : {
 			"moduleName":"componentTestTest",
 			"path" : "components/componentTest/test/componentTestTest"
-		}
+		},
+		
+		
+		"dynamicPage" : {
+			"moduleName":"dynamicPage",
+			"path" : "components/dynamicPage/js"
+		}		
 	}
 }
