@@ -267,7 +267,7 @@ define(["application/api/applicationAPI"], function() {
 						var tech = $(value).children("td.servers").children("select.appServers");
 						var selSerId = $(tech).find(":selected").val();
 						var selVersion = $(value).children("td.version").children("select.server_version").val();
-						if(selSerId !== 0){
+						if(selSerId !== "0"){
 							serverId.artifactGroupId = selSerId;
 							serverId.artifactInfoIds = selVersion;
 							selectedServers.push(serverId);
@@ -281,12 +281,11 @@ define(["application/api/applicationAPI"], function() {
 						var tech = $(value).children("td.databases").children("select.databases");
 						var selSerId = $(tech).find(":selected").val();
 						var selVersion = $(value).children("td.version").children("select.db_version").val();
-						if(selSerId !== 0){
+						if(selSerId !== "0"){
 							serverId.artifactGroupId = selSerId;
 							serverId.artifactInfoIds = selVersion;
 							selectedDatabases.push(serverId);
 						}	
-						
 					}
 					if($(value).attr('class') === "webservice" && $(value).attr('key') === "displayed") {
 						$.each($(this).find(".webservice_chkbox:checked"), function() {
@@ -396,13 +395,14 @@ define(["application/api/applicationAPI"], function() {
 					},
 
 					function(textStatus) {
-						var data = $.parseJSON(textStatus);
-						self.failureMsgPopUp(data.message);
 						commonVariables.loadingScreen.removeLoading();
+						//var data = $.parseJSON(textStatus);
+						self.failureMsgPopUp('service failure');
 					}
 				);
 			} catch(exception) {
 				commonVariables.loadingScreen.removeLoading();
+				self.failureMsgPopUp(exception);
 			}
 
 		},
