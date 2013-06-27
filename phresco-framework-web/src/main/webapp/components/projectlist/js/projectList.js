@@ -71,7 +71,7 @@ define(["projectlist/listener/projectListListener"], function() {
 			
 			if(self.onAddReportEvent === null)
 				self.onAddReportEvent = new signals.Signal();
-			self.onAddReportEvent.add(projectslistListener.addReportEvent, projectslistListener);
+			self.onAddReportEvent.add(projectslistListener.generateReportEvent, projectslistListener);
 			
 			if(self.onGetReportEvent === null)
 				self.onGetReportEvent = new signals.Signal();
@@ -320,10 +320,10 @@ define(["projectlist/listener/projectListListener"], function() {
 
 			$("input[name='generate']").unbind("click");
 			$("input[name='generate']").click(function() {
-				self.onAddReportEvent.dispatch($(this));				
+				self.onAddReportEvent.dispatch($(this));	
 			});
 			
-			$("a[name=pdf_report]").click(function() {
+			$("a[temp=pdf_report]").click(function() {
 				self.onGetReportEvent.dispatch($(this));
 			});
 			

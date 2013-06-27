@@ -9,6 +9,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
+import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -19,6 +20,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.UUID;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.xml.parsers.DocumentBuilder;
@@ -55,6 +58,7 @@ import com.photon.phresco.framework.api.CIManager;
 import com.photon.phresco.framework.api.ProjectManager;
 import com.photon.phresco.framework.commons.FrameworkUtil;
 import com.photon.phresco.framework.rest.api.RestBase;
+import com.photon.phresco.framework.rest.api.PdfService.XmlNameFileFilter;
 import com.photon.phresco.impl.ConfigManagerImpl;
 import com.photon.phresco.plugins.model.Mojos.ApplicationHandler;
 import com.photon.phresco.plugins.model.Mojos.Mojo.Configuration.Parameters.Parameter;
@@ -70,6 +74,7 @@ import com.photon.phresco.util.NodeConfiguration;
 import com.photon.phresco.util.PhrescoDynamicLoader;
 import com.photon.phresco.util.Utility;
 import com.phresco.pom.exception.PhrescoPomException;
+import com.phresco.pom.model.Model.Modules;
 import com.phresco.pom.util.PomProcessor;
 
 
@@ -237,7 +242,165 @@ public class ActionFunction implements Constants ,FrameworkConstants,ActionServi
 			throw new PhrescoException(e.getMessage());
 		}
 	}
+	
+	public boolean isTestReportAvailable(FrameworkUtil frameworkUtil, ApplicationInfo appInfo, String fromPage) throws PhrescoException {
+		boolean xmlResultsAvailable = false;
+		File file = null;
+		StringBuilder sb = new StringBuilder(Utility.getProjectHome());
+		sb.append(appInfo.getAppDirName());
+		try {
+			String isIphone = frameworkUtil.isIphoneTagExists(appInfo);
+			// unit xml check
+			if ((FrameworkConstants.ALL).equals(fromPage) || fromPage.equals("unit")) {
+				List<String> moduleNames = new ArrayList<String>();
+				PomProcessor processor = frameworkUtil.getPomProcessor(appInfo.getAppDirName());
+				Modules pomModules = processor.getPomModule();
+				List<String> modules = null;
+				// check multimodule or not
+				if (pomModules != null) {
+					modules = FrameworkServiceUtil.getProjectModules(appInfo.getAppDirName());
+					for (String module : modules) {
+						if (StringUtils.isNotEmpty(module)) {
+							moduleNames.add(module);
+						}
+					}
+					for (String moduleName : moduleNames) {
+						String moduleXmlPath = sb.toString() + File.separator + moduleName
+								+ frameworkUtil.getUnitTestReportDir(appInfo);
+						file = new File(moduleXmlPath);
+						xmlResultsAvailable = xmlFileSearch(file, xmlResultsAvailable);
+					}
+				} else {
+					if (StringUtils.isNotEmpty(isIphone)) {
+						String unitIphoneTechReportDir = frameworkUtil.getUnitTestReportDir(appInfo);
+						file = new File(sb.toString() + unitIphoneTechReportDir);
+					} else {
+						String unitTechReports = frameworkUtil.getUnitTestReportOptions(appInfo);
+						if (StringUtils.isEmpty(unitTechReports)) {
+							file = new File(sb.toString() + frameworkUtil.getUnitTestReportDir(appInfo));
+						} else {
+							List<String> unitTestTechs = Arrays.asList(unitTechReports.split(","));
+							for (String unitTestTech : unitTestTechs) {
+								unitTechReports = frameworkUtil.getUnitTestReportDir(appInfo, unitTestTech);
+								if (StringUtils.isNotEmpty(unitTechReports)) {
+									file = new File(sb.toString() + unitTechReports);
+									xmlResultsAvailable = xmlFileSearch(file, xmlResultsAvailable);
+								}
+							}
+						}
+					}
+					xmlResultsAvailable = xmlFileSearch(file, xmlResultsAvailable);
+				}
+			}
 
+			// functional xml check
+			if ((FrameworkConstants.ALL).equals(fromPage) || fromPage.equals("functional")) {
+				file = new File(sb.toString() + frameworkUtil.getFunctionalTestReportDir(appInfo));
+				xmlResultsAvailable = xmlFileSearch(file, xmlResultsAvailable);
+			}
+
+			// component xml check
+			if ((FrameworkConstants.ALL).equals(fromPage) || fromPage.equals("component")) {
+				String componentDir = frameworkUtil.getComponentTestReportDir(appInfo);
+				if (StringUtils.isNotEmpty(componentDir)) {
+					file = new File(sb.toString() + componentDir);
+					xmlResultsAvailable = xmlFileSearch(file, xmlResultsAvailable);
+				}
+			}
+
+			// performance xml check
+			if (StringUtils.isEmpty(isIphone)) {
+				if ((FrameworkConstants.ALL).equals(fromPage) || fromPage.equals("performance")) {
+					 xmlResultsAvailable = performanceTestResultAvail(appInfo);
+				}
+			}
+
+			// load xml check
+			if (StringUtils.isEmpty(isIphone)) {
+				if ((FrameworkConstants.ALL).equals(fromPage) || fromPage.equals("load")) {
+					 xmlResultsAvailable = loadTestResultAvail(appInfo);
+				}
+			}
+		} catch (PhrescoException e) {
+			throw new PhrescoException(e);
+		} catch (PhrescoPomException e) {
+			throw new PhrescoException(e);
+		}
+		return xmlResultsAvailable;
+	}
+	
+	public boolean loadTestResultAvail(ApplicationInfo appInfo) throws PhrescoException {
+		boolean isResultFileAvailable = false;
+		try {
+			String baseDir = Utility.getProjectHome() + appInfo.getAppDirName();
+			FrameworkUtil frameworkUtil = FrameworkUtil.getInstance();
+			List<String> testResultsTypes = new ArrayList<String>();
+			testResultsTypes.add("server");
+			testResultsTypes.add("webservice");
+			for (String testResultsType : testResultsTypes) {
+				StringBuilder sb = new StringBuilder(baseDir.toString());
+				String loadReportDir = frameworkUtil.getLoadTestReportDir(appInfo);
+				if (StringUtils.isNotEmpty(loadReportDir) && StringUtils.isNotEmpty(testResultsType)) {
+					Pattern p = Pattern.compile("dir_type");
+					Matcher matcher = p.matcher(loadReportDir);
+					loadReportDir = matcher.replaceAll(testResultsType);
+					sb.append(loadReportDir);
+				}
+				File file = new File(sb.toString());
+				File[] children = file.listFiles(new XmlNameFileFilter(FILE_EXTENSION_XML));
+				if (!ArrayUtils.isEmpty(children)) {
+					isResultFileAvailable = true;
+					break;
+				}
+			}
+		} catch (Exception e) {
+			throw new PhrescoException(e);
+		}
+
+		return isResultFileAvailable;
+	}
+	
+	public boolean performanceTestResultAvail(ApplicationInfo appInfo) throws PhrescoException {
+		boolean isResultFileAvailable = false;
+		try {
+			String baseDir = Utility.getProjectHome() + appInfo.getAppDirName();
+			FrameworkUtil frameworkUtil = FrameworkUtil.getInstance();
+			List<String> testResultsTypes = new ArrayList<String>();
+			testResultsTypes.add("server");
+			testResultsTypes.add("database");
+			testResultsTypes.add("webservice");
+			for (String testResultsType : testResultsTypes) {
+				StringBuilder sb = new StringBuilder(baseDir.toString());
+				String performanceReportDir = frameworkUtil.getPerformanceTestReportDir(appInfo);
+				if (StringUtils.isNotEmpty(performanceReportDir) && StringUtils.isNotEmpty(testResultsType)) {
+					Pattern p = Pattern.compile("dir_type");
+					Matcher matcher = p.matcher(performanceReportDir);
+					performanceReportDir = matcher.replaceAll(testResultsType);
+					sb.append(performanceReportDir);
+				}
+				File file = new File(sb.toString());
+				File[] children = file.listFiles(new XmlNameFileFilter(FILE_EXTENSION_XML));
+				if (!ArrayUtils.isEmpty(children)) {
+					isResultFileAvailable = true;
+					break;
+				}
+			}
+		} catch (Exception e) {
+			throw new PhrescoException(e);
+		}
+
+		return isResultFileAvailable;
+	}
+
+	
+	private boolean xmlFileSearch(File file, boolean xmlResultsAvailable) {
+		File[] children = file.listFiles(new XmlNameFileFilter(FILE_EXTENSION_XML));
+		if (children != null && children.length > 0) {
+			xmlResultsAvailable = true;
+		}
+		return xmlResultsAvailable;
+	}
+	
 	private void printLogs() {
 		if (isDebugEnabled) {
 			S_LOGGER.debug("APPP ID received :"+getAppId());
@@ -2099,6 +2262,27 @@ public class ActionFunction implements Constants ,FrameworkConstants,ActionServi
 			}
 	        return serviceManager.getUserInfo();
 	    }*/
+	/**
+	 * The Class XmlNameFileFilter.
+	 */
+	public class XmlNameFileFilter implements FilenameFilter {
+		
+		/** The filter_. */
+		private String filter_;
+
+		/**
+		 * Instantiates a new xml name file filter.
+		 *
+		 * @param filter the filter
+		 */
+		public XmlNameFileFilter(String filter) {
+			filter_ = filter;
+		}
+		
+		public boolean accept(File dir, String name) {
+			return name.endsWith(filter_);
+		}
+	}
 
 
 
