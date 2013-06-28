@@ -125,7 +125,7 @@ define(["projectlist/listener/projectListListener"], function() {
 		
 		deleterow : function(imgname1, imgname2, deleteproject){
 			var self = this;
-			if(imgname1=='delete'|| imgname2=='delete') {	
+			if(imgname1 === 'delete'|| imgname2 === 'delete') {	
 				$(commonVariables.contentPlaceholder).find("tr[class="+deleteproject+"]").remove();
 			}	
 			else {
@@ -138,7 +138,7 @@ define(["projectlist/listener/projectListListener"], function() {
 		},
 		
 		hideShowCredentials : function(val){
-			if(val == 'svn') {
+			if(val === 'svn') {
 				$(".seperatetd").parent().show();
 			} else {
 				$(".seperatetd").parent().hide();
@@ -230,35 +230,41 @@ define(["projectlist/listener/projectListListener"], function() {
 				var currentPrjName = $(this).closest("tr").attr("class");
 				var dynamicId = $(this).attr("dynamicId");
 				
-				if (action == "Add Repo") {
+				if (action === "Add Repo") {
 					selectObj = $('.ad_Select');
 					checkObj = $("#repocredential_"+dynamicId);
 					usrObj = $("#uname_"+dynamicId);
 					pwdObj = $("#pwd_"+dynamicId);
-				} else if (action == "Commit") {
+				} else if (action === "Commit") {
 					selectObj = $('.co_Select');
 					checkObj = $("#commitCredential_"+dynamicId);
 					usrObj = $("#commitUsername_"+dynamicId);
 					pwdObj = $("#commitPassword_"+dynamicId);
-				} else if (action == "Update") {
+				} else if (action === "Update") {
 					selectObj = $('.up_Select');
 					checkObj = $("#updateCredential_"+dynamicId);
 					usrObj = $("#updateUsername_"+dynamicId);
 					pwdObj = $("#updatePassword_"+dynamicId);
 				} 
 				
-				self.makeCredReadOnly(checkObj, usrObj, pwdObj);
+				if(checkObj !== null  && checkObj !== undefined && checkObj !== '') {
+					self.makeCredReadOnly(checkObj, usrObj, pwdObj);
+				}	
+
+				if(checkObj !== null  && checkObj !== undefined && checkObj !== '') {
+					checkObj.unbind("change");
+					checkObj.on("change", function(){				
+						self.makeCredReadOnly(checkObj, usrObj, pwdObj);
+					});
+				}
 				
-				checkObj.unbind("change");
-				checkObj.on("change", function(){				
-					self.makeCredReadOnly(checkObj, usrObj, pwdObj);	
-				});
-				
-				self.hideShowCredentials(selectObj.val());
-				selectObj.unbind("change");
-				selectObj.on("change", function(){				
-					self.hideShowCredentials(selectObj.val());			
-				});
+				if(selectObj !== null  && selectObj !== undefined && selectObj !== '') {
+					self.hideShowCredentials(selectObj.val());
+					selectObj.unbind("change");
+					selectObj.on("change", function(){				
+						self.hideShowCredentials(selectObj.val());			
+					});
+				}
 				
 				var data = JSON.parse(self.projectslistListener.projectListAPI.localVal.getSession('userInfo'));
 				userId = data.id;
