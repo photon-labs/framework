@@ -124,14 +124,7 @@ define(["codequality/api/codequalityAPI"], function() {
 						if (response !== null) {
 							commonVariables.loadingScreen.removeLoading();
 							callback(response);
-							$('#codeAnalysis').show();
-							$(".code_report").show();
-							$(".code_report_icon").show();
-							$("#codereportTypes").show();							
 						} else {
-							$(".code_report").hide();
-							$(".code_report_icon").hide();
-							$("#codereportTypes").hide();						
 							commonVariables.loadingScreen.removeLoading();
 							callback({ "status" : "service failure"});
 						}
@@ -157,9 +150,11 @@ define(["codequality/api/codequalityAPI"], function() {
 		constructHtml : function(response, output){
 			var self = this;
 			if(response.message === "Dependency returned successfully"){
+			console.info('lister if');
 				var typeLi = '';
 				var validateAgainst = response.data[0].validateAgainst.key;
 				var repTypesData = response.data[0].validateAgainst.value;
+				$("#codereportTypes").show();	
 				$.each(response.data, function(index, resdata) {
 					var innerUl = '';
 					if(resdata.options === null){
@@ -183,8 +178,11 @@ define(["codequality/api/codequalityAPI"], function() {
 				self.onProjects();
 				self.getIframeReport(validateAgainst);
 			}else {
-				$('#iframePart').html('');
-				$('#iframePart').append(response.log);			
+				$('#content_div').html('');
+				$('#codeAnalysis').hide();
+				$(".code_report").hide();
+				$(".code_report_icon").hide();
+				$('#content_div').append('<div class="alert" style="text-align: center; width:98%">'+response.message+'</div>');
 			}
 		},
 		
@@ -204,10 +202,10 @@ define(["codequality/api/codequalityAPI"], function() {
 				self.codequalityAPI.codequality(self.getRequestHeader(validateAgainst , "iframereport"), 
 					function(iframereport) {
 						if(iframereport.data !== null){
-							var iframedata = "<iframe src="+iframereport.data+" style=width:96%;height:450px;></iframe>";
+							var iframedata = "<iframe src="+iframereport.data+" style=width:98%;height:450px;></iframe>";
 							$('#content_div').html(iframedata);
 						}else{
-							$('#content_div').html(iframereport.message);
+							$('#content_div').html('<div class="alert" style="text-align: center; width:98%">'+iframereport.message+'</div>');
 						}
 					},
 					function(textStatus) {

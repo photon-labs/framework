@@ -72,10 +72,12 @@ define(["codequality/listener/codequalityListener"], function() {
 					projectlist.projectlist = response;	
 					self.renderedData = response;
 					self.codequalityListener.constructHtml(self.renderedData);
-					if(response.message === "Dependency returned successfully"){
-					}else{
-						$('#iframePart').html('');
-						$('#iframePart').append(response.message);
+					console.info('sonar = ' , response.message);
+					if(response.message === "Sonar not yet Started"){
+						$('#codeAnalysis').hide();
+						$(".code_report").hide();
+						$(".code_report_icon").hide();
+						$("#codereportTypes").hide();	
 					}
 				});
 			}, 200);
