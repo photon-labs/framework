@@ -175,7 +175,7 @@ define(["build/listener/buildListener"], function() {
 					commonVariables.goal = "start";
 					commonVariables.phase = "run-against-source";
 					var whereToRender = $('#build_runagsource ul');
-					self.dynamicpage.getHtml(whereToRender, this, $(this).attr('name'));
+					self.dynamicpage.getHtml(whereToRender, this, $(this).attr('name'), function() {});
 					$("#buildConsole").attr('data-flag','false');
 				}	
 			});
