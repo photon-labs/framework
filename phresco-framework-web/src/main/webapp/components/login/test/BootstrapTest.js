@@ -47,15 +47,22 @@ define(["jquery"], function($) {
 					listener : "js/commonComponents/listener",
 					fastclick : "lib/fastclick",
 					api : "js/api",
-					lib : "lib",
-					signals : "lib/signals",
 					common : "js/commonComponents/common",
 					modules: "js/commonComponents/modules",
 					Clazz : "js/framework/class",
 					components: "components",
 					configData: data,
-					jshamcrest: "lib/jshamcrest-0.5.2",
-					jsmockito: "lib/jsmockito-1.0.3"
+					jshamcrest: "jshamcrest-0.5.2",
+					jsmockito: "jsmockito-1.0.3",
+					jslib_bootstrap_datepicker: "jslib_bootstrap_datepicker-1.0.0",
+					handlebars: "handlebars-1.0.0",
+					Signal: "Signal-1.0.0",
+					bootstrap_select_min: "bootstrap_select_min-1.0",
+					signalbinding: "SignalBinding-1.0.0",
+					i18next: "i18next-1.6.0",
+					jslib_jquery_sortable_min: "jslib_jquery_sortable_min-1.0.0",
+					bootstrap_min: "bootstrap_min-2.3.1",
+					jquery_mCustomScrollbar_concat_min: "jquery_mCustomScrollbar_concat_min-2.8.1"
 				}
 			};
             
@@ -87,7 +94,7 @@ define(["jquery"], function($) {
 				commonVariables.loadingScreen =new Clazz.com.js.widget.common.Loading();
 			});
 		
-			require(["lib/jslib_bootstrap_datepicker-1.0.0", "lib/bootstrap_select_min-1.0", "lib/handlebars-1.0.0", "lib/Signal-1.0.0", "lib/SignalBinding-1.0.0", "lib/i18next-1.6.0", "lib/jslib_jquery_sortable_min-1.0.0", "lib/bootstrap_min-2.3.1","jquery_mCustomScrollbar_concat_min-2.8.1", "loginTest", "projectlistTest", "headerTest", "footerTest", "navigationTest", "projectTest", "applicationTest", "featuresTest", "codequalityTest", "configurationTest", "buildTest", "editConfigurationTest", "jobTemplateListTest","unitTestTest", "componentTestTest", "jshamcrest", "jsmockito"],	function (Datepicker, Select, Handlebars, Signal, SignalBinding, next, sortable, bootrsap, mCustomScrollbar, loginTest, projectlistTest, headerTest, footerTest, navigationTest, projectTest,applicationTest, featuresTest, codequalityTest, configurationTest, buildTest, editConfigurationTest, jobTemplateListTest, unitTestTest, componentTestTest){
+			require(["loginTest", "projectlistTest", "headerTest", "footerTest", "navigationTest", "projectTest", "applicationTest", "featuresTest", "codequalityTest", "configurationTest", "buildTest", "editConfigurationTest", "jobTemplateListTest","unitTestTest", "componentTestTest", "jshamcrest", "jsmockito", "Signal", "signalbinding", "jslib_bootstrap_datepicker", "handlebars", "i18next", "jslib_jquery_sortable_min", "bootstrap_min", "jquery_mCustomScrollbar_concat_min", "bootstrap_select_min"],	function(loginTest, projectlistTest, headerTest, footerTest, navigationTest, projectTest,applicationTest, featuresTest, codequalityTest, configurationTest, buildTest, editConfigurationTest, jobTemplateListTest, unitTestTest, componentTestTest, signals, signalbinding, datepicker, handlebars, i18next, sortable, bootstrap, scrollbar, select){
 				JsHamcrest.Integration.JsTestDriver();
 				JsMockito.Integration.JsTestDriver();
 				commonVariables.navListener = Clazz.com.components.navigation.js.listener.navigationListener();
