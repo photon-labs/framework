@@ -80,7 +80,7 @@
 	
 	<WebService desc="" name="webservice">
             <protocol>http</protocol>
-            <host>localhost</host>
+            <host>172.16.8.250</host>
             <port>7070</port>
             <username/>
             <password/>
