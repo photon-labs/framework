@@ -57,7 +57,7 @@ define(["componentTest/api/componentTestAPI"], function() {
 				webserviceurl: ''
 			}
 					
-			if(action == "get") {
+			if(action === "get") {
 				header.requestMethod = "GET";
 				header.webserviceurl = commonVariables.webserviceurl + commonVariables.qualityContext + "/" + commonVariables.component + "?userId="+userId+"&appDirName="+appDirName;				
 			}
@@ -71,7 +71,7 @@ define(["componentTest/api/componentTestAPI"], function() {
 			commonVariables.navListener.getMyObj(commonVariables.dynamicPage, function(dynamicPageObject) {
 				self.dynamicPageListener = new Clazz.com.components.dynamicPage.js.listener.DynamicPageListener();
 				dynamicPageObject.getHtml($('.dynamicControls'), thisObj, 'componentTest_popup', function(response) {;
-					if ("No parameters available" == response) {
+					if ("No parameters available" === response) {
 						self.runComponentTest(function(responseData) {
 							callback(responseData);
 						});
@@ -90,7 +90,7 @@ define(["componentTest/api/componentTestAPI"], function() {
 			customerId = appdetails.data.customerIds[0];
 			username = self.componentTestAPI.localVal.getSession('username');
 						
-			if (appdetails != null) {
+			if (appdetails !== null) {
 				queryString ="username="+username+"&appId="+appId+"&customerId="+customerId+"&goal=component-test&phase=component-test&projectId="+projectId+"&"+testData;
 			}
 			

@@ -213,7 +213,7 @@ define(["application/api/applicationAPI"], function() {
 				requestMethod: "GET",
 				dataType: "json",
 				webserviceurl: ''
-			}
+			};
 			
 			header.webserviceurl = commonVariables.webserviceurl+ "appConfig/list?techId="+techId+"&customerId="+customerId+"&type="+type+"&platform=Windows64&userId="+userId;
 			try {
@@ -329,7 +329,7 @@ define(["application/api/applicationAPI"], function() {
 				requestMethod: "GET",
 				dataType: "json",
 				webserviceurl: ''
-			}
+			};
 			
 			header.webserviceurl = commonVariables.webserviceurl+ "appConfig/webservices?userId="+userId;
 			try {
@@ -362,7 +362,7 @@ define(["application/api/applicationAPI"], function() {
 				dataType: "json",
 				webserviceurl: '',
 				data: ''
-			}
+			};
 			if(action === 'getappinfo'){
 				header.webserviceurl = commonVariables.webserviceurl+"project/editApplication?appDirName="+appDirName;
 			}	
@@ -396,7 +396,6 @@ define(["application/api/applicationAPI"], function() {
 
 					function(textStatus) {
 						commonVariables.loadingScreen.removeLoading();
-						//var data = $.parseJSON(textStatus);
 						self.failureMsgPopUp('service failure');
 					}
 				);

@@ -202,7 +202,7 @@ define(["framework/base", "framework/animationProvider"], function() {
 									}
 									//remove old content if exist
 									$.each($(commonVariables.contentPlaceholder).find('div .widget-maincontent-div'), function(index, current){
-										if($(current).attr('active') == "false"){
+										if($(current).attr('active') === "false"){
 											$(current).remove();
 										}
 									});
@@ -228,7 +228,7 @@ define(["framework/base", "framework/animationProvider"], function() {
 					}else{
 						//remove old content if exist
 						$.each($(commonVariables.contentPlaceholder).find('div .widget-maincontent-div'), function(index, current){
-							if($(current).attr('active') == "false"){
+							if($(current).attr('active') === "false"){
 								$(current).remove();
 							}
 						});

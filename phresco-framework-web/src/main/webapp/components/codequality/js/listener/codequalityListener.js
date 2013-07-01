@@ -39,7 +39,6 @@ define(["codequality/api/codequalityAPI"], function() {
 				queryString ="username="+username+"&appId="+appId+"&customerId="+customerId+"&goal=validate-code&phase=validate-code&projectId="+projectId+"&"+ipjson;
 			}
 			$('#iframePart').html('');
-			//$('#content_div').html('Sonar Report will appear here');
 			self.openConsole();//To open the console
 			
 						
@@ -77,7 +76,7 @@ define(["codequality/api/codequalityAPI"], function() {
 		getRequestHeader : function(inputData, action) {
 			var self=this, header, username, appId, customerId, projectId;
 			var customerId = self.getCustomer();
-			customerId = (customerId == "") ? "photon" : customerId;
+			customerId = (customerId === "") ? "photon" : customerId;
 			
 			header = {
 				contentType: "application/json",
@@ -150,7 +149,6 @@ define(["codequality/api/codequalityAPI"], function() {
 		constructHtml : function(response, output){
 			var self = this;
 			if(response.message === "Dependency returned successfully"){
-			console.info('lister if');
 				var typeLi = '';
 				var validateAgainst = response.data[0].validateAgainst.key;
 				var repTypesData = response.data[0].validateAgainst.value;
@@ -170,10 +168,10 @@ define(["codequality/api/codequalityAPI"], function() {
 				});
 				var dropdownLi = '<ul class="nav"><li id="fat-menu" class="dropdown"><a href="#" id="drop5" role="button" class="dropdown-toggle" data-toggle="dropdown"><b id="repTypes" >'+repTypesData+'</b><b class="caret"></b></a> <div class="dropdown-menu cust_sel code_test_opt" role="menu" aria-labelledby="drop5"> <ul id="reportUl">'+typeLi+'</ul></div></li></ul>';
 				var codeReport = $("#codereportTypes").attr("class");
-				if(codeReport != undefined) {
+				if(codeReport !== undefined) {
 					$("#codereportTypes").append(dropdownLi);
 				} else {
-					$(output).append(dropdownLi)
+					$(output).append(dropdownLi);
 				}
 				self.onProjects();
 				self.getIframeReport(validateAgainst);

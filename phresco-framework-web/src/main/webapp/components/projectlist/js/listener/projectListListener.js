@@ -86,14 +86,15 @@ define(["projectlist/api/projectListAPI"], function() {
 					function(response) {
 						if(response !== null ){
 							self.hidePopupLoad();
-							if(self.act=='delete')
+							if(self.act==='delete') {
 								self.successMsgPopUp(response.message);		
-							else if(self.act=='updateget')
+							} else if(self.act==='updateget') {
 								self.successMsgPopUp(response.message);
-							else if(self.act=='repoget')
+							} else if(self.act==='repoget') {
 								self.successMsgPopUp(response.message);
-							else if(self.act=='commitget')
+							} else if(self.act==='commitget') {
 								self.successMsgPopUp(response.message);
+							}
 							self.hidePopupLoad();
 							callback(response);		
 						} else {
@@ -103,12 +104,13 @@ define(["projectlist/api/projectListAPI"], function() {
 						}
 					},					
 					function(textStatus) {
-						if(self.act=='updateget')
+						if(self.act==='updateget') {
 							self.failureMsgPopUp("Project Update Failed");
-						else if(self.act=='repoget')
+						} else if(self.act==='repoget') {
 							self.failureMsgPopUp("Add To Repo Failed");
-						else if(self.act=='commitget')
+						} else if(self.act==='commitget') {
 							self.failureMsgPopUp("Commit Failed");
+						}
 						self.hidePopupLoad();
 					}
 				);
@@ -139,7 +141,7 @@ define(["projectlist/api/projectListAPI"], function() {
 				contentType: "application/json",				
 				dataType: "json",
 				webserviceurl: ''
-			}
+			};
 			self.act = action;
 					
 			if(action === "delete") {
@@ -291,7 +293,7 @@ define(["projectlist/api/projectListAPI"], function() {
 			actionBody = reportdata;
 			action = "generateReport";
 			self.projectListAction(self.getActionHeader(actionBody, action), $('#pdfReportLoading_'+dynamicId), function(response){
-				if (response.service_exception != null) {
+				if (response.service_exception !== null) {
 					self.failureMsgPopUp(response.service_exception);
 				} else {
 					self.getReportEvent(response, appDir, "All", dynamicId);
@@ -347,12 +349,12 @@ define(["projectlist/api/projectListAPI"], function() {
 		getReportEvent : function(obj, appDir, fromPage, dynamicId){
 			var self = this;
 			var getreportdata = {}, actionBody, action, temp;	
-			if (fromPage != undefined && fromPage != null) {
+			if (fromPage !== undefined && fromPage !== null) {
 				getreportdata.fromPage = fromPage;
 			} else {
 				getreportdata.fromPage = obj.attr("fromPage");
 			}
-			if (appDir != undefined && appDir != null) {
+			if (appDir !== undefined && appDir !== null) {
 				getreportdata.appDir = appDir;
 				temp = appDir;
 			} else {
@@ -365,27 +367,6 @@ define(["projectlist/api/projectListAPI"], function() {
 				dynamicId = obj.attr("dynamicId");
 			}
 			self.projectListAction(self.getActionHeader(actionBody, action), $("#pdfReportLoading_"+dynamicId), function(response) {
-				/*var content = "";
-				$("tbody[name=generatedPdfs]").empty();
-				if(response.length !== 0 && response.length !== undefined) {
-					$("#noReport").hide();
-					$("thead[name=pdfHeader]").show();
-					for(var i =0; i < response.length; i++) {
-						var headerTr = '<tr class="generatedRow" fileName="'+response[i].fileName+'" appdirname = "'+temp+'"><td>' + response[i].time + '</td><td>'+response[i].type+'</td>';
-						content = content.concat(headerTr);
-						headerTr = '<td><a class="tooltiptop" fileName="'+response[i].fileName+'" fromPage="All" href="#" data-toggle="tooltip" data-placement="top" name="downLoad" data-original-title="Download Pdf" title=""><img src="themes/default/images/helios/download_icon.png" width="15" height="18" border="0" alt="0"></a></td>';
-						content = content.concat(headerTr);
-						headerTr = '<td><a class="tooltiptop" fileName="'+response[i].fileName+'" fromPage="All" href="#" data-toggle="tooltip" data-placement="top" name="delete" data-original-title="Delete Pdf" title=""><img src="themes/default/images/helios/delete_row.png" width="14" height="18" border="0" alt="0"></a></td></tr>';
-						content = content.concat(headerTr);
-					}
-					$("tbody[name=generatedPdfs]").append(content);
-					self.clickFunction();
-				} else {
-					$("thead[name=pdfHeader]").hide();
-					$("#noReport").show();
-					$("#noReport").html("No Report are Available");
-				}
-				*/
 				self.listPdfReports(response, temp, dynamicId);
 				self.clickFunction(dynamicId);
 			});
@@ -394,9 +375,10 @@ define(["projectlist/api/projectListAPI"], function() {
 		//To list the generated PDF reports
 		listPdfReports : function(response, temp, dynamicId) {
 			var self = this;
+			var userPermissions = JSON.parse(self.projectListAPI.localVal.getSession('userPermissions'));
 			var content = "";
 			$("tbody[name=generatedPdfs_"+dynamicId+"]").empty();
-			if (response != undefined && response != null && response.length > 0) {
+			if (response !== undefined && response !== null && response.length > 0) {
 				$("#noReport_"+dynamicId).addClass("hideContent");
 				$("#noReport_"+dynamicId).hide();
 				$("thead[name=pdfHeader_"+dynamicId+"]").removeClass("hideContent");
@@ -406,11 +388,14 @@ define(["projectlist/api/projectListAPI"], function() {
 					content = content.concat(headerTr);
 					headerTr = '<td><a class="tooltiptop" fileName="'+response[i].fileName+'" fromPage="All" href="#" data-toggle="tooltip" data-placement="top" name="downLoad" data-original-title="Download Pdf" title=""><img src="themes/default/images/helios/download_icon.png" width="15" height="18" border="0" alt="0"></a></td>';
 					content = content.concat(headerTr);
-					headerTr = '<td><a class="tooltiptop" fileName="'+response[i].fileName+'" fromPage="All" href="#" data-toggle="tooltip" data-placement="top" name="delete" data-original-title="Delete Pdf" title=""><img src="themes/default/images/helios/delete_row.png" width="14" height="18" border="0" alt="0"></a></td></tr>';
+					if(userPermissions.managePdfReports) {
+						headerTr = '<td><a class="tooltiptop" fileName="'+response[i].fileName+'" fromPage="All" href="#" data-toggle="tooltip" data-placement="top" name="delete" data-original-title="Delete Pdf" title=""><img src="themes/default/images/helios/delete_row.png" width="14" height="18" border="0" alt="0"></a></td></tr>';
+					} else {
+						headerTr = '<td><a class="tooltiptop" fileName="'+response[i].fileName+'" fromPage="All" href="#" data-toggle="tooltip" data-placement="top" data-original-title="Delete Pdf" title=""><img src="themes/default/images/helios/delete_row_off.png" width="14" height="18" border="0" alt="0"></a></td></tr>';
+					}
 					content = content.concat(headerTr);
 				}
 				$("tbody[name=generatedPdfs_"+dynamicId+"]").append(content);
-				//self.openccpl(obj, $(obj).attr('name'), '');
 			} else {
 				$("thead[name=pdfHeader_"+dynamicId+"]").hide();
 				$("#noReport_"+dynamicId).removeClass("hideContent");
@@ -526,8 +511,9 @@ define(["projectlist/api/projectListAPI"], function() {
 						$("#pwd_"+dynid).attr('placeholder','Enter Password');
 						$("#pwd_"+dynid).addClass("errormessage");
 						self.hasError = true;
-					} else
+					} else {
 						self.hasError=false;
+					}
 					self.flag1=0;
 					return self.hasError;
 				}
@@ -553,8 +539,9 @@ define(["projectlist/api/projectListAPI"], function() {
 						$("#commitPassword_"+dynid).attr('placeholder','Enter Password');
 						$("#commitPassword_"+dynid).addClass("errormessage");
 						self.hasError = true;
-					}else
+					}else {
 						self.hasError=false;
+					}
 					self.flag2=0;
 					return self.hasError;
 				}
@@ -580,8 +567,9 @@ define(["projectlist/api/projectListAPI"], function() {
 						$("#updatePassword_"+dynid).attr('placeholder','Enter Password');
 						$("#updatePassword_"+dynid).addClass("errormessage");
 						self.hasError = true;
-					}else
+					}else {
 						self.hasError=false;
+					}
 					self.flag3=0;
 					return self.hasError;
 				}

@@ -7,38 +7,38 @@ require(["framework/base"], function() {
             container : null,
 			
             initialize  : function(config) {
-                if(config.container != null) {
+                if(config.container !== null) {
                     this.isNative = config.isNative;
                     this.container = config.container;
                 }
             },
 			
             animate : function(type, callback) {
-                if(type == Clazz.ANIMATION_TYPE.SLIDE_LEFT) {
+                if(type === Clazz.ANIMATION_TYPE.SLIDE_LEFT) {
                     this.animateLeft(callback);
-                } else if(type == Clazz.ANIMATION_TYPE.SLIDE_RIGHT) {
+                } else if(type === Clazz.ANIMATION_TYPE.SLIDE_RIGHT) {
                     this.animateRight(callback);
-                } else if(type == Clazz.ANIMATION_TYPE.SLIDE_UP) {
+                } else if(type === Clazz.ANIMATION_TYPE.SLIDE_UP) {
                     this.animateUp(callback);
-                } else if(type == Clazz.ANIMATION_TYPE.SLIDE_DOWN) {
+                } else if(type === Clazz.ANIMATION_TYPE.SLIDE_DOWN) {
                     this.animateDown(callback);
-                } else if(type == Clazz.ANIMATION_TYPE.FADE_IN) {
+                } else if(type === Clazz.ANIMATION_TYPE.FADE_IN) {
                     this.fadeIn(callback);
-                } else if(type == Clazz.ANIMATION_TYPE.FADE_OUT) {
+                } else if(type === Clazz.ANIMATION_TYPE.FADE_OUT) {
                     this.fadeOut(callback);					
-                } else if(type == Clazz.ANIMATION_TYPE.FADE_OUT_QUICK) {
+                } else if(type === Clazz.ANIMATION_TYPE.FADE_OUT_QUICK) {
                     this.fadeOutQuick(callback);
-                } else if(type == Clazz.ANIMATION_TYPE.WEBKIT_TRANSITION_LEFT) {
+                } else if(type === Clazz.ANIMATION_TYPE.WEBKIT_TRANSITION_LEFT) {
                     this.webkitTransitionLeft(callback);
-                } else if(type == Clazz.ANIMATION_TYPE.WEBKIT_TRANSITION_RIGHT) {
+                } else if(type === Clazz.ANIMATION_TYPE.WEBKIT_TRANSITION_RIGHT) {
                     this.webkitTransitionRight(callback);
-                } else if(type == Clazz.ANIMATION_TYPE.WEBKIT_TRANSITION_FLIP_IN) {
+                } else if(type === Clazz.ANIMATION_TYPE.WEBKIT_TRANSITION_FLIP_IN) {
                     this.webkitTransitionFlipIn(callback);
-                } else if(type == Clazz.ANIMATION_TYPE.WEBKIT_TRANSITION_FLIP_OUT) {
+                } else if(type === Clazz.ANIMATION_TYPE.WEBKIT_TRANSITION_FLIP_OUT) {
                     this.webkitTransitionFlipOut(callback);
-                } else if(type == Clazz.ANIMATION_TYPE.WEBKIT_TRANSITION_SLIDEDOWN_IN) {
+                } else if(type === Clazz.ANIMATION_TYPE.WEBKIT_TRANSITION_SLIDEDOWN_IN) {
                     this.webkitTransitionSlideDownIn(callback);
-                } else if(type == Clazz.ANIMATION_TYPE.WEBKIT_TRANSITION_SLIDEDOWN_OUT) {
+                } else if(type === Clazz.ANIMATION_TYPE.WEBKIT_TRANSITION_SLIDEDOWN_OUT) {
                     this.webkitTransitionSlideDownOut(callback);
                 } 
             },

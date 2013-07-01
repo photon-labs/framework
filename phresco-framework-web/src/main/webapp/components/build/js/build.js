@@ -245,7 +245,6 @@ define(["build/listener/buildListener"], function() {
 				self.onRASEvent.dispatch($('form[name=runAgainstForm]').serialize(), function(response){
 					$('.alert_div').hide();
 					self.logContent = $('#logContent').html();
-					//self.loadPage();
 				});
 			});
 			

@@ -23,7 +23,7 @@ define(["jquery", "codequality/codequality"], function($, Codequality) {
 			
 			mockgetIframe = mockFunction();
 			when(mockgetIframe)(anything()).then(function(arg) {
-				var response =  {"response":null,"message":"Dependency returned successfully","exception":null,"data":"http://localhost:9000/dashboard/index/com.photon.phresco:node-test"}
+				var response =  {"response":null,"message":"Dependency returned successfully","exception":null,"data":"http://localhost:9000/dashboard/index/com.photon.phresco:node-test"};
 			});
 			codequality.codequalityListener.getIframeReport = mockgetIframe;
 			
@@ -67,13 +67,12 @@ define(["jquery", "codequality/codequality"], function($, Codequality) {
 		asyncTest("Codequality iFrame test case ", function() {
 			 mockgetReports1 = mockFunction();
 			when(mockgetReports1)(anything()).then(function(arg) {
-				var response = {"response":null,"message":"Dependency returned successfully","exception":null,"data":[{"options":null,"validateAgainst":{"value":"Source","key":"src","dependency":"skipTests"}},{"options":null,"validateAgainst":{"value":"Functional Test","key":"functional","dependency":null}}]}
+				var response = {"response":null,"message":"Dependency returned successfully","exception":null,"data":[{"options":null,"validateAgainst":{"value":"Source","key":"src","dependency":"skipTests"}},{"options":null,"validateAgainst":{"value":"Functional Test","key":"functional","dependency":null}}]};
 
 				var projectlist = {};
 				projectlist.projectlist = response;					
 				codequality.renderedData = response;
 				codequality.renderTemplate(projectlist, commonVariables.contentPlaceholder);
-				//codequality.codequalityListener.constructHtml(response);
 			});
 			
 			codequality.codequalityListener.codequalityAPI.codequality = mockgetReports1; 
@@ -105,7 +104,6 @@ define(["jquery", "codequality/codequality"], function($, Codequality) {
 				validate.codeValidate = response;					
 				codequality.renderedData = response;
 				codequality.renderTemplate(validate, commonVariables.contentPlaceholder);
-				//codequality.codequalityListener.constructHtml(response);
 			});
 			
 			codequality.codequalityListener.codequalityAPI.codequality = mockcodevalidate; 

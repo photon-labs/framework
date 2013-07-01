@@ -80,7 +80,7 @@ define(["jquery"], function($) {
 				});
 
 				//Apply customer based theme
-				if(localStorage.getItem('customertheme') != null && localStorage.getItem('customertheme') != ""){
+				if(localStorage.getItem('customertheme') !== null && localStorage.getItem('customertheme') !== ""){
 					JSS.css(eval('(' + localStorage.getItem('customertheme') + ')'));
 				}
 				

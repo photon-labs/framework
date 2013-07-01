@@ -228,7 +228,7 @@ define(["unitTest/unitTest"], function(UnitTest) {
 
 			setTimeout(function() {
 				var response = {"message":"Test Cases listed successfully","exception":null,"data":[{"name":"testString","file":"C:\\Documents and Settings\\test\\workspace\\projects\\php\\test\\unit\\src\\test\\php\\phresco\\tests\\Home.php","time":"0.002949","assertions":1.0,"testClass":"Home","line":30.0,"testCaseFailure":null,"testCaseError":null}],"response":null};
-				$(commonVariables.contentPlaceholder).find('a[name=testDescription]').click(unitTest.testResult.testResultListener.constructTestReport(response.data))
+				$(commonVariables.contentPlaceholder).find('a[name=testDescription]').click(unitTest.testResult.testResultListener.constructTestReport(response.data));
 				
 				start();
 				equal($(commonVariables.contentPlaceholder).find('#testCases table tbody tr:first td:first').text(), "testString", "Unit test testcases list verified");
@@ -258,7 +258,7 @@ define(["unitTest/unitTest"], function(UnitTest) {
 				var response =  {"message":"Test Result not available","exception":null,"data":null,"response":null};
 				var data = {};
 				data.testSuites = response.data;
-				data.message = response.message
+				data.message = response.message;
 				unitTest.testResult.renderTemplate(data, $(commonVariables.contentPlaceholder).find('#testResult div.widget-maincontent-div')); 
 			});
 			
@@ -297,7 +297,7 @@ define(["unitTest/unitTest"], function(UnitTest) {
 				var response =  {"message":"Test Result not available","exception":null,"data":null,"response":null};
 				var data = {};
 				data.testSuites = response.data;
-				data.message = response.message
+				data.message = response.message;
 				unitTest.testResult.renderTemplate(data, $(commonVariables.contentPlaceholder).find('#testResult div.widget-maincontent-div')); 
 			});
 			
@@ -309,7 +309,7 @@ define(["unitTest/unitTest"], function(UnitTest) {
 			
 			setTimeout(function() {
 				var response =  [{"time":"May 23 2013 10.05","type":"detail","fileName":"unit_detail_May 23 2013 10.05.pdf"}];
-				$(commonVariables.contentPlaceholder).find('#pdfIcon').click(unitTest.testResult.testResultListener.listPdfReports(response))
+				$(commonVariables.contentPlaceholder).find('#pdfIcon').click(unitTest.testResult.testResultListener.listPdfReports(response));
 				start();
 				equal($(commonVariables.contentPlaceholder).find('#availablePdfRptsTbdy').find('tr:first td:first').html(), "May 23 2013 10.05", "Unit test pdf report list verified");
 			}, 1500);

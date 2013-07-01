@@ -127,7 +127,7 @@ define(["componentTest/componentTest"], function(ComponentTest) {
 
 			setTimeout(function() {
 				var response = {"message":"Test Cases listed successfully","exception":null,"data":[{"name":"testString","file":"C:\\Documents and Settings\\test\\workspace\\projects\\php\\test\\unit\\src\\test\\php\\phresco\\tests\\Home.php","time":"0.002949","assertions":1.0,"testClass":"Home","line":30.0,"testCaseFailure":null,"testCaseError":null}],"response":null};
-				$(commonVariables.contentPlaceholder).find('a[name=testDescription]').click(componentTest.testResult.testResultListener.constructTestReport(response.data))
+				$(commonVariables.contentPlaceholder).find('a[name=testDescription]').click(componentTest.testResult.testResultListener.constructTestReport(response.data));
 				
 				start();
 				equal($(commonVariables.contentPlaceholder).find('#testCases table tbody tr:first td:first').text(), "testString", "Component test testcases list verified");
@@ -194,7 +194,7 @@ define(["componentTest/componentTest"], function(ComponentTest) {
 			
 			setTimeout(function() {
 				var response =  [{"time":"May 23 2013 10.05","type":"detail","fileName":"component_detail_May 23 2013 10.05.pdf"}];
-				$(commonVariables.contentPlaceholder).find('#pdfIcon').click(componentTest.testResult.testResultListener.listPdfReports(response))
+				$(commonVariables.contentPlaceholder).find('#pdfIcon').click(componentTest.testResult.testResultListener.listPdfReports(response));
 				start();
 				equal($(commonVariables.contentPlaceholder).find('#availablePdfRptsTbdy').find('tr:first td:first').html(), "May 23 2013 10.05", "Component test pdf report list verified");
 			}, 1500);

@@ -50,31 +50,38 @@ define(["projectlist/listener/projectListListener"], function() {
 		
 		registerEvents : function(projectslistListener,repositoryListener) {
 			var self = this;
-			if(self.onProjectsEvent === null)
+			if(self.onProjectsEvent === null) {
 				self.onProjectsEvent = new signals.Signal();
-			if(self.onProjectEditEvent === null)	
+			}
+			if(self.onProjectEditEvent === null) {
 				self.onProjectEditEvent = new signals.Signal();
+			}
 			self.onProjectEditEvent.add(projectslistListener.onEditProject, projectslistListener);			
 			self.onProjectsEvent.add(projectslistListener.editApplication, projectslistListener);
 			
-			if(self.onAddRepoEvent === null)
+			if(self.onAddRepoEvent === null) {
 				self.onAddRepoEvent = new signals.Signal();
+			}
 			self.onAddRepoEvent.add(projectslistListener.addRepoEvent, projectslistListener);
 			
-			if(self.onAddCommitEvent === null)
+			if(self.onAddCommitEvent === null) {
 				self.onAddCommitEvent = new signals.Signal();
+			}
 			self.onAddCommitEvent.add(projectslistListener.addCommitEvent, projectslistListener);
 			
-			if(self.onAddUpdateEvent === null)
+			if(self.onAddUpdateEvent === null) {
 				self.onAddUpdateEvent = new signals.Signal();
+			}
 			self.onAddUpdateEvent.add(projectslistListener.addUpdateEvent, projectslistListener);
 			
-			if(self.onAddReportEvent === null)
+			if(self.onAddReportEvent === null) {
 				self.onAddReportEvent = new signals.Signal();
+			}
 			self.onAddReportEvent.add(projectslistListener.generateReportEvent, projectslistListener);
 			
-			if(self.onGetReportEvent === null)
+			if(self.onGetReportEvent === null) {
 				self.onGetReportEvent = new signals.Signal();
+			}
 			self.onGetReportEvent.add(projectslistListener.getReportEvent, projectslistListener);
 			
 		},
@@ -108,10 +115,11 @@ define(["projectlist/listener/projectListListener"], function() {
 				if ("delete" === action) {
 					callback();
 				}				
-				if(self.flagged!=1)
+				if(self.flagged!=1) {
 					self.loadPage(animationType);
-				else
+				} else {
 					self.flagged=1;
+				}
 			});
 		},
 		
@@ -127,8 +135,7 @@ define(["projectlist/listener/projectListListener"], function() {
 			var self = this;
 			if(imgname1 === 'delete'|| imgname2 === 'delete') {	
 				$(commonVariables.contentPlaceholder).find("tr[class="+deleteproject+"]").remove();
-			}	
-			else {
+			} else {
 				$(commonVariables.contentPlaceholder).find("tr[class="+deleteproject+"]").prev('tr').remove();
 				$(commonVariables.contentPlaceholder).find("tr[class="+deleteproject+"]").remove();
 			}
@@ -317,7 +324,7 @@ define(["projectlist/listener/projectListListener"], function() {
 				   if(classname !== "proj_title") {
 				        currentRow = currentRow.next('tr');
 				        projectnameArray.push(classname);
-				   }else {currentRow = null}
+				   }else {currentRow = null;}
 				}
 				self.flagged=1;
 				commonVariables.loadingScreen.showLoading();
@@ -336,8 +343,9 @@ define(["projectlist/listener/projectListListener"], function() {
 							}
 						}	
 						$(temp).remove();
-						if(!($('tr.proj_title').length))
+						if(!($('tr.proj_title').length)) {
 							self.flagged=0;
+						}	
 				});					
 			});			
 			
@@ -367,7 +375,7 @@ define(["projectlist/listener/projectListListener"], function() {
 						
 			$("input[name='updatebtn']").unbind("click");
 			$("input[name='updatebtn']").click(function() {
-				var dynid, revision
+				var dynid, revision;
 				dynid = $(this).attr('id');
 				var revision = $("input[name='revision']:checked").val();
 				if(revision !== ""){

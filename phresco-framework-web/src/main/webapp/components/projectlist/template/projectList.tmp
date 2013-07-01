@@ -79,7 +79,11 @@
                    </table>
                    <div class="popuploading" id="pdfReportLoading_{{id}}">&nbsp</div>
                 <div class="flt_right">
-                 <input type="button" fromPage="All"  appDirName="{{appDirName}}" value="Generate" class="btn btn_style" name="generate" appId="{{id}}" projectId = "{{../id}}">
+                {{#if ../../userPermissions.managePdfReports}}
+                 	<input type="button" fromPage="All"  appDirName="{{appDirName}}" value="Generate" class="btn btn_style" name="generate" appId="{{id}}" projectId = "{{../id}}">
+                 {{else}}
+                 	<input type="button" disabled=true fromPage="All"  appDirName="{{appDirName}}" value="Generate" class="btn btn_style" name="generate" appId="{{id}}" projectId = "{{../id}}">
+                  {{/if}}
                  <input type="button" value="Close" class="btn btn_style dyn_popup_close">
                </div>
                <input type="hidden" name="fromPage" value="All"/>

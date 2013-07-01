@@ -252,7 +252,7 @@ define(["navigation/api/navigationAPI"], function() {
 						break;
 						
 					case commonVariables.performanceTest : 
-						if (self.performanceTest == null) {
+						if (self.performanceTest === null) {
 							require(["performanceTest/performanceTest"], function() {
 								self.performanceTest = new Clazz.com.components.performanceTest.js.PerformanceTest();
 								callback(self.performanceTest);	
@@ -659,8 +659,9 @@ define(["navigation/api/navigationAPI"], function() {
 					function(response) {
 						commonVariables.loadingScreen.removeLoading();
 						if (response !== null ) {
-							if(self.act=='importpost')
-							self.successMsgPopUp(response.message);
+							if(self.act==='importpost') {
+								self.successMsgPopUp(response.message);
+							}
 							callback(response);						
 						} else {
 							callback({ "status" : "service failure"});
@@ -668,8 +669,9 @@ define(["navigation/api/navigationAPI"], function() {
 					},
 					function(textStatus) {
 						commonVariables.loadingScreen.removeLoading();
-						if(self.act=='importpost')
+						if(self.act==='importpost') {
 							self.failureMsgPopUp("Project Import failed");
+						}
 					}
 				);
 			} catch(exception) {
@@ -724,7 +726,7 @@ define(["navigation/api/navigationAPI"], function() {
 						self.validateTextBox($("#testRepoUrl"), 'Invalid Test Repourl');
 						setTimeout(function() { 
 							$("#testRepoUrl").val(testRepoUrl); 
-						}, 4000)
+						}, 4000);
 					} else if (testImportUserName === "") {
 						error = true;
 						self.validateTextBox($("#testImportUserName"), 'Enter user name');

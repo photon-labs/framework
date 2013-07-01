@@ -127,12 +127,11 @@ define(["configuration/listener/configurationListener"], function() {
 					$("input[name='envName']").attr('placeholder','Enter Environment Name');
 				} else {							  
 					$('.envlistname').each(function() {
-						if ($(this).text().toLowerCase() == $("input[name='envName']").val().toLowerCase()) {
+						if ($(this).text().toLowerCase() === $("input[name='envName']").val().toLowerCase()) {
 							found = true;
 							return false;
 						}
 					});
-					//var found = $.inArray($("input[name='envName']").val(), arr) > -1;
 					
 					if (found === false) {
 						self.addEnvEvent.dispatch(name, envDesc, '');

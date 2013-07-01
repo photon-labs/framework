@@ -55,9 +55,9 @@ define(["functionalTest/api/functionalTestAPI"], function() {
 				contentType: "application/json",				
 				dataType: "json",
 				webserviceurl: ''
-			}
+			};
 					
-			if (action == "getFunctionalTestOptions") {
+			if (action === "getFunctionalTestOptions") {
 				header.requestMethod = "GET";
 				header.webserviceurl = commonVariables.webserviceurl + commonVariables.qualityContext + "/functionalFramework?appDirName="+appDirName;				
 			}
@@ -71,18 +71,18 @@ define(["functionalTest/api/functionalTestAPI"], function() {
 				self.dynamicPageListener = new Clazz.com.components.dynamicPage.js.listener.DynamicPageListener();
 				dynamicPageObject.getHtml(false, function(response) {
 					var height = $(".testSuiteTable").height();
-					if (goal == commonVariables.functionalTestGoal) {
+					if (goal === commonVariables.functionalTestGoal) {
 						$("#dynamicContent").html(response);
 						$('#functionalTest_popup').css("max-height", height - 40 + 'px');
 						$('#dynamicContent').css("max-height", height - 92 + 'px');
 						self.opencc($("#functionalTestBtn"), 'functionalTest_popup');
-					} else if (goal == commonVariables.startHubGoal) {
+					} else if (goal === commonVariables.startHubGoal) {
 						$("#startHubDynamicContent").html(response);
 						$('#startHub_popup').css("max-height", height - 40 + 'px');
 						$('#startHubDynamicContent').height("auto");
 						$('#startHubDynamicContent').css("max-height", height - 92 + 'px');
 						self.opencc($("#startHub"), 'startHub_popup');
-					} else if (goal == commonVariables.startNodeGoal) {
+					} else if (goal === commonVariables.startNodeGoal) {
 						$("#startNodeDynamicContent").html(response);
 						$('#startNode_popup').css("max-height", height - 40 + 'px');
 						$('#startNodeDynamicContent').css("max-height", height - 92 + 'px');
@@ -90,7 +90,6 @@ define(["functionalTest/api/functionalTestAPI"], function() {
 						self.opencc($("#startNode"), 'startNode_popup');
 					}
 					
-//					self.multiselect();
 					dynamicPageObject.showParameters();
 					self.dynamicPageListener.controlEvent();
 					$(".scrollContent").mCustomScrollbar({
@@ -128,7 +127,7 @@ define(["functionalTest/api/functionalTestAPI"], function() {
 		
 		runFunctionalTest : function(from) {
 			var self = this;
-			var testData
+			var testData;
 			if (from === "startHub") {
 				$("#startHub_popup").toggle();
 				testData = $('#startHubForm').serialize();
@@ -146,7 +145,7 @@ define(["functionalTest/api/functionalTestAPI"], function() {
 			customerId = appdetails.data.customerIds[0];
 			username = self.functionalTestAPI.localVal.getSession('username');
 						
-			if (appdetails != null) {
+			if (appdetails !== null) {
 				queryString ="username="+username+"&appId="+appId+"&customerId="+customerId+"&goal=functional-test&phase=functional-test&projectId="+projectId+"&"+testData;
 			}
 			

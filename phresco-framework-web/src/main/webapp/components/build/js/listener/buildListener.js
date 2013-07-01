@@ -25,15 +25,9 @@ define(["build/api/buildAPI"], function() {
 			var check = $(clicked).attr('data-flag');
 			var self = this;
 			if(check === "true") {
-				/* $('.build_info').animate({width: '97%'},500);
-				$('.build_progress').animate({right: -value1},500);
-				$('.build_close').animate({right: '0px'},500); */
 				self.openConsole();
 				$(clicked).attr('data-flag','false');
 			} else {
-				/* $('.build_info').animate({width: window.innerWidth/1.7},500);
-				$('.build_progress').animate({right: '10px'},500);
-				$('.build_close').animate({right: value1+10},500); */
 				self.closeConsole();
 				$(clicked).attr('data-flag','true');
 				$(window).resize();

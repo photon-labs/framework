@@ -171,12 +171,13 @@ define(["projects/listener/projectsListener"], function() {
 			});
 			
 			$("#endDate").blur(function(){
-				if($('.applnLayer').attr('key') === 'displayed')
+				if($('.applnLayer').attr('key') === 'displayed') {
 					$("#appcode").focus();	
-				else if($('.webLayer').attr('key') === 'displayed')
+				} else if($('.webLayer').attr('key') === 'displayed') {
 					$("#webappcode").focus();
-				else
+				} else {
 					$("#mobileappcode").focus();
+				}
 			});
 
 			$("input[name='projectname']").on('keyup',function() {

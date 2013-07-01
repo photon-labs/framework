@@ -482,14 +482,14 @@ define(["configuration/api/configurationAPI"], function() {
 					if(response === true) {
 						$(".row_bg").each(function() {
 							var type = $(this).attr("type");
-							if (type == typeMatch) {
+							if (type === typeMatch) {
 								$(this).find("td:first-child").after("<td class=active>Active</td>");
 							}
 						});
 					} else {
 						$(".row_bg").each(function() {
 							var type = $(this).attr("type");
-							if (type == typeMatch) {
+							if (type === typeMatch) {
 								$(this).find("td:first-child").after("<td>In Active</td>");
 							}
 						});
@@ -947,7 +947,7 @@ define(["configuration/api/configurationAPI"], function() {
 								var val = $(this).attr("name");
 								if(mandatory === 'true') {
 									if($(this).val() !== undefined && $(this).val() !== null && $.trim($(this).val()) !== ""){
-										if(val == "emailid") {
+										if(val === "emailid") {
 											var email = $("input[name=emailid]").val();
 											var emailMatcher = /^([a-zA-Z0-9_\.\-])+\@(([a-zA-Z0-9\-])+\.)+([a-zA-Z0-9]{2,4})+$/;
 											if (!emailMatcher.test(email)) {
@@ -1004,32 +1004,32 @@ define(["configuration/api/configurationAPI"], function() {
 						}
 						
 						$('.otherKey').each(function() {
-							if($(this).val() != undefined && $(this).val() != null && $.trim($(this).val()) != "") {
+							if($(this).val() !== undefined && $(this).val() !== null && $.trim($(this).val()) !== "") {
 								bCheck = true;
 							} else {
 								bCheck = false;
 								$(this).attr('placeholder','Enter Key');
 								$(this).addClass("errormessage");
 								$(this).focus();
-								return bCheck;
 								$(this).bind('keypress', function() {
 									$(this).removeClass("errormessage");
 								});
+								return bCheck;
 							}
 						});
 			
 						$('.otherKeyValue').each(function() {
-							if($(this).val() != undefined && $(this).val() != null && $.trim($(this).val()) != "") {
+							if($(this).val() !== undefined && $(this).val() !== null && $.trim($(this).val()) !== "") {
 								bCheck = true;
 							} else {
 								bCheck = false;
 								$(this).attr('placeholder','Enter Value');
 								$(this).addClass("errormessage");
 								$(this).focus();
-								return bCheck;
 								$(this).bind('keypress', function() {
 									$(this).removeClass("errormessage");
 								});
+								return bCheck;
 							}
 			
 						});

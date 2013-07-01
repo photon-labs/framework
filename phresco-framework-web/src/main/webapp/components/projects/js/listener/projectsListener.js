@@ -135,11 +135,11 @@ define(["projects/api/projectsAPI"], function() {
 					requestMethod: "GET",
 					dataType: "json",
 					webserviceurl: commonVariables.webserviceurl + "project/edit?userId="+userId+"&customerId=photon&projectId="+id
-				}
+				};
 
 				if(action === "projectlist"){
 					header.requestMethod = "GET";
-					header.webserviceurl = commonVariables.webserviceurl + commonVariables.projectlistContext +"/list?customerId=photon"
+					header.webserviceurl = commonVariables.webserviceurl + commonVariables.projectlistContext +"/list?customerId=photon";
 				}
 
 				if(action === "update"){
@@ -281,7 +281,7 @@ define(["projects/api/projectsAPI"], function() {
 									count1++;
 								});
 								
-								if($("tr[class='applnLayer']").attr('key')=='displayed'){	
+								if($("tr[class='applnLayer']").attr('key')==='displayed'){	
 								  for (var i = 0; i < arr1.length; i++) {
 									for(var j=i+1;j<arr1.length;j++) {
 										if(arr1[i] === arr1[j]) {
@@ -531,7 +531,7 @@ define(["projects/api/projectsAPI"], function() {
 			 */
 			$("select[name='appln_technology']").bind('click', function(){
 				$("select[name='appln_technology'] option").each(function(index, value) {
-					if($(value).text() == "Select Technology"){
+					if($(value).text() === "Select Technology"){
 						$(this).attr('disabled','disabled');
 					}	
 				});
@@ -542,7 +542,7 @@ define(["projects/api/projectsAPI"], function() {
 			 */
 			$("select[name='weblayer']").bind('click', function(){
 				$("select[name='weblayer'] option").each(function(index, value) {
-					if($(value).text() == "Select Web Layer"){
+					if($(value).text() === "Select Web Layer"){
 						$(this).attr('disabled','disabled');
 					}	
 				});
@@ -553,7 +553,7 @@ define(["projects/api/projectsAPI"], function() {
 			 */
 			$("select[name='mobile_layer']").bind('click', function(){
 				$("select[name='mobile_layer'] option").each(function(index, value) {
-					if($(value).text() == "Select Model"){
+					if($(value).text() === "Select Model"){
 						$(this).attr('disabled','disabled');
 					}	
 				});
@@ -704,7 +704,7 @@ define(["projects/api/projectsAPI"], function() {
 				    if(value.id === technologyId){
 						option = '';
 						$.each(value.techVersions, function(index, value){
-							option += '<option>'+ value +'</option>'
+							option += '<option>'+ value +'</option>';
 						});
 						
 						$(versionplaceholder).html(option);
@@ -771,7 +771,7 @@ define(["projects/api/projectsAPI"], function() {
 					option += '<option disabled selected>Select Type</option>';
 					$.each(value.techInfos, function(index, value){
 						option += '<option value='+ value.id +'>'+ value.name +'</option>';
-					})
+					});
 					
 					$(mobileTypePlaceholder).html(option);
 				}
@@ -788,7 +788,7 @@ define(["projects/api/projectsAPI"], function() {
 					} else {
 						option += '<option value='+ value.id +'>'+ value.name +'</option>';
 					}
-				})
+				});
 			});
 			
 			return option;
@@ -802,9 +802,9 @@ define(["projects/api/projectsAPI"], function() {
 					if(value.id === mobileType){
 						option = '';
 						if(value.techVersions !== undefined && value.techVersions !== null) {
-							if(value !== '' && value != null) {
+							if(value !== '' && value !== null) {
 								$.each(value.techVersions, function(index, value){
-									if(value !== '' && value != null) {
+									if(value !== '' && value !== null) {
 										option += '<option>'+ value +'</option>';
 									} else {
 										option += '<option>No Versions available</option>';
@@ -827,7 +827,7 @@ define(["projects/api/projectsAPI"], function() {
 			$("select[name='prebuiltapps']").hide();
 			$("select[name='builtmyself']").bind('change', function(){
 				var selectedText = $(this).find(':selected').text();
-				if(selectedText == "Pre Built"){
+				if(selectedText === "Pre Built"){
 					 $("select[name='prebuiltapps']").css('display' , 'inline-block');
 					 $("input[name='startdate']").attr("disabled", true);
 					 $("input[name='enddate']").attr("disabled", true);
@@ -938,8 +938,6 @@ define(["projects/api/projectsAPI"], function() {
 									}
 								});
 								if(!exists && code !== depsValue) {
-									/* option += '<option value="'+depsValue+'">'+depsValue+'</option>';
-									$(depsSelectPlaceholder).html(option); */
 									$(depsSelectPlaceholder).append($('<option/>').attr('name','selectedVal').val(depsValue).text(depsValue));
 									$(depsSelectPlaceholder).selectpicker('refresh');
 								}
@@ -972,8 +970,6 @@ define(["projects/api/projectsAPI"], function() {
 									}
 								});
 								if(!exists) {
-									/* option += '<option value="'+depsValue+'">'+depsValue+'</option>';
-									$(depsSelectPlaceholder).html(option); */
 									$(depsSelectPlaceholder).append($('<option/>').attr('name','selectedVal').val(depsValue).text(depsValue));
 									$(depsSelectPlaceholder).selectpicker('refresh');
 								}
@@ -1114,7 +1110,7 @@ define(["projects/api/projectsAPI"], function() {
 			$("tr.mobLayer").hide();
 
 			$.each(getData, function(index, value) {
-				if (value.techInfo.appTypeId == "app-layer") {
+				if (value.techInfo.appTypeId === "app-layer") {
 					$("#appLayaer").show();
 					$("tr.applnLayer").show();
 					var option = '';
@@ -1133,7 +1129,7 @@ define(["projects/api/projectsAPI"], function() {
 					} else {
 						$(".appdependencyTd div.appdependencySelect").show();
 					}
-				} else if (value.techInfo.appTypeId == "web-layer") {
+				} else if (value.techInfo.appTypeId === "web-layer") {
 					$("#webLayers").show();
 					$("tr.webLayer").show();
 					if(value.dependentModules !== null) {
@@ -1151,7 +1147,7 @@ define(["projects/api/projectsAPI"], function() {
 					} else {
 						$(".webdependencyTd div.webdependencySelect").show();
 					}
-				} else if (value.techInfo.appTypeId == "mobile-layer") {
+				} else if (value.techInfo.appTypeId === "mobile-layer") {
 					$("#mobLayers").show();
 					$("tr.mobLayer").show();
 					var appendData = '<tr class="mobilelayercontent" name="dynamicMobileLayer"><td><input type="text" value="'+value.code+'" disabled></td><td><select disabled><option>'+value.techInfo.techGroupId+'</option></select></td><td><select name="mobile_types" disabled>'+self.editgetmobiletype(value.techInfo.id)+'</select></td><td colspan="2"><select disabled><option>'+value.techInfo.version+'</option></select></td><td><div class="flt_right icon_center"><a href="javascript:;" name="addMobileLayer"></a><a href="javascript:;" name="removeMobileLayer"></a> </div></td></tr>';

@@ -73,11 +73,11 @@ define(["testResult/listener/testResultListener"], function() {
 			self.testResultListener.performAction(self.testResultListener.getActionHeader(self.requestBody, "getTestSuite"), function(response) {
 				var data = {};
 				data.testSuites = response.data;
-				data.message = response.message
+				data.message = response.message;
 				commonVariables.testSuites = response.data;
 				renderFunction(data, $('#testResult div.widget-maincontent-div'));
 				commonVariables.loadingScreen.removeLoading();
-				if (response.data != undefined && response.data != null) {
+				if (response.data !== undefined && response.data !== null) {
 					setTimeout(function() {
 						self.testResultListener.getBarChartGraphData(response.data, function(graphData, testSuiteLabels) {
 							self.testResultListener.createBarChart(graphData, testSuiteLabels);
@@ -86,7 +86,7 @@ define(["testResult/listener/testResultListener"], function() {
 					$('#pdfDiv').show();
 				} else {
 					setTimeout(function() {
-						var noReportContent = '<div class="alert alert-block" style="text-align: center; margin: auto 0;">' + response.message + '</div>'
+						var noReportContent = '<div class="alert alert-block" style="text-align: center; margin: auto 0;">' + response.message + '</div>';
 						$('#graphView').html(noReportContent);
 					}, 400);
 					$('#pdfDiv').hide();
@@ -115,7 +115,7 @@ define(["testResult/listener/testResultListener"], function() {
 			//To set the height of the test result section  
 			var windowHeight = $(document).height();
 			var marginTop = $('.testSuiteTable').css("margin-top");
-			if (marginTop != undefined) {
+			if (marginTop !== undefined) {
 				marginTop = marginTop.substring(0, marginTop.length - 2);
 			}
 			var footerHeight = $('#footer').height();

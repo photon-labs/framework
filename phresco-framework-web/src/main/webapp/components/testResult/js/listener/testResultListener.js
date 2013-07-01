@@ -207,10 +207,10 @@ define(["testResult/api/testResultAPI"], function() {
 				resultTemplate = resultTemplate.concat('<td>'+ result.testClass +'</td>');
 				resultTemplate = resultTemplate.concat('<td>'+ result.time +'</td>');
 				resultTemplate = resultTemplate.concat('<td>');
-				if (result.testCaseFailure != null) {
+				if (result.testCaseFailure !== null) {
 					resultTemplate = resultTemplate.concat('<img src="themes/default/images/helios/cross_red.png" width="16" height="13" border="0" alt=""></td>');
 					resultTemplate = resultTemplate.concat('<td><a href="#" type="failure" testcaseName="'+ result.name +'" class="log"><img src="themes/default/images/helios/log_icon.png" width="16" height="13" border="0" alt=""></a></td>');
-				}  else if (result.testCaseError != null) {
+				}  else if (result.testCaseError !== null) {
 					resultTemplate = resultTemplate.concat('<img src="themes/default/images/helios/cross_red.png" width="16" height="13" border="0" alt=""></td>');
 					resultTemplate = resultTemplate.concat('<td><a href="#" type="error" testcaseName="'+ result.name +'" class="log"><img src="themes/default/images/helios/log_icon.png" width="16" height="13" border="0" alt=""></a></td>');
 				} else {
@@ -234,7 +234,7 @@ define(["testResult/api/testResultAPI"], function() {
 			$("#testSuites").hide();
 			$("#testCases").hide();
 			$("#graphView").show();
-			$("#graphicalView").html('')
+			$("#graphicalView").html('');
 
 			$("#graphicalView").html('<img src="themes/default/images/helios/quality_graph_on.png" width="25" height="25" border="0" alt=""><b>Graph View</b>');
 		},
@@ -257,7 +257,7 @@ define(["testResult/api/testResultAPI"], function() {
 				contentType: "application/json",				
 				dataType: "json",
 				webserviceurl: ''
-			}
+			};
 			
 			var currentTab = commonVariables.navListener.currentTab;
 			var testType = "";
@@ -268,34 +268,34 @@ define(["testResult/api/testResultAPI"], function() {
 			} else if ("componentTest" === currentTab) {
 				testType = "component";
 			}
-			if (action == "getTestSuite") {
+			if (action === "getTestSuite") {
 				header.requestMethod = "GET";
 				header.webserviceurl = commonVariables.webserviceurl + commonVariables.qualityContext + "/testsuites?appDirName=" + appDirName + "&testType=" + testType;
-				if (techReport != undefined) {
+				if (techReport !== undefined) {
 					header.webserviceurl = header.webserviceurl.concat("&techReport=" + techReport);
 				}
-				if (moduleName != undefined) {
+				if (moduleName !== undefined) {
 					header.webserviceurl = header.webserviceurl.concat("&moduleName=" + moduleName);
 				}
-			} else if (action == "getTestReport") {
+			} else if (action === "getTestReport") {
 				header.requestMethod = "GET";
 				header.webserviceurl = commonVariables.webserviceurl + commonVariables.qualityContext + "/testreports?appDirName=" + appDirName +
 										"&testType=" + testType+ "&testSuite=" + requestBody.testSuite;
-				if (techReport != undefined) {
+				if (techReport !== undefined) {
 					header.webserviceurl = header.webserviceurl.concat("&techReport=" + techReport);
 				}
-				if (moduleName != undefined) {
+				if (moduleName !== undefined) {
 					header.webserviceurl = header.webserviceurl.concat("&moduleName=" + moduleName);
 				}
-			} else if (action == "generatePdfReport") {
+			} else if (action === "generatePdfReport") {
 				var data = $('#pdfReportForm').serialize();
 				header.requestMethod = "POST";
 				header.webserviceurl = commonVariables.webserviceurl + "app/printAsPdf?appDirName=" + appDirName + "&" + data + "&userId=" + userId;
-			} else if (action == "getPdfReports") {
+			} else if (action === "getPdfReports") {
 				var data = $('#pdfReportForm').serialize();
 				header.requestMethod = "GET";
 				header.webserviceurl = commonVariables.webserviceurl + "pdf/showPopUp?appDirName=" + appDirName + "&fromPage=" + testType;
-			} else if (action == "deletePdfReport") {
+			} else if (action === "deletePdfReport") {
 				header.requestMethod = "DELETE";
 				header.webserviceurl = commonVariables.webserviceurl + "pdf/deleteReport?appDirName=" + appDirName + "&fromPage=" + testType + "&reportFileName=" + requestBody.fileName;
 			}
@@ -309,7 +309,6 @@ define(["testResult/api/testResultAPI"], function() {
 					function(response) {
 						if (response !== null) {
 							callback(response);
-//							commonVariables.loadingScreen.removeLoading();
 						} else {
 							commonVariables.loadingScreen.removeLoading();
 							callback({ "status" : "service failure"});
@@ -324,7 +323,7 @@ define(["testResult/api/testResultAPI"], function() {
 		showHideConsole : function() {
 			var self = this;
 			var check = $('#consoleImg').attr('data-flag');
-			if (check == "true") {
+			if (check === "true") {
 				self.openConsole();
 			} else {
 				self.closeConsole();
@@ -410,7 +409,7 @@ define(["testResult/api/testResultAPI"], function() {
 		listPdfReports : function(pdfReports) {
 			var self = this;
 			var content = "";
-			if (pdfReports != undefined && pdfReports != null && pdfReports.length > 0) {
+			if (pdfReports !== undefined && pdfReports !== null && pdfReports.length > 0) {
 				$("#noReport").hide();
 				$("#availablePdfRptsTbl").show();
 				var content = "";
@@ -470,8 +469,8 @@ define(["testResult/api/testResultAPI"], function() {
 				var testcaseName = $(this).attr("testcaseName");
 				var logType = $(this).attr("type");
 				var description = "";
-				var type = ""
-				if (data != null) {
+				var type = "";
+				if (data !== null) {
 					for (i in data) {
 						var testcase = data[i];
 						if (testcaseName === testcase.name) {
