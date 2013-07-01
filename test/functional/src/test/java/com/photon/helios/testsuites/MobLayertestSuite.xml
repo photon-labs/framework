@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<suite name="MobileLayerMobileLayeruite" thread-count="5" verbose="3">
+
+	<test name="iPhoneNativeTest" junit="false" preserve-order="true">
+		<classes>
+			<class name="com.photon.helios.MobileLayer.IPhoneNativeTest" />
+			<methods>
+				<include name="testIPhoneNativeArchetypeCreation"></include>
+			</methods>
+		</classes>
+	</test>
+
+	<test name="iPhoneHybridTest" junit="false" preserve-order="true">
+		<classes>
+			<class name="com.photon.helios.MobileLayer.IPhoneHybridTest" />
+			<methods>
+				<include name="testIPhoneHybridArchetypeCreation"></include>
+			</methods>
+		</classes>
+	</test>
+
+	<test name="iPhoneLibraryTest" junit="false" preserve-order="true">
+		<classes>
+			<class name="com.photon.helios.MobileLayer.IPhoneLibraryTest" />
+			<methods>
+				<include name="testIPhoneLibraryArchetypeCreation"></include>
+			</methods>
+		</classes>
+	</test>
+
+	<test name="AndroidNativeTest" junit="false" preserve-order="true">
+		<classes>
+			<class name="com.photon.helios.MobileLayer.AndroidNativeTest" />
+			<methods>
+				<include name="testAndroidNativeArchetypeCreation"></include>
+			</methods>
+		</classes>
+	</test>
+
+	<test name="AndroidHybridTest" junit="false" preserve-order="true">
+		<classes>
+			<class name="com.photon.helios.MobileLayer.AndroidHybridTest" />
+			<methods>
+				<include name="testAndroidHybridArchetypeCreation"></include>
+				<include name="testAndroidHybridArchetypeEditApp"></include>
+				<include name="testAndroidHybridArchetypeUpdateApp"></include>
+			</methods>
+		</classes>
+	</test>
+
+	<test name="AndroidLibraryTest" junit="false" preserve-order="true">
+		<classes>
+			<class name="com.photon.helios.MobileLayer.AndroidLibraryTest" />
+			<methods>
+				<include name="testAndroidLibraryArchetypeCreation"></include>
+				<include name="testAndroidLibraryArchetypeEditApp"></include> 
+				<include name="testAndroidLibraryArchetypeUpdateApp"></include>
+			</methods>
+		</classes>
+	</test>
+
+	<test name="BlackBerryHybridTest" junit="false" preserve-order="true">
+		<classes>
+			<class name="com.photon.helios.MobileLayer.BlackberryHybridTest" />
+			<methods>
+				<include name="testBlackBerryHybridArchetypeCreation"></include>
+			</methods>
+		</classes>
+	</test>
+
+	<test name="WindowsMetroTest" junit="false" preserve-order="true">
+		<classes>
+			<class name="com.photon.helios.MobileLayer.WindowsMetroTest" />
+			<methods>
+				<include name="testWindowsMetroArchetypeCreation"></include>
+			</methods>
+		</classes>
+	</test>
+
+	<test name="WindowsPhoneTest" junit="false" preserve-order="true">
+		<classes>
+			<class name="com.photon.helios.MobileLayer.WindowsPhoneTest" />
+			<methods>
+				<include name="testWindowsPhoneArchetypeCreation"></include>
+			</methods>
+		</classes>
+	</test>
+
+</suite> 

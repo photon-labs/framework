@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<environment>
+<phresco>
+		 	   <multiYuiArchetypeName>MultiYuiArchetypeProject</multiYuiArchetypeName>
+		       <multiYuiArchetypeDesc>This is MultiYui Archetype Project</multiYuiArchetypeDesc>
+		       <multiYuiArchetypeAppCode>MultiYuiArchetype</multiYuiArchetypeAppCode>
+		       <webLayerValue>HTML5</webLayerValue>
+		       <widgetValue>Multichannel YUI Widget</widgetValue>
+		       <multiYuiArchetypeEditLink>//a[contains(text(),'MultiYuiArchetype')]</multiYuiArchetypeEditLink>
+</phresco>
+</environment>
+ 

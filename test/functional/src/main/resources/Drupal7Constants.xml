@@ -1,63 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!--
-
-    Phresco Framework Root
-
-    Copyright (C) 1999-2013 Photon Infotech Inc.
-
-    Licensed under the Apache License, Version 2.0 (the "License");
-    you may not use this file except in compliance with the License.
-    You may obtain a copy of the License at
-
-            http://www.apache.org/licenses/LICENSE-2.0
-
-    Unless required by applicable law or agreed to in writing, software
-    distributed under the License is distributed on an "AS IS" BASIS,
-    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-    See the License for the specific language governing permissions and
-    limitations under the License.
-
--->
 <environment>
-<phresco>
- <technology>
-       <drupal7>
-       <appInfoDrupalNameValue>Drupal7_Eshop_Proj</appInfoDrupalNameValue>
-       <appInfoDrupalNoneNameValue>Drupal7_None_Proj</appInfoDrupalNoneNameValue>
-       <appInfoDrupalDescValue>This is a Drupal7 project</appInfoDrupalDescValue>
-       <appInfoTechWebappDrupal7>//option[@value='tech-phpdru7']</appInfoTechWebappDrupal7>
-       
-       <appInfoTechWebappDrupal7Click>css=option[value="tech-phpdru7"]</appInfoTechWebappDrupal7Click>
-       <createdDrupalProject>//a[contains(text(),'Drupal7_Eshop_Proj')]</createdDrupalProject>
-       <drupalServerNameValue>DrupalServer</drupalServerNameValue>
-       <drupalServerDescValue>DrupalServer</drupalServerDescValue>
-       <drupalServerHostValue>localhost</drupalServerHostValue>
-       <drupalServerPortValue>80</drupalServerPortValue>
-       
-        <!--  ********* drupalServerDeployDirValue *********** -->
-        
-       <drupalServerDeployDirValue>c:\wamp\www</drupalServerDeployDirValue>
-       
-        <!--  ********* drupalServerDeployDirValue *********** -->
-        
-       <drupalServerTypeValue>wamp</drupalServerTypeValue>
-       <drupal7NoneServerContextValue>Drupal7NoneApp</drupal7NoneServerContextValue>
-       <drupal7EshopServerContextValue>Drupal7EshopApp</drupal7EshopServerContextValue>
-       <drupalDbNameValue>DrupalDataBase</drupalDbNameValue>
-       <drupalDbDescValue>This is the Database configuration for Drupal7</drupalDbDescValue>
-       <drupalDbHostValue>localhost</drupalDbHostValue>
-       <drupalDbPortValue>3306</drupalDbPortValue>
-       <drupalDbUserNameValue>root</drupalDbUserNameValue>
-       <drupalDbPasswordValue></drupalDbPasswordValue>
-       <drupalDbdbNameValue>testCreate_Drupal7_None</drupalDbdbNameValue>
-       <drupalDbContextValue>DrupalDataBase</drupalDbContextValue>
-       <drupalBuildGenBuildDrupalServer>label=DrupalServer</drupalBuildGenBuildDrupalServer>
-       <drupalBuildGenBuildDrupalServerClick>css=option[value="DrupalServer"]</drupalBuildGenBuildDrupalServerClick>
-       <drupalBuildGenBuildDrupalDb>label=DrupalDataBase</drupalBuildGenBuildDrupalDb>
-       <drupalBuildGenBuildDrupalDbClick>css=option[value="DrupalDataBase"]</drupalBuildGenBuildDrupalDbClick>
-       <createdDrupal7NoneProject>//a[contains(text(),'Drupal7_None_Proj')]</createdDrupal7NoneProject>>
-       </drupal7>
-
- </technology>
-</phresco>
+    <phresco>
+      		   <drupal7ArchetypeName>Drupal7ArchetypeProject</drupal7ArchetypeName>
+		       <drupal7ArchetypeDesc>This is Drupal7 Archetype Project</drupal7ArchetypeDesc>
+		       <drupal7ArchetypeAppCode>Drupal7Archetype</drupal7ArchetypeAppCode>
+		       <technologyValue>Drupal7</technologyValue>
+		       <drupal7ArchetypeEditApp>//a[contains(text(),'Drupal7Archetype')]</drupal7ArchetypeEditApp>
+    </phresco>
 </environment>

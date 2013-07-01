@@ -1,59 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!--
-
-    Phresco Framework Root
-
-    Copyright (C) 1999-2013 Photon Infotech Inc.
-
-    Licensed under the Apache License, Version 2.0 (the "License");
-    you may not use this file except in compliance with the License.
-    You may obtain a copy of the License at
-
-            http://www.apache.org/licenses/LICENSE-2.0
-
-    Unless required by applicable law or agreed to in writing, software
-    distributed under the License is distributed on an "AS IS" BASIS,
-    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-    See the License for the specific language governing permissions and
-    limitations under the License.
-
--->
 <environment>
-<phresco>
- <technology>
-       <drupal6>
-       <appInfodrupal6NameValue>Drupal6_None_Proj</appInfodrupal6NameValue>
-       <appInfodrupal6DescValue>This is a Drupal6 project</appInfodrupal6DescValue>
-       <appInfoTechWebappdrupal6>//option[@value='tech-phpdru6']</appInfoTechWebappdrupal6>
-       <appInfoTechWebappdrupal6Click>css=option[value='tech-phpdru7']</appInfoTechWebappdrupal6Click>
-       <createddrupal6Project>//a[contains(text(),'Drupal6_None_Proj')]</createddrupal6Project>
-       <drupal6ServerNameValue>drupal6Server</drupal6ServerNameValue>
-       <drupal6ServerDescValue>drupal6Server</drupal6ServerDescValue>
-       <drupal6ServerHostValue>localhost</drupal6ServerHostValue>
-       <drupal6ServerPortValue>80</drupal6ServerPortValue>
-       
-     <!--  ********* drupal6ServerDeployDirValue *********** -->
-     
-       <drupal6ServerDeployDirValue>c:\wamp\www</drupal6ServerDeployDirValue>
-       
-     <!--  ********* drupal6ServerDeployDirValue *********** -->
-       
-       <drupal6ServerTypeValue>wamp</drupal6ServerTypeValue>
-       <drupal6ServerContextValue>drupal6App</drupal6ServerContextValue>
-       <drupal6DbNameValue>drupal6DataBase</drupal6DbNameValue>
-       <drupal6DbDescValue>drupal6DataBase</drupal6DbDescValue>
-       <drupal6DbHostValue>localhost</drupal6DbHostValue>
-       <drupal6DbPortValue>3306</drupal6DbPortValue>
-       <drupal6DbUserNameValue>root</drupal6DbUserNameValue>
-       <drupal6DbPasswordValue></drupal6DbPasswordValue>
-       <drupal6DbdbNameValue>DataBaseValue</drupal6DbdbNameValue>
-       <drupal6DbContextValue>drupal6DataBase</drupal6DbContextValue>
-       <drupal6BuildGenBuilddrupal6Server>label=drupal6Server</drupal6BuildGenBuilddrupal6Server>
-       <drupal6BuildGenBuilddrupal6ServerClick>css=option[value="drupal6Server"]</drupal6BuildGenBuilddrupal6ServerClick>
-       <drupal6BuildGenBuilddrupal6Db>label=drupal6DataBase</drupal6BuildGenBuilddrupal6Db>
-       <drupal6BuildGenBuilddrupal6DbClick>css=option[value="drupal6DataBase"]</drupal6BuildGenBuilddrupal6DbClick>
-       </drupal6>
-
- </technology>
-</phresco>
+    <phresco>
+        	   <drupal6ArchetypeName>Drupal6ArchetypeProject</drupal6ArchetypeName>
+		       <drupal6ArchetypeDesc>This is Drupal6 Archetype Project</drupal6ArchetypeDesc>
+		       <drupal6ArchetypeAppCode>Drupal6Archetype</drupal6ArchetypeAppCode>
+		       <technologyValue>Drupal6</technologyValue>
+		       <drupal6ArchetypeEditApp>//a[contains(text(),'Drupal6Archetype')]</drupal6ArchetypeEditApp>
+    </phresco>
 </environment>

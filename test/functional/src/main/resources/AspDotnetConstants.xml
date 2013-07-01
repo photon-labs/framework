@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<environment>
+    <phresco>
+        	   <aspDotnetArchetypeName>AspDotnetArchetypeProject</aspDotnetArchetypeName>
+		       <aspDotnetArchetypeDesc>This is AspDotnet Archetype Project</aspDotnetArchetypeDesc>
+		       <aspDotnetArchetypeAppCode>AspDotnetArchetype</aspDotnetArchetypeAppCode>
+		       <technologyValue>ASP.NET</technologyValue>
+		       <aspDotnetArchetypeEditApp>//a[contains(text(),'AspDotnetArchetype')]</aspDotnetArchetypeEditApp>
+    </phresco>
+</environment>

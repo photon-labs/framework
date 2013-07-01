@@ -1,44 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!--
-
-    Phresco Framework Root
-
-    Copyright (C) 1999-2013 Photon Infotech Inc.
-
-    Licensed under the Apache License, Version 2.0 (the "License");
-    you may not use this file except in compliance with the License.
-    You may obtain a copy of the License at
-
-            http://www.apache.org/licenses/LICENSE-2.0
-
-    Unless required by applicable law or agreed to in writing, software
-    distributed under the License is distributed on an "AS IS" BASIS,
-    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-    See the License for the specific language governing permissions and
-    limitations under the License.
-
--->
 <environment>
-<phresco>
- <technology>
-   <sharepoint>
-   <appInfoTechWebappSharepoint>//option[@value='tech-sharepoint']</appInfoTechWebappSharepoint>
-   <sharepointProj>//a[contains(text(),'SharePoint_ResMngmt_Proj')]</sharepointProj>
-   <appInfoSharepointResourceMngmt>//option[@value='Resource Management']</appInfoSharepointResourceMngmt>
-   <sharepointBuildGenBuildSPServer>label=myserver</sharepointBuildGenBuildSPServer>
-   <sharepointBuildGenBuildSPServerClick>css=option[value="myserver"]</sharepointBuildGenBuildSPServerClick>
-   <appInfoSharepointNameValue>SharePoint_ResMngmt_Proj</appInfoSharepointNameValue>
-   <appInfoSharepointNoneNameValue>SharePoint_None_Proj</appInfoSharepointNoneNameValue>
-   <appInfoSharepointDescValue>This is SharePoint project</appInfoSharepointDescValue>
-   <sharepointServerNameValue>SharepointServer</sharepointServerNameValue>
-   <sharepointServerDescValue>Sharepoint server Configurations</sharepointServerDescValue>
-   <sharepointServerTypeValue>wamp</sharepointServerTypeValue>
-   <sharepointServerContextValue>/Pages/Default.aspx</sharepointServerContextValue>
-   <sharepointServerDeployDirValue>C:\</sharepointServerDeployDirValue>
-   <sharepointServerPortValue>2020</sharepointServerPortValue>
-   <sharepointServerHostValue>framework-win2</sharepointServerHostValue>
-   <createdsharepointProjNone>//a[contains(text(),'SharePoint_None_Proj')]</createdsharepointProjNone>
-   </sharepoint>
- </technology>
- </phresco>
- </environment>
+    <phresco>
+      	       <sharepointArchetypeName>SharepointArchetypeProject</sharepointArchetypeName>
+		       <sharepointArchetypeDesc>This is Sharepoint Archetype Project</sharepointArchetypeDesc>
+		       <sharepointArchetypeAppCode>SharepointArchetype</sharepointArchetypeAppCode>
+		       <technologyValue>Sharepoint</technologyValue>
+		       <sharepointArchetypeEditApp>//a[contains(text(),'SharepointArchetype')]</sharepointArchetypeEditApp>
+     </phresco>
+</environment>

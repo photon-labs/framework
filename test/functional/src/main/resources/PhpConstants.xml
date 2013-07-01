@@ -1,62 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!--
-
-    Phresco Framework Root
-
-    Copyright (C) 1999-2013 Photon Infotech Inc.
-
-    Licensed under the Apache License, Version 2.0 (the "License");
-    you may not use this file except in compliance with the License.
-    You may obtain a copy of the License at
-
-            http://www.apache.org/licenses/LICENSE-2.0
-
-    Unless required by applicable law or agreed to in writing, software
-    distributed under the License is distributed on an "AS IS" BASIS,
-    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-    See the License for the specific language governing permissions and
-    limitations under the License.
-
--->
 <environment>
-<phresco>
- <technology>
-   <php>
-      <appInfoPhpNameValue>PHP_Blog_Proj</appInfoPhpNameValue>
-      <appInfoPhpNoneNameValue>PHP_None_Proj</appInfoPhpNoneNameValue>
-      <appInfoPhpDescriptionValue>This is a PHP project</appInfoPhpDescriptionValue>
-      <phpConfigurationNameServer>ServerConfig</phpConfigurationNameServer>
-      <appInfophpPhpBlog>//option[@value='phpblog']</appInfophpPhpBlog>
-      <phpGenBuildServerconfig>label=ServerConfig</phpGenBuildServerconfig>
-      <phpGenBuildDbconfig>label=DBConfig</phpGenBuildDbconfig>
-      <phpConfigServerValue>ServerConfig</phpConfigServerValue>
-      
-       <!--  ********* phpConfigServerDeployDir *********** -->
-       
-      <phpConfigServerDeployDir>c:\wamp\www</phpConfigServerDeployDir>
-      
-       <!--  ********* phpConfigServerDeployDir *********** -->
-       
-      <phpNoneConfigServerContext>PHPNoneApp</phpNoneConfigServerContext>
-      <phpBlogConfigServerContext>PHPBlogApp</phpBlogConfigServerContext>
-      <phpConfigDbName>DBConfig</phpConfigDbName>
-      <phpConfigDbDescription>Database Configuration</phpConfigDbDescription>
-      <phpConfigDbUsername>root</phpConfigDbUsername>
-      <phpSettingsDbName>DBPHP</phpSettingsDbName>
-      <appInfoTechWebappPhp>label=PHP</appInfoTechWebappPhp>
-      <appInfoTechWebappPhpClick>//option[@value='tech-php']</appInfoTechWebappPhpClick>
-      <phpCreatedproject>//a[contains(text(),'PHP_Blog_Proj')]</phpCreatedproject>
-      <phpServerConfigHost>localhost</phpServerConfigHost>
-      <phpServerConfigPort>80</phpServerConfigPort>
-      <phpConfigPort>3306</phpConfigPort>
-      <phpGenBuildServerConfig>label=ServerConfig</phpGenBuildServerConfig>
-      <phpGenBuildServerConfigClick>css=option[value="ServerConfig"]</phpGenBuildServerConfigClick>
-      <phpGenBuildDbConfig>label=DBConfig</phpGenBuildDbConfig>
-      <phpGenBuildDbConfigClick>css=option[value="DBConfig"]</phpGenBuildDbConfigClick>
-      <phpNoneCreatedproject>//a[contains(text(),'PHP_None_Proj')]</phpNoneCreatedproject>>
-      
-      
-   </php>
- </technology>
-</phresco>
+    <phresco>
+		       <phpArchetypeName>PHPArchetypeProject</phpArchetypeName>
+		       <phpArchetypeDesc>This is PHP Archetype Project</phpArchetypeDesc>
+		       <phpArchetypeAppCode>PHPArchetype</phpArchetypeAppCode>
+		       <technologyValue>PHP</technologyValue>
+		       <phpArchetypeEditLink>//a[contains(text(),'PHPArchetype')]</phpArchetypeEditLink>
+		      
+    </phresco>
 </environment>

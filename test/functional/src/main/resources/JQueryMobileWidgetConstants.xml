@@ -1,0 +1,10 @@
+<environment>
+<phresco>
+			   <jQueryMobArchetypeName>JQueryMobileArchetypeProject</jQueryMobArchetypeName>
+		       <jQueryMobArchetypeDesc>This is JQueryMobile Archetype Project</jQueryMobArchetypeDesc>
+		       <jQueryMobArchetypeAppCode>JQueryMobileArchetype</jQueryMobArchetypeAppCode>
+		       <webLayerValue>HTML5</webLayerValue>
+		       <widgetValue>JQuery Mobile Widget</widgetValue>
+		       <jQueryMobArchetypeEditLink>//a[contains(text(),'JQueryMobileArchetype')]</jQueryMobArchetypeEditLink>
+</phresco>
+</environment>

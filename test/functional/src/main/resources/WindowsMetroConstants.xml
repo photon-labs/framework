@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<environment>
+<phresco>
+			   <windowsMetroArchetypeName>WindowsMetroArchetypeProject</windowsMetroArchetypeName>
+			   <windowsMetroArchetypeDesc>This is WindowsMetro Archetype Project</windowsMetroArchetypeDesc>
+		       <windowsMetroArchetypeAppCode>WindowsMetroArchetype</windowsMetroArchetypeAppCode>
+		       <mobileValue>Windows</mobileValue>
+		       <mobileType>Windows Metro</mobileType>
+		       
+</phresco>             
+</environment>

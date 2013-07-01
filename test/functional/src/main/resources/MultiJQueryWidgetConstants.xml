@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<environment>
+<phresco>
+	    	   <multiJQueryArchetypeName>MultiJQueryArchetypeProject</multiJQueryArchetypeName>
+		       <multiJQueryArchetypeDesc>This is MultiJQuery Archetype Project</multiJQueryArchetypeDesc>
+		       <multiJQueryArchetypeAppCode>MultiJQueryArchetype</multiJQueryArchetypeAppCode>
+		       <webLayerValue>HTML5</webLayerValue>
+		       <widgetValue>Multichannel JQuery Widget</widgetValue>
+		       <multiJQueryArchetypeEditLink>//a[contains(text(),'MultiJQueryArchetype')]</multiJQueryArchetypeEditLink>
+</phresco>
+</environment>
+ 

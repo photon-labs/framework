@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<environment>
+	<phresco>
+		<loginUserName>admin</loginUserName>
+		<loginPassword>manage</loginPassword>
+		<customerSelect>//div[@id='customerSelect']/ul/li[3]/a/label</customerSelect>
+	</phresco>
+</environment>

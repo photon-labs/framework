@@ -1,53 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!--
-
-    Phresco Framework Root
-
-    Copyright (C) 1999-2013 Photon Infotech Inc.
-
-    Licensed under the Apache License, Version 2.0 (the "License");
-    you may not use this file except in compliance with the License.
-    You may obtain a copy of the License at
-
-            http://www.apache.org/licenses/LICENSE-2.0
-
-    Unless required by applicable law or agreed to in writing, software
-    distributed under the License is distributed on an "AS IS" BASIS,
-    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-    See the License for the specific language governing permissions and
-    limitations under the License.
-
--->
 <environment>
 <phresco>
-<technology>
- <androidHybrid>
-          <appInfoTechMobappAndroidHybrid>label=Android Hybrid</appInfoTechMobappAndroidHybrid>
-          <appInfoTechMobappAndroidHybridClick>//option[@value='tech-android-hybrid']</appInfoTechMobappAndroidHybridClick>
-          <appInfoTechMobappAndroidHybridShoppinCart>//option[@value='ShoppingCart']</appInfoTechMobappAndroidHybridShoppinCart>
-          <createdAndroidHybridProject>//a[contains(text(),'AndroidHybrid_Eshop_Proj')]</createdAndroidHybridProject>
-          <appInfoAndroidHybridNameValue>AndroidHybrid_Eshop_Proj</appInfoAndroidHybridNameValue>
-          <appInfoAndroidHybridNoneNameValue>AndroidHybrid_None_Proj</appInfoAndroidHybridNoneNameValue>
-          <appInfoAndroidHybridDescValue>This is an Android Hybrid project</appInfoAndroidHybridDescValue>
-          <createdAndroidHybridNoneProject>//a[contains(text(),'AndroidHybrid_None_Proj')]</createdAndroidHybridNoneProject>
-          <AndroidHybridWebServNameValue></AndroidHybridWebServNameValue>
-          <AndroidHybridWebServDescValue></AndroidHybridWebServDescValue>
-          <AndroidHybridWebServTypeValue></AndroidHybridWebServTypeValue>
-          <AndroidHybridWebServTypeClick></AndroidHybridWebServTypeClick>
-          <AndroidHybridWebServHostValue></AndroidHybridWebServHostValue>
-          <AndroidHybridWebServPortValue></AndroidHybridWebServPortValue>
-          <AndroidHybridWebServContextValue></AndroidHybridWebServContextValue>
-          <AndroidHybridGenBuildWebServ></AndroidHybridGenBuildWebServ>
-          <AndroidHybridGenBuildWebServClick></AndroidHybridGenBuildWebServClick>
-          <AndroidHybridGenBuildSDK></AndroidHybridGenBuildSDK>
-          <AndroidHybridGenBuildSDKSimul></AndroidHybridGenBuildSDKSimul>
-          <AndroidHybridGenBuildSDKSimulClick></AndroidHybridGenBuildSDKSimulClick>
-          <AndroidHybridDeploySimulator></AndroidHybridDeploySimulator>
-          
-          
- </androidHybrid>
-</technology>
+			   <androidHybArchetypeName>AndroidHybridArchetypeProject</androidHybArchetypeName>
+		       <androidHybArchetypeDesc>This is AndroidHybrid Archetype Project</androidHybArchetypeDesc>
+		       <androidHybArchetypeAppCode>AndroidHybridArchetype</androidHybArchetypeAppCode>
+		       <mobileValue>Android</mobileValue>
+		       <mobileType>Hybrid</mobileType>
+		       <androidHybArchetypeEditLink>//a[contains(text(),'AndroidHybridArchetype')]</androidHybArchetypeEditLink>
 </phresco>
 </environment>
- 
-      
+
+

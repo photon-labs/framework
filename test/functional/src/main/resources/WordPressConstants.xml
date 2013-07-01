@@ -1,60 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!--
-
-    Phresco Framework Root
-
-    Copyright (C) 1999-2013 Photon Infotech Inc.
-
-    Licensed under the Apache License, Version 2.0 (the "License");
-    you may not use this file except in compliance with the License.
-    You may obtain a copy of the License at
-
-            http://www.apache.org/licenses/LICENSE-2.0
-
-    Unless required by applicable law or agreed to in writing, software
-    distributed under the License is distributed on an "AS IS" BASIS,
-    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-    See the License for the specific language governing permissions and
-    limitations under the License.
-
--->
 <environment>
-<phresco>
- <technology>
-       <WordPress>
-          <appInfoWordPressNameValue>WordPress_Eshop</appInfoWordPressNameValue>
-          <appInfoWordPressNoneNameValue>WordPress_None_Proj</appInfoWordPressNoneNameValue>
-          <appInfoWordPressDescValue>This is a WordPress project</appInfoWordPressDescValue>
-          <appInfoTechWebappWordPressClick>//option[@value='tech-wordpress']</appInfoTechWebappWordPressClick>
-          <createdWordPressProject>//a[contains(text(),'WordPress_None_Proj')]</createdWordPressProject>
-          <WordPressServNameValue>Server</WordPressServNameValue>
-          <WordPressServDescValue>This is a Server for WordPress project</WordPressServDescValue>
-          <WordPressServTypeValue>label=Web Service</WordPressServTypeValue>
-          <WordPressServTypeClick>css=option[value="Web Service"]</WordPressServTypeClick>
-          <WordPressServHostValue>localhost</WordPressServHostValue>
-          <WordPressServPortValue>80</WordPressServPortValue>
-          <WordPressServContextValue>WordpressServer</WordPressServContextValue>
-          <WordPressGenBuildWebServ>label=Webservice</WordPressGenBuildWebServ>
-          <WordPressGenBuildWebServClick>css=option[value="Webservice"]</WordPressGenBuildWebServClick>
-          <WordPressGenBuildSDK>id=sdk</WordPressGenBuildSDK>
-          <WordPressGenBuildSDKSimul>label=iphonesimulator5.0</WordPressGenBuildSDKSimul>
-          <WordPressGenBuildSDKSimulClick>css=option[value="iphonesimulator5.0"]</WordPressGenBuildSDKSimulClick>
-          <WordPressDeploySimulator>id=actionBtn</WordPressDeploySimulator>
-          
-          <!--  ********* WordpressServerDeployDirValue *********** -->
-          
-          <WordpressServerDeployDirValue>c:\wamp\www</WordpressServerDeployDirValue>
-          
-          <!--  ********* WordpressServerDeployDirValue *********** -->
-          
-          <wordpressDbNameValue>WordpressDataBase</wordpressDbNameValue>
-          <wordpressDbDescValue>WordpressDataBase</wordpressDbDescValue>
-          <wordpressDbHostValue>localhost</wordpressDbHostValue>
-          <wordpressDbPortValue>3306</wordpressDbPortValue>
-          <wordpressDbUserNameValue>root</wordpressDbUserNameValue>
-          <wordpressDbdbNameValue>DataBaseValue</wordpressDbdbNameValue>
-          <wordpressDbContextValue>WordpressDataBase</wordpressDbContextValue>
-       </WordPress>
- </technology>
-</phresco>
+	<phresco>
+		<wordpressArchetypeName>WordpressArchetypeProject</wordpressArchetypeName>
+		<wordpressArchetypeDesc>This is Wordpress Archetype Project</wordpressArchetypeDesc>
+		<wordpressArchetypeAppCode>WordpressArchetype</wordpressArchetypeAppCode>
+		<technologyValue>WordPress</technologyValue>
+		<wordpressArchetypeEditApp>//a[contains(text(),'WordpressArchetype')]</wordpressArchetypeEditApp>
+	</phresco>
 </environment>
+

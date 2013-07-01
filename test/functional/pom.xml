@@ -1,191 +1,278 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-  <modelVersion>4.0.0</modelVersion>
-  <groupId>com.photon.phresco</groupId>
-  <artifactId>PhrescoTestFramework</artifactId>
-  <version>0.0.1</version>
-  <packaging>jar</packaging>
-  <name>PhrescoTestFramework</name>
-  <url>http://maven.apache.org</url>
-  
-  <repositories>
-    <repository>      
-      <id>seleniumserver</id>
-      <name>seleniumserver</name>
-      <url>http://172.16.18.178:8080/nexus/content/groups/public/</url>
-    </repository>
-  </repositories>
-  
-	<properties>
-		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-	</properties>
-	<dependencies>
-		<dependency>
-			<groupId>junit</groupId>
-			<artifactId>junit</artifactId>
-			<version>4.10</version>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-              <groupId>org.seleniumhq.selenium.server</groupId>
-              <artifactId>selenium-webdriver</artifactId>
-              <version>2.19.0</version>
-        </dependency>
-        
-		<dependency>
-<groupId>mysql</groupId>
-<artifactId>mysql-connector-java</artifactId>
-<version>5.1.21</version>
-</dependency>
-        
-    <!--  ***************For Windows chromedriver ******************-->    
-        <dependency>
-		   <groupId>org.seleniumhq.selenium</groupId>
-		   <artifactId>chromedriver</artifactId>
-		   <version>19.0.1068.0</version>
-		   <classifier>win</classifier>
-		   <type>zip</type>
-		</dependency>
-	<!-- **************** For Mac machine chromedriver***************** -->   
-			<dependency>
-					  <groupId>org.seleniumhq.selenium</groupId>
-					  <artifactId>chromedriver</artifactId>
-					  <version>19.0.1068.0</version>
-					  <classifier>mac</classifier>
-					  <type>zip</type>
-				</dependency>
-    <!-- **************** For Linux-32 machine chromedriver***************** -->     
-        <dependency>
-			  <groupId>org.seleniumhq.selenium</groupId>
-			  <artifactId>chromedriver</artifactId>
-			  <version>19.0.1068.0</version>
-			  <classifier>linux32</classifier>
-			  <type>zip</type>
-		</dependency>
-	 <!-- **************** For Linux-64 machine chromedriver***************** -->     	
-		<dependency>
-			  <groupId>org.seleniumhq.selenium</groupId>
-			  <artifactId>chromedriver</artifactId>
-			  <version>19.0.1068.0</version>
-			  <classifier>linux64</classifier>
-			  <type>zip</type>
-		</dependency>
-		<!--<dependency> <groupId>org.testng</groupId> <artifactId>testng</artifactId> 
-			<version>6.2</version> </dependency> -->
-	</dependencies>
-	<build>
-		<plugins>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-compiler-plugin</artifactId>
-				<version>2.3.2</version>
-				<inherited>true</inherited>
-				<configuration>
-					<source>1.6</source>
-					<target>1.6</target>
-				</configuration>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-site-plugin</artifactId>
-				<version>2.1</version>
-				<executions>
-		          <execution>
-		            <phase>test</phase>
-		            <goals>
-		              <goal>site</goal>
-		            </goals>
-		          </execution>
-		        </executions>
-				<configuration>
-					<skipTests>true</skipTests>
-				</configuration>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-dependency-plugin</artifactId>
-				<version>2.3</version>
-				<executions>
-					<execution>
-						<id>unpack</id>
-						<phase>compile</phase>
-						<goals>
-							<goal>unpack</goal>
-						</goals>
-						<configuration>
-							<markersDirectory>target/test/chromedriver</markersDirectory>
-						<artifactItems>
-								<artifactItem>
-										 	  <groupId>org.seleniumhq.selenium</groupId>
-											   <artifactId>chromedriver</artifactId>
-											   <version>19.0.1068.0</version>
-											   <classifier>win</classifier>
-											   <type>zip</type>
-											   <overWrite>false</overWrite>
-											   <outputDirectory>target/test/chromedriver/windows</outputDirectory>
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0">
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>com.photon.phresco.functional</groupId>
+    <artifactId>TestSet-Framework3.0-html5jquerymobilewidget</artifactId>
+    <packaging>jar</packaging>
+    <name>TestSet-Framework3.0-html5jquerymobilewidget</name>
+    <version>1.0</version>
+    <url>http://maven.apache.org</url>
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>2.3.2</version>
+                <inherited>true</inherited>
+                <configuration>
+                    <source xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">1.6</source>
+                    <target xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">1.6</target>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-site-plugin</artifactId>
+                <version>2.1</version>
+                <executions>
+                    <execution>
+                        <phase>test</phase>
+                        <goals>
+                            <goal>site</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <skipTests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">true</skipTests>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <version>2.3</version>
+                <executions>
+                    <execution>
+                        <id>unpack</id>
+                        <phase>validate</phase>
+                        <goals>
+                            <goal>unpack</goal>
+                        </goals>
+                        <configuration>
+                            <markersDirectory xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">chromedriver/markers</markersDirectory>
+                            <artifactItems xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+<artifactItem>
+    <groupId>org.seleniumhq.selenium</groupId>
+    <artifactId>chromedriver</artifactId>
+    <version>${driver.version}</version>
+    <classifier>${driver.classifier}</classifier>
+    <type>zip</type>
+    <overWrite>false</overWrite>
+    <outputDirectory>chromedriver</outputDirectory>
 								  </artifactItem>
-								  <artifactItem>
-								                 <groupId>org.seleniumhq.selenium</groupId>
-												  <artifactId>chromedriver</artifactId>
-												  <version>19.0.1068.0</version>
-												  <classifier>mac</classifier>
-												  <type>zip</type>
-												  <overWrite>false</overWrite>
-											      <outputDirectory>target/test/chromedriver/mac</outputDirectory>
-								</artifactItem>	
-								<artifactItem>
-											  <groupId>org.seleniumhq.selenium</groupId>
-											  <artifactId>chromedriver</artifactId>
-											  <version>19.0.1068.0</version>
-											  <classifier>linux32</classifier>
-											  <type>zip</type>
-											  <overWrite>false</overWrite>
-											  <outputDirectory>target/test/chromedriver/linux-32</outputDirectory>
-								</artifactItem>
-								<artifactItem>
-											  <groupId>org.seleniumhq.selenium</groupId>
-											  <artifactId>chromedriver</artifactId>
-											  <version>19.0.1068.0</version>
-											  <classifier>linux64</classifier>
-											  <type>zip</type>
-											  <overWrite>false</overWrite>
-											  <outputDirectory>target/test/chromedriver/linux-64</outputDirectory>
-								</artifactItem>
+								
 						</artifactItems>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-surefire-report-plugin</artifactId>
-				<version>2.8</version>	
-				<executions>
-		          <execution>
-		            <phase>test</phase>
-		            <goals>
-		              <goal>report</goal>
-		            </goals>
-		          </execution>
-		        </executions>
-				<configuration>
-					<skipTests>true</skipTests>
-				</configuration>
-			</plugin>
-	</plugins>
-	</build>
-
-	<reporting>
-		<plugins>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+			<!-- <plugin>
+			 <groupId>maven-testng-plugin</groupId>
+            <artifactId>testng</artifactId>
+            <version>1.2</version>
+			</plugin> -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <version>2.3</version>
+                <executions>
+                    <execution>
+                        <id>copy</id>
+                        <phase>validate</phase>
+                        <goals>
+                            <goal>copy</goal>
+                        </goals>
+                        <configuration>
+                            <markersDirectory xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">lib</markersDirectory>
+                            <artifactItems xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+<artifactItem>
+    <groupId>org.seleniumhq.selenium</groupId>
+    <artifactId>selenium-server-standalone</artifactId>
+    <version>2.30.0</version>
+    <overWrite>false</overWrite>
+    <outputDirectory>${project.basedir}/lib</outputDirectory>
+		
+								  </artifactItem>
+<artifactItem>
+    <groupId>org.seleniumhq.selenium</groupId>
+    <artifactId>selenium-htmlunit-driver</artifactId>
+    <version>2.29.1</version>
+    <overWrite>false</overWrite>
+    <outputDirectory>${project.basedir}/lib</outputDirectory>
+	 </artifactItem>
+								</artifactItems>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <phase>validate</phase>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                        <configuration>
+                            <tasks xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+<chmod file="${project.basedir}/chromedriver/chromedriver" perm="777"/>
+                      </tasks>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
 			
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-surefire-report-plugin</artifactId>
-				<version>2.8</version>				
-				<configuration>
-					<skipTests>true</skipTests>
-				</configuration>				
-			</plugin>
-		</plugins>
-	</reporting>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-report-plugin</artifactId>
+                <version>2.8</version>
+                <executions>
+                    <execution>
+                        <phase>test</phase>
+                        <goals>
+                            <goal>report</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <skipTests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">true</skipTests>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>2.12.3</version>
+                <configuration>
+                    <suiteXmlFiles xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+                        <suiteXmlFile>./src/test/java/com/photon/helios/testsuites/AllTest.xml</suiteXmlFile>
+					</suiteXmlFiles>
+                </configuration>
+            </plugin>
+			<!-- <plugin>
+                <groupId>testng</groupId>
+                <artifactId>maven-testng-plugin</artifactId>
+                <version>1.2</version>
+                 <executions>
+                    <execution>
+                        <phase>test</phase>
+                        <goals>
+                            <goal>junit-report</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin> -->
+        </plugins>
+    </build>
+    <profiles>
+        <profile>
+            <id>windows-x86</id>
+            <activation>
+                <os>
+                    <family>Windows</family>
+                </os>
+            </activation>
+            <properties>
+                <driver.classifier xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">win</driver.classifier>
+                <driver.version xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">23.0.1240.0</driver.version>
+            </properties>
+        </profile>
+        <profile>
+            <id>Linux-32bit</id>
+            <activation>
+                <os>
+                    <name>Linux</name>
+                    <family>unix</family>
+                    <arch>i386</arch>
+                </os>
+            </activation>
+            <properties>
+                <driver.classifier xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">linux32</driver.classifier>
+                <driver.version xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">23.0.1240.0</driver.version>
+            </properties>
+        </profile>
+        <profile>
+            <id>Linux-64bit</id>
+            <activation>
+                <os>
+                    <name>Linux</name>
+                    <family>unix</family>
+                    <arch>x64</arch>
+                </os>
+            </activation>
+            <properties>
+                <driver.classifier xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">linux64</driver.classifier>
+                <driver.version xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">23.0.1240.0</driver.version>
+            </properties>
+        </profile>
+        <profile>
+            <id>mac</id>
+            <activation>
+                <os>
+                    <family>mac</family>
+                </os>
+            </activation>
+            <properties>
+                <driver.classifier xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">mac</driver.classifier>
+                <driver.version xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">23.0.1240.0</driver.version>
+            </properties>
+        </profile>
+    </profiles>
+    <repositories>
+        <repository>
+            <id>seleniumserver</id>
+            <name>seleniumserver</name>
+            <url>http://172.16.18.178:8080/nexus/content/groups/public/</url>
+        </repository>
+    </repositories>
+    <dependencies>
+        <dependency>
+            <groupId>org.testng</groupId>
+            <artifactId>testng</artifactId>
+            <version>6.5.2</version>
+        </dependency>
+        <dependency>
+            <groupId>org.seleniumhq.selenium</groupId>
+            <artifactId>selenium-server-standalone</artifactId>
+            <version>2.30.0</version>
+        </dependency>
+        <dependency>
+            <groupId>com.opera</groupId>
+            <artifactId>operadriver</artifactId>
+            <version>0.14</version>
+        </dependency>
+        <dependency>
+            <groupId>org.seleniumhq.selenium</groupId>
+            <artifactId>selenium-htmlunit-driver</artifactId>
+            <version>2.29.1</version>
+        </dependency>
+        <dependency>
+            <groupId>commons-lang</groupId>
+            <artifactId>commons-lang</artifactId>
+            <version>2.0</version>
+        </dependency>
+		 <!-- <dependency>
+            <groupId>maven-testng-plugin</groupId>
+            <artifactId>testng</artifactId>
+            <version>1.2</version>
+        </dependency> -->
+		
+    </dependencies>
+    <reporting>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-report-plugin</artifactId>
+                <version>2.8</version>
+                <configuration>
+                    <skipTests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">true</skipTests>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.testng.xslt</groupId>
+                <artifactId>testng-xslt-plugin</artifactId>
+                <version>1.1.2</version>
+            </plugin>
+        </plugins>
+    </reporting>
+    <properties>
+        <project.build.sourceEncoding xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">UTF-8</project.build.sourceEncoding>
+    </properties>
 </project>

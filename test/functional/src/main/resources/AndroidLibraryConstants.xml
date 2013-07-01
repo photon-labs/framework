@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<environment>
+<phresco>
+		 		<androidLibArchetypeName>AndroidLibraryArchetypeProject</androidLibArchetypeName>
+		       <androidLibArchetypeDesc>This is AndroidLibrary Archetype Project</androidLibArchetypeDesc>
+		       <androidLibArchetypeAppCode>AndroidLibraryArchetype</androidLibArchetypeAppCode>
+		       <mobileValue>Android</mobileValue>
+		       <mobileType>Library</mobileType>
+		       <androidLibArchetypeEditLink>//a[contains(text(),'AndroidLibraryArchetype')]</androidLibArchetypeEditLink>
+</phresco>
+</environment>

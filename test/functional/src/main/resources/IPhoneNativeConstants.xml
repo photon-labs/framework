@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<environment>
+<phresco>
+    	 	   <iPhoneNatArchetypeName>iPhoneNativeArchetypeProject</iPhoneNatArchetypeName>
+		       <iPhoneNatArchetypeDesc>This is iPhoneNative Archetype Project</iPhoneNatArchetypeDesc>
+		       <iPhoneNatArchetypeAppCode>iPhoneNativeArchetype</iPhoneNatArchetypeAppCode>
+		       <mobileValue>Iphone</mobileValue>
+		       <mobileType>Native</mobileType>
+</phresco>
+</environment>
+

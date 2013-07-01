@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<environment>
+    <phresco>
+           <javaWSArchetypeName>JavaWebserviceArchetypeProject</javaWSArchetypeName>
+	       <javaWSArchetypeDesc>This is JavaWebservice Archetype Project</javaWSArchetypeDesc>
+	       <javaWSArchetypeAppCode>JavaWebserviceArchetype</javaWSArchetypeAppCode>
+	       <technologyValue>J2EE</technologyValue>
+	       <javaWSArchetypeEditApp>//a[contains(text(),'JavaWebserviceArchetype')]</javaWSArchetypeEditApp>
+     </phresco>
+</environment>

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<environment>
+<phresco>
+		       <windowsPhoneArchetypeName>WindowsPhoneArchetypeProject</windowsPhoneArchetypeName>
+			   <windowsPhoneArchetypeDesc>This is WindowsPhone Archetype Project</windowsPhoneArchetypeDesc>
+		       <windowsPhoneArchetypeAppCode>WindowsPhoneArchetype</windowsPhoneArchetypeAppCode>
+		       <mobileValue>Windows</mobileValue>
+		       <mobileType>Windows Phone</mobileType>
+</phresco>             
+</environment>

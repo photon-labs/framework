@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<environment>
+	<phresco>
+		<sitecoreArchetypeName>SitecoreArchetypeProject</sitecoreArchetypeName>
+		<sitecoreArchetypeDesc>This is Sitecore Archetype Project</sitecoreArchetypeDesc>
+		<sitecoreArchetypeAppCode>SitecoreArchetype</sitecoreArchetypeAppCode>
+		<technologyValue>Site Core</technologyValue>
+		<sitecoreArchetypeEditApp>//a[contains(text(),'SitecoreArchetype')]</sitecoreArchetypeEditApp>
+	</phresco>
+</environment>

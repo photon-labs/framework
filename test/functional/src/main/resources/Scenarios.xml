@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<environment>
+	<phresco>
+		<androidNativeName>AndroidNative</androidNativeName>
+		<androidNativeDesc>This is AndroidNative Project</androidNativeDesc>
+		<androidNativeAppCode>ANNJ</androidNativeAppCode>
+		<nodeJsValue>Node JS</nodeJsValue>
+		<j2EEValue>J2EE</j2EEValue>
+		<androidValue>Android</androidValue>
+		<nativeValue>Native</nativeValue>
+		<androidNativeMobCode>NJAN</androidNativeMobCode>
+		<iPhoneValue>Iphone</iPhoneValue>
+		<hybridValue>Hybrid</hybridValue>
+		<html5Value>HTML5</html5Value>
+		<yuiMobileWidgetValue>YUI Mobile Widget</yuiMobileWidgetValue>
+		<multiJqueryWidgetValue>Multichannel JQuery Widget</multiJqueryWidgetValue>
+		<iPhoneNativeName>iPhoneNative</iPhoneNativeName>
+		<iPhoneNativeDesc>This is iPhoneNative Project</iPhoneNativeDesc>
+		<iPhoneNativeAppCode>INNJ</iPhoneNativeAppCode>
+		<iPhoneNativeMobCode>NJIN</iPhoneNativeMobCode>
+		<iPhoneHybridName>iPhoneHybrid</iPhoneHybridName>
+		<iPhoneHybridDesc>This is iPhoneHybrid Project</iPhoneHybridDesc>
+		<iPhoneHybridAppCode>IHNJ</iPhoneHybridAppCode>
+		<iPhoneHybridWebCode>IHNJMW</iPhoneHybridWebCode>
+		<iPhoneHybridMobCode>NJIH</iPhoneHybridMobCode>
+		<androidHybridName>AndroidHybrid</androidHybridName>
+		<androidHybridDesc>This is AndroidHybrid Project</androidHybridDesc>
+		<androidHybridAppCode>AHNJ</androidHybridAppCode>
+		<androidHybridWebCode>AHNJMW</androidHybridWebCode>
+		<androidHybridMobCode>NJAH</androidHybridMobCode>
+		<mobileWidgetName>MobileWidget</mobileWidgetName>
+		<mobileWidgetDesc>This is Mobile Widget Project</mobileWidgetDesc>
+		<mobileWidgetAppcode>NJMW1</mobileWidgetAppcode>
+		<mobileWidgetWebcode>MWNJ1</mobileWidgetWebcode>
+		<jQueryWidgetName>JQueryWidget</jQueryWidgetName>
+		<jQueryWidgetDesc>This is JQuery Widget Project</jQueryWidgetDesc>
+		<jQueryWidgetAppcode>NJJW2</jQueryWidgetAppcode>
+		<jQueryWidgetWebcode>JQNJ2</jQueryWidgetWebcode>
+	</phresco>
+</environment>

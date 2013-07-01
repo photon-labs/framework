@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<suite name="WebLayerWebLayeruite" thread-count="5" verbose="3">
+
+	<test name="JQueryMobileWidgetTest" junit="false" preserve-order="true">
+		<classes>
+			<class name="com.photon.helios.WebLayer.JQueryMobileWidgetTest" />
+			<methods>
+				<include name="testJQueryMobileWidgetArchetypeCreation"></include>
+				<include name="testJQueryMobileWidgetArchetypeEditApp"></include>
+				<include name="testJQueryMobileArchetypeUpdateApp"></include>
+			</methods>
+		</classes>
+	</test>
+
+	<test name="MultiJqueryWidgetTest" junit="false" preserve-order="true">
+		<classes>
+			<class name="com.photon.helios.WebLayer.MultiJQueryWidgetTest" />
+			<methods>
+				<include name="testMultiJQueryWidgetArchetypeCreation"></include>
+				<include name="testMultiJQueryWidgetArchetypeEditApp"></include>
+				<include name="testMultiJQueryArchetypeUpdateApp"></include>
+			</methods>
+		</classes>
+	</test>
+
+	<test name="MultiYuiWidgetTest" junit="false" preserve-order="true">
+		<classes>
+			<class name="com.photon.helios.WebLayer.MultiYUIWidgetTest" />
+			<methods>
+				<include name="testMultiYUIWidgetArchetypeCreation"></include>
+				<include name="testMultiYUIWidgetArchetypeEditApp"></include>
+				<include name="testMultiYUIArchetypeUpdateApp"></include>
+			</methods>
+		</classes>
+	</test>
+
+	<test name="YuiMobileWidgetTest" junit="false" preserve-order="true">
+		<classes>
+			<class name="com.photon.helios.WebLayer.YUIMobileWidgetTest" />
+			<methods>
+				<include name="testYUIMobileWidgetArchetypeCreation"></include>
+				<include name="testYUIMobileWidgetArchetypeEditApp"></include>
+				<include name="testYUIMobileArchetypeUpdateApp"></include>
+			</methods>
+		</classes>
+	</test>
+
+</suite>  

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<environment>
+<phresco>
+			   <iPhoneHybArchetypeName>iPhoneHybridArchetypeProject</iPhoneHybArchetypeName>
+		       <iPhoneHybArchetypeDesc>This is iPhoneHybrid Archetype Project</iPhoneHybArchetypeDesc>
+		       <iPhoneHybArchetypeAppCode>iPhoneHybridArchetype</iPhoneHybArchetypeAppCode>
+		       <mobileValue>Iphone</mobileValue>
+		       <mobileType>Hybrid</mobileType>
+</phresco>
+</environment>
+
+

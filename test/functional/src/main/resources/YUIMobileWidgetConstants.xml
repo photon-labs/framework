@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<environment>
+<phresco>
+ 			   <YUIMobileArchetypeName>YUIMobileArchetypeProject</YUIMobileArchetypeName>
+		       <YUIMobileArchetypeDesc>This is YUIMobile Archetype Project</YUIMobileArchetypeDesc>
+		       <YUIMobileArchetypeAppCode>YUIMobileArchetype</YUIMobileArchetypeAppCode>
+		       <webLayerValue>HTML5</webLayerValue>
+		       <widgetValue>YUI Mobile Widget</widgetValue>
+		       <YUIMobileArchetypeEditLink>//a[contains(text(),'YUIMobileArchetype')]</YUIMobileArchetypeEditLink>
+</phresco>
+</environment>
