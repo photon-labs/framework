@@ -3497,6 +3497,10 @@ img.add_test_icon
 /* *************************************************************** STYLES FOR QUALITY_MANUAL TEST PAGE ************************************************************* */
 
 
+.code_content .qual_unit_main {
+	float: none !important;	
+}
+
 .manual_test_add ul li:nth-child(2) [type="text"]
 {
 	width:192px;
@@ -3548,7 +3552,25 @@ img.add_test_icon
 .text_center {
 	text-align: center;
 }
-/* *************************************************************** STYLES FOR DYNAMIC PARAMETER ENDS ************************************************************************************ */
+
+#template_download [type="radio"]{
+	margin: 0px 4px 3px 0px;
+}
+
+#template_download label:first-child{
+	float: left;
+	margin-right: 15px;
+}
+
+#template_download label{
+	margin-bottom:0px !important;
+}
+
+#template_download ul li {
+padding-bottom: 5px;
+}
+
+/* *************************************************************** STYLES FOR DYNAMIC PARAMETER ENDS ************************************************************************** */
 
 /* *************************************************************** STYLES FOR FULL SCREEN STARTS *************************************************************** */
 
@@ -3773,6 +3795,29 @@ button::-moz-focus-inner {
   -moz-transition: all 3s ease-out;
   transition: all 3s ease-out;
 }
+
+/* *************************************************************** STYLES FOR BLINK POP UP STARTS *************************************************************** */
+
+
+.blinkmsg {
+	top: 23px;
+	z-index: 999;
+	padding:10px;
+	color: #FFF;
+	text-align: center;
+	position: absolute;
+	border-radius: 5px;
+	font-size:12px;
+	font-weight:bold;
+}
+.popsuccess {
+	background: #52de70;	
+}
+
+.poperror {
+	background: #F00;
+}
+
 
 /* *************************************************************** STYLES FOR FULL SCREEN ENDS *************************************************************** */
 
