@@ -99,6 +99,47 @@
 			"delete" : "Delete"
 		}
 	},
+	"unit" : {
+	   "label" : {
+			 "unittest"       : "Unit Test"		 
+		}  
+	 },
+	"component" : {
+	  "label" : {
+	      "componenttest"  :  "Component Test"
+	  }
+	},
+	"testresult" : {
+	  "label" : {
+	      "testsuite"  : "Test Suite",
+		  "total"      : "Total",
+		  "success"    : "Success",
+          "failure"    : "Failure",
+          "error"      : "Error"		  
+	  }
+	},
+	
+	"commonlabel" : {
+	    "label" : {
+	         "detailedreport" : "Detailed Report",
+             "overallreport"  : "Overall Report",
+             "reporttype"     : "Report Type", 
+             "pdfreportname"  : "Pdf Report Name", 			 
+			 "existingreport" : "Existing Reports",
+             "type"           : "Type",  			 
+		     "download"       : "Download",
+             "delete"		  : "Delete",
+             "generate"		  : "Generate",
+             "close"          : "Close",
+             "openfolder"     : "Open Folder",
+             "copypath"       : "Copy Path" ,
+             "test"           : "Test",
+             "tableview"      : "Table View",
+             "graphview"      : "Graph View" 			 
+			 }
+	},
+	
+	
 	"login" : {
 		"label" : {
 			"btn" : {
