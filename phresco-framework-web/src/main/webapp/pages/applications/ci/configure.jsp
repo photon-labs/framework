@@ -503,7 +503,7 @@
 	                        <!--  Ci job configuration starts -->
 								<!-- Ci operation -->
 								
-								<div class="control-group">
+								<div class="control-group" style="padding-left: 1%;">
 									<label class="control-label labelbold popupLbl">
 										<s:text name='lbl.ci.operation' />
 									</label>
