@@ -235,7 +235,7 @@ public class Build extends DynamicParameterAction implements Constants {
 		try {
 		    ApplicationInfo appInfo = getApplicationInfo();
             removeSessionAttribute(appInfo.getId() + PHASE_PACKAGE + SESSION_WATCHER_MAP);
-            setProjModulesInReq();
+            List<String> projectModules = getProjectModules(getApplicationInfo().getAppDirName());
             Map<String, DependantParameters> watcherMap = new HashMap<String, DependantParameters>(8);
             
             MojoProcessor mojo = new MojoProcessor(new File(getPhrescoPluginInfoFilePath(PHASE_PACKAGE)));
@@ -243,6 +243,7 @@ public class Build extends DynamicParameterAction implements Constants {
             
             setPossibleValuesInReq(mojo, appInfo, parameters, watcherMap, PHASE_PACKAGE);
             setSessionAttribute(appInfo.getId() + PHASE_PACKAGE + SESSION_WATCHER_MAP, watcherMap);
+            setReqAttribute(REQ_PROJECT_MODULES, projectModules);
             setReqAttribute(REQ_DYNAMIC_PARAMETERS, parameters);
             setReqAttribute(REQ_GOAL, PHASE_PACKAGE);
             setReqAttribute(REQ_PHASE, PHASE_PACKAGE);
