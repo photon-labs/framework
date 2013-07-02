@@ -52,8 +52,10 @@ import org.w3c.dom.NodeList;
 import com.photon.phresco.commons.FileListFilter;
 import com.photon.phresco.commons.FrameworkConstants;
 import com.photon.phresco.exception.PhrescoException;
+import com.photon.phresco.framework.model.PerformancResultInfo;
 import com.photon.phresco.framework.model.PerformanceTestResult;
 import com.photon.phresco.framework.model.SettingsInfo;
+import com.photon.phresco.framework.model.TestResultInfo;
 import com.photon.phresco.util.Constants;
 import com.photon.phresco.util.TechnologyTypes;
 
@@ -438,9 +440,11 @@ public class QualityUtil {
 		return deviceList;
 	}
 
-	public static Map<String, PerformanceTestResult> getPerformanceReport(Document document, String techId, String deviceId) throws Exception {  // deviceid is the tag name for android
+	public static PerformancResultInfo getPerformanceReport(Document document, String techId, String deviceId) throws Exception {  // deviceid is the tag name for android
 		String xpath = "/*/*";	// For other technologies
 		String device = "*";
+		PerformancResultInfo performanceResultInfo = new PerformancResultInfo();
+		TestResultInfo generateTestResultValues = new TestResultInfo();;
 		if(StringUtils.isNotEmpty(deviceId)) {
 			device = "deviceInfo[@id='" + deviceId + "']";
 		}
@@ -448,7 +452,8 @@ public class QualityUtil {
 			xpath = "/*/" + device + "/*";
 		}
 		NodeList nodeList = org.apache.xpath.XPathAPI.selectNodeList(document, xpath);
-		Map<String, PerformanceTestResult> results = new LinkedHashMap<String, PerformanceTestResult>(100);
+		Map<String, PerformanceTestResult> tempMap = new LinkedHashMap<String, PerformanceTestResult>(100);
+		List<PerformanceTestResult> results = new ArrayList<PerformanceTestResult>();
 		double maxTs = 0;
 		double minTs = 0;
 		int lastTime = 0;
@@ -467,15 +472,14 @@ public class QualityUtil {
 			Node timeStampAttr = nameNodeMap.getNamedItem(FrameworkConstants.ATTR_JM_TIMESTAMP);
 			double timeStamp = Long.parseLong(timeStampAttr.getNodeValue());
 			boolean firstEntry = false;
-
-			PerformanceTestResult performanceTestResult = results.get(label);
+			
+			PerformanceTestResult performanceTestResult = tempMap.get(label);
 			if (performanceTestResult == null) {
 				performanceTestResult = new PerformanceTestResult();
 				firstEntry = true;
 			} else {
 				firstEntry = false;
 			}
-
 			performanceTestResult.setLabel(label.trim());
 			performanceTestResult.setNoOfSamples(performanceTestResult.getNoOfSamples() + 1);
 			performanceTestResult.getTimes().add(time);
@@ -525,10 +529,9 @@ public class QualityUtil {
 				calThroughPut=0.0;
 			}
 			double throughPut = calThroughPut * 1000;
-
 			performanceTestResult.setThroughtPut(throughPut);
-
-			results.put(label, performanceTestResult);
+			tempMap.put(label, performanceTestResult);
+			results.add(performanceTestResult);
 		}
 		// Total Throughput calculation
 		double totalThroughput;
@@ -538,20 +541,92 @@ public class QualityUtil {
 		} else {
 			totalThroughput = 0.0;
 		}
-
-		setStdDevToResults(results);
-		return results;
+		generateTestResultValues = setStdDevToResults(results, generateTestResultValues);
+		generateTestResultValues = generateTestResultValues(results, totalThroughput, generateTestResultValues);
+		setNewValuesToResults(results);
+		performanceResultInfo.setPerfromanceTestResult(results);
+		performanceResultInfo.setAggregateResult(generateTestResultValues);
+		return performanceResultInfo;
+	}
+	
+	private static void setNewValuesToResults(List<PerformanceTestResult> results) {
+		for (PerformanceTestResult performanceTestResult : results) {
+			double avgBytes = performanceTestResult.getAvgBytes();
+			double newavgbytes = Math.round(avgBytes*100.0)/100.0;
+			double throughtPut = performanceTestResult.getThroughtPut();
+			double newthroughPut = Math.round(throughtPut*10.0)/10.0;
+			double kbPerSec = performanceTestResult.getKbPerSec();
+			double newKBPerSec = Math.round(kbPerSec*100.0)/100.0;
+			double stdDev = performanceTestResult.getStdDev();
+			double newstndDev = Math.round(stdDev*100.0)/100.0;
+			
+			performanceTestResult.setAvgBytes(newavgbytes);
+			performanceTestResult.setThroughtPut(newthroughPut);
+			performanceTestResult.setKbPerSec(newKBPerSec);
+			performanceTestResult.setStdDev(newstndDev);
+			
+			
+		}
+		
 	}
 
-	private static void setStdDevToResults(Map<String, PerformanceTestResult> results) {
-		Set<String> keySet = results.keySet();
+	private static TestResultInfo generateTestResultValues(List<PerformanceTestResult> performanceTestResultList ,Double totalThroughput, TestResultInfo testResultInfo) {
+		int totalValue = performanceTestResultList.size();
+		int NoOfSample = 0; 
+		double avg = 0; 
+ 		int min = 0;
+ 		int max = 0;
+ 		double StdDev = 0;
+ 		double Err = 0;
+ 		double KbPerSec = 0;
+ 		double sumOfBytes = 0;
+ 		int i = 1;
+ 		for (PerformanceTestResult performanceTestResult : performanceTestResultList) {
+       	NoOfSample = NoOfSample + performanceTestResult.getNoOfSamples();
+       	avg = avg + performanceTestResult.getAvg();
+       	
+       	if (i == 1) {
+       		min = performanceTestResult.getMin();
+       		max = performanceTestResult.getMax();
+       	}
+       	if (i != 1 && performanceTestResult.getMin() < min) {
+       		min = performanceTestResult.getMin();
+       	}
+       	if (i != 1 && performanceTestResult.getMax() > max) {
+       		max = performanceTestResult.getMax();
+       	}
+       	StdDev = StdDev + performanceTestResult.getStdDev();
+       	Err = Err + performanceTestResult.getErr();
+       	sumOfBytes = sumOfBytes + performanceTestResult.getAvgBytes();
+       	i++;
+		}
+     	double avgBytes = sumOfBytes / totalValue;
+     	KbPerSec = (avgBytes / 1024) * totalThroughput;
+     	float totalThroughputFloat = FrameworkUtil.roundFloat(1,totalThroughput);
+     	float KbPerSecFloat = FrameworkUtil.roundFloat(2,KbPerSec);
+     	float avgBytesFloat = FrameworkUtil.roundFloat(2,avgBytes);
+     	float avgFloat = FrameworkUtil.roundFloat(2,avg/totalValue);
+     	String errFormat = String.format("%.2f", Err/totalValue);
+     	testResultInfo.setThroughput(totalThroughputFloat);
+     	testResultInfo.setKb(KbPerSecFloat);
+     	testResultInfo.setAvgBytes(avgBytesFloat);
+     	testResultInfo.setAverage(avgFloat);
+     	testResultInfo.setError(errFormat);
+     	testResultInfo.setMin(min);
+     	testResultInfo.setMax(max);
+     	testResultInfo.setSample(NoOfSample);
+     	return testResultInfo;
+     	}
+
+	private static TestResultInfo setStdDevToResults(List<PerformanceTestResult> results, TestResultInfo generateTestResultValues) {
 		long xBar = 0;  		//XBar Calculation
 		long sumOfTime = 0;
 		int totalSamples = 0;
 		double sumMean = 0;
+		float stdDevRoundValue = 0;
+		double stdDev = 0;
 		List<Integer> allTimes = new ArrayList<Integer>();
-		for (String key : keySet) {
-			PerformanceTestResult performanceTestResult = results.get(key);
+		for (PerformanceTestResult performanceTestResult : results) {
 			// calculation of average time
 			double avg = performanceTestResult.getTotalTime() / performanceTestResult.getNoOfSamples();
 			sumOfTime = sumOfTime + performanceTestResult.getTotalTime();
@@ -560,7 +635,8 @@ public class QualityUtil {
 
 			// calculation of average bytes
 			double avgBytes = (double) performanceTestResult.getTotalBytes() / performanceTestResult.getNoOfSamples();
-			performanceTestResult.setAvgBytes(Math.round(avgBytes));
+			double newavgBytes = Math.round(avgBytes*100.0)/100.0;
+			performanceTestResult.setAvgBytes(newavgBytes);
 			// KB/Sec calculation
 			Double calKbPerSec = new Double(performanceTestResult.getThroughtPut());
 			calKbPerSec = calKbPerSec * (((double) avgBytes) / 1024)   ;
@@ -573,7 +649,10 @@ public class QualityUtil {
 			for (Integer time : times) {
 				totalMean += Math.pow(time - avg, 2);
 			}
-			performanceTestResult.setStdDev((float) Math.sqrt(totalMean / performanceTestResult.getNoOfSamples()));
+			
+			float stndDev = (float) Math.sqrt(totalMean / performanceTestResult.getNoOfSamples());
+			performanceTestResult.setStdDev(stndDev);
+		
 
 			performanceTestResult.setErr((float) (100 * performanceTestResult.getErr()) / performanceTestResult.getNoOfSamples());
 		}
@@ -583,8 +662,11 @@ public class QualityUtil {
 		for (Integer time : allTimes) {
 			sumMean += Math.pow(time - xBar, 2);
 		}
-		double stdDev = Math.sqrt(sumMean / totalSamples);
-//		request.setAttribute(FrameworkConstants.REQ_TOTAL_STD_DEV, stdDev);
+		stdDev = Math.sqrt(sumMean / totalSamples);
+		stdDevRoundValue = FrameworkUtil.roundFloat(2,stdDev);
+		generateTestResultValues.setStdDev(stdDevRoundValue);
+
+		return generateTestResultValues;
 	}
 
 	public static void changeTestName(String performancePath, String testName) throws Exception {

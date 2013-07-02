@@ -39,7 +39,9 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
+import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
@@ -73,6 +75,7 @@ import com.photon.phresco.configuration.Configuration;
 import com.photon.phresco.exception.PhrescoException;
 import com.photon.phresco.framework.commons.FrameworkUtil;
 import com.photon.phresco.framework.commons.QualityUtil;
+import com.photon.phresco.framework.model.PerformancResultInfo;
 import com.photon.phresco.framework.model.PerformanceTestResult;
 import com.photon.phresco.framework.model.TestCase;
 import com.photon.phresco.framework.model.TestCaseError;
@@ -1306,6 +1309,7 @@ public class QualityService extends RestBase implements ServiceConstants, Framew
 	@Path(REST_API_PERFORMANCE)
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response performance(@QueryParam(REST_QUERY_APPDIR_NAME) String appDirName) {
+		List<String> testResultFiles = null;
 		ResponseInfo<Map> responseData = new ResponseInfo<Map>();
 		try {
 			FrameworkServiceUtil fsu = new FrameworkServiceUtil();
@@ -1323,9 +1327,8 @@ public class QualityService extends RestBase implements ServiceConstants, Framew
             
             boolean resutlAvailable = testResultAvail(appDirName, testAgainsts, Constants.PHASE_PERFORMANCE_TEST);
             boolean showDevice = Boolean.parseBoolean(getPerformanceTestShowDevice(appDirName));
-            List<String> testResultFiles = new ArrayList<String>();
             if (resutlAvailable) {
-            	testResultFiles = testResultFiles(appDirName, testAgainsts, showDevice, testResultFiles, Constants.PHASE_PERFORMANCE_TEST);
+            	testResultFiles = testResultFiles(appDirName, testAgainsts, showDevice, Constants.PHASE_PERFORMANCE_TEST);
             }
             
             List<String> devices = new ArrayList<String>();
@@ -1335,18 +1338,48 @@ public class QualityService extends RestBase implements ServiceConstants, Framew
         		devices = QualityUtil.getDeviceNames(document);
             }
             
-            performanceMap.put(TEST_AGAINSTS, testAgainsts);
             performanceMap.put(RESULT_AVAILABLE, resutlAvailable);
             performanceMap.put(TEST_RESULT_FILES, testResultFiles);
             performanceMap.put(SHOW_DEVICE, showDevice);
             performanceMap.put(DEVICES, devices);
             
-			ResponseInfo<List<String>> finalOutput = responseDataEvaluation(responseData, null,
+			ResponseInfo<Map> finalOutput = responseDataEvaluation(responseData, null,
 					PARAMETER_RETURNED_SUCCESSFULLY, performanceMap);
 			return Response.ok(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, "*").build();
 		} catch (Exception e) {
-			ResponseInfo<List<String>> finalOutput = responseDataEvaluation(responseData, e,
+			ResponseInfo<Map> finalOutput = responseDataEvaluation(responseData, e,
 					UNABLE_TO_GET_PERFORMANCE_TEST_RESULT_OPTIONS, null);
+			return Response.status(Status.BAD_REQUEST).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, "*")
+					.build();
+		}
+	}
+	
+	@POST
+	@Path("/testResultFiles")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response getTypeFiles(@QueryParam(REST_QUERY_APPDIR_NAME) String appDirName,
+			@QueryParam(REST_ACTION_TYPE) String actionType, List<String> testAgainsts) {
+		List<String> testResultFiles = null;
+		boolean resutlAvailable = false;
+		ResponseInfo<List<String>> responseData = new ResponseInfo<List<String>>();
+		try {
+			if (actionType.equalsIgnoreCase(Constants.PHASE_PERFORMANCE_TEST)) {
+				resutlAvailable = testResultAvail(appDirName, testAgainsts, Constants.PHASE_PERFORMANCE_TEST);
+			} else if (actionType.equalsIgnoreCase(Constants.PHASE_LOAD_TEST)) {
+				resutlAvailable = testResultAvail(appDirName, testAgainsts, Constants.PHASE_LOAD_TEST);
+			}
+			boolean showDevice = Boolean.parseBoolean(getPerformanceTestShowDevice(appDirName));
+			if (resutlAvailable) {
+				testResultFiles = testResultFiles(appDirName, testAgainsts, showDevice,
+						actionType);
+			}
+			ResponseInfo<List<String>> finalOutput = responseDataEvaluation(responseData, null,
+					"Test Result Files returned successfully", testResultFiles);
+			return Response.ok(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, "*").build();
+		} catch (PhrescoException e) {
+			ResponseInfo<List<String>> finalOutput = responseDataEvaluation(responseData, e,
+					"Test Result Files returned Failed", null);
 			return Response.status(Status.BAD_REQUEST).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, "*")
 					.build();
 		}
@@ -1414,12 +1447,12 @@ public class QualityService extends RestBase implements ServiceConstants, Framew
         return resultAvailable;
     }
 	
-	private List<String> testResultFiles(String appDirName, List<String> testAgainsts, boolean showDevice, List<String> testResultFiles, String action) throws PhrescoException {
-        try {
+	private List<String> testResultFiles(String appDirName, List<String> testAgainsts, boolean showDevice, String action) throws PhrescoException {
+		List<String> testResultFiles = new ArrayList<String>();
+		String reportDir = "";
+    	String resultExtension = "";
+		try {
             StringBuilder sb = new StringBuilder(FrameworkServiceUtil.getApplicationHome(appDirName));
-            
-            String reportDir = "";
-        	String resultExtension = "";
         	if (Constants.PHASE_PERFORMANCE_TEST.equals(action)) {
         		reportDir =FrameworkServiceUtil.getPerformanceTestReportDir(appDirName);
         		resultExtension = FrameworkServiceUtil.getPerformanceResultFileExtension(appDirName);
@@ -1474,25 +1507,23 @@ public class QualityService extends RestBase implements ServiceConstants, Framew
 	public Response performanceTestResults(@QueryParam(REST_QUERY_APPDIR_NAME) String appDirName, @QueryParam(REST_QUERY_TEST_AGAINST) String testAgainst , 
 			@QueryParam(REST_QUERY_RESULT_FILE_NAME) String resultFileName, @QueryParam(REST_QUERY_DEVICE_ID) String deviceId, @QueryParam(REST_QUERY_SHOW_GRAPH_FOR) String showGraphFor) {
 		ResponseInfo<List<PerformanceTestResult>> responseData = new ResponseInfo<List<PerformanceTestResult>>();
-		Map<String, PerformanceTestResult> performanceTestResultMap = new HashMap<String, PerformanceTestResult>();
+		PerformancResultInfo performanceResultInfo = null;
+		 StringBuilder graphData = new StringBuilder("[");
+         StringBuilder label = new StringBuilder("[");
+         int index = 0;
+         List<Float> allMin = new ArrayList<Float>();
+         List<Float> allMax = new ArrayList<Float>();
+         List<Float> allAvg = new ArrayList<Float>();
         try {
             ApplicationInfo appInfo = FrameworkServiceUtil.getApplicationInfo(appDirName);
             String techId = appInfo.getTechInfo().getId();
             if (StringUtils.isNotEmpty(resultFileName)) {
             	String testResultPath = getLoadOrPerformanceTestResultPath(appDirName, testAgainst, resultFileName, Constants.PHASE_PERFORMANCE_TEST);
                 Document document = getDocument(new File(testResultPath)); 
-                performanceTestResultMap = QualityUtil.getPerformanceReport(document, techId, deviceId);
+                performanceResultInfo = QualityUtil.getPerformanceReport(document, techId, deviceId);
 
-                Set<String> keySet = performanceTestResultMap.keySet();
-                StringBuilder graphData = new StringBuilder("[");
-                StringBuilder label = new StringBuilder("[");
-                
-                List<Float> allMin = new ArrayList<Float>();
-                List<Float> allMax = new ArrayList<Float>();
-                List<Float> allAvg = new ArrayList<Float>();
-                int index = 0;
-                for (String key : keySet) {
-                    PerformanceTestResult performanceTestResult = performanceTestResultMap.get(key);
+                List<PerformanceTestResult> perfromanceTestResult = performanceResultInfo.getPerfromanceTestResult();
+                for (PerformanceTestResult performanceTestResult : perfromanceTestResult) {
                     if (REQ_TEST_SHOW_THROUGHPUT_GRAPH.equals(showGraphFor)) {
                         graphData.append(performanceTestResult.getThroughtPut());	//for ThroughtPut
                     } else if (REQ_TEST_SHOW_MIN_RESPONSE_GRAPH.equals(showGraphFor)) {
@@ -1511,7 +1542,7 @@ public class QualityService extends RestBase implements ServiceConstants, Framew
                     label.append("'");
                     label.append(performanceTestResult.getLabel());
                     label.append("'");
-                    if (index < performanceTestResultMap.size() - 1) {
+                    if (index < perfromanceTestResult.size() - 1) {
                         graphData.append(Constants.COMMA);
                         label.append(Constants.COMMA);
                     }
@@ -1521,16 +1552,13 @@ public class QualityService extends RestBase implements ServiceConstants, Framew
                 graphData.append("]");
             }
             
-            List<PerformanceTestResult> performanceTestResults = new ArrayList<PerformanceTestResult>();
-            if (MapUtils.isNotEmpty(performanceTestResultMap)) {
-            	Set<String> keys = performanceTestResultMap.keySet();
-            	for (String key : keys) {
-            		performanceTestResults.add(performanceTestResultMap.get(key));
-				}
-            }
+            performanceResultInfo.setGraphData(graphData.toString());
+            performanceResultInfo.setLabel(label.toString());
+            performanceResultInfo.setGraphAlldata(allMin +", "+ allAvg +", "+ allMax);
+            performanceResultInfo.setGraphFor(showGraphFor);
             
             ResponseInfo<List<PerformanceTestResult>> finalOutput = responseDataEvaluation(responseData, null,
-					PARAMETER_RETURNED_SUCCESSFULLY, performanceTestResults);
+					PARAMETER_RETURNED_SUCCESSFULLY, performanceResultInfo);
 			return Response.ok(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, "*").build();
 		} catch (Exception e) {
 			ResponseInfo<List<PerformanceTestResult>> finalOutput = responseDataEvaluation(responseData, e,
@@ -1617,7 +1645,7 @@ public class QualityService extends RestBase implements ServiceConstants, Framew
             boolean resutlAvailable = testResultAvail(appDirName, testAgainsts, Constants.PHASE_LOAD_TEST);
             List<String> testResultFiles = new ArrayList<String>();
             if (resutlAvailable) {
-            	testResultFiles = testResultFiles(appDirName, testAgainsts, false, testResultFiles, Constants.PHASE_LOAD_TEST);
+            	testResultFiles = testResultFiles(appDirName, testAgainsts, false, Constants.PHASE_LOAD_TEST);
             }
             
             loadMap.put(RESULT_AVAILABLE, resutlAvailable);

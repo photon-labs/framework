@@ -32,7 +32,7 @@ public class PerformanceTestResult {
 	double avgBytes;
 	int noOfSamples;
 	long totalTime;
-	long totalBytes;
+	double totalBytes;
 	double maxTs;
 	double minTs;
 	double avg;
@@ -72,11 +72,11 @@ public class PerformanceTestResult {
 		return label;
 	}
 	
-	public long getTotalBytes() {
+	public double getTotalBytes() {
 		return totalBytes;
 	}
 
-	public void setTotalBytes(long totalBytes) {
+	public void setTotalBytes(double totalBytes) {
 		this.totalBytes = totalBytes;
 	}
 	
