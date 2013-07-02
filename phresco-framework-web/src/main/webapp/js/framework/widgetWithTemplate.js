@@ -20,6 +20,8 @@ define(["framework/widget", "framework/templateProvider"], function() {
 			defaultContainer : null,
 			
 			showingDatePicker : false,
+
+			renderFnc : null,
 			
 			doMore: function(element) {}, 
 			
@@ -47,6 +49,10 @@ define(["framework/widget", "framework/templateProvider"], function() {
 				// default implementation just call renderFunction
 				renderFunction(this.data, whereToRender);
 			},
+
+			handleResponse : function(response) {
+
+			},
 			
 			/***
 			 * A call to render the UI fragment implemented in renderUI method
@@ -59,8 +65,8 @@ define(["framework/widget", "framework/templateProvider"], function() {
 				if(whereToRender === null) {
 					whereToRender = $(this.defaultContainer);
 				}
-				
-				this.preRender(whereToRender, $.proxy(this.renderTemplate, this));
+				this.renderFnc = $.proxy(this.renderTemplate, this);
+				this.preRender(whereToRender, this.renderFnc);
 			},
 			
 			/***

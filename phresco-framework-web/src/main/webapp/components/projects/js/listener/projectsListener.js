@@ -76,8 +76,6 @@ define(["projects/api/projectsAPI"], function() {
 			$("tr[id="+ layerType +"]").next().show('slow');
 			$("tr[id="+ layerType +"]").next().attr('key', 'displayed');
 			var clasname = $("tr[id="+ layerType +"]").closest('tr').next().attr('id');
-			console.info("classname::::", clasname);
-			console.info("rows:::::", $("tr[id="+ layerType +"]").next().find("tbody."+clasname).children());
 			$("tr[id="+ layerType +"]").next().find("tbody."+ clasname).children().each(function() {
 		 		$(this).show('slow');
 		 		$(this).attr('key', 'displayed');
@@ -89,7 +87,6 @@ define(["projects/api/projectsAPI"], function() {
 			var self=this;
 		 	if(self.counter !== 2){
 				var layerId = object.attr('id');
-				console.info("layerId", layerId);
 				$("tr[id="+ layerId +"]").hide('slow');
 				$("tr[id="+ layerId +"]").next().hide('slow');
 				$("input[name="+layerId+"]").show();

@@ -174,11 +174,25 @@
 			"moduleName":"componentTestTest",
 			"path" : "components/componentTest/test/componentTestTest"
 		},
+
+		"performanceTest" : {
+			"moduleName":"performanceTest",
+			"path" : "components/performanceTest/js"
+		},
 		
+		"performanceTestTest" : {
+			"moduleName":"performanceTestTest",
+			"path" : "components/performanceTest/test/performanceTestTest"
+		},
 		
 		"dynamicPage" : {
 			"moduleName":"dynamicPage",
 			"path" : "components/dynamicPage/js"
+		},
+
+		"dynamicPageTest" : {
+			"moduleName":"dynamicPageTest",
+			"path" : "components/dynamicPage/test/dynamicPageTest"
 		}		
 	}
 }

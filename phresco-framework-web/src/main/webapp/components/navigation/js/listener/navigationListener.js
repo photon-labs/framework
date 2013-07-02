@@ -19,6 +19,7 @@ define(["navigation/api/navigationAPI"], function() {
 		unitTest : null,
 		functionalTest : null,
 		componentTest : null,
+		performanceTest : null,
 		testResult : null,
 		dynamicpage : null,
 		editConfiguration : null,
@@ -66,7 +67,6 @@ define(["navigation/api/navigationAPI"], function() {
 
 		getMyObj : function(keyword, callback) {
 			var self=this, retuenObj, objInfo = "";
-
 				switch(keyword){
 				
 					case commonVariables.header :
