@@ -95,35 +95,17 @@ define(["framework/widgetWithTemplate", "dynamicPage/api/dynamicPageAPI", "commo
             if(response.data.length !== 0) {
                 $(whereToRender).empty();
                 $.each(response.data, function(index, parameter) {
-                    var type = parameter.type, optionalAttrs={};
-                    if(parameter.show === 'false' || parameter.type === "Hidden"){
-                        optionalAttrs.show = ' style="display:none;"';
-                    } else {
-                        optionalAttrs.show = "";
-                    }
-                    
-                    if(parameter.required === 'true'){
-                        optionalAttrs.required = "<sup>*</sup>";
-                    } else {
-                        optionalAttrs.required = "";
-                    }
-
-                    if(parameter.editable === 'false'){
-                        optionalAttrs.editable = " readonly=readonly";
-                    } else {
-                        optionalAttrs.editable = "";
-                    }
-                    
+                    var type = parameter.type;
                     if(type === "String" || type === "Number" || type === "Password"){
-                        self.constructTxtCtrl(parameter, columnClass, optionalAttrs, whereToRender);
+                        self.constructTxtCtrl(parameter, columnClass, whereToRender);
                     } else if (type === "Hidden") {
-                        self.constructHiddenCtrl(parameter, columnClass, optionalAttrs, whereToRender);
+                        self.constructHiddenCtrl(parameter, columnClass, whereToRender);
                     } else if(type === "Boolean"){
-                        self.constructCheckboxCtrl(parameter, columnClass, optionalAttrs, whereToRender);
+                        self.constructCheckboxCtrl(parameter, columnClass, whereToRender);
                     } else if(type === "List"){
-                        self.constructListCtrl(parameter, columnClass, parameter.possibleValues, optionalAttrs, whereToRender);
+                        self.constructListCtrl(parameter, columnClass, parameter.possibleValues, whereToRender);
                     } else if(type === "DynamicParameter" && !parameter.sort){
-                        self.constructDynamicCtrl(parameter, columnClass, parameter.possibleValues, optionalAttrs, whereToRender);
+                        self.constructDynamicCtrl(parameter, columnClass, parameter.possibleValues, whereToRender);
                     } else if (type === "DynamicParameter" && parameter.sort) {
                         // execute sql template
                     } else if (type === "packageFileBrowse") {
@@ -141,16 +123,39 @@ define(["framework/widgetWithTemplate", "dynamicPage/api/dynamicPageAPI", "commo
         },
         
         /********************* Controls construction methods starts**********************************/
-        constructTxtCtrl : function(parameter, columnClass, optionalAttrs, whereToRender) {
-            var self = this, inputType = self.getInputType(parameter.type), textBoxValue = "";
+        getOptionalAttr : function(parameter, optionalAttrs) {
+            if(parameter.show === 'false' || parameter.type === "Hidden"){
+                        optionalAttrs.show = ' style="display:none;"';
+            } else {
+                optionalAttrs.show = "";
+            }
+            
+            if(parameter.required === 'true'){
+                optionalAttrs.required = "<sup>*</sup>";
+            } else {
+                optionalAttrs.required = "";
+            }
+
+            if(parameter.editable === 'false'){
+                optionalAttrs.editable = " readonly=readonly";
+            } else {
+                optionalAttrs.editable = "";
+            }
+
+            return optionalAttrs;
+        },
+
+        constructTxtCtrl : function(parameter, columnClass, whereToRender) {
+            var self = this, inputType = self.getInputType(parameter.type), textBoxValue = "", optionalAttrs = {};
             if (!self.isBlank(parameter.value)) {
                 textBoxValue = parameter.value;
             } 
+            optionalAttrs = self.getOptionalAttr(parameter, optionalAttrs);
             whereToRender.append('<li class="ctrl textCtrl '+columnClass+'" ' +optionalAttrs.show+'  id="'+parameter.key+'Li"><label>'+parameter.name.value[0].value+optionalAttrs.required+'</label>' + 
                                  '<input type="'+inputType+'" parameterType="'+ parameter.type+'" showHide="'+parameter.show+'" name="'+ parameter.key +'" value="'+textBoxValue+'" id="'+parameter.key+'" ' +optionalAttrs.editable+' /></li>');
         },
         
-         constructHiddenCtrl : function(parameter, columnClass, optionalAttrs, whereToRender) {
+         constructHiddenCtrl : function(parameter, columnClass, whereToRender) {
             var self = this, textBoxValue = "";
             if (!self.isBlank(parameter.value)) {
                 textBoxValue = parameter.value;
@@ -158,8 +163,8 @@ define(["framework/widgetWithTemplate", "dynamicPage/api/dynamicPageAPI", "commo
             whereToRender.parent().find('.hiddenControls').append('<input type="hidden" name="'+ parameter.key +'" value="'+textBoxValue+'" id="'+parameter.key+'"/>');
         },
         
-        constructCheckboxCtrl : function(parameter, columnClass, optionalAttrs, whereToRender) {
-            var self = this, liLastPrevId = whereToRender.find("li:last").prev("li").attr("class"), additionalparam = "", dependency = "", checked;
+        constructCheckboxCtrl : function(parameter, columnClass, whereToRender) {
+            var self = this, optionalAttrs = {}, liLastPrevId = whereToRender.find("li:last").prev("li").attr("class"), additionalparam = "", dependency = "", checked;
             if(!self.isBlank(parameter.dependency)){
                 dependency = parameter.dependency;
                 additionalparam = "dependency="+ dependency +"";
@@ -167,7 +172,7 @@ define(["framework/widgetWithTemplate", "dynamicPage/api/dynamicPageAPI", "commo
                 dependency = "";
                 additionalparam = "";
             }
-            
+            optionalAttrs = self.getOptionalAttr(parameter, optionalAttrs);
             checked = parameter.value === "true" ? "checked" : "";
             
             if (liLastPrevId !== undefined && liLastPrevId.indexOf('checkCtrl') !== -1) {
@@ -177,7 +182,7 @@ define(["framework/widgetWithTemplate", "dynamicPage/api/dynamicPageAPI", "commo
             }
         },
         
-        constructListCtrl : function(parameter, columnClass, possibleValues, optionalAttrs, whereToRender) {
+        constructListCtrl : function(parameter, columnClass, possibleValues, whereToRender) {
             var self = this, parameterDependency = "", dependencyAttr = "", additionalParam = "", enableOnchangeFunction = false;
             
             if(!self.isBlank(parameter.dependency)) {
@@ -191,10 +196,10 @@ define(["framework/widgetWithTemplate", "dynamicPage/api/dynamicPageAPI", "commo
                 });
             }
             
-            self.constructSelectCtrl(parameter, columnClass, possibleValues, optionalAttrs, whereToRender, parameterDependency, enableOnchangeFunction);
+            self.constructSelectCtrl(parameter, columnClass, possibleValues, whereToRender, parameterDependency, enableOnchangeFunction);
         },
         
-        constructDynamicCtrl : function(parameter, columnClass, possibleValues, optionalAttrs, whereToRender) {
+        constructDynamicCtrl : function(parameter, columnClass, possibleValues, whereToRender) {
             var self = this, parameterDependency = "", enableOnchangeFunction = false;
             if (parameter.possibleValues !== null && parameter.possibleValues.value !== null) {
                 $.each(parameter.possibleValues.value, function(index, value) {
@@ -209,11 +214,11 @@ define(["framework/widgetWithTemplate", "dynamicPage/api/dynamicPageAPI", "commo
                 enableOnchangeFunction = true;
                 parameterDependency = parameter.dependency;
             }
-            self.constructSelectCtrl(parameter, columnClass, possibleValues, optionalAttrs, whereToRender, parameterDependency, enableOnchangeFunction);
+            self.constructSelectCtrl(parameter, columnClass, possibleValues, whereToRender, parameterDependency, enableOnchangeFunction);
         },
         
-        constructSelectCtrl : function (parameter, columnClass, possibleValues, optionalAttrs, whereToRender, parameterDependency, enableOnchangeFunction) {
-            var self=this, multiple = "", selection, li = "", select = "", isMultiple = parameter.multiple === "true" ? true : false;
+        constructSelectCtrl : function (parameter, columnClass, possibleValues, whereToRender, parameterDependency, enableOnchangeFunction) {
+            var self=this, optionalAttrs = {}, multiple = "", selection, li = "", select = "", isMultiple = parameter.multiple === "true" ? true : false;
             if (isMultiple) {
                 multiple = "multiple=multiple";
                 selection = "selection=multiple";
@@ -221,7 +226,8 @@ define(["framework/widgetWithTemplate", "dynamicPage/api/dynamicPageAPI", "commo
                 multiple = "";
                 selection = "selection=single";
             }
-            
+            optionalAttrs = self.getOptionalAttr(parameter, optionalAttrs);
+
             li = $('<li type="selectbox" class="ctrl selectCtrl '+columnClass+'" ' +optionalAttrs.show+'  id="'+parameter.key+'Li"><label>'+parameter.name.value[0].value+optionalAttrs.required+'</label></li>');
             select = $('<select data-selected-text-format="count>1" '+selection+' id="'+parameter.key+'" showHide="'+parameter.show+'" dependencyAttr="'+parameterDependency+'" name="'+parameter.key+'" parameterType="'+ parameter.type+'" class="selectpicker" '+multiple+' ' + 
                      'enableOnchangeFunction="'+ enableOnchangeFunction +'"  data-selected-text-format="count>2" ' +optionalAttrs.editable+' ></select>');

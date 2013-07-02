@@ -1,4 +1,4 @@
-
+\
 var commonVariables = {
 	globalconfig : "",
 	webserviceurl : "",
@@ -94,7 +94,7 @@ define(["jquery"], function($) {
 				commonVariables.loadingScreen =new Clazz.com.js.widget.common.Loading();
 			});
 		
-			require(["loginTest", "projectlistTest", "headerTest", "footerTest", "navigationTest", "projectTest", "applicationTest", "featuresTest", "codequalityTest", "configurationTest", "buildTest", "editConfigurationTest", "jobTemplateListTest","unitTestTest", "componentTestTest", "jshamcrest", "jsmockito", "Signal", "signalbinding", "jslib_bootstrap_datepicker", "handlebars", "i18next", "jslib_jquery_sortable_min", "bootstrap_min", "jquery_mCustomScrollbar_concat_min", "bootstrap_select_min"],	function(loginTest, projectlistTest, headerTest, footerTest, navigationTest, projectTest,applicationTest, featuresTest, codequalityTest, configurationTest, buildTest, editConfigurationTest, jobTemplateListTest, unitTestTest, componentTestTest, signals, signalbinding, datepicker, handlebars, i18next, sortable, bootstrap, scrollbar, select){
+			require(["loginTest", "projectlistTest", "headerTest", "footerTest", "navigationTest", "projectTest", "applicationTest", "featuresTest", "codequalityTest", "configurationTest", "buildTest", "editConfigurationTest", "jobTemplateListTest","unitTestTest", "componentTestTest", "performanceTestTest", "dynamicPageTest", "jshamcrest", "jsmockito", "Signal", "signalbinding", "jslib_bootstrap_datepicker", "handlebars", "i18next", "jslib_jquery_sortable_min", "bootstrap_min", "jquery_mCustomScrollbar_concat_min", "bootstrap_select_min"],	function(loginTest, projectlistTest, headerTest, footerTest, navigationTest, projectTest,applicationTest, featuresTest, codequalityTest, configurationTest, buildTest, editConfigurationTest, jobTemplateListTest, unitTestTest, componentTestTest, performanceTestTest, dynamicPageTest, signals, signalbinding, datepicker, handlebars, i18next, sortable, bootstrap, scrollbar, select){
 				JsHamcrest.Integration.JsTestDriver();
 				JsMockito.Integration.JsTestDriver();
 				commonVariables.navListener = Clazz.com.components.navigation.js.listener.navigationListener();
@@ -113,6 +113,8 @@ define(["jquery"], function($) {
 					codequalityTest.runTests(data);
 					unitTestTest.runTests(data);
 					componentTestTest.runTests(data);
+					// dynamicPageTest.runTests(data);
+					performanceTestTest.runTests(data);
 				});
 			});
 		}, "json");

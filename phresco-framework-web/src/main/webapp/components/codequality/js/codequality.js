@@ -72,7 +72,6 @@ define(["codequality/listener/codequalityListener"], function() {
 					projectlist.projectlist = response;	
 					self.renderedData = response;
 					self.codequalityListener.constructHtml(self.renderedData);
-					console.info('sonar = ' , response.message);
 					if(response.message === "Sonar not yet Started"){
 						$('#codeAnalysis').hide();
 						$(".code_report").hide();

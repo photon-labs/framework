@@ -1,0 +1,177 @@
+<section class="optiontitle qual_unit">
+    	<div class="unit_text">
+        	Performance Test
+        </div>
+        <div class="flt_right">
+        	{{#showIcons resultAvailable testResultFiles}}
+	        	<div class="unit_view">
+	                <span>
+	                	<a href="#"><img src="themes/default/images/helios/quality_table_on.png" width="25" height="25" border="0" alt=""></a>
+	                    <a href="#"><b>Table View</b></a>
+	                </span>
+	                <span>
+	                	<a href="#"><img src="themes/default/images/helios/quality_graph_off.png" width="26" height="24" border="0" alt=""></a>
+	                	<a href="#">Graph View</a>
+	                </span>    
+	            </div>
+	        {{else}}  
+	        	<div class="unit_view hideContent">
+	                <span>
+	                	<a href="#"><img src="themes/default/images/helios/quality_table_on.png" width="25" height="25" border="0" alt=""></a>
+	                    <a href="#"><b>Table View</b></a>
+	                </span>
+	                <span>
+	                	<a href="#"><img src="themes/default/images/helios/quality_graph_off.png" width="26" height="24" border="0" alt=""></a>
+	                	<a href="#">Graph View</a>
+	                </span>    
+	            </div>  
+            {{/showIcons}}
+            
+            <div class="unit_path">
+	            <input type="button" value="Open Folder" class="btn btn_style openfolder_icon_btn" id="openFolder">
+	            <input type="button" value="Copy Path" class="btn btn_style copypath_icon_btn" id="copyPath">
+        	</div>
+        	
+        	{{#showIcons resultAvailable testResultFiles}}
+	            <div class="code_report_icon pdf_icon">
+	            	<a class="tooltiptop" title="" data-placement="bottom" data-toggle="tooltip" href="#" data-original-title="Export as PDF"><img src="themes/default/images/helios/code_pdf_icon.png" width="28" height="29" border="0" alt=""></a>
+                	<div class="tooltip fade bottom" style="top: 27px; left: 893.1875px; display: block;">
+                    	<div class="tooltip-arrow" style=""></div><div class="tooltip-inner">Export as PDF
+                        </div>
+                    </div>
+	            </div>
+			{{else}}  
+	        	<div class="code_report_icon pdf_icon hideContent">
+	            	<a class="tooltiptop" title="" data-placement="bottom" data-toggle="tooltip" href="#" data-original-title="Export as PDF"><img src="themes/default/images/helios/code_pdf_icon.png" width="28" height="29" border="0" alt=""></a>
+                	<div class="tooltip fade bottom" style="top: 27px; left: 893.1875px; display: block;">
+                    	<div class="tooltip-arrow" style=""></div><div class="tooltip-inner">Export as PDF
+                        </div>
+                    </div>
+	            </div>
+            {{/showIcons}}
+            
+            {{#showDeviceDropDown showDevice devices}}
+	            <div class="code_report device_list">
+	            	Devices
+	            </div>
+	            <div class="navbar navbar-static code_func logintest">
+	                <ul class="nav">
+	                    <li id="fat-menu" class="dropdown">
+	                      <a href="#" id="deviceDropDown" role="button" class="dropdown-toggle" data-toggle="dropdown" value={{#devices showDevice devices testResultFiles true true}}{{/devices}}>{{#devices showDevice devices testResultFiles true false}}{{/devices}}<b class="caret"></b></a>
+	                      <div class="dropdown-menu cust_sel code_test_opt" role="menu" aria-labelledby="drop5">
+	                      	<ul>
+	                      		{{#devices showDevice devices testResultFiles false false}}{{/devices}}
+	                        </ul>
+	                      </div>
+	                    </li>
+	                </ul>
+	            </div>
+            {{/showDeviceDropDown}}
+            
+			{{#showResultFiles testResultFiles}}
+	            <div class="code_report type_report testResultDropdown">
+	            	Results
+	            </div>
+	            <div class="navbar navbar-static code_func logintest testResultDiv">
+	                <ul class="nav">
+	                    <li id="fat-menu" class="dropdown">
+	                      <a href="#" id="testResultFileDrop" role="button" class="dropdown-toggle" data-toggle="dropdown" value={{#testResultFiles testResultFiles true}}{{/testResultFiles}}>{{#testResultFiles testResultFiles true}}{{/testResultFiles}}<b class="caret"></b></a>
+	                      <div class="dropdown-menu cust_sel code_test_opt testResultUl" role="menu" aria-labelledby="drop5">
+	                      	<ul>
+	                        	{{#testResultFiles testResultFiles false}}{{/testResultFiles}}
+	                        </ul>
+	                      </div>
+	                    </li>
+	                </ul>
+	            </div>
+	        {{else}}
+	        	<div class="code_report type_report hideContent testResultDropdown">
+	            	Results
+	            </div>
+	            <div class="navbar navbar-static code_func logintest hideContent testResultDiv">
+	                <ul class="nav">
+	                    <li id="fat-menu" class="dropdown">
+	                      <a href="#" id="testResultFileDrop" role="button" class="dropdown-toggle" data-toggle="dropdown" value={{#testResultFiles testResultFiles true}}{{/testResultFiles}}>{{#testResultFiles testResultFiles true}}{{/testResultFiles}}<b class="caret"></b></a>
+	                      <div class="dropdown-menu cust_sel code_test_opt testResultUl" role="menu" aria-labelledby="drop5">
+	                      	<ul>
+	                        	{{#testResultFiles testResultFiles false}}{{/testResultFiles}}
+	                        </ul>
+	                      </div>
+	                    </li>
+	                </ul>
+	            </div>    
+            {{/showResultFiles}}
+            
+            {{#showTestAgainst showDevice resultAvailable}}
+            <div class="code_report type_report">
+            	Type
+            </div>
+            <div class="navbar navbar-static code_func">
+                <ul class="nav">
+                    <li id="fat-menu" class="dropdown">
+                      <a href="#" id="testAgainstsDrop" role="button" class="dropdown-toggle" data-toggle="dropdown" value={{#testAgainsts testAgainsts true}}{{/testAgainsts}}>{{#testAgainsts testAgainsts true}}{{/testAgainsts}}<b class="caret"></b></a>
+                      <div class="dropdown-menu cust_sel code_test_opt" role="menu" aria-labelledby="drop5">
+	                      	<ul>	
+	                      		{{#testAgainsts testAgainsts false}}{{/testAgainsts}}
+	                        </ul>
+                      </div>
+                    </li>
+                </ul>
+            </div>
+            {{/showTestAgainst}}
+            
+            <div class="code_anal">
+                <input type="submit" value="Test" class="btn btn_style">
+             </div>
+        </div>
+    </section>
+    
+    <section class="content_main code_content testSuiteTable performanceTestResults">
+    	{{#unless resultAvailable}}
+    		<div style="text-align: center; margin: auto 0;" class="alert alert-block">Performance test not yet executed</div>
+    	{{/unless}}
+    	{{#showErrMsg resultAvailable testResultFiles}}
+    		<div style="text-align: center; margin: auto 0;" class="alert alert-block">Test not executed for {{#against testAgainsts}}{{/against}}</div>
+    	{{/showErrMsg}}
+    	
+    	<!-- Testsuites div starts here -->
+			<div class="qual_unit_main unit_info perfResultInfo" id="testSuites">
+		    </div>
+	    <!-- Testsuites div ends here -->
+    
+		<!-- Graphical view div starts here -->
+		    <div class="qual_unit_main unit_info hideContent" id="graphView">
+		    	<div class="graph_area">
+		        	<canvas id="bar" width="620" height="400">[No canvas support]</canvas>
+		        	<canvas id="pie" width="620" height="400">[No canvas support]</canvas>
+		        </div>
+		    </div>
+	    <!-- Graphical view div ends here -->
+    
+	     <!-- Progress div starts here-->
+		    <div class="unit_close performance_close">
+		    	<a href="#" data-flag="true" id="consoleImg">
+		    		<img src="themes/default/images/helios/console_img.png" width="33" height="92" border="0" alt="">
+				</a>
+			</div>
+		    <div class="unit_progress performance_progress">
+		        <table class="table table-striped table_border table-bordered" cellpadding="0" cellspacing="0" border="0">
+		            <thead>
+		                <tr>
+		                    <th>Progress</th>
+							<td>
+								<a href="#" id="copyLog">
+									<img src="themes/default/images/helios/buildreport_icon.png" width="15" height="18" border="0" alt="">
+								</a>
+							</td>
+						</tr>
+					</thead>
+					<tbody class="scrollContent">
+		            	<tr>
+							<td id="testConsole" colspan="2"></td>
+						</tr>
+		        	</tbody>
+		        </table>
+		    </div>
+	    <!-- Progress div ends here -->
+    </section>
