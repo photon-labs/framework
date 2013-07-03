@@ -1,4 +1,4 @@
-\
+
 var commonVariables = {
 	globalconfig : "",
 	webserviceurl : "",

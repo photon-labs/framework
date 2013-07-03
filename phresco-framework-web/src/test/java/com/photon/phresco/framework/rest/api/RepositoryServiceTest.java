@@ -79,13 +79,13 @@ public class RepositoryServiceTest extends RestBaseTest  {
 		Assert.assertEquals("Repository url of the project", "https://insight.photoninfotech.com/svn/repos/phresco-svn-projects/ci/2.0/TestProject/" + appDirName, repodetail.getRepoUrl());
 	}
 	
-	@Test
+//	@Test
 	public void  commitProjectToRepo() {
 		RepoDetail repodetail = new RepoDetail();
 		repodetail.setUserName("santhosh_ja");
 		repodetail.setPassword("santJ!23");
 		repodetail.setType("svn");
-		repodetail.setCommitMessage("[artf672433]testcommit");
+		repodetail.setCommitMessage("[artf710705]testcommit");
 		repodetail.setRepoUrl("https://insight.photoninfotech.com/svn/repos/phresco-svn-projects/ci/2.0/TestProject/" + appDirName);
 		
 		repodetail.setCommitableFiles(Arrays.asList("C:\\Documents and Settings\\saravanan_va\\workspace\\projects\\" + appDirName +"\\pom.xml"));

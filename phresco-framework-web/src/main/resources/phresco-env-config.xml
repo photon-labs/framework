@@ -30,7 +30,7 @@
         </Other>
     </environment>
     
-	<environment default="false" name="Development">
+	<environment default="true" name="Development">
         <Server appliesTo="tech-html5-widget" desc="" name="server">
             <protocol>http</protocol>
             <host>localhost</host>
@@ -48,11 +48,11 @@
 	
 		 <WebService desc="" name="webservice">
             <protocol>http</protocol>
-            <host>localhost</host>
-            <port>3030</port>
+            <host>172.16.8.250</host>
+            <port>7070</port>
             <username/>
             <password/>
-            <context>service</context>
+            <context>service-testing</context>
 			<additional_context>/rest/api</additional_context>
         </WebService>
         
@@ -62,7 +62,7 @@
         
     </environment>
     
-    <environment default="true" name="Testing">
+    <environment default="false" name="Testing">
 	 <Server appliesTo="tech-html5-widget" desc="" name="server">
             <protocol>http</protocol>
             <host>localhost</host>

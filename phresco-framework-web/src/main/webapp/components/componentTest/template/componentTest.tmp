@@ -1,6 +1,6 @@
 <section class="optiontitle qual_unit">
-	<div class="unit_text">
-    	Component Test
+	<div class="unit_text" data-i18n="component.label.componenttest">
+    	
 	</div>
     <div class="flt_right">
 		<div class="unit_view hideContent">
@@ -14,10 +14,10 @@
                 	<table class="table_border availablePdfRptsTbl hideContent" border="0" cellspacing="0" cellpadding="5" width="100%" id="availablePdfRptsTbl">
                 		<thead>
                         	<tr>
-	                            <th>Existing Reports</th>
-	                            <th>Type</th>
-	                            <th>Download</th>
-	                            <th>Delete</th>
+	                            <th data-i18n=commonlabel.label.existingreport></th>
+	                            <th data-i18n=commonlabel.label.type></th>
+	                            <th data-i18n=commonlabel.label.download></th>
+	                            <th data-i18n=commonlabel.label.delete></th>
                         	</tr>    
                     	</thead>
                     	<tbody id="availablePdfRptsTbdy">
@@ -31,8 +31,8 @@
 	                            	<td>Report Type</td>
 	                            	<td>
 	                                	<select name="reportDataType">
-	                                    	<option value="detail">Detailed Report</option>
-	                                    	<option value="crisp">Overall Report</option>
+	                                    	<option value="detail" data-i18n=commonlabel.label.detailedreport></option>
+	                                    	<option value="crisp" data-i18n=commonlabel.label.overallreport></option>
 	                                	</select>
 	                            	</td>
 	                        	</tr>
@@ -46,8 +46,8 @@
 	                   	</table>
 	                   	<div class="popuploading" id="pdfReportLoading">&nbsp</div>
 		               	<div class="flt_right">
-		                 	<input type="button" value="Generate" class="btn btn_style" id="generatePdf">
-		                 	<input type="button" value="Close" class="btn btn_style dyn_popup_close">
+		                   <input type="button" data-i18n="[value]commonlabel.label.generate" class="btn       btn_style"     id="generatePdf">
+		                  <input type="button" data-i18n="[value]commonlabel.label.close" class="btn btn_style dyn_popup_close">
 		               	</div>
                			<input type="hidden" name="fromPage" value="component"/>
            			</form>
@@ -62,15 +62,15 @@
             </span>    
         </div>
     	<div class="unit_path">
-            <input type="button" value="Open Folder" class="btn btn_style openfolder_icon_btn" id="openFolder">
-            <input type="button" value="Copy Path" class="btn btn_style copypath_icon_btn" id="copyPath">
+            <input type="button" data-i18n="[value]commonlabel.label.openfolder" class="btn btn_style openfolder_icon_btn" id="openFolder">
+            <input type="button" data-i18n="[value]commonlabel.label.copypath" class="btn btn_style copypath_icon_btn" id="copyPath">
         </div>
             
         <div class="code_anal">
         	{{#if userPermissions.manageTests}}
-            	<input type="button" value="Test" id="componentTestBtn" class="btn btn_style">
+            	<input type="button" data-i18n="[value]commonlabel.label.test" id="componentTestBtn" class="btn btn_style">
         	{{else}}
-        		<input type="button" value="Test" id="componentTestBtn" class="btn btn_style" disabled>
+        		<input type="button" data-i18n="[value]commonlabel.label.test" id="componentTestBtn" class="btn btn_style" disabled>
         	{{/if}}
 			<form id="componentTestForm">
 				<div id="componentTest_popup" class="dyn_popup hideContent dynamic_cont" style="width:310px;">
@@ -79,8 +79,8 @@
 					<div class="dynamicPopupLoading" style="display:none;">&nbsp</div>
 					<div class="hiddenControls"></div>
 					<div class="flt_right">
-						<input type="button" value="Test" class="btn btn_style" id="runComponentTest">
-						<input type="button" value="Close" class="btn btn_style dyn_popup_close">
+						<input type="button" data-i18n="[value]commonlabel.label.test" class="btn btn_style" id="runComponentTest">
+						<input type="button" data-i18n="[value]commonlabel.label.close" class="btn btn_style dyn_popup_close">
 					</div>
 				</div>
 			</form>
