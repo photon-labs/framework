@@ -1338,6 +1338,7 @@ public class QualityService extends RestBase implements ServiceConstants, Framew
         		devices = QualityUtil.getDeviceNames(document);
             }
             
+            performanceMap.put(TEST_AGAINSTS, testAgainsts);
             performanceMap.put(RESULT_AVAILABLE, resutlAvailable);
             performanceMap.put(TEST_RESULT_FILES, testResultFiles);
             performanceMap.put(SHOW_DEVICE, showDevice);
