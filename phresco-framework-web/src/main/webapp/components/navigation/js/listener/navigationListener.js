@@ -654,10 +654,10 @@ define(["navigation/api/navigationAPI"], function() {
 		navigationAction : function(header, callback) {
 			var self = this;			
 			try {
-				commonVariables.loadingScreen.showLoading();
+				//commonVariables.loadingScreen.showLoading();
 				self.navAPI.donavigation(header,
 					function(response) {
-						commonVariables.loadingScreen.removeLoading();
+						//commonVariables.loadingScreen.removeLoading();
 						if (response !== null ) {
 							if(self.act==='importpost') {
 								self.successMsgPopUp(response.message);
@@ -668,14 +668,14 @@ define(["navigation/api/navigationAPI"], function() {
 						}
 					},
 					function(textStatus) {
-						commonVariables.loadingScreen.removeLoading();
+						//commonVariables.loadingScreen.removeLoading();
 						if(self.act==='importpost') {
 							self.failureMsgPopUp("Project Import failed");
 						}
 					}
 				);
 			} catch(exception) {
-				commonVariables.loadingScreen.removeLoading();
+				//commonVariables.loadingScreen.removeLoading();
 			}
 		}, 
 		

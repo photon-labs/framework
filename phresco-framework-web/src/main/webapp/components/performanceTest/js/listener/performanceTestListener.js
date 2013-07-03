@@ -67,18 +67,18 @@ define(["performanceTest/api/performanceTestAPI"], function() {
 		getPerformanceTestReportOptions : function(header, whereToRender, callback) {
 			var self = this;
 			try {
-				commonVariables.loadingScreen.showLoading();
+				//commonVariables.loadingScreen.showLoading();
 				self.performanceTestAPI.performanceTest(header, function(response) {
 					if (response !== null) {
-						commonVariables.loadingScreen.removeLoading();
+						//commonVariables.loadingScreen.removeLoading();
 						callback(response, whereToRender);
 					} else {
-						commonVariables.loadingScreen.removeLoading();
+						//commonVariables.loadingScreen.removeLoading();
 						callback({"status" : "service failure"}, whereToRender);
 					}
 				});
 			} catch (exception) {
-				commonVariables.loadingScreen.removeLoading();
+				//commonVariables.loadingScreen.removeLoading();
 			}
 		},
 
@@ -107,13 +107,13 @@ define(["performanceTest/api/performanceTestAPI"], function() {
 		getTestResults : function (header, callback) {
 			var self = this;
 			try {
-				commonVariables.loadingScreen.showLoading();
+				//commonVariables.loadingScreen.showLoading();
 				self.performanceTestAPI.performanceTest(header, function(response) {
 					if (response !== null) {
-						commonVariables.loadingScreen.removeLoading();
+						//commonVariables.loadingScreen.removeLoading();
 						callback(response);
 					} else {
-						commonVariables.loadingScreen.removeLoading();
+						//commonVariables.loadingScreen.removeLoading();
 						callback({"status" : "service failure"});
 					}
 				});

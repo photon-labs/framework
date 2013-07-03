@@ -5,7 +5,7 @@ define(["projects/api/projectsAPI"], function() {
 	Clazz.com.components.projects.js.listener.projectsListener = Clazz.extend(Clazz.WidgetWithTemplate, {
 		
 		basePlaceholder : commonVariables.basePlaceholder,
-		loadingScreen : null,
+		//loadingScreen : null,
 		projectAPI : null,
 		applicationlayerData : null,
 		weblayerData : null,
@@ -98,25 +98,25 @@ define(["projects/api/projectsAPI"], function() {
 		getEditProject : function(header, callback) {
 			var self = this;
 			try {
-				commonVariables.loadingScreen.showLoading();
+				//commonVariables.loadingScreen.showLoading();
 				self.projectAPI.projects(header,
 					function(response) {
 						if (response !== null) {
 							callback(response);
-							commonVariables.loadingScreen.removeLoading();
+							//commonVariables.loadingScreen.removeLoading();
 						} else {
 							callback({ "status" : "service failure"});
-							commonVariables.loadingScreen.removeLoading();
+							//commonVariables.loadingScreen.removeLoading();
 						}
 
 					},
 
 					function(textStatus) {
-						commonVariables.loadingScreen.removeLoading();
+						//commonVariables.loadingScreen.removeLoading();
 					}
 				);
 			} catch(exception) {
-				commonVariables.loadingScreen.removeLoading();
+				//commonVariables.loadingScreen.removeLoading();
 			}
 
 		},

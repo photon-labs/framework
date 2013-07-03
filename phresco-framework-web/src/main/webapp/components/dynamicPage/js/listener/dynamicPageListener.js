@@ -4,7 +4,7 @@ define(["framework/widgetWithTemplate", "dynamicPage/api/dynamicPageAPI", "commo
 
     Clazz.com.components.dynamicPage.js.listener.DynamicPageListener = Clazz.extend(Clazz.WidgetWithTemplate, {
         localStorageAPI : null,
-        loadingScreen : null,
+        //loadingScreen : null,
         dynamicPageAPI : null,
         appDirName : null,
         goal : null,
@@ -18,7 +18,7 @@ define(["framework/widgetWithTemplate", "dynamicPage/api/dynamicPageAPI", "commo
          */
         initialize : function(config) {
             var self = this;
-            this.loadingScreen = new Clazz.com.js.widget.common.Loading();
+            //this.loadingScreen = new Clazz.com.js.widget.common.Loading();
             self.dynamicPageAPI = new Clazz.com.components.dynamicPage.js.api.DynamicPageAPI();
         },
         
@@ -34,34 +34,34 @@ define(["framework/widgetWithTemplate", "dynamicPage/api/dynamicPageAPI", "commo
                 var goal = commonVariables.goal;
                 
                 if(self.parameterValidation(appDirName, goal)){
-                    self.loadingScreen.showLoading();
+                    //self.loadingScreen.showLoading();
                     self.dynamicPageAPI.getContent(header, 
                         function(response){
                             self.responseData = response.data;
                             if(response !== undefined && response !== null){
                                 if (response.data === null || response.data.length === 0) {
                                     callback("No parameters available");
-                                    self.loadingScreen.removeLoading();
+                                    //self.loadingScreen.removeLoading();
                                 } else {
                                     self.constructHtml(response, whereToRender, btnObj, openccObj, goal);
-                                    self.loadingScreen.removeLoading();
+                                    //self.loadingScreen.removeLoading();
                                 }
                             } else {
                                 //responce value failed
                                 callback("Responce value failed");
-                                self.loadingScreen.removeLoading();
+                                //self.loadingScreen.removeLoading();
                             }
                         }, 
                         function(serviceError){
                             //service access failed
                             callback("service access failed");
-                            self.loadingScreen.removeLoading();
+                            //self.loadingScreen.removeLoading();
                         }
                     );
                 }
             }catch(error){
                 //Exception
-                self.loadingScreen.removeLoading();
+                //self.loadingScreen.removeLoading();
             }
         },
 

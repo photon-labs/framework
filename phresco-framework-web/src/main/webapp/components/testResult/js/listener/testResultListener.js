@@ -105,7 +105,7 @@ define(["testResult/api/testResultAPI"], function() {
 				$("#testCases").show();
 				self.allTestCases = response.data;
 				self.constructTestReport(response.data);
-				commonVariables.loadingScreen.removeLoading();
+				//commonVariables.loadingScreen.removeLoading();
 				self.getPieChartGraphData(function(graphData) {
 					self.createPieChart(graphData);
 				});
@@ -310,7 +310,7 @@ define(["testResult/api/testResultAPI"], function() {
 						if (response !== null) {
 							callback(response);
 						} else {
-							commonVariables.loadingScreen.removeLoading();
+							//commonVariables.loadingScreen.removeLoading();
 							callback({ "status" : "service failure"});
 						}
 					}

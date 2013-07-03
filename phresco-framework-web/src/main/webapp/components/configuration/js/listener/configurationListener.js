@@ -25,7 +25,7 @@ define(["configuration/api/configurationAPI"], function() {
 		initialize : function(config) {
 			var self = this;
 			self.configurationAPI = new Clazz.com.components.configuration.js.api.ConfigurationAPI();
-			this.loadingScreen = new Clazz.com.js.widget.common.Loading();
+			//this.loadingScreen = new Clazz.com.js.widget.common.Loading();
 		},
 		
 		editConfiguration : function(envName) {
@@ -90,15 +90,15 @@ define(["configuration/api/configurationAPI"], function() {
 			var self = this;
 			try {
 				if (self.bcheck === false) {
-					this.loadingScreen.showLoading();
+					//this.loadingScreen.showLoading();
 				}
 				self.configurationAPI.configuration(header,
 					function(response) {
 						if (response !== null) {
 							callback(response);
-							self.loadingScreen.removeLoading();
+							//self.loadingScreen.removeLoading();
 						} else {
-							self.loadingScreen.removeLoading();
+							//self.loadingScreen.removeLoading();
 							callback({ "status" : "service failure"});
 						}
 
@@ -106,13 +106,13 @@ define(["configuration/api/configurationAPI"], function() {
 
 					function(textStatus) {
 						if (self.bcheck === false) {
-							self.loadingScreen.removeLoading();
+							//self.loadingScreen.removeLoading();
 						}
 					}
 				);
 			} catch(exception) {
 				if (self.bcheck === false) {
-					self.loadingScreen.removeLoading();
+					//self.loadingScreen.removeLoading();
 				}
 			}
 

@@ -166,7 +166,7 @@ define(["application/api/applicationAPI"], function() {
 		getAppInfo : function(header, callback) {
 			var self = this;
 			try {
-				commonVariables.loadingScreen.showLoading();
+				//commonVariables.loadingScreen.showLoading();
 				self.applicationAPI.appinfo(header,
 					function(response) {
 						if (response !== null) {
@@ -182,13 +182,13 @@ define(["application/api/applicationAPI"], function() {
 									self.getWSConfig(response, function(appInfo){
 										data.webserviceData = appInfo.data;
 										self.applicationAPI.localVal.setJson('webserviceData', appInfo.data);
-										commonVariables.loadingScreen.removeLoading();
+										//commonVariables.loadingScreen.removeLoading();
 										callback(data);
 									});	
 								});
 							});
 						} else {
-							commonVariables.loadingScreen.removeLoading();
+							//commonVariables.loadingScreen.removeLoading();
 							callback({ "status" : "service failure"});
 						}
 
@@ -382,25 +382,25 @@ define(["application/api/applicationAPI"], function() {
 		editAppInfo : function(header, callback) {
 			var self = this;
 			try {
-				commonVariables.loadingScreen.showLoading();
+				//commonVariables.loadingScreen.showLoading();
 				self.applicationAPI.appinfo(header,
 					function(response) {
 						if (response !== null) {
 							callback(response);
-							commonVariables.loadingScreen.removeLoading();
+							//commonVariables.loadingScreen.removeLoading();
 						} else {
-							commonVariables.loadingScreen.removeLoading();
+							//commonVariables.loadingScreen.removeLoading();
 							callback({ "status" : "service failure"});
 						}
 					},
 
 					function(textStatus) {
-						commonVariables.loadingScreen.removeLoading();
+						//commonVariables.loadingScreen.removeLoading();
 						self.failureMsgPopUp('service failure');
 					}
 				);
 			} catch(exception) {
-				commonVariables.loadingScreen.removeLoading();
+				//commonVariables.loadingScreen.removeLoading();
 				self.failureMsgPopUp(exception);
 			}
 
@@ -454,9 +454,9 @@ define(["application/api/applicationAPI"], function() {
 					function(response) {
 						if (response !== null) {
 							callback(response);
-							commonVariables.loadingScreen.removeLoading();
+							//commonVariables.loadingScreen.removeLoading();
 						} else {
-							commonVariables.loadingScreen.removeLoading();
+							//commonVariables.loadingScreen.removeLoading();
 							callback({ "status" : "service failure"});
 						}
 

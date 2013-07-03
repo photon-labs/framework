@@ -3,7 +3,7 @@ define(["header/api/headerAPI"], function() {
 	Clazz.createPackage("com.commonComponents.modules.header.js.listener");
 
 	Clazz.com.commonComponents.modules.header.js.listener.HeaderListener = Clazz.extend(Clazz.Widget, {
-		loadingScreen : null,
+		//loadingScreen : null,
 		headerAPI : null,
 		projectListContent: null,
 		currentTab : null,

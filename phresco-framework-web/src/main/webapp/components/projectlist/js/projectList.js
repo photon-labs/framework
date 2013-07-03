@@ -98,7 +98,7 @@ define(["projectlist/listener/projectListListener"], function() {
 		},
 
 		preRender: function(whereToRender, renderFunction){
-			var self = this;
+		 	var self = this;
 			self.projectslistListener.getProjectList(self.projectslistListener.getActionHeader(self.projectRequestBody, "get"), function(response) {
 				var projectlist = {};
 				projectlist.projectlist = response.data;
@@ -126,7 +126,7 @@ define(["projectlist/listener/projectListListener"], function() {
 		deleteProjectfn : function(deletearray, imgname1, imgname2, deleteproject){
 			var self = this;
 			self.getAction(deletearray,"delete",function(response) {
-				commonVariables.loadingScreen.removeLoading();
+				//commonVariables.loadingScreen.removeLoading();
 				self.deleterow(imgname1, imgname2, deleteproject);
 			});
 		},
@@ -307,7 +307,7 @@ define(["projectlist/listener/projectListListener"], function() {
 				imgname1 = $("tr[class="+deleteproject+"]").next('tr').children('td:eq(5)').children('a').children('img').attr('name');
 				imgname2 = $("tr[class="+deleteproject+"]").prev('tr').children('td:eq(5)').children('a').children('img').attr('name');
 				self.flagged=1;
-				commonVariables.loadingScreen.showLoading();				
+				//commonVariables.loadingScreen.showLoading();				
 				self.deleteProjectfn(deletearray, imgname1, imgname2, deleteproject);
 				self.closeAll($(this).attr('name'));
 				
@@ -327,9 +327,9 @@ define(["projectlist/listener/projectListListener"], function() {
 				   }else {currentRow = null;}
 				}
 				self.flagged=1;
-				commonVariables.loadingScreen.showLoading();
+				//commonVariables.loadingScreen.showLoading();
 				self.getAction(projectnameArray,"delete",function(response) {
-					commonVariables.loadingScreen.removeLoading();
+					//commonVariables.loadingScreen.removeLoading();
 						while(curr !== null && curr.length !== 0) {
 							cls = curr.attr("class");
 							if(cls!="proj_title") {

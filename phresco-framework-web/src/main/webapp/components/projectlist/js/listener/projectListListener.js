@@ -54,23 +54,23 @@ define(["projectlist/api/projectListAPI"], function() {
 		getProjectList : function(header, callback) {
 			var self = this;
 			try {
-				commonVariables.loadingScreen.showLoading();
+				//commonVariables.loadingScreen.showLoading();
 				self.projectListAPI.projectslist(header,
 					function(response) {
 						if (response !== null) {
-							commonVariables.loadingScreen.removeLoading();
 							callback(response);
+							//commonVariables.loadingScreen.removeLoading();
 						} else {
-							commonVariables.loadingScreen.removeLoading();
+							//commonVariables.loadingScreen.removeLoading();
 							callback({ "status" : "service failure"});
 						}
 					},
 					function(textStatus) {
-						commonVariables.loadingScreen.removeLoading();
+						//commonVariables.loadingScreen.removeLoading();
 					}
 				);
 			} catch(exception) {
-				commonVariables.loadingScreen.removeLoading();
+				//commonVariables.loadingScreen.removeLoading();
 			}
 
 		},

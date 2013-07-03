@@ -38,7 +38,7 @@ define(["login/api/loginAPI"], function() {
 				var self = this, header = self.getRequestHeader();
 			
 				if(self.loginValidation()){
-					commonVariables.loadingScreen.showLoading();
+					//commonVariables.loadingScreen.showLoading();
 					//TODO: call login service here and call appendPlaceholder in the success function
 					self.loginAPI.doLogin(header, 
 						function(response){
@@ -48,19 +48,19 @@ define(["login/api/loginAPI"], function() {
 								self.renderNavigation();
 							} else {
 								//authentication failed
-								commonVariables.loadingScreen.removeLoading();
+								//commonVariables.loadingScreen.removeLoading();
 							}
 						}, 
 						function(serviceError){
 							//service access failed
-							commonVariables.loadingScreen.removeLoading();
+							//commonVariables.loadingScreen.removeLoading();
 							$(".login_error_msg").text('authentication failed');
 						}
 					);
 				}
 			}catch(error){
 				//Exception
-				commonVariables.loadingScreen.removeLoading();
+				//commonVariables.loadingScreen.removeLoading();
 			}
 		},
 		

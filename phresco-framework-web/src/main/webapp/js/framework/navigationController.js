@@ -27,7 +27,7 @@ define(["framework/base", "framework/animationProvider"], function() {
 			// used in single page single div or multi divs scenario
 			mainContainer : null,
 			currentIndex: -1,
-			
+			loadingActive: false,
 			jQueryContainer : null,
 			transitionType : null,
 			cancelTransitionType : null,
@@ -174,7 +174,10 @@ define(["framework/base", "framework/animationProvider"], function() {
 			
 			push : function(view, bCheck, animationtype) {
 				var self = this;
-
+				
+				//Remove loading screen
+				commonVariables.loadingScreen.removeLoading();
+				
 				//make old content as inactive
 				$(commonVariables.contentPlaceholder).find('div .widget-maincontent-div').attr('active', 'false');
 					
@@ -183,6 +186,7 @@ define(["framework/base", "framework/animationProvider"], function() {
 				
 				// add absolute positioning
 				newDiv.addClass("widget-maincontent-div");
+				newDiv.attr('active', 'true');
 				
 				view.doMore = function(element) {
 					if(bCheck) {
@@ -195,7 +199,7 @@ define(["framework/base", "framework/animationProvider"], function() {
 						animationProviderMain.animate(self.pushAnimationTypeForGoingIn, function(container) {
 							container.show('slow', function(){
 								container.css("z-index", 4);
-								self.removeClasses(container, function(callback){
+								//self.removeClasses(container, function(callback){
 								
 									if(animationtype !== undefined && animationtype !== null && animationtype === true){
 										self.setAnimation(self.transitionType);
@@ -204,9 +208,11 @@ define(["framework/base", "framework/animationProvider"], function() {
 									$.each($(commonVariables.contentPlaceholder).find('div .widget-maincontent-div'), function(index, current){
 										if($(current).attr('active') === "false"){
 											$(current).remove();
+											commonVariables.loadingScreen.removeLoading();
+											self.loadingActive = false;
 										}
 									});
-								});
+								//});
 							});
 						});
 						
@@ -232,7 +238,10 @@ define(["framework/base", "framework/animationProvider"], function() {
 								$(current).remove();
 							}
 						});
+						commonVariables.loadingScreen.removeLoading();
+						self.loadingActive = false;
 					}
+					self.loadingActive = false;
 				};
 				
 				if(bCheck && self.stack.length > 0){
@@ -261,6 +270,10 @@ define(["framework/base", "framework/animationProvider"], function() {
 							// render in its default container
 							$(self.jQueryContainer).append(newDiv);
 							view.render(newDiv);
+							commonVariables.loadingScreen.removeLoading(function(retVal){
+								commonVariables.loadingScreen.showLoading();
+							});
+							self.loadingActive = true;
 						});
 					});
 					self.stack.pop(self.stack.length - 1);
@@ -268,6 +281,10 @@ define(["framework/base", "framework/animationProvider"], function() {
 					// render in its default container
 					$(self.jQueryContainer).append(newDiv);
 					view.render(newDiv);
+					commonVariables.loadingScreen.removeLoading(function(retVal){
+						commonVariables.loadingScreen.showLoading();
+					});
+					self.loadingActive = true;
 				}
 			},
 			

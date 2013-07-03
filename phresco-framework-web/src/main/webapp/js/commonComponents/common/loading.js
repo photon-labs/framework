@@ -33,9 +33,13 @@ define(["framework/class"], function(){
 		 * This method is used to remove customize loading layout.
 		 *
 		 */
-		removeLoading : function() {
+		removeLoading : function(callback) {
 			$('.widget-mask-main').remove();
 			$('.widget-mask-mid-content').remove();
+			
+			if(callback != undefined && callback != null){
+				callback(true);
+			}
 		},
 
 		/**
@@ -44,14 +48,14 @@ define(["framework/class"], function(){
 		 */
 		showLoading: function(isPartialLoading) {
 			var maskMain = $('div.widget-mask-main');
-			
-			if($(commonVariables.contentPlaceholder).find('div.widget-maincontent-div').length > 0){
-				isPartialLoading = $(commonVariables.contentPlaceholder).find('div.widget-maincontent-div');
+
+			if($(commonVariables.contentPlaceholder).find('div[active="true"]').length > 0){
+				isPartialLoading = $(commonVariables.contentPlaceholder).find('div[active="true"]');
 			}
-			
-			if (maskMain.length === 0) {
-				if (isPartialLoading !== null) {
-					var maskMain = $('<div class="widget-mask-mid-content"></div>');
+
+			if (maskMain.length == 0) {
+				if (isPartialLoading != undefined && isPartialLoading != null) {
+					var maskMain = $('<div class="widget-mask-mid-content" style="margin-top:130px;	margin-bottom:27px;"></div>');
 					maskMain.append(this.getPartialLoading());
 					$(isPartialLoading).append(maskMain);
 				} else {

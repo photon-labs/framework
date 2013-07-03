@@ -104,24 +104,24 @@ define(["functionalTest/api/functionalTestAPI"], function() {
 		getFunctionalTestOptions : function(header, callback) {
 			var self = this;
 			try {
-				commonVariables.loadingScreen.showLoading();
+				//commonVariables.loadingScreen.showLoading();
 				self.functionalTestAPI.functionalTest(header,
 					function(response) {
 						if (response !== null) {
-							commonVariables.loadingScreen.removeLoading();
+							//commonVariables.loadingScreen.removeLoading();
 							callback(response);
 						} else {
-							self.loadingScreen.removeLoading();
+							//self.loadingScreen.removeLoading();
 							callback({"status" : "service failure"});
 						}
 					},
 
 					function(textStatus) {
-						commonVariables.loadingScreen.removeLoading();
+						//commonVariables.loadingScreen.removeLoading();
 					}
 				);
 			} catch(exception) {
-				commonVariables.loadingScreen.removeLoading();
+				//commonVariables.loadingScreen.removeLoading();
 			}
 		},
 		

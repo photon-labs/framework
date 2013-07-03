@@ -18,7 +18,6 @@ define(["features/api/featuresAPI", "features/features",  "application/applicati
 		initialize : function(config) {
 			var self = this;	
 			self.featuresAPI = new Clazz.com.components.features.js.api.FeaturesAPI();
-			this.loadingScreen = new Clazz.com.js.widget.common.Loading();
 		},
 		
 		cancelUpdate : function() {
@@ -76,25 +75,25 @@ define(["features/api/featuresAPI", "features/features",  "application/applicati
        	getFeaturesList : function(header, callback) {
 			var self = this;
 			try {
-				self.loadingScreen.showLoading();
+				//commonVariables.loadingScreen.showLoading();
 				self.featuresAPI.features(header,
 					function(response) {
 						if (response !== null) {
-							self.loadingScreen.removeLoading();
+							//commonVariables.loadingScreen.removeLoading();
 							callback(response);
 						} else {
-							self.loadingScreen.removeLoading();
+							//commonVariables.loadingScreen.removeLoading();
 							callback({ "status" : "service failure"});
 						}
 
 					},
 
 					function(textStatus) {
-						self.loadingScreen.removeLoading();
+						//commonVariables.loadingScreen.removeLoading();
 					}
 				);
 			} catch(exception) {
-				self.loadingScreen.removeLoading();
+				//commonVariables.loadingScreen.removeLoading();
 			}
 
 		},
@@ -102,30 +101,30 @@ define(["features/api/featuresAPI", "features/features",  "application/applicati
 		getFeaturesUpdate : function(header, callback) {
 			var self = this;
 			try {
-				self.loadingScreen.showLoading();
+				//commonVariables.loadingScreen.showLoading();
 				self.featuresAPI.features(header,
 					function(response) {
 						if (response !== null) {
-							self.loadingScreen.removeLoading();
+							//commonVariables.loadingScreen.removeLoading();
 							callback(response);
 						} else {
-							self.loadingScreen.removeLoading();
+							//commonVariables.loadingScreen.removeLoading();
 							callback({ "status" : "service failure"});
 						}
 					},
 
 					function(textStatus) {
-						self.loadingScreen.removeLoading();
+						//commonVariables.loadingScreen.removeLoading();
 					}
 				);
 			} catch(exception) {
-				self.loadingScreen.removeLoading();
+				//commonVariables.loadingScreen.removeLoading();
 			}
 		},
 		
 		showLoad : function(){
 			var self = this;
-			self.loadingScreen.showLoading();
+			//commonVariables.loadingScreen.showLoading();
 		},
 		
 		scrollbarEnable : function(){
@@ -188,7 +187,7 @@ define(["features/api/featuresAPI", "features/features",  "application/applicati
 
 		hideLoad : function(){
 			var self = this;
-			self.loadingScreen.removeLoading();
+			//commonVariables.loadingScreen.removeLoading();
 		},
 
 		/***
