@@ -230,7 +230,7 @@ public class ActionService implements ActionServiceConstant {
 	@POST
 	@Path("/stopServer")
 	@Produces(MediaType.APPLICATION_JSON)
-	 public Response startServer(@Context HttpServletRequest request) throws PhrescoException  {
+	 public Response stopServer(@Context HttpServletRequest request) throws PhrescoException  {
 
 		ActionFunction actionFunction = new ActionFunction();
 		ActionResponse response = new ActionResponse();

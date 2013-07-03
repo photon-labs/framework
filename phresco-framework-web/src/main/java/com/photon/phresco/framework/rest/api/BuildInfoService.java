@@ -104,6 +104,7 @@ public class BuildInfoService extends RestBase implements FrameworkConstants, Se
 			@QueryParam(REST_QUERY_BUILD_NUMBER) int buildNumber) {
 		InputStream fileInputStream = null;
 		ResponseInfo responseData = new ResponseInfo();
+		StringBuilder builder = new StringBuilder();
 		try {
 			File buildInfoFile = new File(Utility.getProjectHome() + appDirName + File.separator + BUILD_DIR
 					+ File.separator + BUILD_INFO_FILE_NAME);
@@ -111,7 +112,6 @@ public class BuildInfoService extends RestBase implements FrameworkConstants, Se
 			BuildInfo buildInfo = applicationManager.getBuildInfo(buildNumber, buildInfoFile.toString());
 			if (buildInfo.getBuildNo() == buildNumber) {
 				String deliverables = buildInfo.getDeliverables();
-				StringBuilder builder = new StringBuilder();
 				String fileName = buildInfo.getBuildName();
 				if (StringUtils.isEmpty(deliverables)) {
 					builder.append(Utility.getProjectHome() + appDirName);
@@ -135,9 +135,9 @@ public class BuildInfoService extends RestBase implements FrameworkConstants, Se
 					}
 				}
 				fileInputStream = new FileInputStream(new File(builder.toString()));
-				return Response.status(Status.OK).entity(fileInputStream).header("Access-Control-Allow-Origin", "*")
-						.build();
 			}
+			return Response.status(Status.OK).entity(fileInputStream).header("Access-Control-Allow-Origin", "*")
+			.build();
 		} catch (FileNotFoundException e) {
 			ResponseInfo finalOutput = responseDataEvaluation(responseData, e, "Zip Download Failed", null);
 			return Response.status(Status.NOT_FOUND).entity(finalOutput).header("Access-Control-Allow-Origin", "*")
@@ -147,7 +147,6 @@ public class BuildInfoService extends RestBase implements FrameworkConstants, Se
 			return Response.status(Status.NOT_FOUND).entity(finalOutput).header("Access-Control-Allow-Origin", "*")
 					.build();
 		}
-		return null;
 	}
 
 	/**
@@ -229,6 +228,7 @@ public class BuildInfoService extends RestBase implements FrameworkConstants, Se
 	private  boolean isConnectionAlive(String protocol, String host, int port) {
 		boolean isAlive = true;
 		try {
+			Thread.sleep(3000);
 			URL url = new URL(protocol, host, port, "");
 			URLConnection connection = url.openConnection();
 			connection.connect();

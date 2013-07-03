@@ -19,6 +19,7 @@ package com.photon.phresco.framework.rest.api;
 
 import static org.junit.Assert.fail;
 
+import java.io.File;
 import java.util.Arrays;
 import java.util.List;
 
@@ -31,6 +32,7 @@ import org.springframework.mock.web.MockHttpServletRequest;
 import com.photon.phresco.exception.PhrescoException;
 import com.photon.phresco.framework.rest.api.util.ActionResponse;
 import com.photon.phresco.service.client.api.ServiceManager;
+import com.photon.phresco.util.Utility;
 import com.sun.jersey.api.client.Client;
 import com.sun.jersey.api.client.config.ClientConfig;
 import com.sun.jersey.api.client.config.DefaultClientConfig;
@@ -46,6 +48,9 @@ public class RestBaseTest extends RestBase {
 	protected String appCode = "";
 	protected String techId = "";
 	protected String projectId = "";
+	protected String appId = "";
+	protected String dotPhrescoFolder = "";
+	protected String projectInfo = "";
 	
 	public RestBaseTest() {
 		userId = "admin";
@@ -56,11 +61,23 @@ public class RestBaseTest extends RestBase {
 		appCode = "TestProject";
 		techId = "tech-java-webservice";
 		projectId = "TestProject";
-		
+		appId    = "TestProject";
+		dotPhrescoFolder = ".phresco";
+		projectInfo = "project.info";
 	}
 	
 	protected List<String> getCustomer() {
 		return Arrays.asList("photon");
+	}
+	
+	protected File getProjectInfoPath() {
+		File projectHome = new File(Utility.getProjectHome() + File.separator + appDirName + File.separator + dotPhrescoFolder + File.separator+ projectInfo);
+		return projectHome;
+	}
+	
+	protected File getTempPath() {
+		File projectHome = new File(Utility.getProjectHome() + File.separator + appDirName + File.separator + dotPhrescoFolder + File.separator+ "temp.info");
+		return projectHome;
 	}
 	
 	protected Client createClient() {

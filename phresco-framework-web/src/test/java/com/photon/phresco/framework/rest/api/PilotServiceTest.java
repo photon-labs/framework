@@ -21,7 +21,7 @@ import static org.junit.Assert.assertEquals;
 
 import java.util.List;
 
-import junit.framework.Assert;
+import javax.ws.rs.core.Response;
 
 import org.junit.Test;
 
@@ -31,14 +31,43 @@ import com.photon.phresco.exception.PhrescoException;
 
 public class PilotServiceTest extends RestBaseTest {
 	
+	PilotService pilotservice = new PilotService();
+	
 	public PilotServiceTest() {
 		super();
 	}
 	
 	@Test
+	public void listPilots() {
+		Response listLoginFail = pilotservice.list(customerId, techId, "sample");
+		assertEquals(400 , listLoginFail.getStatus());
+		Response list = pilotservice.list(customerId, techId, userId);
+		assertEquals(200 , list.getStatus());
+//		Response listFail = pilotservice.list(null, null, userId);
+//		ResponseInfo<List<ApplicationInfo>> e = (ResponseInfo<List<ApplicationInfo>>)listFail.getEntity();
+//		System.out.println(e.getData());
+//		assertEquals(204 , listFail.getStatus());
+	}
+	
+	@Test
+	public void dependentPilots() throws PhrescoException {
+		
+		Response dependentServers = pilotservice.getDependentPilot(userId, "d17d8389-3201-4a5f-888a-e5c0a0c68e18", "servers");
+		assertEquals(200 , dependentServers.getStatus());
+		Response dependentDb = pilotservice.getDependentPilot(userId, "d17d8389-3201-4a5f-888a-e5c0a0c68e18", "databases");
+		assertEquals(200 , dependentDb.getStatus());
+		Response dependentWebservices = pilotservice.getDependentPilot(userId, "PHTN_html5_jquery_mobilewidget_eshop", "webservices");
+		assertEquals(200 , dependentWebservices.getStatus());
+		Response listFail = pilotservice.getDependentPilot(userId, "d17d8389-3201-4a5f-888a-e5c0a0c68e18", "rest");
+		assertEquals(400 , listFail.getStatus());
+	}
+	
+	@Test
 	public void testPreBuiltProjects() throws PhrescoException {
-		List<ProjectInfo>  prebuilts = serviceManager.getPrebuiltProjects("photon");
-		Assert.assertNotNull(prebuilts);
-		assertEquals(20 , prebuilts.size());
+		Response preBuiltProjectsLoginFail = pilotservice.preBuiltProjects("sample","photon");
+		assertEquals(400 , preBuiltProjectsLoginFail.getStatus());
+		Response preBuiltProjects = pilotservice.preBuiltProjects("admin","photon");
+		ResponseInfo<List<ProjectInfo>> entity = (ResponseInfo<List<ProjectInfo>>) preBuiltProjects.getEntity();
+		assertEquals(20 , entity.getData().size());
 	}
 }

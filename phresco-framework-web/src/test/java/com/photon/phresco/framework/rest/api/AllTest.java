@@ -24,17 +24,22 @@ import org.junit.runners.Suite.SuiteClasses;
 @RunWith(Suite.class)
 @SuiteClasses({LoginServiceTest.class,
 	ProjectServiceTest.class,
+	CodeValidationServiceTest.class,
 	ConfigurationServiceTest.class,
-	BuildInfoTest.class,
-	ParameterServiceTest.class,
 	PilotServiceTest.class,
 	UnitServiceTest.class,
 	ManualTestServiceTest.class,
 	CIJobTemplateServiceTest.class,
 	RepositoryServiceTest.class,
-	ParameterServiceTest.class}
+	ParameterServiceTest.class,
+	DownloadServiceTest.class,
+	TechnologyServiceTest.class,
+	CustomerServiceTest.class
+	}
 )
 
 public class AllTest {
 	// intentionally blank. All tests were added via annotations
 }
+
+//@SuiteClasses({	LoginServiceTest.class, ProjectServiceTest.class, UnitServiceTest.class, CustomerServiceTest.class, IpaDownloadService.class}

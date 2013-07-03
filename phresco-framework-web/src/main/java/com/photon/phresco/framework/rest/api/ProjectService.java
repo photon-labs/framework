@@ -78,7 +78,7 @@ import com.sun.jersey.api.client.ClientResponse.Status;
 /**
  * The Class ProjectService.
  */
-@Path("/project")
+@Path(ServiceConstants.REST_API_PROJECT)
 public class ProjectService extends RestBase implements FrameworkConstants, ServiceConstants {
 
 	/**
@@ -88,7 +88,7 @@ public class ProjectService extends RestBase implements FrameworkConstants, Serv
 	 * @return the response
 	 */
 	@GET
-	@Path("/list")
+	@Path(REST_API_PROJECTLIST)
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response list(@QueryParam(REST_QUERY_CUSTOMERID) String customerId) {
 		ResponseInfo<List<ProjectInfo>> responseData = new ResponseInfo<List<ProjectInfo>>();
@@ -100,11 +100,11 @@ public class ProjectService extends RestBase implements FrameworkConstants, Serv
 			}
 			ResponseInfo<List<ProjectInfo>> finalOutput = responseDataEvaluation(responseData, null,
 					"Project List Successfully", projects);
-			return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
+			return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN,ALL_HEADER).build();
 		} catch (PhrescoException e) {
 			ResponseInfo<List<ProjectInfo>> finalOutput = responseDataEvaluation(responseData, e,
-					"Project List failed", null);
-			return Response.status(Status.BAD_REQUEST).entity(finalOutput).header("Access-Control-Allow-Origin", "*")
+					PROJECT_LIST_FAILED, null);
+			return Response.status(Status.BAD_REQUEST).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN,ALL_HEADER)
 					.build();
 		}
 	}
@@ -117,7 +117,7 @@ public class ProjectService extends RestBase implements FrameworkConstants, Serv
 	 * @return the response
 	 */
 	@GET
-	@Path("/appinfos")
+	@Path(REST_API_APPINFOS)
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response appinfoList(@QueryParam(REST_QUERY_CUSTOMERID) String customerId,
 			@QueryParam(REST_QUERY_PROJECTID) String projectId) {
@@ -127,18 +127,18 @@ public class ProjectService extends RestBase implements FrameworkConstants, Serv
 			if (CollectionUtils.isNotEmpty(appInfos)) {
 				ResponseInfo<List<ProjectInfo>> finalOutput = responseDataEvaluation(responseData, null,
 						"Application infos returned Successfully", appInfos);
-				return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*")
+				return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN,ALL_HEADER)
 						.build();
 			}
 		} catch (PhrescoException e) {
 			ResponseInfo<List<ProjectInfo>> finalOutput = responseDataEvaluation(responseData, e,
 					"Application info failed", null);
-			return Response.status(Status.BAD_REQUEST).entity(finalOutput).header("Access-Control-Allow-Origin", "*")
+			return Response.status(Status.BAD_REQUEST).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN,ALL_HEADER)
 					.build();
 		}
 		ResponseInfo<List<ProjectInfo>> finalOutput = responseDataEvaluation(responseData, null,
 				"No application to return", null);
-		return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
+		return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN,ALL_HEADER).build();
 	}
 
 	/**
@@ -149,7 +149,7 @@ public class ProjectService extends RestBase implements FrameworkConstants, Serv
 	 * @return the response
 	 */
 	@POST
-	@Path("/create")
+	@Path(REST_API_PROJECT_CREATE)
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response createProject(ProjectInfo projectinfo, @QueryParam(REST_QUERY_USERID) String userId) {
@@ -157,21 +157,24 @@ public class ProjectService extends RestBase implements FrameworkConstants, Serv
 		try {
 			ServiceManager serviceManager = CONTEXT_MANAGER_MAP.get(userId);
 			if (serviceManager == null) {
-				ResponseInfo<ProjectInfo> finalOutput = responseDataEvaluation(responseData, null, "UnAuthorized User",
+				ResponseInfo<ProjectInfo> finalOutput = responseDataEvaluation(responseData, null, UNAUTHORIZED_USER,
 						null);
-				return Response.status(Status.BAD_REQUEST).entity(finalOutput).header("Access-Control-Allow-Origin",
+				return Response.status(Status.BAD_REQUEST).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN,
 						"*").build();
 			}
-			ProjectInfo projectInfo = PhrescoFrameworkFactory.getProjectManager().create(projectinfo, serviceManager);
-			ResponseInfo<ProjectInfo> finalOutput = responseDataEvaluation(responseData, null,
-					"Project created Successfully", projectInfo);
-			return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
+			if (projectinfo != null) {
+				ProjectInfo projectInfo = PhrescoFrameworkFactory.getProjectManager().create(projectinfo, serviceManager);
+				ResponseInfo<ProjectInfo> finalOutput = responseDataEvaluation(responseData, null,
+						PROJECT_CREATED_SUCCESSFULLY, projectInfo);
+				return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN,ALL_HEADER).build();
+			}
 		} catch (PhrescoException e) {
-			ResponseInfo<ProjectInfo> finalOutput = responseDataEvaluation(responseData, e, "Project creation failed",
+			ResponseInfo<ProjectInfo> finalOutput = responseDataEvaluation(responseData, e, PROJECT_CREATED_FAILED,
 					null);
-			return Response.status(Status.BAD_REQUEST).entity(finalOutput).header("Access-Control-Allow-Origin", "*")
+			return Response.status(Status.BAD_REQUEST).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN,ALL_HEADER)
 					.build();
 		}
+		return null;
 	}
 
 	/**
@@ -182,7 +185,7 @@ public class ProjectService extends RestBase implements FrameworkConstants, Serv
 	 * @return the response
 	 */
 	@GET
-	@Path("/edit")
+	@Path(REST_API_PROJECT_EDIT)
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response editProject(@QueryParam(REST_QUERY_PROJECTID) String projectId,
 			@QueryParam(REST_QUERY_CUSTOMERID) String customerId) {
@@ -192,11 +195,11 @@ public class ProjectService extends RestBase implements FrameworkConstants, Serv
 			ProjectManager projectManager = PhrescoFrameworkFactory.getProjectManager();
 			projectInfo = projectManager.getProject(projectId, customerId);
 			ResponseInfo<ProjectInfo> finalOutput = responseDataEvaluation(responseData, null,
-					"Project edited Successfully", projectInfo);
-			return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
+					PROJECT_EDITED_SUCCESSFULLY, projectInfo);
+			return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN,ALL_HEADER).build();
 		} catch (PhrescoException e) {
-			ResponseInfo<ProjectInfo> finalOutput = responseDataEvaluation(responseData, e, "Project edit failed", null);
-			return Response.status(Status.BAD_REQUEST).entity(finalOutput).header("Access-Control-Allow-Origin", "*")
+			ResponseInfo<ProjectInfo> finalOutput = responseDataEvaluation(responseData, e, PROJECT_EDITED_FAILED, null);
+			return Response.status(Status.BAD_REQUEST).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN,ALL_HEADER)
 					.build();
 		}
 	}
@@ -209,7 +212,7 @@ public class ProjectService extends RestBase implements FrameworkConstants, Serv
 	 * @return the response
 	 */
 	@PUT
-	@Path("/updateproject")
+	@Path(REST_API_UPDATEPROJECT)
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response updateProject(ProjectInfo projectinfo, @QueryParam(REST_QUERY_USERID) String userId) {
@@ -217,20 +220,19 @@ public class ProjectService extends RestBase implements FrameworkConstants, Serv
 		try {
 			ServiceManager serviceManager = CONTEXT_MANAGER_MAP.get(userId);
 			if (serviceManager == null) {
-				ResponseInfo<ProjectInfo> finalOutput = responseDataEvaluation(responseData, null, "UnAuthorized User",
+				ResponseInfo<ProjectInfo> finalOutput = responseDataEvaluation(responseData, null, UNAUTHORIZED_USER,
 						null);
-				return Response.status(Status.BAD_REQUEST).entity(finalOutput).header("Access-Control-Allow-Origin",
+				return Response.status(Status.BAD_REQUEST).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN,
 						"*").build();
 			}
-			ProjectInfo projectInfo = PhrescoFrameworkFactory.getProjectManager().update(projectinfo, serviceManager,
-					null);
+			ProjectInfo projectInfo = PhrescoFrameworkFactory.getProjectManager().update(projectinfo, serviceManager, null);
 			ResponseInfo<ProjectInfo> finalOutput = responseDataEvaluation(responseData, null,
-					"Project updated Successfully", projectInfo);
-			return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
+					PROJECT_UPDATED_SUCCESSFULLY, projectInfo);
+			return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN,ALL_HEADER).build();
 		} catch (PhrescoException e) {
-			ResponseInfo<ProjectInfo> finalOutput = responseDataEvaluation(responseData, e, "Project update failed",
+			ResponseInfo<ProjectInfo> finalOutput = responseDataEvaluation(responseData, e, PROJECT_UPDATED_FAILED,
 					null);
-			return Response.status(Status.BAD_REQUEST).entity(finalOutput).header("Access-Control-Allow-Origin", "*")
+			return Response.status(Status.BAD_REQUEST).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN,ALL_HEADER)
 					.build();
 		}
 	}
@@ -245,7 +247,7 @@ public class ProjectService extends RestBase implements FrameworkConstants, Serv
 	 * @return the response
 	 */
 	@PUT
-	@Path("/updateFeature")
+	@Path(REST_API_UPDATE_FEATRUE)
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response updateApplicationFeatures(List<SelectedFeature> selectedFeaturesFromUI,
@@ -262,8 +264,8 @@ public class ProjectService extends RestBase implements FrameworkConstants, Serv
 		try {
 			ServiceManager serviceManager = CONTEXT_MANAGER_MAP.get(userId);
 			if (serviceManager == null) {
-				ResponseInfo finalOutput = responseDataEvaluation(responseData, null, "UnAuthorized User", null);
-				return Response.status(Status.BAD_REQUEST).entity(finalOutput).header("Access-Control-Allow-Origin",
+				ResponseInfo finalOutput = responseDataEvaluation(responseData, null, UNAUTHORIZED_USER, null);
+				return Response.status(Status.BAD_REQUEST).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN,
 						"*").build();
 			}
 			StringBuilder sbs = null;
@@ -321,10 +323,8 @@ public class ProjectService extends RestBase implements FrameworkConstants, Serv
 
 			// To write Deleted Features into
 			// phresco-application-Handler-info.xml
-			List<ArtifactGroup> removedModules = getRemovedModules(applicationInfo, selectedFeaturesFromUI,
-					serviceManager);
-			Type jsonType = new TypeToken<Collection<ArtifactGroup>>() {
-			}.getType();
+			List<ArtifactGroup> removedModules = getRemovedModules(applicationInfo, selectedFeaturesFromUI,	serviceManager);
+			Type jsonType = new TypeToken<Collection<ArtifactGroup>>() {}.getType();
 			String deletedFeatures = gson.toJson(removedModules, jsonType);
 			applicationHandler.setDeletedFeatures(deletedFeatures);
 
@@ -338,20 +338,20 @@ public class ProjectService extends RestBase implements FrameworkConstants, Serv
 			ProjectManager projectManager = PhrescoFrameworkFactory.getProjectManager();
 			projectManager.update(projectinfo, serviceManager, appDirName);
 		} catch (FileNotFoundException e) {
-			ResponseInfo finalOutput = responseDataEvaluation(responseData, e, "update Feature failed", null);
-			return Response.status(Status.BAD_REQUEST).entity(finalOutput).header("Access-Control-Allow-Origin", "*")
+			ResponseInfo finalOutput = responseDataEvaluation(responseData, e, FEATURE_UPDATE_FAILED, null);
+			return Response.status(Status.BAD_REQUEST).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN,ALL_HEADER)
 					.build();
 		} catch (PhrescoException e) {
-			ResponseInfo finalOutput = responseDataEvaluation(responseData, e, "update Feature failed", null);
-			return Response.status(Status.BAD_REQUEST).entity(finalOutput).header("Access-Control-Allow-Origin", "*")
+			ResponseInfo finalOutput = responseDataEvaluation(responseData, e, FEATURE_UPDATE_FAILED, null);
+			return Response.status(Status.BAD_REQUEST).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN,ALL_HEADER)
 					.build();
 		} catch (IOException e) {
-			ResponseInfo finalOutput = responseDataEvaluation(responseData, e, "update Feature failed", null);
-			return Response.status(Status.BAD_REQUEST).entity(finalOutput).header("Access-Control-Allow-Origin", "*")
+			ResponseInfo finalOutput = responseDataEvaluation(responseData, e, FEATURE_UPDATE_FAILED, null);
+			return Response.status(Status.BAD_REQUEST).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN,ALL_HEADER)
 					.build();
 		}
-		ResponseInfo finalOutput = responseDataEvaluation(responseData, null, "Features updated successfully", null);
-		return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
+		ResponseInfo finalOutput = responseDataEvaluation(responseData, null, FEATURE_UPDATE_SUCCESS, null);
+		return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN,ALL_HEADER).build();
 
 	}
 
@@ -365,7 +365,7 @@ public class ProjectService extends RestBase implements FrameworkConstants, Serv
 	 * @return the response
 	 */
 	@PUT
-	@Path("/updateApplication")
+	@Path(REST_UPDATE_APPLICATION)
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response updateApplication(@QueryParam(REST_QUERY_OLD_APPDIR_NAME) String oldAppDirName,
@@ -378,8 +378,8 @@ public class ProjectService extends RestBase implements FrameworkConstants, Serv
 			ServiceManager serviceManager = CONTEXT_MANAGER_MAP.get(userId);
 			if (serviceManager == null) {
 				ResponseInfo<ApplicationInfo> finalOutput = responseDataEvaluation(responseData, null,
-						"UnAuthorized User", null);
-				return Response.status(Status.BAD_REQUEST).entity(finalOutput).header("Access-Control-Allow-Origin",
+						UNAUTHORIZED_USER, null);
+				return Response.status(Status.BAD_REQUEST).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN,
 						"*").build();
 			}
 			List<DownloadInfo> selectedServerGroup = new ArrayList<DownloadInfo>();
@@ -467,7 +467,7 @@ public class ProjectService extends RestBase implements FrameworkConstants, Serv
 			StringBuilder sbs = null;
 			if (StringUtils.isNotEmpty(oldAppDirName)) {
 				sbs = new StringBuilder(Utility.getProjectHome()).append(oldAppDirName).append(File.separator).append(
-						Constants.DOT_PHRESCO_FOLDER).append(File.separator).append("project.info");
+						Constants.DOT_PHRESCO_FOLDER).append(File.separator).append(PROJECT_INFO);
 			}
 			bufferedReader = new BufferedReader(new FileReader(sbs.toString()));
 			Type type = new TypeToken<ProjectInfo>() {
@@ -487,25 +487,25 @@ public class ProjectService extends RestBase implements FrameworkConstants, Serv
 			}
 		} catch (PhrescoException e) {
 			ResponseInfo<ApplicationInfo> finalOutput = responseDataEvaluation(responseData, e,
-					"Application update Failed", null);
-			return Response.status(Status.EXPECTATION_FAILED).entity(finalOutput).header("Access-Control-Allow-Origin",
+					APPLICATION_UPDATE_FAILED, null);
+			return Response.status(Status.EXPECTATION_FAILED).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN,
 					"*").build();
 		} catch (FileNotFoundException e) {
 			ResponseInfo<ApplicationInfo> finalOutput = responseDataEvaluation(responseData, e,
-					"Application update Failed", null);
-			return Response.status(Status.EXPECTATION_FAILED).entity(finalOutput).header("Access-Control-Allow-Origin",
+					APPLICATION_UPDATE_FAILED, null);
+			return Response.status(Status.EXPECTATION_FAILED).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN,
 					"*").build();
 		} catch (IOException e) {
 			ResponseInfo<ApplicationInfo> finalOutput = responseDataEvaluation(responseData, e,
-					"Application update Failed", null);
-			return Response.status(Status.EXPECTATION_FAILED).entity(finalOutput).header("Access-Control-Allow-Origin",
+					APPLICATION_UPDATE_FAILED, null);
+			return Response.status(Status.EXPECTATION_FAILED).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN,
 					"*").build();
 		} finally {
 			Utility.closeReader(bufferedReader);
 		}
 		ResponseInfo<ApplicationInfo> finalOutput = responseDataEvaluation(responseData, null,
-				"Application updated successfully", appInfo);
-		return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
+				APPLICATION_UPDATED_SUCCESSFULLY, appInfo);
+		return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN,ALL_HEADER).build();
 	}
 
 	/**
@@ -515,11 +515,11 @@ public class ProjectService extends RestBase implements FrameworkConstants, Serv
 	 * @return the response
 	 */
 	@GET
-	@Path("/editApplication")
+	@Path(REST_API_EDIT_APPLICATION)
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response editApplication(@QueryParam(REST_QUERY_APPDIR_NAME) String appDirName) {
-		File projectInfoFile = new File(Utility.getProjectHome() + appDirName + File.separator + ".phresco"
-				+ File.separator + "project.info");
+		File projectInfoFile = new File(Utility.getProjectHome() + appDirName + File.separator + FOLDER_DOT_PHRESCO
+				+ File.separator + PROJECT_INFO);
 		BufferedReader reader = null;
 		ResponseInfo<ProjectInfo> responseData = new ResponseInfo<ProjectInfo>();
 		try {
@@ -529,15 +529,15 @@ public class ProjectService extends RestBase implements FrameworkConstants, Serv
 			for (ApplicationInfo applicationInfo : appInfos) {
 				if (applicationInfo.getAppDirName().equals(appDirName)) {
 					ResponseInfo<ProjectInfo> finalOutput = responseDataEvaluation(responseData, null,
-							"Application edited Successfully", projectInfo);
-					return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*")
+							APPLICATION_EDITED_SUCCESSFULLY, projectInfo);
+					return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN,ALL_HEADER)
 							.build();
 				}
 			}
 		} catch (FileNotFoundException e) {
-			ResponseInfo<ProjectInfo> finalOutput = responseDataEvaluation(responseData, e, "Application edit Failed",
+			ResponseInfo<ProjectInfo> finalOutput = responseDataEvaluation(responseData, e, APPLICATION_EDITED_FAILED,
 					null);
-			return Response.status(Status.NOT_FOUND).entity(finalOutput).header("Access-Control-Allow-Origin", "*")
+			return Response.status(Status.NOT_FOUND).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN,ALL_HEADER)
 					.build();
 		}
 		return null;
@@ -550,7 +550,7 @@ public class ProjectService extends RestBase implements FrameworkConstants, Serv
 	 * @return the response
 	 */
 	@DELETE
-	@Path("/delete")
+	@Path(REST_API_PROJECT_DELETE)
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response deleteproject(List<String> appDirnames) {
@@ -572,25 +572,25 @@ public class ProjectService extends RestBase implements FrameworkConstants, Serv
 						boolean connectionAlive = Utility.isConnectionAlive(HTTP_PROTOCOL, LOCALHOST, port);
 						if (connectionAlive) {
 							ResponseInfo finalOutput = responseDataEvaluation(responseData, null,
-									"Unable to delete the Application", null);
+									UNABLE_APPLICATION_DELETE, null);
 							return Response.status(Status.BAD_REQUEST).entity(finalOutput).header(
-									"Access-Control-Allow-Origin", "*").build();
+									ACCESS_CONTROL_ALLOW_ORIGIN,ALL_HEADER).build();
 						}
 					}
 				}
 			}
 			projectManager.delete(appDirnames);
 		} catch (PhrescoException e) {
-			ResponseInfo finalOutput = responseDataEvaluation(responseData, e, "Unable to delete the Application", null);
-			return Response.status(Status.EXPECTATION_FAILED).entity(finalOutput).header("Access-Control-Allow-Origin",
+			ResponseInfo finalOutput = responseDataEvaluation(responseData, e,UNABLE_APPLICATION_DELETE, null);
+			return Response.status(Status.EXPECTATION_FAILED).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN,
 					"*").build();
 		} catch (FileNotFoundException e) {
-			ResponseInfo finalOutput = responseDataEvaluation(responseData, e, "Unable to delete the Application", null);
-			return Response.status(Status.EXPECTATION_FAILED).entity(finalOutput).header("Access-Control-Allow-Origin",
+			ResponseInfo finalOutput = responseDataEvaluation(responseData, e, UNABLE_APPLICATION_DELETE, null);
+			return Response.status(Status.EXPECTATION_FAILED).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN,
 					"*").build();
 		}
-		ResponseInfo finalOutput = responseDataEvaluation(responseData, null, "Application deleted Successfully", null);
-		return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
+		ResponseInfo finalOutput = responseDataEvaluation(responseData, null, APPLICATION_DELETED_SUCCESSFULLY, null);
+		return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN,ALL_HEADER).build();
 	}
 
 	/**
@@ -600,7 +600,7 @@ public class ProjectService extends RestBase implements FrameworkConstants, Serv
 	 * @return the permission
 	 */
 	@GET
-	@Path("/getPermission")
+	@Path(REST_API_GET_PERMISSION)
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response getPermission(@QueryParam(REST_QUERY_USERID) String userId) {
 		ResponseInfo<UserPermissions> responseData = new ResponseInfo<UserPermissions>();
@@ -610,17 +610,17 @@ public class ProjectService extends RestBase implements FrameworkConstants, Serv
 			FrameworkUtil futil = new FrameworkUtil();
 			UserPermissions userPermissions = futil.getUserPermissions(serviceManager, user);
 			ResponseInfo<UserPermissions> finalOutput = responseDataEvaluation(responseData, null,
-					"Permission for user returned Successfully", userPermissions);
-			return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
+					PERMISSION_FOR_USER_RETURNED_SUCCESSFULLY, userPermissions);
+			return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN,ALL_HEADER).build();
 		} catch (PhrescoWebServiceException e) {
 			ResponseInfo<UserPermissions> finalOutput = responseDataEvaluation(responseData, e,
-					"Permission for user not fetched", null);
-			return Response.status(Status.EXPECTATION_FAILED).entity(finalOutput).header("Access-Control-Allow-Origin",
+					PERMISSION_FOR_USER_NOT_RETURNED, null);
+			return Response.status(Status.EXPECTATION_FAILED).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN,
 					"*").build();
 		} catch (PhrescoException e) {
 			ResponseInfo<UserPermissions> finalOutput = responseDataEvaluation(responseData, e,
-					"Permission for user not fetched", null);
-			return Response.status(Status.EXPECTATION_FAILED).entity(finalOutput).header("Access-Control-Allow-Origin",
+					PERMISSION_FOR_USER_NOT_RETURNED, null);
+			return Response.status(Status.EXPECTATION_FAILED).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN,
 					"*").build();
 		}
 	}
@@ -738,7 +738,6 @@ public class ProjectService extends RestBase implements FrameworkConstants, Serv
 		List<String> selectedFeaturesId = appInfo.getSelectedModules();
 		List<String> selectedJSLibsId = appInfo.getSelectedJSLibs();
 		List<String> selectedComponentsId = appInfo.getSelectedComponents();
-		Gson gson = new Gson();
 		List<String> newlySelectedModuleGrpIds = new ArrayList<String>();
 		if (CollectionUtils.isNotEmpty(jsonData)) {
 			for (SelectedFeature obj : jsonData) {
@@ -747,13 +746,13 @@ public class ProjectService extends RestBase implements FrameworkConstants, Serv
 		}
 		List<ArtifactGroup> artifactGroups = new ArrayList<ArtifactGroup>();
 		if (CollectionUtils.isNotEmpty(selectedFeaturesId)) {
-			addArtifactGroups(selectedFeaturesId, gson, newlySelectedModuleGrpIds, artifactGroups, serviceManager);
+			addArtifactGroups(selectedFeaturesId, newlySelectedModuleGrpIds, artifactGroups, serviceManager);
 		}
 		if (CollectionUtils.isNotEmpty(selectedJSLibsId)) {
-			addArtifactGroups(selectedJSLibsId, gson, newlySelectedModuleGrpIds, artifactGroups, serviceManager);
+			addArtifactGroups(selectedJSLibsId, newlySelectedModuleGrpIds, artifactGroups, serviceManager);
 		}
 		if (CollectionUtils.isNotEmpty(selectedComponentsId)) {
-			addArtifactGroups(selectedComponentsId, gson, newlySelectedModuleGrpIds, artifactGroups, serviceManager);
+			addArtifactGroups(selectedComponentsId, newlySelectedModuleGrpIds, artifactGroups, serviceManager);
 		}
 		return artifactGroups;
 	}
@@ -768,7 +767,7 @@ public class ProjectService extends RestBase implements FrameworkConstants, Serv
 	 * @param serviceManager the service manager
 	 * @throws PhrescoException the phresco exception
 	 */
-	private void addArtifactGroups(List<String> selectedFeaturesIds, Gson gson, List<String> newlySelectedModuleGrpIds,
+	private void addArtifactGroups(List<String> selectedFeaturesIds, List<String> newlySelectedModuleGrpIds,
 			List<ArtifactGroup> artifactGroups, ServiceManager serviceManager) throws PhrescoException {
 		for (String selectedfeatures : selectedFeaturesIds) {
 			ArtifactInfo artifactInfo = serviceManager.getArtifactInfo(selectedfeatures);

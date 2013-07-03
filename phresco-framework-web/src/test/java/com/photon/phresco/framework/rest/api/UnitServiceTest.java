@@ -1,6 +1,7 @@
-package com.photon.phresco.framework.rest.api;
+	package com.photon.phresco.framework.rest.api;
 
 import java.io.IOException;
+import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.core.Response;
@@ -11,22 +12,33 @@ import org.junit.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
 
 import com.photon.phresco.exception.PhrescoException;
+import com.photon.phresco.framework.model.TestCase;
 import com.photon.phresco.framework.rest.api.util.ActionResponse;
 
 public class UnitServiceTest extends RestBaseTest {
 
 	QualityService service = new QualityService();
+	ActionService actionService = new ActionService();
 
 	@Test
 	public void testUnitTestReportOption() throws PhrescoException, IOException {
 		Response response = service.unit(appDirName, userId);
-		int status = response.getStatus();
-		Assert.assertEquals(200, status);
+		ResponseInfo<List<String>> responseInfo = (ResponseInfo<List<String>>) response.getEntity();
+		Assert.assertEquals(200, response.getStatus());
+		Assert.assertEquals("Parameter returned successfully", responseInfo.getMessage());
+	}
+	
+	
+	@Test
+	public void testUnitTestReportOptionWithoutDirName() throws PhrescoException, IOException {
+		Response response = service.unit("", userId);
+		ResponseInfo<List<String>> responseInfo = (ResponseInfo<List<String>>) response.getEntity();
+		Assert.assertEquals(400, response.getStatus());
+		Assert.assertEquals("Unable to get unit test report options", responseInfo.getMessage());
 	}
 	
 	@Test
 	public void trigerTest() throws PhrescoException {
-		ActionService actionService = new ActionService();
 		MockHttpServletRequest request = new MockHttpServletRequest();
 		request.setParameter("testAgainst", "java");
 		request.setParameter("customerId", customerId);
@@ -34,23 +46,118 @@ public class UnitServiceTest extends RestBaseTest {
 		request.setParameter("appId", appCode);
 		request.setParameter("username", userId);
 		HttpServletRequest httpServletRequest = (HttpServletRequest)request;
-		Response runUnitTest = actionService.runUnitTest(httpServletRequest);
-		ActionResponse entity = (ActionResponse) runUnitTest.getEntity();
+		Response response = actionService.runUnitTest(httpServletRequest);
+		ActionResponse entity = (ActionResponse) response.getEntity();
 		String uniqueKey = entity.getUniquekey();
 		readLog(uniqueKey);
+		Assert.assertEquals(200, response.getStatus());
 	}
+	
+	@Test
+	public void trigerTestWithoutAppId() throws PhrescoException {
+		MockHttpServletRequest request = new MockHttpServletRequest();
+		request.setParameter("testAgainst", "java");
+		request.setParameter("customerId", customerId);
+		request.setParameter("projectId", projectId);
+		request.setParameter("appId", "");
+		request.setParameter("username", userId);
+		HttpServletRequest httpServletRequest = (HttpServletRequest)request;
+		Response response = actionService.runUnitTest(httpServletRequest);
+		Assert.assertEquals(200, response.getStatus());
+	}
+	
+	
+	@Test
+	public void trigerTestWithoutCustomerId() throws PhrescoException {
+		MockHttpServletRequest request = new MockHttpServletRequest();
+		request.setParameter("testAgainst", "java");
+		request.setParameter("customerId", "");
+		request.setParameter("projectId", projectId);
+		request.setParameter("appId", appCode);
+		request.setParameter("username", userId);
+		HttpServletRequest httpServletRequest = (HttpServletRequest)request;
+		Response response = actionService.runUnitTest(httpServletRequest);
+		Assert.assertEquals(200, response.getStatus());
+	}
+	
+	@Test
+	public void trigerTestWithoutProjectId() throws PhrescoException {
+		MockHttpServletRequest request = new MockHttpServletRequest();
+		request.setParameter("testAgainst", "java");
+		request.setParameter("customerId", customerId);
+		request.setParameter("projectId", "");
+		request.setParameter("appId", appCode);
+		request.setParameter("username", userId);
+		HttpServletRequest httpServletRequest = (HttpServletRequest)request;
+		Response response = actionService.runUnitTest(httpServletRequest);
+		Assert.assertEquals(200, response.getStatus());
+	}
+	
+	@Test
+	public void trigerTestWithoutUserName() throws PhrescoException {
+		MockHttpServletRequest request = new MockHttpServletRequest();
+		request.setParameter("testAgainst", "java");
+		request.setParameter("customerId", customerId);
+		request.setParameter("projectId", "");
+		request.setParameter("appId", appCode);
+		request.setParameter("username", "");
+		HttpServletRequest httpServletRequest = (HttpServletRequest)request;
+		Response response = actionService.runUnitTest(httpServletRequest);
+		Assert.assertEquals(200, response.getStatus());
+	} 
+	
 
 	@Test
 	public void testGetTestSuites() throws PhrescoException, IOException {
 		Response response = service.getTestSuites(appDirName, "unit", "java", "");
-		int status = response.getStatus();
-		Assert.assertEquals(200, status);
+		ResponseInfo<List<String>> responseInfo =  (ResponseInfo<List<String>>) response.getEntity();
+		Assert.assertEquals(200, response.getStatus() );
+		Assert.assertEquals("Test Suites listed successfully", responseInfo.getMessage());
+	}
+	
+	
+	@Test
+	public void testGetTestSuitesWithOutAppDir() throws PhrescoException, IOException {
+		Response response = service.getTestSuites("", "unit", "java", "");
+		ResponseInfo<List<String>> responseInfo =  (ResponseInfo<List<String>>) response.getEntity();
+		Assert.assertEquals(400, response.getStatus() );
+		Assert.assertEquals("Test Suites listed failed", responseInfo.getMessage());
 	}
 
+	
 	@Test
-	public void testgetTestReports() throws PhrescoException, IOException {
-		Response response = service.getTestReports(appDirName, "unit", "java", "", "com.photon.phresco.service.TestCase");
-		int status = response.getStatus();
-		Assert.assertEquals(200, status);
+	public void testGetTestSuitesWithOutTestType() throws PhrescoException, IOException {
+		Response response = service.getTestSuites(appDirName, "", "java", "");
+		ResponseInfo<List<String>> responseInfo =  (ResponseInfo<List<String>>) response.getEntity();
+		Assert.assertEquals(200, response.getStatus() );
+		Assert.assertEquals("Test Result not available", responseInfo.getMessage());
 	}
+	
+	
+	@Test
+	public void testGetTestSuitesWithOutTestReport() throws PhrescoException, IOException {
+		Response response = service.getTestSuites(appDirName, "unit", "", "");
+		ResponseInfo<List<String>> responseInfo =  (ResponseInfo<List<String>>) response.getEntity();
+		Assert.assertEquals(400, response.getStatus() );
+		Assert.assertEquals("Test Suites listed failed", responseInfo.getMessage());
+	}
+	
+	
+	
+	@Test
+	public void testGetTestReports() throws PhrescoException, IOException {
+		Response response = service.getTestReports(appDirName, "unit", "java", "", "com.photon.phresco.service.TestCase");
+		ResponseInfo<List<TestCase>> responseInfo =  (ResponseInfo<List<TestCase>>) response.getEntity();
+		Assert.assertEquals(200, response.getStatus());
+		Assert.assertEquals("Test Cases listed successfully", responseInfo.getMessage());
+	}
+	
+	@Test
+	public void testGetTestReportsAll() throws PhrescoException, IOException {
+		Response response = service.getTestReports(appDirName, "unit", "java", "", "All");
+		ResponseInfo<List<TestCase>> responseInfo =  (ResponseInfo<List<TestCase>>) response.getEntity();
+		Assert.assertEquals(200, response.getStatus());
+		Assert.assertEquals("Test Cases listed successfully", responseInfo.getMessage());
+	}
+	
 }

@@ -349,6 +349,7 @@ public interface FrameworkConstants {
     String EDIT = "edit";
     String SHOW_ANDROID_DEVICE = "showDevice"; 
     String IMPORT_SQL = "importSql";
+    String PHRESCO_SQL_PATH = "phresco.sql.path";
     String ADDITIONAL_CONTEXT_PATH = "additional_context";
     String TOMCAT_DIR ="tomcat";
     String TOMCAT_LOGS_DIR = "logs";

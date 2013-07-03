@@ -48,24 +48,112 @@ public class ConfigurationServiceTest extends LoginServiceTest {
 	public void getAllEnvironmentsTest() {
 		Response response = configurationService.getAllEnvironments(appDirName);
 		Assert.assertEquals(200, response.getStatus());
+//		Response responseFail = configurationService.getAllEnvironments(null);
+//		ResponseInfo<List<Environment>> entity = (ResponseInfo<List<Environment>>)responseFail.getEntity();
+//		Assert.assertEquals(400, responseFail.getStatus());
+	}
+	
+	@Test
+	public void connectionAliveForEnv() throws PhrescoException {
+		String connectionUrl = "";
+		Response response = configurationService.connectionAliveCheck(connectionUrl);
+		Assert.assertEquals(400, response.getStatus());
 	}
 	
 	@Test
 	public void addEnvironmentTest() {
 		List<Environment> environments = new ArrayList<Environment>();
+		List<Configuration> configList = new ArrayList<Configuration>();
+		List<Configuration> configList1 = new ArrayList<Configuration>();
 		Environment env = new Environment();
 		env.setName("Production");
 		env.setDefaultEnv(true);
+		
+		Configuration prodConfigServer = new Configuration();
+		Configuration prodConfigDb = new Configuration();
+		prodConfigServer.setName("serverconfig");
+		prodConfigServer.setType("Server");
+		Properties propProd = new Properties();
+		propProd.setProperty("protocol", "http");
+		propProd.setProperty("host", "localhost");
+		propProd.setProperty("port", "8654");
+		propProd.setProperty("admin_username", "");
+		propProd.setProperty("admin_password", "");
+		propProd.setProperty("remoteDeployment", "");
+		propProd.setProperty("certificate", "");
+		propProd.setProperty("type", "Apache Tomcat");
+		propProd.setProperty("version", "6.0.x");
+		propProd.setProperty("deploy_dir", "c:\\wamp\\");
+		propProd.setProperty("context", "serverprtod");
+		prodConfigServer.setProperties(propProd);
+		
+		prodConfigDb.setName("db");
+		prodConfigDb.setType("Database");
+		Properties propProddb = new Properties();
+		propProddb.setProperty("host", "localhost");
+		propProddb.setProperty("port", "3306");
+		propProddb.setProperty("username", "root");
+		propProddb.setProperty("password", "");
+		propProddb.setProperty("dbname", "testjava");
+		propProddb.setProperty("type", "MySQL");
+		propProddb.setProperty("version", "5.5.1");
+		prodConfigDb.setProperties(propProddb);
+		
+		configList.add(prodConfigServer);
+		configList.add(prodConfigDb);
+		env.setConfigurations(configList);
 		Environment environment = new Environment();
 		environment.setName("Testing");
 		environment.setDefaultEnv(false);
+		
+		Configuration testConfigServer = new Configuration();
+		Configuration testConfigdb = new Configuration();
+		testConfigServer.setName("testconfig");
+		testConfigServer.setType("Server");
+		Properties testServer = new Properties();
+		testServer.setProperty("protocol", "http");
+		testServer.setProperty("host", "localhost");
+		testServer.setProperty("port", "6589");
+		testServer.setProperty("admin_username", "");
+		testServer.setProperty("admin_password", "");
+		testServer.setProperty("remoteDeployment", "");
+		testServer.setProperty("certificate", "");
+		testServer.setProperty("type", "Apache Tomcat");
+		testServer.setProperty("version", "6.0.x");
+		testServer.setProperty("deploy_dir", "c:\\wamp\\");
+		testServer.setProperty("context", "serverprtod");
+		testConfigServer.setProperties(testServer);
+		
+		testConfigdb.setName("testdb");
+		testConfigdb.setType("Database");
+		Properties propTestdb = new Properties();
+		propTestdb.setProperty("host", "localhost");
+		propTestdb.setProperty("port", "3306");
+		propTestdb.setProperty("username", "root");
+		propTestdb.setProperty("password", "");
+		propTestdb.setProperty("dbname", "testjava1");
+		propTestdb.setProperty("type", "MySQL");
+		propTestdb.setProperty("version", "5.5.1");
+		testConfigdb.setProperties(propTestdb);
+		
+		configList1.add(testConfigServer);
+		configList1.add(testConfigdb);
+		environment.setConfigurations(configList1);
+		
+		Environment devEnv = new Environment();
+		devEnv.setName("dev");
+		devEnv.setDefaultEnv(false);
+		devEnv.setDesc("dev for validation");
 		environments.add(env);
+		environments.add(devEnv);
 		environments.add(environment);
 		Response response = configurationService.addEnvironment(appDirName, environments);
 		ResponseInfo<List<Environment>> environmentList = (ResponseInfo<List<Environment>>) configurationService.getAllEnvironments(appDirName).getEntity();
 		List<Environment> data = environmentList.getData();
 		Assert.assertEquals(200, response.getStatus());
-		Assert.assertEquals(2, data.size());
+		Assert.assertEquals(3, data.size());
+		Response responseFail = configurationService.addEnvironment("", environments);
+		Assert.assertEquals(417, responseFail.getStatus());
 	}
 	
 	@Test
@@ -77,11 +165,23 @@ public class ConfigurationServiceTest extends LoginServiceTest {
 	}
 	
 	@Test
+	public void listEnvironmentTestFail() {
+		Response response = configurationService.listEnvironments(appDirName, "");
+		Assert.assertEquals(200, response.getStatus());
+		Response responseFail = configurationService.listEnvironments("", "Production");
+		Assert.assertEquals(417, responseFail.getStatus());
+	}
+	
+	@Test
 	public void deleteEnvTestFail() {
 		String envName = "Production";
 		Response response = configurationService.deleteEnv(appDirName, envName);
 		ResponseInfo<Environment> responseInfo = (ResponseInfo<Environment>) response.getEntity();
 		Assert.assertEquals("Default Environment can not be deleted", responseInfo.getMessage());
+		Response responseFail = configurationService.deleteEnv(appDirName, "");
+		Assert.assertEquals(417, responseFail.getStatus());
+		Response envFail = configurationService.deleteEnv("", envName);
+		Assert.assertEquals(417, envFail.getStatus());
 	}
 	
 	@Test
@@ -93,9 +193,14 @@ public class ConfigurationServiceTest extends LoginServiceTest {
 	
 	@Test
 	public void  getSettingsTemplateTest() {
-		String type = "Server";
-		Response response = configurationService.getSettingsTemplate(appDirName, techId, userId, type);
-		Assert.assertEquals(200, response.getStatus());
+		Response templateLoginFail = configurationService.getSettingsTemplate(appDirName, techId, "sample", "Server");
+		Assert.assertEquals(400, templateLoginFail.getStatus());
+		Response responseDb = configurationService.getSettingsTemplate(appDirName, techId, userId, "Database");
+		Assert.assertEquals(200, responseDb.getStatus());
+		Response responseServer = configurationService.getSettingsTemplate(appDirName, techId, userId, "Server");
+		Assert.assertEquals(200, responseServer.getStatus());
+		Response settingsTempFail = configurationService.getSettingsTemplate(appDirName, "", userId, "");
+		Assert.assertEquals(400, settingsTempFail.getStatus());
 	}
 	
 	@Test
@@ -154,11 +259,12 @@ public class ConfigurationServiceTest extends LoginServiceTest {
 	
 	@Test
 	public void getConfigTypeTest() {
+		Response responseLoginFail = configurationService.getConfigTypes(customerId, "sample", techId);
+		Assert.assertEquals(400, responseLoginFail.getStatus());
 		Response response = configurationService.getConfigTypes(customerId, userId, techId);
-		ResponseInfo<List<String>> responseInfo = (ResponseInfo<List<String>>) response.getEntity();
-		List<String> data = responseInfo.getData();
 		Assert.assertEquals(200, response.getStatus());
-		Assert.assertNotSame(null, data);
+//		Response responseConfigType = configurationService.getConfigTypes("", userId, "");
+//		Assert.assertEquals(400, responseConfigType.getStatus());
 	}
 	
 	@Test
@@ -199,12 +305,12 @@ public class ConfigurationServiceTest extends LoginServiceTest {
 		
 		
 		
-		Configuration configurationServer = new Configuration("Server", "Server", "Production", "Server", propertiesServer);
-		Configuration configurationEmail = new Configuration("Email", "Email", "Production", "Email", propertiesEmail);
-		Configuration configurationSiteCorePath = new Configuration("Server", "Test", "Production", "Server", propertiesSiteCore);
-		Configuration configurationServerDuplicate = new Configuration("Server2", "Server", "Production", "Server", propertiesServer);
-		Configuration configurationEmailDuplicate = new Configuration("Email2", "Email", "Production", "Email", propertiesEmail);
-		Configuration configurationServerName = new Configuration("Server", "Server", "Production", "Server", propertiesServer);
+		Configuration configurationServer = new Configuration("Server", "Serverconfig", "dev", "Server", propertiesServer);
+		Configuration configurationEmail = new Configuration("Email", "Emailconfig", "dev", "Email", propertiesEmail);
+		Configuration configurationSiteCorePath = new Configuration("Server", "Testconfig", "dev", "Server", propertiesSiteCore);
+		Configuration configurationServerDuplicate = new Configuration("Server2", "Serverconfig", "dev", "Server", propertiesServer);
+		Configuration configurationEmailDuplicate = new Configuration("Email2", "Emailconfig", "dev", "Email", propertiesEmail);
+		Configuration configurationServerName = new Configuration("Server", "Serverconfig", "dev", "Server", propertiesServer);
 		List<Configuration> configListServer = new ArrayList<Configuration>();
 		List<Configuration> configListEmail = new ArrayList<Configuration>();
 		List<Configuration> configListSiteCore = new ArrayList<Configuration>();
@@ -225,38 +331,31 @@ public class ConfigurationServiceTest extends LoginServiceTest {
 		configListName.add(configurationServerName);
 		configListName.add(configurationServer);
 		
-		Response responseServer = configurationService.updateConfiguration(userId, customerId, appDirName, "Production", configListServer);
-		
-		System.out.println("Response for responseServer : " + responseServer.getEntity());
+		Response responseServer = configurationService.updateConfiguration(userId, customerId, appDirName, "dev", configListServer);
 		Assert.assertEquals(400, responseServer.getStatus());
 		
-		Response responseEmail = configurationService.updateConfiguration(userId, customerId, appDirName, "Production", configListEmail);
-		
-		System.out.println("Response for responseEmail : " + responseEmail.getEntity());
+		Response responseEmail = configurationService.updateConfiguration(userId, customerId, appDirName, "dev", configListEmail);
 		Assert.assertEquals(400, responseEmail.getStatus());
 		
-		Response responseSiteCore = configurationService.updateConfiguration(userId, customerId, appDirName, "Production", configListSiteCore);
-		
-		System.out.println("Response for responseSiteCore : " + responseSiteCore.getEntity());
+		Response responseSiteCore = configurationService.updateConfiguration(userId, customerId, appDirName, "dev", configListSiteCore);
 		Assert.assertEquals(400, responseSiteCore.getStatus());
 		
-		Response responseName = configurationService.updateConfiguration(userId, customerId, appDirName, "Production", configListName);
-		
-		System.out.println("Response for responseSiteCore : " + responseName.getEntity());
+		Response responseName = configurationService.updateConfiguration(userId, customerId, appDirName, "dev", configListName);
 		Assert.assertEquals(400, responseName.getStatus());
 		
-		Response responsePass = configurationService.updateConfiguration(userId, customerId, appDirName, "Production", configListPass);
-		
-		System.out.println("Response for responsePass : " + responsePass.getEntity());
+		Response responsePass = configurationService.updateConfiguration(userId, customerId, appDirName, "dev", configListPass);
 		Assert.assertEquals(200, responsePass.getStatus());
 		
 	}
 	
 	@Test
 	public void connectionAliveTest() throws PhrescoException {
-		String connectionUrl = getConnectionUrl("Production", "Server", "Server");
+		String connectionUrl = getConnectionUrl("Production", "Server", "serverconfig");
 		Response response = configurationService.connectionAliveCheck(connectionUrl);
 		Assert.assertEquals(false, response.getEntity());
+		String connectionUrlFail = "htp" + "," + "localhost" + "," + "7o9o";
+		Response responseFail = configurationService.connectionAliveCheck(connectionUrlFail);
+		Assert.assertEquals(400, responseFail.getStatus());
 	}
 	
 	@Test

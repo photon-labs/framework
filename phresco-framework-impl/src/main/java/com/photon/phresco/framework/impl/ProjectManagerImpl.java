@@ -53,6 +53,7 @@ import com.photon.phresco.commons.model.Customer;
 import com.photon.phresco.commons.model.DownloadInfo;
 import com.photon.phresco.commons.model.ProjectInfo;
 import com.photon.phresco.commons.model.RepoInfo;
+import com.photon.phresco.commons.model.WebService;
 import com.photon.phresco.configuration.Environment;
 import com.photon.phresco.exception.PhrescoException;
 import com.photon.phresco.framework.PhrescoFrameworkFactory;
@@ -82,39 +83,43 @@ public class ProjectManagerImpl implements ProjectManager, FrameworkConstants, C
 	private static boolean isDebugEnabled = S_LOGGER.isDebugEnabled();
 	
 	public List<ProjectInfo> discover(String customerId) throws PhrescoException {
-		if (isDebugEnabled) {
-			S_LOGGER.debug("Entering Method ProjectManagerImpl.discover(String CustomerId)");
-		}
-		File projectsHome = new File(Utility.getProjectHome());
-		if (isDebugEnabled) {
-			S_LOGGER.debug("discover( )  projectHome = "+projectsHome);
-		}
-		if (!projectsHome.exists()) {
-			return null;
-		}
-		Map<String, ProjectInfo> projectInfosMap = new HashMap<String, ProjectInfo>();
-		List<ProjectInfo> projectInfos = new ArrayList<ProjectInfo>();
-	    File[] appDirs = projectsHome.listFiles();
-	    for (File appDir : appDirs) {
-	        if (appDir.isDirectory()) { // Only check the folders not files
-	            File[] dotPhrescoFolders = appDir.listFiles(new PhrescoFileNameFilter(FOLDER_DOT_PHRESCO));
-	            if (ArrayUtils.isEmpty(dotPhrescoFolders)) {
-	            	continue;
+		try {
+			if (isDebugEnabled) {
+				S_LOGGER.debug("Entering Method ProjectManagerImpl.discover(String CustomerId)");
+			}
+			File projectsHome = new File(Utility.getProjectHome());
+			if (isDebugEnabled) {
+				S_LOGGER.debug("discover( )  projectHome = "+projectsHome);
+			}
+			if (!projectsHome.exists()) {
+				return null;
+			}
+			Map<String, ProjectInfo> projectInfosMap = new HashMap<String, ProjectInfo>();
+			List<ProjectInfo> projectInfos = new ArrayList<ProjectInfo>();
+			File[] appDirs = projectsHome.listFiles();
+			for (File appDir : appDirs) {
+			    if (appDir.isDirectory()) { // Only check the folders not files
+			        File[] dotPhrescoFolders = appDir.listFiles(new PhrescoFileNameFilter(FOLDER_DOT_PHRESCO));
+			        if (ArrayUtils.isEmpty(dotPhrescoFolders)) {
+			        	continue;
 //	                throw new PhrescoException(".phresco folder not found in project " + appDir.getName());
-	            }
-	            File[] dotProjectFiles = dotPhrescoFolders[0].listFiles(new PhrescoFileNameFilter(PROJECT_INFO_FILE));
-	            if (ArrayUtils.isEmpty(dotProjectFiles)) {
-	                throw new PhrescoException("project.info file not found in .phresco of project " + dotPhrescoFolders[0].getParent());
-	            }
-	            projectInfosMap = fillProjects(dotProjectFiles[0], projectInfos, customerId, projectInfosMap);
-	        }
-	    }
+			        }
+			        File[] dotProjectFiles = dotPhrescoFolders[0].listFiles(new PhrescoFileNameFilter(PROJECT_INFO_FILE));
+			        if (ArrayUtils.isEmpty(dotProjectFiles)) {
+			            throw new PhrescoException("project.info file not found in .phresco of project " + dotPhrescoFolders[0].getParent());
+			        }
+			        projectInfosMap = fillProjects(dotProjectFiles[0], projectInfos, customerId, projectInfosMap);
+			    }
+			}
 
-	    Iterator<Entry<String, ProjectInfo>> iterator = projectInfosMap.entrySet().iterator();
-        while (iterator.hasNext()) {
-            projectInfos.add(iterator.next().getValue());
-        }
-        return projectInfos;
+			Iterator<Entry<String, ProjectInfo>> iterator = projectInfosMap.entrySet().iterator();
+			while (iterator.hasNext()) {
+			    projectInfos.add(iterator.next().getValue());
+			}
+			return projectInfos;
+		} catch (Exception e) {
+			throw new PhrescoException(e);
+		}
 	}
 	
 	public List<ProjectInfo> discover() throws PhrescoException {
@@ -279,17 +284,21 @@ public class ProjectManagerImpl implements ProjectManager, FrameworkConstants, C
 
 	public ProjectInfo update(ProjectInfo projectInfo, ServiceManager serviceManager, String oldAppDirName) throws PhrescoException {
 		if (projectInfo.getNoOfApps() == 0 && CollectionUtils.isEmpty(projectInfo.getAppInfos())) {
-			ProjectInfo availableProjectInfo = getProject(projectInfo.getId(), projectInfo.getCustomerIds().get(0));
-			List<ApplicationInfo> appInfos = availableProjectInfo.getAppInfos();
-			for (ApplicationInfo applicationInfo : appInfos) {
-				projectInfo.setAppInfos(Collections.singletonList(applicationInfo));
-				StringBuilder sb = new StringBuilder(Utility.getProjectHome())
-				.append(applicationInfo.getAppDirName())
-				.append(File.separator)
-				.append(DOT_PHRESCO_FOLDER)
-				.append(File.separator)
-				.append(PROJECT_INFO_FILE);
-				ProjectUtils.updateProjectInfo(projectInfo, new File(sb.toString()));// To update the project.info file
+			try {
+				ProjectInfo availableProjectInfo = getProject(projectInfo.getId(), projectInfo.getCustomerIds().get(0));
+				List<ApplicationInfo> appInfos = availableProjectInfo.getAppInfos();
+				for (ApplicationInfo applicationInfo : appInfos) {
+					projectInfo.setAppInfos(Collections.singletonList(applicationInfo));
+					StringBuilder sb = new StringBuilder(Utility.getProjectHome())
+					.append(applicationInfo.getAppDirName())
+					.append(File.separator)
+					.append(DOT_PHRESCO_FOLDER)
+					.append(File.separator)
+					.append(PROJECT_INFO_FILE);
+					ProjectUtils.updateProjectInfo(projectInfo, new File(sb.toString()));// To update the project.info file
+				}
+			} catch (Exception e) {
+				throw new PhrescoException(e);
 			}
 		} else {
 			ClientResponse response = serviceManager.updateProject(projectInfo);
@@ -326,6 +335,8 @@ public class ProjectManagerImpl implements ProjectManager, FrameworkConstants, C
 					MojoProcessor mojoProcessor = new MojoProcessor(new File(pluginInfoFile));
 					ApplicationHandler applicationHandler = mojoProcessor.getApplicationHandler();
 					
+					updateSelectedConfiguration (mojoProcessor, appInfo, serviceManager);
+						
 					createSqlFolder(appInfo, projectInfoFile, serviceManager);
 						
 					if (applicationHandler != null) {
@@ -380,6 +391,86 @@ public class ProjectManagerImpl implements ProjectManager, FrameworkConstants, C
 			createEnvConfigXml(projectInfo, serviceManager);
 		}
 		return null;
+	}
+
+	private void updateSelectedConfiguration(MojoProcessor mojoProcessor, ApplicationInfo appInfo, ServiceManager serviceManager) throws PhrescoException {
+		//To write selected Database into phresco-application-Handler-info.xml
+		List<ArtifactGroupInfo> selectedDatabases = appInfo.getSelectedDatabases();
+		List<DownloadInfo> selectedServerGroup = new ArrayList<DownloadInfo>();
+		List<DownloadInfo> selectedDatabaseGroup = new ArrayList<DownloadInfo>();
+		ApplicationHandler applicationHandler = mojoProcessor.getApplicationHandler();
+		Gson gson = new Gson();
+
+		try {
+			if (CollectionUtils.isNotEmpty(selectedDatabases)) {
+				for (ArtifactGroupInfo selectedDatabase : selectedDatabases) {
+					DownloadInfo downloadInfo = serviceManager.getDownloadInfo(selectedDatabase.getArtifactGroupId());
+					String id = downloadInfo.getArtifactGroup().getId();
+					ArtifactGroup artifactGroupInfo = serviceManager.getArtifactGroupInfo(id);
+					List<ArtifactInfo> dbVersionInfos = artifactGroupInfo.getVersions();//version infos from downloadInfo
+					List<ArtifactInfo> selectedDBVersionInfos = new ArrayList<ArtifactInfo>();//for selected version infos from ui
+					for (ArtifactInfo versionInfo : dbVersionInfos) {
+						String versionId = versionInfo.getId();
+						if (selectedDatabase.getArtifactInfoIds().contains(versionId)) {
+							selectedDBVersionInfos.add(versionInfo);//Add selected version infos to list
+						}
+					}
+					downloadInfo.getArtifactGroup().setVersions(selectedDBVersionInfos);
+					selectedDatabaseGroup.add(downloadInfo);
+				}
+				if (CollectionUtils.isNotEmpty(selectedDatabaseGroup)) {
+					String databaseGroup = gson.toJson(selectedDatabaseGroup);
+					applicationHandler.setSelectedDatabase(databaseGroup);
+				}
+			} else {//To remove selectedDatabse tag from application-handler.xml
+				applicationHandler.setSelectedDatabase(null);
+			}
+
+			//To write selected Servers into phresco-application-Handler-info.xml
+			List<ArtifactGroupInfo> selectedServers = appInfo.getSelectedServers();
+			if (CollectionUtils.isNotEmpty(selectedServers)) {
+				for (ArtifactGroupInfo selectedServer : selectedServers) {
+					DownloadInfo downloadInfo = serviceManager.getDownloadInfo(selectedServer.getArtifactGroupId());
+					String id = downloadInfo.getArtifactGroup().getId();
+					ArtifactGroup artifactGroupInfo = serviceManager.getArtifactGroupInfo(id);
+					List<ArtifactInfo> serverVersionInfos = artifactGroupInfo.getVersions();//version infos from downloadInfo
+					List<ArtifactInfo> selectedServerVersionInfos = new ArrayList<ArtifactInfo>();//for selected version infos from ui
+					for (ArtifactInfo versionInfo : serverVersionInfos) {
+						String versionId = versionInfo.getId();
+						if (selectedServer.getArtifactInfoIds().contains(versionId)) {
+							selectedServerVersionInfos.add(versionInfo);//Add selected version infos to list
+						}
+					}
+					downloadInfo.getArtifactGroup().setVersions(selectedServerVersionInfos);//set only selected version infos to current download info
+					selectedServerGroup.add(downloadInfo);
+				}
+				if (CollectionUtils.isNotEmpty(selectedServerGroup)) {
+					String serverGroup = gson.toJson(selectedServerGroup);
+					applicationHandler.setSelectedServer(serverGroup);
+				}
+			} else {//To remove selectedServer tag from application-handler.xml
+				applicationHandler.setSelectedServer(null);
+			}
+
+			//To write selected WebServices info to phresco-plugin-info.xml
+			List<String> selectedWebservices = appInfo.getSelectedWebservices();
+			List<WebService> webServiceList = new ArrayList<WebService>();
+			if (CollectionUtils.isNotEmpty(selectedWebservices)) {
+				for (String selectedWebService : selectedWebservices) {
+					WebService webservice = serviceManager.getWebService(selectedWebService);
+					webServiceList.add(webservice);//add selected webservice infos to list
+				}
+				if (CollectionUtils.isNotEmpty(webServiceList)) {
+					String serverGroup = gson.toJson(webServiceList);
+					applicationHandler.setSelectedWebService(serverGroup);
+				}
+			} else {//To remove selectedWebService tag from application-handler.xml
+				applicationHandler.setSelectedWebService(null);
+			}
+		} catch (PhrescoException e) {
+			throw new PhrescoException(e);
+		}
+		mojoProcessor.save();
 	}
 
 	private void createEnvConfigXml(ProjectInfo projectInfo, ServiceManager serviceManager) throws PhrescoException {

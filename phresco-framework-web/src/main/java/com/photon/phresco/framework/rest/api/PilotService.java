@@ -26,6 +26,8 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import org.apache.commons.collections.CollectionUtils;
+
 import com.photon.phresco.commons.FrameworkConstants;
 import com.photon.phresco.commons.model.ApplicationInfo;
 import com.photon.phresco.commons.model.ArtifactGroupInfo;
@@ -64,6 +66,11 @@ public class PilotService extends RestBase implements ServiceConstants {
 						"*").build();
 			}
 			List<ApplicationInfo> pilotProjects = serviceManager.getPilotProjects(customerId, techId);
+			if(CollectionUtils.isEmpty(pilotProjects)){
+				ResponseInfo<List<ApplicationInfo>> finalOutput = responseDataEvaluation(responseData, null,
+						"Application pilot listed successfully", null);
+				return Response.status(Status.NO_CONTENT).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
+			}
 			ResponseInfo<List<ApplicationInfo>> finalOutput = responseDataEvaluation(responseData, null,
 					"Application pilot listed successfully", pilotProjects);
 			return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();

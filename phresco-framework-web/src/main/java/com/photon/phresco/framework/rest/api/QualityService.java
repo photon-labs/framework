@@ -163,22 +163,27 @@ public class QualityService extends RestBase implements ServiceConstants, Framew
 			@QueryParam(REST_QUERY_TEST_TYPE) String testType, @QueryParam(REST_QUERY_TECH_REPORT) String techReport,
 			@QueryParam(REST_QUERY_MODULE_NAME) String moduleName) throws PhrescoException {
 		ResponseInfo<List<TestSuite>> responseData = new ResponseInfo<List<TestSuite>>();
-		// TO kill the Process
-		String baseDir = Utility.getProjectHome() + appDirName;
-		Utility.killProcess(baseDir, testType);
+		try {
+			// TO kill the Process
+			String baseDir = Utility.getProjectHome() + appDirName;
+			Utility.killProcess(baseDir, testType);
 
-		String testSuitePath = getTestSuitePath(appDirName, testType, techReport);
-		String testCasePath = getTestCasePath(appDirName, testType, techReport);
-		List<TestSuite> testSuites = testSuites(appDirName, moduleName, testType, moduleName, techReport,
-				testSuitePath, testCasePath, ALL);
-		if (CollectionUtils.isEmpty(testSuites)) {
-			ResponseInfo<Configuration> finalOuptut = responseDataEvaluation(responseData, null,
-					TEST_RESULT_NOT_AVAILABLE, testSuites);
-			return Response.status(Status.OK).entity(finalOuptut).header(ACCESS_CONTROL_ALLOW_ORIGIN, "*").build();
+			String testSuitePath = getTestSuitePath(appDirName, testType, techReport);
+			String testCasePath = getTestCasePath(appDirName, testType, techReport);
+			List<TestSuite> testSuites = testSuites(appDirName, moduleName, testType, moduleName, techReport,
+					testSuitePath, testCasePath, ALL);
+			if (CollectionUtils.isEmpty(testSuites)) {
+				ResponseInfo<Configuration> finalOuptut = responseDataEvaluation(responseData, null,
+						TEST_RESULT_NOT_AVAILABLE, testSuites);
+				return Response.status(Status.OK).entity(finalOuptut).header(ACCESS_CONTROL_ALLOW_ORIGIN, "*").build();
+			}
+			ResponseInfo<List<String>> finalOutput = responseDataEvaluation(responseData, null,
+					TEST_SUITES_LISTED_SUCCESSFULLY, testSuites);
+			return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, "*").build();
+		} catch (Exception e) {
+			ResponseInfo<List<TestSuite>> finalOutput = responseDataEvaluation(responseData, e,	TEST_SUITES_LISTED_FAILED, null);
+			return Response.status(Status.BAD_REQUEST).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN,ALL_HEADER).build();
 		}
-		ResponseInfo<List<String>> finalOutput = responseDataEvaluation(responseData, null,
-				TEST_SUITES_LISTED_SUCCESSFULLY, testSuites);
-		return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, "*").build();
 	}
 
 	/**
@@ -523,7 +528,8 @@ public class QualityService extends RestBase implements ServiceConstants, Framew
 				}
 			}
 		} catch (PhrescoException e) {
-			throw new PhrescoException(e);
+			ResponseInfo<List<TestCase>> finalOutput = responseDataEvaluation(responseData, e, TEST_CASES_LISTED_FAILED, null);
+			return Response.status(Status.BAD_REQUEST).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN,ALL_HEADER).build();
 		}
 		return null;
 	}
