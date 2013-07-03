@@ -68,7 +68,7 @@ define(["testResult/listener/testResultListener"], function() {
 		preRender: function(whereToRender, renderFunction) {
 			var self = this;
 			commonVariables.from = "all";
-			commonVariables.loadingScreen.showLoading();
+			//commonVariables.loadingScreen.showLoading();
 			//To get the testsuites
 			self.testResultListener.performAction(self.testResultListener.getActionHeader(self.requestBody, "getTestSuite"), function(response) {
 				var data = {};
@@ -76,7 +76,7 @@ define(["testResult/listener/testResultListener"], function() {
 				data.message = response.message;
 				commonVariables.testSuites = response.data;
 				renderFunction(data, $('#testResult div.widget-maincontent-div'));
-				commonVariables.loadingScreen.removeLoading();
+				//commonVariables.loadingScreen.removeLoading();
 				if (response.data !== undefined && response.data !== null) {
 					setTimeout(function() {
 						self.testResultListener.getBarChartGraphData(response.data, function(graphData, testSuiteLabels) {
@@ -159,7 +159,7 @@ define(["testResult/listener/testResultListener"], function() {
 			//To show the testcases of the selected testsuite
 			$("a[name=testDescription]").unbind("click");
 			$("a[name=testDescription]").click(function() {
-				commonVariables.loadingScreen.showLoading();
+				//commonVariables.loadingScreen.showLoading();
 				commonVariables.from = "testsuite";
 				commonVariables.testSuiteName = $(this).text();
 				self.onTestResultDescEvent.dispatch();

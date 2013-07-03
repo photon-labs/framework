@@ -270,6 +270,18 @@ $(document).ready(function(){
 			}
 			
 			commonVariables.loadingScreen =new Clazz.com.js.widget.common.Loading();
+			
+			$(document).ajaxStart(function() {
+				commonVariables.loadingScreen.removeLoading(function(retVal){
+					commonVariables.loadingScreen.showLoading();
+				});
+			});
+			
+			$(document).ajaxStop(function() {
+				if(!Clazz.navigationController.loadingActive)
+					commonVariables.loadingScreen.removeLoading();
+			});
+			
 			app.initialize();
 		});
 	}, "json");

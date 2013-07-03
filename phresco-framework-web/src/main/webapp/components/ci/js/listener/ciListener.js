@@ -25,9 +25,9 @@ define(["ci/api/ciAPI"], function() {
 				self.ciAPI = new Clazz.com.components.ci.js.api.CIAPI();
 			}
 			
-			if (self.loadingScreen === null) {
+			/* if (self.loadingScreen === null) {
 				self.loadingScreen = new Clazz.com.js.widget.common.Loading();
-			}
+			} */
 		},
 		
 		loadContinuousDeliveryConfigure : function() {
@@ -281,25 +281,25 @@ define(["ci/api/ciAPI"], function() {
 		listJobTemplate : function (header, callback) {
 			var self = this;
 			try {
-				commonVariables.loadingScreen.showLoading();
+				//commonVariables.loadingScreen.showLoading();
 				self.ciAPI.ci(header, function(response) {
 						if (response !== null) {
-							commonVariables.loadingScreen.removeLoading();
+							//commonVariables.loadingScreen.removeLoading();
 							callback(response);
 						} else {
-							commonVariables.loadingScreen.removeLoading();
+							//commonVariables.loadingScreen.removeLoading();
 							callback({ "status" : "service failure"});
 						}
 
 					},
 
 					function(textStatus) {
-						commonVariables.loadingScreen.removeLoading();
+						//commonVariables.loadingScreen.removeLoading();
 						callback({ "status" : "Connection failure"});
 					}
 				);
 			} catch(exception) {
-				commonVariables.loadingScreen.removeLoading();
+				//commonVariables.loadingScreen.removeLoading();
 				callback({ "status" : "service exception"});
 			}
 		},

@@ -123,7 +123,6 @@ define(["build/listener/buildListener"], function() {
 			self.logContent = '';
 			
 			self.resizeConsoleWindow();
-			self.logContent = '';
 			self.closeConsole();
 			var windowHeight = $(document).height();
 			var marginTop = '';
@@ -174,8 +173,20 @@ define(["build/listener/buildListener"], function() {
 				if($(this).attr("class") === "btn btn_style"){
 					commonVariables.goal = "start";
 					commonVariables.phase = "run-against-source";
-					var whereToRender = $('#build_runagsource ul');
-					self.dynamicpage.getHtml(whereToRender, this, $(this).attr('name'), function() {});
+					/* self.dynamicpage.getHtml(false, function(response){
+						$("#rasdynamicContent").html(response);
+						self.multiselect();
+						self.dynamicpage.showParameters();
+						self.dynamicPageListener.controlEvent();
+					});				
+					self.opencc(this, $(this).attr('name'));
+					self.openConsole(); */
+					 var whereToRender = $('#build_runagsource ul');
+					self.dynamicpage.getHtml(whereToRender, this, $(this).attr('name'), function(retVal){
+						whereToRender.html(retVal);
+					});
+					//commonVariables.loadingScreen.removeLoading();
+					//self.openConsole();
 					$("#buildConsole").attr('data-flag','false');
 				}	
 			});
@@ -185,7 +196,12 @@ define(["build/listener/buildListener"], function() {
                 var whereToRender = $('#build_genbuild ul');
                 commonVariables.goal = "package";
                 commonVariables.phase = "package";
-                self.dynamicpage.getHtml(whereToRender, this, $(this).attr('name'));
+                //self.dynamicpage.getHtml(whereToRender, widgetObject, openccObject);
+                self.dynamicpage.getHtml(whereToRender, this, $(this).attr('name'), function(retVal){
+					whereToRender.html(retVal);
+				});
+				//commonVariables.loadingScreen.removeLoading();
+				//self.openConsole();
 			});
 			
 			$("input[name=build_minifier]").unbind("click");
@@ -241,7 +257,6 @@ define(["build/listener/buildListener"], function() {
 			
 			$("#runSource").click(function(){
 				$(".dyn_popup").hide();
-				self.openConsole();
 				self.onRASEvent.dispatch($('form[name=runAgainstForm]').serialize(), function(response){
 					$('.alert_div').hide();
 					self.logContent = $('#logContent').html();
