@@ -2250,7 +2250,7 @@ margin-left: 10px;
 
 #crone_triggered {
 	z-index: 1;
-	width:34%;
+	width:31%;
 }
 
 #crone_triggered span
@@ -2764,7 +2764,29 @@ html>body tbody.scrollContent {
     margin: -3px 3px 0 !important;
 }
 
+.job_configure{
+	width:517px;
+}
 
+.job_configure #schedule_daily [type="button"]{
+	width:150px;
+}
+
+.job_configure #schedule_weekly [type="button"]{
+	width:100px;
+}
+
+.job_configure #schedule_weekly  td:first-child [type="button"]{
+	width:135px !important;
+}
+
+.job_configure #schedule_monthly [type="button"]{
+	width:64px;
+	}
+	
+.job_configure #schedule_monthly  td:nth-child(2) [type="button"]{
+	width:135px !important;
+}
 /* *************************************************************** STYLES FOR CI-CON_DELIVERY PAGE ************************************************************************************ */
 
 #ci_configure select {
