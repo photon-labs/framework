@@ -193,6 +193,7 @@
 				<includes>
 				<include>**/AllTest.class</include>
 				</includes>
+                <reportsDirectory>${project.basedir}/do_not_checkin/reports/unitReports</reportsDirectory>
 			</configuration>
 			</plugin>
         </plugins>
@@ -404,7 +405,7 @@
         <phresco.unitTest.js.testsuite.xpath xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">/testsuite</phresco.unitTest.js.testsuite.xpath>
         <phresco.unitTest.js.testcase.path xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">/testcase</phresco.unitTest.js.testcase.path>
         <phresco.manualTest.testcase.path xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">/test/manual</phresco.manualTest.testcase.path>
-        <phresco.unitTest.java.report.dir xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">/do_not_checkin/target/surefire-reports</phresco.unitTest.java.report.dir>
+        <phresco.unitTest.java.report.dir xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">/do_not_checkin/reports/unitReports</phresco.unitTest.java.report.dir>
         <phresco.unitTest.java.testsuite.xpath xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">/testsuite</phresco.unitTest.java.testsuite.xpath>
         <phresco.unitTest.java.testcase.path xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">/testcase</phresco.unitTest.java.testcase.path>
         <phresco.functionalTest.selenium.tool xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">grid</phresco.functionalTest.selenium.tool>
