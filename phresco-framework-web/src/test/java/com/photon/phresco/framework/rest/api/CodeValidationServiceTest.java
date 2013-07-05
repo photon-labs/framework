@@ -14,25 +14,14 @@ import org.springframework.mock.web.MockHttpServletRequest;
 import com.photon.phresco.exception.PhrescoException;
 import com.photon.phresco.framework.rest.api.util.ActionResponse;
 
-public class CodeValidationServiceTest extends RestBaseTest {
+public class CodeValidationServiceTest extends RestBaseTest  {
 
 	static String uniqueKey = "";
 
 	@Test
 	public void testSonarParameter() throws PhrescoException, IOException {
 		ParameterService service = new ParameterService();
-		Response response = service.getParameter("JWS-javawebservice", "validate-code", "", userId, customerId);
-		Assert.assertEquals(200, response.getStatus());
-	}
-
-	@Test
-	public void testSonarCodeValidationReportTypes() throws PhrescoException, IOException {
-		ParameterService service = new ParameterService();
-		MockHttpServletRequest request = new  MockHttpServletRequest();
-		request.setServerPort(9000);
-		request.setServerName(appDirName);
-		HttpServletRequest httpServletRequest = (HttpServletRequest)request;
-		Response response = service.getCodeValidationReportTypes("JWS-javawebservice", "validate-code", "", httpServletRequest);
+		Response response = service.getParameter(appDirName, "validate-code", "", userId, customerId);
 		Assert.assertEquals(200, response.getStatus());
 	}
 
@@ -57,12 +46,25 @@ public class CodeValidationServiceTest extends RestBaseTest {
 	} 
 
 	@Test
+	public void testSonarCodeValidationReportTypes() throws PhrescoException, IOException {
+		ParameterService service = new ParameterService();
+		MockHttpServletRequest request = new  MockHttpServletRequest();
+		request.setServerName("localhost");	
+		request.setServerPort(2468);
+		request.setRequestURI("/sonar");
+		HttpServletRequest httpServletRequest = (HttpServletRequest)request;
+		Response response = service.getCodeValidationReportTypes(appDirName, "validate-code", "", httpServletRequest);
+		Assert.assertEquals(200, response.getStatus());
+	}
+
+//	@Test
 	public void testSonarReport() throws PhrescoException, IOException {
 		ParameterService service = new ParameterService();
 		MockHttpServletRequest request = new  MockHttpServletRequest();
-		request.setServerPort(9000);
+		request.setServerName("localhost");	
+		request.setServerPort(2468);
 		request.setServerName(appDirName);
-		Response response = service.getIframeReport("217bd500-a109-4c1d-bfa1-02c89652b989", "admin", "JWS-javawebservice", "java", request);
+		Response response = service.getIframeReport("photon", "admin", appDirName, "java", request);
 		Assert.assertEquals(200, response.getStatus());
 	}
 
