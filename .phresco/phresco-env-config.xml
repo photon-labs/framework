@@ -43,16 +43,15 @@
         </Other>
     </environment>
     <environment appliesTo="" default="false" desc="" name="Development">
-        <Server name="server">
+        <Server desc="" name="server">
             <context>framework</context>
+            <deploy_dir>D:/Softwares/apache-tomcat-7.0.14/webapps/</deploy_dir>
             <admin_username/>
-            <deploy_dir>D:\work\Framwork-apache-tomcat-7.0.14\webapps</deploy_dir>
             <additional_context>/</additional_context>
-            <port>2468</port>
+            <port>3030</port>
             <admin_password/>
-            <version>2.3</version>
-            <certificate/>
-            <type>Apache</type>
+            <version>7.0.x</version>
+            <type>Apache Tomcat</type>
             <remoteDeployment>false</remoteDeployment>
             <protocol>http</protocol>
             <host>localhost</host>

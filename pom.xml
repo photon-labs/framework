@@ -178,24 +178,24 @@
                     <skip xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">true</skip>
                 </configuration>
             </plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-surefire-plugin</artifactId>
-				<version>2.11</version>
-				<dependencies>
-					<dependency>
-					<groupId>org.apache.maven.surefire</groupId>
-					<artifactId>surefire-junit47</artifactId>
-					<version>2.12</version>
-					</dependency>
-				</dependencies>
-			<configuration>
-				<includes>
-				<include>**/AllTest.class</include>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>2.11</version>
+                <dependencies>
+                    <dependency>
+                        <groupId>org.apache.maven.surefire</groupId>
+                        <artifactId>surefire-junit47</artifactId>
+                        <version>2.12</version>
+                    </dependency>
+                </dependencies>
+                <configuration>
+                    <includes>
+                        <include>**/AllTest.class</include>
 				</includes>
-                <reportsDirectory>${project.basedir}/do_not_checkin/reports/unitReports</reportsDirectory>
-			</configuration>
-			</plugin>
+                    <reportsDirectory>${project.basedir}/do_not_checkin/reports/unitReports</reportsDirectory>
+                </configuration>
+            </plugin>
         </plugins>
     </build>
     <profiles>
@@ -408,7 +408,7 @@
         <phresco.unitTest.java.report.dir xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">/do_not_checkin/reports/unitReports</phresco.unitTest.java.report.dir>
         <phresco.unitTest.java.testsuite.xpath xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">/testsuite</phresco.unitTest.java.testsuite.xpath>
         <phresco.unitTest.java.testcase.path xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">/testcase</phresco.unitTest.java.testcase.path>
-        <phresco.functionalTest.selenium.tool xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">grid</phresco.functionalTest.selenium.tool>
+        <phresco.functionalTest.selenium.tool xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">webdriver</phresco.functionalTest.selenium.tool>
         <phresco.functionalTest.dir xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">/test/functional</phresco.functionalTest.dir>
         <phresco.functionalTest.report.dir xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">/test/functional/target/surefire-reports</phresco.functionalTest.report.dir>
         <phresco.functionalTest.testsuite.xpath xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">/testsuite</phresco.functionalTest.testsuite.xpath>
