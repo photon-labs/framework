@@ -442,7 +442,16 @@ html, body {
 .content_title {
 	width:98%;
 	height:46px;
-	background:url(../../images/helios/content_title_bg.jpg) repeat-x;
+	border-bottom: 1px solid #fff;
+	/* background:url(../../images/helios/content_title_bg.jpg) repeat-x; */	
+	background: #eeeeee; /* Old browsers */
+	background: -moz-linear-gradient(top,  #eeeeee 0%, #d2d2d2 100%); /* FF3.6+ */
+	background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#eeeeee), color-stop(100%,#d2d2d2)); /* Chrome,Safari4+ */
+	background: -webkit-linear-gradient(top,  #eeeeee 0%,#d2d2d2 100%); /* Chrome10+,Safari5.1+ */
+	background: -o-linear-gradient(top,  #eeeeee 0%,#d2d2d2 100%); /* Opera 11.10+ */
+	background: -ms-linear-gradient(top,  #eeeeee 0%,#d2d2d2 100%); /* IE10+ */
+	background: linear-gradient(to bottom,  #eeeeee 0%,#d2d2d2 100%); /* W3C */
+	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#eeeeee', endColorstr='#d2d2d2',GradientType=0 ); /* IE6-9 */
 	margin-top:85px;
 	padding-left:1%;
 	padding-right:1%;
@@ -466,6 +475,7 @@ html, body {
 	position:absolute;
 	margin-top:132px;
 	z-index:0;
+	border-top: 1px solid #d2d2d2;
 }
 
 .content_main table {
@@ -746,8 +756,13 @@ ul.nav li.dropdown:hover > .test_options{
 }
 
 .table_border thead {
-	background:url(../../images/helios/thead_bg.jpg) repeat-x left bottom;
+	/* background:url(../../images/helios/thead_bg.jpg) repeat-x left bottom; */
+	background: #d8d8d8;
 	color:#323232 !important;
+}
+
+.table_border thead th {
+	border-bottom: 1px solid #fff;
 }
 
 .table_border tr.proj_title td {
@@ -1261,6 +1276,7 @@ img[name="close"] {
 	position:absolute;
 	margin-top:171px;
 	z-index:0;
+	border-top: 1px solid #d2d2d2;
 }
 
 .features_box {

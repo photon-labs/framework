@@ -179,6 +179,7 @@ define(["projectlist/listener/projectListListener"], function() {
 			var w4 = $(".scrollContent tr:nth-child(2) td:nth-child(4)").width();
 			var w5 = $(".scrollContent tr:nth-child(2) td:nth-child(5)").width();
 			var w6 = $(".scrollContent tr:nth-child(2) td:nth-child(6)").width();
+			var w7 = $(".scrollContent tr:nth-child(2) td:nth-child(7)").width();
 			
 			$(".fixedHeader tr th:first-child").css("width",w1);
 			$(".fixedHeader tr th:nth-child(2)").css("width",w2);
@@ -186,6 +187,7 @@ define(["projectlist/listener/projectListListener"], function() {
 			$(".fixedHeader tr th:nth-child(4)").css("width",w4 + 13);
 			$(".fixedHeader tr th:nth-child(5)").css("width",w5 - 10);
 			$(".fixedHeader tr th:nth-child(6)").css("width",w6);
+			$(".fixedHeader tr th:nth-child(7)").css("width",w7);
 			
 			$(window).resize(function() {
 				var w1 = $(".scrollContent tr:nth-child(2) td:first-child").width();
@@ -194,6 +196,7 @@ define(["projectlist/listener/projectListListener"], function() {
 				var w4 = $(".scrollContent tr:nth-child(2) td:nth-child(4)").width();
 				var w5 = $(".scrollContent tr:nth-child(2) td:nth-child(5)").width();
 				var w6 = $(".scrollContent tr:nth-child(2) td:nth-child(6)").width();
+				var w7 = $(".scrollContent tr:nth-child(2) td:nth-child(7)").width();
 				
 				$(".fixedHeader tr th:first-child").css("width",w1);
 				$(".fixedHeader tr th:nth-child(2)").css("width",w2);
@@ -201,6 +204,7 @@ define(["projectlist/listener/projectListListener"], function() {
 				$(".fixedHeader tr th:nth-child(4)").css("width",w4);
 				$(".fixedHeader tr th:nth-child(5)").css("width",w5);
 				$(".fixedHeader tr th:nth-child(6)").css("width",w6);
+				$(".fixedHeader tr th:nth-child(7)").css("width",w7);
 				self.windowResize();
 			});			
 			
