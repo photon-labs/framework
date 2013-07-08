@@ -607,7 +607,7 @@
                     <possibleValues>
                         <value key="server" dependency="showSettings">Server</value>
                     </possibleValues>
-                    <value></value>
+                    <value>server</value>
                     <sort>false</sort>
                     <show>true</show>
                 </parameter>
@@ -628,7 +628,7 @@
                         <value key="chrome">Chrome</value>
                     </possibleValues>
                     <multiple>false</multiple>
-                    <value></value>
+                    <value>firefox</value>
                     <sort>false</sort>
                     <show>true</show>
                 </parameter>
@@ -691,7 +691,7 @@
                     <editable>true</editable>
                     <key>environmentName</key>
                     <multiple>false</multiple>
-                    <value></value>
+                    <value>Testing</value>
                     <sort>false</sort>
                     <show>true</show>
                 </parameter>
