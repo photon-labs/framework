@@ -52,32 +52,32 @@ define(["jquery"], function($) {
 					Clazz : "js/framework/class",
 					components: "components",
 					configData: data,
-					jshamcrest: "jshamcrest-0.5.2",
-					jsmockito: "jsmockito-1.0.3",
 					jslib_bootstrap_datepicker: "jslib_bootstrap_datepicker-1.0.0",
 					handlebars: "handlebars-1.0.0",
 					Signal: "Signal-1.0.0",
 					bootstrap_select_min: "bootstrap_select_min-1.0",
-					signalbinding: "SignalBinding-1.0.0",
+					signalbinding: "signalbinding-1.0.0",
 					i18next: "i18next-1.6.0",
 					jslib_jquery_sortable_min: "jslib_jquery_sortable_min-1.0.0",
 					bootstrap_min: "bootstrap_min-2.3.1",
-					jquery_mCustomScrollbar_concat_min: "jquery_mCustomScrollbar_concat_min-2.8.1"
+					jquery_mCustomScrollbar_concat_min: "jquery_mCustomScrollbar_concat_min-2.8.1",
+					jquery_mockjax: "jquery_mockjax-1.0",
+					json2: "json2-1.0"
 				}
 			};
             
+            commonVariables.basePlaceholder=$("<div id='base'></div>");
             commonVariables.headerPlaceholder=$("<div id='header'></div>");
+			commonVariables.navigationPlaceholder=$("<navigation\\:widget></navigation\\:widget>");
             commonVariables.contentPlaceholder=$("<div id='content'></div>");
             commonVariables.footerPlaceholder=$("<div id='footer'></div>");
-
-
 			$.each(commonVariables.globalconfig.components, function(index, value){
 				configJson.paths[index] = value.path;
 			});
 			// setup require.js
 			var requireConfig = requirejs.config(configJson);
 			
-			require(["framework/class", "framework/widget", "common/loading", "framework/widgetWithTemplate", "framework/navigationController", "login/login"], function () {
+			require(["framework/class", "framework/widget", "common/loading",  "i18next", "framework/widgetWithTemplate", "framework/navigationController", "jquery_mockjax", "json2", "login/login"], function () {
 				Clazz.config = data;
 				Clazz.navigationController = new Clazz.NavigationController({
 					mainContainer : "basepage\\:widget",
@@ -94,9 +94,7 @@ define(["jquery"], function($) {
 				commonVariables.loadingScreen =new Clazz.com.js.widget.common.Loading();
 			});
 		
-			require(["loginTest", "projectlistTest", "headerTest", "footerTest", "navigationTest", "projectTest", "applicationTest", "featuresTest", "codequalityTest", "configurationTest", "buildTest", "editConfigurationTest", "jobTemplateListTest","unitTestTest", "componentTestTest", "performanceTestTest", "dynamicPageTest", "jshamcrest", "jsmockito", "Signal", "signalbinding", "jslib_bootstrap_datepicker", "handlebars", "i18next", "jslib_jquery_sortable_min", "bootstrap_min", "jquery_mCustomScrollbar_concat_min", "bootstrap_select_min"],	function(loginTest, projectlistTest, headerTest, footerTest, navigationTest, projectTest,applicationTest, featuresTest, codequalityTest, configurationTest, buildTest, editConfigurationTest, jobTemplateListTest, unitTestTest, componentTestTest, performanceTestTest, dynamicPageTest, signals, signalbinding, datepicker, handlebars, i18next, sortable, bootstrap, scrollbar, select){
-				JsHamcrest.Integration.JsTestDriver();
-				JsMockito.Integration.JsTestDriver();
+			require(["loginTest", "projectlistTest", "headerTest", "footerTest", "navigationTest", "projectTest", "applicationTest", "featuresTest", "codequalityTest", "configurationTest", "buildTest", "editConfigurationTest", "jobTemplateListTest","unitTestTest", "componentTestTest", "Signal", "signalbinding",  "jslib_bootstrap_datepicker", "handlebars", "jslib_jquery_sortable_min", "bootstrap_min", "jquery_mCustomScrollbar_concat_min", "bootstrap_select_min"], function(loginTest, projectlistTest, headerTest, footerTest, navigationTest, projectTest,applicationTest, featuresTest, codequalityTest, configurationTest, buildTest, editConfigurationTest, jobTemplateListTest, unitTestTest, componentTestTest, signals, signalbinding, datepicker, handlebars,  sortable, bootstrap, scrollbar, select){
 				commonVariables.navListener = Clazz.com.components.navigation.js.listener.navigationListener();
 				loginTest.runTests(data, function() {
 					editConfigurationTest.runTests(data);
