@@ -4,7 +4,7 @@
     <parent>
         <groupId>com.photon.phresco.framework</groupId>
         <artifactId>phresco-framework-root</artifactId>
-        <version>3.0.0.16001-SNAPSHOT</version>
+        <version>3.0.0.16002-SNAPSHOT</version>
         <relativePath>../</relativePath>
     </parent>
    
@@ -763,7 +763,7 @@
 	    		<plugin>
 				<groupId>net.awired.jstest</groupId>
 				<artifactId>jstest-maven-plugin</artifactId>
-				<version>3.0.0.15004-SNAPSHOT</version>
+				<version>3.0.0.16000</version>
 				<executions>
 					<execution>
 						<goals>
