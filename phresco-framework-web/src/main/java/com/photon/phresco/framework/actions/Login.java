@@ -80,6 +80,7 @@ public class Login extends FrameworkBaseAction {
 	private String editMenuColor="";
 	private String headerBackGroundcolor="";
 	private String footerBackGroundcolor="";
+	private String userSettingColor="";
 	
 	private List<String> customerOptions = null;
 	private List<String> customerAllOptions = null;
@@ -288,6 +289,7 @@ public class Login extends FrameworkBaseAction {
 			setEditMenuColor(themeMap.get(EDIT_MENU_BACKGROUND_COLOR));
 			setHeaderBackGroundcolor(themeMap.get(HEADER_BACKGROUND_COLOR));
 			setFooterBackGroundcolor(themeMap.get(FOOTER_BACKGROUND_COLOR));
+			setUserSettingColor(themeMap.get(USER_SETTINGS_COLOR));
 			
     	} catch (PhrescoException e) {
     		return showErrorPopup(e, getText(EXCEPTION_FETCHLOGO_IMAGE));
@@ -556,6 +558,14 @@ public class Login extends FrameworkBaseAction {
 
 	public void setFooterBackGroundcolor(String footerBackGroundcolor) {
 		this.footerBackGroundcolor = footerBackGroundcolor;
+	}
+
+	public String getUserSettingColor() {
+		return userSettingColor;
+	}
+
+	public void setUserSettingColor(String userSettingColor) {
+		this.userSettingColor = userSettingColor;
 	}
 
 }

@@ -606,9 +606,9 @@
 		if (Footercolor == null) {
 			Footercolor= none;
 		}
+		var userSettingColor = data.userSettingColor;
 		
 		JSS.css({
-			
 			 '.header_main' : {
 				'background' : Headercolor 
 			},
@@ -617,15 +617,16 @@
 				'background' : Footercolor 
 			}, 
 			'.main_wrapper': {
-				'background' : bodyBackGroundColor + "!important"
+				'background' : bodyBackGroundColor
 			},			
 			
 			'.usersettings' : {
-				'background' : "none repeat scroll 0 0 " + brandingColor + "!important" // user settings background color
+				'background' : "none repeat scroll 0 0 " + userSettingColor,
+				'color': brandingColor
 			},
 			
 			'.userInfo ul li' : {
-				'border-bottom': "1px  solid" + brandingColor + "!important"
+				'border-bottom': "1px  solid" + userSettingColor
 			} ,
 			
 			'.qtyTable_view table thead tr' :{
