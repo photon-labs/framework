@@ -70,6 +70,7 @@
         <antcall target="copy-security"/>
 	<!-- 	<antcall target="copy-framework-config"/> -->
         <antcall target="start-waxsim"/>
+        <antcall target="start-iossim"/>
 		<parallel>
 			<antcall target="tomcat-start"/>
 			<antcall target="copy-sonar"/>
@@ -214,6 +215,14 @@
         <exec dir="${waxsim.home}" executable="xcodebuild" osfamily="mac">
         <arg value="install"> </arg>
         <arg value="DSTROOT="> </arg>
+        </exec>
+    </target>
+    
+    <target name="start-iossim">
+	 	<echo message="ios-sim startup"/>
+        <exec dir="${ios-sim.home}" executable="rake" osfamily="mac">
+        <arg value="install"> </arg>
+        <arg value="prefix=/usr/local/"> </arg>
         </exec>
     </target>
     
