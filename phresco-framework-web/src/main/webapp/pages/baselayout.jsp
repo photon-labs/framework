@@ -141,7 +141,7 @@
 		<!-- Loding icon div ends -->
 		
 		<!-- Header Starts Here -->
-		<header>
+		<header class="header_main">
 			<div class="header">
 				<div class="Logo">
 					 <a href="#" id="goToHome"><img class="headerlogoimg" id="logoImg" src="" alt="logo"></a>
@@ -317,7 +317,7 @@
 		<!-- Content Ends Here -->
 		
 		<!-- Footer Starts Here -->
-		<footer>
+		<footer class="footer_main">
 			<address class="copyrit">&copy; 2013 Photon Infotech Pvt Ltd. |<a onclick='open_win();'> www.photon.in</a></address>
 		</footer>
 		<!-- Footer Ends Here -->
@@ -595,20 +595,38 @@
 		} else {
 			$(".copyrit").html("&copy; 2013 Photon Infotech Pvt Ltd. |<a onclick='open_win();'> www.photon.in</a>");
 		}
+		var Headercolor = data.headerBackGroundcolor; 
+		var Footercolor = data.footerBackGroundcolor;
+		var EditMenuColor = data.editMenuColor;
+	
+		if (Headercolor == null) {
+			Headercolor= none;
+		}
+		
+		if (Footercolor == null) {
+			Footercolor= none;
+		}
+		
 		JSS.css({
 			
-		'userInfo ul li:nth-child(2):hover, .userInfo ul li:nth-child(3):hover, .userInfo ul li:nth-child(4):hover' : {
-			'background' : "none repeat scroll 0 0 " + menuBackGround + "!important" // user settings background color
+			 '.header_main' : {
+				'background' : Headercolor 
 			},
 			
-		'.userInfo ul li' : {
-			'border-bottom' : "1px solid" + brandingColor + "!important",
-			'background' : "none repeat scroll 0 0 " + menufontColor + "!important"  // user settings background color
-		},	
+			'.footer_main' : {
+				'background' : Footercolor 
+			}, 
+			'.main_wrapper': {
+				'background' : bodyBackGroundColor + "!important"
+			},			
 			
 			'.usersettings' : {
 				'background' : "none repeat scroll 0 0 " + brandingColor + "!important" // user settings background color
 			},
+			
+			'.userInfo ul li' : {
+				'border-bottom': "1px  solid" + brandingColor + "!important"
+			} ,
 			
 			'.qtyTable_view table thead tr' :{
 				'background' : "none repeat scroll 0 0 " + brandingColor + "!important" // quality tab all border color
@@ -717,10 +735,6 @@
 				'border-color': brandingColor   // progress bar boder color
 			},
 			
-			'.userInfo ul li a': {
-				'color': brandingColor    //  Color when going for Theme change in about phresco
-			},
-
 			'li a.active label': {
 				'color': brandingColor + "! important"     // Active menu label color in Appinfo Left side
 			},
@@ -772,10 +786,6 @@
 			
 			'.tabs li, .pills > li': {
 				'border-bottom': "1px solid" +  bodyBackGroundColor  // left side menu  border-bottom color when mouse over
-			},
-			
-			'body': {
-				'background': bodyBackGroundColor,   // body background color
 			},
 			
 			'.navTopBorder .mfbox' : {
@@ -839,16 +849,12 @@
 				'background' : menuBackGround,                   // left side menu background 
 			},
 
-			'.headerInnerTop ul': {
-				'background': "none repeat scroll 0 0" + menuBackGround      // menu background color
-			},
-			
 			'#testmenu li a, #thememenu li a': {
 				'background': "none repeat scroll 0 0" +  subMenuBackGround // change the Left side menu background color in Quality tab selection ex: click unit ,functional , performance
 			},
 			
 			'.tabs li a.inactive label' : {
-				'color' : menufontColor + "! important"       // inactive menu label color in appinfo Leftside
+				'color' : EditMenuColor + "! important"       // inactive menu label color in appinfo Leftside
 			},
 
 			'li a.active label': {
