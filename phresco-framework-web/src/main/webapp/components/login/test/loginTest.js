@@ -8,9 +8,9 @@ define(["login/login"], function(Login) {
 			var login = new Login(), self = this;
 			
 			asyncTest("Login UI Test", function() {
-				$("#fixture").append(commonVariables.basePlaceholder);
-				$("#fixture").append(commonVariables.headerPlaceholder);
-				$("#fixture").append(commonVariables.navigationPlaceholder);
+				$("#custom").append(commonVariables.basePlaceholder);
+				$("#custom").append(commonVariables.headerPlaceholder);
+				$("#custom").append(commonVariables.navigationPlaceholder);
 				$("#fixture").append(commonVariables.contentPlaceholder);
 				$("#fixture").append(commonVariables.footerPlaceholder);
 
@@ -27,12 +27,12 @@ define(["login/login"], function(Login) {
 					start();
 					output = $(commonVariables.basePlaceholder).find("#loginContent").attr('id');
 					equal("loginContent", output, "Login Rendered Successfully");
-					self.runValidationTest(login);
+					self.runValidationTest(login, runOtherTests);
 				}, 1500);
 			});
 		},
 		
-		runValidationTest : function (login){
+		runValidationTest : function (login, runOtherTests){
 			var self = this;
 			asyncTest("Login Username Validation Test", function() {
 				$('input#username').val('');
@@ -51,12 +51,12 @@ define(["login/login"], function(Login) {
 				setTimeout(function() {
 					start();
 					ok($('#passwordDiv').hasClass("loginuser_error"), 'Password div error class added test');
-					self.runServiceTest(login);
+					self.runServiceTest(login, runOtherTests);
 				}, 1000);
 			});
 		},
 		
-		runServiceTest : function(login){
+		runServiceTest : function(login, runOtherTests){
 			asyncTest("Login Service Test", function() {
 				
 				$('input#username').val('admin');
@@ -89,6 +89,7 @@ define(["login/login"], function(Login) {
 					start();
 					equal($(commonVariables.headerPlaceholder).find("font:first").text(), "Admin", "Login Service Tested");
 					equal($("#footer").attr('id'), "footer", "Footer Rendering Tested");
+					runOtherTests();
 				}, 4000);
 			});
 		}

@@ -42,12 +42,13 @@
 			<scope>test</scope>
 		</dependency>
 		
-		<!-- <dependency>
+		<dependency>
 			<groupId>net.awired.js</groupId>
 			<artifactId>jquery</artifactId>
 			<version>1.7.2</version>
 			<type>war</type>
-		</dependency> -->
+			<scope>test</scope>
+		</dependency>
 
 		<dependency>
 			<groupId>jslibraries.files</groupId>
@@ -849,6 +850,7 @@
             <properties>
                 <sonar.branch>js</sonar.branch>
                 <sonar.language>js</sonar.language>
+				<sonar.exclusions>**/test/**,**/lib/**</sonar.exclusions>
                 <phresco.source.directory>src/main/webapp</phresco.source.directory>
                 <sonar.exclusions>**/lib/**</sonar.exclusions>
 				<testSourceDirectory>src/main/webapp</testSourceDirectory>

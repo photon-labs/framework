@@ -228,6 +228,7 @@ var commonVariables = {
 
 $(document).ready(function(){
 	$.get($("basepage\\:widget").attr("config"), function(data) {
+		commonVariables.animation = data.navigation.animation;
 		commonVariables.globalconfig = data;
 		configJson = {
 			// comment out the below line for production, this one is so require doesn't cache the result

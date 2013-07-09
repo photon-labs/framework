@@ -46,7 +46,7 @@ define(["navigation/api/navigationAPI"], function() {
 			var self = this;
 			self.getMyObj(commonVariables.addproject, function(addProjectObj){
 				Clazz.navigationController.jQueryContainer = commonVariables.contentPlaceholder;
-				Clazz.navigationController.push(addProjectObj, true);
+				Clazz.navigationController.push(addProjectObj, commonVariables.animation);
 			});
 		},
 		
@@ -517,7 +517,7 @@ define(["navigation/api/navigationAPI"], function() {
 			self.header.headerListener.currentTab = "Projects";
 			self.getMyObj(commonVariables.projectlist, function(returnVal){
 				self.currentTab = commonVariables.projectlist;
-				Clazz.navigationController.push(self.projectlist, true);
+				Clazz.navigationController.push(self.projectlist, commonVariables.animation);
 				callback(true);
 			});
 		},
@@ -528,7 +528,7 @@ define(["navigation/api/navigationAPI"], function() {
 			
 			self.getMyObj(contentObj, function(returnVal){
 				self.currentTab = contentObj;
-				Clazz.navigationController.push(returnVal, true);
+				Clazz.navigationController.push(returnVal, commonVariables.animation);
 				callback(true);
 			});
 		},
@@ -613,7 +613,7 @@ define(["navigation/api/navigationAPI"], function() {
 			if(currentObj !== undefined && currentObj !== null){
 				self.currentTab = keyword;
 				Clazz.navigationController.jQueryContainer = commonVariables.contentPlaceholder;
-				Clazz.navigationController.push(currentObj, true);
+				Clazz.navigationController.push(currentObj, commonVariables.animation);
 			}
 		},
 		

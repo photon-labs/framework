@@ -23,7 +23,8 @@ var commonVariables = {
 	testResult : "testResult",
     projectlist : "projectlist",
     projectlistContext : "project",
-
+	addproject : "addproject",
+	
 	basePlaceholder : "basepage\\:widget",
 	headerPlaceholder : "<div id='header'></div>",
 	contentPlaceholder : "content\\:widget",
@@ -36,6 +37,7 @@ define(["jquery"], function($) {
 
 		$.get('src/components/login/test/config.json', function(data) {
 			commonVariables.globalconfig = data;
+			commonVariables.animation = data.navigation.animation;
 			commonVariables.webserviceurl = "framework/";
 			configJson = {
 				// comment out the below line for production, this one is so require doesn't cache the result
@@ -71,6 +73,7 @@ define(["jquery"], function($) {
 			commonVariables.navigationPlaceholder=$("<navigation\\:widget></navigation\\:widget>");
             commonVariables.contentPlaceholder=$("<div id='content'></div>");
             commonVariables.footerPlaceholder=$("<div id='footer'></div>");
+			
 			$.each(commonVariables.globalconfig.components, function(index, value){
 				configJson.paths[index] = value.path;
 			});
@@ -97,7 +100,8 @@ define(["jquery"], function($) {
 			require(["loginTest", "projectlistTest", "headerTest", "footerTest", "navigationTest", "projectTest", "applicationTest", "featuresTest", "codequalityTest", "configurationTest", "buildTest", "editConfigurationTest", "jobTemplateListTest","unitTestTest", "componentTestTest", "Signal", "signalbinding",  "jslib_bootstrap_datepicker", "handlebars", "jslib_jquery_sortable_min", "bootstrap_min", "jquery_mCustomScrollbar_concat_min", "bootstrap_select_min"], function(loginTest, projectlistTest, headerTest, footerTest, navigationTest, projectTest,applicationTest, featuresTest, codequalityTest, configurationTest, buildTest, editConfigurationTest, jobTemplateListTest, unitTestTest, componentTestTest, signals, signalbinding, datepicker, handlebars,  sortable, bootstrap, scrollbar, select){
 				commonVariables.navListener = Clazz.com.components.navigation.js.listener.navigationListener();
 				loginTest.runTests(data, function() {
-					editConfigurationTest.runTests(data);
+					projectTest.runTests(data);
+					/* editConfigurationTest.runTests(data);
 					configurationTest.runTests(data);
 					navigationTest.runTests(data);
 					headerTest.runTests(data);
@@ -111,8 +115,8 @@ define(["jquery"], function($) {
 					codequalityTest.runTests(data);
 					unitTestTest.runTests(data);
 					componentTestTest.runTests(data);
-					// dynamicPageTest.runTests(data);
-					performanceTestTest.runTests(data);
+					dynamicPageTest.runTests(data);
+					performanceTestTest.runTests(data); */
 				});
 			});
 		}, "json");

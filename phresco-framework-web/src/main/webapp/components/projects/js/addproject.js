@@ -82,7 +82,7 @@ define(["projects/listener/projectsListener"], function() {
 			self.applicationlayerData = self.projectsListener.projectAPI.localVal.getJson("Application Layer");
 			self.weblayerData = self.projectsListener.projectAPI.localVal.getJson("Web Layer");
 			self.mobilelayerData = self.projectsListener.projectAPI.localVal.getJson("Mobile Layer");
-			if(self.applicationlayerData !== null &&  self.applicationlayerData !== null && self.applicationlayerData !== null) {
+			if(self.applicationlayerData !== null &&  self.weblayerData !== null && self.mobilelayerData !== null) {
 				self.templateData.applicationlayerData = self.applicationlayerData;
 				self.templateData.weblayerData = self.weblayerData;
 				self.templateData.mobilelayerData = self.mobilelayerData;
@@ -111,7 +111,7 @@ define(["projects/listener/projectsListener"], function() {
 		postRender : function(element) {
 			var self=this;
 			self.multiselect();
-			self.projectsListener.multiModuleEvent();
+			self.projectsListener.multiModuleEvent("false");
 		},
 		
 		setTechnologyData : function(callback) {
@@ -132,7 +132,6 @@ define(["projects/listener/projectsListener"], function() {
 		 *
 		 */
 		bindUI : function(){
-		
 			var self=this;
 			self.projectsListener.addLayersEvent();
 			self.projectsListener.removeLayersEvent();
@@ -148,8 +147,8 @@ define(["projects/listener/projectsListener"], function() {
 				self.onRemoveLayerEvent.dispatch($(this));
 			});
 			
-			$(".content_end input").unbind('click');
-			$(".content_end input").bind('click', function(){
+			$(".flt_left input").unbind('click');
+			$(".flt_left input").bind('click', function(){
 				self.onAddLayerEvent.dispatch($(this));
 			});
 			
@@ -159,7 +158,7 @@ define(["projects/listener/projectsListener"], function() {
 				str = str.replace(/\s/g, "");
 				$(this).val(str);
 			});
-			
+
 			$("input[name='Create']").unbind('click');
 			$("input[name='Create']").bind('click', function(){
 				self.onCreateEvent.dispatch('', 'create');
@@ -198,11 +197,13 @@ define(["projects/listener/projectsListener"], function() {
 				$("#endDate").focus();
 			});
 			
-			$(".create_proj .scrollContent").mCustomScrollbar({
-				autoHideScrollbar:true,
-				theme:"light-thin",
-				advanced:{ updateOnContentResize: true}
-			});
+			if (commonVariables.animate){
+				$(".create_proj .scrollContent").mCustomScrollbar({
+					autoHideScrollbar:true,
+					theme:"light-thin",
+					advanced:{ updateOnContentResize: true}
+				});	
+			}
 			Clazz.navigationController.jQueryContainer = commonVariables.contentPlaceholder;
 		}
 	});
