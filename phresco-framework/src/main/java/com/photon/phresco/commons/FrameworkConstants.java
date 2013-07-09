@@ -1883,6 +1883,7 @@ public interface FrameworkConstants {
 	    String EDIT_MENU_BACKGROUND_COLOR = "editMenuColor";
 	    String HEADER_BACKGROUND_COLOR = "headerBackGroundcolor";
 	    String FOOTER_BACKGROUND_COLOR = "footerBackGroundcolor";
+	    String USER_SETTINGS_COLOR = "userSettingColor";
 	    String USER_JSON = "user.json";
 	    String USER_PROJECT_JSON = "user-project.json";
 	    
