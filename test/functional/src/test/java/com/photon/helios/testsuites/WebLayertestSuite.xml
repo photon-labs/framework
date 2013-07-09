@@ -2,27 +2,31 @@
 
 <suite name="WebLayerWebLayeruite" thread-count="5" verbose="3">
 
-	<test name="JQueryMobileWidgetTest" junit="false" preserve-order="true">
+	 <test name="JQueryMobileWidgetTest" junit="false" preserve-order="true">
 		<classes>
 			<class name="com.photon.helios.WebLayer.JQueryMobileWidgetTest" />
 			<methods>
 				<include name="testJQueryMobileWidgetArchetypeCreation"></include>
 				<include name="testJQueryMobileWidgetArchetypeEditApp"></include>
 				<include name="testJQueryMobileArchetypeUpdateApp"></include>
+				<include name="testJQueryMobWidgetConfigurationCreate"></include>
+				<include name="testJQueryMobWidgetGenerateBuild"></include>
 			</methods>
 		</classes>
-	</test>
+	 </test>
 
-	<test name="MultiJqueryWidgetTest" junit="false" preserve-order="true">
+	 <test name="MultiJqueryWidgetTest" junit="false" preserve-order="true">
 		<classes>
 			<class name="com.photon.helios.WebLayer.MultiJQueryWidgetTest" />
 			<methods>
 				<include name="testMultiJQueryWidgetArchetypeCreation"></include>
 				<include name="testMultiJQueryWidgetArchetypeEditApp"></include>
 				<include name="testMultiJQueryArchetypeUpdateApp"></include>
+				<include name="testMultiJQueryWidgetConfigurationCreate"></include>
+				<include name="testMultiJQueryWidgetGenerateBuild"></include>
 			</methods>
 		</classes>
-	</test>
+	</test> 
 
 	<test name="MultiYuiWidgetTest" junit="false" preserve-order="true">
 		<classes>
@@ -31,9 +35,11 @@
 				<include name="testMultiYUIWidgetArchetypeCreation"></include>
 				<include name="testMultiYUIWidgetArchetypeEditApp"></include>
 				<include name="testMultiYUIArchetypeUpdateApp"></include>
+				<include name="testMultiYUIWidgeConfigurationCreate"></include>
+				<include name="testMultiYUIWidgetGenerateBuild"></include>
 			</methods>
 		</classes>
-	</test>
+	</test> 
 
 	<test name="YuiMobileWidgetTest" junit="false" preserve-order="true">
 		<classes>
@@ -42,8 +48,10 @@
 				<include name="testYUIMobileWidgetArchetypeCreation"></include>
 				<include name="testYUIMobileWidgetArchetypeEditApp"></include>
 				<include name="testYUIMobileArchetypeUpdateApp"></include>
+				<include name="testYUIMobileConfigurationCreate"></include>
+				<include name="testYUIMobileWidgetGenerateBuild"></include>
 			</methods>
 		</classes>
-	</test>
+	</test>  
 
 </suite>  

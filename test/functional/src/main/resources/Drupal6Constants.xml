@@ -1,10 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <environment>
     <phresco>
+               <!-- CreateArchetype -->
         	   <drupal6ArchetypeName>Drupal6ArchetypeProject</drupal6ArchetypeName>
 		       <drupal6ArchetypeDesc>This is Drupal6 Archetype Project</drupal6ArchetypeDesc>
 		       <drupal6ArchetypeAppCode>Drupal6Archetype</drupal6ArchetypeAppCode>
 		       <technologyValue>Drupal6</technologyValue>
 		       <drupal6ArchetypeEditApp>//a[contains(text(),'Drupal6Archetype')]</drupal6ArchetypeEditApp>
+		       
+		       <!-- CreateConfiguration -->
+		       <configName>Server</configName>  
+               <configHost>172.16.28.43</configHost>
+               <configPort>80</configPort>
+               <configDeployDir>C:\wamp\www</configDeployDir>
+               <configContext>drupal6archetype</configContext>
+               
+               <!-- Generate Build -->
+               <buildName>Drupal6Build</buildName>
     </phresco>
 </environment>

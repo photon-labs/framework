@@ -1,10 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <environment>
     <phresco>
+               <!-- CreateArchetype -->
       	       <sharepointArchetypeName>SharepointArchetypeProject</sharepointArchetypeName>
 		       <sharepointArchetypeDesc>This is Sharepoint Archetype Project</sharepointArchetypeDesc>
 		       <sharepointArchetypeAppCode>SharepointArchetype</sharepointArchetypeAppCode>
 		       <technologyValue>Sharepoint</technologyValue>
 		       <sharepointArchetypeEditApp>//a[contains(text(),'SharepointArchetype')]</sharepointArchetypeEditApp>
+     
+               <!-- CreateConfiguration -->
+		       <configName>Server</configName>  
+               <configHost>172.16.28.43</configHost>
+               <configPort>80</configPort>
+               <configDeployDir>C:\wamp\www</configDeployDir>
+               <configContext>phparchetype</configContext>
+               
+               <!-- Generate Build -->
+               <buildName>SharepointBuild</buildName>
+     
      </phresco>
 </environment>

@@ -1,10 +1,21 @@
 <environment>
 <phresco>
+               <!-- CreateArchetype -->
 			   <jQueryMobArchetypeName>JQueryMobileArchetypeProject</jQueryMobArchetypeName>
 		       <jQueryMobArchetypeDesc>This is JQueryMobile Archetype Project</jQueryMobArchetypeDesc>
 		       <jQueryMobArchetypeAppCode>JQueryMobileArchetype</jQueryMobArchetypeAppCode>
 		       <webLayerValue>HTML5</webLayerValue>
 		       <widgetValue>JQuery Mobile Widget</widgetValue>
 		       <jQueryMobArchetypeEditLink>//a[contains(text(),'JQueryMobileArchetype')]</jQueryMobArchetypeEditLink>
+              
+               <!-- CreateConfiguration -->
+               <configName>Server</configName>  
+               <configHost>172.16.28.43</configHost>
+               <configPort>8080</configPort>
+               <configDeployDir>D:\apache-tomcat-7.0.35\webapps</configDeployDir>
+               <configContext>jquerymob</configContext>
+               
+               <!-- GenerateBuild -->
+               <buildName>Build</buildName>
 </phresco>
 </environment>

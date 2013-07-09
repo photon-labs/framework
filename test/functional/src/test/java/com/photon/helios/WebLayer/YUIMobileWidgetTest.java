@@ -97,6 +97,36 @@ public class YUIMobileWidgetTest {
 
 		}
 	} 
+	
+	@Test
+	public void testYUIMobileConfigurationCreate()
+			throws InterruptedException, IOException, Exception {
+				try {
+
+					System.out.println("---------testYUIMobileConfigurationCreate()-------------");
+					methodName = Thread.currentThread().getStackTrace()[1].getMethodName();
+					webBaseScreen.yuiMobileWidgetConfigurationCreate(methodName, yuiMobConst);
+
+				} catch (Exception t) {
+					t.printStackTrace();
+
+				}
+			} 
+	
+	@Test
+	public void testYuiMobileWidgetGenerateBuild()
+			throws InterruptedException, IOException, Exception {
+				try {
+
+					System.out.println("---------testYuiMobileWidgetGenerateBuild()-------------");
+					methodName = Thread.currentThread().getStackTrace()[1].getMethodName();
+					webBaseScreen.yuiMobileWidgetGenerateBuild(methodName, yuiMobConst);
+
+				} catch (Exception t) {
+					t.printStackTrace();
+
+				}
+			} 
 
 	@AfterTest
 	public  void tearDown() {

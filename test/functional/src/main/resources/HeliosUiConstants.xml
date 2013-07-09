@@ -82,6 +82,28 @@
 		
 		<!-- Feature Page -->
 		<featureTab>//*[@id='featurelist']/a</featureTab>
+		
+		<!-- Configuration Page -->		
+		<configTab>//li[@id='configuration']/a</configTab>
+		<configButton>//div[@id='configurationPage']/section/table/tbody/tr/td[3]/a/img</configButton>
+		<addConfig>//input[@value='Add Configuration']</addConfig>
+		<chooseServer>//a[contains(text(),'Server')]</chooseServer>
+		<configName>//input[@id='ConfigServer']</configName>
+		<configHost>//input[@name='host']</configHost>
+		<configPort>//input[@name='port']</configPort>
+		<configDeployDir>//input[@name='deploy_dir']</configDeployDir>
+		<configContext>//input[@name='context']</configContext>
+		<configUpdate>//input[@value='Update']</configUpdate>
+		
+		<!-- Build Page -->
+		<buildtab>//li[@id='build']/a</buildtab>
+		<generatebuild>//input[@value='Generate Build']</generatebuild>
+		<buildname>//input[@id='buildName']</buildname>
+		<buildnumber></buildnumber>
+		<chooseenvironment>//button[@type='button']</chooseenvironment>
+		<chooselogs>//button[@type='button']</chooselogs>
+		<buildrun>//input[@id='buildRun']</buildrun>
+		
 	</phresco>
 </environment>
 				  

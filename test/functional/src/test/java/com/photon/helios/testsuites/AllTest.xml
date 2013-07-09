@@ -4,6 +4,6 @@
 		<suite-file path="/AppLayertestSuite.xml" />
 		<suite-file path="/MobLayertestSuite.xml" />
 		<suite-file path="/WebLayertestSuite.xml" />
-		<suite-file path="/ScenariostestSuite.xml" />
+		<suite-file path="/ScenariostestSuite.xml" /> 
 	</suite-files>
 </suite>

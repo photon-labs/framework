@@ -96,7 +96,37 @@ public class WordpressTest {
 			t.printStackTrace();
 
 		}
-	} 
+	}
+	
+	@Test
+	public void testwordpressConfigurationCreate()
+	throws InterruptedException, IOException, Exception {
+		try {
+
+			System.out.println("---------testwordpressConfigurationCreate()-------------");
+			methodName = Thread.currentThread().getStackTrace()[1].getMethodName();
+			appBaseScreen.wordpressConfigurationCreate(methodName, wordpressConst);
+
+		} catch (Exception t) {
+			t.printStackTrace();
+
+		}
+	}
+	
+	@Test
+	public void testWordpressBuild()
+	throws InterruptedException, IOException, Exception {
+		try {
+
+			System.out.println("---------testWordpressBuild()-------------");
+			methodName = Thread.currentThread().getStackTrace()[1].getMethodName();
+			appBaseScreen.wordpressBuild(methodName, wordpressConst);
+
+		} catch (Exception t) {
+			t.printStackTrace();
+
+		}
+	}
 	
 
 	@AfterTest

@@ -14,7 +14,12 @@ public class NodeJsConstants {
 	private String nodeJsArchetypeAppCode = "nodeJsArchetypeAppCode";
 	private String technologyValue = "technologyValue";
 	private String nodeJsEditApp = "nodeJsEditApp";
-
+	private String configName = "configName";
+    private String configHost = "configHost";
+    private String configPort = "configPort";
+    private String configDeployDir = "configDeployDir";
+    private String configContext = "configContext";
+    private String buildName = "buildName";
 
 
 	public NodeJsConstants() {
@@ -75,5 +80,47 @@ public class NodeJsConstants {
 		this.nodeJsEditApp = nodeJsEditApp;
 	}
 
+	public String getConfigName() {
+		return configName;
+	}
+	
+	public void setConfigName(String configName) {
+		this.configName = configName;
+	}
+	
+	public String getConfigDeployDir() {
+		return configDeployDir;
+	}
+	
+	public void setConfigDeployDir(String configDeployDir) {
+		this.configDeployDir = configDeployDir;
+	}
+	
+	public String getConfigContext() {
+		return configContext;
+	}
+	
+	public void setConfigContext(String configContext) {
+		this.configContext = configContext;
+	}
+	
+	public String getConfigPort() {
+		return configPort;
+	}
+	
+	public void setConfigPort(String configPort) {
+		this.configPort = configPort;
+	}
+	
+	public String getConfigHost() {
+		return configHost;
+	}
+	
+	public void setConfigHost(String configHost) {
+		this.configHost = configHost;
+	}
+	public String getBuildName() {
+		return buildName;
+	}
 	
 	}

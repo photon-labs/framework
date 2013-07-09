@@ -98,6 +98,36 @@ public class JQueryMobileWidgetTest {
 
 		}
 	} 
+	
+	@Test
+	public void testJQueryMobWidgetConfigurationCreate()
+			throws InterruptedException, IOException, Exception {
+				try {
+
+					System.out.println("---------testJQueryMobWidgetConfigurationCreate()-------------");
+					methodName = Thread.currentThread().getStackTrace()[1].getMethodName();
+					webBaseScreen.jQueryMobWidgetConfigurationCreate(methodName, jQueryMobConst);
+
+				} catch (Exception t) {
+					t.printStackTrace();
+
+				}
+			} 
+	
+	@Test
+	public void testJQueryMobWidgetGenerateBuild()
+			throws InterruptedException, IOException, Exception {
+				try {
+
+					System.out.println("---------testJQueryMobWidgetGenerateBuild()-------------");
+					methodName = Thread.currentThread().getStackTrace()[1].getMethodName();
+					webBaseScreen.jQueryMobWidgetGenerateBuild(methodName, jQueryMobConst);
+
+				} catch (Exception t) {
+					t.printStackTrace();
+
+				}
+			} 
 
 	@AfterTest
 	public  void tearDown() {

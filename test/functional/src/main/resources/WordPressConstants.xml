@@ -1,11 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <environment>
 	<phresco>
+		<!-- CreateArchetype -->
 		<wordpressArchetypeName>WordpressArchetypeProject</wordpressArchetypeName>
 		<wordpressArchetypeDesc>This is Wordpress Archetype Project</wordpressArchetypeDesc>
 		<wordpressArchetypeAppCode>WordpressArchetype</wordpressArchetypeAppCode>
 		<technologyValue>WordPress</technologyValue>
 		<wordpressArchetypeEditApp>//a[contains(text(),'WordpressArchetype')]</wordpressArchetypeEditApp>
+		
+		<!-- CreateConfiguration -->
+		<configName>Server</configName>  
+        <configHost>172.16.28.43</configHost>
+        <configPort>80</configPort>
+        <configDeployDir>C:\wamp\www</configDeployDir>
+        <configContext>wordpressarchetype</configContext>
+        
+        <!-- Generate Build -->
+               <buildName>WordpressBuild</buildName>
 	</phresco>
 </environment>
 

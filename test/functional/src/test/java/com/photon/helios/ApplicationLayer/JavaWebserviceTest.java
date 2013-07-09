@@ -23,6 +23,7 @@ public class JavaWebserviceTest {
 	private static JavaWebserviceConstants javaWSConst;
 	private String methodName;
 	private static String selectedBrowser;
+	
 
 	@BeforeTest
 	public void setUp() throws Exception
@@ -98,6 +99,36 @@ public class JavaWebserviceTest {
 
 		}
 	} 
+	
+	@Test
+	public void testJavaWSConfigurationCreate()
+	throws InterruptedException, IOException, Exception {
+		try {
+
+			System.out.println("---------testJavaWSConfigurationCreate()-------------");
+			methodName = Thread.currentThread().getStackTrace()[1].getMethodName();
+			appBaseScreen.javaWSConfigurationCreate(methodName, javaWSConst);
+
+		} catch (Exception t) {
+			t.printStackTrace();
+
+		}
+	} 
+	
+	@Test
+	public void testjavaWSBuild()
+	throws InterruptedException, IOException, Exception {
+		try {
+
+			System.out.println("---------testjavaWSBuild()-------------");
+			methodName = Thread.currentThread().getStackTrace()[1].getMethodName();
+			appBaseScreen.javaWSBuild(methodName, javaWSConst);
+
+		} catch (Exception t) {
+			t.printStackTrace();
+
+		}
+	}
 
 
 	@AfterTest

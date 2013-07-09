@@ -68,6 +68,35 @@ public class IPhoneLibraryTest {
 		}
 	} 
 	
+	@Test
+	public void testIPhoneLibraryArchetypeEditApp()
+	throws InterruptedException, IOException, Exception {
+		try {
+
+			System.out.println("---------testAndroidNativeArchetypeEditApp()-------------");
+			methodName = Thread.currentThread().getStackTrace()[1].getMethodName();
+			mobBaseScreen.iPhoneLibraryArchetypeEditApp(methodName, iPhoneLibraryConst);
+		} catch (Exception t) {
+			t.printStackTrace();
+
+		}
+	} 
+	
+	@Test
+	public void testIPhoneLibraryArchetypeUpdateApp()
+	throws InterruptedException, IOException, Exception {
+		try {
+
+			System.out.println("---------testAndroidNativeArchetypeUpdateApp()-------------");
+			methodName = Thread.currentThread().getStackTrace()[1].getMethodName();
+			mobBaseScreen.iPhoneLibraryArchetypeUpdateApp(methodName, iPhoneLibraryConst);
+
+		} catch (Exception t) {
+			t.printStackTrace();
+
+		}
+	} 
+	
 	@AfterTest
 	public void tearDown() {
 		mobBaseScreen.closeBrowser();

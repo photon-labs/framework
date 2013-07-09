@@ -70,6 +70,35 @@ public class IPhoneHybridTest {
 		}
 	} 
 	
+	@Test
+	public void testIPhoneHybridArchetypeEditApp()
+	throws InterruptedException, IOException, Exception {
+		try {
+
+			System.out.println("---------testAndroidNativeArchetypeEditApp()-------------");
+			methodName = Thread.currentThread().getStackTrace()[1].getMethodName();
+			mobBaseScreen.iPhoneHybridArchetypeEditApp(methodName, iPhoneHybridConst);
+		} catch (Exception t) {
+			t.printStackTrace();
+
+		}
+	} 
+	
+	@Test
+	public void testIPhoneHybridArchetypeUpdateApp()
+	throws InterruptedException, IOException, Exception {
+		try {
+
+			System.out.println("---------testAndroidNativeArchetypeUpdateApp()-------------");
+			methodName = Thread.currentThread().getStackTrace()[1].getMethodName();
+			mobBaseScreen.iPhoneHybridArchetypeUpdateApp(methodName, iPhoneHybridConst);
+
+		} catch (Exception t) {
+			t.printStackTrace();
+
+		}
+	} 
+	
 	@AfterTest
 	public  void tearDown() {
 		mobBaseScreen.closeBrowser();

@@ -14,6 +14,8 @@ public class JavaStandaloneConstants {
 	private String javaSAArchetypeAppCode = "javaSAArchetypeAppCode";
 	private String technologyValue = "technologyValue";
 	private String javaSAArchetypeEditApp = "javaSAArchetypeEditApp";
+	private String buildName = "buildName";
+	
 
 	public JavaStandaloneConstants() {
 		try {
@@ -60,6 +62,9 @@ public class JavaStandaloneConstants {
 	}
 	public void setJavaSAArchetypeEditApp(String javaSAArchetypeEditApp) {
 		this.javaSAArchetypeEditApp = javaSAArchetypeEditApp;
+	}
+	public String getBuildName() {
+		return buildName;
 	}
 
 

@@ -1,10 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <environment>
 	<phresco>
+	    <!-- CreateArchetype -->
 		<sitecoreArchetypeName>SitecoreArchetypeProject</sitecoreArchetypeName>
 		<sitecoreArchetypeDesc>This is Sitecore Archetype Project</sitecoreArchetypeDesc>
 		<sitecoreArchetypeAppCode>SitecoreArchetype</sitecoreArchetypeAppCode>
 		<technologyValue>Site Core</technologyValue>
 		<sitecoreArchetypeEditApp>//a[contains(text(),'SitecoreArchetype')]</sitecoreArchetypeEditApp>
+	
+	    <!-- CreateConfiguration -->
+        <configName>Server</configName>  
+        <configHost>172.16.28.43</configHost>
+        <configPort>80</configPort>
+        <configDeployDir>C:\wamp\www</configDeployDir>
+        <configContext>sitecorearchetype</configContext>
+        
+        <!-- Generate Build -->
+               <buildName>SitecoreBuild</buildName>
+        
 	</phresco>
 </environment>

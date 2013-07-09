@@ -844,7 +844,7 @@ public class ScenariosScreen {
 						.contains(text)) {
 					break;
 				} else {
-					if (i == 204) {
+					if (i == 200) {
 						throw new RuntimeException(
 						"---- Time out for finding the Text----");
 					} else if (driver.findElement(By.tagName("body")).getText()

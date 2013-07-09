@@ -1,11 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <environment>
 	<phresco>
+	       <!-- CreateArchetype -->
 		   <javaSAArchetypeName>JavaStandaloneArchetypeProject</javaSAArchetypeName>
 	       <javaSAArchetypeDesc>This is Java Standalone Archetype Project</javaSAArchetypeDesc>
 	       <javaSAArchetypeAppCode>JavaStandaloneArchetype</javaSAArchetypeAppCode>
 	       <technologyValue>Java Standalone</technologyValue>
 	       <javaSAArchetypeEditApp>//a[contains(text(),'JavaStandaloneArchetype')]</javaSAArchetypeEditApp>
+	       
+	       
+	       <!-- Generate Build -->
+               <buildName>JavaStandaloneBuild</buildName>
+               
 	</phresco>
 </environment>
 

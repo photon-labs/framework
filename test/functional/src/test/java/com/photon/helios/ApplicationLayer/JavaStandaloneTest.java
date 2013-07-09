@@ -85,6 +85,21 @@ public class JavaStandaloneTest {
 		}
 	} 
 	
+	@Test
+	public void testjavaStandaloneBuild()
+	throws InterruptedException, IOException, Exception {
+		try {
+
+			System.out.println("---------testjavaStandaloneBuild()-------------");
+			methodName = Thread.currentThread().getStackTrace()[1].getMethodName();
+			appBaseScreen.javaStandaloneBuild(methodName, javaSAConst);
+
+		} catch (Exception t) {
+			t.printStackTrace();
+
+		}
+	}
+	
 
 	@AfterTest
 	public  void tearDown() {

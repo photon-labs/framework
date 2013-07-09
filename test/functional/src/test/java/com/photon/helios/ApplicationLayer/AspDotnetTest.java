@@ -101,6 +101,36 @@ public class AspDotnetTest {
 		}
 	} 
 	
+	@Test
+	public void testAspDotnetConfigurationCreate()
+	throws InterruptedException, IOException, Exception {
+		try {
+
+			System.out.println("---------testAspDotnetConfigurationCreate()-------------");
+			methodName = Thread.currentThread().getStackTrace()[1].getMethodName();
+			appBaseScreen.aspDotnetConfigurationCreate(methodName, aspDotnetConst);
+
+		} catch (Exception t) {
+			t.printStackTrace();
+
+		}
+	} 
+	
+	@Test
+	public void testaspDotnetBuild()
+	throws InterruptedException, IOException, Exception {
+		try {
+
+			System.out.println("---------testaspDotnetBuild()-------------");
+			methodName = Thread.currentThread().getStackTrace()[1].getMethodName();
+			appBaseScreen.aspDotnetBuild(methodName, aspDotnetConst);
+
+		} catch (Exception t) {
+			t.printStackTrace();
+
+		}
+	}
+	
 
 	@AfterTest
 	public  void tearDown() {

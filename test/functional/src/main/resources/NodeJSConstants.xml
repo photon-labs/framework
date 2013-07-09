@@ -1,10 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <environment>
     <phresco>
+               <!-- CreateArchetype -->
       		   <nodeJsArchetypeName>NodeJsArchetypeProject</nodeJsArchetypeName>
 		       <nodeJsArchetypeDesc>This is NodeJs Archetype Project</nodeJsArchetypeDesc>
 		       <nodeJsArchetypeAppCode>NodeJsArchetype</nodeJsArchetypeAppCode>
 		       <technologyValue>Node JS</technologyValue>
 		       <nodeJsEditApp>//a[contains(text(),'NodeJsArchetype')]</nodeJsEditApp>
+		       
+		       <!-- CreateConfiguration -->
+		       <configName>Server</configName>  
+               <configHost>172.16.28.43</configHost>
+               <configPort>4576</configPort>
+               <configDeployDir>C:\wamp\www</configDeployDir>
+               <configContext>nodejsarchetype</configContext>
+               
+               <!-- Generate Build -->
+               <buildName>NodeJSBuild</buildName>
     </phresco>
 </environment>

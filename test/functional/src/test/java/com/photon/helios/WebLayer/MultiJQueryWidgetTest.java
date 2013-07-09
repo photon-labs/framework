@@ -99,6 +99,35 @@ public class MultiJQueryWidgetTest {
 		}
 	} 
 	
+	@Test
+	public void testMultiJQueryWidgetConfigurationCreate()
+			throws InterruptedException, IOException, Exception {
+				try {
+
+					System.out.println("---------testMultiJQueryWidgetConfigurationCreate()-------------");
+					methodName = Thread.currentThread().getStackTrace()[1].getMethodName();
+					webBaseScreen.multiJQueryWidgetConfigurationCreate(methodName, multiJQueryConst);
+
+				} catch (Exception t) {
+					t.printStackTrace();
+
+				}
+			} 
+	
+	public void testMultiJQueryWidgetGenerateBuild()
+			throws InterruptedException, IOException, Exception {
+				try {
+
+					System.out.println("---------testMultiJQueryWidgetGenerateBuild()-------------");
+					methodName = Thread.currentThread().getStackTrace()[1].getMethodName();
+					webBaseScreen.multiJQueryWidgetGenerateBuild(methodName, multiJQueryConst);
+
+				} catch (Exception t) {
+					t.printStackTrace();
+
+				}
+			} 
+	
 	@AfterTest
 	public  void tearDown() {
 		webBaseScreen.closeBrowser();

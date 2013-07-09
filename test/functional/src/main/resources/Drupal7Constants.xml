@@ -1,10 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <environment>
     <phresco>
+               <!-- CreateArchetype -->
       		   <drupal7ArchetypeName>Drupal7ArchetypeProject</drupal7ArchetypeName>
 		       <drupal7ArchetypeDesc>This is Drupal7 Archetype Project</drupal7ArchetypeDesc>
 		       <drupal7ArchetypeAppCode>Drupal7Archetype</drupal7ArchetypeAppCode>
 		       <technologyValue>Drupal7</technologyValue>
 		       <drupal7ArchetypeEditApp>//a[contains(text(),'Drupal7Archetype')]</drupal7ArchetypeEditApp>
+		       
+		       <!-- CreateConfiguration -->
+		       <configName>Server</configName>  
+               <configHost>172.16.28.43</configHost>
+               <configPort>80</configPort>
+               <configDeployDir>C:\wamp\www</configDeployDir>
+               <configContext>phparchetype</configContext>
+               
+               <!-- Generate Build -->
+               <buildName>Drupal7Build</buildName>
     </phresco>
 </environment>

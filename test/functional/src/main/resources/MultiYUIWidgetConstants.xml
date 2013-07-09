@@ -1,12 +1,24 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <environment>
 <phresco>
+			   <!-- CreateArchetype -->
 		 	   <multiYuiArchetypeName>MultiYuiArchetypeProject</multiYuiArchetypeName>
 		       <multiYuiArchetypeDesc>This is MultiYui Archetype Project</multiYuiArchetypeDesc>
 		       <multiYuiArchetypeAppCode>MultiYuiArchetype</multiYuiArchetypeAppCode>
 		       <webLayerValue>HTML5</webLayerValue>
 		       <widgetValue>Multichannel YUI Widget</widgetValue>
 		       <multiYuiArchetypeEditLink>//a[contains(text(),'MultiYuiArchetype')]</multiYuiArchetypeEditLink>
+               
+               <!-- CreateConfiguration -->
+               <configName>Server</configName>  
+               <configHost>172.16.28.43</configHost>
+               <configPort>8080</configPort>
+               <configDeployDir>D:\apache-tomcat-7.0.35\webapps</configDeployDir>
+               <configContext>multiyui</configContext>
+               
+               <!-- GenerateBuild -->
+               <buildName>Build</buildName>
+               
 </phresco>
 </environment>
  

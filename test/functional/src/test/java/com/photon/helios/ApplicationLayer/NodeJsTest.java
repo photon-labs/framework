@@ -99,6 +99,36 @@ public class NodeJsTest {
 		}
 	} 
 	
+	@Test
+	public void testNodeJsConfigurationCreate()
+	throws InterruptedException, IOException, Exception {
+		try {
+
+			System.out.println("---------testNodeJsConfigurationCreate()-------------");
+			methodName = Thread.currentThread().getStackTrace()[1].getMethodName();
+			appBaseScreen.nodeJsArchetypeUpdateApp(methodName, nodeJsConst);
+
+		} catch (Exception t) {
+			t.printStackTrace();
+
+		}
+	} 
+	
+	@Test
+	public void testNodeJSBuild()
+	throws InterruptedException, IOException, Exception {
+		try {
+
+			System.out.println("---------testNodeJSBuild()-------------");
+			methodName = Thread.currentThread().getStackTrace()[1].getMethodName();
+			appBaseScreen.nodejsWSBuild(methodName, nodeJsConst);
+
+		} catch (Exception t) {
+			t.printStackTrace();
+
+		}
+	}
+	
 
 	@AfterTest
 	public  void tearDown() {

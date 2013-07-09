@@ -10,6 +10,8 @@
 				<include name="testPhpArchetypeCreation"></include>
 				<include name="testPhpArchetypeEditApp"></include>
 				<include name="testPhpArchetypeUpdateApp"></include>
+				<include name="testphpConfigurationCreate"></include>
+				<include name="testphpBuild"></include>
 			</methods>
 		</classes>
 	</test>
@@ -21,6 +23,8 @@
 				<include name="testDrupal6ArchetypeCreation"></include>
 				<include name="testDrupal6ArchetypeEditApp"></include>
 				<include name="testDrupal6ArchetypeUpdateApp"></include>
+				<include name="testDrupal6ConfigurationCreate"></include>
+				<include name="testdrupal6Build"></include>
 			</methods>
 		</classes>
 	</test>
@@ -32,6 +36,8 @@
 				<include name="testDrupal7ArchetypeCreation"></include>
 				<include name="testDrupal7ArchetypeEditApp"></include>
 				<include name="testDrupal7ArchetypeUpdateApp"></include>
+				<include name="testDrupal7ConfigurationCreate"></include>
+				<include name="testdrupal7Build"></include>
 			</methods>
 		</classes>
 	</test>
@@ -43,6 +49,8 @@
 				<include name="testWordpressArchetypeCreation"></include>
 				<include name="testWordpressArchetypeEditApp"></include>
 				<include name="testWordpressArchetypeUpdateApp"></include>
+				<include name="testwordpressConfigurationCreate"></include>
+				<include name="testWordpressBuild"></include>
 			</methods>
 		</classes>
 	</test>
@@ -55,6 +63,8 @@
 				<include name="testSitecoreArchetypeCreation"></include>
 				<include name="testSitecoreArchetypeEditApp"></include>
 				<include name="testSitecoreArchetypeUpdateApp"></include>
+				<include name="testSitecoreConfigurationCreate"></include>
+				<include name="testSitecoreBuild"></include>
 			</methods>
 		</classes>
 	</test>
@@ -66,6 +76,8 @@
 				<include name="testAspDotnetArchetypeCreation"></include>
 				<include name="testAspDotnetArchetypeEditApp"></include>
 				<include name="testAspDotnetArchetypeUpdateApp"></include>
+				<include name="testAspDotnetConfigurationCreate"></include>
+				<include name="testaspDotnetBuild"></include>
 			</methods>
 		</classes>
 	</test>
@@ -77,6 +89,8 @@
 				<include name="testSharepointArchetypeCreation"></include>
 				<include name="testSharepointArchetypeEditApp"></include>
 				<include name="testSharepointArchetypeUpdateApp"></include>
+				<include name="testSharepointConfigurationCreate"></include>
+				<include name="testSharepointBuild"></include>
 			</methods>
 		</classes>
 	</test>
@@ -87,6 +101,7 @@
 			<methods>
 				<include name="testJavaStandaloneArchetypeCreation"></include>
 				<include name="testJavaStandaloneArchetypeEditApp"></include>
+				<include name="testjavaStandaloneBuild"></include>
 			</methods>
 		</classes>
 	</test>
@@ -98,6 +113,8 @@
 				<include name="testJavaWebserviceArchetypeCreation"></include>
 				<include name="=testJavaWebserviceArchetypeEditApp"></include>
 				<include name="testJavaWebserviceArchetypeUpdateApp"></include>
+				<include name="testJavaWSConfigurationCreate"></include>
+				<include name="testjavaWSBuild"></include>
 			</methods>
 		</classes>
 	</test>
@@ -109,6 +126,8 @@
 				<include name="testNodeJsArchetypeCreation"></include>
 				<include name="testNodeJsArchetypeEditApp"></include>
 				<include name="testNodeJsArchetypeUpdateApp"></include>
+				<include name="testNodeJsConfigurationCreate"></include>
+				<include name="testNodeJSBuild"></include>
 			</methods>
 		</classes>
 	</test>

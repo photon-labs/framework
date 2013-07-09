@@ -84,7 +84,7 @@ public class MultiYUIWidgetTest {
 	} 
 	
 	@Test
-	public void testMultiYUIArchetypeUpdateApp()
+	public void testMultiYUIWidgeArchetypeUpdateApp()
 	throws InterruptedException, IOException, Exception {
 		try {
 
@@ -98,7 +98,35 @@ public class MultiYUIWidgetTest {
 		}
 	} 
 	
+	@Test
+	public void testMultiYUIWidgeConfigurationCreate()
+			throws InterruptedException, IOException, Exception {
+				try {
+
+					System.out.println("---------testMultiYUIWidgeConfigurationCreate()-------------");
+					methodName = Thread.currentThread().getStackTrace()[1].getMethodName();
+					webBaseScreen.multiYUIWidgetConfigurationCreate(methodName, multiYUIConst);
+
+				} catch (Exception t) {
+					t.printStackTrace();
+
+				}
+			} 
 	
+	@Test
+	public void testMultiYUIWidgetGenerateBuild()
+			throws InterruptedException, IOException, Exception {
+				try {
+
+					System.out.println("---------testMultiYUIWidgetGenerateBuild()-------------");
+					methodName = Thread.currentThread().getStackTrace()[1].getMethodName();
+					webBaseScreen.multiYUIWidgetGenerateBuild(methodName, multiYUIConst);
+
+				} catch (Exception t) {
+					t.printStackTrace();
+
+				}
+			} 
 	
 	@AfterTest
 	public  void tearDown() {

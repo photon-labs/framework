@@ -98,6 +98,36 @@ public class SharepointTest {
 		}
 	} 
 	
+	@Test
+	public void testSharepointConfigurationCreate()
+	throws InterruptedException, IOException, Exception {
+		try {
+
+			System.out.println("---------testSharepointArchetypeUpdateApp()-------------");
+			methodName = Thread.currentThread().getStackTrace()[1].getMethodName();
+			appBaseScreen.sharePointConfigurationCreate(methodName, sharepointConst);
+
+		} catch (Exception t) {
+			t.printStackTrace();
+
+		}
+	}
+	
+	@Test
+	public void testSharepointBuild()
+	throws InterruptedException, IOException, Exception {
+		try {
+
+			System.out.println("---------testSharepointBuild()-------------");
+			methodName = Thread.currentThread().getStackTrace()[1].getMethodName();
+			appBaseScreen.sharepointBuild(methodName, sharepointConst);
+
+		} catch (Exception t) {
+			t.printStackTrace();
+
+		}
+	}
+	
 
 	@AfterTest
 	public  void tearDown() {

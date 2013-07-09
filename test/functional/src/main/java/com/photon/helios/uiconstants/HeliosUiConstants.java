@@ -61,19 +61,15 @@ public class HeliosUiConstants {
 	private String apacheTomcatServer = "apacheTomcatServer";
 	private String apacheTomcatServerVersion = "apacheTomcatServerVersion";
 	private String nodeJsServer = "nodeJsServer";
-	private String nodeJsServerVersion = "nodeJsServerVersion";
-	
+	private String nodeJsServerVersion = "nodeJsServerVersion";	
 	private String iisServer = "iisServer";
 	private String iisServerVersion = "iisServerVersion";
 	private String sharepointServer = "sharepointServer";
-	private String sharepointServerVersion = "sharepointServerVersion";
-	
+	private String sharepointServerVersion = "sharepointServerVersion";	
 	private String dbDropdown = "dbDropdown";
-	private String mysqlDb = "mysqlDb";
-	
+	private String mysqlDb = "mysqlDb";	
 	private String dbVersionDropdown = "dbVersionDropdown";
-	private String mysqlVersionValue = "mysqlVersionValue";
-	
+	private String mysqlVersionValue = "mysqlVersionValue";	
 	private String restJsonCheckbox = "restJsonCheckbox";
 	private String restXmlCheckbox = "restXmlCheckbox";
 	private String soap1Checkbox = "soap1.0Checkbox";
@@ -95,7 +91,33 @@ public class HeliosUiConstants {
 	 */
 	
 	private String featureTab = "featureTab";
+	
+	/**
+	 * Configuration Page
+	 */
 
+	private String configTab = "configTab";
+	private String configButton = "configButton";
+	private String addConfig = "addConfig";
+	private String chooseServer = "chooseServer";
+	private String configName = "configName";
+    private String configHost = "configHost";
+    private String configPort = "configPort";
+    private String configDeployDir = "configDeployDir";
+    private String configContext = "configContext";
+	private String configUpdate = "configUpdate";
+		
+	/**
+	 * Build Page
+	 */
+	
+	private String buildTab = "buildtab";
+	private String generateBuild = "generatebuild";
+    private String buildName = "buildname";
+    private String chooseEnvironment = "chooseenvironment";
+    private String chooseLogs = "chooselogs";
+	private String buildRun = "buildrun";
+	
 	public HeliosUiConstants() {
 		try {
 			ReadXMLFile readXml = new ReadXMLFile();
@@ -600,7 +622,91 @@ public class HeliosUiConstants {
 		this.featureTab = featureTab;
 	}
 
+	public String getConfigTab() {
+		return configTab;
+	}
 	
+	public String getConfigButton() {
+		return configButton;
+	}
 
+	public String getAddConfig() {
+		return addConfig;
+	}
 	
+	public String getChooseServer() {
+		return chooseServer;
+	}
+	
+	public String getConfigName() {
+		return configName;
+	}
+	
+	public void setConfigName(String configName) {
+		this.configName = configName;
+	}
+	
+	public String getConfigDeployDir() {
+		return configDeployDir;
+	}
+	
+	public void setConfigDeployDir(String configDeployDir) {
+		this.configDeployDir = configDeployDir;
+	}
+	
+	public String getConfigContext() {
+		return configContext;
+	}
+	
+	public void setConfigContext(String configContext) {
+		this.configContext = configContext;
+	}
+	
+	public String getConfigPort() {
+		return configPort;
+	}
+	
+	public void setConfigPort(String configPort) {
+		this.configPort = configPort;
+	}
+	
+	public String getConfigHost() {
+		return configHost;
+	}
+	
+	public void setConfigHost(String configHost) {
+		this.configHost = configHost;
+	}
+	
+	public String getConfigUpdate() {
+		return configUpdate;
+	}
+	
+	public String getBuildName() {
+		return buildName;
+	}
+	
+	public void setBuildName(String buildName) {
+		this.buildName = buildName;
+	}
+	
+	public String getGenerateBuild() {
+		return generateBuild;
+	}
+	
+	public String getBuildRun() {
+		return buildRun;
+	}
+	
+	public String getChooseEnvironment() {
+		return chooseEnvironment;
+	}
+	
+	public String getChooseLogs() {
+		return chooseLogs;
+	}
+	
+	public String getBuildTab() {
+		return buildTab;
+	}
 }

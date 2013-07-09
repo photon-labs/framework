@@ -1,12 +1,23 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <environment>
 <phresco>
+               <!-- CreateArchetype -->
 	    	   <multiJQueryArchetypeName>MultiJQueryArchetypeProject</multiJQueryArchetypeName>
 		       <multiJQueryArchetypeDesc>This is MultiJQuery Archetype Project</multiJQueryArchetypeDesc>
 		       <multiJQueryArchetypeAppCode>MultiJQueryArchetype</multiJQueryArchetypeAppCode>
 		       <webLayerValue>HTML5</webLayerValue>
 		       <widgetValue>Multichannel JQuery Widget</widgetValue>
 		       <multiJQueryArchetypeEditLink>//a[contains(text(),'MultiJQueryArchetype')]</multiJQueryArchetypeEditLink>
+		       
+		       <!-- CreateConfiguration -->
+		       <configName>Server</configName>  
+               <configHost>172.16.28.43</configHost>
+               <configPort>8080</configPort>
+               <configDeployDir>D:\apache-tomcat-7.0.35\webapps</configDeployDir>
+               <configContext>multijquery</configContext>
+               
+               <!-- GenerateBuild -->
+               <buildName>Build</buildName>
 </phresco>
 </environment>
  

@@ -1,10 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <environment>
     <phresco>
+               <!-- CreateArchetype -->
         	   <aspDotnetArchetypeName>AspDotnetArchetypeProject</aspDotnetArchetypeName>
 		       <aspDotnetArchetypeDesc>This is AspDotnet Archetype Project</aspDotnetArchetypeDesc>
 		       <aspDotnetArchetypeAppCode>AspDotnetArchetype</aspDotnetArchetypeAppCode>
 		       <technologyValue>ASP.NET</technologyValue>
 		       <aspDotnetArchetypeEditApp>//a[contains(text(),'AspDotnetArchetype')]</aspDotnetArchetypeEditApp>
+    
+               <!-- CreateConfiguration -->
+		       <configName>Server</configName>  
+               <configHost>172.16.28.43</configHost>
+               <configPort>80</configPort>
+               <configDeployDir>C:\wamp\www</configDeployDir>
+               <configContext>dotnetarchetype</configContext>
+               
+               <!-- Generate Build -->
+               <buildName>aspDotnetBuild</buildName>
+    
     </phresco>
 </environment>

@@ -449,6 +449,12 @@ public class WebBaseScreen {
 			getXpathWebElement(heliosUiConst.getFunctionalToolVersionValue());
 			click();
 			Thread.sleep(5000);
+			
+			Thread.sleep(500);
+			waitForElementPresent(heliosUiConst.getConfigUpdate(), methodName);
+			getXpathWebElement(heliosUiConst.getConfigUpdate());
+			click();
+			Thread.sleep(30000);
 
 		} catch (InterruptedException e) {
 
@@ -468,6 +474,127 @@ public class WebBaseScreen {
 			getXpathWebElement(heliosUiConst.getFeatureTab());
 			click();
 			Thread.sleep(5000);
+		} catch (InterruptedException e) {
+
+			e.printStackTrace();
+		}
+	}
+	
+	public void multiYUIWidgetConfigurationCreate(String methodName,MultiYUIWidgetConstants multiYUIConst) throws Exception {
+		if (StringUtils.isEmpty(methodName)) {
+			methodName = Thread.currentThread().getStackTrace()[1]
+			                                                    .getMethodName();
+		}
+		log.info("@multiYUIWidgetConfigurationCreate executing");
+		try {
+			Thread.sleep(3000);
+			waitForElementPresent(heliosUiConst.getConfigTab(), methodName);
+			getXpathWebElement(heliosUiConst.getConfigTab());
+			click();
+
+			Thread.sleep(500);
+			waitForElementPresent(heliosUiConst.getConfigButton(), methodName);
+			getXpathWebElement(heliosUiConst.getConfigButton());
+			click();
+
+			Thread.sleep(500);
+			waitForElementPresent(heliosUiConst.getAddConfig(), methodName);
+			getXpathWebElement(heliosUiConst.getAddConfig());
+			click();
+			
+			Thread.sleep(500);
+			waitForElementPresent(heliosUiConst.getChooseServer(), methodName);
+			getXpathWebElement(heliosUiConst.getChooseServer());
+			click();
+			
+
+			Thread.sleep(500);
+			waitForElementPresent(heliosUiConst.getConfigName(), methodName);
+			getXpathWebElement(heliosUiConst.getConfigName());
+			click();
+			clear();
+			sendKeys(multiYUIConst.getConfigName());
+
+			Thread.sleep(500);
+			waitForElementPresent(heliosUiConst.getConfigHost(), methodName);
+			getXpathWebElement(heliosUiConst.getConfigHost());
+			click();
+			clear();
+			sendKeys(multiYUIConst.getConfigHost());
+
+			Thread.sleep(500);
+			waitForElementPresent(heliosUiConst.getConfigPort(), methodName);
+			getXpathWebElement(heliosUiConst.getConfigPort());
+			click();
+			clear();
+			sendKeys(multiYUIConst.getConfigPort());
+
+			Thread.sleep(500);
+			waitForElementPresent(heliosUiConst.getConfigDeployDir(), methodName);
+			getXpathWebElement(heliosUiConst.getConfigDeployDir());
+			click();
+			clear();
+			sendKeys(multiYUIConst.getConfigDeployDir());
+
+			Thread.sleep(500);
+			waitForElementPresent(heliosUiConst.getConfigContext(), methodName);
+			getXpathWebElement(heliosUiConst.getConfigContext());
+			click();
+			clear();
+			sendKeys(multiYUIConst.getConfigContext());
+			
+			Thread.sleep(500);
+			waitForElementPresent(heliosUiConst.getConfigUpdate(), methodName);
+			getXpathWebElement(heliosUiConst.getConfigUpdate());
+			click();
+			Thread.sleep(20000);
+
+		} catch (InterruptedException e) {
+
+			e.printStackTrace();
+		}
+	}
+	
+	public void multiYUIWidgetGenerateBuild(String methodName,MultiYUIWidgetConstants multiYUIConst) throws Exception {
+		if (StringUtils.isEmpty(methodName)) {
+			methodName = Thread.currentThread().getStackTrace()[1]
+			                                                    .getMethodName();
+		}
+		log.info("@multiYUIWidgetGenerateBuild executing");
+		try {
+			Thread.sleep(3000);
+			waitForElementPresent(heliosUiConst.getBuildTab(), methodName);
+			getXpathWebElement(heliosUiConst.getBuildTab());
+			click();
+			
+			Thread.sleep(3000);
+			waitForElementPresent(heliosUiConst.getGenerateBuild(), methodName);
+			getXpathWebElement(heliosUiConst.getGenerateBuild());
+			click();
+
+			Thread.sleep(500);
+			waitForElementPresent(heliosUiConst.getBuildName(), methodName);
+			getXpathWebElement(heliosUiConst.getBuildName());
+			click();
+			clear();
+			sendKeys(multiYUIConst.getBuildName());
+
+			Thread.sleep(500);
+			waitForElementPresent(heliosUiConst.getChooseEnvironment(), methodName);
+			getXpathWebElement(heliosUiConst.getChooseEnvironment());
+			click();
+			
+			Thread.sleep(500);
+			waitForElementPresent(heliosUiConst.getChooseLogs(), methodName);
+			getXpathWebElement(heliosUiConst.getChooseLogs());
+			click();
+			
+			Thread.sleep(500);
+			waitForElementPresent(heliosUiConst.getBuildRun(), methodName);
+			getXpathWebElement(heliosUiConst.getBuildRun());
+			click();
+			Thread.sleep(20000);
+
 		} catch (InterruptedException e) {
 
 			e.printStackTrace();
@@ -536,7 +663,7 @@ public class WebBaseScreen {
 			waitForElementPresent(heliosUiConst.getProjectCreateButton(), methodName);
 			getXpathWebElement(heliosUiConst.getProjectCreateButton());
 			click();
-			Thread.sleep(10000);
+			Thread.sleep(20000);
 
 		} catch (InterruptedException e) {
 
@@ -547,8 +674,7 @@ public class WebBaseScreen {
 	
 	public void multiJQueryWidgetArchetypeEditApp(String methodName,MultiJQueryWidgetConstants multiJQueryConst) throws Exception {
 		if (StringUtils.isEmpty(methodName)) {
-			methodName = Thread.currentThread().getStackTrace()[1]
-			                                                    .getMethodName();
+			methodName = Thread.currentThread().getStackTrace()[1].getMethodName();
 		}
 		log.info("@multiJQueryWidgetArchetypeEditApp executing");
 		try {
@@ -612,6 +738,12 @@ public class WebBaseScreen {
 			getXpathWebElement(heliosUiConst.getFunctionalToolVersionValue());
 			click();
 			Thread.sleep(5000);
+			
+			Thread.sleep(500);
+			waitForElementPresent(heliosUiConst.getConfigUpdate(), methodName);
+			getXpathWebElement(heliosUiConst.getConfigUpdate());
+			click();
+			Thread.sleep(20000);
 
 		} catch (InterruptedException e) {
 
@@ -632,6 +764,127 @@ public class WebBaseScreen {
 			getXpathWebElement(heliosUiConst.getFeatureTab());
 			click();
 			Thread.sleep(5000);
+		} catch (InterruptedException e) {
+
+			e.printStackTrace();
+		}
+	}
+	
+	public void multiJQueryWidgetConfigurationCreate(String methodName,MultiJQueryWidgetConstants multiJQueryConst) throws Exception {
+		if (StringUtils.isEmpty(methodName)) {
+			methodName = Thread.currentThread().getStackTrace()[1]
+			                                                    .getMethodName();
+		}
+		log.info("@multiJQueryWidgetConfigurationCreate executing");
+		try {
+			Thread.sleep(3000);
+			waitForElementPresent(heliosUiConst.getConfigTab(), methodName);
+			getXpathWebElement(heliosUiConst.getConfigTab());
+			click();
+
+			Thread.sleep(500);
+			waitForElementPresent(heliosUiConst.getConfigButton(), methodName);
+			getXpathWebElement(heliosUiConst.getConfigButton());
+			click();
+
+			Thread.sleep(500);
+			waitForElementPresent(heliosUiConst.getAddConfig(), methodName);
+			getXpathWebElement(heliosUiConst.getAddConfig());
+			click();
+			
+			Thread.sleep(500);
+			waitForElementPresent(heliosUiConst.getChooseServer(), methodName);
+			getXpathWebElement(heliosUiConst.getChooseServer());
+			click();
+			
+
+			Thread.sleep(500);
+			waitForElementPresent(heliosUiConst.getConfigName(), methodName);
+			getXpathWebElement(heliosUiConst.getConfigName());
+			click();
+			clear();
+			sendKeys(multiJQueryConst.getConfigName());
+
+			Thread.sleep(500);
+			waitForElementPresent(heliosUiConst.getConfigHost(), methodName);
+			getXpathWebElement(heliosUiConst.getConfigHost());
+			click();
+			clear();
+			sendKeys(multiJQueryConst.getConfigHost());
+
+			Thread.sleep(500);
+			waitForElementPresent(heliosUiConst.getConfigPort(), methodName);
+			getXpathWebElement(heliosUiConst.getConfigPort());
+			click();
+			clear();
+			sendKeys(multiJQueryConst.getConfigPort());
+
+			Thread.sleep(500);
+			waitForElementPresent(heliosUiConst.getConfigDeployDir(), methodName);
+			getXpathWebElement(heliosUiConst.getConfigDeployDir());
+			click();
+			clear();
+			sendKeys(multiJQueryConst.getConfigDeployDir());
+
+			Thread.sleep(500);
+			waitForElementPresent(heliosUiConst.getConfigContext(), methodName);
+			getXpathWebElement(heliosUiConst.getConfigContext());
+			click();
+			clear();
+			sendKeys(multiJQueryConst.getConfigContext());
+			
+			Thread.sleep(500);
+			waitForElementPresent(heliosUiConst.getConfigUpdate(), methodName);
+			getXpathWebElement(heliosUiConst.getConfigUpdate());
+			click();
+			Thread.sleep(20000);
+
+		} catch (InterruptedException e) {
+
+			e.printStackTrace();
+		}
+	}
+	
+	public void multiJQueryWidgetGenerateBuild(String methodName,MultiJQueryWidgetConstants multiJQueryConst) throws Exception {
+		if (StringUtils.isEmpty(methodName)) {
+			methodName = Thread.currentThread().getStackTrace()[1]
+			                                                    .getMethodName();
+		}
+		log.info("@multiJQueryWidgetGenerateBuild executing");
+		try {
+			Thread.sleep(3000);
+			waitForElementPresent(heliosUiConst.getBuildTab(), methodName);
+			getXpathWebElement(heliosUiConst.getBuildTab());
+			click();
+			
+			Thread.sleep(3000);
+			waitForElementPresent(heliosUiConst.getGenerateBuild(), methodName);
+			getXpathWebElement(heliosUiConst.getGenerateBuild());
+			click();
+
+			Thread.sleep(500);
+			waitForElementPresent(heliosUiConst.getBuildName(), methodName);
+			getXpathWebElement(heliosUiConst.getBuildName());
+			click();
+			clear();
+			sendKeys(multiJQueryConst.getBuildName());
+
+			Thread.sleep(500);
+			waitForElementPresent(heliosUiConst.getChooseEnvironment(), methodName);
+			getXpathWebElement(heliosUiConst.getChooseEnvironment());
+			click();
+			
+			Thread.sleep(500);
+			waitForElementPresent(heliosUiConst.getChooseLogs(), methodName);
+			getXpathWebElement(heliosUiConst.getChooseLogs());
+			click();
+			
+			Thread.sleep(500);
+			waitForElementPresent(heliosUiConst.getBuildRun(), methodName);
+			getXpathWebElement(heliosUiConst.getBuildRun());
+			click();
+			Thread.sleep(20000);
+
 		} catch (InterruptedException e) {
 
 			e.printStackTrace();
@@ -775,6 +1028,12 @@ public class WebBaseScreen {
 			getXpathWebElement(heliosUiConst.getFunctionalToolVersionValue());
 			click();
 			Thread.sleep(5000);
+			
+			Thread.sleep(500);
+			waitForElementPresent(heliosUiConst.getConfigUpdate(), methodName);
+			getXpathWebElement(heliosUiConst.getConfigUpdate());
+			click();
+			Thread.sleep(20000);
 
 		} catch (InterruptedException e) {
 
@@ -794,6 +1053,127 @@ public class WebBaseScreen {
 			getXpathWebElement(heliosUiConst.getFeatureTab());
 			click();
 			Thread.sleep(5000);
+		} catch (InterruptedException e) {
+
+			e.printStackTrace();
+		}
+	}
+	
+	public void yuiMobileWidgetConfigurationCreate(String methodName,YUIMobileWidgetConstants yuiMobConst) throws Exception {
+		if (StringUtils.isEmpty(methodName)) {
+			methodName = Thread.currentThread().getStackTrace()[1]
+			                                                    .getMethodName();
+		}
+		log.info("@yuiMobileWidgetConfigurationCreate executing");
+		try {
+			Thread.sleep(3000);
+			waitForElementPresent(heliosUiConst.getConfigTab(), methodName);
+			getXpathWebElement(heliosUiConst.getConfigTab());
+			click();
+
+			Thread.sleep(500);
+			waitForElementPresent(heliosUiConst.getConfigButton(), methodName);
+			getXpathWebElement(heliosUiConst.getConfigButton());
+			click();
+
+			Thread.sleep(500);
+			waitForElementPresent(heliosUiConst.getAddConfig(), methodName);
+			getXpathWebElement(heliosUiConst.getAddConfig());
+			click();
+			
+			Thread.sleep(500);
+			waitForElementPresent(heliosUiConst.getChooseServer(), methodName);
+			getXpathWebElement(heliosUiConst.getChooseServer());
+			click();
+			
+
+			Thread.sleep(500);
+			waitForElementPresent(heliosUiConst.getConfigName(), methodName);
+			getXpathWebElement(heliosUiConst.getConfigName());
+			click();
+			clear();
+			sendKeys(yuiMobConst.getConfigName());
+
+			Thread.sleep(500);
+			waitForElementPresent(heliosUiConst.getConfigHost(), methodName);
+			getXpathWebElement(heliosUiConst.getConfigHost());
+			click();
+			clear();
+			sendKeys(yuiMobConst.getConfigHost());
+
+			Thread.sleep(500);
+			waitForElementPresent(heliosUiConst.getConfigPort(), methodName);
+			getXpathWebElement(heliosUiConst.getConfigPort());
+			click();
+			clear();
+			sendKeys(yuiMobConst.getConfigPort());
+
+			Thread.sleep(500);
+			waitForElementPresent(heliosUiConst.getConfigDeployDir(), methodName);
+			getXpathWebElement(heliosUiConst.getConfigDeployDir());
+			click();
+			clear();
+			sendKeys(yuiMobConst.getConfigDeployDir());
+
+			Thread.sleep(500);
+			waitForElementPresent(heliosUiConst.getConfigContext(), methodName);
+			getXpathWebElement(heliosUiConst.getConfigContext());
+			click();
+			clear();
+			sendKeys(yuiMobConst.getConfigContext());
+			
+			Thread.sleep(500);
+			waitForElementPresent(heliosUiConst.getConfigUpdate(), methodName);
+			getXpathWebElement(heliosUiConst.getConfigUpdate());
+			click();
+			Thread.sleep(40000);
+
+		} catch (InterruptedException e) {
+
+			e.printStackTrace();
+		}
+	}
+	
+	public void yuiMobileWidgetGenerateBuild(String methodName,YUIMobileWidgetConstants yuiMobConst) throws Exception {
+		if (StringUtils.isEmpty(methodName)) {
+			methodName = Thread.currentThread().getStackTrace()[1]
+			                                                    .getMethodName();
+		}
+		log.info("@multiYUIWidgetGenerateBuild executing");
+		try {
+			Thread.sleep(3000);
+			waitForElementPresent(heliosUiConst.getBuildTab(), methodName);
+			getXpathWebElement(heliosUiConst.getBuildTab());
+			click();
+			
+			Thread.sleep(3000);
+			waitForElementPresent(heliosUiConst.getGenerateBuild(), methodName);
+			getXpathWebElement(heliosUiConst.getGenerateBuild());
+			click();
+
+			Thread.sleep(500);
+			waitForElementPresent(heliosUiConst.getBuildName(), methodName);
+			getXpathWebElement(heliosUiConst.getBuildName());
+			click();
+			clear();
+			sendKeys(yuiMobConst.getBuildName());
+
+			Thread.sleep(500);
+			waitForElementPresent(heliosUiConst.getChooseEnvironment(), methodName);
+			getXpathWebElement(heliosUiConst.getChooseEnvironment());
+			click();
+			
+			Thread.sleep(500);
+			waitForElementPresent(heliosUiConst.getChooseLogs(), methodName);
+			getXpathWebElement(heliosUiConst.getChooseLogs());
+			click();
+			
+			Thread.sleep(500);
+			waitForElementPresent(heliosUiConst.getBuildRun(), methodName);
+			getXpathWebElement(heliosUiConst.getBuildRun());
+			click();
+			Thread.sleep(20000);
+
 		} catch (InterruptedException e) {
 
 			e.printStackTrace();
@@ -937,7 +1317,12 @@ public class WebBaseScreen {
 			waitForElementPresent(heliosUiConst.getFunctionalToolVersionValue(), methodName);
 			getXpathWebElement(heliosUiConst.getFunctionalToolVersionValue());
 			click();
-			Thread.sleep(5000);
+			
+			Thread.sleep(500);
+			waitForElementPresent(heliosUiConst.getConfigUpdate(), methodName);
+			getXpathWebElement(heliosUiConst.getConfigUpdate());
+			click();
+			Thread.sleep(20000);
 
 
 		} catch (InterruptedException e) {
@@ -958,6 +1343,127 @@ public class WebBaseScreen {
 			getXpathWebElement(heliosUiConst.getFeatureTab());
 			click();
 			Thread.sleep(5000);
+		} catch (InterruptedException e) {
+
+			e.printStackTrace();
+		}
+	}
+	
+	public void jQueryMobWidgetConfigurationCreate(String methodName,JQueryMobileWidgetConstants jQueryMobConst) throws Exception {
+		if (StringUtils.isEmpty(methodName)) {
+			methodName = Thread.currentThread().getStackTrace()[1]
+			                                                    .getMethodName();
+		}
+		log.info("@jQueryMobWidgetConfigurationCreate executing");
+		try {
+			Thread.sleep(3000);
+			waitForElementPresent(heliosUiConst.getConfigTab(), methodName);
+			getXpathWebElement(heliosUiConst.getConfigTab());
+			click();
+
+			Thread.sleep(500);
+			waitForElementPresent(heliosUiConst.getConfigButton(), methodName);
+			getXpathWebElement(heliosUiConst.getConfigButton());
+			click();
+
+			Thread.sleep(500);
+			waitForElementPresent(heliosUiConst.getAddConfig(), methodName);
+			getXpathWebElement(heliosUiConst.getAddConfig());
+			click();
+			
+			Thread.sleep(500);
+			waitForElementPresent(heliosUiConst.getChooseServer(), methodName);
+			getXpathWebElement(heliosUiConst.getChooseServer());
+			click();
+			
+
+			Thread.sleep(500);
+			waitForElementPresent(heliosUiConst.getConfigName(), methodName);
+			getXpathWebElement(heliosUiConst.getConfigName());
+			click();
+			clear();
+			sendKeys(jQueryMobConst.getConfigName());
+
+			Thread.sleep(500);
+			waitForElementPresent(heliosUiConst.getConfigHost(), methodName);
+			getXpathWebElement(heliosUiConst.getConfigHost());
+			click();
+			clear();
+			sendKeys(jQueryMobConst.getConfigHost());
+
+			Thread.sleep(500);
+			waitForElementPresent(heliosUiConst.getConfigPort(), methodName);
+			getXpathWebElement(heliosUiConst.getConfigPort());
+			click();
+			clear();
+			sendKeys(jQueryMobConst.getConfigPort());
+
+			Thread.sleep(500);
+			waitForElementPresent(heliosUiConst.getConfigDeployDir(), methodName);
+			getXpathWebElement(heliosUiConst.getConfigDeployDir());
+			click();
+			clear();
+			sendKeys(jQueryMobConst.getConfigDeployDir());
+
+			Thread.sleep(500);
+			waitForElementPresent(heliosUiConst.getConfigContext(), methodName);
+			getXpathWebElement(heliosUiConst.getConfigContext());
+			click();
+			clear();
+			sendKeys(jQueryMobConst.getConfigContext());
+			
+			Thread.sleep(500);
+			waitForElementPresent(heliosUiConst.getConfigUpdate(), methodName);
+			getXpathWebElement(heliosUiConst.getConfigUpdate());
+			click();
+			Thread.sleep(30000);
+
+		} catch (InterruptedException e) {
+
+			e.printStackTrace();
+		}
+	}
+	
+	public void jQueryMobWidgetGenerateBuild(String methodName,JQueryMobileWidgetConstants jQueryMobConst) throws Exception {
+		if (StringUtils.isEmpty(methodName)) {
+			methodName = Thread.currentThread().getStackTrace()[1]
+			                                                    .getMethodName();
+		}
+		log.info("@jQueryMobWidgetGenerateBuild executing");
+		try {
+			Thread.sleep(3000);
+			waitForElementPresent(heliosUiConst.getBuildTab(), methodName);
+			getXpathWebElement(heliosUiConst.getBuildTab());
+			click();
+			
+			Thread.sleep(3000);
+			waitForElementPresent(heliosUiConst.getGenerateBuild(), methodName);
+			getXpathWebElement(heliosUiConst.getGenerateBuild());
+			click();
+
+			Thread.sleep(500);
+			waitForElementPresent(heliosUiConst.getBuildName(), methodName);
+			getXpathWebElement(heliosUiConst.getBuildName());
+			click();
+			clear();
+			sendKeys(jQueryMobConst.getBuildName());
+
+			Thread.sleep(500);
+			waitForElementPresent(heliosUiConst.getChooseEnvironment(), methodName);
+			getXpathWebElement(heliosUiConst.getChooseEnvironment());
+			click();
+			
+			Thread.sleep(500);
+			waitForElementPresent(heliosUiConst.getChooseLogs(), methodName);
+			getXpathWebElement(heliosUiConst.getChooseLogs());
+			click();
+			
+			Thread.sleep(500);
+			waitForElementPresent(heliosUiConst.getBuildRun(), methodName);
+			getXpathWebElement(heliosUiConst.getBuildRun());
+			click();
+			Thread.sleep(20000);
+
 		} catch (InterruptedException e) {
 
 			e.printStackTrace();

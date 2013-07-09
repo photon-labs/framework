@@ -1,11 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <environment>
     <phresco>
+    		   <!-- CreateArchetype -->
 		       <phpArchetypeName>PHPArchetypeProject</phpArchetypeName>
 		       <phpArchetypeDesc>This is PHP Archetype Project</phpArchetypeDesc>
 		       <phpArchetypeAppCode>PHPArchetype</phpArchetypeAppCode>
 		       <technologyValue>PHP</technologyValue>
 		       <phpArchetypeEditLink>//a[contains(text(),'PHPArchetype')]</phpArchetypeEditLink>
+		       
+		       <!-- CreateConfiguration -->
+		       <configName>Server</configName>  
+               <configHost>172.16.28.43</configHost>
+               <configPort>80</configPort>
+               <configDeployDir>C:\wamp\www</configDeployDir>
+               <configContext>phparchetype</configContext>
+               
+               <!-- Generate Build -->
+               <buildName>PhpBuild</buildName>
 		      
     </phresco>
 </environment>

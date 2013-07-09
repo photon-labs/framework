@@ -100,7 +100,35 @@ public class PhpTest {
 		}
 	} 
 	
+	@Test
+	public void testphpConfigurationCreate()
+	throws InterruptedException, IOException, Exception {
+		try {
+
+			System.out.println("---------testphpConfigurationCreate()-------------");
+			methodName = Thread.currentThread().getStackTrace()[1].getMethodName();
+			appBaseScreen.phpConfigurationCreate(methodName, phpConst);
+
+		} catch (Exception t) {
+			t.printStackTrace();
+
+		}
+	}
 	
+	@Test
+	public void testphpBuild()
+	throws InterruptedException, IOException, Exception {
+		try {
+
+			System.out.println("---------testphpBuild()-------------");
+			methodName = Thread.currentThread().getStackTrace()[1].getMethodName();
+			appBaseScreen.phpBuild(methodName, phpConst);
+
+		} catch (Exception t) {
+			t.printStackTrace();
+
+		}
+	}
 
 	@AfterTest
 	public  void tearDown() {

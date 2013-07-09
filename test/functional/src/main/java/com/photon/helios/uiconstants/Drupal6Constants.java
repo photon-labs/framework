@@ -14,6 +14,13 @@ public class Drupal6Constants {
 	private String drupal6ArchetypeAppCode = "drupal6ArchetypeAppCode";
 	private String technologyValue = "technologyValue";
 	private String drupal6ArchetypeEditApp = "drupal6ArchetypeEditApp";
+	private String configName = "configName";
+    private String configHost = "configHost";
+    private String configPort = "configPort";
+    private String configDeployDir = "configDeployDir";
+    private String configContext = "configContext";
+    private String buildName = "buildName";
+	
 	public Drupal6Constants() {
 		try {
 			ReadXMLFile readXml = new ReadXMLFile();
@@ -61,6 +68,47 @@ public class Drupal6Constants {
 		this.drupal6ArchetypeEditApp = drupal6ArchetypeEditApp;
 	}
 
+	public String getConfigName() {
+		return configName;
+	}
+	
+	public void setConfigName(String configName) {
+		this.configName = configName;
+	}
+	
+	public String getConfigDeployDir() {
+		return configDeployDir;
+	}
+	
+	public void setConfigDeployDir(String configDeployDir) {
+		this.configDeployDir = configDeployDir;
+	}
+	
+	public String getConfigContext() {
+		return configContext;
+	}
+	
+	public void setConfigContext(String configContext) {
+		this.configContext = configContext;
+	}
+	
+	public String getConfigPort() {
+		return configPort;
+	}
+	
+	public void setConfigPort(String configPort) {
+		this.configPort = configPort;
+	}
+	
+	public String getConfigHost() {
+		return configHost;
+	}
+	
+	public void setConfigHost(String configHost) {
+		this.configHost = configHost;
+	}
 
-
+	public String getBuildName() {
+		return buildName;
+	}
 }

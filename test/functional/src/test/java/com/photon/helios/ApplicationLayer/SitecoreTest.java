@@ -98,7 +98,36 @@ public class SitecoreTest {
 			t.printStackTrace();
 
 		}
-	} 
+	}
+	
+	@Test
+	public void testSitecoreConfigurationCreate()
+	throws InterruptedException, IOException, Exception {
+		try {
+
+			System.out.println("---------testSitecoreConfigurationCreate()-------------");
+			methodName = Thread.currentThread().getStackTrace()[1].getMethodName();
+			appBaseScreen.sitecoreConfigurationCreate(methodName, sitecoreConst);
+		} catch (Exception t) {
+			t.printStackTrace();
+
+		}
+	}
+	
+	@Test
+	public void testSitecoreBuild()
+	throws InterruptedException, IOException, Exception {
+		try {
+
+			System.out.println("---------testSitecoreBuild()-------------");
+			methodName = Thread.currentThread().getStackTrace()[1].getMethodName();
+			appBaseScreen.sitecoreBuild(methodName, sitecoreConst);
+
+		} catch (Exception t) {
+			t.printStackTrace();
+
+		}
+	}
 	
 
 	@AfterTest

@@ -13,7 +13,7 @@
 		<version>7.0.x</version>
 		<type>Apache Tomcat</type>
 		<remoteDeployment>false</remoteDeployment>
-		<host>172.16.28.43</host>
+		<host>localhost</host>
 		<protocol>http</protocol>
 	</Server>
 </environment>

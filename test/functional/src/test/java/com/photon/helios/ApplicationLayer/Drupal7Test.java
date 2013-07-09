@@ -99,6 +99,36 @@ public class Drupal7Test {
 
 		}
 	} 
+	
+	@Test
+	public void testDrupal7ConfigurationCreate()
+	throws InterruptedException, IOException, Exception {
+		try {
+
+			System.out.println("---------testDrupal7ArchetypeUpdateApp()-------------");
+			methodName = Thread.currentThread().getStackTrace()[1].getMethodName();
+			appBaseScreen.drupal7ConfigurationCreate(methodName, drupal7Const);
+
+		} catch (Exception t) {
+			t.printStackTrace();
+
+		}
+	} 
+	
+	@Test
+	public void testdrupal7Build()
+	throws InterruptedException, IOException, Exception {
+		try {
+
+			System.out.println("---------testdrupal7Build()-------------");
+			methodName = Thread.currentThread().getStackTrace()[1].getMethodName();
+			appBaseScreen.drupal7Build(methodName, drupal7Const);
+
+		} catch (Exception t) {
+			t.printStackTrace();
+
+		}
+	}
 
 	@AfterTest
 	public  void tearDown() {

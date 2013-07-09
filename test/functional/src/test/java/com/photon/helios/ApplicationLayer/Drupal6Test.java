@@ -98,6 +98,36 @@ public class Drupal6Test {
 
 		}
 	} 
+	
+	@Test
+	public void testDrupal6ConfigurationCreate()
+	throws InterruptedException, IOException, Exception {
+		try {
+
+			System.out.println("---------testDrupal6ArchetypeUpdateApp()-------------");
+			methodName = Thread.currentThread().getStackTrace()[1].getMethodName();
+			appBaseScreen.drupal6ConfigurationCreate(methodName, drupal6Const);
+
+		} catch (Exception t) {
+			t.printStackTrace();
+
+		}
+	} 
+	
+	@Test
+	public void testdrupal6Build()
+	throws InterruptedException, IOException, Exception {
+		try {
+
+			System.out.println("---------testdrupal6Build()-------------");
+			methodName = Thread.currentThread().getStackTrace()[1].getMethodName();
+			appBaseScreen.drupal6Build(methodName, drupal6Const);
+
+		} catch (Exception t) {
+			t.printStackTrace();
+
+		}
+	}
 
 	@AfterTest
 	public  void tearDown() {
