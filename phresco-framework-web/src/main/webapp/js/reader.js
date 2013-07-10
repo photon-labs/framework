@@ -44,7 +44,7 @@ function readerHandler(data, appId, actionType, pageUrl, progressConsoleObj) {
 				console.info('returning...');
 				return;
 			}
-			progressConsoleObj.append(data + '<br>');
+			progressConsoleObj.append(data);
 			progressConsoleObj.prop('scrollTop', progressConsoleObj.prop('scrollHeight')); 
 			asyncHandler(appId, actionType, pageUrl, progressConsoleObj);
 		}
@@ -52,7 +52,7 @@ function readerHandler(data, appId, actionType, pageUrl, progressConsoleObj) {
 	
 	// if apps tab is not present proceed async handler
 	if($("a[name='appTab']").length == 0) {
-		progressConsoleObj.append(data + '<br>');
+		progressConsoleObj.append(data);
 		progressConsoleObj.prop('scrollTop', progressConsoleObj.prop('scrollHeight')); 
 		  asyncHandler(appId, actionType, pageUrl, progressConsoleObj);
 	}

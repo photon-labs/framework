@@ -17,6 +17,9 @@
  */
 package com.photon.phresco.framework.actions.applications;
 
+import static com.photon.phresco.util.Constants.PHASE_FUNCTIONAL_TEST;
+
+import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.File;
@@ -28,7 +31,6 @@ import java.io.FileWriter;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.StringReader;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
@@ -476,7 +478,7 @@ public class Quality extends DynamicParameterAction implements Constants {
 				buildArgCmds.add(pomFileName);
 			}
             ApplicationManager applicationManager = PhrescoFrameworkFactory.getApplicationManager();
-            BufferedReader reader = applicationManager.performAction(getProjectInfo(), ActionType.UNIT_TEST, buildArgCmds, workingDirectory.toString());
+            BufferedInputStream reader = applicationManager.performAction(getProjectInfo(), ActionType.UNIT_TEST, buildArgCmds, workingDirectory.toString());
             
             //To generate the lock for the particular operation
 			FrameworkUtil.generateLock(Collections.singletonList(getLockDetail(appInfo.getId(), UNIT)), true);
@@ -513,7 +515,7 @@ public class Quality extends DynamicParameterAction implements Constants {
 				buildArgCmds.add(pomFileName);
 			}
             ApplicationManager applicationManager = PhrescoFrameworkFactory.getApplicationManager();
-            BufferedReader reader = applicationManager.performAction(getProjectInfo(), ActionType.COMPONENT_TEST, buildArgCmds, workingDirectory.toString());
+            BufferedInputStream reader = applicationManager.performAction(getProjectInfo(), ActionType.COMPONENT_TEST, buildArgCmds, workingDirectory.toString());
             
             //To generate the lock for the particular operation
 			FrameworkUtil.generateLock(Collections.singletonList(getLockDetail(appInfo.getId(), COMPONENT)), true);
@@ -726,7 +728,7 @@ public class Quality extends DynamicParameterAction implements Constants {
 				buildArgCmds.add(pomFileName);
 			}
 	        ApplicationManager applicationManager = PhrescoFrameworkFactory.getApplicationManager();
-	        BufferedReader reader = applicationManager.performAction(getProjectInfo(), ActionType.FUNCTIONAL_TEST, buildArgCmds, workingDirectory.toString());
+	        BufferedInputStream reader = applicationManager.performAction(getProjectInfo(), ActionType.FUNCTIONAL_TEST, buildArgCmds, workingDirectory.toString());
 	        
 	        //To generate the lock for the particular operation
 	        FrameworkUtil.generateLock(Collections.singletonList(getLockDetail(appInfo.getId(), FUNCTIONAL)), true);
@@ -836,7 +838,7 @@ public class Quality extends DynamicParameterAction implements Constants {
 	        int port = hubConfig.getPort();
 	        String str = "Hub is already running in " + host + ":" + port;
 	        InputStream is = new ByteArrayInputStream(str.getBytes());
-	        BufferedReader reader = new BufferedReader(new InputStreamReader(is));
+	        BufferedInputStream reader = new BufferedInputStream(is);
 	        setSessionAttribute(getAppId() + START_HUB, reader);
 	        setReqAttribute(REQ_APP_ID, getAppId());
 	        setReqAttribute(REQ_ACTION_TYPE, START_HUB);
@@ -891,7 +893,7 @@ public class Quality extends DynamicParameterAction implements Constants {
 				buildArgCmds.add(Constants.HYPHEN_F);
 				buildArgCmds.add(pomFileName);
 			}
-			BufferedReader reader = applicationManager.performAction(projectInfo, ActionType.START_HUB, buildArgCmds, workingDirectory);
+			BufferedInputStream reader = applicationManager.performAction(projectInfo, ActionType.START_HUB, buildArgCmds, workingDirectory);
 			setSessionAttribute(getAppId() + START_HUB, reader);
 			setReqAttribute(REQ_APP_ID, getAppId());
 			setReqAttribute(REQ_ACTION_TYPE, START_HUB);
@@ -922,7 +924,7 @@ public class Quality extends DynamicParameterAction implements Constants {
 				buildArgCmds.add(Constants.HYPHEN_F);
 				buildArgCmds.add(pomFileName);
 			}
-            BufferedReader reader = applicationManager.performAction(projectInfo, ActionType.STOP_HUB, buildArgCmds, workingDirectory);
+            BufferedInputStream reader = applicationManager.performAction(projectInfo, ActionType.STOP_HUB, buildArgCmds, workingDirectory);
             setSessionAttribute(getAppId() + STOP_HUB, reader);
             setReqAttribute(REQ_APP_ID, getAppId());
             setReqAttribute(REQ_ACTION_TYPE, STOP_HUB);
@@ -992,7 +994,7 @@ public class Quality extends DynamicParameterAction implements Constants {
             int port = configuration.getPort();
             String str = "Node is already running in " + host + COLON + port;
             InputStream is = new ByteArrayInputStream(str.getBytes());
-            BufferedReader reader = new BufferedReader(new InputStreamReader(is));
+            BufferedInputStream reader = new BufferedInputStream(is);
             setSessionAttribute(getAppId() + START_NODE, reader);
             setReqAttribute(REQ_APP_ID, getAppId());
             setReqAttribute(REQ_ACTION_TYPE, START_NODE);
@@ -1047,7 +1049,7 @@ public class Quality extends DynamicParameterAction implements Constants {
 			ApplicationManager applicationManager = PhrescoFrameworkFactory.getApplicationManager();
 			ProjectInfo projectInfo = getProjectInfo();
 			String workingDirectory = getAppDirectoryPath(appInfo);
-			BufferedReader reader = applicationManager.performAction(projectInfo, ActionType.START_NODE, buildArgCmds, workingDirectory);
+			BufferedInputStream reader = applicationManager.performAction(projectInfo, ActionType.START_NODE, buildArgCmds, workingDirectory);
 			setSessionAttribute(getAppId() + START_NODE, reader);
 			setReqAttribute(REQ_APP_ID, getAppId());
 			setReqAttribute(REQ_ACTION_TYPE, START_NODE);
@@ -1078,7 +1080,7 @@ public class Quality extends DynamicParameterAction implements Constants {
 				buildArgCmds.add(Constants.HYPHEN_F);
 				buildArgCmds.add(pomFileName);
 			}
-            BufferedReader reader = applicationManager.performAction(projectInfo, ActionType.STOP_NODE, buildArgCmds, workingDirectory);
+            BufferedInputStream reader = applicationManager.performAction(projectInfo, ActionType.STOP_NODE, buildArgCmds, workingDirectory);
             setSessionAttribute(getAppId() + STOP_NODE, reader);
             setReqAttribute(REQ_APP_ID, getAppId());
             setReqAttribute(REQ_ACTION_TYPE, STOP_NODE);
@@ -1598,7 +1600,7 @@ public class Quality extends DynamicParameterAction implements Constants {
     		
     		//
             loadOrPerformanceJsonWriter();    			
-    		BufferedReader reader = applicationManager.performAction(projectInfo, ActionType.PERFORMANCE_TEST, buildArgCmds, workingDirectory);
+    		BufferedInputStream reader = applicationManager.performAction(projectInfo, ActionType.PERFORMANCE_TEST, buildArgCmds, workingDirectory);
     		
     		//To generate the lock for the particular operation
 			FrameworkUtil.generateLock(Collections.singletonList(getLockDetail(applicationInfo.getId(), PERFORMANCE_TEST)), true);
@@ -1875,7 +1877,7 @@ public class Quality extends DynamicParameterAction implements Constants {
 			}
             loadOrPerformanceJsonWriter();
             ApplicationManager applicationManager = PhrescoFrameworkFactory.getApplicationManager();
-            BufferedReader reader = applicationManager.performAction(getProjectInfo(), ActionType.LOAD_TEST, buildArgCmds, workingDirectory.toString());
+            BufferedInputStream reader = applicationManager.performAction(getProjectInfo(), ActionType.LOAD_TEST, buildArgCmds, workingDirectory.toString());
             
             //To generate the lock for the particular operation
 			FrameworkUtil.generateLock(Collections.singletonList(getLockDetail(appInfo.getId(), LOAD)), true);
@@ -3065,13 +3067,20 @@ public class Quality extends DynamicParameterAction implements Constants {
 				buildArgCmds.add(pomFileName);
 			}
 			String workingDirectory = getAppDirectoryPath(applicationInfo);
-			BufferedReader reader = applicationManager.performAction(projectInfo, ActionType.PDF_REPORT, buildArgCmds, workingDirectory);
-			String line;
-			line = reader.readLine();
-			while (line != null) {
-				line = reader.readLine();
-				System.out.println("Restart Start Console : " + line);
+			BufferedInputStream reader = applicationManager.performAction(projectInfo, ActionType.PDF_REPORT, buildArgCmds, workingDirectory);
+			
+			int available = reader.available();
+			while (available != 0) {
+				byte[] buf = new byte[available];
+                int read = reader.read(buf);
+                if (read == -1 ||  buf[available-1] == -1) {
+                	break;
+                } else {
+                	System.out.println("Restart Start Console : " + new String(buf));
+                }
+                available = reader.available();
 			}
+			
 			setReqAttribute(REQ_APPINFO, applicationInfo);
 			setReqAttribute(REQ_FROM_PAGE, getFromPage());
             setReqAttribute(REQ_REPORT_STATUS, getText(SUCCESS_REPORT_STATUS));

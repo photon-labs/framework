@@ -17,7 +17,7 @@
     limitations under the License.
 
 --%>
-<%@ page import="java.io.BufferedReader"%>
+<%@ page import="java.io.BufferedInputStream" %>
 <%@ page import="java.io.IOException"%>
 
 <%@ page import="org.apache.commons.lang.StringUtils"%>
@@ -31,20 +31,37 @@
         appId = request.getParameter(FrameworkConstants.REQ_APP_ID);
         actionType = request.getParameter(FrameworkConstants.REQ_ACTION_TYPE);
     }
-    BufferedReader reader = (BufferedReader) session.getAttribute(appId + actionType);
-
+    BufferedInputStream reader = (BufferedInputStream) session.getAttribute(appId + actionType);
     String line = null;
     if (reader != null) {
         try {
-			line = reader.readLine();
-            if (line == null) {
-                line = "EOF";
+        	int available = reader.available();
+        	if (available != 0) {
+        		byte[] buf = new byte[available];
+                int read = reader.read(buf);
+                
+                if (read == -1 ||  buf[available-1] == -1) {
+                	line = "EOF";
+                    session.removeAttribute(appId + actionType);
+                } else {
+                	line = new String(buf, "UTF-8");
+                }
+        	} else {
+        		line = "EOF";
                 session.removeAttribute(appId + actionType);
-            }
+        	}
+        	
+        	if (line != null) {
+				String[] splittedlines = line.trim().split("\n");
+				for (String splittedline : splittedlines) {
+					splittedline = "EOF".equals(splittedline) ? splittedline : splittedline + "<br>";
 %>				
-                <%= line %>
+            			<%= splittedline %>
 		<%
-		    } catch (IOException e) {
+				}
+			}
+        	
+			} catch (IOException e) {
 		%>
             	<%=e.getMessage()%>
 <%

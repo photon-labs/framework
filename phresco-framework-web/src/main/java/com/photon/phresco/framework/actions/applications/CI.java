@@ -19,7 +19,7 @@ package com.photon.phresco.framework.actions.applications;
 
 import static com.photon.phresco.util.Constants.PHASE_FUNCTIONAL_TEST;
 
-import java.io.BufferedReader;
+import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.InputStream;
 import java.io.StringWriter;
@@ -686,7 +686,7 @@ public class CI extends DynamicParameterAction implements FrameworkConstants {
 			List<String> buildArgCmds = new ArrayList<String>(1);
 			buildArgCmds.add(SKIP_TESTS);
 			String workingDirectory = Utility.getJenkinsHome();
-			BufferedReader reader = ciManager.setup(projectInfo, ActionType.INSTALL, buildArgCmds , workingDirectory);
+			BufferedInputStream reader = ciManager.setup(projectInfo, ActionType.INSTALL, buildArgCmds , workingDirectory);
 			
 			setSessionAttribute(getAppId() + CI_SETUP, reader);
 			setReqAttribute(REQ_APP_ID, getAppId());
@@ -1226,7 +1226,7 @@ public class CI extends DynamicParameterAction implements FrameworkConstants {
 			List<String> buildArgCmds = null;
 			String workingDirectory = Utility.getJenkinsHome();
 
-			BufferedReader reader = ciManager.start(projectInfo, ActionType.START, buildArgCmds , workingDirectory);
+			BufferedInputStream reader = ciManager.start(projectInfo, ActionType.START, buildArgCmds , workingDirectory);
 			
 			setSessionAttribute(getAppId() + CI_START, reader);
 			setReqAttribute(REQ_APP_ID, getAppId());
@@ -1250,7 +1250,7 @@ public class CI extends DynamicParameterAction implements FrameworkConstants {
 			
 			List<String> buildArgCmds = null;
 			String workingDirectory = Utility.getJenkinsHome();
-			BufferedReader reader = ciManager.stop(projectInfo, ActionType.STOP, buildArgCmds , workingDirectory);
+			BufferedInputStream reader = ciManager.stop(projectInfo, ActionType.STOP, buildArgCmds , workingDirectory);
 			
 			setSessionAttribute(getAppId() + CI_STOP, reader);
 			setReqAttribute(REQ_APP_ID, getAppId());
@@ -1270,15 +1270,23 @@ public class CI extends DynamicParameterAction implements FrameworkConstants {
 			if (debugEnabled) {
 				S_LOGGER.debug("stopJenkins method called");
 			}
-			BufferedReader reader = (BufferedReader) getHttpSession().getAttribute(getAppId() + CI_STOP);
-			String line;
-			line = reader.readLine();
-			while (!line.startsWith("[INFO] BUILD SUCCESS")) {
-				line = reader.readLine();
-				if (debugEnabled) {
-					S_LOGGER.debug("Restart Stop Console : " + line);
-				}
+			BufferedInputStream reader = (BufferedInputStream) getHttpSession().getAttribute(getAppId() + CI_STOP);
+			
+			int available = reader.available();
+			while (available != 0) {
+				byte[] buf = new byte[available];
+                int read = reader.read(buf);
+                if (read == -1 ||  buf[available-1] == -1) {
+                	break;
+                } else {
+                	String line = new String(buf);
+                	if (debugEnabled) {
+                		S_LOGGER.debug("Restart Stop Console : " + line);
+    				}
+                }
+                available = reader.available();
 			}
+			
 			waitForTime(5);
 
 			start();
@@ -1286,15 +1294,23 @@ public class CI extends DynamicParameterAction implements FrameworkConstants {
 				S_LOGGER.debug("startJenkins method called");
 			}
 
-			BufferedReader reader1 = (BufferedReader) getHttpSession().getAttribute(getAppId() + CI_START);
-			String line1;
-			line1 = reader1.readLine();
-			while (line1 != null && !line1.startsWith("[INFO] BUILD SUCCESS")) {
-				line1 = reader1.readLine();
-				if (debugEnabled) {
-					S_LOGGER.debug("Restart Start Console : " + line);
-				}
+			BufferedInputStream reader1 = (BufferedInputStream) getHttpSession().getAttribute(getAppId() + CI_START);
+			
+			int available1 = reader1.available();
+			while (available1 != 0) {
+				byte[] buf = new byte[available1];
+                int read = reader1.read(buf);
+                if (read == -1 ||  buf[available1-1] == -1) {
+                	break;
+                } else {
+                	String line1 = new String(buf);
+                	if (debugEnabled) {
+                		S_LOGGER.debug("Restart Stop Console : " + line1);
+    				}
+                }
+                available1 = reader1.available();
 			}
+			
 			waitForTime(2);
 
 		} catch (Exception e) {

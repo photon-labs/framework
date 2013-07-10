@@ -40,7 +40,7 @@ public interface CIManager {
 	 * @return
 	 * @throws PhrescoException
 	 */
-	BufferedReader setup(ProjectInfo projectInfo, ActionType action, List<String> buildArgCmds, String workingDirectory) throws PhrescoException;
+	BufferedInputStream setup(ProjectInfo projectInfo, ActionType action, List<String> buildArgCmds, String workingDirectory) throws PhrescoException;
 	
 	/**
 	 * start jenkins in phresco
@@ -50,7 +50,7 @@ public interface CIManager {
 	 * @return
 	 * @throws PhrescoException
 	 */
-	BufferedReader start(ProjectInfo projectInfo, ActionType action, List<String> buildArgCmds, String workingDirectory) throws PhrescoException;
+	BufferedInputStream start(ProjectInfo projectInfo, ActionType action, List<String> buildArgCmds, String workingDirectory) throws PhrescoException;
 	
 	/**
 	 * stop jenkins in phresco
@@ -60,7 +60,7 @@ public interface CIManager {
 	 * @return
 	 * @throws PhrescoException
 	 */
-	BufferedReader stop(ProjectInfo projectInfo, ActionType action, List<String> buildArgCmds, String workingDirectory) throws PhrescoException;
+	BufferedInputStream stop(ProjectInfo projectInfo, ActionType action, List<String> buildArgCmds, String workingDirectory) throws PhrescoException;
 	
 	/**
 	 * Returns particular job info

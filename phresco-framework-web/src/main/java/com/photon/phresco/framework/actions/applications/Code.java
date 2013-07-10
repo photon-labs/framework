@@ -17,7 +17,7 @@
  */
 package com.photon.phresco.framework.actions.applications;
 
-import java.io.BufferedReader;
+import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.net.HttpURLConnection;
@@ -399,7 +399,7 @@ public class Code extends DynamicParameterAction implements Constants {
 			String workingDirectory = getAppDirectoryPath(applicationInfo);
 			ApplicationManager applicationManager = PhrescoFrameworkFactory.getApplicationManager();
 			
-			BufferedReader reader = applicationManager.performAction(projectInfo, ActionType.CODE_VALIDATE, buildArgCmds, workingDirectory);
+			BufferedInputStream reader = applicationManager.performAction(projectInfo, ActionType.CODE_VALIDATE, buildArgCmds, workingDirectory);
 			
 			//To generate the lock for the particular operation
 			FrameworkUtil.generateLock(Collections.singletonList(getLockDetail(applicationInfo.getId(), REQ_CODE)), true);

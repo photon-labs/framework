@@ -17,10 +17,9 @@
  */
 package com.photon.phresco.framework.actions.applications;
 
-import java.io.BufferedReader;
+import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FilenameFilter;
 import java.io.IOException;
@@ -46,7 +45,6 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
-import org.codehaus.jettison.json.JSONException;
 
 import com.photon.phresco.api.ApplicationProcessor;
 import com.photon.phresco.api.ConfigManager;
@@ -1683,7 +1681,7 @@ public class Configurations extends FrameworkBaseAction {
 				buildArgCmds.add(Constants.HYPHEN_F);
 				buildArgCmds.add(pomFileName);
 			}
-            BufferedReader reader = applicationManager.performAction(getProjectInfo(), ActionType.THEME_VALIDATOR, buildArgCmds, workingDirectory.toString());
+            BufferedInputStream reader = applicationManager.performAction(getProjectInfo(), ActionType.THEME_VALIDATOR, buildArgCmds, workingDirectory.toString());
             setSessionAttribute(getAppId() + VALIDATE_THEME, reader);
             setReqAttribute(REQ_APP_ID, getAppId());
             setReqAttribute(REQ_ACTION_TYPE, VALIDATE_THEME);
@@ -1704,7 +1702,7 @@ public class Configurations extends FrameworkBaseAction {
 				buildArgCmds.add(Constants.HYPHEN_F);
 				buildArgCmds.add(pomFileName);
 			}
-            BufferedReader reader = applicationManager.performAction(getProjectInfo(), ActionType.CONTENT_VALIDATOR, buildArgCmds, workingDirectory.toString());
+            BufferedInputStream reader = applicationManager.performAction(getProjectInfo(), ActionType.CONTENT_VALIDATOR, buildArgCmds, workingDirectory.toString());
             setSessionAttribute(getAppId() + VALIDATE_CONTENT, reader);
             setReqAttribute(REQ_APP_ID, getAppId());
             setReqAttribute(REQ_ACTION_TYPE, VALIDATE_CONTENT);
@@ -1725,7 +1723,7 @@ public class Configurations extends FrameworkBaseAction {
 				buildArgCmds.add(Constants.HYPHEN_F);
 				buildArgCmds.add(pomFileName);
 			}
-            BufferedReader reader = applicationManager.performAction(getProjectInfo(), ActionType.THEME_CONVERTOR, buildArgCmds, workingDirectory.toString());
+            BufferedInputStream reader = applicationManager.performAction(getProjectInfo(), ActionType.THEME_CONVERTOR, buildArgCmds, workingDirectory.toString());
             setSessionAttribute(getAppId() + CONVERT_THEME, reader);
             setReqAttribute(REQ_APP_ID, getAppId());
             setReqAttribute(REQ_ACTION_TYPE, CONVERT_THEME);
@@ -1746,7 +1744,7 @@ public class Configurations extends FrameworkBaseAction {
 				buildArgCmds.add(Constants.HYPHEN_F);
 				buildArgCmds.add(pomFileName);
 			}
-            BufferedReader reader = applicationManager.performAction(getProjectInfo(), ActionType.CONTENT_CONVERTOR, buildArgCmds, workingDirectory.toString());
+            BufferedInputStream reader = applicationManager.performAction(getProjectInfo(), ActionType.CONTENT_CONVERTOR, buildArgCmds, workingDirectory.toString());
             setSessionAttribute(getAppId() + CONVERT_CONTENT, reader);
             setReqAttribute(REQ_APP_ID, getAppId());
             setReqAttribute(REQ_ACTION_TYPE, CONVERT_CONTENT);

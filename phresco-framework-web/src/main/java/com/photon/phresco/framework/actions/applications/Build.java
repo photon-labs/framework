@@ -17,8 +17,10 @@
  */
 package com.photon.phresco.framework.actions.applications;
 
+import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.DataInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -366,7 +368,7 @@ public class Build extends DynamicParameterAction implements Constants {
 			}
 			String workingDirectory = getAppDirectoryPath(applicationInfo);
 			getApplicationProcessor().preBuild(getApplicationInfo());
-			BufferedReader reader = applicationManager.performAction(projectInfo, ActionType.BUILD, buildArgCmds, workingDirectory);
+			BufferedInputStream reader = applicationManager.performAction(projectInfo, ActionType.BUILD, buildArgCmds, workingDirectory);
 			
 			//To generate the lock for the particular operation
 			FrameworkUtil.generateLock(Collections.singletonList(getLockDetail(applicationInfo.getId(), REQ_BUILD)), true);
@@ -432,7 +434,7 @@ public class Build extends DynamicParameterAction implements Constants {
 				buildArgCmds.add(Constants.HYPHEN_F);
 				buildArgCmds.add(pomFileName);
 			}
-			BufferedReader reader = applicationManager.performAction(projectInfo, ActionType.PROCESS_BUILD, buildArgCmds, workingDirectory);
+			BufferedInputStream reader = applicationManager.performAction(projectInfo, ActionType.PROCESS_BUILD, buildArgCmds, workingDirectory);
 			setSessionAttribute(getAppId() + REQ_PROCESS_BUILD, reader);
 			setReqAttribute(REQ_APP_ID, getAppId());
 			setReqAttribute(REQ_ACTION_TYPE, REQ_PROCESS_BUILD);
@@ -467,7 +469,7 @@ public class Build extends DynamicParameterAction implements Constants {
 				buildArgCmds.add(pomFileName);
 			}
 			String workingDirectory = getAppDirectoryPath(applicationInfo);
-			BufferedReader reader = applicationManager.performAction(projectInfo, ActionType.DEPLOY, buildArgCmds, workingDirectory);
+			BufferedInputStream reader = applicationManager.performAction(projectInfo, ActionType.DEPLOY, buildArgCmds, workingDirectory);
 			
 			//To generate the lock for the particular operation
 			FrameworkUtil.generateLock(Collections.singletonList(getLockDetail(applicationInfo.getId(), REQ_FROM_TAB_DEPLOY)), true);
@@ -592,10 +594,20 @@ public class Build extends DynamicParameterAction implements Constants {
 			buildArgCmds.add("-Dapplication.name=" + ipaFileName);
 			buildArgCmds.add("-Dapp.path=" + buildName);
 			buildArgCmds.add("-Dbuild.name=" + appBuildName);
-			BufferedReader reader = applicationManager.performAction(projectInfo, ActionType.IPA_DOWNLOAD, buildArgCmds, workingDirectory);
-			while (reader.readLine() != null) {
-				System.out.println(reader.readLine());
+			BufferedInputStream reader = applicationManager.performAction(projectInfo, ActionType.IPA_DOWNLOAD, buildArgCmds, workingDirectory);
+			
+			int available = reader.available();
+			while (available != 0) {
+				byte[] buf = new byte[available];
+                int read = reader.read(buf);
+                if (read == -1 ||  buf[available-1] == -1) {
+                	break;
+                } else {
+                	System.out.println(new String(buf));
+                }
+                available = reader.available();
 			}
+			
 			String ipaPath = applicationManager.getBuildInfo(Integer.parseInt(buildNumber), getBuildInfosFilePath(applicationInfo)).getDeployLocation();
 			ipaPath = ipaPath.substring(0, ipaPath.lastIndexOf(FILE_SEPARATOR)) + FILE_SEPARATOR + ipaFileName + IPA_FORMAT;
 			fileInputStream = new FileInputStream(new File(ipaPath));
@@ -632,9 +644,9 @@ public class Build extends DynamicParameterAction implements Constants {
 			while (StringUtils.isNotEmpty(line) && !line.startsWith("[INFO] BUILD FAILURE")) {
 				line = compileReader.readLine();
 			}
-			BufferedReader reader = null;
+			BufferedInputStream reader = null;
 			if (StringUtils.isNotEmpty(line) && line.startsWith("[INFO] BUILD FAILURE")) {
-				reader = new BufferedReader(new FileReader(getLogFilePath()));
+				reader = new BufferedInputStream(new FileInputStream(getLogFilePath()));
 			} else {
 				MojoProcessor mojo = new MojoProcessor(new File(getPhrescoPluginInfoFilePath(PHASE_RUNGAINST_SRC_START)));
 				persistValuesToXml(mojo, PHASE_RUNGAINST_SRC_START);
@@ -672,7 +684,7 @@ public class Build extends DynamicParameterAction implements Constants {
 		
 		try {
 			setSessionAttribute(getAppId() + REQ_START, null);
-			BufferedReader reader = handleStopServer(false);
+			BufferedInputStream reader = handleStopServer(false);
 			removeSessionAttribute(getAppId() + SESSION_SERVER_STATUS);
 			setSessionAttribute(getAppId() + REQ_STOP, reader);
 			setReqAttribute(REQ_APP_ID, getAppId());
@@ -703,9 +715,9 @@ public class Build extends DynamicParameterAction implements Constants {
 			while (line != null && !line.startsWith("[INFO] BUILD FAILURE")) {
 				line = compileReader.readLine();
 			}
-			BufferedReader reader = null;
+			BufferedInputStream reader = null;
 			if (line != null && line.startsWith("[INFO] BUILD FAILURE")) {
-				reader = new BufferedReader(new FileReader(getLogFilePath()));
+				reader = new BufferedInputStream(new FileInputStream(getLogFilePath()));
 			} else {
 				reader = startServer(null);
 			}
@@ -719,14 +731,14 @@ public class Build extends DynamicParameterAction implements Constants {
 		return APP_ENVIRONMENT_READER;
 	}
 
-	private BufferedReader startServer(String environmentName) throws PhrescoException {
+	private BufferedInputStream startServer(String environmentName) throws PhrescoException {
 		if (debugEnabled) {
 			S_LOGGER.debug("Entering Method Build.startServer()");
 		}
 		String serverHost = "";
 		String serverProtocol = "";
 		int serverPort = 0;
-		BufferedReader reader = null;
+		BufferedInputStream reader = null;
 		try {
 			ApplicationInfo applicationInfo = getApplicationInfo();
 			if(StringUtils.isEmpty(environmentName)) {
@@ -799,12 +811,12 @@ public class Build extends DynamicParameterAction implements Constants {
 		return reader;
 	}
 
-	private BufferedReader handleStopServer(boolean readData) throws PhrescoException {
+	private BufferedInputStream handleStopServer(boolean readData) throws PhrescoException {
 		if (debugEnabled) {
 			S_LOGGER.debug("Entering Method Build.handleStopServer()");
 		}
 		
-		BufferedReader reader = null;
+		BufferedInputStream reader = null;
 		try {
 			ApplicationInfo applicationInfo = getApplicationInfo();
 			ApplicationManager applicationManager = PhrescoFrameworkFactory.getApplicationManager();
@@ -817,7 +829,17 @@ public class Build extends DynamicParameterAction implements Constants {
 			}
 			reader = applicationManager.performAction(getProjectInfo(), ActionType.STOPSERVER, buildArgCmds, workingDirectory);
 			if (readData) {
-				while (StringUtils.isNotEmpty(reader.readLine())) {}
+				int available = reader.available();
+				while (available != 0) {
+					byte[] buf = new byte[available];
+	                int read = reader.read(buf);
+	                if (read == -1 ||  buf[available-1] == -1) {
+	                	break;
+	                } else {
+	                	// 
+	                }
+	                available = reader.available();
+				}
 			}
 			deleteLogFile();
 		} catch (Exception e) {
@@ -1087,7 +1109,7 @@ public class Build extends DynamicParameterAction implements Constants {
 				buildArgCmds.add(Constants.HYPHEN_F);
 				buildArgCmds.add(pomFileName);
 			}
-			BufferedReader reader = applicationManager.performAction(projectInfo, ActionType.MINIFY, buildArgCmds, workingDirectory);
+			BufferedInputStream reader = applicationManager.performAction(projectInfo, ActionType.MINIFY, buildArgCmds, workingDirectory);
 			setSessionAttribute(getAppId() + REQ_MINIFY, reader);
 			setReqAttribute(REQ_APP_ID, getAppId());
 			setReqAttribute(REQ_ACTION_TYPE, REQ_MINIFY);
