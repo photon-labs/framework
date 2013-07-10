@@ -11,7 +11,6 @@
 		<phresco.framework.version>2.3.0.9001-SNAPSHOT</phresco.framework.version>		
 		<tomcat.version>7.0.21</tomcat.version>
 		<sonar.version>3.3.1</sonar.version>
-		<jmeter.version>2.9</jmeter.version>
 		<checker.version>0.1</checker.version>
 		<device.deploy.version>1.0</device.deploy.version>
 		<phantomjs.version>1.5.0</phantomjs.version>
@@ -41,13 +40,6 @@
 		<type>war</type>
 	  </dependency>
 	  
-	  <dependency>
-		<groupId>org.apache.jmeter</groupId>
-		<artifactId>apache-jmeter2</artifactId>
-		<version>${jmeter.version}</version>
-		<type>zip</type>
-	  </dependency>
-  
 	  <dependency>
 		<groupId>com.photon.phresco.file.server</groupId>
 		<artifactId>file-server</artifactId>
@@ -328,16 +320,6 @@
 								</artifactItem>
                                 
 								
-								<!-- extracting JMeter zip file -->
-								<artifactItem>
-									<groupId>org.apache.jmeter</groupId>
-									<artifactId>apache-jmeter2</artifactId>
-									<version>${jmeter.version}</version>
-									<type>zip</type>
-									<overWrite>false</overWrite>
-									<outputDirectory>../workspace/tools</outputDirectory>
-								</artifactItem>
-								
 								<!-- extracting Phantomjs  -->
 								<artifactItem>
 									<groupId>binaries</groupId>
@@ -348,6 +330,8 @@
 									<overWrite>false</overWrite>
 									<outputDirectory>../workspace/tools</outputDirectory>
 								</artifactItem>
+                                
+                                
 								<!--extracting ios-sim zip file-->
 								<artifactItem>
 									  <groupId>softwares.iphone.files</groupId>

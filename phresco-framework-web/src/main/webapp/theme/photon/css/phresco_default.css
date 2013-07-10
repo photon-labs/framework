@@ -51,7 +51,7 @@ body {
 
 header {
 	font-size: 20px;
-	height: 55px;
+	height: 82px;
 	left: 0;
 	/* line-height: 30px; */
 	padding: 0;
@@ -59,6 +59,11 @@ header {
 	text-align: center;
 	top: 0;
 	width: 100%;
+	z-index: 1;
+}
+
+.header_main {
+	background: none;		
 }
 
 h4 {
@@ -75,6 +80,18 @@ footer {
 	padding: 0;
 	position: absolute;
 	width: 100%;
+}
+
+.footer_main {
+	/*border-top: 2px solid #130404;*/
+	background: #2a2929; /* Old browsers */
+	background: -moz-linear-gradient(top,  #2a2929 0%, #000000 100%); /* FF3.6+ */
+	background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#2a2929), color-stop(100%,#000000)); /* Chrome,Safari4+ */
+	background: -webkit-linear-gradient(top,  #2a2929 0%,#000000 100%); /* Chrome10+,Safari5.1+ */
+	background: -o-linear-gradient(top,  #2a2929 0%,#000000 100%); /* Opera 11.10+ */
+	background: -ms-linear-gradient(top,  #2a2929 0%,#000000 100%); /* IE10+ */
+	background: linear-gradient(top,  #2a2929 0%,#000000 100%); /* W3C */
+	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#2a2929', endColorstr='#000000',GradientType=0 ); /* IE6-9 */	
 }
 
 .modal-backdrop, .modal-backdrop.fade.in {
@@ -420,6 +437,7 @@ a {
 	position: absolute;
 	top: 40px !important;
 	width:100% !important;
+	background: none;
 }
 
 .wrapper {
@@ -923,7 +941,7 @@ a {
 
 .Logo {
 	float: left;
-	margin-top:23px;
+	margin-top:20px;
 	margin-left: 1%;
 }
 

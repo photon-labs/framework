@@ -85,8 +85,8 @@ a:focus {
 }
 
 #container {
-	background:url(../images/content_bg.png) repeat;
-	padding-bottom:8px;
+	/*background:url(../images/content_bg.png) repeat;*/
+	/*padding-bottom:8px;*/
 }
 #subcontainer { padding-bottom:8px; }
 

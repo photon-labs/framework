@@ -77,6 +77,10 @@ public class Login extends FrameworkBaseAction {
 	private String copyRight = "";
 	private String disabledLabelColor = "";
 	private String customerId = "";
+	private String editMenuColor="";
+	private String headerBackGroundcolor="";
+	private String footerBackGroundcolor="";
+	private String userSettingColor="";
 	
 	private List<String> customerOptions = null;
 	private List<String> customerAllOptions = null;
@@ -282,6 +286,11 @@ public class Login extends FrameworkBaseAction {
 			setMenufontColor(themeMap.get(MENU_FONT_COLOR));
 			setDisabledLabelColor(themeMap.get(DISABLED_LABEL_COLOR));
 			setCopyRight(themeMap.get(COPYRIGHT));
+			setEditMenuColor(themeMap.get(EDIT_MENU_BACKGROUND_COLOR));
+			setHeaderBackGroundcolor(themeMap.get(HEADER_BACKGROUND_COLOR));
+			setFooterBackGroundcolor(themeMap.get(FOOTER_BACKGROUND_COLOR));
+			setUserSettingColor(themeMap.get(USER_SETTINGS_COLOR));
+			
     	} catch (PhrescoException e) {
     		return showErrorPopup(e, getText(EXCEPTION_FETCHLOGO_IMAGE));
     	} catch (IOException e) {
@@ -525,6 +534,38 @@ public class Login extends FrameworkBaseAction {
 
 	public String getSubMenuBackGround() {
 		return subMenuBackGround;
+	}
+
+	public String getEditMenuColor() {
+		return editMenuColor;
+	}
+
+	public void setEditMenuColor(String editMenuColor) {
+		this.editMenuColor = editMenuColor;
+	}
+
+	public String getHeaderBackGroundcolor() {
+		return headerBackGroundcolor;
+	}
+
+	public void setHeaderBackGroundcolor(String headerBackGroundcolor) {
+		this.headerBackGroundcolor = headerBackGroundcolor;
+	}
+
+	public String getFooterBackGroundcolor() {
+		return footerBackGroundcolor;
+	}
+
+	public void setFooterBackGroundcolor(String footerBackGroundcolor) {
+		this.footerBackGroundcolor = footerBackGroundcolor;
+	}
+
+	public String getUserSettingColor() {
+		return userSettingColor;
+	}
+
+	public void setUserSettingColor(String userSettingColor) {
+		this.userSettingColor = userSettingColor;
 	}
 
 }
