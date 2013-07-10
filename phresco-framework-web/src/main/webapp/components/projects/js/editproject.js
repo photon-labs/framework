@@ -204,11 +204,13 @@ define(["projects/listener/projectsListener"], function() {
 				self.onCancelUpdateEvent.dispatch();
 			});
 			
-			$(".create_proj .scrollContent").mCustomScrollbar({
-				autoHideScrollbar:true,
-				theme:"light-thin",
-				advanced:{ updateOnContentResize: true}
-			});
+			if(commonVariables.animation) {
+				$(".create_proj .scrollContent").mCustomScrollbar({
+					autoHideScrollbar:true,
+					theme:"light-thin",
+					advanced:{ updateOnContentResize: true}
+				});
+			}	
 			
 			$("img[name='close']").unbind('click');
 			$("img[name='close']").bind('click', function(){

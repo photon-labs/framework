@@ -197,7 +197,7 @@ define(["projects/listener/projectsListener"], function() {
 				$("#endDate").focus();
 			});
 			
-			if (commonVariables.animate){
+			if(commonVariables.animation) {
 				$(".create_proj .scrollContent").mCustomScrollbar({
 					autoHideScrollbar:true,
 					theme:"light-thin",

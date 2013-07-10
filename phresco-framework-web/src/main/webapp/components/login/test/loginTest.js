@@ -63,7 +63,7 @@ define(["login/login"], function(Login) {
 				$('input#password').val('manage');
 				
 				var login = $.mockjax({
-				  url: "framework/login",
+				  url: commonVariables.webserviceurl + "login",
 				  type: "POST",
 				  dataType: "json",
 				  contentType: "application/json",
@@ -75,7 +75,7 @@ define(["login/login"], function(Login) {
 				});
 				
 				var projectlist = $.mockjax({
-				  url: 'framework/project/list?customerId=photon',
+				  url: commonVariables.webserviceurl + 'project/list?customerId=photon',
 				  type:'GET',
 				  contentType: 'application/json',
 				  status: 200,

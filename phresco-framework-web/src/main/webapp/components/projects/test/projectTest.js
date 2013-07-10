@@ -10,14 +10,8 @@ define(["projects/addproject", "projects/editproject"], function(addProject, edi
 		
 			asyncTest("Add Project- App Layer UI Test", function() {
 				
-				/* $("#fixture").append(commonVariables.basePlaceholder);
-				$("#fixture").append(commonVariables.headerPlaceholder);
-				$("#fixture").append(commonVariables.navigationPlaceholder);
-				$("#fixture").append(commonVariables.contentPlaceholder);
-				$("#fixture").append(commonVariables.footerPlaceholder); */
-				
 				$.mockjax({
-				  url:'framework/technology/apptypes?userId=admin&customerId=photon',
+				  url: commonVariables.webserviceurl + 'technology/apptypes?userId=admin&customerId=photon',
 				  type:'GET',
 				  contentType: 'application/json',
 				  status: 200,
@@ -67,8 +61,22 @@ define(["projects/addproject", "projects/editproject"], function(addProject, edi
 					equal(weblayerVersionOption, "2.0.2", "Add Project - weblayer Version Change Event Test");
 					equal(mobileTypeOption, "Native", "Add Project - Mobile Type Change Event Test");
 					equal(mobileVersionOption, "4.14.1.2", "Add Project - Mobile Version Change Event Test");
-					self.runCloseButtonTest(addproject);
+					self.runProjectNameKeyupTest(addproject);
 				}, 2500);
+			});
+		},
+		
+		runProjectNameKeyupTest : function(addproject) {
+			var self=this;
+			asyncTest("Add Project- ProjectName Keyup Test", function() {
+				$("input[name='projectname']").val('Testcase');
+				$("input[name='projectname']").keyup();
+				setTimeout(function() {
+					start();
+					var projectCode = $("input[name='projectcode']").val();
+					equal(projectCode, "Testcase", "Add Project - ProjectName Keyup Test");
+					self.runCloseButtonTest(addproject);
+				}, 1500);
 			});
 		},
 		
@@ -78,27 +86,123 @@ define(["projects/addproject", "projects/editproject"], function(addProject, edi
 				$("img[name='close']").click();
 				setTimeout(function() {
 					start();
-					var applnLayerDisplay = $("input[name=applicationlayer]").css('display');
-					var webLayerDisplay = $("input[name=weblayer]").css('display');
-					equal(applnLayerDisplay, "inline", "Add Project - Close Image Event Test for Application Layer");
-					equal(webLayerDisplay, "inline", "Add Project - Close Image Event Test for web Layer");
+					var applnLayer = $("input[name=applicationlayer]").css('display');
+					logs("applnLayerDisplay...."+ applnLayer);
+					var webLayer = $("input[name=weblayer]").css('display');
+					logs("webLayerDisplay...."+ webLayer);
+					equal(applnLayer, "inline", "Add Project - Close Image Event Test for Application Layer");
+					equal(webLayer, "inline", "Add Project - Close Image Event Test for web Layer");
 					self.runInputBtnTest(addproject);
-				}, 1500);
+				}, 2500);
 			});
 		},
-
+		
 		runInputBtnTest : function(addproject) {
+			var self = this;
 			asyncTest("Add Project- Input button Event Test", function() {
-				
 				$(".flt_left input").click();
 				setTimeout(function() {
 					start();
 					var applnLayerTrDisplay = $("tr[name=applicationlayer]").css('display');
-					var applnLayerContentTrDisplay = $("tr[name=applicationlayercontent]").css('display');
+					var applnLayerContentTrDisplay = $("tr[name=applicationlayercontent]").attr('display');
 					equal(applnLayerTrDisplay, "table-row", "Add Project - Input button Event Test for Application Layer");
 					equal(applnLayerContentTrDisplay, "table-row", "Add Project - Input button Event Test for Application Layer");
+					self.runMultiModuleEventTest(addproject);
 				}, 1500);
 			});
-		}	
+		},
+		
+		runMultiModuleEventTest : function(addproject) {
+			var self=this;
+			asyncTest("Add Project- MultiModule CheckBox Event Test", function() {
+				$("input[name='multimodule']").click();
+				setTimeout(function() {
+					start();
+					var appdependency = $("span[name=appdependency]").css('display');
+					equal(appdependency, "none", "Add Project - MultiModule CheckBox Event Test");
+					self.runAddApplicationLayerEventTest(addproject);	
+				}, 1500);
+			});
+		},
+		
+		runAddApplicationLayerEventTest : function(addproject) {
+			var self=this;
+			asyncTest("Add Project- Add Application Layer Event Test", function() {
+				$("a[name=addApplnLayer]").click();
+				setTimeout(function() {
+					start();
+					var addedTrName = $("a[name=addApplnLayer]").parents('tr.applnlayercontent:last').attr('name');
+					equal(addedTrName, "staticApplnLayer", "Add Project- Add Application Layer Event Test");
+					self.runAddWebLayerEventTest(addproject);
+				}, 1500);
+			});
+		},
+		
+		runAddWebLayerEventTest : function(addproject) {
+			var self=this;
+			asyncTest("Add Project- Add Web Layer Event Test", function() {
+				$("a[name=addWebLayer]").click();
+				setTimeout(function() {
+					start();
+					var addedTrName = $("a[name=addWebLayer]").parents('tr.weblayercontent:last').attr('name');
+					equal(addedTrName, "staticWebLayer", "Add Project- Add Web Layer Event Test");
+					self.runAddMobileLayerEventTest(addproject);
+				}, 1500);
+			});
+		},
+		
+		runAddMobileLayerEventTest : function(addproject) {
+			var self=this;
+			asyncTest("Add Project- Add Mobile Layer Event Test", function() {
+				$("a[name=addMobileLayer]").click();
+				setTimeout(function() {
+					start();
+					var addedTrName = $("a[name=addMobileLayer]").parents('tr.mobilelayercontent:last').attr('name');
+					equal(addedTrName, "staticMobileLayer", "Add Project- Add Mobile Layer Event Test");
+					self.showSuccessMessageAfterCreation(addproject);
+				}, 1500);
+			});
+		}, 
+		
+		showSuccessMessageAfterCreation : function(addproject) {
+			var self=this;
+			asyncTest("Add Project- show SuccessMessage After Creation Test", function() {
+				$("input[name=projectname]").val('Test');
+				$("input[name=projectcode]").val('Test1');
+				$("input[name=projectversion]").val('1.0');
+				$("input[name=projectdescription]").val('Test Description');
+				$("input[name=multimodule]").val('false');
+				$("#appcode").val('app1');
+				$("select[name=appln_technology]").val('tech-php');
+				$("select[name=appln_version]").text('5.4.x');
+				$("#webappcode").val('web1');
+				$("select[name=weblayer]").val('html5');
+				$("select[name=web_widget]").val('tech-html5-jquery-mobile-widget');
+				$("select[name=widgetversion]").text('2.0.2');
+				$("#mobileappcode").val('mob1');
+				$("select[name=mobile_layer]").val('Android');
+				$("select[name=mobile_types]").val('tech-android-native');
+				$("select[name=mobile_version]").text('4.1');
+				
+				$.mockjax({
+					  url: commonVariables.webserviceurl + 'project/create?userId=admin',
+					  type:'POST',
+					  contentType:'application/json',
+					  status: 200,
+					  response: function() {
+						   this.responseText = JSON.stringify({"response":null,"message":"Project created Successfully","exception":null,"data":{"appInfos":[{"pomFile":null,"appDirName":"app1","techInfo":{"appTypeId":"app-layer","techGroupId":null,"techVersions":null,"version":"5.4.x","customerIds":null,"used":false,"creationDate":1373455422125,"helpText":null,"system":false,"name":"PHP","id":"tech-php","displayName":null,"description":null,"status":null},"selectedServers":null,"selectedDatabases":null,"selectedModules":null,"selectedJSLibs":null,"selectedComponents":null,"selectedWebservices":null,"pilotInfo":null,"selectedFrameworks":null,"emailSupported":false,"pilotContent":null,"embedAppId":null,"phoneEnabled":false,"tabletEnabled":false,"pilot":false,"functionalFramework":null,"dependentModules":null,"version":"1.0","code":"app1","customerIds":null,"used":false,"creationDate":1373455422125,"helpText":null,"system":false,"name":"app1","id":"ae8afca9-09d8-4bc5-af2c-dac4ca71e25c","displayName":null,"description":null,"status":null},{"pomFile":null,"appDirName":"app2","techInfo":{"appTypeId":"web-layer","techGroupId":"HTML5","techVersions":null,"version":"2.0.2","customerIds":null,"used":false,"creationDate":1373455422125,"helpText":null,"system":false,"name":"JQuery Mobile Widget","id":"tech-html5-jquery-mobile-widget","displayName":null,"description":null,"status":null},"selectedServers":null,"selectedDatabases":null,"selectedModules":null,"selectedJSLibs":null,"selectedComponents":null,"selectedWebservices":null,"pilotInfo":null,"selectedFrameworks":null,"emailSupported":false,"pilotContent":null,"embedAppId":null,"phoneEnabled":false,"tabletEnabled":false,"pilot":false,"functionalFramework":null,"dependentModules":null,"version":"1.0","code":"app2","customerIds":null,"used":false,"creationDate":1373455422125,"helpText":null,"system":false,"name":"app2","id":"0ddb01fd-3990-496f-baf2-0ecb35599acc","displayName":null,"description":null,"status":null},{"pomFile":null,"appDirName":"app3","techInfo":{"appTypeId":"mobile-layer","techGroupId":"Android","techVersions":null,"version":"4.1","customerIds":null,"used":false,"creationDate":1373455422125,"helpText":null,"system":false,"name":"Native","id":"tech-android-native","displayName":null,"description":null,"status":null},"selectedServers":null,"selectedDatabases":null,"selectedModules":null,"selectedJSLibs":null,"selectedComponents":null,"selectedWebservices":null,"pilotInfo":null,"selectedFrameworks":null,"emailSupported":false,"pilotContent":null,"embedAppId":null,"phoneEnabled":false,"tabletEnabled":false,"pilot":false,"functionalFramework":null,"dependentModules":null,"version":"1.0","code":"app3","customerIds":null,"used":false,"creationDate":1373455422125,"helpText":null,"system":false,"name":"app3","id":"64d522b2-001a-40db-9aed-38c00f1b0070","displayName":null,"description":null,"status":null}],"projectCode":"Test1","noOfApps":3,"startDate":null,"endDate":null,"preBuilt":false,"multiModule":false,"version":"1.0","customerIds":["photon"],"used":false,"creationDate":1373455422125,"helpText":null,"system":false,"name":"Test","id":"2695e566-5bff-44ec-933a-8cf81e55314c","displayName":null,"description":"","status":null}});	
+					  }
+				});	  
+			
+				$("input[name='Create']").click();
+				
+				setTimeout(function() {
+					start();
+					var Msg = $(".blinkmsg").hasClass('popsuccess');
+					equal(Msg, false, "Add Project- show SuccessMessage After Creation Test");
+				}, 1500);	
+			});
+		}
+		
 	};	
 });

@@ -38,7 +38,7 @@ define(["jquery"], function($) {
 		$.get('src/components/login/test/config.json', function(data) {
 			commonVariables.globalconfig = data;
 			commonVariables.animation = data.navigation.animation;
-			commonVariables.webserviceurl = "framework/";
+			commonVariables.webserviceurl = "framework/rest/api";
 			configJson = {
 				// comment out the below line for production, this one is so require doesn't cache the result
 				urlArgs: "time=" +  (new Date()).getTime(),
