@@ -10,7 +10,7 @@
 		       
 		       <!-- CreateConfiguration -->
 		       <configName>Server</configName>  
-               <configHost>172.16.28.43</configHost>
+               <configHost>172.16.18.85</configHost>
                <configPort>4576</configPort>
                <configDeployDir>C:\wamp\www</configDeployDir>
                <configContext>nodejsarchetype</configContext>

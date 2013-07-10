@@ -73,7 +73,7 @@ public class IPhoneLibraryTest {
 	throws InterruptedException, IOException, Exception {
 		try {
 
-			System.out.println("---------testAndroidNativeArchetypeEditApp()-------------");
+			System.out.println("---------testIPhoneLibraryArchetypeEditApp()-------------");
 			methodName = Thread.currentThread().getStackTrace()[1].getMethodName();
 			mobBaseScreen.iPhoneLibraryArchetypeEditApp(methodName, iPhoneLibraryConst);
 		} catch (Exception t) {
@@ -87,7 +87,7 @@ public class IPhoneLibraryTest {
 	throws InterruptedException, IOException, Exception {
 		try {
 
-			System.out.println("---------testAndroidNativeArchetypeUpdateApp()-------------");
+			System.out.println("---------testIPhoneLibraryArchetypeUpdateApp()-------------");
 			methodName = Thread.currentThread().getStackTrace()[1].getMethodName();
 			mobBaseScreen.iPhoneLibraryArchetypeUpdateApp(methodName, iPhoneLibraryConst);
 

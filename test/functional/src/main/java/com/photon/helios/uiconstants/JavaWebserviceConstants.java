@@ -116,8 +116,13 @@ public class JavaWebserviceConstants {
 	
 	public void setConfigHost(String configHost) {
 		this.configHost = configHost;
-	}	
+	}
+	
 	public String getBuildName() {
 		return buildName;
+	}
+	
+	public void setBuildName(String buildName) {
+		this.buildName = buildName;
 	}
 }

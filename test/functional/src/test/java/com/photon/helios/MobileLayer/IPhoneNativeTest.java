@@ -74,7 +74,7 @@ public class IPhoneNativeTest {
 	throws InterruptedException, IOException, Exception {
 		try {
 
-			System.out.println("---------testAndroidNativeArchetypeEditApp()-------------");
+			System.out.println("---------testIPhoneNativeArchetypeEditApp()-------------");
 			methodName = Thread.currentThread().getStackTrace()[1].getMethodName();
 			mobBaseScreen.iPhoneNativeArchetypeEditApp(methodName, iPhoneNativeConst);
 		} catch (Exception t) {
@@ -88,7 +88,7 @@ public class IPhoneNativeTest {
 	throws InterruptedException, IOException, Exception {
 		try {
 
-			System.out.println("---------testAndroidNativeArchetypeUpdateApp()-------------");
+			System.out.println("---------testIPhoneNativeArchetypeUpdateApp()-------------");
 			methodName = Thread.currentThread().getStackTrace()[1].getMethodName();
 			mobBaseScreen.iPhoneNativeArchetypeUpdateApp(methodName, iPhoneNativeConst);
 

@@ -111,4 +111,8 @@ public class Drupal6Constants {
 	public String getBuildName() {
 		return buildName;
 	}
+	
+	public void setBuildName(String buildName) {
+		this.buildName = buildName;
+	}
 }

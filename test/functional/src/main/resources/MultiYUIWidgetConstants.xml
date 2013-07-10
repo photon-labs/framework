@@ -11,13 +11,13 @@
                
                <!-- CreateConfiguration -->
                <configName>Server</configName>  
-               <configHost>172.16.28.43</configHost>
+               <configHost>172.16.18.85</configHost>
                <configPort>8080</configPort>
-               <configDeployDir>D:\apache-tomcat-7.0.35\webapps</configDeployDir>
+               <configDeployDir>C:\tom\apache-tomcat-7.0.14\apache-tomcat-7.0.14\webapps</configDeployDir>
                <configContext>multiyui</configContext>
                
                <!-- GenerateBuild -->
-               <buildName>Build</buildName>
+               <buildName>MultiYuiBuild</buildName>
                
 </phresco>
 </environment>

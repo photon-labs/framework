@@ -14,6 +14,7 @@ public class BlackBerryHybridConstants {
 	private String blackBerryHybArchetypeAppCode = "blackBerryHybArchetypeAppCode";
 	private String mobileValue = "mobileValue";
 	private String mobileType = "mobileType";
+	private String buildName = "buildName";
 	
 	public BlackBerryHybridConstants() {
 		try {
@@ -73,6 +74,11 @@ public class BlackBerryHybridConstants {
 		this.mobileType = mobileType;
 	}
 
-	
+	public String getBuildName() {
+		return buildName;
+	}
+	public void setBuildName(String buildName) {
+		this.buildName = buildName;
+	}
 	
 	}

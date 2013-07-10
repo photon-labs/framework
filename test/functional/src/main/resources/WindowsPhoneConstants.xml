@@ -6,5 +6,9 @@
 		       <windowsPhoneArchetypeAppCode>WindowsPhoneArchetype</windowsPhoneArchetypeAppCode>
 		       <mobileValue>Windows</mobileValue>
 		       <mobileType>Windows Phone</mobileType>
+		       
+		       <!-- Generate Build -->
+               <buildName>WindowsPhoneBuild</buildName>
+		       
 </phresco>             
 </environment>

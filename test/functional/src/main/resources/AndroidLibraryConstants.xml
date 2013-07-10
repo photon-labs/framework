@@ -7,5 +7,8 @@
 		       <mobileValue>Android</mobileValue>
 		       <mobileType>Library</mobileType>
 		       <androidLibArchetypeEditLink>//a[contains(text(),'AndroidLibraryArchetype')]</androidLibArchetypeEditLink>
+		       
+		       <!-- Generate Build -->
+               <buildName>AndroidLibraryBuild</buildName>
 </phresco>
 </environment>

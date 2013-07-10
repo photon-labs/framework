@@ -74,7 +74,7 @@ public class BlackberryHybridTest {
 	throws InterruptedException, IOException, Exception {
 		try {
 
-			System.out.println("---------testAndroidNativeArchetypeEditApp()-------------");
+			System.out.println("---------testBlackBerryHybridArchetypeEditApp()-------------");
 			methodName = Thread.currentThread().getStackTrace()[1].getMethodName();
 			mobBaseScreen.blackBerryHybridArchetypeEditApp(methodName, blackBerryConst);
 		} catch (Exception t) {
@@ -88,7 +88,7 @@ public class BlackberryHybridTest {
 	throws InterruptedException, IOException, Exception {
 		try {
 
-			System.out.println("---------testAndroidNativeArchetypeUpdateApp()-------------");
+			System.out.println("---------testBlackBerryHybridArchetypeUpdateApp()-------------");
 			methodName = Thread.currentThread().getStackTrace()[1].getMethodName();
 			mobBaseScreen.blackBerryHybridArchetypeUpdateApp(methodName, blackBerryConst);
 
@@ -97,6 +97,22 @@ public class BlackberryHybridTest {
 
 		}
 	}
+	
+	@Test
+	public void testBlackBerryHybridArchetypeBuild()
+	throws InterruptedException, IOException, Exception {
+		try {
+
+			System.out.println("---------testBlackBerryHybridArchetypeBuild()-------------");
+			methodName = Thread.currentThread().getStackTrace()[1].getMethodName();
+			mobBaseScreen.blackBerryHybridArchetypeBuild(methodName, blackBerryConst);
+
+		} catch (Exception t) {
+			t.printStackTrace();
+
+		}
+	}
+
 	
 
 	@AfterTest

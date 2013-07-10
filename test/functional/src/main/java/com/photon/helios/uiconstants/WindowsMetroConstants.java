@@ -14,6 +14,7 @@ public class WindowsMetroConstants {
 	private String windowsMetroArchetypeAppCode = "windowsMetroArchetypeAppCode";
 	private String mobileValue = "mobileValue";
 	private String mobileType = "mobileType";
+	private String buildName = "buildName";
 
 
 	public WindowsMetroConstants() {
@@ -83,6 +84,12 @@ public class WindowsMetroConstants {
 		this.mobileType = mobileType;
 	}
 
+	public String getBuildName() {
+		return buildName;
+	}
+	public void setBuildName(String buildName) {
+		this.buildName = buildName;
+	}
 
 }
 

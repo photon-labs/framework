@@ -7,8 +7,8 @@
 			<class name="com.photon.helios.MobileLayer.IPhoneNativeTest" />
 			<methods>
 				<include name="testIPhoneNativeArchetypeCreation"></include>
-				<include name="iPhoneNativeArchetypeEditApp"></include>
-				<include name="iPhoneNativeArchetypeUpdateApp"></include>
+				<include name="testIPhoneNativeArchetypeEditApp"></include>
+				<include name="testIPhoneNativeArchetypeUpdateApp"></include>
 			</methods>
 		</classes>
 	</test>
@@ -18,8 +18,8 @@
 			<class name="com.photon.helios.MobileLayer.IPhoneHybridTest" />
 			<methods>
 				<include name="testIPhoneHybridArchetypeCreation"></include>
-				<include name="iPhoneHybridArchetypeEditApp"></include>
-				<include name="iPhoneHybridArchetypeUpdateApp"></include>
+				<include name="testIPhoneHybridArchetypeEditApp"></include>
+				<include name="testIPhoneHybridArchetypeUpdateApp"></include>
 			</methods>
 		</classes>
 	</test>
@@ -29,8 +29,8 @@
 			<class name="com.photon.helios.MobileLayer.IPhoneLibraryTest" />
 			<methods>
 				<include name="testIPhoneLibraryArchetypeCreation"></include>
-				<include name="iPhoneLibraryArchetypeEditApp"></include>
-				<include name="iPhoneLibraryArchetypeUpdateApp"></include>
+				<include name="testIPhoneLibraryArchetypeEditApp"></include>
+				<include name="testIPhoneLibraryArchetypeUpdateApp"></include>
 			</methods>
 		</classes>
 	</test>
@@ -40,8 +40,8 @@
 			<class name="com.photon.helios.MobileLayer.AndroidNativeTest" />
 			<methods>
 				<include name="testAndroidNativeArchetypeCreation"></include>
-				<include name="testBlackBerryHybridArchetypeCreation"></include>
-				<include name="testBlackBerryHybridArchetypeCreation"></include>
+				<include name="testAndroidNativeArchetypeEditApp"></include>
+				<include name="testAndroidNativeArchetypeUpdateApp"></include>
 			</methods>
 		</classes>
 	</test>
@@ -73,8 +73,9 @@
 			<class name="com.photon.helios.MobileLayer.BlackberryHybridTest" />
 			<methods>
 				<include name="testBlackBerryHybridArchetypeCreation"></include>
-				<include name="testBlackBerryHybridArchetypeCreation"></include>
-				<include name="testBlackBerryHybridArchetypeCreation"></include>
+				<include name="testBlackBerryHybridArchetypeEditApp"></include>
+				<include name="testBlackBerryHybridArchetypeUpdateApp"></include>
+				<include name="testBlackBerryHybridArchetypeBuild"></include>
 			</methods>
 		</classes>
 	</test>
@@ -84,8 +85,9 @@
 			<class name="com.photon.helios.MobileLayer.WindowsMetroTest" />
 			<methods>
 				<include name="testWindowsMetroArchetypeCreation"></include>
-				<include name="testBlackBerryHybridArchetypeCreation"></include>
-				<include name="testBlackBerryHybridArchetypeCreation"></include>
+				<include name="testWindowsMetroArchetypeEditApp"></include>
+				<include name="testWindowsMetroArchetypeUpdateApp"></include>
+				<include name="testWindowsMetroArchetypeBuild"></include>
 			</methods>
 		</classes>
 	</test>
@@ -95,8 +97,9 @@
 			<class name="com.photon.helios.MobileLayer.WindowsPhoneTest" />
 			<methods>
 				<include name="testWindowsPhoneArchetypeCreation"></include>
-				<include name="testBlackBerryHybridArchetypeCreation"></include>
-				<include name="testBlackBerryHybridArchetypeCreation"></include>
+				<include name="testWindowsPhoneArchetypeEditApp"></include>
+				<include name="testWindowsPhoneArchetypeUpdateApp"></include>
+				<include name="testWindowsPhoneArchetypeBuild"></include>
 			</methods>
 		</classes>
 	</test>

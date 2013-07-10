@@ -13,6 +13,7 @@ public class IPhoneNativeConstants {
 	private String iPhoneNatArchetypeAppCode = "iPhoneNatArchetypeAppCode";
 	private String mobileValue = "mobileValue";
 	private String mobileType = "mobileType";
+	private String buildName = "buildName";
 
 
 	public IPhoneNativeConstants() {
@@ -73,6 +74,12 @@ public class IPhoneNativeConstants {
 		this.mobileType = mobileType;
 	}
 
+	public String getBuildName() {
+		return buildName;
+	}
+	public void setBuildName(String buildName) {
+		this.buildName = buildName;
+	}
 
 
 }

@@ -14,6 +14,7 @@ public class AndroidNativeConstants {
 	private String androidNatArchetypeAppCode = "androidNatArchetypeAppCode";
 	private String mobileValue = "mobileValue";
 	private String mobileType = "mobileType";
+	private String buildName = "buildName";
 	private String androidNatArchetypeEditLink = "androidNatArchetypeEditLink";
 
 	public AndroidNativeConstants() {
@@ -81,6 +82,13 @@ public class AndroidNativeConstants {
 		this.androidNatArchetypeEditLink = androidNatArchetypeEditLink;
 	}
    
+	public String getBuildName() {
+		return buildName;
+	}
+	public void setBuildName(String buildName) {
+		this.buildName = buildName;
+	}
+	
 	
 
 

@@ -7,6 +7,9 @@
 		       <mobileValue>Android</mobileValue>
 		       <mobileType>Native</mobileType>
 		       <androidNatArchetypeEditLink>//a[contains(text(),'AndroidNativeArchetype')]</androidNatArchetypeEditLink>
+		       
+		       <!-- Generate Build -->
+               <buildName>AndroidNativeBuild</buildName>
 </phresco>
 </environment>
 

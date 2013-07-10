@@ -14,6 +14,7 @@ public class IPhoneLibraryConstants {
 	private String iPhoneLibArchetypeAppCode = "iPhoneLibArchetypeAppCode";
 	private String mobileValue = "mobileValue";
 	private String mobileType = "mobileType";
+	private String buildName = "buildName";
 
 	public IPhoneLibraryConstants() {
 		try {
@@ -71,7 +72,12 @@ public class IPhoneLibraryConstants {
 	public void setMobileType(String mobileType) {
 		this.mobileType = mobileType;
 	}
-	
+	public String getBuildName() {
+		return buildName;
+	}
+	public void setBuildName(String buildName) {
+		this.buildName = buildName;
+	}
 	
 
 }

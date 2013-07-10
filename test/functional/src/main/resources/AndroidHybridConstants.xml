@@ -7,6 +7,9 @@
 		       <mobileValue>Android</mobileValue>
 		       <mobileType>Hybrid</mobileType>
 		       <androidHybArchetypeEditLink>//a[contains(text(),'AndroidHybridArchetype')]</androidHybArchetypeEditLink>
+		       
+		       <!-- Generate Build -->
+               <buildName>AndroidHybridBuild</buildName>
 </phresco>
 </environment>
 

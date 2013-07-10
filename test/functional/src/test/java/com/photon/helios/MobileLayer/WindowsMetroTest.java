@@ -74,7 +74,7 @@ public class WindowsMetroTest {
 	throws InterruptedException, IOException, Exception {
 		try {
 
-			System.out.println("---------testAndroidNativeArchetypeEditApp()-------------");
+			System.out.println("---------testWindowsMetroArchetypeEditApp()-------------");
 			methodName = Thread.currentThread().getStackTrace()[1].getMethodName();
 			mobBaseScreen.windowsMetroArchetypeEditApp(methodName, windowsMetroConst);
 		} catch (Exception t) {
@@ -88,9 +88,24 @@ public class WindowsMetroTest {
 	throws InterruptedException, IOException, Exception {
 		try {
 
-			System.out.println("---------testAndroidNativeArchetypeUpdateApp()-------------");
+			System.out.println("---------testWindowsMetroArchetypeUpdateApp()-------------");
 			methodName = Thread.currentThread().getStackTrace()[1].getMethodName();
 			mobBaseScreen.windowsMetroArchetypeUpdateApp(methodName, windowsMetroConst);
+
+		} catch (Exception t) {
+			t.printStackTrace();
+
+		}
+	}
+	
+	@Test
+	public void testWindowsMetroArchetypeBuild()
+	throws InterruptedException, IOException, Exception {
+		try {
+
+			System.out.println("---------testWindowsMetroArchetypeBuild()-------------");
+			methodName = Thread.currentThread().getStackTrace()[1].getMethodName();
+			mobBaseScreen.windowsMetroArchetypeBuild(methodName, windowsMetroConst);
 
 		} catch (Exception t) {
 			t.printStackTrace();

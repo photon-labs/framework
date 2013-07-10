@@ -14,6 +14,7 @@ public class WindowsPhoneConstants {
 	private String windowsPhoneArchetypeAppCode = "windowsPhoneArchetypeAppCode";
 	private String mobileValue = "mobileValue";
 	private String mobileType = "mobileType";
+	private String buildName = "buildName";
 
 
 	public WindowsPhoneConstants() {
@@ -83,6 +84,12 @@ public class WindowsPhoneConstants {
 		this.mobileType = mobileType;
 	}
 
+	public String getBuildName() {
+		return buildName;
+	}
+	public void setBuildName(String buildName) {
+		this.buildName = buildName;
+	}
 
 }
 

@@ -890,6 +890,52 @@ public class MobBaseScreen {
 			e.printStackTrace();
 		}
 	}
+	
+	public void androidNativeArchetypeBuild(String methodName,
+			AndroidNativeConstants androidNativeConst) throws Exception {
+		if (StringUtils.isEmpty(methodName)) {
+			methodName = Thread.currentThread().getStackTrace()[1]
+			                                                    .getMethodName();
+		}
+		log.info("@androidHybridArchetypeBuild executing");
+		try {
+			Thread.sleep(3000);
+			waitForElementPresent(heliosUiConst.getBuildTab(), methodName);
+			getXpathWebElement(heliosUiConst.getBuildTab());
+			click();
+
+			Thread.sleep(500);
+			waitForElementPresent(heliosUiConst.getGenerateBuild(), methodName);
+			getXpathWebElement(heliosUiConst.getGenerateBuild());
+			click();
+
+			Thread.sleep(500);
+			waitForElementPresent(heliosUiConst.getBuildName(), methodName);
+			getXpathWebElement(heliosUiConst.getBuildName());
+			click();
+			clear();
+			sendKeys(androidNativeConst.getBuildName());
+			
+			Thread.sleep(500);
+			waitForElementPresent(heliosUiConst.getChooseEnvironment(), methodName);
+			getXpathWebElement(heliosUiConst.getChooseEnvironment());
+			click();
+			
+			Thread.sleep(500);
+			waitForElementPresent(heliosUiConst.getChooseLogs(), methodName);
+			getXpathWebElement(heliosUiConst.getChooseLogs());
+			click();
+			
+			Thread.sleep(500);
+			waitForElementPresent(heliosUiConst.getBuildRun(), methodName);
+			getXpathWebElement(heliosUiConst.getBuildRun());
+			click();
+			Thread.sleep(20000);
+		} catch (InterruptedException e) {
+
+			e.printStackTrace();
+		}
+	}
 
 	public void androidHybridArchetypeCreate(String methodName,AndroidHybridConstants androidHybConst) throws Exception {
 		if (StringUtils.isEmpty(methodName)) {
@@ -1033,6 +1079,52 @@ public class MobBaseScreen {
 			e.printStackTrace();
 		}
 	}
+	
+	public void androidHybridArchetypeBuild(String methodName,
+			AndroidHybridConstants androidHybConst) throws Exception {
+		if (StringUtils.isEmpty(methodName)) {
+			methodName = Thread.currentThread().getStackTrace()[1]
+			                                                    .getMethodName();
+		}
+		log.info("@androidHybridArchetypeBuild executing");
+		try {
+			Thread.sleep(3000);
+			waitForElementPresent(heliosUiConst.getBuildTab(), methodName);
+			getXpathWebElement(heliosUiConst.getBuildTab());
+			click();
+
+			Thread.sleep(500);
+			waitForElementPresent(heliosUiConst.getGenerateBuild(), methodName);
+			getXpathWebElement(heliosUiConst.getGenerateBuild());
+			click();
+
+			Thread.sleep(500);
+			waitForElementPresent(heliosUiConst.getBuildName(), methodName);
+			getXpathWebElement(heliosUiConst.getBuildName());
+			click();
+			clear();
+			sendKeys(androidHybConst.getBuildName());
+			
+			Thread.sleep(500);
+			waitForElementPresent(heliosUiConst.getChooseEnvironment(), methodName);
+			getXpathWebElement(heliosUiConst.getChooseEnvironment());
+			click();
+			
+			Thread.sleep(500);
+			waitForElementPresent(heliosUiConst.getChooseLogs(), methodName);
+			getXpathWebElement(heliosUiConst.getChooseLogs());
+			click();
+			
+			Thread.sleep(500);
+			waitForElementPresent(heliosUiConst.getBuildRun(), methodName);
+			getXpathWebElement(heliosUiConst.getBuildRun());
+			click();
+			Thread.sleep(20000);
+		} catch (InterruptedException e) {
+
+			e.printStackTrace();
+		}
+	}
 
 	public void androidLibraryArchetypeCreate(String methodName,AndroidLibraryConstants androidLibraryConst) throws Exception {
 		if (StringUtils.isEmpty(methodName)) {
@@ -1169,6 +1261,52 @@ public class MobBaseScreen {
 			waitForElementPresent(heliosUiConst.getFeatureTab(), methodName);
 			getXpathWebElement(heliosUiConst.getFeatureTab());
 			click();
+		} catch (InterruptedException e) {
+
+			e.printStackTrace();
+		}
+	}
+	
+	public void androidLibraryArchetypeBuild(String methodName,
+			AndroidLibraryConstants androidLibraryConst) throws Exception {
+		if (StringUtils.isEmpty(methodName)) {
+			methodName = Thread.currentThread().getStackTrace()[1]
+			                                                    .getMethodName();
+		}
+		log.info("@androidHybridArchetypeBuild executing");
+		try {
+			Thread.sleep(3000);
+			waitForElementPresent(heliosUiConst.getBuildTab(), methodName);
+			getXpathWebElement(heliosUiConst.getBuildTab());
+			click();
+
+			Thread.sleep(500);
+			waitForElementPresent(heliosUiConst.getGenerateBuild(), methodName);
+			getXpathWebElement(heliosUiConst.getGenerateBuild());
+			click();
+
+			Thread.sleep(500);
+			waitForElementPresent(heliosUiConst.getBuildName(), methodName);
+			getXpathWebElement(heliosUiConst.getBuildName());
+			click();
+			clear();
+			sendKeys(androidLibraryConst.getBuildName());
+			
+			Thread.sleep(500);
+			waitForElementPresent(heliosUiConst.getChooseEnvironment(), methodName);
+			getXpathWebElement(heliosUiConst.getChooseEnvironment());
+			click();
+			
+			Thread.sleep(500);
+			waitForElementPresent(heliosUiConst.getChooseLogs(), methodName);
+			getXpathWebElement(heliosUiConst.getChooseLogs());
+			click();
+			
+			Thread.sleep(500);
+			waitForElementPresent(heliosUiConst.getBuildRun(), methodName);
+			getXpathWebElement(heliosUiConst.getBuildRun());
+			click();
+			Thread.sleep(20000);
 		} catch (InterruptedException e) {
 
 			e.printStackTrace();
@@ -1319,6 +1457,51 @@ public class MobBaseScreen {
 		}
 	}
 
+	public void blackBerryHybridArchetypeBuild(String methodName,
+			BlackBerryHybridConstants blackBerryHybConst) throws Exception {
+		if (StringUtils.isEmpty(methodName)) {
+			methodName = Thread.currentThread().getStackTrace()[1]
+			                                                    .getMethodName();
+		}
+		log.info("@androidHybridArchetypeBuild executing");
+		try {
+			Thread.sleep(3000);
+			waitForElementPresent(heliosUiConst.getBuildTab(), methodName);
+			getXpathWebElement(heliosUiConst.getBuildTab());
+			click();
+
+			Thread.sleep(500);
+			waitForElementPresent(heliosUiConst.getGenerateBuild(), methodName);
+			getXpathWebElement(heliosUiConst.getGenerateBuild());
+			click();
+
+			Thread.sleep(500);
+			waitForElementPresent(heliosUiConst.getBuildName(), methodName);
+			getXpathWebElement(heliosUiConst.getBuildName());
+			click();
+			clear();
+			sendKeys(blackBerryHybConst.getBuildName());
+			
+			Thread.sleep(500);
+			waitForElementPresent(heliosUiConst.getChooseEnvironment(), methodName);
+			getXpathWebElement(heliosUiConst.getChooseEnvironment());
+			click();
+			
+			Thread.sleep(500);
+			waitForElementPresent(heliosUiConst.getChooseLogs(), methodName);
+			getXpathWebElement(heliosUiConst.getChooseLogs());
+			click();
+			
+			Thread.sleep(500);
+			waitForElementPresent(heliosUiConst.getBuildRun(), methodName);
+			getXpathWebElement(heliosUiConst.getBuildRun());
+			click();
+			Thread.sleep(20000);
+		} catch (InterruptedException e) {
+
+			e.printStackTrace();
+		}
+	}
 	public void windowsMetroArchetypeCreate(String methodName,WindowsMetroConstants windowsMetroConst) throws Exception {
 		if (StringUtils.isEmpty(methodName)) {
 			methodName = Thread.currentThread().getStackTrace()[1]
@@ -1463,6 +1646,52 @@ public class MobBaseScreen {
 			e.printStackTrace();
 		}
 	}
+	
+	public void windowsMetroArchetypeBuild(String methodName,
+			WindowsMetroConstants windowsMetroConst) throws Exception {
+		if (StringUtils.isEmpty(methodName)) {
+			methodName = Thread.currentThread().getStackTrace()[1]
+			                                                    .getMethodName();
+		}
+		log.info("@androidHybridArchetypeBuild executing");
+		try {
+			Thread.sleep(3000);
+			waitForElementPresent(heliosUiConst.getBuildTab(), methodName);
+			getXpathWebElement(heliosUiConst.getBuildTab());
+			click();
+
+			Thread.sleep(500);
+			waitForElementPresent(heliosUiConst.getGenerateBuild(), methodName);
+			getXpathWebElement(heliosUiConst.getGenerateBuild());
+			click();
+
+			Thread.sleep(500);
+			waitForElementPresent(heliosUiConst.getBuildName(), methodName);
+			getXpathWebElement(heliosUiConst.getBuildName());
+			click();
+			clear();
+			sendKeys(windowsMetroConst.getBuildName());
+			
+			Thread.sleep(500);
+			waitForElementPresent(heliosUiConst.getChooseEnvironment(), methodName);
+			getXpathWebElement(heliosUiConst.getChooseEnvironment());
+			click();
+			
+			Thread.sleep(500);
+			waitForElementPresent(heliosUiConst.getChooseLogs(), methodName);
+			getXpathWebElement(heliosUiConst.getChooseLogs());
+			click();
+			
+			Thread.sleep(500);
+			waitForElementPresent(heliosUiConst.getBuildRun(), methodName);
+			getXpathWebElement(heliosUiConst.getBuildRun());
+			click();
+			Thread.sleep(20000);
+		} catch (InterruptedException e) {
+
+			e.printStackTrace();
+		}
+	}
 
 	public void windowsPhoneArchetypeCreate(String methodName,WindowsPhoneConstants windowsMobileConst) throws Exception {
 		if (StringUtils.isEmpty(methodName)) {
@@ -1602,6 +1831,52 @@ public class MobBaseScreen {
 			waitForElementPresent(heliosUiConst.getFeatureTab(), methodName);
 			getXpathWebElement(heliosUiConst.getFeatureTab());
 			click();
+		} catch (InterruptedException e) {
+
+			e.printStackTrace();
+		}
+	}
+	
+	public void windowsPhoneArchetypeBuild(String methodName,
+			WindowsPhoneConstants windowsMobileConst) throws Exception {
+		if (StringUtils.isEmpty(methodName)) {
+			methodName = Thread.currentThread().getStackTrace()[1]
+			                                                    .getMethodName();
+		}
+		log.info("@androidHybridArchetypeBuild executing");
+		try {
+			Thread.sleep(3000);
+			waitForElementPresent(heliosUiConst.getBuildTab(), methodName);
+			getXpathWebElement(heliosUiConst.getBuildTab());
+			click();
+
+			Thread.sleep(500);
+			waitForElementPresent(heliosUiConst.getGenerateBuild(), methodName);
+			getXpathWebElement(heliosUiConst.getGenerateBuild());
+			click();
+
+			Thread.sleep(500);
+			waitForElementPresent(heliosUiConst.getBuildName(), methodName);
+			getXpathWebElement(heliosUiConst.getBuildName());
+			click();
+			clear();
+			sendKeys(windowsMobileConst.getBuildName());
+			
+			Thread.sleep(500);
+			waitForElementPresent(heliosUiConst.getChooseEnvironment(), methodName);
+			getXpathWebElement(heliosUiConst.getChooseEnvironment());
+			click();
+			
+			Thread.sleep(500);
+			waitForElementPresent(heliosUiConst.getChooseLogs(), methodName);
+			getXpathWebElement(heliosUiConst.getChooseLogs());
+			click();
+			
+			Thread.sleep(500);
+			waitForElementPresent(heliosUiConst.getBuildRun(), methodName);
+			getXpathWebElement(heliosUiConst.getBuildRun());
+			click();
+			Thread.sleep(20000);
 		} catch (InterruptedException e) {
 
 			e.printStackTrace();
@@ -1793,6 +2068,7 @@ public class MobBaseScreen {
 		}
 		return null;
 	}
+
 }
 
 

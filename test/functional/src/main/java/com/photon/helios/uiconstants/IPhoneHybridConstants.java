@@ -14,6 +14,7 @@ public class IPhoneHybridConstants {
 	private String iPhoneHybArchetypeDesc = "iPhoneHybArchetypeDesc";
 	private String iPhoneHybArchetypeAppCode = "iPhoneHybArchetypeAppCode";
 	private String mobileValue = "mobileValue";
+	private String buildName = "buildName";
 	private String mobileType = "mobileType";
 	
 
@@ -72,6 +73,13 @@ public class IPhoneHybridConstants {
 
 	public void setMobileType(String mobileType) {
 		this.mobileType = mobileType;
+	}
+	
+	public String getBuildName() {
+		return buildName;
+	}
+	public void setBuildName(String buildName) {
+		this.buildName = buildName;
 	}
 	
 	}

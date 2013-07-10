@@ -14,6 +14,7 @@ public class AndroidHybridConstants {
 	private String androidHybArchetypeAppCode = "androidHybArchetypeAppCode";
 	private String mobileValue = "mobileValue";
 	private String mobileType = "mobileType";
+	private String buildName = "buildName";
 	private String androidHybArchetypeEditLink = "androidHybArchetypeEditLink"; 
 
 	public AndroidHybridConstants() {
@@ -81,8 +82,11 @@ public class AndroidHybridConstants {
 		this.androidHybArchetypeEditLink = androidHybArchetypeEditLink;
 	}
 
-
-  
-
+	public String getBuildName() {
+		return buildName;
+	}
+	public void setBuildName(String buildName) {
+		this.buildName = buildName;
+	}
 
 }

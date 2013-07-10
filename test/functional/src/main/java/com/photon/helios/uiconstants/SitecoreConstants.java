@@ -119,5 +119,9 @@ public class SitecoreConstants {
 	public String getBuildName() {
 		return buildName;
 	}
+	
+	public void setBuildName(String buildName) {
+		this.buildName = buildName;
+	}
 
 	}

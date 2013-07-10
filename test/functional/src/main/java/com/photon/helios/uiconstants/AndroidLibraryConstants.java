@@ -13,6 +13,7 @@ public class AndroidLibraryConstants {
 	private String androidLibArchetypeAppCode = "androidLibArchetypeAppCode";
 	private String mobileValue = "mobileValue";
 	private String mobileType = "mobileType";
+	private String buildName = "buildName";
 	private String androidLibArchetypeEditLink = "androidLibArchetypeEditLink";
 
 	public AndroidLibraryConstants() {
@@ -79,7 +80,12 @@ public class AndroidLibraryConstants {
 	public void setAndroidLibArchetypeEditLink(String androidLibArchetypeEditLink) {
 		this.androidLibArchetypeEditLink = androidLibArchetypeEditLink;
 	}
-	
+	public String getBuildName() {
+		return buildName;
+	}
+	public void setBuildName(String buildName) {
+		this.buildName = buildName;
+	}
 	
 
 }

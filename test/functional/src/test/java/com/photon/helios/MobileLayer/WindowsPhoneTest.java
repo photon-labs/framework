@@ -69,11 +69,11 @@ public class WindowsPhoneTest {
 	} 
 	
 	@Test
-	public void testWindowsMetroArchetypeEditApp()
+	public void testWindowsPhoneArchetypeEditApp()
 	throws InterruptedException, IOException, Exception {
 		try {
 
-			System.out.println("---------testAndroidNativeArchetypeEditApp()-------------");
+			System.out.println("---------testWindowsPhoneArchetypeEditApp()-------------");
 			methodName = Thread.currentThread().getStackTrace()[1].getMethodName();
 			mobBaseScreen.windowsPhoneArchetypeEditApp(methodName, windowsPhoneConst);
 		} catch (Exception t) {
@@ -83,13 +83,28 @@ public class WindowsPhoneTest {
 	} 
 	
 	@Test
-	public void testWindowsMetroArchetypeUpdateApp()
+	public void testWindowsPhoneArchetypeUpdateApp()
 	throws InterruptedException, IOException, Exception {
 		try {
 
-			System.out.println("---------testAndroidNativeArchetypeUpdateApp()-------------");
+			System.out.println("---------testWindowsPhoneArchetypeUpdateApp()-------------");
 			methodName = Thread.currentThread().getStackTrace()[1].getMethodName();
 			mobBaseScreen.windowsPhoneArchetypeUpdateApp(methodName, windowsPhoneConst);
+
+		} catch (Exception t) {
+			t.printStackTrace();
+
+		}
+	}
+	
+	@Test
+	public void testWindowsPhoneArchetypeBuild()
+	throws InterruptedException, IOException, Exception {
+		try {
+
+			System.out.println("---------testWindowsPhoneArchetypeBuild()-------------");
+			methodName = Thread.currentThread().getStackTrace()[1].getMethodName();
+			mobBaseScreen.windowsPhoneArchetypeBuild(methodName, windowsPhoneConst);
 
 		} catch (Exception t) {
 			t.printStackTrace();

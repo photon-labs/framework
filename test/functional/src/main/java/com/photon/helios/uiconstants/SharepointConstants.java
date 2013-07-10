@@ -122,4 +122,7 @@ public class SharepointConstants {
 		return buildName;
 	}
 	
+	public void setBuildName(String buildName) {
+		this.buildName = buildName;
+	}
 }
