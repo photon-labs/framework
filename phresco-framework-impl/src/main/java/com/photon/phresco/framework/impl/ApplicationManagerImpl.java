@@ -187,13 +187,13 @@ public class ApplicationManagerImpl implements ApplicationManager {
         }
     }
 	
-	private List<BuildInfo> readBuildInfo(File path) throws IOException {
+	private List<BuildInfo> readBuildInfo(File path) throws IOException, PhrescoException {
 		 S_LOGGER.debug("Entering Method ApplicationManagerImpl.readBuildInfo(File path)");
 		 S_LOGGER.debug("getBuildInfos() File Path = "+path.getPath());
 
 		 if (!path.exists()) {
 			 S_LOGGER.error("readBuildInfo() > " + FrameworkImplConstants.ERROR_FILE_PATH_INCORRECT + path);
-			 return new ArrayList<BuildInfo>(1);
+			 throw new PhrescoException("Path Not Exists");
 		 }
 
 		 BufferedReader bufferedReader = new BufferedReader(new FileReader(path));
