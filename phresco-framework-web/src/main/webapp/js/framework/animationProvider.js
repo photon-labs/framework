@@ -133,7 +133,7 @@ require(["framework/base"], function() {
                 var container =  $(this.container);
                 if(!this.isNative) {
                     container.animate({
-                        left: "-=1350px"
+                        left: "-=1660px"
                     }, {
                         duration : 1000, 
                         complete: function() {
@@ -151,11 +151,11 @@ require(["framework/base"], function() {
 			
             animateRight : function(callback) {
                 var container =  $(this.container);
-				container.css("left", "-1250px");
+				container.css("left", "-1660px");
 				
                 if(!this.isNative) {
                     container.animate({
-                        left: "+=1250px"
+                        left: "+=1660px"
                     }, {
                         duration : 1200, 
                         complete: function() {

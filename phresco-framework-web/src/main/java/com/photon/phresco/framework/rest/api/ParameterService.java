@@ -103,7 +103,7 @@ public class ParameterService extends RestBase implements FrameworkConstants, Se
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response getParameter(@QueryParam(REST_QUERY_APPDIR_NAME) String appDirName,
 			@QueryParam(REST_QUERY_GOAL) String goal, @QueryParam(REST_QUERY_PHASE) String phase, 
-			@QueryParam(REST_QUERY_USERID) String userId, @QueryParam(REST_QUERY_CUSTOMERID) String customerId) {
+			@QueryParam(REST_QUERY_USERID) String userId, @QueryParam(REST_QUERY_CUSTOMERID) String customerId,@QueryParam("buildNumber") String buildNumber) {
 		ResponseInfo<List<Parameter>> responseData = new ResponseInfo<List<Parameter>>();
 		try {
 			ApplicationInfo appInfo = FrameworkServiceUtil.getApplicationInfo(appDirName);
@@ -118,7 +118,7 @@ public class ParameterService extends RestBase implements FrameworkConstants, Se
 				}
 				parameters = mojo.getParameters(goal);
 				Map<String, DependantParameters> watcherMap = new HashMap<String, DependantParameters>(8);
-				setPossibleValuesInReq(mojo, appInfo, parameters, watcherMap, goal, userId, customerId);
+				setPossibleValuesInReq(mojo, appInfo, parameters, watcherMap, goal, userId, customerId, buildNumber);
 			}
 			ResponseInfo<List<Parameter>> finalOutput = responseDataEvaluation(responseData, null,
 					"Parameter returned successfully", parameters);
@@ -217,7 +217,7 @@ public class ParameterService extends RestBase implements FrameworkConstants, Se
 			
 			ApplicationInfo applicationInfo = FrameworkServiceUtil.getApplicationInfo(appDirName);
 			Map<String, DependantParameters> watcherMap = valueMap.get(applicationInfo.getId() + goal);
-			Map<String, Object> constructMapForDynVals = constructMapForDynVals(applicationInfo, watcherMap, key, customerId);
+			Map<String, Object> constructMapForDynVals = constructMapForDynVals(applicationInfo, watcherMap, key, customerId, null);
 			String filePath = getInfoFileDir(appDirName, goal, phase);
 			MojoProcessor mojo = new MojoProcessor(new File(filePath));
 			Parameter dependentParameter = mojo.getParameter(goal, key);
@@ -559,7 +559,7 @@ public class ParameterService extends RestBase implements FrameworkConstants, Se
 	        currentParameters.setValue(value);
 	        map.put(dependencyKey, currentParameters);
 	        
-	        Map<String, Object> constructMapForDynVals = constructMapForDynVals(appInfo, map, parameter.getKey(), customerId);
+	        Map<String, Object> constructMapForDynVals = constructMapForDynVals(appInfo, map, parameter.getKey(), customerId, null);
 	        constructMapForDynVals.put(DynamicParameter.KEY_MOJO, processor);
 	        
 	        try {
@@ -589,7 +589,7 @@ public class ParameterService extends RestBase implements FrameworkConstants, Se
 	 * @throws PhrescoException
 	 */
 	private void setPossibleValuesInReq(MojoProcessor mojo, ApplicationInfo appInfo, List<Parameter> parameters, 
-    		Map<String, DependantParameters> watcherMap, String goal, String userId, String customerId) throws PhrescoException {
+    		Map<String, DependantParameters> watcherMap, String goal, String userId, String customerId, String buildNumber) throws PhrescoException {
         try {
             if (CollectionUtils.isNotEmpty(parameters)) {
                 StringBuilder paramBuilder = new StringBuilder();
@@ -598,7 +598,7 @@ public class ParameterService extends RestBase implements FrameworkConstants, Se
                     String parameterKey = parameter.getKey();
                     if (TYPE_DYNAMIC_PARAMETER.equalsIgnoreCase(parameter.getType()) && parameter.getDynamicParameter() != null) { 
                     	//Dynamic parameter
-                        Map<String, Object> constructMapForDynVals = constructMapForDynVals(appInfo, watcherMap, parameterKey, customerId);
+                        Map<String, Object> constructMapForDynVals = constructMapForDynVals(appInfo, watcherMap, parameterKey, customerId, buildNumber);
                         constructMapForDynVals.put(REQ_MOJO, mojo);
                         constructMapForDynVals.put(REQ_GOAL, goal);
 						constructMapForDynVals.put(REQ_SERVICE_MANAGER, serviceManager);
@@ -695,7 +695,7 @@ public class ParameterService extends RestBase implements FrameworkConstants, Se
 	private Map<String, Object> getDynamicPageParameter(ApplicationInfo appInfo, Map<String, DependantParameters> watcherMap, Parameter parameter, 
 			String userId, String customerId) throws PhrescoException {
 		String parameterKey = parameter.getKey();
-		Map<String, Object> paramsMap = constructMapForDynVals(appInfo, watcherMap, parameterKey, customerId);
+		Map<String, Object> paramsMap = constructMapForDynVals(appInfo, watcherMap, parameterKey, customerId, null);
 		String className = parameter.getDynamicParameter().getClazz();
 		DynamicPageParameter dynamicPageParameter;
 		PhrescoDynamicLoader phrescoDynamicLoader = pdlMap.get(customerId);
@@ -736,7 +736,7 @@ public class ParameterService extends RestBase implements FrameworkConstants, Se
 	 * @param parameterKey
 	 * @return
 	 */
-	private Map<String, Object> constructMapForDynVals(ApplicationInfo appInfo, Map<String, DependantParameters> watcherMap, String parameterKey, String customerId) {
+	private Map<String, Object> constructMapForDynVals(ApplicationInfo appInfo, Map<String, DependantParameters> watcherMap, String parameterKey, String customerId, String buildNumber) {
         Map<String, Object> paramMap = new HashMap<String, Object>(8);
         DependantParameters dependantParameters = watcherMap.get(parameterKey);
         if (dependantParameters != null) {
@@ -744,9 +744,9 @@ public class ParameterService extends RestBase implements FrameworkConstants, Se
         }
         paramMap.put(DynamicParameter.KEY_APP_INFO, appInfo);
         paramMap.put(REQ_CUSTOMER_ID, customerId);
-        /*if (StringUtils.isNotEmpty(getReqParameter(BUILD_NUMBER))) {
-        	paramMap.put(DynamicParameter.KEY_BUILD_NO, getReqParameter(BUILD_NUMBER));
-        }*/
+        if (StringUtils.isNotEmpty(buildNumber)) {
+        	paramMap.put(DynamicParameter.KEY_BUILD_NO, buildNumber);
+        }
         
         return paramMap;
     }

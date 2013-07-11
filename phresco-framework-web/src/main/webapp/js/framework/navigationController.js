@@ -179,7 +179,7 @@ define(["framework/base", "framework/animationProvider"], function() {
 				commonVariables.loadingScreen.removeLoading();
 				
 				//make old content as inactive
-				$(commonVariables.contentPlaceholder).find('div .widget-maincontent-div').attr('active', 'false');
+				$(commonVariables.contentPlaceholder).find('.widget-maincontent-div').attr('active', 'false');
 					
 				// create top element for pushing
 				var newDiv = $("<div></div>");
@@ -205,13 +205,15 @@ define(["framework/base", "framework/animationProvider"], function() {
 										self.setAnimation(self.transitionType);
 									}
 									//remove old content if exist
-									$.each($(commonVariables.contentPlaceholder).find('div .widget-maincontent-div'), function(index, current){
-										if($(current).attr('active') === "false"){
-											$(current).remove();
-											commonVariables.loadingScreen.removeLoading();
-											self.loadingActive = false;
-										}
-									});
+									if($(commonVariables.contentPlaceholder).html() == $(self.jQueryContainer).html()){
+										$.each($(commonVariables.contentPlaceholder).find('.widget-maincontent-div'), function(index, current){
+											if($(current).attr('active') === "false"){
+												$(current).remove();
+											}
+										});
+									}
+									commonVariables.loadingScreen.removeLoading();
+									self.loadingActive = false;
 								//});
 							});
 						});
@@ -233,11 +235,13 @@ define(["framework/base", "framework/animationProvider"], function() {
 						}
 					}else{
 						//remove old content if exist
-						$.each($(commonVariables.contentPlaceholder).find('div .widget-maincontent-div'), function(index, current){
-							if($(current).attr('active') === "false"){
-								$(current).remove();
-							}
-						});
+						if($(commonVariables.contentPlaceholder).html() == $(self.jQueryContainer).html()){
+							$.each($(commonVariables.contentPlaceholder).find('.widget-maincontent-div'), function(index, current){
+								if($(current).attr('active') === "false"){
+									$(current).remove();
+								}
+							});
+						}
 						commonVariables.loadingScreen.removeLoading();
 						self.loadingActive = false;
 					}

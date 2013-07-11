@@ -58,7 +58,8 @@ define(["build/api/buildAPI"], function() {
 		
 		downloadBuild : function(buildNo, callback){
 			var self = this, header = self.getRequestHeader("", {'buildNo':buildNo}, 'download');
-			try {
+			window.open(header.webserviceurl);
+			/* try {
 				self.buildAPI.build(header,
 					function(response) {
 						if (response !== null) {
@@ -68,16 +69,35 @@ define(["build/api/buildAPI"], function() {
 						}
 					},
 
-					function(textStatus) {
+					function(textStatus, xhr, error) {
 						callback({ "status" : "Connection failure"});
 					}
 				);
 			} catch(exception) {
 				callback({ "status" : "service exception"});
-			}
+			} */
 		},
 		
-		deployBuild : function(buildNo, callback){},
+		deployBuild : function(queryString, callback){
+			var self = this, appInfo = self.buildAPI.localVal.getJson('appdetails');
+			
+			if(appInfo !== null){
+				queryString +=	'&customerId='+ self.getCustomer() +'&appId='+ appInfo.data.appInfos[0].id +'&projectId=' + appInfo.data.id + '&username=' + self.buildAPI.localVal.getSession('username');
+			}
+			if(self.mavenServiceListener === null)	{
+				commonVariables.navListener.getMyObj(commonVariables.mavenService, function(retVal){
+					self.mavenServiceListener = retVal;
+					
+					self.mavenServiceListener.mvnDeploy(queryString, '#logContent', function(returnVal){
+						callback(returnVal);
+					});
+				});
+			}else{
+				self.mavenServiceListener.mvnDeploy(queryString, '#logContent', function(returnVal){
+					callback(returnVal);
+				});
+			}
+		},
 		
 		buildProject : function(queryString, callback){
 			var self = this, appInfo = self.buildAPI.localVal.getJson('appdetails');
@@ -194,7 +214,7 @@ define(["build/api/buildAPI"], function() {
 		 * @return: returns the contructed header
 		 */
 		getRequestHeader : function(BuildRequestBody, buildInfo, action) {
-			var self=this, header, appdirName = '', url = '', method = "GET", conte;
+			var self=this, header, appdirName = '', url = '', method = "GET", contType = "application/json", conte;
 			
 			if(self.buildAPI.localVal.getSession('appDirName') !== null){
 				appdirName = self.buildAPI.localVal.getSession('appDirName');
@@ -204,8 +224,9 @@ define(["build/api/buildAPI"], function() {
 				method = "GET";
 				url = 'buildinfo/list?appDirName=' + appdirName;
 			}else if(action === "download"){
-				method = "POST";
-				url = 'buildinfo/buildfile?appDirName=' + appdirName + '&buildNumber=' + buildInfo.buildNo;
+				method = "GET";
+				contType: "multipart/form-data";
+				url = 'buildinfo/downloadBuild?appDirName=' + appdirName + '&buildNumber=' + buildInfo.buildNo;
 			}else if(action === "delete"){
 				method = "DELETE";
 				var appInfo = self.buildAPI.localVal.getJson('appdetails');
@@ -218,12 +239,13 @@ define(["build/api/buildAPI"], function() {
 			} 
 			
 			header = {
-				contentType: "application/json",
+				contentType: contType,
 				requestMethod: method,
 				requestPostBody: BuildRequestBody,
 				dataType: "json",
 				webserviceurl: commonVariables.webserviceurl + url
 			};
+
 			return header;
 		}
 	});

@@ -131,6 +131,7 @@ define(["features/api/featuresAPI", "features/features",  "application/applicati
 			var self=this;
 			if(self.flagged === 2) {
 				$("#content_1,#content_2,#content_3").mCustomScrollbar({
+					scrollInertia:600,
 					autoHideScrollbar:true,
 					callbacks:{
 						onScrollStart: function(){
@@ -143,6 +144,7 @@ define(["features/api/featuresAPI", "features/features",  "application/applicati
 			}
 			
 			$(".features_cont").mCustomScrollbar({
+				scrollInertia:600,
 				autoHideScrollbar:true,
 				theme:"light-thin"
 			});
