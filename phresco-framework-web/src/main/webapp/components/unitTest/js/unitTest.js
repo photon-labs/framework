@@ -103,7 +103,7 @@ define(["unitTest/listener/unitTestListener", "testResult/listener/testResultLis
 			commonVariables.navListener.getMyObj(commonVariables.testResult, function(retVal) {
 				self.testResult = retVal;
 				Clazz.navigationController.jQueryContainer = $(commonVariables.contentPlaceholder).find('#testResult');
-				Clazz.navigationController.push(self.testResult, false);
+				//Clazz.navigationController.push(self.testResult, false);
 			});
 		},
 		

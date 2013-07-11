@@ -92,9 +92,9 @@
     </section>
 	
 	<section class="content_main code_content testSuiteTable">
-    	<div class="qual_unit_main unit_info" id="content_div">
+    	<div class="qual_unit_main unit_info">
         	<table class="table table-striped table_border table-bordered big" cellpadding="0" cellspacing="0" border="0" id="buildRow">
-            	<thead>
+            	<thead class="fixedHeader">
                     <tr>
                         <th>Build No.</th>
                         <th>Date</th>
@@ -103,10 +103,10 @@
                         <th>Delete</th>
                     </tr>    
                 </thead>  
-        		<tbody> 
+        		<tbody class="scrollContent"> 
 					{{#each buildInfos}}
 						<tr>
-							<td name={{buildNo}}>{{buildNo}}</td>
+							<td name="{{buildNo}}">{{buildNo}}</td>
 							<td>{{timeStamp}}</td>
 							<td>
 								<a href="#">
@@ -122,31 +122,17 @@
 									{{/if}}
 								</a>
 								<div id="deploye_{{buildNo}}" class="dyn_popup popup_bg" style="display:none;">
-									<table class="clonetable deploy_pop" width="100%" border="0" cellspacing="0" cellpadding="0">
-									<tbody>
-										<tr>
-											<td>Environment<sup>*</sup></td>
-										</tr>
-										<tr>
-											<td>
-												<select><option>Production</option>
-												</select>
-											</td>
-										</tr>
-										<tr>
-											<td>Logs</td>
-										</tr>
-										<tr>
-											<td>
-												<select><option>Show Errors</option></select>
-											</td>
-										</tr>
-									</tbody>
-									</table>
+									<div id="bdeploy_{{buildNo}}">
+										<form name="deployForm">
+											<ul class="row dynamicControls">
+											</ul>
+											<input type="hidden" name="buildNumber" value="{{buildNo}}" />
+										</form>
 										<div class="flt_right">
 											<input type="button" name="deploy" value="Deploy" class="btn btn_style dyn_popup_close">
 											<input type="button" value="Close" class="btn btn_style dyn_popup_close">
 										</div>
+									</div>
 								</div>
 							</td>
 							<td>
@@ -156,7 +142,7 @@
 									</a>
 									<div id="delete_{{buildNo}}" class="dyn_popup">Are you sure to delete this?
 										<div>
-											<input type="button" name="buildDelete" value="Delete" class="btn btn_style dyn_popup_close">
+											<input type="button" name="buildDelete" value="Yes" class="btn btn_style dyn_popup_close">
 											<input type="button" value="No" class="btn btn_style dyn_popup_close">
 										</div>
 									</div>
@@ -171,27 +157,33 @@
         </div>
         
         <div class="unit_close">
-		<a href="#" data-flag="true" id="buildConsole"><img src="themes/default/images/helios/console_img.png" width="33" height="92" border="0" alt=""></a>
+		<a href="#" data-flag="true" id="buildConsole">
+			<img src="themes/default/images/helios/console_img.png" width="33" height="92" border="0" alt="">
+			<div class="progress_loading" style="display:none;"><img src="themes/default/images/helios/progress_load.gif" border="0"></div>
+		</a>
+		
 		</div>  
         <div class="unit_progress build_progress">
-			<table class="table table-striped table_border table-bordered" cellpadding="0" cellspacing="0" border="0">
-			<thead>
-				<tr>
-					<th>Progress</th>
-					<td>
-						<a href="#" id="buildCopyLog">
-							<img src="themes/default/images/helios/buildreport_icon.png" width="15" height="18" border="0" alt="">
-						</a>	
-					</td>
-				</tr>
+			<table id="build_progress" class="table table-striped table_border table-bordered" cellpadding="0" cellspacing="0" border="0">
+				<thead>
+					<tr>
+						<td>
+							<div class="flt_right">
+								<input type="button" class="btn btn_style kill_btn" value="Kill Process">
+								<a href="#" id="buildCopyLog">
+									<img src="themes/default/images/helios/buildreport_icon.png" width="15" height="18" border="0" alt="">
+								</a>
+							</div>
+							<div class="flt_left">Progress</div>
+						</td>
+					</tr>
 				 </thead>
 				 <tbody class="scrollContent">
 					<tr>
-						<td id="logContent" colspan="2">
-							
+						<td id="logContent">
 						</td>
 					</tr>
-				 </tbody>
+				</tbody>
 			</table>
 		</div>
 	</section>

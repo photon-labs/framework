@@ -4,6 +4,7 @@ define(["framework/base", "api/localStorageAPI"], function(){
 
 	Clazz.com.js.api.API = Clazz.extend(Clazz.Base, {
 		localVal : null,
+
 		/***
 		 * Called in initialization time of this class 
 		 *
@@ -28,7 +29,13 @@ define(["framework/base", "api/localStorageAPI"], function(){
 		// errorHandler is used to handle the error happened.
 		ajaxRequest : function(header, callbackFunction, errorHandler){
 			$.support.cors = true;
-			$.ajax({
+			
+			//cancel/abort existing ajax call
+			/* if(commonVariables.ajaxXhr && commonVariables.ajaxXhr.readyState != 4){
+				commonVariables.ajaxXhr.abort();
+			} */
+
+			commonVariables.ajaxXhr = $.ajax({
 				url: header.webserviceurl,
 				type : header.requestMethod,
 				dataType : header.dataType,

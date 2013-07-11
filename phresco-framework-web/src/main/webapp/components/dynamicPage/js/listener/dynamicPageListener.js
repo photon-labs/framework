@@ -43,7 +43,7 @@ define(["framework/widgetWithTemplate", "dynamicPage/api/dynamicPageAPI", "commo
                                     callback("No parameters available");
                                     //self.loadingScreen.removeLoading();
                                 } else {
-                                    self.constructHtml(response, whereToRender, btnObj, openccObj, goal);
+                                    self.constructHtml(response, whereToRender, btnObj, openccObj, goal, callback);
                                     //self.loadingScreen.removeLoading();
                                 }
                             } else {
@@ -82,7 +82,7 @@ define(["framework/widgetWithTemplate", "dynamicPage/api/dynamicPageAPI", "commo
          * Constructs dynamic controls 
          * 
          */
-        constructHtml : function(response, whereToRender, btnObj, openccObj, goal){
+        constructHtml : function(response, whereToRender, btnObj, openccObj, goal, callback){
             var self = this, show = "",  required = "", editable = "", multiple = "", sort = "", checked = "", additionalParam = "",
                 additionalparamSel = "", dependencyVal = "", psblDependency = "", showFlag = "", enableOnchangeFunction = "", columnClass = "";
             
@@ -122,6 +122,10 @@ define(["framework/widgetWithTemplate", "dynamicPage/api/dynamicPageAPI", "commo
                 self.controlEvent();
                 self.showParameters();
             }
+			
+			if(callback != undefined && callback != null){
+				callback(true);
+			}
         },
         
         /********************* Controls construction methods starts**********************************/
@@ -726,7 +730,14 @@ define(["framework/widgetWithTemplate", "dynamicPage/api/dynamicPageAPI", "commo
             
             if(action === "parameter"){
                 header.requestMethod = "GET";
-                header.webserviceurl = commonVariables.webserviceurl + commonVariables.paramaterContext + "/" + commonVariables.dynamicPageContext + "?appDirName="+appDirName+"&goal="+ goal+"&phase="+phase+"&customerId="+customerId+"&userId="+userId;
+				var buildNumber = "";
+				
+				if(goal == "deploy"){
+					buildNumber = "&buildNumber="+ commonVariables.buildNo;
+				} 
+				
+                header.webserviceurl = commonVariables.webserviceurl + commonVariables.paramaterContext + "/" + commonVariables.dynamicPageContext + "?appDirName="+appDirName+"&goal="+ goal+"&phase="+phase+"&customerId="+customerId+"&userId="+userId+buildNumber;
+				
             } else if (action === "updateWatcher") {
                 header.requestMethod = "POST";
                 header.webserviceurl = commonVariables.webserviceurl + commonVariables.paramaterContext + "/" + "updateWatcher" + "?appDirName="+appDirName+"&goal="+ goal+"&key="+key+"&value="+selectedOption;

@@ -458,7 +458,7 @@ define(["projectlist/api/projectListAPI"], function() {
 		// to get the context path
 		getContextUrl : function() {
 			var url = window.location.href;
-			url = url.substr(0,url.lastIndexOf("/"));
+			url = url.substr(0,url.lastIndexOf("#"));
 			return url;
 		},
 		

@@ -77,6 +77,13 @@ define(["navigation/listener/navigationListener"], function() {
 		bindUI : function(){
 			var self = this;
 			
+			self.windowResize();
+			$(".project_list_popup").mCustomScrollbar({
+				autoHideScrollbar:true,
+				theme:"light-thin",
+				advanced:{ updateOnContentResize: true}
+			});
+			
 			$('#addproject').unbind('click');
 			$('#addproject').click(function(){
 				self.onAddNewProjectEvent.dispatch();

@@ -54,12 +54,12 @@ define(["navigation/api/navigationAPI"], function() {
 			var self = this;
 			self.renderHeader(function(retVal){
 				if(currentContent === undefined || currentContent === null){
-					self.renderContent(function(retVal){
-						self.renderFooter(function(retVal){});
+					self.renderFooter(function(retVal){
+						self.renderContent(function(retVal){});
 					});
 				} else if(currentContent !== undefined && currentContent !== null && currentContent !== "") {
-					self.dynamicContent(currentContent, function(retVal){
-						self.renderFooter(function(retVal){});
+					self.renderFooter(function(retVal){
+						self.dynamicContent(currentContent, function(retVal){});
 					});
 				}
 			});
