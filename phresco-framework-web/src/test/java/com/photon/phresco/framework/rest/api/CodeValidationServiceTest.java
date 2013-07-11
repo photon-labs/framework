@@ -21,7 +21,7 @@ public class CodeValidationServiceTest extends RestBaseTest  {
 	@Test
 	public void testSonarParameter() throws PhrescoException, IOException {
 		ParameterService service = new ParameterService();
-		Response response = service.getParameter(appDirName, "validate-code", "", userId, customerId);
+		Response response = service.getParameter(appDirName, "validate-code", "", userId, customerId, "");
 		Assert.assertEquals(200, response.getStatus());
 	}
 

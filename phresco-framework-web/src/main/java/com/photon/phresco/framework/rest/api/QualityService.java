@@ -1481,9 +1481,12 @@ public class QualityService extends RestBase implements ServiceConstants, Framew
 			if (resutlAvailable) {
 				testResultFiles = testResultFiles(appDirName, testAgainsts, showDevice,
 						actionType);
+				ResponseInfo<List<String>> finalOutput = responseDataEvaluation(responseData, null,
+						"Test Result Files returned successfully", testResultFiles);
+				return Response.ok(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, "*").build();
 			}
 			ResponseInfo<List<String>> finalOutput = responseDataEvaluation(responseData, null,
-					"Test Result Files returned successfully", testResultFiles);
+					"Performance test not yet executed for " + testAgainsts.get(0), testResultFiles);
 			return Response.ok(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, "*").build();
 		} catch (PhrescoException e) {
 			ResponseInfo<List<String>> finalOutput = responseDataEvaluation(responseData, e,
