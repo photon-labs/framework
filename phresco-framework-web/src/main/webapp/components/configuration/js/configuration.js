@@ -77,9 +77,8 @@ define(["configuration/listener/configurationListener"], function() {
 				if (action === "delete") {
 					self.deleteEnv(value);
 				} else {
-					setTimeout(function(){
-						self.successMsgPopUp(response.message);			
-					},2500);
+					$(".blinkmsg").removeClass("poperror").addClass("popsuccess");
+					self.effectFadeOut('popsuccess', response.message);	
 					self.loadPage(true);
 				}
 			});
