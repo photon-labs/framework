@@ -128,7 +128,7 @@
                                         <option value="git">Git</option>
                                     </select>
                                 </td>
-                                <td><input type="text" id="repourl_{{id}}"></td>
+                                <td><input type="text" name="repoUrl" id="repourl_{{id}}"></td>
                             </tr>
                             <tr>
                                 <td class="seperatetd">Other Credential<input type="checkbox" id="repocredential_{{id}}" repoDynid="{{id}}" class="credential"></td>
@@ -139,12 +139,12 @@
                                 <td>Password</td>
                             </tr>
                             <tr>
-                                <td><input type="text" placeholder="username" id="uname_{{id}}" class="uname"></td>
-                                <td><input type="password" placeholder="*******" id="pwd_{{id}}" class="pwd"></td>
+                                <td><input type="text" name="username" placeholder="username" id="uname_{{id}}" class="uname"></td>
+                                <td><input type="password" name="password" placeholder="*******" id="pwd_{{id}}" class="pwd"></td>
                             </tr>
                             <tr>
                                 <td colspan="2">
-                                    <textarea class="popuptextarea" placeholder="Message" id="repomessage_{{id}}"></textarea>
+                                    <textarea class="popuptextarea" name="commitMsg" placeholder="Message" id="repomessage_{{id}}"></textarea>
                                 </td>
                             </tr>
                         </tbody>
@@ -176,7 +176,7 @@
                                                 <option value="git">Git</option>
                                             </select>
                                         </td>
-                                        <td><input type="text" id="commitRepourl_{{id}}"></td>
+                                        <td><input type="text" name="repoUrl" id="commitRepourl_{{id}}"></td>
                                     </tr>
                                     <tr>
                                         <td class="seperatetd">Other Credential<input type="checkbox" id="commitCredential_{{id}}" class="credential"></td>
@@ -187,12 +187,12 @@
                                         <td>Password</td>
                                     </tr>
                                     <tr>
-                                        <td><input type="text" placeholder="admin" id="commitUsername_{{id}}" class="uname"></td>
-                                        <td><input type="password" placeholder="*******" id="commitPassword_{{id}}" class="pwd"></td>
+                                        <td><input type="text" placeholder="admin" id="commitUsername_{{id}}" class="uname" name="username"></td>
+                                        <td><input type="password" placeholder="*******" id="commitPassword_{{id}}" class="pwd" name="password"></td>
                                     </tr>
                                     <tr>
                                         <td colspan="2">
-                                            <textarea class="popuptextarea" placeholder="Message" id="commitMessage_{{id}}"></textarea>
+                                            <textarea class="popuptextarea" placeholder="Message" id="commitMessage_{{id}}" name="commitMsg"></textarea>
                                         </td>
                                     </tr>
                                 </tbody>
@@ -229,7 +229,7 @@
                                                 <option value="git">Git</option>
                                             </select>
                                         </td>
-                                        <td><input type="text" id="updateRepourl_{{id}}"></td>
+                                        <td><input type="text" id="updateRepourl_{{id}}" name="repoUrl"></td>
                                     </tr>
                                     <tr>
                                         <td class="seperatetd">Other Credential<input type="checkbox" id="updateCredential_{{id}}" class="credential"></td>
@@ -240,8 +240,8 @@
                                         <td>Password</td>
                                     </tr>
                                     <tr>
-                                        <td><input type="text" placeholder="admin" id="updateUsername_{{id}}" class="uname"></td>
-                                        <td><input type="password" placeholder="*******" id="updatePassword_{{id}}" class="pwd"></td>
+                                        <td><input type="text" placeholder="admin" id="updateUsername_{{id}}" class="uname" name="username"></td>
+                                        <td><input type="password" placeholder="*******" id="updatePassword_{{id}}" class="pwd" name="password"></td>
                                     </tr>
                                     <tr>
                                         <td colspan="2">Revision</td>

@@ -38,7 +38,7 @@ define(["jquery"], function($) {
 		$.get('src/components/login/test/config.json', function(data) {
 			commonVariables.globalconfig = data;
 			commonVariables.animation = data.navigation.animation;
-			commonVariables.webserviceurl = "framework/rest/api";
+			commonVariables.webserviceurl = "framework/rest/api/";
 			configJson = {
 				// comment out the below line for production, this one is so require doesn't cache the result
 				urlArgs: "time=" +  (new Date()).getTime(),
@@ -101,6 +101,7 @@ define(["jquery"], function($) {
 				commonVariables.navListener = Clazz.com.components.navigation.js.listener.navigationListener();
 				loginTest.runTests(data, function() {
 					projectTest.runTests(data);
+					projectlistTest.runTests(data);
 					/* editConfigurationTest.runTests(data);
 					configurationTest.runTests(data);
 					navigationTest.runTests(data);
