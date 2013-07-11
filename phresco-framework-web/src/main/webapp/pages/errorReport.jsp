@@ -22,13 +22,20 @@
 <%@ page import="com.photon.phresco.commons.model.LogInfo" %>
 <%@ page import="com.photon.phresco.commons.FrameworkConstants"%>
 
-<% 
+<%
 	LogInfo log = (LogInfo)request.getAttribute(FrameworkConstants.REQ_LOG_REPORT); 
 %>
 
 <div class="hideContent" id="trace">
 	<%= log.getTrace() %>
 </div>
+
+<form class="hideContent" id="logForm">
+	<textarea name="userid"><%= log.getUserId() %></textarea>
+	<textarea name="action"><%= log.getAction() %></textarea>
+	<textarea name="trace"><%= log.getTrace() %></textarea>
+	<textarea name="message"><%= log.getMessage() %></textarea>
+</form>
 	
 <script>
 	$('document').ready(function() {
@@ -44,16 +51,7 @@
 	});
 	
 	function popupOnOk(obj) {
-		var errorTrace =  $('#trace').html();	 
-		var params = "message=";
-		params = params.concat("<%= log.getMessage() %>");
-		params = params.concat("&trace=");
-		params = params.concat(errorTrace);
-		params = params.concat("&action=");
-		params = params.concat("<%= log.getAction() %>");
-		params = params.concat("&userid=");
-		params = params.concat("<%= log.getUserId() %>");
-		loadContent("sendReport", '', '', params, true, true);  
+		loadContent("sendReport", $("#logForm"), '', '', true, true);  
 	}
 	
 	function successEvent(pageUrl, data) {

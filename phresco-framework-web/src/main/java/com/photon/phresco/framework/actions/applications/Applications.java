@@ -186,8 +186,8 @@ public class Applications extends FrameworkBaseAction implements Constants {
             removeSessionAttribute(getAppId() + SESSION_APPINFO);
             updateLatestProject();
         } catch (PhrescoException e) {
-            // TODO: handle exception
-        } 
+        	return showErrorPopup(e, EXCEPTION_LOADMENU);
+        }
         
         return appInfo();
     }

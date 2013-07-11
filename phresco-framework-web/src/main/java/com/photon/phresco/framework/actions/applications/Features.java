@@ -256,6 +256,14 @@ public class Features extends DynamicParameterModule {
 			setReqAttribute(REQ_HAS_JSLIBS, hasJsLibs);
 			
 			List<ArtifactGroup> componentGroups = getServiceManager().getFeatures(getCustomerId(), getTechnology(), ArtifactGroup.Type.COMPONENT.name());
+		
+			if (getType().equalsIgnoreCase("COMPONENT")) {
+				  List<ArtifactGroup>  moduleGroupsMod = getServiceManager().getFeatures(getCustomerId(), getTechnologyId(), "FEATURE"); 
+				  List<ArtifactGroup>  moduleGroupsJs = getServiceManager().getFeatures(getCustomerId(), getTechnologyId(), "JAVASCRIPT");
+				  componentGroups.addAll(moduleGroupsMod);
+				  componentGroups.addAll(moduleGroupsJs);
+			}
+			
 			boolean hasComponents = false;
 			if (CollectionUtils.isNotEmpty(componentGroups)) {
 			    hasComponents = true;
@@ -924,10 +932,36 @@ public class Features extends DynamicParameterModule {
 	}
 	
 	public String listFeatures() throws PhrescoException {
-		List<ArtifactGroup> moduleGroups = getServiceManager().getFeatures(getCustomerId(), getTechnologyId(), getType());
+		List<ArtifactGroup> moduleGroups = new ArrayList<ArtifactGroup>();
+		moduleGroups.addAll(getServiceManager().getFeatures(getCustomerId(), getTechnologyId(), getType()));
+		
+		List<ArtifactGroup> dependentList = new ArrayList<ArtifactGroup>();
+		List<ArtifactInfo> dependencyIds = null;
+		List<String> dependencys = null;
+		ArtifactGroup artiGroup = null;
+		
+		if (getType().equalsIgnoreCase("COMPONENT")) {
+			for (ArtifactGroup artifactGroup : moduleGroups) {
+				dependencyIds = artifactGroup.getVersions();
+				for (ArtifactInfo artifactInfo : dependencyIds) {
+					dependencys = artifactInfo.getDependencyIds();
+					if (CollectionUtils.isNotEmpty(dependencys)) {
+						for (String dependent : dependencys) {
+							ArtifactInfo artiInfo = getServiceManager().getArtifactInfo(dependent);
+							String artiGrpId =  artiInfo.getArtifactGroupId();
+							artiGroup = getServiceManager().getArtifactGroupInfo(artiGrpId);
+							dependentList.add(artiGroup);
+						}
+					}
+				}
+			} 
+			moduleGroups.addAll(dependentList);
+		}
+	
 		if (CollectionUtils.isNotEmpty(moduleGroups)) {
 			Collections.sort(moduleGroups, sortFeaturesNameInAlphaOrder());
 		}
+		
 		setReqAttribute(REQ_FEATURES_MOD_GRP, moduleGroups);
 		setReqAttribute(REQ_FEATURES_TYPE, getType());
 		setReqAttribute(REQ_APP_ID, getAppId());

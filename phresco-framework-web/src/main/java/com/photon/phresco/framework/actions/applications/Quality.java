@@ -3154,6 +3154,11 @@ public class Quality extends DynamicParameterAction implements Constants {
         return showGeneratePdfPopup();
     }
     
+    public void clearMap() {
+    	testSuiteMap.clear();
+    	cacheManager.resetCache();
+	}
+    
     public List<SettingsInfo> getServerSettings() {
         return serverSettings;
     }

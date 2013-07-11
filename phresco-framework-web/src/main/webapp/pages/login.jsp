@@ -24,7 +24,7 @@
 <head>
 	<meta content="text/html; charset=utf-8" http-equiv="Content-Type">
 	<meta content="width=device-width" name="viewport">
-	<title>Helios</title>
+	<title>Phresco</title>
 	<link rel="icon" type="image/png" href="images/favicon.png">
 
 	<!-- basic js -->

@@ -12,7 +12,7 @@ function readerHandler(data, appId, actionType, pageUrl, progressConsoleObj) {
 		data = '<b>Test is not available for this project</b>';
 		showSuccessComplete = false;
 	}
-	if($.trim(data) == '[INFO] ... tomcatProcess stopped. ReturnValue:1') { // When CI server starts it wont give EOF, forced it.
+	if($.trim(data).indexOf("[INFO] ... tomcatProcess stopped. ReturnValue:1") > -1 ) { // When CI server starts it wont give EOF, forced it.
 		data = 'EOF';
 	}
 	if ($.trim(data) == 'EOF') {

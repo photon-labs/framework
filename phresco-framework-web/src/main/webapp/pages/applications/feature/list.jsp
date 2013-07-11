@@ -41,8 +41,10 @@
 	String appId = (String) request.getAttribute(FrameworkConstants.REQ_APP_ID);
 	List<ArtifactGroup> artifactGroups = (List<ArtifactGroup>)request.getAttribute(FrameworkConstants.REQ_FEATURES_MOD_GRP);
 	String type = (String) request.getAttribute(FrameworkConstants.REQ_FEATURES_TYPE);
+	
 	if (CollectionUtils.isNotEmpty(artifactGroups)) {
 		for (ArtifactGroup artifactGroup : artifactGroups) {
+			String displayStyle = ""; 
 		    List<CoreOption> coreOptions = artifactGroup.getAppliesTo();
 		    boolean canConfigure = false;
 		    for (CoreOption coreOption : coreOptions) {
@@ -59,9 +61,15 @@
 		        canConfigure = false;
 		    }
 		    
+		    if (type.equals("COMPONENT")) {
+		    	 if (artifactGroup.getType().equals(Type.FEATURE) || artifactGroup.getType().equals(Type.JAVASCRIPT)) {
+ 		    		displayStyle = "style = 'display:none;'";		   
+				}   
+		    }   
+		    
 		    String artifactGrpName = artifactGroup.getName().replaceAll("\\s","");
 %>
-		<div  class="accordion_panel_inner">
+		<div  class="accordion_panel_inner"  <%= displayStyle %>>
 		    <section class="lft_menus_container">	
 				<span class="siteaccordion">
 					<div>
@@ -75,7 +83,7 @@
 								List<ArtifactInfo> artifactInfos = artifactGroup.getVersions();
 								for (ArtifactInfo artifactInfo : artifactInfos) {
 							%>
-									<option value="<%= artifactInfo.getId() %>"><%= artifactInfo.getVersion() %></option>
+									<option value="<%= artifactInfo.getId() %>" ><%= artifactInfo.getVersion() %></option>
 							<% } %>
 							<div style="clear: both;"></div>
 						</select>
@@ -118,6 +126,7 @@
 		hideProgressBar();
 	});
 	
+	
 	var unCheck;
 	//To get the dependent features
 	$("input:checkbox").change(function() {
@@ -128,6 +137,7 @@
 		var moduleId = $("select[name='"+ selectedValue + "']").val();
 		unCheck = false;
 		var status = $(this).attr("checked");
+		
 		if (status != "checked") {
 			unCheck = true;
 		}
@@ -135,7 +145,7 @@
 		var jsonString = JSON.stringify(jsonObjectParam);
 		loadJsonContent("fetchDependentFeatures", jsonString, '', '', true);
 	});
-
+	
 	//To get the default features
 	function getDefaultFeatures() {
 		var jsonObjectParam = {};
@@ -156,10 +166,12 @@
 		loadContent("fetchSelectedFeatures", '', '', params, true, true);
 	}
 	
+	
 	//To check the Features and the corressponding version
 	function makeFeaturesSelected(defaultModules, depArtifactInfoIds, from) {
 		for (i in defaultModules) {  //To check the default feature
 			$("input:checkbox[value='" + defaultModules[i] + "']").attr('checked', true);
+			
 			if (from != undefined && !isBlank(from) && from === "defaultFeature") {
 				$("input:checkbox[value='" + defaultModules[i] + "']").attr('defaultModule', true);
 			}
@@ -191,6 +203,8 @@
 				}
 			}
 		}
+		
+		
 		checkboxEvent($('.feature_checkbox'), $('#checkAllAuto'));
 		if (from === "defaultFeature" && from != "fetchSelectedFeatures") {
 			clickToAdd();

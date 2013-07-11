@@ -35,7 +35,7 @@
 	<head>
 		<meta name="viewport" content="width=device-width, height=device-height, minimum-scale=0.25, maximum-scale=1.6">
 		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-		<title>Helios</title>
+		<title>Phresco</title>
 		<link rel="icon" type="image/png" href="images/favicon.png">
 		<link rel="stylesheet" href="css/bootstrap.css">
 
@@ -157,7 +157,7 @@
 								<ul>
 		                         	<li id="themeContainer" class="theme_change"><a href="#">Themes</a>
 		                             	<ul>
-		                                 	<li><a class="styles" href="#" rel="theme/photon/css/photon_theme.css"><img src="images/photon_theme.png"></a> Helios </li>
+		                                 	<li><a class="styles" href="#" rel="theme/photon/css/photon_theme.css"><img src="images/photon_theme.png"></a> Phresco </li>
 		                                    <li>
                                             	<a class="styles" href="#" rel="theme/red_blue/css/blue.css"><img src="images/blue_themer.jpg" class="skinImage"></a>
 												<a class="styles" href="#" rel="theme/red_blue/css/red.css"><img src="images/red_themer.jpg"></a>
@@ -460,7 +460,7 @@
 		});
 		
 		$("#about, #abtPopUp").click(function() {
-			yesnoPopup('about', 'Helios', 'updateAvailable', 'Update Available');
+			yesnoPopup('about', 'Phresco', 'updateAvailable', 'Update Available');
 		});
 		
 		$("#goToHome").click(function() {

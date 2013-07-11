@@ -25,7 +25,7 @@
 	</div>	
 
 	<div class="abt_content">
-		HeliOS is a platform for creating next generation web, mobile, and multi channel presences 
+		Phresco is a platform for creating next generation web, mobile, and multi channel presences 
 		leveraging your existing investments combined with accepted industry best practices.	
 	</div>
 </div>
@@ -83,7 +83,7 @@
      		$('#LatestVersion').html(data.latestVersion);
 			$('input[name=latestVersion]').val(data.latestVersion);
      		$('#updateAvailableInfo').html(data.message);
-  		 	$("#popupTitle").html("Helios " + data.currentVersion);
+  		 	$("#popupTitle").html("Phresco " + data.currentVersion);
   		 	if (data.updateAvail) {
 				enableButton($("#updateAvailable"));
 			} else {
