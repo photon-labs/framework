@@ -240,6 +240,7 @@ $(document).ready(function(){
 				listener : "commonComponents/listener",
 				api : "api",
 				lib : "../lib",
+                handlebars: "handlebars-1.0.0",
 				common : "commonComponents/common",
 				modules: "commonComponents/modules",
 				footer: "commonComponents/modules/footer",
@@ -256,7 +257,7 @@ $(document).ready(function(){
 		// setup require.js
 		requirejs.config(configJson);
 		
-		require(["framework/class", "framework/widget", "common/loading", "framework/widgetWithTemplate", "framework/navigationController", "login/login"], function () {
+		require(["framework/class", "framework/widget", "common/loading",  "framework/widgetWithTemplate", "framework/navigationController", "login/login"], function () {
 		 	Clazz.config = data;
 			Clazz.navigationController = new Clazz.NavigationController({
 				mainContainer : "basepage\\:widget",
