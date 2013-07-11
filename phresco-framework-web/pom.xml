@@ -81,7 +81,7 @@
 		<dependency>
 			<groupId>jslibraries.files</groupId>
 			<artifactId>signalbinding</artifactId>
-			<version>1.0.0</version>
+			<version>1.0.1</version>
 			<type>js</type>
 		</dependency>
 
@@ -764,7 +764,7 @@
 	    		<plugin>
 				<groupId>net.awired.jstest</groupId>
 				<artifactId>jstest-maven-plugin</artifactId>
-				<version>3.0.0.16002</version>
+				<version>3.0.0.16003</version>
 				<executions>
 					<execution>
 						<goals>

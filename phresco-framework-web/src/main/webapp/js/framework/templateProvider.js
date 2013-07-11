@@ -60,7 +60,7 @@ define(["framework/class"], function() {
 
 			merge : function(templateUrl, data, callbackFunction) {
 				$.get(templateUrl).success(function(template, status, response) {
-					require(["lib/handlebars-1.0.0"], function() {
+					require(["handlebars"], function() {
 						var compiledTemplate = Handlebars.compile(typeof template === "object" ? response.responseText : template);
 						var element = compiledTemplate(data);
 						callbackFunction(element);
