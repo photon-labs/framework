@@ -105,7 +105,7 @@ public class ParameterService extends RestBase implements FrameworkConstants, Se
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response getParameter(@QueryParam(REST_QUERY_APPDIR_NAME) String appDirName,
 			@QueryParam(REST_QUERY_GOAL) String goal, @QueryParam(REST_QUERY_PHASE) String phase, 
-			@QueryParam(REST_QUERY_USERID) String userId, @QueryParam(REST_QUERY_CUSTOMERID) String customerId) {
+			@QueryParam(REST_QUERY_USERID) String userId, @QueryParam(REST_QUERY_CUSTOMERID) String customerId,  @QueryParam("buildNumber") String buildNumber) {
 		ResponseInfo<List<Parameter>> responseData = new ResponseInfo<List<Parameter>>();
 		try {
 			ApplicationInfo appInfo = FrameworkServiceUtil.getApplicationInfo(appDirName);
@@ -121,13 +121,11 @@ public class ParameterService extends RestBase implements FrameworkConstants, Se
 				parameters = mojo.getParameters(goal);
 				Map<String, DependantParameters> watcherMap = new HashMap<String, DependantParameters>(8);
 
-				setPossibleValuesInReq(mojo, appInfo, parameters, watcherMap, goal, userId, customerId);
+				setPossibleValuesInReq(mojo, appInfo, parameters, watcherMap, goal, userId, customerId, buildNumber);
+				
 				ResponseInfo<List<Parameter>> finalOutput = responseDataEvaluation(responseData, null,
 						"Parameter returned successfully", parameters);
 				return Response.ok(finalOutput).header("Access-Control-Allow-Origin", "*").build();
-
-				setPossibleValuesInReq(mojo, appInfo, parameters, watcherMap, goal, userId, customerId, buildNumber);
-
 			}
 			ResponseInfo<List<Parameter>> finalOutput = responseDataEvaluation(responseData, null,
 					"No Parameter Available", null);
