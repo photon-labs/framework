@@ -30,6 +30,15 @@ public class ProjectServiceTest extends LoginServiceTest {
 		assertEquals(200 , response.getStatus());
 		assertEquals("Project created Successfully", responseInfo.getMessage());
 	}
+	
+	@Test
+	public void createProjectForGitTest() {
+		ProjectInfo projectInfo = projectInfo();
+		Response response = projectService.createProject(projectInfo, userId);
+		ResponseInfo<ProjectInfo> responseInfo =  (ResponseInfo<ProjectInfo>) response.getEntity();
+		assertEquals(200 , response.getStatus());
+		assertEquals("Project created Successfully", responseInfo.getMessage());
+	}
 
 
 	@Test
@@ -261,13 +270,26 @@ public class ProjectServiceTest extends LoginServiceTest {
 		projectInfo.setAppInfos(Collections.singletonList(getApplicationInfo()));
 		return projectInfo;
 	}
+	
+	private ProjectInfo projectInfo() {
+		ProjectInfo projectInfo = new ProjectInfo();
+		projectInfo.setCustomerIds(getCustomer());
+		projectInfo.setId("TestGitProject");
+		projectInfo.setName("TestGitProject");
+		projectInfo.setNoOfApps(1);
+		projectInfo.setProjectCode("TestGitProject");
+		projectInfo.setVersion("1.0");
+		projectInfo.setProjectCode("TestGitProject");
+		projectInfo.setAppInfos(Collections.singletonList(createAppInfo()));
+		return projectInfo;
+	}
 
 	private ApplicationInfo createAppInfo() {
 		ApplicationInfo appInfo = new ApplicationInfo();
-		appInfo.setAppDirName(appDirName);
-		appInfo.setCode(appCode);
-		appInfo.setId(projectId);
-		appInfo.setName("TestProject");
+		appInfo.setAppDirName("TestGitProject");
+		appInfo.setCode("TestGitProject");
+		appInfo.setId("TestGitProject");
+		appInfo.setName("TestGitProject");
 		appInfo.setVersion("1.0");
 		TechnologyInfo info = new TechnologyInfo();
 		info.setAppTypeId("web-layer");

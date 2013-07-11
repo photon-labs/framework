@@ -28,18 +28,21 @@ import org.junit.runners.Suite.SuiteClasses;
 	ConfigurationServiceTest.class,
 	PilotServiceTest.class,
 	UnitServiceTest.class,
+	PdfServiceTest.class,
+	BuildInfoTest.class,
 	ManualTestServiceTest.class,
-	CIJobTemplateServiceTest.class,
 	RepositoryServiceTest.class,
 	ParameterServiceTest.class,
 	DownloadServiceTest.class,
 	TechnologyServiceTest.class,
-	CustomerServiceTest.class
+	CustomerServiceTest.class,
+	AppInfoConfigsTest.class,
+	UtilServiceTest.class,
+	FeatureServiceTest.class,
+	CIJobTemplateServiceTest.class
 	}
 )
 
 public class AllTest {
 	// intentionally blank. All tests were added via annotations
 }
-
-//@SuiteClasses({	LoginServiceTest.class, ProjectServiceTest.class, UnitServiceTest.class, CustomerServiceTest.class, IpaDownloadService.class}

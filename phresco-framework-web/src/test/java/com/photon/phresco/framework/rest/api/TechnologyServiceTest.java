@@ -13,7 +13,7 @@ public class TechnologyServiceTest extends RestBaseTest {
 		super();
 	}
 	
-//	@Test
+	@Test
 	public void fetchListAppTypes() {
 		Response listApptypesLoginFail = technologyService.listApptypes("sample", "photon");
 		Assert.assertEquals(400, listApptypesLoginFail.getStatus());
@@ -40,7 +40,7 @@ public class TechnologyServiceTest extends RestBaseTest {
 	public void fetchListTechnologyGroups() {
 		Response listtechnologyGroupLoginFail = technologyService.listtechnologyGroup("photon", "app-layer", "sample");
 		Assert.assertEquals(400, listtechnologyGroupLoginFail.getStatus());
-//		Response listtechnologyGroup = technologyService.listtechnologyGroup("photon", "web-layer", "admin");
+//		Response listtechnologyGroup = technologyService.listtechnologyGroup("photon", "app-layer", "admin");
 //		Assert.assertEquals(200, listtechnologyGroup.getStatus());
 //		Response listtechnologyGroupFail = technologyService.listtechnologyGroup("photon", "app-laye", "admin");
 //		Assert.assertEquals(400, listtechnologyGroupFail.getStatus());

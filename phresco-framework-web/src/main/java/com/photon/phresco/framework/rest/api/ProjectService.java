@@ -162,6 +162,7 @@ public class ProjectService extends RestBase implements FrameworkConstants, Serv
 				return Response.status(Status.BAD_REQUEST).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN,
 						"*").build();
 			}
+		validateProject(projectinfo);
 			if (projectinfo != null) {
 				ProjectInfo projectInfo = PhrescoFrameworkFactory.getProjectManager().create(projectinfo, serviceManager);
 				ResponseInfo<ProjectInfo> finalOutput = responseDataEvaluation(responseData, null,
@@ -375,6 +376,7 @@ public class ProjectService extends RestBase implements FrameworkConstants, Serv
 		BufferedReader bufferedReader = null;
 		File filePath = null;
 		try {
+			validateAppInfo(oldAppDirName,appInfo);
 			ServiceManager serviceManager = CONTEXT_MANAGER_MAP.get(userId);
 			if (serviceManager == null) {
 				ResponseInfo<ApplicationInfo> finalOutput = responseDataEvaluation(responseData, null,
@@ -775,6 +777,52 @@ public class ProjectService extends RestBase implements FrameworkConstants, Serv
 				ArtifactGroup artifactGroupInfo = serviceManager
 						.getArtifactGroupInfo(artifactInfo.getArtifactGroupId());
 				artifactGroups.add(artifactGroupInfo);
+			}
+		}
+	}
+	
+	private void validateProject(ProjectInfo projectinfo) throws PhrescoException {
+		ProjectManager projectManager = PhrescoFrameworkFactory.getProjectManager();
+		List<ProjectInfo> discoveredProjectInfos = projectManager.discover();
+		for (ProjectInfo projectInfos : discoveredProjectInfos) {
+			if(StringUtils.isNotEmpty(projectinfo.getName().trim())) {
+				if(!FrameworkUtil.isCharacterExists(projectinfo.getName().trim())) {
+					throw new PhrescoException("Invalid Name");
+				}
+			} else if(projectInfos.getName().trim().equals(projectinfo.getName().trim())) {
+				throw new PhrescoException("Project Name already exists");
+			}
+			if(StringUtils.isNotEmpty(projectinfo.getProjectCode().trim())) {
+				if(projectinfo.getProjectCode().trim().equals(projectInfos.getProjectCode().trim())) {
+					throw new PhrescoException("Project Code already exists");
+				}
+			}
+			List<ApplicationInfo> appInfos = projectinfo.getAppInfos();
+			List<ApplicationInfo> discoveredAppInfos = projectInfos.getAppInfos();
+			for(int i = 0; i < appInfos.size(); i++) {
+				for(int j = 0; j < discoveredAppInfos.size(); j++) {
+					if(appInfos.get(i).getCode().equals(discoveredAppInfos.get(j).getCode())) {
+						throw new PhrescoException("App code already exists");
+					}
+					if(appInfos.get(i).getAppDirName().equals(discoveredAppInfos.get(j).getAppDirName())) {
+						throw new PhrescoException("App Directory already exists");
+					}
+				}
+			}
+		}
+	}
+
+	private void validateAppInfo(String oldAppDirName, ApplicationInfo appInfo) throws PhrescoException {
+		ProjectManager projectManager = PhrescoFrameworkFactory.getProjectManager();
+		List<ProjectInfo> discoveredProjectInfos = projectManager.discover();
+		for (ProjectInfo projectInfo : discoveredProjectInfos) {
+			List<ApplicationInfo> appInfos = projectInfo.getAppInfos();
+			for (int i = 0; i < appInfos.size(); i++) {
+				if(appInfo.getAppDirName().equals(oldAppDirName)) {
+					continue;
+				} else if(appInfo.getAppDirName().equals(appInfos.get(i).getAppDirName())) {
+					throw new PhrescoException("App directory already exists");
+				}
 			}
 		}
 	}

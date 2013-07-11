@@ -18,6 +18,11 @@
 package com.photon.phresco.framework.rest.api;
 
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.ArrayList;
@@ -31,6 +36,7 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -38,6 +44,7 @@ import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
@@ -646,6 +653,52 @@ public class ConfigurationService extends RestBase implements FrameworkConstants
 			return Response.status(Status.BAD_REQUEST).entity(finalOutput).header("Access-Control-Allow-Origin", "*")
 					.build();
 		}
+	}
+	
+	@POST
+	@Path("/upload")
+	@Produces(MediaType.APPLICATION_JSON)
+	@Consumes(MediaType.APPLICATION_OCTET_STREAM)
+	public Response fileUpload(@Context HttpServletRequest request) {
+		ResponseInfo<Boolean> responseData = new ResponseInfo<Boolean>();
+		try {
+			InputStream inputStream = request.getInputStream();
+			String actionType = request.getHeader("actionType");
+			String appDirName = request.getHeader("appDirName");
+			if (actionType.equals("configuration")) {
+				File tempZipFile = new File(Utility.getProjectHome() + appDirName + File.separator 
+						+ FrameworkConstants.DO_NOT_CHECKIN_DIR + File.separator + FrameworkConstants.TARGET_DIR
+					+ File.separator + request.getHeader("X-File-Name"));
+			
+			 	if (!tempZipFile.getParentFile().exists()) {
+					tempZipFile.getParentFile().mkdirs();
+			} 
+				if (!tempZipFile.exists()) {
+					tempZipFile.createNewFile();
+				}
+				OutputStream out = new FileOutputStream(tempZipFile);
+				int read = 0;
+				byte[] bytes = new byte[1024];
+				while ((read = inputStream.read(bytes)) != -1) {
+					out.write(bytes, 0, read);
+				}
+				inputStream.close();
+				out.flush();
+				out.close();
+				ResponseInfo finalOuptut = responseDataEvaluation(responseData, null, "file uploaded", true);
+				return Response.ok(finalOuptut).header("Access-Control-Allow-Origin", "*").build();
+			}
+		} catch (FileNotFoundException e) {
+			ResponseInfo<Environment> finalOuptut = responseDataEvaluation(responseData, e, "upload Failed", false);
+			return Response.status(Status.EXPECTATION_FAILED).entity(finalOuptut).header("Access-Control-Allow-Origin",
+					"*").build();
+		} catch (IOException e) {
+			ResponseInfo<Environment> finalOuptut = responseDataEvaluation(responseData, e, "upload Failed", false);
+			return Response.status(Status.EXPECTATION_FAILED).entity(finalOuptut).header("Access-Control-Allow-Origin",
+					"*").build();
+		}
+		ResponseInfo finalOuptut = responseDataEvaluation(responseData, null, "No File to upload", false);
+		return Response.ok(finalOuptut).header("Access-Control-Allow-Origin", "*").build();
 	}
 
 	private String settingsCertificateSave(File file, String appDirName,

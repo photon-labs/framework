@@ -50,6 +50,7 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.xml.sax.SAXException;
 
+import com.google.gson.Gson;
 import com.photon.phresco.api.DynamicPageParameter;
 import com.photon.phresco.api.DynamicParameter;
 import com.photon.phresco.commons.FrameworkConstants;
@@ -65,6 +66,7 @@ import com.photon.phresco.framework.PhrescoFrameworkFactory;
 import com.photon.phresco.framework.commons.FrameworkUtil;
 import com.photon.phresco.framework.model.CodeValidationReportType;
 import com.photon.phresco.framework.model.DependantParameters;
+import com.photon.phresco.framework.model.RepoDetail;
 import com.photon.phresco.framework.param.impl.IosTargetParameterImpl;
 import com.photon.phresco.framework.rest.api.util.FrameworkServiceUtil;
 import com.photon.phresco.plugins.model.Mojos.Mojo.Configuration.Parameters.Parameter;
@@ -119,12 +121,19 @@ public class ParameterService extends RestBase implements FrameworkConstants, Se
 				parameters = mojo.getParameters(goal);
 				Map<String, DependantParameters> watcherMap = new HashMap<String, DependantParameters>(8);
 				setPossibleValuesInReq(mojo, appInfo, parameters, watcherMap, goal, userId, customerId);
+				ResponseInfo<List<Parameter>> finalOutput = responseDataEvaluation(responseData, null,
+						"Parameter returned successfully", parameters);
+				return Response.ok(finalOutput).header("Access-Control-Allow-Origin", "*").build();
 			}
 			ResponseInfo<List<Parameter>> finalOutput = responseDataEvaluation(responseData, null,
-					"Parameter returned successfully", parameters);
+					"No Parameter Available", null);
 			return Response.ok(finalOutput).header("Access-Control-Allow-Origin", "*").build();
-
-		} catch (Exception e) {
+		} catch (PhrescoException e) {
+			ResponseInfo<List<Parameter>> finalOutput = responseDataEvaluation(responseData, e,
+					"Parameter not fetched", null);
+			return Response.status(Status.BAD_REQUEST).entity(finalOutput).header("Access-Control-Allow-Origin", "*")
+					.build();
+		} catch (PhrescoPomException e) {
 			ResponseInfo<List<Parameter>> finalOutput = responseDataEvaluation(responseData, e,
 					"Parameter not fetched", null);
 			return Response.status(Status.BAD_REQUEST).entity(finalOutput).header("Access-Control-Allow-Origin", "*")
@@ -680,7 +689,7 @@ public class ParameterService extends RestBase implements FrameworkConstants, Se
                 valueMap.put(appInfo.getId() + goal, watcherMap);
             }
         } catch (Exception e) {
-        	e.printStackTrace();
+        	throw new PhrescoException(e);
         }
     }
 	
