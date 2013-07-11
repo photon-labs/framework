@@ -160,6 +160,7 @@
                     <sourceExcludes xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
                         <sourceExclude>eshop/widgets/Init.js</sourceExclude>
 					</sourceExcludes>
+                    <reportDir>${project.basedir}/do_not_checkin/reports/jstest</reportDir>
                 </configuration>
             </plugin>
             <plugin>

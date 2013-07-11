@@ -692,6 +692,11 @@ ul.nav li.dropdown:hover > .test_options{
 	padding-right:8px !important;
 }
 
+.arrow_down_icon {
+	background:url(../../images/helios/arrow_down.png) #ed7940 no-repeat right !important;
+	padding-right:20px !important;
+}
+
 /* ********************************************** CSS related to MODAL ************************************************************************************** */
 
 #simplemodal-overlay {background-color:#000;}
@@ -885,6 +890,11 @@ ul.nav li.dropdown:hover > .test_options{
 	width: 251px;
 }
 
+.report_type select
+{
+		width:250px !important;
+}
+
 .report_type tr td {
 	border-top: medium none;
 }
@@ -945,9 +955,9 @@ ul.nav li.dropdown:hover > .test_options{
 
 .project_list_popup
 {
-	height: 260px;
+	height: 226px;
 	overflow-y: auto;
-	margin-bottom: 10px;
+	margin-bottom:5px;
 }
 
 #project_list_import table:first-child {
@@ -955,12 +965,13 @@ ul.nav li.dropdown:hover > .test_options{
 }
 
 .noReport {
-	margin-left: 23%;
+	margin-bottom:5px !important;
 }
 
 #project_list_import table tr td {
 	border-top: none;
 	padding: 4px 0;
+	width:58% !important;
 }
 
 #project_list_import table tr td:first-child input[type="text"], #project_list_import table tr td:first-child select {
@@ -972,7 +983,7 @@ ul.nav li.dropdown:hover > .test_options{
 }
 
 #project_list_import input[type="text"], #project_list_import input[type="password"] {
-	width: 165px;
+	width: 183px;
 	margin-bottom:0;
 }
 
@@ -985,7 +996,7 @@ ul.nav li.dropdown:hover > .test_options{
 }
 
 #project_list_import select {
-	width: 177px;
+	width: 182px;
 	margin-bottom: 0;	
 }
 
@@ -3832,6 +3843,12 @@ button::-moz-focus-inner {
   -webkit-transition: all 3s ease-out;
   -moz-transition: all 3s ease-out;
   transition: all 3s ease-out;
+}
+
+.fullscreen_desc {
+	font-size:13px;
+	color:#FFFFFF;
+	margin:12px 0 0 0;
 }
 
 /* *************************************************************** STYLES FOR BLINK POP UP STARTS *************************************************************** */
