@@ -28,7 +28,6 @@ import org.junit.runners.Suite.SuiteClasses;
 	ConfigurationServiceTest.class,
 	PilotServiceTest.class,
 	UnitServiceTest.class,
-	PdfServiceTest.class,
 	BuildInfoTest.class,
 	ManualTestServiceTest.class,
 	RepositoryServiceTest.class,
