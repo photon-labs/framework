@@ -175,7 +175,7 @@ public interface FrameworkConstants {
      */
     String JENKINS_HOME = "JENKINS_HOME";
     String CI_BUILD_NAME = "PHR_ci_build";
-    String CI_JOB_INFO_NAME = "cijob.info";
+    String CI_JOB_INFO_NAME = "ciJob.info";
     String CI_JOB_TEMPLATE_NAME = "ciJobTemplate.info";
     String CI_JOB_JSON_BUILDS = "builds";
     String CI_JOB_BUILD_RESULT = "result";
