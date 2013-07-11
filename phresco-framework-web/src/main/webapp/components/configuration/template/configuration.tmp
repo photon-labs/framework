@@ -109,7 +109,7 @@
                             </tr>
                             <tr>
                                <td>
-                                    <input type="button" class="btn btn_style default" value="Set as Default">
+                                    <input type="checkbox" class="checkboxStyle" name="cloneName{{name}}" value="Set as Default"><label>Set as Default</label>
                                 </td>
                                 <td><span class="display" style="display:none;"> <font style="vertical-align: -3px;"> &nbsp;&nbsp;&nbsp; Enter unique Name. </font></span></td>
                                 <!--<td>&nbsp;</td>-->

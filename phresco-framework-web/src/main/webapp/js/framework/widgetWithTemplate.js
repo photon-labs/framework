@@ -431,10 +431,11 @@ define(["framework/widget", "framework/templateProvider"], function() {
 
 			
 			// popUp onclick to open with dynamic content
-			showPopUp : function(popUpheader,content) {
-				$('#myModal').modal('show');
-				$('#myModalLabel').html(popUpheader);
-				$('.modal-body').html(content);
+			showPopUp : function(id, name, titile, callback) {
+				$('div[name=myModalPopup]').attr('id', id);
+				$('#saveChange').attr('name', name);
+				$('#myModalLabel').html(titile);
+				callback(true);
 			},
 			
 			multiselect : function() {

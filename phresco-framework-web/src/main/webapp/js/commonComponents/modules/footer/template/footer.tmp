@@ -1,3 +1,19 @@
 <footer class="footer_section" id="footer">&copy;<font data-i18n="footer.label.copyrights"></font></footer>
 <div id="myModal" class="modal hide fade alert text-center" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
 </div>
+
+<!-- Modal -->
+<div class="modal hide fade" name="myModalPopup" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+<div class="modal-header">
+<button type="button" class="close" data-dismiss="modal" aria-hidden="true">x</button>
+<h3 id="myModalLabel">Modal header</h3>
+</div>
+<div class="modal-body" id="fileTree">
+</div>
+<div class="popuploading">&nbsp;</div>
+<div class="successMessage"></div>
+<div class="modal-footer">
+<button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
+<button class="btn btn-primary" id="saveChange">Save</button>
+</div>
+</div>

@@ -7,9 +7,9 @@
 						<li id="fat-menu" class="dropdown">
 							<a href="#" id="drop3" role="button" class="dropdown-toggle drop-qual" data-toggle="dropdown">
 								{{#if userPermissions.manageConfiguration}}
-							  		<input type="submit" value="Add Configuration" class="btn btn_style">
+							  		<input type="submit" value="Add Configuration" class="btn btn_style arrow_down_icon">
 						  		{{else}}
-					  				<input type="submit" value="Add Configuration" class="btn btn_style" disabled>
+					  				<input type="submit" value="Add Configuration" class="btn btn_style arrow_down_icon" disabled>
 					  			{{/if}}
 					  		</a>
 						  <div class="dropdown-menu cust_sel fix_height" role="menu" aria-labelledby="drop3" id="configurationListScroll">
