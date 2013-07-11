@@ -48,7 +48,7 @@
                         <value key="js" dependency="showSettings,environmentName">js</value>
                     </possibleValues>
                     <multiple>false</multiple>
-                    <value>java</value>
+                    <value>js</value>
                     <sort>false</sort>
                     <show>true</show>
                 </parameter>

@@ -56,9 +56,9 @@ define(["jquery"], function($) {
 					configData: data,
 					jslib_bootstrap_datepicker: "jslib_bootstrap_datepicker-1.0.0",
 					handlebars: "handlebars-1.0.0",
-					Signal: "Signal-1.0.0",
+					signal: "signal-1.0.1",
 					bootstrap_select_min: "bootstrap_select_min-1.0",
-					signalbinding: "signalbinding-1.0.0",
+					signalbinding: "signalbinding-1.0.1",
 					i18next: "i18next-1.6.0",
 					jslib_jquery_sortable_min: "jslib_jquery_sortable_min-1.0.0",
 					bootstrap_min: "bootstrap_min-2.3.1",
@@ -97,7 +97,7 @@ define(["jquery"], function($) {
 				commonVariables.loadingScreen =new Clazz.com.js.widget.common.Loading();
 			});
 		
-			require(["loginTest", "projectlistTest", "headerTest", "footerTest", "navigationTest", "projectTest", "applicationTest", "featuresTest", "codequalityTest", "configurationTest", "buildTest", "editConfigurationTest", "jobTemplateListTest","unitTestTest", "componentTestTest", "Signal", "signalbinding",  "jslib_bootstrap_datepicker", "handlebars", "jslib_jquery_sortable_min", "bootstrap_min", "jquery_mCustomScrollbar_concat_min", "bootstrap_select_min"], function(loginTest, projectlistTest, headerTest, footerTest, navigationTest, projectTest,applicationTest, featuresTest, codequalityTest, configurationTest, buildTest, editConfigurationTest, jobTemplateListTest, unitTestTest, componentTestTest, signals, signalbinding, datepicker, handlebars,  sortable, bootstrap, scrollbar, select){
+			require(["loginTest", "projectlistTest", "headerTest", "footerTest", "navigationTest", "projectTest", "applicationTest", "featuresTest", "codequalityTest", "configurationTest", "buildTest", "editConfigurationTest", "jobTemplateListTest","unitTestTest", "componentTestTest", "signal", "signalbinding",  "jslib_bootstrap_datepicker", "handlebars", "jslib_jquery_sortable_min", "bootstrap_min", "jquery_mCustomScrollbar_concat_min", "bootstrap_select_min"], function(loginTest, projectlistTest, headerTest, footerTest, navigationTest, projectTest,applicationTest, featuresTest, codequalityTest, configurationTest, buildTest, editConfigurationTest, jobTemplateListTest, unitTestTest, componentTestTest, signals, signalbinding, datepicker, handlebars,  sortable, bootstrap, scrollbar, select){
 				commonVariables.navListener = Clazz.com.components.navigation.js.listener.navigationListener();
 				loginTest.runTests(data, function() {
 					projectTest.runTests(data);

@@ -73,8 +73,8 @@
 		
 		<dependency>
 			<groupId>jslibraries.files</groupId>
-			<artifactId>Signal</artifactId>
-			<version>1.0.0</version>
+			<artifactId>signal</artifactId>
+			<version>1.0.1</version>
 			<type>js</type>
 		</dependency>
 
