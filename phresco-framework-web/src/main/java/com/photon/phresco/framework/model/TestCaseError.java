@@ -22,6 +22,7 @@ public class TestCaseError {
 	private String errorType;
 	private String description;
 	private boolean hasErrorImg;
+	private String screenshotPath;
 
 	public String getErrorType() {
 		return errorType;
@@ -45,5 +46,13 @@ public class TestCaseError {
 
 	public void setHasErrorImg(boolean hasErrorImg) {
 		this.hasErrorImg = hasErrorImg;
+	}
+
+	public void setScreenshotPath(String screenshotPath) {
+		this.screenshotPath = screenshotPath;
+	}
+
+	public String getScreenshotPath() {
+		return screenshotPath;
 	}
 }

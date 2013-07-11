@@ -104,11 +104,11 @@ define(["mavenService/api/mavenServiceAPI"], function() {
 
 		mvnStartNode : function(paramData, divId, callback){
 			var self = this, header = self.getRequestHeader("POST", "", commonVariables.mvnStartNode, paramData);
-			self.mvnCheckNode(paramData, divId, function(response){
-				if(response === false){
+//			self.mvnCheckNode(paramData, divId, function(response){
+//				if(response === false){
 					self.mvnService(header, divId, callback);
-				}
-			});
+//				}
+//			});
 		},
 		
 		mvnStopNode : function(paramData, divId, callback){
@@ -175,14 +175,19 @@ define(["mavenService/api/mavenServiceAPI"], function() {
 				self.mavenServiceAPI.mvnSer(header, 
 					function(response){
 						if(response !==  undefined && response !== null){
-							
 							if(response.log !== undefined && response.log !== null){
 								$(divId).append('<font style = "color:' + self.logColor(response.log) + '">' + response.log + '</font><br>');
 							}
 							if(response.status === 'STARTED'){
 								callback(response);
 							}else if(response.status === 'INPROGRESS'){
-								self.mvnlogService(response.uniquekey, divId, callback);
+								if (response.log.indexOf("AbstractConnector:Started") != -1) {//For start hub
+									callback(response);
+								} else if (response.log.indexOf("Done: /status") != -1) {//For start node
+									callback(response);
+								} else {
+									self.mvnlogService(response.uniquekey, divId, callback);									
+								}
 							}else if(response.status === 'COMPLETED'){
 								callback(response);
 							}else if(response.status === 'ERROR'){

@@ -3,13 +3,13 @@ define(["functionalTest/api/functionalTestAPI"], function() {
 	Clazz.createPackage("com.components.functionalTest.js.listener");
 
 	Clazz.com.components.functionalTest.js.listener.FunctionalTestListener = Clazz.extend(Clazz.WidgetWithTemplate, {
-		
+
 		functionalTestAPI : null,
 		testResultListener : null,
 		dynamicpage : null,
 		dynamicPageListener : null,
 		mavenServiceListener : null,
-		
+
 		/***
 		 * Called in initialization time of this class 
 		 *
@@ -29,17 +29,17 @@ define(["functionalTest/api/functionalTestAPI"], function() {
 				});
 			}
 		},
-		
+
 		onGraphicalView : function() {
 			var self = this;
 			self.testResultListener.showGraphicalView();
 		},
-		
+
 		onTabularView : function() {
 			var self = this;
 			self.testResultListener.showTabularView();
 		},
-		
+
 		/***
 		 * provides the request header
 		 *
@@ -52,80 +52,74 @@ define(["functionalTest/api/functionalTestAPI"], function() {
 			userId = data.id;
 			appDirName = self.functionalTestAPI.localVal.getSession("appDirName");
 			header = {
-				contentType: "application/json",				
-				dataType: "json",
-				webserviceurl: ''
+					contentType: "application/json",				
+					dataType: "json",
+					webserviceurl: ''
 			};
-					
+
 			if (action === "getFunctionalTestOptions") {
 				header.requestMethod = "GET";
 				header.webserviceurl = commonVariables.webserviceurl + commonVariables.qualityContext + "/functionalFramework?appDirName="+appDirName;				
+			} else if (action === "status") {
+				header.requestMethod = "GET";
+				header.webserviceurl = commonVariables.webserviceurl + commonVariables.qualityContext + "/connectionAliveCheck?appDirName="+appDirName+"&fromPage="+requestBody.from;				
 			}
 			return header;
 		},
-		
-		getDynamicParams : function(goal) {
+
+		getDynamicParams : function(thisObj, whereToRender, popupId, goal) {
 			var self = this;
 			commonVariables.goal = goal;
+			commonVariables.phase = goal;
 			commonVariables.navListener.getMyObj(commonVariables.dynamicPage, function(dynamicPageObject) {
 				self.dynamicPageListener = new Clazz.com.components.dynamicPage.js.listener.DynamicPageListener();
-				dynamicPageObject.getHtml(false, function(response) {
+				dynamicPageObject.getHtml(whereToRender, thisObj, popupId, function(response) {
 					var height = $(".testSuiteTable").height();
+					$(popupId).css("max-height", height - 40 + 'px');
+					var formObj;
 					if (goal === commonVariables.functionalTestGoal) {
-						$("#dynamicContent").html(response);
-						$('#functionalTest_popup').css("max-height", height - 40 + 'px');
-						$('#dynamicContent').css("max-height", height - 92 + 'px');
-						self.opencc($("#functionalTestBtn"), 'functionalTest_popup');
+						formObj = $('#functionalTestForm');
 					} else if (goal === commonVariables.startHubGoal) {
-						$("#startHubDynamicContent").html(response);
-						$('#startHub_popup').css("max-height", height - 40 + 'px');
-						$('#startHubDynamicContent').height("auto");
-						$('#startHubDynamicContent').css("max-height", height - 92 + 'px');
-						self.opencc($("#startHub"), 'startHub_popup');
+						formObj = $('#startHubForm');
 					} else if (goal === commonVariables.startNodeGoal) {
-						$("#startNodeDynamicContent").html(response);
-						$('#startNode_popup').css("max-height", height - 40 + 'px');
-						$('#startNodeDynamicContent').css("max-height", height - 92 + 'px');
-						$('#startNodeDynamicContent').height("auto");
-						self.opencc($("#startNode"), 'startNode_popup');
+						formObj = $('#startNodeForm');
 					}
-					
-					dynamicPageObject.showParameters();
-					self.dynamicPageListener.controlEvent();
-					$(".scrollContent").mCustomScrollbar({
+
+					formObj.css("max-height", height - 92 + 'px');
+					formObj.mCustomScrollbar({
 						autoHideScrollbar:true,
 						theme:"light-thin",
-						advanced:{ updateOnContentResize: true}
+						advanced:{updateOnContentResize: true}
 					});
 				});
 			});
 		},
-		
+
 		getFunctionalTestOptions : function(header, callback) {
 			var self = this;
 			try {
 				//commonVariables.loadingScreen.showLoading();
 				self.functionalTestAPI.functionalTest(header,
-					function(response) {
-						if (response !== null) {
-							//commonVariables.loadingScreen.removeLoading();
-							callback(response);
-						} else {
-							//self.loadingScreen.removeLoading();
-							callback({"status" : "service failure"});
-						}
-					},
-
-					function(textStatus) {
+						function(response) {
+					if (response !== null) {
 						//commonVariables.loadingScreen.removeLoading();
+						callback(response);
+					} else {
+						//self.loadingScreen.removeLoading();
+						callback({"status" : "service failure"});
 					}
+				},
+
+				function(textStatus) {
+					//commonVariables.loadingScreen.removeLoading();
+				}
 				);
 			} catch(exception) {
 				//commonVariables.loadingScreen.removeLoading();
 			}
 		},
-		
-		runFunctionalTest : function(from) {
+
+		performAction : function(from) {
 			var self = this;
 			var testData;
 			if (from === "startHub") {
@@ -144,35 +138,133 @@ define(["functionalTest/api/functionalTestAPI"], function() {
 			projectId = appdetails.data.id;
 			customerId = appdetails.data.customerIds[0];
 			username = self.functionalTestAPI.localVal.getSession('username');
-						
+
 			if (appdetails !== null) {
 				queryString ="username="+username+"&appId="+appId+"&customerId="+customerId+"&goal=functional-test&phase=functional-test&projectId="+projectId+"&"+testData;
 			}
-			
+
 			$('#testConsole').html('');
-			self.testResultListener.openConsole();//To open the console
-				
+			self.testResultListener.openConsoleDiv();//To open the console
+
 			if (self.mavenServiceListener === null) {
-				commonVariables.navListener.getMyObj(commonVariables.mavenService, function(retVal){
+				commonVariables.navListener.getMyObj(commonVariables.mavenService, function(retVal) {
 					self.mavenServiceListener = retVal;
 					if (from === "startHub") {
-						self.mavenServiceListener.mvnStartHub(queryString, '#testConsole');
+						self.mavenServiceListener.mvnStartHub(queryString, '#testConsole', function(response) {
+							self.postStartHub();
+						});
 					} else if (from === "startNode") {
-						self.mavenServiceListener.mvnStartNode(queryString, '#testConsole');
+						self.mavenServiceListener.mvnStartNode(queryString, '#testConsole', function(response) {
+							self.postStartNode();
+						});
 					} else if (from === "runFunctionalTest") {
-						self.mavenServiceListener.mvnFunctionalTest(queryString, '#testConsole');
+						self.mavenServiceListener.mvnFunctionalTest(queryString, '#testConsole', function(response) {
+							self.testResultListener.closeConsole();
+						});
+					} else if (from === "stopHub") {
+						self.mavenServiceListener.mvnStopHub(queryString, '#testConsole', function(response) {
+							self.postStopHub(response);
+						});
+					} else if (from === "stopNode") {
+						self.mavenServiceListener.mvnStopNode(queryString, '#testConsole', function(response) {
+							self.postStopNode();
+						});
 					}
 				});
 			} else {
 				if (from === "startHub") {
-					self.mavenServiceListener.mvnStartHub(queryString, '#testConsole');
+					self.mavenServiceListener.mvnStartHub(queryString, '#testConsole', function(response) {
+						self.postStartHub();
+					});
 				} else if (from === "startNode") {
-					self.mavenServiceListener.mvnStartNode(queryString, '#testConsole');
+					self.mavenServiceListener.mvnStartNode(queryString, '#testConsole', function(response) {
+						self.postStartNode();
+					});
 				} else if (from === "runFunctionalTest") {
-					self.mavenServiceListener.mvnFunctionalTest(queryString, '#testConsole');
+					self.mavenServiceListener.mvnFunctionalTest(queryString, '#testConsole', function(response) {
+						self.testResultListener.closeConsole();
+					});
+				} else if (from === "stopHub") {
+					self.mavenServiceListener.mvnStopHub(queryString, '#testConsole', function(response) {
+						self.postStopHub();
+					});
+				} else if (from === "stopNode") {
+					self.mavenServiceListener.mvnStopNode(queryString, '#testConsole', function(response) {
+						self.postStopNode();
+					});
 				}
-			}			
-		}
+			}
+		},
+
+		postStartHub : function() {
+			var self = this;
+			self.closeConsole();
+			var requestBody = {};
+			requestBody.from = "hubStatus";
+			self.getFunctionalTestOptions(self.getActionHeader(requestBody, "status"), function(response) {
+				if (response) {
+					$('#startHub').attr('value', 'Stop Hub').attr('id', "stopHub");
+					$('#functionalTestBtn').attr('disabled', false);
+
+					$("#stopHub").unbind("click");
+					$("#stopHub").click(function() {
+						self.performAction("stopHub");
+					});
+				}
+			});
+		},
+
+		postStartNode : function() {
+			var self = this;
+			self.closeConsole();
+			var requestBody = {};
+			requestBody.from = "nodeStatus";
+			self.getFunctionalTestOptions(self.getActionHeader(requestBody, "status"), function(response) {
+				if (response) {
+					$('#startNode').attr('value', 'Stop Node').attr('id', "stopNode");
+
+					$("#stopNode").unbind("click");
+					$("#stopNode").click(function() {
+						self.performAction("stopNode");
+					});
+				}
+			});
+		},
+
+		postStopHub : function() {
+			var self = this;
+			self.closeConsole();
+			var requestBody = {};
+			requestBody.from = "hubStatus";
+			self.getFunctionalTestOptions(self.getActionHeader(requestBody, "status"), function(response) {
+				if (!response) {
+					$('#stopHub').attr('value', 'Start Hub').attr('id', "startHub");
+					$('#functionalTestBtn').attr('disabled', true);	
+
+					$("#startHub").unbind("click");
+					$("#startHub").click(function() {
+						self.getDynamicParams(this, $('#startHubDynCtrls'), 'startHub_popup', commonVariables.startHubGoal);
+					});
+				}
+			});
+		},
+
+		postStopNode : function() {
+			var self = this;
+			self.closeConsole();
+			var requestBody = {};
+			requestBody.from = "nodeStatus";
+			self.getFunctionalTestOptions(self.getActionHeader(requestBody, "status"), function(response) {
+				if (!response) {
+					$('#stopNode').attr('value', 'Start Node').attr('id', "startNode");
+
+					$("#startNode").unbind("click");
+					$("#startNode").click(function() {
+						self.getDynamicParams(this, $('#startNodeDynCtrls'), 'startNode_popup', commonVariables.startNodeGoal);
+					});
+				}
+			});
+		},
 	});
 
 	return Clazz.com.components.functionalTest.js.listener.FunctionalTestlistener;

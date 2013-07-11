@@ -150,6 +150,20 @@
 		
 		<dependency>
 			<groupId>jslibraries.files</groupId>
+			<artifactId>jquery_fullscreen</artifactId>
+			<version>1.0</version>
+			<type>js</type>
+		</dependency>
+		
+		<dependency>
+			<groupId>jslibraries.files</groupId>
+			<artifactId>jquery_magnific-popup_min</artifactId>
+			<version>1.0</version>
+			<type>js</type>
+		</dependency>
+		
+		<dependency>
+			<groupId>jslibraries.files</groupId>
 			<artifactId>bootstrap_min</artifactId>
 			<version>2.3.1</version>
 			<type>js</type>

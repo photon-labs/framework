@@ -3283,7 +3283,12 @@ html>body tbody.scrollContent {
 
 .browser_table tr td:last-child img
 {
-	padding: 0px 11px 7px 10px;
+	padding: 0px 0px 10px 0px;
+}
+
+.browser_table tr td:last-child a img {
+	margin-left: 10px;
+	margin-right: 0px !important;	
 }
 
 .browser_table tr td select
@@ -3303,6 +3308,19 @@ html>body tbody.scrollContent {
 
 .hideContent  {
 	display : none;
+}
+
+#startNodeForm .browser_table tr td:first-child .dropdown-toggle {
+	width: 145px !important;	
+}
+
+#startNodeForm .browser_table tr td:first-child .dropdown-menu {
+	position: relative;
+	width: 0px !important;	
+}
+
+#startNodeForm .browser_table tr td:last-child input, #startNodeForm .browser_table tr td:last-child .dropdown-toggle {
+	width: 70px !important;
 }
 
 /* *************************************************************** STYLES FOR DYNAMIC PARAMETER STARTS ************************************************************************************ */
@@ -3546,9 +3564,9 @@ img.add_test_icon
 /* *************************************************************** STYLES FOR QUALITY_MANUAL TEST PAGE ************************************************************* */
 
 
-.code_content .qual_unit_main {
+/*.code_content .qual_unit_main {
 	float: none !important;	
-}
+}*/
 
 .manual_test_add ul li:nth-child(2) [type="text"]
 {
@@ -3600,6 +3618,8 @@ img.add_test_icon
 
 .text_center {
 	text-align: center;
+	height: 100%;
+	overflow-y: auto;
 }
 
 #template_download [type="radio"]{

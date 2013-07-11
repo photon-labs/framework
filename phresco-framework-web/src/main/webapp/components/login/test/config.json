@@ -176,6 +176,16 @@
 			"path" : "components/componentTest/test/componentTestTest"
 		},
 
+		"functionalTestTest" : {
+			"moduleName":"functionalTestTest",
+			"path" : "components/functionalTest/test/functionalTestTest"
+		},
+
+		"performanceTest" : {
+			"moduleName":"performanceTest",
+			"path" : "components/performanceTest/js"
+		},
+
 		"performanceTest" : {
 			"moduleName":"performanceTest",
 			"path" : "components/performanceTest/js"

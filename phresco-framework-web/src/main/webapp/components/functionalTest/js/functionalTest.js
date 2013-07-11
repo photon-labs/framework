@@ -14,7 +14,9 @@ define(["functionalTest/listener/functionalTestListener", "testResult/listener/t
 		onTabularViewEvent : null,
 		onGraphicalViewEvent : null,
 		onDynamicPageEvent : null,
-		onRunFunctionalTestEvent : null,
+		onPerformActionEvent : null,
+		onStopHubEvent : null,
+		onStopNodeEvent : null,
 		
 		/***
 		 * Called in initialization time of this class 
@@ -37,19 +39,21 @@ define(["functionalTest/listener/functionalTestListener", "testResult/listener/t
 				self.onTabularViewEvent = new signals.Signal();
 			}
 			self.onTabularViewEvent.add(self.functionalTestListener.onTabularView, self.functionalTestListener);
+			
 			if (self.onGraphicalViewEvent === null) {
 				self.onGraphicalViewEvent = new signals.Signal();
 			}
 			self.onGraphicalViewEvent.add(self.functionalTestListener.onGraphicalView, self.functionalTestListener);
+			
 			if (self.onDynamicPageEvent === null) {
 				self.onDynamicPageEvent = new signals.Signal();
 			}
 			self.onDynamicPageEvent.add(self.functionalTestListener.getDynamicParams, self.functionalTestListener);
 			
-			if (self.onRunFunctionalTestEvent === null) {
-				self.onRunFunctionalTestEvent = new signals.Signal();
+			if (self.onPerformActionEvent === null) {
+				self.onPerformActionEvent = new signals.Signal();
 			}
-			self.onRunFunctionalTestEvent.add(self.functionalTestListener.runFunctionalTest, self.functionalTestListener);
+			self.onPerformActionEvent.add(self.functionalTestListener.performAction, self.functionalTestListener);
 			
 			self.registerEvents();
 		},
@@ -77,6 +81,24 @@ define(["functionalTest/listener/functionalTestListener", "testResult/listener/t
 					return "hideContent";
 				}
 			});
+			
+			//To show the start node and stat hub button only when the functional framework is grid
+			Handlebars.registerHelper('hubButton', function(hubStatus) {
+				if (hubStatus) {
+					return 'value="Stop Hub" id="stopHub"';
+				} else {
+					return 'value="Start Hub" id="startHub"';
+				}
+			});
+			
+			//To show the start node and stat hub button only when the functional framework is grid
+			Handlebars.registerHelper('nodeButton', function(nodeStatus) {
+				if (nodeStatus) {
+					return 'value="Stop Node" id="stopNode"';
+				} else {
+					return 'value="Start Node" id="startNode"';
+				}
+			});
 		},
 		
 		/***
@@ -102,13 +124,14 @@ define(["functionalTest/listener/functionalTestListener", "testResult/listener/t
 			});	
 		},
 		
-		preRender: function(whereToRender, renderFunction){
+		preRender: function(whereToRender, renderFunction) {
 			var self = this;
 			self.functionalTestListener.getFunctionalTestOptions(self.functionalTestListener.getActionHeader(self.projectRequestBody, "getFunctionalTestOptions"), function(response) {
 				var responseData = response.data;
 				var functionalTestOptions = {};
 				functionalTestOptions.functionalFramework = responseData.functionalFramework;
 				functionalTestOptions.hubStatus = responseData.hubStatus;
+				functionalTestOptions.nodeStatus = responseData.nodeStatus;
 				var userPermissions = JSON.parse(self.functionalTestListener.functionalTestAPI.localVal.getSession('userPermissions'));
 				functionalTestOptions.userPermissions = userPermissions;
 				renderFunction(functionalTestOptions, whereToRender);
@@ -123,7 +146,7 @@ define(["functionalTest/listener/functionalTestListener", "testResult/listener/t
 			var self = this;
 			$(".tooltiptop").tooltip();
 
-			self.windowResize();
+			self.testResultListener.resizeTestResultDiv();
 			
 			$(".scrollContent").mCustomScrollbar({
 				autoHideScrollbar:true,
@@ -133,17 +156,28 @@ define(["functionalTest/listener/functionalTestListener", "testResult/listener/t
 			
 			$("#functionalTestBtn").unbind("click");
 			$("#functionalTestBtn").click(function() {
-				self.onDynamicPageEvent.dispatch(commonVariables.functionalTestGoal);
+				self.onDynamicPageEvent.dispatch(this, $('#functionalTestDynCtrls'), 'functionalTest_popup', commonVariables.functionalTestGoal);
 			});
 			
 			$("#startHub").unbind("click");
 			$("#startHub").click(function() {
-				self.onDynamicPageEvent.dispatch(commonVariables.startHubGoal);
+				self.onDynamicPageEvent.dispatch(this, $('#startHubDynCtrls'), 'startHub_popup', commonVariables.startHubGoal);
+			});
+			
+			$("#stopHub").unbind("click");
+			$("#stopHub").click(function() {
+				console.info("inside stopHub.....");
+				self.onPerformActionEvent.dispatch("stopHub");
 			});
 			
 			$("#startNode").unbind("click");
 			$("#startNode").click(function() {
-				self.onDynamicPageEvent.dispatch(commonVariables.startNodeGoal);
+				self.onDynamicPageEvent.dispatch(this, $('#startNodeDynCtrls'), 'startNode_popup', commonVariables.startNodeGoal);
+			});
+			
+			$("#stopNode").unbind("click");
+			$("#stopNode").click(function() {
+				self.onPerformActionEvent.dispatch("stopNode");
 			});
 			
 			$("#testSuites").css("display", "none");
@@ -196,19 +230,19 @@ define(["functionalTest/listener/functionalTestListener", "testResult/listener/t
 			//To run the Functional test
 			$("#runFunctionalTest").unbind("click");
 			$("#runFunctionalTest").click(function() {
-				self.onRunFunctionalTestEvent.dispatch("runFunctionalTest");
+				self.onPerformActionEvent.dispatch("runFunctionalTest");
 			});
 			
 			//To start the Hub
 			$("#executeStartHub").unbind("click");
 			$("#executeStartHub").click(function() {
-				self.onRunFunctionalTestEvent.dispatch("startHub");
+				self.onPerformActionEvent.dispatch("startHub");
 			});
 			
 			//To start the Node
 			$("#executeStartNode").unbind("click");
 			$("#executeStartNode").click(function() {
-				self.onRunFunctionalTestEvent.dispatch("startNode");
+				self.onPerformActionEvent.dispatch("startNode");
 			});
 		}
 	});

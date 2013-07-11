@@ -22,6 +22,7 @@ public class TestCaseFailure {
 	private String failureType;
 	private String description;
 	private boolean hasFailureImg;
+	private String screenshotPath;
 
 	public String getFailureType() {
 		return failureType;
@@ -45,5 +46,13 @@ public class TestCaseFailure {
 
 	public void setHasFailureImg(boolean hasFailureImg) {
 		this.hasFailureImg = hasFailureImg;
+	}
+	
+	public void setScreenshotPath(String screenshotPath) {
+		this.screenshotPath = screenshotPath;
+	}
+
+	public String getScreenshotPath() {
+		return screenshotPath;
 	}
 }

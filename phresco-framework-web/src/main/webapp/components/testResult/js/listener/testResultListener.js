@@ -2,7 +2,7 @@ define(["testResult/api/testResultAPI"], function() {
 
 	Clazz.createPackage("com.components.testResult.js.listener");
 
-	Clazz.com.components.testResult.js.listener.TestResultListener = Clazz.extend(Clazz.Widget, {
+	Clazz.com.components.testResult.js.listener.TestResultListener = Clazz.extend(Clazz.WidgetWithTemplate, {
 		
 		testResultAPI : null,
 		allTestCases : null,
@@ -77,6 +77,9 @@ define(["testResult/api/testResultAPI"], function() {
 				$('#bar').show();
 				$('#pie').hide();
 			} else {
+				self.getPieChartGraphData(function(graphData) {
+					self.createPieChart(graphData);
+				});
 				$('#bar').hide();
 				$('#pie').show();
 			}
@@ -106,9 +109,6 @@ define(["testResult/api/testResultAPI"], function() {
 				self.allTestCases = response.data;
 				self.constructTestReport(response.data);
 				//commonVariables.loadingScreen.removeLoading();
-				self.getPieChartGraphData(function(graphData) {
-					self.createPieChart(graphData);
-				});
 			});
 		},
 		
@@ -201,6 +201,7 @@ define(["testResult/api/testResultAPI"], function() {
 				resultTemplate = resultTemplate.concat('<th>Screenshot</th>');
 			}
 			resultTemplate = resultTemplate.concat('</tr></thead><tbody class="scrollContent" style="height:475px;">');
+			var imgArray = [];
 			for (i in data) {
 				var result = data[i];
 				resultTemplate = resultTemplate.concat('<tr><td>'+ result.name +'</td>');
@@ -209,27 +210,73 @@ define(["testResult/api/testResultAPI"], function() {
 				resultTemplate = resultTemplate.concat('<td>');
 				if (result.testCaseFailure !== null) {
 					resultTemplate = resultTemplate.concat('<img src="themes/default/images/helios/cross_red.png" width="16" height="13" border="0" alt=""></td>');
-					resultTemplate = resultTemplate.concat('<td><a href="#" type="failure" testcaseName="'+ result.name +'" class="log"><img src="themes/default/images/helios/log_icon.png" width="16" height="13" border="0" alt=""></a></td>');
+					resultTemplate = resultTemplate.concat('<td><a href="#" type="failure" resultName="'+result.name+'" class="log"><img src="themes/default/images/helios/log_icon.png" width="16" height="13" border="0" alt=""></a>');
+					resultTemplate = resultTemplate.concat('<div id="'+result.name+'" style="display: none; width:500px"><div style="word-wrap: break-word;"><b>'+result.testCaseFailure.failureType+' : </b>'+ result.testCaseFailure.description+'</div><div class="flt_right">');
+					resultTemplate = resultTemplate.concat('<input type="button" value="Close" class="btn btn_style dyn_popup_close"></div></div></td>');
 				}  else if (result.testCaseError !== null) {
 					resultTemplate = resultTemplate.concat('<img src="themes/default/images/helios/cross_red.png" width="16" height="13" border="0" alt=""></td>');
-					resultTemplate = resultTemplate.concat('<td><a href="#" type="error" testcaseName="'+ result.name +'" class="log"><img src="themes/default/images/helios/log_icon.png" width="16" height="13" border="0" alt=""></a></td>');
+					resultTemplate = resultTemplate.concat('<td><a href="#" type="error" resultName="'+result.name+'" class="log"><img src="themes/default/images/helios/log_icon.png" width="16" height="13" border="0" alt=""></a>');
+					resultTemplate = resultTemplate.concat('<div id="'+result.name+'" style="display: none; width:500px"><div style="word-wrap: break-word;"><b>'+result.testCaseError.errorType+' : </b>'+ result.testCaseError.description+'</div><div class="flt_right">');
+					resultTemplate = resultTemplate.concat('<input type="button" value="Close" class="btn btn_style dyn_popup_close"></div></div></td>');
 				} else {
-					resultTemplate = resultTemplate.concat('<img src="themes/default/images/helios/tick_green.png" width="16" height="13" border="0" alt=""></td>');
+					resultTemplate = resultTemplate.concat('<img src="themes/default/images/helios/tick_green.png" width="16" height="13" border="0" alt=""></td><td>&nbsp;</td>');
 				}
 				
 				if ("functionalTest" === currentTab) {
-					resultTemplate = resultTemplate.concat('<td><a href="#"><img src="themes/default/images/helios/screenshot_icon.png" width="19" height="16" border="0" alt="" /></a></td>');
+					var json = {};
+					json.eventClass = result.name;
+					if (result.testCaseFailure !== null && result.testCaseFailure.hasFailureImg) {
+						json.filePath = result.testCaseFailure.screenshotPath;
+						imgArray.push(json);
+						resultTemplate = resultTemplate.concat('<td><a href="#" class="'+result.name+'"><img src="themes/default/images/helios/screenshot_icon.png" width="19" height="16" border="0" alt="" /></a></td>');
+					} else if (result.testCaseError !== null && result.testCaseError.hasErrorImg) {
+						json.filePath = result.testCaseFailure.screenshotPath;
+						imgArray.push(json);
+						resultTemplate = resultTemplate.concat('<td><a href="#" class="'+result.name+'"><img src="themes/default/images/helios/screenshot_icon.png" width="19" height="16" border="0" alt="" /></a></td>');
+					} else {
+						resultTemplate = resultTemplate.concat('<td>&nbsp;</td>');
+					}
 				}
 				resultTemplate = resultTemplate.concat('</tr>');
+
+				/*$('.'+result.name).on("click", function(e) {
+				 	// Use the plugin
+					$('.mfp-container').fullScreen();
+					e.preventDefault();
+				});*/
 			}
+
 			resultTemplate = resultTemplate.concat('</tbody></table>');
 			$(commonVariables.contentPlaceholder).find('#testCases').html(resultTemplate);
+
 			setTimeout(function() {
-				self.resizeTestResultTable("testCases");
-				self.showLog(data);
-			}, 400);	
+				self.resizeTestResultColumn("testCases");
+				self.showErrorLog();
+			}, 400);
+
+			self.resizeTestResultDiv();
+			self.showScreenShot(imgArray);
 		},
-		
+
+		showScreenShot : function(imgArray) {
+			for (i in imgArray) {
+				var data = imgArray[i];
+				var filePath = "data:image/png;base64," + data.filePath;
+				$('.'+data.eventClass).magnificPopup({
+					items: [
+						{
+							src: $('<div class="text_center"><img src="'+filePath+'"><div class="fullscreen_desc">'+data.eventClass+'</div></div>'), // Dynamically created element
+							type: 'inline'
+						}
+					],
+					gallery: {
+						enabled: true
+					},
+					type: 'image'
+				});
+			}
+		},
+
 		onUnitTestGraph : function() {
 			$("#testSuites").hide();
 			$("#testCases").hide();
@@ -324,53 +371,13 @@ define(["testResult/api/testResultAPI"], function() {
 			var self = this;
 			var check = $('#consoleImg').attr('data-flag');
 			if (check === "true") {
-				self.openConsole();
+				self.openConsoleDiv();
 			} else {
 				self.closeConsole();
 			}
 		},
 		
-		openConsole : function() {
-			$('.testSuiteTable').append('<div class="mask" style="display: block;"></div>');
-			$('.mask').show();
-			$('.unit_close').css("z-index", 1001);
-			$('.unit_progress').css("z-index", 1001);
-			$('.unit_close').css("height", 0);
-			var value = $('.unit_info').width();
-			var value1 = $('.unit_progress').width();
-			$('.unit_info').animate({left: -value},500);
-			$('.unit_progress').animate({right: '10px'},500);
-			$('.unit_close').animate({right: value1+10},500);
-			$('.unit_info table').removeClass("big").addClass("small");
-			$('#consoleImg').attr('data-flag','false');
-			
-			var height = $(window).height();
-			var resultvalue = 0;
-			$('.mainContent').prevAll().each(function() {
-				var rv = $(this).height();
-				resultvalue = resultvalue + rv; 
-			});
-			var footervalue = $('.footer_section').height();
-			resultvalue = resultvalue + footervalue + 200;
-			finalHeight = height - resultvalue;
-			$(".unit_progress").css("height", finalHeight + 10);
-			$('.unit_progress').find('.scrollContent').css("height", finalHeight - 20);
-		},
-		
-		closeConsole : function() {
-			var value = $('.unit_info').width();
-			var value1 = $('.unit_progress').width();
-			$('.unit_info').animate({left: '20'},500);
-			$('.unit_progress').animate({right: -value1},500);
-			$('.unit_close').animate({right: '0px'},500);
-			$('.unit_info table').removeClass("small").addClass("big");
-			$('#consoleImg').attr('data-flag','true');
-			$('.mask').fadeOut(500, function() {
-				$('.mask').remove();
-			});
-		},
-		
-		resizeTestResultTable : function(divId) {
+		resizeTestResultColumn : function(divId) {
 			var w1 = $("#" + divId + " .scrollContent tr td:first-child").width();
 			var w2 = $("#" + divId + " .scrollContent tr td:nth-child(2)").width();
 			var w3 = $("#" + divId + " .scrollContent tr td:nth-child(3)").width();
@@ -384,16 +391,6 @@ define(["testResult/api/testResultAPI"], function() {
 			$("#" + divId + " .fixedHeader tr th:nth-child(4)").css("width", w4);
 			$("#" + divId + " .fixedHeader tr th:nth-child(5)").css("width", w5);
 			$("#" + divId + " .fixedHeader tr th:nth-child(6)").css("width", w6);
-		},
-		
-		resizeConsoleWindow : function() {
-			var twowidth = window.innerWidth-60;
-			var progwidth = window.innerWidth/2;
-			var onewidth = window.innerWidth - (twowidth+70);
-			$('.unit_info').css("width",twowidth);
-			$('.unit_progress').css("width",progwidth);
-			$('.unit_progress').css("right",-twowidth);
-			$('.unit_close').css("right",0);
 		},
 		
 		//To get the existing pdf reports
@@ -464,28 +461,50 @@ define(["testResult/api/testResultAPI"], function() {
 		},
 		
 		//To show the failure/error log
-		showLog : function(data) {
+		showErrorLog : function() {
+			var self = this;
 			$('.log').on("click", function() {
-				var testcaseName = $(this).attr("testcaseName");
-				var logType = $(this).attr("type");
-				var description = "";
-				var type = "";
-				if (data !== null) {
-					for (i in data) {
-						var testcase = data[i];
-						if (testcaseName === testcase.name) {
-							if ("failure" === logType) {
-								description = testcase.testCaseFailure.description;
-								type = testcase.testCaseFailure.failureType;
-							} else if ("error" === logType) {
-								description = testcase.testCaseError.description;
-								type = testcase.testCaseError.errorType;
-							}
-							break;
-						}
-					}
-				}
+				var id = $(this).attr("resultname");
+				self.opencc(this, id);
 			});
+		},
+
+		openConsoleDiv : function() {
+			$('.testSuiteTable').append('<div class="mask"></div>');
+			$('.mask').show();
+			$('.unit_close').css("z-index", 1001);
+			$('.unit_progress').css("z-index", 1001);
+			$('.unit_close').css("height", 0);
+			var value = $('.unit_info').width();
+			var value1 = $('.unit_progress').width();
+			$('.unit_info').animate({left: -value},500);
+			$('.unit_progress').animate({right: '10px'},500);
+			$('.unit_close').animate({right: value1+10},500);
+			$('.unit_info table').removeClass("big").addClass("small");
+			$('#consoleImg').attr('data-flag','false');
+
+			var height = $('.testResult table').height();
+			$('.unit_progress').height(height);
+		},
+
+		resizeTestResultDiv : function() {
+			//To set the height of the test result section  
+			var marginTop = $('.testSuiteTable').css("margin-top");
+			if (marginTop !== undefined) {
+				marginTop = marginTop.substring(0, marginTop.length - 2);
+			}
+			var paddingTop = $('.testSuiteTable').css("padding-top");
+			if (paddingTop !== undefined) {
+				paddingTop = paddingTop.substring(0, paddingTop.length - 2);
+			}
+			var footerHeight = $('#footer').height();
+			var windowHeight = $(window).height();
+			var deductionHeight = Number(marginTop) + Number(footerHeight) + Number(paddingTop) + Number(paddingTop);
+			deductionHeight = windowHeight - deductionHeight;
+			$('.testSuiteTable').height(deductionHeight);
+			$('#testSuites').height(deductionHeight);
+			deductionHeight = deductionHeight - (Number(paddingTop) + Number(paddingTop) + Number(paddingTop));
+			$('.testSuiteTable .scrollContent').height(deductionHeight);
 		}
 	});
 
