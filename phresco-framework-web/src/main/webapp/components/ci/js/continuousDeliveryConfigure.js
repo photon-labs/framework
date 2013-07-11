@@ -15,7 +15,9 @@ define(["framework/widgetWithTemplate", "ci/listener/ciListener"], function() {
 		onConfigureJobEvent : null,	// saving job template
 		onConfigureJobPopupEvent : null, // show configure popup from gear icon
 		onSaveEvent : null, // save continuous delivery
-	
+		editContinuousViewTable : null,  // edit continuous Delivery
+		name : null,
+
 		/***
 		 * Called in initialization time of this class 
 		 *
@@ -55,12 +57,18 @@ define(["framework/widgetWithTemplate", "ci/listener/ciListener"], function() {
 			 if (self.onSaveEvent === null) {
 			 	self.onSaveEvent = new signals.Signal();
 			 }
+
+			 if (self.editContinuousViewTable === null) {
+			 	self.editContinuousViewTable = new signals.Signal();
+			 }
 				
 			 // Trigger registered events
 			 self.onLoadEnvironmentEvent.add(ciListener.loadEnvironmentEvent, ciListener);
 			 self.onConfigureJobPopupEvent.add(self.ciListener.showConfigureJob, self.ciListener);
 			 self.onConfigureJobEvent.add(self.ciListener.configureJob, self.ciListener);
 			 self.onSaveEvent.add(self.ciListener.saveContinuousDelivery, self.ciListener);
+		  	 self.editContinuousViewTable.add(self.ciListener.editContinuousViewTable, self.ciListener);
+
 
 			 // Handle bars
 			Handlebars.registerHelper('environment', function(data, flag) {
@@ -80,6 +88,10 @@ define(["framework/widgetWithTemplate", "ci/listener/ciListener"], function() {
 		loadPage :function(){
 			Clazz.navigationController.jQueryContainer = commonVariables.contentPlaceholder;
 			Clazz.navigationController.push(this, true);
+		},
+
+		loadPageTest :function(){
+			Clazz.navigationController.push(this);
 		},
 		
 		preRender: function(whereToRender, renderFunction) {
@@ -102,12 +114,18 @@ define(["framework/widgetWithTemplate", "ci/listener/ciListener"], function() {
 			// List job templates by environment from all applications
 			self.onLoadEnvironmentEvent.dispatch(function(params) {
 					self.getAction(self.ciRequestBody, 'getJobTemplatesByEnvironment', params, function(response) {
-						self.ciListener.constructJobTemplateViewByEnvironment(response);
+						self.ciListener.constructJobTemplateViewByEnvironment(response, function() {
+							if(self.name !== null) {
+								self.ciListener.getHeaderResponse(self.ciListener.getRequestHeader(self.ciRequestBody, 'editContinuousView', self.name), function (response) {
+									self.editContinuousViewTable.dispatch(response);
+								});
+							} 
+						});
 					});
 			});
 		},
 		
-		getAction : function(ciRequestBody, action, params, callback) {
+		getAction : function(ciRequestBody, action, params, callback) {			
 			var self = this;
 			self.ciListener.getHeaderResponse(self.ciListener.getRequestHeader(self.ciRequestBody, action, params), function(response) {
 				callback(response);
@@ -204,7 +222,18 @@ define(["framework/widgetWithTemplate", "ci/listener/ciListener"], function() {
 		 *
 		 */
 		bindUI : function() {
+
+
 			var self = this;
+
+			$(".jobConfigure").mCustomScrollbar({
+				autoHideScrollbar:true,
+				theme:"light-thin",
+				advanced: {
+					updateOnContentResize: true
+				}
+			});
+
    			$(".dyn_popup").hide();
 	  		$(window).resize(function() {
 				//$(".dyn_popup").hide();
@@ -229,7 +258,7 @@ define(["framework/widgetWithTemplate", "ci/listener/ciListener"], function() {
 						//console.log("[" + this.id + "] received [" + ui.item.html() + "] from [" + ui.sender + "]");
 					},
 
-					receive: function( event, ui ) {
+					receive: function( event, ui ) {						
 						//console.log("receive 1 => " , ui);
 						// For gear icons alone
 						$("#sortable2 li.ui-state-default a").show();
@@ -239,12 +268,17 @@ define(["framework/widgetWithTemplate", "ci/listener/ciListener"], function() {
 						// Remove application name text
 						var itemText = $(ui.item).find('span').text();
 						var anchorElem = $(ui.item).find('a');
-						var appName = $(anchorElem).attr("appname");
+						var appName = $(anchorElem).attr("appname");						
 						$(ui.item).find('span').text($(ui.item).find('span').text().replace(appName + " - ", ""));
+						$( ".sorthead" ).each(function( index ) {
+							if(appName === $(this).text()) {
+								$(ui.item).insertAfter($(this));
+							} 
+						});
 						//console.log("[" + this.id + "] received [" + ui.item.html() + "] from [" + ui.sender + "]");
 					},
 
-					change: function( event, ui ) {
+					change: function( event, ui ) {						
 						//console.log("change1 => " , ui);
 						//console.log("[" + this.id + "] received [" + ui.item.html() + "] from [" + ui.sender + "]");
 					}
@@ -264,25 +298,26 @@ define(["framework/widgetWithTemplate", "ci/listener/ciListener"], function() {
 						//console.log("ui stop 2 => " , ui);
 					},
 
-					change: function( event, ui ) {
+					change: function( event, ui ) {						
 						//console.log("change2 => " , ui);
 
 						//console.log("[" + this.id + "] received [" + ui.item.html() + "] from [" + ui.sender + "]");
 						var itemText = $(ui.item).find('span').text();
 						var anchorElem = $(ui.item).find('a');
 						var templateJsonData = $(anchorElem).data("templateJson");
+						
 						var appName = $(anchorElem).attr("appname");
-
 						var sortable2Len = $('#sortable2 > li').length;
 						//console.log("sortable2Len > " + sortable2Len);
 						// Initial validation
 						if (sortable2Len === 1 && !templateJsonData.enableRepo) {
-							//console.log("atleast one job on right side should be with url 1 " + ui.sender);
+							//console.log("atleast one job on right side should be with url 1 of the present application  " + ui.sender);
 							$(ui.sender).sortable('cancel');
 						}
 					},
 
 					receive: function( event, ui ) {
+						
 						//console.log("receive2 => " , ui);
 
 						// For gear icons alone
@@ -321,14 +356,16 @@ define(["framework/widgetWithTemplate", "ci/listener/ciListener"], function() {
 
 								if (thisAppName === appName && thisTemplateJsonData.enableRepo) {
 									parentAppFound = true;
-									//console.log("Parent project found ");
+									console.log("Parent project found ");
 									return false;
-								} else {
-									//console.log("Parent object not found for this clonned workspace");
-									$(ui.item).find('span').text(itemText);
-									$(ui.sender).sortable('cancel');
 								}
 							});
+
+							if (!parentAppFound) {
+								console.log("Parent object not found for this clonned workspace");
+								$(ui.item).find('span').text(itemText);
+								$(ui.sender).sortable('cancel');
+							}
 
 							//Third  check
 							//self.streamConfig(this); // jobJson is mandatory for this json job construct
@@ -350,7 +387,7 @@ define(["framework/widgetWithTemplate", "ci/listener/ciListener"], function() {
 					updateOnContentResize: true
 				}
 			});
-		
+			
 			// By Default gear icon should not be displayed
 			$("#sortable1 li.ui-state-default a").hide();
 			
@@ -378,12 +415,30 @@ define(["framework/widgetWithTemplate", "ci/listener/ciListener"], function() {
    			});
 
    			// On save event of continuous delivery
-   			$("input[type=submit][value=Add]").click(function() {
-   				//console.log("Continuos delivery add ");
-   				$(".dyn_popup").hide();
-   				self.onSaveEvent.dispatch(this, function(response) {
-   					//console.log("continuous delivery obj " + JSON.stringify(response));
-   				});
+   			// $("input[type=submit][value=Add]").click(function() {
+			$("input[type=submit]").click(function() {				
+				$(".dyn_popup").hide();
+
+				if ( $(this).val() === 'Add') {
+   					self.onSaveEvent.dispatch(this, function(addJobsParams) {
+	   					console.log("continuous delivery save obj " + JSON.stringify(addJobsParams));
+	   					self.ciRequestBody = addJobsParams;
+	   					self.getAction(self.ciRequestBody, 'saveContinuousDelivery', '', function(response) {	   						
+							self.ciListener.loadContinuousDeliveryView();
+	   					});
+	   				});
+   				}
+   			
+   				if ( $(this).val() === 'Update') {
+	   				self.onSaveEvent.dispatch(this, function(editJobParams) {
+	   					console.log("continuous delivery Update obj " + JSON.stringify(editJobParams));
+	   					self.ciRequestBody = editJobParams;
+	   					self.getAction(self.ciRequestBody, 'updateContinuousDelivery', '', function(response) {
+	   						self.ciListener.loadContinuousDeliveryView();
+	   					});
+					});
+	   			}
+
    			});
 
 		}

@@ -165,10 +165,10 @@ public class SvnProcessor implements FrameworkConstants{
     					Node firstNode = firstSibling.getFirstChild().getNextSibling();
     					String firstNodeName = firstNode.getNodeName();
     					if (USERNAME.equals(firstNodeName)) {
-    						if (firstNode.getTextContent().equals(job.getUserName())) {
+    						if (firstNode.getTextContent().equals(job.getUsername())) {
     							credExist = true;
     						} else {
-    							firstNode.setTextContent(job.getUserName());
+    							firstNode.setTextContent(job.getUsername());
     						}
     					} else if (PASSWORD.equals(firstNodeName)) {
     						firstNode.setTextContent(job.getPassword());
@@ -180,10 +180,10 @@ public class SvnProcessor implements FrameworkConstants{
     					if (PASSWORD.equals(lastNodeName)) {
     						lastNode.setTextContent(job.getPassword());
     					} else if (USERNAME.equals(lastNodeName)) {
-    						if (lastNode.getTextContent().equals(job.getUserName())) {
+    						if (lastNode.getTextContent().equals(job.getUsername())) {
     							credExist = true;
     						} else {
-    							lastNode.setTextContent(job.getUserName());
+    							lastNode.setTextContent(job.getUsername());
     						}
     					}
     				} 
@@ -203,7 +203,7 @@ public class SvnProcessor implements FrameworkConstants{
 
     						org.w3c.dom.Element userName = doc.createElement(USERNAME);
     						PasswordCredential.appendChild(userName);
-    						userName.setTextContent(job.getUserName());
+    						userName.setTextContent(job.getUsername());
 
     						org.w3c.dom.Element password = doc.createElement(PASSWORD);
     						PasswordCredential.appendChild(password);
