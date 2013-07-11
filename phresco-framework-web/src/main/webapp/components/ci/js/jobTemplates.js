@@ -295,7 +295,7 @@ define(["ci/listener/ciListener"], function() {
 				self.showHideUploadEvent.dispatch();
 			});				
 			
-			//enable/disable uploads on type change
+			//enable/disable uploads on operation change
 			$("select[name=type]").unbind("change");
 			$("select[name=type]").on("change", function(){					
 				self.changeUploaderEvent.dispatch();

@@ -219,7 +219,6 @@ public class CIManagerImplTest implements FrameworkConstants{
             
             CIJob job3 = updateWithCloneTheWorkspace(job2);
             
-            CIJob job4 = updateWithBuildOtherProjects(job3);
             // Operation
 //            ciManager.customizeNodes(processor, job4);
             //success
@@ -323,7 +322,7 @@ public class CIManagerImplTest implements FrameworkConstants{
     
 	private CIJob createJob() {
 		CIJob job = new CIJob();
-		job.setName("Master2.0Check");
+		job.setJobName("Master2.0Check");
 		job.setJenkinsUrl("172.16.29.161");
 		job.setJenkinsPort("3579");
 //		job.setSvnUrl("KaleesUrl");
@@ -364,11 +363,6 @@ public class CIManagerImplTest implements FrameworkConstants{
 	
 	private CIJob updateWithCloneTheWorkspace(CIJob job) {
 		job.setCloneWorkspace(true);
-		return job;
-	}
-	
-	private CIJob updateWithBuildOtherProjects(CIJob job) {
-		job.setDownStreamProject("kalees_DownstreamProject");
 		return job;
 	}
 }

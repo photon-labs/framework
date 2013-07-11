@@ -64,280 +64,230 @@
         </div>
 
         <!-- popup starts -->
-        <div id="jobConfigure" class="dyn_popup popup_bg">
-            <form id="jonConfiguration">
-                <table id="jobName" class="clonetable" width="100%" border="0" cellspacing="0" cellpadding="0">
-                    <tbody>
-                            <tr>
-                                <td><input name="jobName" type="text" placeholder="Job Name"></td>
-                            </tr>
-                     </tbody>
-                 </table>
-
-                 <!-- Basic Sttings starts here -->
-                 <table id="repoType" class="table table-striped table_border table-bordered" cellpadding="0" cellspacing="0" border="0">
-                    <thead>
-                        <tr>
-                            <th colspan="3">Repo</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td>
-                                <input name="svnUrl" type="text" placeholder="SVN Url">
-                            </td>
-                            <td><input name="userName" type="text" placeholder="Username"></td>
-                            <td><input name="password" type="password" placeholder="Password"></td>
-                        </tr>
-                    </tbody>
-                </table>
-
-                <table id="scheduler" class="table table-striped table_border table-bordered" cellpadding="0" cellspacing="0" border="0">
-                    <thead>
-                        <tr>
-                            <th colspan="3">Scheduler</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td colspan="3">
-                                <div class="build_trigger">
-                                        Build Triggers <br>
-                                        <input id="buildPeriodically" name="triggers" type="checkbox" value="TimerTrigger">
-                                        <span> Build Periodically</span>
-                                        <input id="pollSCM" name="triggers" type="checkbox" value="SCMTrigger">Pol SCM
-                                </div>
-                            </td>
-                        </tr> 
-                        <tr>
-                            <td>Schedule <br>
-                                    <select name="schedule">
-                                        <option value="Daily">Daily</option>
-                                        <option value="Weekly">Weekly</option>
-                                        <option value="Monthly">Monthly</option>
-                                    </select>
-                            </td>
-                            <td>At Every
-                            <div class="every_select">
-                                <select>
-                                    <option value="*">*</option>
-                                    <option value="1">1</option>
-                                    <option value="2">2</option>
-                                    <option value="3">3</option>
-                                    <option value="4"> 4 </option>
-                                    <option value="5"> 5 </option>
-                                    <option value="6"> 6 </option>
-                                    <option value="7"> 7 </option>
-                                    <option value="8"> 8 </option>
-                                    <option value="9"> 9 </option>
-                                    <option value="10"> 10 </option>
-                                    <option value="11"> 11 </option>
-                                    <option value="12"> 12 </option>
-                                    <option value="13"> 13 </option>
-                                    <option value="14"> 14 </option>
-                                    <option value="15"> 15 </option>
-                                    <option value="16"> 16 </option>
-                                    <option value="17"> 17 </option>
-                                    <option value="18"> 18 </option>
-                                    <option value="19"> 19 </option>
-                                    <option value="20"> 20 </option>
-                                    <option value="21"> 21 </option>
-                                    <option value="22"> 22 </option>
-                                    <option value="23"> 23 </option>
-                                </select>
-                                <select>
-                                    <option value="*">*</option>
-                                    <option value="1">1</option>
-                                    <option value="2">2</option>
-                                    <option value="3">3</option>
-                                    <option value="4">4</option>
-                                    <option value="5">5</option>
-                                    <option value="6">6</option>
-                                    <option value="7">7</option>
-                                    <option value="8">8</option>
-                                    <option value="9">9</option>
-                                    <option value="10">10</option> <option value="11">11</option> <option value="12">12</option> <option value="13">13</option> <option value="14">14</option> <option value="15">15</option> <option value="16">16</option> <option value="17">17</option> <option value="18">18</option> <option value="19">19</option> <option value="20">20</option> <option value="21">21</option> <option value="22">22</option> <option value="23">23</option> <option value="24">24</option> <option value="25">25</option> <option value="26">26</option> <option value="27">27</option> <option value="28">28</option> <option value="29">29</option> <option value="30">30</option> <option value="31">31</option> <option value="32">32</option> <option value="33">33</option> <option value="34">34</option> <option value="35">35</option> <option value="36">36</option> <option value="37">37</option> <option value="38">38</option> <option value="39">39</option> <option value="40">40</option> <option value="41">41</option> <option value="42">42</option> <option value="43">43</option> <option value="44">44</option> <option value="45">45</option> <option value="46">46</option> <option value="47">47</option> <option value="48">48</option> <option value="49">49</option> <option value="50">50</option> <option value="51">51</option> <option value="52">52</option> <option value="53">53</option> <option value="54">54</option> <option value="55">55</option> <option value="56">56</option> <option value="57">57</option> <option value="58">58</option> <option value="59">59</option> 
-                                </select>
-                            </div>
-                            </td>
-                            <td>Cron <br>
-                                <input name="scheduleExpression" type="text" placeholder="Cron expression" value="10 * 25 * *">
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
-
-                <table id="mailSettings" class="table table-striped table_border table-bordered mail_settings" cellpadding="0" cellspacing="0" border="0">
-                    <thead>
-                        <tr>
-                            <!--<th colspan="2">Sender Mail Settings</th>-->
-                            <th colspan="2">Recipents Mail Settings</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <!--<td><input name="senderEmailId" type="text" placeholder="Email"></td>
-                            <td><input name="senderEmailPassword" type="password" placeholder="Password"></td>-->
-                            <td><input name="successEmailIds" type="text" placeholder="When Success"></td>
-                            <td><input name="failureEmailIds" type="text" placeholder="When Faliure"></td>
-                        </tr>
-                    </tbody>
-                </table>
-                <!-- Basic Sttings ends here -->
-
-                <!-- Clone and Downstream specification starts -->
-                <div id="downstreamConfig">
-                    <table class="table table-striped table_border table-bordered" border="0" cellspacing="0" cellpadding="0">
+        <div id="jobConfigure" class="cont_delivery dyn_popup popup_bg job_configure">
+            <div class="jobConfigure">
+                <form id="jonConfiguration">
+                    <table id="jobName" class="clonetable jobName" width="100%" border="0" cellspacing="0" cellpadding="0">
                         <tbody>
-                            <tr>
-                                <td>Downstream projects</td>
-                                <td>
-                                    <select id="downstreamProject" name="downstreamProject">
-                                        <option value="">-- Select DownStream --</option>
-                                    </select>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>Downstream criteria</td>
-                                <td>
-                                    <select id="downstreamCriteria" name="downstreamCriteria">
-                                        <option value="SUCCESS">Trigger only if build succeeds</option>
-                                        <option value="UNSTABLE">Trigger even if the build is unstable</option>
-                                        <option value="FAILURE">Trigger even if the build fails</option>
-                                    </select>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>Clone the workspace</td>
-                                <td>
-                                    <input type="radio" name="cloneWorkspace" value="true" />&nbsp; Yes
-                                    <input type="radio" name="cloneWorkspace" value="false" checked/>&nbsp; No
-                                </td>
-                            </tr>
-                        </tbody>
-                 </table>
-             </div>
-                <!-- Clone and Downstream specification ends -->
+                                <tr>
+                                    <td><input name="jobName" type="text" placeholder="Job Name"></td>
+                                </tr>
+                         </tbody>
+                     </table>
 
-                <!-- Build configuration starts here -->
-                <div id="dynamicContent">
-                    <table class="table table-striped table_border table-bordered" cellpadding="0" cellspacing="0" border="0">
+                     <!-- Basic Sttings starts here -->
+                     <table id="repoType" class="table table-striped table_border table-bordered" cellpadding="0" cellspacing="0" border="0">
                         <thead>
                             <tr>
-                                <th colspan="3">Configuration for Code Validation</th>
+                                <th colspan="4">Repo</th>
                             </tr>
                         </thead>
                         <tbody>
                             <tr>
-                                <td><select>
-                                        <option>Source</option>
-                                    </select>
-                                </td>
-                                <td><input type="checkbox">Skip Unit Test</td>
-                            </tr>
-                        </tbody>
-                    </table>
-
-                    <table class="table table-striped table_border table-bordered" cellpadding="0" cellspacing="0" border="0">
-                        <thead>
-                            <tr>
-                                <th colspan="3">Build Configuration</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td>Build Name</td>
-                                <td>Logs</td>
-                                <td></td>
-                            </tr>
-                            <tr>
-                                <td> 
-                                    <input type="text">
-                                </td>
                                 <td>
-                                    <select>
-                                        <option>Show Errors</option>
-                                    </select>
+                                    <input name="svnUrl" type="text" placeholder="SVN Url">
                                 </td>
-                                <td>
-                                    <input type="checkbox">Show Settings</td>
+                                <td><input name="username" type="text" placeholder="Username"></td>
+                                <td><input name="password" type="password" placeholder="Password"></td>
                             </tr>
                         </tbody>
                     </table>
-                </div>
-                <!-- Build configuration ends here -->
 
-                <!-- Upload Settings starts here -->
-                <div id="uploadSettings">
-                    <table id="collabnetUploadSettings" class="table table-striped table_border table-bordered" cellpadding="0" cellspacing="0" border="0">
+                    <table id="scheduler" class="table table-striped table_border table-bordered" cellpadding="0" cellspacing="0" border="0">
                         <thead>
                             <tr>
-                                <th colspan="3">CollabNet Upload Settings</th>
+                                <th colspan="4">Scheduler</th>
+                            </tr>
+                        </thead>
+                        <tbody id="testBody">
+                            <tr>
+                                <td colspan="4">
+                                    <div class="build_trigger">
+                                            Build Triggers <br>
+                                            <input id="buildPeriodically" name="triggers" type="checkbox" value="TimerTrigger">
+                                            <span> Build Periodically</span>
+                                            <input id="pollSCM" name="triggers" type="checkbox" value="SCMTrigger">Pol SCM
+                                    </div>
+                                </td>
+                            </tr> 
+                            <tr id="scheduleExpression">
+                            	<td colspan="4">
+                            		<input type="radio" name="scheduleOption" value="Daily" checked><span>Daily</span>
+                            		<input type="radio" name="scheduleOption" value="Weekly"><span>Weekly</span>
+                            		<input type="radio" name="scheduleOption" value="Monthly"><span>Monthly</span>
+                            	</td>
+                            </tr>
+                        </tbody>
+                    </table>
+					<table id="cronPreview" class="table table-striped table_border table-bordered" cellspacing="0" cellpadding="0" border="0">
+						<thead>
+							<tr> 
+								<th colspan="2">Cron Expression</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr>
+								<td>
+									<input id="CroneExpressionValue" type="text" value="* * * * *" name="scheduleExpression">
+									<a href="javascript:;" id="cronepassword"> 
+										<img src="themes/default/images/helios/question_mark.png">
+									</a>
+								</td>
+							</tr>
+						</tbody>
+					</table>
+					
+                    <table id="mailSettings" class="table table-striped table_border table-bordered mail_settings" cellpadding="0" cellspacing="0" border="0">
+                        <thead>
+                            <tr>
+                                <!--<th colspan="2">Sender Mail Settings</th>-->
+                                <th colspan="2">Recipents Mail Settings</th>
                             </tr>
                         </thead>
                         <tbody>
                             <tr>
-                                <td colspan="3">Overwrite Files ?
-                                    <input type="radio" name="collabNetoverWriteFiles" checked>Yes
-                                    <input type="radio" name="collabNetoverWriteFiles">No
-                                </td>
-                            </tr>
-                            <tr>
-                                <td><input type="text" placeholder="Url"></td>
-                                <td><input type="text" placeholder="Username"></td>
-                                <td><input type="password" placeholder="Password"></td>
-                            </tr>
-                            <tr>
-                                <td><input name="collabNetProject" type="text" placeholder="Project"></td>
-                                <td><input name="collabNetPackage" type="text" placeholder="Package"></td>
-                                <td><input name="collabNetRelease" type="text" placeholder="Release"></td>
+                                <!--<td><input name="senderEmailId" type="text" placeholder="Email"></td>
+                                <td><input name="senderEmailPassword" type="password" placeholder="Password"></td>-->
+                                <td><input name="successEmailIds" type="text" placeholder="When Success"></td>
+                                <td><input name="failureEmailIds" type="text" placeholder="When Faliure"></td>
                             </tr>
                         </tbody>
                     </table>
+                    <!-- Basic Sttings ends here -->
 
-                    <table id="confluenceUploadSettings" class="table table-striped table_border table-bordered" cellpadding="0" cellspacing="0" border="0">
-                        <thead>
-                            <tr>
-                                <th colspan="3">Confluence Upload Settings</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td colspan="3">Overwrite Files ?
-                                    <input type="radio" name="collabNetoverWriteFiles" checked>Yes
-                                    <input type="radio" name="collabNetoverWriteFiles">No
-                                </td>
-                            </tr>
-                            <tr>
-                                <td><input type="text" placeholder="Url"></td>
-                                <td><input type="text" placeholder="Username"></td>
-                                <td><input type="password" placeholder="Password"></td>
-                            </tr>
-                            <tr>
-                                <td><input name="collabNetProject" type="text" placeholder="Project"></td>
-                                <td><input name="collabNetPackage" type="text" placeholder="Package"></td>
-                                <td><input name="collabNetRelease" type="text" placeholder="Release"></td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-                <!-- Upload Settings ends here -->
+                    <!-- Clone and Downstream specification starts -->
+                    <div id="downstreamConfig">
+                        <table class="table table-striped table_border table-bordered" border="0" cellspacing="0" cellpadding="0">
+                            <tbody>
+                                <tr>
+                                    <td>Downstream projects</td>
+                                    <td>
+                                        <select id="downstreamApplication" name="downstreamApplication">
+                                            <option value="">-- Select DownStream --</option>
+                                        </select>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>Downstream criteria</td>
+                                    <td>
+                                        <select id="downstreamCriteria" name="downstreamCriteria">
+                                            <option value="SUCCESS">Trigger only if build succeeds</option>
+                                            <option value="UNSTABLE">Trigger even if the build is unstable</option>
+                                            <option value="FAILURE">Trigger even if the build fails</option>
+                                        </select>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>Clone the workspace</td>
+                                    <td>
+                                        <input type="radio" name="cloneWorkspace" value="true" />&nbsp; Yes
+                                        <input type="radio" name="cloneWorkspace" value="false" checked/>&nbsp; No
+                                    </td>
+                                </tr>
+                            </tbody>
+                     </table>
+                 </div>
+                    <!-- Clone and Downstream specification ends -->
 
-                <!-- Job confiure buttons starts -->
-                <div id="popupBtns" class="flt_right">
-                    <input class="btn btn_style" type="button" appname="" appDirName="" jobtemplatename="" name="configure" value="Configure">
-                    <input class="btn btn_style dyn_popup_close" type="button" value="Close">
-                </div>
-                <!-- Job confiure buttons ends -->
-            </form>
+                    <!-- Build configuration starts here -->
+                    <div id="dynamicContent">
+                        <ul class="row dynamicControls">
+                        </ul>
+                        <div class="dynamicPopupLoading" style="display:none;">&nbsp</div>
+                        <div class="hiddenControls"></div>
+                    </div>
+                    <!-- Build configuration ends here -->
+
+                    <!-- Upload Settings starts here -->
+                    <div id="uploadSettings">
+                        <table id="collabnetUploadSettings" class="table table-striped table_border table-bordered" cellpadding="0" cellspacing="0" border="0">
+                            <thead>
+                                <tr>
+                                    <th colspan="3">CollabNet Upload Settings</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td colspan="3">Overwrite Files ?
+                                        <input type="radio" name="collabNetoverWriteFiles" checked>Yes
+                                        <input type="radio" name="collabNetoverWriteFiles">No
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td><input type="text" placeholder="Url"></td>
+                                    <td><input type="text" placeholder="Username"></td>
+                                    <td><input type="password" placeholder="Password"></td>
+                                </tr>
+                                <tr>
+                                    <td><input name="collabNetProject" type="text" placeholder="Project"></td>
+                                    <td><input name="collabNetPackage" type="text" placeholder="Package"></td>
+                                    <td><input name="collabNetRelease" type="text" placeholder="Release"></td>
+                                </tr>
+                            </tbody>
+                        </table>
+
+                        <table id="confluenceUploadSettings" class="table table-striped table_border table-bordered" cellpadding="0" cellspacing="0" border="0">
+                            <thead>
+                                <tr>
+                                    <th colspan="3">Confluence Upload Settings</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td colspan="3">Overwrite Files ?
+                                        <input type="radio" name="collabNetoverWriteFiles" checked>Yes
+                                        <input type="radio" name="collabNetoverWriteFiles">No
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td><input type="text" placeholder="Url"></td>
+                                    <td><input type="text" placeholder="Username"></td>
+                                    <td><input type="password" placeholder="Password"></td>
+                                </tr>
+                                <tr>
+                                    <td><input name="collabNetProject" type="text" placeholder="Project"></td>
+                                    <td><input name="collabNetPackage" type="text" placeholder="Package"></td>
+                                    <td><input name="collabNetRelease" type="text" placeholder="Release"></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <!-- Upload Settings ends here -->
+
+                    <!-- Job confiure buttons starts -->
+                     
+                    
+                    <!-- Job confiure buttons ends -->
+                </form>
+            </div>
+            <span id='errMsg' class="flt_left"/>  
+            <div id="popupBtns" class="flt_right">
+                <input class="btn btn_style" type="button" appname="" appDirName="" jobtemplatename="" name="configure" value="Configure">
+                <input class="btn btn_style dyn_popup_close" type="button" value="Close">
+            </div>
        </div>
+	   <div id="crone_triggered" class="dyn_popup" style="display:none">
+						<span>Your Schedule will be triggered using the following pattern<br>Daily Schedule</span>
+						<table class="table table-striped table_border table-bordered" border="0" cellpadding="0" cellspacing="0">
+							<thead>
+								<tr>
+									<th>Date</th> 
+								</tr>
+							</thead>
+							<tbody name="scheduleDates">
+							</tbody>
+						</table> 
+						<div id="popupBtns" class="flt_right">
+							<input class="btn btn_style dyn_popupcon_close" type="button" value="Close">
+						</div>
+					</div>
         <!-- popup ends -->
 
         <!--content_main div ends here -->
     </section>
     
     <!-- Global buttons starts -->
-    <section class="content_end">
+    <section class="content_end">        
         <div class="flt_right">
             <a href="javascript:;"><input type="submit" value="Add" class="btn btn_style add_icon_btn"></a>
             <input type="submit" value="Cancel" class="btn btn_style cancel_icon_btn">

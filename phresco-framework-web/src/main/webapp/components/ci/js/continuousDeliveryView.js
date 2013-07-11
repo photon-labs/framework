@@ -11,6 +11,11 @@ define(["framework/widgetWithTemplate", "ci/listener/ciListener"], function() {
 		ciRequestBody : {},
 		templateData : {},
 		continuousDeliveryConfigureLoadEvent : null,
+		continuousDeliveryConfigureEditEvent : null,
+		listBuildsEvent : null,
+		generateBuildEvent : null,
+		deleteJobEvent : null,
+		cloneCiEvent : null,
 	
 		/***
 		 * Called in initialization time of this class 
@@ -34,11 +39,36 @@ define(["framework/widgetWithTemplate", "ci/listener/ciListener"], function() {
 		
 		registerEvents : function (ciListener) {
 			var self = this;
+			if (self.continuousDeliveryConfigureEditEvent === null) {
+				self.continuousDeliveryConfigureEditEvent = new signals.Signal();
+			}
+
 			if (self.continuousDeliveryConfigureLoadEvent === null) {
 				self.continuousDeliveryConfigureLoadEvent = new signals.Signal();
 			}
-
+			
+			if (self.listBuildsEvent === null) {
+				self.listBuildsEvent = new signals.Signal();
+			}
+			
+			if (self.generateBuildEvent === null) {
+				self.generateBuildEvent = new signals.Signal();
+			}
+			
+			if (self.deleteJobEvent === null) {
+				self.deleteJobEvent = new signals.Signal();
+			}
+			
+			if (self.cloneCiEvent === null) {
+				self.cloneCiEvent = new signals.Signal();
+			}
+			
+			self.continuousDeliveryConfigureEditEvent.add(ciListener.editContinuousDeliveryConfigure, ciListener);
 			self.continuousDeliveryConfigureLoadEvent.add(ciListener.loadContinuousDeliveryConfigure, ciListener);
+			self.listBuildsEvent.add(ciListener.getBuilds, ciListener);
+			self.generateBuildEvent.add(ciListener.generateBuild, ciListener);
+			self.deleteJobEvent.add(ciListener.deleteContinuousDelivery, ciListener);
+			self.cloneCiEvent.add(ciListener.cloneCi, ciListener);
 		},
 		/***
 		 * Called in once the login is success
@@ -48,11 +78,18 @@ define(["framework/widgetWithTemplate", "ci/listener/ciListener"], function() {
 			Clazz.navigationController.jQueryContainer = commonVariables.contentPlaceholder;
 			Clazz.navigationController.push(this, true);
 		},
+
+		loadPageTest :function(){
+			Clazz.navigationController.push(this);
+		},
 		
-		// preRender: function(whereToRender, renderFunction){
-		// 	var self = this;
-		// 	console.log("Pre render .... ");
-		// },
+		preRender: function(whereToRender, renderFunction){
+			var self = this;
+			self.ciListener.listJobTemplate(self.ciListener.getRequestHeader(self.ciRequestBody, "continuousDeliveryList"), function(response) {
+				self.templateData.projectDelivery = response.data;
+				renderFunction(self.templateData, whereToRender);
+			});		
+		},
 
 		/***
 		 * Called after the preRender() and bindUI() completes. 
@@ -66,7 +103,6 @@ define(["framework/widgetWithTemplate", "ci/listener/ciListener"], function() {
 		
 		getAction : function(ciRequestBody, action, param, callback) {
 			var self=this;
-			console.log("Get action .... "); 
 		},
 
 		/***
@@ -135,13 +171,50 @@ define(["framework/widgetWithTemplate", "ci/listener/ciListener"], function() {
 				self.continuousDeliveryConfigureLoadEvent.dispatch();
    			});
 
+   			$("a[name=editContinuousDelivery]").click(function() {
+   				
+   				var contName = $(this).parent().parent().text();
+   				//console.info("$(this).parent().parent().text() "+contName.replace(/\s+$/,""));
+				self.continuousDeliveryConfigureEditEvent.dispatch(contName.replace(/\s+$/,""));
+   			});
+
 			$(".datetime_status").click(function() {
 				self.openccwait(this, $(this).attr('class'));
 			});
-
+			
+			$("a[temp=deleteCI]").click(function() {
+				var name = $(this).attr('name');
+				$("input[name=cdName]").val(name);
+				self.openccci(this, $(this).attr('class'));
+			});
+			
+			$("a[temp=clone]").click(function() {
+				var name = $(this).attr('name');
+				$("input[name=hiddenfieldName]").val(name);
+				self.openccci(this, $(this).attr('class'));
+			});
+			
+			$("input[name='confirmDeleteCI']").unbind('click');
+			$("input[name='confirmDeleteCI']").click(function(e) {
+				self.deleteJobEvent.dispatch($(this));
+			});
+			
 			$(".ci_info").click(function() {
 				self.opencctime(this, $(this).attr('class'));
 			});
+			
+			$("#clone_ci").click(function() {
+				self.cloneCiEvent.dispatch($(this));
+			});
+			
+			$("a[temp=list_builds]").click(function() {
+				self.listBuildsEvent.dispatch($(this));
+			});
+			
+			$("a[temp=generate_build]").click(function() {
+				self.generateBuildEvent.dispatch($(this));
+			});
+			
 		}
 	});
 
