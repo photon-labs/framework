@@ -238,7 +238,8 @@ define(["configuration/api/configurationAPI"], function() {
 							if(currentConfig === 'Server') {
 								if($(this).attr('configType') === currentConfig) {
 									bCheck = true;
-									self.successMsgPopUp("Server Already Added");		
+									$(".blinkmsg").removeClass("poperror").addClass("popsuccess");
+									self.effectFadeOut('popsuccess', ("Server Already Added"));			
 									flag = 1;
 								}
 							}
@@ -246,10 +247,9 @@ define(["configuration/api/configurationAPI"], function() {
 							if(currentConfig === 'Email') {
 								if($(this).attr('configType') === currentConfig) {
 									bCheck = true;
-									setTimeout(function(){
-										self.successMsgPopUp("Email Already Added");		
-									},2500);
-								}
+									$(".blinkmsg").removeClass("poperror").addClass("popsuccess");
+									self.effectFadeOut('popsuccess', ("Email Already Added"));			
+							}
 							}
 						});
 					}
@@ -336,7 +336,8 @@ define(["configuration/api/configurationAPI"], function() {
 								});
 							
 								 if ((options1 === "") && (flag === 0)){ 
-									self.successMsgPopUp("Choose the Server Type from App Info");
+								$(".blinkmsg").removeClass("poperror").addClass("popsuccess");
+								self.effectFadeOut('popsuccess', ("Choose the Server Type from App Info"));
 								} 
 							} else if(currentConfig === 'Database') {
 								$.each(self.databaseTypeVersion, function(key, value){
@@ -347,8 +348,9 @@ define(["configuration/api/configurationAPI"], function() {
 									options1 = options1.concat('<option value="' + key + '" '+selectedAttr+'>' + key + '</option>');
 								});
 							
-								 if (options1 === ""){ 
-									self.successMsgPopUp("Choose the DB Type from App Info");
+								 if (options1 === ""){
+								 	$(".blinkmsg").removeClass("poperror").addClass("popsuccess");
+									self.effectFadeOut('popsuccess',("Choose the DB Type from App Info"));		
 								}
 							}
 							inputCtrl = inputCtrl.concat(options1);
@@ -1055,7 +1057,8 @@ define(["configuration/api/configurationAPI"], function() {
 				self.getConfigurationList(self.getRequestHeader(self.configRequestBody, "saveConfig", envrName), function(response) {
 					Clazz.navigationController.jQueryContainer = commonVariables.contentPlaceholder;
 					setTimeout(function(){
-						self.successMsgPopUp(response.message);			
+						$(".blinkmsg").removeClass("poperror").addClass("popsuccess");
+						self.effectFadeOut('popsuccess', (response.message));		
 					},2500);
 					if(self.configListPage === null) {
 						commonVariables.navListener.getMyObj(commonVariables.configuration, function(retVal) {

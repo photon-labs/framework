@@ -417,6 +417,12 @@ define(["framework/widget", "framework/templateProvider"], function() {
 				$('#myModal').html(msg);
 				setTimeout("$('#myModal').modal('hide')", 3000);
 			},
+			effectFadeOut : function (classname, msg) {
+				$("."+classname).css("left", Math.max(0, (($(window).width() - $("."+classname).outerWidth()) / 2) +    $(window).scrollLeft()) + "px");
+				$("."+classname).html(msg);
+				$("."+classname).show();
+				$("."+classname).fadeIn(500).fadeOut(500).fadeIn(500).fadeOut(500).fadeIn(500).fadeOut(5);
+			},
 
 			// popUp for success event to close auto
 			failureMsgPopUp : function(msg) {

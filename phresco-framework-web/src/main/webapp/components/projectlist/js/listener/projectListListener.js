@@ -87,29 +87,37 @@ define(["projectlist/api/projectListAPI"], function() {
 						if(response !== null ){
 							self.hidePopupLoad();
 							if(self.act==='delete') {
-								self.successMsgPopUp(response.message);		
+								$(".blinkmsg").removeClass("poperror").addClass("popsuccess");
+								self.effectFadeOut('popsuccess', (response.message));
 							} else if(self.act==='updateget') {
-								self.successMsgPopUp(response.message);
+								$(".blinkmsg").removeClass("poperror").addClass("popsuccess");
+								self.effectFadeOut('popsuccess', (response.message));
 							} else if(self.act==='repoget') {
-								self.successMsgPopUp(response.message);
+								$(".blinkmsg").removeClass("poperror").addClass("popsuccess");
+								self.effectFadeOut('popsuccess', (response.message));
 							} else if(self.act==='commitget') {
-								self.successMsgPopUp(response.message);
+								$(".blinkmsg").removeClass("poperror").addClass("popsuccess");
+								self.effectFadeOut('popsuccess', (response.message));
 							}
 							self.hidePopupLoad();
 							callback(response);		
 						} else {
 							self.hidePopupLoad();
 							callback({ "status" : "service failure"});
-							self.failureMsgPopUp(response.message);
+							$(".blinkmsg").removeClass("poperror").addClass("popsuccess");
+							self.effectFadeOut('popsuccess', (response.message));
 						}
 					},					
 					function(textStatus) {
 						if(self.act==='updateget') {
-							self.failureMsgPopUp("Project Update Failed");
+							$(".blinkmsg").removeClass("popsuccess").addClass("poperror");
+							self.effectFadeOut('poperror', 'Project Update Failed');
 						} else if(self.act==='repoget') {
-							self.failureMsgPopUp("Add To Repo Failed");
+							$(".blinkmsg").removeClass("popsuccess").addClass("poperror");
+							self.effectFadeOut('poperror', 'Add To Repo Failed');
 						} else if(self.act==='commitget') {
-							self.failureMsgPopUp("Commit Failed");
+							$(".blinkmsg").removeClass("popsuccess").addClass("poperror");
+							self.effectFadeOut('poperror', 'Commit Failed');
 						}
 						self.hidePopupLoad();
 					}
@@ -294,7 +302,8 @@ define(["projectlist/api/projectListAPI"], function() {
 			action = "generateReport";
 			self.projectListAction(self.getActionHeader(actionBody, action), $('#pdfReportLoading_'+dynamicId), function(response){
 				if (response.service_exception !== null) {
-					self.failureMsgPopUp(response.service_exception);
+				$(".blinkmsg").removeClass("popsuccess").addClass("poperror");
+				self.effectFadeOut('poperror', (response.service_exception));
 				} else {
 					self.getReportEvent(response, appDir, "All", dynamicId);
 				}
