@@ -21,8 +21,11 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
 
+import com.photon.phresco.framework.rest.api.util.BufferMapTest;
+
 @RunWith(Suite.class)
-@SuiteClasses({LoginServiceTest.class,
+@SuiteClasses({
+	LoginServiceTest.class,
 	ProjectServiceTest.class,
 	CodeValidationServiceTest.class,
 	ConfigurationServiceTest.class,
@@ -38,7 +41,8 @@ import org.junit.runners.Suite.SuiteClasses;
 	AppInfoConfigsTest.class,
 	UtilServiceTest.class,
 	FeatureServiceTest.class,
-	CIJobTemplateServiceTest.class
+	CIJobTemplateServiceTest.class,
+	BufferMapTest.class
 	}
 )
 

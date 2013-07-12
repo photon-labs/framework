@@ -17,12 +17,14 @@ public class BufferMapTest {
 	private static final String BUILDING_JWS_1_0 = "Building JWS 1.0";
 	String uniqueKey = "";
 	BufferedInputStream reader = null;
+	BufferMap bufferMap = null;
 	
 	@Before
 	public void setUp() throws Exception {
 		uniqueKey = "20bd6122-2a3d-4f56-8604-0c92250a0023";
 		InputStream resourceAsStream = BufferMapTest.class.getResourceAsStream("/logText.log");
 		reader = new BufferedInputStream(new MyWrapper(resourceAsStream));
+		bufferMap = new BufferMap();
 	}
 
 	@After
@@ -32,6 +34,9 @@ public class BufferMapTest {
 		}
 		if (uniqueKey != null) {
 			uniqueKey = null;
+		}
+		if (bufferMap != null) {
+			bufferMap = null;
 		}
 	}
 
@@ -47,6 +52,17 @@ public class BufferMapTest {
 		BufferedInputStream bufferReader = BufferMap.getBufferReader(uniqueKey);
 		String logs = readStream(bufferReader);
 		Assert.assertTrue(StringUtils.countMatches(logs, BUILDING_JWS_1_0) == 2 && StringUtils.countMatches(logs, BUILD_SUCCESS) == 2 && StringUtils.countMatches(logs, T_E_S_T_S) == 1);
+	}
+	
+	@Test
+	public void testReadBufferReader() throws IOException {
+		BufferMap.readBufferReader(uniqueKey);
+	}
+	
+	@Test
+	public void testReadBufferReaderLine() throws IOException {
+		testAddBufferReader();
+		BufferMap.readBufferReader(uniqueKey);
 	}
 	
 	@Test

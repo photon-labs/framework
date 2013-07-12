@@ -16,7 +16,6 @@ public class BufferMap {
 			
 			BufferedInputStream stream = BufferReaderMap.get(key);
 			
-//			line = stream.readLine();
 			int available = stream.available();
         	if (available != 0) {
         		byte[] buf = new byte[available];
