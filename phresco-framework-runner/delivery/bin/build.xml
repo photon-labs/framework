@@ -36,6 +36,12 @@
 	<property name="phresco.url" value="http://localhost:${framework.http.port}/${framework.context}"/>
     <property name="waxsim.home" value="${phresco.home}/workspace/tools/waxsim"/>
 	
+	<taskdef resource="net/sf/antcontrib/antcontrib.properties">
+		<classpath>
+			<pathelement location="${phresco.home}/workspace/repo/ant-contrib/ant-contrib/1.0b3/ant-contrib-1.0b3.jar" />
+		</classpath>
+	</taskdef>
+	
 	<target name="init">
 		<available property="phresco.upgraded" file="${phresco.upgrade.file}"/>
 	</target>	
@@ -125,11 +131,24 @@
 		<echo message="*******************************************************************"/>
 		
 		<antcall target="open-browser"/> 
-		
-		<echo message="Started deploying sonar "/>
-		<unwar src="${phresco.home}/workspace/repo/sonar/sonar/${sonar.version}/sonar-${sonar.version}.war" dest="${tomcat.home}/webapps/sonar"/>
-		<echo message="Loading Sonar"/>
-		
+		<antcall target="sonar-startup-option"/> 
+	</target>
+	
+	<target name="sonar-startup-option"> 
+		<var name="run-sonar" value="${sonar.startup}" />
+		<echo message="input name: ${run-sonar}" />
+		<if>
+		  <equals arg1="${run-sonar}" arg2="true" />
+		  <then>
+			 <echo>sonar will start</echo>
+			 <echo message="Started deploying sonar "/>
+			 <unwar src="${phresco.home}/workspace/repo/sonar/sonar/${sonar.version}/sonar-${sonar.version}.war" dest="${tomcat.home}/webapps/sonar"/>
+			 <echo message="Loading Sonar"/>
+		  </then>
+		  <else>
+			<echo>sonar startup option is false</echo>
+		  </else>
+		</if>   
 	</target>
 	
 	<target name="open-browser">
