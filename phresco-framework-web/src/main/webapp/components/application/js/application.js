@@ -178,12 +178,18 @@ define(["application/listener/applicationListener"], function() {
 				self.onRemoveLayerEvent.dispatch($(this));
 			});
 			
-			$("input[name='appDirName']").bind('input', function(){
-				var str = $(this).val();
-				str = str.replace(/\s/g, "");
-				$(this).val(str);
+			/*$("input[name='appname']").on('keyup',function() {
+				$("input[name='projectcode']").val(self.editApplicationListener.specialCharValidation($(this).val()));
+			});*/
+
+			$("input[name='appCode']").bind('input',function() {
+				$("input[name='appCode']").val(self.specialCharValidation($(this).val().replace(/\s/g, "")));
 			});
 			
+			$("input[name='appDirName']").bind('input',function() {
+				$("input[name='appDirName']").val(self.specialCharValidation($(this).val()));
+			}); 
+
 			$(".content_end input").unbind('click');
 			$(".content_end input").bind('click', function(){
 				self.onAddLayerEvent.dispatch($(this));

@@ -557,6 +557,11 @@ define(["framework/widget", "framework/templateProvider"], function() {
 				});
 			},
 			
+			//Allows A to Z a to Z, 0 to 9 and . - _
+			specialCharValidation : function(inputStr) {
+				return inputStr.replace(/[^a-zA-Z 0-9\.\-\_]+/g, '');
+	        },
+
 			showDynamicPopupLoading : function () {
 				$('.dynamicPopupLoading').show();
 			},

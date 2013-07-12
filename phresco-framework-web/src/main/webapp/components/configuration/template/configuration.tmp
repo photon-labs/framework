@@ -10,8 +10,8 @@
                     <td>&nbsp;</td>
                 </tr>
                 <tr>
-                	<td><input type="text" class="pop_txt dyn_popup_text" name="envName" placeholder="Environment Name"></td>
-                    <td><input type="text" class="pop_txt dyn_popup_text" name="envDesc" placeholder="Environment Description"></td>
+                	<td><input type="text" class="pop_txt dyn_popup_text" name="envName" maxlength="30" title="30 Characters only" placeholder="Environment Name"></td>
+                    <td><input type="text" class="pop_txt dyn_popup_text" name="envDesc" maxlength="150" title="150 Characters only" placeholder="Environment Description"></td>
                     <td><input type="button" class="btn btn_style" name="addEnv" value="Add"></td>
                 </tr>
                 <tr>
@@ -104,8 +104,8 @@
                                 <td>&nbsp;</td>
                             </tr>
                             <tr>
-                                <td><input type="text" class="cloneEnvName{{name}} dyn_popup_text envrName" placeholder="Environment Name" name="envrName"></td>
-                                <td><input type="text" class="cloneEnvDesc{{name}} dyn_popup_text" placeholder="Environment Description" name="envrDesc"></td>
+                                <td><input type="text" class="cloneEnvName{{name}} dyn_popup_text envrName" placeholder="Environment Name" name="envrName" maxlength="30" title="30 Characters only"></td>
+                                <td><input type="text" class="cloneEnvDesc{{name}} dyn_popup_text" placeholder="Environment Description" name="envrDesc" maxlength="30" title="30 Characters only"></td>
                             </tr>
                             <tr>
                                <td>

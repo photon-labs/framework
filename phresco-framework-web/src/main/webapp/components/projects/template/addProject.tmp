@@ -4,13 +4,13 @@
             <tbody class="scrollContent" name="layercontents"> 
             	<tr>
                     <td><span data-i18n="project.create.label.name"></span><sup>*</sup></td>
-                    <td><input type="text" name="projectname" placeholder="Project Name"/></td>
+                    <td><input type="text" name="projectname" maxlength="30" placeholder="Project Name" title="30 Characters only"/></td>
                     <td><span data-i18n="project.create.label.code"></span><sup>*</sup></td>
-                    <td><input type="text" name="projectcode" placeholder="Project Code"/></td>
+                    <td><input type="text" name="projectcode" maxlength="30"  placeholder="Project Code" title="30 Characters only"/></td>
                     <td><span data-i18n="project.create.label.version"></span><sup>*</sup></td>
-                    <td><input type="text" name="projectversion" value="1.0"/></td>
+                    <td><input type="text" name="projectversion" value="1.0" maxlength="20" title="20 Characters only"/></td>
                     <td data-i18n="project.create.label.description"></td>
-                    <td rowspan="2"><textarea class="popuptextarea" name="projectdescription" data-i18n="[placeholder]project.create.label.description"/></td>
+                    <td rowspan="2"><textarea class="popuptextarea" name="projectdescription" maxlength="150" title="150 Characters only" data-i18n="[placeholder]project.create.label.description"/></td>
                 </tr>
                 <tr>
                     <td colspan="2">
@@ -58,7 +58,7 @@
 								</thead>
 								<tbody class="applnlayer">
 									<tr class="applnlayercontent" name="staticApplnLayer">
-										<td class="applnappcode"><input type="text" id="appcode" class="appln-appcode"></td>
+										<td class="applnappcode"><input type="text" id="appcode"  maxlength="30" title="30 characters only" class="appln-appcode"></td>
 										<td name="technology" class="technology">
 											<select name="appln_technology" class="appln_technology">
 											   <option>Select Technology</option>
@@ -109,7 +109,7 @@
 								</thead>
 								<tbody class="WebLayer">
 									<tr class="weblayercontent" name="staticWebLayer">
-										<td class="webappcode"><input type="text" id="webappcode" class="web-appcode"></td>
+										<td class="webappcode"><input type="text" id="webappcode"  maxlength="30" title="30 characters only" class="web-appcode"></td>
 										<td name="web" class="web">
 											<select name="weblayer" class="weblayer">
 												<option>Select Layer</option>
@@ -163,7 +163,7 @@
 								</thead>
 								<tbody>
 									<tr class="mobilelayercontent" name="staticMobileLayer">
-										<td class="mobileappcode"><input type="text" id="mobileappcode" class="mobile-appcode"></td>
+										<td class="mobileappcode"><input type="text" id="mobileappcode" maxlength="30" title="30 characters only" class="mobile-appcode"></td>
 										<td name="mobile" class="mobile">
 											<select name="mobile_layer" class="mobile_layer">
 											   <option>Select Model</option>

@@ -6,13 +6,13 @@
 				{{#editProject}}
             	<tr>
                     <td data-i18n="project.create.label.name"><sup>*</sup></td>
-                    <td><input type="text" value="{{name}}" name="projectname" placeholder="Project Name" disabled/></td>
+                    <td><input type="text" value="{{name}}" name="projectname" maxlength="30" title="30 Characters only" placeholder="Project Name" disabled/></td>
                     <td data-i18n="project.create.label.code"><sup>*</sup></td>
-                    <td><input type="text" value="{{projectCode}}" name="projectcode" placeholder="Project Code" disabled/></td>
+                    <td><input type="text" value="{{projectCode}}" name="projectcode" maxlength="30" title="30 Characters only" placeholder="Project Code" disabled/></td>
                     <td data-i18n="project.create.label.version"></td>
-                    <td><input type="text" name="projectversion" value="{{version}}" disabled/></td>
+                    <td><input type="text" name="projectversion" maxlength="20" title="20 Characters only" value="{{version}}" disabled/></td>
                     <td data-i18n="project.create.label.description"></td>                              
-                    <td rowspan="2"><textarea class="popuptextarea" name="projectdescription"  placeholder="Description" disabled >{{description}}</textarea></td>
+                    <td rowspan="2"><textarea class="popuptextarea" name="projectdescription"  maxlength="150" title="150 Characters only" placeholder="Description" disabled >{{description}}</textarea></td>
                 </tr>
                 <tr>
 					<td colspan="2">
@@ -59,7 +59,7 @@
 								</thead>
 								<tbody class="applnlayer">
 									<tr class="applnlayercontent" name="staticApplnLayer" style="display:none;">
-										<td class="applnappcode"><input type="text" id="appcode" class="appln-appcode"></td>
+										<td class="applnappcode"><input type="text" id="appcode" maxlength="30" title="30 Characters only" class="appln-appcode"></td>
 										<td name="technology" class="technology">
 											<select name="appln_technology" class="appln_technology">
 											   <option>Select Technology</option>
@@ -107,7 +107,7 @@
 								</thead>
 								<tbody class="WebLayer">
 									<tr class="weblayercontent" name="staticWebLayer" style="display:none;">
-										<td class="webappcode"><input type="text" id="webappcode" class="web-appcode"></td>
+										<td class="webappcode"><input type="text" id="webappcode" maxlength="30" title="30 Characters only" class="web-appcode"></td>
 										<td name="web" class="web">
 											<select name="weblayer" class="weblayer">
 												<option>Select Layer</option>
@@ -158,7 +158,7 @@
 								</thead>
 								<tbody class="MobLayer">
 									<tr class="mobilelayercontent" name="staticMobileLayer" style="display:none;">
-										<td class="mobileappcode"><input type="text" id="mobileappcode" class="mobile-appcode"></td>
+										<td class="mobileappcode"><input type="text" id="mobileappcode" maxlength="30" title="30 Characters only" class="mobile-appcode"></td>
 										<td name="mobile" class="mobile">
 											<select name="mobile_layer" class="mobile_layer">
 											   <option>Select Model</option>

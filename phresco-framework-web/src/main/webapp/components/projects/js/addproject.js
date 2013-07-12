@@ -152,11 +152,9 @@ define(["projects/listener/projectsListener"], function() {
 				self.onAddLayerEvent.dispatch($(this));
 			});
 			
+			$("#appcode, #webappcode, #mobileappcode").unbind('input');
 			$("#appcode, #webappcode, #mobileappcode").bind('input', function(){
-				var str = $(this).val();
-				str = str.replace(/[^a-zA-Z 0-9\-\_]+/g, "");
-				str = str.replace(/\s/g, "");
-				$(this).val(str);
+				$(this).val(self.specialCharValidation($(this).val().replace(/\s/g, "")));
 			});
 
 			$("input[name='Create']").unbind('click');
@@ -179,10 +177,18 @@ define(["projects/listener/projectsListener"], function() {
 				}
 			});
 
-			$("input[name='projectname']").on('keyup',function() {
-				$("input[name='projectcode']").val($(this).val());
+			$("input[name='projectname']").bind('input',function() {
+				$("input[name='projectcode']").val(self.specialCharValidation($(this).val().replace(/\s/g, "")));
+			});
+
+			$("input[name='projectcode']").bind('input',function() {
+				$("input[name='projectcode']").val(self.specialCharValidation($(this).val().replace(/\s/g, "")));
 			});
 			
+			$("input[name='projectversion']").on('keyup',function() {
+				$("input[name='projectversion']").val(self.specialCharValidation($(this).val().replace(/\s/g, "")));
+			});
+
 			$("input[name='multimodule']").click(function() {
 				$(this).is(':checked')?$(this).val(true):$(this).val(false);
 				var multimodule = $("input[name=multimodule]").val();

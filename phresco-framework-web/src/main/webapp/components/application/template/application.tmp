@@ -5,18 +5,18 @@
 			{{#each projectlist.appdetails.data.appInfos}}
             	<tr>
                     <td><span data-i18n="application.edit.name"></span><sup>*</sup></td>
-                    <td><input type="text" name="appName" placeholder="App Name" value="{{name}}"/></td>
+                    <td><input type="text" name="appName" maxlength="30" title="30 Characters only" placeholder="App Name" value="{{name}}"/></td>
                     <td><span data-i18n="application.edit.code"></span><sup>*</sup></td>
-                    <td><input type="text" placeholder="Application Code" name="appCode" value="{{code}}"/></td>
+                    <td><input type="text" placeholder="Application maxlength="30" title="30 Characters only" Code" name="appCode" value="{{code}}"/></td>
                     <td class="desc" rowspan="3" data-i18n="application.edit.description"></td>
-                    <td class="descdata" rowspan="3"><textarea name="appDesc" class="appDesc popuptextarea" id="appDesc">{{description}}</textarea></td>
+                    <td class="descdata" rowspan="3"><textarea name="appDesc" maxlength="150" title="150 Characters only" class="appDesc popuptextarea" id="appDesc">{{description}}</textarea></td>
 					<td colspan="2"></td>
                 </tr>
                 <tr>
                 	<td><span data-i18n="application.edit.appdirectory"></span><sup>*</sup></td>
-                    <td><input type="text" placeholder="App DirName" name="appDirName" value="{{appDirName}}"/></td>
+                    <td><input type="text" maxlength="30" title="30 Characters only" placeholder="App DirName" name="appDirName" value="{{appDirName}}"/></td>
                     <td data-i18n="application.edit.version"><sup>*</sup></td>
-                    <td><input type="text" placeholder="version" readonly value="{{version}}" name="appVersion"/></td>
+                    <td><input type="text" placeholder="version" maxlength="20" title="20 Characters only" readonly value="{{version}}" name="appVersion"/></td>
 					<td colspan="3"></td>
                 </tr>
                 <tr>
