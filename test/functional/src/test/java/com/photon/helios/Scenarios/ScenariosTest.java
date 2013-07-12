@@ -168,6 +168,55 @@ public class ScenariosTest {
 
 		}
 	}
+	
+	@Test
+	public void testNumericValuesProjectCreation() throws InterruptedException,
+	IOException, Exception {
+		try {
+
+			System.out
+			.println("---------testNumericValuesProjectCreation()-------------");
+			methodName = Thread.currentThread().getStackTrace()[1]
+			                                                    .getMethodName();
+			scenariosScreen.createProjectUseNumericValues(methodName, scenarioConst);
+		} catch (Exception t) {
+			t.printStackTrace();
+
+		}
+	}
+	
+	@Test
+	public void testAlphaNumericValuesProjectCreation() throws InterruptedException,
+	IOException, Exception {
+		try {
+
+			System.out
+			.println("---------testAlphaNumericValuesProjectCreation()-------------");
+			methodName = Thread.currentThread().getStackTrace()[1]
+			                                                    .getMethodName();
+			scenariosScreen.createProjectUseAlphaNumericValues(methodName, scenarioConst);
+		} catch (Exception t) {
+			t.printStackTrace();
+
+		}
+	}
+	
+	@Test
+	public void testSpecialCharProjectCreation() throws InterruptedException,
+	IOException, Exception {
+		try {
+
+			System.out
+			.println("---------testSpecialCharProjectCreation()-------------");
+			methodName = Thread.currentThread().getStackTrace()[1]
+			                                                    .getMethodName();
+			scenariosScreen.createProjectSpecialChar(methodName, scenarioConst);
+		} catch (Exception t) {
+			t.printStackTrace();
+
+		}
+	}
+	
 	@AfterTest
 	public void tearDown() {
 		scenariosScreen.closeBrowser();

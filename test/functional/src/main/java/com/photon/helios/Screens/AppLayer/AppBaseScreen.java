@@ -480,6 +480,12 @@ public class AppBaseScreen {
 			getXpathWebElement(heliosUiConst.getFunctionalToolVersionValue());
 			click();
 			Thread.sleep(30000);
+			
+			Thread.sleep(500);
+			waitForElementPresent(heliosUiConst.getConfigUpdate(), methodName);
+			getXpathWebElement(heliosUiConst.getConfigUpdate());
+			click();
+			Thread.sleep(20000);
 
 		} catch (InterruptedException e) {
 
@@ -774,6 +780,12 @@ public class AppBaseScreen {
 			Thread.sleep(500);
 			waitForElementPresent(heliosUiConst.getFunctionalToolVersionValue(), methodName);
 			getXpathWebElement(heliosUiConst.getFunctionalToolVersionValue());
+			click();
+			Thread.sleep(20000);
+			
+			Thread.sleep(500);
+			waitForElementPresent(heliosUiConst.getConfigUpdate(), methodName);
+			getXpathWebElement(heliosUiConst.getConfigUpdate());
 			click();
 			Thread.sleep(20000);
 
@@ -1071,6 +1083,12 @@ public class AppBaseScreen {
 			getXpathWebElement(heliosUiConst.getFunctionalToolVersionValue());
 			click();
 			Thread.sleep(5000);
+			
+			Thread.sleep(500);
+			waitForElementPresent(heliosUiConst.getConfigUpdate(), methodName);
+			getXpathWebElement(heliosUiConst.getConfigUpdate());
+			click();
+			Thread.sleep(20000);
 
 
 		} catch (InterruptedException e) {
@@ -1346,7 +1364,7 @@ public class AppBaseScreen {
 			getXpathWebElement(heliosUiConst.getTestNGValue());
 			click();
 
-			Thread.sleep(500);
+			Thread.sleep(500);;
 			waitForElementPresent(heliosUiConst.getFunctionalTool(), methodName);
 			getXpathWebElement(heliosUiConst.getFunctionalTool());
 			click();
@@ -1365,7 +1383,12 @@ public class AppBaseScreen {
 			waitForElementPresent(heliosUiConst.getFunctionalToolVersionValue(), methodName);
 			getXpathWebElement(heliosUiConst.getFunctionalToolVersionValue());
 			click();
-			Thread.sleep(5000);
+			
+			Thread.sleep(500);
+			waitForElementPresent(heliosUiConst.getConfigUpdate(), methodName);
+			getXpathWebElement(heliosUiConst.getConfigUpdate());
+			click();
+			Thread.sleep(20000);
 
 
 		} catch (InterruptedException e) {
@@ -1662,6 +1685,12 @@ public class AppBaseScreen {
 			getXpathWebElement(heliosUiConst.getFunctionalToolVersionValue());
 			click();
 			Thread.sleep(5000);
+			
+			Thread.sleep(500);
+			waitForElementPresent(heliosUiConst.getConfigUpdate(), methodName);
+			getXpathWebElement(heliosUiConst.getConfigUpdate());
+			click();
+			Thread.sleep(20000);
 
 
 		} catch (InterruptedException e) {
@@ -1957,6 +1986,12 @@ public class AppBaseScreen {
 			getXpathWebElement(heliosUiConst.getFunctionalToolVersionValue());
 			click();
 			Thread.sleep(5000);
+			
+			Thread.sleep(500);
+			waitForElementPresent(heliosUiConst.getConfigUpdate(), methodName);
+			getXpathWebElement(heliosUiConst.getConfigUpdate());
+			click();
+			Thread.sleep(20000);
 
 
 		} catch (InterruptedException e) {
@@ -2359,7 +2394,12 @@ public class AppBaseScreen {
 			waitForElementPresent(heliosUiConst.getFunctionalToolVersionValue(), methodName);
 			getXpathWebElement(heliosUiConst.getFunctionalToolVersionValue());
 			click();
-			Thread.sleep(5000);
+			
+			Thread.sleep(500);
+			waitForElementPresent(heliosUiConst.getConfigUpdate(), methodName);
+			getXpathWebElement(heliosUiConst.getConfigUpdate());
+			click();
+			Thread.sleep(20000);
 
 
 		} catch (InterruptedException e) {
@@ -2634,7 +2674,13 @@ public class AppBaseScreen {
 			waitForElementPresent(heliosUiConst.getFunctionalToolVersionValue(), methodName);
 			getXpathWebElement(heliosUiConst.getFunctionalToolVersionValue());
 			click();
-			Thread.sleep(5000);
+			
+			
+			Thread.sleep(500);
+			waitForElementPresent(heliosUiConst.getConfigUpdate(), methodName);
+			getXpathWebElement(heliosUiConst.getConfigUpdate());
+			click();
+			Thread.sleep(20000);
 		} catch (InterruptedException e) {
 
 			e.printStackTrace();
@@ -2905,7 +2951,19 @@ public class AppBaseScreen {
 			waitForElementPresent(heliosUiConst.getFunctionalToolVersionValue(), methodName);
 			getXpathWebElement(heliosUiConst.getFunctionalToolVersionValue());
 			click();
+			
 			Thread.sleep(5000);
+			waitForElementPresent(heliosUiConst.getFunctionalToolVersionValue(), methodName);
+			getXpathWebElement(heliosUiConst.getFunctionalToolVersionValue());
+			click();
+			
+			Thread.sleep(500);
+			waitForElementPresent(heliosUiConst.getConfigUpdate(), methodName);
+			getXpathWebElement(heliosUiConst.getConfigUpdate());
+			click();
+			Thread.sleep(20000);
+			
+			
 
 
 		} catch (InterruptedException e) {

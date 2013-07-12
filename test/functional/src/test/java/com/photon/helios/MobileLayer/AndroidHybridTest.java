@@ -98,6 +98,21 @@ public class AndroidHybridTest {
 		}
 	} 
 	
+	@Test
+	public void testAndroidHybridArchetypeBuild()
+	throws InterruptedException, IOException, Exception {
+		try {
+
+			System.out.println("---------testAndroidHybridArchetypeBuild()-------------");
+			methodName = Thread.currentThread().getStackTrace()[1].getMethodName();
+			mobBaseScreen.androidHybridArchetypeBuild(methodName, androidHybridConst);
+
+		} catch (Exception t) {
+			t.printStackTrace();
+
+		}
+	}
+	
 	@AfterTest
 	public  void tearDown() {
 		mobBaseScreen.closeBrowser();

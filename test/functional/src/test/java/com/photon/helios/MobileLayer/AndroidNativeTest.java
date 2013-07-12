@@ -98,6 +98,21 @@ public class AndroidNativeTest {
 		}
 	} 
 	
+	@Test
+	public void testAndroidNativeArchetypeBuild()
+	throws InterruptedException, IOException, Exception {
+		try {
+
+			System.out.println("---------testAndroidNativeArchetypeBuild()-------------");
+			methodName = Thread.currentThread().getStackTrace()[1].getMethodName();
+			mobBaseScreen.androidNativeArchetypeBuild(methodName, androidNativeConst);
+
+		} catch (Exception t) {
+			t.printStackTrace();
+
+		}
+	}
+	
 	
 
 	@AfterTest

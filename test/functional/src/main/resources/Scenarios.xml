@@ -21,7 +21,7 @@
 		<iPhoneHybridName>iPhoneHybrid</iPhoneHybridName>
 		<iPhoneHybridDesc>This is iPhoneHybrid Project</iPhoneHybridDesc>
 		<iPhoneHybridAppCode>IHNJ</iPhoneHybridAppCode>
-		<iPhoneHybridWebCode>IHNJMW</iPhoneHybridWebCode>
+ 		<iPhoneHybridWebCode>IHNJMW</iPhoneHybridWebCode>
 		<iPhoneHybridMobCode>NJIH</iPhoneHybridMobCode>
 		<androidHybridName>AndroidHybrid</androidHybridName>
 		<androidHybridDesc>This is AndroidHybrid Project</androidHybridDesc>
@@ -36,5 +36,16 @@
 		<jQueryWidgetDesc>This is JQuery Widget Project</jQueryWidgetDesc>
 		<jQueryWidgetAppcode>NJJW2</jQueryWidgetAppcode>
 		<jQueryWidgetWebcode>JQNJ2</jQueryWidgetWebcode>
+		
+		<projectName_Numeric>12345</projectName_Numeric>
+		<project_Description_Numeric>This is Iphone Native project use to Numeric values and create project</project_Description_Numeric>
+		<numeric_AppCode>Numeric</numeric_AppCode>
+		<projectName_AlphaNumeric>abcde123</projectName_AlphaNumeric>
+		<project_Description_AlphaNumeric>This is Iphone Native project use to Alpha Numeric values and create project</project_Description_AlphaNumeric>
+		<alphaNumeric_AppCode>AlphaNumeric</alphaNumeric_AppCode>
+		<projectName_SpecialChar>!@#$%^;:''</projectName_SpecialChar>
+		<projectDesc_SpecialChar>This is Iphone Native project use to special char and create project</projectDesc_SpecialChar>
+		<specialChar_AppCode>SpecialChar</specialChar_AppCode>
+		
 	</phresco>
 </environment>

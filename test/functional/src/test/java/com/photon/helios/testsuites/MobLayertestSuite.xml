@@ -42,6 +42,7 @@
 				<include name="testAndroidNativeArchetypeCreation"></include>
 				<include name="testAndroidNativeArchetypeEditApp"></include>
 				<include name="testAndroidNativeArchetypeUpdateApp"></include>
+				<include name="testAndroidNativeArchetypeBuild"></include>
 			</methods>
 		</classes>
 	</test>
@@ -53,6 +54,7 @@
 				<include name="testAndroidHybridArchetypeCreation"></include>
 				<include name="testAndroidHybridArchetypeEditApp"></include>
 				<include name="testAndroidHybridArchetypeUpdateApp"></include>
+				<include name="testAndroidHybridArchetypeBuild"></include>
 			</methods>
 		</classes>
 	</test>
@@ -64,6 +66,7 @@
 				<include name="testAndroidLibraryArchetypeCreation"></include>
 				<include name="testAndroidLibraryArchetypeEditApp"></include> 
 				<include name="testAndroidLibraryArchetypeUpdateApp"></include>
+				<include name="testAndroidLibraryArchetypeBuild"></include>
 			</methods>
 		</classes>
 	</test>

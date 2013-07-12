@@ -832,7 +832,242 @@ public class ScenariosScreen {
 			e.printStackTrace();
 		}
 	}
+	
+	
+	public void createProjectUseNumericValues(String methodName, ScenariosConstants scenarioConst)
+	throws Exception {
+		if (StringUtils.isEmpty(methodName)) {
+			methodName = Thread.currentThread().getStackTrace()[1]
+			                                                    .getMethodName();
+		}
+		log.info("@createProjectUseNumericValues executing");
+		try {
+			Thread.sleep(3000);
+			waitForElementPresent(heliosUiConst.getProjectButton(), methodName);
+			getXpathWebElement(heliosUiConst.getProjectButton());
+			click();
 
+			Thread.sleep(500);
+			waitForElementPresent(heliosUiConst.getAddProjectButton(),
+					methodName);
+			getXpathWebElement(heliosUiConst.getAddProjectButton());
+			click();
+
+			Thread.sleep(500);
+			waitForElementPresent(heliosUiConst.getProjectName(), methodName);
+			getXpathWebElement(heliosUiConst.getProjectName());
+			click();
+			clear();
+			sendKeys(scenarioConst.getProjectNameNumeric());
+
+			Thread.sleep(500);
+			waitForElementPresent(heliosUiConst.getProjectDescription(),
+					methodName);
+			getXpathWebElement(heliosUiConst.getProjectDescription());
+			click();
+			clear();
+			sendKeys(scenarioConst.getNumericProjectDesc());
+
+			Thread.sleep(1000);
+			waitForElementPresent(heliosUiConst.getWebLayerAppCode(),
+					methodName);
+			getXpathWebElement(heliosUiConst.getWebLayerAppCode());
+			click();
+			clear();
+			sendKeys(scenarioConst.getNumericAppCode());		
+
+			
+			Thread.sleep(1000);
+			waitForElementPresent(heliosUiConst.getWebLayer(), methodName);
+			getXpathWebElement(heliosUiConst.getWebLayer());
+			selectText(element, scenarioConst.getHtml5Value());
+
+			Thread.sleep(1000);
+			waitForElementPresent(heliosUiConst.getWebLayerWidget(), methodName);
+			getXpathWebElement(heliosUiConst.getWebLayerWidget());
+			selectText(element, scenarioConst.getYuiMobileWidgetValue());
+			
+			Thread.sleep(1000);
+			waitForElementPresent(heliosUiConst.getRemoveAppLayer(),
+					methodName);
+			getXpathWebElement(heliosUiConst.getRemoveAppLayer());
+			click();
+
+			Thread.sleep(1000);
+			waitForElementPresent(heliosUiConst.getRemoveMobileLayer(),
+					methodName);
+			getXpathWebElement(heliosUiConst.getRemoveMobileLayer());
+			click();
+			
+			Thread.sleep(1000);
+			waitForElementPresent(heliosUiConst.getProjectCreateButton(),
+					methodName);
+			getXpathWebElement(heliosUiConst.getProjectCreateButton());
+			click();
+			Thread.sleep(30000);
+
+		} catch (InterruptedException e) {
+
+			e.printStackTrace();
+		}
+	}
+	
+	public void createProjectUseAlphaNumericValues(String methodName, ScenariosConstants scenarioConst)
+	throws Exception {
+		if (StringUtils.isEmpty(methodName)) {
+			methodName = Thread.currentThread().getStackTrace()[1]
+			                                                    .getMethodName();
+		}
+		log.info("@createProjectUseNumericValues executing");
+		try {
+			Thread.sleep(3000);
+			waitForElementPresent(heliosUiConst.getProjectButton(), methodName);
+			getXpathWebElement(heliosUiConst.getProjectButton());
+			click();
+
+			Thread.sleep(500);
+			waitForElementPresent(heliosUiConst.getAddProjectButton(),
+					methodName);
+			getXpathWebElement(heliosUiConst.getAddProjectButton());
+			click();
+
+			Thread.sleep(500);
+			waitForElementPresent(heliosUiConst.getProjectName(), methodName);
+			getXpathWebElement(heliosUiConst.getProjectName());
+			click();
+			clear();
+			sendKeys(scenarioConst.getProjectNameAlphaNumeric());
+
+			Thread.sleep(500);
+			waitForElementPresent(heliosUiConst.getProjectDescription(),
+					methodName);
+			getXpathWebElement(heliosUiConst.getProjectDescription());
+			click();
+			clear();
+			sendKeys(scenarioConst.getAlphaNumericProjectDesc());
+
+			Thread.sleep(1000);
+			waitForElementPresent(heliosUiConst.getWebLayerAppCode(),
+					methodName);
+			getXpathWebElement(heliosUiConst.getWebLayerAppCode());
+			click();
+			clear();
+			sendKeys(scenarioConst.getAlphaNumericAppCode());	
+
+					
+			Thread.sleep(1000);
+			waitForElementPresent(heliosUiConst.getWebLayer(), methodName);
+			getXpathWebElement(heliosUiConst.getWebLayer());
+			selectText(element, scenarioConst.getHtml5Value());
+
+			Thread.sleep(1000);
+			waitForElementPresent(heliosUiConst.getWebLayerWidget(), methodName);
+			getXpathWebElement(heliosUiConst.getWebLayerWidget());
+			selectText(element, scenarioConst.getYuiMobileWidgetValue());
+			
+			Thread.sleep(1000);
+			waitForElementPresent(heliosUiConst.getRemoveAppLayer(),
+					methodName);
+			getXpathWebElement(heliosUiConst.getRemoveAppLayer());
+			click();
+
+			Thread.sleep(1000);
+			waitForElementPresent(heliosUiConst.getRemoveMobileLayer(),
+					methodName);
+			getXpathWebElement(heliosUiConst.getRemoveMobileLayer());
+			click();
+			
+			Thread.sleep(1000);
+			waitForElementPresent(heliosUiConst.getProjectCreateButton(),
+					methodName);
+			getXpathWebElement(heliosUiConst.getProjectCreateButton());
+			click();
+			Thread.sleep(30000);
+
+		} catch (InterruptedException e) {
+
+			e.printStackTrace();
+		}
+	}
+
+	public void createProjectSpecialChar(String methodName, ScenariosConstants scenarioConst)
+	throws Exception {
+		if (StringUtils.isEmpty(methodName)) {
+			methodName = Thread.currentThread().getStackTrace()[1]
+			                                                    .getMethodName();
+		}
+		log.info("@createProjectUseNumericValues executing");
+		try {
+			Thread.sleep(3000);
+			waitForElementPresent(heliosUiConst.getProjectButton(), methodName);
+			getXpathWebElement(heliosUiConst.getProjectButton());
+			click();
+
+			Thread.sleep(500);
+			waitForElementPresent(heliosUiConst.getAddProjectButton(),
+					methodName);
+			getXpathWebElement(heliosUiConst.getAddProjectButton());
+			click();
+
+			Thread.sleep(500);
+			waitForElementPresent(heliosUiConst.getProjectName(), methodName);
+			getXpathWebElement(heliosUiConst.getProjectName());
+			click();
+			clear();
+			sendKeys(scenarioConst.getProjectNameSpecialChar());
+
+			Thread.sleep(500);
+			waitForElementPresent(heliosUiConst.getProjectDescription(),
+					methodName);
+			getXpathWebElement(heliosUiConst.getProjectDescription());
+			click();
+			clear();
+			sendKeys(scenarioConst.getSpecialCharProjectDesc());
+
+			Thread.sleep(1000);
+			waitForElementPresent(heliosUiConst.getWebLayerAppCode(),
+					methodName);
+			getXpathWebElement(heliosUiConst.getWebLayerAppCode());
+			click();
+			clear();
+			sendKeys(scenarioConst.getSpecialChar());			
+			
+			Thread.sleep(1000);
+			waitForElementPresent(heliosUiConst.getWebLayer(), methodName);
+			getXpathWebElement(heliosUiConst.getWebLayer());
+			selectText(element, scenarioConst.getHtml5Value());
+
+			Thread.sleep(1000);
+			waitForElementPresent(heliosUiConst.getWebLayerWidget(), methodName);
+			getXpathWebElement(heliosUiConst.getWebLayerWidget());
+			selectText(element, scenarioConst.getYuiMobileWidgetValue());
+			
+			Thread.sleep(1000);
+			waitForElementPresent(heliosUiConst.getRemoveAppLayer(),
+					methodName);
+			getXpathWebElement(heliosUiConst.getRemoveAppLayer());
+			click();
+
+			Thread.sleep(1000);
+			waitForElementPresent(heliosUiConst.getRemoveMobileLayer(),
+					methodName);
+			getXpathWebElement(heliosUiConst.getRemoveMobileLayer());
+			click();
+			
+			Thread.sleep(1000);
+			waitForElementPresent(heliosUiConst.getProjectCreateButton(),
+					methodName);
+			getXpathWebElement(heliosUiConst.getProjectCreateButton());
+			click();
+			Thread.sleep(30000);
+
+		} catch (InterruptedException e) {
+
+			e.printStackTrace();
+		}
+	}
+
+	
 	public boolean isTextPresentBuild(String text) throws InterruptedException,
 	ScreenException {
 

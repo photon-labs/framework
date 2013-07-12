@@ -392,14 +392,7 @@ public class MobBaseScreen {
 		}
 		log.info("@iPhoneNativeArchetypeEditApp executing");
 		try {
-			/*
-			 * Thread.sleep(500);
-			 * waitForElementPresent(iPhoneNativeConst.getSitecoreArchetypeEditApp
-			 * (), methodName);
-			 * getXpathWebElement(iPhoneNativeConst.getSitecoreArchetypeEditApp
-			 * ()); click();
-			 */
-
+			
 			Thread.sleep(500);
 			waitForElementPresent(heliosUiConst.getAppInfoTab(), methodName);
 			getXpathWebElement(heliosUiConst.getAppInfoTab());
@@ -434,7 +427,12 @@ public class MobBaseScreen {
 			waitForElementPresent(heliosUiConst.getFunctionalToolVersionValue(), methodName);
 			getXpathWebElement(heliosUiConst.getFunctionalToolVersionValue());
 			click();
-			Thread.sleep(5000);
+			
+			Thread.sleep(500);
+			waitForElementPresent(heliosUiConst.getConfigUpdate(), methodName);
+			getXpathWebElement(heliosUiConst.getConfigUpdate());
+			click();
+			Thread.sleep(20000);
 
 		} catch (InterruptedException e) {
 
@@ -538,13 +536,6 @@ public class MobBaseScreen {
 		}
 		log.info("@iPhoneHybridArchetypeEditApp executing");
 		try {
-			/*
-			 * Thread.sleep(500);
-			 * waitForElementPresent(iPhoneNativeConst.getSitecoreArchetypeEditApp
-			 * (), methodName);
-			 * getXpathWebElement(iPhoneNativeConst.getSitecoreArchetypeEditApp
-			 * ()); click();
-			 */
 
 			Thread.sleep(500);
 			waitForElementPresent(heliosUiConst.getAppInfoTab(), methodName);
@@ -580,7 +571,12 @@ public class MobBaseScreen {
 			waitForElementPresent(heliosUiConst.getFunctionalToolVersionValue(), methodName);
 			getXpathWebElement(heliosUiConst.getFunctionalToolVersionValue());
 			click();
-			Thread.sleep(5000);
+			
+			Thread.sleep(500);
+			waitForElementPresent(heliosUiConst.getConfigUpdate(), methodName);
+			getXpathWebElement(heliosUiConst.getConfigUpdate());
+			click();
+			Thread.sleep(20000);
 
 		} catch (InterruptedException e) {
 
@@ -682,13 +678,6 @@ public class MobBaseScreen {
 		}
 		log.info("@iPhoneLibraryArchetypeEditApp executing");
 		try {
-			/*
-			 * Thread.sleep(500);
-			 * waitForElementPresent(iPhoneNativeConst.getSitecoreArchetypeEditApp
-			 * (), methodName);
-			 * getXpathWebElement(iPhoneNativeConst.getSitecoreArchetypeEditApp
-			 * ()); click();
-			 */
 
 			Thread.sleep(500);
 			waitForElementPresent(heliosUiConst.getAppInfoTab(), methodName);
@@ -724,7 +713,12 @@ public class MobBaseScreen {
 			waitForElementPresent(heliosUiConst.getFunctionalToolVersionValue(), methodName);
 			getXpathWebElement(heliosUiConst.getFunctionalToolVersionValue());
 			click();
-			Thread.sleep(5000);
+			
+			Thread.sleep(500);
+			waitForElementPresent(heliosUiConst.getConfigUpdate(), methodName);
+			getXpathWebElement(heliosUiConst.getConfigUpdate());
+			click();
+			Thread.sleep(20000);
 
 		} catch (InterruptedException e) {
 
@@ -866,7 +860,12 @@ public class MobBaseScreen {
 			waitForElementPresent(heliosUiConst.getFunctionalToolVersionValue(), methodName);
 			getXpathWebElement(heliosUiConst.getFunctionalToolVersionValue());
 			click();
-			Thread.sleep(5000);
+			
+			Thread.sleep(500);
+			waitForElementPresent(heliosUiConst.getConfigUpdate(), methodName);
+			getXpathWebElement(heliosUiConst.getConfigUpdate());
+			click();
+			Thread.sleep(20000);
 
 		} catch (InterruptedException e) {
 
@@ -1054,7 +1053,15 @@ public class MobBaseScreen {
 			waitForElementPresent(heliosUiConst.getFunctionalToolVersionValue(), methodName);
 			getXpathWebElement(heliosUiConst.getFunctionalToolVersionValue());
 			click();
-			Thread.sleep(5000);
+			
+			Thread.sleep(500);
+			waitForElementPresent(heliosUiConst.getConfigUpdate(), methodName);
+			getXpathWebElement(heliosUiConst.getConfigUpdate());
+			click();
+			Thread.sleep(20000);
+			
+			
+			
 
 		} catch (InterruptedException e) {
 
@@ -1242,7 +1249,13 @@ public class MobBaseScreen {
 			waitForElementPresent(heliosUiConst.getFunctionalToolVersionValue(), methodName);
 			getXpathWebElement(heliosUiConst.getFunctionalToolVersionValue());
 			click();
-			Thread.sleep(5000);
+		
+			
+			Thread.sleep(500);
+			waitForElementPresent(heliosUiConst.getConfigUpdate(), methodName);
+			getXpathWebElement(heliosUiConst.getConfigUpdate());
+			click();
+			Thread.sleep(20000);
 
 		} catch (InterruptedException e) {
 
@@ -1390,13 +1403,6 @@ public class MobBaseScreen {
 		}
 		log.info("@blackBerryHybridArchetypeEditApp executing");
 		try {
-			/*
-			 * Thread.sleep(500);
-			 * waitForElementPresent(iPhoneNativeConst.getSitecoreArchetypeEditApp
-			 * (), methodName);
-			 * getXpathWebElement(iPhoneNativeConst.getSitecoreArchetypeEditApp
-			 * ()); click();
-			 */
 
 			Thread.sleep(500);
 			waitForElementPresent(heliosUiConst.getAppInfoTab(), methodName);
@@ -1432,7 +1438,13 @@ public class MobBaseScreen {
 			waitForElementPresent(heliosUiConst.getFunctionalToolVersionValue(), methodName);
 			getXpathWebElement(heliosUiConst.getFunctionalToolVersionValue());
 			click();
-			Thread.sleep(5000);
+			
+			Thread.sleep(500);
+			waitForElementPresent(heliosUiConst.getConfigUpdate(), methodName);
+			getXpathWebElement(heliosUiConst.getConfigUpdate());
+			click();
+			Thread.sleep(20000);
+			
 
 		} catch (InterruptedException e) {
 
@@ -1579,13 +1591,7 @@ public class MobBaseScreen {
 		}
 		log.info("@windowsMetroArchetypeEditApp executing");
 		try {
-			/*
-			 * Thread.sleep(500);
-			 * waitForElementPresent(iPhoneNativeConst.getSitecoreArchetypeEditApp
-			 * (), methodName);
-			 * getXpathWebElement(iPhoneNativeConst.getSitecoreArchetypeEditApp
-			 * ()); click();
-			 */
+			
 
 			Thread.sleep(500);
 			waitForElementPresent(heliosUiConst.getAppInfoTab(), methodName);
@@ -1622,7 +1628,12 @@ public class MobBaseScreen {
 					heliosUiConst.getFunctionalToolVersionValue(), methodName);
 			getXpathWebElement(heliosUiConst.getFunctionalToolVersionValue());
 			click();
-			Thread.sleep(5000);
+			
+			Thread.sleep(500);
+			waitForElementPresent(heliosUiConst.getConfigUpdate(), methodName);
+			getXpathWebElement(heliosUiConst.getConfigUpdate());
+			click();
+			Thread.sleep(20000);
 
 		} catch (InterruptedException e) {
 
@@ -1770,14 +1781,7 @@ public class MobBaseScreen {
 		}
 		log.info("@iPhoneNativeArchetypeEditApp executing");
 		try {
-			/*
-			 * Thread.sleep(500);
-			 * waitForElementPresent(iPhoneNativeConst.getSitecoreArchetypeEditApp
-			 * (), methodName);
-			 * getXpathWebElement(iPhoneNativeConst.getSitecoreArchetypeEditApp
-			 * ()); click();
-			 */
-
+			
 			Thread.sleep(500);
 			waitForElementPresent(heliosUiConst.getAppInfoTab(), methodName);
 			getXpathWebElement(heliosUiConst.getAppInfoTab());
@@ -1812,7 +1816,12 @@ public class MobBaseScreen {
 			waitForElementPresent(heliosUiConst.getFunctionalToolVersionValue(), methodName);
 			getXpathWebElement(heliosUiConst.getFunctionalToolVersionValue());
 			click();
-			Thread.sleep(5000);
+			
+			Thread.sleep(500);
+			waitForElementPresent(heliosUiConst.getConfigUpdate(), methodName);
+			getXpathWebElement(heliosUiConst.getConfigUpdate());
+			click();
+			Thread.sleep(20000);
 
 		} catch (InterruptedException e) {
 

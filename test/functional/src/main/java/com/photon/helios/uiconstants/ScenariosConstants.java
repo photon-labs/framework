@@ -46,6 +46,17 @@ public class ScenariosConstants {
 	private String jQueryWidgetAppcode = "jQueryWidgetAppcode";
 	private String jQueryWidgetWebcode = "jQueryWidgetWebcode";
 
+	private String projectNameNumeric = "projectName_Numeric";
+	private String projectNameAlphaNumeric = "projectName_AlphaNumeric";
+	private String projectNameSpecialChar = "projectName_SpecialChar";
+	private String numericProjectDesc = "project_Description_Numeric";
+	private String alphaNumericProjectDesc = "project_Description_AlphaNumeric";
+	private String specialCharProjectDesc = "projectDesc_SpecialChar";
+	private String numericAppCode = "numeric_AppCode";
+	private String alphaNumericAppCode = "alphaNumeric_AppCode";
+	private String specialChar = "specialChar_AppCode";
+	
+	
 	public ScenariosConstants() {
 		try {
 			ReadXMLFile readXml = new ReadXMLFile();
@@ -343,6 +354,79 @@ public class ScenariosConstants {
 		this.jQueryWidgetWebcode = jQueryWidgetWebcode;
 	}
 	
+	
+	public String getProjectNameNumeric() {
+		return projectNameNumeric;
+	}
+
+	public void setProjectNameNumeric(String projectNameNumeric) {
+		this.projectNameNumeric = projectNameNumeric;
+	}
+
+	public String getProjectNameAlphaNumeric() {
+		return projectNameAlphaNumeric;
+	}
+
+	public void setProjectNameAlphaNumeric(String projectNameAlphaNumeric) {
+		this.projectNameAlphaNumeric = projectNameAlphaNumeric;
+	}
+
+	public String getProjectNameSpecialChar() {
+		return projectNameSpecialChar;
+	}
+
+	public void setProjectNameSpecialChar(String projectNameSpecialChar) {
+		this.projectNameSpecialChar = projectNameSpecialChar;
+	}
+
+	public String getNumericProjectDesc() {
+		return numericProjectDesc;
+	}
+
+	public void setNumericProjectDesc(String numericProjectDesc) {
+		this.numericProjectDesc = numericProjectDesc;
+	}
+
+	public String getAlphaNumericProjectDesc() {
+		return alphaNumericProjectDesc;
+	}
+
+	public void setAlphaNumericProjectDesc(String alphaNumericProjectDesc) {
+		this.alphaNumericProjectDesc = alphaNumericProjectDesc;
+	}
+
+	public String getSpecialCharProjectDesc() {
+		return specialCharProjectDesc;
+	}
+
+	public void setSpecialCharProjectDesc(String specialCharProjectDesc) {
+		this.specialCharProjectDesc = specialCharProjectDesc;
+	}
+	
+	public String getNumericAppCode() {
+		return numericAppCode;
+	}
+
+	public void setNumericAppCode(String numericAppCode) {
+		this.numericAppCode = numericAppCode;
+	}
+
+	public String getAlphaNumericAppCode() {
+		return alphaNumericAppCode;
+	}
+
+	public void setAlphaNumericAppCode(String alphaNumericAppCode) {
+		this.alphaNumericAppCode = alphaNumericAppCode;
+	}
+
+	public String getSpecialChar() {
+		return specialChar;
+	}
+
+	public void setSpecialChar(String specialChar) {
+		this.specialChar = specialChar;
+	}
+
 	
 
 }

@@ -13,6 +13,10 @@
 			    <include name="testiPhoneHybridProjectCreation"></include>
 			    <include name="testMobileWidgetProjectCreation"></include>
 			    <include name="testJQueryWidgetProjectCreation"></include>
+			    
+			    <include name="testNumericValuesProjectCreation"></include>
+			    <include name="testAlphaNumericValuesProjectCreation"></include>
+			    <include name="testSpecialCharProjectCreation"></include>
 			</methods>
 		</classes>
 	</test>

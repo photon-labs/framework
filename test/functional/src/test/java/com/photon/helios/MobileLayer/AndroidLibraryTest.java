@@ -99,6 +99,21 @@ public class AndroidLibraryTest {
 
 		}
 	} 
+	
+	@Test
+	public void testAndroidLibraryArchetypeBuild()
+	throws InterruptedException, IOException, Exception {
+		try {
+
+			System.out.println("---------testAndroidLibraryArchetypeBuild()-------------");
+			methodName = Thread.currentThread().getStackTrace()[1].getMethodName();
+			mobBaseScreen.androidLibraryArchetypeBuild(methodName, androidLibraryConst);
+
+		} catch (Exception t) {
+			t.printStackTrace();
+
+		}
+	}
 
 	@AfterTest
 	public  void tearDown() {
