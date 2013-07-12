@@ -402,7 +402,7 @@
         <phresco.components.source.dir xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">/src/main/webapp/components</phresco.components.source.dir>
         <phresco.eclipse xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">true</phresco.eclipse>
         <phresco.unitTest xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">js,java</phresco.unitTest>
-        <phresco.unitTest.js.report.dir xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">/do_not_checkin/target/jstest/report</phresco.unitTest.js.report.dir>
+        <phresco.unitTest.js.report.dir xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">/do_not_checkin/reports/jstest</phresco.unitTest.js.report.dir>
         <phresco.unitTest.js.testsuite.xpath xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">/testsuite</phresco.unitTest.js.testsuite.xpath>
         <phresco.unitTest.js.testcase.path xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">/testcase</phresco.unitTest.js.testcase.path>
         <phresco.manualTest.testcase.path xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">/test/manual</phresco.manualTest.testcase.path>
