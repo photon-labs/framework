@@ -175,9 +175,17 @@ define(["mavenService/api/mavenServiceAPI"], function() {
 				self.mavenServiceAPI.mvnSer(header, 
 					function(response){
 						if(response !==  undefined && response !== null){
-							
 							if(response.log !== undefined && response.log !== null){
-								$(divId).append('<font style = "color:' + self.logColor(response.log) + '">' + response.log + '</font><br>');
+								var logMsg = response.log;
+								var nl = /\n|\r|\r\n/g;
+								// split each line for assigning color
+								logMsg = logMsg.replace(nl, '#LINESEP#');
+								var logMsgs = logMsg.split('#LINESEP#');
+								$.each(logMsgs, function (index, logMsgPart) {
+									if (logMsgPart != "") {
+										$(divId).append('<font style = "color:' + self.logColor(logMsgPart) + '">' + logMsgPart + '</font><br>');
+									}
+								});
 							}
 							if(response.status === 'STARTED'){
 								callback(response);
