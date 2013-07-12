@@ -1,0 +1,118 @@
+STARTED
+[INFO] Error stacktraces are turned on.
+[INFO] Scanning for projects...
+[WARNING]
+[WARNING]
+Some problems were encountered while building the effective model for com.photon.phresco.service:JWS:war:1.0
+[WARNING] 'dependencies.dependency.(groupId:artifactId:type:classifier)' must be unique: commons-lang:commons-lang:jar -> version 2.3 vs 2.6 @ line 221, column 21
+[WARNING]
+[WARNING] It is highly recommended to fix these problems because they threaten the stability of your build.
+[WARNING]
+[WARNING] For this reason, future Maven versions might no longer support building such malformed projects.
+[WARNING]
+[INFO]
+[INFO] ------------------------------------------------------------------------
+[INFO] Building JWS 1.0
+[INFO] ------------------------------------------------------------------------
+[INFO]
+[INFO] --- phresco-maven-plugin:3.0.0.16003:package (default-cli) @ JWS ---
+[INFO] /Users/kaleeswaran/workspace/projects/JWS
+[INFO] Target Folder Deleted Successfully
+[INFO] Configuring the project....
+[INFO] Packaging the project...
+[INFO] Error stacktraces are turned on.
+[INFO] Scanning for projects...
+[WARNING]
+[WARNING] Some problems were encountered while building the effective model for com.photon.phresco.service:JWS:war:1.0
+[WARNING] 'dependencies.dependency.(groupId:artifactId:type:classifier)' must be unique: commons-lang:commons-lang:jar -> version 2.3 vs 2.6 @ line 221, column 21
+[WARNING]
+[WARNING] It is highly recommended to fix these problems because they threaten the stability of your build.
+[WARNING]
+[WARNING] For this reason, future Maven versions might no longer support building such malformed projects.
+[WARNING]
+[INFO]
+[INFO] ------------------------------------------------------------------------
+[INFO] Building JWS 1.0
+[INFO] ------------------------------------------------------------------------
+[INFO]
+[INFO] --- maven-clean-plugin:2.4.1:clean (default-clean) @ JWS ---
+[INFO]
+[INFO] --- maven-resources-plugin:2.4.3:resources (default-resources) @ JWS ---
+[WARNING] Using platform encoding (MacRoman actually) to copy filtered resources, i.e. build is platform dependent!
+[INFO] Copying 2 resources
+[INFO]
+[INFO] --- maven-compiler-plugin:2.3.2:compile (default-compile) @ JWS ---
+[WARNING] File encoding has not been set, using platform encoding MacRoman, i.e. build is platform dependent!
+[INFO] Compiling 3 source files to /Users/kaleeswaran/workspace/projects/JWS/do_not_checkin/target/classes
+[INFO]
+[INFO] --- maven-resources-plugin:2.4.3:testResources (default-testResources) @ JWS ---
+[WARNING] Using platform encoding (MacRoman actually) to copy filtered resources, i.e. build is platform dependent!
+[INFO] skip non existing resourceDirectory /Users/kaleeswaran/workspace/projects/JWS/src/test/resources
+[INFO]
+[INFO] --- maven-compiler-plugin:2.3.2:testCompile (default-testCompile) @ JWS ---
+[WARNING] File encoding has not been set, using platform encoding MacRoman, i.e. build is platform dependent!
+[INFO] Compiling 1 source file to /Users/kaleeswaran/workspace/projects/JWS/do_not_checkin/target/test-classes
+[INFO]
+[INFO] --- maven-surefire-plugin:2.7.2:test (default-test) @ JWS ---
+[INFO] Surefire report directory: /Users/kaleeswaran/workspace/projects/JWS/do_not_checkin/target/surefire-reports
+-------------------------------------------------------
+T E S T S
+-------------------------------------------------------
+Running com.photon.phresco.service.TestCase
+Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.102 sec
+Results :
+Tests run: 1, Failures: 0, Errors: 0, Skipped: 0
+[INFO]
+[INFO] >>> jstest-maven-plugin:3.0.0.16003:test (default) @ JWS >>>
+[INFO]
+[INFO] --- maven-resources-plugin:2.4.3:resources (default-resources) @ JWS ---
+[WARNING] Using platform encoding (MacRoman actually) to copy filtered resources, i.e. build is platform dependent!
+[INFO] Copying 2 resources
+[INFO]
+[INFO] --- maven-compiler-plugin:2.3.2:compile (default-compile) @ JWS ---
+[INFO] Nothing to compile - all classes are up to date
+[INFO]
+[INFO] --- jstest-maven-plugin:3.0.0.16003:generateTestSources (default) @ JWS ---
+2013-07-12 12:06:55.358:INFO::Extracting overlays for jsTest
+[INFO]
+[INFO] --- jstest-maven-plugin:3.0.0.16003:processTestSources (default) @ JWS ---
+SLF4J: Failed to load class "org.slf4j.impl.StaticLoggerBinder".
+SLF4J: Defaulting to no-operation (NOP) logger implementation
+SLF4J: See http://www.slf4j.org/codes.html#StaticLoggerBinder for further details.
+[INFO] Skipping JsTest
+[INFO]
+[INFO] --- maven-resources-plugin:2.4.3:testResources (default-testResources) @ JWS ---
+[WARNING] Using platform encoding (MacRoman actually) to copy filtered resources, i.e. build is platform dependent!
+[INFO] skip non existing resourceDirectory /Users/kaleeswaran/workspace/projects/JWS/src/test/resources
+[INFO]
+[INFO] <<< jstest-maven-plugin:3.0.0.16003:test (default) @ JWS <<<
+[INFO]
+[INFO] --- jstest-maven-plugin:3.0.0.16003:test (default) @ JWS ---
+[INFO] Skipping JsTest
+[INFO]
+[INFO] --- maven-war-plugin:2.1.1:war (default-war) @ JWS ---
+[INFO] Packaging webapp
+[INFO] Assembling webapp [JWS] in [/Users/kaleeswaran/workspace/projects/JWS/do_not_checkin/target/Kalees]
+[INFO] Processing war project
+[INFO] Copying webapp resources [/Users/kaleeswaran/workspace/projects/JWS/src/main/webapp]
+[INFO] Processing overlay [ id net.awired.js:jquery]
+[INFO] Webapp assembled in [1518 msecs]
+[INFO] Building war: /Users/kaleeswaran/workspace/projects/JWS/do_not_checkin/target/Kalees.war
+[INFO] WEB-INF/web.xml already added, skipping
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD SUCCESS
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time: 16.734s
+[INFO] Finished at: Fri Jul 12 12:07:00 GMT+05:30 2013
+[INFO] Final Memory: 17M/81M
+[INFO] ------------------------------------------------------------------------
+[INFO] Building the project...
+[INFO] Building zip: /Users/kaleeswaran/workspace/projects/JWS/do_not_checkin/build/PHR3_12-Jul-2013-12-06-39.zip
+[INFO]
+------------------------------------------------------------------------
+[INFO] BUILD SUCCESS
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time: 36.268s
+[INFO] Finished at: Fri Jul 12 12:07:01 GMT+05:30 2013
+[INFO] Final Memory: 9M/81M
+[INFO] ------------------------------------------------------------------------
