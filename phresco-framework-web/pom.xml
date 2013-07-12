@@ -87,7 +87,7 @@
 
 		<dependency>
 			<groupId>jslibraries.files</groupId>
-			<artifactId>jquery-ui</artifactId>
+			<artifactId>jquery_ui</artifactId>
 			<version>1.10.3</version>
 			<type>js</type>
 		</dependency>
@@ -101,14 +101,14 @@
 		
 		<dependency>
 			 <groupId>jslibraries.files</groupId>
-			 <artifactId>RGraph-bar</artifactId>
+			 <artifactId>RGraph_bar</artifactId>
 			 <version>1.0</version>
 			 <type>js</type>
 		</dependency>
 		
 		<dependency>
 			 <groupId>jslibraries.files</groupId>
-			 <artifactId>RGraph.pie</artifactId>
+			 <artifactId>RGraph_pie</artifactId>
 			 <version>1.0</version>
 			 <type>js</type>
 		</dependency>
@@ -157,7 +157,7 @@
 		
 		<dependency>
 			<groupId>jslibraries.files</groupId>
-			<artifactId>jquery_magnific-popup_min</artifactId>
+			<artifactId>jquery_magnific_popup_min</artifactId>
 			<version>1.0</version>
 			<type>js</type>
 		</dependency>

@@ -175,6 +175,11 @@
 			"moduleName":"componentTestTest",
 			"path" : "components/componentTest/test/componentTestTest"
 		},
+		
+		"functionalTest" : {
+			"moduleName":"functionalTest",
+			"path" : "components/functionalTest/js"
+		},
 
 		"functionalTestTest" : {
 			"moduleName":"functionalTestTest",

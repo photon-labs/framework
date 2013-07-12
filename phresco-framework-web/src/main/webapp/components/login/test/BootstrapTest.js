@@ -63,6 +63,7 @@ define(["jquery"], function($) {
 					Clazz : "js/framework/class",
 					components: "components",
 					configData: data,
+					handlebars: "handlebars-1.0.0",
 					jslib_bootstrap_datepicker: "jslib_bootstrap_datepicker-1.0.0",
 					signal: "signal-1.0.1",
 					bootstrap_select_min: "bootstrap_select_min-1.0",
@@ -72,7 +73,16 @@ define(["jquery"], function($) {
 					bootstrap_min: "bootstrap_min-2.3.1",
 					jquery_mCustomScrollbar_concat_min: "jquery_mCustomScrollbar_concat_min-2.8.1",
 					jquery_mockjax: "jquery_mockjax-1.0",
-					json2: "json2-1.0"
+					json2: "json2-1.0",
+					RGraph_common_core: "RGraph_common_core-1.0",
+					RGraph_common_tooltips: "RGraph_common_tooltips-1.0",
+					RGraph_common_effects: "RGraph_common_effects-1.0",
+					RGraph_pie: "RGraph_pie-1.0",
+					RGraph_bar: "RGraph_bar-1.0",
+					RGraph_line: "RGraph_line-1.0",
+					RGraph_common_key: "RGraph_common_key-1.0",
+					jquery_magnific_popup_min: "jquery_magnific_popup_min-1.0",
+					jquery_fullscreen: "jquery_fullscreen-1.0"
 				}
 			};
             
@@ -105,12 +115,14 @@ define(["jquery"], function($) {
 				commonVariables.loadingScreen =new Clazz.com.js.widget.common.Loading();
 			});
 		
-			require(["loginTest", "projectlistTest", "headerTest", "footerTest", "navigationTest", "projectTest", "applicationTest", "featuresTest", "codequalityTest", "configurationTest", "buildTest", "editConfigurationTest", "jobTemplateListTest","unitTestTest", "componentTestTest", "functionalTestTest", "signal", "signalbinding",  "jslib_bootstrap_datepicker", "jslib_jquery_sortable_min", "bootstrap_min", "jquery_mCustomScrollbar_concat_min", "bootstrap_select_min", "performanceTestTest"], function(loginTest, projectlistTest, headerTest, footerTest, navigationTest, projectTest,applicationTest, featuresTest, codequalityTest, configurationTest, buildTest, editConfigurationTest, jobTemplateListTest, unitTestTest, componentTestTest, functionalTestTest, signals, signalbinding, datepicker,  sortable, bootstrap, scrollbar, select, performanceTestTest){
+			require(["loginTest", "projectlistTest", "headerTest", "footerTest", "navigationTest", "projectTest", "applicationTest", "featuresTest", "codequalityTest", "configurationTest", "buildTest", "editConfigurationTest", "jobTemplateListTest","unitTestTest", "componentTestTest", "functionalTestTest","handlebars", "signal", "signalbinding",  "jslib_bootstrap_datepicker", "jslib_jquery_sortable_min", "bootstrap_min", "jquery_mCustomScrollbar_concat_min", "bootstrap_select_min", "performanceTestTest", "RGraph_common_core", "RGraph_common_tooltips", "RGraph_common_effects", "RGraph_pie", "RGraph_bar", "RGraph_line", "RGraph_common_key", "jquery_magnific_popup_min", "jquery_fullscreen"], function(loginTest, projectlistTest, headerTest, footerTest, navigationTest, projectTest,applicationTest, featuresTest, codequalityTest, configurationTest, buildTest, editConfigurationTest, jobTemplateListTest, unitTestTest, componentTestTest, functionalTestTest, handlebars, signals, signalbinding, datepicker,  sortable, bootstrap, scrollbar, select, performanceTestTest, RGraph_common_core, RGraph_common_tooltips, RGraph_common_effects, RGraph_pie, RGraph_bar, RGraph_line, RGraph_common_key, jquery_magnific_popup_min, jquery_fullscreen){
 				commonVariables.navListener = Clazz.com.components.navigation.js.listener.navigationListener();
 				loginTest.runTests(data, function() {
+					projectlistTest.runTests(data);
 					performanceTestTest.runTests(data); 
 					configurationTest.runTests(data);
-					functionalTestTest.runTests(data);
+					//functionalTestTest.runTests(data);
+					
 					/*projectTest.runTests(data);
 					 editConfigurationTest.runTests(data);
 					configurationTest.runTests(data);
