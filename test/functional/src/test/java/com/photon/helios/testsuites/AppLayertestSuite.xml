@@ -8,14 +8,14 @@
 			<class name="com.photon.helios.ApplicationLayer.PhpTest" />
 			<methods>
 				<include name="testPhpArchetypeCreation"></include>
-				<include name="testPhpArchetypeEditApp"></include>
+			<!-- 	<include name="testPhpArchetypeEditApp"></include>
 				<include name="testPhpArchetypeUpdateApp"></include>
 				<include name="testphpConfigurationCreate"></include>
 				<include name="testphpBuild"></include>
-			</methods>
+ -->			</methods>
 		</classes>
 	</test>
-
+<!-- 
 	<test name="Drupal6Test" junit="false" preserve-order="true">
 		<classes>
 			<class name="com.photon.helios.ApplicationLayer.Drupal6Test" />
@@ -131,5 +131,5 @@
 			</methods>
 		</classes>
 	</test>
-</suite> 
+ --></suite> 
   
