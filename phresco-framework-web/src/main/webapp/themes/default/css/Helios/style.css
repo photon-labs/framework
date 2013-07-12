@@ -503,6 +503,8 @@ html, body {
 	z-index:4;
 }
 
+
+
 /* ********************************************** CSS related to Customer change Dropdown ************************************************************************************** */
 
 
@@ -1232,6 +1234,8 @@ img[name="close"] {
 .title_nav ul li a.drop-qual b.caret {
 	border-bottom-color: #353535 !important;
 	border-top-color: #353535 !important;
+	margin-top:9px !important;
+	margin-left:5px !important;
 }
 
 /* *************************************************************************** STYLES FOR FEATURES PAGE ************************************************************************** */
@@ -2427,6 +2431,16 @@ html>body tbody.scrollContent {
 {
 	position: fixed;
 	margin: 38px 0 0 5px;
+	height:150px;
+	width:33px;
+}
+
+.progress_loading {
+	background:url(../../images/helios/progress_loading.png) no-repeat;
+	width:33px;
+	height:27px;
+	margin-top:-6px;
+	padding:4px 0px 0px 10px;
 }
 
 .unit_progress table thead tr td:last-child {
@@ -2731,9 +2745,9 @@ html>body tbody.scrollContent {
 	padding: 2px !important;
 	padding-bottom:0;
 }
-.job_template table tr td input[type="text"]
+.job_template table tr td .bootstrap-select .btn, .job_template table tr td input[type="text"]
 {
-	width:178px !important;
+	width:151px !important;
 	margin: 0 5px 0 0 !important;
 }
 .job_template table tr td select
@@ -3211,6 +3225,10 @@ html>body tbody.scrollContent {
 
 #sortable2 li div {
 	float: left;
+}
+
+.ci_dropdown {
+	width:170px !important; 
 }
 
 /* *************************************************************** STYLES FOR DOWNLOAD PAGE ************************************************************************************ */
