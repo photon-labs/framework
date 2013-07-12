@@ -24,7 +24,7 @@
     <property name="sonar.plugin.home" value="${sonar.home}/extensions/plugins"/>
     <property name="repo.home" value="${phresco.home}/workspace/repo"/>
     <property file = "${phresco.home}/conf/sonar/sonar.properties"/>
-    <taskdef resource="net/sf/antcontrib/antlib.xml" classpath="${phresco.home}/workspace/repo/ant-contrib/ant-contrib/1.0b2/ant-contrib-1.0b2.jar" onerror="ignore"/>
+    <taskdef resource="net/sf/antcontrib/antlib.xml" classpath="${phresco.home}/workspace/repo/ant-contrib/ant-contrib/1.0b3/ant-contrib-1.0b3.jar" onerror="ignore"/>
     
     <target name="init">
 	<!-- 	<antcall target="add"/> -->
