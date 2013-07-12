@@ -1,6 +1,7 @@
 package com.photon.phresco.framework.rest.api;
 
 
+import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
@@ -245,17 +246,18 @@ public class BuildService implements Constants ,FrameworkConstants,BuildServiceC
 			            	
 			            	try {
 			            		
-							     BufferedReader server_logs = build(getUsername());
+			            		BufferedInputStream server_logs = build(getUsername());
 							     String line="";
-					                while((line=server_logs.readLine())!=null) {
-					                	
-					                	if (isInfoEnabled) {
-					    					S_LOGGER.info(this.getName()+" : "+line);
-					    				}
-					                	
-					                	session.deliver(sender, message.getChannel(), line, null);
-					                	
-					                }
+							     
+//					                while((line=server_logs.readLine())!=null) {
+//					                	
+//					                	if (isInfoEnabled) {
+//					    					S_LOGGER.info(this.getName()+" : "+line);
+//					    				}
+//					                	
+//					                	session.deliver(sender, message.getChannel(), line, null);
+//					                	
+//					                }
 							} catch (PhrescoException e) {
 								session.deliver(sender, ERROR_CHANNEL, "Error occured in build thread" , null);
 								e.printStackTrace();
@@ -278,9 +280,9 @@ public class BuildService implements Constants ,FrameworkConstants,BuildServiceC
 	
 
 	
-	public BufferedReader build(String username) throws PhrescoException, IOException {
+	public BufferedInputStream build(String username) throws PhrescoException, IOException {
 
-		BufferedReader reader=null;
+		BufferedInputStream reader=null;
 		try {
 			
 			ApplicationManager applicationManager = PhrescoFrameworkFactory.getApplicationManager();

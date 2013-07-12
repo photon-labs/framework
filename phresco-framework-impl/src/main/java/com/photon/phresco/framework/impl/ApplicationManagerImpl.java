@@ -17,12 +17,15 @@
  */
 package com.photon.phresco.framework.impl;
 
+import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.PushbackInputStream;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -30,8 +33,6 @@ import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.io.FileDeleteStrategy;
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -91,7 +92,7 @@ public class ApplicationManagerImpl implements ApplicationManager {
 	}
 
 	@Override
-	public BufferedReader performAction(ProjectInfo projectInfo, ActionType action, List<String> mavenArgCommands, String workingDirectory) throws PhrescoException {
+	public BufferedInputStream performAction(ProjectInfo projectInfo, ActionType action, List<String> mavenArgCommands, String workingDirectory) throws PhrescoException {
 		if (isDebugEnabled) {
 			S_LOGGER.debug("Entering Method ApplicationManagerImpl.performAction(" +
 					"Project project, ActionType action, Map<String, String> paramsMap,CallBack callBack)");
@@ -168,7 +169,7 @@ public class ApplicationManagerImpl implements ApplicationManager {
         return builder;
     }
 	
-	private BufferedReader executeMavenCommand(ProjectInfo projectInfo, ActionType action, StringBuilder command, String workingDirectory) throws PhrescoException {
+	private BufferedInputStream executeMavenCommand(ProjectInfo projectInfo, ActionType action, StringBuilder command, String workingDirectory) throws PhrescoException {
     	if (isDebugEnabled) {
     		S_LOGGER.debug("Entering Method ApplicationManagerImpl.executeMavenCommand(Project project, ActionType action, StringBuilder command)");
     		S_LOGGER.debug("executeMavenCommand() Project Code = " + projectInfo.getProjectCode());
@@ -181,7 +182,7 @@ public class ApplicationManagerImpl implements ApplicationManager {
         } 
         try {
             Process process = cl.execute();
-            return new BufferedReader(new InputStreamReader(process.getInputStream()));
+            return new BufferedInputStream(new MyWrapper(process.getInputStream()));
         } catch (CommandLineException e) {
             throw new PhrescoException(e);
         }
@@ -312,4 +313,16 @@ public class ApplicationManagerImpl implements ApplicationManager {
 		 }
 	 }
 	 
+	static class MyWrapper extends PushbackInputStream {
+	    MyWrapper(InputStream in) {
+	        super(in);
+	    }
+	
+	    @Override
+	    public int available() throws IOException {
+	        int b = super.read();
+	        super.unread(b);
+	        return super.available();
+	    }
+	}
 }

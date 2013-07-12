@@ -17,6 +17,7 @@
  */
 package com.photon.phresco.framework.api;
 
+import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.File;
 import java.util.List;
@@ -43,7 +44,7 @@ public interface ApplicationManager {
 	 * @return Returns the maven output as Reader object
 	 * @throws PhrescoException
 	 */
-	BufferedReader performAction(ProjectInfo projectInfo, ActionType action, List<String> mavenArgCommands, String workingDirectory) throws PhrescoException;
+	BufferedInputStream performAction(ProjectInfo projectInfo, ActionType action, List<String> mavenArgCommands, String workingDirectory) throws PhrescoException;
 	
 	/**
 	 * This method configures the maven site report for the application

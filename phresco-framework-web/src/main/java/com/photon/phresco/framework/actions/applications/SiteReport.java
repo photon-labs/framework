@@ -17,7 +17,7 @@
  */
 package com.photon.phresco.framework.actions.applications;
 
-import java.io.BufferedReader;
+import java.io.BufferedInputStream;
 import java.io.File;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
@@ -136,7 +136,7 @@ public class SiteReport extends FrameworkBaseAction {
 				buildArgCmds.add(Constants.HYPHEN_F);
 				buildArgCmds.add(pomFileName);
 			}
-			BufferedReader reader = applicationManager.performAction(projectInfo, actionType, buildArgCmds, appDirectoryPath);
+			BufferedInputStream reader = applicationManager.performAction(projectInfo, actionType, buildArgCmds, appDirectoryPath);
 			setSessionAttribute(getAppId() + REQ_SITE_REPORT, reader);
 			setReqAttribute(REQ_APP_ID, getAppId());
 			setReqAttribute(REQ_ACTION_TYPE, REQ_SITE_REPORT);

@@ -1,5 +1,6 @@
 package com.photon.phresco.framework.rest.api;
 
+import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
@@ -66,10 +67,20 @@ public class IpaDownloadService extends RestBase implements ServiceConstants {
 			buildArgCmds.add("-Dapplication.name=" + ipaFileName);
 			buildArgCmds.add("-Dapp.path=" + buildName);
 			buildArgCmds.add("-Dbuild.name=" + appBuildName);
-			BufferedReader readers = applicationManager.performAction(info, ActionType.IPA_DOWNLOAD, buildArgCmds, workingDirectory);
-			while (readers.readLine() != null) {
-				System.out.println(readers.readLine());
+			BufferedInputStream readers = applicationManager.performAction(info, ActionType.IPA_DOWNLOAD, buildArgCmds, workingDirectory);
+			
+			int available = readers.available();
+			while (available != 0) {
+				byte[] buf = new byte[available];
+                int read = readers.read(buf);
+                if (read == -1 ||  buf[available-1] == -1) {
+                	break;
+                } else {
+                	System.out.println(new String(buf));
+                }
+                available = readers.available();
 			}
+			
 			String ipaPath = getBuildName(appDirName, buildNumber).getDeployLocation();
 			ipaPath = ipaPath.substring(0, ipaPath.lastIndexOf( File.separator)) +  File.separator + ipaFileName + ".ipa";
 			InputStream fileInputStream = new FileInputStream(new File(ipaPath));

@@ -1,10 +1,12 @@
 package com.photon.phresco.framework.rest.api.util;
 
 
+import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.ByteArrayInputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileReader;
@@ -410,7 +412,7 @@ public class ActionFunction implements Constants ,FrameworkConstants,ActionServi
 		}
 	}
 
-	private ActionResponse generateResponse(BufferedReader server_logs) {
+	private ActionResponse generateResponse(BufferedInputStream server_logs) {
 		ActionResponse response = new ActionResponse();
 		UUID uniqueKey = UUID.randomUUID();
 		String unique_key = uniqueKey.toString();
@@ -426,7 +428,7 @@ public class ActionFunction implements Constants ,FrameworkConstants,ActionServi
 
 	public ActionResponse build(HttpServletRequest request) throws PhrescoException, IOException {
 		printLogs();
-		BufferedReader server_logs = null;
+		BufferedInputStream server_logs = null;
 		server_logs = build(getUsername());
 		if (server_logs != null) {
 			return generateResponse(server_logs);
@@ -437,7 +439,7 @@ public class ActionFunction implements Constants ,FrameworkConstants,ActionServi
 
 	public ActionResponse deploy(HttpServletRequest request) throws PhrescoException {
 		printLogs();
-		BufferedReader server_logs=null;
+		BufferedInputStream server_logs=null;
 		server_logs = deploy();
 		if (server_logs != null) {
 			return generateResponse(server_logs);
@@ -448,7 +450,7 @@ public class ActionFunction implements Constants ,FrameworkConstants,ActionServi
 
 	public ActionResponse runUnitTest(HttpServletRequest request) throws PhrescoException {
 		printLogs();
-		BufferedReader server_logs=null;
+		BufferedInputStream server_logs=null;
 		server_logs = runUnitTest();
 		if (server_logs != null) {
 			return generateResponse(server_logs);
@@ -459,7 +461,7 @@ public class ActionFunction implements Constants ,FrameworkConstants,ActionServi
 
 	public ActionResponse runComponentTest(HttpServletRequest request) throws PhrescoException {
 		printLogs();
-		BufferedReader server_logs=null;
+		BufferedInputStream server_logs=null;
 		server_logs = runComponentTest();
 		if (server_logs != null) {
 			return generateResponse(server_logs);
@@ -470,7 +472,7 @@ public class ActionFunction implements Constants ,FrameworkConstants,ActionServi
 
 	public ActionResponse codeValidate(HttpServletRequest request) throws PhrescoException {
 		printLogs();
-		BufferedReader server_logs=null;
+		BufferedInputStream server_logs=null;
 		server_logs = codeValidate();
 		if (server_logs != null) {
 			return generateResponse(server_logs);
@@ -481,7 +483,7 @@ public class ActionFunction implements Constants ,FrameworkConstants,ActionServi
 
 	public ActionResponse runAgainstSource(HttpServletRequest request) throws PhrescoException, IOException {
 		printLogs();
-		BufferedReader server_logs=null;
+		BufferedInputStream server_logs=null;
 		server_logs = runAgainstSource();
 		if (server_logs != null) {
 			return generateResponse(server_logs);
@@ -492,7 +494,7 @@ public class ActionFunction implements Constants ,FrameworkConstants,ActionServi
 
 	public ActionResponse stopServer(HttpServletRequest request) throws PhrescoException {
 		printLogs();
-		BufferedReader server_logs=null;
+		BufferedInputStream server_logs=null;
 		server_logs = stopServer();
 		if (server_logs != null) {
 			return generateResponse(server_logs);
@@ -503,7 +505,7 @@ public class ActionFunction implements Constants ,FrameworkConstants,ActionServi
 
 	public ActionResponse restartServer(HttpServletRequest request) throws PhrescoException, IOException {
 		printLogs();
-		BufferedReader server_logs=null;
+		BufferedInputStream server_logs=null;
 		server_logs = restartServer();
 		if (server_logs != null) {
 			return generateResponse(server_logs);
@@ -514,7 +516,7 @@ public class ActionFunction implements Constants ,FrameworkConstants,ActionServi
 
 	public ActionResponse performanceTest(HttpServletRequest request) throws PhrescoException, IOException {
 		printLogs();
-		BufferedReader server_logs=null;
+		BufferedInputStream server_logs=null;
 		server_logs = performanceTest();
 		if (server_logs != null) {
 			return generateResponse(server_logs);
@@ -525,7 +527,7 @@ public class ActionFunction implements Constants ,FrameworkConstants,ActionServi
 
 	public ActionResponse loadTest(HttpServletRequest request) throws PhrescoException, IOException {
 		printLogs();
-		BufferedReader server_logs=null;
+		BufferedInputStream server_logs=null;
 		server_logs = loadTest();
 		if (server_logs != null) {
 			return generateResponse(server_logs);
@@ -536,7 +538,7 @@ public class ActionFunction implements Constants ,FrameworkConstants,ActionServi
 
 	public ActionResponse minification(HttpServletRequest request) throws PhrescoException, IOException {
 		printLogs();
-		BufferedReader server_logs=null;
+		BufferedInputStream server_logs=null;
 		server_logs = minification();
 		if (server_logs != null) {
 			return generateResponse(server_logs);
@@ -547,7 +549,7 @@ public class ActionFunction implements Constants ,FrameworkConstants,ActionServi
 
 	public ActionResponse startHub(HttpServletRequest request) throws PhrescoException, IOException {
 		printLogs();
-		BufferedReader server_logs=null;
+		BufferedInputStream server_logs=null;
 		server_logs = startHub();
 		if (server_logs != null) {
 			return generateResponse(server_logs);
@@ -558,7 +560,7 @@ public class ActionFunction implements Constants ,FrameworkConstants,ActionServi
 
 	public ActionResponse startNode(HttpServletRequest request) throws PhrescoException, IOException {
 		printLogs();
-		BufferedReader server_logs=null;
+		BufferedInputStream server_logs=null;
 		server_logs = startNode();
 		if (server_logs != null) {
 			return generateResponse(server_logs);
@@ -569,7 +571,7 @@ public class ActionFunction implements Constants ,FrameworkConstants,ActionServi
 
 	public ActionResponse runFunctionalTest(HttpServletRequest request) throws PhrescoException, IOException {
 		printLogs();
-		BufferedReader server_logs=null;
+		BufferedInputStream server_logs=null;
 		server_logs = runFunctionalTest();
 		if (server_logs != null) {
 			return generateResponse(server_logs);
@@ -580,7 +582,7 @@ public class ActionFunction implements Constants ,FrameworkConstants,ActionServi
 
 	public ActionResponse stopHub(HttpServletRequest request) throws PhrescoException, IOException {
 		printLogs();
-		BufferedReader server_logs=null;
+		BufferedInputStream server_logs=null;
 		server_logs = stopHub();
 		if (server_logs != null) {
 			return generateResponse(server_logs);
@@ -591,7 +593,7 @@ public class ActionFunction implements Constants ,FrameworkConstants,ActionServi
 
 	public ActionResponse stopNode(HttpServletRequest request) throws PhrescoException, IOException {
 		printLogs();
-		BufferedReader server_logs=null;
+		BufferedInputStream server_logs=null;
 		server_logs = stopNode();
 		if (server_logs != null) {
 			return generateResponse(server_logs);
@@ -602,7 +604,7 @@ public class ActionFunction implements Constants ,FrameworkConstants,ActionServi
 
 	public ActionResponse showStartedHubLog(HttpServletRequest request) throws PhrescoException, IOException {
 		printLogs();
-		BufferedReader server_logs=null;
+		BufferedInputStream server_logs=null;
 		server_logs = showStartedHubLog();
 		if (server_logs != null) {
 			return generateResponse(server_logs);
@@ -613,7 +615,7 @@ public class ActionFunction implements Constants ,FrameworkConstants,ActionServi
 
 	public ActionResponse showStartedNodeLog(HttpServletRequest request) throws PhrescoException, IOException {
 		printLogs();
-		BufferedReader server_logs=null;
+		BufferedInputStream server_logs=null;
 		server_logs = showStartedNodeLog();
 		if (server_logs != null) {
 			return generateResponse(server_logs);
@@ -636,7 +638,7 @@ public class ActionFunction implements Constants ,FrameworkConstants,ActionServi
 
 	public ActionResponse generateSiteReport(HttpServletRequest request) throws PhrescoException, IOException {
 		printLogs();
-		BufferedReader server_logs=null;
+		BufferedInputStream server_logs=null;
 		server_logs = generateSiteReport();
 		if (server_logs != null) {
 			return generateResponse(server_logs);
@@ -647,7 +649,7 @@ public class ActionFunction implements Constants ,FrameworkConstants,ActionServi
 
 	public ActionResponse ciSetup(HttpServletRequest request) throws PhrescoException, IOException {
 		printLogs();
-		BufferedReader server_logs=null;
+		BufferedInputStream server_logs=null;
 		server_logs = ciSetup();
 		if (server_logs != null) {
 			return generateResponse(server_logs);
@@ -658,7 +660,7 @@ public class ActionFunction implements Constants ,FrameworkConstants,ActionServi
 
 	public ActionResponse ciStart(HttpServletRequest request) throws PhrescoException, IOException {
 		printLogs();
-		BufferedReader server_logs=null;
+		BufferedInputStream server_logs=null;
 		server_logs = ciStart();
 		if (server_logs != null) {
 			return generateResponse(server_logs);
@@ -669,7 +671,7 @@ public class ActionFunction implements Constants ,FrameworkConstants,ActionServi
 
 	public ActionResponse ciStop(HttpServletRequest request) throws PhrescoException, IOException {
 		printLogs();
-		BufferedReader server_logs=null;
+		BufferedInputStream server_logs=null;
 		server_logs = ciStop();
 		if (server_logs != null) {
 			return generateResponse(server_logs);
@@ -684,8 +686,8 @@ public class ActionFunction implements Constants ,FrameworkConstants,ActionServi
 		return printAsPdf(response, request);
 	}
 
-	public BufferedReader build(String username) throws PhrescoException, IOException {
-		BufferedReader reader=null;
+	public BufferedInputStream build(String username) throws PhrescoException, IOException {
+		BufferedInputStream reader=null;
 		try {
 			ApplicationManager applicationManager = PhrescoFrameworkFactory.getApplicationManager();
 			ProjectInfo projectInfo = getProjectInfo();
@@ -710,11 +712,11 @@ public class ActionFunction implements Constants ,FrameworkConstants,ActionServi
 		return reader;
 	}
 
-	public BufferedReader deploy() throws PhrescoException {
+	public BufferedInputStream deploy() throws PhrescoException {
 		if (isDebugEnabled) {
 			S_LOGGER.debug("Entering Method  MavenFunctions.deploy()");
 		}
-		BufferedReader reader = null;
+		BufferedInputStream reader = null;
 		try {
 			ApplicationManager applicationManager = PhrescoFrameworkFactory.getApplicationManager();
 			ProjectInfo projectInfo = getProjectInfo();
@@ -738,11 +740,11 @@ public class ActionFunction implements Constants ,FrameworkConstants,ActionServi
 		return reader;
 	}
 
-	public BufferedReader runUnitTest() throws PhrescoException {
+	public BufferedInputStream runUnitTest() throws PhrescoException {
 		if (isDebugEnabled) {
 			S_LOGGER.debug("Entering Method MavenFunctions.runUnitTest()");
 		}
-		BufferedReader reader = null;
+		BufferedInputStream reader = null;
 		try {
 			ApplicationInfo appInfo = getApplicationInfo();
 			StringBuilder workingDirectory = new StringBuilder(getAppDirectoryPath(appInfo));
@@ -763,11 +765,11 @@ public class ActionFunction implements Constants ,FrameworkConstants,ActionServi
 		return reader;
 	}
 
-	public BufferedReader runComponentTest() throws PhrescoException {
+	public BufferedInputStream runComponentTest() throws PhrescoException {
 		if (isDebugEnabled) {
 			S_LOGGER.debug("Entering Method MavenFunctions.runComponentTest:Entry");
 		}
-		BufferedReader reader = null;
+		BufferedInputStream reader = null;
 		try {
 			ApplicationInfo appInfo = getApplicationInfo();
 			StringBuilder workingDirectory = new StringBuilder(getAppDirectoryPath(appInfo));
@@ -788,11 +790,11 @@ public class ActionFunction implements Constants ,FrameworkConstants,ActionServi
 		return reader;
 	}
 
-	public BufferedReader codeValidate() throws PhrescoException {
+	public BufferedInputStream codeValidate() throws PhrescoException {
 		if (isDebugEnabled) {
 			S_LOGGER.debug("Entering Method MavenFunctions.codeValidate()");
 		}
-		BufferedReader reader = null;
+		BufferedInputStream reader = null;
 		try {
 			ProjectInfo projectInfo = getProjectInfo();
 			ApplicationInfo applicationInfo = getApplicationInfo();
@@ -816,11 +818,11 @@ public class ActionFunction implements Constants ,FrameworkConstants,ActionServi
 		return reader;
 	}
 
-	public BufferedReader runAgainstSource() throws IOException, PhrescoException {
+	public BufferedInputStream runAgainstSource() throws IOException, PhrescoException {
 		if (isDebugEnabled) {
 			S_LOGGER.debug("Entering Method MavenFunctions.javaRunAgainstSource()");
 		}
-		BufferedReader reader = null;
+		BufferedInputStream reader = null;
 		try {
 			BufferedReader compileReader = compileSource();
 			String line = compileReader.readLine();
@@ -829,7 +831,7 @@ public class ActionFunction implements Constants ,FrameworkConstants,ActionServi
 			}
 
 			if (StringUtils.isNotEmpty(line) && line.startsWith("[INFO] BUILD FAILURE")) {
-				reader = new BufferedReader(new FileReader(getLogFilePath()));
+				reader = new BufferedInputStream(new FileInputStream(getLogFilePath()));
 			} else {
 				MojoProcessor mojo = new MojoProcessor(new File(getPhrescoPluginInfoFilePath(PHASE_RUNGAINST_SRC_START)));
 				persistValuesToXml(mojo, PHASE_RUNGAINST_SRC_START);
@@ -849,11 +851,11 @@ public class ActionFunction implements Constants ,FrameworkConstants,ActionServi
 		return reader;
 	}
 
-	public BufferedReader stopServer() throws PhrescoException {
+	public BufferedInputStream stopServer() throws PhrescoException {
 		if (isDebugEnabled) {
 			S_LOGGER.debug("Entering Method Build.handleStopServer()");
 		}
-		BufferedReader reader = null;
+		BufferedInputStream reader = null;
 		try {
 			reader = handleStopServer(false);
 		} catch (PhrescoException e) {
@@ -868,9 +870,9 @@ public class ActionFunction implements Constants ,FrameworkConstants,ActionServi
 	}
 
 
-	public BufferedReader restartServer() throws IOException, PhrescoException  {
+	public BufferedInputStream restartServer() throws IOException, PhrescoException  {
 
-		BufferedReader reader = null;
+		BufferedInputStream reader = null;
 		if (isDebugEnabled) {
 			S_LOGGER.debug("Entering Method MavenFunctions.restartServer()");
 		}
@@ -884,7 +886,7 @@ public class ActionFunction implements Constants ,FrameworkConstants,ActionServi
 			}
 
 			if (line != null && line.startsWith("[INFO] BUILD FAILURE")) {
-				reader = new BufferedReader(new FileReader(getLogFilePath()));
+				reader = new BufferedInputStream(new FileInputStream(getLogFilePath()));
 			} else {
 				reader = startServer(null);
 			}
@@ -899,9 +901,9 @@ public class ActionFunction implements Constants ,FrameworkConstants,ActionServi
 	}
 
 
-	public BufferedReader performanceTest() throws PhrescoException {
+	public BufferedInputStream performanceTest() throws PhrescoException {
 
-		BufferedReader reader=null;
+		BufferedInputStream reader=null;
 
 		try {
 			FileOutputStream fop = null;
@@ -929,9 +931,9 @@ public class ActionFunction implements Constants ,FrameworkConstants,ActionServi
 	}
 
 
-	public BufferedReader loadTest() throws PhrescoException {
+	public BufferedInputStream loadTest() throws PhrescoException {
 
-		BufferedReader reader = null;
+		BufferedInputStream reader = null;
 		if (isDebugEnabled) {
 			S_LOGGER.debug("Entering Method MavenFunctions.runLoadTest()");
 		} 
@@ -952,9 +954,9 @@ public class ActionFunction implements Constants ,FrameworkConstants,ActionServi
 		return reader;
 	}
 
-	public BufferedReader minification() throws PhrescoException {
+	public BufferedInputStream minification() throws PhrescoException {
 
-		BufferedReader reader = null;
+		BufferedInputStream reader = null;
 		try {
 			ApplicationManager applicationManager = PhrescoFrameworkFactory.getApplicationManager();
 			ApplicationInfo applicationInfo = getApplicationInfo();
@@ -994,9 +996,9 @@ public class ActionFunction implements Constants ,FrameworkConstants,ActionServi
 		return reader;
 	}
 
-	public BufferedReader startHub() throws PhrescoException {
+	public BufferedInputStream startHub() throws PhrescoException {
 
-		BufferedReader reader = null;
+		BufferedInputStream reader = null;
 		if (isDebugEnabled) {
 			S_LOGGER.debug("Entering Method MavenFunctions.startHub()");
 		}
@@ -1021,9 +1023,9 @@ public class ActionFunction implements Constants ,FrameworkConstants,ActionServi
 	}
 
 
-	public BufferedReader startNode() throws PhrescoException {
+	public BufferedInputStream startNode() throws PhrescoException {
 
-		BufferedReader reader = null;
+		BufferedInputStream reader = null;
 		if (isDebugEnabled) {
 			S_LOGGER.debug("Entering Method MavenFunctions.startNode()");
 		}
@@ -1048,9 +1050,9 @@ public class ActionFunction implements Constants ,FrameworkConstants,ActionServi
 	}
 
 
-	public BufferedReader runFunctionalTest() throws PhrescoException {
+	public BufferedInputStream runFunctionalTest() throws PhrescoException {
 
-		BufferedReader reader = null;
+		BufferedInputStream reader = null;
 
 		if (isDebugEnabled) {
 			S_LOGGER.debug("Entering Method MavenFunctions.runFunctionalTest()");
@@ -1090,9 +1092,9 @@ public class ActionFunction implements Constants ,FrameworkConstants,ActionServi
 	}
 
 
-	public BufferedReader stopHub() throws PhrescoException {
+	public BufferedInputStream stopHub() throws PhrescoException {
 
-		BufferedReader reader = null;
+		BufferedInputStream reader = null;
 		if (isDebugEnabled) {
 			S_LOGGER.debug("Entering Method MavenFunctions.stopHub()");
 		}
@@ -1115,9 +1117,9 @@ public class ActionFunction implements Constants ,FrameworkConstants,ActionServi
 	}
 
 
-	public BufferedReader stopNode() throws PhrescoException {
+	public BufferedInputStream stopNode() throws PhrescoException {
 
-		BufferedReader reader = null;
+		BufferedInputStream reader = null;
 
 		if (isDebugEnabled) {
 			S_LOGGER.debug("Entering Method MavenFunctions.stopNode()");
@@ -1225,8 +1227,8 @@ public class ActionFunction implements Constants ,FrameworkConstants,ActionServi
 	}
 
 
-	public BufferedReader showStartedHubLog() throws PhrescoException {
-		BufferedReader reader = null;
+	public BufferedInputStream showStartedHubLog() throws PhrescoException {
+		BufferedInputStream reader = null;
 		if (isDebugEnabled) {
 			S_LOGGER.debug("Entering Method MavenFunctions.showStartedHubLog()");
 		}
@@ -1237,7 +1239,7 @@ public class ActionFunction implements Constants ,FrameworkConstants,ActionServi
 			int port = hubConfig.getPort();
 			String str = "Hub is already running in " + host + ":" + port;
 			InputStream is = new ByteArrayInputStream(str.getBytes());
-			reader = new BufferedReader(new InputStreamReader(is));
+			reader = new BufferedInputStream(is);
 		} catch (PhrescoException e) {
 			S_LOGGER.error("Entered into catch block of MavenFunctions.showStartedHubLog()"+ FrameworkUtil.getStackTraceAsString(e));
 			throw new PhrescoException("Entered into catch block of MavenFunctions.stopNode()"+ FrameworkUtil.getStackTraceAsString(e));
@@ -1248,8 +1250,8 @@ public class ActionFunction implements Constants ,FrameworkConstants,ActionServi
 	}
 
 
-	public BufferedReader showStartedNodeLog() throws PhrescoException {
-		BufferedReader reader = null;
+	public BufferedInputStream showStartedNodeLog() throws PhrescoException {
+		BufferedInputStream reader = null;
 
 		if (isDebugEnabled) {
 			S_LOGGER.debug("Entering Method MavenFunctions.showStartedNodeLog()");
@@ -1262,7 +1264,7 @@ public class ActionFunction implements Constants ,FrameworkConstants,ActionServi
 			int port = configuration.getPort();
 			String str = "Node is already running in " + host + COLON + port;
 			InputStream is = new ByteArrayInputStream(str.getBytes());
-			reader = new BufferedReader(new InputStreamReader(is));
+			reader = new BufferedInputStream(is);
 
 		} catch (PhrescoException e) {
 			S_LOGGER.error("Entered into catch block of MavenFunctions.showStartedNodeLog()"+ FrameworkUtil.getStackTraceAsString(e));
@@ -1273,8 +1275,8 @@ public class ActionFunction implements Constants ,FrameworkConstants,ActionServi
 		return reader;
 	}
 
-	public BufferedReader generateSiteReport() throws PhrescoException {
-		BufferedReader reader = null;
+	public BufferedInputStream generateSiteReport() throws PhrescoException {
+		BufferedInputStream reader = null;
 		if (isDebugEnabled) {
 			S_LOGGER.debug("Entering Method  MavenFunctions.generateReport()");
 		}
@@ -1297,8 +1299,8 @@ public class ActionFunction implements Constants ,FrameworkConstants,ActionServi
 	}
 
 
-	public BufferedReader ciSetup() throws PhrescoException {
-		BufferedReader reader = null;
+	public BufferedInputStream ciSetup() throws PhrescoException {
+		BufferedInputStream reader = null;
 
 		if (isDebugEnabled) {
 			S_LOGGER.debug("Entering Method  MavenFunctions CI setup()");
@@ -1323,8 +1325,8 @@ public class ActionFunction implements Constants ,FrameworkConstants,ActionServi
 	}
 
 
-	public BufferedReader ciStart() throws PhrescoException {
-		BufferedReader reader = null;
+	public BufferedInputStream ciStart() throws PhrescoException {
+		BufferedInputStream reader = null;
 
 		if (isDebugEnabled) {
 			S_LOGGER.debug("Entering Method  MavenFunctions .startJenkins()");
@@ -1348,9 +1350,9 @@ public class ActionFunction implements Constants ,FrameworkConstants,ActionServi
 		return reader;
 	}
 
-	public BufferedReader ciStop() throws PhrescoException {
+	public BufferedInputStream ciStop() throws PhrescoException {
 
-		BufferedReader reader=null;		
+		BufferedInputStream reader=null;		
 		if (isDebugEnabled) {
 			S_LOGGER.debug("Entering Method  MavenFunctions .stopJenkins()");
 		}
@@ -1423,13 +1425,20 @@ public class ActionFunction implements Constants ,FrameworkConstants,ActionServi
 			List<String> buildArgCmds = getMavenArgCommands(parameters);
 			buildArgCmds.add(HYPHEN_N);
 			String workingDirectory = getAppDirectoryPath(applicationInfo);
-			BufferedReader reader = applicationManager.performAction(projectInfo, ActionType.PDF_REPORT, buildArgCmds, workingDirectory);
-			String line;
-			line = reader.readLine();
-			while (line != null) {
-				line = reader.readLine();
-				System.out.println("Restart Start Console : " + line);
+			BufferedInputStream reader = applicationManager.performAction(projectInfo, ActionType.PDF_REPORT, buildArgCmds, workingDirectory);
+			
+			int available = reader.available();
+			while (available != 0) {
+				byte[] buf = new byte[available];
+                int read = reader.read(buf);
+                if (read == -1 ||  buf[available-1] == -1) {
+                	break;
+                } else {
+                	System.out.println("Restart Start Console : " + new String(buf));
+                }
+                available = reader.available();
 			}
+			
 		} catch (Exception e) {
 			S_LOGGER.error("Entered into catch block of ActionFunction.printAsPdf()"+ e);
 			response.setStatus(ERROR);
@@ -1697,20 +1706,32 @@ public class ActionFunction implements Constants ,FrameworkConstants,ActionServi
 	}
 
 
-	private BufferedReader handleStopServer(boolean readData) throws PhrescoException {
+	private BufferedInputStream handleStopServer(boolean readData) throws PhrescoException {
 		if (isDebugEnabled) {
 			S_LOGGER.debug("Entering Method Build.handleStopServer()");
 		}
 
-		BufferedReader reader = null;
+		BufferedInputStream reader = null;
 		try {
 			ApplicationInfo applicationInfo = getApplicationInfo();
 			ApplicationManager applicationManager = PhrescoFrameworkFactory.getApplicationManager();
 			String workingDirectory = getAppDirectoryPath(applicationInfo);
 			reader = applicationManager.performAction(getProjectInfo(), ActionType.STOPSERVER, null, workingDirectory);
+			
 			if (readData) {
-				while (StringUtils.isNotEmpty(reader.readLine())) {}
+				int available = reader.available();
+				while (available != 0) {
+					byte[] buf = new byte[available];
+	                int read = reader.read(buf);
+	                if (read == -1 ||  buf[available-1] == -1) {
+	                	break;
+	                } else {
+	                	// 
+	                }
+	                available = reader.available();
+				}
 			}
+			
 			deleteLogFile();
 		} catch (Exception e) {
 			S_LOGGER.error("Entered into catch block of Build.handleStopServer()"
@@ -1784,14 +1805,14 @@ public class ActionFunction implements Constants ,FrameworkConstants,ActionServi
 	}
 
 
-	private BufferedReader startServer(String environmentName) throws PhrescoException {
+	private BufferedInputStream startServer(String environmentName) throws PhrescoException {
 		if (isDebugEnabled) {
 			S_LOGGER.debug("Entering Method MavenFunctions.startServer()");
 		}
 		String serverHost = "";
 		String serverProtocol = "";
 		int serverPort = 0;
-		BufferedReader reader = null;
+		BufferedInputStream reader = null;
 		try {
 			ApplicationInfo applicationInfo = getApplicationInfo();
 			if(StringUtils.isEmpty(environmentName)) {

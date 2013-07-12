@@ -19,6 +19,7 @@ package com.photon.phresco.framework.impl;
 
 import hudson.cli.CLI;
 
+import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.ByteArrayOutputStream;
@@ -93,30 +94,30 @@ public class CIManagerImpl implements CIManager, FrameworkConstants {
 	
     private CLI cli = null;
     
-	public BufferedReader setup(ProjectInfo projectInfo, ActionType action, List<String> buildArgCmds, String workingDirectory) throws PhrescoException {
+	public BufferedInputStream setup(ProjectInfo projectInfo, ActionType action, List<String> buildArgCmds, String workingDirectory) throws PhrescoException {
 		try {
 			ApplicationManager applicationManager = PhrescoFrameworkFactory.getApplicationManager();
-			BufferedReader reader = applicationManager.performAction(projectInfo, action, buildArgCmds, workingDirectory);
+			BufferedInputStream reader = applicationManager.performAction(projectInfo, action, buildArgCmds, workingDirectory);
 			return reader;
 		} catch (Exception e) {
 			throw new PhrescoException(e);
 		}
 	}
 
-	public BufferedReader start(ProjectInfo projectInfo, ActionType action, List<String> buildArgCmds, String workingDirectory) throws PhrescoException {
+	public BufferedInputStream start(ProjectInfo projectInfo, ActionType action, List<String> buildArgCmds, String workingDirectory) throws PhrescoException {
 		try {
 			ApplicationManager applicationManager = PhrescoFrameworkFactory.getApplicationManager();
-			BufferedReader reader = applicationManager.performAction(projectInfo, action, buildArgCmds, workingDirectory);
+			BufferedInputStream reader = applicationManager.performAction(projectInfo, action, buildArgCmds, workingDirectory);
 			return reader;
 		} catch (Exception e) {
 			throw new PhrescoException(e);
 		}
 	}
 
-	public BufferedReader stop(ProjectInfo projectInfo, ActionType action, List<String> buildArgCmds, String workingDirectory) throws PhrescoException {
+	public BufferedInputStream stop(ProjectInfo projectInfo, ActionType action, List<String> buildArgCmds, String workingDirectory) throws PhrescoException {
 		try {
 			ApplicationManager applicationManager = PhrescoFrameworkFactory.getApplicationManager();
-			BufferedReader reader = applicationManager.performAction(projectInfo, action, buildArgCmds, workingDirectory);
+			BufferedInputStream reader = applicationManager.performAction(projectInfo, action, buildArgCmds, workingDirectory);
 			return reader;
 		} catch (Exception e) {
 			throw new PhrescoException(e);
