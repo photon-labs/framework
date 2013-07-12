@@ -54,12 +54,12 @@ define(["navigation/api/navigationAPI"], function() {
 			var self = this;
 			self.renderHeader(function(retVal){
 				if(currentContent === undefined || currentContent === null){
-					self.renderContent(function(retVal){
-						self.renderFooter(function(retVal){});
+					self.renderFooter(function(retVal){
+						self.renderContent(function(retVal){});
 					});
 				} else if(currentContent !== undefined && currentContent !== null && currentContent !== "") {
-					self.dynamicContent(currentContent, function(retVal){
-						self.renderFooter(function(retVal){});
+					self.renderFooter(function(retVal){
+						self.dynamicContent(currentContent, function(retVal){});
 					});
 				}
 			});
@@ -660,7 +660,8 @@ define(["navigation/api/navigationAPI"], function() {
 						//commonVariables.loadingScreen.removeLoading();
 						if (response !== null ) {
 							if(self.act==='importpost') {
-								self.successMsgPopUp(response.message);
+								$(".blinkmsg").removeClass("poperror").addClass("popsuccess");
+								self.effectFadeOut('popsuccess', (response.message));
 							}
 							callback(response);						
 						} else {
@@ -670,7 +671,8 @@ define(["navigation/api/navigationAPI"], function() {
 					function(textStatus) {
 						//commonVariables.loadingScreen.removeLoading();
 						if(self.act==='importpost') {
-							self.failureMsgPopUp("Project Import failed");
+						$(".blinkmsg").removeClass("popsuccess").addClass("poperror");
+						self.effectFadeOut('poperror', 'Project Import failed');
 						}
 					}
 				);

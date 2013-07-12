@@ -1,16 +1,14 @@
     <section class="optiontitle qual_unit">
-      <div class="unit_text">
-          Job Templates
-        </div>
+      <div class="unit_text" data-i18n="ci.jobtemplates"/>                  
         <div class="flt_right">
-        <input type="submit" value="Create a Job Template" name="jobTemplatePopup" class="btn btn_style create_job_btn">
+        <input type="submit" data-i18n="[value]ci.createjobtemplate;" name="jobTemplatePopup" class="btn btn_style create_job_btn">
         <div id="jobTemplatePopup" class="dyn_popup job_template">
           <form id="jobTemplate">
                         <table class="table" cellpadding="0" cellspacing="0" border="0">
                             <tbody>
                                 <tr>
-                                  <td>Name</td>
-                                    <td>Job Type</td>
+                                  <td data-i18n="ci.name"/>
+                                  <td data-i18n="ci.type"/>
                                 </tr>
                                 <tr>
                                   <td>
@@ -19,20 +17,20 @@
                                   </td>
                                   <td>
                                       <select name="type" class="selectpicker">
-                                            <option value="Code Validation">Code Validation</option>
-                                            <option value="Build">Build</option>
-                                            <option value="Deploy">Deploy</option>
-                                            <option value="Unit Test">Unit Test</option>
-                                            <option value="Component Test">Component Test</option>
-                                            <option value="Functional Test">Functional Test</option>
-                                            <option value="Performance Test">Performance Test</option>
-                                            <option value="Load Test">Load Test</option>
-                                            <option value="PDF Report">PDF Report</option>
+                                            <option value="codeValidation">Code Validation</option>
+                                            <option value="build">Build</option>
+                                            <option value="deploy">Deploy</option>
+                                            <option value="unittest">Unit Test</option>
+                                            <option value="componentTest">Component Test</option>
+                                            <option value="functionalTest">Functional Test</option>
+                                            <option value="performanceTest">Performance Test</option>
+                                            <option value="loadTest">Load Test</option>
+                                            <option value="pdfReport">PDF Report</option>
                                       </select>
                                   </td>
                                 </tr>
                                 <tr>
-									<td>Application<sup>*</sup></td>
+									<td data-i18n="ci.application"><sup>*</sup></td>
 									<td colspan="3">
 										<select id="appIds" name="appIds" class="selectpicker" multiple data-selected-text-format="count>1">
 										</select>
@@ -47,7 +45,6 @@
                                     <td><select name="repoTypes" class="selectpicker">
                                               <option value="svn">SVN</option>
                                               <option value="git">Git</option>
-                                              <option value="bitkeeper">Bitkeeper</option>
                                         </select>
                                     </td>
                                 </tr>
@@ -60,9 +57,10 @@
                                 <tr>
                                     <td><input type="checkbox" name="enableUploadSettings">Upload Settings</td>
 									<td>
-										<select name="uploadTypes" class="selectpicker" multiple data-selected-text-format="values">
+										<select name="uploadTypes" class="selectpicker" multiple data-selected-text-format="count>1">
 										  <option value="Collabnet">Collabnet</option>
 										  <option value="Confluence">Confluence</option>
+                      <option value="Cobertura">Cobertura</option>
 										</select>
 									</td>
                                 </tr>
@@ -70,8 +68,8 @@
                           </table>
 						  <span id='errMsg' class="flt_left"/>						
                           <div class="flt_right">							
-							<input type="button" value="Create" name="save" class="btn btn_style">
-                            <input type="button" value="Close" class="btn btn_style dyn_popup_close">
+							<input type="button" data-i18n="[value]ci.create;" name="save" class="btn btn_style">
+                            <input type="button" data-i18n="[value]ci.close;" class="btn btn_style dyn_popup_close">
                          </div>
             </form>
         </div>
@@ -82,11 +80,11 @@
           <table id="jobTemplateList" class="table table-striped table_border table-bordered jobs_table" cellpadding="0" cellspacing="0" border="0">
               <thead>
                 <tr>
-                  <th>Name</th>
-                  <th>Type</th>
-                  <th>Application</th>
-                  <th>Configure</th>
-                  <th>Delete</th>
+                  <th data-i18n="ci.name"/>
+                  <th data-i18n="ci.type"/>
+                  <th data-i18n="ci.application"/>
+                  <th data-i18n="ci.edit"/>
+                  <th data-i18n="ci.delete"/>
                 </tr>
               </thead>
               <tbody>
@@ -96,7 +94,7 @@
                       <td>{{type}}</td>
                       <td>{{appIds}}</td>
                       <td>
-                          <a value="{{name}}" data-original-title="Configure" id="edit_{{name}}" name="editpopup" href="#" data-toggle="tooltip" data-placement="top" title="" class="tooltiptop"><img width="29" height="23" border="0" alt="" src="themes/default/images/helios/edit_row_icon.png"></a>
+                          <a value="{{name}}" data-original-title="Edit" id="edit_{{name}}" name="editpopup" href="#" data-toggle="tooltip" data-placement="top" title="" class="tooltiptop"><img width="29" height="23" border="0" alt="" src="themes/default/images/helios/edit_row_icon.png"></a>
                       </td>
                       <td>
                           <a value="{{name}}" class="tooltiptop" id="delete_{{name}}" name="deleteconfirm" title="" data-placement="top" data-toggle="tooltip" href="#" data-original-title="Delete"><img src="themes/default/images/helios/delete_row.png" width="14" height="18" border="0" alt=""></a>

@@ -29,6 +29,7 @@ import javax.ws.rs.core.Response;
 
 import junit.framework.Assert;
 
+import org.apache.commons.io.FileUtils;
 import org.junit.Test;
 
 import com.photon.phresco.api.ConfigManager;
@@ -36,6 +37,7 @@ import com.photon.phresco.configuration.Configuration;
 import com.photon.phresco.configuration.Environment;
 import com.photon.phresco.exception.ConfigurationException;
 import com.photon.phresco.exception.PhrescoException;
+import com.photon.phresco.framework.model.AddCertificateInfo;
 import com.photon.phresco.framework.model.CronExpressionInfo;
 import com.photon.phresco.framework.rest.api.util.FrameworkServiceUtil;
 import com.photon.phresco.impl.ConfigManagerImpl;
@@ -79,11 +81,11 @@ public class ConfigurationServiceTest extends LoginServiceTest {
 		propProd.setProperty("port", "8654");
 		propProd.setProperty("admin_username", "");
 		propProd.setProperty("admin_password", "");
-		propProd.setProperty("remoteDeployment", "");
+		propProd.setProperty("remoteDeployment", "false");
 		propProd.setProperty("certificate", "");
 		propProd.setProperty("type", "Apache Tomcat");
 		propProd.setProperty("version", "6.0.x");
-		propProd.setProperty("deploy_dir", "c:\\wamp\\");
+		propProd.setProperty("deploy_dir", "C:\\apache-tomcat-7.0.14\\webapps");
 		propProd.setProperty("context", "serverprtod");
 		prodConfigServer.setProperties(propProd);
 		
@@ -120,7 +122,7 @@ public class ConfigurationServiceTest extends LoginServiceTest {
 		testServer.setProperty("certificate", "");
 		testServer.setProperty("type", "Apache Tomcat");
 		testServer.setProperty("version", "6.0.x");
-		testServer.setProperty("deploy_dir", "c:\\wamp\\");
+		testServer.setProperty("deploy_dir", "c:\\wamp\\www");
 		testServer.setProperty("context", "serverprtod");
 		testConfigServer.setProperties(testServer);
 		
@@ -191,16 +193,16 @@ public class ConfigurationServiceTest extends LoginServiceTest {
 		Assert.assertEquals(200, response.getStatus());
 	}
 	
-//	@Test
+	@Test
 	public void  getSettingsTemplateTest() {
 		Response templateLoginFail = configurationService.getSettingsTemplate(appDirName, techId, "sample", "Server");
 		Assert.assertEquals(400, templateLoginFail.getStatus());
 		Response responseDb = configurationService.getSettingsTemplate(appDirName, techId, userId, "Database");
 		Assert.assertEquals(200, responseDb.getStatus());
-		Response responseServer = configurationService.getSettingsTemplate(appDirName, techId, userId, "Server");
+		Response responseServer = configurationService.getSettingsTemplate(appDirName, techId, userId, "Email");
 		Assert.assertEquals(200, responseServer.getStatus());
-		Response settingsTempFail = configurationService.getSettingsTemplate(appDirName, "", userId, "");
-		Assert.assertEquals(400, settingsTempFail.getStatus());
+//		Response settingsTempFail = configurationService.getSettingsTemplate(appDirName, "", userId, "");
+//		Assert.assertEquals(400, settingsTempFail.getStatus());
 	}
 	
 	@Test
@@ -217,6 +219,27 @@ public class ConfigurationServiceTest extends LoginServiceTest {
 		Response cronValidation = configurationService.cronValidation(cron);
 		ResponseInfo<CronExpressionInfo> entity = (ResponseInfo<CronExpressionInfo>) cronValidation.getEntity();
 		assertEquals("23 5 * * 3" , entity.getData().getCronExpression());
+	}
+	
+	@Test
+	public void testCronExpressionSuccessOnDaily() throws PhrescoException {
+		CronExpressionInfo cron = new CronExpressionInfo();
+		cron.setCronBy("Daily");
+		cron.setEvery("false");
+		cron.setHours("5");
+		cron.setMinutes("23");
+		cron.setDay("8");
+		Response cronValidation = configurationService.cronValidation(cron);
+		assertEquals(200 , cronValidation.getStatus());
+		
+		CronExpressionInfo cron1 = new CronExpressionInfo();
+		cron1.setCronBy("Daily");
+		cron1.setEvery("true");
+		cron1.setHours("5");
+		cron1.setMinutes("23");
+		cron1.setDay("8");
+		Response cronValdaily = configurationService.cronValidation(cron1);
+		assertEquals(200 , cronValdaily.getStatus());
 	}
 	
 	@Test
@@ -365,6 +388,77 @@ public class ConfigurationServiceTest extends LoginServiceTest {
 		cloneEnvironment.setDefaultEnv(false);
 		Response response = configurationService.cloneEnvironment(appDirName, "Production", cloneEnvironment);
 		Assert.assertEquals(200, response.getStatus());
+	}
+	
+//	@Test
+	public void returnCertificate() throws PhrescoException {
+		Response authenticateServer = configurationService.authenticateServer("kumar_s", "8443", "TestProject");
+		Assert.assertEquals(200, authenticateServer.getStatus());
+	}
+	
+	@Test
+	public void addCertificate() throws PhrescoException {
+		AddCertificateInfo add = new AddCertificateInfo();
+		add.setAppDirName("TestProject");
+		add.setHost("kumar_s");
+		add.setPort("8443");
+		add.setPropValue("CN=kumar_s");
+		add.setFromPage("configuration");
+		add.setCertificateName("CN=kumar_s");
+		add.setEnvironmentName("Production");
+		add.setConfigName("Server");
+		add.setCustomerId("photon");
+//		Response authenticateServer = configurationService.addCertificate(add);
+//		Assert.assertEquals(200, authenticateServer.getStatus());
+		
+		AddCertificateInfo add1 = new AddCertificateInfo();
+		add1.setAppDirName("TestProject");
+		add1.setHost("kumar_s");
+		add1.setPort("8443");
+		add1.setPropValue("CN=kumar_s");
+		add1.setFromPage("settings");
+		add1.setCertificateName("CN=kumar_s");
+		add1.setEnvironmentName("Production");
+		add1.setConfigName("Server");
+		add1.setCustomerId("photon");
+//		Response authenticate = configurationService.addCertificate(add1);
+//		Assert.assertEquals(200, authenticate.getStatus());
+		
+		AddCertificateInfo add4 = new AddCertificateInfo();
+		add4.setHost("kumar_s");
+		add4.setPort("6356");
+		add4.setFromPage("configuraiton");
+		add4.setPropValue("");
+		Response addFailsonValue = configurationService.addCertificate(add4);
+		Assert.assertEquals(200, addFailsonValue.getStatus());
+		 
+		File certFile = FileUtils.toFile(this.getClass().getResource("/Production-Server.crt"));
+		AddCertificateInfo add5 = new AddCertificateInfo();
+		add5.setAppDirName("TestProject");
+		add5.setHost("localhost");
+		add5.setPort("8080");
+		add5.setPropValue(certFile.getPath());
+		add5.setFromPage("configuration");
+		add5.setCertificateName(certFile.getPath());
+		add5.setEnvironmentName("Production");
+		add5.setConfigName("Server");
+		add5.setCustomerId("photon");
+		Response authenticateServerPath = configurationService.addCertificate(add5);
+		Assert.assertEquals(200, authenticateServerPath.getStatus());
+		
+		AddCertificateInfo add6 = new AddCertificateInfo();
+		add6.setAppDirName("TestProject");
+		add6.setHost("localhost");
+		add6.setPort("8080");
+		add6.setPropValue(certFile.getPath());
+		add6.setFromPage("settings");
+		add6.setCertificateName(certFile.getPath());
+		add6.setEnvironmentName("Production");
+		add6.setConfigName("Server");
+		add6.setCustomerId("photon");
+		Response authenticateServersettings = configurationService.addCertificate(add6);
+		Assert.assertEquals(200, authenticateServersettings.getStatus());
+		
 	}
 	
 	private String getConnectionUrl(String envName, String type, String configName) throws PhrescoException {

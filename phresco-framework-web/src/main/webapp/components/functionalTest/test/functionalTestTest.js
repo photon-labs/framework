@@ -1,32 +1,44 @@
+define(["functionalTest/functionalTest"], function(FunctionalTest) {
+	
+	return {
+		runTests: function (configData) {
+			module("FunctionalTest.js");
+			var functionalTest = new FunctionalTest(), self = this;
+			asyncTest("Functional test template render test", function() {
+				$.mockjax({
+				  url: commonVariables.webserviceurl+commonVariables.qualityContext+"/functionalFramework?appDirName=test",
+				  type: "GET",
+				  dataType: "json",
+				  contentType: "application/json",
+				  status: 200,
+				  response : function() {
+					  this.responseText = JSON.stringify({"message":"Functional test framework fetched Successfully","exception":null,"data":{"functionalFramework":"webdriver"},"response":null});
+				  }
+				});
+				
+				$.mockjax({
+					url: commonVariables.webserviceurl+commonVariables.qualityContext+"/testsuites?appDirName=test&testType=functional",
+				  type: "GET",
+				  dataType: "json",
+				  contentType: "application/json",
+				  status: 200,
+				  response : function() {
+					  this.responseText = JSON.stringify({"message":"Test Suites listed successfully","exception":null,"data":[{"name":"TestSuite","file":null,"total":5.0,"time":"186.351","errors":0.0,"assertions":null,"success":1.0,"failures":0.0,"notApplicable":0.0,"blocked":0.0,"notExecuted":0.0,"testCoverage":0.0,"testCases":null,"tests":0.0,"testSteps":null}],"response":null});
+				  }
+				});
+				require(["navigation/navigation"], function(){
+					commonVariables.navListener = new Clazz.com.components.navigation.js.listener.navigationListener();
+				});						
 
-define(["configuration/configuration",  "framework/navigationController", "framework/widgetWithTemplate"], function(Configuration, navigation, WidgetWithTemplate) {
-
-	return { runTests: function (configData) {
-		
-		module("configuration.js;Configuration");
-		
-		asyncTest("Test - Configuration Page design", function() {
-		
-			var configuration, navigationController, widgetWithTemplate, configurationId;
-			 
-			Clazz.config = configData;
-			Clazz.navigationController = new Clazz.NavigationController({
-				mainContainer : "basepage\\:widget",
-				transitionType : Clazz.config.navigation.transitionType,
-				isNative : Clazz.config.navigation.isNative
+				var functionalTestAPI =  new Clazz.com.components.functionalTest.js.api.FunctionalTestAPI();
+				functionalTestAPI.localVal.setSession("appDirName" , "test");
+				
+				commonVariables.navListener.onMytabEvent("functionalTest");
+				setTimeout(function() {
+					start();
+					equal($('.unit_text').text().trim(), "Functional Test", "Functional test template rendering verified");
+				}, 1000);
 			});
-			
-			configuration = new Configuration();
-			Clazz.navigationController.jQueryContainer = $("<div id='configurationTest' style='display:none;'></div>");
-			Clazz.navigationController.push(configuration, false);
-			
-			setTimeout(function() {
-				var configurationId = $(Clazz.navigationController.jQueryContainer).find("#configurationPage").attr('id');
-				equal(configurationId, "configurationPage", "Configuration Page Successfully Rendered");
-				start();
-			}, 1500);
-			
-		});
-		
-	}};
+		}
+	};
 });

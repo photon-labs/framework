@@ -119,7 +119,7 @@ define(["unitTest/api/unitTestAPI"], function() {
 			}
 			
 			$('#testConsole').html('');
-			self.testResultListener.openConsole();//To open the console
+			self.testResultListener.openConsoleDiv();//To open the console
 			
 			if (self.mavenServiceListener === null) {
 				commonVariables.navListener.getMyObj(commonVariables.mavenService, function(retVal){

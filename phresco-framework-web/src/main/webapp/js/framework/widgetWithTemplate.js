@@ -417,6 +417,12 @@ define(["framework/widget", "framework/templateProvider"], function() {
 				$('#myModal').html(msg);
 				setTimeout("$('#myModal').modal('hide')", 3000);
 			},
+			effectFadeOut : function (classname, msg) {
+				$("."+classname).css("left", Math.max(0, (($(window).width() - $("."+classname).outerWidth()) / 2) +    $(window).scrollLeft()) + "px");
+				$("."+classname).html(msg);
+				$("."+classname).show();
+				$("."+classname).fadeIn(500).fadeOut(500).fadeIn(500).fadeOut(500).fadeIn(500).fadeOut(5);
+			},
 
 			// popUp for success event to close auto
 			failureMsgPopUp : function(msg) {
@@ -431,10 +437,11 @@ define(["framework/widget", "framework/templateProvider"], function() {
 
 			
 			// popUp onclick to open with dynamic content
-			showPopUp : function(popUpheader,content) {
-				$('#myModal').modal('show');
-				$('#myModalLabel').html(popUpheader);
-				$('.modal-body').html(content);
+			showPopUp : function(id, name, titile, callback) {
+				$('div[name=myModalPopup]').attr('id', id);
+				$('#saveChange').attr('name', name);
+				$('#myModalLabel').html(titile);
+				callback(true);
 			},
 			
 			multiselect : function() {

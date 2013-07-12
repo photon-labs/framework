@@ -23,7 +23,7 @@ import junit.framework.Assert;
 
 import org.junit.Test;
 
-public class ParameterServiceTest extends LoginServiceTest {
+public class ParameterServiceTest extends RestBaseTest {
 	
 	ParameterService parameterService = new ParameterService();
 	
@@ -33,26 +33,40 @@ public class ParameterServiceTest extends LoginServiceTest {
 	
 	@Test
 	public void getDynamicParameter() {
-		String goal = "package";
-		String phase = "package";
-		
-		Response response = parameterService.getParameter(appDirName, goal, phase, userId, customerId);
-		Assert.assertEquals(200, response.getStatus());
+		Response responsePackage = parameterService.getParameter(appDirName, "package", "package", userId, customerId, "");
+		Assert.assertEquals(200, responsePackage.getStatus());
+		Response responseFunctional = parameterService.getParameter(appDirName, "functional-test", "", userId, customerId, "");
+		Assert.assertEquals(200, responseFunctional.getStatus());
+		getDynamicParamsFail();
 	}
 	
 	@Test
-	public void updateWatcher() {
-		String goal = "package";
-		String key = "showSettings";
-		String value = "true";
-		parameterService.updateWatcher(appDirName, goal, key, value);
+	public void getDynamicParamsFail() {
+		Response responseFailure = parameterService.getParameter(appDirName, "deploy", "", "", customerId, "");
+		Assert.assertEquals(400, responseFailure.getStatus());
 	}
 	
-	@Test 
+	
+	@Test
+	public void getParamsFile() {
+		Response response = parameterService.getFileAsString(appDirName, "deploy", "");
+		Assert.assertEquals(200, response.getStatus());
+		Response responseFailure = parameterService.getFileAsString(appDirName, "pdf-", "");
+		Assert.assertEquals(400, responseFailure.getStatus());
+	}
+
+	 @Test
+	public void updateWatcher() {
+		Response updateWatcher = parameterService.updateWatcher(appDirName, "package", "showSettings", "true");
+		Assert.assertEquals(200, updateWatcher.getStatus());
+//		Response updateWatcherFail = parameterService.updateWatcher(appDirName, "", "showSettings", "");
+//		Assert.assertEquals(400, updateWatcherFail.getStatus());
+		
+	}
+
+	 @Test
 	public void dependency() {
-		String goal = "package";
-		String phase = "package";
-		String key = "environmentName";
-		parameterService.getDependencyPossibleValue(appDirName, customerId, userId, goal, key, phase);
+		Response dependency = parameterService.getDependencyPossibleValue(appDirName, customerId, userId, "package", "environmentName", "package");
+		Assert.assertEquals(200, dependency.getStatus());
 	}
 }

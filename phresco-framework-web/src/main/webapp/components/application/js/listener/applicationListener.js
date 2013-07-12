@@ -311,7 +311,8 @@ define(["application/api/applicationAPI"], function() {
 							self.applicationAPI.localVal.setJson('appdetails', response.data.appInfos);
 							Clazz.navigationController.push(self.editAplnContent, true);
 							setTimeout(function(){
-								self.successMsgPopUp(response.message);			
+								$(".blinkmsg").removeClass("poperror").addClass("popsuccess");
+								self.effectFadeOut('popsuccess', (response.message));		
 							},3000);
 						});
 					}
@@ -396,12 +397,14 @@ define(["application/api/applicationAPI"], function() {
 
 					function(textStatus) {
 						//commonVariables.loadingScreen.removeLoading();
-						self.failureMsgPopUp('service failure');
+						$(".blinkmsg").removeClass("popsuccess").addClass("poperror");
+						self.effectFadeOut('poperror', 'Service Failure');
 					}
 				);
 			} catch(exception) {
 				//commonVariables.loadingScreen.removeLoading();
-				self.failureMsgPopUp(exception);
+				$(".blinkmsg").removeClass("popsuccess").addClass("poperror");
+				self.effectFadeOut('poperror', (exception));
 			}
 
 		},

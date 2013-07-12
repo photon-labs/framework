@@ -1316,6 +1316,17 @@ define(["projects/api/projectsAPI"], function() {
 				self.appDepsArray = [];
 				self.getEditProject(self.getRequestHeader(self.projectRequestBody, "", action), function(response) {
 					self.projectRequestBody = {};
+					
+					if(((response.message) == "Project created Successfully") || ((response.message) == "Project updated Successfully")) {
+						setTimeout(function(){
+							$(".blinkmsg").removeClass("poperror").addClass("popsuccess");
+							self.effectFadeOut('popsuccess', (response.message));		
+						},2000);
+					} else {
+						$(".blinkmsg").removeClass("popsuccess").addClass("poperror");						
+						self.effectFadeOut('poperror', (response.message));
+					}	
+				
 					self.getEditProject(self.getRequestHeader(self.projectRequestBody, "", "projectlist"), function(response) {
 						self.pageRefresh(response);
 					});

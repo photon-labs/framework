@@ -21,9 +21,9 @@ import java.util.List;
 import java.util.Map;
 
 public class CIJob {
-    private String name;
-    private String svnUrl;
-    private String userName;
+    private String jobName;
+    private String url;
+    private String username;
     private String password;
     private Map<String, String> email;
     private String scheduleType;
@@ -56,14 +56,17 @@ public class CIJob {
     //  CI  automation
     // whether to clone the current jobs workspace for further reference
     private boolean cloneWorkspace = false;
-    // when to call is optional - can be added Down stream projects
-    private String downStreamProject = "";
+    private String clonnedWorkspaceName = "";
     // When to trigger down stream project
     private String downStreamCriteria = "";
     // Whether this job is used cloned workspace or normal svn
     private String usedClonnedWorkspace = "";
     // Operation like(Build, deploy, test)
     private String operation = "";
+    
+    // Upstream and downstream management
+    private String upstreamApplication = "";
+    private String downstreamApplication = "";
     
     // for functional test
     private String pomLocation = "";
@@ -136,7 +139,6 @@ public class CIJob {
     private String theme = "";
     private String deviceKeyPassword = "";
     private String emulatorKeyPassword = "";
-    private String type = "";
     private String platform = "";
     private String projectModule = "";
     
@@ -174,11 +176,14 @@ public class CIJob {
 	private String availableJmx = "";
 	private boolean coberturaPlugin = false;
 	private String authManager = "";
-	private String authorizationUrl;
-	private String authorizationUserName;
-	private String authorizationPassword;
-	private String authorizationDomain;
-	private String authorizationRealm;
+	private String authorizationUrl = "";
+	private String authorizationUserName = "";
+	private String authorizationPassword = "";
+	private String authorizationDomain = "";
+	private String authorizationRealm = "";
+	private String appDirName;
+	private String appName;
+	private String templateName;
   
 	// Android functional test
 	private String deviceList = "";
@@ -187,31 +192,31 @@ public class CIJob {
         super();
     }
     
-    public CIJob(String name, String svnUrl, String userName, String password) {
+    public CIJob(String name, String url, String userName, String password) {
         super();
-        this.name = name;
-        this.svnUrl = svnUrl;
-        this.userName = userName;
+        this.jobName = name;
+        this.url = url;
+        this.username = userName;
         this.password = password;
     }
     
-    public String getName() {
-        return name;
+    public String getJobName() {
+        return jobName;
     }
-    public void setName(String name) {
-        this.name = name;
+    public void setJobName(String jobName) {
+        this.jobName = jobName;
     }
-    public String getSvnUrl() {
-        return svnUrl;
+    public String getUrl() {
+        return url;
     }
-    public void setSvnUrl(String svnUrl) {
-        this.svnUrl = svnUrl;
+    public void setUrl(String url) {
+        this.url = url;
     }
-    public String getUserName() {
-        return userName;
+    public String getUsername() {
+        return username;
     }
-    public void setUserName(String userName) {
-        this.userName = userName;
+    public void setUsername(String username) {
+        this.username = username;
     }
     public String getPassword() {
         return password;
@@ -362,14 +367,6 @@ public class CIJob {
 
 	public void setCloneWorkspace(boolean cloneWorkspace) {
 		this.cloneWorkspace = cloneWorkspace;
-	}
-
-	public String getDownStreamProject() {
-		return downStreamProject;
-	}
-
-	public void setDownStreamProject(String downStreamProject) {
-		this.downStreamProject = downStreamProject;
 	}
 
 	public String getUsedClonnedWorkspace() {
@@ -764,14 +761,6 @@ public class CIJob {
 		this.emulatorKeyPassword = emulatorKeyPassword;
 	}
 
-	public String getType() {
-		return type;
-	}
-
-	public void setType(String type) {
-		this.type = type;
-	}
-
 	public String getPlatform() {
 		return platform;
 	}
@@ -1158,13 +1147,91 @@ public class CIJob {
 		this.authorizationRealm = authorizationRealm;
 	}
 
+	/**
+	 * @return the upstreamApplication
+	 */
+	public String getUpstreamApplication() {
+		return upstreamApplication;
+	}
+
+	/**
+	 * @param upstreamApplication the upstreamApplication to set
+	 */
+	public void setUpstreamApplication(String upstreamApplication) {
+		this.upstreamApplication = upstreamApplication;
+	}
+
+	/**
+	 * @return the downstreamApplication
+	 */
+	public String getDownstreamApplication() {
+		return downstreamApplication;
+	}
+
+	/**
+	 * @param downstreamApplication the downstreamApplication to set
+	 */
+	public void setDownstreamApplication(String downstreamApplication) {
+		this.downstreamApplication = downstreamApplication;
+	}
+	
+	/**
+	 * @return the downstreamApplication
+	 */
+	public String getclonnedWorkspaceName() {
+		return downstreamApplication;
+	}
+
+	/**
+	 * @param downstreamApplication the downstreamApplication to set
+	 */
+	public void setclonnedWorkspaceName(String clonnedWorkspaceName) {
+		this.clonnedWorkspaceName = clonnedWorkspaceName;
+	}
+
+	public void setAppDirName(String appDirName) {
+		this.appDirName = appDirName;
+	}
+
+	public String getAppDirName() {
+		return appDirName;
+	}
+	
+	public void setTemplateName(String templateName) {
+		this.templateName = templateName;
+	}
+
+	public String getTemplateName() {
+		return templateName;
+	}
+
+	public void setAppName(String appName) {
+		this.appName = appName;
+	}
+
+	public String getAppName() {
+		return appName;
+	}
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
 	@Override
 	public String toString() {
-		return "CIJob [name=" + name + ", authManager=" + authManager
-				+ ", authorizationUrl=" + authorizationUrl
-				+ ", authorizationUserName=" + authorizationUserName
-				+ ", authorizationPassword=" + authorizationPassword
-				+ ", authorizationDomain=" + authorizationDomain
-				+ ", authorizationRealm=" + authorizationRealm + "]";
+		return "CIJob [name=" + jobName + ", svnUrl=" + url + ", email="
+				+ email + ", scheduleExpression=" + scheduleExpression
+				+ ", mvnCommand=" + mvnCommand + ", jenkinsUrl=" + jenkinsUrl
+				+ ", jenkinsPort=" + jenkinsPort + ", triggers=" + triggers
+				+ ", repoType=" + repoType + ", downStreamApplication="
+				+ downstreamApplication + ", downStreamCriteria="
+				+ downStreamCriteria + ", usedClonnedWorkspace="
+				+ usedClonnedWorkspace + ", operation=" + operation
+				+ ", pomLocation=" + pomLocation + ", enablePostBuildStep="
+				+ enablePostBuildStep + ", enablePreBuildStep="
+				+ enablePreBuildStep + ", prebuildStepCommands="
+				+ prebuildStepCommands + ", postbuildStepCommands="
+				+ postbuildStepCommands + ", attachmentsPattern="
+				+ attachmentsPattern + ", enableArtifactArchiver="
+				+ enableArtifactArchiver + "]";
 	}
 }

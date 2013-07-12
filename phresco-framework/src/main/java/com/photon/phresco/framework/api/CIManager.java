@@ -69,7 +69,7 @@ public interface CIManager {
 	 * @return
 	 * @throws PhrescoException
 	 */
-	CIJob getJob(ApplicationInfo appInfo, String jobName) throws PhrescoException;
+//	CIJob getJob(ApplicationInfo appInfo, String jobName) throws PhrescoException;
 	
 	/**
 	 * Returns the list of user created jobs
@@ -77,7 +77,7 @@ public interface CIManager {
 	 * @return
 	 * @throws PhrescoException
 	 */
-	List<CIJob> getJobs(ApplicationInfo appInfo) throws PhrescoException;
+//	List<CIJob> getJobs(ApplicationInfo appInfo) throws PhrescoException;
 	
 	/**
 	 * Creates jobs in Jenkins.
@@ -102,8 +102,7 @@ public interface CIManager {
 	 * @return
 	 * @throws PhrescoException
 	 */
-	CIJobStatus buildJobs(ApplicationInfo appInfo, List<String> jobs) throws PhrescoException;
-	
+		CIJobStatus generateBuild(CIJob ciJob) throws PhrescoException;	
 	/**
 	 * Delete job. If build is null, job will be deleted
 	 * @param appInfo
@@ -111,7 +110,7 @@ public interface CIManager {
 	 * @return
 	 * @throws PhrescoException
 	 */
-	CIJobStatus deleteJobs(ApplicationInfo appInfo, List<String> jobs) throws PhrescoException;
+	CIJobStatus deleteJobs(String appDir,List<CIJob> ciJobs, String projectId, String continuousName) throws PhrescoException;
 	
 	/**
 	 * Delete job. If build is null, job will be deleted
@@ -120,7 +119,7 @@ public interface CIManager {
 	 * @return
 	 * @throws PhrescoException
 	 */
-	CIJobStatus deleteBuilds(ApplicationInfo appInfo, Map<String, List<String>> builds) throws PhrescoException;
+//	CIJobStatus deleteBuilds(ApplicationInfo appInfo, Map<String, List<String>> builds) throws PhrescoException;
 
 	/**
 	 * Gets builds for a job from the jenkins.
@@ -144,7 +143,7 @@ public interface CIManager {
 	 * @return
 	 * @throws PhrescoException
 	 */
-	int getTotalBuilds(ApplicationInfo appInfo) throws PhrescoException;
+//	int getTotalBuilds(ApplicationInfo appInfo) throws PhrescoException;
 	
 	/**
 	 * Configure email configuration on jenkins
@@ -282,4 +281,20 @@ public interface CIManager {
 	 * @throws PhrescoException
 	 */
 	boolean deleteJobTemplate(String jobTemplateName, String projId) throws PhrescoException;
+	
+	public void createJsonJobs(ContinuousDelivery continuousDelivery, List<CIJob> jobs, String projId, String appDir) throws PhrescoException;
+	
+	public List<ProjectDelivery> getCiJobInfo(String appDir) throws PhrescoException;
+	
+	public void deleteJsonJobs(String appDir, List<CIJob> selectedJobs, String projectId, String name) throws PhrescoException;
+	
+	public void clearContinuousDelivery(String continuousDeliveryName, String projId, String appDir) throws PhrescoException;
+	
+	public CIJob setPreBuildCmds(CIJob job, ApplicationInfo appInfo) throws PhrescoException;
+	
+	public List<CIJob> getDeleteableJobs(String projectId, ContinuousDelivery continuousDelivery, String appDirName) throws PhrescoException;
+
+	public List<CIJob> getJobs(String continuousName, String projectId, List<ProjectDelivery> ciJobInfo) throws PhrescoException;
+	
+	public CIJobStatus deleteBuilds(CIJob ciJob,  String buildNumber) throws PhrescoException;
 }

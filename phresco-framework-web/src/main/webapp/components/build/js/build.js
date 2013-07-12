@@ -16,7 +16,6 @@ define(["build/listener/buildListener"], function() {
 		dynamicpage : null,
 		dynamicPageListener : null,
 		generateBuildContent : "",
-		logContent : '',
 		onRASEvent : null,
 		onStopEvent : null,
 		onRestartEvent : null,
@@ -114,26 +113,29 @@ define(["build/listener/buildListener"], function() {
 			var self = this;
             
 			$("#build_genbuild ul").find(".selectpicker").selectpicker();
-			self.buildListener.getBuildInfo(self.buildListener.getRequestHeader("", '', 'serverstatus'), function(response) {
-				self.changeBtnStatus(response , '');
-			});
+			self.runAgainSourceStatus();
 			self.loadPostContent();
-			
-			$('#logContent').html(self.logContent);
-			self.logContent = '';
-			
 			self.resizeConsoleWindow();
 			self.closeConsole();
-			var windowHeight = $(document).height();
-			var marginTop = '';
+			var windowHeight = $(document).height(), marginTop = '';
 			marginTop = $('.testSuiteTable').css("margin-top");
+			
 			if(marginTop !== undefined){
 				marginTop = marginTop.substring(0, marginTop.length - 2);
-			}	
+			}
+			
 			var footerHeight = $('#footer').height();
 			var deductionHeight = Number(marginTop) + Number(footerHeight);
 			var finalHeight = windowHeight - deductionHeight - 5;
-			$('.testSuiteTable').height(finalHeight);					
+			$('.testSuiteTable').height(finalHeight);	
+			$(window).resize();
+		},
+		
+		runAgainSourceStatus : function(){
+			var self = this;
+			self.buildListener.getBuildInfo(self.buildListener.getRequestHeader("", '', 'serverstatus'), function(response) {
+				self.changeBtnStatus(response , '');
+			});
 		},
 		
 		changeBtnStatus : function(response , btnName){
@@ -160,6 +162,122 @@ define(["build/listener/buildListener"], function() {
 				});
 			}
 		},
+		
+		refreshContent : function(loadContent){
+			var self = this;
+
+			$('.alert_div').hide();
+			if(loadContent){
+				self.buildListener.getBuildInfo(self.buildListener.getRequestHeader("", '', 'getList'), function(response) {
+					if(response != undefined && response != null && response.data != null){
+						var tbody = "";
+						$.each(response.data, function(index, current){
+							
+							tbody += '<tr><td name="'+ current.buildNo +'">'+ current.buildNo +'</td><td>'+ current.timeStamp +'</td><td><a href="#"><img name="downloadBuild" src="themes/default/images/helios/download_icon.png" width="15" height="18" border="0" alt=""></a></td><td><a href="#"><img name="deployBuild" src="themes/default/images/helios/deploy_icon.png" width="16" height="20" border="0" alt=""></a><div id="deploye_'+ current.buildNo +'" class="dyn_popup popup_bg" style="display:none;"><div id="bdeploy_'+ current.buildNo +'"><form name="deployForm"><ul class="row dynamicControls"></ul><input type="hidden" name="buildNumber" value="'+ current.buildNo +'" /></form><div class="flt_right"><input type="button" name="deploy" value="Deploy" class="btn btn_style dyn_popup_close"><input type="button" value="Close" class="btn btn_style dyn_popup_close"></div></div></div></td><td><a name="delete_'+ current.buildNo +'" class="tooltiptop" title="" data-placement="top" data-toggle="tooltip" href="#" data-original-title="Delete Row"><img name="deleteBuild" src="themes/default/images/helios/delete_icon.png" width="16" height="20" border="0" alt=""></a><div id="delete_'+ current.buildNo +'" class="dyn_popup">Are you sure to delete this?<div><input type="button" name="buildDelete" value="Yes" class="btn btn_style dyn_popup_close"><input type="button" value="No" class="btn btn_style dyn_popup_close"></div></div></td></tr>';
+						});
+						
+						$("#buildRow tbody").html(tbody);
+						$('.dyn_popup').css('display', 'none');
+						self.contentDivEvents();
+						self.setConsoleScrollbar(false);
+						$(window).resize();
+						self.closeConsole();
+					}
+				});
+			}
+		},
+		
+		contentDivEvents : function(){
+			self = this;
+			
+			//Deploy build popup click event
+			$("img[name=deployBuild]").unbind('click');
+			$("img[name=deployBuild]").click(function(){
+				var divId = $(this).closest('tr').find('td:eq(0)').text(),
+				whereToRender = $('#deploye_' + divId + ' ul');
+				
+				if(whereToRender.children().length < 1){
+					commonVariables.goal = "deploy";
+					commonVariables.phase = "deploy";
+					commonVariables.buildNo = divId;
+					self.dynamicpage.getHtml(whereToRender, this, 'deploye_' + divId, function(retVal){});
+				}else {self.opencc(this,'deploye_' + divId);}
+			});
+			
+			//build deploy click event
+			$("input[name=deploy]").unbind('click');
+			$("input[name=deploy]").click(function(){
+			
+				$('.alert_div').show();
+				self.clearLogContent();
+				self.setConsoleScrollbar(true);
+				self.openConsole();
+				$('.progress_loading').css('display','block');
+				self.onDeployEvent.dispatch($('form[name=deployForm]').serialize(), function(response){
+					$('.progress_loading').css('display','none');
+					self.setConsoleScrollbar(false);
+				});
+			});
+			
+			//Build download click event
+			$("img[name=downloadBuild]").unbind('click');
+			$("img[name=downloadBuild]").click(function(){
+				self.onDownloadEvent.dispatch($(this).parent().parent().siblings(":first").text(), function(response){});
+			});
+			
+			//build delete click event
+			$('input[name=buildDelete]').unbind('click');
+			$('input[name=buildDelete]').click(function(){
+				var current = this, divId = $(this).closest('tr').find('td:eq(0)').text();
+				self.clearLogContent();
+				self.onDeleteEvent.dispatch(divId, function(response){
+					if(response.message == "Build deleted Successfully"){
+						$(current).closest('tr').remove();
+					}
+				});
+			});
+			
+			//Show tooltip event
+			$(".tooltiptop").unbind("click");
+			$(".tooltiptop").click(function() {
+				self.opencc(this, $(this).attr('name'));
+			});
+			
+			$("#buildRow .scrollContent").mCustomScrollbar("destroy");
+			$("#buildRow .scrollContent").mCustomScrollbar({
+				autoHideScrollbar:true,
+				theme:"light-thin"
+			});
+		},
+		
+		clearLogContent : function(){
+			$('#logContent').html('');
+		},
+		
+		setConsoleScrollbar : function(bcheck){
+			if(bcheck){
+				$("#build_progress .scrollContent").mCustomScrollbar("destroy");
+				$("#build_progress .scrollContent").mCustomScrollbar({
+					autoHideScrollbar: false,
+					scrollInertia: 1000,
+					theme:"light-thin",
+					advanced:{ updateOnContentResize: true},
+					callbacks:{
+						onScrollStart:function(){
+							$("#build_progress .scrollContent").mCustomScrollbar("scrollTo","bottom");
+						}
+					}
+				});
+			}else{
+				$("#build_progress .scrollContent").mCustomScrollbar("destroy");
+				$("#build_progress .scrollContent").mCustomScrollbar({
+					autoHideScrollbar:true,
+					scrollInertia: 200,
+					theme:"light-thin",
+					advanced:{ updateOnContentResize: true}
+				});
+			}
+		},
 
 		/***
 		 * Bind the action listeners. The bindUI() is called automatically after the render is complete 
@@ -168,163 +286,113 @@ define(["build/listener/buildListener"], function() {
 		bindUI : function() {
 			var self = this;
 			
+			//Run again source popup click event
 			$("input[name=build_runagsource]").unbind("click");
 			$("input[name=build_runagsource]").click(function() {
 				if($(this).attr("class") === "btn btn_style"){
 					commonVariables.goal = "start";
 					commonVariables.phase = "run-against-source";
-					/* self.dynamicpage.getHtml(false, function(response){
-						$("#rasdynamicContent").html(response);
-						self.multiselect();
-						self.dynamicpage.showParameters();
-						self.dynamicPageListener.controlEvent();
-					});				
-					self.opencc(this, $(this).attr('name'));
-					self.openConsole(); */
-					 var whereToRender = $('#build_runagsource ul');
-					self.dynamicpage.getHtml(whereToRender, this, $(this).attr('name'), function(retVal){
-						whereToRender.html(retVal);
-					});
-					//commonVariables.loadingScreen.removeLoading();
-					//self.openConsole();
+					self.dynamicpage.getHtml($('#build_runagsource ul'), this, $(this).attr('name'), function(retVal){});
 					$("#buildConsole").attr('data-flag','false');
 				}	
 			});
 			
+			//run again source click event
+			$("#runSource").click(function(){
+				$(".dyn_popup").hide();
+				self.clearLogContent();
+				self.setConsoleScrollbar(true);
+				self.openConsole();
+				$('.progress_loading').css('display','block');
+				self.onRASEvent.dispatch($('form[name=runAgainstForm]').serialize(), function(response){
+					$('.progress_loading').css('display','none');
+					self.setConsoleScrollbar(false);
+					self.runAgainSourceStatus();
+				});
+			});
+			
+			//Run again source stop click event
+			$("#stop").click(function() {
+				if($(this).attr("class") === "btn btn_style"){
+					self.clearLogContent();
+					self.setConsoleScrollbar(true);
+					self.openConsole();
+					$("#buildConsole").attr('data-flag','false');
+					$('.progress_loading').css('display','block');
+					self.onStopEvent.dispatch(function(response){
+						$('.progress_loading').css('display','none');
+						self.setConsoleScrollbar(false);
+						self.runAgainSourceStatus();
+					});					
+				}
+			});		
+			
+			//Run again source restart click event
+			$("#restart").click(function() {
+				if($(this).attr("class") === "btn btn_style"){
+					self.clearLogContent();
+					self.setConsoleScrollbar(true);
+					self.openConsole();
+					$("#buildConsole").attr('data-flag','false');
+					$('.progress_loading').css('display','block');
+					self.onRestartEvent.dispatch(function(response){
+						$('.progress_loading').css('display','none');
+						self.setConsoleScrollbar(false);
+						self.runAgainSourceStatus();						
+					});
+				}
+			});
+			
+			//Generate build popup click event
 			$("input[name=build_genbuild]").unbind("click");
 			$("input[name=build_genbuild]").click(function() {
                 var whereToRender = $('#build_genbuild ul');
-                commonVariables.goal = "package";
-                commonVariables.phase = "package";
-                //self.dynamicpage.getHtml(whereToRender, widgetObject, openccObject);
-                self.dynamicpage.getHtml(whereToRender, this, $(this).attr('name'), function(retVal){
-					whereToRender.html(retVal);
-				});
-				//commonVariables.loadingScreen.removeLoading();
-				//self.openConsole();
+				
+				if(whereToRender.children().length < 1){
+					commonVariables.goal = "package";
+					commonVariables.phase = "package";
+					self.dynamicpage.getHtml(whereToRender, this, $(this).attr('name'), function(retVal){});
+				}else{self.opencc(this,$(this).attr('name'));}
 			});
 			
+			//build run click event
+			$("#buildRun").click(function(){
+				$('.alert_div').show();
+				self.clearLogContent();
+				self.setConsoleScrollbar(true);
+				self.openConsole();
+				$('.progress_loading').css('display','block');
+				self.onBuildEvent.dispatch($('form[name=buildForm]').serialize(), function(response){
+					$('.progress_loading').css('display','none');
+					self.refreshContent(true);
+				});
+			});
+			
+			//Minifier popup click event
 			$("input[name=build_minifier]").unbind("click");
 			$("input[name=build_minifier]").click(function() {
 				self.opencc(this, $(this).attr('name'));
 			});
 			
+			//Log console div click event
 			$("#buildConsole").click(function() {
-				var logContent = $('#logContent').text();
-				if(logContent.match("INFO: Starting Coyote HTTP/1.1")){
+				if($('#logContent').text().match("INFO: Starting Coyote HTTP/1.1")){
 					$("input[name=build_runagsource]").removeClass('btn_style');
 					$("input[name=build_runagsource]").addClass('btn_style_off');
+					$('.progress_loading').css('display','none');
 					$("#stop").removeClass('btn_style_off');
 					$("#stop").addClass('btn_style');
 					$("#restart").removeClass('btn_style_off');
 					$("#restart").addClass('btn_style');
+					self.setConsoleScrollbar(false);
+					self.runAgainSourceStatus();
 				}
 				self.onProgressEvent.dispatch(this);
 			});
 			
-			$("img[name=downloadBuild]").click(function(){
-				self.onDownloadEvent.dispatch($(this).parent().parent().siblings(":first").text(), function(response){
-				});
-			});
-			
-			$("img[name=deployBuild]").click(function(){
-				var divId = $(this).closest('tr').find('td:eq(0)').text();
-				commonVariables.openccmini(this,'deploye_' + divId);
-			});
-			
-			$("input[name=deploy]").click(function(){
-				self.onDeployEvent.dispatch(function(response){
-				});
-			});
-			
-			
-			$('input[name=buildDelete]').click(function(){
-				var divId = $(this).closest('tr').find('td:eq(0)').text();
-				self.onDeleteEvent.dispatch(divId, function(response){
-					self.loadPage();
-				});
-			});
-			
-			$("#buildRun").click(function(){
-				$('.alert_div').show();
-				self.openConsole();
-				self.onBuildEvent.dispatch($('form[name=buildForm]').serialize(), function(response){
-					$('.alert_div').hide();
-					self.logContent = $('#logContent').html();
-					self.loadPage();
-				});
-			});
-			
-			$("#runSource").click(function(){
-				$(".dyn_popup").hide();
-				self.onRASEvent.dispatch($('form[name=runAgainstForm]').serialize(), function(response){
-					$('.alert_div').hide();
-					self.logContent = $('#logContent').html();
-				});
-			});
-			
-			$("#stop").click(function() {
-				if($(this).attr("class") === "btn btn_style"){
-					self.openConsole();
-					$("#buildConsole").attr('data-flag','false');
-					self.onStopEvent.dispatch(function(response){
-						$('.alert_div').hide();
-						self.logContent = $('#logContent').html();
-						self.loadPage();
-					});					
-				}
-				
-			});		
-			
-			$("#restart").click(function() {
-				if($(this).attr("class") === "btn btn_style"){
-					self.openConsole();
-					$("#buildConsole").attr('data-flag','false');
-					self.onRestartEvent.dispatch(function(response){
-						$('.alert_div').hide();
-						self.logContent = $('#logContent').html();
-					});					
-				}
-				
-			});
-			$(".tooltiptop").unbind("click");
-			$(".tooltiptop").click(function() {
-				self.opencc(this, $(this).attr('name'));
-			});
-			
-			$('.connected').sortable({
+			/* $('.connected').sortable({
 				connectWith: '.connected'
-			});
-
-			$(window).resize(function() {
-			
-				$(".dyn_popup").hide();
-
-				var height = $(this).height();
-				var twowidth = window.innerWidth/1.7;
-				var onewidth = window.innerWidth - (twowidth+70);
-				
-				$('.features_content_main').height(height - 230);
-				$('.build_progress').height(height - 230);
-				self.resizeConsoleWindow();
-				$('.build_info').css("width",twowidth);
-				$('.build_progress').css("width",onewidth);
-				$('.build_close').css("right",onewidth+10);
-				
-			});
-			
-			$(window).resize();
-		
-			$("#content_div").mCustomScrollbar({
-				autoHideScrollbar:true,
-				theme:"light-thin"
-			});
-			
-			$(".scrollContent").mCustomScrollbar({
-				autoHideScrollbar:true,
-				theme:"light-thin",
-				advanced:{ updateOnContentResize: true}
-			});
+			}); */
 			
 			//To open the build directory
 			$('#openFolder').unbind('click');
@@ -347,6 +415,29 @@ define(["build/listener/buildListener"], function() {
 			$('#buildCopyLog').click(function() {
 				commonVariables.navListener.copyToClipboard($('#logContent'));
 			});
+			
+			//call content div events
+			self.contentDivEvents();
+			
+			$(window).resize(function() {
+				$(".dyn_popup").hide();
+				
+				var w1 = $(".scrollContent tr:nth-child(1) td:first-child").width();
+				var w2 = $(".scrollContent tr:nth-child(1) td:nth-child(2)").width();
+				var w3 = $(".scrollContent tr:nth-child(1) td:nth-child(3)").width();
+				var w4 = $(".scrollContent tr:nth-child(1) td:nth-child(4)").width();
+				var w5 = $(".scrollContent tr:nth-child(1) td:nth-child(5)").width();
+				
+				$(".fixedHeader tr th:first-child").css("width",w1);
+				$(".fixedHeader tr th:nth-child(2)").css("width",w2);
+				$(".fixedHeader tr th:nth-child(3)").css("width",w3);
+				$(".fixedHeader tr th:nth-child(4)").css("width",w4);
+				$(".fixedHeader tr th:nth-child(5)").css("width",w5);
+				
+				self.resizeConsoleWindow();
+			});
+			
+			self.setConsoleScrollbar(false);
 			
 			Clazz.navigationController.mainContainer = commonVariables.contentPlaceholder;
 		}

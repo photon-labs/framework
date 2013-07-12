@@ -14,6 +14,9 @@ define(["performanceTest/listener/performanceTestListener"], function() {
 		onDynamicPageEvent : null,
 		onRunPerformanceTestEvent : null,
 		onShowHideConsoleEvent : null,
+		getResultEvent : null,
+		getResultFilesEvent : null,
+		whereToRender : null,
 		
 		/***
 		 * Called in initialization time of this class 
@@ -47,6 +50,16 @@ define(["performanceTest/listener/performanceTestListener"], function() {
 				self.onShowHideConsoleEvent = new signals.Signal();
 			}
 			self.onShowHideConsoleEvent.add(self.performanceTestListener.showHideConsole, self.performanceTestListener);
+						
+			if (self.getResultEvent === null) {
+				self.getResultEvent = new signals.Signal();
+			}
+			self.getResultEvent.add(self.performanceTestListener.getResultOnChangeEvent, self.performanceTestListener);
+									
+			if (self.getResultFilesEvent === null) {
+				self.getResultFilesEvent = new signals.Signal();
+			}
+			self.getResultFilesEvent.add(self.performanceTestListener.getResultFiles, self.performanceTestListener);
 			
 			self.registerEvents(self.performanceTestListener);
 		},
@@ -104,7 +117,7 @@ define(["performanceTest/listener/performanceTestListener"], function() {
 					returnVal = data[0];
 				} else {
 					$.each(data, function(index, value){
-						returnVal += '<li class="testAgainstOption"><a href="#">'+ value +'</a></li>';
+						returnVal += '<li class="testAgainstOption"><a href="#" name="testAgainst">'+ value +'</a></li>';
 					});
 				}
 				return returnVal;
@@ -145,7 +158,7 @@ define(["performanceTest/listener/performanceTestListener"], function() {
 					returnVal = data[0];
 				} else {
 					$.each(data, function(index, value){
-						returnVal += '<li class="testResultFilesOption"><a href="#">'+ value +'</a></li>';
+						returnVal += '<li class="testResultFilesOption"><a href="#" name="resultFileName">'+ value +'</a></li>';
 					});
 				}
 				return returnVal;
@@ -174,6 +187,7 @@ define(["performanceTest/listener/performanceTestListener"], function() {
 		
 		preRender: function(whereToRender, renderFunction) {
 			var self = this;
+			self.whereToRender = whereToRender;
 			self.performanceTestListener.getPerformanceTestReportOptions(self.performanceTestListener.getActionHeader(self.projectRequestBody, "resultAvailable"), whereToRender, self.handleResponse);
 		},
 
@@ -231,6 +245,22 @@ define(["performanceTest/listener/performanceTestListener"], function() {
 			$('#consoleImg').unbind("click");
 			$('#consoleImg').click(function() {
 				self.onShowHideConsoleEvent.dispatch();
+			});	
+			
+			//To select the test result file
+			$('li a[name="resultFileName"]').unbind("click");
+			$('li a[name="resultFileName"]').click(function() {
+				$("#testResultFileDrop").text($(this).text());
+				$(".perfResultInfo").html('');
+				self.getResultEvent.dispatch($("#testAgainstsDrop").text(),$(this).text(), self.whereToRender);
+			});
+
+			//To select testAgainst value
+			$('li a[name="testAgainst"]').unbind("click");
+			$('li a[name="testAgainst"]').click(function() {
+				$("#testAgainstsDrop").text($(this).text());
+				$(".perfResultInfo").html('');
+				self.getResultFilesEvent.dispatch($(this).text(), self.whereToRender);
 			});
 			
 			Clazz.navigationController.mainContainer = commonVariables.contentPlaceholder;

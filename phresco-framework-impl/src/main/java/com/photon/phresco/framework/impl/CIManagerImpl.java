@@ -24,7 +24,6 @@ import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
@@ -82,15 +81,18 @@ import com.photon.phresco.framework.model.CIBuild;
 import com.photon.phresco.framework.model.CIJob;
 import com.photon.phresco.framework.model.CIJobStatus;
 import com.photon.phresco.framework.model.CIJobTemplate;
+import com.photon.phresco.framework.model.ContinuousDelivery;
+import com.photon.phresco.framework.model.ProjectDelivery;
+import com.photon.phresco.util.Constants;
 import com.photon.phresco.util.Utility;
 import com.sun.jersey.api.client.ClientHandlerException;
 import com.trilead.ssh2.crypto.Base64;
+
 
 public class CIManagerImpl implements CIManager, FrameworkConstants {
 
 	private static final Logger S_LOGGER = Logger.getLogger(CIManagerImpl.class);
 	private static Boolean debugEnabled = S_LOGGER.isDebugEnabled();
-	private static boolean credExist = false;
 	
     private CLI cli = null;
     
@@ -124,6 +126,142 @@ public class CIManagerImpl implements CIManager, FrameworkConstants {
 		}
 	} 
 	
+	public CIJob setPreBuildCmds(CIJob job, ApplicationInfo appInfo) throws PhrescoException {
+		List<String> preBuildStepCmds = new ArrayList<String>();
+		String operation = job.getOperation();
+		String mvncmd = "";
+		String pomFileName = Utility.getPomFileName(appInfo);
+		job.setPomLocation(pomFileName);
+		job.setJenkinsUrl("localhost");
+		job.setJenkinsPort("3579");
+		if ("build".equalsIgnoreCase(operation)) {
+			job.setEnableArtifactArchiver(true);
+			job.setCollabNetFileReleasePattern(CI_BUILD_EXT);
+			
+			ActionType actionType = ActionType.BUILD;
+			mvncmd =  actionType.getActionType().toString();
+			String buildPrebuildCmd = CI_PRE_BUILD_STEP + " -Dgoal=" + Constants.PHASE_CI + " -Dphase=" + Constants.PHASE_PACKAGE;
+			if(!Constants.POM_NAME.equals(pomFileName)) {
+				buildPrebuildCmd = buildPrebuildCmd + " -f " + pomFileName; 
+			}
+			
+			buildPrebuildCmd = buildPrebuildCmd + FrameworkConstants.SPACE + HYPHEN_N;
+			preBuildStepCmds.add(buildPrebuildCmd);
+		} else if("deploy".equalsIgnoreCase(operation)) {
+			ActionType actionType = ActionType.DEPLOY;
+			mvncmd =  actionType.getActionType().toString();
+			
+			String deployPreBuildCmd = CI_PRE_BUILD_STEP + " -Dgoal=" + Constants.PHASE_CI + " -Dphase=" + Constants.PHASE_DEPLOY;
+			if(!Constants.POM_NAME.equals(pomFileName)) {
+				deployPreBuildCmd = deployPreBuildCmd + " -f " + pomFileName; 
+			}
+			
+			deployPreBuildCmd = deployPreBuildCmd + FrameworkConstants.SPACE + HYPHEN_N;
+			preBuildStepCmds.add(deployPreBuildCmd);
+		} else if("pdfReport".equalsIgnoreCase(operation)) {
+			String attacheMentPattern = "";
+			
+			job.setEnableArtifactArchiver(true);
+			String attachPattern = "do_not_checkin/archives/" + "test" + "/*.pdf";
+			job.setAttachmentsPattern(attachPattern); 
+			job.setCollabNetFileReleasePattern(attachPattern);
+			
+			ActionType actionType = ActionType.PDF_REPORT;
+			mvncmd =  actionType.getActionType().toString();
+			
+			String pdfPreBuildCmd = CI_PRE_BUILD_STEP + " -Dgoal=" + Constants.PHASE_CI + " -Dphase=" + Constants.PHASE_PDF_REPORT;
+			if(!Constants.POM_NAME.equals(pomFileName)) {
+				pdfPreBuildCmd = pdfPreBuildCmd + " -f " + pomFileName; 
+			}
+			
+			pdfPreBuildCmd = pdfPreBuildCmd + FrameworkConstants.SPACE + HYPHEN_N;
+			preBuildStepCmds.add(pdfPreBuildCmd);
+		} else if ("codeValidation".equalsIgnoreCase(operation)) {
+			
+			ActionType actionType = ActionType.CODE_VALIDATE;
+			mvncmd =  actionType.getActionType().toString();
+			
+			String codePreBuildCmd = CI_PRE_BUILD_STEP + " -Dgoal=" + Constants.PHASE_CI + " -Dphase=" + Constants.PHASE_VALIDATE_CODE;
+			if(!Constants.POM_NAME.equals(pomFileName)) {
+				codePreBuildCmd = codePreBuildCmd + " -f " + pomFileName; 
+			}
+			
+			codePreBuildCmd = codePreBuildCmd + FrameworkConstants.SPACE + HYPHEN_N;
+			preBuildStepCmds.add(codePreBuildCmd);
+		} else if ("unittest".equalsIgnoreCase(operation)) {
+			
+			ActionType actionType = ActionType.UNIT_TEST;
+			mvncmd =  actionType.getActionType().toString();
+			
+			String unitTestPreBuildCmd = CI_PRE_BUILD_STEP + " -Dgoal=" + Constants.PHASE_CI + " -Dphase=" + Constants.PHASE_UNIT_TEST;
+			if(!Constants.POM_NAME.equals(pomFileName)) {
+				unitTestPreBuildCmd = unitTestPreBuildCmd + " -f " + pomFileName; 
+			}
+			
+			unitTestPreBuildCmd = unitTestPreBuildCmd + FrameworkConstants.SPACE + HYPHEN_N;
+			preBuildStepCmds.add(unitTestPreBuildCmd);
+			if (job.isCoberturaPlugin()) {
+				job.setEnablePostBuildStep(true);
+				List<String> postBuildStepCmds = new ArrayList<String>();
+				postBuildStepCmds.add(MAVEN_SEP_COBER);
+				postBuildStepCmds.add("shell#SEP#cd ${WORKSPACE}\n${GCOV_HOME} -r ${WORKSPACE} -x -o coverage.xml");
+				if (CollectionUtils.isNotEmpty(postBuildStepCmds)) {
+					job.setPostbuildStepCommands(postBuildStepCmds);
+				}
+			}
+		} else if ("functionalTest".equalsIgnoreCase(operation)) {	
+			ActionType actionType = ActionType.FUNCTIONAL_TEST;
+			mvncmd =  actionType.getActionType().toString();
+			String functionalTestPrebuildCmd = CI_PRE_BUILD_STEP + " -Dgoal=" + Constants.PHASE_CI + " -Dphase=" + Constants.PHASE_FUNCTIONAL_TEST;
+			if(!Constants.POM_NAME.equals(pomFileName)) {
+				functionalTestPrebuildCmd = functionalTestPrebuildCmd + " -f " + pomFileName; 
+			}
+			
+			functionalTestPrebuildCmd = functionalTestPrebuildCmd + FrameworkConstants.SPACE + HYPHEN_N;
+			preBuildStepCmds.add(functionalTestPrebuildCmd);
+		} else if ("loadTest".equalsIgnoreCase(operation)) {
+			ActionType actionType = ActionType.LOAD_TEST;
+			mvncmd =  actionType.getActionType().toString();
+			
+			String loadTestPreBuildCmd = CI_PRE_BUILD_STEP + " -Dgoal=" + Constants.PHASE_CI + " -Dphase=" + Constants.PHASE_LOAD_TEST;
+			if(!Constants.POM_NAME.equals(pomFileName)) {
+				loadTestPreBuildCmd = loadTestPreBuildCmd + " -f " + pomFileName; 
+			}
+			
+			loadTestPreBuildCmd = loadTestPreBuildCmd + FrameworkConstants.SPACE + HYPHEN_N;
+			preBuildStepCmds.add(loadTestPreBuildCmd);
+		} else if ("performanceTest".equalsIgnoreCase(operation)) {
+			ActionType actionType = ActionType.PERFORMANCE_TEST;
+			mvncmd =  actionType.getActionType().toString();
+			
+			String performanceTestPreBuildCmd = CI_PRE_BUILD_STEP + " -Dgoal=" + Constants.PHASE_CI + " -Dphase=" + Constants.PHASE_PERFORMANCE_TEST;
+			if(!Constants.POM_NAME.equals(pomFileName)) {
+				performanceTestPreBuildCmd = performanceTestPreBuildCmd + " -f " + pomFileName; 
+			}
+			
+			performanceTestPreBuildCmd = performanceTestPreBuildCmd + FrameworkConstants.SPACE + HYPHEN_N;
+			preBuildStepCmds.add(performanceTestPreBuildCmd);
+		} else if ("componentTest".equalsIgnoreCase(operation)) {	
+			ActionType actionType = ActionType.COMPONENT_TEST;
+			mvncmd =  actionType.getActionType().toString();
+			
+			String componentTestPreBuildCmd = CI_PRE_BUILD_STEP + " -Dgoal=" + Constants.PHASE_CI + " -Dphase=" + Constants.PHASE_COMPONENT_TEST;
+			if(!Constants.POM_NAME.equals(pomFileName)) {
+				componentTestPreBuildCmd = componentTestPreBuildCmd + " -f " + pomFileName; 
+			}
+			
+			componentTestPreBuildCmd = componentTestPreBuildCmd + FrameworkConstants.SPACE + HYPHEN_N;
+			preBuildStepCmds.add(componentTestPreBuildCmd);
+		}
+		
+		mvncmd = mvncmd + FrameworkConstants.SPACE + HYPHEN_N;
+		job.setMvnCommand(mvncmd);
+		
+		job.setEnablePreBuildStep(true);	
+		job.setPrebuildStepCommands(preBuildStepCmds);		
+		return job;
+	}
+	
 	 public boolean createJob(ApplicationInfo appInfo, CIJob job) throws PhrescoException {
 		 if (debugEnabled) {
 			 S_LOGGER.debug("Entering Method ProjectAdministratorImpl.createJob(Project project, CIJob job)");
@@ -137,7 +275,6 @@ public class CIManagerImpl implements CIManager, FrameworkConstants {
 			 if (debugEnabled) {
 				 S_LOGGER.debug("ProjectInfo = " + appInfo);
 			 }
-			 writeJsonJobs(appInfo, Arrays.asList(job), CI_APPEND_JOBS);
 		 } catch (ClientHandlerException ex) {
 			 if (debugEnabled) {
 				 S_LOGGER.error(ex.getLocalizedMessage());
@@ -152,7 +289,7 @@ public class CIManagerImpl implements CIManager, FrameworkConstants {
 				 }
 			 }
 		 }
-		 return credExist;
+		 return true;
 	 }
 
 	 public boolean updateJob(ApplicationInfo appInfo, CIJob job) throws PhrescoException {
@@ -168,7 +305,6 @@ public class CIManagerImpl implements CIManager, FrameworkConstants {
 			 if (debugEnabled) {
 				 S_LOGGER.debug("getCustomModules() ProjectInfo = "+ appInfo);
 			 }
-			 updateJsonJob(appInfo, job);
 		 } catch (ClientHandlerException ex) {
 			 if (debugEnabled) {
 				 S_LOGGER.error(ex.getLocalizedMessage());
@@ -185,35 +321,31 @@ public class CIManagerImpl implements CIManager, FrameworkConstants {
 				 }
 			 }
 		 }
-		 return credExist;
+		 return true;
 	 }
 	
     private CIJobStatus configureJob(CIJob job, String jobType) throws PhrescoException {
     	if (debugEnabled) {
-    		S_LOGGER.debug("Entering Method CIManagerImpl.createJob(CIJob job)");
+    		S_LOGGER.debug("Entering Method CIManagerImpl.configureJob(CIJob job, String jobType)");
     	}
     	try {
             cli = getCLI(job);
             List<String> argList = new ArrayList<String>();
             argList.add(jobType);
-            argList.add(job.getName());
-            
+            argList.add(job.getJobName());
             String jenkinsTemplateDir = Utility.getJenkinsTemplateDir();
             String configFilePath = jenkinsTemplateDir + job.getRepoType() + HYPHEN + CONFIG_XML;
         	if (debugEnabled) {
         		S_LOGGER.debug("configFilePath ...  " + configFilePath);
         	}
-        	
             File configFile = new File(configFilePath);
             ConfigProcessor processor = new ConfigProcessor(configFile);
             customizeNodes(processor, job);
-            
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
             if (debugEnabled) {
             	S_LOGGER.debug("argList " + argList.toString());
             }
             int result = cli.execute(argList, processor.getConfigAsStream(), System.out, baos);
-            
             String message = "Job created successfully";
             if (result == -1) { 
             	byte[] byteArray = baos.toByteArray();
@@ -224,15 +356,14 @@ public class CIManagerImpl implements CIManager, FrameworkConstants {
             }
             //when svn is selected credential value has to set
             if(SVN.equals(job.getRepoType())) {
-            	credExist = setSvnCredential(job);
+            	setSvnCredential(job);
             }
-            
             return new CIJobStatus(result, message);
-        } catch (IOException e) {
-            throw new PhrescoException(e);
         } catch (JDOMException e) {
             throw new PhrescoException(e);
-        } finally {
+        } catch (IOException e) {
+        	throw new PhrescoException(e);
+		} finally {
             if (cli != null) {
                 try {
                     cli.close();
@@ -262,7 +393,7 @@ public class CIManagerImpl implements CIManager, FrameworkConstants {
     			File credentialFile = new File(credentialFilePath);
     			FileUtils.copyFile(credentialFile, file);
     		}
-    		String svnUrl = job.getSvnUrl();
+    		String svnUrl = job.getUrl();
     		String stringValue = getRealm(svnUrl);
     		SvnProcessor svn = new SvnProcessor(file);
     		return svn.writeSvnXml(stringValue, job);
@@ -315,14 +446,12 @@ public class CIManagerImpl implements CIManager, FrameworkConstants {
             
             SvnProcessor processor = new SvnProcessor(mailFile);
             
-			// Mail have to go with jenkins running email address
 			InetAddress ownIP = InetAddress.getLocalHost();
 			processor.changeNodeValue(CI_HUDSONURL, HTTP_PROTOCOL + PROTOCOL_POSTFIX + ownIP.getHostAddress() + COLON + jenkinsPort + FORWARD_SLASH + CI + FORWARD_SLASH);
             processor.changeNodeValue("smtpAuthUsername", senderEmailId);
             processor.changeNodeValue("smtpAuthPassword", encyPassword(senderEmailPassword));
             processor.changeNodeValue("adminAddress", senderEmailId);
             
-            //jenkins home location
 			String jenkinsJobHome = System.getenv(JENKINS_HOME);
             StringBuilder builder = new StringBuilder(jenkinsJobHome);
             builder.append(File.separator);
@@ -335,7 +464,7 @@ public class CIManagerImpl implements CIManager, FrameworkConstants {
     
     public void saveConfluenceConfiguration(String confluenceUrl, String confluenceUsername, String confluencePassword) throws PhrescoException {
         if (debugEnabled) {
-        	S_LOGGER.debug("Entering Method CIManagerImpl.saveMailConfiguration");
+        	S_LOGGER.debug("Entering Method CIManagerImpl.saveConfluenceConfiguration(String confluenceUrl, String confluenceUsername, String confluencePassword)");
         }
         try {
         	String jenkinsJobHome = System.getenv(JENKINS_HOME);
@@ -513,7 +642,7 @@ public class CIManagerImpl implements CIManager, FrameworkConstants {
         
         List<String> argList = new ArrayList<String>();
         argList.add(FrameworkConstants.CI_BUILD_JOB_COMMAND);
-        argList.add(job.getName());
+        argList.add(job.getJobName());
         try {
             int status = cli.execute(argList);
             String message = FrameworkConstants.CI_BUILD_STARTED;
@@ -545,7 +674,7 @@ public class CIManagerImpl implements CIManager, FrameworkConstants {
     	JsonArray jsonArray = null;
     	try {
         	String jenkinsUrl = "http://" + job.getJenkinsUrl() + ":" + job.getJenkinsPort() + "/ci/";
-        	String jobNameUtf8 = job.getName().replace(" ", "%20");
+        	String jobNameUtf8 = job.getJobName().replace(" ", "%20");
         	String buildsJsonUrl = jenkinsUrl + "job/" + jobNameUtf8 + "/api/json";
             String jsonResponse = getJsonResponse(buildsJsonUrl);
             
@@ -571,7 +700,7 @@ public class CIManagerImpl implements CIManager, FrameworkConstants {
     	List<CIBuild> ciBuilds = null;
         try {
         	if (debugEnabled) {
-        		S_LOGGER.debug("getCIBuilds()  JobName = "+ job.getName());
+        		S_LOGGER.debug("getCIBuilds()  JobName = "+ job.getJobName());
         	}
             JsonArray jsonArray = getBuildsArray(job);
             if (jsonArray != null) {
@@ -667,8 +796,9 @@ public class CIManagerImpl implements CIManager, FrameworkConstants {
     	if (debugEnabled) {
     		S_LOGGER.debug("Entering Method CIManagerImpl.getCLI()");
     	}
-        String jenkinsUrl = HTTP_PROTOCOL + PROTOCOL_POSTFIX + job.getJenkinsUrl() + COLON + job.getJenkinsPort() + FORWARD_SLASH + CI + FORWARD_SLASH;
-    	if (debugEnabled) {
+//        String jenkinsUrl = HTTP_PROTOCOL + PROTOCOL_POSTFIX + job.getJenkinsUrl() + COLON + job.getJenkinsPort() + FORWARD_SLASH + CI + FORWARD_SLASH;
+        String jenkinsUrl = HTTP_PROTOCOL + PROTOCOL_POSTFIX + "localhost" + COLON + "3579" + FORWARD_SLASH + CI + FORWARD_SLASH;
+        if (debugEnabled) {
     		S_LOGGER.debug("jenkinsUrl to get cli object " + jenkinsUrl);
     	}
         try {
@@ -683,44 +813,44 @@ public class CIManagerImpl implements CIManager, FrameworkConstants {
     }
     
     private void customizeNodes(ConfigProcessor processor, CIJob job) throws JDOMException,PhrescoException {
-    	
         //SVN url customization
     	if (SVN.equals(job.getRepoType())) {
     		S_LOGGER.debug("This is svn type project!!!!!");
-    		processor.changeNodeValue(SCM_LOCATIONS_REMOTE, job.getSvnUrl());
-    	} else if (GIT.equals(job.getRepoType())) {
-    		S_LOGGER.debug("This is git type project!!!!!");
-    		processor.changeNodeValue(SCM_USER_REMOTE_CONFIGS_URL, job.getSvnUrl());
-    		processor.changeNodeValue(SCM_BRANCHES_NAME, job.getBranch());
-    		// cloned workspace
-    	} else if (CLONED_WORKSPACE.equals(job.getRepoType())) {
-    		S_LOGGER.debug("Clonned workspace selected!!!!!!!!!!");
-    		processor.useClonedScm(job.getUsedClonnedWorkspace(), SUCCESSFUL);
-    	}
+//    		processor.changeNodeValue(SCM_LOCATIONS_REMOTE, job.getUrl());
+    		processor.changeNodeValue(SCM_LOCATIONS_REMOTE, "localhost");
+    	} 
+//    	else if (GIT.equals(job.getRepoType())) {
+//    		S_LOGGER.debug("This is git type project!!!!!");
+//    		processor.changeNodeValue(SCM_USER_REMOTE_CONFIGS_URL, job.getUrl());
+//    		processor.changeNodeValue(SCM_BRANCHES_NAME, job.getBranch());
+//    		// cloned workspace
+//    	} else if (CLONED_WORKSPACE.equals(job.getRepoType())) {
+//    		S_LOGGER.debug("Clonned workspace selected!!!!!!!!!!");
+//    		processor.useClonedScm(job.getUsedClonnedWorkspace(), SUCCESSFUL);
+//    	}
         
         //Schedule expression customization
-        processor.changeNodeValue(TRIGGERS_SPEC, job.getScheduleExpression());
+//        processor.changeNodeValue(TRIGGERS_SPEC, job.getScheduleExpression());
         
         //Triggers Implementation
-        List<String> triggers = job.getTriggers();
+//        List<String> triggers = job.getTriggers();
         
-        processor.createTriggers(TRIGGERS, triggers, job.getScheduleExpression());
+//        processor.createTriggers(TRIGGERS, triggers, job.getScheduleExpression());
         
         //if the technology is java stanalone and functional test , goal have to specified in post build step only
-        if(job.isEnablePostBuildStep() && FUNCTIONAL_TEST.equals(job.getOperation())) {
-            //Maven command customization
-            processor.changeNodeValue(GOALS, CI_FUNCTIONAL_ADAPT.trim());
-        } else {
-            //Maven command customization
-            processor.changeNodeValue(GOALS, job.getMvnCommand());
-        }
+//        if(job.isEnablePostBuildStep() && FUNCTIONAL_TEST.equals(job.getOperation())) {
+//            //Maven command customization
+//            processor.changeNodeValue(GOALS, CI_FUNCTIONAL_ADAPT.trim());
+//        } else {
+//            //Maven command customization
+//        }
         
         // Artifact archiver - archive do_not_checkin
-        processor.setArtifactArchiver(job.isEnableArtifactArchiver(), job.getCollabNetFileReleasePattern());
+//        processor.setArtifactArchiver(job.isEnableArtifactArchiver(), job.getCollabNetFileReleasePattern());
         
         //Recipients customization
-        Map<String, String> emails = job.getEmail();
-        processor.setEmailPublisher(emails, job.getAttachmentsPattern());
+//        Map<String, String> emails = job.getEmail();
+//        processor.setEmailPublisher(emails, job.getAttachmentsPattern());
 //        //Failure Reception list
 //        processor.changeNodeValue(TRIGGER_FAILURE_EMAIL_RECIPIENT_LIST, (String)email.get(FAILURE_EMAILS));
 //        
@@ -758,7 +888,7 @@ public class CIManagerImpl implements CIManager, FrameworkConstants {
         }
         
         // Build Other projects
-        if (StringUtils.isNotEmpty(job.getDownStreamProject())) {
+        if (StringUtils.isNotEmpty(job.getDownstreamApplication())) {
         	S_LOGGER.debug("Enabling downstream project!!!!!!");
         	String name = "";
         	String ordinal = "";
@@ -777,7 +907,7 @@ public class CIManagerImpl implements CIManager, FrameworkConstants {
         		ordinal = TWO;
         		color = RED;
         	}
-            processor.buildOtherProjects(job.getDownStreamProject(), name, ordinal, color);
+            processor.buildOtherProjects(job.getDownstreamApplication(), name, ordinal, color);
         }
         
         // pom location specifier 
@@ -805,34 +935,28 @@ public class CIManagerImpl implements CIManager, FrameworkConstants {
         
     }
     
-    private CIJobStatus deleteCI(CIJob job, List<String> builds) throws PhrescoException {
+    private CIJobStatus deleteCI(CIJob job, String builds) throws PhrescoException {
     	S_LOGGER.debug("Entering Method CIManagerImpl.deleteCI(CIJob job)");
-    	S_LOGGER.debug("Job name " + job.getName());
+    	S_LOGGER.debug("Job name " + job.getJobName());
     	cli = getCLI(job);
         String deleteType = null;
         List<String> argList = new ArrayList<String>();
-        S_LOGGER.debug("job name " + job.getName());
+        S_LOGGER.debug("job name " + job.getJobName());
         S_LOGGER.debug("Builds " + builds);
-        if(CollectionUtils.isEmpty(builds)) {	// delete job
+        if(StringUtils.isEmpty(builds)) {	// delete job
         	S_LOGGER.debug("Job deletion started");
         	S_LOGGER.debug("Command " + FrameworkConstants.CI_JOB_DELETE_COMMAND);
         	deleteType = DELETE_TYPE_JOB;
         	argList.add(FrameworkConstants.CI_JOB_DELETE_COMMAND);
-            argList.add(job.getName());
+            argList.add(job.getJobName());
         } else {								// delete Build
         	S_LOGGER.debug("Build deletion started");
         	deleteType = DELETE_TYPE_BUILD;
         	argList.add(FrameworkConstants.CI_BUILD_DELETE_COMMAND);
-            argList.add(job.getName());
-    	    StringBuilder result = new StringBuilder();
-    	    for(String string : builds) {
-    	        result.append(string);
-    	        result.append(",");
-    	    }
-    	    String buildNos = result.substring(0, result.length() - 1);
-        	argList.add(buildNos);
+            argList.add(job.getJobName());
+        	argList.add(builds);
     		S_LOGGER.debug("Command " + FrameworkConstants.CI_BUILD_DELETE_COMMAND);
-    		S_LOGGER.debug("Build numbers " + buildNos);
+    		S_LOGGER.debug("Build numbers " + builds);
         }
         try {
             int status = cli.execute(argList);
@@ -861,162 +985,202 @@ public class CIManagerImpl implements CIManager, FrameworkConstants {
         }
     }
     
-	 private CIJob getJob(ApplicationInfo appInfo) throws PhrescoException {
-		 Gson gson = new Gson();
-		 try {
-			 BufferedReader br = new BufferedReader(new FileReader(getCIJobPath(appInfo)));
-			 CIJob job = gson.fromJson(br, CIJob.class);
-			 br.close();
-			 return job;
-		 } catch (FileNotFoundException e) {
-			 S_LOGGER.debug(e.getLocalizedMessage());
-			 return null;
-		 } catch (com.google.gson.JsonParseException e) {
-			 S_LOGGER.debug("it is already adpted project !!!!! " + e.getLocalizedMessage());
-			 return null;
-		 } catch (IOException e) {
-			 S_LOGGER.debug(e.getLocalizedMessage());
-			 return null;
-		 }
-	 }
-
-	 private boolean adaptExistingJobs(ApplicationInfo appInfo) {
-		try {
-			 CIJob existJob = getJob(appInfo);
-			 S_LOGGER.debug("Going to get existing jobs to relocate!!!!!");
-			 if(existJob != null) {
-				 S_LOGGER.debug("Existing job found " + existJob.getName());
-				 boolean deleteExistJob = deleteCIJobFile(appInfo);
-				 Gson gson = new Gson();
-				 List<CIJob> existingJobs = new ArrayList<CIJob>();
-				 existingJobs.addAll(Arrays.asList(existJob));
-				 FileWriter writer = null;
-				 File ciJobFile = new File(getCIJobPath(appInfo));
-				 String jobJson = gson.toJson(existingJobs);
-				 writer = new FileWriter(ciJobFile);
-				 writer.write(jobJson);
-				 writer.flush();
-				 S_LOGGER.debug("Existing job moved to new type of project!!");
-			 }
-			 return true;
-		} catch (Exception e) {
-			S_LOGGER.debug("It is already adapted !!!!! ");
+	 public List<ProjectDelivery> getProjectDeliveries(File projectDeliveryFile) throws PhrescoException {
+			if (debugEnabled) {
+				S_LOGGER.debug("Entering Method CIManagerImpl.getJobTemplates()");
+			}
+			FileReader ProjectDeliveryFileReader = null;
+			BufferedReader br = null;
+			List<ProjectDelivery> ProjectDelivery = null;
+			try {
+				if (!projectDeliveryFile.exists()) {
+					return ProjectDelivery;
+				}
+				ProjectDeliveryFileReader = new FileReader(projectDeliveryFile);
+				br = new BufferedReader(ProjectDeliveryFileReader);
+				Type type = new TypeToken<List<ProjectDelivery>>() {
+				}.getType();
+				Gson gson = new Gson();
+				ProjectDelivery = gson.fromJson(br, type);
+			} catch (Exception e) {
+				if (debugEnabled) {
+					S_LOGGER.error("Entered into catch block of CI.getJobTemplates()"
+							+ e.getLocalizedMessage());
+				}
+				throw new PhrescoException(e);
+			} finally {
+				Utility.closeStream(br);
+				Utility.closeStream(ProjectDeliveryFileReader);
+			}
+			return ProjectDelivery;
 		}
-		return false;
-	 }
-	 
-	 public List<CIJob> getJobs(ApplicationInfo appInfo) throws PhrescoException {
-		 S_LOGGER.debug("GetJobs Called!");
-		 try {
-			 boolean adaptedProject = adaptExistingJobs(appInfo);
-			 S_LOGGER.debug("Project adapted for new feature => " + adaptedProject);
-			 Gson gson = new Gson();
-			 BufferedReader br = new BufferedReader(new FileReader(getCIJobPath(appInfo)));
-			 Type type = new TypeToken<List<CIJob>>(){}.getType();
-			 List<CIJob> jobs = gson.fromJson(br, type);
-			 br.close();
-			 return jobs;
-		 } catch (FileNotFoundException e) {
-			 S_LOGGER.debug("FileNotFoundException");
-			 return null;
-		 } catch (IOException e) {
-			 S_LOGGER.debug("IOException");
-			 throw new PhrescoException(e);
-		 }
-	 }
-	 
-	 public CIJob getJob(ApplicationInfo appInfo, String jobName) throws PhrescoException {
-		 try {
-			 S_LOGGER.debug("Search for jobName => " + jobName);
-			 if (StringUtils.isEmpty(jobName)) {
-				 return null;
-			 }
-			 List<CIJob> jobs = getJobs(appInfo);
-			 if(CollectionUtils.isEmpty(jobs)) {
-				 S_LOGGER.debug("job list is empty!!!!!!!!");
-				 return null;
-			 }
-			 S_LOGGER.debug("Job list found!!!!!");
-			 for (CIJob job : jobs) {
-				 S_LOGGER.debug("job list job Names => " + job.getName());
-				 if (job.getName().equals(jobName)) {
-					 return job;
-				 }
-			 }
-		 } catch (Exception e) {
-			 throw new PhrescoException(e);
-		 }
-		 return null;
-	 }
-	 
-	 private void writeJsonJobs(ApplicationInfo appInfo, List<CIJob> jobs, String status) throws PhrescoException {
-		 try {
-			 if (jobs == null) {
-				 return;
-			 }
-			 Gson gson = new Gson();
-			 List<CIJob> existingJobs = getJobs(appInfo);
-			 if (CI_CREATE_NEW_JOBS.equals(status) || existingJobs == null) {
-				 existingJobs = new ArrayList<CIJob>();
-			 }
-			 existingJobs.addAll(jobs);
-			 FileWriter writer = null;
-			 File ciJobFile = new File(getCIJobPath(appInfo));
-			 String jobJson = gson.toJson(existingJobs);
-			 writer = new FileWriter(ciJobFile);
-			 writer.write(jobJson);
-			 writer.flush();
-		 } catch (Exception e) {
-			 throw new PhrescoException(e);
-		 }
-	 }
-	 
-	 private void deleteJsonJobs(ApplicationInfo appInfo, List<CIJob> selectedJobs) throws PhrescoException {
-		 try {
-			 if (CollectionUtils.isEmpty(selectedJobs)) {
-				 return;
-			 }
-			 Gson gson = new Gson();
-			 List<CIJob> jobs = getJobs(appInfo);
-			 if (CollectionUtils.isEmpty(jobs)) {
-				 return;
-			 }
-			//all values
-			 Iterator<CIJob> iterator = jobs.iterator();
-			//deletable values
-			 for (CIJob selectedInfo : selectedJobs) {
-				 while (iterator.hasNext()) {
-					 CIJob itrCiJob = iterator.next();
-					 if (itrCiJob.getName().equals(selectedInfo.getName())) {
-						 iterator.remove();
-						 break;
-					 }
-				 }
-			 }
-			 writeJsonJobs(appInfo, jobs, CI_CREATE_NEW_JOBS);
-		 } catch (Exception e) {
-			 throw new PhrescoException(e);
-		 }
-	 }
-	 
-	 private void updateJsonJob(ApplicationInfo appInfo, CIJob job) throws PhrescoException {
-		 try {
-			 deleteJsonJobs(appInfo, Arrays.asList(job));
-			 writeJsonJobs(appInfo, Arrays.asList(job), CI_APPEND_JOBS);
-		 } catch (Exception e) {
-			 throw new PhrescoException(e);
-		 }
-	 }
-	 
-	 private String getCIJobPath(ApplicationInfo appInfo) {
-		 StringBuilder builder = new StringBuilder(Utility.getProjectHome());
-		 builder.append(appInfo.getAppDirName());
-		 builder.append(File.separator);
-		 builder.append(FOLDER_DOT_PHRESCO);
-		 builder.append(File.separator);
-		 builder.append(CI_JOB_INFO_NAME);
-		 return builder.toString();
-	 }
+ 	
+ 	private ProjectDelivery createNewProjectDelivery(String name, String environment, List<CIJob> jobs, String projId) {
+ 		ProjectDelivery updateProjectDeliveries = new ProjectDelivery();
+ 		ContinuousDelivery updateContinuousDeliveries = new ContinuousDelivery();
+ 		updateContinuousDeliveries.setName(name);
+		updateContinuousDeliveries.setEnvironment(environment);
+		updateContinuousDeliveries.setJobs(jobs);
+		updateProjectDeliveries.setId(projId);
+		updateProjectDeliveries.setContinuousDeliveries(Arrays.asList(updateContinuousDeliveries));
+		return updateProjectDeliveries;
+ 	}
+ 	
+ 	private ContinuousDelivery createNewContinuousDelivery(String name, String environment, List<CIJob> jobs) {
+ 		ContinuousDelivery updateContinuousDeliveries = new ContinuousDelivery();
+ 		updateContinuousDeliveries.setName(name);
+ 		updateContinuousDeliveries.setEnvironment(environment);
+ 		updateContinuousDeliveries.setJobs(jobs);
+ 		return updateContinuousDeliveries;
+ 	}
+ 	
+ 	public void createJsonJobs(ContinuousDelivery continuousDelivery, List<CIJob> jobs, String projId, String appDir) throws PhrescoException {
+ 		try {
+ 			String ciJobInfoPath = getCiJobInfoPath(appDir);
+ 			File infoFile = new File(ciJobInfoPath);
+ 			
+ 			//create new info file if not exists
+ 			if (!infoFile.exists()) {
+ 				infoFile.createNewFile();
+ 			}
+ 			List<ProjectDelivery> projectDeliveries = getProjectDeliveries(infoFile);
+ 			
+ 			List<ProjectDelivery> newProjectDelivery = new ArrayList<ProjectDelivery>(); 
+ 			ProjectDelivery createNewProjectDelivery = createNewProjectDelivery(continuousDelivery.getName(), continuousDelivery.getEnvironment(), jobs, projId);
+			newProjectDelivery.add(createNewProjectDelivery);
+			
+			ContinuousDelivery createNewContinuousDelivery = createNewContinuousDelivery(continuousDelivery.getName(), continuousDelivery.getEnvironment(), jobs);
+			
+ 			if (CollectionUtils.isEmpty(projectDeliveries)) {
+				projectDeliveries = newProjectDelivery;
+ 			} else {
+ 				ProjectDelivery projectDelivery = getProjectDelivery(projId, projectDeliveries);
+ 				if (projectDelivery != null) {
+ 					List<ContinuousDelivery> continuousDeliveries = projectDelivery.getContinuousDeliveries(); 	
+ 					if(CollectionUtils.isNotEmpty(continuousDeliveries)) {
+ 						continuousDeliveries.add(createNewContinuousDelivery);
+ 					} else {
+ 						projectDelivery.setContinuousDeliveries(Arrays.asList(createNewContinuousDelivery));
+ 					}
+ 				} else {
+ 					projectDeliveries.add(createNewProjectDelivery);
+ 				}
+ 			}
+ 			
+ 			ciInfoFileWriter(infoFile.getPath(), projectDeliveries);
+ 		} catch (Exception e) {
+ 			throw new PhrescoException(e);
+ 		}
+ 	}
+ 	
+ 	private void ciInfoFileWriter(String filePath, Object object ) throws PhrescoException {
+ 		Gson gson = new Gson();
+ 		FileWriter writer = null;
+ 		try {
+ 			writer = new FileWriter(filePath);
+ 			String json = gson.toJson(object);
+ 			writer.write(json);
+ 			writer.flush();
+ 		} catch (IOException e) {
+ 			throw new PhrescoException(e);
+ 		}
+ 	}
+ 	
+	public List<CIJob> getJobs(String continuousName, String projectId, List<ProjectDelivery> ciJobInfo) {
+ 		ProjectDelivery projectDelivery = getProjectDelivery(projectId,ciJobInfo);
+ 		if (projectDelivery != null) {
+ 			List<ContinuousDelivery> continuousDeliveries = projectDelivery.getContinuousDeliveries();
+ 			if(CollectionUtils.isNotEmpty(continuousDeliveries)) {
+ 				ContinuousDelivery continuousDelivery = getContinuousDelivery(continuousName, continuousDeliveries);
+ 				return continuousDelivery.getJobs();
+ 			}
+ 		}
+ 		return null;
+ 	}
+ 	
+ 	private ProjectDelivery getProjectDelivery(String projId, List<ProjectDelivery> projectDeliveries) {
+ 		for(ProjectDelivery projectDelivery : projectDeliveries) {
+ 			if (StringUtils.isNotEmpty(projId) && projId.equals(projectDelivery.getId())) {
+ 				return projectDelivery;
+ 			}
+ 		}
+ 		return null;
+ 	}
+ 	
+ 	private ContinuousDelivery getContinuousDelivery(String name, List<ContinuousDelivery> continuousDeliveries) {
+ 		for(ContinuousDelivery continuousDelivery : continuousDeliveries) {
+ 			if (StringUtils.isNotEmpty(name) && continuousDelivery.getName().equals(name)) {
+ 				return continuousDelivery;
+ 			}
+ 		}
+ 		return null;
+ 	}
+ 	
+ 	public List<CIJob> getDeleteableJobs(String projectId, ContinuousDelivery continuousDelivery, String appDirName) throws PhrescoException {
+ 		List<ProjectDelivery> ciJobInfo = getCiJobInfo(appDirName);
+ 		if (CollectionUtils.isNotEmpty(ciJobInfo)) {
+ 			return getJobs(continuousDelivery.getName(), projectId, ciJobInfo);
+ 		}
+ 		return null;
+ 	}
+ 	
+ 	public void clearContinuousDelivery(String continuousDeliveryName, String projId, String appDir) throws PhrescoException {
+ 		try {
+ 			List<ProjectDelivery> ciJobInfo = getCiJobInfo(appDir);
+ 			String ciJobInfoPath = getCiJobInfoPath(appDir);
+			if (CollectionUtils.isNotEmpty(ciJobInfo)) {
+				ProjectDelivery projectDelivery = getProjectDelivery(projId, ciJobInfo);
+				if (projectDelivery != null) {
+					List<ContinuousDelivery> continuousDeliveries = projectDelivery.getContinuousDeliveries();
+					if (CollectionUtils.isNotEmpty(continuousDeliveries)) { 
+						Iterator<ContinuousDelivery> continuousDeliveryIterator = continuousDeliveries.iterator();
+						while (continuousDeliveryIterator.hasNext()) {
+							ContinuousDelivery continuousDelivery = (ContinuousDelivery) continuousDeliveryIterator.next();
+							if (continuousDelivery.getName().equals(continuousDeliveryName)) {
+								continuousDeliveryIterator.remove();
+								break;
+							}
+						}
+					}
+				}
+ 			}
+			ciInfoFileWriter(ciJobInfoPath, ciJobInfo);
+ 		} catch (Exception e) {
+ 			throw new PhrescoException(e);
+ 		}
+ 	}
+ 	
+ 	public void deleteJsonJobs(String appDir, List<CIJob> selectedJobs, String projectId, String name) throws PhrescoException {
+ 		try {
+ 			if (CollectionUtils.isEmpty(selectedJobs)) {
+ 				return;
+ 			}
+ 			List<CIJob> jobs = new ArrayList<CIJob>();
+ 			List<ProjectDelivery> ciJobInfo = getCiJobInfo(appDir);
+ 			ProjectDelivery projectDelivery = getProjectDelivery(projectId, ciJobInfo);
+ 			List<ContinuousDelivery> continuousDeliveries = projectDelivery.getContinuousDeliveries();
+ 			ContinuousDelivery continuousDelivery = getContinuousDelivery(name, continuousDeliveries);
+ 			jobs = continuousDelivery.getJobs();
+ 			if(jobs.size() == selectedJobs.size()) {
+ 				continuousDeliveries.remove(continuousDelivery);
+ 			} else {
+ 				Iterator<CIJob> iterator = jobs.iterator();
+ 				for (CIJob selectedInfo : selectedJobs) {
+ 					while (iterator.hasNext()) {
+ 						CIJob itrCiJob = iterator.next();
+ 						if (itrCiJob.getJobName().equals(selectedInfo.getJobName())) {
+ 							iterator.remove();
+ 							break;
+ 						}
+ 					}
+ 				}
+ 			}
+ 			String ciJobInfoPath = getCiJobInfoPath(appDir);
+ 			ciInfoFileWriter(ciJobInfoPath, ciJobInfo);
+ 		} catch (Exception e) {
+ 			throw new PhrescoException(e);
+ 		}
+ 	}
 	 
 	 public boolean isJobTemplateNameExists(String jobTemplateName)  throws PhrescoException {
 		if (debugEnabled) {
@@ -1093,7 +1257,6 @@ public class CIManagerImpl implements CIManager, FrameworkConstants {
 		try {
 			File jobTemplateFile = getJobTemplateFile();
 			if (!jobTemplateFile.exists()) {
-				// If file not found return empty object
 				return ciJobTemplates;
 			}
 
@@ -1116,7 +1279,44 @@ public class CIManagerImpl implements CIManager, FrameworkConstants {
 		}
 		return ciJobTemplates;
 	}
-
+	
+	public List<ProjectDelivery> getCiJobInfo(String appDir) throws PhrescoException {
+		if (debugEnabled) {
+			S_LOGGER.debug("Entering Method CIManagerImpl.getCiJobInfo()");
+		}
+		List<ProjectDelivery> projectDelivery = new ArrayList<ProjectDelivery>();
+		String ciJobInfoPath = getCiJobInfoPath(appDir);
+		File ciJobInfoFile = new File(ciJobInfoPath);
+		if(!ciJobInfoFile.exists()) {
+			return new ArrayList<ProjectDelivery>();
+		}
+		projectDelivery = getProjectDeliveries(ciJobInfoFile);
+		return projectDelivery;
+	}
+	
+	public String getCiJobInfoPath(String appDir) throws PhrescoException {
+		if (debugEnabled) {
+			S_LOGGER.debug("Entering Method CIManagerImpl.getCiJobInfoPath()");
+		}
+		try {
+			StringBuilder builder = new StringBuilder(Utility.getProjectHome());
+			if (!StringUtils.isEmpty(appDir)) {		
+				builder.append(appDir);
+				builder.append(File.separator);
+				builder.append(PHRESCO);
+				builder.append(File.separator);	
+			}
+			builder.append(CI_JOB_INFO_NAME);
+			File ciJobInfoFile = new File(builder.toString());
+			if(!ciJobInfoFile.exists()) {
+				ciJobInfoFile.createNewFile();
+			}
+			return ciJobInfoFile.getPath();
+		} catch (IOException e) {
+			throw new PhrescoException(e);
+		}
+	}
+	
 	public List<CIJobTemplate> getJobTemplatesByAppId(String appId) throws PhrescoException {
 		if (debugEnabled) {
 			S_LOGGER.debug("Entering Method CIManagerImpl.getJobTemplatesByAppid()");
@@ -1247,7 +1447,7 @@ public class CIManagerImpl implements CIManager, FrameworkConstants {
 		}
 		try {
 			if (CollectionUtils.isEmpty(ciJobTemplates)) {
-				return false; // Empty collection received
+				return false; 
 			}
 			
 			List<CIJobTemplate> jobTemplates = getJobTemplates();
@@ -1280,7 +1480,7 @@ public class CIManagerImpl implements CIManager, FrameworkConstants {
 		}
 		try {
 			if (StringUtils.isEmpty(jobTemplateName)) {
-				return false; // Empty collection received
+				return false; 
 			}
 			
 			List<CIJobTemplate> jobTemplates = getJobTemplates();
@@ -1305,11 +1505,7 @@ public class CIManagerImpl implements CIManager, FrameworkConstants {
 	}
 
 	private String getJobTemplatePath() {
-		StringBuilder builder = new StringBuilder(Utility.getProjectHome());
-		// builder.append(appInfo.getAppDirName());
-		// builder.append(File.separator);
-		// builder.append(FOLDER_DOT_PHRESCO);
-		// builder.append(File.separator);
+		StringBuilder builder = new StringBuilder(Utility.getProjectHome());		
 		builder.append(CI_JOB_TEMPLATE_NAME);
 		return builder.toString();
 	}
@@ -1321,13 +1517,9 @@ public class CIManagerImpl implements CIManager, FrameworkConstants {
 		return jobTemplateFile;
 	}
 	 
-	 public CIJobStatus buildJobs(ApplicationInfo appInfo, List<String> jobsName) throws PhrescoException {
+	 public CIJobStatus generateBuild(CIJob ciJob) throws PhrescoException {
 		 try {
-			 CIJobStatus jobStatus = null;
-			 for (String jobName : jobsName) {
-				 CIJob ciJob = getJob(appInfo, jobName);
-				 jobStatus = buildJob(ciJob);
-			 }
+			 CIJobStatus jobStatus = buildJob(ciJob);
 			 return jobStatus;
 		 } catch (ClientHandlerException ex) {
 			 S_LOGGER.error(ex.getLocalizedMessage());
@@ -1335,19 +1527,11 @@ public class CIManagerImpl implements CIManager, FrameworkConstants {
 		 }
 	 }
 	 
-	 public CIJobStatus deleteBuilds(ApplicationInfo appInfo,  Map<String, List<String>> builds) throws PhrescoException {
+	 public CIJobStatus deleteBuilds(CIJob ciJob,  String buildNumber) throws PhrescoException {
 		 S_LOGGER.debug("Entering Method ProjectAdministratorImpl.deleteCI()");
 		 	try {
 				CIJobStatus deleteCI = null;
-				Iterator iterator = builds.keySet().iterator();  
-				while (iterator.hasNext()) {
-				   String jobName = iterator.next().toString();  
-				   List<String> deleteBuilds = builds.get(jobName);
-				   S_LOGGER.debug("jobName " + jobName + " builds " + deleteBuilds);
-				   CIJob ciJob = getJob(appInfo, jobName);
-					 //job and build numbers
-				   deleteCI = deleteCI(ciJob, deleteBuilds);
-				}
+				deleteCI = deleteCI(ciJob, buildNumber);
 			 return deleteCI;
 		 } catch (ClientHandlerException ex) {
 			 S_LOGGER.error("Entered into catch block of ProjectAdministratorImpl.deleteCI()" + ex.getLocalizedMessage());
@@ -1355,36 +1539,22 @@ public class CIManagerImpl implements CIManager, FrameworkConstants {
 		 }
 	 }
 
-	 public CIJobStatus deleteJobs(ApplicationInfo appInfo,  List<String> jobNames) throws PhrescoException {
+	 public CIJobStatus deleteJobs(String appDir, List<CIJob> ciJobs, String projectId, String continuousName) throws PhrescoException {
 		 S_LOGGER.debug("Entering Method ProjectAdministratorImpl.deleteCI()");
 		 try {
 			CIJobStatus deleteCI = null;
-			for (String jobName : jobNames) {
-				S_LOGGER.debug(" Deleteable job name " + jobName);
-				CIJob ciJob = getJob(appInfo, jobName);
-				 //job and build numbers
+			for (CIJob ciJob : ciJobs) {
+				S_LOGGER.debug(" Deleteable job name " + ciJob.getJobName());
 				 deleteCI = deleteCI(ciJob, null);
 				 S_LOGGER.debug("write back json data after job deletion successfull");
-				 deleteJsonJobs(appInfo, Arrays.asList(ciJob));
 			}
+			clearContinuousDelivery(continuousName, projectId, appDir);
 			 return deleteCI;
 		 } catch (ClientHandlerException ex) {
 			 S_LOGGER.error("Entered into catch block of ProjectAdministratorImpl.deleteCI()" + ex.getLocalizedMessage());
 			 throw new PhrescoException(ex);
 		 }
 	 }
-	 
-	// When already existing adapted project is created , need to move to new adapted project
-	private boolean deleteCIJobFile(ApplicationInfo appInfo) throws PhrescoException {
-		S_LOGGER.debug("Entering Method ProjectAdministratorImpl.deleteCI()");
-		try {
-       	File ciJobInfo = new File(getCIJobPath(appInfo));
-       	return ciJobInfo.delete();
-		} catch (ClientHandlerException ex) {
-	    	S_LOGGER.error("Entered into catch block of ProjectAdministratorImpl.deleteCI()" + ex.getLocalizedMessage());
-			throw new PhrescoException(ex);
-		}
-	}
 		
 	public boolean isJobCreatingBuild(CIJob ciJob) throws PhrescoException {
 		S_LOGGER.debug("Entering Method ProjectAdministratorImpl.isBuilding()");
@@ -1409,56 +1579,7 @@ public class CIManagerImpl implements CIManager, FrameworkConstants {
 		S_LOGGER.debug("buidInProgress " + buidInProgress);
 		return buidInProgress;
 	}
-	    
-	public int getTotalBuilds(ApplicationInfo appInfo) throws PhrescoException {
-		try {
-			CIJob ciJob = getJob(appInfo);
-			return getTotalBuilds(ciJob);
-		} catch (ClientHandlerException ex) {
-			S_LOGGER.error(ex.getLocalizedMessage());
-			throw new PhrescoException(ex);
-		}
-	}
 		 
-	private int getTotalBuilds(CIJob job) throws PhrescoException {
-		try {
-			S_LOGGER.debug("Entering Method CIManagerImpl.getTotalBuilds(CIJob job)");
-			S_LOGGER.debug("getCIBuilds()  JobName = " + job.getName());
-			JsonArray jsonArray = getBuildsArray(job);
-			Gson gson = new Gson();
-			CIBuild ciBuild = null;
-			if (jsonArray != null && jsonArray.size() > 0) { //not null check
-				ciBuild = gson.fromJson(jsonArray.get(0), CIBuild.class);
-				String buildUrl = ciBuild.getUrl();
-				String jenkinsUrl = job.getJenkinsUrl() + ":" + job.getJenkinsPort();
-				// display the jenkins running url in ci
-				buildUrl = buildUrl.replaceAll("localhost:" + job.getJenkinsPort(), jenkinsUrl);
-																			// list
-				String response = getJsonResponse(buildUrl + API_JSON);
-				JsonParser parser = new JsonParser();
-				JsonElement jsonElement = parser.parse(response);
-				JsonObject jsonObject = jsonElement.getAsJsonObject();
-				JsonElement resultJson = jsonObject.get(FrameworkConstants.CI_JOB_BUILD_RESULT);
-				JsonArray asJsonArray = jsonObject.getAsJsonArray(FrameworkConstants.CI_JOB_BUILD_ARTIFACTS);
-				// when build result is not known
-				if (jsonObject.get(FrameworkConstants.CI_JOB_BUILD_RESULT).toString().equals(STRING_NULL)) {
-					// it indicates the job is in progress and not yet completed
-					return -1;
-				// when build is success and build zip relative path is unknown 
-				} else if (resultJson.getAsString().equals(CI_SUCCESS_FLAG) && asJsonArray.size() < 1) {
-					return -1;
-				} else {
-					return jsonArray.size();
-				}
-			} else {
-				return -1; // When the project is build first time,
-			}
-		} catch (ClientHandlerException ex) {
-			S_LOGGER.error(ex.getLocalizedMessage());
-			throw new PhrescoException(ex);
-		}
-	}
-	
     public void streamToFile(File dest, InputStream ip) throws PhrescoException {
 		try {
 			OutputStream out;
@@ -1475,4 +1596,5 @@ public class CIManagerImpl implements CIManager, FrameworkConstants {
        		throw new PhrescoException(e);
 		}
     }
+
 }

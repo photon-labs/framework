@@ -8,6 +8,7 @@ var commonVariables = {
 	appDirName : null,
 	goal : null,
 	phase : null,
+	buildNo : null,
 	
 	header : "header",
 	headerContext : "",
@@ -160,6 +161,7 @@ var commonVariables = {
 	deleted : "Delete",
 	
 	loadingScreen : null,
+	ajaxXhr : null,
 	
 	basePlaceholder : "basepage\\:widget",
 	headerPlaceholder : $("<header\\:widget></header\\:widget>"),

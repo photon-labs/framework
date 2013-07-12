@@ -103,25 +103,15 @@ define(["testResult/listener/testResultListener"], function() {
 		postRender : function(element) {
 			var self = this;
 			self.testResultListener.onTestResult();
-			self.testResultListener.resizeConsoleWindow();
-			self.testResultListener.resizeTestResultTable("testSuites");
+			self.resizeConsoleWindow();
+			self.testResultListener.resizeTestResultColumn("testSuites");
 			
 			//To show the log after reloading the test result once the test execution is completed
 			$('#testConsole').html(self.logContent);
 			self.logContent = '';
 			
 			self.testResultListener.showTabularView();
-			
-			//To set the height of the test result section  
-			var windowHeight = $(document).height();
-			var marginTop = $('.testSuiteTable').css("margin-top");
-			if (marginTop !== undefined) {
-				marginTop = marginTop.substring(0, marginTop.length - 2);
-			}
-			var footerHeight = $('#footer').height();
-			var deductionHeight = Number(marginTop) + Number(footerHeight);
-			var finalHeight = windowHeight - deductionHeight - 5;
-			$('.testSuiteTable').height(finalHeight);
+			self.testResultListener.resizeTestResultDiv();
 		},
 		
 		/***
@@ -141,7 +131,7 @@ define(["testResult/listener/testResultListener"], function() {
 			});
 			
 			$(window).resize(function() {
-				self.testResultListener.resizeTestResultTable();
+				self.testResultListener.resizeTestResultColumn();
 				
 				var height = $(this).height();
 				var resultvalue = 0;
@@ -152,8 +142,9 @@ define(["testResult/listener/testResultListener"], function() {
 				var footervalue = $('.footer_section').height();
 				resultvalue = resultvalue + footervalue + 200;
 				
-				$('.mainContent .scrollContent').height(height - resultvalue);
-				self.testResultListener.resizeConsoleWindow();
+				var testSuiteTableHeight = $('.testSuiteTable').height();
+				//$('.scrollContent').height(testSuiteTableHeight);
+				self.resizeConsoleWindow();
 			});
 			
 			//To show the testcases of the selected testsuite

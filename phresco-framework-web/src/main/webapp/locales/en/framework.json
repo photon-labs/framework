@@ -205,6 +205,26 @@
 		},
 		"placeholder" : "Search"
 	},
+	"ci" : {
+        "jobtemplates" : "Job Templates",
+        "createjobtemplate" : "Create a Job Template",
+        "name" : "Name",
+        "type" : "Type",
+        "application" : "Application",
+        "configure" : "Configure",
+        "delete" : "Delete",
+		"edit" : "Edit",	
+		"jobtype" : "Job Type",
+        "repo" : "Repo",
+        "scheduler" : "Scheduler",
+        "emailsettings" : "Email Settings",
+        "uploadsettings" : "Upload Settings",
+        "continuousdelivery" : "Continuous Integration",
+        "createnewcontinuousdelivery" : "Create a New Continuous Delivery",
+        "environment" : "Environment",
+        "create" : "Create",
+        "close" : "Close"
+    }, 
 	"edit" : {
 		"label" : {
 			"mobile" : "Mobile",

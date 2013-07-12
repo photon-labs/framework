@@ -18,6 +18,11 @@
 package com.photon.phresco.framework.rest.api;
 
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.ArrayList;
@@ -31,6 +36,7 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -38,6 +44,7 @@ import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
@@ -52,6 +59,7 @@ import com.photon.phresco.commons.model.ApplicationInfo;
 import com.photon.phresco.commons.model.ArtifactGroup;
 import com.photon.phresco.commons.model.ArtifactGroupInfo;
 import com.photon.phresco.commons.model.ArtifactInfo;
+import com.photon.phresco.commons.model.CertificateInfo;
 import com.photon.phresco.commons.model.PropertyTemplate;
 import com.photon.phresco.commons.model.SettingsTemplate;
 import com.photon.phresco.configuration.Configuration;
@@ -59,12 +67,15 @@ import com.photon.phresco.configuration.Environment;
 import com.photon.phresco.exception.ConfigurationException;
 import com.photon.phresco.exception.PhrescoException;
 import com.photon.phresco.framework.commons.FrameworkUtil;
+import com.photon.phresco.framework.model.AddCertificateInfo;
 import com.photon.phresco.framework.model.CronExpressionInfo;
+import com.photon.phresco.framework.model.RemoteCertificateInfo;
 import com.photon.phresco.framework.rest.api.util.FrameworkServiceUtil;
 import com.photon.phresco.impl.ConfigManagerImpl;
 import com.photon.phresco.service.client.api.ServiceManager;
 import com.photon.phresco.util.Constants;
 import com.photon.phresco.util.ServiceConstants;
+import com.photon.phresco.util.Utility;
 import com.sun.jersey.api.client.ClientResponse.Status;
 
 /**
@@ -78,7 +89,7 @@ public class ConfigurationService extends RestBase implements FrameworkConstants
 	
 	/** The is_debug enabled. */
 	private static Boolean is_debugEnabled = S_LOGGER.isDebugEnabled();
-
+	
 	/**
 	 * Adds the environment.
 	 *
@@ -570,6 +581,170 @@ public class ConfigurationService extends RestBase implements FrameworkConstants
 			ResponseInfo<String> finalOutput = responseDataEvaluation(responseData, e, "Environmets not Fetched", null);
 			return Response.status(Status.BAD_REQUEST).entity(finalOutput).header("Access-Control-Allow-Origin", "*")
 					.build();
+		}
+	}
+	
+	/**
+	 * Authenticate server.
+	 *
+	 * @param host the host
+	 * @param port the port
+	 * @param appDirName the app dir name
+	 * @return the response
+	 * @throws PhrescoException the phresco exception
+	 */
+	@GET
+	@Path("/returnCertificate")
+	@Produces(MediaType.APPLICATION_JSON)
+	 public Response authenticateServer(@QueryParam("host") String host, @QueryParam("port") String port, @QueryParam("appDirName") String appDirName) throws PhrescoException {
+		ResponseInfo<RemoteCertificateInfo> responseData = new ResponseInfo<RemoteCertificateInfo>();
+	    		RemoteCertificateInfo remoteCertificateInfo = new RemoteCertificateInfo();
+	    		int portValue = Integer.parseInt(port);
+	    		boolean connctionAlive = Utility.isConnectionAlive("https", host, portValue);
+	    		boolean isCertificateAvailable = false;
+	    		String projectLocation = "";
+    			projectLocation = Utility.getProjectHome() + appDirName;
+	    		if (connctionAlive) {
+	    			List<CertificateInfo> certificates = FrameworkServiceUtil.getCertificate(host, portValue);
+	    			if (CollectionUtils.isNotEmpty(certificates)) {
+	    				isCertificateAvailable = true;
+	    				remoteCertificateInfo.setCertificates(certificates);
+	    				remoteCertificateInfo.setProjectLocation(projectLocation);
+	    				remoteCertificateInfo.setCertificateAvailable(isCertificateAvailable);
+	    				ResponseInfo<RemoteCertificateInfo> finalOutput = responseDataEvaluation(responseData, null,
+	    						"Https server certificate returned successfully", remoteCertificateInfo);
+	    				return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
+	    			}
+	    		}
+	    		ResponseInfo<RemoteCertificateInfo> finalOutput = responseDataEvaluation(responseData, null,
+						"No certificate found", null);
+				return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
+	    }
+
+	@POST
+	@Path("/addCertificate")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response addCertificate(AddCertificateInfo addCertificateInfo) {
+		ResponseInfo<String> responseData = new ResponseInfo<String>();
+		String certificatePath = "";
+		try {
+			String propValue = addCertificateInfo.getPropValue();
+			String fromPage = addCertificateInfo.getFromPage();
+			String appDirName = addCertificateInfo.getAppDirName();
+			if (StringUtils.isNotEmpty(propValue)) {
+				File file = new File(propValue);
+				if (fromPage.equals(CONFIGURATION)) {
+					certificatePath = configCertificateSave(propValue, file, appDirName, addCertificateInfo);
+				} else if (fromPage.equals(SETTINGS)) {
+					certificatePath = settingsCertificateSave(file, appDirName, addCertificateInfo);
+				}
+
+				ResponseInfo<String> finalOutput = responseDataEvaluation(responseData, null,
+						"Https server certificate added successfully", certificatePath);
+				return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*")
+						.build();
+			}
+			ResponseInfo<String> finalOutput = responseDataEvaluation(responseData, null, "Nothin to add", null);
+			return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
+		} catch (PhrescoException e) {
+			ResponseInfo<String> finalOutput = responseDataEvaluation(responseData, e,
+					"Https server certificate not Added", null);
+			return Response.status(Status.BAD_REQUEST).entity(finalOutput).header("Access-Control-Allow-Origin", "*")
+					.build();
+		}
+	}
+	
+	@POST
+	@Path("/upload")
+	@Produces(MediaType.APPLICATION_JSON)
+	@Consumes(MediaType.APPLICATION_OCTET_STREAM)
+	public Response fileUpload(@Context HttpServletRequest request) {
+		ResponseInfo<Boolean> responseData = new ResponseInfo<Boolean>();
+		try {
+			InputStream inputStream = request.getInputStream();
+			String actionType = request.getHeader("actionType");
+			String appDirName = request.getHeader("appDirName");
+			if (actionType.equals("configuration")) {
+				File tempZipFile = new File(Utility.getProjectHome() + appDirName + File.separator 
+						+ FrameworkConstants.DO_NOT_CHECKIN_DIR + File.separator + FrameworkConstants.TARGET_DIR
+					+ File.separator + request.getHeader("X-File-Name"));
+			
+			 	if (!tempZipFile.getParentFile().exists()) {
+					tempZipFile.getParentFile().mkdirs();
+			} 
+				if (!tempZipFile.exists()) {
+					tempZipFile.createNewFile();
+				}
+				OutputStream out = new FileOutputStream(tempZipFile);
+				int read = 0;
+				byte[] bytes = new byte[1024];
+				while ((read = inputStream.read(bytes)) != -1) {
+					out.write(bytes, 0, read);
+				}
+				inputStream.close();
+				out.flush();
+				out.close();
+				ResponseInfo finalOuptut = responseDataEvaluation(responseData, null, "file uploaded", true);
+				return Response.ok(finalOuptut).header("Access-Control-Allow-Origin", "*").build();
+			}
+		} catch (FileNotFoundException e) {
+			ResponseInfo<Environment> finalOuptut = responseDataEvaluation(responseData, e, "upload Failed", false);
+			return Response.status(Status.EXPECTATION_FAILED).entity(finalOuptut).header("Access-Control-Allow-Origin",
+					"*").build();
+		} catch (IOException e) {
+			ResponseInfo<Environment> finalOuptut = responseDataEvaluation(responseData, e, "upload Failed", false);
+			return Response.status(Status.EXPECTATION_FAILED).entity(finalOuptut).header("Access-Control-Allow-Origin",
+					"*").build();
+		}
+		ResponseInfo finalOuptut = responseDataEvaluation(responseData, null, "No File to upload", false);
+		return Response.ok(finalOuptut).header("Access-Control-Allow-Origin", "*").build();
+	}
+
+	private String settingsCertificateSave(File file, String appDirName,
+			AddCertificateInfo addCertificateInfo) throws PhrescoException {
+		String certifactPath = "";
+			StringBuilder sb = new StringBuilder(CERTIFICATES).append(File.separator).append(
+					addCertificateInfo.getEnvironmentName()).append(HYPHEN).append(addCertificateInfo.getConfigName())
+					.append(FrameworkConstants.DOT).append(FILE_TYPE_CRT);
+			certifactPath = sb.toString();
+			if (file.exists()) {
+				File dstFile = new File(Utility.getProjectHome() + certifactPath);
+				FrameworkUtil.copyFile(file, dstFile);
+			} else {
+				saveCertificateFile(certifactPath, addCertificateInfo.getHost(), Integer
+						.parseInt(addCertificateInfo.getPort()), addCertificateInfo.getCertificateName(), appDirName);
+			}
+		return certifactPath;
+	}
+
+	private String configCertificateSave(String value, File file, String appDirName,
+			AddCertificateInfo addCertificateInfo) throws PhrescoException {
+			if (file.exists()) {
+				String path = Utility.getProjectHome().replace("\\", "/");
+				value = value.replace(path + appDirName + "/", "");
+			} else {
+				StringBuilder sb = new StringBuilder(FOLDER_DOT_PHRESCO).append(File.separator).append(CERTIFICATES)
+						.append(File.separator).append(addCertificateInfo.getEnvironmentName()).append(HYPHEN).append(
+								addCertificateInfo.getConfigName()).append(FrameworkConstants.DOT)
+						.append(FILE_TYPE_CRT);
+				value = sb.toString();
+				saveCertificateFile(value, addCertificateInfo.getHost(), Integer
+						.parseInt(addCertificateInfo.getPort()), addCertificateInfo.getCertificateName(), appDirName);
+			}
+		return value;
+	}
+
+	private void saveCertificateFile(String certificatePath, String host, int port,
+			String certificateName, String appDirName) throws PhrescoException {
+		List<CertificateInfo> certificates = FrameworkServiceUtil.getCertificate(host, port);
+		if (CollectionUtils.isNotEmpty(certificates)) {
+			for (CertificateInfo certificate : certificates) {
+				if (certificate.getDisplayName().equals(certificateName)) {
+					File file = new File(Utility.getProjectHome() + appDirName + "/" + certificatePath);
+					FrameworkServiceUtil.addCertificate(certificate, file);
+				}
+			}
 		}
 	}
 

@@ -38,11 +38,10 @@ import org.xml.sax.SAXException;
 
 import com.photon.phresco.commons.FrameworkConstants;
 import com.photon.phresco.exception.PhrescoException;
-import com.photon.phresco.framework.actions.applications.Applications;
 
 public class ApplicationsUtil implements FrameworkConstants {
 
-	private static final Logger S_LOGGER = Logger.getLogger(Applications.class);
+	private static final Logger S_LOGGER = Logger.getLogger(ApplicationsUtil.class);
     private static Boolean s_debugEnabled  = S_LOGGER.isDebugEnabled();
 	
     private static Collection<String> dependentVersions = new ArrayList<String>(1);

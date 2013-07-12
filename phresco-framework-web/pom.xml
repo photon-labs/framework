@@ -4,7 +4,7 @@
     <parent>
         <groupId>com.photon.phresco.framework</groupId>
         <artifactId>phresco-framework-root</artifactId>
-        <version>3.0.0.16004-SNAPSHOT</version>
+        <version>3.0.0.16005-SNAPSHOT</version>
         <relativePath>../</relativePath>
     </parent>
    
@@ -150,6 +150,20 @@
 		
 		<dependency>
 			<groupId>jslibraries.files</groupId>
+			<artifactId>jquery_fullscreen</artifactId>
+			<version>1.0</version>
+			<type>js</type>
+		</dependency>
+		
+		<dependency>
+			<groupId>jslibraries.files</groupId>
+			<artifactId>jquery_magnific-popup_min</artifactId>
+			<version>1.0</version>
+			<type>js</type>
+		</dependency>
+		
+		<dependency>
+			<groupId>jslibraries.files</groupId>
 			<artifactId>bootstrap_min</artifactId>
 			<version>2.3.1</version>
 			<type>js</type>
@@ -242,7 +256,13 @@
 			<type>js</type>
 		</dependency>
 
-		
+		 <dependency>
+			<groupId>jslibraries.files</groupId>
+			<artifactId>jstree</artifactId>
+			<version>1.0.0</version>
+			<type>js</type>
+		</dependency>
+
 	   <!--  <dependency>
 	      <groupId>org.cometd.javascript</groupId>
 	      <artifactId>cometd-javascript-dojo</artifactId>

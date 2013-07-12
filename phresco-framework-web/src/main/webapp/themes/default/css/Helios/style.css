@@ -692,6 +692,11 @@ ul.nav li.dropdown:hover > .test_options{
 	padding-right:8px !important;
 }
 
+.arrow_down_icon {
+	background:url(../../images/helios/arrow_down.png) #ed7940 no-repeat right !important;
+	padding-right:20px !important;
+}
+
 /* ********************************************** CSS related to MODAL ************************************************************************************** */
 
 #simplemodal-overlay {background-color:#000;}
@@ -885,6 +890,11 @@ ul.nav li.dropdown:hover > .test_options{
 	width: 251px;
 }
 
+.report_type select
+{
+		width:250px !important;
+}
+
 .report_type tr td {
 	border-top: medium none;
 }
@@ -945,9 +955,9 @@ ul.nav li.dropdown:hover > .test_options{
 
 .project_list_popup
 {
-	height: 260px;
+	height: 226px;
 	overflow-y: auto;
-	margin-bottom: 10px;
+	margin-bottom:5px;
 }
 
 #project_list_import table:first-child {
@@ -955,12 +965,13 @@ ul.nav li.dropdown:hover > .test_options{
 }
 
 .noReport {
-	margin-left: 23%;
+	margin-bottom:5px !important;
 }
 
 #project_list_import table tr td {
 	border-top: none;
 	padding: 4px 0;
+	width:58% !important;
 }
 
 #project_list_import table tr td:first-child input[type="text"], #project_list_import table tr td:first-child select {
@@ -972,7 +983,7 @@ ul.nav li.dropdown:hover > .test_options{
 }
 
 #project_list_import input[type="text"], #project_list_import input[type="password"] {
-	width: 165px;
+	width: 183px;
 	margin-bottom:0;
 }
 
@@ -985,7 +996,7 @@ ul.nav li.dropdown:hover > .test_options{
 }
 
 #project_list_import select {
-	width: 177px;
+	width: 182px;
 	margin-bottom: 0;	
 }
 
@@ -3272,7 +3283,12 @@ html>body tbody.scrollContent {
 
 .browser_table tr td:last-child img
 {
-	padding: 0px 11px 7px 10px;
+	padding: 0px 0px 10px 0px;
+}
+
+.browser_table tr td:last-child a img {
+	margin-left: 10px;
+	margin-right: 0px !important;	
 }
 
 .browser_table tr td select
@@ -3292,6 +3308,19 @@ html>body tbody.scrollContent {
 
 .hideContent  {
 	display : none;
+}
+
+#startNodeForm .browser_table tr td:first-child .dropdown-toggle {
+	width: 145px !important;	
+}
+
+#startNodeForm .browser_table tr td:first-child .dropdown-menu {
+	position: relative;
+	width: 0px !important;	
+}
+
+#startNodeForm .browser_table tr td:last-child input, #startNodeForm .browser_table tr td:last-child .dropdown-toggle {
+	width: 70px !important;
 }
 
 /* *************************************************************** STYLES FOR DYNAMIC PARAMETER STARTS ************************************************************************************ */
@@ -3535,9 +3564,9 @@ img.add_test_icon
 /* *************************************************************** STYLES FOR QUALITY_MANUAL TEST PAGE ************************************************************* */
 
 
-.code_content .qual_unit_main {
+/*.code_content .qual_unit_main {
 	float: none !important;	
-}
+}*/
 
 .manual_test_add ul li:nth-child(2) [type="text"]
 {
@@ -3589,6 +3618,8 @@ img.add_test_icon
 
 .text_center {
 	text-align: center;
+	height: 100%;
+	overflow-y: auto;
 }
 
 #template_download [type="radio"]{
@@ -3834,6 +3865,12 @@ button::-moz-focus-inner {
   transition: all 3s ease-out;
 }
 
+.fullscreen_desc {
+	font-size:13px;
+	color:#FFFFFF;
+	margin:12px 0 0 0;
+}
+
 /* *************************************************************** STYLES FOR BLINK POP UP STARTS *************************************************************** */
 
 
@@ -3897,3 +3934,86 @@ vertical-align: middle;
 	max-height: 66px;
 	overflow:hidden;
 }
+
+
+/**************************** STYLES FOR TREEVIEW STARTS *************************************/
+
+.jstree-default li, 
+.jstree-default ins { background-image:url(../../images/helios/d.png); background-repeat:no-repeat; background-color:transparent;  }
+.jstree-default li { background-position:-90px 0; background-repeat:repeat-y; color:#0068A7 !important;  }
+.jstree-default li a ins.jstree-icon { margin-right:5px !important; }
+.jstree-default li a { cursor:pointer; padding:4px 2px 6px 2px; color:#0068A7 !important;  }
+.jstree-default li a:hover { background:#dcdcdc;  }
+.jstree-default li.jstree-last { background:transparent; }
+.jstree-default .jstree-open > ins { background-position:-74px -34px; }
+.jstree-default .jstree-closed > ins { background-position:-56px -34px; }
+.jstree-default .jstree-leaf > ins { background-position:-35px 4px; }
+
+.jstree-default .jstree-hovered { background:#e7f4f9; border:1px solid #d8f0fa; padding:0 2px 0 1px; }
+.jstree-default .jstree-clicked { background:#beebff; border:1px solid #99defd; padding:0 2px 0 1px; }
+.jstree-default a .jstree-icon { background-position:-57px -17px; }
+.jstree-default a.jstree-loading .jstree-icon { background:url(../../images/helios/throbber.gif) center center no-repeat !important; }
+
+.jstree-default.jstree-focused { /*background:#ffffee;*/ }
+
+.jstree-default .jstree-no-dots li, 
+.jstree-default .jstree-no-dots .jstree-leaf > ins { background:transparent; }
+.jstree-default .jstree-no-dots .jstree-open > ins { background-position:-18px 0; }
+.jstree-default .jstree-no-dots .jstree-closed > ins { background-position:0 0; }
+
+.jstree-default .jstree-no-icons a .jstree-icon { display:none; }
+
+.jstree-default .jstree-search { /*font-style:italic;*/ }
+
+.jstree-default .jstree-no-icons .jstree-checkbox { display:inline-block; }
+.jstree-default .jstree-no-checkboxes .jstree-checkbox { display:none !important; }
+.jstree-default .jstree-checked > a > .jstree-checkbox { background-position:-38px -19px; }
+.jstree-default .jstree-unchecked > a > .jstree-checkbox { background-position:-2px -19px; }
+.jstree-default .jstree-undetermined > a > .jstree-checkbox { background-position:-20px -19px; }
+.jstree-default .jstree-checked > a > .jstree-checkbox:hover { background-position:-38px -37px; }
+.jstree-default .jstree-unchecked > a > .jstree-checkbox:hover { background-position:-2px -37px; }
+.jstree-default .jstree-undetermined > a > .jstree-checkbox:hover { background-position:-20px -37px; }
+
+#vakata-dragged.jstree-default ins { background:transparent !important; }
+#vakata-dragged.jstree-default .jstree-ok { background:url(../../images/helios/d.png) -2px -53px no-repeat !important; }
+#vakata-dragged.jstree-default .jstree-invalid { background:url(../../images/helios/d.png) -18px -53px no-repeat !important; }
+#jstree-marker.jstree-default { background:url(../../images/helios/d.png) -41px -57px no-repeat !important; text-indent:-100px; }
+
+.jstree-default a.jstree-search { color:aqua; }
+.jstree-default .jstree-locked a { color:silver; cursor:default; }
+
+#vakata-contextmenu.jstree-default-context, 
+#vakata-contextmenu.jstree-default-context li ul { background:#f0f0f0; border:1px solid #979797; -moz-box-shadow: 1px 1px 2px #999; -webkit-box-shadow: 1px 1px 2px #999; box-shadow: 1px 1px 2px #999; }
+#vakata-contextmenu.jstree-default-context li { }
+#vakata-contextmenu.jstree-default-context a { color:black; }
+#vakata-contextmenu.jstree-default-context a:hover, 
+#vakata-contextmenu.jstree-default-context .vakata-hover > a { padding:0 5px; background:#e8eff7; border:1px solid #aecff7; color:black; -moz-border-radius:2px; -webkit-border-radius:2px; border-radius:2px; }
+#vakata-contextmenu.jstree-default-context li.jstree-contextmenu-disabled a, 
+#vakata-contextmenu.jstree-default-context li.jstree-contextmenu-disabled a:hover { color:silver; background:transparent; border:0; padding:1px 4px; }
+#vakata-contextmenu.jstree-default-context li.vakata-separator { background:white; border-top:1px solid #e0e0e0; margin:0; }
+#vakata-contextmenu.jstree-default-context li ul { margin-left:-4px; }
+a.selected { background:#dcdcdc; }
+
+/* IE6 BEGIN */
+.jstree-default li, 
+.jstree-default ins,
+#vakata-dragged.jstree-default .jstree-invalid, 
+#vakata-dragged.jstree-default .jstree-ok, 
+#jstree-marker.jstree-default { _background-image:url(../../images/helios/d.gif); }
+.jstree-default .jstree-open ins { _background-position:-72px 0; }
+.jstree-default .jstree-closed ins { _background-position:-54px 0; }
+.jstree-default .jstree-leaf ins { _background-position:-36px 0; }
+.jstree-default a ins.jstree-icon { _background-position:-56px -19px; }
+#vakata-contextmenu.jstree-default-context ins { _display:none; }
+#vakata-contextmenu.jstree-default-context li { _zoom:1; }
+.jstree-default .jstree-undetermined a .jstree-checkbox { _background-position:-20px -19px; }
+.jstree-default .jstree-checked a .jstree-checkbox { _background-position:-38px -19px; }
+.jstree-default .jstree-unchecked a .jstree-checkbox { _background-position:-2px -19px; }
+/* IE6 END */
+
+
+/**************************** STYLES FOR TREEVIEW ENDS ******************************************/
+
+.modal_window { position:absolute; z-index:10000000 !important; }
+.successMessage {bottom: 20px; left: 33px; position: absolute;}
+.checkboxStyle {float: left; margin-right: 5px !important;};

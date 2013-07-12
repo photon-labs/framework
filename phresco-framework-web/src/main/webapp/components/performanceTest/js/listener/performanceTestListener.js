@@ -60,6 +60,23 @@ define(["performanceTest/api/performanceTestAPI"], function() {
 				header.requestMethod = "GET";
 				header.webserviceurl = commonVariables.webserviceurl + commonVariables.qualityContext + "/" + commonVariables.performanceTestResults + "?appDirName="+appDirName+
 					"&testAgainst=" + testAgainst + "&resultFileName=" + resultFileName + "&deviceId=" + deviceId + "&showGraphFor=responseTime";
+			
+			} else if (action === "getTestResultsOnChange") {
+				var testAgainst = requestBody.testAgainst;
+				var resultFileName = requestBody.resultFileName;
+				var deviceId = "";
+				
+				/* if (requestBody.devices.length !== 0) {
+					deviceId = requestBody.devices[0];
+				} */
+				
+				header.requestMethod = "GET";
+				header.webserviceurl = commonVariables.webserviceurl + commonVariables.qualityContext + "/" + commonVariables.performanceTestResults + "?appDirName="+appDirName+
+					"&testAgainst=" + testAgainst + "&resultFileName=" + resultFileName + "&deviceId=" + deviceId + "&showGraphFor=responseTime";
+			} else if (action === "getfiles") {
+				header.requestMethod = "POST";
+				header.requestPostBody = requestBody;				
+				header.webserviceurl = commonVariables.webserviceurl + commonVariables.qualityContext + "/testResultFiles?actionType=performance-test&appDirName="+appDirName;				
 			}
 			return header;
 		},
@@ -76,6 +93,10 @@ define(["performanceTest/api/performanceTestAPI"], function() {
 						//commonVariables.loadingScreen.removeLoading();
 						callback({"status" : "service failure"}, whereToRender);
 					}
+				},
+				function(textStatus){
+					//commonVariables.loadingScreen.removeLoading();
+					callback({"status" : "service failure"});
 				});
 			} catch (exception) {
 				//commonVariables.loadingScreen.removeLoading();
@@ -96,14 +117,56 @@ define(["performanceTest/api/performanceTestAPI"], function() {
 			renderFunction(performanceTestOptions, whereToRender);
 			if ((performanceTestOptions.testAgainsts.length !== 0 || performanceTestOptions.devices.length !== 0) && performanceTestOptions.testResultFiles.length !== 0) {
 				self.getTestResults(self.getActionHeader(performanceTestOptions, "getTestResults"), function(response) {
+					
 					var resultData = response.data;
-					if (resultData.length > 0) {
+					if (resultData.perfromanceTestResult.length > 0) {
 						self.constructResultTable(resultData, whereToRender);
 					}
 				});
 			} 
 		},
 
+		fileNameChangeEvent : function(whereToRender){
+			var self = this;
+			//To select the test result file
+			$('li a[name="resultFileName"]').unbind("click");
+			$('li a[name="resultFileName"]').click(function() {
+				$("#testResultFileDrop").text($(this).text());
+				$(".perfResultInfo").html('');
+				self.getResultOnChangeEvent($("#testAgainstsDrop").text(),$(this).text(), whereToRender);
+			});		
+		},
+		
+		getResultFiles : function (testAgainst, whereToRender) {
+			var self = this;
+			self.getTestResults(self.getActionHeader(JSON.stringify([testAgainst]), "getfiles"), function(response) {
+				if(response.data !== null){
+					var returnVal = '';
+					$("#testResultFileDrop").html(response.data[0]);
+					$.each(response.data, function(index, value){
+						returnVal += '<li class="testResultFilesOption"><a href="#" name="resultFileName">'+ value +'</a></li>';
+					});
+					$("#resultFiles").html(returnVal);
+					self.fileNameChangeEvent(whereToRender);
+					self.getResultOnChangeEvent(testAgainst, response.data[0], whereToRender);
+				}
+			});
+		},
+				
+		getResultOnChangeEvent : function (testAgainst, resultFileName, whereToRender) {
+			var self = this;
+			var reqData = {};
+			reqData.testAgainst = testAgainst;
+			reqData.resultFileName = resultFileName;
+			self.getTestResults(self.getActionHeader(reqData, "getTestResultsOnChange"), function(response) {
+				//console.info('test = ' , JSON.stringify(response));
+				if(response.message === "Parameter returned successfully"){
+					var resultData = response.data;
+					self.constructResultTable(resultData, whereToRender);
+				}
+			});
+		},
+		
 		getTestResults : function (header, callback) {
 			var self = this;
 			try {
@@ -116,7 +179,12 @@ define(["performanceTest/api/performanceTestAPI"], function() {
 						//commonVariables.loadingScreen.removeLoading();
 						callback({"status" : "service failure"});
 					}
-				});
+				},
+				function(textStatus){
+					//commonVariables.loadingScreen.removeLoading();
+					callback({"status" : "service failure"});
+				}
+				);
 			} catch (exception) {
 				
 			}
@@ -125,11 +193,12 @@ define(["performanceTest/api/performanceTestAPI"], function() {
 		constructResultTable : function(resultData, whereToRender) {
 			var self = this;
 			var resultTable = "";
+			//$(".perfResultInfo").html('');
 			var totalValue = resultData.length, NoOfSample = 0, avg = 0, min = 0, max = 0, StdDev = 0, Err = 0, KbPerSec = 0, sumOfBytes = 0;
-			resultTable += '<table cellspacing="0" cellpadding="0" border="0" class="table table-striped table_border table-bordered">'+
+			resultTable += '<table cellspacing="0" cellpadding="0" border="0" class="table table-striped table_border table-bordered" id="testResultTable">'+
 						  '<thead><tr><th>Label</th><th>Samples</th><th>Averages</th><th>Min</th><th>Max</th><th>Std.Dev</th><th>Error %</th><th>Throughput /sec </th>' +
 						  '<th>KB / sec</th><th>Avg.Bytes</th></tr></thead><tbody>';	
-			$.each(resultData, function(index, value) {
+			$.each(resultData.perfromanceTestResult, function(index, value) {
 				NoOfSample = parseInt(NoOfSample) + parseInt(value.noOfSamples);
 				avg = avg + value.avg;
 				if (index === 0) {
@@ -154,9 +223,10 @@ define(["performanceTest/api/performanceTestAPI"], function() {
 			var avgBytes = parseInt(sumOfBytes) / parseInt(totalValue);
           	//	KbPerSec = (parseInt(avgBytes) / 1024) * parseInt(totalThroughput);
           	var totAvg = parseInt(avg) / parseInt(totalValue);
-			resultTable += '</tbody><tfoot><tr><td>Total</td><td>'+ NoOfSample +'</td><td>'+totAvg+'</td><td>'+min+'</td><td>'+max+'</td>'+
-			'<td>'+StdDev+'</td><td>'+ Err+' %</td><td>TTP</td><td>TKB</td><td>TAVG</td></tr></tfoot></table>';
-			whereToRender.find(".perfResultInfo").append(resultTable);
+			resultTable += '</tbody><tfoot><tr><td>Total</td><td>'+ resultData.aggregateResult.sample +'</td><td>'+resultData.aggregateResult.average+'</td><td>'+resultData.aggregateResult.min+'</td><td>'+resultData.aggregateResult.max+'</td>'+
+			'<td>'+resultData.aggregateResult.stdDev+'</td><td>'+ resultData.aggregateResult.error+' %</td><td>'+resultData.aggregateResult.throughput+'</td><td>'+resultData.aggregateResult.kb+'</td><td>'+resultData.aggregateResult.avgBytes+'</td></tr></tfoot></table>';
+			whereToRender.find(".perfResultInfo").html(resultTable);
+			
 
 			self.resizeConsoleWindow();
 		},

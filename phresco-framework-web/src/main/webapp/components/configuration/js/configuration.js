@@ -77,9 +77,8 @@ define(["configuration/listener/configurationListener"], function() {
 				if (action === "delete") {
 					self.deleteEnv(value);
 				} else {
-					setTimeout(function(){
-						self.successMsgPopUp(response.message);			
-					},2500);
+					$(".blinkmsg").removeClass("poperror").addClass("popsuccess");
+					self.effectFadeOut('popsuccess', response.message);	
 					self.loadPage(true);
 				}
 			});
@@ -134,7 +133,7 @@ define(["configuration/listener/configurationListener"], function() {
 					});
 					
 					if (found === false) {
-						self.addEnvEvent.dispatch(name, envDesc, '');
+						self.addEnvEvent.dispatch(name, envDesc);
 						$("input[name='envName']").attr('placeholder','Environment Name');
 						$("input[name='envDesc']").attr('placeholder','Environment Description');
 					} else {
@@ -158,7 +157,7 @@ define(["configuration/listener/configurationListener"], function() {
 			
 			$("input[name=saveEnvironment]").unbind("click");
 			$("input[name=saveEnvironment]").click(function() {
-				self.saveEnvEvent.dispatch(self.envWithConfig, '', function(response){
+				self.saveEnvEvent.dispatch(self.envWithConfig, function(response){
 					self.configRequestBody = response;
 					self.getAction(self.configRequestBody, 'saveEnv', '', '');
 				});
@@ -202,22 +201,6 @@ define(["configuration/listener/configurationListener"], function() {
 					self.getAction(self.configRequestBody, 'cloneEnv', envrName);
 				}); 
 			});
-			
-			var defaultVal = 0;
-			$(".default").unbind("click");
-			$(".default").click(function() {
-			
-				if (defaultVal === 1){
-					$(".default").attr('name','false');
-					$(".default").val("Set as Default");
-					defaultVal = 0;
-				}
-				else {
-					$(".default").attr('name','true');
-					$(".default").val("Default");
-					defaultVal = 1;
-				}		
-			}); 
 			
 			Clazz.navigationController.mainContainer = commonVariables.contentPlaceholder;
 		}

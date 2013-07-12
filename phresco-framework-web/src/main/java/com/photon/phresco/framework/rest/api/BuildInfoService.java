@@ -96,23 +96,22 @@ public class BuildInfoService extends RestBase implements FrameworkConstants, Se
 	 * @param buildNumber the build number
 	 * @return the response
 	 */
-	@POST
-	@Path("/buildfile")
-	@Produces(MediaType.APPLICATION_OCTET_STREAM)
-	@Consumes(MediaType.APPLICATION_JSON)
+	@GET
+	@Path("/downloadBuild")
+	@Produces(MediaType.MULTIPART_FORM_DATA)
 	public Response buildInfoZip(@QueryParam(REST_QUERY_APPDIR_NAME) String appDirName,
 			@QueryParam(REST_QUERY_BUILD_NUMBER) int buildNumber) {
 		InputStream fileInputStream = null;
 		ResponseInfo responseData = new ResponseInfo();
 		StringBuilder builder = new StringBuilder();
 		try {
-			File buildInfoFile = new File(Utility.getProjectHome() + appDirName + File.separator + BUILD_DIR
-					+ File.separator + BUILD_INFO_FILE_NAME);
+			File buildInfoFile = new File(Utility.getProjectHome() + appDirName + File.separator + BUILD_DIR + File.separator + BUILD_INFO_FILE_NAME);
+			String fileName = "";
 			ApplicationManager applicationManager = PhrescoFrameworkFactory.getApplicationManager();
 			BuildInfo buildInfo = applicationManager.getBuildInfo(buildNumber, buildInfoFile.toString());
 			if (buildInfo.getBuildNo() == buildNumber) {
 				String deliverables = buildInfo.getDeliverables();
-				String fileName = buildInfo.getBuildName();
+				fileName = buildInfo.getBuildName();
 				if (StringUtils.isEmpty(deliverables)) {
 					builder.append(Utility.getProjectHome() + appDirName);
 					builder.append(File.separator);
@@ -136,8 +135,7 @@ public class BuildInfoService extends RestBase implements FrameworkConstants, Se
 				}
 				fileInputStream = new FileInputStream(new File(builder.toString()));
 			}
-			return Response.status(Status.OK).entity(fileInputStream).header("Access-Control-Allow-Origin", "*")
-			.build();
+			return Response.status(Status.OK).entity(fileInputStream).header("Content-Disposition", "attachment; filename=" + fileName).build();
 		} catch (FileNotFoundException e) {
 			ResponseInfo finalOutput = responseDataEvaluation(responseData, e, "Zip Download Failed", null);
 			return Response.status(Status.NOT_FOUND).entity(finalOutput).header("Access-Control-Allow-Origin", "*")

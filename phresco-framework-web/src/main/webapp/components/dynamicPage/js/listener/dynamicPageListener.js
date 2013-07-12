@@ -43,7 +43,7 @@ define(["framework/widgetWithTemplate", "dynamicPage/api/dynamicPageAPI", "commo
                                     callback("No parameters available");
                                     //self.loadingScreen.removeLoading();
                                 } else {
-                                    self.constructHtml(response, whereToRender, btnObj, openccObj, goal);
+                                    self.constructHtml(response, whereToRender, btnObj, openccObj, goal, callback);
                                     //self.loadingScreen.removeLoading();
                                 }
                             } else {
@@ -82,7 +82,7 @@ define(["framework/widgetWithTemplate", "dynamicPage/api/dynamicPageAPI", "commo
          * Constructs dynamic controls 
          * 
          */
-        constructHtml : function(response, whereToRender, btnObj, openccObj, goal){
+        constructHtml : function(response, whereToRender, btnObj, openccObj, goal, callback){
             var self = this, show = "",  required = "", editable = "", multiple = "", sort = "", checked = "", additionalParam = "",
                 additionalparamSel = "", dependencyVal = "", psblDependency = "", showFlag = "", enableOnchangeFunction = "", columnClass = "";
             
@@ -110,7 +110,9 @@ define(["framework/widgetWithTemplate", "dynamicPage/api/dynamicPageAPI", "commo
                         // execute sql template
                     } else if (type === "packageFileBrowse") {
                         // package file browse template
-                    } 
+                    } else if (type === "map") {
+                    	self.constructMapControls(parameter, whereToRender);
+                    }
                 });
                 whereToRender.append('<li></li>');
                 if (!self.isBlank(btnObj)) {
@@ -120,6 +122,10 @@ define(["framework/widgetWithTemplate", "dynamicPage/api/dynamicPageAPI", "commo
                 self.controlEvent();
                 self.showParameters();
             }
+			
+			if(callback != undefined && callback != null){
+				callback(true);
+			}
         },
         
         /********************* Controls construction methods starts**********************************/
@@ -261,8 +267,66 @@ define(["framework/widgetWithTemplate", "dynamicPage/api/dynamicPageAPI", "commo
             });
         },
         
+        //To construct map of controls. Key and value can be in the combination of List/String or vice versa
+        constructMapControls : function(parameter, whereToRender) {
+        	var self = this;
+        	var childs = parameter.childs.child;
+        	var mapCtrl = '<table class="table table-striped table_border table-bordered browser_table" cellpadding="0" cellspacing="0" border="0">'+
+            			'<thead><tr><th>'+childs[0].name.value.value+'</th><th>'+childs[1].name.value.value+'</th></tr></thead><tbody><tr>';
+        	if ("List" === childs[0].type) {
+        		mapCtrl =  mapCtrl.concat('<td><select name="'+childs[0].key+'" class="selectpicker">');
+    			var possibleValues = childs[0].possibleValues.value;
+    			for (i in possibleValues) {
+    				mapCtrl =  mapCtrl.concat('<option value="'+possibleValues[i].key+'">'+possibleValues[i].value+'</option>');
+    			}
+    			mapCtrl =  mapCtrl.concat('</select></td>');
+        	} else if ("String" === childs[0].type) {
+        		mapCtrl =  mapCtrl.concat('<td><input type="text" name="'+childs[0].key+'"></td>');
+        	}
+            
+        	if ("List" === childs[1].type) {
+        		mapCtrl =  mapCtrl.concat('<td><select name="'+childs[1].key+'" class="selectpicker">');
+    			var possibleValues = childs[1].possibleValues.value;
+    			for (i in possibleValues) {
+    				mapCtrl =  mapCtrl.concat('<option value="'+possibleValues[i].key+'">'+possibleValues[i].value+'</option>');
+    			}
+    			mapCtrl =  mapCtrl.concat('</select></td>');
+        	} else if ("String" === childs[1].type) {
+        		mapCtrl =  mapCtrl.concat('<td><input type="text" name="'+childs[1].key+'">');
+        		mapCtrl =  mapCtrl.concat('<a href="#" class="addBrowserInfo"><img src="themes/default/images/helios/plus_icon.png" alt=""></a>');
+        		mapCtrl =  mapCtrl.concat('<a href="#" class="removeBrowserInfo hideContent"><img src="themes/default/images/helios/minus_icon.png" alt=""></a>');
+        		mapCtrl =  mapCtrl.concat('</td>');
+        	}
+        	mapCtrl =  mapCtrl.concat('</tr></tbody></table>');
+        	whereToRender.append(mapCtrl);
+        	self.bindMapCtrlClickEvents();
+        },
+        
         /********************* Controls construction methods ends**********************************/
         
+        bindMapCtrlClickEvents : function() {
+        	var self = this;
+        	$('.addBrowserInfo').unbind('click');
+    		$('.addBrowserInfo').click(function() {
+    			var ctrl = '<tr><td><select class="selectpicker">' + $(this).parent().prev().children().filter(":first").html() + '</select></td>';
+    			var ctrl = ctrl.concat('<td>' + $(this).parent().html() + '</td></tr>');
+    			$(this).parent().parent().parent().append(ctrl);
+    			$(ctrl).find('input').empty();
+    			$(ctrl).find('select option:first').attr('selected', 'selected');
+    			$(this).parent().parent().parent().find('.removeBrowserInfo').show();
+    			$(this).parent().parent().parent().find(".selectpicker").selectpicker();
+    			self.bindMapCtrlClickEvents();
+    		});
+    		
+    		$('.removeBrowserInfo').unbind('click');
+    		$('.removeBrowserInfo').click(function() {
+    			$(this).parent().parent().remove();
+				if ($('.browser_table tbody').find('tr').length == 1) {
+					$('.browser_table tbody').find('.removeBrowserInfo').hide();
+    			}
+				self.bindMapCtrlClickEvents();
+    		});
+        },
         
         //returns textbox type
         getInputType : function (type) {
@@ -666,7 +730,14 @@ define(["framework/widgetWithTemplate", "dynamicPage/api/dynamicPageAPI", "commo
             
             if(action === "parameter"){
                 header.requestMethod = "GET";
-                header.webserviceurl = commonVariables.webserviceurl + commonVariables.paramaterContext + "/" + commonVariables.dynamicPageContext + "?appDirName="+appDirName+"&goal="+ goal+"&phase="+phase+"&customerId="+customerId+"&userId="+userId;
+				var buildNumber = "";
+				
+				if(goal == "deploy"){
+					buildNumber = "&buildNumber="+ commonVariables.buildNo;
+				} 
+				
+                header.webserviceurl = commonVariables.webserviceurl + commonVariables.paramaterContext + "/" + commonVariables.dynamicPageContext + "?appDirName="+appDirName+"&goal="+ goal+"&phase="+phase+"&customerId="+customerId+"&userId="+userId+buildNumber;
+				
             } else if (action === "updateWatcher") {
                 header.requestMethod = "POST";
                 header.webserviceurl = commonVariables.webserviceurl + commonVariables.paramaterContext + "/" + "updateWatcher" + "?appDirName="+appDirName+"&goal="+ goal+"&key="+key+"&value="+selectedOption;

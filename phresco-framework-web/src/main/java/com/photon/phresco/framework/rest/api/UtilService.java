@@ -18,7 +18,6 @@
 package com.photon.phresco.framework.rest.api;
 
 import java.awt.Desktop;
-import java.awt.HeadlessException;
 import java.awt.Toolkit;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
@@ -36,6 +35,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import com.photon.phresco.commons.FrameworkConstants;
+import com.photon.phresco.commons.model.ApplicationInfo;
 import com.photon.phresco.commons.model.ProjectInfo;
 import com.photon.phresco.commons.model.Technology;
 import com.photon.phresco.exception.PhrescoException;
@@ -155,6 +155,12 @@ public class UtilService extends RestBase implements FrameworkConstants, Service
 		ResponseInfo<List<String>> responseData = new ResponseInfo<List<String>>();
 		try {
 			ServiceManager serviceManager = CONTEXT_MANAGER_MAP.get(userId);
+			if (serviceManager == null) {
+				ResponseInfo<List<ApplicationInfo>> finalOutput = responseDataEvaluation(responseData, null,
+						"UnAuthorized User", null);
+				return Response.status(Status.BAD_REQUEST).entity(finalOutput).header("Access-Control-Allow-Origin",
+						"*").build();
+			}
 			Technology technology = serviceManager.getTechnology(techId);
 			List<String> archetypeFeatures = technology.getOptions();
 			ResponseInfo<List<String>> finalOutput = responseDataEvaluation(responseData, null,

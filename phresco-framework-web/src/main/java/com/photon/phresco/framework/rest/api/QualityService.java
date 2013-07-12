@@ -57,8 +57,10 @@ import javax.xml.xpath.XPathExpression;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 
+import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.w3c.dom.Document;
@@ -89,6 +91,7 @@ import com.photon.phresco.plugins.model.Mojos.Mojo.Configuration.Parameters.Para
 import com.photon.phresco.plugins.util.MojoProcessor;
 import com.photon.phresco.util.Constants;
 import com.photon.phresco.util.HubConfiguration;
+import com.photon.phresco.util.NodeConfiguration;
 import com.photon.phresco.util.ServiceConstants;
 import com.photon.phresco.util.Utility;
 import com.phresco.pom.exception.PhrescoPomException;
@@ -342,6 +345,13 @@ public class QualityService extends RestBase implements ServiceConstants, Framew
 					boolean isConnectionAlive = Utility.isConnectionAlive(HTTP_PROTOCOL, host, port);
 					map.put(HUB_STATUS, isConnectionAlive);
 				}
+				NodeConfiguration nodeConfig = getNodeConfiguration(appDirName);
+				if (nodeConfig != null) {
+					String host = nodeConfig.getConfiguration().getHost();
+					int port = nodeConfig.getConfiguration().getPort();
+					boolean isConnectionAlive = Utility.isConnectionAlive(HTTP_PROTOCOL, host, port);
+					map.put(NODE_STATUS, isConnectionAlive);
+				}
 			}
 			ResponseInfo<Map<String, Object>> finalOutput = responseDataEvaluation(responseData, null,
 					FUNCTIONAL_TEST_FRAMEWORK_FETCHED_SUCCESSFULLY, map);
@@ -352,6 +362,41 @@ public class QualityService extends RestBase implements ServiceConstants, Framew
 			return Response.status(Status.BAD_REQUEST).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, "*")
 					.build();
 		}
+	}
+	
+	/**
+	 * Gets the status of the Hub/Node
+	 * @param appDirName
+	 * @param fromPage
+	 * @return
+	 */
+	@GET
+	@Path("/connectionAliveCheck")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response connectionAliveCheck(@QueryParam(REST_QUERY_APPDIR_NAME) String appDirName,
+			@QueryParam(REST_QUERY_FROM_PAGE) String fromPage) {
+		boolean connection_status = false;
+		try {
+			if (HUB_STATUS.equals(fromPage)) {
+				HubConfiguration hubConfig = getHubConfiguration(appDirName);
+				if (hubConfig != null) {
+					String host = hubConfig.getHost();
+					int port = hubConfig.getPort();
+					connection_status = Utility.isConnectionAlive(HTTP_PROTOCOL, host, port);
+				}
+			} else if (NODE_STATUS.equals(fromPage)) {
+				NodeConfiguration nodeConfig = getNodeConfiguration(appDirName);
+				if (nodeConfig != null) {
+					String host = nodeConfig.getConfiguration().getHost();
+					int port = nodeConfig.getConfiguration().getPort();
+					connection_status = Utility.isConnectionAlive(HTTP_PROTOCOL, host, port);
+				}
+			}
+		} catch (Exception e) {
+			return Response.status(Status.BAD_REQUEST).entity(null).header("Access-Control-Allow-Origin", "*").build();
+		}
+
+		return Response.status(Status.OK).entity(connection_status).header("Access-Control-Allow-Origin", "*").build();
 	}
 
 	/**
@@ -383,6 +428,37 @@ public class QualityService extends RestBase implements ServiceConstants, Framew
 		}
 
 		return hubConfig;
+	}
+	
+	/**
+	 * Gets the node configuration.
+	 *
+	 * @param appDirName the app dir name
+	 * @return the node configuration
+	 * @throws PhrescoException the phresco exception
+	 */
+	private NodeConfiguration getNodeConfiguration(String appDirName) throws PhrescoException {
+		BufferedReader reader = null;
+		NodeConfiguration nodeConfig = null;
+		try {
+			String functionalTestDir = FrameworkServiceUtil.getFunctionalTestDir(appDirName);
+			StringBuilder sb = new StringBuilder(FrameworkServiceUtil.getApplicationHome(appDirName));
+			sb.append(functionalTestDir).append(File.separator).append(Constants.NODE_CONFIG_JSON);
+			File nodeConfigFile = new File(sb.toString());
+			Gson gson = new Gson();
+			reader = new BufferedReader(new FileReader(nodeConfigFile));
+			nodeConfig = gson.fromJson(reader, NodeConfiguration.class);
+		} catch (PhrescoException e) {
+			throw new PhrescoException(e);
+		} catch (PhrescoPomException e) {
+			throw new PhrescoException(e);
+		} catch (FileNotFoundException e) {
+			throw new PhrescoException(e);
+		} finally {
+			Utility.closeReader(reader);
+		}
+
+		return nodeConfig;
 	}
 
 	/**
@@ -579,6 +655,7 @@ public class QualityService extends RestBase implements ServiceConstants, Framew
 	 */
 	private List<TestCase> getTestCases(String appDirName, NodeList testSuites, String testSuitePath,
 			String testCasePath) throws PhrescoException {
+		InputStream fileInputStream = null;
 		try {
 			StringBuilder sb = new StringBuilder(); // testsuites/testsuite[@name='yyy']/testcase
 			sb.append(testSuitePath);
@@ -666,6 +743,13 @@ public class QualityService extends RestBase implements ServiceConstants, Framew
 										+ FrameworkConstants.DOT + IMG_PNG_TYPE);
 								if (file.exists()) {
 									failure.setHasFailureImg(true);
+									fileInputStream = new FileInputStream(file);
+									if (fileInputStream != null) {
+										byte[] imgByte = null;
+										imgByte = IOUtils.toByteArray(fileInputStream);
+										byte[] encodedImage = Base64.encodeBase64(imgByte);
+										failure.setScreenshotPath(new String(encodedImage));
+									}
 								}
 								testCase.setTestCaseFailure(failure);
 							}
@@ -679,6 +763,13 @@ public class QualityService extends RestBase implements ServiceConstants, Framew
 										+ FrameworkConstants.DOT + IMG_PNG_TYPE);
 								if (file.exists()) {
 									error.setHasErrorImg(true);
+									fileInputStream = new FileInputStream(file);
+									if (fileInputStream != null) {
+										byte[] imgByte = null;
+										imgByte = IOUtils.toByteArray(fileInputStream);
+										byte[] encodedImage = Base64.encodeBase64(imgByte);
+										error.setScreenshotPath(new String(encodedImage));
+									}
 								}
 								testCase.setTestCaseError(error);
 							}
@@ -695,6 +786,16 @@ public class QualityService extends RestBase implements ServiceConstants, Framew
 			throw e;
 		} catch (XPathExpressionException e) {
 			throw new PhrescoException(e);
+		} catch (IOException e) {
+			throw new PhrescoException(e);
+		} finally {
+			try {
+				if (fileInputStream != null) {
+					fileInputStream.close();
+				}
+			} catch (IOException e) {
+
+			}
 		}
 	}
 
@@ -1380,9 +1481,12 @@ public class QualityService extends RestBase implements ServiceConstants, Framew
 			if (resutlAvailable) {
 				testResultFiles = testResultFiles(appDirName, testAgainsts, showDevice,
 						actionType);
+				ResponseInfo<List<String>> finalOutput = responseDataEvaluation(responseData, null,
+						"Test Result Files returned successfully", testResultFiles);
+				return Response.ok(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, "*").build();
 			}
 			ResponseInfo<List<String>> finalOutput = responseDataEvaluation(responseData, null,
-					"Test Result Files returned successfully", testResultFiles);
+					"Performance test not yet executed for " + testAgainsts.get(0), testResultFiles);
 			return Response.ok(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, "*").build();
 		} catch (PhrescoException e) {
 			ResponseInfo<List<String>> finalOutput = responseDataEvaluation(responseData, e,

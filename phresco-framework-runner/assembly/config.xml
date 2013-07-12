@@ -32,7 +32,7 @@ xsi:schemaLocation="http://maven.apache.org/plugins/maven-assembly-plugin/assemb
             
             <fileSet>
                 <directory>${project.basedir}/settings/service</directory>
-                <outputDirectory>/helios-framework/conf/</outputDirectory>
+                <outputDirectory>/phresco-framework/conf/</outputDirectory>
                 <filtered>true</filtered>
             </fileSet>
             
@@ -40,14 +40,14 @@ xsi:schemaLocation="http://maven.apache.org/plugins/maven-assembly-plugin/assemb
            
            <fileSet>
                 <directory>${project.basedir}/settings/maven</directory>
-                <outputDirectory>/helios-framework/tools/maven/conf</outputDirectory>
+                <outputDirectory>/phresco-framework/tools/maven/conf</outputDirectory>
                 <filtered>true</filtered>
             </fileSet>
 	
 		<!-- filter to copy the contents from the base directory -->
 		<fileSet>
 			<directory>${basedir}/delivery</directory>
-			<outputDirectory>/helios-framework/</outputDirectory>
+			<outputDirectory>/phresco-framework/</outputDirectory>
 			<includes>
 			    <include>bin/*.bat</include>
 			    <include>bin/*.xml</include>
@@ -66,7 +66,7 @@ xsi:schemaLocation="http://maven.apache.org/plugins/maven-assembly-plugin/assemb
 		<!-- filter to copy the contents from the base directory -->
 		<fileSet>
 			<directory>${basedir}/delivery</directory>
-			<outputDirectory>/helios-framework/</outputDirectory>
+			<outputDirectory>/phresco-framework/</outputDirectory>
 			<includes>
 			    <include>bin/*.sh</include>
 			</includes>
@@ -75,7 +75,7 @@ xsi:schemaLocation="http://maven.apache.org/plugins/maven-assembly-plugin/assemb
 		
 		<fileSet>
 			<directory>${basedir}/delivery/tools/maven</directory>
-			<outputDirectory>/helios-framework/tools/maven</outputDirectory>
+			<outputDirectory>/phresco-framework/tools/maven</outputDirectory>
 			<fileMode>0777</fileMode>
 		</fileSet>
 	</fileSets>

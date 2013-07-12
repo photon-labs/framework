@@ -20,12 +20,25 @@ package com.photon.phresco.framework.rest.api.util;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.FileReader;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.security.KeyStore;
+import java.security.cert.CertificateException;
+import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.SSLException;
+import javax.net.ssl.SSLSocket;
+import javax.net.ssl.SSLSocketFactory;
+import javax.net.ssl.TrustManager;
+import javax.net.ssl.TrustManagerFactory;
+import javax.net.ssl.X509TrustManager;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.collections.CollectionUtils;
@@ -36,6 +49,7 @@ import com.google.gson.JsonIOException;
 import com.google.gson.JsonSyntaxException;
 import com.photon.phresco.commons.FrameworkConstants;
 import com.photon.phresco.commons.model.ApplicationInfo;
+import com.photon.phresco.commons.model.CertificateInfo;
 import com.photon.phresco.commons.model.ProjectInfo;
 import com.photon.phresco.exception.PhrescoException;
 import com.photon.phresco.framework.FrameworkConfiguration;
@@ -123,6 +137,21 @@ public class FrameworkServiceUtil implements Constants, FrameworkConstants {
         builder.append(appDirName);
         return builder.toString();
 	}
+	
+	public static String getAppPom(String appDirName) throws PhrescoException {
+		StringBuilder builder = new StringBuilder(getApplicationHome(appDirName));
+		builder.append(File.separator);
+        builder.append(getPomFileName(getApplicationInfo(appDirName)));
+		return builder.toString();
+	}
+	
+	 public static String getPomFileName(ApplicationInfo appInfo) {
+	    	File pomFile = new File(Utility.getProjectHome() + appInfo.getAppDirName() + File.separator + appInfo.getPomFile());
+	    	if(pomFile.exists()) {
+	    		return appInfo.getPomFile();
+	    	}
+	    	return Constants.POM_NAME;
+	    }
 
 	/**
 	 * To get the modules of the given application
@@ -376,5 +405,91 @@ public class FrameworkServiceUtil implements Constants, FrameworkConstants {
 		sb.append(INFO_XML);
 
 		return sb.toString();
+	}
+	
+	public static String getSettingsPath(String customerId) {
+		return Utility.getProjectHome() + customerId + FrameworkConstants.SETTINGS_XML;
+	}
+
+	public static List<CertificateInfo> getCertificate(String host, int port) throws PhrescoException {
+		List<CertificateInfo> certificates = new ArrayList<CertificateInfo>();
+		CertificateInfo info;
+		try {
+			KeyStore ks = KeyStore.getInstance(KeyStore.getDefaultType());
+			SSLContext context = SSLContext.getInstance("TLS");
+			TrustManagerFactory tmf = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());
+			tmf.init(ks);
+			X509TrustManager defaultTrustManager = (X509TrustManager) tmf.getTrustManagers()[0];
+			SavingTrustManager tm = new SavingTrustManager(defaultTrustManager);
+			context.init(null, new TrustManager[] { tm }, null);
+			SSLSocketFactory factory = context.getSocketFactory();
+			SSLSocket socket = (SSLSocket) factory.createSocket(host, port);
+			socket.setSoTimeout(10000);
+			try {
+				socket.startHandshake();
+				socket.close();
+			} catch (SSLException e) {
+
+			}
+			X509Certificate[] chain = tm.chain;
+			for (int i = 0; i < chain.length; i++) {
+				X509Certificate x509Certificate = chain[i];
+				String subjectDN = x509Certificate.getSubjectDN().getName();
+				String[] split = subjectDN.split(",");
+				info = new CertificateInfo();
+				info.setSubjectDN(subjectDN);
+				info.setDisplayName(split[0]);
+				info.setCertificate(x509Certificate);
+				certificates.add(info);
+			}
+		} catch (Exception e) {
+			throw new PhrescoException(e);
+		}
+		return certificates;
+	}
+
+	public static void addCertificate(CertificateInfo info, File file) throws PhrescoException {
+		char[] passphrase = "changeit".toCharArray();
+		InputStream inputKeyStore = null;
+		OutputStream outputKeyStore = null;
+		try {
+			KeyStore keyStore = KeyStore.getInstance(KeyStore.getDefaultType());
+			keyStore.load(null);
+			keyStore.setCertificateEntry(info.getDisplayName(), info.getCertificate());
+			if (!file.exists()) {
+				file.getParentFile().mkdirs();
+				file.createNewFile();
+			}
+			outputKeyStore = new FileOutputStream(file);
+			keyStore.store(outputKeyStore, passphrase);
+		} catch (Exception e) {
+			throw new PhrescoException(e);
+		} finally {
+			Utility.closeStream(inputKeyStore);
+			Utility.closeStream(outputKeyStore);
+		}
+	}
+}
+
+class SavingTrustManager implements X509TrustManager {
+
+	private final X509TrustManager tm;
+	X509Certificate[] chain;
+
+	SavingTrustManager(X509TrustManager tm) {
+		this.tm = tm;
+	}
+
+	public X509Certificate[] getAcceptedIssuers() {
+		throw new UnsupportedOperationException();
+	}
+
+	public void checkClientTrusted(X509Certificate[] chain, String authType) throws CertificateException {
+		throw new UnsupportedOperationException();
+	}
+
+	public void checkServerTrusted(X509Certificate[] chain, String authType) throws CertificateException {
+		this.chain = chain;
+		tm.checkServerTrusted(chain, authType);
 	}
 }
