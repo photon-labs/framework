@@ -166,7 +166,6 @@ define(["functionalTest/listener/functionalTestListener", "testResult/listener/t
 			
 			$("#stopHub").unbind("click");
 			$("#stopHub").click(function() {
-				console.info("inside stopHub.....");
 				self.onPerformActionEvent.dispatch("stopHub");
 			});
 			

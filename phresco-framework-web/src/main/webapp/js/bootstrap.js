@@ -31,6 +31,7 @@ var commonVariables = {
 	
 	dynamicPage : "dynamicPage",
 	dynamicPageContext : "dynamic",
+	templateContext : "template",
 	
 	paramaterContext : "parameter",
 	dependencyContext : "dependency",	

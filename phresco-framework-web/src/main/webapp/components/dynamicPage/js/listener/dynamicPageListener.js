@@ -4,12 +4,14 @@ define(["framework/widgetWithTemplate", "dynamicPage/api/dynamicPageAPI", "commo
 
     Clazz.com.components.dynamicPage.js.listener.DynamicPageListener = Clazz.extend(Clazz.WidgetWithTemplate, {
         localStorageAPI : null,
-        //loadingScreen : null,
         dynamicPageAPI : null,
         appDirName : null,
         goal : null,
         responseData : null,
         projectRequestBody : {},
+        i : 1,
+        contextUrlsRowId : "",
+        dynamicParameters : [],
 
         /***
          * Called in initialization time of this class 
@@ -18,7 +20,6 @@ define(["framework/widgetWithTemplate", "dynamicPage/api/dynamicPageAPI", "commo
          */
         initialize : function(config) {
             var self = this;
-            //this.loadingScreen = new Clazz.com.js.widget.common.Loading();
             self.dynamicPageAPI = new Clazz.com.components.dynamicPage.js.api.DynamicPageAPI();
         },
         
@@ -34,34 +35,28 @@ define(["framework/widgetWithTemplate", "dynamicPage/api/dynamicPageAPI", "commo
                 var goal = commonVariables.goal;
                 
                 if(self.parameterValidation(appDirName, goal)){
-                    //self.loadingScreen.showLoading();
                     self.dynamicPageAPI.getContent(header, 
                         function(response){
                             self.responseData = response.data;
                             if(response !== undefined && response !== null){
                                 if (response.data === null || response.data.length === 0) {
                                     callback("No parameters available");
-                                    //self.loadingScreen.removeLoading();
                                 } else {
                                     self.constructHtml(response, whereToRender, btnObj, openccObj, goal, callback);
-                                    //self.loadingScreen.removeLoading();
                                 }
                             } else {
                                 //responce value failed
                                 callback("Responce value failed");
-                                //self.loadingScreen.removeLoading();
                             }
                         }, 
                         function(serviceError){
                             //service access failed
                             callback("service access failed");
-                            //self.loadingScreen.removeLoading();
                         }
                     );
                 }
             }catch(error){
                 //Exception
-                //self.loadingScreen.removeLoading();
             }
         },
 
@@ -85,7 +80,7 @@ define(["framework/widgetWithTemplate", "dynamicPage/api/dynamicPageAPI", "commo
         constructHtml : function(response, whereToRender, btnObj, openccObj, goal, callback){
             var self = this, show = "",  required = "", editable = "", multiple = "", sort = "", checked = "", additionalParam = "",
                 additionalparamSel = "", dependencyVal = "", psblDependency = "", showFlag = "", enableOnchangeFunction = "", columnClass = "";
-            
+            self.dynamicParameters =  $.merge([], response.data);
             if (!self.isBlank(goal) && "validate-code" === goal) {
                 columnClass = "singleColumn";
             } else {
@@ -94,6 +89,7 @@ define(["framework/widgetWithTemplate", "dynamicPage/api/dynamicPageAPI", "commo
             
             if(response.data.length !== 0) {
                 $(whereToRender).empty();
+                $(whereToRender).parent().find('.templates').empty();
                 $.each(response.data, function(index, parameter) {
                     var type = parameter.type;
                     if(type === "String" || type === "Number" || type === "Password"){
@@ -112,7 +108,9 @@ define(["framework/widgetWithTemplate", "dynamicPage/api/dynamicPageAPI", "commo
                         // package file browse template
                     } else if (type === "map") {
                     	self.constructMapControls(parameter, whereToRender);
-                    }
+                    } else if (type === "DynamicPageParameter") {
+                        self.getDynamicTemplate(parameter, whereToRender);
+                    } 
                 });
                 whereToRender.append('<li></li>');
                 if (!self.isBlank(btnObj)) {
@@ -121,9 +119,10 @@ define(["framework/widgetWithTemplate", "dynamicPage/api/dynamicPageAPI", "commo
                 whereToRender.find(".selectpicker").selectpicker();
                 self.controlEvent();
                 self.showParameters();
+                self.applyEditableComboBox(whereToRender.find('.editableComboBox'));
             }
 			
-			if(callback != undefined && callback != null){
+			if(callback !== undefined && callback !== null){
 				callback(true);
 			}
         },
@@ -161,7 +160,7 @@ define(["framework/widgetWithTemplate", "dynamicPage/api/dynamicPageAPI", "commo
                                  '<input type="'+inputType+'" parameterType="'+ parameter.type+'" showHide="'+parameter.show+'" name="'+ parameter.key +'" value="'+textBoxValue+'" id="'+parameter.key+'" ' +optionalAttrs.editable+' /></li>');
         },
         
-         constructHiddenCtrl : function(parameter, columnClass, whereToRender) {
+        constructHiddenCtrl : function(parameter, columnClass, whereToRender) {
             var self = this, textBoxValue = "";
             if (!self.isBlank(parameter.value)) {
                 textBoxValue = parameter.value;
@@ -224,7 +223,7 @@ define(["framework/widgetWithTemplate", "dynamicPage/api/dynamicPageAPI", "commo
         },
         
         constructSelectCtrl : function (parameter, columnClass, possibleValues, whereToRender, parameterDependency, enableOnchangeFunction) {
-            var self=this, optionalAttrs = {}, multiple = "", selection, li = "", select = "", isMultiple = parameter.multiple === "true" ? true : false;
+            var self=this, selectBoxClass = "", selectWidth = "", optionalAttrs = {}, multiple = "", selection, li = "", select = "", isMultiple = parameter.multiple === "true" ? true : false;
             if (isMultiple) {
                 multiple = "multiple=multiple";
                 selection = "selection=multiple";
@@ -234,8 +233,14 @@ define(["framework/widgetWithTemplate", "dynamicPage/api/dynamicPageAPI", "commo
             }
             optionalAttrs = self.getOptionalAttr(parameter, optionalAttrs);
 
+            if ("edit" === parameter.editable) {
+                selectBoxClass = "editableComboBox", selectWidth = "style=width:100px;";
+            } else {
+                selectBoxClass = "selectpicker", selectWidth = "";
+            }
+
             li = $('<li type="selectbox" class="ctrl selectCtrl '+columnClass+'" ' +optionalAttrs.show+'  id="'+parameter.key+'Li"><label>'+parameter.name.value[0].value+optionalAttrs.required+'</label></li>');
-            select = $('<select data-selected-text-format="count>1" '+selection+' id="'+parameter.key+'" showHide="'+parameter.show+'" dependencyAttr="'+parameterDependency+'" name="'+parameter.key+'" parameterType="'+ parameter.type+'" class="selectpicker" '+multiple+' ' + 
+            select = $('<select data-selected-text-format="count>1" '+selection+' id="'+parameter.key+'" '+selectWidth+' showHide="'+parameter.show+'" dependencyAttr="'+parameterDependency+'" name="'+parameter.key+'" parameterEditable="'+parameter.editable+'" parameterType="'+ parameter.type+'" class="'+selectBoxClass+'" '+multiple+' ' + 
                      'enableOnchangeFunction="'+ enableOnchangeFunction +'"  data-selected-text-format="count>2" ' +optionalAttrs.editable+' ></select>');
             li.append(select);
             whereToRender.append(li);
@@ -301,6 +306,18 @@ define(["framework/widgetWithTemplate", "dynamicPage/api/dynamicPageAPI", "commo
         	whereToRender.append(mapCtrl);
         	self.bindMapCtrlClickEvents();
         },
+
+		getDynamicTemplate : function (parameter, whereToRender) {
+            var templateDiv =  $('<div class="'+parameter.key+'_Template"></div>'), self = this;
+            templateDiv.empty();
+            whereToRender.parent().find('.templates').append(templateDiv);
+            self.queryDynamicTemplate(self.getRequestHeader("", parameter.key, "", "template"), parameter, templateDiv, function(response) {
+                self.hideDynamicPopupLoading();
+                templateDiv.append(response.data);
+                 self.showParameters();
+                 self.bindTemplateEvents();
+            });
+        },
         
         /********************* Controls construction methods ends**********************************/
         
@@ -321,13 +338,23 @@ define(["framework/widgetWithTemplate", "dynamicPage/api/dynamicPageAPI", "commo
     		$('.removeBrowserInfo').unbind('click');
     		$('.removeBrowserInfo').click(function() {
     			$(this).parent().parent().remove();
-				if ($('.browser_table tbody').find('tr').length == 1) {
+				if ($('.browser_table tbody').find('tr').length === 1) {
 					$('.browser_table tbody').find('.removeBrowserInfo').hide();
     			}
 				self.bindMapCtrlClickEvents();
     		});
         },
-        
+        getParameterByKey : function (parameters, key) {
+            var requestedParameter = "";
+            $.each(parameters, function(index, parameter) {
+                if (key === parameter.key) {
+                    requestedParameter = parameter;
+                    return false;
+                }
+            }) 
+
+            return requestedParameter;
+        },
         //returns textbox type
         getInputType : function (type) {
             if (type === "Password") {
@@ -406,6 +433,15 @@ define(["framework/widgetWithTemplate", "dynamicPage/api/dynamicPageAPI", "commo
             } 
         },
         
+        applyEditableComboBox : function (obj) {
+            obj.customComboBox({
+                tipText : "Type or select from the list",
+                allowed : /[A-Za-z0-9\$\._\-\s]/,
+                notallowed : /[\<\>\$]/,
+                index : 'first'
+            });
+        },
+
         //to bind events for dynamic controls
         controlEvent : function(){
             var self = this;
@@ -457,10 +493,10 @@ define(["framework/widgetWithTemplate", "dynamicPage/api/dynamicPageAPI", "commo
         dynamicControlEvents : function(obj, currentParamKey, showHideFlag) {
             var self = this;
             var jecClass = "";
-            if (!self.isBlank(obj.options)) {
-                jecClass = obj.options[obj.selectedIndex].getAttribute('class');
-            }
-            
+            if (obj.find('option').size() > 1) {
+                jecClass = obj.find(":selected").attr("class");
+            } 
+
             if (jecClass !== "jecEditableOption") {
                 var selectedOption = $(obj).val();
                 $(obj).blur();//To remove the focus from the current element
@@ -478,15 +514,23 @@ define(["framework/widgetWithTemplate", "dynamicPage/api/dynamicPageAPI", "commo
                 
                 self.changeEveDependancyListener(selectedOption, currentParamKey);  // update the watcher while changing the drop down
                 self.getDynamicValues(dependencyAttr);
-                
-                if ($(obj).attr("type") === 'checkbox' && showHideFlag === "false") {
-                    if (!selectedOption) {
-                        var previousDependencyArr = [];
-                        previousDependencyArr = csvDependencies.split(',');
-                        self.hideControl(previousDependencyArr);
-                    }   
-                }
+                self.hideCheckboxDependencyCntrls($(obj).attr("type"), selectedOption, dependencyAttr);
             }
+        },
+
+        hideCheckboxDependencyCntrls : function (controlType, isChecked, dependencyAttr) {
+            var self = this;
+            if (controlType === 'checkbox' && !isChecked && dependencyAttr !== undefined && dependencyAttr !== null) {
+                csvDependencies = dependencyAttr.substring(dependencyAttr.indexOf('=') + 1);
+                var parameterDependencies = [];
+                parameterDependencies = csvDependencies.split(',');
+                for (i in parameterDependencies) {
+                   var currentParameter = self.getParameterByKey(self.dynamicParameters, parameterDependencies[i]);
+                   if (!self.isBlank(currentParameter) && !currentParameter.show) {
+                        $("#" + currentParameter.key + "Li").hide();
+                   }
+                }
+            }    
         },
 
         getDynamicValues : function(dependencyAttr) {
@@ -506,6 +550,7 @@ define(["framework/widgetWithTemplate", "dynamicPage/api/dynamicPageAPI", "commo
                 for (var i = 0; i < dependencyArr.length; i+=1) {
                     var curId = $.trim(dependencyArr[i]);
                     var dependentCtrl = $("#"+curId).prop('tagName');
+                    var ctrlType = $("#"+curId).attr('type');
                     if (dependentCtrl === 'SELECT') {
                         var hideOptionDependency = $('#'+curId).find(":selected").attr('hide');
                         if (!self.isBlank(hideOptionDependency)) {
@@ -513,7 +558,7 @@ define(["framework/widgetWithTemplate", "dynamicPage/api/dynamicPageAPI", "commo
                             hideOptionDependencyArr = hideOptionDependency.split(',');
                             self.hideControl(hideOptionDependencyArr);
                         }
-                    }
+                    } 
                 }   
             }
         },
@@ -527,13 +572,37 @@ define(["framework/widgetWithTemplate", "dynamicPage/api/dynamicPageAPI", "commo
                     var previousDependencyArr = [];
                     previousDependencyArr = csvDependencies.split(',');
                     if (jecClass !== 'jecEditableOption') {
-                        self.hideControl(previousDependencyArr);                    
+                        self.hideControl(previousDependencyArr); 
+                        self.hideChildChckBoxDependencies(previousDependencyArr);                   
                     }
                 }
             }
 
         },
         
+        hideChildChckBoxDependencies : function (previousDependencyArr) {
+            var self = this;
+            for (var i = 0; i < previousDependencyArr.length; i+=1) {
+                var controlTag = $("#" + previousDependencyArr[i]).prop('tagName');
+                var controlType = $("#" + previousDependencyArr[i]).attr('type');
+                //iterate previous dependecies & if its checkbox, then hide checkbox's dependency
+                if (controlTag === 'INPUT' && controlType === 'checkbox') {
+                    var id = $("#" + previousDependencyArr[i]).attr('id');
+                    if ("authManager" === id) {
+                        $("#" + previousDependencyArr[i]).val(false);
+                        $("#" + previousDependencyArr[i]).prop("checked", false);
+                    }
+                    var checkBoxDependencies = $("#" + previousDependencyArr[i]).attr('additionalparam');
+                    if (!self.isBlank(checkBoxDependencies)) {
+                        var csvDep = checkBoxDependencies.substring(checkBoxDependencies.indexOf('=') + 1);
+                        var csvDepArr = [];
+                        csvDepArr = csvDep.split(',');
+                        self.hideControl(csvDepArr);
+                    }
+                }
+            }
+        },
+
         //To update watcher map
         changeEveDependancyListener : function(selectedOption, currentParamKey) {
             var self = this;
@@ -557,30 +626,55 @@ define(["framework/widgetWithTemplate", "dynamicPage/api/dynamicPageAPI", "commo
                 var isMultiple = $('#' + dependency).attr("multiple");
                 var controlType = $('#' + dependency).attr('type');
                 var controlTag = $('#' + dependency).prop('tagName');
-                self.constructElements(data,  $('#' + dependency), isMultiple, controlType, controlTag);
+                var currentParameter = self.getParameterByKey(self.dynamicParameters, dependency);
+                if ("DynamicPageParameter" === currentParameter.type) {
+                    self.appendDynamicTemplateDesign($("." + dependency + "_Template"), data);
+                } else {
+                    self.constructElements(data,  $('#' + dependency), isMultiple, controlType, controlTag);    
+                }
             } else {
                 self.hideDynamicPopupLoading();
             }
         },
         
+        appendDynamicTemplateDesign : function (templateContainer, templateDesign) {
+            var self = this;
+            templateContainer.empty();
+            templateContainer.append(templateDesign);
+            self.hideDynamicPopupLoading();
+            self.bindTemplateEvents();
+        },
+
         //to dynamically update dependancy data into controls 
         constructElements : function(data, pushToElement, isMultiple, controlType, controlTag) {
             var self=this, previousValue = $(pushToElement).val(), parameterType = pushToElement.attr("parameterType");
             
             if ('SELECT' === controlTag && 'List' !== parameterType) {
-                pushToElement.empty();
                 self.updateSelectCtrl(pushToElement, data, previousValue);
             }
             self.hideDynamicPopupLoading();
         },
         
         updateSelectCtrl : function (pushToElement, data, previousValue) {
-            var self = this;
+            var self = this, id = pushToElement.attr("id"), editbleComboClass = $('#'+ id + ' option').attr('class');
+            pushToElement.empty();
+            //convert to editable combobox
+            if (editbleComboClass === "jecEditableOption") {
+                var editableComboOption = "<option class='jecEditableOption'>Type or select from the list</option>";
+                pushToElement.append(editableComboOption);
+            }
+            //to construct options
             if (!$.isEmptyObject(data)) {
                 var parameterDependency = pushToElement.attr("dependencyAttr");
                 self.constructOptions(pushToElement, data, previousValue, true, parameterDependency);
             }
-            pushToElement.selectpicker('refresh');
+
+            if (pushToElement.attr("parameterEditable") !== "edit") {
+                //refresh custom selectbox
+                 pushToElement.selectpicker('refresh');
+            } else if (editbleComboClass === "jecEditableOption" && !$.isEmptyObject(data)) {
+                $('#'+ id + ' option[value="'+ data[0].key +'"]').prop("selected","selected");
+            }
         },
         
         //To set option's additionalParam to select box attr
@@ -593,7 +687,7 @@ define(["framework/widgetWithTemplate", "dynamicPage/api/dynamicPageAPI", "commo
         },
         
         //To show or hide controls while popup loads
-        showParameters : function(){
+        showParameters : function() {
             var self=this;
             
             $(':input, .dynamicControls > li').each(function(index, value) {
@@ -694,6 +788,7 @@ define(["framework/widgetWithTemplate", "dynamicPage/api/dynamicPageAPI", "commo
         showControl : function(controls) {
             for (i in controls) {
                 $('#' + controls[i] + 'Li').show();
+                $('.' + controls[i] + '_Template').show();
             }
         },
         
@@ -701,6 +796,7 @@ define(["framework/widgetWithTemplate", "dynamicPage/api/dynamicPageAPI", "commo
         hideControl : function(controls) {
             for (i in controls) {
                 $('#' + controls[i] + 'Li').hide();
+                $('.' + controls[i] + '_Template').hide();
             }
         },
         
@@ -710,7 +806,187 @@ define(["framework/widgetWithTemplate", "dynamicPage/api/dynamicPageAPI", "commo
             }
             return true;
         }, 
+
+        queryDynamicTemplate : function (header, parameter, whereToRender, callback) {
+            var self = this;
+
+            try {
+                self.dynamicPageAPI.getContent(header, function(response) {
+                    if (response !== null)   {
+                        callback(response, whereToRender);
+                    } else {
+                        callback({"status" : "service failure"}, whereToRender);
+                    }
+                });
+            } catch (exception) {
+            }
+        },
         
+        /********************************** TEMPLATE METHODS STARTS ***********************************************/
+         bindTemplateEvents : function () {
+            var self = this, i = 1, contextUrlsRowId = "";
+            $("#contextAdd").unbind("click");
+            $("#contextAdd").click(function() {
+                self.addContext('contextDiv');
+            }) ;
+
+            $("#dbContextAdd").unbind("click");
+            $("#dbContextAdd").click(function() {
+                self.addContext('dbContextDiv');
+            }) ;
+
+            self.bindContextEvents();
+            self.enableDisableDeleteContext('contextDivClass', 'removeContext');
+            self.enableDisableDeleteContext('dbContextDivClass', 'removeDBContext');
+        },
+
+        bindContextEvents : function () {
+            var self = this;
+            $(".headerKeyAdd").unbind("click");
+            $(".headerKeyAdd").click(function() {
+                self.headerKeyAdd($(this));
+            }) ;
+
+            
+            $(".redirectAutomatically").unbind("click");
+            $(".redirectAutomatically").click(function() {
+                self.checkUnCheck($(this));
+            }) ;
+
+            $(".followRedirects").unbind("click");
+            $(".followRedirects").click(function() {
+                self.checkUnCheck($(this));
+            }) ;
+
+            $(".addParameter").unbind("click");
+            $(".addParameter").click(function() {
+                self.addParameterRow($(this));
+            }) ;
+
+            $(".removeParamter").unbind("click");
+            $(".removeParamter").click(function() {
+                self.removeParameterRow($(this));
+            }) ;
+        },
+
+        addContext : function (contextObj) {
+            var self = this, html = $('.'+contextObj+'Class').html();
+            contextUrlsRowId = contextObj + self.i;
+            var contextUrlRow = $(document.createElement('div')).attr("id", contextUrlsRowId).attr("class", contextObj+'Class').css('margin-bottom','5px');
+            contextUrlRow.html(html);
+            $("#" + contextObj + "Parent").append(contextUrlRow);//append to a parent div
+            $(':input:not(:button)', $("#"+contextUrlsRowId)).val('');//to clear already inputed value
+            self.i++;
+            $("#"+contextUrlsRowId).find('.redirectAutomatically').prop('checked', true);
+            $("#"+contextUrlsRowId).find('.add_test').empty();
+
+            var j = 1;
+            $("#"+contextUrlsRowId).find('.parameterRow').each(function() {
+                if (j !== 1) {
+                    $(this).remove();
+                }   
+                j++;
+            });
+            self.showHideMinus($("#"+contextUrlsRowId).find('.addParameter'), 1);
+            $(".removeContext").unbind("click");
+            $(".removeContext").click(function() {
+                self.removeContext($(this), 'contextDivClass', 'removeContext');
+            }); 
+            $(".removeDBContext").unbind("click");
+            $(".removeDBContext").click(function() {
+                self.removeContext($(this), 'dbContextDivClass', 'removeDBContext');
+            });        
+            self.bindContextEvents();
+            self.enableDisableDeleteContext('contextDivClass', 'removeContext');
+            self.enableDisableDeleteContext('dbContextDivClass', 'removeDBContext');
+        },
+
+        removeContext : function (obj, divClass, delIcon) {
+            var imgClass = obj.find('img').attr("class");
+            if (imgClass === "removeContextImg") {
+                var self = this;
+                obj.closest('.'+divClass).remove();
+                self.enableDisableDeleteContext(divClass, delIcon);
+            }
+        },
+
+        enableDisableDeleteContext : function (divClass, delIcon) {
+            var urlCount = $('.' + divClass).size();
+            if (urlCount === 1) {
+                $("." + delIcon).find('img').attr("src", "themes/default/images/helios/delete_row_off.png");
+                $("." + delIcon).find('img').removeClass("removeContextImg");
+            } else {
+                $("." +delIcon).find('img').attr("src", "themes/default/images/helios/delete_row.png");
+                $("." +delIcon).find('img').addClass("removeContextImg");
+            }
+        },
+
+        headerKeyAdd : function (btnObj) {
+            var self = this, key = btnObj.parent().find('.headerKey').val(), value = btnObj.parent().find('.headerValue').val();
+            if (!self.isBlank(key) && !self.isBlank(value)) {
+                var constructHeaders = '<div class="add_remove_test headers">' + key + ' : '+ value+'<input type="hidden" name="headerKey" value="'+key+'"> <input type="hidden" name="headerValue" value="'+value+'"> <img class="removeHeaders" src="themes/default/images/helios/remove_test.png"></div>';
+                btnObj.closest('tbody').find(".add_test").append(constructHeaders);
+                $(".headerKey").val("");
+                $(".headerValue").val("");
+
+                $(".removeHeaders").unbind("click");
+                $(".removeHeaders").click(function() {
+                    self.removeHeaders($(this));
+                }) ;  
+            }
+        },
+
+        removeHeaders : function (obj) {
+            obj.parent().remove();
+        },
+
+        addParameterRow : function (thisObj) {
+            var self = this, parameterRow = '<tr class="parameterRow"><td><input type="text" class="parameterName" name="parameterName" placeholder="Name"><input type="text" class="parameterValue" name="parameterValue" placeholder="Value"><input class="parameterEncode" name="parameterEncode" type="checkbox">Encode '+
+                        '<img class="add_test_icon removeParamter" src="themes/default/images/helios/minus_icon.png">'+
+                        '<img src="themes/default/images/helios/plus_icon.png" class="add_test_icon addParameter"></td></tr>';
+            thisObj.closest('tbody').append(parameterRow);     
+
+            $(".addParameter").unbind("click");
+            $(".addParameter").click(function() {
+                self.addParameterRow($(this));
+            }) ;     
+
+            var size = thisObj.closest('tbody').find('.addParameter').size();
+            self.showHideMinus(thisObj, size);
+            $(".removeParamter").unbind("click");
+            $(".removeParamter").click(function() {
+                self.removeParameterRow($(this));
+            }) ;
+        },
+
+        removeParameterRow : function(obj) {
+            var self = this;
+            var size = obj.closest('tbody').find('.addParameter').size() - 1; 
+            self.showHideMinus(obj, size);
+            obj.closest('tr').remove();
+           
+        },
+
+        showHideMinus : function (obj, size) {
+            if (size > 1) {
+             obj.closest('tbody').find($(".removeParamter")).show();  
+            } else if (size === 1) {
+                obj.closest('tbody').find($(".removeParamter")).hide();  
+            }
+        },
+
+        checkUnCheck : function (checkBoxObj) {
+            var redirectAutomatically = $(checkBoxObj).closest('tr').find($(".redirectAutomatically")).is(':checked');    
+            var followRedirects = $(checkBoxObj).closest('tr').find($(".followRedirects")).is(':checked');
+            var currentObjClass = $(checkBoxObj).attr('class');
+            if (currentObjClass === 'redirectAutomatically' && redirectAutomatically) {
+                $(checkBoxObj).closest('tr').find($(".followRedirects")).prop('checked', false);
+            } else if (followRedirects) {
+                $(checkBoxObj).closest('tr').find($(".redirectAutomatically")).prop('checked', false);
+            }       
+        },
+        /********************************** TEMPLATE METHODS ENDS ***********************************************/
+
         /***
          * provides the request header
          * @return: returns the contructed header
@@ -732,7 +1008,7 @@ define(["framework/widgetWithTemplate", "dynamicPage/api/dynamicPageAPI", "commo
                 header.requestMethod = "GET";
 				var buildNumber = "";
 				
-				if(goal == "deploy"){
+				if(goal === "deploy"){
 					buildNumber = "&buildNumber="+ commonVariables.buildNo;
 				} 
 				
@@ -745,6 +1021,9 @@ define(["framework/widgetWithTemplate", "dynamicPage/api/dynamicPageAPI", "commo
                 header.requestMethod = "POST";
                 header.requestPostBody = projectRequestBody;
                 header.webserviceurl = commonVariables.webserviceurl + commonVariables.paramaterContext + "/" + commonVariables.dependencyContext + "?appDirName="+appDirName+"&goal="+ goal+"&phase="+phase+"&customerId="+customerId+"&userId="+userId+"&key="+ key;
+            } else if (action === "template") {
+                header.requestMethod = "GET";
+                header.webserviceurl = commonVariables.webserviceurl + commonVariables.paramaterContext + "/" + commonVariables.templateContext + "?appDirName="+appDirName+"&goal="+ goal+"&phase="+phase+"&customerId="+customerId+"&userId="+userId+"&parameterKey="+ key;                
             }
             
             return header;
