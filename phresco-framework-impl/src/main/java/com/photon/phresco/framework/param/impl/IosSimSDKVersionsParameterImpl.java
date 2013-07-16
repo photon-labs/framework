@@ -22,6 +22,7 @@ import java.util.*;
 
 import javax.xml.parsers.*;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.xml.sax.*;
 
 import com.photon.phresco.api.*;
@@ -38,10 +39,12 @@ public class IosSimSDKVersionsParameterImpl implements DynamicParameter  {
 			ConfigurationException, PhrescoException {
 		PossibleValues possibleValues = new PossibleValues();
 		List<String> iphoneSimSdkVersions = IosSdkUtil.getMacSdksVersions(MacSdkType.iphonesimulator);
-		for (String iphoneSimSdkVersion : iphoneSimSdkVersions) {
+		if (CollectionUtils.isNotEmpty(iphoneSimSdkVersions)) {
+			for (String iphoneSimSdkVersion : iphoneSimSdkVersions) {
 				Value value = new Value();
 				value.setValue(iphoneSimSdkVersion);
 				possibleValues.getValue().add(value);
+			}
 		}
 		return possibleValues;
 	}
