@@ -256,7 +256,6 @@ define(["projectlist/projectList"], function(ProjectList) {
 		},
 		
 		projectSVNUiVerification : function(projectlist) {
-			logs('Project List');
 			var self = this;
 			asyncTest("Test - Project List SVNUPDATE popup rendered", function() {
 				$('.tooltiptop[name^="svn_update"]').click();
@@ -272,14 +271,13 @@ define(["projectlist/projectList"], function(ProjectList) {
 		},
 		
 		projectSVNUpdateVerification : function(projectlist) {
-			logs('Project List');
 			var self = this;
 			asyncTest("Test -SVNUpdate trigger", function() {
 				$("input[name='repoUrl']").val('https://insight.photoninfotech.com/svn/repos/phresco-svn-projects/ci/3.0.0');
 				$("input[name='username']").val("admin");
 				$("input[name='password']").val("manage");
 				$("input[name='revision']").val("head");	
-				var addtorepoAjax = $.mockjax({
+				var updateImportAjax = $.mockjax({
 					url: commonVariables.webserviceurl + 'repository/updateImportedApplication?appDirName=wordpress-WordPress',			
 					type:'POST',
 					contentType: 'application/json',
@@ -291,7 +289,7 @@ define(["projectlist/projectList"], function(ProjectList) {
 				$("input[name='updatebtn']").click();
 				setTimeout(function() {
 					start();
-					var getval = $(".popsuccess").text();;
+					var getval = $(".popsuccess").text();
 					equal("update svn project Successfully", getval, "SVNUpdate service call");
 					self.projectImportAppSuccessVerification(projectlist);
 				}, 2500);
@@ -301,7 +299,7 @@ define(["projectlist/projectList"], function(ProjectList) {
 		projectImportAppSuccessVerification : function(projectlist) {
 			var self = this;
 			asyncTest("Import Application Success Service Test", function() {
-				var addtorepoAjax = $.mockjax({
+				var importAppAjax = $.mockjax({
 					url: commonVariables.webserviceurl + 'repository/importApplication',			
 					type:'POST',
 					contentType: 'application/json',
@@ -386,6 +384,7 @@ define(["projectlist/projectList"], function(ProjectList) {
 					equal(undefined, techid, "Project List Service Tested");
 				}, 1500);
 			}); 
-		}	
+		}
+		
 	};
 });
