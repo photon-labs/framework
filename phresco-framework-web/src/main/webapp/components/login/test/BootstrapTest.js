@@ -21,6 +21,9 @@ var commonVariables = {
 	configuration : "configuration",
 	editConfiguration : "editConfiguration",
 	
+	featurePage : "features",
+	featurePageContext : "features",
+	
 	loadingScreen : null,
     
 	testResult : "testResult",
@@ -33,6 +36,7 @@ var commonVariables = {
 	performanceTest : "performanceTest",
 	performanceTestResults : "performanceTestResults",
 	functionalTest : "functionalTest",
+	featurelist : "featurelist",
 	
 	basePlaceholder : "basepage\\:widget",
 	headerPlaceholder : "<div id='header'></div>",
@@ -118,28 +122,23 @@ define(["jquery"], function($) {
 			require(["loginTest", "projectlistTest", "headerTest", "footerTest", "navigationTest", "projectTest", "applicationTest", "featuresTest", "codequalityTest", "configurationTest", "buildTest", "editConfigurationTest", "jobTemplateListTest","unitTestTest", "componentTestTest", "functionalTestTest","handlebars", "signal", "signalbinding",  "jslib_bootstrap_datepicker", "jslib_jquery_sortable_min", "bootstrap_min", "jquery_mCustomScrollbar_concat_min", "bootstrap_select_min", "performanceTestTest", "RGraph_common_core", "RGraph_common_tooltips", "RGraph_common_effects", "RGraph_pie", "RGraph_bar", "RGraph_line", "RGraph_common_key", "jquery_magnific_popup_min", "jquery_fullscreen"], function(loginTest, projectlistTest, headerTest, footerTest, navigationTest, projectTest,applicationTest, featuresTest, codequalityTest, configurationTest, buildTest, editConfigurationTest, jobTemplateListTest, unitTestTest, componentTestTest, functionalTestTest, handlebars, signals, signalbinding, datepicker,  sortable, bootstrap, scrollbar, select, performanceTestTest, RGraph_common_core, RGraph_common_tooltips, RGraph_common_effects, RGraph_pie, RGraph_bar, RGraph_line, RGraph_common_key, jquery_magnific_popup_min, jquery_fullscreen){
 				commonVariables.navListener = Clazz.com.components.navigation.js.listener.navigationListener();
 				loginTest.runTests(data, function() {
+					footerTest.runTests(data);
 					projectlistTest.runTests(data);
-					performanceTestTest.runTests(data); 
-					configurationTest.runTests(data);
-					//functionalTestTest.runTests(data);
-					
-					/*projectTest.runTests(data);
-					 editConfigurationTest.runTests(data);
+					projectTest.runTests(data);
+					applicationTest.runTests(data);
+					featuresTest.runTests(data);
+					functionalTestTest.runTests(data);
+					editConfigurationTest.runTests(data);
 					configurationTest.runTests(data);
 					navigationTest.runTests(data);
 					headerTest.runTests(data);
-					projectTest.runTests(data);	
-					footerTest.runTests(data);
-					projectlistTest.runTests(data);
-					applicationTest.runTests(data);
-					featuresTest.runTests(data);
 					jobTemplateListTest.runTests(data);
 					buildTest.runTests(data);
 					codequalityTest.runTests(data);
 					unitTestTest.runTests(data);
 					componentTestTest.runTests(data);
 					dynamicPageTest.runTests(data);
-					performanceTestTest.runTests(data); */
+					performanceTestTest.runTests(data);
 				});
 			});
 		}, "json");

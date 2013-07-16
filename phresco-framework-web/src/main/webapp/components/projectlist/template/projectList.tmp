@@ -268,7 +268,7 @@
               		{{else}}
               			<img name="delete" src="themes/default/images/helios/delete_row_off.png" width="14" height="18" border="0" alt="">
               		{{/if}}
-                    <div id="{{creationDate}}" class="dyn_popup delete_msg">
+                    <div id="{{creationDate}}" class="dyn_popup delete_msg" currentprjname={{appDirName}}>
                       Are you sure to delete ?
                         <div>
                             <input type="button" value="Yes" class="btn btn_style dlt" name="deleteConfirm">

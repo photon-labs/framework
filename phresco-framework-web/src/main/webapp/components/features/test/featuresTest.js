@@ -1,101 +1,263 @@
-define(["jquery", "features/features", "framework/navigationController", "framework/widgetWithTemplate", , "features/listener/featuresListener"], function($, Features) {
-	/**
-	 * Test that the setMainContent method sets the text in the MyCart-widget
-	 */
-	 var fearures = new Features();
-	return { runTests: function (configData) {
-		module("Features.js;Features");
-		asyncTest("Features Test", function() {
-		
-			mockFeaturesList = mockFunction();
-			when(mockFeaturesList)(anything()).then(function(arg) {
+define(["features/features"], function(Features) {
+	return {
+		runTests: function () {
+			var self = this;
+			module("Features.js;Features");
+			commonVariables.techId = "tech-html5-jquery-mobile-widget";
 				
-				var fearuresListresponse = {"response":null,"message":"Application Features listed successfully","exception":null,"data":[{"licenseId":null,"artifactId":"mod_pagination_1.0","classifier":null,"packaging":"zip","groupId":"modules.tech-php.files","versions":[{"scope":null,"dependencyIds":null,"appliesTo":[{"required":false,"techId":"tech-php"}],"artifactGroupId":"19574e90-0a4e-482a-934a-8360abff768c","used":false,"downloadURL":"http://172.16.17.226:8080/repository/content/groups/public//modules/tech-php/files/mod_pagination_1.0/1.0/mod_pagination_1.0-1.0.zip","fileSize":0,"version":"1.0","creationDate":1348896224750,"helpText":null,"system":false,"name":"Pagination","id":"59bdbeeb-0007-4b0f-8538-b3768e3c077d","displayName":null,"description":null,"status":null}],"appliesTo":[{"techId":"tech-php","core":false}],"imageURL":null,"type":"FEATURE","customerIds":["photon"],"used":false,"creationDate":1371627764188,"helpText":null,"system":false,"name":"Pagination","id":"19574e90-0a4e-482a-934a-8360abff768c","displayName":"Pagination","description":null,"status":null},{"licenseId":null,"artifactId":"mod_login_1.0","classifier":null,"packaging":"zip","groupId":"modules.tech-php.files","versions":[{"scope":null,"dependencyIds":null,"appliesTo":[{"required":false,"techId":"tech-php"}],"artifactGroupId":"f521ede3-2780-4799-b1e8-7d640b2c3c2b","used":false,"downloadURL":"http://172.16.17.226:8080/repository/content/groups/public//modules/tech-php/files/mod_login_1.0/1.0/mod_login_1.0-1.0.zip","fileSize":0,"version":"1.0","creationDate":1348896224734,"helpText":null,"system":false,"name":"login","id":"0af3d339-354e-4df9-8222-444042a4860f","displayName":null,"description":null,"status":null}],"appliesTo":[{"techId":"tech-php","core":false}],"imageURL":null,"type":"FEATURE","customerIds":["photon"],"used":false,"creationDate":1371627764204,"helpText":null,"system":false,"name":"login","id":"f521ede3-2780-4799-b1e8-7d640b2c3c2b","displayName":"login","description":null,"status":null},{"licenseId":null,"artifactId":"mod_blog_1.0","classifier":null,"packaging":"zip","groupId":"modules.tech-php.files","versions":[{"scope":null,"dependencyIds":null,"appliesTo":[{"required":false,"techId":"tech-php"}],"artifactGroupId":"5e7f92ad-4d13-44a7-aac5-6e17f4871509","used":false,"downloadURL":"http://172.16.17.226:8080/repository/content/groups/public//modules/tech-php/files/mod_blog_1.0/1.0/mod_blog_1.0-1.0.zip","fileSize":0,"version":"1.0","creationDate":1348896224750,"helpText":null,"system":false,"name":"Blog","id":"1136e881-d093-4211-a1ad-8c791a435276","displayName":null,"description":null,"status":null}],"appliesTo":[{"techId":"tech-php","core":false}],"imageURL":null,"type":"FEATURE","customerIds":["photon"],"used":false,"creationDate":1371627764220,"helpText":null,"system":false,"name":"Blog","id":"5e7f92ad-4d13-44a7-aac5-6e17f4871509","displayName":"Blog","description":null,"status":null},{"licenseId":null,"artifactId":"mod_weather_1.0","classifier":null,"packaging":"zip","groupId":"modules.tech-php.files","versions":[{"scope":null,"dependencyIds":["mod_commenting_system._tech_php1.0","mod_reportgenerator_tech_php1.0"],"appliesTo":[{"required":false,"techId":"tech-php"}],"artifactGroupId":"03ddfaf3-d4dd-4edb-83f4-58846c9a8fa1","used":true,"downloadURL":"http://172.16.17.226:8080/repository/content/groups/public//modules/tech-php/files/mod_weather_1.0/1.0/mod_weather_1.0-1.0.zip","fileSize":0,"version":"1.0","creationDate":1348896224750,"helpText":null,"system":false,"name":"Weather","id":"d365fb80-6bb1-41e6-a6a6-4f6f1d3b5048","displayName":null,"description":null,"status":null}],"appliesTo":[{"techId":"tech-php","core":false}],"imageURL":null,"type":"FEATURE","customerIds":["photon"],"used":false,"creationDate":1371627764220,"helpText":null,"system":false,"name":"Weather","id":"03ddfaf3-d4dd-4edb-83f4-58846c9a8fa1","displayName":"Weather","description":null,"status":null},{"licenseId":null,"artifactId":"mod_reportgenerator_1.0","classifier":null,"packaging":"zip","groupId":"modules.tech-php.files","versions":[{"scope":null,"dependencyIds":null,"appliesTo":[{"required":false,"techId":"tech-php"}],"artifactGroupId":"c85398e6-5c33-4de4-9cbd-53f626bcce07","used":true,"downloadURL":"http://172.16.17.226:8080/repository/content/groups/public//modules/tech-php/files/mod_reportgenerator_1.0/1.0/mod_reportgenerator_1.0-1.0.zip","fileSize":0,"version":"1.0","creationDate":1348896224750,"helpText":null,"system":false,"name":"ReportGenerator","id":"aa5b3b7e-6f5c-4826-8e1d-28af66ff8017","displayName":null,"description":null,"status":null}],"appliesTo":[{"techId":"tech-php","core":false}],"imageURL":null,"type":"FEATURE","customerIds":["photon"],"used":false,"creationDate":1371627764235,"helpText":null,"system":false,"name":"ReportGenerator","id":"c85398e6-5c33-4de4-9cbd-53f626bcce07","displayName":"ReportGenerator","description":null,"status":null},{"licenseId":null,"artifactId":"mod_list_files_1.0","classifier":null,"packaging":"zip","groupId":"modules.tech-php.files","versions":[{"scope":null,"dependencyIds":null,"appliesTo":[{"required":false,"techId":"tech-php"}],"artifactGroupId":"1f7e271a-9776-4d70-93db-eb8e3c60541c","used":false,"downloadURL":"http://172.16.17.226:8080/repository/content/groups/public//modules/tech-php/files/mod_list_files_1.0/1.0/mod_list_files_1.0-1.0.zip","fileSize":0,"version":"1.0","creationDate":1348896224750,"helpText":null,"system":false,"name":"List Files","id":"b715475c-09fa-4490-9d0d-929796af498d","displayName":null,"description":null,"status":null}],"appliesTo":[{"techId":"tech-php","core":false}],"imageURL":null,"type":"FEATURE","customerIds":["photon"],"used":false,"creationDate":1371627764235,"helpText":null,"system":false,"name":"List Files","id":"1f7e271a-9776-4d70-93db-eb8e3c60541c","displayName":"List Files","description":null,"status":null},{"licenseId":null,"artifactId":"mod_commenting_system._1.0","classifier":null,"packaging":"zip","groupId":"modules.tech-php.files","versions":[{"scope":null,"dependencyIds":null,"appliesTo":[{"required":false,"techId":"tech-php"}],"artifactGroupId":"43360fc4-1782-4928-8a35-1da45604c2d6","used":true,"downloadURL":"http://172.16.17.226:8080/repository/content/groups/public//modules/tech-php/files/mod_commenting_system._1.0/1.0/mod_commenting_system._1.0-1.0.zip","fileSize":0,"version":"1.0","creationDate":1348896224750,"helpText":null,"system":false,"name":"Commenting system","id":"fea9872d-bc78-4765-ace2-0e18af45d105","displayName":null,"description":null,"status":null}],"appliesTo":[{"techId":"tech-php","core":false}],"imageURL":null,"type":"FEATURE","customerIds":["photon"],"used":false,"creationDate":1371627764251,"helpText":null,"system":false,"name":"Commenting system","id":"43360fc4-1782-4928-8a35-1da45604c2d6","displayName":"Commenting system","description":null,"status":null},{"licenseId":null,"artifactId":"mod_shoutbox_1.0","classifier":null,"packaging":"zip","groupId":"modules.tech-php.files","versions":[{"scope":null,"dependencyIds":null,"appliesTo":[{"required":false,"techId":"tech-php"}],"artifactGroupId":"dc87ccbe-4ec0-4490-af4c-f282ebf021af","used":false,"downloadURL":"http://172.16.17.226:8080/repository/content/groups/public//modules/tech-php/files/mod_shoutbox_1.0/1.0/mod_shoutbox_1.0-1.0.zip","fileSize":0,"version":"1.0","creationDate":1348896224750,"helpText":null,"system":false,"name":"shoutbox","id":"443e6da2-81cd-4af2-aef3-2361a2b1b1dc","displayName":null,"description":null,"status":null}],"appliesTo":[{"techId":"tech-php","core":false}],"imageURL":null,"type":"FEATURE","customerIds":["photon"],"used":false,"creationDate":1371627764251,"helpText":null,"system":false,"name":"shoutbox","id":"dc87ccbe-4ec0-4490-af4c-f282ebf021af","displayName":"shoutbox","description":null,"status":null},{"licenseId":null,"artifactId":"mod_auto_complete_search_1.0","classifier":null,"packaging":"zip","groupId":"modules.tech-php.files","versions":[{"scope":null,"dependencyIds":null,"appliesTo":[{"required":false,"techId":"tech-php"}],"artifactGroupId":"d76b2cfb-1249-4971-951c-e08675db3943","used":false,"downloadURL":"http://172.16.17.226:8080/repository/content/groups/public//modules/tech-php/files/mod_auto_complete_search_1.0/1.0/mod_auto_complete_search_1.0-1.0.zip","fileSize":0,"version":"1.0","creationDate":1348896224750,"helpText":null,"system":false,"name":"Auto Complete search","id":"3eaf2749-103d-4776-8742-0a7c55d845b2","displayName":null,"description":null,"status":null}],"appliesTo":[{"techId":"tech-php","core":false}],"imageURL":null,"type":"FEATURE","customerIds":["photon"],"used":false,"creationDate":1371627764266,"helpText":null,"system":false,"name":"Auto Complete search","id":"d76b2cfb-1249-4971-951c-e08675db3943","displayName":"Auto Complete search","description":null,"status":null},{"licenseId":null,"artifactId":"mod_multiple_checkbox_1.0","classifier":null,"packaging":"zip","groupId":"modules.tech-php.files","versions":[{"scope":null,"dependencyIds":null,"appliesTo":[{"required":false,"techId":"tech-php"}],"artifactGroupId":"392e3ac1-0778-4ef3-af50-6ce79f47145a","used":false,"downloadURL":"http://172.16.17.226:8080/repository/content/groups/public//modules/tech-php/files/mod_multiple_checkbox_1.0/1.0/mod_multiple_checkbox_1.0-1.0.zip","fileSize":0,"version":"1.0","creationDate":1348896224750,"helpText":null,"system":false,"name":"Multiple Checkbox","id":"1764ca41-191a-4f24-9722-b6efeccafa44","displayName":null,"description":null,"status":null}],"appliesTo":[{"techId":"tech-php","core":false}],"imageURL":null,"type":"FEATURE","customerIds":["photon"],"used":false,"creationDate":1371627764266,"helpText":null,"system":false,"name":"Multiple Checkbox","id":"392e3ac1-0778-4ef3-af50-6ce79f47145a","displayName":"Multiple Checkbox","description":null,"status":null}]};
-				var collection = {};
-				collection.featureslist = fearuresListresponse.data;
-				fearures.renderTemplate(collection, commonVariables.contentPlaceholder);
-				
-			});
-			fearures.getFeatures = mockFeaturesList;
-			fearures.loadPageTest();
-			setTimeout(function() {
-				start();
-				equal($(commonVariables.contentPlaceholder).find("li[type = FEATURE]").attr("name"), "Pagination", "Feature list service Tested");
-			}, 2000);
-		});
-		
-		
-			asyncTest("Features inside Test", function() {
-		
-			mockFeaturesList = mockFunction();
-			when(mockFeaturesList)(anything()).then(function(arg) {
-				
-				var fearuresListresponse = {"response":null,"message":"Application Features listed successfully","exception":null,"data":[{"licenseId":null,"artifactId":"mod_pagination_1.0","classifier":null,"packaging":"zip","groupId":"modules.tech-php.files","versions":[{"scope":null,"dependencyIds":null,"appliesTo":[{"required":false,"techId":"tech-php"}],"artifactGroupId":"19574e90-0a4e-482a-934a-8360abff768c","used":false,"downloadURL":"http://172.16.17.226:8080/repository/content/groups/public//modules/tech-php/files/mod_pagination_1.0/1.0/mod_pagination_1.0-1.0.zip","fileSize":0,"version":"1.0","creationDate":1348896224750,"helpText":null,"system":false,"name":"Pagination","id":"59bdbeeb-0007-4b0f-8538-b3768e3c077d","displayName":null,"description":null,"status":null}],"appliesTo":[{"techId":"tech-php","core":false}],"imageURL":null,"type":"FEATURE","customerIds":["photon"],"used":false,"creationDate":1371627764188,"helpText":null,"system":false,"name":"Pagination","id":"19574e90-0a4e-482a-934a-8360abff768c","displayName":"Pagination","description":null,"status":null},{"licenseId":null,"artifactId":"mod_login_1.0","classifier":null,"packaging":"zip","groupId":"modules.tech-php.files","versions":[{"scope":null,"dependencyIds":null,"appliesTo":[{"required":false,"techId":"tech-php"}],"artifactGroupId":"f521ede3-2780-4799-b1e8-7d640b2c3c2b","used":false,"downloadURL":"http://172.16.17.226:8080/repository/content/groups/public//modules/tech-php/files/mod_login_1.0/1.0/mod_login_1.0-1.0.zip","fileSize":0,"version":"1.0","creationDate":1348896224734,"helpText":null,"system":false,"name":"login","id":"0af3d339-354e-4df9-8222-444042a4860f","displayName":null,"description":null,"status":null}],"appliesTo":[{"techId":"tech-php","core":false}],"imageURL":null,"type":"FEATURE","customerIds":["photon"],"used":false,"creationDate":1371627764204,"helpText":null,"system":false,"name":"login","id":"f521ede3-2780-4799-b1e8-7d640b2c3c2b","displayName":"login","description":null,"status":null},{"licenseId":null,"artifactId":"mod_blog_1.0","classifier":null,"packaging":"zip","groupId":"modules.tech-php.files","versions":[{"scope":null,"dependencyIds":null,"appliesTo":[{"required":false,"techId":"tech-php"}],"artifactGroupId":"5e7f92ad-4d13-44a7-aac5-6e17f4871509","used":false,"downloadURL":"http://172.16.17.226:8080/repository/content/groups/public//modules/tech-php/files/mod_blog_1.0/1.0/mod_blog_1.0-1.0.zip","fileSize":0,"version":"1.0","creationDate":1348896224750,"helpText":null,"system":false,"name":"Blog","id":"1136e881-d093-4211-a1ad-8c791a435276","displayName":null,"description":null,"status":null}],"appliesTo":[{"techId":"tech-php","core":false}],"imageURL":null,"type":"FEATURE","customerIds":["photon"],"used":false,"creationDate":1371627764220,"helpText":null,"system":false,"name":"Blog","id":"5e7f92ad-4d13-44a7-aac5-6e17f4871509","displayName":"Blog","description":null,"status":null},{"licenseId":null,"artifactId":"mod_weather_1.0","classifier":null,"packaging":"zip","groupId":"modules.tech-php.files","versions":[{"scope":null,"dependencyIds":["mod_commenting_system._tech_php1.0","mod_reportgenerator_tech_php1.0"],"appliesTo":[{"required":false,"techId":"tech-php"}],"artifactGroupId":"03ddfaf3-d4dd-4edb-83f4-58846c9a8fa1","used":true,"downloadURL":"http://172.16.17.226:8080/repository/content/groups/public//modules/tech-php/files/mod_weather_1.0/1.0/mod_weather_1.0-1.0.zip","fileSize":0,"version":"1.0","creationDate":1348896224750,"helpText":null,"system":false,"name":"Weather","id":"d365fb80-6bb1-41e6-a6a6-4f6f1d3b5048","displayName":null,"description":null,"status":null}],"appliesTo":[{"techId":"tech-php","core":false}],"imageURL":null,"type":"FEATURE","customerIds":["photon"],"used":false,"creationDate":1371627764220,"helpText":null,"system":false,"name":"Weather","id":"03ddfaf3-d4dd-4edb-83f4-58846c9a8fa1","displayName":"Weather","description":null,"status":null},{"licenseId":null,"artifactId":"mod_reportgenerator_1.0","classifier":null,"packaging":"zip","groupId":"modules.tech-php.files","versions":[{"scope":null,"dependencyIds":null,"appliesTo":[{"required":false,"techId":"tech-php"}],"artifactGroupId":"c85398e6-5c33-4de4-9cbd-53f626bcce07","used":true,"downloadURL":"http://172.16.17.226:8080/repository/content/groups/public//modules/tech-php/files/mod_reportgenerator_1.0/1.0/mod_reportgenerator_1.0-1.0.zip","fileSize":0,"version":"1.0","creationDate":1348896224750,"helpText":null,"system":false,"name":"ReportGenerator","id":"aa5b3b7e-6f5c-4826-8e1d-28af66ff8017","displayName":null,"description":null,"status":null}],"appliesTo":[{"techId":"tech-php","core":false}],"imageURL":null,"type":"FEATURE","customerIds":["photon"],"used":false,"creationDate":1371627764235,"helpText":null,"system":false,"name":"ReportGenerator","id":"c85398e6-5c33-4de4-9cbd-53f626bcce07","displayName":"ReportGenerator","description":null,"status":null},{"licenseId":null,"artifactId":"mod_list_files_1.0","classifier":null,"packaging":"zip","groupId":"modules.tech-php.files","versions":[{"scope":null,"dependencyIds":null,"appliesTo":[{"required":false,"techId":"tech-php"}],"artifactGroupId":"1f7e271a-9776-4d70-93db-eb8e3c60541c","used":false,"downloadURL":"http://172.16.17.226:8080/repository/content/groups/public//modules/tech-php/files/mod_list_files_1.0/1.0/mod_list_files_1.0-1.0.zip","fileSize":0,"version":"1.0","creationDate":1348896224750,"helpText":null,"system":false,"name":"List Files","id":"b715475c-09fa-4490-9d0d-929796af498d","displayName":null,"description":null,"status":null}],"appliesTo":[{"techId":"tech-php","core":false}],"imageURL":null,"type":"FEATURE","customerIds":["photon"],"used":false,"creationDate":1371627764235,"helpText":null,"system":false,"name":"List Files","id":"1f7e271a-9776-4d70-93db-eb8e3c60541c","displayName":"List Files","description":null,"status":null},{"licenseId":null,"artifactId":"mod_commenting_system._1.0","classifier":null,"packaging":"zip","groupId":"modules.tech-php.files","versions":[{"scope":null,"dependencyIds":null,"appliesTo":[{"required":false,"techId":"tech-php"}],"artifactGroupId":"43360fc4-1782-4928-8a35-1da45604c2d6","used":true,"downloadURL":"http://172.16.17.226:8080/repository/content/groups/public//modules/tech-php/files/mod_commenting_system._1.0/1.0/mod_commenting_system._1.0-1.0.zip","fileSize":0,"version":"1.0","creationDate":1348896224750,"helpText":null,"system":false,"name":"Commenting system","id":"fea9872d-bc78-4765-ace2-0e18af45d105","displayName":null,"description":null,"status":null}],"appliesTo":[{"techId":"tech-php","core":false}],"imageURL":null,"type":"FEATURE","customerIds":["photon"],"used":false,"creationDate":1371627764251,"helpText":null,"system":false,"name":"Commenting system","id":"43360fc4-1782-4928-8a35-1da45604c2d6","displayName":"Commenting system","description":null,"status":null},{"licenseId":null,"artifactId":"mod_shoutbox_1.0","classifier":null,"packaging":"zip","groupId":"modules.tech-php.files","versions":[{"scope":null,"dependencyIds":null,"appliesTo":[{"required":false,"techId":"tech-php"}],"artifactGroupId":"dc87ccbe-4ec0-4490-af4c-f282ebf021af","used":false,"downloadURL":"http://172.16.17.226:8080/repository/content/groups/public//modules/tech-php/files/mod_shoutbox_1.0/1.0/mod_shoutbox_1.0-1.0.zip","fileSize":0,"version":"1.0","creationDate":1348896224750,"helpText":null,"system":false,"name":"shoutbox","id":"443e6da2-81cd-4af2-aef3-2361a2b1b1dc","displayName":null,"description":null,"status":null}],"appliesTo":[{"techId":"tech-php","core":false}],"imageURL":null,"type":"FEATURE","customerIds":["photon"],"used":false,"creationDate":1371627764251,"helpText":null,"system":false,"name":"shoutbox","id":"dc87ccbe-4ec0-4490-af4c-f282ebf021af","displayName":"shoutbox","description":null,"status":null},{"licenseId":null,"artifactId":"mod_auto_complete_search_1.0","classifier":null,"packaging":"zip","groupId":"modules.tech-php.files","versions":[{"scope":null,"dependencyIds":null,"appliesTo":[{"required":false,"techId":"tech-php"}],"artifactGroupId":"d76b2cfb-1249-4971-951c-e08675db3943","used":false,"downloadURL":"http://172.16.17.226:8080/repository/content/groups/public//modules/tech-php/files/mod_auto_complete_search_1.0/1.0/mod_auto_complete_search_1.0-1.0.zip","fileSize":0,"version":"1.0","creationDate":1348896224750,"helpText":null,"system":false,"name":"Auto Complete search","id":"3eaf2749-103d-4776-8742-0a7c55d845b2","displayName":null,"description":null,"status":null}],"appliesTo":[{"techId":"tech-php","core":false}],"imageURL":null,"type":"FEATURE","customerIds":["photon"],"used":false,"creationDate":1371627764266,"helpText":null,"system":false,"name":"Auto Complete search","id":"d76b2cfb-1249-4971-951c-e08675db3943","displayName":"Auto Complete search","description":null,"status":null},{"licenseId":null,"artifactId":"mod_multiple_checkbox_1.0","classifier":null,"packaging":"zip","groupId":"modules.tech-php.files","versions":[{"scope":null,"dependencyIds":null,"appliesTo":[{"required":false,"techId":"tech-php"}],"artifactGroupId":"392e3ac1-0778-4ef3-af50-6ce79f47145a","used":false,"downloadURL":"http://172.16.17.226:8080/repository/content/groups/public//modules/tech-php/files/mod_multiple_checkbox_1.0/1.0/mod_multiple_checkbox_1.0-1.0.zip","fileSize":0,"version":"1.0","creationDate":1348896224750,"helpText":null,"system":false,"name":"Multiple Checkbox","id":"1764ca41-191a-4f24-9722-b6efeccafa44","displayName":null,"description":null,"status":null}],"appliesTo":[{"techId":"tech-php","core":false}],"imageURL":null,"type":"FEATURE","customerIds":["photon"],"used":false,"creationDate":1371627764266,"helpText":null,"system":false,"name":"Multiple Checkbox","id":"392e3ac1-0778-4ef3-af50-6ce79f47145a","displayName":"Multiple Checkbox","description":null,"status":null}]};
-				var collection = {};
-				collection.featureslist = fearuresListresponse.data;
-				fearures.renderTemplate(collection, commonVariables.contentPlaceholder);
-				
-			});
-			fearures.getFeatures = mockFeaturesList;
-			fearures.loadPageTest();
-			setTimeout(function() {
-				start();
-				equal($(commonVariables.contentPlaceholder).find("li[name = Blog]").attr("name"), "Blog", "Feature list service Tested");
-			}, 2000);
-		});
-		
-		
-		
-		asyncTest("Features Test", function() {
-		
-			mockFeaturesList = mockFunction();
-			when(mockFeaturesList)(anything()).then(function(arg) {
-				
-				var fearuresListresponse = {"response":null,"message":"Application Features listed successfully","exception":null,"data":[{"artifactId":"mod_pagination_1.0","classifier":null,"packaging":"zip","groupId":"modules.tech-php.files","versions":[{"scope":null,"artifactGroupId":"mod_pagination","dependencyIds":null,"appliesTo":[{"required":false,"techId":"tech-php"}],"downloadURL":"http://172.16.17.226:8080/repository/content/groups/public//modules/tech-php/files/mod_pagination_1.0/1.0/mod_pagination_1.0-1.0.zip","used":false,"fileSize":0,"version":"1.0","creationDate":1348896224750,"helpText":null,"system":false,"name":"Pagination","id":"mod_pagination_tech_php1.0","displayName":null,"description":null,"status":null}],"licenseId":"dda55a98-658b-4509-a47a-db00cec98e95","imageURL":null,"appliesTo":[{"core":false,"techId":"tech-php"}],"type":"FEATURE","used":false,"customerIds":["photon"],"creationDate":1348896224828,"helpText":"As your database grows, showing all the results of a query on a single page is no longer practical","system":true,"name":"Pagination","id":"mod_pagination","displayName":"Pagination","description":"As your database grows, showing all the results of a query on a single page is no longer practical. This is where pagination comes in handy. You can display your results over a number of pages, each linked to the next, to allow your users to browse your content in bite sized pieces. ","status":null}]};
-				var collection = {};
-				collection.featureslist = fearuresListresponse.data;
-				fearures.renderTemplate(collection, commonVariables.contentPlaceholder);
-				
-			});
-			fearures.getFeatures = mockFeaturesList;
-			fearures.loadPageTest();
-			setTimeout(function() {
-				start();
-				fearures.featuresListener.search("Pagination", "moduleContent");
-				var testval  = $(commonVariables.contentPlaceholder).find("li[name=Pagination]").attr("name");
-				equal("Pagination",testval, "Feature list Search Tested");
-			}, 2000);
-		});
-
-		asyncTest("Features Update Test", function() {
-			
-			mockFeaturesUpdate = mockFunction();
-			when(mockFeaturesUpdate)(anything()).then(function(arg) {
-				
-
-				var fearuresListresponse = {"response":null,"message":"Application Features listed successfully","exception":null,"data":[{"licenseId":null,"artifactId":"mod_pagination_1.0","classifier":null,"packaging":"zip","groupId":"modules.tech-php.files","versions":[{"scope":null,"dependencyIds":null,"appliesTo":[{"required":false,"techId":"tech-php"}],"artifactGroupId":"19574e90-0a4e-482a-934a-8360abff768c","used":false,"downloadURL":"http://172.16.17.226:8080/repository/content/groups/public//modules/tech-php/files/mod_pagination_1.0/1.0/mod_pagination_1.0-1.0.zip","fileSize":0,"version":"1.0","creationDate":1348896224750,"helpText":null,"system":false,"name":"Pagination","id":"59bdbeeb-0007-4b0f-8538-b3768e3c077d","displayName":null,"description":null,"status":null}],"appliesTo":[{"techId":"tech-php","core":false}],"imageURL":null,"type":"FEATURE","customerIds":["photon"],"used":false,"creationDate":1371627764188,"helpText":null,"system":false,"name":"Pagination","id":"19574e90-0a4e-482a-934a-8360abff768c","displayName":"Pagination","description":null,"status":null},{"licenseId":null,"artifactId":"mod_login_1.0","classifier":null,"packaging":"zip","groupId":"modules.tech-php.files","versions":[{"scope":null,"dependencyIds":null,"appliesTo":[{"required":false,"techId":"tech-php"}],"artifactGroupId":"f521ede3-2780-4799-b1e8-7d640b2c3c2b","used":false,"downloadURL":"http://172.16.17.226:8080/repository/content/groups/public//modules/tech-php/files/mod_login_1.0/1.0/mod_login_1.0-1.0.zip","fileSize":0,"version":"1.0","creationDate":1348896224734,"helpText":null,"system":false,"name":"login","id":"0af3d339-354e-4df9-8222-444042a4860f","displayName":null,"description":null,"status":null}],"appliesTo":[{"techId":"tech-php","core":false}],"imageURL":null,"type":"FEATURE","customerIds":["photon"],"used":false,"creationDate":1371627764204,"helpText":null,"system":false,"name":"login","id":"f521ede3-2780-4799-b1e8-7d640b2c3c2b","displayName":"login","description":null,"status":null},{"licenseId":null,"artifactId":"mod_blog_1.0","classifier":null,"packaging":"zip","groupId":"modules.tech-php.files","versions":[{"scope":null,"dependencyIds":null,"appliesTo":[{"required":false,"techId":"tech-php"}],"artifactGroupId":"5e7f92ad-4d13-44a7-aac5-6e17f4871509","used":false,"downloadURL":"http://172.16.17.226:8080/repository/content/groups/public//modules/tech-php/files/mod_blog_1.0/1.0/mod_blog_1.0-1.0.zip","fileSize":0,"version":"1.0","creationDate":1348896224750,"helpText":null,"system":false,"name":"Blog","id":"1136e881-d093-4211-a1ad-8c791a435276","displayName":null,"description":null,"status":null}],"appliesTo":[{"techId":"tech-php","core":false}],"imageURL":null,"type":"FEATURE","customerIds":["photon"],"used":false,"creationDate":1371627764220,"helpText":null,"system":false,"name":"Blog","id":"5e7f92ad-4d13-44a7-aac5-6e17f4871509","displayName":"Blog","description":null,"status":null},{"licenseId":null,"artifactId":"mod_weather_1.0","classifier":null,"packaging":"zip","groupId":"modules.tech-php.files","versions":[{"scope":null,"dependencyIds":["mod_commenting_system._tech_php1.0","mod_reportgenerator_tech_php1.0"],"appliesTo":[{"required":false,"techId":"tech-php"}],"artifactGroupId":"03ddfaf3-d4dd-4edb-83f4-58846c9a8fa1","used":true,"downloadURL":"http://172.16.17.226:8080/repository/content/groups/public//modules/tech-php/files/mod_weather_1.0/1.0/mod_weather_1.0-1.0.zip","fileSize":0,"version":"1.0","creationDate":1348896224750,"helpText":null,"system":false,"name":"Weather","id":"d365fb80-6bb1-41e6-a6a6-4f6f1d3b5048","displayName":null,"description":null,"status":null}],"appliesTo":[{"techId":"tech-php","core":false}],"imageURL":null,"type":"FEATURE","customerIds":["photon"],"used":false,"creationDate":1371627764220,"helpText":null,"system":false,"name":"Weather","id":"03ddfaf3-d4dd-4edb-83f4-58846c9a8fa1","displayName":"Weather","description":null,"status":null},{"licenseId":null,"artifactId":"mod_reportgenerator_1.0","classifier":null,"packaging":"zip","groupId":"modules.tech-php.files","versions":[{"scope":null,"dependencyIds":null,"appliesTo":[{"required":false,"techId":"tech-php"}],"artifactGroupId":"c85398e6-5c33-4de4-9cbd-53f626bcce07","used":true,"downloadURL":"http://172.16.17.226:8080/repository/content/groups/public//modules/tech-php/files/mod_reportgenerator_1.0/1.0/mod_reportgenerator_1.0-1.0.zip","fileSize":0,"version":"1.0","creationDate":1348896224750,"helpText":null,"system":false,"name":"ReportGenerator","id":"aa5b3b7e-6f5c-4826-8e1d-28af66ff8017","displayName":null,"description":null,"status":null}],"appliesTo":[{"techId":"tech-php","core":false}],"imageURL":null,"type":"FEATURE","customerIds":["photon"],"used":false,"creationDate":1371627764235,"helpText":null,"system":false,"name":"ReportGenerator","id":"c85398e6-5c33-4de4-9cbd-53f626bcce07","displayName":"ReportGenerator","description":null,"status":null},{"licenseId":null,"artifactId":"mod_list_files_1.0","classifier":null,"packaging":"zip","groupId":"modules.tech-php.files","versions":[{"scope":null,"dependencyIds":null,"appliesTo":[{"required":false,"techId":"tech-php"}],"artifactGroupId":"1f7e271a-9776-4d70-93db-eb8e3c60541c","used":false,"downloadURL":"http://172.16.17.226:8080/repository/content/groups/public//modules/tech-php/files/mod_list_files_1.0/1.0/mod_list_files_1.0-1.0.zip","fileSize":0,"version":"1.0","creationDate":1348896224750,"helpText":null,"system":false,"name":"List Files","id":"b715475c-09fa-4490-9d0d-929796af498d","displayName":null,"description":null,"status":null}],"appliesTo":[{"techId":"tech-php","core":false}],"imageURL":null,"type":"FEATURE","customerIds":["photon"],"used":false,"creationDate":1371627764235,"helpText":null,"system":false,"name":"List Files","id":"1f7e271a-9776-4d70-93db-eb8e3c60541c","displayName":"List Files","description":null,"status":null},{"licenseId":null,"artifactId":"mod_commenting_system._1.0","classifier":null,"packaging":"zip","groupId":"modules.tech-php.files","versions":[{"scope":null,"dependencyIds":null,"appliesTo":[{"required":false,"techId":"tech-php"}],"artifactGroupId":"43360fc4-1782-4928-8a35-1da45604c2d6","used":true,"downloadURL":"http://172.16.17.226:8080/repository/content/groups/public//modules/tech-php/files/mod_commenting_system._1.0/1.0/mod_commenting_system._1.0-1.0.zip","fileSize":0,"version":"1.0","creationDate":1348896224750,"helpText":null,"system":false,"name":"Commenting system","id":"fea9872d-bc78-4765-ace2-0e18af45d105","displayName":null,"description":null,"status":null}],"appliesTo":[{"techId":"tech-php","core":false}],"imageURL":null,"type":"FEATURE","customerIds":["photon"],"used":false,"creationDate":1371627764251,"helpText":null,"system":false,"name":"Commenting system","id":"43360fc4-1782-4928-8a35-1da45604c2d6","displayName":"Commenting system","description":null,"status":null},{"licenseId":null,"artifactId":"mod_shoutbox_1.0","classifier":null,"packaging":"zip","groupId":"modules.tech-php.files","versions":[{"scope":null,"dependencyIds":null,"appliesTo":[{"required":false,"techId":"tech-php"}],"artifactGroupId":"dc87ccbe-4ec0-4490-af4c-f282ebf021af","used":false,"downloadURL":"http://172.16.17.226:8080/repository/content/groups/public//modules/tech-php/files/mod_shoutbox_1.0/1.0/mod_shoutbox_1.0-1.0.zip","fileSize":0,"version":"1.0","creationDate":1348896224750,"helpText":null,"system":false,"name":"shoutbox","id":"443e6da2-81cd-4af2-aef3-2361a2b1b1dc","displayName":null,"description":null,"status":null}],"appliesTo":[{"techId":"tech-php","core":false}],"imageURL":null,"type":"FEATURE","customerIds":["photon"],"used":false,"creationDate":1371627764251,"helpText":null,"system":false,"name":"shoutbox","id":"dc87ccbe-4ec0-4490-af4c-f282ebf021af","displayName":"shoutbox","description":null,"status":null},{"licenseId":null,"artifactId":"mod_auto_complete_search_1.0","classifier":null,"packaging":"zip","groupId":"modules.tech-php.files","versions":[{"scope":null,"dependencyIds":null,"appliesTo":[{"required":false,"techId":"tech-php"}],"artifactGroupId":"d76b2cfb-1249-4971-951c-e08675db3943","used":false,"downloadURL":"http://172.16.17.226:8080/repository/content/groups/public//modules/tech-php/files/mod_auto_complete_search_1.0/1.0/mod_auto_complete_search_1.0-1.0.zip","fileSize":0,"version":"1.0","creationDate":1348896224750,"helpText":null,"system":false,"name":"Auto Complete search","id":"3eaf2749-103d-4776-8742-0a7c55d845b2","displayName":null,"description":null,"status":null}],"appliesTo":[{"techId":"tech-php","core":false}],"imageURL":null,"type":"FEATURE","customerIds":["photon"],"used":false,"creationDate":1371627764266,"helpText":null,"system":false,"name":"Auto Complete search","id":"d76b2cfb-1249-4971-951c-e08675db3943","displayName":"Auto Complete search","description":null,"status":null},{"licenseId":null,"artifactId":"mod_multiple_checkbox_1.0","classifier":null,"packaging":"zip","groupId":"modules.tech-php.files","versions":[{"scope":null,"dependencyIds":null,"appliesTo":[{"required":false,"techId":"tech-php"}],"artifactGroupId":"392e3ac1-0778-4ef3-af50-6ce79f47145a","used":false,"downloadURL":"http://172.16.17.226:8080/repository/content/groups/public//modules/tech-php/files/mod_multiple_checkbox_1.0/1.0/mod_multiple_checkbox_1.0-1.0.zip","fileSize":0,"version":"1.0","creationDate":1348896224750,"helpText":null,"system":false,"name":"Multiple Checkbox","id":"1764ca41-191a-4f24-9722-b6efeccafa44","displayName":null,"description":null,"status":null}],"appliesTo":[{"techId":"tech-php","core":false}],"imageURL":null,"type":"FEATURE","customerIds":["photon"],"used":false,"creationDate":1371627764266,"helpText":null,"system":false,"name":"Multiple Checkbox","id":"392e3ac1-0778-4ef3-af50-6ce79f47145a","displayName":"Multiple Checkbox","description":null,"status":null}]};
-				var collection = {};
-				collection.featureslist = fearuresListresponse.data;
-				fearures.renderTemplate(collection, commonVariables.contentPlaceholder);
-				
-			});
-			fearures.getFeatures = mockFeaturesUpdate;
-			setTimeout(function() {
-				start();
-				var response ={"message":" Selected Features listed successfully","exception":null,"data":[{"name":"login","type":"FEATURE","scope":"","packaging":"zip","artifactGroupId":"f521ede3-2780-4799-b1e8-7d640b2c3c2b","moduleId":"f521ede3-2780-4799-b1e8-7d640b2c3c2b","versionID":"0af3d339-354e-4df9-8222-444042a4860f","dispName":"login","dispValue":"1.0","canConfigure":true,"defaultModule":false},{"name":"Blog","type":"FEATURE","scope":"","packaging":"zip","artifactGroupId":"5e7f92ad-4d13-44a7-aac5-6e17f4871509","moduleId":"5e7f92ad-4d13-44a7-aac5-6e17f4871509","versionID":"1136e881-d093-4211-a1ad-8c791a435276","dispName":"Blog","dispValue":"1.0","canConfigure":true,"defaultModule":false},{"name":"jQuery","type":"JAVASCRIPT","scope":"","packaging":"zip","artifactGroupId":"65fdf4fe-7082-42f1-bea2-0d827661711b","moduleId":"65fdf4fe-7082-42f1-bea2-0d827661711b","versionID":"4f889fa1-fe7a-4dee-8ed8-fb95605dcc85","dispName":"jQuery","dispValue":"1.6.2","canConfigure":false,"defaultModule":false}],"response":null};
-
-				var responseData = response.data;
-				$.each(response.data, function(index, value){
-					$(commonVariables.contentPlaceholder).find("li[name = "+this.name+"] fieldset").addClass("switchOn").removeClass("switchOff");
-					$("#version_"+this.moduleId).show();					
+			asyncTest("Test - Feature list Module service Tested", function() {
+				$.mockjax({
+					url:  commonVariables.webserviceurl+commonVariables.featurePageContext+'/list?customerId=photon&techId=tech-html5-jquery-mobile-widget&type=FEATURE&userId=admin',
+					type:'GET',
+					contentType: 'application/json',
+					status: 200,
+					response: function() {
+						this.responseText = JSON.stringify({"response":null,"message":"Application Features listed successfully","exception":null,"data":[{"licenseId":null,"artifactId":"mod_pagination_1.0","classifier":null,"packaging":"zip","groupId":"modules.tech-php.files","versions":[{"scope":null,"dependencyIds":null,"appliesTo":[{"required":false,"techId":"tech-php"}],"artifactGroupId":"19574e90-0a4e-482a-934a-8360abff768c","used":false,"downloadURL":"http://172.16.17.226:8080/repository/content/groups/public//modules/tech-php/files/mod_pagination_1.0/1.0/mod_pagination_1.0-1.0.zip","fileSize":0,"version":"1.0","creationDate":1348896224750,"helpText":null,"system":false,"name":"Pagination","id":"59bdbeeb-0007-4b0f-8538-b3768e3c077d","displayName":null,"description":null,"status":null}],"appliesTo":[{"techId":"tech-php","core":false}],"imageURL":null,"type":"FEATURE","customerIds":["photon"],"used":false,"creationDate":1371627764188,"helpText":null,"system":false,"name":"Pagination","id":"19574e90-0a4e-482a-934a-8360abff768c","displayName":"Pagination","description":null,"status":null}]});
+					}
 				});
+				$.mockjax({
+					url:  commonVariables.webserviceurl+commonVariables.featurePageContext+'/list?customerId=photon&techId=tech-html5-jquery-mobile-widget&type=JAVASCRIPT&userId=admin',
+					type:'GET',
+					contentType: 'application/json',
+					status: 200,
+					response: function() {
+							this.responseText = JSON.stringify({"response":null,"message":"Application Features listed successfully","exception":null,"data":[{"artifactId":"jslib_jquery_ui","appliesTo":[{"techId":"tech-php","core":false},{"techId":"tech-android-hybrid","core":false},{"techId":"tech-iphone-native","core":false},{"techId":"tech-iphone-hybrid","core":false},{"techId":"tech-html5","core":false},{"techId":"tech-html5-jquery-widget","core":false},{"techId":"tech-html5-jquery-mobile-widget","core":false},{"techId":"tech-html5-mobile-widget","core":false}],"classifier":null,"packaging":"js","groupId":"jslibraries.files","versions":[{"scope":null,"dependencyIds":null,"appliesTo":[{"required":false,"techId":"tech-php"},{"required":false,"techId":"tech-android-hybrid"},{"required":false,"techId":"tech-iphone-native"},{"required":false,"techId":"tech-iphone-hybrid"}],"downloadURL":"http://172.16.17.226:8080/repository/content/groups/public//jslibraries/files/jslib_jquery_ui/1.8.16-alpha-1/jslib_jquery_ui-1.8.16-alpha-1.js","used":false,"artifactGroupId":"jslib_jquery_ui","fileSize":0,"version":"1.8.16-alpha-1","creationDate":1348931139109,"helpText":null,"system":false,"name":"jQuery_UI","id":"jslib_jquery_ui","displayName":null,"description":null,"status":null}],"licenseId":"3ae2a528-5f4c-4686-a6e7-e60968585537","imageURL":null,"type":"JAVASCRIPT","used":false,"customerIds":["photon"],"creationDate":1348931139203,"helpText":"jQuery UI is a JavaScript library that provides abstractions for low-level interaction and animation, advanced effects and high-level, themeable widgets.","system":true,"name":"jQuery_UI","id":"jslib_jquery_ui","displayName":"jQuery_UI","description":"jQuery UI is a JavaScript library that provides abstractions for low-level interaction and animation, advanced effects and high-level, themeable widgets.","status":null},{"artifactId":"jslib_xml2json","appliesTo":[{"techId":"tech-html5-jquery-mobile-widget","core":false},{"techId":"tech-html5-mobile-widget","core":false},{"techId":"tech-html5-jquery-widget","core":false},{"techId":"tech-html5-widget","core":false},{"techId":"tech-html5","core":false}],"classifier":null,"packaging":"zip","groupId":"jslibraries.files","versions":[{"scope":null,"dependencyIds":null,"appliesTo":[{"required":true,"techId":"tech-html5-jquery-mobile-widget"}],"downloadURL":"http://172.16.17.226:8080/repository/content/groups/public//jslibraries/files/jslib_xml2json/0.2.4/jslib_xml2json-0.2.4.zip","used":false,"artifactGroupId":"c2c74b7d-a6b6-4e61-b0e0-a44db1dfb3de","fileSize":0,"version":"0.2.4","creationDate":1355312572937,"helpText":null,"system":false,"name":"xml2json","id":"c4a8d772-305e-441a-993e-703e63795aac","displayName":null,"description":null,"status":null}],"licenseId":"3ae2a528-5f4c-4686-a6e7-e60968585537","imageURL":null,"type":"JAVASCRIPT","used":false,"customerIds":["photon"],"creationDate":1355312572937,"helpText":"A simple tool for taking XML data as an XML object or string and transforming it to a JSON","system":true,"name":"xml2json","id":"c2c74b7d-a6b6-4e61-b0e0-a44db1dfb3de","displayName":"xml2json","description":"A simple tool for taking XML data as an XML object or string and transforming it to a JSON","status":null}]});
+						}
+				}); 
 				
-				var output = $(commonVariables.contentPlaceholder).find("li[name = Blog] fieldset").attr("class");
-				equal(output,"switch switchOn", "Feature list Search Tested");
-			}, 2000);
-		});
+				$.mockjax({
+					url:  commonVariables.webserviceurl+commonVariables.featurePageContext+'/list?customerId=photon&techId=tech-html5-jquery-mobile-widget&type=COMPONENT&userId=admin',
+					type:'GET',
+					contentType: 'application/json',
+					status: 200,
+					response: function() {
+						this.responseText = JSON.stringify({"response":null,"message":"Application Features listed successfully","exception":null,"data":[]});
+					}
+				}); 
+				
+				(["navigation/navigation"], function(){
+				commonVariables.navListener = new Clazz.com.components.navigation.js.listener.navigationListener();
+				});
 
+				commonVariables.navListener.onMytabEvent("featurelist");				
+				setTimeout(function() {
+					start();
+					equal($(commonVariables.contentPlaceholder).find("li[type = FEATURE]").attr("name"), "Pagination", "Feature list Module service Tested");
+					self.FeatureModulelistfailureVerification();
+				}, 2000);
+			});
+		},
 		
-	}};
-	
+		FeatureModulelistfailureVerification : function (){
+			var self = this;
+			asyncTest("Test - Feature javascript list Failure service Tested", function() {
+				commonVariables.navListener.onMytabEvent("featurelist");				
+				setTimeout(function() {
+					start();
+					notEqual($(commonVariables.contentPlaceholder).find("li[type = FEATURE]").attr("name"), "Page", "Feature list Module failure service Tested");
+					self.FeatureJavascriptlistVerification();
+				}, 2000);
+			});
+		},
+		
+		
+		FeatureJavascriptlistVerification : function (){
+			var self = this;
+			asyncTest("Test - Feature javascript list service Tested", function() {
+				commonVariables.navListener.onMytabEvent("featurelist");				
+				setTimeout(function() {
+					start();
+					equal($(commonVariables.contentPlaceholder).find("li[type = JAVASCRIPT]").attr("name"), "jQuery_UI", "Feature javascript list service Tested");
+					self.FeatureJavascriptlistfailureVerification();
+				}, 2000);
+			});
+		},
+		
+		FeatureJavascriptlistfailureVerification : function (){
+			var self = this;
+			asyncTest("Test - Feature javascript list Failure service Tested", function() {
+				commonVariables.navListener.onMytabEvent("featurelist");				
+				setTimeout(function() {
+					start();
+					notEqual($(commonVariables.contentPlaceholder).find("li[type = JAVASCRIPT]").attr("name"), "jQuery", "Feature javascript list Failure service Tested");
+					self.FeatureModuleSearchVerification();
+				}, 2000);
+			});
+		},
+		FeatureModuleSearchVerification : function (){
+			var self = this;
+			asyncTest("Test - Feature Module Search Verification Tested", function() {
+				commonVariables.navListener.onMytabEvent("featurelist");
+				$('#module').val("jQuery_UI");
+				$('#module').bind("keyup");			
+				setTimeout(function() {
+					start();
+					equal($(commonVariables.contentPlaceholder).find("li[type = FEATURE]").attr("name"), "Pagination", "Feature Module Search Verification Tested");
+					self.FeatureModuleSearchFailurVerification();
+				}, 2000);
+			});
+		},
+		FeatureModuleSearchFailurVerification : function (){
+			var self = this;
+			asyncTest("Test - Feature Module Search failure Verification Tested", function() {
+				commonVariables.navListener.onMytabEvent("featurelist");
+				$('#module').val("aaaaaa");
+				$('#module').bind("keyup");			
+				setTimeout(function() {
+					start();
+					equal($(commonVariables.contentPlaceholder).find("#norecord1").text(), "No records", "Feature Module Search Failure Verification Tested");
+					self.FeatureJavascriptSearchVerification();
+				}, 2000);
+			});
+		},
+		FeatureJavascriptSearchVerification : function (){
+			var self = this;
+			asyncTest("Test - Feature Javascript Libraries Search Verification Tested", function() {
+				commonVariables.navListener.onMytabEvent("featurelist");
+				$('#jsibraries').val("jQuery_UI");
+				$('#jsibraries').bind("keyup");			
+				setTimeout(function() {
+					start();
+					equal($(commonVariables.contentPlaceholder).find("li[type = JAVASCRIPT]").attr("name"), "jQuery_UI", "Javascript Libraries Search Verification Tested");
+					self.FeatureModuleJavascriptFailurVerification();
+				}, 2000);
+			});
+		},
+		FeatureModuleJavascriptFailurVerification : function (){
+			var self = this;
+			asyncTest("Test - Javascript Libraries Search failure Verification Tested", function() {
+				commonVariables.navListener.onMytabEvent("featurelist");
+				$('#jsibraries').val("aaaaaaffd");
+				$('#jsibraries').bind("keyup");			
+				setTimeout(function() {
+					start();
+					equal($(commonVariables.contentPlaceholder).find("#norecord2").text(), "No records", " Javascript Libraries Search Failure Verification Tested");
+					self.FeatureModuleDescriptionVerification();
+				}, 2000);
+			});
+		},
+		FeatureModuleDescriptionVerification : function (){
+			var self = this;
+			asyncTest("Test - Module Description Service Verification Tested", function() {
+				$.mockjax({
+					url:  commonVariables.webserviceurl+commonVariables.featurePageContext+'/desc?&artifactGroupId=c2c74b7d-a6b6-4e61-b0e0-a44db1dfb3de&userId=admin',					
+					type:'GET',
+					contentType: 'application/json',
+					status: 200,
+					response: function() {
+						this.responseText = JSON.stringify({"response": null,"message": "Application Features listed successfully","exception": null,"data": "JDOM is a way to represent an XML document for easy and efficient reading, manipulation, and writing."});
+					}
+				});
+				$.mockjax({
+					url:  commonVariables.webserviceurl+commonVariables.featurePageContext+'/desc?&artifactGroupId=19574e90-0a4e-482a-934a-8360abff768c&userId=admin',					
+					type:'GET',
+					contentType: 'application/json',
+					status: 200,
+					response: function() {
+						this.responseText = JSON.stringify({"response": null,"message": "Application Features listed successfully","exception": null,"data": "As your database grows, showing all the results of a query on a single page is no longer practical. This is where pagination comes in handy. You can display your results over a number of pages, each linked to the next, to allow your users to browse your content in bite sized pieces."});
+					}
+				});
+				$.mockjax({
+					url:  commonVariables.webserviceurl+commonVariables.featurePageContext+'/desc?&artifactGroupId=jslib_jquery_ui&userId=admin',					
+					type:'GET',
+					contentType: 'application/json',
+					status: 200,
+					response: function() {
+						this.responseText = JSON.stringify({"response": null,"message": "Application Features listed successfully","exception": null,"data": "jQuery UI is a JavaScript library that provides abstractions for low-level interaction and animation, advanced effects and high-level, themeable widgets."});
+					}
+				});
+				commonVariables.navListener.onMytabEvent("featurelist");
+				$('.featureinfo_img').click();						
+				setTimeout(function() { 
+					start();					
+					var desc = $(commonVariables.contentPlaceholder).find(".features_desc_content").text();
+					equal(desc, "JDOM is a way to represent an XML document for easy and efficient reading, manipulation, and writing.", " Module Description Service Verification Tested");
+					self.FeatureUpdateVerification();
+				}, 2000);
+			});
+		},
+		FeatureUpdateVerification : function (){
+			var self = this;
+			asyncTest("Test - Module Update Service Verification Tested", function() {
+				$.mockjax({
+					url:  commonVariables.webserviceurl+commonVariables.projectlistContext + "/updateFeature?customerId=photon&userId=admin&appDirName=wordpress-WordPress",
+					type:'PUT',
+					contentType: 'application/json',
+					status: 200,
+					response: function() {
+						this.responseText = JSON.stringify({"response": null,"message": "Update Features listed successfully","exception": null,"data": null});
+					}
+				});
+				$.mockjax({
+					url:  commonVariables.webserviceurl+commonVariables.featurePageContext + "/selectedFeature?&userId=admin&appDirName=wordpress-WordPress",
+					type:'GET',
+					contentType: 'application/json',
+					status: 200,
+					response: function() {
+						this.responseText = JSON.stringify({"response": null,"message": "Update Features listed successfully","exception": null,"data": null});
+					}
+				});
+				var featuresAPI = new Clazz.com.components.features.js.api.FeaturesAPI();
+				featuresAPI.localVal.setSession("appDirName" , "wordpress-WordPress");
+				
+				commonVariables.navListener.onMytabEvent("featurelist");
+				$('#featureUpdate').click();		
+				setTimeout(function() { 
+					start();
+					//var successmsg = $(".popsuccess").text();
+					var selectoption = $(commonVariables.contentPlaceholder).find("#feature_c2c74b7d-a6b6-4e61-b0e0-a44db1dfb3de").attr("class");
+					equal(selectoption, "switch switchOn", " Select Service Verification Tested");
+					self.FeatureSelectVerification();
+				}, 2000);
+			});
+		},
+		
+		FeatureSelectVerification : function (){
+			var self = this;
+			asyncTest("Test - Select Service Verification Tested", function() {
+				$.mockjax({
+					url:  commonVariables.webserviceurl+commonVariables.featurePageContext + "/selectedFeature?&userId=admin&appDirName=wordpress-WordPress",
+					type:'GET',
+					contentType: 'application/json',
+					status: 200,
+					response: function() {
+						this.responseText = JSON.stringify({"response":null,"message":"Features updated successfully","exception":null,"data":null});
+					}
+				});
+				var featuresAPI = new Clazz.com.components.features.js.api.FeaturesAPI();
+				featuresAPI.localVal.setSession("appDirName" , "wordpress-WordPress");				
+				commonVariables.navListener.onMytabEvent("featurelist");
+				$('#featureUpdate').click();		
+				setTimeout(function() { 
+					start();					
+					var selectoption = $(commonVariables.contentPlaceholder).find("#feature_c2c74b7d-a6b6-4e61-b0e0-a44db1dfb3de").attr("class");
+					equal(selectoption, "switch switchOn", " Select Service Verification Tested");
+					self.FeatureSelectFailureVerification();
+				}, 2000);
+			});
+		},
+		FeatureSelectFailureVerification : function (){
+			var self = this;
+			asyncTest("Test - UnSelect Service option Verification Tested", function() {
+				$.mockjax({
+					url:  commonVariables.webserviceurl+commonVariables.featurePageContext + "/selectedFeature?&userId=admin&appDirName=wordpress-WordPress",
+					type:'GET',
+					contentType: 'application/json',
+					status: 200,
+					response: function() {
+						this.responseText = JSON.stringify({"response": null,"message": "Update Features listed successfully","exception": null,"data": null});
+					}
+				});
+				var featuresAPI = new Clazz.com.components.features.js.api.FeaturesAPI();
+				featuresAPI.localVal.setSession("appDirName" , "wordpress-WordPress");				
+				commonVariables.navListener.onMytabEvent("featurelist");
+				$('#featureUpdate').click();		
+				setTimeout(function() { 
+					start();	
+					var unselectoption = $(commonVariables.contentPlaceholder).find("#feature_jslib_jquery_ui").attr("class");
+					equal(unselectoption, "switch switchOff", "UnSelect Service option Verification Tested");
+				}, 2000);
+			});
+		}
+	};
 });

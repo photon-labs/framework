@@ -169,58 +169,6 @@ var commonVariables = {
 	contentPlaceholder : $("<content\\:widget></content\\:widget>"),
 	footerPlaceholder : $("<footer\\:widget></footer\\:widget>"),
 	
-	openccmini : function(e,place) {
-		var clicked = $(e);
-		var target = $("#" + place);
-		var twowidth = window.innerWidth/1.5;;
-
-		if (clicked.offset().left < twowidth) {	
-			$(target).toggle();
-			var t=clicked.offset().top - target.height()/2 + 10;
-			var l=clicked.offset().left + clicked.width()+ 15;
-			$(target).offset({
-				top: t,
-				left: l
-			});
-			
-			$(target).addClass('speakstyleleft').removeClass('speakstyleright');
-			$(".header_section").css("z-index","4");
-			$(".content_title").css("z-index","4");
-			$(".optiontitle").css("z-index","0");
-		}
-		else {
-			$(target).toggle();
-			var t=clicked.offset().top - target.height()/2 + 10;
-			var l=clicked.offset().left - (target.width()+15);
-			$(target).offset({
-				top: t,
-				left: l
-			});
-			
-			$(target).addClass('speakstyleright').removeClass('speakstyleleft');
-			$(".header_section").css("z-index","4");
-			$(".content_title").css("z-index","4");
-			$(".optiontitle").css("z-index","0");
-
-		}
-		
-		$(document).keyup(function(e) {
-			if(e.which === 27){
-				$("#" + place).hide();
-				$(".header_section").css("z-index","7");
-				$(".content_title").css("z-index","6");
-				$(".optiontitle").css("z-index","1");
-			}
-		});
-		
-		$('.dyn_popup_close').click( function() {
-			$("#" + place).hide();
-			$(".header_section").css("z-index","7");
-			$(".content_title").css("z-index","6");
-			$(".optiontitle").css("z-index","1");
-		});
-	},
-	
 	getParameterByName : function (name) {
 		name = name.replace(/[\[]/, "\\\[").replace(/[\]]/, "\\\]");
 		var regex = new RegExp("[\\?&]" + name + "=([^&#]*)"),	results = regex.exec(location.search);
