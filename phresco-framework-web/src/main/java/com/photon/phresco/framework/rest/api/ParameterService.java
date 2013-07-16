@@ -17,9 +17,12 @@
  */
 package com.photon.phresco.framework.rest.api;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.InetAddress;
 import java.net.URL;
@@ -44,13 +47,13 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.xml.parsers.ParserConfigurationException;
 
+import org.antlr.stringtemplate.StringTemplate;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.xml.sax.SAXException;
 
-import com.google.gson.Gson;
 import com.photon.phresco.api.DynamicPageParameter;
 import com.photon.phresco.api.DynamicParameter;
 import com.photon.phresco.commons.FrameworkConstants;
@@ -66,7 +69,7 @@ import com.photon.phresco.framework.PhrescoFrameworkFactory;
 import com.photon.phresco.framework.commons.FrameworkUtil;
 import com.photon.phresco.framework.model.CodeValidationReportType;
 import com.photon.phresco.framework.model.DependantParameters;
-import com.photon.phresco.framework.model.RepoDetail;
+import com.photon.phresco.framework.model.PerformanceDetails;
 import com.photon.phresco.framework.param.impl.IosTargetParameterImpl;
 import com.photon.phresco.framework.rest.api.util.FrameworkServiceUtil;
 import com.photon.phresco.plugins.model.Mojos.Mojo.Configuration.Parameters.Parameter;
@@ -88,9 +91,10 @@ import com.sun.jersey.api.client.ClientResponse.Status;
  */
 @Path("/parameter")
 public class ParameterService extends RestBase implements FrameworkConstants, ServiceConstants {
-
 	private static Map<String, PhrescoDynamicLoader> pdlMap = new HashMap<String, PhrescoDynamicLoader>();
 	private static Map<String, Map<String, DependantParameters>> valueMap = new HashMap<String, Map<String, DependantParameters>>();
+	private static Map<String, List<PerformanceDetails>> templateMap = new HashMap<String, List<PerformanceDetails>>();
+	private static String SUCCESS = "success";
 	
 	/**
 	 * Gets the parameter.
@@ -124,21 +128,21 @@ public class ParameterService extends RestBase implements FrameworkConstants, Se
 				setPossibleValuesInReq(mojo, appInfo, parameters, watcherMap, goal, userId, customerId, buildNumber);
 				
 				ResponseInfo<List<Parameter>> finalOutput = responseDataEvaluation(responseData, null,
-						"Parameter returned successfully", parameters);
-				return Response.ok(finalOutput).header("Access-Control-Allow-Origin", "*").build();
+						PARAMETER_RETURNED_SUCCESSFULLY, parameters);
+				return Response.ok(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, ALL_HEADER).build();
 			}
 			ResponseInfo<List<Parameter>> finalOutput = responseDataEvaluation(responseData, null,
-					"No Parameter Available", null);
-			return Response.ok(finalOutput).header("Access-Control-Allow-Origin", "*").build();
+					NO_PARAMETER_AVAILABLE, null);
+			return Response.ok(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, ALL_HEADER).build();
 		} catch (PhrescoException e) {
 			ResponseInfo<List<Parameter>> finalOutput = responseDataEvaluation(responseData, e,
-					"Parameter not fetched", null);
-			return Response.status(Status.BAD_REQUEST).entity(finalOutput).header("Access-Control-Allow-Origin", "*")
+					PARAMETER_NOT_FETCHED, null);
+			return Response.status(Status.BAD_REQUEST).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, ALL_HEADER)
 					.build();
 		} catch (PhrescoPomException e) {
 			ResponseInfo<List<Parameter>> finalOutput = responseDataEvaluation(responseData, e,
-					"Parameter not fetched", null);
-			return Response.status(Status.BAD_REQUEST).entity(finalOutput).header("Access-Control-Allow-Origin", "*")
+					PARAMETER_NOT_FETCHED, null);
+			return Response.status(Status.BAD_REQUEST).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, ALL_HEADER)
 					.build();
 		}
 	}
@@ -161,12 +165,12 @@ public class ParameterService extends RestBase implements FrameworkConstants, Se
 			String filePath = getInfoFileDir(appDirName, goal, phase);
 			File file = new File(filePath);
 			String xml = IOUtils.toString(new FileInputStream(file));
-			ResponseInfo finalOutput = responseDataEvaluation(responseData, null, "Parameter returned successfully",
+			ResponseInfo finalOutput = responseDataEvaluation(responseData, null, PARAMETER_RETURNED_SUCCESSFULLY,
 					xml);
-			return Response.status(200).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
+			return Response.status(200).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, ALL_HEADER).build();
 		} catch (Exception e) {
-			ResponseInfo finalOutput = responseDataEvaluation(responseData, e, "Parameter not fetched", null);
-			return Response.status(Status.BAD_REQUEST).entity(finalOutput).header("Access-Control-Allow-Origin", "*")
+			ResponseInfo finalOutput = responseDataEvaluation(responseData, e, PARAMETER_NOT_FETCHED, null);
+			return Response.status(Status.BAD_REQUEST).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, ALL_HEADER)
 					.build();
 		}
 	}
@@ -193,12 +197,12 @@ public class ParameterService extends RestBase implements FrameworkConstants, Se
 			watcherMap.put(key, currentParameters);
 			valueMap.put(applicationInfo.getId() + goal, watcherMap);
 			ResponseInfo<String> finalOutput = responseDataEvaluation(responseData, null,
-					"Map updated successfully", "success");
-			return Response.ok(finalOutput).header("Access-Control-Allow-Origin", "*").build();
+					MAP_UPDATED_SUCCESSFULLY, SUCCESS);
+			return Response.ok(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, ALL_HEADER).build();
 		} catch (PhrescoException e) {
 			ResponseInfo<PossibleValues> finalOutput = responseDataEvaluation(responseData, e,
-					"Map not updated", "failure");
-			return Response.status(Status.BAD_REQUEST).entity(finalOutput).header("Access-Control-Allow-Origin", "*")
+					MAP_NOT_UPDATED, FAILURE);
+			return Response.status(Status.BAD_REQUEST).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, ALL_HEADER)
 					.build();
 		} 
 	}
@@ -222,8 +226,9 @@ public class ParameterService extends RestBase implements FrameworkConstants, Se
 			@QueryParam(REST_QUERY_CUSTOMERID) String customerId, @QueryParam(REST_QUERY_USERID) String userId,
 			@QueryParam(REST_QUERY_GOAL) String goal, @QueryParam(REST_QUERY_KEY) String key, 
 			@QueryParam(REST_QUERY_PHASE) String phase) {
-		ResponseInfo<List<Value>> responseData = new ResponseInfo<List<Value>>();
+		ResponseInfo responseData = new ResponseInfo();
 		PossibleValues possibleValues = null;
+		ResponseInfo finalOutput = new ResponseInfo();
 		try {
 			
 			ApplicationInfo applicationInfo = FrameworkServiceUtil.getApplicationInfo(appDirName);
@@ -237,17 +242,26 @@ public class ParameterService extends RestBase implements FrameworkConstants, Se
             List<Value> dependentPossibleValues = new ArrayList<Value>();
             if (TYPE_DYNAMIC_PARAMETER.equalsIgnoreCase(dependentParameter.getType()) && dependentParameter.getDynamicParameter() != null) {
             	dependentPossibleValues = getDynamicPossibleValues(constructMapForDynVals, dependentParameter, userId, customerId);
+            	 finalOutput = responseDataEvaluation(responseData, null,
+    					DEPENDENCY_RETURNED_SUCCESSFULLY, dependentPossibleValues);
+            } else if (TYPE_DYNAMIC_PAGE_PARAMETER.equalsIgnoreCase(dependentParameter.getType()) && dependentParameter.getDynamicParameter() != null) {
+            	Map<String, Object> dynamicPageParameterMap = getDynamicPageParameter(applicationInfo, watcherMap, dependentParameter, userId, customerId);
+    			List<? extends Object> dynamicPageParameter = (List<? extends Object>) dynamicPageParameterMap.get(REQ_VALUES_FROM_JSON);
+    			List<PerformanceDetails> templateDetails = (List<PerformanceDetails>) dynamicPageParameter;
+    			templateMap.put(applicationInfo.getId() + dependentParameter.getKey(), templateDetails);
+    			StringTemplate constructDynamicTemplate = new StringTemplate();
+    			constructDynamicTemplate = constructDynamicTemplate(customerId, userId, dependentParameter, templateDetails);
+    			 finalOutput = responseDataEvaluation(responseData, null,
+    					DEPENDENCY_RETURNED_SUCCESSFULLY, constructDynamicTemplate.toString());
             }
             
             updateDynamicValuesToWathcer(goal, key, applicationInfo, watcherMap, dependentParameter, dependentPossibleValues);
             
-			ResponseInfo<PossibleValues> finalOutput = responseDataEvaluation(responseData, null,
-					"Dependency returned successfully", dependentPossibleValues);
-			return Response.ok(finalOutput).header("Access-Control-Allow-Origin", "*").build();
-		} catch (PhrescoException e) {
-			ResponseInfo<PossibleValues> finalOutput = responseDataEvaluation(responseData, e,
-					"Dependency not fetched", null);
-			return Response.status(Status.BAD_REQUEST).entity(finalOutput).header("Access-Control-Allow-Origin", "*")
+			return Response.ok(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, ALL_HEADER).build();
+		} catch (Exception e) {
+			 finalOutput = responseDataEvaluation(responseData, new PhrescoException(e),
+					DEPENDENCY_NOT_FETCHED, null);
+			return Response.status(Status.BAD_REQUEST).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, ALL_HEADER)
 					.build();
 		}
 	}
@@ -293,8 +307,8 @@ public class ParameterService extends RestBase implements FrameworkConstants, Se
 			if (responseCode != 200) {
 				ResponseInfo<PossibleValues> finalOutput = responseDataEvaluation(responseData, null,
 						"Sonar not yet Started", null);
-				return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin",
-						"*").build();
+				return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN,
+						ALL_HEADER).build();
 			}
 			String infoFileDir = getInfoFileDir(appDirName, goal, phase);
 			ApplicationInfo appInfo = FrameworkServiceUtil.getApplicationInfo(appDirName);
@@ -328,17 +342,17 @@ public class ParameterService extends RestBase implements FrameworkConstants, Se
 				codeValidationReportTypes.add(codeValidationReportType);
 			}
 			ResponseInfo<CodeValidationReportType> finalOutput = responseDataEvaluation(responseData, null,
-					"Dependency returned successfully", codeValidationReportTypes);
-			return Response.ok(finalOutput).header("Access-Control-Allow-Origin", "*").build();
+					DEPENDENCY_RETURNED_SUCCESSFULLY, codeValidationReportTypes);
+			return Response.ok(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, ALL_HEADER).build();
 		} catch (PhrescoException e) {
 			ResponseInfo<PossibleValues> finalOutput = responseDataEvaluation(responseData, e,
-					"Dependency not fetched", null);
-			return Response.status(Status.BAD_REQUEST).entity(finalOutput).header("Access-Control-Allow-Origin", "*")
+					DEPENDENCY_NOT_FETCHED, null);
+			return Response.status(Status.BAD_REQUEST).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, ALL_HEADER)
 					.build();
 		} catch (PhrescoPomException e) {
 			ResponseInfo<PossibleValues> finalOutput = responseDataEvaluation(responseData, e,
-					"Dependency not fetched", null);
-			return Response.status(Status.BAD_REQUEST).entity(finalOutput).header("Access-Control-Allow-Origin", "*")
+					DEPENDENCY_NOT_FETCHED, null);
+			return Response.status(Status.BAD_REQUEST).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, ALL_HEADER)
 					.build();
 		}
 	}
@@ -392,23 +406,19 @@ public class ParameterService extends RestBase implements FrameworkConstants, Se
 					sb.append(FrameworkConstants.FORWARD_SLASH);
 					sb.append(INDEX_HTML);
 					ResponseInfo<String> finalOutput = responseDataEvaluation(responseData, null,
-							"Dependency returned successfully", sb.toString());
-					return Response.ok(finalOutput).header("Access-Control-Allow-Origin", "*").build();
+							DEPENDENCY_RETURNED_SUCCESSFULLY, sb.toString());
+					return Response.ok(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, ALL_HEADER).build();
 				} else {
 					ResponseInfo<PossibleValues> finalOutput = responseDataEvaluation(responseData, null,
-							"Dependency not fetched", null);
+							DEPENDENCY_NOT_FETCHED, null);
 					return Response.status(Status.BAD_REQUEST).entity(finalOutput).header(
-							"Access-Control-Allow-Origin", "*").build();
+							ACCESS_CONTROL_ALLOW_ORIGIN, ALL_HEADER).build();
 				}
 			}
 			String serverUrl = "";
 			FrameworkUtil frameworkUtil = new FrameworkUtil(request);
 			serverUrl = frameworkUtil.getSonarHomeURL();
 			StringBuilder reportPath = new StringBuilder(FrameworkServiceUtil.getApplicationHome(appDirName));
-			// if (StringUtils.isNotEmpty(getSelectedModule())) {
-			// reportPath.append(File.separatorChar);
-			// reportPath.append(getSelectedModule());
-			// }
 			if (StringUtils.isNotEmpty(validateAgainst) && FUNCTIONALTEST.equals(validateAgainst)) {
 				reportPath.append(frameworkUtil.getFunctionalTestDir(appInfo));
 			}
@@ -435,8 +445,8 @@ public class ParameterService extends RestBase implements FrameworkConstants, Se
 			if (responseCode != 200) {
 				ResponseInfo<PossibleValues> finalOutput = responseDataEvaluation(responseData, null,
 						"Report not available", null);
-				return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin",
-						"*").build();
+				return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN,
+						ALL_HEADER).build();
 			}
 			Map<String, String> theme = customer.getFrameworkTheme();
 			if (MapUtils.isNotEmpty(theme)) {
@@ -449,28 +459,28 @@ public class ParameterService extends RestBase implements FrameworkConstants, Se
 			}
 		} catch (PhrescoException e) {
 			ResponseInfo<PossibleValues> finalOutput = responseDataEvaluation(responseData, e,
-					"Dependency not fetched", null);
-			return Response.status(Status.BAD_REQUEST).entity(finalOutput).header("Access-Control-Allow-Origin", "*")
+					DEPENDENCY_NOT_FETCHED, null);
+			return Response.status(Status.BAD_REQUEST).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, ALL_HEADER)
 					.build();
 		} catch (PhrescoPomException e) {
 			ResponseInfo<PossibleValues> finalOutput = responseDataEvaluation(responseData, e,
-					"Dependency not fetched", null);
-			return Response.status(Status.BAD_REQUEST).entity(finalOutput).header("Access-Control-Allow-Origin", "*")
+					DEPENDENCY_NOT_FETCHED, null);
+			return Response.status(Status.BAD_REQUEST).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, ALL_HEADER)
 					.build();
 		} catch (UnknownHostException e) {
 			ResponseInfo<PossibleValues> finalOutput = responseDataEvaluation(responseData, e,
-					"Dependency not fetched", null);
-			return Response.status(Status.BAD_REQUEST).entity(finalOutput).header("Access-Control-Allow-Origin", "*")
+					DEPENDENCY_NOT_FETCHED, null);
+			return Response.status(Status.BAD_REQUEST).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, ALL_HEADER)
 					.build();
 		} catch (IOException e) {
 			ResponseInfo<PossibleValues> finalOutput = responseDataEvaluation(responseData, e,
-					"Dependency not fetched", null);
-			return Response.status(Status.BAD_REQUEST).entity(finalOutput).header("Access-Control-Allow-Origin", "*")
+					DEPENDENCY_NOT_FETCHED, null);
+			return Response.status(Status.BAD_REQUEST).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, ALL_HEADER)
 					.build();
 		}
 		ResponseInfo<String> finalOutput = responseDataEvaluation(responseData, null,
-				"Dependency returned successfully", sb.toString());
-		return Response.ok(finalOutput).header("Access-Control-Allow-Origin", "*").build();
+				DEPENDENCY_RETURNED_SUCCESSFULLY, sb.toString());
+		return Response.ok(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, ALL_HEADER).build();
 	}
 
 	/**
@@ -684,7 +694,8 @@ public class ParameterService extends RestBase implements FrameworkConstants, Se
                     } else if(TYPE_DYNAMIC_PAGE_PARAMETER.equalsIgnoreCase(parameter.getType())) {
             			Map<String, Object> dynamicPageParameterMap = getDynamicPageParameter(appInfo, watcherMap, parameter, userId, customerId);
             			List<? extends Object> dynamicPageParameter = (List<? extends Object>) dynamicPageParameterMap.get(REQ_VALUES_FROM_JSON);
-            			String className = (String) dynamicPageParameterMap.get(REQ_CLASS_NAME);
+            			List<PerformanceDetails> templateDetails = (List<PerformanceDetails>) dynamicPageParameter;
+            			templateMap.put(appInfo.getId() + parameter.getKey(), templateDetails);
             		}
                 }
                 
@@ -694,6 +705,50 @@ public class ParameterService extends RestBase implements FrameworkConstants, Se
         	throw new PhrescoException(e);
         }
     }
+	
+	/**
+	 * Gets the parameter.
+	 *
+	 * @param appDirName the app dir name
+	 * @param goal the goal
+	 * @param phase the phase
+	 * @return the parameter
+	 */
+	@GET
+	@Path("/template")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response getTemplate(@QueryParam(REST_QUERY_APPDIR_NAME) String appDirName,
+			@QueryParam(REST_QUERY_GOAL) String goal, @QueryParam(REST_QUERY_PHASE) String phase, 
+			@QueryParam(REST_QUERY_USERID) String userId, @QueryParam(REST_QUERY_CUSTOMERID) String customerId, @QueryParam("parameterKey") String parameterKey) {
+		ResponseInfo<String> responseData = new ResponseInfo<String>();
+		try {
+			ApplicationInfo appInfo = FrameworkServiceUtil.getApplicationInfo(appDirName);
+			List<Parameter> parameters = null;
+			StringTemplate constructDynamicTemplate = new StringTemplate();
+			String filePath = getInfoFileDir(appDirName, goal, phase);
+			File file = new File(filePath);
+			if (file.exists()) {
+				MojoProcessor mojo = new MojoProcessor(file);
+				if (Constants.PHASE_FUNCTIONAL_TEST.equals(goal)) {
+					String functionalTestFramework = FrameworkServiceUtil.getFunctionalTestFramework(appDirName);
+					goal = goal + HYPHEN + functionalTestFramework;
+				}
+				parameters = mojo.getParameters(goal);
+				Parameter templateParameter = mojo.getParameter(goal, parameterKey);
+				List<PerformanceDetails> performanceDetails = templateMap.get(appInfo.getId() + parameterKey);
+				constructDynamicTemplate = constructDynamicTemplate(customerId, userId, templateParameter, performanceDetails);
+			}
+			ResponseInfo<String> finalOutput = responseDataEvaluation(responseData, null,
+					"Template content returned succesfully", constructDynamicTemplate.toString());
+			return Response.ok(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, ALL_HEADER).build();
+
+		} catch (Exception e) {
+			ResponseInfo<String> finalOutput = responseDataEvaluation(responseData, e,
+					"Template content not fetched", null);
+			return Response.status(Status.BAD_REQUEST).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, ALL_HEADER)
+					.build();
+		}
+	}
 	
 	/**
 	 * gets the DynamicPageParameter
@@ -739,6 +794,55 @@ public class ParameterService extends RestBase implements FrameworkConstants, Se
 		
 		return dynamicPageParameter.getObjects(paramsMap);
 	}
+	
+	 public StringTemplate constructDynamicTemplate(String CustomerId, String userId, Parameter parameter, List<? extends Object> obj) throws IOException {
+	    	try {
+	    		StringBuilder sb = new StringBuilder();
+	    		String line;
+	    		ServiceManager serviceManager = CONTEXT_MANAGER_MAP.get(userId);
+	    		Customer customer = serviceManager.getCustomer(CustomerId);
+	    		RepoInfo repoInfo = customer.getRepoInfo();
+	    		List<ArtifactGroup> artifactGroups = new ArrayList<ArtifactGroup>();
+	    		ArtifactGroup artifactGroup = new ArtifactGroup();
+	    		artifactGroup.setGroupId(parameter.getDynamicParameter().getDependencies().getDependency().getGroupId());
+	    		artifactGroup.setArtifactId(parameter.getDynamicParameter().getDependencies().getDependency().getArtifactId());
+	    		artifactGroup.setPackaging(parameter.getDynamicParameter().getDependencies().getDependency().getType());
+	    		//to set version
+	    		List<ArtifactInfo> artifactInfos = new ArrayList<ArtifactInfo>();
+	    		ArtifactInfo artifactInfo = new ArtifactInfo();
+	    		artifactInfo.setVersion(parameter.getDynamicParameter().getDependencies().getDependency().getVersion());
+	    		artifactInfos.add(artifactInfo);
+	    		artifactGroup.setVersions(artifactInfos);
+	    		artifactGroups.add(artifactGroup);
+	    		//dynamically loads Template Stream 
+	    		PhrescoDynamicLoader phrescoDynamicLoader = new PhrescoDynamicLoader(repoInfo, artifactGroups);
+	    		InputStream fileStream = phrescoDynamicLoader.getResourceAsStream(parameter.getKey()+".st");
+	    		BufferedReader br = new BufferedReader(new InputStreamReader(fileStream));
+	    		while ((line = br.readLine()) != null) {
+	    			sb.append(line);
+	    		} 
+	    		
+	    		StringTemplate stringTemplate = new StringTemplate(sb.toString());
+	    		if (CollectionUtils.isNotEmpty(obj)) {
+	    			stringTemplate.setAttribute("myObject", obj);
+	    		} else {
+	    			stringTemplate.setAttribute("myObject", "");
+	    		}
+	    		
+	    		return stringTemplate;
+	    	} catch (Exception e) {
+	    	}
+
+	    	return null;
+	    }
+	 
+	 private static String getDynamicTemplateWholeDiv() {
+	    	StringBuilder sb = new StringBuilder();
+	    	sb.append("<div class='$templateClass$' id='$templateId$'> $templateDesign$")
+	    	.append("<input type='hidden' name='objectClass' value='$className$'/></div>");
+	    	
+	    	return sb.toString();
+	    }
 	
 	/**
 	 * constructMapForDynVals

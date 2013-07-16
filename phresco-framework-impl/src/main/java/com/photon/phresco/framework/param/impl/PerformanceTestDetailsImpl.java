@@ -39,6 +39,8 @@ import com.phresco.pom.util.PomProcessor;
 
 public class PerformanceTestDetailsImpl implements DynamicPageParameter, Constants {
     
+	private static final String VALUES_FROM_JSON = "valuesFromJson";
+
 	@Override
     public Map<String, Object> getObjects(Map<String, Object> paramsMap) throws PhrescoException {
 		 Reader read = null;
@@ -60,7 +62,7 @@ public class PerformanceTestDetailsImpl implements DynamicPageParameter, Constan
             	}
             }
             resultMap.put("className", performanceDetail.getClass().getName());
-            resultMap.put("valuesFromJson", performanceDetails);
+            resultMap.put(VALUES_FROM_JSON, performanceDetails);
 
             return resultMap;
 		 } catch(Exception e){

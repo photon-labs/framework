@@ -156,6 +156,11 @@ define(["projects/api/projectsAPI"], function() {
 					header.requestMethod = "GET";
 					header.webserviceurl = commonVariables.webserviceurl + "technology/apptypes?userId="+userId+"&customerId="+self.getCustomer();
 				}
+				
+				if(action === "pilotlist"){
+					header.requestMethod = "GET";
+					header.webserviceurl = commonVariables.webserviceurl + "pilot/prebuilt?userId="+userId+"&customerId="+self.getCustomer();
+				}
 
 				return header;
 		},
@@ -818,28 +823,167 @@ define(["projects/api/projectsAPI"], function() {
 		},
 		
 		pilotprojectsEvent : function() {
+			var self=this;
 			$("select[name='prebuiltapps']").hide();
 			$("select[name='builtmyself']").bind('change', function(){
-				var selectedText = $(this).find(':selected').text();
-				if(selectedText === "Pre Built"){
-					 $("select[name='prebuiltapps']").css('display' , 'inline-block');
+				var selectedText = $(this).find(':selected').val();
+				if(selectedText === "prebuilt"){
+					 $("tr[name=applicationLayer]").hide();
+					 $("tr.applnLayer").hide();	
+					 $("tr[name=web-Layer]").hide();
+					 $("tr.webLayer").hide();	
+					 $("tr[name=mobile-Layer]").hide();
+					 $("tr.mobLayer").hide();	
 					 $("input[name='startdate']").attr("disabled", true);
 					 $("input[name='enddate']").attr("disabled", true);
 					 $("select[name='builtmyselfapps']").hide();
 					 $("#applicationlayer").hide();
+					 $("a[name=addApplnLayer]").hide();
+					 $("a[name=addWebLayer]").hide();
+					 $("a[name=addMobileLayer]").hide();
 					 $("#weblayer").hide();
 					 $("#mobilelayer").hide();
+					 self.setPilotData(function(Option){
+						$("select[name='prebuiltapps']").css('display' , 'inline-block');
+						$("select[name='prebuiltapps']").html(Option);
+						var selectedPilot = $("select[name='prebuiltapps']").find(':selected').text();
+						self.layerRender(selectedPilot);
+					 });
 				} else {
+					 $("tr[name=applicationLayer]").show();
+					 $("tr.applnLayer").show();	
+					 $("tr[name=web-Layer]").show();
+					 $("tr.webLayer").show();	
+					 $("tr[name=mobile-Layer]").show();
+					 $("tr.mobLayer").show();	
 					 $("select[name='builtmyselfapps']").css('display' , 'inline-block');
 					 $("input[name='startdate']").attr("disabled", false);
 					 $("input[name='enddate']").attr("disabled", false);
 					 $("select[name='prebuiltapps']").hide();
 					 $("#applicationlayer").show();
 					 $("#weblayer").show();
-					 $("#mobilelayer").show();	
+					 $("#mobilelayer").show();
+					 $("a[name=addApplnLayer]").show();
+					 $("a[name=addWebLayer]").show();
+					 $("a[name=addMobileLayer]").show();
+					 $("#appcode").val('');
+					 $("#webappcode").val('');
+					 $("#mobileappcode").val('');
+					 self.revertSelectValues($("select[name='appln_technology']"),"Select Technology");
+					 $("select[name=appln_version]").html('<option>Select Version</option>');
+					 self.revertSelectValues($("select[name='weblayer']"),"Select Layer");
+					 self.revertSelectValues($("select[name='mobile_layer']"),"Select Model");
+					 $("select[name=web_widget]").html('<option>Select Widget</option>');
+					 $("select[name=web_version]").html('<option>Select Version</option>');
+					 $("select[name=mobile_types]").html('<option>Select Type</option>');
+					 $("select[name=mobile_version]").html('<option>Select Version</option>'); 
 				}
 			});
+			
+			$("select[name='prebuiltapps']").change(function() {
+				var selectedPilot = $(this).find(':selected').text();
+				self.layerRender(selectedPilot);
+			});
 		},
+		
+		revertSelectValues : function(obj, OptionText) {
+			$(obj).find('option').each(function(index, value) {
+				$(value).removeAttr('selected');
+			});
+			if($(obj).find('option').val() === OptionText) {
+				$(obj).find('option').attr('selected', 'selected');
+				$(obj).val(OptionText);
+			}
+		},
+		
+		setPilotData : function(callback) {
+			var self=this, option = '';
+			self.getEditProject(self.getRequestHeader(self.projectRequestBody, "", "pilotlist"), function(response) {
+				$.each(response.data, function(index, value){
+					self.projectAPI.localVal.setJson(value.name, value);
+					option += '<option>'+ value.displayName +'</option>';
+					if(response.data.length === (index + 1)){
+						callback(option);
+					} 
+				});
+			});
+		},
+		
+		layerRender : function(selectedPilot) {
+			var self=this;
+			var selectedPilotData = self.projectAPI.localVal.getJson(selectedPilot);
+			$("tr[name=applicationLayer]").hide();
+			$("tr.applnLayer").hide();	
+			$("#applicationlayer").hide();
+			$("tr[name=web-Layer]").hide();
+			$("tr.webLayer").hide();	
+			$("#weblayer").hide();
+			$("tr[name=mobile-Layer]").hide();
+			$("tr.mobLayer").hide();
+			$("#mobilelayer").hide();
+			$.each(selectedPilotData.appInfos, function(index, appInfo){
+				if(appInfo.techInfo.appTypeId === "app-layer"){
+					$("select[name='appln_technology'] option").each(function(index, value) {
+						$(value).removeAttr('selected');	
+						if($(value).val() === appInfo.techInfo.id) {
+							$(value).attr('selected', 'selected');
+							$("select[name='appln_technology']").val($(value).val());
+						}
+					});
+					var techId = $("select[name='appln_technology']").val();
+					var versionplaceholder = $("select[name='appln_technology']").parents("td[name='technology']").siblings("td[name='version']").children("select[name='appln_version']");
+					self.gettechnologyversion(techId, versionplaceholder);
+					$("tr[name=applicationLayer]").show();
+					$("tr.applnLayer").show();
+				} else if (appInfo.techInfo.appTypeId === "web-layer") {
+					$("select[name='weblayer'] option").each(function(index, value) {
+						$(value).removeAttr('selected');	
+						if($(value).val() === appInfo.techInfo.techGroupId) {
+							$(value).attr('selected', 'selected');
+							$("select[name='weblayer']").val($(value).val());
+						}
+					});
+					var type = $("select[name='weblayer']").val();
+					var widgetTypePlaceholder = $("select[name='weblayer']").parents("td[name='web']").siblings("td[name='widget']").children("select[name='web_widget']");
+					self.getwidgettype(type, widgetTypePlaceholder);
+					$("select[name='web_widget'] option").each(function(index, value) {
+						$(value).removeAttr('selected');	
+						if($(value).val() === appInfo.techInfo.id) {
+							$(value).attr('selected', 'selected');
+							$("select[name='web_widget']").val($(value).val());
+						}
+					});
+					var widgetType = $("select[name='web_widget']").val();
+					var widgetTypePlaceholder = $("select[name='web_widget']").parents("td[name='widget']").siblings("td[name='widgetversion']").children("select[name='web_version']");
+					self.getwidgetversion(widgetType, widgetTypePlaceholder);
+					$("tr[name=web-Layer]").show();
+					$("tr.webLayer").show();
+				} else if(appInfo.techInfo.appTypeId === "mob-layer") {
+					$("select[name='mobile_layer'] option").each(function(index, value){
+						$(value).removeAttr('selected');	
+						if($(value).val() === appInfo.techInfo.techGroupId) {
+							$(value).attr('selected', 'selected');
+							$("select[name='mobile_layer']").val($(value).val());
+						}
+					});
+					var mobile = $("select[name='mobile_layer']").val();
+					var mobileTypePlaceholder = $("select[name='mobile_layer']").parents("td[name='mobile']").siblings("td[name='types']").children("select[name='mobile_types']");
+					self.getmobiletype(mobile, mobileTypePlaceholder);
+					$("select[name='mobile_types'] option").each(function(index, value){
+						$(value).removeAttr('selected');	
+						if($(value).val() === appInfo.techInfo.id) {
+							$(value).attr('selected', 'selected');
+							$("select[name='mobile_types']").val($(value).val());
+						}
+					});
+					var mobileType = $("select[name='mobile_types']").val();
+					var mobileTypePlaceholder = $("select[name='mobile_types']").parents("td[name='types']").siblings("td[name='mobileversion']").children("select[name='mobile_version']");
+					self.getmobileversion(mobileType, mobileTypePlaceholder);	
+					$("tr[name=mobile-Layer]").show();
+					$("tr.mobLayer").show();
+				}
+			});	
+		}, 
 		
 		multiModuleEvent : function(multimodule){
 			var self = this;
@@ -1180,6 +1324,7 @@ define(["projects/api/projectsAPI"], function() {
 				var myStartDate = new Date(startdate);
 				var myEndDate = new Date(enddate);
 				var multimodule = $("input[name='multimodule']").val() === "true" ? true:false;
+				var preBuilt = $("select[name=builtmyself]").find(":selected").text() === "Custom"? false:true;
 				var count = 0;
 				self.customerIds = [];
 				self.appInfos = [];
@@ -1192,6 +1337,7 @@ define(["projects/api/projectsAPI"], function() {
 				self.projectInfo.description = projectdescription;
 				self.projectInfo.startDate = myStartDate;
 				self.projectInfo.endDate = myEndDate;
+				self.projectInfo.preBuilt = preBuilt;
 				self.projectInfo.multiModule = multimodule;
 				self.projectInfo.customerIds = self.customerIds;
 							
@@ -1314,7 +1460,7 @@ define(["projects/api/projectsAPI"], function() {
 				self.getEditProject(self.getRequestHeader(self.projectRequestBody, "", action), function(response) {
 					self.projectRequestBody = {};
 					
-					if(((response.message) == "Project created Successfully") || ((response.message) == "Project updated Successfully")) {
+					if(((response.message) === "Project created Successfully") || ((response.message) === "Project updated Successfully")) {
 						setTimeout(function(){
 							$(".blinkmsg").removeClass("poperror").addClass("popsuccess");
 							self.effectFadeOut('popsuccess', (response.message));		

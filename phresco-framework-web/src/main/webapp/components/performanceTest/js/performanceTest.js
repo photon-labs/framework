@@ -17,6 +17,10 @@ define(["performanceTest/listener/performanceTestListener"], function() {
 		getResultEvent : null,
 		getResultFilesEvent : null,
 		whereToRender : null,
+		dynamicpage : null,
+		logContent : '',
+		dynamicPageListener : null,
+		preTriggerPerformanceTest : null,
 		
 		/***
 		 * Called in initialization time of this class 
@@ -61,6 +65,18 @@ define(["performanceTest/listener/performanceTestListener"], function() {
 			}
 			self.getResultFilesEvent.add(self.performanceTestListener.getResultFiles, self.performanceTestListener);
 			
+			if(self.dynamicpage === null){
+				commonVariables.navListener.getMyObj(commonVariables.dynamicPage, function(retVal){
+					self.dynamicpage = retVal;
+					self.dynamicPageListener = self.dynamicpage.dynamicPageListener;
+				});
+			}
+
+			if(self.preTriggerPerformanceTest === null) {
+				self.preTriggerPerformanceTest = new signals.Signal();
+			}
+			self.preTriggerPerformanceTest.add(self.performanceTestListener.preTriggerPerformanceTest, self.performanceTestListener);
+
 			self.registerEvents(self.performanceTestListener);
 		},
 		
@@ -69,7 +85,7 @@ define(["performanceTest/listener/performanceTestListener"], function() {
 			
 			//To show performance not yet executed for server/ws/db msg
 			Handlebars.registerHelper('showErrMsg', function(resultAvailable, testResultFiles, options) {
-				if (resultAvailable && testResultFiles.length == 0) {
+				if (resultAvailable && testResultFiles.length === 0) {
 					return options.fn(this);
 				} else {
 					return options.inverse(this);
@@ -78,7 +94,7 @@ define(["performanceTest/listener/performanceTestListener"], function() {
 			
 			//To return server/ws/db
 			Handlebars.registerHelper('against', function(testAgainsts) {
-				if (testAgainsts != undefined && testAgainsts.length > 0) {
+				if (testAgainsts !== undefined && testAgainsts.length > 0) {
 					return testAgainsts[0];
 				}
 			});
@@ -103,7 +119,7 @@ define(["performanceTest/listener/performanceTestListener"], function() {
 			
 			//To show/hide result file drop down
 			Handlebars.registerHelper('showResultFiles', function(testResultFiles, options) {
-				if (testResultFiles != undefined && testResultFiles.length > 0) {
+				if (testResultFiles !== null && testResultFiles !== undefined && testResultFiles.length > 0) {
 					return options.fn(this);
 				} else {
 					return options.inverse(this);
@@ -126,7 +142,7 @@ define(["performanceTest/listener/performanceTestListener"], function() {
 			//To load devices drop down
 			Handlebars.registerHelper('devices', function(showDevice, devices, testResultFiles, firstValue, id) {
 				var returnVal = "";
-				if (showDevice && testResultFiles != undefined && testResultFiles.length > 0 && !$.isEmptyObject(devices)) {
+				if (showDevice && testResultFiles !== undefined && testResultFiles.length > 0 && !$.isEmptyObject(devices)) {
 					if (firstValue && id) {
 						returnVal = devices[0].split("#SEP#")[0];
 					} else if (firstValue && !id) {
@@ -154,9 +170,9 @@ define(["performanceTest/listener/performanceTestListener"], function() {
 			//To load result file in results drop down
 			Handlebars.registerHelper('testResultFiles', function(data, firstVal) {
 				var returnVal = "";
-				if (firstVal) {
+				if (firstVal && data !== null) {
 					returnVal = data[0];
-				} else {
+				} else if ( data !== null) {
 					$.each(data, function(index, value){
 						returnVal += '<li class="testResultFilesOption"><a href="#" name="resultFileName">'+ value +'</a></li>';
 					});
@@ -183,6 +199,9 @@ define(["performanceTest/listener/performanceTestListener"], function() {
 			var self = this;
 			self.performanceTestListener.resizeConsoleWindow();
 			self.performanceTestListener.resultBodyResize();
+			//To show the log after reloading the test result once the test execution is completed
+			$('#testConsole').html(self.logContent);
+			self.logContent = '';
 		},
 		
 		preRender: function(whereToRender, renderFunction) {
@@ -212,6 +231,24 @@ define(["performanceTest/listener/performanceTestListener"], function() {
 				advanced:{ updateOnContentResize: true}
 			});
 			
+			//To show performance popup
+			$("input[name=performancePopup]").unbind("click");
+			$("input[name=performancePopup]").click(function() {
+				self.closeConsole();
+                var whereToRender = $('#performancePopup ul');
+                commonVariables.goal = "performance-test";
+                commonVariables.phase = "performance-test";
+                self.dynamicpage.getHtml(whereToRender, this, $(this).attr('name'), function() {
+                	var sectionHeight = $('.performanceTestResults').height();
+					$('#performancePopup').css("max-height", sectionHeight - 40 + 'px');
+					$('#performanceForm').css("max-height", sectionHeight - 92 + 'px');
+                	$("#performanceForm").mCustomScrollbar({
+						autoHideScrollbar:true,
+						theme:"light-thin",
+						advanced:{ updateOnContentResize: true}
+					});
+                });
+			});
 			
 			//To open the performance test directory
 			$('#openFolder').unbind('click');
@@ -263,6 +300,10 @@ define(["performanceTest/listener/performanceTestListener"], function() {
 				self.getResultFilesEvent.dispatch($(this).text(), self.whereToRender);
 			});
 			
+			$("#performanceRun").click(function() {
+				self.preTriggerPerformanceTest.dispatch();
+			}),
+
 			Clazz.navigationController.mainContainer = commonVariables.contentPlaceholder;
 		}
 	});

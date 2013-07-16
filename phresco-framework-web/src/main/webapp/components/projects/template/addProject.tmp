@@ -4,22 +4,22 @@
             <tbody class="scrollContent" name="layercontents"> 
             	<tr>
                     <td><span data-i18n="project.create.label.name"></span><sup>*</sup></td>
-                    <td><input type="text" name="projectname" maxlength="30" placeholder="Project Name" title="30 Characters only"/></td>
+                    <td><input type="text" name="projectname" id="projectname" maxlength="30" placeholder="Project Name" title="30 Characters only"/></td>
                     <td><span data-i18n="project.create.label.code"></span><sup>*</sup></td>
-                    <td><input type="text" name="projectcode" maxlength="30"  placeholder="Project Code" title="30 Characters only"/></td>
+                    <td><input type="text" name="projectcode" id="projectcode" maxlength="30"  placeholder="Project Code" title="30 Characters only"/></td>
                     <td><span data-i18n="project.create.label.version"></span><sup>*</sup></td>
-                    <td><input type="text" name="projectversion" value="1.0" maxlength="20" title="20 Characters only"/></td>
+                    <td><input type="text" name="projectversion" id="projectversion" value="1.0" maxlength="20" title="20 Characters only"/></td>
                     <td data-i18n="project.create.label.description"></td>
-                    <td rowspan="2"><textarea class="popuptextarea" name="projectdescription" maxlength="150" title="150 Characters only" data-i18n="[placeholder]project.create.label.description"/></td>
+                    <td rowspan="2"><textarea class="popuptextarea" name="projectdescription" id="projectdescription" maxlength="150" title="150 Characters only" data-i18n="[placeholder]project.create.label.description"/></td>
                 </tr>
                 <tr>
                     <td colspan="2">
                         <select class="custon_dropdown" name="builtmyself">
-                            <option>Custom</option>
-                            <option>Pre Built</option>
+                            <option value="custom">Custom</option>
+                            <option value="prebuilt">Pre Built</option>
                         </select>
                         <select class="optional_dropdown" name="prebuiltapps">
-                            <option>NodeJSandMySQL</option>
+                            <option>Select Pilot Project</option>
                         </select>
 						<select class="optional_dropdown" name="builtmyselfapps" disabled>
                             <option>Select</option>
@@ -37,7 +37,7 @@
                     <td colspan="6"></td>
                 </tr>
 				{{#if applicationlayerData.techGroups}}
-					<tr class="proj_title">
+					<tr class="proj_title" name="applicationLayer">
 
 					 <td colspan="3">{{applicationlayerData.name}}</td>
 					 <td colspan="3"><span class="errmsg1"></span></td>
@@ -61,7 +61,7 @@
 										<td class="applnappcode"><input type="text" id="appcode"  maxlength="30" title="30 characters only" class="appln-appcode"></td>
 										<td name="technology" class="technology">
 											<select name="appln_technology" class="appln_technology">
-											   <option>Select Technology</option>
+											   <option value="Select Technology" data-i18n="project.create.label.selecttechnology"></option>
 											   {{#each applicationlayerData.techGroups}}
 													{{#each techInfos}}
 													  <option value="{{id}}">{{name}}</option>
@@ -71,7 +71,7 @@
 										 </td>
 										 <td colspan="3" name="version" class="version">
 											<select name="appln_version" class="appln_version">
-											   <option>Select Version</option>
+											   <option value="Select Version" data-i18n="project.create.label.selectversion"></option>
 											</select>
 										 </td>
 										 <td colspan="2" class="appdependencyTd">
@@ -89,7 +89,7 @@
 					</tr>
 				 {{/if}}
 				 {{#if weblayerData.techGroups}}
-                     <tr class="proj_title">
+                     <tr class="proj_title" name="web-Layer">
                       <td colspan="3">{{weblayerData.name}}</td>
                       <td colspan="3"><span class="errmsg2"></span></td>
                       <td colspan="2"><img name="close" id="weblayer" src="themes/default/images/helios/close_icon.png"   border="0" alt=""></td>
@@ -112,7 +112,7 @@
 										<td class="webappcode"><input type="text" id="webappcode"  maxlength="30" title="30 characters only" class="web-appcode"></td>
 										<td name="web" class="web">
 											<select name="weblayer" class="weblayer">
-												<option>Select Layer</option>
+												<option value="Select Layer" data-i18n="project.create.label.selectlayer"></option>
 												{{#each weblayerData.techGroups}}
 													<option value="{{id}}">{{name}}</option>
 												{{/each}}
@@ -120,12 +120,12 @@
 										 </td>
 										 <td name="widget" class="widget">
 											<select name="web_widget" class="web_widget">
-												<option>Select Widget</option>
+												<option value="Select Widget" data-i18n="project.create.label.selectwidget"></option>
 											 </select>
 										 </td>
 										 <td name="widgetversion" class="widgetversion">
 											<select name="web_version" class="web_version">
-												<option>Select Version</option>
+												<option value="Select Version" data-i18n="project.create.label.selectversion"></option>
 											</select>
 										 </td>
 										 <td class="webdependencyTd">
@@ -143,7 +143,7 @@
                       </tr>
 					{{/if}}
 				{{#if mobilelayerData.techGroups}}
-                    <tr class="proj_title">
+                    <tr class="proj_title" name="mobile-Layer">
                       <td colspan="3">{{mobilelayerData.name}}</td>
                       <td colspan="3"><span class="errmsg3"></span></td>
                       <td colspan="2"><img name="close" id="mobilelayer" src="themes/default/images/helios/close_icon.png"  border="0" alt=""></td>
@@ -166,7 +166,7 @@
 										<td class="mobileappcode"><input type="text" id="mobileappcode" maxlength="30" title="30 characters only" class="mobile-appcode"></td>
 										<td name="mobile" class="mobile">
 											<select name="mobile_layer" class="mobile_layer">
-											   <option>Select Model</option>
+											   <option value="Select Model" data-i18n="project.create.label.selectmodel"></option>
 											   {{#each mobilelayerData.techGroups}}
 												  <option value="{{id}}">{{name}}</option>
 											   {{/each}}
@@ -174,12 +174,12 @@
 										 </td>
 										 <td name="types" class="types">
 											<select name="mobile_types" class="mobile_types">
-											   <option>Select Type</option>
+											   <option value="Select Type" data-i18n="project.create.label.selecttype"></option>
 											</select>
 										 </td>
 										 <td colspan="2" name="mobileversion" class="mobileversion">
 											<select name="mobile_version" class="mobile_version">
-											   <option>Select Version</option>
+											   <option value="Select Version" data-i18n="project.create.label.selectversion"></option>
 											</select>
 										 </td>
 										 <td>
