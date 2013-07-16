@@ -791,7 +791,7 @@
 	    		<plugin>
 				<groupId>net.awired.jstest</groupId>
 				<artifactId>jstest-maven-plugin</artifactId>
-				<version>3.0.0.16003</version>
+				<version>3.0.0.17002-SNAPSHOT</version>
 				<executions>
 					<execution>
 						<goals>
@@ -879,7 +879,6 @@
                 <sonar.language>js</sonar.language>
 				<sonar.exclusions>**/test/**,**/lib/**</sonar.exclusions>
                 <phresco.source.directory>src/main/webapp</phresco.source.directory>
-                <sonar.exclusions>**/lib/**</sonar.exclusions>
 				<testSourceDirectory>src/main/webapp</testSourceDirectory>
 				<js.skipTest>false</js.skipTest>
             </properties>
@@ -903,14 +902,14 @@
 		<phresco.env.test.config.xml>/src/test/webapp/resources/phresco-env-config.xml</phresco.env.test.config.xml>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<sonar.language>js</sonar.language>
-		<sonar.javascript.jstest.reportsfolder>do_not_checkin/target/jstest/report/emulator-0</sonar.javascript.jstest.reportsfolder>
+		<sonar.javascript.jstest.reportsfolder>do_not_checkin/reports/jstest/emulator-0</sonar.javascript.jstest.reportsfolder>
 		<sonar.javascript.testframework>jstest</sonar.javascript.testframework>
 		<phresco.jslibs.source.dir>/src/main/webapp/lib</phresco.jslibs.source.dir>
 		<phresco.source.resource.dir>/src/main/webapp/WEB-INF/resources</phresco.source.resource.dir>
 		<phresco.components.source.dir>/src/main/webapp/components</phresco.components.source.dir>
 		<phresco.eclipse>true</phresco.eclipse>
 		<phresco.unitTest>js,java</phresco.unitTest>
-		<phresco.unitTest.js.report.dir>/do_not_checkin/target/jstest/report</phresco.unitTest.js.report.dir>
+		<phresco.unitTest.js.report.dir>/do_not_checkin/reports/jstest/emulator-0</phresco.unitTest.js.report.dir>
 		<phresco.unitTest.js.testsuite.xpath>/testsuite</phresco.unitTest.js.testsuite.xpath>
 		<phresco.unitTest.js.testcase.path>/testcase</phresco.unitTest.js.testcase.path>
 		<phresco.manualTest.testcase.path>/test/manual</phresco.manualTest.testcase.path>
