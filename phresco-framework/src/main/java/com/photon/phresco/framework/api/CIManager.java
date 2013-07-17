@@ -297,4 +297,15 @@ public interface CIManager {
 	public List<CIJob> getJobs(String continuousName, String projectId, List<ProjectDelivery> ciJobInfo) throws PhrescoException;
 	
 	public CIJobStatus deleteBuilds(CIJob ciJob,  String buildNumber) throws PhrescoException;
+	
+	/**
+	 * Sets svn credential values without restarting jenkins
+	 * @param submitUrl
+	 * @param svnUrl
+	 * @param username
+	 * @param password
+	 * @return boolean
+	 * @throws PhrescoException
+	 */
+	public boolean setSVNCredentials(String submitUrl, String svnUrl, String username, String password) throws PhrescoException;
 }
