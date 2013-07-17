@@ -415,7 +415,7 @@ define(["configuration/api/configurationAPI"], function() {
 							inputCtrl = inputCtrl.concat(options1);
 							inputCtrl = inputCtrl.concat("</select></td>"); 
 						} else if (key === 'certificate') { 
-							inputCtrl = '<input mandatory="'+required+'" value="'+ configValue +'" class="'+configTemplate.name+self.count+'Configuration" name="'+key+'" temp="'+configTemplate.name+key+self.count+'" type="text" placeholder=""/><a href="#" name="remote_deploy"><img src="themes/default/images/helios/settings_icon.png" width="23" height="22" border="0" alt=""></a><div id="remote_deploy" class="dyn_popup" style="display:none"><div id="certificateValue"></div><div class="flt_right"><input type="button" name="selectFilePath" class="btn btn_style" value="Ok"><input type="button" value="Close" name="treePopupClose" class="btn btn_style dyn_popup_close"></div></div>';
+							inputCtrl = '<input mandatory="'+required+'" value="'+ configValue +'" class="'+configTemplate.name+self.count+'Configuration" name="'+key+'" temp="'+configTemplate.name+key+self.count+'" type="text" placeholder=""/><a href="#" name="remote_deploy"><img src="themes/default/images/helios/settings_icon.png" width="23" height="22" border="0" alt=""></a><div id="remote_deploy" class="dyn_popup" style="display:none"><div id="certificateValue"></div><div class="flt_right"><input type="button" name="selectFilePath" class="btn btn_style" value="Ok">&nbsp;&nbsp;<input type="button" value="Close" name="treePopupClose" class="btn btn_style dyn_popup_close"></div></div>';
 						} else {
 							inputCtrl = '<input mandatory="'+required+'" value="'+ configValue +'" configKey ="configKey'+configTemplate.name+key+'" class="'+configTemplate.name+self.count+'Configuration" name="'+key+'" temp="'+configTemplate.name+key+self.count+'" type="text" placeholder=""/>';
 						}
@@ -568,6 +568,12 @@ define(["configuration/api/configurationAPI"], function() {
 										$("#certificateValue").append(temptree);
 										self.treeclickEvent();	
 										self.popupforTree(current, $(current).attr('name'));
+										$("#certificateValue").css("height", "250px");
+										$("#certificateValue").mCustomScrollbar({
+											autoHideScrollbar:true,
+											theme:"light-thin",
+											advanced:{ updateOnContentResize: true}
+										});	
 									}); 
 								}, 100);
 							});
@@ -576,12 +582,6 @@ define(["configuration/api/configurationAPI"], function() {
 				});
 				
 			});
-			
-			$(".features_content_main #certificateValue").mCustomScrollbar({
-					autoHideScrollbar:true,
-					theme:"light-thin",
-					advanced:{ updateOnContentResize: true}
-				});	
 			
 			$('input[name=treePopupClose]').click(function(){
 				$("#remote_deploy").hide();
@@ -627,10 +627,8 @@ define(["configuration/api/configurationAPI"], function() {
 				certificateJson.propValue = value;
 				self.configRequestBody = certificateJson;
 				self.getConfigurationList(self.getRequestHeader(self.configRequestBody, "addCertificate", ''), function(response) {
-					$(".successMessage").html(response.message);
-					setTimeout(function() {
-						$(".successMessage").html('');
-					},1500);
+					$(".blinkmsg").removeClass("poperror").addClass("popsuccess");
+					self.effectFadeOut('popsuccess', (response.message));		
 				});
 			});
 		},
