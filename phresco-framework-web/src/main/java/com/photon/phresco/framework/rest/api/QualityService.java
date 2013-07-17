@@ -203,8 +203,7 @@ public class QualityService extends RestBase implements ServiceConstants, Framew
 	 * @return the list
 	 * @throws PhrescoException the phresco exception
 	 */
-	private List<TestSuite> testSuites(String appDirName, String moduleName, String testType, String module,
-			String techReport, String testSuitePath, String testCasePath, String testSuite) throws PhrescoException {
+	private List<TestSuite> testSuites(String appDirName, String moduleName, String testType, String module, String techReport, String testSuitePath, String testCasePath, String testSuite) throws PhrescoException {
 		setTestSuite(testSuite);
 		List<TestSuite> suites = new ArrayList<TestSuite>();
 		try {
@@ -219,7 +218,6 @@ public class QualityService extends RestBase implements ServiceConstants, Framew
 			if (MapUtils.isEmpty(testResultNameMap)) {
 				return null;
 			}
-			// NodeList testSuites = testResultNameMap.get(testSuite);
 			Map<String, String> testSuitesResultMap = new HashMap<String, String>();
 			float totalTestSuites = 0;
 			float successTestSuites = 0;
@@ -500,8 +498,7 @@ public class QualityService extends RestBase implements ServiceConstants, Framew
 	 * @return the response
 	 * @throws PhrescoException the phresco exception
 	 */
-	private Response testReport(String appDirName, String moduleName, String testType, String module,
-			String techReport, String testSuitePath, String testCasePath, String testSuite) throws PhrescoException {
+	private Response testReport(String appDirName, String moduleName, String testType, String module, String techReport, String testSuitePath, String testCasePath, String testSuite) throws PhrescoException {
 		setTestSuite(testSuite);
 		ResponseInfo<TestReportResult> responseDataAll = new ResponseInfo<TestReportResult>();
 		ResponseInfo<List<TestCase>> responseData = new ResponseInfo<List<TestCase>>();
@@ -595,7 +592,6 @@ public class QualityService extends RestBase implements ServiceConstants, Framew
 								isClassEmpty = true;
 							}
 						}
-						// setReqAttribute(IS_CLASS_EMPTY, isClassEmpty);
 						ResponseInfo<List<TestCase>> finalOutput = responseDataEvaluation(responseData, null,
 								TEST_CASES_LISTED_SUCCESSFULLY, testCases);
 						return Response.status(Status.OK).entity(finalOutput)
@@ -653,11 +649,10 @@ public class QualityService extends RestBase implements ServiceConstants, Framew
 	 * @return the test cases
 	 * @throws PhrescoException the phresco exception
 	 */
-	private List<TestCase> getTestCases(String appDirName, NodeList testSuites, String testSuitePath,
-			String testCasePath) throws PhrescoException {
+	private List<TestCase> getTestCases(String appDirName, NodeList testSuites, String testSuitePath, String testCasePath) throws PhrescoException {
 		InputStream fileInputStream = null;
 		try {
-			StringBuilder sb = new StringBuilder(); // testsuites/testsuite[@name='yyy']/testcase
+			StringBuilder sb = new StringBuilder(); 
 			sb.append(testSuitePath);
 			sb.append(NAME_FILTER_PREFIX);
 			sb.append(getTestSuite());
@@ -682,7 +677,7 @@ public class QualityService extends RestBase implements ServiceConstants, Framew
 
 			// For technology sharepoint
 			if (nodeList.getLength() == 0) {
-				StringBuilder sbMulti = new StringBuilder(); // testsuites/testsuite[@name='yyy']/testcase
+				StringBuilder sbMulti = new StringBuilder(); 
 				sbMulti.append(XPATH_MULTIPLE_TESTSUITE);
 				sbMulti.append(NAME_FILTER_PREFIX);
 				sbMulti.append(getTestSuite());
@@ -1486,7 +1481,7 @@ public class QualityService extends RestBase implements ServiceConstants, Framew
 				return Response.ok(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, "*").build();
 			}
 			ResponseInfo<List<String>> finalOutput = responseDataEvaluation(responseData, null,
-					"Performance test not yet executed for " + testAgainsts.get(0), testResultFiles);
+					"Test not yet executed for " + testAgainsts.get(0), testResultFiles);
 			return Response.ok(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, "*").build();
 		} catch (PhrescoException e) {
 			ResponseInfo<List<String>> finalOutput = responseDataEvaluation(responseData, e,
@@ -1499,10 +1494,6 @@ public class QualityService extends RestBase implements ServiceConstants, Framew
 	public boolean testResultAvail(String appDirName, List<String> testAgainsts, String action) throws PhrescoException {
 		boolean resultAvailable = false;
         try {
-       	 	// TO kill the Process
-//            String baseDir = Utility.getProjectHome()+ appDirName;
-//            Utility.killProcess(baseDir, getTestType());
-        	
         	String reportDir = "";
         	String resultExtension = "";
         	if (Constants.PHASE_PERFORMANCE_TEST.equals(action)) {
@@ -1512,7 +1503,6 @@ public class QualityService extends RestBase implements ServiceConstants, Framew
         		reportDir = FrameworkServiceUtil.getLoadTestReportDir(appDirName);
         		resultExtension = FrameworkServiceUtil.getLoadResultFileExtension(appDirName);
         	}
-        	
             for (String testAgainst: testAgainsts) {
             	StringBuilder sb = new StringBuilder(FrameworkServiceUtil.getApplicationHome(appDirName));
             	if (Constants.PHASE_PERFORMANCE_TEST.equals(action)) {
@@ -1529,7 +1519,7 @@ public class QualityService extends RestBase implements ServiceConstants, Framew
                 }
                 
                 File file = new File(sb.toString());
-                if (StringUtils.isNotEmpty(resultExtension)) {
+                if (StringUtils.isNotEmpty(resultExtension) && file.exists()) {
                 	File[] children = file.listFiles(new XmlNameFileFilter(resultExtension));
                 	if (!ArrayUtils.isEmpty(children)) {
                 		resultAvailable = true;
@@ -1636,15 +1626,20 @@ public class QualityService extends RestBase implements ServiceConstants, Framew
                 List<PerformanceTestResult> perfromanceTestResult = performanceResultInfo.getPerfromanceTestResult();
                 for (PerformanceTestResult performanceTestResult : perfromanceTestResult) {
                     if (REQ_TEST_SHOW_THROUGHPUT_GRAPH.equals(showGraphFor)) {
-                        graphData.append(performanceTestResult.getThroughtPut());	//for ThroughtPut
+                    	//for ThroughtPut
+                        graphData.append(performanceTestResult.getThroughtPut());	
                     } else if (REQ_TEST_SHOW_MIN_RESPONSE_GRAPH.equals(showGraphFor)) {
-                        graphData.append(performanceTestResult.getMin());	//for min response time
+                    	//for min response time
+                        graphData.append(performanceTestResult.getMin());	
                     } else if (REQ_TEST_SHOW_MAX_RESPONSE_GRAPH.equals(showGraphFor)) {
-                        graphData.append(performanceTestResult.getMax());	//for max response time
+                    	//for max response time
+                        graphData.append(performanceTestResult.getMax());	
                     } else if (REQ_TEST_SHOW_RESPONSE_TIME_GRAPH.equals(showGraphFor)) {
-                   	 	graphData.append(performanceTestResult.getAvg());	//for responseTime
+                    	//for responseTime
+                   	 	graphData.append(performanceTestResult.getAvg());	
                     } else if (REQ_TEST_SHOW_ALL_GRAPH.equals(showGraphFor)) {
-                    	graphData.append(performanceTestResult.getThroughtPut());	//for ThroughtPut
+                    	//for ThroughtPut
+                    	graphData.append(performanceTestResult.getThroughtPut());	
                     	allMin.add((float)performanceTestResult.getMin()/1000);
                     	allMax.add((float)performanceTestResult.getMax()/1000);
                     	allAvg.add((float) (performanceTestResult.getAvg())/1000);

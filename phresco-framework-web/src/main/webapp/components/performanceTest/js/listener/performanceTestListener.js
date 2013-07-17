@@ -66,10 +66,6 @@ define(["performanceTest/api/performanceTestAPI"], function() {
 				var resultFileName = requestBody.resultFileName;
 				var deviceId = "";
 				
-				/* if (requestBody.devices.length !== 0) {
-					deviceId = requestBody.devices[0];
-				} */
-				
 				header.requestMethod = "GET";
 				header.webserviceurl = commonVariables.webserviceurl + commonVariables.qualityContext + "/" + commonVariables.performanceTestResults + "?appDirName="+appDirName+
 					"&testAgainst=" + testAgainst + "&resultFileName=" + resultFileName + "&deviceId=" + deviceId + "&showGraphFor=responseTime";
@@ -84,22 +80,17 @@ define(["performanceTest/api/performanceTestAPI"], function() {
 		getPerformanceTestReportOptions : function(header, whereToRender, callback) {
 			var self = this;
 			try {
-				//commonVariables.loadingScreen.showLoading();
 				self.performanceTestAPI.performanceTest(header, function(response) {
 					if (response !== null) {
-						//commonVariables.loadingScreen.removeLoading();
 						callback(response, whereToRender);
 					} else {
-						//commonVariables.loadingScreen.removeLoading();
 						callback({"status" : "service failure"}, whereToRender);
 					}
 				},
 				function(textStatus){
-					//commonVariables.loadingScreen.removeLoading();
 					callback({"status" : "service failure"});
 				});
 			} catch (exception) {
-				//commonVariables.loadingScreen.removeLoading();
 			}
 		},
 
@@ -115,7 +106,7 @@ define(["performanceTest/api/performanceTestAPI"], function() {
 			var userPermissions = JSON.parse(self.performanceTestAPI.localVal.getSession('userPermissions'));
 			performanceTestOptions.userPermissions = userPermissions;
 			renderFunction(performanceTestOptions, whereToRender);
-			if ((performanceTestOptions.testAgainsts.length !== 0 || performanceTestOptions.devices.length !== 0) && performanceTestOptions.testResultFiles.length !== 0) {
+			if ((performanceTestOptions.testAgainsts.length !== 0 || performanceTestOptions.devices.length !== 0) && !self.isBlank(performanceTestOptions.testResultFiles) && performanceTestOptions.testResultFiles.length !== 0) {
 				self.getTestResults(self.getActionHeader(performanceTestOptions, "getTestResults"), function(response) {
 					
 					var resultData = response.data;
@@ -141,6 +132,7 @@ define(["performanceTest/api/performanceTestAPI"], function() {
 			var self = this;
 			self.getTestResults(self.getActionHeader(JSON.stringify([testAgainst]), "getfiles"), function(response) {
 				if(response.data !== null){
+					self.hideErrorAndShowControls();
 					var returnVal = '';
 					$("#testResultFileDrop").html(response.data[0]);
 					$.each(response.data, function(index, value){
@@ -149,17 +141,36 @@ define(["performanceTest/api/performanceTestAPI"], function() {
 					$("#resultFiles").html(returnVal);
 					self.fileNameChangeEvent(whereToRender);
 					self.getResultOnChangeEvent(testAgainst, response.data[0], whereToRender);
+				} else if (!self.isBlank(response.message)) {
+					self.showErrorAndHideControls(response.message);
 				}
 			});
 		},
-				
+		
+		showErrorAndHideControls : function (errorMessage) {
+			$('.perfError').show();
+			$('.perfError').text(errorMessage);
+			$('.testResultDropdown').hide();
+			$('.testResultDiv').hide();
+			$('.performancePdf').hide();
+			$('.performanceView').hide();
+		},
+
+		hideErrorAndShowControls : function () {
+			$('.perfError').hide();
+			$('.perfError').text("");
+			$('.testResultDropdown').show();
+			$('.testResultDiv').show();
+			$('.performancePdf').show();
+			$('.performanceView').show();
+		},
+
 		getResultOnChangeEvent : function (testAgainst, resultFileName, whereToRender) {
 			var self = this;
 			var reqData = {};
 			reqData.testAgainst = testAgainst;
 			reqData.resultFileName = resultFileName;
 			self.getTestResults(self.getActionHeader(reqData, "getTestResultsOnChange"), function(response) {
-				//console.info('test = ' , JSON.stringify(response));
 				if(response.message === "Parameter returned successfully"){
 					var resultData = response.data;
 					self.constructResultTable(resultData, whereToRender);
@@ -170,18 +181,14 @@ define(["performanceTest/api/performanceTestAPI"], function() {
 		getTestResults : function (header, callback) {
 			var self = this;
 			try {
-				//commonVariables.loadingScreen.showLoading();
 				self.performanceTestAPI.performanceTest(header, function(response) {
 					if (response !== null) {
-						//commonVariables.loadingScreen.removeLoading();
 						callback(response);
 					} else {
-						//commonVariables.loadingScreen.removeLoading();
 						callback({"status" : "service failure"});
 					}
 				},
 				function(textStatus){
-					//commonVariables.loadingScreen.removeLoading();
 					callback({"status" : "service failure"});
 				}
 				);
@@ -193,7 +200,6 @@ define(["performanceTest/api/performanceTestAPI"], function() {
 		constructResultTable : function(resultData, whereToRender) {
 			var self = this;
 			var resultTable = "";
-			//$(".perfResultInfo").html('');
 			var totalValue = resultData.length, NoOfSample = 0, avg = 0, min = 0, max = 0, StdDev = 0, Err = 0, KbPerSec = 0, sumOfBytes = 0;
 			resultTable += '<table cellspacing="0" cellpadding="0" border="0" class="table table-striped table_border table-bordered" id="testResultTable">'+
 						  '<thead><tr><th>Label</th><th>Samples</th><th>Averages</th><th>Min</th><th>Max</th><th>Std.Dev</th><th>Error %</th><th>Throughput /sec </th>' +
@@ -221,7 +227,6 @@ define(["performanceTest/api/performanceTestAPI"], function() {
 			});
 			
 			var avgBytes = parseInt(sumOfBytes) / parseInt(totalValue);
-          	//	KbPerSec = (parseInt(avgBytes) / 1024) * parseInt(totalThroughput);
           	var totAvg = parseInt(avg) / parseInt(totalValue);
 			resultTable += '</tbody><tfoot><tr><td>Total</td><td>'+ resultData.aggregateResult.sample +'</td><td>'+resultData.aggregateResult.average+'</td><td>'+resultData.aggregateResult.min+'</td><td>'+resultData.aggregateResult.max+'</td>'+
 			'<td>'+resultData.aggregateResult.stdDev+'</td><td>'+ resultData.aggregateResult.error+' %</td><td>'+resultData.aggregateResult.throughput+'</td><td>'+resultData.aggregateResult.kb+'</td><td>'+resultData.aggregateResult.avgBytes+'</td></tr></tfoot></table>';
@@ -260,6 +265,171 @@ define(["performanceTest/api/performanceTestAPI"], function() {
 			resultvalue = resultvalue + $('.footer_section').height() + 65;
 			$('.performanceTestResults').height($(window).height() - (resultvalue + 80));
 		},
+
+		preTriggerPerformanceTest : function () {
+			var self = this, testBasis = $("#testBasis").val(), testAgainst = $("#testAgainst").val(), redirect = false, jsonString = "";
+			console.info("");
+			//if performance test is triggered against parameters
+			if (testAgainst !== undefined && testBasis !== undefined && testBasis === "parameters") {
+				//call template mandatory fn for server or webservice
+				if (testAgainst === "server" || testAgainst === "webservice") {
+					redirect = self.contextUrlsMandatoryVal();
+				} else if (testAgainst === "database") {//call template mandatory fn for database
+					redirect = self.dbContextUrlsMandatoryVal();
+				} 
+			} else if (testBasis !== undefined && testBasis === "customise") {//if performance test is triggered against customise
+				redirect = true; 
+			} else if (testBasis === undefined && testAgainst === undefined) { 			
+				redirect = true; // added for  android performance return			
+			} 
+
+			if (redirect) {
+				self.triggerPerformanceTest();
+			}
+		},
+
+		triggerPerformanceTest : function (callback) {
+			var self = this, jsonString = "";
+			jsonString = self.constructInputsAsJson();
+			self.executeTest($('#performanceForm').serialize(), function(response) {
+				self.logContent = $('#testConsole').html();
+				commonVariables.navListener.onMytabEvent(commonVariables.performanceTest);
+			});
+		},
+
+		executeTest : function (queryString, callback) {
+			var self = this, appInfo = self.performanceTestAPI.localVal.getJson('appdetails');
+			$("#performancePopup").toggle();
+			self.openConsole();
+			if(appInfo !== null){
+				queryString +=	'&customerId='+ self.getCustomer() +'&appId='+ appInfo.data.appInfos[0].id +'&projectId=' + appInfo.data.id + '&username=' + self.performanceTestAPI.localVal.getSession('username');
+			}
+			if(self.mavenServiceListener === null)	{
+				commonVariables.navListener.getMyObj(commonVariables.mavenService, function(retVal){
+					self.mavenServiceListener = retVal;
+					self.mavenServiceListener.mvnPerformanceTest(queryString, '#testConsole', function(response){
+						callback(response);
+					});
+				});
+			}else{
+				self.mavenServiceListener.mvnPerformanceTest(queryString, '#testConsole', function(response){
+					callback(response);
+				});
+			}
+		},
+
+		constructInputsAsJson : function () {
+			var self = this, formJsonStr = JSON.stringify($('#performanceForm').serializeObject()), templJsonStr = "", testBasis = $("#testBasis").val(), testAgainst = $("#testAgainst").val();
+			if (!self.isBlank(testBasis) && !self.isBlank(testAgainst) && testBasis === "parameters") {
+				templJsonStr = self.contextUrls() + "," + self.dbContextUrls();
+				formJsonStr = formJsonStr.slice(0,formJsonStr.length-1);
+				formJsonStr = formJsonStr + ',' + templJsonStr + '}';
+			}
+			$("#resultJson").val("");
+			$("#resultJson").val(formJsonStr);
+			return formJsonStr;
+		},
+
+		contextUrlsMandatoryVal : function () {
+			var self = this, redirect = true;
+			$('.contextDivClass').each(function() {
+				if (self.isBlank($(this).find($('input[name=httpName]')).val())) {
+					redirect = false;
+					$(this).find($('input[name=httpName]')).val('');
+					$(this).find($('input[name=httpName]')).focus();
+					$(this).find($('input[name=httpName]')).attr('placeholder','Http name is missing');
+					$(this).find($('input[name=httpName]')).addClass("errormessage");
+				} else if (self.isBlank($(this).find($('input[name=context]')).val())) {
+					redirect = false;
+					$(this).find($('input[name=context]')).val('');
+					$(this).find($('input[name=context]')).focus();
+					$(this).find($('input[name=context]')).attr('placeholder','Context is missing');
+					$(this).find($('input[name=context]')).addClass("errormessage");
+				} 
+			});
+			
+			return redirect;
+		},
+
+		dbContextUrlsMandatoryVal : function () {
+			var redirect = true;
+			$('.perDBContextUrlFieldset').each(function() {
+				if ($(this).find($('input[name=dbName]')).val() === "" || isBlank($(this).find($('input[name=dbName]')).val())) {
+					redirect = false;
+					$('.yesNoPopupErr').text('Name is missing');
+					$(this).find($('input[name=dbName]')).val('');
+					$(this).find($('input[name=dbName]')).focus();
+				} else if ($(this).find($('textarea[name=query]')).val() === "" || isBlank($(this).find($('textarea[name=query]')).val())) {
+					redirect = false;
+					$('.yesNoPopupErr').text('Query is missing');
+					$(this).find($('textarea[name=query]')).val('');
+					$(this).find($('textarea[name=query]')).focus();
+				} 
+			});
+			
+			return redirect;
+		},
+	
+		contextUrls : function () {
+		var contextUrls = [];
+		var contexts = "";
+		$('.contextDivClass').each(function() {
+			var jsonObject = {};
+			jsonObject.name = $(this).find($("input[name=httpName]")).val();
+			jsonObject.context = $(this).find($("input[name=context]")).val();
+			jsonObject.contextType = $(this).find($("select[name=contextType]")).val();
+			jsonObject.encodingType = $(this).find($("select[name=encodingType]")).val();
+			jsonObject.contextPostData = $(this).find($("textarea[name=contextPostData]")).val(); 
+
+			jsonObject.redirectAutomatically = $(this).find($("input[name=redirectAutomatically]")).is(':checked'); 
+			jsonObject.followRedirects = $(this).find($("input[name=followRedirects]")).is(':checked'); 
+			jsonObject.keepAlive = $(this).find($("input[name=keepAlive]")).is(':checked'); 
+			jsonObject.multipartData = $(this).find($("input[name=multipartData]")).is(':checked'); 
+			jsonObject.compatibleHeaders = $(this).find($("input[name=compatibleHeaders]")).is(':checked');  			
+			
+			var headers = [];
+			$(this).find($('.headers')).each(function() {
+				var key = $(this).find($("input[name=headerKey]")).val();
+				var value = $(this).find($("input[name=headerValue]")).val();
+				var keyValueObj = {};
+				keyValueObj.key=key;
+				keyValueObj.value=value;
+				headers.push(keyValueObj);
+			});
+			jsonObject.headers=headers;
+			
+			var parameters = [];
+			$(this).find($('.parameterRow')).each(function() {
+				var name = $(this).find($("input[name=parameterName]")).val();
+				var value = $(this).find($("input[name=parameterValue]")).val();
+				var encode = $(this).find($("input[name=parameterEncode]")).is(':checked');
+				var nameValueObj = {};
+				nameValueObj.name=name;
+				nameValueObj.value=value;
+				nameValueObj.encode=encode;
+				parameters.push(nameValueObj);
+			});
+			jsonObject.parameters=parameters;
+
+			contextUrls.push(JSON.stringify(jsonObject));
+		});
+		var jsonStrFromTemplate = '"contextUrls":[' + contextUrls + ']';
+		return jsonStrFromTemplate;
+	},
+
+	dbContextUrls : function () {
+		var dbContextUrls = [];
+		$('.dbContextDivClass').each(function() {
+			var jsonObject = {};
+			jsonObject.name = $(this).find($("input[name=dbName]")).val();
+			jsonObject.queryType = $(this).find($("select[name=queryType]")).val();
+			jsonObject.query = $(this).find($("textarea[name=query]")).val(); 
+			var dbContexts = JSON.stringify(jsonObject);
+			dbContextUrls.push(dbContexts);
+		});
+		var jsonStrFromTemplate = '"dbContextUrls":[' + dbContextUrls + ']';
+		return jsonStrFromTemplate;
+	},
 
 	});
 

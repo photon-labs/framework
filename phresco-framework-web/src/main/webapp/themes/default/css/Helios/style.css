@@ -3372,12 +3372,12 @@ html>body tbody.scrollContent {
 	margin-right:0 !important;
 }
 
-.dynamic_cont input[type="text"], .dynamic_cont .bootstrap-select .btn {
+.dynamic_cont input[type="text"], .dynamic_cont input[type="password"]	,.dynamic_cont .bootstrap-select .btn {
 	width:151px !important;
 	margin-bottom:0 !important;
 }
 
-.dynamic_cont input[type="text"] {
+.dynamic_cont input[type="text"], .dynamic_cont input[type="password"] {
 	margin-bottom:10px !important;
 }
 
@@ -3456,6 +3456,11 @@ html>body tbody.scrollContent {
 	margin: 0px 5px 3px 0px;
 }
 
+#contextAdd, #dbContextAdd {
+	float: right;
+    margin-bottom: 10px;
+}
+
 .test_table tr td select
 {
 	width:242px !important;
@@ -3484,6 +3489,10 @@ html>body tbody.scrollContent {
 {
 	float:right;
 	margin: -7px 0px 6px 0px;
+}
+
+.removeHeaders, .add_test_icon, .removeContext, .removeDBContext {
+	cursor: pointer;
 }
 
 .context_table

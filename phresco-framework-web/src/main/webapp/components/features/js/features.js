@@ -260,7 +260,7 @@ define(["features/listener/featuresListener"], function() {
 				self.onCancelEvent.dispatch();
            	});
        		var flag=1,temp1,temp2;
-          	$('.featureinfo_img').on("click", function(event) {	
+          	$('.featureinfo_img').on("click", function(event) {
 				var descid = $(this).attr("artifactGroupId");
 				temp2=descid;
 				var currentObj = this;				
@@ -269,8 +269,7 @@ define(["features/listener/featuresListener"], function() {
 					var divhtml = '<div id="'+descriptionid+'" class="dyn_popup featureinfo"><h1>Description</h1><a href="#" class="dyn_popup_close">X</a><div class="features_cont"><span><img src="themes/default/images/helios/feature_info_logo.png" width="42" height="42" border="0" alt=""></span><span class="features_desc_content">'+response.data+'</span></div></div>';
 					$("#desc").children().remove();
 					$("#desc").append(divhtml);
-					commonVariables.temp = currentObj;
-					commonVariables.openccmini(currentObj,descriptionid);
+					self.popupforDesc(currentObj,descriptionid);
 					 if(flag === 1){
 						temp1=descid;
 						$("#"+descid).show();	
@@ -312,7 +311,15 @@ define(["features/listener/featuresListener"], function() {
 				});				
 				
 				self.featuresListener.getFeaturesUpdate(self.featuresListener.getRequestHeader(self.featureUpdatedArray, "UPDATE", ""), function(response) {
-					self.loadPage(true);
+					if(((response.message) == "Project created Successfully")){
+						setTimeout(function(){
+							$(".blinkmsg").removeClass("poperror").addClass("popsuccess");
+							self.effectFadeOut('popsuccess', (response.message));		
+						},2000);
+					} else {
+						$(".blinkmsg").removeClass("popsuccess").addClass("poperror");						
+						self.effectFadeOut('poperror', (response.message));
+					}	
 				}); 
 			});
 			self.windowResize();

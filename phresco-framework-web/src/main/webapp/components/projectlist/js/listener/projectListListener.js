@@ -31,7 +31,7 @@ define(["projectlist/api/projectListAPI"], function() {
 			commonVariables.projectId = projectId;
 			commonVariables.navListener.getMyObj(commonVariables.editproject, function(editprojectObject) {
 				Clazz.navigationController.jQueryContainer = commonVariables.contentPlaceholder;
-				Clazz.navigationController.push(editprojectObject, true);
+				Clazz.navigationController.push(editprojectObject, commonVariables.animation);
 				$("#editprojectTab").css("display", "block");
 				self.dynamicrenderlocales(commonVariables.contentPlaceholder);
 			});

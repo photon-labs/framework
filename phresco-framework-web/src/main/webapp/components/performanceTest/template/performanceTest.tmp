@@ -4,7 +4,7 @@
         </div>
         <div class="flt_right">
         	{{#showIcons resultAvailable testResultFiles}}
-	        	<div class="unit_view">
+	        	<div class="unit_view performanceView">
 	                <span>
 	                	<a href="#"><img src="themes/default/images/helios/quality_table_on.png" width="25" height="25" border="0" alt=""></a>
 	                    <a href="#"><b>Table View</b></a>
@@ -15,7 +15,7 @@
 	                </span>    
 	            </div>
 	        {{else}}  
-	        	<div class="unit_view hideContent">
+	        	<div class="unit_view performanceView hideContent">
 	                <span>
 	                	<a href="#"><img src="themes/default/images/helios/quality_table_on.png" width="25" height="25" border="0" alt=""></a>
 	                    <a href="#"><b>Table View</b></a>
@@ -33,7 +33,7 @@
         	</div>
         	
         	{{#showIcons resultAvailable testResultFiles}}
-	            <div class="code_report_icon pdf_icon">
+	            <div class="code_report_icon pdf_icon performancePdf">
 	            	<a class="tooltiptop" title="" data-placement="bottom" data-toggle="tooltip" href="#" data-original-title="Export as PDF"><img src="themes/default/images/helios/code_pdf_icon.png" width="28" height="29" border="0" alt=""></a>
                 	<div class="tooltip fade bottom" style="top: 27px; left: 893.1875px; display: block;">
                     	<div class="tooltip-arrow" style=""></div><div class="tooltip-inner">Export as PDF
@@ -41,7 +41,7 @@
                     </div>
 	            </div>
 			{{else}}  
-	        	<div class="code_report_icon pdf_icon hideContent">
+	        	<div class="code_report_icon pdf_icon hideContent performancePdf">
 	            	<a class="tooltiptop" title="" data-placement="bottom" data-toggle="tooltip" href="#" data-original-title="Export as PDF"><img src="themes/default/images/helios/code_pdf_icon.png" width="28" height="29" border="0" alt=""></a>
                 	<div class="tooltip fade bottom" style="top: 27px; left: 893.1875px; display: block;">
                     	<div class="tooltip-arrow" style=""></div><div class="tooltip-inner">Export as PDF
@@ -121,18 +121,40 @@
             {{/showTestAgainst}}
             
             <div class="code_anal">
-                <input type="submit" value="Test" class="btn btn_style">
+            	{{#if userPermissions.manageTests}}
+               		 <input type="submit" value="Test" data-i18n="" name="performancePopup" class="btn btn_style">
+				{{else}}               		 
+					<input type="submit" value="Test" data-i18n="" name="performancePopup" class="btn btn_style" disabled>
+				{{/if}}
+                <div id="performancePopup" class="dyn_popup dynamic_cont" style="display:none;width:500px;">
+                    <form name="performanceForm" id="performanceForm">	
+                    	<input type="hidden" name="resultJson" id="resultJson" value=""/>
+                        <ul class="row dynamicControls">
+                        </ul>
+                        <div class="templates"></div>
+						<div class="hiddenControls"></div>
+					</form>
+                    <div class="alignright">
+                    	<div class="dynamicPopupLoading" style="display:none;">&nbsp</div>
+                        <input id="performanceRun" type="button" value="Test" class="btn btn_style">
+                        <input type="button" value="Close" class="btn btn_style dyn_popup_close">
+                    </div>
+                </div>
              </div>
         </div>
     </section>
     
     <section class="content_main code_content testSuiteTable performanceTestResults">
     	{{#unless resultAvailable}}
-    		<div style="text-align: center; margin: auto 0;" class="alert alert-block">Performance test not yet executed</div>
+    		<div style="text-align: center; margin: auto 0;" class="alert alert-block perfError">Performance test not yet executed</div>
+		{{else}}
+		 	{{#showErrMsg resultAvailable testResultFiles}}
+    			<div style="text-align: center; margin: auto 0;" class="alert alert-block perfError">Test not executed for {{#against testAgainsts}}{{/against}}</div>
+	    	{{else}}	
+	    		<div style="text-align: center; margin: auto 0; display:none" class="alert alert-block perfError"></div>
+	    	{{/showErrMsg}}   		
     	{{/unless}}
-    	{{#showErrMsg resultAvailable testResultFiles}}
-    		<div style="text-align: center; margin: auto 0;" class="alert alert-block">Test not executed for {{#against testAgainsts}}{{/against}}</div>
-    	{{/showErrMsg}}
+    	
     	
     	<!-- Testsuites div starts here -->
 			<div class="qual_unit_main unit_info perfResultInfo" id="testSuites">
