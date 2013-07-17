@@ -1,0 +1,17 @@
+<environments>
+    <environment default="true" desc="Production Environment is used for Development purpose only" name="Production">
+        <Server desc="" name="Server">
+            <context>phpServer</context>
+            <deploy_dir>/Users/kaleeswaran/softwares/apache-tomcat-7.0.25-Use/webapps</deploy_dir>
+            <admin_username/>
+            <additional_context/>
+            <port>8080</port>
+            <admin_password/>
+            <version>2.0.5</version>
+            <type>Mamp</type>
+            <remoteDeployment>false</remoteDeployment>
+            <protocol>http</protocol>
+            <host>localhost</host>
+        </Server>
+    </environment>
+</environments>
