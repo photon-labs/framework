@@ -52,12 +52,16 @@ define(["projects/api/projectsAPI"], function() {
 		 		object.closest('tr').hide('slow');
 		 		$("input[name="+layerId+"]").show();
 		 		self.counter=self.counter+1;
+				if(self.counter === 2) {
+					$('img[name="close"]').hide();
+				}
 		 	}
 		},
 		
 		addlayer : function(object) {
 			var self=this;
-		 	var layerType = object.attr('name');
+		 	$('img[name="close"]').show();
+			var layerType = object.attr('name');
 		 	$("input[name="+layerType+"]").hide();
 		 	$("tr[name="+ layerType +"]").show('slow');
 		 	var clasname = $("tr[name="+ layerType +"]").closest('tr').next().attr('class');
@@ -70,6 +74,7 @@ define(["projects/api/projectsAPI"], function() {
 		
 		addlayeredit:function(object) {
 			var self=this;
+			$('img[name="close"]').show();
 		 	var layerType = object.attr('name');
 		 	$("input[name="+layerType+"]").hide();
 			$("tr[id="+ layerType +"]").show('slow');
@@ -91,6 +96,9 @@ define(["projects/api/projectsAPI"], function() {
 				$("tr[id="+ layerId +"]").next().hide('slow');
 				$("input[name="+layerId+"]").show();
 				self.counter=self.counter+1;
+				if(self.counter === 2) {
+					$('img[name="close"]').hide();
+				}
 			}	
 		},
 		
@@ -165,217 +173,257 @@ define(["projects/api/projectsAPI"], function() {
 				return header;
 		},
 		
-		validation : function() {
-		
-		       var flag1=0,flag2=0,flag3=0;
-			   var name = $("input[name='projectname']").val();
-			   var code = $("input[name='projectcode']").val();
-			   var labelversion = $("input[name='projectversion']").val();
-			   var appcode = $("#appcode").val();
-			   var webappcode = $("#webappcode").val();
-			   var mobileappcode = $("#mobileappcode").val();
-			   var startdate = $("input[name='startdate']").val();
-			   var enddate = $("input[name='enddate']").val();
-			  
-			   
-			   if(name === ""){
-					$("input[name='projectname']").focus();
-					$("input[name='projectname']").attr('placeholder','Enter Name');
-					$("input[name='projectname']").addClass("errormessage");
-					$("input[name='projectname']").bind('keypress', function() {
-						$(this).removeClass("errormessage");
-					});
-					self.hasError = true;
-			   } else if(code === ""){
-					$("input[name='projectcode']").focus();
-					$("input[name='projectcode']").attr('placeholder','Enter Code');
-					$("input[name='projectcode']").addClass("errormessage");
-					$("input[name='projectcode']").bind('keypress', function() {
-						$(this).removeClass("errormessage");
-					});
-					self.hasError = true;
-			   } else if(labelversion === ""){
-					$("input[name='projectversion']").focus();
-					$("input[name='projectversion']").attr('placeholder','Enter Version');
-					$("input[name='projectversion']").addClass("errormessage");
-					$("input[name='projectversion']").bind('keypress', function() {
-						$(this).removeClass("errormessage");
-					});
-					self.hasError = true;
-			   } else {
-
-					$('.appln-appcode').each(function() {
-
-						if($(this).val() === '') {
-							var keyy4=$("tr[class='applnLayer']").attr('key');
-							if(keyy4 === 'hidden') {
-								self.hasError=false;
-							} else {	
-								$(this).addClass("errormessage");
-								var errorItem1 = $(".errormessage:first");
-								errorItem1.focus();
-								errorItem1.attr('placeholder','Enter AppCode');
-								errorItem1.bind('keypress', function() {
-									$(this).removeClass("errormessage");
-								});
-								flag1=1;	
-							}
-						}	
-					});		
-
-					if(flag1 === 1) {
-						return true;
-					} else {
-
-						$('.web-appcode').each(function() {
-
-							if($(this).val() === '') {
-								var keyy5=$("tr[class='webLayer']").attr('key');
-								if(keyy5 === 'hidden') {
-									self.hasError=false;
-								} else {	
-									$(this).addClass("errormessage");
-									var errorItem2 = $(".errormessage:first");
-									errorItem2.focus();
-									errorItem2.attr('placeholder','Enter AppCode');
-									errorItem2.bind('keypress', function() {
-											$(this).removeClass("errormessage");
-									});
-									flag2=1;
-								}		
-							}
-						});	
-
-						if(flag2 === 1) {
-							return true;
-						} else {
-							$('.mobile-appcode').each(function() {
-								if($(this).val() === '') {
-									var keyy6=$("tr[class='mobLayer']").attr('key');
-									if(keyy6 === 'hidden') {
-										self.hasError=false;
-									} else {	
-										$(this).addClass("errormessage");
-										var errorItem3 = $(".errormessage:first");
-										errorItem3.focus();
-										errorItem3.attr('placeholder','Enter AppCode');
-										errorItem3.bind('keypress', function() {
-											$(this).removeClass("errormessage");
-										});
-										flag3=1;	
-									}	
-								}
-
-							});	
-
-							if(flag3 === 1) {
-								return true;
-							} else {
-								var arr1=[],arr2=[],arr3=[];
-								var count1=0,count2=0,count3=0;
-								var textboxval,textbox2val,textbox3val,techval,verval,tech2val,widgetval,webverval,layerval,typeval,mobverval;
-								$('.applnlayercontent').each(function() {
-									textboxval=$(this).children('td:eq(0)').children().val();
-									techval=$(this).find('.appln_technology').val();
-									verval=$(this).find('.appln_version').val();
-									arr1[count1]=textboxval+techval+verval;
-									$(this).next();
-									count1++;
-								});
-								
-								if($("tr[class='applnLayer']").attr('key')==='displayed'){	
-								  for (var i = 0; i < arr1.length; i++) {
-									for(var j=i+1;j<arr1.length;j++) {
-										if(arr1[i] === arr1[j]) {
-											$(".errmsg1").show();
-											$(".errmsg1").text("Added Technology and Version already exists.");
-											setTimeout(function() {
-												$(".errmsg1").hide();
-											}, 5000);
-											return true;
-										}	
-									};	
-
-								  };
-								}
-
-								$('.weblayercontent').each(function() {
-									textbox2val=$(this).children('td:eq(0)').children().val();
-									tech2val=$(this).find('.weblayer').val();
-									widgetval=$(this).find('.web_widget').val();
-									webverval=$(this).find('.web_version').val();
-									arr2[count2]=textbox2val+tech2val+widgetval+webverval;
-									$(this).next();
-									count2++;
-								});	
-								
-								if($("tr[class='webLayer']").attr('key') === 'displayed'){
-								   for (var i = 0; i < arr2.length; i++) {
-									for(var j=i+1;j<arr2.length;j++) {
-										if(arr2[i] === arr2[j]) {
-											$(".errmsg2").show();
-											$(".errmsg2").text("Added Web Layer,Widget and Version already exists.");
-											setTimeout(function() {
-												$(".errmsg2").hide();
-											}, 5000);
-											return true;
-										}	
-									};	
-
-								  };
-							    }
-
-								$('.mobilelayercontent').each(function() {
-									textbox3val=$(this).children('td:eq(0)').children().val();
-									layerval=$(this).find('.mobile_layer').val();
-									typeval=$(this).find('.mobile_types').val();
-									mobverval=$(this).find('.mobile_version').val();
-									arr3[count3]=textbox3val+layerval+typeval+mobverval;
-									$(this).next();
-									count3++;
-								});	
-
-								if($("tr[class='mobLayer']").attr('key') ==='displayed'){
-								  for (var i = 0; i < arr3.length; i++) {
-									for(var j=i+1;j<arr3.length;j++) {
-										if(arr3[i] === arr3[j]) {
-											$(".errmsg3").show();
-											$(".errmsg3").text("Added Mobile,Type and Version already exists.");
-											setTimeout(function() {
-												$(".errmsg3").hide();
-											}, 5000);
-											return true;
-										}	
-									};	
-
-								  };
-								}
-
-								self.hasError=false;
-								return self.hasError;
-
-							}
-
-						}
-
-					}	
-		 	  }	
-			
-			  return self.hasError;	
+		valid : function(item, msg) {
+			$(item).focus();
+			$(item).attr('placeholder', msg);
+			$(item).addClass("errormessage");
+			$(item).bind('keypress', function() {
+				$(this).removeClass("errormessage");
+			});
 		},
 
-		getCustomer : function() {
-			var selectedcustomer = $("#selectedCustomer").text();
-			var customerId = "";
-			
-			$.each($("#customer").children(), function(index, value){
-				var customerText = $(value).children().text();
-				if(customerText === selectedcustomer){
-					customerId = $(value).children().attr('id');
+		appvalid : function() {
+			var textboxval,techval,verval,count1 = 0,flagnew1 = 0,arr1 = [],flag = 0;
+			$('.applnlayercontent').each(function(index,value) {
+				if(($(value).css('display') !== 'none') && ($(value).attr('name') === 'staticApplnLayer')){
+					textboxval = $(this).children('td.applnappcode').children('input.appln-appcode').val();
+					techval = $(this).children('td.technology').children('select.appln_technology').val();
+					techvalObj = $(this).children('td.technology').children('select.appln_technology');
+					verval = $(this).children('td:eq(2)').children().val();
+					if($("tr[class='applnLayer']").attr('key') === 'displayed'){
+						if(textboxval === '') {
+							var t = $(this).children('td:eq(0)').children();
+							t.addClass("errormessage");
+						 	t.focus();
+							t.attr('placeholder','Enter AppCode');
+							flag = 1;
+							t.bind('keypress', function() {
+								$(this).removeClass("errormessage");
+							});
+						}
+						if(flag !== 1) {
+							if(techval !== undefined || techval !== 'undefined') { 
+								if(techval === 'Select Technology' || techval === null) {
+									flagnew1 = 1;
+									$(techvalObj).focus();
+									$(".errmsg1").show();
+									$(".errmsg1").text("Select Technology.");
+									setTimeout(function() {
+										$(".errmsg1").hide();
+									}, 5000);
+								} 
+							}
+						}
+					}
+					arr1[count1]=textboxval+techval+verval;
+					$(this).next();
+					count1++;
+				}	
+			});
+			if(flag === 1) {
+				return true;
+			}	
+			if(flagnew1 === 1) {
+				return true;
+			}	
+			if($("tr[class='applnLayer']").attr('key') === 'displayed'){	
+				for (var i = 0; i < arr1.length; i++) {
+					for(var j = i+1;j<arr1.length;j++) {
+						if(arr1[i] === arr1[j]) {
+							$(".errmsg1").show();
+							$(".errmsg1").text("Added Technology and Version already exists.");
+							setTimeout(function() {
+								$(".errmsg1").hide();
+							}, 5000);
+							return true;
+						}	
+					};	
+				};
+			}
+		},
+
+		webvalid : function() {
+			$(".errmsg1").hide();
+			var textbox2val,tech2val,widgetval,webverval,count2 = 0,flagged = 0,flagg = 0,flagnew2 = 0,arr2 = [];
+			$('.weblayercontent').each(function(index,value) {
+				if(($(value).css('display') !== 'none') && ($(value).attr('name') === 'staticWebLayer')){
+					textbox2val = $(this).children('td.webappcode').children('input.web-appcode').val();
+					tech2val = $(this).children('td.web').children('select.weblayer').val();
+					widgetval = $(this).children('td.widget').children('select.web_widget').val();
+					webverval = $(this).children('td.widgetversion').children('select.web_version').val();
+					tech2valobj = $(this).children('td.web').children('select.weblayer');
+					widgetvalobj = $(this).children('td.widget').children('select.web_widget');
+					if($("tr[class='webLayer']").attr('key') === 'displayed'){
+						if(textbox2val ==='') {
+							var t = $(this).children('td:eq(0)').children();
+							t.addClass("errormessage");
+						 	t.focus();
+							t.attr('placeholder', 'Enter AppCode');
+							flagg = 1;
+							t.bind('keypress', function() {
+								$(this).removeClass("errormessage");
+							});
+						}
+						if(flagg !== 1) {
+							if(tech2val !== undefined || tech2val !== 'undefined') { 
+								if(tech2val === 'Select Layer' || tech2val === null) {
+									flagged=1;
+									flagnew2 = 1;
+									$(".errmsg2").show();
+									$(".errmsg2").text("Select Layer.");
+									$(tech2valobj).focus();	
+								}
+							}
+
+							if(flagged !== 1) {
+								if(widgetval !== undefined || widgetval !== 'undefined' ) {
+									if(widgetval === 'Select Widget' || widgetval ===null) {
+										flagnew2 = 1;
+										$(".errmsg2").show();
+										$(".errmsg2").text("Select Widget.");
+										$(widgetvalobj).focus();
+										setTimeout(function() {
+											$(".errmsg2").hide();
+										}, 5000);	
+									}
+								}
+							}
+						}
+					}	
+					arr2[count2]=textbox2val+tech2val+widgetval+webverval;
+					$(this).next();
+					count2++;
 				}
 			});
+			if(flagg === 1)
+				return true;
+			if(flagnew2 === 1)
+				return true;	
+			$(".errmsg2").hide();
+			if($("tr[class='webLayer']").attr('key')=='displayed'){
+				for (var i = 0; i < arr2.length; i++) {
+					for(var j=i+1;j<arr2.length;j++) {
+						if(arr2[i]==arr2[j]) {
+							$(".errmsg2").show();
+							$(".errmsg2").text("Added Web Layer,Widget and Version already exists.");
+							setTimeout(function() {
+								$(".errmsg2").hide();
+							}, 5000);
+							return true;
+						}	
+					};	
+			    };
+		    }
+		},
+
+		mobvalid : function() {
+			$(".errmsg2").hide();
+			var textbox3val,layerval,typeval,mobverval,count3 = 0,flagger = 0,flaggg = 0,flagnew3 = 0,arr3 = [];
+			$('.mobilelayercontent').each(function(index,value) {
+				if(($(value).css('display') !== 'none') && ($(value).attr('name') === 'staticMobileLayer')){
+					textbox3val = $(this).children('td.mobileappcode').children('input.mobile-appcode').val();
+					layerval = $(this).children('td.mobile').children('select.mobile_layer').val();
+					typeval = $(this).children('td.types').children('select.mobile_types').val();
+					mobverval = $(this).children('td.mobileversion').children('select.mobile_version').val();
+					layervalobj = $(this).children('td.mobile').children('select.mobile_layer');
+					typevalobj = $(this).children('td.types').children('select.mobile_types'); 
+					if($("tr[class='mobLayer']").attr('key') === 'displayed'){
+						if(textbox3val === '') {
+							var t = $(this).children('td:eq(0)').children();
+							t.addClass("errormessage");
+						 	t.focus();
+							t.attr('placeholder','Enter AppCode');
+							flaggg = 1;
+							t.bind('keypress', function() {
+								$(this).removeClass("errormessage");
+							});
+						}
+						if(flaggg !== 1) {
+							if(layerval !== undefined || layerval !== 'undefined') { 
+								if(layerval === 'Select Model' ||layerval === null) {
+									flagger=1;
+									flagnew3=1;
+									$(".errmsg3").show();
+									$(".errmsg3").text("Select Model.");
+									$(layervalobj).focus();
+								}
+							}
+							if(flagger !== 1) {
+								if(typeval !== undefined || typeval !=='undefined') {
+									if(typeval === 'Select Type' || typeval === null) {
+										flagnew3=1;
+										$(".errmsg3").show();
+										$(".errmsg3").text("Select Type.");
+										$(typevalobj).focus();
+										setTimeout(function() {
+											$(".errmsg2").hide();
+										}, 5000);
+									}
+								}
+							}
+						}	
+					}
+					arr3[count3]=textbox3val+layerval+typeval+mobverval;
+					$(this).next();
+					count3++;
+				}	
+			});
+			if(flaggg === 1) {
+				return true;
+			}	
+			if(flagnew3 === 1) {
+				return true;	
+			}
+			$(".errmsg3").hide();	
+			if($("tr[class='mobLayer']").attr('key') === 'displayed'){
+				for (var i = 0; i < arr3.length; i++) {
+					for(var j=i+1;j<arr3.length;j++) {
+						if(arr3[i]==arr3[j]) {
+							$(".errmsg3").show();
+							$(".errmsg3").text("Added Mobile,Type and Version already exists.");
+							setTimeout(function() {
+								$(".errmsg3").hide();
+							}, 5000);
+							return true;
+					    }	
+					};	
+			    };
+			}
+		},
+		
+		validation : function() {
+			 var self = this;
+			 var name = $("input[name='projectname']").val();
+			 var code = $("input[name='projectcode']").val();
+			 var labelversion = $("input[name='projectversion']").val();
+			 var appcode = $("#appcode").val();
+			 var webappcode = $("#webappcode").val();
+			 var mobileappcode = $("#mobileappcode").val();
+
+			    if(name === ""){
+					self.valid("input[name='projectname']", "Enter Name");
+					self.hasError = true;
+			    }else if(code === ""){
+					self.valid("input[name='projectcode']", "Enter Code");
+					self.hasError = true;
+			    }else if(labelversion === ""){
+					self.valid("input[name='projectversion']", "Enter Version");
+					self.hasError = true;
+			    }else if(self.appvalid()) {
+					self.hasError = true;
+			    }else if(self.webvalid()) {
+			    	$(".errmsg1").hide();
+					self.hasError = true;
+			    }else if(self.mobvalid()) {
+			    	$(".errmsg2").hide();
+					self.hasError = true;		
+			    }else {		
+			    	$(".errmsg3").hide();
+				self.hasError=false;
+				return self.hasError;
+				}		
 			
-			return customerId;
+			return self.hasError;	
 		},
 
 		getCustomer : function() {
@@ -826,14 +874,20 @@ define(["projects/api/projectsAPI"], function() {
 			var self=this;
 			$("select[name='prebuiltapps']").hide();
 			$("select[name='builtmyself']").bind('change', function(){
+				$("input.appln-appcode").val('');
+				$("input.web-appcode").val('');
+				$("input.mobile-appcode").val('');
 				var selectedText = $(this).find(':selected').val();
 				if(selectedText === "prebuilt"){
 					 $("tr[name=applicationLayer]").hide();
-					 $("tr.applnLayer").hide();	
+					 $("tr.applnLayer").hide();
+					 $("tr.applnLayer").attr('key','hidden');	
 					 $("tr[name=web-Layer]").hide();
-					 $("tr.webLayer").hide();	
+					 $("tr.webLayer").hide();
+					 $("tr.webLayer").attr('key','hidden');	
 					 $("tr[name=mobile-Layer]").hide();
-					 $("tr.mobLayer").hide();	
+					 $("tr.mobLayer").hide();
+					 $("tr.mobLayer").attr('key','hidden');	
 					 $("input[name='startdate']").attr("disabled", true);
 					 $("input[name='enddate']").attr("disabled", true);
 					 $("select[name='builtmyselfapps']").hide();
@@ -851,11 +905,14 @@ define(["projects/api/projectsAPI"], function() {
 					 });
 				} else {
 					 $("tr[name=applicationLayer]").show();
-					 $("tr.applnLayer").show();	
+					 $("tr.applnLayer").show();
+					 $("tr.applnLayer").attr('key','displayed');	
 					 $("tr[name=web-Layer]").show();
-					 $("tr.webLayer").show();	
+					 $("tr.webLayer").show();
+					 $("tr.webLayer").attr('key','displayed');	
 					 $("tr[name=mobile-Layer]").show();
-					 $("tr.mobLayer").show();	
+					 $("tr.mobLayer").show();
+					 $("tr.mobLayer").attr('key','displayed');	
 					 $("select[name='builtmyselfapps']").css('display' , 'inline-block');
 					 $("input[name='startdate']").attr("disabled", false);
 					 $("input[name='enddate']").attr("disabled", false);
@@ -866,9 +923,6 @@ define(["projects/api/projectsAPI"], function() {
 					 $("a[name=addApplnLayer]").show();
 					 $("a[name=addWebLayer]").show();
 					 $("a[name=addMobileLayer]").show();
-					 $("#appcode").val('');
-					 $("#webappcode").val('');
-					 $("#mobileappcode").val('');
 					 self.revertSelectValues($("select[name='appln_technology']"),"Select Technology");
 					 $("select[name=appln_version]").html('<option>Select Version</option>');
 					 self.revertSelectValues($("select[name='weblayer']"),"Select Layer");
@@ -881,6 +935,9 @@ define(["projects/api/projectsAPI"], function() {
 			});
 			
 			$("select[name='prebuiltapps']").change(function() {
+				$("input.appln-appcode").val('');
+				$("input.web-appcode").val('');
+				$("input.mobile-appcode").val('');
 				var selectedPilot = $(this).find(':selected').text();
 				self.layerRender(selectedPilot);
 			});
@@ -913,14 +970,14 @@ define(["projects/api/projectsAPI"], function() {
 			var self=this;
 			var selectedPilotData = self.projectAPI.localVal.getJson(selectedPilot);
 			$("tr[name=applicationLayer]").hide();
-			$("tr.applnLayer").hide();	
-			$("#applicationlayer").hide();
+			$("tr.applnLayer").hide();
+			$("tr.applnLayer").attr('key','hidden');	
 			$("tr[name=web-Layer]").hide();
-			$("tr.webLayer").hide();	
-			$("#weblayer").hide();
+			$("tr.webLayer").hide();
+			$("tr.webLayer").attr('key','hidden');	
 			$("tr[name=mobile-Layer]").hide();
 			$("tr.mobLayer").hide();
-			$("#mobilelayer").hide();
+			$("tr.mobLayer").attr('key','hidden');
 			$.each(selectedPilotData.appInfos, function(index, appInfo){
 				if(appInfo.techInfo.appTypeId === "app-layer"){
 					$("select[name='appln_technology'] option").each(function(index, value) {
@@ -935,6 +992,7 @@ define(["projects/api/projectsAPI"], function() {
 					self.gettechnologyversion(techId, versionplaceholder);
 					$("tr[name=applicationLayer]").show();
 					$("tr.applnLayer").show();
+					$("tr.applnLayer").attr('key','displayed');
 				} else if (appInfo.techInfo.appTypeId === "web-layer") {
 					$("select[name='weblayer'] option").each(function(index, value) {
 						$(value).removeAttr('selected');	
@@ -958,6 +1016,7 @@ define(["projects/api/projectsAPI"], function() {
 					self.getwidgetversion(widgetType, widgetTypePlaceholder);
 					$("tr[name=web-Layer]").show();
 					$("tr.webLayer").show();
+					$("tr.webLayer").attr('key','displayed');
 				} else if(appInfo.techInfo.appTypeId === "mob-layer") {
 					$("select[name='mobile_layer'] option").each(function(index, value){
 						$(value).removeAttr('selected');	
@@ -981,6 +1040,7 @@ define(["projects/api/projectsAPI"], function() {
 					self.getmobileversion(mobileType, mobileTypePlaceholder);	
 					$("tr[name=mobile-Layer]").show();
 					$("tr.mobLayer").show();
+					$("tr.mobLayer").attr('key','displayed');
 				}
 			});	
 		}, 
@@ -1313,7 +1373,7 @@ define(["projects/api/projectsAPI"], function() {
 		createproject : function(projectId, action) {
 			
 			var self = this;
-			//if(!self.validation()) {
+			if(!self.validation()) {
 				var projectname = $("input[name='projectname']").val();
 				var projectcode = $("input[name='projectcode']").val();
 				var projectversion = $("input[name='projectversion']").val();
@@ -1323,8 +1383,10 @@ define(["projects/api/projectsAPI"], function() {
 				//To convert dd/mm//yyyy to (month date,year) format
 				var myStartDate = new Date(startdate);
 				var myEndDate = new Date(enddate);
-				var multimodule = $("input[name='multimodule']").val() === "true" ? true:false;
-				var preBuilt = $("select[name=builtmyself]").find(":selected").text() === "Custom"? false:true;
+				var multimodule = $("input[name='multimodule']").val() === "true"? true:false;
+				if($("select[name=builtmyself]").find(":selected").val() !== undefined) {
+					var	preBuilt = $("select[name=builtmyself]").find(":selected").val() === "custom"? false:true;
+				}	
 				var count = 0;
 				self.customerIds = [];
 				self.appInfos = [];
@@ -1475,7 +1537,7 @@ define(["projects/api/projectsAPI"], function() {
 					});
 				});
 			}
-		//}
+		}
 	});
 
 	return Clazz.com.components.projects.js.listener.projectsListener;

@@ -193,7 +193,7 @@ define(["projects/addproject", "projects/editproject"], function(addProject, edi
 				setTimeout(function() {
 					start();
 					var Msg = $(".blinkmsg").hasClass('popsuccess');
-					equal(Msg, false, "Add Project- show SuccessMessage After Creation Test");
+					equal(Msg, true, "Add Project- show SuccessMessage After Creation Test");
 					self.runCancelButtonTest();
 				}, 1500);	
 			});
@@ -275,7 +275,7 @@ define(["projects/addproject", "projects/editproject"], function(addProject, edi
 				$("input[name='Create']").click();
 				setTimeout(function() {
 					start();
-					ok($("input#webappcode").hasClass('errormessage'), "Add Project - Empty Web AppCode Tested");
+					notEqual($("input#webappcode").hasClass('errormessage'), true, "Add Project - Empty Web AppCode Tested");
 					self.runEmptyMobileAppCodeTest();
 				}, 1500);
 			});
@@ -302,7 +302,7 @@ define(["projects/addproject", "projects/editproject"], function(addProject, edi
 				$("input[name='Create']").click();
 				setTimeout(function() {
 					start();
-					ok($("input#mobileappcode").hasClass('errormessage'), "Add Project - Empty Mobile AppCode Tested");
+					notEqual($("input#mobileappcode").hasClass('errormessage'), true, "Add Project - Empty Mobile AppCode Tested");
 					self.runCloseButtonTest();
 				}, 1500);
 			});
