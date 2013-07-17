@@ -746,9 +746,14 @@ define(["navigation/api/navigationAPI"], function() {
 		},
 		
 		validateTextBox : function (textBoxObj, errormsg) {
-			textBoxObj.focus();
-			textBoxObj.attr('placeholder', errormsg);
-			textBoxObj.addClass("errormessage");
+			if(textBoxObj !== "" && errormsg !== "") {
+				textBoxObj.focus();
+				textBoxObj.attr('placeholder', errormsg);
+				textBoxObj.addClass("errormessage");
+			} else {
+				textBoxObj.attr('placeholder', errormsg);
+				textBoxObj.removeClass("errormessage");
+			}
 		}, 
 		
 		addImportEvent : function(){
