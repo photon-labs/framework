@@ -395,12 +395,12 @@ define(["projectlist/api/projectListAPI"], function() {
 				for(var i =0; i < response.length; i++) {
 					var headerTr = '<tr class="generatedRow" fileName="'+response[i].fileName+'" appdirname = "'+temp+'"><td>' + response[i].time + '</td><td>'+response[i].type+'</td>';
 					content = content.concat(headerTr);
-					headerTr = '<td><a class="tooltiptop" fileName="'+response[i].fileName+'" fromPage="All" href="#" data-toggle="tooltip" data-placement="top" name="downLoad" data-original-title="Download Pdf" title=""><img src="themes/default/images/helios/download_icon.png" width="15" height="18" border="0" alt="0"></a></td>';
+					headerTr = '<td class="list_img"><a class="tooltiptop" fileName="'+response[i].fileName+'" fromPage="All" href="#" data-toggle="tooltip" data-placement="top" name="downLoad" data-original-title="Download Pdf" title=""><img src="themes/default/images/helios/download_icon.png" width="15" height="18" border="0" alt="0"></a></td>';
 					content = content.concat(headerTr);
 					if(userPermissions.managePdfReports) {
-						headerTr = '<td><a class="tooltiptop" fileName="'+response[i].fileName+'" fromPage="All" href="#" data-toggle="tooltip" data-placement="top" name="delete" data-original-title="Delete Pdf" title=""><img src="themes/default/images/helios/delete_row.png" width="14" height="18" border="0" alt="0"></a></td></tr>';
+						headerTr = '<td class="list_img"><a class="tooltiptop" fileName="'+response[i].fileName+'" fromPage="All" href="#" data-toggle="tooltip" data-placement="top" name="delete" data-original-title="Delete Pdf" title=""><img src="themes/default/images/helios/delete_row.png" width="14" height="18" border="0" alt="0"></a></td></tr>';
 					} else {
-						headerTr = '<td><a class="tooltiptop" fileName="'+response[i].fileName+'" fromPage="All" href="#" data-toggle="tooltip" data-placement="top" data-original-title="Delete Pdf" title=""><img src="themes/default/images/helios/delete_row_off.png" width="14" height="18" border="0" alt="0"></a></td></tr>';
+						headerTr = '<td class="list_img"><a class="tooltiptop" fileName="'+response[i].fileName+'" fromPage="All" href="#" data-toggle="tooltip" data-placement="top" data-original-title="Delete Pdf" title=""><img src="themes/default/images/helios/delete_row_off.png" width="14" height="18" border="0" alt="0"></a></td></tr>';
 					}
 					content = content.concat(headerTr);
 				}

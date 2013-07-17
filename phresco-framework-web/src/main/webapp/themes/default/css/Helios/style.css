@@ -880,7 +880,7 @@ ul.nav li.dropdown:hover > .test_options{
 }	
 
 .pdf_report {
-	 width: 380px !important;
+	 width: 369px !important;
 }
 
 .existing_report {
@@ -1025,6 +1025,15 @@ ul.nav li.dropdown:hover > .test_options{
 .popupCloseBtn {
 	text-align: right;
 }	
+
+.list_img img {
+	margin-left:9px;
+}
+
+.centre_img {
+	margin:0px !important;
+}
+
 /* ******************************************************************* CSS related to create project page ********************************************************************** */
 
 .datepicker  {
@@ -2327,7 +2336,7 @@ html>body thead.fixedHeader tr {
 
 html>body tbody.scrollContent {
 	display: block;
-	height: 580px;
+	/*height: 580px;*/
 	overflow: auto;
 	width: 100%;
 }
@@ -3929,7 +3938,7 @@ button::-moz-focus-inner {
 padding-top: 12px;
 }
 
-select, textarea, input[type="text"], input[type="password"], input[type="datetime"], input[type="datetime-local"], input[type="date"], input[type="month"], input[type="time"], input[type="week"], input[type="number"], input[type="email"], input[type="url"], input[type="search"], input[type="tel"], input[type="color"], .uneditable-input {
+select, input[type="text"], input[type="password"], input[type="datetime"], input[type="datetime-local"], input[type="date"], input[type="month"], input[type="time"], input[type="week"], input[type="number"], input[type="email"], input[type="url"], input[type="search"], input[type="tel"], input[type="color"], .uneditable-input {
 border-radius: 4px 4px 4px 4px;
 color: #555555;
 display: inline-block;

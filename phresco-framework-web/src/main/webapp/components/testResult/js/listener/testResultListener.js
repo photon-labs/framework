@@ -207,15 +207,15 @@ define(["testResult/api/testResultAPI"], function() {
 				resultTemplate = resultTemplate.concat('<tr><td>'+ result.name +'</td>');
 				resultTemplate = resultTemplate.concat('<td>'+ result.testClass +'</td>');
 				resultTemplate = resultTemplate.concat('<td>'+ result.time +'</td>');
-				resultTemplate = resultTemplate.concat('<td>');
+				resultTemplate = resultTemplate.concat('<td class="list_img">');
 				if (result.testCaseFailure !== null) {
 					resultTemplate = resultTemplate.concat('<img src="themes/default/images/helios/cross_red.png" width="16" height="13" border="0" alt=""></td>');
-					resultTemplate = resultTemplate.concat('<td><a href="#" type="failure" resultName="'+result.name+'" class="log"><img src="themes/default/images/helios/log_icon.png" width="16" height="13" border="0" alt=""></a>');
+					resultTemplate = resultTemplate.concat('<td class="list_img"><a href="#" type="failure" resultName="'+result.name+'" class="log"><img src="themes/default/images/helios/log_icon.png" width="16" height="13" border="0" alt=""></a>');
 					resultTemplate = resultTemplate.concat('<div id="'+result.name+'" style="display: none; width:500px"><div style="word-wrap: break-word;"><b>'+result.testCaseFailure.failureType+' : </b>'+ result.testCaseFailure.description+'</div><div class="flt_right">');
 					resultTemplate = resultTemplate.concat('<input type="button" value="Close" class="btn btn_style dyn_popup_close"></div></div></td>');
 				}  else if (result.testCaseError !== null) {
 					resultTemplate = resultTemplate.concat('<img src="themes/default/images/helios/cross_red.png" width="16" height="13" border="0" alt=""></td>');
-					resultTemplate = resultTemplate.concat('<td><a href="#" type="error" resultName="'+result.name+'" class="log"><img src="themes/default/images/helios/log_icon.png" width="16" height="13" border="0" alt=""></a>');
+					resultTemplate = resultTemplate.concat('<td class="list_img"><a href="#" type="error" resultName="'+result.name+'" class="log"><img src="themes/default/images/helios/log_icon.png" width="16" height="13" border="0" alt=""></a>');
 					resultTemplate = resultTemplate.concat('<div id="'+result.name+'" style="display: none; width:500px"><div style="word-wrap: break-word;"><b>'+result.testCaseError.errorType+' : </b>'+ result.testCaseError.description+'</div><div class="flt_right">');
 					resultTemplate = resultTemplate.concat('<input type="button" value="Close" class="btn btn_style dyn_popup_close"></div></div></td>');
 				} else {
