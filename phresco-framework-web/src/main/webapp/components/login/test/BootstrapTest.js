@@ -20,6 +20,8 @@ var commonVariables = {
 	
 	configuration : "configuration",
 	editConfiguration : "editConfiguration",
+
+	techId : "tech-phpdru6",
 	
 	featurePage : "features",
 	featurePageContext : "features",
@@ -135,6 +137,8 @@ define(["jquery"], function($) {
 					projectTest.runTests(data);
 					dynamicPageTest.runTests(data);
 					performanceTestTest.runTests(data);
+					editConfigurationTest.runTests(data);
+					configurationTest.runTests(data);
 					/*applicationTest.runTests(data);
 					featuresTest.runTests(data);
 					functionalTestTest.runTests(data);

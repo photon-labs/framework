@@ -79,7 +79,7 @@ define(["configuration/listener/configurationListener"], function() {
 				} else {
 					$(".blinkmsg").removeClass("poperror").addClass("popsuccess");
 					self.effectFadeOut('popsuccess', response.message);	
-					self.loadPage(true);
+					self.loadPage(commonVariables.animation);
 				}
 			});
 		},
