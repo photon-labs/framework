@@ -191,6 +191,59 @@ define(["framework/widget", "framework/templateProvider"], function() {
 				});
 			},
 			
+			popupforTree : function(e,place) {
+				var clicked = $(e), self=this;
+				var target = $("#" + place);
+				var twowidth = window.innerWidth/1.5;;
+
+				if (clicked.offset().left < twowidth) {
+					$(target).toggle();
+					var t=clicked.offset().top - target.height()/2 + 10;
+					var l=clicked.offset().left + clicked.width()+ 15;
+					$(target).offset({
+						top: t,
+						left: l
+					});
+
+					$(target).addClass('speakstyleleft').removeClass('speakstyleright');
+					$(".header_section").css("z-index","4");
+					$(".content_title").css("z-index","4");
+					$(".optiontitle").css("z-index","0");
+				}
+				else {
+					$(target).toggle();
+					var t=clicked.offset().top - 130;
+					var l=clicked.offset().left - 340;
+					$(target).offset({
+						top: t,
+						left: l
+					});
+
+					$(target).addClass('speakstyleright').removeClass('speakstyleleft');
+					$(target).css({"height":"272px" ,"width": "309px"});
+					$(".header_section").css("z-index","4");
+					$(".content_title").css("z-index","4");
+					$(".optiontitle").css("z-index","0");
+
+				}
+
+				$(document).keyup(function(e) {
+					if(e.which === 27){
+						$("#" + place).hide();
+						$(".header_section").css("z-index","7");
+						$(".content_title").css("z-index","6");
+						$(".optiontitle").css("z-index","1");
+					}
+				});
+
+				$('.dyn_popup_close').click( function() {
+					$("#" + place).hide();
+					$(".header_section").css("z-index","7");
+					$(".content_title").css("z-index","6");
+					$(".optiontitle").css("z-index","1");
+				});
+			},
+			
 			opencc : function(ee, placeId, currentPrjName) {
 				var self=this;
 				$(".dyn_popup").hide();
@@ -620,6 +673,35 @@ define(["framework/widget", "framework/templateProvider"], function() {
 			
 			hideDynamicPopupLoading : function () {
 				$('.dynamicPopupLoading').hide();
+			},
+			
+			fileTree : function (retValue, callback) {
+				var self=this;
+				//var strTree = $('<div></div>');
+				var rootItem = $(retValue).contents().children().children();
+				self.getList(rootItem, function(returnValue){
+					//var tree = $(strTree).append(returnValue);	
+					callback('<div>'+ returnValue +'</div>');
+				});
+			},
+			
+			getList : function(ItemList, callback) {
+				var self=this, strUl = "", strRoot ="", strItems ="", strCollection = "";
+				$(ItemList).each(function(index, value){
+					if($(value).children().length > 0) {
+						strRoot = $(value).attr('name');
+						self.getList($(value).children(),function(callback) {
+							strCollection = callback;
+						});
+						strItems += '<li value='+$(value).attr('path').replace(/\s/g,"+")+'><span class="folder"><a>' + strRoot + '</a></span>' + strCollection +'</li>';
+					} else { 
+						
+						strItems += '<li value='+$(value).attr('path').replace(/\s/g,"+")+'><span class="folder"><a>' + $(value).attr('name') + '</a></span></li>';
+					}
+				});
+				
+				strUl = '<ul >' + strItems + '</ul>';
+				callback(strUl); 
 			},
 			
 			CSVToArray : function(strData, strDelimiter) {
