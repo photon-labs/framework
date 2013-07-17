@@ -108,12 +108,12 @@
 						<tr>
 							<td name="{{buildNo}}">{{buildNo}}</td>
 							<td>{{timeStamp}}</td>
-							<td>
+							<td class="list_img">
 								<a href="#">
 									<img name="downloadBuild" src="themes/default/images/helios/download_icon.png" width="15" height="18" border="0" alt="">
 								</a>
 							</td>
-							<td>
+							<td class="list_img">
 								<a href="#">
 									{{#if ../userPermissions.manageBuilds}}
 										<img name="deployBuild" src="themes/default/images/helios/deploy_icon.png" width="16" height="20" border="0" alt="">
@@ -135,7 +135,7 @@
 									</div>
 								</div>
 							</td>
-							<td>
+							<td class="list_img">
 								{{#if ../userPermissions.manageBuilds}}
 									<a name="delete_{{buildNo}}" class="tooltiptop" title="" data-placement="top" data-toggle="tooltip" href="#" data-original-title="Delete Row">
 										<img name="deleteBuild" src="themes/default/images/helios/delete_icon.png" width="16" height="20" border="0" alt="">
