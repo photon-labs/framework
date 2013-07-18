@@ -450,6 +450,7 @@ define(["configuration/api/configurationAPI"], function() {
                 action: commonVariables.webserviceurl+commonVariables.configuration+'/upload',
 				actionType : "configuration",
 				appDirName : appDirName,
+				buttonLabel: "Upload File",
 				multiple: false,
 				debug: true
             });           
