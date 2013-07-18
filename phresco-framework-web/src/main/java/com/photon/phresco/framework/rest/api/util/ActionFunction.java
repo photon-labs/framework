@@ -136,6 +136,35 @@ public class ActionFunction implements Constants ,FrameworkConstants,ActionServi
 			} else {
 				throw new PhrescoException("No valid Customer Id Passed");
 			}
+			setSelectedFiles(request.getParameter(SELECTED_FILES));
+		} catch (Exception e) {
+			throw new PhrescoException(e.getMessage());
+		}
+	}
+	
+	public void prePopulateBuildModelData(HttpServletRequest request) throws PhrescoException {
+		try {
+			this.request = request;
+			String appId = request.getParameter(APP_ID);
+			if (StringUtils.isNotEmpty(appId) && !"null".equalsIgnoreCase(appId)) {
+				setAppId(appId);	
+			} else {
+				throw new PhrescoException("No valid App Id Passed");
+			}
+
+			String projectId = request.getParameter(PROJECT_ID);
+			if (StringUtils.isNotEmpty(projectId) && !"null".equalsIgnoreCase(projectId)) {
+				setProjectId(projectId);
+			} else {
+				throw new PhrescoException("No valid Project Id Passed");
+			}
+
+			String customerId = request.getParameter(CUSTOMER_ID);
+			if (StringUtils.isNotEmpty(customerId) && !"null".equalsIgnoreCase(request.getParameter(CUSTOMER_ID))) {
+				setCustomerId(customerId);
+			} else {
+				throw new PhrescoException("No valid Customer Id Passed");
+			}
 
 			String userName = request.getParameter(BuildServiceConstants.USERNAME);
 			if (StringUtils.isNotEmpty(userName) && !"null".equalsIgnoreCase(userName)) {
@@ -409,6 +438,14 @@ public class ActionFunction implements Constants ,FrameworkConstants,ActionServi
 			S_LOGGER.debug("APPP ID received :"+getAppId());
 			S_LOGGER.debug("PROJECT ID received :"+getProjectId());
 			S_LOGGER.debug("CUSTOMER ID received :"+getCustomerId());
+		}
+	}
+	
+	private void printBuildLogs() {
+		if (isDebugEnabled) {
+			S_LOGGER.debug("APPP ID received :"+getAppId());
+			S_LOGGER.debug("PROJECT ID received :"+getProjectId());
+			S_LOGGER.debug("CUSTOMER ID received :"+getCustomerId());
 			S_LOGGER.debug("USERNAME  received :"+getUsername());
 		}
 	}
@@ -428,7 +465,7 @@ public class ActionFunction implements Constants ,FrameworkConstants,ActionServi
 	}
 
 	public ActionResponse build(HttpServletRequest request) throws PhrescoException, IOException {
-		printLogs();
+		printBuildLogs();
 		BufferedInputStream server_logs = null;
 		server_logs = build(getUsername());
 		if (server_logs != null) {

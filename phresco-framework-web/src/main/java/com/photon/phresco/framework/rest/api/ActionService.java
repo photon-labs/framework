@@ -67,7 +67,7 @@ public class ActionService implements ActionServiceConstant {
 		ActionFunction actionFunction = new ActionFunction();
 		ActionResponse response = new ActionResponse();
 		try	{
-			actionFunction.prePopulateModelData(request);
+			actionFunction.prePopulateBuildModelData(request);
 			response = actionFunction.build(request);
 		} catch (Exception e) {
 
