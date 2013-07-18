@@ -124,7 +124,7 @@
 				{{else}}               		 
 					<input type="submit" value="Test" data-i18n="" name="performancePopup" class="btn btn_style" disabled>
 				{{/if}}
-                <div id="performancePopup" class="dyn_popup dynamic_cont" style="display:none;width:500px;">
+                <div id="performancePopup" class="dyn_popup performance_pop_cont" style="display:none;width:500px;">
                     <form name="performanceForm" id="performanceForm">	
                     	<input type="hidden" name="resultJson" id="resultJson" value=""/>
                         <ul class="row dynamicControls">
