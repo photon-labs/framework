@@ -111,7 +111,6 @@ define(["projects/listener/projectsListener"], function() {
 		postRender : function(element) {
 			var self=this;
 			self.multiselect();
-			self.projectsListener.multiModuleEvent("false");
 			if(commonVariables.animation) {
 				$(".create_proj .scrollContent").mCustomScrollbar({
 					autoHideScrollbar:true,
@@ -119,6 +118,7 @@ define(["projects/listener/projectsListener"], function() {
 					advanced:{ updateOnContentResize: true}
 				});	
 			}
+			self.projectsListener.multiModuleEvent("false");
 		},
 		
 		setTechnologyData : function(callback) {

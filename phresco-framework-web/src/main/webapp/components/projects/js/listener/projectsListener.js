@@ -971,80 +971,82 @@ define(["projects/api/projectsAPI"], function() {
 		layerRender : function(selectedPilot) {
 			var self=this;
 			var selectedPilotData = self.projectAPI.localVal.getJson(selectedPilot);
-			$("tr[name=applicationLayer]").hide();
-			$("tr.applnLayer").hide();
-			$("tr.applnLayer").attr('key','hidden');	
-			$("tr[name=web-Layer]").hide();
-			$("tr.webLayer").hide();
-			$("tr.webLayer").attr('key','hidden');	
-			$("tr[name=mobile-Layer]").hide();
-			$("tr.mobLayer").hide();
-			$("tr.mobLayer").attr('key','hidden');
-			$.each(selectedPilotData.appInfos, function(index, appInfo){
-				if(appInfo.techInfo.appTypeId === "app-layer"){
-					$("select[name='appln_technology'] option").each(function(index, value) {
-						$(value).removeAttr('selected');	
-						if($(value).val() === appInfo.techInfo.id) {
-							$(value).attr('selected', 'selected');
-							$("select[name='appln_technology']").val($(value).val());
-						}
-					});
-					var techId = $("select[name='appln_technology']").val();
-					var versionplaceholder = $("select[name='appln_technology']").parents("td[name='technology']").siblings("td[name='version']").children("select[name='appln_version']");
-					self.gettechnologyversion(techId, versionplaceholder);
-					$("tr[name=applicationLayer]").show();
-					$("tr.applnLayer").show();
-					$("tr.applnLayer").attr('key','displayed');
-				} else if (appInfo.techInfo.appTypeId === "web-layer") {
-					$("select[name='weblayer'] option").each(function(index, value) {
-						$(value).removeAttr('selected');	
-						if($(value).val() === appInfo.techInfo.techGroupId) {
-							$(value).attr('selected', 'selected');
-							$("select[name='weblayer']").val($(value).val());
-						}
-					});
-					var type = $("select[name='weblayer']").val();
-					var widgetTypePlaceholder = $("select[name='weblayer']").parents("td[name='web']").siblings("td[name='widget']").children("select[name='web_widget']");
-					self.getwidgettype(type, widgetTypePlaceholder);
-					$("select[name='web_widget'] option").each(function(index, value) {
-						$(value).removeAttr('selected');	
-						if($(value).val() === appInfo.techInfo.id) {
-							$(value).attr('selected', 'selected');
-							$("select[name='web_widget']").val($(value).val());
-						}
-					});
-					var widgetType = $("select[name='web_widget']").val();
-					var widgetTypePlaceholder = $("select[name='web_widget']").parents("td[name='widget']").siblings("td[name='widgetversion']").children("select[name='web_version']");
-					self.getwidgetversion(widgetType, widgetTypePlaceholder);
-					$("tr[name=web-Layer]").show();
-					$("tr.webLayer").show();
-					$("tr.webLayer").attr('key','displayed');
-				} else if(appInfo.techInfo.appTypeId === "mob-layer") {
-					$("select[name='mobile_layer'] option").each(function(index, value){
-						$(value).removeAttr('selected');	
-						if($(value).val() === appInfo.techInfo.techGroupId) {
-							$(value).attr('selected', 'selected');
-							$("select[name='mobile_layer']").val($(value).val());
-						}
-					});
-					var mobile = $("select[name='mobile_layer']").val();
-					var mobileTypePlaceholder = $("select[name='mobile_layer']").parents("td[name='mobile']").siblings("td[name='types']").children("select[name='mobile_types']");
-					self.getmobiletype(mobile, mobileTypePlaceholder);
-					$("select[name='mobile_types'] option").each(function(index, value){
-						$(value).removeAttr('selected');	
-						if($(value).val() === appInfo.techInfo.id) {
-							$(value).attr('selected', 'selected');
-							$("select[name='mobile_types']").val($(value).val());
-						}
-					});
-					var mobileType = $("select[name='mobile_types']").val();
-					var mobileTypePlaceholder = $("select[name='mobile_types']").parents("td[name='types']").siblings("td[name='mobileversion']").children("select[name='mobile_version']");
-					self.getmobileversion(mobileType, mobileTypePlaceholder);	
-					$("tr[name=mobile-Layer]").show();
-					$("tr.mobLayer").show();
-					$("tr.mobLayer").attr('key','displayed');
-				}
-			});	
+			if(selectedPilotData !== undefined && selectedPilotData !== null) {
+				$("tr[name=applicationLayer]").hide();
+				$("tr.applnLayer").hide();
+				$("tr.applnLayer").attr('key','hidden');	
+				$("tr[name=web-Layer]").hide();
+				$("tr.webLayer").hide();
+				$("tr.webLayer").attr('key','hidden');	
+				$("tr[name=mobile-Layer]").hide();
+				$("tr.mobLayer").hide();
+				$("tr.mobLayer").attr('key','hidden');
+				$.each(selectedPilotData.appInfos, function(index, appInfo){
+					if(appInfo.techInfo.appTypeId === "app-layer"){
+						$("select[name='appln_technology'] option").each(function(index, value) {
+							$(value).removeAttr('selected');	
+							if($(value).val() === appInfo.techInfo.id) {
+								$(value).attr('selected', 'selected');
+								$("select[name='appln_technology']").val($(value).val());
+							}
+						});
+						var techId = $("select[name='appln_technology']").val();
+						var versionplaceholder = $("select[name='appln_technology']").parents("td[name='technology']").siblings("td[name='version']").children("select[name='appln_version']");
+						self.gettechnologyversion(techId, versionplaceholder);
+						$("tr[name=applicationLayer]").show();
+						$("tr.applnLayer").show();
+						$("tr.applnLayer").attr('key','displayed');
+					} else if (appInfo.techInfo.appTypeId === "web-layer") {
+						$("select[name='weblayer'] option").each(function(index, value) {
+							$(value).removeAttr('selected');	
+							if($(value).val() === appInfo.techInfo.techGroupId) {
+								$(value).attr('selected', 'selected');
+								$("select[name='weblayer']").val($(value).val());
+							}
+						});
+						var type = $("select[name='weblayer']").val();
+						var widgetTypePlaceholder = $("select[name='weblayer']").parents("td[name='web']").siblings("td[name='widget']").children("select[name='web_widget']");
+						self.getwidgettype(type, widgetTypePlaceholder);
+						$("select[name='web_widget'] option").each(function(index, value) {
+							$(value).removeAttr('selected');	
+							if($(value).val() === appInfo.techInfo.id) {
+								$(value).attr('selected', 'selected');
+								$("select[name='web_widget']").val($(value).val());
+							}
+						});
+						var widgetType = $("select[name='web_widget']").val();
+						var widgetTypePlaceholder = $("select[name='web_widget']").parents("td[name='widget']").siblings("td[name='widgetversion']").children("select[name='web_version']");
+						self.getwidgetversion(widgetType, widgetTypePlaceholder);
+						$("tr[name=web-Layer]").show();
+						$("tr.webLayer").show();
+						$("tr.webLayer").attr('key','displayed');
+					} else if(appInfo.techInfo.appTypeId === "mob-layer") {
+						$("select[name='mobile_layer'] option").each(function(index, value){
+							$(value).removeAttr('selected');	
+							if($(value).val() === appInfo.techInfo.techGroupId) {
+								$(value).attr('selected', 'selected');
+								$("select[name='mobile_layer']").val($(value).val());
+							}
+						});
+						var mobile = $("select[name='mobile_layer']").val();
+						var mobileTypePlaceholder = $("select[name='mobile_layer']").parents("td[name='mobile']").siblings("td[name='types']").children("select[name='mobile_types']");
+						self.getmobiletype(mobile, mobileTypePlaceholder);
+						$("select[name='mobile_types'] option").each(function(index, value){
+							$(value).removeAttr('selected');	
+							if($(value).val() === appInfo.techInfo.id) {
+								$(value).attr('selected', 'selected');
+								$("select[name='mobile_types']").val($(value).val());
+							}
+						});
+						var mobileType = $("select[name='mobile_types']").val();
+						var mobileTypePlaceholder = $("select[name='mobile_types']").parents("td[name='types']").siblings("td[name='mobileversion']").children("select[name='mobile_version']");
+						self.getmobileversion(mobileType, mobileTypePlaceholder);	
+						$("tr[name=mobile-Layer]").show();
+						$("tr.mobLayer").show();
+						$("tr.mobLayer").attr('key','displayed');
+					}
+				});
+			}		
 		}, 
 		
 		multiModuleEvent : function(multimodule){
