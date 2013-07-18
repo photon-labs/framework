@@ -123,6 +123,14 @@ define(["framework/widgetWithTemplate", "ci/listener/ciListener"], function() {
 						});
 					});
 			});
+			
+			$(".jobConfigure").mCustomScrollbar({
+				autoHideScrollbar:true,
+				theme:"light-thin",
+				advanced: {
+					updateOnContentResize: true
+				}
+			});
 		},
 		
 		getAction : function(ciRequestBody, action, params, callback) {			
@@ -214,14 +222,6 @@ define(["framework/widgetWithTemplate", "ci/listener/ciListener"], function() {
 
 
 			var self = this;
-
-			$(".jobConfigure").mCustomScrollbar({
-				autoHideScrollbar:true,
-				theme:"light-thin",
-				advanced: {
-					updateOnContentResize: true
-				}
-			});
 
    			$(".dyn_popup").hide();
 	  		$(window).resize(function() {
