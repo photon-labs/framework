@@ -200,11 +200,11 @@ define(["framework/widgetWithTemplate", "ci/listener/ciListener"], function() {
 				self.continuousDeliveryConfigureEditEvent.dispatch(contName);
    			});
    			
-   			setInterval(function() {   //calls click event after a certain time
+   			//setInterval(function() {   //calls click event after a certain time
    				$(".pipeline_box").each(function() {
    	   				self.ciStatusEvent.dispatch($(this))
    	   			});
- 			}, 10000);
+ 			//}, 10000);
    			
 			$(".datetime_status").click(function() {
 				self.openccwait(this, $(this).attr('class'));

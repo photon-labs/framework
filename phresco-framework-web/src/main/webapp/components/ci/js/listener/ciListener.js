@@ -87,7 +87,7 @@ define(["ci/api/ciAPI"], function() {
 			var customerId = self.getCustomer();
 			customerId = (customerId == "") ? "photon" : customerId;
 			var projectId = self.ciAPI.localVal.getSession("projectId");
-			var appDir = self.ciAPI.localVal.getSession('appDirName');
+			//var appDir = self.ciAPI.localVal.getSession('appDirName');
 
 			header = {
 				contentType: "application/json",
@@ -110,7 +110,7 @@ define(["ci/api/ciAPI"], function() {
 				header.webserviceurl = commonVariables.webserviceurl + commonVariables.jobTemplates;
 			} else if (action === "continuousDeliveryList") {
 				header.requestMethod = "GET";
-				header.webserviceurl = commonVariables.webserviceurl + commonVariables.ci+"/list?projectId="+projectId+"&appDirName="+appDir;
+				header.webserviceurl = commonVariables.webserviceurl + commonVariables.ci+"/list?projectId="+projectId;
 			} else if (action === "update") {
 				header.requestMethod = "PUT";
 				ciRequestBody.customerId = customerId;
