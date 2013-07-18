@@ -1178,6 +1178,11 @@ img[name="close"] {
 	border-left:1px solid #FFF;
 }
 
+.pipeline_box .tooltip-inner {
+	color:#FFF !important;
+	padding:8px;
+}
+
 .tooltiptop, .tooltiptop:hover {
 	color: #000000;
 	text-decoration: none;
@@ -3373,19 +3378,19 @@ html>body tbody.scrollContent {
 
 /* *************************************************************** STYLES FOR DYNAMIC PARAMETER STARTS ************************************************************************************ */
 
-.dynamic_cont .row {
+.dynamic_cont .row, .performance_pop_cont .row {
 	padding:0;
 	margin:0;
 	list-style:none;
 }
 
-.dynamic_cont .row .ctrl {
+.dynamic_cont .row .ctrl, .performance_pop_cont .row .ctrl {
 	float:left;
 	width:143px;
 	margin-right:15px;
 }
 
-.dynamic_cont .row .ctrl label  {
+.dynamic_cont .row .ctrl label, .performance_pop_cont .row .ctrl label, .context_table td label  {
 	font-size:12px !important
 }
 
@@ -3398,7 +3403,7 @@ html>body tbody.scrollContent {
 	margin-bottom:0 !important;
 }
 
-.dynamic_cont input[type="text"], .dynamic_cont input[type="password"] {
+.dynamic_cont input[type="text"], .dynamic_cont input[type="password"], .performance_pop_cont input[type="text"], .performance_pop_cont input[type="password"] {
 	margin-bottom:10px !important;
 }
 
@@ -3413,6 +3418,23 @@ html>body tbody.scrollContent {
 .singleColumn button, singleColumn input  {
 	margin-bottom:10px;
 }
+
+.performance_pop_cont {
+	width:475px !important;
+}
+
+.performance_pop_cont input[type="text"], .performance_pop_cont input[type="password"], .performance_pop_cont select, .performance_pop_cont .bootstrap-select .btn {
+	width:151px !important;
+}
+
+.performance_pop_cont form {
+	margin-bottom:4px !important;
+}
+
+.performance_pop_cont select {
+	margin-top:0 !important;
+}
+
 /* *************************************************************** STYLES FOR QUALITY_PERFORMANCE TEST PAGE ************************************************************************************ */
 
 
@@ -3504,6 +3526,7 @@ html>body tbody.scrollContent {
 	float:left;
 	color:#ed7940;
 	font-weight:bold;
+	margin-top:6px;
 }
 
 .middle_div span:last-child
@@ -3516,10 +3539,23 @@ html>body tbody.scrollContent {
 	cursor: pointer;
 }
 
+.context_table th, .context_table td {
+	border-top:none !important;
+}
+
 .context_table
 {
 	margin-bottom:10px !important;
 	padding-bottom:6px;
+}
+
+.context_table table {
+	margin-bottom:0 !important;
+}
+
+.context_table [type="checkbox"] {
+	margin-right:8px;
+	margin-top:-4px !important;
 }
 
 .context_table tr:first-child td:first-child, .context_table tr:nth-child(2) td:first-child
@@ -3537,16 +3573,8 @@ html>body tbody.scrollContent {
 	padding-right: 7px;
 }
 
-.context_table tr td select
-{
-	width:110px !important;
-	height:25px;
-}
-
-.context_table tr td [type="text"]
-{
-	width:110px !important;
-	height:15px;
+.context_table tr td [type="text"], .context_table tr td select {
+	width:100px !important;
 }
 
 .delete_icon 
@@ -3597,7 +3625,7 @@ img.add_test_icon
 
 .header_table tr td [type="button"]
 {
-	margin-bottom:2px;
+	margin-bottom:11px;
 }
 
 .header_table tr td:first-child
