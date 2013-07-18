@@ -439,27 +439,18 @@ define(["projectlist/api/projectListAPI"], function() {
 			});
 			
 			$("a[name=downLoad]").click(function() {
-				var downloaddata = {}, actionBody = {}, action;
-				downloaddata.fileName = $(this).attr("fileName");
-				downloaddata.fromPage = $(this).attr("frompage");
-				downloaddata.appDir = $(this).closest('tr').attr("appdirname");
-				actionBody = downloaddata;
-				var Url = self.getContextUrl();
-				finalUrl = Url + commonVariables.webserviceurl + "pdf/downloadReport?appDirName="+actionBody.appDir+"&reportFileName="+actionBody.fileName+"&fromPage="+actionBody.fromPage;
-				$(this).attr('href',finalUrl);
+				var actionBody = {};
+				actionBody.fileName = $(this).attr("fileName");
+				actionBody.fromPage = $(this).attr("frompage");
+				actionBody.appDir = $(this).closest('tr').attr("appdirname");
+				var pdfDownloadUrl = commonVariables.webserviceurl + "pdf/downloadReport?appDirName="+actionBody.appDir+"&reportFileName="+actionBody.fileName+"&fromPage="+actionBody.fromPage;
+				window.open(pdfDownloadUrl, '_self');
 			});
 			
-			// blocked the space and special characters from keyboard
-			$("input[name=pdfName]").keypress(function() {
-				$(this).limitkeypress({ rexp: /^[A-Za-z0-9-_]*$/ });
+			$("input[name=pdfName]").unbind('input');
+			$("input[name=pdfName]").bind('input', function(){
+				$(this).val(self.specialCharValidation($(this).val().replace(/\s/g, "")));
 			});
-		},
-		
-		// to get the context path
-		getContextUrl : function() {
-			var url = window.location.href;
-			url = url.substr(0,url.lastIndexOf("#"));
-			return url;
 		},
 		
 		addUpdateEvent : function(obj, dynid, revision){
