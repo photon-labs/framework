@@ -82,6 +82,12 @@ define(["componentTest/listener/componentTestListener", "testResult/listener/tes
 				Clazz.navigationController.jQueryContainer = $(commonVariables.contentPlaceholder).find('#testResult');
 				Clazz.navigationController.push(self.testResult, false);
 			});
+			
+			$("#testResult .scrollContent").mCustomScrollbar({
+				autoHideScrollbar:true,
+				theme:"light-thin",
+				advanced:{ updateOnContentResize: true}
+			});
 		},
 		
 		preRender: function(whereToRender, renderFunction) {

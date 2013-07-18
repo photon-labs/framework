@@ -1,20 +1,19 @@
-define(["unitTest/listener/unitTestListener", "testResult/listener/testResultListener"], function() {
-	Clazz.createPackage("com.components.unitTest.js");
+define(["integrationTest/listener/integrationTestListener", "testResult/listener/testResultListener"], function() {
+	Clazz.createPackage("com.components.integrationTest.js");
 
-	Clazz.com.components.unitTest.js.UnitTest = Clazz.extend(Clazz.WidgetWithTemplate, {
+	Clazz.com.components.integrationTest.js.IntegrationTest = Clazz.extend(Clazz.WidgetWithTemplate, {
 		
 		// template URL, used to indicate where to get the template
-		templateUrl: commonVariables.contexturl + "components/unitTest/template/unitTest.tmp",
-		configUrl: "components/unitTest/config/config.json",
-		name : commonVariables.unitTest,
-		unitTestListener : null,
-		unitTestAPI : null,
+		templateUrl: commonVariables.contexturl + "components/integrationTest/template/integrationTest.tmp",
+		configUrl: "components/integrationTest/config/config.json",
+		name : commonVariables.integrationTest,
+		integrationTestListener : null,
+		integrationTestAPI : null,
 		testResult : null,
 		testResultListener : null,
 		onTabularViewEvent : null,
 		onGraphicalViewEvent : null,
-		onDynamicPageEvent : null,
-		onRunUnitTestEvent : null,
+		onRunIntegrationTestEvent : null,
 		
 		/***
 		 * Called in initialization time of this class 
@@ -23,12 +22,12 @@ define(["unitTest/listener/unitTestListener", "testResult/listener/testResultLis
 		 */
 		initialize : function(globalConfig) {
 			var self = this;
-			commonVariables.testType = commonVariables.unit;
-			if (self.unitTestAPI === null) {
-				self.unitTestAPI =  new Clazz.com.components.unitTest.js.api.UnitTestAPI();
+			commonVariables.testType = commonVariables.integration;
+			if (self.integrationTestAPI === null) {
+				self.integrationTestAPI =  new Clazz.com.components.integrationTest.js.api.IntegrationTestAPI();
 			}
-			if (self.unitTestListener === null ) {
-				self.unitTestListener = new Clazz.com.components.unitTest.js.listener.UnitTestListener();
+			if (self.integrationTestListener === null ) {
+				self.integrationTestListener = new Clazz.com.components.integrationTest.js.listener.IntegrationTestListener();
 			}
 			if (self.testResultListener === null) {
 				self.testResultListener = new Clazz.com.components.testResult.js.listener.TestResultListener();
@@ -36,51 +35,23 @@ define(["unitTest/listener/unitTestListener", "testResult/listener/testResultLis
 			if (self.onTabularViewEvent === null) {
 				self.onTabularViewEvent = new signals.Signal();
 			}
-			self.onTabularViewEvent.add(self.unitTestListener.onTabularView, self.unitTestListener);
+			self.onTabularViewEvent.add(self.integrationTestListener.onTabularView, self.integrationTestListener);
 			
 			if (self.onGraphicalViewEvent === null) {
 				self.onGraphicalViewEvent = new signals.Signal();
 			}
-			self.onGraphicalViewEvent.add(self.unitTestListener.onGraphicalView, self.unitTestListener);
+			self.onGraphicalViewEvent.add(self.integrationTestListener.onGraphicalView, self.integrationTestListener);
 			
-			if (self.onDynamicPageEvent === null) {
-				self.onDynamicPageEvent = new signals.Signal();
+			if (self.onRunIntegrationTestEvent === null) {
+				self.onRunIntegrationTestEvent = new signals.Signal();
 			}
-			self.onDynamicPageEvent.add(self.unitTestListener.getDynamicParams, self.unitTestListener);
+			self.onRunIntegrationTestEvent.add(self.integrationTestListener.runIntegrationTest, self.integrationTestListener);
 			
-			if (self.onRunUnitTestEvent === null) {
-				self.onRunUnitTestEvent = new signals.Signal();
-			}
-			self.onRunUnitTestEvent.add(self.unitTestListener.runUnitTest, self.unitTestListener);
-			
-			self.registerEvents(self.unitTestListener);
+			self.registerEvents(self.integrationTestListener);
 		},
 		
-		registerEvents : function(unitTestListener) {
+		registerEvents : function(integrationTestListener) {
 			var self = this;
-			Handlebars.registerHelper('report', function(data, firstVal) {
-				var returnVal = "";
-				if (firstVal) {
-					returnVal = data[0];
-				} else {
-					$.each(data, function(index, current){
-						returnVal += '<li class="reportOption"><a href="#">'+ current +'</a></li>';
-					});
-				}
-				return returnVal;
-			});
-			
-			Handlebars.registerHelper('modules', function(data, firstVal) {
-				var returnVal = "";
-				if (firstVal) {
-					returnVal = data[0];
-				} else {
-					$.each(data, function(index, current){
-						returnVal += '<li class="projectModule"><a href="#">'+ current +'</a></li>';
-					});
-				}
-				return returnVal;
-			});
 		},
 		
 		/***
@@ -105,25 +76,14 @@ define(["unitTest/listener/unitTestListener", "testResult/listener/testResultLis
 				Clazz.navigationController.jQueryContainer = $(commonVariables.contentPlaceholder).find('#testResult');
 				Clazz.navigationController.push(self.testResult, false);
 			});
-			
-			$("#testResult .scrollContent").mCustomScrollbar({
-				autoHideScrollbar:true,
-				theme:"light-thin",
-				advanced:{ updateOnContentResize: true}
-			});
 		},
 		
 		preRender: function(whereToRender, renderFunction) {
 			var self = this;
-			self.unitTestListener.getUnitTestReportOptions(self.unitTestListener.getActionHeader(self.projectRequestBody, "get"), function(response) {
-				var responseData = response.data;
-				var unitTestOptions = {};
-				unitTestOptions.reportOptions = responseData.reportOptions;
-				unitTestOptions.projectModules = responseData.projectModules;
-				var userPermissions = JSON.parse(self.unitTestListener.unitTestAPI.localVal.getSession('userPermissions'));
-				unitTestOptions.userPermissions = userPermissions;
-				renderFunction(unitTestOptions, whereToRender);
-			});
+				var data = {};
+				var userPermissions = JSON.parse(self.integrationTestListener.integrationTestAPI.localVal.getSession('userPermissions'));
+				data.userPermissions = userPermissions;
+				renderFunction(data, whereToRender);
 		},
 		
 		/***
@@ -136,8 +96,14 @@ define(["unitTest/listener/unitTestListener", "testResult/listener/testResultLis
 
 			self.windowResize();
 			
-			$("#unitTestBtn").unbind("click");
-			$("#unitTestBtn").click(function() {
+			$(".scrollContent").mCustomScrollbar({
+				autoHideScrollbar:true,
+				theme:"light-thin",
+				advanced:{ updateOnContentResize: true}
+			});
+			
+			$("#ntegrationTestBtn").unbind("click");
+			$("#ntegrationTestBtn").click(function() {
 				self.onDynamicPageEvent.dispatch(this, function() {
 					self.testResult.logContent = $('#testConsole').html();
 					$('#testResult').empty();
@@ -172,19 +138,19 @@ define(["unitTest/listener/unitTestListener", "testResult/listener/testResultLis
 				Clazz.navigationController.push(self.testResult, false);
 			});
 			
-			//To open the unit test directory
+			//To open the Integration test directory
 			$('#openFolder').unbind('click');
 			$("#openFolder").click(function() {
 				var paramJson = {};
-				paramJson.type =  commonVariables.typeUnitTest;
+				paramJson.type =  commonVariables.typeIntegrationTest;
 				commonVariables.navListener.openFolder(paramJson);
 			});
 			
-			//To copy the path of unit test directory
+			//To copy the path of Integration test directory
 			$('#copyPath').unbind('click');
 			$("#copyPath").click(function() {
 				var paramJson = {};
-				paramJson.type =  commonVariables.typeUnitTest;
+				paramJson.type =  commonVariables.typeIntegrationTest;
 				commonVariables.navListener.copyPath(paramJson);
 			});
 			
@@ -201,8 +167,8 @@ define(["unitTest/listener/unitTestListener", "testResult/listener/testResultLis
 			});
 			
 			//To run the unit test
-			$("#runUnitTest").unbind("click");
-			$("#runUnitTest").click(function() {
+			$("#runIntegrationTest").unbind("click");
+			$("#runIntegrationTest").click(function() {
 				self.onRunUnitTestEvent.dispatch(function() {
 					self.testResult.logContent = $('#testConsole').html();
 					$('#testResult').empty();
@@ -216,5 +182,5 @@ define(["unitTest/listener/unitTestListener", "testResult/listener/testResultLis
 		}
 	});
 
-	return Clazz.com.components.unitTest.js.UnitTest;
+	return Clazz.com.components.integrationTest.js.IntegrationTest;
 });

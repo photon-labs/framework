@@ -5,7 +5,7 @@
     <div class="flt_right">
 		<div class="unit_view hideContent">
 			<div class="code_report_icon" id="pdfDiv">
-				<div class="icon_images"><a class="tooltiptop" title="" data-placement="bottom" data-toggle="tooltip" href="#" data-original-title="PDF Report"><img src="themes/default/images/helios/pdf_icon_white.png"></a></div>
+				<div class="icon_images"><a id="pdfIcon" class="tooltiptop" title="" data-placement="bottom" data-toggle="tooltip" href="#" data-original-title="PDF Report"><img src="themes/default/images/helios/pdf_icon_white.png"></a></div>
 				<!--Pdf report popup starts here -->
 				<div id="pdf_report" class="dyn_popup hideContent">
 					<div id="noPdfReport" class="noReport"></div>
@@ -59,8 +59,8 @@
             	<a id="graphicalView" href="#"><img src="themes/default/images/helios/quality_graph_off.png" width="26" height="24" border="0" alt="">Graph View</a>
             </span>    
         </div>
-    	<div class="icon_images"><a class="tooltiptop" title="" data-placement="bottom" data-toggle="tooltip" href="#" data-original-title="Open Folder"><img src="themes/default/images/helios/openfolder_icon.png" ></a></div>
-		<div class="icon_images" style="margin-right:2px;"><a class="tooltiptop" title="" data-placement="bottom" data-toggle="tooltip" href="#" data-original-title="Copy Path"><img src="themes/default/images/helios/copypath_icon.png" ></a></div>	
+    	<div class="icon_images"><a class="tooltiptop" title="" data-placement="bottom" data-toggle="tooltip" href="#" data-original-title="Open Folder" id="openFolder"><img src="themes/default/images/helios/openfolder_icon.png"></a></div>
+		<div class="icon_images" style="margin-right:2px;"><a class="tooltiptop" title="" data-placement="bottom" data-toggle="tooltip" href="#" data-original-title="Copy Path" id="copyPath"><img src="themes/default/images/helios/copypath_icon.png" ></a></div>	
             
         <div class="code_anal">
         	{{#if userPermissions.manageTests}}

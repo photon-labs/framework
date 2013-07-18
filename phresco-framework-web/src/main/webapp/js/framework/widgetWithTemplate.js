@@ -589,15 +589,6 @@ define(["framework/widget", "framework/templateProvider"], function() {
 				}
 			},
 		
-			showHideConsole : function() {
-				var self = this;
-				var check = $('#consoleImg').attr('data-flag');
-				if (check === "true") {
-					self.openConsole();
-				} else {
-					self.closeConsole();
-				}
-			},
 			// Open console window - Added by sudhakar
 			openConsole : function() {
 				$('.testSuiteTable').append('<div class="mask"></div>');
@@ -634,7 +625,9 @@ define(["framework/widget", "framework/templateProvider"], function() {
 				$('.unit_close').animate({right: '0px'},500);
 				$('.unit_info table').removeClass("small").addClass("big");
 				$('#consoleImg').attr('data-flag','true');
-				$('.mask').remove();
+				$('.mask').fadeOut("slow", function() {
+					$('.mask').remove();
+				});
 			},
 			
 			// Resize window - Added by sudhakar

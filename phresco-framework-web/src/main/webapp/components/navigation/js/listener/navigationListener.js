@@ -19,6 +19,7 @@ define(["navigation/api/navigationAPI"], function() {
 		unitTest : null,
 		functionalTest : null,
 		componentTest : null,
+		integrationTest : null,
 		performanceTest : null,
 		testResult : null,
 		dynamicpage : null,
@@ -234,6 +235,18 @@ define(["navigation/api/navigationAPI"], function() {
 							});
 						}else{
 							callback(self.functionalTest);
+						}
+						
+						break;
+
+					case commonVariables.integrationTest :
+						if (self.integrationTest === null) {
+							require(["integrationTest/integrationTest"], function() {
+								self.integrationTest = new Clazz.com.components.integrationTest.js.IntegrationTest();
+								callback(self.integrationTest);	
+							});
+						}else{
+							callback(self.integrationTest);
 						}
 						
 						break;
@@ -601,6 +614,11 @@ define(["navigation/api/navigationAPI"], function() {
 				});
 			} else if (keyword === commonVariables.performanceTest) {
 				self.getMyObj(commonVariables.performanceTest, function(returnVal){
+					currentObj = returnVal;
+					self.myTabRenderFunction(currentObj, keyword);
+				});
+			}  else if (keyword === commonVariables.integrationTest) {
+				self.getMyObj(commonVariables.integrationTest, function(returnVal){
 					currentObj = returnVal;
 					self.myTabRenderFunction(currentObj, keyword);
 				});

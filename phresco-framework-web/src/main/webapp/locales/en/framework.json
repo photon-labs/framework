@@ -115,6 +115,11 @@
 	      "componenttest"  :  "Component Test"
 	  }
 	},
+	"integration" : {
+	  "label" : {
+	      "integrationtest"  :  "Integration Test"
+	  }
+	},
 	"testresult" : {
 	  "label" : {
 	      "testsuite"  : "Test Suite",

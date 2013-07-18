@@ -252,6 +252,11 @@ define(["testResult/api/testResultAPI"], function() {
 			setTimeout(function() {
 				self.resizeTestResultColumn("testCases");
 				self.showErrorLog();
+				$("#testResult .scrollContent").mCustomScrollbar({
+					autoHideScrollbar:true,
+					theme:"light-thin",
+					advanced:{ updateOnContentResize: true}
+				});
 			}, 400);
 
 			self.resizeTestResultDiv();
@@ -374,6 +379,7 @@ define(["testResult/api/testResultAPI"], function() {
 				self.openConsoleDiv();
 			} else {
 				self.closeConsole();
+				$('.progress_loading').hide();
 			}
 		},
 		
@@ -471,7 +477,7 @@ define(["testResult/api/testResultAPI"], function() {
 
 		openConsoleDiv : function() {
 			$('.testSuiteTable').append('<div class="mask"></div>');
-			$('.mask').show();
+			$('.mask').fadeIn("slow");
 			$('.unit_close').css("z-index", 1001);
 			$('.unit_progress').css("z-index", 1001);
 			$('.unit_close').css("height", 0);
@@ -483,8 +489,9 @@ define(["testResult/api/testResultAPI"], function() {
 			$('.unit_info table').removeClass("big").addClass("small");
 			$('#consoleImg').attr('data-flag','false');
 
-			var height = $('.testResult table').height();
+			var height = $('#testResult table').height();
 			$('.unit_progress').height(height);
+			$('.progress_loading').show();
 		},
 
 		resizeTestResultDiv : function() {
@@ -505,6 +512,31 @@ define(["testResult/api/testResultAPI"], function() {
 			$('#testSuites').height(deductionHeight);
 			deductionHeight = deductionHeight - (Number(paddingTop) + Number(paddingTop) + Number(paddingTop));
 			$('.testSuiteTable .scrollContent').height(deductionHeight);
+		},
+		
+		setConsoleScrollbar : function(bcheck){
+			if(bcheck){
+				$("#unit_progress .scrollContent").mCustomScrollbar("destroy");
+				$("#unit_progress .scrollContent").mCustomScrollbar({
+					autoHideScrollbar: false,
+					scrollInertia: 1000,
+					theme:"light-thin",
+					advanced:{ updateOnContentResize: true},
+					callbacks:{
+						onScrollStart:function(){
+							$("#unit_progress .scrollContent").mCustomScrollbar("scrollTo","bottom");
+						}
+					}
+				});
+			}else{
+				$("#unit_progress .scrollContent").mCustomScrollbar("destroy");
+				$("#unit_progress .scrollContent").mCustomScrollbar({
+					autoHideScrollbar:true,
+					scrollInertia: 200,
+					theme:"light-thin",
+					advanced:{ updateOnContentResize: true}
+				});
+			}
 		}
 	});
 

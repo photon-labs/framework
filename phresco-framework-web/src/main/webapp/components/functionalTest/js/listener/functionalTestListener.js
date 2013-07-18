@@ -145,29 +145,34 @@ define(["functionalTest/api/functionalTestAPI"], function() {
 
 			$('#testConsole').html('');
 			self.testResultListener.openConsoleDiv();//To open the console
-
+			self.testResultListener.setConsoleScrollbar(true);//To apply for auto scroll for console window
 			if (self.mavenServiceListener === null) {
 				commonVariables.navListener.getMyObj(commonVariables.mavenService, function(retVal) {
 					self.mavenServiceListener = retVal;
 					if (from === "startHub") {
 						self.mavenServiceListener.mvnStartHub(queryString, '#testConsole', function(response) {
 							self.postStartHub();
+							self.testResultListener.setConsoleScrollbar(false);
 						});
 					} else if (from === "startNode") {
 						self.mavenServiceListener.mvnStartNode(queryString, '#testConsole', function(response) {
 							self.postStartNode();
+							self.testResultListener.setConsoleScrollbar(false);
 						});
 					} else if (from === "runFunctionalTest") {
 						self.mavenServiceListener.mvnFunctionalTest(queryString, '#testConsole', function(response) {
 							self.testResultListener.closeConsole();
+							self.testResultListener.setConsoleScrollbar(false);
 						});
 					} else if (from === "stopHub") {
 						self.mavenServiceListener.mvnStopHub(queryString, '#testConsole', function(response) {
 							self.postStopHub(response);
+							self.testResultListener.setConsoleScrollbar(false);
 						});
 					} else if (from === "stopNode") {
 						self.mavenServiceListener.mvnStopNode(queryString, '#testConsole', function(response) {
 							self.postStopNode();
+							self.testResultListener.setConsoleScrollbar(false);
 						});
 					}
 				});
@@ -175,22 +180,27 @@ define(["functionalTest/api/functionalTestAPI"], function() {
 				if (from === "startHub") {
 					self.mavenServiceListener.mvnStartHub(queryString, '#testConsole', function(response) {
 						self.postStartHub();
+						self.testResultListener.setConsoleScrollbar(false);
 					});
 				} else if (from === "startNode") {
 					self.mavenServiceListener.mvnStartNode(queryString, '#testConsole', function(response) {
 						self.postStartNode();
+						self.testResultListener.setConsoleScrollbar(false);
 					});
 				} else if (from === "runFunctionalTest") {
 					self.mavenServiceListener.mvnFunctionalTest(queryString, '#testConsole', function(response) {
 						self.testResultListener.closeConsole();
+						self.testResultListener.setConsoleScrollbar(false);
 					});
 				} else if (from === "stopHub") {
 					self.mavenServiceListener.mvnStopHub(queryString, '#testConsole', function(response) {
 						self.postStopHub();
+						self.testResultListener.setConsoleScrollbar(false);
 					});
 				} else if (from === "stopNode") {
 					self.mavenServiceListener.mvnStopNode(queryString, '#testConsole', function(response) {
 						self.postStopNode();
+						self.testResultListener.setConsoleScrollbar(false);
 					});
 				}
 			}

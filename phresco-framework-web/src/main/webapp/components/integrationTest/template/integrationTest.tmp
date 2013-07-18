@@ -1,12 +1,13 @@
 <section class="optiontitle qual_unit">
-	<div class="unit_text" data-i18n="unit.label.unittest">
+	<div class="unit_text" data-i18n="integration.label.integrationtest">
     	
 	</div>
     <div class="flt_right">
 		<div class="unit_view hideContent">
 			<div class="code_report_icon" id="pdfDiv">
-				<div class="icon_images"><a class="tooltiptop" title="" data-placement="bottom" data-toggle="tooltip" href="#" data-original-title="PDF Report"><img src="themes/default/images/helios/pdf_icon_white.png"></a></div>
-				
+				<a id="pdfIcon" class="tooltiptop" title="" data-placement="bottom" data-toggle="tooltip" href="#" data-original-title="PDF Report">
+					<img src="themes/default/images/helios/code_pdf_icon.png" width="28" height="29" border="0" alt="">
+				</a>
 				<!--Pdf report popup starts here -->
 				<div id="pdf_report" class="dyn_popup hideContent">
 					<div id="noPdfReport" class="noReport"></div>
@@ -60,8 +61,10 @@
             	<a id="graphicalView" href="#"><img src="themes/default/images/helios/quality_graph_off.png" width="26" height="24" border="0" alt="" data-i18n="[value]commonlabel.label.graphview"></a>
             </span>    
         </div>
-		<div class="icon_images"><a class="tooltiptop" title="" data-placement="bottom" data-toggle="tooltip" href="#" data-original-title="Open Folder" id="openFolder"><img src="themes/default/images/helios/openfolder_icon.png" ></a></div>
-		<div class="icon_images"><a class="tooltiptop" title="" data-placement="bottom" data-toggle="tooltip" href="#" data-original-title="Copy Path" id="copyPath"><img src="themes/default/images/helios/copypath_icon.png" ></a></div>	
+    	<div class="unit_path">
+            <input type="button" data-i18n="[value]commonlabel.label.openfolder" class="btn btn_style openfolder_icon_btn" id="openFolder">
+            <input type="button" data-i18n="[value]commonlabel.label.copypath" class="btn btn_style copypath_icon_btn" id="copyPath">
+        </div>
             
         {{#if projectModules}}
             <div class="code_report">

@@ -121,7 +121,13 @@ define(["functionalTest/listener/functionalTestListener", "testResult/listener/t
 				self.testResult = retVal;
 				Clazz.navigationController.jQueryContainer = '#testResult';
 				Clazz.navigationController.push(self.testResult, false);
-			});	
+			});
+			
+			$("#testResult .scrollContent").mCustomScrollbar({
+				autoHideScrollbar:true,
+				theme:"light-thin",
+				advanced:{ updateOnContentResize: true}
+			});
 		},
 		
 		preRender: function(whereToRender, renderFunction) {
@@ -147,12 +153,6 @@ define(["functionalTest/listener/functionalTestListener", "testResult/listener/t
 			$(".tooltiptop").tooltip();
 
 			self.testResultListener.resizeTestResultDiv();
-			
-			$(".scrollContent").mCustomScrollbar({
-				autoHideScrollbar:true,
-				theme:"light-thin",
-				advanced:{ updateOnContentResize: true}
-			});
 			
 			$("#functionalTestBtn").unbind("click");
 			$("#functionalTestBtn").click(function() {
