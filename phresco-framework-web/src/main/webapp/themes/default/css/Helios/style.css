@@ -1326,7 +1326,7 @@ img[name="close"] {
 	position:absolute;
 	margin-top:171px;
 	z-index:0;
-	border-top: 1px solid #d2d2d2;
+	/*border-top: 1px solid #d2d2d2;*/
 }
 
 .features_box {
