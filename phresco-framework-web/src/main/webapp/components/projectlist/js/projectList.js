@@ -95,6 +95,11 @@ define(["projectlist/listener/projectListListener"], function() {
 		postRender : function(element) {
 			commonVariables.navListener.currentTab = commonVariables.projectlist;
 			commonVariables.navListener.showHideControls(commonVariables.projectlist);
+			$(".proj_list .scrollContent").mCustomScrollbar({
+				autoHideScrollbar:true,
+				theme:"light-thin",
+				advanced:{ updateOnContentResize: true}
+			});
 		},
 
 		preRender: function(whereToRender, renderFunction){
@@ -208,12 +213,6 @@ define(["projectlist/listener/projectListListener"], function() {
 				self.windowResize();
 			});			
 			
-			$(".proj_list .scrollContent").mCustomScrollbar({
-				autoHideScrollbar:true,
-				theme:"light-thin",
-				advanced:{ updateOnContentResize: true}
-			});
-			
 			$("#applicationedit").css("display", "none");
 			$("#editprojectTab").css("display", "none");
 			$("img[name=editproject]").unbind("click");
@@ -223,6 +222,7 @@ define(["projectlist/listener/projectListListener"], function() {
 			
 			$("#myTab li a").removeClass("act");
 			$('a[name=editApplication]').click(function(){
+				$(".dyn_popup").hide();
 				commonVariables.appDirName = $(this).closest("tr").attr("class");
 				var value = $(this).closest("tr").attr("class");
 				var techid = $(this).closest("tr").attr("techid");

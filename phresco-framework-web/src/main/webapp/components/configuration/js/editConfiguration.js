@@ -66,6 +66,17 @@ define(["framework/widgetWithTemplate", "configuration/listener/configurationLis
 		postRender : function(element) {	
 			var self = this;
 			commonVariables.navListener.currentTab = self.name;
+			$(".features_content_main").mCustomScrollbar({
+				autoHideScrollbar:true,
+				theme:"light-thin",
+				advanced:{ updateOnContentResize: true}
+			});
+
+			$(".fix_height").mCustomScrollbar({
+				autoHideScrollbar:true,
+				theme:"light-thin",
+				advanced:{ updateOnContentResize: true}
+			});
 		},
 		
 		registerEvents : function(configurationlistener) {
@@ -99,7 +110,6 @@ define(["framework/widgetWithTemplate", "configuration/listener/configurationLis
 			$("input[name=UpdateConfiguration]").click(function() {
 				self.updateConfigEvent.dispatch();
 			});
-			self.configurationlistener.scrollbarEnable();
 		}
 	});
 

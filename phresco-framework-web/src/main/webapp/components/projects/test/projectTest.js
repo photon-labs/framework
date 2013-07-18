@@ -1,6 +1,6 @@
 define(["projects/addproject", "projects/editproject"], function(addProject, editProject) {
 
-	return { runTests: function (configData) {
+	return { runTests: function (runOtherTests) {
 		/**
 		 * Test that the setMainContent method sets the text in the MyCart-widget
 		 */
@@ -30,12 +30,12 @@ define(["projects/addproject", "projects/editproject"], function(addProject, edi
 					equal(techOption, "PHP", "Add Project - Applayer UI Tested");
 					equal(weblayerOption, "HTML5", "Add Project - WebLayer UI Tested");
 					equal(mobilelayerOption, "Android", "Add Project - Mobile Layer UI Tested");
-					self.runChangeEventTest();
+					self.runChangeEventTest(runOtherTests);
 				}, 2500);
 			});
 		},
 		
-		runChangeEventTest : function() {
+		runChangeEventTest : function(runOtherTests) {
 			var self=this;
 			asyncTest("Add Project- Technolgy Version Change Event Test", function() {
 				$("select[name='appln_technology']").val('tech-php');
@@ -61,7 +61,7 @@ define(["projects/addproject", "projects/editproject"], function(addProject, edi
 					equal(weblayerVersionOption, "2.0.2", "Add Project - weblayer Version Change Event Test");
 					equal(mobileTypeOption, "Native", "Add Project - Mobile Type Change Event Test");
 					equal(mobileVersionOption, "4.14.1.2", "Add Project - Mobile Version Change Event Test");
-					self.runAddApplicationLayerEventTest();
+					self.runAddApplicationLayerEventTest(runOtherTests);
 				}, 2500);
 			});
 		},
@@ -80,7 +80,7 @@ define(["projects/addproject", "projects/editproject"], function(addProject, edi
 			});
 		},*/
 		
-		runAddApplicationLayerEventTest : function() {
+		runAddApplicationLayerEventTest : function(runOtherTests) {
 			var self=this;
 			asyncTest("Add Project- Add Application Layer Event Test", function() {
 				$("a[name=addApplnLayer]").click();
@@ -88,12 +88,12 @@ define(["projects/addproject", "projects/editproject"], function(addProject, edi
 					start();
 					var addedTrName = $("a[name=addApplnLayer]").parents('tr.applnlayercontent:last').attr('name');
 					equal(addedTrName, "staticApplnLayer", "Add Project- Add Application Layer Event Test");
-					self.runAddWebLayerEventTest();
+					self.runAddWebLayerEventTest(runOtherTests);
 				}, 2500);
 			});
 		},
 		
-		runAddWebLayerEventTest : function() {
+		runAddWebLayerEventTest : function(runOtherTests) {
 			var self=this;
 			asyncTest("Add Project- Add Web Layer Event Test", function() {
 				$("a[name=addWebLayer]").click();
@@ -101,12 +101,12 @@ define(["projects/addproject", "projects/editproject"], function(addProject, edi
 					start();
 					var addedTrName = $("a[name=addWebLayer]").parents('tr.weblayercontent:last').attr('name');
 					equal(addedTrName, "staticWebLayer", "Add Project- Add Web Layer Event Test");
-					self.runAddMobileLayerEventTest();
+					self.runAddMobileLayerEventTest(runOtherTests);
 				}, 2500);
 			});
 		},
 		
-		runAddMobileLayerEventTest : function() {
+		runAddMobileLayerEventTest : function(runOtherTests) {
 			var self=this;
 			asyncTest("Add Project- Add Mobile Layer Event Test", function() {
 				$("a[name=addMobileLayer]").click();
@@ -114,12 +114,12 @@ define(["projects/addproject", "projects/editproject"], function(addProject, edi
 					start();
 					var addedTrName = $("a[name=addMobileLayer]").parents('tr.mobilelayercontent:last').attr('name');
 					equal(addedTrName, "staticMobileLayer", "Add Project- Add Mobile Layer Event Test");
-					self.showSuccessMessageAfterCreation();
+					self.showSuccessMessageAfterCreation(runOtherTests);
 				}, 2500);
 			});
 		},
 
-		runRemoveApplicationLayerEventTest : function() {
+		runRemoveApplicationLayerEventTest : function(runOtherTests) {
 			var self=this;
 			asyncTest("Add Project- Remove Application Layer Event Test", function() {
 				$("a[name=removeApplnLayer]").click();
@@ -127,12 +127,12 @@ define(["projects/addproject", "projects/editproject"], function(addProject, edi
 					start();
 					var trCount = $("a[name=addApplnLayer]").parents('tr.applnlayercontent:last').length;
 					equal(trCount, 0, "Add Project- Remove Application Layer Event Test");
-					self.runRemoveWebLayerEventTest();
+					self.runRemoveWebLayerEventTest(runOtherTests);
 				}, 2500);
 			});
 		},
 
-		runRemoveWebLayerEventTest : function() {
+		runRemoveWebLayerEventTest : function(runOtherTests) {
 			var self=this;
 			asyncTest("Add Project- Remove Web Layer Event Test", function() {
 				$("a[name=removeWebLayer]").click();
@@ -140,12 +140,12 @@ define(["projects/addproject", "projects/editproject"], function(addProject, edi
 					start();
 					var trCount = $("a[name=addWebLayer]").parents('tr.weblayercontent:last').length;
 					equal(trCount, 0, "Add Project- Remove Web Layer Event Test");
-					self.runRemoveMobileLayerEventTest();
+					self.runRemoveMobileLayerEventTest(runOtherTests);
 				}, 2500);
 			});
 		},
 
-		runRemoveMobileLayerEventTest : function() {
+		runRemoveMobileLayerEventTest : function(runOtherTests) {
 			var self=this;
 			asyncTest("Add Project- Remove Mobile Layer Event Test", function() {
 				$("a[name=removeMobileLayer]").click();
@@ -153,12 +153,12 @@ define(["projects/addproject", "projects/editproject"], function(addProject, edi
 					start();
 					var trCount = $("a[name=addMobileLayer]").parents('tr.mobilelayercontent:last').length;
 					equal(trCount, 0, "Add Project- Remove Web Layer Event Test");
-					self.showSuccessMessageAfterCreation();
+					self.showSuccessMessageAfterCreation(runOtherTests);
 				}, 2500);
 			});
 		},	
 		
-		showSuccessMessageAfterCreation : function() {
+		showSuccessMessageAfterCreation : function(runOtherTests) {
 			var self=this;
 			asyncTest("Add Project- show SuccessMessage After Creation Test", function() {
 				$("input[name=projectname]").val('Test');
@@ -194,12 +194,12 @@ define(["projects/addproject", "projects/editproject"], function(addProject, edi
 					start();
 					var Msg = $(".blinkmsg").hasClass('popsuccess');
 					equal(Msg, true, "Add Project- show SuccessMessage After Creation Test");
-					self.runCancelButtonTest();
+					self.runCancelButtonTest(runOtherTests);
 				}, 1500);	
 			});
 		},
 		
-		runCancelButtonTest : function() {
+		runCancelButtonTest : function(runOtherTests) {
 			var self=this;
 			asyncTest("Add Project- Cancel Button Event Test", function() {
 				$("input[name='Cancel']").click();
@@ -207,12 +207,12 @@ define(["projects/addproject", "projects/editproject"], function(addProject, edi
 					start();
 					var appText = $("a[name=editApplication]").text();
 					equal(appText, "wordpress-WordPress", "Add Project - Cancel Button Event Tested");
-					self.runEmptyProjectNameTest();
+					self.runEmptyProjectNameTest(runOtherTests);
 				}, 1500);
 			});
 		},
 		
-		runEmptyProjectNameTest : function() {
+		runEmptyProjectNameTest : function(runOtherTests) {
 			var self=this;
 			asyncTest("Add Project- Empty Project Name Test", function() {
 				$("input#projectname").val('');
@@ -221,12 +221,12 @@ define(["projects/addproject", "projects/editproject"], function(addProject, edi
 					start();
 					var errorMsg = $("input[name=projectname]").attr('placeholder');
 					equal(errorMsg, "Enter Name", "Add Project - Empty Project Name Test Tested");
-					self.runEmptyProjectCodeTest();
+					self.runEmptyProjectCodeTest(runOtherTests);
 				}, 1500);
 			});
 		},
 		
-		runEmptyProjectCodeTest : function() {
+		runEmptyProjectCodeTest : function(runOtherTests) {
 			var self=this;
 			asyncTest("Add Project- Empty Project Code Test", function() {
 				$("input#projectname").val('Test');
@@ -236,12 +236,12 @@ define(["projects/addproject", "projects/editproject"], function(addProject, edi
 					start();
 					var errorMsg = $("input[name=projectcode]").attr('placeholder');
 					equal(errorMsg, "Enter Code", "Add Project - Empty Project Name Test Tested");
-					self.runEmptyApplicationAppCodeTest();
+					self.runEmptyApplicationAppCodeTest(runOtherTests);
 				}, 1500);
 			});
 		},
 		
-		runEmptyApplicationAppCodeTest : function() {
+		runEmptyApplicationAppCodeTest : function(runOtherTests) {
 			var self=this, errorMsg;
 			asyncTest("Add Project- Empty Application AppCode Test", function() {
 				$("input#projectname").val('Test');
@@ -256,12 +256,12 @@ define(["projects/addproject", "projects/editproject"], function(addProject, edi
 						}
 					});
 					equal(errorMsg, "Enter AppCode", "Add Project - Empty Application AppCode Tested");
-					self.runEmptyWebAppCodeTest();
+					self.runEmptyWebAppCodeTest(runOtherTests);
 				}, 1500);
 			});
 		},
 		
-		runEmptyWebAppCodeTest : function() {
+		runEmptyWebAppCodeTest : function(runOtherTests) {
 			var self=this, errorMsg;
 			asyncTest("Add Project- Empty Web AppCode Test", function() {
 				$("input#projectname").val('Test');
@@ -276,12 +276,12 @@ define(["projects/addproject", "projects/editproject"], function(addProject, edi
 				setTimeout(function() {
 					start();
 					notEqual($("input#webappcode").hasClass('errormessage'), true, "Add Project - Empty Web AppCode Tested");
-					self.runEmptyMobileAppCodeTest();
+					self.runEmptyMobileAppCodeTest(runOtherTests);
 				}, 1500);
 			});
 		},
 		
-		runEmptyMobileAppCodeTest : function() {
+		runEmptyMobileAppCodeTest : function(runOtherTests) {
 			var self=this;
 			asyncTest("Add Project- Empty Mobile AppCode Test", function() {
 				$("input#projectname").val('Test');
@@ -303,12 +303,12 @@ define(["projects/addproject", "projects/editproject"], function(addProject, edi
 				setTimeout(function() {
 					start();
 					notEqual($("input#mobileappcode").hasClass('errormessage'), true, "Add Project - Empty Mobile AppCode Tested");
-					self.runCloseButtonTest();
+					self.runCloseButtonTest(runOtherTests);
 				}, 1500);
 			});
 		},
 		
-		runCloseButtonTest : function() {
+		runCloseButtonTest : function(runOtherTests) {
 			var self=this;
 			asyncTest("Add Project- Close Image Event Test", function() {
 				$("img[name='close']").click();
@@ -316,12 +316,12 @@ define(["projects/addproject", "projects/editproject"], function(addProject, edi
 				setTimeout(function() {
 					start();
 					equal(applnLayer, "table-row", "Add Project - Close Image Event Test for Application Layer");
-					self.runInputBtnTest();
+					self.runInputBtnTest(runOtherTests);
 				}, 1500);
 			});
 		},
 		
-		runInputBtnTest : function() {
+		runInputBtnTest : function(runOtherTests) {
 			var self = this;
 			asyncTest("Add Project- Input button Event Test", function() {
 				$(".flt_left input").click();
@@ -329,12 +329,12 @@ define(["projects/addproject", "projects/editproject"], function(addProject, edi
 				setTimeout(function() {
 					start();
 					equal(applnLayerTrDisplay, "displayed", "Add Project - Input button Event Test for Application Layer");
-					self.runMultiModuleEventTest();
+					self.runMultiModuleEventTest(runOtherTests);
 				}, 1500);
 			});
 		},
 		
-		runMultiModuleEventTest : function() {
+		runMultiModuleEventTest : function(runOtherTests) {
 			var self=this;
 			asyncTest("Add Project- MultiModule CheckBox Event Test", function() {
 				$("input[name='multimodule']").click();
@@ -342,12 +342,12 @@ define(["projects/addproject", "projects/editproject"], function(addProject, edi
 				setTimeout(function() {
 					start();
 					equal(appdependency, "none", "Add Project - MultiModule CheckBox Event Test");
-					self.runPilotProjectEventTest();	
+					self.runPilotProjectEventTest(runOtherTests);	
 				}, 1500);
 			});
 		},
 		
-		runPilotProjectEventTest : function() {
+		runPilotProjectEventTest : function(runOtherTests) {
 			var self=this;
 			asyncTest("Add Project- Pilot Project Change With Prebuilt Option Event Test", function() {
 			
@@ -367,12 +367,12 @@ define(["projects/addproject", "projects/editproject"], function(addProject, edi
 					start();
 					var pilotOption = $("select[name=prebuiltapps]").find("option:contains(Blog Php)").text();
 					equal(pilotOption, "Blog Php", "Add Project - Pilot Project Change With Prebuilt Option Event Tested");
-					self.runPilotProjectChangeEventTest();	
+					self.runPilotProjectChangeEventTest(runOtherTests);	
 				}, 1500);
 			});
 		},
 		
-		runPilotProjectChangeEventTest : function(){
+		runPilotProjectChangeEventTest : function(runOtherTests){
 			var self = this;
 			asyncTest("Add Project- Pilot Project Change With Custom Option Event Test", function() {
 				$("select[name=builtmyself]").val('custom');
@@ -385,12 +385,12 @@ define(["projects/addproject", "projects/editproject"], function(addProject, edi
 					equal(techId, "Select Technology", "Add Project - Pilot Project Change With Custom Option Event Tested");
 					equal(weblayer, "Select Widget", "Add Project - Pilot Project Change With Custom Option Event Tested");
 					equal(mobilelayer, "Select Type", "Add Project - Pilot Project Change With Custom Option Event Tested");
-					self.runPilotSelectTest();	
+					self.runPilotSelectTest(runOtherTests);	
 				}, 1500);
 			});
 		},
 		
-		runPilotSelectTest : function() {
+		runPilotSelectTest : function(runOtherTests) {
 			var self = this;
 			asyncTest("Add Project- Select Pilot Test", function() {
 				$("select[name=prebuiltapps]").find("option:selected").text('Eshop Nodejs Webservice - HTML5 YUI Mobile Widget - Android Hybrid');
@@ -403,12 +403,12 @@ define(["projects/addproject", "projects/editproject"], function(addProject, edi
 					equal(techId, "tech-nodejs-webservice", "Add Project - Pilot Project Select Event Tested");
 					equal(weblayer, "tech-html5-mobile-widget", "Add Project - Pilot Project Select Event Tested");
 					equal(mobilelayer, "tech-android-hybrid", "Add Project - Pilot Project Select Event Tested");
-					self.runEditProjectTest();	
+					self.runEditProjectTest(runOtherTests);	
 				}, 1500);
 			});
 		},
 		
-		runEditProjectTest : function() {
+		runEditProjectTest : function(runOtherTests) {
 			module("EditProject.js");
 			var self = this;
 			asyncTest("Edit Project- Edit Project UI Test", function() {
@@ -440,6 +440,7 @@ define(["projects/addproject", "projects/editproject"], function(addProject, edi
 					var mobLayersDisplay = $("input[name=mobLayers]").css('display');
 					equal(projectname, "adasdasdasd", "Edit Project - UI Tested");
 					equal(mobLayersDisplay, "inline", "Edit Project - Mobile Layer Input Button Tested");
+					runOtherTests();
 				}, 1500);
 			});
 		}

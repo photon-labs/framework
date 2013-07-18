@@ -1,7 +1,7 @@
 
 define(["configuration/editConfiguration"], function(EditConfiguration) {
 
-	return { runTests: function (configData) {
+	return { runTests: function (runOtherTests) {
 		
 		module("EditConfiguration.js;EditConfiguration");
 		
@@ -11,7 +11,7 @@ define(["configuration/editConfiguration"], function(EditConfiguration) {
 		asyncTest("Test - Edit Configuration Render Test", function() {
 		
 			$.mockjax({
-				url:  commonVariables.webserviceurl+commonVariables.configuration+"/types?customerId=photon&userId=admin&techId=tech-phpdru6",
+				url:  commonVariables.webserviceurl+commonVariables.configuration+"/types?customerId=photon&userId=admin&techId=tech-html5-jquery-mobile-widget",
 				type:'GET',
 				contentType: 'application/json',
 				status: 200,
@@ -38,21 +38,21 @@ define(["configuration/editConfiguration"], function(EditConfiguration) {
 			setTimeout(function() {
 				start();
 				equal($(commonVariables.contentPlaceholder).find('input[name=EnvName]').val(), "Production", "Edit Configuration Render Tested");
-				self.addConfiguration(editConfiguration);
+				self.addConfiguration(editConfiguration, runOtherTests);
 			}, 1500);
 		}); 
 	},
 	
-	addConfiguration : function(editConfiguration) {
+	addConfiguration : function(editConfiguration, runOtherTests) {
 		var self=this;
 		asyncTest("Test - Add Configuration Test", function() {
 			$.mockjax({
-				url:  commonVariables.webserviceurl+commonVariables.configuration+"/settingsTemplate?appDirName=aap1&customerId=photon&userId=admin&type=Server&techId=tech-phpdru6",
+				url:  commonVariables.webserviceurl+commonVariables.configuration+"/settingsTemplate?appDirName=aap1&customerId=photon&userId=admin&type=Server&techId=tech-html5-jquery-mobile-widget",
 				type:'GET',
 				contentType: 'application/json',
 				status: 200,
 				response: function() {
-					this.responseText = JSON.stringify({"response":null,"message":"confuguration Template Fetched successfully","exception":null,"data":{"downloadInfo":{"Apache Server":["2.3","2.2"],"Wamp":["2.1e"]},"settingsTemplate":{"appliesToTechs":[{"creationDate":1359036240000,"helpText":null,"system":false,"name":"ASP.NET","id":"tech-dotnet","displayName":null,"description":null,"status":null},{"creationDate":1359036240000,"helpText":null,"system":false,"name":"Drupal6","id":"tech-phpdru6","displayName":null,"description":null,"status":null},{"creationDate":1359036240000,"helpText":null,"system":false,"name":"Drupal7","id":"tech-phpdru7","displayName":null,"description":null,"status":null},{"creationDate":1359036240000,"helpText":null,"system":false,"name":"HTML5 JQuery Mobile Widget","id":"tech-html5-jquery-mobile-widget","displayName":null,"description":null,"status":null},{"creationDate":1359036240000,"helpText":null,"system":false,"name":"HTML5 Multichannel JQuery Widget","id":"tech-html5-jquery-widget","displayName":null,"description":null,"status":null},{"creationDate":1359036240000,"helpText":null,"system":false,"name":"HTML5 Multichannel YUI Widget","id":"tech-html5","displayName":null,"description":null,"status":null},{"creationDate":1359036240000,"helpText":null,"system":false,"name":"HTML5 YUI Mobile Widget","id":"tech-html5-mobile-widget","displayName":null,"description":null,"status":null},{"creationDate":1359036240000,"helpText":null,"system":false,"name":"Java WebService","id":"tech-java-webservice","displayName":null,"description":null,"status":null},{"creationDate":1359036240000,"helpText":null,"system":false,"name":"PHP","id":"tech-php","displayName":null,"description":null,"status":null},{"creationDate":1359036240000,"helpText":null,"system":false,"name":"Sharepoint","id":"tech-sharepoint","displayName":null,"description":null,"status":null},{"creationDate":1359036240000,"helpText":null,"system":false,"name":"Site Core","id":"tech-sitecore","displayName":null,"description":null,"status":null},{"creationDate":1359036240000,"helpText":null,"system":false,"name":"WordPress","id":"tech-wordpress","displayName":null,"description":null,"status":null},{"creationDate":1359036240000,"helpText":null,"system":false,"name":"estee html jquery","id":"74a3c4e0-d8ba-47fb-9325-4f6f1be612e8","displayName":null,"description":null,"status":null},{"creationDate":1359036240000,"helpText":null,"system":false,"name":"estee iphone hybrid","id":"6e222405-9831-4eed-81d9-c9870711d914","displayName":null,"description":null,"status":null},{"creationDate":1349685730000,"helpText":null,"system":false,"name":"Metlife html5 jquery archetype","id":"3bfc67a1-588d-41f0-9b8a-2807317d5c70","displayName":null,"description":null,"status":null},{"creationDate":1359036240000,"helpText":null,"system":false,"name":"loreal iphone hybrid","id":"059fb4a0-7224-4a05-a5ec-c4b9bebb2485","displayName":null,"description":null,"status":null},{"creationDate":1349685730000,"helpText":null,"system":false,"name":"loreal html jquery","id":"cb3cac8f-012b-4966-aa1b-d06f1fc03b7f","displayName":null,"description":null,"status":null}],"possibleTypes":null,"customProp":false,"favourite":false,"envSpecific":true,"properties":[{"required":true,"possibleValues":["http","https"],"propertyTemplates":null,"multiple":false,"key":"protocol","type":"String","defaultValue":null,"creationDate":1359036240000,"helpText":"","system":false,"name":"Protocol","id":"1ba69a28-c263-4751-85de-a06aef198759","displayName":null,"description":null,"status":null},{"required":true,"possibleValues":[],"propertyTemplates":null,"multiple":false,"key":"host","type":"String","defaultValue":null,"creationDate":1359036240000,"helpText":"","system":false,"name":"Host","id":"8a9f2d1e-9829-4710-b070-54d5277f07f0","displayName":null,"description":null,"status":null},{"required":true,"possibleValues":[],"propertyTemplates":null,"multiple":false,"key":"port","type":"Number","defaultValue":null,"creationDate":1359036240000,"helpText":"","system":false,"name":"Port","id":"bed36f46-df33-4cef-b8ac-f59b9867e29a","displayName":null,"description":null,"status":null},{"required":false,"possibleValues":[],"propertyTemplates":null,"multiple":false,"key":"admin_username","type":"String","defaultValue":null,"creationDate":1359036240000,"helpText":"","system":false,"name":"Admin Username","id":"578439f9-dda0-4359-8aec-0debe88b8e79","displayName":null,"description":null,"status":null},{"required":false,"possibleValues":[],"propertyTemplates":null,"multiple":false,"key":"admin_password","type":"Password","defaultValue":null,"creationDate":1359036240000,"helpText":"","system":false,"name":"Admin Password","id":"3cb9fed8-6d0d-43ff-8e90-0cbad1ed6410","displayName":null,"description":null,"status":null},{"required":false,"possibleValues":[],"propertyTemplates":null,"multiple":false,"key":"remoteDeployment","type":"Boolean","defaultValue":null,"creationDate":1359036240000,"helpText":"","system":false,"name":"Remote Deployment","id":"c0029d24-7cfc-475a-a981-095388b1e9e2","displayName":null,"description":null,"status":null},{"required":false,"possibleValues":[],"propertyTemplates":null,"multiple":false,"key":"certificate","type":"String","defaultValue":null,"creationDate":1359036240000,"helpText":"","system":false,"name":"Certificate","id":"cdc44d80-fa82-4791-91ab-16761ee0b580","displayName":null,"description":null,"status":null},{"required":true,"possibleValues":[],"propertyTemplates":null,"multiple":false,"key":"type","type":"String","defaultValue":null,"creationDate":1359036240000,"helpText":"","system":false,"name":"Server Type","id":"2051ba38-03e1-4bf1-a63c-df956d642afe","displayName":null,"description":null,"status":null},{"required":true,"possibleValues":[],"propertyTemplates":null,"multiple":false,"key":"version","type":"String","defaultValue":null,"creationDate":1359036240000,"helpText":"","system":false,"name":"Version","id":"2051ba38-03e1-4bf1-a63c-df956d642wafe","displayName":null,"description":null,"status":null},{"required":true,"possibleValues":[],"propertyTemplates":null,"multiple":false,"key":"deploy_dir","type":"String","defaultValue":null,"creationDate":1359036240000,"helpText":"","system":false,"name":"Deploy Directory","id":"7c993072-0e94-4339-8cdc-2c8b48637f5b","displayName":null,"description":null,"status":null},{"required":true,"possibleValues":[],"propertyTemplates":null,"multiple":false,"key":"context","type":"String","defaultValue":null,"creationDate":1359036240000,"helpText":"","system":false,"name":"Context","id":"e779c012-4c45-467d-b146-67a0a59e8f32","displayName":null,"description":null,"status":null},{"required":false,"possibleValues":[],"propertyTemplates":null,"multiple":false,"key":"additional_context","type":"String","defaultValue":null,"creationDate":1359036240000,"helpText":"","system":false,"name":"Additional Context Path","id":"6b945b56-5410-464a-9176-f4f042e36d31","displayName":null,"description":null,"status":null}],"type":null,"displayName":null,"customerIds":["photon","0f3d8d9d-a7d0-49b8-b662-2cc25a5ee88b","05c80933-95d4-46c8-a58d-ceceb4bcce48","c32171c4-90e5-4ede-9c51-0ff370eae974","05c80933-95d4-46c8-a58d-ceceb4bcce48"],"used":false,"creationDate":1359036240000,"helpText":null,"system":true,"name":"Server","id":"config_Server","description":"Server Configuration","status":null}}});
+					this.responseText = JSON.stringify({"response":null,"message":"confuguration Template Fetched successfully","exception":null,"data":{"downloadInfo":{"Apache Server":["2.3","2.2"],"Wamp":["2.1e"]},"settingsTemplate":{"appliesToTechs":[{"creationDate":1359036240000,"helpText":null,"system":false,"name":"ASP.NET","id":"tech-dotnet","displayName":null,"description":null,"status":null},{"creationDate":1359036240000,"helpText":null,"system":false,"name":"Drupal6","id":"tech-html5-jquery-mobile-widget","displayName":null,"description":null,"status":null},{"creationDate":1359036240000,"helpText":null,"system":false,"name":"Drupal7","id":"tech-phpdru7","displayName":null,"description":null,"status":null},{"creationDate":1359036240000,"helpText":null,"system":false,"name":"HTML5 JQuery Mobile Widget","id":"tech-html5-jquery-mobile-widget","displayName":null,"description":null,"status":null},{"creationDate":1359036240000,"helpText":null,"system":false,"name":"HTML5 Multichannel JQuery Widget","id":"tech-html5-jquery-widget","displayName":null,"description":null,"status":null},{"creationDate":1359036240000,"helpText":null,"system":false,"name":"HTML5 Multichannel YUI Widget","id":"tech-html5","displayName":null,"description":null,"status":null},{"creationDate":1359036240000,"helpText":null,"system":false,"name":"HTML5 YUI Mobile Widget","id":"tech-html5-mobile-widget","displayName":null,"description":null,"status":null},{"creationDate":1359036240000,"helpText":null,"system":false,"name":"Java WebService","id":"tech-java-webservice","displayName":null,"description":null,"status":null},{"creationDate":1359036240000,"helpText":null,"system":false,"name":"PHP","id":"tech-php","displayName":null,"description":null,"status":null},{"creationDate":1359036240000,"helpText":null,"system":false,"name":"Sharepoint","id":"tech-sharepoint","displayName":null,"description":null,"status":null},{"creationDate":1359036240000,"helpText":null,"system":false,"name":"Site Core","id":"tech-sitecore","displayName":null,"description":null,"status":null},{"creationDate":1359036240000,"helpText":null,"system":false,"name":"WordPress","id":"tech-wordpress","displayName":null,"description":null,"status":null},{"creationDate":1359036240000,"helpText":null,"system":false,"name":"estee html jquery","id":"74a3c4e0-d8ba-47fb-9325-4f6f1be612e8","displayName":null,"description":null,"status":null},{"creationDate":1359036240000,"helpText":null,"system":false,"name":"estee iphone hybrid","id":"6e222405-9831-4eed-81d9-c9870711d914","displayName":null,"description":null,"status":null},{"creationDate":1349685730000,"helpText":null,"system":false,"name":"Metlife html5 jquery archetype","id":"3bfc67a1-588d-41f0-9b8a-2807317d5c70","displayName":null,"description":null,"status":null},{"creationDate":1359036240000,"helpText":null,"system":false,"name":"loreal iphone hybrid","id":"059fb4a0-7224-4a05-a5ec-c4b9bebb2485","displayName":null,"description":null,"status":null},{"creationDate":1349685730000,"helpText":null,"system":false,"name":"loreal html jquery","id":"cb3cac8f-012b-4966-aa1b-d06f1fc03b7f","displayName":null,"description":null,"status":null}],"possibleTypes":null,"customProp":false,"favourite":false,"envSpecific":true,"properties":[{"required":true,"possibleValues":["http","https"],"propertyTemplates":null,"multiple":false,"key":"protocol","type":"String","defaultValue":null,"creationDate":1359036240000,"helpText":"","system":false,"name":"Protocol","id":"1ba69a28-c263-4751-85de-a06aef198759","displayName":null,"description":null,"status":null},{"required":true,"possibleValues":[],"propertyTemplates":null,"multiple":false,"key":"host","type":"String","defaultValue":null,"creationDate":1359036240000,"helpText":"","system":false,"name":"Host","id":"8a9f2d1e-9829-4710-b070-54d5277f07f0","displayName":null,"description":null,"status":null},{"required":true,"possibleValues":[],"propertyTemplates":null,"multiple":false,"key":"port","type":"Number","defaultValue":null,"creationDate":1359036240000,"helpText":"","system":false,"name":"Port","id":"bed36f46-df33-4cef-b8ac-f59b9867e29a","displayName":null,"description":null,"status":null},{"required":false,"possibleValues":[],"propertyTemplates":null,"multiple":false,"key":"admin_username","type":"String","defaultValue":null,"creationDate":1359036240000,"helpText":"","system":false,"name":"Admin Username","id":"578439f9-dda0-4359-8aec-0debe88b8e79","displayName":null,"description":null,"status":null},{"required":false,"possibleValues":[],"propertyTemplates":null,"multiple":false,"key":"admin_password","type":"Password","defaultValue":null,"creationDate":1359036240000,"helpText":"","system":false,"name":"Admin Password","id":"3cb9fed8-6d0d-43ff-8e90-0cbad1ed6410","displayName":null,"description":null,"status":null},{"required":false,"possibleValues":[],"propertyTemplates":null,"multiple":false,"key":"remoteDeployment","type":"Boolean","defaultValue":null,"creationDate":1359036240000,"helpText":"","system":false,"name":"Remote Deployment","id":"c0029d24-7cfc-475a-a981-095388b1e9e2","displayName":null,"description":null,"status":null},{"required":false,"possibleValues":[],"propertyTemplates":null,"multiple":false,"key":"certificate","type":"String","defaultValue":null,"creationDate":1359036240000,"helpText":"","system":false,"name":"Certificate","id":"cdc44d80-fa82-4791-91ab-16761ee0b580","displayName":null,"description":null,"status":null},{"required":true,"possibleValues":[],"propertyTemplates":null,"multiple":false,"key":"type","type":"String","defaultValue":null,"creationDate":1359036240000,"helpText":"","system":false,"name":"Server Type","id":"2051ba38-03e1-4bf1-a63c-df956d642afe","displayName":null,"description":null,"status":null},{"required":true,"possibleValues":[],"propertyTemplates":null,"multiple":false,"key":"version","type":"String","defaultValue":null,"creationDate":1359036240000,"helpText":"","system":false,"name":"Version","id":"2051ba38-03e1-4bf1-a63c-df956d642wafe","displayName":null,"description":null,"status":null},{"required":true,"possibleValues":[],"propertyTemplates":null,"multiple":false,"key":"deploy_dir","type":"String","defaultValue":null,"creationDate":1359036240000,"helpText":"","system":false,"name":"Deploy Directory","id":"7c993072-0e94-4339-8cdc-2c8b48637f5b","displayName":null,"description":null,"status":null},{"required":true,"possibleValues":[],"propertyTemplates":null,"multiple":false,"key":"context","type":"String","defaultValue":null,"creationDate":1359036240000,"helpText":"","system":false,"name":"Context","id":"e779c012-4c45-467d-b146-67a0a59e8f32","displayName":null,"description":null,"status":null},{"required":false,"possibleValues":[],"propertyTemplates":null,"multiple":false,"key":"additional_context","type":"String","defaultValue":null,"creationDate":1359036240000,"helpText":"","system":false,"name":"Additional Context Path","id":"6b945b56-5410-464a-9176-f4f042e36d31","displayName":null,"description":null,"status":null}],"type":null,"displayName":null,"customerIds":["photon","0f3d8d9d-a7d0-49b8-b662-2cc25a5ee88b","05c80933-95d4-46c8-a58d-ceceb4bcce48","c32171c4-90e5-4ede-9c51-0ff370eae974","05c80933-95d4-46c8-a58d-ceceb4bcce48"],"used":false,"creationDate":1359036240000,"helpText":null,"system":true,"name":"Server","id":"config_Server","description":"Server Configuration","status":null}}});
 				}
 
 			});
@@ -61,12 +61,12 @@ define(["configuration/editConfiguration"], function(EditConfiguration) {
 			setTimeout(function() {
 				start();
 				equal($(commonVariables.contentPlaceholder).find('.row_bg').attr('configtype'), "Server", "Add Configuration Tested");
-				self.serverChangeEvent(editConfiguration);
+				self.serverChangeEvent(editConfiguration, runOtherTests);
 			}, 1500);
 		});
 	},
 	
-	serverChangeEvent : function(editConfiguration) {
+	serverChangeEvent : function(editConfiguration, runOtherTests) {
 		var self=this;
 		asyncTest("Test - Server Change Event Test", function() {
 			
@@ -76,13 +76,13 @@ define(["configuration/editConfiguration"], function(EditConfiguration) {
 			setTimeout(function() {
 				start();
 				equal($(commonVariables.contentPlaceholder).find("select[currentconfig=Server]").val(), "2.1e", "Server Change Event Tested");
-				self.remoteDeployTrue(editConfiguration);
+				self.remoteDeployTrue(editConfiguration, runOtherTests);
 			}, 1500);
 		}); 
 		
 	},
 	
-	remoteDeployTrue : function(editConfiguration) {
+	remoteDeployTrue : function(editConfiguration, runOtherTests) {
 		var self=this;
 		asyncTest("Test - Remote Deploy True Event Test", function() {
 			
@@ -92,13 +92,13 @@ define(["configuration/editConfiguration"], function(EditConfiguration) {
 			setTimeout(function() {
 				start();
 				equal($(commonVariables.contentPlaceholder).find("input[name=deploy_dir]").css('display'), "none", "Remote Deploy True Tested");
-				self.remoteDeployFalse(editConfiguration);
+				self.remoteDeployFalse(editConfiguration, runOtherTests);
 			}, 1500);
 		}); 
 		
 	},
 	
-	remoteDeployFalse : function(editConfiguration) {
+	remoteDeployFalse : function(editConfiguration, runOtherTests) {
 		var self=this;
 		asyncTest("Test - Remote Deploy False Event Test", function() {
 			
@@ -108,13 +108,13 @@ define(["configuration/editConfiguration"], function(EditConfiguration) {
 			setTimeout(function() {
 				start();
 				equal($(commonVariables.contentPlaceholder).find("input[name=deploy_dir]").css('display'), "inline", "Remote Deploy Click Tested");
-				self.addCertificate(editConfiguration);
+				self.addCertificate(editConfiguration, runOtherTests);
 			}, 1500);
 		}); 
 		
 	},
 	
-	addCertificate : function(editConfiguration) {
+	addCertificate : function(editConfiguration, runOtherTests) {
 		var self=this;
 		asyncTest("Test - Add Certificate Test", function() {
 			
@@ -138,13 +138,13 @@ define(["configuration/editConfiguration"], function(EditConfiguration) {
 			setTimeout(function() {
 				start();
 				equal($(commonVariables.contentPlaceholder).find('select[name=certificateValue]').val(), "CN=kumar_s", "Add Certificate Tested");
-				self.saveCertificate(editConfiguration);
+				self.saveCertificate(editConfiguration, runOtherTests);
 			}, 1500);
 		}); 
 		
 	},
 	
-	saveCertificate : function(editConfiguration) {
+	saveCertificate : function(editConfiguration, runOtherTests) {
 		var self=this;
 		asyncTest("Test - Save Certificate Test", function() {
 			$.mockjax({
@@ -167,13 +167,13 @@ define(["configuration/editConfiguration"], function(EditConfiguration) {
 			setTimeout(function() {
 				start();
 				equal($(commonVariables.contentPlaceholder).find('input[name=certificate]').val(), "CN=kumar_s", "Save Certificate Tested");
-				self.serverAliveEvent(editConfiguration);
+				self.serverAliveEvent(editConfiguration, runOtherTests);
 			}, 1500);
 		}); 
 		
 	},
 	
-	serverAliveEvent : function(editConfiguration) {
+	serverAliveEvent : function(editConfiguration, runOtherTests) {
 		var self=this;
 		asyncTest("Test - Server Alive Event Test", function() {
 		
@@ -192,13 +192,13 @@ define(["configuration/editConfiguration"], function(EditConfiguration) {
 			setTimeout(function() {
 				start();
 				equal($(commonVariables.contentPlaceholder).find(".inactive").text(), "In Active", "Server Alive Event Tested");
-				self.removeConfiguration(editConfiguration);
+				self.removeConfiguration(editConfiguration, runOtherTests);
 			}, 1500);
 		}); 
 		
 	},
 	
-	removeConfiguration : function(editConfiguration) {
+	removeConfiguration : function(editConfiguration, runOtherTests) {
 		var self=this;
 		asyncTest("Test - Remove Configuration Test", function() {
 			
@@ -207,13 +207,13 @@ define(["configuration/editConfiguration"], function(EditConfiguration) {
 			setTimeout(function() {
 				start();
 				equal($(commonVariables.contentPlaceholder).find('.row_bg').attr('configtype'), undefined, "Remove Configuration Tested");
-				self.addOtherConfiguration(editConfiguration);
+				self.addOtherConfiguration(editConfiguration, runOtherTests);
 			}, 1500);
 		}); 
 		
 	},
 	
-	addOtherConfiguration : function(editConfiguration) {
+	addOtherConfiguration : function(editConfiguration, runOtherTests) {
 		var self=this;
 		asyncTest("Test - Add Other Configuration Test", function() {
 			
@@ -222,12 +222,12 @@ define(["configuration/editConfiguration"], function(EditConfiguration) {
 			setTimeout(function() {
 				start();
 				equal($(commonVariables.contentPlaceholder).find('.row_bg').attr('configtype'), "Other", "Add Other Configuration Tested");
-				self.addOtherConfigurationKeyValue(editConfiguration);
+				self.addOtherConfigurationKeyValue(editConfiguration, runOtherTests);
 			}, 1500);
 		}); 
 	},
 	
-	addOtherConfigurationKeyValue : function(editConfiguration) {
+	addOtherConfigurationKeyValue : function(editConfiguration, runOtherTests) {
 		var self=this;
 		asyncTest("Test - Add Other Configuration Key Test", function() {
 			
@@ -236,12 +236,12 @@ define(["configuration/editConfiguration"], function(EditConfiguration) {
 			setTimeout(function() {
 				start();
 				equal($(commonVariables.contentPlaceholder).find('tbody[name=ConfigurationLists] tr').length, 5, "Add Other Configuration Key Tested");
-				self.removeOtherConfigurationKeyValue(editConfiguration);
+				self.removeOtherConfigurationKeyValue(editConfiguration, runOtherTests);
 			}, 1500);
 		}); 
 	},
 	
-	removeOtherConfigurationKeyValue : function(editConfiguration) {
+	removeOtherConfigurationKeyValue : function(editConfiguration, runOtherTests) {
 		var self=this;
 		asyncTest("Test - Remove Other Configuration Key Test", function() {
 			
@@ -250,12 +250,12 @@ define(["configuration/editConfiguration"], function(EditConfiguration) {
 			setTimeout(function() {
 				start();
 				equal($(commonVariables.contentPlaceholder).find('tbody[name=ConfigurationLists] tr').length, 3, "Remove Other Configuration Key Tested");
-				self.validationForConfiguration(editConfiguration);
+				self.validationForConfiguration(editConfiguration, runOtherTests);
 			}, 1500);
 		}); 
 	},
 	
-	validationForConfiguration : function(editConfiguration) {
+	validationForConfiguration : function(editConfiguration, runOtherTests) {
 		var self=this;
 		asyncTest("Test - Validation for Configuration Test", function() {
 			
@@ -264,24 +264,24 @@ define(["configuration/editConfiguration"], function(EditConfiguration) {
 			setTimeout(function() {
 				start();
 				equal($(commonVariables.contentPlaceholder).find("#ConfigOther").attr('placeholder'), "Enter Configuration Name", "Validation for Configuration Tested");
-				self.updateConfiguration(editConfiguration);
+				self.updateConfiguration(editConfiguration, runOtherTests);
 			}, 1500);
 		}); 
 	},
 	
-	updateConfiguration : function(editConfiguration) {
+	updateConfiguration : function(editConfiguration, runOtherTests) {
 		var self=this;
 		asyncTest("Test - Update Configuration Test", function() {
 			
 			$("a[name=removeConfig]").click();
 			
 			$.mockjax({
-				url:  commonVariables.webserviceurl+commonVariables.configuration+"/settingsTemplate?appDirName=aap1&customerId=photon&userId=admin&type=Email&techId=tech-phpdru6",
+				url:  commonVariables.webserviceurl+commonVariables.configuration+"/settingsTemplate?appDirName=aap1&customerId=photon&userId=admin&type=Email&techId=tech-html5-jquery-mobile-widget",
 				type:'GET',
 				contentType: 'application/json',
 				status: 200,
 				response: function() {
-					this.responseText = JSON.stringify({"response":null,"message":"confuguration Template Fetched successfully","exception":null,"data":{"downloadInfo":{},"settingsTemplate":{"appliesToTechs":[{"creationDate":1349685730343,"helpText":null,"system":false,"name":"Php","id":"tech-php","displayName":null,"description":null,"status":null},{"creationDate":1349685730343,"helpText":null,"system":false,"name":"Drupal 6","id":"tech-phpdru6","displayName":null,"description":null,"status":null},{"creationDate":1349685730343,"helpText":null,"system":false,"name":"Drupal 7","id":"tech-phpdru7","displayName":null,"description":null,"status":null},{"creationDate":1349685730343,"helpText":null,"system":false,"name":"Sharepoint","id":"tech-sharepoint","displayName":null,"description":null,"status":null},{"creationDate":1349685730343,"helpText":null,"system":false,"name":"Dotnet","id":"tech-dotnet","displayName":null,"description":null,"status":null},{"creationDate":1349685730343,"helpText":null,"system":false,"name":"Nodejs Webservice","id":"tech-nodejs-webservice","displayName":null,"description":null,"status":null},{"creationDate":1349685730343,"helpText":null,"system":false,"name":"Java Webservice","id":"tech-java-webservice","displayName":null,"description":null,"status":null}],"possibleTypes":null,"customProp":false,"favourite":false,"envSpecific":true,"properties":[{"required":false,"possibleValues":null,"propertyTemplates":null,"multiple":false,"key":"incoming_mail_server","type":"String","defaultValue":null,"creationDate":1349685730343,"helpText":null,"system":false,"name":"Incoming Mail Server","id":"41479c58-73c1-40f7-bd47-984cc6b5e3e5","displayName":null,"description":"Name or IPAddress of the incoming email server","status":null},{"required":false,"possibleValues":null,"propertyTemplates":null,"multiple":false,"key":"incoming_mail_port","type":"String","defaultValue":null,"creationDate":1349685730343,"helpText":null,"system":false,"name":"Incoming Port","id":"39d432af-b223-4115-b127-d03081631f29","displayName":null,"description":"Name or IPAddress of the incoming email server","status":null},{"required":true,"possibleValues":null,"propertyTemplates":null,"multiple":false,"key":"host","type":"String","defaultValue":null,"creationDate":1349685730343,"helpText":null,"system":false,"name":"Outgoing Server Name","id":"fdb07cbd-6d77-4fa4-b438-3389312e098a","displayName":null,"description":"Name or IPAddress of the email server","status":null},{"required":true,"possibleValues":null,"propertyTemplates":null,"multiple":false,"key":"port","type":"String","defaultValue":null,"creationDate":1349685730343,"helpText":null,"system":false,"name":"Outgoing Port","id":"01d2a388-c2cb-4335-a928-18846203857d","displayName":null,"description":"Name or IPAddress of the outgoing email server","status":null},{"required":true,"possibleValues":null,"propertyTemplates":null,"multiple":false,"key":"username","type":"String","defaultValue":null,"creationDate":1349685730343,"helpText":null,"system":false,"name":"Username","id":"7bee741b-2321-413f-aa11-8322642a7a8d","displayName":null,"description":"Username of the Email address","status":null},{"required":true,"possibleValues":null,"propertyTemplates":null,"multiple":false,"key":"password","type":"Password","defaultValue":null,"creationDate":1349685730343,"helpText":null,"system":false,"name":"Password","id":"0df73568-2d98-43b8-bbc6-05eca1454f49","displayName":null,"description":"Password for the email address","status":null},{"required":true,"possibleValues":null,"propertyTemplates":null,"multiple":false,"key":"emailid","type":"String","defaultValue":null,"creationDate":1349685730343,"helpText":null,"system":false,"name":"Email Id","id":"21c590a3-3508-4974-b57e-ac572a21f388","displayName":null,"description":"Email Id","status":null}],"type":null,"displayName":null,"customerIds":["photon"],"used":false,"creationDate":1349685730343,"helpText":null,"system":true,"name":"Email","id":"config_Email","description":"Email configuration","status":null}}});
+					this.responseText = JSON.stringify({"response":null,"message":"confuguration Template Fetched successfully","exception":null,"data":{"downloadInfo":{},"settingsTemplate":{"appliesToTechs":[{"creationDate":1349685730343,"helpText":null,"system":false,"name":"Php","id":"tech-php","displayName":null,"description":null,"status":null},{"creationDate":1349685730343,"helpText":null,"system":false,"name":"Drupal 6","id":"tech-html5-jquery-mobile-widget","displayName":null,"description":null,"status":null},{"creationDate":1349685730343,"helpText":null,"system":false,"name":"Drupal 7","id":"tech-phpdru7","displayName":null,"description":null,"status":null},{"creationDate":1349685730343,"helpText":null,"system":false,"name":"Sharepoint","id":"tech-sharepoint","displayName":null,"description":null,"status":null},{"creationDate":1349685730343,"helpText":null,"system":false,"name":"Dotnet","id":"tech-dotnet","displayName":null,"description":null,"status":null},{"creationDate":1349685730343,"helpText":null,"system":false,"name":"Nodejs Webservice","id":"tech-nodejs-webservice","displayName":null,"description":null,"status":null},{"creationDate":1349685730343,"helpText":null,"system":false,"name":"Java Webservice","id":"tech-java-webservice","displayName":null,"description":null,"status":null}],"possibleTypes":null,"customProp":false,"favourite":false,"envSpecific":true,"properties":[{"required":false,"possibleValues":null,"propertyTemplates":null,"multiple":false,"key":"incoming_mail_server","type":"String","defaultValue":null,"creationDate":1349685730343,"helpText":null,"system":false,"name":"Incoming Mail Server","id":"41479c58-73c1-40f7-bd47-984cc6b5e3e5","displayName":null,"description":"Name or IPAddress of the incoming email server","status":null},{"required":false,"possibleValues":null,"propertyTemplates":null,"multiple":false,"key":"incoming_mail_port","type":"String","defaultValue":null,"creationDate":1349685730343,"helpText":null,"system":false,"name":"Incoming Port","id":"39d432af-b223-4115-b127-d03081631f29","displayName":null,"description":"Name or IPAddress of the incoming email server","status":null},{"required":true,"possibleValues":null,"propertyTemplates":null,"multiple":false,"key":"host","type":"String","defaultValue":null,"creationDate":1349685730343,"helpText":null,"system":false,"name":"Outgoing Server Name","id":"fdb07cbd-6d77-4fa4-b438-3389312e098a","displayName":null,"description":"Name or IPAddress of the email server","status":null},{"required":true,"possibleValues":null,"propertyTemplates":null,"multiple":false,"key":"port","type":"String","defaultValue":null,"creationDate":1349685730343,"helpText":null,"system":false,"name":"Outgoing Port","id":"01d2a388-c2cb-4335-a928-18846203857d","displayName":null,"description":"Name or IPAddress of the outgoing email server","status":null},{"required":true,"possibleValues":null,"propertyTemplates":null,"multiple":false,"key":"username","type":"String","defaultValue":null,"creationDate":1349685730343,"helpText":null,"system":false,"name":"Username","id":"7bee741b-2321-413f-aa11-8322642a7a8d","displayName":null,"description":"Username of the Email address","status":null},{"required":true,"possibleValues":null,"propertyTemplates":null,"multiple":false,"key":"password","type":"Password","defaultValue":null,"creationDate":1349685730343,"helpText":null,"system":false,"name":"Password","id":"0df73568-2d98-43b8-bbc6-05eca1454f49","displayName":null,"description":"Password for the email address","status":null},{"required":true,"possibleValues":null,"propertyTemplates":null,"multiple":false,"key":"emailid","type":"String","defaultValue":null,"creationDate":1349685730343,"helpText":null,"system":false,"name":"Email Id","id":"21c590a3-3508-4974-b57e-ac572a21f388","displayName":null,"description":"Email Id","status":null}],"type":null,"displayName":null,"customerIds":["photon"],"used":false,"creationDate":1349685730343,"helpText":null,"system":true,"name":"Email","id":"config_Email","description":"Email configuration","status":null}}});
 				}
 
 			});
@@ -309,6 +309,7 @@ define(["configuration/editConfiguration"], function(EditConfiguration) {
 				$("input[name=emailid]").val('ssss@gmail.com');
 				$("input[name=UpdateConfiguration]").click();
 				equal($(commonVariables.contentPlaceholder).find(".configName").val(), "email", "Update Configuration Tested");
+				runOtherTests();
 			}, 3000);
 		}); 
 	}

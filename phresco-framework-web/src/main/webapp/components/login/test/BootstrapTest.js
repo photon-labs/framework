@@ -147,23 +147,28 @@ define(["jquery"], function($) {
 				commonVariables.navListener = Clazz.com.components.navigation.js.listener.navigationListener();
 				loginTest.runTests(data, function() {
 					footerTest.runTests(data);
-					projectlistTest.runTests(data);
-					projectTest.runTests(data);
-					dynamicPageTest.runTests(data);
-					performanceTestTest.runTests(data);
-					editConfigurationTest.runTests(data);
-					configurationTest.runTests(data);
+					projectlistTest.runTests(function(){
+						projectTest.runTests(function(){
+							featuresTest.runTests(function(){
+								configurationTest.runTests(function(){
+									editConfigurationTest.runTests(function(){
+										performanceTestTest.runTests(data);
+										dynamicPageTest.runTests(data);
+									});
+								});
+							});
+						});
+					});
 					/*applicationTest.runTests(data);
-					featuresTest.runTests(data);
+					
 					functionalTestTest.runTests(data);
 					editConfigurationTest.runTests(data);
 					configurationTest.runTests(data);
 					navigationTest.runTests(data);
 					headerTest.runTests(data);
-					jobTemplatesTest.runTests(data);*/
-					continuousDeliveryConfigureTest.runTests(data);
+					jobTemplateListTest.runTests(data);
 					buildTest.runTests(data);
-					/*codequalityTest.runTests(data);
+					codequalityTest.runTests(data);
 					unitTestTest.runTests(data);
 					componentTestTest.runTests(data);*/
 				});

@@ -126,7 +126,13 @@ define(["features/listener/featuresListener"], function() {
 			}
 			setTimeout(function(){
 					self.selectedCount();
-			},3000);			
+			},3000);
+
+			$(".features_cont").mCustomScrollbar({
+				scrollInertia:600,
+				autoHideScrollbar:true,
+				theme:"light-thin"
+			});	
 		},
 		
 		

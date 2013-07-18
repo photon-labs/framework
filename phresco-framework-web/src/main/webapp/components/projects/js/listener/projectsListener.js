@@ -74,8 +74,8 @@ define(["projects/api/projectsAPI"], function() {
 		
 		addlayeredit:function(object) {
 			var self=this;
-			$('img[name="close"]').show();
 		 	var layerType = object.attr('name');
+			$("img[id="+layerType+"]").show();
 		 	$("input[name="+layerType+"]").hide();
 			$("tr[id="+ layerType +"]").show('slow');
 			$("tr[id="+ layerType +"]").next().show('slow');
@@ -958,7 +958,9 @@ define(["projects/api/projectsAPI"], function() {
 			self.getEditProject(self.getRequestHeader(self.projectRequestBody, "", "pilotlist"), function(response) {
 				$.each(response.data, function(index, value){
 					self.projectAPI.localVal.setJson(value.name, value);
-					option += '<option>'+ value.displayName +'</option>';
+					if(value.displayName !== undefined && value.displayName !== null && value.displayName !== '') {
+						option += '<option>'+ value.displayName +'</option>';
+					}
 					if(response.data.length === (index + 1)){
 						callback(option);
 					} 
@@ -1311,6 +1313,7 @@ define(["projects/api/projectsAPI"], function() {
 				if (value.techInfo.appTypeId === "app-layer") {
 					$("#appLayaer").show();
 					$("tr.applnLayer").show();
+					$('img[name="close"]').hide();
 					var option = '';
 					if(value.dependentModules !== null) {
 						$.each(value.dependentModules, function(index, value){
@@ -1330,6 +1333,7 @@ define(["projects/api/projectsAPI"], function() {
 				} else if (value.techInfo.appTypeId === "web-layer") {
 					$("#webLayers").show();
 					$("tr.webLayer").show();
+					$('img[name="close"]').hide();
 					if(value.dependentModules !== null) {
 						$.each(value.dependentModules, function(index, value){
 							option += '<option selected>'+ value +'</option>';
@@ -1348,6 +1352,7 @@ define(["projects/api/projectsAPI"], function() {
 				} else if (value.techInfo.appTypeId === "mobile-layer") {
 					$("#mobLayers").show();
 					$("tr.mobLayer").show();
+					$('img[name="close"]').hide();
 					var appendData = '<tr class="mobilelayercontent" name="dynamicMobileLayer"><td><input type="text" value="'+value.code+'" disabled></td><td><select disabled><option>'+value.techInfo.techGroupId+'</option></select></td><td><select name="mobile_types" disabled>'+self.editgetmobiletype(value.techInfo.id)+'</select></td><td colspan="2"><select disabled><option>'+value.techInfo.version+'</option></select></td><td><div class="flt_right icon_center"><a href="javascript:;" name="addMobileLayer"></a><a href="javascript:;" name="removeMobileLayer"></a> </div></td></tr>';
 					$("tbody.MobLayer").append(appendData);
 					self.multiselect();

@@ -48,21 +48,6 @@ define(["configuration/api/configurationAPI"], function() {
 			}
 		},
 
-		scrollbarEnable : function(){
-			$(".features_content_main").mCustomScrollbar({
-				autoHideScrollbar:true,
-				theme:"light-thin",
-				advanced:{ updateOnContentResize: true}
-			});
-
-			$(".fix_height").mCustomScrollbar({
-				autoHideScrollbar:true,
-				theme:"light-thin",
-				advanced:{ updateOnContentResize: true}
-			});
-
-		},
-
 		windowResize : function(){
 			var resultvalue = 0;
 			$('.features_content_main').prevAll().each(function() {

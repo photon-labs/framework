@@ -329,13 +329,15 @@ define(["framework/widget", "framework/templateProvider"], function() {
 				$(".dyn_popup").hide();
 				
 				$('.features_content_main').removeClass('z_index');
-				
+				var act = $(ee).attr("data-original-title");
+
 				var clicked = $(ee);
 				var target = $("#" + placeId);
 				var t= clicked.offset().top + 33;
 				var halfheight= window.innerHeight/2;
 				var halfwidth= window.innerWidth/2;
 				$(target).attr('currentPrjName',currentPrjName);
+				var style;
 				
 				if (clicked.offset().top < halfheight && clicked.offset().left < halfwidth) {
 					$(target).css({"left":clicked.offset().left ,"margin-top":10,"right": "auto"});
@@ -343,7 +345,13 @@ define(["framework/widget", "framework/templateProvider"], function() {
 					$(target).removeClass('speakstyletopright').removeClass('speakstylebottomright').removeClass('speakstylebottomleft').addClass('speakstyletopleft').addClass('dyn_popup');
 				} else if (clicked.offset().top < halfheight && clicked.offset().left > halfwidth){
 					var d= ($(window).width() - (clicked.offset().left + clicked.outerWidth())) - 18;
-					$(target).css({"right":d ,"margin-top":10,"left": "auto","top": "auto"});
+					if(($(ee).parent('td').attr('class')!='delimages') && (act === "Delete Row")) {
+						var BottomHeight = clicked.position().top + clicked.height() ;
+						$(target).css({"right":d,"left": "auto","top": BottomHeight});
+					}
+					else {		
+						$(target).css({"right":d ,"margin-top":10,"left": "auto","top": "auto"});
+					}
 					$(target).toggle();
 					$(target).removeClass('speakstyletopleft').removeClass('speakstylebottomright').removeClass('speakstylebottomleft').addClass('speakstyletopright').addClass('dyn_popup');
 				} else if (clicked.offset().top > halfheight && clicked.offset().left < halfwidth){
@@ -352,11 +360,20 @@ define(["framework/widget", "framework/templateProvider"], function() {
 					$(target).toggle();
 					$(target).removeClass('speakstyletopleft').removeClass('speakstylebottomright').removeClass('speakstyletopright').addClass('speakstylebottomleft').addClass('dyn_popup');	
 				} else if (clicked.offset().top > halfheight && clicked.offset().left > halfwidth){
-					var d= ($(window).width() - (clicked.offset().left + clicked.outerWidth())) - 15;
-					var BottomHeight = clicked.position().top - (target.height() + 28 );
-					$(target).css({"right":d ,"top":BottomHeight,"left": "auto"});
-					$(target).toggle();
-					$(target).removeClass('speakstyletopleft').removeClass('speakstyletopright').removeClass('speakstylebottomleft').addClass('speakstylebottomright').addClass('dyn_popup');	
+					var d = null,BottomHeight = null;
+					d = ($(window).width() - (clicked.offset().left + clicked.outerWidth())) - 15;
+					if(($(ee).parent('td').attr('class')!='delimages') && (act === "Delete Row")) {
+						BottomHeight = clicked.position().top - 70;
+						$(target).css({"right":d ,"top":BottomHeight,"left": "auto"});
+						$(target).toggle();
+						$(target).removeClass('speakstyletopleft').removeClass('speakstyletopright').removeClass('speakstylebottomleft').addClass('speakstylebottomright').addClass('dyn_popup');
+					}
+						else {
+							BottomHeight = clicked.position().top - (target.height() + 28 );
+							$(target).css({"right":d ,"top":BottomHeight,"left": "auto"});
+							$(target).toggle();
+							$(target).removeClass('speakstyletopleft').removeClass('speakstyletopright').removeClass('speakstylebottomleft').addClass('speakstylebottomright').addClass('dyn_popup');
+						}
 				} 
 
 				self.closeAll(placeId);

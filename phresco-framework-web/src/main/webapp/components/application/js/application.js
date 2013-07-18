@@ -146,7 +146,11 @@ define(["application/listener/applicationListener"], function() {
 			self.multiselect();
 			commonVariables.navListener.showHideControls(commonVariables.editApplication);
 			commonVariables.navListener.showHideTechOptions();
-
+			$(".scrollContent").mCustomScrollbar({
+				autoHideScrollbar:true,
+				theme:"light-thin",
+				advanced:{ updateOnContentResize: true}
+			});
 		},
 		
 		preRender: function(whereToRender, renderFunction){
@@ -208,11 +212,6 @@ define(["application/listener/applicationListener"], function() {
 				self.updateApp.dispatch(self.renderData);
 			});
 					
-			$(".scrollContent").mCustomScrollbar({
-				autoHideScrollbar:true,
-				theme:"light-thin",
-				advanced:{ updateOnContentResize: true}
-			});
 			self.windowResize();	
 		}
 	});
