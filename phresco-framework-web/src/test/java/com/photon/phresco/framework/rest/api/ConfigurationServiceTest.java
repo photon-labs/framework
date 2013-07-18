@@ -26,6 +26,7 @@ import java.util.List;
 import java.util.Properties;
 
 import javax.ws.rs.core.Response;
+import javax.xml.transform.dom.DOMSource;
 
 import junit.framework.Assert;
 
@@ -41,6 +42,7 @@ import com.photon.phresco.framework.model.AddCertificateInfo;
 import com.photon.phresco.framework.model.CronExpressionInfo;
 import com.photon.phresco.framework.rest.api.util.FrameworkServiceUtil;
 import com.photon.phresco.impl.ConfigManagerImpl;
+import com.photon.phresco.util.Utility;
 
 public class ConfigurationServiceTest extends LoginServiceTest {
 	
@@ -459,6 +461,16 @@ public class ConfigurationServiceTest extends LoginServiceTest {
 		Response authenticateServersettings = configurationService.addCertificate(add6);
 		Assert.assertEquals(200, authenticateServersettings.getStatus());
 		
+	}
+	
+	@Test
+	public void fileBrowseTest() {
+		Response fileStructure = configurationService.returnFileBorwseFolderStructure(Utility.getProjectHome()
+				+ appDirName);
+		Assert.assertEquals(200, fileStructure.getStatus());
+		Response fileEntireStructure = configurationService.returnFileBorwseEntireStructure(appDirName);
+		Assert.assertEquals(200, fileEntireStructure.getStatus());
+		DOMSource data = (DOMSource) fileEntireStructure.getEntity();
 	}
 	
 	private String getConnectionUrl(String envName, String type, String configName) throws PhrescoException {
