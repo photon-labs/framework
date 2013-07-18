@@ -434,12 +434,14 @@ define(["framework/widgetWithTemplate", "dynamicPage/api/dynamicPageAPI", "commo
         },
         
         applyEditableComboBox : function (obj) {
-            obj.customComboBox({
-                tipText : "Type or select from the list",
-                allowed : /[A-Za-z0-9\$\._\-\s]/,
-                notallowed : /[\<\>\$]/,
-                index : 'first'
-            });
+			if (obj !== undefined && obj !== null && obj.length > 1) {
+				obj.customComboBox({
+					tipText : "Type or select from the list",
+					allowed : /[A-Za-z0-9\$\._\-\s]/,
+					notallowed : /[\<\>\$]/,
+					index : 'first'
+				});
+			}
         },
 
         //to bind events for dynamic controls
