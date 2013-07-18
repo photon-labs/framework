@@ -10,8 +10,8 @@
 	                    <a href="#"><b>Table View</b></a>
 	                </span>
 	                <span>
-	                	<a href="#"><img src="themes/default/images/helios/quality_graph_off.png" width="26" height="24" border="0" alt=""></a>
-	                	<a href="#">Graph View</a>
+	                	<!--<a href="#"><img src="themes/default/images/helios/quality_graph_off.png" width="26" height="24" border="0" alt=""></a>
+	                	<a href="#">Graph View</a>-->
 	                </span>    
 	            </div>
 	        {{else}}  
@@ -21,22 +21,22 @@
 	                    <a href="#"><b>Table View</b></a>
 	                </span>
 	                <span>
-	                	<a href="#"><img src="themes/default/images/helios/quality_graph_off.png" width="26" height="24" border="0" alt=""></a>
-	                	<a href="#">Graph View</a>
+	                	<!--<a href="#"><img src="themes/default/images/helios/quality_graph_off.png" width="26" height="24" border="0" alt=""></a>
+	                	<a href="#">Graph View</a>-->
 	                </span>    
 	            </div>  
             {{/showIcons}}
             
-            <div class="icon_images"><a class="tooltiptop" title="" data-placement="bottom" data-toggle="tooltip" href="#" data-original-title="Open Folder"><img src="themes/default/images/helios/openfolder_icon.png" ></a></div>
-			<div class="icon_images" style="margin-right:2px;"><a class="tooltiptop" title="" data-placement="bottom" data-toggle="tooltip" href="#" data-original-title="Copy Path"><img src="themes/default/images/helios/copypath_icon.png" ></a></div>
+            <div class="icon_images"><a class="tooltiptop" id="openFolder" title="" data-placement="bottom" data-toggle="tooltip" href="#" data-original-title="Open Folder"><img src="themes/default/images/helios/openfolder_icon.png" ></a></div>
+			<div class="icon_images" style="margin-right:2px;"><a id="copyPath" class="tooltiptop" title="" data-placement="bottom" data-toggle="tooltip" href="#" data-original-title="Copy Path"><img src="themes/default/images/helios/copypath_icon.png" ></a></div>
         	
         	{{#showIcons resultAvailable testResultFiles}}
-	            <div class="code_report_icon pdf_icon performancePdf">
-	            	div class="icon_images"><a class="tooltiptop" title="" data-placement="bottom" data-toggle="tooltip" href="#" data-original-title="PDF Report"><img src="themes/default/images/helios/pdf_icon_white.png"></a></div>
+	           <div class="code_report_icon pdf_icon performancePdf">
+	            	<!--<div class="icon_images"><a class="tooltiptop" title="" data-placement="bottom" data-toggle="tooltip" href="#" data-original-title="PDF Report"><img src="themes/default/images/helios/pdf_icon_white.png"></a></div>
                 	<div class="tooltip fade bottom" style="top: 27px; left: 893.1875px; display: block;">
                     	<div class="tooltip-arrow" style=""></div><div class="tooltip-inner">Export as PDF
                         </div>
-                    </div>
+                    </div>-->
 	            </div>
 			{{else}}  
 	        	<div class="code_report_icon pdf_icon hideContent performancePdf">
@@ -172,19 +172,24 @@
 		    <div class="unit_close performance_close">
 		    	<a href="#" data-flag="true" id="consoleImg">
 		    		<img src="themes/default/images/helios/console_img.png" width="33" height="92" border="0" alt="">
+		    		<div class="progress_loading" style="display:none;"><img src="themes/default/images/helios/progress_load.gif" border="0"></div>
 				</a>
 			</div>
 		    <div class="unit_progress performance_progress">
-		        <table class="table table-striped table_border table-bordered" cellpadding="0" cellspacing="0" border="0">
+		        <table id="unit_progress" class="table table-striped table_border table-bordered" cellpadding="0" cellspacing="0" border="0">
 		            <thead>
-		                <tr>
-		                    <th>Progress</th>
-							<td>
+					<tr>
+						<td>
+							<div class="flt_right">
+								<input type="button" class="btn btn_style kill_btn" value="Kill Process">
 								<a href="#" id="copyLog">
 									<img src="themes/default/images/helios/buildreport_icon.png" width="15" height="18" border="0" alt="">
 								</a>
-							</td>
-						</tr>
+							</div>
+							<div class="flt_left">Progress</div>
+						</td>
+					</tr>
+				 </thead>
 					</thead>
 					<tbody class="scrollContent">
 		            	<tr>

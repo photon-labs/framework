@@ -211,7 +211,8 @@ define(["framework/base", "framework/animationProvider"], function() {
 											}
 										});
 									}
-									commonVariables.loadingScreen.removeLoading();
+									if(commonVariables.ajaxXhr == null || commonVariables.ajaxXhr.readyState == 4)
+										commonVariables.loadingScreen.removeLoading();
 									self.loadingActive = false;
 								//});
 							});
@@ -241,7 +242,9 @@ define(["framework/base", "framework/animationProvider"], function() {
 								}
 							});
 						}
-						commonVariables.loadingScreen.removeLoading();
+						if(commonVariables.ajaxXhr == null || commonVariables.ajaxXhr.readyState == 4)
+							commonVariables.loadingScreen.removeLoading();
+							
 						self.loadingActive = false;
 					}
 					self.loadingActive = false;

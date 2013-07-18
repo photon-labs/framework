@@ -107,6 +107,8 @@ public class ActionFunction implements Constants ,FrameworkConstants,ActionServi
 	private String fromPage = "";
 	private String pdfName = "";
 	private String reportDataType = "";
+	private String testBasis = "";
+	private String testAction = "";
 	boolean connectionAlive = false;
 	private ServiceManager serviceManager = null;
 	HttpServletRequest request;
@@ -919,7 +921,7 @@ public class ActionFunction implements Constants ,FrameworkConstants,ActionServi
 			String workingDirectory = getAppDirectoryPath(applicationInfo);  
 
 			//
-			performanceJsonWriter();    			
+			jsonWriter();    			
 			reader = applicationManager.performAction(projectInfo, ActionType.PERFORMANCE_TEST, buildArgCmds, workingDirectory);
 
 		} catch (PhrescoException e) {
@@ -1603,18 +1605,25 @@ public class ActionFunction implements Constants ,FrameworkConstants,ActionServi
 		return childElement;
 	}
 
-	public String performanceJsonWriter() throws PhrescoException {
-
+	public String jsonWriter() throws PhrescoException {
 		FileWriter fw = null;
-
+		String property = "";
 		try {
-			if(StringUtils.isNotEmpty(getTestAgainst())) {
+			if(REQ_PARAMETERS.equalsIgnoreCase(request.getParameter("testBasis")) && StringUtils.isNotEmpty(getTestAgainst())
+					|| (StringUtils.isEmpty(request.getParameter("testBasis")) && StringUtils.isNotEmpty(getTestAgainst()))) {
+				if (LOAD.equals(request.getParameter("testAction"))) {
+					property = POM_PROP_KEY_LOADTEST_DIR;
+				} else {
+					property = POM_PROP_KEY_PERFORMANCETEST_DIR;					
+				}
+				
 				ApplicationInfo applicationInfo = getApplicationInfo();
-				PomProcessor processor = new PomProcessor(getPOMFile(applicationInfo.getAppDirName()));					
-				String performTestDir = processor.getProperty(POM_PROP_KEY_PERFORMANCETEST_DIR);	        
+				File pomFile = getPOMFile(applicationInfo.getAppDirName());
+				PomProcessor processor = new PomProcessor(pomFile);					
+		        String performTestDir = processor.getProperty(property);	        
 				FileOutputStream fop;
 				boolean success = false;
-				if(getIsFromCI().equalsIgnoreCase("true")) {				
+				if(getIsFromCI().equalsIgnoreCase("true")) {	
 					StringBuilder filepath = new StringBuilder(Utility.getProjectHome())
 					.append(applicationInfo.getAppDirName())
 					.append(performTestDir)
@@ -1622,10 +1631,8 @@ public class ActionFunction implements Constants ,FrameworkConstants,ActionServi
 					.append(getTestAgainst())
 					.append(File.separator)
 					.append(Constants.FOLDER_JSON);
-					//					.append(File.separator)
-					//					.append("CITemp");					
+					
 					success = new File(filepath.toString()).mkdirs();
-
 					filepath.append(File.separator)
 					.append(getTestName())
 					.append(DOT_JSON);
@@ -1638,7 +1645,7 @@ public class ActionFunction implements Constants ,FrameworkConstants,ActionServi
 					fop.write(contentInBytes);
 					fop.flush();
 					fop.close();				
-
+										
 					StringBuilder infofilepath = new StringBuilder(Utility.getProjectHome())
 					.append(applicationInfo.getAppDirName())
 					.append(performTestDir)
@@ -1646,12 +1653,10 @@ public class ActionFunction implements Constants ,FrameworkConstants,ActionServi
 					.append(getTestAgainst())
 					.append(File.separator)
 					.append(Constants.FOLDER_JSON)				
-					//					.append(File.separator)
-					//					.append("CITemp")
 					.append(File.separator)
 					.append("ci")
 					.append(".info");					
-					file = new File(infofilepath.toString());					
+					file = new File(infofilepath.toString());	
 					if (!file.exists()) {
 						file.createNewFile();
 						fw = new FileWriter(file);
@@ -1663,8 +1668,8 @@ public class ActionFunction implements Constants ,FrameworkConstants,ActionServi
 						.append(getTestName());
 						fw.write(jsonFileName.toString()+DOT_JSON);						
 					}
-
-				} else {					
+					
+				} else {		
 					StringBuilder filepath = new StringBuilder(Utility.getProjectHome())
 					.append(applicationInfo.getAppDirName())
 					.append(performTestDir)
@@ -2253,6 +2258,22 @@ public class ActionFunction implements Constants ,FrameworkConstants,ActionServi
 
 
 	//private static ServiceManager serviceManager = null;
+
+	public void setTestAction(String testAction) {
+		this.testAction = testAction;
+	}
+
+	public String getTestAction() {
+		return testAction;
+	}
+
+	public void setTestBasis(String testBasis) {
+		this.testBasis = testBasis;
+	}
+
+	public String getTestBasis() {
+		return testBasis;
+	}
 
 	/* protected ServiceManager getServiceManager(String username) {
 			return serviceManager;

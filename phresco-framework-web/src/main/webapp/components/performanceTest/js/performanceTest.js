@@ -18,7 +18,6 @@ define(["performanceTest/listener/performanceTestListener"], function() {
 		getResultFilesEvent : null,
 		whereToRender : null,
 		dynamicpage : null,
-		logContent : '',
 		dynamicPageListener : null,
 		preTriggerPerformanceTest : null,
 		
@@ -196,12 +195,23 @@ define(["performanceTest/listener/performanceTestListener"], function() {
 		 * @element: Element as the result of the template + data binding
 		 */
 		postRender : function(element) {
-			var self = this;
+			var self = this, performanceLog = "", consoleLog = self.performanceTestAPI.localVal.getSession('performanceConsole');
 			self.performanceTestListener.resizeConsoleWindow();
 			self.performanceTestListener.resultBodyResize();
+			
+			if (!self.isBlank(consoleLog)) {
+				performanceLog = consoleLog;
+			}
+
 			//To show the log after reloading the test result once the test execution is completed
-			$('#testConsole').html(self.logContent);
-			self.logContent = '';
+			$('#testConsole').html(performanceLog);
+
+			$(".scrollContent").mCustomScrollbar({
+				autoHideScrollbar:true,
+				theme:"light-thin",
+				advanced:{ updateOnContentResize: true}
+			});
+			self.performanceTestAPI.localVal.setSession('performanceConsole', '');
 		},
 		
 		preRender: function(whereToRender, renderFunction) {
@@ -218,6 +228,30 @@ define(["performanceTest/listener/performanceTestListener"], function() {
 			performanceTest.performanceTestListener.renderPerformanceTemplate(response, performanceTest.renderFnc,  whereToRender);
 		},
 	
+		setConsoleScrollbar : function(bcheck){
+			if(bcheck){
+				$("#unit_progress .scrollContent").mCustomScrollbar("destroy");
+				$("#unit_progress .scrollContent").mCustomScrollbar({
+					autoHideScrollbar: false,
+					scrollInertia: 1000,
+					theme:"light-thin",
+					advanced:{ updateOnContentResize: true},
+					callbacks:{
+						onScrollStart:function(){
+							$("#unit_progress .scrollContent").mCustomScrollbar("scrollTo","bottom");
+						}
+					}
+				});
+			}else{
+				$("#unit_progress .scrollContent").mCustomScrollbar("destroy");
+				$("#unit_progress .scrollContent").mCustomScrollbar({
+					autoHideScrollbar:true,
+					scrollInertia: 200,
+					theme:"light-thin",
+					advanced:{ updateOnContentResize: true}
+				});
+			}
+		},	
 		/***
 		 * Bind the action listeners. The bindUI() is called automatically after the render is complete 
 		 *
@@ -225,29 +259,31 @@ define(["performanceTest/listener/performanceTestListener"], function() {
 		bindUI : function() {
 			var self = this;
 			$(".tooltiptop").tooltip();
-			$(".scrollContent").mCustomScrollbar({
-				autoHideScrollbar:true,
-				theme:"light-thin",
-				advanced:{ updateOnContentResize: true}
-			});
-			
+
 			//To show performance popup
 			$("input[name=performancePopup]").unbind("click");
 			$("input[name=performancePopup]").click(function() {
 				self.closeConsole();
+
                 var whereToRender = $('#performancePopup ul');
                 commonVariables.goal = "performance-test";
                 commonVariables.phase = "performance-test";
-                self.dynamicpage.getHtml(whereToRender, this, $(this).attr('name'), function() {
-                	var sectionHeight = $('.performanceTestResults').height();
-					$('#performancePopup').css("max-height", sectionHeight - 40 + 'px');
-					$('#performanceForm').css("max-height", sectionHeight - 92 + 'px');
-                	$("#performanceForm").mCustomScrollbar({
-						autoHideScrollbar:true,
-						theme:"light-thin",
-						advanced:{ updateOnContentResize: true}
-					});
-                });
+
+                if (whereToRender.children().length < 1) {
+                	self.dynamicpage.getHtml(whereToRender, this, $(this).attr('name'), function() {
+	                	var sectionHeight = $('.performanceTestResults').height();
+						$('#performancePopup').css("max-height", sectionHeight - 40 + 'px');
+						$('#performanceForm').css("max-height", sectionHeight - 92 + 'px');
+	                	$("#performanceForm").mCustomScrollbar({
+							autoHideScrollbar:true,
+							theme:"light-thin",
+							advanced:{ updateOnContentResize: true}
+						});
+                	});
+                } else {
+                	self.opencc(this, $(this).attr('name'));
+                }
+                
 			});
 			
 			//To open the performance test directory
@@ -301,6 +337,8 @@ define(["performanceTest/listener/performanceTestListener"], function() {
 			});
 			
 			$("#performanceRun").click(function() {
+				$('.progress_loading').show();
+				self.setConsoleScrollbar(true);
 				self.preTriggerPerformanceTest.dispatch();
 			}),
 
