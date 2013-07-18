@@ -43,6 +43,11 @@ var commonVariables = {
 	dynamicPage : "dynamicPage",
 	dynamicPageContext : "dynamic",
 	templateContext : "template",
+
+	ci : "ci",
+	jobTemplates : "jobTemplates",
+	continuousDeliveryView : "continuousDeliveryView",
+	continuousDeliveryConfigure : "continuousDeliveryConfigure",
 	
 	paramaterContext : "parameter",
 	dependencyContext : "dependency",			
@@ -94,6 +99,7 @@ define(["jquery"], function($) {
 					RGraph_bar: "RGraph_bar-1.0",
 					RGraph_line: "RGraph_line-1.0",
 					RGraph_common_key: "RGraph_common_key-1.0",
+					jquery_tojson: "jquery-tojson-1.0",
 					jquery_magnific_popup_min: "jquery_magnific_popup_min-1.0",
 					jquery_fullscreen: "jquery_fullscreen-1.0",
 					customComboBox: "customcombobox-1.0"
@@ -129,7 +135,7 @@ define(["jquery"], function($) {
 				commonVariables.loadingScreen =new Clazz.com.js.widget.common.Loading();
 			});
 		
-			require(["loginTest", "projectlistTest", "headerTest", "footerTest", "navigationTest", "projectTest", "applicationTest", "featuresTest", "codequalityTest", "configurationTest", "buildTest", "editConfigurationTest", "jobTemplateListTest", "dynamicPageTest", "unitTestTest", "componentTestTest", "functionalTestTest","handlebars", "signal", "signalbinding",  "jslib_bootstrap_datepicker", "jslib_jquery_sortable_min", "bootstrap_min", "jquery_mCustomScrollbar_concat_min", "bootstrap_select_min", "performanceTestTest", "RGraph_common_core", "RGraph_common_tooltips", "RGraph_common_effects", "RGraph_pie", "RGraph_bar", "RGraph_line", "RGraph_common_key", "jquery_magnific_popup_min", "jquery_fullscreen", "customComboBox"], function(loginTest, projectlistTest, headerTest, footerTest, navigationTest, projectTest,applicationTest, featuresTest, codequalityTest, configurationTest, buildTest, editConfigurationTest, jobTemplateListTest, dynamicPageTest, unitTestTest, componentTestTest, functionalTestTest, handlebars, signals, signalbinding, datepicker,  sortable, bootstrap, scrollbar, select, performanceTestTest, RGraph_common_core, RGraph_common_tooltips, RGraph_common_effects, RGraph_pie, RGraph_bar, RGraph_line, RGraph_common_key, jquery_magnific_popup_min, jquery_fullscreen, customComboBox){
+			require(["loginTest", "projectlistTest", "headerTest", "footerTest", "navigationTest", "projectTest", "applicationTest", "featuresTest", "codequalityTest", "configurationTest", "buildTest", "editConfigurationTest", "jobTemplatesTest", "continuousDeliveryConfigureTest", "dynamicPageTest", "unitTestTest", "componentTestTest", "functionalTestTest","handlebars", "signal", "signalbinding",  "jslib_bootstrap_datepicker", "jslib_jquery_sortable_min", "bootstrap_min", "jquery_mCustomScrollbar_concat_min", "bootstrap_select_min", "performanceTestTest", "RGraph_common_core", "RGraph_common_tooltips", "RGraph_common_effects", "RGraph_pie", "RGraph_bar", "RGraph_line", "RGraph_common_key", "jquery_magnific_popup_min", "jquery_fullscreen", "customComboBox"], function(loginTest, projectlistTest, headerTest, footerTest, navigationTest, projectTest,applicationTest, featuresTest, codequalityTest, configurationTest, buildTest, editConfigurationTest, jobTemplatesTest, continuousDeliveryConfigureTest, dynamicPageTest, unitTestTest, componentTestTest, functionalTestTest, handlebars, signals, signalbinding, datepicker,  sortable, bootstrap, scrollbar, select, performanceTestTest, RGraph_common_core, RGraph_common_tooltips, RGraph_common_effects, RGraph_pie, RGraph_bar, RGraph_line, RGraph_common_key, jquery_magnific_popup_min, jquery_fullscreen, customComboBox){
 				commonVariables.navListener = Clazz.com.components.navigation.js.listener.navigationListener();
 				loginTest.runTests(data, function() {
 					footerTest.runTests(data);
@@ -146,8 +152,9 @@ define(["jquery"], function($) {
 					configurationTest.runTests(data);
 					navigationTest.runTests(data);
 					headerTest.runTests(data);
-					jobTemplateListTest.runTests(data);
-					buildTest.runTests(data);
+					jobTemplatesTest.runTests(data);*/
+					continuousDeliveryConfigureTest.runTests(data);
+					/*buildTest.runTests(data);
 					codequalityTest.runTests(data);
 					unitTestTest.runTests(data);
 					componentTestTest.runTests(data);*/

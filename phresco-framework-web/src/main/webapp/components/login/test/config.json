@@ -146,9 +146,14 @@
 			"path" : "components/ci/js"
 		},
 		
-		"jobTemplateListTest" : {
-			"moduleName":"jobTemplateListTest",
-			"path" : "components/ci/test/jobTemplateListTest"
+		"jobTemplatesTest" : {
+			"moduleName":"jobTemplatesTest",
+			"path" : "components/ci/test/jobTemplatesTest"
+		},
+		
+		"continuousDeliveryConfigureTest" : {
+			"moduleName":"continuousDeliveryConfigureTest",
+			"path" : "components/ci/test/continuousDeliveryConfigureTest"
 		},
 		
 		"testResult" : {

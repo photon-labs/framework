@@ -1,6 +1,6 @@
 <section class="optiontitle qual_unit">
         <div class="unit_text">
-            Continuous Delivery
+            Continuous Integration
         </div>
         <div class="flt_right">
             <div class="unit_path">
@@ -14,13 +14,14 @@
  {{#if projectDelivery}}
      	{{#if projectDelivery.continuousDeliveries}}
      		{{#each projectDelivery.continuousDeliveries}}
-    	<div class="widget_testing">
-        		<h4>{{name}}
+    	<div class="widget_testing" name="{{name}}">
+        		<h4>{{name}} 
+        		<span style="float: none; margin-left: 158px;">[ {{envName}} ]</span> 
                 	<span>
                     	<a temp="clone" name="{{name}}" class="clone_popup" title="" data-placement="bottom" data-toggle="tooltip" href="#" data-original-title="clone">
                     		<img src="themes/default/images/helios/stack.png" width="29" height="23" border="0" alt="">
                     	</a>
-                    	<a class="tooltiptop" title="" data-placement="bottom" data-toggle="tooltip" name="editContinuousDelivery" data-original-title="Edit">
+                    	<a class="tooltiptop" title="" data-placement="bottom" data-toggle="tooltip" continuousName="{{name}}" name="editContinuousDelivery" data-original-title="Edit">
                     		<img src="themes/default/images/helios/edit_row_icon.png" width="29" height="23" border="0" alt="">
                     	</a> 
                     	<a temp="deleteCI" name="{{name}}" class="deleteCI" title="" data-placement="bottom" data-toggle="tooltip" href="#" data-original-title="Delete">
@@ -31,12 +32,12 @@
                 </h4>
     			<div class="widget_testing_env">
     			 {{#each jobs}}
-                    	<div class="pipeline_box">
+                    	<div id="{{jobName}}"class="pipeline_box">
                             	<img class="img_process" src="themes/default/images/helios/queue_icon.png">{{operation}}
                           	<div>
-                                <a href="javascript:;" class="ci_info"><img src="themes/default/images/helios/wait.png"></a>
-                                 <a href="javascript:;"  temp="generate_build" jobName="{{jobName}}" projectId="{{projectDelivery.id}}"><img src="themes/default/images/helios/wait.png"></a>
-                                <a temp="list_builds" jobName="{{jobName}}" projectId="{{projectDelivery.id}}" href="javascript:;" class="datetime_status"><img src="themes/default/images/helios/time.png"></a>
+                                <a href="javascript:;" class="ci_info wait_button"><img class="wait_button" src="themes/default/images/helios/wait.png"></a>
+                                 <a href="javascript:;" class="wait_button" temp="generate_build" jobName="{{jobName}}" projectId="{{projectDelivery.id}}"><img class="wait_button" src="themes/default/images/helios/wait.png"></a>
+                                <a temp="list_builds" jobName="{{jobName}}" projectId="{{projectDelivery.id}}" href="javascript:;" class="datetime_status"><img class="time_button" src="themes/default/images/helios/time.png"></a>
                             </div>
                        	</div>
            		 {{/each}}
@@ -87,13 +88,13 @@
                 </li>
                 <li>Environment<br/></li>
                 <li>
-                    <select>
-                        <option>Production</option>
+                    <select name="envName">
+                        
                     </select>
                 </li>
                 <li>
                     <div class="flt_left">
-                    	<input type="hidden" name="continuousName" class="btn btn_style dyn_popup_close">
+                    	<input type="hidden" name="continuousName">
                         <input type="button" id="clone_ci" value="Clone" class="btn btn_style">
                         <input type="button" value="Close" class="btn btn_style dyn_popup_close">
                     </div>

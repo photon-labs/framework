@@ -200,6 +200,67 @@ public class CIService extends RestBase implements FrameworkConstants, ServiceCo
 		}
 	}
 	
+	@POST
+	@Path("/clone")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response createClone(@QueryParam(REST_QUERY_CLONE_NAME) String cloneName, @QueryParam(REST_QUERY_ENV_NAME) String envName,
+			@QueryParam(REST_QUERY_CONTINOUSNAME) String continuousName, @QueryParam(REST_QUERY_CUSTOMERID) String customerId,
+			@QueryParam(REST_QUERY_PROJECTID) String projectId, @QueryParam(REST_QUERY_APPDIR_NAME) String appDir)
+	throws PhrescoException {
+		ResponseInfo<ContinuousDelivery> responseData = new ResponseInfo<ContinuousDelivery>();
+		try {
+			boolean createJob = false;
+			List<CIJob> ciJobs = new ArrayList<CIJob>(); 
+			List<CIJob> createdciJobs = new ArrayList<CIJob>(); 
+			List<CIJob> jobs = new ArrayList<CIJob>();
+			CIManager ciManager = PhrescoFrameworkFactory.getCIManager();
+			ContinuousDelivery continuousDelivery = new ContinuousDelivery();
+			List<ProjectDelivery> ciJobInfo = ciManager.getCiJobInfo(appDir);
+			ProjectDelivery projectDelivery = ciManager.getProjectDelivery(projectId, ciJobInfo);
+			List<ContinuousDelivery> continuousDeliveries = projectDelivery.getContinuousDeliveries();
+			ContinuousDelivery cd = ciManager.getContinuousDelivery(continuousName.trim(), continuousDeliveries);
+			
+			if(cd.getName().equals(continuousName.trim())) {
+				continuousDelivery.setName(cloneName);
+				continuousDelivery.setEnvName(envName);
+				jobs = cd.getJobs();
+			}
+			
+			for(CIJob cijob: jobs) {
+				cijob.setJobName(cijob.getJobName()+"-"+envName);
+				if(StringUtils.isNotEmpty(cijob.getDownstreamApplication())) {
+					cijob.setDownstreamApplication(cijob.getDownstreamApplication()+"-"+envName);
+				}
+				if(StringUtils.isNotEmpty(cijob.getUpstreamApplication())) {
+					cijob.setUpstreamApplication(cijob.getUpstreamApplication()+"-"+envName);
+				}
+				ciJobs.add(cijob);
+			}
+			ApplicationInfo applicationInfo = null;
+			for(CIJob job : ciJobs) {	
+				if(StringUtils.isNotEmpty(job.getAppDirName())) {
+					applicationInfo = FrameworkServiceUtil.getApplicationInfo(job.getAppDirName());
+				}
+				CIJob jobWithCmds = ciManager.setPreBuildCmds(job,  applicationInfo);
+				createJob = ciManager.createJob(applicationInfo, jobWithCmds);
+				if (createJob) {
+					createdciJobs.add(job);
+				}
+			}
+			//continuousDelivery.setJobs(createdciJobs);
+			ciManager.createJsonJobs(continuousDelivery, createdciJobs, projectId, appDir);
+			
+			ResponseInfo<ContinuousDelivery> finalOutput = responseDataEvaluation(responseData, null, "Job created successfully", continuousDelivery);
+			return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
+		} catch (PhrescoException e) {
+			ResponseInfo<ContinuousDelivery> finalOutput = responseDataEvaluation(responseData, e, "Job creation Failed",
+					null);
+			return Response.status(Status.NOT_FOUND).entity(finalOutput).header("Access-Control-Allow-Origin", "*")
+			.build();
+		}
+	}
+	
 //	@POST
 //	@Path("/create")
 //	@Consumes(MediaType.APPLICATION_JSON)
@@ -302,21 +363,15 @@ public class CIService extends RestBase implements FrameworkConstants, ServiceCo
 		boolean exist = false;
 		CIManager ciManager = PhrescoFrameworkFactory.getCIManager();
 		List<ProjectDelivery> ciJobInfo = ciManager.getCiJobInfo(appDir);
-		if(CollectionUtils.isNotEmpty(ciJobInfo)) {
-			for(ProjectDelivery projectDelivery : ciJobInfo) {
-				if (projectDelivery.getId().equals(projectId)) {
-					List<ContinuousDelivery> continuousDeliveries = projectDelivery.getContinuousDeliveries();
-					if(CollectionUtils.isNotEmpty(continuousDeliveries)) {
-						for(ContinuousDelivery continuousDelivery : continuousDeliveries) {
-							if (continuousDelivery.getName().equalsIgnoreCase(continuousName)) {
-								matchingContinuous = continuousDelivery;
-								exist = true;
-							}
-						}
-					}
-				}
-			}
-		}	
+		ProjectDelivery projectDelivery = ciManager.getProjectDelivery(projectId, ciJobInfo);
+		List<ContinuousDelivery> continuousDeliveries = projectDelivery.getContinuousDeliveries();
+		ContinuousDelivery continuousDelivery = ciManager.getContinuousDelivery(continuousName.trim(), continuousDeliveries);
+		
+		if (continuousDelivery.getName().equalsIgnoreCase(continuousName)) {
+			matchingContinuous = continuousDelivery;
+			exist = true;
+		}
+		
 		ResponseInfo<ContinuousDelivery> finalOutput;
 		if(exist) {
 			finalOutput= responseDataEvaluation(responseData, null, "Continuous Delivery Fetched successfully",	matchingContinuous);
@@ -345,56 +400,54 @@ public class CIService extends RestBase implements FrameworkConstants, ServiceCo
 			ProjectDelivery projectContinuousDelivery = new ProjectDelivery();
 			List<ProjectDelivery> ciJobInfo = ciManager.getCiJobInfo(appDir);
 			if(CollectionUtils.isNotEmpty(ciJobInfo)) {
-				for (ProjectDelivery projectDelivery : ciJobInfo) {
-					if(projectDelivery.getId().equals(projectId)) {
-						List<ContinuousDelivery> continuousDeliveries = projectDelivery.getContinuousDeliveries();
-						List<ContinuousDelivery> contDeliveryList = new ArrayList<ContinuousDelivery>();
-						for (ContinuousDelivery continuousDelivery : continuousDeliveries) {
-							
-							List<CIJob> ciJobs = continuousDelivery.getJobs();
-							String downstreamApplication = "";
-							ContinuousDelivery contDelivery = new ContinuousDelivery();
-							List<CIJob> jobs = new ArrayList<CIJob>();
+				ProjectDelivery projectDelivery = ciManager.getProjectDelivery(projectId, ciJobInfo);
+				List<ContinuousDelivery> continuousDeliveries = projectDelivery.getContinuousDeliveries();
+				List<ContinuousDelivery> contDeliveryList = new ArrayList<ContinuousDelivery>();
+				for (ContinuousDelivery continuousDelivery : continuousDeliveries) {
+					
+					List<CIJob> ciJobs = continuousDelivery.getJobs();
+					String downstreamApplication = "";
+					ContinuousDelivery contDelivery = new ContinuousDelivery();
+					List<CIJob> jobs = new ArrayList<CIJob>();
+					for (CIJob ciJob : ciJobs) {
+						if(StringUtils.isEmpty(ciJob.getUpstreamApplication())) {
+							jobs.add(ciJob);
+							downstreamApplication = ciJob.getDownstreamApplication();
+							if(ciJobs.size() == 1) {
+								contDelivery.setJobs(jobs);
+							}
+						}
+					}
+					if(StringUtils.isNotEmpty(downstreamApplication)) {
+						int flag = 0;
+						for(int i=0;i<ciJobs.size();i++){
 							for (CIJob ciJob : ciJobs) {
-								if(StringUtils.isEmpty(ciJob.getUpstreamApplication())) {
+								if(ciJob.getJobName().equals(downstreamApplication)) {
 									jobs.add(ciJob);
-									downstreamApplication = ciJob.getDownstreamApplication();
-									if(ciJobs.size() == 1) {
+									if(StringUtils.isEmpty(ciJob.getDownstreamApplication())) {
+										flag = 1;
 										contDelivery.setJobs(jobs);
+										downstreamApplication = "";
+										break;
+									} else {
+										downstreamApplication = ciJob.getDownstreamApplication();
 									}
+									if(flag == 1) {
+										break;
+									}
+								}
+								if(flag == 1) {
+									break;
 								}
 							}
-							if(StringUtils.isNotEmpty(downstreamApplication)) {
-								int flag = 0;
-								for(int i=0;i<ciJobs.size();i++){
-									for (CIJob ciJob : ciJobs) {
-										if(ciJob.getJobName().equals(downstreamApplication)) {
-											jobs.add(ciJob);
-											if(StringUtils.isEmpty(ciJob.getDownstreamApplication())) {
-												flag = 1;
-												contDelivery.setJobs(jobs);
-												downstreamApplication = "";
-												break;
-											} else {
-												downstreamApplication = ciJob.getDownstreamApplication();
-											}
-											if(flag == 1) {
-												break;
-											}
-										}
-										if(flag == 1) {
-											break;
-										}
-									}
-								}
-							} 
-							contDelivery.setName(continuousDelivery.getName());
-							contDeliveryList.add(contDelivery);
-							projectContinuousDelivery.setContinuousDeliveries(contDeliveryList);
 						}
-						projectContinuousDelivery.setId(projectId);
-					}
+					} 
+					contDelivery.setName(continuousDelivery.getName());
+					contDelivery.setEnvName(continuousDelivery.getEnvName());
+					contDeliveryList.add(contDelivery);
+					projectContinuousDelivery.setContinuousDeliveries(contDeliveryList);
 				}
+				projectContinuousDelivery.setId(projectId);
 			}
 			
 			ResponseInfo<ProjectDelivery> finalOutput = responseDataEvaluation(responseData, null,
@@ -432,6 +485,7 @@ public class CIService extends RestBase implements FrameworkConstants, ServiceCo
 			CIJobStatus ciJobStatus = null;
 			List<CIJob> jobs = ciManager.getJobs(continuousName, projectId, ciJobInfo);
 			ciJobStatus = ciManager.deleteJobs(appDir, jobs, projectId, continuousName);
+			ciManager.clearContinuousDelivery(continuousName, projectId, appDir);
 			ResponseInfo<CIJobStatus> finalOutput = responseDataEvaluation(responseData, null, "Job deleted successfully",
 					ciJobStatus);
 			return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*")
@@ -469,19 +523,14 @@ public class CIService extends RestBase implements FrameworkConstants, ServiceCo
 			CIJobStatus deleteBuilds = null;
 			ProjectDelivery projectContinuousDelivery = new ProjectDelivery();
 			List<ProjectDelivery> ciJobInfo = ciManager.getCiJobInfo(appDir);
-			if(CollectionUtils.isNotEmpty(ciJobInfo)) {
-				for (ProjectDelivery projectDelivery : ciJobInfo) {
-					if(projectDelivery.getId().equals(projectId)) {
-						List<ContinuousDelivery> continuousDeliveries = projectDelivery.getContinuousDeliveries();
-						List<ContinuousDelivery> contDeliveryList = new ArrayList<ContinuousDelivery>();
-						for (ContinuousDelivery continuousDelivery : continuousDeliveries) {
-							List<CIJob> ciJobs = continuousDelivery.getJobs();
-							for (CIJob ciJob : ciJobs) {
-								if(ciJob.getJobName().equals(jobName)) {
-									deleteBuilds = ciManager.deleteBuilds(ciJob, buildNumber);
-								}
-							}
-						}
+			
+			ProjectDelivery projectDelivery = ciManager.getProjectDelivery(projectId, ciJobInfo);
+			List<ContinuousDelivery> continuousDeliveries = projectDelivery.getContinuousDeliveries();
+			for (ContinuousDelivery continuousDelivery : continuousDeliveries) {
+				List<CIJob> ciJobs = continuousDelivery.getJobs();
+				for (CIJob ciJob : ciJobs) {
+					if(ciJob.getJobName().equals(jobName)) {
+						deleteBuilds = ciManager.deleteBuilds(ciJob, buildNumber);
 					}
 				}
 			}
@@ -643,17 +692,15 @@ public class CIService extends RestBase implements FrameworkConstants, ServiceCo
 			CIJobStatus buildJobs = null;
 			CIJob job = null;
 			List<ProjectDelivery> ciJobInfo = ciManager.getCiJobInfo(appDir);
-			for (ProjectDelivery projectDelivery : ciJobInfo) {
-				if(projectDelivery.getId().equals(projectId)) {
-					List<ContinuousDelivery> continuousDeliveries = projectDelivery.getContinuousDeliveries();
-					for (ContinuousDelivery continuousDelivery : continuousDeliveries) {
-						List<CIJob> ciJobs = continuousDelivery.getJobs();
-						for (CIJob ciJob : ciJobs) {
-							if(ciJob.getJobName().equals(name)) {
-								job = ciJob;
-								buildJobs = ciManager.generateBuild(job);
-							}
-						}
+			
+			ProjectDelivery projectDelivery = ciManager.getProjectDelivery(projectId, ciJobInfo);
+			List<ContinuousDelivery> continuousDeliveries = projectDelivery.getContinuousDeliveries();
+			for (ContinuousDelivery continuousDelivery : continuousDeliveries) {
+				List<CIJob> ciJobs = continuousDelivery.getJobs();
+				for (CIJob ciJob : ciJobs) {
+					if(ciJob.getJobName().equals(name)) {
+						job = ciJob;
+						buildJobs = ciManager.generateBuild(job);
 					}
 				}
 			}
@@ -801,6 +848,34 @@ public class CIService extends RestBase implements FrameworkConstants, ServiceCo
 				.build();
 	}
 
+	@GET
+	@Path("/jobStatus")
+	@Produces(MediaType.APPLICATION_JSON)
+	@Consumes(MediaType.APPLICATION_JSON)
+	public Response getStatus(@QueryParam(REST_QUERY_NAME) String jobName, @QueryParam(REST_QUERY_CONTINOUSNAME) String continuousName,
+			@QueryParam(REST_QUERY_PROJECTID) String projectId, @QueryParam(REST_QUERY_APPDIR_NAME) String appDir) {
+		ResponseInfo<String> responseData = new ResponseInfo<String>();
+		try {
+			CIManager ciManager = PhrescoFrameworkFactory.getCIManager();
+			CIJob job = null;
+			List<ProjectDelivery> ciJobInfo = ciManager.getCiJobInfo(appDir);
+			List<CIJob> ciJobs = ciManager.getJobs(continuousName, projectId, ciJobInfo);
+			for (CIJob ciJob : ciJobs) {
+				if(ciJob.getJobName().equals(jobName)) {
+					job = ciJob;
+				}
+			}
+			String jobStatus = ciManager.getJobStatus(job);
+			ResponseInfo<Boolean> finalOutput = responseDataEvaluation(responseData, null, "Return Job Status successfully", jobStatus);
+			return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
+		} catch (PhrescoException e) {
+			ResponseInfo<Boolean> finalOutput = responseDataEvaluation(responseData, e, "Failed to get Job Status",
+					null);
+			return Response.status(Status.NOT_FOUND).entity(finalOutput).header("Access-Control-Allow-Origin", "*")
+					.build();
+		}
+	}
+	
 	/**
 	 * Gets the port no.
 	 *
