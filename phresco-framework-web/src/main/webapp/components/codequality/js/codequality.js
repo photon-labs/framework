@@ -99,10 +99,34 @@ define(["codequality/listener/codequalityListener"], function() {
 			var footerHeight = $('#footer').height();
 			var deductionHeight = Number(marginTop) + Number(footerHeight);
 			var finalHeight = windowHeight - deductionHeight - 5;
-			$('.testSuiteTable').height(finalHeight);					
+			$('.testSuiteTable').height(finalHeight);
 		
 		},
-
+		
+		setConsoleScrollbar : function(bcheck){
+			if(bcheck){
+				$("#unit_progress .scrollContent").mCustomScrollbar("destroy");
+				$("#unit_progress .scrollContent").mCustomScrollbar({
+					autoHideScrollbar: false,
+					scrollInertia: 1000,
+					theme:"light-thin",
+					advanced:{ updateOnContentResize: true},
+					callbacks:{
+						onScrollStart:function(){
+							$("#unit_progress .scrollContent").mCustomScrollbar("scrollTo","bottom");
+						}
+					}
+				});
+			}else{
+				$("#unit_progress .scrollContent").mCustomScrollbar("destroy");
+				$("#unit_progress .scrollContent").mCustomScrollbar({
+					autoHideScrollbar:true,
+					scrollInertia: 200,
+					theme:"light-thin",
+					advanced:{ updateOnContentResize: true}
+				});
+			}
+		},
 		/***
 		 * Bind the action listeners. The bindUI() is called automatically after the render is complete 
 		 *
@@ -120,8 +144,13 @@ define(["codequality/listener/codequalityListener"], function() {
 			});
 			
 			$("#validate").click(function() {
-				self.readLogEvent.dispatch();
+				self.setConsoleScrollbar(true);
+				$('.progress_loading').css('display','block');
 				$(".dyn_popup").hide();
+				self.readLogEvent.dispatch(function(){
+					$('.progress_loading').css('display','none');
+					self.setConsoleScrollbar(false);
+				});
 			});
 			
 			$("#codeValidateConsole").click(function() {
@@ -134,7 +163,7 @@ define(["codequality/listener/codequalityListener"], function() {
 				commonVariables.navListener.copyToClipboard($('#iframePart'));
 			});
 			
-			$(window).resize(function() {
+			/* $(window).resize(function() {
 			
 				$(".dyn_popup").hide();
 
@@ -143,13 +172,13 @@ define(["codequality/listener/codequalityListener"], function() {
 				var onewidth = window.innerWidth - (twowidth+70);
 				
 				$('.features_content_main').height(height - 230);
-				$('.build_progress').height(height - 230);
+				$('.unit_progress').height(height - 230);
 				
-				$('.build_info').css("width",twowidth);
-				$('.build_progress').css("width",onewidth);
-				$('.build_close').css("right",onewidth+10);
+				$('.unit_info').css("width",twowidth);
+				$('.unit_progress').css("width",onewidth);
+				$('.unit_close').css("right",onewidth+10);
 				
-			});
+			}); */
 			
 			$(window).resize();
 		

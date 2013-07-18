@@ -25,7 +25,7 @@ define(["codequality/api/codequalityAPI"], function() {
 			}				
 		},
 		
-		codeValidate : function() {
+		codeValidate : function(callback) {
 			var self = this;
 			var ipjson = $("#codeValidateForm").serialize();
 			var appdetails = self.codequalityAPI.localVal.getJson('appdetails');
@@ -48,12 +48,14 @@ define(["codequality/api/codequalityAPI"], function() {
 					self.mavenServiceListener.mvnCodeValidation(queryString, '#iframePart', function(returnVal){
 						var validateAgainst = $("#src").find(':selected').val();
 						self.getIframeReport(validateAgainst);
+						callback(returnVal);
 					});
 				});
 			}else{
 				self.mavenServiceListener.mvnCodeValidation(queryString, '#iframePart', function(returnVal){
 					var validateAgainst = $("#src").find(':selected').val();
 					self.getIframeReport(validateAgainst);
+					callback(returnVal);
 				});
 			}			
 			
