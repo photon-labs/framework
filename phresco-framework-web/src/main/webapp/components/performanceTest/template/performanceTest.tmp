@@ -27,14 +27,12 @@
 	            </div>  
             {{/showIcons}}
             
-            <div class="unit_path">
-	            <input type="button" value="Open Folder" class="btn btn_style openfolder_icon_btn" id="openFolder">
-	            <input type="button" value="Copy Path" class="btn btn_style copypath_icon_btn" id="copyPath">
-        	</div>
+            <div class="icon_images"><a class="tooltiptop" title="" data-placement="bottom" data-toggle="tooltip" href="#" data-original-title="Open Folder"><img src="themes/default/images/helios/openfolder_icon.png" ></a></div>
+			<div class="icon_images" style="margin-right:2px;"><a class="tooltiptop" title="" data-placement="bottom" data-toggle="tooltip" href="#" data-original-title="Copy Path"><img src="themes/default/images/helios/copypath_icon.png" ></a></div>
         	
         	{{#showIcons resultAvailable testResultFiles}}
 	            <div class="code_report_icon pdf_icon performancePdf">
-	            	<a class="tooltiptop" title="" data-placement="bottom" data-toggle="tooltip" href="#" data-original-title="Export as PDF"><img src="themes/default/images/helios/code_pdf_icon.png" width="28" height="29" border="0" alt=""></a>
+	            	div class="icon_images"><a class="tooltiptop" title="" data-placement="bottom" data-toggle="tooltip" href="#" data-original-title="PDF Report"><img src="themes/default/images/helios/pdf_icon_white.png"></a></div>
                 	<div class="tooltip fade bottom" style="top: 27px; left: 893.1875px; display: block;">
                     	<div class="tooltip-arrow" style=""></div><div class="tooltip-inner">Export as PDF
                         </div>
@@ -42,7 +40,7 @@
 	            </div>
 			{{else}}  
 	        	<div class="code_report_icon pdf_icon hideContent performancePdf">
-	            	<a class="tooltiptop" title="" data-placement="bottom" data-toggle="tooltip" href="#" data-original-title="Export as PDF"><img src="themes/default/images/helios/code_pdf_icon.png" width="28" height="29" border="0" alt=""></a>
+	            	<div class="icon_images"><a class="tooltiptop" title="" data-placement="bottom" data-toggle="tooltip" href="#" data-original-title="PDF Report"><img src="themes/default/images/helios/pdf_icon_white.png"></a></div>
                 	<div class="tooltip fade bottom" style="top: 27px; left: 893.1875px; display: block;">
                     	<div class="tooltip-arrow" style=""></div><div class="tooltip-inner">Export as PDF
                         </div>

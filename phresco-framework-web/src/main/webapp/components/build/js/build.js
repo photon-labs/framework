@@ -285,6 +285,7 @@ define(["build/listener/buildListener"], function() {
 		 */
 		bindUI : function() {
 			var self = this;
+			$(".tooltiptop").tooltip();
 			
 			//Run again source popup click event
 			$("input[name=build_runagsource]").unbind("click");

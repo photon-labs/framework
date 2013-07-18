@@ -627,7 +627,7 @@ ul.nav li.dropdown:hover > .test_options{
 	padding-right:8px !important;
 }
 
-.openfolder_icon_btn {
+/*.openfolder_icon_btn {
 	background:url(../../images/helios/openfolder_icon.png) #ed7940 no-repeat 6px 7px !important;
 	padding-left:28px !important;
 	padding-right:8px !important;
@@ -637,7 +637,7 @@ ul.nav li.dropdown:hover > .test_options{
 	background:url(../../images/helios/copypath_icon.png) #ed7940 no-repeat 6px 6px !important;
 	padding-left:30px !important;
 	padding-right:8px !important;
-}
+}*/
 
 .pdf_icon_btn {
 	background:url(../../images/helios/pdf_icon_white.png) #ed7940 no-repeat 6px 4px !important;
@@ -698,6 +698,27 @@ ul.nav li.dropdown:hover > .test_options{
 	background:url(../../images/helios/arrow_down.png) #ed7940 no-repeat right !important;
 	padding-right:20px !important;
 }
+
+.icon_images {
+	background: none repeat scroll 0 0 #ED7940;
+    border-radius: 5px 5px 5px 5px;
+    cursor: pointer;
+    float: left;
+    margin-right: 7px;
+    margin-top: 7px;
+    padding: 6px 8px;
+}
+
+.build_icons{
+	background: none repeat scroll 0 0 #ED7940;
+    border-radius: 5px 5px 5px 5px;
+    cursor: pointer;
+    float: left;
+    margin-right: 7px;
+    padding: 6px 8px;
+}
+	
+	
 
 /* ********************************************** CSS related to MODAL ************************************************************************************** */
 
@@ -2533,7 +2554,7 @@ html>body tbody.scrollContent {
 /* *************************************************************** STYLES FOR QUALITY_UNIT_DESC PAGE ************************************************************************************ */
 
 .unit_view .code_report_icon {
-	margin: -2px 6px 0px 0px;	
+	margin: -8px 0px 0px;
 }
 
 /* *************************************************************** STYLES FOR DATAPICKER ************************************************************************************ */

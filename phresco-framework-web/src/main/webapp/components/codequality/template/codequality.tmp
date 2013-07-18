@@ -24,7 +24,9 @@
 				 </div>
             
         </div>
-        <div class="code_report_icon"><a class="tooltiptop" title="" data-placement="bottom" data-toggle="tooltip" href="#" data-original-title="PDF Report"><img src="themes/default/images/helios/code_pdf_icon.png" width="28" height="29" border="0" alt=""></a></div>
+        <div class="code_report_icon">
+			<div class="icon_images"><a class="tooltiptop" title="" data-placement="bottom" data-toggle="tooltip" href="#" data-original-title="PDF Report"><img src="themes/default/images/helios/pdf_icon_white.png"></a></div>
+		</div>
     </section>
 
 
