@@ -25,6 +25,14 @@ var commonVariables = {
 	
 	featurePage : "features",
 	featurePageContext : "features",
+
+	buildNo : null,
+	build : "build",
+	typeBuild : "build",
+	mvnBuild : "app/build",
+	mvnDeploy : "app/deploy",
+	optionsBuild : "Build",
+	optionsDeploy : "Deploy",
 	
 	loadingScreen : null,
     
@@ -154,8 +162,8 @@ define(["jquery"], function($) {
 					headerTest.runTests(data);
 					jobTemplatesTest.runTests(data);*/
 					continuousDeliveryConfigureTest.runTests(data);
-					/*buildTest.runTests(data);
-					codequalityTest.runTests(data);
+					buildTest.runTests(data);
+					/*codequalityTest.runTests(data);
 					unitTestTest.runTests(data);
 					componentTestTest.runTests(data);*/
 				});

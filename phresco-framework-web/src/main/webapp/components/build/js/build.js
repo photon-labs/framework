@@ -84,11 +84,14 @@ define(["build/listener/buildListener"], function() {
 		 *
 		 */
 		loadPage : function(){
+			Clazz.navigationController.jQueryContainer = commonVariables.contentPlaceholder;
 			Clazz.navigationController.mainContainer = commonVariables.contentPlaceholder;
 			Clazz.navigationController.push(this, true);
 		},
 		
 		loadPageType : function(){
+			//console.info('loadPageType',this);
+			Clazz.navigationController.jQueryContainer = commonVariables.contentPlaceholder;
 			Clazz.navigationController.push(this , false);
 		},
 		
@@ -169,11 +172,16 @@ define(["build/listener/buildListener"], function() {
 			$('.alert_div').hide();
 			if(loadContent){
 				self.buildListener.getBuildInfo(self.buildListener.getRequestHeader("", '', 'getList'), function(response) {
-					if(response != undefined && response != null && response.data != null){
+					if(response != undefined && response != null && response.data != null && response.data.length > 0){
 						var tbody = "";
+						
+						if($("#buildRow").length < 1){
+							var table = '<table class="table table-striped table_border table-bordered big" cellpadding="0" cellspacing="0" border="0" id="buildRow"><thead class="fixedHeader"><tr><th data-i18n="build.label.bNo"></th><th data-i18n="build.label.date"></th><th data-i18n="build.label.download"></th><th data-i18n="build.label.deploy"></th><th data-i18n="build.label.delete"></th></tr></thead><tbody class="scrollContent"></tbody></table>';
+							$('.qual_unit_main').html(table);
+						}
+
 						$.each(response.data, function(index, current){
-							
-							tbody += '<tr><td name="'+ current.buildNo +'">'+ current.buildNo +'</td><td>'+ current.timeStamp +'</td><td><a href="#"><img name="downloadBuild" src="themes/default/images/helios/download_icon.png" width="15" height="18" border="0" alt=""></a></td><td><a href="#"><img name="deployBuild" src="themes/default/images/helios/deploy_icon.png" width="16" height="20" border="0" alt=""></a><div id="deploye_'+ current.buildNo +'" class="dyn_popup popup_bg" style="display:none;"><div id="bdeploy_'+ current.buildNo +'"><form name="deployForm"><ul class="row dynamicControls"></ul><input type="hidden" name="buildNumber" value="'+ current.buildNo +'" /></form><div class="flt_right"><input type="button" name="deploy" value="Deploy" class="btn btn_style dyn_popup_close"><input type="button" value="Close" class="btn btn_style dyn_popup_close"></div></div></div></td><td><a name="delete_'+ current.buildNo +'" class="tooltiptop" title="" data-placement="top" data-toggle="tooltip" href="#" data-original-title="Delete Row"><img name="deleteBuild" src="themes/default/images/helios/delete_icon.png" width="16" height="20" border="0" alt=""></a><div id="delete_'+ current.buildNo +'" class="dyn_popup">Are you sure to delete this?<div><input type="button" name="buildDelete" value="Yes" class="btn btn_style dyn_popup_close"><input type="button" value="No" class="btn btn_style dyn_popup_close"></div></div></td></tr>';
+							tbody += '<tr><td name="'+ current.buildNo +'">'+ current.buildNo +'</td><td>'+ current.timeStamp +'</td><td><a href="#"><img name="downloadBuild" src="themes/default/images/helios/download_icon.png" width="15" height="18" border="0" alt=""></a></td><td><a href="#"><img name="deployBuild" src="themes/default/images/helios/deploy_icon.png" width="16" height="20" border="0" alt=""></a><div id="deploye_'+ current.buildNo +'" class="dyn_popup popup_bg" style="display:none;"><div id="bdeploy_'+ current.buildNo +'"><form name="deployForm"><ul class="row dynamicControls"></ul><input type="hidden" name="buildNumber" value="'+ current.buildNo +'" /></form><div class="flt_right"><input type="button" name="deploy" data-i18n="[value]build.label.deploy" class="btn btn_style dyn_popup_close"><input type="button"  data-i18n="[value]build.label.close" class="btn btn_style dyn_popup_close"></div></div></div></td><td><a name="delete_'+ current.buildNo +'" class="tooltiptop" title="" data-placement="top" data-toggle="tooltip" href="#" data-original-title="Delete Row"><img name="deleteBuild" src="themes/default/images/helios/delete_icon.png" width="16" height="20" border="0" alt=""></a><div id="delete_'+ current.buildNo +'" class="dyn_popup"><div data-i18n="build.label.deleteConform"></div><div><input type="button" name="buildDelete" data-i18n="[value]build.label.yes" class="btn btn_style dyn_popup_close"><input type="button"  data-i18n="[value]build.label.no" class="btn btn_style dyn_popup_close"></div></div></td></tr>';
 						});
 						
 						$("#buildRow tbody").html(tbody);
@@ -182,6 +190,7 @@ define(["build/listener/buildListener"], function() {
 						self.setConsoleScrollbar(false);
 						$(window).resize();
 						self.closeConsole();
+						self.renderlocales(commonVariables.contentPlaceholder);
 					}
 				});
 			}
@@ -233,6 +242,12 @@ define(["build/listener/buildListener"], function() {
 				self.onDeleteEvent.dispatch(divId, function(response){
 					if(response.message == "Build deleted Successfully"){
 						$(current).closest('tr').remove();
+
+						if($("#buildRow tbody tr").length < 1){
+							$('.qual_unit_main').children().remove();
+							$('.qual_unit_main').html('<div class="alert" style="text-align: center;" data-i18n="build.label.nodata"></div>');
+							self.renderlocales(commonVariables.contentPlaceholder);
+						}
 					}
 				});
 			});
@@ -285,7 +300,6 @@ define(["build/listener/buildListener"], function() {
 		 */
 		bindUI : function() {
 			var self = this;
-			$(".tooltiptop").tooltip();
 			
 			//Run again source popup click event
 			$("input[name=build_runagsource]").unbind("click");

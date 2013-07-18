@@ -96,14 +96,14 @@ define(["login/listener/loginListener"], function() {
 			});
 			
 			// Control validation Event
-			$('#username').focusout(function(){
+			/* $('#username').focusout(function(){
 				self.loginListener.userNameValidation();
-			});
+			}); */
 			
 			// Control validation Event
-			$('#password').focusout(function(){
+			/* $('#password').focusout(function(){
 				self.loginListener.passwordValidation();
-			});
+			}); */
 			
 			//Set rememberMe chk box val
 			if(self.loginListener.loginAPI.localVal.getSession('rememberMe') === "true"){
