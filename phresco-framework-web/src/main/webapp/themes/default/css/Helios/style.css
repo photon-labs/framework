@@ -4001,6 +4001,7 @@ vertical-align: middle;
 .jstree-default li a ins.jstree-icon { margin-right:5px !important; }
 .jstree-default li a { cursor:pointer; padding:4px 2px 6px 2px; color:#0068A7 !important;  }
 .jstree-default li a:hover { background:#dcdcdc;  }
+.jstree-default li a:.selected { background:#dcdcdc;  }
 .jstree-default li.jstree-last { background:transparent; }
 .jstree-default .jstree-open > ins { background-position:-74px -34px; }
 .jstree-default .jstree-closed > ins { background-position:-56px -34px; }
