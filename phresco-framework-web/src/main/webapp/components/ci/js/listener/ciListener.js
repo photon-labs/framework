@@ -87,6 +87,7 @@ define(["ci/api/ciAPI"], function() {
 			var customerId = self.getCustomer();
 			customerId = (customerId == "") ? "photon" : customerId;
 			var projectId = self.ciAPI.localVal.getSession("projectId");
+			var appDir = self.ciAPI.localVal.getSession('appDirName');
 
 			header = {
 				contentType: "application/json",
@@ -109,7 +110,7 @@ define(["ci/api/ciAPI"], function() {
 				header.webserviceurl = commonVariables.webserviceurl + commonVariables.jobTemplates;
 			} else if (action === "continuousDeliveryList") {
 				header.requestMethod = "GET";
-				header.webserviceurl = commonVariables.webserviceurl + commonVariables.ci+"/list?projectId="+projectId;
+				header.webserviceurl = commonVariables.webserviceurl + commonVariables.ci+"/list?projectId="+projectId+"&appDirName="+appDir;
 			} else if (action === "update") {
 				header.requestMethod = "PUT";
 				ciRequestBody.customerId = customerId;
@@ -200,6 +201,9 @@ define(["ci/api/ciAPI"], function() {
 			} else if (action === "deleteBuild") {
 				header.requestMethod = "DELETE";
 				header.webserviceurl = commonVariables.webserviceurl + commonVariables.ci + "/deletebuilds?buildNumber="+ciRequestBody.buildNumber+"&name="+ciRequestBody.jobName+"&projectId="+projectId;
+			} else if (action === "jobStatus") {
+				header.requestMethod = "GET";
+				header.webserviceurl = commonVariables.webserviceurl + commonVariables.ci + "/jobStatus?name="+ciRequestBody.jobName+"&continuousName="+ciRequestBody.cdName+"&projectId="+projectId;
 			} else if (action === "deleteContinuousDelivery") {
 				header.requestMethod = "DELETE";
 				header.webserviceurl = commonVariables.webserviceurl + commonVariables.ci + "/delete?continuousName="+ciRequestBody.cdName+"&customerId="+ customerId + "&projectId=" + projectId;
@@ -212,6 +216,9 @@ define(["ci/api/ciAPI"], function() {
 				header.requestMethod = "POST";
 				header.requestPostBody = JSON.stringify(ciRequestBody);
 				header.webserviceurl = commonVariables.webserviceurl+commonVariables.configuration+"/cronExpression";
+			} else if (action === "createClone") {
+				header.requestMethod = "POST";
+				header.webserviceurl = commonVariables.webserviceurl+commonVariables.ci+"/clone?projectId="+projectId+"&"+ciRequestBody.data;
 			} else if(action === "editContinuousView") {
 				header.requestMethod = "GET";
 				header.webserviceurl = commonVariables.webserviceurl + commonVariables.ci + "/editContinuousView?projectId="+projectId+ "&name=" + params;
@@ -243,6 +250,20 @@ define(["ci/api/ciAPI"], function() {
 			
 			self.getHeaderResponse(self.getRequestHeader(ciRequestBody, 'deleteContinuousDelivery'), function (response) {
 				self.loadContinuousDeliveryView();
+			});
+		},
+		
+		ciStatus:function(obj) {
+			var self = this;
+			var ciRequestBody = {},name;
+			ciRequestBody.jobName=obj.attr("id");
+			ciRequestBody.cdName = obj.parent().parent("div").attr("name");
+			self.getHeaderResponse(self.getRequestHeader(ciRequestBody, 'jobStatus'), function (response) {
+				if(response.data === "FAILURE") {
+					obj.find('.img_process').attr('src',"themes/default/images/helios/cross_red.png");
+				} else if (response.data === "SUCCESS") {
+					obj.find('.img_process').attr('src',"themes/default/images/helios/tick_green.png");
+				}
 			});
 		},
 		
@@ -288,6 +309,22 @@ define(["ci/api/ciAPI"], function() {
 			});
 		},
 		
+		listEnvironment: function(obj) {
+			var self = this;
+			var ciRequestBody = {};
+			self.getHeaderResponse(self.getRequestHeader(ciRequestBody, 'getEnvironemntsByProjId'), function (response) {
+				var content = "";
+				$("select[name=envName]").empty();
+				if(response.data !== undefined && response.data !== null && response.data !== "" && response.data.length > 0) {
+					for(var i =0; i < response.data.length; i++) {
+						var headerTr = '<option value="'+response.data[i]+'">'+response.data[i]+'</option>'
+						content = content.concat(headerTr);
+					}
+					$("select[name=envName]").append(content);
+				}
+			});
+		},
+		
 		generateBuild: function(obj) {
 			var self = this;
 			var ciRequestBody = {},jobName;
@@ -301,8 +338,8 @@ define(["ci/api/ciAPI"], function() {
 			var self = this;
 			var ciRequestBody = {},jobName;
 			ciRequestBody.data = obj.closest("form").serialize();
-			jobName = ciRequestBody.jobName;
 			self.getHeaderResponse(self.getRequestHeader(ciRequestBody, 'createClone'), function (response) {
+				self.loadContinuousDeliveryView();
 			});
 		},
 		
@@ -1294,7 +1331,7 @@ define(["ci/api/ciAPI"], function() {
 					});
 					
 					contDelivery.name = contDeliveryName;
-					contDelivery.environment = envName;
+					contDelivery.envName = envName;
 					contDelivery.jobs = jobs;
 
 					callback(contDelivery);

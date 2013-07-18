@@ -12,10 +12,10 @@ define(["framework/widgetWithTemplate", "ci/listener/ciListener"], function() {
 		dynamicpage : null,
 		onLoadEnvironmentEvent : null,
 		onLoadDynamicPageEvent : null,
-		onConfigureJobEvent : null,	// saving job template
-		onConfigureJobPopupEvent : null, // show configure popup from gear icon
-		onSaveEvent : null, // save continuous delivery
-		editContinuousViewTable : null,  // edit continuous Delivery
+		onConfigureJobEvent : null,	
+		onConfigureJobPopupEvent : null, 
+		onSaveEvent : null, 
+		editContinuousViewTable : null,  
 		name : null,
 
 		/***
@@ -139,28 +139,22 @@ define(["framework/widgetWithTemplate", "ci/listener/ciListener"], function() {
 		streamConfig : function(thisObj) {
 	  		// third Construct upstream and downstream validations
 	  		// all li elemnts of this
-	  		//console.log("upstream and sownstream construction ");
 			$($(thisObj).find('li').get().reverse()).each(function() {
-				//console.log("elem span" + $(thisObj).find('span').text());
 				    var anchorElem = $(thisObj).find('a');
 				    var appName = $(anchorElem).attr("appname");
 				    var templateJsonData = $(anchorElem).data("templateJson");
-				    //console.log("templateJsonData => " + JSON.stringify(templateJsonData));
 				    var jobJsonData = $(anchorElem).data("jobJson");
-				    //console.log("jobJsonData => " + JSON.stringify(jobJsonData));
 				    // upstream and downstream and clone workspace except last job
 				    
 				    var preli = $(thisObj).prev('li')
 				    var preAnchorElem = $(preli).find('a');
 				    var preTemplateJsonData = $(preAnchorElem).data("templateJson");
 				    var preJobJsonData = $(preAnchorElem).data("jobJson");
-				    //console.log("preJobJsonData > " + preJobJsonData);
 				    
 				    var nextli = $(thisObj).next('li');
 				    var nextAnchorElem = $(nextli).find('a');
 				    var nextTemplateJsonData = $(nextAnchorElem).data("templateJson");
 				    var nextJobJsonData = $(nextAnchorElem).data("jobJson");
-				    //console.log("nextJobJsonData > " + nextJobJsonData);
 
 
 				    if (jobJsonData != undefined && jobJsonData != null) {
@@ -177,27 +171,22 @@ define(["framework/widgetWithTemplate", "ci/listener/ciListener"], function() {
 				        jobJsonData.upstreamApplication = preJobJsonData.name;
 				    }
 
-				    //console.log("is previous App has repo check");
 				    // Is parent app available for this app job
 				    var parentAppFound = false;
 				    var workspaceAppFound = false;
 			  		$(thisObj).prevAll('li').each(function(index) {
-			  			// Corresponding element access
 					    var thisAnchorElem = $(thisObj).find('a');
-					    //console.log("elem span" + $(thisObj).find('span').text());
 			  			var thisTemplateJsonData = $(thisAnchorElem).data("templateJson");
 			  			var thisJobJsonData = $(thisAnchorElem).data("jobJson");
 			  			var thisAppName = $(thisAnchorElem).attr("appname");
 
 			  			if (thisAppName === appName && thisTemplateJsonData.enableRepo) {
 			  				parentAppFound = true;
-			  				//console.log("Parent project found ");
 			  				return false;
 			  			}
 
 			  			if (thisAppName === appName && !workspaceAppFound) {
 			  				workspaceAppFound = true;
-			  				//console.log("Applications workspaceApp job found ");
 			  				// Upstream app
 			  				if (thisJobJsonData != undefined && thisJobJsonData != null) {
 				        		jobJsonData.workspaceApp = thisJobJsonData.name;
@@ -247,19 +236,13 @@ define(["framework/widgetWithTemplate", "ci/listener/ciListener"], function() {
 					items: "> li",
 					start: function( event, ui ) {
 						$(".dyn_popup").hide();
-						//console.log("start 1");
-						// console.log("New position: " + ui.item.index());
-						//console.log("[" + this.id + "] received [" + ui.item.html() + "] from [" + ui.sender + "]");
 					},
 
 					stop: function( event, ui ) {
 						$(".dyn_popup").hide();
-						//console.log("ui1 stop => " , ui);
-						//console.log("[" + this.id + "] received [" + ui.item.html() + "] from [" + ui.sender + "]");
 					},
 
 					receive: function( event, ui ) {						
-						//console.log("receive 1 => " , ui);
 						// For gear icons alone
 						$("#sortable2 li.ui-state-default a").show();
 						$("#sortable1 li.ui-state-default a").hide();	
@@ -275,7 +258,6 @@ define(["framework/widgetWithTemplate", "ci/listener/ciListener"], function() {
 								$(ui.item).insertAfter($(this));
 							} 
 						});
-						//console.log("[" + this.id + "] received [" + ui.item.html() + "] from [" + ui.sender + "]");
 					},
 
 					change: function( event, ui ) {						
@@ -290,35 +272,27 @@ define(["framework/widgetWithTemplate", "ci/listener/ciListener"], function() {
 					items: "> li",
 					start: function( event, ui ) {
 						$(".dyn_popup").hide();
-						//console.log("UI start 1");
 					},
 
 					stop: function( event, ui ) {
 						$(".dyn_popup").hide();
-						//console.log("ui stop 2 => " , ui);
 					},
 
 					change: function( event, ui ) {						
-						//console.log("change2 => " , ui);
 
-						//console.log("[" + this.id + "] received [" + ui.item.html() + "] from [" + ui.sender + "]");
 						var itemText = $(ui.item).find('span').text();
 						var anchorElem = $(ui.item).find('a');
 						var templateJsonData = $(anchorElem).data("templateJson");
 						
 						var appName = $(anchorElem).attr("appname");
 						var sortable2Len = $('#sortable2 > li').length;
-						//console.log("sortable2Len > " + sortable2Len);
 						// Initial validation
 						if (sortable2Len === 1 && !templateJsonData.enableRepo) {
-							//console.log("atleast one job on right side should be with url 1 of the present application  " + ui.sender);
 							$(ui.sender).sortable('cancel');
 						}
 					},
 
 					receive: function( event, ui ) {
-						
-						//console.log("receive2 => " , ui);
 
 						// For gear icons alone
 						$("#sortable2 li.ui-state-default a").show();
@@ -332,13 +306,9 @@ define(["framework/widgetWithTemplate", "ci/listener/ciListener"], function() {
 
 						// Application name construct
 						$(ui.item).find('span').text(appName  + " - " + itemText);
-						//console.log("Template json data1 => " + JSON.stringify(templateJsonData));
 
 
 						var sortable2Len = $('#sortable2 > li').length;
-						//console.log("calc " + $(this).find('li').size());
-
-						//console.log("New position: " + ui.item.index());
 
 						// Second level validation
 						// when the repo is not available check for parent project in sortable2
@@ -346,11 +316,8 @@ define(["framework/widgetWithTemplate", "ci/listener/ciListener"], function() {
 							var parentAppFound = false;
 
 							// Previous elemets
-							//console.log("is previous elemnt has repo check");
 							$(ui.item).prevAll('li').each(function(index) {
-								// Corresponding element access
 								var thisAnchorElem = $(this).find('a');
-								//console.log("elem span" + $(this).find('span').text());
 								var thisTemplateJsonData = $(thisAnchorElem).data("templateJson");
 								var thisAppName = $(thisAnchorElem).attr("appname");
 
@@ -367,10 +334,6 @@ define(["framework/widgetWithTemplate", "ci/listener/ciListener"], function() {
 								$(ui.sender).sortable('cancel');
 							}
 
-							//Third  check
-							//self.streamConfig(this); // jobJson is mandatory for this json job construct
-
-							// Fourth on click save validation on save event 
 						}
 					}
 				}); 
@@ -392,36 +355,34 @@ define(["framework/widgetWithTemplate", "ci/listener/ciListener"], function() {
 			$("#sortable1 li.ui-state-default a").hide();
 			
    			$('#sortable2').on('click', 'a[name=jobConfigurePopup]', function() {
-   				// Show popup as well as dynamic popup
    				self.onConfigureJobPopupEvent.dispatch(this);
    			});
 
    			// on change of environemnt change function
    			$("[name=environments]").change(function() {
-   				//Clear existing job templates of a environemnt, when the environment is changed
    				$("#sortable2").empty();
-   				// List job templates by environment from all applications
 				self.onLoadEnvironmentEvent.dispatch(function(params) {
 						self.getAction(self.ciRequestBody, 'getJobTemplatesByEnvironment', params, function(response) {
-							self.ciListener.constructJobTemplateViewByEnvironment(response);
+							self.ciListener.constructJobTemplateViewByEnvironment(response, function() {});
 						});
 				});
    			});
 
    			// on clicking configure button from job configuration
    			$("[name=configure]").click(function() {
-   				// we can get the this element over here
    				self.onConfigureJobEvent.dispatch(this);
    			});
-
+   			
+   			$("input[value=Cancel]").click(function() {		
+   				self.ciListener.loadContinuousDeliveryView();
+   			});
+   			
    			// On save event of continuous delivery
-   			// $("input[type=submit][value=Add]").click(function() {
 			$("input[type=submit]").click(function() {				
 				$(".dyn_popup").hide();
 
 				if ( $(this).val() === 'Add') {
    					self.onSaveEvent.dispatch(this, function(addJobsParams) {
-	   					console.log("continuous delivery save obj " + JSON.stringify(addJobsParams));
 	   					self.ciRequestBody = addJobsParams;
 	   					self.getAction(self.ciRequestBody, 'saveContinuousDelivery', '', function(response) {	   						
 							self.ciListener.loadContinuousDeliveryView();
@@ -431,7 +392,6 @@ define(["framework/widgetWithTemplate", "ci/listener/ciListener"], function() {
    			
    				if ( $(this).val() === 'Update') {
 	   				self.onSaveEvent.dispatch(this, function(editJobParams) {
-	   					console.log("continuous delivery Update obj " + JSON.stringify(editJobParams));
 	   					self.ciRequestBody = editJobParams;
 	   					self.getAction(self.ciRequestBody, 'updateContinuousDelivery', '', function(response) {
 	   						self.ciListener.loadContinuousDeliveryView();

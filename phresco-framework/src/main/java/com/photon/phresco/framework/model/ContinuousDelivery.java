@@ -6,7 +6,7 @@ import java.util.List;
 public class ContinuousDelivery {
 
 	private String name;
-	private String environment;
+	private String envName;
 	private List<CIJob> jobs;
 
 	public ContinuousDelivery() {
@@ -35,12 +35,12 @@ public class ContinuousDelivery {
 		return jobs;
 	}
 
-	public void setEnvironment(String environment) {
-		this.environment = environment;
+	public void setEnvName(String envName) {
+		this.envName = envName;
 	}
 
-	public String getEnvironment() {
-		return environment;
+	public String getEnvName() {
+		return envName;
 	}
 
 }

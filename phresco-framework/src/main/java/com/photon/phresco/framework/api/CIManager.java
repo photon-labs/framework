@@ -297,4 +297,10 @@ public interface CIManager {
 	public List<CIJob> getJobs(String continuousName, String projectId, List<ProjectDelivery> ciJobInfo) throws PhrescoException;
 	
 	public CIJobStatus deleteBuilds(CIJob ciJob,  String buildNumber) throws PhrescoException;
+	
+	public String getJobStatus(CIJob ciJob) throws PhrescoException;
+
+	ProjectDelivery getProjectDelivery(String projectId, List<ProjectDelivery> ciJobInfo) throws PhrescoException;
+
+	ContinuousDelivery getContinuousDelivery(String continuousName, List<ContinuousDelivery> continuousDeliveries) throws PhrescoException;
 }

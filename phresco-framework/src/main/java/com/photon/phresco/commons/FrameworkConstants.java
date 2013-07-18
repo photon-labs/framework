@@ -187,6 +187,8 @@ public interface FrameworkConstants {
     String CI_CREATE_JOB_COMMAND = "create-job";
     String CI_UPDATE_JOB_COMMAND = "update-job";
     String CI_BUILD_JOB_COMMAND = "build";
+    String CI_JOB = "job";
+    String LAST_BUILD = "lastBuild";
     String CI_BUILD_DELETE_COMMAND = "delete-builds";
     String CI_JOB_DELETE_COMMAND = "delete-job";
     String CI_RELOAD_CONFIGS = "reload-configuration";
@@ -284,6 +286,7 @@ public interface FrameworkConstants {
     String STRING_NULL = "null";
     String API_JSON = "api/json";
     String BUSY_EXECUTORS = "computer/api/xml?xpath=/computerSet/busyExecutors/text()";
+    String JOB_STATUS_COMMAND = "lastBuild/api/xml?depth=1&xpath=*/result/text()";
     String DELETE_TYPE_BUILD = "Build";
     String DELETE_TYPE_JOB = "Job";
     String SUCCESS_EMAILS = "successEmails";
