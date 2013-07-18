@@ -536,7 +536,6 @@ define(["configuration/api/configurationAPI"], function() {
 			
 			$('a[name=remote_deploy]').click(function(){
 				var current = this;
-				$("#certificateValue").html('');
 				var val = {}, disName = [];
 				val.host = $("input[configKey=configKeyServerhost]").val();
 				val.port = $("input[configKey=configKeyServerport]").val();
@@ -600,6 +599,8 @@ define(["configuration/api/configurationAPI"], function() {
 		treeclickEvent : function() {
 			var self=this;
 			$('span.folder').click(function(e){
+				$("span.folder a").removeClass("selected");
+				$(this).find("a").attr("class", "selected");
 				var path = $(this).parent().attr('value');
 				path = path.replace(/\+/g,' ');
 				$("input[name=selectFilePath]").unbind('click');
@@ -628,7 +629,9 @@ define(["configuration/api/configurationAPI"], function() {
 				self.configRequestBody = certificateJson;
 				self.getConfigurationList(self.getRequestHeader(self.configRequestBody, "addCertificate", ''), function(response) {
 					$(".blinkmsg").removeClass("poperror").addClass("popsuccess");
-					self.effectFadeOut('popsuccess', (response.message));		
+					self.effectFadeOut('popsuccess', (response.message));	
+					$("#remote_deploy").hide();
+					self.closeTreePopup();
 				});
 			});
 		},

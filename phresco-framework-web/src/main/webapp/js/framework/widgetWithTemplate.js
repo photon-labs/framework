@@ -230,18 +230,21 @@ define(["framework/widget", "framework/templateProvider"], function() {
 				$(document).keyup(function(e) {
 					if(e.which === 27){
 						$("#" + place).hide();
-						$(".header_section").css("z-index","7");
-						$(".content_title").css("z-index","6");
-						$(".optiontitle").css("z-index","1");
+						self.closeTreePopup();
 					}
 				});
 
 				$('.dyn_popup_close').click( function() {
 					$("#" + place).hide();
-					$(".header_section").css("z-index","7");
-					$(".content_title").css("z-index","6");
-					$(".optiontitle").css("z-index","1");
+					self.closeTreePopup();
 				});
+			},
+			
+			closeTreePopup : function() {
+				var self=this;
+				$(".header_section").css("z-index","7");
+				$(".content_title").css("z-index","6");
+				$(".optiontitle").css("z-index","1");
 			},
 			
 			opencc : function(ee, placeId, currentPrjName) {
