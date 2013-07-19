@@ -343,6 +343,7 @@ define(["projectlist/api/projectListAPI"], function() {
 							autoHideScrollbar:true,
 							theme:"light-thin",
 							advanced: {
+								autoScrollOnFocus: false,
 								updateOnContentResize: true
 							}
 						});

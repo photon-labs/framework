@@ -64,7 +64,7 @@ define(["features/listener/featuresListener"], function() {
 						if(JSON.stringify(value.appliesTo) !== "null"){
 							$.each(value.appliesTo, function(index, value){
 								if(value.required === true){
-									fieldset = '<fieldset class="switch switchOn" id="feature_'+ id +'" value="false"><label class="off" name="on_off" value="false"></label><label class="on" name="on_off" value="true"></label></fieldset>';
+									fieldset = '<fieldset class="switch switchOn" id="feature_'+ id +'" value="false"><label value="false"></label><label class="on" value="true"></label></fieldset>';
 								} else {							
 									fieldset = '<fieldset class="switch switchOff" id="feature_'+ id +'" value="false"><label class="off" name="on_off" value="false"></label><label class="on" name="on_off" value="true"></label></fieldset>';
 								}
@@ -238,7 +238,6 @@ define(["features/listener/featuresListener"], function() {
            	});
 
            	$('#switchoffbutton').on("click", function(event) {
-				
            		self.featuresListener.showSelected('');
 				$("#norecord1, #norecord2, #norecord3").hide();
 				
@@ -317,14 +316,14 @@ define(["features/listener/featuresListener"], function() {
 				});				
 				
 				self.featuresListener.getFeaturesUpdate(self.featuresListener.getRequestHeader(self.featureUpdatedArray, "UPDATE", ""), function(response) {
-					if(((response.message) == "Project created Successfully")){
+					if(((response.message) == "Features updated successfully")){
 						setTimeout(function(){
 							$(".blinkmsg").removeClass("poperror").addClass("popsuccess");
 							self.effectFadeOut('popsuccess', (response.message));		
 						},2000);
 					} else {
 						$(".blinkmsg").removeClass("popsuccess").addClass("poperror");						
-						self.effectFadeOut('poperror', (response.message));
+						self.effectFadeOut('poperror', ("Features update failed"));
 					}	
 				}); 
 			});
