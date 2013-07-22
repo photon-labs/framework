@@ -169,6 +169,10 @@ public interface FrameworkConstants {
 	String APKLIB  = "apklib";
 	String APK  = "apk";
 	String OTHERS = "Others";
+	
+	String STATUS_SUCCESS = "success";
+	String STATUS_FAILURE = "failure";
+	String STATUS_ERROR = "error";
     
 	 /*
      * CI constants

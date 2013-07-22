@@ -38,6 +38,8 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
+import com.photon.phresco.commons.FrameworkConstants;
+import com.photon.phresco.commons.ResponseCodes;
 import com.photon.phresco.commons.model.Customer;
 import com.photon.phresco.commons.model.User;
 import com.photon.phresco.commons.model.UserPermissions;
@@ -53,7 +55,11 @@ import com.sun.jersey.api.client.ClientResponse.Status;
  * The Class LoginService.
  */
 @Path("/login")
-public class LoginService extends RestBase {
+public class LoginService extends RestBase implements FrameworkConstants, ResponseCodes{
+	
+	String status;
+	String errorCode;
+	String successCode;
 	
 	/**
 	 * Authenticate User for login.
@@ -70,13 +76,17 @@ public class LoginService extends RestBase {
 		try {
 			user = doLogin(credentials);
 			if (user == null) {
-				ResponseInfo<User> finalOuptut = responseDataEvaluation(responseData, null, "Login failed", null);
-				return Response.status(Status.EXPECTATION_FAILED).entity(finalOuptut).header(
+				status = STATUS_FAILURE;
+				errorCode = PHR110001;
+				ResponseInfo<User> finalOuptut = responseDataEvaluation(responseData, null, null, status, errorCode);
+				return Response.status(Status.OK).entity(finalOuptut).header(
 						"Access-Control-Allow-Origin", "*").build();
 			}
 			if (!user.isPhrescoEnabled()) {
-				ResponseInfo<User> finalOuptut = responseDataEvaluation(responseData, null, "Login failed", null);
-				return Response.status(Status.EXPECTATION_FAILED).entity(finalOuptut).header(
+				status = STATUS_FAILURE;
+				errorCode = PHR110002;
+				ResponseInfo<User> finalOuptut = responseDataEvaluation(responseData, null, null, status, errorCode);
+				return Response.status(Status.OK).entity(finalOuptut).header(
 						"Access-Control-Allow-Origin", "*").build();
 			}
 
@@ -112,24 +122,42 @@ public class LoginService extends RestBase {
 			ServiceManager serviceManager = CONTEXT_MANAGER_MAP.get(credentials.getUsername());
 			UserPermissions userPermissions = FrameworkUtil.getUserPermissions(serviceManager, user);
 			user.setPermissions(userPermissions);
-
-			ResponseInfo<User> finalOuptut = responseDataEvaluation(responseData, null, "Login Success", user);
+			
+			status = STATUS_SUCCESS;
+			successCode = PHR100001;
+			ResponseInfo<User> finalOuptut = responseDataEvaluation(responseData, null, user, status, successCode);
 			return Response.ok(finalOuptut).header("Access-Control-Allow-Origin", "*").build();
 		} catch (PhrescoWebServiceException e) {
-			ResponseInfo<User> finalOuptut = responseDataEvaluation(responseData, e, "Login failed", null);
-			return Response.status(Status.EXPECTATION_FAILED).entity(finalOuptut).header("Access-Control-Allow-Origin",
-					"*").build();
+			if (e.getResponse().getStatus() == 204) {
+				status = STATUS_ERROR;
+				errorCode = PHR110003;
+				ResponseInfo<User> finalOuptut = responseDataEvaluation(responseData, e, null, status, errorCode);
+				return Response.status(Status.OK).entity(finalOuptut).header("Access-Control-Allow-Origin",
+						"*").build();
+			} else {
+				status = STATUS_ERROR;
+				errorCode = PHR110004;
+				ResponseInfo<User> finalOuptut = responseDataEvaluation(responseData, e, null, status, errorCode);
+				return Response.status(Status.OK).entity(finalOuptut).header("Access-Control-Allow-Origin",
+						"*").build();
+			}
 		} catch (IOException e) {
-			ResponseInfo<User> finalOuptut = responseDataEvaluation(responseData, e, "Login failed", null);
-			return Response.status(Status.INTERNAL_SERVER_ERROR).entity(finalOuptut).header(
+			status = STATUS_ERROR;
+			errorCode = PHR110005;
+			ResponseInfo<User> finalOuptut = responseDataEvaluation(responseData, e, null, status, errorCode);
+			return Response.status(Status.OK).entity(finalOuptut).header(
 					"Access-Control-Allow-Origin", "*").build();
 		} catch (ParseException e) {
-			ResponseInfo<User> finalOuptut = responseDataEvaluation(responseData, e, "Login failed", null);
-			return Response.status(Status.INTERNAL_SERVER_ERROR).entity(finalOuptut).header(
+			status = STATUS_ERROR;
+			errorCode = PHR110006;
+			ResponseInfo<User> finalOuptut = responseDataEvaluation(responseData, e, null, status, errorCode);
+			return Response.status(Status.OK).entity(finalOuptut).header(
 					"Access-Control-Allow-Origin", "*").build();
 		} catch (PhrescoException e) {
-			ResponseInfo<User> finalOuptut = responseDataEvaluation(responseData, e, "Login failed", null);
-			return Response.status(Status.INTERNAL_SERVER_ERROR).entity(finalOuptut).header(
+			status = STATUS_ERROR;
+			errorCode = PHR110007;
+			ResponseInfo<User> finalOuptut = responseDataEvaluation(responseData, e, null, status, errorCode);
+			return Response.status(Status.OK).entity(finalOuptut).header(
 					"Access-Control-Allow-Origin", "*").build();
 		}
 	}

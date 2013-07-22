@@ -164,6 +164,15 @@
 			"password" : "Password",
 			"username" : "Username"
 		},
+		"errormessage" : {
+			"isempty": "'user' object does not exist or is empty",
+			"unauthorizeduser": "Unauthorized user for Phresco",
+			"invalidcredential": "Invalid Credentials",
+			"authservicedown": "Auth Service is down",
+			"jsonnotfound": "'user.json' file not found",
+			"parsingfailed": "Parsing failed for file 'user.json'",
+			"invalidpermissions": "User doesn't have valid permissions"
+		},
 		"title" : "USER LOGIN"
 	},
 	"build" : {

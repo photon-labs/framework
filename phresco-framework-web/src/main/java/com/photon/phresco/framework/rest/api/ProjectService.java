@@ -46,6 +46,7 @@ import org.apache.commons.lang.StringUtils;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import com.photon.phresco.commons.ResponseCodes;
 import com.photon.phresco.commons.FrameworkConstants;
 import com.photon.phresco.commons.model.ApplicationInfo;
 import com.photon.phresco.commons.model.ArtifactGroup;
@@ -79,7 +80,11 @@ import com.sun.jersey.api.client.ClientResponse.Status;
  * The Class ProjectService.
  */
 @Path(ServiceConstants.REST_API_PROJECT)
-public class ProjectService extends RestBase implements FrameworkConstants, ServiceConstants {
+public class ProjectService extends RestBase implements FrameworkConstants, ServiceConstants, ResponseCodes {
+	
+	String status;
+	String errorCode;
+	String successCode;
 
 	/**
 	 * To return the List of available projects.
@@ -98,13 +103,17 @@ public class ProjectService extends RestBase implements FrameworkConstants, Serv
 			if (CollectionUtils.isNotEmpty(projects)) {
 				Collections.sort(projects, sortByDateToLatest());
 			}
+			status = STATUS_SUCCESS;
+			successCode = PHR200001;
 			ResponseInfo<List<ProjectInfo>> finalOutput = responseDataEvaluation(responseData, null,
-					"Project List Successfully", projects);
+					projects, status, successCode);
 			return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN,ALL_HEADER).build();
 		} catch (PhrescoException e) {
+			status = STATUS_ERROR;
+			errorCode = PHR210001;
 			ResponseInfo<List<ProjectInfo>> finalOutput = responseDataEvaluation(responseData, e,
-					PROJECT_LIST_FAILED, null);
-			return Response.status(Status.BAD_REQUEST).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN,ALL_HEADER)
+					null, status, errorCode);
+			return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN,ALL_HEADER)
 					.build();
 		}
 	}
@@ -125,19 +134,25 @@ public class ProjectService extends RestBase implements FrameworkConstants, Serv
 		try {
 			List<ApplicationInfo> appInfos = FrameworkServiceUtil.getAppInfos(customerId, projectId);
 			if (CollectionUtils.isNotEmpty(appInfos)) {
+				status = STATUS_SUCCESS;
+				successCode = PHR200002;
 				ResponseInfo<List<ProjectInfo>> finalOutput = responseDataEvaluation(responseData, null,
-						"Application infos returned Successfully", appInfos);
+						appInfos, status, successCode);
 				return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN,ALL_HEADER)
 						.build();
 			}
 		} catch (PhrescoException e) {
+			status = STATUS_ERROR;
+			errorCode = PHR210002;
 			ResponseInfo<List<ProjectInfo>> finalOutput = responseDataEvaluation(responseData, e,
-					"Application info failed", null);
-			return Response.status(Status.BAD_REQUEST).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN,ALL_HEADER)
+					null, status, errorCode);
+			return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN,ALL_HEADER)
 					.build();
 		}
+		status = STATUS_SUCCESS;
+		successCode = PHR200003;
 		ResponseInfo<List<ProjectInfo>> finalOutput = responseDataEvaluation(responseData, null,
-				"No application to return", null);
+				null, status, successCode);
 		return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN,ALL_HEADER).build();
 	}
 
