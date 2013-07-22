@@ -1,5 +1,7 @@
 package com.photon.phresco.framework.rest.api;
 
+import java.util.ArrayList;
+
 import javax.xml.bind.annotation.XmlRootElement;
 
 @XmlRootElement
@@ -8,7 +10,21 @@ public class ResponseInfo<T> {
 	private T data;
 	private Exception exception;
 	private Integer response;
+	String status;
+	String errorCode;
 	
+	public String getStatus() {
+		return status;
+	}
+	public void setStatus(String status) {
+		this.status = status;
+	}
+	public String getErrorCode() {
+		return errorCode;
+	}
+	public void setErrorCode(String errorCode) {
+		this.errorCode = errorCode;
+	}
 	public String getMessage() {
 		return message;
 	}
@@ -35,8 +51,8 @@ public class ResponseInfo<T> {
 	}
 	@Override
 	public String toString() {
-		return "ResponseData [message=" + message + ", data=" + data + ", exception=" + exception + ", response="
-				+ response + "]";
+		return "ResponseData [data=" + data + ", exception=" + exception + ", response="
+				+ response + ", status=" + status + ", errorCode=" + errorCode +"]";
 	}
 
 }

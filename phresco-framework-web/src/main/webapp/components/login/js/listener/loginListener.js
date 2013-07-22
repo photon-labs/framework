@@ -2,7 +2,7 @@ define(["login/api/loginAPI"], function() {
 
 	Clazz.createPackage("com.components.login.js.listener");
 
-	Clazz.com.components.login.js.listener.LoginListener = Clazz.extend(Clazz.Widget, {
+	Clazz.com.components.login.js.listener.LoginListener = Clazz.extend(Clazz.WidgetWithTemplate, {
 		localStorageAPI : null,
 		headerContent : null,
 		footerContent : null,
@@ -42,19 +42,41 @@ define(["login/api/loginAPI"], function() {
 					//TODO: call login service here and call appendPlaceholder in the success function
 					self.loginAPI.doLogin(header, 
 						function(response){
-							if(response !== undefined && response !== null && response.data.validLogin === true){
+							if(response !== undefined && response !== null && response.status !== "error" && response.status !== "failure"){
 								self.setUserInfo(response.data);
 								self.appendPlaceholder();
 								self.renderNavigation();
 							} else {
 								//authentication failed
 								//commonVariables.loadingScreen.removeLoading();
+								if(response.errorCode === "PHR110001") {
+									$(".login_error_msg").attr('data-i18n', 'login.errormessage.isempty');
+									self.renderlocales(commonVariables.basePlaceholder);
+								} else if(response.errorCode === "PHR110002") {
+									$(".login_error_msg").attr('data-i18n', 'login.errormessage.unauthorizeduser');
+									self.renderlocales(commonVariables.basePlaceholder);
+								} else if(response.errorCode === "PHR110003") {
+									$(".login_error_msg").attr('data-i18n', 'login.errormessage.invalidcredential');
+									self.renderlocales(commonVariables.basePlaceholder);
+								} else if(response.errorCode === "PHR110004") {
+									$(".login_error_msg").attr('data-i18n', 'login.errormessage.authservicedown');
+									self.renderlocales(commonVariables.basePlaceholder);
+								} else if(response.errorCode === "PHR110005") {
+									$(".login_error_msg").attr('data-i18n', 'login.errormessage.jsonnotfound');
+									self.renderlocales(commonVariables.basePlaceholder);
+								} else if(response.errorCode === "PHR110006") {
+									$(".login_error_msg").attr('data-i18n', 'login.errormessage.parsingfailed');
+									self.renderlocales(commonVariables.basePlaceholder);
+								} else if(response.errorCode === "PHR110007") {
+									$(".login_error_msg").attr('data-i18n', 'login.errormessage.invalidpermissions');
+									self.renderlocales(commonVariables.basePlaceholder);
+								}
 							}
 						}, 
 						function(serviceError){
 							//service access failed
 							//commonVariables.loadingScreen.removeLoading();
-							$(".login_error_msg").text('authentication failed');
+							$(".login_error_msg").text('Service down');
 						}
 					);
 				}

@@ -17,6 +17,7 @@
  */
 package com.photon.phresco.framework.rest.api;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -80,6 +81,15 @@ public class RestBase<T> {
 		responseData.setException(e);
 		responseData.setMessage(msg);
 		responseData.setData(data);
+		
+		return responseData;
+	}
+	
+	protected ResponseInfo<T> responseDataEvaluation(ResponseInfo<T> responseData, Exception e, T data, String status, String responseCode ) {
+		responseData.setException(e);
+		responseData.setData(data);
+		responseData.setStatus(status);
+		responseData.setErrorCode(responseCode);
 		
 		return responseData;
 	}
