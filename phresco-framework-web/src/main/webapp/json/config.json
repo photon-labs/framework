@@ -94,6 +94,12 @@
 			"moduleName":"componentTest",
 			"path" : "../components/componentTest/js"
 		},
+
+
+		"integrationTest" : {
+			"moduleName":"integrationTest",
+			"path" : "../components/integrationTest/js"
+		},
 		
 		"performanceTest" : {
 			"moduleName":"performanceTest",

@@ -48,21 +48,6 @@ define(["configuration/api/configurationAPI"], function() {
 			}
 		},
 
-		scrollbarEnable : function(){
-			$(".features_content_main").mCustomScrollbar({
-				autoHideScrollbar:true,
-				theme:"light-thin",
-				advanced:{ updateOnContentResize: true}
-			});
-
-			$(".fix_height").mCustomScrollbar({
-				autoHideScrollbar:true,
-				theme:"light-thin",
-				advanced:{ updateOnContentResize: true}
-			});
-
-		},
-
 		windowResize : function(){
 			var resultvalue = 0;
 			$('.features_content_main').prevAll().each(function() {
@@ -107,7 +92,7 @@ define(["configuration/api/configurationAPI"], function() {
 
 					},
 
-					function(textStatus) {
+					function(textStatus, xhr, e) {
 						self.hidePopupLoad();
 						if (self.bcheck === false) {
 							//self.loadingScreen.removeLoading();
@@ -182,6 +167,11 @@ define(["configuration/api/configurationAPI"], function() {
 			} else if (action === "isAliveCheck") {
 					header.requestMethod = "GET";
 					header.webserviceurl = commonVariables.webserviceurl+commonVariables.configuration+"/connectionAliveCheck?url="+configRequestBody.protocol+","+configRequestBody.host+","+configRequestBody.port;
+			} else if (action === "fileBrowse") {
+					header.requestMethod = "GET";
+					header.dataType = "xml";
+					header.contentType = "application/xml",
+					header.webserviceurl = commonVariables.webserviceurl+commonVariables.configuration+"/fileBrowse?&appDirName="+appDirName;
 			} else if (action === "certificate") {
 					header.requestMethod = "GET";
 					header.webserviceurl = commonVariables.webserviceurl+commonVariables.configuration+"/returnCertificate?host="+configRequestBody.host+"&port="+configRequestBody.port+"&appDirName="+appDirName;
@@ -193,7 +183,7 @@ define(["configuration/api/configurationAPI"], function() {
 			return header;
 		},
 		
-		constructHtml : function(configTemplates, configuration, currentConfig, WhereToAppend){
+		constructHtml : function(configTemplates, configuration, currentConfig){
 			var flag = 0;
 			var htmlTag = "";
 			var key = "";
@@ -208,7 +198,6 @@ define(["configuration/api/configurationAPI"], function() {
 			var configProperties = "";
 			var bCheck = false;
 			var fCheck = false;
-			var toAppend;
 			var configTemplate = configTemplates.data.settingsTemplate;
 			if(currentConfig === 'Server') {
 				self.serverTypeVersion = configTemplates.data.downloadInfo;
@@ -295,7 +284,7 @@ define(["configuration/api/configurationAPI"], function() {
 					}
 					var inputCtrl = "";
 					if (value.possibleValues !== null &&  value.possibleValues.length !== 0) {
-						inputCtrl = '<select mandatory="'+required+'" class="'+configTemplate.name+self.count+'Configuration" temp="'+configTemplate.name+key+self.count+'" name="' + value.key + '">';
+						inputCtrl = '<select mandatory="'+required+'" class="'+configTemplate.name+self.count+'Configuration selectpicker" configKey ="configKey'+configTemplate.name+key+'" temp="'+configTemplate.name+key+self.count+'" name="' + value.key + '">';
 						var possibleValues = value.possibleValues;
 						var options = "";
 						for (j in possibleValues) {
@@ -323,7 +312,7 @@ define(["configuration/api/configurationAPI"], function() {
 						inputCtrl = '<input value="'+ configValue +'" '+checked+' class="'+configTemplate.name+self.count+'Configuration" name="'+key+'" mandatory="'+required+'" type="checkbox"/>';
 					} else {
 						if (key === 'type') {
-							inputCtrl = '<select mandatory="'+required+'" class="'+configTemplate.name+self.count+'Configuration" name="' + value.key + '">';
+							inputCtrl = '<select mandatory="'+required+'" class="'+configTemplate.name+self.count+'Configuration selectpicker" name="' + value.key + '">';
 							
 							var options1 = "";
 							if(currentConfig === 'Server') {
@@ -356,7 +345,7 @@ define(["configuration/api/configurationAPI"], function() {
 							inputCtrl = inputCtrl.concat(options1);
 							inputCtrl = inputCtrl.concat("</select></td>");
 						} else if (key === 'version') {
-							inputCtrl = '<select mandatory="'+required+'" class="'+configTemplate.name+self.count+'Configuration" currentConfig="'+configTemplate.name+self.count+'" name="' + value.key + '">';
+							inputCtrl = '<select mandatory="'+required+'" class="'+configTemplate.name+self.count+'Configuration selectpicker" currentConfig="'+configTemplate.name+self.count+'" name="' + value.key + '">';
 							var options1 = "";
 							var i=0;
 							if(currentConfig === 'Server') {
@@ -411,9 +400,9 @@ define(["configuration/api/configurationAPI"], function() {
 							inputCtrl = inputCtrl.concat(options1);
 							inputCtrl = inputCtrl.concat("</select></td>"); 
 						} else if (key === 'certificate') { 
-							inputCtrl = '<input mandatory="'+required+'" value="'+ configValue +'" class="'+configTemplate.name+self.count+'Configuration" name="'+key+'" temp="'+configTemplate.name+key+self.count+'" type="text" placeholder=""/><a href="#remote_deploy" name="remote_deploy" role="button" data-toggle="modal"><img src="themes/default/images/helios/settings_icon.png" width="23" height="22" border="0" alt=""><</a>';
+							inputCtrl = '<input mandatory="'+required+'" value="'+ configValue +'" class="'+configTemplate.name+self.count+'Configuration" name="'+key+'" temp="'+configTemplate.name+key+self.count+'" type="text" placeholder=""/><a href="#" name="remote_deploy"><img src="themes/default/images/helios/settings_icon.png" width="23" height="22" border="0" alt=""></a><div id="remote_deploy" class="dyn_popup" style="display:none"><div id="certificateValue"></div><div class="flt_right"><input type="button" name="selectFilePath" class="btn btn_style" value="Ok">&nbsp;&nbsp;<input type="button" value="Close" name="treePopupClose" class="btn btn_style dyn_popup_close"></div></div>';
 						} else {
-							inputCtrl = '<input mandatory="'+required+'" value="'+ configValue +'" class="'+configTemplate.name+self.count+'Configuration" name="'+key+'" temp="'+configTemplate.name+key+self.count+'" type="text" placeholder=""/>';
+							inputCtrl = '<input mandatory="'+required+'" value="'+ configValue +'" configKey ="configKey'+configTemplate.name+key+'" class="'+configTemplate.name+self.count+'Configuration" name="'+key+'" temp="'+configTemplate.name+key+self.count+'" type="text" placeholder=""/>';
 						}
 					}
 					control = control.concat(inputCtrl);
@@ -421,15 +410,11 @@ define(["configuration/api/configurationAPI"], function() {
 					i = count++;
 				});
 				if (bCheck === false) {
-					if (WhereToAppend === "") {
-						toAppend = $("tbody[name=ConfigurationLists]");
-					} else {
-						toAppend = WhereToAppend;
-					}
-					toAppend.append(content);
+					$("tbody[name=ConfigurationLists]").append(content);
 					if (currentConfig === 'Server') {
 						self.remoteDeploy();
 					}
+					self.multiselect();
 					$("a[name=removeConfig]").unbind("change");
 					$('select[name=type]').unbind("change");
 					self.severDbOnChangeEvent();
@@ -465,6 +450,7 @@ define(["configuration/api/configurationAPI"], function() {
                 action: commonVariables.webserviceurl+commonVariables.configuration+'/upload',
 				actionType : "configuration",
 				appDirName : appDirName,
+				buttonLabel: "Upload File",
 				multiple: false,
 				debug: true
             });           
@@ -485,6 +471,7 @@ define(["configuration/api/configurationAPI"], function() {
 								options += '<option value="' + value[k] + '">' + value[k] + '</option>';
 							}
 							$('select[currentConfig='+configTypeClass+']').append(options);
+							$('select[currentConfig='+configTypeClass+']').selectpicker('refresh');
 						}
 					});
 				} 
@@ -496,6 +483,7 @@ define(["configuration/api/configurationAPI"], function() {
 								options += '<option value="' + value[k] + '">' + value[k] + '</option>';
 							}
 							$('select[currentConfig='+configTypeClass+']').append(options);
+							$('select[currentConfig='+configTypeClass+']').selectpicker('refresh');
 						}
 					});
 				}
@@ -521,6 +509,10 @@ define(["configuration/api/configurationAPI"], function() {
 				} else {
 					$(this).val(false);
 					self.hideCertificateTab();
+					$("input[name=deploy_dir]").attr("mandatory", true);
+					$("input[name=deploy_dir]").parent().prev('td').show();
+					$("input[name=deploy_dir]").show();
+					$("input[name=deploy_dir]").val('');
 					$("input[name=admin_username]").attr("mandatory", false);
 					$("input[name=admin_password]").attr("mandatory", false);
 					$("input[name=admin_username]").parent().prev('td').find('sup').html('');
@@ -529,39 +521,59 @@ define(["configuration/api/configurationAPI"], function() {
 			});
 			
 			$('a[name=remote_deploy]').click(function(){
-				$("#fileTree").html('');
-				self.showPopUp($(this).attr('name'), 'saveCertificate', 'Add Certificate', function(response){
-					if (response === true) {
-						self.saveCertificate();
-					}
-				});
+				var current = this;
 				var val = {}, disName = [];
-				val.host = $("input[name=host]").val();
-				val.port = $("input[name=port]").val();
+				val.host = $("input[configKey=configKeyServerhost]").val();
+				val.port = $("input[configKey=configKeyServerport]").val();
 				self.configRequestBody = val;
 				self.getConfigurationList(self.getRequestHeader(self.configRequestBody, "certificate", ''), function(response) {
-					$("#fileTree").html('');
+					$("#certificateValue").html('');
 					if(response.data !== null) {
 						disName = response.data.certificates[0].displayName.split(",");
-						$("#fileTree").append('<select name="certificateValue">"'+self.getDisName(disName)+'"</select>');
+						$("#certificateValue").append('<select name="certificateValue">"'+self.getDisName(disName)+'"</select>');
+						self.popupforTree(current, $(current).attr('name'));
+						var cerValue = $('select[name=certificateValue]').val();
+						self.saveCertificate(cerValue);
 					} else {
-						$("#fileTree").append('<ul id="filetree" class="filetree"><li><span><strong>Click here to select file </strong></span> <ul><li><span>sub1</span> <ul><li><span>sub3</span> </li><li><span>sub4</span></li></ul> </li><li><span>sub2</span> </li></ul></li></ul>');
-						$("#fileTree").jstree({
-						"themes": {
-							"theme": "default",
-							"dots": false,
-							"icons": false,
-							"url": "themes/default/css/Helios/style.css"
-						}
-						}).bind("init.jstree", function(event, data){ 
-						}).bind("loaded.jstree", function (event, data) {
+						self.configRequestBody = {};
+						self.getConfigurationList(self.getRequestHeader(self.configRequestBody, "fileBrowse", ''), function(response) {
+							self.fileTree(response, function(res){
+								var temptree = $('<div></div>');
+								temptree.append('<ul id="filetree" class="filetree"><li><span><strong>Click here to select file path </strong></span>' + res + '</li></ul>');
+								setTimeout(function(){
+									$(temptree).jstree({
+									"themes": {
+										"theme": "default",
+										"dots": false,
+										"icons": false,
+										"url": "themes/default/css/Helios/style.css"
+									}
+									}).bind("init.jstree", function(event, data){ 
+									}).bind("loaded.jstree", function (event, data) {
+										$("#certificateValue").append(temptree);
+										self.treeclickEvent();	
+										self.popupforTree(current, $(current).attr('name'));
+										$("#certificateValue").css("height", "250px");
+										$("#certificateValue").mCustomScrollbar({
+											autoHideScrollbar:true,
+											theme:"light-thin",
+											advanced:{ updateOnContentResize: true}
+										});	
+									}); 
+								}, 100);
+							});
 						});
 					}
 				});
+				
 			});
 			
-			$('select[name=protocol]').change(function() {
-				if($(this).val() === 'https' && $("input[name=host]").val() !== "" && $("input[name=port]").val() !== "") {
+			$('input[name=treePopupClose]').click(function(){
+				$("#remote_deploy").hide();
+			});
+			
+			$('select[configKey=configKeyServerprotocol]').change(function() {
+				if($(this).val() === 'https' && $("input[configKey=configKeyServerport]").val() !== "" && $("input[configKey=configKeyServerhost]").val() !== "" && $("input[name=remoteDeployment]").is(':checked')) {
 					self.showCertificateTab();
 				} else {
 					self.hideCertificateTab();
@@ -570,41 +582,56 @@ define(["configuration/api/configurationAPI"], function() {
 			
 		},
 		
-		saveCertificate : function() {
+		treeclickEvent : function() {
 			var self=this;
-			$("button[name=saveCertificate]").bind('click', function() {
-				var cerficate = $("select[name=certificateValue]").val();
+			$('span.folder').click(function(e){
+				$("span.folder a").removeClass("selected");
+				$(this).find("a").attr("class", "selected");
+				var path = $(this).parent().attr('value');
+				path = path.replace(/\+/g,' ');
+				$("input[name=selectFilePath]").unbind('click');
+				self.saveCertificate(path);
+			});
+		},
+		
+		saveCertificate : function(value) {
+			var self=this;
+			$("input[name=selectFilePath]").click(function() {
+				var cerficate = value;
 				$("input[name=certificate]").val(cerficate);
 				var customerId = self.getCustomer();
 				customerId = (customerId === "") ? "photon" : customerId;
 				var appDirName = self.configurationAPI.localVal.getSession("appDirName");
 				var certificateJson = {};
 				certificateJson.customerId = customerId;
-				certificateJson.host = $("input[name=host]").val();
-				certificateJson.port = $("input[name=port]").val();
+				certificateJson.host = $("input[configKey=configKeyServerhost]").val();
+				certificateJson.port = $("input[configKey=configKeyServerport]").val();
 				certificateJson.appDirName = appDirName;
-				certificateJson.certificateName = $("select[name=certificateValue]").val();
+				certificateJson.certificateName = value;
 				certificateJson.fromPage = 'configuration';
 				certificateJson.environmentName = $('input[name=EnvName]').val();
 				certificateJson.configName = $(this).parent().parent().parent().parent().attr('name');
-				certificateJson.propValue = $("select[name=certificateValue]").val();
+				certificateJson.propValue = value;
 				self.configRequestBody = certificateJson;
 				self.getConfigurationList(self.getRequestHeader(self.configRequestBody, "addCertificate", ''), function(response) {
-					$(".successMessage").html(response.message);
-					setTimeout(function() {
-						$(".successMessage").html('');
-					},1500);
+					$(".blinkmsg").removeClass("poperror").addClass("popsuccess");
+					self.effectFadeOut('popsuccess', (response.message));	
+					$("#remote_deploy").hide();
+					self.closeTreePopup();
 				});
 			});
 		},
 		
 		showCertificate : function() {
 			var self = this;
+			$("input[name=deploy_dir]").attr("mandatory", false);
+			$("input[name=deploy_dir]").parent().prev('td').hide();
+			$("input[name=deploy_dir]").hide();
 			$("input[name=admin_username]").attr("mandatory", true);
 			$("input[name=admin_password]").attr("mandatory", true);
 			$("input[name=admin_username]").parent().prev('td').append(' <sup>*</sup>');
 			$("input[name=admin_password]").parent().prev('td').append(' <sup>*</sup>');
-			if ($("select[name=protocol]").val() === 'https' && $("input[name=host]").val() !== "" && $("input[name=port]").val() !== "") {
+			if ($("select[configKey=configKeyServerprotocol]").val() === 'https' && $("input[configKey=configKeyServerport]").val() !== "" && $("input[configKey=configKeyServerhost]").val() !== "") {
 				self.showCertificateTab();
 			}
 		},
@@ -655,7 +682,7 @@ define(["configuration/api/configurationAPI"], function() {
 						$(".row_bg").each(function() {
 							var type = $(this).attr("type");
 							if (type === typeMatch) {
-								$(this).find("td:first-child").after("<td>In Active</td>");
+								$(this).find("td:first-child").after("<td class=inactive>In Active</td>");
 							}
 						});
 					}
@@ -883,13 +910,13 @@ define(["configuration/api/configurationAPI"], function() {
 			return option;
 		},
 		
-		htmlForOther : function(value, WhereToAppend) {
-			var self = this, headerTr, content = '', textBox, apiKey = "", keyValue = "", type="Other", addIcon = '<img src="themes/default/images/helios/plus_icon.png" border="0" alt="">', toAppend;
+		htmlForOther : function(value) {
+			var self = this, headerTr, content = '', textBox, apiKey = "", keyValue = "", type="Other", addIcon = '<img src="themes/default/images/helios/plus_icon.png" border="0" alt="">';
 				if (value !== null && value !== '') {
 					type = value.type;
 				}
 				
-				headerTr = '<tr class="row_bg" type="otherConfig"><div class="row"><td colspan="3">' + type + '</td><td colspan="3">'+
+				headerTr = '<tr class="row_bg" type="otherConfig" configType="'+type+'"><div class="row"><td colspan="3">' + type + '</td><td colspan="3">'+
 				'<a href="javascript:;" name="removeConfig"><img src="themes/default/images/helios/close_icon.png" border="0" alt="" class="flt_right"/></a></td></div></tr>';
 				content = content.concat(headerTr);
 				
@@ -905,12 +932,8 @@ define(["configuration/api/configurationAPI"], function() {
 					textBox = '<tr class="otherConfig" name="'+type+'"><td></td><td><input type="text" placeholder= "key" class="otherKey"/><td><input type="text" placeholder= "value" class="otherKeyValue" /></td><td><div class="flt_right icon_center"><a href="javascript:;" name="addOther"><img src="themes/default/images/helios/plus_icon.png" border="0" alt=""></a> <a href="javascript:;" name="removeOther"></a></div></td></tr>';
 					content = content.concat(textBox);
 				}
-				if (WhereToAppend === "") {
-						toAppend = $("tbody[name=ConfigurationLists]");
-					} else {
-						toAppend = WhereToAppend;
-					}
-				toAppend.append(content);
+
+				$("tbody[name=ConfigurationLists]").append(content);
 				if (value !== null && value !== '') {
 					$("tr.otherConfig:last").find("a[name=addOther]").html(addIcon);
 					if ($("tr.otherConfig").length === 1) {
@@ -996,7 +1019,7 @@ define(["configuration/api/configurationAPI"], function() {
 					self.constructHtml(response, '', config, '');
 				});
 			} else {
-				self.htmlForOther('', '');
+				self.htmlForOther('');
 			}
 		},
 		
@@ -1060,7 +1083,7 @@ define(["configuration/api/configurationAPI"], function() {
 					setTimeout(function(){
 						$(".blinkmsg").removeClass("poperror").addClass("popsuccess");
 						self.effectFadeOut('popsuccess', (response.message));		
-					},2500);
+					},1000);
 					if(self.configListPage === null) {
 						commonVariables.navListener.getMyObj(commonVariables.configuration, function(retVal) {
 							self.configListPage = retVal;

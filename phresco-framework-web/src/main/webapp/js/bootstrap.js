@@ -56,6 +56,8 @@ var commonVariables = {
 	componentTest : "componentTest",
 	functional : "functional",
 	functionalTest : "functionalTest",
+	integration : "integration",
+	integrationTest : "integrationTest",
 	from : null,
 	testSuiteName : null,
 	testSuites : null,
@@ -92,6 +94,7 @@ var commonVariables = {
 	typeLoadTest : "loadTest",
 	typePerformanceTest : "performanceTest",
 	typeComponentTest : "componentTest",
+	typeIntegrationTest : "integrationTest",
 	
 	/******* Technology options constants *******/
 	optionsCode : "Code",

@@ -194,7 +194,7 @@ public class ApplicationManagerImpl implements ApplicationManager {
 
 		 if (!path.exists()) {
 			 S_LOGGER.error("readBuildInfo() > " + FrameworkImplConstants.ERROR_FILE_PATH_INCORRECT + path);
-			 throw new PhrescoException("Path Not Exists");
+			 return new ArrayList<BuildInfo>(1);
 		 }
 
 		 BufferedReader bufferedReader = new BufferedReader(new FileReader(path));

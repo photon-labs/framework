@@ -32,7 +32,7 @@ public class CIServiceTest {
 
 	private ContinuousDelivery continuousDeliveryInfo() {
 		ContinuousDelivery continuousDelivery = new ContinuousDelivery();
-		continuousDelivery.setEnvironment("Production");
+		continuousDelivery.setEnvName("Production");
 		continuousDelivery.setName("testContinuousDelivery");
 		List<CIJob> jobs = new ArrayList<CIJob>();
 		CIJob cijob = new CIJob();
@@ -94,4 +94,11 @@ public class CIServiceTest {
 		ResponseInfo<CIService> responseInfo =  (ResponseInfo<CIService>) delete.getEntity();
 		assertEquals("Job deleted successfully", responseInfo.getMessage());
 	}
+	
+//	@Test
+//	public void updateJobTest() throws PhrescoException {
+//		ContinuousDelivery continuousDelivery = continuousDeliveryInfo();;
+//		ciservice.updateJob(continuousDelivery, "photon", "testProjectId", "", "");
+//	}
+	
 }

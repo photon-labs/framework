@@ -137,7 +137,7 @@
     	<div class="title_nav">
         	<ul class="nav">
             	<li><a href="#" class="act">Project Info</a></li>
-                <li><a href="#">Integration Test</a></li>
+                <li id="integrationTest"><a href="#">Integration Test</a></li>
                 <li class="dropdown">
                     <a href="#" id="drop4" role="quality" class="dropdown-toggle drop-qual" data-toggle="dropdown">Continous Integration<b class="caret"></b></a>
                     <div class="dropdown-menu cust_sel test_options" role="quality" aria-labelledby="drop4">

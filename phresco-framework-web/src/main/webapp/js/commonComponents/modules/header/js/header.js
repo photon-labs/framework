@@ -41,6 +41,11 @@ define(["header/listener/headerListener"] , function(template) {
 			} else {
 				$('#bannerlogo').attr("src", "themes/default/images/helios/helios_logo.png");
 			}
+			var customername = self.headerListener.headerAPI.localVal.getSession('customername');
+			if (customername !== null && customername !== undefined && customername !== "") {
+				$("#selectedCustomer").text(customername);
+				$('.customerDropdown').hide();
+			}
 		},
 		
 		/***

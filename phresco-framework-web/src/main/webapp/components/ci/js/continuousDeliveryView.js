@@ -1,3 +1,4 @@
+
 define(["framework/widgetWithTemplate", "ci/listener/ciListener"], function() {
 	Clazz.createPackage("com.components.ci.js");
 
@@ -16,6 +17,8 @@ define(["framework/widgetWithTemplate", "ci/listener/ciListener"], function() {
 		generateBuildEvent : null,
 		deleteJobEvent : null,
 		cloneCiEvent : null,
+		listEnvironmentsEvent : null,
+		ciStatusEvent : null,
 	
 		/***
 		 * Called in initialization time of this class 
@@ -63,12 +66,22 @@ define(["framework/widgetWithTemplate", "ci/listener/ciListener"], function() {
 				self.cloneCiEvent = new signals.Signal();
 			}
 			
+			if (self.listEnvironmentsEvent === null) {
+				self.listEnvironmentsEvent = new signals.Signal();
+			}
+			
+			if (self.ciStatusEvent === null) {
+				self.ciStatusEvent = new signals.Signal();
+			}
+			
 			self.continuousDeliveryConfigureEditEvent.add(ciListener.editContinuousDeliveryConfigure, ciListener);
 			self.continuousDeliveryConfigureLoadEvent.add(ciListener.loadContinuousDeliveryConfigure, ciListener);
 			self.listBuildsEvent.add(ciListener.getBuilds, ciListener);
 			self.generateBuildEvent.add(ciListener.generateBuild, ciListener);
 			self.deleteJobEvent.add(ciListener.deleteContinuousDelivery, ciListener);
 			self.cloneCiEvent.add(ciListener.cloneCi, ciListener);
+			self.listEnvironmentsEvent.add(ciListener.listEnvironment, ciListener);
+			self.ciStatusEvent.add(ciListener.ciStatus, ciListener);
 		},
 		/***
 		 * Called in once the login is success
@@ -111,20 +124,31 @@ define(["framework/widgetWithTemplate", "ci/listener/ciListener"], function() {
 		 */
 		bindUI : function() {
 			var self = this;
-				var resultvalue = 0;
-				$('.content_main').prevAll().each(function() {
-					resultvalue = resultvalue + $(this).height(); 
-				});
+			var resultvalue = 0;
+			$('.content_main').prevAll().each(function() {
+				resultvalue = resultvalue + $(this).height(); 
+			});
 				
-				resultvalue = resultvalue + $('.footer_section').height() + 65;
-				$('.content_main').height($(window).height() - (resultvalue + 155));
+			resultvalue = resultvalue + $('.footer_section').height() + 65;
+			$('.content_main').height($(window).height() - (resultvalue + 155));
 
-				$(".content_main").mCustomScrollbar({
+			$(".content_main").mCustomScrollbar({
 				autoHideScrollbar:true,
 				theme:"light-thin",
 				advanced:{ updateOnContentResize: true}
 			});
-
+			
+			$(".wait_button").hover(function() {
+				$(this).attr("src","themes/default/images/helios/wait_hover.png");
+			}, function() {
+				$(this).attr("src","themes/default/images/helios/wait.png");
+			});
+			
+			$(".time_button").hover(function() {
+				$(this).attr("src","themes/default/images/helios/time_hover.png");
+			}, function() {
+				$(this).attr("src","themes/default/images/helios/time.png");
+			});
    			$(".dyn_popup").hide();
 	  		
 	  		/*$(window).resize(function() {
@@ -172,12 +196,16 @@ define(["framework/widgetWithTemplate", "ci/listener/ciListener"], function() {
    			});
 
    			$("a[name=editContinuousDelivery]").click(function() {
-   				
-   				var contName = $(this).parent().parent().text();
-   				//console.info("$(this).parent().parent().text() "+contName.replace(/\s+$/,""));
-				self.continuousDeliveryConfigureEditEvent.dispatch(contName.replace(/\s+$/,""));
+   				var contName = $(this).attr("continuousName");
+				self.continuousDeliveryConfigureEditEvent.dispatch(contName);
    			});
-
+   			
+   			//setInterval(function() {   //calls click event after a certain time
+   				$(".pipeline_box").each(function() {
+   	   				self.ciStatusEvent.dispatch($(this))
+   	   			});
+ 			//}, 10000);
+   			
 			$(".datetime_status").click(function() {
 				self.openccwait(this, $(this).attr('class'));
 			});
@@ -190,8 +218,9 @@ define(["framework/widgetWithTemplate", "ci/listener/ciListener"], function() {
 			
 			$("a[temp=clone]").click(function() {
 				var name = $(this).attr('name');
-				$("input[name=hiddenfieldName]").val(name);
+				$("input[name=continuousName]").val(name);
 				self.openccci(this, $(this).attr('class'));
+				self.listEnvironmentsEvent.dispatch($(this));
 			});
 			
 			$("input[name='confirmDeleteCI']").unbind('click');
@@ -212,6 +241,7 @@ define(["framework/widgetWithTemplate", "ci/listener/ciListener"], function() {
 			});
 			
 			$("a[temp=generate_build]").click(function() {
+				$(this).parent().parent("div").find(".img_process").attr('src',"themes/default/images/helios/processing.gif");
 				self.generateBuildEvent.dispatch($(this));
 			});
 			

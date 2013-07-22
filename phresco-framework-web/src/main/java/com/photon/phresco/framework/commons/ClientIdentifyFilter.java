@@ -82,13 +82,16 @@ public class ClientIdentifyFilter implements Filter , ClientIdentifyFilterConsta
 						out.print("<script type=\"text/javascript\"> localStorage.removeItem(\""+ THEME_KEY +"\"); </script> ");
 						out.print("<script type=\"text/javascript\"> localStorage.removeItem(\""+ LOGO_KEY +"\"); </script> ");
 						out.print("<script type=\"text/javascript\"> localStorage.removeItem(\""+ STATUS_MESSAGE +"\"); </script> ");
+						out.print("<script type=\"text/javascript\"> localStorage.removeItem(\""+ CUSTOMER_NAME_KEY +"\"); </script> ");
 						ClientIdentifyModel customerdetails = getCustomerProperties(cutomername);
 				    	if(customerdetails.getStatus()) {
 				    		JSONObject cutomer_theme = processCustomerProperties(customerdetails.getCustomer());
 				        	String customer_json_theme = new Gson().toJson(cutomer_theme);
 				        	String customer_logo= customerdetails.getCustomerlogo();
+							String customername= customerdetails.getCustomer().getName();
 				    		out.print("<script type=\"text/javascript\"> localStorage.setItem(\""+ THEME_KEY +"\",JSON.stringify("+ customer_json_theme +")); </script> ");
-				    		out.print("<script type=\"text/javascript\"> localStorage.setItem(\""+ LOGO_KEY +"\",\""+ customer_logo +"\"); </script> ");	
+				    		out.print("<script type=\"text/javascript\"> localStorage.setItem(\""+ LOGO_KEY +"\",\""+ customer_logo +"\"); </script> ");
+							out.print("<script type=\"text/javascript\"> localStorage.setItem(\""+ CUSTOMER_NAME_KEY +"\",\""+ customername +"\"); </script> ");							
 				    	}
 				    	else {
 				    			out.print("<script type=\"text/javascript\"> localStorage.setItem(\""+ STATUS_MESSAGE +"\",\""+ customerdetails.getMessage() +"\"); </script> ");	

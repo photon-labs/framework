@@ -41,11 +41,11 @@ define(["framework/widgetWithTemplate", "configuration/listener/configurationLis
 				$.each(response.data.configurations, function(index, value){
 					if (value.type !== "Other") {
 						self.configurationlistener.getConfigurationList(self.configurationlistener.getRequestHeader(self.configRequestBody, "template", value.type), function(response) {
-							self.configurationlistener.constructHtml(response, value, response.data.settingsTemplate.name, '');
+							self.configurationlistener.constructHtml(response, value, response.data.settingsTemplate.name);
 						});
 					} else {
 						setTimeout(function(){
-							self.configurationlistener.htmlForOther(value, '');
+							self.configurationlistener.htmlForOther(value);
 						},800);
 					}
 				});
@@ -66,6 +66,17 @@ define(["framework/widgetWithTemplate", "configuration/listener/configurationLis
 		postRender : function(element) {	
 			var self = this;
 			commonVariables.navListener.currentTab = self.name;
+			$(".features_content_main").mCustomScrollbar({
+				autoHideScrollbar:true,
+				theme:"light-thin",
+				advanced:{ updateOnContentResize: true}
+			});
+
+			$(".fix_height").mCustomScrollbar({
+				autoHideScrollbar:true,
+				theme:"light-thin",
+				advanced:{ updateOnContentResize: true}
+			});
 		},
 		
 		registerEvents : function(configurationlistener) {
@@ -99,7 +110,6 @@ define(["framework/widgetWithTemplate", "configuration/listener/configurationLis
 			$("input[name=UpdateConfiguration]").click(function() {
 				self.updateConfigEvent.dispatch();
 			});
-			self.configurationlistener.scrollbarEnable();
 		}
 	});
 

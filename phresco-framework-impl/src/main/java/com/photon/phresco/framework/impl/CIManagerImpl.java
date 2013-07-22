@@ -650,6 +650,23 @@ public class CIManagerImpl implements CIManager, FrameworkConstants {
     	}
     }
     
+    private String getStatus(CIJob job) throws PhrescoException {
+    	if (debugEnabled) {
+    		S_LOGGER.debug("Entering Method CIManagerImpl.buildJob(CIJob job)");
+    	}
+    	String jsonResponse = null;
+        try {
+        	String jenkinsUrl = HTTP_PROTOCOL + PROTOCOL_POSTFIX + job.getJenkinsUrl() + COLON + job.getJenkinsPort() + FORWARD_SLASH + CI + FORWARD_SLASH + CI_JOB + FORWARD_SLASH + job.getJobName()+ FORWARD_SLASH +  JOB_STATUS_COMMAND;
+    		jsonResponse = getJsonResponse(jenkinsUrl);
+            
+        } catch (Exception e) {
+			if (debugEnabled) {
+	    		S_LOGGER.debug("Entering catch block of CIManagerImpl.getBuildsArray "+e.getLocalizedMessage());
+	    	}
+		}
+        return jsonResponse;
+    }
+    
     private CIJobStatus buildJob(CIJob job) throws PhrescoException {
     	if (debugEnabled) {
     		S_LOGGER.debug("Entering Method CIManagerImpl.buildJob(CIJob job)");
@@ -812,8 +829,8 @@ public class CIManagerImpl implements CIManager, FrameworkConstants {
     	if (debugEnabled) {
     		S_LOGGER.debug("Entering Method CIManagerImpl.getCLI()");
     	}
-//        String jenkinsUrl = HTTP_PROTOCOL + PROTOCOL_POSTFIX + job.getJenkinsUrl() + COLON + job.getJenkinsPort() + FORWARD_SLASH + CI + FORWARD_SLASH;
-        String jenkinsUrl = HTTP_PROTOCOL + PROTOCOL_POSTFIX + "localhost" + COLON + "3579" + FORWARD_SLASH + CI + FORWARD_SLASH;
+        String jenkinsUrl = HTTP_PROTOCOL + PROTOCOL_POSTFIX + job.getJenkinsUrl() + COLON + job.getJenkinsPort() + FORWARD_SLASH + CI + FORWARD_SLASH;
+//        String jenkinsUrl = HTTP_PROTOCOL + PROTOCOL_POSTFIX + "localhost" + COLON + "3579" + FORWARD_SLASH + CI + FORWARD_SLASH;
         if (debugEnabled) {
     		S_LOGGER.debug("jenkinsUrl to get cli object " + jenkinsUrl);
     	}
@@ -1035,7 +1052,7 @@ public class CIManagerImpl implements CIManager, FrameworkConstants {
  		ProjectDelivery updateProjectDeliveries = new ProjectDelivery();
  		ContinuousDelivery updateContinuousDeliveries = new ContinuousDelivery();
  		updateContinuousDeliveries.setName(name);
-		updateContinuousDeliveries.setEnvironment(environment);
+		updateContinuousDeliveries.setEnvName(environment);
 		updateContinuousDeliveries.setJobs(jobs);
 		updateProjectDeliveries.setId(projId);
 		updateProjectDeliveries.setContinuousDeliveries(Arrays.asList(updateContinuousDeliveries));
@@ -1045,7 +1062,7 @@ public class CIManagerImpl implements CIManager, FrameworkConstants {
  	private ContinuousDelivery createNewContinuousDelivery(String name, String environment, List<CIJob> jobs) {
  		ContinuousDelivery updateContinuousDeliveries = new ContinuousDelivery();
  		updateContinuousDeliveries.setName(name);
- 		updateContinuousDeliveries.setEnvironment(environment);
+ 		updateContinuousDeliveries.setEnvName(environment);
  		updateContinuousDeliveries.setJobs(jobs);
  		return updateContinuousDeliveries;
  	}
@@ -1062,10 +1079,10 @@ public class CIManagerImpl implements CIManager, FrameworkConstants {
  			List<ProjectDelivery> projectDeliveries = getProjectDeliveries(infoFile);
  			
  			List<ProjectDelivery> newProjectDelivery = new ArrayList<ProjectDelivery>(); 
- 			ProjectDelivery createNewProjectDelivery = createNewProjectDelivery(continuousDelivery.getName(), continuousDelivery.getEnvironment(), jobs, projId);
+ 			ProjectDelivery createNewProjectDelivery = createNewProjectDelivery(continuousDelivery.getName(), continuousDelivery.getEnvName(), jobs, projId);
 			newProjectDelivery.add(createNewProjectDelivery);
 			
-			ContinuousDelivery createNewContinuousDelivery = createNewContinuousDelivery(continuousDelivery.getName(), continuousDelivery.getEnvironment(), jobs);
+			ContinuousDelivery createNewContinuousDelivery = createNewContinuousDelivery(continuousDelivery.getName(), continuousDelivery.getEnvName(), jobs);
 			
  			if (CollectionUtils.isEmpty(projectDeliveries)) {
 				projectDeliveries = newProjectDelivery;
@@ -1082,7 +1099,6 @@ public class CIManagerImpl implements CIManager, FrameworkConstants {
  					projectDeliveries.add(createNewProjectDelivery);
  				}
  			}
- 			
  			ciInfoFileWriter(infoFile.getPath(), projectDeliveries);
  		} catch (Exception e) {
  			throw new PhrescoException(e);
@@ -1114,7 +1130,7 @@ public class CIManagerImpl implements CIManager, FrameworkConstants {
  		return null;
  	}
  	
- 	private ProjectDelivery getProjectDelivery(String projId, List<ProjectDelivery> projectDeliveries) {
+ 	public ProjectDelivery getProjectDelivery(String projId, List<ProjectDelivery> projectDeliveries) {
  		for(ProjectDelivery projectDelivery : projectDeliveries) {
  			if (StringUtils.isNotEmpty(projId) && projId.equals(projectDelivery.getId())) {
  				return projectDelivery;
@@ -1123,7 +1139,7 @@ public class CIManagerImpl implements CIManager, FrameworkConstants {
  		return null;
  	}
  	
- 	private ContinuousDelivery getContinuousDelivery(String name, List<ContinuousDelivery> continuousDeliveries) {
+ 	public ContinuousDelivery getContinuousDelivery(String name, List<ContinuousDelivery> continuousDeliveries) {
  		for(ContinuousDelivery continuousDelivery : continuousDeliveries) {
  			if (StringUtils.isNotEmpty(name) && continuousDelivery.getName().equals(name)) {
  				return continuousDelivery;
@@ -1543,6 +1559,16 @@ public class CIManagerImpl implements CIManager, FrameworkConstants {
 		 }
 	 }
 	 
+	 public String getJobStatus(CIJob ciJob) throws PhrescoException {
+		 try {
+			 String status = getStatus(ciJob);
+			 return status;
+		 } catch (ClientHandlerException ex) {
+			 S_LOGGER.error(ex.getLocalizedMessage());
+			 throw new PhrescoException(ex);
+		 }
+	 }
+	 
 	 public CIJobStatus deleteBuilds(CIJob ciJob,  String buildNumber) throws PhrescoException {
 		 S_LOGGER.debug("Entering Method ProjectAdministratorImpl.deleteCI()");
 		 	try {
@@ -1564,7 +1590,7 @@ public class CIManagerImpl implements CIManager, FrameworkConstants {
 				 deleteCI = deleteCI(ciJob, null);
 				 S_LOGGER.debug("write back json data after job deletion successfull");
 			}
-			clearContinuousDelivery(continuousName, projectId, appDir);
+			//clearContinuousDelivery(continuousName, projectId, appDir);
 			 return deleteCI;
 		 } catch (ClientHandlerException ex) {
 			 S_LOGGER.error("Entered into catch block of ProjectAdministratorImpl.deleteCI()" + ex.getLocalizedMessage());

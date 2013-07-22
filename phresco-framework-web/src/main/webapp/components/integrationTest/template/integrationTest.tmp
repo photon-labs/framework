@@ -1,0 +1,129 @@
+<section class="optiontitle qual_unit">
+	<div class="unit_text" data-i18n="integration.label.integrationtest">
+    	
+	</div>
+    <div class="flt_right">
+		<div class="unit_view hideContent">
+			<div class="code_report_icon" id="pdfDiv">
+				<a id="pdfIcon" class="tooltiptop" title="" data-placement="bottom" data-toggle="tooltip" href="#" data-original-title="PDF Report">
+					<img src="themes/default/images/helios/code_pdf_icon.png" width="28" height="29" border="0" alt="">
+				</a>
+				<!--Pdf report popup starts here -->
+				<div id="pdf_report" class="dyn_popup hideContent">
+					<div id="noPdfReport" class="noReport"></div>
+                	<table class="table_border availablePdfRptsTbl hideContent" border="0" cellspacing="0" cellpadding="5" width="100%" id="availablePdfRptsTbl">
+                		<thead>
+                        	<tr>
+	                            <th data-i18n=commonlabel.label.existingreport></th>
+	                            <th data-i18n=commonlabel.label.type></th>
+	                            <th data-i18n=commonlabel.label.download></th>
+	                            <th data-i18n=commonlabel.label.delete></th>
+                        	</tr>    
+                    	</thead>
+                    	<tbody id="availablePdfRptsTbdy">
+                    	    
+                   	 	</tbody>    
+                	</table>
+                	<form id="pdfReportForm">
+	                   	<table class="report_type">
+	                    	<tbody>
+	                        	<tr>
+	                            	<td data-i18n=commonlabel.label.reporttype></td>
+	                            	<td>
+	                                	<select name="reportDataType">
+	                                    	<option value="detail" data-i18n=commonlabel.label.detailedreport></option>
+	                                    	<option value="crisp" data-i18n=commonlabel.label.overallreport></option>
+	                                	</select>
+	                            	</td>
+	                        	</tr>
+								<tr>
+	                            	<td data-i18n=commonlabel.label.pdfreportname></td>
+		                            <td>
+		                               <input type="text" placeholder="Pdf report name" name="pdfName">
+		                            </td>
+	                        	</tr>	                        	
+	                    	</tbody>
+	                   	</table>
+	                   	<div class="popuploading" id="pdfReportLoading">&nbsp</div>
+		               	<div class="flt_right">
+		                 	<input type="button" data-i18n="[value]commonlabel.label.generate" class="btn btn_style" id="generatePdf">
+		                 	<input type="button" data-i18n="[value]commonlabel.label.close" class="btn btn_style dyn_popup_close">
+		               	</div>
+               			<input type="hidden" name="fromPage" value="unit"/>
+           			</form>
+				</div>
+				<!--Pdf report popup ends here -->	
+			</div>
+            <span>
+            	<a id="tabularView" href="#"><img src="themes/default/images/helios/quality_table_on.png" width="25" height="25" border="0" alt=""><b data-i18n="commonlabel.label.tableview"></b></a>
+            </span>
+            <span>
+            	<a id="graphicalView" href="#"><img src="themes/default/images/helios/quality_graph_off.png" width="26" height="24" border="0" alt="" data-i18n="[value]commonlabel.label.graphview"></a>
+            </span>    
+        </div>
+    	<div class="unit_path">
+            <input type="button" data-i18n="[value]commonlabel.label.openfolder" class="btn btn_style openfolder_icon_btn" id="openFolder">
+            <input type="button" data-i18n="[value]commonlabel.label.copypath" class="btn btn_style copypath_icon_btn" id="copyPath">
+        </div>
+            
+        {{#if projectModules}}
+            <div class="code_report">
+            	Module
+            </div>
+            <div class="navbar navbar-static code_func module">
+                <ul class="nav">
+                    <li id="fat-menu" class="dropdown">
+						<a href="#" id="modulesDrop" role="button" class="dropdown-toggle" data-toggle="dropdown" 
+							value="{{#modules projectModules true}}{{/modules}}">{{#modules projectModules true}}{{/modules}}<b class="caret"></b></a>
+                      	<div class="dropdown-menu cust_sel code_test_opt" role="menu" aria-labelledby="modulesDrop">
+	                      	<ul>
+	                      		{{#modules projectModules false}}{{/modules}}
+                        	</ul>
+						</div>
+                    </li>
+                </ul>
+            </div>
+        {{/if}}
+    
+        {{#if reportOptions}}
+            <div class="code_report">
+            	Technology
+            </div>
+            <div class="navbar navbar-static code_func">
+                <ul class="nav">
+                    <li id="fat-menu" class="dropdown">
+						<a href="#" id="reportOptionsDrop" role="button" class="dropdown-toggle" data-toggle="dropdown" 
+							value="{{#report reportOptions true}}{{/report}}">{{#report reportOptions true}}{{/report}}<b class="caret"></b></a>
+						<div class="dropdown-menu cust_sel code_test_opt" role="menu" aria-labelledby="reportOptionsDrop">
+	                      	<ul>
+	                      		{{#report reportOptions false}}{{/report}}
+	                        </ul>
+						</div>
+                    </li>
+                </ul>
+            </div>
+        {{/if}}
+           
+        <div class="code_anal">
+        	{{#if userPermissions.manageTests}}
+            	<input type="button" data-i18n="[value]commonlabel.label.test" id="unitTestBtn" class="btn btn_style">
+        	{{else}}
+        		<input type="button" data-i18n="[value]commonlabel.label.test" id="unitTestBtn" class="btn btn_style" disabled>
+        	{{/if}}
+			
+			<form id="unitTestForm">
+				<div id="unit_popup" class="dyn_popup hideContent dynamic_cont" style="width:310px;">
+					<ul class="row dynamicControls">
+					</ul>
+					<div class="dynamicPopupLoading" style="display:none;">&nbsp</div>
+					<div class="hiddenControls"></div>
+					<div class="flt_right">
+						<input type="button" data-i18n="[value]commonlabel.label.test" class="btn btn_style" id="runUnitTest">
+						<input type="button" data-i18n="[value]commonlabel.label.close" class="btn btn_style dyn_popup_close">
+					</div>
+				</div>
+			</form>
+		</div>
+	</div>
+</section>
+<div class="mainContent" id="testResult"></div>

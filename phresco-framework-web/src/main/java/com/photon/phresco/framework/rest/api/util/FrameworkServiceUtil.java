@@ -277,6 +277,17 @@ public class FrameworkServiceUtil implements Constants, FrameworkConstants {
     }
 	
 	/**
+	 * To get the performance jmx upload directory
+	 * @param appDirName
+	 * @return
+	 * @throws PhrescoException
+	 * @throws PhrescoPomException
+	 */
+	public static String getPerformanceUploadJmxDir(String appDirName) throws PhrescoException, PhrescoPomException {
+        return getPomProcessor(appDirName).getProperty(POM_PROP_KEY_PERFORMANCETEST_JMX_UPLOAD_DIR);
+    }
+	
+	/**
 	 * To get the performance test result directory
 	 * @param appDirName
 	 * @return

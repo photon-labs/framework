@@ -178,6 +178,13 @@ define(["projects/listener/projectsListener"], function() {
 			self.multiselect();
 			self.projectsListener.editSeriveTechnolyEvent(self.getData);
 			self.projectsListener.enablebutton();
+			if(commonVariables.animation) {
+				$(".create_proj .scrollContent").mCustomScrollbar({
+					autoHideScrollbar:true,
+					theme:"light-thin",
+					advanced:{ updateOnContentResize: true}
+				});
+			}
 		},
 		
 		/***
@@ -203,14 +210,6 @@ define(["projects/listener/projectsListener"], function() {
 			$("#cancelUpdate").bind('click', function() {
 				self.onCancelUpdateEvent.dispatch();
 			});
-			
-			if(commonVariables.animation) {
-				$(".create_proj .scrollContent").mCustomScrollbar({
-					autoHideScrollbar:true,
-					theme:"light-thin",
-					advanced:{ updateOnContentResize: true}
-				});
-			}	
 			
 			$("img[name='close']").unbind('click');
 			$("img[name='close']").bind('click', function(){

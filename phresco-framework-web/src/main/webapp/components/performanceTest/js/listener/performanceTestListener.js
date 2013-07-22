@@ -268,7 +268,6 @@ define(["performanceTest/api/performanceTestAPI"], function() {
 
 		preTriggerPerformanceTest : function () {
 			var self = this, testBasis = $("#testBasis").val(), testAgainst = $("#testAgainst").val(), redirect = false, jsonString = "";
-			console.info("");
 			//if performance test is triggered against parameters
 			if (testAgainst !== undefined && testBasis !== undefined && testBasis === "parameters") {
 				//call template mandatory fn for server or webservice
@@ -288,16 +287,13 @@ define(["performanceTest/api/performanceTestAPI"], function() {
 			}
 		},
 
-		triggerPerformanceTest : function (callback) {
+		triggerPerformanceTest : function () {
 			var self = this, jsonString = "";
-			jsonString = self.constructInputsAsJson();
-			self.executeTest($('#performanceForm').serialize(), function(response) {
-				self.logContent = $('#testConsole').html();
-				commonVariables.navListener.onMytabEvent(commonVariables.performanceTest);
-			});
+			self.constructInputsAsJson();
 		},
 
 		executeTest : function (queryString, callback) {
+			queryString = queryString.concat("&testAction=performance");
 			var self = this, appInfo = self.performanceTestAPI.localVal.getJson('appdetails');
 			$("#performancePopup").toggle();
 			self.openConsole();
@@ -327,7 +323,12 @@ define(["performanceTest/api/performanceTestAPI"], function() {
 			}
 			$("#resultJson").val("");
 			$("#resultJson").val(formJsonStr);
-			return formJsonStr;
+
+			self.executeTest($('#performanceForm').serialize(), function(response) {
+				self.performanceTestAPI.localVal.setSession('performanceConsole', $('#testConsole').html());
+				$('.progress_loading').hide();
+				commonVariables.navListener.onMytabEvent(commonVariables.performanceTest);
+			});
 		},
 
 		contextUrlsMandatoryVal : function () {

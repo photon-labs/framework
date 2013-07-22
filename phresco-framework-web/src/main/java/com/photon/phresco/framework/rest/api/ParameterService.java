@@ -20,6 +20,7 @@ package com.photon.phresco.framework.rest.api;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -52,6 +53,7 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
+import org.codehaus.plexus.util.FileUtils;
 import org.xml.sax.SAXException;
 
 import com.photon.phresco.api.DynamicPageParameter;
@@ -78,7 +80,9 @@ import com.photon.phresco.plugins.model.Mojos.Mojo.Configuration.Parameters.Para
 import com.photon.phresco.plugins.model.Mojos.Mojo.Configuration.Parameters.Parameter.PossibleValues.Value;
 import com.photon.phresco.plugins.util.MojoProcessor;
 import com.photon.phresco.service.client.api.ServiceManager;
+import com.photon.phresco.util.ArchiveUtil;
 import com.photon.phresco.util.Constants;
+import com.photon.phresco.util.FileUtil;
 import com.photon.phresco.util.PhrescoDynamicLoader;
 import com.photon.phresco.util.ServiceConstants;
 import com.photon.phresco.util.Utility;
@@ -193,6 +197,7 @@ public class ParameterService extends RestBase implements FrameworkConstants, Se
 			if (currentParameters == null) {
 				currentParameters = new DependantParameters();
 			}
+			
 			currentParameters.setValue(value);
 			watcherMap.put(key, currentParameters);
 			valueMap.put(applicationInfo.getId() + goal, watcherMap);
@@ -230,7 +235,6 @@ public class ParameterService extends RestBase implements FrameworkConstants, Se
 		PossibleValues possibleValues = null;
 		ResponseInfo finalOutput = new ResponseInfo();
 		try {
-			
 			ApplicationInfo applicationInfo = FrameworkServiceUtil.getApplicationInfo(appDirName);
 			Map<String, DependantParameters> watcherMap = valueMap.get(applicationInfo.getId() + goal);
 			Map<String, Object> constructMapForDynVals = constructMapForDynVals(applicationInfo, watcherMap, key, customerId, null);
@@ -255,7 +259,10 @@ public class ParameterService extends RestBase implements FrameworkConstants, Se
     					DEPENDENCY_RETURNED_SUCCESSFULLY, constructDynamicTemplate.toString());
             }
             
-            updateDynamicValuesToWathcer(goal, key, applicationInfo, watcherMap, dependentParameter, dependentPossibleValues);
+            if (TYPE_DYNAMIC_PARAMETER.equalsIgnoreCase(dependentParameter.getType())) {
+            	updateDynamicValuesToWathcer(goal, key, applicationInfo, watcherMap, dependentParameter, dependentPossibleValues);
+            }
+            
             
 			return Response.ok(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, ALL_HEADER).build();
 		} catch (Exception e) {
@@ -268,6 +275,7 @@ public class ParameterService extends RestBase implements FrameworkConstants, Se
 
 	private void updateDynamicValuesToWathcer(String goal, String key, ApplicationInfo applicationInfo, Map<String, DependantParameters> watcherMap,
 			Parameter dependentParameter, List<Value> dependentPossibleValues) {
+		
 		if (CollectionUtils.isNotEmpty(dependentPossibleValues) && watcherMap.containsKey(key)) {
 		    DependantParameters dependantParameters = (DependantParameters) watcherMap.get(key);
 		    dependantParameters.setValue(dependentPossibleValues.get(0).getValue());
@@ -282,7 +290,6 @@ public class ParameterService extends RestBase implements FrameworkConstants, Se
 		    			dependentParameter.getKey(), dependentPossibleValues.get(0).getValue());
 		    }
 		}
-		
 		valueMap.put(applicationInfo.getId() + goal, watcherMap);
 	}
 
@@ -750,6 +757,135 @@ public class ParameterService extends RestBase implements FrameworkConstants, Se
 		}
 	}
 	
+	@POST
+	@Path("/dynamicUpload")
+	@Produces(MediaType.APPLICATION_JSON)
+	@Consumes(MediaType.APPLICATION_OCTET_STREAM)
+	public Response dynamicFileUpload(@Context HttpServletRequest request) throws PhrescoException {
+		ResponseInfo<Boolean> responseData = new ResponseInfo<Boolean>();
+		ResponseInfo finalOuptut = new ResponseInfo();
+		try {
+			InputStream inputStream = request.getInputStream();
+			String appDirName = request.getHeader("appDirName");
+			String uploadedFileName = request.getHeader(X_FILE_NAME);
+			if (StringUtils.isNotEmpty(uploadedFileName)) {
+				if (PERFORMANCE_TEST.equals(request.getHeader("goal"))) {
+					String performanceTestDir = FrameworkServiceUtil.getPerformanceTestDir(appDirName);
+					String performanceUploadJmxDir = FrameworkServiceUtil.getPerformanceUploadJmxDir(appDirName);
+					finalOuptut = uploadFileForPerformanceLoad(request, appDirName, inputStream, performanceTestDir, performanceUploadJmxDir,uploadedFileName);
+				} else if (Constants.PHASE_LOAD_TEST.equals(request.getHeader("goal"))) {
+//					String loadTestDir = frameworkUtil.getLoadTestDir(applicationInfo);
+//					String loadUploadJmxDir = frameworkUtil.getLoadUploadJmxDir(applicationInfo);
+//					uploadFileForPerformanceLoad(writer, applicationInfo, is, loadTestDir, loadUploadJmxDir,uploadedFileName);
+				}
+			}
+			return Response.ok(finalOuptut).header(ACCESS_CONTROL_ALLOW_ORIGIN, ALL_HEADER).build();
+		} catch (FileNotFoundException e) {
+			finalOuptut = responseDataEvaluation(responseData, e, "Upload Failed", false);
+			return Response.status(Status.EXPECTATION_FAILED).entity(finalOuptut).header(ACCESS_CONTROL_ALLOW_ORIGIN,
+					ALL_HEADER).build();
+		} catch (IOException e) {
+			finalOuptut = responseDataEvaluation(responseData, e, "Upload Failed", false);
+			return Response.status(Status.EXPECTATION_FAILED).entity(finalOuptut).header(ACCESS_CONTROL_ALLOW_ORIGIN,
+					ALL_HEADER).build();
+		} catch (PhrescoPomException e) {
+			finalOuptut = responseDataEvaluation(responseData, e, "Upload Failed", false);
+			return Response.status(Status.EXPECTATION_FAILED).entity(finalOuptut).header(ACCESS_CONTROL_ALLOW_ORIGIN,
+					ALL_HEADER).build();
+		}
+	}
+	
+	private ResponseInfo uploadFileForPerformanceLoad(HttpServletRequest request, String appDirName, InputStream inputStream, String testDirectory, String jmxUploadDir, String zipfileName) throws PhrescoException {
+		ResponseInfo responseData = new ResponseInfo();
+    	File tempDirectory = null;
+    	try {
+			StringBuilder uploadJmxDir = new StringBuilder(Utility.getProjectHome())
+			.append(appDirName)
+			.append(testDirectory)
+			.append(File.separator)
+			.append(request.getHeader(REQ_CUSTOM_TEST_AGAINST))
+			.append(jmxUploadDir);
+			
+			StringBuilder temp = new StringBuilder(uploadJmxDir);
+			temp.append(File.separator)
+			.append(Constants.PROJECTS_TEMP);
+
+			tempDirectory = new File(temp.toString());
+			if (!tempDirectory.exists()) {
+				tempDirectory.mkdir();
+			}
+			
+			 String tempZipPath = tempDirectory.getPath() + File.separator + zipfileName;
+
+			 //create zip file from inputstream
+			 File tempZipFile = FileUtil.writeFileFromInputStream(inputStream, tempZipPath);
+			 String folder = FileUtils.removeExtension(tempZipPath.replace(tempDirectory.getPath() + File.separator, ""));
+			 //extract the zip file inside temp directory
+			 boolean unzipped = ArchiveUtil.unzip(tempZipPath, tempDirectory.getPath(), folder);
+			 StringBuilder unzippedDir = new StringBuilder(tempDirectory.getPath());
+			 unzippedDir.append(File.separator)
+			 .append(Constants.PROJECTS_TEMP)
+			 .append(folder);
+			 
+			 File extractedPath = new File(unzippedDir.toString()); 
+			 boolean fileExist = false;
+			 if (unzipped) {
+				 if(extractedPath.exists()) {
+					 fileExist = checkFileExist(extractedPath, DOT_JMX, fileExist);
+				 }
+				 if (fileExist) {
+					 uploadJmxDir = uploadJmxDir.append(File.separator)
+					 .append(CUSTOM);
+					 
+					 File destination = new File(uploadJmxDir.toString());
+					 if (!destination.exists()) {
+						 destination.mkdir();
+					 }
+					 
+					 File extractedFile = new File(tempDirectory.getPath() + File.separator + Constants.PROJECTS_TEMP + folder);
+					 if (extractedFile.exists()) {
+						 FileUtil.copyFolder(extractedFile, destination);
+					 }
+					 responseDataEvaluation(responseData, null, "File uploaded successfully", true);
+				 } else {
+					 responseDataEvaluation(responseData, null, "No jmx file exist", false);
+				 }
+			 } else {
+				 responseDataEvaluation(responseData, null, "Unable To Extract", false);
+			 }
+			 
+			 //after extracting, delete that zip file
+			 FileUtil.delete(tempZipFile);
+			 
+		} catch (Exception e) {
+			responseDataEvaluation(responseData, e, "Upload Failed", false);
+		} finally {
+			 FileUtil.delete(tempDirectory);
+		}
+		
+		return responseData;
+    }
+	
+	 private boolean checkFileExist(File directory, String fileExtension, boolean flag) {
+	    	File[] childs = directory.listFiles();
+			if (childs  != null && childs.length != 0) {
+				for (File child : childs) {
+					if (child.isDirectory() && !flag) {
+						flag = checkFileExist(child, fileExtension, flag);//recursive call if the child is a directory
+					} else if (child.getName().endsWith(fileExtension) && !flag) {
+						flag = true;
+						return flag;
+					}
+					
+					if (flag) {
+						break;
+					}
+				}
+			}
+			
+			return flag;
+		}
+	
 	/**
 	 * gets the DynamicPageParameter
 	 * @param appInfo
@@ -862,7 +998,7 @@ public class ParameterService extends RestBase implements FrameworkConstants, Se
         if (StringUtils.isNotEmpty(buildNumber)) {
         	paramMap.put(DynamicParameter.KEY_BUILD_NO, buildNumber);
         }
-        
+
         return paramMap;
     }
 	

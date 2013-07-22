@@ -143,12 +143,8 @@ define(["features/api/featuresAPI", "features/features",  "application/applicati
 				});
 			}
 			
-			$(".features_cont").mCustomScrollbar({
-				scrollInertia:600,
-				autoHideScrollbar:true,
-				theme:"light-thin"
-			});
 		},
+		
 		scrollbarUpdate : function(){
 			$("#content_1").mCustomScrollbar("update"); 
 			$("#content_2").mCustomScrollbar("update"); 

@@ -37,6 +37,7 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang.StringUtils;
 import org.json.simple.JSONObject;
@@ -78,6 +79,12 @@ public class BuildInfoService extends RestBase implements FrameworkConstants, Se
 					+ File.separator + BUILD_INFO_FILE_NAME);
 			ApplicationManager applicationManager = PhrescoFrameworkFactory.getApplicationManager();
 			List<BuildInfo> builds = applicationManager.getBuildInfos(buildInfoFile);
+			if (CollectionUtils.isEmpty(builds)) {
+				ResponseInfo<List<BuildInfo>> finalOutput = responseDataEvaluation(responseData, null,
+						"No build available", null);
+				return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*")
+						.build();
+			}
 			ResponseInfo<List<BuildInfo>> finalOutput = responseDataEvaluation(responseData, null,
 					"Buildinfo listed Successfully", builds);
 			return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();

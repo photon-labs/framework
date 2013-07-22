@@ -47,11 +47,23 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerConfigurationException;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.quartz.CronExpression;
+import org.w3c.dom.DOMException;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 
 import com.photon.phresco.api.ConfigManager;
 import com.photon.phresco.commons.FrameworkConstants;
@@ -66,6 +78,7 @@ import com.photon.phresco.configuration.Configuration;
 import com.photon.phresco.configuration.Environment;
 import com.photon.phresco.exception.ConfigurationException;
 import com.photon.phresco.exception.PhrescoException;
+import com.photon.phresco.framework.commons.FileBrowseInfo;
 import com.photon.phresco.framework.commons.FrameworkUtil;
 import com.photon.phresco.framework.model.AddCertificateInfo;
 import com.photon.phresco.framework.model.CronExpressionInfo;
@@ -686,7 +699,7 @@ public class ConfigurationService extends RestBase implements FrameworkConstants
 				out.flush();
 				out.close();
 				ResponseInfo finalOuptut = responseDataEvaluation(responseData, null, "file uploaded", true);
-				return Response.ok(finalOuptut).header("Access-Control-Allow-Origin", "*").build();
+				return Response.status(Status.OK).entity(finalOuptut).header("Access-Control-Allow-Origin", "*").build();
 			}
 		} catch (FileNotFoundException e) {
 			ResponseInfo<Environment> finalOuptut = responseDataEvaluation(responseData, e, "upload Failed", false);
@@ -699,6 +712,143 @@ public class ConfigurationService extends RestBase implements FrameworkConstants
 		}
 		ResponseInfo finalOuptut = responseDataEvaluation(responseData, null, "No File to upload", false);
 		return Response.ok(finalOuptut).header("Access-Control-Allow-Origin", "*").build();
+	}
+
+	@GET
+	@Path("/fileBrowseFolder")
+	@Produces(MediaType.APPLICATION_XML)
+	public Response returnFileBorwseFolderStructure(@QueryParam("browsePath") String browsePath) {
+		try {
+			List<FileBrowseInfo> browseList = new ArrayList<FileBrowseInfo>();
+			File browseFile = new File(browsePath);
+			File[] files = browseFile.listFiles();
+			if (files == null) {
+				return Response.status(Status.OK).entity("No Browse File Structure Found").header(
+						"Access-Control-Allow-Origin", "*").build();
+			}
+			for (int i = 0; i < files.length; i++) {
+				FileBrowseInfo fileBrowse = new FileBrowseInfo();
+				if (files[i].isDirectory()) {
+					fileBrowse.setName(files[i].getName());
+					fileBrowse.setPath(files[i].getPath());
+					fileBrowse.setType("Folder");
+					browseList.add(fileBrowse);
+				} else {
+					fileBrowse.setName(files[i].getName());
+					fileBrowse.setPath(files[i].getPath());
+					fileBrowse.setType("File");
+					browseList.add(fileBrowse);
+				}
+			}
+
+			DOMSource outputContent = constructXml(browseFile.getName(), browsePath.toString(), browseList);
+			return Response.status(Status.OK).entity(outputContent).header("Access-Control-Allow-Origin", "*").build();
+		} catch (PhrescoException e) {
+			return Response.status(Status.BAD_REQUEST).entity(e).header("Access-Control-Allow-Origin", "*").build();
+		}
+
+	}
+	
+	@GET
+	@Path("/fileBrowse")
+	@Produces(MediaType.APPLICATION_XML)
+	public Response returnFileBorwseEntireStructure(@QueryParam("appDirName") String appDirName) {
+		try {
+			String browsePath = Utility.getProjectHome()  + appDirName;
+			DOMSource outputContent = createXML(browsePath);
+			if(outputContent == null) {
+				return Response.status(Status.OK).entity("File cannot be Iterated").header("Access-Control-Allow-Origin", "*").build();
+			}
+			return Response.status(Status.OK).entity(outputContent).header("Access-Control-Allow-Origin", "*").build();
+		} catch (PhrescoException e) {
+			return Response.status(Status.BAD_REQUEST).entity(e).header("Access-Control-Allow-Origin", "*").build();	
+		}
+
+	}
+
+	// for the return of entire project structure as single xml
+	private static DOMSource createXML(String browsePath) throws PhrescoException {
+		try {
+			File inputPath = new File(browsePath);
+			if (inputPath.isFile()) {
+				return null;
+			}
+			DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
+			DocumentBuilder documentBuilder = documentBuilderFactory.newDocumentBuilder();
+			Document document = documentBuilder.newDocument();
+			Element rootElement = document.createElement("root");
+			document.appendChild(rootElement);
+
+			Element mainFolder = document.createElement("Item");
+			mainFolder.setAttribute("name", inputPath.getName());
+			mainFolder.setAttribute("path", inputPath.toString());
+			mainFolder.setAttribute("type", "Folder");
+			rootElement.appendChild(mainFolder);
+
+			listDirectories(mainFolder, document, inputPath);
+
+			DOMSource source = new DOMSource(document);
+			return source;
+		} catch (DOMException e) {
+			throw new PhrescoException(e);
+		} catch (ParserConfigurationException e) {
+			throw new PhrescoException(e);
+		}
+	}
+	
+	private static void listDirectories(Element rootElement, Document document, File dir) {
+
+		for (File childFile : dir.listFiles()) {
+			if (childFile.isDirectory()) {
+				Element childElement = document.createElement("Item");
+				childElement.setAttribute("name", childFile.getName());
+				childElement.setAttribute("path", childFile.getPath());
+				childElement.setAttribute("type", "Folder");
+				rootElement.appendChild(childElement);
+
+				listDirectories(childElement, document, childFile.getAbsoluteFile());
+			} else { 
+				Element childElement = document.createElement("Item");
+				childElement.setAttribute("name", childFile.getName());
+				childElement.setAttribute("path", childFile.getPath());
+				childElement.setAttribute("type", "File");
+				rootElement.appendChild(childElement);
+			}
+		}
+	}
+		
+	// for the return of project structure on individual folders
+	private DOMSource constructXml(String name, String path, List<FileBrowseInfo> browseList) throws PhrescoException {
+		try {
+			DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
+			DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
+
+			// root elements
+			Document doc = docBuilder.newDocument();
+			Element rootElement = doc.createElement("root");
+			doc.appendChild(rootElement);
+
+			// Main folder
+			Element item = doc.createElement("item");
+			rootElement.appendChild(item);
+
+			item.setAttribute("type", "folder");
+			item.setAttribute("name", name);
+			item.setAttribute("path", path);
+
+			// Sub foldersfor
+			for (FileBrowseInfo browseField : browseList) {
+				Element childitem = doc.createElement("item");
+				childitem.setAttribute("type", browseField.getType());
+				childitem.setAttribute("name", browseField.getName());
+				childitem.setAttribute("path", browseField.getPath());
+				item.appendChild(childitem);
+			}
+			DOMSource source = new DOMSource(doc);
+			return source;
+		} catch (ParserConfigurationException e) {
+			throw new PhrescoException(e);
+		}
 	}
 
 	private String settingsCertificateSave(File file, String appDirName,

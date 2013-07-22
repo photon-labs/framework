@@ -111,6 +111,13 @@ define(["projects/listener/projectsListener"], function() {
 		postRender : function(element) {
 			var self=this;
 			self.multiselect();
+			if(commonVariables.animation) {
+				$(".create_proj .scrollContent").mCustomScrollbar({
+					autoHideScrollbar:true,
+					theme:"light-thin",
+					advanced:{ updateOnContentResize: true}
+				});	
+			}
 			self.projectsListener.multiModuleEvent("false");
 		},
 		
@@ -203,13 +210,6 @@ define(["projects/listener/projectsListener"], function() {
 				$("#endDate").focus();
 			});
 			
-			if(commonVariables.animation) {
-				$(".create_proj .scrollContent").mCustomScrollbar({
-					autoHideScrollbar:true,
-					theme:"light-thin",
-					advanced:{ updateOnContentResize: true}
-				});	
-			}
 			Clazz.navigationController.jQueryContainer = commonVariables.contentPlaceholder;
 		}
 	});

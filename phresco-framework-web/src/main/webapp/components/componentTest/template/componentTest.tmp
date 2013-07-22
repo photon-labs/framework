@@ -5,54 +5,54 @@
     <div class="flt_right">
 		<div class="unit_view hideContent">
 			<div class="code_report_icon" id="pdfDiv">
-				<a id="pdfIcon" class="tooltiptop" title="" data-placement="bottom" data-toggle="tooltip" href="#" data-original-title="PDF Report">
-					<img src="themes/default/images/helios/code_pdf_icon.png" width="28" height="29" border="0" alt="">
-				</a>
-				<!--Pdf report popup starts here -->
-				<div id="pdf_report" class="dyn_popup hideContent">
-					<div id="noPdfReport" class="noReport"></div>
-                	<table class="table_border availablePdfRptsTbl hideContent" border="0" cellspacing="0" cellpadding="5" width="100%" id="availablePdfRptsTbl">
-                		<thead>
-                        	<tr>
-	                            <th data-i18n=commonlabel.label.existingreport></th>
-	                            <th data-i18n=commonlabel.label.type></th>
-	                            <th data-i18n=commonlabel.label.download></th>
-	                            <th data-i18n=commonlabel.label.delete></th>
-                        	</tr>    
-                    	</thead>
-                    	<tbody id="availablePdfRptsTbdy">
-                    	    
-                   	 	</tbody>    
-                	</table>
-                	<form id="pdfReportForm">
-	                   	<table class="report_type">
-	                    	<tbody>
+				<div class="icon_images">
+					<a id="pdfIcon" class="tooltiptop" title="" data-placement="bottom" data-toggle="tooltip" href="#" data-original-title="PDF Report" id="pdfIcon"><img src="themes/default/images/helios/pdf_icon_white.png"></a>
+					<!--Pdf report popup starts here -->
+					<div id="pdf_report" class="dyn_popup hideContent">
+						<div id="noPdfReport" class="noReport"></div>
+	                	<table class="table_border availablePdfRptsTbl hideContent" border="0" cellspacing="0" cellpadding="5" width="100%" id="availablePdfRptsTbl">
+	                		<thead>
 	                        	<tr>
-	                            	<td>Report Type</td>
-	                            	<td>
-	                                	<select name="reportDataType">
-	                                    	<option value="detail" data-i18n=commonlabel.label.detailedreport></option>
-	                                    	<option value="crisp" data-i18n=commonlabel.label.overallreport></option>
-	                                	</select>
-	                            	</td>
-	                        	</tr>
-								<tr>
-	                            	<td>Pdf Report Name</td>
-		                            <td>
-		                               <input type="text" placeholder="Pdf report name" name="pdfName">
-		                            </td>
-	                        	</tr>	                        	
-	                    	</tbody>
-	                   	</table>
-	                   	<div class="popuploading" id="pdfReportLoading">&nbsp</div>
-		               	<div class="flt_right">
-		                   <input type="button" data-i18n="[value]commonlabel.label.generate" class="btn       btn_style"     id="generatePdf">
-		                  <input type="button" data-i18n="[value]commonlabel.label.close" class="btn btn_style dyn_popup_close">
-		               	</div>
-               			<input type="hidden" name="fromPage" value="component"/>
-           			</form>
+		                            <th data-i18n=commonlabel.label.existingreport></th>
+		                            <th data-i18n=commonlabel.label.type></th>
+		                            <th data-i18n=commonlabel.label.download></th>
+		                            <th data-i18n=commonlabel.label.delete></th>
+	                        	</tr>    
+	                    	</thead>
+	                    	<tbody id="availablePdfRptsTbdy">
+	                    	    
+	                   	 	</tbody>    
+	                	</table>
+	                	<form id="pdfReportForm">
+		                   	<table class="report_type">
+		                    	<tbody>
+		                        	<tr>
+		                            	<td>Report Type</td>
+		                            	<td>
+		                                	<select name="reportDataType">
+		                                    	<option value="detail" data-i18n=commonlabel.label.detailedreport></option>
+		                                    	<option value="crisp" data-i18n=commonlabel.label.overallreport></option>
+		                                	</select>
+		                            	</td>
+		                        	</tr>
+									<tr>
+		                            	<td>Pdf Report Name</td>
+			                            <td>
+			                               <input type="text" placeholder="Pdf report name" name="pdfName">
+			                            </td>
+		                        	</tr>	                        	
+		                    	</tbody>
+		                   	</table>
+		                   	<div class="popuploading" id="pdfReportLoading">&nbsp</div>
+			               	<div class="flt_right">
+			                   <input type="button" data-i18n="[value]commonlabel.label.generate" class="btn       btn_style"     id="generatePdf">
+			                  <input type="button" data-i18n="[value]commonlabel.label.close" class="btn btn_style dyn_popup_close">
+			               	</div>
+	               			<input type="hidden" name="fromPage" value="component"/>
+	           			</form>
+					</div>
+					<!--Pdf report popup ends here -->
 				</div>
-				<!--Pdf report popup ends here -->
 			</div>
             <span>
             	<a id="tabularView" href="#"><img src="themes/default/images/helios/quality_table_on.png" width="25" height="25" border="0" alt=""><b>Table View</b></a>
@@ -61,10 +61,8 @@
             	<a id="graphicalView" href="#"><img src="themes/default/images/helios/quality_graph_off.png" width="26" height="24" border="0" alt="">Graph View</a>
             </span>    
         </div>
-    	<div class="unit_path">
-            <input type="button" data-i18n="[value]commonlabel.label.openfolder" class="btn btn_style openfolder_icon_btn" id="openFolder">
-            <input type="button" data-i18n="[value]commonlabel.label.copypath" class="btn btn_style copypath_icon_btn" id="copyPath">
-        </div>
+    	<div class="icon_images"><a class="tooltiptop" title="" data-placement="bottom" data-toggle="tooltip" href="#" data-original-title="Open Folder" id="openFolder"><img src="themes/default/images/helios/openfolder_icon.png"></a></div>
+		<div class="icon_images" style="margin-right:2px;"><a class="tooltiptop" title="" data-placement="bottom" data-toggle="tooltip" href="#" data-original-title="Copy Path" id="copyPath"><img src="themes/default/images/helios/copypath_icon.png" ></a></div>	
             
         <div class="code_anal">
         	{{#if userPermissions.manageTests}}

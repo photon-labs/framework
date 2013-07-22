@@ -64,6 +64,12 @@
 				"startdate" : "Start Date",
 				"widget" : "Widget",
 				"technology" : "Technology",
+				"selecttechnology" : "Select Technology",
+				"selectversion" : "Select Version",
+				"selectlayer" : "Select Layer",
+				"selectwidget" : "Select Widget",
+				"selectmodel" : "Select Model",
+				"selecttype" : "Select Type",
 				"dependency" : "Dependency",
 				"version" : "Version",
 				"description" : "Description",
@@ -107,6 +113,11 @@
 	"component" : {
 	  "label" : {
 	      "componenttest"  :  "Component Test"
+	  }
+	},
+	"integration" : {
+	  "label" : {
+	      "integrationtest"  :  "Integration Test"
 	  }
 	},
 	"testresult" : {
@@ -159,6 +170,7 @@
 		"label" : {
 			"stop" : "Stop",
 			"minifer" : "Minifer",
+			"minify" : "Minify",
 			"runagainstsource" : "Run Against Source",
 			"copypath" : "Copy Path",
 			"date" : "Date",
@@ -169,7 +181,17 @@
 			"download" : "Download",
 			"deploy" : "Deploy",
 			"generatebuild" : "Generate Build",
-			"restart" : "Restart"
+			"restart" : "Restart",
+			"ProgressMsg" : "Build in progress... Do not perform any action or refresh the page.",
+			"deleteConform" :"Are you sure to delete this?",
+			"run" : "Run",
+			"close" : "Close",
+			"browse" : "Browse",
+			"bNo" : "Build No",
+			"yes" : "Yes",
+			"no" : "No",
+			"kill" : "Kill Process",
+			"nodata" : "No Builds Available"
 		}
 	},
 	"application" : {

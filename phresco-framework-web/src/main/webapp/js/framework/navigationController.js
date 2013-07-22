@@ -174,7 +174,6 @@ define(["framework/base", "framework/animationProvider"], function() {
 			
 			push : function(view, bCheck, animationtype) {
 				var self = this;
-				
 				//Remove loading screen
 				commonVariables.loadingScreen.removeLoading();
 				
@@ -190,7 +189,7 @@ define(["framework/base", "framework/animationProvider"], function() {
 				
 				view.doMore = function(element) {
 					if(bCheck) {
-
+						
 						var animationProviderMain = new Clazz.AnimationProvider({
 							isNative: self.isNative,
 							container: newDiv
@@ -212,7 +211,8 @@ define(["framework/base", "framework/animationProvider"], function() {
 											}
 										});
 									}
-									commonVariables.loadingScreen.removeLoading();
+									if(commonVariables.ajaxXhr == null || commonVariables.ajaxXhr.readyState == 4)
+										commonVariables.loadingScreen.removeLoading();
 									self.loadingActive = false;
 								//});
 							});
@@ -242,14 +242,16 @@ define(["framework/base", "framework/animationProvider"], function() {
 								}
 							});
 						}
-						commonVariables.loadingScreen.removeLoading();
+						if(commonVariables.ajaxXhr == null || commonVariables.ajaxXhr.readyState == 4)
+							commonVariables.loadingScreen.removeLoading();
+							
 						self.loadingActive = false;
 					}
 					self.loadingActive = false;
 				};
 				
 				if(bCheck && self.stack.length > 0){
-				
+
 					if(animationtype !== undefined && animationtype !== null && animationtype === true){
 						self.setAnimation(self.cancelTransitionType);
 					}

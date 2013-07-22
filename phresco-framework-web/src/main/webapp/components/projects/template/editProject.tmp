@@ -10,18 +10,11 @@
                     <td data-i18n="project.create.label.code"><sup>*</sup></td>
                     <td><input type="text" value="{{projectCode}}" name="projectcode" maxlength="30" title="30 Characters only" placeholder="Project Code" disabled/></td>
                     <td data-i18n="project.create.label.version"></td>
-                    <td><input type="text" name="projectversion" maxlength="20" title="20 Characters only" value="{{version}}" disabled/></td>
+                    <td><input type="text" name="projectversion" maxlength="20" title="20 Characters only" value="{{version}}"/></td>
                     <td data-i18n="project.create.label.description"></td>                              
                     <td rowspan="2"><textarea class="popuptextarea" name="projectdescription"  maxlength="150" title="150 Characters only" placeholder="Description" disabled >{{description}}</textarea></td>
                 </tr>
                 <tr>
-					<td colspan="2">
-                        <select class="custon_dropdown" disabled>
-                            <option>Pre Built</option>
-                            <option>Custom</option>
-                        </select>
-                    </td>
-					
                     <td data-i18n="project.create.label.startdate" name="startdate-lbl"></td>
                     <td class="startdate" name="startdateholder"><input name="startdate" type="text" value="{{startDate}}" id="startDate" disabled><span class="add-on"><img src="themes/default/images/helios/cal_icon.png" border="0" alt=""></span></td>
                     <td data-i18n="project.create.label.enddate" name="enddate-lbl"></td>
@@ -41,8 +34,9 @@
                 </tr>
 			{{/editProject}}
                <tr id="appLayaer" class="proj_title">
-                  <td colspan="4">{{applicationlayerData.name}}</td>
-                  <td colspan="4"><img name="close" border="0" alt=""><img name="close" id="appLayaer" src="themes/default/images/helios/close_icon.png"  border="0" alt=""></td>
+				  <td colspan="3">{{applicationlayerData.name}}</td>
+                  <td colspan="3"><span class="errmsg1"></span></td>
+                  <td colspan="2"><img name="close" id="appLayaer" src="themes/default/images/helios/close_icon.png"  border="0" alt=""></td>
                 </tr>
                 <tr class="applnLayer" id="applnlayer" key="displayed">
 						<td colspan="8" class="appln">
@@ -62,7 +56,7 @@
 										<td class="applnappcode"><input type="text" id="appcode" maxlength="30" title="30 Characters only" class="appln-appcode"></td>
 										<td name="technology" class="technology">
 											<select name="appln_technology" class="appln_technology">
-											   <option>Select Technology</option>
+											   <option value="Select Technology" data-i18n="project.create.label.selecttechnology"></option>
 											   {{#each applicationlayerData.techGroups}}
 													{{#each techInfos}}
 													  <option value="{{id}}">{{name}}</option>
@@ -72,7 +66,7 @@
 										 </td>
 										 <td colspan="3" name="version" class="version">
 											<select name="appln_version" class="appln_version">
-											   <option>Select Version</option>
+											   <option value="Select Version" data-i18n="project.create.label.selectversion"></option>
 											</select>
 										 </td>
 										 <td colspan="2" class="appdependencyTd">
@@ -89,8 +83,9 @@
 						</td>
 					</tr>
 					 <tr id="webLayers" class="proj_title">
-                      <td colspan="4">{{weblayerData.name}}</td>
-                      <td colspan="4"><img name="close" id="webLayers" src="themes/default/images/helios/close_icon.png" border="0" alt=""></td>
+					  <td colspan="3">{{weblayerData.name}}</td>
+                      <td colspan="3"><span class="errmsg2"></span></td>
+                      <td colspan="2"><img name="close" id="webLayers" src="themes/default/images/helios/close_icon.png" border="0" alt=""></td>
                      </tr>
                      <tr class="webLayer" id="WebLayer" key="displayed">
 						  <td colspan="8" class="WebLayer">
@@ -110,7 +105,7 @@
 										<td class="webappcode"><input type="text" id="webappcode" maxlength="30" title="30 Characters only" class="web-appcode"></td>
 										<td name="web" class="web">
 											<select name="weblayer" class="weblayer">
-												<option>Select Layer</option>
+												<option value="Select Layer" data-i18n="project.create.label.selectlayer"></option>
 												{{#each weblayerData.techGroups}}
 													<option value="{{id}}">{{name}}</option>
 												{{/each}}
@@ -118,12 +113,12 @@
 										 </td>
 										 <td name="widget" class="widget">
 											<select name="web_widget" class="web_widget">
-												<option>Select Widget</option>
+												<option value="Select Widget" data-i18n="project.create.label.selectwidget"></option>
 											 </select>
 										 </td>
 										 <td name="widgetversion" class="widgetversion">
 											<select name="web_version" class="web_version">
-												<option>Select Version</option>
+												<option value="Select Version" data-i18n="project.create.label.selectversion"></option>
 											</select>
 										 </td>
 										 <td class="webdependencyTd">
@@ -140,8 +135,9 @@
                         </td>	
                       </tr>
 					  <tr id="mobLayers" class="proj_title">
-                      <td colspan="4">{{mobilelayerData.name}}</td>
-                      <td colspan="4"><img name="close" id="mobLayers" src="themes/default/images/helios/close_icon.png"  border="0" alt=""></td>
+						  <td colspan="3">{{mobilelayerData.name}}</td>
+						  <td colspan="3"><span class="errmsg3"></span></td>
+						  <td colspan="2"><img name="close" id="mobLayers" src="themes/default/images/helios/close_icon.png"  border="0" alt=""></td>
                      </tr>
                      <tr class="mobLayer" id="MobLayer" key="displayed">
                       	<td colspan="8" class="mob">
@@ -161,7 +157,7 @@
 										<td class="mobileappcode"><input type="text" id="mobileappcode" maxlength="30" title="30 Characters only" class="mobile-appcode"></td>
 										<td name="mobile" class="mobile">
 											<select name="mobile_layer" class="mobile_layer">
-											   <option>Select Model</option>
+											   <option value="Select Model" data-i18n="project.create.label.selectmodel"></option>
 											   {{#each mobilelayerData.techGroups}}
 												  <option value="{{id}}">{{name}}</option>
 											   {{/each}}
@@ -169,12 +165,12 @@
 										 </td>
 										 <td name="types" class="types">
 											<select name="mobile_types" class="mobile_types">
-											   <option>Select Type</option>
+											   <option value="Select Type" data-i18n="project.create.label.selecttype"></option>
 											</select>
 										 </td>
 										 <td colspan="2" name="mobileversion" class="mobileversion">
 											<select name="mobile_version" class="mobile_version">
-											   <option>Select Version</option>
+											   <option value="Select Version" data-i18n="project.create.label.selectversion"></option>
 											</select>
 										 </td>
 										 <td>

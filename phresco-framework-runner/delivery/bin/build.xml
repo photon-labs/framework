@@ -33,7 +33,7 @@
 	<property name="phresco.file.server" value="PhrescoFileServer"/>
     <property file = "${phresco.home}/conf/service.properties"/>
     <property file = "${phresco.home}/bin/framework.properties"/>
-	<property name="phresco.url" value="http://localhost:${framework.http.port}/${framework.context}"/>
+	<property name="phresco.url" value="http://localhost:${framework.http.port}"/>
     <property name="waxsim.home" value="${phresco.home}/workspace/tools/waxsim"/>
 	
 	<taskdef resource="net/sf/antcontrib/antcontrib.properties">
@@ -194,6 +194,7 @@
 			<jvmarg value="-Xmx1024m"/>
 			<jvmarg value="-XX:MaxPermSize=256M"/>
             <jvmarg value="-Dtomcat.keystore.pass=photonphresco"/>
+            <jvmarg value="-Dframework.context=${framework.context}"/>
 			
 			<classpath>
 			  <fileset dir="${tomcat.home}/bin">

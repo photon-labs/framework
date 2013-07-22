@@ -16,6 +16,7 @@ public interface ClientIdentifyFilterConstants {
 	public String THEME_KEY="customertheme";
 	public String LOGO_KEY="customerlogo";
 	public String STATUS_MESSAGE="statusmsg";
+	public String CUSTOMER_NAME_KEY="customername";
 	
 	public String INVALID_CUSTOMER="Invalid Customer";
 	public String NO_IMAGE="No Customer Image Obatined";

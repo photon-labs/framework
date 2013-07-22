@@ -102,9 +102,25 @@ define(["navigation/listener/navigationListener"], function() {
 			});
 			
 			$("#importApp").click(function() {
-				var currentPrjName = "";
+				var currentPrjName = "";				
 				$('#importUserName').attr('readonly', true);
 				$('#importPassword').attr('readonly', true);
+				$("#importRepourl").removeClass("errormessage");
+				$("#importUserName").removeClass("errormessage");
+				$("#importPassword").removeClass("errormessage");
+				$("#revision").removeClass("errormessage");
+				$("#testRepoUrl").removeClass("errormessage");
+				$("#testImportUserName").removeClass("errormessage");
+				$("#testImportPassword").removeClass("errormessage");
+				self.navigationListener.validateTextBox($("#importRepourl"),"");
+				self.navigationListener.validateTextBox($("#importUserName"),"");
+				self.navigationListener.validateTextBox($("#importPassword"),"");
+				self.navigationListener.validateTextBox($("#revision"),"");
+				self.navigationListener.validateTextBox($("#testRepoUrl"),"");
+				self.navigationListener.validateTextBox($("#testImportUserName"),"");
+				self.navigationListener.validateTextBox($("#testImportPassword"),"");
+				self.navigationListener.validateTextBox($("#testRepoUrl"),"");
+
 				self.opencc(this, "project_list_import", currentPrjName);
 			});
 			

@@ -1,6 +1,6 @@
 define(["features/features"], function(Features) {
 	return {
-		runTests: function () {
+		runTests: function (runOtherTests) {
 			var self = this;
 			module("Features.js;Features");
 			commonVariables.techId = "tech-html5-jquery-mobile-widget";
@@ -43,48 +43,48 @@ define(["features/features"], function(Features) {
 				setTimeout(function() {
 					start();
 					equal($(commonVariables.contentPlaceholder).find("li[type = FEATURE]").attr("name"), "Pagination", "Feature list Module service Tested");
-					self.FeatureModulelistfailureVerification();
+					self.FeatureModulelistfailureVerification(runOtherTests);
 				}, 2000);
 			});
 		},
 		
-		FeatureModulelistfailureVerification : function (){
+		FeatureModulelistfailureVerification : function (runOtherTests){
 			var self = this;
 			asyncTest("Test - Feature javascript list Failure service Tested", function() {
 				commonVariables.navListener.onMytabEvent("featurelist");				
 				setTimeout(function() {
 					start();
 					notEqual($(commonVariables.contentPlaceholder).find("li[type = FEATURE]").attr("name"), "Page", "Feature list Module failure service Tested");
-					self.FeatureJavascriptlistVerification();
+					self.FeatureJavascriptlistVerification(runOtherTests);
 				}, 2000);
 			});
 		},
 		
 		
-		FeatureJavascriptlistVerification : function (){
+		FeatureJavascriptlistVerification : function (runOtherTests){
 			var self = this;
 			asyncTest("Test - Feature javascript list service Tested", function() {
 				commonVariables.navListener.onMytabEvent("featurelist");				
 				setTimeout(function() {
 					start();
 					equal($(commonVariables.contentPlaceholder).find("li[type = JAVASCRIPT]").attr("name"), "jQuery_UI", "Feature javascript list service Tested");
-					self.FeatureJavascriptlistfailureVerification();
+					self.FeatureJavascriptlistfailureVerification(runOtherTests);
 				}, 2000);
 			});
 		},
 		
-		FeatureJavascriptlistfailureVerification : function (){
+		FeatureJavascriptlistfailureVerification : function (runOtherTests){
 			var self = this;
 			asyncTest("Test - Feature javascript list Failure service Tested", function() {
 				commonVariables.navListener.onMytabEvent("featurelist");				
 				setTimeout(function() {
 					start();
 					notEqual($(commonVariables.contentPlaceholder).find("li[type = JAVASCRIPT]").attr("name"), "jQuery", "Feature javascript list Failure service Tested");
-					self.FeatureModuleSearchVerification();
+					self.FeatureModuleSearchVerification(runOtherTests);
 				}, 2000);
 			});
 		},
-		FeatureModuleSearchVerification : function (){
+		FeatureModuleSearchVerification : function (runOtherTests){
 			var self = this;
 			asyncTest("Test - Feature Module Search Verification Tested", function() {
 				commonVariables.navListener.onMytabEvent("featurelist");
@@ -93,11 +93,11 @@ define(["features/features"], function(Features) {
 				setTimeout(function() {
 					start();
 					equal($(commonVariables.contentPlaceholder).find("li[type = FEATURE]").attr("name"), "Pagination", "Feature Module Search Verification Tested");
-					self.FeatureModuleSearchFailurVerification();
+					self.FeatureModuleSearchFailurVerification(runOtherTests);
 				}, 2000);
 			});
 		},
-		FeatureModuleSearchFailurVerification : function (){
+		FeatureModuleSearchFailurVerification : function (runOtherTests){
 			var self = this;
 			asyncTest("Test - Feature Module Search failure Verification Tested", function() {
 				commonVariables.navListener.onMytabEvent("featurelist");
@@ -106,11 +106,11 @@ define(["features/features"], function(Features) {
 				setTimeout(function() {
 					start();
 					equal($(commonVariables.contentPlaceholder).find("#norecord1").text(), "No records", "Feature Module Search Failure Verification Tested");
-					self.FeatureJavascriptSearchVerification();
+					self.FeatureJavascriptSearchVerification(runOtherTests);
 				}, 2000);
 			});
 		},
-		FeatureJavascriptSearchVerification : function (){
+		FeatureJavascriptSearchVerification : function (runOtherTests){
 			var self = this;
 			asyncTest("Test - Feature Javascript Libraries Search Verification Tested", function() {
 				commonVariables.navListener.onMytabEvent("featurelist");
@@ -119,11 +119,11 @@ define(["features/features"], function(Features) {
 				setTimeout(function() {
 					start();
 					equal($(commonVariables.contentPlaceholder).find("li[type = JAVASCRIPT]").attr("name"), "jQuery_UI", "Javascript Libraries Search Verification Tested");
-					self.FeatureModuleJavascriptFailurVerification();
+					self.FeatureModuleJavascriptFailurVerification(runOtherTests);
 				}, 2000);
 			});
 		},
-		FeatureModuleJavascriptFailurVerification : function (){
+		FeatureModuleJavascriptFailurVerification : function (runOtherTests){
 			var self = this;
 			asyncTest("Test - Javascript Libraries Search failure Verification Tested", function() {
 				commonVariables.navListener.onMytabEvent("featurelist");
@@ -132,11 +132,11 @@ define(["features/features"], function(Features) {
 				setTimeout(function() {
 					start();
 					equal($(commonVariables.contentPlaceholder).find("#norecord2").text(), "No records", " Javascript Libraries Search Failure Verification Tested");
-					self.FeatureModuleDescriptionVerification();
+					self.FeatureModuleDescriptionVerification(runOtherTests);
 				}, 2000);
 			});
 		},
-		FeatureModuleDescriptionVerification : function (){
+		FeatureModuleDescriptionVerification : function (runOtherTests){
 			var self = this;
 			asyncTest("Test - Module Description Service Verification Tested", function() {
 				$.mockjax({
@@ -172,11 +172,11 @@ define(["features/features"], function(Features) {
 					start();					
 					var desc = $(commonVariables.contentPlaceholder).find(".features_desc_content").text();
 					equal(desc, "JDOM is a way to represent an XML document for easy and efficient reading, manipulation, and writing.", " Module Description Service Verification Tested");
-					self.FeatureUpdateVerification();
+					self.FeatureUpdateVerification(runOtherTests);
 				}, 2000);
 			});
 		},
-		FeatureUpdateVerification : function (){
+		FeatureUpdateVerification : function (runOtherTests){
 			var self = this;
 			asyncTest("Test - Module Update Service Verification Tested", function() {
 				$.mockjax({
@@ -207,12 +207,12 @@ define(["features/features"], function(Features) {
 					//var successmsg = $(".popsuccess").text();
 					var selectoption = $(commonVariables.contentPlaceholder).find("#feature_c2c74b7d-a6b6-4e61-b0e0-a44db1dfb3de").attr("class");
 					equal(selectoption, "switch switchOn", " Select Service Verification Tested");
-					self.FeatureSelectVerification();
+					self.FeatureSelectVerification(runOtherTests);
 				}, 2000);
 			});
 		},
 		
-		FeatureSelectVerification : function (){
+		FeatureSelectVerification : function (runOtherTests){
 			var self = this;
 			asyncTest("Test - Select Service Verification Tested", function() {
 				$.mockjax({
@@ -232,11 +232,11 @@ define(["features/features"], function(Features) {
 					start();					
 					var selectoption = $(commonVariables.contentPlaceholder).find("#feature_c2c74b7d-a6b6-4e61-b0e0-a44db1dfb3de").attr("class");
 					equal(selectoption, "switch switchOn", " Select Service Verification Tested");
-					self.FeatureSelectFailureVerification();
+					self.FeatureSelectFailureVerification(runOtherTests);
 				}, 2000);
 			});
 		},
-		FeatureSelectFailureVerification : function (){
+		FeatureSelectFailureVerification : function (runOtherTests){
 			var self = this;
 			asyncTest("Test - UnSelect Service option Verification Tested", function() {
 				$.mockjax({
@@ -256,6 +256,7 @@ define(["features/features"], function(Features) {
 					start();	
 					var unselectoption = $(commonVariables.contentPlaceholder).find("#feature_jslib_jquery_ui").attr("class");
 					equal(unselectoption, "switch switchOff", "UnSelect Service option Verification Tested");
+					runOtherTests();
 				}, 2000);
 			});
 		}

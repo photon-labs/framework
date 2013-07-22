@@ -110,7 +110,9 @@ define(["framework/widgetWithTemplate", "dynamicPage/api/dynamicPageAPI", "commo
                     	self.constructMapControls(parameter, whereToRender);
                     } else if (type === "DynamicPageParameter") {
                         self.getDynamicTemplate(parameter, whereToRender);
-                    } 
+                    } else if (type === "FileType") {
+                        self.constructFileBrowseCtrl(parameter, whereToRender, goal);
+                    }
                 });
                 whereToRender.append('<li></li>');
                 if (!self.isBlank(btnObj)) {
@@ -128,26 +130,31 @@ define(["framework/widgetWithTemplate", "dynamicPage/api/dynamicPageAPI", "commo
         },
         
         /********************* Controls construction methods starts**********************************/
-        getOptionalAttr : function(parameter, optionalAttrs) {
-            if(parameter.show === 'false' || parameter.type === "Hidden"){
-                        optionalAttrs.show = ' style="display:none;"';
-            } else {
-                optionalAttrs.show = "";
-            }
-            
-            if(parameter.required === 'true'){
-                optionalAttrs.required = "<sup>*</sup>";
-            } else {
-                optionalAttrs.required = "";
-            }
+        constructFileBrowseCtrl : function (parameter, whereToRender, goal) {
+            var self = this;
+            whereToRender.append('<li id="'+parameter.key+'Li" class="ctrl"><div id="'+parameter.key+'" class="'+parameter.key+'-file-uploader"><noscript><p>Please enable JavaScript to use file uploader.</p></noscript></div></li>');
+            self.createFileUploader(parameter, goal); 
+        },
 
-            if(parameter.editable === 'false'){
-                optionalAttrs.editable = " readonly=readonly";
-            } else {
-                optionalAttrs.editable = "";
+        createFileUploader : function (parameter, goal) {
+            var self = this, appDirName, dependency = "";
+            appDirName = self.dynamicPageAPI.localVal.getSession("appDirName");
+            if (!self.isBlank(parameter.dependency)) {
+                dependency = parameter.dependency;
             }
-
-            return optionalAttrs;
+            var uploader = new qq.FileUploader({
+                element: document.getElementById(parameter.key),
+                action: commonVariables.webserviceurl + commonVariables.paramaterContext + "/dynamicUpload",
+                actionType : "dynamicUpload",
+                appDirName : appDirName,
+                multiple: false,
+                key : parameter.key,
+                buttonLabel: parameter.name.value[0].value,
+                dependency: dependency,
+                goal: goal, 
+                dynamicPageObject: self,
+                debug: true
+            });
         },
 
         constructTxtCtrl : function(parameter, columnClass, whereToRender) {
@@ -320,7 +327,28 @@ define(["framework/widgetWithTemplate", "dynamicPage/api/dynamicPageAPI", "commo
         },
         
         /********************* Controls construction methods ends**********************************/
-        
+        getOptionalAttr : function(parameter, optionalAttrs) {
+            if(parameter.show === 'false' || parameter.type === "Hidden"){
+                        optionalAttrs.show = ' style="display:none;"';
+            } else {
+                optionalAttrs.show = "";
+            }
+            
+            if(parameter.required === 'true'){
+                optionalAttrs.required = "<sup>*</sup>";
+            } else {
+                optionalAttrs.required = "";
+            }
+
+            if(parameter.editable === 'false'){
+                optionalAttrs.editable = " readonly=readonly";
+            } else {
+                optionalAttrs.editable = "";
+            }
+
+            return optionalAttrs;
+        },
+
         bindMapCtrlClickEvents : function() {
         	var self = this;
         	$('.addBrowserInfo').unbind('click');
@@ -434,12 +462,14 @@ define(["framework/widgetWithTemplate", "dynamicPage/api/dynamicPageAPI", "commo
         },
         
         applyEditableComboBox : function (obj) {
-            obj.customComboBox({
-                tipText : "Type or select from the list",
-                allowed : /[A-Za-z0-9\$\._\-\s]/,
-                notallowed : /[\<\>\$]/,
-                index : 'first'
-            });
+			if (obj !== undefined && obj !== null && obj.length > 0) {
+				obj.customComboBox({
+					tipText : "Type or select from the list",
+					allowed : /[A-Za-z0-9\$\._\-\s]/,
+					notallowed : /[\<\>\$]/,
+					index : 'first'
+				});
+			}
         },
 
         //to bind events for dynamic controls
@@ -925,6 +955,7 @@ define(["framework/widgetWithTemplate", "dynamicPage/api/dynamicPageAPI", "commo
             var self = this, key = btnObj.parent().find('.headerKey').val(), value = btnObj.parent().find('.headerValue').val();
             if (!self.isBlank(key) && !self.isBlank(value)) {
                 var constructHeaders = '<div class="add_remove_test headers">' + key + ' : '+ value+'<input type="hidden" name="headerKey" value="'+key+'"> <input type="hidden" name="headerValue" value="'+value+'"> <img class="removeHeaders" src="themes/default/images/helios/remove_test.png"></div>';
+                btnObj.closest('tbody').find(".headerContent").show();
                 btnObj.closest('tbody').find(".add_test").append(constructHeaders);
                 $(".headerKey").val("");
                 $(".headerValue").val("");
@@ -937,6 +968,10 @@ define(["framework/widgetWithTemplate", "dynamicPage/api/dynamicPageAPI", "commo
         },
 
         removeHeaders : function (obj) {
+            var headerCount = obj.parent().parent().find('.headers').size();
+            if (headerCount - 1 === 0) {
+                obj.closest('.headerContent').hide();
+            }
             obj.parent().remove();
         },
 
