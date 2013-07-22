@@ -386,12 +386,6 @@ public class ProjectServiceTest extends LoginServiceTest {
 		databases.add(databaseArtifactGroupInfos);
 		info.setSelectedDatabases(databases);
 
-		// webService
-
-		List<String> webServices = new ArrayList<String>();
-		webServices.add("restjson");
-		info.setSelectedWebservices(webServices);
-
 		return info;
 	}
 

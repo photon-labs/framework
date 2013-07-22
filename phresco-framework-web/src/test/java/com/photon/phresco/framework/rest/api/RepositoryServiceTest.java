@@ -28,6 +28,7 @@ import org.junit.Test;
 
 import com.photon.phresco.exception.PhrescoException;
 import com.photon.phresco.framework.model.RepoDetail;
+import com.photon.phresco.util.Utility;
 
 public class RepositoryServiceTest extends RestBaseTest  {
 	
@@ -164,7 +165,7 @@ public class RepositoryServiceTest extends RestBaseTest  {
 		repodetail.setCommitMessage("[artf710705]testcommit");
 		repodetail.setRepoUrl("https://github.com/santhosh-ja/TestGit.git");
 		
-		repodetail.setCommitableFiles(Arrays.asList("C:\\Documents and Settings\\saravanan_va\\workspace\\projects\\" + "TestGitProject" +"\\pom.xml"));
+		repodetail.setCommitableFiles(Arrays.asList( Utility.getProjectHome() +"projects\\" + "TestGitProject" +"\\pom.xml"));
 		Response commitImportedProject = repositoryservice.commitImportedProject(repodetail, "TestGitProject");
 		Assert.assertEquals(200,commitImportedProject.getStatus());
 	}
