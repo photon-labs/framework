@@ -121,6 +121,13 @@
             <version>${httpclient.version}</version>
         </dependency>
         
+                
+        <dependency>
+            <groupId>org.apache.httpcomponents</groupId>
+            <artifactId>httpmime</artifactId>
+            <version>${httpclient.version}</version>
+        </dependency>
+        
         <dependency>
             <groupId>com.itextpdf</groupId>
             <artifactId>itextpdf</artifactId>
@@ -139,6 +146,12 @@
             <version>0.9.0</version>
         </dependency>
         
+        <dependency>
+			<groupId>org.json</groupId>
+			<artifactId>json</artifactId>
+			<version>20090211</version>
+		</dependency>
+		
     </dependencies>
     
     <build>

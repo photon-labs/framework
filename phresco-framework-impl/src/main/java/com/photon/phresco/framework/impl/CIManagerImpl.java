@@ -36,6 +36,7 @@ import java.net.InetAddress;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
+import java.nio.charset.Charset;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.text.DateFormat;
@@ -52,16 +53,30 @@ import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.http.HttpResponse;
+import org.apache.http.NameValuePair;
+import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.CookieStore;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.ResponseHandler;
 import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.client.protocol.ClientContext;
+import org.apache.http.entity.mime.HttpMultipartMode;
+import org.apache.http.entity.mime.MultipartEntity;
+import org.apache.http.entity.mime.content.StringBody;
+import org.apache.http.impl.client.BasicCookieStore;
 import org.apache.http.impl.client.BasicResponseHandler;
 import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.protocol.BasicHttpContext;
+import org.apache.http.protocol.HttpContext;
 import org.apache.log4j.Logger;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.plexus.util.FileUtils;
 import org.jdom.JDOMException;
+import org.json.JSONObject;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
@@ -87,7 +102,8 @@ import com.photon.phresco.util.Constants;
 import com.photon.phresco.util.Utility;
 import com.sun.jersey.api.client.ClientHandlerException;
 import com.trilead.ssh2.crypto.Base64;
-
+import org.apache.http.message.BasicNameValuePair;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
 
 public class CIManagerImpl implements CIManager, FrameworkConstants {
 
@@ -1623,4 +1639,247 @@ public class CIManagerImpl implements CIManager, FrameworkConstants {
 		}
     }
 
+	@Override
+	public boolean setSVNCredentials(String submitUrl, String svnUrl, String username, String password) throws PhrescoException {
+		if (debugEnabled) {
+			S_LOGGER.debug("Entering Method CIManagerImpl.setSVNCredentials()");
+		}
+		try {
+			HttpClient client = new DefaultHttpClient();
+//			String uri = "http://localhost:3579/ci/scm/SubversionSCM/postCredential";
+			HttpPost post = new HttpPost(submitUrl);
+			HttpContext httpContext = new BasicHttpContext();
+			BasicCookieStore cookieStore =  new BasicCookieStore();
+			httpContext.setAttribute(ClientContext.COOKIE_STORE, cookieStore);
+			
+			String json = "";
+			String boundary="---------------------------28244134517666";
+			MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE, boundary, Charset.forName("UTF-8"));
+			reqEntity.addPart("url", new StringBody(svnUrl));
+			reqEntity.addPart("kind", new StringBody("password"));
+			reqEntity.addPart("username1", new StringBody(username));
+			reqEntity.addPart("password1", new StringBody(password));
+			reqEntity.addPart("username2", new StringBody(""));
+			reqEntity.addPart("password2", new StringBody(""));
+			reqEntity.addPart("privateKey", new StringBody("Content-Type: application/octet-stream"));
+			reqEntity.addPart("certificate", new StringBody("Content-Type: application/octet-stream"));
+			reqEntity.addPart("password3", new StringBody(""));
+			reqEntity.addPart("json", new StringBody(json));
+			reqEntity.addPart("Submit", new StringBody("OK"));
+  
+			post.setEntity(reqEntity);
+			HttpResponse response = client.execute(post, httpContext);
+			int statusCode = response.getStatusLine().getStatusCode();
+			System.out.println(statusCode);
+			// 302 success
+			if (302 == statusCode) {
+				return true;
+			}
+		} catch (Exception e) {
+			if (debugEnabled) {
+				S_LOGGER.error("Entered into the catch block of CIManagerImpl.setSVNCredentials" + e.getLocalizedMessage());
+			}
+       		throw new PhrescoException(e);
+		}
+		return false;
+	}
+	
+	public boolean setGlobalConfiguration(String jenkinsUrl, String submitUrl, String confluenceUrl, String confluenceUsername, String confluencePassword, String emailAddress, String emailPassword) throws PhrescoException {
+		if (debugEnabled) {
+			S_LOGGER.debug("Entering Method CIManagerImpl.setGlobalConfiguration()");
+		}
+		try {
+			// TODO : jenkinsUrl should end with /
+			HttpClient client = new DefaultHttpClient();
+//		    String uri = "http://localhost:3579/ci/configSubmit";
+			HttpPost post = new HttpPost(submitUrl);
+		    HttpContext httpContext = new BasicHttpContext();
+		    CookieStore cookieStore =  new BasicCookieStore();
+		    httpContext.setAttribute(ClientContext.COOKIE_STORE, cookieStore);
+
+		    String globalConfig = "/ciGlobalConfig.json";
+			InputStream resourceAsStream = CIManagerImpl.class.getResourceAsStream(globalConfig);
+			String json = IOUtils.toString(resourceAsStream);
+			
+			List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
+			post.setHeader("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8");
+			JSONObject jsonObj = new JSONObject(json);
+			
+			// Email address
+			if(StringUtils.isNotEmpty(emailAddress)) {
+				String smtpServer="smtp.gmail.com";
+				JSONObject mailConfiguration = new JSONObject();
+				// Mail config
+//				String string = "http://localhost:3579/ci/"; jenkins url
+				mailConfiguration.put("url", jenkinsUrl);
+				mailConfiguration.put("smtpServer", smtpServer);
+				mailConfiguration.put("defaultSuffix", "");
+				mailConfiguration.put("adminAddress", emailAddress); //Sender E-mail Address
+				// UseSMTPAuth
+				JSONObject emailCrdential = new JSONObject();
+				emailCrdential.put("smtpAuthUserName", emailAddress); //User Name
+				emailCrdential.put("smtpAuthPassword", emailPassword);
+				mailConfiguration.put("useSMTPAuth", emailCrdential);
+				// Basic
+				mailConfiguration.put("useSsl", true);
+				mailConfiguration.put("smtpPort", "465");
+				mailConfiguration.put("charset", "UTF-8");
+				  
+				jsonObj.put("hudson-tasks-Mailer", mailConfiguration);
+				nameValuePairs.add(new BasicNameValuePair("_.smtpServer", smtpServer));
+				nameValuePairs.add(new BasicNameValuePair("_.adminAddress", emailAddress));
+			}
+			
+		    // Confluence list need to be handled
+			if(StringUtils.isNotEmpty(confluenceUrl)) {
+				JSONObject confluenceConfig = new JSONObject();
+				confluenceConfig.put("url", confluenceUrl);
+				confluenceConfig.put("username", confluenceUsername);
+				confluenceConfig.put("password", confluencePassword);
+				
+				JSONObject confluenceSites = new JSONObject();
+				confluenceSites.put("sites", confluenceConfig); // here site is a array
+				System.out.println("json_obj_confluence >  " + confluenceSites.toString());
+				jsonObj.put("com-myyearbook-hudson-plugins-confluence-ConfluencePublisher", confluenceSites);
+				
+				// array
+				nameValuePairs.add(new BasicNameValuePair("_.url", confluenceUrl));
+				nameValuePairs.add(new BasicNameValuePair("_.username", confluenceUsername));
+				nameValuePairs.add(new BasicNameValuePair("_.password", confluencePassword));
+			}
+			
+			return postConfigData(jenkinsUrl, client, post, httpContext, nameValuePairs, jsonObj);
+		} catch (Exception e) {
+			if (debugEnabled) {
+				S_LOGGER.error("Entered into the catch block of CIManagerImpl.setGlobalConfiguration" + e.getLocalizedMessage());
+			}
+       		throw new PhrescoException(e);
+		}
+	}
+	
+	public boolean setGlobalConfiguration(String jenkinsUrl, String submitUrl, JSONObject confluenceObj, String emailAddress, String emailPassword) throws PhrescoException {
+		if (debugEnabled) {
+			S_LOGGER.debug("Entering Method CIManagerImpl.setGlobalConfiguration()");
+		}
+		try {
+			// TODO : jenkinsUrl should end with /
+			HttpClient client = new DefaultHttpClient();
+//		    String uri = "http://localhost:3579/ci/configSubmit";
+			HttpPost post = new HttpPost(submitUrl);
+		    HttpContext httpContext = new BasicHttpContext();
+		    CookieStore cookieStore =  new BasicCookieStore();
+		    httpContext.setAttribute(ClientContext.COOKIE_STORE, cookieStore);
+
+		    String globalConfig = "/ciGlobalConfig.json";
+			InputStream resourceAsStream = CIManagerImpl.class.getResourceAsStream(globalConfig);
+			String json = IOUtils.toString(resourceAsStream);
+			
+			List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
+			post.setHeader("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8");
+			JSONObject jsonObj = new JSONObject(json);
+			
+			// Email address
+			if(StringUtils.isNotEmpty(emailAddress)) {
+				String smtpServer="smtp.gmail.com";
+				JSONObject mailConfiguration = new JSONObject();
+				// Mail config
+//				String string = "http://localhost:3579/ci/"; jenkins url
+				mailConfiguration.put("url", jenkinsUrl);
+				mailConfiguration.put("smtpServer", smtpServer);
+				mailConfiguration.put("defaultSuffix", "");
+				mailConfiguration.put("adminAddress", emailAddress); //Sender E-mail Address
+				// UseSMTPAuth
+				JSONObject emailCrdential = new JSONObject();
+				emailCrdential.put("smtpAuthUserName", emailAddress); //User Name
+				emailCrdential.put("smtpAuthPassword", emailPassword);
+				mailConfiguration.put("useSMTPAuth", emailCrdential);
+				// Basic
+				mailConfiguration.put("useSsl", true);
+				mailConfiguration.put("smtpPort", "465");
+				mailConfiguration.put("charset", "UTF-8");
+				  
+				jsonObj.put("hudson-tasks-Mailer", mailConfiguration);
+				nameValuePairs.add(new BasicNameValuePair("_.smtpServer", smtpServer));
+				nameValuePairs.add(new BasicNameValuePair("_.adminAddress", emailAddress));
+			}
+			
+		    // Confluence list need to be handled
+			if(confluenceObj != null) {
+				JSONObject confluenceSites = new JSONObject();
+				confluenceSites.put("sites", confluenceObj); // here site is a array
+				System.out.println("json_obj_confluence >  " + confluenceSites.toString());
+				jsonObj.put("com-myyearbook-hudson-plugins-confluence-ConfluencePublisher", confluenceSites);
+			}
+			
+			return postConfigData(jenkinsUrl, client, post, httpContext, nameValuePairs, jsonObj);
+		} catch (Exception e) {
+			if (debugEnabled) {
+				S_LOGGER.error("Entered into the catch block of CIManagerImpl.setGlobalConfiguration" + e.getLocalizedMessage());
+			}
+       		throw new PhrescoException(e);
+		}
+	}
+
+	private boolean postConfigData(String jenkinsUrl, HttpClient client, HttpPost post, HttpContext httpContext, List<NameValuePair> nameValuePairs, JSONObject jsonObj) throws Exception {
+		// Default values
+		nameValuePairs.add(new BasicNameValuePair("_.rawWorkspaceDir","${JENKINS_HOME}/workspace/${ITEM_FULLNAME}"));
+		nameValuePairs.add(new BasicNameValuePair("_.rawBuildsDir","${ITEM_ROOTDIR}/builds"));
+		//system_message
+		nameValuePairs.add(new BasicNameValuePair("_.numExecutors","2"));
+		nameValuePairs.add(new BasicNameValuePair("_.quietPeriod","5"));
+		nameValuePairs.add(new BasicNameValuePair("_.scmCheckoutRetryCount","0"));
+		nameValuePairs.add(new BasicNameValuePair("slaveAgentPortType","random"));
+		nameValuePairs.add(new BasicNameValuePair("stapler-class","hudson.markup.RawHtmlMarkupFormatter"));
+		nameValuePairs.add(new BasicNameValuePair("stapler-class","hudson.plugins.collabnet.auth.CollabNetSecurityRealm"));
+		// collabnet url
+		nameValuePairs.add(new BasicNameValuePair("_.enableSSOAuthFromCTF","on"));
+		nameValuePairs.add(new BasicNameValuePair("_.enableSSOAuthToCTF","on"));
+		nameValuePairs.add(new BasicNameValuePair("stapler-class","hudson.security.LegacySecurityRealm"));
+		nameValuePairs.add(new BasicNameValuePair("stapler-class","hudson.security.HudsonPrivateSecurityRealm"));
+		nameValuePairs.add(new BasicNameValuePair("privateRealm.allowsSignup","on"));
+		nameValuePairs.add(new BasicNameValuePair("stapler-class","hudson.security.LDAPSecurityRealm"));
+		//ldap.server
+		nameValuePairs.add(new BasicNameValuePair("authorization","0"));
+		nameValuePairs.add(new BasicNameValuePair("stapler-class","hudson.security.AuthorizationStrategy$Unsecured"));
+		nameValuePairs.add(new BasicNameValuePair("stapler-class","hudson.plugins.collabnet.auth.CNAuthorizationStrategy"));
+		nameValuePairs.add(new BasicNameValuePair("_.authCacheTimeoutMin","5"));
+		nameValuePairs.add(new BasicNameValuePair("stapler-class","hudson.security.LegacyAuthorizationStrategy"));
+		nameValuePairs.add(new BasicNameValuePair("stapler-class","hudson.security.FullControlOnceLoggedInAuthorizationStrategy"));
+		nameValuePairs.add(new BasicNameValuePair("stapler-class","hudson.security.GlobalMatrixAuthorizationStrategy"));
+		nameValuePairs.add(new BasicNameValuePair("stapler-class","hudson.security.ProjectMatrixAuthorizationStrategy"));
+		nameValuePairs.add(new BasicNameValuePair("stapler-class","hudson.security.csrf.DefaultCrumbIssuer"));
+		nameValuePairs.add(new BasicNameValuePair("_.name","JAVA_HOME"));
+		nameValuePairs.add(new BasicNameValuePair("_.home","${JAVA_HOME}"));
+		nameValuePairs.add(new BasicNameValuePair("stapler-class-bag","true"));
+		nameValuePairs.add(new BasicNameValuePair("_.name","Default"));
+		//	nameValuePairs.add(new BasicNameValuePair("_.home","git.exe")); // git home
+		nameValuePairs.add(new BasicNameValuePair("_.home","git"));
+		nameValuePairs.add(new BasicNameValuePair("stapler-class-bag","true"));
+		nameValuePairs.add(new BasicNameValuePair("_.name","MAVEN_HOME"));
+		nameValuePairs.add(new BasicNameValuePair("_.home","${M2_HOME}"));
+		nameValuePairs.add(new BasicNameValuePair("stapler-class-bag","true"));
+		nameValuePairs.add(new BasicNameValuePair("_.usageStatisticsCollected","on"));
+		nameValuePairs.add(new BasicNameValuePair("svn.workspaceFormat","8"));
+		nameValuePairs.add(new BasicNameValuePair("svn.storeAuthToDisk","on"));
+		nameValuePairs.add(new BasicNameValuePair("ext_mailer_admin_address","address not configured yet <nobody>"));
+		nameValuePairs.add(new BasicNameValuePair("ext_mailer_hudson_url", jenkinsUrl)); //"http://localhost:3579/ci/"
+		nameValuePairs.add(new BasicNameValuePair("ext_mailer_default_content_type","text/plain"));
+		nameValuePairs.add(new BasicNameValuePair("ext_mailer_default_subject","$PROJECT_NAME - Build # $BUILD_NUMBER - $BUILD_STATUS!"));
+		nameValuePairs.add(new BasicNameValuePair("ext_mailer_default_body","$PROJECT_NAME - Build # $BUILD_NUMBER - $BUILD_STATUS:\nCheck console output at $BUILD_URL to view the results."));
+		nameValuePairs.add(new BasicNameValuePair("_.url", jenkinsUrl)); //"http://localhost:3579/ci/"
+		nameValuePairs.add(new BasicNameValuePair("_.charset","UTF-8"));
+		nameValuePairs.add(new BasicNameValuePair("url", jenkinsUrl + "github-webhook/")); //"http://localhost:3579/ci/github-webhook/"
+		nameValuePairs.add(new BasicNameValuePair("hookMode","none"));
+		nameValuePairs.add(new BasicNameValuePair("json", jsonObj.toString()));
+		nameValuePairs.add(new BasicNameValuePair("Submit", "Save"));
+
+		post.setEntity(new UrlEncodedFormEntity(nameValuePairs));
+		HttpResponse response = client.execute(post,httpContext);
+		int statusCode = response.getStatusLine().getStatusCode();
+		System.out.println(statusCode);
+		if (302 == statusCode) {
+			return true;
+		}
+		return false;
+	}
 }

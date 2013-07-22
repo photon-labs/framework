@@ -24,7 +24,7 @@ import com.phresco.pom.util.PomProcessor;
 
 public class ProjectModuleImpl implements DynamicParameter, Constants {
 
-	@Override
+	
 	public PossibleValues getValues(Map<String, Object> paramMap)
 			throws IOException, ParserConfigurationException, SAXException,
 			ConfigurationException, PhrescoException {
@@ -54,20 +54,23 @@ public class ProjectModuleImpl implements DynamicParameter, Constants {
     	try {
             StringBuilder builder = getPomPath(appDirName);
     		File pomPath = new File(builder.toString());
-    		PomProcessor processor = new PomProcessor(pomPath);
-    		Modules pomModule = processor.getPomModule();
-    		List<String> moduleList = new ArrayList<String>();
-    		if (pomModule != null) {
-    			List<String> modules = pomModule.getModule();
-    			for (String module : modules) {
-					String[] split = module.split("/");
-					if(split != null) {
-						module = split[0];
-					}
-					moduleList.add(module);
-				}
-    			return moduleList;
-    		}
+    		if(pomPath.exists()){
+    			PomProcessor processor = new PomProcessor(pomPath);
+        		Modules pomModule = processor.getPomModule();
+        		List<String> moduleList = new ArrayList<String>();
+        		if (pomModule != null) {
+        			List<String> modules = pomModule.getModule();
+        			for (String module : modules) {
+    					String[] split = module.split("/");
+    					if(split != null) {
+    						module = split[0];
+    					}
+    					moduleList.add(module);
+    				}
+        			return moduleList;
+        		}
+    		} 
+    		
     	} catch (PhrescoPomException e) {
     		 throw new PhrescoException(e);
     	}
