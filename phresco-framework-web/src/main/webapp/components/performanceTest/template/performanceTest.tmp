@@ -10,9 +10,9 @@
 	                    <a href="#"><b>Table View</b></a>
 	                </span>
 	                <span>
-	                	<!--<a href="#"><img src="themes/default/images/helios/quality_graph_off.png" width="26" height="24" border="0" alt=""></a>
-	                	<a href="#">Graph View</a>-->
-	                </span>    
+	                	<a href="#"><img src="themes/default/images/helios/quality_graph_off.png" width="26" height="24" border="0" alt=""></a>
+	                	<a href="#">Graph View</a>
+	                </span>
 	            </div>
 	        {{else}}  
 	        	<div class="unit_view performanceView hideContent">
@@ -21,31 +21,42 @@
 	                    <a href="#"><b>Table View</b></a>
 	                </span>
 	                <span>
-	                	<!--<a href="#"><img src="themes/default/images/helios/quality_graph_off.png" width="26" height="24" border="0" alt=""></a>
-	                	<a href="#">Graph View</a>-->
+	                	<a href="#"><img src="themes/default/images/helios/quality_graph_off.png" width="26" height="24" border="0" alt=""></a>
+	                	<a href="#">Graph View</a>
 	                </span>    
 	            </div>  
             {{/showIcons}}
             
-            <div class="icon_images"><a class="tooltiptop" id="openFolder" title="" data-placement="bottom" data-toggle="tooltip" href="#" data-original-title="Open Folder"><img src="themes/default/images/helios/openfolder_icon.png" ></a></div>
-			<div class="icon_images" style="margin-right:2px;"><a id="copyPath" class="tooltiptop" title="" data-placement="bottom" data-toggle="tooltip" href="#" data-original-title="Copy Path"><img src="themes/default/images/helios/copypath_icon.png" ></a></div>
-        	
+            <div class="icon_images performanceScreenShotDiv" style="display: none;">
+				<a class="tooltiptop performanceScreenShot" title="" data-placement="bottom" data-toggle="tooltip" href="#" data-original-title="Screen Shot">
+					<img src="themes/default/images/helios/screenshot_white.png" >
+				</a>
+			</div>
+
+            <div class="icon_images">
+            	<a class="tooltiptop" id="openFolder" title="" data-placement="bottom" data-toggle="tooltip" href="#" data-original-title="Open Folder">
+            		<img src="themes/default/images/helios/openfolder_icon.png" >
+        		</a>
+    		</div>
+			<div class="icon_images">
+				<a id="copyPath" class="tooltiptop" title="" data-placement="bottom" data-toggle="tooltip" href="#" data-original-title="Copy Path">
+					<img src="themes/default/images/helios/copypath_icon.png" >
+				</a>
+			</div>
+
         	{{#showIcons resultAvailable testResultFiles}}
-	           <div class="code_report_icon pdf_icon performancePdf">
-	            	<!--<div class="icon_images"><a class="tooltiptop" title="" data-placement="bottom" data-toggle="tooltip" href="#" data-original-title="PDF Report"><img src="themes/default/images/helios/pdf_icon_white.png"></a></div>
-                	<div class="tooltip fade bottom" style="top: 27px; left: 893.1875px; display: block;">
-                    	<div class="tooltip-arrow" style=""></div><div class="tooltip-inner">Export as PDF
-                        </div>
-                    </div>-->
-	            </div>
+	            <div class="icon_images"  id="performancePdf">
+	            	<a class="tooltiptop" title="" data-placement="bottom" data-toggle="tooltip" href="#" data-original-title="PDF Report">
+	            		<img src="themes/default/images/helios/pdf_icon_white.png" >
+	        		</a>
+	    		</div>
+
 			{{else}}  
-	        	<div class="code_report_icon pdf_icon hideContent performancePdf">
-	            	<div class="icon_images"><a class="tooltiptop" title="" data-placement="bottom" data-toggle="tooltip" href="#" data-original-title="PDF Report"><img src="themes/default/images/helios/pdf_icon_white.png"></a></div>
-                	<div class="tooltip fade bottom" style="top: 27px; left: 893.1875px; display: block;">
-                    	<div class="tooltip-arrow" style=""></div><div class="tooltip-inner">Export as PDF
-                        </div>
-                    </div>
-	            </div>
+	        	 <div class="icon_images hideContent"  id="performancePdf">
+	            	<a class="tooltiptop" title="" data-placement="bottom" data-toggle="tooltip" href="#" data-original-title="PDF Report">
+	            		<img src="themes/default/images/helios/pdf_icon_white.png" >
+	        		</a>
+	    		</div>
             {{/showIcons}}
             
             {{#showDeviceDropDown showDevice devices}}

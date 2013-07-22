@@ -35,6 +35,7 @@ public class PerformancResultInfo implements Serializable {
 	private String graphData;
 	private String label;
 	private String graphAlldata;
+	private List<String> images;
 	private List<PerformanceTestResult> perfromanceTestResult;
 	private TestResultInfo aggregateResult;
 	private double totalStdDev;
@@ -121,6 +122,14 @@ public class PerformancResultInfo implements Serializable {
 
 	public void setGraphFor(String graphFor) {
 		this.graphFor = graphFor;
+	}
+
+	public void setImages(List<String> images) {
+		this.images = images;
+	}
+
+	public List<String> getImages() {
+		return images;
 	}
 
 	public String toString() {

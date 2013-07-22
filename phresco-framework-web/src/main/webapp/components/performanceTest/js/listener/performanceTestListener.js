@@ -94,7 +94,6 @@ define(["performanceTest/api/performanceTestAPI"], function() {
 			}
 		},
 
-
 		renderPerformanceTemplate  : function(response, renderFunction, whereToRender, callback) {
 			var self = this, responseData = response.data;
 			var performanceTestOptions = {};
@@ -113,8 +112,13 @@ define(["performanceTest/api/performanceTestAPI"], function() {
 					if (resultData.perfromanceTestResult.length > 0) {
 						self.constructResultTable(resultData, whereToRender);
 					}
+					if (callback !== undefined) {
+						callback();
+					}
 				});
 			} 
+
+
 		},
 
 		fileNameChangeEvent : function(whereToRender){
@@ -165,7 +169,7 @@ define(["performanceTest/api/performanceTestAPI"], function() {
 			$('.performanceView').show();
 		},
 
-		getResultOnChangeEvent : function (testAgainst, resultFileName, whereToRender) {
+		getResultOnChangeEvent : function (testAgainst, resultFileName, whereToRender, callback) {
 			var self = this;
 			var reqData = {};
 			reqData.testAgainst = testAgainst;
@@ -174,6 +178,9 @@ define(["performanceTest/api/performanceTestAPI"], function() {
 				if(response.message === "Parameter returned successfully"){
 					var resultData = response.data;
 					self.constructResultTable(resultData, whereToRender);
+					if (callback !== undefined) {
+						callback(response);
+					}
 				}
 			});
 		},
@@ -267,7 +274,9 @@ define(["performanceTest/api/performanceTestAPI"], function() {
 		},
 
 		preTriggerPerformanceTest : function () {
-			var self = this, testBasis = $("#testBasis").val(), testAgainst = $("#testAgainst").val(), redirect = false, jsonString = "";
+			var self = this, testBasis = "", testAgainst = "", redirect = true, jsonString = "";
+			testBasis = $("#testBasis").val();
+			testAgainst = $("#testAgainst").val();
 			//if performance test is triggered against parameters
 			if (testAgainst !== undefined && testBasis !== undefined && testBasis === "parameters") {
 				//call template mandatory fn for server or webservice
@@ -276,10 +285,6 @@ define(["performanceTest/api/performanceTestAPI"], function() {
 				} else if (testAgainst === "database") {//call template mandatory fn for database
 					redirect = self.dbContextUrlsMandatoryVal();
 				} 
-			} else if (testBasis !== undefined && testBasis === "customise") {//if performance test is triggered against customise
-				redirect = true; 
-			} else if (testBasis === undefined && testAgainst === undefined) { 			
-				redirect = true; // added for  android performance return			
 			} 
 
 			if (redirect) {
@@ -430,7 +435,7 @@ define(["performanceTest/api/performanceTestAPI"], function() {
 		});
 		var jsonStrFromTemplate = '"dbContextUrls":[' + dbContextUrls + ']';
 		return jsonStrFromTemplate;
-	},
+	}
 
 	});
 

@@ -206,11 +206,7 @@ define(["performanceTest/listener/performanceTestListener"], function() {
 			//To show the log after reloading the test result once the test execution is completed
 			$('#testConsole').html(performanceLog);
 
-			$(".scrollContent").mCustomScrollbar({
-				autoHideScrollbar:true,
-				theme:"light-thin",
-				advanced:{ updateOnContentResize: true}
-			});
+			
 			self.performanceTestAPI.localVal.setSession('performanceConsole', '');
 		},
 		
@@ -221,13 +217,35 @@ define(["performanceTest/listener/performanceTestListener"], function() {
 		},
 
 		handleResponse : function(response, whereToRender) {
-			var performanceTest;
+			var self = this, performanceTest;
 			commonVariables.navListener.getMyObj('performanceTest', function(obj){
 				performanceTest = obj;
 			});
 			performanceTest.performanceTestListener.renderPerformanceTemplate(response, performanceTest.renderFnc,  whereToRender);
 		},
-	
+
+		showScreenShot : function(screenShots) {
+			if (screenShots.length > 0) {
+				$('.performanceScreenShotDiv').show();
+				var imgArray = [];
+				for(var i = 0; i < screenShots.length ; i++) {
+					var srcJson = {};
+					srcJson.src = $('<div class="text_center"><img src="data:image/png;base64,'+screenShots[i]+'"><div class="fullscreen_desc"></div></div>');
+					srcJson.type = 'inline';
+					imgArray.push(srcJson);
+				}
+				$('.performanceScreenShot').magnificPopup({
+					items: imgArray,
+					gallery: {
+					  enabled: true
+					},
+					type: 'image'
+				});
+			} else {
+				$('.performanceScreenShotDiv').hide();
+			}
+		},
+		
 		setConsoleScrollbar : function(bcheck){
 			if(bcheck){
 				$("#unit_progress .scrollContent").mCustomScrollbar("destroy");
@@ -325,7 +343,9 @@ define(["performanceTest/listener/performanceTestListener"], function() {
 			$('li a[name="resultFileName"]').click(function() {
 				$("#testResultFileDrop").text($(this).text());
 				$(".perfResultInfo").html('');
-				self.getResultEvent.dispatch($("#testAgainstsDrop").text(),$(this).text(), self.whereToRender);
+				self.getResultEvent.dispatch($("#testAgainstsDrop").text(),$(this).text(), self.whereToRender, function(response) {
+					self.showScreenShot(response.data.images);
+				});
 			});
 
 			//To select testAgainst value
@@ -340,7 +360,7 @@ define(["performanceTest/listener/performanceTestListener"], function() {
 				$('.progress_loading').show();
 				self.setConsoleScrollbar(true);
 				self.preTriggerPerformanceTest.dispatch();
-			}),
+			});
 
 			Clazz.navigationController.mainContainer = commonVariables.contentPlaceholder;
 		}

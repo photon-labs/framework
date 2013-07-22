@@ -64,6 +64,7 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -95,6 +96,7 @@ import com.photon.phresco.util.NodeConfiguration;
 import com.photon.phresco.util.ServiceConstants;
 import com.photon.phresco.util.Utility;
 import com.phresco.pom.exception.PhrescoPomException;
+import com.phresco.pom.model.Plugin;
 import com.phresco.pom.util.PomProcessor;
 import com.sun.jersey.api.client.ClientResponse.Status;
 
@@ -1458,7 +1460,7 @@ public class QualityService extends RestBase implements ServiceConstants, Framew
 	}
 	
 	@POST
-	@Path("/testResultFiles")
+	@Path(REST_API_TEST_RESULT_FILES)
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response getTypeFiles(@QueryParam(REST_QUERY_APPDIR_NAME) String appDirName,
@@ -1477,15 +1479,15 @@ public class QualityService extends RestBase implements ServiceConstants, Framew
 				testResultFiles = testResultFiles(appDirName, testAgainsts, showDevice,
 						actionType);
 				ResponseInfo<List<String>> finalOutput = responseDataEvaluation(responseData, null,
-						"Test Result Files returned successfully", testResultFiles);
+						TEST_RESULT_FILES_RETURNED_SUCCESSFULLY, testResultFiles);
 				return Response.ok(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, "*").build();
 			}
 			ResponseInfo<List<String>> finalOutput = responseDataEvaluation(responseData, null,
-					"Test not yet executed for " + testAgainsts.get(0), testResultFiles);
+					TEST_NOT_YET_EXECUTED_FOR + testAgainsts.get(0), testResultFiles);
 			return Response.ok(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, "*").build();
 		} catch (PhrescoException e) {
 			ResponseInfo<List<String>> finalOutput = responseDataEvaluation(responseData, e,
-					"Test Result Files returned Failed", null);
+					TEST_RESULT_FILES_RETURNED_FAILED, null);
 			return Response.status(Status.BAD_REQUEST).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, "*")
 					.build();
 		}
@@ -1595,6 +1597,47 @@ public class QualityService extends RestBase implements ServiceConstants, Framew
         return testResultFiles;
     }
 	
+	private List<String> getScreenShot(String testAgainst, String resultFile, String appDirName, String from) throws PhrescoException {
+		List<String> imgSources = new ArrayList<String>();
+		try {
+			String testDir = "";
+			if (PERFORMACE.equals(from)) {
+				testDir = FrameworkServiceUtil.getPerformanceTestDir(appDirName);
+			}
+			
+			StringBuilder sb = new StringBuilder(FrameworkServiceUtil.getApplicationHome(appDirName));
+			sb.append(testDir).append(File.separator).append(testAgainst);
+			int lastDot = resultFile.lastIndexOf(".");
+			String resultName = resultFile.substring(0, lastDot);
+
+			File testPomFile = new File(sb.toString() + File.separator + POM_XML);
+			PomProcessor pomProcessor = new PomProcessor(testPomFile);
+			Plugin plugin = pomProcessor.getPlugin(COM_LAZERYCODE_JMETER, JMETER_MAVEN_PLUGIN);
+			com.phresco.pom.model.Plugin.Configuration jmeterConfiguration = plugin.getConfiguration();
+			List<Element> jmeterConfigs = jmeterConfiguration.getAny();
+			for (Element element : jmeterConfigs) {
+				if (PLUGIN_TYPES.equalsIgnoreCase(element.getTagName()) && element.hasChildNodes()) {
+					NodeList types = element.getChildNodes();
+					for (int i = 0; i < types.getLength(); i++) {
+						Node pluginType = types.item(i);
+						if (StringUtils.isNotEmpty(pluginType.getTextContent())) {
+							File imgFile = new File(sb.toString() + RESULTS_JMETER_GRAPHS + resultName + HYPHEN + pluginType.getTextContent() + PNG);
+							if (imgFile.exists()) {
+								InputStream imageStream = new FileInputStream(imgFile);
+								String imgSrc = new String(Base64.encodeBase64(IOUtils.toByteArray(imageStream)));
+								imgSources.add(imgSrc);
+							}
+						}
+					}
+				}
+			}
+
+		} catch (Exception e) {
+			throw new PhrescoException(e);
+		}
+		
+		return imgSources;
+	}
 	/**
 	 * Performance.
 	 *
@@ -1657,11 +1700,12 @@ public class QualityService extends RestBase implements ServiceConstants, Framew
                 label.append("]");
                 graphData.append("]");
             }
-            
+            List<String> screenShots = getScreenShot(testAgainst, resultFileName, appDirName, PERFORMACE);
             performanceResultInfo.setGraphData(graphData.toString());
             performanceResultInfo.setLabel(label.toString());
             performanceResultInfo.setGraphAlldata(allMin +", "+ allAvg +", "+ allMax);
             performanceResultInfo.setGraphFor(showGraphFor);
+            performanceResultInfo.setImages(screenShots);
             
             ResponseInfo<List<PerformanceTestResult>> finalOutput = responseDataEvaluation(responseData, null,
 					PARAMETER_RETURNED_SUCCESSFULLY, performanceResultInfo);
@@ -1674,6 +1718,16 @@ public class QualityService extends RestBase implements ServiceConstants, Framew
 		}
     }
 	
+	/**
+	 * Performance.
+	 *
+	 * @param appDirName the app dir name
+	 * @param userId the user id
+	 * @return the response
+	 */
+	@GET
+	@Path(REST_API_PERFORMANCE_RESULTS)
+	@Produces(MediaType.APPLICATION_JSON)
 	private String getLoadOrPerformanceTestResultPath(String appDirName, String testAgainst, String resultFileName, String action) throws PhrescoException {
 		try {
 	        StringBuilder sb = new StringBuilder(FrameworkServiceUtil.getApplicationHome(appDirName));
