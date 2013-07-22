@@ -163,7 +163,7 @@ define(["features/api/featuresAPI", "features/features",  "application/applicati
 				val = eachList;
 			}
 			val.each(function() {
-				if($(this).attr("class") === "switch switchOn"){
+				if($(this).attr("class") === "switch switchOn default"){
 					$(this).parent().show();
 					self.scrollbarUpdate();					
 				}

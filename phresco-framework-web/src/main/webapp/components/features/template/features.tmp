@@ -38,6 +38,8 @@
                                         <option value="{{id}}" scope="{{scope}}">{{version}}</option>  
                                     {{/each}} 
                                 </select>
+								</div>
+								{{#packagedata packaging versions appliesTo}}{{/packagedata}}
                         </li>
 						<div class="clear"></div>
                   {{/each}}  
@@ -76,7 +78,9 @@
 											<option value="{{id}}" scope="{{scope}}">{{version}}</option>  
 										{{/each}} 
 									</select>
-								{{/if}}    
+								{{/if}} 
+							</div>
+							{{#packagedata packaging versions appliesTo}}{{/packagedata}}								
                         </li>
 						 <div class="clear"></div>
                   {{/each}}
@@ -116,6 +120,9 @@
 										{{/each}} 
 									</select>
 								{{/if}}
+							</div>
+							{{#packagedata packaging versions appliesTo}}{{/packagedata}}								
+
                         </li>
 						<div class="clear"></div>
                   {{/each}}

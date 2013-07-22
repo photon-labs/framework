@@ -64,7 +64,7 @@ define(["features/listener/featuresListener"], function() {
 						if(JSON.stringify(value.appliesTo) !== "null"){
 							$.each(value.appliesTo, function(index, value){
 								if(value.required === true){
-									fieldset = '<fieldset class="switch switchOn" id="feature_'+ id +'" value="false"><label value="false"></label><label class="on" value="true"></label></fieldset>';
+									fieldset = '<fieldset class="switch switchOn default" id="feature_'+ id +'" value="false"><label value="false"></label><label class="on" value="true"></label></fieldset>';
 								} else {							
 									fieldset = '<fieldset class="switch switchOff" id="feature_'+ id +'" value="false"><label class="off" name="on_off" value="false"></label><label class="on" name="on_off" value="true"></label></fieldset>';
 								}
@@ -101,6 +101,22 @@ define(["features/listener/featuresListener"], function() {
 				var uniqueid;
 				uniqueid = $.trim(id.replace(/ /g,''));
 				return uniqueid;
+			});
+			Handlebars.registerHelper('packagedata', function(packaging, versions, appliesTo) {
+				var settingimg;
+				if(packaging === "zip" &&  appliesTo[0].core === false){
+					$.each(versions, function(index, value){
+						if(JSON.stringify(value.appliesTo) !== "null"){
+							$.each(value.appliesTo, function(index, value){
+								console.info("inside");
+								if(value.required === false){
+									settingimg = '<span class="settings_icon"><img src="themes/default/images/helios/settings_icon.png" width="23" height="22" border="0" alt=""></span>';
+								}
+							});
+						}		
+					});
+				}				
+				return settingimg;
 			});
 		},
 
