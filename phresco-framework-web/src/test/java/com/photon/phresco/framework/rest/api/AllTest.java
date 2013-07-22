@@ -31,6 +31,7 @@ import com.photon.phresco.framework.rest.api.util.BufferMapTest;
 	ConfigurationServiceTest.class,
 	PilotServiceTest.class,
 	UnitServiceTest.class,
+	PdfServiceTest.class,
 	BuildInfoTest.class,
 	ManualTestServiceTest.class,
 	RepositoryServiceTest.class,
