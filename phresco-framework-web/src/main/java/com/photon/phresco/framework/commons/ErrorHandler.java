@@ -14,11 +14,13 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.log4j.Logger;
 import org.codehaus.jackson.map.ObjectMapper;
 
+import com.photon.phresco.commons.FrameworkConstants;
+import com.photon.phresco.commons.ResponseCodes;
 import com.photon.phresco.exception.PhrescoException;
 import com.photon.phresco.framework.rest.api.ResponseInfo;
 import com.photon.phresco.framework.rest.api.RestBase;
 
-public class ErrorHandler extends RestBase implements Filter {
+public class ErrorHandler extends RestBase implements Filter, ResponseCodes {
 
 	private static final String UTF_8 = "UTF-8";
 	private static final String APPLICATION_JSON = "application/json";
@@ -39,13 +41,13 @@ public class ErrorHandler extends RestBase implements Filter {
 			}
 			PhrescoException phrescoException = new PhrescoException(e);
 			ResponseInfo<Object> responseData = new ResponseInfo<Object>();
-			ResponseInfo<Object> finalOuptut = responseDataEvaluation(responseData, phrescoException, "Internal Server Error", null);
+			ResponseInfo<Object> finalOuptut = responseDataEvaluation(responseData, phrescoException, null, FrameworkConstants.STATUS_ERROR, ResponseCodes.PHR000000);
 			
 			ObjectMapper mapper = new ObjectMapper();
 			String objectToReturn = mapper.writeValueAsString(finalOuptut);
 			
             HttpServletResponse res = (HttpServletResponse)response;
-			res.setStatus(500);
+			res.setStatus(200);
 			
 			response.setContentType(APPLICATION_JSON);
 			response.setCharacterEncoding(UTF_8);
