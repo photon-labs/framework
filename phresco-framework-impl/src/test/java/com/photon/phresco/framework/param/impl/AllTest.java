@@ -7,7 +7,7 @@ import org.junit.runners.Suite.SuiteClasses;
 import com.photon.phresco.framework.impl.ConfigurationReaderTest;
 
 @RunWith(Suite.class)
-@SuiteClasses({ MacosSdkParameterImplTest.class, IosSdkParameterImplTest.class, IosSimSDKVersionsParameterImplTest.class, ConfigurationReaderTest.class, TechnologyVersionImplTest.class, ProjectModuleImplTest.class})
+@SuiteClasses({ MacosSdkParameterImplTest.class, IosSdkParameterImplTest.class, IosSimSDKVersionsParameterImplTest.class, ConfigurationReaderTest.class, EnvironmentWebservicesImplTest.class, EnvironmentDatabaseImplTest.class, TechnologyVersionImplTest.class, ProjectModuleImplTest.class})
 
 public class AllTest {
 	// intentionally blank. All tests were added via annotations
