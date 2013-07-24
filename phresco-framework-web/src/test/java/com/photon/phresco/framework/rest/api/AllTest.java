@@ -21,6 +21,7 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
 
+import com.photon.phresco.framework.commons.ErrorHandlerTest;
 import com.photon.phresco.framework.rest.api.util.BufferMapTest;
 
 @RunWith(Suite.class)
@@ -43,7 +44,8 @@ import com.photon.phresco.framework.rest.api.util.BufferMapTest;
 	UtilServiceTest.class,
 	FeatureServiceTest.class,
 	CIJobTemplateServiceTest.class,
-	BufferMapTest.class
+	BufferMapTest.class,
+	ErrorHandlerTest.class
 	}
 )
 

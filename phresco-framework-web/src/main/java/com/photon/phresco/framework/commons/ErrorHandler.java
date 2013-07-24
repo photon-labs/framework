@@ -37,7 +37,7 @@ public class ErrorHandler extends RestBase implements Filter, ResponseCodes {
 			chain.doFilter(request, response);
 		} catch (Exception e) {
 			if (isDebugEnabled) {
-				S_LOGGER.debug("Entering into the method of ErrorHandler.doFilter()");
+				S_LOGGER.debug("Entering into the catch of ErrorHandler.doFilter()");
 			}
 			PhrescoException phrescoException = new PhrescoException(e);
 			ResponseInfo<Object> responseData = new ResponseInfo<Object>();
