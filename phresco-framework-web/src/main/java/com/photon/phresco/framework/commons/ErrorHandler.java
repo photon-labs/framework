@@ -47,7 +47,7 @@ public class ErrorHandler extends RestBase implements Filter, ResponseCodes {
 			String objectToReturn = mapper.writeValueAsString(finalOuptut);
 			
             HttpServletResponse res = (HttpServletResponse)response;
-			res.setStatus(200);
+			res.setStatus(res.SC_OK);
 			
 			response.setContentType(APPLICATION_JSON);
 			response.setCharacterEncoding(UTF_8);
