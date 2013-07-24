@@ -41,10 +41,10 @@ define(["projectlist/listener/projectListListener"], function() {
 		 * Called in once the login is success
 		 *
 		 */
-		loadPage :function(animationType) {
+		loadPage :function() {
 			var self = this;
 			Clazz.navigationController.jQueryContainer = commonVariables.contentPlaceholder;
-			Clazz.navigationController.push(this, animationType);
+			Clazz.navigationController.push(this, commonVaraiables.animation);
 		},
 		
 		
@@ -107,21 +107,21 @@ define(["projectlist/listener/projectListListener"], function() {
 			self.projectslistListener.getProjectList(self.projectslistListener.getActionHeader(self.projectRequestBody, "get"), function(response) {
 				var projectlist = {};
 				projectlist.projectlist = response.data;
-				var userPermissions = JSON.parse(self.projectslistListener.projectListAPI.localVal.getSession('userPermissions'));
+				var userPermissions = JSON.parse(commonVariables.api.localVal.getSession('userPermissions'));
 				projectlist.userPermissions = userPermissions;
 				renderFunction(projectlist, whereToRender);
 			});
 		},
 
 		getAction : function(actionBody, action, callback) {
-			var self = this, animationType = true;
+			var self = this;
 			
 			self.projectslistListener.projectListAction(self.projectslistListener.getActionHeader(actionBody, action), "" , function(response) {
 				if ("delete" === action) {
 					callback();
 				}				
 				if(self.flagged!=1) {
-					self.loadPage(animationType);
+					self.loadPage(commonVariables.animation);
 				} else {
 					self.flagged=1;
 				}
@@ -277,7 +277,7 @@ define(["projectlist/listener/projectListListener"], function() {
 					});
 				}
 				
-				var data = JSON.parse(self.projectslistListener.projectListAPI.localVal.getSession('userInfo'));
+				var data = JSON.parse(commonVariables.api.localVal.getSession('userInfo'));
 				userId = data.id;
 				$('.uname').val(data.id);
 				$('.pwd').val(data.password);
@@ -359,7 +359,7 @@ define(["projectlist/listener/projectListListener"], function() {
 					$(".uname").val('');
 					$(".pwd").val('');
 				} else {
-					var data = JSON.parse(self.projectslistListener.projectListAPI.localVal.getSession('userInfo'));
+					var data = JSON.parse(commonVariables.api.localVal.getSession('userInfo'));
 					$(".uname").val(data.id);
 					$(".pwd").val(data.password);
 				}

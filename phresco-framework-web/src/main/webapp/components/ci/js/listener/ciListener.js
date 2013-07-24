@@ -1,11 +1,10 @@
-define(["ci/api/ciAPI"], function() {
+define([], function() {
 
 	Clazz.createPackage("com.components.ci.js.listener");
 
 	Clazz.com.components.ci.js.listener.CIListener = Clazz.extend(Clazz.WidgetWithTemplate, {
 		
 		basePlaceholder :  window.commonVariables.basePlaceholder,
-		ciAPI : null,
 		continuousDeliveryConfigure : null,
 		addJobTemplate : null,
 		listJobTemplate : null,
@@ -21,10 +20,6 @@ define(["ci/api/ciAPI"], function() {
 		 */
 		initialize : function(config) {
 			var self = this;
-			if (self.ciAPI === null) {
-				self.ciAPI = new Clazz.com.components.ci.js.api.CIAPI();
-			}
-			
 			if (self.loadingScreen === null) {
 				self.loadingScreen = new Clazz.com.js.widget.common.Loading();
 			}
@@ -36,7 +31,7 @@ define(["ci/api/ciAPI"], function() {
 			commonVariables.navListener.getMyObj(commonVariables.continuousDeliveryConfigure, function(retVal){
 				self.continuousDeliveryConfigure = 	retVal;
 				retVal.name = null;
-				Clazz.navigationController.push(retVal, true);
+				Clazz.navigationController.push(retVal, commonVariables.animation);
 			}); 
 		},
 
@@ -45,7 +40,7 @@ define(["ci/api/ciAPI"], function() {
 			Clazz.navigationController.jQueryContainer = commonVariables.contentPlaceholder;
 			commonVariables.navListener.getMyObj(commonVariables.continuousDeliveryView, function(retVal){
 				self.continuousDeliveryView = 	retVal;			
-				Clazz.navigationController.push(retVal, true);
+				Clazz.navigationController.push(retVal, commonVariables.animation);
 			}); 
 		},
 
@@ -54,7 +49,7 @@ define(["ci/api/ciAPI"], function() {
 			Clazz.navigationController.jQueryContainer = commonVariables.contentPlaceholder;
 			commonVariables.navListener.getMyObj(commonVariables.continuousDeliveryConfigure, function(retVal){
 				retVal.name = contDeliveryName;
-				Clazz.navigationController.push(retVal, true);
+				Clazz.navigationController.push(retVal, commonVariables.animation);
 			}); 
 		},
 
@@ -86,7 +81,7 @@ define(["ci/api/ciAPI"], function() {
 			// basic params for job templates
 			var customerId = self.getCustomer();
 			customerId = (customerId == "") ? "photon" : customerId;
-			var projectId = self.ciAPI.localVal.getSession("projectId");
+			var projectId = commonVariables.api.localVal.getSession("projectId");
 			//var appDir = self.ciAPI.localVal.getSession('appDirName');
 
 			header = {
@@ -449,7 +444,7 @@ define(["ci/api/ciAPI"], function() {
 			var self = this;
 			try {
 				commonVariables.loadingScreen.showLoading();
-				self.ciAPI.ci(header, function(response) {
+				commonvariables.api.ajaxRequest(header, function(response) {
 						if (response !== null) {
 							commonVariables.loadingScreen.removeLoading();
 							callback(response);
@@ -474,7 +469,7 @@ define(["ci/api/ciAPI"], function() {
 		getHeaderResponse : function (header, callback) {
 			var self = this;
 			try {
-				self.ciAPI.ci(header, function(response) {
+				commonvariables.api.ajaxRequest(header, function(response) {
 						if (response !== null) {
 							callback(response);
 						} else {

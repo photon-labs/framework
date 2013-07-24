@@ -1,11 +1,10 @@
-define(["features/api/featuresAPI", "features/features",  "application/application",  "projectlist/projectList"], function() {
+define(["features/features",  "application/application",  "projectlist/projectList"], function() {
 
 	Clazz.createPackage("com.components.features.js.listener");
 
 	Clazz.com.components.features.js.listener.FeaturesListener = Clazz.extend(Clazz.Widget, {
 		
 		basePlaceholder :  window.commonVariables.basePlaceholder,
-		featuresAPI : null,
 		appinfoContent : null,
 		projectListContent : null,
 		flagged:null,
@@ -17,14 +16,13 @@ define(["features/api/featuresAPI", "features/features",  "application/applicati
 		 */
 		initialize : function(config) {
 			var self = this;	
-			self.featuresAPI = new Clazz.com.components.features.js.api.FeaturesAPI();
 		},
 		
 		cancelUpdate : function() {
 			var self = this;
 			Clazz.navigationController.jQueryContainer = commonVariables.contentPlaceholder;
 			self.projectListContent = new Clazz.com.components.projectlist.js.ProjectList();
-			Clazz.navigationController.push(self.projectListContent, true);
+			Clazz.navigationController.push(self.projectListContent, true, true);
 		},
 
 		search : function (txtSearch, divId){
@@ -76,7 +74,7 @@ define(["features/api/featuresAPI", "features/features",  "application/applicati
 			var self = this;
 			try {
 				//commonVariables.loadingScreen.showLoading();
-				self.featuresAPI.features(header,
+				commonVariables.api.ajaxRequest(header,
 					function(response) {
 						if (response !== null) {
 							//commonVariables.loadingScreen.removeLoading();
@@ -102,7 +100,7 @@ define(["features/api/featuresAPI", "features/features",  "application/applicati
 			var self = this;
 			try {
 				//commonVariables.loadingScreen.showLoading();
-				self.featuresAPI.features(header,
+				commonVariables.api.ajaxRequest(header,
 					function(response) {
 						if (response !== null) {
 							//commonVariables.loadingScreen.removeLoading();
@@ -196,8 +194,8 @@ define(["features/api/featuresAPI", "features/features",  "application/applicati
 		 */
 		getRequestHeader : function(projectRequestBody, type, descid) {
 			var url, self = this;
-			var userId = JSON.parse(self.featuresAPI.localVal.getSession("userInfo"));
-			var appDirName = self.featuresAPI.localVal.getSession("appDirName");
+			var userId = JSON.parse(commonVariables.api.localVal.getSession("userInfo"));
+			var appDirName = commonVariables.api.localVal.getSession("appDirName");
 			var techId = commonVariables.techId;
 			var header = {
 				contentType: "application/json",

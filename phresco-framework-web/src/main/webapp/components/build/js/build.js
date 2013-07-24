@@ -86,7 +86,7 @@ define(["build/listener/buildListener"], function() {
 		loadPage : function(){
 			Clazz.navigationController.jQueryContainer = commonVariables.contentPlaceholder;
 			Clazz.navigationController.mainContainer = commonVariables.contentPlaceholder;
-			Clazz.navigationController.push(this, true);
+			Clazz.navigationController.push(this, commonVariables.animation);
 		},
 		
 		loadPageType : function(){
@@ -99,7 +99,7 @@ define(["build/listener/buildListener"], function() {
 			var self = this;
 			self.buildListener.getBuildInfo(self.buildListener.getRequestHeader("", '', 'getList'), function(response) {
 			var buildObject = {};
-			var userPermissions = JSON.parse(self.buildListener.buildAPI.localVal.getSession('userPermissions'));
+			var userPermissions = JSON.parse(commonVariables.api.localVal.getSession('userPermissions'));
 				buildObject.buildInfos = response.data;
 				buildObject.userPermissions = userPermissions;
 				renderFunction(buildObject, whereToRender);

@@ -8,7 +8,6 @@ define(["unitTest/listener/unitTestListener", "testResult/listener/testResultLis
 		configUrl: "components/unitTest/config/config.json",
 		name : commonVariables.unitTest,
 		unitTestListener : null,
-		unitTestAPI : null,
 		testResult : null,
 		testResultListener : null,
 		onTabularViewEvent : null,
@@ -24,9 +23,6 @@ define(["unitTest/listener/unitTestListener", "testResult/listener/testResultLis
 		initialize : function(globalConfig) {
 			var self = this;
 			commonVariables.testType = commonVariables.unit;
-			if (self.unitTestAPI === null) {
-				self.unitTestAPI =  new Clazz.com.components.unitTest.js.api.UnitTestAPI();
-			}
 			if (self.unitTestListener === null ) {
 				self.unitTestListener = new Clazz.com.components.unitTest.js.listener.UnitTestListener();
 			}
@@ -120,7 +116,7 @@ define(["unitTest/listener/unitTestListener", "testResult/listener/testResultLis
 				var unitTestOptions = {};
 				unitTestOptions.reportOptions = responseData.reportOptions;
 				unitTestOptions.projectModules = responseData.projectModules;
-				var userPermissions = JSON.parse(self.unitTestListener.unitTestAPI.localVal.getSession('userPermissions'));
+				var userPermissions = JSON.parse(commonVariables.api.localVal.getSession('userPermissions'));
 				unitTestOptions.userPermissions = userPermissions;
 				renderFunction(unitTestOptions, whereToRender);
 			});

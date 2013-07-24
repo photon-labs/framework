@@ -1,10 +1,9 @@
-define(["performanceTest/api/performanceTestAPI"], function() {
+define([], function() {
 
 	Clazz.createPackage("com.components.performanceTest.js.listener");
 
 	Clazz.com.components.performanceTest.js.listener.PerformanceTestListener = Clazz.extend(Clazz.WidgetWithTemplate, {
 		
-		performanceTestAPI : null,
 		dynamicpage : null,
 		dynamicPageListener : null,
 		mavenServiceListener : null,
@@ -16,9 +15,6 @@ define(["performanceTest/api/performanceTestAPI"], function() {
 		 */
 		initialize : function(config) {
 			var self = this;
-			if (self.performanceTestAPI === null) {
-				self.performanceTestAPI =  new Clazz.com.components.performanceTest.js.api.PerformanceTestAPI();
-			}
 			if (self.mavenServiceListener === null)	{
 			}
 		},
@@ -38,7 +34,7 @@ define(["performanceTest/api/performanceTestAPI"], function() {
 		 * @return: returns the contructed header
 		 */
 		getActionHeader : function(requestBody, action) {
-			var self = this, appDirName = self.performanceTestAPI.localVal.getSession("appDirName"),
+			var self = this, appDirName = commonVariables.api.localVal.getSession("appDirName"),
 			header = {
 				contentType: "application/json",				
 				dataType: "json",
@@ -80,7 +76,7 @@ define(["performanceTest/api/performanceTestAPI"], function() {
 		getPerformanceTestReportOptions : function(header, whereToRender, callback) {
 			var self = this;
 			try {
-				self.performanceTestAPI.performanceTest(header, function(response) {
+				commonVariables.api.ajaxRequest(header, function(response) {
 					if (response !== null) {
 						callback(response, whereToRender);
 					} else {
@@ -102,7 +98,7 @@ define(["performanceTest/api/performanceTestAPI"], function() {
 			performanceTestOptions.showDevice = responseData.showDevice;
 			performanceTestOptions.testResultFiles = responseData.testResultFiles;
 			performanceTestOptions.devices = responseData.devices;
-			var userPermissions = JSON.parse(self.performanceTestAPI.localVal.getSession('userPermissions'));
+			var userPermissions = JSON.parse(commonVariables.api.localVal.getSession('userPermissions'));
 			performanceTestOptions.userPermissions = userPermissions;
 			renderFunction(performanceTestOptions, whereToRender);
 			if ((performanceTestOptions.testAgainsts.length !== 0 || performanceTestOptions.devices.length !== 0) && !self.isBlank(performanceTestOptions.testResultFiles) && performanceTestOptions.testResultFiles.length !== 0) {
@@ -188,7 +184,7 @@ define(["performanceTest/api/performanceTestAPI"], function() {
 		getTestResults : function (header, callback) {
 			var self = this;
 			try {
-				self.performanceTestAPI.performanceTest(header, function(response) {
+				commonVariables.api.ajaxRequest(header, function(response) {
 					if (response !== null) {
 						callback(response);
 					} else {
@@ -299,11 +295,11 @@ define(["performanceTest/api/performanceTestAPI"], function() {
 
 		executeTest : function (queryString, callback) {
 			queryString = queryString.concat("&testAction=performance");
-			var self = this, appInfo = self.performanceTestAPI.localVal.getJson('appdetails');
+			var self = this, appInfo = commonVariables.api.localVal.getJson('appdetails');
 			$("#performancePopup").toggle();
 			self.openConsole();
 			if(appInfo !== null){
-				queryString +=	'&customerId='+ self.getCustomer() +'&appId='+ appInfo.data.appInfos[0].id +'&projectId=' + appInfo.data.id + '&username=' + self.performanceTestAPI.localVal.getSession('username');
+				queryString +=	'&customerId='+ self.getCustomer() +'&appId='+ appInfo.data.appInfos[0].id +'&projectId=' + appInfo.data.id + '&username=' + commonVariables.api.localVal.getSession('username');
 			}
 			if(self.mavenServiceListener === null)	{
 				commonVariables.navListener.getMyObj(commonVariables.mavenService, function(retVal){
@@ -330,7 +326,7 @@ define(["performanceTest/api/performanceTestAPI"], function() {
 			$("#resultJson").val(formJsonStr);
 
 			self.executeTest($('#performanceForm').serialize(), function(response) {
-				self.performanceTestAPI.localVal.setSession('performanceConsole', $('#testConsole').html());
+				commonVariables.api.localVal.setSession('performanceConsole', $('#testConsole').html());
 				$('.progress_loading').hide();
 				commonVariables.navListener.onMytabEvent(commonVariables.performanceTest);
 			});

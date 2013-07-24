@@ -159,12 +159,12 @@ define(["application/listener/applicationListener"], function() {
 				self.editApplicationListener.getAppInfo(self.editApplicationListener.getRequestHeader(self.appDirName , "getappinfo"), function(response) {
 					var projectlist = {};
 					projectlist.projectlist = response;
-					var userPermissions = JSON.parse(self.editApplicationListener.applicationAPI.localVal.getSession('userPermissions'));
+					var userPermissions = JSON.parse(commonVariables.api.localVal.getSession('userPermissions'));
 					projectlist.userPermissions = userPermissions;
 					self.renderData = response;
 					var techId = response.appdetails.data.appInfos[0].techInfo.id;
 					self.editApplicationListener.getApplicableOptions(self.editApplicationListener.getRequestHeader(self.appDirName, "getApplicableOptions", techId), function(response) {
-						self.editApplicationListener.applicationAPI.localVal.setSession("applicableOptions", JSON.stringify(response.data));
+						commonVariables.api.localVal.setSession("applicableOptions", JSON.stringify(response.data));
 						renderFunction(projectlist, whereToRender);
 					});
 				});

@@ -1,10 +1,9 @@
-define(["unitTest/api/unitTestAPI"], function() {
+define([], function() {
 
 	Clazz.createPackage("com.components.unitTest.js.listener");
 
 	Clazz.com.components.unitTest.js.listener.UnitTestListener = Clazz.extend(Clazz.WidgetWithTemplate, {
 		
-		unitTestAPI : null,
 		testResultListener : null,
 		dynamicpage : null,
 		dynamicPageListener : null,
@@ -17,9 +16,6 @@ define(["unitTest/api/unitTestAPI"], function() {
 		 */
 		initialize : function(config) {
 			var self = this;
-			if (self.unitTestAPI === null) {
-				self.unitTestAPI =  new Clazz.com.components.unitTest.js.api.UnitTestAPI();
-			}
 			if (self.testResultListener === null) {
 				self.testResultListener = new Clazz.com.components.testResult.js.listener.TestResultListener();
 			}
@@ -48,9 +44,9 @@ define(["unitTest/api/unitTestAPI"], function() {
 		 */
 		getActionHeader : function(requestBody, action) {
 			var self = this, header, data = {}, userId;
-			data = JSON.parse(self.unitTestAPI.localVal.getSession('userInfo'));
+			data = JSON.parse(commonVariables.api.localVal.getSession('userInfo'));
 			userId = data.id;
-			appDirName = self.unitTestAPI.localVal.getSession("appDirName");
+			appDirName = commonVariables.api.localVal.getSession("appDirName");
 			header = {
 				contentType: "application/json",				
 				dataType: "json",
@@ -68,7 +64,7 @@ define(["unitTest/api/unitTestAPI"], function() {
 			var self = this;
 			try {
 				//commonVariables.loadingScreen.showLoading();
-				self.unitTestAPI.unitTest(header,
+				commonVariables.api.ajaxRequest(header,
 					function(response) {
 						if (response !== null) {
 							//commonVariables.loadingScreen.removeLoading();
@@ -107,12 +103,12 @@ define(["unitTest/api/unitTestAPI"], function() {
 		runUnitTest : function(callback) {
 			var self = this;
 			var testData = $("#unitTestForm").serialize();
-			var appdetails = self.unitTestAPI.localVal.getJson('appdetails');
+			var appdetails = commonVariables.api.localVal.getJson('appdetails');
 			var queryString = '';
 			appId = appdetails.data.appInfos[0].id;
 			projectId = appdetails.data.id;
 			customerId = appdetails.data.customerIds[0];
-			username = self.unitTestAPI.localVal.getSession('username');
+			username = commonVariables.api.localVal.getSession('username');
 						
 			if (appdetails !== null) {
 				queryString ="username="+username+"&appId="+appId+"&customerId="+customerId+"&goal=unit-test&phase=unit-test&projectId="+projectId+"&"+testData;

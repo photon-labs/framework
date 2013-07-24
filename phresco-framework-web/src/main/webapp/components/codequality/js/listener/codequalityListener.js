@@ -1,11 +1,10 @@
-define(["codequality/api/codequalityAPI"], function() {
+define([], function() {
 
 	Clazz.createPackage("com.components.codequality.js.listener");
 
 	Clazz.com.components.codequality.js.listener.CodequalityListener = Clazz.extend(Clazz.WidgetWithTemplate, {
 		
 		basePlaceholder :  window.commonVariables.basePlaceholder,
-		codequalityAPI : null,
 		mavenServiceListener : null,
 
 		/***
@@ -15,9 +14,6 @@ define(["codequality/api/codequalityAPI"], function() {
 		 */
 		initialize : function(config) {
 			var self = this;
-			if(self.codequalityAPI === null){
-				self.codequalityAPI = new Clazz.com.components.codequality.js.api.CodeQualityAPI();
-			}
 			if(self.mavenServiceListener === null)	{
 				commonVariables.navListener.getMyObj(commonVariables.mavenService, function(retVal){
 					self.mavenServiceListener = retVal;
@@ -28,12 +24,12 @@ define(["codequality/api/codequalityAPI"], function() {
 		codeValidate : function(callback) {
 			var self = this;
 			var ipjson = $("#codeValidateForm").serialize();
-			var appdetails = self.codequalityAPI.localVal.getJson('appdetails');
+			var appdetails = commonVariables.api.localVal.getJson('appdetails');
 			var queryString = '';
 			appId = appdetails.data.appInfos[0].id;
 			projectId = appdetails.data.id;
 			customerId = appdetails.data.customerIds[0];
-			username = self.codequalityAPI.localVal.getSession('username');
+			username = commonVariables.api.localVal.getSession('username');
 						
 			if(appdetails !== null){
 				queryString ="username="+username+"&appId="+appId+"&customerId="+customerId+"&goal=validate-code&phase=validate-code&projectId="+projectId+"&"+ipjson;
@@ -88,10 +84,10 @@ define(["codequality/api/codequalityAPI"], function() {
 				data: ''
 			};
 			if(action === "validate-code"){
-				var appdetails = self.codequalityAPI.localVal.getJson('appdetails');
+				var appdetails = commonVariables.api.localVal.getJson('appdetails');
 				appId = appdetails.data.appInfos[0].id;
 				projectId = appdetails.data.id;
-				username = self.codequalityAPI.localVal.getSession('username');
+				username = commonVariables.api.localVal.getSession('username');
 				
 				header.requestMethod ="POST";
 				header.webserviceurl = commonVariables.webserviceurl+"app/codeValidate?username="+username+"&appId="+appId+"&customerId="+customerId+"&goal=validate-code&phase=validate-code&projectId="+projectId+"&"+inputData;
@@ -102,13 +98,13 @@ define(["codequality/api/codequalityAPI"], function() {
 			}
 			
 			if(action === "reporttypes"){
-				var appDirName = this.codequalityAPI.localVal.getSession('appDirName');
+				var appDirName = commonVariables.api.localVal.getSession('appDirName');
 				header.webserviceurl = commonVariables.webserviceurl+"parameter/codeValidationReportTypes?appDirName="+appDirName+"&goal=validate-code";
 			}
 			
 			if(action === "iframereport"){
-				var appDirName = this.codequalityAPI.localVal.getSession('appDirName');
-				username = self.codequalityAPI.localVal.getSession('username');
+				var appDirName = commonVariables.api.localVal.getSession('appDirName');
+				username = commonVariables.api.localVal.getSession('username');
 				header.webserviceurl = commonVariables.webserviceurl+"parameter/iFrameReport?appDirName="+appDirName+"&validateAgainst="+inputData+"&customerId="+customerId+"&userId="+username;
 			}
 
@@ -120,7 +116,7 @@ define(["codequality/api/codequalityAPI"], function() {
 			self.closeConsole();
 			try {
 				//commonVariables.loadingScreen.showLoading();
-				self.codequalityAPI.codequality(header,
+				commonVariables.api.ajaxRequest(header,
 					function(response) {
 						if (response !== null) {
 							//commonVariables.loadingScreen.removeLoading();
@@ -199,7 +195,7 @@ define(["codequality/api/codequalityAPI"], function() {
 			var self = this;
 			self.closeConsole();
 			try {
-				self.codequalityAPI.codequality(self.getRequestHeader(validateAgainst , "iframereport"), 
+				commonVariables.api.ajaxRequest(self.getRequestHeader(validateAgainst , "iframereport"), 
 					function(iframereport) {
 						if(iframereport.data !== null){
 							var iframedata = "<iframe src="+iframereport.data+" style=width:98%;height:450px;></iframe>";

@@ -1,10 +1,9 @@
-define(["framework/widgetWithTemplate", "dynamicPage/api/dynamicPageAPI", "common/loading"], function() {
+define(["framework/widgetWithTemplate", "common/loading"], function() {
 
     Clazz.createPackage("com.components.dynamicPage.js.listener");
 
     Clazz.com.components.dynamicPage.js.listener.DynamicPageListener = Clazz.extend(Clazz.WidgetWithTemplate, {
         localStorageAPI : null,
-        dynamicPageAPI : null,
         appDirName : null,
         goal : null,
         responseData : null,
@@ -20,7 +19,6 @@ define(["framework/widgetWithTemplate", "dynamicPage/api/dynamicPageAPI", "commo
          */
         initialize : function(config) {
             var self = this;
-            self.dynamicPageAPI = new Clazz.com.components.dynamicPage.js.api.DynamicPageAPI();
         },
         
         /***
@@ -35,7 +33,7 @@ define(["framework/widgetWithTemplate", "dynamicPage/api/dynamicPageAPI", "commo
                 var goal = commonVariables.goal;
                 
                 if(self.parameterValidation(appDirName, goal)){
-                    self.dynamicPageAPI.getContent(header, 
+                    commonVariables.api.ajaxRequest(header, 
                         function(response){
                             self.responseData = response.data;
                             if(response !== undefined && response !== null){
@@ -139,7 +137,7 @@ define(["framework/widgetWithTemplate", "dynamicPage/api/dynamicPageAPI", "commo
 
         createFileUploader : function (parameter, goal, allowedExtensions) {
             var self = this, appDirName, dependency = "";
-            appDirName = self.dynamicPageAPI.localVal.getSession("appDirName");
+            appDirName = commonVariables.api.localVal.getSession("appDirName");
             if (!self.isBlank(parameter.dependency)) {
                 dependency = parameter.dependency;
             }
@@ -638,7 +636,7 @@ define(["framework/widgetWithTemplate", "dynamicPage/api/dynamicPageAPI", "commo
         //To update watcher map
         changeEveDependancyListener : function(selectedOption, currentParamKey) {
             var self = this;
-            self.dynamicPageAPI.getContent(self.getRequestHeader(self.projectRequestBody, currentParamKey, selectedOption, "updateWatcher"), function(response) {
+            commonVariables.api.ajaxRequest(self.getRequestHeader(self.projectRequestBody, currentParamKey, selectedOption, "updateWatcher"), function(response) {
             });
         },
         
@@ -646,7 +644,7 @@ define(["framework/widgetWithTemplate", "dynamicPage/api/dynamicPageAPI", "commo
         updateDependancy : function(dependency) {
             var self = this;
             self.showDynamicPopupLoading();
-            self.dynamicPageAPI.getContent(self.getRequestHeader(self.projectRequestBody, dependency, "", "dependency"), function(response) {
+            commonVariables.api.ajaxRequest(self.getRequestHeader(self.projectRequestBody, dependency, "", "dependency"), function(response) {
                 self.updateDependancySuccEvent(response.data, dependency);
             });
         },
@@ -843,7 +841,7 @@ define(["framework/widgetWithTemplate", "dynamicPage/api/dynamicPageAPI", "commo
             var self = this;
 
             try {
-                self.dynamicPageAPI.getContent(header, function(response) {
+                commonVariables.api.ajaxRequest(header, function(response) {
                     if (response !== null)   {
                         callback(response, whereToRender);
                     } else {
@@ -1033,7 +1031,7 @@ define(["framework/widgetWithTemplate", "dynamicPage/api/dynamicPageAPI", "commo
             var appDirName = commonVariables.appDirName;
             var goal = commonVariables.goal;
             var phase = commonVariables.phase;
-            var userId = self.dynamicPageAPI.localVal.getSession('username');
+            var userId = commonVariables.api.localVal.getSession('username');
             var customerId = self.getCustomer();
             var header = {
                 contentType: "application/json",

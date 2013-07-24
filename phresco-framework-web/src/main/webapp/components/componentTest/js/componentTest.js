@@ -8,7 +8,6 @@ define(["componentTest/listener/componentTestListener", "testResult/listener/tes
 		configUrl: "components/componentTest/config/config.json",
 		name : commonVariables.componentTest,
 		componentTestListener : null,
-		componentTestAPI : null,
 		testResult : null,
 		testResultListener : null,
 		onTabularViewEvent : null,
@@ -24,9 +23,6 @@ define(["componentTest/listener/componentTestListener", "testResult/listener/tes
 		initialize : function(globalConfig) {
 			var self = this;
 			commonVariables.testType = commonVariables.component;
-			if (self.componentTestAPI === null) {
-				self.componentTestAPI =  new Clazz.com.components.componentTest.js.api.ComponentTestAPI();
-			}
 			if (self.componentTestListener === null ) {
 				self.componentTestListener = new Clazz.com.components.componentTest.js.listener.ComponentTestListener();
 			}
@@ -93,7 +89,7 @@ define(["componentTest/listener/componentTestListener", "testResult/listener/tes
 		preRender: function(whereToRender, renderFunction) {
 			var self = this;
 			var data = {};
-			var userPermissions = JSON.parse(self.componentTestListener.componentTestAPI.localVal.getSession('userPermissions'));
+			var userPermissions = JSON.parse(commonVariables.api.localVal.getSession('userPermissions'));
 			data.userPermissions = userPermissions;
 			renderFunction(data, whereToRender);
 		},

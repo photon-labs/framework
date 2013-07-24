@@ -71,7 +71,7 @@ define(["projects/listener/projectsListener"], function() {
 		 */
 		loadPage:function(){
 			Clazz.navigationController.jQueryContainer = commonVariables.contentPlaceholder;
-			Clazz.navigationController.push(this, true);
+			Clazz.navigationController.push(this, commonVariables.animation);
 		},
 		
 		preRender : function(whereToRender, renderFunction) {
@@ -79,9 +79,9 @@ define(["projects/listener/projectsListener"], function() {
 			$("#createProject").show();
 			var self=this;
 			self.projectsListener.counter = null;
-			self.applicationlayerData = self.projectsListener.projectAPI.localVal.getJson("Application Layer");
-			self.weblayerData = self.projectsListener.projectAPI.localVal.getJson("Web Layer");
-			self.mobilelayerData = self.projectsListener.projectAPI.localVal.getJson("Mobile Layer");
+			self.applicationlayerData = commonVariables.api.localVal.getJson("Application Layer");
+			self.weblayerData = commonVariables.api.localVal.getJson("Web Layer");
+			self.mobilelayerData = commonVariables.api.localVal.getJson("Mobile Layer");
 			if(self.applicationlayerData !== null &&  self.weblayerData !== null && self.mobilelayerData !== null) {
 				self.templateData.applicationlayerData = self.applicationlayerData;
 				self.templateData.weblayerData = self.weblayerData;
@@ -90,9 +90,9 @@ define(["projects/listener/projectsListener"], function() {
 			} else {
 				self.setTechnologyData(function(bCheck){
 					if(bCheck){
-						self.applicationlayerData = self.projectsListener.projectAPI.localVal.getJson("Application Layer");
-						self.weblayerData = self.projectsListener.projectAPI.localVal.getJson("Web Layer");
-						self.mobilelayerData = self.projectsListener.projectAPI.localVal.getJson("Mobile Layer");
+						self.applicationlayerData = commonVariables.api.localVal.getJson("Application Layer");
+						self.weblayerData = commonVariables.api.localVal.getJson("Web Layer");
+						self.mobilelayerData = commonVariables.api.localVal.getJson("Mobile Layer");
 						self.templateData.applicationlayerData = self.applicationlayerData;
 						self.templateData.weblayerData = self.weblayerData;
 						self.templateData.mobilelayerData = self.mobilelayerData;
@@ -111,22 +111,23 @@ define(["projects/listener/projectsListener"], function() {
 		postRender : function(element) {
 			var self=this;
 			self.multiselect();
+			commonVariables.navListener.currentTab = commonVariables.addproject;
 			if(commonVariables.animation) {
 				$(".create_proj .scrollContent").mCustomScrollbar({
 					autoHideScrollbar:true,
 					theme:"light-thin",
 					advanced:{ updateOnContentResize: true}
-				});	
+				});
 			}
 			self.projectsListener.multiModuleEvent("false");
 		},
 		
 		setTechnologyData : function(callback) {
 			var self=this;
-			self.userInfo = JSON.parse(self.projectsListener.projectAPI.localVal.getSession('userInfo'));
+			self.userInfo = JSON.parse(commonVariables.api.localVal.getSession('userInfo'));
 			self.projectsListener.getEditProject(self.projectsListener.getRequestHeader(self.projectRequestBody, '', 'apptypes'), function(response) {
 				$.each(response.data, function(index, value){
-					self.projectsListener.projectAPI.localVal.setJson(value.name, value);
+					commonVariables.api.localVal.setJson(value.name, value);
 					if(response.data.length === (index + 1)){
 						callback(true);
 					}
@@ -145,8 +146,9 @@ define(["projects/listener/projectsListener"], function() {
 			self.projectsListener.technologyAndVersionChangeEvent();
 			self.projectsListener.pilotprojectsEvent();
 			self.projectsListener.multiModuleEvent("false");
-			self.setDateTimePicker();
-			
+			if(commonVariables.animation) {
+				self.setDateTimePicker();
+			}
 			self.windowResize();
 			
 			$("img[name='close']").unbind('click');

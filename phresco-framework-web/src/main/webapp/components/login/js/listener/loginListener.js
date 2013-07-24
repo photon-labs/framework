@@ -1,4 +1,4 @@
-define(["login/api/loginAPI"], function() {
+define([], function() {
 
 	Clazz.createPackage("com.components.login.js.listener");
 
@@ -7,7 +7,8 @@ define(["login/api/loginAPI"], function() {
 		headerContent : null,
 		footerContent : null,
 		navigationContent : null,
-		loginAPI : null,
+		//loginAPI : null,
+		enterKeyDisable : false,
 		//self : this,
 		/***
 		 * Called in initialization time of this class 
@@ -22,9 +23,6 @@ define(["login/api/loginAPI"], function() {
 					self.navigationContent = new Clazz.com.components.navigation.js.navigation();	
 				});
 			}	
-			if(self.loginAPI === null){
-				self.loginAPI = new Clazz.com.components.login.js.api.LoginAPI();
-			}	
 		},
 		
 		/***
@@ -36,11 +34,11 @@ define(["login/api/loginAPI"], function() {
 			try{
 				
 				var self = this, header = self.getRequestHeader();
-			
+				self.enterKeyDisable = true;
 				if(self.loginValidation()){
 					//commonVariables.loadingScreen.showLoading();
 					//TODO: call login service here and call appendPlaceholder in the success function
-					self.loginAPI.doLogin(header, 
+					commonVariables.api.ajaxRequest(header, 
 						function(response){
 							if(response !== undefined && response !== null && response.status !== "error" && response.status !== "failure"){
 								self.setUserInfo(response.data);
@@ -94,11 +92,11 @@ define(["login/api/loginAPI"], function() {
 		
 		setUserInfo : function(data){
 			var self = this, userInfo = JSON.stringify(data);
-			self.loginAPI.localVal.setSession("username",$("#username").val());
-			self.loginAPI.localVal.setSession("password",$("#password").val());
-			self.loginAPI.localVal.setSession("rememberMe",$("#rememberMe").is(":checked"));
-			self.loginAPI.localVal.setSession("userInfo",userInfo);
-			self.loginAPI.localVal.setSession("userPermissions", JSON.stringify(data.permissions));
+			commonVariables.api.localVal.setSession("username",$("#username").val());
+			commonVariables.api.localVal.setSession("password",$("#password").val());
+			commonVariables.api.localVal.setSession("rememberMe",$("#rememberMe").is(":checked"));
+			commonVariables.api.localVal.setSession("userInfo",userInfo);
+			commonVariables.api.localVal.setSession("userPermissions", JSON.stringify(data.permissions));
 		},
 		
 		loginValidation : function(){

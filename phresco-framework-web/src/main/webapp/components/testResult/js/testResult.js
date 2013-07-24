@@ -8,7 +8,6 @@ define(["testResult/listener/testResultListener"], function() {
 		configUrl: "components/testResult/config/config.json",
 		name : commonVariables.testResult,
 		testResultListener : null,
-		testResultAPI : null,
 		requestBody : {},
 		onTestResultDescEvent : null,
 		onShowHideConsoleEvent : null,
@@ -25,9 +24,6 @@ define(["testResult/listener/testResultListener"], function() {
 			var self = this;
 			if (self.testResultListener === null) {
 				self.testResultListener = new Clazz.com.components.testResult.js.listener.TestResultListener();
-			}
-			if (self.testResultAPI === null) {
-				self.testResultAPI =  new Clazz.com.components.testResult.js.api.TestResultAPI();
 			}
 			
 			if (self.onShowHideConsoleEvent === null) {

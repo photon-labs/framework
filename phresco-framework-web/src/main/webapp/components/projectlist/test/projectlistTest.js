@@ -1,7 +1,7 @@
 define(["projectlist/projectList"], function(ProjectList) {
 
 	return {
-		runTests: function (runOtherTests) {
+		runTests: function() {
 			var self = this, projectlistdata;
 			var projectlist = new ProjectList();
 			module("projectlist.js;projectlist");
@@ -13,12 +13,12 @@ define(["projectlist/projectList"], function(ProjectList) {
 					var visibility =  $('#addRepo_294187d7-f75a-4adc-bb25-ce9465e0e82f').css('display').trim();
 					equal("block", visibility, "Add to repo popup shown");
 					equal("svn", getval, "Repo type svn listed");
-					self.runValidationAddrepoTest(projectlist, runOtherTests);
+					self.runValidationAddrepoTest(projectlist);
 				}, 1500);
 			});
 		},
 		
-		runValidationAddrepoTest : function (projectlist, runOtherTests){
+		runValidationAddrepoTest : function (projectlist){
 			var self = this;			
 				asyncTest("addRepo URL Validation Test", function() {
 					$('input#uname_294187d7-f75a-4adc-bb25-ce9465e0e82f').val('');
@@ -31,12 +31,12 @@ define(["projectlist/projectList"], function(ProjectList) {
 						start();
 						var repo = $(commonVariables.contentPlaceholder).find('#repourl_294187d7-f75a-4adc-bb25-ce9465e0e82f').attr('class');
 						equal("errormessage", repo, 'URL div error class added test');
-						self.runValidationAddrepousernameTest(projectlist, runOtherTests);
+						self.runValidationAddrepousernameTest(projectlist);
 					}, 1000);
 					
 				});
 		},
-		runValidationAddrepousernameTest : function (projectlist, runOtherTests){
+		runValidationAddrepousernameTest : function (projectlist){
 			var self = this;
 			asyncTest("addRepo username Validation Test", function() {
 				$('input#repourl_294187d7-f75a-4adc-bb25-ce9465e0e82f').val('http://localhost');
@@ -48,11 +48,11 @@ define(["projectlist/projectList"], function(ProjectList) {
 					start();
 					var username = $(commonVariables.contentPlaceholder).find('#uname_294187d7-f75a-4adc-bb25-ce9465e0e82f').attr('class');
 					equal("uname errormessage", username, 'username div error class added test');
-					self.runValidationAddrepoPasswordTest(projectlist, runOtherTests);
+					self.runValidationAddrepoPasswordTest(projectlist);
 				}, 1000);
 			});
 		},
-		runValidationAddrepoPasswordTest : function (projectlist, runOtherTests){
+		runValidationAddrepoPasswordTest : function (projectlist){
 			var self = this;
 			asyncTest("addRepo password Validation Test", function() {
 				$('input#repourl_294187d7-f75a-4adc-bb25-ce9465e0e82f').val('http://localhost');
@@ -65,12 +65,12 @@ define(["projectlist/projectList"], function(ProjectList) {
 					start();
 					var password = $(commonVariables.contentPlaceholder).find('#pwd_294187d7-f75a-4adc-bb25-ce9465e0e82f').attr('class');
 					notEqual("errormessage", password, 'Password div error class added test');
-					self.runValidationCommitRepoTest(projectlist, runOtherTests);
+					self.runValidationCommitRepoTest(projectlist);
 				}, 1000);
 			}); 
 		},
 		
-		runValidationCommitRepoTest : function (projectlist, runOtherTests){
+		runValidationCommitRepoTest : function (projectlist){
 			var self = this;			
 				asyncTest("CommitRepo URL Validation Test", function() {
 					$('input#uname_294187d7-f75a-4adc-bb25-ce9465e0e82f').val('');
@@ -83,12 +83,12 @@ define(["projectlist/projectList"], function(ProjectList) {
 						start();
 						var repo = $(commonVariables.contentPlaceholder).find('#repourl_294187d7-f75a-4adc-bb25-ce9465e0e82f').attr('class');
 						equal("errormessage", repo, 'URL div error class added test');
-						self.runValidationCommitusernameTest(projectlist, runOtherTests);
+						self.runValidationCommitusernameTest(projectlist);
 					}, 1000);
 					
 				});
 		},
-		runValidationCommitusernameTest : function (projectlist, runOtherTests){
+		runValidationCommitusernameTest : function (projectlist){
 			var self = this;
 			asyncTest("Commit username Validation Test", function() {
 				$('input#repourl_294187d7-f75a-4adc-bb25-ce9465e0e82f').val('http://localhost');
@@ -100,11 +100,11 @@ define(["projectlist/projectList"], function(ProjectList) {
 					start();
 					var username = $(commonVariables.contentPlaceholder).find('#uname_294187d7-f75a-4adc-bb25-ce9465e0e82f').attr('class');
 					equal("uname errormessage", username, 'username div error class added test');
-					self.runValidationCommiPasswordTest(projectlist, runOtherTests);
+					self.runValidationCommiPasswordTest(projectlist);
 				}, 1000);
 			});
 		},
-		runValidationCommiPasswordTest : function (projectlist, runOtherTests){
+		runValidationCommiPasswordTest : function (projectlist){
 			var self = this;
 			asyncTest("Commit password Validation Test", function() {
 				$('input#repourl_294187d7-f75a-4adc-bb25-ce9465e0e82f').val('http://localhost');
@@ -117,12 +117,12 @@ define(["projectlist/projectList"], function(ProjectList) {
 					start();
 					var password = $(commonVariables.contentPlaceholder).find('#pwd_294187d7-f75a-4adc-bb25-ce9465e0e82f').attr('class');
 					notEqual("errormessage", password, 'Password div error class added test');
-					self.runValidationSVNupdateTest(projectlist, runOtherTests);
+					self.runValidationSVNupdateTest(projectlist);
 				}, 1000);
 			}); 
 		},
 		
-		runValidationSVNupdateTest : function (projectlist, runOtherTests){
+		runValidationSVNupdateTest : function (projectlist){
 			var self = this;			
 				asyncTest("SVNupdate URL Validation Test", function() {
 					$('input#uname_294187d7-f75a-4adc-bb25-ce9465e0e82f').val('');
@@ -135,12 +135,12 @@ define(["projectlist/projectList"], function(ProjectList) {
 						start();
 						var repo = $(commonVariables.contentPlaceholder).find('#repourl_294187d7-f75a-4adc-bb25-ce9465e0e82f').attr('class');
 						equal("errormessage", repo, 'URL div error class added test');
-						self.runValidationSVNupdateusernameTest(projectlist, runOtherTests);
+						self.runValidationSVNupdateusernameTest(projectlist);
 					}, 1000);
 					
 				});
 		},
-		runValidationSVNupdateusernameTest : function (projectlist, runOtherTests){
+		runValidationSVNupdateusernameTest : function (projectlist){
 			var self = this;
 			asyncTest("SVNupdate username Validation Test", function() {
 				$('input#repourl_294187d7-f75a-4adc-bb25-ce9465e0e82f').val('http://localhost');
@@ -152,11 +152,11 @@ define(["projectlist/projectList"], function(ProjectList) {
 					start();
 					var username = $(commonVariables.contentPlaceholder).find('#uname_294187d7-f75a-4adc-bb25-ce9465e0e82f').attr('class');
 					equal("uname errormessage", username, 'username div error class added test');
-					self.runValidationSVNupdatePasswordTest(projectlist, runOtherTests);
+					self.runValidationSVNupdatePasswordTest(projectlist);
 				}, 1000);
 			});
 		},
-		runValidationSVNupdatePasswordTest : function (projectlist, runOtherTests){
+		runValidationSVNupdatePasswordTest : function (projectlist){
 			var self = this;
 			asyncTest("SVNupdate password Validation Test", function() {
 				$('input#repourl_294187d7-f75a-4adc-bb25-ce9465e0e82f').val('http://localhost');
@@ -169,12 +169,12 @@ define(["projectlist/projectList"], function(ProjectList) {
 					start();
 					var password = $(commonVariables.contentPlaceholder).find('#pwd_294187d7-f75a-4adc-bb25-ce9465e0e82f').attr('class');
 					notEqual("errormessage", password, 'Password div error class added test');
-					self.projectaddrepoVerification(projectlist, runOtherTests);
+					self.projectaddrepoVerification(projectlist);
 				}, 1000);
 			}); 
 		},
 
-		projectaddrepoVerification : function(projectlist, runOtherTests) {
+		projectaddrepoVerification : function(projectlist) {
 			var self=this;
 			asyncTest("Test -Add to Repo trigger", function() {
 				$("input[name='repoUrl']").val('https://insight.photoninfotech.com/svn/repos/phresco-svn-projects/ci/3.0.0');
@@ -195,12 +195,12 @@ define(["projectlist/projectList"], function(ProjectList) {
 					start();
 					var getval = $(".popsuccess").text();
 					equal("SVN project added Successfully", getval, "Addrepo service call");
-					self.projectCommitUiVerification(projectlist, runOtherTests);
+					self.projectCommitUiVerification(projectlist);
 				}, 2500);
 			});
 		},
 		
-		projectCommitUiVerification : function(projectlist, runOtherTests) {
+		projectCommitUiVerification : function(projectlist) {
 			var self = this;
 			asyncTest("Test - Project List Commit popup rendered", function() {
 				var getcommitfile = $.mockjax({
@@ -220,12 +220,12 @@ define(["projectlist/projectList"], function(ProjectList) {
 					var visibility =  $('#commit294187d7-f75a-4adc-bb25-ce9465e0e82f').css('display').trim();
 					equal("block", visibility, "Add to Commit popup shown");
 					equal("svn", getval, "Commit type svn listed");
-					self.projectcommitVerification(projectlist, runOtherTests);
+					self.projectcommitVerification(projectlist);
 				}, 2500);
 			});
 		},
 		
-		projectcommitVerification : function(projectlist, runOtherTests) {
+		projectcommitVerification : function(projectlist) {
 			var self=this;
 			asyncTest("Test -Commit trigger", function() {
 				$("input[name='repoUrl']").val('https://insight.photoninfotech.com/svn/repos/phresco-svn-projects/ci/3.0.0/wordpress-WordPress');
@@ -246,12 +246,12 @@ define(["projectlist/projectList"], function(ProjectList) {
 					start();
 					var getvalue = $(".popsuccess").text();
 					equal("SVN project committed Successfully", getvalue, "Commit service call");
-					self.projectSVNUiVerification(projectlist, runOtherTests);
+					self.projectSVNUiVerification(projectlist);
 				}, 2500);
 			});
 		},
 		
-		projectSVNUiVerification : function(projectlist, runOtherTests) {
+		projectSVNUiVerification : function(projectlist) {
 			var self = this;
 			asyncTest("Test - Project List SVNUPDATE popup rendered", function() {
 				$('.tooltiptop[name^="svn_update"]').click();
@@ -261,12 +261,12 @@ define(["projectlist/projectList"], function(ProjectList) {
 					var visibility =  $('#svn_update294187d7-f75a-4adc-bb25-ce9465e0e82f').css('display').trim();
 					equal("block", visibility, "Add to Commit popup shown");
 					equal("svn", getval, "Project List SVNUPDATE popup rendered");
-					self.projectSVNUpdateVerification(projectlist, runOtherTests);
+					self.projectSVNUpdateVerification(projectlist);
 				}, 2500);
 			});
 		},
 		
-		projectSVNUpdateVerification : function(projectlist, runOtherTests) {
+		projectSVNUpdateVerification : function(projectlist) {
 			var self = this;
 			asyncTest("Test -SVNUpdate trigger", function() {
 				$("input[name='repoUrl']").val('https://insight.photoninfotech.com/svn/repos/phresco-svn-projects/ci/3.0.0');
@@ -287,12 +287,12 @@ define(["projectlist/projectList"], function(ProjectList) {
 					start();
 					var getval = $(".popsuccess").text();
 					equal("update svn project Successfully", getval, "SVNUpdate service call");
-					self.projectImportAppSuccessVerification(projectlist, runOtherTests);
+					self.projectImportAppSuccessVerification(projectlist);
 				}, 2500);
 			});
 		},
 		
-		projectImportAppSuccessVerification : function(projectlist, runOtherTests) {
+		projectImportAppSuccessVerification : function(projectlist) {
 			var self = this;
 			asyncTest("Import Application Success Service Test", function() {
 				var importAppAjax = $.mockjax({
@@ -318,12 +318,12 @@ define(["projectlist/projectList"], function(ProjectList) {
 					start();
 					var techid = $(commonVariables.contentPlaceholder).find(".wordpress-WordPress").attr("techid");
 					equal("tech-wordpress", techid, "Project List Service Tested");
-					self.projectListTest(projectlist, runOtherTests);
+					self.projectListTest(projectlist);
 				}, 2500);
 			});
 		}, 
 		
-		projectListTest : function(projectlist, runOtherTests) {
+		projectListTest : function(projectlist) {
 			$('#content').empty();
 			var self = this;
 			asyncTest("Test - Project List Service", function() {
@@ -342,11 +342,11 @@ define(["projectlist/projectList"], function(ProjectList) {
 					start();
 					var techid = $(commonVariables.contentPlaceholder).find(".wordpress-WordPress").attr("techid");
 					equal("tech-wordpress", techid, "Project List Service Tested");
-					self.projectDeleteSuccessVerification(projectlist, runOtherTests);
+					self.projectDeleteSuccessVerification(projectlist);
 				}, 2500);
 			});
 		},
-		projectDeleteSuccessVerification : function(projectlist, runOtherTests) {
+		projectDeleteSuccessVerification : function(projectlist) {
 			var self = this;
 			$.mockjaxClear(self.projectlistdata);
 
@@ -378,7 +378,9 @@ define(["projectlist/projectList"], function(ProjectList) {
 					start();					
 					var techid = $(commonVariables.contentPlaceholder).find(".wordpress-WordPress").attr("techid");
 					equal(undefined, techid, "Project List Service Tested");
-					runOtherTests();
+					require(["projectTest"], function(projectTest){
+						projectTest.runTests();
+					});
 				}, 1500);
 			}); 
 		}

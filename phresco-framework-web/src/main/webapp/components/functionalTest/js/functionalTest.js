@@ -8,7 +8,6 @@ define(["functionalTest/listener/functionalTestListener", "testResult/listener/t
 		configUrl: "components/functionalTest/config/config.json",
 		name : commonVariables.functionalTest,
 		functionalTestListener : null,
-		functionalTestAPI : null,
 		testResult : null,
 		testResultListener : null,
 		onTabularViewEvent : null,
@@ -26,9 +25,6 @@ define(["functionalTest/listener/functionalTestListener", "testResult/listener/t
 		initialize : function(globalConfig) {
 			var self = this;
 			commonVariables.testType = commonVariables.functional;
-			if (self.functionalTestAPI === null) {
-				self.functionalTestAPI =  new Clazz.com.components.functionalTest.js.api.FunctionalTestAPI();
-			}
 			if (self.functionalTestListener === null ) {
 				self.functionalTestListener = new Clazz.com.components.functionalTest.js.listener.FunctionalTestListener();
 			}
@@ -138,7 +134,7 @@ define(["functionalTest/listener/functionalTestListener", "testResult/listener/t
 				functionalTestOptions.functionalFramework = responseData.functionalFramework;
 				functionalTestOptions.hubStatus = responseData.hubStatus;
 				functionalTestOptions.nodeStatus = responseData.nodeStatus;
-				var userPermissions = JSON.parse(self.functionalTestListener.functionalTestAPI.localVal.getSession('userPermissions'));
+				var userPermissions = JSON.parse(commonVariables.api.localVal.getSession('userPermissions'));
 				functionalTestOptions.userPermissions = userPermissions;
 				renderFunction(functionalTestOptions, whereToRender);
 			});

@@ -1,9 +1,8 @@
-define(["navigation/api/navigationAPI"], function() {
+define([], function() {
 
 	Clazz.createPackage("com.components.navigation.js.listener");
 
 	Clazz.com.components.navigation.js.listener.navigationListener = Clazz.extend(Clazz.WidgetWithTemplate, {
-		navAPI : null,
 		localStorageAPI : null,
 		header : null,
 		footer : null,
@@ -37,10 +36,6 @@ define(["navigation/api/navigationAPI"], function() {
 		 */
 		initialize : function(config) {
 			var self = this;
-			
-			if(self.navAPI === null){
-				self.navAPI = new Clazz.com.components.navigation.js.api.navigationAPI();
-			}	
 		},
 		
 		onAddProject : function() {
@@ -373,7 +368,7 @@ define(["navigation/api/navigationAPI"], function() {
 		//To apply the RBAC to the users
 		applyRBAC : function(keyword) {
 			var self = this;
-			var userPermissions = JSON.parse(self.navAPI.localVal.getSession('userPermissions'));
+			var userPermissions = JSON.parse(commonVariables.api.localVal.getSession('userPermissions'));
 			switch(keyword) {
 				case commonVariables.projectlist :
 					if (!userPermissions.importApplication) {
@@ -395,7 +390,7 @@ define(["navigation/api/navigationAPI"], function() {
 		//To show hide the options like build, deploy based on the applicable options for the technology
 		showHideTechOptions : function() {
 			var self = this;
-			var applicableOptions = JSON.parse(self.navAPI.localVal.getSession('applicableOptions'));
+			var applicableOptions = JSON.parse(commonVariables.api.localVal.getSession('applicableOptions'));
 			if (jQuery.inArray(commonVariables.optionsCode, applicableOptions) === -1) {
 				$("#codequality").hide();
 			} else {
@@ -518,7 +513,7 @@ define(["navigation/api/navigationAPI"], function() {
 			var self = this;
 			Clazz.navigationController.jQueryContainer = commonVariables.headerPlaceholder;
 			self.getMyObj(commonVariables.header, function(returnVal){
-				self.header.data = JSON.parse(self.navAPI.localVal.getSession('userInfo'));
+				self.header.data = JSON.parse(commonVariables.api.localVal.getSession('userInfo'));
 				Clazz.navigationController.push(self.header, false);
 				callback(true);
 			});
@@ -644,7 +639,7 @@ define(["navigation/api/navigationAPI"], function() {
 		getActionHeader : function(requestBody, action) {
 			var self=this, header, data = {}, userId;
 			var type = requestBody.type;
-			var appDirName = self.navAPI.localVal.getSession("appDirName");
+			var appDirName = commonVariables.api.localVal.getSession("appDirName");
 			header = {
 				contentType: "application/json",				
 				dataType: "json",
@@ -673,7 +668,7 @@ define(["navigation/api/navigationAPI"], function() {
 			var self = this;			
 			try {
 				//commonVariables.loadingScreen.showLoading();
-				self.navAPI.donavigation(header,
+				commonVariables.api.ajaxRequest(header,
 					function(response) {
 						//commonVariables.loadingScreen.removeLoading();
 						if (response !== null ) {
@@ -815,7 +810,7 @@ define(["navigation/api/navigationAPI"], function() {
 					$("#project_list_import").hide();	
 					self.getMyObj(commonVariables.projectlist, function(returnVal){
 						self.projectlist = returnVal;
-						Clazz.navigationController.push(self.projectlist, true);
+						Clazz.navigationController.push(self.projectlist, commonVaraibles.animation);
 					});
 				}
 			});

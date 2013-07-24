@@ -36,10 +36,10 @@ define(["features/listener/featuresListener"], function() {
 			self.registerHandlebars();
 		},
 		
-		loadPage :function(animationType) {
+		loadPage :function() {
 			var self = this;
 			Clazz.navigationController.jQueryContainer = commonVariables.contentPlaceholder;
-			Clazz.navigationController.push(this, animationType);
+			Clazz.navigationController.push(this, commonVariables.animation);
 		},
 		
 		registerEvents : function () {
@@ -57,7 +57,7 @@ define(["features/listener/featuresListener"], function() {
 		registerHandlebars : function () {
 			var self = this;
 			Handlebars.registerHelper('versiondata', function(versions, id) {
-				var selectedList = self.featuresListener.featuresAPI.localVal.getSession("selectedFeatures");				
+				var selectedList = commonVariables.api.localVal.getSession("selectedFeatures");				
 				var fieldset;
 				if(versions.length > 0){
 					$.each(versions, function(index, value){
@@ -108,7 +108,6 @@ define(["features/listener/featuresListener"], function() {
 					$.each(versions, function(index, value){
 						if(JSON.stringify(value.appliesTo) !== "null"){
 							$.each(value.appliesTo, function(index, value){
-								console.info("inside");
 								if(value.required === false){
 									settingimg = '<span class="settings_icon"><img src="themes/default/images/helios/settings_icon.png" width="23" height="22" border="0" alt=""></span>';
 								}
@@ -180,7 +179,7 @@ define(["features/listener/featuresListener"], function() {
 			var self = this;
 			self.featuresListener.getFeaturesList(self.featuresListener.getRequestHeader(self.featureRequestBody, "FEATURE"), function(response) {
 				collection.featureslist = response.data;
-				var userPermissions = JSON.parse(self.featuresListener.featuresAPI.localVal.getSession('userPermissions'));
+				var userPermissions = JSON.parse(commonVariables.api.localVal.getSession('userPermissions'));
 				collection.userPermissions = userPermissions;
 				self.getLibraries(collection, callback);
 			});

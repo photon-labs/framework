@@ -8,7 +8,6 @@ define(["performanceTest/listener/performanceTestListener"], function() {
 		configUrl: "components/performanceTest/config/config.json",
 		name : commonVariables.performanceTest,
 		performanceTestListener : null,
-		performanceTestAPI : null,
 		onTabularViewEvent : null,
 		onGraphicalViewEvent : null,
 		onDynamicPageEvent : null,
@@ -29,9 +28,6 @@ define(["performanceTest/listener/performanceTestListener"], function() {
 		initialize : function(globalConfig) {
 			var self = this;
 			commonVariables.testType = commonVariables.performance;
-			if (self.performanceTestAPI === null) {
-				self.performanceTestAPI =  new Clazz.com.components.performanceTest.js.api.PerformanceTestAPI();
-			}
 			if (self.performanceTestListener === null ) {
 				self.performanceTestListener = new Clazz.com.components.performanceTest.js.listener.PerformanceTestListener();
 			}
@@ -195,7 +191,7 @@ define(["performanceTest/listener/performanceTestListener"], function() {
 		 * @element: Element as the result of the template + data binding
 		 */
 		postRender : function(element) {
-			var self = this, performanceLog = "", consoleLog = self.performanceTestAPI.localVal.getSession('performanceConsole');
+			var self = this, performanceLog = "", consoleLog = commonVariables.api.localVal.getSession('performanceConsole');
 			self.performanceTestListener.resizeConsoleWindow();
 			self.performanceTestListener.resultBodyResize();
 			
@@ -207,7 +203,7 @@ define(["performanceTest/listener/performanceTestListener"], function() {
 			$('#testConsole').html(performanceLog);
 
 			
-			self.performanceTestAPI.localVal.setSession('performanceConsole', '');
+			commonVariables.api.localVal.setSession('performanceConsole', '');
 		},
 		
 		preRender: function(whereToRender, renderFunction) {
