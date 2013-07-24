@@ -44,7 +44,6 @@ public class ErrorHandlerTest extends RestBase {
 		mapper.configure(DeserializationConfig.Feature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 		ResponseInfo responseInfo = mapper.readValue(new StringReader(contentAsString), ResponseInfo.class);
 		String errorCode = responseInfo.getErrorCode();
-		System.out.println(errorCode);
 		Assert.assertEquals("PHR000000", errorCode);
 	}
 
