@@ -95,6 +95,8 @@ import com.sun.jersey.api.client.ClientResponse.Status;
  */
 @Path("/parameter")
 public class ParameterService extends RestBase implements FrameworkConstants, ServiceConstants {
+	private static final String COLORS_CUSTOMER_COLOR = "&colors=customerColor";
+	private static final String CSS_PHRESCO_STYLE = "css=phresco_style";
 	private static Map<String, PhrescoDynamicLoader> pdlMap = new HashMap<String, PhrescoDynamicLoader>();
 	private static Map<String, Map<String, DependantParameters>> valueMap = new HashMap<String, Map<String, DependantParameters>>();
 	private static Map<String, List<PerformanceDetails>> templateMap = new HashMap<String, List<PerformanceDetails>>();
@@ -463,6 +465,11 @@ public class ParameterService extends RestBase implements FrameworkConstants, Se
 				sb.append("&" + CUST_MENU_BACK_GROUND + "=" + theme.get("MenuBackGround"));
 				sb.append("&" + CUST_MENUFONT_COLOR + "=" + theme.get("MenufontColor"));
 				sb.append("&" + CUST_DISABLED_LABEL_COLOR + "=" + theme.get("DisabledLabelColor"));
+				sb.append("&" + CSS_PHRESCO_STYLE);
+				sb.append(COLORS_CUSTOMER_COLOR);
+			} else {
+				sb.append("?");
+				sb.append(CSS_PHRESCO_STYLE);
 			}
 		} catch (PhrescoException e) {
 			ResponseInfo<PossibleValues> finalOutput = responseDataEvaluation(responseData, e,
