@@ -4188,3 +4188,60 @@ a.selected { background:#dcdcdc; }
 .modal_window { position:absolute; z-index:10000000 !important; }
 .successMessage {bottom: 20px; left: 33px; position: absolute;}
 .checkboxStyle {float: left; margin-right: 5px !important;};
+
+
+
+
+/*Scroll*/
+
+.mCSB_container{
+	width:auto;
+	overflow:visible;
+}
+.mCSB_container.mCS_no_scrollbar{
+	margin-right:0;
+}
+.mCustomScrollBox>.mCSB_scrollTools{
+	width:10px;
+	height:100%;
+	top:0;
+	right:0;
+}
+.mCSB_scrollTools .mCSB_draggerContainer{
+	position:absolute;
+	top:0;
+	left:0;
+	bottom:0;
+	right:0; 
+	height:auto;
+}
+.mCSB_scrollTools .mCSB_dragger{
+	cursor:pointer;
+	width:100%;
+	height:30px;
+}
+.mCSB_scrollTools .mCSB_dragger .mCSB_dragger_bar{
+	width:4px;
+	height:100%;
+	margin:0 auto;
+	-webkit-border-radius:10px;
+	-moz-border-radius:10px;
+	border-radius:10px;
+	text-align:center;
+}
+/* horizontal scrollbar */
+.mCSB_horizontal>.mCSB_scrollTools a+.mCSB_draggerContainer{
+	margin:0 20px;
+}
+/* default scrollbar colors and backgrounds (default theme) */
+.mCSB_scrollTools .mCSB_dragger .mCSB_dragger_bar{
+	background:#6f6f6f; /* rgba fallback */
+	filter:"alpha(opacity=15)"; -ms-filter:"alpha(opacity=15)"; /* old ie */
+}
+.mCS-light-thin>.mCSB_scrollTools .mCSB_draggerRail{
+	background:#ff0000; /* rgba fallback */
+	background:rgba(255,255,255,0.1);
+}
+.mCS-light-thin>.mCSB_scrollTools .mCSB_dragger .mCSB_dragger_bar{
+	width:2px;
+}
