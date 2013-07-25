@@ -150,6 +150,7 @@ public class CIJob {
     private String testType = "";
     private String logo = "";
     private String sonarUrl = "";
+    private String technologyName = "";
     private String reportName = "";
     
 	// Load Test CI integration
@@ -1167,6 +1168,14 @@ public class CIJob {
 
 	public void setPackageType(String packageType) {
 		this.packageType = packageType;
+	}
+
+	public String getTechnologyName() {
+		return technologyName;
+	}
+
+	public void setTechnologyName(String technologyName) {
+		this.technologyName = technologyName;
 	}
 
 	@Override

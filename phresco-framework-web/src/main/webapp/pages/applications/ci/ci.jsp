@@ -333,14 +333,12 @@ $(document).ready(function() {
     
     <% if (permissions != null && permissions.canManageCIJobs()) { %>
 	    if (<%= jenkinsAlive %>) {
-	    	console.log("jenkins alive , enable configure button ");
 	    	enableStart();
 	    	enableButton($("#configure"));
 	    	enableButton($("#emailConfiguration"));
 	    	enableButton($("confluenceConfiguration"));
 	    	disableButton($("#setup"));
 	    } else {
-	    	console.log("Jenkins down , disabled configure button ");
 	    	enableStop();
 	    	disableButton($("#configure"));
 	    	disableButton($("#emailConfiguration"));
@@ -355,10 +353,8 @@ $(document).ready(function() {
 	
 	// if build is in progress disable configure button
     if (<%= isAtleastOneJobIsInProgress %> || <%= isBuildTriggeredFromUI %>) {
-    	console.log("build is in progress, disable configure button ");
     	disableButton($("#configure"));
     	refreshCi = true;
-    	console.log("at least one job is in progres...");
     	refreshBuild();
     } 
 	
@@ -422,23 +418,16 @@ function enableStop() {
 
 //when background build is in progress, have to refresh ci page
 function refreshBuild() {
-	console.log("refresh build method called value " + refreshCi);
 	if(refreshCi) {
-		console.log("Going to get no of jobs in progress " + refreshCi);	
 		loadContent('getNoOfJobsIsInProgress',$('#deleteObjects'), '', getBasicParams(), true, true);
 	}
 }
 
 function successRefreshBuild(data) {
-	console.log("noOfJobsIsinProgress....." + <%= noOfJobsIsinProgress %>);
-	console.log("successRefreshBuild....." + data.numberOfJobsInProgress);
-	console.log("refreshCi ... " + refreshCi);
 	//data can be zero when no build is in progress, can be int value for each running job
 	// noOfJobsIsinProgress also can be zero  when no jobs in in progress
 	if (data.numberOfJobsInProgress < <%= noOfJobsIsinProgress %> || data.numberOfJobsInProgress > <%= noOfJobsIsinProgress %>) { // When build is increased or decreased on a job refresh the page , refresh the page
-    	console.log("build succeeded going to load builds.....");
     	if ($("a[name='appTab'][class='active']").attr("id") == "ci" && $("#popupPage").css("display") == "block") {
-    		console.log("Build trigger completed in jenkins , but UI is blocking ");
 //     		refreshCi = false;
     	} else {
     		loadContent('ci', $('#deleteObjects'), $('#subcontainer'), getBasicParams(), false, true);
@@ -450,17 +439,13 @@ function successRefreshBuild(data) {
 
 //after configured , it ll take some time to start server , so we ll get no builds available , in that case have to refresh ci
 function refreshAfterServerUp() {
-	console.log("Server startup Refreshed...." + isCiRefresh);
 	// after configured job , jenkins will take some time to load. In that case after jenkins started(fully up and running), we have to enable this
 	
    	localJenkinsAliveCheck (); // checks jenkins status and updates the variable
 	
-	console.log("Local jenkins alive called ....  jenkins alive ... " + isJenkinsAlive);
-	console.log("Local jenkins alive called .... jenkins ready ... " + isJenkinsReady);
 	
    	//default : isCiRefresh = true
 	if (!isCiRefresh) { //when stop is clicked it will comme here
-		console.log("Refreshing it!!!!!!");
 		reloadCI();
 	} else if(isCiRefresh && (!isJenkinsAlive || !isJenkinsReady)) { // when start is clicked it will come here
 		//till page is reloaded disable these buttons.
@@ -468,11 +453,9 @@ function refreshAfterServerUp() {
 		jenkinsGettingReady();
 	   	$(".errorMsgLbl").text('<%= FrameworkConstants.CI_BUILD_LOADED_SHORTLY%>');
 	   	
-		console.log("I ll wait till jenkins gets ready!!!");
 		window.setTimeout(refreshAfterServerUp, 10000); // wait for 10 sec
 	} else {
 		isCiRefresh = false;
-		console.log("Server started successfully!");
 		reloadCI();
 	}
 }
@@ -486,33 +469,26 @@ function jenkinsGettingReady() {
 
 function reloadCI() {
 	if ($("a[name='appTab'][class='active']").attr("id") == "ci" && $("#popupPage").css("display") == "none"){
-		console.log("reload CI called and going to refresh the page ");
-    	console.log("Server startup completed ..." + isCiRefresh);
 		loadContent('ci',$('#deleteObjects'), $('#subcontainer'), getBasicParams(), false, true);
 	} else {
-		console.log("reload CI : It is not in CI tab or popup available ");
 		$(".errorMsgLbl").text('<%= FrameworkConstants.CI_NO_JOBS_AVAILABLE%>');
 	}
 }
 
 function localJenkinsAliveCheck () {
-	console.log("local jenkins alive check called ");
 	loadContent('localJenkinsAliveCheck',$('#deleteObjects'), '', getBasicParams(), true, false);
 }
 
 function successLocalJenkinsAliveCheck (data) {
 	if ($.trim(data.localJenkinsAlive) == '200') {
-		console.log("200");
 		isJenkinsAlive = true;
 		isJenkinsReady = true;
 	}
 	if ($.trim(data.localJenkinsAlive) == '503') {
-		console.log("503");
 		isJenkinsAlive = true;
 		isJenkinsReady = false;
 	}
 	if ($.trim(data.localJenkinsAlive) == '404') {
-		console.log("404");
 		isJenkinsAlive = false;
 		isJenkinsReady = false;
 	}
@@ -524,7 +500,6 @@ function successEvent(pageUrl, data) {
 		successRefreshBuild(data);
 	} else if (pageUrl == "localJenkinsAliveCheck") {
 		hideLoadingIcon();
-		console.log("success jenkins alive check called ");
 		successLocalJenkinsAliveCheck(data);
 	} else if (pageUrl == "CIJobDownStreamCheck") {
 		if (data.downStreamAvailable) {
@@ -605,14 +580,10 @@ function isOneJobSelected() {
 
 function popupOnClose(obj) {
 	var closeUrl = $(obj).attr("id");
-	console.log("handle load content here " + closeUrl);
 	if (closeUrl === "setup") {
-		console.log("setup called ");
 	} else 	if (closeUrl === "startJenkins") {
-		console.log("start called ");
 		isCiRefresh = true; //after stratup , when closing popup, page should refreshed after some time
 	} else 	if (closeUrl === "stopJenkins") {
-		console.log("stop called ");
 	}
 	
 	refreshAfterServerUp();
@@ -624,10 +595,8 @@ function popupOnOk(obj) {
 		okUrl = $(obj).attr("id");
 		if (okUrl == "saveJob" || okUrl == "updateJob" ) {
 			if (isOneJobSelected()) {
-				console.log("update job validation ");
 				okUrl = "updateJob";
 			} else {
-				console.log("This is save job ");
 			}
 			// do the validation for collabNet info only if the user selects git radio button
 			validation = configureJobValidation();
@@ -676,7 +645,6 @@ function redirectCiConfigure() {
 	var collabnet = $("input:radio[name=enableBuildRelease][value='true']").is(':checked');
 	var confluence = $("input:radio[name=enableConfluence][value='true']").is(':checked')
 	var ciOperation = $('#operation').val();
-	console.log('ciOperation.......',ciOperation);
 	if (validation) {
 		var colabStatus = false;
 		var conflStatus = false;

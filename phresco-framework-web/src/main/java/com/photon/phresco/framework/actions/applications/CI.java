@@ -56,6 +56,7 @@ import com.photon.phresco.commons.CIPasswordScrambler;
 import com.photon.phresco.commons.FrameworkConstants;
 import com.photon.phresco.commons.model.ApplicationInfo;
 import com.photon.phresco.commons.model.ProjectInfo;
+import com.photon.phresco.commons.model.Technology;
 import com.photon.phresco.exception.PhrescoException;
 import com.photon.phresco.framework.PhrescoFrameworkFactory;
 import com.photon.phresco.framework.api.ActionType;
@@ -148,6 +149,7 @@ public class CI extends DynamicParameterAction implements FrameworkConstants {
     private String testType = "";
     private String theme = "";
     private String logo = "";
+    private String technologyName = "";
     private String sonarUrl = "";
     private boolean isDownStreamAvailable;
    
@@ -189,6 +191,8 @@ public class CI extends DynamicParameterAction implements FrameworkConstants {
 			setReqAttribute(CI_JENKINS_ALIVE, jenkinsAlive);
 
 			jenkinsAlive = Utility.isConnectionAlive(HTTP_PROTOCOL, LOCALHOST,	Integer.parseInt(getPortNo(Utility.getJenkinsHome())));
+			// set theme as empty, struts2 will throw the error for this special char content
+			theme = "";
 			if (debugEnabled) {
 				S_LOGGER.debug("jenkins Alive " + jenkinsAlive);
 			}
@@ -660,6 +664,9 @@ public class CI extends DynamicParameterAction implements FrameworkConstants {
 	                } else if (PDF_REPORT.equals(operation) && "theme".equals(key)) {
 	                	// for pdf report operation we have to assign our own values for few parameters
 	    				bu.setProperty(cijob, parameter.getKey(), theme);
+	                } else if (PDF_REPORT.equals(operation) && "technologyName".equals(key)) {
+	                	// for pdf report operation we have to assign our own values for technology name
+	    				bu.setProperty(cijob, parameter.getKey(), technologyName);
 	                } else {
 	                    bu.setProperty(cijob, parameter.getKey(), getReqParameter(parameter.getKey()));
                 	}
@@ -785,6 +792,7 @@ public class CI extends DynamicParameterAction implements FrameworkConstants {
 			existJob.setSonarUrl(sonarUrl);
 			existJob.setLogo(logo);
 			existJob.setTheme(theme);
+			existJob.setTechnologyName(technologyName);
 			
 			// Build info
 			ApplicationInfo applicationInfo = getApplicationInfo();
@@ -871,6 +879,9 @@ public class CI extends DynamicParameterAction implements FrameworkConstants {
 				String logoImageString = getLogoImageString();
 				String themeColorJson = getThemeColorJson();
 				
+				// get technology name from service
+				Technology technology = getServiceManager().getTechnology(applicationInfo.getTechInfo().getId());
+				
 				// object change
 				existJob.setSonarUrl(usingSonarUrl);
 				existJob.setLogo(logoImageString);
@@ -880,6 +891,7 @@ public class CI extends DynamicParameterAction implements FrameworkConstants {
 				sonarUrl = usingSonarUrl;
 				logo = logoImageString;
 				theme = themeColorJson;
+				technologyName = technology.getName();
 				
 				MojoProcessor mojo = new MojoProcessor(new File(getPhrescoPluginInfoFilePath(Constants.PHASE_CI)));
 				persistValuesToXml(mojo, Constants.PHASE_PDF_REPORT);
@@ -1910,6 +1922,14 @@ public class CI extends DynamicParameterAction implements FrameworkConstants {
 
 	public void setSonarUrl(String sonarUrl) {
 		this.sonarUrl = sonarUrl;
+	}
+
+	public String getTechnologyName() {
+		return technologyName;
+	}
+
+	public void setTechnologyName(String technologyName) {
+		this.technologyName = technologyName;
 	}
 
 	public String getReportType() {

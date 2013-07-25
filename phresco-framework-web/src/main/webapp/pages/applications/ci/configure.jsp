@@ -1045,7 +1045,6 @@
 			$("#errMsg").html("Enter the Name");
 			$("#name").focus();
 			$("#name").val("");
-			console.log("Name is not specified ");
 			return false;
 		} 
 		
@@ -1053,7 +1052,6 @@
 			if(isValidEmail(senderEmailId)) {
 				$("#errMsg").html("Enter Valid Email");
 				$("#senderEmailId").focus();
-				console.log("Email is not valid ");
 				return false;
 			}
 		}
@@ -1064,7 +1062,6 @@
 				$("#errMsg").html("Enter the URL");
 				$("#svnurl").focus();
 				$("#svnurl").val("");
-				console.log("url is missing");
 				return false;
 			} 
 			
@@ -1072,7 +1069,6 @@
 				$("#errMsg").html("Enter valid URL");
 				$("#svnurl").focus();
 				$("#svnurl").val("");
-				console.log("url is invalid");
 				return false;
 			}
 			
@@ -1080,13 +1076,11 @@
 				$("#errMsg").html("Enter UserName");
 				$("#username").focus();
 				$("#username").val("");
-				console.log("usename is not specified ");
 				return false;
 			}
 			if(isBlank(password)) {
 				$("#errMsg").html("Enter Password");
 				$("#password").focus();
-				console.log("password is not specified ");
 				return false;
 			}
 		} 
@@ -1096,7 +1090,6 @@
 				$("#errMsg").html("Enter the URL");
 				$("#svnurl").focus();
 				$("#svnurl").val("");
-				console.log("Url is not specified ");
 				return false;
 			}
 			
@@ -1104,7 +1097,6 @@
 				$("#errMsg").html("Enter Branch Name");
 				$("#branch").focus();
 				$("#branch").val("");
-				console.log("branch is not specified ");
 				return false;
 			}
 		} 
@@ -1112,7 +1104,6 @@
 		if($("input:radio[name=svnType][value='clonedWorkspace']").is(':checked')) {
 			if($("select[name=usedClonnedWorkspace] option").length <= 0){
 				$("#errMsg").html("There is no parent project to configure");
-				console.log("parent project is not choosed ");
 				return false;
 			}
 		}
