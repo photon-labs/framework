@@ -83,6 +83,16 @@
 					"createproject" : "Create Project"
 				}
 			}
+		},
+		"successmessage" : {
+			"projectcreated" : "Project created successfully",
+			"projectupdated" : "Project updated successfully"
+		},
+		"errormessage" : {
+			"projectcreatefailed" : "Project creation failed",
+			"projecteditfailed" : "Failed to edit project",
+			"projectupdatefailed" :"Failed to update project",
+			"unauthorizeduser" : "Unauthorized user"
 		}
 	},
 	"projectlist" : {
@@ -93,7 +103,17 @@
 			"repository" : "Repository",
 			"description" : "Description",
 			"nodata" : "No Projects Available"
+		},
+		"successmessage" : {
+			"applicationdeleted" : "Application deleted successfully"
+		},
+		"errormessage" : {
+			"projectlistfailed": " Failed to list projects",
+			"applicationdeletefailed" : "Unable to delete application",
+			"connectionalive" : "Could not delete application, connection still alive",
+			"runagainstsource" : "Could not open file 'runagainstsource.info'"
 		}
+		
 	},
 	"configuration" : {
 		"label" : {
@@ -147,7 +167,11 @@
              "test"           : "Test",
              "tableview"      : "Table View",
              "graphview"      : "Graph View" 			 
-			 }
+			 },
+		"errormessage" : {
+			"serviceerror" : "Service Error",
+			"unexpectedfailure": "Unexpected Failure at server end"	 
+		}
 	},
 	
 	
@@ -220,6 +244,15 @@
 		"btn" : {
 			"cancel" : "Cancel",
 			"update" : "Update"
+		},
+		"successmessage" : {
+			"applicationupdated" : "Application updated successfully"
+		},
+		"errormessage" : {
+			"applicationupdatefailed" : "Failed to update application",
+			"openprojectinfofailed" : "Could not open file 'project.info'",
+			"unauthorizeduser" : "Unauthorized user",
+			"ioerror" : "I/O error while closing BufferedReader"
 		}
 	},
 	"features" : {
@@ -234,7 +267,15 @@
 			"jslibraries" : "JS Libraries",
 			"components" : "Components"
 		},
-		"placeholder" : "Search"
+		"placeholder" : "Search",
+		"successmessage" : {
+			"featuresupdated" : "Features updated successfully" 
+		},
+		"errormessage" : {
+			"featuresupdatefailed" : "Failed to update features",
+			"openprojectinfofailed" : "Could not open file 'project.info'",
+			"unauthorizeduser" : "Unauthorized user"
+		}
 	},
 	"ci" : {
         "jobtemplates" : "Job Templates",

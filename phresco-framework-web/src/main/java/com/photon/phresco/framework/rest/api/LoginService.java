@@ -76,14 +76,14 @@ public class LoginService extends RestBase implements FrameworkConstants, Respon
 		try {
 			user = doLogin(credentials);
 			if (user == null) {
-				status = STATUS_FAILURE;
+				status = RESPONSE_STATUS_FAILURE;
 				errorCode = PHR110001;
 				ResponseInfo<User> finalOuptut = responseDataEvaluation(responseData, null, null, status, errorCode);
 				return Response.status(Status.OK).entity(finalOuptut).header(
 						"Access-Control-Allow-Origin", "*").build();
 			}
 			if (!user.isPhrescoEnabled()) {
-				status = STATUS_FAILURE;
+				status = RESPONSE_STATUS_FAILURE;
 				errorCode = PHR110002;
 				ResponseInfo<User> finalOuptut = responseDataEvaluation(responseData, null, null, status, errorCode);
 				return Response.status(Status.OK).entity(finalOuptut).header(
@@ -123,38 +123,38 @@ public class LoginService extends RestBase implements FrameworkConstants, Respon
 			UserPermissions userPermissions = FrameworkUtil.getUserPermissions(serviceManager, user);
 			user.setPermissions(userPermissions);
 			
-			status = STATUS_SUCCESS;
+			status = RESPONSE_STATUS_SUCCESS;
 			successCode = PHR100001;
 			ResponseInfo<User> finalOuptut = responseDataEvaluation(responseData, null, user, status, successCode);
 			return Response.ok(finalOuptut).header("Access-Control-Allow-Origin", "*").build();
 		} catch (PhrescoWebServiceException e) {
 			if (e.getResponse().getStatus() == 204) {
-				status = STATUS_ERROR;
+				status = RESPONSE_STATUS_ERROR;
 				errorCode = PHR110003;
 				ResponseInfo<User> finalOuptut = responseDataEvaluation(responseData, e, null, status, errorCode);
 				return Response.status(Status.OK).entity(finalOuptut).header("Access-Control-Allow-Origin",
 						"*").build();
 			} else {
-				status = STATUS_ERROR;
+				status = RESPONSE_STATUS_ERROR;
 				errorCode = PHR110004;
 				ResponseInfo<User> finalOuptut = responseDataEvaluation(responseData, e, null, status, errorCode);
 				return Response.status(Status.OK).entity(finalOuptut).header("Access-Control-Allow-Origin",
 						"*").build();
 			}
 		} catch (IOException e) {
-			status = STATUS_ERROR;
+			status = RESPONSE_STATUS_ERROR;
 			errorCode = PHR110005;
 			ResponseInfo<User> finalOuptut = responseDataEvaluation(responseData, e, null, status, errorCode);
 			return Response.status(Status.OK).entity(finalOuptut).header(
 					"Access-Control-Allow-Origin", "*").build();
 		} catch (ParseException e) {
-			status = STATUS_ERROR;
+			status = RESPONSE_STATUS_ERROR;
 			errorCode = PHR110006;
 			ResponseInfo<User> finalOuptut = responseDataEvaluation(responseData, e, null, status, errorCode);
 			return Response.status(Status.OK).entity(finalOuptut).header(
 					"Access-Control-Allow-Origin", "*").build();
 		} catch (PhrescoException e) {
-			status = STATUS_ERROR;
+			status = RESPONSE_STATUS_ERROR;
 			errorCode = PHR110007;
 			ResponseInfo<User> finalOuptut = responseDataEvaluation(responseData, e, null, status, errorCode);
 			return Response.status(Status.OK).entity(finalOuptut).header(

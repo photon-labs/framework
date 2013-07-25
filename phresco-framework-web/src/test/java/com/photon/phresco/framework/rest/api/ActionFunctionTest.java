@@ -59,7 +59,6 @@ public class ActionFunctionTest implements ActionServiceConstant  {
 		System.out.println("response.getType()"+response.getType());
 		System.out.println("response.getType()"+response.getStatus());
 		System.out.println("output.getMessage()"+output.getMessage());
-		System.out.println("output.getResponse()"+output.getResponse());
 		
 		//fail("login failed");
 		assertEquals("Failed during Login", "Login Successfull", output.getMessage());

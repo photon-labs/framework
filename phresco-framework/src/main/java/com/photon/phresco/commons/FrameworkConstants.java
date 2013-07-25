@@ -170,9 +170,9 @@ public interface FrameworkConstants {
 	String APK  = "apk";
 	String OTHERS = "Others";
 	
-	String STATUS_SUCCESS = "success";
-	String STATUS_FAILURE = "failure";
-	String STATUS_ERROR = "error";
+	String RESPONSE_STATUS_SUCCESS = "success";
+	String RESPONSE_STATUS_FAILURE = "failure";
+	String RESPONSE_STATUS_ERROR = "error";
     
 	 /*
      * CI constants

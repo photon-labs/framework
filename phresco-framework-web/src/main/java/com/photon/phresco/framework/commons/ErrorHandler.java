@@ -20,7 +20,7 @@ import com.photon.phresco.exception.PhrescoException;
 import com.photon.phresco.framework.rest.api.ResponseInfo;
 import com.photon.phresco.framework.rest.api.RestBase;
 
-public class ErrorHandler extends RestBase implements Filter, ResponseCodes {
+public class ErrorHandler extends RestBase implements Filter, ResponseCodes, FrameworkConstants {
 
 	private static final String UTF_8 = "UTF-8";
 	private static final String APPLICATION_JSON = "application/json";
@@ -41,7 +41,7 @@ public class ErrorHandler extends RestBase implements Filter, ResponseCodes {
 			}
 			PhrescoException phrescoException = new PhrescoException(e);
 			ResponseInfo<Object> responseData = new ResponseInfo<Object>();
-			ResponseInfo<Object> finalOuptut = responseDataEvaluation(responseData, phrescoException, null, FrameworkConstants.STATUS_ERROR, ResponseCodes.PHR000000);
+			ResponseInfo<Object> finalOuptut = responseDataEvaluation(responseData, phrescoException, null, RESPONSE_STATUS_ERROR, PHR000000);
 			
 			ObjectMapper mapper = new ObjectMapper();
 			String objectToReturn = mapper.writeValueAsString(finalOuptut);

@@ -89,7 +89,7 @@ public class RestBase<T> {
 		responseData.setException(e);
 		responseData.setData(data);
 		responseData.setStatus(status);
-		responseData.setErrorCode(responseCode);
+		responseData.setResponseCode(responseCode);
 		
 		return responseData;
 	}

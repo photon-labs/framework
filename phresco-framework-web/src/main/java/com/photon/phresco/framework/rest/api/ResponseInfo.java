@@ -9,9 +9,8 @@ public class ResponseInfo<T> {
 	private String message;
 	private T data;
 	private Exception exception;
-	private Integer response;
-	String status;
-	String errorCode;
+	private String status;
+	private String responseCode;
 	
 	public String getStatus() {
 		return status;
@@ -19,11 +18,11 @@ public class ResponseInfo<T> {
 	public void setStatus(String status) {
 		this.status = status;
 	}
-	public String getErrorCode() {
-		return errorCode;
+	public String getResponseCode() {
+		return responseCode;
 	}
-	public void setErrorCode(String errorCode) {
-		this.errorCode = errorCode;
+	public void setResponseCode(String responseCode) {
+		this.responseCode = responseCode;
 	}
 	public String getMessage() {
 		return message;
@@ -43,16 +42,10 @@ public class ResponseInfo<T> {
 	public void setException(Exception exception) {
 		this.exception = exception;
 	}
-	public Integer getResponse() {
-		return response;
-	}
-	public void setResponse(Integer response) {
-		this.response = response;
-	}
 	@Override
 	public String toString() {
-		return "ResponseData [data=" + data + ", exception=" + exception + ", response="
-				+ response + ", status=" + status + ", errorCode=" + errorCode +"]";
+		return "ResponseData [data=" + data + ", exception=" + exception + 
+				", status=" + status + ", errorCode=" + responseCode +"]";
 	}
 
 }

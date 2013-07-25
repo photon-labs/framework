@@ -2,7 +2,7 @@ define(["features/features",  "application/application",  "projectlist/projectLi
 
 	Clazz.createPackage("com.components.features.js.listener");
 
-	Clazz.com.components.features.js.listener.FeaturesListener = Clazz.extend(Clazz.Widget, {
+	Clazz.com.components.features.js.listener.FeaturesListener = Clazz.extend(Clazz.WidgetWithTemplate, {
 		
 		basePlaceholder :  window.commonVariables.basePlaceholder,
 		appinfoContent : null,
@@ -102,17 +102,46 @@ define(["features/features",  "application/application",  "projectlist/projectLi
 				//commonVariables.loadingScreen.showLoading();
 				commonVariables.api.ajaxRequest(header,
 					function(response) {
-						if (response !== null) {
+						if (response !== null && response.status !== "error" && response.status !== "failure") {
 							//commonVariables.loadingScreen.removeLoading();
+							if(response.responseCode === "PHR200007") {
+								$(".blinkmsg").removeClass("poperror").addClass("popsuccess");
+								self.effectFadeOut('popsuccess', (''));
+								$(".popsuccess").attr('data-i18n', 'features.successmessage.featuresupdated');
+								self.renderlocales(commonVariables.basePlaceholder);
+							}
 							callback(response);
 						} else {
 							//commonVariables.loadingScreen.removeLoading();
-							callback({ "status" : "service failure"});
+							if(response.responseCode === "PHR210008") {
+								$(".blinkmsg").removeClass("popsuccess").addClass("poperror");
+								self.effectFadeOut('poperror', (''));
+								$(".poperror").attr('data-i18n', 'features.errormessage.featuresupdatefailed');
+								self.renderlocales(commonVariables.basePlaceholder);
+							} else if(response.responseCode === "PHR210007") {
+								$(".blinkmsg").removeClass("popsuccess").addClass("poperror");
+								self.effectFadeOut('poperror', (''));
+								$(".poperror").attr('data-i18n', 'features.errormessage.openprojectinfofailed');
+								self.renderlocales(commonVariables.basePlaceholder);
+							} else if(response.responseCode === "PHR210003") {
+								$(".blinkmsg").removeClass("popsuccess").addClass("poperror");
+								self.effectFadeOut('poperror', (''));
+								$(".poperror").attr('data-i18n', 'features.errormessage.unauthorizeduser');
+								self.renderlocales(commonVariables.basePlaceholder);
+							} else if(response.responseCode === "PHR000000") {
+								$(".blinkmsg").removeClass("popsuccess").addClass("poperror");
+								self.effectFadeOut('poperror', (''));
+								$(".poperror").attr('data-i18n', 'commonlabel.errormessage.unexpectedfailure');
+								self.renderlocales(commonVariables.basePlaceholder);
+							}
 						}
 					},
 
 					function(textStatus) {
-						//commonVariables.loadingScreen.removeLoading();
+						$(".blinkmsg").removeClass("popsuccess").addClass("poperror");
+						self.effectFadeOut('poperror', (''));
+						$(".poperror").attr('data-i18n', 'commonlabel.errormessage.serviceerror');
+						self.renderlocales(commonVariables.basePlaceholder);
 					}
 				);
 			} catch(exception) {
