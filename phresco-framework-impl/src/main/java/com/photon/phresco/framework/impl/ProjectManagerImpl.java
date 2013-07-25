@@ -98,11 +98,10 @@ public class ProjectManagerImpl implements ProjectManager, FrameworkConstants, C
 			List<ProjectInfo> projectInfos = new ArrayList<ProjectInfo>();
 			File[] appDirs = projectsHome.listFiles();
 			for (File appDir : appDirs) {
-			    if (appDir.isDirectory()) { // Only check the folders not files
+			    if (appDir.isDirectory()) { 
 			        File[] dotPhrescoFolders = appDir.listFiles(new PhrescoFileNameFilter(FOLDER_DOT_PHRESCO));
 			        if (ArrayUtils.isEmpty(dotPhrescoFolders)) {
 			        	continue;
-//	                throw new PhrescoException(".phresco folder not found in project " + appDir.getName());
 			        }
 			        File[] dotProjectFiles = dotPhrescoFolders[0].listFiles(new PhrescoFileNameFilter(PROJECT_INFO_FILE));
 			        if (ArrayUtils.isEmpty(dotProjectFiles)) {
@@ -137,11 +136,10 @@ public class ProjectManagerImpl implements ProjectManager, FrameworkConstants, C
 		List<ProjectInfo> projectInfos = new ArrayList<ProjectInfo>();
 	    File[] appDirs = projectsHome.listFiles();
 	    for (File appDir : appDirs) {
-	        if (appDir.isDirectory()) { // Only check the folders not files
+	        if (appDir.isDirectory()) { 
 	            File[] dotPhrescoFolders = appDir.listFiles(new PhrescoFileNameFilter(FOLDER_DOT_PHRESCO));
 	            if (ArrayUtils.isEmpty(dotPhrescoFolders)) {
 	            	continue;
-//	                throw new PhrescoException(".phresco folder not found in project " + appDir.getName());
 	            }
 	            File[] dotProjectFiles = dotPhrescoFolders[0].listFiles(new PhrescoFileNameFilter(PROJECT_INFO_FILE));
 	            if (ArrayUtils.isEmpty(dotProjectFiles)) {
@@ -184,10 +182,9 @@ public class ProjectManagerImpl implements ProjectManager, FrameworkConstants, C
 	public ProjectInfo getProject(String projectId, String customerId, String appId) throws PhrescoException {
 		File[] appDirs = new File(Utility.getProjectHome()).listFiles();
 	    for (File appDir : appDirs) {
-	        if (appDir.isDirectory()) { // Only check the folders not files
+	        if (appDir.isDirectory()) { 
 	            File[] dotPhrescoFolders = appDir.listFiles(new PhrescoFileNameFilter(FOLDER_DOT_PHRESCO));
 	            if (ArrayUtils.isEmpty(dotPhrescoFolders)) {
-//	                throw new PhrescoException(".phresco folder not found in project " + appDir.getName());
 	            	continue;
 	            }
 	            File[] dotProjectFiles = dotPhrescoFolders[0].listFiles(new PhrescoFileNameFilter(PROJECT_INFO_FILE));
@@ -295,7 +292,7 @@ public class ProjectManagerImpl implements ProjectManager, FrameworkConstants, C
 					.append(DOT_PHRESCO_FOLDER)
 					.append(File.separator)
 					.append(PROJECT_INFO_FILE);
-					ProjectUtils.updateProjectInfo(projectInfo, new File(sb.toString()));// To update the project.info file
+					ProjectUtils.updateProjectInfo(projectInfo, new File(sb.toString()));
 				}
 			} catch (Exception e) {
 				throw new PhrescoException(e);
@@ -303,7 +300,6 @@ public class ProjectManagerImpl implements ProjectManager, FrameworkConstants, C
 		} else {
 			ClientResponse response = serviceManager.updateProject(projectInfo);
 			if (response.getStatus() == 200) {
-				BufferedReader breader = null;
 				File backUpProjectInfoFile = null;
 				try {
 					//application path with old app dir
@@ -318,9 +314,8 @@ public class ProjectManagerImpl implements ProjectManager, FrameworkConstants, C
 					
 					//rename to application app dir
 					oldDir.renameTo(projectInfoFile);
-					
 					extractArchive(response, projectInfo);
-					updateProjectPom(projectInfo);// To update project pom.xml
+					updateProjectPom(projectInfo);
 					StringBuilder dotPhrescoPathSb = new StringBuilder(projectInfoFile.getPath());
 					dotPhrescoPathSb.append(File.separator);
 					dotPhrescoPathSb.append(DOT_PHRESCO_FOLDER);
@@ -336,9 +331,7 @@ public class ProjectManagerImpl implements ProjectManager, FrameworkConstants, C
 					ApplicationHandler applicationHandler = mojoProcessor.getApplicationHandler();
 					
 					updateSelectedConfiguration (mojoProcessor, appInfo, serviceManager);
-						
 					createSqlFolder(appInfo, projectInfoFile, serviceManager);
-						
 					if (applicationHandler != null) {
 						String selectedFeatures = applicationHandler.getSelectedFeatures();
 						String deletedFeatures = applicationHandler.getDeletedFeatures();
@@ -361,7 +354,7 @@ public class ProjectManagerImpl implements ProjectManager, FrameworkConstants, C
 						applicationProcessor.postUpdate(appInfo, artifactGroups, deletedArtifacts);
 	
 						File projectInfoPath = new File(dotPhrescoPathSb.toString() + PROJECT_INFO_FILE);
-						ProjectUtils.updateProjectInfo(projectInfo, projectInfoPath);// To update the project.info file
+						ProjectUtils.updateProjectInfo(projectInfo, projectInfoPath);
 					}
 					if (isCallEclipsePlugin(appInfo)) {
 						ApplicationManager applicationManager = PhrescoFrameworkFactory.getApplicationManager();
@@ -390,7 +383,7 @@ public class ProjectManagerImpl implements ProjectManager, FrameworkConstants, C
 			}
 			createEnvConfigXml(projectInfo, serviceManager);
 		}
-		return null;
+		return projectInfo;
 	}
 
 	private void updateSelectedConfiguration(MojoProcessor mojoProcessor, ApplicationInfo appInfo, ServiceManager serviceManager) throws PhrescoException {
@@ -407,12 +400,12 @@ public class ProjectManagerImpl implements ProjectManager, FrameworkConstants, C
 					DownloadInfo downloadInfo = serviceManager.getDownloadInfo(selectedDatabase.getArtifactGroupId());
 					String id = downloadInfo.getArtifactGroup().getId();
 					ArtifactGroup artifactGroupInfo = serviceManager.getArtifactGroupInfo(id);
-					List<ArtifactInfo> dbVersionInfos = artifactGroupInfo.getVersions();//version infos from downloadInfo
-					List<ArtifactInfo> selectedDBVersionInfos = new ArrayList<ArtifactInfo>();//for selected version infos from ui
+					List<ArtifactInfo> dbVersionInfos = artifactGroupInfo.getVersions();
+					List<ArtifactInfo> selectedDBVersionInfos = new ArrayList<ArtifactInfo>();
 					for (ArtifactInfo versionInfo : dbVersionInfos) {
 						String versionId = versionInfo.getId();
 						if (selectedDatabase.getArtifactInfoIds().contains(versionId)) {
-							selectedDBVersionInfos.add(versionInfo);//Add selected version infos to list
+							selectedDBVersionInfos.add(versionInfo);
 						}
 					}
 					downloadInfo.getArtifactGroup().setVersions(selectedDBVersionInfos);
@@ -422,7 +415,7 @@ public class ProjectManagerImpl implements ProjectManager, FrameworkConstants, C
 					String databaseGroup = gson.toJson(selectedDatabaseGroup);
 					applicationHandler.setSelectedDatabase(databaseGroup);
 				}
-			} else {//To remove selectedDatabse tag from application-handler.xml
+			} else {
 				applicationHandler.setSelectedDatabase(null);
 			}
 
@@ -433,22 +426,22 @@ public class ProjectManagerImpl implements ProjectManager, FrameworkConstants, C
 					DownloadInfo downloadInfo = serviceManager.getDownloadInfo(selectedServer.getArtifactGroupId());
 					String id = downloadInfo.getArtifactGroup().getId();
 					ArtifactGroup artifactGroupInfo = serviceManager.getArtifactGroupInfo(id);
-					List<ArtifactInfo> serverVersionInfos = artifactGroupInfo.getVersions();//version infos from downloadInfo
-					List<ArtifactInfo> selectedServerVersionInfos = new ArrayList<ArtifactInfo>();//for selected version infos from ui
+					List<ArtifactInfo> serverVersionInfos = artifactGroupInfo.getVersions();
+					List<ArtifactInfo> selectedServerVersionInfos = new ArrayList<ArtifactInfo>();
 					for (ArtifactInfo versionInfo : serverVersionInfos) {
 						String versionId = versionInfo.getId();
 						if (selectedServer.getArtifactInfoIds().contains(versionId)) {
-							selectedServerVersionInfos.add(versionInfo);//Add selected version infos to list
+							selectedServerVersionInfos.add(versionInfo);
 						}
 					}
-					downloadInfo.getArtifactGroup().setVersions(selectedServerVersionInfos);//set only selected version infos to current download info
+					downloadInfo.getArtifactGroup().setVersions(selectedServerVersionInfos);
 					selectedServerGroup.add(downloadInfo);
 				}
 				if (CollectionUtils.isNotEmpty(selectedServerGroup)) {
 					String serverGroup = gson.toJson(selectedServerGroup);
 					applicationHandler.setSelectedServer(serverGroup);
 				}
-			} else {//To remove selectedServer tag from application-handler.xml
+			} else {
 				applicationHandler.setSelectedServer(null);
 			}
 
@@ -458,13 +451,13 @@ public class ProjectManagerImpl implements ProjectManager, FrameworkConstants, C
 			if (CollectionUtils.isNotEmpty(selectedWebservices)) {
 				for (String selectedWebService : selectedWebservices) {
 					WebService webservice = serviceManager.getWebService(selectedWebService);
-					webServiceList.add(webservice);//add selected webservice infos to list
+					webServiceList.add(webservice);
 				}
 				if (CollectionUtils.isNotEmpty(webServiceList)) {
 					String serverGroup = gson.toJson(webServiceList);
 					applicationHandler.setSelectedWebService(serverGroup);
 				}
-			} else {//To remove selectedWebService tag from application-handler.xml
+			} else {
 				applicationHandler.setSelectedWebService(null);
 			}
 		} catch (PhrescoException e) {
@@ -533,7 +526,6 @@ public class ProjectManagerImpl implements ProjectManager, FrameworkConstants, C
 		ArtifactGroup artifactGroup = new ArtifactGroup();
 		artifactGroup.setGroupId(applicationHandler.getGroupId());
 		artifactGroup.setArtifactId(applicationHandler.getArtifactId());
-		//artifactGroup.setType(Type.FEATURE); to set version
 		List<ArtifactInfo> artifactInfos = new ArrayList<ArtifactInfo>();
 		ArtifactInfo artifactInfo = new ArtifactInfo();
 		artifactInfo.setVersion(applicationHandler.getVersion());
