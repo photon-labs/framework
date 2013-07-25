@@ -1,5 +1,4 @@
 define(["framework/base", "framework/animationProvider"], function() {
-
 	Clazz.NAVIGATION_ANIMATION = {
 		// push transition in goes to the left, pop going the reverse
 		SLIDE_LEFT_FADE_IN : 1,
@@ -13,329 +12,344 @@ define(["framework/base", "framework/animationProvider"], function() {
 		WEBKIT_TRANSITION_FADE_IN_FLIP_OUT : 11,
 		WEBKIT_TRANSITION_SLIDEDOWN_IN_OUT : 12
 	};
+	
+	Clazz.ANIMATION_TYPE = {
+        SLIDE_LEFT : 1,
+        SLIDE_RIGHT : 2,
+        SLIDE_UP : 3,
+        SLIDE_DOWN : 4,
+        FADE_IN : 5,
+        FADE_OUT : 6,
+        FADE_OUT_QUICK : 7,
+        WEBKIT_TRANSITION_LEFT : 8,
+        WEBKIT_TRANSITION_RIGHT : 9,
+        WEBKIT_TRANSITION_FLIP_IN: 10,
+        WEBKIT_TRANSITION_FLIP_OUT: 11,
+        WEBKIT_TRANSITION_SLIDEDOWN_IN :12,                
+        WEBKIT_TRANSITION_SLIDEDOWN_OUT :13                
+    };
 
 	// TODO: ongoing work
-	Clazz.NavigationController = Clazz.extend(
-		Clazz.Base,
-		{
-			stack: [],
-			indexMapping : {},
+	Clazz.NavigationController = Clazz.extend(Clazz.Base, {
+		stack: [],
+		indexMapping : {},
 
-			isNative : null,
-			isUsingAnimation : true,
-			
-			// used in single page single div or multi divs scenario
-			mainContainer : null,
-			currentIndex: -1,
-			loadingActive: false,
-			jQueryContainer : null,
-			transitionType : null,
-			cancelTransitionType : null,
+		isNative : null,
+		isUsingAnimation : true,
+		
+		// used in single page single div or multi divs scenario
+		mainContainer : null,
+		currentIndex: -1,
+		loadingActive: false,
+		jQueryContainer : null,
+		transitionType : null,
+		cancelTransitionType : null,
 
-			initialize : function(config) {
-				
-				this.mainContainer = config.mainContainer;
-				this.jQueryContainer = $(this.mainContainer);
-				
-				if(config.transitionType) {
-					this.transitionType = config.transitionType;
-					this.cancelTransitionType = config.cancelTransitionType;
-				}
-				if(config.isNative) {
-					this.isNative = config.isNative;
-				}
-				
-				this.setAnimation(this.transitionType);
-			},
+		initialize : function(config) {
 			
-			setAnimation : function(transitionType){
-				if(transitionType === Clazz.NAVIGATION_ANIMATION.SLIDE_LEFT_FADE_IN) {
-					this.pushAnimationTypeForGoingIn = Clazz.ANIMATION_TYPE.FADE_IN;
-					this.pushAnimationTypeForGoingOut = Clazz.ANIMATION_TYPE.SLIDE_LEFT;
-					
-					this.popAnimationTypeForGoingIn = Clazz.ANIMATION_TYPE.FADE_IN;
-					this.popAnimationTypeForGoingOut = Clazz.ANIMATION_TYPE.SLIDE_LEFT;
-					
-				} else if(transitionType === Clazz.NAVIGATION_ANIMATION.FADE_OUT_SLIDE_RIGHT) {
-					this.pushAnimationTypeForGoingIn = Clazz.ANIMATION_TYPE.SLIDE_RIGHT;
-					this.pushAnimationTypeForGoingOut = Clazz.ANIMATION_TYPE.FADE_OUT;
-					
-					this.popAnimationTypeForGoingIn = Clazz.ANIMATION_TYPE.SLIDE_RIGHT;
-					this.popAnimationTypeForGoingOut = Clazz.ANIMATION_TYPE.FADE_OUT;
-					
-				} else if(transitionType === Clazz.NAVIGATION_ANIMATION.SLIDE_UP_DOWN) {
-					this.pushAnimationTypeForGoingIn = Clazz.ANIMATION_TYPE.FADE_IN;
-					this.pushAnimationTypeForGoingOut = Clazz.ANIMATION_TYPE.SLIDE_UP;
-					
-					this.popAnimationTypeForGoingIn = Clazz.ANIMATION_TYPE.SLIDE_DOWN;
-					this.popAnimationTypeForGoingOut = Clazz.ANIMATION_TYPE.FADE_OUT;
-					
-				} else if(transitionType === Clazz.NAVIGATION_ANIMATION.FADE_IN_FADE_OUT) {
-					this.pushAnimationTypeForGoingIn = Clazz.ANIMATION_TYPE.FADE_IN;
-					this.pushAnimationTypeForGoingOut = Clazz.ANIMATION_TYPE.FADE_OUT;
-					
-					this.popAnimationTypeForGoingIn = Clazz.ANIMATION_TYPE.FADE_IN;
-					this.popAnimationTypeForGoingOut = Clazz.ANIMATION_TYPE.FADE_OUT;
-				
-				} else if(transitionType === Clazz.NAVIGATION_ANIMATION.FADE_OUT_QUICK) {
-					this.pushAnimationTypeForGoingOut = Clazz.ANIMATION_TYPE.FADE_OUT_QUICK;
-					this.popAnimationTypeForGoingOut = Clazz.ANIMATION_TYPE.FADE_OUT_QUICK;
-				
-				} else if(transitionType === Clazz.NAVIGATION_ANIMATION.WEBKIT_TRANSITION_RIGHT_LEFT) {
-					this.pushAnimationTypeForGoingIn = Clazz.ANIMATION_TYPE.WEBKIT_TRANSITION_LEFT;
-					this.pushAnimationTypeForGoingOut = Clazz.ANIMATION_TYPE.WEBKIT_TRANSITION_RIGHT;
-					
-					this.popAnimationTypeForGoingIn = Clazz.ANIMATION_TYPE.WEBKIT_TRANSITION_LEFT;
-					this.popAnimationTypeForGoingOut = Clazz.ANIMATION_TYPE.WEBKIT_TRANSITION_RIGHT;
-				
-				} else if(transitionType === Clazz.NAVIGATION_ANIMATION.WEBKIT_TRANSITION_LEFT_RIGHT) {
-					this.pushAnimationTypeForGoingIn = Clazz.ANIMATION_TYPE.WEBKIT_TRANSITION_RIGHT;
-					this.pushAnimationTypeForGoingOut =  Clazz.ANIMATION_TYPE.WEBKIT_TRANSITION_LEFT;
-					
-					this.popAnimationTypeForGoingIn = Clazz.ANIMATION_TYPE.WEBKIT_TRANSITION_RIGHT;
-					this.popAnimationTypeForGoingOut = Clazz.ANIMATION_TYPE.WEBKIT_TRANSITION_LEFT;
-				
-				} else if(transitionType === Clazz.NAVIGATION_ANIMATION.WEBKIT_TRANSITION_FLIP_IN_OUT) {
-					this.pushAnimationTypeForGoingIn = Clazz.ANIMATION_TYPE.WEBKIT_TRANSITION_FLIP_IN;
-					this.pushAnimationTypeForGoingOut = Clazz.ANIMATION_TYPE.WEBKIT_TRANSITION_FLIP_OUT;
-					
-					this.popAnimationTypeForGoingIn = Clazz.ANIMATION_TYPE.WEBKIT_TRANSITION_FLIP_IN;
-					this.popAnimationTypeForGoingOut = Clazz.ANIMATION_TYPE.WEBKIT_TRANSITION_FLIP_OUT;
-				
-				} 
-				
-				
-				else if(transitionType === Clazz.NAVIGATION_ANIMATION.WEBKIT_TRANSITION_FADE_IN_FLIP_OUT) {
-					this.pushAnimationTypeForGoingIn = Clazz.ANIMATION_TYPE.FADE_IN;
-					this.pushAnimationTypeForGoingOut = Clazz.ANIMATION_TYPE.WEBKIT_TRANSITION_FLIP_OUT;
-					
-					this.popAnimationTypeForGoingIn = Clazz.ANIMATION_TYPE.FADE_IN;
-					this.popAnimationTypeForGoingOut = Clazz.ANIMATION_TYPE.WEBKIT_TRANSITION_FLIP_OUT;
-				
-				} 
-				
-				
-				else if(transitionType === Clazz.NAVIGATION_ANIMATION.WEBKIT_TRANSITION_SLIDEDOWN_IN_OUT) {
-					this.pushAnimationTypeForGoingIn = Clazz.ANIMATION_TYPE.WEBKIT_TRANSITION_SLIDEDOWN_IN;
-					this.pushAnimationTypeForGoingOut = Clazz.ANIMATION_TYPE.WEBKIT_TRANSITION_SLIDEDOWN_OUT;
-					
-					this.popAnimationTypeForGoingIn = Clazz.ANIMATION_TYPE.WEBKIT_TRANSITION_SLIDEDOWN_IN;
-					this.popAnimationTypeForGoingOut = Clazz.ANIMATION_TYPE.WEBKIT_TRANSITION_SLIDEDOWN_OUT;
-				}
-			},
+			this.mainContainer = config.mainContainer;
+			this.jQueryContainer = $(this.mainContainer);
 			
-			pop : function(goBack) {
-				var self = this;
-				var page = this.stack.pop();
+			if(config.transitionType) {
+				this.transitionType = config.transitionType;
+				this.cancelTransitionType = config.cancelTransitionType;
+			}
+			if(config.isNative) {
+				this.isNative = config.isNative;
+			}
+			
+			this.setAnimation(this.transitionType);
+		},
+		
+		setAnimation : function(transitionType){
+			if(transitionType === Clazz.NAVIGATION_ANIMATION.SLIDE_LEFT_FADE_IN) {
+				this.pushAnimationTypeForGoingIn = Clazz.ANIMATION_TYPE.FADE_IN;
+				this.pushAnimationTypeForGoingOut = Clazz.ANIMATION_TYPE.SLIDE_LEFT;
 				
-				if(goBack === null) {
-					goBack = true;
-				}
+				this.popAnimationTypeForGoingIn = Clazz.ANIMATION_TYPE.FADE_IN;
+				this.popAnimationTypeForGoingOut = Clazz.ANIMATION_TYPE.SLIDE_LEFT;
 				
-				if(page !== undefined && page !== null){
-					var animationProviderMain = new Clazz.AnimationProvider( {
-						isNative: self.isNative,
-						container: page.element
-					});
-					
-					if(!self.isNative){
-						animationProviderMain.animate(this.popAnimationTypeForGoingOut, function(container) {
-							container.remove();
-							page = null;
-							delete page;
-						});
-					} else {
-						page.element.remove();
+			} else if(transitionType === Clazz.NAVIGATION_ANIMATION.FADE_OUT_SLIDE_RIGHT) {
+				this.pushAnimationTypeForGoingIn = Clazz.ANIMATION_TYPE.SLIDE_RIGHT;
+				this.pushAnimationTypeForGoingOut = Clazz.ANIMATION_TYPE.FADE_OUT;
+				
+				this.popAnimationTypeForGoingIn = Clazz.ANIMATION_TYPE.SLIDE_RIGHT;
+				this.popAnimationTypeForGoingOut = Clazz.ANIMATION_TYPE.FADE_OUT;
+				
+			} else if(transitionType === Clazz.NAVIGATION_ANIMATION.SLIDE_UP_DOWN) {
+				this.pushAnimationTypeForGoingIn = Clazz.ANIMATION_TYPE.FADE_IN;
+				this.pushAnimationTypeForGoingOut = Clazz.ANIMATION_TYPE.SLIDE_UP;
+				
+				this.popAnimationTypeForGoingIn = Clazz.ANIMATION_TYPE.SLIDE_DOWN;
+				this.popAnimationTypeForGoingOut = Clazz.ANIMATION_TYPE.FADE_OUT;
+				
+			} else if(transitionType === Clazz.NAVIGATION_ANIMATION.FADE_IN_FADE_OUT) {
+				this.pushAnimationTypeForGoingIn = Clazz.ANIMATION_TYPE.FADE_IN;
+				this.pushAnimationTypeForGoingOut = Clazz.ANIMATION_TYPE.FADE_OUT;
+				
+				this.popAnimationTypeForGoingIn = Clazz.ANIMATION_TYPE.FADE_IN;
+				this.popAnimationTypeForGoingOut = Clazz.ANIMATION_TYPE.FADE_OUT;
+			
+			} else if(transitionType === Clazz.NAVIGATION_ANIMATION.FADE_OUT_QUICK) {
+				this.pushAnimationTypeForGoingOut = Clazz.ANIMATION_TYPE.FADE_OUT_QUICK;
+				this.popAnimationTypeForGoingOut = Clazz.ANIMATION_TYPE.FADE_OUT_QUICK;
+			
+			} else if(transitionType === Clazz.NAVIGATION_ANIMATION.WEBKIT_TRANSITION_RIGHT_LEFT) {
+				this.pushAnimationTypeForGoingIn = Clazz.ANIMATION_TYPE.WEBKIT_TRANSITION_LEFT;
+				this.pushAnimationTypeForGoingOut = Clazz.ANIMATION_TYPE.WEBKIT_TRANSITION_RIGHT;
+				
+				this.popAnimationTypeForGoingIn = Clazz.ANIMATION_TYPE.WEBKIT_TRANSITION_LEFT;
+				this.popAnimationTypeForGoingOut = Clazz.ANIMATION_TYPE.WEBKIT_TRANSITION_RIGHT;
+			
+			} else if(transitionType === Clazz.NAVIGATION_ANIMATION.WEBKIT_TRANSITION_LEFT_RIGHT) {
+				this.pushAnimationTypeForGoingIn = Clazz.ANIMATION_TYPE.WEBKIT_TRANSITION_RIGHT;
+				this.pushAnimationTypeForGoingOut =  Clazz.ANIMATION_TYPE.WEBKIT_TRANSITION_LEFT;
+				
+				this.popAnimationTypeForGoingIn = Clazz.ANIMATION_TYPE.WEBKIT_TRANSITION_RIGHT;
+				this.popAnimationTypeForGoingOut = Clazz.ANIMATION_TYPE.WEBKIT_TRANSITION_LEFT;
+			
+			} else if(transitionType === Clazz.NAVIGATION_ANIMATION.WEBKIT_TRANSITION_FLIP_IN_OUT) {
+				this.pushAnimationTypeForGoingIn = Clazz.ANIMATION_TYPE.WEBKIT_TRANSITION_FLIP_IN;
+				this.pushAnimationTypeForGoingOut = Clazz.ANIMATION_TYPE.WEBKIT_TRANSITION_FLIP_OUT;
+				
+				this.popAnimationTypeForGoingIn = Clazz.ANIMATION_TYPE.WEBKIT_TRANSITION_FLIP_IN;
+				this.popAnimationTypeForGoingOut = Clazz.ANIMATION_TYPE.WEBKIT_TRANSITION_FLIP_OUT;
+			
+			} 
+			
+			
+			else if(transitionType === Clazz.NAVIGATION_ANIMATION.WEBKIT_TRANSITION_FADE_IN_FLIP_OUT) {
+				this.pushAnimationTypeForGoingIn = Clazz.ANIMATION_TYPE.FADE_IN;
+				this.pushAnimationTypeForGoingOut = Clazz.ANIMATION_TYPE.WEBKIT_TRANSITION_FLIP_OUT;
+				
+				this.popAnimationTypeForGoingIn = Clazz.ANIMATION_TYPE.FADE_IN;
+				this.popAnimationTypeForGoingOut = Clazz.ANIMATION_TYPE.WEBKIT_TRANSITION_FLIP_OUT;
+			
+			} 
+			
+			
+			else if(transitionType === Clazz.NAVIGATION_ANIMATION.WEBKIT_TRANSITION_SLIDEDOWN_IN_OUT) {
+				this.pushAnimationTypeForGoingIn = Clazz.ANIMATION_TYPE.WEBKIT_TRANSITION_SLIDEDOWN_IN;
+				this.pushAnimationTypeForGoingOut = Clazz.ANIMATION_TYPE.WEBKIT_TRANSITION_SLIDEDOWN_OUT;
+				
+				this.popAnimationTypeForGoingIn = Clazz.ANIMATION_TYPE.WEBKIT_TRANSITION_SLIDEDOWN_IN;
+				this.popAnimationTypeForGoingOut = Clazz.ANIMATION_TYPE.WEBKIT_TRANSITION_SLIDEDOWN_OUT;
+			}
+		},
+		
+		pop : function(goBack) {
+			var self = this;
+			var page = this.stack.pop();
+			
+			if(goBack === null) {
+				goBack = true;
+			}
+			
+			if(page !== undefined && page !== null){
+				var animationProviderMain = new Clazz.AnimationProvider( {
+					isNative: self.isNative,
+					container: page.element
+				});
+				
+				if(!self.isNative){
+					animationProviderMain.animate(this.popAnimationTypeForGoingOut, function(container) {
+						container.remove();
 						page = null;
 						delete page;
-					}
-					
-					if(this.stack.length > 0) {
-						var topPage = this.stack[this.stack.length-1];
-						topPage.element.show();
-						
-						var animationProviderSub = new Clazz.AnimationProvider( {
-							isNative: self.isNative,
-							container: topPage.element
-						});
-							
-						// call in transition on sub
-						animationProviderSub.animate(this.popAnimationTypeForGoingIn, function(container) {
-							container.css("z-index", 4);
-							
-							if(goBack) {
-								history.back();
-							}
-							self.currentIndex = self.stack.length - 1;
-						});
-					}
+					});
+				} else {
+					page.element.remove();
+					page = null;
+					delete page;
 				}
-			},
-			
-			push : function(view, bCheck, animationtype) {
-				var self = this;
-				//Remove loading screen
-				commonVariables.loadingScreen.removeLoading();
 				
-				//make old content as inactive
-				$(commonVariables.contentPlaceholder).find('.widget-maincontent-div').attr('active', 'false');
-					
-				// create top element for pushing
-				var newDiv = $("<div></div>");
-				
-				// add absolute positioning
-				newDiv.addClass("widget-maincontent-div");
-				newDiv.attr('active', 'true');
-				
-				view.doMore = function(element) {
-					if(bCheck) {
-						var animationProviderMain = new Clazz.AnimationProvider({
-							isNative: self.isNative,
-							container: newDiv
-						});
-						
-						animationProviderMain.animate(self.pushAnimationTypeForGoingIn, function(container) {
-							container.show('slow', function(){
-								container.css("z-index", 4);
-								//self.removeClasses(container, function(callback){
-								
-									if(animationtype !== undefined && animationtype !== null && animationtype === true){
-										self.setAnimation(self.transitionType);
-									}
-									//remove old content if exist
-									if($(commonVariables.contentPlaceholder).html() == $(self.jQueryContainer).html()){
-										$.each($(commonVariables.contentPlaceholder).find('.widget-maincontent-div'), function(index, current){
-											if($(current).attr('active') === "false"){
-												$(current).remove();
-											}
-										});
-									}
-									if(commonVariables.ajaxXhr == null || commonVariables.ajaxXhr.readyState == 4)
-										commonVariables.loadingScreen.removeLoading();
-									self.loadingActive = false;
-								//});
-							});
-						});
-						
-						// update browser history
-						var title = "#page" + self.stack.length;
-						var name = view.name ? "#"  + view.name : title;
-						// push into the stack
-						var data = {
-							view : view,
-							element : newDiv
-						};
-						
-						self.stack.push(data);
-						self.currentIndex = self.stack.length - 1;
-						self.indexMapping[name] = self.stack.length - 1;
-						if (history.pushState !== undefined) {
-							history.pushState({}, name, name);
-						}
-					}else{
-						//remove old content if exist
-						if(($(commonVariables.contentPlaceholder).html() == $(self.jQueryContainer).html()) && commonVariables.animation){
-							$.each($(commonVariables.contentPlaceholder).find('.widget-maincontent-div'), function(index, current){
-								if($(current).attr('active') === "false"){
-									$(current).remove();
-								}
-							});
-						}
-						if(commonVariables.ajaxXhr == null || commonVariables.ajaxXhr.readyState == 4)
-							commonVariables.loadingScreen.removeLoading();
-							
-						self.loadingActive = false;
-					}
-					self.loadingActive = false;
-				};
-				
-				if(bCheck && self.stack.length > 0){
-
-					if(animationtype !== undefined && animationtype !== null && animationtype === true){
-						self.setAnimation(self.cancelTransitionType);
-					}
-
-					var topPage = self.stack[self.stack.length-1];
-					
-					// call onPause to save the state of this page
-					if(topPage.view.onPause) {
-						topPage.view.onPause();
-					}
+				if(this.stack.length > 0) {
+					var topPage = this.stack[this.stack.length-1];
+					topPage.element.show();
 					
 					var animationProviderSub = new Clazz.AnimationProvider( {
 						isNative: self.isNative,
 						container: topPage.element
 					});
+						
+					// call in transition on sub
+					animationProviderSub.animate(this.popAnimationTypeForGoingIn, function(container) {
+						container.css("z-index", 4);
+						
+						if(goBack) {
+							history.back();
+						}
+						self.currentIndex = self.stack.length - 1;
+					});
+				}
+			}
+		},
+		
+		push : function(view, bCheck, animationtype) {
+			var self = this;
+			//Remove loading screen
+			commonVariables.loadingScreen.removeLoading();
+			
+			//make old content as inactive
+			$(commonVariables.contentPlaceholder).find('.widget-maincontent-div').attr('active', 'false');
 				
-					animationProviderSub.animate(self.pushAnimationTypeForGoingOut, function(container) {
-						container.css("z-index", 3);
-						container.hide('fast', function(){
-							$(container).remove();
+			// create top element for pushing
+			var newDiv = $("<div></div>");
+			
+			// add absolute positioning
+			newDiv.addClass("widget-maincontent-div");
+			newDiv.attr('active', 'true');
+			
+			view.doMore = function(element) {
+				if(bCheck) {
+					var animationProviderMain = new Clazz.AnimationProvider({
+						isNative: self.isNative,
+						container: newDiv
+					});
+					
+					animationProviderMain.animate(self.pushAnimationTypeForGoingIn, function(container) {
+						container.show('slow', function(){
+							container.css("z-index", 4);
+							//self.removeClasses(container, function(callback){
 							
-							// render in its default container
-							$(self.jQueryContainer).append(newDiv);
-							view.render(newDiv);
-							commonVariables.loadingScreen.removeLoading(function(retVal){
-								commonVariables.loadingScreen.showLoading();
-							});
-							self.loadingActive = true;
+								if(animationtype !== undefined && animationtype !== null && animationtype === true){
+									self.setAnimation(self.transitionType);
+								}
+								//remove old content if exist
+								if($(commonVariables.contentPlaceholder).html() == $(self.jQueryContainer).html()){
+									$.each($(commonVariables.contentPlaceholder).find('.widget-maincontent-div'), function(index, current){
+										if($(current).attr('active') === "false"){
+											$(current).remove();
+										}
+									});
+								}
+								if(commonVariables.ajaxXhr == null || commonVariables.ajaxXhr.readyState == 4 && !commonVariables.continueloading)
+									commonVariables.loadingScreen.removeLoading();
+								self.loadingActive = false;
+							//});
 						});
 					});
-					self.stack.pop(self.stack.length - 1);
-				}else{
-					// render in its default container
-					$(self.jQueryContainer).append(newDiv);
-					view.render(newDiv);
-					commonVariables.loadingScreen.removeLoading(function(retVal){
-						commonVariables.loadingScreen.showLoading();
-					});
-					self.loadingActive = true;
-				}
-			},
-			
-			getView: function(locationHash) {
-				
-				var index = this.indexMapping[locationHash];
 					
-				if(index !== null) {
-					var page = this.stack[index];
+					// update browser history
+					var title = "#page" + self.stack.length;
+					var name = view.name ? "#"  + view.name : title;
+					// push into the stack
+					var data = {
+						view : view,
+						element : newDiv
+					};
 					
-					if(this.currentIndex > index) {
-						for(var i = this.currentIndex; i > index; i--) {
-							var current = this.stack[i];
-							if(current !== undefined && current !== null){
-								// delete the mapping
-								// update browser history
-								var title = "#page" + i;
-								var name = current.view.name ? "#"  + current.view.name : title;
-								delete this.indexMapping[name];
-								this.pop(false);
-							}
-						}
-						this.currentIndex = index;
-					} 
-					
-					if(page.view.onResume) {
-						// call on resume on the current page
-						page.view.onResume();
+					self.stack.push(data);
+					self.currentIndex = self.stack.length - 1;
+					self.indexMapping[name] = self.stack.length - 1;
+					if (history.pushState !== undefined) {
+						history.pushState({}, name, name);
 					}
-				} 
-			},
+				}else{
+					//remove old content if exist
+					if(($(commonVariables.contentPlaceholder).html() == $(self.jQueryContainer).html()) && commonVariables.animation){
+						$.each($(commonVariables.contentPlaceholder).find('.widget-maincontent-div'), function(index, current){
+							if($(current).attr('active') === "false"){
+								$(current).remove();
+							}
+						});
+					}
+					if(commonVariables.ajaxXhr == null || commonVariables.ajaxXhr.readyState == 4 && !commonVariables.continueloading)
+						commonVariables.loadingScreen.removeLoading();
+						
+					self.loadingActive = false;
+				}
+				self.loadingActive = false;
+			};
 			
-			removeClasses : function(container, callback){
-				setTimeout(function(){
-					$(container).css("left", "0px");
-					$(container).removeClass("slide in");
-					$(container).removeClass("slide out reverse");
-					$(container).removeClass("flip in");
-					$(container).removeClass("flip out");
-					$(container).removeClass("slidedown in");
-					$(container).removeClass("slidedown out");
-					callback(true);
-				},100);
+			if(bCheck && self.stack.length > 0){
+
+				if(animationtype !== undefined && animationtype !== null && animationtype === true){
+					self.setAnimation(self.cancelTransitionType);
+				}
+
+				var topPage = self.stack[self.stack.length-1];
+				
+				// call onPause to save the state of this page
+				if(topPage.view.onPause) {
+					topPage.view.onPause();
+				}
+				
+				var animationProviderSub = new Clazz.AnimationProvider( {
+					isNative: self.isNative,
+					container: topPage.element
+				});
+			
+				animationProviderSub.animate(self.pushAnimationTypeForGoingOut, function(container) {
+					container.css("z-index", 3);
+					container.hide('fast', function(){
+						$(container).remove();
+						
+						// render in its default container
+						$(self.jQueryContainer).append(newDiv);
+						view.render(newDiv);
+						commonVariables.loadingScreen.removeLoading(function(retVal){
+							if(!commonVariables.hideloading)
+								commonVariables.loadingScreen.showLoading();
+						});
+						self.loadingActive = true;
+					});
+				});
+				self.stack.pop(self.stack.length - 1);
+			}else{
+				// render in its default container
+				$(self.jQueryContainer).append(newDiv);
+				view.render(newDiv);
+				commonVariables.loadingScreen.removeLoading(function(retVal){
+					if(!commonVariables.hideloading)
+						commonVariables.loadingScreen.showLoading();
+				});
+				self.loadingActive = true;
 			}
+		},
+		
+		getView: function(locationHash) {
+			
+			var index = this.indexMapping[locationHash];
+				
+			if(index !== null) {
+				var page = this.stack[index];
+				
+				if(this.currentIndex > index) {
+					for(var i = this.currentIndex; i > index; i--) {
+						var current = this.stack[i];
+						if(current !== undefined && current !== null){
+							// delete the mapping
+							// update browser history
+							var title = "#page" + i;
+							var name = current.view.name ? "#"  + current.view.name : title;
+							delete this.indexMapping[name];
+							this.pop(false);
+						}
+					}
+					this.currentIndex = index;
+				} 
+				
+				if(page.view.onResume) {
+					// call on resume on the current page
+					page.view.onResume();
+				}
+			} 
+		},
+		
+		removeClasses : function(container, callback){
+			setTimeout(function(){
+				$(container).css("left", "0px");
+				$(container).removeClass("slide in");
+				$(container).removeClass("slide out reverse");
+				$(container).removeClass("flip in");
+				$(container).removeClass("flip out");
+				$(container).removeClass("slidedown in");
+				$(container).removeClass("slidedown out");
+				callback(true);
+			},100);
 		}
-	);
+	});
    
    return Clazz.NavigationController;
 });

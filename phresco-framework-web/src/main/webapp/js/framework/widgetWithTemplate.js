@@ -135,7 +135,7 @@ define(["framework/widget", "framework/templateProvider"], function() {
 					resultvalue = resultvalue + $(this).height(); 
 				});
 				
-				resultvalue = resultvalue + $('.footer_section').height() + 65;
+				resultvalue = resultvalue + $('.footer_section').height() + 40;
 				$('.content_main .scrollContent').height($(window).height() - (resultvalue + 155));
 			},
 			
@@ -247,7 +247,7 @@ define(["framework/widget", "framework/templateProvider"], function() {
 				$(".optiontitle").css("z-index","1");
 			},
 			
-			opencc : function(ee, placeId, currentPrjName) {
+			opencc : function(ee, placeId, currentPrjName, adjestVal) {
 				var self=this;
 				$(".dyn_popup").hide();
 				
@@ -266,6 +266,11 @@ define(["framework/widget", "framework/templateProvider"], function() {
 					$(target).removeClass('speakstyletopright').removeClass('speakstylebottomright').removeClass('speakstylebottomleft').addClass('speakstyletopleft').addClass('dyn_popup');
 				} else if (clicked.offset().top < halfheight && clicked.offset().left > halfwidth){
 					var d= ($(window).width() - (clicked.offset().left + clicked.outerWidth()));
+					
+					if(adjestVal != undefined && adjestVal != null){
+						d = d -50;
+					}
+						
 					$(target).css({"right":d ,"margin-top":10,"left": "auto","top": "auto"});
 					$(target).toggle();
 					$(target).removeClass('speakstyletopleft').removeClass('speakstylebottomright').removeClass('speakstylebottomleft').addClass('speakstyletopright').addClass('dyn_popup');
@@ -276,6 +281,11 @@ define(["framework/widget", "framework/templateProvider"], function() {
 					$(target).removeClass('speakstyletopleft').removeClass('speakstylebottomright').removeClass('speakstyletopright').addClass('speakstylebottomleft').addClass('dyn_popup');	
 				} else if (clicked.offset().top > halfheight && clicked.offset().left > halfwidth){
 					var d= ($(window).width() - (clicked.offset().left + clicked.outerWidth()));
+					
+					if(adjestVal != undefined && adjestVal != null){
+						d = d -50;
+					}
+					
 					var BottomHeight = clicked.position().top - (target.height() + 33 );
 					$(target).css({"right":d ,"top":BottomHeight,"left": "auto"});
 					$(target).toggle();

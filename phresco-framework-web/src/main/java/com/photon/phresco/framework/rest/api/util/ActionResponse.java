@@ -1,6 +1,9 @@
 package com.photon.phresco.framework.rest.api.util;
 
+import java.util.List;
+
 import javax.xml.bind.annotation.XmlRootElement;
+
 
 
 @SuppressWarnings("restriction")
@@ -12,6 +15,8 @@ public class ActionResponse {
 	String service_exception;
 	String uniquekey;
 	boolean connectionAlive = false;
+	boolean errorFound;
+	List<String> configErrorMsg;
 	
 	
 	public boolean isConnectionAlive() {
@@ -43,6 +48,18 @@ public class ActionResponse {
 	}
 	public void setService_exception(String service_exception) {
 		this.service_exception = service_exception;
+	}
+	public List<String> getConfigErrorMsg() {
+		return configErrorMsg;
+	}
+	public void setConfigErrorMsg(List<String> configErrorMsg) {
+		this.configErrorMsg = configErrorMsg;
+	}
+	public boolean isErrorFound() {
+		return errorFound;
+	}
+	public void setErrorFound(boolean errorFound) {
+		this.errorFound = errorFound;
 	}
 	
 	

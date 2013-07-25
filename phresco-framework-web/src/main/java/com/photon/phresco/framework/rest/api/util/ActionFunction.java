@@ -467,16 +467,25 @@ public class ActionFunction implements Constants ,FrameworkConstants,ActionServi
 		return response;
 	}
 
-	public ActionResponse build(HttpServletRequest request) throws PhrescoException, IOException {
-		printBuildLogs();
+	public ActionResponse build(HttpServletRequest request) throws PhrescoException {
+		FrameworkServiceUtil futil = new FrameworkServiceUtil();
+		ActionResponse response = new ActionResponse();
+		printLogs();
 		BufferedInputStream server_logs = null;
-		server_logs = build(getUsername());
+		String envNames = request.getParameter("environmentName");
+		response = futil.mandatoryValidation(response, request, PHASE_PACKAGE, getApplicationInfo().getAppDirName());
+		response = FrameworkServiceUtil.checkForConfigurations(response, getApplicationInfo().getAppDirName(), envNames, getCustomerId());
+		if(response.isErrorFound()) {
+			return response;
+		}
+		server_logs = build();
 		if (server_logs != null) {
 			return generateResponse(server_logs);
 		} else {
 			throw new PhrescoException("No build logs obatined");
 		}
 	}
+
 
 	public ActionResponse deploy(HttpServletRequest request) throws PhrescoException {
 		printLogs();
@@ -727,7 +736,7 @@ public class ActionFunction implements Constants ,FrameworkConstants,ActionServi
 		return printAsPdf(response, request);
 	}
 
-	public BufferedInputStream build(String username) throws PhrescoException, IOException {
+	public BufferedInputStream build() throws PhrescoException {
 		BufferedInputStream reader=null;
 		try {
 			ApplicationManager applicationManager = PhrescoFrameworkFactory.getApplicationManager();
@@ -740,12 +749,9 @@ public class ActionFunction implements Constants ,FrameworkConstants,ActionServi
 			List<String> buildArgCmds = getMavenArgCommands(parameters);
 			buildArgCmds.add(HYPHEN_N);
 			String workingDirectory = getAppDirectoryPath(applicationInfo);
-			getApplicationProcessor(username).preBuild(getApplicationInfo());
+			getApplicationProcessor(getUsername()).preBuild(getApplicationInfo());
 			reader = applicationManager.performAction(projectInfo, ActionType.BUILD, buildArgCmds, workingDirectory);
 		} catch (PhrescoException e) {
-			S_LOGGER.error(FrameworkUtil.getStackTraceAsString(e));
-			throw new PhrescoException("Exception occured in the build process"+e.getMessage());
-		} catch (Exception e) {
 			S_LOGGER.error(FrameworkUtil.getStackTraceAsString(e));
 			throw new PhrescoException("Exception occured in the build process"+e.getMessage());
 		}

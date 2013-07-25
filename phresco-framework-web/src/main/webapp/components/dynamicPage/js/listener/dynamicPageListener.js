@@ -102,6 +102,7 @@ define(["framework/widgetWithTemplate", "common/loading"], function() {
                         self.constructDynamicCtrl(parameter, columnClass, parameter.possibleValues, whereToRender);
                     } else if (type === "DynamicParameter" && parameter.sort) {
                         // execute sql template
+						self.consDragnDropcnt(parameter, columnClass, whereToRender);
                     } else if (type === "packageFileBrowse") {
                         // package file browse template
                     } else if (type === "map") {
@@ -128,6 +129,13 @@ define(["framework/widgetWithTemplate", "common/loading"], function() {
         },
         
         /********************* Controls construction methods starts**********************************/
+		
+		consDragnDropcnt : function(parameter, columnClass, whereToRender){
+			var self = this;
+			
+			whereToRender.append('<table id="'+ parameter.key +'_table" class="table table-striped table_border table-bordered" cellpadding="0" cellspacing="0" border="0"><thead><tr><th colspan="2">DB Script Execution</th></tr></thead><tbody><tr><td><ul id="sortable1" class="connectedSortable"><li class="ui-state-default"></li></ul></td><td><ul id="sortable2" class="connectedSortable"><li class="ui-state-default"></li></ul></td></tr></tbody></table>');
+		},
+		
         constructFileBrowseCtrl : function (parameter, whereToRender, goal) {
             var self = this, allowedExtensions = [];
             whereToRender.append('<li id="'+parameter.key+'Li" class="ctrl"><div id="'+parameter.key+'" class="'+parameter.key+'-file-uploader"><noscript><p>Please enable JavaScript to use file uploader.</p></noscript></div></li>');
@@ -495,10 +503,12 @@ define(["framework/widgetWithTemplate", "common/loading"], function() {
             dependency = $(checkBoxCtrl).attr('dependency');
             key = $(checkBoxCtrl).attr('id');
             showFlag = $(checkBoxCtrl).attr('showFlag');
-            
+            commonVariables.hideloading = true;
             if (!self.isBlank(dependency)) {
                 self.dynamicControlEvents($(checkBoxCtrl), key, showFlag);
-            } 
+            }
+			self.chkSQLCheck();
+			commonVariables.hideloading = false;
         },
         
         selectBoxChangeEvent : function(control) {
@@ -755,7 +765,21 @@ define(["framework/widgetWithTemplate", "common/loading"], function() {
                     }
                 }
             });
+			
+			self.chkSQLCheck();
         },
+		
+		
+		chkSQLCheck : function(){
+			if(!$('#executeSql').is(':checked')){
+				$('#fetchSql_table').hide();
+				$('#dataBaseLi').hide();
+			}else{
+				$('#fetchSql_table').show();
+				$('#dataBaseLi').show();
+			}
+		},
+		
         
         showCheckBoxDependencies : function (dependencyArr) {
             var self = this;

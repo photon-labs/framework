@@ -302,10 +302,12 @@ define([], function() {
 				commitdata.appdirname = obj.parent("div").attr("appDirName");
 				actionBody = commitdata;
 				action = "commitget";
+				commonVariables.hideloading = true;
 				self.projectListAction(self.getActionHeader(actionBody, action), $('#commitLoading_'+dynid), function(response){
 					if (response.exception === null) {
 						$("#commit"+dynid).hide();
 					}
+				commonVariables.hideloading = false;
 				});
 			}
 		},
@@ -319,6 +321,7 @@ define([], function() {
 			reportdata.appDirName = appDir;
 			actionBody = reportdata;
 			action = "generateReport";
+			commonVariables.hideloading = true;
 			self.projectListAction(self.getActionHeader(actionBody, action), $('#pdfReportLoading_'+dynamicId), function(response){
 				if (response.service_exception !== null) {
 				$(".blinkmsg").removeClass("popsuccess").addClass("poperror");
@@ -326,6 +329,7 @@ define([], function() {
 				} else {
 					self.getReportEvent(response, appDir, "All", dynamicId);
 				}
+				commonVariables.hideloading = false;
 			});
 		},
 		
@@ -334,6 +338,7 @@ define([], function() {
 			var dynamicId = data.dynamicId;
 			self.openccpl(obj, $(obj).attr('name'), '');
 			$('#commitLoading_'+dynamicId).show();
+			commonVariables.hideloading = true;
 	      	self.projectListAction(self.getActionHeader(data, "getCommitableFiles"), $('#commitLoading_'+dynamicId), function(response) {
 	      		$("#dummyCommit_"+dynamicId).css("height","0");
 				var commitableFiles = "";
@@ -372,6 +377,7 @@ define([], function() {
 				if (!self.isBlank(response.data.repoInfoFile) && response.data.repoInfoFile.length === 0) {
 					$('.commit_data_'+dynamicId).show();
 				}
+				commonVariables.hideloading = false;
 			});
 		},
 		
@@ -395,9 +401,12 @@ define([], function() {
 			if (dynamicId === undefined || dynamicId === null) {
 				dynamicId = obj.attr("dynamicId");
 			}
+			
+			commonVariables.hideloading = true;
 			self.projectListAction(self.getActionHeader(actionBody, action), $("#pdfReportLoading_"+dynamicId), function(response) {
 				self.listPdfReports(response, temp, dynamicId);
 				self.clickFunction(dynamicId);
+				commonVariables.hideloading = false;
 			});
 		},
 		
