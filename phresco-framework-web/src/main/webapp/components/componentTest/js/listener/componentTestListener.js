@@ -1,10 +1,9 @@
-define(["componentTest/api/componentTestAPI"], function() {
+define([], function() {
 
 	Clazz.createPackage("com.components.componentTest.js.listener");
 
 	Clazz.com.components.componentTest.js.listener.ComponentTestListener = Clazz.extend(Clazz.WidgetWithTemplate, {
 		
-		componentTestAPI : null,
 		testResultListener : null,
 		dynamicpage : null,
 		dynamicPageListener : null,
@@ -17,9 +16,6 @@ define(["componentTest/api/componentTestAPI"], function() {
 		 */
 		initialize : function(config) {
 			var self = this;
-			if (self.componentTestAPI === null) {
-				self.componentTestAPI =  new Clazz.com.components.componentTest.js.api.ComponentTestAPI();
-			}
 			if (self.testResultListener === null) {
 				self.testResultListener = new Clazz.com.components.testResult.js.listener.TestResultListener();
 			}
@@ -48,9 +44,9 @@ define(["componentTest/api/componentTestAPI"], function() {
 		 */
 		getActionHeader : function(requestBody, action) {
 			var self = this, header, data = {}, userId;
-			data = JSON.parse(self.componentTestAPI.localVal.getSession('userInfo'));
+			data = JSON.parse(commonVariables.api.localVal.getSession('userInfo'));
 			userId = data.id;
-			appDirName = self.componentTestAPI.localVal.getSession("appDirName");
+			appDirName = commonVariables.api.localVal.getSession("appDirName");
 			header = {
 				contentType: "application/json",				
 				dataType: "json",
@@ -83,12 +79,12 @@ define(["componentTest/api/componentTestAPI"], function() {
 		runComponentTest : function(callback) {
 			var self = this;
 			var testData = $("#componentTestForm").serialize();
-			var appdetails = self.componentTestAPI.localVal.getJson('appdetails');
+			var appdetails = commonVariables.api.localVal.getJson('appdetails');
 			var queryString = '';
 			appId = appdetails.data.appInfos[0].id;
 			projectId = appdetails.data.id;
 			customerId = appdetails.data.customerIds[0];
-			username = self.componentTestAPI.localVal.getSession('username');
+			username = commonVariables.api.localVal.getSession('username');
 						
 			if (appdetails !== null) {
 				queryString ="username="+username+"&appId="+appId+"&customerId="+customerId+"&goal=component-test&phase=component-test&projectId="+projectId+"&"+testData;

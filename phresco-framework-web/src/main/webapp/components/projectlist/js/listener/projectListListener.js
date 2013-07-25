@@ -1,11 +1,10 @@
-define(["projectlist/api/projectListAPI"], function() {
+define([], function() {
 
 	Clazz.createPackage("com.components.projectlist.js.listener");
 
 	Clazz.com.components.projectlist.js.listener.ProjectsListListener = Clazz.extend(Clazz.WidgetWithTemplate, {
 		
 		basePlaceholder :  window.commonVariables.basePlaceholder,
-		projectListAPI : null,
 		editproject : null,
 		editAplnContent : null,
 		projectRequestBody : {},
@@ -21,9 +20,6 @@ define(["projectlist/api/projectListAPI"], function() {
 		 */
 		initialize : function(config) {
 			var self = this;
-			if(self.projectListAPI === null){
-				self.projectListAPI = new Clazz.com.components.projectlist.js.api.ProjectsListAPI();
-			}
 		},
 		
 		onEditProject : function(projectId) {
@@ -55,7 +51,7 @@ define(["projectlist/api/projectListAPI"], function() {
 			var self = this;
 			try {
 				//commonVariables.loadingScreen.showLoading();
-				self.projectListAPI.projectslist(header,
+				commonVariables.api.ajaxRequest(header,
 					function(response) {
 						if (response !== null) {
 							callback(response);
@@ -82,7 +78,7 @@ define(["projectlist/api/projectListAPI"], function() {
 				if (!self.isBlank(loadingObj)) {
 					self.showpopupLoad(loadingObj);
 				}
-				self.projectListAPI.projectslist(header,
+				commonVariables.api.ajaxRequest(header,
 					function(response) {
 						if(response !== null ){
 							self.hidePopupLoad();
@@ -143,7 +139,7 @@ define(["projectlist/api/projectListAPI"], function() {
 			var self=this, header, data = {}, userId;
 			var customerId = self.getCustomer();
 			customerId = (customerId === "") ? "photon" : customerId;
-			data = JSON.parse(self.projectListAPI.localVal.getSession('userInfo'));
+			data = JSON.parse(commonVariables.api.localVal.getSession('userInfo'));
 			if(data !== "") { userId = data.id; }
 			header = {
 				contentType: "application/json",				
@@ -230,9 +226,9 @@ define(["projectlist/api/projectListAPI"], function() {
 		loadAppInfo : function(value, techid){
 			var self = this;
 			self.editAplnContent.appDirName = value;
-			self.projectListAPI.localVal.setSession('appDirName', value);
-			self.projectListAPI.localVal.setSession('techid', techid);
-			Clazz.navigationController.push(self.editAplnContent, true);
+			commonVariables.api.localVal.setSession('appDirName', value);
+			commonVariables.api.localVal.setSession('techid', techid);
+			Clazz.navigationController.push(self.editAplnContent, commonVariables.animation);
 			$("#aplntitle").html("Edit - "+value);
 		},
 		
@@ -385,7 +381,7 @@ define(["projectlist/api/projectListAPI"], function() {
 		//To list the generated PDF reports
 		listPdfReports : function(response, temp, dynamicId) {
 			var self = this;
-			var userPermissions = JSON.parse(self.projectListAPI.localVal.getSession('userPermissions'));
+			var userPermissions = JSON.parse(commonVariables.api.localVal.getSession('userPermissions'));
 			var content = "";
 			$("tbody[name=generatedPdfs_"+dynamicId+"]").empty();
 			if (response !== undefined && response !== null && response.length > 0) {

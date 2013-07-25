@@ -120,7 +120,7 @@ define(["ci/listener/ciListener"], function() {
 		 */
 		loadPage :function(){
 			Clazz.navigationController.jQueryContainer = commonVariables.contentPlaceholder;
-			Clazz.navigationController.push(this, true);
+			Clazz.navigationController.push(this, commonVariables.animation);
 		},
 
 		loadPageTest :function(){

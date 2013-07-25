@@ -44,21 +44,21 @@ define(["login/listener/loginListener"], function() {
 		postRender : function(element) {	
 			var self = this;
 			
-			if(self.loginListener.loginAPI.localVal.getSession('customerlogo') !== null &&
-				self.loginListener.loginAPI.localVal.getSession('customerlogo') !== ""){
+			if(commonVariables.api.localVal.getSession('customerlogo') !== null &&
+				commonVariables.api.localVal.getSession('customerlogo') !== ""){
 				$('#loginlogo').attr("src", "data:image/png;base64," + self.loginListener.loginAPI.localVal.getSession('customerlogo'));
 			} else {
 				$('#loginlogo').attr("src", "themes/default/images/helios/logo_login.png");
 			}
 			
-			if(self.loginListener.loginAPI.localVal.getSession('loggedout') === "true"){
+			if(commonVariables.api.localVal.getSession('loggedout') === "true"){
 				$(".login_error_msg").text('Logged out');
 				$(".login_error_msg").css('color','green');
 			}
-			self.loginListener.loginAPI.localVal.deleteSession('loggedout');
+			commonVariables.api.localVal.deleteSession('loggedout');
 			
-			if(self.loginListener.loginAPI.localVal.getSession('statusmsg') !== null){
-				if(self.loginListener.loginAPI.localVal.getSession('statusmsg') === "Customer Context Required"){
+			if(commonVariables.api.localVal.getSession('statusmsg') !== null){
+				if(commonVariables.api.localVal.getSession('statusmsg') === "Customer Context Required"){
 					$("#contex_er").show();
 				}else{
 					$(".login_error_msg").text(self.loginListener.loginAPI.localVal.getSession('statusmsg'));
@@ -82,9 +82,13 @@ define(["login/listener/loginListener"], function() {
 			
 			//Enter Key Press Event
 			document.onkeydown = function(evt) {
-				evt = evt || window.event;
-				if (evt.keyCode === 13) {
-					self.onLoginEvent.dispatch();
+				if(self.loginListener.enterKeyDisable) {
+					return true;
+				} else {
+					evt = evt || window.event;
+					if (evt.keyCode === 13) {
+						self.onLoginEvent.dispatch();
+					}
 				}
 			};
 			
@@ -106,7 +110,7 @@ define(["login/listener/loginListener"], function() {
 			}); */
 			
 			//Set rememberMe chk box val
-			if(self.loginListener.loginAPI.localVal.getSession('rememberMe') === "true"){
+			if(commonVariables.api.localVal.getSession('rememberMe') === "true"){
 				$('#rememberMe').prop('checked', true);
 				$('#username').val(self.loginListener.loginAPI.localVal.getSession('username'));
 				$('#password').val(self.loginListener.loginAPI.localVal.getSession('password'));

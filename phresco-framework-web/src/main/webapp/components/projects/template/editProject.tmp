@@ -1,4 +1,4 @@
-<section id="addproject">   
+<section id="editproject">   
 	
      <section class="content_main create_proj">
           <table class="table table-striped table_border table-bordered create_edit_table" cellpadding="0" cellspacing="0" border="0">  
@@ -6,7 +6,7 @@
 				{{#editProject}}
             	<tr>
                     <td data-i18n="project.create.label.name"><sup>*</sup></td>
-                    <td><input type="text" value="{{name}}" name="projectname" maxlength="30" title="30 Characters only" placeholder="Project Name" disabled/></td>
+                    <td><input type="text" value="{{name}}" id="editPrjprojectname" name="projectname" maxlength="30" title="30 Characters only" placeholder="Project Name" disabled/></td>
                     <td data-i18n="project.create.label.code"><sup>*</sup></td>
                     <td><input type="text" value="{{projectCode}}" name="projectcode" maxlength="30" title="30 Characters only" placeholder="Project Code" disabled/></td>
                     <td data-i18n="project.create.label.version"></td>

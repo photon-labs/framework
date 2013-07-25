@@ -1,10 +1,9 @@
-define(["mavenService/api/mavenServiceAPI"], function() {
+define([], function() {
 
 	Clazz.createPackage("com.components.mavenService.js.listener");
 
 	Clazz.com.components.mavenService.js.listener.MavenServiceListener = Clazz.extend(Clazz.Widget, {
 		localStorageAPI : null,
-		mavenServiceAPI : null,
 		//self : this,
 		/***
 		 * Called in initialization time of this class 
@@ -12,10 +11,6 @@ define(["mavenService/api/mavenServiceAPI"], function() {
 		 * @config: configurations for this listener
 		 */
 		initialize : function(config) {
-			
-			if(this.mavenServiceAPI === null){
-				this.mavenServiceAPI = new Clazz.com.components.mavenService.js.api.MavenServiceAPI();
-			}	
 		},
 
 		mvnBuild : function(paramData, divId, callback){
@@ -131,7 +126,7 @@ define(["mavenService/api/mavenServiceAPI"], function() {
 				var self = this;
 				commonVariables.loadingScreen.showLoading();
 				$(divId).html('');
-				self.mavenServiceAPI.mvnSer(header, 
+				commonVariables.api.ajaxRequest(header, 
 					function(response){
 						if(response !==  undefined && response !==  null){
 							commonVariables.loadingScreen.removeLoading();
@@ -172,7 +167,7 @@ define(["mavenService/api/mavenServiceAPI"], function() {
 		mvnlogService : function(key, divId, callback){
 			try{
 				var self = this, header = self.getRequestHeader("GET", '&uniquekey=' + key, commonVariables.mvnlogService, "");
-				self.mavenServiceAPI.mvnSer(header, 
+				commonVariables.api.ajaxRequest(header, 
 					function(response){
 						if(response !==  undefined && response !== null){
 							if(response.log !== undefined && response.log !== null){

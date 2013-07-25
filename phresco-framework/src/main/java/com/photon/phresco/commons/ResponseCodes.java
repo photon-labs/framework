@@ -21,6 +21,11 @@ package com.photon.phresco.commons;
 public interface ResponseCodes {
 	
 	/*
+	 * Generic page
+	 */
+	String PHR000000 = "PHR000000"; // Unexpected Failure at server end
+	
+	/*
 	 * Login page
 	 */
 	String PHR100001 = "PHR100001"; // Login Success

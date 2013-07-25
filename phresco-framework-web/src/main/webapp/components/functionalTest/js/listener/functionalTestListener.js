@@ -1,10 +1,9 @@
-define(["functionalTest/api/functionalTestAPI"], function() {
+define([], function() {
 
 	Clazz.createPackage("com.components.functionalTest.js.listener");
 
 	Clazz.com.components.functionalTest.js.listener.FunctionalTestListener = Clazz.extend(Clazz.WidgetWithTemplate, {
 
-		functionalTestAPI : null,
 		testResultListener : null,
 		dynamicpage : null,
 		dynamicPageListener : null,
@@ -17,9 +16,6 @@ define(["functionalTest/api/functionalTestAPI"], function() {
 		 */
 		initialize : function(config) {
 			var self = this;
-			if (self.functionalTestAPI === null) {
-				self.functionalTestAPI =  new Clazz.com.components.functionalTest.js.api.FunctionalTestAPI();
-			}
 			if (self.testResultListener === null) {
 				self.testResultListener = new Clazz.com.components.testResult.js.listener.TestResultListener();
 			}
@@ -48,9 +44,9 @@ define(["functionalTest/api/functionalTestAPI"], function() {
 		 */
 		getActionHeader : function(requestBody, action) {
 			var self = this, header, data = {}, userId;
-			data = JSON.parse(self.functionalTestAPI.localVal.getSession('userInfo'));
+			data = JSON.parse(commonVariables.api.localVal.getSession('userInfo'));
 			userId = data.id;
-			appDirName = self.functionalTestAPI.localVal.getSession("appDirName");
+			appDirName = commonVariables.api.localVal.getSession("appDirName");
 			header = {
 					contentType: "application/json",				
 					dataType: "json",
@@ -99,7 +95,7 @@ define(["functionalTest/api/functionalTestAPI"], function() {
 			var self = this;
 			try {
 				//commonVariables.loadingScreen.showLoading();
-				self.functionalTestAPI.functionalTest(header,
+				commonVariables.api.ajaxRequest(header,
 						function(response) {
 					if (response !== null) {
 						//commonVariables.loadingScreen.removeLoading();
@@ -132,12 +128,12 @@ define(["functionalTest/api/functionalTestAPI"], function() {
 				$("#functionalTest_popup").toggle();
 				testData = $('#functionalTestForm').serialize();
 			}
-			var appdetails = self.functionalTestAPI.localVal.getJson('appdetails');
+			var appdetails = commonVariables.api.localVal.getJson('appdetails');
 			var queryString = '';
 			appId = appdetails.data.appInfos[0].id;
 			projectId = appdetails.data.id;
 			customerId = appdetails.data.customerIds[0];
-			username = self.functionalTestAPI.localVal.getSession('username');
+			username = commonVariables.api.localVal.getSession('username');
 
 			if (appdetails !== null) {
 				queryString ="username="+username+"&appId="+appId+"&customerId="+customerId+"&goal=functional-test&phase=functional-test&projectId="+projectId+"&"+testData;

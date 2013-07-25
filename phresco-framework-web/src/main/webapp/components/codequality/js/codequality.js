@@ -7,7 +7,6 @@ define(["codequality/listener/codequalityListener"], function() {
 		configUrl: "components/projects/config/config.json",
 		name : commonVariables.codequality,
 		codequalityListener: null,
-		codequalityAPI : null,
 		dynamicpage : null,
 		dynamicPageListener : null,
 		renderedData : {},
@@ -62,7 +61,7 @@ define(["codequality/listener/codequalityListener"], function() {
 		 
 		postRender : function(element) {
 			var self = this; 
-			var appDirName = self.codequalityListener.codequalityAPI.localVal.getSession('appDirName');
+			var appDirName = commonVariables.api.localVal.getSession('appDirName');
 			var goal = "validate-code";
 			commonVariables.goal = goal;
 			
@@ -82,7 +81,7 @@ define(["codequality/listener/codequalityListener"], function() {
 			}, 200);
 			
 			//RBAC
-			var userPermissions = JSON.parse(self.codequalityListener.codequalityAPI.localVal.getSession('userPermissions'));
+			var userPermissions = JSON.parse(commonVariables.api.localVal.getSession('userPermissions'));
 			if (!userPermissions.manageCodeValidation) {
 				$("#codeAnalysis").prop("disabled", true);
 			} else {

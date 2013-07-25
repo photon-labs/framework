@@ -21,7 +21,7 @@ var commonVariables = {
 	configuration : "configuration",
 	editConfiguration : "editConfiguration",
 
-	techId : "tech-phpdru6",
+	techId : "tech-html5-jquery-mobile-widget",
 	
 	featurePage : "features",
 	featurePageContext : "features",
@@ -40,6 +40,7 @@ var commonVariables = {
     projectlist : "projectlist",
     projectlistContext : "project",
 	addproject : "addproject",
+	editproject : "editproject",
 	performanceTest : "performanceTest",
 	qualityContext : "quality",
 	performance : "performance",
@@ -126,7 +127,7 @@ define(["jquery"], function($) {
 			// setup require.js
 			var requireConfig = requirejs.config(configJson);
 			
-			require(["framework/class", "framework/widget", "common/loading",  "i18next", "framework/widgetWithTemplate", "framework/navigationController", "jquery_mockjax", "json2", "login/login"], function () {
+			require(["framework/class", "framework/widget", "common/loading",  "i18next", "framework/widgetWithTemplate", "framework/navigationController", "jquery_mockjax", "json2", "api/api","login/login"], function () {
 				Clazz.config = data;
 				Clazz.navigationController = new Clazz.NavigationController({
 					mainContainer : "basepage\\:widget",
@@ -140,38 +141,13 @@ define(["jquery"], function($) {
 					JSS.css(eval('(' + localStorage.getItem('customertheme') + ')'));
 				}
 				
-				commonVariables.loadingScreen =new Clazz.com.js.widget.common.Loading();
+				commonVariables.loadingScreen = new Clazz.com.js.widget.common.Loading();
+				commonVariables.api = new Clazz.com.js.api.API();
 			});
 		
-			require(["loginTest", "projectlistTest", "headerTest", "footerTest", "navigationTest", "projectTest", "applicationTest", "featuresTest", "codequalityTest", "configurationTest", "buildTest", "editConfigurationTest", "jobTemplatesTest", "continuousDeliveryConfigureTest", "dynamicPageTest", "unitTestTest", "componentTestTest", "functionalTestTest","handlebars", "signal", "signalbinding",  "jslib_bootstrap_datepicker", "jslib_jquery_sortable_min", "bootstrap_min", "jquery_mCustomScrollbar_concat_min", "bootstrap_select_min", "performanceTestTest", "RGraph_common_core", "RGraph_common_tooltips", "RGraph_common_effects", "RGraph_pie", "RGraph_bar", "RGraph_line", "RGraph_common_key", "jquery_magnific_popup_min", "jquery_fullscreen", "customComboBox"], function(loginTest, projectlistTest, headerTest, footerTest, navigationTest, projectTest,applicationTest, featuresTest, codequalityTest, configurationTest, buildTest, editConfigurationTest, jobTemplatesTest, continuousDeliveryConfigureTest, dynamicPageTest, unitTestTest, componentTestTest, functionalTestTest, handlebars, signals, signalbinding, datepicker,  sortable, bootstrap, scrollbar, select, performanceTestTest, RGraph_common_core, RGraph_common_tooltips, RGraph_common_effects, RGraph_pie, RGraph_bar, RGraph_line, RGraph_common_key, jquery_magnific_popup_min, jquery_fullscreen, customComboBox){
+			require(["loginTest", "projectlistTest", "headerTest", "footerTest", "navigationTest", "projectTest", "applicationTest", "featuresTest", "codequalityTest", "configurationTest", "buildTest", "editConfigurationTest", "dynamicPageTest", "unitTestTest", "componentTestTest", "functionalTestTest","handlebars", "signal", "signalbinding",  "jslib_bootstrap_datepicker", "jslib_jquery_sortable_min", "bootstrap_min", "jquery_mCustomScrollbar_concat_min", "bootstrap_select_min", "performanceTestTest", "RGraph_common_core", "RGraph_common_tooltips", "RGraph_common_effects", "RGraph_pie", "RGraph_bar", "RGraph_line", "RGraph_common_key", "jquery_magnific_popup_min", "jquery_fullscreen", "customComboBox"], function(loginTest, projectlistTest, headerTest, footerTest, navigationTest, projectTest,applicationTest, featuresTest, codequalityTest, configurationTest, buildTest, editConfigurationTest, jobTemplatesTest, continuousDeliveryConfigureTest, dynamicPageTest, unitTestTest, componentTestTest, functionalTestTest, handlebars, signals, signalbinding, datepicker,  sortable, bootstrap, scrollbar, select, performanceTestTest, RGraph_common_core, RGraph_common_tooltips, RGraph_common_effects, RGraph_pie, RGraph_bar, RGraph_line, RGraph_common_key, jquery_magnific_popup_min, jquery_fullscreen, customComboBox){
 				commonVariables.navListener = Clazz.com.components.navigation.js.listener.navigationListener();
-				loginTest.runTests(data, function() {
-					footerTest.runTests(data);
-					projectlistTest.runTests(function(){
-						projectTest.runTests(function(){
-							featuresTest.runTests(function(){
-								configurationTest.runTests(function(){
-									editConfigurationTest.runTests(function(){
-										performanceTestTest.runTests(data);
-										dynamicPageTest.runTests(data);
-									});
-								});
-							});
-						});
-					});
-					/*applicationTest.runTests(data);
-					
-					functionalTestTest.runTests(data);
-					editConfigurationTest.runTests(data);
-					configurationTest.runTests(data);
-					navigationTest.runTests(data);
-					headerTest.runTests(data);
-					jobTemplateListTest.runTests(data);
-					buildTest.runTests(data);
-					codequalityTest.runTests(data);
-					unitTestTest.runTests(data);
-					componentTestTest.runTests(data);*/
-				});
+				loginTest.runTests(data);
 			});
 		}, "json");
 	});

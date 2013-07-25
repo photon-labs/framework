@@ -1,9 +1,8 @@
-define(["build/api/buildAPI"], function() {
+define([], function() {
 
 	Clazz.createPackage("com.components.build.js.listener");
 
 	Clazz.com.components.build.js.listener.BuildListener = Clazz.extend(Clazz.WidgetWithTemplate, {
-		buildAPI : null,		
 		mavenServiceListener : null,		
 		/***
 		 * Called in initialization time of this class 
@@ -13,9 +12,6 @@ define(["build/api/buildAPI"], function() {
 		initialize : function(config) {
 			var self = this;
 			
-			if(self.buildAPI === null){
-				self.buildAPI = new Clazz.com.components.build.js.api.BuildAPI();
-			}
 			if(self.mavenServiceListener === null)	{
 				commonVariables.navListener.getMyObj(commonVariables.mavenService, function(retVal){});
 			}
@@ -38,7 +34,7 @@ define(["build/api/buildAPI"], function() {
 			var self = this;
 			
 			try {
-				self.buildAPI.build(header,
+				commonVariables.api.ajaxRequest(header,
 					function(response) {
 						if (response !== null) {
 							callback(response);
@@ -79,10 +75,10 @@ define(["build/api/buildAPI"], function() {
 		},
 		
 		deployBuild : function(queryString, callback){
-			var self = this, appInfo = self.buildAPI.localVal.getJson('appdetails');
+			var self = this, appInfo = commonVariables.api.localVal.getJson('appdetails');
 			
 			if(appInfo !== null){
-				queryString +=	'&customerId='+ self.getCustomer() +'&appId='+ appInfo.data.appInfos[0].id +'&projectId=' + appInfo.data.id + '&username=' + self.buildAPI.localVal.getSession('username');
+				queryString +=	'&customerId='+ self.getCustomer() +'&appId='+ appInfo.data.appInfos[0].id +'&projectId=' + appInfo.data.id + '&username=' + commonVariables.api.localVal.getSession('username');
 			}
 			if(self.mavenServiceListener === null)	{
 				commonVariables.navListener.getMyObj(commonVariables.mavenService, function(retVal){
@@ -100,10 +96,10 @@ define(["build/api/buildAPI"], function() {
 		},
 		
 		buildProject : function(queryString, callback){
-			var self = this, appInfo = self.buildAPI.localVal.getJson('appdetails');
+			var self = this, appInfo = commonVariables.api.localVal.getJson('appdetails');
 			
 			if(appInfo !== null){
-				queryString +=	'&customerId='+ self.getCustomer() +'&appId='+ appInfo.data.appInfos[0].id +'&projectId=' + appInfo.data.id + '&username=' + self.buildAPI.localVal.getSession('username');
+				queryString +=	'&customerId='+ self.getCustomer() +'&appId='+ appInfo.data.appInfos[0].id +'&projectId=' + appInfo.data.id + '&username=' + commonVariables.api.localVal.getSession('username');
 			}
 			
 			if(self.mavenServiceListener === null)	{
@@ -122,10 +118,10 @@ define(["build/api/buildAPI"], function() {
 		},
 		
 		runAgainstSource : function(queryString, callback){
-			var self = this, appInfo = self.buildAPI.localVal.getJson('appdetails');
+			var self = this, appInfo = commonVariables.api.localVal.getJson('appdetails');
 			
 			if(appInfo !== null){
-				queryString +=	'&customerId='+ self.getCustomer() +'&appId='+ appInfo.data.appInfos[0].id +'&projectId=' + appInfo.data.id + '&username=' + self.buildAPI.localVal.getSession('username');
+				queryString +=	'&customerId='+ self.getCustomer() +'&appId='+ appInfo.data.appInfos[0].id +'&projectId=' + appInfo.data.id + '&username=' + commonVariables.api.localVal.getSession('username');
 			}
 
 			if(self.mavenServiceListener === null)	{
@@ -144,9 +140,9 @@ define(["build/api/buildAPI"], function() {
 		},
 		
 		stopServer : function(callback){
-			var self = this, appInfo = self.buildAPI.localVal.getJson('appdetails');
+			var self = this, appInfo = commonVariables.api.localVal.getJson('appdetails');
 			if(appInfo !== null){
-				queryString =	'&customerId='+ self.getCustomer() +'&appId='+ appInfo.data.appInfos[0].id +'&projectId=' + appInfo.data.id + '&username=' + self.buildAPI.localVal.getSession('username');
+				queryString =	'&customerId='+ self.getCustomer() +'&appId='+ appInfo.data.appInfos[0].id +'&projectId=' + appInfo.data.id + '&username=' + commonVariables.api.localVal.getSession('username');
 			}
 			
 			if(self.mavenServiceListener === null)	{
@@ -165,9 +161,9 @@ define(["build/api/buildAPI"], function() {
 		},
 
 		restartServer : function(callback){
-			var self = this, appInfo = self.buildAPI.localVal.getJson('appdetails');
+			var self = this, appInfo = commonVariables.api.localVal.getJson('appdetails');
 			if(appInfo !== null){
-				queryString =	'&customerId='+ self.getCustomer() +'&appId='+ appInfo.data.appInfos[0].id +'&projectId=' + appInfo.data.id + '&username=' + self.buildAPI.localVal.getSession('username');
+				queryString =	'&customerId='+ self.getCustomer() +'&appId='+ appInfo.data.appInfos[0].id +'&projectId=' + appInfo.data.id + '&username=' + commonVariables.api.localVal.getSession('username');
 			}
 			
 			if(self.mavenServiceListener === null)	{
@@ -188,7 +184,7 @@ define(["build/api/buildAPI"], function() {
 		deleteBuild : function(buildNo, callback){
 			var self = this, header = self.getRequestHeader(JSON.stringify([buildNo]), '', 'delete');
 			try {
-				self.buildAPI.build(header,
+				commonVariables.api.ajaxRequest(header,
 					function(response) {
 						if (response !== null) {
 							callback(response);
@@ -216,8 +212,8 @@ define(["build/api/buildAPI"], function() {
 		getRequestHeader : function(BuildRequestBody, buildInfo, action) {
 			var self=this, header, appdirName = '', url = '', method = "GET", contType = "application/json", conte;
 			
-			if(self.buildAPI.localVal.getSession('appDirName') !== null){
-				appdirName = self.buildAPI.localVal.getSession('appDirName');
+			if(commonVariables.api.localVal.getSession('appDirName') !== null){
+				appdirName = commonVariables.api.localVal.getSession('appDirName');
 			}
 			
 			if(action === "getList"){
@@ -229,7 +225,7 @@ define(["build/api/buildAPI"], function() {
 				url = 'buildinfo/downloadBuild?appDirName=' + appdirName + '&buildNumber=' + buildInfo.buildNo;
 			}else if(action === "delete"){
 				method = "DELETE";
-				var appInfo = self.buildAPI.localVal.getJson('appdetails');
+				var appInfo = commonVariables.api.localVal.getJson('appdetails');
 				if(appInfo !== null){
 					url = 'buildinfo/deletebuild?customerId='+ self.getCustomer() +'&appId='+ appInfo.data.appInfos[0].id +'&projectId=' + appInfo.data.id;
 				}

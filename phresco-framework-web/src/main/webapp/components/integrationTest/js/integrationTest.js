@@ -8,7 +8,6 @@ define(["integrationTest/listener/integrationTestListener", "testResult/listener
 		configUrl: "components/integrationTest/config/config.json",
 		name : commonVariables.integrationTest,
 		integrationTestListener : null,
-		integrationTestAPI : null,
 		testResult : null,
 		testResultListener : null,
 		onTabularViewEvent : null,
@@ -23,9 +22,6 @@ define(["integrationTest/listener/integrationTestListener", "testResult/listener
 		initialize : function(globalConfig) {
 			var self = this;
 			commonVariables.testType = commonVariables.integration;
-			if (self.integrationTestAPI === null) {
-				self.integrationTestAPI =  new Clazz.com.components.integrationTest.js.api.IntegrationTestAPI();
-			}
 			if (self.integrationTestListener === null ) {
 				self.integrationTestListener = new Clazz.com.components.integrationTest.js.listener.IntegrationTestListener();
 			}
@@ -81,7 +77,7 @@ define(["integrationTest/listener/integrationTestListener", "testResult/listener
 		preRender: function(whereToRender, renderFunction) {
 			var self = this;
 				var data = {};
-				var userPermissions = JSON.parse(self.integrationTestListener.integrationTestAPI.localVal.getSession('userPermissions'));
+				var userPermissions = JSON.parse(commonVariables.api.localVal.getSession('userPermissions'));
 				data.userPermissions = userPermissions;
 				renderFunction(data, whereToRender);
 		},

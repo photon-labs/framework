@@ -16,6 +16,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.StringWriter;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -53,6 +55,7 @@ import com.photon.phresco.commons.model.RepoInfo;
 import com.photon.phresco.configuration.ConfigurationInfo;
 import com.photon.phresco.exception.ConfigurationException;
 import com.photon.phresco.exception.PhrescoException;
+import com.photon.phresco.framework.FrameworkConfiguration;
 import com.photon.phresco.framework.PhrescoFrameworkFactory;
 import com.photon.phresco.framework.api.ActionType;
 import com.photon.phresco.framework.api.ApplicationManager;
@@ -283,7 +286,7 @@ public class ActionFunction implements Constants ,FrameworkConstants,ActionServi
 		try {
 			String isIphone = frameworkUtil.isIphoneTagExists(appInfo);
 			// unit xml check
-			if ((FrameworkConstants.ALL).equals(fromPage) || fromPage.equals("unit")) {
+			if (!xmlResultsAvailable) {
 				List<String> moduleNames = new ArrayList<String>();
 				PomProcessor processor = frameworkUtil.getPomProcessor(appInfo.getAppDirName());
 				Modules pomModules = processor.getPomModule();
@@ -303,7 +306,7 @@ public class ActionFunction implements Constants ,FrameworkConstants,ActionServi
 						xmlResultsAvailable = xmlFileSearch(file, xmlResultsAvailable);
 					}
 				} else {
-					if (StringUtils.isNotEmpty(isIphone)) {
+					if (StringUtils.isNotEmpty(isIphone)) {	
 						String unitIphoneTechReportDir = frameworkUtil.getUnitTestReportDir(appInfo);
 						file = new File(sb.toString() + unitIphoneTechReportDir);
 					} else {
@@ -326,13 +329,13 @@ public class ActionFunction implements Constants ,FrameworkConstants,ActionServi
 			}
 
 			// functional xml check
-			if ((FrameworkConstants.ALL).equals(fromPage) || fromPage.equals("functional")) {
+			if (!xmlResultsAvailable) {
 				file = new File(sb.toString() + frameworkUtil.getFunctionalTestReportDir(appInfo));
 				xmlResultsAvailable = xmlFileSearch(file, xmlResultsAvailable);
 			}
 
 			// component xml check
-			if ((FrameworkConstants.ALL).equals(fromPage) || fromPage.equals("component")) {
+			if (!xmlResultsAvailable) {
 				String componentDir = frameworkUtil.getComponentTestReportDir(appInfo);
 				if (StringUtils.isNotEmpty(componentDir)) {
 					file = new File(sb.toString() + componentDir);
@@ -342,14 +345,14 @@ public class ActionFunction implements Constants ,FrameworkConstants,ActionServi
 
 			// performance xml check
 			if (StringUtils.isEmpty(isIphone)) {
-				if ((FrameworkConstants.ALL).equals(fromPage) || fromPage.equals("performance")) {
+				if (!xmlResultsAvailable) {
 					 xmlResultsAvailable = performanceTestResultAvail(appInfo);
 				}
 			}
 
 			// load xml check
 			if (StringUtils.isEmpty(isIphone)) {
-				if ((FrameworkConstants.ALL).equals(fromPage) || fromPage.equals("load")) {
+				if (!xmlResultsAvailable) {
 					 xmlResultsAvailable = loadTestResultAvail(appInfo);
 				}
 			}
@@ -2172,6 +2175,233 @@ public class ActionFunction implements Constants ,FrameworkConstants,ActionServi
 		plugins.add(artifactGroup);
 		return plugins;
 	}
+	
+	public boolean isSonarReportAvailable(FrameworkUtil frameworkUtil, ApplicationInfo appInfo, HttpServletRequest request)
+	throws PhrescoException {
+		boolean isSonarReportAvailable = false;
+try {
+	String isIphone = frameworkUtil.isIphoneTagExists(appInfo);
+	if (StringUtils.isEmpty(isIphone)) {
+		FrameworkConfiguration frameworkConfig = PhrescoFrameworkFactory.getFrameworkConfig();
+		String serverUrl = 	FrameworkServiceUtil.getSonarURL(request);
+		String sonarReportPath = frameworkConfig.getSonarReportPath().replace(FrameworkConstants.FORWARD_SLASH + SONAR, "");
+		serverUrl = serverUrl + sonarReportPath;
+		PomProcessor processor = frameworkUtil.getPomProcessor(appInfo.getAppDirName());
+		Modules pomModules = processor.getPomModule();
+		List<String> modules = null;
+		if (pomModules != null) {
+			modules = pomModules.getModule();
+		}
+
+		// check multimodule or not
+		List<String> sonarProfiles = frameworkUtil.getSonarProfiles(appInfo);
+		if (CollectionUtils.isEmpty(sonarProfiles)) {
+			sonarProfiles.add(SONAR_SOURCE);
+		}
+		sonarProfiles.add(FUNCTIONAL);
+		boolean isSonarUrlAvailable = false;
+		if (CollectionUtils.isNotEmpty(modules)) {
+			for (String module : modules) {
+				for (String sonarProfile : sonarProfiles) {
+					isSonarUrlAvailable = checkSonarModuleUrl(sonarProfile, serverUrl, module, frameworkUtil,
+							appInfo);
+
+					if (isSonarUrlAvailable) {
+						isSonarReportAvailable = true;
+						break;
+					}
+				}
+			}
+		} else {
+			for (String sonarProfile : sonarProfiles) {
+				isSonarUrlAvailable = checkSonarUrl(sonarProfile, serverUrl, frameworkUtil, appInfo);
+				if (isSonarUrlAvailable) {
+					isSonarReportAvailable = true;
+					break;
+				}
+			}
+		}
+	} else {
+		StringBuilder sb = new StringBuilder(Utility.getProjectHome()).append(appInfo.getAppDirName()).append(
+				File.separatorChar).append(DO_NOT_CHECKIN_DIR).append(File.separatorChar).append(
+				STATIC_ANALYSIS_REPORT);
+		File indexPath = new File(sb.toString());
+		if (indexPath.exists() && indexPath.isDirectory()) {
+			File[] listFiles = indexPath.listFiles();
+			for (int i = 0; i < listFiles.length; i++) {
+				File file = listFiles[i];
+				File htmlFileCheck = new File(file, INDEX_HTML);
+				if (htmlFileCheck.exists()) {
+					isSonarReportAvailable = true;
+				}
+			}
+		}
+	}
+} catch (PhrescoException e) {
+	throw new PhrescoException(e);
+} catch (PhrescoPomException e) {
+	throw new PhrescoException(e);
+}
+return isSonarReportAvailable;
+}
+
+	/**
+	 * Check sonar module url.
+	 * 
+	 * @param sonarProfile
+	 *            the sonar profile
+	 * @param serverUrl
+	 *            the server url
+	 * @param module
+	 *            the module
+	 * @param frameworkUtil
+	 *            the framework util
+	 * @param appInfo
+	 *            the app info
+	 * @return true, if successful
+	 * @throws PhrescoException
+	 *             the phresco exception
+	 */
+	private boolean checkSonarModuleUrl(String sonarProfile, String serverUrl, String module,
+			FrameworkUtil frameworkUtil, ApplicationInfo appInfo) throws PhrescoException {
+		boolean isSonarReportAvailable = false;
+		try {
+			if (StringUtils.isNotEmpty(module)) {
+				StringBuilder builder = new StringBuilder(Utility.getProjectHome());
+				builder.append(appInfo.getAppDirName());
+				builder.append(File.separatorChar);
+
+				if (!FUNCTIONALTEST.equals(sonarProfile)) {
+					builder.append(module);
+				}
+				if (StringUtils.isNotEmpty(sonarProfile) && FUNCTIONALTEST.equals(sonarProfile)) {
+					builder.append(frameworkUtil.getFunctionalTestDir(appInfo));
+				}
+
+				builder.append(File.separatorChar);
+				File pomXml = new File(builder.toString() + File.separatorChar + Utility.getPomFileName(appInfo));
+				if (pomXml.exists()) {
+					builder.append(Utility.getPomFileName(appInfo));
+				} else {
+					builder.append(Constants.POM_NAME);
+				}
+				File pomPath = new File(builder.toString());
+				StringBuilder sbuild = new StringBuilder();
+				if (pomPath.exists()) {
+					PomProcessor pomProcessor = new PomProcessor(pomPath);
+					String groupId = pomProcessor.getModel().getGroupId();
+					String artifactId = pomProcessor.getModel().getArtifactId();
+
+					sbuild.append(groupId);
+					sbuild.append(FrameworkConstants.COLON);
+					sbuild.append(artifactId);
+					if (!REQ_SRC.equals(sonarProfile)) {
+						sbuild.append(FrameworkConstants.COLON);
+						sbuild.append(sonarProfile);
+					}
+
+					String artifact = sbuild.toString();
+					String url = serverUrl + artifact;
+					if (isSonarAlive(url)) {
+						isSonarReportAvailable = true;
+					}
+				}
+			}
+		} catch (PhrescoException e) {
+			throw new PhrescoException(e);
+		} catch (PhrescoPomException e) {
+			throw new PhrescoException(e);
+		}
+		return isSonarReportAvailable;
+	}
+
+	/**
+	 * Check sonar url.
+	 * 
+	 * @param sonarProfile
+	 *            the sonar profile
+	 * @param serverUrl
+	 *            the server url
+	 * @param frameworkUtil
+	 *            the framework util
+	 * @param appInfo
+	 *            the app info
+	 * @return true, if successful
+	 * @throws PhrescoException
+	 *             the phresco exception
+	 */
+	private boolean checkSonarUrl(String sonarProfile, String serverUrl, FrameworkUtil frameworkUtil,
+			ApplicationInfo appInfo) throws PhrescoException {
+		boolean isSonarReportAvailable = false;
+		try {
+			if (StringUtils.isNotBlank(sonarProfile)) {
+				// get sonar report
+				StringBuilder builder = new StringBuilder(Utility.getProjectHome());
+				builder.append(appInfo.getAppDirName());
+				builder.append(File.separatorChar);
+
+				if (StringUtils.isNotEmpty(sonarProfile) && FUNCTIONALTEST.equals(sonarProfile)) {
+					builder.append(frameworkUtil.getFunctionalTestDir(appInfo));
+				}
+
+				builder.append(File.separatorChar);
+				builder.append(Utility.getPomFileName(appInfo));
+				File pomPath = new File(builder.toString());
+				StringBuilder sbuild = new StringBuilder();
+				if (pomPath.exists()) {
+					PomProcessor pomProcessor = new PomProcessor(pomPath);
+					String groupId = pomProcessor.getModel().getGroupId();
+					String artifactId = pomProcessor.getModel().getArtifactId();
+
+					sbuild.append(groupId);
+					sbuild.append(FrameworkConstants.COLON);
+					sbuild.append(artifactId);
+
+					if (!SOURCE_DIR.equals(sonarProfile)) {
+						sbuild.append(FrameworkConstants.COLON);
+						sbuild.append(sonarProfile);
+					}
+				}
+
+				String artifact = sbuild.toString();
+				String url = serverUrl + artifact;
+				if (isSonarAlive(url)) {
+					isSonarReportAvailable = true;
+				}
+			}
+		} catch (PhrescoException e) {
+			throw new PhrescoException(e);
+		} catch (PhrescoPomException e) {
+			throw new PhrescoException(e);
+		}
+		return isSonarReportAvailable;
+	}
+
+	/**
+	 * Checks if is sonar alive.
+	 * 
+	 * @param url
+	 *            the url
+	 * @return true, if is sonar alive
+	 */
+	private boolean isSonarAlive(String url) {
+		boolean xmlResultsAvailable = false;
+		try {
+			URL sonarURL = new URL(url);
+			HttpURLConnection connection = null;
+			connection = (HttpURLConnection) sonarURL.openConnection();
+			int responseCode = connection.getResponseCode();
+			if (responseCode != 200) {
+				xmlResultsAvailable = false;
+			} else {
+				xmlResultsAvailable = true;
+			}
+		} catch (Exception e) {
+			xmlResultsAvailable = false;
+		}
+		return xmlResultsAvailable;
+	}
+
 
 
 	protected ServiceManager getServiceManager(String username) throws PhrescoException {

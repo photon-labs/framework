@@ -1,10 +1,9 @@
-define(["testResult/api/testResultAPI"], function() {
+define([], function() {
 
 	Clazz.createPackage("com.components.testResult.js.listener");
 
 	Clazz.com.components.testResult.js.listener.TestResultListener = Clazz.extend(Clazz.WidgetWithTemplate, {
 		
-		testResultAPI : null,
 		allTestCases : null,
 		
 		/***
@@ -14,9 +13,6 @@ define(["testResult/api/testResultAPI"], function() {
 		 */
 		initialize : function(config) {
 			var self = this;
-			if (self.testResultAPI === null) {
-				self.testResultAPI = new Clazz.com.components.testResult.js.api.TestResultAPI();
-			}
 		},
 		
 		onTestResult : function() {
@@ -300,9 +296,9 @@ define(["testResult/api/testResultAPI"], function() {
 		getActionHeader : function(requestBody, action) {
 			var self = this;
 			var header, userId;
-			var userInfo = JSON.parse(self.testResultAPI.localVal.getSession('userInfo'));
+			var userInfo = JSON.parse(commonVariables.api.localVal.getSession('userInfo'));
 			var userId = userInfo.id;
-			var appDirName = self.testResultAPI.localVal.getSession('appDirName');
+			var appDirName = commonVariables.api.localVal.getSession('appDirName');
 			var techReport = $('#reportOptionsDrop').attr("value");
 			var moduleName = $('#modulesDrop').attr("value");
 			header = {
@@ -357,7 +353,7 @@ define(["testResult/api/testResultAPI"], function() {
 		performAction : function(header, callback) {
 			var self = this;
 			try {
-				self.testResultAPI.testResult(header,
+				commonVariables.api.ajaxRequest(header,
 					function(response) {
 						if (response !== null) {
 							callback(response);

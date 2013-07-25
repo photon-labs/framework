@@ -52,7 +52,7 @@ define(["header/api/headerAPI"], function() {
 			}	
 
 			if(currentObj !== null){
-				Clazz.navigationController.push(currentObj, true);
+				Clazz.navigationController.push(currentObj, commonVariables.animation);
 			}
 		},
 
@@ -71,22 +71,18 @@ define(["header/api/headerAPI"], function() {
 		},
 		
 		selectCoustomer : function(customerValue) {
-			var self=this, obj=null;
+			var self=this;
 			self.headerAPI.localVal.deleteSession("Application Layer");
 			self.headerAPI.localVal.deleteSession("Web Layer");
 			self.headerAPI.localVal.deleteSession("Mobile Layer");
 			Clazz.navigationController.jQueryContainer = commonVariables.contentPlaceholder;
 			$("#selectedCustomer").text(customerValue);
-			if (obj === null) {
+			if (commonVariables.navListener.currentTab === "projectlist" || commonVariables.navListener.currentTab === "addproject" || commonVariables.navListener.currentTab === "editproject") {
 				commonVariables.navListener.getMyObj(commonVariables.projectlist, function(retVal) {
 					obj = retVal;
+					Clazz.navigationController.push(obj, commonVariables.animation);
 				});
 			}
-			$('.proj_list').each(function() {
-				if(obj !== null){
-					Clazz.navigationController.push(obj, true);
-				}	
-			});
 		}
 	});
 

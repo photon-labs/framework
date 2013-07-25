@@ -5,9 +5,10 @@ import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
 
 import com.photon.phresco.framework.impl.ConfigurationReaderTest;
+import com.photon.phresco.framework.impl.ProjectManagerTest;
 
 @RunWith(Suite.class)
-@SuiteClasses({ MacosSdkParameterImplTest.class, IosSdkParameterImplTest.class, IosSimSDKVersionsParameterImplTest.class, ConfigurationReaderTest.class, EnvironmentDatabaseImplTest.class, TechnologyVersionImplTest.class, ProjectModuleImplTest.class})
+@SuiteClasses({ MacosSdkParameterImplTest.class, IosSdkParameterImplTest.class, IosSimSDKVersionsParameterImplTest.class, ConfigurationReaderTest.class, EnvironmentDatabaseImplTest.class, TechnologyVersionImplTest.class, ProjectManagerTest.class, ProjectModuleImplTest.class, WarProjectModuleImplTest.class, IosAndMacosSdkParameterImplTest.class, EnvironmentWebservicesImplTest.class, EnvironmentServersImplTest.class})
 
 public class AllTest {
 	// intentionally blank. All tests were added via annotations

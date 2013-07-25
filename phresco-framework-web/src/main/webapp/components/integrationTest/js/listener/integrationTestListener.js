@@ -1,10 +1,9 @@
-define(["integrationTest/api/integrationTestAPI"], function() {
+define([], function() {
 
 	Clazz.createPackage("com.components.integrationTest.js.listener");
 
 	Clazz.com.components.integrationTest.js.listener.IntegrationTestListener = Clazz.extend(Clazz.WidgetWithTemplate, {
 		
-		integrationTestAPI : null,
 		testResultListener : null,
 		mavenServiceListener : null,
 		
@@ -15,9 +14,6 @@ define(["integrationTest/api/integrationTestAPI"], function() {
 		 */
 		initialize : function(config) {
 			var self = this;
-			if (self.integrationTestAPI === null) {
-				self.integrationTestAPI =  new Clazz.com.components.integrationTest.js.api.IntegrationTestAPI();
-			}
 			if (self.testResultListener === null) {
 				self.testResultListener = new Clazz.com.components.testResult.js.listener.TestResultListener();
 			}

@@ -51,7 +51,7 @@ define(["framework/widgetWithTemplate", "configuration/listener/configurationLis
 				});
 				self.templateData.configurations = response.data;
 				self.templateData.configType = self.configType;
-				var userPermissions = JSON.parse(self.configurationlistener.configurationAPI.localVal.getSession('userPermissions'));
+				var userPermissions = JSON.parse(commonVariables.api.localVal.getSession('userPermissions'));
 				self.templateData.userPermissions = userPermissions;
 				renderFunction(self.templateData, whereToRender);
 			});		

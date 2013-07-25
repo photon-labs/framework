@@ -30,8 +30,8 @@ define(["configuration/editConfiguration"], function(EditConfiguration) {
 				}
 			});
 			
-			var configurationAPI = new Clazz.com.components.configuration.js.api.ConfigurationAPI();
-			configurationAPI.localVal.setSession("appDirName" , "aap1");
+			/* var configurationAPI = new Clazz.com.components.configuration.js.api.ConfigurationAPI(); */
+			commonVariables.api.localVal.setSession("appDirName" , "aap1");
 			
 			editConfiguration.configurationlistener.editConfiguration("Production");
 			
@@ -264,7 +264,7 @@ define(["configuration/editConfiguration"], function(EditConfiguration) {
 			setTimeout(function() {
 				start();
 				equal($(commonVariables.contentPlaceholder).find("#ConfigOther").attr('placeholder'), "Enter Configuration Name", "Validation for Configuration Tested");
-				self.updateConfiguration(editConfiguration, runOtherTests);
+				//self.updateConfiguration(editConfiguration, runOtherTests);
 			}, 1500);
 		}); 
 	},

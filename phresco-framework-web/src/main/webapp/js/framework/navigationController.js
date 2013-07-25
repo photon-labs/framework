@@ -189,7 +189,6 @@ define(["framework/base", "framework/animationProvider"], function() {
 				
 				view.doMore = function(element) {
 					if(bCheck) {
-						
 						var animationProviderMain = new Clazz.AnimationProvider({
 							isNative: self.isNative,
 							container: newDiv
@@ -235,7 +234,7 @@ define(["framework/base", "framework/animationProvider"], function() {
 						}
 					}else{
 						//remove old content if exist
-						if($(commonVariables.contentPlaceholder).html() == $(self.jQueryContainer).html()){
+						if(($(commonVariables.contentPlaceholder).html() == $(self.jQueryContainer).html()) && commonVariables.animation){
 							$.each($(commonVariables.contentPlaceholder).find('.widget-maincontent-div'), function(index, current){
 								if($(current).attr('active') === "false"){
 									$(current).remove();

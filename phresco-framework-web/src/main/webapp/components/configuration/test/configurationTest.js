@@ -1,7 +1,7 @@
 
 define(["configuration/configuration"], function(Configuration) {
 
-	return { runTests: function (runOtherTests) {
+	return { runTests: function () {
 		
 		module("configuration.js;Configuration");
 		
@@ -22,8 +22,8 @@ define(["configuration/configuration"], function(Configuration) {
 					commonVariables.navListener = new Clazz.com.components.navigation.js.listener.navigationListener();
 				});
 
-				var configurationAPI = new Clazz.com.components.configuration.js.api.ConfigurationAPI();
-				configurationAPI.localVal.setSession("appDirName" , "aap1");
+				//var configurationAPI = new Clazz.com.components.configuration.js.api.ConfigurationAPI();
+				commonVariables.api.localVal.setSession("appDirName" , "aap1");
 
 				commonVariables.navListener.onMytabEvent("configuration");
 			
@@ -31,13 +31,13 @@ define(["configuration/configuration"], function(Configuration) {
 					start();
 					equal($(commonVariables.contentPlaceholder).find(".envlistname").text(), "Production", "Configuration Page render Tested");
 					equal($(commonVariables.contentPlaceholder).find("#content_Env li").length, 1, "Add Configuration Page render Tested");
-					self.addEnvironment(runOtherTests);
+					self.addEnvironment();
 				}, 1500);
 		});
 			
 	},
 	
-	addEnvironment : function(runOtherTests) {
+	addEnvironment : function() {
 		var self =this;
 		asyncTest("Test - Add Environment Test", function() {
 			$("input[name=envName]").val('test');
@@ -46,13 +46,13 @@ define(["configuration/configuration"], function(Configuration) {
 			setTimeout(function() {
 				start();
 				equal($(commonVariables.contentPlaceholder).find("#content_Env li").length, 2, "Add Environment Tested");
-				self.saveEnvironment(runOtherTests);
+				self.saveEnvironment();
 			}, 1500);
 		});
 		
 	},
 	
-	saveEnvironment : function(runOtherTests) {
+	saveEnvironment : function() {
 		var self =this;
 		asyncTest("Test - Save Environment Test", function() {
 			$.mockjaxClear(self.configList);
@@ -80,8 +80,8 @@ define(["configuration/configuration"], function(Configuration) {
 				commonVariables.navListener = new Clazz.com.components.navigation.js.listener.navigationListener();
 			});
 
-			var configurationAPI = new Clazz.com.components.configuration.js.api.ConfigurationAPI();
-			configurationAPI.localVal.setSession("appDirName" , "aap1");
+			/* var configurationAPI = new Clazz.com.components.configuration.js.api.ConfigurationAPI(); */
+			commonVariables.api.localVal.setSession("appDirName" , "aap1");
 
 			commonVariables.navListener.onMytabEvent("configuration");
 			
@@ -89,12 +89,12 @@ define(["configuration/configuration"], function(Configuration) {
 			setTimeout(function() {
 				start();
 				equal($(commonVariables.contentPlaceholder).find(".envlistname").text(),"Productiontest", "Save Environment Tested");
-				self.cloneEnvironment(runOtherTests);
+				self.cloneEnvironment();
 			}, 1500);
 		});
 	},
 	
-	cloneEnvironment : function(runOtherTests) {
+	cloneEnvironment : function() {
 		var self=this;
 		asyncTest("Test - Clone Environment Test", function() {
 			$.mockjaxClear(self.configList);
@@ -132,8 +132,8 @@ define(["configuration/configuration"], function(Configuration) {
 				commonVariables.navListener = new Clazz.com.components.navigation.js.listener.navigationListener();
 			});
 
-			var configurationAPI = new Clazz.com.components.configuration.js.api.ConfigurationAPI();
-			configurationAPI.localVal.setSession("appDirName" , "aap1");
+			/* var configurationAPI = new Clazz.com.components.configuration.js.api.ConfigurationAPI(); */
+			commonVariables.api.localVal.setSession("appDirName" , "aap1");
 
 			commonVariables.navListener.onMytabEvent("configuration");
 			
@@ -143,12 +143,12 @@ define(["configuration/configuration"], function(Configuration) {
 			setTimeout(function() {
 				start();
 				equal($(commonVariables.contentPlaceholder).find(".envlistname").text(),"Productiontestsample", "Clone Environment Tested");
-				self.deleteEnvironment(runOtherTests);
+				self.deleteEnvironment();
 			}, 1500);
 		});
 	},
 	
-	deleteEnvironment : function(runOtherTests) {
+	deleteEnvironment : function() {
 		var self =this;
 		asyncTest("Test - Delete Environment Test", function() {
 		
@@ -186,7 +186,9 @@ define(["configuration/configuration"], function(Configuration) {
 			setTimeout(function() {
 				start();
 				equal($(commonVariables.contentPlaceholder).find('tbody[name=EnvLists] tr').html(), null, "Delete Environment Tested");
-				runOtherTests();
+				require(["editConfigurationTest"], function(editConfigurationTest){
+					editConfigurationTest.runTests();
+				});
 			}, 2500);
 		});
 		

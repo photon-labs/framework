@@ -1,11 +1,10 @@
-define(["application/api/applicationAPI"], function() {
+define([], function() {
 
 	Clazz.createPackage("com.components.application.js.listener");
 
 	Clazz.com.components.application.js.listener.ApplicationListener = Clazz.extend(Clazz.WidgetWithTemplate, {
 		
 		basePlaceholder :  window.commonVariables.basePlaceholder,
-		applicationAPI : null,
 		projectlistContent : null,
 		appInfos : [],
 		hasError: false,
@@ -17,9 +16,6 @@ define(["application/api/applicationAPI"], function() {
 		 */
 		initialize : function(config) {
 			var self = this;
-			if(self.applicationAPI === null){
-				self.applicationAPI = new Clazz.com.components.application.js.api.ApplicationAPI();
-			}	
 		},
 		
 		onCancelUpdate : function() {
@@ -133,7 +129,7 @@ define(["application/api/applicationAPI"], function() {
 				$("<option>").val('Server Version').text('Select Version').appendTo(versionplaceholder);	
 				$(versionplaceholder).selectpicker('refresh');
 			}else {
-				var applicationlayerData = self.applicationAPI.localVal.getJson(technology);
+				var applicationlayerData = commonVariables.api.localVal.getJson(technology);
 				$.each(applicationlayerData, function(index, value){
 					if(value.id === currentData){
 						self.getOptions(value, versionplaceholder, function(){
@@ -155,7 +151,7 @@ define(["application/api/applicationAPI"], function() {
 		
 		getOptionData : function(technology) {
 			var self=this, option;
-			var applicationlayerData = self.applicationAPI.localVal.getJson(technology);
+			var applicationlayerData = commonVariables.api.localVal.getJson(technology);
 			option = '';
 			$.each(applicationlayerData, function(index, value){
 			    option += '<option value='+ value.id +'>'+ value.name +'</option>';
@@ -167,21 +163,21 @@ define(["application/api/applicationAPI"], function() {
 			var self = this;
 			try {
 				//commonVariables.loadingScreen.showLoading();
-				self.applicationAPI.appinfo(header,
+				commonVariables.api.ajaxRequest(header,
 					function(response) {
 						if (response !== null) {
 						var data = {};
 							data.appdetails = response;
-							self.applicationAPI.localVal.setJson('appdetails', response);
+							commonVariables.api.localVal.setJson('appdetails', response);
 							self.getAppConfig(response , 'SERVER', function(appInfo){
 								data.serverData = appInfo.data;
-								self.applicationAPI.localVal.setJson('serverData', appInfo.data);
+								commonVariables.api.localVal.setJson('serverData', appInfo.data);
 								self.getAppConfig(response , 'DATABASE', function(appInfo){
 									data.databaseData = appInfo.data;
-									self.applicationAPI.localVal.setJson('databaseData', appInfo.data);
+									commonVariables.api.localVal.setJson('databaseData', appInfo.data);
 									self.getWSConfig(response, function(appInfo){
 										data.webserviceData = appInfo.data;
-										self.applicationAPI.localVal.setJson('webserviceData', appInfo.data);
+										commonVariables.api.localVal.setJson('webserviceData', appInfo.data);
 										//commonVariables.loadingScreen.removeLoading();
 										callback(data);
 									});	
@@ -205,7 +201,7 @@ define(["application/api/applicationAPI"], function() {
 		
 		getAppConfig : function(appInfo , type, callback){
 			var self=this, header, data = {}, userId, techId, customerId;
-			userId = self.applicationAPI.localVal.getSession('username');
+			userId = commonVariables.api.localVal.getSession('username');
 			techId = appInfo.data.appInfos[0].techInfo.id;
 			customerId = appInfo.data.customerIds[0];
 			header = {
@@ -217,7 +213,7 @@ define(["application/api/applicationAPI"], function() {
 			
 			header.webserviceurl = commonVariables.webserviceurl+ "appConfig/list?techId="+techId+"&customerId="+customerId+"&type="+type+"&platform=Windows64&userId="+userId;
 			try {
-				self.applicationAPI.appinfo(header,
+				commonVariables.api.ajaxRequest(header,
 					function(response) {
 						if (response !== null) {
 							callback(response);
@@ -301,14 +297,14 @@ define(["application/api/applicationAPI"], function() {
 				}
 				self.editAppInfo(self.getRequestHeader(JSON.stringify(appInfo), "editApplication"), function(response) {
 					if(response.message === "Application updated successfully"){
-						var appDir = self.applicationAPI.localVal.getSession('appDirName');
+						var appDir = commonVariables.api.localVal.getSession('appDirName');
 						localStorage.setItem(appDir + '_AppUpdateMsg', response.message);
 						commonVariables.navListener.getMyObj(commonVariables.editApplication, function(retVal){
 							self.editAplnContent = retVal;
 							self.editAplnContent.appDirName = response.data.appDirName;
 							commonVariables.appDirName = response.data.appDirName;
-							self.applicationAPI.localVal.setSession('appDirName', response.data.appDirName);
-							self.applicationAPI.localVal.setJson('appdetails', response.data.appInfos);
+							commonVariables.api.localVal.setSession('appDirName', response.data.appDirName);
+							commonVariables.api.localVal.setJson('appdetails', response.data.appInfos);
 							Clazz.navigationController.push(self.editAplnContent, true);
 							setTimeout(function(){
 								$(".blinkmsg").removeClass("poperror").addClass("popsuccess");
@@ -322,7 +318,7 @@ define(["application/api/applicationAPI"], function() {
 		
 		getWSConfig : function(appInfo , callback){
 			var self=this, header, data = {}, userId, techId, customerId;
-			userId = self.applicationAPI.localVal.getSession('username');
+			userId = commonVariables.api.localVal.getSession('username');
 			techId = appInfo.data.appInfos[0].techInfo.id;
 			customerId = appInfo.data.customerIds[0];
 			header = {
@@ -334,7 +330,7 @@ define(["application/api/applicationAPI"], function() {
 			
 			header.webserviceurl = commonVariables.webserviceurl+ "appConfig/webservices?userId="+userId;
 			try {
-				self.applicationAPI.appinfo(header,
+				commonVariables.api.ajaxRequest(header,
 					function(response) {
 						if (response !== null) {
 							callback(response);
@@ -355,8 +351,8 @@ define(["application/api/applicationAPI"], function() {
 		
 		getRequestHeader : function(appDirName, action, techId) {
 			var self=this, header, data = {}, userId, oldAppDirName;
-			userId = self.applicationAPI.localVal.getSession('username');
-			oldAppDirName = self.applicationAPI.localVal.getSession("appDirName");
+			userId = commonVariables.api.localVal.getSession('username');
+			oldAppDirName = commonVariables.api.localVal.getSession("appDirName");
 			header = {
 				contentType: "application/json",
 				requestMethod: "GET",
@@ -384,7 +380,7 @@ define(["application/api/applicationAPI"], function() {
 			var self = this;
 			try {
 				//commonVariables.loadingScreen.showLoading();
-				self.applicationAPI.appinfo(header,
+				commonVariables.api.ajaxRequest(header,
 					function(response) {
 						if (response !== null) {
 							callback(response);
@@ -453,7 +449,7 @@ define(["application/api/applicationAPI"], function() {
 		getApplicableOptions : function(header, callback) {
 			var self = this;
 			try {
-				self.applicationAPI.appinfo(header,
+				commonVariables.api.ajaxRequest(header,
 					function(response) {
 						if (response !== null) {
 							callback(response);

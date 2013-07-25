@@ -165,6 +165,7 @@ var commonVariables = {
 	deleted : "Delete",
 	
 	loadingScreen : null,
+	api : null,
 	ajaxXhr : null,
 	
 	basePlaceholder : "basepage\\:widget",
@@ -211,7 +212,7 @@ $(document).ready(function(){
 		// setup require.js
 		requirejs.config(configJson);
 		
-		require(["framework/class", "framework/widget", "common/loading",  "framework/widgetWithTemplate", "framework/navigationController", "login/login"], function () {
+		require(["framework/class", "framework/widget", "common/loading",  "framework/widgetWithTemplate", "framework/navigationController", "api/api", "login/login"], function () {
 		 	Clazz.config = data;
 			Clazz.navigationController = new Clazz.NavigationController({
 				mainContainer : "basepage\\:widget",
@@ -226,6 +227,7 @@ $(document).ready(function(){
 			}
 			
 			commonVariables.loadingScreen =new Clazz.com.js.widget.common.Loading();
+			commonVariables.api = new Clazz.com.js.api.API();
 			
 			$(document).ajaxStart(function() {
 				commonVariables.loadingScreen.removeLoading(function(retVal){

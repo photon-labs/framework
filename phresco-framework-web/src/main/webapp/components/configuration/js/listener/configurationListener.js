@@ -1,10 +1,9 @@
-define(["configuration/api/configurationAPI"], function() {
+define([], function() {
 
 	Clazz.createPackage("com.components.configuration.js.listener");
 
 	Clazz.com.components.configuration.js.listener.ConfigurationListener = Clazz.extend(Clazz.WidgetWithTemplate, {
 		basePlaceholder :  window.commonVariables.basePlaceholder,
-		configurationAPI : null,
 		editConfigurations : null,
 		configList : [],
 		configListPage : null,
@@ -24,8 +23,6 @@ define(["configuration/api/configurationAPI"], function() {
 		 */
 		initialize : function(config) {
 			var self = this;
-			self.configurationAPI = new Clazz.com.components.configuration.js.api.ConfigurationAPI();
-			//this.loadingScreen = new Clazz.com.js.widget.common.Loading();
 		},
 		
 		editConfiguration : function(envName) {
@@ -37,13 +34,13 @@ define(["configuration/api/configurationAPI"], function() {
 					self.editConfigurations = retVal;
 					self.getConfigurationList(self.getRequestHeader(self.configRequestBody, "configTypes"), function(response) {
 						self.editConfigurations.configType = response.data;
-						Clazz.navigationController.push(self.editConfigurations, true);
+						Clazz.navigationController.push(self.editConfigurations, commonVariables.animation);
 					});
 				});
 			} else {
 				self.getConfigurationList(self.getRequestHeader(self.configRequestBody, "configTypes"), function(response) {
 					self.editConfigurations.configType = response.data;
-					Clazz.navigationController.push(self.editConfigurations, true);
+					Clazz.navigationController.push(self.editConfigurations, commonVariables.animation);
 				});
 			}
 		},
@@ -64,10 +61,10 @@ define(["configuration/api/configurationAPI"], function() {
 			if(self.cancelEditConfigurations  === null) {
 				commonVariables.navListener.getMyObj(commonVariables.configuration, function(retVal) {
 					self.cancelEditConfigurations = retVal;
-					Clazz.navigationController.push(self.cancelEditConfigurations, true, true);
+					Clazz.navigationController.push(self.cancelEditConfigurations, commonVaraibles.animation);
 				});
 			} else {
-				Clazz.navigationController.push(self.cancelEditConfigurations, true, true);
+				Clazz.navigationController.push(self.cancelEditConfigurations, commonVaraibles.animation);
 			}
 		},
 		
@@ -78,7 +75,7 @@ define(["configuration/api/configurationAPI"], function() {
 				if (self.bcheck === false) {
 					//this.loadingScreen.showLoading();
 				}
-				self.configurationAPI.configuration(header,
+				commonVariables.api.ajaxRequest(header,
 					function(response) {
 						self.hidePopupLoad();
 						if (response !== null) {
@@ -120,8 +117,8 @@ define(["configuration/api/configurationAPI"], function() {
 			var self = this, header, appDirName;
 			var customerId = self.getCustomer();
 			customerId = (customerId === "") ? "photon" : customerId;
-			appDirName = self.configurationAPI.localVal.getSession("appDirName");
-			data = JSON.parse(self.configurationAPI.localVal.getSession('userInfo'));
+			appDirName = commonVariables.api.localVal.getSession("appDirName");
+			data = JSON.parse(commonVariables.api.localVal.getSession('userInfo'));
 			if(data !== null) {
 				var userId = data.id;
 			}
@@ -444,7 +441,7 @@ define(["configuration/api/configurationAPI"], function() {
 		
 		createUploader : function() {     
 			var self = this, appDirName;
-			appDirName = self.configurationAPI.localVal.getSession("appDirName");
+			appDirName = commonVariables.api.localVal.getSession("appDirName");
             var uploader = new qq.FileUploader({
                 element: document.getElementById('file-uploader-demo1'),
                 action: commonVariables.webserviceurl+commonVariables.configuration+'/upload',
@@ -601,7 +598,7 @@ define(["configuration/api/configurationAPI"], function() {
 				$("input[name=certificate]").val(cerficate);
 				var customerId = self.getCustomer();
 				customerId = (customerId === "") ? "photon" : customerId;
-				var appDirName = self.configurationAPI.localVal.getSession("appDirName");
+				var appDirName = commonVariables.api.localVal.getSession("appDirName");
 				var certificateJson = {};
 				certificateJson.customerId = customerId;
 				certificateJson.host = $("input[configKey=configKeyServerhost]").val();

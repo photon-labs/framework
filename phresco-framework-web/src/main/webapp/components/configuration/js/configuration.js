@@ -7,7 +7,6 @@ define(["configuration/listener/configurationListener"], function() {
 		templateUrl: commonVariables.contexturl + "components/configuration/template/configuration.tmp",
 		configUrl: "components/configuration/config/config.json",
 		name : commonVariables.configuration,
-		configurationAPI : null,
 		configurationlistener : null,
 		editConfigurationEvent : null,
 		addEnvEvent : null,
@@ -31,8 +30,8 @@ define(["configuration/listener/configurationListener"], function() {
 		 * Called in once the login is success
 		 *
 		 */
-		loadPage : function(transitionType){
-			Clazz.navigationController.push(this, transitionType);
+		loadPage : function(){
+			Clazz.navigationController.push(this, commonVariables.animation);
 		},
 		
 		/***
@@ -44,7 +43,7 @@ define(["configuration/listener/configurationListener"], function() {
 			self.configurationlistener.getConfigurationList(self.configurationlistener.getRequestHeader(self.configRequestBody, "list"), function(response) {
 				self.templateData.configurationList = response.data;
 				self.envWithConfig = response.data;
-				var userPermissions = JSON.parse(self.configurationlistener.configurationAPI.localVal.getSession('userPermissions'));
+				var userPermissions = JSON.parse(commonVariables.api.localVal.getSession('userPermissions'));
 				self.templateData.userPermissions = userPermissions;
 				renderFunction(self.templateData, whereToRender);
 			});			
