@@ -195,7 +195,7 @@ public class RepositoryService extends RestBase implements FrameworkConstants, S
 		Response response = null;
 		if (action.equals(COMMIT)) {
 			response = repoExistCheckForCommit(appDirName, action, userId);
-		} else if (action.equals("update")) {
+		} else if (action.equals(FrameworkConstants.UPDATE)) {
 			response = repoExistCheckForUpdate(appDirName, action, userId);
 		}
 		return response;
