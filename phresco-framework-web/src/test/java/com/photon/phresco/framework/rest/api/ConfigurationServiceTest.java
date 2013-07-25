@@ -87,7 +87,7 @@ public class ConfigurationServiceTest extends LoginServiceTest {
 		propProd.setProperty("certificate", "");
 		propProd.setProperty("type", "Apache Tomcat");
 		propProd.setProperty("version", "6.0.x");
-		propProd.setProperty("deploy_dir", "C:\\apache-tomcat-7.0.14\\webapps");
+		propProd.setProperty("deploy_dir", "C:\\wamp");
 		propProd.setProperty("context", "serverprtod");
 		prodConfigServer.setProperties(propProd);
 		
@@ -470,7 +470,6 @@ public class ConfigurationServiceTest extends LoginServiceTest {
 		Assert.assertEquals(200, fileStructure.getStatus());
 		Response fileEntireStructure = configurationService.returnFileBorwseEntireStructure(appDirName);
 		Assert.assertEquals(200, fileEntireStructure.getStatus());
-		DOMSource data = (DOMSource) fileEntireStructure.getEntity();
 	}
 	
 	private String getConnectionUrl(String envName, String type, String configName) throws PhrescoException {

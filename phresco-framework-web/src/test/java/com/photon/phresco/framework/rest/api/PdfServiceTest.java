@@ -14,21 +14,12 @@ public class PdfServiceTest extends RestBaseTest {
 	
 	@Test
 	 public void displayGeneratePopUpWithNoPdf() {
-		System.out.println("displayGeneratePopUpWithNoPdf displayGeneratePopUpWithNoPdf ");
 		 MockHttpServletRequest request = new MockHttpServletRequest();
 		 request.setParameter("appDirName", "TestProject");
 		 request.setParameter("reportDataType", "detail");
 		 HttpServletRequest httpServletRequest = (HttpServletRequest)request;
 		 Response showGeneratePdfPopup = pdfService.showGeneratePdfPopup(appDirName, "unit", httpServletRequest);
-		 Response showGenerateFunctionalPopUp = pdfService.showGeneratePdfPopup(appDirName, "functional", httpServletRequest);
-		 Response showGeneratePerformancePopUp = pdfService.showGeneratePdfPopup(appDirName, "performance", httpServletRequest);
-		 Response showGenerateloadPopUp = pdfService.showGeneratePdfPopup(appDirName, "load", httpServletRequest);
-		 Response showGenerateComponentPopUp = pdfService.showGeneratePdfPopup(appDirName, "component", httpServletRequest);
 		 Assert.assertEquals(200, showGeneratePdfPopup.getStatus());
-		 Assert.assertEquals(200, showGenerateFunctionalPopUp.getStatus());
-		 Assert.assertEquals(200, showGeneratePerformancePopUp.getStatus());
-		 Assert.assertEquals(200, showGenerateloadPopUp.getStatus());
-		 Assert.assertEquals(200, showGenerateComponentPopUp.getStatus());
 	}
 	 
 	@Test
@@ -76,7 +67,6 @@ public class PdfServiceTest extends RestBaseTest {
 	
 	 @Test
 	 public void fetchDownloadReport() {
-		 System.out.println("fetch downlaod ");
 		 Response unitdownloadReport = pdfService.downloadReport("unit", "testcheck_detail.pdf", appDirName);
 		 Response componentdownloadReport = pdfService.downloadReport("component", "testcheck_detail.pdf", appDirName);
 		 Response functionaldownloadReport = pdfService.downloadReport("functional", "testcheck_detail.pdf", appDirName);

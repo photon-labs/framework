@@ -21,7 +21,9 @@ import java.io.File;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
@@ -137,33 +139,37 @@ public class FeatureService extends RestBase implements ServiceConstants, Consta
 	 * @param artifactInfo the artifact info
 	 * @return the dependency feature
 	 */
-	@POST
+	@GET
 	@Path("/dependencyFeature")
-	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response getDependencyFeature(@QueryParam(REST_QUERY_USERID) String userId, ArtifactInfo artifactInfo) {
-		List<String> dependencyIds = artifactInfo.getDependencyIds();
-		ResponseInfo<List<ArtifactGroup>> responseData = new ResponseInfo<List<ArtifactGroup>>();
+	public Response getDependencyFeature(@QueryParam(REST_QUERY_USERID) String userId, @QueryParam("versionId") String versionId) {
+		ResponseInfo<Map<String,String>> responseData = new ResponseInfo<Map<String,String>>();
+		Map<String,String> map = new HashMap<String, String>();
 		try {
-			List<ArtifactGroup> atArtifactGroups = new ArrayList<ArtifactGroup>();
 			ServiceManager serviceManager = CONTEXT_MANAGER_MAP.get(userId);
 			if (serviceManager == null) {
-				ResponseInfo<List<ArtifactGroup>> finalOutput = responseDataEvaluation(responseData, null,
+				ResponseInfo<Map<String,String>> finalOutput = responseDataEvaluation(responseData, null,
 						"UnAuthorized User", null);
 				return Response.status(Status.BAD_REQUEST).entity(finalOutput).header("Access-Control-Allow-Origin",
 						"*").build();
 			}
-			for (String dependencyId : dependencyIds) {
-				ArtifactInfo artifact = serviceManager.getArtifactInfo(dependencyId);
-				String artifactGroupId = artifact.getArtifactGroupId();
-				ArtifactGroup artifactGroupInfo = serviceManager.getArtifactGroupInfo(artifactGroupId);
-				atArtifactGroups.add(artifactGroupInfo);
+			ArtifactInfo artifactInfo = serviceManager.getArtifactInfo(versionId);
+			List<String> dependencyIds = artifactInfo.getDependencyIds();
+			if (CollectionUtils.isNotEmpty(dependencyIds)) {
+				for (String dependencyId : dependencyIds) {
+					ArtifactInfo artifact = serviceManager.getArtifactInfo(dependencyId);
+					String depeVersionId = artifact.getId();
+					map.put(artifactInfo.getId(), depeVersionId);
+				}
+				ResponseInfo<Map<String,String>> finalOutput = responseDataEvaluation(responseData, null,
+						" Dependency Features listed successfully", map);
+				return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
 			}
-			ResponseInfo<List<ArtifactGroup>> finalOutput = responseDataEvaluation(responseData, null,
-					" Dependency Features listed successfully", atArtifactGroups);
+			ResponseInfo<Map<String,String>> finalOutput = responseDataEvaluation(responseData, null,
+					" No Dependency Features Available", null);
 			return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
 		} catch (PhrescoException e) {
-			ResponseInfo<List<ArtifactGroup>> finalOutput = responseDataEvaluation(responseData, e,
+			ResponseInfo<Map<String,String>> finalOutput = responseDataEvaluation(responseData, e,
 					"Dependency Features not fetched", null);
 			return Response.status(Status.BAD_REQUEST).entity(finalOutput).header("Access-Control-Allow-Origin", "*")
 					.build();
