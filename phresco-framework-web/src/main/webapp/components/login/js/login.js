@@ -1,4 +1,4 @@
-define(["login/listener/loginListener"], function() {
+define(["framework/widgetWithTemplate", "login/listener/loginListener"], function() {
 	Clazz.createPackage("com.components.login.js");
 
 	Clazz.com.components.login.js.Login = Clazz.extend(Clazz.WidgetWithTemplate, {
