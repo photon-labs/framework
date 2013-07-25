@@ -53,15 +53,28 @@ define([], function() {
 				//commonVariables.loadingScreen.showLoading();
 				commonVariables.api.ajaxRequest(header,
 					function(response) {
-						if (response !== null) {
+						if (response !== null && response.status !== "error" && response.status !== "failure") {
 							callback(response);
 							//commonVariables.loadingScreen.removeLoading();
 						} else {
-							//commonVariables.loadingScreen.removeLoading();
-							callback({ "status" : "service failure"});
+							if(response.responseCode === "PHR210001") {
+								$(".blinkmsg").removeClass("popsuccess").addClass("poperror");
+								self.effectFadeOut('poperror', (''));
+								$(".poperror").attr('data-i18n', 'projectlist.errormessage.projectlistfailed');
+								self.renderlocales(commonVariables.basePlaceholder);
+							} else if(response.responseCode === "PHR000000") {
+								$(".blinkmsg").removeClass("popsuccess").addClass("poperror");
+								self.effectFadeOut('poperror', (''));
+								$(".poperror").attr('data-i18n', 'commonlabel.errormessage.unexpectedfailure');
+								self.renderlocales(commonVariables.basePlaceholder);
+							}							
 						}
 					},
 					function(textStatus) {
+						$(".blinkmsg").removeClass("popsuccess").addClass("poperror");
+						self.effectFadeOut('poperror', (''));
+						$(".poperror").attr('data-i18n', 'commonlabel.errormessage.serviceerror');
+						self.renderlocales(commonVariables.basePlaceholder);
 						//commonVariables.loadingScreen.removeLoading();
 					}
 				);
@@ -80,28 +93,38 @@ define([], function() {
 				}
 				commonVariables.api.ajaxRequest(header,
 					function(response) {
-						if(response !== null ){
+						if(response !== null && response.status !== "error" && response.status !== "failure"){
 							self.hidePopupLoad();
-							if(self.act==='delete') {
+							if(response.responseCode === "PHR200010") {
 								$(".blinkmsg").removeClass("poperror").addClass("popsuccess");
-								self.effectFadeOut('popsuccess', (response.message));
-							} else if(self.act==='updateget') {
-								$(".blinkmsg").removeClass("poperror").addClass("popsuccess");
-								self.effectFadeOut('popsuccess', (response.message));
-							} else if(self.act==='repoget') {
-								$(".blinkmsg").removeClass("poperror").addClass("popsuccess");
-								self.effectFadeOut('popsuccess', (response.message));
-							} else if(self.act==='commitget') {
-								$(".blinkmsg").removeClass("poperror").addClass("popsuccess");
-								self.effectFadeOut('popsuccess', (response.message));
+								self.effectFadeOut('popsuccess', (''));
+								$(".popsuccess").attr('data-i18n', 'projectlist.successmessage.applicationdeleted');
+								self.renderlocales(commonVariables.basePlaceholder);
 							}
 							self.hidePopupLoad();
 							callback(response);		
 						} else {
-							self.hidePopupLoad();
-							callback({ "status" : "service failure"});
-							$(".blinkmsg").removeClass("poperror").addClass("popsuccess");
-							self.effectFadeOut('popsuccess', (response.message));
+							if(response.responseCode === "PHR210012") {
+								$(".blinkmsg").removeClass("popsuccess").addClass("poperror");
+								self.effectFadeOut('poperror', (''));
+								$(".poperror").attr('data-i18n', 'projectlist.errormessage.applicationdeletefailed');
+								self.renderlocales(commonVariables.basePlaceholder);
+							} else if(response.responseCode === "PHR210011") {
+								$(".blinkmsg").removeClass("popsuccess").addClass("poperror");
+								self.effectFadeOut('poperror', (''));
+								$(".poperror").attr('data-i18n', 'projectlist.errormessage.connectionalive');
+								self.renderlocales(commonVariables.basePlaceholder);
+							} else if(response.responseCode === "PHR210013") {
+								$(".blinkmsg").removeClass("popsuccess").addClass("poperror");
+								self.effectFadeOut('poperror', (''));
+								$(".poperror").attr('data-i18n', 'projectlist.errormessage.runagainstsource');
+								self.renderlocales(commonVariables.basePlaceholder);
+							} else if(response.responseCode === "PHR000000") {
+								$(".blinkmsg").removeClass("popsuccess").addClass("poperror");
+								self.effectFadeOut('poperror', (''));
+								$(".poperror").attr('data-i18n', 'commonlabel.errormessage.unexpectedfailure');
+								self.renderlocales(commonVariables.basePlaceholder);
+							}
 						}
 					},					
 					function(textStatus) {

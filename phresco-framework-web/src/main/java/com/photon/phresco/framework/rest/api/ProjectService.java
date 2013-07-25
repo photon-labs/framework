@@ -103,13 +103,13 @@ public class ProjectService extends RestBase implements FrameworkConstants, Serv
 			if (CollectionUtils.isNotEmpty(projects)) {
 				Collections.sort(projects, sortByDateToLatest());
 			}
-			status = STATUS_SUCCESS;
+			status = RESPONSE_STATUS_SUCCESS;
 			successCode = PHR200001;
 			ResponseInfo<List<ProjectInfo>> finalOutput = responseDataEvaluation(responseData, null,
 					projects, status, successCode);
 			return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN,ALL_HEADER).build();
 		} catch (PhrescoException e) {
-			status = STATUS_ERROR;
+			status = RESPONSE_STATUS_ERROR;
 			errorCode = PHR210001;
 			ResponseInfo<List<ProjectInfo>> finalOutput = responseDataEvaluation(responseData, e,
 					null, status, errorCode);
@@ -134,7 +134,7 @@ public class ProjectService extends RestBase implements FrameworkConstants, Serv
 		try {
 			List<ApplicationInfo> appInfos = FrameworkServiceUtil.getAppInfos(customerId, projectId);
 			if (CollectionUtils.isNotEmpty(appInfos)) {
-				status = STATUS_SUCCESS;
+				status = RESPONSE_STATUS_SUCCESS;
 				successCode = PHR200002;
 				ResponseInfo<List<ProjectInfo>> finalOutput = responseDataEvaluation(responseData, null,
 						appInfos, status, successCode);
@@ -142,14 +142,14 @@ public class ProjectService extends RestBase implements FrameworkConstants, Serv
 						.build();
 			}
 		} catch (PhrescoException e) {
-			status = STATUS_ERROR;
+			status = RESPONSE_STATUS_ERROR;
 			errorCode = PHR210002;
 			ResponseInfo<List<ProjectInfo>> finalOutput = responseDataEvaluation(responseData, e,
 					null, status, errorCode);
 			return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN,ALL_HEADER)
 					.build();
 		}
-		status = STATUS_SUCCESS;
+		status = RESPONSE_STATUS_SUCCESS;
 		successCode = PHR200003;
 		ResponseInfo<List<ProjectInfo>> finalOutput = responseDataEvaluation(responseData, null,
 				null, status, successCode);
@@ -172,22 +172,28 @@ public class ProjectService extends RestBase implements FrameworkConstants, Serv
 		try {
 			ServiceManager serviceManager = CONTEXT_MANAGER_MAP.get(userId);
 			if (serviceManager == null) {
-				ResponseInfo<ProjectInfo> finalOutput = responseDataEvaluation(responseData, null, UNAUTHORIZED_USER,
-						null);
-				return Response.status(Status.BAD_REQUEST).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN,
+				status = RESPONSE_STATUS_FAILURE;
+				errorCode = PHR210003;
+				ResponseInfo<ProjectInfo> finalOutput = responseDataEvaluation(responseData, null,
+						null, status, errorCode);
+				return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN,
 						"*").build();
 			}
 		validateProject(projectinfo);
 			if (projectinfo != null) {
 				ProjectInfo projectInfo = PhrescoFrameworkFactory.getProjectManager().create(projectinfo, serviceManager);
+				status = RESPONSE_STATUS_SUCCESS;
+				successCode = PHR200004;
 				ResponseInfo<ProjectInfo> finalOutput = responseDataEvaluation(responseData, null,
-						PROJECT_CREATED_SUCCESSFULLY, projectInfo);
+						projectInfo, status, successCode);
 				return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN,ALL_HEADER).build();
 			}
 		} catch (PhrescoException e) {
-			ResponseInfo<ProjectInfo> finalOutput = responseDataEvaluation(responseData, e, PROJECT_CREATED_FAILED,
-					null);
-			return Response.status(Status.BAD_REQUEST).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN,ALL_HEADER)
+			status = RESPONSE_STATUS_ERROR;
+			errorCode = PHR210004;
+			ResponseInfo<ProjectInfo> finalOutput = responseDataEvaluation(responseData, e,
+					null, status, errorCode);
+			return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN,ALL_HEADER)
 					.build();
 		}
 		return null;
@@ -210,12 +216,16 @@ public class ProjectService extends RestBase implements FrameworkConstants, Serv
 		try {
 			ProjectManager projectManager = PhrescoFrameworkFactory.getProjectManager();
 			projectInfo = projectManager.getProject(projectId, customerId);
+			status = RESPONSE_STATUS_SUCCESS;
+			successCode = PHR200005;
 			ResponseInfo<ProjectInfo> finalOutput = responseDataEvaluation(responseData, null,
-					PROJECT_EDITED_SUCCESSFULLY, projectInfo);
+					projectInfo, status, successCode);
 			return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN,ALL_HEADER).build();
 		} catch (PhrescoException e) {
-			ResponseInfo<ProjectInfo> finalOutput = responseDataEvaluation(responseData, e, PROJECT_EDITED_FAILED, null);
-			return Response.status(Status.BAD_REQUEST).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN,ALL_HEADER)
+			status = RESPONSE_STATUS_ERROR;
+			errorCode = PHR210005;
+			ResponseInfo<ProjectInfo> finalOutput = responseDataEvaluation(responseData, e, null, status, errorCode);
+			return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN,ALL_HEADER)
 					.build();
 		}
 	}
@@ -236,19 +246,25 @@ public class ProjectService extends RestBase implements FrameworkConstants, Serv
 		try {
 			ServiceManager serviceManager = CONTEXT_MANAGER_MAP.get(userId);
 			if (serviceManager == null) {
-				ResponseInfo<ProjectInfo> finalOutput = responseDataEvaluation(responseData, null, UNAUTHORIZED_USER,
-						null);
-				return Response.status(Status.BAD_REQUEST).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN,
+				status = RESPONSE_STATUS_FAILURE;
+				errorCode = PHR210003;
+				ResponseInfo<ProjectInfo> finalOutput = responseDataEvaluation(responseData, null,
+						null, status, errorCode);
+				return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN,
 						"*").build();
 			}
 			ProjectInfo projectInfo = PhrescoFrameworkFactory.getProjectManager().update(projectinfo, serviceManager, null);
+			status = RESPONSE_STATUS_SUCCESS;
+			successCode = PHR200006;
 			ResponseInfo<ProjectInfo> finalOutput = responseDataEvaluation(responseData, null,
-					PROJECT_UPDATED_SUCCESSFULLY, projectInfo);
+					projectInfo, status, successCode);
 			return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN,ALL_HEADER).build();
 		} catch (PhrescoException e) {
-			ResponseInfo<ProjectInfo> finalOutput = responseDataEvaluation(responseData, e, PROJECT_UPDATED_FAILED,
-					null);
-			return Response.status(Status.BAD_REQUEST).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN,ALL_HEADER)
+			status = RESPONSE_STATUS_ERROR;
+			errorCode = PHR210006;
+			ResponseInfo<ProjectInfo> finalOutput = responseDataEvaluation(responseData, e,
+					null, status, errorCode);
+			return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN,ALL_HEADER)
 					.build();
 		}
 	}
@@ -280,8 +296,10 @@ public class ProjectService extends RestBase implements FrameworkConstants, Serv
 		try {
 			ServiceManager serviceManager = CONTEXT_MANAGER_MAP.get(userId);
 			if (serviceManager == null) {
-				ResponseInfo finalOutput = responseDataEvaluation(responseData, null, UNAUTHORIZED_USER, null);
-				return Response.status(Status.BAD_REQUEST).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN,
+				status = RESPONSE_STATUS_FAILURE;
+				errorCode = PHR210003;
+				ResponseInfo finalOutput = responseDataEvaluation(responseData, null, null, status, errorCode);
+				return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN,
 						"*").build();
 			}
 			StringBuilder sbs = null;
@@ -354,19 +372,21 @@ public class ProjectService extends RestBase implements FrameworkConstants, Serv
 			ProjectManager projectManager = PhrescoFrameworkFactory.getProjectManager();
 			projectManager.update(projectinfo, serviceManager, appDirName);
 		} catch (FileNotFoundException e) {
-			ResponseInfo finalOutput = responseDataEvaluation(responseData, e, FEATURE_UPDATE_FAILED, null);
-			return Response.status(Status.BAD_REQUEST).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN,ALL_HEADER)
+			status = RESPONSE_STATUS_ERROR;
+			errorCode = PHR210007;
+			ResponseInfo finalOutput = responseDataEvaluation(responseData, e, null, status, errorCode);
+			return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN,ALL_HEADER)
 					.build();
 		} catch (PhrescoException e) {
-			ResponseInfo finalOutput = responseDataEvaluation(responseData, e, FEATURE_UPDATE_FAILED, null);
-			return Response.status(Status.BAD_REQUEST).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN,ALL_HEADER)
-					.build();
-		} catch (IOException e) {
-			ResponseInfo finalOutput = responseDataEvaluation(responseData, e, FEATURE_UPDATE_FAILED, null);
-			return Response.status(Status.BAD_REQUEST).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN,ALL_HEADER)
+			status = RESPONSE_STATUS_ERROR;
+			errorCode = PHR210008;
+			ResponseInfo finalOutput = responseDataEvaluation(responseData, e, null, status, errorCode);
+			return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN,ALL_HEADER)
 					.build();
 		}
-		ResponseInfo finalOutput = responseDataEvaluation(responseData, null, FEATURE_UPDATE_SUCCESS, null);
+		status = RESPONSE_STATUS_SUCCESS;
+		successCode = PHR200007;
+		ResponseInfo finalOutput = responseDataEvaluation(responseData, null, null, status, successCode);
 		return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN,ALL_HEADER).build();
 
 	}
@@ -394,9 +414,11 @@ public class ProjectService extends RestBase implements FrameworkConstants, Serv
 			validateAppInfo(oldAppDirName,appInfo);
 			ServiceManager serviceManager = CONTEXT_MANAGER_MAP.get(userId);
 			if (serviceManager == null) {
+				status = RESPONSE_STATUS_FAILURE;
+				errorCode = PHR210003;
 				ResponseInfo<ApplicationInfo> finalOutput = responseDataEvaluation(responseData, null,
-						UNAUTHORIZED_USER, null);
-				return Response.status(Status.BAD_REQUEST).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN,
+						null, status, errorCode);
+				return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN,
 						"*").build();
 			}
 			List<DownloadInfo> selectedServerGroup = new ArrayList<DownloadInfo>();
@@ -503,25 +525,33 @@ public class ProjectService extends RestBase implements FrameworkConstants, Serv
 				Collections.sort(projects, sortByDateToLatest());
 			}
 		} catch (PhrescoException e) {
+			status = RESPONSE_STATUS_ERROR;
+			errorCode = PHR210009;
 			ResponseInfo<ApplicationInfo> finalOutput = responseDataEvaluation(responseData, e,
-					APPLICATION_UPDATE_FAILED, null);
-			return Response.status(Status.EXPECTATION_FAILED).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN,
+					null, status, errorCode);
+			return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN,
 					"*").build();
 		} catch (FileNotFoundException e) {
+			status = RESPONSE_STATUS_ERROR;
+			errorCode = PHR210007;
 			ResponseInfo<ApplicationInfo> finalOutput = responseDataEvaluation(responseData, e,
-					APPLICATION_UPDATE_FAILED, null);
-			return Response.status(Status.EXPECTATION_FAILED).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN,
+					null, status, errorCode);
+			return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN,
 					"*").build();
 		} catch (IOException e) {
+			status = RESPONSE_STATUS_ERROR;
+			errorCode = PHR210010;
 			ResponseInfo<ApplicationInfo> finalOutput = responseDataEvaluation(responseData, e,
-					APPLICATION_UPDATE_FAILED, null);
-			return Response.status(Status.EXPECTATION_FAILED).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN,
+					null, status, errorCode);
+			return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN,
 					"*").build();
 		} finally {
 			Utility.closeReader(bufferedReader);
 		}
+		status = RESPONSE_STATUS_SUCCESS;
+		successCode = PHR200008;
 		ResponseInfo<ApplicationInfo> finalOutput = responseDataEvaluation(responseData, null,
-				APPLICATION_UPDATED_SUCCESSFULLY, appInfo);
+				appInfo, status, successCode);
 		return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN,ALL_HEADER).build();
 	}
 
@@ -545,16 +575,20 @@ public class ProjectService extends RestBase implements FrameworkConstants, Serv
 			List<ApplicationInfo> appInfos = projectInfo.getAppInfos();
 			for (ApplicationInfo applicationInfo : appInfos) {
 				if (applicationInfo.getAppDirName().equals(appDirName)) {
+					status = RESPONSE_STATUS_SUCCESS;
+					successCode = PHR200009;
 					ResponseInfo<ProjectInfo> finalOutput = responseDataEvaluation(responseData, null,
-							APPLICATION_EDITED_SUCCESSFULLY, projectInfo);
+							projectInfo, status, successCode);
 					return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN,ALL_HEADER)
 							.build();
 				}
 			}
 		} catch (FileNotFoundException e) {
-			ResponseInfo<ProjectInfo> finalOutput = responseDataEvaluation(responseData, e, APPLICATION_EDITED_FAILED,
-					null);
-			return Response.status(Status.NOT_FOUND).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN,ALL_HEADER)
+			status = RESPONSE_STATUS_ERROR;
+			errorCode = PHR210007;
+			ResponseInfo<ProjectInfo> finalOutput = responseDataEvaluation(responseData, e,
+					null, status, errorCode);
+			return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN,ALL_HEADER)
 					.build();
 		}
 		return null;
@@ -588,9 +622,11 @@ public class ProjectService extends RestBase implements FrameworkConstants, Serv
 						int port = Integer.parseInt(configInfo.getServerPort());
 						boolean connectionAlive = Utility.isConnectionAlive(HTTP_PROTOCOL, LOCALHOST, port);
 						if (connectionAlive) {
+							status = RESPONSE_STATUS_FAILURE;
+							errorCode = PHR210011;
 							ResponseInfo finalOutput = responseDataEvaluation(responseData, null,
-									UNABLE_APPLICATION_DELETE, null);
-							return Response.status(Status.BAD_REQUEST).entity(finalOutput).header(
+									null, status, errorCode);
+							return Response.status(Status.OK).entity(finalOutput).header(
 									ACCESS_CONTROL_ALLOW_ORIGIN,ALL_HEADER).build();
 						}
 					}
@@ -598,15 +634,21 @@ public class ProjectService extends RestBase implements FrameworkConstants, Serv
 			}
 			projectManager.delete(appDirnames);
 		} catch (PhrescoException e) {
-			ResponseInfo finalOutput = responseDataEvaluation(responseData, e,UNABLE_APPLICATION_DELETE, null);
-			return Response.status(Status.EXPECTATION_FAILED).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN,
+			status = RESPONSE_STATUS_ERROR;
+			errorCode = PHR210012;
+			ResponseInfo finalOutput = responseDataEvaluation(responseData, e, null, status, errorCode);
+			return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN,
 					"*").build();
 		} catch (FileNotFoundException e) {
-			ResponseInfo finalOutput = responseDataEvaluation(responseData, e, UNABLE_APPLICATION_DELETE, null);
-			return Response.status(Status.EXPECTATION_FAILED).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN,
+			status = RESPONSE_STATUS_ERROR;
+			errorCode = PHR210013;
+			ResponseInfo finalOutput = responseDataEvaluation(responseData, e, null, status, errorCode);
+			return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN,
 					"*").build();
 		}
-		ResponseInfo finalOutput = responseDataEvaluation(responseData, null, APPLICATION_DELETED_SUCCESSFULLY, null);
+		status = RESPONSE_STATUS_SUCCESS;
+		successCode = PHR200010;
+		ResponseInfo finalOutput = responseDataEvaluation(responseData, null, null, status, successCode);
 		return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN,ALL_HEADER).build();
 	}
 
@@ -626,18 +668,24 @@ public class ProjectService extends RestBase implements FrameworkConstants, Serv
 			User user = ServiceManagerImpl.USERINFO_MANAGER_MAP.get(userId);
 			FrameworkUtil futil = new FrameworkUtil();
 			UserPermissions userPermissions = futil.getUserPermissions(serviceManager, user);
+			status = RESPONSE_STATUS_SUCCESS;
+			successCode = PHR200011;
 			ResponseInfo<UserPermissions> finalOutput = responseDataEvaluation(responseData, null,
-					PERMISSION_FOR_USER_RETURNED_SUCCESSFULLY, userPermissions);
+					userPermissions, status, successCode);
 			return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN,ALL_HEADER).build();
 		} catch (PhrescoWebServiceException e) {
+			status = RESPONSE_STATUS_ERROR;
+			errorCode = PHR210014;
 			ResponseInfo<UserPermissions> finalOutput = responseDataEvaluation(responseData, e,
-					PERMISSION_FOR_USER_NOT_RETURNED, null);
-			return Response.status(Status.EXPECTATION_FAILED).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN,
+					null, status, errorCode);
+			return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN,
 					"*").build();
 		} catch (PhrescoException e) {
+			status = RESPONSE_STATUS_ERROR;
+			errorCode = PHR210014;
 			ResponseInfo<UserPermissions> finalOutput = responseDataEvaluation(responseData, e,
-					PERMISSION_FOR_USER_NOT_RETURNED, null);
-			return Response.status(Status.EXPECTATION_FAILED).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN,
+					null, status, errorCode);
+			return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN,
 					"*").build();
 		}
 	}

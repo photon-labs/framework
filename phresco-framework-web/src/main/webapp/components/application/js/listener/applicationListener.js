@@ -165,7 +165,7 @@ define([], function() {
 				//commonVariables.loadingScreen.showLoading();
 				commonVariables.api.ajaxRequest(header,
 					function(response) {
-						if (response !== null) {
+						if (response !== null && response.status !== "error" && response.status !== "failure") {
 						var data = {};
 							data.appdetails = response;
 							commonVariables.api.localVal.setJson('appdetails', response);
@@ -184,14 +184,27 @@ define([], function() {
 								});
 							});
 						} else {
-							//commonVariables.loadingScreen.removeLoading();
-							callback({ "status" : "service failure"});
+							if(response.responseCode === "PHR210007") {
+								$(".blinkmsg").removeClass("popsuccess").addClass("poperror");
+								self.effectFadeOut('poperror', (''));
+								$(".poperror").attr('data-i18n', 'application.errormessage.openprojectinfofailed');
+								self.renderlocales(commonVariables.basePlaceholder);
+							} else if(response.responseCode === "PHR000000") {
+								$(".blinkmsg").removeClass("popsuccess").addClass("poperror");
+								self.effectFadeOut('poperror', (''));
+								$(".poperror").attr('data-i18n', 'commonlabel.errormessage.unexpectedfailure');
+								self.renderlocales(commonVariables.basePlaceholder);
+							}
+							
 						}
 
 					},
 
 					function(textStatus) {
-						callback({ "status" : "service failure"});
+						$(".blinkmsg").removeClass("popsuccess").addClass("poperror");
+						self.effectFadeOut('poperror', (''));
+						$(".poperror").attr('data-i18n', 'commonlabel.errormessage.serviceerror');
+						self.renderlocales(commonVariables.basePlaceholder);
 					}
 				);
 			} catch(exception) {
@@ -224,7 +237,10 @@ define([], function() {
 					},
 
 					function(textStatus) {
-						callback({ "status" : "service failure"});
+						$(".blinkmsg").removeClass("popsuccess").addClass("poperror");
+						self.effectFadeOut('poperror', (''));
+						$(".poperror").attr('data-i18n', 'commonlabel.errormessage.serviceerror');
+						self.renderlocales(commonVariables.basePlaceholder);
 					}
 				);
 			} catch(exception) {
@@ -296,7 +312,7 @@ define([], function() {
 					appInfo.selectedWebservices = selectedWebServices;
 				}
 				self.editAppInfo(self.getRequestHeader(JSON.stringify(appInfo), "editApplication"), function(response) {
-					if(response.message === "Application updated successfully"){
+					if(response.responseCode === "PHR200008"){
 						var appDir = commonVariables.api.localVal.getSession('appDirName');
 						localStorage.setItem(appDir + '_AppUpdateMsg', response.message);
 						commonVariables.navListener.getMyObj(commonVariables.editApplication, function(retVal){
@@ -308,7 +324,9 @@ define([], function() {
 							Clazz.navigationController.push(self.editAplnContent, true);
 							setTimeout(function(){
 								$(".blinkmsg").removeClass("poperror").addClass("popsuccess");
-								self.effectFadeOut('popsuccess', (response.message));		
+								self.effectFadeOut('popsuccess', (''));
+								$(".popsuccess").attr('data-i18n', 'application.successmessage.applicationupdated');
+								self.renderlocales(commonVariables.basePlaceholder);	
 							},3000);
 						});
 					}
@@ -341,6 +359,10 @@ define([], function() {
 					},
 
 					function(textStatus) {
+						$(".blinkmsg").removeClass("popsuccess").addClass("poperror");
+						self.effectFadeOut('poperror', (''));
+						$(".poperror").attr('data-i18n', 'commonlabel.errormessage.serviceerror');
+						self.renderlocales(commonVariables.basePlaceholder);
 						
 					}
 				);
@@ -382,19 +404,45 @@ define([], function() {
 				//commonVariables.loadingScreen.showLoading();
 				commonVariables.api.ajaxRequest(header,
 					function(response) {
-						if (response !== null) {
+						if (response !== null && response.status !== "error" && response.status !== "failure") {
 							callback(response);
 							//commonVariables.loadingScreen.removeLoading();
 						} else {
-							//commonVariables.loadingScreen.removeLoading();
-							callback({ "status" : "service failure"});
+							if(response.responseCode === "PHR210009") {
+								$(".blinkmsg").removeClass("popsuccess").addClass("poperror");
+								self.effectFadeOut('poperror', (''));
+								$(".poperror").attr('data-i18n', 'application.errormessage.applicationupdatefailed');
+								self.renderlocales(commonVariables.basePlaceholder);
+							} else if(response.responseCode === "PHR210007") {
+								$(".blinkmsg").removeClass("popsuccess").addClass("poperror");
+								self.effectFadeOut('poperror', (''));
+								$(".poperror").attr('data-i18n', 'application.errormessage.openprojectinfofailed');
+								self.renderlocales(commonVariables.basePlaceholder);
+							} else if(response.responseCode === "PHR210003") {
+								$(".blinkmsg").removeClass("popsuccess").addClass("poperror");
+								self.effectFadeOut('poperror', (''));
+								$(".poperror").attr('data-i18n', 'application.errormessage.unauthorizeduser');
+								self.renderlocales(commonVariables.basePlaceholder);
+							} else if(response.responseCode === "PHR210010") {
+								$(".blinkmsg").removeClass("popsuccess").addClass("poperror");
+								self.effectFadeOut('poperror', (''));
+								$(".poperror").attr('data-i18n', 'application.errormessage.ioerror');
+								self.renderlocales(commonVariables.basePlaceholder);
+							} else if(response.responseCode === "PHR000000") {
+								$(".blinkmsg").removeClass("popsuccess").addClass("poperror");
+								self.effectFadeOut('poperror', (''));
+								$(".poperror").attr('data-i18n', 'commonlabel.errormessage.unexpectedfailure');
+								self.renderlocales(commonVariables.basePlaceholder);
+							}
 						}
 					},
 
 					function(textStatus) {
 						//commonVariables.loadingScreen.removeLoading();
 						$(".blinkmsg").removeClass("popsuccess").addClass("poperror");
-						self.effectFadeOut('poperror', 'Service Failure');
+						self.effectFadeOut('poperror', (''));
+						$(".poperror").attr('data-i18n', 'commonlabel.errormessage.serviceerror');
+						self.renderlocales(commonVariables.basePlaceholder);
 					}
 				);
 			} catch(exception) {

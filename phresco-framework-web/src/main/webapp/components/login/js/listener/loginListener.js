@@ -47,26 +47,29 @@ define([], function() {
 							} else {
 								//authentication failed
 								//commonVariables.loadingScreen.removeLoading();
-								if(response.errorCode === "PHR110001") {
+								if(response.responseCode === "PHR110001") {
 									$(".login_error_msg").attr('data-i18n', 'login.errormessage.isempty');
 									self.renderlocales(commonVariables.basePlaceholder);
-								} else if(response.errorCode === "PHR110002") {
+								} else if(response.responseCode === "PHR110002") {
 									$(".login_error_msg").attr('data-i18n', 'login.errormessage.unauthorizeduser');
 									self.renderlocales(commonVariables.basePlaceholder);
-								} else if(response.errorCode === "PHR110003") {
+								} else if(response.responseCode === "PHR110003") {
 									$(".login_error_msg").attr('data-i18n', 'login.errormessage.invalidcredential');
 									self.renderlocales(commonVariables.basePlaceholder);
-								} else if(response.errorCode === "PHR110004") {
+								} else if(response.responseCode === "PHR110004") {
 									$(".login_error_msg").attr('data-i18n', 'login.errormessage.authservicedown');
 									self.renderlocales(commonVariables.basePlaceholder);
-								} else if(response.errorCode === "PHR110005") {
+								} else if(response.responseCode === "PHR110005") {
 									$(".login_error_msg").attr('data-i18n', 'login.errormessage.jsonnotfound');
 									self.renderlocales(commonVariables.basePlaceholder);
-								} else if(response.errorCode === "PHR110006") {
+								} else if(response.responseCode === "PHR110006") {
 									$(".login_error_msg").attr('data-i18n', 'login.errormessage.parsingfailed');
 									self.renderlocales(commonVariables.basePlaceholder);
-								} else if(response.errorCode === "PHR110007") {
+								} else if(response.responseCode === "PHR110007") {
 									$(".login_error_msg").attr('data-i18n', 'login.errormessage.invalidpermissions');
+									self.renderlocales(commonVariables.basePlaceholder);
+								} else if(response.responseCode === "PHR000000") {
+									$(".login_error_msg").attr('data-i18n', 'commonlabel.errormessage.unexpectedfailure');
 									self.renderlocales(commonVariables.basePlaceholder);
 								}
 							}
@@ -74,7 +77,8 @@ define([], function() {
 						function(serviceError){
 							//service access failed
 							//commonVariables.loadingScreen.removeLoading();
-							$(".login_error_msg").text('Service down');
+							$(".login_error_msg").attr('data-i18n', 'commonlabel.errormessage.serviceerror');
+							self.renderlocales(commonVariables.basePlaceholder);
 						}
 					);
 				}

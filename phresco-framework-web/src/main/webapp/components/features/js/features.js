@@ -331,16 +331,7 @@ define(["features/listener/featuresListener"], function() {
 				});				
 				
 				self.featuresListener.getFeaturesUpdate(self.featuresListener.getRequestHeader(self.featureUpdatedArray, "UPDATE", ""), function(response) {
-					if(((response.message) == "Features updated successfully")){
-						setTimeout(function(){
-							$(".blinkmsg").removeClass("poperror").addClass("popsuccess");
-							self.effectFadeOut('popsuccess', (response.message));		
-						},2000);
-					} else {
-						$(".blinkmsg").removeClass("popsuccess").addClass("poperror");						
-						self.effectFadeOut('poperror', ("Features update failed"));
-					}	
-				}); 
+					}); 
 			});
 			self.windowResize();
 
