@@ -242,7 +242,6 @@ define(["features/features",  "application/application",  "projectlist/projectLi
 			//commonVariables.loadingScreen.removeLoading();
 		},
 
-		
 		getRequestHeader : function(projectRequestBody, type, descid) {
 			var url, self = this;
 			var userId = JSON.parse(commonVariables.api.localVal.getSession("userInfo"));
