@@ -47,6 +47,8 @@ var commonVariables = {
 	configuration : "configuration",
 	editConfiguration : "editConfiguration",
 	
+	croneExpression : "croneExpression",
+	
 	qualityContext : "quality",
 	testType : null,
 	unit : "unit",

@@ -39,7 +39,7 @@
 								<tr>
 	                            	<td data-i18n=commonlabel.label.pdfreportname></td>
 		                            <td>
-		                               <input type="text" placeholder="Pdf report name" name="pdfName">
+		                               <input type="text" data-i18n="[placeholder]commonlabel.label.pdfreportname" name="pdfName">
 		                            </td>
 	                        	</tr>	                        	
 	                    	</tbody>

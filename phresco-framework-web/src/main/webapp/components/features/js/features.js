@@ -224,6 +224,7 @@ define(["features/listener/featuresListener"], function() {
 			  });
 
 			$('.switch').css('background', 'url("themes/default/images/helios/on_off_switch.png")');
+			$("input[name=on_off]").unbind();
 			$("label[name=on_off]").click(function() {
 				self.featuresListener.bcheck(this);
 			});

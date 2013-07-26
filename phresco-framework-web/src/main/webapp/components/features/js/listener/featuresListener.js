@@ -220,6 +220,7 @@ define(["features/features",  "application/application",  "projectlist/projectLi
 				$(obj).closest('fieldset').addClass('switchOff');
 				$(obj).closest('fieldset').attr('value', "false");
 				self.defendentmodule(obj, button);
+				self.defendentmodule(versionID, button);
 			}else if(button === 'true'){
 				$(obj).closest('fieldset').addClass('switchOn');
 				$(obj).closest('fieldset').attr('value', "true");
@@ -247,6 +248,26 @@ define(["features/features",  "application/application",  "projectlist/projectLi
 						} 
 					}); 
 				}); 
+
+				if(response.data !== null){
+					$.each(response.data, function(index, value){
+						$("select.input-mini option").each(function(index, currentVal) {
+							var uiId = $(this).val();
+							if(value === uiId){
+								if(button === 'true'){
+									$(currentVal).parents("div").siblings("fieldset").removeClass('switchOff').addClass("switchOn");
+									$(this).attr("selected", "selected");
+									var showversionId = $(currentVal).parents("div").attr("id");
+									$("#"+showversionId).show();
+								} else if(button === 'false'){
+									$(currentVal).parents("div").siblings("fieldset").removeClass('switchOn').addClass("switchOff");
+									var showversionId = $(currentVal).parents("div").attr("id");
+									$("#"+showversionId).hide();
+								}
+							} 
+						}); 
+					}); 
+				}
 			});
 		},
 
@@ -255,12 +276,6 @@ define(["features/features",  "application/application",  "projectlist/projectLi
 			//commonVariables.loadingScreen.removeLoading();
 		},
 
-		/***
-		 * provides the request header
-		 *
-		 * @projectRequestBody: request body of synonym
-		 * @return: returns the contructed header
-		 */
 		getRequestHeader : function(projectRequestBody, type, descid) {
 			var url, self = this;
 			var userId = JSON.parse(commonVariables.api.localVal.getSession("userInfo"));

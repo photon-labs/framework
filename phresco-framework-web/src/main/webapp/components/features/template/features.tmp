@@ -43,7 +43,7 @@
                         </li>
 						<div class="clear"></div>
                   {{/each}}  
-					<li id="norecord1" style="display:none" align="center">No records</li>				  
+					<li id="norecord1" style="display:none" align="center" data-i18n="features.norecords"></li>				  
                     </ul>   
                 
                 </div>
@@ -84,7 +84,7 @@
                         </li>
 						 <div class="clear"></div>
                   {{/each}}
-					<li id="norecord2" style="display:none" align="center">No records</li>
+					<li id="norecord2" style="display:none" align="center" data-i18n="features.norecords"></li>
                     </ul>   
                 
                 </div>
@@ -126,7 +126,7 @@
                         </li>
 						<div class="clear"></div>
                   {{/each}}
-					<li id="norecord3" style="display:none" align="center">No records</li>
+					<li id="norecord3" style="display:none" align="center" data-i18n="features.norecords"></li>
                     </ul>   
                 </div>
                 <!--Components div ends here -->

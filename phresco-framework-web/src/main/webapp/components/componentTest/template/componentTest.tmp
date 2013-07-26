@@ -27,7 +27,7 @@
 		                   	<table class="report_type">
 		                    	<tbody>
 		                        	<tr>
-		                            	<td>Report Type</td>
+		                            	<td data-i18n="commonlabel.label.reporttype"></td>
 		                            	<td>
 		                                	<select name="reportDataType">
 		                                    	<option value="detail" data-i18n=commonlabel.label.detailedreport></option>
@@ -36,16 +36,16 @@
 		                            	</td>
 		                        	</tr>
 									<tr>
-		                            	<td>Pdf Report Name</td>
+		                            	<td data-i18n="commonlabel.label.pdfreportname"></td>
 			                            <td>
-			                               <input type="text" placeholder="Pdf report name" name="pdfName">
+			                               <input type="text" data-i18n="[placeholder]commonlabel.label.pdfreportname" name="pdfName">
 			                            </td>
 		                        	</tr>	                        	
 		                    	</tbody>
 		                   	</table>
 		                   	<div class="popuploading" id="pdfReportLoading">&nbsp</div>
 			               	<div class="flt_right">
-			                   <input type="button" data-i18n="[value]commonlabel.label.generate" class="btn       btn_style"     id="generatePdf">
+			                   <input type="button" data-i18n="[value]commonlabel.label.generate" class="btn btn_style" id="generatePdf">
 			                  <input type="button" data-i18n="[value]commonlabel.label.close" class="btn btn_style dyn_popup_close">
 			               	</div>
 	               			<input type="hidden" name="fromPage" value="component"/>

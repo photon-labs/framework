@@ -1,6 +1,5 @@
 <section class="optiontitle qual_unit">
-    	<div class="unit_text">
-        	Performance Test
+    	<div class="unit_text" data-i18n="ci.performancetest">
         </div>
         <div class="flt_right">
         	{{#showIcons resultAvailable testResultFiles}}
@@ -131,9 +130,9 @@
             
             <div class="code_anal">
             	{{#if userPermissions.manageTests}}
-               		 <input type="submit" value="Test" data-i18n="" name="performancePopup" class="btn btn_style">
+               		 <input type="submit" value="Test" data-i18n="[value]test.label.test" name="performancePopup" class="btn btn_style">
 				{{else}}               		 
-					<input type="submit" value="Test" data-i18n="" name="performancePopup" class="btn btn_style" disabled>
+					<input type="submit" value="Test" data-i18n="[value]test.label.test" name="performancePopup" class="btn btn_style" disabled>
 				{{/if}}
                 <div id="performancePopup" class="dyn_popup performance_pop_cont" style="display:none;">
                     <form name="performanceForm" id="performanceForm">	
@@ -155,7 +154,7 @@
     
     <section class="content_main code_content testSuiteTable performanceTestResults">
     	{{#unless resultAvailable}}
-    		<div style="text-align: center; margin: auto 0;" class="alert alert-block perfError">Performance test not yet executed</div>
+    		<div style="text-align: center; margin: auto 0;" class="alert alert-block perfError" data-i18n="testresult.label.notexecuted"></div>
 		{{else}}
 		 	{{#showErrMsg resultAvailable testResultFiles}}
     			<div style="text-align: center; margin: auto 0;" class="alert alert-block perfError">Test not executed for {{#against testAgainsts}}{{/against}}</div>
@@ -192,12 +191,12 @@
 					<tr>
 						<td>
 							<div class="flt_right">
-								<input type="button" class="btn btn_style kill_btn" value="Kill Process">
+								<input type="button" class="btn btn_style kill_btn" value="Kill Process" data-i18n="build.label.killprocess">
 								<a href="#" id="copyLog">
 									<img src="themes/default/images/helios/buildreport_icon.png" width="15" height="18" border="0" alt="">
 								</a>
 							</div>
-							<div class="flt_left">Progress</div>
+							<div class="flt_left"><span data-i18n="build.label.progress"></span></div>
 						</td>
 					</tr>
 				 </thead>
