@@ -242,12 +242,7 @@ define(["features/features",  "application/application",  "projectlist/projectLi
 			//commonVariables.loadingScreen.removeLoading();
 		},
 
-		/***
-		 * provides the request header
-		 *
-		 * @projectRequestBody: request body of synonym
-		 * @return: returns the contructed header
-		 */
+		
 		getRequestHeader : function(projectRequestBody, type, descid) {
 			var url, self = this;
 			var userId = JSON.parse(commonVariables.api.localVal.getSession("userInfo"));
