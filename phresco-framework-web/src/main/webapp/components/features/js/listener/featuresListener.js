@@ -206,7 +206,7 @@ define(["features/features",  "application/application",  "projectlist/projectLi
 			if(button === 'false'){
 				$(obj).closest('fieldset').addClass('switchOff');
 				$(obj).closest('fieldset').attr('value', "false");
-				self.defendentmodule(obj, button);
+				self.defendentmodule(versionID, button);
 			}else if(button === 'true'){
 				$(obj).closest('fieldset').addClass('switchOn');
 				$(obj).closest('fieldset').attr('value', "true");
@@ -220,7 +220,7 @@ define(["features/features",  "application/application",  "projectlist/projectLi
 				$.each(response.data, function(index, value){
 					$("select.input-mini option").each(function(index, currentVal) {
 						var uiId = $(this).val();
-						if("b4ce2df7-71e7-4f34-bab2-d4f0ef3217e1" === "b4ce2df7-71e7-4f34-bab2-d4f0ef3217e1"){
+						if(value === uiId){
 							if(button === 'true'){
 								$(currentVal).parents("div").siblings("fieldset").removeClass('switchOff').addClass("switchOn");
 								$(this).attr("selected", "selected");
