@@ -217,23 +217,25 @@ define(["features/features",  "application/application",  "projectlist/projectLi
 		defendentmodule : function(versionID, button){
 			var self = this;
 			self.getFeaturesUpdate(self.getRequestHeader(self.featureUpdatedArray, "DEPENDENCY", versionID), function(response) {
-				$.each(response.data, function(index, value){
-					$("select.input-mini option").each(function(index, currentVal) {
-						var uiId = $(this).val();
-						if(value === uiId){
-							if(button === 'true'){
-								$(currentVal).parents("div").siblings("fieldset").removeClass('switchOff').addClass("switchOn");
-								$(this).attr("selected", "selected");
-								var showversionId = $(currentVal).parents("div").attr("id");
-								$("#"+showversionId).show();
-							} else if(button === 'false'){
-								$(currentVal).parents("div").siblings("fieldset").removeClass('switchOn').addClass("switchOff");
-								var showversionId = $(currentVal).parents("div").attr("id");
-								$("#"+showversionId).hide();
-							}
-						} 
+				if(response.data !== null){
+					$.each(response.data, function(index, value){
+						$("select.input-mini option").each(function(index, currentVal) {
+							var uiId = $(this).val();
+							if(value === uiId){
+								if(button === 'true'){
+									$(currentVal).parents("div").siblings("fieldset").removeClass('switchOff').addClass("switchOn");
+									$(this).attr("selected", "selected");
+									var showversionId = $(currentVal).parents("div").attr("id");
+									$("#"+showversionId).show();
+								} else if(button === 'false'){
+									$(currentVal).parents("div").siblings("fieldset").removeClass('switchOn').addClass("switchOff");
+									var showversionId = $(currentVal).parents("div").attr("id");
+									$("#"+showversionId).hide();
+								}
+							} 
+						}); 
 					}); 
-				}); 
+				}
 			});
 		},
 
