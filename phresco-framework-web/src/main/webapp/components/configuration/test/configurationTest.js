@@ -31,13 +31,13 @@ define(["configuration/configuration"], function(Configuration) {
 					start();
 					equal($(commonVariables.contentPlaceholder).find(".envlistname").text(), "Production", "Configuration Page render Tested");
 					equal($(commonVariables.contentPlaceholder).find("#content_Env li").length, 1, "Add Configuration Page render Tested");
-					self.addEnvironment();
+					self.addEnvironment(configuration);
 				}, 1500);
 		});
 			
 	},
 	
-	addEnvironment : function() {
+	addEnvironment : function(configuration) {
 		var self =this;
 		asyncTest("Test - Add Environment Test", function() {
 			$("input[name=envName]").val('test');
@@ -46,13 +46,13 @@ define(["configuration/configuration"], function(Configuration) {
 			setTimeout(function() {
 				start();
 				equal($(commonVariables.contentPlaceholder).find("#content_Env li").length, 2, "Add Environment Tested");
-				self.saveEnvironment();
+				self.saveEnvironment(configuration);
 			}, 1500);
 		});
 		
 	},
 	
-	saveEnvironment : function() {
+	saveEnvironment : function(configuration) {
 		var self =this;
 		asyncTest("Test - Save Environment Test", function() {
 			$.mockjaxClear(self.configList);
@@ -76,25 +76,17 @@ define(["configuration/configuration"], function(Configuration) {
 				}
 			});
 			
-			require(["navigation/navigation"], function(){
-				commonVariables.navListener = new Clazz.com.components.navigation.js.listener.navigationListener();
+			configuration.configurationlistener.saveEnvEvent("", function(res){
 			});
-
-			/* var configurationAPI = new Clazz.com.components.configuration.js.api.ConfigurationAPI(); */
-			commonVariables.api.localVal.setSession("appDirName" , "aap1");
-
-			commonVariables.navListener.onMytabEvent("configuration");
-			
-			$("input[name=saveEnvironment]").click();
 			setTimeout(function() {
 				start();
 				equal($(commonVariables.contentPlaceholder).find(".envlistname").text(),"Productiontest", "Save Environment Tested");
-				self.cloneEnvironment();
+				self.cloneEnvironment(configuration);
 			}, 1500);
 		});
 	},
 	
-	cloneEnvironment : function() {
+	cloneEnvironment : function(configuration) {
 		var self=this;
 		asyncTest("Test - Clone Environment Test", function() {
 			$.mockjaxClear(self.configList);
@@ -128,21 +120,12 @@ define(["configuration/configuration"], function(Configuration) {
 				}
 			});
 			
-			require(["navigation/navigation"], function(){
-				commonVariables.navListener = new Clazz.com.components.navigation.js.listener.navigationListener();
-			});
-
-			/* var configurationAPI = new Clazz.com.components.configuration.js.api.ConfigurationAPI(); */
-			commonVariables.api.localVal.setSession("appDirName" , "aap1");
-
-			commonVariables.navListener.onMytabEvent("configuration");
-			
 			$("input[name=envrName]").val('sample');
 			$("input[name=envrDesc]").val('sample');
 			$("input[name=cloneEnvr]").click();
 			setTimeout(function() {
 				start();
-				equal($(commonVariables.contentPlaceholder).find(".envlistname").text(),"Productiontestsample", "Clone Environment Tested");
+				equal($(commonVariables.contentPlaceholder).find(".envlistname").text(),"ProductiontestProductiontestsample", "Clone Environment Tested");
 				self.deleteEnvironment();
 			}, 1500);
 		});
