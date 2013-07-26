@@ -44,7 +44,7 @@ define(["projectlist/listener/projectListListener"], function() {
 		loadPage :function() {
 			var self = this;
 			Clazz.navigationController.jQueryContainer = commonVariables.contentPlaceholder;
-			Clazz.navigationController.push(this, commonVaraiables.animation);
+			Clazz.navigationController.push(this, commonVariables.animation);
 		},
 		
 		
