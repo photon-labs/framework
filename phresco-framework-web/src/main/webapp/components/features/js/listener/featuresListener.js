@@ -190,7 +190,7 @@ define(["features/features",  "application/application",  "projectlist/projectLi
 				val = eachList;
 			}
 			val.each(function() {
-				if($(this).attr("class") === "switch switchOn default"){
+				if($(this).attr("class") === "switch switchOn default" || $(this).attr("class") === "switch switchOn"){
 					$(this).parent().show();
 					self.scrollbarUpdate();					
 				}
@@ -198,16 +198,43 @@ define(["features/features",  "application/application",  "projectlist/projectLi
 		},
 		
 		bcheck : function(obj){
+			var self = this;
 			var button = $(obj).attr("value");
+			var versionID = $(obj).parent().next('div.flt_right').children('select.input-mini').find(':selected').val();
 			$(obj).closest('fieldset').removeClass('switchOn'); 
 			$(obj).closest('fieldset').removeClass('switchOff');			
-			if(button === 'false'){ 
+			if(button === 'false'){
 				$(obj).closest('fieldset').addClass('switchOff');
-				$(obj).closest('fieldset').attr('value', "false"); 
-			}else if(button === 'true'){ 
+				$(obj).closest('fieldset').attr('value', "false");
+				self.defendentmodule(obj, button);
+			}else if(button === 'true'){
 				$(obj).closest('fieldset').addClass('switchOn');
 				$(obj).closest('fieldset').attr('value', "true");
+				self.defendentmodule(versionID, button);
 			}
+		},
+		
+		defendentmodule : function(versionID, button){
+			var self = this;
+			self.getFeaturesUpdate(self.getRequestHeader(self.featureUpdatedArray, "DEPENDENCY", versionID), function(response) {
+				$.each(response.data, function(index, value){
+					$("select.input-mini option").each(function(index, currentVal) {
+						var uiId = $(this).val();
+						if("b4ce2df7-71e7-4f34-bab2-d4f0ef3217e1" === "b4ce2df7-71e7-4f34-bab2-d4f0ef3217e1"){
+							if(button === 'true'){
+								$(currentVal).parents("div").siblings("fieldset").removeClass('switchOff').addClass("switchOn");
+								$(this).attr("selected", "selected");
+								var showversionId = $(currentVal).parents("div").attr("id");
+								$("#"+showversionId).show();
+							} else if(button === 'false'){
+								$(currentVal).parents("div").siblings("fieldset").removeClass('switchOn').addClass("switchOff");
+								var showversionId = $(currentVal).parents("div").attr("id");
+								$("#"+showversionId).hide();
+							}
+						} 
+					}); 
+				}); 
+			});
 		},
 
 		hideLoad : function(){
@@ -235,14 +262,17 @@ define(["features/features",  "application/application",  "projectlist/projectLi
 				header.webserviceurl = commonVariables.webserviceurl+commonVariables.featurePageContext+"/list?customerId=photon&techId="+ techId +"&type="+type+"&userId="+userId.id;
 			} else if (type === "desc") {
 				header.requestMethod = "GET";
-				header.webserviceurl = commonVariables.webserviceurl+commonVariables.featurePageContext+"/desc?&artifactGroupId="+descid+"&userId="+userId.id;
+				header.webserviceurl = commonVariables.webserviceurl+commonVariables.featurePageContext+"/desc?artifactGroupId="+descid+"&userId="+userId.id;
 			} else if (type === "SELECTED") {
 				header.requestMethod = "GET";
-				header.webserviceurl = commonVariables.webserviceurl+commonVariables.featurePageContext+"/selectedFeature?&userId="+userId.id+"&appDirName="+appDirName;
+				header.webserviceurl = commonVariables.webserviceurl+commonVariables.featurePageContext+"/selectedFeature?userId="+userId.id+"&appDirName="+appDirName;
 			} else if (type === "UPDATE") {
 				header.requestMethod = "PUT";
 				header.requestPostBody = JSON.stringify(projectRequestBody);
 				header.webserviceurl = commonVariables.webserviceurl+commonVariables.projectlistContext + "/updateFeature?customerId=photon&userId="+userId.id+"&appDirName="+appDirName;
+			} else if (type === "DEPENDENCY") {
+				header.requestMethod = "GET";
+				header.webserviceurl = commonVariables.webserviceurl+commonVariables.featurePageContext + "/dependencyFeature?userId="+userId.id+"&versionId="+descid; // descid is versionId
 			}
 			return header;
 		}
