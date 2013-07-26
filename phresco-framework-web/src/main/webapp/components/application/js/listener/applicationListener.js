@@ -228,10 +228,20 @@ define([], function() {
 			try {
 				commonVariables.api.ajaxRequest(header,
 					function(response) {
-						if (response !== null) {
+						if (response !== null && response.status !== "error" && response.status !== "failure") {
 							callback(response);
 						} else {
-							callback({ "status" : "service failure"});
+							if(response.responseCode === "PHR310002") {
+								$(".blinkmsg").removeClass("popsuccess").addClass("poperror");
+								self.effectFadeOut('poperror', (''));
+								$(".poperror").attr('data-i18n', 'application.errormessage.configurationfetchfailed');
+								self.renderlocales(commonVariables.basePlaceholder);
+							} else if(response.responseCode === "PHR310001") {
+								$(".blinkmsg").removeClass("popsuccess").addClass("poperror");
+								self.effectFadeOut('poperror', (''));
+								$(".poperror").attr('data-i18n', 'application.errormessage.unauthorizeduser');
+								self.renderlocales(commonVariables.basePlaceholder);
+							}
 						}
 
 					},
@@ -350,10 +360,25 @@ define([], function() {
 			try {
 				commonVariables.api.ajaxRequest(header,
 					function(response) {
-						if (response !== null) {
+						if (response !== null && response.status !== "error" && response.status !== "failure") {
 							callback(response);
 						} else {
-							callback({ "status" : "service failure"});
+							if(response.responseCode === "PHR310003") {
+								$(".blinkmsg").removeClass("popsuccess").addClass("poperror");
+								self.effectFadeOut('poperror', (''));
+								$(".poperror").attr('data-i18n', 'application.errormessage.wsconfigurationfetchfailed');
+								self.renderlocales(commonVariables.basePlaceholder);
+							} else if(response.responseCode === "PHR310002") {
+								$(".blinkmsg").removeClass("popsuccess").addClass("poperror");
+								self.effectFadeOut('poperror', (''));
+								$(".poperror").attr('data-i18n', 'application.errormessage.configurationfetchfailed');
+								self.renderlocales(commonVariables.basePlaceholder);
+							} else if(response.responseCode === "PHR310001") {
+								$(".blinkmsg").removeClass("popsuccess").addClass("poperror");
+								self.effectFadeOut('poperror', (''));
+								$(".poperror").attr('data-i18n', 'application.errormessage.unauthorizeduser');
+								self.renderlocales(commonVariables.basePlaceholder);
+							}
 						}
 
 					},
@@ -408,32 +433,27 @@ define([], function() {
 							callback(response);
 							//commonVariables.loadingScreen.removeLoading();
 						} else {
+							$(".blinkmsg").removeClass("popsuccess").addClass("poperror");
+							var failuremsg = null;
 							if(response.responseCode === "PHR210009") {
-								$(".blinkmsg").removeClass("popsuccess").addClass("poperror");
 								self.effectFadeOut('poperror', (''));
-								$(".poperror").attr('data-i18n', 'application.errormessage.applicationupdatefailed');
-								self.renderlocales(commonVariables.basePlaceholder);
+								failuremsg = 'application.errormessage.applicationupdatefailed';
 							} else if(response.responseCode === "PHR210007") {
-								$(".blinkmsg").removeClass("popsuccess").addClass("poperror");
 								self.effectFadeOut('poperror', (''));
-								$(".poperror").attr('data-i18n', 'application.errormessage.openprojectinfofailed');
-								self.renderlocales(commonVariables.basePlaceholder);
-							} else if(response.responseCode === "PHR210003") {
-								$(".blinkmsg").removeClass("popsuccess").addClass("poperror");
+								failuremsg = 'application.errormessage.openprojectinfofailed';
+							} else if(response.responseCode === "PHR310001") {
 								self.effectFadeOut('poperror', (''));
-								$(".poperror").attr('data-i18n', 'application.errormessage.unauthorizeduser');
-								self.renderlocales(commonVariables.basePlaceholder);
+								failuremsg = 'application.errormessage.unauthorizeduser';
 							} else if(response.responseCode === "PHR210010") {
-								$(".blinkmsg").removeClass("popsuccess").addClass("poperror");
 								self.effectFadeOut('poperror', (''));
-								$(".poperror").attr('data-i18n', 'application.errormessage.ioerror');
-								self.renderlocales(commonVariables.basePlaceholder);
+								failuremsg = 'application.errormessage.ioerror';
 							} else if(response.responseCode === "PHR000000") {
-								$(".blinkmsg").removeClass("popsuccess").addClass("poperror");
 								self.effectFadeOut('poperror', (''));
-								$(".poperror").attr('data-i18n', 'commonlabel.errormessage.unexpectedfailure');
-								self.renderlocales(commonVariables.basePlaceholder);
+								failuremsg = 'commonlabel.errormessage.unexpectedfailure';
 							}
+							$(".poperror").attr('data-i18n', failuremsg);
+							self.renderlocales(commonVariables.basePlaceholder);
+
 						}
 					},
 
@@ -499,12 +519,22 @@ define([], function() {
 			try {
 				commonVariables.api.ajaxRequest(header,
 					function(response) {
-						if (response !== null) {
+						if (response !== null && response.status !== "error" && response.status !== "failure") {
 							callback(response);
 							//commonVariables.loadingScreen.removeLoading();
 						} else {
 							//commonVariables.loadingScreen.removeLoading();
-							callback({ "status" : "service failure"});
+							if(response.responseCode === "PHR310004") {
+								$(".blinkmsg").removeClass("popsuccess").addClass("poperror");
+								self.effectFadeOut('poperror', (''));
+								$(".poperror").attr('data-i18n', 'application.errormessage.techoptionsfailed');
+								self.renderlocales(commonVariables.basePlaceholder);
+							} else if(response.responseCode === "PHR310001") {
+								$(".blinkmsg").removeClass("popsuccess").addClass("poperror");
+								self.effectFadeOut('poperror', (''));
+								$(".poperror").attr('data-i18n', 'application.errormessage.unauthorizeduser');
+								self.renderlocales(commonVariables.basePlaceholder);
+							}
 						}
 
 					}

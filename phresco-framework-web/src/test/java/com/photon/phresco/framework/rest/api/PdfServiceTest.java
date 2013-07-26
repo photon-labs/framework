@@ -101,7 +101,7 @@ public class PdfServiceTest extends RestBaseTest {
 		 Assert.assertEquals(200, showGeneratePdfPopupAll.getStatus());
 		 
 		 Response showGeneratePdfPopupFail = pdfService.showGeneratePdfPopup("xx", "All", httpServletRequest);
-		 Assert.assertEquals(404, showGeneratePdfPopupFail.getStatus());
+		 Assert.assertEquals(200, showGeneratePdfPopupFail.getStatus());
 	 }
 	
 	 @Test

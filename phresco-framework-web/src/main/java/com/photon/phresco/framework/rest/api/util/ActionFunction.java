@@ -46,6 +46,7 @@ import com.google.gson.Gson;
 import com.photon.phresco.api.ApplicationProcessor;
 import com.photon.phresco.api.ConfigManager;
 import com.photon.phresco.commons.FrameworkConstants;
+import com.photon.phresco.commons.ResponseCodes;
 import com.photon.phresco.commons.model.ApplicationInfo;
 import com.photon.phresco.commons.model.ArtifactGroup;
 import com.photon.phresco.commons.model.ArtifactInfo;
@@ -82,7 +83,7 @@ import com.phresco.pom.model.Model.Modules;
 import com.phresco.pom.util.PomProcessor;
 
 
-public class ActionFunction implements Constants ,FrameworkConstants,ActionServiceConstant {
+public class ActionFunction implements Constants ,FrameworkConstants,ActionServiceConstant, ResponseCodes {
 
 	private final String PHASE_RUNAGAINST_SOURCE = "run-against-source";
 	public static final java.lang.String SERVICE_URL = "phresco.service.url";
@@ -1494,8 +1495,9 @@ public class ActionFunction implements Constants ,FrameworkConstants,ActionServi
 			response.setUniquekey("");
 			throw new PhrescoException("exception occured in the Print As PDF functionality");
 		}
-		response.setStatus(ActionServiceConstant.SUCCESS);
+		response.setStatus(RESPONSE_STATUS_SUCCESS);
 		response.setLog(ActionServiceConstant.SUCCESS);
+		response.setResponseCode(PHR200016);
 		return response;
 	}
 

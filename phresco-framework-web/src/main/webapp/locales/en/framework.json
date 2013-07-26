@@ -15,6 +15,17 @@
 			"unit" : "Unit",
 			"manual" : "Manual",
 			"component" : "Component"
+		},
+		"errormessage" : {
+			"invalidcredentials" : "Invalid credentials",
+			"invalidurl" : "Invalid URL",
+			"invalidrevision" : "Invalid revision",
+			"importfailed" : "Failed to import project",
+			"projectalreadyexists" : "Project already exists",
+			"doesnotexist" : "Phresco compliant project does not exist"
+		},
+		"successmessage" : {
+			"importsuccess" : "Project imported successfully"
 		}
 	},
 	"codequality" : {
@@ -105,13 +116,36 @@
 			"nodata" : "No Projects Available"
 		},
 		"successmessage" : {
-			"applicationdeleted" : "Application deleted successfully"
+			"applicationdeleted" : "Application deleted successfully",
+			"reportdeleted" : "Report deleted successfully",
+			"noreporttodelete" : "No report to delete",
+			"noreporttodownload" : "No report to download",
+			"reportgenerated" : "Report generated successfully",
+			"projectupdated" : "Project updated successfully",
+			"projectadded" : "Project added successfully",
+			"projectcommited" : "Project committed successfully"
 		},
 		"errormessage" : {
 			"projectlistfailed": " Failed to list projects",
 			"applicationdeletefailed" : "Unable to delete application",
+			"reportdeletefailed" : "Failed to delete report",
+			"atleastonereport" : "Atleast one test report should be available or sonar report should be available",
+			"deleteaccessfailed" : "Could not access application home to delete report",
+			"fetchreportfailed" : "Unable to fetch reports",
+			"generatereportfailed" : "Failed to generate report",
+			"downloadfailed" : "Unable to download report",
+			"readreportfailed" : "Unable to access or read report",
 			"connectionalive" : "Could not delete application, connection still alive",
-			"runagainstsource" : "Could not open file 'runagainstsource.info'"
+			"runagainstsource" : "Could not open file 'runagainstsource.info'",
+			"projectupdatefailed" : "Failed to update project",
+			"notworkingcopy" : "This is not a working copy",
+			"nofilestoupdate" : "No files to update",
+			"addprojectfailed" : "Failed to add project",
+			"repositoryexistsnot" : "This git repository does not exist",
+			"commitfailed" : "Failed to commit project to repository",
+			"nofilestocommit" : "No files to commit",
+			"repositoryfailed" : "Repository does not exist",
+			"updaterepositoryfailed" : "Repository does not exist for update"
 		}
 		
 	},
@@ -252,7 +286,10 @@
 			"applicationupdatefailed" : "Failed to update application",
 			"openprojectinfofailed" : "Could not open file 'project.info'",
 			"unauthorizeduser" : "Unauthorized user",
-			"ioerror" : "I/O error while closing BufferedReader"
+			"ioerror" : "I/O error while closing BufferedReader",
+			"configurationfetchfailed" : "Unable to fetch configuration",
+			"wsconfigurationfetchfailed" : "Unable to fetch webservice configuration",
+			"techoptionsfailed" : "Failed to get technology options"
 		}
 	},
 	"features" : {
@@ -274,7 +311,10 @@
 		"errormessage" : {
 			"featuresupdatefailed" : "Failed to update features",
 			"openprojectinfofailed" : "Could not open file 'project.info'",
-			"unauthorizeduser" : "Unauthorized user"
+			"unauthorizeduser" : "Unauthorized user",
+			"applicationfeaturesfailed" : "Unable to fetch application features",
+			"fetchdescriptionfailed" : "Unable to fetch description",
+			"selectedfeaturesfailed" : "Unable to fetch selected features"
 		}
 	},
 	"ci" : {

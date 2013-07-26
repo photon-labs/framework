@@ -31,6 +31,7 @@ import javax.ws.rs.core.Response;
 import org.apache.log4j.Logger;
 
 import com.photon.phresco.commons.FrameworkConstants;
+import com.photon.phresco.commons.ResponseCodes;
 import com.photon.phresco.commons.model.ApplicationInfo;
 import com.photon.phresco.exception.PhrescoException;
 import com.photon.phresco.framework.commons.FrameworkUtil;
@@ -45,7 +46,7 @@ import com.sun.jersey.api.client.ClientResponse.Status;
  * The Class ActionService.
  */
 @Path ("/app")
-public class ActionService implements ActionServiceConstant, FrameworkConstants {
+public class ActionService implements ActionServiceConstant, FrameworkConstants, ResponseCodes {
 	
 	/** The Constant S_LOGGER. */
 	private static final Logger S_LOGGER= Logger.getLogger(ActionService.class);
@@ -751,19 +752,22 @@ public class ActionService implements ActionServiceConstant, FrameworkConstants 
 				isReportAvailable = actionFunction.isTestReportAvailable(frameworkUtil, appInfo, fromPage);
 			}
 //			boolean testReportAvailable = actionFunction.isTestReportAvailable(frameworkUtil, appInfo, fromPage);
-			System.out.println("testReportAvailable :: " + isReportAvailable);
 			if (isReportAvailable) {
 				response = actionFunction.printAsPdf(request);
 			} else {
-				response.setService_exception("Aleast one Test Report should be available Or Sonar report should be available");
+				response.setService_exception("Atleast one Test Report should be available Or Sonar report should be available");
+				response.setResponseCode(PHR210020);
+				response.setStatus(RESPONSE_STATUS_FAILURE);
 			}
 			
 		} catch (Exception e) {
 			S_LOGGER.error(e.getMessage());
-			response.setStatus(ERROR);
+			response.setStatus(RESPONSE_STATUS_ERROR);
 			response.setLog("");
 			response.setService_exception(FrameworkUtil.getStackTraceAsString(e));
 			response.setUniquekey("");
+			response.setResponseCode(PHR210021);
+			
 		}
 		return Response.status(Status.OK).entity(response).header("Access-Control-Allow-Origin", "*").build();
 		

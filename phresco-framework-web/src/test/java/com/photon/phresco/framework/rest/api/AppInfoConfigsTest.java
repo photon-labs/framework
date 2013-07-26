@@ -15,7 +15,7 @@ public class AppInfoConfigsTest extends RestBaseTest {
 	@Test
 	public void fetchDownloadInfos() {
 		Response downloadInfosLoginFail = appInfoConfigs.getDownloadInfos("photon", "tech-java-webservice", "SERVER", "Windows64", "sample");
-		Assert.assertEquals(400, downloadInfosLoginFail.getStatus());
+		Assert.assertEquals(200, downloadInfosLoginFail.getStatus());
 		Response downloadInfos = appInfoConfigs.getDownloadInfos("photon", "tech-java-webservice", "SERVER", "Windows64", "admin");
 		Assert.assertEquals(200, downloadInfos.getStatus());
 //		Response downloadInfosFail = appInfoConfigs.getDownloadInfos("photon", "", "", "", "admin");
@@ -27,7 +27,7 @@ public class AppInfoConfigsTest extends RestBaseTest {
 	@Test
 	public void fetchWebServices() {
 		Response webServicesLoginFail = appInfoConfigs.getWebServices("sample");
-		Assert.assertEquals(400, webServicesLoginFail.getStatus());
+		Assert.assertEquals(200, webServicesLoginFail.getStatus());
 		Response webServices = appInfoConfigs.getWebServices("admin");
 		Assert.assertEquals(200, webServices.getStatus());
 	}

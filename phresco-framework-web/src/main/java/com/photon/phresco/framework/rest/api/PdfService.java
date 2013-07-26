@@ -49,6 +49,7 @@ import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 
 import com.photon.phresco.commons.FrameworkConstants;
+import com.photon.phresco.commons.ResponseCodes;
 import com.photon.phresco.commons.model.ApplicationInfo;
 import com.photon.phresco.exception.PhrescoException;
 import com.photon.phresco.framework.FrameworkConfiguration;
@@ -68,8 +69,12 @@ import com.sun.jersey.api.client.ClientResponse.Status;
  * The Class PdfService.
  */
 @Path("/pdf")
-public class PdfService extends RestBase implements FrameworkConstants, Constants, ServiceConstants {
+public class PdfService extends RestBase implements FrameworkConstants, Constants, ServiceConstants, ResponseCodes {
 
+	String status;
+	String errorCode;
+	String successCode;
+	
 	/**
 	 * Download report.
 	 *
@@ -102,15 +107,21 @@ public class PdfService extends RestBase implements FrameworkConstants, Constant
 					.build();
 			}
 		} catch (PhrescoException e) {
-			ResponseInfo finalOutput = responseDataEvaluation(responseData, e, "download report Failed", null);
-			return Response.status(Status.NOT_FOUND).entity(finalOutput).header("Access-Control-Allow-Origin", "*")
+			status = RESPONSE_STATUS_ERROR;
+			errorCode = PHR210015;
+			ResponseInfo finalOutput = responseDataEvaluation(responseData, e, null, status, errorCode);
+			return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*")
 					.build();
 		} catch (FileNotFoundException e) {
-			ResponseInfo finalOutput = responseDataEvaluation(responseData, e, "download report Failed", null);
-			return Response.status(Status.NOT_FOUND).entity(finalOutput).header("Access-Control-Allow-Origin", "*")
+			status = RESPONSE_STATUS_ERROR;
+			errorCode = PHR210016;
+			ResponseInfo finalOutput = responseDataEvaluation(responseData, e, null, status, errorCode);
+			return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*")
 					.build();
 		}
-		ResponseInfo finalOutput = responseDataEvaluation(responseData, null, "Nothing to download", null);
+		status = RESPONSE_STATUS_SUCCESS;
+		successCode = PHR200012;
+		ResponseInfo finalOutput = responseDataEvaluation(responseData, null, null, status, successCode);
 		return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
 	}
 
@@ -142,23 +153,31 @@ public class PdfService extends RestBase implements FrameworkConstants, Constant
 			if (pdfFile.isFile()) {
 				boolean reportDeleted = pdfFile.delete();
 				if (reportDeleted) {
-					ResponseInfo finalOutput = responseDataEvaluation(responseData, null, SUCCESS_REPORT_DELETE_STATUS,
-							null);
+					status = RESPONSE_STATUS_SUCCESS;
+					successCode = PHR200013;
+					ResponseInfo finalOutput = responseDataEvaluation(responseData, null,
+							null, status, successCode);
 					return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*")
 							.build();
 				} else {
-					ResponseInfo finalOutput = responseDataEvaluation(responseData, null, ERROR_REPORT_DELETE_STATUS,
-							null);
-					return Response.status(Status.NOT_FOUND).entity(finalOutput).header("Access-Control-Allow-Origin",
+					status = RESPONSE_STATUS_ERROR;
+					errorCode = PHR210017;
+					ResponseInfo finalOutput = responseDataEvaluation(responseData, null,
+							null, status, errorCode);
+					return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin",
 							"*").build();
 				}
 			}
 		} catch (PhrescoException e) {
-			ResponseInfo finalOutput = responseDataEvaluation(responseData, e, ERROR_REPORT_DELETE_STATUS, null);
-			return Response.status(Status.NOT_FOUND).entity(finalOutput).header("Access-Control-Allow-Origin", "*")
+			status = RESPONSE_STATUS_ERROR;
+			errorCode = PHR210018;
+			ResponseInfo finalOutput = responseDataEvaluation(responseData, e, null, status, errorCode);
+			return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*")
 					.build();
 		}
-		ResponseInfo finalOutput = responseDataEvaluation(responseData, null, "No Report to delete", null);
+		status = RESPONSE_STATUS_SUCCESS;
+		successCode = PHR200014;
+		ResponseInfo finalOutput = responseDataEvaluation(responseData, null, null, status, successCode);
 		return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
 	}
 
@@ -183,13 +202,17 @@ public class PdfService extends RestBase implements FrameworkConstants, Constant
 				return Response.status(Status.OK).entity(existingPDFs).header("Access-Control-Allow-Origin", "*")
 						.build();
 			}
-			ResponseInfo<JSONArray> finalOutput = responseDataEvaluation(responseData, null, "No Reports avaliable",
-					null);
+			status = RESPONSE_STATUS_SUCCESS;
+			successCode = PHR200015;
+			ResponseInfo<JSONArray> finalOutput = responseDataEvaluation(responseData, null,
+					null, status, successCode);
 			return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
 		} catch (Exception e) {
-			ResponseInfo<JSONArray> finalOutput = responseDataEvaluation(responseData, e, "Reports is not available",
-					null);
-			return Response.status(Status.NOT_FOUND).entity(finalOutput).header("Access-Control-Allow-Origin", "*")
+			status = RESPONSE_STATUS_ERROR;
+			errorCode = PHR210019;
+			ResponseInfo<JSONArray> finalOutput = responseDataEvaluation(responseData, e,
+					null, status, errorCode);
+			return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*")
 					.build();
 		}
 	}

@@ -40,6 +40,7 @@ import org.apache.commons.lang.StringUtils;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.photon.phresco.commons.FrameworkConstants;
+import com.photon.phresco.commons.ResponseCodes;
 import com.photon.phresco.commons.model.ApplicationInfo;
 import com.photon.phresco.commons.model.ArtifactElement;
 import com.photon.phresco.commons.model.ArtifactGroup;
@@ -61,8 +62,10 @@ import com.sun.jersey.api.client.ClientResponse.Status;
  * The Class FeatureService.
  */
 @Path("/features")
-public class FeatureService extends RestBase implements ServiceConstants, Constants, FrameworkConstants {
-	
+public class FeatureService extends RestBase implements ServiceConstants, Constants, FrameworkConstants, ResponseCodes {
+	String status;
+	String errorCode;
+	String successCode;
 	/**
 	 * List the entire features.
 	 *
@@ -82,19 +85,25 @@ public class FeatureService extends RestBase implements ServiceConstants, Consta
 		try {
 			ServiceManager serviceManager = CONTEXT_MANAGER_MAP.get(userId);
 			if (serviceManager == null) {
+				status = RESPONSE_STATUS_FAILURE;
+				errorCode = PHR410001;
 				ResponseInfo<List<ArtifactGroup>> finalOutput = responseDataEvaluation(responseData, null,
-						"UnAuthorized User", null);
-				return Response.status(Status.BAD_REQUEST).entity(finalOutput).header("Access-Control-Allow-Origin",
+						null, status, errorCode);
+				return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin",
 						"*").build();
 			}
 			List<ArtifactGroup> features = serviceManager.getFeatures(customerId, techId, type);
+			status = RESPONSE_STATUS_SUCCESS;
+			successCode = PHR400001;
 			ResponseInfo<List<ArtifactGroup>> finalOutput = responseDataEvaluation(responseData, null,
-					"Application Features listed successfully", features);
+					features, status, successCode);
 			return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
 		} catch (PhrescoException e) {
+			status = RESPONSE_STATUS_ERROR;
+			errorCode = PHR410002;
 			ResponseInfo<List<ArtifactGroup>> finalOutput = responseDataEvaluation(responseData, e,
-					"Application Features not fetched", null);
-			return Response.status(Status.BAD_REQUEST).entity(finalOutput).header("Access-Control-Allow-Origin", "*")
+					null, status, errorCode);
+			return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*")
 					.build();
 		}
 	}
@@ -115,19 +124,25 @@ public class FeatureService extends RestBase implements ServiceConstants, Consta
 		try {
 			ServiceManager serviceManager = CONTEXT_MANAGER_MAP.get(userId);
 			if (serviceManager == null) {
+				status = RESPONSE_STATUS_FAILURE;
+				errorCode = PHR410001;
 				ResponseInfo<ArtifactElement> finalOutput = responseDataEvaluation(responseData, null,
-						"UnAuthorized User", null);
-				return Response.status(Status.BAD_REQUEST).entity(finalOutput).header("Access-Control-Allow-Origin",
+						null, status, errorCode);
+				return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin",
 						"*").build();
 			}
+			status = RESPONSE_STATUS_SUCCESS;
+			successCode = PHR400002;
 			ArtifactElement artifactElement = serviceManager.getArtifactDescription(artifactGroupId);
 			ResponseInfo<ArtifactElement> finalOutput = responseDataEvaluation(responseData, null,
-					"Application Features listed successfully", artifactElement.getDescription());
+					artifactElement.getDescription(), status, successCode);
 			return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
 		} catch (PhrescoException e) {
+			status = RESPONSE_STATUS_ERROR;
+			errorCode = PHR410003;
 			ResponseInfo<ArtifactElement> finalOutput = responseDataEvaluation(responseData, e,
-					"Application Features not fetched", null);
-			return Response.status(Status.BAD_REQUEST).entity(finalOutput).header("Access-Control-Allow-Origin", "*")
+					null, status, errorCode);
+			return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*")
 					.build();
 		}
 	}
@@ -148,9 +163,11 @@ public class FeatureService extends RestBase implements ServiceConstants, Consta
 		try {
 			ServiceManager serviceManager = CONTEXT_MANAGER_MAP.get(userId);
 			if (serviceManager == null) {
+				status = RESPONSE_STATUS_FAILURE;
+				errorCode = PHR410001;
 				ResponseInfo<Map<String,String>> finalOutput = responseDataEvaluation(responseData, null,
-						"UnAuthorized User", null);
-				return Response.status(Status.BAD_REQUEST).entity(finalOutput).header("Access-Control-Allow-Origin",
+						null, status, errorCode);
+				return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin",
 						"*").build();
 			}
 			ArtifactInfo artifactInfo = serviceManager.getArtifactInfo(versionId);
@@ -161,17 +178,23 @@ public class FeatureService extends RestBase implements ServiceConstants, Consta
 					String depeVersionId = artifact.getId();
 					map.put(artifactInfo.getId(), depeVersionId);
 				}
+				status = RESPONSE_STATUS_SUCCESS;
+				successCode = PHR400003;
 				ResponseInfo<Map<String,String>> finalOutput = responseDataEvaluation(responseData, null,
-						" Dependency Features listed successfully", map);
+						map, status, successCode);
 				return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
 			}
+			status = RESPONSE_STATUS_FAILURE;
+			errorCode = PHR410004;
 			ResponseInfo<Map<String,String>> finalOutput = responseDataEvaluation(responseData, null,
-					" No Dependency Features Available", null);
+					null, status, errorCode);
 			return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
 		} catch (PhrescoException e) {
+			status = RESPONSE_STATUS_ERROR;
+			errorCode = PHR410005;
 			ResponseInfo<Map<String,String>> finalOutput = responseDataEvaluation(responseData, e,
-					"Dependency Features not fetched", null);
-			return Response.status(Status.BAD_REQUEST).entity(finalOutput).header("Access-Control-Allow-Origin", "*")
+					null, status, errorCode);
+			return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*")
 					.build();
 		}
 	}
@@ -194,9 +217,11 @@ public class FeatureService extends RestBase implements ServiceConstants, Consta
 		try {
 			ServiceManager serviceManager = CONTEXT_MANAGER_MAP.get(userId);
 			if (serviceManager == null) {
+				status = RESPONSE_STATUS_FAILURE;
+				errorCode = PHR410001;
 				ResponseInfo<List<SelectedFeature>> finalOutput = responseDataEvaluation(responseData, null,
-						"UnAuthorized User", null);
-				return Response.status(Status.BAD_REQUEST).entity(finalOutput).header("Access-Control-Allow-Origin",
+						null, status, errorCode);
+				return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin",
 						"*").build();
 			}
 			ApplicationInfo appInfo = FrameworkServiceUtil.getApplicationInfo(appDirName);
@@ -227,15 +252,18 @@ public class FeatureService extends RestBase implements ServiceConstants, Consta
 					listFeatures.add(selectFeature);
 				}
 			}
-
+			status = RESPONSE_STATUS_SUCCESS;
+			successCode = PHR400004;
 			ResponseInfo<List<SelectedFeature>> finalOutput = responseDataEvaluation(responseData, null,
-					" Selected Features listed successfully", listFeatures);
+					listFeatures, status, successCode);
 			return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
 
 		} catch (Exception e) {
+			status = RESPONSE_STATUS_ERROR;
+			errorCode = PHR410006;
 			ResponseInfo<List<SelectedFeature>> finalOutput = responseDataEvaluation(responseData, e,
-					"Selected Features not fetched", null);
-			return Response.status(Status.BAD_REQUEST).entity(finalOutput).header("Access-Control-Allow-Origin", "*")
+					null, status, errorCode);
+			return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*")
 					.build();
 		}
 	}

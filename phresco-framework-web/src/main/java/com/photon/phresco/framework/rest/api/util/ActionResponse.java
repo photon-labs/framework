@@ -17,8 +17,14 @@ public class ActionResponse {
 	boolean connectionAlive = false;
 	boolean errorFound;
 	List<String> configErrorMsg;
+	String responseCode;
 	
-	
+	public String getResponseCode() {
+		return responseCode;
+	}
+	public void setResponseCode(String responseCode) {
+		this.responseCode = responseCode;
+	}
 	public boolean isConnectionAlive() {
 		return connectionAlive;
 	}
