@@ -1544,11 +1544,10 @@ public class CI extends DynamicParameterAction implements FrameworkConstants {
 				}
 				setTotalBuildSize(size);
 				if ((size > itemsPerPage) && (pageNo < 1)) { // size > items_per_page
-					setLimitedBuilds(ci.getLimitedBuilds(job, size - itemsPerPage, size));
+					setLimitedBuilds(ci.getLimitedBuilds(job, 0, itemsPerPage));
 				} else if ((size > itemsPerPage) && (pageNo > 0)) { // if pageNo > 0, do calculation
 					int index = pageNo * itemsPerPage;
-					//console.log("size-(index+items_per_page) >= 0 ? size-(index+items_per_page) : 0 "+ (size-(index+items_per_page) >= 0 ? size-(index+items_per_page) : 0));
-					setLimitedBuilds(ci.getLimitedBuilds(job, size-(index+itemsPerPage) >= 0 ? size-(index+itemsPerPage) : 0, (size-index) > 0 ? size-index:1));
+					setLimitedBuilds(ci.getLimitedBuilds(job, index <= size ? index : 0, index+itemsPerPage > 0 ? index+itemsPerPage:1));
 				} else if (size == 0) { //size == 0, return immediately
 					return SUCCESS;
 				} else { //size < items_per_page

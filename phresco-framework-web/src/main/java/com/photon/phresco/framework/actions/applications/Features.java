@@ -480,12 +480,16 @@ public class Features extends DynamicParameterModule {
 		getScope(appInfo, artifactInfo.getId(), slctFeature);
 		
 		List<CoreOption> appliesTo = artifactGroupInfo.getAppliesTo();
+		
 		for (CoreOption coreOption : appliesTo) {
-		    if (coreOption.getTechId().equals(techId) && !coreOption.isCore() && !slctFeature.getType().equals(REQ_JAVASCRIPT_TYPE_MODULE) && artifactGroupInfo.getPackaging().equalsIgnoreCase(ZIP_FILE)) {
-		        slctFeature.setCanConfigure(true);
-		    } else {
-		        slctFeature.setCanConfigure(false);
-		    }
+			if (coreOption.getTechId().equals(techId)) {
+				if (!coreOption.isCore() && !slctFeature.getType().equals(REQ_JAVASCRIPT_TYPE_MODULE) && artifactGroupInfo.getPackaging().equalsIgnoreCase(ZIP_FILE)) {
+					slctFeature.setCanConfigure(true);
+				} else {
+					slctFeature.setCanConfigure(false);
+				}
+				break;
+			}
 		}
 		List<RequiredOption> appliesToReqird = artifactInfo.getAppliesTo();
 		if (CollectionUtils.isNotEmpty(appliesToReqird)) {
