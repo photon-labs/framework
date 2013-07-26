@@ -122,6 +122,16 @@
         	String customerId = (String)session.getAttribute(user.getId());
         	List<Customer> customers  = (List<Customer>) session.getAttribute(FrameworkConstants.SESSION_CUSTOMERS);
             String displayName = user.getDisplayName();
+            String uiOptionType = (String)session.getAttribute(FrameworkConstants.UI_TYPE_OPTION);
+            String hideAdvUiContent = "";
+            String hideSimUiContent = "";
+            if (uiOptionType.equalsIgnoreCase(FrameworkConstants.SIMPLE_UI)) {
+            	hideAdvUiContent = "hideContent";
+            }
+            if (uiOptionType.equalsIgnoreCase(FrameworkConstants.ADVANCE_UI)) {
+            	hideSimUiContent = "hideContent";
+            }  
+            
         %>
 		<div class="modal-backdrop fade in popupalign"></div>
 	    
@@ -167,8 +177,8 @@
 		                             </li>
 		                             <li><a href="#" id="forum" class="<%= FrameworkConstants.HELP_KEY %>"><s:text name="lbl.hdr.help"/></a></li>
 		                             <li><a href="#" id="about" ><s:text name="lbl.abt.helios"/></a></li>
-		                             <li><a href="#" id="simpleUI"><s:text name="lbl.hdr.simple.ui"/><img id="simpleUIImg" class="selectedIcn" src="images/icons/success.png"/></a></li>
-		                             <li><a href="#" id="advanceUI"><s:text name="lbl.hdr.advance.ui"/><img id="advanceUIImg" class="selectedIcn hideContent" src="images/icons/success.png"/></a></li>
+		                             <li><a href="#" id="simpleUI"><s:text name="lbl.hdr.simple.ui"/><img id="simpleUIImg" class="selectedIcn <%= hideSimUiContent  %>"  src="images/icons/success.png"/></a></li>
+		                             <li><a href="#" id="advanceUI"><s:text name="lbl.hdr.advance.ui"/><img id="advanceUIImg" class="selectedIcn <%= hideAdvUiContent %>"  src="images/icons/success.png"/></a></li>
 		                             <li><a href="<s:url action='logout'/>"><s:text name="lbl.signout"/></a></li>
 		                         </ul>	
 							</div>
@@ -245,7 +255,7 @@
 								    %>
 								</select>
 								<input type="hidden" id="customerId" name="customerId" value=""/>
-								<input type="hidden" id="uiType" name="uiType" value="simpleUI"/>
+								<input type="hidden" id="uiType" name="uiType" value='<%= uiOptionType %>'/>
 							</div>
 						</div>
 					</form>
@@ -471,13 +481,14 @@
     	});
 		
 		//To select the simpleUI/advanceUI option
-		$("#simpleUI, #advanceUI").unbind();
+	    $("#simpleUI, #advanceUI").unbind();
 		$("#simpleUI, #advanceUI").click(function() {
 			var ancId = $(this).attr("id");
 			$(".selectedIcn").hide();
 			$("#" + ancId + "Img").show();
 			$("#uiType").val(ancId);
-		});
+		    loadContent("fetchUiType", $('#formCustomers'), '', '', false, true, '');
+		}); 
 	});
 	
 	if ($.browser.safari && $.browser.version == 530.17) {

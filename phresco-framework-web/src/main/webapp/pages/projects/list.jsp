@@ -384,6 +384,7 @@
 				$(".repoTh").show();
 				$(".repoTd").show();
 			}
+			loadContent("fetchUiType", $('#formCustomers'), '', '', false, true, '');
 		});
    	});
 	
@@ -393,7 +394,7 @@
 		params = params.concat(projectId);
 		params = params.concat("&appId=");
 		params = params.concat(appId);
-		loadContent("loadMenu", $("#formCustomers"), $('#container'), params, '', true);
+		loadContent("loadMenu", $("#formCustomers"), $("#container"), params, '', true);
 	}
     
     function editProject(projectId) {

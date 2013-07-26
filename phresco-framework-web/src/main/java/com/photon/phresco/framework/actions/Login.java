@@ -82,6 +82,7 @@ public class Login extends FrameworkBaseAction {
 	private String headerBackGroundcolor="";
 	private String footerBackGroundcolor="";
 	private String userSettingColor="";
+	private String uiType="";
 	
 	private List<String> customerOptions = null;
 	private List<String> customerAllOptions = null;
@@ -192,6 +193,23 @@ public class Login extends FrameworkBaseAction {
         	} 
         	userjson.put(userId, customerId);
         	
+        	
+        	File tempUiPath = new File(Utility.getPhrescoTemp() + File.separator + USER_UITYPE_JSON);
+        	JSONObject useruijson = new JSONObject();
+        	JSONParser uiparser = new JSONParser();
+        	String uiType = ADVANCE_UI;
+        	if (tempUiPath.exists()) {
+        		FileReader reader = new FileReader(tempUiPath);
+        		useruijson = (JSONObject)uiparser.parse(reader);
+        		if (useruijson.get(userId) != null) {
+        			uiType = (String) useruijson.get(userId);
+        		}
+        		reader.close();
+        	} 
+        	useruijson.put(userId, uiType);
+        	setSessionAttribute(UI_TYPE_OPTION, uiType);
+        	
+        	
         	List<String> customerList = new ArrayList<String>();
         	for (Customer c : customers) {
 				customerList.add(c.getId());
@@ -205,6 +223,11 @@ public class Login extends FrameworkBaseAction {
         	FileWriter  writer = new FileWriter(tempPath);
         	writer.write(userjson.toString());
         	writer.close();
+        	
+        	FileWriter  uiwriter = new FileWriter(tempUiPath);
+        	uiwriter.write(useruijson.toString());
+        	uiwriter.close();
+        	
         } catch (PhrescoWebServiceException e) {
         	if(e.getResponse().getStatus() == 204) {
 				setReqAttribute(REQ_LOGIN_ERROR, getText(ERROR_LOGIN_INVALID_USER));
@@ -330,7 +353,7 @@ public class Login extends FrameworkBaseAction {
     			} else {
     				userjson = new JSONObject();
     			}
-
+    			
     			userjson.put(userId, customerId);
     			FileWriter  writer = new FileWriter(tempPath);
     			writer.write(userjson.toString());
@@ -342,6 +365,34 @@ public class Login extends FrameworkBaseAction {
 		} catch (ParseException e) {
 			return showErrorPopup(new PhrescoException(e), getText(EXCEPTION_FRAMEWORKSTREAM));
 		}
+    	return SUCCESS;
+    }
+    
+    public String fetchUiType() {
+    	try {
+    		User user = (User) getSessionAttribute(SESSION_USER_INFO);
+    		String userId = user.getId();
+    		String uiType = getUiType();
+    		File tempUIPath = new File(Utility.getPhrescoTemp() + File.separator + USER_UITYPE_JSON);
+    		JSONObject useruijson = null;
+    		JSONParser uiparser = new JSONParser();
+    		if (tempUIPath.exists()) {
+    			FileReader reader = new FileReader(tempUIPath);
+    			useruijson = (JSONObject)uiparser.parse(reader);
+    			reader.close();
+    		} else {
+    			useruijson = new JSONObject();
+    		}
+
+    		useruijson.put(userId, uiType);
+    		FileWriter  writer = new FileWriter(tempUIPath);
+    		writer.write(useruijson.toString());
+    		writer.close();
+    	} catch (IOException e) {
+    		return showErrorPopup(new PhrescoException(e), getText(EXCEPTION_FRAMEWORKSTREAM));
+    	} catch (ParseException e) {
+    		return showErrorPopup(new PhrescoException(e), getText(EXCEPTION_FRAMEWORKSTREAM));
+    	}
     	return SUCCESS;
     }
     
@@ -570,6 +621,14 @@ public class Login extends FrameworkBaseAction {
 
 	public void setUserSettingColor(String userSettingColor) {
 		this.userSettingColor = userSettingColor;
+	}
+
+	public String getUiType() {
+		return uiType;
+	}
+
+	public void setUiType(String uiType) {
+		this.uiType = uiType;
 	}
 
 }

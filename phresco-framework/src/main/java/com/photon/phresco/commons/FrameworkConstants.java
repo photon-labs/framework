@@ -98,7 +98,8 @@ public interface FrameworkConstants {
     String PROCESS_BUILD = "Process_Build";
     String EMBED_APPLICATION = "Embed_Application";
     String IMPORT = "import";
-    String FEATURE_CONFIG = "FeatureConfig"; 
+    String FEATURE_CONFIG = "FeatureConfig";
+    String UI_TYPE_OPTION ="uiOption";
     
     String REQ_CUSTOMER_ID = "customerId";
     String REQ_PROJECT_ID = "projectId";
@@ -1885,8 +1886,9 @@ public interface FrameworkConstants {
 	    String FOOTER_BACKGROUND_COLOR = "footerBackGroundcolor";
 	    String USER_SETTINGS_COLOR = "userSettingColor";
 	    String USER_JSON = "user.json";
+	    String USER_UITYPE_JSON = "uitype.json";
 	    String USER_PROJECT_JSON = "user-project.json";
-	    
+	   
 	    String PACKAGE = "package";
 	    String PHRESCO_HYPHEN_BUILD_XML = "phresco-build.xml";
 	    String SEPARATOR_SEP = "#SEP#";

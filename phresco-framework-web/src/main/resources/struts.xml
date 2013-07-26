@@ -74,6 +74,10 @@
 			<result type="json"/>
         </action>
         
+        <action name="fetchUiType" method="fetchUiType" class="com.photon.phresco.framework.actions.Login">
+			<result type="json"/>
+        </action>
+        
         <action name="fetchCustomerOptions" method="fetchCustomerOptions" class="com.photon.phresco.framework.actions.Login">
 			<result type="json"/>
         </action>
@@ -255,6 +259,10 @@
         </action>
         		
 		<action name="fetchDependentFeatures" method="fetchDependentFeatures" class="com.photon.phresco.framework.actions.applications.Features">
+        	<result type="json"/>
+        </action>
+        
+        <action name="fetchFeatureDescription" method="fetchFeatureDescription" class="com.photon.phresco.framework.actions.applications.Features">
         	<result type="json"/>
         </action>
         

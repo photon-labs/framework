@@ -163,7 +163,7 @@
 			            <section class="lft_menus_container">
 			                <span class="siteaccordion" id="siteaccordion_active">
 			                	<div id="<%= jobName %>Accordion">
-			                		<img src="images/r_arrowclose.png" class ="accImg" id="" onclick="accordionClickOperation(this);">
+			                		<img src="images/r_arrowclose.png" class ="accImg" id="" onclick="accordionClicOperation(this);">
 			                		<%
 							    		per_disabledStr = "disabled";
 										per_disabledClass = "btn-disabled";
@@ -825,7 +825,7 @@ function appendBuildList(data) {
 	}
 }
 
-function accordionClickOperation(thisObj) {
+function accordionClicOperation(thisObj) {
 	//hide pagination buttons
 	$(thisObj).closest('span').find('div.pagination').hide();
 	var jobName = $(thisObj).closest('span').find('input:checkbox:first').val();

@@ -73,7 +73,7 @@
 		    <section class="lft_menus_container">	
 				<span class="siteaccordion">
 					<div>
-						<img src="images/r_arrowclose.png" class ="accImg" id="" onclick="accordionClickOperation(this);">
+						<img src="images/r_arrowclose.png" class ="accImg" id="" onclick="accordionClkOperation(this, '<%= artifactGroup.getId()%>');">
 						<input class="feature_checkbox" type="checkbox" defaultModule="<%= defaultModule %>" canConfigure="<%= canConfigure %>" 
 							value="<%= artifactGroup.getName() %>" dispName="<%= artifactGroup.getDisplayName() %>" scope="compile" packaging="<%= artifactGroup.getPackaging() %>" onclick="checkboxEvent($('.feature_checkbox'), $('#checkAllAuto'));"/>
 						<div style="float: left; margin-left:2%;"><%= artifactGroup.getDisplayName() %></div>
@@ -90,19 +90,7 @@
 					</div>
 				</span>
 				<div class="mfbox siteinnertooltiptxt">
-					<%
-						String desc = artifactGroup.getHelpText();
-						if (StringUtils.isNotEmpty(desc)) {
-					%>
-					    <div class="scrollpanel">
-				        <section class="scrollpanel_inner">
-							<img style="float: left;" class="headerlogoimg" src="images/right1.png" alt="logo">
-							<p class="version_des">
-								<%= desc %>
-							</p>
-						</section>
-				    </div>
-				    <%} %>
+				
 				</div>
 			</section>
 		</div>
@@ -118,6 +106,7 @@
 %>
 
 <script type="text/javascript">
+
 	$(document).ready(function() {
 		hideLoadingIcon();//To hide the loading icon
 		accordionOperation();
@@ -128,6 +117,7 @@
 	
 	
 	var unCheck;
+	var arrowObj = "";
 	//To get the dependent features
 	$("input:checkbox").change(function() {
 		var jsonObjectParam = {};
@@ -210,4 +200,37 @@
 			clickToAdd();
 		} 
 	}
+	
+	
+	function accordionClkOperation(thisObj, artifactGrpId) {
+		var _tempIndex = $('.accImg').index(thisObj);
+		arrowObj = thisObj;
+		$('.mfbox').eq(_tempIndex).slideToggle(300,function() {
+			var image = $(thisObj).attr("src");
+			if (image != "images/r_arrowopen.png") {
+			  	$(thisObj).attr("src","images/r_arrowopen.png");
+			  	var descriptionContent = $(thisObj).closest('.accordion_panel_inner').find('.siteinnertooltiptxt').html();
+			  	if (isBlank(descriptionContent)) {
+			  		var params = "artifactGrpId="
+					params = params.concat(artifactGrpId);
+					loadContent("fetchFeatureDescription", '', '', params, true, true);	
+			  	}
+			} else {
+				$(thisObj).attr("src","images/r_arrowclose.png");
+			}
+			  
+		});	
+		
+	}
+	
+	function successEvent(pageUrl, data) {
+		
+		if (pageUrl === "fetchFeatureDescription" && data.featureDescription != null && data.featureDescription != "") {
+			var div = '<div class="scrollpanel"><section class="scrollpanel_inner desc_feature"><img style="float: left;" class="headerlogoimg" src="images/right1.png" alt="logo">' +
+	        '<p class="version_des"> '+data.featureDescription +
+	        '</p></section> </div>' ;
+	        $(arrowObj).closest('.accordion_panel_inner').find('.siteinnertooltiptxt').html(div);
+		}
+	}
+	
 </script>

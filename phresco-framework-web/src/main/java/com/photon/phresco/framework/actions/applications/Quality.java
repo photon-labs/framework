@@ -21,6 +21,7 @@ import static com.photon.phresco.util.Constants.PHASE_FUNCTIONAL_TEST;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -33,8 +34,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringReader;
 import java.net.HttpURLConnection;
+import java.net.InetAddress;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.net.UnknownHostException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -533,7 +536,7 @@ public class Quality extends DynamicParameterAction implements Constants {
         return APP_ENVIRONMENT_READER;
     }
 	
-	public String functional() {
+	public String functional() throws IOException {
         if (s_debugEnabled) {
             S_LOGGER.debug("Entering Method Quality.functional()");
         }
@@ -550,6 +553,8 @@ public class Quality extends DynamicParameterAction implements Constants {
             setReqAttribute(REQ_FUNCTEST_SELENIUM_TOOL, seleniumToolType);
             setReqAttribute(REQ_APPINFO, appInfo);
             if (SELENIUM_GRID.equalsIgnoreCase(seleniumToolType)) {
+            	setHubHost(appInfo);
+                setNodeHost(appInfo);
                 HubConfiguration hubConfig = getHubConfig();
                 if (hubConfig != null) {
                     String host = hubConfig.getHost();
@@ -581,6 +586,68 @@ public class Quality extends DynamicParameterAction implements Constants {
 
         return APP_FUNCTIONAL_TEST;
     }
+	
+	private void setHubHost(ApplicationInfo appInfo) throws PhrescoException, PhrescoPomException, IOException {
+		if (s_debugEnabled) {
+			S_LOGGER.debug("Entering Method Quality.setHubHost(ApplicationInfo appInfo)");
+		}
+		
+		BufferedWriter out = null;
+		FileWriter fileWriter = null;
+		try {
+			FrameworkUtil frameworkUtil = FrameworkUtil.getInstance();
+			HubConfiguration hubConfig = getHubConfig();
+			InetAddress thisIp = InetAddress.getLocalHost();
+			String hostAddress = thisIp.getHostAddress();
+			hubConfig.setHost(hostAddress);
+			String baseDir = getAppDirectoryPath(appInfo);
+			String funcDir =  frameworkUtil.getFunctionalTestDir(appInfo);
+			File hubConfigFile = new File(baseDir + funcDir + File.separator + Constants.HUB_CONFIG_JSON);
+			Gson gson = new Gson();
+			String infoJSON = gson.toJson(hubConfig);
+			fileWriter = new FileWriter(hubConfigFile);
+			out = new BufferedWriter(fileWriter);
+			out.write(infoJSON);
+		} catch(PhrescoException e) {
+			throw new PhrescoException(e);
+		} finally {
+			Utility.closeWriter(out);
+			Utility.closeStream(fileWriter);
+		}
+	}
+	
+	
+	private void setNodeHost(ApplicationInfo appInfo) throws PhrescoException, PhrescoPomException, IOException {
+		if (s_debugEnabled) {
+			S_LOGGER.debug("Entering Method Quality.setNodeHost(ApplicationInfo appInfo)");
+		}
+
+		BufferedWriter out = null;
+		FileWriter fileWriter = null;
+		try {
+			FrameworkUtil frameworkUtil = FrameworkUtil.getInstance();
+			String baseDir = getAppDirectoryPath(appInfo);
+			String funcDir =  frameworkUtil.getFunctionalTestDir(appInfo);	
+			File nodeConfigFile = new File(baseDir + funcDir + File.separator + Constants.NODE_CONFIG_JSON);
+			InetAddress thisIp = InetAddress.getLocalHost();
+			NodeConfiguration nodeConfiguration = getNodeConfig();
+			if (nodeConfiguration != null) {
+				String hostAddress = thisIp.getHostAddress();
+				nodeConfiguration.getConfiguration().setHost(hostAddress);
+				Gson gson = new Gson();
+				String infoJSON = gson.toJson(nodeConfiguration);
+				fileWriter = new FileWriter(nodeConfigFile);
+				out = new BufferedWriter(fileWriter);
+				out.write(infoJSON);
+			}
+		} catch(PhrescoException e) {
+			throw new PhrescoException(e);
+		}  finally {
+			Utility.closeWriter(out);
+			Utility.closeStream(fileWriter);
+		}
+	}
+	
 	
 	public String downloadFunctionalLogFile() throws PhrescoException {
         if (s_debugEnabled) {

@@ -47,6 +47,7 @@ import com.google.gson.JsonSyntaxException;
 import com.google.gson.reflect.TypeToken;
 import com.photon.phresco.api.ConfigManager;
 import com.photon.phresco.commons.model.ApplicationInfo;
+import com.photon.phresco.commons.model.ArtifactElement;
 import com.photon.phresco.commons.model.ArtifactGroup;
 import com.photon.phresco.commons.model.ArtifactGroupInfo;
 import com.photon.phresco.commons.model.ArtifactInfo;
@@ -144,6 +145,8 @@ public class Features extends DynamicParameterModule {
 	private String serverName = "";
 	private String databaseName = "";
 	private String featureType = "";
+	private String artifactGrpId = "";
+	private String featureDescription = "";
 	
 	private String configTemplateType = "";
 	
@@ -1015,6 +1018,15 @@ public class Features extends DynamicParameterModule {
 		}
 		return SUCCESS;
 	}
+	
+	public String fetchFeatureDescription() throws PhrescoException {
+		
+		ArtifactElement artielement = getServiceManager().getFeatureDescription(getArtifactGrpId());
+		String featDesc = artielement.getDescription();
+		setFeatureDescription(featDesc);
+		
+		return SUCCESS;
+	}
 
 	private void getDependentForDefaultFeatures(List<ArtifactGroup> artifactGroups, ArtifactInfo artifactInfo) {
 		for (String dependentId : artifactInfo.getDependencyIds()) {
@@ -1635,5 +1647,21 @@ public class Features extends DynamicParameterModule {
 
 	public void setFunctionFrameworkError(String functionFrameworkError) {
 		this.functionFrameworkError = functionFrameworkError;
+	}
+
+	public String getArtifactGrpId() {
+		return artifactGrpId;
+	}
+
+	public void setArtifactGrpId(String artifactGrpId) {
+		this.artifactGrpId = artifactGrpId;
+	}
+
+	public String getFeatureDescription() {
+		return featureDescription;
+	}
+
+	public void setFeatureDescription(String featureDescription) {
+		this.featureDescription = featureDescription;
 	}
 }
