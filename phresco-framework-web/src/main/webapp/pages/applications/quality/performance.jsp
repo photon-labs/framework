@@ -286,6 +286,7 @@
     function testResultAvailShowList() {
     	$(".noTestAvail").show(); // shows list alone
     	testResultNotAvail();
+    	hideLoadingIcon();
     }
     
 	function testResultNotAvail() {
