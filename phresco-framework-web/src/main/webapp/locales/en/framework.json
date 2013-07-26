@@ -14,7 +14,17 @@
 			"performance" : "Performance",
 			"unit" : "Unit",
 			"manual" : "Manual",
-			"component" : "Component"
+			"component" : "Component",
+			"import" : "Import",
+			"component" : "Component",
+			"projectinfo" : "Project Info",
+			"integrationtest" : "Integration Test",
+			"continuousintegration" : "Continuous Integration",
+			"jobs" : "Jobs",
+			"apistatus" : "API Status",
+			"apprepourl" : "Application Repo URL",
+			"testcheckout" : "Test Checkout",
+			"testrepourl" : "Test Repo Url"
 		}
 	},
 	"codequality" : {
@@ -48,32 +58,34 @@
 		"create" : {
 			"label" : {
 				"name" : "Name",
-				"applicationversion" : "Version",
 				"mobile" : "Mobile",
-				"types" : "Types",
-				"mobileversion" : "Version",
+				"type" : "Type",
 				"weblayer" : "Web Layer",
 				"custom" : "Custom",
 				"tablet" : "Tablet",
 				"prebuilt" : "Pre Built",
 				"artifactId" : "Artifact Id",
-				"widgetversion" : "Version",
 				"enddate" : "End Date",
 				"code" : "Code",
 				"pilotprojects" : "Pilot Projects",
 				"startdate" : "Start Date",
 				"widget" : "Widget",
+				"multimodule" : "  Multi Module",
 				"technology" : "Technology",
-				"selecttechnology" : "Select Technology",
-				"selectversion" : "Select Version",
-				"selectlayer" : "Select Layer",
-				"selectwidget" : "Select Widget",
-				"selectmodel" : "Select Model",
-				"selecttype" : "Select Type",
 				"dependency" : "Dependency",
 				"version" : "Version",
 				"description" : "Description",
-				"appcode" : "App Code"
+				"appcode" : "App Code",
+				"selwidget" : "Select Widget",
+				"seldependency" : "Select Dependency",
+				"selversion" : "Select Version",
+				"selmodel" : "Select Model",
+				"seltype" : "Select Type",
+				"projectcode" : "Project Code",
+				"projectname" : "Project Name",
+				"selpilotproject" : "Select Pilot Project",
+				"seltech" : "Select Technology",
+				"sellayer" : "Select Layer"
 			},
 			"title" : {
 				"label" : {
@@ -102,7 +114,25 @@
 			"report" : "Report",
 			"repository" : "Repository",
 			"description" : "Description",
-			"nodata" : "No Projects Available"
+			"nodata" : "No Projects Available",
+			"detailedReport" : "Detailed Report",
+			"overallReport" : "Overall Report",
+			"generate" : "Generate",
+			"svn" : "SVN",
+			"bitkeeper" : "Bitkeeper",
+			"git" : "Git",
+			"addrepo" : "Add To Repo",
+			"commit" : "Commit",
+			"headrevision" : "Head Revision",
+			"revision" : "Revision",
+			"message" : "Message",
+			"othercredential" : "Other Credential",
+			"pdfreportname" : "Pdf Report Name",
+			"notworkingcopy" : "This Project is not a working copy, add to repository and then try to commit."
+		},
+		"btn" : {
+			"addrepo" : "Add To Repo",
+			"validate" : "Validate"
 		},
 		"successmessage" : {
 			"applicationdeleted" : "Application deleted successfully"
@@ -113,16 +143,33 @@
 			"connectionalive" : "Could not delete application, connection still alive",
 			"runagainstsource" : "Could not open file 'runagainstsource.info'"
 		}
-		
 	},
 	"configuration" : {
 		"label" : {
 			"addenvironment" : "Add Environment",
+			"addconfig" : "Add Configuration",
 			"configure" : "Configure",
 			"description" : "Description",
 			"name" : "Name",
 			"clone" : "Clone",
-			"delete" : "Delete"
+			"delete" : "Delete",
+			"default" : "Default",
+			"environment" : "Environment",
+			"noenvironment" : "No Environment Available",
+			"other" : "Other",
+			"setdefault" : "Set as Default",
+			"schedule" : "Schedule"
+		},
+		"placeholder" : {
+			"envname" : "Environment Name",
+			"envdescription" : "Environment Description",
+			"enterconfigname" : "Enter Configuration Name",
+			"enterenvname" : "Enter Environment Name",
+			"enterval" : "Enter Value",
+			"enterkey" : "Enter Key",
+			"entervalidemail" : "Enter Valid Email Id",
+			"configname" : "Configuration Name",
+			"configdesc" : "Configuration Description"
 		}
 	},
 	"unit" : {
@@ -142,11 +189,14 @@
 	},
 	"testresult" : {
 	  "label" : {
-	      "testsuite"  : "Test Suite",
+	      "testeddate" : "Tested Date",
+		  "testsuite"  : "Test Suite",
 		  "total"      : "Total",
 		  "success"    : "Success",
           "failure"    : "Failure",
-          "error"      : "Error"		  
+          "error"      : "Error",
+		  "results"    : "Results",
+		  "notexecuted": "Performance test not yet executed"
 	  }
 	},
 	
@@ -166,8 +216,9 @@
              "copypath"       : "Copy Path" ,
              "test"           : "Test",
              "tableview"      : "Table View",
-             "graphview"      : "Graph View" 			 
-			 },
+             "graphview"      : "Graph View",
+			 "module"  	      : "Module" 	
+		},
 		"errormessage" : {
 			"serviceerror" : "Service Error",
 			"unexpectedfailure": "Unexpected Failure at server end"	 
@@ -186,7 +237,9 @@
 		},
 		"placeholder" : {
 			"password" : "Password",
-			"username" : "Username"
+			"username" : "Username",
+			"enterusername" : "Enter Username",
+			"enterpassword" : "Enter Password"
 		},
 		"errormessage" : {
 			"isempty": "'user' object does not exist or is empty",
@@ -201,6 +254,7 @@
 	},
 	"build" : {
 		"label" : {
+			"build" : "Build",
 			"stop" : "Stop",
 			"minifer" : "Minifer",
 			"minify" : "Minify",
@@ -208,12 +262,16 @@
 			"copypath" : "Copy Path",
 			"date" : "Date",
 			"delete" : "Delete",
-			"buildno" : "Build No",
+			"buildno" : "Build No.",
+			"browse" : "Browse",
 			"progress" : "Progress",
 			"openfolder" : "Open Folder",
 			"download" : "Download",
 			"deploy" : "Deploy",
+			"jsminification" : "JS Minification",
+			"cssminification" : "CSS Minification",
 			"generatebuild" : "Generate Build",
+			"killprocess" : "Kill Process",
 			"restart" : "Restart",
 			"ProgressMsg" : "Build in progress... Do not perform any action or refresh the page.",
 			"deleteConform" :"Are you sure to delete this?",
@@ -236,10 +294,28 @@
 			"code" : "Code",
 			"name" : "Name",
 			"servers" : "Server",
+			"selectserver" : "Select Server",
+			"selectversion" : "Select Version",
+			"selectdb" : "Select Database",
 			"description" : "Description",
 			"pilotproject" : "Pilot Project",
+			"appname" : "Application Name",
+			"appcode" : "Application Code",
 			"appdirectory" : "App Directory",
-			"webservice" : "Webservice"
+			"appdirectoryname" : "App Directory Name",
+			"testing" : "Testing",
+			"webservice" : "Webservice",
+			"funcframework" : "Functional Framework",
+			"phpunit" : "PHPunit",
+			"junit" : "Junit",
+			"testng" : "TestNG",
+			"nunit" : "Nunit",
+			"selwebdriver" : "Selenium Web Driver",
+			"selgrid" : "Selenium Grid",
+			"cucumber" : "Cucumber",
+			"entername" : "Enter Name",
+			"entercode" : "Enter Code",
+			"enterappdir" : "Enter app directory"
 		},
 		"btn" : {
 			"cancel" : "Cancel",
@@ -257,6 +333,7 @@
 	},
 	"features" : {
 		"show" : "Show Selected",
+		"norecords" : "No records",
 		"btn" : {
 			"update" : "Update",
 			"cancel" : "Cancel",
@@ -289,13 +366,56 @@
 		"jobtype" : "Job Type",
         "repo" : "Repo",
         "scheduler" : "Scheduler",
+		"buildtriggers" : "Build Triggers",
+		"croneexpression" : "Crone Expression",
+		"sendermailsettings" : "Sender Mail Settings",
+		"recipentsmailsettings" : "Recipents Mail Settings",
         "emailsettings" : "Email Settings",
         "uploadsettings" : "Upload Settings",
-        "continuousdelivery" : "Continuous Integration",
+        "continuousdelivery" : "Continuous Delivery",
         "createnewcontinuousdelivery" : "Create a New Continuous Delivery",
         "environment" : "Environment",
         "create" : "Create",
-        "close" : "Close"
+        "close" : "Close",
+		"continuousintegration" : "Continuous Integration",
+		"production" : "Production",
+		"downstreamprojects" : "Downstream Projects",
+		"downstreamcriteria" : "Downstream Criteria",
+		"cloneworkspace" : "Clone the workspace",
+		"collabnetupload" : "CollabNet Upload Settings",
+		"overwritefiles" : "Overwrite Files ?",
+        "confluenceupload" : "Confluence Upload Settings",
+		 "exportpdf" : "Export as PDF",
+		"codevalidation" : "Code Validation",
+        "performancetest" : "Performance Test",
+        "loadtest" : "Load Test",
+		"pdfreport" : "PDF Report",
+		"collabnet" : "Collabnet",
+		"confluence" : "Confluence",	
+		"cobertura" : "Cobertura",
+		"success" : "Trigger only if build succeeds",
+		"unstable" : "Trigger even if the build is unstable",
+		"failure" : "Trigger even if the build fails",
+		"datetime" : "Date & Time",
+		"status" : "Status",
+		"buildperiodically" : "Build Periodically",
+		"pollscm" : "Poll SCM",
+		"selectdownstream" : "Select DownStream",
+		"cdjobsnotavailable" : "Continuous Delivery Jobs not available",
+		"jobtempnotavailable" : "Job Templates not available",
+		"daily" : "Daily",
+		"weekly" : "Weekly",	
+		"monthly" : "Monthly",
+		"placeholder" : {
+			"jobname" : "Job Name",
+			"svnurl" : "SVN Url",
+			"url" : "URL",
+			"project" : "Project",
+			"package" : "Package",
+			"release" : "Release",
+			"whensuccess" : "When Success",
+			"whenfailure" : "When Failure"
+		}
     }, 
 	"edit" : {
 		"label" : {
@@ -316,7 +436,8 @@
 			"version" : "Version",
 			"appcode" : "App Code",
 			"mobileversion" : "Version",
-			"technology" : "Technology"
+			"technology" : "Technology",
+			"tools" : "Tools"
 		},
 		"title" : {
 			"label" : {
@@ -354,6 +475,33 @@
 			"help" : "Help"
 		}
 	},
+	
+	"common" : {
+		"btn" : {
+			"add" : "Add",
+			"ok" : "OK",
+			"run" : "Run",
+			"cancel" : "Cancel",
+			"create" : "Create",
+			"close" : "Close",
+			"update" : "Update",
+			"yes" : "Yes",
+			"no" : "No",
+			"updateapp" : "Update Application",
+			"all" : "All",
+			"start" : "Start"
+		}
+	},
+	
+	"test" : {
+		"label" : {
+			"copypath" : "Copy Path",
+			"test" : "Test",
+			"starthub" : "Start Hub",
+			"startnode" : "Start Node"
+		}
+	},
+	
 	"footer" : {
 		"label" : {
 			"copyrights" : "2013.Photon Infotech Pvt Ltd. | www.photon.in"

@@ -12,25 +12,25 @@
                                 </tr>
                                 <tr>
                                   <td>
-                                    <input type="text" placeholder="Job Name" name="name" value="">
+                                    <input type="text" data-i18n="[placeholder]ci.placeholder.jobname" name="name" value="">
                                     <input type="hidden" name="oldname" value="">
                                   </td>
                                   <td>
                                       <select name="type" class="selectpicker">
-                                            <option value="codeValidation">Code Validation</option>
-                                            <option value="build">Build</option>
-                                            <option value="deploy">Deploy</option>
-                                            <option value="unittest">Unit Test</option>
-                                            <option value="componentTest">Component Test</option>
-                                            <option value="functionalTest">Functional Test</option>
-                                            <option value="performanceTest">Performance Test</option>
-                                            <option value="loadTest">Load Test</option>
-                                            <option value="pdfReport">PDF Report</option>
+											<option value="codeValidation" data-i18n="ci.codevalidation"></option>
+											<option value="build" data-i18n="build.label.build"></option>
+											<option value="deploy" data-i18n="build.label.deploy"></option>
+											<option value="unittest" data-i18n="unit.label.unittest"></option>
+											<option value="componentTest" data-i18n="component.label.componenttest"></option>
+											<option value="functionalTest" data-i18n="codequality.functionaltest"></option>
+											<option value="performanceTest" data-i18n="ci.performancetest"></option>
+											<option value="loadTest" data-i18n="ci.loadtest"></option>
+											<option value="pdfReport" data-i18n="ci.pdfreport"></option>
                                       </select>
                                   </td>
                                 </tr>
                                 <tr>
-									<td data-i18n="ci.application" colspan="2"><sup>*</sup></td>
+									<td><span data-i18n="ci.application" colspan="2"></span><sup>*</sup></td>
                                 </tr>
 								<tr>
 									<td colspan="2"><select id="appIds" name="appIds" class="selectpicker" multiple data-selected-text-format="count>1"></select></td>
@@ -40,26 +40,26 @@
                          <table id="features" class="table table_template" cellpadding="0" cellspacing="0" border="0">
                             <tbody>
                                 <tr>
-                                    <td><input name="enableRepo" type="checkbox">Repo</td>
+                                    <td><input name="enableRepo" type="checkbox"><span data-i18n="ci.repo"></span></td>
                                     <td><select name="repoTypes" class="selectpicker">
-                                              <option value="svn">SVN</option>
-                                              <option value="git">Git</option>
+                                              <option value="svn" data-i18n="projectlist.label.svn"></option>
+											  <option value="git" data-i18n="projectlist.label.git"></option>
                                         </select>
                                     </td>
                                 </tr>
                                 <tr>
-                                    <td><input type="checkbox" name="enableSheduler">Scheduler</td>
+                                    <td><input type="checkbox" name="enableSheduler"><span data-i18n="ci.scheduler"></span></td>
                                 </tr>
                                 <tr>
-                                    <td><input type="checkbox" name="enableEmailSettings">Email Settings</td>
+                                    <td><input type="checkbox" name="enableEmailSettings"><span data-i18n="ci.emailsettings"></span></td>
                                 </tr>
                                 <tr>
-                                    <td><input type="checkbox" name="enableUploadSettings">Upload Settings</td>
+                                    <td><input type="checkbox" name="enableUploadSettings"><span data-i18n="ci.uploadsettings"></span></td>
 									<td>
 										<select name="uploadTypes" class="selectpicker" multiple data-selected-text-format="count>1">
-										  <option value="Collabnet">Collabnet</option>
-										  <option value="Confluence">Confluence</option>
-                      <option value="Cobertura">Cobertura</option>
+										 	<option value="Collabnet" data-i18n="ci.collabnet"></option>
+											<option value="Confluence" data-i18n="ci.confluence"></option>
+											<option value="Cobertura" data-i18n="ci.cobertura"></option>
 										</select>
 									</td>
                                 </tr>
@@ -100,8 +100,8 @@
                           
                           <div id="yesnopopup_{{name}}" name="{{name}}" class="dyn_popup"> Are you sure to delete this ?
                           <div>
-                            <input type="button" value="Yes" class="btn btn_style" name="delete">
-                            <input type="button" value="No" class="btn btn_style dyn_popup_close">
+                            <input type="button" value="Yes" data-i18n="[value]common.btn.yes" class="btn btn_style" name="delete">
+                            <input type="button" value="No" data-i18n="[value]common.btn.no" class="btn btn_style dyn_popup_close">
                           </div>
                       </td>
                     </tr>
@@ -109,7 +109,7 @@
               </tbody>
         </table>
         {{else}}
-            <div class="alert alert-block" style="text-align: center; margin: auto 0;">Job Templates not available</div>
+            <div class="alert alert-block" style="text-align: center; margin: auto 0;" data-i18n="ci.jobtempnotavailable"></div>
         {{/if}}
         </div>
       <!--content_main div ends here -->

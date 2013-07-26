@@ -1,7 +1,5 @@
     <section class="optiontitle qual_unit">
-        <div class="unit_text">
-            Continuous Delivery
-        </div>      
+        <div class="unit_text" data-i18n="ci.continuousintegration"></div>      
     </section>
     
     <section class="content_main code_content">
@@ -10,7 +8,7 @@
             <table class="table" id="continuousDeliveryNameDiv">
                 <tbody>
                     <tr>
-                        <td>Name</td>
+                        <td data-i18n="configuration.label.name"></td>
                         <td><input name="continuousDeliveryName" type="text"></td>
                     </tr>
                 </tbody>
@@ -19,7 +17,7 @@
             <table class="table" id="envornmentDiv">
                 <tbody>
                     <tr>
-                        <td rowspan="3">Environment</td>
+                        <td rowspan="3" data-i18n="ci.environment"> </td>
                         <td>
                             <select name="environments">
                                 {{#environment environments true}}{{/environment}}
@@ -33,7 +31,7 @@
         <div class="sortablecont">
                 <!-- Drag Drop section 1 starts -->
                 <ul id="sortable1" class="connectedSortable type_test">
-<!--                     <div class="sorthead">Web Service</div>
+<!--                     <div class="sorthead" data-i18n="application.edit.webservice"> </div>
                     <li class="ui-state-default">Webservice - Unit Test</li>
                     <li class="ui-state-default">Webservice - Build</li>
                     <li class="ui-state-default">Webservice - Code Validation</li>
@@ -70,25 +68,25 @@
                     <table id="jobName" class="clonetable jobName" width="100%" border="0" cellspacing="0" cellpadding="0">
                         <tbody>
                                 <tr>
-                                    <td><input name="jobName" type="text" placeholder="Job Name"></td>
+                                    <td><input name="jobName" type="text" data-i18n="[placeholder]ci.placeholder.jobname"></td>
                                 </tr>
                          </tbody>
                      </table>
 
-                     <!-- Basic Sttings starts here -->
+                     <!-- Basic Settings starts here -->
                      <table id="repoType" class="table table-striped table_border table-bordered" cellpadding="0" cellspacing="0" border="0">
                         <thead>
                             <tr>
-                                <th colspan="4">Repo</th>
+                                <th colspan="4" data-i18n="ci.repo"></th>
                             </tr>
                         </thead>
                         <tbody>
                             <tr>
                                 <td>
-                                    <input name="svnUrl" type="text" placeholder="SVN Url">
+                                    <input name="svnUrl" type="text" data-i18n="[placeholder]ci.placeholder.svnurl">
                                 </td>
-                                <td><input name="username" type="text" placeholder="Username"></td>
-                                <td><input name="password" type="password" placeholder="Password"></td>
+                                <td><input name="username" type="text" data-i18n="[placeholder]login.placeholder.username"></td>
+                                <td><input name="password" type="password" data-i18n="[placeholder]login.placeholder.password"></td>
                             </tr>
                         </tbody>
                     </table>
@@ -96,25 +94,23 @@
                     <table id="scheduler" class="table table-striped table_border table-bordered" cellpadding="0" cellspacing="0" border="0">
                         <thead>
                             <tr>
-                                <th colspan="4">Scheduler</th>
+                                <th colspan="4" data-i18n="ci.scheduler"> </th>
                             </tr>
                         </thead>
                         <tbody id="testBody">
                             <tr>
                                 <td colspan="4">
-                                    <div class="build_trigger">
-                                            Build Triggers <br>
-                                            <input id="buildPeriodically" name="triggers" type="checkbox" value="TimerTrigger">
-                                            <span> Build Periodically</span>
-                                            <input id="pollSCM" name="triggers" type="checkbox" value="SCMTrigger">Pol SCM
+                                    <div class="build_trigger" data-i18n="ci.buildtriggers"><br>
+                                        <input id="buildPeriodically" name="triggers" type="checkbox" value="TimerTrigger"><span data-i18n="ci.buildperiodically"></span>
+                                        <input id="pollSCM" name="triggers" type="checkbox" value="SCMTrigger"><span data-i18n="ci.pollscm"></span>
                                     </div>
                                 </td>
                             </tr> 
                             <tr id="scheduleExpression">
                             	<td colspan="4">
-                            		<input type="radio" name="scheduleOption" value="Daily" checked><span>Daily</span>
-                            		<input type="radio" name="scheduleOption" value="Weekly"><span>Weekly</span>
-                            		<input type="radio" name="scheduleOption" value="Monthly"><span>Monthly</span>
+                            		<input type="radio" name="scheduleOption" value="Daily" checked><span data-i18n="ci.daily"></span>
+                            		<input type="radio" name="scheduleOption" value="Weekly"><span data-i18n="ci.weekly"></span>
+                            		<input type="radio" name="scheduleOption" value="Monthly"><span data-i18n="ci.monthly"></span>
                             	</td>
                             </tr>
                         </tbody>
@@ -122,7 +118,7 @@
 					<table id="cronPreview" class="table table-striped table_border table-bordered" cellspacing="0" cellpadding="0" border="0">
 						<thead>
 							<tr> 
-								<th colspan="2">Cron Expression</th>
+								<th colspan="2" data-i18n="ci.croneexpression"></th>
 							</tr>
 						</thead>
 						<tbody>
@@ -140,45 +136,45 @@
                     <table id="mailSettings" class="table table-striped table_border table-bordered mail_settings" cellpadding="0" cellspacing="0" border="0">
                         <thead>
                             <tr>
-                                <!--<th colspan="2">Sender Mail Settings</th>-->
-                                <th colspan="2">Recipents Mail Settings</th>
+                                <!--<th colspan="2" data-i18n="ci.sendermailsettings"></th>-->
+                                <th colspan="2" data-i18n="ci.recipentsmailsettings"></th>
                             </tr>
                         </thead>
                         <tbody>
                             <tr>
                                 <!--<td><input name="senderEmailId" type="text" placeholder="Email"></td>
-                                <td><input name="senderEmailPassword" type="password" placeholder="Password"></td>-->
-                                <td><input name="successEmailIds" type="text" placeholder="When Success"></td>
-                                <td><input name="failureEmailIds" type="text" placeholder="When Faliure"></td>
+                                <td><input name="senderEmailPassword" type="password" data-i18n="[placeholder]login.placeholder.password"></td>-->
+                                <td><input name="successEmailIds" type="text" data-i18n="[placeholder]ci.placeholder.whensuccess"></td>
+                                <td><input name="failureEmailIds" type="text" data-i18n="[placeholder]ci.placeholder.whenfailure"></td>
                             </tr>
                         </tbody>
                     </table>
-                    <!-- Basic Sttings ends here -->
+                    <!-- Basic Settings ends here -->
 
                     <!-- Clone and Downstream specification starts -->
                     <div id="downstreamConfig">
                         <table class="table table-striped table_border table-bordered" border="0" cellspacing="0" cellpadding="0">
                             <tbody>
                                 <tr>
-                                    <td>Downstream projects</td>
+                                    <td data-i18n="ci.downstreamprojects"></td>
                                     <td>
                                         <select id="downstreamApplication" name="downstreamApplication">
-                                            <option value="">-- Select DownStream --</option>
+                                            <option value="" data-i18n="ci.selectdownstream"></option>
                                         </select>
                                     </td>
                                 </tr>
                                 <tr>
-                                    <td>Downstream criteria</td>
+                                    <td data-i18n="ci.downstreamcriteria"></td>
                                     <td>
                                         <select id="downstreamCriteria" name="downstreamCriteria">
-                                            <option value="SUCCESS">Trigger only if build succeeds</option>
-                                            <option value="UNSTABLE">Trigger even if the build is unstable</option>
-                                            <option value="FAILURE">Trigger even if the build fails</option>
+                                            <option value="SUCCESS" data-i18n="ci.success"></option>
+                                            <option value="UNSTABLE" data-i18n="ci.unstable"></option>
+                                            <option value="FAILURE" data-i18n="ci.failure"></option>
                                         </select>
                                     </td>
                                 </tr>
                                 <tr>
-                                    <td>Clone the workspace</td>
+                                    <td data-i18n="ci.cloneworkspace"></td>
                                     <td>
                                         <input type="radio" name="cloneWorkspace" value="true" />&nbsp; Yes
                                         <input type="radio" name="cloneWorkspace" value="false" checked/>&nbsp; No
@@ -203,25 +199,25 @@
                         <table id="collabnetUploadSettings" class="table table-striped table_border table-bordered" cellpadding="0" cellspacing="0" border="0">
                             <thead>
                                 <tr>
-                                    <th colspan="3">CollabNet Upload Settings</th>
+                                    <th colspan="3" data-i18n="ci.collabnetupload"></th>
                                 </tr>
                             </thead>
                             <tbody>
                                 <tr>
-                                    <td colspan="3">Overwrite Files ?
+                                    <td colspan="3" data-i18n="ci.overwritefiles">
                                         <input type="radio" name="collabNetoverWriteFiles" checked>Yes
                                         <input type="radio" name="collabNetoverWriteFiles">No
                                     </td>
                                 </tr>
                                 <tr>
-                                    <td><input type="text" placeholder="Url"></td>
-                                    <td><input type="text" placeholder="Username"></td>
-                                    <td><input type="password" placeholder="Password"></td>
+                                    <td><input type="text" data-i18n="[placeholder]ci.placeholder.url"></td>
+                                    <td><input type="text" data-i18n="[placeholder]login.placeholder.username"></td>
+                                    <td><input type="password" data-i18n="[placeholder]login.placeholder.password"></td>
                                 </tr>
                                 <tr>
-                                    <td><input name="collabNetProject" type="text" placeholder="Project"></td>
-                                    <td><input name="collabNetPackage" type="text" placeholder="Package"></td>
-                                    <td><input name="collabNetRelease" type="text" placeholder="Release"></td>
+                                    <td><input name="collabNetProject" type="text" data-i18n="[placeholder]ci.placeholder.project"></td>
+                                    <td><input name="collabNetPackage" type="text" data-i18n="[placeholder]ci.placeholder.package"></td>
+                                    <td><input name="collabNetRelease" type="text" data-i18n="[placeholder]ci.placeholder.release"></td>
                                 </tr>
                             </tbody>
                         </table>
@@ -229,41 +225,41 @@
                         <table id="confluenceUploadSettings" class="table table-striped table_border table-bordered" cellpadding="0" cellspacing="0" border="0">
                             <thead>
                                 <tr>
-                                    <th colspan="3">Confluence Upload Settings</th>
+                                    <th colspan="3" data-i18n="ci.confluenceupload"></th>
                                 </tr>
                             </thead>
                             <tbody>
                                 <tr>
-                                    <td colspan="3">Overwrite Files ?
+                                    <td colspan="3" data-i18n="ci.overwritefiles">
                                         <input type="radio" name="collabNetoverWriteFiles" checked>Yes
                                         <input type="radio" name="collabNetoverWriteFiles">No
                                     </td>
                                 </tr>
                                 <tr>
-                                    <td><input type="text" placeholder="Url"></td>
-                                    <td><input type="text" placeholder="Username"></td>
-                                    <td><input type="password" placeholder="Password"></td>
+                                    <td><input type="text" data-i18n="[placeholder]ci.placeholder.url"></td>
+                                    <td><input type="text" data-i18n="[placeholder]login.placeholder.username"></td>
+                                    <td><input type="password" data-i18n="[placeholder]login.placeholder.password"></td>
                                 </tr>
                                 <tr>
-                                    <td><input name="collabNetProject" type="text" placeholder="Project"></td>
-                                    <td><input name="collabNetPackage" type="text" placeholder="Package"></td>
-                                    <td><input name="collabNetRelease" type="text" placeholder="Release"></td>
+                                    <td><input name="collabNetProject" type="text" data-i18n="[placeholder]ci.placeholder.project"></td>
+                                    <td><input name="collabNetPackage" type="text" data-i18n="[placeholder]ci.placeholder.package"></td>
+                                    <td><input name="collabNetRelease" type="text" data-i18n="[placeholder]ci.placeholder.release"></td>
                                 </tr>
                             </tbody>
                         </table>
                     </div>
                     <!-- Upload Settings ends here -->
 
-                    <!-- Job confiure buttons starts -->
+                    <!-- Job configure buttons starts -->
                      
                     
-                    <!-- Job confiure buttons ends -->
+                    <!-- Job configure buttons ends -->
                 </form>
             </div>
             <span id='errMsg' class="flt_left"/>  
             <div id="popupBtns" class="flt_right">
-                <input class="btn btn_style" type="button" appname="" appDirName="" jobtemplatename="" name="configure" value="Configure">
-                <input class="btn btn_style dyn_popup_close" type="button" value="Close">
+                <input class="btn btn_style" type="button" appname="" appDirName="" jobtemplatename="" name="configure" value="Configure" data-i18n="[value]configuration.label.configure">
+                <input class="btn btn_style dyn_popup_close" type="button" value="Close" data-i18n="[value]common.btn.close">
             </div>
        </div>
 	   <div id="crone_triggered" class="dyn_popup" style="display:none">
@@ -271,14 +267,14 @@
 						<table class="table table-striped table_border table-bordered" border="0" cellpadding="0" cellspacing="0">
 							<thead>
 								<tr>
-									<th>Date</th> 
+									<th data-i18n="build.label.date"></th> 
 								</tr>
 							</thead>
 							<tbody name="scheduleDates">
 							</tbody>
 						</table> 
 						<div id="popupBtns" class="flt_right">
-							<input class="btn btn_style dyn_popupcon_close" type="button" value="Close">
+							<input class="btn btn_style dyn_popupcon_close" type="button" value="Close" data-i18n="[value]common.btn.close">
 						</div>
 					</div>
         <!-- popup ends -->
@@ -289,8 +285,8 @@
     <!-- Global buttons starts -->
     <section class="content_end">        
         <div class="flt_right">
-            <a href="javascript:;"><input type="submit" value="Add" class="btn btn_style add_icon_btn"></a>
-            <input type="submit" value="Cancel" class="btn btn_style cancel_icon_btn">
+            <a href="javascript:;"><input type="submit" value="Add" data-i18n="[value]common.btn.add" class="btn btn_style add_icon_btn"></a>
+            <input type="submit" value="Cancel" data-i18n="[value]common.btn.close" class="btn btn_style cancel_icon_btn">
         </div>
         <!--content_title ends here -->
     </section>
