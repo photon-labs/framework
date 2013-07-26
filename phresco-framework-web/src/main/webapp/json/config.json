@@ -65,6 +65,11 @@
 			"path" : "../components/configuration/js"
 		},
 		
+		"croneExpression" : {
+			"moduleName":"croneExpression",
+			"path" : "../components/croneExpression/js"
+		},	
+		
 		"dynamicPage" : {
 			"moduleName":"dynamicPage",
 			"path" : "../components/dynamicPage/js"

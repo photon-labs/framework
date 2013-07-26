@@ -316,8 +316,8 @@ define(["features/features"], function(Features) {
 					start();
 					var selectoption = $(commonVariables.contentPlaceholder).find("#feature_7077da20-a2cc-41bc-b822-84c66ee1fe4e").attr("class"); 
 					equal(selectoption, "switch switchOn", "Defentent Service Verification Tested");
-					require(["codequalityTest"], function(codequalityTest){
-						codequalityTest.runTests();
+					require(["croneExpressionTest"], function(croneExpressionTest){
+						croneExpressionTest.runTests();
 					});
 				}, 2000);
 			});
