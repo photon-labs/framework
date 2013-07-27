@@ -211,7 +211,6 @@ define(["features/features",  "application/application",  "projectlist/projectLi
 		},
 		
 		bcheck : function(obj, buttonId){
-			console.info("buttonId", buttonId);
 			var self = this;
 			var button = $(obj).attr("value");
 			var versionID = $(obj).parent().next('div.flt_right').children('select.input-mini').find(':selected').val();

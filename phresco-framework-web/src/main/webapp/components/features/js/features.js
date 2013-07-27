@@ -234,7 +234,6 @@ define(["features/listener/featuresListener"], function() {
 			 
 			$("input[name=on_off]").unbind();
 			$("input[name=on_off]").bind("click", function() {
-				console.info("input");
 				var button = $(this).val();
 				if(button === 'off'){ $(this).closest('fieldset').css('background-position', 'right'); }
 				if(button === 'on'){ $(this).closest('fieldset').css('background-position', 'left'); }	
