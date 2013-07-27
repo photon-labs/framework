@@ -14,7 +14,16 @@
 			"performance" : "Performance",
 			"unit" : "Unit",
 			"manual" : "Manual",
-			"component" : "Component"
+			"import" : "Import",
+			"component" : "Component",
+			"projectinfo" : "Project Info",
+			"integrationtest" : "Integration Test",
+			"continuousintegration" : "Continuous Integration",
+			"jobs" : "Jobs",
+			"apistatus" : "API Status",
+			"apprepourl" : "Application Repo URL",
+			"testcheckout" : "Test Checkout",
+			"testrepourl" : "Test Repo Url"
 		},
 		"errormessage" : {
 			"invalidcredentials" : "Invalid credentials",
@@ -26,17 +35,6 @@
 		},
 		"successmessage" : {
 			"importsuccess" : "Project imported successfully"
-			"component" : "Component",
-			"import" : "Import",
-			"component" : "Component",
-			"projectinfo" : "Project Info",
-			"integrationtest" : "Integration Test",
-			"continuousintegration" : "Continuous Integration",
-			"jobs" : "Jobs",
-			"apistatus" : "API Status",
-			"apprepourl" : "Application Repo URL",
-			"testcheckout" : "Test Checkout",
-			"testrepourl" : "Test Repo Url"
 		}
 	},
 	"codequality" : {

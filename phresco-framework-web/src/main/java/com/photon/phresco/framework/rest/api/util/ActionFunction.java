@@ -28,6 +28,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.ws.rs.core.Response;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
@@ -53,6 +54,8 @@ import com.photon.phresco.commons.model.ArtifactInfo;
 import com.photon.phresco.commons.model.Customer;
 import com.photon.phresco.commons.model.ProjectInfo;
 import com.photon.phresco.commons.model.RepoInfo;
+import com.photon.phresco.commons.model.Technology;
+import com.photon.phresco.commons.model.TechnologyInfo;
 import com.photon.phresco.configuration.ConfigurationInfo;
 import com.photon.phresco.exception.ConfigurationException;
 import com.photon.phresco.exception.PhrescoException;
@@ -63,12 +66,15 @@ import com.photon.phresco.framework.api.ApplicationManager;
 import com.photon.phresco.framework.api.CIManager;
 import com.photon.phresco.framework.api.ProjectManager;
 import com.photon.phresco.framework.commons.FrameworkUtil;
+import com.photon.phresco.framework.rest.api.QualityService;
+import com.photon.phresco.framework.rest.api.ResponseInfo;
 import com.photon.phresco.framework.rest.api.RestBase;
 import com.photon.phresco.impl.ConfigManagerImpl;
 import com.photon.phresco.plugins.model.Mojos.ApplicationHandler;
 import com.photon.phresco.plugins.model.Mojos.Mojo.Configuration.Parameters.Parameter;
 import com.photon.phresco.plugins.model.Mojos.Mojo.Configuration.Parameters.Parameter.Childs.Child;
 import com.photon.phresco.plugins.model.Mojos.Mojo.Configuration.Parameters.Parameter.MavenCommands.MavenCommand;
+import com.photon.phresco.plugins.model.Mojos.Mojo.Configuration.Parameters.Parameter.PossibleValues.Value;
 import com.photon.phresco.plugins.util.MojoProcessor;
 import com.photon.phresco.plugins.util.MojoUtil;
 import com.photon.phresco.service.client.api.ServiceManager;
@@ -81,9 +87,10 @@ import com.photon.phresco.util.Utility;
 import com.phresco.pom.exception.PhrescoPomException;
 import com.phresco.pom.model.Model.Modules;
 import com.phresco.pom.util.PomProcessor;
+import com.sun.jersey.api.client.ClientResponse.Status;
 
 
-public class ActionFunction implements Constants ,FrameworkConstants,ActionServiceConstant, ResponseCodes {
+public class ActionFunction extends RestBase implements Constants ,FrameworkConstants,ActionServiceConstant, ResponseCodes {
 
 	private final String PHASE_RUNAGAINST_SOURCE = "run-against-source";
 	public static final java.lang.String SERVICE_URL = "phresco.service.url";
@@ -347,7 +354,19 @@ public class ActionFunction implements Constants ,FrameworkConstants,ActionServi
 			// performance xml check
 			if (StringUtils.isEmpty(isIphone)) {
 				if (!xmlResultsAvailable) {
-					 xmlResultsAvailable = performanceTestResultAvail(appInfo);
+					 QualityService qualityService = new QualityService();
+					FrameworkServiceUtil fsu = new FrameworkServiceUtil();
+					MojoProcessor mojo = new MojoProcessor(new File(fsu.getPhrescoPluginInfoFilePath(Constants.PHASE_PERFORMANCE_TEST, 
+							Constants.PHASE_PERFORMANCE_TEST, appInfo.getAppDirName())));
+					List<String> testAgainsts = new ArrayList<String>();
+					Parameter testAgainstParameter = mojo.getParameter(Constants.PHASE_PERFORMANCE_TEST, REQ_TEST_AGAINST);
+					if (testAgainstParameter != null && TYPE_LIST.equalsIgnoreCase(testAgainstParameter.getType())) {
+						List<Value> values = testAgainstParameter.getPossibleValues().getValue();
+						for (Value value : values) {
+							testAgainsts.add(value.getKey());
+						}
+					}
+					xmlResultsAvailable =qualityService.testResultAvail(appInfo.getAppDirName(), testAgainsts, Constants.PHASE_PERFORMANCE_TEST);
 				}
 			}
 
@@ -415,10 +434,13 @@ public class ActionFunction implements Constants ,FrameworkConstants,ActionServi
 					sb.append(performanceReportDir);
 				}
 				File file = new File(sb.toString());
-				File[] children = file.listFiles(new XmlNameFileFilter(FILE_EXTENSION_XML));
-				if (!ArrayUtils.isEmpty(children)) {
-					isResultFileAvailable = true;
-					break;
+				String resultExtension = FrameworkServiceUtil.getPerformanceResultFileExtension(appInfo.getAppDirName());
+				if (StringUtils.isNotEmpty(resultExtension)) {
+					File[] children = file.listFiles(new XmlNameFileFilter(resultExtension));
+					if (!ArrayUtils.isEmpty(children)) {
+						isResultFileAvailable = true;
+						break;
+					}
 				}
 			}
 		} catch (Exception e) {
@@ -1437,6 +1459,15 @@ public class ActionFunction implements Constants ,FrameworkConstants,ActionServi
 			String customerId = projectInfo.getCustomerIds().get(0);
 
 			ApplicationInfo applicationInfo = projectInfo.getAppInfos().get(0);
+			String techId = applicationInfo.getTechInfo().getId();
+			ServiceManager serviceManager = CONTEXT_MANAGER_MAP.get(userId);
+			if (serviceManager == null) {
+				response.setStatus(ActionServiceConstant.SUCCESS);
+				response.setLog(ActionServiceConstant.SUCCESS);
+				response.setService_exception("Unauthorized User ");
+				return response;
+			} 
+			Technology technology = serviceManager.getTechnology(techId);
 			StringBuilder sb = new StringBuilder(FrameworkServiceUtil.getApplicationHome(appDirName));
 			sb.append(File.separator);
 			sb.append(FOLDER_DOT_PHRESCO);
@@ -1465,6 +1496,8 @@ public class ActionFunction implements Constants ,FrameworkConstants,ActionServi
 	            		parameter.setValue(getThemeColorJson(userId, customerId));
 	            	} else if (REQ_REPORT_NAME.equals(key)) {
 	            		parameter.setValue(pdfName);
+	            	} else if ("technologyName".equals(key)) {
+	            		parameter.setValue(technology.getName());
 	            	}
 				}
 			}
