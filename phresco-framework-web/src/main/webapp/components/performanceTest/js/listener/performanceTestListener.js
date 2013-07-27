@@ -358,7 +358,7 @@ define([], function() {
 				$("#noReport").hide();
 				$("#availablePdfRptsTbl").show();
 				var content = "";
-				for (i in pdfReports) {
+				for (var i = 0; i < pdfReports.length; i++) {
 					content = content.concat('<tr class="generatedRow"><td>' + pdfReports[i].time + '</td>');
 					content = content.concat('<td>' + pdfReports[i].type + '</td>');
 					content = content.concat('<td><a class="tooltiptop donloadPdfReport" fileName="' + pdfReports[i].fileName + '" href="#"');

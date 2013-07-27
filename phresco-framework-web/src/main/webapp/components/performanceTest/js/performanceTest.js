@@ -11,7 +11,6 @@ define(["performanceTest/listener/performanceTestListener"], function() {
 		onTabularViewEvent : null,
 		onGraphicalViewEvent : null,
 		onDynamicPageEvent : null,
-		onRunPerformanceTestEvent : null,
 		onShowHideConsoleEvent : null,
 		onShowPdfPopupEvent : null,
 		getResultEvent : null,
@@ -35,6 +34,27 @@ define(["performanceTest/listener/performanceTestListener"], function() {
 			if (self.performanceTestListener === null ) {
 				self.performanceTestListener = new Clazz.com.components.performanceTest.js.listener.PerformanceTestListener();
 			}
+			self.getDynamicPageObject();
+			self.resultViewSignals();
+			self.getResultEventSignals();
+			self.deviceEventSignals();
+			self.pdfReportEventSignals();
+			self.testTriggerSignals();
+			self.registerEvents(self.performanceTestListener);
+		},
+		
+		getDynamicPageObject : function () {
+			var self = this;
+			if (self.dynamicpage === null){
+				commonVariables.navListener.getMyObj(commonVariables.dynamicPage, function(retVal){
+					self.dynamicpage = retVal;
+					self.dynamicPageListener = self.dynamicpage.dynamicPageListener;
+				});
+			}
+		},
+
+		resultViewSignals : function () {
+			var self = this;
 			if (self.onTabularViewEvent === null) {
 				self.onTabularViewEvent = new signals.Signal();
 			}
@@ -44,11 +64,10 @@ define(["performanceTest/listener/performanceTestListener"], function() {
 				self.onGraphicalViewEvent = new signals.Signal();
 			}
 			self.onGraphicalViewEvent.add(self.performanceTestListener.onGraphicalView, self.performanceTestListener);
-			
-			if (self.onRunPerformanceTestEvent === null) {
-				self.onRunPerformanceTestEvent = new signals.Signal();
-			}
-			
+		},
+
+		getResultEventSignals : function () {
+			var self = this;
 			if (self.onShowHideConsoleEvent === null) {
 				self.onShowHideConsoleEvent = new signals.Signal();
 			}
@@ -63,7 +82,10 @@ define(["performanceTest/listener/performanceTestListener"], function() {
 				self.getResultFilesEvent = new signals.Signal();
 			}
 			self.getResultFilesEvent.add(self.performanceTestListener.getResultFiles, self.performanceTestListener);
-			
+		},
+
+		deviceEventSignals : function () {
+			var self = this;
 			if (self.getDeviceEvent === null) {
 				self.getDeviceEvent = new signals.Signal();
 			}
@@ -73,19 +95,10 @@ define(["performanceTest/listener/performanceTestListener"], function() {
 				self.onDeviceChangeEvent = new signals.Signal();
 			}
 			self.onDeviceChangeEvent.add(self.performanceTestListener.getResultOnChangeEvent, self.performanceTestListener);
+		},
 
-			if (self.dynamicpage === null){
-				commonVariables.navListener.getMyObj(commonVariables.dynamicPage, function(retVal){
-					self.dynamicpage = retVal;
-					self.dynamicPageListener = self.dynamicpage.dynamicPageListener;
-				});
-			}
-
-			if (self.preTriggerPerformanceTest === null) {
-				self.preTriggerPerformanceTest = new signals.Signal();
-			}
-			self.preTriggerPerformanceTest.add(self.performanceTestListener.preTriggerPerformanceTest, self.performanceTestListener);
-
+		pdfReportEventSignals : function () {
+			var self = this;
 			if (self.onShowPdfPopupEvent === null) {
 				self.onShowPdfPopupEvent = new signals.Signal();
 			}
@@ -96,10 +109,16 @@ define(["performanceTest/listener/performanceTestListener"], function() {
 				self.onGeneratePdfEvent = new signals.Signal();
 			}
 			self.onGeneratePdfEvent.add(self.performanceTestListener.generatePdfReport, self.performanceTestListener);
-
-			self.registerEvents(self.performanceTestListener);
 		},
-		
+
+		testTriggerSignals : function () {
+			var self = this;
+			if (self.preTriggerPerformanceTest === null) {
+				self.preTriggerPerformanceTest = new signals.Signal();
+			}
+			self.preTriggerPerformanceTest.add(self.performanceTestListener.preTriggerPerformanceTest, self.performanceTestListener);
+		},
+
 		registerEvents : function(performanceTestListener) {
 			var self = this;
 			
