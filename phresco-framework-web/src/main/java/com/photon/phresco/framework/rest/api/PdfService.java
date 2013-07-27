@@ -80,7 +80,7 @@ public class PdfService extends RestBase implements FrameworkConstants, Constant
 	 */
 	@GET
 	@Path("/downloadReport")
-	@Produces(MediaType.APPLICATION_OCTET_STREAM)
+	@Produces(MediaType.MULTIPART_FORM_DATA)
 	public Response downloadReport(@QueryParam(REST_QUERY_FROM_PAGE) String fromPage,
 			@QueryParam(REST_QUERY_REPORT_FILE_NAME) String reportFileName, @QueryParam(REST_QUERY_APPDIR_NAME) String appDirName) {
 		FileInputStream fileInputStream = null;
@@ -98,8 +98,8 @@ public class PdfService extends RestBase implements FrameworkConstants, Constant
 			File pdfFile = new File(pdfLOC);
 			if (pdfFile.isFile()) {
 				fileInputStream = new FileInputStream(pdfFile);
-				return Response.status(Status.OK).entity(fileInputStream).header("Access-Control-Allow-Origin", "*")
-						.build();
+				return Response.status(Status.OK).entity(fileInputStream).header("Content-Disposition", "attachment; filename=" + pdfFile.getName())
+					.build();
 			}
 		} catch (PhrescoException e) {
 			ResponseInfo finalOutput = responseDataEvaluation(responseData, e, "download report Failed", null);
