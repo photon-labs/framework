@@ -3654,6 +3654,14 @@ img.add_test_icon
 	margin-bottom: 0px !important;	
 }
 
+#graphForDrop {
+	width : 130px;
+}
+
+.performanceGraphNav {
+	width: 134px;
+}
+
 /* *************************************************************** STYLES FOR QUALITY_MANUAL TEST PAGE ************************************************************* */
 
 

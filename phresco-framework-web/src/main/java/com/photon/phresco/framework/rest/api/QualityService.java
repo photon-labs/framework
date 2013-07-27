@@ -1493,6 +1493,30 @@ public class QualityService extends RestBase implements ServiceConstants, Framew
 		}
 	}
 	
+	@GET
+	@Path(REST_API_DEVICES)
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response devices(@QueryParam(REST_QUERY_APPDIR_NAME) String appDirName, 
+			@QueryParam(REST_QUERY_RESULT_FILE_NAME) String resultFileName) throws PhrescoException {
+		ResponseInfo<List<String>> responseData = new ResponseInfo<List<String>>();
+		List<String> devices = new ArrayList<String>();
+		try {
+			String testResultPath = getLoadOrPerformanceTestResultPath(appDirName, "", resultFileName, Constants.PHASE_PERFORMANCE_TEST);
+			Document document = getDocument(new File(testResultPath));
+			devices = QualityUtil.getDeviceNames(document);
+
+			ResponseInfo<List<String>> finalOutput = responseDataEvaluation(responseData, null,
+					DEVICES_RETURNED_SUCCESSFULLY, devices);
+			return Response.ok(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, "*").build();
+		} catch (Exception e) {
+			ResponseInfo<List<String>> finalOutput = responseDataEvaluation(responseData, e,
+					DEVICES_RETURNED_FAILED, null);
+			return Response.status(Status.BAD_REQUEST).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, "*")
+			.build();
+		}
+	}
+	
 	public boolean testResultAvail(String appDirName, List<String> testAgainsts, String action) throws PhrescoException {
 		boolean resultAvailable = false;
         try {
@@ -1665,7 +1689,6 @@ public class QualityService extends RestBase implements ServiceConstants, Framew
             	String testResultPath = getLoadOrPerformanceTestResultPath(appDirName, testAgainst, resultFileName, Constants.PHASE_PERFORMANCE_TEST);
                 Document document = getDocument(new File(testResultPath)); 
                 performanceResultInfo = QualityUtil.getPerformanceReport(document, techId, deviceId);
-
                 List<PerformanceTestResult> perfromanceTestResult = performanceResultInfo.getPerfromanceTestResult();
                 for (PerformanceTestResult performanceTestResult : perfromanceTestResult) {
                     if (REQ_TEST_SHOW_THROUGHPUT_GRAPH.equals(showGraphFor)) {
@@ -1700,7 +1723,10 @@ public class QualityService extends RestBase implements ServiceConstants, Framew
                 label.append("]");
                 graphData.append("]");
             }
-            List<String> screenShots = getScreenShot(testAgainst, resultFileName, appDirName, PERFORMACE);
+            List<String> screenShots = new ArrayList<String>();
+            if (StringUtils.isNotEmpty(testAgainst)) {
+            	screenShots = getScreenShot(testAgainst, resultFileName, appDirName, PERFORMACE);
+            }
             performanceResultInfo.setGraphData(graphData.toString());
             performanceResultInfo.setLabel(label.toString());
             performanceResultInfo.setGraphAlldata(allMin +", "+ allAvg +", "+ allMax);
@@ -1718,16 +1744,6 @@ public class QualityService extends RestBase implements ServiceConstants, Framew
 		}
     }
 	
-	/**
-	 * Performance.
-	 *
-	 * @param appDirName the app dir name
-	 * @param userId the user id
-	 * @return the response
-	 */
-	@GET
-	@Path(REST_API_PERFORMANCE_RESULTS)
-	@Produces(MediaType.APPLICATION_JSON)
 	private String getLoadOrPerformanceTestResultPath(String appDirName, String testAgainst, String resultFileName, String action) throws PhrescoException {
 		try {
 	        StringBuilder sb = new StringBuilder(FrameworkServiceUtil.getApplicationHome(appDirName));
@@ -1745,11 +1761,10 @@ public class QualityService extends RestBase implements ServiceConstants, Framew
 	        if (StringUtils.isNotEmpty(reportDir) && StringUtils.isNotEmpty(testAgainst) && matcher.find()) {
 	        	reportDir = matcher.replaceAll(testAgainst);
 	        }
-	        
 	        sb.append(reportDir);
 	        sb.append(File.separator);
 	        sb.append(resultFileName);
-	        
+
 	        return sb.toString();
 		} catch (Exception e) {
 			throw new PhrescoException(e);

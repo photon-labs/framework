@@ -138,7 +138,7 @@ define(["framework/widgetWithTemplate", "common/loading"], function() {
 		
         constructFileBrowseCtrl : function (parameter, whereToRender, goal) {
             var self = this, allowedExtensions = [];
-            whereToRender.append('<li id="'+parameter.key+'Li" class="ctrl"><div id="'+parameter.key+'" class="'+parameter.key+'-file-uploader"><noscript><p>Please enable JavaScript to use file uploader.</p></noscript></div></li>');
+            whereToRender.append('<li id="'+parameter.key+'Li" class="ctrl"><label>&nbsp;</label><div id="'+parameter.key+'" class="'+parameter.key+'-file-uploader"><noscript><p>Please enable JavaScript to use file uploader.</p></noscript></div></li>');
             allowedExtensions = parameter.fileType.split(',');
             self.createFileUploader(parameter, goal, allowedExtensions); 
         },

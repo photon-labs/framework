@@ -7,6 +7,7 @@ define([], function() {
 		dynamicpage : null,
 		dynamicPageListener : null,
 		mavenServiceListener : null,
+		showDevice : null,
 		
 		/***
 		 * Called in initialization time of this class 
@@ -21,10 +22,25 @@ define([], function() {
 		
 		onGraphicalView : function() {
 			var self = this;
+			$("#graphicalView").html('<img src="themes/default/images/helios/quality_graph_on.png" width="25" height="25" border="0" alt=""><b>Graph View</b>');
+			$("#tabularView").html('<img src="themes/default/images/helios/quality_table_off.png" width="25" height="25" border="0" alt="">Table View');
+			$('.perfResultInfo').hide();
+			$('#graphView').show();
+
+			if ($('#graphForDrop').attr("value") !== "all") {
+				$("#allData").hide();
+			} else {
+				$("#allData").show();
+			}
 		},
 		
 		onTabularView : function() {
 			var self = this;
+			$("#graphicalView").html('<img src="themes/default/images/helios/quality_graph_off.png" width="25" height="25" border="0" alt="">Graph View');
+			$("#tabularView").html('<img src="themes/default/images/helios/quality_table_on.png" width="25" height="25" border="0" alt=""><b>Table View</b>');
+			$('#graphView').hide();
+			$('.perfResultInfo').show();
+
 		},
 		
 		/***
@@ -40,36 +56,59 @@ define([], function() {
 				dataType: "json",
 				webserviceurl: ''
 			};
-					
+			
+			var userInfo = JSON.parse(commonVariables.api.localVal.getSession('userInfo'));
+			var userId = userInfo.id;		
 			if(action === "resultAvailable") {
 				header.requestMethod = "GET";
 				header.webserviceurl = commonVariables.webserviceurl + commonVariables.qualityContext + "/" + commonVariables.performance + "?appDirName="+appDirName;				
 			} else if (action === "getTestResults") {
-				var testAgainst = requestBody.testAgainsts[0];
+				var testAgainst = "";
 				var resultFileName = requestBody.testResultFiles[0];
 				var deviceId = "";
 				
-				if (requestBody.devices.length !== 0) {
-					deviceId = requestBody.devices[0];
-				}
+				if (!self.isBlank(requestBody.testAgainsts[0])) {
+					testAgainst = requestBody.testAgainsts[0];
+				} 
 				
+				if (requestBody.devices.length !== 0) {
+					deviceId = requestBody.devices[0].split("#SEP#")[0];
+				}
+
 				header.requestMethod = "GET";
 				header.webserviceurl = commonVariables.webserviceurl + commonVariables.qualityContext + "/" + commonVariables.performanceTestResults + "?appDirName="+appDirName+
 					"&testAgainst=" + testAgainst + "&resultFileName=" + resultFileName + "&deviceId=" + deviceId + "&showGraphFor=responseTime";
-			
 			} else if (action === "getTestResultsOnChange") {
 				var testAgainst = requestBody.testAgainst;
 				var resultFileName = requestBody.resultFileName;
-				var deviceId = "";
+				var showGraphFor = requestBody.showGraphFor;
+				var deviceId = requestBody.deviceId;
 				
 				header.requestMethod = "GET";
 				header.webserviceurl = commonVariables.webserviceurl + commonVariables.qualityContext + "/" + commonVariables.performanceTestResults + "?appDirName="+appDirName+
-					"&testAgainst=" + testAgainst + "&resultFileName=" + resultFileName + "&deviceId=" + deviceId + "&showGraphFor=responseTime";
+					"&testAgainst=" + testAgainst + "&resultFileName=" + resultFileName + "&deviceId=" + deviceId + "&showGraphFor=" + showGraphFor;
 			} else if (action === "getfiles") {
 				header.requestMethod = "POST";
 				header.requestPostBody = requestBody;				
 				header.webserviceurl = commonVariables.webserviceurl + commonVariables.qualityContext + "/testResultFiles?actionType=performance-test&appDirName="+appDirName;				
+			} else if (action === "getPdfReports") {
+				header.requestMethod = "GET";
+				header.webserviceurl = commonVariables.webserviceurl + "pdf/showPopUp?appDirName=" + appDirName + "&fromPage=performance";
+			} else if (action === "generatePdfReport") {
+				var data = $('#pdfReportForm').serialize();
+				header.requestMethod = "POST";
+				header.webserviceurl = commonVariables.webserviceurl + "app/printAsPdf?appDirName=" + appDirName + "&" + data + "&userId=" + userId;
+			} else if (action === "deletePdfReport") {
+				header.requestMethod = "DELETE";
+				header.webserviceurl = commonVariables.webserviceurl + "pdf/deleteReport?appDirName=" + appDirName + "&fromPage=performance" + "&reportFileName=" + requestBody.fileName;
+			} else if(action === "downloadPdfReport") {
+				header.requestMethod = "GET";
+				header.webserviceurl = commonVariables.webserviceurl + "pdf/downloadReport?appDirName="+appDirName+"&reportFileName="+requestBody.fileName+"&fromPage=performance";		
+			} else if(action === "getDevices") {
+				header.requestMethod = "GET";
+				header.webserviceurl = commonVariables.webserviceurl + commonVariables.qualityContext + "/devices?appDirName="+appDirName+"&resultFileName="+requestBody.resultFileName;
 			}
+
 			return header;
 		},
 		
@@ -78,6 +117,7 @@ define([], function() {
 			try {
 				commonVariables.api.ajaxRequest(header, function(response) {
 					if (response !== null) {
+						self.showDevice = response.data.showDevice;
 						callback(response, whereToRender);
 					} else {
 						callback({"status" : "service failure"}, whereToRender);
@@ -103,18 +143,110 @@ define([], function() {
 			renderFunction(performanceTestOptions, whereToRender);
 			if ((performanceTestOptions.testAgainsts.length !== 0 || performanceTestOptions.devices.length !== 0) && !self.isBlank(performanceTestOptions.testResultFiles) && performanceTestOptions.testResultFiles.length !== 0) {
 				self.getTestResults(self.getActionHeader(performanceTestOptions, "getTestResults"), function(response) {
-					
 					var resultData = response.data;
 					if (resultData.perfromanceTestResult.length > 0) {
 						self.constructResultTable(resultData, whereToRender);
+						self.drawChart(resultData);
+						self.showScreenShot(resultData.images);
 					}
 					if (callback !== undefined) {
 						callback();
 					}
 				});
 			} 
+		},
 
+		drawChart : function(data) {
+			var self = this, chartTitle = "";
+            var chartUnit = "";
+            if (data.graphFor === "responseTime") {
+            	chartTitle = "Aggr Response Time";
+            	chartUnit = "ms";
+            } else if (data.graphFor === "throughPut") {
+            	chartTitle = "Throughput";
+            	chartUnit = "sec";
+            } else if (data.graphFor === "minResponseTime") {
+            	chartTitle = "Min Response Time";
+            	chartUnit = "ms";
+            } else if (data.graphFor === "maxResponseTime") {
+            	chartTitle = "Max Response Time";
+            	chartUnit = "ms";
+            } else if (data.graphFor === "all") {
+            	chartTitle = "Throughput";
+            	chartUnit = "sec";
+            }
 
+			//line chart color
+	      	var minColor = "#00A8F0";
+	      	var maxColor = "#008000";
+	      	var avgColor = "red";
+
+	      	var graphDataArray = data.graphData.replace("[","").replace("]","").split(",");
+	      	var values = [];
+	      	$.each(graphDataArray, function(index, value){
+				values.push(parseInt(value));
+			});
+
+	      	var labelArr = data.label.replace("[", "").replace("]", "").split(",");
+	      	var labelString = "";
+
+	      	$.each(labelArr, function(index, value){
+				if (index === labelArr.length - 1) {
+					labelString += value.replace("'","").replace("'","");
+				} else {
+					labelString += value.replace("'","").replace("'","") + ",";
+				}
+			});
+
+	      	RGraph.Clear(document.getElementById('myCanvas'));
+	      	RGraph.Clear(document.getElementById('allData'));
+			var bar = new RGraph.Bar('myCanvas',[values]);
+	        bar.Set('chart.gutter.left', 70);
+	        bar.Set('chart.text.color', "#4C4C4C");
+	        bar.Set('chart.background.barcolor1', 'transparent');
+	        bar.Set('chart.background.barcolor2', 'transparent');
+	        bar.Set('chart.background.grid', true);
+	        bar.Set('chart.colors', ["#39BC67"]);
+	        bar.Set('chart.background.grid.width', 0.5);
+	        bar.Set('chart.text.angle', 45);
+	        bar.Set('chart.gutter.bottom', 140);
+	        bar.Set('chart.background.grid.color', "#4F577C");
+	        bar.Set('chart.axis.color', "#323232");
+	        bar.Set('chart.title', chartTitle);
+	        bar.Set('chart.title.color', "#4C4C4C");
+	        bar.Set('chart.labels', labelString.split(","));
+	        bar.Set('chart.units.post', chartUnit);
+	        bar.Draw();
+
+        	if (data.graphFor ===  "all") {
+				var line = new RGraph.Line('allData', [values]);
+		        line.Set('chart.background.grid', true);
+		        line.Set('chart.linewidth', 5);
+		        line.Set('chart.gutter.left', 85);
+		        line.Set('chart.text.color', "#4C4C4C");
+		        line.Set('chart.hmargin', 5);
+		        if (!document.all || RGraph.isIE9up()) {
+		            line.Set('chart.shadow', true);
+		        }
+		        line.Set('chart.tickmarks', 'endcircle');
+		        line.Set('chart.units.post', 's');
+		        line.Set('chart.colors', [minColor, avgColor, maxColor]);
+		        line.Set('chart.background.grid.autofit', true);
+		        line.Set('chart.background.grid.autofit.numhlines', 10);
+		        line.Set('chart.curvy', true);
+		        line.Set('chart.curvy.factor', 0.5); // This is the default
+		        line.Set('chart.animation.unfold.initial',0);
+		        line.Set('chart.labels',labelString.split(","));
+		        line.Set('chart.title','Response Time');// Title
+		        line.Set('chart.axis.color', "#323232");
+		        line.Set('chart.text.angle', 45);
+		        line.Set('chart.gutter.bottom', 140);
+		        line.Set('chart.key', ['Min','Avg','Max']);
+		        line.Set('chart.background.grid.color', "#4F577C");
+		        line.Set('chart.title.color', "#4C4C4C");
+		        line.Set('chart.shadow', false);
+		        line.Draw();
+        	}
 		},
 
 		fileNameChangeEvent : function(whereToRender){
@@ -122,31 +254,155 @@ define([], function() {
 			//To select the test result file
 			$('li a[name="resultFileName"]').unbind("click");
 			$('li a[name="resultFileName"]').click(function() {
-				$("#testResultFileDrop").text($(this).text());
+				var currentOption = $(this).text();
+				$("#testResultFileDrop").html(currentOption   + '<b class="caret"></b>');
+				$("#testResultFileDrop").attr("value", currentOption);
 				$(".perfResultInfo").html('');
-				self.getResultOnChangeEvent($("#testAgainstsDrop").text(),$(this).text(), whereToRender);
+				var showGraphFor = $("#graphForDrop").attr("value");
+				self.getResultOnChangeEvent($("#testAgainstsDrop").attr("value"), $(this).text(), showGraphFor, '', whereToRender);
 			});		
 		},
 		
+		deviceChangeEvent : function (whereToRender) {
+			var self = this;
+			$('li a[name="devices"]').unbind("click");
+			$('li a[name="devices"]').click(function() {
+				var previousDevice = $("#deviceDropDown").attr("value");
+				var currentDevice = $(this).attr("deviceid");
+				if (previousDevice !== currentDevice) {
+					$("#deviceDropDown").html($(this).text()  + '<b class="caret"></b>');
+					$("#deviceDropDown").attr("value", currentDevice);
+					self.getResultOnChangeEvent('',$("#testResultFileDrop").attr("value"), '', currentDevice, whereToRender, function() {
+						self.setResponseTime();
+					});
+				}
+			});
+		},
+
+		showScreenShot : function(screenShots) {
+			if (screenShots.length > 0) {
+				$('.performanceScreenShotDiv').show();
+				var imgArray = [];
+				for(var i = 0; i < screenShots.length ; i++) {
+					var srcJson = {};
+					srcJson.src = $('<div class="text_center"><img src="data:image/png;base64,'+screenShots[i]+'"><div class="fullscreen_desc"></div></div>');
+					srcJson.type = 'inline';
+					imgArray.push(srcJson);
+				}
+				$('.performanceScreenShot').magnificPopup({
+					items: imgArray,
+					gallery: {
+					  enabled: true
+					},
+					type: 'image'
+				});
+			} else {
+				$('.performanceScreenShotDiv').hide();
+			}
+		},
+
 		getResultFiles : function (testAgainst, whereToRender) {
 			var self = this;
 			self.getTestResults(self.getActionHeader(JSON.stringify([testAgainst]), "getfiles"), function(response) {
 				if(response.data !== null){
 					self.hideErrorAndShowControls();
 					var returnVal = '';
-					$("#testResultFileDrop").html(response.data[0]);
+					$("#testResultFileDrop").html(response.data[0] + "<b class='caret'></b>");
+					$("#testResultFileDrop").attr("value", response.data[0]);
 					$.each(response.data, function(index, value){
 						returnVal += '<li class="testResultFilesOption"><a href="#" name="resultFileName">'+ value +'</a></li>';
 					});
 					$("#resultFiles").html(returnVal);
+					self.setResponseTime();
 					self.fileNameChangeEvent(whereToRender);
-					self.getResultOnChangeEvent(testAgainst, response.data[0], whereToRender);
+					self.getResultOnChangeEvent(testAgainst, response.data[0], '', '', whereToRender);
 				} else if (!self.isBlank(response.message)) {
 					self.showErrorAndHideControls(response.message);
 				}
 			});
 		},
 		
+		setResponseTime : function () {
+			//to make aggr response time as default option in graphical view
+			$("#graphForDrop").attr("value","responseTime");
+			$("#graphForDrop").html("Aggr Response Time<b class='caret'></b>");
+			//to hide alldata canvas
+			$("#allData").hide();
+		},
+
+		//To generate the pdf report
+		generatePdfReport : function() {
+			var self = this;
+			var requestBody = {};
+			self.performAction(self.getActionHeader(requestBody, "generatePdfReport"), function(response) {
+				if (response.status === "success") {
+					self.getPdfReports();
+				}
+			});
+		},
+
+		//To get the existing pdf reports
+		getPdfReports : function() {
+			var self = this;
+			var requestBody = {};
+			self.performAction(self.getActionHeader(requestBody, "getPdfReports"), function(response) {
+				self.listPdfReports(response);
+			});
+		},
+
+			//To list the generated PDF reports
+		listPdfReports : function(pdfReports) {
+			var self = this;
+			var content = "";
+			if (pdfReports !== undefined && pdfReports !== null && pdfReports.length > 0) {
+				$("#noReport").hide();
+				$("#availablePdfRptsTbl").show();
+				var content = "";
+				for (i in pdfReports) {
+					content = content.concat('<tr class="generatedRow"><td>' + pdfReports[i].time + '</td>');
+					content = content.concat('<td>' + pdfReports[i].type + '</td>');
+					content = content.concat('<td><a class="tooltiptop donloadPdfReport" fileName="' + pdfReports[i].fileName + '" href="#"');
+					content = content.concat(' data-toggle="tooltip" data-placement="top" name="downLoad" data-original-title="Download Pdf" title="">');
+					content = content.concat('<img src="themes/default/images/helios/download_icon.png" width="15" height="18" border="0" alt="0"></a></td>');
+					content = content.concat('<td><a class="tooltiptop deletePdf" fileName="' + pdfReports[i].fileName + '" href="#"');
+					content = content.concat(' data-toggle="tooltip" data-placement="top" name="delete" data-original-title="Delete Pdf" title="">');
+					content = content.concat('<img src="themes/default/images/helios/delete_row.png" width="14" height="18" border="0" alt="0"></a></td></tr>');
+				}
+				$(commonVariables.contentPlaceholder).find("#availablePdfRptsTbdy").html(content);
+				self.deletePdfReport();
+				self.downloadPdfReport();
+			} else {
+				$(commonVariables.contentPlaceholder).find("#availablePdfRptsTbl").hide();
+				$("#noReport").show();
+				$("#noReport").html("No Report are Available");
+			}
+			$('#pdfReportLoading').hide();
+		},
+
+		//To delete the selected pdf report
+		deletePdfReport : function() {
+			var self = this;
+			$('.deletePdf').on("click", function() {
+				$('#pdfReportLoading').show();
+				var requestBody = {};
+				requestBody.fileName = $(this).attr('fileName');
+				self.performAction(self.getActionHeader(requestBody, "deletePdfReport"), function(response) {
+					if (response.status === "success" ) {
+						self.getPdfReports();
+					}
+				});
+			});
+		},
+		
+		downloadPdfReport : function () {
+			var self = this;
+			$('.donloadPdfReport').on("click", function() {
+				var fileName = $(this).attr("fileName"), appDirName = commonVariables.api.localVal.getSession("appDirName");
+				var pdfDownloadUrl = commonVariables.webserviceurl + "pdf/downloadReport?appDirName="+appDirName+"&reportFileName="+fileName+"&fromPage=performance";
+				window.open(pdfDownloadUrl, '_self');
+			});
+		},
+
 		showErrorAndHideControls : function (errorMessage) {
 			$('.perfError').show();
 			$('.perfError').text(errorMessage);
@@ -154,6 +410,8 @@ define([], function() {
 			$('.testResultDiv').hide();
 			$('.performancePdf').hide();
 			$('.performanceView').hide();
+			$('#graphView').hide();
+			$('.performanceScreenShotDiv').hide();
 		},
 
 		hideErrorAndShowControls : function () {
@@ -165,15 +423,44 @@ define([], function() {
 			$('.performanceView').show();
 		},
 
-		getResultOnChangeEvent : function (testAgainst, resultFileName, whereToRender, callback) {
+		getResultOnChangeEvent : function (testAgainst, resultFileName, showGraphFor, deviceId, whereToRender, callback) {
 			var self = this;
 			var reqData = {};
-			reqData.testAgainst = testAgainst;
+			if (!self.isBlank(testAgainst)) {
+				reqData.testAgainst = testAgainst;
+			} else {
+				reqData.testAgainst = "";
+			}
+			
+			if (!self.isBlank(deviceId)) {
+				reqData.deviceId = deviceId;
+			} else {
+				reqData.deviceId = "";
+			}
+
 			reqData.resultFileName = resultFileName;
+			
+			if (self.isBlank(showGraphFor)) {
+				reqData.showGraphFor = "responseTime";
+			} else {
+				reqData.showGraphFor = showGraphFor;
+			}
+
 			self.getTestResults(self.getActionHeader(reqData, "getTestResultsOnChange"), function(response) {
 				if(response.message === "Parameter returned successfully"){
 					var resultData = response.data;
 					self.constructResultTable(resultData, whereToRender);
+					self.drawChart(resultData);
+					self.showScreenShot(resultData.images);
+					//tabular view
+					if($("#tabularView").find('img').attr('src') === "themes/default/images/helios/quality_table_on.png") {
+						$(".perfResultInfo").show();
+						$("#graphView").hide();
+					} else {
+						$("#graphView").show();
+						$(".perfResultInfo").hide();
+					}
+
 					if (callback !== undefined) {
 						callback(response);
 					}
@@ -181,7 +468,50 @@ define([], function() {
 			});
 		},
 		
+		getDevices : function (resultFileName, showGraphFor, whereToRender, callback) {
+			var self = this, reqData = {}, graphFor = "";
+			reqData.resultFileName = resultFileName;
+			if (self.isBlank(showGraphFor)) {
+				reqData.showGraphFor = "responseTime";
+			} else {
+				reqData.showGraphFor = showGraphFor;
+			}
+
+			self.performAction(self.getActionHeader(reqData, "getDevices"), function(response) {
+				if (response.message === "Devices returned successfully") {
+					$("#deviceDropDown").attr("value", response.data[0].split("#SEP#")[0]);
+					$("#deviceDropDown").html(response.data[0].split("#SEP#")[1] + '<b class="caret"></b>');
+					var returnVal = "";
+					$.each(response.data, function(index, value){
+						returnVal += '<li class="devicesOption"><a href="#" name="devices" deviceid="'+value.split("#SEP#")[0]+'">'+ value.split("#SEP#")[1] +'</a></li>';
+					});
+					$("#deviceDropUL").html(returnVal);
+					self.getResultOnChangeEvent('',resultFileName, showGraphFor, response.data[0].split("#SEP#")[0], whereToRender);
+					self.deviceChangeEvent(whereToRender);
+				}
+			}); 
+		},
+
 		getTestResults : function (header, callback) {
+			var self = this;
+			try {
+				commonVariables.api.ajaxRequest(header, function(response) {
+					if (response !== null) {
+						callback(response);
+					} else {
+						callback({"status" : "service failure"});
+					}
+				},
+				function(textStatus){
+					callback({"status" : "service failure"});
+				}
+				);
+			} catch (exception) {
+				
+			}
+		},
+
+		performAction : function (header, callback) {
 			var self = this;
 			try {
 				commonVariables.api.ajaxRequest(header, function(response) {

@@ -3,7 +3,7 @@ define(["dynamicPage/dynamicPage"], function(DyanmicPage) {
 
 	return { 
 		runTests: function (configData) {
-			module("dynamicPage.js;DynamicPage");
+			module("dynamicPage.js");
 			var dyanmicPage = new DyanmicPage();
 			var self = this;
 			//self.testTextBox(dyanmicPage, self);
@@ -36,7 +36,7 @@ define(["dynamicPage/dynamicPage"], function(DyanmicPage) {
 					dyanmicPage.dynamicPageListener.constructHtml(parameterResponse, divElement.find('ul'), '', '', 'package');
 					equal(true, divElement.find('li').length > 0, "Dynamic page rendering tested");
 					self.testRenderWithEmpty(dyanmicPage, self);
-				}, 1500);
+				}, 500);
 			});
 		},
 	
@@ -50,7 +50,7 @@ define(["dynamicPage/dynamicPage"], function(DyanmicPage) {
 					start();
 					equal(true, divElement.find('li').length === 0, "Dynamic page rendering with empty value tested");
 					self.testTextBox(dyanmicPage, self);
-				}, 1500);
+				}, 500);
 			});
 		},
 	
@@ -66,7 +66,7 @@ define(["dynamicPage/dynamicPage"], function(DyanmicPage) {
 					start();
 					equal("text", divElement.find('input').attr("type"), "construct textbox element tested");
 					self.testHidden(dyanmicPage, self);
-				}, 1500);
+				}, 200);
 			});
 		},
 	
@@ -84,7 +84,7 @@ define(["dynamicPage/dynamicPage"], function(DyanmicPage) {
 					start();
 					equal("hidden", parentDiv.find('input').attr("type"), "construct hidden element tested");
 					self.testSingleSelect(dyanmicPage, self);
-				}, 1500);
+				}, 200);
 			});
 		},
 
@@ -100,7 +100,7 @@ define(["dynamicPage/dynamicPage"], function(DyanmicPage) {
 					start();
 					equal("single", divElement.find('li').find("select").attr("selection"), "construct single select element tested");
 					self.testMultiSelect(dyanmicPage, self);
-				}, 1500);
+				}, 200);
 			});
 		},
 	
@@ -115,7 +115,10 @@ define(["dynamicPage/dynamicPage"], function(DyanmicPage) {
 				setTimeout(function() {
 					start();
 					equal("multiple", divElement.find('li').find("select").attr("selection"), "construct multi select element tested");
-				}, 1500);
+					require(["performanceTestTest"], function(performanceTestTest){
+						performanceTestTest.runTests();
+					});
+				}, 200);
 			}); 
 		},
 	};
