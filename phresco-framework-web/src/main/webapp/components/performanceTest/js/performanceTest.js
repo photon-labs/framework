@@ -222,14 +222,6 @@ define(["performanceTest/listener/performanceTestListener"], function() {
 		},
 		
 		/***
-		 * Called in once the login is success
-		 *
-		 */
-		loadPage : function(needAnimation) {
-			Clazz.navigationController.push(this, needAnimation);
-		},
-		
-		/***
 		 * Called after the preRender() and bindUI() completes. 
 		 * Override and add any preRender functionality here
 		 *
