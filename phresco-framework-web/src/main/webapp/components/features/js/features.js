@@ -74,7 +74,7 @@ define(["features/listener/featuresListener"], function() {
 						}
 					});
 				}else {							
-					fieldset = '<fieldset class="switch switchOff" id="feature_'+ id +'" value="false"><label class="off" name="on_off" value="false"></label><label class="on" name="on_off" value="true"></label></fieldset>';
+					fieldset = '<fieldset class="switch switchOff" id="feature_'+ id +'" value="false"><label class="off" name="on_off" value="false"></label><label class="on" name="on_off" value="true" ></label></fieldset>';
 				}
 				return fieldset;
 			});
@@ -224,12 +224,17 @@ define(["features/listener/featuresListener"], function() {
 			  });
 
 			$('.switch').css('background', 'url("themes/default/images/helios/on_off_switch.png")');
-			$("input[name=on_off]").unbind();
-			$("label[name=on_off]").click(function() {
-				self.featuresListener.bcheck(this);
+			
+			$("label[name=on_off]").unbind();
+			$("label[name=on_off]").bind("click", function() {
+				var buttonId = $(this).attr("id");
+				self.featuresListener.bcheck(this, buttonId);
+				
 			});
 			 
-			$("input[name=on_off]").click(function() {
+			$("input[name=on_off]").unbind();
+			$("input[name=on_off]").bind("click", function() {
+				console.info("input");
 				var button = $(this).val();
 				if(button === 'off'){ $(this).closest('fieldset').css('background-position', 'right'); }
 				if(button === 'on'){ $(this).closest('fieldset').css('background-position', 'left'); }	
