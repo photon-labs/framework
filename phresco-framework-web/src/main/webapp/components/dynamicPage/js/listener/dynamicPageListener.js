@@ -296,7 +296,7 @@ define(["framework/widgetWithTemplate", "common/loading"], function() {
         	if ("List" === childs[0].type) {
         		mapCtrl =  mapCtrl.concat('<td><select name="'+childs[0].key+'" class="selectpicker">');
     			var possibleValues = childs[0].possibleValues.value;
-    			for (i in possibleValues) {
+    			for (var i = 0; i < possibleValues; i++) {
     				mapCtrl =  mapCtrl.concat('<option value="'+possibleValues[i].key+'">'+possibleValues[i].value+'</option>');
     			}
     			mapCtrl =  mapCtrl.concat('</select></td>');
@@ -307,7 +307,7 @@ define(["framework/widgetWithTemplate", "common/loading"], function() {
         	if ("List" === childs[1].type) {
         		mapCtrl =  mapCtrl.concat('<td><select name="'+childs[1].key+'" class="selectpicker">');
     			var possibleValues = childs[1].possibleValues.value;
-    			for (i in possibleValues) {
+    			for (var i = 0; i < possibleValues; i++) {
     				mapCtrl =  mapCtrl.concat('<option value="'+possibleValues[i].key+'">'+possibleValues[i].value+'</option>');
     			}
     			mapCtrl =  mapCtrl.concat('</select></td>');
@@ -387,7 +387,7 @@ define(["framework/widgetWithTemplate", "common/loading"], function() {
                     requestedParameter = parameter;
                     return false;
                 }
-            }) 
+            }); 
 
             return requestedParameter;
         },
@@ -564,7 +564,7 @@ define(["framework/widgetWithTemplate", "common/loading"], function() {
                 csvDependencies = dependencyAttr.substring(dependencyAttr.indexOf('=') + 1);
                 var parameterDependencies = [];
                 parameterDependencies = csvDependencies.split(',');
-                for (i in parameterDependencies) {
+                for (var i = 0;  i < parameterDependencies; i++) {
                    var currentParameter = self.getParameterByKey(self.dynamicParameters, parameterDependencies[i]);
                    if (!self.isBlank(currentParameter) && !currentParameter.show) {
                         $("#" + currentParameter.key + "Li").hide();
@@ -840,7 +840,7 @@ define(["framework/widgetWithTemplate", "common/loading"], function() {
         
         //To show controls
         showControl : function(controls) {
-            for (i in controls) {
+            for (var i = 0; i < controls.length; i++) {
                 $('#' + controls[i] + 'Li').show();
                 $('.' + controls[i] + '_Template').show();
             }
@@ -848,7 +848,7 @@ define(["framework/widgetWithTemplate", "common/loading"], function() {
         
         //To hide controls
         hideControl : function(controls) {
-            for (i in controls) {
+            for (var i = 0; i < controls.length; i++) {
                 $('#' + controls[i] + 'Li').hide();
                 $('.' + controls[i] + '_Template').hide();
             }
