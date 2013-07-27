@@ -21,7 +21,7 @@
                 </tr>
                 <tr>
                     <td data-i18n="application.edit.technology"></td>
-                    <td><input type="text" placeholder="Android Hybrid" name="technology" value="{{techInfo.name}} - {{techInfo.version}}" readonly/>
+                    <td><input type="text" placeholder="Android Hybrid" name="technology" value="{{techInfo.name}} {{#if techInfo.version}} - {{techInfo.version}}{{/if}}" readonly/>
 					</td>
                     <td></td>
                     <td>   </td>
