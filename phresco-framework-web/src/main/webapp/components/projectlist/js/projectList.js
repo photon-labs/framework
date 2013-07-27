@@ -34,6 +34,7 @@ define(["projectlist/listener/projectListListener"], function() {
 			if(self.projectslistListener === null){
 				self.projectslistListener = new Clazz.com.components.projectlist.js.listener.ProjectsListListener;
 			}
+			self.registerHandlebars();
 			self.registerEvents(self.projectslistListener);
 		},
 
@@ -84,6 +85,18 @@ define(["projectlist/listener/projectListListener"], function() {
 			}
 			self.onGetReportEvent.add(projectslistListener.getReportEvent, projectslistListener);
 			
+		},
+		registerHandlebars : function () {
+			var self = this;
+			Handlebars.registerHelper('descriptionshow', function(description) {
+				var descri;
+				if(description !== null){
+					descri = description;
+				}else{							
+					descri = '&nbsp';
+				}		
+				return descri;
+			});
 		},
 		
 		/***

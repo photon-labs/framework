@@ -42,7 +42,7 @@
 					         {{#each appInfos}}
                       <tr class="{{appDirName}}" techid="{{techInfo.id}}">
                         <td><a name="editApplication" href="javascript:;">{{name}}</a></td>
-                        <td>{{#if description }} {{description}} {{else}} &nbsp {{/if}}</td>
+                        <td>{{#descriptionshow description}}{{/descriptionshow}}</td>
                         <td>{{techInfo.name}}</td>
                        <td class="list_img"><a name="pdf_report_{{id}}" temp="pdf_report" fromPage="All" class="tooltiptop" title="" dynamicId="{{id}}" data-placement="top" data-t="tooltip" href="#" data-original-title="PDF Report"><img src="themes/default/images/helios/pdf_icon.png" width="14" height="16" border="0" alt=""></a>
                   
