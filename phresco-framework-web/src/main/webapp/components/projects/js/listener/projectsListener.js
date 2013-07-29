@@ -234,6 +234,7 @@ define([], function() {
 							flag = 1;
 							t.bind('keypress', function() {
 								$(this).removeClass("errormessage");
+								$(this).removeAttr("placeholder");
 							});
 						}
 						if(flag !== 1) {
@@ -272,8 +273,8 @@ define([], function() {
 							}, 5000);
 							return true;
 						}	
-					};	
-				};
+					}	
+				}
 			}
 		},
 
@@ -297,6 +298,7 @@ define([], function() {
 							flagg = 1;
 							t.bind('keypress', function() {
 								$(this).removeClass("errormessage");
+								$(this).removeAttr("placeholder");
 							});
 						}
 						if(flagg !== 1) {
@@ -346,8 +348,8 @@ define([], function() {
 							}, 5000);
 							return true;
 						}	
-					};	
-			    };
+					}	
+			    }
 		    }
 		},
 
@@ -371,6 +373,7 @@ define([], function() {
 							flaggg = 1;
 							t.bind('keypress', function() {
 								$(this).removeClass("errormessage");
+								$(this).removeAttr("placeholder");
 							});
 						}
 						if(flaggg !== 1) {
@@ -421,8 +424,8 @@ define([], function() {
 							}, 5000);
 							return true;
 					    }	
-					};	
-			    };
+					}	
+			    }
 			}
 		},
 		
@@ -917,6 +920,7 @@ define([], function() {
 				$("input.appln-appcode").val('');
 				$("input.web-appcode").val('');
 				$("input.mobile-appcode").val('');
+				
 				var selectedText = $(this).find(':selected').val();
 				if(selectedText === "prebuilt"){
 					 $("tr[name=applicationLayer]").hide();
@@ -932,9 +936,6 @@ define([], function() {
 					 $("input[name='enddate']").attr("disabled", true);
 					 $("select[name='builtmyselfapps']").hide();
 					 $("#applicationlayer").hide();
-					 $("a[name=addApplnLayer]").hide();
-					 $("a[name=addWebLayer]").hide();
-					 $("a[name=addMobileLayer]").hide();
 					 $("#weblayer").hide();
 					 $("#mobilelayer").hide();
 					 self.setPilotData(function(Option){
@@ -960,9 +961,6 @@ define([], function() {
 					 $("#applicationlayer").show();
 					 $("#weblayer").show();
 					 $("#mobilelayer").show();
-					 $("a[name=addApplnLayer]").show();
-					 $("a[name=addWebLayer]").show();
-					 $("a[name=addMobileLayer]").show();
 					 self.revertSelectValues($("select[name='appln_technology']"),"Select Technology");
 					 $("select[name=appln_version]").html('<option>Select Version</option>');
 					 $("select[name=appln_version]").selectpicker('refresh');
@@ -989,6 +987,7 @@ define([], function() {
 		},
 		
 		revertSelectValues : function(obj, OptionText) {
+			$(obj).removeAttr('appInfoId');
 			$(obj).find('option').each(function(index, value) {
 				$(value).removeAttr('selected');
 				$(obj).selectpicker('refresh');
@@ -1035,6 +1034,7 @@ define([], function() {
 							if($(value).val() === appInfo.techInfo.id) {
 								$(value).attr('selected', 'selected');
 								$("select[name='appln_technology']").val($(value).val());
+								$("select[name='appln_technology']").attr('appInfoId', appInfo.id);
 								$("select[name='appln_technology']").selectpicker('refresh');
 							}
 						});
@@ -1050,6 +1050,7 @@ define([], function() {
 							if($(value).val() === appInfo.techInfo.techGroupId) {
 								$(value).attr('selected', 'selected');
 								$("select[name='weblayer']").val($(value).val());
+								$("select[name='weblayer']").attr('appInfoId', appInfo.id);
 								$("select[name='weblayer']").selectpicker('refresh');
 							}
 						});
@@ -1076,6 +1077,7 @@ define([], function() {
 							if($(value).val() === appInfo.techInfo.techGroupId) {
 								$(value).attr('selected', 'selected');
 								$("select[name='mobile_layer']").val($(value).val());
+								$("select[name='mobile_layer']").attr('appInfoId', appInfo.id);
 								$("select[name='mobile_layer']").selectpicker('refresh');
 							}
 						});
@@ -1097,6 +1099,7 @@ define([], function() {
 						$("tr.mobLayer").show();
 						$("tr.mobLayer").attr('key','displayed');
 					}
+					self.enablebuttonAdd();
 				});
 			}		
 		}, 
@@ -1342,7 +1345,19 @@ define([], function() {
              }); 				
 		},
 		
-		enablebutton : function() {
+		enablebuttonAdd : function() {
+			if($('tr[name=applicationLayer]').css('display') === "none") {
+				$("input[name='applicationlayer']").show();
+			}	
+			if($('tr[name=web-Layer]').css('display') === "none") {
+				$("input[name='weblayer']").show();
+			}	
+			if($('tr[name=mobile-Layer]').css('display') === "none") {
+				$("input[name='mobilelayer']").show();
+			}
+		},
+		
+		enablebuttonEdit : function() {
 			if($('#appLayaer').css('display') === "none") {
 					$("input[name='appLayaer']").show();
 			}	
@@ -1466,6 +1481,7 @@ define([], function() {
 				
 					var techInfo = {};
 					var tech;
+					var appInfoId = "";
 					var techName = "";
 					var code = "";
 					var dependency = "";
@@ -1480,9 +1496,13 @@ define([], function() {
 								var appInfo = {};
 								var techInfo = {};
 								tech = $(value).children("td.technology").children("select.appln_technology");
+								appInfoId = $(value).children("td.technology").children("select.appln_technology").attr('appInfoId');
 								techName = $(tech).find(":selected").text();
 								code = $(value).children("td.applnappcode").children("input.appln-appcode").val();
 								dependency = $(value).children('td.appdependencyTd').children("select.appdependencySelect").val();
+								if(appInfoId !== undefined && appInfoId !== null) {
+									appInfo.id = appInfoId;
+								}
 								appInfo.code = code;
 								appInfo.appDirName = code;
 								appInfo.version = projectversion;
@@ -1513,6 +1533,10 @@ define([], function() {
 								techName = $(tech).find(":selected").text();
 								code = $(value).children("td.webappcode").children("input.web-appcode").val();
 								dependency = $(value).children('td.webdependencyTd').children("select.webdependencySelect").val();
+								appInfoId = $(value).children("td.web").children("select.weblayer").attr('appInfoId');
+								if(appInfoId !== undefined && appInfoId !== null){
+									appInfo.id = appInfoId;
+								}
 								appInfo.code = code;
 								appInfo.appDirName = code;
 								appInfo.version = projectversion;
@@ -1544,6 +1568,10 @@ define([], function() {
 								tech = $(value).children("td.types").children("select.mobile_types");
 								techName = $(tech).find(":selected").text();
 								code = $(value).children("td.mobileappcode").children("input.mobile-appcode").val();
+								appInfoId = $(value).children("td.mobile").children("select.mobile_layer").attr('appInfoId');
+								if(appInfoId !== undefined && appInfoId !== null){
+									appInfo.id = appInfoId;
+								}
 								appInfo.code = code;
 								appInfo.appDirName = code; 
 								appInfo.version = projectversion;

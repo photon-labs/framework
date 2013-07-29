@@ -85,7 +85,7 @@
 				"dependency" : "Dependency",
 				"version" : "Version",
 				"description" : "Description",
-				"appcode" : "App Code",
+				"module" : "Module",
 				"selwidget" : "Select Widget",
 				"seldependency" : "Select Dependency",
 				"selversion" : "Select Version",
