@@ -62,10 +62,10 @@ define(["croneExpression/croneExpression"], function() {
 			if(self.cancelEditConfigurations  === null) {
 				commonVariables.navListener.getMyObj(commonVariables.configuration, function(retVal) {
 					self.cancelEditConfigurations = retVal;
-					Clazz.navigationController.push(self.cancelEditConfigurations, commonVaraibles.animation);
+					Clazz.navigationController.push(self.cancelEditConfigurations, commonVariables.animation, commonVariables.animation);
 				});
 			} else {
-				Clazz.navigationController.push(self.cancelEditConfigurations, commonVaraibles.animation);
+				Clazz.navigationController.push(self.cancelEditConfigurations, commonVariables.animation, commonVariables.animation);
 			}
 		},
 		
@@ -501,6 +501,7 @@ define(["croneExpression/croneExpression"], function() {
 			}
 			
 			$("input[name=remoteDeployment]").click(function() {
+				$("input[name=deploy_dir]").val('');
 				if ($(this).is(':checked')) { 
 					$(this).val(true);
 					self.showCertificate();
@@ -510,7 +511,6 @@ define(["croneExpression/croneExpression"], function() {
 					$("input[name=deploy_dir]").attr("mandatory", true);
 					$("input[name=deploy_dir]").parent().prev('td').show();
 					$("input[name=deploy_dir]").show();
-					$("input[name=deploy_dir]").val('');
 					$("input[name=admin_username]").attr("mandatory", false);
 					$("input[name=admin_password]").attr("mandatory", false);
 					$("input[name=admin_username]").parent().prev('td').find('sup').html('');
@@ -849,7 +849,9 @@ define(["croneExpression/croneExpression"], function() {
 					}
 					$(this).find("." + type + "Configuration").each(function() {
 						var proValue = $(this).attr("name");
-						properties[proValue] = $(this).val();
+						if(proValue !== undefined) {
+							properties[proValue] = $(this).val();
+						}
 					});
 					
 					var otherKey = $(this).children().find('.otherKey').val();
