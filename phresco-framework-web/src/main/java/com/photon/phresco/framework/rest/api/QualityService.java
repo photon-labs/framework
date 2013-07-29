@@ -1416,9 +1416,8 @@ public class QualityService extends RestBase implements ServiceConstants, Framew
 		List<String> testResultFiles = null;
 		ResponseInfo<Map> responseData = new ResponseInfo<Map>();
 		try {
-			FrameworkServiceUtil fsu = new FrameworkServiceUtil();
 			Map<String, Object> performanceMap = new HashMap<String, Object>();
-            MojoProcessor mojo = new MojoProcessor(new File(fsu.getPhrescoPluginInfoFilePath(Constants.PHASE_PERFORMANCE_TEST, 
+            MojoProcessor mojo = new MojoProcessor(new File(FrameworkServiceUtil.getPhrescoPluginInfoFilePath(Constants.PHASE_PERFORMANCE_TEST, 
 									Constants.PHASE_PERFORMANCE_TEST, appDirName)));
             List<String> testAgainsts = new ArrayList<String>();
             Parameter testAgainstParameter = mojo.getParameter(Constants.PHASE_PERFORMANCE_TEST, REQ_TEST_AGAINST);
@@ -1805,9 +1804,8 @@ public class QualityService extends RestBase implements ServiceConstants, Framew
 	public Response load(@QueryParam(REST_QUERY_APPDIR_NAME) String appDirName) {
 		ResponseInfo<Map> responseData = new ResponseInfo<Map>();
 		try {
-			FrameworkServiceUtil fsu = new FrameworkServiceUtil();
 			Map<String, Object> loadMap = new HashMap<String, Object>();
-            MojoProcessor mojo = new MojoProcessor(new File(fsu.getPhrescoPluginInfoFilePath(Constants.PHASE_LOAD_TEST, 
+            MojoProcessor mojo = new MojoProcessor(new File(FrameworkServiceUtil.getPhrescoPluginInfoFilePath(Constants.PHASE_LOAD_TEST, 
 									Constants.PHASE_LOAD_TEST, appDirName)));
             List<String> testAgainsts = new ArrayList<String>();
             Parameter testAgainstParameter = mojo.getParameter(Constants.PHASE_LOAD_TEST, REQ_TEST_AGAINST);

@@ -1,7 +1,7 @@
     <section class="optiontitle qual_unit">
       <div class="unit_text" data-i18n="ci.jobtemplates"/>                  
         <div class="flt_right">
-        <input type="submit" data-i18n="[value]ci.createjobtemplate;" name="jobTemplatePopup" class="btn btn_style create_job_btn">
+        <input type="submit" data-i18n="[value]ci.create;" name="jobTemplatePopup" class="btn btn_style create_job_btn">
         <div id="jobTemplatePopup" class="dyn_popup job_template">
           <form id="jobTemplate">
                         <table class="table" cellpadding="0" cellspacing="0" border="0">
@@ -93,7 +93,7 @@
                       <td>{{type}}</td>
                       <td>{{appIds}}</td>
                       <td>
-                          <a value="{{name}}" data-original-title="Edit" id="edit_{{name}}" name="editpopup" href="#" data-toggle="tooltip" data-placement="top" title="" class="tooltiptop"><img width="29" height="23" border="0" alt="" src="themes/default/images/helios/edit_row_icon.png"></a>
+                          <a value="{{name}}" data-original-title="Edit" id="edit_{{name}}" name="editpopup" href="#" data-toggle="tooltip" data-placement="top" title="" class="tooltiptop"><img border="0" alt="" src="themes/default/images/helios/edit_icon.png"></a>
                       </td>
                       <td>
                           <a value="{{name}}" class="tooltiptop" id="delete_{{name}}" name="deleteconfirm" title="" data-placement="top" data-toggle="tooltip" href="#" data-original-title="Delete"><img src="themes/default/images/helios/delete_row.png" width="14" height="18" border="0" alt=""></a>

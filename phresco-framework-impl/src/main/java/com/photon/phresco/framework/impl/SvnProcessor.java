@@ -60,7 +60,7 @@ import org.w3c.dom.NodeList;
 
 import com.photon.phresco.commons.FrameworkConstants;
 import com.photon.phresco.exception.PhrescoException;
-import com.photon.phresco.framework.model.CIJob;
+import com.photon.phresco.commons.model.CIJob;
 import com.trilead.ssh2.crypto.Base64;
 
 public class SvnProcessor implements FrameworkConstants{

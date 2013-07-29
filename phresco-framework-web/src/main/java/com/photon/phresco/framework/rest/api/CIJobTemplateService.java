@@ -47,7 +47,7 @@ import com.photon.phresco.exception.ConfigurationException;
 import com.photon.phresco.exception.PhrescoException;
 import com.photon.phresco.framework.PhrescoFrameworkFactory;
 import com.photon.phresco.framework.api.CIManager;
-import com.photon.phresco.framework.model.CIJobTemplate;
+import com.photon.phresco.commons.model.CIJobTemplate;
 import com.photon.phresco.framework.rest.api.util.FrameworkServiceUtil;
 import com.photon.phresco.impl.ConfigManagerImpl;
 import com.photon.phresco.util.ServiceConstants;
@@ -246,27 +246,19 @@ public class CIJobTemplateService extends RestBase implements ServiceConstants {
 	@Path("/getJobTemplatesByEnvironment")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response getJobTemplatesByEnvironemnt(@QueryParam(REST_QUERY_CUSTOMERID) String customerId,
-			@QueryParam(REST_QUERY_PROJECTID) String projectId, @QueryParam(REST_QUERY_EVN_NAME) String envName) {
+			@QueryParam(REST_QUERY_PROJECTID) String projectId, @QueryParam(REST_QUERY_EVN_NAME) String envName, 
+			@QueryParam(REST_QUERY_APPDIR_NAME) String appDir) {
 		ResponseInfo<CIJobTemplate> responseData = new ResponseInfo<CIJobTemplate>();
+		Map<JSONObject, List<CIJobTemplate>> jobTemplateMap = new HashMap<JSONObject, List<CIJobTemplate>>();
 		try {
-			List<ApplicationInfo> appInfos = FrameworkServiceUtil.getAppInfos(customerId, projectId);
 			CIManager ciManager = PhrescoFrameworkFactory.getCIManager();
-			Map<JSONObject, List<CIJobTemplate>> jobTemplateMap = new HashMap<JSONObject, List<CIJobTemplate>>();
-			for (ApplicationInfo appInfo : appInfos) {
-				String appName = appInfo.getName();
-				List<Environment> environments = getEnvironments(appInfo);
-				for (Environment environment : environments) {
-					if (envName.equals(environment.getName())) {
-						List<CIJobTemplate> jobTemplates = ciManager.getJobTemplatesByAppId(appName);
-						if (CollectionUtils.isNotEmpty(jobTemplates)) {
-							JSONObject jsonObject = new JSONObject();
-							jsonObject.put("appName", appInfo.getName());
-							jsonObject.put("appDirName", appInfo.getAppDirName());
-							
-							jobTemplateMap.put(jsonObject, jobTemplates);
-//							jobTemplateMap.put(appName, jobTemplates);
-						}
-					}
+			if(StringUtils.isNotEmpty(appDir)) {
+				ApplicationInfo applicationInfo = FrameworkServiceUtil.getApplicationInfo(appDir);
+				getJobTemplateByAppDir(envName, jobTemplateMap, ciManager, applicationInfo);
+			} else {
+				List<ApplicationInfo> appInfos = FrameworkServiceUtil.getAppInfos(customerId, projectId);
+				for (ApplicationInfo appInfo : appInfos) {
+					getJobTemplateByAppDir(envName, jobTemplateMap, ciManager, appInfo);
 				}
 			}
 			ResponseInfo<CIJobTemplate> finalOutput = responseDataEvaluation(responseData, null,
@@ -283,6 +275,25 @@ public class CIJobTemplateService extends RestBase implements ServiceConstants {
 		} catch (JSONException e) {
 			ResponseInfo<CIJobTemplate> finalOutput = responseDataEvaluation(responseData, e, "Job Templates Failed to Fetch", null);
 			return Response.status(Status.EXPECTATION_FAILED).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
+		}
+	}
+
+	private void getJobTemplateByAppDir(String envName,
+			Map<JSONObject, List<CIJobTemplate>> jobTemplateMap,
+			CIManager ciManager, ApplicationInfo applicationInfo)
+			throws ConfigurationException, PhrescoException, JSONException {
+		String appName = applicationInfo.getName();
+		List<Environment> environments = getEnvironments(applicationInfo);
+		for (Environment environment : environments) {
+			if (envName.equals(environment.getName())) {
+				List<CIJobTemplate> jobTemplates = ciManager.getJobTemplatesByAppId(applicationInfo.getName());
+				if (CollectionUtils.isNotEmpty(jobTemplates)) {
+					JSONObject jsonObject = new JSONObject();
+					jsonObject.put("appName", applicationInfo.getName());
+					jsonObject.put("appDirName", applicationInfo.getAppDirName());
+					jobTemplateMap.put(jsonObject, jobTemplates);
+				}
+			}
 		}
 	}
 

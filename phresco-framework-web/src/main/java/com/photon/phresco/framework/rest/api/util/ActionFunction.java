@@ -355,9 +355,9 @@ public class ActionFunction extends RestBase implements Constants ,FrameworkCons
 			if (StringUtils.isEmpty(isIphone)) {
 				if (!xmlResultsAvailable) {
 					 QualityService qualityService = new QualityService();
-					FrameworkServiceUtil fsu = new FrameworkServiceUtil();
-					MojoProcessor mojo = new MojoProcessor(new File(fsu.getPhrescoPluginInfoFilePath(Constants.PHASE_PERFORMANCE_TEST, 
-							Constants.PHASE_PERFORMANCE_TEST, appInfo.getAppDirName())));
+					String phrescoPluginInfoFilePath = FrameworkServiceUtil.getPhrescoPluginInfoFilePath(Constants.PHASE_PERFORMANCE_TEST, 
+							Constants.PHASE_PERFORMANCE_TEST, appInfo.getAppDirName());
+					MojoProcessor mojo = new MojoProcessor(new File(phrescoPluginInfoFilePath));
 					List<String> testAgainsts = new ArrayList<String>();
 					Parameter testAgainstParameter = mojo.getParameter(Constants.PHASE_PERFORMANCE_TEST, REQ_TEST_AGAINST);
 					if (testAgainstParameter != null && TYPE_LIST.equalsIgnoreCase(testAgainstParameter.getType())) {

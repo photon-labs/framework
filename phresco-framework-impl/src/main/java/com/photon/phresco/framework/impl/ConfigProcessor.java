@@ -17,27 +17,35 @@
  */
 package com.photon.phresco.framework.impl;
 
-import java.io.*;
-import java.net.*;
-import java.security.*;
-import java.util.*;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.util.List;
+import java.util.Map;
 
-import javax.crypto.*;
-import javax.crypto.spec.*;
+import javax.crypto.Cipher;
+import javax.crypto.SecretKey;
+import javax.crypto.spec.SecretKeySpec;
 
-import org.apache.commons.configuration.plist.ParseException;
-import org.apache.commons.lang.*;
-import org.apache.log4j.*;
-import org.jdom.*;
-import org.jdom.input.*;
-import org.jdom.output.*;
-import org.jdom.xpath.*;
+import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
+import org.jdom.Document;
+import org.jdom.Element;
+import org.jdom.JDOMException;
+import org.jdom.input.SAXBuilder;
+import org.jdom.output.XMLOutputter;
+import org.jdom.xpath.XPath;
 
-import com.photon.phresco.commons.*;
 import com.photon.phresco.commons.CIPasswordScrambler;
-import com.photon.phresco.exception.*;
-import com.photon.phresco.framework.model.*;
-import com.trilead.ssh2.crypto.*;
+import com.photon.phresco.commons.FrameworkConstants;
+import com.photon.phresco.commons.model.CIJob;
+import com.photon.phresco.exception.PhrescoException;
+import com.trilead.ssh2.crypto.Base64;
 
 public class ConfigProcessor implements FrameworkConstants {
 	private static final Logger S_LOGGER = Logger.getLogger(ConfigProcessor.class);

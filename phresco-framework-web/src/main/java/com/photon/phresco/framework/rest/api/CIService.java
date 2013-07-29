@@ -18,17 +18,15 @@
 package com.photon.phresco.framework.rest.api;
 
 import java.io.File;
-import java.io.InputStream;
 import java.net.ConnectException;
 import java.net.HttpURLConnection;
+import java.net.InetAddress;
 import java.net.URL;
 import java.net.URLConnection;
+import java.net.UnknownHostException;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
@@ -43,26 +41,29 @@ import javax.ws.rs.core.Response;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
-import org.w3c.dom.Document;
-import org.w3c.dom.NodeList;
 
-import com.google.gson.Gson;
 import com.photon.phresco.commons.FrameworkConstants;
 import com.photon.phresco.commons.model.ApplicationInfo;
+import com.photon.phresco.commons.model.CIBuild;
+import com.photon.phresco.commons.model.CIJob;
+import com.photon.phresco.commons.model.CIJobStatus;
+import com.photon.phresco.commons.model.ContinuousDelivery;
+import com.photon.phresco.commons.model.ProjectDelivery;
+import com.photon.phresco.commons.model.ProjectInfo;
 import com.photon.phresco.exception.PhrescoException;
 import com.photon.phresco.framework.PhrescoFrameworkFactory;
+import com.photon.phresco.framework.api.ActionType;
 import com.photon.phresco.framework.api.ApplicationManager;
 import com.photon.phresco.framework.api.CIManager;
-import com.photon.phresco.framework.commons.ApplicationsUtil;
-import com.photon.phresco.framework.model.CIBuild;
-import com.photon.phresco.framework.model.CIJob;
-import com.photon.phresco.framework.model.CIJobStatus;
-import com.photon.phresco.framework.model.ContinuousDelivery;
-import com.photon.phresco.framework.model.ProjectDelivery;
+import com.photon.phresco.framework.commons.FrameworkUtil;
+import com.photon.phresco.framework.impl.CIManagerImpl;
 import com.photon.phresco.framework.rest.api.util.FrameworkServiceUtil;
+import com.photon.phresco.plugins.model.Mojos.Mojo.Configuration.Parameters.Parameter;
+import com.photon.phresco.plugins.util.MojoProcessor;
 import com.photon.phresco.util.Constants;
 import com.photon.phresco.util.ServiceConstants;
 import com.photon.phresco.util.Utility;
+import com.phresco.pom.exception.PhrescoPomException;
 import com.sun.jersey.api.client.ClientResponse.Status;
 
 /**
@@ -71,79 +72,39 @@ import com.sun.jersey.api.client.ClientResponse.Status;
 @Path("/ci")
 public class CIService extends RestBase implements FrameworkConstants, ServiceConstants,Constants {
 
+	
 	/**
-	 * Gets the jobs.
-	 *
-	 * @param customerId the customer id
-	 * @param projectId the project id
-	 * @param appId the app id
-	 * @return the jobs
-	 * @throws PhrescoException the phresco exception
-	 */
-//	@GET
-//	@Path("/jobs")
-//	@Consumes(MediaType.APPLICATION_JSON)
-//	@Produces(MediaType.APPLICATION_JSON)
-//	public Response getJobs(@QueryParam(REST_QUERY_CUSTOMERID) String customerId,
-//			@QueryParam(REST_QUERY_PROJECTID) String projectId, @QueryParam(REST_QUERY_APPID) String appId)
-//			throws PhrescoException {
-//		ResponseInfo<List<CIJob>> responseData = new ResponseInfo<List<CIJob>>();
-//		try {
-//			List<CIJob> jobs = null;
-//			CIManager ciManager = PhrescoFrameworkFactory.getCIManager();
-//			ApplicationManager applicationManager = PhrescoFrameworkFactory.getApplicationManager();
-//			ApplicationInfo applicationInfo = applicationManager.getApplicationInfo(customerId, projectId, appId);
-//			jobs = ciManager.getJobs(applicationInfo);
-//			ResponseInfo<List<CIJob>> finalOutput = responseDataEvaluation(responseData, null, "Jobs returned successfully",
-//					jobs);
-//			return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*")
-//					.build();
-//		} catch (PhrescoException e) {
-//			ResponseInfo<List<CIJob>> finalOutput = responseDataEvaluation(responseData, e, "No jobs to return",
-//					null);
-//			return Response.status(Status.NOT_FOUND).entity(finalOutput).header("Access-Control-Allow-Origin", "*")
-//					.build();
-//		}
-//	}
-
-	/**
-	 * Gets the builds.
-	 *
-	 * @param customerId the customer id
-	 * @param projectId the project id
-	 * @param appId the app id
-	 * @param name the name
-	 * @return the builds
-	 * @throws PhrescoException the phresco exception
+	 * @param projectId
+	 * @param appDir
+	 * @param jobName
+	 * @param continuousName
+	 * @return
+	 * @throws PhrescoException
 	 */
 	@GET
 	@Path("/builds")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response getBuilds(@QueryParam(REST_QUERY_PROJECTID) String projectId, @QueryParam(REST_QUERY_APPDIR_NAME) String appDir,
-			@QueryParam(REST_QUERY_NAME) String name) throws PhrescoException {
+			@QueryParam(REST_QUERY_NAME) String jobName, @QueryParam(REST_QUERY_CONTINOUSNAME) String continuousName) throws PhrescoException {
 		ResponseInfo<List<CIBuild>> responseData = new ResponseInfo<List<CIBuild>>();
 		List<CIBuild> builds = null;
 		CIJob job = null;
 		try {
+			if(projectId.equals("null")) {
+				ProjectInfo projectInfo = FrameworkServiceUtil.getProjectInfo(appDir);
+				projectId = projectInfo.getId();
+			}
 			CIManager ciManager = PhrescoFrameworkFactory.getCIManager();
 			List<ProjectDelivery> ciJobInfo = ciManager.getCiJobInfo(appDir);
-			for (ProjectDelivery projectDelivery : ciJobInfo) {
-				if(projectDelivery.getId().equals(projectId)) {
-					List<ContinuousDelivery> continuousDeliveries = projectDelivery.getContinuousDeliveries();
-					for (ContinuousDelivery continuousDelivery : continuousDeliveries) {
-						List<CIJob> ciJobs = continuousDelivery.getJobs();
-						for (CIJob ciJob : ciJobs) {
-							if(ciJob.getJobName().equals(name)) {
-								job = ciJob;
-							}
-						}
-					}
+			List<CIJob> ciJobs = Utility.getJobs(continuousName, projectId, ciJobInfo);
+			for (CIJob ciJob : ciJobs) {
+				if(ciJob.getJobName().equals(jobName)) {
+					job = ciJob;
 				}
 			}
 			builds = ciManager.getBuilds(job);
-			ResponseInfo<List<CIBuild>> finalOutput = responseDataEvaluation(responseData, null, "Builds returned successfully",
-					builds);
+			ResponseInfo<List<CIBuild>> finalOutput = responseDataEvaluation(responseData, null, "Builds returned successfully", builds);
 			return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*")
 					.build();
 		} catch (PhrescoException e) {
@@ -155,51 +116,52 @@ public class CIService extends RestBase implements FrameworkConstants, ServiceCo
 	}
 
 	/**
-	 * Creates the job.
-	 *
-	 * @param job the job
-	 * @param customerId the customer id
-	 * @param projectId the project id
-	 * @param appId the app id
-	 * @return the string
-	 * @throws PhrescoException the phresco exception
+	 * @param continuousDelivery
+	 * @param customerId
+	 * @param projectId
+	 * @param appDir
+	 * @return
+	 * @throws PhrescoException
 	 */
 	@POST
 	@Path("/create")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response createJob(ContinuousDelivery continuousDelivery, @QueryParam(REST_QUERY_CUSTOMERID) String customerId,
-			@QueryParam(REST_QUERY_PROJECTID) String projectId, @QueryParam(REST_QUERY_APPID) String appId, @QueryParam(REST_QUERY_APPDIR_NAME) String appDir)
+			@QueryParam(REST_QUERY_PROJECTID) String projectId, @QueryParam(REST_QUERY_APPDIR_NAME) String appDir)
 	throws PhrescoException {
 		ResponseInfo<ContinuousDelivery> responseData = new ResponseInfo<ContinuousDelivery>();
+		ResponseInfo<ContinuousDelivery> finalOutput;
 		try {
-			boolean createJob = false;
-			List<CIJob> ciJobs = new ArrayList<CIJob>(); 
-			CIManager ciManager = PhrescoFrameworkFactory.getCIManager();
-			List<CIJob> jobs = continuousDelivery.getJobs();
-			ApplicationInfo applicationInfo = null;
-			for(CIJob job : jobs) {	
-				if(StringUtils.isNotEmpty(job.getAppDirName())) {
-					applicationInfo = FrameworkServiceUtil.getApplicationInfo(job.getAppDirName());
-				}
-				CIJob jobWithCmds = ciManager.setPreBuildCmds(job,  applicationInfo);
-				createJob = ciManager.createJob(applicationInfo, jobWithCmds);
-				if (createJob) {
-					ciJobs.add(job);
-				}
+			if(projectId.equals("null")) {
+				ProjectInfo projectInfo = FrameworkServiceUtil.getProjectInfo(appDir);
+				projectId = projectInfo.getId();
 			}
-			ciManager.createJsonJobs(continuousDelivery, ciJobs, projectId, appDir);
-			
-			ResponseInfo<ContinuousDelivery> finalOutput = responseDataEvaluation(responseData, null, "Job created successfully", continuousDelivery);
+			List<CIJob> jobs = continuousDelivery.getJobs();
+			boolean coreCreateJob = coreCreateJob(continuousDelivery, projectId, appDir);
+			if (coreCreateJob) {
+				finalOutput = responseDataEvaluation(responseData, null, "Job(s) created successfully", continuousDelivery);
+			} else {
+				finalOutput = responseDataEvaluation(responseData, null, "Job(s) creation Failed", null);
+			}
 			return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
 		} catch (PhrescoException e) {
-			ResponseInfo<ContinuousDelivery> finalOutput = responseDataEvaluation(responseData, e, "Job creation Failed",
-					null);
+			finalOutput = responseDataEvaluation(responseData, e, "Job creation Failed", null);
 			return Response.status(Status.NOT_FOUND).entity(finalOutput).header("Access-Control-Allow-Origin", "*")
 			.build();
 		}
 	}
 	
+	/**
+	 * @param cloneName
+	 * @param envName
+	 * @param continuousName
+	 * @param customerId
+	 * @param projectId
+	 * @param appDir
+	 * @return
+	 * @throws PhrescoException
+	 */
 	@POST
 	@Path("/clone")
 	@Consumes(MediaType.APPLICATION_JSON)
@@ -209,146 +171,166 @@ public class CIService extends RestBase implements FrameworkConstants, ServiceCo
 			@QueryParam(REST_QUERY_PROJECTID) String projectId, @QueryParam(REST_QUERY_APPDIR_NAME) String appDir)
 	throws PhrescoException {
 		ResponseInfo<ContinuousDelivery> responseData = new ResponseInfo<ContinuousDelivery>();
+		ResponseInfo<ContinuousDelivery> finalOutput;
 		try {
-			boolean createJob = false;
-			List<CIJob> ciJobs = new ArrayList<CIJob>(); 
-			List<CIJob> createdciJobs = new ArrayList<CIJob>(); 
-			List<CIJob> jobs = new ArrayList<CIJob>();
+			if(projectId.equals("null")) {
+				ProjectInfo projectInfo = FrameworkServiceUtil.getProjectInfo(appDir);
+				projectId = projectInfo.getId();
+			}
+			String trimmedName = continuousName.trim();
 			CIManager ciManager = PhrescoFrameworkFactory.getCIManager();
 			ContinuousDelivery continuousDelivery = new ContinuousDelivery();
+
+			List<CIJob> ciJobs = new ArrayList<CIJob>(); 
+			List<CIJob> jobs = new ArrayList<CIJob>();
+
 			List<ProjectDelivery> ciJobInfo = ciManager.getCiJobInfo(appDir);
-			ProjectDelivery projectDelivery = ciManager.getProjectDelivery(projectId, ciJobInfo);
-			List<ContinuousDelivery> continuousDeliveries = projectDelivery.getContinuousDeliveries();
-			ContinuousDelivery cd = ciManager.getContinuousDelivery(continuousName.trim(), continuousDeliveries);
-			
-			if(cd.getName().equals(continuousName.trim())) {
+			ContinuousDelivery specificContinuousDelivery = Utility.getContinuousDelivery(projectId, trimmedName, ciJobInfo);
+			if(specificContinuousDelivery.getName().equals(trimmedName)) {
 				continuousDelivery.setName(cloneName);
 				continuousDelivery.setEnvName(envName);
-				jobs = cd.getJobs();
+				jobs = specificContinuousDelivery.getJobs();
 			}
-			
+
 			for(CIJob cijob: jobs) {
 				cijob.setJobName(cijob.getJobName()+"-"+envName);
+				cijob.setEnvironmentName(envName);
 				if(StringUtils.isNotEmpty(cijob.getDownstreamApplication())) {
 					cijob.setDownstreamApplication(cijob.getDownstreamApplication()+"-"+envName);
 				}
 				if(StringUtils.isNotEmpty(cijob.getUpstreamApplication())) {
+					cijob.setUsedClonnedWorkspace(cijob.getUpstreamApplication()+"-"+envName);
 					cijob.setUpstreamApplication(cijob.getUpstreamApplication()+"-"+envName);
 				}
+
 				ciJobs.add(cijob);
 			}
-			ApplicationInfo applicationInfo = null;
-			for(CIJob job : ciJobs) {	
-				if(StringUtils.isNotEmpty(job.getAppDirName())) {
-					applicationInfo = FrameworkServiceUtil.getApplicationInfo(job.getAppDirName());
-				}
-				CIJob jobWithCmds = ciManager.setPreBuildCmds(job,  applicationInfo);
-				createJob = ciManager.createJob(applicationInfo, jobWithCmds);
-				if (createJob) {
-					createdciJobs.add(job);
-				}
+			continuousDelivery.setJobs(ciJobs);
+			boolean coreCreateJob = coreCreateJob(continuousDelivery, projectId, appDir);
+
+			if (coreCreateJob) {
+				finalOutput = responseDataEvaluation(responseData, null, "Job(s) created successfully", continuousDelivery);
+			} else {
+				finalOutput = responseDataEvaluation(responseData, null, "Job(s) creation Failed", null);
 			}
-			//continuousDelivery.setJobs(createdciJobs);
-			ciManager.createJsonJobs(continuousDelivery, createdciJobs, projectId, appDir);
-			
-			ResponseInfo<ContinuousDelivery> finalOutput = responseDataEvaluation(responseData, null, "Job created successfully", continuousDelivery);
 			return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
 		} catch (PhrescoException e) {
-			ResponseInfo<ContinuousDelivery> finalOutput = responseDataEvaluation(responseData, e, "Job creation Failed",
-					null);
-			return Response.status(Status.NOT_FOUND).entity(finalOutput).header("Access-Control-Allow-Origin", "*")
-			.build();
+			finalOutput = responseDataEvaluation(responseData, e, "Job creation Failed", null);
+			return Response.status(Status.NOT_FOUND).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
 		}
 	}
 	
-//	@POST
-//	@Path("/create")
-//	@Consumes(MediaType.APPLICATION_JSON)
-//	@Produces(MediaType.APPLICATION_JSON)
-//	public Response createCloneJob(@QueryParam(REST_QUERY_CLONE_NAME) String cloneName, @QueryParam(REST_QUERY_CONTINOUSNAME) String continuousName,
-//			@QueryParam(REST_QUERY_PROJECTID) String projectId, @QueryParam(REST_QUERY_ENV_NAME) String envName, @QueryParam(REST_QUERY_APPID) String appDir)
-//			throws PhrescoException {
-//		ResponseInfo<ContinuousDelivery> responseData = new ResponseInfo<ContinuousDelivery>();
-//		try {
-//			boolean createJob = false;
-//			System.out.println("Create Job method ======>");
-////			ApplicationManager applicationManager = PhrescoFrameworkFactory.getApplicationManager();
-////			ApplicationInfo applicationInfo = applicationManager.getApplicationInfo(customerId, projectId, appId);
-//			CIManager ciManager = PhrescoFrameworkFactory.getCIManager();
-//			List<CIJob> jobs = continuousDelivery.getJobs();
-//			for(CIJob job : jobs) {	
-//				ApplicationInfo applicationInfo = FrameworkServiceUtil.getApplicationInfo(job.getAppDirName());
-//				CIJob jobWithCmds = ciManager.setPreBuildCmds(job,  applicationInfo);
-//				createJob = ciManager.createJob(applicationInfo, jobWithCmds);
-//				System.out.println("createJob ===> "+createJob);
-//				if (createJob) {
-//					ciManager.writeJsonJobs(continuousDelivery, jobWithCmds, projectId);
-//				}
-//			}
-//					
-//			 ResponseInfo<ContinuousDelivery> finalOutput = responseDataEvaluation(responseData, null, "Job created successfully", continuousDelivery);
-//			return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
-//		} catch (PhrescoException e) {
-//			ResponseInfo<ContinuousDelivery> finalOutput = responseDataEvaluation(responseData, e, "Job creation Failed",
-//					null);
-//			return Response.status(Status.NOT_FOUND).entity(finalOutput).header("Access-Control-Allow-Origin", "*")
-//					.build();
-//		}
-//	}
-	
 	/**
-	 * Update job.
-	 *
-	 * @param job the job
-	 * @param customerId the customer id
-	 * @param projectId the project id
-	 * @param appId the app id
-	 * @return the string
-	 * @throws PhrescoException the phresco exception
+	 * @param continuousDelivery
+	 * @param customerId
+	 * @param projectId
+	 * @param appDir
+	 * @return
+	 * @throws PhrescoException
 	 */
 	@PUT
 	@Path("/update")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response updateJob(ContinuousDelivery continuousDelivery, @QueryParam(REST_QUERY_CUSTOMERID) String customerId,
-			@QueryParam(REST_QUERY_PROJECTID) String projectId, @QueryParam(REST_QUERY_APPID) String appId,  @QueryParam(REST_QUERY_APPDIR_NAME) String appDir)
-			throws PhrescoException {
-		ResponseInfo<ContinuousDelivery> responseData = new ResponseInfo<ContinuousDelivery>();
+			@QueryParam(REST_QUERY_PROJECTID) String projectId, @QueryParam(REST_QUERY_APPDIR_NAME) String appDir)
+	throws PhrescoException {
+		ResponseInfo<CIJobStatus> responseData = new ResponseInfo<CIJobStatus>();
 		boolean updateJob = false;
+		CIJobStatus status = null;
 		try {
 			CIManager ciManager = PhrescoFrameworkFactory.getCIManager();
-			
-			//Lists objects for current updated jobs, previous jobs, diff jobs to be deleted, list to add for updating jsonFile respectively
-			List<CIJob> jobs = continuousDelivery.getJobs();
-			List<CIJob> oldJobs = ciManager.getDeleteableJobs(projectId, continuousDelivery, appDir);
-			List<CIJob> removeFromList = removeFromList(oldJobs, jobs);
-			List<CIJob> ciJobs = new ArrayList<CIJob>(); 
-			
-			ciManager.clearContinuousDelivery(continuousDelivery.getName(), projectId, appDir);
-			for(CIJob job : jobs) {	
-				ApplicationInfo applicationInfo = FrameworkServiceUtil.getApplicationInfo(job.getAppDirName());
-				updateJob = ciManager.updateJob(applicationInfo, job);		
-				if (updateJob) {
-					ciJobs.add(job);
-				}
+			if(projectId.equals("null")) {
+				ProjectInfo projectInfo = FrameworkServiceUtil.getProjectInfo(appDir);
+				projectId = projectInfo.getId();
 			}
-			ciManager.createJsonJobs(continuousDelivery, ciJobs, projectId, appDir);
-			ciManager.deleteJobs(appDir, removeFromList, projectId, continuousDelivery.getName());
-			
-			ResponseInfo<ContinuousDelivery> finalOutput = responseDataEvaluation(responseData, null, "Job updated successfully", null);
+			List<CIJob> tempCiJobs = new ArrayList<CIJob>(); 
+			List<CIJob> tempJobs = new ArrayList<CIJob>();
+			List<CIJob> newJobs = continuousDelivery.getJobs();
+			List<CIJob> oldJobs = ciManager.getOldJobs(projectId, continuousDelivery, appDir);
+			tempCiJobs.addAll(oldJobs);
+
+			for (CIJob ciJob : newJobs) {//t1,t2,t3	
+				boolean exists = false;
+				for (CIJob oldCiJob : oldJobs) {//t1,t3,t2
+					if(oldCiJob.getJobName().equals(ciJob.getJobName())) {
+						boolean equals = ciJob.equals(oldCiJob);
+						//tempCiJobs.add(ciJob);
+						ApplicationInfo applicationInfo = new ApplicationInfo();
+						if(!equals) {
+							exists = true;
+							if(StringUtils.isNotEmpty(ciJob.getAppDirName())) {
+								applicationInfo = FrameworkServiceUtil.getApplicationInfo(ciJob.getAppDirName());
+							}
+							CIJob job = setPreBuildCmds(ciJob,  applicationInfo, ciJob.getAppDirName(), projectId, continuousDelivery.getName());
+							updateJob = ciManager.updateJob(job);
+							//						if(updateJob) {
+							tempJobs.add(ciJob);
+							//						}
+						} else {
+							exists = true;
+							tempJobs.add(ciJob);
+						}
+					} 
+				}
+				if (!exists) {
+					ApplicationInfo applicationInfo = new ApplicationInfo();
+					if(StringUtils.isNotEmpty(ciJob.getAppDirName())) {
+						applicationInfo = FrameworkServiceUtil.getApplicationInfo(ciJob.getAppDirName());
+					}
+					CIJob jobWithCmds = setPreBuildCmds(ciJob,  applicationInfo, ciJob.getAppDirName(), projectId, continuousDelivery.getName());
+					boolean createJob = ciManager.createJob(jobWithCmds);
+					if(createJob) {
+						tempJobs.add(ciJob);
+					}
+					exists = false;
+				} 
+			}
+			boolean clearContinuousDelivery = ciManager.clearContinuousDelivery(continuousDelivery.getName(), projectId, appDir);
+			if(clearContinuousDelivery) {
+				continuousDelivery.setJobs(tempJobs);
+			}
+
+			boolean createJsonJobs = ciManager.createJsonJobs(continuousDelivery, tempJobs, projectId, appDir);
+			if (createJsonJobs) {
+				/*Iterator<CIJob> iterator = oldJobs.iterator();
+				for(CIJob job:tempJobs) {
+					while (iterator.hasNext()) {
+						CIJob itrCiJob = iterator.next();
+						if (itrCiJob.getJobName().equals(job.getJobName())) {
+							iterator.remove();
+							break;
+						}
+					}
+				}*/
+				for(CIJob job:tempJobs) {
+					for (CIJob ciJob2 : tempCiJobs) {
+						if(ciJob2.getJobName().equals(job.getJobName())) {
+							oldJobs.remove(ciJob2);
+						}
+					}
+				}
+				status = ciManager.deleteJobs(appDir, oldJobs, projectId, continuousDelivery.getName());
+			}
+			ResponseInfo<CIJobStatus> finalOutput;
+			if (createJsonJobs) {
+				finalOutput = responseDataEvaluation(responseData, null, "Job(s) Updated successfully", continuousDelivery);
+			} else {
+				finalOutput = responseDataEvaluation(responseData, null, "Job(s) updation Failed", null);
+			}
 			return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
 		} catch (PhrescoException e) {
 			ResponseInfo<Boolean> finalOutput = responseDataEvaluation(responseData, e, "Job updation Failed",
 					null);
 			return Response.status(Status.NOT_FOUND).entity(finalOutput).header("Access-Control-Allow-Origin", "*")
-					.build();
+			.build();
 		}
 	}
 	
 	/**
-	 * @param customerId
 	 * @param projectId
-	 * @param appId
+	 * @param continuousName
+	 * @param appDir
 	 * @return
 	 * @throws PhrescoException
 	 */
@@ -357,21 +339,22 @@ public class CIService extends RestBase implements FrameworkConstants, ServiceCo
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response editContinuousView(@QueryParam(REST_QUERY_PROJECTID) String projectId, @QueryParam(REST_QUERY_NAME) String continuousName, @QueryParam(REST_QUERY_APPDIR_NAME) String appDir)
-			throws PhrescoException {
+	throws PhrescoException {
 		ResponseInfo<ContinuousDelivery> responseData = new ResponseInfo<ContinuousDelivery>();
 		ContinuousDelivery matchingContinuous = null;
 		boolean exist = false;
+		if(projectId.equals("null")) {
+			ProjectInfo projectInfo = FrameworkServiceUtil.getProjectInfo(appDir);
+			projectId = projectInfo.getId();
+		}
 		CIManager ciManager = PhrescoFrameworkFactory.getCIManager();
 		List<ProjectDelivery> ciJobInfo = ciManager.getCiJobInfo(appDir);
-		ProjectDelivery projectDelivery = ciManager.getProjectDelivery(projectId, ciJobInfo);
-		List<ContinuousDelivery> continuousDeliveries = projectDelivery.getContinuousDeliveries();
-		ContinuousDelivery continuousDelivery = ciManager.getContinuousDelivery(continuousName.trim(), continuousDeliveries);
-		
+		ContinuousDelivery continuousDelivery = Utility.getContinuousDelivery(projectId, continuousName.trim(), ciJobInfo);
 		if (continuousDelivery.getName().equalsIgnoreCase(continuousName)) {
 			matchingContinuous = continuousDelivery;
 			exist = true;
 		}
-		
+
 		ResponseInfo<ContinuousDelivery> finalOutput;
 		if(exist) {
 			finalOutput= responseDataEvaluation(responseData, null, "Continuous Delivery Fetched successfully",	matchingContinuous);
@@ -382,9 +365,8 @@ public class CIService extends RestBase implements FrameworkConstants, ServiceCo
 	}
 	
 	/**
-	 * @param customerId
 	 * @param projectId
-	 * @param appId
+	 * @param appDir
 	 * @return
 	 * @throws PhrescoException
 	 */
@@ -393,63 +375,69 @@ public class CIService extends RestBase implements FrameworkConstants, ServiceCo
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response getContinuousDeliveryJob(@QueryParam(REST_QUERY_PROJECTID) String projectId, @QueryParam(REST_QUERY_APPDIR_NAME) String appDir)
-			throws PhrescoException {
+	throws PhrescoException {
 		ResponseInfo<Boolean> responseData = new ResponseInfo<Boolean>();
 		try {
+			if(projectId.equals("null")) {
+				ProjectInfo projectInfo = FrameworkServiceUtil.getProjectInfo(appDir);
+				projectId = projectInfo.getId();
+			}
 			CIManager ciManager = PhrescoFrameworkFactory.getCIManager();
 			ProjectDelivery projectContinuousDelivery = new ProjectDelivery();
 			List<ProjectDelivery> ciJobInfo = ciManager.getCiJobInfo(appDir);
 			if(CollectionUtils.isNotEmpty(ciJobInfo)) {
-				ProjectDelivery projectDelivery = ciManager.getProjectDelivery(projectId, ciJobInfo);
-				List<ContinuousDelivery> continuousDeliveries = projectDelivery.getContinuousDeliveries();
-				List<ContinuousDelivery> contDeliveryList = new ArrayList<ContinuousDelivery>();
-				for (ContinuousDelivery continuousDelivery : continuousDeliveries) {
-					
-					List<CIJob> ciJobs = continuousDelivery.getJobs();
-					String downstreamApplication = "";
-					ContinuousDelivery contDelivery = new ContinuousDelivery();
-					List<CIJob> jobs = new ArrayList<CIJob>();
-					for (CIJob ciJob : ciJobs) {
-						if(StringUtils.isEmpty(ciJob.getUpstreamApplication())) {
-							jobs.add(ciJob);
-							downstreamApplication = ciJob.getDownstreamApplication();
-							if(ciJobs.size() == 1) {
-								contDelivery.setJobs(jobs);
+				ProjectDelivery projectDelivery = Utility.getProjectDelivery(projectId, ciJobInfo);
+				if (projectDelivery != null) {
+					List<ContinuousDelivery> continuousDeliveries = projectDelivery.getContinuousDeliveries();
+					List<ContinuousDelivery> contDeliveryList = new ArrayList<ContinuousDelivery>();
+					for (ContinuousDelivery continuousDelivery : continuousDeliveries) {
+
+						List<CIJob> ciJobs = continuousDelivery.getJobs();
+						String downstreamApplication = "";
+						ContinuousDelivery contDelivery = new ContinuousDelivery();
+						List<CIJob> jobs = new ArrayList<CIJob>();
+						for (CIJob ciJob : ciJobs) {
+							if(StringUtils.isEmpty(ciJob.getUpstreamApplication())) {
+								jobs.add(ciJob);
+								downstreamApplication = ciJob.getDownstreamApplication();
+								if(ciJobs.size() == 1) {
+									contDelivery.setJobs(jobs);
+								}
 							}
 						}
-					}
-					if(StringUtils.isNotEmpty(downstreamApplication)) {
-						int flag = 0;
-						for(int i=0;i<ciJobs.size();i++){
-							for (CIJob ciJob : ciJobs) {
-								if(ciJob.getJobName().equals(downstreamApplication)) {
-									jobs.add(ciJob);
-									if(StringUtils.isEmpty(ciJob.getDownstreamApplication())) {
-										flag = 1;
-										contDelivery.setJobs(jobs);
-										downstreamApplication = "";
-										break;
-									} else {
-										downstreamApplication = ciJob.getDownstreamApplication();
+						if(StringUtils.isNotEmpty(downstreamApplication)) {
+							int flag = 0;
+							for(int i=0;i<ciJobs.size();i++){
+								for (CIJob ciJob : ciJobs) {
+									if(ciJob.getJobName().equals(downstreamApplication)) {
+										jobs.add(ciJob);
+										if(StringUtils.isEmpty(ciJob.getDownstreamApplication())) {
+											flag = 1;
+											contDelivery.setJobs(jobs);
+											downstreamApplication = "";
+											break;
+										} else {
+											downstreamApplication = ciJob.getDownstreamApplication();
+										}
+										if(flag == 1) {
+											break;
+										}
 									}
 									if(flag == 1) {
 										break;
 									}
 								}
-								if(flag == 1) {
-									break;
-								}
 							}
-						}
-					} 
-					contDelivery.setName(continuousDelivery.getName());
-					contDelivery.setEnvName(continuousDelivery.getEnvName());
-					contDeliveryList.add(contDelivery);
-					projectContinuousDelivery.setContinuousDeliveries(contDeliveryList);
+						} 
+						contDelivery.setName(continuousDelivery.getName());
+						contDelivery.setEnvName(continuousDelivery.getEnvName());
+						contDeliveryList.add(contDelivery);
+						projectContinuousDelivery.setContinuousDeliveries(contDeliveryList);
+					}
 				}
 				projectContinuousDelivery.setId(projectId);
 			}
-			
+
 			ResponseInfo<ProjectDelivery> finalOutput = responseDataEvaluation(responseData, null,
 					"Continuous Delivery List Successfully", projectContinuousDelivery);
 			return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
@@ -457,103 +445,141 @@ public class CIService extends RestBase implements FrameworkConstants, ServiceCo
 			ResponseInfo<Boolean> finalOutput = responseDataEvaluation(responseData, e, "Job creation Failed",
 					null);
 			return Response.status(Status.NOT_FOUND).entity(finalOutput).header("Access-Control-Allow-Origin", "*")
-					.build();
+			.build();
 		}
 	}
-	
 
 	/**
-	 * Delete jobs.
-	 *
-	 * @param jobNames the job names
-	 * @param customerId the customer id
-	 * @param projectId the project id
-	 * @param appId the app id
-	 * @return the cI job status
-	 * @throws PhrescoException the phresco exception
+	 * @param continuousName
+	 * @param customerId
+	 * @param projectId
+	 * @param appDir
+	 * @return
+	 * @throws PhrescoException
 	 */
 	@DELETE
 	@Path("/delete")
 	@Produces(MediaType.APPLICATION_JSON)
 	@Consumes(MediaType.APPLICATION_JSON)
 	public Response delete(@QueryParam(REST_QUERY_CONTINOUSNAME) String continuousName, @QueryParam(REST_QUERY_CUSTOMERID) String customerId,
-			@QueryParam(REST_QUERY_PROJECTID) String projectId, @QueryParam(REST_QUERY_APPID) String appDir) throws PhrescoException {
+			@QueryParam(REST_QUERY_PROJECTID) String projectId, @QueryParam(REST_QUERY_APPDIR_NAME) String appDir) throws PhrescoException {
 		ResponseInfo<CIJobStatus> responseData = new ResponseInfo<CIJobStatus>();
 		try {
+			if(projectId.equals("null")) {
+				ProjectInfo projectInfo = FrameworkServiceUtil.getProjectInfo(appDir);
+				projectId = projectInfo.getId();
+			}
 			CIManager ciManager = PhrescoFrameworkFactory.getCIManager();
 			List<ProjectDelivery> ciJobInfo = ciManager.getCiJobInfo(appDir);
 			CIJobStatus ciJobStatus = null;
-			List<CIJob> jobs = ciManager.getJobs(continuousName, projectId, ciJobInfo);
+			List<CIJob> jobs = Utility.getJobs(continuousName, projectId, ciJobInfo);
 			ciJobStatus = ciManager.deleteJobs(appDir, jobs, projectId, continuousName);
 			ciManager.clearContinuousDelivery(continuousName, projectId, appDir);
 			ResponseInfo<CIJobStatus> finalOutput = responseDataEvaluation(responseData, null, "Job deleted successfully",
 					ciJobStatus);
 			return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*")
-					.build();
+			.build();
 		} catch (PhrescoException e) {
 			ResponseInfo<CIJobStatus> finalOutput = responseDataEvaluation(responseData, e, "Job deletion Failed",
 					null);
 			return Response.status(Status.NOT_FOUND).entity(finalOutput).header("Access-Control-Allow-Origin", "*")
-					.build();
+			.build();
 		}
 	}
 
-
 	/**
-	 * Delete builds.
-	 *
-	 * @param selectedBuilds the selected builds
-	 * @param customerId the customer id
-	 * @param projectId the project id
-	 * @param appId the app id
-	 * @return the cI job status
-	 * @throws PhrescoException the phresco exception
+	 * @param buildNumber
+	 * @param jobName
+	 * @param customerId
+	 * @param projectId
+	 * @param appDir
+	 * @param continuousName
+	 * @return
+	 * @throws PhrescoException
 	 */
 	@DELETE
 	@Path("/deletebuilds")
 	@Produces(MediaType.APPLICATION_JSON)
 	@Consumes(MediaType.APPLICATION_JSON)
 	public Response deleteBuilds(@QueryParam(REST_QUERY_BUILD_NUMBER) String buildNumber, @QueryParam(REST_QUERY_NAME) String jobName, @QueryParam(REST_QUERY_CUSTOMERID) String customerId,
-			@QueryParam(REST_QUERY_PROJECTID) String projectId, @QueryParam(REST_QUERY_APPID) String appDir)
-			throws PhrescoException {
+			@QueryParam(REST_QUERY_PROJECTID) String projectId, @QueryParam(REST_QUERY_APPDIR_NAME) String appDir, @QueryParam(REST_QUERY_CONTINOUSNAME) String continuousName)
+	throws PhrescoException {
 		ResponseInfo<CIJobStatus> responseData = new ResponseInfo<CIJobStatus>();
-		
+		ResponseInfo<CIJobStatus> finalOutput ;
 		try {
+			if(projectId.equals("null")) {
+				ProjectInfo projectInfo = FrameworkServiceUtil.getProjectInfo(appDir);
+				projectId = projectInfo.getId();
+			}
 			CIManager ciManager = PhrescoFrameworkFactory.getCIManager();
 			CIJobStatus deleteBuilds = null;
-			ProjectDelivery projectContinuousDelivery = new ProjectDelivery();
 			List<ProjectDelivery> ciJobInfo = ciManager.getCiJobInfo(appDir);
-			
-			ProjectDelivery projectDelivery = ciManager.getProjectDelivery(projectId, ciJobInfo);
-			List<ContinuousDelivery> continuousDeliveries = projectDelivery.getContinuousDeliveries();
-			for (ContinuousDelivery continuousDelivery : continuousDeliveries) {
-				List<CIJob> ciJobs = continuousDelivery.getJobs();
-				for (CIJob ciJob : ciJobs) {
-					if(ciJob.getJobName().equals(jobName)) {
-						deleteBuilds = ciManager.deleteBuilds(ciJob, buildNumber);
-					}
-				}
+			CIJob specificJob = ciManager.getJob(jobName, projectId, ciJobInfo, continuousName);
+			if (specificJob != null) {
+				deleteBuilds = ciManager.deleteBuilds(specificJob, buildNumber);
+				finalOutput = responseDataEvaluation(responseData, null, "Build deleted successfully",	deleteBuilds);
+			} else {
+				finalOutput = responseDataEvaluation(responseData, null, "Build deletion Failed",	deleteBuilds);
 			}
-			ResponseInfo<CIJobStatus> finalOutput = responseDataEvaluation(responseData, null, "Build deleted successfully",
-					deleteBuilds);
+
 			return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*")
-					.build();
+			.build();
 		} catch (PhrescoException e) {
-			ResponseInfo<CIJobStatus> finalOutput = responseDataEvaluation(responseData, e, "Build deletion Failed",
+			finalOutput = responseDataEvaluation(responseData, e, "Build deletion Failed",
 					null);
 			return Response.status(Status.NOT_FOUND).entity(finalOutput).header("Access-Control-Allow-Origin", "*")
-					.build();
+			.build();
+		}
+	}
+	
+	/**
+	 * @param name
+	 * @param projectId
+	 * @param appDir
+	 * @param continuousName
+	 * @return
+	 * @throws PhrescoException
+	 */
+	@POST
+	@Path("/build")
+	@Produces(MediaType.APPLICATION_JSON)
+	@Consumes(MediaType.APPLICATION_JSON)
+	public Response build(@QueryParam(REST_QUERY_NAME) String name,
+			@QueryParam(REST_QUERY_PROJECTID) String projectId, @QueryParam(REST_QUERY_APPDIR_NAME) String appDir, @QueryParam(REST_QUERY_CONTINOUSNAME) String continuousName) throws PhrescoException {
+		ResponseInfo<CIJobStatus> responseData = new ResponseInfo<CIJobStatus>();
+		try {
+			if(projectId.equals("null")) {
+				ProjectInfo projectInfo = FrameworkServiceUtil.getProjectInfo(appDir);
+				projectId = projectInfo.getId();
+			}
+			CIManager ciManager = PhrescoFrameworkFactory.getCIManager();
+			CIJobStatus buildJobs = null;
+			ResponseInfo<CIJobStatus> finalOutput; 
+			List<ProjectDelivery> ciJobInfo = ciManager.getCiJobInfo(appDir);
+			CIJob specificJob = ciManager.getJob(name, projectId, ciJobInfo, continuousName);
+			if (specificJob != null) {
+				buildJobs = ciManager.generateBuild(specificJob);
+				finalOutput = responseDataEvaluation(responseData, null, "Build Triggered success", buildJobs);
+			} else {
+				finalOutput = responseDataEvaluation(responseData, null, "Build Triggered Failed", buildJobs);
+			}
+
+			return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*")
+			.build();
+		} catch (PhrescoException e) {
+			ResponseInfo<CIJobStatus> finalOutput = responseDataEvaluation(responseData, e, "Build failed",
+					null);
+			return Response.status(Status.NOT_FOUND).entity(finalOutput).header("Access-Control-Allow-Origin", "*")
+			.build();
 		}
 	}
 
 	/**
-	 * Gets the email configuration.
-	 *
-	 * @param customerId the customer id
-	 * @param projectId the project id
-	 * @param appId the app id
-	 * @return the email configuration
-	 * @throws PhrescoException the phresco exception
+	 * @param customerId
+	 * @param projectId
+	 * @param appId
+	 * @return
+	 * @throws PhrescoException
 	 */
 	@POST
 	@Path("/mail")
@@ -561,7 +587,7 @@ public class CIService extends RestBase implements FrameworkConstants, ServiceCo
 	@Consumes(MediaType.APPLICATION_JSON)
 	public Response getEmailConfiguration(@QueryParam(REST_QUERY_CUSTOMERID) String customerId,
 			@QueryParam(REST_QUERY_PROJECTID) String projectId, @QueryParam(REST_QUERY_APPID) String appId)
-			throws PhrescoException {
+	throws PhrescoException {
 		ResponseInfo responseData = new ResponseInfo();
 		try {
 			CIManager ciManager = PhrescoFrameworkFactory.getCIManager();
@@ -573,22 +599,19 @@ public class CIService extends RestBase implements FrameworkConstants, ServiceCo
 			ResponseInfo finalOutput = responseDataEvaluation(responseData, e, "Returned mail confiuration Failed",
 					null);
 			return Response.status(Status.NOT_FOUND).entity(finalOutput).header("Access-Control-Allow-Origin", "*")
-					.build();
+			.build();
 		}
-//		return SUCCESS;
 		return null;
 	}
 
 	/**
-	 * Save email configuration.
-	 *
-	 * @param senderEmailId the sender email id
-	 * @param senderEmailPassword the sender email password
-	 * @param customerId the customer id
-	 * @param projectId the project id
-	 * @param appId the app id
-	 * @return the string
-	 * @throws PhrescoException the phresco exception
+	 * @param senderEmailId
+	 * @param senderEmailPassword
+	 * @param customerId
+	 * @param projectId
+	 * @param appId
+	 * @return
+	 * @throws PhrescoException
 	 */
 	@POST
 	@Path("/savemail")
@@ -597,225 +620,32 @@ public class CIService extends RestBase implements FrameworkConstants, ServiceCo
 	public Response saveEmailConfiguration(@QueryParam(REST_QUERY_SENDER_MAIL_ID) String senderEmailId,
 			@QueryParam(REST_QUERY_SENDER_MAIL_PWD) String senderEmailPassword, @QueryParam(REST_QUERY_CUSTOMERID) String customerId,
 			@QueryParam(REST_QUERY_PROJECTID) String projectId, @QueryParam(REST_QUERY_APPID) String appId)
-			throws PhrescoException {
+	throws PhrescoException {
 		ResponseInfo responseData = new ResponseInfo();
 		try {
 			CIManager ciManager = PhrescoFrameworkFactory.getCIManager();
-//			ApplicationManager applicationManager = PhrescoFrameworkFactory.getApplicationManager();
-//			ApplicationInfo applicationInfo = applicationManager.getApplicationInfo(customerId, projectId, appId);
-			String jenkinsPort = getPortNo(Utility.getJenkinsHome());
+			//			ApplicationManager applicationManager = PhrescoFrameworkFactory.getApplicationManager();
+			//			ApplicationInfo applicationInfo = applicationManager.getApplicationInfo(customerId, projectId, appId);
+			String jenkinsPort = FrameworkServiceUtil.getJenkinsPortNo();
 			ciManager.saveMailConfiguration(jenkinsPort, senderEmailId, senderEmailPassword);
 			ResponseInfo finalOutput = responseDataEvaluation(responseData, null, "Mail Configuration saved successfully",
 					null);
 			return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*")
-					.build();
+			.build();
 		} catch (PhrescoException e) {
 			ResponseInfo finalOutput = responseDataEvaluation(responseData, e, "Save mail Configuration failed",
 					null);
 			return Response.status(Status.NOT_FOUND).entity(finalOutput).header("Access-Control-Allow-Origin", "*")
-					.build();
+			.build();
 		}
 	}
 
+	
+	
 	/**
-	 * Down stream check.
-	 *
-	 * @param selectedJobs the selected jobs
-	 * @param customerId the customer id
-	 * @param projectId the project id
-	 * @param appId the app id
-	 * @return the string
-	 * @throws PhrescoException the phresco exception
+	 * @return
 	 */
-//	@POST
-//	@Path("/downstream")
-//	@Produces(MediaType.APPLICATION_JSON)
-//	@Consumes(MediaType.APPLICATION_JSON)
-//	public Response downStreamCheck(String[] selectedJobs, @QueryParam(REST_QUERY_CUSTOMERID) String customerId,
-//			@QueryParam(REST_QUERY_PROJECTID) String projectId, @QueryParam(REST_QUERY_APPID) String appId)
-//			throws PhrescoException {
-//		ResponseInfo responseData = new ResponseInfo();
-//		try {
-//			boolean isDownStreamAvailable = false;
-//			boolean streamCheck = false;
-//			CIManager ciManager = PhrescoFrameworkFactory.getCIManager();
-//			ApplicationManager applicationManager = PhrescoFrameworkFactory.getApplicationManager();
-//			ApplicationInfo applicationInfo = applicationManager.getApplicationInfo(customerId, projectId, appId);
-//			// get all the jobs
-//			List<CIJob> existJobs = ciManager.getJobs(applicationInfo);
-//			// get the name of all the jobs
-//			List<String> allJobNames = getJobNames(existJobs);
-//			List<String> asList = Arrays.asList(selectedJobs);
-//			for (String job : asList) {
-//				CIJob existJob = ciManager.getJob(applicationInfo, job);
-//				String existDownStream = existJob.getDownstreamApplication();
-//				boolean contains = allJobNames.contains(existDownStream);
-//				if (StringUtils.isNotEmpty(existDownStream) && contains) {
-//					streamCheck = true;
-//				}
-//				if (streamCheck) {
-//					isDownStreamAvailable = true;
-//				}
-//			}
-//			ResponseInfo finalOutput = responseDataEvaluation(responseData, null, "Down stream checked successfully",
-//					null);
-//			return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*")
-//					.build();
-//		} catch (PhrescoException e) {
-//			ResponseInfo finalOutput = responseDataEvaluation(responseData, e, "Down stream check failed",
-//					null);
-//			return Response.status(Status.NOT_FOUND).entity(finalOutput).header("Access-Control-Allow-Origin", "*")
-//					.build();
-//		}
-////		return SUCCESS;
-//	}
-
-	/**
-	 * Builds the.
-	 *
-	 * @param selectedJobs the selected jobs
-	 * @param customerId the customer id
-	 * @param projectId the project id
-	 * @param appId the app id
-	 * @return the cI job status
-	 * @throws PhrescoException the phresco exception
-	 */
-	@POST
-	@Path("/build")
-	@Produces(MediaType.APPLICATION_JSON)
-	@Consumes(MediaType.APPLICATION_JSON)
-	public Response build(@QueryParam(REST_QUERY_NAME) String name,
-			@QueryParam(REST_QUERY_PROJECTID) String projectId, @QueryParam(REST_QUERY_APPDIR_NAME) String appDir) throws PhrescoException {
-		ResponseInfo<CIJobStatus> responseData = new ResponseInfo<CIJobStatus>();
-		try {
-			CIManager ciManager = PhrescoFrameworkFactory.getCIManager();
-			CIJobStatus buildJobs = null;
-			CIJob job = null;
-			List<ProjectDelivery> ciJobInfo = ciManager.getCiJobInfo(appDir);
-			
-			ProjectDelivery projectDelivery = ciManager.getProjectDelivery(projectId, ciJobInfo);
-			List<ContinuousDelivery> continuousDeliveries = projectDelivery.getContinuousDeliveries();
-			for (ContinuousDelivery continuousDelivery : continuousDeliveries) {
-				List<CIJob> ciJobs = continuousDelivery.getJobs();
-				for (CIJob ciJob : ciJobs) {
-					if(ciJob.getJobName().equals(name)) {
-						job = ciJob;
-						buildJobs = ciManager.generateBuild(job);
-					}
-				}
-			}
-			ResponseInfo<CIJobStatus> finalOutput = responseDataEvaluation(responseData, null, "Build successfully",
-					buildJobs);
-			return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*")
-					.build();
-		} catch (PhrescoException e) {
-			ResponseInfo<CIJobStatus> finalOutput = responseDataEvaluation(responseData, e, "Build failed",
-					null);
-			return Response.status(Status.NOT_FOUND).entity(finalOutput).header("Access-Control-Allow-Origin", "*")
-					.build();
-		}
-	}
-
-	/**
-	 * CI build download.
-	 *
-	 * @param buildDownloadUrl the build download url
-	 * @param downloadJobName the download job name
-	 * @param customerId the customer id
-	 * @param projectId the project id
-	 * @param appId the app id
-	 * @return the input stream
-	 * @throws PhrescoException the phresco exception
-	 */
-//	@POST
-//	@Path("/downloadBuild")
-//	@Produces(MediaType.APPLICATION_JSON)
-//	@Consumes(MediaType.APPLICATION_JSON)
-//	public Response CIBuildDownload(@QueryParam(REST_QUERY_BUILD_DOWNLOAD_URL) String buildDownloadUrl,
-//			@QueryParam(REST_QUERY_DOWNLOAD_JOB_NAME) String downloadJobName, @QueryParam(REST_QUERY_CUSTOMERID) String customerId,
-//			@QueryParam(REST_QUERY_PROJECTID) String projectId, @QueryParam(REST_QUERY_APPID) String appId)
-//			throws PhrescoException {
-//		ResponseInfo responseData = new ResponseInfo();
-//		InputStream fileInputStream = null;
-//		String fileName = "";
-//		String contentType = "";
-//		String fileType = "";
-//		try {
-//			CIManager ciManager = PhrescoFrameworkFactory.getCIManager();
-//			ApplicationManager applicationManager = PhrescoFrameworkFactory.getApplicationManager();
-//			ApplicationInfo applicationInfo = applicationManager.getApplicationInfo(customerId, projectId, appId);
-//
-//			CIJob existJob = ciManager.getJob(applicationInfo, downloadJobName);
-//			// Get it from web path
-//			buildDownloadUrl = buildDownloadUrl.replace(" ", "%20");
-//			URL url = new URL(buildDownloadUrl);
-//			fileInputStream = url.openStream();
-//			fileName = existJob.getJobName();
-//			contentType = "application/octet-stream";
-//			if (BUILD.equals(existJob.getOperation())) {
-//				fileType = Constants.ZIP;
-//			} else if (PDF_REPORT.equals(existJob.getOperation())) {
-//				fileType = "pdf";
-//			}
-//			return Response.status(Status.OK).entity(fileInputStream).header("Access-Control-Allow-Origin", "*")
-//			.build();
-//		} catch (Exception e) {
-//			ResponseInfo finalOutput = responseDataEvaluation(responseData, e, "Build Download failed",
-//					null);
-//			return Response.status(Status.NOT_FOUND).entity(finalOutput).header("Access-Control-Allow-Origin", "*")
-//					.build();
-//		}
-//	}
-
-	/**
-	 * Number of jobs is in progress.
-	 *
-	 * @param customerId the customer id
-	 * @param projectId the project id
-	 * @param appId the app id
-	 * @return the int
-	 * @throws PhrescoException the phresco exception
-	 */
-//	@POST
-//	@Path("/progress")
-//	@Produces(MediaType.APPLICATION_JSON)
-//	@Consumes(MediaType.APPLICATION_JSON)
-//	public Response numberOfJobsIsInProgress(@QueryParam(REST_QUERY_CUSTOMERID) String customerId,
-//			@QueryParam(REST_QUERY_PROJECTID) String projectId, @QueryParam(REST_QUERY_APPID) String appId)
-//			throws PhrescoException {
-//		ResponseInfo<Integer> responseData = new ResponseInfo<Integer>();
-//		int numberOfJobsInProgress = 0;
-//		try {
-//			CIManager ciManager = PhrescoFrameworkFactory.getCIManager();
-//			ApplicationManager applicationManager = PhrescoFrameworkFactory.getApplicationManager();
-//			ApplicationInfo applicationInfo = applicationManager.getApplicationInfo(customerId, projectId, appId);
-//			List<CIJob> jobs = ciManager.getJobs(applicationInfo);
-//			if (CollectionUtils.isNotEmpty(jobs)) {
-//				for (CIJob ciJob : jobs) {
-//					boolean jobCreatingBuild = ciManager.isJobCreatingBuild(ciJob);
-//					if (jobCreatingBuild) {
-//						numberOfJobsInProgress++;
-//					}
-//				}
-//			}
-//			ResponseInfo<Integer> finalOutput = responseDataEvaluation(responseData, null, "Progress Jobs  returned successfully",
-//					numberOfJobsInProgress);
-//			return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*")
-//					.build();
-//		} catch (PhrescoException e) {
-//			ResponseInfo<Integer> finalOutput = responseDataEvaluation(responseData, e, "Progress Jobs  return failed",
-//					null);
-//			return Response.status(Status.NOT_FOUND).entity(finalOutput).header("Access-Control-Allow-Origin", "*")
-//					.build();
-//		}
-//	}
-
-	/**
-	 * Local jenkins local alive.
-	 *
-	 * @return the string
-	 */
-	@POST
+	@GET
 	@Path("/isAlive")
 	@Produces(MediaType.APPLICATION_JSON)
 	@Consumes(MediaType.APPLICATION_JSON)
@@ -824,30 +654,37 @@ public class CIService extends RestBase implements FrameworkConstants, ServiceCo
 		String localJenkinsAlive = "";
 		try {
 			URL url = new URL(HTTP_PROTOCOL + PROTOCOL_POSTFIX + LOCALHOST + FrameworkConstants.COLON
-					+ Integer.parseInt(getPortNo(Utility.getJenkinsHome())) + FrameworkConstants.FORWARD_SLASH + CI);
+					+ Integer.parseInt(FrameworkServiceUtil.getJenkinsPortNo()) + FrameworkConstants.FORWARD_SLASH + CI);
 			URLConnection connection = url.openConnection();
 			HttpURLConnection httpConnection = (HttpURLConnection) connection;
 			int code = httpConnection.getResponseCode();
 			localJenkinsAlive = code + "";
 		} catch (ConnectException e) {
 			localJenkinsAlive = CODE_404;
-			ResponseInfo<String> finalOutput = responseDataEvaluation(responseData, null, "Progress Jobs  returned successfully",
+			ResponseInfo<String> finalOutput = responseDataEvaluation(responseData, null, "Jenkins not found",
 					localJenkinsAlive);
 			return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*")
-					.build();
+			.build();
 		} catch (Exception e) {
 			localJenkinsAlive = CODE_404;
-			ResponseInfo<String> finalOutput = responseDataEvaluation(responseData, null, "Progress Jobs  returned successfully",
+			ResponseInfo<String> finalOutput = responseDataEvaluation(responseData, null, "Jenkins not found",
 					localJenkinsAlive);
 			return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*")
-					.build();
+			.build();
 		}
-		ResponseInfo<String> finalOutput = responseDataEvaluation(responseData, null, "Progress Jobs  returned successfully",
+		ResponseInfo<String> finalOutput = responseDataEvaluation(responseData, null, "Jenkins is Alive",
 				localJenkinsAlive);
 		return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*")
-				.build();
+		.build();
 	}
 
+	/**
+	 * @param jobName
+	 * @param continuousName
+	 * @param projectId
+	 * @param appDir
+	 * @return
+	 */
 	@GET
 	@Path("/jobStatus")
 	@Produces(MediaType.APPLICATION_JSON)
@@ -856,10 +693,14 @@ public class CIService extends RestBase implements FrameworkConstants, ServiceCo
 			@QueryParam(REST_QUERY_PROJECTID) String projectId, @QueryParam(REST_QUERY_APPDIR_NAME) String appDir) {
 		ResponseInfo<String> responseData = new ResponseInfo<String>();
 		try {
+			if(projectId.equals("null")) {
+				ProjectInfo projectInfo = FrameworkServiceUtil.getProjectInfo(appDir);
+				projectId = projectInfo.getId();
+			}
 			CIManager ciManager = PhrescoFrameworkFactory.getCIManager();
 			CIJob job = null;
 			List<ProjectDelivery> ciJobInfo = ciManager.getCiJobInfo(appDir);
-			List<CIJob> ciJobs = ciManager.getJobs(continuousName, projectId, ciJobInfo);
+			List<CIJob> ciJobs = Utility.getJobs(continuousName, projectId, ciJobInfo);
 			for (CIJob ciJob : ciJobs) {
 				if(ciJob.getJobName().equals(jobName)) {
 					job = ciJob;
@@ -869,57 +710,293 @@ public class CIService extends RestBase implements FrameworkConstants, ServiceCo
 			ResponseInfo<Boolean> finalOutput = responseDataEvaluation(responseData, null, "Return Job Status successfully", jobStatus);
 			return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
 		} catch (PhrescoException e) {
-			ResponseInfo<Boolean> finalOutput = responseDataEvaluation(responseData, e, "Failed to get Job Status",
-					null);
+			ResponseInfo<Boolean> finalOutput = responseDataEvaluation(responseData, e, "Failed to get Job Status",	null);
 			return Response.status(Status.NOT_FOUND).entity(finalOutput).header("Access-Control-Allow-Origin", "*")
-					.build();
+			.build();
 		}
 	}
 	
-	/**
-	 * Gets the port no.
-	 *
-	 * @param path the path
-	 * @return the port no
-	 * @throws PhrescoException the phresco exception
-	 */
-	public static String getPortNo(String path) throws PhrescoException {
-		String portNo = "";
+	//core method used to create jobs in contDelivery
+	private boolean coreCreateJob(ContinuousDelivery continuousDelivery, String  projectId, String appDir) throws PhrescoException {
+		CIManagerImpl ciManager = null;
+		boolean createJsonJobs = false;
 		try {
-			Document document = ApplicationsUtil.getDocument(new File(path + File.separator + POM_FILE));
-			String portNoNode = CI_TOMCAT_HTTP_PORT;
-			NodeList nodelist = org.apache.xpath.XPathAPI.selectNodeList(document, portNoNode);
-			portNo = nodelist.item(0).getTextContent();
-		} catch (Exception e) {
-			throw new PhrescoException(e);
+			ciManager = new CIManagerImpl();
+			ApplicationInfo applicationInfo = null;
+			List<CIJob> ciJobs = new ArrayList<CIJob>(); 
+			List<CIJob> jobs = continuousDelivery.getJobs();
+			for(CIJob job : jobs) {	
+				if(StringUtils.isNotEmpty(job.getAppDirName())) {
+					applicationInfo = FrameworkServiceUtil.getApplicationInfo(job.getAppDirName());
+				}
+				CIJob jobWithCmds = setPreBuildCmds(job,  applicationInfo, appDir, projectId, continuousDelivery.getName());
+				boolean createJob = ciManager.createJob(job);
+				if (createJob) {
+					ciJobs.add(job);
+				}
+			}
+			if (CollectionUtils.isNotEmpty(ciJobs)) {
+				createJsonJobs = ciManager.createJsonJobs(continuousDelivery, ciJobs, projectId, appDir);
+			}
+			return createJsonJobs;
+		} catch (PhrescoException e) {
+			throw new PhrescoException();
 		}
-		return portNo;
-	}
-
-	/**
-	 * Gets the job names.
-	 *
-	 * @param existJobs the exist jobs
-	 * @return the job names
-	 */
-	private List<String> getJobNames(List<CIJob> existJobs) {
-		List<String> names = new ArrayList<String>();
-		for (CIJob job : existJobs) {
-			names.add(job.getJobName());
-		}
-		return names;
 	}
 	
-	private List<CIJob> removeFromList(List<CIJob> returningList, List<CIJob> negateList) {
-		 for (Iterator<CIJob> itr = returningList.iterator();itr.hasNext();) {  
-	            CIJob next = itr.next(); 
-	            for (CIJob job : negateList) {
-		            if(StringUtils.isNotEmpty(job.getJobName()) && (job.getJobName()).equals(next.getJobName())) {
-			                itr.remove();  
-			            }  
-		            }
-	        }  
-		return returningList;
+	public CIJob setPreBuildCmds(CIJob job, ApplicationInfo appInfo, String appDir, String id, String name) throws PhrescoException {
+		try {
+			List<String> preBuildStepCmds = new ArrayList<String>();
+
+			String operation = job.getOperation();
+
+			String mvncmd = "";
+
+			String pomFileName = Utility.getPomFileName(appInfo);
+			job.setPomLocation(pomFileName);
+
+			InetAddress thisIp = InetAddress.getLocalHost();
+			job.setJenkinsUrl(thisIp.getHostAddress());
+			job.setJenkinsPort(FrameworkServiceUtil.getJenkinsPortNo());
+
+			List<Parameter> parameters = null;
+
+			String integrationType = GLOBAL;
+			if(StringUtils.isNotEmpty(appDir)) {
+				integrationType = LOCAL;
+			}
+
+			if (BUILD.equalsIgnoreCase(operation)) {
+				// enable archiving
+				job.setEnableArtifactArchiver(true);
+				// if the enable build release option is choosed in UI, the file pattenr value will be used
+				job.setCollabNetFileReleasePattern(CI_BUILD_EXT);
+
+				MojoProcessor mojo = new MojoProcessor(new File(FrameworkServiceUtil.getPhrescoPluginInfoFilePath(Constants.PHASE_CI, Constants.PHASE_PACKAGE, job.getAppDirName())));
+
+				//To get maven build arguments
+				parameters = FrameworkServiceUtil.getMojoParameters(mojo, Constants.PHASE_PACKAGE);
+				ActionType actionType = ActionType.BUILD;
+				mvncmd =  actionType.getActionType().toString();
+
+				String buildPrebuildCmd = CI_PRE_BUILD_STEP + " -Dgoal=" + Constants.PHASE_CI + " -Dphase=" + Constants.PHASE_PACKAGE +
+				CREATIONTYPE + integrationType + ID + id + CONTINUOUSNAME + name;
+
+				if(!Constants.POM_NAME.equals(pomFileName)) {
+					buildPrebuildCmd = buildPrebuildCmd + " -f " + pomFileName; 
+				}
+				// To handle multi module project
+				buildPrebuildCmd = buildPrebuildCmd + FrameworkConstants.SPACE + HYPHEN_N;
+				preBuildStepCmds.add(buildPrebuildCmd);
+			} else if (DEPLOY.equals(operation)) {
+
+				MojoProcessor mojo = new MojoProcessor(new File(FrameworkServiceUtil.getPhrescoPluginInfoFilePath(Constants.PHASE_CI, Constants.PHASE_DEPLOY, job.getAppDirName())));
+
+				//To get maven build arguments
+				parameters = FrameworkServiceUtil.getMojoParameters(mojo, Constants.PHASE_DEPLOY);
+				ActionType actionType = ActionType.DEPLOY;
+				mvncmd =  actionType.getActionType().toString();
+
+				String deployPreBuildCmd = CI_PRE_BUILD_STEP + " -Dgoal=" + Constants.PHASE_CI + " -Dphase=" + Constants.PHASE_DEPLOY +
+				CREATIONTYPE + integrationType + ID + id + CONTINUOUSNAME + name;
+				if(!POM_NAME.equals(pomFileName)) {
+					deployPreBuildCmd = deployPreBuildCmd + " -f " + pomFileName; 
+				}
+				// To handle multi module project
+				deployPreBuildCmd = deployPreBuildCmd + FrameworkConstants.SPACE + HYPHEN_N;
+				preBuildStepCmds.add(deployPreBuildCmd);
+			} else if (PDF_REPORT.equals(operation)) {
+				// for pdf report attachment patterns
+				// based on test report type, it should be specified
+				//TODO validation for TestType
+				String attacheMentPattern = "cumulativeReports";
+
+				// enable archiving
+				job.setEnableArtifactArchiver(true);
+				String attachPattern = "do_not_checkin/archives/" + attacheMentPattern + "/*.pdf";
+				job.setAttachmentsPattern(attachPattern); //do_not_checkin/archives/cumulativeReports/*.pdf
+				// if the enable build release option is choosed in UI, the file pattenr value will be used
+				job.setCollabNetFileReleasePattern(attachPattern);
+
+				// here we can set necessary values in request and we can change object value as well...
+				// getting sonar url
+				
+				FrameworkUtil frameworkUtil = FrameworkUtil.getInstance();
+				String usingSonarUrl = frameworkUtil.getSonarURL();
+				// logo and theme
+				//				String logoImageString = getLogoImageString();
+				//				String themeColorJson = getThemeColorJson();
+
+				// object change
+				job.setSonarUrl(usingSonarUrl);
+				//				job.setLogo(logoImageString);
+				//				job.setTheme(themeColorJson);
+
+				// set values in request
+//								sonarUrl = usingSonarUrl;
+				//				logo = logoImageString;
+				//				theme = themeColorJson;
+
+				MojoProcessor mojo = new MojoProcessor(new File(FrameworkServiceUtil.getPhrescoPluginInfoFilePath(Constants.PHASE_CI, Constants.PHASE_PDF_REPORT, job.getAppDirName())));
+
+				//To get maven build arguments
+				parameters = FrameworkServiceUtil.getMojoParameters(mojo, Constants.PHASE_PDF_REPORT);
+				ActionType actionType = ActionType.PDF_REPORT;
+				mvncmd =  actionType.getActionType().toString();
+
+				String pdfPreBuildCmd = CI_PRE_BUILD_STEP + " -Dgoal=" + Constants.PHASE_CI + " -Dphase=" + Constants.PHASE_PDF_REPORT +
+				CREATIONTYPE + integrationType + ID + id + CONTINUOUSNAME + name;
+				if(!POM_NAME.equals(pomFileName)) {
+					pdfPreBuildCmd = pdfPreBuildCmd + " -f " + pomFileName; 
+				}
+				// To handle multi module project
+				pdfPreBuildCmd = pdfPreBuildCmd + FrameworkConstants.SPACE + HYPHEN_N;
+				preBuildStepCmds.add(pdfPreBuildCmd);
+			} else if (CODE_VALIDATION.equals(operation)) {
+
+				MojoProcessor mojo = new MojoProcessor(new File(FrameworkServiceUtil.getPhrescoPluginInfoFilePath(Constants.PHASE_CI, Constants.PHASE_VALIDATE_CODE, job.getAppDirName())));
+
+				//To get maven build arguments
+				parameters = FrameworkServiceUtil.getMojoParameters(mojo, Constants.PHASE_VALIDATE_CODE);
+				ActionType actionType = ActionType.CODE_VALIDATE;
+				mvncmd =  actionType.getActionType().toString();
+
+				String deployPreBuildCmd = CI_PRE_BUILD_STEP + " -Dgoal=" + Constants.PHASE_CI + " -Dphase=" + Constants.PHASE_VALIDATE_CODE +
+				CREATIONTYPE + integrationType + ID + id + CONTINUOUSNAME + name;
+				if(!POM_NAME.equals(pomFileName)) {
+					deployPreBuildCmd = deployPreBuildCmd + " -f " + pomFileName; 
+				}
+				// To handle multi module project
+				deployPreBuildCmd = deployPreBuildCmd + FrameworkConstants.SPACE + HYPHEN_N;
+				preBuildStepCmds.add(deployPreBuildCmd);
+			} else if (UNIT_TEST.equals(operation)) {
+
+				MojoProcessor mojo = new MojoProcessor(new File(FrameworkServiceUtil.getPhrescoPluginInfoFilePath(Constants.PHASE_CI, Constants.PHASE_UNIT_TEST, job.getAppDirName())));
+
+				//To get maven build arguments
+				parameters = FrameworkServiceUtil.getMojoParameters(mojo, Constants.PHASE_UNIT_TEST);
+				ActionType actionType = ActionType.UNIT_TEST;
+				mvncmd =  actionType.getActionType().toString();
+
+				String unitTestPreBuildCmd = CI_PRE_BUILD_STEP + " -Dgoal=" + Constants.PHASE_CI + " -Dphase=" + Constants.PHASE_UNIT_TEST +
+				CREATIONTYPE + integrationType + ID + id + CONTINUOUSNAME + name;
+				if(!POM_NAME.equals(pomFileName)) {
+					unitTestPreBuildCmd = unitTestPreBuildCmd + " -f " + pomFileName; 
+				}
+				// To handle multi module project
+				unitTestPreBuildCmd = unitTestPreBuildCmd + FrameworkConstants.SPACE + HYPHEN_N;
+				preBuildStepCmds.add(unitTestPreBuildCmd);
+				if (job.isCoberturaPlugin()) {
+					job.setEnablePostBuildStep(true);
+					List<String> postBuildStepCmds = new ArrayList<String>();
+					postBuildStepCmds.add(MAVEN_SEP_COBER);
+					postBuildStepCmds.add("shell#SEP#cd ${WORKSPACE}\n${GCOV_HOME} -r ${WORKSPACE} -x -o coverage.xml");
+					if (CollectionUtils.isNotEmpty(postBuildStepCmds)) {
+						job.setPostbuildStepCommands(postBuildStepCmds);
+					}
+				}
+			} else if (FUNCTIONAL_TEST.equals(operation)) {
+
+				MojoProcessor mojo = new MojoProcessor(new File(FrameworkServiceUtil.getPhrescoPluginInfoFilePath(Constants.PHASE_CI, Constants.PHASE_FUNCTIONAL_TEST, job.getAppDirName())));
+				FrameworkUtil frameworkUtil = FrameworkUtil.getInstance();
+				String seleniumToolType = "";
+				seleniumToolType = frameworkUtil.getSeleniumToolType(appInfo);
+
+				//To get maven build arguments
+				parameters = FrameworkServiceUtil.getMojoParameters(mojo, Constants.PHASE_FUNCTIONAL_TEST + HYPHEN + seleniumToolType);
+				ActionType actionType = ActionType.FUNCTIONAL_TEST;
+				mvncmd =  actionType.getActionType().toString();
+				String functionalTestPrebuildCmd = CI_PRE_BUILD_STEP + " -Dgoal=" + Constants.PHASE_CI + " -Dphase=" + Constants.PHASE_FUNCTIONAL_TEST +
+				CREATIONTYPE + integrationType + ID + id + CONTINUOUSNAME + name;
+				if(!POM_NAME.equals(pomFileName)) {
+					functionalTestPrebuildCmd = functionalTestPrebuildCmd + " -f " + pomFileName; 
+				}
+				// To handle multi module project
+				functionalTestPrebuildCmd = functionalTestPrebuildCmd + FrameworkConstants.SPACE + HYPHEN_N;
+				preBuildStepCmds.add(functionalTestPrebuildCmd);
+			} else if (LOAD_TEST.equals(operation)) {
+
+				MojoProcessor mojo = new MojoProcessor(new File(FrameworkServiceUtil.getPhrescoPluginInfoFilePath(Constants.PHASE_CI, Constants.PHASE_LOAD_TEST, job.getAppDirName())));
+
+				//To get maven build arguments
+				parameters = FrameworkServiceUtil.getMojoParameters(mojo, Constants.PHASE_LOAD_TEST);
+				ActionType actionType = ActionType.LOAD_TEST;
+				mvncmd =  actionType.getActionType().toString();
+
+				String loadTestPreBuildCmd = CI_PRE_BUILD_STEP + " -Dgoal=" + Constants.PHASE_CI + " -Dphase=" + Constants.PHASE_LOAD_TEST +
+				CREATIONTYPE + integrationType + ID + id + CONTINUOUSNAME + name;
+				if(!POM_NAME.equals(pomFileName)) {
+					loadTestPreBuildCmd = loadTestPreBuildCmd + " -f " + pomFileName; 
+				}
+				// To handle multi module project
+				loadTestPreBuildCmd = loadTestPreBuildCmd + FrameworkConstants.SPACE + HYPHEN_N;
+				preBuildStepCmds.add(loadTestPreBuildCmd);
+			} else if (PERFORMANCE_TEST_CI.equals(operation)) {
+				MojoProcessor mojo = new MojoProcessor(new File(FrameworkServiceUtil.getPhrescoPluginInfoFilePath(Constants.PHASE_CI, Constants.PHASE_PERFORMANCE_TEST, job.getAppDirName())));
+
+				//To get maven build arguments
+				parameters = FrameworkServiceUtil.getMojoParameters(mojo, Constants.PHASE_PERFORMANCE_TEST);
+				ActionType actionType = ActionType.PERFORMANCE_TEST;
+				mvncmd =  actionType.getActionType().toString();
+
+				String performanceTestPreBuildCmd = CI_PRE_BUILD_STEP + " -Dgoal=" + Constants.PHASE_CI + " -Dphase=" + Constants.PHASE_PERFORMANCE_TEST +
+				CREATIONTYPE + integrationType + ID + id + CONTINUOUSNAME + name;
+				if(!POM_NAME.equals(pomFileName)) {
+					performanceTestPreBuildCmd = performanceTestPreBuildCmd + " -f " + pomFileName; 
+				}
+				// To handle multi module project
+				performanceTestPreBuildCmd = performanceTestPreBuildCmd + FrameworkConstants.SPACE + HYPHEN_N;
+				preBuildStepCmds.add(performanceTestPreBuildCmd);
+			} else if (COMPONENT_TEST_CI.equals(operation)) {
+				MojoProcessor mojo = new MojoProcessor(new File(FrameworkServiceUtil.getPhrescoPluginInfoFilePath(Constants.PHASE_CI, Constants.PHASE_COMPONENT_TEST, job.getAppDirName())));
+
+				//To get maven build arguments
+				parameters = FrameworkServiceUtil.getMojoParameters(mojo, Constants.PHASE_COMPONENT_TEST);
+				ActionType actionType = ActionType.COMPONENT_TEST;
+				mvncmd =  actionType.getActionType().toString();
+
+				String componentTestPreBuildCmd = CI_PRE_BUILD_STEP + " -Dgoal=" + Constants.PHASE_CI + " -Dphase=" + Constants.PHASE_COMPONENT_TEST +
+				CREATIONTYPE + integrationType + ID + id + CONTINUOUSNAME + name;
+				if(!POM_NAME.equals(pomFileName)) {
+					componentTestPreBuildCmd = componentTestPreBuildCmd + " -f " + pomFileName; 
+				}
+				// To handle multi module project
+				componentTestPreBuildCmd = componentTestPreBuildCmd + FrameworkConstants.SPACE + HYPHEN_N;
+				preBuildStepCmds.add(componentTestPreBuildCmd);
+			}
+
+
+			List<String> buildArgCmds = FrameworkServiceUtil.getMavenArgCommands(parameters);
+			if(!POM_NAME.equals(pomFileName)) {
+				buildArgCmds.add(HYPHEN_F);
+				buildArgCmds.add(pomFileName);
+			}
+			if (!CollectionUtils.isEmpty(buildArgCmds)) {
+				for (String buildArgCmd : buildArgCmds) {
+					mvncmd = mvncmd + FrameworkConstants.SPACE + buildArgCmd;
+				}
+			}
+
+			// for build job alone existing do_not_checkin need to be cleared
+			// For pdf report, it should clear existing pdf reports in do_not_checkin folder
+			if (BUILD.equals(operation) || PDF_REPORT.equals(operation)) {
+				mvncmd = CI_PROFILE + mvncmd;
+			}
+
+			// To handle multi module project
+			mvncmd = mvncmd + FrameworkConstants.SPACE + HYPHEN_N;
+			job.setMvnCommand(mvncmd);
+			// prebuild step enable
+			job.setEnablePreBuildStep(true);
+
+			job.setPrebuildStepCommands(preBuildStepCmds);		
+
+		} catch (UnknownHostException e) {
+			throw new PhrescoException();
+		} catch (PhrescoPomException e) {
+			throw new PhrescoException();
+		}
+		return job;
 	}
 
 }

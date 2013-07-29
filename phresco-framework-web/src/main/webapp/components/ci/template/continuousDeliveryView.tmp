@@ -2,7 +2,8 @@
 	<div class="unit_text" data-i18n="ci.continuousintegration"> </div>
 	<div class="flt_right">
 		<div class="unit_path">
-			<a> <input id="createContinuousDelivery" type="submit" value="Create a New Continuous Delivery" data-i18n="[value]ci.create"class="btn btn_style"></a>
+			<a class = "aliveOpts"> <input id="createContinuousDelivery" type="submit" value="Create a New Continuous Delivery" data-i18n="[value]ci.create"class="btn btn_style"></a>
+			<a class = "deadOpts"> <input id="createContinuousDelivery" type="submit" value="Create a New Continuous Delivery" data-i18n="[value]ci.create"class="btn btn_style" disabled></a>
 		</div>    
 	</div>   
 </section>
@@ -14,7 +15,8 @@
     	<div class="widget_testing" name="{{name}}">
         		<h4>{{name}} 
         		<span style="float: none; margin-left: 158px;">[ {{envName}} ]</span> 
-                	<span>
+                	
+                	<span class="aliveOpts">
                     	<a temp="clone" name="{{name}}" class="clone_popup" title="" data-placement="bottom" data-toggle="tooltip" href="#" data-original-title="clone">
                     		<img src="themes/default/images/helios/stack.png" width="29" height="23" border="0" alt="">
                     	</a>
@@ -26,16 +28,37 @@
                     	</a>
                 	</span>
                 	
+                	<span class="deadOpts">
+                    	<a name="{{name}}" title="" data-placement="bottom" data-toggle="tooltip" href="javascript:;" data-original-title="clone">
+                    		<img src="themes/default/images/helios/stack_dis.png" width="29" height="23" border="0" alt="">
+                    	</a>
+                    	<a title="" data-placement="bottom" data-toggle="tooltip" continuousName="{{name}}" data-original-title="Edit">
+                    		<img src="themes/default/images/helios/edit_row_icon_dis.png" width="29" height="23" border="0" alt="">
+                    	</a> 
+                    	<a name="{{name}}" title="" data-placement="bottom" data-toggle="tooltip" href="javascript:;" data-original-title="Delete">
+                    		<img src="themes/default/images/helios/delete_row_icon_off.png" width="29" height="23" border="0" alt="0">
+                    	</a>
+                	</span>
+                	
                 </h4>
     			<div class="widget_testing_env">
     			 {{#each jobs}}
                     	<div id="{{jobName}}"class="pipeline_box">
                             	<img class="img_process" src="themes/default/images/helios/queue_icon.png">{{operation}}
-                          	<div>
-                                <a href="javascript:;" class="ci_info wait_button"><img class="wait_button" src="themes/default/images/helios/wait.png"></a>
-                                 <a href="javascript:;" class="wait_button" temp="generate_build" jobName="{{jobName}}" projectId="{{projectDelivery.id}}"><img class="wait_button" src="themes/default/images/helios/wait.png"></a>
-                                <a temp="list_builds" jobName="{{jobName}}" projectId="{{projectDelivery.id}}" href="javascript:;" class="datetime_status"><img class="time_button" src="themes/default/images/helios/time.png"></a>
-                            </div>
+                          	<div >
+	                          	<span class="aliveOpts">
+	                                <a href="javascript:;" class="ci_info execute_button"><img class="wait_button" src="themes/default/images/helios/wait.png"></a>
+	                                 <a href="javascript:;" class="wait_button" temp="generate_build" jobName="{{jobName}}" projectId="{{projectDelivery.id}}"><img class="execute_button" src="themes/default/images/helios/execute_icon.png"></a>
+	                                <a temp="list_builds" jobName="{{jobName}}" projectId="{{projectDelivery.id}}" href="javascript:;" class="datetime_status"><img class="time_button" src="themes/default/images/helios/time.png"></a>
+	                             </span>
+	                             <span class="deadOpts">
+	                                <a href="javascript:;" class="wait_button"><img src="themes/default/images/helios/wait.png"></a>
+	                                 <a href="javascript:;" class="wait_button" jobName="{{jobName}}" projectId="{{projectDelivery.id}}"><img src="themes/default/images/helios/execute_icon.png"></a>
+	                                <a jobName="{{jobName}}" projectId="{{projectDelivery.id}}" href="javascript:;"><img src="themes/default/images/helios/time.png"></a>
+	                             </span>
+                        	</div>
+                           
+                            
                        	</div>
            		 {{/each}}
                         <div class="clear"></div>
