@@ -1,8 +1,7 @@
 
     <section class="content_main create_proj" id="appinfo">
-          <div class="scrolldiv">
-		  <table class="table table-striped table_border table-bordered" cellpadding="0" cellspacing="0" border="0">  
-            <tbody name="layercontents"> 
+          <table class="table table-striped table_border table-bordered" cellpadding="0" cellspacing="0" border="0">  
+            <tbody name="layercontents" class="scrollContent"> 
 			{{#each projectlist.appdetails.data.appInfos}}
             	<tr>
                     <td><span data-i18n="application.edit.name"></span><sup>*</sup></td>
@@ -212,7 +211,6 @@
                       </tr>					  
               	</tbody>
             </table>
-			</div>
     	<!--content_main div ends here -->
     </section>
     <section class="content_end">

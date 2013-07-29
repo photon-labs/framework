@@ -213,7 +213,7 @@ define(["application/listener/applicationListener"], function() {
 			});
 					
 			self.windowResize();	
-			this.customScroll($(".scrolldiv"));
+			//this.customScroll($(".scrolldiv"));
 		}
 	});
 
