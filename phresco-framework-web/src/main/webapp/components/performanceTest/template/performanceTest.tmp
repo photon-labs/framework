@@ -232,7 +232,7 @@
 	                    </li>
 	                </ul>
 	            </div>
-		    	<div class="graph_area">
+		    	<div class="graph_area graph_performance">
 		        	<canvas id="allData" width="420" height="300">[No canvas support]</canvas>
 		        	<canvas id="myCanvas" width="420" height="300">[No canvas support]</canvas>
 		        </div>

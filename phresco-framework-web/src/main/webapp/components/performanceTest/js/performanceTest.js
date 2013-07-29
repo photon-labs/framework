@@ -257,31 +257,6 @@ define(["performanceTest/listener/performanceTestListener"], function() {
 			performanceTest.performanceTestListener.renderPerformanceTemplate(response, performanceTest.renderFnc,  whereToRender);
 		},
 
-		setConsoleScrollbar : function(bcheck){
-			if(bcheck){
-				$("#unit_progress .scrollContent").mCustomScrollbar("destroy");
-				$("#unit_progress .scrollContent").mCustomScrollbar({
-					autoHideScrollbar: false,
-					scrollInertia: 1000,
-					theme:"light-thin",
-					advanced:{ updateOnContentResize: true},
-					callbacks:{
-						onScrollStart:function(){
-							$("#unit_progress .scrollContent").mCustomScrollbar("scrollTo","bottom");
-						}
-					}
-				});
-			}else{
-				$("#unit_progress .scrollContent").mCustomScrollbar("destroy");
-				$("#unit_progress .scrollContent").mCustomScrollbar({
-					autoHideScrollbar:true,
-					scrollInertia: 200,
-					theme:"light-thin",
-					advanced:{ updateOnContentResize: true}
-				});
-			}
-		},	
-
 		graphDropDownChangeEvent : function (obj) {
 			var self = this;
 			var previousOption = $("#graphForDrop").attr("value");
@@ -431,7 +406,7 @@ define(["performanceTest/listener/performanceTestListener"], function() {
 			
 			$("#performanceRun").click(function() {
 				$('.progress_loading').show();
-				self.setConsoleScrollbar(true);
+				self.performanceTestListener.setConsoleScrollbar(true);
 				self.preTriggerPerformanceTest.dispatch();
 			});
 

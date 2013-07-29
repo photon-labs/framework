@@ -584,6 +584,7 @@ define([], function() {
 			var check = $('#consoleImg').attr('data-flag');
 			if (check === "true") {
 				self.openConsole();
+				self.setConsoleScrollbar(false);
 			} else {
 				self.closeConsole();
 			}
@@ -599,12 +600,38 @@ define([], function() {
 			$('.performanceTestResults').height($(window).height() - (resultvalue + 80));
 		},
 
+		setConsoleScrollbar : function(bcheck){
+			if(bcheck){
+				$("#unit_progress .scrollContent").mCustomScrollbar("destroy");
+				$("#unit_progress .scrollContent").mCustomScrollbar({
+					autoHideScrollbar: false,
+					scrollInertia: 1000,
+					theme:"light-thin",
+					advanced:{ updateOnContentResize: true},
+					callbacks:{
+						onScrollStart:function(){
+							$("#unit_progress .scrollContent").mCustomScrollbar("scrollTo","bottom");
+						}
+					}
+				});
+			}else{
+				$("#unit_progress .scrollContent").mCustomScrollbar("destroy");
+				$("#unit_progress .scrollContent").mCustomScrollbar({
+					autoHideScrollbar:true,
+					scrollInertia: 200,
+					theme:"light-thin",
+					advanced:{ updateOnContentResize: true}
+				});
+			}
+		},	
+
 		preTriggerPerformanceTest : function () {
 			var self = this, testBasis = "", testAgainst = "", redirect = true, jsonString = "";
 			testBasis = $("#testBasis").val();
 			testAgainst = $("#testAgainst").val();
 			//if performance test is triggered against parameters
 			if (testAgainst !== undefined && testBasis !== undefined && testBasis === "parameters") {
+
 				//call template mandatory fn for server or webservice
 				if (testAgainst === "server" || testAgainst === "webservice") {
 					redirect = self.contextUrlsMandatoryVal();
@@ -612,7 +639,6 @@ define([], function() {
 					redirect = self.dbContextUrlsMandatoryVal();
 				} 
 			} 
-
 			if (redirect) {
 				self.triggerPerformanceTest();
 			}
@@ -654,7 +680,6 @@ define([], function() {
 			}
 			$("#resultJson").val("");
 			$("#resultJson").val(formJsonStr);
-
 			self.executeTest($('#performanceForm').serialize(), function(response) {
 				commonVariables.api.localVal.setSession('performanceConsole', $('#testConsole').html());
 				$('.progress_loading').hide();
@@ -679,7 +704,6 @@ define([], function() {
 					$(this).find($('input[name=context]')).addClass("errormessage");
 				} 
 			});
-			
 			return redirect;
 		},
 
