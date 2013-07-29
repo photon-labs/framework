@@ -37,7 +37,7 @@
 		<dependency>
 			<groupId>net.awired.js</groupId>
 			<artifactId>qunit</artifactId>
-			<version>1.5.11</version>
+			<version>1.12.0</version>
 			<type>war</type>
 			<scope>test</scope>
 		</dependency>
@@ -45,7 +45,7 @@
 		<dependency>
 			<groupId>net.awired.js</groupId>
 			<artifactId>jquery</artifactId>
-			<version>1.7.2</version>
+			<version>2.0.3</version>
 			<type>war</type>
 			<scope>test</scope>
 		</dependency>
@@ -791,7 +791,7 @@
 	    		<plugin>
 				<groupId>net.awired.jstest</groupId>
 				<artifactId>jstest-maven-plugin</artifactId>
-				<version>3.0.0.17001</version>
+				<version>3.0.0.19001-SNAPSHOT</version>
 				<executions>
 					<execution>
 						<goals>
@@ -801,7 +801,7 @@
 				</executions>
 				<configuration>
 					<runnerType>REQUIREJS</runnerType>
-					<coverage>true</coverage>
+					<coverage>false</coverage>
 					<skipTests>${js.skipTest}</skipTests>
 					<packBeforeTest>false</packBeforeTest>                    
 					<testIncludes>
