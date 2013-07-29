@@ -40,8 +40,8 @@ import org.junit.Test;
 
 import com.google.gson.Gson;
 import com.photon.phresco.commons.FrameworkConstants;
-import com.photon.phresco.framework.model.CIJob;
-import com.photon.phresco.framework.model.CIJobTemplate;
+import com.photon.phresco.commons.model.CIJob;
+import com.photon.phresco.commons.model.CIJobTemplate;
 import com.photon.phresco.service.client.api.ServiceManager;
 
 public class CIManagerImplTest implements FrameworkConstants{
@@ -76,7 +76,7 @@ public class CIManagerImplTest implements FrameworkConstants{
 	    }
 	}
 	
-	@Test
+//	@Test
 	public void testAddJobTemplates() throws Exception {
 		System.out.println("Add job template ");
 		CIJobTemplate ciJobTemplate = new CIJobTemplate();
@@ -113,7 +113,7 @@ public class CIManagerImplTest implements FrameworkConstants{
 		Assert.assertTrue(createJobTemplates);
 	}
 	
-	@Test
+//	@Test
 	public void testListAllJobTemplates() throws Exception {
 		System.out.println("ListAll job template ");
 		List<CIJobTemplate> jobTemplates = ciManager.getJobTemplates();
@@ -125,7 +125,7 @@ public class CIManagerImplTest implements FrameworkConstants{
 		Assert.assertTrue(size > 0 && size < 2);
 	}
 	
-	@Test
+//	@Test
 	public void testpListByNameJobTemplates() throws Exception {
 		System.out.println("ListByName job template ");
 		String name = "Test";
@@ -140,7 +140,7 @@ public class CIManagerImplTest implements FrameworkConstants{
 //		String type = "build";
 //	}
 	
-	@Test
+//	@Test
 	public void testpListByAppIdJobTemplates() throws Exception {
 		System.out.println("ListByAppId job template ");
 		String appId = "a123";
@@ -150,7 +150,7 @@ public class CIManagerImplTest implements FrameworkConstants{
 		
 	}
 	
-	@Test
+//	@Test
 	public void testpListByProjIdJobTemplates() throws Exception {
 		System.out.println("ListByProjId job template ");
 		String projId = "p123";
@@ -166,7 +166,7 @@ public class CIManagerImplTest implements FrameworkConstants{
 //	}
 	
 	
-	@Test
+//	@Test
 	public void testUpdateJobTemplates() throws Exception {
 		System.out.println("Update job template ");
 		String name = "Test";
@@ -181,7 +181,7 @@ public class CIManagerImplTest implements FrameworkConstants{
 		Assert.assertTrue(!jobTemplateByName.isEnableEmailSettings()); // retrive obje vallue and check
 	}
 	
-	@Test
+//	@Test
 	public void testDeleteJobTemplates() throws Exception {
 		System.out.println("Delete job template ");
 		String name = "Test";
@@ -242,6 +242,18 @@ public class CIManagerImplTest implements FrameworkConstants{
 				ps.close();
 			}
 		}
+	}
+	
+//	@Test
+	public void objectCompareTest() {
+		CIJob job1 = new CIJob();
+		CIJob job2 = new CIJob();
+		job1.setJobName("name");
+		job1.setRepoType("svn");
+		job2.setJobName("name");
+		job2.setRepoType("svn1");
+		boolean equals = job1.equals(job2);	
+		System.out.println("equals "+equals);
 	}
 
 	
