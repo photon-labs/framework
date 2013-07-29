@@ -57,7 +57,7 @@
                             <th data-i18n="commonlabel.label.delete"></th>
                         </tr>    
                     </thead>
-                    <tbody name="generatedPdfs_{{id}}">
+                    <tbody name="generatedPdfs_{{id}}" class="scroll">
                     </tbody>    
                 </table>
                 <form id="pdfReport">
@@ -66,7 +66,7 @@
                         <tr>
                         	<td data-i18n="commonlabel.label.reporttype"></td>
                         	<td>
-                            	<select name="reportDataType">
+                            	<select name="reportDataType" class="reportDataType">
                                 	<option value="detail" data-i18n="projectlist.label.detailedReport"></option>
                                 	<option value="crisp" data-i18n="projectlist.label.overallReport"></option>
                             	</select>
@@ -75,7 +75,7 @@
                          <tr>
                         	<td data-i18n="commonlabel.label.pdfreportname"></td>
                             <td>
-                               <input type="text" data-i18n="[placeholder]projectlist.label.pdfreportname" name="pdfName">
+                               <input type="text" data-i18n="[placeholder]projectlist.label.pdfreportname" name="pdfName" class="pdfName">
                             </td>
                         </tr>
                     </tbody>
