@@ -48,6 +48,8 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang.StringUtils;
+import org.w3c.dom.Document;
+import org.w3c.dom.NodeList;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonIOException;
@@ -67,8 +69,10 @@ import com.photon.phresco.framework.FrameworkConfiguration;
 import com.photon.phresco.framework.PhrescoFrameworkFactory;
 import com.photon.phresco.framework.api.ApplicationManager;
 import com.photon.phresco.framework.api.ProjectManager;
+import com.photon.phresco.framework.commons.ApplicationsUtil;
 import com.photon.phresco.plugins.model.Mojos.Mojo.Configuration.Parameters.Parameter;
 import com.photon.phresco.plugins.model.Mojos.Mojo.Configuration.Parameters.Parameter.Childs.Child;
+import com.photon.phresco.plugins.model.Mojos.Mojo.Configuration.Parameters.Parameter.MavenCommands.MavenCommand;
 import com.photon.phresco.plugins.model.Mojos.Mojo.Configuration.Parameters.Parameter.PossibleValues.Value;
 import com.photon.phresco.plugins.util.MojoProcessor;
 import com.photon.phresco.util.Constants;
@@ -418,7 +422,7 @@ public class FrameworkServiceUtil implements Constants, FrameworkConstants {
 	 * @return
 	 * @throws PhrescoException 
 	 */
-	public String getPhrescoPluginInfoFilePath(String goal, String phase, String appDirName) throws PhrescoException {
+	public static String getPhrescoPluginInfoFilePath(String goal, String phase, String appDirName) throws PhrescoException {
 		StringBuilder sb = new StringBuilder(getApplicationHome(appDirName));
 		sb.append(File.separator);
 		sb.append(FOLDER_DOT_PHRESCO);
@@ -432,11 +436,40 @@ public class FrameworkServiceUtil implements Constants, FrameworkConstants {
 		} else if (PHASE_RUNGAINST_SRC_START.equals(goal)|| PHASE_RUNGAINST_SRC_STOP.equals(goal) ) {
 			sb.append(PHASE_RUNAGAINST_SOURCE);
 		} else {
-			sb.append(goal);
+			sb.append(CI_HYPHEN);
+			sb.append(phase);
 		}
 		sb.append(INFO_XML);
 
 		return sb.toString();
+	}
+
+	
+	public static List<Parameter> getMojoParameters(MojoProcessor mojo, String goal) throws PhrescoException {
+		com.photon.phresco.plugins.model.Mojos.Mojo.Configuration mojoConfiguration = mojo.getConfiguration(goal);
+		if (mojoConfiguration != null) {
+			return mojoConfiguration.getParameters().getParameter();
+		}
+
+		return null;
+	}
+	
+	public static List<String> getMavenArgCommands(List<Parameter> parameters) throws PhrescoException {
+		List<String> buildArgCmds = new ArrayList<String>();	
+		if(CollectionUtils.isEmpty(parameters)) {
+			return buildArgCmds;
+		}
+		for (Parameter parameter : parameters) {
+			if (parameter.getPluginParameter()!= null && PLUGIN_PARAMETER_FRAMEWORK.equalsIgnoreCase(parameter.getPluginParameter())) {
+				List<MavenCommand> mavenCommand = parameter.getMavenCommands().getMavenCommand();
+				for (MavenCommand mavenCmd : mavenCommand) {
+					if (StringUtils.isNotEmpty(parameter.getValue()) && parameter.getValue().equalsIgnoreCase(mavenCmd.getKey())) {
+						buildArgCmds.add(mavenCmd.getValue());
+					}
+				}
+			}
+		}
+		return buildArgCmds;
 	}
 	
 	public static String getSettingsPath(String customerId) {
@@ -703,6 +736,28 @@ public class FrameworkServiceUtil implements Constants, FrameworkConstants {
 
 		return actionresponse;
 	}
+
+	/**
+	 * Gets the port no.
+	 *
+	 * @param path the path
+	 * @return the port no
+	 * @throws PhrescoException the phresco exception
+	 */
+	public static String getJenkinsPortNo() throws PhrescoException {
+		String portNo = "";
+		try {
+			String jenkinsHome = Utility.getJenkinsHome();
+			StringBuilder path = new StringBuilder(jenkinsHome);
+			Document document = ApplicationsUtil.getDocument(new File(path.toString() + File.separator + POM_FILE));
+			String portNoNode = CI_TOMCAT_HTTP_PORT;
+			NodeList nodelist = org.apache.xpath.XPathAPI.selectNodeList(document, portNoNode);
+			portNo = nodelist.item(0).getTextContent();
+		} catch (Exception e) {
+			throw new PhrescoException(e);
+		}
+		return portNo;
+	}
 	
 	private boolean fetchAlreadyValidatedKeys(Map<String, List<String>> validateMap, Parameter parameter) {
 		boolean alreadyValidated = false;
@@ -729,30 +784,20 @@ public class FrameworkServiceUtil implements Constants, FrameworkConstants {
 
 		return sb.toString();
 	}
-	
-	   private static List<Parameter> getMojoParameters(MojoProcessor mojo, String goal) throws PhrescoException {
-			com.photon.phresco.plugins.model.Mojos.Mojo.Configuration mojoConfiguration = mojo.getConfiguration(goal);
-			if (mojoConfiguration != null) {
-			    return mojoConfiguration.getParameters().getParameter();
-			}
-			
-			return null;
-		}
-	   
-	   private static boolean dependentParamMandatoryChk(MojoProcessor mojo, List<String> eventDependencies, String goal, HttpServletRequest request, ActionResponse validateinfo, List<String> errorMsg) {
-			boolean flag = false;
-			if (CollectionUtils.isNotEmpty(eventDependencies)) {
-				for (String eventDependency : eventDependencies) {
-					Parameter dependencyParameter = mojo.getParameter(goal, eventDependency);
-					ActionResponse paramsMandatoryCheck = paramsMandatoryCheck(dependencyParameter, request, validateinfo, errorMsg);
-					if (Boolean.parseBoolean(dependencyParameter.getRequired()) && paramsMandatoryCheck.isErrorFound()) {
-						flag = true;
-						break;
-					}
+	private static boolean dependentParamMandatoryChk(MojoProcessor mojo, List<String> eventDependencies, String goal, HttpServletRequest request, ActionResponse validateinfo, List<String> errorMsg) {
+		boolean flag = false;
+		if (CollectionUtils.isNotEmpty(eventDependencies)) {
+			for (String eventDependency : eventDependencies) {
+				Parameter dependencyParameter = mojo.getParameter(goal, eventDependency);
+				ActionResponse paramsMandatoryCheck = paramsMandatoryCheck(dependencyParameter, request, validateinfo, errorMsg);
+				if (Boolean.parseBoolean(dependencyParameter.getRequired()) && paramsMandatoryCheck.isErrorFound()) {
+					flag = true;
+					break;
 				}
 			}
-			return flag;
 		}
+		return flag;
+	}
 	   
 	   private static ActionResponse paramsMandatoryCheck (Parameter parameter, HttpServletRequest request, ActionResponse validateinfo, List<String> errorMsg) {
 		   String lableTxt =  getParameterLabel(parameter);

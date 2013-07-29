@@ -26,6 +26,7 @@ define([], function() {
 			var self = this;
 			commonVariables.projectId = projectId;
 			commonVariables.navListener.getMyObj(commonVariables.editproject, function(editprojectObject) {
+				commonVariables.api.localVal.setSession('appDirName', '');
 				Clazz.navigationController.jQueryContainer = commonVariables.contentPlaceholder;
 				Clazz.navigationController.push(editprojectObject, commonVariables.animation);
 				$("#editprojectTab").css("display", "block");

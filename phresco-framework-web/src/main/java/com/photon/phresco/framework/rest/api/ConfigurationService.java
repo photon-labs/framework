@@ -597,6 +597,31 @@ public class ConfigurationService extends RestBase implements FrameworkConstants
 		}
 	}
 	
+	
+	@GET
+	@Path("/environmentList")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response getEnvironmentList(@QueryParam(REST_QUERY_CUSTOMERID) String customerId,
+			@QueryParam(REST_QUERY_APPDIR_NAME) String appDirName) {
+		ResponseInfo<String> responseData = new ResponseInfo<String>();
+		try {
+			String configFileDir = FrameworkServiceUtil.getConfigFileDir(appDirName);
+			ConfigManager configManager = new ConfigManagerImpl(new File(configFileDir));
+			List<Environment> environments = configManager.getEnvironments();
+			Set<String> environmentSet = new HashSet<String>();
+			for (Environment environment : environments) {
+				environmentSet.add(environment.getName());
+			}
+			ResponseInfo<String> finalOutput = responseDataEvaluation(responseData, null,
+					"Environments Listed successfully", environmentSet);
+			return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
+		} catch (ConfigurationException e) {
+			ResponseInfo<String> finalOutput = responseDataEvaluation(responseData, e, "Environmets not Fetched", null);
+			return Response.status(Status.BAD_REQUEST).entity(finalOutput).header("Access-Control-Allow-Origin", "*")
+					.build();
+		}
+	}
+	
 	/**
 	 * Authenticate server.
 	 *

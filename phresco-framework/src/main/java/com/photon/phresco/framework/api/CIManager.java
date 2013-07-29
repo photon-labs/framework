@@ -24,14 +24,12 @@ import org.codehaus.jettison.json.JSONArray;
 
 import com.photon.phresco.commons.model.*;
 import com.photon.phresco.exception.*;
-import com.photon.phresco.framework.model.*;
-
 
 /**
  * Interface for communicating with Jenkins (CI)
  */
 public interface CIManager {
-	
+
 	/**
 	 * setup jenkins in phresco
 	 * @param projectInfo
@@ -41,7 +39,7 @@ public interface CIManager {
 	 * @throws PhrescoException
 	 */
 	BufferedInputStream setup(ProjectInfo projectInfo, ActionType action, List<String> buildArgCmds, String workingDirectory) throws PhrescoException;
-	
+
 	/**
 	 * start jenkins in phresco
 	 * @param projectInfo
@@ -51,7 +49,7 @@ public interface CIManager {
 	 * @throws PhrescoException
 	 */
 	BufferedInputStream start(ProjectInfo projectInfo, ActionType action, List<String> buildArgCmds, String workingDirectory) throws PhrescoException;
-	
+
 	/**
 	 * stop jenkins in phresco
 	 * @param projectInfo
@@ -61,31 +59,14 @@ public interface CIManager {
 	 * @throws PhrescoException
 	 */
 	BufferedInputStream stop(ProjectInfo projectInfo, ActionType action, List<String> buildArgCmds, String workingDirectory) throws PhrescoException;
-	
-	/**
-	 * Returns particular job info
-	 * @param appInfo
-	 * @param jobName
-	 * @return
-	 * @throws PhrescoException
-	 */
-//	CIJob getJob(ApplicationInfo appInfo, String jobName) throws PhrescoException;
-	
-	/**
-	 * Returns the list of user created jobs
-	 * @param appInfo
-	 * @return
-	 * @throws PhrescoException
-	 */
-//	List<CIJob> getJobs(ApplicationInfo appInfo) throws PhrescoException;
-	
+
 	/**
 	 * Creates jobs in Jenkins.
 	 * @param appInfo
 	 * @param job
 	 * @throws PhrescoException
 	 */
-	boolean createJob(ApplicationInfo appInfo, CIJob job) throws PhrescoException;
+	boolean createJob(CIJob job) throws PhrescoException;
 
 	/**
 	 * Updates jobs in Jenkins.
@@ -93,7 +74,7 @@ public interface CIManager {
 	 * @param job
 	 * @throws PhrescoException
 	 */
-	boolean updateJob(ApplicationInfo appInfo, CIJob job) throws PhrescoException;
+	boolean updateJob(CIJob job) throws PhrescoException;
 
 	/**
 	 * triggers build on jobs
@@ -102,7 +83,7 @@ public interface CIManager {
 	 * @return
 	 * @throws PhrescoException
 	 */
-		CIJobStatus generateBuild(CIJob ciJob) throws PhrescoException;	
+	CIJobStatus generateBuild(CIJob ciJob) throws PhrescoException;	
 	/**
 	 * Delete job. If build is null, job will be deleted
 	 * @param appInfo
@@ -111,15 +92,6 @@ public interface CIManager {
 	 * @throws PhrescoException
 	 */
 	CIJobStatus deleteJobs(String appDir,List<CIJob> ciJobs, String projectId, String continuousName) throws PhrescoException;
-	
-	/**
-	 * Delete job. If build is null, job will be deleted
-	 * @param appInfo
-	 * @param builds
-	 * @return
-	 * @throws PhrescoException
-	 */
-//	CIJobStatus deleteBuilds(ApplicationInfo appInfo, Map<String, List<String>> builds) throws PhrescoException;
 
 	/**
 	 * Gets builds for a job from the jenkins.
@@ -138,180 +110,200 @@ public interface CIManager {
 	boolean isJobCreatingBuild(CIJob ciJob) throws PhrescoException;
 
 	/**
-	 * Get total number of builds
-	 * @param appInfo
-	 * @return
-	 * @throws PhrescoException
-	 */
-//	int getTotalBuilds(ApplicationInfo appInfo) throws PhrescoException;
-	
-	/**
-	 * Configure email configuration on jenkins
 	 * @param jenkinsPort
 	 * @param senderEmailId
 	 * @param senderEmailPassword
-	 * @return
 	 * @throws PhrescoException
 	 */
 	void saveMailConfiguration(String jenkinsPort, String senderEmailId, String senderEmailPassword) throws PhrescoException;
-	
+
 	/**
-	 * Configure confluence configuration on jenkins
 	 * @param confluenceUrl
 	 * @param confluenceUserName
 	 * @param confluencePassword
-	 * @return
 	 * @throws PhrescoException
 	 */
 	void saveConfluenceConfiguration(String confluenceUrl, String confluenceUserName, String confluencePassword) throws PhrescoException;
-	
+
 	/**
-	 * Get Configured email configuration
-	 * @param jenkinsPort
-	 * @param senderEmailId
-	 * @param senderEmailPassword
+	 * @param tag
 	 * @return
 	 * @throws PhrescoException
 	 */
 	String getMailConfiguration(String tag) throws PhrescoException;
-	
+
 	/**
-	 * Get Configured confluence configuration
-	 * @return JSONArray
+	 * @return
 	 * @throws PhrescoException
 	 */
 	JSONArray getConfluenceConfiguration() throws PhrescoException;
-	
+
 	/**
-	 * clear confluence configuration nodes
-	 * @return 
 	 * @throws PhrescoException
 	 */
 	public void clearConfluenceSitesNodes() throws PhrescoException;
-	
+
 	/**
-	 * get confluence sites 
-	 * @return List<String>
+	 * @return
 	 * @throws PhrescoException
 	 */
 	public List<String> getConfluenceSites() throws PhrescoException;
-	
+
 	/**
-	 * encrypt String 
-	 * @return encrypted String
+	 * @param password
+	 * @return
 	 * @throws PhrescoException
 	 */
 	public String encyPassword(String password) throws PhrescoException;
-	
+
 	/**
-	 * decrypt String 
-	 * @return decrypted String
+	 * @param encryptedText
+	 * @return
 	 * @throws PhrescoException
 	 */
 	public String decyPassword(String encryptedText) throws PhrescoException;
-	
+
 	/**
-	 * Checks if the jobTemplate name already used
 	 * @param jobTemplateName
-	 * @return boolean
+	 * @return
 	 * @throws PhrescoException
 	 */
 	boolean isJobTemplateNameExists(String jobTemplateName) throws PhrescoException;
-	
+
 	/**
-	 * creates job template configuration
 	 * @param ciJobTemplates
 	 * @param createNewFile
-	 * @return boolean
+	 * @return
 	 * @throws PhrescoException
 	 */
 	boolean createJobTemplates(List<CIJobTemplate> ciJobTemplates, boolean createNewFile) throws PhrescoException;
-	
+
 	/**
-	 * Lists all job templates
-	 * @return CIJobTemplate
+	 * @return
 	 * @throws PhrescoException
 	 */
 	List<CIJobTemplate> getJobTemplates() throws PhrescoException;
-	
+
 	/**
-	 * Lists job template by appId
 	 * @param appId
-	 * @return CIJobTemplate
+	 * @return
 	 * @throws PhrescoException
 	 */
 	List<CIJobTemplate> getJobTemplatesByAppId(String appId) throws PhrescoException;
-	
+
 	/**
-	 * Lists job template by projId
 	 * @param projId
-	 * @return CIJobTemplate
+	 * @return
 	 * @throws PhrescoException
 	 */
 	List<CIJobTemplate> getJobTemplatesByProjId(String projId) throws PhrescoException;
-	
+
 	/**
-	 * Lists job template by job template name
 	 * @param jobTemplateName
-	 * @return CIJobTemplate
+	 * @return
 	 * @throws PhrescoException
 	 */
 	CIJobTemplate getJobTemplateByName(String jobTemplateName) throws PhrescoException;
-	
+
 	/**
-	 * Update jobTemplate
-	 * @param ciJobTemplate, oldName, projId
-	 * @return boolean
+	 * @param ciJobTemplate
+	 * @param oldName
+	 * @param projId
+	 * @return
 	 * @throws PhrescoException
 	 */
 	boolean updateJobTemplate(CIJobTemplate ciJobTemplate, String oldName, String projId) throws PhrescoException;
-	
+
 	/**
-	 * Deletes list of job templates
-	 * @param CIJobTemplate ciJobTemplates
-	 * @return boolean
+	 * @param ciJobTemplates
+	 * @return
 	 * @throws PhrescoException
 	 */
 	boolean deleteJobTemplates(List<CIJobTemplate> ciJobTemplates) throws PhrescoException;
-	
+
 	/**
-	 * Deletes job template by name
 	 * @param jobTemplateName
-	 * @return boolean
+	 * @param projId
+	 * @return
 	 * @throws PhrescoException
 	 */
 	boolean deleteJobTemplate(String jobTemplateName, String projId) throws PhrescoException;
-	
-	public void createJsonJobs(ContinuousDelivery continuousDelivery, List<CIJob> jobs, String projId, String appDir) throws PhrescoException;
-	
-	public List<ProjectDelivery> getCiJobInfo(String appDir) throws PhrescoException;
-	
-	public void deleteJsonJobs(String appDir, List<CIJob> selectedJobs, String projectId, String name) throws PhrescoException;
-	
-	public void clearContinuousDelivery(String continuousDeliveryName, String projId, String appDir) throws PhrescoException;
-	
-	public CIJob setPreBuildCmds(CIJob job, ApplicationInfo appInfo) throws PhrescoException;
-	
-	public List<CIJob> getDeleteableJobs(String projectId, ContinuousDelivery continuousDelivery, String appDirName) throws PhrescoException;
 
-	public List<CIJob> getJobs(String continuousName, String projectId, List<ProjectDelivery> ciJobInfo) throws PhrescoException;
-	
-	public CIJobStatus deleteBuilds(CIJob ciJob,  String buildNumber) throws PhrescoException;
-	
 	/**
-	 * Sets svn credential values without restarting jenkins
+	 * @param continuousDelivery
+	 * @param jobs
+	 * @param projId
+	 * @param appDir
+	 * @return
+	 * @throws PhrescoException
+	 */
+	public boolean createJsonJobs(ContinuousDelivery continuousDelivery, List<CIJob> jobs, String projId, String appDir) throws PhrescoException;
+
+	/**
+	 * @param appDir
+	 * @return
+	 * @throws PhrescoException
+	 */
+	public List<ProjectDelivery> getCiJobInfo(String appDir) throws PhrescoException;
+
+	/**
+	 * @param appDir
+	 * @param selectedJobs
+	 * @param projectId
+	 * @param name
+	 * @throws PhrescoException
+	 */
+	public void deleteJsonJobs(String appDir, List<CIJob> selectedJobs, String projectId, String name) throws PhrescoException;
+
+	/**
+	 * @param continuousDeliveryName
+	 * @param projId
+	 * @param appDir
+	 * @return
+	 * @throws PhrescoException
+	 */
+	public boolean clearContinuousDelivery(String continuousDeliveryName, String projId, String appDir) throws PhrescoException;
+
+	/**
+	 * @param projectId
+	 * @param continuousDelivery
+	 * @param appDirName
+	 * @return
+	 * @throws PhrescoException
+	 */
+	public List<CIJob> getOldJobs(String projectId, ContinuousDelivery continuousDelivery, String appDirName) throws PhrescoException;
+
+	/**
+	 * @param ciJob
+	 * @param buildNumber
+	 * @return
+	 * @throws PhrescoException
+	 */
+	public CIJobStatus deleteBuilds(CIJob ciJob,  String buildNumber) throws PhrescoException;
+
+	/**
 	 * @param submitUrl
 	 * @param svnUrl
 	 * @param username
 	 * @param password
-	 * @return boolean
+	 * @return
 	 * @throws PhrescoException
 	 */
 	public boolean setSVNCredentials(String submitUrl, String svnUrl, String username, String password) throws PhrescoException;
-	
+
+	/**
+	 * @param ciJob
+	 * @return
+	 * @throws PhrescoException
+	 */
 	public String getJobStatus(CIJob ciJob) throws PhrescoException;
 
-	ProjectDelivery getProjectDelivery(String projectId, List<ProjectDelivery> ciJobInfo) throws PhrescoException;
-
-	ContinuousDelivery getContinuousDelivery(String continuousName, List<ContinuousDelivery> continuousDeliveries) throws PhrescoException;
+	/**
+	 * @param jobName
+	 * @param projectId
+	 * @param projectDeliveries
+	 * @param continuousName
+	 * @return
+	 */
+	public CIJob getJob(String jobName, String projectId, List<ProjectDelivery> projectDeliveries, String continuousName);
 }

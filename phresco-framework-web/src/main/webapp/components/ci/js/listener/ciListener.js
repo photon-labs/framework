@@ -61,7 +61,8 @@ define([], function() {
 				var sort = $(commonVariables.contentPlaceholder).find('#sortable2');
 				sort.empty();
 				$('input[name=continuousDeliveryName]').val(data.name);
-				$('select[name=environments]').val(data.environment);
+				$('input[name=continuousDeliveryName]').prop("readonly",true);
+				$('select[name=environments]').val(data.envName);
 				$.each(data.jobs, function(key, value) {
 					var id = value.appName + value.templateName;
 					var parentli = $('#'+id).parent();
@@ -82,7 +83,7 @@ define([], function() {
 			var customerId = self.getCustomer();
 			customerId = (customerId == "") ? "photon" : customerId;
 			var projectId = commonVariables.api.localVal.getSession("projectId");
-			//var appDir = self.ciAPI.localVal.getSession('appDirName');
+			var appDir = commonVariables.api.localVal.getSession('appDirName');
 
 			header = {
 				contentType: "application/json",
@@ -92,7 +93,7 @@ define([], function() {
 			};
 			if (action === "list") {
 				header.requestMethod = "GET";
-				header.webserviceurl = commonVariables.webserviceurl + commonVariables.jobTemplates + "?customerId="+ customerId + "&projectId=" + projectId;
+				header.webserviceurl = commonVariables.webserviceurl + commonVariables.jobTemplates + "?customerId="+ customerId + "&projectId=" + projectId+"&appDirName="+appDir;
 				if (params !== null && params !== undefined && params !== '') {
 					params = $.param(params);
 					header.webserviceurl = header.webserviceurl + "?" + params;
@@ -105,7 +106,7 @@ define([], function() {
 				header.webserviceurl = commonVariables.webserviceurl + commonVariables.jobTemplates;
 			} else if (action === "continuousDeliveryList") {
 				header.requestMethod = "GET";
-				header.webserviceurl = commonVariables.webserviceurl + commonVariables.ci+"/list?projectId="+projectId;
+				header.webserviceurl = commonVariables.webserviceurl + commonVariables.ci+"/list?projectId="+projectId+"&appDirName="+appDir;
 			} else if (action === "update") {
 				header.requestMethod = "PUT";
 				ciRequestBody.customerId = customerId;
@@ -140,16 +141,19 @@ define([], function() {
 				header.webserviceurl = commonVariables.webserviceurl + commonVariables.jobTemplates + "/validate" + "?customerId="+ customerId + "&oldname=" + oldname + "&projectId=" + projectId + "&name=" + name;				
 			} else if (action === "getEnvironemntsByProjId") {
 				header.requestMethod = "GET";
-				header.webserviceurl = commonVariables.webserviceurl + commonVariables.configuration + "/listEnvironmentsByProjectId" + "?customerId="+ customerId + "&projectId=" + projectId;
+				if(appDir !== null & appDir !== undefined && appDir !== '') {
+					header.webserviceurl = commonVariables.webserviceurl + commonVariables.configuration + "/environmentList?appDirName="+appDir;
+				} else {
+					header.webserviceurl = commonVariables.webserviceurl + commonVariables.configuration + "/listEnvironmentsByProjectId" + "?customerId="+ customerId + "&projectId=" + projectId;
+				}
 				// For Testing Purpose - Remove this when service calls get ready
-				//header.webserviceurl = header.webserviceurl + "&appDirName=wwwww-Java WebService";		
 				if (params !== null && params !== undefined && params !== '') {
 					params = $.param(params);
 					header.webserviceurl = header.webserviceurl + "&" + params;
 				}
 			}  else if (action === "getJobTemplatesByEnvironment") {
 				header.requestMethod = "GET";
-				header.webserviceurl = commonVariables.webserviceurl + commonVariables.jobTemplates + "/getJobTemplatesByEnvironment" + "?customerId="+ customerId + "&projectId=" + projectId;	
+				header.webserviceurl = commonVariables.webserviceurl + commonVariables.jobTemplates + "/getJobTemplatesByEnvironment" + "?customerId="+ customerId + "&projectId=" + projectId+"&appDirName="+appDir;	
 				if (params !== null && params !== undefined && params !== '') {
 					params = $.param(params);
 					header.webserviceurl = header.webserviceurl + "&" + params;
@@ -166,7 +170,7 @@ define([], function() {
 				// Save the continuos delivery with all the drag and dropped job templates
 				header.requestMethod = "POST";
 				header.requestPostBody = JSON.stringify(ciRequestBody);
-				header.webserviceurl = commonVariables.webserviceurl + commonVariables.ci + "/create" + "?customerId="+ customerId + "&projectId=" + projectId;
+				header.webserviceurl = commonVariables.webserviceurl + commonVariables.ci + "/create" + "?customerId="+ customerId + "&projectId=" + projectId+"&appDirName="+appDir;
 				if (params !== null && params !== undefined && params !== '') {
 					params = $.param(params);
 					header.webserviceurl = header.webserviceurl + "&" + params;
@@ -175,7 +179,7 @@ define([], function() {
 				// update the continuos delivery with all the drag and dropped job templates
 				header.requestMethod = "PUT";
 				header.requestPostBody = JSON.stringify(ciRequestBody);
-				header.webserviceurl = commonVariables.webserviceurl + commonVariables.ci + "/update" + "?customerId="+ customerId + "&projectId=" + projectId;
+				header.webserviceurl = commonVariables.webserviceurl + commonVariables.ci + "/update" + "?customerId="+ customerId + "&projectId=" + projectId+"&appDirName="+appDir;
 				if (params !== null && params !== undefined && params !== '') {
 					params = $.param(params);
 					header.webserviceurl = header.webserviceurl + "&" + params;					
@@ -189,19 +193,19 @@ define([], function() {
 				}
 			} else if (action === "getBuilds") {
 				header.requestMethod = "GET";
-				header.webserviceurl = commonVariables.webserviceurl + commonVariables.ci + "/builds?projectId="+projectId+"&name="+ciRequestBody.jobName;
+				header.webserviceurl = commonVariables.webserviceurl + commonVariables.ci + "/builds?projectId="+projectId+"&name="+ciRequestBody.jobName+"&appDirName="+appDir+"&continuousName="+ciRequestBody.continuousName;
 			} else if (action === "generateBuild") {
 				header.requestMethod = "POST";
-				header.webserviceurl = commonVariables.webserviceurl + commonVariables.ci + "/build?name="+ciRequestBody.jobName+"&projectId="+projectId;
+				header.webserviceurl = commonVariables.webserviceurl + commonVariables.ci + "/build?name="+ciRequestBody.jobName+"&projectId="+projectId+"&appDirName="+appDir+"&continuousName="+ciRequestBody.continuousName;
 			} else if (action === "deleteBuild") {
 				header.requestMethod = "DELETE";
-				header.webserviceurl = commonVariables.webserviceurl + commonVariables.ci + "/deletebuilds?buildNumber="+ciRequestBody.buildNumber+"&name="+ciRequestBody.jobName+"&projectId="+projectId;
+				header.webserviceurl = commonVariables.webserviceurl + commonVariables.ci + "/deletebuilds?buildNumber="+ciRequestBody.buildNumber+"&name="+ciRequestBody.jobName+"&projectId="+projectId+"&appDirName="+appDir+"&continuousName="+ciRequestBody.continuousName;
 			} else if (action === "jobStatus") {
 				header.requestMethod = "GET";
-				header.webserviceurl = commonVariables.webserviceurl + commonVariables.ci + "/jobStatus?name="+ciRequestBody.jobName+"&continuousName="+ciRequestBody.cdName+"&projectId="+projectId;
+				header.webserviceurl = commonVariables.webserviceurl + commonVariables.ci + "/jobStatus?name="+ciRequestBody.jobName+"&continuousName="+ciRequestBody.cdName+"&projectId="+projectId+"&appDirName="+appDir;
 			} else if (action === "deleteContinuousDelivery") {
 				header.requestMethod = "DELETE";
-				header.webserviceurl = commonVariables.webserviceurl + commonVariables.ci + "/delete?continuousName="+ciRequestBody.cdName+"&customerId="+ customerId + "&projectId=" + projectId;
+				header.webserviceurl = commonVariables.webserviceurl + commonVariables.ci + "/delete?continuousName="+ciRequestBody.cdName+"&customerId="+ customerId + "&projectId=" + projectId+"&appDirName="+appDir;
 				if (params !== null && params !== undefined && params !== '') {
 					params = $.param(params);
 					header.webserviceurl = header.webserviceurl + "&" + params;
@@ -213,10 +217,13 @@ define([], function() {
 				header.webserviceurl = commonVariables.webserviceurl+commonVariables.configuration+"/cronExpression";
 			} else if (action === "createClone") {
 				header.requestMethod = "POST";
-				header.webserviceurl = commonVariables.webserviceurl+commonVariables.ci+"/clone?projectId="+projectId+"&"+ciRequestBody.data;
+				header.webserviceurl = commonVariables.webserviceurl+commonVariables.ci+"/clone?projectId="+projectId+"&appDirName="+appDir+"&"+ciRequestBody.data;
 			} else if(action === "editContinuousView") {
 				header.requestMethod = "GET";
-				header.webserviceurl = commonVariables.webserviceurl + commonVariables.ci + "/editContinuousView?projectId="+projectId+ "&name=" + params;
+				header.webserviceurl = commonVariables.webserviceurl + commonVariables.ci + "/editContinuousView?projectId="+projectId+"&appDirName="+appDir+"&name=" + params;
+			} else if(action === "jenkinsStatus") {
+				header.requestMethod = "GET";
+				header.webserviceurl = commonVariables.webserviceurl + commonVariables.ci + "/isAlive";
 			}
 
 			return header;
@@ -262,15 +269,38 @@ define([], function() {
 			});
 		},
 		
-		getBuilds: function(obj,job) {
+		jenkinsStatus:function() {
 			var self = this;
-			var ciRequestBody = {},jobName;
+			var ciRequestBody = {};
+			self.getHeaderResponse(self.getRequestHeader(ciRequestBody, 'jenkinsStatus'), function (response) {
+				var enableOpts, disableOpts;
+				if(response.data === "200") {
+					disableOpts = document.getElementsByClassName('deadOpts');
+					enableOpts = document.getElementsByClassName('aliveOpts');
+				} else {
+					disableOpts = document.getElementsByClassName('aliveOpts');
+					enableOpts = document.getElementsByClassName('deadOpts');
+				}
+				 for(var i = 0, length = enableOpts.length; i < length; i++) {
+					 enableOpts[i].style.display = 'block';
+					 disableOpts[i].style.display = 'none';
+				 } 
+			});
+		},
+		
+		getBuilds: function(obj,job, name) {
+			var self = this;
+			var ciRequestBody = {},jobName,continuousName;
 			if (job !== undefined && job !== null) {
 				jobName = job;
+				continuousName = name;
 				ciRequestBody.jobName =job;
+				ciRequestBody.continuousName = name;
 			} else {
 				ciRequestBody.jobName = obj.attr("jobName");
 				jobName = ciRequestBody.jobName;
+				ciRequestBody.continuousName = obj.closest('div[class=widget_testing]').attr('name');
+				continuousName = ciRequestBody.continuousName;
 			}
 			self.getHeaderResponse(self.getRequestHeader(ciRequestBody, 'getBuilds'), function (response) {
 				$("tbody[name=buildList]").empty();
@@ -285,7 +315,7 @@ define([], function() {
 							headerTr = '</td><td><img src="themes/default/images/helios/green_active.png"></td>';
 						}
 						content = content.concat(headerTr);
-						headerTr = '<td><a href="#" data-placement="top" jobName="'+jobName+'"buildNumber="'+response.data[i].number+'"temp="deleteBuild"><img src="themes/default/images/helios/delete_row.png" width="14" height="18" border="0" alt="0"></a></td></tr>';
+						headerTr = '<td><a href="#" data-placement="top" continuousName="'+continuousName+'" jobName="'+jobName+'"buildNumber="'+response.data[i].number+'"temp="deleteBuild"><img src="themes/default/images/helios/delete_row.png" width="14" height="18" border="0" alt="0"></a></td></tr>';
 						content = content.concat(headerTr);
 					}
 					
@@ -325,6 +355,7 @@ define([], function() {
 			var ciRequestBody = {},jobName;
 			ciRequestBody.jobName = obj.attr("jobName");
 			jobName = ciRequestBody.jobName;
+			ciRequestBody.continuousName = obj.closest('div[class=widget_testing]').attr('name');
 			self.getHeaderResponse(self.getRequestHeader(ciRequestBody, 'generateBuild'), function (response) {
 			});
 		},
@@ -333,19 +364,41 @@ define([], function() {
 			var self = this;
 			var ciRequestBody = {},jobName;
 			ciRequestBody.data = obj.closest("form").serialize();
-			self.getHeaderResponse(self.getRequestHeader(ciRequestBody, 'createClone'), function (response) {
-				self.loadContinuousDeliveryView();
-			});
+			if(self.cloneValidation()) {
+				self.getHeaderResponse(self.getRequestHeader(ciRequestBody, 'createClone'), function (response) {
+					self.loadContinuousDeliveryView();
+				});
+			}
+		},
+		
+		cloneValidation: function(obj) {
+			$('#errMsg').html('');
+			var self=this;
+			var status = true;
+			var name = $("input[name=cloneName]").val();
+			if(name === "" || name === undefined) {				
+				$("input[name='cloneName']").focus();
+				$("input[name='cloneName']").attr('placeholder','Enter Name');
+				$("input[name='cloneName']").addClass("errormessage");
+				$("input[name='ncloneNameame']").bind('keypress', function() {
+					$(this).removeClass("errormessage");
+				});
+				status = false;				
+			}
+			
+			return status;
 		},
 		
 		deleteBuild: function(obj) {
 			var self = this;
-			var ciRequestBody = {},jobName;
+			var ciRequestBody = {},jobName,continuousName;
 			ciRequestBody.jobName = obj.attr("jobName");
 			ciRequestBody.buildNumber = obj.attr("buildNumber");
+			ciRequestBody.continuousName = obj.attr('continuousName');
+			continuousName = ciRequestBody.continuousName;
 			jobName = ciRequestBody.jobName;
 			self.getHeaderResponse(self.getRequestHeader(ciRequestBody, 'deleteBuild'), function (response) {
-				self.getBuilds(response,jobName);
+				self.getBuilds(response,jobName, continuousName);
 			});
 		},
 		
@@ -444,7 +497,7 @@ define([], function() {
 			var self = this;
 			try {
 				commonVariables.loadingScreen.showLoading();
-				commonvariables.api.ajaxRequest(header, function(response) {
+				commonVariables.api.ajaxRequest(header, function(response) {
 						if (response !== null) {
 							commonVariables.loadingScreen.removeLoading();
 							callback(response);
@@ -469,7 +522,7 @@ define([], function() {
 		getHeaderResponse : function (header, callback) {
 			var self = this;
 			try {
-				commonvariables.api.ajaxRequest(header, function(response) {
+				commonVariables.api.ajaxRequest(header, function(response) {
 						if (response !== null) {
 							callback(response);
 						} else {
@@ -606,7 +659,6 @@ define([], function() {
 
 
 		showConfigureJob : function(thisObj) {
-
 			$('input[name=jobName]').removeClass('errormessage');
 			$('input[name=jobName]').val('');
 			$('#errMsg').html('');
@@ -619,11 +671,10 @@ define([], function() {
 			$("select[name=days]").attr('disabled', false);			
 			$("select[name=weeks]").attr('disabled', false);
 			$("select[name=months]").attr('disabled', false);
+			$("input[name=triggers]").attr('disabled', false);
 			
-			//TODO: need to get downstream project as well as dynamic params from service
 			var self = this;
 			var templateJsonData = $(thisObj).data("templateJson");
-
 			var jobJsonData = $(thisObj).data("jobJson");			
 			// elements
 			var repoTypeElem = $("#repoType tbody tr");
@@ -757,7 +808,7 @@ define([], function() {
 			commonVariables.appDirName = appDirName;
 			
 			self.CroneExpression();
-			
+			$('#dynamicContent ul').empty();
 			commonVariables.navListener.getMyObj(commonVariables.dynamicPage, function(dynamicPageObject) {
 				self.dynamicPageListener = new Clazz.com.components.dynamicPage.js.listener.DynamicPageListener();
 
@@ -767,12 +818,14 @@ define([], function() {
 				dynamicPageObject.getHtml(whereToRender, thisObj, 'jobConfigure', function(response) {
 					// Restore existing values
 					// get all the elemenst of the form and iterate through that, check for type and populate the value	
+					var EnvName = $(thisObj).attr("envname");
+					$("#environmentName").val(EnvName);
+					$("#environmentName").selectpicker('refresh');
 					if (!self.isBlank(jobJsonData)) {
 						$('input[name=jobName]').val(jobJsonData.jobName);
 						self.restoreFormValues($("#jonConfiguration"), jobJsonData);
-					} else {
-						//console.info("jobJsonData is empty",jobJsonData)
 					}
+					self.openccci(thisObj, 'jobConfigure');
 				});
 			});
 		},
@@ -1133,6 +1186,11 @@ define([], function() {
 
 			// validation ends
 			if (!emptyFound) {
+				var triggers = [];
+				$.each($("input:checkbox[name=triggers]:checked"), function(key, value) {
+					 triggers.push($(this).val());
+				});
+				
 				//disable scheduler options
 				$("input[name=scheduleOption]").attr('disabled', true);
 				$("input[name=everyAt]").attr('disabled', true);
@@ -1141,12 +1199,12 @@ define([], function() {
 				$("select[name=days]").attr('disabled', true);			
 				$("select[name=weeks]").attr('disabled', true);
 				$("select[name=months]").attr('disabled', true);
-
-
+				$("input[name=triggers]").attr('disabled', true);
+ 
 				// append the configureJob json (jobJson) in  job template name id
 				var jobConfiguration = $('#jonConfiguration').serializeObject();
-			
 				jobConfiguration.operation = templateJsonData.type;
+				jobConfiguration.triggers = triggers;
 				jobConfiguration.templateName = templateJsonData.name;
 				jobConfiguration.appDirName=appDirName;
 				jobConfiguration.appName = appName;
@@ -1162,7 +1220,6 @@ define([], function() {
 			var data = response.data;			
 			if (!self.isBlank(data)) {
 				// appinfo job templates
-				//var continuousDeliveryJobTemplates = "";
 				var sort = $(commonVariables.contentPlaceholder).find('#sortable1');
 				sort.empty();
 				$.each(data, function(key, value) {
@@ -1211,7 +1268,6 @@ define([], function() {
 				    var nextTemplateJsonData = $(nextAnchorElem).data("templateJson");
 				    var nextJobJsonData = $(nextAnchorElem).data("jobJson");
 
-
 				    if (jobJsonData == undefined && jobJsonData == null) {
 				        jobJsonData = {};
 				    }
@@ -1223,7 +1279,7 @@ define([], function() {
 				        //jobJsonData.downStreamProject = nextJobJsonData.jobName;
 				        jobJsonData.downStreamCriteria = "SUCCESS";
 				    } else {
-				    	// console.log("next job data not found ... ");
+				    	jobJsonData.downstreamApplication ="";
 				    }
 
 				    // No use parent job
@@ -1231,7 +1287,7 @@ define([], function() {
 				    	// upstream job specifies the from where this app will be triggered, this will be based on assumption, only for UI purpose
 				        jobJsonData.upstreamApplication = preJobJsonData.jobName;
 				    } else {
-				    	// console.log("previous job data not found ... ");
+				    	jobJsonData.upstreamApplication = "";
 				    }
 
 				   // Is parent app available for this app job
@@ -1284,9 +1340,9 @@ define([], function() {
 			var self = this;
 			var contDeliveryName = $("[name=continuousDeliveryName]").val();
 			var envName = $("select[name=environments]").val();
-			if(!self.isBlank(contDeliveryName)) {				
-				var sortable2LiObj = $("#sortable2 li");
-				var sortable2Obj = $("#sortable2");
+			var sortable2LiObj = $("#sortable2 li");
+			var sortable2Obj = $("#sortable2");
+			if(!self.isBlank(contDeliveryName) && $(sortable2LiObj).length !== 0) {				
 				var hasError = false;
 				$(sortable2LiObj).each(function(index) {
 					var thisAnchorElem = $(this).find('a');
@@ -1305,9 +1361,6 @@ define([], function() {
 							hasError = true;
 							return false;
 						}
-
-						// more validation can be added here
-
 					}
 				});
 
@@ -1331,13 +1384,17 @@ define([], function() {
 
 					callback(contDelivery);
 				}
-			} else {				
+			} else if(self.isBlank(contDeliveryName)){
 				$("[name=continuousDeliveryName]").focus();
 				$("[name=continuousDeliveryName]").attr('placeholder','Enter Name');
 				$("[name=continuousDeliveryName]").addClass("errormessage");
 				$("[name=continuousDeliveryName]").bind('keypress', function() {
 					$(this).removeClass("errormessage");
 				});
+			} else if($(sortable2LiObj).length === 0) {
+				$(".blinkmsg").removeClass("popsuccess").addClass("poperror");
+				self.effectFadeOut('poperror', (''));
+				$(".poperror").text("Configure atleast one Job!");
 			}
 		},
 

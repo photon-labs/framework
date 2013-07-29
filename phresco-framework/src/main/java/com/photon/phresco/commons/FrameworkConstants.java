@@ -324,6 +324,7 @@ public interface FrameworkConstants {
 	String HUDSON_TASKS_SHELL = "hudson.tasks.Shell";
 	String POST_BUILDERS_NODE = "postbuilders";
 	String PRE_BUILDERS_NODE = "prebuilders";
+	String SCM_SUBVERSION_SCM_POST_CREDENTIAL = "/scm/SubversionSCM/postCredential";
     String CI_FILE_RELEASE_PUBLISHER_NODE="publishers";
     String COLON = ":";
     String HTTP_PROTOCOL = "http";

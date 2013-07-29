@@ -242,7 +242,7 @@ define(["framework/widgetWithTemplate", "ci/listener/ciListener"], function() {
 						$(".dyn_popup").hide();
 					},
 
-					receive: function( event, ui ) {						
+					receive: function( event, ui ) {			
 						// For gear icons alone
 						$("#sortable2 li.ui-state-default a").show();
 						$("#sortable1 li.ui-state-default a").hide();	
@@ -260,9 +260,35 @@ define(["framework/widgetWithTemplate", "ci/listener/ciListener"], function() {
 						});
 					},
 
-					change: function( event, ui ) {						
-						//console.log("change1 => " , ui);
-						//console.log("[" + this.id + "] received [" + ui.item.html() + "] from [" + ui.sender + "]");
+					change: function( event, ui ) {		
+						var itemText = $(ui.item).find('span').text();
+						var anchorElem = $(ui.item).find('a');
+						var templateJsonData = $(anchorElem).data("templateJson");
+						var id = $(ui.item).parent("ul").attr("id");
+						if(id === "sortable2") {
+							var nextItem = $(ui.item).next();
+							var nextAnchorElem = $(ui.item).next().find('a');
+							var nextAnchorElem = $(ui.item).next().find('a');
+							var downTemplateJsonData = $(nextAnchorElem).data("templateJson");
+							
+							var prevItem = $(ui.item).prev();
+							var upTemplateJsonData;
+							if(prevItem !== null && prevItem!== undefined) {
+								var prevAnchorElem = $(ui.item).prev().find('a');
+								var prevAnchorElem = $(ui.item).prev().find('a');
+								upTemplateJsonData = $(prevAnchorElem).data("templateJson");
+							}
+							if(upTemplateJsonData === null) {
+								if(downTemplateJsonData !== undefined && downTemplateJsonData!== null) {
+									if (!downTemplateJsonData.enableRepo) {
+										$(".blinkmsg").removeClass("popsuccess").addClass("poperror");
+										$(ui.sender).sortable('cancel');
+										self.effectFadeOut('poperror', (''));
+										$(".poperror").text("DownStream "+downTemplateJsonData.name+" job Doesn't have the Repo!");
+									}
+								}
+							}
+						}
 					}
 				});
 
@@ -278,22 +304,25 @@ define(["framework/widgetWithTemplate", "ci/listener/ciListener"], function() {
 						$(".dyn_popup").hide();
 					},
 
-					change: function( event, ui ) {						
-
+					change: function( event, ui ) {		
 						var itemText = $(ui.item).find('span').text();
+						//var nextItem = $(ui.item).next();
+						
 						var anchorElem = $(ui.item).find('a');
 						var templateJsonData = $(anchorElem).data("templateJson");
-						
 						var appName = $(anchorElem).attr("appname");
 						var sortable2Len = $('#sortable2 > li').length;
 						// Initial validation
 						if (sortable2Len === 1 && !templateJsonData.enableRepo) {
 							$(ui.sender).sortable('cancel');
+							$(".blinkmsg").removeClass("popsuccess").addClass("poperror");
+							self.effectFadeOut('poperror', (''));
+							$(".poperror").text(templateJsonData.name + " job Doesn't have the Repo!");
 						}
+						
 					},
 
 					receive: function( event, ui ) {
-
 						// For gear icons alone
 						$("#sortable2 li.ui-state-default a").show();
 						$("#sortable1 li.ui-state-default a").hide();	
@@ -332,6 +361,9 @@ define(["framework/widgetWithTemplate", "ci/listener/ciListener"], function() {
 								console.log("Parent object not found for this clonned workspace");
 								$(ui.item).find('span').text(itemText);
 								$(ui.sender).sortable('cancel');
+								$(".blinkmsg").removeClass("popsuccess").addClass("poperror");
+								self.effectFadeOut('poperror', (''));
+								$(".poperror").text("Parent object not found for "+templateJsonData.name+" template!");
 							}
 
 						}
@@ -355,6 +387,8 @@ define(["framework/widgetWithTemplate", "ci/listener/ciListener"], function() {
 			$("#sortable1 li.ui-state-default a").hide();
 			
    			$('#sortable2').on('click', 'a[name=jobConfigurePopup]', function() {
+   				var envName = $("[name=environments]").val();
+   				$(this).attr("envName",envName);
    				self.onConfigureJobPopupEvent.dispatch(this);
    			});
 

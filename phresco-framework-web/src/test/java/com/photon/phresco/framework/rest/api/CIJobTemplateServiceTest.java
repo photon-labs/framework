@@ -24,7 +24,7 @@ import junit.framework.Assert;
 
 import org.junit.Test;
 
-import com.photon.phresco.framework.model.CIJobTemplate;
+import com.photon.phresco.commons.model.CIJobTemplate;
 
 public class CIJobTemplateServiceTest extends RestBaseTest {
 	CIJobTemplateService ciJobTemplateService = new CIJobTemplateService();
@@ -109,7 +109,7 @@ public class CIJobTemplateServiceTest extends RestBaseTest {
 
 	@Test
 	public void getJobTemplatesByEnvironemnt() {
-		Response jobTemplate = ciJobTemplateService.getJobTemplatesByEnvironemnt(customerId, projectId, "Production");
+		Response jobTemplate = ciJobTemplateService.getJobTemplatesByEnvironemnt(customerId, projectId, "Production","");
 		Assert.assertEquals(200, jobTemplate.getStatus());
 //		Response jobTemplateFail = ciJobTemplateService.getJobTemplatesByEnvironemnt(customerId, "Te", "");
 //		Assert.assertEquals(417, jobTemplateFail.getStatus());

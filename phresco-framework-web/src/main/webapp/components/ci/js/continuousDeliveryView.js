@@ -19,6 +19,7 @@ define(["framework/widgetWithTemplate", "ci/listener/ciListener"], function() {
 		cloneCiEvent : null,
 		listEnvironmentsEvent : null,
 		ciStatusEvent : null,
+		jenkinsStatus : null,
 	
 		/***
 		 * Called in initialization time of this class 
@@ -74,6 +75,10 @@ define(["framework/widgetWithTemplate", "ci/listener/ciListener"], function() {
 				self.ciStatusEvent = new signals.Signal();
 			}
 			
+			if (self.jenkinsStatus === null) {
+				self.jenkinsStatus = new signals.Signal();
+			}
+			
 			self.continuousDeliveryConfigureEditEvent.add(ciListener.editContinuousDeliveryConfigure, ciListener);
 			self.continuousDeliveryConfigureLoadEvent.add(ciListener.loadContinuousDeliveryConfigure, ciListener);
 			self.listBuildsEvent.add(ciListener.getBuilds, ciListener);
@@ -82,6 +87,7 @@ define(["framework/widgetWithTemplate", "ci/listener/ciListener"], function() {
 			self.cloneCiEvent.add(ciListener.cloneCi, ciListener);
 			self.listEnvironmentsEvent.add(ciListener.listEnvironment, ciListener);
 			self.ciStatusEvent.add(ciListener.ciStatus, ciListener);
+			self.jenkinsStatus.add(ciListener.jenkinsStatus, ciListener);
 		},
 		/***
 		 * Called in once the login is success
@@ -112,6 +118,7 @@ define(["framework/widgetWithTemplate", "ci/listener/ciListener"], function() {
 		 */
 		postRender : function(element) {
 			var self = this; 
+			self.jenkinsStatus.dispatch();
 		},
 		
 		getAction : function(ciRequestBody, action, param, callback) {
@@ -125,6 +132,7 @@ define(["framework/widgetWithTemplate", "ci/listener/ciListener"], function() {
 		bindUI : function() {
 			var self = this;
 			var resultvalue = 0;
+			$(".tooltiptop").tooltip();
 			$('.content_main').prevAll().each(function() {
 				resultvalue = resultvalue + $(this).height(); 
 			});
@@ -138,6 +146,12 @@ define(["framework/widgetWithTemplate", "ci/listener/ciListener"], function() {
 				advanced:{ updateOnContentResize: true}
 			});
 			
+			$(".execute_button").hover(function() {
+				$(this).attr("src","themes/default/images/helios/execute_icon_hover.png");
+			}, function() {
+				$(this).attr("src","themes/default/images/helios/execute_icon.png");
+			});
+			
 			$(".wait_button").hover(function() {
 				$(this).attr("src","themes/default/images/helios/wait_hover.png");
 			}, function() {
@@ -149,8 +163,13 @@ define(["framework/widgetWithTemplate", "ci/listener/ciListener"], function() {
 			}, function() {
 				$(this).attr("src","themes/default/images/helios/time.png");
 			});
+			
    			$(".dyn_popup").hide();
 	  		
+   			$(window).resize(function() {
+   				$(".dyn_popup").hide();
+   			  });
+   			
 	  		/*$(window).resize(function() {
 				$(".dyn_popup").hide();
 	  		});
@@ -202,9 +221,13 @@ define(["framework/widgetWithTemplate", "ci/listener/ciListener"], function() {
    			
    			//setInterval(function() {   //calls click event after a certain time
    				$(".pipeline_box").each(function() {
-   	   				self.ciStatusEvent.dispatch($(this))
+   	   				self.ciStatusEvent.dispatch($(this));
    	   			});
  			//}, 10000);
+   				
+//			setInterval(function() {
+//				self.jenkinsStatus.dispatch();
+//			}, 5000);
    			
 			$(".datetime_status").click(function() {
 				self.openccwait(this, $(this).attr('class'));
@@ -241,7 +264,7 @@ define(["framework/widgetWithTemplate", "ci/listener/ciListener"], function() {
 			});
 			
 			$("a[temp=generate_build]").click(function() {
-				$(this).parent().parent("div").find(".img_process").attr('src',"themes/default/images/helios/processing.gif");
+				$(this).parent().parent().parent("div").find(".img_process").attr('src',"themes/default/images/helios/processing.gif");
 				self.generateBuildEvent.dispatch($(this));
 			});
 			
