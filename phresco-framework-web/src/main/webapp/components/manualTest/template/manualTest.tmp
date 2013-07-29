@@ -1,0 +1,150 @@
+<section class="optiontitle qual_unit">
+	<div class="unit_text">Manual Test	</div>
+    <div class="flt_right">
+		<div class="unit_view hideContent">
+			<div class="code_report_icon" id="pdfDiv">
+				<div class="icon_images">
+					<a class="tooltiptop" title="" data-placement="bottom" data-toggle="tooltip" href="#" data-original-title="PDF Report" id="pdfIcon">
+						<img src="themes/default/images/helios/pdf_icon_white.png">
+					</a>
+					<!--Pdf report popup starts here -->
+					<div id="pdf_report" class="dyn_popup hideContent">
+						<div id="noPdfReport" class="noReport"></div>
+	                	<table class="table_border availablePdfRptsTbl hideContent" border="0" cellspacing="0" cellpadding="5" width="100%" id="availablePdfRptsTbl">
+	                		<thead>
+	                        	<tr>
+		                            <th data-i18n="commonlabel.label.existingreport"></th>
+									<th data-i18n="commonlabel.label.type"></th>
+	                            	<th data-i18n="commonlabel.label.download"></th>
+	                            	<th data-i18n="commonlabel.label.delete"></th>
+	                        	</tr>    
+	                    	</thead>
+	                    	<tbody id="availablePdfRptsTbdy">
+	                    	    
+	                   	 	</tbody>    
+	                	</table>
+	                	<form id="pdfReportForm">
+		                   	<table class="report_type">
+		                    	<tbody>
+		                        	<tr>
+		                            	<td data-i18n="commonlabel.label.reporttype"></td>
+		                            	<td>
+		                                	<select name="reportDataType">
+	                                    		<option value="detail" data-i18n="projectlist.label.detailedReport"></option>
+	                                    		<option value="crisp" data-i18n="projectlist.label.overallReport"></option>
+	                                		</select>
+		                            	</td>
+		                        	</tr>
+									<tr>
+		                            	<td data-i18n="commonlabel.label.pdfreportname"></td>
+			                            <td>
+			                               <input type="text" data-i18n="[placeholder]commonlabel.label.pdfreportname" name="pdfName">
+			                            </td>
+		                        	</tr>	                        	
+		                    	</tbody>
+		                   	</table>
+		                   	<div class="popuploading" id="pdfReportLoading">&nbsp</div>
+			               	<div class="flt_right">
+			                 	<input type="button" value="Generate" data-i18n="[value]projectlist.label.generate"  class="btn btn_style" id="generatePdf">
+		                 		<input type="button" value="Close" data-i18n="[value]common.btn.close" class="btn btn_style dyn_popup_close">
+		               		</div>
+	               			<input type="hidden" name="fromPage" value="functional" data-i18n="navigation.application.functional"/>
+	           			</form>
+					</div>
+					<!--Pdf report popup ends here -->
+				</div>
+			</div>
+            <span>
+            	<a id="tabularView" href="#"><img src="themes/default/images/helios/quality_table_on.png" width="25" height="25" border="0" alt=""><b>Table View</b></a>
+            </span>
+            <span>
+            	<a id="graphicalView" href="#"><img src="themes/default/images/helios/quality_graph_off.png" width="26" height="24" border="0" alt="">Graph View</a>
+            </span>    
+        </div>
+        
+        
+    <!--	<div class="icon_images"><a class="tooltiptop" title="" data-placement="bottom" data-toggle="tooltip" href="#" data-original-title="Open Folder" id="openFolder"><img src="themes/default/images/helios/openfolder_icon.png" ></a></div>-->
+	<!--	<div class="icon_images" style="margin-right:2px;"><a class="tooltiptop" title="" data-placement="bottom" data-toggle="tooltip" href="#" data-original-title="Copy Path" id="copyPath"><img src="themes/default/images/helios/copypath_icon.png" ></a></div>-->
+            
+        <div class="unit_path">
+    		<input type="button" value="Add TestCase" id="addTestCase" name="show_manualTestCase_popup" class="btn btn_style" style="display:none">
+	            <div id="show_manualTestCase_popup" class="dyn_popup" style="display:none">
+		            <form id="manualTestTestCaseForm">
+						<table class="table node_table" cellpadding="0" cellspacing="0" border="0">
+							<tbody>
+								<tr>
+									<td>Test Scenarios<br>
+										<input type="text" id="testSuiteName" placeholder="TestSuite Name" name="testSuiteName" value="">
+									</td>
+									<td>Features<sup>*</sup><br>
+										<input type="text" placeholder="Name of the Features" name="featureId" value="">
+									</td>
+								</tr>
+								<tr>
+									<td>TestCases<sup>*</sup><br>
+										<input type="text" placeholder="Name of the TestCases" name="testCaseId" value="">
+									</td>
+									<td>Status<br>
+										<select name="status">
+											<option value="success">Success</option>
+											<option value="failure">Failure</option>
+										</select>
+									</td>
+								</tr>
+								<tr>
+									<td>TestCase Description<br>
+										<textarea name="description"></textarea>
+									</td>
+									<td>Test Steps<br>
+										<textarea name="steps"></textarea>
+									</td>
+								</tr>
+								<tr>
+									<td>Expected Result<br>
+										<textarea name="expectedResult"></textarea>
+									</td>
+									<td>Actual Result<br>
+										<textarea name="actualResult"></textarea>
+									</td>
+								</tr>
+								<tr>
+									<td colspan="2">Bug ID/Comments<br>
+										<textarea name="bugComment"></textarea>
+									</td>
+								 </tr>
+							</tbody>
+						</table>
+						<div class="flt_right">
+							<input type="button" value="Save" class="btn btn_style" name="saveTestCase">
+							<input type="button" value="Close" class="btn btn_style dyn_popup_close">
+						</div>
+					</form>
+				</div>
+				
+				<input type="button" value="Add TestSuite" id="addTestSuite" name="show_manualTestSuite_popup" class="btn btn_style">
+				<div id="show_manualTestSuite_popup" class="dyn_popup" style="display:none">
+					<form id="manualTestSuiteForm">
+						<table class="table node_table" cellpadding="0" cellspacing="0" border="0">
+							<tbody>
+								<tr>
+									<td style="vertical-align: middle;">Test Scenarios
+									<input type="text" placeholder="TestSuite Name" name="testSuiteName" id="testSuiteId" ></td>
+								</tr>
+								<tr>
+									<td style="vertical-align: middle;">Upload Files
+									<input type="file" placeholder="TestSuite file" name=""></td>
+								</tr>
+							</tbody>
+						</table>
+						<div class="flt_right">
+							<input type="button" value="Save" class="btn btn_style" name="saveTestSuite">
+							<input type="button" value="Close" class="btn btn_style dyn_popup_close">
+						</div>
+					</form>
+				</div>
+        </div>
+        
+   </div>
+</section>
+
+<div class="mainContent" id="testResult"></div>
