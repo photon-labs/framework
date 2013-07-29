@@ -540,7 +540,7 @@ a.dropdown-toggle b.caret  {
 	right: 0;
 	left: auto !important;
 	padding: 0px !important;
-	width:174px;
+	width:170px;
 }
 
 .cust_sel:after {
@@ -556,6 +556,10 @@ a.dropdown-toggle b.caret  {
 .cust_sel ul {
 	margin: 0px;
 	padding: 0px;
+}
+
+.search{
+	margin: 7px 0 0 142px !important;
 }
 
 .cust_sel ul li{
@@ -3827,6 +3831,10 @@ img.add_test_icon
 #template_download label:first-child{
 	float: left;
 	margin-right: 15px;
+}
+
+tfoot {
+	font-weight:bold;
 }
 
 #template_download label{
