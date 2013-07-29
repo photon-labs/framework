@@ -219,6 +219,7 @@ define(["projects/listener/projectsListener"], function() {
 			});
 			
 			Clazz.navigationController.jQueryContainer = commonVariables.contentPlaceholder;
+			this.customScroll($(".scrolldiv"));
 		}
 	});
 
