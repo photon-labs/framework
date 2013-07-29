@@ -41,6 +41,7 @@ define([], function() {
 					commonVariables.api.ajaxRequest(header, 
 						function(response){
 							if(response !== undefined && response !== null && response.status !== "error" && response.status !== "failure"){
+								self.enterKeyDisable = false;
 								self.setUserInfo(response.data);
 								self.appendPlaceholder();
 								self.renderNavigation();
@@ -48,27 +49,35 @@ define([], function() {
 								//authentication failed
 								//commonVariables.loadingScreen.removeLoading();
 								if(response.responseCode === "PHR110001") {
+									self.enterKeyDisable = false;
 									$(".login_error_msg").attr('data-i18n', 'login.errormessage.isempty');
 									self.renderlocales(commonVariables.basePlaceholder);
 								} else if(response.responseCode === "PHR110002") {
+									self.enterKeyDisable = false;
 									$(".login_error_msg").attr('data-i18n', 'login.errormessage.unauthorizeduser');
 									self.renderlocales(commonVariables.basePlaceholder);
 								} else if(response.responseCode === "PHR110003") {
+									self.enterKeyDisable = false;
 									$(".login_error_msg").attr('data-i18n', 'login.errormessage.invalidcredential');
 									self.renderlocales(commonVariables.basePlaceholder);
 								} else if(response.responseCode === "PHR110004") {
+									self.enterKeyDisable = false;
 									$(".login_error_msg").attr('data-i18n', 'login.errormessage.authservicedown');
 									self.renderlocales(commonVariables.basePlaceholder);
 								} else if(response.responseCode === "PHR110005") {
+									self.enterKeyDisable = false;
 									$(".login_error_msg").attr('data-i18n', 'login.errormessage.jsonnotfound');
 									self.renderlocales(commonVariables.basePlaceholder);
 								} else if(response.responseCode === "PHR110006") {
+									self.enterKeyDisable = false;
 									$(".login_error_msg").attr('data-i18n', 'login.errormessage.parsingfailed');
 									self.renderlocales(commonVariables.basePlaceholder);
 								} else if(response.responseCode === "PHR110007") {
+									self.enterKeyDisable = false;
 									$(".login_error_msg").attr('data-i18n', 'login.errormessage.invalidpermissions');
 									self.renderlocales(commonVariables.basePlaceholder);
 								} else if(response.responseCode === "PHR000000") {
+									self.enterKeyDisable = false;
 									$(".login_error_msg").attr('data-i18n', 'commonlabel.errormessage.unexpectedfailure');
 									self.renderlocales(commonVariables.basePlaceholder);
 								}

@@ -49,7 +49,7 @@
 							<table class="table table-striped table_border border_div table-bordered applnlayer" cellpadding="0" cellspacing="0" border="0">
 								<thead>
 									<tr>
-										<th><span data-i18n="project.create.label.appcode"></span><sup>*</sup></th>
+										<th><span data-i18n="project.create.label.module"></span><sup>*</sup></th>
 										<th><span data-i18n="project.create.label.technology"></span></th>
 										<th><span data-i18n="project.create.label.version"></span></th>
 										<th></th>
@@ -61,7 +61,7 @@
 									<tr class="applnlayercontent" name="staticApplnLayer">
 										<td class="applnappcode"><input type="text" id="appcode"  maxlength="30" title="30 characters only" class="appln-appcode"></td>
 										<td name="technology" class="technology">
-											<select name="appln_technology" class="appln_technology selectpicker">
+											<select name="appln_technology" class="appln_technology selectpicker" title="Select Technology">
 											   <option value="Select Technology" data-i18n="project.create.label.seltech"></option>
 											   {{#each applicationlayerData.techGroups}}
 													{{#each techInfos}}
@@ -71,8 +71,8 @@
 											</select>
 										 </td>
 										 <td colspan="3" name="version" class="version">
-											<select name="appln_version" class="appln_version selectpicker">
-											   <option value="Select Version" data-i18n="project.create.label.selversion"></option>
+											<select name="appln_version" class="appln_version selectpicker" title="Select Version">
+											   <option value="Select Version">Select Version</option>
 											</select>
 										 </td>
 										 <td colspan="2" class="appdependencyTd">
@@ -100,7 +100,7 @@
 							<table class="table table-striped table_border border_div table-bordered WebLayer" cellpadding="0" cellspacing="0" border="0">
 								<thead>
 									<tr>
-										<th><span data-i18n="project.create.label.appcode"></span><sup>*</sup></th>
+										<th><span data-i18n="project.create.label.module"></span><sup>*</sup></th>
 										<th><span data-i18n="project.create.label.weblayer"></span></td>
 										<th><span data-i18n="project.create.label.widget"></span></td>
 										<th><span data-i18n="project.create.label.version"></span></td>
@@ -112,21 +112,21 @@
 									<tr class="weblayercontent" name="staticWebLayer">
 										<td class="webappcode"><input type="text" id="webappcode"  maxlength="30" title="30 characters only" class="web-appcode"></td>
 										<td name="web" class="web">
-											<select name="weblayer" class="weblayer selectpicker">
-												<option value="Select Layer" data-i18n="project.create.label.sellayer"></option>
+											<select name="weblayer" class="weblayer selectpicker" title="Select Layer">
+												<option value="Select Layer">Select Layer</option>
 												{{#each weblayerData.techGroups}}
 													<option value="{{id}}">{{name}}</option>
 												{{/each}}
 											</select>
 										 </td>
 										 <td name="widget" class="widget">
-											<select name="web_widget" class="web_widget selectpicker">
-												<option value="Select Widget" data-i18n="project.create.label.selwidget"></option>
+											<select name="web_widget" class="web_widget selectpicker" title="Select Widget">
+												<option value="Select Widget">Select Widget</option>
 											 </select>
 										 </td>
 										 <td name="widgetversion" class="widgetversion">
-											<select name="web_version" class="web_version">
-												<option value="Select Version" data-i18n="project.create.label.selversion"></option>
+											<select name="web_version" class="web_version selectpicker" title="Select Version">
+												<option value="Select Version">Select Version</option>
 											</select>
 										 </td>
 										 <td class="webdependencyTd">
@@ -154,7 +154,7 @@
 							<table class="table table-striped table_border border_div table-bordered mob-table" cellpadding="0" cellspacing="0" border="0">
 								<thead>
 									<tr>
-										<th><span data-i18n="project.create.label.appcode"></span><sup>*</sup></th>
+										<th><span data-i18n="project.create.label.module"></span><sup>*</sup></th>
 										<th><span data-i18n="project.create.label.mobile"></span></th>
 										<th><span data-i18n="project.create.label.type"></span></th>
 										<th><span data-i18n="project.create.label.version"></span></th>
@@ -166,21 +166,21 @@
 									<tr class="mobilelayercontent" name="staticMobileLayer">
 										<td class="mobileappcode"><input type="text" id="mobileappcode" maxlength="30" title="30 characters only" class="mobile-appcode"></td>
 										<td name="mobile" class="mobile">
-											<select name="mobile_layer" class="mobile_layer selectpicker">
-											   <option value="Select Model" data-i18n="project.create.label.selmodel"></option>
+											<select name="mobile_layer" class="mobile_layer selectpicker" title="Select Model">
+											   <option value="Select Model">Select Model</option>
 											   {{#each mobilelayerData.techGroups}}
 												  <option value="{{id}}">{{name}}</option>
 											   {{/each}}
 											</select>
 										 </td>
 										 <td name="types" class="types">
-											<select name="mobile_types" class="mobile_types selectpicker">
-											   <option value="Select Type" data-i18n="project.create.label.seltype"></option>
+											<select name="mobile_types" class="mobile_types selectpicker" title="Select Type">
+											   <option value="Select Type">Select Type</option>
 											</select>
 										 </td>
 										 <td colspan="2" name="mobileversion" class="mobileversion">
-											<select name="mobile_version" class="mobile_version selectpicker">
-											   <option value="Select Version" data-i18n="project.create.label.selversion"></option>
+											<select name="mobile_version" class="mobile_version selectpicker" title="Select Version">
+											   <option value="Select Version">Select Version</option>
 											</select>
 										 </td>
 										 <td>

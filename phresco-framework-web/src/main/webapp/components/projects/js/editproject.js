@@ -180,7 +180,7 @@ define(["projects/listener/projectsListener"], function() {
 			self.multiselect();
 			commonVariables.navListener.currentTab = commonVariables.editproject;
 			self.projectsListener.editSeriveTechnolyEvent(self.getData);
-			self.projectsListener.enablebutton();
+			self.projectsListener.enablebuttonEdit();
 			},
 		
 		/***
