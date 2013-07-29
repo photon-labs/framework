@@ -121,6 +121,9 @@ define([], function() {
 							} else if(response.responseCode === "PHR200020") {
 								self.effectFadeOut('popsuccess', (''));
 								successmsg = 'projectlist.successmessage.projectcommited';
+							} else if(response.responseCode === "PHR200023") {
+								self.effectFadeOut('popsuccess', (''));
+								successmsg = 'projectlist.successmessage.logmsgsuccess';
 							}
 							$(".popsuccess").attr('data-i18n', successmsg);
 							self.renderlocales(commonVariables.basePlaceholder);
@@ -200,6 +203,12 @@ define([], function() {
 							} else if(response.responseCode === "PHR210037") {
 								self.effectFadeOut('poperror', (''));
 								failuremsg = 'projectlist.errormessage.updaterepositoryfailed';
+							} else if(response.responseCode === "PHR210039") {
+								self.effectFadeOut('poperror', (''));
+								failuremsg = 'projectlist.errormessage.logmessagefailure';
+							} else if(response.responseCode === "PHR210038") {
+								self.effectFadeOut('poperror', (''));
+								failuremsg = 'projectlist.errormessage.logurlfailure';
 							} else if(response.responseCode === "PHR000000") {
 								self.effectFadeOut('poperror', (''));
 								failuremsg = 'commonlabel.errormessage.unexpectedfailure';
@@ -306,6 +315,11 @@ define([], function() {
 				header.requestMethod = "GET";
 				header.webserviceurl = commonVariables.webserviceurl + "repository/popupValues?appDirName="+projectRequestBody.appdirname+"&userId=" + userId + "&action=commit";
 			} 
+			if(action === "searchlogmessage") {
+				header.requestMethod = "POST";
+				header.requestPostBody = JSON.stringify(projectRequestBody);
+				header.webserviceurl = commonVariables.webserviceurl +"repository/logMessages";
+			}
 			return header;
 		},
 		
