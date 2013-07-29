@@ -169,8 +169,9 @@ define(["features/features",  "application/application",  "projectlist/projectLi
 		
 		scrollbarEnable : function(){
 			var self=this;
+			console.info('self.flagged  ====' , self.flagged );
 			if(self.flagged === 2) {
-				$("#content_1,#content_2,#content_3").mCustomScrollbar({
+				/*$("#content_1,#content_2,#content_3").mCustomScrollbar({
 					scrollInertia:600,
 					autoHideScrollbar:true,
 					callbacks:{
@@ -180,7 +181,9 @@ define(["features/features",  "application/application",  "projectlist/projectLi
 					},
 					theme:"light-thin",
 					updateOnContentResize: true
-				});
+				});*/
+				$(".feature_content").scrollbars();
+				$(".dyn_popup").hide();
 			}
 			
 		},

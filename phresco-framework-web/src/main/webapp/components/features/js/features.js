@@ -143,11 +143,6 @@ define(["features/listener/featuresListener"], function() {
 					self.selectedCount();
 			},3000);
 
-			$(".features_cont").mCustomScrollbar({
-				scrollInertia:600,
-				autoHideScrollbar:true,
-				theme:"light-thin"
-			});	
 		},
 		
 		
@@ -291,7 +286,7 @@ define(["features/listener/featuresListener"], function() {
 				var currentObj = this;				
 				self.featuresListener.getFeaturesList(self.featuresListener.getRequestHeader(self.featureRequestBody, "desc", descid), function(response) {
 					var descriptionid = $.trim(descid.replace(/ /g,''));
-					var divhtml = '<div id="'+descriptionid+'" class="dyn_popup featureinfo"><h1>Description</h1><a href="#" class="dyn_popup_close">X</a><div class="features_cont"><span><img src="themes/default/images/helios/feature_info_logo.png" width="42" height="42" border="0" alt=""></span><span class="features_desc_content">'+response.data+'</span></div></div>';
+					var divhtml = '<div id="'+descriptionid+'" class="dyn_popup featureinfo"><h1>Description</h1><a href="#" class="dyn_popup_close">X</a><div class="features_cont desc_content"><span><img src="themes/default/images/helios/feature_info_logo.png" width="42" height="42" border="0" alt=""></span><span class="features_desc_content">'+response.data+'</span></div></div>';
 					$("#desc").children().remove();
 					$("#desc").append(divhtml);
 					self.popupforDesc(currentObj,descriptionid);
@@ -309,6 +304,8 @@ define(["features/listener/featuresListener"], function() {
 					}
 					self.featuresListener.flagged = 1;
 					self.featuresListener.scrollbarEnable();
+					$(".desc_content").scrollbars();
+					$(".desc_content").css('display', 'block');
 				});
 				
            	});

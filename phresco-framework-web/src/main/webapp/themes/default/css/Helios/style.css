@@ -2654,6 +2654,13 @@ html>body tbody.scrollContent {
 	text-align: center;
 }
 
+.graph_performance {
+	width: 100%;
+	float:left;
+	margin: 0 auto;
+	text-align: center;
+}
+
 /* *************************************************************** STYLES FOR QUALITY_UNIT_DESC PAGE ************************************************************************************ */
 
 .unit_view .code_report_icon {

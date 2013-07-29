@@ -222,6 +222,7 @@ define(["projects/listener/projectsListener"], function() {
 				var multimodule = $("input[name=multimodule]").val();
 				self.projectsListener.multiModuleEvent(multimodule);
 			});
+			this.customScroll($(".scrolldiv"));
 		}
 	});
 

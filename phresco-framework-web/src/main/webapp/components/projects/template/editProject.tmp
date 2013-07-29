@@ -1,7 +1,8 @@
 <section id="editproject">   
 	
      <section class="content_main create_proj">
-          <table class="table table-striped table_border table-bordered create_edit_table" cellpadding="0" cellspacing="0" border="0">  
+          <div class="scrolldiv">
+		  <table class="table table-striped table_border table-bordered create_edit_table" cellpadding="0" cellspacing="0" border="0">  
             <tbody name="layercontents"> 
 				{{#editProject}}
             	<tr>
@@ -40,7 +41,7 @@
                 </tr>
                 <tr class="applnLayer" id="applnlayer" key="displayed">
 						<td colspan="8" class="appln">
-							<table class="table table-striped table_border table-bordered applnlayer" cellpadding="0" cellspacing="0" border="0">
+							<table class="table table-striped table_border border_div table-bordered applnlayer" cellpadding="0" cellspacing="0" border="0">
 								<thead>
 									<tr>
 										<th><span data-i18n="project.create.label.appcode"></span><sup>*</sup></th>
@@ -89,7 +90,7 @@
                      </tr>
                      <tr class="webLayer" id="WebLayer" key="displayed">
 						  <td colspan="8" class="WebLayer">
-							<table class="table table-striped table_border table-bordered WebLayer" cellpadding="0" cellspacing="0" border="0">
+							<table class="table table-striped table_border border_div table-bordered WebLayer" cellpadding="0" cellspacing="0" border="0">
 								<thead>
 									<tr>
 										<th><span data-i18n="project.create.label.appcode"></span><sup>*</sup></th>
@@ -141,7 +142,7 @@
                      </tr>
                      <tr class="mobLayer" id="MobLayer" key="displayed">
                       	<td colspan="8" class="mob">
-							<table class="table table-striped table_border table-bordered mob-table" cellpadding="0" cellspacing="0" border="0">
+							<table class="table table-striped table_border border_div table-bordered mob-table" cellpadding="0" cellspacing="0" border="0">
 								<thead>
 									<tr>
 										<th><span data-i18n="project.create.label.appcode"></span><sup>*</sup></th>
@@ -183,6 +184,7 @@
                      </tr>
               	</tbody>
             </table>
+			</div>
     	<!--content_main div ends here -->
     </section>
     <section class="content_end">

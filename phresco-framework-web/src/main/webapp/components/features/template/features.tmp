@@ -19,7 +19,7 @@
                 <h1 data-i18n="features.list.modules"></h1><span class="value_features"> ( <span class="totalModules"></span>&nbsp; of <span class="ftotal"></span> )</span>
                 <input type="text" class="flt_right" data-i18n="[placeholder]features.placeholder" id="module">
                 <div class="clear"></div>
-                <div class="box_div" id="content_1">
+                <div class="box_div feature_content" id="content_1">
                     <ul id="moduleContent">
                     {{#each featureslist}}
                         <li name="{{name}}" dispName="{{dispName}}" packaging="{{packaging}}" type="{{type}}">{{#if displayName}}{{displayName}}{{else}}{{name}}{{/if}}
@@ -57,7 +57,7 @@
                 <h1 data-i18n="features.list.jslibraries"></h1><span class="value_features"> ( <span class="totalJslibraries"></span>&nbsp; of <span class="jstotal"></span> )</span>
                 <input type="text" class="flt_right" data-i18n="[placeholder]features.placeholder" id="jsibraries">
                 <div class="clear"></div>
-                <div class="box_div" id="content_2">
+                <div class="box_div feature_content" id="content_2">
                    <ul id="jsibrariesContent">
                     {{#each jsibrarielist}}
                         <li name="{{name}}" dispName="{{dispName}}" packaging="{{packaging}}" type="{{type}}">
@@ -99,7 +99,7 @@
                 <h1 data-i18n="features.list.components"></h1><span class="value_features"> ( <span class="totalComponent"></span>&nbsp; of <span class="comptotal"></span> )</span>
                 <input type="text" class="flt_right" data-i18n="[placeholder]features.placeholder" id="components">
                 <div class="clear"></div>
-                <div class="box_div" id="content_3">
+                <div class="box_div feature_content" id="content_3">
                     <ul id="componentsContent">
                     {{#each componentList}}
                         <li name="{{name}}" dispName="{{dispName}}" packaging="{{packaging}}" type="{{type}}">{{#if displayName}}{{displayName}}{{else}}{{name}}{{/if}}
