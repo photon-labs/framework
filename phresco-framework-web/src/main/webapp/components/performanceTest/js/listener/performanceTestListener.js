@@ -534,9 +534,9 @@ define([], function() {
 			var self = this;
 			var resultTable = "";
 			var totalValue = resultData.length, NoOfSample = 0, avg = 0, min = 0, max = 0, StdDev = 0, Err = 0, KbPerSec = 0, sumOfBytes = 0;
-			resultTable += '<table cellspacing="0" cellpadding="0" border="0" class="table table-striped table_border table-bordered" id="testResultTable">'+
-						  '<thead><tr><th>Label</th><th>Samples</th><th>Averages</th><th>Min</th><th>Max</th><th>Std.Dev</th><th>Error %</th><th>Throughput /sec </th>' +
-						  '<th>KB / sec</th><th>Avg.Bytes</th></tr></thead><tbody>';	
+			resultTable += '<div class="fixed-table-container"><div class="header-background"></div><div class="fixed-table-container-inner"><table cellspacing="0" cellpadding="0" border="0" class="table table-striped table_border table-bordered" id="testResultTable">'+
+						  '<thead class="height_th"><tr><th><div class="th-inner">Label</div></th><th><div class="th-inner">Samples</div></th><th><div class="th-inner">Averages</div></th><th><div class="th-inner">Min</div></th><th><div class="th-inner">Max</div></th><th><div class="th-inner">Std.Dev</div></th><th><div class="th-inner">Error %</div></th><th><div class="th-inner">Throughput /sec </div></th>' +
+						  '<th><div class="th-inner">KB / sec</div></th><th><div class="th-inner">Avg.Bytes</div></th></tr></thead><tbody>';	
 			$.each(resultData.perfromanceTestResult, function(index, value) {
 				NoOfSample = parseInt(NoOfSample) + parseInt(value.noOfSamples);
 				avg = avg + value.avg;
@@ -562,10 +562,10 @@ define([], function() {
 			var avgBytes = parseInt(sumOfBytes) / parseInt(totalValue);
           	var totAvg = parseInt(avg) / parseInt(totalValue);
 			resultTable += '</tbody><tfoot><tr><td>Total</td><td>'+ resultData.aggregateResult.sample +'</td><td>'+resultData.aggregateResult.average+'</td><td>'+resultData.aggregateResult.min+'</td><td>'+resultData.aggregateResult.max+'</td>'+
-			'<td>'+resultData.aggregateResult.stdDev+'</td><td>'+ resultData.aggregateResult.error+' %</td><td>'+resultData.aggregateResult.throughput+'</td><td>'+resultData.aggregateResult.kb+'</td><td>'+resultData.aggregateResult.avgBytes+'</td></tr></tfoot></table>';
+			'<td>'+resultData.aggregateResult.stdDev+'</td><td>'+ resultData.aggregateResult.error+' %</td><td>'+resultData.aggregateResult.throughput+'</td><td>'+resultData.aggregateResult.kb+'</td><td>'+resultData.aggregateResult.avgBytes+'</td></tr></tfoot></table></div></div>';
 			whereToRender.find(".perfResultInfo").html(resultTable);
 			
-
+			self.tableScrollbar();
 			self.resizeConsoleWindow();
 		},
 		

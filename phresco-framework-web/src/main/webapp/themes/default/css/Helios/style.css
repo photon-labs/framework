@@ -1976,7 +1976,7 @@ select[name="builtmyself"] {
 
 
 .fixed-table-container {
-  width: 100%;
+  width: 99.9%;
 /*  height: 500px;*/
   border: 1px solid #CDCDCD;
   /* above is decorative or flexible */
@@ -2555,7 +2555,7 @@ html>body tbody.scrollContent {
 
 .unit_info
 {
-	height:100%;
+	/*height:100%;*/
 	float:left;
 	overflow:hidden;
 }
