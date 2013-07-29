@@ -4277,3 +4277,17 @@ a.selected { background:#dcdcdc; }
 .mCS-light-thin>.mCSB_scrollTools .mCSB_dragger .mCSB_dragger_bar{
 	width:2px;
 }
+
+/* **************************Manual test starts**********************************************************/
+.hideManualColumns { display: none !important; }
+
+select[name="reportDataType"], input[name="pdfName"] {
+	margin:0;
+}
+
+/* sonar iframe css */
+.iframe_sonar {
+	border:1px solid #ccc;
+	width: 99.5%;%;
+	height:450px;
+}
