@@ -14,6 +14,7 @@ define([], function() {
 		configuration : null, 
 		build : null,
 		currentTab : null,
+		manualTest : null,
 		editproject : null,
 		unitTest : null,
 		functionalTest : null,
@@ -352,6 +353,19 @@ define([], function() {
 						}
 					
 						break;
+						
+					case commonVariables.manualTest :
+						
+						if (self.manualTest === null) {
+							require(["manualTest/manualTest"], function() {
+								self.manualTest = new Clazz.com.components.manualTest.js.ManualTest();
+								callback(self.manualTest);	
+							});
+						}else{
+							callback(self.manualTest);
+						}
+						
+						break;
 				}
 		},
 
@@ -619,6 +633,11 @@ define([], function() {
 				});
 			}  else if (keyword === commonVariables.integrationTest) {
 				self.getMyObj(commonVariables.integrationTest, function(returnVal){
+					currentObj = returnVal;
+					self.myTabRenderFunction(currentObj, keyword);
+				});
+			} else if (keyword === commonVariables.manualTest) {
+				self.getMyObj(commonVariables.manualTest, function(returnVal){
 					currentObj = returnVal;
 					self.myTabRenderFunction(currentObj, keyword);
 				});

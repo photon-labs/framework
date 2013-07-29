@@ -62,6 +62,25 @@ define([], function() {
 			}
 		},
 		
+		// for manual
+		getManualPieChartGraphData : function(callback) {
+			var testSuites = commonVariables.testSuites.testSuites;
+			
+			for (i in testSuites) {
+				if (testSuites[i].name === commonVariables.testSuiteName) {
+					var graphData = {};
+					graphData.failures = Math.round(testSuites[i].failures);
+					graphData.success = Math.round(testSuites[i].success);
+					graphData.notApplicable = Math.round(testSuites[i].notApplicable);
+					graphData.blocked = Math.round(testSuites[i].blocked);
+					graphData.total = testSuites[i].total;
+					graphData.notExecuted = testSuites[i].notExecuted;
+					callback(graphData);
+					break;
+				}
+			}
+		},
+		
 		showGraphicalView : function() {
 			var self = this;
 			$("#graphicalView").html('<img src="themes/default/images/helios/quality_graph_on.png" width="25" height="25" border="0" alt=""><b>Graph View</b>');
@@ -98,6 +117,7 @@ define([], function() {
 		onTestResultDesc : function(callback) {
 			var self = this;
 			var requestBody = {};
+			var currentTab = commonVariables.navListener.currentTab;
 			requestBody.testSuite = commonVariables.testSuiteName;
 			self.performAction(self.getActionHeader(requestBody, "getTestReport"), function(response) {
 				$("#testSuites").hide();
@@ -105,6 +125,15 @@ define([], function() {
 				self.allTestCases = response.data;
 				self.constructTestReport(response.data);
 				//commonVariables.loadingScreen.removeLoading();
+				if ("manualTest" === currentTab) {
+					self.getManualPieChartGraphData(function(graphData) {
+						self.createManualPieChart(graphData);
+					});
+				} else {
+					self.getPieChartGraphData(function(graphData) {
+						self.createPieChart(graphData);
+					});
+				}
 			});
 		},
 		
@@ -140,6 +169,61 @@ define([], function() {
 			bar1.Set('chart.gutter.bottom', 175);
 			bar1.Set('chart.background.grid.autofit',true);
 			bar1.Draw();
+		},
+		
+		// for manual
+		createManualBarChart : function(graphData) {
+			var chartTextColor = "#4C4C4C";
+	        var chartGridColor = "#4C4C4C";
+	        var chartAxisColor = "#4C4C4C";
+	        var chartBarColor = "#00A8F0";
+	        //line chart color
+	      	var successColor = "#6f6";
+	      	var failureColor = "red";
+	      	var notExeColor = "grey";
+	      	var notAppColor = "#800000";
+	      	var blockedColor = "orange";
+			
+	        var bar1 = new RGraph.Bar('bar', graphData);
+			bar1.Set('chart.background.barcolor1', 'transparent');
+			bar1.Set('chart.background.barcolor2', 'transparent');
+			bar1.Set('chart.key', ['Total Failure','Total NotExecuted','Total Success','Total NotApplicable', 'Total Blocked']);
+			bar1.Set('chart.key.position.y',240);
+			bar1.Set('chart.key.position', 'gutter');
+			bar1.Set('chart.colors', [failureColor, notExeColor, successColor, notAppColor, blockedColor]);
+			bar1.Set('chart.shadow', false);
+			bar1.Set('chart.shadow.blur', 0);
+			bar1.Set('chart.shadow.offsetx', 0);
+			bar1.Set('chart.shadow.offsety', 0);
+			bar1.Set('chart.key.linewidth', 0);
+			bar1.Set('chart.yaxispos', 'left');
+			bar1.Set('chart.strokestyle', 'rgba(0,0,0,0)');
+			bar1.Set('chart.text.angle', 45);
+			bar1.Set('chart.text.color', chartTextColor);
+			bar1.Set('chart.axis.color', chartAxisColor);
+			bar1.Set('chart.gutter.left', 60);
+			bar1.Set('chart.background.grid.color', chartGridColor);				
+			bar1.Set('chart.gutter.bottom', 175);
+			bar1.Set('chart.background.grid.autofit',true);
+			bar1.Draw();
+		},
+		
+		// for manual
+		getManualBarChartGraphData : function(data, callback) {
+			var graphDatas = [];
+			var totalFailure = Math.round(data.totalFailure);
+			var totalNotExecuted = Math.round(data.totalNotExecuted);
+			var totalSuccess = Math.round(data.totalSuccess);
+			var totalNotApplicable = Math.round(data.totalNotApplicable);
+			var totalBlocked = Math.round(data.totalBlocked);
+			var graphData = [];
+			graphData.push(totalFailure);
+			graphData.push(totalNotExecuted);
+			graphData.push(totalSuccess);
+			graphData.push(totalNotApplicable);
+			graphData.push(totalBlocked);
+			graphDatas.push(graphData);
+			callback(graphDatas);
 		},
 		
 		createPieChart : function(graphData) {
@@ -187,64 +271,103 @@ define([], function() {
 			}
 		},
 		
+		//for manual
+		createManualPieChart : function(data) {
+			var graphData = {};
+			graphData.total = data.total;
+			graphData.success = data.success;
+			graphData.failures = data.failures;
+			graphData.notApplicable = data.notApplicable;
+			graphData.blocked = data.blocked;
+			graphData.notExecuted = data.notExecuted;
+			
+			var pieData = [];
+			pieData.push('Total (' + graphData.total + ' Tests)');
+			pieData.push('Success (' + graphData.success + ')');
+			pieData.push('Failures (' + graphData.failures + ')');
+			pieData.push('NotApplicable (' + graphData.notApplicable + ')');
+			pieData.push('Blocked (' + graphData.blocked + ' Tests)');
+			pieData.push('NotExecuted (' + graphData.notExecuted + ' Tests)');
+			
+			var pie2 = new RGraph.Pie('pie',[graphData.success, graphData.failures, graphData.notApplicable, graphData.blocked, graphData.notExecuted, graphData.total]); // Create the pie object
+			pie2.Set('chart.gutter.left', 45);
+			pie2.Set('chart.colors', ['#6f6', 'red', '#7474F7', 'orange', 'grey']);
+			pie2.Set('chart.key', ['Success ('+graphData.success+')', 'Failures ('+graphData.failures+')', 'NotApplicable ('+graphData.notApplicable+')', 'Blocked ('+graphData.blocked+')', 'NotExecuted ('+graphData.notExecuted+')','Total Tests ('+graphData.total+')']);
+			pie2.Set('chart.key.background', 'white');
+			pie2.Set('chart.strokestyle', 'white');
+			pie2.Set('chart.linewidth', 3);
+			pie2.Set('chart.title',  commonVariables.testSuiteName + ' Report');
+			pie2.Set('chart.title.size',10);
+			pie2.Set('chart.title.color', '#494949');
+			pie2.Set('chart.exploded', [5,5,0]);
+			pie2.Set('chart.shadow', true);
+			pie2.Set('chart.shadow.offsetx', 0);
+			pie2.Set('chart.shadow.offsety', 0);
+			pie2.Set('chart.shadow.blur', 25);
+			pie2.Set('chart.radius', 100);
+			pie2.Set('chart.background.grid.autofit',true);
+			if (RGraph.isIE8()) {
+		    	pie2.Draw();
+			} else {
+		    	RGraph.Effects.Pie.RoundRobin(pie2);
+			}
+		},
+		
 		constructTestReport : function(data) {
 			var self = this;
 			var currentTab = commonVariables.navListener.currentTab;
-			
-			var resultTemplate = '<table class="table table-striped table_border table-bordered" cellpadding="0" cellspacing="0" border="0">'+
-								'<thead class="fixedHeader"><tr><th>Name</th><th>Class</th><th>Time</th><th>Status</th><th>Log</th>';
-			if ("functionalTest" === currentTab) {
-				resultTemplate = resultTemplate.concat('<th>Screenshot</th>');
-			}
-			resultTemplate = resultTemplate.concat('</tr></thead><tbody class="scrollContent" style="height:475px;">');
 			var imgArray = [];
-			for (i in data) {
-				var result = data[i];
-				resultTemplate = resultTemplate.concat('<tr><td>'+ result.name +'</td>');
-				resultTemplate = resultTemplate.concat('<td>'+ result.testClass +'</td>');
-				resultTemplate = resultTemplate.concat('<td>'+ result.time +'</td>');
-				resultTemplate = resultTemplate.concat('<td class="list_img">');
-				if (result.testCaseFailure !== null) {
-					resultTemplate = resultTemplate.concat('<img src="themes/default/images/helios/cross_red.png" width="16" height="13" border="0" alt=""></td>');
-					resultTemplate = resultTemplate.concat('<td class="list_img"><a href="#" type="failure" resultName="'+result.name+'" class="log"><img src="themes/default/images/helios/log_icon.png" width="16" height="13" border="0" alt=""></a>');
-					resultTemplate = resultTemplate.concat('<div id="'+result.name+'" style="display: none; width:500px"><div style="word-wrap: break-word;"><b>'+result.testCaseFailure.failureType+' : </b>'+ result.testCaseFailure.description+'</div><div class="flt_right">');
-					resultTemplate = resultTemplate.concat('<input type="button" value="Close" class="btn btn_style dyn_popup_close"></div></div></td>');
-				}  else if (result.testCaseError !== null) {
-					resultTemplate = resultTemplate.concat('<img src="themes/default/images/helios/cross_red.png" width="16" height="13" border="0" alt=""></td>');
-					resultTemplate = resultTemplate.concat('<td class="list_img"><a href="#" type="error" resultName="'+result.name+'" class="log"><img src="themes/default/images/helios/log_icon.png" width="16" height="13" border="0" alt=""></a>');
-					resultTemplate = resultTemplate.concat('<div id="'+result.name+'" style="display: none; width:500px"><div style="word-wrap: break-word;"><b>'+result.testCaseError.errorType+' : </b>'+ result.testCaseError.description+'</div><div class="flt_right">');
-					resultTemplate = resultTemplate.concat('<input type="button" value="Close" class="btn btn_style dyn_popup_close"></div></div></td>');
-				} else {
-					resultTemplate = resultTemplate.concat('<img src="themes/default/images/helios/tick_green.png" width="16" height="13" border="0" alt=""></td><td>&nbsp;</td>');
-				}
-				
+			var resultTemplate = "";
+			if ("manualTest" === currentTab) {
+				resultTemplate = self.constructManualTestCaseTbl(resultTemplate, data);
+			} else {
+				resultTemplate = '<table class="table table-striped table_border table-bordered" cellpadding="0" cellspacing="0" border="0">'+
+				'<thead class="fixedHeader"><tr><th>Name</th><th>Class</th><th>Time</th><th>Status</th><th>Log</th>';
 				if ("functionalTest" === currentTab) {
-					var json = {};
-					json.eventClass = result.name;
-					if (result.testCaseFailure !== null && result.testCaseFailure.hasFailureImg) {
-						json.filePath = result.testCaseFailure.screenshotPath;
-						imgArray.push(json);
-						resultTemplate = resultTemplate.concat('<td><a href="#" class="'+result.name+'"><img src="themes/default/images/helios/screenshot_icon.png" width="19" height="16" border="0" alt="" /></a></td>');
-					} else if (result.testCaseError !== null && result.testCaseError.hasErrorImg) {
-						json.filePath = result.testCaseFailure.screenshotPath;
-						imgArray.push(json);
-						resultTemplate = resultTemplate.concat('<td><a href="#" class="'+result.name+'"><img src="themes/default/images/helios/screenshot_icon.png" width="19" height="16" border="0" alt="" /></a></td>');
-					} else {
-						resultTemplate = resultTemplate.concat('<td>&nbsp;</td>');
-					}
+					resultTemplate = resultTemplate.concat('<th>Screenshot</th>');
 				}
-				resultTemplate = resultTemplate.concat('</tr>');
-
-				/*$('.'+result.name).on("click", function(e) {
-				 	// Use the plugin
-					$('.mfp-container').fullScreen();
-					e.preventDefault();
-				});*/
+				resultTemplate = resultTemplate.concat('</tr></thead><tbody class="scrollContent" style="height:475px;">');
+				for (i in data) {
+					var result = data[i];
+					resultTemplate = resultTemplate.concat('<tr><td>'+ result.name +'</td>');
+					resultTemplate = resultTemplate.concat('<td>'+ result.testClass +'</td>');
+					resultTemplate = resultTemplate.concat('<td>'+ result.time +'</td>');
+					resultTemplate = resultTemplate.concat('<td class="list_img">');
+					if (result.testCaseFailure !== null) {
+						resultTemplate = resultTemplate.concat('<img src="themes/default/images/helios/cross_red.png" width="16" height="13" border="0" alt=""></td>');
+						resultTemplate = resultTemplate.concat('<td class="list_img"><a href="#" type="failure" resultName="'+result.name+'" class="log"><img src="themes/default/images/helios/log_icon.png" width="16" height="13" border="0" alt=""></a>');
+						resultTemplate = resultTemplate.concat('<div id="'+result.name+'" style="display: none; width:500px"><div style="word-wrap: break-word;"><b>'+result.testCaseFailure.failureType+' : </b>'+ result.testCaseFailure.description+'</div><div class="flt_right">');
+						resultTemplate = resultTemplate.concat('<input type="button" value="Close" class="btn btn_style dyn_popup_close"></div></div></td>');
+					}  else if (result.testCaseError !== null) {
+						resultTemplate = resultTemplate.concat('<img src="themes/default/images/helios/cross_red.png" width="16" height="13" border="0" alt=""></td>');
+						resultTemplate = resultTemplate.concat('<td class="list_img"><a href="#" type="error" resultName="'+result.name+'" class="log"><img src="themes/default/images/helios/log_icon.png" width="16" height="13" border="0" alt=""></a>');
+						resultTemplate = resultTemplate.concat('<div id="'+result.name+'" style="display: none; width:500px"><div style="word-wrap: break-word;"><b>'+result.testCaseError.errorType+' : </b>'+ result.testCaseError.description+'</div><div class="flt_right">');
+						resultTemplate = resultTemplate.concat('<input type="button" value="Close" class="btn btn_style dyn_popup_close"></div></div></td>');
+					} else {
+						resultTemplate = resultTemplate.concat('<img src="themes/default/images/helios/tick_green.png" width="16" height="13" border="0" alt=""></td><td>&nbsp;</td>');
+					}
+					
+					if ("functionalTest" === currentTab) {
+						var json = {};
+						json.eventClass = result.name;
+						if (result.testCaseFailure !== null && result.testCaseFailure.hasFailureImg) {
+							json.filePath = result.testCaseFailure.screenshotPath;
+							imgArray.push(json);
+							resultTemplate = resultTemplate.concat('<td><a href="#" class="'+result.name+'"><img src="themes/default/images/helios/screenshot_icon.png" width="19" height="16" border="0" alt="" /></a></td>');
+						} else if (result.testCaseError !== null && result.testCaseError.hasErrorImg) {
+							json.filePath = result.testCaseFailure.screenshotPath;
+							imgArray.push(json);
+							resultTemplate = resultTemplate.concat('<td><a href="#" class="'+result.name+'"><img src="themes/default/images/helios/screenshot_icon.png" width="19" height="16" border="0" alt="" /></a></td>');
+						} else {
+							resultTemplate = resultTemplate.concat('<td>&nbsp;</td>');
+						}
+					}
+					resultTemplate = resultTemplate.concat('</tr>');
+					resultTemplate = resultTemplate.concat('</tbody></table>');
+				}
 			}
 
-			resultTemplate = resultTemplate.concat('</tbody></table>');
 			$(commonVariables.contentPlaceholder).find('#testCases').html(resultTemplate);
-
 			setTimeout(function() {
 				self.resizeTestResultColumn("testCases");
 				self.showErrorLog();
@@ -258,7 +381,32 @@ define([], function() {
 			self.resizeTestResultDiv();
 			self.showScreenShot(imgArray);
 		},
-
+		
+		constructManualTestCaseTbl : function(resultTemplate, data) {
+			var self = this;
+			$("#addTestCase").show();
+			$("#addTestSuite").hide();
+			if (data.length > 0) {
+				resultTemplate = '<table class="table table-striped table_border table-bordered" cellpadding="0" cellspacing="0" border="0">'+
+				'<thead class="fixedHeader"><tr><th>Feature Id</th><th>Test Cases</th><th>Expected Result</th><th>Actual Result</th><th class="">Status</th><th class="">Bug Comments</th><th>Edit</th>';
+				resultTemplate = resultTemplate.concat('</tr></thead><tbody class="scrollContent" name="manualTest" style="height:475px;">');
+				for (i in data) {
+					var result = data[i];
+					resultTemplate = resultTemplate.concat('<tr><td>'+ result.featureId +'</td>');
+					resultTemplate = resultTemplate.concat('<td>'+ result.testCaseId +'</td>');
+					resultTemplate = resultTemplate.concat('<td>'+ result.expectedResult +'</td>');
+					resultTemplate = resultTemplate.concat('<td>'+ result.actualResult +'</td>');
+					resultTemplate = resultTemplate.concat('<td>'+ result.status +'</td>');
+					resultTemplate = resultTemplate.concat('<td>'+ result.bugComment +'</td>');
+					resultTemplate = resultTemplate.concat('<td><a class="editManualTestcase" name="updateManualTestCase_popup" href="#" testcaseName="'+ result.testCaseId +'"><img alt="Edit" src="themes/default/images/helios/edit_icon.png"/></a></td></tr>');
+				}
+				resultTemplate = resultTemplate.concat('</tbody></table>');
+			} else {
+				resultTemplate = '<div class="alert alert-block" style="text-align: center; margin: auto;">No Testcases available</div>';
+			}
+			return resultTemplate;
+		},
+		
 		showScreenShot : function(imgArray) {
 			for (i in imgArray) {
 				var data = imgArray[i];
@@ -283,7 +431,6 @@ define([], function() {
 			$("#testCases").hide();
 			$("#graphView").show();
 			$("#graphicalView").html('');
-
 			$("#graphicalView").html('<img src="themes/default/images/helios/quality_graph_on.png" width="25" height="25" border="0" alt=""><b>Graph View</b>');
 		},
 		
@@ -318,7 +465,12 @@ define([], function() {
 			}
 			if (action === "getTestSuite") {
 				header.requestMethod = "GET";
-				header.webserviceurl = commonVariables.webserviceurl + commonVariables.qualityContext + "/testsuites?appDirName=" + appDirName + "&testType=" + testType;
+				if ("manualTest" === currentTab) {
+					header.webserviceurl = commonVariables.webserviceurl + commonVariables.manual + "/testsuites?appDirName=" + appDirName;
+				} else {
+					header.webserviceurl = commonVariables.webserviceurl + commonVariables.qualityContext + "/testsuites?appDirName=" + appDirName + "&testType=" + testType;
+				}
+				
 				if (techReport !== undefined) {
 					header.webserviceurl = header.webserviceurl.concat("&techReport=" + techReport);
 				}
@@ -327,8 +479,13 @@ define([], function() {
 				}
 			} else if (action === "getTestReport") {
 				header.requestMethod = "GET";
-				header.webserviceurl = commonVariables.webserviceurl + commonVariables.qualityContext + "/testreports?appDirName=" + appDirName +
-										"&testType=" + testType+ "&testSuite=" + requestBody.testSuite;
+				if ("manualTest" === currentTab) {
+					header.webserviceurl = commonVariables.webserviceurl + commonVariables.manual + "/testcases?appDirName=" + appDirName+"&testSuiteName=" + requestBody.testSuite;
+				} else {
+					header.webserviceurl = commonVariables.webserviceurl + commonVariables.qualityContext + "/testreports?appDirName=" + appDirName +
+					"&testType=" + testType+ "&testSuite=" + requestBody.testSuite;
+				}
+				
 				if (techReport !== undefined) {
 					header.webserviceurl = header.webserviceurl.concat("&techReport=" + techReport);
 				}
@@ -386,6 +543,9 @@ define([], function() {
 			var w4 = $("#" + divId + " .scrollContent tr td:nth-child(4)").width();
 			var w5 = $("#" + divId + " .scrollContent tr td:nth-child(5)").width();
 			var w6 = $("#" + divId + " .scrollContent tr td:nth-child(6)").width();
+			var w7 = $("#" + divId + " .scrollContent tr td:nth-child(7)").width();
+			var w8 = $("#" + divId + " .scrollContent tr td:nth-child(8)").width();
+			var w9 = $("#" + divId + " .scrollContent tr td:nth-child(9)").width();
 			
 			$("#" + divId + " .fixedHeader tr th:first-child").css("width", w1);
 			$("#" + divId + " .fixedHeader tr th:nth-child(2)").css("width", w2);
@@ -393,6 +553,9 @@ define([], function() {
 			$("#" + divId + " .fixedHeader tr th:nth-child(4)").css("width", w4);
 			$("#" + divId + " .fixedHeader tr th:nth-child(5)").css("width", w5);
 			$("#" + divId + " .fixedHeader tr th:nth-child(6)").css("width", w6);
+			$("#" + divId + " .fixedHeader tr th:nth-child(7)").css("width", w7);
+			$("#" + divId + " .fixedHeader tr th:nth-child(8)").css("width", w8);
+			$("#" + divId + " .fixedHeader tr th:nth-child(9)").css("width", w9);
 		},
 		
 		//To get the existing pdf reports
@@ -407,7 +570,6 @@ define([], function() {
 		//To list the generated PDF reports
 		listPdfReports : function(pdfReports) {
 			var self = this;
-			var content = "";
 			if (pdfReports !== undefined && pdfReports !== null && pdfReports.length > 0) {
 				$("#noReport").hide();
 				$("#availablePdfRptsTbl").show();
@@ -415,7 +577,7 @@ define([], function() {
 				for (i in pdfReports) {
 					content = content.concat('<tr class="generatedRow"><td>' + pdfReports[i].time + '</td>');
 					content = content.concat('<td>' + pdfReports[i].type + '</td>');
-					content = content.concat('<td><a class="tooltiptop" fileName="' + pdfReports[i].fileName + '" href="#"');
+					content = content.concat('<td><a class="tooltiptop" href="#" fileName="' + pdfReports[i].fileName + '" fromPage="' + pdfReports[i].fromPage);
 					content = content.concat(' data-toggle="tooltip" data-placement="top" name="downLoad" data-original-title="Download Pdf" title="">');
 					content = content.concat('<img src="themes/default/images/helios/download_icon.png" width="15" height="18" border="0" alt="0"></a></td>');
 					content = content.concat('<td><a class="tooltiptop deletePdf" fileName="' + pdfReports[i].fileName + '" href="#"');
@@ -470,7 +632,71 @@ define([], function() {
 				self.opencc(this, id);
 			});
 		},
-
+		
+		
+			updateManualTestcase : function() {
+				self.openccpl(this, 'updateManualTestCase_popup','');
+//				var updateTemplate = "";
+//				updateTemplate = updateTemplate.concat('<div id="show_manualTestCase_popup" class="dyn_popup" style="display:none">');
+//				
+//	            <form id="manualTestTestCaseForm">
+//					<table class="table node_table" cellpadding="0" cellspacing="0" border="0">
+//						<tbody>
+//							<tr>
+//								<td>Test Scenarios<br>
+//									<input type="text" id="testSuiteName" placeholder="TestSuite Name" name="testSuiteName" value="">
+//								</td>
+//								<td>Features<sup>*</sup><br>
+//									<input type="text" placeholder="Name of the Features" name="featureId" value="">
+//								</td>
+//							</tr>
+//							<tr>
+//								<td>TestCases<sup>*</sup><br>
+//									<input type="text" placeholder="Name of the TestCases" name="testCaseId" value="">
+//								</td>
+//								<td>Status<br>
+//									<select name="status">
+//										<option value="success">Success</option>
+//										<option value="failure">Failure</option>
+//									</select>
+//								</td>
+//							</tr>
+//							<tr>
+//								<td>TestCase Description<br>
+//									<textarea name="description"></textarea>
+//								</td>
+//								<td>Test Steps<br>
+//									<textarea name="steps"></textarea>
+//								</td>
+//							</tr>
+//							<tr>
+//								<td>Expected Result<br>
+//									<textarea name="expectedResult"></textarea>
+//								</td>
+//								<td>Actual Result<br>
+//									<textarea name="actualResult"></textarea>
+//								</td>
+//							</tr>
+//							<tr>
+//								<td colspan="2">Bug ID/Comments<br>
+//									<textarea name="bugComment"></textarea>
+//								</td>
+//							 </tr>
+//						</tbody>
+//					</table>
+//					<div class="flt_right">
+//						<input type="button" value="Save" class="btn btn_style" name="addTestCase">
+//						<input type="button" value="Close" class="btn btn_style dyn_popup_close">
+//					</div>
+//				</form>
+//			</div>
+//			});
+		},
+		
+		
+		
+		
+		
 		openConsoleDiv : function() {
 			$('.testSuiteTable').append('<div class="mask"></div>');
 			$('.mask').fadeIn("slow");

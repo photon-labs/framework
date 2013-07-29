@@ -14,7 +14,7 @@ define(["testResult/listener/testResultListener"], function() {
 		logContent : "",
 		onPrintPdfEvent : null,
 		onGeneratePdfEvent : null,
-		
+//		updateManualTest : null,
 		/***
 		 * Called in initialization time of this class 
 		 *
@@ -44,6 +44,7 @@ define(["testResult/listener/testResultListener"], function() {
 			if (self.onGeneratePdfEvent === null) {
 				self.onGeneratePdfEvent = new signals.Signal();
 			}
+//			self.updateManualTest = new Clazz.com.components.manualTest.js.manualTest();
 			self.onGeneratePdfEvent.add(self.testResultListener.generatePdfReport, self.testResultListener);
 			
 			self.registerEvents();
@@ -55,6 +56,28 @@ define(["testResult/listener/testResultListener"], function() {
 				self.onTestResultDescEvent = new signals.Signal();
 			}
 			self.onTestResultDescEvent.add(self.testResultListener.onTestResultDesc, self.testResultListener);
+			
+			Handlebars.registerHelper('hideManualColumn', function() {
+				var currentTab = commonVariables.navListener.currentTab;
+				var returnVal = "";
+				if ("manualTest" === currentTab) {
+					returnVal = "";
+				} else {
+					returnVal = "hideContent";
+				}
+				return returnVal;
+			});
+			
+			Handlebars.registerHelper('showManualColumn', function() {
+				var currentTab = commonVariables.navListener.currentTab;
+				var returnVal = "";
+				if ("manualTest" === currentTab) {
+					returnVal = "hideContent";
+				} else {
+					returnVal = "";
+				}
+				return returnVal;
+			});
 		},
 		
 		loadPage : function() {
@@ -64,20 +87,31 @@ define(["testResult/listener/testResultListener"], function() {
 		preRender: function(whereToRender, renderFunction) {
 			var self = this;
 			commonVariables.from = "all";
+			var currentTab = commonVariables.navListener.currentTab;
 			//commonVariables.loadingScreen.showLoading();
 			//To get the testsuites
 			self.testResultListener.performAction(self.testResultListener.getActionHeader(self.requestBody, "getTestSuite"), function(response) {
 				var data = {};
-				data.testSuites = response.data;
+				if ("manualTest" === currentTab) {
+					data.testSuites = response.data.testSuites;
+				} else {
+					data.testSuites = response.data;
+				}
 				data.message = response.message;
 				commonVariables.testSuites = response.data;
 				renderFunction(data, $('#testResult div.widget-maincontent-div'));
 				//commonVariables.loadingScreen.removeLoading();
 				if (response.data !== undefined && response.data !== null) {
 					setTimeout(function() {
-						self.testResultListener.getBarChartGraphData(response.data, function(graphData, testSuiteLabels) {
-							self.testResultListener.createBarChart(graphData, testSuiteLabels);
-						});
+						if ("manualTest" === currentTab) {
+							self.testResultListener.getManualBarChartGraphData(response.data, function(graphData) {
+								self.testResultListener.createManualBarChart(graphData);
+							});
+						} else {
+							self.testResultListener.getBarChartGraphData(response.data, function(graphData, testSuiteLabels) {
+								self.testResultListener.createBarChart(graphData, testSuiteLabels);
+							});
+						}
 					}, 400);
 					$('#pdfDiv').show();
 				} else {
@@ -173,11 +207,24 @@ define(["testResult/listener/testResultListener"], function() {
 				self.testResultListener.showPopupLoading($('#pdfReportLoading'));
 			});
 			
+			//To generate the pdf report
+			$('#generatePdf').unbind("click");
+			$('#generatePdf').click(function() {
+				self.onGeneratePdfEvent.dispatch();
+				self.testResultListener.showPopupLoading($('#pdfReportLoading'));
+			});
+			
 			//To copy the console log content to the clip-board
 			$('#copyLog').unbind("click");
 			$('#copyLog').click(function() {
 				commonVariables.navListener.copyToClipboard($('#testConsole'));
 			});
+			
+//			$('a[name=editManualTestcase]').unbind("click");
+//			$('a[name=updateManualTestCase_popup]').click(function() {
+//				alert("ca;;ed ");
+////				self.testResultListener.updateManualTestcase();
+//			});
 			
 			Clazz.navigationController.mainContainer = commonVariables.contentPlaceholder;
 		}

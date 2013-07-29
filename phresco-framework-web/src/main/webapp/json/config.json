@@ -119,6 +119,11 @@
 		"testResult" : {
 			"moduleName":"testResult",
 			"path" : "../components/testResult/js"
+		},
+		
+		"manualTest" : {
+			"moduleName":"manualTest",
+			"path" : "../components/manualTest/js"
 		}
 	}
 }

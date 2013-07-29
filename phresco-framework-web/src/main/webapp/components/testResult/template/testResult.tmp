@@ -173,7 +173,11 @@
 		              	<th data-i18n="testresult.label.total"></th>
 		              	<th data-i18n="testresult.label.success"></th>
 		              	<th data-i18n="testresult.label.failure"></th>
-		              	<th data-i18n="testresult.label.error"></th>
+		              	<th class="{{#showManualColumn}}{{/showManualColumn}}" data-i18n="testresult.label.error"></th>
+		              	<th class="{{#hideManualColumn}}{{/hideManualColumn}}" data-i18n="testresult.label.notApplicable"></th>
+		              	<th class="{{#hideManualColumn}}{{/hideManualColumn}}" data-i18n="testresult.label.blocked"></th>
+		              	<th class="{{#hideManualColumn}}{{/hideManualColumn}}" data-i18n="testresult.label.notExecuted"></th>
+		              	<th class="{{#hideManualColumn}}{{/hideManualColumn}}" data-i18n="testresult.label.testCoverage"></th>
 	            	</tr>
 	          	</thead>
 	          	<tbody class="scrollContent" style="height:475px;">
@@ -183,7 +187,11 @@
 		                	<td>{{total}}</td>
 		                	<td>{{success}}</td>
 		                	<td>{{failures}}</td>
-		                	<td>{{errors}}</td>
+		                	<td class="{{#showManualColumn}}{{/showManualColumn}}">{{errors}}</td>
+		                	<td class="{{#hideManualColumn}}{{/hideManualColumn}}">{{notApplicable}}</td>
+		                	<td class="{{#hideManualColumn}}{{/hideManualColumn}}">{{blocked}}</td>
+		                	<td class="{{#hideManualColumn}}{{/hideManualColumn}}">{{notExecuted}}</td>
+		                	<td class="{{#hideManualColumn}}{{/hideManualColumn}}">{{testCoverage}}</td>
 		              	</tr>
 	              	{{/each}}
 	          	</tbody>
@@ -196,7 +204,64 @@
     
     <!-- Test class of the testsuite div ends here -->
     <div class="qual_unit_main unit_info hideContent" id="testCases">
-    
+    	
+    	
+    	<!-- manual test update dynamic popup on click edit -->
+    	<div id="updateManualTestCase_popup" class="dyn_popup" style="display:none">
+            <form id="updateManualTestCaseForm">
+				<table class="table node_table" cellpadding="0" cellspacing="0" border="0">
+					<tbody>
+						<tr>
+							<td>Test Scenarios<br>
+								<input type="text" id="testSuiteName" placeholder="TestSuite Name" name="testSuiteName" value="">
+							</td>
+							<td>Features<sup>*</sup><br>
+								<input type="text" placeholder="Name of the Features" name="featureId" value="">
+							</td>
+						</tr>
+						<tr>
+							<td>TestCases<sup>*</sup><br>
+								<input type="text" placeholder="Name of the TestCases" name="testCaseId" value="">
+							</td>
+							<td>Status<br>
+								<select name="status">
+									<option value="success">Success</option>
+									<option value="failure">Failure</option>
+								</select>
+							</td>
+						</tr>
+						<tr>
+							<td>TestCase Description<br>
+								<textarea name="description"></textarea>
+							</td>
+							<td>Test Steps<br>
+								<textarea name="steps"></textarea>
+							</td>
+						</tr>
+						<tr>
+							<td>Expected Result<br>
+								<textarea name="expectedResult"></textarea>
+							</td>
+							<td>Actual Result<br>
+								<textarea name="actualResult"></textarea>
+							</td>
+						</tr>
+						<tr>
+							<td colspan="2">Bug ID/Comments<br>
+								<textarea name="bugComment"></textarea>
+							</td>
+						 </tr>
+					</tbody>
+				</table>
+				<div class="flt_right">
+					<input type="button" value="Save" class="btn btn_style" name="addTestCase">
+					<input type="button" value="Close" class="btn btn_style dyn_popup_close">
+				</div>
+			</form>
+		</div>
+		<!-- manual test update dynamic popup on click edit ends here -->	
+				
+				
     </div>
     <!-- Test class of the testsuite div ends here -->
     
