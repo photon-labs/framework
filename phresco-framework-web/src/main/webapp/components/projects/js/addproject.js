@@ -112,13 +112,6 @@ define(["projects/listener/projectsListener"], function() {
 			var self=this;
 			self.multiselect();
 			commonVariables.navListener.currentTab = commonVariables.addproject;
-			if(commonVariables.animation) {
-				$(".create_proj .scrollContent").mCustomScrollbar({
-					autoHideScrollbar:true,
-					theme:"light-thin",
-					advanced:{ updateOnContentResize: true}
-				});
-			}
 			self.projectsListener.multiModuleEvent("false");
 		},
 		
@@ -187,7 +180,7 @@ define(["projects/listener/projectsListener"], function() {
 
 
 			$("#endDate").blur(function(){
-				if($('#projectname').val() === '') {}
+				if($('#projectname').val() === '') {
 					$('#projectname').focus();
 				} else if($('.applnLayer').attr('key') === 'displayed') {
 					$("#appcode").focus();

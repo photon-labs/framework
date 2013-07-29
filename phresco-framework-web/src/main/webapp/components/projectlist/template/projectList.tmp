@@ -4,15 +4,15 @@
         <div class="header-background"> </div>
         <div class="fixed-table-container-inner"> 
 		<table class="table table-striped table_border table-bordered" id="projectlist" cellpadding="0" cellspacing="0" border="0">
-              <thead>
+              <thead class="height_th">
                  <tr>
-                  <th data-i18n="projectlist.label.name"></th>
-                  <th data-i18n="projectlist.label.description"></th>
-                  <th data-i18n="projectlist.label.technology"></th>
-                  <th data-i18n="projectlist.label.report"></th>
-                  <th data-i18n="projectlist.label.repository"></th>
-                  <th data-i18n="commonlabel.label.delete"></th>                  
-                  <th>&nbsp;</th>
+                  <th><div class="th-inner" data-i18n="projectlist.label.name"></div></th>
+                  <th><div class="th-inner" data-i18n="projectlist.label.description"></div></th>
+                  <th><div class="th-inner" data-i18n="projectlist.label.technology"></div></th>
+                  <th><div class="th-inner" data-i18n="projectlist.label.report"></div></th>
+                  <th><div class="th-inner" data-i18n="projectlist.label.repository"></div></th>
+                  <th><div class="th-inner" data-i18n="commonlabel.label.delete"></div></th>                  
+                  <th><div class="th-inner">&nbsp;</div></th>
                 </tr>
               </thead>
               <tbody>

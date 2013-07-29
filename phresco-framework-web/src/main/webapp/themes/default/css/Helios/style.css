@@ -57,7 +57,7 @@ header, aside, figure, footer, ul, li {
 	margin:0;
 	font-size:12px;
 }
-#main { width:100%; height:100%; }
+#main { width:100%; height:99.9%; }
 .flt_left { float:left; }
 .flt_right { float:right; }
 .clear { clear:both; line-height:0; height:0; }
@@ -540,6 +540,7 @@ a.dropdown-toggle b.caret  {
 	right: 0;
 	left: auto !important;
 	padding: 0px !important;
+	width:174px;
 }
 
 .cust_sel:after {
@@ -765,10 +766,10 @@ ul.nav li.dropdown:hover > .test_options{
 
 .table_border {
 	border-radius: 6px !important;
-	border:1px solid #cdcdcd !important;
+	border:none !important;
 	color:#747474; 
-	/*margin-bottom:-1px !important;
-	border-collapse:collapse !important;*/
+	margin-bottom:-1px !important;
+	border-collapse:collapse !important;
 }
 
 .table_border a {
@@ -1900,59 +1901,148 @@ select[name="builtmyself"] {
 
 /* *************************************************************************** STYLES FOR DIV SCROLL ************************************************************************** */
 
-/* basic scrollbar styling */
-/* vertical scrollbar */
-.mCSB_container{
-	width:auto;
-	overflow:visible;
+.scroll-bar {
+    width:7px !important;
 }
-.mCSB_container.mCS_no_scrollbar{
-	margin-right:0;
+
+.scroll-up {
+    display:none !important;
 }
-.mCustomScrollBox>.mCSB_scrollTools{
-	width:10px;
-	height:100%;
-	top:0;
-	right:0;
+
+.scroll-down {
+    display:none !important;
 }
-.mCSB_scrollTools .mCSB_draggerContainer{
-	position:absolute;
-	top:0;
-	left:0;
-	bottom:0;
-	right:0; 
-	height:auto;
+
+.scroll-line {
+    background-repeat:no-repeat;
+    background-position:center;
+    width:7px !important;
+    top:7px;
+    height:90%!important;
 }
-.mCSB_scrollTools .mCSB_dragger{
-	cursor:pointer;
-	width:100%;
-	height:30px;
+
+.scroll-hold{
+	padding-right:0px !important;
 }
-.mCSB_scrollTools .mCSB_dragger .mCSB_dragger_bar{
-	width:4px;
-	height:100%;
-	margin:0 auto;
-	-webkit-border-radius:10px;
-	-moz-border-radius:10px;
-	border-radius:10px;
-	text-align:center;
+
+.scroll-bar .scroll-slider {
+    background-repeat:no-repeat;
+    background-position:bottom;
+    width:7px   !important;
+    left:0px !important;
 }
-/* horizontal scrollbar */
-.mCSB_horizontal>.mCSB_scrollTools a+.mCSB_draggerContainer{
-	margin:0 20px;
+
+.scroll-slider-inner {
+    cursor:pointer;
+    height:100%;
+    width:7px;
+    left:0;
+    overflow:hidden;
+    position:absolute;
+    background-repeat:no-repeat;
+    background-position:center;
+    margin-top:-1px;
 }
-/* default scrollbar colors and backgrounds (default theme) */
-.mCSB_scrollTools .mCSB_dragger .mCSB_dragger_bar{
-	background:#6f6f6f; /* rgba fallback */
-	filter:"alpha(opacity=15)"; -ms-filter:"alpha(opacity=15)"; /* old ie */
+
+.scroll-slider-inner-stp {
+    cursor:pointer;
+    height:100%;
+    width:7px;
+    left:0;
+    overflow:hidden;
+    position:absolute;
+    background-repeat:no-repeat;
+    background-position: center;
+    margin-top:-1px;
 }
-.mCS-light-thin>.mCSB_scrollTools .mCSB_draggerRail{
-	background:#ff0000; /* rgba fallback */
-	background:rgba(255,255,255,0.1);
+
+.scroll-content{
+	width: 100%;
 }
-.mCS-light-thin>.mCSB_scrollTools .mCSB_dragger .mCSB_dragger_bar{
-	width:2px;
+.table_border thead.height_th {
+	padding:0 !important;
+	margin:0 !important;
+	line-height:0 !important;
+	height:0 !important;
+	border:none;
 }
+
+.table_border thead.height_th th {
+	padding:0 !important;
+	margin:0 !important;
+	line-height:0 !important;
+	height:0 !important;
+}
+
+
+.fixed-table-container {
+  width: 100%;
+/*  height: 500px;*/
+  border: 1px solid #CDCDCD;
+  /* above is decorative or flexible */
+  position: relative; /* could be absolute or relative */
+  padding-top: 35px; /* height of header */
+  border-radius:6px;
+}
+
+.fixed-table-container-inner {
+  overflow-x: hidden;
+  overflow-y: hidden;
+  height: 100%;
+}
+ 
+.header-background {
+  background-color: #D8D8D8;;
+  height: 35px; /* height of header */
+  position: absolute;
+  top: 0;
+  right: 0;
+  left: 0;
+  border-top-left-radius:6px;
+  border-top-right-radius:6px;
+}
+
+.th-inner {
+  position: fixed; /* absolute; */
+  line-height: 35px; /* height of header */
+  text-align: left;
+  padding-left:8px;
+}
+
+
+.fixed-table-container.sort-decoration { 
+  overflow-x: hidden;
+  min-width: 100%; /* enough width to show arrows */
+}
+.sort-decoration .th-inner {
+  width: 100%;
+}
+.scroll-line {
+	background:#929292;
+	width:3px !important;
+	/*opacity:.6;*/
+	height:100% !important;
+	margin-top:-7px;
+}
+
+.scroll-slider-inner-stp {
+	background:#333333;
+	opacity:.6;
+}
+
+.fixed-table-container table tr:first-child td{
+	border-top:none !important;
+}
+
+.scrolldiv {
+	border:1px solid #cdcdcd !important;
+	border-radius: 6px;
+}
+
+.border_div {
+	border:1px solid #cdcdcd !important;
+}
+
 
 /* *************************************************************************** STYLES FOR BUILD PAGE ************************************************************************** */
 
@@ -4119,3 +4209,56 @@ a.selected { background:#dcdcdc; }
 .modal_window { position:absolute; z-index:10000000 !important; }
 .successMessage {bottom: 20px; left: 33px; position: absolute;}
 .checkboxStyle {float: left; margin-right: 5px !important;};
+/*Scroll*/
+
+.mCSB_container{
+	width:auto;
+	overflow:visible;
+}
+.mCSB_container.mCS_no_scrollbar{
+	margin-right:0;
+}
+.mCustomScrollBox>.mCSB_scrollTools{
+	width:10px;
+	height:100%;
+	top:0;
+	right:0;
+}
+.mCSB_scrollTools .mCSB_draggerContainer{
+	position:absolute;
+	top:0;
+	left:0;
+	bottom:0;
+	right:0; 
+	height:auto;
+}
+.mCSB_scrollTools .mCSB_dragger{
+	cursor:pointer;
+	width:100%;
+	height:30px;
+}
+.mCSB_scrollTools .mCSB_dragger .mCSB_dragger_bar{
+	width:4px;
+	height:100%;
+	margin:0 auto;
+	-webkit-border-radius:10px;
+	-moz-border-radius:10px;
+	border-radius:10px;
+	text-align:center;
+}
+/* horizontal scrollbar */
+.mCSB_horizontal>.mCSB_scrollTools a+.mCSB_draggerContainer{
+	margin:0 20px;
+}
+/* default scrollbar colors and backgrounds (default theme) */
+.mCSB_scrollTools .mCSB_dragger .mCSB_dragger_bar{
+	background:#6f6f6f; /* rgba fallback */
+	filter:"alpha(opacity=15)"; -ms-filter:"alpha(opacity=15)"; /* old ie */
+}
+.mCS-light-thin>.mCSB_scrollTools .mCSB_draggerRail{
+	background:#ff0000; /* rgba fallback */
+	background:rgba(255,255,255,0.1);
+}
+.mCS-light-thin>.mCSB_scrollTools .mCSB_dragger .mCSB_dragger_bar{
+	width:2px;
+}

@@ -1,7 +1,8 @@
 <section id="addproject">    
     <section class="content_main create_proj">
+		<div class="scrolldiv">
           <table class="table table-striped table_border table-bordered create_edit_table" cellpadding="0" cellspacing="0" border="0">  
-            <tbody class="scrollContent" name="layercontents"> 
+            <tbody name="layercontents"> 
             	<tr>
                     <td><span data-i18n="project.create.label.name"></span><sup>*</sup></td>
                     <td><input type="text" name="projectname" id="projectname" maxlength="30" data-i18n="[placeholder]project.create.label.projectname" title="30 Characters only"/></td>
@@ -45,7 +46,7 @@
 					</tr>
 					<tr class="applnLayer" key="displayed">
 						<td colspan="8" class="appln">
-							<table class="table table-striped table_border table-bordered applnlayer" cellpadding="0" cellspacing="0" border="0">
+							<table class="table table-striped table_border border_div table-bordered applnlayer" cellpadding="0" cellspacing="0" border="0">
 								<thead>
 									<tr>
 										<th><span data-i18n="project.create.label.appcode"></span><sup>*</sup></th>
@@ -96,7 +97,7 @@
                      </tr>
                      <tr class="webLayer" key="displayed">
 						  <td colspan="8" class="WebLayer">
-							<table class="table table-striped table_border table-bordered WebLayer" cellpadding="0" cellspacing="0" border="0">
+							<table class="table table-striped table_border border_div table-bordered WebLayer" cellpadding="0" cellspacing="0" border="0">
 								<thead>
 									<tr>
 										<th><span data-i18n="project.create.label.appcode"></span><sup>*</sup></th>
@@ -150,7 +151,7 @@
                      </tr>
                      <tr class="mobLayer" key="displayed">
                       	<td colspan="8" class="mob">
-							<table class="table table-striped table_border table-bordered mob-table" cellpadding="0" cellspacing="0" border="0">
+							<table class="table table-striped table_border border_div table-bordered mob-table" cellpadding="0" cellspacing="0" border="0">
 								<thead>
 									<tr>
 										<th><span data-i18n="project.create.label.appcode"></span><sup>*</sup></th>
@@ -193,6 +194,7 @@
 					{{/if}}
               	</tbody>
             </table>
+		</div>
     	<!--content_main div ends here -->
     </section>
     <section class="content_end">

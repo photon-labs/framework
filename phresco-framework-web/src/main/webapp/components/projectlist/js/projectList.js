@@ -108,11 +108,6 @@ define(["projectlist/listener/projectListListener"], function() {
 		postRender : function(element) {
 			commonVariables.navListener.currentTab = commonVariables.projectlist;
 			commonVariables.navListener.showHideControls(commonVariables.projectlist);
-			$(".proj_list .scrollContent").mCustomScrollbar({
-				autoHideScrollbar:true,
-				theme:"light-thin",
-				advanced:{ updateOnContentResize: true}
-			});
 		},
 
 		preRender: function(whereToRender, renderFunction){
@@ -419,7 +414,7 @@ define(["projectlist/listener/projectListListener"], function() {
 				}
 			});
 			self.windowResize();
-			
+			self.tableScrollbar();
 		}
 	});
 

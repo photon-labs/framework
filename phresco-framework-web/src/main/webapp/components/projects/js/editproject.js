@@ -181,14 +181,7 @@ define(["projects/listener/projectsListener"], function() {
 			commonVariables.navListener.currentTab = commonVariables.editproject;
 			self.projectsListener.editSeriveTechnolyEvent(self.getData);
 			self.projectsListener.enablebutton();
-			if(commonVariables.animation) {
-				$(".create_proj .scrollContent").mCustomScrollbar({
-					autoHideScrollbar:true,
-					theme:"light-thin",
-					advanced:{ updateOnContentResize: true}
-				});
-			}
-		},
+			},
 		
 		/***
 		 * Bind the action listeners. The bindUI() is called automatically after the render is complete 

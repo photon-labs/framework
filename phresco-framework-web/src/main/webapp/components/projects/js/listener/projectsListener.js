@@ -1462,7 +1462,7 @@ define([], function() {
 				self.projectInfo.multiModule = multimodule;
 				self.projectInfo.customerIds = self.customerIds;
 							
-				$.each($("tbody[name='layercontents'] > div.mCustomScrollBox > div.mCSB_container").children(), function(index, value){
+				$.each($("tbody[name='layercontents']").children(), function(index, value){
 				
 					var techInfo = {};
 					var tech;

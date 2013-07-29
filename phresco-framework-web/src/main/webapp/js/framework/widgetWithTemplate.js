@@ -89,6 +89,48 @@ define(["framework/widget", "framework/templateProvider"], function() {
 					});
 				}
 			},
+			
+				
+			/***
+			 * To apply the custom scrollbar style to the table
+			 */
+			tableScrollbar : function() {
+				if ($(".fixed-table-container-inner") !== undefined && $(".fixed-table-container-inner").length > 0) {
+					this.customScroll($(".fixed-table-container-inner"));
+				}
+			},
+			
+			customScroll : function(divId) {
+				if ($('.fixed-table-container-inner').offset() !== undefined) {
+					var height = $(window).height() - $('.fixed-table-container-inner').offset().top - 40;
+					$('.fixed-table-container').css('height', height);
+				} else {
+					var height = $(window).height() - $(divId).offset().top - 40;
+					if ($('.content_end').length > 0){
+						height = height - $('.content_end').height();
+					}
+					$(divId).css('height', height);
+					$('.scroll-bar').css('height',  height);
+				}
+				if ( $('.header-background').offset() !== undefined) {
+					$('.th-inner').css('top', $('.header-background').offset().top+'px');
+				}
+				$(window).resize(function() {
+					if ($('.fixed-table-container-inner').offset() !== undefined) {			  
+						var height = $(this).height() - $('.fixed-table-container-inner').offset().top - 40;
+						$('.fixed-table-container, .fixed-table-container-inner, .scroll-bar').css('height', height);
+					} else {
+						var height = $(window).height() - $(divId).offset().top - 40;
+						if ($('.content_end').length > 0){
+							height = height - $('.content_end').height();
+						}
+						$(divId).css('height', height);
+						$('.scroll-bar').css('height',  height);
+					}
+				});
+				divId.scrollbars();
+			},
+			
 		 
 			/***
 			 *  Method to get the HTML String representation, can be used to include
