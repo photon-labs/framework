@@ -611,6 +611,43 @@
 		</dependency>
 		
 		<dependency>
+			<groupId>jslibraries.files</groupId>
+			<artifactId>jquery_ba_resize_min</artifactId>
+			<version>1.0</version>
+			<type>js</type>
+		</dependency>
+		<dependency>
+			<groupId>jslibraries.files</groupId>
+			<artifactId>jquery_event_drag_min</artifactId>
+			<version>2.0</version>
+			<type>js</type>
+		</dependency>
+		<dependency>
+			<groupId>jslibraries.files</groupId>
+			<artifactId>jquery_mousehold</artifactId>
+			<version>1.0</version>
+			<type>js</type>
+		</dependency>
+		<dependency>
+			<groupId>jslibraries.files</groupId>
+			<artifactId>jquery_mousewheel</artifactId>
+			<version>1.0</version>
+			<type>js</type>
+		</dependency>
+		<dependency>
+			<groupId>jslibraries.files</groupId>
+			<artifactId>main</artifactId>
+			<version>1.0</version>
+			<type>js</type>
+		</dependency>
+		<dependency>
+			<groupId>jslibraries.files</groupId>
+			<artifactId>scrollbars</artifactId>
+			<version>1.0</version>
+			<type>js</type>
+		</dependency>
+		
+		<dependency>
 		    <groupId>org.codehaus.mojo</groupId>
 		    <artifactId>jasperreports-maven-plugin</artifactId>
 		    <version>${jasperreports-maven-plugin.version}</version>

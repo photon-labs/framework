@@ -3816,7 +3816,7 @@ img.add_test_icon
 
 .text_center {
 	text-align: center;
-	height: 100%;
+	/*height: 100%;*/
 	overflow-y: auto;
 }
 
