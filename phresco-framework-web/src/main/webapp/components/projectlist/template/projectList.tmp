@@ -1,18 +1,21 @@
 <section class="content_main proj_list">
 	{{#if projectlist}}
+		<div class="fixed-table-container">
+        <div class="header-background"> </div>
+        <div class="fixed-table-container-inner"> 
 		<table class="table table-striped table_border table-bordered" id="projectlist" cellpadding="0" cellspacing="0" border="0">
-              <thead class="fixedHeader">
+              <thead class="height_th">
                  <tr>
-                  <th data-i18n="projectlist.label.name"></th>
-                  <th data-i18n="projectlist.label.description"></th>
-                  <th data-i18n="projectlist.label.technology"></th>
-                  <th data-i18n="projectlist.label.report"></th>
-                  <th data-i18n="projectlist.label.repository"></th>
-                  <th>Delete</th>                  
-                  <th>&nbsp;</th>
+                  <th><div class="th-inner" data-i18n="projectlist.label.name"></div></th>
+                  <th><div class="th-inner" data-i18n="projectlist.label.description"></div></th>
+                  <th><div class="th-inner" data-i18n="projectlist.label.technology"></div></th>
+                  <th><div class="th-inner" data-i18n="projectlist.label.report"></div></th>
+                  <th><div class="th-inner" data-i18n="projectlist.label.repository"></div></th>
+                  <th><div class="th-inner" data-i18n="commonlabel.label.delete"></div></th>                  
+                  <th><div class="th-inner">&nbsp;</div></th>
                 </tr>
               </thead>
-              <tbody class="scrollContent">
+              <tbody>
                   {{#each projectlist}}
                       <tr class="proj_title"> 
                         <td colspan="4">{{name}}</td>  
@@ -21,7 +24,7 @@
                         		<img name="editproject" key="{{id}}" src="themes/default/images/helios/edit_row_icon.png" width="29" height="23" border="0" alt="">
                     		</a> 
                     		{{#if ../userPermissions.manageApplication}}
-	                    		<a name="{{id}}" class="tooltiptop" title="" data-placement="bottom" data-toggle="tooltip" href="#" data-original-title="Delete Row">
+	                    		<a name="{{id}}" class="tooltiptop" title="" data-placement="bottom" data-toggle="tooltip" href="#" data-original-title="Delete {{name}}">
 	                    			<img src="themes/default/images/helios/delete_row_icon.png" width="29" height="23" border="0" alt="0">
 	                			</a>
                 			{{else}}
@@ -30,17 +33,17 @@
 
                             <div id="{{id}}" class="dyn_popup deleteproj_msg"> Are you sure to delete this ?
                                 <div>
-                                    <input type="button" value="Yes" class="btn btn_style" name="holeDelete">
-                                    <input type="button" value="No" class="btn btn_style dyn_popup_close">
+                                    <input type="button" value="Yes" data-i18n="[value]common.btn.yes" class="btn btn_style" name="holeDelete">
+                                    <input type="button" value="No" data-i18n="[value]common.btn.no" class="btn btn_style dyn_popup_close">
                                 </div>
                             </div>
                         </td>
                       </tr>
 					         {{#each appInfos}}
                       <tr class="{{appDirName}}" techid="{{techInfo.id}}">
-                        <td><a name="editApplication" href="javascript:;">{{name}}</a></td>
-                        <td>{{#if description }} {{description}} {{else}} &nbsp {{/if}}</td>
-                        <td>{{techInfo.name}}</td>
+                        <td width="25%"><a name="editApplication" href="javascript:;">{{name}}</a></td>
+                        <td width="25%">{{#descriptionshow description}}{{/descriptionshow}}</td>
+                        <td width="25%">{{techInfo.name}}</td>
                        <td class="list_img"><a name="pdf_report_{{id}}" temp="pdf_report" fromPage="All" class="tooltiptop" title="" dynamicId="{{id}}" data-placement="top" data-t="tooltip" href="#" data-original-title="PDF Report"><img src="themes/default/images/helios/pdf_icon.png" width="14" height="16" border="0" alt=""></a>
                   
               <div id="pdf_report_{{id}}" class="dyn_popup pdf_report">
@@ -48,10 +51,10 @@
                 <table class="existing_report" width="100%" border="0" cellspacing="0" cellpadding="5">
                   <thead class="hideContent" name="pdfHeader_{{id}}" show="true">
                         <tr>
-                            <th>Existing Reports</th>
-                            <th>Type</th>
-                            <th>Download</th>
-                            <th>Delete</th>
+                            <th data-i18n="commonlabel.label.existingreport"></th>
+                            <th data-i18n="commonlabel.label.type"></th>
+                            <th data-i18n="commonlabel.label.download"></th>
+                            <th data-i18n="commonlabel.label.delete"></th>
                         </tr>    
                     </thead>
                     <tbody name="generatedPdfs_{{id}}">
@@ -61,18 +64,18 @@
                    <table class="report_type">
                     <tbody>
                         <tr>
-                        	<td>Report Type</td>
+                        	<td data-i18n="commonlabel.label.reporttype"></td>
                         	<td>
                             	<select name="reportDataType">
-                                	<option value="detail">Detailed Report</option>
-                                	<option value="crisp">Overall Report</option>
+                                	<option value="detail" data-i18n="projectlist.label.detailedReport"></option>
+                                	<option value="crisp" data-i18n="projectlist.label.overallReport"></option>
                             	</select>
                         	</td>
                     	</tr>
                          <tr>
-                            <td>Pdf Report Name</td>
+                        	<td data-i18n="commonlabel.label.pdfreportname"></td>
                             <td>
-                               <input type="text" placeholder="Pdf report name" name="pdfName">
+                               <input type="text" data-i18n="[placeholder]projectlist.label.pdfreportname" name="pdfName">
                             </td>
                         </tr>
                     </tbody>
@@ -80,13 +83,13 @@
                    <div class="popuploading" id="pdfReportLoading_{{id}}">&nbsp</div>
                 <div class="flt_right">
                 {{#if ../../userPermissions.managePdfReports}}
-                 	<input type="button" fromPage="All"  appDirName="{{appDirName}}" value="Generate" class="btn btn_style" name="generate" appId="{{id}}" projectId = "{{../id}}">
+                 	<input type="button" fromPage="All"  appDirName="{{appDirName}}" value="Generate" data-i18n="[value]projectlist.label.generate" class="btn btn_style" name="generate" appId="{{id}}" projectId = "{{../id}}">
                  {{else}}
-                 	<input type="button" disabled=true fromPage="All"  appDirName="{{appDirName}}" value="Generate" class="btn btn_style" name="generate" appId="{{id}}" projectId = "{{../id}}">
+                 	<input type="button" disabled=true fromPage="All"  appDirName="{{appDirName}}" value="Generate" data-i18n="[value]projectlist.label.generate" class="btn btn_style" name="generate" appId="{{id}}" projectId = "{{../id}}">
                   {{/if}}
-                 <input type="button" value="Close" class="btn btn_style dyn_popup_close">
+                 <input type="button" value="Close" data-i18n="[value]common.btn.close" class="btn btn_style dyn_popup_close">
                </div>
-               <input type="hidden" name="fromPage" value="All"/>
+               <input type="hidden" name="fromPage" value="All" data-i18n="[value]common.btn.all"/>
                </form>
                 <!--pdf_report div ends here -->  
              </div> 
@@ -117,42 +120,42 @@
                       <table width="100%" border="0" cellspacing="0" cellpadding="0">
                         <tbody>
                             <tr>
-                                <td>Type<sup>*</sup></td>
-                                <td>Application Repo URL<sup>*</sup></td>
+                                <td><span data-i18n="commonlabel.label.type"></span><sup>*</sup></td>
+                                <td><span data-i18n="navigation.application.apprepourl"></span><sup>*</sup></td>
                             </tr>
                             <tr>
                                 <td>
                                     <select id="type_{{id}}" class="ad_Select">
-                                        <option value="svn">SVN</option>
-                                        <option value="bitkeeper">Bitkeeper</option>
-                                        <option value="git">Git</option>
+                                        <option value="svn" data-i18n="projectlist.label.svn"></option>
+                                        <option value="bitkeeper" data-i18n="projectlist.label.bitkeeper"></option>
+                                        <option value="git" data-i18n="projectlist.label.git"></option>
                                     </select>
                                 </td>
                                 <td><input type="text" name="repoUrl" id="repourl_{{id}}"></td>
                             </tr>
                             <tr>
-                                <td class="seperatetd">Other Credential<input type="checkbox" id="repocredential_{{id}}" repoDynid="{{id}}" class="credential"></td>
+                                <td class="seperatetd"><span data-i18n="projectlist.label.othercredential"></span><input type="checkbox" id="repocredential_{{id}}" repoDynid="{{id}}" class="credential"></td>
                                 <td></td>
                             </tr>
                             <tr>
-                                <td>Username</td>
-                                <td>Password</td>
+                                <td><span data-i18n="login.placeholder.username"></span><sup>*</sup></td>
+                                <td><span data-i18n="login.placeholder.password"></span><sup>*</sup></td>
                             </tr>
                             <tr>
-                                <td><input type="text" name="username" placeholder="username" id="uname_{{id}}" class="uname"></td>
+                                <td><input type="text" name="username" data-i18n="[placeholder]login.placeholder.username" id="uname_{{id}}" class="uname"></td>
                                 <td><input type="password" name="password" placeholder="*******" id="pwd_{{id}}" class="pwd"></td>
                             </tr>
                             <tr>
                                 <td colspan="2">
-                                    <textarea class="popuptextarea" name="commitMsg" placeholder="Message" id="repomessage_{{id}}"></textarea>
+                                    <textarea class="popuptextarea" name="commitMsg" data-i18n="[placeholder]projectlist.label.message" id="repomessage_{{id}}"></textarea>
                                 </td>
                             </tr>
                         </tbody>
                      </table> 
                      <div class="popuploading" id="addRepoLoading_{{id}}">&nbsp</div>
                      <div class="flt_right" appId="{{id}}" projectId = "{{../id}}" appDirName="{{appDirName}}">
-                        <input type="button" name="addrepobtn" id="{{id}}" value="Add To Repo" class="btn btn_style">
-                        <input type="button" value="Close" class="btn btn_style dyn_popup_close">
+                        <input type="button" name="addrepobtn" id="{{id}}" value="Add To Repo" data-i18n="[value]projectlist.btn.addrepo;" class="btn btn_style">
+                        <input type="button" value="Close" data-i18n="[value]common.btn.close;" class="btn btn_style dyn_popup_close">
                      </div> 
                   </div>
                   <!--add_repo div ends here --> 
@@ -165,50 +168,51 @@
                             <table class="commitData_{{id}}" width="100%" border="0" cellspacing="0" cellpadding="0">
                                 <tbody>
                                     <tr>
-                                        <td>Type<sup>*</sup></td>
-                                        <td>Application Repo URL<sup>*</sup></td>
+                                        <td><span data-i18n="commonlabel.label.type"></span><sup>*</sup></td>
+										<td><span data-i18n="navigation.application.apprepourl"></span><sup>*</sup></td>
                                     </tr>
                                     <tr>
                                         <td>
                                             <select id="commitType_{{id}}" class="co_Select">
-                                                <option value="svn">SVN</option>
-                                                <option value="bitkeeper">Bitkeeper</option>
-                                                <option value="git">Git</option>
+                                                <option value="svn" data-i18n="projectlist.label.svn"></option>
+                                        		<option value="bitkeeper" data-i18n="projectlist.label.bitkeeper"></option>
+                                        		<option value="git" data-i18n="projectlist.label.git"></option>
                                             </select>
                                         </td>
                                         <td><input type="text" name="repoUrl" id="commitRepourl_{{id}}"></td>
                                     </tr>
                                     <tr>
-                                        <td class="seperatetd">Other Credential<input type="checkbox" id="commitCredential_{{id}}" class="credential"></td>
+                                        <td class="seperatetd"><span data-i18n="projectlist.label.othercredential"></span><input type="checkbox" id="commitCredential_{{id}}" class="credential"></td>
                                         <td></td>
                                     </tr>
                                     <tr>
-                                        <td>Username</td>
-                                        <td>Password</td>
+                                        <td><span data-i18n="login.placeholder.username"></span><sup>*</sup></td>
+										<td><span data-i18n="login.placeholder.password"></span><sup>*</sup></td>
                                     </tr>
                                     <tr>
-                                        <td><input type="text" placeholder="admin" id="commitUsername_{{id}}" class="uname" name="username"></td>
+                                        <td><input type="text" data-i18n="[placeholder]login.placeholder.username" id="commitUsername_{{id}}" class="uname" name="username"></td>
                                         <td><input type="password" placeholder="*******" id="commitPassword_{{id}}" class="pwd" name="password"></td>
                                     </tr>
                                     <tr>
                                         <td colspan="2">
-                                            <textarea class="popuptextarea" placeholder="Message" id="commitMessage_{{id}}" name="commitMsg"></textarea>
+                                            <textarea class="popuptextarea" data-i18n="[placeholder]projectlist.label.message" id="commitMessage_{{id}}" name="commitMsg"></textarea>
                                         </td>
                                     </tr>
                                 </tbody>
                              </table> 
 							 
                          <div class="flt_right roll_data" appDirName="{{appDirName}}">
-                          <input type="button" value="Commit" disabled class="btn" id="{{id}}" name="commitbtn">
-                            <input type="button" value="Close" class="btn btn_style dyn_popup_close">
+                          <input type="button" value="Commit" data-i18n="[value]projectlist.label.commit" disabled class="btn" id="{{id}}" name="commitbtn">
+                            <input type="button" value="Close" data-i18n="[value]common.btn.close" class="btn btn_style dyn_popup_close">
                          </div>
 					 </div> 
 				 	<div class="dummyCommit" id="dummyCommit_{{id}}"></div>
 				 	<div class="popuploading" id="commitLoading_{{id}}">&nbsp</div>
 					<div class="hideContent commitErr_{{id}} popup_btn" width="100%" border="0" cellspacing="0" cellpadding="0">
-						<p>This Project is not a working copy, add to repository and then try to commit.</p>
+						<p>Repository does not exist for commit.</p>
+						<p><span data-i18n="projectlist.label.notworkingcopy"></span></p>
 						<div class="popupCloseBtn">
-							<input type="button" value="Close" class="btn btn_style dyn_popup_close">
+							<input type="button" value="Close" data-i18n="[value]common.btn.close" class="btn btn_style dyn_popup_close">
 						</div>		
 					 </div>
                   </div>
@@ -218,51 +222,51 @@
 					<table width="100%" border="0" cellspacing="0" cellpadding="0">
                         <tbody>
                                     <tr>
-                                        <td>Type<sup>*</sup></td>
-                                        <td>Application Repo URL<sup>*</sup></td>
+                                        <td><span data-i18n="commonlabel.label.type"></span><sup>*</sup></td>
+										<td><span data-i18n="navigation.application.apprepourl"></span><sup>*</sup></td>
                                     </tr>
                                     <tr>
                                         <td>
                                             <select id="updateType_{{id}}" class="up_Select">
-                                                <option value="svn">SVN</option>
-                                                <option value="bitkeeper">Bitkeeper</option>
-                                                <option value="git">Git</option>
+                                                <option value="svn" data-i18n="projectlist.label.svn"></option>
+                                        		<option value="bitkeeper" data-i18n="projectlist.label.bitkeeper"></option>
+                                        		<option value="git" data-i18n="projectlist.label.git"></option>
                                             </select>
                                         </td>
                                         <td><input type="text" id="updateRepourl_{{id}}" name="repoUrl"></td>
                                     </tr>
                                     <tr>
-                                        <td class="seperatetd">Other Credential<input type="checkbox" id="updateCredential_{{id}}" class="credential"></td>
+                                        <td class="seperatetd"><span data-i18n="projectlist.label.othercredential"></span><input type="checkbox" id="updateCredential_{{id}}" class="credential"></td>
                                         <td></td>
                                     </tr>
                                     <tr>
-                                        <td>Username</td>
-                                        <td>Password</td>
+                                        <td><span data-i18n="login.placeholder.username"></span><sup>*</sup></td>
+										<td><span data-i18n="login.placeholder.password"></span><sup>*</sup></td>
                                     </tr>
                                     <tr>
-                                        <td><input type="text" placeholder="admin" id="updateUsername_{{id}}" class="uname" name="username"></td>
+                                        <td><input type="text" data-i18n="[placeholder]login.placeholder.username" id="updateUsername_{{id}}" class="uname" name="username"></td>
                                         <td><input type="password" placeholder="*******" id="updatePassword_{{id}}" class="pwd" name="password"></td>
                                     </tr>
                                     <tr>
-                                        <td colspan="2">Revision</td>
+                                       <td colspan="2" data-i18n="projectlist.label.revision"></td>
                                     </tr>
                                     <tr>
-                                        <td><input type="radio" name="revision" class="radioBtnClass" value="head">Head Revision<input type="radio" name="revision" class="radioBtnClass" value="">Revision</td>
+                                        <td><input type="radio" name="revision" class="radioBtnClass" value="head"><span data-i18n="projectlist.label.headrevision"></span><input type="radio" name="revision" class="radioBtnClass" value=""><span data-i18n="projectlist.label.revision"></span></td>
                                         <td><input type="text"></td>
                                     </tr>
                                 </tbody>
                      </table> 
                      <div class="popuploading" id="updateRepoLoading_{{id}}">&nbsp</div>
                      <div class="flt_right" appDirName="{{appDirName}}">
-                         <input type="button" value="Update Application" id="{{id}}" class="btn btn_style" name="updatebtn">
-                         <input type="button" value="Close" class="btn btn_style dyn_popup_close">
+                         <input type="button" value="Update Application" data-i18n="[value]common.btn.updateapp"  id="{{id}}" class="btn btn_style" name="updatebtn">
+                         <input type="button" value="Close" data-i18n="[value]common.btn.close" class="btn btn_style dyn_popup_close">
                      </div>               
                     <!--svn_update div ends here -->	
                   </div>
                   </td>
                   <td class="list_img">
                   	{{#if ../../userPermissions.manageApplication}}
-	                  	<a name="{{creationDate}}" class="tooltiptop" title="" data-placement="top" data-toggle="tooltip" href="#" data-original-title="Delete Row">
+	                  	<a name="{{creationDate}}" class="tooltiptop" title="" data-placement="top" data-toggle="tooltip" href="#" data-original-title="Delete {{appDirName}}">
 	                  		<img name="delete" src="themes/default/images/helios/delete_row.png" width="14" height="18" border="0" alt="">
 	              		</a>
               		{{else}}
@@ -271,8 +275,8 @@
                     <div id="{{creationDate}}" class="dyn_popup delete_msg" currentprjname={{appDirName}}>
                       Are you sure to delete ?
                         <div>
-                            <input type="button" value="Yes" class="btn btn_style dlt" name="deleteConfirm">
-                            <input type="button" value="No" class="btn btn_style dyn_popup_close">
+                            <input type="button" value="Yes" data-i18n="[value]common.btn.yes" class="btn btn_style dlt" name="deleteConfirm">
+                            <input type="button" value="No" data-i18n="[value]common.btn.no" class="btn btn_style dyn_popup_close">
                         </div>
                     </div>
                   </td>
@@ -281,7 +285,9 @@
                     {{/each}}
                   {{/each}}
               </tbody>
-            </table>			
+            </table>
+			</div>
+			</div>
 			{{else}}
 				<div class="alert" style="text-align: center;" data-i18n="projectlist.label.nodata"></div>
 			{{/if}}

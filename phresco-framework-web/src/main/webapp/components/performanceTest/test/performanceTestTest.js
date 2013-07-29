@@ -4,48 +4,13 @@ define(["performanceTest/performanceTest"], function(PerformanceTest) {
 		runTests: function (configData) {
 			module("PerformanceTest.js");
 			var performanceTest = new PerformanceTest(), self = this;
-			asyncTest("Performance template render test", function() {
-				$.mockjax({
-				  url: commonVariables.webserviceurl+commonVariables.qualityContext+"/"+commonVariables.performance+"?appDirName=MergePerformanceAndLoad1-php5.4.x",
-				  type: "GET",
-				  dataType: "json",
-				  contentType: "application/json",
-				  status: 200,
-				  response : function() {
-					  this.responseText = JSON.stringify({"response":null,"message":"Parameter returned successfully","exception":null,"data":{"resultAvailable":true,"testResultFiles":["HTTP Request1.jtl","LoginTest.jtl","testServer.jtl"],"showDevice":false,"devices":[],"testAgainsts":["server","webservice","database"]}});
-				  }
-				});
-				
-				$.mockjax({
-					url: commonVariables.webserviceurl+commonVariables.qualityContext+"/"+commonVariables.performanceTestResults+"?appDirName=MergePerformanceAndLoad1-php5.4.x&testAgainst=server&resultFileName=HTTP Request1.jtl&deviceId=&showGraphFor=responseTime",
-				  type: "GET",
-				  dataType: "json",
-				  contentType: "application/json",
-				  status: 200,
-				  response : function() {
-					  this.responseText = JSON.stringify({"response":null,"message":"Parameter returned successfully","exception":null,"data":{"perfromanceTestResult":[{"totalBytes":86117,"max":1253,"throughtPut":0.8,"min":1253,"avg":1253,"noOfSamples":1,"times":[1253],"totalTime":1253,"err":0,"maxTs":1371464304079,"lastTime":1253,"minTs":1371464304079,"avgBytes":86117,"kbPerSec":67.12,"stdDev":0,"totalStdDev":0,"totalThroughput":0,"label":"HTTP Request1"},{"totalBytes":86114,"max":214,"throughtPut":4.7,"min":214,"avg":214,"noOfSamples":1,"times":[214],"totalTime":214,"err":0,"maxTs":1371464305377,"lastTime":214,"minTs":1371464305377,"avgBytes":86114,"kbPerSec":392.97,"stdDev":0,"totalStdDev":0,"totalThroughput":0,"label":"HTTP Request2"},{"totalBytes":86130,"max":225,"throughtPut":4.4,"min":225,"avg":225,"noOfSamples":1,"times":[225],"totalTime":225,"err":0,"maxTs":1371464305592,"lastTime":225,"minTs":1371464305592,"avgBytes":86130,"kbPerSec":373.83,"stdDev":0,"totalStdDev":0,"totalThroughput":0,"label":"HTTP Request3"},{"totalBytes":86021,"max":1048,"throughtPut":1,"min":1048,"avg":1048,"noOfSamples":1,"times":[1048],"totalTime":1048,"err":0,"maxTs":1371464305818,"lastTime":1048,"minTs":1371464305818,"avgBytes":86021,"kbPerSec":80.16,"stdDev":0,"totalStdDev":0,"totalThroughput":0,"label":"HTTP Request4"},{"totalBytes":86077,"max":883,"throughtPut":1.1,"min":883,"avg":883,"noOfSamples":1,"times":[883],"totalTime":883,"err":0,"maxTs":1371464306868,"lastTime":883,"minTs":1371464306868,"avgBytes":86077,"kbPerSec":95.2,"stdDev":0,"totalStdDev":0,"totalThroughput":0,"label":"HTTP Request5"},{"totalBytes":86121,"max":408,"throughtPut":2.5,"min":408,"avg":408,"noOfSamples":1,"times":[408],"totalTime":408,"err":0,"maxTs":1371464307752,"lastTime":408,"minTs":1371464307752,"avgBytes":86121,"kbPerSec":206.13,"stdDev":0,"totalStdDev":0,"totalThroughput":0,"label":"HTTP Request6"}],"graphData":"[1253.0,214.0,225.0,1048.0,883.0,408.0]","graphAlldata":"[], [], []","aggregateResult":{"error":"0.00","max":1253,"min":214,"avgBytes":86096.67,"stdDev":408.81,"average":671.83,"throughput":1.5,"kb":123.61,"sample":6},"totalStdDev":0,"totalThroughput":0,"graphFor":"responseTime","label":"['HTTP Request1','HTTP Request2','HTTP Request3','HTTP Request4','HTTP Request5','HTTP Request6']"}});
-				  }
-				});
-				require(["navigation/navigation"], function(){
-					commonVariables.navListener = new Clazz.com.components.navigation.js.listener.navigationListener();
-				});						
+			self.renderPerformanceTemplateTest(performanceTest);
+		},
 
-				var performanceTestAPI =  new Clazz.com.components.performanceTest.js.api.PerformanceTestAPI();
-				performanceTestAPI.localVal.setSession("appDirName" , "MergePerformanceAndLoad1-php5.4.x");
-				
-				commonVariables.navListener.onMytabEvent("performanceTest");
-				setTimeout(function() {
-					start();
-					equal($('.unit_text').text().trim(), "Performance Test", "performance template rendering verified");
-					self.runNegativeEventTest(performanceTest);
-				}, 1000);
-			});
-	},
-	
-	runNegativeEventTest : function(performanceTest) {
+		renderPerformanceTemplateTest : function(performanceTest) {
 			module("PerformanceTest.js");
-			var performanceTest = new PerformanceTest(), self = this;
-			asyncTest("Performance template render negative test test", function() {
+			var self = this;
+			asyncTest("Performance template & Result table render test", function() {
 				$.mockjax({
 				  url: commonVariables.webserviceurl+commonVariables.qualityContext+"/"+commonVariables.performance+"?appDirName=MergePerformanceAndLoad1-php5.4.x",
 				  type: "GET",
@@ -58,115 +23,96 @@ define(["performanceTest/performanceTest"], function(PerformanceTest) {
 				});
 				
 				$.mockjax({
-					url: commonVariables.webserviceurl+commonVariables.qualityContext+"/"+commonVariables.performanceTestResults+"?appDirName=MergePerformanceAndLoad1-php5.4.x&testAgainst=server&resultFileName=HTTP Request1.jtl&deviceId=&showGraphFor=responseTime",
+				  url: commonVariables.webserviceurl+commonVariables.qualityContext+"/"+commonVariables.performanceTestResults+"?appDirName=MergePerformanceAndLoad1-php5.4.x&testAgainst=server&resultFileName=HTTP Request1.jtl&deviceId=&showGraphFor=responseTime",
 				  type: "GET",
 				  dataType: "json",
 				  contentType: "application/json",
 				  status: 200,
 				  response : function() {
-					  this.responseText = JSON.stringify({"response":null,"message":"Parameter returned successfully","exception":null,"data":{"perfromanceTestResult":[{"totalBytes":86117,"max":1253,"throughtPut":0.8,"min":1253,"avg":1253,"noOfSamples":1,"times":[1253],"totalTime":1253,"err":0,"maxTs":1371464304079,"lastTime":1253,"minTs":1371464304079,"avgBytes":86117,"kbPerSec":67.12,"stdDev":0,"totalStdDev":0,"totalThroughput":0,"label":"HTTP Request1"},{"totalBytes":86114,"max":214,"throughtPut":4.7,"min":214,"avg":214,"noOfSamples":1,"times":[214],"totalTime":214,"err":0,"maxTs":1371464305377,"lastTime":214,"minTs":1371464305377,"avgBytes":86114,"kbPerSec":392.97,"stdDev":0,"totalStdDev":0,"totalThroughput":0,"label":"HTTP Request2"},{"totalBytes":86130,"max":225,"throughtPut":4.4,"min":225,"avg":225,"noOfSamples":1,"times":[225],"totalTime":225,"err":0,"maxTs":1371464305592,"lastTime":225,"minTs":1371464305592,"avgBytes":86130,"kbPerSec":373.83,"stdDev":0,"totalStdDev":0,"totalThroughput":0,"label":"HTTP Request3"},{"totalBytes":86021,"max":1048,"throughtPut":1,"min":1048,"avg":1048,"noOfSamples":1,"times":[1048],"totalTime":1048,"err":0,"maxTs":1371464305818,"lastTime":1048,"minTs":1371464305818,"avgBytes":86021,"kbPerSec":80.16,"stdDev":0,"totalStdDev":0,"totalThroughput":0,"label":"HTTP Request4"},{"totalBytes":86077,"max":883,"throughtPut":1.1,"min":883,"avg":883,"noOfSamples":1,"times":[883],"totalTime":883,"err":0,"maxTs":1371464306868,"lastTime":883,"minTs":1371464306868,"avgBytes":86077,"kbPerSec":95.2,"stdDev":0,"totalStdDev":0,"totalThroughput":0,"label":"HTTP Request5"},{"totalBytes":86121,"max":408,"throughtPut":2.5,"min":408,"avg":408,"noOfSamples":1,"times":[408],"totalTime":408,"err":0,"maxTs":1371464307752,"lastTime":408,"minTs":1371464307752,"avgBytes":86121,"kbPerSec":206.13,"stdDev":0,"totalStdDev":0,"totalThroughput":0,"label":"HTTP Request6"}],"graphData":"[1253.0,214.0,225.0,1048.0,883.0,408.0]","graphAlldata":"[], [], []","aggregateResult":{"error":"0.00","max":1253,"min":214,"avgBytes":86096.67,"stdDev":408.81,"average":671.83,"throughput":1.5,"kb":123.61,"sample":6},"totalStdDev":0,"totalThroughput":0,"graphFor":"responseTime","label":"['HTTP Request1','HTTP Request2','HTTP Request3','HTTP Request4','HTTP Request5','HTTP Request6']"}});
+					  this.responseText = JSON.stringify({"response":null,"message":"Parameter returned successfully","exception":null,"data":{"perfromanceTestResult":[{"totalBytes":86117,"max":1253,"throughtPut":0.8,"min":1253,"avg":1253,"noOfSamples":1,"times":[1253],"totalTime":1253,"err":0,"maxTs":1371464304079,"lastTime":1253,"minTs":1371464304079,"avgBytes":86117,"kbPerSec":67.12,"stdDev":0,"totalStdDev":0,"totalThroughput":0,"label":"HTTP Request1"},{"totalBytes":86114,"max":214,"throughtPut":4.7,"min":214,"avg":214,"noOfSamples":1,"times":[214],"totalTime":214,"err":0,"maxTs":1371464305377,"lastTime":214,"minTs":1371464305377,"avgBytes":86114,"kbPerSec":392.97,"stdDev":0,"totalStdDev":0,"totalThroughput":0,"label":"HTTP Request2"},{"totalBytes":86130,"max":225,"throughtPut":4.4,"min":225,"avg":225,"noOfSamples":1,"times":[225],"totalTime":225,"err":0,"maxTs":1371464305592,"lastTime":225,"minTs":1371464305592,"avgBytes":86130,"kbPerSec":373.83,"stdDev":0,"totalStdDev":0,"totalThroughput":0,"label":"HTTP Request3"},{"totalBytes":86021,"max":1048,"throughtPut":1,"min":1048,"avg":1048,"noOfSamples":1,"times":[1048],"totalTime":1048,"err":0,"maxTs":1371464305818,"lastTime":1048,"minTs":1371464305818,"avgBytes":86021,"kbPerSec":80.16,"stdDev":0,"totalStdDev":0,"totalThroughput":0,"label":"HTTP Request4"},{"totalBytes":86077,"max":883,"throughtPut":1.1,"min":883,"avg":883,"noOfSamples":1,"times":[883],"totalTime":883,"err":0,"maxTs":1371464306868,"lastTime":883,"minTs":1371464306868,"avgBytes":86077,"kbPerSec":95.2,"stdDev":0,"totalStdDev":0,"totalThroughput":0,"label":"HTTP Request5"},{"totalBytes":86121,"max":408,"throughtPut":2.5,"min":408,"avg":408,"noOfSamples":1,"times":[408],"totalTime":408,"err":0,"maxTs":1371464307752,"lastTime":408,"minTs":1371464307752,"avgBytes":86121,"kbPerSec":206.13,"stdDev":0,"totalStdDev":0,"totalThroughput":0,"label":"HTTP Request6"}],"graphData":"[1253.0,214.0,225.0,1048.0,883.0,408.0]","graphAlldata":"[], [], []","aggregateResult":{"error":"0.00","max":1253,"min":214,"avgBytes":86096.67,"stdDev":408.81,"average":671.83,"throughput":1.5,"kb":123.61,"sample":6},"totalStdDev":0,"totalThroughput":0,"graphFor":"responseTime","label":"['HTTP Request1','HTTP Request2','HTTP Request3','HTTP Request4','HTTP Request5','HTTP Request6']","images":["iVBORw0KGgoAAAANSUhEUgAAAyAAAAJYCAYAAACadoJwAAA20ElEQVR42u3dCZhddX3w8XmevNMYw2YDhBCSCCQkIQkBBEQB9WltEZFaEQRKwcqrtWpfrbW1oqCCu6XILgqICILIKrtIpLKvCYSQkBBCQnay7wHB/zu/f3qmN5PZc+/k5uQzz/OZ3Dkz98693zmT5/zmnHNvQ/LmzZs3b968efPmzZu3HnprkMCbN2/evHnz5s2bN28GEG/evHnz5s2bN2/evJVvAPnTn/6UAACgzJ6d/FKry+ctXNzq5c547fXX09QZsze53FP3vaP7VI3bq+Z1CwYQAAC22QGkcnlXN64XLVme5i5YtMnlLTmAdOZ+VGOIMIAAAEAHG92z572aJk6ZkVasXN28rDXF516ZuzBNmvpyWr5iVasb7zNmzUsrVq3Z5HLc/vPTZubvtXDxso2u29ptxvUmvzgrTX1pdlq9Zm2bA8OSpSvyY4jLcf3nXng5zZqzsM371JnH0Nbltm6/5eX4fpVN49/4OBT31QACAMA2OYCsWr22eQO5MxvjK5s25OM6U6a/0uptxgZ6a5fffPPNfCjU66//caPlbd3mC02XY9nadetb/V5xvTVr16VpM+ZsdJ3Va9bl61Xe7858v84MIG3dfsvL8TWVTeN6MXhEA3tAAABwCFY3LlcOLJV7LWbOXrDJ5WIvQHwcG+Oduc2ODomKz0+fOTfvVXnjjTfbvH7L+9GZ79fV+9fR5fWvvZ4fdwxCre3NMYAAALDNDyDFX+tbXi72AMShUS1vb878Rfl8i5aXi70QMQzEBnhrewxa3maxB2Td+tfa3AMSn5u7YHHz9ymuU7mHouX9aOv7tRw0YmCKr2u5B6Tl7Xd2GCnuy/NTX+7+AHJbQ0OntbzuG2+8sdkrTDVuAwAAA0jLy7Fnofhrf+Xl+JqXX5nftBE9Mx/G1PK6sYEeh1m1vBzivIm4nTgZvOX3be02i3NAYnlxLkXl9yr+jSHkxZfnNO9lKc7RqDz8qfJ+dPQYKs/ZiGcAa7m85e13ZgApzrOpPC+k2wNI6oTWBpCxY8du9grT3m1cf/316e/+7u+26l+IuP833nij/xwAAOpwYKnH24zhYH3TQBJ7LuLQrGp/v87cfnfVfABpaGVZl+9kG7fxetOEN2zYsLRo0aKtegWP+z9y5Mj8ePzCAwBsea2d91FPtxnPUhV7PGI4qHyGq2p9v87cfl0OIDE4FOLjJUuWpKOOOio1NjamI488Mn9cfO0dd9yRl/fq1SuNGTMm3X///a3eRqVLL700felLX+rwNlobYio/nj59eho1alTacccd080339zh8u48jo4+98UvfjE/Hr/wAACUWY/uAfnMZz6TZs/ecALMrbfemr7whS80fy42zK+66qp8+Z577kl77bVXh3tAYgio3Ijvym1Ufnz88ceniy66KD3zzDMbXaet5d19HO19Lh7H0UcfbaUEAMAAUq0BZOedd97oc7vttlvz5dj4jnMhYsO85aFIbQ0gffv2TevXr+/WbVR+vP3227d6+FNby7v7ONr7XDyO+H5WSgAADCBVGkAqD6cKcShS5XkQ73//+/NegtgQHz9+fIcDSOX1u3obLe9XV8496e7jaO9zxR4SKyUAAAaQKg0gcS5FR98rnnL3iiuuSLvvvnuHg0BsxFfuAensbcR1NmcPSHcfR3ufswcEAAADSBUGkPir/sqVK5vPnZg1a1a+fN1116VDDz20+eviWaDiJO24fNddd220N6DyNiodc8wx+Ws7exuxLDb+44TvygHkox/9aLryyivTpEmTNjovo63l3X0c7X0uDsuKx2OlBADAALIZA0hsxPfu3bv5EKR41qjY8I5ngZo8eXLz1z366KP5GaficKb4fLGh3vI2KsWzRn3uc5/r1G0UG/yxl+Gyyy7b5Fmwhg8fns/tqBxo2lre3cfR3uficXgWLAAADCB/2rxXQq+lODwq9kzMnTt3q/4hxP2Px+F1QAAAMIDUuTK8Evqpp57qldABADCAAAAAGEAAAAADCAAAQLsDyJtN7wAAAHqCAQQAADCAAAAABhAAAICtcwBZtnx5fgG+lsufnTgxDRs2LL9a+AEHHJAeePBBPywAADCAdN+8+fPTu9/97tTQ0LDJ50459dR03nnn5cvf+c530gknnuiHBQAABpDu22OPPdJll13W6gASe0XWrV+fLy9esiSNGjXKDwsAAAwg3Tdn7twNd6CVAaRPnz7tflwY99D4NrX2dZZZZplllllmmWWWWWbZ+G37JPTWBpCWy+JckI5uZ0uHBAAAOjOAvNl0YQvKw0aLZXmPRzsftyYPIFv4sQAAAB1s/9fjADJ8+PC0bNnyfHnFipX5GbEMIAAAYACpyQDyiU+clp/9Ki7Hv6eccqoBZDPpo48++uijjz766EM9NKrLAeSxxx7Pz4TVq1evvPfj2WcnWsH8Auqjjz766KMP+uhjALGCAQAABhAAAMAAYgABAAADiAHE8X366KCPPvroo48++mhkALGC6aOPPvroo48+OuijjwFEPAAAwADiBwoAAAYQAwgAAGAAcXwf+uijjz766KOPPhoZQKxg+uijjz766IM++uhTzgHkjaZ3ZRDxyvJYAACgrAwgAACAAcQAAgAABhADiD766IM++uijjz76aGQAsYLpo48++uijjz76oI8BxAoGAAAYQAAAAAOIAQQAAAwgBhB99NFHB3300UcfffTRyABiBdNHH3300UcfffRBHwOIFQwAADCAAAAABhADCAAAGEAMII7v0wd99NFHH3300UcjA4gVTB999NFHH330QR99DCBWMAAAwAACAADUxwDyRtOFEsgDSEkeCwAAlJUBZBuhjz766KOPPvroow/10MgAYuVCH3300UcfffTRRyMDiBUMAABKeQjWm6kMNgwgbwIAAHXMAAIAABhADCD66KOPPvrogz766FO+Rg1/bHpXBhGvLI9FH3300UcffdBHH33K2sgAAgAAGEAMIAAAYAAxgAAAAAYQA4g++uijjz766KMP+jgHxAqmjz766KOPDvroo48+GhlAAAAAh2AZQAAAwABiAAEAAEo6gLwye046+OBDUu/evdNJJ52UVq1eYwAxoOmjjz766KMP+ujjHJDaOPbYY9PNt9yaL//uvnHpK6efbgXzC6iPPvroo48+6KOPAaQ2Ys/Ha6//sfnjPffaywoGAAAOwardAFJcXrf+tY0+bjl0tKW1r7PMMssss8wyyyyzzDLLxhtAWvrABz6QD71asnRZOuGEE1JDQ4M9IAAAYA9IbUyb9mLad99RqW/fvuniiy9pcw+IAcQxkProo48++uijjw76OAekqiZPnpJ23HFHK5hfQH300UcfffRBH30MILUxdNiw9PAjj+QT0b/73e+l4447zgoGAAAOwaqNe357bxo8eHDz64DMm7/AAAIAAAYQu9gAAAADCProo48++uijjz766OAcECuYPvroo48+6KOPPvoYQMQDAAAMIAYQAAAo1QDyetO7MogBpCyPBQAAysoAso3QRx999NFHH3300Yd6aGQAsXKhjz766KOPPvroo1EPDiB/bLpQAjleSR4LAACUlQEEAAAwgBhAAADAAGIA0UcffdBHH3300UcfjQwgVjB99NFHH3300Ucf9DGAWMEAAAADCAAAYAAxgAAAgAHEAKKPPvrooI8++uijjz4aGUCsYProo48++uijjz7oYwCxggEAAAYQAADAAGIAAQAAA4gBxPF9+qCPPvroo48++mhkALGC6aOPPvroo48+6KOPAcQKBgAAGEAAAAADiAEEAAAMIAYQx/fpgz766KOPPvroo5EBxAqmjz766KOPPvqgjz4GECsYAADQqQHktaZ3ZRADSFkeCwAAlJUBBAAAMIAYQPTRRx999NEHffTRp3yNDCBWLvTRRx999NFHH300MoBYwQAAwCFYBhAAAMAAYgABAAADiAFEH3300UcfHfTRRx99NDKAWLnQRx999NFHH3300WhLDCCvN10ogRyvJI8FAADKygACAAAYQAwgAABgADGA6KOPPuijjz766KOPRgYQK5g++uijjz766KMP+hhArGAAAEB9DyCTp0xN++9/QGpsbEwHHviO9MLUFw0gAABQjgHkjVRvDjzwwPTwI4/ly/Hvu971rg6vs2EAeQMAAKhjdTmAxJ6P9j42gHSdPvroo48++uijjz7UQ6O6HEAOO+yw9NTTE/Ll8ROezR+3FawtrX2dZZa1taxyuS5vtNlEF8u6s6zyX10s8/+z/58tq791yADS5Iknn059+/ZNDQ0NqU+fPvljEy4AADgEq2bngMSej7j84EOPpIMPPtgAAgAABhDngAAAAFv5ABJ7PIpzQOLwq9gjYgBxEpY++uijjz76oI8+JTgJfX3Tu3rz3POT89Cx4XVADswfd3SdiFePj6Ve6KOPPvroo48++uhDPTRqEA8AADCAGEAAAMAAYgABAAAMIAYQffTRRx999NFHH/RxDogVTB999NFHHx300UcffTQygAAAAAYQAwgAABhADCAAAIABxACijz766KOPPvrogz7OAbGC6aOPPvqgjz766KOPRgYQAADAIVgGEAAAMIAYQAAAAAOIAUQfffTRRx999NFHH32cA2IF00cfffRBH3300UcfjQwgAACAQ7AMIAAAYAAxgAAAADUZQF5rulACeQApyWPRRx999NFHH/TRR5+yNjKAWLnQRx999NFHH3300ajnBpB1Te/KIOKV5bEAAEBZGUAAAAADiAEEAAAMIAYQffTRB3300UcfffTRyABiBdNHH3300UcfffRBHwOIFQwAADCAAAAABhADCAAAGEAMIProo48O+uijjz766KORAcQKpo8++uijjz766IM+BhArGAAAYAABAAAMIAYQAAAwgBhAHN+nD/roo48++uijj0YGECuYPvroo48++uiDPvoYQKxgAACAAQQAADCAGEAAAMAAYgBxfJ8+6KOPPvroo48+GhlArGD66KOPPvroow/66GMAsYIBAAAGEAAAwABiAAEAAAOIAcTxffqgjz766KOPPvpoVNsBZG3Tu3rT0NCwkV69enV4nYhXj4+lXuijjz766KOPPvroQz00aqj3KD//xTXpzG980woGAAAlUNcDyLwFi9JBBx+cVq973QACAAAGkNr6yulfS+edf2G7Q0dbWvs6yyyzzDLLLLPMMssss2z8Fh5A1jddqEMrV69PAwbsnv/tzNfnkHX6WOqBPvroo48++uijjz7UQ6O6HUCu+9UN6aSTTraC+QXURx999NFHH/TRxwBSe6ec8vH0i6uvtYIBAECJ1O0AMmr06DTh2UkGEAAAMIDUXu/evdPqta8bQAAAwADi+DV99NEHffTRRx999NHIAII++uijjz766KMP+hhArGAAAIABBAAAMIAYQAAAwABiANFHH33QRx999NFHH40MIFYwffTRRx999NFHH/TZSgaQP6Yy2BDvjwAAQB0zgAAAAAYQAwgAABhADCD66KMP+uijjz766KORAcQKpo8++uijjz766IM+BhArGAAAYAABAAC2wACypuldGcQAUpbHAgAAZWUA2Uboo48++uijjz766EM9NDKAWLnQRx999NFHH3300cgAYgUDAACHYBlAAAAAA4gBBAAADCAGEH300UcffXTQRx999NHIAGLlQh999NFHH3300UejrWQA+dH5F6bevXtbwQAAgNoPII2NjWnSlGkbLRs4cA8DCAAAUP0BpG/fvmnJ8lUbLbv7t79LhxzyTgMIAABQ3QHkZ1delfr12zk9+vhTzYPIk08/k/eMGEAc36ePPvqgjz766KOPRlU/Cf2hRx5PQ4cOzXtDevXqlXbZZdd06213WMGsXProow/66KOPPvpoVP0BRDwAAKDrA8i6pgtdtGrNa2n4iBH5kKs+ffrkZVdedXXqzm1VSx5AtuD3BwAAOtatAaR//93ShRf9OA8icfhVLBswYPd06U8uN4AAAADVHUAaGhqaLxcDyMuz5qSddnqbAaRO6aOPPvroo48++uhDPTTq1gASz4A14ZlJGw0gLS9bwaxc+uijD/roo48++mhUlQHkttvvyntBbrzp1jx0xKFY519wcRq2zz5WMAAAoLoDSHjp5VfS2LH755PQ42T0UaNHm3ABAIDaDCB2HwEAAD0ygMSzXfXu3Ttf/toZX8+HYcV5IVOmTjeAGND00Ucf9NFHH3300ai6A0gMH5MmT0svvjQzvwL6ilXr0j33jstPz2sFs3Lpo48+6KOPPvroo1FVB5A452PRkhVp6NCh6aFHHm9e7lmwAACAdgeQ1U3vuuqMr38zDyGHHX5E/njlmtfS2d/+bho0aHDqzu1VQwwgW+p7AwAAndOlAWTMfvulmbPnbbI8hpEhQ4Zs0QdiAAEAgJINIE+Nn5jP8zju+BPS0hVr6uqBGED00UcfffTRRx990Kf+G3XrEKxrf/Xr/PofXz3j61YwK5c++uijjz766KOPPhrVdgCpPBckBpGrrv6lFQwAAKjtABLiUKwTTzo5H5r1yONPVe2O/dNnP5ef7jfOLbn9znsMIAAAYAD5X6/MXZDeeei7qnJb/3Xu+enr3zw7P7tWDB977rmnAQQAAAwgtXHEe96bnnjqGYdgOURNH3300UcffXTQRx/ngNRenFfyo/MuTH379k0j9903PTd5WpvB2tLa11lmWVvLKpfr8sc2m+hiWXeWVf6ri2X+f/b/s2X1tw5tFQPIj39yeT4/Iy7HM2HFK6D367dzmjx1enXuVEND+vcvfyVfvu/3f0gfOOqDJlwAANhWD8GK4SP2Skx7aWbaZZdd0/JV69I9947LJ6JX407FCxvG+R+Ve0QMIAAAsI0OIDEgvLpkRdp76ND04COPNy+PPSHVuFPDR4xI8xcuMYAAAIABZMPrf8QQctjhR+SPY2/F2d/+bho0aHBV7tTpXz0j/ec5P8qX77rnd+ljJ5xkAHESlj766KOPPvqgjz5OQv/fPSLxeh3VulOLl61KHzn2uHy78dS+M2bNsYL5BdRHH3300Ucf9NFnWx5AYq9HnPthBQMAAGo6gFx19S/ziejxbFVxEvpBBx2cX7ej8rwNAwgAAFCVASQGj9j7EXtBXnhxRh5I4vU6dtrpbQYQAACgugNIvFL5nPmvOsbP8X366IM++uijjz76aFT7ASReAyReHLCehhArmD766KOPPvroow/6lHQA+eQ/fjo/61W87sfAgXvkYeSp8ROdAwIAAFR/AKkUr4Z+w023plGjRzsHBAAA6GAAWdt0oQTyAFKSxwIAAGXV7QGkOASrb9++adg++6TxEyYZQAxo+uijD/roo48++mjU/gCyquldVw0YsHu64KIfp2Ur16VFS1elX1736/zUvDf/5o7Undurhoi3pb731kAfffTRRx999NFHH+qhUbcGkBg2Wi574OHHU79+O1vBAACA6g4gMWg8PWHSJsvjkCwDCAAAUNUBJJ71KvaCXH/DzWnJ8jX5UKwfnvOjNGrUaAMIAABQ3QEkvDjjlTRmzH6pT58+qbGxMQ0fMcIxfo7v00cffdBHH3300Uej6g0gxTkesecjBhArmJVLH33QRx999NFHH41qNoAseHVZ/vfDf3tsfgX0OOdj8JAh6WMnnJTPCSk+bwUDAACqeghWYcq0GekX11yXRo7cN78SugEEAACo6gCyJZ/tygACAADbyADyidM+md7at29+BqzY23HY4UekJ5+emF+McMXq1/JhWQYQx/fpo48+6KOPPvroo1FV94DEs17NW7AkPfrE+HTAAQemHXbYMfNChFYuffTRB3300UcffTSq6TkghYWLV1jBAACAjgaQ11NXnXveBal3796pO9etlQ0DyOsAAEAd69YAEodgPff81I2WDRw40AACAABUfwCJE9EXLV250bI77743HXzIOw0gdUofffTRRx999NFHH+qhUbcGkMt/dlU+4fzhx55sHkQef2pC3jNiBbNy6aOPPuijjz766KNRVQeQ8MDDj6W9hw7Ne0PidUF22WXXdPNvbreCAQAA1R9ATG8AAECPDCCX/vSKvNdju+23T2PG7JeenvBcWrJ8dVq2cq0BBAAAqP5J6PEsWOPufyAPIG/fc8/86uh9+vQxgNhDpI8++qCPPvroo49G1R1AYtiIf6dOn5mGjxiRL3/5K191DoiVSx999EEfffTRRx+Nqj+AxMnn111/Y5o1Z34aNGhQXhaHX+2009usYAAAQPVPQh85ct/8FLyxN+TFGbM8DS8AANDxALKy6d3m+PVNt+RzP8L5F12SNvf2uisGkC31vQEAgM5pKMsDMYDoo48++uijjz76oE/9N+rWAHLJpZel3r1758unf+3M/JS88croz78w3Qpm5dJHH33QRx999NFHo+oOIDF8THx+anph+sz8CuhLV65Nd/32vtS//25WMAAAoLoDSJxsvnDx8vxsWA88/Fjz8tgTYgABAACqOoB87cxv5CHksMOPyB8vX70+nfWt76Q9Bg0ygAAAALU9CT2GkcFDhjjGz/F9+uijD/roo48++mjUwQCypulCNyxftT4tXbE2dff61Zbj1cl9qUf66KOPPvroo48++lAPjbo1gFx51S/ziejxIoRxEvo7Djo4PfbkhDR3wWIrGAAAUN0BJAaP2PsRe0EmT52RB5J4ZfSddnqbAQQAAKjuAHLEEe9Nr8xdaBcbAABQ+wFk4qSp6cgPfLCuhhADiD766KOPPvroow/6lPQckE9+6tP5Wa/idT8GDhyYh5Ennn62aueAxO3EYV6VrGB+AfXRRx999NEHffTZRgeQSi+8ODP9+sZb0qhRo6t2Dkjc3keO/agVDAAAHIJVe2d+46zMAAIAAAaQdOlPr8iHX2233fZpzJj90lMTnkuLl62u2uuCfPhvP5JfZb1Pnz5p7Nj9816WtoaOtrT2dZZZZplllllmmWWWWWbZ+K1vAHlr3775RPT7fv9AHkDevuee+TyNGBiqcaf6998t33ZcfmbilPSX7/9re0AcA6mPPvroo48+6KPPtnoOSHFSeOyZGD58RL785f/4arr51ttrcifjRQ+tYH4B9dFHH3300Qd99NlGB5C9hw5N1/7qxjRz9vy0x6BBeVkcflWrFyKMQ72sYAAAsA2fhB6vfP7qkpV5b8i0l2alx56ckBobG6typ2LAiUOv4nI8vW887a8BBAAAttEBJPZ8FJfjKXPj3I9w/oWXVOVOxfkfcWhXDDSdfcFDAwgAAJR0AKnWng7H+Omjjz766KOPPvroo49zQDr0/R+ck1nBrFz66IM++uijjz76aNQjJ6HHuR9x0vnRHzomn/8Rz4gV54RYwQAAgDYHkBVN77pj3sKladKU6Wncfz+U3nHQwWnwkCH52aq6e3ubKwaQLfW9AQCAzunWABKvgl5vD8QAAgAAJRtA/uG0T+ZXQS8Ovzrs8CPS408/mxYuWZmWrVqfdh840ABSp/TRRx999NFHH330oR4adWsPSDwL1pwFi9Mjjz+d9j/gwLTDDjtm/frtbAWzcumjjz7oo48++uijUXUHkNYsWLTcCgYAAPTMAGLCBQAAqjqAjBy5b5o1d6EBBAAAqP0AEiefvzRrrmfBsodIH33QRx999NFHH41qP4D8148uyM9+FYNIvBhhvP7HZT+7Kj054bk09aVZ+dmwrGBWLn300Qd99NFHH300quo5IPEsWM9Ompr+8NBj6eS/PzUfmhVPweuFCAEAACehAwAAW/cAMnjIkHwuSLww4bBh++TDsAwgAABA1QeQAQMGpPMvvCQtWbE2n/dxzbW/zueF3HTr7QYQe4j00Ucf9NFHH3300ai6A0gMGy2XxfkgXgndyqWPPvqgjz766KOPRu0PIKubLnRRDBpPjn9uk+X56Xm7cXvVkONtoe8NAAB0TrcGkOtvuCXvBbnu+pvToqWr05Lla9MP/vPcNGrUaAMIAABQ3QEkTJ0+K40es1/q06dPflre4cNHbNEHYgABAIASDyD1xgCijz766KOPPvrogz7138gAYuVCH3300UcfffTRR6P6HkBefmW+eAAAQM8MIHHOhwEEAADo8gCyvOldV33vB+dk3blurcQAUk/3BwAA2FS3BpC99x6an4Z3p53elj74oWPSo09MSFOmzUwLFq80gNQpffTRRx999NFHH32oh0YN3b3i3IVL03OTp6f77n8oveOgg9PgIUPSdtttbwWzcumjjz7oo48++uijUfUHEPEAAIAeGUCWrlyfX3gwTkZ/S58+ednlV15tAAEAAKo/gPTvv1s674JL8iDSq1evvGy3AQPSxT++zAACAABUdwCJE9CLy8UAMm3G7HxSugHEIWr66KMP+uijjz76aFTVAaRfv53TE+Of22gAaXnZCmbl0kcffdBHH3300UejqgwgN//mzrwX5Fc33JKHjjgU69zzLkrDhu1jBQMAAKo7gIQXps9K+43dP5+EHiej7ztqtAkXAACozQBi9xEAANAjA0i84vnuAwfmw6969+6d3n3YEfmFCQ0gBjR99NEHffTRRx99NOpgAHktdVU85e53vvfDfHn+q8vSN8/+Tj4nZPrMOak7t1cNG+K9hj766KOPPvroow/61HGjbg0gMWwsXbluo2XXXX9TGjxkiBUMAACo7gASz3Y145V5Gy2LgWTD0/AaQAAAgCoMIDvssGMaMXLfdN4FF+dzPyoPuYqBZJdddjGAAAAA1RlA5i5ckp4YPzGd+g+n5cOt4lCs+Ped73xXfhX03//hYQOI4/v00Ucf9NFHH3300ai6h2BVmjLt5Xz+R7wOSAwhVjArlz766IM++uijjz4a1WQAWbx8jRUMAACo7QDy4CNPpD0GDcqHYPXv3z+/DsijT4xPs+cvMoAAAADVHUBi8Ii9H/EaIOMnTk7f+8E5afjwEVU/BOvecX/I38sAAgAA2/AA0q/fzps8DW8tvOe97zOA2EOkjz766KOPPuijz7Z+Dsitt9+dD8GKPSC1umOx9+PwI95jAPELqI8++uijjz7oo0+ZBpBlTe+66pKfXJ4Hg+JpeI/72In56XnnLFySunN7rYm9H8UhWG19TQRrS2tfZ5lllllmmWWWWWaZZZaNr9o2e3d0awCJVzxftHxNWrB4RZrw3Avph/91Xtrnf84BqcadKvZ+LPuf8006c50tHRIAAKjRABKv+TF1xuya3ali74cBBAAAyjaArGq60EWx1+P9f31kWrBoRerO9TtSHN5VqaPr5AGkBvelLPTRRx999NFHH330oR4adWsA2Xvvoemtb+2bB4M49OqH55yXJj7/Yk0Gks4MH1YwffTRRx999NFHH/Qp8QBSmLNgSXpywqR0xtfPSsOG7bPhHBADCAAAUM0B5JJLL08vvDjLhAsAANR+ADntk59OgwcPSY2NjflwrK9/81tp0pSXDCAAAEDtDsEKk6e+nP7li/+WD5XaYYcdDSCO79NHH33QRx999NFHo9oNIIXP/vPn0+U/+4UVzMqljz76oI8++uijj0a1Pwdk0bI16S19+ljBAACA6g4gf3/KP6TdBgzI54C8/e175mfBihcONIAAAAA1OwQr9no8/ezkfPhVPA3vFT+/xgACAADU/hwQx/jpo48++qCPPvroo49GVR1AevfunQ+5+vwX/jXv+Vi4ZJUVzMqljz766KOPPvroo49GtdsDEk+7e9Otd6bRY/ZL/frtnHbZZZe039j9012/HZdefHmOFQwAAKjdIVixF+SxJ59J//pv/5F69eplAAEAAKo/gMSekH/8p8+mXfv3z89+te+o0emBh58wgAAAANUZQOK8j/f/9ZFpu+22T3sMGpTO/vb38yDiGD/H9+mjjz466KOPPvroo1HVB5CGhobsp5f/fJMXIrSCWbn00Ucf9NFHH3300aiqA8icBUvSE09PTKd+/LQ0ePCQPIzEv8d97MS8PD5vBQMAAGp2EnocgnXt9Tflc0B22ultBhAAAKB2A4hdbAAAgAEEffTRRx999NFHH310qL9zQJY2vSuDiFeWx6KPPvroo48+6KOPPmVtZAABAAAMIAYQAAAwgBhAAAAAA4gBRB999NFHH3300Qd9nANiBdNHH3300UcHffTRRx+NDCAAAIBDsAwgAABgADGAAAAA1RhAVjZdKIE8gJTkseijjz766KMP+uijT1kbGUCsXOijjz766KOPPvpoZACxggEAQPkYQAAAAAOIAQQAAAwgBhB99NEHffTRRx999NHIAGIF00cfffTRRx999EEfA4gVDAAAMIAAAAAGEAMIAAAYQAwg+uijjw766KOPPvroo5EBxAqmjz766KOPPvrogz4GECsYAABgAAEAALbkALKk6V0ZxABSlscCAABlZQDZRuijjz766KOPPvroQz00qssB5IFHnkpj9z8wNTY2pgPfcXB6YvwkK5hfQH300UcfffRBH30MILUxYuS+6aprrs+XL7708jyMWMEAAMAhWD0i9oQYQAAAwABSU4uWr0tfO/OsdNTRx7Q5dLSlta+zzDLLLLPMMssss8wyy8YbQFqzcOmatMMOO6ZevXqlq6+9wR4Qx0Dqo48++uijD/roU45zQNanevbrm29Lu/bv3+HXbYi3Hn300UcfffTRRx/0qeNGDVtDmA3ngFjBAABga1eXA8heew9NDzzyZL581733pyPe+z4DCAAAGEBq497fP5ifijf2fLz7sMPT5GkzDSAAAGAAcYyfPvrogz766KOPPvpoZABBH3300UcfffTRRx8dDCBWMAAAcAiWAQQAADCAGEAAAMAAYgDRRx990EcfffTRRx+NDCBWIn300UcfffTRRx/0MYBYwQAAgDyArGi6UAJ5ACnJYwEAgLIygAAAAAYQA4g++uijjz76oI8++pSvkQHEyoU++uijjz766KOPRgYQKxgAAJTwEKzFTe/KIAaQsjwWAAAoKwMIAABgADGA6KOPPvroow/66KNP+RoZQKxc6KOPPvroo48++mhkALGCAQCAQ7AMIAAAgAHEAAIAAAYQA4g++uijjz466KOPPvpoZACxcqGPPvroo48++uijkQHECgYAAA7BMoAAAAAGEAMIAAAYQAwg+uijjz7oo48++uijkQHEyoU++uijjz766KMPBhArGAAAOATLAAIAABhADCAAAGAAMYDoo48++qCPPvroo49GBhD00UcfffTRRx999MEAYgUDAACHYBlAAAAAA4gBBAAADCAGEH300UcfHfTRRx999NGoUwPIoqZ3ZRDxyvJY9NFHH3300Qd99NGnrI0MIAAAQA8OIMubLpRAHkBK8lgAAKCsDCAAAIABxACijz766KOPPuijjz7la2QAsXKhjz766KOPPvroo5EBxAoGAAAOwTKAAAAA5RpA7rzn/jRq9H6psbExjdlv//TQYxMMIAAAYACpjb32Hppuv3tcvvyDc85PY/c/0ABiD5E++uijjz76oI8+zgGpvYVL1+Y9IVYwv4D66KOPPvrogz76GEBqbsbsV/PhWG0Fa0trX2eZZZZZZplllllmmWWWbdnBrO4HkDO/+e109XU3mnABAMA5ILX1xPjn0+f/5d/sYgMAAANIbU2e9kr6xP/9xzR/8WoDiGMg9dFHH3300Qd99HEOSO3EM2B96G8+kuYsWG4F8wuojz766KOPPuijjwGktvbYY1BqaGjYiBUMAAAcgmXCBQAADCAAAIABxACijz766KMP+uijjz7OARHPyqWPDvroo48++uijj0Y9MIC82vSuDCJeWR4LAACUlQEEAAAwgBhAAADAAGIA0UcffdBHH3300UcfjQwgVjB99NFHH3300Ucf9DGAWMEAAAADCAAAsEUGkHWpDDYMIOsAAIA6ZgDZRuijjz766KOPPvroQz00MoBYudBHH3300UcfffTRyABiBQMAAIdgGUAAAAADiAEEAAAMIAYQffTRRx99dNBHH3300ahiAFnWdKEEcrySPBZ99NFHH330QR999ClrIwMIAABgADGAAACAAcQAAgAAGEAMIProo48++uijjz7o4xwQK5g++uijjz466KOPPvpoZAABAAAcgmUAAQAAA4gBBAAAMIAYQPTRRx999NFHH33QZ2s6B2Rh07syiHhleSz66KOPPvrogz766FPWRgYQAADAAGIAAQAAA4gBBAAAMIAYQPTRRx999NFHH33QxzkgVjB99NFHH3100EcfffTRyAACAAA4BMsAAgAABhADCAAAYAAxgOijjz766KOPPvqgj3NArGD66KOPPuijjz766KORAQQAAHAIlgEEAAAMIAYQAADAAGIA0UcfffTRRx990Ecf54BYwfTRRx990EcfffTRR6OtcQCZ/srCNOTte1rBAADAIVi1NWnqrHTwIYemhoYGAwgAABhAamv33QemH13w404NIEvvHpfebPr61/68X1p2y51+qAAAYADpmokvvLzhznUwgMRej/W79k9NX5jFEBLLWu4NscyyjpZVLtdlXZtNdLGsO8sq/9XFMv8/+//ZsvpbhwwglXeuE3tAYu9HMYC82TSMmCodoqaPPvroo48++qBPPZ+EvrTpQp3KA0gHX7P0rnF58MiHYN3wm1TPjwcAALZ1W/0AUsjTmx8oAADU9wCyoOldvYoBpLNfGwNIPT8WAADAALLN0EcfffTRRx999NGHemjUIJ6VC3300UcfffTRRx+NDCBWMAAAcAiWAQQAADCAGEAAAMAAYgDRRx999NFHB3300UcfjQwgVi700UcfffTRRx99NDKAWMEAAMAhWAYQAADAAGIAAQAAA4gBRB999NEHffTRRx99NDKAWLnQRx999NFHH330wQBiBQMAAIdgGUAAAAADiAEEAAAMIAYQffTRRx/00UcfffTRyABi5dJHH3300UcfffTRBwOIFQwAAByCZQABAAAMIAYQAAAwgBhA9NFHH33QRx999NFHIwMI+uijjz766KOPPvpgALGCAQDAtnkI1vymd2UQA0hZHgsAAJSVAQQAAOjJAWRtKoMNA8ha9NFHH3300UcffdCnjhsZQKxc6KOPPvroo48++mhkALGCAQBA+RhAAAAAA4gBBAAAyjiALGm6UAJ5ACnJY9FHH3300Ucf9NFHn7I2MoBYudBHH3300UcfffTRyABiBQMAgPIxgAAAAAYQAwgAABhADCD66KMP+uijjz766KORAcQKpo8++uijjz766IM+BhArGAAAYAABAAAMIAYQAAAwgBhA9NFHHx300UcfffTRRyMDiBVMH3300UcfffTRB30MIFYwAADAAAIAABhADCAAAGAA2ULuf+iptNdeQ1NjY2Mavd/YdNtd4wwgBjR99NFHH330QR99ynAOyLymd/Xm+BNOTt/63jn58ulnnpU+fOzxHV4n4tXjY6kX+uijjz766KOPPvpQD43qcgAZ8vY906z5y/PlKS/NS8NHjLSC+QXURx999NFHH/TRxwBSG295S592P64MBgAAdJ8BJO5UQ8NGH8e5ICZcfwHQRx999NFHH/TRxx6QLboHxArmF1AfffTRRx999NFBHwPIZtt76D5p6swF+fKLr7ya9txrqBXML6A++uijjz76oI8+BpDa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"]}});
 				  }
 				});
 				require(["navigation/navigation"], function(){
 					commonVariables.navListener = new Clazz.com.components.navigation.js.listener.navigationListener();
-				});						
-
-				var performanceTestAPI =  new Clazz.com.components.performanceTest.js.api.PerformanceTestAPI();
-				performanceTestAPI.localVal.setSession("appDirName" , "MergePerformanceAndLoad1-php5.4.x");
+				});			
+				$("#testResultTable tr").remove();			
+				commonVariables.api.localVal.setSession("appDirName" , "MergePerformanceAndLoad1-php5.4.x");
 				
 				commonVariables.navListener.onMytabEvent("performanceTest");
 				setTimeout(function() {
 					start();
-					notEqual($('.unit_text').text().trim(), "Performance Tests", "performance template rendering negative test case");
-					self.runTablelengthTest(performanceTest);
+					equal($('.unit_text').attr("data-i18n").trim(), "ci.performancetest", "Performance template render test");
+					equal($("#testResultTable tr").length, 8, "Result table render test");
+					equal($(commonVariables.contentPlaceholder).find('.testAgainstOption').length, 3, "Test Against Dropdown test");
+					equal($(commonVariables.contentPlaceholder).find('.testResultFilesOption').length, 3, "Result Files Dropdown test");
+					self.runTestAgainstChangeEvent(performanceTest);
 				}, 1500);
 			});
-		},	
+		},
 		
-		runTablelengthTest : function(performanceTest) {
+		runTestAgainstChangeEvent : function(performanceTest) {
 			module("PerformanceTest.js");
-			var performanceTest = new PerformanceTest(), self = this;
-			asyncTest("Performance Result table length test", function() {
-			
+			var self = this;
+			asyncTest("Test Against change event test", function() {
 				$.mockjax({
-				  url: commonVariables.webserviceurl+commonVariables.qualityContext+"/"+commonVariables.performance+"?appDirName=MergePerformanceAndLoad1-php5.4.x",
-				  type: "GET",
+				  url: commonVariables.webserviceurl+commonVariables.qualityContext+"/testResultFiles?actionType=performance-test&appDirName=PF_TEST_PHP",
+				  type: "POST",
 				  dataType: "json",
 				  contentType: "application/json",
 				  status: 200,
 				  response : function() {
-					  this.responseText = JSON.stringify({"response":null,"message":"Parameter returned successfully","exception":null,"data":{"resultAvailable":true,"testResultFiles":["HTTP Request1.jtl","LoginTest.jtl","testServer.jtl"],"showDevice":false,"devices":[],"testAgainsts":["server","webservice","database"]}});
+					  this.responseText = JSON.stringify({"message":"Test Result Files returned successfully","exception":null,"responseCode":null,"data":["testServer.jtl","LoginTest.jtl","Custom.jtl"],"status":null});
 				  }
 				});
-				
-				$.mockjax({
-					url: commonVariables.webserviceurl+commonVariables.qualityContext+"/"+commonVariables.performanceTestResults+"?appDirName=MergePerformanceAndLoad1-php5.4.x&testAgainst=server&resultFileName=HTTP Request1.jtl&deviceId=&showGraphFor=responseTime",
-				  type: "GET",
-				  dataType: "json",
-				  contentType: "application/json",
-				  status: 200,
-				  response : function() {
-					  this.responseText = JSON.stringify({"response":null,"message":"Parameter returned successfully","exception":null,"data":{"perfromanceTestResult":[{"totalBytes":86117,"max":1253,"throughtPut":0.8,"min":1253,"avg":1253,"noOfSamples":1,"times":[1253],"totalTime":1253,"err":0,"maxTs":1371464304079,"lastTime":1253,"minTs":1371464304079,"avgBytes":86117,"kbPerSec":67.12,"stdDev":0,"totalStdDev":0,"totalThroughput":0,"label":"HTTP Request1"},{"totalBytes":86114,"max":214,"throughtPut":4.7,"min":214,"avg":214,"noOfSamples":1,"times":[214],"totalTime":214,"err":0,"maxTs":1371464305377,"lastTime":214,"minTs":1371464305377,"avgBytes":86114,"kbPerSec":392.97,"stdDev":0,"totalStdDev":0,"totalThroughput":0,"label":"HTTP Request2"},{"totalBytes":86130,"max":225,"throughtPut":4.4,"min":225,"avg":225,"noOfSamples":1,"times":[225],"totalTime":225,"err":0,"maxTs":1371464305592,"lastTime":225,"minTs":1371464305592,"avgBytes":86130,"kbPerSec":373.83,"stdDev":0,"totalStdDev":0,"totalThroughput":0,"label":"HTTP Request3"},{"totalBytes":86021,"max":1048,"throughtPut":1,"min":1048,"avg":1048,"noOfSamples":1,"times":[1048],"totalTime":1048,"err":0,"maxTs":1371464305818,"lastTime":1048,"minTs":1371464305818,"avgBytes":86021,"kbPerSec":80.16,"stdDev":0,"totalStdDev":0,"totalThroughput":0,"label":"HTTP Request4"},{"totalBytes":86077,"max":883,"throughtPut":1.1,"min":883,"avg":883,"noOfSamples":1,"times":[883],"totalTime":883,"err":0,"maxTs":1371464306868,"lastTime":883,"minTs":1371464306868,"avgBytes":86077,"kbPerSec":95.2,"stdDev":0,"totalStdDev":0,"totalThroughput":0,"label":"HTTP Request5"},{"totalBytes":86121,"max":408,"throughtPut":2.5,"min":408,"avg":408,"noOfSamples":1,"times":[408],"totalTime":408,"err":0,"maxTs":1371464307752,"lastTime":408,"minTs":1371464307752,"avgBytes":86121,"kbPerSec":206.13,"stdDev":0,"totalStdDev":0,"totalThroughput":0,"label":"HTTP Request6"}],"graphData":"[1253.0,214.0,225.0,1048.0,883.0,408.0]","graphAlldata":"[], [], []","aggregateResult":{"error":"0.00","max":1253,"min":214,"avgBytes":86096.67,"stdDev":408.81,"average":671.83,"throughput":1.5,"kb":123.61,"sample":6},"totalStdDev":0,"totalThroughput":0,"graphFor":"responseTime","label":"['HTTP Request1','HTTP Request2','HTTP Request3','HTTP Request4','HTTP Request5','HTTP Request6']"}});
-				  }
-				});
-				require(["navigation/navigation"], function(){
-					commonVariables.navListener = new Clazz.com.components.navigation.js.listener.navigationListener();
-				});						
 
-				var performanceTestAPI =  new Clazz.com.components.performanceTest.js.api.PerformanceTestAPI();
-				performanceTestAPI.localVal.setSession("appDirName" , "MergePerformanceAndLoad1-php5.4.x");
-				
-				commonVariables.navListener.onMytabEvent("performanceTest");
-				
+				$.mockjax({
+				  url: commonVariables.webserviceurl+commonVariables.qualityContext+"/"+commonVariables.performanceTestResults+"?appDirName=PF_TEST_PHP&testAgainst=server&resultFileName=testServer.jtl&deviceId=&showGraphFor=responseTime",
+				  type: "GET",
+				  dataType: "json",
+				  contentType: "application/json",
+				  status: 200,
+				  response : function() {
+					  this.responseText = JSON.stringify({"message":"Parameter returned successfully","exception":null,"responseCode":null,"data":{"perfromanceTestResult":[{"totalBytes":5738.0,"max":12216,"throughtPut":0.1,"min":12216,"avg":12216.0,"noOfSamples":1,"times":[12216],"totalTime":12216,"err":0.0,"maxTs":1.374486508375E12,"lastTime":12216,"minTs":1.374486508375E12,"avgBytes":5738.0,"kbPerSec":0.46,"stdDev":0.0,"totalStdDev":0.0,"totalThroughput":0.0,"label":"cd"}],"graphData":"[12216.0]","graphAlldata":"[], [], []","aggregateResult":{"error":"0.00","max":12216,"min":12216,"avgBytes":5738.0,"stdDev":0.0,"average":12216.0,"throughput":0.1,"kb":0.46,"sample":1},"totalStdDev":0.0,"totalThroughput":0.0,"graphFor":"responseTime","label":"['cd']","images":[]},"status":null});
+				  }
+				});
+				$(commonVariables.contentPlaceholder).find('.testAgainstNav').find('#testAgainstsDrop').attr("value", "webservice");
+				commonVariables.api.localVal.setSession("appDirName" , "PF_TEST_PHP");
+				performanceTest.testAgainstChangeEvent($(commonVariables.contentPlaceholder).find('.testAgainstNav').find('#testAgainstsDrop').parent().find('a[value=server]'));
 				setTimeout(function() {
 					start();
-					equal($("#testResultTable tr").length, 8, "Result table length test");
-					self.runTablelengthNegativeTest(performanceTest);
-				}, 2000);
+					equal($(commonVariables.contentPlaceholder).find('.testAgainstNav').find('#testAgainstsDrop').attr("value"), "server", "TestAgainst dropdown change event test");
+					self.runTabularViewClickTest(performanceTest);
+				}, 800);
+
+			});	
+		},
+
+		runTabularViewClickTest : function (performanceTest) {
+			module("PerformanceTest.js");
+			var self = this;
+			asyncTest("Tabular view click test", function() {
+				$(commonVariables.contentPlaceholder).find('#tabularView').click();
+				setTimeout(function() {
+					start();
+					equal($(commonVariables.contentPlaceholder).find('.perfResultInfo').css('display'), "block", "Tabular view test");
+					self.runGraphViewClickTest(performanceTest);
+				}, 50);
 			});
 		},
-				
-		runTablelengthNegativeTest : function(performanceTest) {
-			module("PerformanceTest.js");
-			var performanceTest = new PerformanceTest(), self = this;
-			asyncTest("Performance Result table length negative test", function() {
-				$.mockjax({
-				  url: commonVariables.webserviceurl+commonVariables.qualityContext+"/"+commonVariables.performance+"?appDirName=MergePerformanceAndLoad1-php5.4.x",
-				  type: "GET",
-				  dataType: "json",
-				  contentType: "application/json",
-				  status: 200,
-				  response : function() {
-					  this.responseText = JSON.stringify({"response":null,"message":"Parameter returned successfully","exception":null,"data":{"resultAvailable":true,"testResultFiles":["HTTP Request1.jtl","LoginTest.jtl","testServer.jtl"],"showDevice":false,"devices":[],"testAgainsts":["server","webservice","database"]}});
-				  }
-				});
-				
-				$.mockjax({
-					url: commonVariables.webserviceurl+commonVariables.qualityContext+"/"+commonVariables.performanceTestResults+"?appDirName=MergePerformanceAndLoad1-php5.4.x&testAgainst=server&resultFileName=HTTP Request1.jtl&deviceId=&showGraphFor=responseTime",
-				  type: "GET",
-				  dataType: "json",
-				  contentType: "application/json",
-				  status: 200,
-				  response : function() {
-					  this.responseText = JSON.stringify({"response":null,"message":"Parameter returned successfully","exception":null,"data":{"perfromanceTestResult":[{"totalBytes":86117,"max":1253,"throughtPut":0.8,"min":1253,"avg":1253,"noOfSamples":1,"times":[1253],"totalTime":1253,"err":0,"maxTs":1371464304079,"lastTime":1253,"minTs":1371464304079,"avgBytes":86117,"kbPerSec":67.12,"stdDev":0,"totalStdDev":0,"totalThroughput":0,"label":"HTTP Request1"},{"totalBytes":86114,"max":214,"throughtPut":4.7,"min":214,"avg":214,"noOfSamples":1,"times":[214],"totalTime":214,"err":0,"maxTs":1371464305377,"lastTime":214,"minTs":1371464305377,"avgBytes":86114,"kbPerSec":392.97,"stdDev":0,"totalStdDev":0,"totalThroughput":0,"label":"HTTP Request2"},{"totalBytes":86130,"max":225,"throughtPut":4.4,"min":225,"avg":225,"noOfSamples":1,"times":[225],"totalTime":225,"err":0,"maxTs":1371464305592,"lastTime":225,"minTs":1371464305592,"avgBytes":86130,"kbPerSec":373.83,"stdDev":0,"totalStdDev":0,"totalThroughput":0,"label":"HTTP Request3"},{"totalBytes":86021,"max":1048,"throughtPut":1,"min":1048,"avg":1048,"noOfSamples":1,"times":[1048],"totalTime":1048,"err":0,"maxTs":1371464305818,"lastTime":1048,"minTs":1371464305818,"avgBytes":86021,"kbPerSec":80.16,"stdDev":0,"totalStdDev":0,"totalThroughput":0,"label":"HTTP Request4"},{"totalBytes":86077,"max":883,"throughtPut":1.1,"min":883,"avg":883,"noOfSamples":1,"times":[883],"totalTime":883,"err":0,"maxTs":1371464306868,"lastTime":883,"minTs":1371464306868,"avgBytes":86077,"kbPerSec":95.2,"stdDev":0,"totalStdDev":0,"totalThroughput":0,"label":"HTTP Request5"},{"totalBytes":86121,"max":408,"throughtPut":2.5,"min":408,"avg":408,"noOfSamples":1,"times":[408],"totalTime":408,"err":0,"maxTs":1371464307752,"lastTime":408,"minTs":1371464307752,"avgBytes":86121,"kbPerSec":206.13,"stdDev":0,"totalStdDev":0,"totalThroughput":0,"label":"HTTP Request6"}],"graphData":"[1253.0,214.0,225.0,1048.0,883.0,408.0]","graphAlldata":"[], [], []","aggregateResult":{"error":"0.00","max":1253,"min":214,"avgBytes":86096.67,"stdDev":408.81,"average":671.83,"throughput":1.5,"kb":123.61,"sample":6},"totalStdDev":0,"totalThroughput":0,"graphFor":"responseTime","label":"['HTTP Request1','HTTP Request2','HTTP Request3','HTTP Request4','HTTP Request5','HTTP Request6']"}});
-				  }
-				});
-				require(["navigation/navigation"], function(){
-					commonVariables.navListener = new Clazz.com.components.navigation.js.listener.navigationListener();
-				});						
 
-				var performanceTestAPI =  new Clazz.com.components.performanceTest.js.api.PerformanceTestAPI();
-				performanceTestAPI.localVal.setSession("appDirName" , "MergePerformanceAndLoad1-php5.4.x");
-				
-				commonVariables.navListener.onMytabEvent("performanceTest");
+		runGraphViewClickTest : function (performanceTest) {
+			module("PerformanceTest.js");
+			var self = this;
+			asyncTest("Graphical view click test", function() {
+				$(commonVariables.contentPlaceholder).find('#graphicalView').click();
 				setTimeout(function() {
 					start();
-					notEqual($("#testResultTable tr").length, 1, "Result table length negative test");
+					equal($(commonVariables.contentPlaceholder).find('#graphView').css('display'), "block", "Graphical view test");
 					self.runShowPerformancePopup(performanceTest);
-				}, 2500);
+				}, 50);
 			});
 		},
-		
+
 		runShowPerformancePopup : function (performanceTest) {
 			module("PerformanceTest.js");
 			var performanceTest = new PerformanceTest(), self = this;
@@ -183,9 +129,8 @@ define(["performanceTest/performanceTest"], function(PerformanceTest) {
 				  }
 				});
 
-				var performanceTestAPI =  new Clazz.com.components.performanceTest.js.api.PerformanceTestAPI();
-				performanceTestAPI.localVal.setSession("appDirName" , "MergePerformanceAndLoad1-php5.4.x");
-				performanceTestAPI.localVal.setSession("username" , "rajeshkumar_ra");		
+				commonVariables.api.localVal.setSession("appDirName" , "MergePerformanceAndLoad1-php5.4.x");
+				commonVariables.api.localVal.setSession("username" , "rajeshkumar_ra");		
 				commonVariables.appDirName = "MergePerformanceAndLoad1-php5.4.x";
 
 				$.mockjax({
@@ -209,15 +154,14 @@ define(["performanceTest/performanceTest"], function(PerformanceTest) {
 					  this.responseText = JSON.stringify({"response":null,"message":"Template content returned succesfully","exception":null,"data":"<div class=\"middle_div\">\t<span>DB Context URLs</span>\t<span><input type=\"button\" value=\"Add\" id=\"dbContextAdd\" class=\"btn btn_style add_icon_btn\"></span>\t<div class=\"clear\"></div></div><script type=\"text/javascript\">\tvar dbJsonFlag = true;</script><div id=\"dbContextDivParent\">\t\t\t\t</div>\t<script type=\"text/javascript\">\tif(dbJsonFlag) {\t\tvar newTextBoxDiv = jQuery(document.createElement('div')).attr('id', 'dbContextDiv').attr('class','dbContextDivClass');\t\tnewTextBoxDiv.html(\"<table class='table table-striped table_border table-bordered context_table' cellpadding='0' cellspacing='0' border='0'>\t\t\t<thead><tr><th colspan='4'><div class='delete_icon removeDBContext'><img class='removeContextImg' src='themes/default/images/helios/delete_row.png'></div></th></tr>\t\t\t</thead><tbody><tr><td>Name<sup>*</sup></td><td>Query Type<sup>*</sup></td><td>Query<sup>*</sup></td></tr><tr>\t\t\t<td><input type='text' name='dbName' value=''></td><td><select name='queryType'><option value='Select Statement'>Select Statement</option><option value='Update Statement'>Update Statement</option></select></td><td><textarea name='query' id='query'></textarea></td></tr></tbody></table>\");\t\tnewTextBoxDiv.appendTo(\"#dbContextDivParent\");\t\t}</script>\t"});
 				  }
 				});
-					
 				$('input[name=performancePopup]').click();
 				setTimeout(function() {
 					start();
-					equal($(".dynamicControls").find(".ctrl").size(), 15, "Performance dynamic controls rendered succesfully");
-					equal($(".contextDivParent").find(".contextDivClass").size(), 2, "Context template rendered succesfully");
-					equal($("#dbContextDivParent").find(".dbContextDivClass").size(), 1, "DB Context template rendered succesfully");
+					equal($(".dynamicControls").find(".ctrl").size(), 16, "Performance dynamic controls render test");
+					equal($(".contextDivParent").find(".contextDivClass").size(), 2, "Context URL template render test");
+					equal($("#dbContextDivParent").find(".dbContextDivClass").size(), 1, "DB Context template render test");
 					self.runAddContextUrlTest(performanceTest);
-				},3000);
+				},1200);
 			});
 		},
 		
@@ -228,9 +172,9 @@ define(["performanceTest/performanceTest"], function(PerformanceTest) {
 				$('#contextAdd').click();
 				setTimeout(function() {
 					start();
-					equal($(".contextDivParent").find(".contextDivClass").size(), 3, "Add context url tested succesfully");
+					equal($(".contextDivParent").find(".contextDivClass").size(), 3, "Add context url test");
 					self.runRemoveContextUrlTest(performanceTest);
-				}, 3500);
+				}, 50);
 			});
 		},
 
@@ -241,9 +185,171 @@ define(["performanceTest/performanceTest"], function(PerformanceTest) {
 				$('#contextDiv1').find('.removeContext').click();
 				setTimeout(function() {
 					start();
-					equal($(".contextDivParent").find(".contextDivClass").size(), 2, "remove context url tested succesfully");
-					// self.runTriggerPerformanceTest(performanceTest);
-				}, 3700);
+					equal($(".contextDivParent").find(".contextDivClass").size(), 2, "Remove context url test");
+					self.runShowPdfPopup(performanceTest);
+				}, 50);
+			});
+		},
+
+		runShowPdfPopup : function (performanceTest) {
+			module("PerformanceTest.js");
+			var performanceTest = new PerformanceTest(), self = this;
+			asyncTest("Render Performance PDF popup and Existing PDF list test", function() {
+				$.mockjax({
+				  url: commonVariables.webserviceurl+"pdf/showPopUp?appDirName=PF_TEST_PHP&fromPage=performance",
+				  type: "GET",
+				  dataType: "json",
+				  contentType: "application/json",
+				  status: 200,
+				  response : function() {
+					  this.responseText = JSON.stringify([{"time":"Jul 23 2013 16.28","type":"crisp","fileName":"Raj_crisp.pdf"},{"time":"Jul 23 2013 16.08","type":"crisp","fileName":"tech_overall_crisp.pdf"}]);
+				  }
+				});
+				commonVariables.api.localVal.setSession("appDirName" , "PF_TEST_PHP");
+				$('#performancePdf').click();
+				setTimeout(function() {
+					start();
+					equal($(commonVariables.contentPlaceholder).find("#pdf_report").css("display"), 'block', 'Show PDF popup test');
+					equal($(commonVariables.contentPlaceholder).find("#availablePdfRptsTbdy").find('tr').length, 2, "Existing PDF list test");
+					self.runGeneratePdf(performanceTest);
+				}, 500);
+			});
+		},
+
+		runGeneratePdf : function (performanceTest) {
+			module("PerformanceTest.js");
+			var performanceTest = new PerformanceTest(), self = this;
+			asyncTest("Generate Performance result as PDF", function() {
+				$.mockjaxClear();
+				$.mockjax({
+				  url: commonVariables.webserviceurl+"app/printAsPdf?appDirName=PF_TEST_PHP&reportDataType=detail&pdfName=TestGeneratePDF&fromPage=performance&userId=admin",
+				  type: "POST",
+				  dataType: "json",
+				  contentType: "application/json",
+				  status: 200,
+				  response : function() {
+					  this.responseText = JSON.stringify({"connectionAlive":false,"errorFound":false,"uniquekey":null,"service_exception":null,"configErrorMsg":null,"responseCode":"PHR200016","status":"success","log":"SUCCESS"});
+				  }
+				});
+
+				$.mockjax({
+				  url: commonVariables.webserviceurl+"pdf/showPopUp?appDirName=PF_TEST_PHP&fromPage=performance",
+				  type: "GET",
+				  dataType: "json",
+				  contentType: "application/json",
+				  status: 200,
+				  response : function() {
+					  this.responseText = JSON.stringify([{"time":"Jul 23 2013 16.28","type":"crisp","fileName":"Raj_crisp.pdf"},{"time":"Jul 23 2013 16.08","type":"crisp","fileName":"tech_overall_crisp.pdf"},{"time":"Jul 23 2013 16.08","type":"crisp","fileName":"TestGenerate_crisp.pdf"}]);
+				  }
+				});
+
+				$(commonVariables.contentPlaceholder).find("#pdf_report").find('input[name=pdfName]').val("TestGeneratePDF");
+				$(commonVariables.contentPlaceholder).find("#pdf_report").find("#generatePdf").click();
+				setTimeout(function () {
+					start();
+					equal($(commonVariables.contentPlaceholder).find("#availablePdfRptsTbdy").find('tr:last').find('.deletePdf').attr('filename'),'TestGenerate_crisp.pdf', 'Generate PDF test');
+					self.runDeletePdf(performanceTest);
+				}, 1300)
+			});	
+		},
+
+		runDeletePdf : function (performanceTest) {
+			module("PerformanceTest.js");
+			var performanceTest = new PerformanceTest(), self = this;
+			asyncTest("Delete PDF report test", function() {
+       			$.mockjaxClear();
+				$.mockjax({
+				  url: commonVariables.webserviceurl+"pdf/deleteReport?appDirName=PF_TEST_PHP&fromPage=performance&reportFileName=Raj_crisp.pdf",
+				  type: "DELETE",
+				  dataType: "json",
+				  contentType: "application/json",
+				  status: 200,
+				  response : function() {
+					  this.responseText = JSON.stringify({"message":null,"exception":null,"responseCode":"PHR200013","data":null,"status":"success"});
+				  }
+				});
+
+				$.mockjax({
+				  url: commonVariables.webserviceurl+"pdf/showPopUp?appDirName=PF_TEST_PHP&fromPage=performance",
+				  type: "GET",
+				  dataType: "json",
+				  contentType: "application/json",
+				  status: 200,
+				  response : function() {
+					  this.responseText = JSON.stringify([{"time":"Jul 23 2013 16.08","type":"crisp","fileName":"tech_overall_crisp.pdf"}]);
+				  }
+				});
+				commonVariables.api.localVal.setSession("appDirName" , "PF_TEST_PHP");
+				$(commonVariables.contentPlaceholder).find("#availablePdfRptsTbdy").find('tr:first').find('.deletePdf').click();
+				setTimeout(function() {
+					start();
+					equal($(commonVariables.contentPlaceholder).find("#availablePdfRptsTbdy").find('tr').length, 1, "Delete PDF test");
+					self.renderRenderDeviceList(performanceTest);
+				}, 1300);
+			});
+		},
+
+		renderRenderDeviceList : function(performanceTest) {
+			module("PerformanceTest.js");
+			var performanceTest = new PerformanceTest(), self = this;
+			asyncTest("Device list render test", function() {
+				$(commonVariables.contentPlaceholder).find('.performanceTemp').remove();
+				$.mockjax({
+				  url: commonVariables.webserviceurl+commonVariables.qualityContext+"/"+commonVariables.performance+"?appDirName=native_none-androidnative",
+				  type: "GET",
+				  dataType: "json",
+				  contentType: "application/json",
+				  status: 200,
+				  response : function() {
+					  this.responseText = JSON.stringify({"message":"Parameter returned successfully","exception":null,"responseCode":null,"data":{"resultAvailable":true,"testResultFiles":["Sample.xml","alltests.xml"],"showDevice":true,"devices":["emulator-5554#SEP#sample_google_sdk","emulator-5551#SEP#sampple_Android_sdk"],"testAgainsts":[]},"status":null});
+				  }
+				});
+
+				$.mockjax({
+			      url: commonVariables.webserviceurl+commonVariables.qualityContext+"/"+commonVariables.performanceTestResults+"?appDirName=native_none-androidnative&testAgainst=&resultFileName=Sample.xml&deviceId=emulator-5554&showGraphFor=responseTime",
+				  type: "GET",
+				  dataType: "json",
+				  contentType: "application/json",
+				  status: 200,
+				  response : function() {
+					  this.responseText = JSON.stringify({"message":"Parameter returned successfully","exception":null,"responseCode":null,"data":{"perfromanceTestResult":[{"totalBytes":0.0,"max":12516,"throughtPut":0.1,"min":12516,"avg":12516.0,"noOfSamples":1,"times":[12516],"totalTime":12516,"err":0.0,"maxTs":1.337325718E12,"lastTime":12516,"minTs":1.337325718E12,"avgBytes":0.0,"kbPerSec":0.0,"stdDev":0.0,"totalStdDev":0.0,"totalThroughput":0.0,"label":"SSStestMain"}],"graphData":"[12516.0]","graphAlldata":"[], [], []","aggregateResult":{"error":"0.00","max":12516,"min":12516,"avgBytes":0.0,"stdDev":0.0,"average":12516.0,"throughput":0.1,"kb":0.0,"sample":1},"totalStdDev":0.0,"totalThroughput":0.0,"graphFor":"all","label":"['SSStestMain']","images":[]},"status":null});
+				  }
+				});
+				require(["navigation/navigation"], function(){
+					commonVariables.navListener = new Clazz.com.components.navigation.js.listener.navigationListener();
+				});			
+				commonVariables.api.localVal.setSession("appDirName" , "native_none-androidnative");
+				
+				commonVariables.navListener.onMytabEvent("performanceTest");
+				setTimeout(function() {
+					start();
+					equal($(commonVariables.contentPlaceholder).find('.devicesOption').length, 3, "Device list Dropdown test");
+					self.runGraphBasedOnChangeEvent(performanceTest);
+				}, 1500);
+			});
+		},
+
+		runGraphBasedOnChangeEvent : function (performanceTest) {
+			module("PerformanceTest.js");
+			var self = this;
+			asyncTest("Graph based on change event", function() {
+				$.mockjax({
+			      url: commonVariables.webserviceurl+commonVariables.qualityContext+"/"+commonVariables.performanceTestResults+"?appDirName=native_none-androidnative&testAgainst=&resultFileName=Sample.xml&deviceId=emulator-5554&showGraphFor=all",
+				  type: "GET",
+				  dataType: "json",
+				  contentType: "application/json",
+				  status: 200,
+				  response : function() {
+					  this.responseText = JSON.stringify({"message":"Parameter returned successfully","exception":null,"responseCode":null,"data":{"perfromanceTestResult":[{"totalBytes":0.0,"max":12516,"throughtPut":0.1,"min":12516,"avg":12516.0,"noOfSamples":1,"times":[12516],"totalTime":12516,"err":0.0,"maxTs":1.337325718E12,"lastTime":12516,"minTs":1.337325718E12,"avgBytes":0.0,"kbPerSec":0.0,"stdDev":0.0,"totalStdDev":0.0,"totalThroughput":0.0,"label":"SSStestMain"}],"graphData":"[0.1]","graphAlldata":"[12.516], [12.516], [12.516]","aggregateResult":{"error":"0.00","max":12516,"min":12516,"avgBytes":0.0,"stdDev":0.0,"average":12516.0,"throughput":0.1,"kb":0.0,"sample":1},"totalStdDev":0.0,"totalThroughput":0.0,"graphFor":"all","label":"['SSStestMain']","images":[]},"status":null});
+				  }
+				});
+				commonVariables.api.localVal.setSession("appDirName" , "native_none-androidnative");
+				$(commonVariables.contentPlaceholder).find('#graphView').find('.performanceGraphNav').find('.graphForDrop').click();
+				performanceTest.graphDropDownChangeEvent($(commonVariables.contentPlaceholder).find('#graphView').find('.performanceGraphNav').find('a[value=all]'));
+				setTimeout(function() {
+					start();
+					equal($(commonVariables.contentPlaceholder).find('#graphView').find('.performanceGraphNav').find('#graphForDrop').attr("value"),"all","GraphFor dropdown change event test");
+				}, 500);
 			});
 		},
 

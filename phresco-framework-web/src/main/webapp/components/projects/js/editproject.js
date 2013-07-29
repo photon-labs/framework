@@ -180,15 +180,8 @@ define(["projects/listener/projectsListener"], function() {
 			self.multiselect();
 			commonVariables.navListener.currentTab = commonVariables.editproject;
 			self.projectsListener.editSeriveTechnolyEvent(self.getData);
-			self.projectsListener.enablebutton();
-			if(commonVariables.animation) {
-				$(".create_proj .scrollContent").mCustomScrollbar({
-					autoHideScrollbar:true,
-					theme:"light-thin",
-					advanced:{ updateOnContentResize: true}
-				});
-			}
-		},
+			self.projectsListener.enablebuttonEdit();
+			},
 		
 		/***
 		 * Bind the action listeners. The bindUI() is called automatically after the render is complete 
@@ -229,6 +222,7 @@ define(["projects/listener/projectsListener"], function() {
 				var multimodule = $("input[name=multimodule]").val();
 				self.projectsListener.multiModuleEvent(multimodule);
 			});
+			this.customScroll($(".scrolldiv"));
 		}
 	});
 

@@ -30,6 +30,8 @@ import javax.ws.rs.core.Response;
 
 import org.apache.log4j.Logger;
 
+import com.photon.phresco.commons.FrameworkConstants;
+import com.photon.phresco.commons.ResponseCodes;
 import com.photon.phresco.commons.model.ApplicationInfo;
 import com.photon.phresco.exception.PhrescoException;
 import com.photon.phresco.framework.commons.FrameworkUtil;
@@ -44,7 +46,7 @@ import com.sun.jersey.api.client.ClientResponse.Status;
  * The Class ActionService.
  */
 @Path ("/app")
-public class ActionService implements ActionServiceConstant {
+public class ActionService implements ActionServiceConstant, FrameworkConstants, ResponseCodes {
 	
 	/** The Constant S_LOGGER. */
 	private static final Logger S_LOGGER= Logger.getLogger(ActionService.class);
@@ -729,8 +731,9 @@ public class ActionService implements ActionServiceConstant {
 	@POST
 	@Path("/printAsPdf")
 	@Produces(MediaType.APPLICATION_JSON)
-	 public Response printAsPdf(@Context HttpServletRequest request) throws PhrescoException  {ActionFunction actionFunction = new ActionFunction();
-	 
+	 public Response printAsPdf(@Context HttpServletRequest request) throws PhrescoException  {
+		ActionFunction actionFunction = new ActionFunction();
+		boolean isReportAvailable = false;
 		ActionResponse response = new ActionResponse();
 		try	{
 			actionFunction.prePopulatePrintAsPDFData(request);
@@ -738,19 +741,33 @@ public class ActionService implements ActionServiceConstant {
 			String appDirName = request.getParameter(APPDIR);
 			String fromPage = request.getParameter(FROM_PAGE);
 			ApplicationInfo appInfo = FrameworkServiceUtil.getApplicationInfo(appDirName);
-			boolean testReportAvailable = actionFunction.isTestReportAvailable(frameworkUtil, appInfo, fromPage);
-			if (testReportAvailable) {
+			
+			// is sonar report available
+			if ((FrameworkConstants.ALL).equals(fromPage)) {
+			isReportAvailable = actionFunction.isSonarReportAvailable(frameworkUtil, appInfo, request);
+			}
+
+			// is test report available
+			if (!isReportAvailable) {
+				isReportAvailable = actionFunction.isTestReportAvailable(frameworkUtil, appInfo, fromPage);
+			}
+//			boolean testReportAvailable = actionFunction.isTestReportAvailable(frameworkUtil, appInfo, fromPage);
+			if (isReportAvailable) {
 				response = actionFunction.printAsPdf(request);
 			} else {
-				response.setService_exception("Aleast one Test Report should be available Or Sonar report should be available");
+				response.setService_exception("Atleast one Test Report should be available Or Sonar report should be available");
+				response.setResponseCode(PHR210020);
+				response.setStatus(RESPONSE_STATUS_FAILURE);
 			}
 			
 		} catch (Exception e) {
 			S_LOGGER.error(e.getMessage());
-			response.setStatus(ERROR);
+			response.setStatus(RESPONSE_STATUS_ERROR);
 			response.setLog("");
 			response.setService_exception(FrameworkUtil.getStackTraceAsString(e));
 			response.setUniquekey("");
+			response.setResponseCode(PHR210021);
+			
 		}
 		return Response.status(Status.OK).entity(response).header("Access-Control-Allow-Origin", "*").build();
 		
@@ -793,7 +810,7 @@ public class ActionService implements ActionServiceConstant {
 			}
 			else{
 				
-				status=INPROGRESS;
+				status=ActionServiceConstant.INPROGRESS;
 			}
 		
 		} catch (IOException e) {

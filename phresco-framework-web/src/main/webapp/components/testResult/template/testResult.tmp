@@ -3,13 +3,13 @@
     	<table class="table table-striped table_border table-bordered" cellpadding="0" cellspacing="0" border="0">
           <thead class="fixedHeader">
             <tr>
-              <th>Tested Date</th>
-              <th>Technology</th>
-              <th>Total</th>
-              <th>Success</th>
-              <th>Failure</th>
-              <th>Error</th>
-              <th>Results</th>
+              <th data-i18n="testresult.label.testeddate"></th>
+              <th data-i18n="projectlist.label.technology"></th>
+              <th data-i18n="testresult.label.total"></th>
+              <th data-i18n="testresult.label.success"></th>
+			  <th data-i18n="testresult.label.failure"></th>
+			  <th data-i18n="testresult.label.error"></th>
+			  <th data-i18n="testresult.label.results"></th>
             </tr>
           </thead>
           <tbody class="scrollContent">
@@ -222,12 +222,12 @@
                 <tr>
 					<td>
 						<div class="flt_right">
-							<input type="button" class="btn btn_style kill_btn" value="Kill Process">
+							<input type="button" class="btn btn_style kill_btn" value="Kill Process" data-i18n="[value]build.label.killprocess">
 							<a href="#" id="buildCopyLog">
 								<img src="themes/default/images/helios/buildreport_icon.png" width="15" height="18" border="0" alt="">
 							</a>
 						</div>
-						<div class="flt_left">Progress</div>
+						<div class="flt_left"><span data-i18n="build.label.progress"></span></div>
 					</td>
 				</tr>
 			</thead>

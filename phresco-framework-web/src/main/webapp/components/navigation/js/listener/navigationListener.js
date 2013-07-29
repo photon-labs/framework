@@ -48,14 +48,19 @@ define([], function() {
 		
 		landingPage : function(currentContent){
 			var self = this;
+			commonVariables.continueloading = true;
 			self.renderHeader(function(retVal){
 				if(currentContent === undefined || currentContent === null){
 					self.renderFooter(function(retVal){
-						self.renderContent(function(retVal){});
+						self.renderContent(function(retVal){
+							commonVariables.continueloading = false;
+						});
 					});
 				} else if(currentContent !== undefined && currentContent !== null && currentContent !== "") {
 					self.renderFooter(function(retVal){
-						self.dynamicContent(currentContent, function(retVal){});
+						self.dynamicContent(currentContent, function(retVal){
+							commonVariables.continueloading = false;
+						});
 					});
 				}
 			});

@@ -145,6 +145,8 @@ define([], function() {
 								callback(response.service_exception);
 							}else if(response.status === 'SUCCESS'){
 								callback(response.connectionAlive);
+							}else if(response.status === null){
+								callback(response);
 							}
 							
 							$(divId).mCustomScrollbar("update");
@@ -198,6 +200,8 @@ define([], function() {
 								$(divId).append('<font style = "color:red">' + data.service_exception + '</font><br>');
 								callback(response);
 							}else if(response.status === 'SUCCESS'){
+								callback(response);
+							}else if(response.status === null){
 								callback(response);
 							}
 							

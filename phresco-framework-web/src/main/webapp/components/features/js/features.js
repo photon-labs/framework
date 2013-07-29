@@ -74,7 +74,7 @@ define(["features/listener/featuresListener"], function() {
 						}
 					});
 				}else {							
-					fieldset = '<fieldset class="switch switchOff" id="feature_'+ id +'" value="false"><label class="off" name="on_off" value="false"></label><label class="on" name="on_off" value="true"></label></fieldset>';
+					fieldset = '<fieldset class="switch switchOff" id="feature_'+ id +'" value="false"><label class="off" name="on_off" value="false"></label><label class="on" name="on_off" value="true" ></label></fieldset>';
 				}
 				return fieldset;
 			});
@@ -143,11 +143,6 @@ define(["features/listener/featuresListener"], function() {
 					self.selectedCount();
 			},3000);
 
-			$(".features_cont").mCustomScrollbar({
-				scrollInertia:600,
-				autoHideScrollbar:true,
-				theme:"light-thin"
-			});	
 		},
 		
 		
@@ -224,11 +219,16 @@ define(["features/listener/featuresListener"], function() {
 			  });
 
 			$('.switch').css('background', 'url("themes/default/images/helios/on_off_switch.png")');
-			$("label[name=on_off]").click(function() {
-				self.featuresListener.bcheck(this);
+			
+			$("label[name=on_off]").unbind();
+			$("label[name=on_off]").bind("click", function() {
+				var buttonId = $(this).attr("id");
+				self.featuresListener.bcheck(this, buttonId);
+				
 			});
 			 
-			$("input[name=on_off]").click(function() {
+			$("input[name=on_off]").unbind();
+			$("input[name=on_off]").bind("click", function() {
 				var button = $(this).val();
 				if(button === 'off'){ $(this).closest('fieldset').css('background-position', 'right'); }
 				if(button === 'on'){ $(this).closest('fieldset').css('background-position', 'left'); }	
@@ -286,7 +286,7 @@ define(["features/listener/featuresListener"], function() {
 				var currentObj = this;				
 				self.featuresListener.getFeaturesList(self.featuresListener.getRequestHeader(self.featureRequestBody, "desc", descid), function(response) {
 					var descriptionid = $.trim(descid.replace(/ /g,''));
-					var divhtml = '<div id="'+descriptionid+'" class="dyn_popup featureinfo"><h1>Description</h1><a href="#" class="dyn_popup_close">X</a><div class="features_cont"><span><img src="themes/default/images/helios/feature_info_logo.png" width="42" height="42" border="0" alt=""></span><span class="features_desc_content">'+response.data+'</span></div></div>';
+					var divhtml = '<div id="'+descriptionid+'" class="dyn_popup featureinfo"><h1>Description</h1><a href="#" class="dyn_popup_close">X</a><div class="features_cont desc_content"><span><img src="themes/default/images/helios/feature_info_logo.png" width="42" height="42" border="0" alt=""></span><span class="features_desc_content">'+response.data+'</span></div></div>';
 					$("#desc").children().remove();
 					$("#desc").append(divhtml);
 					self.popupforDesc(currentObj,descriptionid);
@@ -304,6 +304,8 @@ define(["features/listener/featuresListener"], function() {
 					}
 					self.featuresListener.flagged = 1;
 					self.featuresListener.scrollbarEnable();
+					$(".desc_content").scrollbars();
+					$(".desc_content").css('display', 'block');
 				});
 				
            	});
@@ -331,16 +333,7 @@ define(["features/listener/featuresListener"], function() {
 				});				
 				
 				self.featuresListener.getFeaturesUpdate(self.featuresListener.getRequestHeader(self.featureUpdatedArray, "UPDATE", ""), function(response) {
-					if(((response.message) == "Features updated successfully")){
-						setTimeout(function(){
-							$(".blinkmsg").removeClass("poperror").addClass("popsuccess");
-							self.effectFadeOut('popsuccess', (response.message));		
-						},2000);
-					} else {
-						$(".blinkmsg").removeClass("popsuccess").addClass("poperror");						
-						self.effectFadeOut('poperror', ("Features update failed"));
-					}	
-				}); 
+					}); 
 			});
 			self.windowResize();
 

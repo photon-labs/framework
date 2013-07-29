@@ -38,7 +38,7 @@
 									<tr>
 		                            	<td data-i18n=commonlabel.label.pdfreportname></td>
 			                            <td>
-			                               <input type="text" placeholder="Pdf report name" name="pdfName">
+			                               <input type="text" data-i18n=[placeholder]commonlabel.label.pdfreportname name="pdfName">
 			                            </td>
 		                        	</tr>	                        	
 		                    	</tbody>
@@ -65,8 +65,7 @@
 		<div class="icon_images"><a class="tooltiptop" title="" data-placement="bottom" data-toggle="tooltip" href="#" data-original-title="Copy Path" id="copyPath"><img src="themes/default/images/helios/copypath_icon.png" ></a></div>	
             
         {{#if projectModules}}
-            <div class="code_report">
-            	Module
+            <div class="code_report" data-i18n="commonlabel.label.module">
             </div>
             <div class="navbar navbar-static code_func module">
                 <ul class="nav">
@@ -84,8 +83,7 @@
         {{/if}}
     
         {{#if reportOptions}}
-            <div class="code_report">
-            	Technology
+            <div class="code_report" data-i18n="projectlist.label.technology">
             </div>
             <div class="navbar navbar-static code_func">
                 <ul class="nav">

@@ -11,14 +11,17 @@ define(["performanceTest/listener/performanceTestListener"], function() {
 		onTabularViewEvent : null,
 		onGraphicalViewEvent : null,
 		onDynamicPageEvent : null,
-		onRunPerformanceTestEvent : null,
 		onShowHideConsoleEvent : null,
+		onShowPdfPopupEvent : null,
 		getResultEvent : null,
+		getDeviceEvent : null,
+		onDeviceChangeEvent : null,
 		getResultFilesEvent : null,
 		whereToRender : null,
 		dynamicpage : null,
 		dynamicPageListener : null,
 		preTriggerPerformanceTest : null,
+		onGeneratePdfEvent : null,
 		
 		/***
 		 * Called in initialization time of this class 
@@ -31,6 +34,27 @@ define(["performanceTest/listener/performanceTestListener"], function() {
 			if (self.performanceTestListener === null ) {
 				self.performanceTestListener = new Clazz.com.components.performanceTest.js.listener.PerformanceTestListener();
 			}
+			self.getDynamicPageObject();
+			self.resultViewSignals();
+			self.getResultEventSignals();
+			self.deviceEventSignals();
+			self.pdfReportEventSignals();
+			self.testTriggerSignals();
+			self.registerEvents(self.performanceTestListener);
+		},
+		
+		getDynamicPageObject : function () {
+			var self = this;
+			if (self.dynamicpage === null){
+				commonVariables.navListener.getMyObj(commonVariables.dynamicPage, function(retVal){
+					self.dynamicpage = retVal;
+					self.dynamicPageListener = self.dynamicpage.dynamicPageListener;
+				});
+			}
+		},
+
+		resultViewSignals : function () {
+			var self = this;
 			if (self.onTabularViewEvent === null) {
 				self.onTabularViewEvent = new signals.Signal();
 			}
@@ -40,11 +64,10 @@ define(["performanceTest/listener/performanceTestListener"], function() {
 				self.onGraphicalViewEvent = new signals.Signal();
 			}
 			self.onGraphicalViewEvent.add(self.performanceTestListener.onGraphicalView, self.performanceTestListener);
-			
-			if (self.onRunPerformanceTestEvent === null) {
-				self.onRunPerformanceTestEvent = new signals.Signal();
-			}
-			
+		},
+
+		getResultEventSignals : function () {
+			var self = this;
 			if (self.onShowHideConsoleEvent === null) {
 				self.onShowHideConsoleEvent = new signals.Signal();
 			}
@@ -59,22 +82,43 @@ define(["performanceTest/listener/performanceTestListener"], function() {
 				self.getResultFilesEvent = new signals.Signal();
 			}
 			self.getResultFilesEvent.add(self.performanceTestListener.getResultFiles, self.performanceTestListener);
-			
-			if(self.dynamicpage === null){
-				commonVariables.navListener.getMyObj(commonVariables.dynamicPage, function(retVal){
-					self.dynamicpage = retVal;
-					self.dynamicPageListener = self.dynamicpage.dynamicPageListener;
-				});
-			}
+		},
 
-			if(self.preTriggerPerformanceTest === null) {
+		deviceEventSignals : function () {
+			var self = this;
+			if (self.getDeviceEvent === null) {
+				self.getDeviceEvent = new signals.Signal();
+			}
+			self.getDeviceEvent.add(self.performanceTestListener.getDevices, self.performanceTestListener);
+
+			if (self.onDeviceChangeEvent === null) {
+				self.onDeviceChangeEvent = new signals.Signal();
+			}
+			self.onDeviceChangeEvent.add(self.performanceTestListener.getResultOnChangeEvent, self.performanceTestListener);
+		},
+
+		pdfReportEventSignals : function () {
+			var self = this;
+			if (self.onShowPdfPopupEvent === null) {
+				self.onShowPdfPopupEvent = new signals.Signal();
+			}
+			self.onShowPdfPopupEvent.add(self.performanceTestListener.getPdfReports, self.performanceTestListener);
+
+
+			if (self.onGeneratePdfEvent === null) {
+				self.onGeneratePdfEvent = new signals.Signal();
+			}
+			self.onGeneratePdfEvent.add(self.performanceTestListener.generatePdfReport, self.performanceTestListener);
+		},
+
+		testTriggerSignals : function () {
+			var self = this;
+			if (self.preTriggerPerformanceTest === null) {
 				self.preTriggerPerformanceTest = new signals.Signal();
 			}
 			self.preTriggerPerformanceTest.add(self.performanceTestListener.preTriggerPerformanceTest, self.performanceTestListener);
-
-			self.registerEvents(self.performanceTestListener);
 		},
-		
+
 		registerEvents : function(performanceTestListener) {
 			var self = this;
 			
@@ -128,7 +172,7 @@ define(["performanceTest/listener/performanceTestListener"], function() {
 					returnVal = data[0];
 				} else {
 					$.each(data, function(index, value){
-						returnVal += '<li class="testAgainstOption"><a href="#" name="testAgainst">'+ value +'</a></li>';
+						returnVal += '<li class="testAgainstOption"><a href="#" name="testAgainst" value="'+value+'">'+ value +'</a></li>';
 					});
 				}
 				return returnVal;
@@ -144,8 +188,9 @@ define(["performanceTest/listener/performanceTestListener"], function() {
 						returnVal = devices[0].split("#SEP#")[1];
 					} else {
 						$.each(devices, function(i, value){
-							returnVal += '<li class="devicesOption"><a href="#" deviceId="'+ value.split("#SEP#")[0] +'">'+ value.split("#SEP#")[1] +'</a></li>';
+							returnVal += '<li class="devicesOption"><a href="#" name="devices" deviceId="'+ value.split("#SEP#")[0] +'">'+ value.split("#SEP#")[1] +'</a></li>';
 						});
+						returnVal += '<li class="devicesOption"><a href="#" name="devices" deviceId="">All</a></li>';
 					} 
 				} 
 				
@@ -174,14 +219,6 @@ define(["performanceTest/listener/performanceTestListener"], function() {
 				}
 				return returnVal;
 			});
-		},
-		
-		/***
-		 * Called in once the login is success
-		 *
-		 */
-		loadPage : function(needAnimation) {
-			Clazz.navigationController.push(this, needAnimation);
 		},
 		
 		/***
@@ -220,52 +257,30 @@ define(["performanceTest/listener/performanceTestListener"], function() {
 			performanceTest.performanceTestListener.renderPerformanceTemplate(response, performanceTest.renderFnc,  whereToRender);
 		},
 
-		showScreenShot : function(screenShots) {
-			if (screenShots.length > 0) {
-				$('.performanceScreenShotDiv').show();
-				var imgArray = [];
-				for(var i = 0; i < screenShots.length ; i++) {
-					var srcJson = {};
-					srcJson.src = $('<div class="text_center"><img src="data:image/png;base64,'+screenShots[i]+'"><div class="fullscreen_desc"></div></div>');
-					srcJson.type = 'inline';
-					imgArray.push(srcJson);
+		graphDropDownChangeEvent : function (obj) {
+			var self = this;
+			var previousOption = $("#graphForDrop").attr("value");
+			var currentOption = obj.attr("value");
+			if (previousOption !== currentOption) {
+				$("#graphForDrop").html(obj.text()  + '<b class="caret"></b>');
+				$("#graphForDrop").attr("value", obj.attr("value"));
+				self.getResultEvent.dispatch($("#testAgainstsDrop").attr("value"),$("#testResultFileDrop").attr("value"), currentOption, $("#deviceDropDown").attr("value"), commonVariables.contentPlaceholder);
+				if (currentOption !== "all") {
+					$("#allData").hide();
+				} else {
+					$("#allData").show();
 				}
-				$('.performanceScreenShot').magnificPopup({
-					items: imgArray,
-					gallery: {
-					  enabled: true
-					},
-					type: 'image'
-				});
-			} else {
-				$('.performanceScreenShotDiv').hide();
 			}
 		},
-		
-		setConsoleScrollbar : function(bcheck){
-			if(bcheck){
-				$("#unit_progress .scrollContent").mCustomScrollbar("destroy");
-				$("#unit_progress .scrollContent").mCustomScrollbar({
-					autoHideScrollbar: false,
-					scrollInertia: 1000,
-					theme:"light-thin",
-					advanced:{ updateOnContentResize: true},
-					callbacks:{
-						onScrollStart:function(){
-							$("#unit_progress .scrollContent").mCustomScrollbar("scrollTo","bottom");
-						}
-					}
-				});
-			}else{
-				$("#unit_progress .scrollContent").mCustomScrollbar("destroy");
-				$("#unit_progress .scrollContent").mCustomScrollbar({
-					autoHideScrollbar:true,
-					scrollInertia: 200,
-					theme:"light-thin",
-					advanced:{ updateOnContentResize: true}
-				});
-			}
-		},	
+
+		testAgainstChangeEvent : function (obj) {
+			var self = this, currentOption = obj.text();
+			$("#testAgainstsDrop").html(currentOption + '<b class="caret"></b>');
+			$("#testAgainstsDrop").attr("value", currentOption);
+			$(".perfResultInfo").html('');
+			self.getResultFilesEvent.dispatch(currentOption, commonVariables.contentPlaceholder);
+		},
+
 		/***
 		 * Bind the action listeners. The bindUI() is called automatically after the render is complete 
 		 *
@@ -278,7 +293,6 @@ define(["performanceTest/listener/performanceTestListener"], function() {
 			$("input[name=performancePopup]").unbind("click");
 			$("input[name=performancePopup]").click(function() {
 				self.closeConsole();
-
                 var whereToRender = $('#performancePopup ul');
                 commonVariables.goal = "performance-test";
                 commonVariables.phase = "performance-test";
@@ -315,17 +329,32 @@ define(["performanceTest/listener/performanceTestListener"], function() {
 				paramJson.type =  commonVariables.typePerformanceTest;
 				commonVariables.navListener.copyPath(paramJson);
 			});
+
+			//To show the print as pdf popup
+			$('#performancePdf').unbind("click");
+			$('#performancePdf').click(function() {
+				self.onShowPdfPopupEvent.dispatch();
+				$('#pdfReportLoading').show();
+				self.opencc(this, 'pdf_report');
+			});
 			
+			//To generate the pdf report
+			$('#generatePdf').unbind("click");
+			$('#generatePdf').click(function() {
+				self.onGeneratePdfEvent.dispatch();
+				$('#pdfReportLoading').show();
+			});
+
 			//Shows the tabular view of the test result
 			$("#tabularView").unbind("click");
 			$("#tabularView").click(function() {
-				self.onTabularViewEvent.dispatch();
+				self.onTabularViewEvent.dispatch($(this));
 			});
 			
 			//Shows the graphical view of the test result
 			$("#graphicalView").unbind("click");
 			$("#graphicalView").click(function() {
-				self.onGraphicalViewEvent.dispatch();
+				self.onGraphicalViewEvent.dispatch($(this));
 			});
 			
 			//To show hide the console content when the console is clicked
@@ -337,24 +366,47 @@ define(["performanceTest/listener/performanceTestListener"], function() {
 			//To select the test result file
 			$('li a[name="resultFileName"]').unbind("click");
 			$('li a[name="resultFileName"]').click(function() {
-				$("#testResultFileDrop").text($(this).text());
+				var currentOption = $(this).text();
+				$("#testResultFileDrop").html(currentOption  + '<b class="caret"></b>');
+				$("#testResultFileDrop").attr("value", currentOption);
 				$(".perfResultInfo").html('');
-				self.getResultEvent.dispatch($("#testAgainstsDrop").text(),$(this).text(), self.whereToRender, function(response) {
-					self.showScreenShot(response.data.images);
-				});
+
+				if (!self.isBlank($("#testAgainstsDrop").attr("value"))) {
+					self.getResultEvent.dispatch($("#testAgainstsDrop").attr("value"), $(this).text(), $("#graphForDrop").attr("value"), '', self.whereToRender);
+				} else {
+					self.getDeviceEvent.dispatch($("#testResultFileDrop").attr("value"), $("#graphForDrop").attr("value"), self.whereToRender);
+				}
+			});
+
+			//To select the show graph based on
+			$('li a[name="graphForDrop"]').unbind("click");
+			$('li a[name="graphForDrop"]').click(function() {
+				self.graphDropDownChangeEvent($(this));
+			});
+
+			$('li a[name="devices"]').unbind("click");
+			$('li a[name="devices"]').click(function() {
+				var previousDevice = $("#deviceDropDown").attr("value");
+				var currentDevice = $(this).attr("deviceid");
+				if (previousDevice !== currentDevice) {
+					$("#deviceDropDown").html($(this).text()  + '<b class="caret"></b>');
+					$("#deviceDropDown").attr("value", currentDevice);
+					self.onDeviceChangeEvent.dispatch('',$("#testResultFileDrop").text(), '', currentDevice, self.whereToRender, function(response) {
+						self.performanceTestListener.setResponseTime();	
+					});
+				}
 			});
 
 			//To select testAgainst value
 			$('li a[name="testAgainst"]').unbind("click");
 			$('li a[name="testAgainst"]').click(function() {
-				$("#testAgainstsDrop").text($(this).text());
-				$(".perfResultInfo").html('');
-				self.getResultFilesEvent.dispatch($(this).text(), self.whereToRender);
+				self.testAgainstChangeEvent($(this));
+				
 			});
 			
 			$("#performanceRun").click(function() {
 				$('.progress_loading').show();
-				self.setConsoleScrollbar(true);
+				self.performanceTestListener.setConsoleScrollbar(true);
 				self.preTriggerPerformanceTest.dispatch();
 			});
 

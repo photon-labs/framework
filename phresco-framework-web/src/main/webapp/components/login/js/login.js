@@ -1,4 +1,4 @@
-define(["login/listener/loginListener"], function() {
+define(["framework/widgetWithTemplate", "login/listener/loginListener"], function() {
 	Clazz.createPackage("com.components.login.js");
 
 	Clazz.com.components.login.js.Login = Clazz.extend(Clazz.WidgetWithTemplate, {
@@ -46,7 +46,7 @@ define(["login/listener/loginListener"], function() {
 			
 			if(commonVariables.api.localVal.getSession('customerlogo') !== null &&
 				commonVariables.api.localVal.getSession('customerlogo') !== ""){
-				$('#loginlogo').attr("src", "data:image/png;base64," + self.loginListener.loginAPI.localVal.getSession('customerlogo'));
+				$('#loginlogo').attr("src", "data:image/png;base64," + commonVariables.api.localVal.getSession('customerlogo'));
 			} else {
 				$('#loginlogo').attr("src", "themes/default/images/helios/logo_login.png");
 			}
@@ -61,7 +61,7 @@ define(["login/listener/loginListener"], function() {
 				if(commonVariables.api.localVal.getSession('statusmsg') === "Customer Context Required"){
 					$("#contex_er").show();
 				}else{
-					$(".login_error_msg").text(self.loginListener.loginAPI.localVal.getSession('statusmsg'));
+					$(".login_error_msg").text(commonVariables.api.localVal.getSession('statusmsg'));
 				}
 			}
 		},
@@ -95,7 +95,11 @@ define(["login/listener/loginListener"], function() {
 			//Key press Event
 			$('#login, #rememberMe').keypress(function(e){
 				if(e.keyCode === 13){
-					self.onLoginEvent.dispatch();
+					if(self.loginListener.enterKeyDisable) {
+						return true;
+					} else {
+						self.onLoginEvent.dispatch();
+					}	
 				}	
 			});
 			
@@ -112,8 +116,8 @@ define(["login/listener/loginListener"], function() {
 			//Set rememberMe chk box val
 			if(commonVariables.api.localVal.getSession('rememberMe') === "true"){
 				$('#rememberMe').prop('checked', true);
-				$('#username').val(self.loginListener.loginAPI.localVal.getSession('username'));
-				$('#password').val(self.loginListener.loginAPI.localVal.getSession('password'));
+				$('#username').val(commonVariables.api.localVal.getSession('username'));
+				$('#password').val(commonVariables.api.localVal.getSession('password'));
 			}
 			
 			$('#username').focus();

@@ -102,6 +102,7 @@ define(["framework/widgetWithTemplate", "common/loading"], function() {
                         self.constructDynamicCtrl(parameter, columnClass, parameter.possibleValues, whereToRender);
                     } else if (type === "DynamicParameter" && parameter.sort) {
                         // execute sql template
+						self.consDragnDropcnt(parameter, columnClass, whereToRender);
                     } else if (type === "packageFileBrowse") {
                         // package file browse template
                     } else if (type === "map") {
@@ -128,9 +129,16 @@ define(["framework/widgetWithTemplate", "common/loading"], function() {
         },
         
         /********************* Controls construction methods starts**********************************/
+		
+		consDragnDropcnt : function(parameter, columnClass, whereToRender){
+			var self = this;
+			
+			whereToRender.append('<table id="'+ parameter.key +'_table" class="table table-striped table_border table-bordered" cellpadding="0" cellspacing="0" border="0"><thead><tr><th colspan="2">DB Script Execution</th></tr></thead><tbody><tr><td><ul id="sortable1" class="connectedSortable"><li class="ui-state-default"></li></ul></td><td><ul id="sortable2" class="connectedSortable"><li class="ui-state-default"></li></ul></td></tr></tbody></table>');
+		},
+		
         constructFileBrowseCtrl : function (parameter, whereToRender, goal) {
             var self = this, allowedExtensions = [];
-            whereToRender.append('<li id="'+parameter.key+'Li" class="ctrl"><div id="'+parameter.key+'" class="'+parameter.key+'-file-uploader"><noscript><p>Please enable JavaScript to use file uploader.</p></noscript></div></li>');
+            whereToRender.append('<li id="'+parameter.key+'Li" class="ctrl"><label>&nbsp;</label><div id="'+parameter.key+'" class="'+parameter.key+'-file-uploader"><noscript><p>Please enable JavaScript to use file uploader.</p></noscript></div></li>');
             allowedExtensions = parameter.fileType.split(',');
             self.createFileUploader(parameter, goal, allowedExtensions); 
         },
@@ -288,7 +296,7 @@ define(["framework/widgetWithTemplate", "common/loading"], function() {
         	if ("List" === childs[0].type) {
         		mapCtrl =  mapCtrl.concat('<td><select name="'+childs[0].key+'" class="selectpicker">');
     			var possibleValues = childs[0].possibleValues.value;
-    			for (i in possibleValues) {
+    			for (var i = 0; i < possibleValues; i++) {
     				mapCtrl =  mapCtrl.concat('<option value="'+possibleValues[i].key+'">'+possibleValues[i].value+'</option>');
     			}
     			mapCtrl =  mapCtrl.concat('</select></td>');
@@ -299,7 +307,7 @@ define(["framework/widgetWithTemplate", "common/loading"], function() {
         	if ("List" === childs[1].type) {
         		mapCtrl =  mapCtrl.concat('<td><select name="'+childs[1].key+'" class="selectpicker">');
     			var possibleValues = childs[1].possibleValues.value;
-    			for (i in possibleValues) {
+    			for (var i = 0; i < possibleValues; i++) {
     				mapCtrl =  mapCtrl.concat('<option value="'+possibleValues[i].key+'">'+possibleValues[i].value+'</option>');
     			}
     			mapCtrl =  mapCtrl.concat('</select></td>');
@@ -379,7 +387,7 @@ define(["framework/widgetWithTemplate", "common/loading"], function() {
                     requestedParameter = parameter;
                     return false;
                 }
-            }) 
+            }); 
 
             return requestedParameter;
         },
@@ -495,10 +503,12 @@ define(["framework/widgetWithTemplate", "common/loading"], function() {
             dependency = $(checkBoxCtrl).attr('dependency');
             key = $(checkBoxCtrl).attr('id');
             showFlag = $(checkBoxCtrl).attr('showFlag');
-            
+            commonVariables.hideloading = true;
             if (!self.isBlank(dependency)) {
                 self.dynamicControlEvents($(checkBoxCtrl), key, showFlag);
-            } 
+            }
+			self.chkSQLCheck();
+			commonVariables.hideloading = false;
         },
         
         selectBoxChangeEvent : function(control) {
@@ -554,7 +564,7 @@ define(["framework/widgetWithTemplate", "common/loading"], function() {
                 csvDependencies = dependencyAttr.substring(dependencyAttr.indexOf('=') + 1);
                 var parameterDependencies = [];
                 parameterDependencies = csvDependencies.split(',');
-                for (i in parameterDependencies) {
+                for (var i = 0;  i < parameterDependencies; i++) {
                    var currentParameter = self.getParameterByKey(self.dynamicParameters, parameterDependencies[i]);
                    if (!self.isBlank(currentParameter) && !currentParameter.show) {
                         $("#" + currentParameter.key + "Li").hide();
@@ -755,7 +765,21 @@ define(["framework/widgetWithTemplate", "common/loading"], function() {
                     }
                 }
             });
+			
+			self.chkSQLCheck();
         },
+		
+		
+		chkSQLCheck : function(){
+			if(!$('#executeSql').is(':checked')){
+				$('#fetchSql_table').hide();
+				$('#dataBaseLi').hide();
+			}else{
+				$('#fetchSql_table').show();
+				$('#dataBaseLi').show();
+			}
+		},
+		
         
         showCheckBoxDependencies : function (dependencyArr) {
             var self = this;
@@ -816,7 +840,7 @@ define(["framework/widgetWithTemplate", "common/loading"], function() {
         
         //To show controls
         showControl : function(controls) {
-            for (i in controls) {
+            for (var i = 0; i < controls.length; i++) {
                 $('#' + controls[i] + 'Li').show();
                 $('.' + controls[i] + '_Template').show();
             }
@@ -824,7 +848,7 @@ define(["framework/widgetWithTemplate", "common/loading"], function() {
         
         //To hide controls
         hideControl : function(controls) {
-            for (i in controls) {
+            for (var i = 0; i < controls.length; i++) {
                 $('#' + controls[i] + 'Li').hide();
                 $('.' + controls[i] + '_Template').hide();
             }

@@ -1,27 +1,26 @@
-<section class="optiontitle qual_unit">
-    	<div class="unit_text">
-        	Performance Test
+<section class="optiontitle qual_unit performanceTemp">
+    	<div class="unit_text" data-i18n="ci.performancetest">
         </div>
         <div class="flt_right">
         	{{#showIcons resultAvailable testResultFiles}}
 	        	<div class="unit_view performanceView">
-	                <span>
-	                	<a href="#"><img src="themes/default/images/helios/quality_table_on.png" width="25" height="25" border="0" alt=""></a>
+	                <span id="tabularView">
+	                	<a href="#"><img class="tableIcon" src="themes/default/images/helios/quality_table_on.png" width="25" height="25" border="0" alt=""></a>
 	                    <a href="#"><b>Table View</b></a>
 	                </span>
-	                <span>
-	                	<a href="#"><img src="themes/default/images/helios/quality_graph_off.png" width="26" height="24" border="0" alt=""></a>
+	                <span id="graphicalView">
+	                	<a href="#"><img class="graphIcon" src="themes/default/images/helios/quality_graph_off.png" width="26" height="24" border="0" alt=""></a>
 	                	<a href="#">Graph View</a>
 	                </span>
 	            </div>
 	        {{else}}  
 	        	<div class="unit_view performanceView hideContent">
-	                <span>
-	                	<a href="#"><img src="themes/default/images/helios/quality_table_on.png" width="25" height="25" border="0" alt=""></a>
+	                <span id="tabularView">
+	                	<a href="#"><img class="tableIcon" src="themes/default/images/helios/quality_table_on.png" width="25" height="25" border="0" alt=""></a>
 	                    <a href="#"><b>Table View</b></a>
 	                </span>
-	                <span>
-	                	<a href="#"><img src="themes/default/images/helios/quality_graph_off.png" width="26" height="24" border="0" alt=""></a>
+	                <span id="graphicalView">
+	                	<a href="#"><img class="graphIcon" src="themes/default/images/helios/quality_graph_off.png" width="26" height="24" border="0" alt=""></a>
 	                	<a href="#">Graph View</a>
 	                </span>    
 	            </div>  
@@ -45,12 +44,56 @@
 			</div>
 
         	{{#showIcons resultAvailable testResultFiles}}
-	            <div class="icon_images"  id="performancePdf">
-	            	<a class="tooltiptop" title="" data-placement="bottom" data-toggle="tooltip" href="#" data-original-title="PDF Report">
+	            <div class="icon_images">
+	            	<a class="tooltiptop" id="performancePdf" title="" data-placement="bottom" data-toggle="tooltip" href="#" data-original-title="PDF Report">
 	            		<img src="themes/default/images/helios/pdf_icon_white.png" >
 	        		</a>
+	        		<!--Pdf report popup starts here -->
+					<div id="pdf_report" class="dyn_popup hideContent">
+						<div id="noPdfReport" class="noReport"></div>
+	                	<table class="table_border availablePdfRptsTbl hideContent" border="0" cellspacing="0" cellpadding="5" width="100%" id="availablePdfRptsTbl">
+	                		<thead>
+	                        	<tr>
+		                            <th>Existing Reports</th>
+		                            <th>Type</th>
+		                            <th>Download</th>
+		                            <th>Delete</th>
+	                        	</tr>    
+	                    	</thead>
+	                    	<tbody id="availablePdfRptsTbdy">
+	                    	    
+	                   	 	</tbody>    
+	                	</table>
+	                	<form id="pdfReportForm">
+		                   	<table class="report_type" style="border: none; margin-top:4px;">
+		                    	<tbody>
+		                        	<tr>
+		                            	<td>Report Type</td>
+		                            	<td>
+		                                	<select name="reportDataType">
+		                                    	<option value="detail">Detailed Report</option>
+		                                    	<option value="crisp">Overall Report</option>
+		                                	</select>
+		                            	</td>
+		                        	</tr>
+									<tr>
+		                            	<td>Pdf Report Name</td>
+			                            <td>
+			                               <input type="text" placeholder="Pdf report name" name="pdfName">
+			                            </td>
+		                        	</tr>	                        	
+		                    	</tbody>
+		                   	</table>
+		                   	<div class="popuploading" id="pdfReportLoading">&nbsp</div>
+			               	<div class="flt_right">
+			                 	<input type="button" value="Generate" class="btn btn_style" id="generatePdf">
+			                 	<input type="button" value="Close" class="btn btn_style dyn_popup_close">
+			               	</div>
+	               			<input type="hidden" name="fromPage" value="performance"/>
+	           			</form>
+					</div>
+					<!--Pdf report popup ends here -->
 	    		</div>
-
 			{{else}}  
 	        	 <div class="icon_images hideContent"  id="performancePdf">
 	            	<a class="tooltiptop" title="" data-placement="bottom" data-toggle="tooltip" href="#" data-original-title="PDF Report">
@@ -68,7 +111,7 @@
 	                    <li id="fat-menu" class="dropdown">
 	                      <a href="#" id="deviceDropDown" role="button" class="dropdown-toggle" data-toggle="dropdown" value={{#devices showDevice devices testResultFiles true true}}{{/devices}}>{{#devices showDevice devices testResultFiles true false}}{{/devices}}<b class="caret"></b></a>
 	                      <div class="dropdown-menu cust_sel code_test_opt" role="menu" aria-labelledby="drop5">
-	                      	<ul>
+	                      	<ul id="deviceDropUL">
 	                      		{{#devices showDevice devices testResultFiles false false}}{{/devices}}
 	                        </ul>
 	                      </div>
@@ -116,7 +159,7 @@
             	Type
             </div>
             <div class="navbar navbar-static code_func">
-                <ul class="nav">
+                <ul class="nav testAgainstNav">
                     <li id="fat-menu" class="dropdown">
                       <a href="#" id="testAgainstsDrop" role="button" class="dropdown-toggle" data-toggle="dropdown" value={{#testAgainsts testAgainsts true}}{{/testAgainsts}}>{{#testAgainsts testAgainsts true}}{{/testAgainsts}}<b class="caret"></b></a>
                       <div class="dropdown-menu cust_sel code_test_opt" role="menu" aria-labelledby="drop5">
@@ -131,9 +174,9 @@
             
             <div class="code_anal">
             	{{#if userPermissions.manageTests}}
-               		 <input type="submit" value="Test" data-i18n="" name="performancePopup" class="btn btn_style">
+               		 <input type="submit" value="Test" data-i18n="[value]test.label.test" name="performancePopup" class="btn btn_style">
 				{{else}}               		 
-					<input type="submit" value="Test" data-i18n="" name="performancePopup" class="btn btn_style" disabled>
+					<input type="submit" value="Test" data-i18n="[value]test.label.test" name="performancePopup" class="btn btn_style" disabled>
 				{{/if}}
                 <div id="performancePopup" class="dyn_popup performance_pop_cont" style="display:none;">
                     <form name="performanceForm" id="performanceForm">	
@@ -153,9 +196,9 @@
         </div>
     </section>
     
-    <section class="content_main code_content testSuiteTable performanceTestResults">
+    <section class="content_main code_content testSuiteTable performanceTestResults performanceTemp">
     	{{#unless resultAvailable}}
-    		<div style="text-align: center; margin: auto 0;" class="alert alert-block perfError">Performance test not yet executed</div>
+    		<div style="text-align: center; margin: auto 0;" class="alert alert-block perfError" data-i18n="testresult.label.notexecuted"></div>
 		{{else}}
 		 	{{#showErrMsg resultAvailable testResultFiles}}
     			<div style="text-align: center; margin: auto 0;" class="alert alert-block perfError">Test not executed for {{#against testAgainsts}}{{/against}}</div>
@@ -165,16 +208,33 @@
     	{{/unless}}
     	
     	
-    	<!-- Testsuites div starts here -->
+    	<!-- Table view div starts here -->
 			<div class="qual_unit_main unit_info perfResultInfo" id="testSuites">
 		    </div>
-	    <!-- Testsuites div ends here -->
+	    <!-- Table view div ends here -->
     
 		<!-- Graphical view div starts here -->
 		    <div class="qual_unit_main unit_info hideContent" id="graphView">
-		    	<div class="graph_area">
-		        	<canvas id="bar" width="620" height="400">[No canvas support]</canvas>
-		        	<canvas id="pie" width="620" height="400">[No canvas support]</canvas>
+		    	<div class="code_report type_report">Based on</div>
+		    	<div class="navbar navbar-static code_func logintest graphFor performanceGraphNav">
+	                <ul class="nav">
+	                    <li class="dropdown" id="fat-menu">
+	                      <a value="responseTime" data-toggle="dropdown" class="dropdown-toggle" role="button" id="graphForDrop" href="#">Aggr Response Time<b class="caret"></b></a>
+	                      <div aria-labelledby="drop5" role="menu" class="dropdown-menu cust_sel code_test_opt">
+	                      	<ul id="graphForList">
+	                        	<li class="graphForDrop"><a name="graphForDrop" value="responseTime" href="#">Response Time</a></li>
+	                        	<li class="graphForDrop"><a name="graphForDrop" value="throughPut" href="#">Throughput</a></li>
+	                        	<li class="graphForDrop"><a name="graphForDrop" value="minResponseTime" href="#">Min Response Time</a></li>
+	                        	<li class="graphForDrop"><a name="graphForDrop" value="maxResponseTime" href="#">Max Response Time</a></li>
+	                        	<li class="graphForDrop"><a name="graphForDrop" value="all" href="#">All</a></li>
+	                        </ul>
+	                      </div>
+	                    </li>
+	                </ul>
+	            </div>
+		    	<div class="graph_area graph_performance">
+		        	<canvas id="allData" width="420" height="300">[No canvas support]</canvas>
+		        	<canvas id="myCanvas" width="420" height="300">[No canvas support]</canvas>
 		        </div>
 		    </div>
 	    <!-- Graphical view div ends here -->
@@ -192,12 +252,12 @@
 					<tr>
 						<td>
 							<div class="flt_right">
-								<input type="button" class="btn btn_style kill_btn" value="Kill Process">
+								<input type="button" class="btn btn_style kill_btn" value="Kill Process" data-i18n="build.label.killprocess">
 								<a href="#" id="copyLog">
 									<img src="themes/default/images/helios/buildreport_icon.png" width="15" height="18" border="0" alt="">
 								</a>
 							</div>
-							<div class="flt_left">Progress</div>
+							<div class="flt_left"><span data-i18n="build.label.progress"></span></div>
 						</td>
 					</tr>
 				 </thead>

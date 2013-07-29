@@ -35,6 +35,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import com.photon.phresco.commons.FrameworkConstants;
+import com.photon.phresco.commons.ResponseCodes;
 import com.photon.phresco.commons.model.ApplicationInfo;
 import com.photon.phresco.commons.model.ProjectInfo;
 import com.photon.phresco.commons.model.Technology;
@@ -49,7 +50,11 @@ import com.sun.jersey.api.client.ClientResponse.Status;
  * The Class UtilService.
  */
 @Path("/util")
-public class UtilService extends RestBase implements FrameworkConstants, ServiceConstants {
+public class UtilService extends RestBase implements FrameworkConstants, ServiceConstants, ResponseCodes {
+	
+	String status;
+	String errorCode;
+	String successCode;
 
 	/**
 	 * Open folder.
@@ -156,20 +161,26 @@ public class UtilService extends RestBase implements FrameworkConstants, Service
 		try {
 			ServiceManager serviceManager = CONTEXT_MANAGER_MAP.get(userId);
 			if (serviceManager == null) {
+				status = RESPONSE_STATUS_FAILURE;
+				errorCode = PHR310001;
 				ResponseInfo<List<ApplicationInfo>> finalOutput = responseDataEvaluation(responseData, null,
-						"UnAuthorized User", null);
-				return Response.status(Status.BAD_REQUEST).entity(finalOutput).header("Access-Control-Allow-Origin",
+						null, status, errorCode);
+				return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin",
 						"*").build();
 			}
 			Technology technology = serviceManager.getTechnology(techId);
 			List<String> archetypeFeatures = technology.getOptions();
+			status = RESPONSE_STATUS_SUCCESS;
+			successCode = PHR300002;
 			ResponseInfo<List<String>> finalOutput = responseDataEvaluation(responseData, null,
-					"Technology options fetched successfully", archetypeFeatures);
+					archetypeFeatures, status, successCode);
 			return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
 		} catch (PhrescoException e) {
+			status = RESPONSE_STATUS_ERROR;
+			errorCode = PHR310004;
 			ResponseInfo<ProjectInfo> finalOutput = responseDataEvaluation(responseData, e,
-					"Failed to get Technology options", null);
-			return Response.status(Status.BAD_REQUEST).entity(finalOutput).header("Access-Control-Allow-Origin", "*")
+					null, status, errorCode);
+			return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*")
 					.build();
 		}
 	}

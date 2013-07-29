@@ -45,35 +45,34 @@ public class WarProjectModuleImpl implements DynamicParameter, Constants {
 		return null;
 	}
 
-	private PomProcessor getPomProcessor(String appDirName) throws PhrescoException {
-		try {
-			StringBuilder builder  = new StringBuilder();
-			builder.append(Utility.getProjectHome())
-			.append(appDirName)
-			.append(File.separatorChar)
-			.append(POM_NAME);
-			return new PomProcessor(new File(builder.toString()));
-		} catch (PhrescoPomException e) {
-			throw new PhrescoException(e);
-		}
+	private StringBuilder getPomPath(String appDirName) {
+		StringBuilder builder = new StringBuilder(Utility.getProjectHome());
+		 builder.append(appDirName);
+		 builder.append(File.separator);
+		 builder.append(POM_NAME);
+		return builder;
 	}
 	
 	protected List<String> getProjectModules(String appDirName) throws PhrescoException {
     	try {
-    		PomProcessor processor = getPomProcessor(appDirName);
-    		Modules pomModule = processor.getPomModule();
-    		List<String> moduleList = new ArrayList<String>();
-    		if (pomModule != null) {
-    			List<String> modules = pomModule.getModule();
-    			for (String module : modules) {
-					String[] split = module.split("/");
-					if(split != null) {
-						module = split[0];
+    		 StringBuilder builder = getPomPath(appDirName);
+     		File pomPath = new File(builder.toString());
+     		if(pomPath.exists()) {
+	     		PomProcessor processor = new PomProcessor(pomPath);
+	    		Modules pomModule = processor.getPomModule();
+	    		List<String> moduleList = new ArrayList<String>();
+	    		if (pomModule != null) {
+	    			List<String> modules = pomModule.getModule();
+	    			for (String module : modules) {
+						String[] split = module.split("/");
+						if(split != null) {
+							module = split[0];
+						}
+						moduleList.add(module);
 					}
-					moduleList.add(module);
-				}
-    			return moduleList;
-    		}
+	    			return moduleList;
+	    		}
+     		}
     	} catch (PhrescoPomException e) {
     		 throw new PhrescoException(e);
     	}

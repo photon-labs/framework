@@ -203,6 +203,14 @@ define(["navigation/listener/navigationListener"], function() {
 				});
 			});
 			
+			$('#gitName').keypress(function(e) {
+				if ((e.which >= 65 && e.which <= 90) ||(e.which >= 97 && e.which <= 122) || (e.which === 8) || (e.which === 45)|| (e.which >= 48 && e.which <= 57)) {
+					return true;
+				} else {
+					e.preventDefault();
+				}
+			});
+			
 			Clazz.navigationController.mainContainer = commonVariables.contentPlaceholder;
 			
 		}

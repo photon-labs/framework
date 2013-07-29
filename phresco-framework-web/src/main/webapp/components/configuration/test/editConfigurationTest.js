@@ -86,11 +86,12 @@ define(["configuration/editConfiguration"], function(EditConfiguration) {
 		var self=this;
 		asyncTest("Test - Remote Deploy True Event Test", function() {
 			
-			$("input[name=remoteDeployment]").attr("checked", true);
+			$("input[name=remoteDeployment]").attr("checked", false);
 			$("input[name=remoteDeployment]").click();
 			
 			setTimeout(function() {
 				start();
+				console.info("valu...", $(commonVariables.contentPlaceholder));
 				equal($(commonVariables.contentPlaceholder).find("input[name=deploy_dir]").css('display'), "none", "Remote Deploy True Tested");
 				self.remoteDeployFalse(editConfiguration, runOtherTests);
 			}, 1500);
@@ -102,12 +103,12 @@ define(["configuration/editConfiguration"], function(EditConfiguration) {
 		var self=this;
 		asyncTest("Test - Remote Deploy False Event Test", function() {
 			
-			$("input[name=remoteDeployment]").attr("checked", false);
+			$("input[name=remoteDeployment]").attr("checked", true);
 			$("input[name=remoteDeployment]").click();
 			
 			setTimeout(function() {
 				start();
-				equal($(commonVariables.contentPlaceholder).find("input[name=deploy_dir]").css('display'), "inline", "Remote Deploy Click Tested");
+				notEqual($(commonVariables.contentPlaceholder).find("input[name=deploy_dir]").css('display'), "inline", "Remote Deploy Click Tested");
 				self.addCertificate(editConfiguration, runOtherTests);
 			}, 1500);
 		}); 

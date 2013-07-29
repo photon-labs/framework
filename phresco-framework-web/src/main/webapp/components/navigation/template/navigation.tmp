@@ -27,30 +27,30 @@
 	
 	
     <section class="content_title" id="projectList" name="navigation">
-    	<h1>Projects</h1>
+    	<h1><span data-i18n="header.menu.projects"></span></h1>
     	<div class="add_cancel">
-        	<a><input type="button" value="Add" class="btn btn_style add_icon_btn" id="addproject"></a>
-            <input type="submit" value="Import" class="btn btn_style import_icon_btn" id="importApp">
+        	<a><input type="button" value="Add" data-i18n="common.btn.add" class="btn btn_style add_icon_btn" id="addproject"></a>
+            <input type="submit" value="Import" data-i18n="navigation.application.import" class="btn btn_style import_icon_btn" id="importApp">
 			<div id="project_list_import" class="dyn_popup" style="display:none; width:30%;">
             <div class="project_list_popup">
                 <table class="table importselect" cellpadding="0" cellspacing="0" border="0">
                     <tbody>
                         <tr>
-                            <td>Type<sup>*</sup></td>
-                            <td>Application Repo URL<sup>*</sup></td>
+                            <td><span data-i18n="project.create.label.type"></span><sup>*</sup></td>
+                            <td><span data-i18n="navigation.application.apprepourl"></span><sup>*</sup></td>
                         </tr>
                         <tr>
                         	<td>
                             	<select id="importType">
-                                	<option value="svn">SVN</option>
-                                    <option value="bitkeeper">Bitkeeper</option>
-                                    <option value="git">Git</option>
+                                	<option value="svn" data-i18n="projectlist.label.svn"></option>
+									<option value="bitkeeper" data-i18n="projectlist.label.bitkeeper"></option>
+									<option value="git" data-i18n="projectlist.label.git"></option>
                             	</select>
                             </td>
-                            <td><input type="text" id="importRepourl"></td>
+                            <td><input type="text" id="importRepourl" data-i18n="[placeholder]navigation.application.apprepourl"></td>
                         </tr>
                         <tr>
-                            <td class="seperatetd" id="importCredential">Other Credential<input type="checkbox"></td>
+                            <td class="seperatetd" id="importCredential"><span data-i18n="projectlist.label.othercredential"></span><input type="checkbox"></td>
                             <td></td>
                         </tr>
                     </tbody>
@@ -59,20 +59,20 @@
                 <table>
                 	<tbody>
                         <tr>
-                            <td>Username<sup class="svnusr">*</sup></td>
-                            <td>Password<sup class="svnpswd">*</sup></td>
+                            <td><span data-i18n="login.placeholder.username"></span><sup class="svnusr">*</sup></td>
+                            <td><span data-i18n="login.placeholder.password"></span><sup class="svnpswd">*</sup></td>
                         </tr>
                         <tr>
-                            <td><input type="text" placeholder="admin" id="importUserName"></td>
+                            <td><input type="text" data-i18n="[placeholder]login.placeholder.username" id="importUserName"></td>
                             <td><input type="password" placeholder="*******" id="importPassword"></td>
                         </tr>
                         <tr>
-                        	<td><input type="radio" name="headoption" value="HEAD" checked>Head Revision<input  class="revtext" type="radio" name="headoption" value="revision">Revision</td>
+                        	<td><input type="radio" name="headoption" value="HEAD" checked><span data-i18n="projectlist.label.headrevision"></span><input class="revtext" type="radio" name="headoption" value="revision"><span data-i18n="projectlist.label.revision"></span></td>
                             <td><input type="text" readonly="readonly" id="revision"></td>
                         </tr>
                         
                         <tr>
-                            <td class="seperatetd">Test Checkout<input type="checkbox" class="testCheckout"></td>
+                            <td class="seperatetd"><span data-i18n="navigation.application.testcheckout"></span><input type="checkbox" class="testCheckout"></td>
                             <td></td>
                         </tr>
                     </tbody>
@@ -82,23 +82,23 @@
 	                <table>
 	                	<tbody>
 	                		<tr>
-	                            <td>Test Repo Url</td>
-	                            <td><input type="text" id="testRepoUrl"></td>
+	                            <td><span data-i18n="navigation.application.testrepourl"></span></td>
+	                            <td><input type="text" id="testRepoUrl" data-i18n="[placeholder]navigation.application.testrepourl"></td>
 	                        </tr>
 	                        <tr>
-	                            <td class="seperatetd">Other Credential<input  id="testCredentials" type="checkbox"></td>
+	                            <td class="seperatetd"><span data-i18n="projectlist.label.othercredential"></span><input  id="testCredentials" type="checkbox"></td>
 	                            <td></td>
                         	</tr>
 	                        <tr>
-	                            <td>Username<sup>*</sup></td>
-	                            <td>Password<sup>*</sup></td>
+	                            <td><span data-i18n="login.placeholder.username"></span><sup>*</sup></td>
+	                            <td><span data-i18n="login.placeholder.password"></span><sup>*</sup></td>
 	                        </tr>
 	                        <tr>
-	                            <td><input type="text" placeholder="admin" id="testImportUserName"></td>
+	                            <td><input type="text" data-i18n="[placeholder]login.placeholder.username" id="testImportUserName"></td>
 	                            <td><input type="password" placeholder="*******" id="testImportPassword"></td>
 	                        </tr>
 	                        <tr>
-	                        	<td><input type="radio" name="testHeadOption" value="HEAD" checked>Head Revision<input  class="revtext" type="radio" name="testHeadOption" value="revision">Revision</td>
+	                        	<td><input type="radio" name="testHeadOption" value="HEAD" checked><span data-i18n="projectlist.label.headrevision"></span><input class="revtext" type="radio" name="testHeadOption" value="revision"><span data-i18n="projectlist.label.revision"></span></td>
 	                            <td><input type="text" readonly="readonly" id="testRevision"></td>
 	                        </tr>
 	                    </tbody>
@@ -108,20 +108,20 @@
                         <table>
                             <tbody>
                                 <tr>
-                                    <td>Username</td>
-                                    <td>Password</td>
+                                    <td><span data-i18n="login.placeholder.username"></span><sup>*</sup></td>
+									<td><span data-i18n="login.placeholder.password"></span><sup>*</sup></td>
                                 </tr>
                                 <tr>
-                                    <td><input type="text"></td>
-                                    <td><input type="password"></td>
+                                    <td id="gitName"><input type="text" data-i18n="[placeholder]login.placeholder.username"></td>
+                                    <td><input type="password" placeholder="*******"></td>
                                 </tr>
                             </tbody>
                          </table>
                   	 </div>
                </div>   
                   <div class="flt_right">
-                        <input class="btn btn_style" type="button" value="Import" name="importbtn">
-                        <input class="btn btn_style dyn_popup_close" type="button" value="Close">
+                        <input class="btn btn_style" type="button" value="Import" name="importbtn" data-i18n="[value]navigation.application.import">
+                        <input class="btn btn_style dyn_popup_close" type="button" value="Close" data-i18n="[value]common.btn.close">
                   </div>
         </div>
         </div>
@@ -129,26 +129,26 @@
     </section>	
 	
 	<section class="content_title" name="navigation" id="createProject" style="display:none">
-    	<h1>Create Project</h1>
+    	<h1><span data-i18n="project.create.title.label.createproject"></span></h1>
     	<!--content_title ends here -->
     </section>
 	
 	 <section class="content_title" name="navigation" id="editprojectTab" style="display:none">
     	<div class="title_nav">
         	<ul class="nav">
-            	<li><a href="#" class="act">Project Info</a></li>
-                <li id="integrationTest"><a href="#">Integration Test</a></li>
+            	<li><a href="#" class="act"><span data-i18n="navigation.application.projectinfo"></span></a></li>
+                <li id="integrationTest"><a href="#"><span data-i18n="navigation.application.integrationtest"></span></a></li>
                 <li class="dropdown">
-                    <a href="#" id="drop4" role="quality" class="dropdown-toggle drop-qual" data-toggle="dropdown">Continous Integration<b class="caret"></b></a>
+                    <a href="#" id="drop4" role="quality" class="dropdown-toggle drop-qual" data-toggle="dropdown"><span data-i18n="navigation.application.continuousintegration"></span><b class="caret"></b></a>
                     <div class="dropdown-menu cust_sel test_options" role="quality" aria-labelledby="drop4">
                         <ul id="ci" class="ci_dropdown">
-                            <li id="jobTemplates"><a href="#">Jobs</a></li>
+                            <li id="jobTemplates"><a href="#"><span data-i18n="navigation.application.jobs"></span></a></li>
                             <!--<li id="pipeline"><a href="#">Pipeline</a></li>-->
-                            <li id="continuousDeliveryView"><a href="#">Continuous Integration</a></li>
+                            <li id="continuousDeliveryView"><a href="#"><span data-i18n="navigation.application.continuousintegration"></span></a></li>
                         </ul>
                     </div>
                 </li>
-                <li><a href="#">API Status</a></li>
+                <li><a href="#"><span data-i18n="navigation.application.apistatus"></span></a></li>
         	</ul>
         </div>	
         <h1 id="editprojecttitle"></h1>
@@ -163,7 +163,7 @@
                 <li id="configuration"><a href="#" data-i18n="navigation.application.configuration"></a></li>
                 <li id="build"><a href="#" data-i18n="navigation.application.build"></a></li>
 				<li class="dropdown">
-                	<a href="#" id="drop4" role="quality" class="dropdown-toggle drop-qual" data-toggle="dropdown">Quality Assurance<b class="caret"></b></a>
+                	<a href="#" id="drop4" role="quality" class="dropdown-toggle drop-qual" data-toggle="dropdown" data-i18n="navigation.application.qa"><b class="caret"></b></a>
                 	<div class="dropdown-menu cust_sel test_options" role="quality" aria-labelledby="drop4">
                       	<ul id="qualityAssurance">
                         	<li id="unitTest"><a href="#" data-i18n="navigation.application.unit"></a></li>

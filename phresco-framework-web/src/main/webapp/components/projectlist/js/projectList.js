@@ -34,6 +34,7 @@ define(["projectlist/listener/projectListListener"], function() {
 			if(self.projectslistListener === null){
 				self.projectslistListener = new Clazz.com.components.projectlist.js.listener.ProjectsListListener;
 			}
+			self.registerHandlebars();
 			self.registerEvents(self.projectslistListener);
 		},
 
@@ -44,7 +45,7 @@ define(["projectlist/listener/projectListListener"], function() {
 		loadPage :function() {
 			var self = this;
 			Clazz.navigationController.jQueryContainer = commonVariables.contentPlaceholder;
-			Clazz.navigationController.push(this, commonVaraiables.animation);
+			Clazz.navigationController.push(this, commonVariables.animation);
 		},
 		
 		
@@ -85,6 +86,18 @@ define(["projectlist/listener/projectListListener"], function() {
 			self.onGetReportEvent.add(projectslistListener.getReportEvent, projectslistListener);
 			
 		},
+		registerHandlebars : function () {
+			var self = this;
+			Handlebars.registerHelper('descriptionshow', function(description) {
+				var descri;
+				if(description !== null){
+					descri = description;
+				}else{							
+					descri = '&nbsp';
+				}		
+				return descri;
+			});
+		},
 		
 		/***
 		 * Called after the preRender() and bindUI() completes. 
@@ -95,11 +108,6 @@ define(["projectlist/listener/projectListListener"], function() {
 		postRender : function(element) {
 			commonVariables.navListener.currentTab = commonVariables.projectlist;
 			commonVariables.navListener.showHideControls(commonVariables.projectlist);
-			$(".proj_list .scrollContent").mCustomScrollbar({
-				autoHideScrollbar:true,
-				theme:"light-thin",
-				advanced:{ updateOnContentResize: true}
-			});
 		},
 
 		preRender: function(whereToRender, renderFunction){
@@ -406,7 +414,7 @@ define(["projectlist/listener/projectListListener"], function() {
 				}
 			});
 			self.windowResize();
-			
+			self.tableScrollbar();
 		}
 	});
 

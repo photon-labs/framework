@@ -2,17 +2,17 @@ define(["features/features"], function(Features) {
 	return {
 		runTests: function () {
 			var self = this;
+			var feature = new Features();
 			module("Features.js;Features");
 			commonVariables.techId = "tech-html5-jquery-mobile-widget";
-				
 			asyncTest("Test - Feature list Module service Tested", function() {
-				$.mockjax({
+			$.mockjax({
 					url:  commonVariables.webserviceurl+commonVariables.featurePageContext+'/list?customerId=photon&techId=tech-html5-jquery-mobile-widget&type=FEATURE&userId=admin',
 					type:'GET',
 					contentType: 'application/json',
 					status: 200,
 					response: function() {
-						this.responseText = JSON.stringify({"response":null,"message":"Application Features listed successfully","exception":null,"data":[{"licenseId":null,"artifactId":"mod_pagination_1.0","classifier":null,"packaging":"zip","groupId":"modules.tech-php.files","versions":[{"scope":null,"dependencyIds":null,"appliesTo":[{"required":false,"techId":"tech-php"}],"artifactGroupId":"19574e90-0a4e-482a-934a-8360abff768c","used":false,"downloadURL":"http://172.16.17.226:8080/repository/content/groups/public//modules/tech-php/files/mod_pagination_1.0/1.0/mod_pagination_1.0-1.0.zip","fileSize":0,"version":"1.0","creationDate":1348896224750,"helpText":null,"system":false,"name":"Pagination","id":"59bdbeeb-0007-4b0f-8538-b3768e3c077d","displayName":null,"description":null,"status":null}],"appliesTo":[{"techId":"tech-php","core":false}],"imageURL":null,"type":"FEATURE","customerIds":["photon"],"used":false,"creationDate":1371627764188,"helpText":null,"system":false,"name":"Pagination","id":"19574e90-0a4e-482a-934a-8360abff768c","displayName":"Pagination","description":null,"status":null}]});
+						this.responseText = JSON.stringify({"message":"Application Features listed successfully","exception":null,"responseCode":null,"data":[{"artifactId":"jdom","classifier":null,"packaging":"jar","groupId":"jdom","versions":[{"downloadURL":"http://172.16.17.226:8080/repository/content/groups/public//jdom/jdom/1.0/jdom-1.0.jar","scope":null,"appliesTo":[{"required":false,"techId":"tech-java-webservice"}],"artifactGroupId":"31ec87e7-d8f2-43fe-aec2-ac24af57b3aa","dependencyIds":["b966ea3d-3ed0-47bb-8a0a-83cefc4ae41c","ad9508da-b484-427d-a7f9-16cc0a0b0494","b4ce2df7-71e7-4f34-bab2-d4f0ef3217e1"],"used":false,"fileSize":0,"version":"1.0","helpText":null,"system":false,"creationDate":1348896243312,"name":"jdom","id":"e75b7088-8d9f-4b00-8077-9e76b5c478fe","displayName":null,"description":null,"status":null}],"appliesTo":[{"techId":"tech-java-standalone","core":false},{"techId":"tech-java-webservice","core":false},{"techId":"tech-html5","core":false},{"techId":"tech-html5-jquery-mobile-widget","core":false},{"techId":"tech-html5-mobile-widget","core":false},{"techId":"tech-html5-jquery-widget","core":false},{"techId":"tech-html5-widget","core":false}],"imageURL":null,"licenseId":null,"type":"FEATURE","used":false,"customerIds":["photon"],"helpText":null,"system":false,"creationDate":1374762921526,"name":"jdom","id":"31ec87e7-d8f2-43fe-aec2-ac24af57b3aa","displayName":"jdom","description":null,"status":null},{"artifactId":"spring-xml","classifier":null,"packaging":"jar","groupId":"org.springframework.ws ","versions":[{"downloadURL":"http://172.16.17.226:8080/repository/content/groups/public//org/springframework/ws /spring-xml/1.5.9/spring-xml-1.5.9.jar","scope":null,"appliesTo":[{"required":false,"techId":"tech-java-webservice"}],"artifactGroupId":"7077da20-a2cc-41bc-b822-84c66ee1fe4e","dependencyIds":null,"used":false,"fileSize":0,"version":"1.5.9","helpText":null,"system":false,"creationDate":1348896243296,"name":"Spring-xml","id":"b4ce2df7-71e7-4f34-bab2-d4f0ef3217e1","displayName":null,"description":null,"status":null}],"appliesTo":[{"techId":"tech-java-standalone","core":false},{"techId":"tech-java-webservice","core":false},{"techId":"tech-html5","core":false},{"techId":"tech-html5-jquery-mobile-widget","core":false},{"techId":"tech-html5-mobile-widget","core":false},{"techId":"tech-html5-jquery-widget","core":false},{"techId":"tech-html5-widget","core":false}],"imageURL":null,"licenseId":null,"type":"FEATURE","used":false,"customerIds":["photon"],"helpText":null,"system":false,"creationDate":1374762921526,"name":"Spring-xml","id":"7077da20-a2cc-41bc-b822-84c66ee1fe4e","displayName":"Spring-xml","description":null,"status":null}]});
 					}
 				});
 				$.mockjax({
@@ -42,49 +42,49 @@ define(["features/features"], function(Features) {
 				commonVariables.navListener.onMytabEvent("featurelist");				
 				setTimeout(function() {
 					start();
-					equal($(commonVariables.contentPlaceholder).find("li[type = FEATURE]").attr("name"), "Pagination", "Feature list Module service Tested");
-					self.FeatureModulelistfailureVerification();
+					equal($(commonVariables.contentPlaceholder).find("li[type = FEATURE]").attr("name"), "jdom", "Feature list Module service Tested");
+					self.FeatureModulelistfailureVerification(feature);
 				}, 2000);
 			});
 		},
 		
-		FeatureModulelistfailureVerification : function (){
+		FeatureModulelistfailureVerification : function (feature){
 			var self = this;
 			asyncTest("Test - Feature javascript list Failure service Tested", function() {
 				commonVariables.navListener.onMytabEvent("featurelist");				
 				setTimeout(function() {
 					start();
 					notEqual($(commonVariables.contentPlaceholder).find("li[type = FEATURE]").attr("name"), "Page", "Feature list Module failure service Tested");
-					self.FeatureJavascriptlistVerification();
+					self.FeatureJavascriptlistVerification(feature);
 				}, 2000);
 			});
 		},
 		
 		
-		FeatureJavascriptlistVerification : function (){
+		FeatureJavascriptlistVerification : function (feature){
 			var self = this;
 			asyncTest("Test - Feature javascript list service Tested", function() {
 				commonVariables.navListener.onMytabEvent("featurelist");				
 				setTimeout(function() {
 					start();
 					equal($(commonVariables.contentPlaceholder).find("li[type = JAVASCRIPT]").attr("name"), "jQuery_UI", "Feature javascript list service Tested");
-					self.FeatureJavascriptlistfailureVerification();
+					self.FeatureJavascriptlistfailureVerification(feature);
 				}, 2000);
 			});
 		},
 		
-		FeatureJavascriptlistfailureVerification : function (){
+		FeatureJavascriptlistfailureVerification : function (feature){
 			var self = this;
 			asyncTest("Test - Feature javascript list Failure service Tested", function() {
 				commonVariables.navListener.onMytabEvent("featurelist");				
 				setTimeout(function() {
 					start();
 					notEqual($(commonVariables.contentPlaceholder).find("li[type = JAVASCRIPT]").attr("name"), "jQuery", "Feature javascript list Failure service Tested");
-					self.FeatureModuleSearchVerification();
+					self.FeatureModuleSearchVerification(feature);
 				}, 2000);
 			});
 		},
-		FeatureModuleSearchVerification : function (){
+		FeatureModuleSearchVerification : function (feature){
 			var self = this;
 			asyncTest("Test - Feature Module Search Verification Tested", function() {
 				commonVariables.navListener.onMytabEvent("featurelist");
@@ -92,12 +92,39 @@ define(["features/features"], function(Features) {
 				$('#module').bind("keyup");			
 				setTimeout(function() {
 					start();
-					equal($(commonVariables.contentPlaceholder).find("li[type = FEATURE]").attr("name"), "Pagination", "Feature Module Search Verification Tested");
-					self.FeatureModuleSearchFailurVerification();
+					equal($(commonVariables.contentPlaceholder).find("li[type = FEATURE]").attr("name"), "jdom", "Feature Module Search Verification Tested");
+					self.FeatureSearch(feature);
 				}, 2000);
 			});
 		},
-		FeatureModuleSearchFailurVerification : function (){
+		FeatureSearch: function (feature){
+			var self = this;
+			asyncTest("Test - Feature Module Search function Tested", function() {
+				commonVariables.navListener.onMytabEvent("featurelist");
+				feature.featuresListener.search("jQuery_UI", "module");
+				setTimeout(function() {
+					start();
+					equal($(commonVariables.contentPlaceholder).find("li[type = FEATURE]").attr("name"), "jdom", "Feature Module Search function Tested");
+					self.FeatureSelected(feature);
+				}, 2000);
+			});
+		},
+		
+		FeatureSelected: function (feature){
+			var self = this;
+			asyncTest("Test - Feature Module Selected function Tested", function() {
+				commonVariables.navListener.onMytabEvent("featurelist");
+				feature.featuresListener.showSelected("");
+				setTimeout(function() {
+					start();
+					equal($(commonVariables.contentPlaceholder).find("li[type = FEATURE]").attr("name"), "jdom", "Feature Module Selected function Tested");
+					self.FeatureModuleSearchFailurVerification(feature);
+				}, 2000);
+			});
+		},
+		
+		
+		FeatureModuleSearchFailurVerification : function (feature){
 			var self = this;
 			asyncTest("Test - Feature Module Search failure Verification Tested", function() {
 				commonVariables.navListener.onMytabEvent("featurelist");
@@ -106,11 +133,11 @@ define(["features/features"], function(Features) {
 				setTimeout(function() {
 					start();
 					equal($(commonVariables.contentPlaceholder).find("#norecord1").text(), "No records", "Feature Module Search Failure Verification Tested");
-					self.FeatureJavascriptSearchVerification();
+					self.FeatureJavascriptSearchVerification(feature);
 				}, 2000);
 			});
 		},
-		FeatureJavascriptSearchVerification : function (){
+		FeatureJavascriptSearchVerification : function (feature){
 			var self = this;
 			asyncTest("Test - Feature Javascript Libraries Search Verification Tested", function() {
 				commonVariables.navListener.onMytabEvent("featurelist");
@@ -119,11 +146,11 @@ define(["features/features"], function(Features) {
 				setTimeout(function() {
 					start();
 					equal($(commonVariables.contentPlaceholder).find("li[type = JAVASCRIPT]").attr("name"), "jQuery_UI", "Javascript Libraries Search Verification Tested");
-					self.FeatureModuleJavascriptFailurVerification();
+					self.FeatureModuleJavascriptFailurVerification(feature);
 				}, 2000);
 			});
 		},
-		FeatureModuleJavascriptFailurVerification : function (){
+		FeatureModuleJavascriptFailurVerification : function (feature){
 			var self = this;
 			asyncTest("Test - Javascript Libraries Search failure Verification Tested", function() {
 				commonVariables.navListener.onMytabEvent("featurelist");
@@ -132,15 +159,15 @@ define(["features/features"], function(Features) {
 				setTimeout(function() {
 					start();
 					equal($(commonVariables.contentPlaceholder).find("#norecord2").text(), "No records", " Javascript Libraries Search Failure Verification Tested");
-					self.FeatureModuleDescriptionVerification();
+					self.FeatureModuleDescriptionVerification(feature);
 				}, 2000);
 			});
 		},
-		FeatureModuleDescriptionVerification : function (){
+		FeatureModuleDescriptionVerification : function (feature){
 			var self = this;
 			asyncTest("Test - Module Description Service Verification Tested", function() {
 				$.mockjax({
-					url:  commonVariables.webserviceurl+commonVariables.featurePageContext+'/desc?&artifactGroupId=c2c74b7d-a6b6-4e61-b0e0-a44db1dfb3de&userId=admin',					
+					url:  commonVariables.webserviceurl+commonVariables.featurePageContext+'/desc?artifactGroupId=31ec87e7-d8f2-43fe-aec2-ac24af57b3aa&userId=admin',					
 					type:'GET',
 					contentType: 'application/json',
 					status: 200,
@@ -149,7 +176,7 @@ define(["features/features"], function(Features) {
 					}
 				});
 				$.mockjax({
-					url:  commonVariables.webserviceurl+commonVariables.featurePageContext+'/desc?&artifactGroupId=19574e90-0a4e-482a-934a-8360abff768c&userId=admin',					
+					url:  commonVariables.webserviceurl+commonVariables.featurePageContext+'/desc?artifactGroupId=7077da20-a2cc-41bc-b822-84c66ee1fe4e&userId=admin',					
 					type:'GET',
 					contentType: 'application/json',
 					status: 200,
@@ -158,7 +185,16 @@ define(["features/features"], function(Features) {
 					}
 				});
 				$.mockjax({
-					url:  commonVariables.webserviceurl+commonVariables.featurePageContext+'/desc?&artifactGroupId=jslib_jquery_ui&userId=admin',					
+					url:  commonVariables.webserviceurl+commonVariables.featurePageContext+'/desc?artifactGroupId=c2c74b7d-a6b6-4e61-b0e0-a44db1dfb3de&userId=admin',					
+					type:'GET',
+					contentType: 'application/json',
+					status: 200,
+					response: function() {
+						this.responseText = JSON.stringify({"response": null,"message": "Application Features listed successfully","exception": null,"data": "As your database grows, showing all the results of a query on a single page is no longer practical. This is where pagination comes in handy. You can display your results over a number of pages, each linked to the next, to allow your users to browse your content in bite sized pieces."});
+					}
+				});
+				$.mockjax({
+					url:  commonVariables.webserviceurl+commonVariables.featurePageContext+'/desc?artifactGroupId=jslib_jquery_ui&userId=admin',					
 					type:'GET',
 					contentType: 'application/json',
 					status: 200,
@@ -171,12 +207,12 @@ define(["features/features"], function(Features) {
 				setTimeout(function() { 
 					start();					
 					var desc = $(commonVariables.contentPlaceholder).find(".features_desc_content").text();
-					equal(desc, "JDOM is a way to represent an XML document for easy and efficient reading, manipulation, and writing.", " Module Description Service Verification Tested");
-					self.FeatureUpdateVerification();
+					equal(desc, "As your database grows, showing all the results of a query on a single page is no longer practical. This is where pagination comes in handy. You can display your results over a number of pages, each linked to the next, to allow your users to browse your content in bite sized pieces.", " Module Description Service Verification Tested");
+					self.FeatureUpdateVerification(feature);
 				}, 2000);
 			});
 		},
-		FeatureUpdateVerification : function (){
+		FeatureUpdateVerification : function (feature){
 			var self = this;
 			asyncTest("Test - Module Update Service Verification Tested", function() {
 				$.mockjax({
@@ -189,7 +225,7 @@ define(["features/features"], function(Features) {
 					}
 				});
 				$.mockjax({
-					url:  commonVariables.webserviceurl+commonVariables.featurePageContext + "/selectedFeature?&userId=admin&appDirName=wordpress-WordPress",
+					url:  commonVariables.webserviceurl+commonVariables.featurePageContext + "/selectedFeature?userId=admin&appDirName=wordpress-WordPress",
 					type:'GET',
 					contentType: 'application/json',
 					status: 200,
@@ -206,17 +242,17 @@ define(["features/features"], function(Features) {
 					start();
 					//var successmsg = $(".popsuccess").text();
 					var selectoption = $(commonVariables.contentPlaceholder).find("#feature_c2c74b7d-a6b6-4e61-b0e0-a44db1dfb3de").attr("class");
-					equal(selectoption, "switch switchOn", " Select Service Verification Tested");
-					self.FeatureSelectVerification();
+					equal(selectoption, "switch switchOn default", " Select Service Verification Tested");
+					self.FeatureSelectVerification(feature);
 				}, 2000);
 			});
 		},
 		
-		FeatureSelectVerification : function (){
+		FeatureSelectVerification : function (feature){
 			var self = this;
 			asyncTest("Test - Select Service Verification Tested", function() {
 				$.mockjax({
-					url:  commonVariables.webserviceurl+commonVariables.featurePageContext + "/selectedFeature?&userId=admin&appDirName=wordpress-WordPress",
+					url:  commonVariables.webserviceurl+commonVariables.featurePageContext + "/selectedFeature?userId=admin&appDirName=wordpress-WordPress",
 					type:'GET',
 					contentType: 'application/json',
 					status: 200,
@@ -231,16 +267,16 @@ define(["features/features"], function(Features) {
 				setTimeout(function() { 
 					start();					
 					var selectoption = $(commonVariables.contentPlaceholder).find("#feature_c2c74b7d-a6b6-4e61-b0e0-a44db1dfb3de").attr("class");
-					equal(selectoption, "switch switchOn", " Select Service Verification Tested");
-					self.FeatureSelectFailureVerification();
+					equal(selectoption, "switch switchOn default", " Select Service Verification Tested");
+					self.FeatureSelectFailureVerification(feature);
 				}, 2000);
 			});
 		},
-		FeatureSelectFailureVerification : function (){
+		FeatureSelectFailureVerification : function (feature){
 			var self = this;
 			asyncTest("Test - UnSelect Service option Verification Tested", function() {
 				$.mockjax({
-					url:  commonVariables.webserviceurl+commonVariables.featurePageContext + "/selectedFeature?&userId=admin&appDirName=wordpress-WordPress",
+					url:  commonVariables.webserviceurl+commonVariables.featurePageContext + "/selectedFeature?userId=admin&appDirName=wordpress-WordPress",
 					type:'GET',
 					contentType: 'application/json',
 					status: 200,
@@ -256,9 +292,33 @@ define(["features/features"], function(Features) {
 					start();	
 					var unselectoption = $(commonVariables.contentPlaceholder).find("#feature_jslib_jquery_ui").attr("class");
 					equal(unselectoption, "switch switchOff", "UnSelect Service option Verification Tested");
-					/* require(["codequalityTest"], function(codequalityTest){
-						codequalityTest.runTests();
-					}); */
+					self.FeaturedepententVerification(feature);					
+				}, 2000);
+			});
+		},
+		FeaturedepententVerification : function (feature){
+			var self = this;
+			var descid = "e75b7088-8d9f-4b00-8077-9e76b5c478fe";
+			asyncTest("Test - Defentent Service Verification Tested", function() {
+				$.mockjax({
+					url:  commonVariables.webserviceurl+commonVariables.featurePageContext + "/dependencyFeature?userId=admin&versionId=e75b7088-8d9f-4b00-8077-9e76b5c478fe",
+					type:'GET',
+					contentType: 'application/json',
+					status: 200,
+					response: function() {
+						this.responseText = JSON.stringify({"message": " Dependency Features listed successfully","exception": null,"responseCode": null,"data": {"e75b7088-8d9f-4b00-8077-9e76b5c478fe": "b4ce2df7-71e7-4f34-bab2-d4f0ef3217e1"},"status": null});
+					}
+				});
+				commonVariables.navListener.onMytabEvent("featurelist");
+				//$("label[name=on_off]").click();
+				feature.featuresListener.defendentmodule("e75b7088-8d9f-4b00-8077-9e76b5c478fe", "true");
+				setTimeout(function() { 
+					start();
+					var selectoption = $(commonVariables.contentPlaceholder).find("#feature_7077da20-a2cc-41bc-b822-84c66ee1fe4e").attr("class"); 
+					equal(selectoption, "switch switchOn", "Defentent Service Verification Tested");
+					require(["croneExpressionTest"], function(croneExpressionTest){
+						croneExpressionTest.runTests();
+					});
 				}, 2000);
 			});
 		}

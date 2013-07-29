@@ -2,7 +2,7 @@ define(["features/features",  "application/application",  "projectlist/projectLi
 
 	Clazz.createPackage("com.components.features.js.listener");
 
-	Clazz.com.components.features.js.listener.FeaturesListener = Clazz.extend(Clazz.Widget, {
+	Clazz.com.components.features.js.listener.FeaturesListener = Clazz.extend(Clazz.WidgetWithTemplate, {
 		
 		basePlaceholder :  window.commonVariables.basePlaceholder,
 		appinfoContent : null,
@@ -76,12 +76,28 @@ define(["features/features",  "application/application",  "projectlist/projectLi
 				//commonVariables.loadingScreen.showLoading();
 				commonVariables.api.ajaxRequest(header,
 					function(response) {
-						if (response !== null) {
+						if (response !== null && response.status !== "error" && response.status !== "failure") {
 							//commonVariables.loadingScreen.removeLoading();
 							callback(response);
 						} else {
 							//commonVariables.loadingScreen.removeLoading();
-							callback({ "status" : "service failure"});
+							$(".blinkmsg").removeClass("popsuccess").addClass("poperror");
+							var failuremsg = null;
+							if(response.responseCode === "PHR410001") {
+								self.effectFadeOut('poperror', (''));
+								failuremsg = 'features.errormessage.unauthorizeduser';
+							} else if(response.responseCode === "PHR410002") {
+								self.effectFadeOut('poperror', (''));
+								failuremsg = 'features.errormessage.applicationfeaturesfailed';
+							} else if(response.responseCode === "PHR410003") {
+								self.effectFadeOut('poperror', (''));
+								failuremsg = 'features.errormessage.fetchdescriptionfailed';
+							} else if(response.responseCode === "PHR410006") {
+								self.effectFadeOut('poperror', (''));
+								failuremsg = 'features.errormessage.selectedfeaturesfailed';
+							}
+							self.renderlocales(commonVariables.basePlaceholder);
+
 						}
 
 					},
@@ -102,17 +118,43 @@ define(["features/features",  "application/application",  "projectlist/projectLi
 				//commonVariables.loadingScreen.showLoading();
 				commonVariables.api.ajaxRequest(header,
 					function(response) {
-						if (response !== null) {
+						if (response !== null && response.status !== "error" && response.status !== "failure") {
 							//commonVariables.loadingScreen.removeLoading();
+							if(response.responseCode === "PHR200007") {
+								$(".blinkmsg").removeClass("poperror").addClass("popsuccess");
+								self.effectFadeOut('popsuccess', (''));
+								$(".popsuccess").attr('data-i18n', 'features.successmessage.featuresupdated');
+								self.renderlocales(commonVariables.basePlaceholder);
+							}
 							callback(response);
 						} else {
 							//commonVariables.loadingScreen.removeLoading();
-							callback({ "status" : "service failure"});
+							$(".blinkmsg").removeClass("popsuccess").addClass("poperror");
+							var failuremsg = null;
+							if(response.responseCode === "PHR210008") {
+								self.effectFadeOut('poperror', (''));
+								failuremsg = 'features.errormessage.featuresupdatefailed';
+							} else if(response.responseCode === "PHR210007") {
+								self.effectFadeOut('poperror', (''));
+								failuremsg = 'features.errormessage.openprojectinfofailed';
+							} else if(response.responseCode === "PHR410001") {
+								self.effectFadeOut('poperror', (''));
+								failuremsg = 'features.errormessage.unauthorizeduser';
+							} else if(response.responseCode === "PHR000000") {
+								self.effectFadeOut('poperror', (''));
+								failuremsg = 'commonlabel.errormessage.unexpectedfailure';
+							}
+							$(".poperror").attr('data-i18n', failuremsg);
+							self.renderlocales(commonVariables.basePlaceholder);
+							
 						}
 					},
 
 					function(textStatus) {
-						//commonVariables.loadingScreen.removeLoading();
+						$(".blinkmsg").removeClass("popsuccess").addClass("poperror");
+						self.effectFadeOut('poperror', (''));
+						$(".poperror").attr('data-i18n', 'commonlabel.errormessage.serviceerror');
+						self.renderlocales(commonVariables.basePlaceholder);
 					}
 				);
 			} catch(exception) {
@@ -127,8 +169,9 @@ define(["features/features",  "application/application",  "projectlist/projectLi
 		
 		scrollbarEnable : function(){
 			var self=this;
+			console.info('self.flagged  ====' , self.flagged );
 			if(self.flagged === 2) {
-				$("#content_1,#content_2,#content_3").mCustomScrollbar({
+				/*$("#content_1,#content_2,#content_3").mCustomScrollbar({
 					scrollInertia:600,
 					autoHideScrollbar:true,
 					callbacks:{
@@ -138,7 +181,9 @@ define(["features/features",  "application/application",  "projectlist/projectLi
 					},
 					theme:"light-thin",
 					updateOnContentResize: true
-				});
+				});*/
+				$(".feature_content").scrollbars();
+				$(".dyn_popup").hide();
 			}
 			
 		},
@@ -161,24 +206,55 @@ define(["features/features",  "application/application",  "projectlist/projectLi
 				val = eachList;
 			}
 			val.each(function() {
-				if($(this).attr("class") === "switch switchOn default"){
+				if($(this).attr("class") === "switch switchOn default" || $(this).attr("class") === "switch switchOn"){
 					$(this).parent().show();
 					self.scrollbarUpdate();					
 				}
 			});			
 		},
 		
-		bcheck : function(obj){
+		bcheck : function(obj, buttonId){
+			var self = this;
 			var button = $(obj).attr("value");
+			var versionID = $(obj).parent().next('div.flt_right').children('select.input-mini').find(':selected').val();
 			$(obj).closest('fieldset').removeClass('switchOn'); 
 			$(obj).closest('fieldset').removeClass('switchOff');			
-			if(button === 'false'){ 
+			if(button === 'false'){
 				$(obj).closest('fieldset').addClass('switchOff');
-				$(obj).closest('fieldset').attr('value', "false"); 
-			}else if(button === 'true'){ 
+				$(obj).closest('fieldset').attr('value', "false");
+			}else if(button === 'true'){
 				$(obj).closest('fieldset').addClass('switchOn');
 				$(obj).closest('fieldset').attr('value', "true");
 			}
+			if(buttonId === undefined){
+				self.defendentmodule(versionID, button);
+			}
+
+		},
+		
+		defendentmodule : function(versionID, button){
+			var self = this;
+			self.getFeaturesUpdate(self.getRequestHeader(self.featureUpdatedArray, "DEPENDENCY", versionID), function(response) {
+				if(response.data === null){
+					$.each(response.data, function(index, value){
+						$("select.input-mini option").each(function(index, currentVal) {
+							var uiId = $(this).val();
+							if(value === uiId){
+								if(button === 'true'){
+									$(currentVal).parents("div").siblings("fieldset").removeClass('switchOff').addClass("switchOn");
+									$(this).attr("selected", "selected");
+									var showversionId = $(currentVal).parents("div").attr("id");
+									$("#"+showversionId).show();
+								} else if(button === 'false'){
+									$(currentVal).parents("div").siblings("fieldset").removeClass('switchOn').addClass("switchOff");
+									var showversionId = $(currentVal).parents("div").attr("id");
+									$("#"+showversionId).hide();
+								}
+							} 
+						}); 
+					});
+				}	
+			});
 		},
 
 		hideLoad : function(){
@@ -186,12 +262,6 @@ define(["features/features",  "application/application",  "projectlist/projectLi
 			//commonVariables.loadingScreen.removeLoading();
 		},
 
-		/***
-		 * provides the request header
-		 *
-		 * @projectRequestBody: request body of synonym
-		 * @return: returns the contructed header
-		 */
 		getRequestHeader : function(projectRequestBody, type, descid) {
 			var url, self = this;
 			var userId = JSON.parse(commonVariables.api.localVal.getSession("userInfo"));
@@ -206,14 +276,17 @@ define(["features/features",  "application/application",  "projectlist/projectLi
 				header.webserviceurl = commonVariables.webserviceurl+commonVariables.featurePageContext+"/list?customerId=photon&techId="+ techId +"&type="+type+"&userId="+userId.id;
 			} else if (type === "desc") {
 				header.requestMethod = "GET";
-				header.webserviceurl = commonVariables.webserviceurl+commonVariables.featurePageContext+"/desc?&artifactGroupId="+descid+"&userId="+userId.id;
+				header.webserviceurl = commonVariables.webserviceurl+commonVariables.featurePageContext+"/desc?artifactGroupId="+descid+"&userId="+userId.id;
 			} else if (type === "SELECTED") {
 				header.requestMethod = "GET";
-				header.webserviceurl = commonVariables.webserviceurl+commonVariables.featurePageContext+"/selectedFeature?&userId="+userId.id+"&appDirName="+appDirName;
+				header.webserviceurl = commonVariables.webserviceurl+commonVariables.featurePageContext+"/selectedFeature?userId="+userId.id+"&appDirName="+appDirName;
 			} else if (type === "UPDATE") {
 				header.requestMethod = "PUT";
 				header.requestPostBody = JSON.stringify(projectRequestBody);
 				header.webserviceurl = commonVariables.webserviceurl+commonVariables.projectlistContext + "/updateFeature?customerId=photon&userId="+userId.id+"&appDirName="+appDirName;
+			} else if (type === "DEPENDENCY") {
+				header.requestMethod = "GET";
+				header.webserviceurl = commonVariables.webserviceurl+commonVariables.featurePageContext + "/dependencyFeature?userId="+userId.id+"&versionId="+descid; // descid is versionId
 			}
 			return header;
 		}

@@ -112,13 +112,6 @@ define(["projects/listener/projectsListener"], function() {
 			var self=this;
 			self.multiselect();
 			commonVariables.navListener.currentTab = commonVariables.addproject;
-			if(commonVariables.animation) {
-				$(".create_proj .scrollContent").mCustomScrollbar({
-					autoHideScrollbar:true,
-					theme:"light-thin",
-					advanced:{ updateOnContentResize: true}
-				});
-			}
 			self.projectsListener.multiModuleEvent("false");
 		},
 		
@@ -176,15 +169,28 @@ define(["projects/listener/projectsListener"], function() {
 				self.onCancelCreateEvent.dispatch();
 			});
 			
+			$("#startDate,#endDate").bind('keydown', function(e) {
+				var keyCode = e.keyCode || e.which;
+				if ((e.which >= 48 && e.which <= 57 && !e.shiftKey) || (keyCode === 191 && !e.shiftKey) || (keyCode === 9) || (keyCode === 8)){
+					return true;
+				} else {
+					e.preventDefault();
+				}
+			});
+
+
 			$("#endDate").blur(function(){
-				if($('.applnLayer').attr('key') === 'displayed') {
-					$("#appcode").focus();	
+				if($('#projectname').val() === '') {
+					$('#projectname').focus();
+				} else if($('.applnLayer').attr('key') === 'displayed') {
+					$("#appcode").focus();
 				} else if($('.webLayer').attr('key') === 'displayed') {
 					$("#webappcode").focus();
 				} else {
 					$("#mobileappcode").focus();
 				}
 			});
+
 
 			$("input[name='projectname']").bind('input',function() {
 				$("input[name='projectcode']").val(self.specialCharValidation($(this).val().replace(/\s/g, "")));
@@ -213,6 +219,7 @@ define(["projects/listener/projectsListener"], function() {
 			});
 			
 			Clazz.navigationController.jQueryContainer = commonVariables.contentPlaceholder;
+			this.customScroll($(".scrolldiv"));
 		}
 	});
 

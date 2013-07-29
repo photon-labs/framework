@@ -28,7 +28,11 @@ import java.security.KeyStore;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -42,19 +46,31 @@ import javax.net.ssl.X509TrustManager;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang.StringUtils;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonIOException;
 import com.google.gson.JsonSyntaxException;
+import com.photon.phresco.api.ConfigManager;
 import com.photon.phresco.commons.FrameworkConstants;
 import com.photon.phresco.commons.model.ApplicationInfo;
+import com.photon.phresco.commons.model.BuildInfo;
 import com.photon.phresco.commons.model.CertificateInfo;
 import com.photon.phresco.commons.model.ProjectInfo;
+import com.photon.phresco.configuration.ConfigReader;
+import com.photon.phresco.configuration.Configuration;
+import com.photon.phresco.configuration.Environment;
+import com.photon.phresco.exception.ConfigurationException;
 import com.photon.phresco.exception.PhrescoException;
 import com.photon.phresco.framework.FrameworkConfiguration;
 import com.photon.phresco.framework.PhrescoFrameworkFactory;
+import com.photon.phresco.framework.api.ApplicationManager;
 import com.photon.phresco.framework.api.ProjectManager;
+import com.photon.phresco.plugins.model.Mojos.Mojo.Configuration.Parameters.Parameter;
+import com.photon.phresco.plugins.model.Mojos.Mojo.Configuration.Parameters.Parameter.Childs.Child;
+import com.photon.phresco.plugins.model.Mojos.Mojo.Configuration.Parameters.Parameter.PossibleValues.Value;
+import com.photon.phresco.plugins.util.MojoProcessor;
 import com.photon.phresco.util.Constants;
 import com.photon.phresco.util.Utility;
 import com.phresco.pom.exception.PhrescoPomException;
@@ -390,6 +406,11 @@ public class FrameworkServiceUtil implements Constants, FrameworkConstants {
 	    }
 	    return serverUrl;
     }
+    
+    private static String getBuildInfosFilePath(String appDirName) throws PhrescoException {
+    	return getApplicationHome(appDirName) + FILE_SEPARATOR + BUILD_DIR + FILE_SEPARATOR +BUILD_INFO_FILE_NAME;
+    }
+    
 	
 	/**
 	 * To the phresco plugin info file path based on the goal
@@ -480,6 +501,359 @@ public class FrameworkServiceUtil implements Constants, FrameworkConstants {
 			Utility.closeStream(outputKeyStore);
 		}
 	}
+	
+	public static ActionResponse checkForConfigurations(ActionResponse actionresponse, String appDirName, String environmentName, String customerId) throws PhrescoException {
+		ConfigManager configManager = null;
+		List<String> errorMsg = new ArrayList<String>();
+		try {
+			File baseDir = new File(Utility.getProjectHome() + appDirName);
+			File configFile = new File(baseDir +  File.separator + Constants.DOT_PHRESCO_FOLDER + File.separator + Constants.CONFIGURATION_INFO_FILE);
+			File settingsFile = new File(Utility.getProjectHome()+ customerId + SETTINGS_INFO_FILE_NAME);
+			List<String> selectedEnvs = csvToList(environmentName);
+			List<String> selectedConfigTypeList = getSelectedConfigTypeList(baseDir.getName());
+			List<String> nullConfig = new ArrayList<String>();
+			if (settingsFile.exists()) {
+				configManager = PhrescoFrameworkFactory.getConfigManager(settingsFile);
+				List<Environment> environments = configManager.getEnvironments();
+				for (Environment environment : environments) {
+					if (selectedEnvs.contains(environment.getName())) {
+						if (CollectionUtils.isNotEmpty(selectedConfigTypeList)) {
+							for (String selectedConfigType : selectedConfigTypeList) {
+								if(CollectionUtils.isEmpty(configManager.getConfigurations(environment.getName(), selectedConfigType))) {
+									nullConfig.add(selectedConfigType);
+								}
+							}
+						}
+					} if(CollectionUtils.isNotEmpty(nullConfig)) {
+						String errMsg = environment.getName() + " environment in global settings doesnot have "+ nullConfig + " configurations";
+						actionresponse.setErrorFound(true);
+						errorMsg.add(errMsg);
+						actionresponse.setConfigErrorMsg(errorMsg);
+					}
+				} 
+			} 
+			configManager = PhrescoFrameworkFactory.getConfigManager(configFile);
+			List<Environment> environments = configManager.getEnvironments();
+			for (Environment environment : environments) {
+				if (selectedEnvs.contains(environment.getName())) {
+					if (CollectionUtils.isNotEmpty(selectedConfigTypeList)) {
+						for (String selectedConfigType : selectedConfigTypeList) {
+							if(CollectionUtils.isEmpty(configManager.getConfigurations(environment.getName(), selectedConfigType))) {
+								nullConfig.add(selectedConfigType);
+							}
+						}
+					}
+				} if(CollectionUtils.isNotEmpty(nullConfig)) {
+					String errMsg = environment.getName() + " environment in " + baseDir.getName() + " doesnot have "+ nullConfig + " configurations";
+					actionresponse.setErrorFound(true);
+					errorMsg.add(errMsg);
+					actionresponse.setConfigErrorMsg(errorMsg);
+				}
+			} 
+			return actionresponse;
+		} catch (PhrescoException e) {
+			throw new PhrescoException(e);
+		} catch (ConfigurationException e) {
+			throw new PhrescoException(e);
+		}
+	}
+	
+	public static List<String> csvToList(String csvString) {
+		List<String> envs = new ArrayList<String>();
+		if (StringUtils.isNotEmpty(csvString)) {
+			String[] temp = csvString.split(",");
+			for (int i = 0; i < temp.length; i++) {
+				envs.add(temp[i]);
+			}
+		}
+		return envs;
+	}
+	
+	private static List<String> getSelectedConfigTypeList(String  baseDir) throws PhrescoException {
+		try {
+			ApplicationInfo appInfo = getApplicationInfo(baseDir);
+			List<String> selectedList = new ArrayList<String>();
+			if(CollectionUtils.isNotEmpty(appInfo.getSelectedServers())) {
+				selectedList.add("Server");
+			}
+			if(CollectionUtils.isNotEmpty(appInfo.getSelectedDatabases())) {
+				selectedList.add("Database");
+			}
+			if(CollectionUtils.isNotEmpty(appInfo.getSelectedWebservices())) {
+				selectedList.add("WebService");
+			}
+			return selectedList;
+		} catch (PhrescoException e) {
+			throw new PhrescoException(e);
+		}
+	}
+
+	public List<Configuration> configurationList(String configType) throws PhrescoException {
+		try {
+			InputStream stream = null;
+			stream = this.getClass().getClassLoader().getResourceAsStream(Constants.CONFIGURATION_INFO_FILE);
+			ConfigReader configReader = new ConfigReader(stream);
+			String environment = System.getProperty("SERVER_ENVIRONMENT");
+			if (environment == null || environment.isEmpty() ) {
+				environment = configReader.getDefaultEnvName();
+			}
+			return configReader.getConfigurations(environment, configType);
+		} catch (Exception e) {
+		    throw new PhrescoException(e);
+		}
+	}
+
+	public ActionResponse mandatoryValidation(ActionResponse actionresponse, HttpServletRequest request, String goal, String appDirName) throws PhrescoException {
+		List<String> errorMsg = new ArrayList<String>();
+		try {
+			ApplicationManager applicationManager = PhrescoFrameworkFactory.getApplicationManager();
+			List<BuildInfo> builds = applicationManager.getBuildInfos(new File(getBuildInfosFilePath(appDirName)));
+			File infoFile = new File(getPhrescoPluginInfoFilePath(goal, null ,appDirName));
+			MojoProcessor mojo = new MojoProcessor(infoFile);
+			List<Parameter> parameters = getMojoParameters(mojo, goal);
+			List<String> eventDependencies = new ArrayList<String>();
+			List<String> dropDownDependencies = null;
+			Map<String, List<String>> validateMap = new HashMap<String, List<String>>();
+			if (CollectionUtils.isNotEmpty(parameters)) {
+				for (Parameter parameter : parameters) {
+					if (TYPE_BOOLEAN.equalsIgnoreCase(parameter.getType()) && StringUtils.isNotEmpty(parameter.getDependency())) {
+						//To validate check box dependency controls
+						eventDependencies = Arrays.asList(parameter.getDependency().split(CSV_PATTERN));
+						validateMap.put(parameter.getKey(), eventDependencies);//add checkbox dependency keys to map
+						if (request.getParameter(parameter.getKey()) != null && dependentParamMandatoryChk(mojo, eventDependencies, goal, request, actionresponse ,errorMsg)) {
+							break;//break from loop if error exists
+						}
+					} else if (TYPE_LIST.equalsIgnoreCase(parameter.getType()) &&  !Boolean.parseBoolean(parameter.getMultiple())
+							&& parameter.getPossibleValues() != null) {
+						//To validate (Parameter type - LIST) single select list box dependency controls
+						if (StringUtils.isNotEmpty(request.getParameter(parameter.getKey()))) {
+							List<Value> values = parameter.getPossibleValues().getValue();
+							String allPossibleValueDependencies = fetchAllPossibleValueDependencies(values);
+							eventDependencies = Arrays.asList(allPossibleValueDependencies.toString().split(CSV_PATTERN));
+							validateMap.put(parameter.getKey(), eventDependencies);//add psbl value dependency keys to map
+							for (Value value : values) {
+								dropDownDependencies = new ArrayList<String>();
+								if (value.getKey().equalsIgnoreCase(request.getParameter((parameter.getKey())))
+										&& StringUtils.isNotEmpty(value.getDependency())) {
+									//get currently selected option's dependency keys to validate and break from loop
+									dropDownDependencies = Arrays.asList(value.getDependency().split(CSV_PATTERN));
+									break;
+								}
+							}
+							if (dependentParamMandatoryChk(mojo, dropDownDependencies, goal, request, actionresponse, errorMsg)) {
+								//break from loop if error exists
+								break;
+							}
+						}
+					} else if (Boolean.parseBoolean(parameter.getRequired())) {
+						//comes here for other controls
+						boolean alreadyValidated = fetchAlreadyValidatedKeys(validateMap, parameter);
+						if ((parameter.isShow() || !alreadyValidated)) {
+							ActionResponse paramsMandatoryCheck = paramsMandatoryCheck(parameter, request, actionresponse, errorMsg);
+							if (paramsMandatoryCheck.isErrorFound()) {
+								break;
+							}
+						}
+					} else if(TYPE_STRING.equalsIgnoreCase(parameter.getType()) && BUILD_NAME.equalsIgnoreCase(parameter.getKey())) {
+						List<String> platforms = new ArrayList<String>(); 
+						String buildName = request.getParameter((parameter.getKey()));
+						String platform = request.getParameter((PLATFORM));
+						if (StringUtils.isNotEmpty(platform)) {
+							String[] split = platform.split(COMMA);
+							for (String plaform : split) {
+								platforms.add(plaform.replaceAll("\\s+", "") + METRO_BUILD_SEPARATOR + buildName);
+							}
+						}
+
+						if(!buildName.isEmpty()) {
+							for (BuildInfo build : builds) {
+								String bldName = FilenameUtils.removeExtension(build.getBuildName());
+								if (bldName .contains(METRO_BUILD_SEPARATOR) && CollectionUtils.isNotEmpty(platforms)) {	
+									for (String name : platforms) {
+										if (name.equalsIgnoreCase(bldName)) {	
+											actionresponse.setErrorFound(true);
+											errorMsg.add("Build Name Already Exsist");
+											actionresponse.setConfigErrorMsg(errorMsg);
+										}
+									}
+								} else if(buildName.equalsIgnoreCase(FilenameUtils.removeExtension(build.getBuildName()))) {
+									actionresponse.setErrorFound(true);
+									errorMsg.add("Build Name Already Exsist");
+									actionresponse.setConfigErrorMsg(errorMsg);
+								}
+							}
+						}
+					} else if(TYPE_NUMBER.equalsIgnoreCase(parameter.getType()) && BUILD_NUMBER.equalsIgnoreCase(parameter.getKey())) {
+						String buildNumber = request.getParameter(parameter.getKey());
+						if(!buildNumber.isEmpty()) {
+							for (BuildInfo build : builds) {
+								if(Integer.parseInt(buildNumber) == build.getBuildNo()) {
+									actionresponse.setErrorFound(true);
+									errorMsg.add("Build Number Already Exsist");
+									actionresponse.setConfigErrorMsg(errorMsg);
+								}
+							}
+						}
+					} 
+				}
+			}
+		} catch (Exception e) {
+			throw new PhrescoException(e);
+		}
+
+		return actionresponse;
+	}
+	
+	private boolean fetchAlreadyValidatedKeys(Map<String, List<String>> validateMap, Parameter parameter) {
+		boolean alreadyValidated = false;
+		Set<String> keySet = validateMap.keySet();
+		for (String key : keySet) {
+			List<String> valueList = validateMap.get(key);
+			if (valueList.contains(parameter.getKey())) {
+				alreadyValidated = true;
+			}
+		}
+		return alreadyValidated;
+	}
+	
+	private String fetchAllPossibleValueDependencies(List<Value> values) {
+		StringBuilder sb = new StringBuilder();
+		String sep = "";
+		for (Value value : values) {
+			if (StringUtils.isNotEmpty(value.getDependency())) {
+				sb.append(sep);
+				sb.append(value.getDependency());
+				sep = COMMA;
+			}
+		}
+
+		return sb.toString();
+	}
+	
+	   private static List<Parameter> getMojoParameters(MojoProcessor mojo, String goal) throws PhrescoException {
+			com.photon.phresco.plugins.model.Mojos.Mojo.Configuration mojoConfiguration = mojo.getConfiguration(goal);
+			if (mojoConfiguration != null) {
+			    return mojoConfiguration.getParameters().getParameter();
+			}
+			
+			return null;
+		}
+	   
+	   private static boolean dependentParamMandatoryChk(MojoProcessor mojo, List<String> eventDependencies, String goal, HttpServletRequest request, ActionResponse validateinfo, List<String> errorMsg) {
+			boolean flag = false;
+			if (CollectionUtils.isNotEmpty(eventDependencies)) {
+				for (String eventDependency : eventDependencies) {
+					Parameter dependencyParameter = mojo.getParameter(goal, eventDependency);
+					ActionResponse paramsMandatoryCheck = paramsMandatoryCheck(dependencyParameter, request, validateinfo, errorMsg);
+					if (Boolean.parseBoolean(dependencyParameter.getRequired()) && paramsMandatoryCheck.isErrorFound()) {
+						flag = true;
+						break;
+					}
+				}
+			}
+			return flag;
+		}
+	   
+	   private static ActionResponse paramsMandatoryCheck (Parameter parameter, HttpServletRequest request, ActionResponse validateinfo, List<String> errorMsg) {
+		   String lableTxt =  getParameterLabel(parameter);
+			if (TYPE_STRING.equalsIgnoreCase(parameter.getType()) || TYPE_NUMBER.equalsIgnoreCase(parameter.getType())
+					|| TYPE_PASSWORD.equalsIgnoreCase(parameter.getType())
+					|| TYPE_DYNAMIC_PARAMETER.equalsIgnoreCase(parameter.getType()) && !Boolean.parseBoolean(parameter.getMultiple())
+					|| (TYPE_LIST.equalsIgnoreCase(parameter.getType()) && !Boolean.parseBoolean(parameter.getMultiple()))
+					|| (TYPE_FILE_BROWSE.equalsIgnoreCase(parameter.getType()))) {
+				
+				if (FROM_PAGE_EDIT.equalsIgnoreCase(parameter.getEditable())) {//For editable combo box
+					validateinfo = editableComboValidate(parameter, lableTxt, request, validateinfo, errorMsg);
+				} else {//for text box,non editable single select list box,file browse
+					validateinfo = textSingleSelectValidate(parameter,lableTxt, request, validateinfo, errorMsg);
+				}
+			} else if (TYPE_DYNAMIC_PARAMETER.equalsIgnoreCase(parameter.getType()) && Boolean.parseBoolean(parameter.getMultiple()) || 
+					(TYPE_LIST.equalsIgnoreCase(parameter.getType()) && Boolean.parseBoolean(parameter.getMultiple()))) {
+				validateinfo = multiSelectValidate(parameter, lableTxt, request, validateinfo, errorMsg);//for multi select list box
+			} else if (parameter.getType().equalsIgnoreCase(TYPE_MAP)) {
+				validateinfo = mapControlValidate(parameter, request, validateinfo, errorMsg);//for type map
+			}
+			return validateinfo;
+		}
+	   
+	   private static String getParameterLabel(Parameter parameter) {
+			String lableTxt = "";
+			List<com.photon.phresco.plugins.model.Mojos.Mojo.Configuration.Parameters.Parameter.Name.Value> labels = parameter.getName().getValue();
+			for (com.photon.phresco.plugins.model.Mojos.Mojo.Configuration.Parameters.Parameter.Name.Value label : labels) {
+				if (label.getLang().equals("en")) {	//to get label of parameter
+					lableTxt = label.getValue();
+				    break;
+				}
+			}
+			return lableTxt;
+		}
+	   
+	   private static ActionResponse textSingleSelectValidate(Parameter parameter, String lableTxt, HttpServletRequest request, ActionResponse validateinfo, List<String> errorMsg) {
+			if (StringUtils.isEmpty(request.getParameter(parameter.getKey()))) {
+				validateinfo.setErrorFound(true);
+				errorMsg.add(lableTxt + " " + "is missing");
+				validateinfo.setConfigErrorMsg(errorMsg); 
+			}
+			return validateinfo;
+		}
+		
+		private static ActionResponse editableComboValidate(Parameter parameter, String lableTxt, HttpServletRequest request, ActionResponse validateinfo, List<String> errorMsg) {
+			String value = request.getParameter(parameter.getKey());
+			value = value.replaceAll("\\s+", "").toLowerCase();
+			
+			if (StringUtils.isEmpty(value) || "typeorselectfromthelist".equalsIgnoreCase(value)) {
+				validateinfo.setErrorFound(true);
+				errorMsg.add(lableTxt + " " + "is missing");
+				validateinfo.setConfigErrorMsg(errorMsg);
+			} 
+			return validateinfo;
+		}
+		
+		/**
+		 * To validate key value pair control
+		 * @param parameter
+		 * @param returnFlag
+		 * @return
+		 */
+		private static ActionResponse mapControlValidate(Parameter parameter, HttpServletRequest request, ActionResponse validateinfo, List<String> errorMsg) {
+			List<Child> childs = parameter.getChilds().getChild();
+			String[] keys = request.getParameterValues(childs.get(0).getKey());
+			String[] values = request.getParameterValues(childs.get(1).getKey());
+			String childLabel = "";
+			for (int i = 0; i < keys.length; i++) {
+				if (StringUtils.isEmpty(keys[i]) && Boolean.parseBoolean(childs.get(0).getRequired())) {
+					childLabel = childs.get(0).getName().getValue().getValue();
+					validateinfo.setErrorFound(true);
+					errorMsg.add(childLabel + " " + "is missing");
+					validateinfo.setConfigErrorMsg(errorMsg);
+					break;
+				} else if (StringUtils.isEmpty(values[i]) && Boolean.parseBoolean(childs.get(1).getRequired())) {
+					childLabel = childs.get(1).getName().getValue().getValue();
+					validateinfo.setErrorFound(true);
+					errorMsg.add(childLabel + " " + "is missing");
+					validateinfo.setConfigErrorMsg(errorMsg);
+					break;
+				}
+			}
+			return validateinfo;
+		}
+
+		/**
+		 * To validate multi select list box
+		 * @param parameter
+		 * @param returnFlag
+		 * @param lableTxt
+		 * @return
+		 */
+		private static ActionResponse multiSelectValidate(Parameter parameter, String lableTxt, HttpServletRequest request, ActionResponse validateinfo, List<String> errorMsg) {
+			if (request.getParameterValues(parameter.getKey()) == null) {//for multi select list box
+				validateinfo.setErrorFound(true);
+				errorMsg.add(lableTxt + " " + "is missing");
+				validateinfo.setConfigErrorMsg(errorMsg);
+			}
+			return validateinfo;
+		}
+		
 }
 
 class SavingTrustManager implements X509TrustManager {

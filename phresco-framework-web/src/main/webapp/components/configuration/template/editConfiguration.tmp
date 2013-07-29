@@ -1,15 +1,15 @@
 <section class="add_config">
 		<div class="second_title">
-				<!--<input type="submit" value="Add Environment" class="btn btn_style"> -->
+				<!--<input type="submit" value="Add Environment" data-i18n="[value]configuration.label.addenvironment" class="btn btn_style"> -->
 				
 				<div class="navbar navbar-static flt_right">
 					<ul class="nav">
 						<li id="fat-menu" class="dropdown">
 							<a href="#" id="drop3" role="button" class="dropdown-toggle drop-qual" data-toggle="dropdown">
 								{{#if userPermissions.manageConfiguration}}
-							  		<input type="submit" value="Add Configuration" class="btn btn_style arrow_down_icon">
+							  		<input type="submit" value="Add Configuration" data-i18n="[value]configuration.label.addconfig" class="btn btn_style arrow_down_icon">
 						  		{{else}}
-					  				<input type="submit" value="Add Configuration" class="btn btn_style arrow_down_icon" disabled>
+					  				<input type="submit" value="Add Configuration" data-i18n="[value]configuration.label.addconfig" class="btn btn_style arrow_down_icon" disabled>
 					  			{{/if}}
 					  		</a>
 						  <div class="dropdown-menu cust_sel fix_height" role="menu" aria-labelledby="drop3" id="configurationListScroll">
@@ -17,7 +17,7 @@
 								{{#configType}}
 								<li name="{{this}}"><a href="#">{{this}}</a></li>
 								{{/configType}}
-								<li name="Other"><a href="#">Other</a></li>
+								<li name="Other"><a href="#" data-i18n="configuration.label.other"></a></li>
 							</ul>
 						  </div>
 						</li>
@@ -28,19 +28,20 @@
 		</div>
 		
 		<section class="features_content_main tab_line">
+			<div class="scrolldiv">
 			<table class="table table_border table-bordered" cellpadding="0" cellspacing="0" border="0">  
 				<tbody name="ConfigurationLists"> 
 					<tr>
 						{{#configurations}}
-							<td>Name</td>
+							<td><span data-i18n="configuration.label.name"></span><sup>*</sup></td>
 							<td><input type="text" name="EnvName" maxlength="30" title="30 Characters only" value="{{name}}"/></td>
-							<td>Description</td>
+							<td data-i18n="configuration.label.description"></td>
 							<td colspan="3"><input type="text"  maxlength="150" title="150 Characters only" value="{{desc}}"/></td>
 						{{/configurations}}
 					</tr>
 				</tbody>
 			</table>
-			
+			</div>
 			
 			
 			<!--features_content_main div ends here -->
@@ -48,11 +49,11 @@
 		<section class="content_end">
 			<div class="flt_right">
 				{{#if userPermissions.manageConfiguration}}
-					<input type="submit" name="UpdateConfiguration" value="Update" class="btn btn_style update_btn">
+					<input type="submit" name="UpdateConfiguration" value="Update" data-i18n="[value]common.btn.update" class="btn btn_style update_btn">
 				{{else}}
-					<input type="submit" name="UpdateConfiguration" value="Update" class="btn btn_style update_btn" disabled>
+					<input type="submit" name="UpdateConfiguration" value="Update" data-i18n="[value]common.btn.update" class="btn btn_style update_btn" disabled>
 				{{/if}}
-				<input id="cancelEditConfig"" type="submit" value="Cancel" class="btn btn_style cancel_icon_btn">
+				<input id="cancelEditConfig"" type="submit" value="Cancel" data-i18n="[value]common.btn.close" class="btn btn_style cancel_icon_btn">
 			</div>
 			<!--content_title ends here -->
 		</section>

@@ -200,7 +200,7 @@ define(["configuration/listener/configurationListener"], function() {
 					self.getAction(self.configRequestBody, 'cloneEnv', envrName);
 				}); 
 			});
-			
+			self.tableScrollbar();
 			Clazz.navigationController.mainContainer = commonVariables.contentPlaceholder;
 		}
 		

@@ -116,6 +116,16 @@
 			"path" : "components/configuration/test/configurationTest"
 		},
 		
+		"croneExpression" : {
+			"moduleName":"croneExpression",
+			"path" : "components/croneExpression/js"
+		},
+		
+		"croneExpressionTest" : {
+			"moduleName":"croneExpressionTest",
+			"path" : "components/croneExpression/test/croneExpressionTest"
+		},
+		
 		"codequality" : {
 			"moduleName":"codequality",
 			"path" : "components/codequality/js"

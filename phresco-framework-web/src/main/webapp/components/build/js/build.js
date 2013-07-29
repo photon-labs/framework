@@ -120,6 +120,8 @@ define(["build/listener/buildListener"], function() {
 			self.loadPostContent();
 			self.resizeConsoleWindow();
 			self.closeConsole();
+			$(window).resize();
+			
 			var windowHeight = $(document).height(), marginTop = '';
 			marginTop = $('.testSuiteTable').css("margin-top");
 			
@@ -130,8 +132,8 @@ define(["build/listener/buildListener"], function() {
 			var footerHeight = $('#footer').height();
 			var deductionHeight = Number(marginTop) + Number(footerHeight);
 			var finalHeight = windowHeight - deductionHeight - 5;
-			$('.testSuiteTable').height(finalHeight);	
-			$(window).resize();
+			$('.testSuiteTable').height(finalHeight);
+			commonVariables.navListener.showHideTechOptions();
 		},
 		
 		runAgainSourceStatus : function(){
@@ -202,27 +204,32 @@ define(["build/listener/buildListener"], function() {
 			//Deploy build popup click event
 			$("img[name=deployBuild]").unbind('click');
 			$("img[name=deployBuild]").click(function(){
-				var divId = $(this).closest('tr').find('td:eq(0)').text(),
+				var current = this, divId = $(this).closest('tr').find('td:eq(0)').text(),
 				whereToRender = $('#deploye_' + divId + ' ul');
 				
 				if(whereToRender.children().length < 1){
 					commonVariables.goal = "deploy";
 					commonVariables.phase = "deploy";
 					commonVariables.buildNo = divId;
-					self.dynamicpage.getHtml(whereToRender, this, 'deploye_' + divId, function(retVal){});
-				}else {self.opencc(this,'deploye_' + divId);}
+					self.dynamicpage.getHtml(whereToRender, this, '', function(retVal){
+						self.opencc(current,'deploye_' + divId, '' , 50);
+					}); //'deploye_' + divId
+					
+				}else {self.opencc(this,'deploye_' + divId, '', 50);}
 			});
 			
 			//build deploy click event
 			$("input[name=deploy]").unbind('click');
 			$("input[name=deploy]").click(function(){
 			
-				$('.alert_div').show();
+				//$('.alert_div').show();
 				self.clearLogContent();
 				self.setConsoleScrollbar(true);
 				self.openConsole();
 				$('.progress_loading').css('display','block');
+				$('input[name=buildDelete]').hide();
 				self.onDeployEvent.dispatch($('form[name=deployForm]').serialize(), function(response){
+					$('input[name=buildDelete]').show();
 					$('.progress_loading').css('display','none');
 					self.setConsoleScrollbar(false);
 				});
@@ -255,12 +262,13 @@ define(["build/listener/buildListener"], function() {
 			//Show tooltip event
 			$(".tooltiptop").unbind("click");
 			$(".tooltiptop").click(function() {
-				self.opencc(this, $(this).attr('name'));
+				self.opencc(this, $(this).attr('name'), '', 50);
 			});
 			
 			$("#buildRow .scrollContent").mCustomScrollbar("destroy");
 			$("#buildRow .scrollContent").mCustomScrollbar({
 				autoHideScrollbar:true,
+				advanced:{ updateOnContentResize: true},
 				theme:"light-thin"
 			});
 		},
@@ -307,7 +315,11 @@ define(["build/listener/buildListener"], function() {
 				if($(this).attr("class") === "btn btn_style"){
 					commonVariables.goal = "start";
 					commonVariables.phase = "run-against-source";
-					self.dynamicpage.getHtml($('#build_runagsource ul'), this, $(this).attr('name'), function(retVal){});
+					self.dynamicpage.getHtml($('#build_runagsource ul'), this, $(this).attr('name'), function(retVal){
+						$('.connectedSortable').sortable({
+							connectWith: '.connectedSortable'
+						});
+					});
 					$("#buildConsole").attr('data-flag','false');
 				}	
 			});
@@ -379,7 +391,15 @@ define(["build/listener/buildListener"], function() {
 				$('.progress_loading').css('display','block');
 				self.onBuildEvent.dispatch($('form[name=buildForm]').serialize(), function(response){
 					$('.progress_loading').css('display','none');
-					self.refreshContent(true);
+					if(response != null && response.errorFound == true){
+						$('.alert_div').hide();
+						self.closeConsole();
+						$("form[name=buildForm] #build_genbuild").show();
+						$(".blinkmsg").removeClass("popsuccess").addClass("poperror");
+							self.effectFadeOut('poperror', response.configErrorMsg[0]);
+					}else if(response != null && response.errorFound == false){
+						self.refreshContent(true);
+					}
 				});
 			});
 			
@@ -405,10 +425,6 @@ define(["build/listener/buildListener"], function() {
 				self.onProgressEvent.dispatch(this);
 			});
 			
-			/* $('.connected').sortable({
-				connectWith: '.connected'
-			}); */
-			
 			//To open the build directory
 			$('#openFolder').unbind('click');
 			$("#openFolder").click(function() {
@@ -431,9 +447,6 @@ define(["build/listener/buildListener"], function() {
 				commonVariables.navListener.copyToClipboard($('#logContent'));
 			});
 			
-			//call content div events
-			self.contentDivEvents();
-			
 			$(window).resize(function() {
 				$(".dyn_popup").hide();
 				
@@ -452,8 +465,12 @@ define(["build/listener/buildListener"], function() {
 				self.resizeConsoleWindow();
 			});
 			
+			//set log console scroll content event
 			self.setConsoleScrollbar(false);
 			
+			//call content div events
+			self.contentDivEvents();
+
 			Clazz.navigationController.mainContainer = commonVariables.contentPlaceholder;
 		}
 	});

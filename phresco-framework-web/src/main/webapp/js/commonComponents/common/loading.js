@@ -1,8 +1,8 @@
-define(["framework/class"], function(){
+define(["framework/base"], function(){
 
 	Clazz.createPackage("com.js.widget.common");
 
-	Clazz.com.js.widget.common.Loading = Clazz.extend(Clazz.Widget, {
+	Clazz.com.js.widget.common.Loading = Clazz.extend(Clazz.Base, {
 		mainContent : null,
 
 		/**

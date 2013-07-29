@@ -1,4 +1,3 @@
-
 var commonVariables = {
 	globalconfig : "",
 	webserviceurl : "rest/api/",
@@ -47,6 +46,8 @@ var commonVariables = {
 	
 	configuration : "configuration",
 	editConfiguration : "editConfiguration",
+	
+	croneExpression : "croneExpression",
 	
 	qualityContext : "quality",
 	testType : null,
@@ -165,6 +166,8 @@ var commonVariables = {
 	deleted : "Delete",
 	
 	loadingScreen : null,
+	hideloading : false,
+	continueloading : false,
 	api : null,
 	ajaxXhr : null,
 	
@@ -212,7 +215,7 @@ $(document).ready(function(){
 		// setup require.js
 		requirejs.config(configJson);
 		
-		require(["framework/class", "framework/widget", "common/loading",  "framework/widgetWithTemplate", "framework/navigationController", "api/api", "login/login"], function () {
+		require(["framework/class", "framework/base", "framework/widget", "common/loading", "api/api",  "framework/widgetWithTemplate", "framework/navigationController", "login/login"], function () {
 		 	Clazz.config = data;
 			Clazz.navigationController = new Clazz.NavigationController({
 				mainContainer : "basepage\\:widget",
@@ -231,13 +234,20 @@ $(document).ready(function(){
 			
 			$(document).ajaxStart(function() {
 				commonVariables.loadingScreen.removeLoading(function(retVal){
-					commonVariables.loadingScreen.showLoading();
+					if(!commonVariables.hideloading){
+						commonVariables.loadingScreen.showLoading();
+					}
 				});
 			});
 			
 			$(document).ajaxStop(function() {
-				if(!Clazz.navigationController.loadingActive)
-					commonVariables.loadingScreen.removeLoading();
+				if(!Clazz.navigationController.loadingActive){
+					commonVariables.hideloading = false;
+					if(!commonVariables.continueloading){
+						commonVariables.continueloading = false;
+						commonVariables.loadingScreen.removeLoading();
+					}
+				}
 			});
 			
 			app.initialize();

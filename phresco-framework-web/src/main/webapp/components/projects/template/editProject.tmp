@@ -1,18 +1,19 @@
 <section id="editproject">   
 	
      <section class="content_main create_proj">
-          <table class="table table-striped table_border table-bordered create_edit_table" cellpadding="0" cellspacing="0" border="0">  
-            <tbody name="layercontents" class="scrollContent"> 
+          <div class="scrolldiv">
+		  <table class="table table-striped table_border table-bordered create_edit_table" cellpadding="0" cellspacing="0" border="0">  
+            <tbody name="layercontents"> 
 				{{#editProject}}
             	<tr>
-                    <td data-i18n="project.create.label.name"><sup>*</sup></td>
-                    <td><input type="text" value="{{name}}" id="editPrjprojectname" name="projectname" maxlength="30" title="30 Characters only" placeholder="Project Name" disabled/></td>
-                    <td data-i18n="project.create.label.code"><sup>*</sup></td>
-                    <td><input type="text" value="{{projectCode}}" name="projectcode" maxlength="30" title="30 Characters only" placeholder="Project Code" disabled/></td>
+                    <td><span data-i18n="project.create.label.name"></span><sup>*</sup></td>
+                    <td><input type="text" value="{{name}}" id="editPrjprojectname" name="projectname" maxlength="30" title="30 Characters only" data-i18n="[placeholder]project.create.label.projectname" disabled/></td>
+                    <td><span data-i18n="project.create.label.code"></span><sup>*</sup></td>
+                    <td><input type="text" value="{{projectCode}}" name="projectcode" maxlength="30" title="30 Characters only" data-i18n="[placeholder]project.create.label.projectcode" disabled/></td>
                     <td data-i18n="project.create.label.version"></td>
                     <td><input type="text" name="projectversion" maxlength="20" title="20 Characters only" value="{{version}}"/></td>
                     <td data-i18n="project.create.label.description"></td>                              
-                    <td rowspan="2"><textarea class="popuptextarea" name="projectdescription"  maxlength="150" title="150 Characters only" placeholder="Description" disabled >{{description}}</textarea></td>
+                    <td rowspan="2"><textarea class="popuptextarea" name="projectdescription"  maxlength="150" title="150 Characters only" data-i18n="[placeholder]project.create.label.description" disabled >{{description}}</textarea></td>
                 </tr>
                 <tr>
                     <td data-i18n="project.create.label.startdate" name="startdate-lbl"></td>
@@ -22,13 +23,13 @@
                 </tr>
 				<tr>
 					{{#if editProject.multiModule}}
-                	   <td colspan="2"><input type="checkbox" name="multimodule" value="true" checked><b>&nbsp; Multi Module</b></td>
+                	   <td colspan="2"><input type="checkbox" name="multimodule" value="true" checked><b><span data-i18n="project.create.label.multimodule"></span></b></td>
 					   <td><span name="artifactId-lbl" data-i18n="project.create.label.artifactId"></span></td>
-					   <td><input name="artifactId" type="text" placeholder="Artifact ID"></td>
+					   <td><input name="artifactId" type="text" data-i18n="[placeholder]project.create.label.artifactId"></td>
 					{{else}}
-						<td colspan="2"><input type="checkbox" name="multimodule" value="false"><b>&nbsp; Multi Module</b></td>
+						<td colspan="2"><input type="checkbox" name="multimodule" value="false"><b><span data-i18n="project.create.label.multimodule"></span></b></td>
 						<td><span name="artifactId-lbl" data-i18n="project.create.label.artifactId" style="display:none;"></span></td>
-					   <td><input name="artifactId" type="text" placeholder="Artifact ID" style="display:none;"></td>
+					   <td><input name="artifactId" type="text" data-i18n="[placeholder]project.create.label.artifactId" style="display:none;"></td>
 					{{/if}}   
                     <td colspan="6"></td>
                 </tr>
@@ -40,12 +41,12 @@
                 </tr>
                 <tr class="applnLayer" id="applnlayer" key="displayed">
 						<td colspan="8" class="appln">
-							<table class="table table-striped table_border table-bordered applnlayer" cellpadding="0" cellspacing="0" border="0">
+							<table class="table table-striped table_border border_div table-bordered applnlayer" cellpadding="0" cellspacing="0" border="0">
 								<thead>
 									<tr>
 										<th><span data-i18n="project.create.label.appcode"></span><sup>*</sup></th>
 										<th><span data-i18n="project.create.label.technology"></span></th>
-										<th><span data-i18n="project.create.label.applicationversion"></span></th>
+										<th><span data-i18n="project.create.label.version"></span></th>
 										<th></th>
 										<th></th>
 										<th colspan="3"><span name="appdependency" data-i18n="project.create.label.dependency"></span></th>
@@ -56,7 +57,7 @@
 										<td class="applnappcode"><input type="text" id="appcode" maxlength="30" title="30 Characters only" class="appln-appcode"></td>
 										<td name="technology" class="technology">
 											<select name="appln_technology" class="appln_technology">
-											   <option value="Select Technology" data-i18n="project.create.label.selecttechnology"></option>
+											   <option value="Select Technology" data-i18n="project.create.label.seltech"></option>
 											   {{#each applicationlayerData.techGroups}}
 													{{#each techInfos}}
 													  <option value="{{id}}">{{name}}</option>
@@ -66,12 +67,12 @@
 										 </td>
 										 <td colspan="3" name="version" class="version">
 											<select name="appln_version" class="appln_version">
-											   <option value="Select Version" data-i18n="project.create.label.selectversion"></option>
+											   <option value="Select Version" data-i18n="project.create.label.selversion"></option>
 											</select>
 										 </td>
 										 <td colspan="2" class="appdependencyTd">
 											<select class="selectpicker appdependencySelect" name="appdependencySelect" multiple title="Select Dependency" data-selected-text-format="count>2">
-											   <option value="0" disabled>Select Dependency</option>
+											   <option value="0" disabled data-i18n="project.create.label.seldependency"></option>
 											</select>
 										 </td>
 										 <td>
@@ -89,13 +90,13 @@
                      </tr>
                      <tr class="webLayer" id="WebLayer" key="displayed">
 						  <td colspan="8" class="WebLayer">
-							<table class="table table-striped table_border table-bordered WebLayer" cellpadding="0" cellspacing="0" border="0">
+							<table class="table table-striped table_border border_div table-bordered WebLayer" cellpadding="0" cellspacing="0" border="0">
 								<thead>
 									<tr>
 										<th><span data-i18n="project.create.label.appcode"></span><sup>*</sup></th>
 										<th><span data-i18n="project.create.label.weblayer"></span></td>
 										<th><span data-i18n="project.create.label.widget"></span></td>
-										<th><span data-i18n="project.create.label.widgetversion"></span></td>
+										<th><span data-i18n="project.create.label.version"></span></td>
 										<th><span name="webdependency" data-i18n="project.create.label.dependency"></span></th>
 										<th></th>
 									</tr>
@@ -105,7 +106,7 @@
 										<td class="webappcode"><input type="text" id="webappcode" maxlength="30" title="30 Characters only" class="web-appcode"></td>
 										<td name="web" class="web">
 											<select name="weblayer" class="weblayer">
-												<option value="Select Layer" data-i18n="project.create.label.selectlayer"></option>
+											   <option data-i18n="project.create.label.sellayer"></option>
 												{{#each weblayerData.techGroups}}
 													<option value="{{id}}">{{name}}</option>
 												{{/each}}
@@ -113,17 +114,17 @@
 										 </td>
 										 <td name="widget" class="widget">
 											<select name="web_widget" class="web_widget">
-												<option value="Select Widget" data-i18n="project.create.label.selectwidget"></option>
+												<option value="Select Widget" data-i18n="project.create.label.selwidget"></option>
 											 </select>
 										 </td>
 										 <td name="widgetversion" class="widgetversion">
 											<select name="web_version" class="web_version">
-												<option value="Select Version" data-i18n="project.create.label.selectversion"></option>
+												<option value="Select Version" data-i18n="project.create.label.selversion"></option>
 											</select>
 										 </td>
 										 <td class="webdependencyTd">
 											<select class="selectpicker webdependencySelect" name="webdependencySelect" multiple data-selected-text-format="count>2" title="Select Dependency">
-											   <option disabled>Select Dependency</option>
+											   <option disabled data-i18n="project.create.label.seldependency"></option>
 											</select>
 										 </td>
 										 <td>
@@ -141,13 +142,13 @@
                      </tr>
                      <tr class="mobLayer" id="MobLayer" key="displayed">
                       	<td colspan="8" class="mob">
-							<table class="table table-striped table_border table-bordered mob-table" cellpadding="0" cellspacing="0" border="0">
+							<table class="table table-striped table_border border_div table-bordered mob-table" cellpadding="0" cellspacing="0" border="0">
 								<thead>
 									<tr>
 										<th><span data-i18n="project.create.label.appcode"></span><sup>*</sup></th>
 										<th><span data-i18n="project.create.label.mobile"></span></th>
-										<th><span data-i18n="project.create.label.types"></span></th>
-										<th><span data-i18n="project.create.label.mobileversion"></span></th>
+										<th><span data-i18n="project.create.label.type"></span></th>
+										<th><span data-i18n="project.create.label.version"></span></th>
 										<th></th>
 										<th></th>
 									</tr>
@@ -157,7 +158,7 @@
 										<td class="mobileappcode"><input type="text" id="mobileappcode" maxlength="30" title="30 Characters only" class="mobile-appcode"></td>
 										<td name="mobile" class="mobile">
 											<select name="mobile_layer" class="mobile_layer">
-											   <option value="Select Model" data-i18n="project.create.label.selectmodel"></option>
+											   <option value="Select Model" data-i18n="project.create.label.selmodel"></option>
 											   {{#each mobilelayerData.techGroups}}
 												  <option value="{{id}}">{{name}}</option>
 											   {{/each}}
@@ -165,12 +166,12 @@
 										 </td>
 										 <td name="types" class="types">
 											<select name="mobile_types" class="mobile_types">
-											   <option value="Select Type" data-i18n="project.create.label.selecttype"></option>
+											   <option value="Select Type" data-i18n="project.create.label.seltype"></option>
 											</select>
 										 </td>
 										 <td colspan="2" name="mobileversion" class="mobileversion">
 											<select name="mobile_version" class="mobile_version">
-											   <option value="Select Version" data-i18n="project.create.label.selectversion"></option>
+											   <option value="Select Version" data-i18n="project.create.label.selversion"></option>
 											</select>
 										 </td>
 										 <td>
@@ -183,21 +184,22 @@
                      </tr>
               	</tbody>
             </table>
+			</div>
     	<!--content_main div ends here -->
     </section>
     <section class="content_end">
 		<div class="flt_left">
-        	<input type="submit" name="appLayaer" value="Application Layer" class="btn btn_style app_layer_icon_btn" style="display:none;">
-            <input type="submit" name="webLayers" value="Web Layer" class="btn btn_style web_layer_icon_btn" style="display:none;">
-            <input type="submit" name="mobLayers" value="Mobile Layer" class="btn btn_style mobile_layer_icon_btn" style="display:none;">
+        	<input type="submit" name="appLayaer" value="Application Layer" data-i18n="[value]project.create.title.label.applicationlayer" class="btn btn_style app_layer_icon_btn" style="display:none;">
+            <input type="submit" name="webLayers" value="Web Layer" data-i18n="[value]project.create.title.label.weblayer" class="btn btn_style web_layer_icon_btn" style="display:none;">
+            <input type="submit" name="mobLayers" value="Mobile Layer" data-i18n="[value]project.create.title.label.mobilelayer" class="btn btn_style mobile_layer_icon_btn" style="display:none;">
         </div>
         <div class="flt_right">
         	{{#if userPermissions.manageApplication}}
-        		<input type="submit" value="Update" id="updateProject" class="btn btn_style add_icon_btn">
+        		<input type="submit" value="Update" data-i18n="[value]common.btn.update" id="updateProject" class="btn btn_style add_icon_btn">
         	{{else}}
-        		<input type="submit" value="Update" id="updateProject" class="btn btn_style add_icon_btn" disabled>
+        		<input type="submit" value="Update" data-i18n="[value]common.btn.update" id="updateProject" class="btn btn_style add_icon_btn" disabled>
     		{{/if}}
-            <input type="submit" value="Cancel" id="cancelUpdate" class="btn btn_style cancel_icon_btn">
+            <input type="submit" value="Cancel" data-i18n="[value]common.btn.close" id="cancelUpdate" class="btn btn_style cancel_icon_btn">
         </div>
     	<!--content_title ends here -->
     </section>

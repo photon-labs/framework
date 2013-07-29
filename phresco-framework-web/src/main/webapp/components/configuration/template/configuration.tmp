@@ -5,23 +5,23 @@
 			 <div id="env_pop" class="dyn_popup popup_bg" style="display:none;">
                 <table width="100%" border="0" cellspacing="0" cellpadding="5">
                 <tr>
-                	<td>Name <sup>*</sup></td>
-                    <td>Description</td>
+                	<td><span data-i18n="configuration.label.name"></span><sup>*</sup></td>
+                    <td data-i18n="configuration.label.description"></td>
                     <td>&nbsp;</td>
                 </tr>
                 <tr>
-                	<td><input type="text" class="pop_txt dyn_popup_text" name="envName" maxlength="30" title="30 Characters only" placeholder="Environment Name"></td>
-                    <td><input type="text" class="pop_txt dyn_popup_text" name="envDesc" maxlength="150" title="150 Characters only" placeholder="Environment Description"></td>
-                    <td><input type="button" class="btn btn_style" name="addEnv" value="Add"></td>
+                	<td><input type="text" class="pop_txt dyn_popup_text" name="envName" maxlength="30" title="30 Characters only" data-i18n="[placeholder]configuration.placeholder.envname"></td>
+                    <td><input type="text" class="pop_txt dyn_popup_text" name="envDesc" maxlength="150" title="150 Characters only" data-i18n="[placeholder]configuration.placeholder.envdescription"></td>
+                    <td><input type="button" class="btn btn_style" name="addEnv" value="Add" data-i18n="[value]common.btn.add"></td>
                 </tr>
                 <tr>
                 	<td colspan="3">
                     	<div class="env_border">	                        	
-                            <table class="table table-striped table_border table-bordered add_env" cellpadding="0" cellspacing="0" border="0">
+                            <table class="table table-striped table_border border_div table-bordered add_env" cellpadding="0" cellspacing="0" border="0">
                             <thead>
                                 <tr>
-                                	<th>Default</th>
-                                    <th>Environment</th>
+                                	<th data-i18n="configuration.label.default"></th>
+                                    <th data-i18n="configuration.label.environment"></th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -53,8 +53,8 @@
                         </div>
 						<div class="flt_left" id="errdisplay" > </div>
                         <div class="flt_right">
-                            <input type="button" value="Ok" name="saveEnvironment" class="btn btn_style">
-                            <input type="button" value="Close" class="btn btn_style dyn_popup_close">
+                            <input type="button" value="Ok" data-i18n="[value]common.btn.ok" name="saveEnvironment" class="btn btn_style">
+                            <input type="button" value="Close" data-i18n="[value]common.btn.close" class="btn btn_style dyn_popup_close">
                         </div>
                     </td>
                 </tr>
@@ -67,15 +67,18 @@
 	</div>
 		
 	<section class="features_content_main">
+		<div class="fixed-table-container">
+        <div class="header-background"></div>
+        <div class="fixed-table-container-inner">
 		{{#if configurationList}}
 		<table class="table table-striped table_border table-bordered" cellpadding="0" cellspacing="0" border="0">
-			  <thead>
+			  <thead class="height_th">
 				<tr>
-				  <th data-i18n="configuration.label.name"></th>
-				  <th data-i18n="configuration.label.description"></th>
-				  <th data-i18n="configuration.label.configure"></th>
-				  <th data-i18n="configuration.label.clone"></th>
-				  <th data-i18n="configuration.label.delete"></th>
+				  <th><div class="th-inner" data-i18n="configuration.label.name"></div></th>
+				  <th><div class="th-inner" data-i18n="configuration.label.description"></div></th>
+				  <th><div class="th-inner" data-i18n="configuration.label.configure"></div></th>
+				  <th><div class="th-inner" data-i18n="configuration.label.clone"></div></th>
+				  <th><div class="th-inner" data-i18n="configuration.label.delete"></div></th>
 				  <th>&nbsp;</th>
 				</tr>
 			  </thead>
@@ -98,24 +101,24 @@
 					<div id="clone_popup{{name}}" type="{{name}}" class="dyn_popup popup_bg">
                         <table class="clonetable" width="100%" border="0" cellspacing="0" cellpadding="5">
                             <tr>
-                                <td>Name <sup>*</sup></td>
+                                <td><span data-i18n="configuration.label.name"></span><sup>*</sup></td>
 							<!--	<span class="display" style="display:none;"> <font style="vertical-align: -3px;"> &nbsp;&nbsp;&nbsp; Enter unique Name. </font></span>-->
-								<td>Description </td>
+								<td data-i18n="configuration.label.description"></td>
                                 <td>&nbsp;</td>
                             </tr>
                             <tr>
-                                <td><input type="text" class="cloneEnvName{{name}} dyn_popup_text envrName" placeholder="Environment Name" name="envrName" maxlength="30" title="30 Characters only"></td>
-                                <td><input type="text" class="cloneEnvDesc{{name}} dyn_popup_text" placeholder="Environment Description" name="envrDesc" maxlength="30" title="30 Characters only"></td>
+                                <td><input type="text" class="cloneEnvName{{name}} dyn_popup_text envrName" data-i18n="[placeholder]configuration.placeholder.envname" name="envrName" maxlength="30" title="30 Characters only"></td>
+                                <td><input type="text" class="cloneEnvDesc{{name}} dyn_popup_text" data-i18n="[placeholder]configuration.placeholder.envdescription" name="envrDesc" maxlength="30" title="30 Characters only"></td>
                             </tr>
                             <tr>
                                <td>
-                                    <input type="checkbox" class="checkboxStyle" name="cloneName{{name}}" value="Set as Default"><label>Set as Default</label>
+                                    <input type="checkbox" class="checkboxStyle" name="cloneName{{name}}" value="Set as Default"><label data-i18n="configuration.label.setdefault"></label>
                                 </td>
                                 <td><span class="display" style="display:none;"> <font style="vertical-align: -3px;"> &nbsp;&nbsp;&nbsp; Enter unique Name. </font></span></td>
                                 <!--<td>&nbsp;</td>-->
                                 <td name={{name}}>
-                                	<input type="button" name="cloneEnvr" class="btn btn_style" value="Clone">	
-                                    <input type="button" value="Close" class="btn btn_style dyn_popup_close">
+                                	<input type="button" name="cloneEnvr" class="btn btn_style" value="Clone" data-i18n="[value]configuration.label.clone">	
+                                    <input type="button" value="Close" data-i18n="[value]common.btn.close" class="btn btn_style dyn_popup_close">
                                 </td>    
                             </tr>
                         </table>
@@ -137,8 +140,8 @@
 					{{/if}}
 				<div id="{{name}}" class="dyn_popup delete_msg"> Are you sure to delete this ?
 					<div>
-						<input type="button" value="Yes" class="btn btn_style" name="deleteEnv">
-						<input type="button" value="No" class="btn btn_style dyn_popup_close">
+						<input type="button" value="Yes" data-i18n="[value]common.btn.yes" class="btn btn_style" name="deleteEnv">
+						<input type="button" value="No" data-i18n="[value]common.btn.no" class="btn btn_style dyn_popup_close">
 					</div>
 				</div>
 				</td>
@@ -147,8 +150,10 @@
 			{{/configurationList}}
 			  </tbody>
 		</table>
+		</div>
+		</div>
 		{{else}}
-		<div class="alert" style="text-align: center;">No Environment Available</div>
+		<div class="alert" style="text-align: center;" data-i18n="configuration.label.noenvironment"></div>
 		{{/if}}
 		<!--features_content_main div ends here -->
 	</section>

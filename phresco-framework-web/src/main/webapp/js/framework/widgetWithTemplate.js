@@ -89,6 +89,48 @@ define(["framework/widget", "framework/templateProvider"], function() {
 					});
 				}
 			},
+			
+				
+			/***
+			 * To apply the custom scrollbar style to the table
+			 */
+			tableScrollbar : function() {
+				if ($(".fixed-table-container-inner") !== undefined && $(".fixed-table-container-inner").length > 0) {
+					this.customScroll($(".fixed-table-container-inner"));
+				}
+			},
+			
+			customScroll : function(divId) {
+				if ($('.fixed-table-container-inner').offset() !== undefined) {
+					var height = $(window).height() - $('.fixed-table-container-inner').offset().top - 40;
+					$('.fixed-table-container').css('height', height);
+				} else {
+					var height = $(window).height() - $(divId).offset().top - 40;
+					if ($('.content_end').length > 0){
+						height = height - $('.content_end').height();
+					}
+					$(divId).css('height', height);
+					$('.scroll-bar').css('height',  height);
+				}
+				if ( $('.header-background').offset() !== undefined) {
+					$('.th-inner').css('top', $('.header-background').offset().top+'px');
+				}
+				$(window).resize(function() {
+					if ($('.fixed-table-container-inner').offset() !== undefined) {			  
+						var height = $(this).height() - $('.fixed-table-container-inner').offset().top - 40;
+						$('.fixed-table-container, .fixed-table-container-inner, .scroll-bar').css('height', height);
+					} else {
+						var height = $(window).height() - $(divId).offset().top - 40;
+						if ($('.content_end').length > 0){
+							height = height - $('.content_end').height();
+						}
+						$(divId).css('height', height);
+						$('.scroll-bar').css('height',  height);
+					}
+				});
+				divId.scrollbars();
+			},
+			
 		 
 			/***
 			 *  Method to get the HTML String representation, can be used to include
@@ -135,7 +177,7 @@ define(["framework/widget", "framework/templateProvider"], function() {
 					resultvalue = resultvalue + $(this).height(); 
 				});
 				
-				resultvalue = resultvalue + $('.footer_section').height() + 65;
+				resultvalue = resultvalue + $('.footer_section').height() + 40;
 				$('.content_main .scrollContent').height($(window).height() - (resultvalue + 155));
 			},
 			
@@ -247,7 +289,7 @@ define(["framework/widget", "framework/templateProvider"], function() {
 				$(".optiontitle").css("z-index","1");
 			},
 			
-			opencc : function(ee, placeId, currentPrjName) {
+			opencc : function(ee, placeId, currentPrjName, adjestVal) {
 				var self=this;
 				$(".dyn_popup").hide();
 				
@@ -266,6 +308,11 @@ define(["framework/widget", "framework/templateProvider"], function() {
 					$(target).removeClass('speakstyletopright').removeClass('speakstylebottomright').removeClass('speakstylebottomleft').addClass('speakstyletopleft').addClass('dyn_popup');
 				} else if (clicked.offset().top < halfheight && clicked.offset().left > halfwidth){
 					var d= ($(window).width() - (clicked.offset().left + clicked.outerWidth()));
+					
+					if(adjestVal != undefined && adjestVal != null){
+						d = d -50;
+					}
+						
 					$(target).css({"right":d ,"margin-top":10,"left": "auto","top": "auto"});
 					$(target).toggle();
 					$(target).removeClass('speakstyletopleft').removeClass('speakstylebottomright').removeClass('speakstylebottomleft').addClass('speakstyletopright').addClass('dyn_popup');
@@ -276,6 +323,11 @@ define(["framework/widget", "framework/templateProvider"], function() {
 					$(target).removeClass('speakstyletopleft').removeClass('speakstylebottomright').removeClass('speakstyletopright').addClass('speakstylebottomleft').addClass('dyn_popup');	
 				} else if (clicked.offset().top > halfheight && clicked.offset().left > halfwidth){
 					var d= ($(window).width() - (clicked.offset().left + clicked.outerWidth()));
+					
+					if(adjestVal != undefined && adjestVal != null){
+						d = d -50;
+					}
+					
 					var BottomHeight = clicked.position().top - (target.height() + 33 );
 					$(target).css({"right":d ,"top":BottomHeight,"left": "auto"});
 					$(target).toggle();

@@ -1,5 +1,4 @@
 define(["framework/base", "api/localStorageAPI"], function(){	
-	
 	Clazz.createPackage("com.js.api");
 
 	Clazz.com.js.api.API = Clazz.extend(Clazz.Base, {
