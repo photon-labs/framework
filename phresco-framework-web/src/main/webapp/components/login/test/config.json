@@ -214,6 +214,16 @@
 		"dynamicPageTest" : {
 			"moduleName":"dynamicPageTest",
 			"path" : "components/dynamicPage/test/dynamicPageTest"
-		}		
+		},
+
+		"manualTest" : {
+			"moduleName":"manualTest",
+			"path" : "components/manualTest/js"
+		},
+		
+		"manualTestTest" : {
+			"moduleName":"manualTestTest",
+			"path" : "components/manualTest/test/manualTestTest"
+		}
 	}
 }

@@ -68,6 +68,8 @@ var commonVariables = {
 	loadTest : "loadTest",
 	
 	testResult : "testResult",
+	manual : "manual",
+	manualTest : "manualTest",
 
 	ci : "ci",
 	jobTemplates : "jobTemplates",
