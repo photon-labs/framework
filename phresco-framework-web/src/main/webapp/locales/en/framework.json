@@ -229,7 +229,11 @@
           "failure"    : "Failure",
           "error"      : "Error",
 		  "results"    : "Results",
-		  "notexecuted": "Performance test not yet executed"
+		  "notexecuted": "Performance test not yet executed",
+		  "notApplicable"	: "Not Applicable",
+		  "blocked"			: "blocked",
+		  "notExecuted"		: "Not Executed",
+		  "testCoverage"	: "Test Coverage"
 	  }
 	},
 	
