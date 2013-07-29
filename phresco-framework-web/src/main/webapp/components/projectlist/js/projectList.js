@@ -248,7 +248,10 @@ define(["projectlist/listener/projectListListener"], function() {
 				var action = $(this).attr("data-original-title");
 				var currentPrjName = $(this).closest("tr").attr("class");
 				var dynamicId = $(this).attr("dynamicId");
-				
+				//for hiding and clearing the dropdown values
+				$('.searchdropdown').hide();
+				$('.searchdropdown').html('');
+				//end for hiding and clearing dropdown value
 				if (action === "Add Repo") {
 					selectObj = $('.ad_Select');
 					checkObj = $("#repocredential_"+dynamicId);
@@ -304,7 +307,40 @@ define(["projectlist/listener/projectListListener"], function() {
 					self.projectslistListener.getCommitableFiles(data, this);
 				} else {
 					self.openccpl(this, $(this).attr('name'), currentPrjName);
-				}	
+				}
+				
+				//functionality for search log messages
+				$("#type_"+dynamicId).bind('change',function() {
+					if($(this).val() !== 'svn') {
+						$(".search").hide();
+						$('.searchdropdown').hide();
+					} else
+						$(".search").show();
+				});
+				
+				if($("#type_"+dynamicId).val() === 'svn')
+					$('.search').show();
+				else
+					$(".search").hide();
+				
+				$('.search').click(function() {
+					var actionBody = {};
+					actionBody.repoUrl = $("#repourl_"+dynamicId).val();
+					actionBody.userName = $("#uname_"+dynamicId).val();
+					actionBody.password = $("#pwd_"+dynamicId).val();
+					self.projectslistListener.projectListAction(self.projectslistListener.getActionHeader(actionBody, "searchlogmessage"), "" , function(response) {
+						 $.each(response.data, function(index, value) {
+							$('.searchdropdown').append('<option value='+value+'>'+value+'</option>');
+						});
+					});
+					$('.searchdropdown').show();
+				});
+				$('.searchdropdown').focusout(function() {
+					$('.searchdropdown').hide();
+					var temp = $(this).find(':selected').text();
+					$("#repomessage_"+dynamicId).val(temp);
+				});	
+				//end of functionality for search log messages
 			});
 			
 			$("a[name = 'updatesvn']").unbind("click");

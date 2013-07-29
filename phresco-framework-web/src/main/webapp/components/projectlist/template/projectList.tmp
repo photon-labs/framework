@@ -146,10 +146,16 @@
                                 <td><input type="password" name="password" placeholder="*******" id="pwd_{{id}}" class="pwd"></td>
                             </tr>
                             <tr>
-                                <td colspan="2">
+                                <td>
                                     <textarea class="popuptextarea" name="commitMsg" data-i18n="[placeholder]projectlist.label.message" id="repomessage_{{id}}"></textarea>
-                                </td>
+								</td>
+								<td>
+									<img class="search" src="themes/default/images/helios/search_icon.png" border="0" alt="">
+								</td>
                             </tr>
+							<tr>
+								<td><select class="searchdropdown"></select></td>
+							</tr>
                         </tbody>
                      </table> 
                      <div class="popuploading" id="addRepoLoading_{{id}}">&nbsp</div>
