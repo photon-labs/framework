@@ -35,10 +35,11 @@ import com.photon.phresco.commons.ResponseCodes;
 import com.photon.phresco.commons.model.ApplicationInfo;
 import com.photon.phresco.exception.PhrescoException;
 import com.photon.phresco.framework.commons.FrameworkUtil;
-import com.photon.phresco.framework.rest.api.util.BufferMap;
+import com.photon.phresco.framework.model.PerformanceUrls;
 import com.photon.phresco.framework.rest.api.util.ActionFunction;
 import com.photon.phresco.framework.rest.api.util.ActionResponse;
 import com.photon.phresco.framework.rest.api.util.ActionServiceConstant;
+import com.photon.phresco.framework.rest.api.util.BufferMap;
 import com.photon.phresco.framework.rest.api.util.FrameworkServiceUtil;
 import com.sun.jersey.api.client.ClientResponse.Status;
 
@@ -288,14 +289,13 @@ public class ActionService implements ActionServiceConstant, FrameworkConstants,
 	@POST
 	@Path("/performanceTest")
 	@Produces(MediaType.APPLICATION_JSON)
-	 public Response performanceTest(@Context HttpServletRequest request) throws PhrescoException  {
+	 public Response performanceTest(@Context HttpServletRequest request, PerformanceUrls performanceUrls) throws PhrescoException  {
 
 		ActionFunction actionFunction = new ActionFunction();
 		ActionResponse response = new ActionResponse();
 		try	{
 			actionFunction.prePopulateModelData(request);
-			actionFunction.prePopulatePerformanceTestData(request);
-			response = actionFunction.performanceTest(request);
+			response = actionFunction.performanceTest(request, performanceUrls);
 		} catch (Exception e) {
 			S_LOGGER.error(e.getMessage());
 			response.setStatus(ERROR);

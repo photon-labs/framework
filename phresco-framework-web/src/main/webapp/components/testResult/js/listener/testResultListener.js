@@ -1,4 +1,4 @@
-define([], function() {
+define(['lib/RGraph_common_core-1.0','lib/RGraph_common_tooltips-1.0','lib/RGraph_common_effects-1.0','lib/RGraph_pie-1.0','lib/RGraph_bar-1.0','lib/RGraph_line-1.0','lib/RGraph_common_key-1.0'], function() {
 
 	Clazz.createPackage("com.components.testResult.js.listener");
 

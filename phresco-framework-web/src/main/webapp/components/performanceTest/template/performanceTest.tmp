@@ -180,7 +180,6 @@
 				{{/if}}
                 <div id="performancePopup" class="dyn_popup performance_pop_cont" style="display:none;">
                     <form name="performanceForm" id="performanceForm">	
-                    	<input type="hidden" name="resultJson" id="resultJson" value=""/>
                         <ul class="row dynamicControls">
                         </ul>
                         <div class="templates"></div>
@@ -197,19 +196,18 @@
     </section>
     
     <section class="content_main code_content testSuiteTable performanceTestResults performanceTemp">
-    	{{#unless resultAvailable}}
-    		<div style="text-align: center; margin: auto 0;" class="alert alert-block perfError" data-i18n="testresult.label.notexecuted"></div>
-		{{else}}
-		 	{{#showErrMsg resultAvailable testResultFiles}}
-    			<div style="text-align: center; margin: auto 0;" class="alert alert-block perfError">Test not executed for {{#against testAgainsts}}{{/against}}</div>
-	    	{{else}}	
-	    		<div style="text-align: center; margin: auto 0; display:none" class="alert alert-block perfError"></div>
-	    	{{/showErrMsg}}   		
-    	{{/unless}}
-    	
-    	
     	<!-- Table view div starts here -->
-			<div class="qual_unit_main unit_info perfResultInfo" id="testSuites">
+			<div class="qual_unit_main unit_info" id="testSuites">
+				{{#unless resultAvailable}}
+	    		<div style="text-align: center; margin: auto 0;" class="alert alert-block perfError" data-i18n="testresult.label.notexecuted"></div>
+			{{else}}
+			 	{{#showErrMsg resultAvailable testResultFiles}}
+	    			<div style="text-align: center; margin: auto 0;" class="alert alert-block perfError">Test not executed for {{#against testAgainsts}}{{/against}}</div>
+		    	{{else}}	
+		    		<div style="text-align: center; margin: auto 0; display:none" class="alert alert-block perfError"></div>
+		    	{{/showErrMsg}}   		
+	    	{{/unless}}
+	    		<div class="perfResultInfo"></div>
 		    </div>
 	    <!-- Table view div ends here -->
     

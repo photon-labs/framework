@@ -28,7 +28,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.core.Response;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
@@ -55,7 +54,6 @@ import com.photon.phresco.commons.model.Customer;
 import com.photon.phresco.commons.model.ProjectInfo;
 import com.photon.phresco.commons.model.RepoInfo;
 import com.photon.phresco.commons.model.Technology;
-import com.photon.phresco.commons.model.TechnologyInfo;
 import com.photon.phresco.configuration.ConfigurationInfo;
 import com.photon.phresco.exception.ConfigurationException;
 import com.photon.phresco.exception.PhrescoException;
@@ -66,8 +64,8 @@ import com.photon.phresco.framework.api.ApplicationManager;
 import com.photon.phresco.framework.api.CIManager;
 import com.photon.phresco.framework.api.ProjectManager;
 import com.photon.phresco.framework.commons.FrameworkUtil;
+import com.photon.phresco.framework.model.PerformanceUrls;
 import com.photon.phresco.framework.rest.api.QualityService;
-import com.photon.phresco.framework.rest.api.ResponseInfo;
 import com.photon.phresco.framework.rest.api.RestBase;
 import com.photon.phresco.impl.ConfigManagerImpl;
 import com.photon.phresco.plugins.model.Mojos.ApplicationHandler;
@@ -87,7 +85,6 @@ import com.photon.phresco.util.Utility;
 import com.phresco.pom.exception.PhrescoPomException;
 import com.phresco.pom.model.Model.Modules;
 import com.phresco.pom.util.PomProcessor;
-import com.sun.jersey.api.client.ClientResponse.Status;
 
 
 public class ActionFunction extends RestBase implements Constants ,FrameworkConstants,ActionServiceConstant, ResponseCodes {
@@ -110,7 +107,6 @@ public class ActionFunction extends RestBase implements Constants ,FrameworkCons
 	private String username="";
 	private String testAgainst = "";
 	private String testName = "";
-	private String resultJson = "";
 	private String isFromCI = "";
 	private List<String> minifyFileNames = null;
 	private String minifyAll = "";
@@ -185,34 +181,6 @@ public class ActionFunction extends RestBase implements Constants ,FrameworkCons
 			}
 
 			setSelectedFiles(request.getParameter(SELECTED_FILES));
-		} catch (Exception e) {
-			throw new PhrescoException(e.getMessage());
-		}
-	}
-
-	public void prePopulatePerformanceTestData(HttpServletRequest request) throws PhrescoException {
-		try {
-			String testAgainst = request.getParameter(TEST_AGAINST);
-			if (StringUtils.isNotEmpty(testAgainst) && !"null".equalsIgnoreCase(testAgainst)) {
-				setTestAgainst(testAgainst);	
-			} else {
-				throw new PhrescoException("No valid TEST_AGAINST Passed");
-			}
-
-			String testName = request.getParameter(TEST_NAME);
-			if (StringUtils.isNotEmpty(testName) && !"null".equalsIgnoreCase(testName)) {
-				setTestName(testName);	
-			} else {
-				throw new PhrescoException("No valid TEST_NAME Passed");
-			}
-			String resultJson = request.getParameter(RESULT_JSON);
-			if (StringUtils.isNotEmpty(resultJson) && !"null".equalsIgnoreCase(resultJson)) {
-				setResultJson(resultJson);	
-			} else {
-				throw new PhrescoException("No valid RESULT_JSON Passed");
-			}
-			//To avoid null pointer exception incase of normal performance test.
-			setIsFromCI("");
 		} catch (Exception e) {
 			throw new PhrescoException(e.getMessage());
 		}
@@ -587,10 +555,10 @@ public class ActionFunction extends RestBase implements Constants ,FrameworkCons
 		}
 	}
 
-	public ActionResponse performanceTest(HttpServletRequest request) throws PhrescoException, IOException {
+	public ActionResponse performanceTest(HttpServletRequest request, PerformanceUrls performanceUrls) throws PhrescoException, IOException {
 		printLogs();
 		BufferedInputStream server_logs=null;
-		server_logs = performanceTest();
+		server_logs = performanceTest(performanceUrls);
 		if (server_logs != null) {
 			return generateResponse(server_logs);
 		} else {
@@ -971,7 +939,7 @@ public class ActionFunction extends RestBase implements Constants ,FrameworkCons
 	}
 
 
-	public BufferedInputStream performanceTest() throws PhrescoException {
+	public BufferedInputStream performanceTest(PerformanceUrls performanceUrls) throws PhrescoException {
 
 		BufferedInputStream reader=null;
 
@@ -990,7 +958,7 @@ public class ActionFunction extends RestBase implements Constants ,FrameworkCons
 			String workingDirectory = getAppDirectoryPath(applicationInfo);  
 
 			//
-			jsonWriter();    			
+			jsonWriter(performanceUrls);    			
 			reader = applicationManager.performAction(projectInfo, ActionType.PERFORMANCE_TEST, buildArgCmds, workingDirectory);
 
 		} catch (PhrescoException e) {
@@ -1686,7 +1654,7 @@ public class ActionFunction extends RestBase implements Constants ,FrameworkCons
 		return childElement;
 	}
 
-	public String jsonWriter() throws PhrescoException {
+	public String jsonWriter(PerformanceUrls performanceUrls) throws PhrescoException {
 		FileWriter fw = null;
 		String property = "";
 		try {
@@ -1722,7 +1690,9 @@ public class ActionFunction extends RestBase implements Constants ,FrameworkCons
 					if (!file.exists()) {
 						file.createNewFile();
 					}
-					byte[] contentInBytes = getResultJson().getBytes();				 
+					Gson gson = new Gson();
+					String string = gson.toJson(performanceUrls).toString();
+					byte[] contentInBytes = string.getBytes();				 
 					fop.write(contentInBytes);
 					fop.flush();
 					fop.close();				
@@ -1767,7 +1737,10 @@ public class ActionFunction extends RestBase implements Constants ,FrameworkCons
 						if (!file.exists()) {
 							file.createNewFile();
 						}
-						byte[] contentInBytes = getResultJson().getBytes();				 
+						
+						Gson gson = new Gson();
+						String string = gson.toJson(performanceUrls).toString();
+						byte[] contentInBytes = string.getBytes();				 
 						fop.write(contentInBytes);
 						fop.flush();
 						fop.close();				
@@ -2483,12 +2456,6 @@ return isSonarReportAvailable;
 	}
 	public void setIsFromCI(String isFromCI) {
 		this.isFromCI = isFromCI;
-	}
-	public String getResultJson() {
-		return resultJson;
-	}
-	public void setResultJson(String resultJson) {
-		this.resultJson = resultJson;
 	}
 	public String getTestAgainst() {
 		return testAgainst;

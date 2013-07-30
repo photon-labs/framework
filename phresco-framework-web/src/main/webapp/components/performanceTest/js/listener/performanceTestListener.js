@@ -1,4 +1,4 @@
-define(["lib/jquery-tojson-1.0"], function() {
+define(["lib/jquery-tojson-1.0",'lib/RGraph_common_core-1.0','lib/RGraph_common_tooltips-1.0','lib/RGraph_common_effects-1.0','lib/RGraph_pie-1.0','lib/RGraph_bar-1.0','lib/RGraph_line-1.0','lib/RGraph_common_key-1.0'], function() {
 
 	Clazz.createPackage("com.components.performanceTest.js.listener");
 
@@ -649,7 +649,7 @@ define(["lib/jquery-tojson-1.0"], function() {
 			self.constructInputsAsJson();
 		},
 
-		executeTest : function (queryString, callback) {
+		executeTest : function (queryString, json, callback) {
 			queryString = queryString.concat("&testAction=performance");
 			var self = this, appInfo = commonVariables.api.localVal.getJson('appdetails');
 			$("#performancePopup").toggle();
@@ -660,12 +660,12 @@ define(["lib/jquery-tojson-1.0"], function() {
 			if(self.mavenServiceListener === null)	{
 				commonVariables.navListener.getMyObj(commonVariables.mavenService, function(retVal){
 					self.mavenServiceListener = retVal;
-					self.mavenServiceListener.mvnPerformanceTest(queryString, '#testConsole', function(response){
+					self.mavenServiceListener.mvnPerformanceTest(queryString, '#testConsole', json, function(response){
 						callback(response);
 					});
 				});
 			}else{
-				self.mavenServiceListener.mvnPerformanceTest(queryString, '#testConsole', function(response){
+				self.mavenServiceListener.mvnPerformanceTest(queryString, '#testConsole', json, function(response){
 					callback(response);
 				});
 			}
@@ -678,9 +678,8 @@ define(["lib/jquery-tojson-1.0"], function() {
 				formJsonStr = formJsonStr.slice(0,formJsonStr.length-1);
 				formJsonStr = formJsonStr + ',' + templJsonStr + '}';
 			}
-			$("#resultJson").val("");
-			$("#resultJson").val(formJsonStr);
-			self.executeTest($('#performanceForm').serialize(), function(response) {
+			var json = JSON.parse('{' + templJsonStr + '}');
+			self.executeTest($('#performanceForm').serialize(), json, function(response) {
 				commonVariables.api.localVal.setSession('performanceConsole', $('#testConsole').html());
 				$('.progress_loading').hide();
 				commonVariables.navListener.onMytabEvent(commonVariables.performanceTest);
