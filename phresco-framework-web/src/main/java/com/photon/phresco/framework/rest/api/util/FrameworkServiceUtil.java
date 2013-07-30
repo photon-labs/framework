@@ -436,7 +436,7 @@ public class FrameworkServiceUtil implements Constants, FrameworkConstants {
 		} else if (PHASE_RUNGAINST_SRC_START.equals(goal)|| PHASE_RUNGAINST_SRC_STOP.equals(goal) ) {
 			sb.append(PHASE_RUNAGAINST_SOURCE);
 		} else {
-			sb.append(phase);
+			sb.append(goal);
 		}
 		sb.append(INFO_XML);
 
