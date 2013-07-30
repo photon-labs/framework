@@ -105,8 +105,6 @@ public class ActionFunction extends RestBase implements Constants ,FrameworkCons
 	private String selectedFiles="";
 	private String phase="";
 	private String username="";
-	private String testAgainst = "";
-	private String testName = "";
 	private String isFromCI = "";
 	private List<String> minifyFileNames = null;
 	private String minifyAll = "";
@@ -957,7 +955,6 @@ public class ActionFunction extends RestBase implements Constants ,FrameworkCons
 			buildArgCmds.add(HYPHEN_N);
 			String workingDirectory = getAppDirectoryPath(applicationInfo);  
 
-			//
 			jsonWriter(performanceUrls);    			
 			reader = applicationManager.performAction(projectInfo, ActionType.PERFORMANCE_TEST, buildArgCmds, workingDirectory);
 
@@ -1658,8 +1655,8 @@ public class ActionFunction extends RestBase implements Constants ,FrameworkCons
 		FileWriter fw = null;
 		String property = "";
 		try {
-			if(REQ_PARAMETERS.equalsIgnoreCase(request.getParameter("testBasis")) && StringUtils.isNotEmpty(getTestAgainst())
-					|| (StringUtils.isEmpty(request.getParameter("testBasis")) && StringUtils.isNotEmpty(getTestAgainst()))) {
+			if(REQ_PARAMETERS.equalsIgnoreCase(request.getParameter("testBasis")) && StringUtils.isNotEmpty("testAgainst")
+					|| (StringUtils.isEmpty(request.getParameter("testBasis")) && StringUtils.isNotEmpty("testAgainst"))) {
 				if (LOAD.equals(request.getParameter("testAction"))) {
 					property = POM_PROP_KEY_LOADTEST_DIR;
 				} else {
@@ -1677,13 +1674,13 @@ public class ActionFunction extends RestBase implements Constants ,FrameworkCons
 					.append(applicationInfo.getAppDirName())
 					.append(performTestDir)
 					.append(File.separator)
-					.append(getTestAgainst())
+					.append(request.getParameter("testAgainst"))
 					.append(File.separator)
 					.append(Constants.FOLDER_JSON);
 					
 					success = new File(filepath.toString()).mkdirs();
 					filepath.append(File.separator)
-					.append(getTestName())
+					.append(request.getParameter("testName"))
 					.append(DOT_JSON);
 					File file = new File(filepath.toString());
 					fop = new FileOutputStream(file);
@@ -1701,7 +1698,7 @@ public class ActionFunction extends RestBase implements Constants ,FrameworkCons
 					.append(applicationInfo.getAppDirName())
 					.append(performTestDir)
 					.append(File.separator)
-					.append(getTestAgainst())
+					.append(request.getParameter("testAgainst"))
 					.append(File.separator)
 					.append(Constants.FOLDER_JSON)				
 					.append(File.separator)
@@ -1711,12 +1708,12 @@ public class ActionFunction extends RestBase implements Constants ,FrameworkCons
 					if (!file.exists()) {
 						file.createNewFile();
 						fw = new FileWriter(file);
-						fw.write(getTestName()+DOT_JSON);
+						fw.write(request.getParameter("testName")+DOT_JSON);
 					} else {
 						fw = new FileWriter(infofilepath.toString(),true);
 						StringBuilder jsonFileName = new StringBuilder()
 						.append(",")
-						.append(getTestName());
+						.append(request.getParameter("testName"));
 						fw.write(jsonFileName.toString()+DOT_JSON);						
 					}
 					
@@ -1725,19 +1722,18 @@ public class ActionFunction extends RestBase implements Constants ,FrameworkCons
 					.append(applicationInfo.getAppDirName())
 					.append(performTestDir)
 					.append(File.separator)
-					.append(getTestAgainst())
+					.append(request.getParameter("testAgainst"))
 					.append(File.separator)
 					.append(Constants.FOLDER_JSON);			
 					if (new File(filepath.toString()).exists()) {
 						filepath.append(File.separator)
-						.append(getTestName())
+						.append(request.getParameter("testName"))
 						.append(DOT_JSON);				
 						File file = new File(filepath.toString());
 						fop = new FileOutputStream(file);
 						if (!file.exists()) {
 							file.createNewFile();
 						}
-						
 						Gson gson = new Gson();
 						String string = gson.toJson(performanceUrls).toString();
 						byte[] contentInBytes = string.getBytes();				 
@@ -1746,8 +1742,8 @@ public class ActionFunction extends RestBase implements Constants ,FrameworkCons
 						fop.close();				
 					}
 				}				
-			}			
-		} catch (Exception e) {			
+			}
+		} catch (Exception e) {	
 			throw new PhrescoException(e);
 		} finally {
 			Utility.closeStream(fw);
@@ -2456,18 +2452,6 @@ return isSonarReportAvailable;
 	}
 	public void setIsFromCI(String isFromCI) {
 		this.isFromCI = isFromCI;
-	}
-	public String getTestAgainst() {
-		return testAgainst;
-	}
-	public void setTestAgainst(String testAgainst) {
-		this.testAgainst = testAgainst;
-	}
-	public String getTestName() {
-		return testName;
-	}
-	public void setTestName(String testName) {
-		this.testName = testName;
 	}
 	public String getUsername() {
 		return username;
