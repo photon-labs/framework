@@ -27,6 +27,6 @@ public class BuildInfoComparator implements Comparator<BuildInfo> {
     public int compare(BuildInfo info1, BuildInfo info2) {
     	Integer build1 = info1.getBuildNo();
     	Integer build2 = info2.getBuildNo();
-        return (build1 > build2) ? -1 : (build1 == build2 ? 0 : 1);
+    	return (build1 > build2) ? -1 : (build1.equals(build2) ? 0 : 1);
     }
 }
