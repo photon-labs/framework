@@ -1,4 +1,4 @@
-define([], function() {
+define(["lib/jquery-tojson-1.0"], function() {
 
 	Clazz.createPackage("com.components.performanceTest.js.listener");
 
@@ -285,7 +285,7 @@ define([], function() {
 				var imgArray = [];
 				for(var i = 0; i < screenShots.length ; i++) {
 					var srcJson = {};
-					srcJson.src = $('<div class="text_center"><img src="data:image/png;base64,'+screenShots[i]+'"><div class="fullscreen_desc"></div></div>');
+					srcJson.src = $('<div class="text_center"><img src="data:image/png;base64,'+screenShots[i].split("#NAME_SEP#")[0]+'"><div class="fullscreen_desc">'+screenShots[i].split("#NAME_SEP#")[1]+'</div></div>');
 					srcJson.type = 'inline';
 					imgArray.push(srcJson);
 				}

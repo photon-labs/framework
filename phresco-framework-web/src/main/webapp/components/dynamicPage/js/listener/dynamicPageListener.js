@@ -1,4 +1,4 @@
-define(["framework/widgetWithTemplate", "common/loading"], function() {
+define(["framework/widgetWithTemplate", "common/loading", "lib/customcombobox-1.0", "lib/fileuploader-2.0"], function() {
 
     Clazz.createPackage("com.components.dynamicPage.js.listener");
 

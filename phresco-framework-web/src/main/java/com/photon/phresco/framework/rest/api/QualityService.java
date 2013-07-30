@@ -1427,7 +1427,6 @@ public class QualityService extends RestBase implements ServiceConstants, Framew
             		testAgainsts.add(value.getKey());
 				}
             }
-            
             boolean resutlAvailable = testResultAvail(appDirName, testAgainsts, Constants.PHASE_PERFORMANCE_TEST);
             boolean showDevice = Boolean.parseBoolean(getPerformanceTestShowDevice(appDirName));
             if (resutlAvailable) {
@@ -1648,7 +1647,7 @@ public class QualityService extends RestBase implements ServiceConstants, Framew
 							if (imgFile.exists()) {
 								InputStream imageStream = new FileInputStream(imgFile);
 								String imgSrc = new String(Base64.encodeBase64(IOUtils.toByteArray(imageStream)));
-								imgSources.add(imgSrc);
+								imgSources.add(imgSrc + "#NAME_SEP#" + resultName + HYPHEN + pluginType.getTextContent());
 							}
 						}
 					}

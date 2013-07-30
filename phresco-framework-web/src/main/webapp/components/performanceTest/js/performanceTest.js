@@ -330,6 +330,12 @@ define(["performanceTest/listener/performanceTestListener"], function() {
 				commonVariables.navListener.copyPath(paramJson);
 			});
 
+			//To copy the console log content to the clip-board
+			$('#copyLog').unbind("click");
+			$('#copyLog').click(function() {
+				commonVariables.navListener.copyToClipboard($('#testConsole'));
+			});
+
 			//To show the print as pdf popup
 			$('#performancePdf').unbind("click");
 			$('#performancePdf').click(function() {
@@ -404,6 +410,7 @@ define(["performanceTest/listener/performanceTestListener"], function() {
 				
 			});
 			
+
 			$("#performanceRun").click(function() {
 				$('.progress_loading').show();
 				self.performanceTestListener.setConsoleScrollbar(true);

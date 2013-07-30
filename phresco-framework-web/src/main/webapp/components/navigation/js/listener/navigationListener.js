@@ -844,9 +844,11 @@ define([], function() {
 		copyToClipboard : function(consoleObj) {
 			var self = this;
 			var logContent = consoleObj.text();
-			var data = {};
-			data.log = escape(logContent);
-			self.navigationAction(self.getActionHeader(data, "copyToClipboard"), function(response) {});
+			if (!self.isBlank(logContent)) {
+				var data = {};
+				data.log = escape(logContent);
+				self.navigationAction(self.getActionHeader(data, "copyToClipboard"), function(response) {});
+			}
 		}
 	});
 
