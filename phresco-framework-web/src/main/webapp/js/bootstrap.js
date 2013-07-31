@@ -46,6 +46,7 @@ var commonVariables = {
 	
 	configuration : "configuration",
 	editConfiguration : "editConfiguration",
+	updateConfigName : '',
 	
 	croneExpression : "croneExpression",
 	
@@ -166,6 +167,7 @@ var commonVariables = {
 	edit : "Edit",
 	create : "Create",
 	deleted : "Delete",
+	subtabClicked : false,
 	
 	loadingScreen : null,
 	hideloading : false,

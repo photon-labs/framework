@@ -378,11 +378,32 @@ define(["projectlist/projectList"], function(ProjectList) {
 					start();					
 					var techid = $(commonVariables.contentPlaceholder).find(".wordpress-WordPress").attr("techid");
 					equal(undefined, techid, "Project List Service Tested");
-					require(["projectTest"], function(projectTest){
-						projectTest.runTests();
-					});
+					self.setConfigurationTypeTests(projectlist);
 				}, 1500);
 			}); 
+		},
+		
+		setConfigurationTypeTests : function (projectlist){
+			var self = this;
+			asyncTest("Configuration type Test", function() {
+				$.mockjax({
+					url:  commonVariables.webserviceurl+commonVariables.configuration+"/types?customerId=photon&userId=admin&techId=tech-html5-jquery-mobile-widget",
+					type:'GET',
+					contentType: 'application/json',
+					status: 200,
+					response: function() {
+						this.responseText = JSON.stringify({"message":"confuguration Template Fetched successfully","exception":null,"responseCode":null,"data":[{"envSpecific":true,"favourite":false,"templateName":"Scheduler"},{"envSpecific":true,"favourite":false,"templateName":"Server"},{"envSpecific":true,"favourite":false,"templateName":"Database"},{"envSpecific":true,"favourite":false,"templateName":"Email"},{"envSpecific":false,"favourite":false,"templateName":"SAP"}],"status":null});
+					}
+				});
+				projectlist.projectslistListener.editApplication("wordpress-WordPress", "tech-html5-jquery-mobile-widget");
+				setTimeout(function() {
+					start();
+					equal("", "", 'Configuration type Test');
+					require(["configurationTest"], function(configurationTest){
+						configurationTest.runTests();
+					});
+				}, 1000);
+			});
 		}
 		
 	};

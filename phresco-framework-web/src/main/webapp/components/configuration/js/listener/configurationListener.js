@@ -16,6 +16,7 @@ define(["croneExpression/croneExpression"], function() {
 		serverTypeVersion : null,
 		databaseTypeVersion : null,
 		croneExp : null,
+		nonEnvEditConfigurations : null,
 	
 		/***
 		 * Called in initialization time of this class 
@@ -26,23 +27,22 @@ define(["croneExpression/croneExpression"], function() {
 			var self = this;
 		},
 		
-		editConfiguration : function(envName) {
-			var self=this;
+		editConfiguration : function(envName, envSpecificVal) {
+			var self=this, envSpecific;
 			commonVariables.environmentName = envName;
+			envSpecific = (envSpecificVal === "true") ? true : false;
 			Clazz.navigationController.jQueryContainer = commonVariables.contentPlaceholder;
 			if(self.editConfigurations  === null) {
 				commonVariables.navListener.getMyObj(commonVariables.editConfiguration, function(retVal) {
 					self.editConfigurations = retVal;
-					self.getConfigurationList(self.getRequestHeader(self.configRequestBody, "configTypes"), function(response) {
-						self.editConfigurations.configType = response.data;
-						Clazz.navigationController.push(self.editConfigurations, commonVariables.animation);
-					});
-				});
-			} else {
-				self.getConfigurationList(self.getRequestHeader(self.configRequestBody, "configTypes"), function(response) {
-					self.editConfigurations.configType = response.data;
+					self.editConfigurations.envSpecificVal = envSpecific;
+					self.editConfigurations.configClick = "EditConfiguration";
 					Clazz.navigationController.push(self.editConfigurations, commonVariables.animation);
 				});
+			} else {
+				self.editConfigurations.envSpecificVal = envSpecific;
+				self.editConfigurations.configClick = "EditConfiguration";
+				Clazz.navigationController.push(self.editConfigurations, commonVariables.animation);
 			}
 		},
 
@@ -74,17 +74,14 @@ define(["croneExpression/croneExpression"], function() {
 			try {
 				self.showpopupLoad();
 				if (self.bcheck === false) {
-					//this.loadingScreen.showLoading();
 				}
 				commonVariables.api.ajaxRequest(header,
 					function(response) {
 						self.hidePopupLoad();
 						if (response !== null) {
 							callback(response);
-							//self.loadingScreen.removeLoading();
 						} else {
 							self.hidePopupLoad();
-							//self.loadingScreen.removeLoading();
 							callback({ "status" : "service failure"});
 						}
 
@@ -93,14 +90,12 @@ define(["croneExpression/croneExpression"], function() {
 					function(textStatus, xhr, e) {
 						self.hidePopupLoad();
 						if (self.bcheck === false) {
-							//self.loadingScreen.removeLoading();
 						}
 					}
 				);
 			} catch(exception) {
 				self.hidePopupLoad();
 				if (self.bcheck === false) {
-					//self.loadingScreen.removeLoading();
 				}
 			}
 
@@ -131,17 +126,28 @@ define(["croneExpression/croneExpression"], function() {
 				requestMethod : "GET",
 				webserviceurl : ''
 			};
-			if (action === "list") {
-				header.webserviceurl = commonVariables.webserviceurl+commonVariables.configuration+"/allEnvironments?appDirName="+appDirName;
-			} else if (action === "edit") {
-				header.webserviceurl = commonVariables.webserviceurl+commonVariables.configuration+"?appDirName="+appDirName+"&envName="+commonVariables.environmentName;
-			}else if (action === "configTypes") {
+			if (action === 'list') {
+				if (configRequestBody.envSpecific === false && configRequestBody.configType !== "") {
+					header.webserviceurl = commonVariables.webserviceurl+commonVariables.configuration+"/allEnvironments?appDirName="+appDirName+"&isEnvSpecific="+configRequestBody.envSpecific+"&configType="+configRequestBody.configType;
+				} else {				
+					header.webserviceurl = commonVariables.webserviceurl+commonVariables.configuration+"/allEnvironments?appDirName="+appDirName;
+				}
+			} else if (action === 'edit') {
+				if (configRequestBody.envSpecific === false) {
+					header.webserviceurl = commonVariables.webserviceurl+commonVariables.configuration+"?appDirName="+appDirName+"&configName="+commonVariables.environmentName+"&isEnvSpecific="+configRequestBody.envSpecific;
+				} else {
+					header.webserviceurl = commonVariables.webserviceurl+commonVariables.configuration+"?appDirName="+appDirName+"&envName="+commonVariables.environmentName;
+				}
+			}else if (action === 'configTypes') {
 				self.bcheck = true;
 				header.webserviceurl = commonVariables.webserviceurl+commonVariables.configuration+"/types?customerId="+customerId+"&userId="+userId+"&techId="+techId;
-			} else if (action === "delete") {
+			} else if (action === 'delete') {
 				self.bcheck = true;
 				header.requestMethod = "DELETE";
 				header.webserviceurl = commonVariables.webserviceurl+commonVariables.configuration+"/deleteEnv?appDirName="+appDirName+"&envName="+deleteEnv;
+			} else if (action === "deleteConfig") {
+				header.requestMethod = "DELETE";
+				header.webserviceurl = commonVariables.webserviceurl+commonVariables.configuration+"/deleteConfig?appDirName="+appDirName+"&configName="+deleteEnv;
 			} else if (action === "template") {
 					self.bcheck = true;
 					header.webserviceurl = commonVariables.webserviceurl+commonVariables.configuration+"/settingsTemplate?appDirName="+appDirName+"&customerId="+customerId+"&userId="+userId+"&type="+deleteEnv+"&techId="+techId;
@@ -152,16 +158,15 @@ define(["croneExpression/croneExpression"], function() {
 			} else if (action === "saveConfig") {
 					header.requestMethod = "POST";
 					header.requestPostBody = JSON.stringify(configRequestBody);
-					header.webserviceurl = commonVariables.webserviceurl+commonVariables.configuration+"/updateConfig?appDirName="+appDirName+"&envName="+deleteEnv+"&customerId="+customerId+"&userId="+userId;
+					if (deleteEnv === "false") {
+						header.webserviceurl = commonVariables.webserviceurl+commonVariables.configuration+"/updateConfig?appDirName="+appDirName+"&isEnvSpecific="+deleteEnv+"&configName="+commonVariables.updateConfigName+"&customerId="+customerId+"&userId="+userId;
+					} else {
+						header.webserviceurl = commonVariables.webserviceurl+commonVariables.configuration+"/updateConfig?appDirName="+appDirName+"&envName="+deleteEnv+"&customerId="+customerId+"&userId="+userId;
+					}
 			} else if (action === "cloneEnv") {
 					header.requestMethod = "POST";
 					header.requestPostBody = JSON.stringify(configRequestBody);
 					header.webserviceurl = commonVariables.webserviceurl+commonVariables.configuration+"/cloneEnvironment?appDirName="+appDirName+"&envName="+deleteEnv;
-			} else if (action === "cronExpression") {
-					self.bcheck = true;
-					header.requestMethod = "POST";
-					header.requestPostBody = JSON.stringify(configRequestBody);
-					header.webserviceurl = commonVariables.webserviceurl+commonVariables.configuration+"/cronExpression";
 			} else if (action === "isAliveCheck") {
 					header.requestMethod = "GET";
 					header.webserviceurl = commonVariables.webserviceurl+commonVariables.configuration+"/connectionAliveCheck?url="+configRequestBody.protocol+","+configRequestBody.host+","+configRequestBody.port;
@@ -181,7 +186,7 @@ define(["croneExpression/croneExpression"], function() {
 			return header;
 		},
 		
-		constructHtml : function(configTemplates, configuration, currentConfig){
+		constructHtml : function(configTemplates, configuration, currentConfig, envSpecificVal){
 			var flag = 0;
 			var htmlTag = "";
 			var key = "";
@@ -246,7 +251,14 @@ define(["croneExpression/croneExpression"], function() {
 					self.count = "";
 				}
 				
-				var headerTr = '<tr type="'+configTemplate.name+self.count+'" class="row_bg" configType="'+configTemplate.name+'"><td colspan="3">' + configTemplate.name + '</td><td colspan="3">'+'<a href="javascript:;" name="removeConfig"><img src="themes/default/images/helios/close_icon.png" border="0" alt="" class="flt_right"/></a></td></tr>';
+				var removeIcon = "";
+				if(envSpecificVal === false) { 
+					removeIcon = ''; 
+				} else {
+					removeIcon = '<a href="javascript:;" name="removeConfig"><img src="themes/default/images/helios/close_icon.png" border="0" alt="" class="flt_right"/></a>';
+				}
+				
+				var headerTr = '<tr type="'+configTemplate.name+self.count+'" class="row_bg" envSpecificVal="'+envSpecificVal+'" configType="'+configTemplate.name+'"><td colspan="3">' + configTemplate.name + '</td><td colspan="3">'+removeIcon+'</td></tr>';
 				content = content.concat(headerTr);
 				var defaultTd = '<tr name="'+configTemplate.name+'" class="'+configTemplate.name+self.count+'"><td class="labelTd">Name <sup>*</sup></td><td><input type="text" id="Config'+configTemplate.name+self.count+'" mandatory="true" maxlength="30" title="30 Characters only" class="configName" value="'+configName+'" placeholder= "Configuration Name"/></td><td class="labelTd">Description</td><td><input type="text" class="configDesc" value="'+configDesc+'" maxlength="150" title="150 Characters only" placeholder= "Configuration Description"/></td>';
 				content = content.concat(defaultTd);
@@ -298,7 +310,10 @@ define(["croneExpression/croneExpression"], function() {
 					} else if (type === "Password") {
 						inputCtrl = '<input value="'+ configValue +'" class="'+configTemplate.name+self.count+'Configuration" name="'+key+'" mandatory="'+required+'" type="password" placeholder=""/>';
 					} else if (type === "FileType") {
-						inputCtrl = '<div id="file-uploader-demo1" class="file-uploader" propTempName="'+key+'"><noscript><p>Please enable JavaScript to use file uploader.</p><!-- or put a simple form for upload here --></noscript>  </div>';
+						inputCtrl = '<div id="file-uploader'+currentConfig+'" class="file-uploader" propTempName="'+key+'"><noscript><p>Please enable JavaScript to use file uploader.</p><!-- or put a simple form for upload here --></noscript>  </div>';
+						fCheck = true;
+					} else if (type === "Actions") {
+						inputCtrl = '<input value="'+ label +'" class="'+configTemplate.name+self.count+'Configuration btn btn_style" name="'+key+'" mandatory="'+required+'" type="button" />';
 						fCheck = true;
 					} else if (key === "scheduler") {
 						inputCtrl = '<input value="'+ configValue +'" class="'+configTemplate.name+self.count+'Configuration" name="'+key+'" mandatory="'+required+'" type="text" placeholder=""/><a name="cron_expression"><img src="themes/default/images/helios/settings_icon.png" width="23" height="22" border="0" alt=""></a><div id="cron_expression" class="dyn_popup" style="display:none"></div>';
@@ -306,6 +321,8 @@ define(["croneExpression/croneExpression"], function() {
 						var checked = "";
 						if(configValue === "true") {
 							checked = "checked";
+						} else if(configValue === "" || configValue === null) {
+							configValue = "false";
 						}
 						inputCtrl = '<input value="'+ configValue +'" '+checked+' class="'+configTemplate.name+self.count+'Configuration" name="'+key+'" mandatory="'+required+'" type="checkbox"/>';
 					} else {
@@ -435,23 +452,29 @@ define(["croneExpression/croneExpression"], function() {
 				self.removeConfiguration();
 				self.spclCharValidation();
 				if (fCheck === true) {
-					self.createUploader();
+					self.createUploader("file-uploader"+currentConfig);
 				}
 			}
 		},
 		
-		createUploader : function() {     
+		createUploader : function(id) {     
 			var self = this, appDirName;
 			appDirName = commonVariables.api.localVal.getSession("appDirName");
             var uploader = new qq.FileUploader({
-                element: document.getElementById('file-uploader-demo1'),
+                element: document.getElementById(id),
                 action: commonVariables.webserviceurl+commonVariables.configuration+'/upload',
 				actionType : "configuration",
 				appDirName : appDirName,
 				buttonLabel: "Upload File",
 				multiple: false,
-				debug: true
-            });           
+				debug: true,	
+				onComplete: function (id, fileName, responseJSON) {
+					$("img[name=removeFile]").click(function(){
+						$(this).parent().remove();
+					});
+				}
+
+            });  
         },
 		
 		severDbOnChangeEvent : function () {
@@ -700,16 +723,18 @@ define(["croneExpression/croneExpression"], function() {
 		},	
 		
 		htmlForOther : function(value) {
-			var self = this, headerTr, content = '', textBox, apiKey = "", keyValue = "", type="Other", addIcon = '<img src="themes/default/images/helios/plus_icon.png" border="0" alt="">';
+			var self = this, headerTr, content = '', textBox, apiKey = "", keyValue = "", type="Other", name="", desc="", addIcon = '<img src="themes/default/images/helios/plus_icon.png" border="0" alt="">';
 				if (value !== null && value !== '') {
 					type = value.type;
+					name = value.name;
+					desc = value.desc;
 				}
 				
 				headerTr = '<tr class="row_bg" type="otherConfig" configType="'+type+'"><div class="row"><td colspan="3">' + type + '</td><td colspan="3">'+
 				'<a href="javascript:;" name="removeConfig"><img src="themes/default/images/helios/close_icon.png" border="0" alt="" class="flt_right"/></a></td></div></tr>';
 				content = content.concat(headerTr);
 				
-				var defaultTd = '<tr name="configName" class="otherConfig" name="'+type+'"><td class="labelTd">Name <sup>*</sup></td><td><input type="text" id="ConfigOther" maxlength="30" title="30 Characters only" mandatory="true" class="configName" value="" placeholder= "Configuration Name"/></td><td class="labelTd">Description</td><td><input type="text" id="ConfigOther" class="configDesc" maxlength="150" title="150 Characters only"  value="" placeholder= "Configuration Description"/></td>';
+				var defaultTd = '<tr name="configName" class="otherConfig" name="'+type+'"><td class="labelTd">Name <sup>*</sup></td><td><input type="text" id="ConfigOther" maxlength="30" title="30 Characters only" mandatory="true" class="configName" value="'+name+'" placeholder= "Configuration Name"/></td><td class="labelTd">Description</td><td><input type="text" id="ConfigOther" class="configDesc" maxlength="150" title="150 Characters only"  value="'+desc+'" placeholder= "Configuration Description"/></td>';
 				content = content.concat(defaultTd);
 				
 				if (value !== null && value !== '') {
@@ -805,7 +830,7 @@ define(["croneExpression/croneExpression"], function() {
 			var self=this;
 			if (config !== "Other") {
 				self.getConfigurationList(self.getRequestHeader(self.configRequestBody, "template", config), function(response) {
-					self.constructHtml(response, '', config, '');
+					self.constructHtml(response, '', config, '', true);
 				});
 			} else {
 				self.htmlForOther('');
@@ -866,7 +891,14 @@ define(["croneExpression/croneExpression"], function() {
 				});
 				self.configList.push(configJson);
 			});
-			var envrName = $('input[name=EnvName]').val();
+			
+			var envrName = "";
+			if ($('input[name=EnvName]').val() !== undefined) {
+				envrName = $('input[name=EnvName]').val();
+			} else {
+				envrName = $(".row_bg").attr('envspecificval');
+			}
+			
 			self.configRequestBody = self.configList;
 			if(self.validation()) {
 				self.getConfigurationList(self.getRequestHeader(self.configRequestBody, "saveConfig", envrName), function(response) {
@@ -883,7 +915,7 @@ define(["croneExpression/croneExpression"], function() {
 					} else {
 						Clazz.navigationController.push(self.configListPage, true);
 					}
-				}); 
+				});
 			}
 		},
 		
@@ -1071,6 +1103,18 @@ define(["croneExpression/croneExpression"], function() {
 			envJson.desc = desc;
 			envJson.defaultEnv = defaultEnv;
 			callback(envJson);
+		},
+		
+		nonEnvConfig : function (configName, envSpecificVal) {
+			var self=this;
+			Clazz.navigationController.jQueryContainer = commonVariables.contentPlaceholder;
+			commonVariables.navListener.getMyObj(commonVariables.editConfiguration, function(retVal) {
+				self.nonEnvEditConfigurations = retVal;
+				self.nonEnvEditConfigurations.configName = configName;
+				self.nonEnvEditConfigurations.configClick = "AddConfiguration";
+				self.nonEnvEditConfigurations.envSpecificVal = (envSpecificVal === "false") ? false : true;
+				Clazz.navigationController.push(self.nonEnvEditConfigurations, true);
+			});
 		}
 		
 	});

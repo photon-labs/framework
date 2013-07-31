@@ -89,10 +89,21 @@ define(["navigation/listener/navigationListener"], function() {
 				$(this).children().addClass("act");
 				self.onMytabEvent.dispatch(this.id);
 			});
-
-			$("#myTab li").click(function() {
+			
+			$("li[name=editMenu]").unbind("click");
+			$("li[name=editMenu]").click(function() {
+				if(!commonVariables.subtabClicked){
+					$("#myTab li a").removeClass("act");
+					$(this).children().addClass("act");
+					self.onMytabEvent.dispatch(this.id);
+				}
+				commonVariables.subtabClicked = false;
+			});
+			
+			$("li[name=qualityMenu]").off("click");
+			$("li[name=qualityMenu]").on("click", function() {
 				$("#myTab li a").removeClass("act");
-				$(this).children().addClass("act");
+				$('#qualityMenu').addClass("act");
 				self.onMytabEvent.dispatch(this.id);
 			});
 			

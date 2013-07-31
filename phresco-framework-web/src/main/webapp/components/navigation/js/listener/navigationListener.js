@@ -589,6 +589,7 @@ define([], function() {
 			} else if (self.currentTab !== commonVariables.configuration && keyword === commonVariables.configuration) {
 				self.getMyObj(commonVariables.configuration, function(returnVal){
 					currentObj = returnVal;
+					currentObj.envSpecific = true;
 					self.myTabRenderFunction(currentObj, keyword);
 				});
 			} else if (self.currentTab !== commonVariables.build && keyword === commonVariables.build) {
@@ -844,11 +845,47 @@ define([], function() {
 		copyToClipboard : function(consoleObj) {
 			var self = this;
 			var logContent = consoleObj.text();
-			if (!self.isBlank(logContent)) {
-				var data = {};
-				data.log = escape(logContent);
-				self.navigationAction(self.getActionHeader(data, "copyToClipboard"), function(response) {});
+			var data = {};
+			data.log = escape(logContent);
+			self.navigationAction(self.getActionHeader(data, "copyToClipboard"), function(response) {});
+		},
+		
+		configDropdown : function(val) {
+			var self=this, favConfigList="", favConfig, flag = false;
+			$("#configuration").html('');
+			$.each(val, function(index, value){
+				if (value.favourite === true || value.envSpecific === false) {
+					flag = true;
+					favConfigList += '<li name="configuration" configType="'+value.templateName+'" favourite='+value.favourite+' envSpecific='+value.envSpecific+'><a href="#">'+value.templateName+'</a></li>';
+				}
+			});
+			if (flag === true) {
+				favConfig = '<a href="#" id="drop4Config" role="quality" class="dropdown-toggle drop-qual" data-toggle="dropdown">Configuration<b class="caret"></b></a><div class="dropdown-menu cust_sel test_options" role="quality" aria-labelledby="drop4"><ul name="configurationList">'+favConfigList+'</ul></div>';
+			} else {
+				favConfig = '<a href="#" id="drop4Config" role="quality" class="dropdown-toggle drop-qual" data-toggle="dropdown">Configuration</b></a>';
 			}
+			$("#configuration").append(favConfig);
+			self.clickEvent();
+		},
+		
+		clickEvent : function() {
+			var self=this, envSpec, configType;
+			$("ul[name=configurationList] li").unbind("click");
+			$("ul[name=configurationList] li").click(function() {
+				$("#myTab li a").removeClass("act");
+				$("#configuration a#drop4Config").addClass("act");
+				envSpec = $(this).attr('envSpecific');
+				configType = $(this).attr('configType');
+				envSpec = (envSpec === "true") ? true : false;
+				commonVariables.subtabClicked = true;
+				commonVariables.navListener.currentTab = '';
+				self.getMyObj(commonVariables.configuration, function(returnVal){
+					self.nonEnvConfigurations = returnVal;
+					self.nonEnvConfigurations.envSpecific = envSpec;
+					self.nonEnvConfigurations.configType = configType;
+					Clazz.navigationController.push(self.nonEnvConfigurations, true);
+				});
+			});
 		}
 	});
 

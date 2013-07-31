@@ -189,6 +189,7 @@
 			"default" : "Default",
 			"environment" : "Environment",
 			"noenvironment" : "No Environment Available",
+			"noconfiguration" : "No Configuration Available",
 			"other" : "Other",
 			"setdefault" : "Set as Default",
 			"schedule" : "Schedule"

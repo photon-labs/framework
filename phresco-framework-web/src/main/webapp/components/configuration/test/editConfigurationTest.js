@@ -10,18 +10,8 @@ define(["configuration/editConfiguration"], function(EditConfiguration) {
 
 		asyncTest("Test - Edit Configuration Render Test", function() {
 		
-			$.mockjax({
-				url:  commonVariables.webserviceurl+commonVariables.configuration+"/types?customerId=photon&userId=admin&techId=tech-html5-jquery-mobile-widget",
-				type:'GET',
-				contentType: 'application/json',
-				status: 200,
-				response: function() {
-					this.responseText = JSON.stringify({"response":null,"message":"confuguration Template Fetched successfully","exception":null,"data":["Scheduler","Server","Database","Email","SAP","WebService","LDAP"]});
-				}
-			});
-			
 			self.editConfig = $.mockjax({
-				url:  commonVariables.webserviceurl+commonVariables.configuration+"?appDirName=aap1&envName=Production",
+				url:  commonVariables.webserviceurl+commonVariables.configuration+"?appDirName=wordpress-WordPress&envName=Production",
 				type:'GET',
 				contentType: 'application/json',
 				status: 200,
@@ -30,24 +20,21 @@ define(["configuration/editConfiguration"], function(EditConfiguration) {
 				}
 			});
 			
-			/* var configurationAPI = new Clazz.com.components.configuration.js.api.ConfigurationAPI(); */
-			commonVariables.api.localVal.setSession("appDirName" , "aap1");
-			
-			editConfiguration.configurationlistener.editConfiguration("Production");
+			editConfiguration.configurationlistener.editConfiguration("Production", "true");
 			
 			setTimeout(function() {
 				start();
 				equal($(commonVariables.contentPlaceholder).find('input[name=EnvName]').val(), "Production", "Edit Configuration Render Tested");
-				self.addConfiguration(editConfiguration, runOtherTests);
+				self.addConfiguration(editConfiguration);
 			}, 1500);
 		}); 
 	},
 	
-	addConfiguration : function(editConfiguration, runOtherTests) {
+	addConfiguration : function(editConfiguration) {
 		var self=this;
 		asyncTest("Test - Add Configuration Test", function() {
 			$.mockjax({
-				url:  commonVariables.webserviceurl+commonVariables.configuration+"/settingsTemplate?appDirName=aap1&customerId=photon&userId=admin&type=Server&techId=tech-html5-jquery-mobile-widget",
+				url:  commonVariables.webserviceurl+commonVariables.configuration+"/settingsTemplate?appDirName=wordpress-WordPress&customerId=photon&userId=admin&type=Server&techId=tech-html5-jquery-mobile-widget",
 				type:'GET',
 				contentType: 'application/json',
 				status: 200,
@@ -61,12 +48,12 @@ define(["configuration/editConfiguration"], function(EditConfiguration) {
 			setTimeout(function() {
 				start();
 				equal($(commonVariables.contentPlaceholder).find('.row_bg').attr('configtype'), "Server", "Add Configuration Tested");
-				self.serverChangeEvent(editConfiguration, runOtherTests);
+				self.serverChangeEvent(editConfiguration);
 			}, 1500);
 		});
 	},
 	
-	serverChangeEvent : function(editConfiguration, runOtherTests) {
+	serverChangeEvent : function(editConfiguration) {
 		var self=this;
 		asyncTest("Test - Server Change Event Test", function() {
 			
@@ -76,13 +63,13 @@ define(["configuration/editConfiguration"], function(EditConfiguration) {
 			setTimeout(function() {
 				start();
 				equal($(commonVariables.contentPlaceholder).find("select[currentconfig=Server]").val(), "2.1e", "Server Change Event Tested");
-				self.remoteDeployTrue(editConfiguration, runOtherTests);
+				self.remoteDeployTrue(editConfiguration);
 			}, 1500);
 		}); 
 		
 	},
 	
-	remoteDeployTrue : function(editConfiguration, runOtherTests) {
+	remoteDeployTrue : function(editConfiguration) {
 		var self=this;
 		asyncTest("Test - Remote Deploy True Event Test", function() {
 			
@@ -91,15 +78,14 @@ define(["configuration/editConfiguration"], function(EditConfiguration) {
 			
 			setTimeout(function() {
 				start();
-				console.info("valu...", $(commonVariables.contentPlaceholder));
 				equal($(commonVariables.contentPlaceholder).find("input[name=deploy_dir]").css('display'), "none", "Remote Deploy True Tested");
-				self.remoteDeployFalse(editConfiguration, runOtherTests);
+				self.remoteDeployFalse(editConfiguration);
 			}, 1500);
 		}); 
 		
 	},
 	
-	remoteDeployFalse : function(editConfiguration, runOtherTests) {
+	remoteDeployFalse : function(editConfiguration) {
 		var self=this;
 		asyncTest("Test - Remote Deploy False Event Test", function() {
 			
@@ -108,19 +94,19 @@ define(["configuration/editConfiguration"], function(EditConfiguration) {
 			
 			setTimeout(function() {
 				start();
-				notEqual($(commonVariables.contentPlaceholder).find("input[name=deploy_dir]").css('display'), "inline", "Remote Deploy Click Tested");
-				self.addCertificate(editConfiguration, runOtherTests);
+				notEqual($(commonVariables.contentPlaceholder).find("input[name=deploy_dir]").css('display'), "none", "Remote Deploy Click Tested");
+				self.addCertificate(editConfiguration);
 			}, 1500);
 		}); 
 		
 	},
 	
-	addCertificate : function(editConfiguration, runOtherTests) {
+	addCertificate : function(editConfiguration) {
 		var self=this;
 		asyncTest("Test - Add Certificate Test", function() {
 			
 			self.certificate = $.mockjax({
-				url:  commonVariables.webserviceurl+commonVariables.configuration+"/returnCertificate?host=localhost&port=3030&appDirName=aap1",
+				url:  commonVariables.webserviceurl+commonVariables.configuration+"/returnCertificate?host=localhost&port=3030&appDirName=wordpress-WordPress",
 				type:'GET',
 				contentType: 'application/json',
 				status: 200,
@@ -139,13 +125,13 @@ define(["configuration/editConfiguration"], function(EditConfiguration) {
 			setTimeout(function() {
 				start();
 				equal($(commonVariables.contentPlaceholder).find('select[name=certificateValue]').val(), "CN=kumar_s", "Add Certificate Tested");
-				self.saveCertificate(editConfiguration, runOtherTests);
+				self.saveCertificate(editConfiguration);
 			}, 1500);
 		}); 
 		
 	},
 	
-	saveCertificate : function(editConfiguration, runOtherTests) {
+	saveCertificate : function(editConfiguration) {
 		var self=this;
 		asyncTest("Test - Save Certificate Test", function() {
 			$.mockjax({
@@ -168,13 +154,13 @@ define(["configuration/editConfiguration"], function(EditConfiguration) {
 			setTimeout(function() {
 				start();
 				equal($(commonVariables.contentPlaceholder).find('input[name=certificate]').val(), "CN=kumar_s", "Save Certificate Tested");
-				self.serverAliveEvent(editConfiguration, runOtherTests);
+				self.serverAliveEvent(editConfiguration);
 			}, 1500);
 		}); 
 		
 	},
 	
-	serverAliveEvent : function(editConfiguration, runOtherTests) {
+	serverAliveEvent : function(editConfiguration) {
 		var self=this;
 		asyncTest("Test - Server Alive Event Test", function() {
 		
@@ -193,13 +179,13 @@ define(["configuration/editConfiguration"], function(EditConfiguration) {
 			setTimeout(function() {
 				start();
 				equal($(commonVariables.contentPlaceholder).find(".inactive").text(), "In Active", "Server Alive Event Tested");
-				self.removeConfiguration(editConfiguration, runOtherTests);
+				self.removeConfiguration(editConfiguration);
 			}, 1500);
 		}); 
 		
 	},
 	
-	removeConfiguration : function(editConfiguration, runOtherTests) {
+	removeConfiguration : function(editConfiguration) {
 		var self=this;
 		asyncTest("Test - Remove Configuration Test", function() {
 			
@@ -208,13 +194,13 @@ define(["configuration/editConfiguration"], function(EditConfiguration) {
 			setTimeout(function() {
 				start();
 				equal($(commonVariables.contentPlaceholder).find('.row_bg').attr('configtype'), undefined, "Remove Configuration Tested");
-				self.addOtherConfiguration(editConfiguration, runOtherTests);
+				self.addOtherConfiguration(editConfiguration);
 			}, 1500);
 		}); 
 		
 	},
 	
-	addOtherConfiguration : function(editConfiguration, runOtherTests) {
+	addOtherConfiguration : function(editConfiguration) {
 		var self=this;
 		asyncTest("Test - Add Other Configuration Test", function() {
 			
@@ -223,12 +209,12 @@ define(["configuration/editConfiguration"], function(EditConfiguration) {
 			setTimeout(function() {
 				start();
 				equal($(commonVariables.contentPlaceholder).find('.row_bg').attr('configtype'), "Other", "Add Other Configuration Tested");
-				self.addOtherConfigurationKeyValue(editConfiguration, runOtherTests);
+				self.addOtherConfigurationKeyValue(editConfiguration);
 			}, 1500);
 		}); 
 	},
 	
-	addOtherConfigurationKeyValue : function(editConfiguration, runOtherTests) {
+	addOtherConfigurationKeyValue : function(editConfiguration) {
 		var self=this;
 		asyncTest("Test - Add Other Configuration Key Test", function() {
 			
@@ -237,12 +223,12 @@ define(["configuration/editConfiguration"], function(EditConfiguration) {
 			setTimeout(function() {
 				start();
 				equal($(commonVariables.contentPlaceholder).find('tbody[name=ConfigurationLists] tr').length, 5, "Add Other Configuration Key Tested");
-				self.removeOtherConfigurationKeyValue(editConfiguration, runOtherTests);
+				self.removeOtherConfigurationKeyValue(editConfiguration);
 			}, 1500);
 		}); 
 	},
 	
-	removeOtherConfigurationKeyValue : function(editConfiguration, runOtherTests) {
+	removeOtherConfigurationKeyValue : function(editConfiguration) {
 		var self=this;
 		asyncTest("Test - Remove Other Configuration Key Test", function() {
 			
@@ -251,12 +237,12 @@ define(["configuration/editConfiguration"], function(EditConfiguration) {
 			setTimeout(function() {
 				start();
 				equal($(commonVariables.contentPlaceholder).find('tbody[name=ConfigurationLists] tr').length, 3, "Remove Other Configuration Key Tested");
-				self.validationForConfiguration(editConfiguration, runOtherTests);
+				self.validationForConfiguration(editConfiguration);
 			}, 1500);
 		}); 
 	},
 	
-	validationForConfiguration : function(editConfiguration, runOtherTests) {
+	validationForConfiguration : function(editConfiguration) {
 		var self=this;
 		asyncTest("Test - Validation for Configuration Test", function() {
 			
@@ -265,19 +251,19 @@ define(["configuration/editConfiguration"], function(EditConfiguration) {
 			setTimeout(function() {
 				start();
 				equal($(commonVariables.contentPlaceholder).find("#ConfigOther").attr('placeholder'), "Enter Configuration Name", "Validation for Configuration Tested");
-				//self.updateConfiguration(editConfiguration, runOtherTests);
+				self.updateConfiguration(editConfiguration);
 			}, 1500);
 		}); 
 	},
 	
-	updateConfiguration : function(editConfiguration, runOtherTests) {
+	updateConfiguration : function(editConfiguration) {
 		var self=this;
 		asyncTest("Test - Update Configuration Test", function() {
 			
 			$("a[name=removeConfig]").click();
 			
 			$.mockjax({
-				url:  commonVariables.webserviceurl+commonVariables.configuration+"/settingsTemplate?appDirName=aap1&customerId=photon&userId=admin&type=Email&techId=tech-html5-jquery-mobile-widget",
+				url:  commonVariables.webserviceurl+commonVariables.configuration+"/settingsTemplate?appDirName=wordpress-WordPress&customerId=photon&userId=admin&type=Email&techId=tech-html5-jquery-mobile-widget",
 				type:'GET',
 				contentType: 'application/json',
 				status: 200,
@@ -290,7 +276,7 @@ define(["configuration/editConfiguration"], function(EditConfiguration) {
 			editConfiguration.configurationlistener.addConfiguration("Email");
 			
 			$.mockjax({
-				url:  commonVariables.webserviceurl+commonVariables.configuration+"/updateConfig?appDirName=aap1&envName=Production&customerId=photon&userId=admin",
+				url:  commonVariables.webserviceurl+commonVariables.configuration+"/updateConfig?appDirName=wordpress-WordPress&envName=Production&customerId=photon&userId=admin",
 				type:'POST',
 				contentType: 'application/json',
 				status: 200,
@@ -310,10 +296,85 @@ define(["configuration/editConfiguration"], function(EditConfiguration) {
 				$("input[name=emailid]").val('ssss@gmail.com');
 				$("input[name=UpdateConfiguration]").click();
 				equal($(commonVariables.contentPlaceholder).find(".configName").val(), "email", "Update Configuration Tested");
-				runOtherTests();
-			}, 3000);
+				self.nonEnvEditConfigurationRender(editConfiguration);
+			}, 1500);
 		}); 
-	}
+	},
+	
+	nonEnvEditConfigurationRender : function(editConfiguration) {
+		var self=this;
+		$("#content").html('');
+		asyncTest("Test - Non Environment Edit Configuration Test", function() {
+		
+			$.mockjax({
+				url:  commonVariables.webserviceurl+commonVariables.configuration+"/settingsTemplate?appDirName=wordpress-WordPress&customerId=photon&userId=admin&type=SAP&techId=tech-html5-jquery-mobile-widget",
+				type:'GET',
+				contentType: 'application/json',
+				status: 200,
+				response: function() {
+					this.responseText = JSON.stringify({"message":"confuguration Template Fetched successfully","exception":null,"responseCode":null,"data":{"downloadInfo":{},"settingsTemplate":{"envSpecific":false,"favourite":false,"appliesToTechs":[{"creationDate":1349685730000,"helpText":null,"system":false,"name":"Php","id":"tech-php","displayName":null,"description":null,"status":null},{"creationDate":1349685730000,"helpText":null,"system":false,"name":"Drupal6","id":"tech-phpdru6","displayName":null,"description":null,"status":null},{"creationDate":1349685730000,"helpText":null,"system":false,"name":"Drupal7","id":"tech-phpdru7","displayName":null,"description":null,"status":null},{"creationDate":1349685730000,"helpText":null,"system":false,"name":"Sharepoint","id":"tech-sharepoint","displayName":null,"description":null,"status":null},{"creationDate":1349685730000,"helpText":null,"system":false,"name":"HTML5 Multichannel YUI Widget","id":"tech-html5","displayName":null,"description":null,"status":null},{"creationDate":1349685730000,"helpText":null,"system":false,"name":"HTML5 Multichannel JQuery Widget","id":"tech-html5-jquery-widget","displayName":null,"description":null,"status":null},{"creationDate":1349685730000,"helpText":null,"system":false,"name":"HTML5 JQuery Mobile Widget","id":"tech-html5-jquery-mobile-widget","displayName":null,"description":null,"status":null},{"creationDate":1349685730000,"helpText":null,"system":false,"name":"HTML5 YUI Mobile Widget","id":"tech-html5-mobile-widget","displayName":null,"description":null,"status":null},{"creationDate":1349685730000,"helpText":null,"system":false,"name":"Iphone Native","id":"tech-iphone-native","displayName":null,"description":null,"status":null},{"creationDate":1349685730000,"helpText":null,"system":false,"name":"Iphone Hybrid","id":"tech-iphone-hybrid","displayName":null,"description":null,"status":null},{"creationDate":1349685730000,"helpText":null,"system":false,"name":"Android Native","id":"tech-android-native","displayName":null,"description":null,"status":null},{"creationDate":1349685730000,"helpText":null,"system":false,"name":"Android Hybrid","id":"tech-android-hybrid","displayName":null,"description":null,"status":null},{"creationDate":1349685730000,"helpText":null,"system":false,"name":"Metlife html5 jquery archetype","id":"3bfc67a1-588d-41f0-9b8a-2807317d5c70","displayName":null,"description":null,"status":null}],"possibleTypes":[],"customProp":false,"properties":[{"required":false,"possibleValues":null,"propertyTemplates":null,"multiple":false,"key":"searchHosts","type":"String","defaultValue":null,"creationDate":1349685730343,"helpText":null,"system":false,"name":"Search Hosts","id":"c42b96f7-0d91-4a39-bd3a-ea031aad1254","displayName":null,"description":"SearchHosts","status":null},{"required":false,"possibleValues":null,"propertyTemplates":null,"multiple":false,"key":"sapSvcHost","type":"String","defaultValue":null,"creationDate":1349685730343,"helpText":null,"system":false,"name":"SapSvc Host","id":"0f90ccf2-ffb2-4633-9317-48062d3a22e5","displayName":null,"description":"SapSvcHost","status":null},{"required":false,"possibleValues":null,"propertyTemplates":null,"multiple":false,"key":"sapSvcPort","type":"Number","defaultValue":null,"creationDate":1349685730343,"helpText":null,"system":false,"name":"SapSvcPort","id":"bf0de51b-4391-4f49-be98-c1d11d4190b3","displayName":null,"description":"SapSvcPort","status":null},{"required":false,"possibleValues":null,"propertyTemplates":null,"multiple":false,"key":"smtp-host","type":"String","defaultValue":null,"creationDate":1349685730343,"helpText":null,"system":false,"name":"SmtpHost","id":"11821bc4-eeb5-42b6-b8c4-3fd5ec8f4557","displayName":null,"description":"SmtpHost","status":null},{"required":false,"possibleValues":null,"propertyTemplates":null,"multiple":false,"key":"useProductionConfig","type":"String","defaultValue":null,"creationDate":1349685730343,"helpText":null,"system":false,"name":"UseProductionConfig","id":"90ff8a9d-dfb6-4058-a89d-a4437d0e84e7","displayName":null,"description":"UseProductionConfig","status":null},{"required":false,"possibleValues":null,"propertyTemplates":null,"multiple":false,"key":"auth-token-cache-ttl","type":"String","defaultValue":null,"creationDate":1349685730343,"helpText":null,"system":false,"name":"AuthTokenCache ttl","id":"0d62a584-f3da-4a7d-b58d-54d76076a85d","displayName":null,"description":"AuthToken Cache ttl","status":null}],"type":null,"displayName":null,"customerIds":["photon","05c80933-95d4-46c8-a58d-ceceb4bcce48"],"used":false,"creationDate":1349685730343,"helpText":null,"system":true,"name":"SAP","id":"config_SAP","description":"SAP Configuration","status":null}},"status":null});
+				}
+
+			});
+			
+			self.editConfig = $.mockjax({
+				url:  commonVariables.webserviceurl+commonVariables.configuration+"?appDirName=wordpress-WordPress&configName=ttt&isEnvSpecific=false",
+				type:'GET',
+				contentType: 'application/json',
+				status: 200,
+				response: function() {
+					this.responseText = JSON.stringify({"message":"Configurations Listed","exception":null,"responseCode":null,"data":{"envName":null,"name":"ttt","properties":{"smtp-host":"bb","auth-token-cache-ttl":"v","searchHosts":"bb","sapSvcPort":"bb","useProductionConfig":"bvbvb","sapSvcHost":"bv"},"type":"SAP","desc":"bb"},"status":null});
+				}
+			});
+			
+			editConfiguration.configurationlistener.editConfiguration("ttt", "false");
+			
+			
+			setTimeout(function() {
+				start();
+				equal($(commonVariables.contentPlaceholder).find(".row_bg").attr('type'), "SAP", "Non Environment Edit Configuration Test");
+			}, 2500);
+			self.nonEnvAddConfigurationRender(editConfiguration);
+		}); 
+	},
+	
+	nonEnvAddConfigurationRender : function(editConfiguration) {
+		var self=this;
+		asyncTest("Test - Non Environment Add Configuration Test", function() {
+		
+			$.mockjax({
+				url:  commonVariables.webserviceurl+commonVariables.configuration+"/settingsTemplate?appDirName=wordpress-WordPress&customerId=photon&userId=admin&type=SAP&techId=tech-html5-jquery-mobile-widget",
+				type:'GET',
+				contentType: 'application/json',
+				status: 200,
+				response: function() {
+					this.responseText = JSON.stringify({"message":"confuguration Template Fetched successfully","exception":null,"responseCode":null,"data":{"downloadInfo":{},"settingsTemplate":{"envSpecific":false,"favourite":false,"appliesToTechs":[{"creationDate":1349685730000,"helpText":null,"system":false,"name":"Php","id":"tech-php","displayName":null,"description":null,"status":null},{"creationDate":1349685730000,"helpText":null,"system":false,"name":"Drupal6","id":"tech-phpdru6","displayName":null,"description":null,"status":null},{"creationDate":1349685730000,"helpText":null,"system":false,"name":"Drupal7","id":"tech-phpdru7","displayName":null,"description":null,"status":null},{"creationDate":1349685730000,"helpText":null,"system":false,"name":"Sharepoint","id":"tech-sharepoint","displayName":null,"description":null,"status":null},{"creationDate":1349685730000,"helpText":null,"system":false,"name":"HTML5 Multichannel YUI Widget","id":"tech-html5","displayName":null,"description":null,"status":null},{"creationDate":1349685730000,"helpText":null,"system":false,"name":"HTML5 Multichannel JQuery Widget","id":"tech-html5-jquery-widget","displayName":null,"description":null,"status":null},{"creationDate":1349685730000,"helpText":null,"system":false,"name":"HTML5 JQuery Mobile Widget","id":"tech-html5-jquery-mobile-widget","displayName":null,"description":null,"status":null},{"creationDate":1349685730000,"helpText":null,"system":false,"name":"HTML5 YUI Mobile Widget","id":"tech-html5-mobile-widget","displayName":null,"description":null,"status":null},{"creationDate":1349685730000,"helpText":null,"system":false,"name":"Iphone Native","id":"tech-iphone-native","displayName":null,"description":null,"status":null},{"creationDate":1349685730000,"helpText":null,"system":false,"name":"Iphone Hybrid","id":"tech-iphone-hybrid","displayName":null,"description":null,"status":null},{"creationDate":1349685730000,"helpText":null,"system":false,"name":"Android Native","id":"tech-android-native","displayName":null,"description":null,"status":null},{"creationDate":1349685730000,"helpText":null,"system":false,"name":"Android Hybrid","id":"tech-android-hybrid","displayName":null,"description":null,"status":null},{"creationDate":1349685730000,"helpText":null,"system":false,"name":"Metlife html5 jquery archetype","id":"3bfc67a1-588d-41f0-9b8a-2807317d5c70","displayName":null,"description":null,"status":null}],"possibleTypes":[],"customProp":false,"properties":[{"required":false,"possibleValues":null,"propertyTemplates":null,"multiple":false,"key":"searchHosts","type":"String","defaultValue":null,"creationDate":1349685730343,"helpText":null,"system":false,"name":"Search Hosts","id":"c42b96f7-0d91-4a39-bd3a-ea031aad1254","displayName":null,"description":"SearchHosts","status":null},{"required":false,"possibleValues":null,"propertyTemplates":null,"multiple":false,"key":"sapSvcHost","type":"String","defaultValue":null,"creationDate":1349685730343,"helpText":null,"system":false,"name":"SapSvc Host","id":"0f90ccf2-ffb2-4633-9317-48062d3a22e5","displayName":null,"description":"SapSvcHost","status":null},{"required":false,"possibleValues":null,"propertyTemplates":null,"multiple":false,"key":"sapSvcPort","type":"Number","defaultValue":null,"creationDate":1349685730343,"helpText":null,"system":false,"name":"SapSvcPort","id":"bf0de51b-4391-4f49-be98-c1d11d4190b3","displayName":null,"description":"SapSvcPort","status":null},{"required":false,"possibleValues":null,"propertyTemplates":null,"multiple":false,"key":"smtp-host","type":"String","defaultValue":null,"creationDate":1349685730343,"helpText":null,"system":false,"name":"SmtpHost","id":"11821bc4-eeb5-42b6-b8c4-3fd5ec8f4557","displayName":null,"description":"SmtpHost","status":null},{"required":false,"possibleValues":null,"propertyTemplates":null,"multiple":false,"key":"useProductionConfig","type":"String","defaultValue":null,"creationDate":1349685730343,"helpText":null,"system":false,"name":"UseProductionConfig","id":"90ff8a9d-dfb6-4058-a89d-a4437d0e84e7","displayName":null,"description":"UseProductionConfig","status":null},{"required":false,"possibleValues":null,"propertyTemplates":null,"multiple":false,"key":"auth-token-cache-ttl","type":"String","defaultValue":null,"creationDate":1349685730343,"helpText":null,"system":false,"name":"AuthTokenCache ttl","id":"0d62a584-f3da-4a7d-b58d-54d76076a85d","displayName":null,"description":"AuthToken Cache ttl","status":null}],"type":null,"displayName":null,"customerIds":["photon","05c80933-95d4-46c8-a58d-ceceb4bcce48"],"used":false,"creationDate":1349685730343,"helpText":null,"system":true,"name":"SAP","id":"config_SAP","description":"SAP Configuration","status":null}},"status":null});
+				}
+
+			});
+			
+			editConfiguration.configurationlistener.nonEnvConfig("SAP", "false");
+			
+			setTimeout(function() {
+				start();
+				equal($(commonVariables.contentPlaceholder).find(".row_bg").attr('type'), "SAP", "Non Add Environment Configuration Test");
+				self.cancleEventTest(editConfiguration);
+			}, 2000);
+		}); 
+	},
+	
+	cancleEventTest : function(editConfiguration) {
+		var self=this;
+		asyncTest("Test - Cancel Event Configuration Test", function() {
+			
+			$("#cancelEditConfig").click();
+			
+			setTimeout(function() {
+				start();
+				equal($(commonVariables.contentPlaceholder).find("#configurationPage").attr('id'), "configurationPage", "Cancel Event Configuration Test");
+			}, 1500);
+		}); 
+	},
 	
 	};
 });
