@@ -147,8 +147,22 @@ public class ProjectManagerTest {
 	}
 	
 	@Test
+	public void testUpdateWithoutApp() throws PhrescoException {
+		ProjectInfo projectInfo = new ProjectInfo();
+		projectInfo.setId("test");
+		projectInfo.setVersion("1.0");
+		projectInfo.setProjectCode("testPhp");
+		List<String> customerIds = new ArrayList<String>();
+		customerIds.add(customerId);
+		projectInfo.setCustomerIds(customerIds);
+		ProjectInfo project = projectManager.update(projectInfo, serviceManager, "testPhp");
+		Assert.assertEquals("testPhp", project.getProjectCode());
+	}
+	
+	@Test
 	public void testUpdateProject() throws PhrescoException {
 		ProjectInfo projectInfo = getProjectInfo();
+		projectInfo.getAppInfos().get(0).setAppDirName("testPhp");
 		List<String> selectedModules = new ArrayList<String>();
 		selectedModules.add("mod_weather_tech_php1.0");
 		selectedModules.add("mod_commenting_system._tech_php1.0");
@@ -178,9 +192,12 @@ public class ProjectManagerTest {
 		
 		projectInfo.getAppInfos().get(0).setSelectedDatabases(selectedDatabases);
 		
+		List<String> selectedWebservices = new ArrayList<String>();
+		selectedWebservices.add("restjson");
+		projectInfo.getAppInfos().get(0).setSelectedWebservices(selectedWebservices);
+		
 		projectInfo.setVersion("2.0");
 		projectInfo.setDescription("Sample Discription for php");
-		
 		ProjectInfo project = projectManager.update(projectInfo, serviceManager, "testPhp");
 		Assert.assertEquals("Sample Discription for php", project.getDescription());
 	}

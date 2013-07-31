@@ -1,7 +1,8 @@
 <div id="configurationPage">
 	<div class="second_title">
-		<div class="code_anal">
-			<input type="submit" name="env_pop" data-i18n="[value]configuration.label.addenvironment"  class="btn btn_style">
+		{{#if envSpecific}}
+		<div class="code_anal" name="EnvConfiguration">
+			<input type="submit" name="env_pop" data-i18n="[value]configuration.label.addenvironment"  class="btn btn_style arrow_down_icon">
 			 <div id="env_pop" class="dyn_popup popup_bg" style="display:none;">
                 <table width="100%" border="0" cellspacing="0" cellpadding="5">
                 <tr>
@@ -62,6 +63,11 @@
                 <!--env_pop div ends here -->	
             </div>
 			<!--code_anal div ends here -->
+			{{else}}
+			<div class="code_anal" configName="{{configType}}" envSpecificVal=false>
+				<input type="submit" name="nonEnv_pop" value="Add Configuration"  class="btn btn_style">
+			</div>
+			{{/if}}
 		</div>
 		<!--second_title div ends here -->
 	</div>
@@ -77,9 +83,11 @@
 				  <th><div class="th-inner" data-i18n="configuration.label.name"></div></th>
 				  <th><div class="th-inner" data-i18n="configuration.label.description"></div></th>
 				  <th><div class="th-inner" data-i18n="configuration.label.configure"></div></th>
+				  {{#if envSpecific}}
 				  <th><div class="th-inner" data-i18n="configuration.label.clone"></div></th>
+				  {{/if}}
 				  <th><div class="th-inner" data-i18n="configuration.label.delete"></div></th>
-				  <th>&nbsp;</th>
+				  <th><div  class="th-inner">&nbsp;</div></th>
 				</tr>
 			  </thead>
 			  <tbody name="EnvLists">
@@ -87,11 +95,12 @@
 			  <tr class="envlist">
 				<td name='envNames'>{{name}} {{#if defaultEnv}} (Default) {{else}} &nbsp; {{/if}}</td>  
 				<td>{{#if desc }} {{desc}} {{else}} &nbsp {{/if}}</td>
-				<td class="list_img"><a class="tooltiptop" href="#" data-toggle="tooltip" data-original-title="Configure" name="editConfiguration" key={{name}}>
+				<td class="list_img"><a class="tooltiptop" href="#" data-toggle="tooltip" data-placement="bottom" data-original-title="Configure" envSpecificValue="{{#if ../envSpecific}}true{{else}}false{{/if}}" name="editConfiguration" key={{name}}>
 				<img src="themes/default/images/helios/configure_icon.png" width="15" height="16" border="0" alt=""></a></td>
+				{{#if ../envSpecific}}
 				<td class="list_img">
-					{{#if ../userPermissions.manageConfiguration}}
-						<a class="tooltiptop" href="#" data-toggle="tooltip" data-original-title="Clone" name="clone_popup{{name}}">
+					{{#if ../../userPermissions.manageConfiguration}}
+						<a class="tooltiptop" href="#" data-placement="bottom" data-toggle="tooltip" data-original-title="Clone" name="clone_popup{{name}}">
 							<img src="themes/default/images/helios/clone_icon.png" width="20" height="18" border="0" alt="">
 						</a>
 					{{else}}
@@ -125,13 +134,14 @@
                         <!--env_pop div ends here -->	
                     </div>
 				</td>
+				{{/if}}
 				<td class="list_img">
 					{{#if ../userPermissions.manageConfiguration}}
 					
 						{{#if defaultEnv}}
 							<img src="themes/default/images/helios/delete_row_off.png" border="0" alt="">
 						{{else}}
-						<a name="{{name}}" class="tooltiptop" title="" data-placement="top" data-toggle="tooltip" href="#" data-original-title="Delete Row">
+						<a name="{{name}}" class="tooltiptop" title="" data-placement="bottom" data-toggle="tooltip" href="#" data-original-title="Delete Row">
 							<img src="themes/default/images/helios/delete_row.png" border="0" alt=""></a>
 						{{/if}}	
 					{{else}}
@@ -140,7 +150,7 @@
 					{{/if}}
 				<div id="{{name}}" class="dyn_popup delete_msg"> Are you sure to delete this ?
 					<div>
-						<input type="button" value="Yes" data-i18n="[value]common.btn.yes" class="btn btn_style" name="deleteEnv">
+						<input type="button" value="Yes" data-i18n="[value]common.btn.yes" envSpecificValue="{{#if ../envSpecific}}true{{else}}false{{/if}}" class="btn btn_style" name="deleteEnv">
 						<input type="button" value="No" data-i18n="[value]common.btn.no" class="btn btn_style dyn_popup_close">
 					</div>
 				</div>
@@ -153,7 +163,11 @@
 		</div>
 		</div>
 		{{else}}
-		<div class="alert" style="text-align: center;" data-i18n="configuration.label.noenvironment"></div>
+			 {{#if envSpecific}}
+				<div class="alert" style="text-align: center;" data-i18n="configuration.label.noenvironment"></div>
+			{{else}}
+				<div class="alert" style="text-align: center;" data-i18n="configuration.label.noconfiguration"></div>
+			{{/if}}
 		{{/if}}
 		<!--features_content_main div ends here -->
 	</section>

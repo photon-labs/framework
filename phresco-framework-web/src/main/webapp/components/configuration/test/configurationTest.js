@@ -7,9 +7,8 @@ define(["configuration/configuration"], function(Configuration) {
 		
 		var configuration = new Configuration(), self=this, configList;
 		asyncTest("Test - Configuration Page render", function() {
-
 			self.configList = $.mockjax({
-				url:  commonVariables.webserviceurl+commonVariables.configuration+"/allEnvironments?appDirName=aap1",
+				url:  commonVariables.webserviceurl+commonVariables.configuration+"/allEnvironments?appDirName=wordpress-WordPress",
 				type:'GET',
 				contentType: 'application/json',
 				status: 200,
@@ -22,19 +21,31 @@ define(["configuration/configuration"], function(Configuration) {
 					commonVariables.navListener = new Clazz.com.components.navigation.js.listener.navigationListener();
 				});
 
-				//var configurationAPI = new Clazz.com.components.configuration.js.api.ConfigurationAPI();
-				commonVariables.api.localVal.setSession("appDirName" , "aap1");
-
 				commonVariables.navListener.onMytabEvent("configuration");
 			
 				setTimeout(function() {
 					start();
 					equal($(commonVariables.contentPlaceholder).find(".envlistname").text(), "Production", "Configuration Page render Tested");
 					equal($(commonVariables.contentPlaceholder).find("#content_Env li").length, 1, "Add Configuration Page render Tested");
-					self.addEnvironment(configuration);
+					self.validationTest(configuration);
 				}, 1500);
 		});
 			
+	},
+	
+	validationTest : function(configuration) {
+		var self =this;
+		asyncTest("Test - Add Environment validation Test", function() {
+			$("input[name=envName]").val('');
+			$("input[name=envDesc]").val('');
+			$("input[name=addEnv]").click();
+			setTimeout(function() {
+				start();
+				equal($(commonVariables.contentPlaceholder).find("input[name='envName']").attr('placeholder'), "Enter Environment Name", "Add Environment validation Tested");
+				self.addEnvironment(configuration);
+			}, 1500);
+		});
+		
 	},
 	
 	addEnvironment : function(configuration) {
@@ -57,7 +68,7 @@ define(["configuration/configuration"], function(Configuration) {
 		asyncTest("Test - Save Environment Test", function() {
 			$.mockjaxClear(self.configList);
 			$.mockjax({
-				url:  commonVariables.webserviceurl+commonVariables.configuration+"?appDirName=aap1",
+				url:  commonVariables.webserviceurl+commonVariables.configuration+"?appDirName=wordpress-WordPress",
 				type:'POST',
 				contentType: 'application/json',
 				status: 200,
@@ -67,7 +78,7 @@ define(["configuration/configuration"], function(Configuration) {
 			});
 			
 			self.configList = $.mockjax({
-				url:  commonVariables.webserviceurl+commonVariables.configuration+"/allEnvironments?appDirName=aap1",
+				url:  commonVariables.webserviceurl+commonVariables.configuration+"/allEnvironments?appDirName=wordpress-WordPress",
 				type:'GET',
 				contentType: 'application/json',
 				status: 200,
@@ -91,7 +102,7 @@ define(["configuration/configuration"], function(Configuration) {
 		asyncTest("Test - Clone Environment Test", function() {
 			$.mockjaxClear(self.configList);
 			$.mockjax({
-				url:  commonVariables.webserviceurl+commonVariables.configuration+"/cloneEnvironment?appDirName=aap1&envName=Production",
+				url:  commonVariables.webserviceurl+commonVariables.configuration+"/cloneEnvironment?appDirName=wordpress-WordPress&envName=Production",
 				type:'POST',
 				contentType: 'application/json',
 				status: 200,
@@ -101,7 +112,7 @@ define(["configuration/configuration"], function(Configuration) {
 			});
 			
 			$.mockjax({
-				url:  commonVariables.webserviceurl+commonVariables.configuration+"/cloneEnvironment?appDirName=aap1&envName=test",
+				url:  commonVariables.webserviceurl+commonVariables.configuration+"/cloneEnvironment?appDirName=wordpress-WordPress&envName=test",
 				type:'POST',
 				contentType: 'application/json',
 				status: 200,
@@ -111,7 +122,7 @@ define(["configuration/configuration"], function(Configuration) {
 			});
 			
 			self.configList = $.mockjax({
-				url:  commonVariables.webserviceurl+commonVariables.configuration+"/allEnvironments?appDirName=aap1",
+				url:  commonVariables.webserviceurl+commonVariables.configuration+"/allEnvironments?appDirName=wordpress-WordPress",
 				type:'GET',
 				contentType: 'application/json',
 				status: 200,
@@ -126,17 +137,17 @@ define(["configuration/configuration"], function(Configuration) {
 			setTimeout(function() {
 				start();
 				equal($(commonVariables.contentPlaceholder).find(".envlistname").text(),"ProductiontestProductiontestsample", "Clone Environment Tested");
-				self.deleteEnvironment();
+				self.deleteEnvironment(configuration);
 			}, 1500);
 		});
 	},
 	
-	deleteEnvironment : function() {
+	deleteEnvironment : function(configuration) {
 		var self =this;
 		asyncTest("Test - Delete Environment Test", function() {
 		
 			$.mockjax({
-				url:  commonVariables.webserviceurl+commonVariables.configuration+"/deleteEnv?appDirName=aap1&envName=Production",
+				url:  commonVariables.webserviceurl+commonVariables.configuration+"/deleteEnv?appDirName=wordpress-WordPress&envName=Production",
 				type:'DELETE',
 				contentType: 'application/json',
 				status: 200,
@@ -146,7 +157,7 @@ define(["configuration/configuration"], function(Configuration) {
 			});
 			
 			$.mockjax({
-				url:  commonVariables.webserviceurl+commonVariables.configuration+"/deleteEnv?appDirName=aap1&envName=test",
+				url:  commonVariables.webserviceurl+commonVariables.configuration+"/deleteEnv?appDirName=wordpress-WordPress&envName=test",
 				type:'DELETE',
 				contentType: 'application/json',
 				status: 200,
@@ -156,7 +167,7 @@ define(["configuration/configuration"], function(Configuration) {
 			});
 			
 			$.mockjax({
-				url:  commonVariables.webserviceurl+commonVariables.configuration+"/deleteEnv?appDirName=aap1&envName=sample",
+				url:  commonVariables.webserviceurl+commonVariables.configuration+"/deleteEnv?appDirName=wordpress-WordPress&envName=sample",
 				type:'DELETE',
 				contentType: 'application/json',
 				status: 200,
@@ -169,13 +180,36 @@ define(["configuration/configuration"], function(Configuration) {
 			setTimeout(function() {
 				start();
 				equal($(commonVariables.contentPlaceholder).find('tbody[name=EnvLists] tr').html(), null, "Delete Environment Tested");
-				require(["editConfigurationTest"], function(editConfigurationTest){
-					editConfigurationTest.runTests();
-				});
+				self.envConfigurationRender(configuration);
 			}, 2500);
 		});
 		
-	}
+	},
 	
+	envConfigurationRender : function(configuration) {
+		var self=this;
+		$("#content").html('');
+		asyncTest("Test - Non Environmnet Configuration Page render", function() {
+			self.configList = $.mockjax({
+				url:  commonVariables.webserviceurl+commonVariables.configuration+"/allEnvironments?appDirName=wordpress-WordPress&isEnvSpecific=false&configType=SAP",
+				type:'GET',
+				contentType: 'application/json',
+				status: 200,
+				response: function() {
+					this.responseText = JSON.stringify({"message":"Configurations Listed","exception":null,"responseCode":null,"data":[{"envName":null,"name":"ttt","properties":{"smtp-host":"bb","auth-token-cache-ttl":"v","searchHosts":"bb","sapSvcPort":"bb","useProductionConfig":"bvbvb","sapSvcHost":"bv"},"type":"SAP","desc":"bb"}],"status":null});
+				}
+			});
+			
+			$("ul[name=configurationList] li").click();
+			
+			setTimeout(function() {
+				start();
+				equal($(commonVariables.contentPlaceholder).find("div[envspecificval=false]").attr("configname"), "SAP", "Non Environmnet Configuration Page Tested");
+				require(["editConfigurationTest"], function(editConfigurationTest){
+					editConfigurationTest.runTests();
+				});
+			}, 1500);
+		});
+	}
 	};
 });

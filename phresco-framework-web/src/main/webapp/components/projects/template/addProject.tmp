@@ -62,7 +62,7 @@
 										<td class="applnappcode"><input type="text" id="appcode"  maxlength="30" title="30 characters only" class="appln-appcode"></td>
 										<td name="technology" class="technology">
 											<select name="appln_technology" class="appln_technology selectpicker" title="Select Technology">
-											   <option value="Select Technology" data-i18n="project.create.label.seltech"></option>
+											   <option value="Select Technology"></option>
 											   {{#each applicationlayerData.techGroups}}
 													{{#each techInfos}}
 													  <option value="{{id}}">{{name}}</option>

@@ -380,6 +380,17 @@ public class FrameworkServiceUtil implements Constants, FrameworkConstants {
 		return builder.toString();
 	}
 	
+	public static String getnonEnvConfigFileDir(String appDirName) {
+		StringBuilder builder = new StringBuilder();
+		builder.append(Utility.getProjectHome())
+		.append(appDirName)
+		.append(File.separatorChar)
+		.append(Constants.DOT_PHRESCO_FOLDER)
+		.append(File.separatorChar)
+		.append(FrameworkConstants.PHRESCO_CONFIG_FILE_NAME);
+		return builder.toString();
+	}
+	
 	 //get server Url for sonar
     public static String getSonarURL(HttpServletRequest request) throws PhrescoException {
     	FrameworkConfiguration frameworkConfig = PhrescoFrameworkFactory.getFrameworkConfig();
@@ -411,7 +422,7 @@ public class FrameworkServiceUtil implements Constants, FrameworkConstants {
 	    return serverUrl;
     }
     
-    private static String getBuildInfosFilePath(String appDirName) throws PhrescoException {
+    public static String getBuildInfosFilePath(String appDirName) throws PhrescoException {
     	return getApplicationHome(appDirName) + FILE_SEPARATOR + BUILD_DIR + FILE_SEPARATOR +BUILD_INFO_FILE_NAME;
     }
     
@@ -535,9 +546,9 @@ public class FrameworkServiceUtil implements Constants, FrameworkConstants {
 		}
 	}
 	
-	public static ActionResponse checkForConfigurations(ActionResponse actionresponse, String appDirName, String environmentName, String customerId) throws PhrescoException {
+	public static ActionResponse checkForConfigurations( String appDirName, String environmentName, String customerId) throws PhrescoException {
 		ConfigManager configManager = null;
-		List<String> errorMsg = new ArrayList<String>();
+		ActionResponse actionresponse = new ActionResponse();
 		try {
 			File baseDir = new File(Utility.getProjectHome() + appDirName);
 			File configFile = new File(baseDir +  File.separator + Constants.DOT_PHRESCO_FOLDER + File.separator + Constants.CONFIGURATION_INFO_FILE);
@@ -560,8 +571,7 @@ public class FrameworkServiceUtil implements Constants, FrameworkConstants {
 					} if(CollectionUtils.isNotEmpty(nullConfig)) {
 						String errMsg = environment.getName() + " environment in global settings doesnot have "+ nullConfig + " configurations";
 						actionresponse.setErrorFound(true);
-						errorMsg.add(errMsg);
-						actionresponse.setConfigErrorMsg(errorMsg);
+						actionresponse.setConfigErrorMsg(errMsg);
 					}
 				} 
 			} 
@@ -579,8 +589,7 @@ public class FrameworkServiceUtil implements Constants, FrameworkConstants {
 				} if(CollectionUtils.isNotEmpty(nullConfig)) {
 					String errMsg = environment.getName() + " environment in " + baseDir.getName() + " doesnot have "+ nullConfig + " configurations";
 					actionresponse.setErrorFound(true);
-					errorMsg.add(errMsg);
-					actionresponse.setConfigErrorMsg(errorMsg);
+					actionresponse.setConfigErrorMsg(errMsg);
 				}
 			} 
 			return actionresponse;
@@ -636,10 +645,10 @@ public class FrameworkServiceUtil implements Constants, FrameworkConstants {
 		}
 	}
 
-	public ActionResponse mandatoryValidation(ActionResponse actionresponse, HttpServletRequest request, String goal, String appDirName) throws PhrescoException {
-		List<String> errorMsg = new ArrayList<String>();
+	public ActionResponse mandatoryValidation( HttpServletRequest request, String goal, String appDirName) throws PhrescoException {
+		ActionResponse actionresponse = new ActionResponse();
+		ApplicationManager applicationManager = PhrescoFrameworkFactory.getApplicationManager();
 		try {
-			ApplicationManager applicationManager = PhrescoFrameworkFactory.getApplicationManager();
 			List<BuildInfo> builds = applicationManager.getBuildInfos(new File(getBuildInfosFilePath(appDirName)));
 			File infoFile = new File(getPhrescoPluginInfoFilePath(goal, null ,appDirName));
 			MojoProcessor mojo = new MojoProcessor(infoFile);
@@ -653,7 +662,7 @@ public class FrameworkServiceUtil implements Constants, FrameworkConstants {
 						//To validate check box dependency controls
 						eventDependencies = Arrays.asList(parameter.getDependency().split(CSV_PATTERN));
 						validateMap.put(parameter.getKey(), eventDependencies);//add checkbox dependency keys to map
-						if (request.getParameter(parameter.getKey()) != null && dependentParamMandatoryChk(mojo, eventDependencies, goal, request, actionresponse ,errorMsg)) {
+						if (request.getParameter(parameter.getKey()) != null && dependentParamMandatoryChk(mojo, eventDependencies, goal, request, actionresponse)) {
 							break;//break from loop if error exists
 						}
 					} else if (TYPE_LIST.equalsIgnoreCase(parameter.getType()) &&  !Boolean.parseBoolean(parameter.getMultiple())
@@ -673,7 +682,7 @@ public class FrameworkServiceUtil implements Constants, FrameworkConstants {
 									break;
 								}
 							}
-							if (dependentParamMandatoryChk(mojo, dropDownDependencies, goal, request, actionresponse, errorMsg)) {
+							if (dependentParamMandatoryChk(mojo, dropDownDependencies, goal, request, actionresponse)) {
 								//break from loop if error exists
 								break;
 							}
@@ -682,7 +691,7 @@ public class FrameworkServiceUtil implements Constants, FrameworkConstants {
 						//comes here for other controls
 						boolean alreadyValidated = fetchAlreadyValidatedKeys(validateMap, parameter);
 						if ((parameter.isShow() || !alreadyValidated)) {
-							ActionResponse paramsMandatoryCheck = paramsMandatoryCheck(parameter, request, actionresponse, errorMsg);
+							ActionResponse paramsMandatoryCheck = paramsMandatoryCheck(parameter, request, actionresponse);
 							if (paramsMandatoryCheck.isErrorFound()) {
 								break;
 							}
@@ -705,14 +714,12 @@ public class FrameworkServiceUtil implements Constants, FrameworkConstants {
 									for (String name : platforms) {
 										if (name.equalsIgnoreCase(bldName)) {	
 											actionresponse.setErrorFound(true);
-											errorMsg.add("Build Name Already Exsist");
-											actionresponse.setConfigErrorMsg(errorMsg);
+											actionresponse.setConfigErrorMsg("Build Name Already Exsist");
 										}
 									}
 								} else if(buildName.equalsIgnoreCase(FilenameUtils.removeExtension(build.getBuildName()))) {
 									actionresponse.setErrorFound(true);
-									errorMsg.add("Build Name Already Exsist");
-									actionresponse.setConfigErrorMsg(errorMsg);
+									actionresponse.setConfigErrorMsg("Build Name Already Exsist");
 								}
 							}
 						}
@@ -722,8 +729,7 @@ public class FrameworkServiceUtil implements Constants, FrameworkConstants {
 							for (BuildInfo build : builds) {
 								if(Integer.parseInt(buildNumber) == build.getBuildNo()) {
 									actionresponse.setErrorFound(true);
-									errorMsg.add("Build Number Already Exsist");
-									actionresponse.setConfigErrorMsg(errorMsg);
+									actionresponse.setConfigErrorMsg("Build Number Already Exsist");
 								}
 							}
 						}
@@ -784,22 +790,23 @@ public class FrameworkServiceUtil implements Constants, FrameworkConstants {
 
 		return sb.toString();
 	}
-	private static boolean dependentParamMandatoryChk(MojoProcessor mojo, List<String> eventDependencies, String goal, HttpServletRequest request, ActionResponse validateinfo, List<String> errorMsg) {
-		boolean flag = false;
-		if (CollectionUtils.isNotEmpty(eventDependencies)) {
-			for (String eventDependency : eventDependencies) {
-				Parameter dependencyParameter = mojo.getParameter(goal, eventDependency);
-				ActionResponse paramsMandatoryCheck = paramsMandatoryCheck(dependencyParameter, request, validateinfo, errorMsg);
-				if (Boolean.parseBoolean(dependencyParameter.getRequired()) && paramsMandatoryCheck.isErrorFound()) {
-					flag = true;
-					break;
+  
+	   private static boolean dependentParamMandatoryChk(MojoProcessor mojo, List<String> eventDependencies, String goal, HttpServletRequest request, ActionResponse actionResponse) {
+			boolean flag = false;
+			if (CollectionUtils.isNotEmpty(eventDependencies)) {
+				for (String eventDependency : eventDependencies) {
+					Parameter dependencyParameter = mojo.getParameter(goal, eventDependency);
+					ActionResponse paramsMandatoryCheck = paramsMandatoryCheck(dependencyParameter, request, actionResponse);
+					if (Boolean.parseBoolean(dependencyParameter.getRequired()) && paramsMandatoryCheck.isErrorFound()) {
+						flag = true;
+						break;
+					}
 				}
 			}
+			return flag;
 		}
-		return flag;
-	}
 	   
-	   private static ActionResponse paramsMandatoryCheck (Parameter parameter, HttpServletRequest request, ActionResponse validateinfo, List<String> errorMsg) {
+	   private static ActionResponse paramsMandatoryCheck (Parameter parameter, HttpServletRequest request, ActionResponse actionResponse) {
 		   String lableTxt =  getParameterLabel(parameter);
 			if (TYPE_STRING.equalsIgnoreCase(parameter.getType()) || TYPE_NUMBER.equalsIgnoreCase(parameter.getType())
 					|| TYPE_PASSWORD.equalsIgnoreCase(parameter.getType())
@@ -808,17 +815,17 @@ public class FrameworkServiceUtil implements Constants, FrameworkConstants {
 					|| (TYPE_FILE_BROWSE.equalsIgnoreCase(parameter.getType()))) {
 				
 				if (FROM_PAGE_EDIT.equalsIgnoreCase(parameter.getEditable())) {//For editable combo box
-					validateinfo = editableComboValidate(parameter, lableTxt, request, validateinfo, errorMsg);
-				} else {//for text box,non editable single select list box,file browse
-					validateinfo = textSingleSelectValidate(parameter,lableTxt, request, validateinfo, errorMsg);
+					actionResponse = editableComboValidate(parameter, lableTxt, request, actionResponse);
+				} else { //for text box,non editable single select list box,file browse
+					actionResponse = textSingleSelectValidate(parameter,lableTxt, request, actionResponse);
 				}
 			} else if (TYPE_DYNAMIC_PARAMETER.equalsIgnoreCase(parameter.getType()) && Boolean.parseBoolean(parameter.getMultiple()) || 
 					(TYPE_LIST.equalsIgnoreCase(parameter.getType()) && Boolean.parseBoolean(parameter.getMultiple()))) {
-				validateinfo = multiSelectValidate(parameter, lableTxt, request, validateinfo, errorMsg);//for multi select list box
+				actionResponse = multiSelectValidate(parameter, lableTxt, request, actionResponse);//for multi select list box
 			} else if (parameter.getType().equalsIgnoreCase(TYPE_MAP)) {
-				validateinfo = mapControlValidate(parameter, request, validateinfo, errorMsg);//for type map
+				actionResponse = mapControlValidate(parameter, request, actionResponse);//for type map
 			}
-			return validateinfo;
+			return actionResponse;
 		}
 	   
 	   private static String getParameterLabel(Parameter parameter) {
@@ -833,25 +840,23 @@ public class FrameworkServiceUtil implements Constants, FrameworkConstants {
 			return lableTxt;
 		}
 	   
-	   private static ActionResponse textSingleSelectValidate(Parameter parameter, String lableTxt, HttpServletRequest request, ActionResponse validateinfo, List<String> errorMsg) {
+	   private static ActionResponse textSingleSelectValidate(Parameter parameter, String lableTxt, HttpServletRequest request, ActionResponse actionResponse) {
 			if (StringUtils.isEmpty(request.getParameter(parameter.getKey()))) {
-				validateinfo.setErrorFound(true);
-				errorMsg.add(lableTxt + " " + "is missing");
-				validateinfo.setConfigErrorMsg(errorMsg); 
+				actionResponse.setErrorFound(true);
+				actionResponse.setConfigErrorMsg(lableTxt + " " + "is missing"); 
 			}
-			return validateinfo;
+			return actionResponse;
 		}
 		
-		private static ActionResponse editableComboValidate(Parameter parameter, String lableTxt, HttpServletRequest request, ActionResponse validateinfo, List<String> errorMsg) {
+		private static ActionResponse editableComboValidate(Parameter parameter, String lableTxt, HttpServletRequest request, ActionResponse actionResponse) {
 			String value = request.getParameter(parameter.getKey());
 			value = value.replaceAll("\\s+", "").toLowerCase();
 			
 			if (StringUtils.isEmpty(value) || "typeorselectfromthelist".equalsIgnoreCase(value)) {
-				validateinfo.setErrorFound(true);
-				errorMsg.add(lableTxt + " " + "is missing");
-				validateinfo.setConfigErrorMsg(errorMsg);
+				actionResponse.setErrorFound(true);
+				actionResponse.setConfigErrorMsg(lableTxt + " " + "is missing");
 			} 
-			return validateinfo;
+			return actionResponse;
 		}
 		
 		/**
@@ -860,7 +865,7 @@ public class FrameworkServiceUtil implements Constants, FrameworkConstants {
 		 * @param returnFlag
 		 * @return
 		 */
-		private static ActionResponse mapControlValidate(Parameter parameter, HttpServletRequest request, ActionResponse validateinfo, List<String> errorMsg) {
+		private static ActionResponse mapControlValidate(Parameter parameter, HttpServletRequest request, ActionResponse actionResponse) {
 			List<Child> childs = parameter.getChilds().getChild();
 			String[] keys = request.getParameterValues(childs.get(0).getKey());
 			String[] values = request.getParameterValues(childs.get(1).getKey());
@@ -868,19 +873,17 @@ public class FrameworkServiceUtil implements Constants, FrameworkConstants {
 			for (int i = 0; i < keys.length; i++) {
 				if (StringUtils.isEmpty(keys[i]) && Boolean.parseBoolean(childs.get(0).getRequired())) {
 					childLabel = childs.get(0).getName().getValue().getValue();
-					validateinfo.setErrorFound(true);
-					errorMsg.add(childLabel + " " + "is missing");
-					validateinfo.setConfigErrorMsg(errorMsg);
+					actionResponse.setErrorFound(true);
+					actionResponse.setConfigErrorMsg(childLabel + " " + "is missing");
 					break;
 				} else if (StringUtils.isEmpty(values[i]) && Boolean.parseBoolean(childs.get(1).getRequired())) {
 					childLabel = childs.get(1).getName().getValue().getValue();
-					validateinfo.setErrorFound(true);
-					errorMsg.add(childLabel + " " + "is missing");
-					validateinfo.setConfigErrorMsg(errorMsg);
+					actionResponse.setErrorFound(true);
+					actionResponse.setConfigErrorMsg(childLabel + " " + "is missing");
 					break;
 				}
 			}
-			return validateinfo;
+			return actionResponse;
 		}
 
 		/**
@@ -890,13 +893,12 @@ public class FrameworkServiceUtil implements Constants, FrameworkConstants {
 		 * @param lableTxt
 		 * @return
 		 */
-		private static ActionResponse multiSelectValidate(Parameter parameter, String lableTxt, HttpServletRequest request, ActionResponse validateinfo, List<String> errorMsg) {
+		private static ActionResponse multiSelectValidate(Parameter parameter, String lableTxt, HttpServletRequest request, ActionResponse actionResponse) {
 			if (request.getParameterValues(parameter.getKey()) == null) {//for multi select list box
-				validateinfo.setErrorFound(true);
-				errorMsg.add(lableTxt + " " + "is missing");
-				validateinfo.setConfigErrorMsg(errorMsg);
+				actionResponse.setErrorFound(true);
+				actionResponse.setConfigErrorMsg(lableTxt + " " + "is missing");
 			}
-			return validateinfo;
+			return actionResponse;
 		}
 		
 }

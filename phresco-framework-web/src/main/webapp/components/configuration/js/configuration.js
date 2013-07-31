@@ -39,7 +39,17 @@ define(["configuration/listener/configurationListener"], function() {
 		*/
 		
 		preRender: function(whereToRender, renderFunction){
-			var self = this;
+			var self = this, nonEnvSpecific = {};
+			if(self.envSpecific === false) {
+				nonEnvSpecific.envSpecific = self.envSpecific;
+				nonEnvSpecific.configType = self.configType;
+				self.configRequestBody = nonEnvSpecific;
+				self.templateData.envSpecific = self.envSpecific;
+				self.templateData.configType = self.configType;	
+			} else {
+				self.templateData.envSpecific = true;
+				self.configRequestBody = {};
+			}
 			self.configurationlistener.getConfigurationList(self.configurationlistener.getRequestHeader(self.configRequestBody, "list"), function(response) {
 				self.templateData.configurationList = response.data;
 				self.envWithConfig = response.data;
@@ -64,7 +74,9 @@ define(["configuration/listener/configurationListener"], function() {
 			self.addEnvEvent = new signals.Signal();
 			self.saveEnvEvent = new signals.Signal();
 			self.cloneEnvEvent = new signals.Signal();
+			self.nonEnvConfigEvent = new signals.Signal();
 			self.editConfigurationEvent.add(configurationlistener.editConfiguration, configurationlistener);
+			self.nonEnvConfigEvent.add(configurationlistener.nonEnvConfig, configurationlistener);
 			self.addEnvEvent.add(configurationlistener.addEnvEvent, configurationlistener);
 			self.saveEnvEvent.add(configurationlistener.saveEnvEvent, configurationlistener);
 			self.cloneEnvEvent.add(configurationlistener.cloneEnv, configurationlistener);
@@ -73,7 +85,7 @@ define(["configuration/listener/configurationListener"], function() {
 		getAction : function(configRequestBody, action, deleteEnvironment, value) {
 			var self=this;
 			self.configurationlistener.getConfigurationList(self.configurationlistener.getRequestHeader(self.configRequestBody, action, deleteEnvironment), function(response) {
-				if (action === "delete") {
+				if (action === "delete" || action === "deleteConfig") {
 					self.deleteEnv(value);
 				} else {
 					$(".blinkmsg").removeClass("poperror").addClass("popsuccess");
@@ -176,12 +188,16 @@ define(["configuration/listener/configurationListener"], function() {
 			$("input[name='deleteEnv']").click(function(e) {
 				deleteEnvironment = $(this).parent().parent().attr('id');
 				self.configRequestBody = {};
-				self.getAction(self.configRequestBody, 'delete', deleteEnvironment, $(this));
+				if ($(this).attr('envSpecificValue') === "true") {
+					self.getAction(self.configRequestBody, 'delete', deleteEnvironment, $(this));
+				} else {
+					self.getAction(self.configRequestBody, 'deleteConfig', deleteEnvironment, $(this));
+				}
 			});
 			
 			$("a[name=editConfiguration]").unbind("click");
 			$("a[name=editConfiguration]").click(function() {
-				self.editConfigurationEvent.dispatch($(this).attr('key'));
+				self.editConfigurationEvent.dispatch($(this).attr('key'), $(this).attr('envSpecificValue'));
 			});
 			
 			$('input[name=envrName]').keypress(function(e) {
@@ -201,6 +217,12 @@ define(["configuration/listener/configurationListener"], function() {
 				}); 
 			});
 			self.tableScrollbar();
+			$("input[name='nonEnv_pop']").off("click");
+			$("input[name='nonEnv_pop']").on('click', function() {
+				var configName = $(this).parent().attr('configName');
+				var envSpecificVal = $(this).parent().attr('envSpecificVal');
+				self.nonEnvConfigEvent.dispatch(configName, envSpecificVal); 
+			});
 			Clazz.navigationController.mainContainer = commonVariables.contentPlaceholder;
 		}
 		

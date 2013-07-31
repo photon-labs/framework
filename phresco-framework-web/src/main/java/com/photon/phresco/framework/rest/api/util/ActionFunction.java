@@ -28,6 +28,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.ws.rs.core.Response;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
@@ -54,6 +55,7 @@ import com.photon.phresco.commons.model.Customer;
 import com.photon.phresco.commons.model.ProjectInfo;
 import com.photon.phresco.commons.model.RepoInfo;
 import com.photon.phresco.commons.model.Technology;
+import com.photon.phresco.commons.model.TechnologyInfo;
 import com.photon.phresco.configuration.ConfigurationInfo;
 import com.photon.phresco.exception.ConfigurationException;
 import com.photon.phresco.exception.PhrescoException;
@@ -66,6 +68,7 @@ import com.photon.phresco.framework.api.ProjectManager;
 import com.photon.phresco.framework.commons.FrameworkUtil;
 import com.photon.phresco.framework.model.PerformanceUrls;
 import com.photon.phresco.framework.rest.api.QualityService;
+import com.photon.phresco.framework.rest.api.ResponseInfo;
 import com.photon.phresco.framework.rest.api.RestBase;
 import com.photon.phresco.impl.ConfigManagerImpl;
 import com.photon.phresco.plugins.model.Mojos.ApplicationHandler;
@@ -457,14 +460,18 @@ public class ActionFunction extends RestBase implements Constants ,FrameworkCons
 	}
 
 	public ActionResponse build(HttpServletRequest request) throws PhrescoException {
-		FrameworkServiceUtil futil = new FrameworkServiceUtil();
-		ActionResponse response = new ActionResponse();
 		printLogs();
 		BufferedInputStream server_logs = null;
+		FrameworkServiceUtil futil = new FrameworkServiceUtil();
+		ActionResponse response = null;
 		String envNames = request.getParameter("environmentName");
-		response = futil.mandatoryValidation(response, request, PHASE_PACKAGE, getApplicationInfo().getAppDirName());
-		response = FrameworkServiceUtil.checkForConfigurations(response, getApplicationInfo().getAppDirName(), envNames, getCustomerId());
-		if(response.isErrorFound()) {
+		response = futil.mandatoryValidation(request, PHASE_PACKAGE, getApplicationInfo().getAppDirName());
+		if (response.isErrorFound()) {
+			return response;
+		}
+		response = FrameworkServiceUtil.checkForConfigurations(getApplicationInfo().getAppDirName(),
+				envNames, getCustomerId());
+		if (response.isErrorFound()) {
 			return response;
 		}
 		server_logs = build();
@@ -479,6 +486,18 @@ public class ActionFunction extends RestBase implements Constants ,FrameworkCons
 	public ActionResponse deploy(HttpServletRequest request) throws PhrescoException {
 		printLogs();
 		BufferedInputStream server_logs=null;
+		FrameworkServiceUtil futil = new FrameworkServiceUtil();
+		ActionResponse response = null;
+		String envNames = request.getParameter("environmentName");
+		response = futil.mandatoryValidation(request, PHASE_DEPLOY, getApplicationInfo().getAppDirName());
+		if (response.isErrorFound()) {
+			return response;
+		}
+		response = FrameworkServiceUtil.checkForConfigurations(getApplicationInfo().getAppDirName(),
+				envNames, getCustomerId());
+		if (response.isErrorFound()) {
+			return response;
+		}
 		server_logs = deploy();
 		if (server_logs != null) {
 			return generateResponse(server_logs);
@@ -523,6 +542,18 @@ public class ActionFunction extends RestBase implements Constants ,FrameworkCons
 	public ActionResponse runAgainstSource(HttpServletRequest request) throws PhrescoException, IOException {
 		printLogs();
 		BufferedInputStream server_logs=null;
+		FrameworkServiceUtil futil = new FrameworkServiceUtil();
+		ActionResponse response = null;
+		String envNames = request.getParameter("environmentName");
+		response = futil.mandatoryValidation(request, PHASE_RUNGAINST_SRC_START, getApplicationInfo().getAppDirName());
+		if (response.isErrorFound()) {
+			return response;
+		}
+		response = FrameworkServiceUtil.checkForConfigurations(getApplicationInfo().getAppDirName(),
+				envNames, getCustomerId());
+		if (response.isErrorFound()) {
+			return response;
+		}
 		server_logs = runAgainstSource();
 		if (server_logs != null) {
 			return generateResponse(server_logs);

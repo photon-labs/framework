@@ -1,4 +1,4 @@
-define(["framework/widgetWithTemplate", "configuration/listener/configurationListener"], function() {
+define(["configuration/listener/configurationListener"], function() {
 	Clazz.createPackage("com.components.configuration.js");
 
 	Clazz.com.components.configuration.js.EditConfiguration = Clazz.extend(Clazz.WidgetWithTemplate, {
@@ -10,7 +10,7 @@ define(["framework/widgetWithTemplate", "configuration/listener/configurationLis
 		configurationlistener : null,
 		cancelEditConfigurationEvent : null,
 		addConfigurationEvent : null,
-		configRequestBody : null,
+		configRequestBody : {},
 		templateData : {},
 		removeConfiguationEvent : null,
 		configType : null,
@@ -36,25 +36,50 @@ define(["framework/widgetWithTemplate", "configuration/listener/configurationLis
 		},
 		
 		preRender: function(whereToRender, renderFunction){
-			var self = this;
-			self.configurationlistener.getConfigurationList(self.configurationlistener.getRequestHeader(self.configRequestBody, "edit"), function(response) {
-				$.each(response.data.configurations, function(index, value){
-					if (value.type !== "Other") {
-						self.configurationlistener.getConfigurationList(self.configurationlistener.getRequestHeader(self.configRequestBody, "template", value.type), function(response) {
-							self.configurationlistener.constructHtml(response, value, response.data.settingsTemplate.name);
-						});
+			var self = this, res = {};
+			if (self.configClick === "EditConfiguration") {
+				self.configRequestBody.envSpecific = self.envSpecificVal;
+				self.configurationlistener.getConfigurationList(self.configurationlistener.getRequestHeader(self.configRequestBody, "edit"), function(response) {
+					if(response.data.configurations !== undefined) {
+					$.each(response.data.configurations, function(index, value){
+						if (value.type !== "Other") {
+							self.configurationlistener.getConfigurationList(self.configurationlistener.getRequestHeader(self.configRequestBody, "template", value.type), function(response) {
+								self.configurationlistener.constructHtml(response, value, response.data.settingsTemplate.name, self.envSpecificVal);
+							});
+						} else {
+							setTimeout(function(){
+								self.configurationlistener.htmlForOther(value);
+							},800);
+						}
+					});
 					} else {
-						setTimeout(function(){
-							self.configurationlistener.htmlForOther(value);
-						},800);
+						res = response.data;
+						self.configurationlistener.getConfigurationList(self.configurationlistener.getRequestHeader(self.configRequestBody, "template", res.type), function(response) {
+							commonVariables.updateConfigName = res.name;
+							self.configurationlistener.constructHtml(response, res, response.data.settingsTemplate.name, self.envSpecificVal);
+						});
 					}
+					self.templateData.configurations = response.data;
+					self.renderValues();
+					renderFunction(self.templateData, whereToRender);
+				});	
+			} else {
+				self.configurationlistener.getConfigurationList(self.configurationlistener.getRequestHeader(self.configRequestBody, "template", self.configName), function(response) {
+					commonVariables.updateConfigName = '';
+					self.configurationlistener.constructHtml(response, "", self.configName, self.envSpecificVal);
 				});
-				self.templateData.configurations = response.data;
-				self.templateData.configType = self.configType;
-				var userPermissions = JSON.parse(commonVariables.api.localVal.getSession('userPermissions'));
-				self.templateData.userPermissions = userPermissions;
+				self.renderValues();
 				renderFunction(self.templateData, whereToRender);
-			});		
+			}	
+		},
+		
+		renderValues : function() {
+			var self=this;
+			self.configType = commonVariables.api.localVal.getJson('configTypes');
+			self.templateData.configType = self.configType;
+			self.templateData.envSpecificVal = self.envSpecificVal;
+			var userPermissions = JSON.parse(commonVariables.api.localVal.getSession('userPermissions'));
+			self.templateData.userPermissions = userPermissions;
 			
 		},
 		/***
@@ -73,7 +98,9 @@ define(["framework/widgetWithTemplate", "configuration/listener/configurationLis
 			self.cancelEditConfigurationEvent = new signals.Signal();
 			self.addConfigurationEvent = new signals.Signal();
 			self.updateConfigEvent = new signals.Signal();
+			self.addNonEnvirinmentConfigEvent = new signals.Signal();
 			self.cancelEditConfigurationEvent.add(configurationlistener.cancelEditConfiguration, configurationlistener);
+			self.addNonEnvirinmentConfigEvent.add(configurationlistener.addConfiguration, configurationlistener);
 			self.addConfigurationEvent.add(configurationlistener.addConfiguration, configurationlistener);
 			self.updateConfigEvent.add(configurationlistener.updateConfig, configurationlistener);
 		},
@@ -99,7 +126,7 @@ define(["framework/widgetWithTemplate", "configuration/listener/configurationLis
 			$("input[name=UpdateConfiguration]").click(function() {
 				self.updateConfigEvent.dispatch();
 			});
-			this.customScroll($(".scrolldiv"));
+			self.customScroll($(".scrolldiv"));
 		}
 	});
 

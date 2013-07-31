@@ -23,7 +23,7 @@
                     <ul id="moduleContent">
                     {{#each featureslist}}
                         <li name="{{name}}" dispName="{{dispName}}" packaging="{{packaging}}" type="{{type}}">{{#if displayName}}{{displayName}}{{else}}{{name}}{{/if}}
-                        <span class="flt_right" ><a class="featureinfo_img" value="{{#idtrime id}}{{/idtrime}}" artifactGroupId="{{id}}" > 
+                        <span class="flt_right" ><a href="javascript:;" class="featureinfo_img" value="{{#idtrime id}}{{/idtrime}}" artifactGroupId="{{id}}" > 
                         <img src="themes/default/images/helios/info_icon.png" width="15" height="16" border="0" alt=""></a></span>
                                 {{#versiondata versions id}}{{/versiondata}}
 								{{#versionShowHide versions id}}{{/versionShowHide}} 
@@ -61,7 +61,7 @@
                    <ul id="jsibrariesContent">
                     {{#each jsibrarielist}}
                         <li name="{{name}}" dispName="{{dispName}}" packaging="{{packaging}}" type="{{type}}">
-                        <span class="flt_right" ><a class="featureinfo_img" value="{{#idtrime id}}{{/idtrime}}" artifactGroupId="{{id}}"> 
+                        <span class="flt_right" ><a href="javascript:;" class="featureinfo_img" value="{{#idtrime id}}{{/idtrime}}" artifactGroupId="{{id}}"> 
                         <img src="themes/default/images/helios/info_icon.png" width="15" height="16" border="0" alt=""></a></span>
                              {{#if displayName}}{{displayName}}{{else}}{{name}}{{/if}}
                                 {{#versiondata versions id}}{{/versiondata}}
@@ -103,7 +103,7 @@
                     <ul id="componentsContent">
                     {{#each componentList}}
                         <li name="{{name}}" dispName="{{dispName}}" packaging="{{packaging}}" type="{{type}}">{{#if displayName}}{{displayName}}{{else}}{{name}}{{/if}}
-                        <span class="flt_right" ><a class="featureinfo_img" value="{{#idtrime id}}{{/idtrime}}" artifactGroupId="{{id}}"> 
+                        <span class="flt_right" ><a href="javascript:;" class="featureinfo_img" value="{{#idtrime id}}{{/idtrime}}" artifactGroupId="{{id}}"> 
                         <img src="themes/default/images/helios/info_icon.png" width="15" height="16" border="0" alt=""></a></span>
                                 {{#versiondata versions id}}{{/versiondata}}
 								{{#versionShowHide versions id}}{{/versionShowHide}}

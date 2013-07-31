@@ -107,7 +107,7 @@ public class ProjectManagerImpl implements ProjectManager, FrameworkConstants, C
 			        if (ArrayUtils.isEmpty(dotProjectFiles)) {
 			            throw new PhrescoException("project.info file not found in .phresco of project " + dotPhrescoFolders[0].getParent());
 			        }
-			        projectInfosMap = fillProjects(dotProjectFiles[0], projectInfos, customerId, projectInfosMap);
+			        projectInfosMap = fillProjects(dotProjectFiles[0], customerId, projectInfosMap);
 			    }
 			}
 
@@ -471,7 +471,7 @@ public class ProjectManagerImpl implements ProjectManager, FrameworkConstants, C
 			List<ApplicationInfo> appInfos = projectInfo.getAppInfos();
 			Environment defaultEnv = getEnvFromService(serviceManager);
 			for (ApplicationInfo applicationInfo : appInfos) {
-				createConfigurationXml(applicationInfo.getAppDirName(), serviceManager, defaultEnv);	
+				createConfigurationXml(applicationInfo.getAppDirName(), defaultEnv);	
 			}
 		} catch (PhrescoException e) {
 			S_LOGGER.error("Entered into the catch block of Configuration creation failed Exception" + e.getLocalizedMessage());
@@ -546,7 +546,7 @@ public class ProjectManagerImpl implements ProjectManager, FrameworkConstants, C
 	}
 
 	
-    private Map<String, ProjectInfo> fillProjects(File dotProjectFile, List<ProjectInfo> projectInfos, String customerId, Map<String, ProjectInfo> projectInfosMap) throws PhrescoException {
+    private Map<String, ProjectInfo> fillProjects(File dotProjectFile, String customerId, Map<String, ProjectInfo> projectInfosMap) throws PhrescoException {
         S_LOGGER.debug("Entering Method ProjectManagerImpl.fillProjects(File[] dotProjectFiles, List<Project> projects)");
 
         Gson gson = new Gson();
@@ -690,7 +690,7 @@ public class ProjectManagerImpl implements ProjectManager, FrameworkConstants, C
 		return null;
 	}
 	
-	private File createConfigurationXml(String appDirName, ServiceManager serviceManager, Environment defaultEnv) throws PhrescoException {
+	private File createConfigurationXml(String appDirName, Environment defaultEnv) throws PhrescoException {
 		File configFile = new File(getConfigurationPath(appDirName).toString());
 		if (!configFile.exists()) {
 			createEnvironments(configFile, defaultEnv, true);

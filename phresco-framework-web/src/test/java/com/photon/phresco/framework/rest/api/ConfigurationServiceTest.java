@@ -50,7 +50,7 @@ public class ConfigurationServiceTest extends LoginServiceTest {
 	
 	@Test
 	public void getAllEnvironmentsTest() {
-		Response response = configurationService.getAllEnvironments(appDirName);
+		Response response = configurationService.getAllEnvironments(appDirName,"true","");
 		Assert.assertEquals(200, response.getStatus());
 //		Response responseFail = configurationService.getAllEnvironments(null);
 //		ResponseInfo<List<Environment>> entity = (ResponseInfo<List<Environment>>)responseFail.getEntity();
@@ -152,7 +152,7 @@ public class ConfigurationServiceTest extends LoginServiceTest {
 		environments.add(devEnv);
 		environments.add(environment);
 		Response response = configurationService.addEnvironment(appDirName, environments);
-		ResponseInfo<List<Environment>> environmentList = (ResponseInfo<List<Environment>>) configurationService.getAllEnvironments(appDirName).getEntity();
+		ResponseInfo<List<Environment>> environmentList = (ResponseInfo<List<Environment>>) configurationService.getAllEnvironments(appDirName,"true", "").getEntity();
 		List<Environment> data = environmentList.getData();
 		Assert.assertEquals(200, response.getStatus());
 		Assert.assertEquals(3, data.size());
@@ -161,19 +161,97 @@ public class ConfigurationServiceTest extends LoginServiceTest {
 	}
 	
 	@Test
+	public void addNonEnvConfigTest() {
+		List<Configuration> configList = new ArrayList<Configuration>();
+		Configuration prodConfigServer = new Configuration();
+		prodConfigServer.setName("serverconfig");
+		prodConfigServer.setType("Server");
+		Properties propProd = new Properties();
+		propProd.setProperty("protocol", "http");
+		propProd.setProperty("host", "localhost");
+		propProd.setProperty("port", "8654");
+		propProd.setProperty("admin_username", "");
+		propProd.setProperty("admin_password", "");
+		propProd.setProperty("remoteDeployment", "false");
+		propProd.setProperty("certificate", "");
+		propProd.setProperty("type", "Apache Tomcat");
+		propProd.setProperty("version", "6.0.x");
+		propProd.setProperty("deploy_dir", "C:\\wamp");
+		propProd.setProperty("context", "serverprtod");
+		prodConfigServer.setProperties(propProd);
+		configList.add(prodConfigServer);
+		Response response = configurationService.updateConfiguration(userId, customerId, appDirName, "", configList, "false", "");
+		Assert.assertEquals(200, response.getStatus());
+		
+		
+		List<Configuration> configList1 = new ArrayList<Configuration>();
+		Configuration prodConfigServer1 = new Configuration();
+		prodConfigServer1.setName("serverconfig");
+		prodConfigServer1.setType("Server");
+		Properties propPro1 = new Properties();
+		propPro1.setProperty("protocol", "http");
+		propPro1.setProperty("host", "localhost");
+		propPro1.setProperty("port", "8654");
+		propPro1.setProperty("admin_username", "");
+		propPro1.setProperty("admin_password", "");
+		propPro1.setProperty("remoteDeployment", "false");
+		propPro1.setProperty("certificate", "");
+		propPro1.setProperty("type", "Apache Tomcat");
+		propPro1.setProperty("version", "6.0.x");
+		propPro1.setProperty("deploy_dir", "C:\\wamp");
+		propPro1.setProperty("context", "serverprtod");
+		prodConfigServer1.setProperties(propPro1);
+		configList1.add(prodConfigServer1);
+		
+		Response responseUp = configurationService.updateConfiguration(userId, customerId, appDirName, "", configList1, "false", "serverconfig");
+		Assert.assertEquals(200, responseUp.getStatus());
+		
+		List<Configuration> configList2 = new ArrayList<Configuration>();
+		Configuration prodConfigServer2 = new Configuration();
+		prodConfigServer2.setName("Configs");
+		prodConfigServer2.setType("Server");
+		Properties propProd2 = new Properties();
+		propProd2.setProperty("protocol", "http");
+		propProd2.setProperty("host", "localhost");
+		propProd2.setProperty("port", "5555");
+		propProd2.setProperty("admin_username", "rrr");
+		propProd2.setProperty("admin_password", "sss");
+		propProd2.setProperty("remoteDeployment", "false");
+		propProd2.setProperty("certificate", "");
+		propProd2.setProperty("type", "Apache Tomcat");
+		propProd2.setProperty("version", "7.0.x");
+		propProd2.setProperty("deploy_dir", "C:\\wamp");
+		propProd2.setProperty("context", "serverprtod");
+		prodConfigServer2.setProperties(propProd2);
+		configList2.add(prodConfigServer2);
+		Response responseNonEnv = configurationService.updateConfiguration(userId, customerId, appDirName, "", configList2, "false", "");
+		Assert.assertEquals(200, responseNonEnv.getStatus());
+		
+		
+	}
+	
+	@Test
 	public void listEnvironmentTest() {
-		Response response = configurationService.listEnvironments(appDirName, "Production");
+		Response response = configurationService.listEnvironments(appDirName, "Production", "","");
 		ResponseInfo<Environment> responseInfo = (ResponseInfo<Environment>) response.getEntity();
 		Environment environment = responseInfo.getData();
 		Assert.assertEquals("Production", environment.getName());
+		
+		Response responseNon = configurationService.listEnvironments(appDirName, "", "false","serverconfig");
+		Assert.assertEquals(200, responseNon.getStatus());
+		
+		Response responseNonEnvList = configurationService.getAllEnvironments(appDirName, "false", "Server");
+		Assert.assertEquals(200, responseNonEnvList.getStatus());
+		
 	}
 	
 	@Test
 	public void listEnvironmentTestFail() {
-		Response response = configurationService.listEnvironments(appDirName, "");
+		Response response = configurationService.listEnvironments(appDirName, "","","");
 		Assert.assertEquals(200, response.getStatus());
-		Response responseFail = configurationService.listEnvironments("", "Production");
+		Response responseFail = configurationService.listEnvironments("", "Production","","");
 		Assert.assertEquals(417, responseFail.getStatus());
+		
 	}
 	
 	@Test
@@ -182,10 +260,8 @@ public class ConfigurationServiceTest extends LoginServiceTest {
 		Response response = configurationService.deleteEnv(appDirName, envName);
 		ResponseInfo<Environment> responseInfo = (ResponseInfo<Environment>) response.getEntity();
 		Assert.assertEquals("Default Environment can not be deleted", responseInfo.getMessage());
-		Response responseFail = configurationService.deleteEnv(appDirName, "");
-		Assert.assertEquals(417, responseFail.getStatus());
-		Response envFail = configurationService.deleteEnv("", envName);
-		Assert.assertEquals(417, envFail.getStatus());
+//		Response responseFail = configurationService.deleteEnv(appDirName, "");
+//		Assert.assertEquals(417, responseFail.getStatus());
 	}
 	
 	@Test
@@ -193,6 +269,11 @@ public class ConfigurationServiceTest extends LoginServiceTest {
 		String envName = "Testing";
 		Response response = configurationService.deleteEnv(appDirName, envName);
 		Assert.assertEquals(200, response.getStatus());
+		
+		Response responsedel = configurationService.deleteConfiguraion(appDirName, "Configs");
+		Assert.assertEquals(200, responsedel.getStatus());
+		
+		
 	}
 	
 	@Test
@@ -356,19 +437,19 @@ public class ConfigurationServiceTest extends LoginServiceTest {
 		configListName.add(configurationServerName);
 		configListName.add(configurationServer);
 		
-		Response responseServer = configurationService.updateConfiguration(userId, customerId, appDirName, "dev", configListServer);
+		Response responseServer = configurationService.updateConfiguration(userId, customerId, appDirName, "dev", configListServer,"","");
 		Assert.assertEquals(400, responseServer.getStatus());
 		
-		Response responseEmail = configurationService.updateConfiguration(userId, customerId, appDirName, "dev", configListEmail);
+		Response responseEmail = configurationService.updateConfiguration(userId, customerId, appDirName, "dev", configListEmail,"","");
 		Assert.assertEquals(400, responseEmail.getStatus());
 		
-		Response responseSiteCore = configurationService.updateConfiguration(userId, customerId, appDirName, "dev", configListSiteCore);
+		Response responseSiteCore = configurationService.updateConfiguration(userId, customerId, appDirName, "dev", configListSiteCore,"","");
 		Assert.assertEquals(400, responseSiteCore.getStatus());
 		
-		Response responseName = configurationService.updateConfiguration(userId, customerId, appDirName, "dev", configListName);
+		Response responseName = configurationService.updateConfiguration(userId, customerId, appDirName, "dev", configListName,"","");
 		Assert.assertEquals(400, responseName.getStatus());
 		
-		Response responsePass = configurationService.updateConfiguration(userId, customerId, appDirName, "dev", configListPass);
+		Response responsePass = configurationService.updateConfiguration(userId, customerId, appDirName, "dev", configListPass,"","");
 		Assert.assertEquals(200, responsePass.getStatus());
 		
 	}

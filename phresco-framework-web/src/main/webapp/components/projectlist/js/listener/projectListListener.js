@@ -295,7 +295,10 @@ define([], function() {
 				addupdate.version = projectRequestBody.revision;
 				header.requestPostBody = JSON.stringify(addupdate);
 				header.webserviceurl = commonVariables.webserviceurl + "repository/updateImportedApplication?appDirName="+projectRequestBody.appdirname;
-			}
+			} else if (action === "configTypes") {
+				self.bcheck = true;
+				header.webserviceurl = commonVariables.webserviceurl+commonVariables.configuration+"/types?customerId="+customerId+"&userId="+userId+"&techId="+projectRequestBody.techid;
+			} 
 			if(action === "generateReport") {
 				header.requestMethod = "POST";
 				header.webserviceurl = commonVariables.webserviceurl + "app/printAsPdf?appDirName=" + projectRequestBody.appDirName + "&" + projectRequestBody.data + "&userId=" + userId;
@@ -325,8 +328,14 @@ define([], function() {
 		},
 		
 		editApplication : function(value, techid) {
-			var self = this;
+			var self = this, jsonVal = {};
 			Clazz.navigationController.jQueryContainer = commonVariables.contentPlaceholder;
+			jsonVal.techid = techid;
+			self.projectRequestBody = jsonVal;
+			self.projectListAction(self.getActionHeader(self.projectRequestBody, "configTypes"), "", function(response) {
+				commonVariables.api.localVal.setJson('configTypes', response.data);
+				commonVariables.navListener.configDropdown(response.data);
+			});
 			if(self.editAplnContent === null){
 				commonVariables.navListener.getMyObj(commonVariables.editApplication, function(returnVal){
 					self.editAplnContent = returnVal;

@@ -89,27 +89,27 @@ define(["framework/widgetWithTemplate", "common/loading", "lib/customcombobox-1.
                 $(whereToRender).empty();
                 $(whereToRender).parent().find('.templates').empty();
                 $.each(response.data, function(index, parameter) {
-                    var type = parameter.type;
-                    if(type === "String" || type === "Number" || type === "Password"){
+                    var type = parameter.type.toLowerCase();
+                    if(type === "string" || type === "number" || type === "password"){
                         self.constructTxtCtrl(parameter, columnClass, whereToRender);
-                    } else if (type === "Hidden") {
+                    } else if (type === "hidden") {
                         self.constructHiddenCtrl(parameter, columnClass, whereToRender);
-                    } else if(type === "Boolean"){
+                    } else if(type === "boolean"){
                         self.constructCheckboxCtrl(parameter, columnClass, whereToRender);
-                    } else if(type === "List"){
+                    } else if(type === "list"){
                         self.constructListCtrl(parameter, columnClass, parameter.possibleValues, whereToRender);
-                    } else if(type === "DynamicParameter" && !parameter.sort){
+                    } else if(type === "dynamicparameter" && !parameter.sort){
                         self.constructDynamicCtrl(parameter, columnClass, parameter.possibleValues, whereToRender);
-                    } else if (type === "DynamicParameter" && parameter.sort) {
+                    } else if (type === "dynamicparameter" && parameter.sort) {
                         // execute sql template
 						self.consDragnDropcnt(parameter, columnClass, whereToRender);
-                    } else if (type === "packageFileBrowse") {
+                    } else if (type === "packagefilebrowse") {
                         // package file browse template
                     } else if (type === "map") {
                     	self.constructMapControls(parameter, whereToRender);
-                    } else if (type === "DynamicPageParameter") {
+                    } else if (type === "dynamicpageparameter") {
                         self.getDynamicTemplate(parameter, whereToRender);
-                    } else if (type === "FileType") {
+                    } else if (type === "filetype") {
                         self.constructFileBrowseCtrl(parameter, whereToRender, goal);
                     }
                 });
@@ -132,8 +132,18 @@ define(["framework/widgetWithTemplate", "common/loading", "lib/customcombobox-1.
 		
 		consDragnDropcnt : function(parameter, columnClass, whereToRender){
 			var self = this;
+			if(parameter != null && parameter != ""){
+				var sortable1Values = "";
+				
+				if(parameter.possibleValues != null && parameter.possibleValues != "" &&
+					parameter.possibleValues.value != null && parameter.possibleValues.value != ""){
+					$.each(parameter.possibleValues.value, function(index, current){
+						sortable1Values += '<li class="ui-state-default" path="'+ current.value +'">'+ current.key +'</li>';
+					})
+				}
 			
-			whereToRender.append('<table id="'+ parameter.key +'_table" class="table table-striped table_border table-bordered" cellpadding="0" cellspacing="0" border="0"><thead><tr><th colspan="2">DB Script Execution</th></tr></thead><tbody><tr><td><ul id="sortable1" class="connectedSortable"><li class="ui-state-default"></li></ul></td><td><ul id="sortable2" class="connectedSortable"><li class="ui-state-default"></li></ul></td></tr></tbody></table>');
+				whereToRender.append('<table id="'+ parameter.key +'_table" class="table table-striped table_border table-bordered" cellpadding="0" cellspacing="0" border="0"><thead><tr><th colspan="2">DB Script Execution</th></tr></thead><tbody><tr><td><ul id="sortable1" class="connectedSortable">'+ sortable1Values +'</ul></td><td><ul id="sortable2" class="connectedSortable"></ul></td></tr></tbody></table>');
+			}
 		},
 		
         constructFileBrowseCtrl : function (parameter, whereToRender, goal) {
@@ -890,6 +900,7 @@ define(["framework/widgetWithTemplate", "common/loading", "lib/customcombobox-1.
             }) ;
 
             self.bindContextEvents();
+            self.bindRemoveContextEvent();
             self.enableDisableDeleteContext('contextDivClass', 'removeContext');
             self.enableDisableDeleteContext('dbContextDivClass', 'removeDBContext');
         },
@@ -942,14 +953,7 @@ define(["framework/widgetWithTemplate", "common/loading", "lib/customcombobox-1.
                 j++;
             });
             self.showHideMinus($("#"+contextUrlsRowId).find('.addParameter'), 1);
-            $(".removeContext").unbind("click");
-            $(".removeContext").click(function() {
-                self.removeContext($(this), 'contextDivClass', 'removeContext');
-            }); 
-            $(".removeDBContext").unbind("click");
-            $(".removeDBContext").click(function() {
-                self.removeContext($(this), 'dbContextDivClass', 'removeDBContext');
-            });        
+            self.bindRemoveContextEvent();      
             self.bindContextEvents();
             self.enableDisableDeleteContext('contextDivClass', 'removeContext');
             self.enableDisableDeleteContext('dbContextDivClass', 'removeDBContext');
@@ -962,6 +966,18 @@ define(["framework/widgetWithTemplate", "common/loading", "lib/customcombobox-1.
                 obj.closest('.'+divClass).remove();
                 self.enableDisableDeleteContext(divClass, delIcon);
             }
+        },
+
+        bindRemoveContextEvent : function() {
+            var self = this;
+            $(".removeContext").unbind("click");
+            $(".removeContext").click(function() {
+                self.removeContext($(this), 'contextDivClass', 'removeContext');
+            }); 
+            $(".removeDBContext").unbind("click");
+            $(".removeDBContext").click(function() {
+                self.removeContext($(this), 'dbContextDivClass', 'removeDBContext');
+            });  
         },
 
         enableDisableDeleteContext : function (divClass, delIcon) {
@@ -1068,7 +1084,7 @@ define(["framework/widgetWithTemplate", "common/loading", "lib/customcombobox-1.
 				var buildNumber = "";
 				
 				if(goal === "deploy"){
-					buildNumber = "&buildNumber="+ commonVariables.buildNo;
+					buildNumber = "&buildNumber="+ commonVariables.buildNo+"&iphoneDeploy=" + (commonVariables.iphoneDeploy == null ? "" : commonVariables.iphoneDeploy);
 				} 
 				
                 header.webserviceurl = commonVariables.webserviceurl + commonVariables.paramaterContext + "/" + commonVariables.dynamicPageContext + "?appDirName="+appDirName+"&goal="+ goal+"&phase="+phase+"&customerId="+customerId+"&userId="+userId+buildNumber;

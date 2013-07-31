@@ -111,7 +111,6 @@ define(["projects/listener/projectsListener"], function() {
 						responseData.endDate = "";
 					}
 					
-					console.info("responseData editProject if...", responseData);
 					self.templateData.editProject = responseData;
 					// Setting project id in local storage for future use in job templates
 					commonVariables.api.localVal.setSession("projectId", responseData.id);
@@ -151,7 +150,6 @@ define(["projects/listener/projectsListener"], function() {
 							responseData.endDate = "";
 						}
 						
-						console.info("responseData editProject else...", responseData);
 						self.templateData.editProject = responseData;
 						// Setting project id in local storage for future use in job templates
 						commonVariables.api.localVal.setSession("projectId", responseData.id);
@@ -215,6 +213,23 @@ define(["projects/listener/projectsListener"], function() {
 			$(".flt_left input").unbind('click');
 			$(".flt_left input").bind('click', function(){
 				self.addLayerEvent.dispatch($(this));
+			});
+			
+			$("#startDate,#endDate").bind('keydown', function(e) {
+				var keyCode = e.keyCode || e.which;
+				if ((e.which >= 48 && e.which <= 57 && !e.shiftKey) || (keyCode === 191 && !e.shiftKey) || (keyCode === 9) || (keyCode === 8)){
+					return true;
+				} else {
+					e.preventDefault();
+				}
+			});
+			
+			$("#strdt").click(function() {
+				$("#startDate").focus();
+			});
+
+			$("#enddt").click(function() {
+				$("#endDate").focus();
 			});
 			
 			$("input[name='multimodule']").click(function() {

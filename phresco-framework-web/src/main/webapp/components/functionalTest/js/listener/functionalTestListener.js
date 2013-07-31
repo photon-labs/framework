@@ -270,7 +270,7 @@ define([], function() {
 					});
 				}
 			});
-		},
+		}
 	});
 
 	return Clazz.com.components.functionalTest.js.listener.FunctionalTestlistener;

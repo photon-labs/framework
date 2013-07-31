@@ -46,7 +46,8 @@ import com.photon.phresco.framework.rest.api.util.BufferMapTest;
 	FeatureServiceTest.class,
 	CIJobTemplateServiceTest.class,
 	BufferMapTest.class,
-	ErrorHandlerTest.class
+	ErrorHandlerTest.class,
+	ProjectDeleteServiceTest.class
 	}
 )
 

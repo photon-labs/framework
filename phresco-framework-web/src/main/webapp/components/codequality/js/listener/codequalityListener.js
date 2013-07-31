@@ -212,7 +212,7 @@ define([], function() {
 			} catch(exception) {
 				$('#content_div').html('<div class="alert" style="text-align: center; width:98%">'+exception+'</div>');
 			}	
-		},
+		}
 		
 	});
 

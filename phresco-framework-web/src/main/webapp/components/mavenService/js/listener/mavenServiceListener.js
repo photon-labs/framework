@@ -248,7 +248,7 @@ define([], function() {
 			}else{
 				return "block";
 			}
-		},
+		}
 	});
 
 	return Clazz.com.components.mavenService.js.listener.MavenServiceListener;

@@ -62,6 +62,7 @@ import com.photon.phresco.commons.FrameworkConstants;
 import com.photon.phresco.commons.model.ApplicationInfo;
 import com.photon.phresco.commons.model.ArtifactGroup;
 import com.photon.phresco.commons.model.ArtifactInfo;
+import com.photon.phresco.commons.model.BuildInfo;
 import com.photon.phresco.commons.model.Customer;
 import com.photon.phresco.commons.model.RepoInfo;
 import com.photon.phresco.exception.ConfigurationException;
@@ -71,6 +72,7 @@ import com.photon.phresco.framework.PhrescoFrameworkFactory;
 import com.photon.phresco.framework.commons.FrameworkUtil;
 import com.photon.phresco.framework.model.CodeValidationReportType;
 import com.photon.phresco.framework.model.DependantParameters;
+import com.photon.phresco.framework.model.Parameters;
 import com.photon.phresco.framework.model.PerformanceDetails;
 import com.photon.phresco.framework.param.impl.IosTargetParameterImpl;
 import com.photon.phresco.framework.rest.api.util.FrameworkServiceUtil;
@@ -113,7 +115,7 @@ public class ParameterService extends RestBase implements FrameworkConstants, Se
 	@GET
 	@Path("/dynamic")
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response getParameter(@QueryParam(REST_QUERY_APPDIR_NAME) String appDirName,
+	public Response getParameter(@QueryParam(REST_QUERY_APPDIR_NAME) String appDirName, @QueryParam("iphoneDeploy") String iphoneDeploy,
 			@QueryParam(REST_QUERY_GOAL) String goal, @QueryParam(REST_QUERY_PHASE) String phase, 
 			@QueryParam(REST_QUERY_USERID) String userId, @QueryParam(REST_QUERY_CUSTOMERID) String customerId,  @QueryParam("buildNumber") String buildNumber) {
 		ResponseInfo<List<Parameter>> responseData = new ResponseInfo<List<Parameter>>();
@@ -128,6 +130,7 @@ public class ParameterService extends RestBase implements FrameworkConstants, Se
 					String functionalTestFramework = FrameworkServiceUtil.getFunctionalTestFramework(appDirName);
 					goal = goal + HYPHEN + functionalTestFramework;
 				}
+				getValues(iphoneDeploy, appInfo, mojo, goal);
 				parameters = mojo.getParameters(goal);
 				Map<String, DependantParameters> watcherMap = new HashMap<String, DependantParameters>(8);
 
@@ -151,6 +154,44 @@ public class ParameterService extends RestBase implements FrameworkConstants, Se
 			return Response.status(Status.BAD_REQUEST).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, ALL_HEADER)
 					.build();
 		}
+	}
+
+	public static void getValues(String iphoneDeploy, ApplicationInfo appInfo, MojoProcessor mojo, String goal) throws PhrescoException {
+		try {
+			if(StringUtils.isEmpty(iphoneDeploy)) {
+				return;
+			}
+			
+				if (iphoneDeploy.equals("false")) { // if it is simulator, show popup for following dependency
+					setShowPropValue(mojo, "sdkVersion", true, goal);
+					setShowPropValue(mojo, "family", true, goal);
+					setShowPropValue(mojo, "logs", true, goal);
+					setShowPropValue(mojo, "buildNumber", true, goal);
+					setPropValue(mojo, "triggerSimulator", TRUE, goal);
+					setPropValue(mojo, "deviceType", "simulator", goal);
+				} else { // if it is device, it should return null and should not show any popup
+					setShowPropValue(mojo, "sdkVersion", false, goal);
+					setShowPropValue(mojo, "family", false, goal);
+					setShowPropValue(mojo, "logs", false, goal);
+					setShowPropValue(mojo, "buildNumber", false, goal);
+					setPropValue(mojo, "triggerSimulator", FALSE, goal);
+					setPropValue(mojo, "deviceType", "device", goal);
+				}
+		} catch (PhrescoException e) {
+			throw new PhrescoException(e);
+		}
+	}
+	
+	private static void setPropValue(MojoProcessor mojo, String key, String value, String goal) throws PhrescoException {
+    	Parameter parameter = mojo.getParameter(goal, key);
+		parameter.setValue(value);
+    	mojo.save();
+	}
+	
+	private static void setShowPropValue(MojoProcessor mojo, String key, boolean isShow, String goal) throws PhrescoException {
+    	Parameter parameter = mojo.getParameter(goal, key);
+		parameter.setShow(isShow);
+    	mojo.save();
 	}
 
 	/**

@@ -559,7 +559,7 @@ a.dropdown-toggle b.caret  {
 }
 
 .search{
-	margin: 7px 0 0 142px !important;
+	margin: -38px 0 0 -22px !important;
 }
 
 .cust_sel ul li{
@@ -722,6 +722,14 @@ ul.nav li.dropdown:hover > .test_options{
     float: left;
     margin-right: 7px;
     padding: 6px 8px;
+}
+
+.copy_path_icon{
+	margin-right:2px;
+}
+
+.performanceScreenShotDiv {
+	padding:6.7px 9px !important;
 }
 	
 	
@@ -1231,7 +1239,16 @@ img[name="close"] {
 }
 
 .btn.dropdown-toggle {
-	margin-bottom: -8px;	
+	margin-bottom: -8px;
+	font-size: 12px;
+	background-image:none !important;
+	box-shadow: none !important;
+	border:1px solid #cccccc !important;
+}
+
+.btn.dropdown-toggle:hover, .btn.dropdown-toggle:focus
+{
+	background:#F5F5F5 !important;
 }
 
 #appinfo .dropdown-menu {
@@ -1441,7 +1458,7 @@ img[name="close"] {
 
 .featureinfo .features_cont {
 	padding:8px;
-	max-height: 150px;
+	max-height: 75px;
 	overflow-y: auto;
 }
 
@@ -1506,7 +1523,7 @@ img[name="close"] {
 	border-top-left-radius: 6px;
 	border-bottom-left-radius: 6px;
 	text-align:center;
-	margin:6px 0 0 0 !important;
+	margin:6px 0 0 6px !important;
 }
 
 .code_func {
@@ -1790,7 +1807,7 @@ select[name="builtmyself"] {
 }
 
 .title_nav ul a {
-	padding: 12px 4px !important;
+	padding: 12px 7px !important;
 }
 
 }
@@ -1819,7 +1836,7 @@ select[name="builtmyself"] {
 }
 
 .title_nav ul a {
-	padding: 12px 5px !important;
+	padding: 12px 8px !important;
 }
 }
 
@@ -1848,8 +1865,8 @@ select[name="builtmyself"] {
 }
 
 .title_nav ul a {
-	padding: 12px 8px !important;
-	font-size: 14px;
+	padding: 12px 13px !important;
+	font-size: 13px;
 }
 }
 
@@ -1980,7 +1997,7 @@ select[name="builtmyself"] {
 
 
 .fixed-table-container {
-  width: 99.9%;
+  /*width: 99.9%;*/
 /*  height: 500px;*/
   border: 1px solid #CDCDCD;
   /* above is decorative or flexible */
@@ -2022,7 +2039,7 @@ select[name="builtmyself"] {
   width: 100%;
 }
 .scroll-line {
-	background:#929292;
+	/*background:#929292;*/
 	width:3px !important;
 	/*opacity:.6;*/
 	height:100% !important;
@@ -2030,8 +2047,8 @@ select[name="builtmyself"] {
 }
 
 .scroll-slider-inner-stp {
-	background:#333333;
-	opacity:.6;
+	background:#000;
+	opacity:.5;
 }
 
 .fixed-table-container table tr:first-child td{
@@ -2173,6 +2190,23 @@ select[name="builtmyself"] {
 	border-bottom: none;	
 }
 
+#fetchSql_table td {
+	width:45% !important;
+}
+#fetchSql_table td ul {
+	border: 1px solid #c7c7c7;
+	border-radius:6px;
+	min-height: 150px;
+	cursor: move;
+}
+
+#fetchSql_table td ul li {
+	border-bottom:1px solid #ccc;
+	line-height:25px !important;
+	padding:0 8px !important;
+}
+
+
 .z_index {
 	z-index:1;
 }
@@ -2211,7 +2245,7 @@ select[name="builtmyself"] {
 	list-style:none;
 }
 .env_border ul li {
-	border-bottom:1px solid #d8d8d8;
+	border-bottom:1px solid #d8d8d8 !important;
 	padding:0px 0 0px 4px;
 	line-height: 30px;
 }
@@ -2220,9 +2254,6 @@ select[name="builtmyself"] {
 	padding-left: 64px;
 }
 
-.env_border ul:first-child li {
-	border-right: 1px solid #d8d8d8;
-}
 .env_border ul li:last-child {
 	border-bottom:none;
 }
@@ -2616,7 +2647,7 @@ html>body tbody.scrollContent {
 }
 
 .qual_unit .code_func {
-	padding: 4px 0 0 8px;
+	padding: 4px 10px 0 8px;
     width: auto;
 }
 
@@ -3499,6 +3530,13 @@ html>body tbody.scrollContent {
 	margin-right:15px;
 }
 
+.ci_dynamic_cont .row .ctrl {
+	float:left;
+	width:143px;
+	margin-right:15px;
+	height:60px;
+}
+
 .dynamic_cont .row .ctrl label, .performance_pop_cont .row .ctrl label, .context_table td label  {
 	font-size:12px !important
 }
@@ -3558,10 +3596,6 @@ html>body tbody.scrollContent {
 .pdf_icon
 {
 	float:left;
-}
-.logintest
-{
-	margin-right:6px !important;
 }
 
 #performance_test table tr td

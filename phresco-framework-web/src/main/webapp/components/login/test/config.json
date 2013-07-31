@@ -71,6 +71,11 @@
 			"path" : "components/navigation/test/navigationTest"
 		},
 		
+		"mavenService" : {
+			"moduleName":"mavenService",
+			"path" : "components/mavenService/js"
+		},
+		
 		"projects" : {
 			"moduleName":"projects",
 			"path": "components/projects/js"
