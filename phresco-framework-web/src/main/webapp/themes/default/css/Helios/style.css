@@ -3530,6 +3530,13 @@ html>body tbody.scrollContent {
 	margin-right:15px;
 }
 
+.ci_dynamic_cont .row .ctrl {
+	float:left;
+	width:143px;
+	margin-right:15px;
+	height:60px;
+}
+
 .dynamic_cont .row .ctrl label, .performance_pop_cont .row .ctrl label, .context_table td label  {
 	font-size:12px !important
 }
