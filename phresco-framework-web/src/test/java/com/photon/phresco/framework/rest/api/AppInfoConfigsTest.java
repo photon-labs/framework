@@ -31,4 +31,10 @@ public class AppInfoConfigsTest extends RestBaseTest {
 		Response webServices = appInfoConfigs.getWebServices("admin");
 		Assert.assertEquals(200, webServices.getStatus());
 	}
+	
+	@Test
+	public void testGetFunctionalFrameworks() {
+		appInfoConfigs.getFunctionalFrameworks("admin", "tech-php");
+	}
+	
 }
