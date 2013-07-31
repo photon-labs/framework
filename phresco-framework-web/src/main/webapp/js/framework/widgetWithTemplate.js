@@ -117,7 +117,7 @@ define(["framework/widget", "framework/templateProvider"], function() {
 				if ($(divId).find('.fixed-table-container-inner').offset() !== undefined) {
 					var height = $(window).height() - $('.fixed-table-container-inner').offset().top - 40;
 					$('.fixed-table-container, .fixed-table-container-inner, .scroll-bar').css('height', height);
-				} else if(!divId.hasClass('popup_scroll')) {
+				} else if(divId.length > 0 && !divId.hasClass('popup_scroll')) {
 					var height = $(window).height() - $(divId).offset().top - 40;
 					if ($('.content_end').length > 0){
 						height = height - $('.content_end').height();

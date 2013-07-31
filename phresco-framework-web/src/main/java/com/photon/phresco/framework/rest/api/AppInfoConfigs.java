@@ -33,6 +33,8 @@ import org.apache.commons.collections.CollectionUtils;
 import com.photon.phresco.commons.FrameworkConstants;
 import com.photon.phresco.commons.ResponseCodes;
 import com.photon.phresco.commons.model.DownloadInfo;
+import com.photon.phresco.commons.model.FunctionalFramework;
+import com.photon.phresco.commons.model.FunctionalFrameworkGroup;
 import com.photon.phresco.commons.model.WebService;
 import com.photon.phresco.exception.PhrescoException;
 import com.photon.phresco.service.client.api.ServiceManager;
@@ -147,5 +149,43 @@ public class AppInfoConfigs extends RestBase implements ServiceConstants, Framew
 				return projectInfo1.getName().compareToIgnoreCase(projectInfo2.getName());
 			}
 		};
+	}
+	
+	/**
+	 * Gets the web services.
+	 *
+	 * @param userId the user id
+	 * @return the web services
+	 */
+	@GET
+	@Path("/functionalFrameworks")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response getFunctionalFrameworks(@QueryParam(REST_QUERY_USERID) String userId, @QueryParam(REST_QUERY_TECHID) String techId) {
+		ResponseInfo<List<FunctionalFrameworkGroup>> responseData = new ResponseInfo<List<FunctionalFrameworkGroup>>();
+		try {
+			ServiceManager serviceManager = CONTEXT_MANAGER_MAP.get(userId);
+			if (serviceManager == null) {
+				status = RESPONSE_STATUS_FAILURE;
+				errorCode = PHR310001;
+				ResponseInfo<List<FunctionalFrameworkGroup>> finalOutput = responseDataEvaluation(responseData, null,
+						null, status, errorCode);
+				return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin",
+						"*").build();
+			}
+			status = RESPONSE_STATUS_SUCCESS;
+			successCode = PHR300001;
+			List<FunctionalFrameworkGroup> webServices = serviceManager.getFunctionalTestFramework(techId);
+			ResponseInfo<List<FunctionalFrameworkGroup>> finalOutput = responseDataEvaluation(responseData, null,
+					webServices, status, successCode);
+			return Response.status(ClientResponse.Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin",
+					"*").build();
+		} catch (PhrescoException e) {
+			status = RESPONSE_STATUS_ERROR;
+			errorCode = PHR310003;
+			ResponseInfo<List<FunctionalFrameworkGroup>> finalOutput = responseDataEvaluation(responseData, e,
+					null, status, errorCode);
+			return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*")
+					.build();
+		}
 	}
 }
