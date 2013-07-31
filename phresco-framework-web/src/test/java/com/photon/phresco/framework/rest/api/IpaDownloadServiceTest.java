@@ -18,6 +18,7 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.photon.phresco.commons.model.BuildInfo;
 import com.photon.phresco.exception.PhrescoException;
+import com.photon.phresco.framework.rest.api.util.FrameworkServiceUtil;
 
 public class IpaDownloadServiceTest {
 
@@ -26,8 +27,8 @@ public class IpaDownloadServiceTest {
 		String osType = System.getProperty("os.name");
 		if (isMac(osType)) {
 			IpaDownloadService downloadService = new IpaDownloadService();
-			String appDirectoryPath = downloadService.getAppDirectoryPath("PHONE-iphonenative");
-			String buildDirectoryPath = downloadService.getBuildInfosFilePath("PHONE-iphonenative");
+			String appDirectoryPath = FrameworkServiceUtil.getApplicationHome("PHONE-iphonenative");
+			String buildDirectoryPath = FrameworkServiceUtil.getBuildInfosFilePath("PHONE-iphonenative");
 			int buildNo = getBuildNo(buildDirectoryPath, "PHONE-iphonenative");
 			File appDir = new File(appDirectoryPath);
 			File buildDir = new File(buildDirectoryPath);

@@ -8,6 +8,7 @@ var commonVariables = {
 	goal : null,
 	phase : null,
 	buildNo : null,
+	iphoneDeploy : null,
 	
 	header : "header",
 	headerContext : "",

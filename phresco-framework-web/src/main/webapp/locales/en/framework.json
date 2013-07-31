@@ -305,6 +305,7 @@
 			"progress" : "Progress",
 			"openfolder" : "Open Folder",
 			"download" : "Download",
+			"processBuild" : "Process Build",
 			"deploy" : "Deploy",
 			"jsminification" : "JS Minification",
 			"cssminification" : "CSS Minification",

@@ -62,7 +62,10 @@
                             <tbody>
                                 <tr>
                                     <td><input type="text"></td>
-                                    <td><input type="text"><input type="button" value="Browse" data-i18n="[value]build.label.browse" class="btn btn_style"><a href="#"><img src="themes/default/images/helios/plus_icon.png" alt=""></a></td>
+                                    <td>
+										<input type="text"><input type="button" value="Browse" data-i18n="[value]build.label.browse" class="btn btn_style">
+										<img src="themes/default/images/helios/plus_icon.png" alt="">
+									</td>
                                 </tr>
                             </tbody>
                           </table>
@@ -75,7 +78,9 @@
                             <tbody>
                                 <tr>
                                     <td><input type="text"></td>
-                                    <td><input type="text"><input type="button" value="Browse" data-i18n="[value]build.label.browse" class="btn btn_style"><a href="#"><img src="themes/default/images/helios/plus_icon.png" alt=""></a></td>
+                                    <td>
+										<input type="text"><input type="button" value="Browse" data-i18n="[value]build.label.browse" class="btn btn_style"><img src="themes/default/images/helios/plus_icon.png" alt="">
+									</td>
                                 </tr>
                             </tbody>
                           </table>
@@ -98,6 +103,7 @@
 							<th data-i18n="build.label.buildno"></th>
 							<th data-i18n="build.label.date"></th>
 							<th data-i18n="build.label.download"></th>
+							<th name="prcBuild" data-i18n="build.label.processBuild"></th>
 							<th data-i18n="build.label.deploy"></th>
 							<th data-i18n="build.label.delete"></th>
 						</tr>    
@@ -111,28 +117,50 @@
 									<a href="#">
 										<img name="downloadBuild" src="themes/default/images/helios/download_icon.png" width="15" height="18" border="0" alt="">
 									</a>
+									{{#if options.canCreateIpa}}
+										<a href="#">
+											<img name="ipaDownload" src="themes/default/images/helios/ipa_icon.png" width="13" height="18" border="0" alt="">
+										</a>
+									{{/if}}
 								</td>
-								<td class="list_img">
+								<td name="prcBuild" class="list_img">
 									<a href="#">
-										{{#if ../userPermissions.manageBuilds}}
-											<img name="deployBuild" src="themes/default/images/helios/deploy_icon.png" width="16" height="20" border="0" alt="">
-										{{else}}
-											<img src="themes/default/images/helios/deploy_icon_off.png" width="16" height="20" border="0" alt="">
-										{{/if}}
+										<img name="procBuild" src="themes/default/images/helios/download_icon.png" width="15" height="18" border="0" alt="">
 									</a>
-									<div id="deploye_{{buildNo}}" class="dyn_popup popup_bg" style="display:none;">
-										<div id="bdeploy_{{buildNo}}">
-											<form name="deployForm">
-												<ul class="row dynamicControls">
-												</ul>
-												<input type="hidden" name="buildNumber" value="{{buildNo}}" />
-											</form>
-											<div class="flt_right">
-												<input type="button" name="deploy" data-i18n="[value]build.label.deploy" class="btn btn_style dyn_popup_close">
-												<input type="button" data-i18n="[value]build.label.close" class="btn btn_style dyn_popup_close">
-											</div>
+									<div id="prcBuild_{{buildNo}}" class="dyn_popup" style="display:none; width:30%;">
+										<form id="prcBForm_{{buildNo}}">
+										</form>
+										<div class="flt_right">
+											<input class="btn btn_style" type="button" name="processBuild" data-i18n="[value]navigation.application.import">
+											<input class="btn btn_style dyn_popup_close" type="button"  data-i18n="[value]common.btn.close">
 										</div>
 									</div>
+								</td>
+								<td class="list_img">
+									{{#if ../userPermissions.manageBuilds}}
+										<a href="#">
+											{{{devicedploy options.deviceDeploy}}}
+										</a>
+										{{#if options.deviceDeploy}}
+											<div class="dyn_popup popup_bg" style="display:none;"></div>
+										{{else}}
+											<div id="deploye_{{buildNo}}" class="dyn_popup popup_bg" style="display:none;">
+												<div id="bdeploy_{{buildNo}}">
+													<form name="deployForm">
+														<ul class="row dynamicControls">
+														</ul>
+														<input type="hidden" name="buildNumber" value="{{buildNo}}" />
+													</form>
+													<div class="flt_right">
+														<input type="button" name="deploy" data-i18n="[value]build.label.deploy" class="btn btn_style dyn_popup_close">
+														<input type="button" data-i18n="[value]build.label.close" class="btn btn_style dyn_popup_close">
+													</div>
+												</div>
+											</div>
+										{{/if}}
+									{{else}}
+										<img src="themes/default/images/helios/deploy_icon_off.png" width="16" height="20" border="0" alt="">
+									{{/if}}
 								</td>
 								<td class="list_img">
 									{{#if ../userPermissions.manageBuilds}}
@@ -158,14 +186,12 @@
 				<div class="alert" style="text-align: center;" data-i18n="build.label.nodata"></div>
 			{{/if}}	
 		</div>
-		
 		<div class="unit_close">
 			<a href="#" data-flag="true" id="buildConsole">
 				<img src="themes/default/images/helios/console_img.png" width="33" height="92" border="0" alt="">
 				<div class="progress_loading" style="display:none;"><img src="themes/default/images/helios/progress_load.gif" border="0"></div>
 			</a>
 		</div>
-		
 		<div class="unit_progress build_progress">
 			<table id="build_progress" class="table table-striped table_border table-bordered" cellpadding="0" cellspacing="0" border="0">
 				<thead>

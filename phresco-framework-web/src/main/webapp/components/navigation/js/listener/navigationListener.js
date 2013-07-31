@@ -470,19 +470,19 @@ define([], function() {
 				$("#minifier").show();
 			}
 			if (jQuery.inArray(commonVariables.optionsBuild, applicableOptions) === -1) {
-
+				$('input[name=build_genbuild]').hide();
 			} else {
-				
+				$('input[name=build_genbuild]').show();
 			}
 			if (jQuery.inArray(commonVariables.optionsDeploy, applicableOptions) === -1) {
-
+				$('img[name=deployBuild]').hide();
 			} else {
-				
+				$('img[name=deployBuild]').show();
 			}
 			if (jQuery.inArray(commonVariables.optionsExeDownload, applicableOptions) === -1) { 
-
+				$('img[name=ipaDownload]').hide();
 			} else {
-				
+				$('img[name=ipaDownload]').show();
 			}
 			if (jQuery.inArray(commonVariables.optionsFeatureConfig, applicableOptions) === -1) {
 
@@ -495,9 +495,13 @@ define([], function() {
 				
 			}
 			if (jQuery.inArray(commonVariables.optionsProcessBuild, applicableOptions) === -1) {
-
+				//process build
+				$("table th[name=prcBuild]").hide();
+				$("table td[name=prcBuild]").hide();
 			} else {
-				
+				$("table th[name=prcBuild]").show();
+				$("table td[name=prcBuild]").show();
+
 			}
 			if (jQuery.inArray(commonVariables.optionsRemoteDeployment, applicableOptions) === -1) {
 

@@ -74,6 +74,11 @@ define([], function() {
 			} */
 		},
 		
+		ipadownload : function(buildNo, callback){
+			var self = this, header = self.getRequestHeader("", {'buildNo':buildNo}, 'ipadownload');
+			window.open(header.webserviceurl);
+		},
+		
 		deployBuild : function(queryString, callback){
 			var self = this, appInfo = commonVariables.api.localVal.getJson('appdetails');
 			
@@ -223,6 +228,10 @@ define([], function() {
 				method = "GET";
 				contType: "multipart/form-data";
 				url = 'buildinfo/downloadBuild?appDirName=' + appdirName + '&buildNumber=' + buildInfo.buildNo;
+			}else if(action === "ipadownload"){
+				method = "POST";
+				contType: "multipart/form-data";
+				url = 'buildinfo/Ipadownload?appDirName=' + appdirName + '&buildNumber=' + buildInfo.buildNo;
 			}else if(action === "delete"){
 				method = "DELETE";
 				var appInfo = commonVariables.api.localVal.getJson('appdetails');
