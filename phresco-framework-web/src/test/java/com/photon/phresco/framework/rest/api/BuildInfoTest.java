@@ -4,6 +4,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 
 import java.io.File;
+import java.util.Collections;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -11,10 +12,14 @@ import javax.ws.rs.core.Response;
 
 import junit.framework.Assert;
 
+import org.apache.commons.lang.StringUtils;
 import org.junit.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
 
+import com.photon.phresco.commons.model.ApplicationInfo;
 import com.photon.phresco.commons.model.BuildInfo;
+import com.photon.phresco.commons.model.ProjectInfo;
+import com.photon.phresco.commons.model.TechnologyInfo;
 import com.photon.phresco.exception.PhrescoException;
 import com.photon.phresco.framework.rest.api.util.ActionResponse;
 import com.photon.phresco.util.Utility;
@@ -31,7 +36,7 @@ public class BuildInfoTest extends RestBaseTest {
 		String goal = "package";
 		String phase = "package";
 		
-		Response response = parameterservice.getParameter(appDirName, goal, phase, userId, customerId,"");
+		Response response = parameterservice.getParameter(appDirName, "", goal, phase, userId, customerId,"");
 		assertEquals(200, response.getStatus());
 	}
 	
@@ -203,6 +208,42 @@ public class BuildInfoTest extends RestBaseTest {
 		Assert.assertEquals(200, response.getStatus());
 	}
 	
+//	@Test
+	public void iphoneDevicebuildTest() throws PhrescoException {
+		ParameterService parameterService = new ParameterService();
+		ProjectService projectService = new ProjectService();
+		if(StringUtils.isNotEmpty(System.getProperty("ANDROID_HOME"))) {
+			
+			ProjectInfo iphoneProjectInfo = iphoneProjectInfo();
+			Response response = projectService.createProject(iphoneProjectInfo, userId);
+			assertEquals(200 , response.getStatus());
+			
+		MockHttpServletRequest request = new MockHttpServletRequest();
+		request.setParameter("buildName", "android");
+		request.setParameter("environmentName", "Production");
+		request.setParameter("logs", "showErrors");
+		request.setParameter("skipTest", "true");
+		request.setParameter("customerId", customerId);
+		request.setParameter("projectId", "androidtest-androidnative");
+		request.setParameter("appId", "androidtest-androidnative");
+		request.setParameter("username", userId);
+		request.setParameter("buildNumber", "2");
+		request.setParameter("sdk", "4.1");
+		HttpServletRequest httpServletRequest = (HttpServletRequest)request;
+		Response build = actionservice.build(httpServletRequest);
+		ActionResponse entity = (ActionResponse) build.getEntity();
+		uniqueKey = entity.getUniquekey();
+		assertEquals("STARTED", entity.getStatus());
+		
+		Response deployDev = parameterService.getParameter(appDirName, "false", "deploy", "deploy", userId, customerId, "");
+		Assert.assertEquals(200, deployDev.getStatus());
+		
+		Response deployDevice = parameterService.getParameter(appDirName, "true", "deploy", "deploy", userId, customerId, "");
+		Assert.assertEquals(200, deployDevice.getStatus());
+		
+		}
+	}
+	
 	public Boolean readLog() throws PhrescoException {
 		MockHttpServletRequest request = new MockHttpServletRequest();
 		request.setParameter("uniquekey", uniqueKey);
@@ -232,5 +273,42 @@ public class BuildInfoTest extends RestBaseTest {
 			}
 		}
 		return false;
+	}
+	
+private ProjectInfo iphoneProjectInfo() {
+		
+		ProjectInfo projectInfo = new ProjectInfo();
+		projectInfo.setCustomerIds(getCustomer());
+		projectInfo.setId("androidtest-androidnative");
+		projectInfo.setName("androidtest-androidnative");
+		projectInfo.setNoOfApps(1);
+		projectInfo.setVersion("1.0");
+		projectInfo.setProjectCode("androidtest-androidnative");
+		
+		ApplicationInfo info = new ApplicationInfo();
+		info.setAppDirName("androidtest-androidnative");
+		info.setCode("androidtest-androidnative");
+		info.setId("androidtest-androidnative");
+		info.setCustomerIds(Collections.singletonList("photon"));
+		info.setEmailSupported(false);
+		info.setPhoneEnabled(false);
+		info.setTabletEnabled(false);
+		info.setDescription("Simple android Project");
+		info.setHelpText("Help");
+		info.setName("androidtest-androidnative");
+		info.setPilot(false);
+		info.setUsed(false);
+		info.setDisplayName("androidtest-androidnative");
+		info.setVersion("1.0");
+
+		TechnologyInfo techInfo = new TechnologyInfo();
+		techInfo.setAppTypeId("mob-layer");
+		techInfo.setVersion("");
+		techInfo.setId("tech-android-native");
+		techInfo.setSystem(false);
+		info.setTechInfo(techInfo);
+		projectInfo.setAppInfos(Collections.singletonList(info));
+		
+		return projectInfo;
 	}
 }

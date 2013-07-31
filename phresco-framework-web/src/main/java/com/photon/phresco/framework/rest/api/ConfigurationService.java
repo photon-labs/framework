@@ -66,6 +66,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 import com.photon.phresco.api.ConfigManager;
+import com.photon.phresco.api.NonEnvConfigManager;
 import com.photon.phresco.commons.FrameworkConstants;
 import com.photon.phresco.commons.model.ApplicationInfo;
 import com.photon.phresco.commons.model.ArtifactGroup;
@@ -83,8 +84,10 @@ import com.photon.phresco.framework.commons.FrameworkUtil;
 import com.photon.phresco.framework.model.AddCertificateInfo;
 import com.photon.phresco.framework.model.CronExpressionInfo;
 import com.photon.phresco.framework.model.RemoteCertificateInfo;
+import com.photon.phresco.framework.model.TemplateInfo;
 import com.photon.phresco.framework.rest.api.util.FrameworkServiceUtil;
 import com.photon.phresco.impl.ConfigManagerImpl;
+import com.photon.phresco.impl.NonEnvConfigManagerImpl;
 import com.photon.phresco.service.client.api.ServiceManager;
 import com.photon.phresco.util.Constants;
 import com.photon.phresco.util.ServiceConstants;
@@ -140,9 +143,17 @@ public class ConfigurationService extends RestBase implements FrameworkConstants
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response listEnvironments(@QueryParam(REST_QUERY_APPDIR_NAME) String appDirName,
-			@QueryParam(REST_QUERY_ENV_NAME) String envName) {
+			@QueryParam(REST_QUERY_ENV_NAME) String envName, @QueryParam("isEnvSpecific") String isEnvSpecific, @QueryParam("configName") String configName) {
 		ResponseInfo<Environment> responseData = new ResponseInfo<Environment>();
 		try {
+			if (StringUtils.isNotEmpty(isEnvSpecific) && isEnvSpecific.equals("false")) {
+				String nonEnvConfigFile = FrameworkServiceUtil.getnonEnvConfigFileDir(appDirName);
+				NonEnvConfigManager nonConfigManager = new NonEnvConfigManagerImpl(new File(nonEnvConfigFile));
+				Configuration configurations = nonConfigManager.getConfiguration(configName);
+				ResponseInfo<Configuration> finalOuptut = responseDataEvaluation(responseData, null, "Configurations Listed",
+						configurations);
+				return Response.ok(finalOuptut).header("Access-Control-Allow-Origin", "*").build();
+			}
 			String configFileDir = FrameworkServiceUtil.getConfigFileDir(appDirName);
 			ConfigManager configManager = new ConfigManagerImpl(new File(configFileDir));
 			if (StringUtils.isNotEmpty(envName)) {
@@ -168,6 +179,11 @@ public class ConfigurationService extends RestBase implements FrameworkConstants
 					"Environments Failed to List", null);
 			return Response.status(Status.EXPECTATION_FAILED).entity(finalOuptut).header("Access-Control-Allow-Origin",
 					"*").build();
+		} catch (PhrescoException e) {
+			ResponseInfo<Configuration> finalOuptut = responseDataEvaluation(responseData, e,
+					"Configuration Failed to List", null);
+			return Response.status(Status.EXPECTATION_FAILED).entity(finalOuptut).header("Access-Control-Allow-Origin",
+					"*").build();
 		}
 	}
 
@@ -180,9 +196,17 @@ public class ConfigurationService extends RestBase implements FrameworkConstants
 	@GET
 	@Path("allEnvironments")
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response getAllEnvironments(@QueryParam(REST_QUERY_APPDIR_NAME) String appDirName) {
+	public Response getAllEnvironments(@QueryParam(REST_QUERY_APPDIR_NAME) String appDirName, @QueryParam("isEnvSpecific") String isEnvSpecific, @QueryParam("configType") String configType) {
 		ResponseInfo<Environment> responseData = new ResponseInfo<Environment>();
 		try {
+			if (StringUtils.isNotEmpty(isEnvSpecific) && isEnvSpecific.equals("false")) {
+				String nonEnvConfigFile = FrameworkServiceUtil.getnonEnvConfigFileDir(appDirName);
+				NonEnvConfigManager nonConfigManager = new NonEnvConfigManagerImpl(new File(nonEnvConfigFile));
+				List<Configuration> configurations = nonConfigManager.getConfigurations(configType);
+				ResponseInfo<List<Configuration>> finalOuptut = responseDataEvaluation(responseData, null, "Configurations Listed",
+						configurations);
+				return Response.ok(finalOuptut).header("Access-Control-Allow-Origin", "*").build();
+			}
 			String configFileDir = FrameworkServiceUtil.getConfigFileDir(appDirName);
 			ConfigManager configManager = new ConfigManagerImpl(new File(configFileDir));
 			List<Environment> environments = configManager.getEnvironments();
@@ -192,6 +216,11 @@ public class ConfigurationService extends RestBase implements FrameworkConstants
 		} catch (ConfigurationException e) {
 			ResponseInfo<Environment> finalOuptut = responseDataEvaluation(responseData, e,
 					"Environments Failed to List", null);
+			return Response.status(Status.EXPECTATION_FAILED).entity(finalOuptut).header("Access-Control-Allow-Origin",
+					"*").build();
+		} catch (PhrescoException e) {
+			ResponseInfo<List<Configuration>> finalOuptut = responseDataEvaluation(responseData, e,
+					"Configuration Failed to List", null);
 			return Response.status(Status.EXPECTATION_FAILED).entity(finalOuptut).header("Access-Control-Allow-Origin",
 					"*").build();
 		}
@@ -238,6 +267,28 @@ public class ConfigurationService extends RestBase implements FrameworkConstants
 				"Environment Not available to Delete", null);
 		return Response.status(Status.EXPECTATION_FAILED).entity(finalOuptut)
 				.header("Access-Control-Allow-Origin", "*").build();
+	}
+	
+	
+	@DELETE
+	@Path("/deleteConfig")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response deleteConfiguraion(@QueryParam(REST_QUERY_APPDIR_NAME) String appDirName,
+			@QueryParam("configName") String configName) {
+		ResponseInfo<Environment> responseData = new ResponseInfo<Environment>();
+		try {
+			String nonEnvConfigFie = FrameworkServiceUtil.getnonEnvConfigFileDir(appDirName);
+			NonEnvConfigManager nonConfigManager = new NonEnvConfigManagerImpl(new File(nonEnvConfigFie));
+			nonConfigManager.deleteConfiguration(configName);
+			ResponseInfo<Environment> finalOuptut = responseDataEvaluation(responseData, null,
+					"Configuration Deleted successfully", null);
+			return Response.ok(finalOuptut).header("Access-Control-Allow-Origin", "*").build();
+		} catch (PhrescoException e) {
+			ResponseInfo<Environment> finalOuptut = responseDataEvaluation(responseData, null,
+					"Configuraiotn Not available to Delete", null);
+			return Response.status(Status.EXPECTATION_FAILED).entity(finalOuptut)
+					.header("Access-Control-Allow-Origin", "*").build();
+		}
 	}
 
 	/**
@@ -298,27 +349,31 @@ public class ConfigurationService extends RestBase implements FrameworkConstants
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response getConfigTypes(@QueryParam(REST_QUERY_CUSTOMERID) String customerId,
 			@QueryParam(REST_QUERY_USERID) String userId, @QueryParam(REST_QUERY_TECHID) String techId) {
-		ResponseInfo<List<String>> responseData = new ResponseInfo<List<String>>();
+		ResponseInfo<List<TemplateInfo>> responseData = new ResponseInfo<List<TemplateInfo>>();
 		try {
 			ServiceManager serviceManager = CONTEXT_MANAGER_MAP.get(userId);
 			if (serviceManager == null) {
-				ResponseInfo<List<String>> finalOutput = responseDataEvaluation(responseData, null,
+				ResponseInfo<List<TemplateInfo>> finalOutput = responseDataEvaluation(responseData, null,
 						"UnAuthorized User", null);
 				return Response.status(Status.BAD_REQUEST).entity(finalOutput).header("Access-Control-Allow-Origin",
 						"*").build();
 			}
-			List<String> settingsTypes = new ArrayList<String>();
+			List<TemplateInfo> settingsTypes = new ArrayList<TemplateInfo>();
 			List<SettingsTemplate> settingsTemplates = serviceManager.getConfigTemplates(customerId, techId);
 			if (CollectionUtils.isNotEmpty(settingsTemplates)) {
 				for (SettingsTemplate settingsTemplate : settingsTemplates) {
-					settingsTypes.add(settingsTemplate.getName());
+					TemplateInfo template = new TemplateInfo();
+					template.setTemplateName(settingsTemplate.getName());
+					template.setFavourite(settingsTemplate.isFavourite());
+					template.setEnvSpecific(settingsTemplate.isEnvSpecific());
+					settingsTypes.add(template);
 				}
 			}
-			ResponseInfo<List<String>> finalOutput = responseDataEvaluation(responseData, null,
+			ResponseInfo<List<TemplateInfo>> finalOutput = responseDataEvaluation(responseData, null,
 					"confuguration Template Fetched successfully", settingsTypes);
 			return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
 		} catch (PhrescoException e) {
-			ResponseInfo<List<String>> finalOutput = responseDataEvaluation(responseData, e,
+			ResponseInfo<List<TemplateInfo>> finalOutput = responseDataEvaluation(responseData, e,
 					"confuguration Template not Fetched", null);
 			return Response.status(Status.BAD_REQUEST).entity(finalOutput).header("Access-Control-Allow-Origin", "*")
 					.build();
@@ -377,7 +432,7 @@ public class ConfigurationService extends RestBase implements FrameworkConstants
 	public Response updateConfiguration(@QueryParam(REST_QUERY_USERID) String userId,
 			@QueryParam(REST_QUERY_CUSTOMERID) String customerId,
 			@QueryParam(REST_QUERY_APPDIR_NAME) String appDirName, @QueryParam(REST_QUERY_ENV_NAME) String envName,
-			List<Configuration> configurationlist) {
+			List<Configuration> configurationlist, @QueryParam("isEnvSpecific") String isEnvSpecific, @QueryParam("configName") String configName) {
 		if (is_debugEnabled) {
 			S_LOGGER.debug("Entering Method  Configurationservice.updateConfiguration()");
 		}
@@ -385,16 +440,34 @@ public class ConfigurationService extends RestBase implements FrameworkConstants
 		String configFile = FrameworkServiceUtil.getConfigFileDir(appDirName);
 		ResponseInfo<Configuration> responseData = new ResponseInfo<Configuration>();
 		try {
+			if (StringUtils.isEmpty(isEnvSpecific)) {
 			ConfigManager configManager = new ConfigManagerImpl(new File(configFile));
 			List<Configuration> listofconfiguration = configManager.getConfigurations(envName);
 			List<String> configuration_names = new ArrayList<String>();
-			validateConfiguration(userId, customerId, appDirName, configurationlist);
+			String validateConfiguration = validateConfiguration(userId, customerId, appDirName, configurationlist);
+			if(StringUtils.isNotEmpty(validateConfiguration)) {
+				ResponseInfo<String> finalOuptut = responseDataEvaluation(responseData, null,
+    					"Configurations Fails on validation", validateConfiguration);
+    			return Response.ok(finalOuptut).header("Access-Control-Allow-Origin", "*").build();
+			}
 			for (Configuration configuration_temp : listofconfiguration) {
 
 				configuration_names.add(configuration_temp.getName());
 			}
-			configManager.deleteConfigurations(envName, configuration_names);
-			configManager.createConfiguration(envName, configurationlist);
+				configManager.deleteConfigurations(envName, configuration_names);
+	    		configManager.createConfiguration(envName, configurationlist);
+	    	} else {
+	    		String nonEnvConfigFie = FrameworkServiceUtil.getnonEnvConfigFileDir(appDirName);
+	    		NonEnvConfigManager nonConfigManager = new NonEnvConfigManagerImpl(new File(nonEnvConfigFie));
+	    		if(StringUtils.isEmpty(configName)) {
+	    			nonConfigManager.createConfiguration(configurationlist.get(0));
+	    			ResponseInfo<String> finalOuptut = responseDataEvaluation(responseData, null,
+	    					"Configurations created Successfully", "Success");
+	    			return Response.ok(finalOuptut).header("Access-Control-Allow-Origin", "*").build();
+	    		} else {
+	    		nonConfigManager.updateConfiguration(configName, configurationlist.get(0));
+	    		}
+	    	}
 			ResponseInfo<String> finalOuptut = responseDataEvaluation(responseData, null,
 					"Configurations Updated Successfully", "Success");
 			return Response.ok(finalOuptut).header("Access-Control-Allow-Origin", "*").build();
@@ -944,9 +1017,10 @@ public class ConfigurationService extends RestBase implements FrameworkConstants
 	 * @param customerId the customer id
 	 * @param appDirName the app dir name
 	 * @param configurationlist the configurationlist
+	 * @return 
 	 * @throws PhrescoException the phresco exception
 	 */
-	private void validateConfiguration(String userId, String customerId, String appDirName,
+	private String validateConfiguration(String userId, String customerId, String appDirName,
 			List<Configuration> configurationlist) throws PhrescoException {
 		ServiceManager serviceManager = CONTEXT_MANAGER_MAP.get(userId);
 		int serverCount = 0;
@@ -957,13 +1031,13 @@ public class ConfigurationService extends RestBase implements FrameworkConstants
 		String dynamicError = "";
 		for (int i = 0; i < configurationlist.size(); i++) {
 			if (StringUtils.isEmpty(configurationlist.get(i).getName())) {
-				throw new PhrescoException("Name is Empty");
+				return "Name is Empty";
 			} else {
 				String name = configurationlist.get(i).getName();
 				for (int j = 0; j < configurationlist.size(); j++) {
 					if (i != j) {
 						if (name.equals(configurationlist.get(j).getName())) {
-							throw new PhrescoException("Name already Exists");
+							return "Name already Exists";
 						}
 					}
 				}
@@ -974,30 +1048,35 @@ public class ConfigurationService extends RestBase implements FrameworkConstants
 			SettingsTemplate configTemplateByType = serviceManager.getConfigTemplateByType(customerId, configuration
 					.getType());
 			if (StringUtils.isEmpty(configuration.getType())) {
-				throw new PhrescoException("Configuration Type is Empty");
+				return "Configuration Type is Empty";
 			}
 
-			if (FrameworkConstants.SERVER.equals(configuration.getType())
-					|| FrameworkConstants.EMAIL.equals(configuration.getType())) {
+//			if (FrameworkConstants.SERVER.equals(configuration.getType())
+//					|| FrameworkConstants.EMAIL.equals(configuration.getType())) {
+				
 				if (FrameworkConstants.SERVER.equals(configuration.getType())) {
 					serverCount++;
-				} else {
-					String propertyEmail = configuration.getProperties().getProperty(FrameworkConstants.EMAIL_ID);
-					if (propertyEmail.isEmpty()) {
-						throw new PhrescoException("Email ID is Empty");
-					} else {
-						emailvalidation(propertyEmail);
-					}
-					emailCount++;
 				}
-			}
+				
+			if(FrameworkConstants.EMAIL.equals(configuration.getType())) {
+					String propertyEmail = configuration.getProperties().getProperty(FrameworkConstants.EMAIL_ID);
+					emailCount++;
+					if (propertyEmail.isEmpty()) {
+						return "Email ID is Empty";
+					} else {
+						String emailvalidation = emailvalidation(propertyEmail);
+						 if(StringUtils.isNotEmpty(emailvalidation)) {
+							 return emailvalidation;
+						 }
+					}
+				}
 
 			if (serverCount > 1) {
-				throw new PhrescoException("Server Configuration type Already Exists");
+				return "Server Configuration type Already Exists";
 			}
 
 			if (emailCount > 1) {
-				throw new PhrescoException("Email Configuration type Already Exists");
+				return "Email Configuration type Already Exists";
 			}
 
 			if (!FrameworkConstants.OTHERS.equals(configuration.getType())) {
@@ -1010,8 +1089,7 @@ public class ConfigurationService extends RestBase implements FrameworkConstants
 							|| FrameworkConstants.NODEJS_MAC_SERVER.equals(propValue)
 							|| FrameworkConstants.SHAREPOINT_SERVER.equals(propValue)
 							|| FrameworkConstants.IIS_SERVER.equals(propValue)) {
-						// If nodeJs and sharepoint server selected , there
-						// should not be validation for deploy dir.
+						// If nodeJs and sharepoint server selected , there should not be validation for deploy dir.
 						serverTypeValidation = true;
 					}
 
@@ -1046,43 +1124,46 @@ public class ConfigurationService extends RestBase implements FrameworkConstants
 
 					if (StringUtils.isNotEmpty(dynamicError)) {
 						dynamicError = dynamicError.substring(0, dynamicError.length() - 1);
-						throw new PhrescoException(dynamicError);
+						return dynamicError;
 					}
 
-					// Version Validation for Server and Database configuration
-					// types
-					if (FrameworkConstants.SERVER.equals(configuration.getType())
-							|| FrameworkConstants.DATABASE.equals(configuration.getType())) {
-						if (StringUtils.isEmpty(configuration.getProperties().getProperty(FrameworkConstants.VERSION))) {
-							throw new PhrescoException("Version is Empty");
-						}
-					}
+					// Version Validation for Server and Database configuration types
+//					if (FrameworkConstants.SERVER.equals(configuration.getType())
+//							|| FrameworkConstants.DATABASE.equals(configuration.getType())) {
+//						if (StringUtils.isEmpty(configuration.getProperties().getProperty(FrameworkConstants.VERSION))) {
+//							return "Version is Empty";
+//						}
+//					}
+					
 					// Site Core installation path check
 					if (techId.equals(FrameworkConstants.TECH_SITE_CORE)
 							&& FrameworkConstants.SERVER.equals(configuration.getType())
 							&& StringUtils.isEmpty(configuration.getProperties().getProperty(
 									FrameworkConstants.SETTINGS_TEMP_SITECORE_INST_PATH))) {
-						throw new PhrescoException("SiteCore Installation path Location is missing");
+						return "SiteCore Installation path Location is missing";
 					}
 				}
 			}
 		}
+		return null;
 	}
 
 	/**
 	 * Emailvalidation.
 	 *
 	 * @param propertyEmail the property email
+	 * @return 
 	 * @throws PhrescoException the phresco exception
 	 */
-	private void emailvalidation(String propertyEmail) throws PhrescoException {
+	private String emailvalidation(String propertyEmail) throws PhrescoException {
 		Pattern p = Pattern
 				.compile("^[_A-Za-z0-9-]+(\\.[_A-Za-z0-9-]+)*@[A-Za-z0-9]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$");
 		Matcher m = p.matcher(propertyEmail);
 		boolean b = m.matches();
 		if (!b) {
-			throw new PhrescoException("Email Format mismatch");
+			return "Email Format mismatch";
 		}
+		return null;
 
 	}
 
