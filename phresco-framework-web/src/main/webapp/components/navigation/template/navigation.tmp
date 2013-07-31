@@ -163,7 +163,7 @@
                 <li id="configuration"><a href="#" data-i18n="navigation.application.configuration"></a></li>
                 <li id="build"><a href="#" data-i18n="navigation.application.build"></a></li>
 				<li class="dropdown">
-                	<a href="#" id="drop4" role="quality" class="dropdown-toggle drop-qual" data-toggle="dropdown" data-i18n="navigation.application.qa"><b class="caret"></b></a>
+                	<a href="#" id="drop4" role="quality" class="dropdown-toggle drop-qual" data-toggle="dropdown"><span data-i18n="navigation.application.qa"></span><b class="caret"></b></a>
                 	<div class="dropdown-menu cust_sel test_options" role="quality" aria-labelledby="drop4">
                       	<ul id="qualityAssurance">
                         	<li id="unitTest"><a href="#" data-i18n="navigation.application.unit"></a></li>

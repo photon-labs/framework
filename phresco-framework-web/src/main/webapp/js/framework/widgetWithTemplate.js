@@ -179,6 +179,7 @@ define(["framework/widget", "framework/templateProvider"], function() {
 			},
 			
 			popupforDesc : function(e,place) {
+				var self=this;
 				var clicked = $(e);
 				var target = $("#" + place);
 				var twowidth = window.innerWidth/1.5;;
@@ -228,6 +229,7 @@ define(["framework/widget", "framework/templateProvider"], function() {
 					$(".content_title").css("z-index","6");
 					$(".optiontitle").css("z-index","1");
 				});
+				self.customScroll(target.find('.popup_scroll'));
 			},
 			
 			popupforTree : function(e,place) {

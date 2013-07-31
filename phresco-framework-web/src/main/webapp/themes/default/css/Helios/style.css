@@ -1458,7 +1458,7 @@ img[name="close"] {
 
 .featureinfo .features_cont {
 	padding:8px;
-	max-height: 150px;
+	max-height: 75px;
 	overflow-y: auto;
 }
 
@@ -2189,6 +2189,23 @@ select[name="builtmyself"] {
 #build_runagsource .table:nth-child(2) ul li:last-child {
 	border-bottom: none;	
 }
+
+#fetchSql_table td {
+	width:45% !important;
+}
+#fetchSql_table td ul {
+	border: 1px solid #c7c7c7;
+	border-radius:6px;
+	min-height: 150px;
+	cursor: move;
+}
+
+#fetchSql_table td ul li {
+	border-bottom:1px solid #ccc;
+	line-height:25px !important;
+	padding:0 8px !important;
+}
+
 
 .z_index {
 	z-index:1;
