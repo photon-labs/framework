@@ -890,6 +890,7 @@ define(["framework/widgetWithTemplate", "common/loading", "lib/customcombobox-1.
             }) ;
 
             self.bindContextEvents();
+            self.bindRemoveContextEvent();
             self.enableDisableDeleteContext('contextDivClass', 'removeContext');
             self.enableDisableDeleteContext('dbContextDivClass', 'removeDBContext');
         },
@@ -942,14 +943,7 @@ define(["framework/widgetWithTemplate", "common/loading", "lib/customcombobox-1.
                 j++;
             });
             self.showHideMinus($("#"+contextUrlsRowId).find('.addParameter'), 1);
-            $(".removeContext").unbind("click");
-            $(".removeContext").click(function() {
-                self.removeContext($(this), 'contextDivClass', 'removeContext');
-            }); 
-            $(".removeDBContext").unbind("click");
-            $(".removeDBContext").click(function() {
-                self.removeContext($(this), 'dbContextDivClass', 'removeDBContext');
-            });        
+            self.bindRemoveContextEvent();      
             self.bindContextEvents();
             self.enableDisableDeleteContext('contextDivClass', 'removeContext');
             self.enableDisableDeleteContext('dbContextDivClass', 'removeDBContext');
@@ -962,6 +956,18 @@ define(["framework/widgetWithTemplate", "common/loading", "lib/customcombobox-1.
                 obj.closest('.'+divClass).remove();
                 self.enableDisableDeleteContext(divClass, delIcon);
             }
+        },
+
+        bindRemoveContextEvent : function() {
+            var self = this;
+            $(".removeContext").unbind("click");
+            $(".removeContext").click(function() {
+                self.removeContext($(this), 'contextDivClass', 'removeContext');
+            }); 
+            $(".removeDBContext").unbind("click");
+            $(".removeDBContext").click(function() {
+                self.removeContext($(this), 'dbContextDivClass', 'removeDBContext');
+            });  
         },
 
         enableDisableDeleteContext : function (divClass, delIcon) {
