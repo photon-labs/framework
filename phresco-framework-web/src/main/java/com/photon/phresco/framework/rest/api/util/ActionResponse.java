@@ -16,7 +16,7 @@ public class ActionResponse {
 	String uniquekey;
 	boolean connectionAlive = false;
 	boolean errorFound;
-	List<String> configErrorMsg;
+	String configErrorMsg;
 	String responseCode;
 	
 	public String getResponseCode() {
@@ -55,10 +55,10 @@ public class ActionResponse {
 	public void setService_exception(String service_exception) {
 		this.service_exception = service_exception;
 	}
-	public List<String> getConfigErrorMsg() {
+	public String getConfigErrorMsg() {
 		return configErrorMsg;
 	}
-	public void setConfigErrorMsg(List<String> configErrorMsg) {
+	public void setConfigErrorMsg(String configErrorMsg) {
 		this.configErrorMsg = configErrorMsg;
 	}
 	public boolean isErrorFound() {
