@@ -1,5 +1,5 @@
 
-define(["framework/widgetWithTemplate", "ci/listener/ciListener"], function() {
+define(["framework/widgetWithTemplate", "ci/listener/ciListener", "lib/jquery-tojson-1.0"], function() {
 	Clazz.createPackage("com.components.ci.js");
 
 	Clazz.com.components.ci.js.ContinuousDeliveryView = Clazz.extend(Clazz.WidgetWithTemplate, {
@@ -20,6 +20,7 @@ define(["framework/widgetWithTemplate", "ci/listener/ciListener"], function() {
 		listEnvironmentsEvent : null,
 		ciStatusEvent : null,
 		jenkinsStatus : null,
+		interval : {},
 	
 		/***
 		 * Called in initialization time of this class 
@@ -118,7 +119,11 @@ define(["framework/widgetWithTemplate", "ci/listener/ciListener"], function() {
 		 */
 		postRender : function(element) {
 			var self = this; 
-			self.jenkinsStatus.dispatch();
+			self.jenkinsStatus.dispatch(function(callback) {
+				$(".pipeline_box").each(function() {
+	   				self.ciStatusEvent.dispatch($(this));
+	   			});
+			});
 		},
 		
 		getAction : function(ciRequestBody, action, param, callback) {
@@ -168,48 +173,8 @@ define(["framework/widgetWithTemplate", "ci/listener/ciListener"], function() {
 	  		
    			$(window).resize(function() {
    				$(".dyn_popup").hide();
-   			  });
+			});
    			
-	  		/*$(window).resize(function() {
-				$(".dyn_popup").hide();
-	  		});
-	  		$(".first_list").find("span").hide();
-
-			$(function() {
-			    $( "#sortable1, #sortable2" ).sortable({
-			      connectWith: ".connectedSortable",
-				  items: "> li",
-				  start: function( event, ui ) {
-					  $("#sortable1 li.ui-state-default a").hide();
-					  $("#sortable2 li.ui-state-default a").show();	
-					  $(".dyn_popup").hide();
-					  },
-				  stop: function( event, ui ) {
-					  $("#sortable2 li.ui-state-default a").show();
-					  $("#sortable1 li.ui-state-default a").hide();	
-					  $(".dyn_popup").hide();
-					  }	  
-			    }).disableSelection();
-			 }); 
-
-	  		$(function () {
-				$(".tooltiptop").tooltip();
-			});
-		
-			$(".code_content .scrollContent").mCustomScrollbar({
-				autoHideScrollbar:true,
-				theme:"light-thin",
-				advanced:{
-						updateOnContentResize: true
-				}
-			});
-		
-			$("#sortable1 li.ui-state-default a").hide();
-
-			$("input[name=cont_delivery]", "input[name=code_build]").click(function() {
-   				self.openccmini(this, $(this).attr('name'));
-   			});*/
-
    			$("#createContinuousDelivery").click(function() {
 				self.continuousDeliveryConfigureLoadEvent.dispatch();
    			});
@@ -218,16 +183,12 @@ define(["framework/widgetWithTemplate", "ci/listener/ciListener"], function() {
    				var contName = $(this).attr("continuousName");
 				self.continuousDeliveryConfigureEditEvent.dispatch(contName);
    			});
-   			
-   			//setInterval(function() {   //calls click event after a certain time
+   			clearInterval(self.interval);
+   			self.interval = setInterval(function() {   
    				$(".pipeline_box").each(function() {
    	   				self.ciStatusEvent.dispatch($(this));
    	   			});
- 			//}, 10000);
-   				
-//			setInterval(function() {
-//				self.jenkinsStatus.dispatch();
-//			}, 5000);
+ 			}, 10000);
    			
 			$(".datetime_status").click(function() {
 				self.openccwait(this, $(this).attr('class'));

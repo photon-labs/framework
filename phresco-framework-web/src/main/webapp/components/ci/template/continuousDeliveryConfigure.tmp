@@ -186,7 +186,7 @@
                     <!-- Clone and Downstream specification ends -->
 
                     <!-- Build configuration starts here -->
-                    <div id="dynamicContent">
+                    <div id="dynamicContent" class="performance_pop_cont ci_dynamic_cont">
                         <ul class="row dynamicControls">
                         </ul>
                         <div class="dynamicPopupLoading" style="display:none;">&nbsp</div>

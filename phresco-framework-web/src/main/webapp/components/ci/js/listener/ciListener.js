@@ -260,6 +260,7 @@ define([], function() {
 			var ciRequestBody = {},name;
 			ciRequestBody.jobName=obj.attr("id");
 			ciRequestBody.cdName = obj.parent().parent("div").attr("name");
+			commonVariables.loadingScreen.removeLoading();
 			self.getHeaderResponse(self.getRequestHeader(ciRequestBody, 'jobStatus'), function (response) {
 				if(response.data === "FAILURE") {
 					obj.find('.img_process').attr('src',"themes/default/images/helios/cross_red.png");
@@ -269,7 +270,7 @@ define([], function() {
 			});
 		},
 		
-		jenkinsStatus:function() {
+		jenkinsStatus:function(callback) {
 			var self = this;
 			var ciRequestBody = {};
 			self.getHeaderResponse(self.getRequestHeader(ciRequestBody, 'jenkinsStatus'), function (response) {
@@ -285,6 +286,7 @@ define([], function() {
 					 enableOpts[i].style.display = 'block';
 					 disableOpts[i].style.display = 'none';
 				 } 
+				 callback(response);
 			});
 		},
 		
@@ -458,7 +460,7 @@ define([], function() {
 					// save or update operation
 					if (!self.isBlank(response) && response.data) {						
 						 if (operation === 'save') {
-							self.addJobTemplate(function(response) { // request body construction
+							self.addJobTemplate(function(response) {
 								self.ciRequestBody = response;
 								self.getHeaderResponse(self.getRequestHeader(self.ciRequestBody, 'add'), function(response){
 									callback(response); 
@@ -672,7 +674,6 @@ define([], function() {
 			$("select[name=weeks]").attr('disabled', false);
 			$("select[name=months]").attr('disabled', false);
 			$("input[name=triggers]").attr('disabled', false);
-			
 			var self = this;
 			var templateJsonData = $(thisObj).data("templateJson");
 			var jobJsonData = $(thisObj).data("jobJson");			
@@ -1062,7 +1063,7 @@ define([], function() {
 			        var key = e.name;
 			        var value = data[key];
 
-			        if (self.isBlank(e.name)) continue; // Shortcut, may not be suitable for values = 0 (considered as false)
+			        if (self.isBlank(e.name)) continue; 
 
 			       	switch (e.type) {
 			            case 'text':
@@ -1091,7 +1092,7 @@ define([], function() {
 			            		$('[name="'+ key +'"]').prop('checked', true);
 			            	} else if ($.type(value) === "string" && value === "false") {
 			            		$('[name="'+ key +'"]').prop('checked', false);
-			            	} else if ($.type(value) === "string") { // other case
+			            	} else if ($.type(value) === "string") { 
 			            	 	$('[name="'+ key +'"][value="'+ value +'"]').attr("checked", true);
 			            	}
 			                break;
@@ -1231,12 +1232,11 @@ define([], function() {
 					// job tesmplate key and value
 					$.each(value, function(jobTemplateKey, jobTemplateValue) {
 						var jobTemplateGearHtml = '<a href="javascript:;" id="'+ appName + jobTemplateValue.name +'" class="validate_icon" jobTemplateName="'+ jobTemplateValue.name +'" appName="'+ appName +'" appDirName="'+ appDirName +'" name="jobConfigurePopup" style="display: none;"><img src="themes/default/images/helios/validate_image.png" width="19" height="19" border="0"></a>';
-                		var jobTemplateHtml = '<li class="ui-state-default"><span>' + jobTemplateValue.name + ' - ' + jobTemplateValue.type + '</span>' + jobTemplateGearHtml + '</li>'
+                		var jobTemplateHtml = '<li class="ui-state-default" temp="ci"><span>' + jobTemplateValue.name + ' - ' + jobTemplateValue.type + '</span>' + jobTemplateGearHtml + '</li>'
                 		sort.append(jobTemplateHtml);
-                		
                 		// set json value on attribute
                 		var jobTemplateJsonVal = jobTemplateValue;
-                		$('#'+ appName + jobTemplateValue.name).data("templateJson", jobTemplateJsonVal);                		
+                		$('#'+ appName + jobTemplateValue.name).data("templateJson", jobTemplateJsonVal);        
 					});					
 				});				
 			}
@@ -1340,7 +1340,7 @@ define([], function() {
 			var self = this;
 			var contDeliveryName = $("[name=continuousDeliveryName]").val();
 			var envName = $("select[name=environments]").val();
-			var sortable2LiObj = $("#sortable2 li");
+			var sortable2LiObj = $("#sortable2 li[temp=ci]");
 			var sortable2Obj = $("#sortable2");
 			if(!self.isBlank(contDeliveryName) && $(sortable2LiObj).length !== 0) {				
 				var hasError = false;

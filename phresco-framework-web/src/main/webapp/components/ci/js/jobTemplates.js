@@ -1,4 +1,4 @@
-define(["ci/listener/ciListener"], function() {
+define(["ci/listener/ciListener", "lib/jquery-tojson-1.0"], function() {
 	Clazz.createPackage("com.components.ci.js");
 
 	Clazz.com.components.ci.js.JobTemplates = Clazz.extend(Clazz.WidgetWithTemplate, {
@@ -131,8 +131,6 @@ define(["ci/listener/ciListener"], function() {
 			var self = this;
 			self.ciListener.listJobTemplate(self.ciListener.getRequestHeader(self.ciRequestBody, "list"), function(response) {
 				self.templateData.jobTemplates = response.data;
-				// var userPermissions = JSON.parse(self.configurationlistener.configurationAPI.localVal.getSession('userPermissions'));
-				// self.templateData.userPermissions = userPermissions;
 				renderFunction(self.templateData, whereToRender);
 			});			
 		},
@@ -151,17 +149,14 @@ define(["ci/listener/ciListener"], function() {
 		pageRefresh: function() {
 			var self = this;
 			self.ciListener.listJobTemplate(self.ciListener.getRequestHeader(self.ciRequestBody, "list"), function(response) {
-				//self.templateData.jobTemplates = response.data;
 				self.data.jobTemplates = response.data;
 				self.loadPage();		
-				//self.renderTemplate(self.templateData, commonVariables.contentPlaceholder);
 			});
 		},
 
 		getAction : function(ciRequestBody, action, param, callback) {
 			var self = this;
 			// Content place holder for the Job template
-			// Clazz.navigationController.jQueryContainer = commonVariables.contentPlaceholder;
 			self.ciListener.listJobTemplate(self.ciListener.getRequestHeader(self.ciRequestBody, action, param), function(response) {
 				if (action === "edit") {
 					// only for edit popup value population
@@ -172,8 +167,6 @@ define(["ci/listener/ciListener"], function() {
 					// For add, update and delete
 					self.pageRefresh();
 				}
-				// console.log(JSON.stringify(response.data));
-				//self.renderTemplate(response.data, commonVariables.contentPlaceholder);
 			});	
 		},
 	
@@ -200,7 +193,7 @@ define(["ci/listener/ciListener"], function() {
 
 					//to refresh all bootstrap-select
 					$('.selectpicker').selectpicker('refresh');
-					if (jobTemplateName != '') {
+					if (jobTemplateName !== '') {
 						// Restore values
 						self.getAction(self.configRequestBody, 'edit', jobTemplateName);
 					}

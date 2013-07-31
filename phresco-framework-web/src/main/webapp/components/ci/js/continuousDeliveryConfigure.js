@@ -1,4 +1,4 @@
-define(["framework/widgetWithTemplate", "ci/listener/ciListener"], function() {
+define(["framework/widgetWithTemplate", "ci/listener/ciListener", "lib/jquery-tojson-1.0"], function() {
 	Clazz.createPackage("com.components.ci.js");
 
 	Clazz.com.components.ci.js.ContinuousDeliveryConfigure = Clazz.extend(Clazz.WidgetWithTemplate, {
@@ -73,7 +73,7 @@ define(["framework/widgetWithTemplate", "ci/listener/ciListener"], function() {
 			 // Handle bars
 			Handlebars.registerHelper('environment', function(data, flag) {
 				var returnVal = "";
-				if (data != undefined) {
+				if (data !== undefined) {
 					$.each(data, function(key, value) {
 						returnVal +=  '<option value="'+ value +'">'+ value +'</option>';
 					});
@@ -154,7 +154,7 @@ define(["framework/widgetWithTemplate", "ci/listener/ciListener"], function() {
 				    var jobJsonData = $(anchorElem).data("jobJson");
 				    // upstream and downstream and clone workspace except last job
 				    
-				    var preli = $(thisObj).prev('li')
+				    var preli = $(thisObj).prev('li');
 				    var preAnchorElem = $(preli).find('a');
 				    var preTemplateJsonData = $(preAnchorElem).data("templateJson");
 				    var preJobJsonData = $(preAnchorElem).data("jobJson");
@@ -165,17 +165,17 @@ define(["framework/widgetWithTemplate", "ci/listener/ciListener"], function() {
 				    var nextJobJsonData = $(nextAnchorElem).data("jobJson");
 
 
-				    if (jobJsonData != undefined && jobJsonData != null) {
+				    if (jobJsonData !== undefined && jobJsonData !== null) {
 				        jobJsonData = {};
 				    }
 
 				    // Downstream
-				    if (nextJobJsonData != undefined && nextJobJsonData != null) {
+				    if (nextJobJsonData !== undefined && nextJobJsonData !== null) {
 				        jobJsonData.downstreamApplication = nextJobJsonData.name;
 				    }
 
 				    // No use parent job
-				    if (preJobJsonData != undefined && preJobJsonData != null) {
+				    if (preJobJsonData !== undefined && preJobJsonData !== null) {
 				        jobJsonData.upstreamApplication = preJobJsonData.name;
 				    }
 
@@ -196,18 +196,13 @@ define(["framework/widgetWithTemplate", "ci/listener/ciListener"], function() {
 			  			if (thisAppName === appName && !workspaceAppFound) {
 			  				workspaceAppFound = true;
 			  				// Upstream app
-			  				if (thisJobJsonData != undefined && thisJobJsonData != null) {
+			  				if (thisJobJsonData !== undefined && thisJobJsonData !== null) {
 				        		jobJsonData.workspaceApp = thisJobJsonData.name;
 				        		thisJobJsonData.clonetheWrokspace = true;
 				        		$(thisAnchorElem).data("jobJson", thisJobJsonData);
 				    		}
 			  			}
 					});
-					
-					if (!parentAppFound) {
-						//console.log("Not able to find its parent source app for this job");
-					}
-
 				    // Store value in data
 				    $(anchorElem).data("jobJson", jobJsonData);
 
@@ -225,7 +220,7 @@ define(["framework/widgetWithTemplate", "ci/listener/ciListener"], function() {
 
    			$(".dyn_popup").hide();
 	  		$(window).resize(function() {
-				//$(".dyn_popup").hide();
+				$(".dyn_popup").hide();
 	  		});
 	  		$(".first_list").find("span").hide();
 
@@ -278,14 +273,12 @@ define(["framework/widgetWithTemplate", "ci/listener/ciListener"], function() {
 								var prevAnchorElem = $(ui.item).prev().find('a');
 								upTemplateJsonData = $(prevAnchorElem).data("templateJson");
 							}
-							if(upTemplateJsonData === null) {
-								if(downTemplateJsonData !== undefined && downTemplateJsonData!== null) {
-									if (!downTemplateJsonData.enableRepo) {
-										$(".blinkmsg").removeClass("popsuccess").addClass("poperror");
-										$(ui.sender).sortable('cancel');
-										self.effectFadeOut('poperror', (''));
-										$(".poperror").text("DownStream "+downTemplateJsonData.name+" job Doesn't have the Repo!");
-									}
+							if (upTemplateJsonData === null) {
+								if(downTemplateJsonData !== undefined && downTemplateJsonData!== null && !downTemplateJsonData.enableRepo) {
+									$(".blinkmsg").removeClass("popsuccess").addClass("poperror");
+									$(ui.sender).sortable('cancel');
+									self.effectFadeOut('poperror', (''));
+									$(".poperror").text("DownStream "+downTemplateJsonData.name+" job Doesn't have the Repo!");
 								}
 							}
 						}
@@ -306,7 +299,6 @@ define(["framework/widgetWithTemplate", "ci/listener/ciListener"], function() {
 
 					change: function( event, ui ) {		
 						var itemText = $(ui.item).find('span').text();
-						//var nextItem = $(ui.item).next();
 						
 						var anchorElem = $(ui.item).find('a');
 						var templateJsonData = $(anchorElem).data("templateJson");
@@ -341,7 +333,7 @@ define(["framework/widgetWithTemplate", "ci/listener/ciListener"], function() {
 
 						// Second level validation
 						// when the repo is not available check for parent project in sortable2
-						if (!templateJsonData.enableRepo) {
+						if ( templateJsonData !== undefined && !templateJsonData.enableRepo) {
 							var parentAppFound = false;
 
 							// Previous elemets
@@ -352,13 +344,11 @@ define(["framework/widgetWithTemplate", "ci/listener/ciListener"], function() {
 
 								if (thisAppName === appName && thisTemplateJsonData.enableRepo) {
 									parentAppFound = true;
-									console.log("Parent project found ");
 									return false;
 								}
 							});
 
 							if (!parentAppFound) {
-								console.log("Parent object not found for this clonned workspace");
 								$(ui.item).find('span').text(itemText);
 								$(ui.sender).sortable('cancel');
 								$(".blinkmsg").removeClass("popsuccess").addClass("poperror");

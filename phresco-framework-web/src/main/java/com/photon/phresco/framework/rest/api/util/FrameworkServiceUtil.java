@@ -429,7 +429,8 @@ public class FrameworkServiceUtil implements Constants, FrameworkConstants {
 		sb.append(File.separator);
 		sb.append(PHRESCO_HYPEN);
 		// when phase is CI, it have to take ci info file for update dependency
-		if (PHASE_CI.equals(phase)) {
+		if (PHASE_CI.equals(goal)) {
+			sb.append(CI_HYPHEN);
 			sb.append(phase);
 		} else if (StringUtils.isNotEmpty(goal) && goal.contains(FUNCTIONAL)) {
 			sb.append(PHASE_FUNCTIONAL_TEST);

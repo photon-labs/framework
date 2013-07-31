@@ -28,6 +28,7 @@ import com.photon.phresco.framework.rest.api.util.BufferMapTest;
 @SuiteClasses({
 	LoginServiceTest.class,
 	ProjectServiceTest.class,
+	CIServiceTest.class,
 	CodeValidationServiceTest.class,
 	ConfigurationServiceTest.class,
 	PilotServiceTest.class,
