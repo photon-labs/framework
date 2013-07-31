@@ -182,7 +182,7 @@ define(["features/features",  "application/application",  "projectlist/projectLi
 					theme:"light-thin",
 					updateOnContentResize: true
 				});*/
-				$(".feature_content").scrollbars();
+				self.customScroll($(".features_box").find(".feature_content"));
 				$(".dyn_popup").hide();
 			}
 			

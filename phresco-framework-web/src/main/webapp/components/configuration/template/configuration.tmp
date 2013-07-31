@@ -1,7 +1,7 @@
 <div id="configurationPage">
 	<div class="second_title">
 		<div class="code_anal">
-			<input type="submit" name="env_pop" data-i18n="[value]configuration.label.addenvironment"  class="btn btn_style">
+			<input type="submit" name="env_pop" data-i18n="[value]configuration.label.addenvironment"  class="btn btn_style arrow_down_icon">
 			 <div id="env_pop" class="dyn_popup popup_bg" style="display:none;">
                 <table width="100%" border="0" cellspacing="0" cellpadding="5">
                 <tr>
