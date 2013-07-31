@@ -1051,20 +1051,25 @@ public class ConfigurationService extends RestBase implements FrameworkConstants
 				return "Configuration Type is Empty";
 			}
 
-			if (FrameworkConstants.SERVER.equals(configuration.getType())
-					|| FrameworkConstants.EMAIL.equals(configuration.getType())) {
+//			if (FrameworkConstants.SERVER.equals(configuration.getType())
+//					|| FrameworkConstants.EMAIL.equals(configuration.getType())) {
+				
 				if (FrameworkConstants.SERVER.equals(configuration.getType())) {
 					serverCount++;
-				} else {
+				}
+				
+			if(FrameworkConstants.EMAIL.equals(configuration.getType())) {
 					String propertyEmail = configuration.getProperties().getProperty(FrameworkConstants.EMAIL_ID);
+					emailCount++;
 					if (propertyEmail.isEmpty()) {
 						return "Email ID is Empty";
 					} else {
-						emailvalidation(propertyEmail);
+						String emailvalidation = emailvalidation(propertyEmail);
+						 if(StringUtils.isNotEmpty(emailvalidation)) {
+							 return emailvalidation;
+						 }
 					}
-					emailCount++;
 				}
-			}
 
 			if (serverCount > 1) {
 				return "Server Configuration type Already Exists";
@@ -1122,14 +1127,14 @@ public class ConfigurationService extends RestBase implements FrameworkConstants
 						return dynamicError;
 					}
 
-					// Version Validation for Server and Database configuration
-					// types
-					if (FrameworkConstants.SERVER.equals(configuration.getType())
-							|| FrameworkConstants.DATABASE.equals(configuration.getType())) {
-						if (StringUtils.isEmpty(configuration.getProperties().getProperty(FrameworkConstants.VERSION))) {
-							return "Version is Empty";
-						}
-					}
+					// Version Validation for Server and Database configuration types
+//					if (FrameworkConstants.SERVER.equals(configuration.getType())
+//							|| FrameworkConstants.DATABASE.equals(configuration.getType())) {
+//						if (StringUtils.isEmpty(configuration.getProperties().getProperty(FrameworkConstants.VERSION))) {
+//							return "Version is Empty";
+//						}
+//					}
+					
 					// Site Core installation path check
 					if (techId.equals(FrameworkConstants.TECH_SITE_CORE)
 							&& FrameworkConstants.SERVER.equals(configuration.getType())
@@ -1147,16 +1152,18 @@ public class ConfigurationService extends RestBase implements FrameworkConstants
 	 * Emailvalidation.
 	 *
 	 * @param propertyEmail the property email
+	 * @return 
 	 * @throws PhrescoException the phresco exception
 	 */
-	private void emailvalidation(String propertyEmail) throws PhrescoException {
+	private String emailvalidation(String propertyEmail) throws PhrescoException {
 		Pattern p = Pattern
 				.compile("^[_A-Za-z0-9-]+(\\.[_A-Za-z0-9-]+)*@[A-Za-z0-9]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$");
 		Matcher m = p.matcher(propertyEmail);
 		boolean b = m.matches();
 		if (!b) {
-			throw new PhrescoException("Email Format mismatch");
+			return "Email Format mismatch";
 		}
+		return null;
 
 	}
 
