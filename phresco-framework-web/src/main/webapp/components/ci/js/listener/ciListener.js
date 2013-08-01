@@ -827,7 +827,7 @@ define([], function() {
 						$('input[name=jobName]').val(jobJsonData.jobName);
 						self.restoreFormValues($("#jonConfiguration"), jobJsonData);
 					}
-					self.openccci(thisObj, 'jobConfigure');
+					self.popForCi(thisObj, 'jobConfigure');
 				});
 			});
 		},
