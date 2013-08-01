@@ -89,14 +89,8 @@ define(["login/login"], function(Login) {
 					start();
 					equal($(commonVariables.headerPlaceholder).find("font:first").text(), "Admin", "Login Service Tested");
 					equal($("#footer").attr('id'), "footer", "Footer Rendering Tested");
-//					require(["continuousDeliveryConfigureTest"], function(continuousDeliveryConfigureTest){
-//						continuousDeliveryConfigureTest.runTests();
-//					});
-//					require(["continuousDeliveryViewTest"], function(continuousDeliveryViewTest){
-//						continuousDeliveryViewTest.runTests();
-//					});
-					require(["jobTemplatesTest"], function(jobTemplatesTest){
-						jobTemplatesTest.runTests();
+					require(["projectlistTest"], function(projectlistTest){
+						projectlistTest.runTests();
 					});
 				}, 4000);
 			});
