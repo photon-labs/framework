@@ -75,6 +75,7 @@ public class ConfigurationServiceTest extends LoginServiceTest {
 		
 		Configuration prodConfigServer = new Configuration();
 		Configuration prodConfigDb = new Configuration();
+		Configuration prodWebService = new Configuration();
 		prodConfigServer.setName("serverconfig");
 		prodConfigServer.setType("Server");
 		Properties propProd = new Properties();
@@ -103,8 +104,21 @@ public class ConfigurationServiceTest extends LoginServiceTest {
 		propProddb.setProperty("version", "5.5.1");
 		prodConfigDb.setProperties(propProddb);
 		
+		prodWebService.setName("ws");
+		prodWebService.setType("WebService");
+		Properties propProdWs= new Properties();
+		propProdWs.setProperty("host", "localhost");
+		propProdWs.setProperty("port", "3306");
+		propProdWs.setProperty("username", "root");
+		propProdWs.setProperty("password", "");
+		propProdWs.setProperty("context", "webservice");
+		propProdWs.setProperty("protocol", "http");
+		prodWebService.setProperties(propProdWs);
+		
 		configList.add(prodConfigServer);
 		configList.add(prodConfigDb);
+		configList.add(prodWebService);
+		
 		env.setConfigurations(configList);
 		Environment environment = new Environment();
 		environment.setName("Testing");
@@ -112,6 +126,7 @@ public class ConfigurationServiceTest extends LoginServiceTest {
 		
 		Configuration testConfigServer = new Configuration();
 		Configuration testConfigdb = new Configuration();
+		Configuration testWebService = new Configuration();
 		testConfigServer.setName("testconfig");
 		testConfigServer.setType("Server");
 		Properties testServer = new Properties();
@@ -140,8 +155,20 @@ public class ConfigurationServiceTest extends LoginServiceTest {
 		propTestdb.setProperty("version", "5.5.1");
 		testConfigdb.setProperties(propTestdb);
 		
+		
+		testWebService.setName("ws");
+		testWebService.setType("WebService");
+		Properties testProdWs= new Properties();
+		testProdWs.setProperty("host", "localhost");
+		testProdWs.setProperty("port", "3306");
+		testProdWs.setProperty("username", "root");
+		testProdWs.setProperty("password", "");
+		testProdWs.setProperty("context", "webservice");
+		testProdWs.setProperty("protocol", "http");
+		testWebService.setProperties(testProdWs);
 		configList1.add(testConfigServer);
 		configList1.add(testConfigdb);
+		configList1.add(testWebService);
 		environment.setConfigurations(configList1);
 		
 		Environment devEnv = new Environment();
@@ -438,16 +465,16 @@ public class ConfigurationServiceTest extends LoginServiceTest {
 		configListName.add(configurationServer);
 		
 		Response responseServer = configurationService.updateConfiguration(userId, customerId, appDirName, "dev", configListServer,"","");
-		Assert.assertEquals(400, responseServer.getStatus());
+		Assert.assertEquals(200, responseServer.getStatus());
 		
 		Response responseEmail = configurationService.updateConfiguration(userId, customerId, appDirName, "dev", configListEmail,"","");
-		Assert.assertEquals(400, responseEmail.getStatus());
+		Assert.assertEquals(200, responseEmail.getStatus());
 		
 		Response responseSiteCore = configurationService.updateConfiguration(userId, customerId, appDirName, "dev", configListSiteCore,"","");
-		Assert.assertEquals(400, responseSiteCore.getStatus());
+		Assert.assertEquals(200, responseSiteCore.getStatus());
 		
 		Response responseName = configurationService.updateConfiguration(userId, customerId, appDirName, "dev", configListName,"","");
-		Assert.assertEquals(400, responseName.getStatus());
+		Assert.assertEquals(200, responseName.getStatus());
 		
 		Response responsePass = configurationService.updateConfiguration(userId, customerId, appDirName, "dev", configListPass,"","");
 		Assert.assertEquals(200, responsePass.getStatus());

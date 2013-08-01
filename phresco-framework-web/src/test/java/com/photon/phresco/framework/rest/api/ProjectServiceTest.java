@@ -24,9 +24,34 @@ public class ProjectServiceTest extends LoginServiceTest {
 	@Test
 	public void createProjectTest() {
 		ProjectInfo projectInfo = createProjectInfo();
+		Response responseonFail = projectService.createProject(projectInfo, "");
+		assertEquals(200 , responseonFail.getStatus());
 		Response response = projectService.createProject(projectInfo, userId);
 		assertEquals(200 , response.getStatus());
 	}
+	
+	@Test
+	public void validationOncreateProjectTest() {
+		ProjectInfo projectInfo = projectInfo();
+		projectInfo.setName("@@@@###########");
+		Response response = projectService.createProject(projectInfo, userId);
+		assertEquals(200 , response.getStatus());
+		ProjectInfo projectInfo1 = projectInfo();
+		projectInfo1.setName("TestProject");
+		Response responseError = projectService.createProject(projectInfo1, userId);
+		assertEquals(200 , responseError.getStatus());
+		ProjectInfo projectInfo2 = projectInfo();
+		projectInfo2.getAppInfos().get(0).setCode("TestProject");
+		Response responseErrorcode = projectService.createProject(projectInfo2, userId);
+		assertEquals(200 , responseErrorcode.getStatus());
+		ProjectInfo projectInfo3 = projectInfo();
+		projectInfo3.getAppInfos().get(0).setAppDirName("TestProject");
+		Response responseErrorApp = projectService.createProject(projectInfo3, userId);
+		assertEquals(200 , responseErrorApp.getStatus());
+		
+		
+	}
+
 	
 	@Test
 	public void createProjectForGitTest() {
@@ -76,6 +101,9 @@ public class ProjectServiceTest extends LoginServiceTest {
 		ApplicationInfo appInfo = getApplicationInfo();
 		Response response  = projectService.updateApplication(appDirName, appInfo, userId, customerId);
 		assertEquals(200 , response.getStatus());
+		appInfo.setAppDirName("TestGitProject");
+		Response responseonFail  = projectService.updateApplication(appDirName, appInfo, userId, customerId);
+		assertEquals(200 , responseonFail.getStatus());
 	}
 
 
@@ -335,6 +363,13 @@ public class ProjectServiceTest extends LoginServiceTest {
 		databases.add(databaseArtifactGroupInfos);
 		info.setSelectedDatabases(databases);
 
+		
+		// webService
+
+		List<String> webServices = new ArrayList<String>();
+		webServices.add("restjson");
+		info.setSelectedWebservices(webServices);
+		
 		return info;
 	}
 
