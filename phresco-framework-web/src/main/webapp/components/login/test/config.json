@@ -229,6 +229,21 @@
 		"manualTestTest" : {
 			"moduleName":"manualTestTest",
 			"path" : "components/manualTest/test/manualTestTest"
+		},
+		
+		"jobTemplatesTest" : {
+			"moduleName":"jobTemplatesTest",
+			"path" : "components/ci/test/jobTemplatesTest"
+		},
+			
+		"continuousDeliveryViewTest" : {
+			"moduleName":"continuousDeliveryViewTest",
+			"path" : "components/ci/test/continuousDeliveryViewTest"
+		},
+		
+		"continuousDeliveryConfigureTest" : {
+			"moduleName":"continuousDeliveryConfigureTest",
+			"path" : "components/ci/test/continuousDeliveryConfigureTest"
 		}
 	}
 }
