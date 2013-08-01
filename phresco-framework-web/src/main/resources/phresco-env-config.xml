@@ -46,13 +46,13 @@
             <additional_context>/</additional_context>
         </Server>
 	
-		 <WebService desc="" name="webservice">
+		<WebService desc="" name="webservice">
             <protocol>http</protocol>
-            <host>localhost</host>
-            <port>3030</port>
+            <host>172.16.8.250</host>
+            <port>7070</port>
             <username/>
             <password/>
-            <context>service</context>
+            <context>service-testing</context>
 			<additional_context>/rest/api</additional_context>
         </WebService>
         

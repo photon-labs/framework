@@ -740,7 +740,6 @@ public class CIService extends RestBase implements FrameworkConstants, ServiceCo
 			}
 			return createJsonJobs;
 		} catch (PhrescoException e) {
-			e.printStackTrace();
 			throw new PhrescoException();
 		}
 	}
