@@ -363,8 +363,8 @@ define(['lib/RGraph_common_core-1.0','lib/RGraph_common_tooltips-1.0','lib/RGrap
 						}
 					}
 					resultTemplate = resultTemplate.concat('</tr>');
-					resultTemplate = resultTemplate.concat('</tbody></table></div></div>');
 				}
+				resultTemplate = resultTemplate.concat('</tbody></table></div></div>');
 			}
 			
 			$(commonVariables.contentPlaceholder).find('#testCases').html(resultTemplate);
