@@ -1,21 +1,52 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <environment>
-    <phresco>
-               <!-- CreateArchetype -->
-      		   <nodeJsArchetypeName>NodeJsArchetypeProject</nodeJsArchetypeName>
-		       <nodeJsArchetypeDesc>This is NodeJs Archetype Project</nodeJsArchetypeDesc>
-		       <nodeJsArchetypeAppCode>NodeJsArchetype</nodeJsArchetypeAppCode>
-		       <technologyValue>Node JS</technologyValue>
-		       <nodeJsEditApp>//a[contains(text(),'NodeJsArchetype')]</nodeJsEditApp>
-		       
-		       <!-- CreateConfiguration -->
-		       <configName>Server</configName>  
-               <configHost>172.16.18.85</configHost>
-               <configPort>4576</configPort>
-               <configDeployDir>C:\wamp\www</configDeployDir>
-               <configContext>nodejsarchetype</configContext>
-               
-               <!-- Generate Build -->
-               <buildName>NodeJSBuild</buildName>
-    </phresco>
+	<phresco>
+		<!-- Create Project -->
+		<nodeJsArchetypeName>NodeJsArchetypeProject</nodeJsArchetypeName>
+		<nodeJsArchetypeDesc>This is NodeJs Archetype Project</nodeJsArchetypeDesc>
+		<nodeJsArchetypeAppCode>NodeJsArchetype</nodeJsArchetypeAppCode>
+		<technologyValue>Node JS</technologyValue>
+		<versionValue>0.10.9</versionValue>
+		<startDate>//td[text()='19']</startDate>
+		<endDate></endDate>
+		
+		<!-- Edit Application -->
+		<nodeJsArchetypeEditApp>//a[contains(text(),'NodeJsArchetype')]</nodeJsArchetypeEditApp>
+
+		<!-- Edit Project -->
+		<editProject>//img[@name='editproject']</editProject>
+
+		<!-- Edit Application Desc -->
+		<appEditDesc>This is NodeJs Application</appEditDesc>
+		
+		<!-- Configuration Server -->
+		<configServer>Server</configServer>
+		<configServerDesc>This is Server Configuration</configServerDesc>
+		<configServerProtocol>http</configServerProtocol>
+		<configServerHost>172.16.27.151</configServerHost>
+		<configServerPort>80</configServerPort>
+		<configServerUName>admin</configServerUName>
+		<configServerPwd>admin</configServerPwd>
+		<configServerCertificate>cerficate</configServerCertificate>
+		<configServerDeployDir>C:\wamp\www</configServerDeployDir>
+		<configServerContext>nodejsArchetype</configServerContext>
+		
+		<!-- Configuration Db -->
+		<configDb>Database</configDb>
+		<configDbDesc>This is Database Configuration</configDbDesc>
+		<configDbHost>172.16.27.151</configDbHost>
+		<configDbPort>3306</configDbPort>
+		<configDbUsername>root</configDbUsername>
+		<configDbPwd>admin</configDbPwd>
+		<configDbName>nodejsArchetype</configDbName>
+
+		<!-- Generate Build -->
+		<buildName>NodeJSBuild</buildName>
+		
+		<!--Pdf Report -->
+		<nodeJsArchetypePdfReportIcon>//tr[@class='NodeJsArchetype']/td[4]/a/img</nodeJsArchetypePdfReportIcon>
+		<nodeJsArchetypeOverAllReportName>NodeJs Archetype OverAll Testing Report</nodeJsArchetypeOverAllReportName>
+		<nodeJsArchetypeDetailReportName>NodeJs Archetype Detailed Testing Report</nodeJsArchetypeDetailReportName>
+		
+	</phresco>
 </environment>

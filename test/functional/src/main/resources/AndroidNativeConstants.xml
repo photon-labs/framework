@@ -1,15 +1,29 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <environment>
 <phresco>
+               <!-- Create Project -->
 		 	   <androidNatArchetypeName>AndroidNativeArchetypeProject</androidNatArchetypeName>
-		       <androidNatArchetypeDesc>This is AndroidNative Archetype Project</androidNatArchetypeDesc>
+		       <androidNatArchetypeDesc>This is AndroidNative Project</androidNatArchetypeDesc>		       
 		       <androidNatArchetypeAppCode>AndroidNativeArchetype</androidNatArchetypeAppCode>
 		       <mobileValue>Android</mobileValue>
-		       <mobileType>Native</mobileType>
-		       <androidNatArchetypeEditLink>//a[contains(text(),'AndroidNativeArchetype')]</androidNatArchetypeEditLink>
+		       <mobileType>Native</mobileType>		      
+		       
+		        <!-- Edit App Page -->
+		       <androidNatArchetypeUpdateDesc>This is AndroidNative Application</androidNatArchetypeUpdateDesc>
+		       
+		       <!-- Edit App -->
+		      <androidNatArchetypeEditApp>//a[contains(text(),'AndroidNativeArchetype')]</androidNatArchetypeEditApp>
+		        
+		       <!-- Edit Project -->		       
+		       <editProject>//img[@name='editproject']</editProject>
 		       
 		       <!-- Generate Build -->
-               <buildName>AndroidNativeBuild</buildName>
+               <buildName>AndroidNativeBuild</buildName> 
+               
+                 <!--Pdf Report  -->
+		       <androidNatArchetypePdfReportIcon>//tr[@class='AndroidNativeArchetype']/td[4]/a/img</androidNatArchetypePdfReportIcon>
+		       <androidNatArchetypeOverAllReportName>AndroidNative Archetype App OverAll Testing Report</androidNatArchetypeOverAllReportName>
+		       <androidNatArchetypeDetailReportName>AndroidNative Archetype App Detailed Testing Report</androidNatArchetypeDetailReportName>
 </phresco>
 </environment>
 

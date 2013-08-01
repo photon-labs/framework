@@ -4,7 +4,7 @@
 	<Resolution>1280x960</Resolution>
 
 	<Server desc="" name="server">
-		<context>helios</context>
+		<context>phresco</context>
 		<admin_username />
 		<deploy_dir>C:/</deploy_dir>
 		<additional_context />

@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<suite name="ScenarioTestsuite" thread-count="5" verbose="3">
+
+	<test name="ScenariosTest" junit="false" preserve-order="true">
+		<classes>
+			<class name="com.photon.phresco.Scenarios.ScenariosTest" />
+			<methods>
+			    <include name="testLogin"></include>
+			    <include name="testNumericValuesProjectCreation"></include>
+			    <include name="testAlphaNumericValuesProjectCreation"></include>
+			    <include name="testSpecialCharProjectCreation"></include> 
+			    
+			</methods>
+		</classes>
+	</test>
+	
+	<test name="AppLayerScenariosTest" junit="false" preserve-order="true">
+		<classes>
+			<class name="com.photon.phresco.Scenarios.AppLayerScenariosTest" />
+			<methods>
+			    <include name="testLogin"></include> 
+			</methods>
+		</classes>
+	</test>
+	
+	<test name="MobileLayerScenariosTest" junit="false" preserve-order="true">
+		<classes>
+			<class name="com.photon.phresco.Scenarios.MobileLayerScenariosTest" />
+			<methods>
+			    <include name="testLogin"></include>
+			    <include name="testAndroidNativeProjectCreation"></include>
+			    <include name="testiPhoneNativeProjectCreation"></include>
+			    <include name="testAndroidHybridProjectCreation"></include>
+			    <include name="testiPhoneHybridProjectCreation"></include>
+			</methods>
+		</classes>
+	</test>
+	
+	<test name="WebLayerScenariosTest" junit="false" preserve-order="true">
+		<classes>
+			<class name="com.photon.phresco.Scenarios.WebLayerScenariosTest" />
+			<methods>
+			    <include name="testLogin"></include>
+			    <include name="testMobileWidgetProjectCreation"></include>
+			    <include name="testJQueryWidgetProjectCreation"></include>
+			    <include name="testMultiYuiWidgetArchetypeRunAgainstSource"></include>
+			    <include name="testYuiMobileWidgetArchetypeRunAgainstSource"></include>  
+			</methods>
+		</classes>
+	</test>
+
+</suite>  

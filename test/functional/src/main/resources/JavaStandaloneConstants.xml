@@ -1,17 +1,33 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <environment>
 	<phresco>
-	       <!-- CreateArchetype -->
-		   <javaSAArchetypeName>JavaStandaloneArchetypeProject</javaSAArchetypeName>
-	       <javaSAArchetypeDesc>This is Java Standalone Archetype Project</javaSAArchetypeDesc>
-	       <javaSAArchetypeAppCode>JavaStandaloneArchetype</javaSAArchetypeAppCode>
-	       <technologyValue>Java Standalone</technologyValue>
-	       <javaSAArchetypeEditApp>//a[contains(text(),'JavaStandaloneArchetype')]</javaSAArchetypeEditApp>
-	       
-	       
-	       <!-- Generate Build -->
-               <buildName>JavaStandaloneBuild</buildName>
-               
+
+		<!-- Create project -->
+		<javaSAArchetypeName>JavaStandaloneArchetypeProj</javaSAArchetypeName>
+		<javaSAArchetypeDesc>This is Java Standalone Archetype Project</javaSAArchetypeDesc>
+		<javaSAArchetypeAppCode>JavaStandaloneArchetype</javaSAArchetypeAppCode>
+		<technologyValue>Java Standalone</technologyValue>
+		<versionValue>1.7</versionValue>
+		<startDate>//td[text()='19']</startDate>
+		<endDate></endDate>
+
+		<!-- Edit Application -->
+		<javaSAArchetypeEditApp>//a[contains(text(),'JavaStandaloneArchetype')]</javaSAArchetypeEditApp>
+
+		<!-- Edit Project -->
+		<editProject>//img[@name='editproject']</editProject>
+
+		<!-- Edit Application Desc -->
+		<appEditDesc>This is JavaStandalone Application</appEditDesc>
+
+		<!-- Generate Build -->
+		<buildName>JavaStandaloneBuild</buildName>
+		
+		<!--Pdf Report -->
+		<javaSAArchetypePdfReportIcon>//tr[@class='JavaStandaloneArchetype']/td[4]/a/img</javaSAArchetypePdfReportIcon>
+		<javaSAArchetypeOverAllReportName>JavaStandalone Archetype OverAll Testing Report</javaSAArchetypeOverAllReportName>
+		<javaSAArchetypeDetailReportName>JavaStandalone Archetype Detailed Testing Report</javaSAArchetypeDetailReportName>
+
 	</phresco>
 </environment>
 

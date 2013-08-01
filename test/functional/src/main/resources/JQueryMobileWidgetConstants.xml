@@ -3,11 +3,20 @@
                <!-- CreateArchetype -->
 			   <jQueryMobArchetypeName>JQueryMobileArchetypeProject</jQueryMobArchetypeName>
 		       <jQueryMobArchetypeDesc>This is JQueryMobile Archetype Project</jQueryMobArchetypeDesc>
+		       <startDate>//td[text()='19']</startDate>
+		       <endDate></endDate>
 		       <jQueryMobArchetypeAppCode>JQueryMobileArchetype</jQueryMobArchetypeAppCode>
 		       <webLayerValue>HTML5</webLayerValue>
 		       <widgetValue>JQuery Mobile Widget</widgetValue>
-		       <jQueryMobArchetypeEditLink>//a[contains(text(),'JQueryMobileArchetype')]</jQueryMobArchetypeEditLink>
-              
+		       <versionValue>2.0.2</versionValue>
+		       <jQueryMobArchetypeEditApp>//a[contains(text(),'JQueryMobileArchetype')]</jQueryMobArchetypeEditApp>
+		       
+		       <!-- Edit Project -->
+		       <editProject>//img[@name='editproject']</editProject>
+		       
+		       <!-- Edit App Page -->
+		       <appUpdateDesc>This is JQueryMobileApplication</appUpdateDesc>
+		       
                <!-- CreateConfiguration -->
                <configName>Server</configName>  
                <configHost>172.16.18.85</configHost>
@@ -17,5 +26,10 @@
                
                <!-- GenerateBuild -->
                <buildName>JQueryMobileBuild</buildName>
+               
+               <!--Pdf Report -->
+			   <jQueryMobArchetypePdfReportIcon>//tr[@class='JQueryMobileArchetype']/td[4]/a/img</jQueryMobArchetypePdfReportIcon>
+			   <jQueryMobArchetypeOverAllReportName>JQueryMobileWidget Archetype OverAll Testing Report</jQueryMobArchetypeOverAllReportName>
+			   <jQueryMobArchetypeDetailReportName>JQueryMobileWidget Archetype Detailed Testing Report</jQueryMobArchetypeDetailReportName>
 </phresco>
 </environment>

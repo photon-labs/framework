@@ -12,8 +12,16 @@
 		<iPhoneValue>Iphone</iPhoneValue>
 		<hybridValue>Hybrid</hybridValue>
 		<html5Value>HTML5</html5Value>
+		
 		<yuiMobileWidgetValue>YUI Mobile Widget</yuiMobileWidgetValue>
 		<multiJqueryWidgetValue>Multichannel JQuery Widget</multiJqueryWidgetValue>
+		<multiYuiWidgetName>MultichannelYUIScenProj</multiYuiWidgetName>
+		<yuiMobileWidgetName>YuiMobileScenProj</yuiMobileWidgetName>
+		<multiYuiEditProj>//a[contains(text(),'MultichannelYUIScenProj')]</multiYuiEditProj>
+		<yuiMobEditProj>//a[contains(text(),'YuiMobileScenProj')]</yuiMobEditProj>
+		<multiYuiConfigPort>7070</multiYuiConfigPort>
+		<yuiMobConfigPort>4040</yuiMobConfigPort>
+		
 		<iPhoneNativeName>iPhoneNative</iPhoneNativeName>
 		<iPhoneNativeDesc>This is iPhoneNative Project</iPhoneNativeDesc>
 		<iPhoneNativeAppCode>INNJ</iPhoneNativeAppCode>
@@ -23,15 +31,18 @@
 		<iPhoneHybridAppCode>IHNJ</iPhoneHybridAppCode>
  		<iPhoneHybridWebCode>IHNJMW</iPhoneHybridWebCode>
 		<iPhoneHybridMobCode>NJIH</iPhoneHybridMobCode>
+		
 		<androidHybridName>AndroidHybrid</androidHybridName>
 		<androidHybridDesc>This is AndroidHybrid Project</androidHybridDesc>
 		<androidHybridAppCode>AHNJ</androidHybridAppCode>
 		<androidHybridWebCode>AHNJMW</androidHybridWebCode>
 		<androidHybridMobCode>NJAH</androidHybridMobCode>
+		
 		<mobileWidgetName>MobileWidget</mobileWidgetName>
 		<mobileWidgetDesc>This is Mobile Widget Project</mobileWidgetDesc>
 		<mobileWidgetAppcode>NJMW1</mobileWidgetAppcode>
 		<mobileWidgetWebcode>MWNJ1</mobileWidgetWebcode>
+		
 		<jQueryWidgetName>JQueryWidget</jQueryWidgetName>
 		<jQueryWidgetDesc>This is JQuery Widget Project</jQueryWidgetDesc>
 		<jQueryWidgetAppcode>NJJW2</jQueryWidgetAppcode>
@@ -43,7 +54,7 @@
 		<projectName_AlphaNumeric>abcde123</projectName_AlphaNumeric>
 		<project_Description_AlphaNumeric>This is Iphone Native project use to Alpha Numeric values and create project</project_Description_AlphaNumeric>
 		<alphaNumeric_AppCode>AlphaNumeric</alphaNumeric_AppCode>
-		<projectName_SpecialChar>!@#$%^;:''</projectName_SpecialChar>
+		<projectName_SpecialChar>a!@#$%^;:''</projectName_SpecialChar>
 		<projectDesc_SpecialChar>This is Iphone Native project use to special char and create project</projectDesc_SpecialChar>
 		<specialChar_AppCode>SpecialChar</specialChar_AppCode>
 		

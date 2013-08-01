@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<suite name="AllTest" thread-count="10">
+	<suite-files>
+		<suite-file path="/AppLayertestSuite.xml" /> 
+		<suite-file path="/MobLayertestSuite.xml" />
+		<suite-file path="/WebLayertestSuite.xml" />  
+		<suite-file path="/ScenariostestSuite.xml" />   
+	</suite-files>
+</suite>

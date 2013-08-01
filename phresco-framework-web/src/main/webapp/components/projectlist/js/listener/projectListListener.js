@@ -374,10 +374,12 @@ define([], function() {
 				repodata.projectid = obj.parent("div").attr("projectId");
 				actionBody = repodata;
 				action = "repoget";
+				commonVariables.hideloading = true;
 				self.projectListAction(self.getActionHeader(actionBody, action), $("#addRepoLoading_"+dynid), function(response){
 					if (response.exception === null) {
 						$("#addRepo_"+dynid).hide();
 					}
+				commonVariables.hideloading = false;
 				});
 			}
 		},
@@ -593,10 +595,12 @@ define([], function() {
 				updatedata.appdirname = obj.parent("div").attr("appDirName");
 				actionBody = updatedata;
 				action = "updateget";
+				commonVariables.hideloading = true;
 				self.projectListAction(self.getActionHeader(actionBody, action), $("#updateRepoLoading_"+dynid), function(response){
 					if (response.exception === null) {
 						$("#svn_update"+dynid).hide();
 					}
+				commonVariables.hideloading = false;
 				});
 			}
 		},

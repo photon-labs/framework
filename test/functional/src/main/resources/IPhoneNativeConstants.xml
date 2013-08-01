@@ -1,11 +1,30 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <environment>
-<phresco>
+	<phresco>
+				<!--Create Project  -->
     	 	   <iPhoneNatArchetypeName>iPhoneNativeArchetypeProject</iPhoneNatArchetypeName>
-		       <iPhoneNatArchetypeDesc>This is iPhoneNative Archetype Project</iPhoneNatArchetypeDesc>
-		       <iPhoneNatArchetypeAppCode>iPhoneNativeArchetype</iPhoneNatArchetypeAppCode>
+		       <iPhoneNatArchetypeDesc>This is iPhoneNative Project</iPhoneNatArchetypeDesc>		       
+		       <iPhoneNatArchetypeAppCode>iPhoneNativeArchetype</iPhoneNatArchetypeAppCode>		      
 		       <mobileValue>Iphone</mobileValue>
 		       <mobileType>Native</mobileType>
-</phresco>
+		       
+		       <!-- Edit App Page -->
+		       <iPhoneNatArchetypeUpdateDesc>This is iPhoneNative Application</iPhoneNatArchetypeUpdateDesc>
+		       
+		       <!-- Edit App -->
+		        <iPhoneNatArchetypeEditAppApp>//a[contains(text(),'iPhoneNativeArchetype')]</iPhoneNatArchetypeEditAppApp>
+		        
+		       <!-- Edit Project -->		       
+		       <editProject>//img[@name='editproject']</editProject>
+		      
+		       <!-- GenarateBuild -->
+		       <buildName>Build</buildName> 
+		       
+		       <!--Pdf Report  -->
+		       <iPhoneNatArchetypePdfReportIcon>//tr[@class='iPhoneNativeArchetype']/td[4]/a/img</iPhoneNatArchetypePdfReportIcon>
+		       <iPhoneNatArchetypeOverAllReportName>iPhoneNative Archetype App OverAll Testing Report</iPhoneNatArchetypeOverAllReportName>
+		       <iPhoneNatArchetypeDetailReportName>iPhoneNative Archetype App Detailed Testing Report</iPhoneNatArchetypeDetailReportName>
+				      
+	</phresco>
 </environment>
 

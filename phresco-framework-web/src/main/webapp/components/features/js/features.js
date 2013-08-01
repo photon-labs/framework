@@ -304,7 +304,6 @@ define(["features/listener/featuresListener"], function() {
 					}
 					self.featuresListener.flagged = 1;
 					self.featuresListener.scrollbarEnable();
-					$(".desc_content").scrollbars();
 					$(".desc_content").css('display', 'block');
 				});
 				

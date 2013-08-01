@@ -1,16 +1,38 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <environment>
-<phresco>
-			   <androidHybArchetypeName>AndroidHybridArchetypeProject</androidHybArchetypeName>
-		       <androidHybArchetypeDesc>This is AndroidHybrid Archetype Project</androidHybArchetypeDesc>
-		       <androidHybArchetypeAppCode>AndroidHybridArchetype</androidHybArchetypeAppCode>
-		       <mobileValue>Android</mobileValue>
-		       <mobileType>Hybrid</mobileType>
-		       <androidHybArchetypeEditLink>//a[contains(text(),'AndroidHybridArchetype')]</androidHybArchetypeEditLink>
-		       
-		       <!-- Generate Build -->
-               <buildName>AndroidHybridBuild</buildName>
-</phresco>
+	<phresco>
+		<!-- Create Project -->
+		<androidHybArchetypeName>AndroidHybridArchetypeProject
+		</androidHybArchetypeName>
+		<androidHybArchetypeDesc>This is AndroidHybrid Archetype Project
+		</androidHybArchetypeDesc>
+		<androidHybArchetypeAppCode>AndroidHybridArchetype
+		</androidHybArchetypeAppCode>
+		<mobileValue>Android</mobileValue>
+		<mobileType>Hybrid</mobileType>
+
+		<!-- Edit App Page -->
+		<androidHybArchetypeUpdateDesc>This is AndroidHybrid Application
+		</androidHybArchetypeUpdateDesc>
+
+		<!-- Edit App -->
+		<androidHybArchetypeEditApp>//a[contains(text(),'AndroidHybridArchetype')]
+		</androidHybArchetypeEditApp>
+
+		<!-- Edit Project -->
+		<editProject>//img[@name='editproject']</editProject>
+
+		<!-- Generate Build -->
+		<buildName>AndroidHybridBuild</buildName>
+
+		<!--Pdf Report -->
+		<androidHybArchetypePdfReportIcon>//tr[@class='AndroidHybridArchetype']/td[4]/a/img
+		</androidHybArchetypePdfReportIcon>
+		<androidHybArchetypeOverAllReportName>AndroidHybrid Archetype App
+			OverAll Testing Report</androidHybArchetypeOverAllReportName>
+		<androidHybArchetypeDetailReportName>AndroidHybrid Archetype App
+			Detailed Testing Report</androidHybArchetypeDetailReportName>
+	</phresco>
 </environment>
 
 

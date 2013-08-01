@@ -5,10 +5,18 @@
  			   <YUIMobileArchetypeName>YUIMobileArchetypeProject</YUIMobileArchetypeName>
 		       <YUIMobileArchetypeDesc>This is YUIMobile Archetype Project</YUIMobileArchetypeDesc>
 		       <YUIMobileArchetypeAppCode>YUIMobileArchetype</YUIMobileArchetypeAppCode>
+		       <startDate>//td[text()='19']</startDate>
+		       <endDate></endDate>
 		       <webLayerValue>HTML5</webLayerValue>
 		       <widgetValue>YUI Mobile Widget</widgetValue>
-		       <YUIMobileArchetypeEditLink>//a[contains(text(),'YUIMobileArchetype')]</YUIMobileArchetypeEditLink>
+		       <YUIMobileArchetypeEditApp>//a[contains(text(),'YUIMobileArchetype')]</YUIMobileArchetypeEditApp>
 			   
+		        <!-- Edit Project -->
+		       <editProject>//img[@name='editproject']</editProject>
+		       
+		       <!-- Edit App Page -->
+		       <appUpdateDesc>This is YUIMobileApplication</appUpdateDesc>
+		       
 			   <!-- CreateConfiguration -->
 			   <configName>Server</configName>  
                <configHost>172.16.18.85</configHost>
@@ -18,6 +26,11 @@
                
                <!-- GenerateBuild -->
                <buildName>YUIMobileBuild</buildName>
+               
+                <!--Pdf Report -->
+			  <yuiMobileArchetypePdfReportIcon>//tr[@class='YUIMobileArchetype']/td[4]/a/img</yuiMobileArchetypePdfReportIcon>
+			  <yuiMobileArchetypeOverAllReportName>YUIMobileWidget Archetype OverAll Testing Report</yuiMobileArchetypeOverAllReportName>
+			  <yuiMobileArchetypeDetailReportName>YUIMobileWidget Archetype Detailed Testing Report</yuiMobileArchetypeDetailReportName>
 			      	
 </phresco>
 </environment>

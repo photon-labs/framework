@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<suite name="WebLayerWebLayeruite" thread-count="5" verbose="3">
+
+	 <test name="JQueryMobileWidgetTest" junit="false" preserve-order="true">
+		<classes>
+			<class name="com.photon.phresco.WebLayer.JQueryMobileWidgetTest" />
+			<methods>
+				<include name="testJQueryMobWidgetArchetypeCreation"></include>
+				<include name="testJQueryMobWidgetArchetypeEditProject"></include>
+				<include name="testJQueryMobWidgetArchetypeEditApp"></include>
+				<include name="testJQueryMobWidgetArchetypeUpdateFeature"></include>
+				<include name="testJQueryMobWidgetArchetypeEditAppDesc"></include>
+				<include name="testJQueryMobWidgetCodeValidateJs"></include>
+				<include name="testJQueryMobWidgetCodeValidateJava"></include>
+				<include name="testJQueryMobWidgetCodeValidateJsp"></include>
+				<include name="testJQueryMobWidgetCodeValidateHtml"></include>
+				<include name="testJQueryMobWidgetCodeValidationFunctional"></include>
+				<include name="testJQueryMobWidgetArchetypeConfigurationCreate"></include>
+				<include name="testJQueryMobWidgetArchetypeCloneEnvironment"></include>
+				<include name="testJQueryMobWidgetArchetypeGenerateBuild"></include>
+				<include name="testJQueryMobWidgetArchetypeOverAllPdfReport"></include>
+				<include name="testJQueryMobWidgetArchetypeDetailedPdfReport"></include>
+			</methods>
+		</classes>
+	 </test>
+
+	  <test name="MultiJqueryWidgetTest" junit="false" preserve-order="true">
+		<classes>
+			<class name="com.photon.phresco.WebLayer.MultiJQueryWidgetTest" />
+			<methods>
+				<include name="testMultiJQueryWidgetArchetypeCreation"></include>
+				<include name="testMultiJQueryWidgetArchetypeEditProject"></include>
+				<include name="testMultiJQueryWidgetArchetypeEditApp"></include>
+				<include name="testMultiJQueryWidgetArchetypeUpdateFeature"></include>
+				<include name="testMultiJQueryWidgetArchetypeEditAppDesc"></include>
+				<include name="testMultiJQueryWidgetCodeValidateJs"></include>
+				<include name="testMultiJQueryWidgetCodeValidateJava"></include>
+				<include name="testMultiJQueryWidgetCodeValidateJsp"></include>
+				<include name="testMultiJQueryWidgetCodeValidateHtml"></include>
+				<include name="testMultiJQueryWidgetCodeValidateFunctional"></include>
+				<include name="testMultiJQueryWidgetArchetypeConfigurationCreate"></include>
+				<include name="testMultiJQueryWidgetArchetypeCloneEnvironment"></include>
+				<include name="testMultiJQueryWidgetArchetypeGenerateBuild"></include>
+				<include name="testMultiJQueryWidgetArchetypeOverAllPdfReport"></include>
+				<include name="testMultiJQueryWidgetArchetypeDetailedPdfReport"></include>
+			</methods>
+		</classes>
+	</test>
+
+	<test name="MultiYuiWidgetTest" junit="false" preserve-order="true">
+		<classes>
+			<class name="com.photon.phresco.WebLayer.MultiYuiWidgetTest" />
+			<methods>
+				<include name="testMultiYuiWidgetArchetypeCreation"></include>
+				<include name="testMultiYuiWidgetArchetypeEditProject"></include>
+				<include name="testMultiYuiWidgetArchetypeEditApp"></include>
+				<include name="testMultiYuiWidgetArchetypeUpdateFeature"></include>
+				<include name="testMultiYuiWidgetArchetypeEditAppDesc"></include>
+				<include name="testMultiYuiWidgetCodeValidateJs"></include>
+				<include name="testMultiYuiWidgetCodeValidateJava"></include>
+				<include name="testMultiYuiWidgetCodeValidateJsp"></include>
+				<include name="testMultiYuiWidgetCodeValidateHtml"></include>
+				<include name="testMultiYuiWidgetCodeValidateFunctional"></include>				
+				<include name="testMultiYuiWidgetArchetypeConfigurationCreate"></include>
+				<include name="testMultiYuiWidgetArchetypeCloneEnvironment"></include>
+				<include name="testMultiYuiWidgetArchetypeGenerateBuild"></include>
+				<include name="testMultiYuiWidgetArchetypeOverAllPdfReport"></include>
+				<include name="testMultiYuiWidgetArchetypeDetailedPdfReport"></include>
+			</methods>
+		</classes>
+	</test> 
+
+	<test name="YuiMobileWidgetTest" junit="false" preserve-order="true">
+		<classes>
+			<class name="com.photon.phresco.WebLayer.YuiMobileWidgetTest" />
+			<methods>
+				<include name="testYuiMobileWidgetArchetypeCreation"></include>
+				<include name="testYuiMobileWidgetArchetypeEditProject"></include>
+				<include name="testYuiMobileWidgetArchetypeEditApp"></include>
+				<include name="testYuiMobileWidgetArchetypeUpdateFeature"></include>
+				<include name="testYuiMobileWidgetArchetypeEditAppDesc"></include>
+				<include name="testYuiMobileWidgetCodeValidateJs"></include>
+				<include name="testYuiMobileWidgetCodeValidateJava"></include>
+				<include name="testYuiMobileWidgetCodeValidateJsp"></include>
+				<include name="testYuiMobileWidgetCodeValidateHtml"></include>	
+				<include name="testYuiMobileWidgetCodeValidateFunctional"></include>
+				<include name="testYuiMobileWidgetArchetypeConfigurationCreate"></include>
+				<include name="testYuiMobileWidgetArchetypeCloneEnvironment"></include>
+				<include name="testYuiMobileWidgetArchetypeGenerateBuild"></include>
+				<include name="testYuiMobileWidgetArchetypeOverAllPdfReport"></include>
+				<include name="testYuiMobileWidgetArchetypeDetailedPdfReport"></include>
+			</methods>
+		</classes>
+	</test>  
+ 
+</suite>  

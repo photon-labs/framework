@@ -1,21 +1,51 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <environment>
-    <phresco>
-               <!-- CreateArchetype -->
-      		   <drupal7ArchetypeName>Drupal7ArchetypeProject</drupal7ArchetypeName>
-		       <drupal7ArchetypeDesc>This is Drupal7 Archetype Project</drupal7ArchetypeDesc>
-		       <drupal7ArchetypeAppCode>Drupal7Archetype</drupal7ArchetypeAppCode>
-		       <technologyValue>Drupal7</technologyValue>
-		       <drupal7ArchetypeEditApp>//a[contains(text(),'Drupal7Archetype')]</drupal7ArchetypeEditApp>
-		       
-		       <!-- CreateConfiguration -->
-		       <configName>Server</configName>  
-               <configHost>172.16.28.43</configHost>
-               <configPort>80</configPort>
-               <configDeployDir>C:\wamp\www</configDeployDir>
-               <configContext>phparchetype</configContext>
-               
-               <!-- Generate Build -->
-               <buildName>Drupal7Build</buildName>
-    </phresco>
+	<phresco>
+		<!-- Create Project -->
+		<drupal7ArchetypeName>Drupal7ArchetypeProject</drupal7ArchetypeName>
+		<drupal7ArchetypeDesc>This is Drupal7 Archetype Project</drupal7ArchetypeDesc>
+		<drupal7ArchetypeAppCode>Drupal7Archetype</drupal7ArchetypeAppCode>
+		<technologyValue>Drupal7</technologyValue>
+		<versionValue>7.8</versionValue>
+		<startDate>//td[text()='19']</startDate>
+		<endDate></endDate>
+		
+		<!-- Edit Application -->
+		<drupal7ArchetypeEditApp>//a[contains(text(),'Drupal7Archetype')]</drupal7ArchetypeEditApp>
+
+		<!-- Edit Project -->
+		<editProject>//img[@name='editproject']</editProject>
+
+		<!-- Edit Application Desc -->
+		<appEditDesc>This is Drupal7 Application</appEditDesc>
+		
+				<!-- Configuration Server -->
+		<configServer>Server</configServer>
+		<configServerDesc>This is Server Configuration</configServerDesc>
+		<configServerProtocol>http</configServerProtocol>
+		<configServerHost>172.16.27.151</configServerHost>
+		<configServerPort>80</configServerPort>
+		<configServerUName>admin</configServerUName>
+		<configServerPwd>admin</configServerPwd>
+		<configServerCertificate>cerficate</configServerCertificate>
+		<configServerDeployDir>C:\wamp\www</configServerDeployDir>
+		<configServerContext>drupal7archetype</configServerContext>
+		
+		<!-- Configuration Db -->
+		<configDb>Database</configDb>
+		<configDbDesc>This is Database Configuration</configDbDesc>
+		<configDbHost>172.16.27.151</configDbHost>
+		<configDbPort>3306</configDbPort>
+		<configDbUsername>root</configDbUsername>
+		<configDbPwd>admin</configDbPwd>
+		<configDbName>drupal7archetype</configDbName>
+		<!-- Generate Build -->
+		<buildName>Drupal7Build</buildName>
+		
+		<!--Pdf Report -->
+		<drupal7ArchetypePdfReportIcon>//tr[@class='Drupal7Archetype']/td[4]/a/img</drupal7ArchetypePdfReportIcon>
+		<drupal7ArchetypeOverAllReportName>Drupal7 Archetype OverAll Testing Report</drupal7ArchetypeOverAllReportName>
+		<drupal7ArchetypeDetailReportName>Drupal7 Archetype Detailed Testing Report</drupal7ArchetypeDetailReportName>
+		
+	</phresco>
 </environment>

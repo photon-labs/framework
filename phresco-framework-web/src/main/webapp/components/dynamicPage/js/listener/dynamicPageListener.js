@@ -803,7 +803,7 @@ define(["framework/widgetWithTemplate", "common/loading", "lib/customcombobox-1.
                     var selectedOption = $("#" + dependencyArr[i]).is(':checked');
                     if (selectedOption) {
                         var c = $("#" + dependencyArr[i]).attr('additionalparam');
-                        if (!isBlank(c)) {
+                        if (!self.isBlank(c)) {
                             var csvDep = c.substring(c.indexOf('=') + 1);
                             var csvDepArr = [];
                             csvDepArr = csvDep.split(',');

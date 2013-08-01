@@ -1,0 +1,172 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<suite name="MobileLayerMobileLayeruite" thread-count="5" verbose="3">
+
+	<test name="iPhoneNativeTest" junit="false" preserve-order="true">
+		<classes>
+			<class name="com.photon.phresco.MobileLayer.IPhoneNativeTest" />
+			<methods>
+				<include name="testIPhoneNativeArchetypeCreation"></include>
+				<include name="testIPhoneNativeArchetypeEditProject"></include>
+				<include name="testIPhoneNativeArchetypeEditApp"></include>
+				<include name="testIPhoneNativeArchetypeUpdateFeatures"></include>
+				<include name="testIPhoneNativeArchetypeOverAllPdfReport"></include>
+				<include name="testIPhoneNativeArchetypeUnitTest"></include>
+				<include name="testIPhoneNativeArchetypeOverAllPdfReport"></include>
+				<include name="testIPhoneNativeArchetypeDetailedPdfReport"></include>
+			</methods>
+		</classes>
+	</test>
+
+	<test name="iPhoneHybridTest" junit="false" preserve-order="true">
+		<classes>
+			<class name="com.photon.phresco.MobileLayer.IPhoneHybridTest" />
+			<methods>
+				<include name="testIPhoneHybridArchetypeCreation"></include>
+				<include name="testIPhoneHybridArchetypeEditProject"></include>
+				<include name="testIPhoneHybridArchetypeEditApp"></include>
+				<include name="testIPhoneHybridArchetypeUpdateFeatures"></include>
+				<include name="testIPhoneHybridArchetypeEditAppDesc"></include>
+				<include name="testIPhoneHybridArchetypeUnitTest"></include>
+				<include name="testIPhoneHybridArchetypeOverAllPdfReport"></include>
+				<include name="testIPhoneHybridArchetypeDetailedPdfReport"></include>
+			</methods>
+		</classes>
+	</test>
+
+	<test name="iPhoneLibraryTest" junit="false" preserve-order="true">
+		<classes>
+			<class name="com.photon.phresco.MobileLayer.IPhoneLibraryTest" />
+			<methods>
+				<include name="testIPhoneLibraryArchetypeCreation"></include>
+				<include name="testIPhoneLibraryArchetypeEditProject"></include>
+				<include name="testIPhoneLibraryArchetypeEditApp"></include>
+				<include name="testIPhoneLibraryArchetypeUpdateAppFeatures"></include>
+				<include name="testIPhoneLibraryArchetypeEditAppDesc"></include>
+				<include name="testIPhoneLibraryArchetypeOverAllPdfReport"></include>
+				<include name="testIPhoneLibraryArchetypeDetailedPdfReport"></include>
+			</methods>
+		</classes>
+	</test>
+	
+	<test name="iPhoneWorkspaceTest" junit="false" preserve-order="true">
+		<classes>
+			<class name="com.photon.phresco.MobileLayer.IPhoneWorkspaceTest" />
+			<methods>
+				<include name="testIPhoneWorkspaceArchetypeCreation"></include>
+				<include name="testIPhoneWorkspaceArchetypeEditProject"></include>
+				<include name="testIPhoneWorkspaceArchetypeEditApp"></include>
+				<include name="testIPhoneWorkspaceArchetypeUpdateAppFeatures"></include>
+				<include name="testIPhoneWorkspaceArchetypeEditAppDesc"></include>
+				<include name="testIPhoneWorkspaceArchetypeOverAllPdfReport"></include>
+				<include name="testIPhoneWorkspaceArchetypeDetailedPdfReport"></include>
+			</methods>
+		</classes>
+	</test>
+
+	<test name="AndroidNativeTest" junit="false" preserve-order="true">
+		<classes>
+			<class name="com.photon.phresco.MobileLayer.AndroidNativeTest" />
+			<methods>
+				<include name="testAndroidNativeArchetypeCreation"></include>
+				<include name="testAndroidNativeArchetypeEditProject"></include>
+				<include name="testAndroidNativeArchetypeEditApp"></include>				
+				<include name="testAndroidNativeArchetypeUpdateAppFeatures"></include>
+				<include name="testAndroidNativeArchetypeEditAppDesc"></include>
+				<include name="testAndroidNativeArchetypeCodeValidateSource"></include>
+				<include name="testAndroidNativeArchetypeCodeValidateFunctionalTest"></include>
+				<include name="testAndroidNativeArchetypeBuild"></include>
+				<include name="testAndroidNativeArchetypeUnitTest"></include>
+				<include name="testAndroidNativeArchetypeOverAllPdfReport"></include>
+				<include name="testAndroidNativeArchetypeDetailedPdfReport"></include>	
+			</methods>
+		</classes>
+	</test>
+
+	<test name="AndroidHybridTest" junit="false" preserve-order="true">
+		<classes>
+			<class name="com.photon.phresco.MobileLayer.AndroidHybridTest" />
+			<methods>
+				<include name="testAndroidHybridArchetypeCreation"></include>
+				<include name="testAndroidHybridArchetypeEditProject"></include>
+				<include name="testAndroidHybridArchetypeEditApp"></include>
+				<include name="testAndroidHybridArchetypeUpdateAppFeatures"></include>
+				<include name="testAndroidHybridArchetypeEditAppDesc"></include>
+				<include name="testAndroidHybridArchetypeCodeValidateSource"></include>
+				<include name="testAndroidHybridArchetypeBuild"></include>	
+				<include name="testAndroidHybridArchetypeOverAllPdfReport"></include>
+				<include name="testAndroidHybridArchetypeDetailedPdfReport"></include>				
+			</methods>
+		</classes>
+	</test>
+
+	<test name="AndroidLibraryTest" junit="false" preserve-order="true">
+		<classes>
+			<class name="com.photon.phresco.MobileLayer.AndroidLibraryTest" />
+			<methods>
+				<include name="testAndroidLibraryArchetypeCreation"></include>
+				<include name="testAndroidLibraryArchetypeEditProject"></include>
+				<include name="testAndroidLibraryArchetypeEditApp"></include>
+				<include name="testAndroidLibraryArchetypeUpdateAppFeatures"></include>
+				<include name="testAndroidLibraryArchetypeEditAppDesc"></include>
+				<include name="testAndroidLibraryArchetypeCodeValidateSource"></include>
+				<include name="testAndroidLibraryArchetypeBuild"></include>
+				<include name="testAndroidLibraryArchetypeOverAllPdfReport"></include>
+				<include name="testAndroidLibraryArchetypeDetailedPdfReport"></include>	
+			</methods>
+		</classes>
+	</test>
+
+	 <test name="BlackBerryHybridTest" junit="false" preserve-order="true">
+		<classes>
+			<class name="com.photon.phresco.MobileLayer.BlackberryHybridTest" />
+			<methods>
+				<include name="testBlackBerryHybridArchetypeCreation"></include>
+				<include name="testBlackBerryHybridArchetypeEditProject"></include>				
+				<include name="testBlackBerryHybridArchetypeEditApp"></include>
+				<include name="testBlackBerryHybridArchetypeUpdateAppFeatures"></include>
+				<include name="testBlackBerryHybridArchetypeEditAppDesc"></include>
+				<include name="testBlackBerryHybridArchetypeCodeValidateSource"></include>
+				<include name="testBlackBerryHybridArchetypeOverAllPdfReport"></include>
+				<include name="testBlackBerryHybridArchetypeDetailedPdfReport"></include>
+			</methods>
+		</classes>
+	</test> 
+
+ 	<test name="WindowsMetroTest" junit="false" preserve-order="true">
+		<classes>
+			<class name="com.photon.phresco.MobileLayer.WindowsMetroTest" />
+			<methods>
+				<include name="testWindowsMetroArchetypeCreation"></include>
+				<include name="testWindowsMetroArchetypeEditProject"></include>
+				<include name="testWindowsMetroArchetypeEditApp"></include>
+				<include name="testWindowsMetroArchetypeUpdateAppFeatures"></include>
+				<include name="testWindowsMetroArchetypeEditAppDesc"></include>
+				<include name="testWindowsMetroArchetypeCodeValidateSource"></include>
+				<include name="testWindowsMetroArchetypeBuild"></include>
+				<include name="testWindowsMetroArchetypeUnitTest"></include>
+				<include name="testWindowsMetroArchetypeOverAllPdfReport"></include>
+				<include name="testWindowsMetroArchetypeDetailedPdfReport"></include>
+			</methods>
+		</classes>
+	</test> 
+
+	<test name="WindowsPhoneTest" junit="false" preserve-order="true">
+		<classes>
+			<class name="com.photon.phresco.MobileLayer.WindowsPhoneTest" />
+			<methods>
+				<include name="testWindowsPhoneArchetypeCreation"></include>
+				<include name="testWindowsPhoneArchetypeEditProject"></include>
+				<include name="testWindowsPhoneArchetypeEditApp"></include>
+				<include name="testWindowsPhoneArchetypeUpdateAppFeatures"></include>
+				<include name="testWindowsPhoneArchetypeEditAppDesc"></include>
+				<include name="testWindowsPhoneCodeValidateForSource"></include>
+				<include name="testWindowsPhoneArchetypeBuild"></include>
+				<include name="testWindowsPhoneArchetypeUnitTest"></include>
+				<include name="testWindowsPhoneArchetypeOverAllPdfReport"></include>
+				<include name="testWindowsPhoneArchetypeDetailedPdfReport"></include>
+			</methods>
+		</classes>
+	</test>
+
+</suite> 
