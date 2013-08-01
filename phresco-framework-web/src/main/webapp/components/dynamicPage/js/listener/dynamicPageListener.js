@@ -114,9 +114,11 @@ define(["framework/widgetWithTemplate", "common/loading", "lib/customcombobox-1.
                     }
                 });
                 whereToRender.append('<li></li>');
-                if (!self.isBlank(btnObj)) {
+                if (!self.isBlank(btnObj) && (openccObj !== 'jobConfigure') {
                     self.opencc(btnObj, openccObj);
-                }
+                } else if(!self.isBlank(btnObj) && (openccObj === 'jobConfigure') {
+					self.popForCi(btnObj, openccObj);
+				}
                 whereToRender.find(".selectpicker").selectpicker();
                 self.controlEvent();
                 self.showParameters();

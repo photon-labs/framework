@@ -3,7 +3,7 @@
 		<div class="fixed-table-container">
         <div class="header-background"> </div>
         <div class="fixed-table-container-inner"> 
-		<table class="table table-striped table_border table-bordered" id="projectlist" cellpadding="0" cellspacing="0" border="0">
+		<table class="table table-striped table_border table-hover table-bordered" id="projectlist" cellpadding="0" cellspacing="0" border="0">
               <thead class="height_th">
                  <tr>
                   <th><div class="th-inner" data-i18n="projectlist.label.name"></div></th>
@@ -163,12 +163,12 @@
                   </div>
                   <!--add_repo div ends here --> 
                   
-                  <div id="commit{{id}}" class="commit dyn_popup popup_bg" name="commitpopup">
+                  <div id="commit{{id}}" class="commit dyn_popup popup_bg commit_table" name="commitpopup">
                       <div class="hideContent commit_data_{{id}}">
                             <table  class="commitable_files_{{id}}" width="100%" border="0" cellspacing="0" cellpadding="5">
                                   
                             </table>                               
-                            <table class="commitData_{{id}}" width="100%" border="0" cellspacing="0" cellpadding="0">
+                            <table class="commitData_{{id}} commit_tab" width="100%" border="0" cellspacing="0" cellpadding="0">
                                 <tbody>
                                     <tr>
                                         <td><span data-i18n="commonlabel.label.type"></span><sup>*</sup></td>
@@ -260,7 +260,7 @@
                                 </tbody>
                      </table> 
                      <div class="popuploading" id="updateRepoLoading_{{id}}">&nbsp</div>
-                     <div class="flt_right" appDirName="{{appDirName}}">
+                     <div class="flt_right" style=margin-top:5px;" appDirName="{{appDirName}}">
                          <input type="button" value="Update Application" data-i18n="[value]common.btn.updateapp"  id="{{id}}" class="btn btn_style" name="updatebtn">
                          <input type="button" value="Close" data-i18n="[value]common.btn.close" class="btn btn_style dyn_popup_close">
                      </div>               

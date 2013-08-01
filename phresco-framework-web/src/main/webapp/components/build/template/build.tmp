@@ -97,7 +97,7 @@
 	<section class="content_main code_content testSuiteTable">
 		<div class="qual_unit_main unit_info">
 			{{#if buildInfos}}
-				<table class="table table-striped table_border table-bordered big" cellpadding="0" cellspacing="0" border="0" id="buildRow">
+				<table class="table table-striped table_border table-hover table-bordered big" cellpadding="0" cellspacing="0" border="0" id="buildRow">
 					<thead class="fixedHeader">
 						<tr>
 							<th data-i18n="build.label.buildno"></th>

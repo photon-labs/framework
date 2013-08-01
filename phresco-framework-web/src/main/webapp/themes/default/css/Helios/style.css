@@ -475,7 +475,7 @@ html, body {
 	padding:1%;
 	position:absolute;
 	margin-top:132px;
-	z-index:0;
+	z-index:1;
 	border-top: 1px solid #d2d2d2;
 }
 
@@ -528,7 +528,7 @@ html, body {
 
 .navbar .nav li.dropdown.open>.dropdown-toggle {
 	background-color: inherit !important;
-	color:inherit !important;
+	color:#FFF !important;
 }
 
 a.dropdown-toggle b.caret  {
@@ -776,6 +776,10 @@ ul.nav li.dropdown:hover > .test_options{
     /*border-collapse: collapse;*/
 }
 
+.table-hover tbody tr:hover > td {
+	background:#f4f4f4;
+}
+
 .table_border {
 	border-radius: 6px !important;
 	border:none !important;
@@ -840,16 +844,24 @@ ul.nav li.dropdown:hover > .test_options{
 	color: #000000;
 }
 
-.add_repo tbody>tr:nth-child(odd)>td, .add_repo tbody>tr:nth-child(odd)>th {
+.add_repo tbody>tr:nth-child(odd)>td, .add_repo tbody>tr:nth-child(odd)>th, .commit_table tbody>tr:nth-child(odd)>td, .add_repo tbody>tr:nth-child(odd)>th {
 	background: none !important;
 }
 
-.add_repo tbody>tr td, .commit table:last-child tr td, .svn_update table tr td {
+.add_repo tbody>tr td, .commit table:last-child tr td, .svn_update table tr td, .commit_table table tr td {
 	border-top: none !important;
 }
 
-.report_type tr td, .commit table:last-child tr td, .svn_update table tr td {
+.report_type tr td, .commit table:last-child tr td, .svn_update table tr td, .commit_table table tr td {
 	background:none !important;
+}
+
+.commit_table table select, input, textarea {
+	margin-bottom:0 !important;
+}
+
+.commit_table table.commit_tab tr td  {
+	padding:2px !important;
 }
 
 .commit table:first-child tbody tr td:nth-child(2) {
@@ -875,12 +887,9 @@ ul.nav li.dropdown:hover > .test_options{
 	width: 164px;
 }
 
-.add_repo textarea {
-	width: 100%;	
-}
-
-.commit textarea {
-	width: 94%;	
+.commit textarea, .add_repo textarea {
+	width: 100%;
+	margin-top:5px;
 }
 
 .add_repo table tbody>tr:nth-child(even)>td {
@@ -1235,7 +1244,7 @@ img[name="close"] {
 }
 
 .table-striped tbody>tr:nth-child(even)>td {
-	background-color:#f9f9f9;
+	background-color:#f6f6f6;
 }
 
 .btn.dropdown-toggle {

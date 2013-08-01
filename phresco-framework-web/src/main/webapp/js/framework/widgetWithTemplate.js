@@ -376,6 +376,47 @@ define(["framework/widget", "framework/templateProvider"], function() {
 				self.closeAll(placeId);
 			},
 			
+			popForCi : function(e,place) {
+				var self=this;
+				$(".dyn_popup").hide();
+				
+				$('.content_main').addClass('z_index_ci');
+				
+				var clicked = $(e);
+				var target = $("#" + place);
+				var twowidth = window.innerWidth/1.5;
+				
+				if (clicked.offset().left < twowidth) {
+				$(target).toggle();
+				var a = target.height()/2;
+				var b = clicked.height()/2;
+				// var t=clicked.offset().top + (b+12) - a ;
+				// var l=clicked.offset().left + clicked.width()+ 15;
+				var t=clicked.offset().top + (b+12) - a ;
+				var l=clicked.offset().left + clicked.width()+ 8;
+				$(target).offset({
+				top: t,
+				left: l
+				});
+				
+				$(target).addClass('speakstyleleft').removeClass('speakstyleright');
+				}
+				else {
+				$(target).toggle();
+				var t=clicked.offset().top - target.height()/2;
+				var l=clicked.offset().left - (target.width()+clicked.width()+15);
+				$(target).offset({
+				top: t,
+				left: l
+				});
+				$(target).addClass('speakstyleright').removeClass('speakstyleleft');
+				
+				}
+				
+				self.closeAll(place);
+				},
+				
+			
 			openccpl : function(ee, placeId, currentPrjName) {
 				var self=this;
 				$(".dyn_popup").hide();

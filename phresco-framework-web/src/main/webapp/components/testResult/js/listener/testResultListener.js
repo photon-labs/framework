@@ -321,12 +321,12 @@ define(['lib/RGraph_common_core-1.0','lib/RGraph_common_tooltips-1.0','lib/RGrap
 			if ("manualTest" === currentTab) {
 				resultTemplate = self.constructManualTestCaseTbl(resultTemplate, data);
 			} else {
-				resultTemplate = '<table class="table table-striped table_border table-bordered" cellpadding="0" cellspacing="0" border="0">'+
-				'<thead class="fixedHeader"><tr><th>Name</th><th>Class</th><th>Time</th><th>Status</th><th>Log</th>';
+				resultTemplate = '<div class="fixed-table-container"><div class="header-background"></div><div class="fixed-table-container-inner"><table class="table table-striped table-hover table_border table-bordered" cellpadding="0" cellspacing="0" border="0">'+
+				'<thead class="height_th"><tr><th><div class="th-inner">Name</div></th><th><div class="th-inner">Class</div></th><th><div class="th-inner">Time</div></th><th><div class="th-inner">Status</div></th><th><div class="th-inner">Log</div></th>';
 				if ("functionalTest" === currentTab) {
-					resultTemplate = resultTemplate.concat('<th>Screenshot</th>');
+					resultTemplate = resultTemplate.concat('<th><div class="th-inner">Screenshot</div></th>');
 				}
-				resultTemplate = resultTemplate.concat('</tr></thead><tbody class="scrollContent" style="height:475px;">');
+				resultTemplate = resultTemplate.concat('</tr></thead><tbody>');
 				for (i in data) {
 					var result = data[i];
 					resultTemplate = resultTemplate.concat('<tr><td>'+ result.name +'</td>');
@@ -363,11 +363,12 @@ define(['lib/RGraph_common_core-1.0','lib/RGraph_common_tooltips-1.0','lib/RGrap
 						}
 					}
 					resultTemplate = resultTemplate.concat('</tr>');
-					resultTemplate = resultTemplate.concat('</tbody></table>');
+					resultTemplate = resultTemplate.concat('</tbody></table></div></div>');
 				}
 			}
-
+			
 			$(commonVariables.contentPlaceholder).find('#testCases').html(resultTemplate);
+		
 			setTimeout(function() {
 				self.resizeTestResultColumn("testCases");
 				self.showErrorLog();
@@ -380,6 +381,7 @@ define(['lib/RGraph_common_core-1.0','lib/RGraph_common_tooltips-1.0','lib/RGrap
 
 			self.resizeTestResultDiv();
 			self.showScreenShot(imgArray);
+			self.tableScrollbar();
 		},
 		
 		constructManualTestCaseTbl : function(resultTemplate, data) {
@@ -387,20 +389,20 @@ define(['lib/RGraph_common_core-1.0','lib/RGraph_common_tooltips-1.0','lib/RGrap
 			$("#addTestCase").show();
 			$("#addTestSuite").hide();
 			if (data.length > 0) {
-				resultTemplate = '<table class="table table-striped table_border table-bordered" cellpadding="0" cellspacing="0" border="0">'+
-				'<thead class="fixedHeader"><tr><th>Feature Id</th><th>Test Cases</th><th>Expected Result</th><th>Actual Result</th><th class="">Status</th><th class="">Bug Comments</th><th>Edit</th>';
-				resultTemplate = resultTemplate.concat('</tr></thead><tbody class="scrollContent" name="manualTest" style="height:475px;">');
+				resultTemplate = '<div class="fixed-table-container"><div class="header-background"></div><div class="fixed-table-container-inner"><table class="table table-striped table-hover table_border table-bordered" cellpadding="0" cellspacing="0" border="0">'+
+				'<thead class="height_th"><tr><th><div class="th-inner">Feature Id</div></th><th><div class="th-inner">Test Cases</div></th><th><div class="th-inner">Expected Result</div></th><th><div class="th-inner">Actual Result</div></th><th><div class="th-inner">Status</div></th><th><div class="th-inner">Bug Comments</div></th><th><div class="th-inner">Edit</div></th>';
+				resultTemplate = resultTemplate.concat('</tr></thead><tbody name="manualTest">');
 				for (i in data) {
 					var result = data[i];
-					resultTemplate = resultTemplate.concat('<tr><td>'+ result.featureId +'</td>');
-					resultTemplate = resultTemplate.concat('<td>'+ result.testCaseId +'</td>');
-					resultTemplate = resultTemplate.concat('<td>'+ result.expectedResult +'</td>');
-					resultTemplate = resultTemplate.concat('<td>'+ result.actualResult +'</td>');
-					resultTemplate = resultTemplate.concat('<td>'+ result.status +'</td>');
-					resultTemplate = resultTemplate.concat('<td>'+ result.bugComment +'</td>');
-					resultTemplate = resultTemplate.concat('<td><a class="editManualTestcase" name="updateManualTestCase_popup" href="#" testcaseName="'+ result.testCaseId +'"><img alt="Edit" src="themes/default/images/helios/edit_icon.png"/></a></td></tr>');
+					resultTemplate = resultTemplate.concat('<tr><td width="15%">'+ result.featureId +'</td>');
+					resultTemplate = resultTemplate.concat('<td width="10%">'+ result.testCaseId +'</td>');
+					resultTemplate = resultTemplate.concat('<td width="25%">'+ result.expectedResult +'</td>');
+					resultTemplate = resultTemplate.concat('<td width="25%">'+ result.actualResult +'</td>');
+					resultTemplate = resultTemplate.concat('<td width="5%">'+ result.status +'</td>');
+					resultTemplate = resultTemplate.concat('<td width="15%">'+ result.bugComment +'</td>');
+					resultTemplate = resultTemplate.concat('<td width="5%"><a class="editManualTestcase" name="updateManualTestCase_popup" href="#" testcaseName="'+ result.testCaseId +'"><img alt="Edit" src="themes/default/images/helios/edit_icon.png"/></a></td></tr>');
 				}
-				resultTemplate = resultTemplate.concat('</tbody></table>');
+				resultTemplate = resultTemplate.concat('</tbody></table></div></div>');
 			} else {
 				resultTemplate = '<div class="alert alert-block" style="text-align: center; margin: auto;">No Testcases available</div>';
 			}

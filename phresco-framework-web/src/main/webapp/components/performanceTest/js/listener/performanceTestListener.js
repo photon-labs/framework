@@ -534,7 +534,7 @@ define(["lib/jquery-tojson-1.0",'lib/RGraph_common_core-1.0','lib/RGraph_common_
 			var self = this;
 			var resultTable = "";
 			var totalValue = resultData.length, NoOfSample = 0, avg = 0, min = 0, max = 0, StdDev = 0, Err = 0, KbPerSec = 0, sumOfBytes = 0;
-			resultTable += '<div class="fixed-table-container"><div class="header-background"></div><div class="fixed-table-container-inner"><table cellspacing="0" cellpadding="0" border="0" class="table table-striped table_border table-bordered" id="testResultTable">'+
+			resultTable += '<div class="fixed-table-container"><div class="header-background"></div><div class="fixed-table-container-inner"><table cellspacing="0" cellpadding="0" border="0" class="table-hover table table-striped table_border table-bordered" id="testResultTable">'+
 						  '<thead class="height_th"><tr><th><div class="th-inner">Label</div></th><th><div class="th-inner">Samples</div></th><th><div class="th-inner">Averages</div></th><th><div class="th-inner">Min</div></th><th><div class="th-inner">Max</div></th><th><div class="th-inner">Std.Dev</div></th><th><div class="th-inner">Error %</div></th><th><div class="th-inner">Throughput /sec </div></th>' +
 						  '<th><div class="th-inner">KB / sec</div></th><th><div class="th-inner">Avg.Bytes</div></th></tr></thead><tbody>';	
 			$.each(resultData.perfromanceTestResult, function(index, value) {
