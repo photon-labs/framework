@@ -397,7 +397,7 @@ define(["framework/widget", "framework/templateProvider"], function() {
 					$(target).removeClass('speakstyletopright').removeClass('speakstylebottomright').removeClass('speakstylebottomleft').addClass('speakstyletopleft').addClass('dyn_popup');
 				} else if (clicked.offset().top < halfheight && clicked.offset().left > halfwidth){
 					var d= ($(window).width() - (clicked.offset().left + clicked.outerWidth())) - 18;
-					if(($(ee).parent('td').attr('class')!='delimages') && (act === "Delete Row")) {
+					if(($(ee).parent('td').attr('class')!='delimages') && (act === "Delete "+currentPrjName)) {
 						var BottomHeight = clicked.position().top + clicked.height() ;
 						$(target).css({"right":d,"left": "auto","top": BottomHeight});
 					}
@@ -414,7 +414,7 @@ define(["framework/widget", "framework/templateProvider"], function() {
 				} else if (clicked.offset().top > halfheight && clicked.offset().left > halfwidth){
 					var d = null,BottomHeight = null;
 					d = ($(window).width() - (clicked.offset().left + clicked.outerWidth())) - 15;
-					if(($(ee).parent('td').attr('class')!='delimages') && (act === "Delete Row")) {
+					if(($(ee).parent('td').attr('class')!='delimages') && (act === "Delete "+currentPrjName)) {
 						BottomHeight = clicked.position().top - 70;
 						$(target).css({"right":d ,"top":BottomHeight,"left": "auto"});
 						$(target).toggle();

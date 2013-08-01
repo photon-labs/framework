@@ -112,6 +112,7 @@ define(["navigation/listener/navigationListener"], function() {
 				var currentPrjName = "";
 				$('#importUserName').val(data.id);
 				$('#importPassword').val(data.password);
+				$("#importRepourl").val("");
 				$("#importRepourl").removeClass("errormessage");
 				$("#importUserName").removeClass("errormessage");
 				$("#importPassword").removeClass("errormessage");
