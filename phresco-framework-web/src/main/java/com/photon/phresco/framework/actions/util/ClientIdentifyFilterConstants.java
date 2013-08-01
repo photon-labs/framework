@@ -12,7 +12,8 @@ public interface ClientIdentifyFilterConstants {
 	public String THEMES="/themes/";
 	
 	public String ROUTE_URL="index.html";
-	public String REST_API_CUSTOMER_PROPERTIES="/admin/customerproperties";
+	public String REST_API_CUSTOMER_ICON = "/admin/customers/icon";
+	public String REST_API_CUSTOMERINFO = "/admin/customers/properties";
 	public String THEME_KEY="customertheme";
 	public String LOGO_KEY="customerlogo";
 	public String STATUS_MESSAGE="statusmsg";

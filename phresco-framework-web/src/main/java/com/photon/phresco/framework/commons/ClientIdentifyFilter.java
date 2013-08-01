@@ -110,61 +110,38 @@ public class ClientIdentifyFilter implements Filter , ClientIdentifyFilterConsta
 			}
 	}
 	
-	public ClientIdentifyModel getCustomerProperties(String cutomername) throws PhrescoException, IOException
-	{
+	public ClientIdentifyModel getCustomerProperties(String cutomername) throws PhrescoException, IOException {
+		Customer customer = null;
+		InputStream iconStream = null;
 		FrameworkConfiguration configuration = PhrescoFrameworkFactory.getFrameworkConfig();
 		ClientConfig config = new DefaultClientConfig();
         config.getClasses().add(JacksonJsonProvider.class);
 		Client c = Client.create(config);
-	    WebResource resource = c.resource(configuration.getServerPath() +REST_API_CUSTOMER_PROPERTIES);
-	    resource = resource.queryParam("context", cutomername);
-	    resource.accept(MultiPartMediaTypes.MULTIPART_MIXED);
-	    MultiPart result = null;
-		result = resource.get(MultiPart.class);
-		String status = result.getHeaders().getFirst("status");
-		if((Response.Status.OK.getReasonPhrase()).equals(status)) {
-				
-				BodyPart part1 = result.getBodyParts().get(0);
-			    BodyPart part2 = result.getBodyParts().get(1);
-		        Customer customer = part1.getEntityAs(Customer.class);
-		        if (isDebugEnabled) {
-					S_LOGGER.debug("Response Status -->  CustomerID : " + customer.getId());
-				}
-		        InputStream fileInputStream = part2.getEntityAs(InputStream.class);
-		        if(fileInputStream == null) {
-		        	throw new PhrescoException("exception occured while reading the customer image");
-		        }
-				byte[] imgByte = null;
-				imgByte = IOUtils.toByteArray(fileInputStream);
-			    byte[] encodedImage = Base64.encodeBase64(imgByte);
-		        String encodeImg = new String(encodedImage);
-		        ClientIdentifyModel data = new ClientIdentifyModel();
-		        data.setCustomer(customer);
-		        data.setCustomerlogo(encodeImg);
-		        data.setStatus(true);
-		        return data;
-		}
-		else if((Response.Status.NOT_FOUND.getReasonPhrase()).equals(status)) {
 		
-			if (isDebugEnabled) {
-					S_LOGGER.debug("Response Status :"+Response.Status.NOT_FOUND.getReasonPhrase());
-			}
+	    WebResource resource = c.resource(configuration.getServerPath() +REST_API_CUSTOMER_ICON);
+	    resource = resource.queryParam("context", cutomername);
+	    resource.accept(org.springframework.http.MediaType.MULTIPART_FORM_DATA_VALUE);
+	    ClientResponse iconResponse = resource.get(ClientResponse.class);
+        resource = c.resource(configuration.getServerPath() + REST_API_CUSTOMERINFO);
+	    resource = resource.queryParam("context", cutomername);
+	    resource.accept(org.springframework.http.MediaType.APPLICATION_JSON_VALUE);
+	    ClientResponse customerResponse = resource.get(ClientResponse.class);
+	    System.out.println("Context is " + cutomername);
+	    System.out.println("icon response" + iconResponse.getStatus());
+	    System.out.println("Customer response " + customerResponse.getStatus());
+	    if(iconResponse.getStatus() != 200 && customerResponse.getStatus() != 200) {
 	       ClientIdentifyModel data = new ClientIdentifyModel();
 	       data.setStatus(false);
 	       data.setMessage(INVALID_CUSTOMER);
 	       return data;
 		}
-		else if((Response.Status.NO_CONTENT.getReasonPhrase()).equals(status)) {
-				
-			if (isDebugEnabled) {
-				S_LOGGER.debug("Response Status :"+Response.Status.NO_CONTENT.getReasonPhrase());
-			}
+	    if(iconResponse.getStatus() != 200) {
 		    ClientIdentifyModel data = new ClientIdentifyModel();
 		    data.setStatus(false);
 		    data.setMessage(NO_IMAGE);
 		    return data;
 		}
-		else if((Response.Status.PRECONDITION_FAILED.getReasonPhrase()).equals(status)) {
+	    if(customerResponse.getStatus() != 200) {
 			if (isDebugEnabled) {
 				S_LOGGER.debug("Response Status :"+Response.Status.PRECONDITION_FAILED.getReasonPhrase());
 			}
@@ -173,15 +150,29 @@ public class ClientIdentifyFilter implements Filter , ClientIdentifyFilterConsta
 		    data.setMessage(NO_ID);
 		    return data;
 		}
-		else {
-			if (isDebugEnabled) {
-				S_LOGGER.debug("Response Status :"+INVALID);
-			}
-			ClientIdentifyModel data = new ClientIdentifyModel();
-		    data.setStatus(false);
-		    data.setMessage(INVALID);
-			return null;
-			}
+	    if(iconResponse.getStatus() == 200 && customerResponse.getStatus() == 200) {
+	    	iconStream = iconResponse.getEntityInputStream();
+		    customer = customerResponse.getEntity(Customer.class);
+			byte[] imgByte = null;
+			imgByte = IOUtils.toByteArray(iconStream);
+		    byte[] encodedImage = Base64.encodeBase64(imgByte);
+	        String encodeImg = new String(encodedImage);
+	        ClientIdentifyModel data = new ClientIdentifyModel();
+	        data.setCustomer(customer);
+	        data.setCustomerlogo(encodeImg);
+	        data.setStatus(true);
+	        return data;
+	    }
+//		else {
+//			if (isDebugEnabled) {
+//				S_LOGGER.debug("Response Status :"+INVALID);
+//			}
+//			ClientIdentifyModel data = new ClientIdentifyModel();
+//		    data.setStatus(false);
+//		    data.setMessage(INVALID);
+//			return null;
+//			}
+		return null;
 	}
 	
 	public JSONObject processCustomerProperties(Customer customer) {
