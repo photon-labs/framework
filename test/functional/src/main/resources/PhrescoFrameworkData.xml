@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<environment>
+	<phresco>
+	    
+	    <!-- Project Create Message -->
+	    <projectCreateMsg>Project created successfully</projectCreateMsg>
+	    
+		<!-- Application Update Message -->
+		<appUpdateMsg>Application updated successfully</appUpdateMsg>
+		
+		<!-- Feature Update Message -->
+		<featureUpdateMsg>Features updated successfully</featureUpdateMsg>
+
+		<!-- Configuration Update Message -->
+		<configUpdateMsg>Configurations Updated Successfully</configUpdateMsg>
+		
+		<!-- Clone Environment Name -->
+		<cloneEnvName>Testing</cloneEnvName>
+		
+		<!-- Project Update Message -->
+		<projectUpdateMsg></projectUpdateMsg>
+		
+	</phresco>
+</environment>

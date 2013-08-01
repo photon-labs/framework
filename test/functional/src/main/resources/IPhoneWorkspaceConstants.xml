@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<environment>
+	<phresco>
+	            <!--Create Project  -->
+			   <iPhoneWorkspaceArchetypeName>iPhoneWorkspaceArchetypeProject</iPhoneWorkspaceArchetypeName>
+		       <iPhoneWorkspaceArchetypeDesc>This is iPhoneWorkspace Project</iPhoneWorkspaceArchetypeDesc>
+		       <iPhoneWorkspaceArchetypeAppCode>iPhoneWorkspaceArchetype</iPhoneWorkspaceArchetypeAppCode>
+		       <mobileValue>Iphone</mobileValue>
+		       <mobileType>Workspace</mobileType>
+		       
+		        <!-- Edit App Page -->
+		        <iPhoneWorkspaceArchetypeUpdateDesc>This is iPhoneWorkspace Application</iPhoneWorkspaceArchetypeUpdateDesc>
+		       
+		       <!-- Edit App -->
+		       <iphoneWorkspaceArchetypeEditApp>//a[contains(text(),'iPhoneWorkspaceArchetype')]</iphoneWorkspaceArchetypeEditApp>
+		        
+		       <!-- Edit Project -->		       
+		       <editProject>//img[@name='editproject']</editProject>
+		       
+		        <!-- GenarateBuild -->
+		       <buildName>IphoneWorkspace</buildName>
+		       
+		       <!--Pdf Report  -->
+		       <iPhoneWorkspaceArchetypePdfReportIcon>//tr[@class='iPhoneWorkspaceArchetype']/td[4]/a/img</iPhoneWorkspaceArchetypePdfReportIcon>
+		       <iPhoneWorkspaceArchetypeOverAllReportName>iPhoneWorkspace Archetype App OverAll Testing Report</iPhoneWorkspaceArchetypeOverAllReportName>
+		       <iPhoneWorkspaceArchetypeDetailReportName>iPhoneWorkspace Archetype App Detailed Testing Report</iPhoneWorkspaceArchetypeDetailReportName>
+		       
+	</phresco>
+</environment>

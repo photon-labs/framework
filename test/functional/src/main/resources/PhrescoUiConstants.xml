@@ -1,0 +1,216 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<environment>
+	<phresco>
+	    <!-- Login Page- -->
+	    
+		<loginUserName>//*[@id='username']</loginUserName>
+		<loginPassword>//*[@id='password']</loginPassword>
+		<loginButton>//*[@id='login']</loginButton>
+		
+		
+		<!-- Menu Page -->
+		
+		<projectButton>//*[@id='pojectList']</projectButton>
+		<addProjectButton>//div/a/input[text()='Add']</addProjectButton>
+		<customerDropdown>//*[@id='selectedCustomer']</customerDropdown>
+		<customerName>//a[@id='photon']</customerName>
+		
+		<!-- Create Project Page  -->
+		
+		<projectName>//input[@name='projectname']</projectName>
+		<projectCode>//input[@name='projectcode']</projectCode>
+		<projectVersion>//input[@name='projectversion']</projectVersion>
+		<projectDescription>//textarea[@name='projectdescription']</projectDescription>
+		<projectBuildMyself>//select[@name='builtmyself']</projectBuildMyself>
+		<startDate>//img[@id='strdt']</startDate>
+		<endDate>//img[@id='enddt']</endDate>
+		<appLayerAppCode>//input[@class='appln-appcode']</appLayerAppCode>
+		<appLayerTechnology>//div[@class='btn-group bootstrap-select appln_technology']/button</appLayerTechnology>
+		<appLayerTechnologyVersion>//div[@class='btn-group bootstrap-select appln_version']/button</appLayerTechnologyVersion>
+		<removeAppLayer>//img[@id='applicationlayer']</removeAppLayer>
+		<webLayerAppCode>//input[@class='web-appcode']</webLayerAppCode>
+		<webLayer>//div[@class='btn-group bootstrap-select weblayer']/button</webLayer>
+		<webLayerWidget>//div[@class='btn-group bootstrap-select web_widget']/button</webLayerWidget>
+		<webLayerWidgetVersion>//select[@name='web_version']</webLayerWidgetVersion>
+		<removeWebLayer>//img[@id='weblayer']</removeWebLayer>
+		<mobLayerAppCode>//input[@class='mobile-appcode']</mobLayerAppCode>
+		<mobLayer>//div[@class='btn-group bootstrap-select mobile_layer']/button</mobLayer>
+		<mobileType>//div[@class='btn-group bootstrap-select mobile_types']/button</mobileType>
+		<mobileVersion>//select[@name='mobile_version']</mobileVersion>
+		<removeMobileLayer>//img[@id='mobilelayer']</removeMobileLayer>
+		<projectCreateButton>//input[@name='Create']</projectCreateButton>
+		
+		<appTechnologyJ2EE>//span[text()='J2EE']</appTechnologyJ2EE>
+		<appTechnologyNodeJS>//span[text()='Node JS']</appTechnologyNodeJS>
+		<appTechnologyPHP>//span[text()='PHP']</appTechnologyPHP>
+		<appTechnologyDrupal6>//span[text()='Drupal6']</appTechnologyDrupal6>
+		<appTechnologyDrupal7>//span[text()='Drupal7']</appTechnologyDrupal7>
+		<appTechnologyWordPress>//span[text()='WordPress']</appTechnologyWordPress>
+		<appTechnologyAspDotNet>//span[text()='ASP.NET']</appTechnologyAspDotNet>
+		<appTechnologySharePoint>//span[text()='Sharepoint']</appTechnologySharePoint>
+		<appTechnologySiteCore>//span[text()='Site Core']</appTechnologySiteCore>
+		<appTechnologyJSA>//span[text()='Java Standalone']</appTechnologyJSA>
+		
+		<webTechnologyHTML5>//span[text()='HTML5']</webTechnologyHTML5>
+		<webTechnologyJMW>//span[text()='JQuery Mobile Widget']</webTechnologyJMW>
+		<webTechnologyYMW>//span[text()='YUI Mobile Widget']</webTechnologyYMW>
+		<webTechnologyMJW>//span[text()='Multichannel JQuery Widget']</webTechnologyMJW>
+		<webTechnologyMYW>//span[text()='Multichannel YUI Widget']</webTechnologyMYW>
+				
+		<mobTechnologyWindows>//span[text()='Windows']</mobTechnologyWindows>
+		<mobTechnologyWindowsMetro>//span[text()='Windows Metro']</mobTechnologyWindowsMetro>
+		<mobTechnologyWindowsPhone>//span[text()='Windows Phone']</mobTechnologyWindowsPhone>		
+		<mobTechnologyBlackBerry>//span[text()='Black Berry']</mobTechnologyBlackBerry>
+		<mobTechnologyBlackBerryHybrid>//span[text()='Hybrid']</mobTechnologyBlackBerryHybrid>		
+		<mobTechnologyAndroid>//span[text()='Android']</mobTechnologyAndroid>
+		<mobTechnologyAndroidLibrary>//span[text()='Library']</mobTechnologyAndroidLibrary>
+		<mobTechnologyAndroidNative>//span[text()='Native']</mobTechnologyAndroidNative>
+		<mobTechnologyAndroidHybrid>//span[text()='Hybrid']</mobTechnologyAndroidHybrid>
+		<mobTechnologyIphone>//span[text()='Iphone']</mobTechnologyIphone>
+		<mobTechnologyIphoneWorkspace>//span[text()='Workspace']</mobTechnologyIphoneWorkspace>
+		<mobTechnologyIphoneLibrary>//span[text()='Library']</mobTechnologyIphoneLibrary>
+		<mobTechnologyIphoneNative>//span[text()='Native']</mobTechnologyIphoneNative>
+		<mobTechnologyIphoneHybrid>//span[text()='Hybrid']</mobTechnologyIphoneHybrid>
+				
+		
+		<!-- Edit Project Page-->
+		<projectUpdateButton>//input[@id='updateProject']</projectUpdateButton>
+		
+		<!-- App Info Page -->
+		<appInfoTab>//a[contains(text(),'App Info')]</appInfoTab>
+		<appDesc>//textarea[@id='appDesc']</appDesc>
+		
+		<serverDropdown>//div[@class='btn-group bootstrap-select appServers']/button/span[2]</serverDropdown>
+		<serverVersionDropdown>//div[@class='btn-group bootstrap-select server_version show-tick']/button/span[2]</serverVersionDropdown>
+		
+		<wampServer>//span[contains(text(),'Wamp')]</wampServer>
+		<wampServerVersion>//span[contains(text(),'2.1e')]</wampServerVersion>
+		
+		<nodeJsServer>//span[contains(text(),'NodeJs')]</nodeJsServer>
+		<nodeJsServerVersion>//span[contains(text(),'0.8.7')]</nodeJsServerVersion>
+		
+		<apacheTomcatServer>//span[contains(text(),'Apache Tomcat')]</apacheTomcatServer>
+		<apacheTomcatServerVersion>//span[contains(text(),'7.0.x')]</apacheTomcatServerVersion>
+		
+		<iisServer>//span[contains(text(),'IIS')]</iisServer>
+		<iisServerVersion>//span[contains(text(),'7.5')]</iisServerVersion>
+		
+		<sharepointServer>//span[contains(text(),'Sharepoint Server')]</sharepointServer>
+		<sharepointServerVersion>//span[contains(text(),'2007')]</sharepointServerVersion>
+		
+		<dbDropdown>//div[@class='btn-group bootstrap-select databases']/button/span[2]</dbDropdown>
+		<dbVersionDropdown>//div[@class='btn-group bootstrap-select db_version show-tick']/button/span[2]</dbVersionDropdown>
+		<mysqlDb>//span[contains(text(),'MYSQL')]</mysqlDb>
+		<mysqlVersionValue>//span[contains(text(),'5.5.1')]</mysqlVersionValue>
+		
+		<restJsonCheckbox>//input[@value='restjson']</restJsonCheckbox>
+		<restXmlCheckbox>//input[@value='restxml']</restXmlCheckbox>
+		<soap1.0Checkbox>//input[@value='saop1.0']</soap1.0Checkbox>
+		<soap2.0Checkbox>//input[@value='saop2.0']</soap2.0Checkbox>
+		<jmsCheckbox>//input[@value='jms']</jmsCheckbox>
+		<functionalFramework>//div[@class='btn-group bootstrap-select func_framework']/button/span[2]</functionalFramework>
+		<testNGValue>//span[contains(text(),'TestNG')]</testNGValue>
+		<phpUnitValue>//span[contains(text(),'PHPunit')]</phpUnitValue>
+		<jUnitValue>//span[contains(text(),'Junit')]</jUnitValue>
+		<functionalTool>//div[@class='btn-group bootstrap-select tools']/button/span[2]</functionalTool>
+		<cucumberValue>//span[contains(text(),'Cucumber')]</cucumberValue>
+		<webdriverValue>//span[contains(text(),'Selenium Web Driver')]</webdriverValue>
+		<gridValue>//span[contains(text(),'Selenium Grid')]</gridValue>
+		<functionalToolVersion>//div[@class='btn-group bootstrap-select tools_version']/button/span[2]</functionalToolVersion>
+		<functionalToolVersionValue>//span[contains(text(),'2.0')]</functionalToolVersionValue>
+		<appUpdateButton>//input[@id='updatebutton']</appUpdateButton>
+		
+		<!-- Feature Page -->
+		<featureTab>//*[@id='featurelist']/a</featureTab>
+		<featureUpdateButton>//input[@id='featureUpdate']</featureUpdateButton>
+		
+		<!-- Code Validation -->
+		
+		<codeQualityTab>//a[contains(text(),'Code Quality')]</codeQualityTab>
+		<codeAnalysisTab>//input[@value='Code Analysis']</codeAnalysisTab>
+		<codeValidateAgainstDropdown>//li[@id='sonarLi']/div/button</codeValidateAgainstDropdown>
+		<codeValidateCs>//li/a/span[contains(text(),'cs')]</codeValidateCs>
+		<codeValidateJs>//li/a/span[contains(text(),'js')]</codeValidateJs>
+		<codeValidateJava>//li/a/span[contains(text(),'java')]</codeValidateJava>
+		<codeValidateHtml>//li/a/span[contains(text(),'html')]</codeValidateHtml>
+		<codeValidateJsp>//li/a/span[contains(text(),'jsp/jsf')]</codeValidateJsp>
+		<codeValidateSource>//li/a/span[contains(text(),'Source')]</codeValidateSource>
+		<codeValidateFunctionalTest>//li/a/span[contains(text(),'Functional Test')]</codeValidateFunctionalTest>
+		<codeTechnologyDropdown>//li[@id='srcLi']/div/button</codeTechnologyDropdown>
+		<codeValidateBtn>//input[@id='validate']</codeValidateBtn>
+		<codeCloseBtn>//input[@name='close']</codeCloseBtn>
+		<validateAgainstSrc>//button[@class='btn dropdown-toggle']</validateAgainstSrc>
+		<skipUnitTestCheckBox>//input[@id='skipTests']</skipUnitTestCheckBox>
+		
+		<!-- Configuration Server -->
+		<configTab>//*[@id='configuration']/a</configTab>
+		<configButton>//td/a[@key='Production']/img</configButton>
+		<addConfig>//input[@value='Add Configuration']</addConfig>
+		<configChooseServer>//a[contains(text(),'Server')]</configChooseServer>
+		<configServer>//input[@id='ConfigServer']</configServer>
+		<configServerDesc>//tr[@class='Server']/td[4]/input</configServerDesc>
+		<configServerProtocol>//select[@name='protocol']</configServerProtocol>
+		<configServerHost>//input[@name='host' and @class='ServerConfiguration']</configServerHost>
+		<configServerPort>//input[@name='port' and @class='ServerConfiguration']</configServerPort>
+		<configServerUName>//input[@name='admin_username']</configServerUName>
+		<configServerPwd>//input[@name='admin_password']</configServerPwd>
+		<configServerCertificate>//input[@name='certificate']</configServerCertificate>
+		<configServerDeployDir>//input[@name='deploy_dir']</configServerDeployDir>
+		<configServerContext>//input[@name='context']</configServerContext>
+		<configChooseDb>//a[contains(text(),'Database')]</configChooseDb>
+		<configDb>//input[@id='ConfigDatabase']</configDb>
+		<configDbDesc>//tr[@class='Database']/td[4]/input</configDbDesc>
+		<configDbHost>//input[@name='host' and @class='DatabaseConfiguration']</configDbHost>
+		<configDbPort>//input[@name='port' and @class='DatabaseConfiguration']</configDbPort>
+		<configDbUsername>//input[@name='username']</configDbUsername>
+		<configDbPwd>//input[@name='password']</configDbPwd>
+		<configDbName>//input[@name='dbname']</configDbName>
+		<configUpdateButton>//input[@class='btn btn_style update_btn']</configUpdateButton>
+		
+		
+		<!-- Clone Environment -->
+		<cloneEnv>//a[@name='clone_popupProduction']/img</cloneEnv>
+		<cloneEnvName>//input[@name='envrName']</cloneEnvName>
+		<cloneButton>//input[@name='cloneEnvr']</cloneButton>
+		
+		
+		<!-- Build Page -->
+		<buildTab>//li[@id='build']/a</buildTab>
+		<buildGenerate>//input[@name='build_genbuild']</buildGenerate>
+		<buildName>//input[@id='buildName']</buildName>
+		<buildNumber>//input[@id='buildNumber']</buildNumber>
+		<chooseEnvironment>//button[@type='button']</chooseEnvironment>
+		<chooseLogs>//button[@type='button']</chooseLogs>
+		<buildRun>//input[@id='buildRun']</buildRun>
+		
+
+		<!-- Run against Source Page -->
+        <runAgainstSourceButton>//input[@name='build_runagsource']</runAgainstSourceButton>
+        <executeSqlCheckbox>//input[@id='executeSql']</executeSqlCheckbox>
+        <runAgainstRunButton>//input[@id='runSource']</runAgainstRunButton>
+		
+		<!-- Deploy Page -->
+		
+		<deployBuild>//img[@name='deployBuild']</deployBuild>
+		<deployButton>//input[@name='deploy']</deployButton>
+		
+		<!-- Unit Test -->
+		<qualityAssuranceButton>//a[contains(text(),'Quality Assurance')]</qualityAssuranceButton>
+		<unitButton>//a[contains(text(),'Unit')]</unitButton>
+		<unitTestButton>//input[@id='unitTestBtn']</unitTestButton>
+		<unitTestAgainst>//li[@id='testAgainstLi']/div/button</unitTestAgainst>
+		<unitTestRun>//input[@id='runUnitTest']</unitTestRun>
+		
+		<!--Pdf Report  -->
+		<pdfReportTypeDropDown>//select[@name='reportDataType']</pdfReportTypeDropDown>
+		<pdfName>//input[@name='pdfName']</pdfName>
+		<pdfGenerateBtn>//input[@name='generate']</pdfGenerateBtn>
+		<pdfCloseBtn>//form[@id='pdfReport']/div[2]/input[2]</pdfCloseBtn>
+		<pdfOverAllReport>Overall Report</pdfOverAllReport>
+		<pdfDetailReport>Detailed Report</pdfDetailReport>
+		
+		
+
+	</phresco>
+</environment>
+				  

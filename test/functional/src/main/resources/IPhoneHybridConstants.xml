@@ -1,12 +1,30 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <environment>
-<phresco>
+	 <phresco>
+	            <!--Create Project  -->
 			   <iPhoneHybArchetypeName>iPhoneHybridArchetypeProject</iPhoneHybArchetypeName>
-		       <iPhoneHybArchetypeDesc>This is iPhoneHybrid Archetype Project</iPhoneHybArchetypeDesc>
-		       <iPhoneHybArchetypeAppCode>iPhoneHybridArchetype</iPhoneHybArchetypeAppCode>
+		       <iPhoneHybArchetypeDesc>This is iPhoneHybrid Project</iPhoneHybArchetypeDesc>		      
+		       <iPhoneHybArchetypeAppCode>iPhoneHybridArchetype</iPhoneHybArchetypeAppCode>		     
 		       <mobileValue>Iphone</mobileValue>
 		       <mobileType>Hybrid</mobileType>
-</phresco>
+		       
+		        <!-- Edit App Page -->
+		        <iPhoneHybArchetypeUpdateDesc>This is iPhoneHybrid Application</iPhoneHybArchetypeUpdateDesc>
+		       
+		       <!-- Edit App -->
+		         <iphoneHybSrchetypeAppEditApp>//a[contains(text(),'iPhoneHybridArchetype')]</iphoneHybSrchetypeAppEditApp>
+		        
+		       <!-- Edit Project -->		       
+		       <editProject>//img[@name='editproject']</editProject>
+		       
+		       <!-- GenarateBuild -->
+		       <buildName>Build</buildName>
+		       
+		       <!--Pdf Report  -->
+		       <iPhoneHybArchetypePdfReportIcon>//tr[@class='iPhoneHybridArchetype']/td[4]/a/img</iPhoneHybArchetypePdfReportIcon>
+		       <iPhoneHybArchetypeOverAllReportName>iPhoneHybrid Archetype App OverAll Testing Report</iPhoneHybArchetypeOverAllReportName>
+		       <iPhoneHybArchetypeDetailReportName>iPhoneHybrid Archetype App Detailed Testing Report</iPhoneHybArchetypeDetailReportName>
+	</phresco>
 </environment>
 
 
