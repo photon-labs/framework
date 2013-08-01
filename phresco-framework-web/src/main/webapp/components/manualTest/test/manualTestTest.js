@@ -99,6 +99,9 @@ define(["manualTest/manualTest"], function(ManualTest) {
 				setTimeout(function() {
 					start();
 					equal($('.unit_text').text().trim(), "Manual Test", "Adding Manual testcases succeeded");
+					require(["jobTemplatesTest"], function(jobTemplatesTest){
+						jobTemplatesTest.runTests();
+					});
 				}, 100);
 			});
 		},
