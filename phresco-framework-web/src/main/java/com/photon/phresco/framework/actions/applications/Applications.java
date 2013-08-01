@@ -568,11 +568,13 @@ public class Applications extends FrameworkBaseAction implements Constants {
 			Type type = new TypeToken<ProjectInfo>() {}.getType();
 			ProjectInfo projectinfo = gson.fromJson(bufferedReader, type);
 			ApplicationInfo applicationInfo = projectinfo.getAppInfos().get(0);
-			
 			bufferedReader.close();
+			appInfo.setCreated(true);
+			projectInfo.setAppInfos(Collections.singletonList(appInfo));
+			if(applicationInfo.getPilotInfo() != null) {
+				projectInfo = cloneProjectInfo(projectInfo, appInfo);
+			}
 			deleteSqlFolder(applicationInfo, selectedDatabases);
-			
-    		projectInfo.setAppInfos(Collections.singletonList(appInfo));
     		ProjectManager projectManager = PhrescoFrameworkFactory.getProjectManager();
     		projectManager.update(projectInfo, getServiceManager(), getOldAppDirName());
     		updateFunctionalTestProperties(appInfo);
@@ -592,6 +594,13 @@ public class Applications extends FrameworkBaseAction implements Constants {
     		Utility.closeReader(bufferedReader);
     	}
     	return SUCCESS;
+    }
+    
+    private ProjectInfo cloneProjectInfo(ProjectInfo projectInfo, ApplicationInfo appInfo) {
+    	ProjectInfo clone = projectInfo.clone();
+    	appInfo.setPilotInfo(null);
+    	clone.setAppInfos(Collections.singletonList(appInfo));
+    	return clone;
     }
     
     private void updateFunctionalTestProperties(ApplicationInfo appInfo) throws PhrescoException {
