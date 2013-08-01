@@ -810,6 +810,7 @@ define([], function() {
 			
 			self.CroneExpression();
 			$('#dynamicContent ul').empty();
+			$('#dynamicContent div[class=hiddenControls]').empty();
 			commonVariables.navListener.getMyObj(commonVariables.dynamicPage, function(dynamicPageObject) {
 				self.dynamicPageListener = new Clazz.com.components.dynamicPage.js.listener.DynamicPageListener();
 
@@ -1209,6 +1210,7 @@ define([], function() {
 				jobConfiguration.templateName = templateJsonData.name;
 				jobConfiguration.appDirName=appDirName;
 				jobConfiguration.appName = appName;
+				
 				//Checking
 				$('[appname="'+ appName +'"][jobtemplatename="'+ jobtemplatename +'"]').data("jobJson", jobConfiguration);
 	            // Hide popup

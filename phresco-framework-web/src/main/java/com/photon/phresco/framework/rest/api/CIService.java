@@ -262,7 +262,7 @@ public class CIService extends RestBase implements FrameworkConstants, ServiceCo
 							if(StringUtils.isNotEmpty(ciJob.getAppDirName())) {
 								applicationInfo = FrameworkServiceUtil.getApplicationInfo(ciJob.getAppDirName());
 							}
-							CIJob job = setPreBuildCmds(ciJob,  applicationInfo, ciJob.getAppDirName(), projectId, continuousDelivery.getName());
+							CIJob job = setPreBuildCmds(ciJob,  applicationInfo, appDir, projectId, continuousDelivery.getName());
 							updateJob = ciManager.updateJob(job);
 							//						if(updateJob) {
 							tempJobs.add(ciJob);
@@ -278,7 +278,7 @@ public class CIService extends RestBase implements FrameworkConstants, ServiceCo
 					if(StringUtils.isNotEmpty(ciJob.getAppDirName())) {
 						applicationInfo = FrameworkServiceUtil.getApplicationInfo(ciJob.getAppDirName());
 					}
-					CIJob jobWithCmds = setPreBuildCmds(ciJob,  applicationInfo, ciJob.getAppDirName(), projectId, continuousDelivery.getName());
+					CIJob jobWithCmds = setPreBuildCmds(ciJob,  applicationInfo, appDir, projectId, continuousDelivery.getName());
 					boolean createJob = ciManager.createJob(jobWithCmds);
 					if(createJob) {
 						tempJobs.add(ciJob);
@@ -772,11 +772,12 @@ public class CIService extends RestBase implements FrameworkConstants, ServiceCo
 				job.setEnableArtifactArchiver(true);
 				// if the enable build release option is choosed in UI, the file pattenr value will be used
 				job.setCollabNetFileReleasePattern(CI_BUILD_EXT);
-
-				MojoProcessor mojo = new MojoProcessor(new File(FrameworkServiceUtil.getPhrescoPluginInfoFilePath(Constants.PHASE_CI, Constants.PHASE_PACKAGE, job.getAppDirName())));
-
-				//To get maven build arguments
-				parameters = FrameworkServiceUtil.getMojoParameters(mojo, Constants.PHASE_PACKAGE);
+				File phrescoPluginInfoFilePath = new File(FrameworkServiceUtil.getPhrescoPluginInfoFilePath(Constants.PHASE_CI, Constants.PHASE_PACKAGE, job.getAppDirName()));
+				if(phrescoPluginInfoFilePath.exists()) {
+					MojoProcessor mojo = new MojoProcessor(phrescoPluginInfoFilePath);
+					//To get maven build arguments
+					parameters = FrameworkServiceUtil.getMojoParameters(mojo, Constants.PHASE_PACKAGE);
+				}
 				ActionType actionType = ActionType.BUILD;
 				mvncmd =  actionType.getActionType().toString();
 
@@ -790,11 +791,12 @@ public class CIService extends RestBase implements FrameworkConstants, ServiceCo
 				buildPrebuildCmd = buildPrebuildCmd + FrameworkConstants.SPACE + HYPHEN_N;
 				preBuildStepCmds.add(buildPrebuildCmd);
 			} else if (DEPLOY.equals(operation)) {
-
-				MojoProcessor mojo = new MojoProcessor(new File(FrameworkServiceUtil.getPhrescoPluginInfoFilePath(Constants.PHASE_CI, Constants.PHASE_DEPLOY, job.getAppDirName())));
-
-				//To get maven build arguments
-				parameters = FrameworkServiceUtil.getMojoParameters(mojo, Constants.PHASE_DEPLOY);
+				File phrescoPluginInfoFilePath = new File(FrameworkServiceUtil.getPhrescoPluginInfoFilePath(Constants.PHASE_CI, Constants.PHASE_DEPLOY, job.getAppDirName()));
+				if (phrescoPluginInfoFilePath.exists()) {
+					MojoProcessor mojo = new MojoProcessor(phrescoPluginInfoFilePath);
+					//To get maven build arguments
+					parameters = FrameworkServiceUtil.getMojoParameters(mojo, Constants.PHASE_DEPLOY);
+				}
 				ActionType actionType = ActionType.DEPLOY;
 				mvncmd =  actionType.getActionType().toString();
 
@@ -837,11 +839,12 @@ public class CIService extends RestBase implements FrameworkConstants, ServiceCo
 //								sonarUrl = usingSonarUrl;
 				//				logo = logoImageString;
 				//				theme = themeColorJson;
-
-				MojoProcessor mojo = new MojoProcessor(new File(FrameworkServiceUtil.getPhrescoPluginInfoFilePath(Constants.PHASE_CI, Constants.PHASE_PDF_REPORT, job.getAppDirName())));
-
-				//To get maven build arguments
-				parameters = FrameworkServiceUtil.getMojoParameters(mojo, Constants.PHASE_PDF_REPORT);
+				File phrescoPluginInfoFilePath = new File(FrameworkServiceUtil.getPhrescoPluginInfoFilePath(Constants.PHASE_CI, Constants.PHASE_PDF_REPORT, job.getAppDirName()));
+				if (phrescoPluginInfoFilePath.exists()) {
+					MojoProcessor mojo = new MojoProcessor(phrescoPluginInfoFilePath);
+					//To get maven build arguments
+					parameters = FrameworkServiceUtil.getMojoParameters(mojo, Constants.PHASE_PDF_REPORT);
+				}
 				ActionType actionType = ActionType.PDF_REPORT;
 				mvncmd =  actionType.getActionType().toString();
 
@@ -854,11 +857,12 @@ public class CIService extends RestBase implements FrameworkConstants, ServiceCo
 				pdfPreBuildCmd = pdfPreBuildCmd + FrameworkConstants.SPACE + HYPHEN_N;
 				preBuildStepCmds.add(pdfPreBuildCmd);
 			} else if (CODE_VALIDATION.equals(operation)) {
-
-				MojoProcessor mojo = new MojoProcessor(new File(FrameworkServiceUtil.getPhrescoPluginInfoFilePath(Constants.PHASE_CI, Constants.PHASE_VALIDATE_CODE, job.getAppDirName())));
-
-				//To get maven build arguments
-				parameters = FrameworkServiceUtil.getMojoParameters(mojo, Constants.PHASE_VALIDATE_CODE);
+				File phrescoPluginInfoFilePath = new File(FrameworkServiceUtil.getPhrescoPluginInfoFilePath(Constants.PHASE_CI, Constants.PHASE_VALIDATE_CODE, job.getAppDirName()));
+				if (phrescoPluginInfoFilePath.exists()) {
+					MojoProcessor mojo = new MojoProcessor(phrescoPluginInfoFilePath);
+					//To get maven build arguments
+					parameters = FrameworkServiceUtil.getMojoParameters(mojo, Constants.PHASE_VALIDATE_CODE);
+				}
 				ActionType actionType = ActionType.CODE_VALIDATE;
 				mvncmd =  actionType.getActionType().toString();
 
@@ -871,11 +875,12 @@ public class CIService extends RestBase implements FrameworkConstants, ServiceCo
 				deployPreBuildCmd = deployPreBuildCmd + FrameworkConstants.SPACE + HYPHEN_N;
 				preBuildStepCmds.add(deployPreBuildCmd);
 			} else if (UNIT_TEST.equals(operation)) {
-
-				MojoProcessor mojo = new MojoProcessor(new File(FrameworkServiceUtil.getPhrescoPluginInfoFilePath(Constants.PHASE_CI, Constants.PHASE_UNIT_TEST, job.getAppDirName())));
-
-				//To get maven build arguments
-				parameters = FrameworkServiceUtil.getMojoParameters(mojo, Constants.PHASE_UNIT_TEST);
+				File phrescoPluginInfoFilePath = new File(FrameworkServiceUtil.getPhrescoPluginInfoFilePath(Constants.PHASE_CI, Constants.PHASE_UNIT_TEST, job.getAppDirName()));
+				if (phrescoPluginInfoFilePath.exists()) {
+					MojoProcessor mojo = new MojoProcessor(phrescoPluginInfoFilePath);
+					//To get maven build arguments
+					parameters = FrameworkServiceUtil.getMojoParameters(mojo, Constants.PHASE_UNIT_TEST);
+				}
 				ActionType actionType = ActionType.UNIT_TEST;
 				mvncmd =  actionType.getActionType().toString();
 
@@ -897,14 +902,16 @@ public class CIService extends RestBase implements FrameworkConstants, ServiceCo
 					}
 				}
 			} else if (FUNCTIONAL_TEST.equals(operation)) {
-
-				MojoProcessor mojo = new MojoProcessor(new File(FrameworkServiceUtil.getPhrescoPluginInfoFilePath(Constants.PHASE_CI, Constants.PHASE_FUNCTIONAL_TEST, job.getAppDirName())));
-				FrameworkUtil frameworkUtil = FrameworkUtil.getInstance();
-				String seleniumToolType = "";
-				seleniumToolType = frameworkUtil.getSeleniumToolType(appInfo);
-
-				//To get maven build arguments
-				parameters = FrameworkServiceUtil.getMojoParameters(mojo, Constants.PHASE_FUNCTIONAL_TEST + HYPHEN + seleniumToolType);
+				File phrescoPluginInfoFilePath = new File(FrameworkServiceUtil.getPhrescoPluginInfoFilePath(Constants.PHASE_CI, Constants.PHASE_FUNCTIONAL_TEST, job.getAppDirName()));
+				if (phrescoPluginInfoFilePath.exists()) {
+					MojoProcessor mojo = new MojoProcessor(phrescoPluginInfoFilePath);
+					FrameworkUtil frameworkUtil = FrameworkUtil.getInstance();
+					String seleniumToolType = "";
+					seleniumToolType = frameworkUtil.getSeleniumToolType(appInfo);
+	
+					//To get maven build arguments
+					parameters = FrameworkServiceUtil.getMojoParameters(mojo, Constants.PHASE_FUNCTIONAL_TEST + HYPHEN + seleniumToolType);
+				}
 				ActionType actionType = ActionType.FUNCTIONAL_TEST;
 				mvncmd =  actionType.getActionType().toString();
 				String functionalTestPrebuildCmd = CI_PRE_BUILD_STEP + " -Dgoal=" + Constants.PHASE_CI + " -Dphase=" + Constants.PHASE_FUNCTIONAL_TEST +
@@ -916,11 +923,12 @@ public class CIService extends RestBase implements FrameworkConstants, ServiceCo
 				functionalTestPrebuildCmd = functionalTestPrebuildCmd + FrameworkConstants.SPACE + HYPHEN_N;
 				preBuildStepCmds.add(functionalTestPrebuildCmd);
 			} else if (LOAD_TEST.equals(operation)) {
-
-				MojoProcessor mojo = new MojoProcessor(new File(FrameworkServiceUtil.getPhrescoPluginInfoFilePath(Constants.PHASE_CI, Constants.PHASE_LOAD_TEST, job.getAppDirName())));
-
-				//To get maven build arguments
-				parameters = FrameworkServiceUtil.getMojoParameters(mojo, Constants.PHASE_LOAD_TEST);
+				File phrescoPluginInfoFilePath = new File(FrameworkServiceUtil.getPhrescoPluginInfoFilePath(Constants.PHASE_CI, Constants.PHASE_LOAD_TEST, job.getAppDirName()));
+				if (phrescoPluginInfoFilePath.exists()) {
+					MojoProcessor mojo = new MojoProcessor(phrescoPluginInfoFilePath);
+					//To get maven build arguments
+					parameters = FrameworkServiceUtil.getMojoParameters(mojo, Constants.PHASE_LOAD_TEST);
+				}
 				ActionType actionType = ActionType.LOAD_TEST;
 				mvncmd =  actionType.getActionType().toString();
 
@@ -933,10 +941,12 @@ public class CIService extends RestBase implements FrameworkConstants, ServiceCo
 				loadTestPreBuildCmd = loadTestPreBuildCmd + FrameworkConstants.SPACE + HYPHEN_N;
 				preBuildStepCmds.add(loadTestPreBuildCmd);
 			} else if (PERFORMANCE_TEST_CI.equals(operation)) {
-				MojoProcessor mojo = new MojoProcessor(new File(FrameworkServiceUtil.getPhrescoPluginInfoFilePath(Constants.PHASE_CI, Constants.PHASE_PERFORMANCE_TEST, job.getAppDirName())));
-
-				//To get maven build arguments
-				parameters = FrameworkServiceUtil.getMojoParameters(mojo, Constants.PHASE_PERFORMANCE_TEST);
+				File phrescoPluginInfoFilePath = new File(FrameworkServiceUtil.getPhrescoPluginInfoFilePath(Constants.PHASE_CI, Constants.PHASE_PERFORMANCE_TEST, job.getAppDirName()));
+				if (phrescoPluginInfoFilePath.exists()) {
+					MojoProcessor mojo = new MojoProcessor(phrescoPluginInfoFilePath);
+					//To get maven build arguments
+					parameters = FrameworkServiceUtil.getMojoParameters(mojo, Constants.PHASE_PERFORMANCE_TEST);
+				}
 				ActionType actionType = ActionType.PERFORMANCE_TEST;
 				mvncmd =  actionType.getActionType().toString();
 
@@ -949,10 +959,12 @@ public class CIService extends RestBase implements FrameworkConstants, ServiceCo
 				performanceTestPreBuildCmd = performanceTestPreBuildCmd + FrameworkConstants.SPACE + HYPHEN_N;
 				preBuildStepCmds.add(performanceTestPreBuildCmd);
 			} else if (COMPONENT_TEST_CI.equals(operation)) {
-				MojoProcessor mojo = new MojoProcessor(new File(FrameworkServiceUtil.getPhrescoPluginInfoFilePath(Constants.PHASE_CI, Constants.PHASE_COMPONENT_TEST, job.getAppDirName())));
-
-				//To get maven build arguments
-				parameters = FrameworkServiceUtil.getMojoParameters(mojo, Constants.PHASE_COMPONENT_TEST);
+				File phrescoPluginInfoFilePath = new File(FrameworkServiceUtil.getPhrescoPluginInfoFilePath(Constants.PHASE_CI, Constants.PHASE_COMPONENT_TEST, job.getAppDirName()));
+				if (phrescoPluginInfoFilePath.exists()) {
+					MojoProcessor mojo = new MojoProcessor(phrescoPluginInfoFilePath);
+					//To get maven build arguments
+					parameters = FrameworkServiceUtil.getMojoParameters(mojo, Constants.PHASE_COMPONENT_TEST);
+				}
 				ActionType actionType = ActionType.COMPONENT_TEST;
 				mvncmd =  actionType.getActionType().toString();
 

@@ -282,6 +282,10 @@ define(["ci/listener/ciListener", "lib/jquery-tojson-1.0"], function() {
 				self.showHideRepoEvent.dispatch();
 			});
 			
+			$("input[name=name]").on("keypress keyup paste", function(e) {
+				this.value = this.value.replace(/[^a-zA-Z0-9]/g, '');
+			});
+
 			// show/hide upload types
    			$("input[name=enableUploadSettings]").unbind("click");
 			$("input[name=enableUploadSettings]").click(function() {

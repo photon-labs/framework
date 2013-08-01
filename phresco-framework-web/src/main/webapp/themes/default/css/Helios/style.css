@@ -3142,7 +3142,7 @@ html>body tbody.scrollContent {
 }
 
 .jobConfigure {
-	height: 390px;
+	height: auto;
     overflow-y: auto;
 }
 
