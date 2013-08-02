@@ -221,6 +221,12 @@
 	      "integrationtest"  :  "Integration Test"
 	  }
 	},
+	"manual" : {
+	  "label" : {
+	      "manualtest"  :  "Manual Test"
+	  }
+	},
+	
 	"testresult" : {
 	  "label" : {
 	      "testeddate" : "Tested Date",

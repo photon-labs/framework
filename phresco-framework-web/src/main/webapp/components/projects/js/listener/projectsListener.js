@@ -130,7 +130,7 @@ define([], function() {
 								self.effectFadeOut('poperror', (''));
 								$(".poperror").attr('data-i18n', 'project.errormessage.projecteditfailed');
 								self.renderlocales(commonVariables.basePlaceholder);
-							} else if(response.responseCode === "PHR210006") {
+							} else if(response.responseCode === "PHR210006") { 
 								$(".blinkmsg").removeClass("popsuccess").addClass("poperror");
 								self.effectFadeOut('poperror', (''));
 								$(".poperror").attr('data-i18n', 'project.errormessage.projectupdatefailed');
@@ -457,8 +457,8 @@ define([], function() {
 					self.hasError = true;		
 			    }else {		
 			    	$(".errmsg3").hide();
-				self.hasError=false;
-				return self.hasError;
+					self.hasError=false;
+					return self.hasError;
 				}		
 			
 			return self.hasError;	

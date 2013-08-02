@@ -78,7 +78,7 @@ define(["manualTest/listener/manualTestListener", "testResult/listener/testResul
 				Clazz.navigationController.jQueryContainer = $(commonVariables.contentPlaceholder).find('#testResult');
 				Clazz.navigationController.push(self.testResult, false);
 			});
-			
+			self.manualTestListener.createUploader();
 		},
 		
 		preRender: function(whereToRender, renderFunction) {
@@ -104,6 +104,7 @@ define(["manualTest/listener/manualTestListener", "testResult/listener/testResul
 				advanced:{ updateOnContentResize: true}
 			});
 			
+			//show manual TestSuite popup
 			$("#addTestSuite").click(function() {
 				self.openccpl(this, 'show_manualTestSuite_popup','');
 				$('#testSuiteId').focus();
@@ -113,21 +114,32 @@ define(["manualTest/listener/manualTestListener", "testResult/listener/testResul
 				}
 			});
 			
+			//show manual TestCase popup
 			$("#addTestCase").click(function() {
 				self.openccpl(this, 'show_manualTestCase_popup','');
 				var currentTestsuiteName = commonVariables.testSuiteName;
 				$('input[name=testSuiteName]').attr('value', currentTestsuiteName);
 			});
 			
-			$("a[class=edit]").click(function() {
-				self.openPopUpToEdit(this);
+			//show download template popup
+			$('#show_downloadTemplate_popup').click(function() {
+				self.openccpl(this, 'template_download','');
+			});	
+			
+			//download template
+			$('#downloadTemplate').click(function() {
+				var format = $('input[name="format"]:checked').val();
+				self.manualTestListener.downloadTemplate(format);
 			});
 			
+			//add testsuite 
 			$("input[name=saveTestSuite]").click(function() {
 				var testSuiteId = $('#testSuiteId').val();
 				self.addManualTestSuite.dispatch(testSuiteId);
 			});
 			
+			//add testcases to testsuite
+			$("input[name=saveTestCase]").unbind("click");
 			$("input[name=saveTestCase]").click(function() {
 				var testSuiteName = $('input[name=testSuiteName]').val();
 				self.addManualTestcase.dispatch(testSuiteName);

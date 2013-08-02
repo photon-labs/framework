@@ -7,6 +7,7 @@ define([], function() {
 		testResultListener : null,
 		mavenServiceListener : null,
 		manualRequestBody : null,
+		hasError: false,
 		
 		/***
 		 * Called in initialization time of this class 
@@ -63,7 +64,12 @@ define([], function() {
 				header.requestMethod = "POST";
 				header.requestPostBody = JSON.stringify(requestBody);
 				header.webserviceurl = commonVariables.webserviceurl + commonVariables.manual + '/testcases?testSuiteName=' + requestBody.testSuiteName + '&appDirName=' + appDirName;
-			} /*else if (action === "updateTestcase") {
+			} else if (action === "downloadTemplate") {
+				header.requestMethod = "GET";
+				header.webserviceurl = commonVariables.webserviceurl + "manual/manualTemplate?fileType="+requestBody.format;
+			} 
+			
+			/*else if (action === "updateTestcase") {
 				header.requestMethod = "PUT";
 				header.requestPostBody = JSON.stringify(requestBody);
 				header.webserviceurl = commonVariables.webserviceurl + commonVariables.manual + '/testcases?testSuiteName=aaaaaaa&appDirName=' + appDirName;
@@ -98,21 +104,64 @@ define([], function() {
 		
 		addManualTestSuite : function(testSuiteVal) {
 			var self = this, data = {};
-			data.testSuiteName = testSuiteVal;
-			self.manualRequestBody = data;
-			self.getManualTestReport(self.getActionHeader(self.manualRequestBody, "addTestSuite"), function(response) {
+			if(!self.validationTestSuite()) {
+				data.testSuiteName = testSuiteVal;
+				self.manualRequestBody = data;
+				self.getManualTestReport(self.getActionHeader(self.manualRequestBody, "addTestSuite"), function(response) {
+				});
+				commonVariables.navListener.onMytabEvent("manualTest");
+			}
+		},
+		
+		validationTestSuite : function() {
+			var self = this;
+			
+		    if($('#testSuiteId').val() === ""){
+				self.valid("#testSuiteId", "Testsuite Name");
+				self.hasError = true;
+		    } else {
+		    	self.hasError = false;
+		    } 
+	    	return self.hasError;
+		    	
+		},
+		
+		validationTestcase : function() {
+			var self = this;
+			
+			if ($('#featureId').val() === "") {
+		    	self.valid("#featureId", "Feature Name");
+		    	self.hasError = true;
+		    } else if ($('#testCaseId').val() === "") {
+		    	self.valid("#testCaseId", "Feature Name");
+		    	self.hasError = true;
+		    } else {
+		    	self.hasError = false;
+		    } 
+	    	return self.hasError;
+		    	
+		},
+		
+		
+		valid : function(item, msg) {
+			$(item).focus();
+			$(item).attr('placeholder', msg);
+			$(item).addClass("errormessage");
+			$(item).bind('keypress', function() {
+				$(this).removeClass("errormessage");
 			});
-			commonVariables.navListener.onMytabEvent("manualTest");
 		},
 		
 		addManualTestcase : function(testsuiteName) {
 			var self = this; data = {}, response = {};
-			data = $("#manualTestTestCaseForm").serializeObject();
-			self.manualRequestBody = data;
-			$("#show_manualTestCase_popup").toggle();
-			self.getManualTestReport(self.getActionHeader(self.manualRequestBody, "addTestcase"), function(response) {
-				self.testResultListener.onTestResultDesc(response);
-			});
+			if(!self.validationTestcase()) {
+				data = $("#manualTestTestCaseForm").serializeObject();
+				self.manualRequestBody = data;
+				$("#show_manualTestCase_popup").toggle();
+				self.getManualTestReport(self.getActionHeader(self.manualRequestBody, "addTestcase"), function(response) {
+					self.testResultListener.onTestResultDesc(response);
+				});
+			}
 		},
 		
 		updateManualTestcase : function(testcaseVal) {
@@ -123,10 +172,29 @@ define([], function() {
 			});
 		},
 		
+		createUploader : function() {     
+			var appDirName = commonVariables.api.localVal.getSession("appDirName");
+			var uploadFileUrl =commonVariables.webserviceurl + commonVariables.manual + '/uploadTemplate?appDirName=' + appDirName;
+            var uploader = new qq.FileUploader({
+                element: document.getElementById('manual_temp_upload'),
+                action: uploadFileUrl,
+				actionType : "manualTest",
+				appDirName : appDirName,
+				allowedExtensions : ['xls','xlsx'],
+				buttonLabel: "Upload File",
+				multiple: false,
+				debug: true
+            });           
+        },
+        
 		openPopUpToEdit : function(obj) {
 			self.openccpl(obj, 'show_manualTestCase_popup','');
+		},
+		
+		downloadTemplate : function(format) {
+			var downloadTemplateUrl = commonVariables.webserviceurl + commonVariables.manual + "/manualTemplate?fileType=" + format;
+			window.open(downloadTemplateUrl, '_self');
 		}
-
 	});
 
 	return Clazz.com.components.manualTest.js.listener.ManualTestListener;

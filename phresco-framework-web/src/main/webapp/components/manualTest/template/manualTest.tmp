@@ -1,9 +1,10 @@
-<section class="optiontitle qual_unit">
-	<div class="unit_text">Manual Test	</div>
-    <div class="flt_right">
+<section class="optiontitle qual_unit manualTemp">
+	<div class="unit_text" data-i18n="manual.label.manualtest"></div>
+	<div class="flt_right">
 		<div class="unit_view hideContent">
 			<div class="code_report_icon" id="pdfDiv">
-					<div class="icon_images"><a class="tooltiptop" title="" data-placement="bottom" data-toggle="tooltip" href="#" data-original-title="PDF Report" id="pdfIcon"><img src="themes/default/images/helios/pdf_icon_white.png" ></a>
+				<div class="icon_images">
+					<a class="tooltiptop" title="" data-placement="bottom" data-toggle="tooltip" href="#" data-original-title="PDF Report" id="pdfIcon"><img src="themes/default/images/helios/pdf_icon_white.png"></a>
 					<!--Pdf report popup starts here -->
 					<div id="pdf_report" class="dyn_popup hideContent">
 						<div id="noPdfReport" class="noReport"></div>
@@ -58,12 +59,10 @@
             	<a id="graphicalView" href="#"><img src="themes/default/images/helios/quality_graph_off.png" width="26" height="24" border="0" alt="">Graph View</a>
             </span>    
         </div>
-        
-        
-    <!--	<div class="icon_images"><a class="tooltiptop" title="" data-placement="bottom" data-toggle="tooltip" href="#" data-original-title="Open Folder" id="openFolder"><img src="themes/default/images/helios/openfolder_icon.png" ></a></div>-->
-	<!--	<div class="icon_images copy_path_icon" style="margin-right:2px;"><a class="tooltiptop" title="" data-placement="bottom" data-toggle="tooltip" href="#" data-original-title="Copy Path" id="copyPath"><img src="themes/default/images/helios/copypath_icon.png" ></a></div>-->
-            
+         
+		 
         <div class="unit_path">
+        <!--Add TestCase popup starts here -->
     		<input type="button" value="Add TestCase" id="addTestCase" name="show_manualTestCase_popup" class="btn btn_style" style="display:none">
 	            <div id="show_manualTestCase_popup" class="dyn_popup" style="display:none">
 		            <form id="manualTestTestCaseForm">
@@ -74,12 +73,12 @@
 										<input type="text" id="testSuiteName" placeholder="TestSuite Name" name="testSuiteName" value="">
 									</td>
 									<td>Features<sup>*</sup><br>
-										<input type="text" placeholder="Name of the Features" name="featureId" value="">
+										<input type="text" placeholder="Name of the Features" id="featureId" name="featureId" value="">
 									</td>
 								</tr>
 								<tr>
 									<td>TestCases<sup>*</sup><br>
-										<input type="text" placeholder="Name of the TestCases" name="testCaseId" value="">
+										<input type="text" placeholder="Name of the TestCases" name="testCaseId" id="testCaseId" value="">
 									</td>
 									<td>Status<br>
 										<select name="status">
@@ -117,19 +116,43 @@
 						</div>
 					</form>
 				</div>
+			<!--Add TestCase popup ends here -->
 				
-				<input type="button" value="Add TestSuite" id="addTestSuite" name="show_manualTestSuite_popup" class="btn btn_style">
+				<!--download popup starts here -->
+				<input type="button" value="Download" title="template download" id="show_downloadTemplate_popup" name="template_download" class="btn btn_style">
+					<div id="template_download" class="dyn_popup" style="display:none">
+						<form id="manualDownloadForm">
+							<ul>
+								<li>Select Format<br/></li>
+								<li>
+									<label><input type="radio" name="format" checked value="xls">.xls</label>
+									<label><input type="radio" name="format" value="xlsx">.xlsx</label>
+								</li>
+							</ul>
+							<div class="flt_right">
+								<input type="button" value="Download" id="downloadTemplate" class="btn btn_style">
+								<input type="button" value="Close" class="btn btn_style dyn_popup_close">
+							 </div>
+						</form>
+					</div>
+				<!--download popup ends here -->
+				
+				
+				
+				<!--Add TestSuite popup starts here -->
+				<input type="button" value="Add" title="Add Testsuite" id="addTestSuite" name="show_manualTestSuite_popup" class="btn btn_style">
 				<div id="show_manualTestSuite_popup" class="dyn_popup" style="display:none">
 					<form id="manualTestSuiteForm">
 						<table class="table node_table" cellpadding="0" cellspacing="0" border="0">
 							<tbody>
 								<tr>
-									<td style="vertical-align: middle;">Test Scenarios
+									<td style="vertical-align: middle;">Test Scenarios<sup>*</sup> &nbsp;&nbsp;
 									<input type="text" placeholder="TestSuite Name" name="testSuiteName" id="testSuiteId" ></td>
 								</tr>
 								<tr>
-									<td style="vertical-align: middle;">Upload Files
-									<input type="file" placeholder="TestSuite file" name=""></td>
+									<td style="vertical-align: middle;"><label class="uploadTemp" title="upload template">Upload</label>
+										<div id="manual_temp_upload" class="file-uploader"><noscript><p>Please enable JavaScript to use file uploader.</p><!-- or put a simple form for upload here --></noscript>  </div>
+									</td>
 								</tr>
 							</tbody>
 						</table>
@@ -139,9 +162,11 @@
 						</div>
 					</form>
 				</div>
+				<!--Add TestSuite popup ends here -->
+				
         </div>
-        
-   </div>
+	</div>	
+		
 </section>
 
-<div class="mainContent" id="testResult"></div>
+<div class="mainContent manualTemp" id="testResult"></div>
