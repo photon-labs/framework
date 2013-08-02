@@ -80,12 +80,12 @@
 	
 	<WebService desc="" name="webservice">
             <protocol>http</protocol>
-            <host>localhost</host>
-            <port>8080</port>
+            <host>phresco.photoninfotech.com</host>
+            <port>80</port>
             <username/>
             <password/>
-            <context>service-testing</context>
-	    <additional_context>/rest/api</additional_context>
+            <context>service</context>
+	    <additional_context>/v-2.3.1/rest/api</additional_context>
         </WebService>
         
         <Other appliesTo="tech-html5-widget" desc="" name="Apikey">
