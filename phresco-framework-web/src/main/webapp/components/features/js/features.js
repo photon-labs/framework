@@ -138,6 +138,7 @@ define(["features/listener/featuresListener"], function() {
 						$("#version_"+this.moduleId).show();					
 					});
 				});
+				
 			}
 			setTimeout(function(){
 					self.selectedCount();
@@ -332,6 +333,7 @@ define(["features/listener/featuresListener"], function() {
 				});				
 				
 				self.featuresListener.getFeaturesUpdate(self.featuresListener.getRequestHeader(self.featureUpdatedArray, "UPDATE", ""), function(response) {
+					self.selectedCount();
 					}); 
 			});
 			self.windowResize();

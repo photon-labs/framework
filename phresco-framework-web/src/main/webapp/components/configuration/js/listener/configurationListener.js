@@ -308,7 +308,7 @@ define(["croneExpression/croneExpression"], function() {
 						inputCtrl = inputCtrl.concat("</select></td>");
 						
 					} else if (type === "Password") {
-						inputCtrl = '<input value="'+ configValue +'" class="'+configTemplate.name+self.count+'Configuration" name="'+key+'" mandatory="'+required+'" type="password" placeholder=""/>';
+						inputCtrl = '<input value="'+ configValue +'" class="'+configTemplate.name+self.count+'Configuration" name="'+key+'" mandatory="'+required+'" type="password" temp="'+configTemplate.name+key+self.count+'" placeholder=""/>';
 					} else if (type === "FileType") {
 						inputCtrl = '<div id="file-uploader'+currentConfig+'" class="file-uploader" propTempName="'+key+'"><noscript><p>Please enable JavaScript to use file uploader.</p><!-- or put a simple form for upload here --></noscript>  </div>';
 						fCheck = true;
