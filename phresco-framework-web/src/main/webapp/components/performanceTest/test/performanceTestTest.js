@@ -258,6 +258,7 @@ define(["performanceTest/performanceTest"], function(PerformanceTest) {
 			module("PerformanceTest.js");
 			var performanceTest = new PerformanceTest(), self = this;
 			asyncTest("Render Performance PDF popup and Existing PDF list test", function() {
+				$.mockjaxClear();
 				$.mockjax({
 				  url: commonVariables.webserviceurl+"pdf/showPopUp?appDirName=PF_TEST_PHP&fromPage=performance",
 				  type: "GET",
@@ -269,7 +270,7 @@ define(["performanceTest/performanceTest"], function(PerformanceTest) {
 				  }
 				});
 				commonVariables.api.localVal.setSession("appDirName" , "PF_TEST_PHP");
-				$('#performancePdf').click();
+				$('.performancePDF').click();
 				setTimeout(function() {
 					start();
 					equal($(commonVariables.contentPlaceholder).find("#pdf_report").css("display"), 'block', 'Show PDF popup test');
@@ -387,9 +388,38 @@ define(["performanceTest/performanceTest"], function(PerformanceTest) {
 				setTimeout(function() {
 					start();
 					equal($(commonVariables.contentPlaceholder).find('.devicesOption').length, 3, "Device list Dropdown test");
-					self.runGraphBasedOnChangeEvent(performanceTest);
+					// self.runDeviceChangeEvent(performanceTest);
+					require(["loadTestTest"], function(loadTestTest){
+						loadTestTest.runTests();
+					});
 				}, 1500);
 			});
+		},
+
+		runDeviceChangeEvent : function (performanceTest) {
+			module("PerformanceTest.js");
+			var performanceTest = new PerformanceTest(), self = this;
+			asyncTest("Device change event test", function() {
+				$.mockjax({
+				  url: commonVariables.webserviceurl+commonVariables.qualityContext+"/"+commonVariables.performanceTestResults+"?appDirName=native_none-androidnative&testAgainst=&resultFileName=Sample.xml&deviceId=emulator-5554&showGraphFor=responseTime",
+				  type: "GET",
+				  dataType: "json",
+				  contentType: "application/json",
+				  status: 200,
+				  response : function() {
+					  this.responseText = JSON.stringify({"message":"Parameter returned successfully","exception":null,"responseCode":null,"data":{"perfromanceTestResult":[{"totalBytes":0.0,"max":12511,"throughtPut":0.1,"min":12511,"avg":12511.0,"noOfSamples":1,"times":[12511],"totalTime":12511,"err":0.0,"maxTs":1.337315718E12,"lastTime":12511,"minTs":1.337315718E12,"avgBytes":0.0,"kbPerSec":0.0,"stdDev":0.0,"totalStdDev":0.0,"totalThroughput":0.0,"label":"SSSandroidMani"}],"graphData":"[12511.0]","graphAlldata":"[], [], []","aggregateResult":{"error":"0.00","max":12511,"min":12511,"avgBytes":0.0,"stdDev":0.0,"average":12511.0,"throughput":0.1,"kb":0.0,"sample":1},"totalStdDev":0.0,"totalThroughput":0.0,"graphFor":"responseTime","label":"['SSSandroidMani']","images":[]},"status":null});
+				  }
+				});
+				$(commonVariables.contentPlaceholder).find('#deviceDropDown').attr("value", "emulator-5551");
+				commonVariables.api.localVal.setSession("appDirName" , "native_none-androidnative");					
+				performanceTest.deviceChangeEvent($(commonVariables.contentPlaceholder).find('#deviceDropDown').parent().find('a[deviceid=emulator-5554]'));
+				
+				setTimeout(function() {
+					start();
+					equal($(commonVariables.contentPlaceholder).find('#deviceDropDown').attr("value"), "emulator-5554", "Device list Dropdown change event test");
+					self.runGraphBasedOnChangeEvent(performanceTest);
+				}, 500);
+			});	
 		},
 
 		runGraphBasedOnChangeEvent : function (performanceTest) {
@@ -412,7 +442,8 @@ define(["performanceTest/performanceTest"], function(PerformanceTest) {
 				setTimeout(function() {
 					start();
 					equal($(commonVariables.contentPlaceholder).find('#graphView').find('.performanceGraphNav').find('#graphForDrop').attr("value"),"all","GraphFor dropdown change event test");
-				}, 500);
+					
+				}, 800);
 			});
 		},
 	};

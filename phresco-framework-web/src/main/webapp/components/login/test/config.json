@@ -200,17 +200,27 @@
 			"moduleName":"performanceTest",
 			"path" : "components/performanceTest/js"
 		},
-
-		"performanceTest" : {
-			"moduleName":"performanceTest",
-			"path" : "components/performanceTest/js"
-		},
 		
 		"performanceTestTest" : {
 			"moduleName":"performanceTestTest",
 			"path" : "components/performanceTest/test/performanceTestTest"
 		},
-		
+
+		"loadTest" : {
+			"moduleName":"loadTest",
+			"path" : "components/loadTest/js"
+		},
+
+		"loadTestTest" : {
+			"moduleName":"loadTestTest",
+			"path" : "components/loadTest/test/loadTestTest"
+		},
+
+		"performanceLoadListener" : {
+			"moduleName" : "performanceLoadListener",
+			"path" : "components/performanceLoadListener/js"
+		},
+
 		"dynamicPage" : {
 			"moduleName":"dynamicPage",
 			"path" : "components/dynamicPage/js"

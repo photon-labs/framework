@@ -822,9 +822,9 @@ public class ParameterService extends RestBase implements FrameworkConstants, Se
 					String performanceUploadJmxDir = FrameworkServiceUtil.getPerformanceUploadJmxDir(appDirName);
 					finalOuptut = uploadFileForPerformanceLoad(request, appDirName, inputStream, performanceTestDir, performanceUploadJmxDir,uploadedFileName);
 				} else if (Constants.PHASE_LOAD_TEST.equals(request.getHeader("goal"))) {
-//					String loadTestDir = frameworkUtil.getLoadTestDir(applicationInfo);
-//					String loadUploadJmxDir = frameworkUtil.getLoadUploadJmxDir(applicationInfo);
-//					uploadFileForPerformanceLoad(writer, applicationInfo, is, loadTestDir, loadUploadJmxDir,uploadedFileName);
+					String loadTestDir = FrameworkServiceUtil.getLoadTestDir(appDirName);
+					String loadUploadJmxDir = FrameworkServiceUtil.getLoadUploadJmxDir(appDirName);
+					finalOuptut = uploadFileForPerformanceLoad(request, appDirName, inputStream, loadTestDir, loadUploadJmxDir,uploadedFileName);
 				}
 			}
 			return Response.ok(finalOuptut).header(ACCESS_CONTROL_ALLOW_ORIGIN, ALL_HEADER).build();

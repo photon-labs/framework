@@ -1625,6 +1625,8 @@ public class QualityService extends RestBase implements ServiceConstants, Framew
 			String testDir = "";
 			if (PERFORMACE.equals(from)) {
 				testDir = FrameworkServiceUtil.getPerformanceTestDir(appDirName);
+			} else {
+				testDir = FrameworkServiceUtil.getLoadTestDir(appDirName);
 			}
 			
 			StringBuilder sb = new StringBuilder(FrameworkServiceUtil.getApplicationHome(appDirName));
@@ -1671,7 +1673,7 @@ public class QualityService extends RestBase implements ServiceConstants, Framew
 	@Path(REST_API_PERFORMANCE_RESULTS)
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response performanceTestResults(@QueryParam(REST_QUERY_APPDIR_NAME) String appDirName, @QueryParam(REST_QUERY_TEST_AGAINST) String testAgainst , 
-			@QueryParam(REST_QUERY_RESULT_FILE_NAME) String resultFileName, @QueryParam(REST_QUERY_DEVICE_ID) String deviceId, @QueryParam(REST_QUERY_SHOW_GRAPH_FOR) String showGraphFor) {
+			@QueryParam(REST_QUERY_RESULT_FILE_NAME) String resultFileName, @QueryParam(REST_QUERY_DEVICE_ID) String deviceId, @QueryParam(REST_QUERY_SHOW_GRAPH_FOR) String showGraphFor, @QueryParam("from") String from) {
 		ResponseInfo<List<PerformanceTestResult>> responseData = new ResponseInfo<List<PerformanceTestResult>>();
 		PerformancResultInfo performanceResultInfo = null;
 		 StringBuilder graphData = new StringBuilder("[");
@@ -1684,7 +1686,7 @@ public class QualityService extends RestBase implements ServiceConstants, Framew
             ApplicationInfo appInfo = FrameworkServiceUtil.getApplicationInfo(appDirName);
             String techId = appInfo.getTechInfo().getId();
             if (StringUtils.isNotEmpty(resultFileName)) {
-            	String testResultPath = getLoadOrPerformanceTestResultPath(appDirName, testAgainst, resultFileName, Constants.PHASE_PERFORMANCE_TEST);
+            	String testResultPath = getLoadOrPerformanceTestResultPath(appDirName, testAgainst, resultFileName, from);
                 Document document = getDocument(new File(testResultPath)); 
                 performanceResultInfo = QualityUtil.getPerformanceReport(document, techId, deviceId);
                 List<PerformanceTestResult> perfromanceTestResult = performanceResultInfo.getPerfromanceTestResult();
@@ -1723,7 +1725,11 @@ public class QualityService extends RestBase implements ServiceConstants, Framew
             }
             List<String> screenShots = new ArrayList<String>();
             if (StringUtils.isNotEmpty(testAgainst)) {
-            	screenShots = getScreenShot(testAgainst, resultFileName, appDirName, PERFORMACE);
+            	if (Constants.PHASE_PERFORMANCE_TEST.equals(from)) {
+            		screenShots = getScreenShot(testAgainst, resultFileName, appDirName, PERFORMACE);
+            	} else {
+            		screenShots = getScreenShot(testAgainst, resultFileName, appDirName, LOAD);
+            	}
             }
             performanceResultInfo.setGraphData(graphData.toString());
             performanceResultInfo.setLabel(label.toString());
@@ -1752,7 +1758,6 @@ public class QualityService extends RestBase implements ServiceConstants, Framew
         	} else {
         		reportDir = FrameworkServiceUtil.getLoadTestReportDir(appDirName);
         	}
-	        
 	        //To change the dir_type based on the selected type
 	        Pattern p = Pattern.compile(TEST_DIRECTORY);
 	        Matcher matcher = p.matcher(reportDir);
@@ -1820,6 +1825,7 @@ public class QualityService extends RestBase implements ServiceConstants, Framew
             	testResultFiles = testResultFiles(appDirName, testAgainsts, false, Constants.PHASE_LOAD_TEST);
             }
             
+            loadMap.put(TEST_AGAINSTS, testAgainsts);
             loadMap.put(RESULT_AVAILABLE, resutlAvailable);
             loadMap.put(TEST_RESULT_FILES, testResultFiles);
             

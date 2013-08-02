@@ -111,6 +111,16 @@
 			"path" : "../components/performanceTest/js"
 		},
 
+		"loadTest" : {
+			"moduleName" : "loadTest",	
+			"path" : "../components/loadTest/js"
+		},
+
+		"performanceLoadListener" : {
+			"moduleName" : "performanceLoadListener",
+			"path" : "../components/performanceLoadListener/js"
+		},
+
 		"ci" : {
 			"moduleName":"ci",
 			"path" : "../components/ci/js"

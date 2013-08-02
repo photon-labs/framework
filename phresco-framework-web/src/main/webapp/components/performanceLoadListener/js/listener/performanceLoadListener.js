@@ -1,8 +1,8 @@
 define(["lib/jquery-tojson-1.0",'lib/RGraph_common_core-1.0','lib/RGraph_common_tooltips-1.0','lib/RGraph_common_effects-1.0','lib/RGraph_pie-1.0','lib/RGraph_bar-1.0','lib/RGraph_line-1.0','lib/RGraph_common_key-1.0'], function() {
 
-	Clazz.createPackage("com.components.performanceTest.js.listener");
+	Clazz.createPackage("com.components.performanceLoadListener.js.listener");
 
-	Clazz.com.components.performanceTest.js.listener.PerformanceTestListener = Clazz.extend(Clazz.WidgetWithTemplate, {
+	Clazz.com.components.performanceLoadListener.js.listener.PerformanceLoadListener = Clazz.extend(Clazz.WidgetWithTemplate, {
 		
 		dynamicpage : null,
 		dynamicPageListener : null,
@@ -56,10 +56,13 @@ define(["lib/jquery-tojson-1.0",'lib/RGraph_common_core-1.0','lib/RGraph_common_
 				dataType: "json",
 				webserviceurl: ''
 			};
-			
+			var fromAction = $('.testingType').val();
 			var userInfo = JSON.parse(commonVariables.api.localVal.getSession('userInfo'));
-			var userId = userInfo.id;		
-			if(action === "resultAvailable") {
+			var userId = userInfo.id;	
+			if (action === "loadResultAvailable") {
+				header.requestMethod = "GET";
+				header.webserviceurl = commonVariables.webserviceurl + commonVariables.qualityContext + "/" + commonVariables.load + "?appDirName="+appDirName;				
+			} else if(action === "resultAvailable") {
 				header.requestMethod = "GET";
 				header.webserviceurl = commonVariables.webserviceurl + commonVariables.qualityContext + "/" + commonVariables.performance + "?appDirName="+appDirName;				
 			} else if (action === "getTestResults") {
@@ -71,39 +74,35 @@ define(["lib/jquery-tojson-1.0",'lib/RGraph_common_core-1.0','lib/RGraph_common_
 					testAgainst = requestBody.testAgainsts[0];
 				} 
 				
-				if (requestBody.devices.length !== 0) {
+				if (!self.isBlank(requestBody.device) && requestBody.devices.length !== 0) {
 					deviceId = requestBody.devices[0].split("#SEP#")[0];
 				}
 
 				header.requestMethod = "GET";
 				header.webserviceurl = commonVariables.webserviceurl + commonVariables.qualityContext + "/" + commonVariables.performanceTestResults + "?appDirName="+appDirName+
-					"&testAgainst=" + testAgainst + "&resultFileName=" + resultFileName + "&deviceId=" + deviceId + "&showGraphFor=responseTime&from=performance-test";
+					"&testAgainst=" + testAgainst + "&resultFileName=" + resultFileName + "&deviceId=" + deviceId + "&showGraphFor=responseTime&from=" + requestBody.from;
 			} else if (action === "getTestResultsOnChange") {
 				var testAgainst = requestBody.testAgainst;
 				var resultFileName = requestBody.resultFileName;
 				var showGraphFor = requestBody.showGraphFor;
 				var deviceId = requestBody.deviceId;
-				
 				header.requestMethod = "GET";
 				header.webserviceurl = commonVariables.webserviceurl + commonVariables.qualityContext + "/" + commonVariables.performanceTestResults + "?appDirName="+appDirName+
-					"&testAgainst=" + testAgainst + "&resultFileName=" + resultFileName + "&deviceId=" + deviceId + "&showGraphFor=" + showGraphFor+"&from="+requestBody.from;
+					"&testAgainst=" + testAgainst + "&resultFileName=" + resultFileName + "&deviceId=" + deviceId + "&showGraphFor=" + showGraphFor +"&from=" +fromAction;
 			} else if (action === "getfiles") {
 				header.requestMethod = "POST";
 				header.requestPostBody = requestBody;				
-				header.webserviceurl = commonVariables.webserviceurl + commonVariables.qualityContext + "/testResultFiles?actionType=performance-test&appDirName="+appDirName;				
+				header.webserviceurl = commonVariables.webserviceurl + commonVariables.qualityContext + "/testResultFiles?actionType="+fromAction+"&appDirName="+appDirName;				
 			} else if (action === "getPdfReports") {
 				header.requestMethod = "GET";
-				header.webserviceurl = commonVariables.webserviceurl + "pdf/showPopUp?appDirName=" + appDirName + "&fromPage=performance";
+				header.webserviceurl = commonVariables.webserviceurl + "pdf/showPopUp?appDirName=" + appDirName + "&fromPage="+requestBody.from;
 			} else if (action === "generatePdfReport") {
 				var data = $('#pdfReportForm').serialize();
 				header.requestMethod = "POST";
 				header.webserviceurl = commonVariables.webserviceurl + "app/printAsPdf?appDirName=" + appDirName + "&" + data + "&userId=" + userId;
 			} else if (action === "deletePdfReport") {
 				header.requestMethod = "DELETE";
-				header.webserviceurl = commonVariables.webserviceurl + "pdf/deleteReport?appDirName=" + appDirName + "&fromPage=performance" + "&reportFileName=" + requestBody.fileName;
-			} else if(action === "downloadPdfReport") {
-				header.requestMethod = "GET";
-				header.webserviceurl = commonVariables.webserviceurl + "pdf/downloadReport?appDirName="+appDirName+"&reportFileName="+requestBody.fileName+"&fromPage=performance";		
+				header.webserviceurl = commonVariables.webserviceurl + "pdf/deleteReport?appDirName=" + appDirName + "&fromPage="+ requestBody.from + "&reportFileName=" + requestBody.fileName;
 			} else if(action === "getDevices") {
 				header.requestMethod = "GET";
 				header.webserviceurl = commonVariables.webserviceurl + commonVariables.qualityContext + "/devices?appDirName="+appDirName+"&resultFileName="+requestBody.resultFileName;
@@ -112,7 +111,7 @@ define(["lib/jquery-tojson-1.0",'lib/RGraph_common_core-1.0','lib/RGraph_common_
 			return header;
 		},
 		
-		getPerformanceTestReportOptions : function(header, whereToRender, callback) {
+		getTestReportOptions : function(header, whereToRender, callback) {
 			var self = this;
 			try {
 				commonVariables.api.ajaxRequest(header, function(response) {
@@ -127,6 +126,31 @@ define(["lib/jquery-tojson-1.0",'lib/RGraph_common_core-1.0','lib/RGraph_common_
 					callback({"status" : "service failure"});
 				});
 			} catch (exception) {
+			}
+		},
+
+		renderLoadTemplate  : function(response, renderFunction, whereToRender, callback) {
+			var self = this, responseData = response.data;
+			var loadTestOptions = {};
+			loadTestOptions.testAgainsts = responseData.testAgainsts;
+			loadTestOptions.resultAvailable = responseData.resultAvailable;
+			loadTestOptions.testResultFiles = responseData.testResultFiles;
+			loadTestOptions.from = "load-test";
+			var userPermissions = JSON.parse(commonVariables.api.localVal.getSession('userPermissions'));
+			loadTestOptions.userPermissions = userPermissions;
+			renderFunction(loadTestOptions, whereToRender);
+			if (loadTestOptions.testAgainsts.length !== 0 && !self.isBlank(loadTestOptions.testResultFiles) && loadTestOptions.testResultFiles.length !== 0) {
+				self.getTestResults(self.getActionHeader(loadTestOptions, "getTestResults"), function(response) {
+					var resultData = response.data;
+					if (resultData.perfromanceTestResult.length > 0) {
+						self.constructResultTable(resultData, whereToRender);
+						self.drawChart(resultData);
+						self.showScreenShot(resultData.images);
+					}
+					if (callback !== undefined) {
+						callback();
+					}
+				});
 			}
 		},
 
@@ -331,27 +355,28 @@ define(["lib/jquery-tojson-1.0",'lib/RGraph_common_core-1.0','lib/RGraph_common_
 		},
 
 		//To generate the pdf report
-		generatePdfReport : function() {
+		generatePdfReport : function(from) {
 			var self = this;
 			var requestBody = {};
 			self.performAction(self.getActionHeader(requestBody, "generatePdfReport"), function(response) {
 				if (response.status === "success") {
-					self.getPdfReports();
+					self.getPdfReports(from);
 				}
 			});
 		},
 
 		//To get the existing pdf reports
-		getPdfReports : function() {
+		getPdfReports : function(from) {
 			var self = this;
 			var requestBody = {};
+			requestBody.from = from;
 			self.performAction(self.getActionHeader(requestBody, "getPdfReports"), function(response) {
-				self.listPdfReports(response);
+				self.listPdfReports(response, from);
 			});
 		},
 
 			//To list the generated PDF reports
-		listPdfReports : function(pdfReports) {
+		listPdfReports : function(pdfReports, from) {
 			var self = this;
 			var content = "";
 			if (pdfReports !== undefined && pdfReports !== null && pdfReports.length > 0) {
@@ -361,10 +386,10 @@ define(["lib/jquery-tojson-1.0",'lib/RGraph_common_core-1.0','lib/RGraph_common_
 				for (var i = 0; i < pdfReports.length; i++) {
 					content = content.concat('<tr class="generatedRow"><td>' + pdfReports[i].time + '</td>');
 					content = content.concat('<td>' + pdfReports[i].type + '</td>');
-					content = content.concat('<td><a class="tooltiptop donloadPdfReport" fileName="' + pdfReports[i].fileName + '" href="#"');
+					content = content.concat('<td><a class="tooltiptop donloadPdfReport" from="'+from+'" fileName="' + pdfReports[i].fileName + '" href="#"');
 					content = content.concat(' data-toggle="tooltip" data-placement="top" name="downLoad" data-original-title="Download Pdf" title="">');
 					content = content.concat('<img src="themes/default/images/helios/download_icon.png" width="15" height="18" border="0" alt="0"></a></td>');
-					content = content.concat('<td><a class="tooltiptop deletePdf" fileName="' + pdfReports[i].fileName + '" href="#"');
+					content = content.concat('<td><a class="tooltiptop deletePdf" from="'+from+'" fileName="' + pdfReports[i].fileName + '" href="#"');
 					content = content.concat(' data-toggle="tooltip" data-placement="top" name="delete" data-original-title="Delete Pdf" title="">');
 					content = content.concat('<img src="themes/default/images/helios/delete_row.png" width="14" height="18" border="0" alt="0"></a></td></tr>');
 				}
@@ -384,11 +409,13 @@ define(["lib/jquery-tojson-1.0",'lib/RGraph_common_core-1.0','lib/RGraph_common_
 			var self = this;
 			$('.deletePdf').on("click", function() {
 				$('#pdfReportLoading').show();
+				var from = $(this).attr('from');
 				var requestBody = {};
 				requestBody.fileName = $(this).attr('fileName');
+				requestBody.from = from;
 				self.performAction(self.getActionHeader(requestBody, "deletePdfReport"), function(response) {
 					if (response.status === "success" ) {
-						self.getPdfReports();
+						self.getPdfReports(from);
 					}
 				});
 			});
@@ -397,8 +424,8 @@ define(["lib/jquery-tojson-1.0",'lib/RGraph_common_core-1.0','lib/RGraph_common_
 		downloadPdfReport : function () {
 			var self = this;
 			$('.donloadPdfReport').on("click", function() {
-				var fileName = $(this).attr("fileName"), appDirName = commonVariables.api.localVal.getSession("appDirName");
-				var pdfDownloadUrl = commonVariables.webserviceurl + "pdf/downloadReport?appDirName="+appDirName+"&reportFileName="+fileName+"&fromPage=performance";
+				var fileName = $(this).attr("fileName"), from=$(this).attr("from"), appDirName = commonVariables.api.localVal.getSession("appDirName");
+				var pdfDownloadUrl = commonVariables.webserviceurl + "pdf/downloadReport?appDirName="+appDirName+"&reportFileName="+fileName+"&fromPage="+from;
 				window.open(pdfDownloadUrl, '_self');
 			});
 		},
@@ -445,7 +472,7 @@ define(["lib/jquery-tojson-1.0",'lib/RGraph_common_core-1.0','lib/RGraph_common_
 			} else {
 				reqData.showGraphFor = showGraphFor;
 			}
-			reqData.from = "performance-test";
+
 			self.getTestResults(self.getActionHeader(reqData, "getTestResultsOnChange"), function(response) {
 				if(response.message === "Parameter returned successfully"){
 					var resultData = response.data;
@@ -534,7 +561,7 @@ define(["lib/jquery-tojson-1.0",'lib/RGraph_common_core-1.0','lib/RGraph_common_
 			var self = this;
 			var resultTable = "";
 			var totalValue = resultData.length, NoOfSample = 0, avg = 0, min = 0, max = 0, StdDev = 0, Err = 0, KbPerSec = 0, sumOfBytes = 0;
-			resultTable += '<div class="fixed-table-container"><div class="header-background"></div><div class="fixed-table-container-inner"><table cellspacing="0" cellpadding="0" border="0" class="table-hover table table-striped table_border table-bordered" id="testResultTable">'+
+			resultTable += '<div class="fixed-table-container"><div class="header-background"></div><div class="fixed-table-container-inner"><table cellspacing="0" cellpadding="0" border="0" class="table table-striped table_border table-bordered" id="testResultTable">'+
 						  '<thead class="height_th"><tr><th><div class="th-inner">Label</div></th><th><div class="th-inner">Samples</div></th><th><div class="th-inner">Averages</div></th><th><div class="th-inner">Min</div></th><th><div class="th-inner">Max</div></th><th><div class="th-inner">Std.Dev</div></th><th><div class="th-inner">Error %</div></th><th><div class="th-inner">Throughput /sec </div></th>' +
 						  '<th><div class="th-inner">KB / sec</div></th><th><div class="th-inner">Avg.Bytes</div></th></tr></thead><tbody>';	
 			$.each(resultData.perfromanceTestResult, function(index, value) {
@@ -644,28 +671,68 @@ define(["lib/jquery-tojson-1.0",'lib/RGraph_common_core-1.0','lib/RGraph_common_
 			}
 		},
 
+		preTriggerloadTest : function () {
+			var self = this, testBasis = "", testAgainst = "", redirect = true, jsonString = "";
+			testBasis = $("#testBasis").val();
+			testAgainst = $("#testAgainst").val();
+			//if test is triggered against parameters
+			if (testAgainst !== undefined && testBasis !== undefined && testBasis === "parameters") {
+				//call template mandatory fn for server or webservice
+				redirect = self.loadContextUrlsMandatoryVal();
+			} 
+			if (redirect) {
+				self.constructLoadTestJson();
+			}
+		}, 
+
+		constructLoadTestJson : function () {
+			var self = this, formJsonStr = JSON.stringify($('#loadForm').serializeObject()), templJsonStr = "", testBasis = $("#testBasis").val(), testAgainst = $("#testAgainst").val();
+			if (!self.isBlank(testBasis) && !self.isBlank(testAgainst) && testBasis === "parameters") {
+				templJsonStr = self.contextUrls();
+				formJsonStr = formJsonStr.slice(0,formJsonStr.length-1);
+				formJsonStr = formJsonStr + ',' + templJsonStr + '}';
+			}
+			var json = JSON.parse('{' + templJsonStr + '}');
+			self.executeTest($('#loadForm').serialize(), json, 'load', $("#loadPopup"),function(response) {
+				commonVariables.api.localVal.setSession('loadConsole', $('#testConsole').html());
+				$('.progress_loading').hide();
+				commonVariables.navListener.onMytabEvent(commonVariables.loadTest);
+			});
+		},
+
 		triggerPerformanceTest : function () {
 			var self = this, jsonString = "";
 			self.constructInputsAsJson();
 		},
 
-		executeTest : function (queryString, json, callback) {
-			queryString = queryString.concat("&testAction=performance");
+		executeTest : function (queryString, json, testAction, popupObj, callback) {
+			queryString = queryString.concat("&testAction=" +testAction);
 			var self = this, appInfo = commonVariables.api.localVal.getJson('appdetails');
-			$("#performancePopup").toggle();
+			popupObj.toggle();
 			self.openConsole();
 			if(appInfo !== null){
 				queryString +=	'&customerId='+ self.getCustomer() +'&appId='+ appInfo.data.appInfos[0].id +'&projectId=' + appInfo.data.id + '&username=' + commonVariables.api.localVal.getSession('username');
 			}
-			if(self.mavenServiceListener === null)	{
+			self.callMavenService(queryString, json, testAction, callback);
+		},
+
+		callMavenService : function (queryString, json, testAction, callback) {
+			var self = this; 
+			if (self.mavenServiceListener === null) {
 				commonVariables.navListener.getMyObj(commonVariables.mavenService, function(retVal){
 					self.mavenServiceListener = retVal;
-					self.mavenServiceListener.mvnPerformanceTest(queryString, '#testConsole', json, function(response){
-						callback(response);
-					});
+					self.execute(retVal, queryString, json, testAction, callback);
 				});
-			}else{
-				self.mavenServiceListener.mvnPerformanceTest(queryString, '#testConsole', json, function(response){
+			}
+		},
+
+		execute : function (mavenService, queryString, postBody, testAction, callback) {
+			if ('load' === testAction) {
+				mavenService.mvnLoadTest(queryString, '#testConsole', postBody, function(response){
+					callback(response);
+				});
+			} else {
+				mavenService.mvnPerformanceTest(queryString, '#testConsole', postBody, function(response){
 					callback(response);
 				});
 			}
@@ -705,6 +772,26 @@ define(["lib/jquery-tojson-1.0",'lib/RGraph_common_core-1.0','lib/RGraph_common_
 			});
 			return redirect;
 		},
+
+		loadContextUrlsMandatoryVal : function () {
+			var self = this, redirect = true;
+			$('.contextDivClass').each(function() {
+				if (self.isBlank($(this).find($('input[name=httpName]')).val())) {
+					redirect = false;
+					$(this).find($('input[name=httpName]')).val('');
+					$(this).find($('input[name=httpName]')).focus();
+					$(this).find($('input[name=httpName]')).attr('placeholder','Http name is missing');
+					$(this).find($('input[name=httpName]')).addClass("errormessage");
+				} else if (self.isBlank($(this).find($('input[name=context]')).val())) {
+					redirect = false;
+					$(this).find($('input[name=context]')).val('');
+					$(this).find($('input[name=context]')).focus();
+					$(this).find($('input[name=context]')).attr('placeholder','Context is missing');
+					$(this).find($('input[name=context]')).addClass("errormessage");
+				} 
+			});
+			return redirect;
+		}, 
 
 		dbContextUrlsMandatoryVal : function () {
 			var redirect = true;
@@ -788,5 +875,5 @@ define(["lib/jquery-tojson-1.0",'lib/RGraph_common_core-1.0','lib/RGraph_common_
 
 	});
 
-	return Clazz.com.components.performanceTest.js.listener.PerformanceTestListener;
+	return Clazz.com.components.performanceLoadListener.js.listener.PerformanceLoadListener;
 });

@@ -58,8 +58,8 @@ define([], function() {
 			self.mvnService(header, divId, callback);
 		},
 		
-		mvnLoadTest : function(paramData, divId, callback){
-			var self = this, header = self.getRequestHeader("POST", "", commonVariables.mvnLoadTest, paramData);
+		mvnLoadTest : function(paramData, divId, json, callback){
+			var self = this, header = self.getRequestHeader("POST", JSON.stringify(json), commonVariables.mvnLoadTest, paramData);
 			self.mvnService(header, divId, callback);
 		},
 		

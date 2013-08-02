@@ -21,6 +21,7 @@ define([], function() {
 		componentTest : null,
 		integrationTest : null,
 		performanceTest : null,
+		loadTest : null,
 		testResult : null,
 		dynamicpage : null,
 		editConfiguration : null,
@@ -275,7 +276,18 @@ define([], function() {
 							callback(self.performanceTest);	
 						}
 						break;
-						
+					
+					case commonVariables.loadTest : 
+						if (self.loadTest === null) {
+							require(["loadTest/loadTest"], function() {
+								self.loadTest = new Clazz.com.components.loadTest.js.LoadTest();
+								callback(self.loadTest);	
+							});
+						} else {
+							callback(self.loadTest);	
+						}
+						break;
+
 					case commonVariables.editConfiguration :
 						
 						if(self.editConfiguration === null){
@@ -636,7 +648,12 @@ define([], function() {
 					currentObj = returnVal;
 					self.myTabRenderFunction(currentObj, keyword);
 				});
-			}  else if (keyword === commonVariables.integrationTest) {
+			}  else if (keyword === commonVariables.loadTest) {
+				self.getMyObj(commonVariables.loadTest, function(returnVal){
+					currentObj = returnVal;
+					self.myTabRenderFunction(currentObj, keyword);
+				});
+			} else if (keyword === commonVariables.integrationTest) {
 				self.getMyObj(commonVariables.integrationTest, function(returnVal){
 					currentObj = returnVal;
 					self.myTabRenderFunction(currentObj, keyword);
