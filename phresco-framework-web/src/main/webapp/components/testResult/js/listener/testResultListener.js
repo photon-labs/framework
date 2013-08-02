@@ -505,6 +505,9 @@ define(['lib/RGraph_common_core-1.0','lib/RGraph_common_tooltips-1.0','lib/RGrap
 			} else if (action === "deletePdfReport") {
 				header.requestMethod = "DELETE";
 				header.webserviceurl = commonVariables.webserviceurl + "pdf/deleteReport?appDirName=" + appDirName + "&fromPage=" + testType + "&reportFileName=" + requestBody.fileName;
+			} else if (action === "downloadPdfReport") {
+				header.requestMethod = "GET";
+				header.webserviceurl = commonVariables.webserviceurl + "pdf/downloadReport?appDirName=" + appDirName + "&fromPage=" + testType + "&reportFileName=" + requestBody.fileName;
 			}
 			return header;
 		},
@@ -579,15 +582,15 @@ define(['lib/RGraph_common_core-1.0','lib/RGraph_common_tooltips-1.0','lib/RGrap
 				for (i in pdfReports) {
 					content = content.concat('<tr class="generatedRow"><td>' + pdfReports[i].time + '</td>');
 					content = content.concat('<td>' + pdfReports[i].type + '</td>');
-					content = content.concat('<td><a class="tooltiptop" href="#" fileName="' + pdfReports[i].fileName + '" fromPage="' + pdfReports[i].fromPage);
-					content = content.concat(' data-toggle="tooltip" data-placement="top" name="downLoad" data-original-title="Download Pdf" title="">');
+					content = content.concat('<td><a class="tooltiptop" fileName="' + pdfReports[i].fileName + '" href="#"');
+					content = content.concat(' data-toggle="tooltip" data-placement="top" name="downloadPdfReport" data-original-title="Download Pdf" title="">');
 					content = content.concat('<img src="themes/default/images/helios/download_icon.png" width="15" height="18" border="0" alt="0"></a></td>');
 					content = content.concat('<td><a class="tooltiptop deletePdf" fileName="' + pdfReports[i].fileName + '" href="#"');
 					content = content.concat(' data-toggle="tooltip" data-placement="top" name="delete" data-original-title="Delete Pdf" title="">');
 					content = content.concat('<img src="themes/default/images/helios/delete_row.png" width="14" height="18" border="0" alt="0"></a></td></tr>');
 				}
 				$(commonVariables.contentPlaceholder).find("#availablePdfRptsTbdy").html(content);
-				self.deletePdfReport();
+				self.pdfReportEvents();
 			} else {
 				$(commonVariables.contentPlaceholder).find("#availablePdfRptsTbl").hide();
 				$("#noReport").show();
@@ -605,9 +608,9 @@ define(['lib/RGraph_common_core-1.0','lib/RGraph_common_tooltips-1.0','lib/RGrap
 			});
 		},
 		
-		//To delete the selected pdf report
-		deletePdfReport : function() {
+		pdfReportEvents : function() {
 			var self = this;
+			//To delete the selected pdf report
 			$('.deletePdf').on("click", function() {
 				self.showPopupLoading($('#pdfReportLoading'));
 				var requestBody = {};
@@ -615,6 +618,14 @@ define(['lib/RGraph_common_core-1.0','lib/RGraph_common_tooltips-1.0','lib/RGrap
 				self.performAction(self.getActionHeader(requestBody, "deletePdfReport"), function(response) {
 					self.getPdfReports();
 				});
+			});
+
+			//To download the selected pdf report
+			$('a[name=downloadPdfReport]').on("click", function() {
+				var requestBody = {};
+				requestBody.fileName = $(this).attr('fileName');
+				var header = self.getActionHeader(requestBody, "downloadPdfReport");
+				window.open(header.webserviceurl, '_self');
 			});
 		},
 		

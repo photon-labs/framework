@@ -301,37 +301,37 @@ define(["framework/widgetWithTemplate", "common/loading", "lib/customcombobox-1.
         
         //To construct map of controls. Key and value can be in the combination of List/String or vice versa
         constructMapControls : function(parameter, whereToRender) {
-        	var self = this;
-        	var childs = parameter.childs.child;
-        	var mapCtrl = '<table class="table table-striped table_border table-bordered browser_table" cellpadding="0" cellspacing="0" border="0">'+
-            			'<thead><tr><th>'+childs[0].name.value.value+'</th><th>'+childs[1].name.value.value+'</th></tr></thead><tbody><tr>';
-        	if ("List" === childs[0].type) {
-        		mapCtrl =  mapCtrl.concat('<td><select name="'+childs[0].key+'" class="selectpicker">');
-    			var possibleValues = childs[0].possibleValues.value;
-    			for (var i = 0; i < possibleValues; i++) {
-    				mapCtrl =  mapCtrl.concat('<option value="'+possibleValues[i].key+'">'+possibleValues[i].value+'</option>');
-    			}
-    			mapCtrl =  mapCtrl.concat('</select></td>');
-        	} else if ("String" === childs[0].type) {
-        		mapCtrl =  mapCtrl.concat('<td><input type="text" name="'+childs[0].key+'"></td>');
-        	}
+            var self = this;
+            var childs = parameter.childs.child;
+            var mapCtrl = '<table class="table table-striped table_border table-bordered browser_table" cellpadding="0" cellspacing="0" border="0">'+
+                        '<thead><tr><th>'+childs[0].name.value.value+'</th><th>'+childs[1].name.value.value+'</th></tr></thead><tbody><tr>';
+            if ("List" === childs[0].type) {
+                mapCtrl =  mapCtrl.concat('<td><select name="'+childs[0].key+'" class="selectpicker">');
+                var possibleValues = childs[0].possibleValues.value;
+                $.each(possibleValues, function(index, value) {
+                    mapCtrl =  mapCtrl.concat('<option value="'+value.key+'">'+value.value+'</option>');
+                });
+                mapCtrl =  mapCtrl.concat('</select></td>');
+            } else if ("String" === childs[0].type) {
+                mapCtrl =  mapCtrl.concat('<td><input type="text" name="'+childs[0].key+'"></td>');
+            }
             
-        	if ("List" === childs[1].type) {
-        		mapCtrl =  mapCtrl.concat('<td><select name="'+childs[1].key+'" class="selectpicker">');
-    			var possibleValues = childs[1].possibleValues.value;
-    			for (var i = 0; i < possibleValues; i++) {
-    				mapCtrl =  mapCtrl.concat('<option value="'+possibleValues[i].key+'">'+possibleValues[i].value+'</option>');
-    			}
-    			mapCtrl =  mapCtrl.concat('</select></td>');
-        	} else if ("String" === childs[1].type) {
-        		mapCtrl =  mapCtrl.concat('<td><input type="text" name="'+childs[1].key+'">');
-        		mapCtrl =  mapCtrl.concat('<a href="#" class="addBrowserInfo"><img src="themes/default/images/helios/plus_icon.png" alt=""></a>');
-        		mapCtrl =  mapCtrl.concat('<a href="#" class="removeBrowserInfo hideContent"><img src="themes/default/images/helios/minus_icon.png" alt=""></a>');
-        		mapCtrl =  mapCtrl.concat('</td>');
-        	}
-        	mapCtrl =  mapCtrl.concat('</tr></tbody></table>');
-        	whereToRender.append(mapCtrl);
-        	self.bindMapCtrlClickEvents();
+            if ("List" === childs[1].type) {
+                mapCtrl =  mapCtrl.concat('<td><select name="'+childs[1].key+'" class="selectpicker">');
+                var possibleValues = childs[1].possibleValues.value;
+                $.each(possibleValues, function(index, value){
+                    mapCtrl =  mapCtrl.concat('<option value="'+value.key+'">'+value.value+'</option>');
+                });
+                mapCtrl =  mapCtrl.concat('</select></td>');
+            } else if ("String" === childs[1].type) {
+                mapCtrl =  mapCtrl.concat('<td><input type="text" name="'+childs[1].key+'">');
+                mapCtrl =  mapCtrl.concat('<a href="#" class="addBrowserInfo"><img src="themes/default/images/helios/plus_icon.png" alt=""></a>');
+                mapCtrl =  mapCtrl.concat('<a href="#" class="removeBrowserInfo hideContent"><img src="themes/default/images/helios/minus_icon.png" alt=""></a>');
+                mapCtrl =  mapCtrl.concat('</td>');
+            }
+            mapCtrl =  mapCtrl.concat('</tr></tbody></table>');
+            whereToRender.append(mapCtrl);
+            self.bindMapCtrlClickEvents();
         },
 
 		getDynamicTemplate : function (parameter, whereToRender) {
