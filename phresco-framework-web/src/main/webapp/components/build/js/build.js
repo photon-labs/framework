@@ -106,12 +106,6 @@ define(["build/listener/buildListener"], function() {
 			Clazz.navigationController.push(this, commonVariables.animation);
 		},
 		
-		loadPageType : function(){
-			//console.info('loadPageType',this);
-			Clazz.navigationController.jQueryContainer = commonVariables.contentPlaceholder;
-			Clazz.navigationController.push(this , false);
-		},
-		
 		preRender: function(whereToRender, renderFunction){
 			var self = this;
 			self.buildListener.getBuildInfo(self.buildListener.getRequestHeader("", '', 'getList'), function(response) {
@@ -334,44 +328,7 @@ define(["build/listener/buildListener"], function() {
 			//Process build popup event
 			$('table td img[name=procBuild]').unbind('click');
 			$('table td img[name=procBuild]').click(function(){
-				var current = this, divId = $(this).closest('tr').find('td:eq(0)').text(), whereToRender = $('#prcBForm_' + divId), content ='<div class="project_list_popup"><table class="table importselect" cellpadding="0" cellspacing="0" border="0"><tbody><tr><td><span data-i18n="project.create.label.type"></span><sup>*</sup></td><td><span data-i18n="navigation.application.apprepourl"></span><sup>*</sup></td></tr><tr><td><select name="importType"><option value="svn" data-i18n="projectlist.label.svn"></option><option value="bitkeeper" data-i18n="projectlist.label.bitkeeper"></option><option value="git" data-i18n="projectlist.label.git"></option></select></td><td><input type="text" name="importRepourl" data-i18n="[placeholder]navigation.application.apprepourl"></td></tr><tr><td class="seperatetd" name="importCredential"><span data-i18n="projectlist.label.othercredential"></span><input type="checkbox"></td><td></td></tr></tbody></table><div class="svndata"><table><tbody><tr><td><span data-i18n="login.placeholder.username"></span><sup class="svnusr">*</sup></td><td><span data-i18n="login.placeholder.password"></span><sup class="svnpswd">*</sup></td></tr><tr><td><input type="text" data-i18n="[placeholder]login.placeholder.username" name="importUserName"></td><td><input type="password" placeholder="*******" name="importPassword"></td></tr><tr><td><input type="radio" name="headoption" value="HEAD" checked><span data-i18n="projectlist.label.headrevision"></span><input class="revtext" type="radio" name="headoption" value="revision"><span data-i18n="projectlist.label.revision"></span></td><td><input type="text" readonly="readonly" name="revision"></td></tr><tr><td class="seperatetd"><span data-i18n="navigation.application.testcheckout"></span><input type="checkbox" class="testCheckout"></td><td></td></tr></tbody></table></div><div class="testCheckoutData"><table><tbody><tr><td><span data-i18n="navigation.application.testrepourl"></span></td><td><input type="text" name="testRepoUrl" data-i18n="[placeholder]navigation.application.testrepourl"></td></tr><tr><td class="seperatetd"><span data-i18n="projectlist.label.othercredential"></span><input  name="testCredentials" type="checkbox"></td><td></td></tr><tr><td><span data-i18n="login.placeholder.username"></span><sup>*</sup></td><td><span data-i18n="login.placeholder.password"></span><sup>*</sup></td></tr><tr><td><input type="text" data-i18n="[placeholder]login.placeholder.username" name="testImportUserName"></td><td><input type="password" placeholder="*******" name="testImportPassword"></td></tr><tr><td><input type="radio" name="testHeadOption" value="HEAD" checked><span data-i18n="projectlist.label.headrevision"></span><input class="revtext" type="radio" name="testHeadOption" value="revision"><span data-i18n="projectlist.label.revision"></span></td><td><input type="text" readonly="readonly" name="testRevision"></td></tr></tbody></table></div><div class="gitdata"><table><tbody><tr><td><span  data-i18n="login.placeholder.username"></span><sup>*</sup></td><td><span  data-i18n="login.placeholder.password"></span><sup>*</sup></td></tr><tr><td name="gitName"><input type="text" data-i18n="[placeholder]login.placeholder.username"></td><td><input type="password" placeholder="*******"></td></tr></tbody></table></div></div>';
 				
-				if(whereToRender.children().length < 1){
-					whereToRender.html(content);
-					self.renderlocales(commonVariables.contentPlaceholder);
-					
-					$(".gitdata").hide();
-					$(".importselect select").change(function () {
-						if($(this).val() === "bitkeeper") {
-							$(".svndata").hide();
-							$(".svnusr").hide();
-							$(".svnpswd").hide();
-							$(".gitdata").show();
-							$(".seperatetd").hide();
-							$(".testCheckoutData").hide();
-						}
-
-						else if($(this).val() === "git") {
-							$(".svndata").hide();
-							$(".svnusr").hide();
-							$(".svnpswd").hide();
-							$(".gitdata").show();
-							$(".seperatetd").hide();
-							$(".testCheckoutData").hide();
-						}
-
-						else if($(this).val() === "svn") {
-							$(".svndata").show();
-							$(".seperatetd").show();
-							$(".svnusr").show();
-							$(".svnpswd").show();
-							$(".gitdata").hide();
-						}
-					});
-					self.opencc(this,'prcBuild_' + divId, '', 50);
-				}else {
-					self.opencc(this,'prcBuild_' + divId, '', 50);
-				}
 			});
 			
 			//Process build click event
