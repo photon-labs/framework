@@ -19,11 +19,14 @@ package com.photon.phresco.framework.actions.applications;
 
 import static org.apache.commons.lang.StringEscapeUtils.escapeHtml;
 
+import java.awt.Image;
+import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStream;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -31,12 +34,17 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 
+import javax.imageio.ImageIO;
+
+import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -76,6 +84,8 @@ import com.photon.phresco.util.Constants;
 import com.photon.phresco.util.Utility;
 import com.phresco.pom.exception.PhrescoPomException;
 import com.phresco.pom.util.PomProcessor;
+import com.sun.jersey.multipart.BodyPart;
+import com.sun.jersey.multipart.MultiPart;
 
 public class Features extends DynamicParameterModule {
     
@@ -147,6 +157,8 @@ public class Features extends DynamicParameterModule {
 	private String featureType = "";
 	private String artifactGrpId = "";
 	private String featureDescription = "";
+	private String descImage = "";
+	private String modver = "";
 	
 	private String configTemplateType = "";
 	
@@ -969,6 +981,7 @@ public class Features extends DynamicParameterModule {
 			Collections.sort(moduleGroups, sortFeaturesNameInAlphaOrder());
 		}
 		
+		setReqAttribute(REQ_CUSTOMER_ID, getCustomerId());
 		setReqAttribute(REQ_FEATURES_MOD_GRP, moduleGroups);
 		setReqAttribute(REQ_FEATURES_TYPE, getType());
 		setReqAttribute(REQ_APP_ID, getAppId());
@@ -1019,12 +1032,18 @@ public class Features extends DynamicParameterModule {
 		return SUCCESS;
 	}
 	
-	public String fetchFeatureDescription() throws PhrescoException {
-		
-		ArtifactElement artielement = getServiceManager().getFeatureDescription(getArtifactGrpId());
-		String featDesc = artielement.getDescription();
+	public String fetchFeatureDescription() throws PhrescoException, IOException {
+		ArtifactElement artifactElement = getServiceManager().getFeatureDescription(getArtifactGrpId());
+		InputStream iconStream = getServiceManager().getFeatureIcon(getArtifactGrpId(), getCustomerId(), getModver());
+		byte[] imgByte = null;
+		imgByte = IOUtils.toByteArray(iconStream);
+		byte[] encodedImg = Base64.encodeBase64(imgByte);
+		String desImag = new String(encodedImg);
+		setDescImage(desImag);
+
+		String featDesc = artifactElement.getDescription();
 		setFeatureDescription(featDesc);
-		
+
 		return SUCCESS;
 	}
 
@@ -1663,5 +1682,21 @@ public class Features extends DynamicParameterModule {
 
 	public void setFeatureDescription(String featureDescription) {
 		this.featureDescription = featureDescription;
+	}
+
+    public String getModver() {
+		return modver;
+	}
+
+	public void setModver(String modver) {
+		this.modver = modver;
+	}
+
+	public String getDescImage() {
+		return descImage;
+	}
+
+	public void setDescImage(String descImage) {
+		this.descImage = descImage;
 	}
 }

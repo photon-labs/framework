@@ -39,6 +39,7 @@
 	boolean defaultModule = false;
 	String techId = (String) request.getAttribute(FrameworkConstants.REQ_TECHNOLOGY);
 	String appId = (String) request.getAttribute(FrameworkConstants.REQ_APP_ID);
+	String customerId = (String) request.getAttribute(FrameworkConstants.REQ_CUSTOMER_ID);
 	List<ArtifactGroup> artifactGroups = (List<ArtifactGroup>)request.getAttribute(FrameworkConstants.REQ_FEATURES_MOD_GRP);
 	String type = (String) request.getAttribute(FrameworkConstants.REQ_FEATURES_TYPE);
 	
@@ -73,7 +74,7 @@
 		    <section class="lft_menus_container">	
 				<span class="siteaccordion">
 					<div>
-						<img src="images/r_arrowclose.png" class ="accImg" id="" onclick="accordionClkOperation(this, '<%= artifactGroup.getId()%>');">
+						<img src="images/r_arrowclose.png" class ="accImg" id="" onclick="accordionClkOperation(this, '<%= artifactGroup.getId()%>', '<%= customerId %>');">
 						<input class="feature_checkbox" type="checkbox" defaultModule="<%= defaultModule %>" canConfigure="<%= canConfigure %>" 
 							value="<%= artifactGroup.getName() %>" dispName="<%= artifactGroup.getDisplayName() %>" scope="compile" packaging="<%= artifactGroup.getPackaging() %>" onclick="checkboxEvent($('.feature_checkbox'), $('#checkAllAuto'));"/>
 						<div style="float: left; margin-left:2%;"><%= artifactGroup.getDisplayName() %></div>
@@ -117,7 +118,6 @@
 	
 	
 	var unCheck;
-	var arrowObj = "";
 	//To get the dependent features
 	$("input:checkbox").change(function() {
 		var jsonObjectParam = {};
@@ -200,37 +200,4 @@
 			clickToAdd();
 		} 
 	}
-	
-	
-	function accordionClkOperation(thisObj, artifactGrpId) {
-		var _tempIndex = $('.accImg').index(thisObj);
-		arrowObj = thisObj;
-		$('.mfbox').eq(_tempIndex).slideToggle(300,function() {
-			var image = $(thisObj).attr("src");
-			if (image != "images/r_arrowopen.png") {
-			  	$(thisObj).attr("src","images/r_arrowopen.png");
-			  	var descriptionContent = $(thisObj).closest('.accordion_panel_inner').find('.siteinnertooltiptxt').html();
-			  	if (isBlank(descriptionContent)) {
-			  		var params = "artifactGrpId="
-					params = params.concat(artifactGrpId);
-					loadContent("fetchFeatureDescription", '', '', params, true, true);	
-			  	}
-			} else {
-				$(thisObj).attr("src","images/r_arrowclose.png");
-			}
-			  
-		});	
-		
-	}
-	
-	function successEvent(pageUrl, data) {
-		
-		if (pageUrl === "fetchFeatureDescription" && data.featureDescription != null && data.featureDescription != "") {
-			var div = '<div class="scrollpanel"><section class="scrollpanel_inner desc_feature"><img style="float: left;" class="headerlogoimg" src="images/right1.png" alt="logo">' +
-	        '<p class="version_des"> '+data.featureDescription +
-	        '</p></section> </div>' ;
-	        $(arrowObj).closest('.accordion_panel_inner').find('.siteinnertooltiptxt').html(div);
-		}
-	}
-	
 </script>

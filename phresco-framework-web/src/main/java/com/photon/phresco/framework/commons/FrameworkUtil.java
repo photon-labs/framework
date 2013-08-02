@@ -2449,7 +2449,7 @@ public class FrameworkUtil extends FrameworkBaseAction implements Constants {
 
 							int flag = 0;
 							next = rowIterator.next();
-							if (mySheet.getSheetName().equalsIgnoreCase("Index")
+							if (mySheet.getSheetName().trim().equalsIgnoreCase("Index")
 									&& ((mySheet.getLastRowNum() - next.getRowNum()) < 3)) {
 								for (Cell cell : next) {
 									cell.setCellType(1);
@@ -2467,7 +2467,7 @@ public class FrameworkUtil extends FrameworkBaseAction implements Constants {
 						} while (rowIterator.hasNext());
 
 						Row r = null;
-						if (mySheet.getSheetName().equalsIgnoreCase("Index")) {
+						if (mySheet.getSheetName().trim().equalsIgnoreCase("Index")) {
 							r = mySheet.createRow(next.getRowNum() - 1);
 
 						} else {
@@ -2482,7 +2482,7 @@ public class FrameworkUtil extends FrameworkBaseAction implements Constants {
 
 							cell.setCellStyle(tryStyle[i]);
 						}
-						if (mySheet.getSheetName().equalsIgnoreCase("Index")) {
+						if (mySheet.getSheetName().trim().equalsIgnoreCase("Index")) {
 							Sheet fromSheet = myWorkBook.getSheetAt((myWorkBook
 									.getNumberOfSheets() - 1));
 							Sheet toSheet = myWorkBook.createSheet(sheetName);
@@ -2553,7 +2553,7 @@ public class FrameworkUtil extends FrameworkBaseAction implements Constants {
 	
 								int flag = 0;
 								next = rowIterator.next();
-								if (mySheet.getSheetName().equalsIgnoreCase("Index")
+								if (mySheet.getSheetName().trim().equalsIgnoreCase("Index")
 										&& ((mySheet.getLastRowNum() - next.getRowNum()) < 3)) {
 									for (Cell cell : next) {
 										cell.setCellType(1);
@@ -2571,7 +2571,7 @@ public class FrameworkUtil extends FrameworkBaseAction implements Constants {
 							} while (rowIterator.hasNext());
 	
 							Row r = null;
-							if (mySheet.getSheetName().equalsIgnoreCase("Index")) {
+							if (mySheet.getSheetName().trim().equalsIgnoreCase("Index")) {
 								r = mySheet.createRow(mySheet.getLastRowNum() - 2);
 							} else {
 								r = mySheet.createRow(next.getRowNum() + 1);
@@ -2585,7 +2585,7 @@ public class FrameworkUtil extends FrameworkBaseAction implements Constants {
 	
 								cell.setCellStyle(tryStyle[i]);
 							}
-							if (mySheet.getSheetName().equalsIgnoreCase("Index")) {
+							if (mySheet.getSheetName().trim().equalsIgnoreCase("Index")) {
 								Sheet fromSheet = myWorkBook.getSheetAt((myWorkBook
 										.getNumberOfSheets() - 1));
 								Sheet toSheet = myWorkBook.createSheet(sheetName);
@@ -2943,7 +2943,7 @@ public class FrameworkUtil extends FrameworkBaseAction implements Constants {
 		            }
 				
 				Row r = null;
-				if (mySheet.getSheetName().equalsIgnoreCase("Index")) {
+				if (mySheet.getSheetName().trim().equalsIgnoreCase("Index")) {
 					r = mySheet.createRow(next.getRowNum() - 1);
 				
 				} else {
@@ -2968,6 +2968,7 @@ public class FrameworkUtil extends FrameworkBaseAction implements Constants {
 			String status, int numCol, int cellno, CellStyle[] tryStyle,
 			StringBuilder sb) throws FileNotFoundException, IOException,
 			UnknownHostException, PhrescoException {
+		
 		Iterator<Row> rowIterator;
 		FileInputStream myInput = new FileInputStream(sb.toString());
 		HSSFWorkbook myWorkBook = new HSSFWorkbook(myInput);
@@ -3044,7 +3045,7 @@ public class FrameworkUtil extends FrameworkBaseAction implements Constants {
 		                }
 					
 					Row r = null;
-					if (myHssfSheet.getSheetName().equalsIgnoreCase("Index")) {
+					if (myHssfSheet.getSheetName().trim().equalsIgnoreCase("Index")) {
 						r = myHssfSheet.createRow(next.getRowNum() - 1);
 					
 					} else {
@@ -3132,20 +3133,17 @@ public class FrameworkUtil extends FrameworkBaseAction implements Constants {
 	private static TrustManager[ ] get_trust_mgr() {
 	     TrustManager[ ] certs = new TrustManager[ ] {
 	        new X509TrustManager() {
-			@Override
 			public void checkClientTrusted(
 					java.security.cert.X509Certificate[] chain, String authType)
 					throws CertificateException {
 				
 			}
-			@Override
 			public void checkServerTrusted(
 					java.security.cert.X509Certificate[] chain, String authType)
 					throws CertificateException {
 				// TODO Auto-generated method stub
 				
 			}
-			@Override
 			public java.security.cert.X509Certificate[] getAcceptedIssuers() {
 				// TODO Auto-generated method stub
 				return null;

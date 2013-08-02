@@ -225,6 +225,7 @@ if (CollectionUtils.isNotEmpty(defaultfeatures)) {
 	activateMenu($('#features'));
 
 	var selectedType = "";
+	var arrowObj = "";
     $(document).ready(function () {
     	
     	showLoadingIcon();
@@ -432,6 +433,32 @@ if (CollectionUtils.isNotEmpty(defaultfeatures)) {
   		yesnoPopup('showFeatureConfigPopup', '<s:text name="lbl.configure"/>', 'configureFeature', '<s:text name="lbl.configure"/>', '', params);
   	}
   	
+  	
+	function accordionClkOperation(thisObj, artifactGrpId, customerId) {
+		var modver = $(thisObj).parent().find('.features_ver_sel option:selected').text();
+		var _tempIndex = $('.accImg').index(thisObj);
+		arrowObj = thisObj;
+		$('.mfbox').eq(_tempIndex).slideToggle(300,function() {
+			var image = $(thisObj).attr("src");
+			if (image != "images/r_arrowopen.png") {
+			  	$(thisObj).attr("src","images/r_arrowopen.png");
+			  	var descriptionContent = $(thisObj).closest('.accordion_panel_inner').find('.siteinnertooltiptxt').html();
+			  	if (isBlank(descriptionContent)) {
+			  		var params = "artifactGrpId="
+					params = params.concat(artifactGrpId);
+			  		params = params.concat("&modver=");
+			  		params = params.concat(modver);
+			  		params = params.concat("&customerId=");
+			  		params = params.concat(customerId);
+					loadContent("fetchFeatureDescription", '', '', params, true, true);	
+			  	}
+			} else {
+				$(arrowObj).attr("src","images/r_arrowclose.png");
+			}
+			  
+		});	
+	}
+	
   	function successEvent(url, data) {
   		if (url === "showConfigProperties") {
   			$('#propertiesDiv').empty();
@@ -448,6 +475,12 @@ if (CollectionUtils.isNotEmpty(defaultfeatures)) {
 			if (data.dependency) {
 				makeFeaturesSelected(data.depArtifactGroupNames, data.dependencyIds, "fetchDependentFeatures");
 			}
+		} else if (url === "fetchFeatureDescription" && data.featureDescription != null && data.featureDescription != "") {
+			var div = '<div class="scrollpanel"><section class="scrollpanel_inner desc_feature"><img style="float: left;height:42px;width:42px" src="data:image/png;base64,'+data.descImage+'" class="headerlogoimg"  alt="logo">' +
+	        '<p class="version_des"> '+data.featureDescription +
+	        '</p></section> </div>' ;
+	        
+	        $(arrowObj).closest('.accordion_panel_inner').find('.siteinnertooltiptxt').html(div);
 		}
   	}
   	
