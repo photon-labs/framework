@@ -39,10 +39,6 @@ define(["projects/listener/projectsListener"], function() {
 				self.onCancelUpdateEvent = new signals.Signal();
 			}
 			
-			if(self.onCreateEvent === null) {
-				self.onCreateEvent = new signals.Signal();
-			}
-			
 			if(self.removeLayerEvent === null) {
 				self.removeLayerEvent = new signals.Signal();
 			}
@@ -58,26 +54,6 @@ define(["projects/listener/projectsListener"], function() {
 		},
 		
 		
-		/***
-		 * Called once to register all the events 
-		 *
-		 * @projectsListener: projectsListener methods getting registered
-		 */
-		/***
-		 *
-		 *	Called once to create the projects listener
-		 *
-		 */
-		loadPage :function(){
-			Clazz.navigationController.push(this, commonVariables.animation);
-		},
-		/***
-		 * Called after the preRender() and bindUI() completes. 
-		 * Override and add any preRender functionality here
-		 *
-		 * @element: Element as the result of the template + data binding
-		 */
-		 
 		preRender: function(whereToRender, renderFunction){
 			var self = this;
 				self.applicationlayerData = commonVariables.api.localVal.getJson("Application Layer");

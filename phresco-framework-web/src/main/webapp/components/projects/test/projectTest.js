@@ -6,7 +6,7 @@ define(["projects/addproject", "projects/editproject"], function(addProject, edi
 		 */
 		module("AddProject.js");
 		
-		var addproject = new addProject(), editproject = new editProject(), self = this;
+		var addproject = new addProject(), editproject = new editProject(), self = this, createProject;
 		
 			asyncTest("Add Project- App Layer UI Test", function() {
 				
@@ -66,7 +66,7 @@ define(["projects/addproject", "projects/editproject"], function(addProject, edi
 			});
 		},
 		
-		/*runProjectNameKeyupTest : function() {
+		/* runProjectNameKeyupTest : function() {
 			var self=this;
 			asyncTest("Add Project- ProjectName Keyup Test", function() {
 				$("input#projectname").val('Test case');
@@ -78,7 +78,7 @@ define(["projects/addproject", "projects/editproject"], function(addProject, edi
 					self.runAddApplicationLayerEventTest();
 				}, 1500);
 			});
-		},*/
+		}, */
 		
 		runAddApplicationLayerEventTest : function() {
 			var self=this;
@@ -119,45 +119,6 @@ define(["projects/addproject", "projects/editproject"], function(addProject, edi
 			});
 		},
 
-		runRemoveApplicationLayerEventTest : function() {
-			var self=this;
-			asyncTest("Add Project- Remove Application Layer Event Test", function() {
-				$("a[name=removeApplnLayer]").click();
-				setTimeout(function() {
-					start();
-					var trCount = $("a[name=addApplnLayer]").parents('tr.applnlayercontent:last').length;
-					equal(trCount, 0, "Add Project- Remove Application Layer Event Test");
-					self.runRemoveWebLayerEventTest();
-				}, 2500);
-			});
-		},
-
-		runRemoveWebLayerEventTest : function() {
-			var self=this;
-			asyncTest("Add Project- Remove Web Layer Event Test", function() {
-				$("a[name=removeWebLayer]").click();
-				setTimeout(function() {
-					start();
-					var trCount = $("a[name=addWebLayer]").parents('tr.weblayercontent:last').length;
-					equal(trCount, 0, "Add Project- Remove Web Layer Event Test");
-					self.runRemoveMobileLayerEventTest();
-				}, 2500);
-			});
-		},
-
-		runRemoveMobileLayerEventTest : function() {
-			var self=this;
-			asyncTest("Add Project- Remove Mobile Layer Event Test", function() {
-				$("a[name=removeMobileLayer]").click();
-				setTimeout(function() {
-					start();
-					var trCount = $("a[name=addMobileLayer]").parents('tr.mobilelayercontent:last').length;
-					equal(trCount, 0, "Add Project- Remove Web Layer Event Test");
-					self.showSuccessMessageAfterCreation();
-				}, 2500);
-			});
-		},	
-		
 		showSuccessMessageAfterCreation : function() {
 			var self=this;
 			asyncTest("Add Project- show SuccessMessage After Creation Test", function() {
@@ -168,17 +129,25 @@ define(["projects/addproject", "projects/editproject"], function(addProject, edi
 				$("input[name=multimodule]").val('false');
 				$("#appcode").val('app1');
 				$("select[name=appln_technology]").val('tech-php');
-				$("select[name=appln_version]").text('5.4.x');
+				$("select[name=appln_technology]").change();
+				$("select[name=appln_version]").val('5.4.x');
+				$("select[name=appln_version]").change();
 				$("#webappcode").val('web1');
 				$("select[name=weblayer]").val('html5');
+				$("select[name=weblayer]").change();
 				$("select[name=web_widget]").val('tech-html5-jquery-mobile-widget');
-				$("select[name=widgetversion]").text('2.0.2');
+				$("select[name=web_widget]").change();;
+				$("select[name=widgetversion]").val('2.0.2');
+				$("select[name=widgetversion]").change();
 				$("#mobileappcode").val('mob1');
 				$("select[name=mobile_layer]").val('Android');
+				$("select[name=mobile_layer]").change();
 				$("select[name=mobile_types]").val('tech-android-native');
-				$("select[name=mobile_version]").text('4.1');
+				$("select[name=mobile_types]").change();
+				$("select[name=mobile_version]").val('4.1');
+				$("select[name=mobile_version]").change();
 				
-				$.mockjax({
+				self.createProject = $.mockjax({
 					  url: commonVariables.webserviceurl + 'project/create?userId=admin',
 					  type:'POST',
 					  contentType:'application/json',
@@ -256,6 +225,25 @@ define(["projects/addproject", "projects/editproject"], function(addProject, edi
 						}
 					});
 					equal(errorMsg, "Enter AppCode", "Add Project - Empty Application AppCode Tested");
+					self.runTechnologySelectValidateTest();
+				}, 1500);
+			});
+		},
+		
+		runTechnologySelectValidateTest : function() {
+			var self=this;
+			asyncTest("Add Project- Technology Select Validate Test", function() {
+				$("input#projectname").val('Test');
+				$("input#projectcode").val('Test');
+				$.each($("input.appln-appcode"), function(index, value) {
+					$(value).val('app1')
+				});
+				$('select.appln_technology').val('Select Technology');
+				$("input[name='Create']").click();
+				setTimeout(function() {
+					start();
+					var errorMsg = $(".errmsg1").text();
+					equal(errorMsg, "Select Technology.", "Add Project - Technology Select Validate Tested");
 					self.runEmptyWebAppCodeTest();
 				}, 1500);
 			});
@@ -267,15 +255,77 @@ define(["projects/addproject", "projects/editproject"], function(addProject, edi
 				$("input#projectname").val('Test');
 				$("input#projectcode").val('Test');
 				$.each($("input.appln-appcode"), function(index, value) {
-					$(value).val('app1')
+					$(value).val('app1');
 				});
-				$("select[name=appln_technology]").val('tech-php');
-				$("select[name=appln_version]").text('5.4.x');
+				$("input.appln-appcode").bind('input');	
+				$.each($("select[name=appln_technology]"), function(index, value) {
+					$(value).val('tech-php');
+				});
+				$("select[name=appln_technology]").change();
 				$("input#webappcode").val('');
 				$("input[name='Create']").click();
 				setTimeout(function() {
 					start();
-					notEqual($("input#webappcode").hasClass('errormessage'), true, "Add Project - Empty Web AppCode Tested");
+					equal($("input#webappcode").hasClass('errormessage'), true, "Add Project - Empty Web AppCode Tested");
+					self.runWebLayerSelectTest();
+				}, 1500);
+			});
+		},
+		
+		runWebLayerSelectTest : function() {
+			var self=this, errorMsg;
+			asyncTest("Add Project- WebLayer Select Test", function() {
+				$("input#projectname").val('Test');
+				$("input#projectcode").val('Test');
+				$.each($("input.appln-appcode"), function(index, value) {
+					$(value).val('app1');
+				});
+				$("input.appln-appcode").bind('input');	
+				$.each($("select[name=appln_technology]"), function(index, value) {
+					$(value).val('tech-php');
+				});
+				$("select[name=appln_technology]").change();
+				$.each($("input.web-appcode"), function(index, value) {
+					$(value).val('web1')
+				});
+				$("input.web-appcode").bind('input');
+				$('select[name=weblayer]').val('Select Layer');	
+				$("input[name='Create']").click();
+				setTimeout(function() {
+					start();
+					var errorMsg = $(".errmsg2").text();
+					equal(errorMsg, "Select Layer.", "Add Project - WebLayer Select Tested");
+					self.runWebWidgetSelectTest();
+				}, 1500);
+			});
+		},
+		
+		runWebWidgetSelectTest : function() {
+			var self=this, errorMsg;
+			asyncTest("Add Project- Web Widget Select Test", function() {
+				$("input#projectname").val('Test');
+				$("input#projectcode").val('Test');
+				$.each($("input.appln-appcode"), function(index, value) {
+					$(value).val('app1');
+				});
+				$("input.appln-appcode").bind('input');	
+				$.each($("select[name=appln_technology]"), function(index, value) {
+					$(value).val('tech-php');
+				});
+				$("select[name=appln_technology]").change();
+				$.each($("input.web-appcode"), function(index, value) {
+					$(value).val('web1')
+				});
+				$("input.web-appcode").bind('input');
+				
+				$("select[name=weblayer]").val('html5');
+				$("select[name=weblayer]").change();
+				$("select[name=web_widget]").val('Select Widget');
+				$("input[name='Create']").click();
+				setTimeout(function() {
+					start();
+					var errorMsg = $(".errmsg2").text();
+					equal(errorMsg, "Select Widget.", "Add Project - runWebWidgetSelectTest Select Tested");
 					self.runEmptyMobileAppCodeTest();
 				}, 1500);
 			});
@@ -287,22 +337,155 @@ define(["projects/addproject", "projects/editproject"], function(addProject, edi
 				$("input#projectname").val('Test');
 				$("input#projectcode").val('Test');
 				$("input#appcode").val('app1');
-				$("select[name=appln_technology]").val('tech-php');
-				$("select[name=appln_version]").text('5.4.x');
 				$.each($("input.appln-appcode"), function(index, value) {
-					$(value).val('app1')
+					$(value).val('app1');
 				});
+				$("input.appln-appcode").bind('input');
+				$.each($("select[name=appln_technology]"), function(index, value) {
+					$(value).val('tech-php');
+				});
+				$("select[name=appln_technology]").change();	
 				$.each($("input.web-appcode"), function(index, value) {
 					$(value).val('web1')
 				});
 				$("select[name=weblayer]").val('html5');
+				$("select[name=weblayer]").change();
 				$("select[name=web_widget]").val('tech-html5-jquery-mobile-widget');
-				$("select[name=widgetversion]").text('2.0.2');
+				$("select[name=web_widget]").change();
+				$("select[name=widgetversion]").val('2.0.2');
+				$("select[name=widgetversion]").change();
 				$("input#mobileappcode").val('');
 				$("input[name='Create']").click();
 				setTimeout(function() {
 					start();
-					notEqual($("input#mobileappcode").hasClass('errormessage'), true, "Add Project - Empty Mobile AppCode Tested");
+					equal($("input#mobileappcode").hasClass('errormessage'), true, "Add Project - Empty Mobile AppCode Tested");
+					self.runSelectMobileTechnologyTest();
+				}, 1500);
+			});
+		},
+		
+		runSelectMobileTechnologyTest : function(){
+			var self=this;
+			asyncTest("Add Project- Empty Select Technology Mobile Test", function() {
+				$("input#projectname").val('Test');
+				$("input#projectcode").val('Test');
+				$("input#appcode").val('app1');
+				$.each($("input.appln-appcode"), function(index, value) {
+					$(value).val('app1');
+				});
+				$("input.appln-appcode").bind('input');
+				$.each($("select[name=appln_technology]"), function(index, value) {
+					$(value).val('tech-php');
+				});
+				$("select[name=appln_technology]").change();	
+				$.each($("input.web-appcode"), function(index, value) {
+					$(value).val('web1')
+				});
+				$("select[name=weblayer]").val('html5');
+				$("select[name=weblayer]").change();
+				$("select[name=web_widget]").val('tech-html5-jquery-mobile-widget');
+				$("select[name=web_widget]").change();
+				$("select[name=widgetversion]").val('2.0.2');
+				$("select[name=widgetversion]").change();
+				$.each($("input.mobile-appcode"), function(index, value) {
+					$(value).val('mobile1')
+				});
+				$("select[name=mobile_layer]").val('Select Technology');
+				$("input[name='Create']").click();
+				setTimeout(function() {
+					start();
+					var errorMsg = $(".errmsg3").text();
+					equal(errorMsg, "Select Technology.", "Add Project - Select Mobile Technology Tested");
+					self.runSelectMobilePlatformTest();
+				}, 1500);
+			});
+		},
+		
+		runSelectMobilePlatformTest : function(){
+			var self=this;
+			asyncTest("Add Project- Empty Select Platform Mobile Test", function() {
+				$("input#projectname").val('Test');
+				$("input#projectcode").val('Test');
+				$("input#appcode").val('app1');
+				$.each($("input.appln-appcode"), function(index, value) {
+					$(value).val('app1');
+				});
+				$("input.appln-appcode").bind('input');
+				$.each($("select[name=appln_technology]"), function(index, value) {
+					$(value).val('tech-php');
+				});
+				$("select[name=appln_technology]").change();	
+				$.each($("input.web-appcode"), function(index, value) {
+					$(value).val('web1')
+				});
+				$("select[name=weblayer]").val('html5');
+				$("select[name=weblayer]").change();
+				$("select[name=web_widget]").val('tech-html5-jquery-mobile-widget');
+				$("select[name=web_widget]").change();
+				$("select[name=widgetversion]").val('2.0.2');
+				$("select[name=widgetversion]").change();
+				$.each($("input.mobile-appcode"), function(index, value) {
+					$(value).val('mobile1')
+				});
+				$("select[name=mobile_layer]").val('android');
+				$("select[name=mobile_layer]").change();
+				$("select[name=mobile_types]").val('Select Platform');
+				$("input[name='Create']").click();
+				setTimeout(function() {
+					start();
+					var errorMsg = $(".errmsg3").text();
+					equal(errorMsg, "Select Platform.", "Add Project - Select Mobile Platform Tested");
+					self.runCreateProjectTest();
+				}, 1500);
+			});
+		},
+		
+		runCreateProjectTest : function(){
+			var self=this;
+			$.mockjaxClear(self.createProject);
+			asyncTest("Add Project- Empty Select Platform Mobile Test", function() {
+				$.mockjax({
+					  url: commonVariables.webserviceurl + 'project/create?userId=admin',
+					  type:'POST',
+					  contentType:'application/json',
+					  status: 200,
+					  response: function() {
+						   this.responseText = JSON.stringify({"response":null,"message":"Project created Successfully","exception":null,"data":{"message":null,"exception":null,"responseCode":"PHR200004","data":{"appInfos":[{"modules":null,"pomFile":null,"appDirName":"app1","techInfo":{"appTypeId":"app-layer","techGroupId":null,"techVersions":null,"version":"5.4.x","customerIds":null,"used":false,"creationDate":1375685448734,"helpText":null,"system":false,"name":"PHP","id":"tech-php","displayName":null,"description":null,"status":null},"selectedServers":null,"selectedDatabases":null,"selectedModules":null,"selectedJSLibs":null,"selectedComponents":null,"selectedWebservices":null,"pilotInfo":null,"selectedFrameworks":null,"emailSupported":false,"pilotContent":null,"embedAppId":null,"phoneEnabled":false,"tabletEnabled":false,"pilot":false,"functionalFramework":null,"dependentModules":null,"functionalFrameworkInfo":null,"version":"1.0","code":"app1","customerIds":null,"used":false,"creationDate":1375685448734,"helpText":null,"system":false,"name":"app1","id":"e2396af3-639c-4e51-bd40-8a2e1b4e2a70","displayName":null,"description":null,"status":null},{"modules":null,"pomFile":null,"appDirName":"web1","techInfo":{"appTypeId":"web-layer","techGroupId":"HTML5","techVersions":null,"version":"2.0.2","customerIds":null,"used":false,"creationDate":1375685448734,"helpText":null,"system":false,"name":"JQuery Mobile Widget","id":"tech-html5-jquery-mobile-widget","displayName":null,"description":null,"status":null},"selectedServers":null,"selectedDatabases":null,"selectedModules":null,"selectedJSLibs":null,"selectedComponents":null,"selectedWebservices":null,"pilotInfo":null,"selectedFrameworks":null,"emailSupported":false,"pilotContent":null,"embedAppId":null,"phoneEnabled":false,"tabletEnabled":false,"pilot":false,"functionalFramework":null,"dependentModules":null,"functionalFrameworkInfo":null,"version":"1.0","code":"web1","customerIds":null,"used":false,"creationDate":1375685448734,"helpText":null,"system":false,"name":"web1","id":"94a5d575-d67d-4d0a-acd0-f6d46c89c228","displayName":null,"description":null,"status":null},{"modules":null,"pomFile":null,"appDirName":"mobile1","techInfo":{"appTypeId":"mobile-layer","techGroupId":"Android","techVersions":null,"version":"4.1","customerIds":null,"used":false,"creationDate":1375685448734,"helpText":null,"system":false,"name":"Hybrid","id":"tech-android-hybrid","displayName":null,"description":null,"status":null},"selectedServers":null,"selectedDatabases":null,"selectedModules":null,"selectedJSLibs":null,"selectedComponents":null,"selectedWebservices":null,"pilotInfo":null,"selectedFrameworks":null,"emailSupported":false,"pilotContent":null,"embedAppId":null,"phoneEnabled":false,"tabletEnabled":false,"pilot":false,"functionalFramework":null,"dependentModules":null,"functionalFrameworkInfo":null,"version":"1.0","code":"mobile1","customerIds":null,"used":false,"creationDate":1375685448734,"helpText":null,"system":false,"name":"mobile1","id":"b9011420-28ed-4959-b760-983bae48481f","displayName":null,"description":null,"status":null}],"projectCode":"Test","noOfApps":3,"startDate":null,"endDate":null,"preBuilt":false,"multiModule":false,"version":"1.0","customerIds":["photon"],"used":false,"creationDate":1375685448734,"helpText":null,"system":false,"name":"Test","id":"3c55a6ed-28bb-4862-a718-761839fc6bd5","displayName":null,"description":"","status":null},"status":"success"}});	
+					  }
+				});
+				
+				$("input#projectname").val('Test');
+				$("input#projectcode").val('Test');
+				$("input#appcode").val('app1');
+				$.each($("input.appln-appcode"), function(index, value) {
+					$(value).val('app1');
+				});
+				$("input.appln-appcode").bind('input');
+				$.each($("select[name=appln_technology]"), function(index, value) {
+					$(value).val('tech-php');
+				});
+				$("select[name=appln_technology]").change();	
+				$.each($("input.web-appcode"), function(index, value) {
+					$(value).val('web1')
+				});
+				$("select[name=weblayer]").val('html5');
+				$("select[name=weblayer]").change();
+				$("select[name=web_widget]").val('tech-html5-jquery-mobile-widget');
+				$("select[name=web_widget]").change();
+				$("select[name=widgetversion]").val('2.0.2');
+				$("select[name=widgetversion]").change();
+				$.each($("input.mobile-appcode"), function(index, value) {
+					$(value).val('mobile1')
+				});
+				$("select[name=mobile_layer]").val('android');
+				$("select[name=mobile_layer]").change();
+				$("select[name=mobile_types]").val('tech-android-hybrid');
+				$("select[name=mobile_types]").change();
+				$("input[name='Create']").click();
+				setTimeout(function() {
+					start();
+					var appText = $("a[name=editApplication]").text();
+					notEqual(appText, "app1", "Add Project - Create Project Tested");
 					self.runCloseButtonTest();
 				}, 1500);
 			});
@@ -328,13 +511,13 @@ define(["projects/addproject", "projects/editproject"], function(addProject, edi
 				var applnLayerTrDisplay = $("tr[class=applnLayer]").attr('key');
 				setTimeout(function() {
 					start();
-					equal(applnLayerTrDisplay, "displayed", "Add Project - Input button Event Test for Application Layer");
-					self.runMultiModuleEventTest();
+					equal(applnLayerTrDisplay, "hidden", "Add Project - Input button Event Test for Application Layer");
+					self.runPilotProjectEventTest();
 				}, 1500);
 			});
 		},
 		
-		runMultiModuleEventTest : function() {
+		/* runMultiModuleEventTest : function() {
 			var self=this;
 			asyncTest("Add Project- MultiModule CheckBox Event Test", function() {
 				$("input[name='multimodule']").click();
@@ -345,7 +528,7 @@ define(["projects/addproject", "projects/editproject"], function(addProject, edi
 					self.runPilotProjectEventTest();	
 				}, 1500);
 			});
-		},
+		}, */
 		
 		runPilotProjectEventTest : function() {
 			var self=this;
@@ -403,8 +586,47 @@ define(["projects/addproject", "projects/editproject"], function(addProject, edi
 					equal(techId, "tech-nodejs-webservice", "Add Project - Pilot Project Select Event Tested");
 					equal(weblayer, "tech-html5-mobile-widget", "Add Project - Pilot Project Select Event Tested");
 					equal(mobilelayer, "tech-android-hybrid", "Add Project - Pilot Project Select Event Tested");
-					self.runEditProjectTest();	
+					self.runRemoveApplicationLayerEventTest();	
 				}, 1500);
+			});
+		},
+		
+		runRemoveApplicationLayerEventTest : function() {
+			var self=this;
+			asyncTest("Add Project- Remove Application Layer Event Test", function() {
+				$("a[name=removeApplnLayer]").click();
+				setTimeout(function() {
+					start();
+					var trCount = $("a[name=addApplnLayer]").parents('tr.applnlayercontent:last').length;
+					equal(trCount, 0, "Add Project- Remove Application Layer Event Test");
+					self.runRemoveWebLayerEventTest();
+				}, 2500);
+			});
+		},
+
+		runRemoveWebLayerEventTest : function() {
+			var self=this;
+			asyncTest("Add Project- Remove Web Layer Event Test", function() {
+				$("a[name=removeWebLayer]").click();
+				setTimeout(function() {
+					start();
+					var trCount = $("a[name=addWebLayer]").parents('tr.weblayercontent:last').length;
+					equal(trCount, 0, "Add Project- Remove Web Layer Event Test");
+					self.runRemoveMobileLayerEventTest();
+				}, 2500);
+			});
+		},
+
+		runRemoveMobileLayerEventTest : function() {
+			var self=this;
+			asyncTest("Add Project- Remove Mobile Layer Event Test", function() {
+				$("a[name=removeMobileLayer]").click();
+				setTimeout(function() {
+					start();
+					var trCount = $("a[name=addMobileLayer]").parents('tr.mobilelayercontent:last').length;
+					equal(trCount, 0, "Add Project- Remove Web Layer Event Test");
+					self.runEditProjectTest();
+				}, 2500);
 			});
 		},
 		
@@ -439,9 +661,31 @@ define(["projects/addproject", "projects/editproject"], function(addProject, edi
 					var projectname = $("#editPrjprojectname").val();
 					var mobLayersDisplay = $("input[name=mobLayers]").css('display');
 					equal(projectname, "adasdasdasd", "Edit Project - UI Tested");
-					require(["featuresTest"], function(featuresTest){
-						featuresTest.runTests();
-					});
+					self.runEditInputBtnTest();
+				}, 1500);
+			});
+		},
+		
+		runEditInputBtnTest : function(){
+			var self=this;
+			asyncTest("Edit Project- Input Btn Test", function() {
+				$(".flt_left input").click();
+				var mobTrDisplay = $("tr[id=MobLayer]").attr('key');
+				setTimeout(function() {
+					start();
+					equal(mobTrDisplay, "displayed", "Edit Project - Input button Event Test for Mobile Layer");
+					self.runEditProjectCloseEventTest();
+				}, 1500);
+			});	
+		},
+		
+		runEditProjectCloseEventTest : function(){
+			asyncTest("Edit Project- Edit Project Close Image Test", function() {
+				$("img[name='close']").click();
+				var applnLayer = $("tr[id=MobLayer]").attr('key');
+				setTimeout(function() {
+					start();
+					equal(applnLayer, "hidden", "Edit Project - Close Image Event Test for Mobile Layer");
 				}, 1500);
 			});
 		}
