@@ -828,7 +828,7 @@
 	    		<plugin>
 				<groupId>net.awired.jstest</groupId>
 				<artifactId>jstest-maven-plugin</artifactId>
-				<version>3.0.0.19001</version>
+				<version>3.0.0.19006-SNAPSHOT</version>
 				<executions>
 					<execution>
 						<goals>
@@ -838,9 +838,12 @@
 				</executions>
 				<configuration>
 					<runnerType>REQUIREJS</runnerType>
-					<coverage>false</coverage>
+					<coverage>true</coverage>
 					<skipTests>${js.skipTest}</skipTests>
-					<packBeforeTest>false</packBeforeTest>                    
+					<packBeforeTest>false</packBeforeTest>
+					<amdPreloads>
+						<amdPreload>lib/jquery.js</amdPreload>
+					</amdPreloads>						
 					<testIncludes>
 						<testInclude>components/login/test/config.json</testInclude>
 						<testInclude>components/login/test/BootstrapTest.js</testInclude>

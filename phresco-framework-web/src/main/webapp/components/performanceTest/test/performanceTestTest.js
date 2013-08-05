@@ -1,4 +1,4 @@
-define(["performanceTest/performanceTest"], function(PerformanceTest) {
+define(["performanceTest/performanceTest", "lib/jquery_magnific_popup_min-1.0"], function(PerformanceTest) {
 
 	return {
 		runTests: function (configData) {

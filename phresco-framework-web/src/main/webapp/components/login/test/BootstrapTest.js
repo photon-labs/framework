@@ -76,7 +76,7 @@ var commonVariables = {
 	navigationPlaceholder : "navigation\\:widget"
 };
 
-define(["jquery"], function($) {
+define([], function() {
 	$(document).ready(function(){
 
 		$.get('src/components/login/test/config.json', function(data) {
@@ -89,6 +89,8 @@ define(["jquery"], function($) {
 				baseUrl: "src/",
 				
 				paths : {
+					lib : "lib",
+					js : "js",
 					framework : "js/framework",
 					listener : "js/commonComponents/listener",
 					fastclick : "lib/fastclick",
@@ -97,36 +99,7 @@ define(["jquery"], function($) {
 					modules: "js/commonComponents/modules",
 					Clazz : "js/framework/class",
 					components: "components",
-					configData: data,
-					handlebars: "handlebars-1.0.0",
-					jslib_bootstrap_datepicker: "jslib_bootstrap_datepicker-1.0.0",
-					signal: "signal-1.0.1",
-					bootstrap_select_min: "bootstrap_select_min-1.0",
-					signalbinding: "signalbinding-1.0.1",
-					i18next: "i18next-1.6.0",
-					jslib_jquery_sortable_min: "jslib_jquery_sortable_min-1.0.0",
-					bootstrap_min: "bootstrap_min-2.3.1",
-					jquery_mCustomScrollbar_concat_min: "jquery_mCustomScrollbar_concat_min-2.8.1",
-					jquery_mockjax: "jquery_mockjax-1.0",
-					json2: "json2-1.0",
-					RGraph_common_core: "RGraph_common_core-1.0",
-					RGraph_common_tooltips: "RGraph_common_tooltips-1.0",
-					RGraph_common_effects: "RGraph_common_effects-1.0",
-					RGraph_pie: "RGraph_pie-1.0",
-					RGraph_bar: "RGraph_bar-1.0",
-					RGraph_line: "RGraph_line-1.0",
-					RGraph_common_key: "RGraph_common_key-1.0",
-					jquery_tojson: "jquery-tojson-1.0",
-					jquery_magnific_popup_min: "jquery_magnific_popup_min-1.0",
-					jquery_fullscreen: "jquery_fullscreen-1.0",
-					customComboBox: "customcombobox-1.0",
-					fileuploader: "fileuploader-2.0",
-					main: "main-1.0",
-					scrollbars : "scrollbars-1.0",
-					jquery_event_drag_min: "jquery_event_drag_min-2.0",
-					jquery_ba_resize_min: "jquery_ba_resize_min-1.0",
-					jquery_mousewheel : "jquery_mousewheel-1.0",
-					jquery_mousehold : "jquery_mousehold-1.0"
+					configData: data
 				}
 			};
             
@@ -141,8 +114,8 @@ define(["jquery"], function($) {
 			});
 			// setup require.js
 			var requireConfig = requirejs.config(configJson);
-			
-			require(["framework/class", "framework/widget", "common/loading",  "i18next", "framework/widgetWithTemplate", "framework/navigationController", "jquery_mockjax", "json2", "api/api","login/login"], function () {
+
+			require(["framework/class", "framework/widget", "lib/jslib_bootstrap_datepicker-1.0.0", "lib/bootstrap_select_min-1.0", "framework/widgetWithTemplate", "framework/navigationController", "common/loading", "api/api", "lib/jquery_mockjax-1.0", "lib/json2-1.0", "lib/jslib_jss_min-1.0.0", "lib/i18next-1.6.0", "lib/signal-1.0.1", "lib/signalbinding-1.0.1", "lib/main-1.0", "lib/scrollbars-1.0", "lib/jquery_mousewheel-1.0", "lib/jquery_mousehold-1.0", "lib/jquery_ba_resize_min-1.0", "lib/jquery_event_drag_min-2.0", "lib/jquery_mCustomScrollbar_concat_min-2.8.1", "lib/jquery_ui-1.10.3"], function () {
 				Clazz.config = data;
 				Clazz.navigationController = new Clazz.NavigationController({
 					mainContainer : "basepage\\:widget",
@@ -158,11 +131,11 @@ define(["jquery"], function($) {
 				
 				commonVariables.loadingScreen = new Clazz.com.js.widget.common.Loading();
 				commonVariables.api = new Clazz.com.js.api.API();
-			});
-		
-			require(["loginTest", "projectlistTest", "headerTest", "footerTest", "navigationTest", "projectTest", "applicationTest", "featuresTest", "codequalityTest", "configurationTest", "buildTest", "editConfigurationTest", "dynamicPageTest", "unitTestTest", "componentTestTest", "functionalTestTest","manualTestTest", "jobTemplatesTest", "continuousDeliveryViewTest", "continuousDeliveryConfigureTest", "handlebars", "signal", "signalbinding",  "jslib_bootstrap_datepicker", "jslib_jquery_sortable_min", "bootstrap_min", "jquery_mCustomScrollbar_concat_min", "bootstrap_select_min", "performanceTestTest", "RGraph_common_core", "RGraph_common_tooltips", "RGraph_common_effects", "RGraph_pie", "RGraph_bar", "RGraph_line", "RGraph_common_key", "jquery_magnific_popup_min", "jquery_fullscreen", "customComboBox", "main", "scrollbars", "jquery_event_drag_min", "jquery_ba_resize_min", "jquery_mousewheel", "jquery_mousehold","jquery_tojson"], function(loginTest, projectlistTest, headerTest, footerTest, navigationTest, projectTest,applicationTest, featuresTest, codequalityTest, configurationTest, buildTest, editConfigurationTest, dynamicPageTest, unitTestTest, componentTestTest, functionalTestTest,manualTestTest, jobTemplatesTest, continuousDeliveryViewTest, continuousDeliveryConfigureTest,handlebars, signals, signalbinding, datepicker,  sortable, bootstrap, scrollbar, select, performanceTestTest, RGraph_common_core, RGraph_common_tooltips, RGraph_common_effects, RGraph_pie, RGraph_bar, RGraph_line, RGraph_common_key, jquery_magnific_popup_min, jquery_fullscreen, customComboBox, main, scrollbars, jquery_event_drag_min, jquery_ba_resize_min, jquery_mousewheel, jquery_mousehold, jquery_tojson){
-				commonVariables.navListener = Clazz.com.components.navigation.js.listener.navigationListener();
-				loginTest.runTests(data);
+			
+				require(["loginTest", "navigation/listener/navigationListener" ], function(loginTest){
+					commonVariables.navListener = Clazz.com.components.navigation.js.listener.navigationListener();
+					loginTest.runTests(data);
+				});
 			});
 		}, "json");
 	});
