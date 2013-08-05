@@ -169,7 +169,6 @@ define(["features/features",  "application/application",  "projectlist/projectLi
 		
 		scrollbarEnable : function(){
 			var self=this;
-			console.info('self.flagged  ====' , self.flagged );
 			if(self.flagged === 2) {
 				/*$("#content_1,#content_2,#content_3").mCustomScrollbar({
 					scrollInertia:600,
@@ -206,7 +205,7 @@ define(["features/features",  "application/application",  "projectlist/projectLi
 				val = eachList;
 			}
 			val.each(function() {
-				if($(this).attr("class") === "switch switchOn default" || $(this).attr("class") === "switch switchOn"){
+				if($(this).attr("class") === "switch switchOn default" || $(this).attr("class") === "switch default switchOn" || $(this).attr("class") === "switch switchOn"){
 					$(this).parent().show();
 					self.scrollbarUpdate();					
 				}

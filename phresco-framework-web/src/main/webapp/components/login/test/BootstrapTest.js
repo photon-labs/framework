@@ -48,6 +48,8 @@ var commonVariables = {
 	performanceTest : "performanceTest",
 	qualityContext : "quality",
 	performance : "performance",
+	load : "load",
+	loadTest: "loadTest",
 	performanceTest : "performanceTest",
 	mvnPerformanceTest : "app/performanceTest",
 	mvnlogService : "app/readlog",

@@ -4334,3 +4334,11 @@ select[name="reportDataType"], input[name="pdfName"] {
 	width: 99.5%;%;
 	height:450px;
 }
+
+.uploadTemp {
+	float: left;
+    margin-bottom: 0;
+    position: relative;
+    top: 12px;
+    width: 92px;
+}

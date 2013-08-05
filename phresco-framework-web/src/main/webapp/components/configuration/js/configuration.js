@@ -109,6 +109,14 @@ define(["configuration/listener/configurationListener"], function() {
 		 */
 		bindUI : function() {
 			var self = this;
+			var array=[];
+			var defaultEnv=[];
+			var count=0;
+			array[count]=$('.envlistname').text();
+			$("input[name='optionsRadiosfd']").each(function() {
+				defaultEnv[count] = $(this).is(':checked');
+				count++;
+			}); 
 			
 			$('.connected').sortable({
 				connectWith: '.connected'
@@ -168,10 +176,25 @@ define(["configuration/listener/configurationListener"], function() {
 			
 			$("input[name=saveEnvironment]").unbind("click");
 			$("input[name=saveEnvironment]").click(function() {
-				self.saveEnvEvent.dispatch(self.envWithConfig, function(response){
+				
+				var arr=[];
+				var Env=[];
+				var counts=0;
+				arr[counts]=$('.envlistname').text();
+				$("input[name='optionsRadiosfd']").each(function() {
+					Env[counts] = $(this).is(':checked');
+					counts++;
+				}); 
+				if (($.trim(Env) === $.trim(defaultEnv)) && ($.trim(arr) === $.trim(array))){
+					$("input[name='envName']").focus();
+					$("input[name='envName']").attr('placeholder','Enter Environment Name');
+				}
+				else {
+					self.saveEnvEvent.dispatch(self.envWithConfig, function(response){
 					self.configRequestBody = response;
 					self.getAction(self.configRequestBody, 'saveEnv', '', '');
-				});
+					}); 
+				}
 			});
 			
 			$(".tooltiptop").unbind("click");

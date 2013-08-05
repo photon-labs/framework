@@ -126,9 +126,6 @@ public class ClientIdentifyFilter implements Filter , ClientIdentifyFilterConsta
 	    resource = resource.queryParam("context", cutomername);
 	    resource.accept(org.springframework.http.MediaType.APPLICATION_JSON_VALUE);
 	    ClientResponse customerResponse = resource.get(ClientResponse.class);
-	    System.out.println("Context is " + cutomername);
-	    System.out.println("icon response" + iconResponse.getStatus());
-	    System.out.println("Customer response " + customerResponse.getStatus());
 	    if(iconResponse.getStatus() != 200 && customerResponse.getStatus() != 200) {
 	       ClientIdentifyModel data = new ClientIdentifyModel();
 	       data.setStatus(false);

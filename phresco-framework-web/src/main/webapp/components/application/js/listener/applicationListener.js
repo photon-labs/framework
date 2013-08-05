@@ -43,7 +43,7 @@ define([], function() {
 		},
 		
 		addServerDatabase : function(appType, whereToAppend, rowId) {
-			var self = this, dynamicValue, server = '<tr class="servers" key="displayed" name="serverscontent"> <td><span>Server</span>&nbsp;<span class="paid">'+rowId+'</span></td><td name="servers" class="servers"><select name="appServers" class="appServers selectpicker"><option value=0>Select Server</option>'+ self.getOptionData('serverData') +'</select></td><td>Versions</td><td colspan="4" name="version" class="version"><select title="Select Version" multiple data-selected-text-format="count>3" name="server_version" class="server_version selectpicker"></select> <div class="flt_right"><a href="javascript:;" name="addServer"><img src="themes/default/images/helios/plus_icon.png" border="0" alt=""></a> <a href="javascript:;" name="removeServer"><img src="themes/default/images/helios/minus_icon.png"  border="0" alt=""></a></div></td></tr>',
+			var self = this, dynamicValue, server = '<tr class="servers" key="displayed" name="serverscontent"> <td><span>Server</span>&nbsp;<span class="paid">'+rowId+'</span></td><td name="servers" class="servers"><select name="appServers" class="appServers selectpicker"><option value="0">Select Server</option>'+ self.getOptionData('serverData') +'</select></td><td>Versions</td><td colspan="4" name="version" class="version"><select title="Select Version" multiple data-selected-text-format="count>3" name="server_version" class="server_version selectpicker"></select> <div class="flt_right"><a href="javascript:;" name="addServer"><img src="themes/default/images/helios/plus_icon.png" border="0" alt=""></a> <a href="javascript:;" name="removeServer"><img src="themes/default/images/helios/minus_icon.png"  border="0" alt=""></a></div></td></tr>',
 			
 			database ='<tr class="database" key="displayed" name="databasecontent"><td><span>Database</span>&nbsp;<span class="paid">'+rowId+'</span></td><td name="servers" class="databases"><select name="databases" class="databases selectpicker"><option value=0>Select Database</option>'+ self.getOptionData('databaseData') +'</select></td><td>Versions</td> <td colspan="4" name="version" class="version"><select title="Select Version" multiple data-selected-text-format="count>3" name="db_version" class="db_version selectpicker"></select><div class="flt_right"><a href="javascript:;" name="addDatabase"><img src="themes/default/images/helios/plus_icon.png"  border="0" alt=""></a> <a href="javascript:;" name="removeDatabase"><img src="themes/default/images/helios/minus_icon.png" border="0" alt=""></a></div></td></tr>';
 			if (appType === "addServer") {
@@ -117,9 +117,71 @@ define([], function() {
 			$("select[name='databases']").bind('change', function(){
 				var currentData = $(this).val();
 				self.getVersions($(this), currentData, 'databaseData', 'db');
+			});	
+			
+			$("select[name='func_framework']").bind('change', function(){
+				var currentData = $(this).val();
+				self.getTools($(this), currentData, 'functionalFrameworkData', 'func_framework');
+				tools_versionplaceholder = $("select[name=tools_version]");
+				$(tools_versionplaceholder).html('');
+				$("<option>").val("").text('Select Version').appendTo(tools_versionplaceholder);
+				$(tools_versionplaceholder).selectpicker('refresh');				
+			});
+			
+			$("select[name='func_framework_tools']").bind('change', function(){
+				var currentData = $(this).val();
+				self.getToolsVersion($(this), currentData, 'functionalFrameworkData', 'tools_version');
 			});
 		},
-
+		
+		getToolsVersion : function(object, currentData, technology, type){
+			var self=this, option,  versionplaceholder;
+			versionplaceholder = $("select[name=tools_version]");
+			$(versionplaceholder).html('');
+			if(currentData === "0"){
+				$(versionplaceholder).selectpicker('refresh');
+				$("<option>").val("").text('Select Version').appendTo(versionplaceholder);	
+			}else {
+				var jsontechData = commonVariables.api.localVal.getJson(technology);
+				$.each(jsontechData, function(index, value){
+					if(value.id === $("select[name='func_framework']").val()){
+						$.each(value.functionalFrameworks, function(index, value){
+							if(value.id === currentData){
+								$.each(value.versions, function(index, value){
+									$("<option>").val(value).text(value).appendTo(versionplaceholder);
+								});
+								$(versionplaceholder).selectpicker('refresh');
+							}
+						});					
+					}
+				});
+			}	
+		},
+		
+		getTools : function(object, currentData, technology, type){
+			var self=this, option, version, versionplaceholder;
+			version = object.parents("td[name='servers']");
+			versionplaceholder = $(version).siblings("td[name='tools']").children("select[name=func_framework_tools]");
+			$(versionplaceholder).html('');
+			$("<option>").val('0').text('Select Tools').appendTo(versionplaceholder);	
+			// To clear Version
+			
+			if(currentData === "0"){
+				$(versionplaceholder).selectpicker('refresh');
+			}else {
+				var jsontechData = commonVariables.api.localVal.getJson(technology);
+				$.each(jsontechData, function(index, value){
+					if(value.id === currentData){
+						$.each(value.functionalFrameworks, function(index, value){
+							$("<option>").val(value.id).text(value.displayName).appendTo(versionplaceholder);
+						});
+						$(versionplaceholder).selectpicker('refresh');
+						
+					}
+				});
+			}	
+		},
+		
 		getVersions : function(object, currentData, technology, type) {
 			var self=this, option, version, versionplaceholder;
 			version = object.parents("td[name='servers']");
@@ -178,8 +240,11 @@ define([], function() {
 									self.getWSConfig(response, function(appInfo){
 										data.webserviceData = appInfo.data;
 										commonVariables.api.localVal.setJson('webserviceData', appInfo.data);
-										//commonVariables.loadingScreen.removeLoading();
-										callback(data);
+										self.getAppConfig(response , 'functionalFrameworks', function(appInfo){
+											data.functionalFrameworkData = appInfo.data;
+											commonVariables.api.localVal.setJson('functionalFrameworkData', appInfo.data);
+											callback(data);
+										});	
 									});	
 								});
 							});
@@ -223,8 +288,11 @@ define([], function() {
 				dataType: "json",
 				webserviceurl: ''
 			};
-			
-			header.webserviceurl = commonVariables.webserviceurl+ "appConfig/list?techId="+techId+"&customerId="+customerId+"&type="+type+"&platform=Windows64&userId="+userId;
+			if("functionalFrameworks" === type){
+				header.webserviceurl = commonVariables.webserviceurl+ "appConfig/functionalFrameworks?techId="+techId+"&userId="+userId;			
+			}else{
+				header.webserviceurl = commonVariables.webserviceurl+ "appConfig/list?techId="+techId+"&customerId="+customerId+"&type="+type+"&platform=Windows64&userId="+userId;
+			}
 			try {
 				commonVariables.api.ajaxRequest(header,
 					function(response) {
@@ -281,66 +349,116 @@ define([], function() {
 				var selectedWebServices = [];
 				var databasesJson = {};
 				var serversJson = {};
+				var functionalFrameworkInfo = null;
+				var submitFlag = 0;
+				//console.log($("tbody[name='layercontents']").children().children().children());
 				$.each($("tbody[name='layercontents']").children().children().children(), function(index, value){
 				
-					if($(value).attr('class') === "servers" && $(value).attr('key') === "displayed") {
+					if($(value).attr('class') === "servers" && $(value).css('display') !== "none") {
 						var serverId = {};
 						var artifactInfoIds = [];
 						var tech = $(value).children("td.servers").children("select.appServers");
 						var selSerId = $(tech).find(":selected").val();
 						var selVersion = $(value).children("td.version").children("select.server_version").val();
-						if(selSerId !== "0"){
-							serverId.artifactGroupId = selSerId;
-							serverId.artifactInfoIds = selVersion;
-							selectedServers.push(serverId);
+						if(selSerId !== "0" && selVersion === null){
+							$("#servererror").focus();
+							$("#servererror").addClass("errormessage");
+							$("#servererror").text('Please select server version');
+							$("select[name='server_version']").bind('change', function() {
+								$("#servererror").text("");
+								$("#servererror").removeClass("errormessage");
+							});
+							submitFlag = 1;
+						} else {
+							if(selSerId !== "0" && selSerId !== 0){
+								serverId.artifactGroupId = selSerId;
+								serverId.artifactInfoIds = selVersion;
+								selectedServers.push(serverId);
+							}	
 						}
 						
 					}
 					
-					if($(value).attr('class') === "database" && $(value).attr('key') === "displayed") {
+					if($(value).attr('class') === "database" && $(value).css('display') !== "none") {
 						var serverId = {};
 						var artifactInfoIds = [];
 						var tech = $(value).children("td.databases").children("select.databases");
 						var selSerId = $(tech).find(":selected").val();
 						var selVersion = $(value).children("td.version").children("select.db_version").val();
-						if(selSerId !== "0"){
-							serverId.artifactGroupId = selSerId;
-							serverId.artifactInfoIds = selVersion;
-							selectedDatabases.push(serverId);
+						if(selSerId !== "0" && selVersion === null){
+							$("#dberror").focus();
+							$("#dberror").addClass("errormessage");
+							$("#dberror").text('Please select database version');
+							$("select[name='db_version']").bind('change', function() {
+								$("#dberror").text("");
+								$("#dberror").removeClass("errormessage");
+							});
+							submitFlag = 1;
+						} else {
+							if(selSerId !== "0" && selSerId !== 0){
+								serverId.artifactGroupId = selSerId;
+								serverId.artifactInfoIds = selVersion;
+								selectedDatabases.push(serverId);
+							}	
 						}	
 					}
-					if($(value).attr('class') === "webservice" && $(value).attr('key') === "displayed") {
+					if($(value).attr('class') === "webservice" && $(value).css('display') !== "none") {
 						$.each($(this).find(".webservice_chkbox:checked"), function() {
 							selectedWebServices.push($(this).val());
 						});
 					}
+					
+					if($(value).attr('class') === "functionalFramework" && $(value).css('display') !== "none") {
+						
+						var frameworkGroupId = $("select[name=func_framework]").val();
+						var frameworkIds = $("select[name=func_framework_tools]").val();
+						var version = $("select[name=tools_version]").val();
+						 if(frameworkGroupId !== "0" && frameworkIds === "0"){
+							$("#fferror").focus();
+							$("#fferror").addClass("errormessage");
+							$("#fferror").text('Please select tools');
+							$("select[name='func_framework_tools']").bind('change', function() {
+								$("#fferror").text("");
+								$("#fferror").removeClass("errormessage");
+							});
+							submitFlag = 1;
+						} else {
+							functionalFrameworkInfo = {};							
+							functionalFrameworkInfo.frameworkGroupId = frameworkGroupId;
+							functionalFrameworkInfo.frameworkIds = frameworkIds;
+							functionalFrameworkInfo.version = version;
+						}	
+					}					
 				});
 				if (appInfo.code !== '') {
 					appInfo.techInfo = renderData.appdetails.data.appInfos[0].techInfo;
 					appInfo.selectedDatabases = selectedDatabases;
 					appInfo.selectedServers = selectedServers;
 					appInfo.selectedWebservices = selectedWebServices;
+					appInfo.functionalFrameworkInfo = functionalFrameworkInfo;
 				}
-				self.editAppInfo(self.getRequestHeader(JSON.stringify(appInfo), "editApplication"), function(response) {
-					if(response.responseCode === "PHR200008"){
-						var appDir = commonVariables.api.localVal.getSession('appDirName');
-						localStorage.setItem(appDir + '_AppUpdateMsg', response.message);
-						commonVariables.navListener.getMyObj(commonVariables.editApplication, function(retVal){
-							self.editAplnContent = retVal;
-							self.editAplnContent.appDirName = response.data.appDirName;
-							commonVariables.appDirName = response.data.appDirName;
-							commonVariables.api.localVal.setSession('appDirName', response.data.appDirName);
-							commonVariables.api.localVal.setJson('appdetails', response.data.appInfos);
-							Clazz.navigationController.push(self.editAplnContent, true);
-							setTimeout(function(){
-								$(".blinkmsg").removeClass("poperror").addClass("popsuccess");
-								self.effectFadeOut('popsuccess', (''));
-								$(".popsuccess").attr('data-i18n', 'application.successmessage.applicationupdated');
-								self.renderlocales(commonVariables.basePlaceholder);	
-							},3000);
-						});
-					}
-				});
+				if(submitFlag === 0){
+					self.editAppInfo(self.getRequestHeader(JSON.stringify(appInfo), "editApplication"), function(response) {
+						if(response.responseCode === "PHR200008"){
+							var appDir = commonVariables.api.localVal.getSession('appDirName');
+							localStorage.setItem(appDir + '_AppUpdateMsg', response.message);
+							commonVariables.navListener.getMyObj(commonVariables.editApplication, function(retVal){
+								self.editAplnContent = retVal;
+								self.editAplnContent.appDirName = response.data.appDirName;
+								commonVariables.appDirName = response.data.appDirName;
+								commonVariables.api.localVal.setSession('appDirName', response.data.appDirName);
+								commonVariables.api.localVal.setJson('appdetails', response.data.appInfos);
+								Clazz.navigationController.push(self.editAplnContent, true);
+								setTimeout(function(){
+									$(".blinkmsg").removeClass("poperror").addClass("popsuccess");
+									self.effectFadeOut('popsuccess', (''));
+									$(".popsuccess").attr('data-i18n', 'application.successmessage.applicationupdated');
+									self.renderlocales(commonVariables.basePlaceholder);	
+								},3000);
+							});
+						}
+					});
+				}	
 			}
 		},
 		

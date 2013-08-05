@@ -123,6 +123,43 @@ define(["application/listener/applicationListener"], function() {
 					return options.inverse(this);
 				}
 			});
+			
+			Handlebars.registerHelper('comparetools', function(frameworkGroupId, frameworkIds, functionalFrameworkData) {
+				var option = '';
+				$.each(functionalFrameworkData, function(index, value){
+					if(frameworkGroupId === value.id){
+						$.each(value.functionalFrameworks, function(index, value){
+							if (value.id === frameworkIds) {
+								option +='<option selected="selected" value='+value.id+'>'+ value.displayName +'</option>';
+							} else {
+								option +='<option value='+value.id+'>'+ value.displayName +'</option>';
+							}
+						});
+					}
+				});
+				return option;
+			});
+						
+			Handlebars.registerHelper('comparetoolsversion', function(functionalFrameworkInfo, functionalFrameworkData) {
+				var option = '';
+				$.each(functionalFrameworkData, function(index, value){
+					if(functionalFrameworkInfo.frameworkGroupId === value.id){
+						$.each(value.functionalFrameworks, function(index, value){
+							if (value.id === functionalFrameworkInfo.frameworkIds) {
+								$.each(value.versions, function(index, value){
+									if (value === functionalFrameworkInfo.version) {
+										option +='<option selected="selected" value='+value+'>'+ value +'</option>';
+									} else {
+										option +='<option value='+value+'>'+ value +'</option>';
+									}
+								});		
+							}
+						});
+					}
+				});
+				return option;
+			});
+			
 						
 		},
 		 
@@ -213,7 +250,7 @@ define(["application/listener/applicationListener"], function() {
 			});
 					
 			self.windowResize();	
-			//this.customScroll($(".scrolldiv"));
+			this.customScroll($(".scrolldiv"));
 		}
 	});
 

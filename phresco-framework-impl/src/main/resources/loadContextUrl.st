@@ -1,155 +1,136 @@
-<div style="background-color: #323232;color: #FFFFFF;">
-     <table class="zebra-striped">
-         <tr>
-             <th class="" style="padding:8px 0 5px 9px">Context URLs</th>
-         </tr>
-     </table>
+<div class="middle_div">
+ 	<span>Context URLs</span>
+    <span><input type="button" value="Add" id="contextAdd" class="btn btn_style add_icon_btn"></span>
+    <div class="clear"></div>
 </div>
 <script type="text/javascript">
 	var jsonFlag = true;
 </script>
-<div id="contextDivParent">
-$myObject:{ obj |
-	$obj.contextUrls: { contextUrlsObj |
-	<script type="text/javascript">
-		jsonFlag = false;
-	</script>
-	<div id="contextDiv" class="contextDivClass" style="margin-bottom:5px;">
-		<fieldset class="popup-fieldset fieldsetBottom perFieldSet perContextUrlFieldset" id="context">
-			<table style="line-height: 0px;">
-				<thead>
-					<tr>
-						<td class="noBorder" style="color: #333333; font-weight: bold;"><span class="red">*</span>&nbsp;Name</td>
-						<td class="noBorder" style="color: #333333; font-weight: bold;">Context</td>
-						<td class="noBorder" style="color: #333333; font-weight: bold;">Type</td>
-						<td class="noBorder" style="color: #333333; font-weight: bold;">Encoding</td>
-					</tr>							
-				</thead>
-				<tbody>
-					<tr>
-						<td class="noBorder">
-							<input type="text" name="contextName" class="input-small" title="Name" maxlength="20" value="$contextUrlsObj.name$" class="screenName">
-						</td>
-						<td class="noBorder">
-							<input type="text" name="context" title="Context" value="$contextUrlsObj.context$" class="input-medium">
-						</td>
-						<td class="noBorder">
-							<select name="contextType" id="contextType$contextUrlsObj.name$" class="input-small" style="width:75px;">
-								<option value="GET">GET</option>
-								<option value="POST">POST</option>
-							</select>
-						</td>
-						<td class="noBorder">
-							<select name="encodingType" id="encodingType$contextUrlsObj.name$" class="input-small">
-								<option value="UTF-8">UTF-8</option>
-								<option value="UTF-16">UTF-16</option>
-							</select>
-						</td>
-					</tr>
-				</tbody>
-			</table>
-			<table style="line-height: 0px;">
-				<thead>
-					<tr>
-						<td style="color: #333333; font-weight: bold;" class="noBorder">
-							<input type="checkbox" checkFlag="$contextUrlsObj.redirectAutomatically$" name="redirectAutomatically" class="redirectAutomatically" onclick="checkUncheck(this);" class="">&nbsp;Redirect Automatically
-						</td>
-						<td style="color: #333333; font-weight: bold;" class="noBorder">
-							<input type="checkbox" checkFlag="$contextUrlsObj.followRedirects$" name="followRedirects" class="followRedirects" onclick="checkUncheck(this);" class="">&nbsp;Follow Redirects
-						</td>
-						<td style="color: #333333; font-weight: bold;" class="noBorder">
-							<input type="checkbox" checkFlag="$contextUrlsObj.keepAlive$" name="keepAlive" onclick="" class="keepAlive">&nbsp;Use Keep Alive
-						</td>
-					</tr>
-				</thead>
-			</table>
-			<table style="line-height: 0px;">
-				<thead>
-					<tr>
-						<td style="color: #333333; font-weight: bold; width: 45.3%;" class="noBorder">
-							<input type="checkbox" checkFlag="$contextUrlsObj.multipartData$" name="multipartData" onclick="" class="multipartData">&nbsp;Use multipart data
-						</td>
-						<td style="color: #333333; font-weight: bold;" class="noBorder">
-							<input type="checkbox" checkFlag="$contextUrlsObj.compatibleHeaders$" name="compatibleHeaders" onclick="" class="compatibleHeaders">&nbsp;Browser Compatible headers
-						</td>
-					</tr>
-				</thead>
-			</table>
-			<fieldset class="popup-fieldset perContentFieldsetDiv" style="padding: 0; margin-bottom: 0; width: 97%; margin-left:8px; float: left;" id="headerLegend">
-				<legend class="fieldSetLegend">Headers</legend>
-				<table>
-					<tr>
-						<td class="noBorder" style="color: #333333; font-weight: bold;">Key</td>
-						<td class="noBorder"><input type="text" class="input-mini key"/></td>
-						<td class="noBorder" style="color: #333333; font-weight: bold;">Value</td>
-						<td class="noBorder"><input type="text" class="input-mini value"/></td>
-						<td class="noBorder"><input type="button" class="btn btn-primary" value="Add" onclick="addHeader(this);"/></td>
-					</tr>
-				</table>
-				$contextUrlsObj.headers: { headersObj |
-					<div id="headerkeyId" class="headers" style="background-color: #bbbbbb; width: 52%; margin-left: 2px;  margin-bottom:2px; height: auto; border-radius: 6px; padding: 0 0 0 10px; position: relative" ><a onclick="removeHeader(this);" style="text-decoration: none; margin-right: 10px; color: #000000; margin-left: 92%;" href="#">&times;</a><div style="cursor: pointer; color: #000000; height: auto; position: relative; width: 90%; line-height: 17px; margin-top: -14px; padding: 0 0 6px 1px;">$headersObj.key$ : $headersObj.value$</div><input type="hidden" value="$headersObj.key$" name="headerKey"><input type="hidden" value="$headersObj.value$" name="headerValue"></div>
-				}$
-			</fieldset>
-			
-			<fieldset class="popup-fieldset perContentFieldsetDiv parameterFieldset" style="padding: 0; margin-bottom: 0; width: 97%; 		margin-left:8px; float: left;" id="parameterFieldset">
-				<legend class="fieldSetLegend">Parameters</legend>
-				<table>
+<div class="contextDivParent" id="contextDivParent">
+	$myObject:{ obj |
+		$obj.contextUrls: { contextUrlsObj |
+		<script type="text/javascript">
+			jsonFlag = false;
+		</script>
+			<div id="contextDiv" class="contextDivClass">
+				<table class="table table-striped table_border table-bordered context_table" cellpadding="0" cellspacing="0" border="0">
 					<thead>
 						<tr>
-							<td style="color: #333333; font-weight: bold;" class="noBorder">Name</td>
-							<td style="color: #333333; font-weight: bold;" class="noBorder">Value</td>
-							<td style="color: #333333; font-weight: bold;" class="noBorder">Encode</td>
+							<th colspan="4">
+							<div class="delete_icon removeContext">
+								<img class="removeContextImg" src="themes/default/images/helios/delete_row.png">
+							</div>
+							</th>
 						</tr>
 					</thead>
 					<tbody>
-						$contextUrlsObj.parameters: { parametersObj |
-							<tr class="parameterRow">
-								<td class="noBorder">
-									<input type="text" class="parameterName" value="$parametersObj.name$" style="width:130px;" name="parameterName"/>
-								</td>
-								<td class="noBorder">
-									<textarea type="text" class="parameterValue" style="width:130px; height:20px; resize:none;" name="parameterValue">$parametersObj.value$</textarea>
-								</td>
-								
-								<td class="noBorder">
-									<input type="checkbox" class="parameterEncode" name="parameterEncode" checkFlag="$parametersObj.encode$"/>
-								</td>
-								<td class="noBorder">
-									<a>
-										<img onclick="appendParameterRow(this);" class="parameterPlus" id="parameterPlus" src="images/icons/add_icon.png">
-									</a>
-									<a>
-										<img onclick="removeParameterRow(this);" src="images/icons/minus_icon.png" class="del imagealign hide parameterMinus">
-									</a>
-								</td>
-							</tr>
-						}$	
-					</tbody>	
+						<tr>
+							<td>
+								<label>HTTP Name<sup>*</sup></label>
+								<input type="text" value="$contextUrlsObj.name$" name="httpName">
+							</td>
+							<td>
+								<label>Context<sup>*</sup></label>
+								<input type="text" value="$contextUrlsObj.context$" name="context">
+							</td>
+							<td>
+								<label>Type</label>
+								<select id="contextType$contextUrlsObj.name$" name="contextType">
+									<option value="GET">GET</option>
+									<option value="POST">POST</option>
+									<option value="PUT">PUT</option>
+									<option value="DELETE">DELETE</option>
+								</select>
+							</td>
+							<td>
+								<label>Encoding</label>
+								<select id="encodingType$contextUrlsObj.name$" name="encodingType">
+									<option value="UTF-8">UTF-8</option>
+									<option value="UTF-16">UTF-16</option>
+								</select>
+							</td>
+						</tr>
+						<tr>
+							<td colspan="4">
+								<table class="table" cellpadding="0" cellspacing="0" border="0">
+									<tbody>
+										<tr>
+											<td><input type="checkbox" checkFlag="$contextUrlsObj.redirectAutomatically$" name="redirectAutomatically" class="redirectAutomatically">Redirect Automatically</td>
+											<td><input type="checkbox" checkFlag="$contextUrlsObj.followRedirects$" name="followRedirects" class="followRedirects">Follow Redirects</td>
+											<td><input type="checkbox" checkFlag="$contextUrlsObj.keepAlive$" name="keepAlive" class="keepAlive">Use Keep Alive</td>
+										</tr>
+										<tr>
+											<td><input type="checkbox" checkFlag="$contextUrlsObj.multipartData$" name="multipartData" class="multipartData">Use Mulipart data</td>
+											<td colspan="2"><input type="checkbox" checkFlag="$contextUrlsObj.compatibleHeaders$" name="compatibleHeaders" class="compatibleHeaders">Browser Compatible Headers</td>
+										</tr> 
+									</tbody>
+								</table> 
+							</td>                                  	
+						</tr>
+						<tr>
+							<td colspan="4">
+								<table class="table table-striped table_border table-bordered header_table" cellpadding="0" cellspacing="0" border="0">
+									<thead>
+										<tr>
+											<th>Headers</th>
+										</tr>
+									</thead>
+									<tbody>
+										<tr>
+											<td><input type="text" class="headerKey" placeholder="Key"><input class="headerValue" type="text" placeholder="Value"><input type="button" value="Add" class="btn btn_style headerKeyAdd"></td>
+										</tr>
+										<tr>
+											<td colspan="4">
+												<div class="add_test">
+													$contextUrlsObj.headers: { headersObj |
+														<div class="add_remove_test headers">$headersObj.key$ : $headersObj.value$<input type="hidden" value="$headersObj.key$" name="headerKey"> <input type="hidden" value="$headersObj.value$" name="headerValue"> <img src="themes/default/images/helios/remove_test.png" class="removeHeaders"></div>
+													}$
+												</div>
+											</td>
+										</tr>
+									 </tbody>
+								   </table>
+								 </td>
+							 </tr>
+							 <tr>
+								<td colspan="4">
+									 <table class="table table-striped table_border table-bordered header_table" cellpadding="0" cellspacing="0" border="0">
+										<thead>
+											<tr>
+												<th>Parameters</th>
+											</tr>
+										</thead>
+										<tbody>
+											$contextUrlsObj.parameters: { parametersObj |
+												<tr class="parameterRow">
+													<td><input type="text" class="parameterName" value="$parametersObj.name$" placeholder="Name" name="parameterName"/>
+													<input type="text" class="parameterValue" value="$parametersObj.value$" name="parameterValue" placeholder="Value"/>
+													<input class="parameterEncode" type="checkbox"  name="parameterEncode" checkFlag="$parametersObj.encode$"/>Encode
+													<img src="themes/default/images/helios/minus_icon.png" class="add_test_icon removeParamter" style="display:none;">
+													<img class="add_test_icon addParameter" src="themes/default/images/helios/plus_icon.png"></td>
+												</tr>
+											}$				
+										</tbody>
+									</table>
+								 </td>
+							 </tr>
+					</tbody>
 				</table>
-			</fieldset>
-		</fieldset>
-	</div>
-	<script type="text/javascript">
-		document.getElementById("contextType$contextUrlsObj.name$").value = '$contextUrlsObj.contextType$';
-		document.getElementById("encodingType$contextUrlsObj.name$").value = '$contextUrlsObj.encodingType$';
-	</script>
+			</div>   
+			<script type="text/javascript">
+				document.getElementById("contextType$contextUrlsObj.name$").value = '$contextUrlsObj.contextType$';
+				document.getElementById("encodingType$contextUrlsObj.name$").value = '$contextUrlsObj.encodingType$';
+			</script>
+		}$
 	}$
-}$
-</div>
+</div>     
 <script type="text/javascript">
-	console.info("load contexturl template created");
-	if (jsonFlag) {
-		var newTextBoxDiv = jQuery(document.createElement('div')).attr('id', 'contextDiv').attr('class','contextDivClass').css('margin-bottom','5px');
-		newTextBoxDiv.html("<fieldset class='popup-fieldset fieldsetBottom perFieldSet perContextUrlFieldset' id='context'>
-			<table style='line-height: 0px;'><thead><tr><td class='noBorder' style='color: #333333; font-weight: bold;'><span class='red'>*</span>&nbsp;Http Name</td><td class='noBorder' style='color: #333333; font-weight: bold;'>Context</td><td class='noBorder' style='color: #333333; font-weight: bold;'>Type</td><td class='noBorder' style='color: #333333; font-weight: bold;'>Encoding</td></tr></thead><tbody><tr><td class='noBorder'><input type='text' name='contextName' class='input-small' title='Name' maxlength='20' value='' class='screenName'></td><td class='noBorder'><input type='text' name='context' title='Context' value='' class='input-medium'></td><td class='noBorder'><select name='contextType' id='contextType' class='input-small' style='width:75px;'><option value='GET'>GET</option><option value='POST'>POST</option></select></td><td class='noBorder'><select name='encodingType' id='encodingType' class='input-small'><option value='UTF-8'>UTF-8</option><option value='UTF-16'>UTF-16</option></select></td></tr></tbody>
-			</table><table style='line-height: 0px;'><thead><tr><td style='color: #333333; font-weight: bold;' class='noBorder'><input type='checkbox' name='redirectAutomatically' class='redirectAutomatically' onclick='checkUncheck(this);' checked='true' class=''>&nbsp;Redirect Automatically</td><td style='color: #333333; font-weight: bold;' class='noBorder'><input type='checkbox' name='followRedirects' class='followRedirects' onclick='checkUncheck(this);' class=''>&nbsp;Follow Redirects</td><td style='color: #333333; font-weight: bold;' class='noBorder'><input type='checkbox' name='keepAlive' onclick='' class=''>&nbsp;Use Keep Alive</td></tr></tbody></table><table style='line-height: 0px;'><thead><tr><td style='color: #333333; font-weight: bold; width: 45.3%;' class='noBorder'><input type='checkbox' name='multipartData' onclick='' class=''>&nbsp;Use multipart data</td><td style='color: #333333; font-weight: bold;' class='noBorder'><input type='checkbox' name='compatibleHeaders' onclick='' class=''>&nbsp;Browser Compatible headers</td></tr></thead></table>
-			<fieldset class='popup-fieldset perContentFieldsetDiv' style='padding: 0; margin-bottom: 0; width: 97%; margin-left:8px; float: left;' id='headerLegend'><legend class='fieldSetLegend'>Headers</legend><table><tr><td class='noBorder' style='color: #333333; font-weight: bold;'>Key</td><td class='noBorder'><input type='text' class='input-mini key'/></td><td class='noBorder' style='color: #333333; font-weight: bold;''>Value</td><td class='noBorder'><input type='text' class='input-mini value'/></td><td class='noBorder'><input type='button' class='btn btn-primary' value='Add' onclick='addHeader(this);'/></td></tr></table></fieldset>
-			<fieldset class='popup-fieldset perContentFieldsetDiv parameterFieldset' style='padding: 0; margin-bottom: 0; width: 97%; margin-left:8px; float: left;' id='parameterFieldset'><legend class='fieldSetLegend'>Parameters</legend><table><thead><tr><td style='color: #333333; font-weight: bold;' class='noBorder'>Name</td><td style='color: #333333; font-weight: bold;' class='noBorder'>Value</td><td style='color: #333333; font-weight: bold;' class='noBorder'>Encode</td></tr></thead><tbody><tr class='parameterRow'><td class='noBorder'><input type='text' style='width:130px;' class='parameterName' name='parameterName'/></td><td class='noBorder'><textarea type='text' class='parameterValue' style='width:130px; height:20px; resize:none;' name='parameterValue'></textarea></td><td class='noBorder'><input type='checkbox' class='input-medium parameterEncode' name='parameterEncode'/></td><td class='noBorder'><a><img onclick='appendParameterRow(this);' class='parameterPlus' id='parameterPlus' src='images/icons/add_icon.png'></a><a><img onclick='removeParameterRow(this);' src='images/icons/minus_icon.png' class='del imagealign hide parameterMinus' style='margin-left:4px;'></a></td></tr></tbody></table></fieldset>
-			</fieldset></div>");
-		newTextBoxDiv.appendTo("#contextDivParent");	
-	} else {
+	if(jsonFlag) {
+		var newTextBoxDiv = jQuery(document.createElement('div')).attr('id', 'contextDiv').attr('class','contextDivClass');
+		newTextBoxDiv.html("<table class='table table-striped table_border table-bordered context_table' cellpadding='0' cellspacing='0' 	border='0'><thead><tr><th colspan='4'><div class='delete_icon removeContext'><img class='removeContextImg' src='themes/default/images/helios/delete_row.png'></div></th></tr></thead><tbody><tr><td><label>HTTP Name<sup>*</sup></label><input type='text' value='' name='httpName'></td><td><label>Context<sup>*</sup></label><input type='text' value='' name='context'></td><td><label>Type</label><select name='contextType'><option value='GET'>GET</option><option value='POST'>POST</option><option value='PUT'>PUT</option><option value='DELETE'>DELETE</option></select></td><td><label>Encoding</label><select name='encodingType'><option value='UTF-8'>UTF-8</option><option value='UTF-16'>UTF-16</option></select></td></tr><tr><td colspan='4'><table class='table' cellpadding='0' cellspacing='0' border='0'><tbody><tr><td><input type='checkbox' name='redirectAutomatically' class='redirectAutomatically'>Redirect Automatically</td><td><input type='checkbox'  name='followRedirects' class='followRedirects'>Follow Redirects</td><td><input type='checkbox' name='keepAlive' class='keepAlive'>Use Keep Alive</td></tr><tr><td><input type='checkbox' name='multipartData' class='multipartData'>Use Mulipart data</td><td colspan='2'><input type='checkbox' name='compatibleHeaders' class='compatibleHeaders'>Browser Compatible Headers</td></tr></tbody></table></td></tr><tr><td colspan='4'><table class='table table-striped table_border table-bordered header_table' cellpadding='0' cellspacing='0' border='0'><thead><tr><th>Headers</th></tr></thead><tbody><tr><td><input type='text' class='headerKey' placeholder='Key'><input class='headerValue' type='text' placeholder='Value'><input type='button' value='Add' class='btn btn_style headerKeyAdd'></td></tr><tr class='headerContent' style='display:none;'><td><div class='add_test'></div></td></tr></tbody></table></td></tr><tr><td colspan='4'><table class='table table-striped table_border table-bordered header_table' cellpadding='0' cellspacing='0' border='0'><thead><tr><th>Parameters</th></tr></thead><tbody><tr class='parameterRow'><td><input type='text' class='parameterName' value='' placeholder='Name' name='parameterName'/><input type='text' class='parameterValue' value='' name='parameterValue' placeholder='Value'/><input class='parameterEncode' type='checkbox'  name='parameterEncode'/>Encode<img src='themes/default/images/helios/minus_icon.png' class='add_test_icon removeParamter' style='display:none;'><img class='add_test_icon addParameter' src='themes/default/images/helios/plus_icon.png'></td></tr></tbody></table></td></tr></tbody></table>");
+		newTextBoxDiv.appendTo("#contextDivParent");
+	}  else {
 		checkEncodeCheckBox();
-		disableEnableMinus();
 	}
 	
 	function checkEncodeCheckBox() {
@@ -203,35 +184,12 @@ $myObject:{ obj |
 		});
 	}
 	
-	
-	function disableEnableMinus() {
-		jQuery('.perContextUrlFieldset').each(function() {
-			var size = jQuery(this).find('.parameterPlus').size();
-			if (size > 1) {
-				jQuery(this).find('.parameterMinus').show();
-			}
-		});
-	}
-	function loadContextUrlMandatoryVal() {
-		var redirect = true;
-		jQuery('.perContextUrlFieldset').each(function() {
-			if (jQuery(this).find(jQuery('input[name=contextName]')).val() == "" || isBlank(jQuery(this).find(jQuery('input[name=contextName]')).val())) {
-				redirect = false;
-				jQuery('.yesNoPopupErr').text('Name is missing');
-				jQuery(this).find(jQuery('input[name=contextName]')).val('');
-				jQuery(this).find(jQuery('input[name=contextName]')).focus();
-			}
-		});
-		
-		return redirect;
-	}
-	
-	function loadContextUrl() {
+	function loadContextUrls() {
 		var contextUrls = [];
 		var contexts = "";
-		jQuery('.perContextUrlFieldset').each(function() {
+		jQuery('.contextDivClass').each(function() {
 			var jsonObject = {};
-			jsonObject.name = jQuery(this).find(jQuery("input[name=contextName]")).val();
+			jsonObject.name = jQuery(this).find(jQuery("input[name=httpName]")).val();
 			jsonObject.context = jQuery(this).find(jQuery("input[name=context]")).val();
 			jsonObject.contextType = jQuery(this).find(jQuery("select[name=contextType]")).val();
 			jsonObject.encodingType = jQuery(this).find(jQuery("select[name=encodingType]")).val();
@@ -272,4 +230,4 @@ $myObject:{ obj |
 		var jsonStrFromTemplate = '"contextUrls":[' + contextUrls + ']';
 		return jsonStrFromTemplate;
 	}
-</script> 
+</script>

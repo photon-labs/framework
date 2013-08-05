@@ -110,6 +110,9 @@ define([], function() {
 							} else if(response.responseCode === "PHR200014") {
 								self.effectFadeOut('popsuccess', (''));
 								successmsg = 'projectlist.successmessage.noreporttodelete';
+							} else if(response.responseCode === "PHR200015") {
+								$('input[name=generate]').removeClass('disabled').addClass('btn_style');
+								$('input[name=generate]').removeAttr('disabled');
 							} else if(response.responseCode === "PHR200016") {
 								self.effectFadeOut('popsuccess', (''));
 								successmsg = 'projectlist.successmessage.reportgenerated';
@@ -160,6 +163,8 @@ define([], function() {
 							} else if(response.responseCode === "PHR210020") {
 								self.effectFadeOut('poperror', (''));
 								failuremsg = 'projectlist.errormessage.atleastonereport';
+								$('input[name=generate]').addClass('disabled').removeClass('btn_style');
+								$('input[name=generate]').attr('disabled', 'disabled');
 							}  else if(response.responseCode === "PHR210021") {
 								self.effectFadeOut('poperror', (''));
 								failuremsg = 'projectlist.errormessage.generatereportfailed';

@@ -240,7 +240,7 @@ define(["projectlist/listener/projectListListener"], function() {
 			});
 
 			$(".tooltiptop").unbind("click");
-			$(".tooltiptop").click(function() {	
+			$(".tooltiptop").click(function() {
 				var selectObj;
 				var checkObj;
 				var usrObj;
@@ -248,6 +248,8 @@ define(["projectlist/listener/projectListListener"], function() {
 				var action = $(this).attr("data-original-title");
 				var currentPrjName = $(this).closest("tr").attr("class");
 				var dynamicId = $(this).attr("dynamicId");
+				$('input[name=generate]').addClass('btn_style').removeClass('disabled');
+				$('input[name=generate]').removeAttr('disabled');
 				//for hiding and clearing the dropdown values
 				$('.searchdropdown').hide();
 				$('.searchdropdown').html('');

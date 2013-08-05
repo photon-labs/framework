@@ -231,7 +231,7 @@ define([], function() {
 			}else if(action === "ipadownload"){
 				method = "POST";
 				contType: "multipart/form-data";
-				url = 'buildinfo/Ipadownload?appDirName=' + appdirName + '&buildNumber=' + buildInfo.buildNo;
+				url = 'Ipadownload?appDirName=' + appdirName + '&buildNumber=' + buildInfo.buildNo;
 			}else if(action === "delete"){
 				method = "DELETE";
 				var appInfo = commonVariables.api.localVal.getJson('appdetails');

@@ -531,8 +531,13 @@ public class QualityUtil {
 			double throughPut = calThroughPut * 1000;
 			performanceTestResult.setThroughtPut(throughPut);
 			tempMap.put(label, performanceTestResult);
-			results.add(performanceTestResult);
 		}
+		
+		Set<String> keySet = tempMap.keySet();
+		for (String label : keySet) {
+			results.add(tempMap.get(label));
+		}
+		
 		// Total Throughput calculation
 		double totalThroughput;
 		double timeSpan = ((maxTs + lastTime) - minTs);

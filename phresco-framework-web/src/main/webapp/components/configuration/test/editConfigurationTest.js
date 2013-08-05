@@ -371,7 +371,8 @@ define(["configuration/editConfiguration"], function(EditConfiguration) {
 			
 			setTimeout(function() {
 				start();
-				equal($(commonVariables.contentPlaceholder).find("#configurationPage").attr('id'), "configurationPage", "Cancel Event Configuration Test");
+				console.info("Done ################# ", $("#configurationPage").attr('id'));
+				equal($("#configurationPage").attr('id'), "configurationPage", "Cancel Event Configuration Test");
 			}, 1500);
 		}); 
 	},

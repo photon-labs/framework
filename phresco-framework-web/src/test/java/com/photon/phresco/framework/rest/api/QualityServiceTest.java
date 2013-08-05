@@ -45,14 +45,14 @@ public class QualityServiceTest extends RestBaseTest {
 //	@Test
 	public void performancetTestResultsTest() {
 		QualityService qualityService = new QualityService();
-		Response response = qualityService.performanceTestResults("MergePerformanceAndLoad1-php5.4.x", "server", "testServer.jtl", "", "responseTime");
+		Response response = qualityService.performanceTestResults("MergePerformanceAndLoad1-php5.4.x", "server", "testServer.jtl", "", "responseTime", "performance-test");
 		assertEquals(200, response.getStatus());
 	}
 
 //	@Test
 	public void performancetTestResultsFailureTest() {
 		QualityService qualityService = new QualityService();
-		Response response = qualityService.performanceTestResults("MergePerformanceAndLoad1-php5.4.x", "server", "noFile.jtl", "", "responseTime");
+		Response response = qualityService.performanceTestResults("MergePerformanceAndLoad1-php5.4.x", "server", "noFile.jtl", "", "responseTime", "performance-test");
 		assertEquals(400, response.getStatus());
 	}
 	

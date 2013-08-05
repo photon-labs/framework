@@ -1,13 +1,13 @@
-define(["performanceTest/listener/performanceTestListener"], function() {
-	Clazz.createPackage("com.components.performanceTest.js");
+define(["performanceLoadListener/listener/performanceLoadListener"], function() {
+	Clazz.createPackage("com.components.loadTest.js");
 
-	Clazz.com.components.performanceTest.js.PerformanceTest = Clazz.extend(Clazz.WidgetWithTemplate, {
+	Clazz.com.components.loadTest.js.LoadTest = Clazz.extend(Clazz.WidgetWithTemplate, {
 		
 		// template URL, used to indicate where to get the template
-		templateUrl: commonVariables.contexturl + "components/performanceTest/template/performanceTest.tmp",
-		configUrl: "components/performanceTest/config/config.json",
-		name : commonVariables.performanceTest,
-		performanceTestListener : null,
+		templateUrl: commonVariables.contexturl + "components/loadTest/template/loadTest.tmp",
+		configUrl: "components/loadTest/config/config.json",
+		name : commonVariables.loadTest,
+		loadTestListener : null,
 		onTabularViewEvent : null,
 		onGraphicalViewEvent : null,
 		onDynamicPageEvent : null,
@@ -20,7 +20,7 @@ define(["performanceTest/listener/performanceTestListener"], function() {
 		whereToRender : null,
 		dynamicpage : null,
 		dynamicPageListener : null,
-		preTriggerPerformanceTest : null,
+		preTriggerloadTest : null,
 		onGeneratePdfEvent : null,
 		
 		/***
@@ -30,9 +30,9 @@ define(["performanceTest/listener/performanceTestListener"], function() {
 		 */
 		initialize : function(globalConfig) {
 			var self = this;
-			commonVariables.testType = commonVariables.performance;
-			if (self.performanceTestListener === null ) {
-				self.performanceTestListener = new Clazz.com.components.performanceTest.js.listener.PerformanceTestListener();
+			commonVariables.testType = commonVariables.load;
+			if (self.loadTestListener === null ) {
+				self.loadTestListener = new Clazz.com.components.performanceLoadListener.js.listener.PerformanceLoadListener();
 			}
 			self.getDynamicPageObject();
 			self.resultViewSignals();
@@ -40,7 +40,7 @@ define(["performanceTest/listener/performanceTestListener"], function() {
 			self.deviceEventSignals();
 			self.pdfReportEventSignals();
 			self.testTriggerSignals();
-			self.registerEvents(self.performanceTestListener);
+			self.registerEvents(self.loadTestListener);
 		},
 		
 		getDynamicPageObject : function () {
@@ -58,12 +58,12 @@ define(["performanceTest/listener/performanceTestListener"], function() {
 			if (self.onTabularViewEvent === null) {
 				self.onTabularViewEvent = new signals.Signal();
 			}
-			self.onTabularViewEvent.add(self.performanceTestListener.onTabularView, self.performanceTestListener);
+			self.onTabularViewEvent.add(self.loadTestListener.onTabularView, self.loadTestListener);
 			
 			if (self.onGraphicalViewEvent === null) {
 				self.onGraphicalViewEvent = new signals.Signal();
 			}
-			self.onGraphicalViewEvent.add(self.performanceTestListener.onGraphicalView, self.performanceTestListener);
+			self.onGraphicalViewEvent.add(self.loadTestListener.onGraphicalView, self.loadTestListener);
 		},
 
 		getResultEventSignals : function () {
@@ -71,17 +71,17 @@ define(["performanceTest/listener/performanceTestListener"], function() {
 			if (self.onShowHideConsoleEvent === null) {
 				self.onShowHideConsoleEvent = new signals.Signal();
 			}
-			self.onShowHideConsoleEvent.add(self.performanceTestListener.showHideConsole, self.performanceTestListener);
+			self.onShowHideConsoleEvent.add(self.loadTestListener.showHideConsole, self.loadTestListener);
 						
 			if (self.getResultEvent === null) {
 				self.getResultEvent = new signals.Signal();
 			}
-			self.getResultEvent.add(self.performanceTestListener.getResultOnChangeEvent, self.performanceTestListener);
+			self.getResultEvent.add(self.loadTestListener.getResultOnChangeEvent, self.loadTestListener);
 									
 			if (self.getResultFilesEvent === null) {
 				self.getResultFilesEvent = new signals.Signal();
 			}
-			self.getResultFilesEvent.add(self.performanceTestListener.getResultFiles, self.performanceTestListener);
+			self.getResultFilesEvent.add(self.loadTestListener.getResultFiles, self.loadTestListener);
 		},
 
 		deviceEventSignals : function () {
@@ -89,12 +89,12 @@ define(["performanceTest/listener/performanceTestListener"], function() {
 			if (self.getDeviceEvent === null) {
 				self.getDeviceEvent = new signals.Signal();
 			}
-			self.getDeviceEvent.add(self.performanceTestListener.getDevices, self.performanceTestListener);
+			self.getDeviceEvent.add(self.loadTestListener.getDevices, self.loadTestListener);
 
 			if (self.onDeviceChangeEvent === null) {
 				self.onDeviceChangeEvent = new signals.Signal();
 			}
-			self.onDeviceChangeEvent.add(self.performanceTestListener.getResultOnChangeEvent, self.performanceTestListener);
+			self.onDeviceChangeEvent.add(self.loadTestListener.getResultOnChangeEvent, self.loadTestListener);
 		},
 
 		pdfReportEventSignals : function () {
@@ -102,24 +102,24 @@ define(["performanceTest/listener/performanceTestListener"], function() {
 			if (self.onShowPdfPopupEvent === null) {
 				self.onShowPdfPopupEvent = new signals.Signal();
 			}
-			self.onShowPdfPopupEvent.add(self.performanceTestListener.getPdfReports, self.performanceTestListener);
+			self.onShowPdfPopupEvent.add(self.loadTestListener.getPdfReports, self.loadTestListener);
 
 
 			if (self.onGeneratePdfEvent === null) {
 				self.onGeneratePdfEvent = new signals.Signal();
 			}
-			self.onGeneratePdfEvent.add(self.performanceTestListener.generatePdfReport, self.performanceTestListener);
+			self.onGeneratePdfEvent.add(self.loadTestListener.generatePdfReport, self.loadTestListener);
 		},
 
 		testTriggerSignals : function () {
 			var self = this;
-			if (self.preTriggerPerformanceTest === null) {
-				self.preTriggerPerformanceTest = new signals.Signal();
+			if (self.preTriggerloadTest === null) {
+				self.preTriggerloadTest = new signals.Signal();
 			}
-			self.preTriggerPerformanceTest.add(self.performanceTestListener.preTriggerPerformanceTest, self.performanceTestListener);
+			self.preTriggerloadTest.add(self.loadTestListener.preTriggerloadTest, self.loadTestListener);
 		},
 
-		registerEvents : function(performanceTestListener) {
+		registerEvents : function(loadTestListener) {
 			var self = this;
 			
 			//To show performance not yet executed for server/ws/db msg
@@ -131,7 +131,7 @@ define(["performanceTest/listener/performanceTestListener"], function() {
 				}	
 			});
 			
-			//To return server/ws/db
+			//To return server/ws
 			Handlebars.registerHelper('against', function(testAgainsts) {
 				if (testAgainsts !== undefined && testAgainsts.length > 0) {
 					return testAgainsts[0];
@@ -228,33 +228,33 @@ define(["performanceTest/listener/performanceTestListener"], function() {
 		 * @element: Element as the result of the template + data binding
 		 */
 		postRender : function(element) {
-			var self = this, performanceLog = "", consoleLog = commonVariables.api.localVal.getSession('performanceConsole');
-			self.performanceTestListener.resizeConsoleWindow();
-			self.performanceTestListener.resultBodyResize();
+			var self = this, loadLog = "", consoleLog = commonVariables.api.localVal.getSession('loadConsole');
+			self.loadTestListener.resizeConsoleWindow();
+			self.loadTestListener.resultBodyResize();
 			
 			if (!self.isBlank(consoleLog)) {
-				performanceLog = consoleLog;
+				loadLog = consoleLog;
 			}
 
 			//To show the log after reloading the test result once the test execution is completed
-			$('#testConsole').html(performanceLog);
+			$('#testConsole').html(loadLog);
 
 			
-			commonVariables.api.localVal.setSession('performanceConsole', '');
+			commonVariables.api.localVal.setSession('loadConsole', '');
 		},
 		
 		preRender: function(whereToRender, renderFunction) {
 			var self = this;
 			self.whereToRender = whereToRender;
-			self.performanceTestListener.getPerformanceTestReportOptions(self.performanceTestListener.getActionHeader(self.projectRequestBody, "resultAvailable"), whereToRender, self.handleResponse);
+			self.loadTestListener.getTestReportOptions(self.loadTestListener.getActionHeader(self.projectRequestBody, "loadResultAvailable"), whereToRender, self.handleResponse);
 		},
 
 		handleResponse : function(response, whereToRender) {
-			var self = this, performanceTest;
-			commonVariables.navListener.getMyObj('performanceTest', function(obj){
-				performanceTest = obj;
+			var self = this, loadTest;
+			commonVariables.navListener.getMyObj('loadTest', function(obj){
+				loadTest = obj;
 			});
-			performanceTest.performanceTestListener.renderPerformanceTemplate(response, performanceTest.renderFnc,  whereToRender);
+			loadTest.loadTestListener.renderLoadTemplate(response, loadTest.renderFnc,  whereToRender);
 		},
 
 		graphDropDownChangeEvent : function (obj) {
@@ -288,7 +288,7 @@ define(["performanceTest/listener/performanceTestListener"], function() {
 				$("#deviceDropDown").html(obj.text()  + '<b class="caret"></b>');
 				$("#deviceDropDown").attr("value", currentDevice);
 				self.onDeviceChangeEvent.dispatch('',$("#testResultFileDrop").text(), '', currentDevice, commonVariables.contentPlaceholder, function(response) {
-					self.performanceTestListener.setResponseTime();	
+					self.loadTestListener.setResponseTime();	
 				});
 			}
 		},
@@ -301,19 +301,18 @@ define(["performanceTest/listener/performanceTestListener"], function() {
 			$(".tooltiptop").tooltip();
 
 			//To show performance popup
-			$("input[name=performancePopup]").unbind("click");
-			$("input[name=performancePopup]").click(function() {
+			$("input[name=loadPopup]").unbind("click");
+			$("input[name=loadPopup]").click(function() {
 				self.closeConsole();
-                var whereToRender = $('#performancePopup ul');
-                commonVariables.goal = "performance-test";
-                commonVariables.phase = "performance-test";
-
+                var whereToRender = $('#loadPopup ul');
+                commonVariables.goal = "load-test";
+                commonVariables.phase = "load-test";
                 if (whereToRender.children().length < 1) {
                 	self.dynamicpage.getHtml(whereToRender, this, $(this).attr('name'), function() {
 	                	var sectionHeight = $('.performanceTestResults').height();
-						$('#performancePopup').css("max-height", sectionHeight - 40 + 'px');
-						$('#performanceForm').css("max-height", sectionHeight - 92 + 'px');
-	                	$("#performanceForm").mCustomScrollbar({
+						$('#loadPopup').css("max-height", sectionHeight - 40 + 'px');
+						$('#loadForm').css("max-height", sectionHeight - 92 + 'px');
+	                	$("#loadForm").mCustomScrollbar({
 							autoHideScrollbar:true,
 							theme:"light-thin",
 							advanced:{ updateOnContentResize: true}
@@ -326,18 +325,18 @@ define(["performanceTest/listener/performanceTestListener"], function() {
 			});
 			
 			//To open the performance test directory
-			$('#openFolder').unbind('click');
-			$("#openFolder").click(function() {
+			$('#openLoadFolder').unbind('click');
+			$("#openLoadFolder").click(function() {
 				var paramJson = {};
-				paramJson.type =  commonVariables.typePerformanceTest;
+				paramJson.type =  commonVariables.typeLoadTest;
 				commonVariables.navListener.openFolder(paramJson);
 			});
 			
 			//To copy the path of performance test directory
-			$('#copyPath').unbind('click');
-			$("#copyPath").click(function() {
+			$('#copyLoadPath').unbind('click');
+			$("#copyLoadPath").click(function() {
 				var paramJson = {};
-				paramJson.type =  commonVariables.typePerformanceTest;
+				paramJson.type =  commonVariables.typeloadTest;
 				commonVariables.navListener.copyPath(paramJson);
 			});
 
@@ -348,9 +347,9 @@ define(["performanceTest/listener/performanceTestListener"], function() {
 			});
 
 			//To show the print as pdf popup
-			$('.performancePDF').unbind("click");
-			$('.performancePDF').click(function() {
-				self.onShowPdfPopupEvent.dispatch();
+			$('.loadPDF').unbind("click");
+			$('.loadPDF').click(function() {
+				self.onShowPdfPopupEvent.dispatch($(this).attr("from"));
 				$('#pdfReportLoading').show();
 				self.opencc(this, 'pdf_report');
 			});
@@ -358,8 +357,8 @@ define(["performanceTest/listener/performanceTestListener"], function() {
 			//To generate the pdf report
 			$('#generatePdf').unbind("click");
 			$('#generatePdf').click(function() {
-				self.onGeneratePdfEvent.dispatch();
-				$('#pdfReportLoading').show();
+				var from = $(this).parent().find('input[name=fromPage]').val();
+				self.onGeneratePdfEvent.dispatch(from);
 			});
 
 			//Shows the tabular view of the test result
@@ -413,15 +412,15 @@ define(["performanceTest/listener/performanceTestListener"], function() {
 			});
 			
 
-			$("#performanceRun").click(function() {
+			$("#loadRun").click(function() {
 				$('.progress_loading').show();
-				self.performanceTestListener.setConsoleScrollbar(true);
-				self.preTriggerPerformanceTest.dispatch();
+				self.loadTestListener.setConsoleScrollbar(true);
+				self.preTriggerloadTest.dispatch();
 			});
 
 			Clazz.navigationController.mainContainer = commonVariables.contentPlaceholder;
 		}
 	});
 
-	return Clazz.com.components.performanceTest.js.PerformanceTest;
+	return Clazz.com.components.loadTest.js.LoadTest;
 });

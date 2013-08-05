@@ -316,13 +316,13 @@ public class ActionService implements ActionServiceConstant, FrameworkConstants,
 	@POST
 	@Path("/loadTest")
 	@Produces(MediaType.APPLICATION_JSON)
-	 public Response loadTest(@Context HttpServletRequest request) throws PhrescoException  {
+	 public Response loadTest(@Context HttpServletRequest request, PerformanceUrls performanceUrls) throws PhrescoException  {
 
 		ActionFunction actionFunction = new ActionFunction();
 		ActionResponse response = new ActionResponse();
 		try	{
 			actionFunction.prePopulateModelData(request);
-			response = actionFunction.loadTest(request);
+			response = actionFunction.loadTest(request, performanceUrls);
 		} catch (Exception e) {
 			S_LOGGER.error(e.getMessage());
 			response.setStatus(ERROR);

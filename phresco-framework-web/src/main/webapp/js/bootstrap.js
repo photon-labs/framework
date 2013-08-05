@@ -64,9 +64,12 @@ var commonVariables = {
 	from : null,
 	testSuiteName : null,
 	testSuites : null,
+	
 	performance : "performance",
 	performanceTest : "performanceTest",
 	performanceTestResults : "performanceTestResults",
+
+	load : "load",
 	loadTest : "loadTest",
 	
 	testResult : "testResult",

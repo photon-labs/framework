@@ -221,6 +221,12 @@
 	      "integrationtest"  :  "Integration Test"
 	  }
 	},
+	"manual" : {
+	  "label" : {
+	      "manualtest"  :  "Manual Test"
+	  }
+	},
+	
 	"testresult" : {
 	  "label" : {
 	      "testeddate" : "Tested Date",
@@ -230,7 +236,8 @@
           "failure"    : "Failure",
           "error"      : "Error",
 		  "results"    : "Results",
-		  "notexecuted": "Performance test not yet executed",
+		  "performancenotexecuted": "Performance test not yet executed",
+		  "loadnotexecuted": "Load test not yet executed",
 		  "notApplicable"	: "Not Applicable",
 		  "blocked"			: "blocked",
 		  "notExecuted"		: "Not Executed",

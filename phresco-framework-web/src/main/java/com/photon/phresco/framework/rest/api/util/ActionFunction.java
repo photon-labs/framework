@@ -323,7 +323,7 @@ public class ActionFunction extends RestBase implements Constants ,FrameworkCons
 			// performance xml check
 			if (StringUtils.isEmpty(isIphone)) {
 				if (!xmlResultsAvailable) {
-					 QualityService qualityService = new QualityService();
+					QualityService qualityService = new QualityService();
 					String phrescoPluginInfoFilePath = FrameworkServiceUtil.getPhrescoPluginInfoFilePath(Constants.PHASE_PERFORMANCE_TEST, 
 							Constants.PHASE_PERFORMANCE_TEST, appInfo.getAppDirName());
 					MojoProcessor mojo = new MojoProcessor(new File(phrescoPluginInfoFilePath));
@@ -335,14 +335,27 @@ public class ActionFunction extends RestBase implements Constants ,FrameworkCons
 							testAgainsts.add(value.getKey());
 						}
 					}
-					xmlResultsAvailable =qualityService.testResultAvail(appInfo.getAppDirName(), testAgainsts, Constants.PHASE_PERFORMANCE_TEST);
+					xmlResultsAvailable = qualityService.testResultAvail(appInfo.getAppDirName(), testAgainsts, Constants.PHASE_PERFORMANCE_TEST);
 				}
 			}
 
 			// load xml check
 			if (StringUtils.isEmpty(isIphone)) {
 				if (!xmlResultsAvailable) {
-					 xmlResultsAvailable = loadTestResultAvail(appInfo);
+					String phrescoPluginInfoFilePath = FrameworkServiceUtil.getPhrescoPluginInfoFilePath(Constants.PHASE_LOAD_TEST, 
+							Constants.PHASE_LOAD_TEST, appInfo.getAppDirName());
+					System.out.println("phres >> "+phrescoPluginInfoFilePath);
+					MojoProcessor mojo = new MojoProcessor(new File(phrescoPluginInfoFilePath));
+					Parameter testAgainstParameter = mojo.getParameter(Constants.PHASE_LOAD_TEST, REQ_TEST_AGAINST);
+					List<String> testAgainsts = new ArrayList<String>();
+					if (testAgainstParameter != null && TYPE_LIST.equalsIgnoreCase(testAgainstParameter.getType())) {
+						List<Value> values = testAgainstParameter.getPossibleValues().getValue();
+						for (Value value : values) {
+							testAgainsts.add(value.getKey());
+						}
+					}
+					QualityService qualityService = new QualityService();
+					xmlResultsAvailable = qualityService.testResultAvail(appInfo.getAppDirName(), testAgainsts, Constants.PHASE_LOAD_TEST);
 				}
 			}
 		} catch (PhrescoException e) {
@@ -595,10 +608,10 @@ public class ActionFunction extends RestBase implements Constants ,FrameworkCons
 		}
 	}
 
-	public ActionResponse loadTest(HttpServletRequest request) throws PhrescoException, IOException {
+	public ActionResponse loadTest(HttpServletRequest request, PerformanceUrls performanceUrls) throws PhrescoException, IOException {
 		printLogs();
 		BufferedInputStream server_logs=null;
-		server_logs = loadTest();
+		server_logs = loadTest(performanceUrls);
 		if (server_logs != null) {
 			return generateResponse(server_logs);
 		} else {
@@ -997,7 +1010,7 @@ public class ActionFunction extends RestBase implements Constants ,FrameworkCons
 	}
 
 
-	public BufferedInputStream loadTest() throws PhrescoException {
+	public BufferedInputStream loadTest(PerformanceUrls performanceUrls) throws PhrescoException {
 
 		BufferedInputStream reader = null;
 		if (isDebugEnabled) {
@@ -1011,6 +1024,7 @@ public class ActionFunction extends RestBase implements Constants ,FrameworkCons
 			List<Parameter> parameters = getMojoParameters(mojo, PHASE_LOAD_TEST);
 			List<String> buildArgCmds = getMavenArgCommands(parameters);
 			buildArgCmds.add(HYPHEN_N);
+			jsonWriter(performanceUrls);  
 			ApplicationManager applicationManager = PhrescoFrameworkFactory.getApplicationManager();
 			reader = applicationManager.performAction(getProjectInfo(), ActionType.LOAD_TEST, buildArgCmds, workingDirectory.toString());
 		} catch(PhrescoException e) {

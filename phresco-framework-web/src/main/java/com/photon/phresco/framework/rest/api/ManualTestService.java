@@ -2,10 +2,10 @@ package com.photon.phresco.framework.rest.api;
 
 import java.io.File;
 import java.io.InputStream;
+import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.servlet.ServletInputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
@@ -20,6 +20,7 @@ import javax.ws.rs.core.Response;
 
 import org.apache.commons.io.FileUtils;
 
+import com.photon.phresco.commons.FrameworkConstants;
 import com.photon.phresco.exception.PhrescoException;
 import com.photon.phresco.framework.commons.FrameworkUtil;
 import com.photon.phresco.framework.model.ManualTestResult;
@@ -32,7 +33,7 @@ import com.phresco.pom.util.PomProcessor;
 import com.sun.jersey.api.client.ClientResponse.Status;
 
 @Path(ServiceConstants.REST_API_MANUAL)
-public class ManualTestService extends RestBase implements ServiceConstants {
+public class ManualTestService extends RestBase implements ServiceConstants, FrameworkConstants {
 	
 	@GET
 	@Path(REST_API_MANUALTEMPLATE)
@@ -44,7 +45,8 @@ public class ManualTestService extends RestBase implements ServiceConstants {
         	if(resourceStream == null) {
         		return Response.status(Status.NO_CONTENT).header("Access-Control-Allow-Origin", "*").entity(resourceStream).build();
         	}
-        	return Response.status(Status.OK).header("Access-Control-Allow-Origin", "*").entity(resourceStream).build();
+        	
+        	return Response.status(Status.OK).entity(resourceStream).header("Content-Disposition", "attachment; filename=helios_manul_test_template." + fileType).build();
         } catch (Exception e) {
         	ResponseInfo finalOutput = responseDataEvaluation(info, e,
 					"Get Manual Template Failed", null);
@@ -55,19 +57,22 @@ public class ManualTestService extends RestBase implements ServiceConstants {
 	
 	@POST
 	@Path(REST_API_UPLOADTEMPLATE)
-	@Produces(MediaType.APPLICATION_OCTET_STREAM)
+	@Consumes(MediaType.APPLICATION_OCTET_STREAM)
+	@Produces(MediaType.APPLICATION_JSON)
 	public Response uploadManualTemplate(@Context HttpServletRequest request, @QueryParam(REST_QUERY_APPDIR_NAME) String appDirName) 
 		throws PhrescoException {
 		ResponseInfo response = new ResponseInfo();
         try {
+        	String uploadedFileName = request.getHeader(FrameworkConstants.X_FILE_NAME);
+        	String fileName = URLDecoder.decode(uploadedFileName, "UTF-8");
+        	InputStream inputStream = request.getInputStream();
         	PomProcessor pomProcessor = FrameworkUtil.getInstance().getPomProcessor(appDirName);
-        	String manualTestReportPath = pomProcessor.getProperty("phresco.manualTest.testcase.path");
+        	String manualTestReportPath = pomProcessor.getProperty("phresco.manualTest.report.dir");
         	StringBuilder builder = new StringBuilder(Utility.getProjectHome());
     		builder.append(appDirName);
     		builder.append(File.separator);
     		builder.append(manualTestReportPath);
-    		ServletInputStream inputStream = request.getInputStream();
-    		File file = new File(builder.toString() + "/helios_manul_test_template.xls");
+    		File file = new File(builder.toString() + File.separator + fileName);
     		FileUtils.copyInputStreamToFile(inputStream, file);
         } catch (Exception e) {
         	ResponseInfo finalOutput = responseDataEvaluation(response, e,
@@ -86,19 +91,22 @@ public class ManualTestService extends RestBase implements ServiceConstants {
 		ResponseInfo<List<TestSuite>> responseData = new ResponseInfo<List<TestSuite>>();
 		List<TestSuite> readManualTestSuiteFile = new ArrayList<TestSuite>();
 		ManualTestResult createManualTestResult = null;
+		ResponseInfo<List<TestSuite>> finalOutput = null;
 		try {
 			FrameworkUtil frameworkUtil = FrameworkUtil.getInstance();
 			String manualTestDir = getManualTestReportDir(appDirName);
 			StringBuilder sb = new StringBuilder(Utility.getProjectHome()).append(appDirName).append(manualTestDir);
-			if (new File(sb.toString()).exists()) {
-				readManualTestSuiteFile = frameworkUtil.readManualTestSuiteFile(sb.toString());
-			} 
+			File file = new File(sb.toString());
+			if (! new File(sb.toString()).exists()) {
+				finalOutput = responseDataEvaluation(responseData, null, "Manual test file not exists", createManualTestResult);
+				return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
+			}
+			readManualTestSuiteFile = frameworkUtil.readManualTestSuiteFile(sb.toString());
 			createManualTestResult = createManualTestResult(readManualTestSuiteFile);
-			ResponseInfo<List<TestSuite>> finalOutput = 
-				responseDataEvaluation(responseData, null, "Testsuites returned Successfully", createManualTestResult);
+			finalOutput = responseDataEvaluation(responseData, null, "Testsuites returned Successfully", createManualTestResult);
 			return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
 		} catch (Exception e) {
-			ResponseInfo<List<TestSuite>> finalOutput = responseDataEvaluation(responseData, e, "Failed", null);
+			finalOutput = responseDataEvaluation(responseData, e, "Failed", null);
 			return Response.status(Status.BAD_REQUEST).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
 		} 
 	}
