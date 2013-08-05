@@ -236,21 +236,24 @@ define(["features/listener/featuresListener"], function() {
 			});
 
 			$('#module').keyup(function(event) {
+				var classval = $("#search").attr("class");
 				var txtSearch = $('#module').val();
 				var divId = "moduleContent";
-				self.onSearchEvent.dispatch(txtSearch, divId);
+				self.onSearchEvent.dispatch(txtSearch, divId, classval);
            	});
 
            	$('#jsibraries').keyup(function(event) {
+				var classval = $("#search").attr("class");
 				var txtSearch = $('#jsibraries').val();
 				var divId = "jsibrariesContent";
-				self.onSearchEvent.dispatch(txtSearch, divId);
+				self.onSearchEvent.dispatch(txtSearch, divId, classval);
            	});
 
            	$('#components').keyup(function(event) {
+				var classval = $("#search").attr("class");
 				var txtSearch = $('#components').val();
 				var divId = "componentsContent";
-				self.onSearchEvent.dispatch(txtSearch, divId);
+				self.onSearchEvent.dispatch(txtSearch, divId, classval);
            	});
 
            	$('#switchoffbutton').on("click", function(event) {

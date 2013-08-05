@@ -1,7 +1,7 @@
 <div class="second_title" >
     	<div class="features_right">
             <font data-i18n="features.show"></font>
-            <fieldset class="switch switchOff" value="false">
+            <fieldset id="search" class="switch switchOff" value="false">
             <label class="off" name="on_off" value="false" id="switchonbutton"></label>
             <label class="on" name="on_off" value="true" id="switchoffbutton"></label>
             </fieldset>

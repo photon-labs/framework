@@ -4342,3 +4342,7 @@ select[name="reportDataType"], input[name="pdfName"] {
     top: 12px;
     width: 92px;
 }
+
+.des-width {
+	width: 45%;
+}

@@ -13,6 +13,29 @@ define(["projectlist/projectList"], function(ProjectList) {
 					var visibility =  $('#addRepo_294187d7-f75a-4adc-bb25-ce9465e0e82f').css('display').trim();
 					equal("block", visibility, "Add to repo popup shown");
 					equal("svn", getval, "Repo type svn listed");
+					self.projectListTest(projectlist);
+				}, 1500);
+			});
+		},
+		projectListTest : function(projectlist) {
+			$('#content').empty();
+			var self = this;
+			asyncTest("Test - Project List Service", function() {
+				var projectlistdata = $.mockjax({
+					url:  commonVariables.webserviceurl+'project/list?customerId=photon',
+					type:'GET',
+					contentType: 'application/json',
+					status: 200,
+					response: function() {
+						this.responseText = JSON.stringify({"response":null,"message":"Project List Successfully","exception":null,"data":[{"appInfos":[{"pomFile":null,"appDirName":"wordpress-WordPress","techInfo":{"appTypeId":"app-layer","techGroupId":null,"techVersions":null,"version":"3.4.2","creationDate":1369915294000,"helpText":null,"system":false,"name":"WordPress","id":"tech-wordpress","displayName":null,"description":null,"status":null},"selectedModules":null,"selectedJSLibs":null,"selectedComponents":null,"selectedServers":null,"selectedDatabases":null,"selectedWebservices":null,"pilotInfo":null,"selectedFrameworks":null,"emailSupported":false,"pilotContent":null,"embedAppId":null,"phoneEnabled":false,"tabletEnabled":false,"pilot":false,"functionalFramework":null,"version":"3.0","code":"wordpress-WordPress","customerIds":null,"used":false,"creationDate":1369915294000,"helpText":null,"system":false,"name":"wordpress-WordPress","id":"294187d7-f75a-4adc-bb25-ce9465e0e82f","displayName":null,"description":null,"status":null}],"projectCode":"wordpress","noOfApps":1,"startDate":null,"endDate":null,"version":"3.0","customerIds":["photon"],"used":false,"creationDate":1369915294000,"helpText":null,"system":false,"name":"wordpress","id":"a58a5358-fa43-4fac-9b98-9bf94b7c4d1f","displayName":null,"description":"sample wordpress project","status":null}]});
+					}
+				});
+				
+				$(commonVariables.headerPlaceholder).find(".header_left ul li").click();
+				setTimeout(function() {
+					start();
+					var techid = $(commonVariables.contentPlaceholder).find(".wordpress-WordPress").attr("techid");
+					equal("tech-wordpress", techid, "Project List Service Tested");
 					self.runValidationAddrepoTest(projectlist);
 				}, 1500);
 			});
@@ -187,14 +210,14 @@ define(["projectlist/projectList"], function(ProjectList) {
 					contentType: 'application/json',
 					status: 200,
 					response: function() {
-						this.responseText = JSON.stringify({"response":null,"message":"SVN project added Successfully","exception":null,"data":null});
+						this.responseText = JSON.stringify({"message":null,"exception":null,"responseCode":"PHR200019","data":null,"status":"success"});
 					}
 				});
 				$("input[name='addrepobtn']").click();
 				setTimeout(function() {
 					start();
 					var getval = $(".popsuccess").text();
-					equal("SVN project added Successfully", getval, "Addrepo service call");
+					equal("Project added successfully", getval, "Addrepo service call");
 					self.projectCommitUiVerification(projectlist);
 				}, 2500);
 			});
@@ -238,14 +261,14 @@ define(["projectlist/projectList"], function(ProjectList) {
 					contentType: 'application/json',
 					status: 200,
 					response: function() {
-						this.responseText = JSON.stringify({"response":null,"message":"SVN project committed Successfully","exception":null,"data":null});
+						this.responseText = JSON.stringify({"message":null,"exception":null,"responseCode":"PHR200020","data":null,"status":"success"});
 					}
 				});
 				$("input[name='commitbtn']").click();
 				setTimeout(function() {
 					start();
 					var getvalue = $(".popsuccess").text();
-					equal("SVN project committed Successfully", getvalue, "Commit service call");
+					equal("Project committed successfully", getvalue, "Commit service call");
 					self.projectSVNUiVerification(projectlist);
 				}, 2500);
 			});
@@ -279,14 +302,14 @@ define(["projectlist/projectList"], function(ProjectList) {
 					contentType: 'application/json',
 					status: 200,
 					response: function() {
-						this.responseText = JSON.stringify({"response":null,"message":"update svn project Successfully","exception":null,"data":null});
+						this.responseText = JSON.stringify({"message":null,"exception":null,"responseCode":"PHR200018","data":null,"status":"success"});
 					}
 				});
 				$("input[name='updatebtn']").click();
 				setTimeout(function() {
 					start();
 					var getval = $(".popsuccess").text();
-					equal("update svn project Successfully", getval, "SVNUpdate service call");
+					equal("Project updated successfully", getval, "SVNUpdate service call");
 					self.projectImportAppSuccessVerification(projectlist);
 				}, 2500);
 			});
@@ -323,29 +346,7 @@ define(["projectlist/projectList"], function(ProjectList) {
 			});
 		}, 
 		
-		projectListTest : function(projectlist) {
-			$('#content').empty();
-			var self = this;
-			asyncTest("Test - Project List Service", function() {
-				var projectlistdata = $.mockjax({
-					url:  commonVariables.webserviceurl+'project/list?customerId=photon',
-					type:'GET',
-					contentType: 'application/json',
-					status: 200,
-					response: function() {
-						this.responseText = JSON.stringify({"response":null,"message":"Project List Successfully","exception":null,"data":[{"appInfos":[{"pomFile":null,"appDirName":"wordpress-WordPress","techInfo":{"appTypeId":"app-layer","techGroupId":null,"techVersions":null,"version":"3.4.2","creationDate":1369915294000,"helpText":null,"system":false,"name":"WordPress","id":"tech-wordpress","displayName":null,"description":null,"status":null},"selectedModules":null,"selectedJSLibs":null,"selectedComponents":null,"selectedServers":null,"selectedDatabases":null,"selectedWebservices":null,"pilotInfo":null,"selectedFrameworks":null,"emailSupported":false,"pilotContent":null,"embedAppId":null,"phoneEnabled":false,"tabletEnabled":false,"pilot":false,"functionalFramework":null,"version":"3.0","code":"wordpress-WordPress","customerIds":null,"used":false,"creationDate":1369915294000,"helpText":null,"system":false,"name":"wordpress-WordPress","id":"294187d7-f75a-4adc-bb25-ce9465e0e82f","displayName":null,"description":null,"status":null}],"projectCode":"wordpress","noOfApps":1,"startDate":null,"endDate":null,"version":"3.0","customerIds":["photon"],"used":false,"creationDate":1369915294000,"helpText":null,"system":false,"name":"wordpress","id":"a58a5358-fa43-4fac-9b98-9bf94b7c4d1f","displayName":null,"description":"sample wordpress project","status":null}]});
-					}
-				});
-				
-				$(commonVariables.headerPlaceholder).find(".header_left ul li").click();
-				setTimeout(function() {
-					start();
-					var techid = $(commonVariables.contentPlaceholder).find(".wordpress-WordPress").attr("techid");
-					equal("tech-wordpress", techid, "Project List Service Tested");
-					self.projectDeleteSuccessVerification(projectlist);
-				}, 2500);
-			});
-		},
+		
 		projectDeleteSuccessVerification : function(projectlist) {
 			var self = this;
 			$.mockjaxClear(self.projectlistdata);
@@ -399,8 +400,8 @@ define(["projectlist/projectList"], function(ProjectList) {
 				setTimeout(function() {
 					start();
 					equal("", "", 'Configuration type Test');
-					require(["manualTestTest"], function(manualTestTest){
-						manualTestTest.runTests();
+					require(["projectTest"], function(projectTest){
+						projectTest.runTests();
 					});
 				}, 1000);
 			});

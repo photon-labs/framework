@@ -25,39 +25,79 @@ define(["features/features",  "application/application",  "projectlist/projectLi
 			Clazz.navigationController.push(self.projectListContent, true, true);
 		},
 
-		search : function (txtSearch, divId){
+		search : function (txtSearch, divId, classval){
 			var self = this;
-       		var txtSearch = txtSearch.toLowerCase();           		
-			if (txtSearch !== "") {
-				$("#"+divId+" li").hide();//To hide all the ul
-				var hasRecord = false;				
-				var i=0;
-				$("#"+divId+" li").each(function() {//To search for the txtSearch and search option thru all td
-					var tdText = $(this).text().toLowerCase();
-					if (tdText.match(txtSearch)) {
-						$(this).show();
-						hasRecord = true;
-						i++;
+       		var txtSearch = txtSearch.toLowerCase();
+			if(classval === "switch switchOff") {
+				if (txtSearch !== "") {
+					$("#"+divId+" li").hide();//To hide all the ul
+					var hasRecord = false;				
+					var i=0;
+					$("#"+divId+" li").each(function() {//To search for the txtSearch and search option thru all td
+						var tdText = $(this).text().toLowerCase();
+						if (tdText.match(txtSearch)) {
+							$(this).show();
+							hasRecord = true;
+							i++;
+						}
+						
+					});
+					if (hasRecord === false) {
+						if(divId === "moduleContent"){
+							$("#norecord1").show();
+						} if(divId === "jsibrariesContent"){
+							$("#norecord2").show();
+						} if(divId === "componentsContent"){
+							$("#norecord3").show();
+						}					
+					} else {
+						self.norecordHide(divId);
 					}
-					
-				});
-				if (hasRecord === false) {
-					if(divId === "moduleContent"){
-						$("#norecord1").show();
-					} if(divId === "jsibrariesContent"){
-						$("#norecord2").show();
-					} if(divId === "componentsContent"){
-						$("#norecord3").show();
-					}					
-				} else {
+				}
+				else {				
+					$("#"+divId+" li").show();
 					self.norecordHide(divId);
 				}
+				self.scrollbarUpdate();
+			} else {
+				
+				if (txtSearch !== "") {
+					$("#"+divId+" li").hide();//To hide all the ul
+					var hasRecord = false;				
+					var i=0;
+					$("#"+divId+" li").each(function(index, value) {//To search for the txtSearch and search option thru all td
+						if($(value).find("fieldset").attr('class') === "switch switchOn default" || $(value).find("fieldset").attr('class') === "switch switchOn"){
+							var tdText = $(this).text().toLowerCase();
+							if (tdText.match(txtSearch)) {
+								$(this).show();
+								hasRecord = true;
+								i++;
+							}
+						}	
+						
+					});
+					if (hasRecord === false) {
+						if(divId === "moduleContent"){
+							$("#norecord1").show();
+						} if(divId === "jsibrariesContent"){
+							$("#norecord2").show();
+						} if(divId === "componentsContent"){
+							$("#norecord3").show();
+						}					
+					} else {
+						self.norecordHide(divId);
+					}
+				}
+				else {
+					$("#"+divId+" li").each(function(index, value) {
+						if($(value).find("fieldset").attr('class') === "switch switchOn default" || $(value).find("fieldset").attr('class') === "switch switchOn"){
+							$(this).show();
+							self.norecordHide(divId);
+						}
+					});	
+				} 
+				self.scrollbarUpdate();
 			}
-			else {				
-				$("#"+divId+" li").show();
-				self.norecordHide(divId);
-			}
-			self.scrollbarUpdate();
        	},
 	
 		norecordHide : function(divId) {
