@@ -52,8 +52,8 @@
             <port>80</port>
             <username/>
             <password/>
-            <context>service</context>
-			<additional_context>/v-2.3.1/rest/api</additional_context>
+            <context>service-v-2.3.1</context>
+	    <additional_context>/rest/api</additional_context>
         </WebService>
         
         <Other appliesTo="tech-html5-widget" desc="" name="Apikey">
