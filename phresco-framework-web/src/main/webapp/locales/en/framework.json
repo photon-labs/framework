@@ -69,7 +69,7 @@
 			"label" : {
 				"name" : "Name",
 				"mobile" : "Mobile",
-				"type" : "Type",
+				"platform" : "Platform",
 				"weblayer" : "Web Layer",
 				"custom" : "Custom",
 				"tablet" : "Tablet",
@@ -89,7 +89,7 @@
 				"selwidget" : "Select Widget",
 				"seldependency" : "Select Dependency",
 				"selversion" : "Select Version",
-				"selmodel" : "Select Model",
+				"selmodel" : "Select Technology",
 				"seltype" : "Select Type",
 				"projectcode" : "Project Code",
 				"projectname" : "Project Name",

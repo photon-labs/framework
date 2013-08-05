@@ -154,8 +154,8 @@ define(["projects/listener/projectsListener"], function() {
 				self.onAddLayerEvent.dispatch($(this));
 			});
 			
-			$("#appcode, #webappcode, #mobileappcode").unbind('input');
-			$("#appcode, #webappcode, #mobileappcode").bind('input', function(){
+			$(".appln-appcode, .web-appcode, .mobile-appcode").unbind('input');
+			$(".appln-appcode, .web-appcode, .mobile-appcode").bind('input', function(){
 				$(this).val(self.specialCharValidation($(this).val().replace(/\s/g, "")));
 			});
 
@@ -193,11 +193,12 @@ define(["projects/listener/projectsListener"], function() {
 
 
 			$("input[name='projectname']").bind('input',function() {
+				$(this).val(self.specialCharValidation($(this).val().replace(/\s/g, "")));
 				$("input[name='projectcode']").val(self.specialCharValidation($(this).val().replace(/\s/g, "")));
 			});
 
 			$("input[name='projectcode']").bind('input',function() {
-				$("input[name='projectcode']").val(self.specialCharValidation($(this).val().replace(/\s/g, "")));
+				$(this).val(self.specialCharValidation($(this).val().replace(/\s/g, "")));
 			});
 			
 			$("input[name='projectversion']").on('keyup',function() {

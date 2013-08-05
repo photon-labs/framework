@@ -583,6 +583,7 @@ define(["framework/widget", "framework/templateProvider"], function() {
 					}
 					checkin.hide();
 					$('#endDate')[0].focus();
+					$('#endDate').removeAttr('disabled');
 				}).data('datepicker');
 				
 				var checkout = $('#endDate').datepicker({
