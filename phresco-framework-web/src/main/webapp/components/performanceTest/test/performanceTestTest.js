@@ -23,7 +23,7 @@ define(["performanceTest/performanceTest", "lib/jquery_magnific_popup_min-1.0"],
 				});
 				
 				$.mockjax({
-				  url: commonVariables.webserviceurl+commonVariables.qualityContext+"/"+commonVariables.performanceTestResults+"?appDirName=PF_TEST_PHP&testAgainst=server&resultFileName=HTTP Request1.jtl&deviceId=&showGraphFor=responseTime",
+				  url: commonVariables.webserviceurl+commonVariables.qualityContext+"/"+commonVariables.performanceTestResults+"?appDirName=PF_TEST_PHP&testAgainst=server&resultFileName=HTTP Request1.jtl&deviceId=&showGraphFor=responseTime&from=performance-test",
 				  type: "GET",
 				  dataType: "json",
 				  contentType: "application/json",
@@ -66,7 +66,7 @@ define(["performanceTest/performanceTest", "lib/jquery_magnific_popup_min-1.0"],
 				});
 
 				$.mockjax({
-				  url: commonVariables.webserviceurl+commonVariables.qualityContext+"/"+commonVariables.performanceTestResults+"?appDirName=PF_TEST_PHP&testAgainst=server&resultFileName=testServer.jtl&deviceId=&showGraphFor=responseTime",
+				  url: commonVariables.webserviceurl+commonVariables.qualityContext+"/"+commonVariables.performanceTestResults+"?appDirName=PF_TEST_PHP&testAgainst=server&resultFileName=testServer.jtl&deviceId=&showGraphFor=responseTime&from=performance-test",
 				  type: "GET",
 				  dataType: "json",
 				  contentType: "application/json",
@@ -233,7 +233,7 @@ define(["performanceTest/performanceTest", "lib/jquery_magnific_popup_min-1.0"],
 				});
 				
 				$.mockjax({
-				  url: commonVariables.webserviceurl+commonVariables.qualityContext+"/"+commonVariables.performanceTestResults+"?appDirName=PF_TEST_PHP&testAgainst=server&resultFileName=testServer.jtl&deviceId=&showGraphFor=responseTime",
+				  url: commonVariables.webserviceurl+commonVariables.qualityContext+"/"+commonVariables.performanceTestResults+"?appDirName=PF_TEST_PHP&testAgainst=server&resultFileName=testServer.jtl&deviceId=&showGraphFor=responseTime&from=performance-test",
 				  type: "GET",
 				  dataType: "json",
 				  contentType: "application/json",
@@ -370,7 +370,7 @@ define(["performanceTest/performanceTest", "lib/jquery_magnific_popup_min-1.0"],
 				});
 
 				$.mockjax({
-			      url: commonVariables.webserviceurl+commonVariables.qualityContext+"/"+commonVariables.performanceTestResults+"?appDirName=native_none-androidnative&testAgainst=&resultFileName=Sample.xml&deviceId=emulator-5554&showGraphFor=responseTime",
+			      url: commonVariables.webserviceurl+commonVariables.qualityContext+"/"+commonVariables.performanceTestResults+"?appDirName=native_none-androidnative&testAgainst=&resultFileName=Sample.xml&deviceId=emulator-5554&showGraphFor=responseTime&from=performance-test",
 				  type: "GET",
 				  dataType: "json",
 				  contentType: "application/json",
@@ -388,10 +388,7 @@ define(["performanceTest/performanceTest", "lib/jquery_magnific_popup_min-1.0"],
 				setTimeout(function() {
 					start();
 					equal($(commonVariables.contentPlaceholder).find('.devicesOption').length, 3, "Device list Dropdown test");
-					// self.runDeviceChangeEvent(performanceTest);
-					require(["loadTestTest"], function(loadTestTest){
-						loadTestTest.runTests();
-					});
+					self.runDeviceChangeEvent(performanceTest);
 				}, 1500);
 			});
 		},
@@ -401,7 +398,7 @@ define(["performanceTest/performanceTest", "lib/jquery_magnific_popup_min-1.0"],
 			var performanceTest = new PerformanceTest(), self = this;
 			asyncTest("Device change event test", function() {
 				$.mockjax({
-				  url: commonVariables.webserviceurl+commonVariables.qualityContext+"/"+commonVariables.performanceTestResults+"?appDirName=native_none-androidnative&testAgainst=&resultFileName=Sample.xml&deviceId=emulator-5554&showGraphFor=responseTime",
+				  url: commonVariables.webserviceurl+commonVariables.qualityContext+"/"+commonVariables.performanceTestResults+"?appDirName=native_none-androidnative&testAgainst=&resultFileName=Sample.xml&deviceId=emulator-5554&showGraphFor=responseTime&from=performance-test",
 				  type: "GET",
 				  dataType: "json",
 				  contentType: "application/json",
@@ -427,7 +424,7 @@ define(["performanceTest/performanceTest", "lib/jquery_magnific_popup_min-1.0"],
 			var self = this;
 			asyncTest("Graph based on change event", function() {
 				$.mockjax({
-			      url: commonVariables.webserviceurl+commonVariables.qualityContext+"/"+commonVariables.performanceTestResults+"?appDirName=native_none-androidnative&testAgainst=&resultFileName=Sample.xml&deviceId=emulator-5554&showGraphFor=all",
+			      url: commonVariables.webserviceurl+commonVariables.qualityContext+"/"+commonVariables.performanceTestResults+"?appDirName=native_none-androidnative&testAgainst=&resultFileName=Sample.xml&deviceId=emulator-5554&showGraphFor=all&from=performance-test",
 				  type: "GET",
 				  dataType: "json",
 				  contentType: "application/json",
@@ -442,8 +439,11 @@ define(["performanceTest/performanceTest", "lib/jquery_magnific_popup_min-1.0"],
 				setTimeout(function() {
 					start();
 					equal($(commonVariables.contentPlaceholder).find('#graphView').find('.performanceGraphNav').find('#graphForDrop').attr("value"),"all","GraphFor dropdown change event test");
-					
-				}, 800);
+					$('.performanceTemp').remove();
+					require(["loadTestTest"], function(loadTestTest){
+						loadTestTest.runTests();
+					});
+				}, 1500);
 			});
 		},
 	};

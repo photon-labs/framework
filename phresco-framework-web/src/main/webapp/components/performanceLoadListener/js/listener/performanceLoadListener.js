@@ -16,8 +16,6 @@ define(["lib/jquery-tojson-1.0",'lib/RGraph_common_core-1.0','lib/RGraph_common_
 		 */
 		initialize : function(config) {
 			var self = this;
-			if (self.mavenServiceListener === null)	{
-			}
 		},
 		
 		onGraphicalView : function() {
@@ -582,7 +580,7 @@ define(["lib/jquery-tojson-1.0",'lib/RGraph_common_core-1.0','lib/RGraph_common_
             	sumOfBytes = parseInt(sumOfBytes) + parseInt(value.avgBytes);
             	
 				resultTable += '<tr><td>'+ value.label +'</td><td>' + value.noOfSamples + '</td><td>' + value.avg + '</td><td>' + value.min + '</td>' + 
-                    		  '<td>' + value.max + '</td><td>'+ value.stdDev +'</td><td>' + value.err + ' %</td><td>' + value.throughtPut + '</td>' + 
+                    		  '<td>' + value.max + '</td><td>'+ value.stdDev +'</td><td>' + value.err.toFixed(2) + ' %</td><td>' + value.throughtPut + '</td>' + 
                     		  '<td>' + value.kbPerSec + '</td><td>' + value.avgBytes + '</td></tr>';
 			});
 			
@@ -678,7 +676,7 @@ define(["lib/jquery-tojson-1.0",'lib/RGraph_common_core-1.0','lib/RGraph_common_
 			//if test is triggered against parameters
 			if (testAgainst !== undefined && testBasis !== undefined && testBasis === "parameters") {
 				//call template mandatory fn for server or webservice
-				redirect = self.loadContextUrlsMandatoryVal();
+				redirect = self.contextUrlsMandatoryVal();
 			} 
 			if (redirect) {
 				self.constructLoadTestJson();
@@ -721,8 +719,10 @@ define(["lib/jquery-tojson-1.0",'lib/RGraph_common_core-1.0','lib/RGraph_common_
 			if (self.mavenServiceListener === null) {
 				commonVariables.navListener.getMyObj(commonVariables.mavenService, function(retVal){
 					self.mavenServiceListener = retVal;
-					self.execute(retVal, queryString, json, testAction, callback);
+					self.execute(self.mavenServiceListener, queryString, json, testAction, callback);
 				});
+			} else {
+				self.execute(self.mavenServiceListener, queryString, json, testAction, callback);	
 			}
 		},
 
@@ -762,36 +762,11 @@ define(["lib/jquery-tojson-1.0",'lib/RGraph_common_core-1.0','lib/RGraph_common_
 					$(this).find($('input[name=httpName]')).focus();
 					$(this).find($('input[name=httpName]')).attr('placeholder','Http name is missing');
 					$(this).find($('input[name=httpName]')).addClass("errormessage");
-				} else if (self.isBlank($(this).find($('input[name=context]')).val())) {
-					redirect = false;
-					$(this).find($('input[name=context]')).val('');
-					$(this).find($('input[name=context]')).focus();
-					$(this).find($('input[name=context]')).attr('placeholder','Context is missing');
-					$(this).find($('input[name=context]')).addClass("errormessage");
 				} 
 			});
+			
 			return redirect;
 		},
-
-		loadContextUrlsMandatoryVal : function () {
-			var self = this, redirect = true;
-			$('.contextDivClass').each(function() {
-				if (self.isBlank($(this).find($('input[name=httpName]')).val())) {
-					redirect = false;
-					$(this).find($('input[name=httpName]')).val('');
-					$(this).find($('input[name=httpName]')).focus();
-					$(this).find($('input[name=httpName]')).attr('placeholder','Http name is missing');
-					$(this).find($('input[name=httpName]')).addClass("errormessage");
-				} else if (self.isBlank($(this).find($('input[name=context]')).val())) {
-					redirect = false;
-					$(this).find($('input[name=context]')).val('');
-					$(this).find($('input[name=context]')).focus();
-					$(this).find($('input[name=context]')).attr('placeholder','Context is missing');
-					$(this).find($('input[name=context]')).addClass("errormessage");
-				} 
-			});
-			return redirect;
-		}, 
 
 		dbContextUrlsMandatoryVal : function () {
 			var redirect = true;

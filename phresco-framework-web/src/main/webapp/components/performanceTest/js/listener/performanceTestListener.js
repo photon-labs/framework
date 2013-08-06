@@ -695,12 +695,6 @@ define(["lib/jquery-tojson-1.0",'lib/RGraph_common_core-1.0','lib/RGraph_common_
 					$(this).find($('input[name=httpName]')).focus();
 					$(this).find($('input[name=httpName]')).attr('placeholder','Http name is missing');
 					$(this).find($('input[name=httpName]')).addClass("errormessage");
-				} else if (self.isBlank($(this).find($('input[name=context]')).val())) {
-					redirect = false;
-					$(this).find($('input[name=context]')).val('');
-					$(this).find($('input[name=context]')).focus();
-					$(this).find($('input[name=context]')).attr('placeholder','Context is missing');
-					$(this).find($('input[name=context]')).addClass("errormessage");
 				} 
 			});
 			return redirect;

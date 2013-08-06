@@ -2,10 +2,10 @@ define(["loadTest/loadTest"], function(LoadTest) {
 
 	return {
 		runTests: function (configData) {
-			console.info("LoadTest > ",LoadTest);
 			module("LoadTest.js");
 			var self = this;
 			var loadTest = new LoadTest();
+			
 			self.renderLoadTemplateTest(loadTest);
 		},
 
@@ -134,6 +134,7 @@ define(["loadTest/loadTest"], function(LoadTest) {
 
 				commonVariables.api.localVal.setSession("appDirName" , "Load-html5jquerymobilewidget");
 				commonVariables.appDirName = "Load-html5jquerymobilewidget";
+				commonVariables.api.localVal.setSession("username" , "admin");
 
 				$.mockjax({
 				  url: commonVariables.webserviceurl+commonVariables.paramaterContext+"/"+commonVariables.templateContext+"?appDirName=Load-html5jquerymobilewidget&goal=load-test&phase=load-test&customerId=photon&userId=admin&parameterKey=loadContextUrl",

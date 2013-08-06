@@ -11,6 +11,7 @@ define(["framework/widgetWithTemplate", "common/loading", "lib/customcombobox-1.
         i : 1,
         contextUrlsRowId : "",
         dynamicParameters : [],
+        formObj : "",
 
         /***
          * Called in initialization time of this class 
@@ -88,6 +89,7 @@ define(["framework/widgetWithTemplate", "common/loading", "lib/customcombobox-1.
             if(response.data.length !== 0) {
                 $(whereToRender).empty();
                 $(whereToRender).parent().find('.templates').empty();
+                self.formObj = $(whereToRender).closest('form');
                 $.each(response.data, function(index, parameter) {
                     var type = parameter.type.toLowerCase();
                     if(type === "string" || type === "number" || type === "password"){
@@ -348,12 +350,12 @@ define(["framework/widgetWithTemplate", "common/loading", "lib/customcombobox-1.
         
         /********************* Controls construction methods ends**********************************/
         getOptionalAttr : function(parameter, optionalAttrs) {
-            if(parameter.show === 'false' || parameter.type === "Hidden"){
-                        optionalAttrs.show = ' style="display:none;"';
+            if(!parameter.show || parameter.type.toLowerCase() === "hidden"){
+                optionalAttrs.show = ' style="display:none;"';
             } else {
                 optionalAttrs.show = "";
             }
-            
+
             if(parameter.required === 'true'){
                 optionalAttrs.required = "<sup>*</sup>";
             } else {
@@ -567,6 +569,18 @@ define(["framework/widgetWithTemplate", "common/loading", "lib/customcombobox-1.
                 self.changeEveDependancyListener(selectedOption, currentParamKey);  // update the watcher while changing the drop down
                 self.getDynamicValues(dependencyAttr);
                 self.hideCheckboxDependencyCntrls($(obj).attr("type"), selectedOption, dependencyAttr);
+                self.removeFormOverflowHidden();
+            }
+        },
+
+        removeFormOverflowHidden : function () {
+            var self = this, formHeight = self.formObj.css('height').split('px')[0];
+            if (!self.isBlank(formHeight) && formHeight < 150) {
+                self.formObj.css("overflow", "inherit");
+                self.formObj.find('.mCustomScrollBox').css("overflow", "");
+            } else {
+                self.formObj.css("overflow", "hidden");
+                self.formObj.find('.mCustomScrollBox').css("overflow", "hidden");
             }
         },
 
@@ -574,9 +588,10 @@ define(["framework/widgetWithTemplate", "common/loading", "lib/customcombobox-1.
             var self = this;
             if (controlType === 'checkbox' && !isChecked && dependencyAttr !== undefined && dependencyAttr !== null) {
                 csvDependencies = dependencyAttr.substring(dependencyAttr.indexOf('=') + 1);
+
                 var parameterDependencies = [];
                 parameterDependencies = csvDependencies.split(',');
-                for (var i = 0;  i < parameterDependencies; i++) {
+                for (var i = 0;  i < parameterDependencies.length ; i++) {
                    var currentParameter = self.getParameterByKey(self.dynamicParameters, parameterDependencies[i]);
                    if (!self.isBlank(currentParameter) && !currentParameter.show) {
                         $("#" + currentParameter.key + "Li").hide();
@@ -741,7 +756,6 @@ define(["framework/widgetWithTemplate", "common/loading", "lib/customcombobox-1.
         //To show or hide controls while popup loads
         showParameters : function() {
             var self=this;
-            
             $(':input, .dynamicControls > li').each(function(index, value) {
                 var currentObjType = $(this).prop('tagName');
                 var multipleAttr = $(this).attr('multiple');
@@ -779,6 +793,7 @@ define(["framework/widgetWithTemplate", "common/loading", "lib/customcombobox-1.
             });
 			
 			self.chkSQLCheck();
+            self.removeFormOverflowHidden();
         },
 		
 		
@@ -1090,7 +1105,6 @@ define(["framework/widgetWithTemplate", "common/loading", "lib/customcombobox-1.
 				} 
 				
                 header.webserviceurl = commonVariables.webserviceurl + commonVariables.paramaterContext + "/" + commonVariables.dynamicPageContext + "?appDirName="+appDirName+"&goal="+ goal+"&phase="+phase+"&customerId="+customerId+"&userId="+userId+buildNumber;
-				
             } else if (action === "updateWatcher") {
                 header.requestMethod = "POST";
                 header.webserviceurl = commonVariables.webserviceurl + commonVariables.paramaterContext + "/" + "updateWatcher" + "?appDirName="+appDirName+"&goal="+ goal+"&key="+key+"&value="+selectedOption;

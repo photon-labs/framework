@@ -310,14 +310,17 @@ define(["performanceTest/listener/performanceTestListener"], function() {
 
                 if (whereToRender.children().length < 1) {
                 	self.dynamicpage.getHtml(whereToRender, this, $(this).attr('name'), function() {
-	                	var sectionHeight = $('.performanceTestResults').height();
-						$('#performancePopup').css("max-height", sectionHeight - 40 + 'px');
-						$('#performanceForm').css("max-height", sectionHeight - 92 + 'px');
-	                	$("#performanceForm").mCustomScrollbar({
-							autoHideScrollbar:true,
-							theme:"light-thin",
-							advanced:{ updateOnContentResize: true}
-						});
+                		var totalControls = whereToRender.find('.ctrl').length;
+                		if (totalControls > 3) {
+        					var sectionHeight = $('.performanceTestResults').height();
+							$('#performancePopup').css("max-height", sectionHeight - 40 + 'px');
+							$('#performanceForm').css("max-height", sectionHeight - 92 + 'px');
+		                	$("#performanceForm").mCustomScrollbar({
+								autoHideScrollbar:true,
+								theme:"light-thin",
+								advanced:{ updateOnContentResize: true}
+							});
+                		}
                 	});
                 } else {
                 	self.opencc(this, $(this).attr('name'));
