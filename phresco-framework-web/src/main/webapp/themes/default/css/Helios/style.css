@@ -1490,6 +1490,20 @@ img[name="close"] {
 	width:33%;
 }
 
+.cleartext{
+	margin: 5% 2%;
+	cursor: pointer;
+}
+
+.search_box{
+	border: 1px solid #CCCCCC;
+}
+
+.search_text{
+	border: medium none !important;
+    width: 90% !important;
+}
+
 /* *************************************************************************** CSS for Code validation ************************************************************************** */
 
 .optiontitle {

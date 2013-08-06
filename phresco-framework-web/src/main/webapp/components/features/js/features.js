@@ -218,6 +218,14 @@ define(["features/listener/featuresListener"], function() {
 				$('.box_div').height(height - 306);
 				self.windowResize();
 			  });
+			
+			$('#moduleContent ,#jsibrariesContent, #componentsContent').on('DOMMouseScroll mousewheel', function (e) {
+				if(e.originalEvent.detail > 0 || e.originalEvent.wheelDelta < 0) { 
+					$('.dyn_popup_close').click();
+				} else {
+					$('.dyn_popup_close').click();
+				}
+			});
 
 			$('.switch').css('background', 'url("themes/default/images/helios/on_off_switch.png")');
 			
@@ -255,6 +263,16 @@ define(["features/listener/featuresListener"], function() {
 				var divId = "componentsContent";
 				self.onSearchEvent.dispatch(txtSearch, divId, classval);
            	});
+			
+			$('.cleartext').click(function() {
+				var temp = $(this).attr('name');
+				var classval = $("#search").attr("class");
+				$("#"+temp).val('');
+				self.onSearchEvent.dispatch('', temp+'content', classval);
+				$("#norecord1").hide();	
+				$("#norecord2").hide();	
+				$("#norecord3").hide();	
+			});
 
            	$('#switchoffbutton').on("click", function(event) {
            		self.featuresListener.showSelected('');
@@ -298,13 +316,17 @@ define(["features/listener/featuresListener"], function() {
 						temp1=descid;
 						$("#"+descid).show();	
 						flag = 0;
+						$(".header_section").css("z-index","7");
+						$(".content_title").css("z-index","6");
+						$(".optiontitle").css("z-index","1"); 
 					 }
 					else{					 
-						$("#"+descid).hide();	
+						$('.dyn_popup_close').click();	
 						flag = 1;
 						if(temp1 !== temp2){
 							$("#"+temp2).show();
 						}	
+						self.closeTreePopup();
 					}
 					self.featuresListener.flagged = 1;
 					self.featuresListener.scrollbarEnable();
@@ -346,10 +368,13 @@ define(["features/listener/featuresListener"], function() {
 			});
 			if(counter === 1){
 				$('.features_box').parent('td').addClass('onefeature');
+				$('.search_box').css('width', '17%');
 			} else if(counter === 2){
 				$('.features_box').parent('td').addClass('twofeatures');
+				$('.search_box').css('width', '35%');
 			} else if(counter === 3){
 				$('.features_box').parent('td').addClass('threefeatures');
+				$('.search_box').css('width', '45%');
 			}
 		}		
 	});
