@@ -113,6 +113,31 @@ public class ActionService implements ActionServiceConstant, FrameworkConstants,
 		
 	}
 	
+	/**
+	 * @param request
+	 * @return
+	 * @throws PhrescoException
+	 */
+	@POST
+	@Path("/processBuild")
+	@Produces(MediaType.APPLICATION_JSON)
+	 public Response processBuild(@Context HttpServletRequest request) throws PhrescoException  {
+		ActionFunction actionFunction = new ActionFunction();
+		ActionResponse response = new ActionResponse();
+		try	{
+			actionFunction.prePopulateBuildProcessData(request);
+			response = actionFunction.processBuild(request);
+		} catch (Exception e) {
+			S_LOGGER.error(e.getMessage());
+			response.setStatus(ERROR);
+			response.setLog("");
+			response.setService_exception(FrameworkUtil.getStackTraceAsString(e));
+			response.setUniquekey("");
+		}
+		return Response.status(Status.OK).entity(response).header("Access-Control-Allow-Origin", "*").build();
+	
+		
+	}
 	
 	/**
 	 * Run unit test.

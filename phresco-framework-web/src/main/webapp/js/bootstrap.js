@@ -147,6 +147,7 @@ var commonVariables = {
 	mvnlogService : "app/readlog",
 	mvnBuild : "app/build",
 	mvnDeploy : "app/deploy",
+	mvnProcessBuild : "app/processBuild",
 	mvnUnitTest : "app/runUnitTest",
 	mvnComponentTest : "app/runComponentTest",
 	mvnCodeValidation : "app/codeValidate",

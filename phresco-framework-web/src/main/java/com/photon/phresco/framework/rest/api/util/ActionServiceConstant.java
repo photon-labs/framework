@@ -6,7 +6,9 @@ public interface ActionServiceConstant {
 	
 	public String APP_ID = "appId";
 	public String PROJECT_ID = "projectId";
+	public String PROCESS_URL = "url";
 	public String CUSTOMER_ID = "customerId";
+	public String PASSWORD = "password";
 	public String SELECTED_FILES ="selectedFiles";
 	public String UNIQUE_KEY ="uniquekey";
 	public String TEST_AGAINST ="testAgainst";

@@ -8,6 +8,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.MultivaluedMap;
 
 import org.codehaus.jackson.jaxrs.JacksonJsonProvider;
+import org.junit.Assert;
 import org.junit.Test;
 
 import com.photon.phresco.commons.model.User;
@@ -172,6 +173,43 @@ public class ActionFunctionTest implements ActionServiceConstant  {
 		   
 		   System.out.println("---------Log Start---------------");
 		   printLogs(output.getUniquekey());
+		
+    }
+	
+	@Test
+	public void testProcessbuild() throws PhrescoException {
+		
+			System.out.println("********************* Running the ProcessBuild test *************************************");
+			
+			ClientConfig cfg = new DefaultClientConfig();
+			cfg.getClasses().add(JacksonJsonProvider.class);
+			Client client = Client.create(cfg);
+ 
+			WebResource webResource = client.resource("http://localhost:2468/framework/rest/api/app/processBuild");
+		
+			
+		   MultivaluedMap queryParams = new MultivaluedMapImpl();
+		   queryParams.add("message", "testingTheProcessBuild");
+		   queryParams.add("appId", "TestProject");
+		   queryParams.add("buildNumber", "555");
+		   queryParams.add("customerId", "photon");
+		   queryParams.add("url", "https://insight.photoninfotech.com/svn/repos/phresco-svn-projects/ci/3.0.0/CI-Impl/");
+		   queryParams.add("username", "admin");
+		   queryParams.add("password", "manage");
+		   queryParams.add("projectId", "TestProject");
+ 
+		
+
+		   ClientResponse response = webResource.queryParams(queryParams).type("application/x-www-form-urlencoded").post(ClientResponse.class );
+		   
+		   ActionResponse output = response.getEntity(ActionResponse.class);
+		   
+		   if (response.getStatus() != 200) {
+			   throw new RuntimeException("Failed : HTTP error code : "
+					   + response.getStatus());
+		   }
+		   
+		   assertEquals("ProcessBuild failed",STARTED,output.getStatus());
 		
     }
 	

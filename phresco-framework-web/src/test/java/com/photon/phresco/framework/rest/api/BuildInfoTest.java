@@ -61,6 +61,24 @@ public class BuildInfoTest extends RestBaseTest {
 	}
 	
 	@Test
+	public void processBuild() throws PhrescoException {
+		MockHttpServletRequest request = new MockHttpServletRequest();
+		request.setParameter("password", "manage");
+		request.setParameter("message", "testingTheProcessBuild");
+		request.setParameter("url", "https://insight.photoninfotech.com/svn/repos/phresco-svn-projects/ci/3.0.0/CI-Impl/");
+		request.setParameter("customerId", customerId);
+		request.setParameter("projectId", "TestProject");
+		request.setParameter("appId", "TestProject");
+		request.setParameter("username", userId);
+		request.setParameter("buildNumber", "1");
+		HttpServletRequest httpServletRequest = (HttpServletRequest)request;
+		Response build = actionservice.processBuild(httpServletRequest);
+		ActionResponse entity = (ActionResponse) build.getEntity();
+		uniqueKey = entity.getUniquekey();
+		assertEquals("STARTED", entity.getStatus());
+	}
+	
+	@Test
 	public void readBuildLog() throws PhrescoException {
 		assertEquals(true, readLog());
 	}

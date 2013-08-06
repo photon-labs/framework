@@ -14,6 +14,7 @@ define(["build/listener/buildListener"], function() {
 		onDeleteEvent : null,
 		onDeployEvent : null,
 		onBuildEvent : null,
+		onProcessBuildEvent : null,
 		dynamicpage : null,
 		dynamicPageListener : null,
 		generateBuildContent : "",
@@ -46,7 +47,7 @@ define(["build/listener/buildListener"], function() {
 		
 		registerHandlebars : function () {
 			Handlebars.registerHelper('devicedploy', function(paramVal) {
-				if(paramVal == null){
+				if(paramVal === null){
 					return '<img name="deployBuild" deviceDeploy="" src="themes/default/images/helios/deploy_icon.png" width="16" height="20" border="0" alt="">';
 				}else{							
 					return '<img name="deployBuild" deviceDeploy="' + paramVal + '" src="themes/default/images/helios/deploy_icon.png" width="16" height="20" border="0" alt="">';
@@ -75,6 +76,9 @@ define(["build/listener/buildListener"], function() {
 			if(self.onBuildEvent === null){
 				self.onBuildEvent = new signals.Signal();
 			}
+			if(self.onProcessBuildEvent === null){
+				self.onProcessBuildEvent = new signals.Signal();
+			}
 			if(self.onRASEvent === null){
 				self.onRASEvent = new signals.Signal();
 			}
@@ -91,6 +95,7 @@ define(["build/listener/buildListener"], function() {
 			self.onDeleteEvent.add(self.buildListener.deleteBuild, self.buildListener);
 			self.onDeployEvent.add(self.buildListener.deployBuild, self.buildListener);
 			self.onBuildEvent.add(self.buildListener.buildProject, self.buildListener);
+			self.onProcessBuildEvent.add(self.buildListener.processBuild, self.buildListener);
 			self.onRASEvent.add(self.buildListener.runAgainstSource, self.buildListener);
 			self.onStopEvent.add(self.buildListener.stopServer, self.buildListener);
 			self.onRestartEvent.add(self.buildListener.restartServer, self.buildListener);
@@ -184,7 +189,7 @@ define(["build/listener/buildListener"], function() {
 			$('.alert_div').hide();
 			if(loadContent){
 				self.buildListener.getBuildInfo(self.buildListener.getRequestHeader("", '', 'getList'), function(response) {
-					if(response != undefined && response != null && response.data != null && response.data.length > 0){
+					if(response !== undefined && response !== null && response.data !== null && response.data.length > 0){
 						var tbody = "", buildObject = {}, userPermissions = JSON.parse(commonVariables.api.localVal.getSession('userPermissions'));
 						buildObject.buildInfos = response.data;
 						buildObject.userPermissions = userPermissions;
@@ -200,18 +205,18 @@ define(["build/listener/buildListener"], function() {
 							var deviceDeploy = "";
 							var deleteOpt = "";
 
-							if(current.options != null && current.options.canCreateIpa == true){
+							if(current.options !== null && current.options.canCreateIpa === true){
 								cancreateIpa = '<a href="#"><img name="ipaDownload" src="themes/default/images/helios/ipa_icon.png" width="13" height="18" border="0" alt=""></a>';
 							}
 
-							if(current.options == null || current.options.deviceDeploy == false){
+							if(current.options === null || current.options.deviceDeploy === false){
 								deviceDeploy = '<div id="deploye_'+ current.buildNo +'" class="dyn_popup popup_bg" style="display:none;"><div id="bdeploy_'+ current.buildNo +'"><form name="deployForm"><ul class="row dynamicControls"></ul><input type="hidden" name="buildNumber" value="'+ current.buildNo +'" /></form><div class="flt_right"><input type="button" name="deploy" data-i18n="[value]build.label.deploy" class="btn btn_style dyn_popup_close"><input type="button" data-i18n="[value]build.label.close" class="btn btn_style dyn_popup_close"></div></div></div>';
 							}else{
 								deviceDeploy = '<div class="dyn_popup popup_bg" style="display:none;"></div>';
 							}
 
-							if(buildObject.userPermissions.manageBuilds != null && buildObject.userPermissions.manageBuilds == true){
-								manageBuilds = '<a href="#"><img name="deployBuild" deviceDeploy="' + (current.options == null ? "" : current.options.deviceDeploy) + '" src="themes/default/images/helios/deploy_icon.png" width="16" height="20" border="0" alt=""></a>' + deviceDeploy;
+							if(buildObject.userPermissions.manageBuilds !== null && buildObject.userPermissions.manageBuilds === true){
+								manageBuilds = '<a href="#"><img name="deployBuild" deviceDeploy="' + (current.options === null ? "" : current.options.deviceDeploy) + '" src="themes/default/images/helios/deploy_icon.png" width="16" height="20" border="0" alt=""></a>' + deviceDeploy;
 								
 								deleteOpt ='<a name="delete_'+ current.buildNo +'" class="tooltiptop" title="" data-placement="top" data-toggle="tooltip" href="#" data-original-title="Delete Row"><img name="deleteBuild" src="themes/default/images/helios/delete_icon.png" width="16" height="20" border="0" alt=""></a><div id="delete_'+ current.buildNo +'" class="dyn_popup"><div data-i18n="build.label.deleteConform"></div><div><input type="button" name="buildDelete" data-i18n="[value]build.label.yes" class="btn btn_style dyn_popup_close" /><input type="button" data-i18n="[value]build.label.no" class="btn btn_style dyn_popup_close" /></div></div>';
 								
@@ -220,7 +225,7 @@ define(["build/listener/buildListener"], function() {
 								deleteOpt ='<img src="themes/default/images/helios/delete_row_off.png" width="16" height="20" border="0" alt="">';
 							}
 						
-							tbody += '<tr><td name="'+ current.buildNo +'">'+ current.buildNo +'</td><td>'+ current.timeStamp +'</td><td class="list_img"><a href="#"><img name="downloadBuild" src="themes/default/images/helios/download_icon.png" width="15" height="18" border="0" alt=""></a>'+ cancreateIpa +'</td><td name="prcBuild" class="list_img"><a href="#"><img name="procBuild" src="themes/default/images/helios/download_icon.png" width="15" height="18" border="0" alt=""></a><div id="prcBuild_'+ current.buildNo +'" class="dyn_popup" style="display:none; width:30%;"><form id="prcBForm_'+ current.buildNo +'"></form><div class="flt_right"><input class="btn btn_style" type="button" name="processBuild" data-i18n="[value]navigation.application.import"><input class="btn btn_style dyn_popup_close" type="button"  data-i18n="[value]common.btn.close"></div></div></td><td class="list_img">'+ manageBuilds +'</td><td class="list_img">'+ deleteOpt +'</td></tr>';
+							tbody += '<tr><td name="'+ current.buildNo +'">'+ current.buildNo +'</td><td>'+ current.timeStamp +'</td><td class="list_img"><a href="#"><img name="downloadBuild" src="themes/default/images/helios/download_icon.png" width="15" height="18" border="0" alt=""></a>'+ cancreateIpa +'</td><td name="prcBuild" class="list_img"><a href="#"><img name="procBuild" src="themes/default/images/helios/download_icon.png" width="15" height="18" border="0" alt=""></a><div id="prcBuild_'+ current.buildNo +'" class="dyn_popup popup_bg" style="display:none; width:30%;"><div id="prcBuild_'+ current.buildNo +'"><form name="prcBForm"><ul class="row dynamicControls"></ul><input type="hidden" name="buildNumber" value="'+ current.buildNo +'"/></form><div class="flt_right"><input class="btn btn_style" type="button" name="processBuild" data-i18n="[value]common.btn.ok"><input class="btn btn_style dyn_popup_close" type="button"  data-i18n="[value]common.btn.close"></div></div></div></td><td class="list_img">'+ manageBuilds +'</td><td class="list_img">'+ deleteOpt +'</td></tr>';
 						});
 						
 						$("#buildRow tbody").html(tbody);
@@ -250,7 +255,7 @@ define(["build/listener/buildListener"], function() {
 				commonVariables.buildNo = divId;
 				commonVariables.iphoneDeploy = $(this).attr("deviceDeploy");
 
-				if(deviceDeploy == "true"){
+				if(deviceDeploy === "true"){
 					// call device deployment service
 					
 					self.dynamicpage.getHtml(whereToRender, this, '', function(retVal){
@@ -258,7 +263,7 @@ define(["build/listener/buildListener"], function() {
 							$('input[name=buildDelete]').show();
 							$('.progress_loading').css('display','none');
 							self.setConsoleScrollbar(false);
-							if(response != null && response.errorFound == true){
+							if(response !== null && response.errorFound === true){
 								$(current).closest('tr').find('form[name=deployForm]').show();
 								$(".blinkmsg").removeClass("popsuccess").addClass("poperror");
 								self.effectFadeOut('poperror', response.configErrorMsg);
@@ -293,7 +298,7 @@ define(["build/listener/buildListener"], function() {
 					$('input[name=buildDelete]').show();
 					$('.progress_loading').css('display','none');
 					self.setConsoleScrollbar(false);
-					if(response != null && response.errorFound == true){
+					if(response !== null && response.errorFound === true){
 						$(current).closest('tr').find('form[name=deployForm]').show();
 						$(".blinkmsg").removeClass("popsuccess").addClass("poperror");
 						self.effectFadeOut('poperror', response.configErrorMsg);
@@ -313,7 +318,7 @@ define(["build/listener/buildListener"], function() {
 				var current = this, divId = $(this).closest('tr').find('td:eq(0)').text();
 				self.clearLogContent();
 				self.onDeleteEvent.dispatch(divId, function(response){
-					if(response.message == "Build deleted Successfully"){
+					if(response.message === "Build deleted Successfully"){
 						$(current).closest('tr').remove();
 
 						if($("#buildRow tbody tr").length < 1){
@@ -328,19 +333,49 @@ define(["build/listener/buildListener"], function() {
 			//Process build popup event
 			$('table td img[name=procBuild]').unbind('click');
 			$('table td img[name=procBuild]').click(function(){
+				var current = this, divId = $(this).closest('tr').find('td:eq(0)').text(),
+				whereToRender = $('#prcBuild_' + divId + ' ul');
+				commonVariables.goal = "process-build";
+				commonVariables.phase = "process-build";
+				commonVariables.buildNo = divId;
+				if(whereToRender.children().length < 1){
+					self.dynamicpage.getHtml(whereToRender, this, '', function(retVal){
+						if($('#prcBuild_' + divId).find('form[name=prcBForm] ul').children().length > 0){
+							self.opencc(current,'prcBuild_' + divId, '' , 50);
+						}else{$('#prcBuild_' + divId).hide();}
+					});
+				}else {
+					if($('#prcBuild_' + divId).find('form[name=prcBForm] ul').children().length > 0){
+						self.opencc(current,'prcBuild_' + divId, '' , 50);
+					}else{$('#prcBuild_' + divId).hide();}
+				}
 				
 			});
 			
 			//Process build click event
 			$('input[name=processBuild]').unbind('click');
 			$('input[name=processBuild]').click(function(){
-				console.info('process build clicked');
+				self.clearLogContent();
+				self.setConsoleScrollbar(true);
+				self.openConsole();
+				$('.progress_loading').css('display','block');
+				$(".dyn_popup").hide();
+				self.onProcessBuildEvent.dispatch($(this).closest('tr').find('form[name=prcBForm]').serialize(), function(response){
+				$('.progress_loading').css('display','none');
+				if(response !== null && response.errorFound === true){
+					$('.alert_div').hide();
+					self.closeConsole();
+					$(".blinkmsg").removeClass("popsuccess").addClass("poperror");
+					self.effectFadeOut('poperror', response.configErrorMsg);
+				}else if(response !== null && response.errorFound === false){
+					self.refreshContent(true);
+				}
+				});
 			});
 			
 			//ipa download click event
 			$('img[name=ipaDownload]').unbind('click');
 			$('img[name=ipaDownload]').click(function(){
-				//console.info('ipa download clicked');
 				self.onipaDownloadEvent.dispatch($(this).parent().parent().siblings(":first").text(), function(response){});
 			});
 			
@@ -417,22 +452,16 @@ define(["build/listener/buildListener"], function() {
 				self.openConsole();
 				$('.progress_loading').css('display','block');
 				
-				/* var dbScript = "";
-				
-				$.each($('#sortable2').children(), function(index, current){
-					dbScript += current
-				}); */
-				
 				self.onRASEvent.dispatch($('form[name=runAgainstForm]').serialize(), function(response){
 					$('.progress_loading').css('display','none');
 					self.setConsoleScrollbar(false);
 					
-					if(response != null && response.errorFound == true){
+					if(response !== null && response.errorFound === true) {
 						self.closeConsole();
 						$("form[name=runAgainstForm] #build_runagsource").show();
 						$(".blinkmsg").removeClass("popsuccess").addClass("poperror");
 						self.effectFadeOut('poperror', response.configErrorMsg);
-					}else if(response != null && response.errorFound == false){
+					}else if(response !== null && response.errorFound === false) { 	
 						self.runAgainSourceStatus();
 					}
 				});
@@ -491,13 +520,13 @@ define(["build/listener/buildListener"], function() {
 				$('.progress_loading').css('display','block');
 				self.onBuildEvent.dispatch($('form[name=buildForm]').serialize(), function(response){
 					$('.progress_loading').css('display','none');
-					if(response != null && response.errorFound == true){
+					if(response !== null && response.errorFound === true) {
 						$('.alert_div').hide();
 						self.closeConsole();
 						$("form[name=buildForm] #build_genbuild").show();
 						$(".blinkmsg").removeClass("popsuccess").addClass("poperror");
 						self.effectFadeOut('poperror', response.configErrorMsg);
-					}else if(response != null && response.errorFound == false){
+					}else if(response !== null && response.errorFound === false) {
 						self.refreshContent(true);
 					}
 				});

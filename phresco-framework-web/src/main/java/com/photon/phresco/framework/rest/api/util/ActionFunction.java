@@ -107,7 +107,10 @@ public class ActionFunction extends RestBase implements Constants ,FrameworkCons
 	private String customerId="";
 	private String selectedFiles="";
 	private String phase="";
+	private String url="";
 	private String username="";
+	private String password="";
+	private String message="";
 	private String isFromCI = "";
 	private List<String> minifyFileNames = null;
 	private String minifyAll = "";
@@ -145,6 +148,66 @@ public class ActionFunction extends RestBase implements Constants ,FrameworkCons
 				throw new PhrescoException("No valid Customer Id Passed");
 			}
 			setSelectedFiles(request.getParameter(SELECTED_FILES));
+		} catch (Exception e) {
+			throw new PhrescoException(e.getMessage());
+		}
+	}
+	
+	public void prePopulateBuildProcessData(HttpServletRequest request) throws PhrescoException {
+		try {
+			this.request = request;
+			String appId = request.getParameter(APP_ID);
+			
+			String buildNumber = request.getParameter("buildNumber");
+			if (StringUtils.isNotEmpty(appId) && !"null".equalsIgnoreCase(appId)) {
+				setAppId(appId);	
+			} else {
+				throw new PhrescoException("No valid App Id Passed");
+			}
+
+			String projectId = request.getParameter(PROJECT_ID);
+			if (StringUtils.isNotEmpty(projectId) && !"null".equalsIgnoreCase(projectId)) {
+				setProjectId(projectId);
+			} else {
+				throw new PhrescoException("No valid Project Id Passed");
+			}
+
+			String customerId = request.getParameter(CUSTOMER_ID);
+			if (StringUtils.isNotEmpty(customerId) && !"null".equalsIgnoreCase(request.getParameter(CUSTOMER_ID))) {
+				setCustomerId(customerId);
+			} else {
+				throw new PhrescoException("No valid Customer Id Passed");
+			}
+			
+			String url = request.getParameter(PROCESS_URL);
+			if (StringUtils.isNotEmpty(url) && !"null".equalsIgnoreCase(request.getParameter(PROCESS_URL))) {
+				setUrl(url);
+			} else {
+				throw new PhrescoException("No valid url Passed");
+			}
+			
+			String username = request.getParameter("username");
+			if (StringUtils.isNotEmpty(username) && !"null".equalsIgnoreCase(request.getParameter("username"))) {
+				setUsername(username);
+			} else {
+				throw new PhrescoException("No valid username Passed");
+			}
+			
+			String password = request.getParameter("password");
+			if (StringUtils.isNotEmpty(password) && !"null".equalsIgnoreCase(request.getParameter("password"))) {
+				setPassword(password);
+			} else {
+				throw new PhrescoException("No valid password Passed");
+			}
+			
+			String message = request.getParameter("message");
+			if (StringUtils.isNotEmpty(message) && !"null".equalsIgnoreCase(request.getParameter("message"))) {
+				setMessage(message);
+			} else {
+				throw new PhrescoException("No valid message Passed");
+			}
+			
+//			setSelectedFiles(request.getParameter(SELECTED_FILES));
 		} catch (Exception e) {
 			throw new PhrescoException(e.getMessage());
 		}
@@ -519,6 +582,17 @@ public class ActionFunction extends RestBase implements Constants ,FrameworkCons
 		}
 	}
 
+	public ActionResponse processBuild(HttpServletRequest request) throws PhrescoException {
+		printLogs();
+		BufferedInputStream server_logs=null;
+		server_logs = processBuild();
+		if (server_logs != null) {
+			return generateResponse(server_logs);
+		} else {
+			throw new PhrescoException("No processBuild logs obatined");
+		}
+	}
+	
 	public ActionResponse runUnitTest(HttpServletRequest request) throws PhrescoException {
 		printLogs();
 		BufferedInputStream server_logs=null;
@@ -819,7 +893,31 @@ public class ActionFunction extends RestBase implements Constants ,FrameworkCons
 
 		return reader;
 	}
+	
+	public BufferedInputStream processBuild() throws PhrescoException {
+		if (isDebugEnabled) {
+			S_LOGGER.debug("Entering Method  MavenFunctions.processBuild()");
+		}
+		BufferedInputStream reader = null;
+		try {
+			ApplicationManager applicationManager = PhrescoFrameworkFactory.getApplicationManager();
+			ProjectInfo projectInfo = getProjectInfo();
+			ApplicationInfo applicationInfo = getApplicationInfo();
+			MojoProcessor mojo = new MojoProcessor(new File(getPhrescoPluginInfoFilePath(PHASE_PROCESS_BUILD)));
+			persistValuesToXml(mojo, PHASE_PROCESS_BUILD);
+			
+			String workingDirectory = getAppDirectoryPath(applicationInfo);
+			reader = applicationManager.performAction(projectInfo, ActionType.PROCESS_BUILD, null, workingDirectory);
+		} catch (PhrescoException e) {
+			if (isDebugEnabled) {
+				S_LOGGER.error("Exception occured in the processBuild process()" + FrameworkUtil.getStackTraceAsString(e));
+				throw new PhrescoException("Exception occured in the processBuild process");
+			}
+		}
 
+		return reader;
+	}
+	
 	public BufferedInputStream runUnitTest() throws PhrescoException {
 		if (isDebugEnabled) {
 			S_LOGGER.debug("Entering Method MavenFunctions.runUnitTest()");
@@ -2569,6 +2667,30 @@ return isSonarReportAvailable;
 
 	public String getTestAction() {
 		return testAction;
+	}
+
+	public String getUrl() {
+		return url;
+	}
+
+	public void setUrl(String url) {
+		this.url = url;
+	}
+
+	public String getPassword() {
+		return password;
+	}
+
+	public void setPassword(String password) {
+		this.password = password;
+	}
+
+	public String getMessage() {
+		return message;
+	}
+
+	public void setMessage(String message) {
+		this.message = message;
 	}
 
 	public void setTestBasis(String testBasis) {

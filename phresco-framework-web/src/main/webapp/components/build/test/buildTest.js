@@ -206,6 +206,61 @@ define(["build/build"], function(Build) {
 				setTimeout(function() {
 					start();
 					equal("", "", "Build download Successfully");
+					self.processBuildDynamicParam(build, self, buildListener); 
+				}, 1500);
+			});
+		},
+
+		processBuildDynamicParam : function(build, self, buildListener){
+			asyncTest("Dynamic param for process build", function(){
+				var output;
+				self.setuserInfo();
+				//mock process build dynamic param ajax call 
+				var buildparam = $.mockjax({
+				  url: commonVariables.webserviceurl + 'parameter/dynamic?appDirName=HTML&goal=process-build&phase=process-build&customerId=photon&userId=kavinraj_m',
+				  type: "GET",
+				  dataType: "json",
+				  contentType: "application/json",
+				  status: 200,
+				  response : function() {
+					  this.responseText = JSON.stringify({"message":"Parameter returned successfully","exception":null,"responseCode":null,"data":[{"pluginParameter":null,"mavenCommands":null,"name":{"value":[{"value":"URL","lang":"en"}]},"type":"String","childs":null,"dynamicParameter":null,"required":"true","editable":"true","description":"","key":"url","possibleValues":null,"multiple":"false","value":"test","sort":false,"show":true},{"pluginParameter":null,"mavenCommands":null,"name":{"value":[{"value":"Username","lang":"en"}]},"type":"String","childs":null,"dynamicParameter":null,"required":"true","editable":"true","description":"","key":"username","possibleValues":null,"multiple":"false","value":"sda","sort":false,"show":true},{"pluginParameter":null,"mavenCommands":null,"name":{"value":[{"value":"Password","lang":"en"}]},"type":"password","childs":null,"dynamicParameter":null,"required":"true","editable":"true","description":"","key":"password","possibleValues":null,"multiple":"false","value":"VmpKMGIxUXlTbGhVV0d4V1ZrUkJPUT09","sort":false,"show":true},{"pluginParameter":null,"mavenCommands":null,"name":{"value":[{"value":"Commit Message","lang":"en"}]},"type":"String","childs":null,"dynamicParameter":null,"required":"true","editable":"true","description":"","key":"message","possibleValues":null,"multiple":"false","value":"sdaf","sort":false,"show":true},{"pluginParameter":null,"mavenCommands":null,"name":{"value":[{"value":"Build Number","lang":"en"}]},"type":"Hidden","childs":null,"dynamicParameter":null,"required":"false","editable":"true","description":"","key":"buildNumber","possibleValues":null,"multiple":"false","value":"4","sort":false,"show":true}],"status":null});
+				  }
+				});
+				
+				$("img[name=procBuild]").click();
+				setTimeout(function() {
+					start();
+					output = $('#process_build ul.row li:first').attr('id');
+					equal("", "", "Build dynamic param render Successfully");
+					self.processBuild(build, self, buildListener); 
+				}, 1500);
+			});
+		},
+		
+		processBuild : function(build, self, buildListener){
+			asyncTest("Process build", function(){
+				var output;
+				self.setuserInfo();
+				self.setHTMLAppInfo();
+				
+				//mock generate build ajax call 
+				var genBuild = $.mockjax({
+				  url: commonVariables.webserviceurl + 'app/processBuild?buildNumber=1&url=https://insight.photoninfotech.com/svn/repos/phresco-svn-projects/ci/IphoneAutomationInJe/&username=admin&password=manage&message=testing&customerId=photon&appId=137223b6-8454-4041-b52d-07c110ab57fb&projectId=d6528c06-b2f6-4388-8001-54e7e25d59db&username=kavinraj_m',
+				  type: "POST",
+				  dataType: "json",
+				  contentType: "application/json",
+				  status: 200,
+				  response : function() {
+					  this.responseText = JSON.stringify({"log":null,"connectionAlive":false,"errorFound":false,"configErrorMsg":null,"uniquekey":"30b3faf1-620a-42fd-b2db-7d633a9f456d","service_exception":null,"responseCode":null,"status":"COMPLETED"});
+				  }
+				});
+				
+				buildListener.onPrgoress();
+				$("#buildConsole").click();
+				setTimeout(function() {
+					start();
+					output = $('#buildRow tr td:first').text();
+					equal("1", output, "Process Build Generater Successfully");
 					self.openFolder(build, self, buildListener); 
 				}, 1500);
 			});

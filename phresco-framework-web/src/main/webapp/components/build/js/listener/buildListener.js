@@ -55,23 +55,6 @@ define([], function() {
 		downloadBuild : function(buildNo, callback){
 			var self = this, header = self.getRequestHeader("", {'buildNo':buildNo}, 'download');
 			window.open(header.webserviceurl);
-			/* try {
-				self.buildAPI.build(header,
-					function(response) {
-						if (response !== null) {
-							callback(response);
-						} else {
-							callback({ "status" : "service failure"});
-						}
-					},
-
-					function(textStatus, xhr, error) {
-						callback({ "status" : "Connection failure"});
-					}
-				);
-			} catch(exception) {
-				callback({ "status" : "service exception"});
-			} */
 		},
 		
 		ipadownload : function(buildNo, callback){
@@ -117,6 +100,26 @@ define([], function() {
 				});
 			}else{
 				self.mavenServiceListener.mvnBuild(queryString, '#logContent', function(returnVal){
+					callback(returnVal);
+				});
+			}
+		},
+		
+		processBuild : function(queryString, callback) {
+			var self = this, appInfo = commonVariables.api.localVal.getJson('appdetails');
+			if(appInfo !== null){
+				queryString +=	'&customerId='+ self.getCustomer() +'&appId='+ appInfo.data.appInfos[0].id +'&projectId=' + appInfo.data.id + '&username=' + commonVariables.api.localVal.getSession('username');
+			}
+			if(self.mavenServiceListener === null)	{
+				commonVariables.navListener.getMyObj(commonVariables.mavenService, function(retVal){
+					self.mavenServiceListener = retVal;
+					
+					self.mavenServiceListener.mvnProcessBuild(queryString, '#logContent', function(returnVal){
+						callback(returnVal);
+					});
+				});
+			}else{
+				self.mavenServiceListener.mvnProcessBuild(queryString, '#logContent', function(returnVal){
 					callback(returnVal);
 				});
 			}
@@ -221,24 +224,24 @@ define([], function() {
 				appdirName = commonVariables.api.localVal.getSession('appDirName');
 			}
 			
-			if(action === "getList"){
+			if (action === "getList") {
 				method = "GET";
 				url = 'buildinfo/list?appDirName=' + appdirName;
-			}else if(action === "download"){
+			} else if(action === "download") {
 				method = "GET";
 				contType: "multipart/form-data";
 				url = 'buildinfo/downloadBuild?appDirName=' + appdirName + '&buildNumber=' + buildInfo.buildNo;
-			}else if(action === "ipadownload"){
+			} else if(action === "ipadownload") {
 				method = "POST";
 				contType: "multipart/form-data";
 				url = 'Ipadownload?appDirName=' + appdirName + '&buildNumber=' + buildInfo.buildNo;
-			}else if(action === "delete"){
+			} else if(action === "delete") {
 				method = "DELETE";
 				var appInfo = commonVariables.api.localVal.getJson('appdetails');
 				if(appInfo !== null){
 					url = 'buildinfo/deletebuild?customerId='+ self.getCustomer() +'&appId='+ appInfo.data.appInfos[0].id +'&projectId=' + appInfo.data.id;
 				}
-			} else if(action === "serverstatus"){
+			} else if(action === "serverstatus") {
 				method = "GET";
 				url = 'buildinfo/checkstatus?appDirName=' + appdirName;
 			} 

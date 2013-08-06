@@ -127,12 +127,19 @@
 									<a href="#">
 										<img name="procBuild" src="themes/default/images/helios/download_icon.png" width="15" height="18" border="0" alt="">
 									</a>
-									<div id="prcBuild_{{buildNo}}" class="dyn_popup" style="display:none; width:30%;">
-										<form id="prcBForm_{{buildNo}}">
-										</form>
-										<div class="flt_right">
-											<input class="btn btn_style" type="button" name="processBuild" data-i18n="[value]navigation.application.import">
-											<input class="btn btn_style dyn_popup_close" type="button"  data-i18n="[value]common.btn.close">
+									<div id="prcBuild_{{buildNo}}" class="dyn_popup popup_bg" style="display:none;">
+										<div id="prcBuild_{{buildNo}}">
+											<form id="prcBForm" name="prcBForm">
+												<div id="process_build">
+													<ul class="row dynamicControls">
+													</ul>
+													<input type="hidden" name="buildNumber" value="{{buildNo}}" />
+												</div>
+											</form>
+											<div class="flt_right">
+												<input class="btn btn_style" type="button" name="processBuild" data-i18n="[value]common.btn.ok">
+												<input class="btn btn_style dyn_popup_close" type="button"  data-i18n="[value]common.btn.close">
+											</div>
 										</div>
 									</div>
 								</td>
