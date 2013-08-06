@@ -487,9 +487,11 @@ define([], function() {
 				$('input[name=build_genbuild]').show();
 			}
 			if (jQuery.inArray(commonVariables.optionsDeploy, applicableOptions) === -1) {
-				$('img[name=deployBuild]').hide();
+				$("table th[name=buildDep]").hide();
+				$("table td[name=buildDep]").hide();
 			} else {
-				$('img[name=deployBuild]').show();
+				$("table th[name=buildDep]").show();
+				$("table td[name=buildDep]").show();
 			}
 			if (jQuery.inArray(commonVariables.optionsExeDownload, applicableOptions) === -1) { 
 				$('img[name=ipaDownload]').hide();

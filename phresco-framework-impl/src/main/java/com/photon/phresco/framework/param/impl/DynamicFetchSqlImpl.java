@@ -89,7 +89,7 @@ public class DynamicFetchSqlImpl implements DynamicParameter, Constants {
 					Value value = new Value();
 					sqlFileName = dbSqlFiles[i].getName();
 					path = sqlFilePath + dbname + "/" +  dbVersion + "/" + sqlFileName;
-					value.setKey(sqlFileName);
+					value.setKey(dbname);
 					value.setValue(path);
 		    		possibleValues.getValue().add(value);
 				}

@@ -2213,17 +2213,17 @@ select[name="builtmyself"] {
 	border-bottom: none;	
 }
 
-#fetchSql_table td {
+.fetchSql_table td {
 	width:45% !important;
 }
-#fetchSql_table td ul {
+.fetchSql_table td ul {
 	border: 1px solid #c7c7c7;
 	border-radius:6px;
 	min-height: 150px;
 	cursor: move;
 }
 
-#fetchSql_table td ul li {
+.fetchSql_table td ul li {
 	border-bottom:1px solid #ccc;
 	line-height:25px !important;
 	padding:0 8px !important;
@@ -3417,11 +3417,11 @@ html>body tbody.scrollContent {
 	line-height: 22px;
 }
 
-#sortable1 li div {
+.sortable1 li div {
 	float: none;
 }
 
-#sortable2 li div {
+.sortable2 li div {
 	float: left;
 }
 

@@ -153,9 +153,11 @@ define(["build/listener/buildListener"], function() {
 		
 		runAgainSourceStatus : function(){
 			var self = this;
-			self.buildListener.getBuildInfo(self.buildListener.getRequestHeader("", '', 'serverstatus'), function(response) {
-				self.changeBtnStatus(response , '');
-			});
+			if($("input[name=build_runagsource]").is(':visible')){
+				self.buildListener.getBuildInfo(self.buildListener.getRequestHeader("", '', 'serverstatus'), function(response) {
+					self.changeBtnStatus(response , '');
+				});
+			}
 		},
 		
 		changeBtnStatus : function(response , btnName){
@@ -195,7 +197,7 @@ define(["build/listener/buildListener"], function() {
 						buildObject.userPermissions = userPermissions;
 						
 						if($("#buildRow").length < 1){
-							var table = '<table class="table table-striped table_border table-bordered big" cellpadding="0" cellspacing="0" border="0" id="buildRow"><thead class="fixedHeader"><tr><th data-i18n="build.label.bNo"></th><th data-i18n="build.label.date"></th><th data-i18n="build.label.download"><th name="prcBuild" data-i18n="build.label.processBuild"></th></th><th data-i18n="build.label.deploy"></th><th data-i18n="build.label.delete"></th></tr></thead><tbody class="scrollContent"></tbody></table>';
+							var table = '<table class="table table-striped table_border table-bordered big" cellpadding="0" cellspacing="0" border="0" id="buildRow"><thead class="fixedHeader"><tr><th data-i18n="build.label.bNo"></th><th data-i18n="build.label.date"></th><th data-i18n="build.label.download"><th name="prcBuild" data-i18n="build.label.processBuild"></th></th><th name="buildDep" data-i18n="build.label.deploy"></th><th data-i18n="build.label.delete"></th></tr></thead><tbody class="scrollContent"></tbody></table>';
 							$('.qual_unit_main').html(table);
 						}
 
@@ -225,7 +227,7 @@ define(["build/listener/buildListener"], function() {
 								deleteOpt ='<img src="themes/default/images/helios/delete_row_off.png" width="16" height="20" border="0" alt="">';
 							}
 						
-							tbody += '<tr><td name="'+ current.buildNo +'">'+ current.buildNo +'</td><td>'+ current.timeStamp +'</td><td class="list_img"><a href="#"><img name="downloadBuild" src="themes/default/images/helios/download_icon.png" width="15" height="18" border="0" alt=""></a>'+ cancreateIpa +'</td><td name="prcBuild" class="list_img"><a href="#"><img name="procBuild" src="themes/default/images/helios/download_icon.png" width="15" height="18" border="0" alt=""></a><div id="prcBuild_'+ current.buildNo +'" class="dyn_popup popup_bg" style="display:none; width:30%;"><div id="prcBuild_'+ current.buildNo +'"><form name="prcBForm"><ul class="row dynamicControls"></ul><input type="hidden" name="buildNumber" value="'+ current.buildNo +'"/></form><div class="flt_right"><input class="btn btn_style" type="button" name="processBuild" data-i18n="[value]common.btn.ok"><input class="btn btn_style dyn_popup_close" type="button"  data-i18n="[value]common.btn.close"></div></div></div></td><td class="list_img">'+ manageBuilds +'</td><td class="list_img">'+ deleteOpt +'</td></tr>';
+							tbody += '<tr><td name="'+ current.buildNo +'">'+ current.buildNo +'</td><td>'+ current.timeStamp +'</td><td class="list_img"><a href="#"><img name="downloadBuild" src="themes/default/images/helios/download_icon.png" width="15" height="18" border="0" alt=""></a>'+ cancreateIpa +'</td><td name="prcBuild" class="list_img"><a href="#"><img name="procBuild" src="themes/default/images/helios/download_icon.png" width="15" height="18" border="0" alt=""></a><div id="prcBuild_'+ current.buildNo +'" class="dyn_popup popup_bg" style="display:none; width:30%;"><div id="prcBuild_'+ current.buildNo +'"><form name="prcBForm"><ul class="row dynamicControls"></ul><input type="hidden" name="buildNumber" value="'+ current.buildNo +'"/></form><div class="flt_right"><input class="btn btn_style" type="button" name="processBuild" data-i18n="[value]common.btn.ok"><input class="btn btn_style dyn_popup_close" type="button"  data-i18n="[value]common.btn.close"></div></div></div></td><td name="buildDep" class="list_img">'+ manageBuilds +'</td><td class="list_img">'+ deleteOpt +'</td></tr>';
 						});
 						
 						$("#buildRow tbody").html(tbody);
@@ -259,6 +261,11 @@ define(["build/listener/buildListener"], function() {
 					// call device deployment service
 					
 					self.dynamicpage.getHtml(whereToRender, this, '', function(retVal){
+						self.clearLogContent();
+						self.setConsoleScrollbar(true);
+						self.openConsole();
+						$('.progress_loading').css('display','block');
+						$('input[name=buildDelete]').hide();
 						self.onDeployEvent.dispatch("", function(response){
 							$('input[name=buildDelete]').show();
 							$('.progress_loading').css('display','none');
@@ -294,7 +301,25 @@ define(["build/listener/buildListener"], function() {
 				self.openConsole();
 				$('.progress_loading').css('display','block');
 				$('input[name=buildDelete]').hide();
-				self.onDeployEvent.dispatch($(this).closest('tr').find('form[name=deployForm]').serialize(), function(response){
+				
+				var sqlParam = "", queryStr = "";
+				
+				if($(this).closest('tr').find('form[name=deployForm] #executeSql').is(':checked')){
+					sqlParam = {};
+					$.each($(this).closest('tr').find('form[name=deployForm] ul[name=sortable2] li'), function(index, current){
+						if(sqlParam.hasOwnProperty($(current).attr('dbName'))){
+							sqlParam[$(current).attr('dbName')].push($(current).attr('path'));
+						}else{
+							sqlParam[$(current).attr('dbName')] = []
+							sqlParam[$(current).attr('dbName')].push($(current).attr('path'));
+						}
+					});	
+				}
+				
+				queryStr = $(this).closest('tr').find('form[name=deployForm]').serialize().replace("=on", "=true");
+				queryStr += '&fetchSql=' + ($.isEmptyObject(sqlParam) ==true ? "" : JSON.stringify(sqlParam));
+				
+				self.onDeployEvent.dispatch(queryStr, function(response){
 					$('input[name=buildDelete]').show();
 					$('.progress_loading').css('display','none');
 					self.setConsoleScrollbar(false);
@@ -437,7 +462,8 @@ define(["build/listener/buildListener"], function() {
 					commonVariables.phase = "run-against-source";
 					self.dynamicpage.getHtml($('#build_runagsource ul'), this, $(this).attr('name'), function(retVal){
 						$('.connectedSortable').sortable({
-							connectWith: '.connectedSortable'
+							connectWith: '.connectedSortable',
+							cancel: ".ui-state-disabled"
 						});
 					});
 					$("#buildConsole").attr('data-flag','false');
@@ -451,8 +477,24 @@ define(["build/listener/buildListener"], function() {
 				self.setConsoleScrollbar(true);
 				self.openConsole();
 				$('.progress_loading').css('display','block');
+		
+				var sqlParam = "", queryStr = "";
+				if($('form[name=runAgainstForm] #executeSql').is(':checked')){
+					sqlParam = {};
+					$.each($('form[name=runAgainstForm] ul[name=sortable2] li'), function(index, current){
+						if(sqlParam.hasOwnProperty($(current).attr('dbName'))){
+							sqlParam[$(current).attr('dbName')].push($(current).attr('path'));
+						}else{
+							sqlParam[$(current).attr('dbName')] = []
+							sqlParam[$(current).attr('dbName')].push($(current).attr('path'));
+						}
+					});	
+				}
 				
-				self.onRASEvent.dispatch($('form[name=runAgainstForm]').serialize(), function(response){
+				queryStr = $('form[name=runAgainstForm]').serialize().replace("=on", "=true");
+				queryStr += '&fetchSql=' + ($.isEmptyObject(sqlParam) ==true ? "" : JSON.stringify(sqlParam));
+				
+				self.onRASEvent.dispatch(queryStr, function(response){
 					$('.progress_loading').css('display','none');
 					self.setConsoleScrollbar(false);
 					
@@ -518,7 +560,11 @@ define(["build/listener/buildListener"], function() {
 				self.setConsoleScrollbar(true);
 				self.openConsole();
 				$('.progress_loading').css('display','block');
-				self.onBuildEvent.dispatch($('form[name=buildForm]').serialize(), function(response){
+				
+				var sqlParam = "";
+				queryStr = $('form[name=buildForm]').serialize().replace("=on", "=true");
+				
+				self.onBuildEvent.dispatch(queryStr, function(response){
 					$('.progress_loading').css('display','none');
 					if(response !== null && response.errorFound === true) {
 						$('.alert_div').hide();

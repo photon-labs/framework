@@ -104,7 +104,7 @@
 							<th data-i18n="build.label.date"></th>
 							<th data-i18n="build.label.download"></th>
 							<th name="prcBuild" data-i18n="build.label.processBuild"></th>
-							<th data-i18n="build.label.deploy"></th>
+							<th name="buildDep" data-i18n="build.label.deploy"></th>
 							<th data-i18n="build.label.delete"></th>
 						</tr>    
 					</thead>  
@@ -143,7 +143,7 @@
 										</div>
 									</div>
 								</td>
-								<td class="list_img">
+								<td name="buildDep" class="list_img">
 									{{#if ../userPermissions.manageBuilds}}
 										<a href="#">
 											{{{devicedploy options.deviceDeploy}}}

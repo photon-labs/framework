@@ -137,18 +137,69 @@ define(["framework/widgetWithTemplate", "common/loading", "lib/customcombobox-1.
 		consDragnDropcnt : function(parameter, columnClass, whereToRender){
 			var self = this;
 			if(parameter != null && parameter != ""){
-				var sortable1Values = "";
+				var sortable1Val = "", sortable2Val = "", sort2 ={};
 				
+				if(parameter.value != null && parameter.value != ""){
+					$.each(JSON.parse(parameter.value), function(key, currentDbList){
+						sort2[key] = [];
+						$.each(currentDbList, function(index, current){
+							sortable2Val += '<li class="ui-state-default '+ ($("#dataBase").val() == key ? "" : "ui-state-disabled")+'" path="'+ current +'" dbName="' + key + '">'+ current.split('/').pop() +'</li>';
+							sort2[key].push(current);
+						});
+					});
+				} 
+
 				if(parameter.possibleValues != null && parameter.possibleValues != "" &&
 					parameter.possibleValues.value != null && parameter.possibleValues.value != ""){
 					$.each(parameter.possibleValues.value, function(index, current){
-						sortable1Values += '<li class="ui-state-default" path="'+ current.value +'">'+ current.key +'</li>';
+					
+						if(!$.isEmptyObject(sort2)){
+							var exist = false;
+							$.each(sort2, function(key, path){
+								if(current.key == key && $.inArray(current.value, path) >= 0){
+									exist = true;
+								}
+							});
+
+							if(!exist){
+								sortable1Val += '<li class="ui-state-default" path="'+ current.value +'" dbName="' + current.key + '">'+ current.value.split('/').pop() +'</li>';
+							}
+						}else{
+							sortable1Val += '<li class="ui-state-default" path="'+ current.value +'" dbName="' + current.key + '">'+ current.value.split('/').pop() +'</li>';
+						}
 					})
 				}
-			
-				whereToRender.append('<table id="'+ parameter.key +'_table" class="table table-striped table_border table-bordered" cellpadding="0" cellspacing="0" border="0"><thead><tr><th colspan="2">DB Script Execution</th></tr></thead><tbody><tr><td><ul id="sortable1" class="connectedSortable">'+ sortable1Values +'</ul></td><td><ul id="sortable2" class="connectedSortable"></ul></td></tr></tbody></table>');
+				whereToRender.append('<table name="'+ parameter.key +'_table" class="table table-striped table_border table-bordered fetchSql_table" cellpadding="0" cellspacing="0" border="0"><thead><tr><th colspan="2">DB Script Execution</th></tr></thead><tbody><tr><td><ul name="sortable1" class="sortable1 connectedSortable">' + sortable1Val + '</ul></td><td><ul name="sortable2" class="sortable2 connectedSortable">' + sortable2Val + '</ul></td></tr></tbody></table>');
 			}
 		},
+		
+		updateLeftSideContent : function(paramData){
+			var sortable1Val = "";
+
+			if(!$.isEmptyObject(paramData)){
+				$.each(paramData, function(index, current){
+					if($('ul[name=sortable2] li').length > 0){
+						var exist = false;
+						$.each($('ul[name=sortable2] li'), function(num, liVal){
+							if($(liVal).attr('dbName') == $("#dataBase").val()){
+								$(liVal).removeClass('ui-state-disabled');
+							}else{
+								$(liVal).addClass('ui-state-disabled');
+							}
+							if($(liVal).attr('dbName') == current.key && $(liVal).attr('path') == current.value){exist = true;}
+						});
+						
+						if(!exist){
+							sortable1Val += '<li class="ui-state-default" path="'+ current.value +'" dbName="' + current.key + '">'+ current.value.split('/').pop() +'</li>';
+						}
+					}else{
+						sortable1Val += '<li class="ui-state-default" path="'+ current.value +'" dbName="' + current.key + '">'+ current.value.split('/').pop() +'</li>';
+					}
+				});
+			}
+
+			$('ul[name=sortable1]').html(sortable1Val);
+		}, 
 		
         constructFileBrowseCtrl : function (parameter, whereToRender, goal) {
             var self = this, allowedExtensions = [];
@@ -574,14 +625,18 @@ define(["framework/widgetWithTemplate", "common/loading", "lib/customcombobox-1.
         },
 
         removeFormOverflowHidden : function () {
-            var self = this, formHeight = self.formObj.css('height').split('px')[0];
-            if (!self.isBlank(formHeight) && formHeight < 150) {
-                self.formObj.css("overflow", "inherit");
-                self.formObj.find('.mCustomScrollBox').css("overflow", "");
-            } else {
-                self.formObj.css("overflow", "hidden");
-                self.formObj.find('.mCustomScrollBox').css("overflow", "hidden");
-            }
+            var self = this;
+
+			if(self.formObj.length > 0){
+				var formHeight = self.formObj.css('height').split('px')[0];
+				if (!self.isBlank(formHeight) && formHeight < 150) {
+					self.formObj.css("overflow", "inherit");
+					self.formObj.find('.mCustomScrollBox').css("overflow", "");
+				} else {
+					self.formObj.css("overflow", "hidden");
+					self.formObj.find('.mCustomScrollBox').css("overflow", "hidden");
+				}
+			}
         },
 
         hideCheckboxDependencyCntrls : function (controlType, isChecked, dependencyAttr) {
@@ -718,7 +773,9 @@ define(["framework/widgetWithTemplate", "common/loading", "lib/customcombobox-1.
             
             if ('SELECT' === controlTag && 'List' !== parameterType) {
                 self.updateSelectCtrl(pushToElement, data, previousValue);
-            }
+            }else if(!isMultiple && !controlType && !controlTag){
+				self.updateLeftSideContent(data);
+			}
             self.hideDynamicPopupLoading();
         },
         
@@ -799,10 +856,10 @@ define(["framework/widgetWithTemplate", "common/loading", "lib/customcombobox-1.
 		
 		chkSQLCheck : function(){
 			if(!$('#executeSql').is(':checked')){
-				$('#fetchSql_table').hide();
+				$('table[name=fetchSql_table]').hide();
 				$('#dataBaseLi').hide();
 			}else{
-				$('#fetchSql_table').show();
+				$('table[name=fetchSql_table]').show();
 				$('#dataBaseLi').show();
 			}
 		},
