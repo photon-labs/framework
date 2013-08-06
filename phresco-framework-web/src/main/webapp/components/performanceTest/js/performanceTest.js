@@ -1,4 +1,4 @@
-define(["performanceTest/listener/performanceTestListener"], function() {
+define(["performanceLoadListener/listener/performanceLoadListener"], function() {
 	Clazz.createPackage("com.components.performanceTest.js");
 
 	Clazz.com.components.performanceTest.js.PerformanceTest = Clazz.extend(Clazz.WidgetWithTemplate, {
@@ -32,7 +32,7 @@ define(["performanceTest/listener/performanceTestListener"], function() {
 			var self = this;
 			commonVariables.testType = commonVariables.performance;
 			if (self.performanceTestListener === null ) {
-				self.performanceTestListener = new Clazz.com.components.performanceTest.js.listener.PerformanceTestListener();
+				self.performanceTestListener = new Clazz.com.components.performanceLoadListener.js.listener.PerformanceLoadListener();
 			}
 			self.getDynamicPageObject();
 			self.resultViewSignals();
@@ -238,7 +238,6 @@ define(["performanceTest/listener/performanceTestListener"], function() {
 
 			//To show the log after reloading the test result once the test execution is completed
 			$('#testConsole').html(performanceLog);
-
 			
 			commonVariables.api.localVal.setSession('performanceConsole', '');
 		},
@@ -246,7 +245,7 @@ define(["performanceTest/listener/performanceTestListener"], function() {
 		preRender: function(whereToRender, renderFunction) {
 			var self = this;
 			self.whereToRender = whereToRender;
-			self.performanceTestListener.getPerformanceTestReportOptions(self.performanceTestListener.getActionHeader(self.projectRequestBody, "resultAvailable"), whereToRender, self.handleResponse);
+			self.performanceTestListener.getTestReportOptions(self.performanceTestListener.getActionHeader(self.projectRequestBody, "resultAvailable"), whereToRender, self.handleResponse);
 		},
 
 		handleResponse : function(response, whereToRender) {
@@ -353,7 +352,7 @@ define(["performanceTest/listener/performanceTestListener"], function() {
 			//To show the print as pdf popup
 			$('.performancePDF').unbind("click");
 			$('.performancePDF').click(function() {
-				self.onShowPdfPopupEvent.dispatch();
+				self.onShowPdfPopupEvent.dispatch('performance');
 				$('#pdfReportLoading').show();
 				self.opencc(this, 'pdf_report');
 			});
@@ -361,8 +360,7 @@ define(["performanceTest/listener/performanceTestListener"], function() {
 			//To generate the pdf report
 			$('#generatePdf').unbind("click");
 			$('#generatePdf').click(function() {
-				self.onGeneratePdfEvent.dispatch();
-				$('#pdfReportLoading').show();
+				self.onGeneratePdfEvent.dispatch('performance');
 			});
 
 			//Shows the tabular view of the test result

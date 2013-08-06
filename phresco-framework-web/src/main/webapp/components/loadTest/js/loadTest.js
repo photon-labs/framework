@@ -349,7 +349,7 @@ define(["performanceLoadListener/listener/performanceLoadListener"], function() 
 			//To show the print as pdf popup
 			$('.loadPDF').unbind("click");
 			$('.loadPDF').click(function() {
-				self.onShowPdfPopupEvent.dispatch($(this).attr("from"));
+				self.onShowPdfPopupEvent.dispatch('load');
 				$('#pdfReportLoading').show();
 				self.opencc(this, 'pdf_report');
 			});

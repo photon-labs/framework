@@ -162,11 +162,12 @@ define(["lib/jquery-tojson-1.0",'lib/RGraph_common_core-1.0','lib/RGraph_common_
 			performanceTestOptions.devices = responseData.devices;
 			var userPermissions = JSON.parse(commonVariables.api.localVal.getSession('userPermissions'));
 			performanceTestOptions.userPermissions = userPermissions;
+			performanceTestOptions.from = 'performance-test';
 			renderFunction(performanceTestOptions, whereToRender);
 			if ((performanceTestOptions.testAgainsts.length !== 0 || performanceTestOptions.devices.length !== 0) && !self.isBlank(performanceTestOptions.testResultFiles) && performanceTestOptions.testResultFiles.length !== 0) {
 				self.getTestResults(self.getActionHeader(performanceTestOptions, "getTestResults"), function(response) {
 					var resultData = response.data;
-					if (resultData.perfromanceTestResult.length > 0) {
+					if (!self.isBlank(resultData)	 && resultData.perfromanceTestResult.length > 0) {
 						self.constructResultTable(resultData, whereToRender);
 						self.drawChart(resultData);
 						self.showScreenShot(resultData.images);
@@ -700,7 +701,7 @@ define(["lib/jquery-tojson-1.0",'lib/RGraph_common_core-1.0','lib/RGraph_common_
 
 		triggerPerformanceTest : function () {
 			var self = this, jsonString = "";
-			self.constructInputsAsJson();
+			self.constructPerformanceTestJson();
 		},
 
 		executeTest : function (queryString, json, testAction, popupObj, callback) {
@@ -738,7 +739,7 @@ define(["lib/jquery-tojson-1.0",'lib/RGraph_common_core-1.0','lib/RGraph_common_
 			}
 		},
 
-		constructInputsAsJson : function () {
+		constructPerformanceTestJson : function () {
 			var self = this, formJsonStr = JSON.stringify($('#performanceForm').serializeObject()), templJsonStr = "", testBasis = $("#testBasis").val(), testAgainst = $("#testAgainst").val();
 			if (!self.isBlank(testBasis) && !self.isBlank(testAgainst) && testBasis === "parameters") {
 				templJsonStr = self.contextUrls() + "," + self.dbContextUrls();
@@ -746,7 +747,7 @@ define(["lib/jquery-tojson-1.0",'lib/RGraph_common_core-1.0','lib/RGraph_common_
 				formJsonStr = formJsonStr + ',' + templJsonStr + '}';
 			}
 			var json = JSON.parse('{' + templJsonStr + '}');
-			self.executeTest($('#performanceForm').serialize(), json, function(response) {
+			self.executeTest($('#performanceForm').serialize(), json, 'performance', $("#performancePopup"),function(response) {
 				commonVariables.api.localVal.setSession('performanceConsole', $('#testConsole').html());
 				$('.progress_loading').hide();
 				commonVariables.navListener.onMytabEvent(commonVariables.performanceTest);
