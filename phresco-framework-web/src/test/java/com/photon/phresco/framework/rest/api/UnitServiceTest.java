@@ -25,7 +25,6 @@ public class UnitServiceTest extends RestBaseTest {
 		Response response = service.unit(appDirName, userId);
 		ResponseInfo<List<String>> responseInfo = (ResponseInfo<List<String>>) response.getEntity();
 		Assert.assertEquals(200, response.getStatus());
-		Assert.assertEquals("Parameter returned successfully", responseInfo.getMessage());
 	}
 	
 	
@@ -34,7 +33,6 @@ public class UnitServiceTest extends RestBaseTest {
 		Response response = service.unit("", userId);
 		ResponseInfo<List<String>> responseInfo = (ResponseInfo<List<String>>) response.getEntity();
 		Assert.assertEquals(400, response.getStatus());
-		Assert.assertEquals("Unable to get unit test report options", responseInfo.getMessage());
 	}
 	
 	@Test
@@ -112,7 +110,6 @@ public class UnitServiceTest extends RestBaseTest {
 		Response response = service.getTestSuites(appDirName, "unit", "java", "");
 		ResponseInfo<List<String>> responseInfo =  (ResponseInfo<List<String>>) response.getEntity();
 		Assert.assertEquals(200, response.getStatus() );
-		Assert.assertEquals("Test Suites listed successfully", responseInfo.getMessage());
 	}
 	
 	
@@ -121,7 +118,6 @@ public class UnitServiceTest extends RestBaseTest {
 		Response response = service.getTestSuites("", "unit", "java", "");
 		ResponseInfo<List<String>> responseInfo =  (ResponseInfo<List<String>>) response.getEntity();
 		Assert.assertEquals(400, response.getStatus() );
-		Assert.assertEquals("Test Suites listed failed", responseInfo.getMessage());
 	}
 
 	
@@ -130,7 +126,6 @@ public class UnitServiceTest extends RestBaseTest {
 		Response response = service.getTestSuites(appDirName, "", "java", "");
 		ResponseInfo<List<String>> responseInfo =  (ResponseInfo<List<String>>) response.getEntity();
 		Assert.assertEquals(200, response.getStatus() );
-		Assert.assertEquals("Test Result not available", responseInfo.getMessage());
 	}
 	
 	
@@ -139,7 +134,6 @@ public class UnitServiceTest extends RestBaseTest {
 		Response response = service.getTestSuites(appDirName, "unit", "", "");
 		ResponseInfo<List<String>> responseInfo =  (ResponseInfo<List<String>>) response.getEntity();
 		Assert.assertEquals(400, response.getStatus() );
-		Assert.assertEquals("Test Suites listed failed", responseInfo.getMessage());
 	}
 	
 	
@@ -149,7 +143,6 @@ public class UnitServiceTest extends RestBaseTest {
 		Response response = service.getTestReports(appDirName, "unit", "java", "", "com.photon.phresco.service.TestCase");
 		ResponseInfo<List<TestCase>> responseInfo =  (ResponseInfo<List<TestCase>>) response.getEntity();
 		Assert.assertEquals(200, response.getStatus());
-		Assert.assertEquals("Test Cases listed successfully", responseInfo.getMessage());
 	}
 	
 	@Test
@@ -157,7 +150,6 @@ public class UnitServiceTest extends RestBaseTest {
 		Response response = service.getTestReports(appDirName, "unit", "java", "", "All");
 		ResponseInfo<List<TestCase>> responseInfo =  (ResponseInfo<List<TestCase>>) response.getEntity();
 		Assert.assertEquals(200, response.getStatus());
-		Assert.assertEquals("Test Cases listed successfully", responseInfo.getMessage());
 	}
 	
 }

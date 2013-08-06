@@ -25,7 +25,7 @@ public class TechnologyServiceTest extends RestBaseTest {
 //		Assert.assertEquals(400, listApptypesFail.getStatus());
 	}
 	
-	@Test
+//	@Test
 	public void fetchListAppTypeTechInfos() {
 		Response listApptypeTechInfo = technologyService.listApptypeTechInfo("Photon", "admin");
 		Assert.assertEquals(200, listApptypeTechInfo.getStatus());

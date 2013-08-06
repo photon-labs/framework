@@ -68,6 +68,6 @@ public class PilotServiceTest extends RestBaseTest {
 		assertEquals(400 , preBuiltProjectsLoginFail.getStatus());
 		Response preBuiltProjects = pilotservice.preBuiltProjects("admin","photon");
 		ResponseInfo<List<ProjectInfo>> entity = (ResponseInfo<List<ProjectInfo>>) preBuiltProjects.getEntity();
-		assertEquals(20 , entity.getData().size());
+		assertEquals(23 , entity.getData().size());
 	}
 }

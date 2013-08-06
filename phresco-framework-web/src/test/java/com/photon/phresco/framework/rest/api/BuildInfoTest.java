@@ -95,6 +95,7 @@ public class BuildInfoTest extends RestBaseTest {
 		request.setParameter("executeSql", "false");
 		request.setParameter("buildName", "sample.zip");
 		request.setParameter("buildNumber", "1");
+		request.setParameter("dataBase", "mysql");
 		HttpServletRequest httpServletRequest = (HttpServletRequest)request;
 		Response deploy = actionservice.deploy(httpServletRequest);
 		ActionResponse entity = (ActionResponse) deploy.getEntity();

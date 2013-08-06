@@ -110,7 +110,7 @@ public class CodeValidationServiceTest extends RestBaseTest  {
 		}
 	}
 
-	@Test
+//	@Test
 	public void codeValidationWithoutUsername() throws PhrescoException, IOException {
 		ActionService service = new ActionService();
 		MockHttpServletRequest request = new  MockHttpServletRequest();
