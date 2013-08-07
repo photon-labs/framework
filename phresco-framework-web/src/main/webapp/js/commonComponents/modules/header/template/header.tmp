@@ -1,1 +1,36 @@
-<header class="header_section" id="header">	<div class="blinkmsg" style="display:none;"></div>	<div class="header_left">		<figure><img id="bannerlogo" src="" border="0"></figure>		<ul>			<li><a href="#" data-i18n="header.menu.dashboard"></a></li>			<li><a href="#" id="pojectList" class="nav_active" data-i18n="header.menu.projects"></a></li>			<li><a href="#" data-i18n="header.menu.settings"></a></li>			<li><a href="#" data-i18n="header.menu.downloads"></a></li>			<li><a href="#" data-i18n="header.menu.admin"></a></li>		</ul>	</div>	<div class="header_right flt_right">		<div class="user_login">			<img src="themes/default/images/helios/user_icon.png" width="15" height="14" border="0" alt="">			<font id="displayname">{{displayName}}</font>&nbsp;&nbsp; | &nbsp;&nbsp; 			<a href="javascript:;"><font id="logout" data-i18n="header.userinfo.logout"></font> &nbsp;			<img src="themes/default/images/helios/logout_icon.png" width="14" height="15" border="0" alt=""></a>		</div>		<div class="navbar navbar-static">			<ul class="nav">				<li><a href="#" data-i18n="header.userinfo.help"></a></li>				<li><a href="#" data-i18n="header.userinfo.about"></a></li>				<li id="fat-menu" class="dropdown customerDropdown">				  <a href="#" id="drop3" role="button" class="dropdown-toggle" data-toggle="dropdown"><font id="selectedCustomer">Photon</font><b class="caret"></b></a>				  <div class="dropdown-menu cust_sel" role="menu" aria-labelledby="drop3">					<ul id="customer">						{{#each customers}}<li><a href="javascript:;" id="{{id}}" name="customers">{{name}}</a></li>{{/each}}					</ul>				  </div>				</li>			</ul>		</div>		  </div>  	<!--header div ends here --></header>
+<header class="header_section" id="header">
+	<div class="blinkmsg" style="display:none;"></div>
+	<div class="header_left">
+		<figure><img id="bannerlogo" src="" border="0"></figure>
+		<ul>
+			<li><a href="#" data-i18n="header.menu.dashboard"></a></li>
+			<li><a href="#" id="pojectList" class="nav_active" data-i18n="header.menu.projects"></a></li>
+			<li><a href="#" data-i18n="header.menu.settings"></a></li>
+			<li><a href="#" data-i18n="header.menu.downloads"></a></li>
+			<li><a href="#" data-i18n="header.menu.admin"></a></li>
+		</ul>
+	</div>
+	<div class="header_right flt_right">
+		<div class="user_login">
+			<img src="themes/default/images/helios/user_icon.png" width="15" height="14" border="0" alt="">
+			<font id="displayname">{{displayName}}</font>&nbsp;&nbsp; | &nbsp;&nbsp; 
+			<a href="javascript:;"><font id="logout" data-i18n="header.userinfo.logout"></font> &nbsp;
+			<img src="themes/default/images/helios/logout_icon.png" width="14" height="15" border="0" alt=""></a>
+		</div>
+		<div class="navbar navbar-static">
+			<ul class="nav">
+				<li><a href="#" data-i18n="header.userinfo.help"></a></li>
+				<li><a href="#" data-i18n="header.userinfo.about"></a></li>
+				<li id="fat-menu" class="dropdown customerDropdown">
+				  <a href="#" id="drop3" role="button" class="dropdown-toggle" data-toggle="dropdown"><font id="selectedCustomer">Photon</font><b class="caret"></b></a>
+				  <div class="dropdown-menu cust_sel cus_themes" role="menu" aria-labelledby="drop3">
+					<ul id="customer">
+						{{#each customers}}<li><a href="javascript:;" id="{{id}}" name="customers">{{name}}</a></li>{{/each}}
+					</ul>
+				  </div>
+				</li>
+			</ul>
+		</div>	
+	  </div>  
+	<!--header div ends here -->
+</header>

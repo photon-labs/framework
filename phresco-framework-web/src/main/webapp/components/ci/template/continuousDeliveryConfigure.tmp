@@ -63,7 +63,7 @@
 
         <!-- popup starts -->
         <div id="jobConfigure" class="cont_delivery dyn_popup popup_bg job_configure">
-            <div class="jobConfigure">
+            <div class="jobConfigure popup_scroll">
                 <form id="jonConfiguration">
                     <table id="jobName" class="clonetable jobName" width="100%" border="0" cellspacing="0" cellpadding="0">
                         <tbody>
@@ -74,7 +74,7 @@
                      </table>
 
                      <!-- Basic Settings starts here -->
-                     <table id="repoType" class="table table-striped table_border table-bordered" cellpadding="0" cellspacing="0" border="0">
+                     <table id="repoType" class="table table-striped table_border table-bordered border_div" cellpadding="0" cellspacing="0" border="0">
                         <thead>
                             <tr>
                                 <th colspan="4" data-i18n="ci.repo"></th>
@@ -91,7 +91,7 @@
                         </tbody>
                     </table>
 
-                    <table id="scheduler" class="table table-striped table_border table-bordered" cellpadding="0" cellspacing="0" border="0">
+                    <table id="scheduler" class="table table-striped table_border table-bordered border_div" cellpadding="0" cellspacing="0" border="0">
                         <thead>
                             <tr>
                                 <th colspan="4" data-i18n="ci.scheduler"> </th>
@@ -115,7 +115,7 @@
                             </tr>
                         </tbody>
                     </table>
-					<table id="cronPreview" class="table table-striped table_border table-bordered" cellspacing="0" cellpadding="0" border="0">
+					<table id="cronPreview" class="table table-striped table_border table-bordered border_div" cellspacing="0" cellpadding="0" border="0">
 						<thead>
 							<tr> 
 								<th colspan="2" data-i18n="ci.croneexpression"></th>
@@ -133,7 +133,7 @@
 						</tbody>
 					</table>
 					
-                    <table id="mailSettings" class="table table-striped table_border table-bordered mail_settings" cellpadding="0" cellspacing="0" border="0">
+                    <table id="mailSettings" class="table table-striped table_border table-bordered mail_settings border_div" cellpadding="0" cellspacing="0" border="0">
                         <thead>
                             <tr>
                                 <!--<th colspan="2" data-i18n="ci.sendermailsettings"></th>-->

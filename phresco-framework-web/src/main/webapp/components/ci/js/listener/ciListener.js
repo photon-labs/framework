@@ -894,12 +894,16 @@ define([], function() {
 			$(document).keyup(function(e) {
 				if(e.which === 27){
 					$(placeId).hide();
+					$('#header').css('z-index','7');
+					$('.content_title').css('z-index','6');
 				}
 			});
 			
 			$('.dyn_popup_close').click( function() {
 				$(placeId).hide();
 				$("#cron_expression").hide();
+				$('#header').css('z-index','7');
+				$('.content_title').css('z-index','6');
 			});
 				
 		},
@@ -1215,6 +1219,8 @@ define([], function() {
 				$('[appname="'+ appName +'"][jobtemplatename="'+ jobtemplatename +'"]').data("jobJson", jobConfiguration);
 	            // Hide popup
 	            $(".dyn_popup").hide();
+				$('#header').css('z-index','7');
+				$('.content_title').css('z-index','6');
 			} 			
 		},
 

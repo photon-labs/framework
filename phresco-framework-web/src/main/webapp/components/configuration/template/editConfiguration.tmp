@@ -13,7 +13,7 @@
 										<input type="submit" data-i18n="[value]configuration.label.addconfig" class="btn btn_style arrow_down_icon" disabled>
 									{{/if}}
 								</a>
-								<div class="dropdown-menu cust_sel fix_height" role="menu" aria-labelledby="drop3" id="configurationListScroll">
+								<div class="dropdown-menu cust_sel fix_height popup_scroll" role="menu" aria-labelledby="drop3" id="configurationListScroll">
 								<ul name="configurations">
 									{{#configType}}
 									{{#if envSpecific}}

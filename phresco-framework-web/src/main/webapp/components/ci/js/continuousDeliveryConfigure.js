@@ -124,13 +124,13 @@ define(["framework/widgetWithTemplate", "ci/listener/ciListener", "lib/jquery-to
 					});
 			});
 			
-			$(".jobConfigure").mCustomScrollbar({
+			/*$(".jobConfigure").mCustomScrollbar({
 				autoHideScrollbar:true,
 				theme:"light-thin",
 				advanced: {
 					updateOnContentResize: true
 				}
-			});
+			});*/
 		},
 		
 		getAction : function(ciRequestBody, action, params, callback) {			
@@ -231,10 +231,14 @@ define(["framework/widgetWithTemplate", "ci/listener/ciListener", "lib/jquery-to
 					items: "> li",
 					start: function( event, ui ) {
 						$(".dyn_popup").hide();
+						$('#header').css('z-index','7');
+						$('.content_title').css('z-index','6');
 					},
 
 					stop: function( event, ui ) {
 						$(".dyn_popup").hide();
+						$('#header').css('z-index','7');
+						$('.content_title').css('z-index','6');
 					},
 
 					receive: function( event, ui ) {			
@@ -377,6 +381,8 @@ define(["framework/widgetWithTemplate", "ci/listener/ciListener", "lib/jquery-to
 			$("#sortable1 li.ui-state-default a").hide();
 			
    			$('#sortable2').on('click', 'a[name=jobConfigurePopup]', function() {
+				$('#header').css('z-index','0');
+				$('.content_title').css('z-index','0');
    				var envName = $("[name=environments]").val();
    				$(this).attr("envName",envName);
    				self.onConfigureJobPopupEvent.dispatch(this);

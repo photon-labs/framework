@@ -127,6 +127,7 @@ define(["configuration/listener/configurationListener"], function() {
 				self.updateConfigEvent.dispatch();
 			});
 			self.customScroll($(".scrolldiv"));
+			self.customScroll($(".popup_scroll"));
 		}
 	});
 

@@ -540,7 +540,10 @@ a.dropdown-toggle b.caret  {
 	right: 0;
 	left: auto !important;
 	padding: 0px !important;
-	width:170px;
+}
+
+.cus_themes {
+	width:175px !important;
 }
 
 .cust_sel:after {
@@ -1080,6 +1083,10 @@ ul.nav li.dropdown:hover > .test_options{
 	margin:0px !important;
 }
 
+#project_list_import .scroll-bar{
+	width:3px !important;
+}
+
 /* ******************************************************************* CSS related to create project page ********************************************************************** */
 
 .datepicker  {
@@ -1378,6 +1385,7 @@ img[name="close"] {
 	border-radius: 7px; 
 	height:448px;
 	overflow:auto;
+	margin-top:8px;
 }
 
 .features_box .box_div ul {
@@ -2027,6 +2035,7 @@ select[name="builtmyself"] {
   position: relative; /* could be absolute or relative */
   padding-top: 35px; /* height of header */
   border-radius:6px;
+  background:#F9F9F9;
 }
 
 .fixed-table-container-inner {
@@ -2100,8 +2109,12 @@ select[name="builtmyself"] {
 }
 
 .buildtitle {
-	padding-top: 6px;
-	height:34px;
+	padding-top: 3px;
+	height:37px;
+}
+
+.buildtitle .icon_images {
+	margin-top:4px;
 }
 
 .buildtitle .alert_div {
@@ -2236,6 +2249,9 @@ select[name="builtmyself"] {
 .connected {
 	cursor:move;
 }
+.scroll_height {
+	height:120px !important;
+}
 
 .build_close {
 	position: fixed;
@@ -2285,7 +2301,7 @@ select[name="builtmyself"] {
 }
 
 .env_border .add_env {
-	margin-bottom: 0px;
+	margin-bottom: 0px !important;
 	border: 0px !important;
 }
 
@@ -2496,6 +2512,7 @@ margin-left: 10px;
 .fix_height {
 	max-height: 150px;
 	overflow-y: auto;
+	min-width:145px !important;
 }
 
 .hideContent {
@@ -2640,6 +2657,10 @@ html>body tbody.scrollContent {
 
 .unit_progress table {
 	border: none !important;	
+}
+
+.console_pad {
+	padding:10px;
 }
 
 .unit_text {
@@ -3389,10 +3410,10 @@ html>body tbody.scrollContent {
 	border-bottom-right-radius:12px;
 }
 
-.widget_testing h4 span a:first-child
+/*.widget_testing h4 span a:first-child
 {
 	padding-right:5px;
-}
+}*/
 
 .ci_inner_info
 {
@@ -3427,6 +3448,10 @@ html>body tbody.scrollContent {
 
 .ci_dropdown {
 	width:170px !important; 
+}
+
+.clone_text{
+	width:220px !important;
 }
 
 /* *************************************************************** STYLES FOR DOWNLOAD PAGE ************************************************************************************ */

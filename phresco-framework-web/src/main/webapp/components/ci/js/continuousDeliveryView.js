@@ -145,11 +145,12 @@ define(["framework/widgetWithTemplate", "ci/listener/ciListener", "lib/jquery-to
 			resultvalue = resultvalue + $('.footer_section').height() + 65;
 			$('.content_main').height($(window).height() - (resultvalue + 155));
 
-			$(".content_main").mCustomScrollbar({
+			/*$(".content_main").mCustomScrollbar({
 				autoHideScrollbar:true,
 				theme:"light-thin",
 				advanced:{ updateOnContentResize: true}
-			});
+			});*/
+			
 			
 			$(".execute_button").hover(function() {
 				$(this).attr("src","themes/default/images/helios/execute_icon_hover.png");
@@ -228,6 +229,8 @@ define(["framework/widgetWithTemplate", "ci/listener/ciListener", "lib/jquery-to
 				$(this).parent().parent().parent("div").find(".img_process").attr('src',"themes/default/images/helios/processing.gif");
 				self.generateBuildEvent.dispatch($(this));
 			});
+			
+			this.customScroll($(".scrollpage"));
 			
 		}
 	});

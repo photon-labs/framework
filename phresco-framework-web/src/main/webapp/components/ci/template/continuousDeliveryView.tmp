@@ -9,12 +9,13 @@
 </section>
     
 <section class="content_main code_content">
+<div class="scrollpage">
  {{#if projectDelivery}}
      	{{#if projectDelivery.continuousDeliveries}}
      		{{#each projectDelivery.continuousDeliveries}}
     	<div class="widget_testing" name="{{name}}">
         		<h4>{{name}} 
-        		<span style="float: none; margin-left: 158px;">[ {{envName}} ]</span> 
+        		<span style="float: none;">[ {{envName}} ]</span> 
                 	
                 	<span class="aliveOpts">
                     	<a temp="clone" name="{{name}}" class="clone_popup" title="" data-placement="bottom" data-toggle="tooltip" href="#" data-original-title="clone">
@@ -104,7 +105,7 @@
             <ul>
                 <li data-i18n="configuration.label.name"><br/></li>
                 <li>
-                    <input type="text" name="cloneName">
+                    <input type="text" name="cloneName" class="clone_text">
                 </li>
                 <li data-i18n="ci.environment"><br/></li>
                 <li>
@@ -113,7 +114,7 @@
                     </select>
                 </li>
                 <li>
-                    <div class="flt_left">
+                    <div class="flt_right">
                     	<input type="hidden" name="continuousName">
                         <input type="button" id="clone_ci" value="Clone" data-i18n="[value]configuration.label.clone" class="btn btn_style">
                         <input type="button" value="Close" data-i18n="[value]common.btn.close" class="btn btn_style dyn_popup_close">
@@ -122,11 +123,12 @@
             </ul>
             </form>
         </div>
-        <div id="deleteCI" class="dyn_popup dyn_popup_delete"> Are you sure to delete this ?
+        <div id="deleteCI" class="dyn_popup dyn_popup_delete deleteproj_msg"> Are you sure to delete this ?
             <div>
             	<input type="hidden" name="cdName">
                 <input type="button" value="Yes" data-i18n="[value]common.btn.yes" class="btn btn_style"  name="confirmDeleteCI">
                 <input type="button" value="No" data-i18n="[value]common.btn.no" class="btn btn_style dyn_popup_close">
             </div>
         </div>
+		</div>
     </section>
