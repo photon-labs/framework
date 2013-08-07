@@ -16,10 +16,10 @@ public class ProjectDeleteServiceTest {
 	@Test
 	public void deleteProjectTest() {
 		List<String> projectToDel = new ArrayList<String>();
-		projectToDel.add("TestProject");
-		projectToDel.add("TestGitProject");
 		projectToDel.add("239");
 		projectToDel.add("AddGit1-wordpress3.4.2");
+		projectToDel.add("TestGitProject");
+		projectToDel.add("TestProject");
 		Response deleteproject = projectservice.deleteproject(projectToDel);
 		assertEquals(200 , deleteproject.getStatus());
 	}

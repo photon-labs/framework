@@ -44,7 +44,6 @@ public class BuildInfoTest extends RestBaseTest {
 	public void generateBuild() throws PhrescoException {
 		MockHttpServletRequest request = new MockHttpServletRequest();
 		request.setParameter("buildName", "sample");
-		request.setParameter("fromPage", "All");
 		request.setParameter("environmentName", "Production");
 		request.setParameter("logs", "showErrors");
 		request.setParameter("skipTest", "true");
@@ -58,6 +57,11 @@ public class BuildInfoTest extends RestBaseTest {
 		ActionResponse entity = (ActionResponse) build.getEntity();
 		uniqueKey = entity.getUniquekey();
 		assertEquals("STARTED", entity.getStatus());
+	}
+	
+	@Test
+	public void readBuildLog() throws PhrescoException {
+		assertEquals(true, readLog());
 	}
 	
 	@Test
@@ -79,7 +83,7 @@ public class BuildInfoTest extends RestBaseTest {
 	}
 	
 	@Test
-	public void readBuildLog() throws PhrescoException {
+	public void readprocessBuildLog() throws PhrescoException {
 		assertEquals(true, readLog());
 	}
 	

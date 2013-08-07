@@ -31,6 +31,13 @@ public class ProjectServiceTest extends LoginServiceTest {
 	}
 	
 	@Test
+	public void createProjectForGitTest() {
+		ProjectInfo projectInfo = projectInfo();
+		Response response = projectService.createProject(projectInfo, userId);
+		assertEquals(200 , response.getStatus());
+	}
+	
+	@Test
 	public void validationOncreateProjectTest() {
 		ProjectInfo projectInfo = projectInfo();
 		projectInfo.setName("@@@@###########");
@@ -51,16 +58,7 @@ public class ProjectServiceTest extends LoginServiceTest {
 		
 		
 	}
-
 	
-	@Test
-	public void createProjectForGitTest() {
-		ProjectInfo projectInfo = projectInfo();
-		Response response = projectService.createProject(projectInfo, userId);
-		assertEquals(200 , response.getStatus());
-	}
-
-
 	@Test
 	public void listProjectsTest() {
 		Response response = projectService.list(customerId);
@@ -101,9 +99,9 @@ public class ProjectServiceTest extends LoginServiceTest {
 		ApplicationInfo appInfo = getApplicationInfo();
 		Response response  = projectService.updateApplication(appDirName, appInfo, userId, customerId);
 		assertEquals(200 , response.getStatus());
-		appInfo.setAppDirName("TestGitProject");
-		Response responseonFail  = projectService.updateApplication(appDirName, appInfo, userId, customerId);
-		assertEquals(200 , responseonFail.getStatus());
+//		appInfo.setAppDirName("TestGitProject");
+//		Response responseonFail  = projectService.updateApplication(appDirName, appInfo, userId, customerId);
+//		assertEquals(200 , responseonFail.getStatus());
 	}
 
 
@@ -125,7 +123,7 @@ public class ProjectServiceTest extends LoginServiceTest {
 	public void listAppInfosWithoutCustomerIdTest() {
 		Response response = projectService.appinfoList("", projectId);
 		assertEquals(200, response.getStatus());
-	} 
+	}
 
 	@Test
 	public void updateProjectWithoutUserIdTest() {
@@ -137,7 +135,6 @@ public class ProjectServiceTest extends LoginServiceTest {
 	@Test
 	public void updateApplicationFeatureswithOutUserId() {
 		List<SelectedFeature> selectedFeatures = getSelectedFeatures();
-		Gson gson = new Gson();
 		Response response = projectService.updateApplicationFeatures(selectedFeatures, appDirName, "", customerId);
 		assertEquals(200 , response.getStatus());
 	}
@@ -154,16 +151,16 @@ public class ProjectServiceTest extends LoginServiceTest {
 	public void getPermissionTest() {
 		Response response = projectService.getPermission(userId);
 		assertEquals(200 , response.getStatus());
-	} 
+	}
 
-	@Test
+//	@Test
 	public void deleteprojectTest() {
 		ProjectService service = new ProjectService();
 		Response response = service.deleteproject(getCollections(appDirName));
 		assertEquals(200, response.getStatus());
 	}
 
-	@Test
+//	@Test
 	public void createProjectTestDemo() {
 		ProjectInfo projectInfo = createProjectInfo();
 		projectInfo.getAppInfos().get(0).setSelectedWebservices(null);
