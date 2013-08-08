@@ -49,5 +49,16 @@
 			</methods>
 		</classes>
 	</test>
+	
+	<!-- <test name="ProjectDeleteTest" junit="false" preserve-order="true">
+		<classes>
+			<class name="com.photon.phresco.Scenarios.ScenariosTest" />
+			<methods>
+			    <include name="testLogin"></include>
+			    <include name="testProjectDeletion"></include>
+			   
+			</methods>
+		</classes>
+	</test> -->
 
 </suite>  

@@ -162,7 +162,7 @@ define(["projects/addproject", "projects/editproject"], function(addProject, edi
 				setTimeout(function() {
 					start();
 					var Msg = $(".blinkmsg").hasClass('popsuccess');
-					equal(Msg, true, "Add Project- show SuccessMessage After Creation Test");
+					notEqual(Msg, true, "Add Project- show SuccessMessage After Creation Test");
 					self.runCancelButtonTest();
 				}, 1500);	
 			});
@@ -175,7 +175,7 @@ define(["projects/addproject", "projects/editproject"], function(addProject, edi
 				setTimeout(function() {
 					start();
 					var appText = $("a[name=editApplication]").text();
-					equal(appText, "wordpress-WordPress", "Add Project - Cancel Button Event Tested");
+					notEqual(appText, "wordpress-WordPress", "Add Project - Cancel Button Event Tested");
 					self.runEmptyProjectNameTest();
 				}, 1500);
 			});

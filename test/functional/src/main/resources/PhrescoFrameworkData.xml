@@ -21,5 +21,13 @@
 		<!-- Project Update Message -->
 		<projectUpdateMsg></projectUpdateMsg>
 		
+				<!-- Build Success Message -->
+		<buildSuccessMsg>BUILD SUCCESS</buildSuccessMsg>
+		
+		<!-- Build Failure Message -->
+		<buildFailuresMsg>BUILD FAILURE</buildFailuresMsg>
+		
+		
+		
 	</phresco>
 </environment>

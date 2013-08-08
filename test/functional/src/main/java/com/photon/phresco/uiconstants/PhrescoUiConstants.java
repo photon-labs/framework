@@ -51,7 +51,7 @@ public class PhrescoUiConstants {
 	private String mobileVersion = "mobileVersion";
 	private String removeMobileLayer = "removeMobileLayer";
 	private String projectCreateButton = "projectCreateButton";
-	
+
 	private String appTechnologyJ2EE = "appTechnologyJ2EE";
 	private String appTechnologyNodeJS = "appTechnologyNodeJS";
 	private String appTechnologyPHP = "appTechnologyPHP";
@@ -62,13 +62,13 @@ public class PhrescoUiConstants {
 	private String appTechnologySharePoint = "appTechnologySharePoint";
 	private String appTechnologySiteCore = "appTechnologySiteCore";
 	private String appTechnologyJSA = "appTechnologyJSA";
-	
+
 	private String webTechnologyHTML5 = "webTechnologyHTML5";
 	private String webTechnologyJMW = "webTechnologyJMW";
 	private String webTechnologyYMW = "webTechnologyYMW";
 	private String webTechnologyMJW = "webTechnologyMJW";
 	private String webTechnologyMYW = "webTechnologyMYW";
-	
+
 	private String mobTechnologyWindows = "mobTechnologyWindows";
 	private String mobTechnologyWindowsMetro = "mobTechnologyWindowsMetro";
 	private String mobTechnologyWindowsPhone = "mobTechnologyWindowsPhone";
@@ -83,7 +83,7 @@ public class PhrescoUiConstants {
 	private String mobTechnologyIphoneLibrary = "mobTechnologyIphoneLibrary";
 	private String mobTechnologyIphoneNative = "mobTechnologyIphoneNative";
 	private String mobTechnologyIphoneHybrid = "mobTechnologyIphoneHybrid";
-	
+
 	/**
 	 * Edit Project Page
 	 */
@@ -211,16 +211,54 @@ public class PhrescoUiConstants {
 	private String runAgainstSourceButton = "runAgainstSourceButton";
 	private String executeSqlCheckbox = "executeSqlCheckbox";
 	private String runAgainstRunButton = "runAgainstRunButton";
+	
+	/*
+	 * Quality Tab
+	 */
+	
+	private String qualityAssuranceButton = "qualityAssuranceButton";
+	private String unitButton = "unitButton";
+	private String componentButton = "componentButton";
+	private String functionalButton = "functionalButton";
+	private String manualButton = "manualButton";
+	private String performanceButton = "performanceButton";
+	private String loadButton = "loadButton";
+	
 
 	/**
 	 * Unit Test
 	 */
 
-	private String qualityAssuranceButton = "qualityAssuranceButton";
-	private String unitButton = "unitButton";
 	private String unitTestButton = "unitTestButton";
 	private String unitTestAgainst = "unitTestAgainst";
 	private String unitTestRun = "unitTestRun";
+
+	/*
+	 * Component Test
+	 */
+	private String componentTestButton = "componentTestButton";
+	private String componentKillProcessBtn = "componentKillProcessBtn";
+	
+	/*
+	 * Performance Test
+	 */
+	private String perfjmxType = "perfjmxType";
+	private String perftestAgainst = "perftestAgainst";
+	private String perfauthManager = "perfauthManager";
+	private String perfRampupPeriod = "perfRampupPeriod";
+	private String perfHttpName = "perfHttpName";
+	private String perfContext = "perfContext";
+	private String perfDataType = "perfDataType";
+	private String perfEncodingType = "perfEncodingType";
+	private String perfRedirect = "perfRedirect";
+	private String perfFollowRedirect = "perfFollowRedirect";
+	private String perfKeepAlive = "perfKeepAlive";
+	private String perHeaderKey = "perHeaderKey";
+	private String perfHeaderValue = "perfHeaderValue";
+	private String perfHeaderAddButton = "perfHeaderAddButton";
+	private String perParameterKey = "perParameterKey";
+	private String perfParameterValue = "perfParameterValue";
+	private String perfTestButton = "perfTestButton";
 
 	/*
 	 * Pdf Report
@@ -232,6 +270,14 @@ public class PhrescoUiConstants {
 	private String pdfCloseBtn = "pdfCloseBtn";
 	private String pdfOverAllReport = "pdfOverAllReport";
 	private String pdfDetailReport = "pdfDetailReport";
+	
+	/*
+	 * Delete Projects
+	 */
+	
+	private String projectDeleteIcon = "projectDeleteIcon";
+	private String projectDeletePopUpYesBtn = "projectDeletePopUpYesBtn";
+	
 
 	public PhrescoUiConstants() {
 		try {
@@ -1935,7 +1981,7 @@ public class PhrescoUiConstants {
 	public void setPdfDetailReport(String pdfDetailReport) {
 		this.pdfDetailReport = pdfDetailReport;
 	}
-	
+
 	/**
 	 * @return the appTechnologyJ2EE
 	 */
@@ -1944,7 +1990,8 @@ public class PhrescoUiConstants {
 	}
 
 	/**
-	 * @param appTechnologyJ2EE the appTechnologyJ2EE to set
+	 * @param appTechnologyJ2EE
+	 *            the appTechnologyJ2EE to set
 	 */
 	public void setAppTechnologyJ2EE(String appTechnologyJ2EE) {
 		this.appTechnologyJ2EE = appTechnologyJ2EE;
@@ -1958,7 +2005,8 @@ public class PhrescoUiConstants {
 	}
 
 	/**
-	 * @param appTechnologyNodeJS the appTechnologyNodeJS to set
+	 * @param appTechnologyNodeJS
+	 *            the appTechnologyNodeJS to set
 	 */
 	public void setAppTechnologyNodeJS(String appTechnologyNodeJS) {
 		this.appTechnologyNodeJS = appTechnologyNodeJS;
@@ -1972,7 +2020,8 @@ public class PhrescoUiConstants {
 	}
 
 	/**
-	 * @param appTechnologyPHP the appTechnologyPHP to set
+	 * @param appTechnologyPHP
+	 *            the appTechnologyPHP to set
 	 */
 	public void setAppTechnologyPHP(String appTechnologyPHP) {
 		this.appTechnologyPHP = appTechnologyPHP;
@@ -1986,7 +2035,8 @@ public class PhrescoUiConstants {
 	}
 
 	/**
-	 * @param appTechnologyDrupal6 the appTechnologyDrupal6 to set
+	 * @param appTechnologyDrupal6
+	 *            the appTechnologyDrupal6 to set
 	 */
 	public void setAppTechnologyDrupal6(String appTechnologyDrupal6) {
 		this.appTechnologyDrupal6 = appTechnologyDrupal6;
@@ -2000,7 +2050,8 @@ public class PhrescoUiConstants {
 	}
 
 	/**
-	 * @param appTechnologyDrupal7 the appTechnologyDrupal7 to set
+	 * @param appTechnologyDrupal7
+	 *            the appTechnologyDrupal7 to set
 	 */
 	public void setAppTechnologyDrupal7(String appTechnologyDrupal7) {
 		this.appTechnologyDrupal7 = appTechnologyDrupal7;
@@ -2014,7 +2065,8 @@ public class PhrescoUiConstants {
 	}
 
 	/**
-	 * @param appTechnologyWordPress the appTechnologyWordPress to set
+	 * @param appTechnologyWordPress
+	 *            the appTechnologyWordPress to set
 	 */
 	public void setAppTechnologyWordPress(String appTechnologyWordPress) {
 		this.appTechnologyWordPress = appTechnologyWordPress;
@@ -2028,7 +2080,8 @@ public class PhrescoUiConstants {
 	}
 
 	/**
-	 * @param appTechnologyAspDotNet the appTechnologyAspDotNet to set
+	 * @param appTechnologyAspDotNet
+	 *            the appTechnologyAspDotNet to set
 	 */
 	public void setAppTechnologyAspDotNet(String appTechnologyAspDotNet) {
 		this.appTechnologyAspDotNet = appTechnologyAspDotNet;
@@ -2042,7 +2095,8 @@ public class PhrescoUiConstants {
 	}
 
 	/**
-	 * @param appTechnologySharePoint the appTechnologySharePoint to set
+	 * @param appTechnologySharePoint
+	 *            the appTechnologySharePoint to set
 	 */
 	public void setAppTechnologySharePoint(String appTechnologySharePoint) {
 		this.appTechnologySharePoint = appTechnologySharePoint;
@@ -2056,7 +2110,8 @@ public class PhrescoUiConstants {
 	}
 
 	/**
-	 * @param appTechnologySiteCore the appTechnologySiteCore to set
+	 * @param appTechnologySiteCore
+	 *            the appTechnologySiteCore to set
 	 */
 	public void setAppTechnologySiteCore(String appTechnologySiteCore) {
 		this.appTechnologySiteCore = appTechnologySiteCore;
@@ -2070,7 +2125,8 @@ public class PhrescoUiConstants {
 	}
 
 	/**
-	 * @param appTechnologyJSA the appTechnologyJSA to set
+	 * @param appTechnologyJSA
+	 *            the appTechnologyJSA to set
 	 */
 	public void setAppTechnologyJSA(String appTechnologyJSA) {
 		this.appTechnologyJSA = appTechnologyJSA;
@@ -2084,7 +2140,8 @@ public class PhrescoUiConstants {
 	}
 
 	/**
-	 * @param webTechnologyHTML5 the webTechnologyHTML5 to set
+	 * @param webTechnologyHTML5
+	 *            the webTechnologyHTML5 to set
 	 */
 	public void setWebTechnologyHTML5(String webTechnologyHTML5) {
 		this.webTechnologyHTML5 = webTechnologyHTML5;
@@ -2098,7 +2155,8 @@ public class PhrescoUiConstants {
 	}
 
 	/**
-	 * @param webTechnologyJMW the webTechnologyJMW to set
+	 * @param webTechnologyJMW
+	 *            the webTechnologyJMW to set
 	 */
 	public void setWebTechnologyJMW(String webTechnologyJMW) {
 		this.webTechnologyJMW = webTechnologyJMW;
@@ -2112,7 +2170,8 @@ public class PhrescoUiConstants {
 	}
 
 	/**
-	 * @param webTechnologyYMW the webTechnologyYMW to set
+	 * @param webTechnologyYMW
+	 *            the webTechnologyYMW to set
 	 */
 	public void setWebTechnologyYMW(String webTechnologyYMW) {
 		this.webTechnologyYMW = webTechnologyYMW;
@@ -2126,7 +2185,8 @@ public class PhrescoUiConstants {
 	}
 
 	/**
-	 * @param webTechnologyMJW the webTechnologyMJW to set
+	 * @param webTechnologyMJW
+	 *            the webTechnologyMJW to set
 	 */
 	public void setWebTechnologyMJW(String webTechnologyMJW) {
 		this.webTechnologyMJW = webTechnologyMJW;
@@ -2140,7 +2200,8 @@ public class PhrescoUiConstants {
 	}
 
 	/**
-	 * @param webTechnologyMYW the webTechnologyMYW to set
+	 * @param webTechnologyMYW
+	 *            the webTechnologyMYW to set
 	 */
 	public void setWebTechnologyMYW(String webTechnologyMYW) {
 		this.webTechnologyMYW = webTechnologyMYW;
@@ -2154,7 +2215,8 @@ public class PhrescoUiConstants {
 	}
 
 	/**
-	 * @param mobTechnologyWindows the mobTechnologyWindows to set
+	 * @param mobTechnologyWindows
+	 *            the mobTechnologyWindows to set
 	 */
 	public void setMobTechnologyWindows(String mobTechnologyWindows) {
 		this.mobTechnologyWindows = mobTechnologyWindows;
@@ -2168,7 +2230,8 @@ public class PhrescoUiConstants {
 	}
 
 	/**
-	 * @param mobTechnologyWindowsMetro the mobTechnologyWindowsMetro to set
+	 * @param mobTechnologyWindowsMetro
+	 *            the mobTechnologyWindowsMetro to set
 	 */
 	public void setMobTechnologyWindowsMetro(String mobTechnologyWindowsMetro) {
 		this.mobTechnologyWindowsMetro = mobTechnologyWindowsMetro;
@@ -2182,7 +2245,8 @@ public class PhrescoUiConstants {
 	}
 
 	/**
-	 * @param mobTechnologyWindowsPhone the mobTechnologyWindowsPhone to set
+	 * @param mobTechnologyWindowsPhone
+	 *            the mobTechnologyWindowsPhone to set
 	 */
 	public void setMobTechnologyWindowsPhone(String mobTechnologyWindowsPhone) {
 		this.mobTechnologyWindowsPhone = mobTechnologyWindowsPhone;
@@ -2196,7 +2260,8 @@ public class PhrescoUiConstants {
 	}
 
 	/**
-	 * @param mobTechnologyBlackBerry the mobTechnologyBlackBerry to set
+	 * @param mobTechnologyBlackBerry
+	 *            the mobTechnologyBlackBerry to set
 	 */
 	public void setMobTechnologyBlackBerry(String mobTechnologyBlackBerry) {
 		this.mobTechnologyBlackBerry = mobTechnologyBlackBerry;
@@ -2210,7 +2275,8 @@ public class PhrescoUiConstants {
 	}
 
 	/**
-	 * @param mobTechnologyBlackBerryHybrid the mobTechnologyBlackBerryHybrid to set
+	 * @param mobTechnologyBlackBerryHybrid
+	 *            the mobTechnologyBlackBerryHybrid to set
 	 */
 	public void setMobTechnologyBlackBerryHybrid(
 			String mobTechnologyBlackBerryHybrid) {
@@ -2225,7 +2291,8 @@ public class PhrescoUiConstants {
 	}
 
 	/**
-	 * @param mobTechnologyAndroid the mobTechnologyAndroid to set
+	 * @param mobTechnologyAndroid
+	 *            the mobTechnologyAndroid to set
 	 */
 	public void setMobTechnologyAndroid(String mobTechnologyAndroid) {
 		this.mobTechnologyAndroid = mobTechnologyAndroid;
@@ -2239,9 +2306,11 @@ public class PhrescoUiConstants {
 	}
 
 	/**
-	 * @param mobTechnologyAndroidLibrary the mobTechnologyAndroidLibrary to set
+	 * @param mobTechnologyAndroidLibrary
+	 *            the mobTechnologyAndroidLibrary to set
 	 */
-	public void setMobTechnologyAndroidLibrary(String mobTechnologyAndroidLibrary) {
+	public void setMobTechnologyAndroidLibrary(
+			String mobTechnologyAndroidLibrary) {
 		this.mobTechnologyAndroidLibrary = mobTechnologyAndroidLibrary;
 	}
 
@@ -2253,7 +2322,8 @@ public class PhrescoUiConstants {
 	}
 
 	/**
-	 * @param mobTechnologyAndroidNative the mobTechnologyAndroidNative to set
+	 * @param mobTechnologyAndroidNative
+	 *            the mobTechnologyAndroidNative to set
 	 */
 	public void setMobTechnologyAndroidNative(String mobTechnologyAndroidNative) {
 		this.mobTechnologyAndroidNative = mobTechnologyAndroidNative;
@@ -2267,7 +2337,8 @@ public class PhrescoUiConstants {
 	}
 
 	/**
-	 * @param mobTechnologyAndroidHybrid the mobTechnologyAndroidHybrid to set
+	 * @param mobTechnologyAndroidHybrid
+	 *            the mobTechnologyAndroidHybrid to set
 	 */
 	public void setMobTechnologyAndroidHybrid(String mobTechnologyAndroidHybrid) {
 		this.mobTechnologyAndroidHybrid = mobTechnologyAndroidHybrid;
@@ -2281,7 +2352,8 @@ public class PhrescoUiConstants {
 	}
 
 	/**
-	 * @param mobTechnologyIphone the mobTechnologyIphone to set
+	 * @param mobTechnologyIphone
+	 *            the mobTechnologyIphone to set
 	 */
 	public void setMobTechnologyIphone(String mobTechnologyIphone) {
 		this.mobTechnologyIphone = mobTechnologyIphone;
@@ -2295,9 +2367,11 @@ public class PhrescoUiConstants {
 	}
 
 	/**
-	 * @param mobTechnologyIphoneWorkspace the mobTechnologyIphoneWorkspace to set
+	 * @param mobTechnologyIphoneWorkspace
+	 *            the mobTechnologyIphoneWorkspace to set
 	 */
-	public void setMobTechnologyIphoneWorkspace(String mobTechnologyIphoneWorkspace) {
+	public void setMobTechnologyIphoneWorkspace(
+			String mobTechnologyIphoneWorkspace) {
 		this.mobTechnologyIphoneWorkspace = mobTechnologyIphoneWorkspace;
 	}
 
@@ -2309,7 +2383,8 @@ public class PhrescoUiConstants {
 	}
 
 	/**
-	 * @param mobTechnologyIphoneLibrary the mobTechnologyIphoneLibrary to set
+	 * @param mobTechnologyIphoneLibrary
+	 *            the mobTechnologyIphoneLibrary to set
 	 */
 	public void setMobTechnologyIphoneLibrary(String mobTechnologyIphoneLibrary) {
 		this.mobTechnologyIphoneLibrary = mobTechnologyIphoneLibrary;
@@ -2323,7 +2398,8 @@ public class PhrescoUiConstants {
 	}
 
 	/**
-	 * @param mobTechnologyIphoneNative the mobTechnologyIphoneNative to set
+	 * @param mobTechnologyIphoneNative
+	 *            the mobTechnologyIphoneNative to set
 	 */
 	public void setMobTechnologyIphoneNative(String mobTechnologyIphoneNative) {
 		this.mobTechnologyIphoneNative = mobTechnologyIphoneNative;
@@ -2337,12 +2413,380 @@ public class PhrescoUiConstants {
 	}
 
 	/**
-	 * @param mobTechnologyIphoneHybrid the mobTechnologyIphoneHybrid to set
+	 * @param mobTechnologyIphoneHybrid
+	 *            the mobTechnologyIphoneHybrid to set
 	 */
 	public void setMobTechnologyIphoneHybrid(String mobTechnologyIphoneHybrid) {
 		this.mobTechnologyIphoneHybrid = mobTechnologyIphoneHybrid;
 	}
 
+	/**
+	 * @return the componentButton
+	 */
+	public String getComponentButton() {
+		return componentButton;
+	}
 
+	/**
+	 * @param componentButton
+	 *            the componentButton to set
+	 */
+	public void setComponentButton(String componentButton) {
+		this.componentButton = componentButton;
+	}
+
+	/**
+	 * @return the componentTestButton
+	 */
+	public String getComponentTestButton() {
+		return componentTestButton;
+	}
+
+	/**
+	 * @param componentTestButton
+	 *            the componentTestButton to set
+	 */
+	public void setComponentTestButton(String componentTestButton) {
+		this.componentTestButton = componentTestButton;
+	}
+
+	/**
+	 * @return the componentKillProcessBtn
+	 */
+	public String getComponentKillProcessBtn() {
+		return componentKillProcessBtn;
+	}
+
+	/**
+	 * @param componentKillProcessBtn
+	 *            the componentKillProcessBtn to set
+	 */
+	public void setComponentKillProcessBtn(String componentKillProcessBtn) {
+		this.componentKillProcessBtn = componentKillProcessBtn;
+	}
+
+	/**
+	 * @return the functionalButton
+	 */
+	public String getFunctionalButton() {
+		return functionalButton;
+	}
+
+	/**
+	 * @param functionalButton the functionalButton to set
+	 */
+	public void setFunctionalButton(String functionalButton) {
+		this.functionalButton = functionalButton;
+	}
+
+	/**
+	 * @return the manualButton
+	 */
+	public String getManualButton() {
+		return manualButton;
+	}
+
+	/**
+	 * @param manualButton the manualButton to set
+	 */
+	public void setManualButton(String manualButton) {
+		this.manualButton = manualButton;
+	}
+
+	/**
+	 * @return the performanceButton
+	 */
+	public String getPerformanceButton() {
+		return performanceButton;
+	}
+
+	/**
+	 * @param performanceButton the performanceButton to set
+	 */
+	public void setPerformanceButton(String performanceButton) {
+		this.performanceButton = performanceButton;
+	}
+
+	/**
+	 * @return the loadButton
+	 */
+	public String getLoadButton() {
+		return loadButton;
+	}
+
+	/**
+	 * @param loadButton the loadButton to set
+	 */
+	public void setLoadButton(String loadButton) {
+		this.loadButton = loadButton;
+	}
+
+	/**
+	 * @return the perfjmxType
+	 */
+	public String getPerfjmxType() {
+		return perfjmxType;
+	}
+
+	/**
+	 * @param perfjmxType the perfjmxType to set
+	 */
+	public void setPerfjmxType(String perfjmxType) {
+		this.perfjmxType = perfjmxType;
+	}
+
+	/**
+	 * @return the perftestAgainst
+	 */
+	public String getPerftestAgainst() {
+		return perftestAgainst;
+	}
+
+	/**
+	 * @param perftestAgainst the perftestAgainst to set
+	 */
+	public void setPerftestAgainst(String perftestAgainst) {
+		this.perftestAgainst = perftestAgainst;
+	}
+
+	/**
+	 * @return the perfauthManager
+	 */
+	public String getPerfauthManager() {
+		return perfauthManager;
+	}
+
+	/**
+	 * @param perfauthManager the perfauthManager to set
+	 */
+	public void setPerfauthManager(String perfauthManager) {
+		this.perfauthManager = perfauthManager;
+	}
+
+	/**
+	 * @return the perfRampupPeriod
+	 */
+	public String getPerfRampupPeriod() {
+		return perfRampupPeriod;
+	}
+
+	/**
+	 * @param perfRampupPeriod the perfRampupPeriod to set
+	 */
+	public void setPerfRampupPeriod(String perfRampupPeriod) {
+		this.perfRampupPeriod = perfRampupPeriod;
+	}
+
+	/**
+	 * @return the perfHttpName
+	 */
+	public String getPerfHttpName() {
+		return perfHttpName;
+	}
+
+	/**
+	 * @param perfHttpName the perfHttpName to set
+	 */
+	public void setPerfHttpName(String perfHttpName) {
+		this.perfHttpName = perfHttpName;
+	}
+
+	/**
+	 * @return the perfContext
+	 */
+	public String getPerfContext() {
+		return perfContext;
+	}
+
+	/**
+	 * @param perfContext the perfContext to set
+	 */
+	public void setPerfContext(String perfContext) {
+		this.perfContext = perfContext;
+	}
+
+	/**
+	 * @return the perfDataType
+	 */
+	public String getPerfDataType() {
+		return perfDataType;
+	}
+
+	/**
+	 * @param perfDataType the perfDataType to set
+	 */
+	public void setPerfDataType(String perfDataType) {
+		this.perfDataType = perfDataType;
+	}
+
+	/**
+	 * @return the perfEncodingType
+	 */
+	public String getPerfEncodingType() {
+		return perfEncodingType;
+	}
+
+	/**
+	 * @param perfEncodingType the perfEncodingType to set
+	 */
+	public void setPerfEncodingType(String perfEncodingType) {
+		this.perfEncodingType = perfEncodingType;
+	}
+
+	/**
+	 * @return the perfRedirect
+	 */
+	public String getPerfRedirect() {
+		return perfRedirect;
+	}
+
+	/**
+	 * @param perfRedirect the perfRedirect to set
+	 */
+	public void setPerfRedirect(String perfRedirect) {
+		this.perfRedirect = perfRedirect;
+	}
+
+	/**
+	 * @return the perfFollowRedirect
+	 */
+	public String getPerfFollowRedirect() {
+		return perfFollowRedirect;
+	}
+
+	/**
+	 * @param perfFollowRedirect the perfFollowRedirect to set
+	 */
+	public void setPerfFollowRedirect(String perfFollowRedirect) {
+		this.perfFollowRedirect = perfFollowRedirect;
+	}
+
+	/**
+	 * @return the perfKeepAlive
+	 */
+	public String getPerfKeepAlive() {
+		return perfKeepAlive;
+	}
+
+	/**
+	 * @param perfKeepAlive the perfKeepAlive to set
+	 */
+	public void setPerfKeepAlive(String perfKeepAlive) {
+		this.perfKeepAlive = perfKeepAlive;
+	}
+
+	/**
+	 * @return the perHeaderKey
+	 */
+	public String getPerHeaderKey() {
+		return perHeaderKey;
+	}
+
+	/**
+	 * @param perHeaderKey the perHeaderKey to set
+	 */
+	public void setPerHeaderKey(String perHeaderKey) {
+		this.perHeaderKey = perHeaderKey;
+	}
+
+	/**
+	 * @return the perfHeaderValue
+	 */
+	public String getPerfHeaderValue() {
+		return perfHeaderValue;
+	}
+
+	/**
+	 * @param perfHeaderValue the perfHeaderValue to set
+	 */
+	public void setPerfHeaderValue(String perfHeaderValue) {
+		this.perfHeaderValue = perfHeaderValue;
+	}
+
+	/**
+	 * @return the perfHeaderAddButton
+	 */
+	public String getPerfHeaderAddButton() {
+		return perfHeaderAddButton;
+	}
+
+	/**
+	 * @param perfHeaderAddButton the perfHeaderAddButton to set
+	 */
+	public void setPerfHeaderAddButton(String perfHeaderAddButton) {
+		this.perfHeaderAddButton = perfHeaderAddButton;
+	}
+
+	/**
+	 * @return the perParameterKey
+	 */
+	public String getPerParameterKey() {
+		return perParameterKey;
+	}
+
+	/**
+	 * @param perParameterKey the perParameterKey to set
+	 */
+	public void setPerParameterKey(String perParameterKey) {
+		this.perParameterKey = perParameterKey;
+	}
+
+	/**
+	 * @return the perfParameterValue
+	 */
+	public String getPerfParameterValue() {
+		return perfParameterValue;
+	}
+
+	/**
+	 * @param perfParameterValue the perfParameterValue to set
+	 */
+	public void setPerfParameterValue(String perfParameterValue) {
+		this.perfParameterValue = perfParameterValue;
+	}
+
+	/**
+	 * @return the perfTestButton
+	 */
+	public String getPerfTestButton() {
+		return perfTestButton;
+	}
+
+	/**
+	 * @param perfTestButton the perfTestButton to set
+	 */
+	public void setPerfTestButton(String perfTestButton) {
+		this.perfTestButton = perfTestButton;
+	}
+
+	/**
+	 * @return the projectDeleteIcon
+	 */
+	public String getProjectDeleteIcon() {
+		return projectDeleteIcon;
+	}
+
+	/**
+	 * @param projectDeleteIcon the projectDeleteIcon to set
+	 */
+	public void setProjectDeleteIcon(String projectDeleteIcon) {
+		this.projectDeleteIcon = projectDeleteIcon;
+	}
+
+	/**
+	 * @return the projectDeletePopUpYesBtn
+	 */
+	public String getProjectDeletePopUpYesBtn() {
+		return projectDeletePopUpYesBtn;
+	}
+
+	/**
+	 * @param projectDeletePopUpYesBtn the projectDeletePopUpYesBtn to set
+	 */
+	public void setProjectDeletePopUpYesBtn(String projectDeletePopUpYesBtn) {
+		this.projectDeletePopUpYesBtn = projectDeletePopUpYesBtn;
+	}
+	
+	
 
 }

@@ -21,7 +21,7 @@
 			   <configName>Server</configName>  
                <configHost>172.16.18.85</configHost>
                <configPort>8080</configPort>
-               <configDeployDir>C:\tom\apache-tomcat-7.0.14\apache-tomcat-7.0.14\webapps</configDeployDir>
+               <configDeployDir>G:\apache-tomcat-7.0.25\webapps</configDeployDir>
                <configContext>yuimob</configContext>
                
                <!-- GenerateBuild -->

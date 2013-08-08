@@ -10,7 +10,7 @@
 				<include name="testIPhoneNativeArchetypeEditProject"></include>
 				<include name="testIPhoneNativeArchetypeEditApp"></include>
 				<include name="testIPhoneNativeArchetypeUpdateFeatures"></include>
-				<include name="testIPhoneNativeArchetypeOverAllPdfReport"></include>
+				<include name="testIPhoneNativeArchetypeEditAppDesc"></include>
 				<include name="testIPhoneNativeArchetypeUnitTest"></include>
 				<include name="testIPhoneNativeArchetypeOverAllPdfReport"></include>
 				<include name="testIPhoneNativeArchetypeDetailedPdfReport"></include>

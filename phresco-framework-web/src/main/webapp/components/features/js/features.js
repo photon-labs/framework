@@ -127,7 +127,7 @@ define(["features/listener/featuresListener"], function() {
 		 */
 		postRender : function(element) {
 			var self = this;
-			if(self.updateFlag === 1){
+			//if(self.updateFlag === 1){
 				self.featuresListener.getFeaturesList(self.featuresListener.getRequestHeader(self.featureRequestBody, "SELECTED"), function(response) {
 					var responseData = response.data;
 					$(".switchOn").each(function(index, currentVal) {
@@ -139,7 +139,7 @@ define(["features/listener/featuresListener"], function() {
 					});
 				});
 				
-			}
+			//}
 			setTimeout(function(){
 					self.selectedCount();
 			},3000);
@@ -353,7 +353,7 @@ define(["features/listener/featuresListener"], function() {
 						featureUpdatedata.moduleId = moduleId; 
 						featureUpdatedata.artifactGroupId = moduleId;
 						self.featureUpdatedArray.push(featureUpdatedata);
-						self.updateFlag = 1;
+						//self.updateFlag = 1;
 					}
 				});				
 				

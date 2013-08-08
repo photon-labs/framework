@@ -3,7 +3,7 @@
 <suite name="ApplicationLayerTestCaseSuite" thread-count="5"
 	verbose="3">
 
-   <!--  <test name="CleanTest" junit="false" preserve-order="true">
+    <test name="CleanTest" junit="false" preserve-order="true">
 		<classes>
 			<class name="com.photon.phresco.preconditions.CleanUp" />
 			<methods>
@@ -13,7 +13,7 @@
 				<include name="testWordpressArchetypeDatabase"></include>
 			</methods>
 		</classes>
-	</test> -->
+	</test>
     
 	<test name="PhpTest" junit="false" preserve-order="true">
 		<classes>
@@ -133,7 +133,7 @@
 		</classes>
 	</test>
 
-	 <test name="NodeJsTest" junit="false" preserve-order="true">
+	  <test name="NodeJsTest" junit="false" preserve-order="true">
 		<classes>
 			<class name="com.photon.phresco.ApplicationLayer.NodeJsTest" />
 			<methods>
@@ -170,7 +170,7 @@
 				<include name="testAspDotnetArchetypeConfigurationServer"></include>
 				<include name="testAspDotnetArchetypeCloneEnvironment"></include>
 				<include name="testAspDotnetArchetypeBuild"></include>
-				<include name="testAspDotnetArchetypeDeploy"></include>
+				<!-- <include name="testAspDotnetArchetypeDeploy"></include> -->
 				<include name="testAspDotnetArchetypeOverAllPdfReport"></include>
 				<include name="testAspDotnetArchetypeDetailedPdfReport"></include>
 			</methods>
@@ -191,7 +191,7 @@
 				<include name="testSharepointArchetypeConfigurationServer"></include>
 				<include name="testSharepointCloneEnvironment"></include>
 				<include name="testSharepointArchetypeBuild"></include>
-				<include name="testSharepointArchetypeDeploy"></include>
+				<!-- <include name="testSharepointArchetypeDeploy"></include> -->
 				<include name="testSharepointArchetypeOverAllPdfReport"></include>
 				<include name="testSharepointArchetypeDetailedPdfReport"></include>
 			</methods>
@@ -227,7 +227,7 @@
 				<include name="testSitecoreArchetypeConfigurationServer"></include>
 				<include name="testSitecoreCloneEnvironment"></include>
 				<include name="testSitecoreArchetypeBuild"></include>
-				<include name="testSitecoreArchetypeDeploy"></include>
+				<!-- <include name="testSitecoreArchetypeDeploy"></include> -->
 				<include name="testSitecoreArchetypeOverAllPdfReport"></include>
 				<include name="testSitecoreArchetypeDetailedPdfReport"></include>
 			</methods>

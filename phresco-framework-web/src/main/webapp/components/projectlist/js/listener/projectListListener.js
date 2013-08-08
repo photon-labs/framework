@@ -340,15 +340,16 @@ define([], function() {
 			self.projectListAction(self.getActionHeader(self.projectRequestBody, "configTypes"), "", function(response) {
 				commonVariables.api.localVal.setJson('configTypes', response.data);
 				commonVariables.navListener.configDropdown(response.data);
-			});
-			if(self.editAplnContent === null){
-				commonVariables.navListener.getMyObj(commonVariables.editApplication, function(returnVal){
-					self.editAplnContent = returnVal;
+				if(self.editAplnContent === null){
+					commonVariables.navListener.getMyObj(commonVariables.editApplication, function(returnVal){
+						self.editAplnContent = returnVal;
+						self.loadAppInfo(value, techid);
+					});	
+				} else {
 					self.loadAppInfo(value, techid);
-				});	
-			} else {
-				self.loadAppInfo(value, techid);
-			}	
+				}					
+			});
+			
 		},
 		
 		loadAppInfo : function(value, techid){

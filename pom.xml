@@ -4,7 +4,7 @@
     <groupId>com.photon.phresco.framework</groupId>
     <artifactId>phresco-framework-root</artifactId>
     <packaging>pom</packaging>
-    <name>Phresco Framework root</name>
+    <name>Phresco Framework</name>
     <version>3.0.0.20002-SNAPSHOT</version>
     <description>phresco-framework-root</description>
     <url>http://www.phresco.org</url>
@@ -58,7 +58,7 @@
                 <plugin>
                     <groupId>com.photon.phresco.plugins</groupId>
                     <artifactId>phresco-maven-plugin</artifactId>
-                    <version>2.3.0.9000</version>
+                    <version>2.3.1.6000</version>
                     <extensions>true</extensions>
                 </plugin>
             </plugins>
@@ -140,27 +140,6 @@
                             <type>war</type>
 						</deployable>
                    </deployables>
-                </configuration>
-            </plugin>
-            <plugin>
-                <groupId>net.awired.jstest</groupId>
-                <artifactId>jstest-maven-plugin</artifactId>
-                <version>2.2.1.1000</version>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>test</goal>
-                        </goals>
-                    </execution>
-                </executions>
-                <configuration>
-                    <runnerType xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">ALMOND</runnerType>
-                    <coverage xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">true</coverage>
-                    <skipTests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">${js.skipTest}</skipTests>
-                    <sourceExcludes xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-                        <sourceExclude>eshop/widgets/Init.js</sourceExclude>
-					</sourceExcludes>
-                    <reportDir>${project.basedir}/do_not_checkin/reports/jstest</reportDir>
                 </configuration>
             </plugin>
             <plugin>

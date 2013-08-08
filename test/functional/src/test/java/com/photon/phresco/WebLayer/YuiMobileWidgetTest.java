@@ -263,8 +263,7 @@ public class YuiMobileWidgetTest {
 		try {
 
 			System.out.println("---------testYuiMobileWidgetArchetypeOverAllPdfReport()-------------");
-			methodName = Thread.currentThread().getStackTrace()[1].getMethodName();
-			webBaseScreen.loginPage(methodName);
+			methodName = Thread.currentThread().getStackTrace()[1].getMethodName();			
 			webBaseScreen.yuiMobileWidgetArchetypeOverAllPdfReport(methodName, yuiMobConst);
 		} catch (Exception t) {
 			t.printStackTrace();
@@ -278,9 +277,22 @@ public class YuiMobileWidgetTest {
 		try {
 
 			System.out.println("---------testYuiMobileWidgetArchetypeDetailedPdfReport()-------------");
-			methodName = Thread.currentThread().getStackTrace()[1].getMethodName();
-			webBaseScreen.loginPage(methodName);
+			methodName = Thread.currentThread().getStackTrace()[1].getMethodName();			
 			webBaseScreen.yuiMobileWidgetArchetypeDetailedPdfReport(methodName, yuiMobConst);
+		} catch (Exception t) {
+			t.printStackTrace();
+
+		}
+	} 
+	
+	@Test
+	public void testYuiMobileWidgetArchetypeComponentTest()
+	throws InterruptedException, IOException, Exception {
+		try {
+
+			System.out.println("---------testYuiMobileWidgetArchetypeComponentTest()-------------");
+			methodName = Thread.currentThread().getStackTrace()[1].getMethodName();
+			webBaseScreen.componentTest(methodName);
 		} catch (Exception t) {
 			t.printStackTrace();
 

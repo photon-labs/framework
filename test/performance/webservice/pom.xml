@@ -1,0 +1,92 @@
+<!--
+  ###
+  Archetype - phresco-html5-jquery-archetype
+  
+  Copyright (C) 1999 - 2012 Photon Infotech Inc.
+  
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+  
+       http://www.apache.org/licenses/LICENSE-2.0
+  
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+  ###
+  -->
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>Photon</groupId>
+	<artifactId>Phresco</artifactId>
+	<packaging>pom</packaging>
+	<name>Performance testing for JQuery Widget-Webservices</name>
+	<version>1.0</version>
+	
+	<build>
+    <plugins>
+      <plugin>
+        <groupId>com.google.code.sortpom</groupId>
+        <artifactId>maven-sortpom-plugin</artifactId>
+        <version>2.1.0</version>
+        <executions>
+          <execution>
+            <phase>test</phase>
+            <goals>
+              <goal>sort</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>com.lazerycode.jmeter</groupId>
+        <artifactId>jmeter-maven-plugin</artifactId>
+        <version>1.8.22</version>
+        <executions>
+          <execution>
+            <id>jmeter-tests</id>
+            <phase>test</phase>
+            <goals>
+              <goal>jmeter</goal>
+            </goals>
+          </execution>
+        </executions>
+        <dependencies>
+          <dependency>
+            <groupId>mysql</groupId>
+            <artifactId>mysql-connector-java</artifactId>
+            <version>5.1.9</version>
+          </dependency>
+          <dependency>
+            <groupId>kg.apc</groupId>
+            <artifactId>cmdrunner</artifactId>
+            <version>1.0.1</version>
+          </dependency>
+          <dependency>
+            <groupId>kg.apc</groupId>
+            <artifactId>JMeterPlugins</artifactId>
+            <version>1.0.0</version>
+          </dependency>
+          <dependency>
+            <groupId>kg.apc</groupId>
+            <artifactId>JMeterPlugins</artifactId>
+            <version>1.0.0</version>
+          </dependency>
+        </dependencies>
+        <configuration>
+          <!-- <ignoreResultFailures>true</ignoreResultFailures> -->
+          <testFilesDirectory>tests/</testFilesDirectory>
+          <testFilesIncluded>
+            <jMeterTestFile>PhrescoFrameWork_TestPlan.jmx</jMeterTestFile>
+          </testFilesIncluded>
+          <resultFilesDirectory>results/jmeter/</resultFilesDirectory>
+          <resultFilesName>Sample</resultFilesName>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+	
+</project>

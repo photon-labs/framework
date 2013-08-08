@@ -25,8 +25,7 @@ public class JQueryMobileWidgetTest {
 	private static String selectedBrowser;
 
 	@BeforeTest
-	public  void setUp() throws Exception
-	{
+	public void setUp() throws Exception {
 		phrscEnv = new phresco_env_config();
 		heliosUiConst = new PhrescoUiConstants();
 		userInfoConst = new UserInfoConstants();
@@ -42,10 +41,13 @@ public class JQueryMobileWidgetTest {
 
 	public static void launchingBrowser() throws Exception {
 
-		String applicationURL = phrscEnv.getProtocol() + "://" + phrscEnv.getHost() + ":" + phrscEnv.getPort() + "/";
+		String applicationURL = phrscEnv.getProtocol() + "://"
+				+ phrscEnv.getHost() + ":" + phrscEnv.getPort() + "/";
 		selectedBrowser = phrscEnv.getBrowser();
 		try {
-			webBaseScreen = new WebScreen(selectedBrowser, applicationURL,phrscEnv.getContext(),phrscEnv,heliosUiConst,userInfoConst,heliosData);
+			webBaseScreen = new WebScreen(selectedBrowser, applicationURL,
+					phrscEnv.getContext(), phrscEnv, heliosUiConst,
+					userInfoConst, heliosData);
 		} catch (ScreenException e) {
 
 			e.printStackTrace();
@@ -54,108 +56,128 @@ public class JQueryMobileWidgetTest {
 
 	@Test
 	public void testJQueryMobWidgetArchetypeCreation()
-	throws InterruptedException, IOException, Exception {
+			throws InterruptedException, IOException, Exception {
 		try {
 
-			System.out.println("---------testJQueryMobWidgetArchetypeCreation()-------------");
-			methodName = Thread.currentThread().getStackTrace()[1].getMethodName();
+			System.out
+					.println("---------testJQueryMobWidgetArchetypeCreation()-------------");
+			methodName = Thread.currentThread().getStackTrace()[1]
+					.getMethodName();
 			webBaseScreen.loginPage(methodName);
-			webBaseScreen.jQueryMobWidgetArchetypeCreate(methodName, jQueryMobConst);
+			webBaseScreen.jQueryMobWidgetArchetypeCreate(methodName,
+					jQueryMobConst);
 		} catch (Exception t) {
 			t.printStackTrace();
 		}
-	} 
+	}
 
 	@Test
 	public void testJQueryMobWidgetArchetypeEditProject()
-	throws InterruptedException, IOException, Exception {
+			throws InterruptedException, IOException, Exception {
 		try {
 
-			System.out.println("---------testJQueryMobWidgetArchetypeEditProject()-------------");
-			methodName = Thread.currentThread().getStackTrace()[1].getMethodName();
-			webBaseScreen.jQueryMobWidgetArchetypeEditProject(methodName, jQueryMobConst);
+			System.out
+					.println("---------testJQueryMobWidgetArchetypeEditProject()-------------");
+			methodName = Thread.currentThread().getStackTrace()[1]
+					.getMethodName();
+			webBaseScreen.jQueryMobWidgetArchetypeEditProject(methodName,
+					jQueryMobConst);
 
 		} catch (Exception t) {
 			t.printStackTrace();
 
 		}
-	} 
+	}
 
 	@Test
 	public void testJQueryMobWidgetArchetypeEditApp()
-	throws InterruptedException, IOException, Exception {
+			throws InterruptedException, IOException, Exception {
 		try {
 
-			System.out.println("---------testJQueryMobWidgetArchetypeEditApp()-------------");
-			methodName = Thread.currentThread().getStackTrace()[1].getMethodName();
-			webBaseScreen.jQueryMobWidgetArchetypeEditApp(methodName, jQueryMobConst);
+			System.out
+					.println("---------testJQueryMobWidgetArchetypeEditApp()-------------");
+			methodName = Thread.currentThread().getStackTrace()[1]
+					.getMethodName();
+			webBaseScreen.jQueryMobWidgetArchetypeEditApp(methodName,
+					jQueryMobConst);
 
 		} catch (Exception t) {
 			t.printStackTrace();
 
 		}
-	} 
+	}
 
 	@Test
 	public void testJQueryMobWidgetArchetypeUpdateFeature()
-	throws InterruptedException, IOException, Exception {
+			throws InterruptedException, IOException, Exception {
 		try {
 
-			System.out.println("---------testJQueryMobWidgetArchetypeUpdateFeature()-------------");
-			methodName = Thread.currentThread().getStackTrace()[1].getMethodName();
-			webBaseScreen.jQueryMobWidgetArchetypeUpdateApp(methodName, jQueryMobConst);
+			System.out
+					.println("---------testJQueryMobWidgetArchetypeUpdateFeature()-------------");
+			methodName = Thread.currentThread().getStackTrace()[1]
+					.getMethodName();
+			webBaseScreen.jQueryMobWidgetArchetypeUpdateApp(methodName,
+					jQueryMobConst);
 
 		} catch (Exception t) {
 			t.printStackTrace();
 
 		}
-	} 
+	}
 
 	@Test
 	public void testJQueryMobWidgetArchetypeEditAppDesc()
-	throws InterruptedException, IOException, Exception {
+			throws InterruptedException, IOException, Exception {
 		try {
 
-			System.out.println("---------testJQueryMobWidgetArchetypeEditAppDesc()-------------");
-			methodName = Thread.currentThread().getStackTrace()[1].getMethodName();
-			webBaseScreen.jQueryMobWidgetArchetypeEditAppDesc(methodName, jQueryMobConst);
+			System.out
+					.println("---------testJQueryMobWidgetArchetypeEditAppDesc()-------------");
+			methodName = Thread.currentThread().getStackTrace()[1]
+					.getMethodName();
+			webBaseScreen.jQueryMobWidgetArchetypeEditAppDesc(methodName,
+					jQueryMobConst);
 
 		} catch (Exception t) {
 			t.printStackTrace();
 
 		}
-	} 
+	}
 
 	@Test
 	public void testJQueryMobWidgetArchetypeConfigurationCreate()
-	throws InterruptedException, IOException, Exception {
+			throws InterruptedException, IOException, Exception {
 		try {
 
-			System.out.println("---------testJQueryMobWidgetArchetypeConfigurationCreate()-------------");
-			methodName = Thread.currentThread().getStackTrace()[1].getMethodName();
-			webBaseScreen.jQueryMobWidgetConfigurationCreate(methodName, jQueryMobConst);
+			System.out
+					.println("---------testJQueryMobWidgetArchetypeConfigurationCreate()-------------");
+			methodName = Thread.currentThread().getStackTrace()[1]
+					.getMethodName();
+			webBaseScreen.jQueryMobWidgetConfigurationCreate(methodName,
+					jQueryMobConst);
 
 		} catch (Exception t) {
 			t.printStackTrace();
 
 		}
-	} 
-	
+	}
+
 	@Test
 	public void testJQueryMobWidgetArchetypeCloneEnvironment()
-	throws InterruptedException, IOException, Exception {
+			throws InterruptedException, IOException, Exception {
 		try {
 
-			System.out.println("---------testJQueryMobWidgetArchetypeCloneEnvironment()-------------");
-			methodName = Thread.currentThread().getStackTrace()[1].getMethodName();
+			System.out
+					.println("---------testJQueryMobWidgetArchetypeCloneEnvironment()-------------");
+			methodName = Thread.currentThread().getStackTrace()[1]
+					.getMethodName();
 			webBaseScreen.cloneEnvironment(methodName);
 
 		} catch (Exception t) {
 			t.printStackTrace();
 
 		}
-	} 
-	
+	}
+
 	@Test
 	public void testJQueryMobWidgetCodeValidateJs()
 			throws InterruptedException, IOException, Exception {
@@ -223,7 +245,7 @@ public class JQueryMobileWidgetTest {
 
 		}
 	}
-	
+
 	@Test
 	public void testJQueryMobWidgetCodeValidationFunctional()
 			throws InterruptedException, IOException, Exception {
@@ -240,57 +262,81 @@ public class JQueryMobileWidgetTest {
 
 		}
 	}
-	
-	
+
 	@Test
 	public void testJQueryMobWidgetArchetypeGenerateBuild()
-	throws InterruptedException, IOException, Exception {
+			throws InterruptedException, IOException, Exception {
 		try {
 
-			System.out.println("---------testJQueryMobWidgetArchetypeGenerateBuild()-------------");
-			methodName = Thread.currentThread().getStackTrace()[1].getMethodName();
-			webBaseScreen.jQueryMobWidgetGenerateBuild(methodName, jQueryMobConst);
+			System.out
+					.println("---------testJQueryMobWidgetArchetypeGenerateBuild()-------------");
+			methodName = Thread.currentThread().getStackTrace()[1]
+					.getMethodName();
+			webBaseScreen.jQueryMobWidgetGenerateBuild(methodName,
+					jQueryMobConst);
 
 		} catch (Exception t) {
 			t.printStackTrace();
 
 		}
-	} 
-	
+	}
+
 	@Test
 	public void testJQueryMobWidgetArchetypeOverAllPdfReport()
-	throws InterruptedException, IOException, Exception {
+			throws InterruptedException, IOException, Exception {
 		try {
 
-			System.out.println("---------testJQueryMobWidgetArchetypeOverAllPdfReport()-------------");
-			methodName = Thread.currentThread().getStackTrace()[1].getMethodName();
-			webBaseScreen.jQueryMobWidgetArchetypeDetailedPdfReport(methodName, jQueryMobConst);
+			System.out
+					.println("---------testJQueryMobWidgetArchetypeOverAllPdfReport()-------------");
+			methodName = Thread.currentThread().getStackTrace()[1]
+					.getMethodName();
+			webBaseScreen.jQueryMobWidgetArchetypeDetailedPdfReport(methodName,
+					jQueryMobConst);
 
 		} catch (Exception t) {
 			t.printStackTrace();
 
 		}
-	} 
-	
+	}
+
 	@Test
 	public void testJQueryMobWidgetArchetypeDetailedPdfReport()
-	throws InterruptedException, IOException, Exception {
+			throws InterruptedException, IOException, Exception {
 		try {
 
-			System.out.println("---------testJQueryMobWidgetArchetypeDetailedPdfReport()-------------");
-			methodName = Thread.currentThread().getStackTrace()[1].getMethodName();
-			webBaseScreen.jQueryMobWidgetArchetypeOverAllPdfReport(methodName, jQueryMobConst);
+			System.out
+					.println("---------testJQueryMobWidgetArchetypeDetailedPdfReport()-------------");
+			methodName = Thread.currentThread().getStackTrace()[1]
+					.getMethodName();
+			webBaseScreen.jQueryMobWidgetArchetypeOverAllPdfReport(methodName,
+					jQueryMobConst);
 
 		} catch (Exception t) {
 			t.printStackTrace();
 
 		}
-	} 
+	}
+
+	@Test
+	public void testJQueryMobWidgetArchetypeComponentTest()
+			throws InterruptedException, IOException, Exception {
+		try {
+
+			System.out
+					.println("---------testJQueryMobWidgetArchetypeComponentTest()-------------");
+			methodName = Thread.currentThread().getStackTrace()[1]
+					.getMethodName();
+			webBaseScreen.componentTest(methodName);
+
+		} catch (Exception t) {
+			t.printStackTrace();
+
+		}
+	}
 
 	@AfterTest
-	public  void tearDown() {
+	public void tearDown() {
 		webBaseScreen.closeBrowser();
 	}
 
 }
-

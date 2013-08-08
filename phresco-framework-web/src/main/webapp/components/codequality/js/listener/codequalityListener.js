@@ -146,40 +146,41 @@ define([], function() {
 
 		constructHtml : function(response, output){
 			var self = this;
-			if(response.message === "Dependency returned successfully"){
-				var typeLi = '';
-				var validateAgainst = response.data[0].validateAgainst.key;
-				var repTypesData = response.data[0].validateAgainst.value;
-				$("#codereportTypes").show();	
-				$.each(response.data, function(index, resdata) {
-					var innerUl = '';
-					if(resdata.options === null){
-						typeLi += "<li name='selectType' key="+resdata.validateAgainst.key+" data="+resdata.validateAgainst.value+" style='padding-left:8px;cursor:pointer;'>"+resdata.validateAgainst.value+"</li>";
-					}else{
-						validateAgainst = resdata.options[0].key;
-						 repTypesData = resdata.options[0].value;
-						$.each(resdata.options, function(index, optvalue) {
-							innerUl += "<li name='selectType' key="+optvalue.key+" data="+optvalue.value+" style='padding-left:8px;cursor:pointer;'>"+optvalue.value+"</li>";
-						});
-						typeLi += "<li disabled='disabled' key="+resdata.validateAgainst.key+" data="+resdata.validateAgainst.value+" style='padding-left:4px;'>"+resdata.validateAgainst.value+'<ul>'+innerUl+"</ul></li>";
+				if(response[0].validateAgainst !== null){
+					var typeLi = '';
+					var validateAgainst = response[0].validateAgainst.key;
+					var repTypesData = response[0].validateAgainst.value;
+					$("#codereportTypes").show();
+					$.each(response, function(index, resdata) {
+						var innerUl = '';
+						if(resdata.options === null){
+							typeLi += "<li name='selectType' key="+resdata.validateAgainst.key+" data="+resdata.validateAgainst.value+" style='padding-left:8px;cursor:pointer;'>"+resdata.validateAgainst.value+"</li>";
+						}else{
+							validateAgainst = resdata.options[0].key;
+							 repTypesData = resdata.options[0].value;
+							$.each(resdata.options, function(index, optvalue) {
+								innerUl += "<li name='selectType' key="+optvalue.key+" data="+optvalue.value+" style='padding-left:8px;cursor:pointer;'>"+optvalue.value+"</li>";
+							});
+							typeLi += "<li disabled='disabled' key="+resdata.validateAgainst.key+" data="+resdata.validateAgainst.value+" style='padding-left:4px;'>"+resdata.validateAgainst.value+'<ul>'+innerUl+"</ul></li>";
+						}
+					});
+					var dropdownLi = '<ul class="nav"><li id="fat-menu" class="dropdown"><a href="#" id="drop5" role="button" class="dropdown-toggle" data-toggle="dropdown"><b id="repTypes" >'+repTypesData+'</b><b class="caret"></b></a> <div class="dropdown-menu cust_sel code_test_opt" role="menu" aria-labelledby="drop5"> <ul id="reportUl">'+typeLi+'</ul></div></li></ul>';
+					var codeReport = $("#codereportTypes").attr("class");
+					if(codeReport !== undefined) {
+						$("#codereportTypes").append(dropdownLi);
+					} else {
+						$(output).append(dropdownLi);
 					}
-				});
-				var dropdownLi = '<ul class="nav"><li id="fat-menu" class="dropdown"><a href="#" id="drop5" role="button" class="dropdown-toggle" data-toggle="dropdown"><b id="repTypes" >'+repTypesData+'</b><b class="caret"></b></a> <div class="dropdown-menu cust_sel code_test_opt" role="menu" aria-labelledby="drop5"> <ul id="reportUl">'+typeLi+'</ul></div></li></ul>';
-				var codeReport = $("#codereportTypes").attr("class");
-				if(codeReport !== undefined) {
-					$("#codereportTypes").append(dropdownLi);
-				} else {
-					$(output).append(dropdownLi);
+					self.onProjects();
+					self.getIframeReport(validateAgainst);
+				}else {
+					$('#content_div').html('');
+					$('#codeAnalysis').hide();
+					$(".code_report").hide();
+					$(".code_report_icon").hide();
+					$("#codereportTypes").hide();
+					$('#content_div').append('<div class="alert" style="text-align: center; width:98%">Dependency not returned.</div>');
 				}
-				self.onProjects();
-				self.getIframeReport(validateAgainst);
-			}else {
-				$('#content_div').html('');
-				$('#codeAnalysis').hide();
-				$(".code_report").hide();
-				$(".code_report_icon").hide();
-				$('#content_div').append('<div class="alert" style="text-align: center; width:98%">'+response.message+'</div>');
-			}
 		},
 		
 		onProjects : function() {

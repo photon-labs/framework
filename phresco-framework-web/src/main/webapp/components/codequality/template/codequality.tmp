@@ -3,7 +3,7 @@
             <div class="code_report">
             	<font data-i18n="codequality.report"></font>
             </div>
-            <div class="navbar navbar-static code_func" id="codereportTypes" style="width:80px;">
+            <div class="navbar navbar-static code_func" id="codereportTypes" style="width:92px;">
                 <ul class="nav"></ul>
             </div>
            
