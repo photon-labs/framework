@@ -255,7 +255,7 @@ define(["croneExpression/croneExpression"], function() {
 				if(envSpecificVal === false) { 
 					removeIcon = ''; 
 				} else {
-					removeIcon = '<a href="javascript:;" name="removeConfig"><img src="themes/default/images/helios/close_icon.png" border="0" alt="" class="flt_right"/></a>';
+					removeIcon = '<a href="javascript:;" name="removeConfig"><img src="themes/default/images/helios/close_red.png" border="0" alt="" class="flt_right"/></a>';
 				}
 				
 				var headerTr = '<tr type="'+configTemplate.name+self.count+'" class="row_bg" envSpecificVal="'+envSpecificVal+'" configType="'+configTemplate.name+'"><td colspan="3">' + configTemplate.name + '</td><td colspan="3">'+removeIcon+'</td></tr>';
@@ -731,7 +731,7 @@ define(["croneExpression/croneExpression"], function() {
 				}
 				
 				headerTr = '<tr class="row_bg" type="otherConfig" configType="'+type+'"><div class="row"><td colspan="3">' + type + '</td><td colspan="3">'+
-				'<a href="javascript:;" name="removeConfig"><img src="themes/default/images/helios/close_icon.png" border="0" alt="" class="flt_right"/></a></td></div></tr>';
+				'<a href="javascript:;" name="removeConfig"><img src="themes/default/images/helios/close_red.png" border="0" alt="" class="flt_right"/></a></td></div></tr>';
 				content = content.concat(headerTr);
 				
 				var defaultTd = '<tr name="configName" class="otherConfig" name="'+type+'"><td class="labelTd">Name <sup>*</sup></td><td><input type="text" id="ConfigOther" maxlength="30" title="30 Characters only" mandatory="true" class="configName" value="'+name+'" placeholder= "Configuration Name"/></td><td class="labelTd">Description</td><td><input type="text" id="ConfigOther" class="configDesc" maxlength="150" title="150 Characters only"  value="'+desc+'" placeholder= "Configuration Description"/></td>';
