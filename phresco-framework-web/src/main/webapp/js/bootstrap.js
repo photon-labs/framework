@@ -242,20 +242,16 @@ $(document).ready(function(){
 			commonVariables.api = new Clazz.com.js.api.API();
 			
 			$(document).ajaxStart(function() {
-				commonVariables.loadingScreen.removeLoading(function(retVal){
-					if(!commonVariables.hideloading){
-						commonVariables.loadingScreen.showLoading();
-					}
-				});
+				if(!commonVariables.hideloading){
+					commonVariables.loadingScreen.showLoading();
+				}
 			});
 			
 			$(document).ajaxStop(function() {
-				if(!Clazz.navigationController.loadingActive){
+				if(!Clazz.navigationController.loadingActive && !commonVariables.continueloading){
 					commonVariables.hideloading = false;
-					if(!commonVariables.continueloading){
-						commonVariables.continueloading = false;
-						commonVariables.loadingScreen.removeLoading();
-					}
+					commonVariables.continueloading = false;
+					commonVariables.loadingScreen.removeLoading();
 				}
 			});
 			
