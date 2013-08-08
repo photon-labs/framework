@@ -25,7 +25,6 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import javax.ws.rs.Consumes;
@@ -50,6 +49,7 @@ import com.photon.phresco.commons.model.CIJobStatus;
 import com.photon.phresco.commons.model.ContinuousDelivery;
 import com.photon.phresco.commons.model.ProjectDelivery;
 import com.photon.phresco.commons.model.ProjectInfo;
+import com.photon.phresco.commons.model.Technology;
 import com.photon.phresco.exception.PhrescoException;
 import com.photon.phresco.framework.PhrescoFrameworkFactory;
 import com.photon.phresco.framework.api.ActionType;
@@ -60,6 +60,7 @@ import com.photon.phresco.framework.impl.CIManagerImpl;
 import com.photon.phresco.framework.rest.api.util.FrameworkServiceUtil;
 import com.photon.phresco.plugins.model.Mojos.Mojo.Configuration.Parameters.Parameter;
 import com.photon.phresco.plugins.util.MojoProcessor;
+import com.photon.phresco.service.client.api.ServiceManager;
 import com.photon.phresco.util.Constants;
 import com.photon.phresco.util.ServiceConstants;
 import com.photon.phresco.util.Utility;
@@ -69,6 +70,7 @@ import com.sun.jersey.api.client.ClientResponse.Status;
 /**
  * The Class CIService.
  */
+
 @Path("/ci")
 public class CIService extends RestBase implements FrameworkConstants, ServiceConstants,Constants {
 
@@ -128,7 +130,7 @@ public class CIService extends RestBase implements FrameworkConstants, ServiceCo
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response createJob(ContinuousDelivery continuousDelivery, @QueryParam(REST_QUERY_CUSTOMERID) String customerId,
-			@QueryParam(REST_QUERY_PROJECTID) String projectId, @QueryParam(REST_QUERY_APPDIR_NAME) String appDir)
+			@QueryParam(REST_QUERY_PROJECTID) String projectId, @QueryParam(REST_QUERY_APPDIR_NAME) String appDir, @QueryParam(REST_QUERY_USERID) String userId)
 	throws PhrescoException {
 		ResponseInfo<ContinuousDelivery> responseData = new ResponseInfo<ContinuousDelivery>();
 		ResponseInfo<ContinuousDelivery> finalOutput;
@@ -138,7 +140,7 @@ public class CIService extends RestBase implements FrameworkConstants, ServiceCo
 				projectId = projectInfo.getId();
 			}
 			List<CIJob> jobs = continuousDelivery.getJobs();
-			boolean coreCreateJob = coreCreateJob(continuousDelivery, projectId, appDir);
+			boolean coreCreateJob = coreCreateJob(continuousDelivery, projectId, appDir, userId);
 			if (coreCreateJob) {
 				finalOutput = responseDataEvaluation(responseData, null, "Job(s) created successfully", continuousDelivery);
 			} else {
@@ -168,7 +170,7 @@ public class CIService extends RestBase implements FrameworkConstants, ServiceCo
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response createClone(@QueryParam(REST_QUERY_CLONE_NAME) String cloneName, @QueryParam(REST_QUERY_ENV_NAME) String envName,
 			@QueryParam(REST_QUERY_CONTINOUSNAME) String continuousName, @QueryParam(REST_QUERY_CUSTOMERID) String customerId,
-			@QueryParam(REST_QUERY_PROJECTID) String projectId, @QueryParam(REST_QUERY_APPDIR_NAME) String appDir)
+			@QueryParam(REST_QUERY_PROJECTID) String projectId, @QueryParam(REST_QUERY_APPDIR_NAME) String appDir, @QueryParam(REST_QUERY_USERID) String userId)
 	throws PhrescoException {
 		ResponseInfo<ContinuousDelivery> responseData = new ResponseInfo<ContinuousDelivery>();
 		ResponseInfo<ContinuousDelivery> finalOutput;
@@ -206,7 +208,7 @@ public class CIService extends RestBase implements FrameworkConstants, ServiceCo
 				ciJobs.add(cijob);
 			}
 			continuousDelivery.setJobs(ciJobs);
-			boolean coreCreateJob = coreCreateJob(continuousDelivery, projectId, appDir);
+			boolean coreCreateJob = coreCreateJob(continuousDelivery, projectId, appDir, userId);
 
 			if (coreCreateJob) {
 				finalOutput = responseDataEvaluation(responseData, null, "Job(s) created successfully", continuousDelivery);
@@ -233,7 +235,7 @@ public class CIService extends RestBase implements FrameworkConstants, ServiceCo
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response updateJob(ContinuousDelivery continuousDelivery, @QueryParam(REST_QUERY_CUSTOMERID) String customerId,
-			@QueryParam(REST_QUERY_PROJECTID) String projectId, @QueryParam(REST_QUERY_APPDIR_NAME) String appDir)
+			@QueryParam(REST_QUERY_PROJECTID) String projectId, @QueryParam(REST_QUERY_APPDIR_NAME) String appDir, @QueryParam(REST_QUERY_USERID) String userId)
 	throws PhrescoException {
 		ResponseInfo<CIJobStatus> responseData = new ResponseInfo<CIJobStatus>();
 		boolean updateJob = false;
@@ -262,7 +264,7 @@ public class CIService extends RestBase implements FrameworkConstants, ServiceCo
 							if(StringUtils.isNotEmpty(ciJob.getAppDirName())) {
 								applicationInfo = FrameworkServiceUtil.getApplicationInfo(ciJob.getAppDirName());
 							}
-							CIJob job = setPreBuildCmds(ciJob,  applicationInfo, appDir, projectId, continuousDelivery.getName());
+							CIJob job = setPreBuildCmds(ciJob,  applicationInfo, appDir, projectId, continuousDelivery.getName(), userId);
 							updateJob = ciManager.updateJob(job);
 							//						if(updateJob) {
 							tempJobs.add(ciJob);
@@ -278,7 +280,7 @@ public class CIService extends RestBase implements FrameworkConstants, ServiceCo
 					if(StringUtils.isNotEmpty(ciJob.getAppDirName())) {
 						applicationInfo = FrameworkServiceUtil.getApplicationInfo(ciJob.getAppDirName());
 					}
-					CIJob jobWithCmds = setPreBuildCmds(ciJob,  applicationInfo, appDir, projectId, continuousDelivery.getName());
+					CIJob jobWithCmds = setPreBuildCmds(ciJob,  applicationInfo, appDir, projectId, continuousDelivery.getName(), userId);
 					boolean createJob = ciManager.createJob(jobWithCmds);
 					if(createJob) {
 						tempJobs.add(ciJob);
@@ -293,16 +295,6 @@ public class CIService extends RestBase implements FrameworkConstants, ServiceCo
 
 			boolean createJsonJobs = ciManager.createJsonJobs(continuousDelivery, tempJobs, projectId, appDir);
 			if (createJsonJobs) {
-				/*Iterator<CIJob> iterator = oldJobs.iterator();
-				for(CIJob job:tempJobs) {
-					while (iterator.hasNext()) {
-						CIJob itrCiJob = iterator.next();
-						if (itrCiJob.getJobName().equals(job.getJobName())) {
-							iterator.remove();
-							break;
-						}
-					}
-				}*/
 				for(CIJob job:tempJobs) {
 					for (CIJob ciJob2 : tempCiJobs) {
 						if(ciJob2.getJobName().equals(job.getJobName())) {
@@ -639,7 +631,45 @@ public class CIService extends RestBase implements FrameworkConstants, ServiceCo
 			.build();
 		}
 	}
-
+	
+	/**
+	 * @param buildDownloadUrl
+	 * @param downloadJobName
+	 * @param customerId
+	 * @param projectId
+	 * @param appDir
+	 * @param continuousName
+	 * @return
+	 * @throws PhrescoException
+	 */
+	@GET
+	@Path("/downloadBuild")
+	@Produces(MediaType.APPLICATION_JSON)
+	@Consumes(MediaType.APPLICATION_JSON)
+	public Response CIBuildDownload(@QueryParam(REST_QUERY_BUILD_DOWNLOAD_URL) String buildDownloadUrl,
+			@QueryParam(REST_QUERY_DOWNLOAD_JOB_NAME) String downloadJobName, @QueryParam(REST_QUERY_CUSTOMERID) String customerId,
+			@QueryParam(REST_QUERY_PROJECTID) String projectId, @QueryParam(REST_QUERY_APPDIR_NAME) String appDir, 
+			@QueryParam(REST_QUERY_CONTINOUSNAME) String continuousName)
+			throws PhrescoException {
+		ResponseInfo responseData = new ResponseInfo();
+		ResponseInfo finalOutput = null;
+		try {
+			CIManager ciManager = PhrescoFrameworkFactory.getCIManager();
+			List<ProjectDelivery> ciJobInfo = ciManager.getCiJobInfo(appDir);
+			CIJob job = ciManager.getJob(downloadJobName, projectId, ciJobInfo, continuousName);
+			// Get it from web path
+			String jenkinsUrl = HTTP_PROTOCOL + PROTOCOL_POSTFIX + job.getJenkinsUrl() + ":" + job.getJenkinsPort() + "/" + CI + "/job/";
+			buildDownloadUrl = buildDownloadUrl.replace(" ", "%20");
+			String url = jenkinsUrl+job.getJobName()+"/ws/"+buildDownloadUrl;
+			finalOutput = responseDataEvaluation(responseData, null, "Build Download url retrieved successfully", url);
+			return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*")
+			.build();
+		} catch (Exception e) {
+			finalOutput = responseDataEvaluation(responseData, e, "Build Download url retrieve failed", null);
+			return Response.status(Status.NOT_FOUND).entity(finalOutput).header("Access-Control-Allow-Origin", "*")
+					.build();
+		}
+	}
 	
 	
 	/**
@@ -717,7 +747,7 @@ public class CIService extends RestBase implements FrameworkConstants, ServiceCo
 	}
 	
 	//core method used to create jobs in contDelivery
-	private boolean coreCreateJob(ContinuousDelivery continuousDelivery, String  projectId, String appDir) throws PhrescoException {
+	private boolean coreCreateJob(ContinuousDelivery continuousDelivery, String  projectId, String appDir, String userId) throws PhrescoException {
 		CIManagerImpl ciManager = null;
 		boolean createJsonJobs = false;
 		try {
@@ -729,7 +759,7 @@ public class CIService extends RestBase implements FrameworkConstants, ServiceCo
 				if(StringUtils.isNotEmpty(job.getAppDirName())) {
 					applicationInfo = FrameworkServiceUtil.getApplicationInfo(job.getAppDirName());
 				}
-				CIJob jobWithCmds = setPreBuildCmds(job,  applicationInfo, appDir, projectId, continuousDelivery.getName());
+				CIJob jobWithCmds = setPreBuildCmds(job,  applicationInfo, appDir, projectId, continuousDelivery.getName(), userId);
 				boolean createJob = ciManager.createJob(job);
 				if (createJob) {
 					ciJobs.add(job);
@@ -740,11 +770,12 @@ public class CIService extends RestBase implements FrameworkConstants, ServiceCo
 			}
 			return createJsonJobs;
 		} catch (PhrescoException e) {
+			e.printErrorStack();
 			throw new PhrescoException();
 		}
 	}
 	
-	public CIJob setPreBuildCmds(CIJob job, ApplicationInfo appInfo, String appDir, String id, String name) throws PhrescoException {
+	public CIJob setPreBuildCmds(CIJob job, ApplicationInfo appInfo, String appDir, String id, String name, String userId) throws PhrescoException {
 		try {
 			List<String> preBuildStepCmds = new ArrayList<String>();
 
@@ -765,7 +796,12 @@ public class CIService extends RestBase implements FrameworkConstants, ServiceCo
 			if(StringUtils.isNotEmpty(appDir)) {
 				integrationType = LOCAL;
 			}
-
+			Technology technology = null;
+			if (StringUtils.isNotEmpty(userId)) {
+				ServiceManager serviceManager = CONTEXT_MANAGER_MAP.get(userId);
+				technology = serviceManager.getTechnology(appInfo.getTechInfo().getId());
+			}
+			
 			if (BUILD.equalsIgnoreCase(operation)) {
 				// enable archiving
 				job.setEnableArtifactArchiver(true);
@@ -812,9 +848,10 @@ public class CIService extends RestBase implements FrameworkConstants, ServiceCo
 				// based on test report type, it should be specified
 				//TODO validation for TestType
 				String attacheMentPattern = "cumulativeReports";
-
+				
 				// enable archiving
 				job.setEnableArtifactArchiver(true);
+				job.setTechnologyName(technology.getName());
 				String attachPattern = "do_not_checkin/archives/" + attacheMentPattern + "/*.pdf";
 				job.setAttachmentsPattern(attachPattern); //do_not_checkin/archives/cumulativeReports/*.pdf
 				// if the enable build release option is choosed in UI, the file pattenr value will be used

@@ -164,6 +164,9 @@ define(["manualTest/manualTest", "lib/jquery-tojson-1.0", "lib/fileuploader-2.0"
 				setTimeout(function() {
 					start();
 					equal(1, 1, "Adding Manual testcases succeeded");
+					require(["jobTemplatesTest"], function(jobTemplatesTest){
+						jobTemplatesTest.runTests();
+					});
 //					self.runDownloadTemplate(moduleName);
 				}, 500);
 			});

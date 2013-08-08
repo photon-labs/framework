@@ -50,7 +50,7 @@
 	                          	<span class="aliveOpts">
 	                                <a href="javascript:;" class="ci_info execute_button"><img class="wait_button" src="themes/default/images/helios/wait.png"></a>
 	                                 <a href="javascript:;" class="wait_button" temp="generate_build" jobName="{{jobName}}" projectId="{{projectDelivery.id}}"><img class="execute_button" src="themes/default/images/helios/execute_icon.png"></a>
-	                                <a temp="list_builds" jobName="{{jobName}}" projectId="{{projectDelivery.id}}" href="javascript:;" class="datetime_status"><img class="time_button" src="themes/default/images/helios/time.png"></a>
+	                                <a temp="list_builds" jobName="{{jobName}}" projectId="{{projectDelivery.id}}" href="javascript:;" class="datetime_status" operation={{operation}}><img class="time_button" src="themes/default/images/helios/time.png"></a>
 	                             </span>
 	                             <span class="deadOpts">
 	                                <a href="javascript:;" class="wait_button"><img src="themes/default/images/helios/wait.png"></a>
@@ -73,6 +73,7 @@
                 <tr>
                   <th data-i18n="ci.datetime"></th>
                   <th data-i18n="ci.status"></th>
+                   <th data-i18n="ci.download"></th>
                   <th data-i18n="ci.delete"></th>
                 </tr>
               </thead>

@@ -222,7 +222,7 @@ define(["framework/widgetWithTemplate", "ci/listener/ciListener", "lib/jquery-to
 			});
 			
 			$("a[temp=list_builds]").click(function() {
-				self.listBuildsEvent.dispatch($(this));
+				self.listBuildsEvent.dispatch($(this),'','', $(this).attr('operation'));
 			});
 			
 			$("a[temp=generate_build]").click(function() {

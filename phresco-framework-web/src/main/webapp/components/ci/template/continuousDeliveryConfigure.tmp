@@ -63,7 +63,7 @@
 
         <!-- popup starts -->
         <div id="jobConfigure" class="cont_delivery dyn_popup popup_bg job_configure">
-            <div class="jobConfigure popup_scroll">
+            <div class="jobConfigure">
                 <form id="jonConfiguration">
                     <table id="jobName" class="clonetable jobName" width="100%" border="0" cellspacing="0" cellpadding="0">
                         <tbody>

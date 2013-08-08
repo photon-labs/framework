@@ -53,7 +53,7 @@ define([], function() {
 			}); 
 		},
 
-		editContinuousViewTable : function (response) {			
+		editContinuousViewTable : function (response) {		
 			var self = this;			
 			var data = response.data;
 			$("input[type=submit][value=Add]").attr("value","Update");					
@@ -81,7 +81,11 @@ define([], function() {
 			var self = this, header;
 			// basic params for job templates
 			var customerId = self.getCustomer();
-			customerId = (customerId == "") ? "photon" : customerId;
+			customerId = (customerId === "") ? "photon" : customerId;
+			var data = JSON.parse(commonVariables.api.localVal.getSession('userInfo'));
+			if(data !== "") { 
+				userId = data.id; 
+			}
 			var projectId = commonVariables.api.localVal.getSession("projectId");
 			var appDir = commonVariables.api.localVal.getSession('appDirName');
 
@@ -158,19 +162,11 @@ define([], function() {
 					params = $.param(params);
 					header.webserviceurl = header.webserviceurl + "&" + params;
 				}
-			} else if (action === "getDynamicPopupByAppId") {
-				// need to pass appId, operation and appId
-				header.requestMethod = "GET";
-				header.webserviceurl = commonVariables.webserviceurl + commonVariables.jobTemplates + "/getDynamicPopupByAppId" + "?customerId="+ customerId + "&projectId=" + projectId;
-				if (params !== null && params !== undefined && params !== '') {
-					params = $.param(params);
-					header.webserviceurl = header.webserviceurl + "&" + params;
-				}
-			} else if (action === "saveContinuousDelivery") {
+			}  else if (action === "saveContinuousDelivery") {
 				// Save the continuos delivery with all the drag and dropped job templates
 				header.requestMethod = "POST";
 				header.requestPostBody = JSON.stringify(ciRequestBody);
-				header.webserviceurl = commonVariables.webserviceurl + commonVariables.ci + "/create" + "?customerId="+ customerId + "&projectId=" + projectId+"&appDirName="+appDir;
+				header.webserviceurl = commonVariables.webserviceurl + commonVariables.ci + "/create" + "?customerId="+ customerId + "&projectId=" + projectId+"&appDirName="+ appDir + "&userId=" +userId;
 				if (params !== null && params !== undefined && params !== '') {
 					params = $.param(params);
 					header.webserviceurl = header.webserviceurl + "&" + params;
@@ -179,19 +175,12 @@ define([], function() {
 				// update the continuos delivery with all the drag and dropped job templates
 				header.requestMethod = "PUT";
 				header.requestPostBody = JSON.stringify(ciRequestBody);
-				header.webserviceurl = commonVariables.webserviceurl + commonVariables.ci + "/update" + "?customerId="+ customerId + "&projectId=" + projectId+"&appDirName="+appDir;
+				header.webserviceurl = commonVariables.webserviceurl + commonVariables.ci + "/update" + "?customerId="+ customerId + "&projectId=" + projectId+"&appDirName="+appDir + "&userId=" +userId;
 				if (params !== null && params !== undefined && params !== '') {
 					params = $.param(params);
 					header.webserviceurl = header.webserviceurl + "&" + params;					
 				}				
-			} else if (action === "getContinuousDelivery") {
-				header.requestMethod = "GET";
-				header.webserviceurl = commonVariables.webserviceurl + commonVariables.ci + "/getContinuousDelivery" + "?customerId="+ customerId + "&projectId=" + projectId;
-				if (params !== null && params !== undefined && params !== '') {
-					params = $.param(params);
-					header.webserviceurl = header.webserviceurl + "&" + params;
-				}
-			} else if (action === "getBuilds") {
+			}  else if (action === "getBuilds") {
 				header.requestMethod = "GET";
 				header.webserviceurl = commonVariables.webserviceurl + commonVariables.ci + "/builds?projectId="+projectId+"&name="+ciRequestBody.jobName+"&appDirName="+appDir+"&continuousName="+ciRequestBody.continuousName;
 			} else if (action === "generateBuild") {
@@ -200,6 +189,9 @@ define([], function() {
 			} else if (action === "deleteBuild") {
 				header.requestMethod = "DELETE";
 				header.webserviceurl = commonVariables.webserviceurl + commonVariables.ci + "/deletebuilds?buildNumber="+ciRequestBody.buildNumber+"&name="+ciRequestBody.jobName+"&projectId="+projectId+"&appDirName="+appDir+"&continuousName="+ciRequestBody.continuousName;
+			} else if(action === "download"){
+				header.requestMethod = "GET";
+				header.webserviceurl  =commonVariables.webserviceurl + commonVariables.ci +"/downloadBuild?buildDownloadUrl=" +ciRequestBody.buildDownloadUrl+"&downloadJobName="+ciRequestBody.jobName+ "&customerId=" + customerId +"&projectId="+projectId+"&appDirName="+appDir+"&continuousName="+ciRequestBody.continuousName;
 			} else if (action === "jobStatus") {
 				header.requestMethod = "GET";
 				header.webserviceurl = commonVariables.webserviceurl + commonVariables.ci + "/jobStatus?name="+ciRequestBody.jobName+"&continuousName="+ciRequestBody.cdName+"&projectId="+projectId+"&appDirName="+appDir;
@@ -217,7 +209,7 @@ define([], function() {
 				header.webserviceurl = commonVariables.webserviceurl+commonVariables.configuration+"/cronExpression";
 			} else if (action === "createClone") {
 				header.requestMethod = "POST";
-				header.webserviceurl = commonVariables.webserviceurl+commonVariables.ci+"/clone?projectId="+projectId+"&appDirName="+appDir+"&"+ciRequestBody.data;
+				header.webserviceurl = commonVariables.webserviceurl+commonVariables.ci+"/clone?projectId="+projectId+"&appDirName=" + appDir + "&userId=" + userId +"&"+ciRequestBody.data;
 			} else if(action === "editContinuousView") {
 				header.requestMethod = "GET";
 				header.webserviceurl = commonVariables.webserviceurl + commonVariables.ci + "/editContinuousView?projectId="+projectId+"&appDirName="+appDir+"&name=" + params;
@@ -264,6 +256,8 @@ define([], function() {
 			self.getHeaderResponse(self.getRequestHeader(ciRequestBody, 'jobStatus'), function (response) {
 				if(response.data === "FAILURE") {
 					obj.find('.img_process').attr('src',"themes/default/images/helios/cross_red.png");
+				} else if (response.data === "INPROGRESS") {
+					obj.find('.img_process').attr('src',"themes/default/images/helios/processing.gif");
 				} else if (response.data === "SUCCESS") {
 					obj.find('.img_process').attr('src',"themes/default/images/helios/tick_green.png");
 				}
@@ -290,10 +284,10 @@ define([], function() {
 			});
 		},
 		
-		getBuilds: function(obj,job, name) {
+		getBuilds: function(obj,job, name, operation) {
 			var self = this;
 			var ciRequestBody = {},jobName,continuousName;
-			if (job !== undefined && job !== null) {
+			if (!self.isBlank(job)) {
 				jobName = job;
 				continuousName = name;
 				ciRequestBody.jobName =job;
@@ -304,7 +298,7 @@ define([], function() {
 				ciRequestBody.continuousName = obj.closest('div[class=widget_testing]').attr('name');
 				continuousName = ciRequestBody.continuousName;
 			}
-			self.getHeaderResponse(self.getRequestHeader(ciRequestBody, 'getBuilds'), function (response) {
+ 			self.getHeaderResponse(self.getRequestHeader(ciRequestBody, 'getBuilds'), function (response) {
 				$("tbody[name=buildList]").empty();
 				var content = "";
 				if(response.data !== undefined && response.data !== null && response.data !== "" && response.data.length > 0) {
@@ -317,6 +311,13 @@ define([], function() {
 							headerTr = '</td><td><img src="themes/default/images/helios/green_active.png"></td>';
 						}
 						content = content.concat(headerTr);
+						if(response.data[i].status === "SUCCESS" && (operation === 'build' || operation === 'pdfReport')) {
+							var url = (response.data[i].download).replace(/\"/g, ""); 
+							headerTr = '<td><center><a href="#" data-placement="top" continuousName="'+continuousName+'" jobName="'+jobName+'"buildNumber="'+response.data[i].number+'"buildDownloadUrl="'+ url +'"temp="downloadBuild"><img src="themes/default/images/helios/download_icon.png" width="14" height="18" border="0" alt="0"></a><center></td>';
+						} else {
+							headerTr = '<td><center><img src="themes/default/images/helios/cross_red.png" width="14" height="18" border="0" alt="0"><center></td>';
+						}
+						content = content.concat(headerTr);
 						headerTr = '<td><a href="#" data-placement="top" continuousName="'+continuousName+'" jobName="'+jobName+'"buildNumber="'+response.data[i].number+'"temp="deleteBuild"><img src="themes/default/images/helios/delete_row.png" width="14" height="18" border="0" alt="0"></a></td></tr>';
 						content = content.concat(headerTr);
 					}
@@ -325,14 +326,46 @@ define([], function() {
 				} else {
 					$("tbody[name=buildList]").html("No Builds are Available");
 				}
-				self.deleteOnClick(response);
+				self.BuildsOnClick(response);
+				
 			});
 		},
 		
-		deleteOnClick: function(obj) {
+		BuildsOnClick: function(obj) {
 			var self = this;
 			$("a[temp=deleteBuild]").click(function() {
 				self.deleteBuild($(this));
+			});
+			
+			$("a[temp=downloadBuild]").click(function() {
+				self.downloadBuild($(this));
+			});
+		},
+		
+		deleteBuild: function(obj) {
+			var self = this;
+			var ciRequestBody = {},jobName,continuousName;
+			ciRequestBody.jobName = obj.attr("jobName");
+			ciRequestBody.buildNumber = obj.attr("buildNumber");
+			ciRequestBody.continuousName = obj.attr('continuousName');
+			continuousName = ciRequestBody.continuousName;
+			jobName = ciRequestBody.jobName;
+			self.getHeaderResponse(self.getRequestHeader(ciRequestBody, 'deleteBuild'), function (response) {
+				self.getBuilds(response,jobName, continuousName);
+			});
+		},
+		
+		downloadBuild: function(obj) {
+			var self = this;
+			var ciRequestBody = {},jobName,continuousName;
+			ciRequestBody.jobName = obj.attr("jobName");
+			ciRequestBody.buildNumber = obj.attr("buildNumber");
+			ciRequestBody.continuousName = obj.attr('continuousName');
+			ciRequestBody.buildDownloadUrl = obj.attr('buildDownloadUrl');
+//			continuousName = ciRequestBody.continuousName;
+//			jobName = ciRequestBody.jobName;
+			self.getHeaderResponse(self.getRequestHeader(ciRequestBody, 'download'), function (response) {
+				window.open(response.data);
 			});
 		},
 		
@@ -391,19 +424,6 @@ define([], function() {
 			return status;
 		},
 		
-		deleteBuild: function(obj) {
-			var self = this;
-			var ciRequestBody = {},jobName,continuousName;
-			ciRequestBody.jobName = obj.attr("jobName");
-			ciRequestBody.buildNumber = obj.attr("buildNumber");
-			ciRequestBody.continuousName = obj.attr('continuousName');
-			continuousName = ciRequestBody.continuousName;
-			jobName = ciRequestBody.jobName;
-			self.getHeaderResponse(self.getRequestHeader(ciRequestBody, 'deleteBuild'), function (response) {
-				self.getBuilds(response,jobName, continuousName);
-			});
-		},
-		
 		validate : function (callback) {
 			$('#errMsg').html('');
 			var self=this;
@@ -432,7 +452,7 @@ define([], function() {
 				$('select[name=appIds]').next().find('button.dropdown-toggle').addClass("btn-danger");
 				status = false;	 											
 			}	
-			
+		
 			var name = $("[name=name]").val();			
 			if(name === "") {				
 				$("input[name='name']").focus();
@@ -443,7 +463,7 @@ define([], function() {
 				});
 				status = false;				
 			}
-						
+
 			return status;
 		},
 
@@ -458,7 +478,7 @@ define([], function() {
 				self.getHeaderResponse(self.getRequestHeader(self.ciRequestBody, 'validate'), function (response) {
 					
 					// save or update operation
-					if (!self.isBlank(response) && response.data) {						
+					if (!self.isBlank(response) && response.data) {	
 						 if (operation === 'save') {
 							self.addJobTemplate(function(response) {
 								self.ciRequestBody = response;
@@ -807,7 +827,6 @@ define([], function() {
 
 			commonVariables.phase = commonVariables.ciPhase + commonVariables.goal; // ci phase
 			commonVariables.appDirName = appDirName;
-			
 			self.CroneExpression();
 			$('#dynamicContent ul').empty();
 			$('#dynamicContent div[class=hiddenControls]').empty();

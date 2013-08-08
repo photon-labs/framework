@@ -34,7 +34,7 @@ public class CIServiceTest {
 		ContinuousDelivery continuousDelivery = continuousDeliveryInfo();
 		String jenkinsAlive = isJenkinsAlive();
 		if(jenkinsAlive.equals("200")) {
-			Response createJob = ciservice.createJob(continuousDelivery, "photon", "TestProject","");
+			Response createJob = ciservice.createJob(continuousDelivery, "photon", "TestProject","","admin");
 			Assert.assertEquals(200, createJob.getStatus());
 		} else {
 			Assert.assertNotSame("200", jenkinsAlive);
@@ -151,7 +151,7 @@ public class CIServiceTest {
 	public void cloneTest() throws PhrescoException {
 		String jenkinsAlive = isJenkinsAlive();
 		if(jenkinsAlive.equals("200")) {
-			Response createClone = ciservice.createClone("testContinuousDelivery1", "Testing", "testContinuousDelivery", "Photon", "TestProject", "");
+			Response createClone = ciservice.createClone("testContinuousDelivery1", "Testing", "testContinuousDelivery", "Photon", "TestProject", "", "admin");
 			Assert.assertEquals(200, createClone.getStatus());
 		} else {
 			Assert.assertNotSame("200", jenkinsAlive);
@@ -163,7 +163,7 @@ public class CIServiceTest {
 		String jenkinsAlive = isJenkinsAlive();
 		if(jenkinsAlive.equals("200")) {
 			ContinuousDelivery continuousDelivery = continuousDeliveryInfoUpdate();
-			Response updateJob = ciservice.updateJob(continuousDelivery, "Photon", "TestProject", "");
+			Response updateJob = ciservice.updateJob(continuousDelivery, "Photon", "TestProject", "", "admin");
 			Assert.assertEquals(200, updateJob.getStatus());
 		} else {
 			Assert.assertNotSame("200", jenkinsAlive);

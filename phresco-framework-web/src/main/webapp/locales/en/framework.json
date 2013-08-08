@@ -448,6 +448,7 @@
 		"failure" : "Trigger even if the build fails",
 		"datetime" : "Date & Time",
 		"status" : "Status",
+		"download": "Download",
 		"buildperiodically" : "Build Periodically",
 		"pollscm" : "Poll SCM",
 		"selectdownstream" : "Select DownStream",
