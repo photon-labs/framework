@@ -119,16 +119,16 @@ define([], function() {
 				commonVariables.api.ajaxRequest(header,
 					function(response) {
 						if (response !== null) {
-							//commonVariables.loadingScreen.removeLoading();
+							commonVariables.loadingScreen.removeLoading();
 							callback(response);
 						} else {
-							//commonVariables.loadingScreen.removeLoading();
+							commonVariables.loadingScreen.removeLoading();
 							callback({ "status" : "service failure"});
 						}
 					},
 
 					function(textStatus) {
-						//commonVariables.loadingScreen.removeLoading();
+						commonVariables.loadingScreen.removeLoading();
 						var data = $.parseJSON(textStatus);
 						$('#content_div').html('<div class="alert" style="text-align: center; width:98%">'+data.message+'</div>');
 						$('#codeAnalysis').hide();
@@ -138,7 +138,7 @@ define([], function() {
 					}
 				);
 			} catch(exception) {
-				//commonVariables.loadingScreen.removeLoading();
+				commonVariables.loadingScreen.removeLoading();
 				$('#content_div').html('<div class="alert" style="text-align: center; width:98%">'+exception+'</div>');
 				$('#codeAnalysis').hide();
 			}
