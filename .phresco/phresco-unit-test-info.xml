@@ -14,7 +14,7 @@
                 <groupId>com.photon.phresco.plugins</groupId>
                 <artifactId>java-phresco-plugin</artifactId>
                 <type>jar</type>
-                <version>2.3.0.4001</version>
+                <version>2.3.1.6000</version>
                 <class>com.photon.phresco.plugins.java.JavaPlugin</class>
             </dependency>
         </implementation>
@@ -48,11 +48,11 @@
                         <value key="js" dependency="showSettings,environmentName">js</value>
                     </possibleValues>
                     <multiple>false</multiple>
-                    <value>js</value>
+                    <value></value>
                     <sort>false</sort>
                     <show>true</show>
                 </parameter>
-                <parameter>
+				 <parameter>
                     <name>
                         <value lang="en">Show Settings</value>
                     </name>
@@ -62,12 +62,12 @@
                     <description></description>
                     <key>showSettings</key>
                     <multiple>false</multiple>
-                    <value>false</value>
+                    <value></value>
                     <sort>false</sort>
                     <show>false</show>
                     <dependency>environmentName</dependency>
                 </parameter>
-                <parameter>
+				  <parameter>
                     <name>
                         <value lang="en">Environment</value>
                     </name>
@@ -76,10 +76,10 @@
                         <class>com.photon.phresco.impl.EnvironmentsParameterImpl</class>
                         <dependencies>
                             <dependency>
-<groupId>com.photon.phresco.commons</groupId>
-<artifactId>phresco-commons</artifactId>
-<type>jar</type>
-<version>2.3.0.4001</version>
+								<groupId>com.photon.phresco.commons</groupId>
+								<artifactId>phresco-commons</artifactId>
+								<type>jar</type>
+								<version>2.3.1.6000</version>
                             </dependency>
                         </dependencies>
                     </dynamicParameter>
@@ -87,7 +87,7 @@
                     <editable>true</editable>
                     <key>environmentName</key>
                     <multiple>false</multiple>
-                    <value>Production</value>
+                    <value></value>
                     <sort>false</sort>
                     <show>true</show>
                 </parameter>
