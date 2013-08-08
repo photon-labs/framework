@@ -27,6 +27,20 @@ public interface ResponseCodes {
 	String PHR000000 = "PHR000000"; // Unexpected Failure at server end
 	
 	/*
+	 * Common
+	 */
+	String PHR1C00001 = "PHR1C00001"; // parameter returned successfully
+	String PHR1C10001 = "PHR1C10001"; // no parameter available
+	String PHR1C10002 = "PHR1C10002"; // parameter not fetched
+	String PHR1C10003 = "PHR1C10003"; // unable to read 'phresco.functionalTest.selenium.tool' property in project's pom.xml
+	String PHR2C00001 = "PHR2C00001"; // log copied successfully
+	String PHR2C10001 = "PHR2C10001"; // log copy failed
+	String PHR3C00001 = "PHR3C00001"; // folder opened successfully
+	String PHR3C10001 = "PHR3C10001"; // failed to open folder
+	String PHR4C00001 = "PHR4C00001"; // path copied successfully
+	String PHR4C10001 = "PHR4C10001"; // failed to copy path
+	
+	/*
 	 * Login page
 	 */
 	String PHR100001 = "PHR100001"; // Login Success
@@ -103,16 +117,22 @@ public interface ResponseCodes {
 	String PHR210038 = "PHR210038"; // invalid URL or repository moved temporarily
 	String PHR210039 = "PHR210039"; // failed to fetch log messages
 	String PHR200023 = "PHR200023"; // log messages returned successfully
+	String PHR210040 = "PHR210040"; // invalid name
+	String PHR210041 = "PHR210041"; // project name already exists
+	String PHR210042 = "PHR210042"; // project code already exists
+	String PHR210043 = "PHR210043"; // app code already exists
+	String PHR210044 = "PHR210044"; // app directory already exists
 	
 	/*
 	 * App Info Page
 	 */
 	String PHR310001 = "PHR310001"; // unauthorized user
 	String PHR300001 = "PHR300001"; // configuration listed successfully
-	String PHR310002 = "PHR310002"; // unable to fetch configuration
+	String PHR310002 = "PHR310002"; // unable to fetch server/database configuration
 	String PHR310003 = "PHR310003"; // unable to fetch webservice configuration
 	String PHR300002 = "PHR300002"; // technology options fetched successfully
 	String PHR310004 = "PHR310004"; // failed to get technology options
+	String PHR310005 = "PHR310005"; // unable to fetch functional frameworks
 	
 	/*
 	 * Features Page
@@ -124,14 +144,23 @@ public interface ResponseCodes {
 	String PHR410003 = "PHR410003"; // unable to fetch description
 	String PHR400003 = "PHR400003"; // dependency features listed successfully
 	String PHR410004 = "PHR410004"; // no dependency features available
-	String PHR410005 = "PHR410005"; // unable to fetch dependency features
+	String PHR410005 = "PHR410005"; // unable to fetch artifact infos for dependency features
 	String PHR400004 = "PHR400004"; // selected features listed successfully
 	String PHR410006 = "PHR410006"; // unable to fetch selected features
 	
 	/*
 	 * Code Quality Page
 	 */
-	
+	String PHR510001 = "PHR510001"; // sonar not yet started
+	String PHR500001 = "PHR500001"; // dependency returned successfully
+	String PHR510002 = "PHR510002"; // dependency not fetched
+	String PHR510003 = "PHR510003"; // report not available
+	String PHR510004 = "PHR510004"; // code validation failed
+	String PHR500002 = "PHR500002"; // code validation started successfully
+	String PHR510005 = "PHR510005"; // unable to fetch 'phresco.code.validate.report' property in project's pom.xml
+	String PHR510006 = "PHR510006"; // failed to read functional test dir from project's pom.xml or create pom.xml in that dir
+	String PHR510007 = "PHR510007"; // no IP address for the host could be found
+	String PHR510008 = "PHR510008"; // an I/O exception has occurred
 	
 	
 	/*
@@ -152,12 +181,12 @@ public interface ResponseCodes {
 	String PHR610009 = "PHR610009"; // unable to check connection
 	String PHR600005 = "PHR600005"; // checked connection successfully
 	String PHR600006 = "PHR600006"; // configurations updated successfully
-	String PHR610010 = "PHR610010"; // failed to be update configurations for the environment
+	String PHR610010 = "PHR610010"; // failed to update configurations for the environment
 	String PHR600007 = "PHR600007"; // environment cloned successfully
 	String PHR610011 = "PHR610011"; // failed to clone environment
 	String PHR600008 = "PHR600008"; // cron expression calculated successfully
 	String PHR610012 = "PHR610012"; // cron expression not available
-	String PHR610013 = "PHR610013"; // unable to fetch environments
+	String PHR610013 = "PHR610013"; // could not fetch app infos in order to list environments
 	String PHR600009 = "PHR600009"; // https server certificate returned successfully
 	String PHR610014 = "PHR610014"; // no certificate found
 	String PHR600010 = "PHR600010"; // https server certificate added successfully
@@ -172,4 +201,62 @@ public interface ResponseCodes {
 	String PHR610021 = "PHR610021"; // file cannot be iterated
 	String PHR600013 = "PHR600013"; // file browse entire structure returned successfully
 	String PHR610022 = "PHR610022"; // unable to return file browse entire structure
+	String PHR600014 = "PHR600014"; // configuration deleted successfully
+	String PHR610023 = "PHR610023"; // configuration not available to delete
+	String PHR610024 = "PHR610024"; // configurations fail on validation
+	String PHR600015 = "PHR600015"; // configurations created successfully
+	String PHR610025 = "PHR610025"; // failed to list environments for particular envName
+	String PHR610026 = "PHR610026"; // failed to read environments from phresco-env-config.xml
+	String PHR610027 = "PHR610027"; // failed to get environments from phresco-fav-config.xml
+	String PHR610028 = "PHR610028"; // unable to fetch environments
+	String PHR610029 = "PHR610029"; // failed to clone environment during manipulation of phresco-env-config.xml
+	
+	/*
+	 * Build Page
+	 */
+	String PHR710001 = "PHR710001"; // no build available
+	String PHR700001 = "PHR700001"; // buildinfo listed successfully
+	String PHR710002 = "PHR710002"; // buildinfo list failed
+	String PHR710003 = "PHR710003"; // zip download failed
+	String PHR710004 = "PHR710004"; // failed to delete build
+	String PHR700002 = "PHR700002"; // build deleted successfully
+	String PHR710005 = "PHR710005"; // run against source not yet performed
+	String PHR700003 = "PHR700003"; // connection alive
+	String PHR710006 = "PHR710006"; // connection not alive
+	String PHR710007 = "PHR710007"; // 'runagainstsource.info' not found error
+	String PHR710008 = "PHR710008"; // unable to build application
+	String PHR700004 = "PHR700004"; // application built successfully
+	String PHR700005 = "PHR700005"; // application deployed successfully
+	String PHR710009 = "PHR710009"; // unable to deploy application
+	String PHR700006 = "PHR700006"; // run against source executed successfully
+	String PHR710010 = "PHR710010"; // run against source failed
+	
+	/*
+	 * Quality Assurance Page
+	 */
+	
+	/*
+	 * Common Constants
+	 */
+	String PHRQ010001 = "PHRQ010001"; // test result not available
+	String PHRQ000001 = "PHRQ000001"; // test suites listed successfully
+	String PHRQ010002 = "PHRQ010002"; // failed to list test suites
+	String PHRQ000002 = "PHRQ000002"; // test cases listed successfully
+	String PHRQ010003 = "PHRQ010003"; // test case not available
+	String PHRQ010004 = "PHRQ010004"; // failed to list test cases
+	
+	/*
+	 * Unit
+	 */
+	String PHRQ100001 = "PHRQ100001"; // parameter returned successfully
+	String PHRQ110001 = "PHRQ110001"; // unable to get unit test report options
+	String PHRQ100002 = "PHRQ100002"; // unit test executed successfully
+	String PHRQ110002 = "PHRQ110002"; // failed to execute unit test
+	
+	/*
+	 * Component
+	 */
+	String PHRQ200001 = "PHRQ200001"; // component test executed successfully
+	String PHRQ210001 = "PHRQ210001"; // failed to execute component test 
+	
 }
