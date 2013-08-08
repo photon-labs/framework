@@ -1,29 +1,158 @@
 <environments>
-    <environment default="true" name="Testing">
-        <Server name="server">
-            <context>framework</context>
-            <admin_username/>
-            <deploy_dir>D:/Softwares/apache-tomcat-7.0.14/webapps/</deploy_dir>
-            <additional_context>/</additional_context>
-            <port>3030</port>
-            <admin_password/>
-            <version>7.0.x</version>
-            <type>Apache Tomcat</type>
-            <remoteDeployment>false</remoteDeployment>
-            <host>localhost</host>
+    <environment default="false" name="Production">
+		 <Server appliesTo="tech-html5-widget" desc="" name="server">
             <protocol>http</protocol>
+            <host>localhost</host>
+            <port>2468</port>
+            <admin_username/>
+            <admin_password/>
+            <remoteDeployment>false</remoteDeployment>
+            <certificate/>
+            <type>Apache</type>
+            <version>2.3</version>
+            <deploy_dir>D:\work\Framwork-apache-tomcat-7.0.14\webapps</deploy_dir>
+            <context>framework</context>
+            <additional_context>/</additional_context>
         </Server>
-        <WebService name="webservice">
+	
+		<WebService desc="" name="Webservice">
+			<protocol>http</protocol>
+			<host>phresco.photoninfotech.com</host>
+			<port>80</port>
+			<username/>
+			<password/>
+			<context>service-2.0</context>
+			<additional_context>/rest/api</additional_context>
+		</WebService>
+                 
+        <Other appliesTo="tech-html5-widget" desc="" name="Apikey">
+            <apiKey>Bearer TXuk45IV_fFoCou1pzu15l2jEgka</apiKey>
+        </Other>
+    </environment>
+    
+	<environment default="true" name="Development">
+        <Server appliesTo="tech-html5-widget" desc="" name="server">
+            <protocol>http</protocol>
+            <host>localhost</host>
+            <port>2468</port>
+            <admin_username/>
+            <admin_password/>
+            <remoteDeployment>false</remoteDeployment>
+            <certificate/>
+            <type>Apache</type>
+            <version>2.3</version>
+            <deploy_dir>D:\work\Framwork-apache-tomcat-7.0.14\webapps</deploy_dir>
+            <context>framework</context>
+            <additional_context>/</additional_context>
+        </Server>
+	
+		<WebService desc="" name="webservice">
+            <protocol>http</protocol>
+            <host>172.16.8.250</host>
             <port>7070</port>
+            <username/>
             <password/>
             <context>service-testing</context>
-            <host>172.16.8.250</host>
-            <additional_context>/rest/api</additional_context>
-            <protocol>http</protocol>
-            <username/>
+			<additional_context>/rest/api</additional_context>
         </WebService>
-        <Other name="Apikey">
+        
+        <Other appliesTo="tech-html5-widget" desc="" name="Apikey">
+            <apiKey>Bearer TXuk45IV_fFoCou1pzu15l2jEgka</apiKey>
+        </Other>
+        
+    </environment>
+    
+    <environment default="false" name="Testing">
+	 <Server appliesTo="tech-html5-widget" desc="" name="server">
+            <protocol>http</protocol>
+            <host>localhost</host>
+            <port>2468</port>
+            <admin_username/>
+            <admin_password/>
+            <remoteDeployment>false</remoteDeployment>
+            <certificate/>
+            <type>Apache</type>
+            <version>2.3</version>
+            <deploy_dir>D:\work\Framwork-apache-tomcat-7.0.14\webapps</deploy_dir>
+            <context>framework</context>
+            <additional_context>/</additional_context>
+        </Server>
+	
+	<WebService desc="" name="webservice">
+            <protocol>http</protocol>
+            <host>172.16.8.250</host>
+            <port>7070</port>
+            <username/>
+            <password/>
+            <context>service-testing</context>
+	    <additional_context>/rest/api</additional_context>
+        </WebService>
+        
+        <Other appliesTo="tech-html5-widget" desc="" name="Apikey">
             <apiKey>Bearer oaqHffzj7qp0nCLW8VKeE8toAIYa</apiKey>
         </Other>
     </environment>
+
+<environment default="false" name="Testing-amazon">
+         <Server appliesTo="tech-html5-widget" desc="" name="server">
+            <protocol>http</protocol>
+            <host>localhost</host>
+            <port>2468</port>
+            <admin_username/>
+            <admin_password/>
+            <remoteDeployment>false</remoteDeployment>
+            <certificate/>
+            <type>Apache</type>
+            <version>2.3</version>
+            <deploy_dir>D:\work\Framwork-apache-tomcat-7.0.14\webapps</deploy_dir>
+            <context>framework</context>
+            <additional_context>/</additional_context>
+        </Server>
+
+        <WebService desc="" name="webservice">
+            <protocol>http</protocol>
+            <host>54.242.10.51</host>
+            <port>8080</port>
+            <username/>
+            <password/>
+            <context>service-testing</context>
+            <additional_context>/rest/api</additional_context>
+        </WebService>
+
+        <Other appliesTo="tech-html5-widget" desc="" name="Apikey">
+            <apiKey>Bearer oaqHffzj7qp0nCLW8VKeE8toAIYa</apiKey>
+        </Other>
+    </environment>
+
+    <environment default="false" name="Testing-ws">
+                 <Server appliesTo="tech-html5-widget" desc="" name="server">
+            <protocol>http</protocol>
+            <host>localhost</host>
+            <port>2468</port>
+            <admin_username/>
+            <admin_password/>
+            <remoteDeployment>false</remoteDeployment>
+            <certificate/>
+            <type>Apache</type>
+            <version>2.3</version>
+            <deploy_dir>D:\work\Framwork-apache-tomcat-7.0.14\webapps</deploy_dir>
+            <context>framework</context>
+            <additional_context>/</additional_context>
+        </Server>
+
+                 <WebService desc="" name="webservice">
+            <protocol>http</protocol>
+            <host>172.16.28.67</host>
+            <port>3030</port>
+            <username/>
+            <password/>
+            <context>service</context>
+                        <additional_context>/rest/api</additional_context>
+        </WebService>
+
+        <Other appliesTo="tech-html5-widget" desc="" name="Apikey">
+            <apiKey>Bearer oaqHffzj7qp0nCLW8VKeE8toAIYa</apiKey>
+        </Other>
+    </environment>
+
 </environments>
