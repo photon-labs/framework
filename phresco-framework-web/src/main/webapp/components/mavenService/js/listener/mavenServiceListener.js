@@ -129,8 +129,9 @@ define([], function() {
 		mvnService : function(header, divId, callback){
 			try{
 				var self = this;
-				commonVariables.loadingScreen.showLoading();
 				$(divId).html('');
+				commonVariables.loadingScreen.showLoading();
+				
 				commonVariables.api.ajaxRequest(header, 
 					function(response){
 						if(response !==  undefined && response !==  null){
@@ -174,6 +175,8 @@ define([], function() {
 		mvnlogService : function(key, divId, callback){
 			try{
 				var self = this, header = self.getRequestHeader("GET", '&uniquekey=' + key, commonVariables.mvnlogService, "");
+				$('.progress_loading').css('display','block');
+				
 				commonVariables.api.ajaxRequest(header, 
 					function(response){
 						if(response !==  undefined && response !== null){
@@ -203,21 +206,27 @@ define([], function() {
 								callback(response);
 							}else if(response.status === 'ERROR'){
 								$(divId).append('<font style = "color:red">' + data.service_exception + '</font><br>');
+								$('.progress_loading').css('display','none');
 								callback(response);
 							}else if(response.status === 'SUCCESS'){
+								$('.progress_loading').css('display','none');
 								callback(response);
 							}else if(response.status === null){
+								$('.progress_loading').css('display','none');
 								callback(response);
 							}
 							
 							//$(divId).mCustomScrollbar("update");
 						}else {
+							$('.progress_loading').css('display','none');
 							callback(response);
 						}
 					}, 
 					function(serviceerror){
+						$('.progress_loading').css('display','none');
 					});
 			}catch(exception){
+				$('.progress_loading').css('display','none');
 				//Exception
 			}
 		},

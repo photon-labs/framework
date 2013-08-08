@@ -920,8 +920,9 @@ define(["croneExpression/croneExpression"], function() {
 		},
 		
 		validation : function() {
-			var self = this, bCheck = false;
+			var self = this, bCheck = true;
 			$.each($(".row_bg"), function(index, value) {
+				bCheck = false;
 				var type = $(this).attr("type");
 				if (type !== "otherConfig") {
 					$("." + type).each(function() {
