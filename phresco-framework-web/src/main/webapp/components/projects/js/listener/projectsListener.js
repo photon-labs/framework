@@ -1524,7 +1524,22 @@ define([], function() {
 								techInfo.version = $(value).children("td.version").children("select.appln_version").val();
 								if (appInfo.code !== undefined && appInfo.code !== null) {
 									appInfo.techInfo = techInfo;
-									self.appInfos.push(appInfo);
+									if(preBuilt){
+										var selectedPilot = $("select[name='prebuiltapps']").find(':selected').text();
+										var selectedPilotData = commonVariables.api.localVal.getJson(selectedPilot);
+										$.each(selectedPilotData.appInfos, function(index, appInfo){
+											if(appInfo.techInfo.appTypeId === "app-layer"){
+												//console.info('appInfo.techInfo.appTypeId = '  , appInfo.techInfo.appTypeId);
+												appInfo.appDirName = code;
+												appInfo.code = code;
+												appInfo.name = code;
+												appInfo.version = projectversion;
+												self.appInfos.push(appInfo);
+											}
+										});
+									}else{
+										self.appInfos.push(appInfo);
+									}
 									count++;
 								}
 							}	
@@ -1559,7 +1574,24 @@ define([], function() {
 								techInfo.name = $(value).children("td.widget").children("select.web_widget").find(":selected").text();
 								if (appInfo.code !== undefined && appInfo.code !== null) {
 									appInfo.techInfo = techInfo;
-									self.appInfos.push(appInfo);
+									if(preBuilt){
+										var selectedPilot = $("select[name='prebuiltapps']").find(':selected').text();
+										var selectedPilotData = commonVariables.api.localVal.getJson(selectedPilot);
+										//console.info('selectedPilotData  web layer = ' , selectedPilotData.appInfos);
+										$.each(selectedPilotData.appInfos, function(index, appInfo){
+											if(appInfo.techInfo.appTypeId === "web-layer"){
+												//console.info('appdirname = '  , appInfo.appDirName)
+												//console.info('appInfo.techInfo.appTypeId = '  , appInfo.techInfo.appTypeId);
+												appInfo.appDirName = code;
+												appInfo.code = code;
+												appInfo.name = code;
+												appInfo.version = projectversion;
+												self.appInfos.push(appInfo);
+											}
+										});
+									}else{
+										self.appInfos.push(appInfo);
+									}	
 									count++;
 								}
 							}	
@@ -1595,7 +1627,22 @@ define([], function() {
 								}
 								if (appInfo.code !== undefined && appInfo.code !== null) {
 									appInfo.techInfo = techInfo;
-									self.appInfos.push(appInfo);
+									if(preBuilt){
+										var selectedPilot = $("select[name='prebuiltapps']").find(':selected').text();
+										var selectedPilotData = commonVariables.api.localVal.getJson(selectedPilot);
+										$.each(selectedPilotData.appInfos, function(index, appInfo){
+											if(appInfo.techInfo.appTypeId === "mob-layer"){
+												//console.info('appInfo.techInfo.appTypeId = '  , appInfo.techInfo.appTypeId);
+												appInfo.appDirName = code;
+												appInfo.code = code;
+												appInfo.name = code;
+												appInfo.version = projectversion;
+												self.appInfos.push(appInfo);
+											}
+										});
+									}else{
+										self.appInfos.push(appInfo);
+									}
 									count++;
 								}
 							}
@@ -1603,7 +1650,6 @@ define([], function() {
 					}    	
 					
 				});
-				
 				var appInfos = $.merge($.merge($.merge([],self.appInfos), self.appInfosweb), self.appInfosmobile);
 				self.projectInfo.noOfApps = count;
 				self.projectInfo.appInfos = appInfos;
