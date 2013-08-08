@@ -147,7 +147,7 @@ define(["build/listener/buildListener"], function() {
 			
 			var footerHeight = $('#footer').height();
 			var deductionHeight = Number(marginTop) + Number(footerHeight);
-			var finalHeight = windowHeight - deductionHeight - 5;
+			var finalHeight = windowHeight - deductionHeight - 6;
 			$('.testSuiteTable').height(finalHeight);
 		},
 		
@@ -410,12 +410,12 @@ define(["build/listener/buildListener"], function() {
 				self.opencc(this, $(this).attr('name'), '', 50);
 			});
 			
-			$("#buildRow .scrollContent").mCustomScrollbar("destroy");
+			/*$("#buildRow .scrollContent").mCustomScrollbar("destroy");
 			$("#buildRow .scrollContent").mCustomScrollbar({
 				autoHideScrollbar:true,
 				advanced:{ updateOnContentResize: true},
 				theme:"light-thin"
-			});
+			});*/
 		},
 		
 		clearLogContent : function(){
@@ -423,7 +423,7 @@ define(["build/listener/buildListener"], function() {
 		},
 		
 		setConsoleScrollbar : function(bcheck){
-			if(bcheck){
+			/*if(bcheck){
 				$("#build_progress .scrollContent").mCustomScrollbar("destroy");
 				$("#build_progress .scrollContent").mCustomScrollbar({
 					autoHideScrollbar: false,
@@ -444,7 +444,7 @@ define(["build/listener/buildListener"], function() {
 					theme:"light-thin",
 					advanced:{ updateOnContentResize: true}
 				});
-			}
+			}*/
 		},
 
 		/***
@@ -639,14 +639,18 @@ define(["build/listener/buildListener"], function() {
 				$(".fixedHeader tr th:nth-child(5)").css("width",w5);
 				$(".fixedHeader tr th:nth-child(6)").css("width",w6);
 				
-				self.resizeConsoleWindow();
+				//self.resizeConsoleWindow();
 			});
 			
 			//set log console scroll content event
 			self.setConsoleScrollbar(false);
+			self.tableScrollbar();
+			
 			
 			//call content div events
 			self.contentDivEvents();
+			self.customScroll($(".consolescrolldiv"));
+			//$(".scrolldiv").scrollbars();
 
 			Clazz.navigationController.mainContainer = commonVariables.contentPlaceholder;
 		}

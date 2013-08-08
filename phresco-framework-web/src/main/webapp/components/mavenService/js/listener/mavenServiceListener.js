@@ -210,7 +210,7 @@ define([], function() {
 								callback(response);
 							}
 							
-							$(divId).mCustomScrollbar("update");
+							//$(divId).mCustomScrollbar("update");
 						}else {
 							callback(response);
 						}
