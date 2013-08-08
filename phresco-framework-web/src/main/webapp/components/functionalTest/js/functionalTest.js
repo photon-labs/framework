@@ -225,7 +225,12 @@ define(["functionalTest/listener/functionalTestListener", "testResult/listener/t
 			//To run the Functional test
 			$("#runFunctionalTest").unbind("click");
 			$("#runFunctionalTest").click(function() {
-				self.onPerformActionEvent.dispatch("runFunctionalTest");
+				self.onPerformActionEvent.dispatch("runFunctionalTest", function() {
+					self.testResult.logContent = $('#testConsole').html();
+					$('#testResult').empty();
+					Clazz.navigationController.jQueryContainer = '#testResult';
+					Clazz.navigationController.push(self.testResult, false);
+				});
 			});
 			
 			//To start the Hub

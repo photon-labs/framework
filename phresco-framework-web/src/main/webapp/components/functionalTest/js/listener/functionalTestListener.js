@@ -115,7 +115,7 @@ define([], function() {
 			}
 		},
 
-		performAction : function(from) {
+		performAction : function(from, callback) {
 			var self = this;
 			var testData;
 			if (from === "startHub") {
@@ -158,6 +158,7 @@ define([], function() {
 					} else if (from === "runFunctionalTest") {
 						self.mavenServiceListener.mvnFunctionalTest(queryString, '#testConsole', function(response) {
 							self.testResultListener.closeConsole();
+							callback();
 							self.testResultListener.setConsoleScrollbar(false);
 						});
 					} else if (from === "stopHub") {
@@ -186,6 +187,7 @@ define([], function() {
 				} else if (from === "runFunctionalTest") {
 					self.mavenServiceListener.mvnFunctionalTest(queryString, '#testConsole', function(response) {
 						self.testResultListener.closeConsole();
+						callback();
 						self.testResultListener.setConsoleScrollbar(false);
 					});
 				} else if (from === "stopHub") {
