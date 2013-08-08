@@ -170,13 +170,12 @@ public class ProjectService extends RestBase implements FrameworkConstants, Serv
 	public Response createProject(ProjectInfo projectinfo, @QueryParam(REST_QUERY_USERID) String userId) {
 		ResponseInfo<ProjectInfo> responseData = new ResponseInfo<ProjectInfo>();
 		try {
-			String validateProject = validateProject(projectinfo);
-			if(StringUtils.isNotEmpty(validateProject)) {
+			if (validateProject(projectinfo) != null) {
+				ResponseInfo validationResponse = validateProject(projectinfo);
 				ResponseInfo<List<String>> finalOutput = responseDataEvaluation(responseData, null,
-						"Project creation failed on validation", validateProject);
+						null, validationResponse.getStatus(), validationResponse.getResponseCode());
 				return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN,ALL_HEADER).build();
 			}
-			
 			ServiceManager serviceManager = CONTEXT_MANAGER_MAP.get(userId);
 			if (serviceManager == null) {
 				status = RESPONSE_STATUS_FAILURE;
@@ -417,10 +416,10 @@ public class ProjectService extends RestBase implements FrameworkConstants, Serv
 		BufferedReader bufferedReader = null;
 		File filePath = null;
 		try {
-			String validateAppInfo = validateAppInfo(oldAppDirName,appInfo);
-			if(StringUtils.isNotEmpty(validateAppInfo)) {
+			if (validateAppInfo(oldAppDirName,appInfo) != null) {
+				ResponseInfo validationResponse = validateAppInfo(oldAppDirName,appInfo);
 				ResponseInfo<List<String>> finalOutput = responseDataEvaluation(responseData, null,
-						"Application update failed on validation", validateAppInfo);
+						null, validationResponse.getStatus(), validationResponse.getResponseCode());
 				return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN,
 						"*").build();
 			}
@@ -856,20 +855,29 @@ public class ProjectService extends RestBase implements FrameworkConstants, Serv
 		}
 	}
 	
-	private String validateProject(ProjectInfo projectinfo) throws PhrescoException {
+	private ResponseInfo validateProject(ProjectInfo projectinfo) throws PhrescoException {
+		ResponseInfo response = null;
 		ProjectManager projectManager = PhrescoFrameworkFactory.getProjectManager();
 		List<ProjectInfo> discoveredProjectInfos = projectManager.discover();
 		if(!FrameworkUtil.isCharacterExists(projectinfo.getName().trim())) {
-			return "Invalid Name";
+			response = new ResponseInfo();
+			response.setStatus(RESPONSE_STATUS_FAILURE);
+			response.setResponseCode(PHR210040);
+			return response;
 		}
 		for (ProjectInfo projectInfos : discoveredProjectInfos) {
-			if(StringUtils.isNotEmpty(projectinfo.getName().trim())) {
-			} else if(projectInfos.getName().trim().equals(projectinfo.getName().trim())) {
-				return "Project Name already exists";
+			if(StringUtils.isNotEmpty(projectinfo.getName().trim()) && projectInfos.getName().trim().equals(projectinfo.getName().trim())) {
+				response = new ResponseInfo();
+				response.setStatus(RESPONSE_STATUS_FAILURE);
+				response.setResponseCode(PHR210041);
+				return response;
 			}
 			if(StringUtils.isNotEmpty(projectinfo.getProjectCode().trim())) {
 				if(projectinfo.getProjectCode().trim().equals(projectInfos.getProjectCode().trim())) {
-					return "Project Code already exists";
+					response = new ResponseInfo();
+					response.setStatus(RESPONSE_STATUS_FAILURE);
+					response.setResponseCode(PHR210042);
+					return response;
 				}
 			}
 			List<ApplicationInfo> appInfos = projectinfo.getAppInfos();
@@ -877,18 +885,25 @@ public class ProjectService extends RestBase implements FrameworkConstants, Serv
 			for(int i = 0; i < appInfos.size(); i++) {
 				for(int j = 0; j < discoveredAppInfos.size(); j++) {
 					if(appInfos.get(i).getCode().equals(discoveredAppInfos.get(j).getCode())) {
-						return "App code already exists";
+						response = new ResponseInfo();
+						response.setStatus(RESPONSE_STATUS_FAILURE);
+						response.setResponseCode(PHR210043);
+						return response;
 					}
 					if(appInfos.get(i).getAppDirName().equals(discoveredAppInfos.get(j).getAppDirName())) {
-						return "App Directory already exists";
+						response = new ResponseInfo();
+						response.setStatus(RESPONSE_STATUS_FAILURE);
+						response.setResponseCode(PHR210044);
+						return response;
 					}
 				}
 			}
 		}
-		return null;
+		return response;
 	}
 
-	private String validateAppInfo(String oldAppDirName, ApplicationInfo appInfo) throws PhrescoException {
+	private ResponseInfo validateAppInfo(String oldAppDirName, ApplicationInfo appInfo) throws PhrescoException {
+		ResponseInfo response = null;
 		ProjectManager projectManager = PhrescoFrameworkFactory.getProjectManager();
 		List<ProjectInfo> discoveredProjectInfos = projectManager.discover();
 		for (ProjectInfo projectInfo : discoveredProjectInfos) {
@@ -897,10 +912,13 @@ public class ProjectService extends RestBase implements FrameworkConstants, Serv
 				if(appInfo.getAppDirName().equals(oldAppDirName)) {
 					continue;
 				} else if(appInfo.getAppDirName().equals(appInfos.get(i).getAppDirName())) {
-					return "App directory already exists";
+					response = new ResponseInfo();
+					response.setStatus(RESPONSE_STATUS_FAILURE);
+					response.setResponseCode(PHR210044);
+					return response;
 				}
 			}
 		}
-		return null;
+		return response;
 	}
 }

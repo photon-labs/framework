@@ -1,8 +1,4 @@
  <section class="optiontitle buildtitle">
-		<!--<div class="flt_left">
-        	<input type="button" data-i18n="[value]build.label.openfolder" class="btn btn_style openfolder_icon_btn" id="openFolder">
-			<input type="button" data-i18n="[value]build.label.copypath" class="btn btn_style copypath_icon_btn" id="copyPath">
-        </div>-->
         <div class="alert_div" style="display:none;" data-i18n="build.label.ProgressMsg"></div>
         
         <div class="flt_right">
@@ -213,7 +209,7 @@
 						<td>
 							<div class="flt_right">
 								<input type="button" class="btn btn_style kill_btn" value="Kill Process" data-i18n="[value]build.label.killprocess">
-								<a href="#" id="buildCopyLog">
+								<a href="#" class="tooltiptop" title="" data-placement="bottom" data-toggle="tooltip" href="#" data-original-title="Copy" id="buildCopyLog">
 									<img src="themes/default/images/helios/buildreport_icon.png" width="15" height="18" border="0" alt="">
 								</a>
 							</div>
@@ -222,7 +218,7 @@
 					</tr>
 				 </thead>
 			</table>
-			<div class="consolescrolldiv">
+			<div class="consolescrolldiv" autoscroll="true">
 				<div id="logContent" class="console_pad">
 				</div>
 			</div>

@@ -187,9 +187,7 @@ define(["framework/base", "framework/animationProvider"], function() {
 		
 		push : function(view, bCheck, animationtype) {
 			var self = this;
-			//Remove loading screen
-			commonVariables.loadingScreen.removeLoading();
-			
+
 			//make old content as inactive
 			$(commonVariables.contentPlaceholder).find('.widget-maincontent-div').attr('active', 'false');
 				
@@ -223,9 +221,10 @@ define(["framework/base", "framework/animationProvider"], function() {
 										}
 									});
 								}
-								if(commonVariables.ajaxXhr == null || commonVariables.ajaxXhr.readyState == 4 && !commonVariables.continueloading)
+								if((commonVariables.ajaxXhr == null || commonVariables.ajaxXhr.readyState == 4) && !commonVariables.continueloading){
 									commonVariables.loadingScreen.removeLoading();
-								self.loadingActive = false;
+									self.loadingActive = false;
+								}
 							//});
 						});
 					});
@@ -254,12 +253,13 @@ define(["framework/base", "framework/animationProvider"], function() {
 							}
 						});
 					}
-					if(commonVariables.ajaxXhr == null || commonVariables.ajaxXhr.readyState == 4 && !commonVariables.continueloading)
+					
+					if((commonVariables.ajaxXhr == null || commonVariables.ajaxXhr.readyState == 4) && !commonVariables.continueloading){
 						commonVariables.loadingScreen.removeLoading();
-						
-					self.loadingActive = false;
+						self.loadingActive = false;
+					}
 				}
-				self.loadingActive = false;
+				//self.loadingActive = false;
 			};
 			
 			if(bCheck && self.stack.length > 0){
@@ -288,10 +288,9 @@ define(["framework/base", "framework/animationProvider"], function() {
 						// render in its default container
 						$(self.jQueryContainer).append(newDiv);
 						view.render(newDiv);
-						commonVariables.loadingScreen.removeLoading(function(retVal){
-							if(!commonVariables.hideloading)
-								commonVariables.loadingScreen.showLoading();
-						});
+						if(!commonVariables.hideloading){
+							commonVariables.loadingScreen.showLoading();
+						}
 						self.loadingActive = true;
 					});
 				});
@@ -300,10 +299,9 @@ define(["framework/base", "framework/animationProvider"], function() {
 				// render in its default container
 				$(self.jQueryContainer).append(newDiv);
 				view.render(newDiv);
-				commonVariables.loadingScreen.removeLoading(function(retVal){
-					if(!commonVariables.hideloading)
-						commonVariables.loadingScreen.showLoading();
-				});
+				if(!commonVariables.hideloading){
+					commonVariables.loadingScreen.showLoading();
+				}
 				self.loadingActive = true;
 			}
 		},

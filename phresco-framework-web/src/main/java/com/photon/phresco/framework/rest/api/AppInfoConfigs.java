@@ -181,7 +181,7 @@ public class AppInfoConfigs extends RestBase implements ServiceConstants, Framew
 					"*").build();
 		} catch (PhrescoException e) {
 			status = RESPONSE_STATUS_ERROR;
-			errorCode = PHR310003;
+			errorCode = PHR310005;
 			ResponseInfo<List<FunctionalFrameworkGroup>> finalOutput = responseDataEvaluation(responseData, e,
 					null, status, errorCode);
 			return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*")

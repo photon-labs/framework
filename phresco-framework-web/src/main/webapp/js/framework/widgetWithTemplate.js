@@ -126,12 +126,12 @@ define(["framework/widget", "framework/templateProvider"], function() {
 					$('.scroll-bar').css('height',  height);
 				} else {
 					$(divId).find('.scroll-bar').css('height', divId.css('height'));
-					/*if ($('.consolescrolldiv').offset() !== undefined) {
-						var scrollTo = $('.consolescrolldiv').find('.scroll-content').height() + $('.consolescrolldiv').offset().top; 
-						console.info('scr con ', $('.consolescrolldiv').find('.scroll-content'));
-						$('.consolescrolldiv').animate({scrollTop: scrollTo});
-					}*/
-				}
+						/*if ($('.consolescrolldiv').offset() !== undefined) {
+							var scrollTo = $('.consolescrolldiv').find('.scroll-content').height() + $('.consolescrolldiv').offset().top; 
+							console.info('scr con ', $('.consolescrolldiv').find('.scroll-content'));
+							$('.consolescrolldiv').animate({scrollTop: scrollTo});
+						}*/
+					}
 			},
 		 
 			/***

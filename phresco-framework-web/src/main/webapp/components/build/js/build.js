@@ -147,7 +147,7 @@ define(["build/listener/buildListener"], function() {
 			
 			var footerHeight = $('#footer').height();
 			var deductionHeight = Number(marginTop) + Number(footerHeight);
-			var finalHeight = windowHeight - deductionHeight - 5;
+			var finalHeight = windowHeight - deductionHeight - 6;
 			$('.testSuiteTable').height(finalHeight);
 		},
 		
@@ -155,24 +155,58 @@ define(["build/listener/buildListener"], function() {
 			var self = this;
 			if($("input[name=build_runagsource]").is(':visible')){
 				self.buildListener.getBuildInfo(self.buildListener.getRequestHeader("", '', 'serverstatus'), function(response) {
-					self.changeBtnStatus(response , '');
+					self.changeBtnStatus(response);
 				});
 			}
 		},
 		
-		changeBtnStatus : function(response , btnName){
-			if(response.data === true){
-				if(btnName !== ''){
-					btnName.removeClass('btn_style');
-					btnName.addClass('btn_style_off');
-				}
-				$("input[name=build_runagsource]").removeClass('btn_style');
-				$("input[name=build_runagsource]").addClass('btn_style_off');
-				$("#stop").removeClass('btn_style_off');
-				$("#stop").addClass('btn_style');
-				$("#restart").removeClass('btn_style_off');
-				$("#restart").addClass('btn_style');
+		dragDrop : function(){
+			$('.connectedSortable').sortable({
+				connectWith: '.connectedSortable',
+				cancel: ".ui-state-disabled"
+			});
+		},
+		
+		showErrorPopUp : function(configErrorMsg){
+			var self = this;
+			$(".blinkmsg").removeClass("popsuccess").addClass("poperror");
+			self.effectFadeOut('poperror', configErrorMsg);
+		},
+		
+		sqlQueryParam : function(ststus, control, callback){
+			var sqlParamVal = "";
+			
+			if(ststus){
+				sqlParamVal = {};
+				$.each(control, function(index, current){
+					if(sqlParamVal.hasOwnProperty($(current).attr('dbName'))){
+						sqlParamVal[$(current).attr('dbName')].push($(current).attr('path'));
+					}else{
+						sqlParamVal[$(current).attr('dbName')] = []
+						sqlParamVal[$(current).attr('dbName')].push($(current).attr('path'));
+					}
+				});
+				callback(JSON.stringify(sqlParamVal));
+			} else {
+				callback(sqlParamVal);
 			}
+		},
+		
+		changeBtnStatus : function(response){
+			var show = "btn_style", hide = "btn_style_off";
+		
+			if(!response.data){
+				show = "btn_style_off";
+				hide = "btn_style";
+			}
+			
+			$("input[name=build_runagsource]").removeClass(show);
+			$("#stop").removeClass(hide);
+			$("#restart").removeClass(hide);
+			
+			$("input[name=build_runagsource]").addClass(hide);
+			$("#stop").addClass(show);
+			$("#restart").addClass(show);
 		},
 
 		loadPostContent : function(){
@@ -183,6 +217,44 @@ define(["build/listener/buildListener"], function() {
 					self.dynamicPageListener = self.dynamicPage.dynamicPageListener;
 				});
 			}
+		},
+		
+		callDepOpencc : function(current, divId){
+			var self = this;
+			
+			if($('#deploye_' + divId).find('form[name=deployForm] ul').children().length > 0){
+				self.dragDrop();
+				self.opencc(current,'deploye_' + divId, '' , 50);
+			}else{$('#deploye_' + divId).hide();}
+		},
+		
+		clearLogContent : function(){
+			$('#logContent').html('');
+		},
+		
+		setConsoleScrollbar : function(bcheck){
+			/* if(bcheck){
+				$("#build_progress .scrollContent").mCustomScrollbar("destroy");
+				$("#build_progress .scrollContent").mCustomScrollbar({
+					autoHideScrollbar: false,
+					scrollInertia: 1000,
+					theme:"light-thin",
+					advanced:{ updateOnContentResize: true},
+					callbacks:{
+						onScrollStart:function(){
+							$("#build_progress .scrollContent").mCustomScrollbar("scrollTo","bottom");
+						}
+					}
+				});
+			}else{
+				$("#build_progress .scrollContent").mCustomScrollbar("destroy");
+				$("#build_progress .scrollContent").mCustomScrollbar({
+					autoHideScrollbar:true,
+					scrollInertia: 200,
+					theme:"light-thin",
+					advanced:{ updateOnContentResize: true}
+				});
+			} */
 		},
 		
 		refreshContent : function(loadContent){
@@ -233,7 +305,7 @@ define(["build/listener/buildListener"], function() {
 						$("#buildRow tbody").html(tbody);
 						$('.dyn_popup').css('display', 'none');
 						self.contentDivEvents();
-						self.setConsoleScrollbar(false);
+						//self.setConsoleScrollbar(false);
 						self.renderlocales(commonVariables.contentPlaceholder);
 						commonVariables.navListener.showHideTechOptions();
 						$(window).resize();
@@ -262,32 +334,26 @@ define(["build/listener/buildListener"], function() {
 					
 					self.dynamicpage.getHtml(whereToRender, this, '', function(retVal){
 						self.clearLogContent();
-						self.setConsoleScrollbar(true);
+						//self.setConsoleScrollbar(true);
 						self.openConsole();
-						$('.progress_loading').css('display','block');
 						$('input[name=buildDelete]').hide();
 						self.onDeployEvent.dispatch("", function(response){
 							$('input[name=buildDelete]').show();
 							$('.progress_loading').css('display','none');
-							self.setConsoleScrollbar(false);
+							//self.setConsoleScrollbar(false);
 							if(response !== null && response.errorFound === true){
 								$(current).closest('tr').find('form[name=deployForm]').show();
-								$(".blinkmsg").removeClass("popsuccess").addClass("poperror");
-								self.effectFadeOut('poperror', response.configErrorMsg);
+								self.showErrorPopUp(response.configErrorMsg);
 							}
 						});
 					});
 				}else{
 					if(whereToRender.children().length < 1){
 						self.dynamicpage.getHtml(whereToRender, this, '', function(retVal){
-							if($('#deploye_' + divId).find('form[name=deployForm] ul').children().length > 0){
-								self.opencc(current,'deploye_' + divId, '' , 50);
-							}else{$('#deploye_' + divId).hide();}
+							self.callDepOpencc(current, divId);
 						});
 					}else {
-						if($('#deploye_' + divId).find('form[name=deployForm] ul').children().length > 0){
-							self.opencc(current,'deploye_' + divId, '' , 50);
-						}else{$('#deploye_' + divId).hide();}
+						self.callDepOpencc(current, divId);
 					}
 				}
 			});
@@ -295,38 +361,26 @@ define(["build/listener/buildListener"], function() {
 			//build deploy click event
 			$("input[name=deploy]").unbind('click');
 			$("input[name=deploy]").click(function(){
-				var current = this;
+				var current = this, sqlParam = "", queryStr = "";;
 				self.clearLogContent();
-				self.setConsoleScrollbar(true);
+				//self.setConsoleScrollbar(true);
 				self.openConsole();
-				$('.progress_loading').css('display','block');
 				$('input[name=buildDelete]').hide();
-				
-				var sqlParam = "", queryStr = "";
-				
-				if($(this).closest('tr').find('form[name=deployForm] #executeSql').is(':checked')){
-					sqlParam = {};
-					$.each($(this).closest('tr').find('form[name=deployForm] ul[name=sortable2] li'), function(index, current){
-						if(sqlParam.hasOwnProperty($(current).attr('dbName'))){
-							sqlParam[$(current).attr('dbName')].push($(current).attr('path'));
-						}else{
-							sqlParam[$(current).attr('dbName')] = []
-							sqlParam[$(current).attr('dbName')].push($(current).attr('path'));
-						}
-					});	
-				}
+
+				self.sqlQueryParam($(this).closest('tr').find('form[name=deployForm] #executeSql').is(':checked'), $(this).closest('tr').find('form[name=deployForm] ul[name=sortable2] li'), function(retVal){
+					sqlParam = retVal;
+				});
 				
 				queryStr = $(this).closest('tr').find('form[name=deployForm]').serialize().replace("=on", "=true");
-				queryStr += '&fetchSql=' + ($.isEmptyObject(sqlParam) ==true ? "" : JSON.stringify(sqlParam));
+				queryStr += '&fetchSql=' + ($.isEmptyObject(sqlParam) === true ? "" : sqlParam);
 				
 				self.onDeployEvent.dispatch(queryStr, function(response){
 					$('input[name=buildDelete]').show();
 					$('.progress_loading').css('display','none');
-					self.setConsoleScrollbar(false);
+					//self.setConsoleScrollbar(false);
 					if(response !== null && response.errorFound === true){
 						$(current).closest('tr').find('form[name=deployForm]').show();
-						$(".blinkmsg").removeClass("popsuccess").addClass("poperror");
-						self.effectFadeOut('poperror', response.configErrorMsg);
+						self.showErrorPopUp(response.configErrorMsg);
 					}
 				});
 			});
@@ -381,17 +435,15 @@ define(["build/listener/buildListener"], function() {
 			$('input[name=processBuild]').unbind('click');
 			$('input[name=processBuild]').click(function(){
 				self.clearLogContent();
-				self.setConsoleScrollbar(true);
+				//self.setConsoleScrollbar(true);
 				self.openConsole();
-				$('.progress_loading').css('display','block');
 				$(".dyn_popup").hide();
 				self.onProcessBuildEvent.dispatch($(this).closest('tr').find('form[name=prcBForm]').serialize(), function(response){
 				$('.progress_loading').css('display','none');
 				if(response !== null && response.errorFound === true){
 					$('.alert_div').hide();
 					self.closeConsole();
-					$(".blinkmsg").removeClass("popsuccess").addClass("poperror");
-					self.effectFadeOut('poperror', response.configErrorMsg);
+					self.showErrorPopUp(response.configErrorMsg);
 				}else if(response !== null && response.errorFound === false){
 					self.refreshContent(true);
 				}
@@ -409,42 +461,6 @@ define(["build/listener/buildListener"], function() {
 			$(".tooltiptop").click(function() {
 				self.opencc(this, $(this).attr('name'), '', 50);
 			});
-			
-			$("#buildRow .scrollContent").mCustomScrollbar("destroy");
-			$("#buildRow .scrollContent").mCustomScrollbar({
-				autoHideScrollbar:true,
-				advanced:{ updateOnContentResize: true},
-				theme:"light-thin"
-			});
-		},
-		
-		clearLogContent : function(){
-			$('#logContent').html('');
-		},
-		
-		setConsoleScrollbar : function(bcheck){
-			if(bcheck){
-				$("#build_progress .scrollContent").mCustomScrollbar("destroy");
-				$("#build_progress .scrollContent").mCustomScrollbar({
-					autoHideScrollbar: false,
-					scrollInertia: 1000,
-					theme:"light-thin",
-					advanced:{ updateOnContentResize: true},
-					callbacks:{
-						onScrollStart:function(){
-							$("#build_progress .scrollContent").mCustomScrollbar("scrollTo","bottom");
-						}
-					}
-				});
-			}else{
-				$("#build_progress .scrollContent").mCustomScrollbar("destroy");
-				$("#build_progress .scrollContent").mCustomScrollbar({
-					autoHideScrollbar:true,
-					scrollInertia: 200,
-					theme:"light-thin",
-					advanced:{ updateOnContentResize: true}
-				});
-			}
 		},
 
 		/***
@@ -472,37 +488,27 @@ define(["build/listener/buildListener"], function() {
 			
 			//run again source click event
 			$("#runSource").click(function(){
+				var sqlParam = "", queryStr = "";
 				$(".dyn_popup").hide();
 				self.clearLogContent();
-				self.setConsoleScrollbar(true);
+				//self.setConsoleScrollbar(true);
 				self.openConsole();
-				$('.progress_loading').css('display','block');
-		
-				var sqlParam = "", queryStr = "";
-				if($('form[name=runAgainstForm] #executeSql').is(':checked')){
-					sqlParam = {};
-					$.each($('form[name=runAgainstForm] ul[name=sortable2] li'), function(index, current){
-						if(sqlParam.hasOwnProperty($(current).attr('dbName'))){
-							sqlParam[$(current).attr('dbName')].push($(current).attr('path'));
-						}else{
-							sqlParam[$(current).attr('dbName')] = []
-							sqlParam[$(current).attr('dbName')].push($(current).attr('path'));
-						}
-					});	
-				}
+
+				self.sqlQueryParam($('form[name=runAgainstForm] #executeSql').is(':checked'), $('form[name=runAgainstForm] ul[name=sortable2] li'), function(retVal){
+					sqlParam = retVal;
+				});
 				
 				queryStr = $('form[name=runAgainstForm]').serialize().replace("=on", "=true");
-				queryStr += '&fetchSql=' + ($.isEmptyObject(sqlParam) ==true ? "" : JSON.stringify(sqlParam));
+				queryStr += '&fetchSql=' + ($.isEmptyObject(sqlParam) === true ? "" : sqlParam);
 				
 				self.onRASEvent.dispatch(queryStr, function(response){
 					$('.progress_loading').css('display','none');
-					self.setConsoleScrollbar(false);
+					//self.setConsoleScrollbar(false);
 					
 					if(response !== null && response.errorFound === true) {
 						self.closeConsole();
 						$("form[name=runAgainstForm] #build_runagsource").show();
-						$(".blinkmsg").removeClass("popsuccess").addClass("poperror");
-						self.effectFadeOut('poperror', response.configErrorMsg);
+						self.showErrorPopUp(response.configErrorMsg);
 					}else if(response !== null && response.errorFound === false) { 	
 						self.runAgainSourceStatus();
 					}
@@ -513,13 +519,12 @@ define(["build/listener/buildListener"], function() {
 			$("#stop").click(function() {
 				if($(this).attr("class") === "btn btn_style"){
 					self.clearLogContent();
-					self.setConsoleScrollbar(true);
+					//self.setConsoleScrollbar(true);
 					self.openConsole();
 					$("#buildConsole").attr('data-flag','false');
-					$('.progress_loading').css('display','block');
 					self.onStopEvent.dispatch(function(response){
 						$('.progress_loading').css('display','none');
-						self.setConsoleScrollbar(false);
+						//self.setConsoleScrollbar(false);
 						self.runAgainSourceStatus();
 					});					
 				}
@@ -529,13 +534,12 @@ define(["build/listener/buildListener"], function() {
 			$("#restart").click(function() {
 				if($(this).attr("class") === "btn btn_style"){
 					self.clearLogContent();
-					self.setConsoleScrollbar(true);
+					//self.setConsoleScrollbar(true);
 					self.openConsole();
 					$("#buildConsole").attr('data-flag','false');
-					$('.progress_loading').css('display','block');
 					self.onRestartEvent.dispatch(function(response){
 						$('.progress_loading').css('display','none');
-						self.setConsoleScrollbar(false);
+						//self.setConsoleScrollbar(false);
 						self.runAgainSourceStatus();						
 					});
 				}
@@ -549,7 +553,11 @@ define(["build/listener/buildListener"], function() {
 				if(whereToRender.children().length < 1){
 					commonVariables.goal = "package";
 					commonVariables.phase = "package";
-					self.dynamicpage.getHtml(whereToRender, this, $(this).attr('name'), function(retVal){});
+					self.dynamicpage.getHtml(whereToRender, this, $(this).attr('name'), function(retVal){
+						$("#buildNumber").bind('keypress',function(e) {
+							if((e.which >= 48 && e.which <= 57) || (e.which === 8)){return true;}else {e.preventDefault();}
+						});
+					});
 				}else{self.opencc(this,$(this).attr('name'));}
 			});
 			
@@ -557,9 +565,8 @@ define(["build/listener/buildListener"], function() {
 			$("#buildRun").click(function(){
 				$('.alert_div').show();
 				self.clearLogContent();
-				self.setConsoleScrollbar(true);
+				//self.setConsoleScrollbar(true);
 				self.openConsole();
-				$('.progress_loading').css('display','block');
 				
 				var sqlParam = "";
 				queryStr = $('form[name=buildForm]').serialize().replace("=on", "=true");
@@ -570,8 +577,7 @@ define(["build/listener/buildListener"], function() {
 						$('.alert_div').hide();
 						self.closeConsole();
 						$("form[name=buildForm] #build_genbuild").show();
-						$(".blinkmsg").removeClass("popsuccess").addClass("poperror");
-						self.effectFadeOut('poperror', response.configErrorMsg);
+						self.showErrorPopUp(response.configErrorMsg);
 					}else if(response !== null && response.errorFound === false) {
 						self.refreshContent(true);
 					}
@@ -594,7 +600,7 @@ define(["build/listener/buildListener"], function() {
 					$("#stop").addClass('btn_style');
 					$("#restart").removeClass('btn_style_off');
 					$("#restart").addClass('btn_style');
-					self.setConsoleScrollbar(false);
+					//self.setConsoleScrollbar(false);
 					self.runAgainSourceStatus();
 				}
 				self.onProgressEvent.dispatch(this);
@@ -639,14 +645,19 @@ define(["build/listener/buildListener"], function() {
 				$(".fixedHeader tr th:nth-child(5)").css("width",w5);
 				$(".fixedHeader tr th:nth-child(6)").css("width",w6);
 				
-				self.resizeConsoleWindow();
+				//self.resizeConsoleWindow();
 			});
 			
 			//set log console scroll content event
-			self.setConsoleScrollbar(false);
+			//self.setConsoleScrollbar(false);
+			self.tableScrollbar();
 			
 			//call content div events
 			self.contentDivEvents();
+			//self.customScroll($(".consolescrolldiv"));
+
+			//Show tool tip
+			$(".tooltiptop").tooltip();
 
 			Clazz.navigationController.mainContainer = commonVariables.contentPlaceholder;
 		}
