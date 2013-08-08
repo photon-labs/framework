@@ -154,7 +154,7 @@ public class BaseScreen {
 	public WebElement getXpathWebElement(String xpath) throws Exception {
 		log.info("Entering:-----getXpathWebElement-------");
 		try {
-
+			Thread.sleep(MagicNumbers.HALF_SECONDS);
 			element = driver.findElement(By.xpath(xpath));
 
 		} catch (Throwable t) {
@@ -207,7 +207,7 @@ public class BaseScreen {
 				by = By.id(locator);
 			}
 
-			WebDriverWait wait = new WebDriverWait(driver, MagicNumbers.SIXTY_SECONDS);
+			WebDriverWait wait = new WebDriverWait(driver, MagicNumbers.THIRTY_SEC);
 			wait.until(presenceOfElementLocated(by));
 
 		}
@@ -230,7 +230,7 @@ public class BaseScreen {
 		return new Function<WebDriver, WebElement>() {
 			public WebElement apply(WebDriver driver) {
 				try {
-					Thread.sleep(MagicNumbers.HALF_SECONDS);
+					Thread.sleep(MagicNumbers.ONE_THOUSAND_SECONDS);
 					log.info("Waiting for Element to present");
 				} catch (InterruptedException e) {
 					log.info("Exception in presenceOfElementLocated"
@@ -260,6 +260,7 @@ public class BaseScreen {
 	throws ScreenException {
 		log.info("Entering:----------get Select Text Webelement----------");
 		try {
+			Thread.sleep(MagicNumbers.HALF_SECONDS);
 			Select selObj = new Select(element);
 			selObj.selectByVisibleText(TextValue);
 		} catch (Throwable t) {
@@ -271,6 +272,7 @@ public class BaseScreen {
 	public void click() throws ScreenException {
 		log.info("Entering:********click operation start********");
 		try {
+			Thread.sleep(MagicNumbers.HALF_SECONDS);
 			element.isDisplayed();
 			element.click();
 		} catch (Throwable t) {
@@ -295,6 +297,7 @@ public class BaseScreen {
 	public void clear() throws ScreenException {
 		log.info("Entering:********clear operation start********");
 		try {
+			Thread.sleep(MagicNumbers.HALF_SECONDS);
 			element.clear();
 		} catch (Throwable t) {
 			t.printStackTrace();
@@ -306,6 +309,7 @@ public class BaseScreen {
 	public void sendKeys(String text) throws ScreenException {
 		log.info("Entering:********enterText operation start********");
 		try {
+			Thread.sleep(MagicNumbers.HALF_SECONDS);
 			element.sendKeys(text);
 
 		} catch (Throwable t) {

@@ -40,6 +40,16 @@ public class PhrescoframeworkData {
 	 */
 	private String cloneEnvName = "cloneEnvName";
 	
+	/**
+	 * Build Success Message
+	 */
+	private String buildSuccessMsg = "buildSuccessMsg";
+	
+	/**
+	 * Build Failure Message
+	 */
+	private String buildFailuresMsg = "buildFailuresMsg";
+	
 	public PhrescoframeworkData() {
 		try {
 			ReadXMLFile readXml = new ReadXMLFile();
@@ -82,16 +92,12 @@ public class PhrescoframeworkData {
 		this.projectCreateMsg = projectCreateMsg;
 	}
 
-	/**
-	 * @param cloneEnvName the cloneEnvName to set
-	 */
+	
 	public void setCloneEnvName(String cloneEnvName) {
 		this.cloneEnvName = cloneEnvName;
 	}
 
-	/**
-	 * @return the cloneEnvName
-	 */
+	
 	public String getCloneEnvName() {
 		return cloneEnvName;
 	}
@@ -101,6 +107,27 @@ public class PhrescoframeworkData {
 	}
 	public void setFeatureUpdateMsg(String featureUpdateMsg) {
 		this.featureUpdateMsg = featureUpdateMsg;
+	}
+
+	
+	public String getBuildSuccessMsg() {
+		return buildSuccessMsg;
+	}
+
+	
+	public void setBuildSuccessMsg(String buildSuccessMsg) {
+		this.buildSuccessMsg = buildSuccessMsg;
+	}
+
+	
+	public String getBuildFailuresMsg() {
+		return buildFailuresMsg;
+	}
+
+	
+	public void setBuildFailuresMsg(String buildFailuresMsg) {
+		this.buildFailuresMsg = buildFailuresMsg;
 	}	
+	
 	
 	}

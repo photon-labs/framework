@@ -6,9 +6,10 @@ public class  MagicNumbers {
 	public static final int TEN_DAYS = 10;
 	public static final int X_POSITION = 780;
 	public static final int Y_POSITION = 120;
-	public static final long FOURTY_SECONDS = 40;
-	public static final long SIXTY_SECONDS = 60;
+	public static final long FOURTY_SECONDS = 40000;
+	public static final long SIXTY_SECONDS = 60000;
 	public static final long EIGHTY_SECONDS = 80;
+	public static final long THIRTY_SEC =5;
 	public static final long HALF_SECONDS = 500;
 	public static final long ONE_THOUSAND_SECONDS = 1000;
 	public static final long TWO_THOUSAND_SECONDS = 2000;
@@ -18,5 +19,6 @@ public class  MagicNumbers {
 	public static final long SIX_THOUSAND_SECONDS = 6000;
 	public static final long SEVEN_THOUSAND_SECONDS = 7000;
 	public static final long TEN_THOUSAND_SECONDS = 10000;
-	public static final long TWENTY_THOUSAND_SECONDS = 50000;
+	public static final long TWENTY_THOUSAND_SECONDS = 20000;
+	public static final long THIRTY_THOUSAND_SECONDS = 30000;
 }

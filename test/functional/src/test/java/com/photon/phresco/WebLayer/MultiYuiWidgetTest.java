@@ -261,8 +261,7 @@ public class MultiYuiWidgetTest {
 		try {
 
 			System.out.println("---------testMultiYuiWidgetArchetypeOverAllPdfReport()-------------");
-			methodName = Thread.currentThread().getStackTrace()[1].getMethodName();
-			webBaseScreen.loginPage(methodName);
+			methodName = Thread.currentThread().getStackTrace()[1].getMethodName();			
 			webBaseScreen.multiYuiWidgetArchetypeOverAllPdfReport(methodName, multiYuiConst);
 		
 		} catch (Exception t) {
@@ -277,9 +276,23 @@ public class MultiYuiWidgetTest {
 		try {
 
 			System.out.println("---------testMultiYuiWidgetArchetypeDetailedPdfReport()-------------");
-			methodName = Thread.currentThread().getStackTrace()[1].getMethodName();
-			webBaseScreen.loginPage(methodName);
+			methodName = Thread.currentThread().getStackTrace()[1].getMethodName();			
 			webBaseScreen.multiYuiWidgetArchetypeDetailedPdfReport(methodName, multiYuiConst);
+		
+		} catch (Exception t) {
+			t.printStackTrace();
+
+		}
+	} 
+	
+	@Test
+	public void testMultiYuiWidgetArchetypeComponentTest()
+	throws InterruptedException, IOException, Exception {
+		try {
+
+			System.out.println("---------testMultiYuiWidgetArchetypeComponentTest()-------------");
+			methodName = Thread.currentThread().getStackTrace()[1].getMethodName();			
+			webBaseScreen.componentTest(methodName);
 		
 		} catch (Exception t) {
 			t.printStackTrace();

@@ -373,7 +373,7 @@ public class AppScreen extends BaseScreen{
 			waitForElementPresent(phrescoUiConst.getCodeValidateBtn(), methodName);
 			getXpathWebElement(phrescoUiConst.getCodeValidateBtn());
 			click();
-			Thread.sleep(MagicNumbers.TWENTY_THOUSAND_SECONDS);
+			Thread.sleep(MagicNumbers.THIRTY_THOUSAND_SECONDS);
 		} catch (InterruptedException e) {
 
 			e.printStackTrace();
@@ -566,7 +566,7 @@ public class AppScreen extends BaseScreen{
 			waitForElementPresent(phrescoUiConst.getBuildRun(), methodName);
 			getXpathWebElement(phrescoUiConst.getBuildRun());
 			click();
-			Thread.sleep(MagicNumbers.TWENTY_THOUSAND_SECONDS);
+			Thread.sleep(MagicNumbers.THIRTY_THOUSAND_SECONDS);
 
 		} catch (InterruptedException e) {
 
@@ -650,6 +650,7 @@ public class AppScreen extends BaseScreen{
 			waitForElementPresent(phrescoUiConst.getPdfReportTypeDropDown(), methodName);
 			getXpathWebElement(phrescoUiConst.getPdfReportTypeDropDown());
 			click();
+			clear();
 			sendKeys(phrescoUiConst.getPdfOverAllReport());
 			
 			Thread.sleep(MagicNumbers.HALF_SECONDS);
@@ -693,14 +694,14 @@ public class AppScreen extends BaseScreen{
 			waitForElementPresent(phrescoUiConst.getPdfReportTypeDropDown(), methodName);
 			getXpathWebElement(phrescoUiConst.getPdfReportTypeDropDown());
 			click();
+			Thread.sleep(MagicNumbers.ONE_THOUSAND_SECONDS);
 			sendKeys(phrescoUiConst.getPdfDetailReport());
 			
 			Thread.sleep(MagicNumbers.HALF_SECONDS);
 			waitForElementPresent(phrescoUiConst.getPdfName(), methodName);
 			getXpathWebElement(phrescoUiConst.getPdfName());
 			click();
-			clear();
-			Thread.sleep(MagicNumbers.ONE_THOUSAND_SECONDS);
+			clear();			
 			sendKeys(phpConst.getPhpArchetypeDetailReportName());
 			
 			Thread.sleep(MagicNumbers.HALF_SECONDS);
@@ -1014,7 +1015,7 @@ public class AppScreen extends BaseScreen{
 			waitForElementPresent(phrescoUiConst.getCodeValidateBtn(), methodName);
 			getXpathWebElement(phrescoUiConst.getCodeValidateBtn());
 			click();
-			Thread.sleep(MagicNumbers.TWENTY_THOUSAND_SECONDS);
+			Thread.sleep(MagicNumbers.THIRTY_THOUSAND_SECONDS);
 		} catch (InterruptedException e) {
 
 			e.printStackTrace();
@@ -1207,7 +1208,7 @@ public class AppScreen extends BaseScreen{
 			waitForElementPresent(phrescoUiConst.getBuildRun(), methodName);
 			getXpathWebElement(phrescoUiConst.getBuildRun());
 			click();
-			Thread.sleep(MagicNumbers.TWENTY_THOUSAND_SECONDS);
+			Thread.sleep(MagicNumbers.THIRTY_THOUSAND_SECONDS);
 
 		} catch (InterruptedException e) {
 
@@ -1297,6 +1298,7 @@ public class AppScreen extends BaseScreen{
 			waitForElementPresent(phrescoUiConst.getPdfName(), methodName);
 			getXpathWebElement(phrescoUiConst.getPdfName());
 			click();
+			clear();	
 			sendKeys(drupal6Const.getDrupal6ArchetypeOverAllReportName());
 			
 			Thread.sleep(MagicNumbers.HALF_SECONDS);
@@ -1656,7 +1658,7 @@ public class AppScreen extends BaseScreen{
 			waitForElementPresent(phrescoUiConst.getCodeValidateBtn(), methodName);
 			getXpathWebElement(phrescoUiConst.getCodeValidateBtn());
 			click();
-			Thread.sleep(MagicNumbers.TWENTY_THOUSAND_SECONDS);
+			Thread.sleep(MagicNumbers.THIRTY_THOUSAND_SECONDS);
 		} catch (InterruptedException e) {
 
 			e.printStackTrace();
@@ -1850,7 +1852,7 @@ public class AppScreen extends BaseScreen{
 			waitForElementPresent(phrescoUiConst.getBuildRun(), methodName);
 			getXpathWebElement(phrescoUiConst.getBuildRun());
 			click();
-			Thread.sleep(MagicNumbers.TWENTY_THOUSAND_SECONDS);
+			Thread.sleep(MagicNumbers.THIRTY_THOUSAND_SECONDS);
 
 		} catch (InterruptedException e) {
 
@@ -1940,6 +1942,7 @@ public class AppScreen extends BaseScreen{
 			waitForElementPresent(phrescoUiConst.getPdfName(), methodName);
 			getXpathWebElement(phrescoUiConst.getPdfName());
 			click();
+			clear();	
 			sendKeys(drupal7Const.getDrupal7ArchetypeOverAllReportName());
 			
 			Thread.sleep(MagicNumbers.HALF_SECONDS);
@@ -2296,7 +2299,7 @@ public class AppScreen extends BaseScreen{
 			waitForElementPresent(phrescoUiConst.getCodeValidateBtn(), methodName);
 			getXpathWebElement(phrescoUiConst.getCodeValidateBtn());
 			click();
-			Thread.sleep(MagicNumbers.TWENTY_THOUSAND_SECONDS);
+			Thread.sleep(MagicNumbers.THIRTY_THOUSAND_SECONDS);
 		} catch (InterruptedException e) {
 
 			e.printStackTrace();
@@ -2490,7 +2493,7 @@ public class AppScreen extends BaseScreen{
 			waitForElementPresent(phrescoUiConst.getBuildRun(), methodName);
 			getXpathWebElement(phrescoUiConst.getBuildRun());
 			click();
-			Thread.sleep(MagicNumbers.TWENTY_THOUSAND_SECONDS);
+			Thread.sleep(MagicNumbers.THIRTY_THOUSAND_SECONDS);
 
 		} catch (InterruptedException e) {
 
@@ -2580,6 +2583,7 @@ public class AppScreen extends BaseScreen{
 			waitForElementPresent(phrescoUiConst.getPdfName(), methodName);
 			getXpathWebElement(phrescoUiConst.getPdfName());
 			click();
+			clear();	
 			sendKeys(wordpressConst.getWordpressArchetypeOverAllReportName());
 			
 			Thread.sleep(MagicNumbers.HALF_SECONDS);
@@ -2742,7 +2746,7 @@ public class AppScreen extends BaseScreen{
 			waitForElementPresent(j2EEConst.getEditProject(), methodName);
 			getXpathWebElement(j2EEConst.getEditProject());
 			click();
-			Thread.sleep(MagicNumbers.HALF_SECONDS);
+			Thread.sleep(MagicNumbers.TWO_THOUSAND_SECONDS);
 			waitForElementPresent(phrescoUiConst.getProjectUpdateButton(), methodName);
 			getXpathWebElement(phrescoUiConst.getProjectUpdateButton());
 			click();
@@ -2768,22 +2772,22 @@ public class AppScreen extends BaseScreen{
 			getXpathWebElement(j2EEConst.getJ2EEArchetypeEditApp());
 			click();
 
-			Thread.sleep(MagicNumbers.HALF_SECONDS);
+			Thread.sleep(MagicNumbers.TWO_THOUSAND_SECONDS);
 			waitForElementPresent(phrescoUiConst.getServerDropdown(), methodName);
 			getXpathWebElement(phrescoUiConst.getServerDropdown());
 			click();
 
-			Thread.sleep(MagicNumbers.HALF_SECONDS);
+			Thread.sleep(MagicNumbers.TWO_THOUSAND_SECONDS);
 			waitForElementPresent(phrescoUiConst.getApacheTomcatServer(), methodName);
 			getXpathWebElement(phrescoUiConst.getApacheTomcatServer());
 			click();
 
-			Thread.sleep(MagicNumbers.HALF_SECONDS);
+			Thread.sleep(MagicNumbers.TWO_THOUSAND_SECONDS);
 			waitForElementPresent(phrescoUiConst.getServerVersionDropdown(), methodName);
 			getXpathWebElement(phrescoUiConst.getServerVersionDropdown());
 			click();
 
-			Thread.sleep(MagicNumbers.HALF_SECONDS);
+			Thread.sleep(MagicNumbers.TWO_THOUSAND_SECONDS);
 			waitForElementPresent(phrescoUiConst.getApacheTomcatServerVersion(), methodName);
 			getXpathWebElement(phrescoUiConst.getApacheTomcatServerVersion());
 			click();
@@ -2928,7 +2932,7 @@ public class AppScreen extends BaseScreen{
 			waitForElementPresent(phrescoUiConst.getCodeValidateBtn(), methodName);
 			getXpathWebElement(phrescoUiConst.getCodeValidateBtn());
 			click();
-			Thread.sleep(MagicNumbers.TWENTY_THOUSAND_SECONDS);
+			Thread.sleep(MagicNumbers.THIRTY_THOUSAND_SECONDS);
 		} catch (InterruptedException e) {
 
 			e.printStackTrace();
@@ -2969,7 +2973,7 @@ public class AppScreen extends BaseScreen{
 			waitForElementPresent(phrescoUiConst.getCodeValidateBtn(), methodName);
 			getXpathWebElement(phrescoUiConst.getCodeValidateBtn());
 			click();
-			Thread.sleep(MagicNumbers.TWENTY_THOUSAND_SECONDS);
+			Thread.sleep(MagicNumbers.THIRTY_THOUSAND_SECONDS);
 		} catch (InterruptedException e) {
 
 			e.printStackTrace();
@@ -3011,7 +3015,7 @@ public class AppScreen extends BaseScreen{
 			waitForElementPresent(phrescoUiConst.getCodeValidateBtn(), methodName);
 			getXpathWebElement(phrescoUiConst.getCodeValidateBtn());
 			click();
-			Thread.sleep(MagicNumbers.TWENTY_THOUSAND_SECONDS);
+			Thread.sleep(MagicNumbers.THIRTY_THOUSAND_SECONDS);
 		} catch (InterruptedException e) {
 
 			e.printStackTrace();
@@ -3056,7 +3060,7 @@ public class AppScreen extends BaseScreen{
 			waitForElementPresent(phrescoUiConst.getCodeValidateBtn(), methodName);
 			getXpathWebElement(phrescoUiConst.getCodeValidateBtn());
 			click();
-			Thread.sleep(MagicNumbers.TWENTY_THOUSAND_SECONDS);
+			Thread.sleep(MagicNumbers.THIRTY_THOUSAND_SECONDS);
 		} catch (InterruptedException e) {
 
 			e.printStackTrace();
@@ -3183,7 +3187,7 @@ public class AppScreen extends BaseScreen{
 			waitForElementPresent(phrescoUiConst.getBuildRun(), methodName);
 			getXpathWebElement(phrescoUiConst.getBuildRun());
 			click();
-			Thread.sleep(MagicNumbers.TWENTY_THOUSAND_SECONDS);
+			Thread.sleep(MagicNumbers.THIRTY_THOUSAND_SECONDS);
 
 		} catch (InterruptedException e) {
 
@@ -3209,6 +3213,36 @@ public class AppScreen extends BaseScreen{
 			click();
 
 			Thread.sleep(MagicNumbers.TWENTY_THOUSAND_SECONDS);
+
+		} catch (InterruptedException e) {
+
+			e.printStackTrace();
+		}
+	}
+	
+	public void j2EEcomponentTest(String methodName,J2EEConstants j2EEConst) throws Exception {
+		if (StringUtils.isEmpty(methodName)) {
+			methodName = Thread.currentThread().getStackTrace()[1]
+			                                                    .getMethodName();
+		}
+		log.info("@j2EEcomponentTest executing");
+		try {
+			Thread.sleep(MagicNumbers.THREE_THOUSAND_SECONDS);
+			waitForElementPresent(phrescoUiConst.getQualityAssuranceButton(), methodName);
+			getXpathWebElement(phrescoUiConst.getQualityAssuranceButton());
+			click();
+
+			Thread.sleep(MagicNumbers.HALF_SECONDS);
+			waitForElementPresent(phrescoUiConst.getComponentButton(), methodName);
+			getXpathWebElement(phrescoUiConst.getComponentButton());
+			click();
+			
+			Thread.sleep(MagicNumbers.HALF_SECONDS);
+			waitForElementPresent(phrescoUiConst.getComponentTestButton(), methodName);
+			getXpathWebElement(phrescoUiConst.getComponentTestButton());
+			click();
+
+			Thread.sleep(MagicNumbers.FOURTY_SECONDS);
 
 		} catch (InterruptedException e) {
 
@@ -3252,7 +3286,7 @@ public class AppScreen extends BaseScreen{
 			waitForElementPresent(phrescoUiConst.getUnitTestRun(), methodName);
 			getXpathWebElement(phrescoUiConst.getUnitTestRun());
 			click();
-			Thread.sleep(MagicNumbers.TWENTY_THOUSAND_SECONDS);
+			Thread.sleep(MagicNumbers.THIRTY_THOUSAND_SECONDS);
 
 		} catch (InterruptedException e) {
 
@@ -3296,7 +3330,7 @@ public class AppScreen extends BaseScreen{
 			waitForElementPresent(phrescoUiConst.getUnitTestRun(), methodName);
 			getXpathWebElement(phrescoUiConst.getUnitTestRun());
 			click();
-			Thread.sleep(MagicNumbers.TWENTY_THOUSAND_SECONDS);
+			Thread.sleep(MagicNumbers.THIRTY_THOUSAND_SECONDS);
 
 		} catch (InterruptedException e) {
 
@@ -3332,6 +3366,7 @@ public class AppScreen extends BaseScreen{
 			waitForElementPresent(phrescoUiConst.getPdfName(), methodName);
 			getXpathWebElement(phrescoUiConst.getPdfName());
 			click();
+			clear();	
 			sendKeys(j2EEConst.getJ2EEArchetypeOverAllReportName());
 			
 			Thread.sleep(MagicNumbers.HALF_SECONDS);
@@ -3673,7 +3708,7 @@ public class AppScreen extends BaseScreen{
 			waitForElementPresent(phrescoUiConst.getCodeValidateBtn(), methodName);
 			getXpathWebElement(phrescoUiConst.getCodeValidateBtn());
 			click();
-			Thread.sleep(MagicNumbers.TWENTY_THOUSAND_SECONDS);
+			Thread.sleep(MagicNumbers.FOURTY_SECONDS);
 		} catch (InterruptedException e) {
 
 			e.printStackTrace();
@@ -3736,13 +3771,6 @@ public class AppScreen extends BaseScreen{
 			click();
 			clear();
 			sendKeys(nodeJsConst.getConfigServerPort());
-
-			Thread.sleep(MagicNumbers.HALF_SECONDS);
-			waitForElementPresent(phrescoUiConst.getConfigServerDeployDir(), methodName);
-			getXpathWebElement(phrescoUiConst.getConfigServerDeployDir());
-			click();
-			clear();
-			sendKeys(nodeJsConst.getConfigServerDeployDir());
 
 			Thread.sleep(MagicNumbers.HALF_SECONDS);
 			waitForElementPresent(phrescoUiConst.getConfigServerContext(), methodName);
@@ -3857,6 +3885,7 @@ public class AppScreen extends BaseScreen{
 			waitForElementPresent(phrescoUiConst.getPdfName(), methodName);
 			getXpathWebElement(phrescoUiConst.getPdfName());
 			click();
+			clear();	
 			sendKeys(nodeJsConst.getNodeJsArchetypeOverAllReportName());
 			
 			Thread.sleep(MagicNumbers.HALF_SECONDS);
@@ -4086,7 +4115,7 @@ public class AppScreen extends BaseScreen{
 			waitForElementPresent(phrescoUiConst.getCodeValidateBtn(), methodName);
 			getXpathWebElement(phrescoUiConst.getCodeValidateBtn());
 			click();
-			Thread.sleep(MagicNumbers.TWENTY_THOUSAND_SECONDS);
+			Thread.sleep(MagicNumbers.THIRTY_THOUSAND_SECONDS);
 		} catch (InterruptedException e) {
 
 			e.printStackTrace();
@@ -4188,7 +4217,7 @@ public class AppScreen extends BaseScreen{
 			waitForElementPresent(phrescoUiConst.getBuildRun(), methodName);
 			getXpathWebElement(phrescoUiConst.getBuildRun());
 			click();
-			Thread.sleep(MagicNumbers.TWENTY_THOUSAND_SECONDS);
+			Thread.sleep(MagicNumbers.THIRTY_THOUSAND_SECONDS);
 
 		} catch (InterruptedException e) {
 
@@ -4225,6 +4254,7 @@ public class AppScreen extends BaseScreen{
 			waitForElementPresent(phrescoUiConst.getPdfName(), methodName);
 			getXpathWebElement(phrescoUiConst.getPdfName());
 			click();
+			clear();	
 			sendKeys(javaStandalone.getJavaSAArchetypeOverAllReportName());
 			
 			Thread.sleep(MagicNumbers.HALF_SECONDS);
@@ -4567,7 +4597,7 @@ public class AppScreen extends BaseScreen{
 			waitForElementPresent(phrescoUiConst.getCodeValidateBtn(), methodName);
 			getXpathWebElement(phrescoUiConst.getCodeValidateBtn());
 			click();
-			Thread.sleep(MagicNumbers.TWENTY_THOUSAND_SECONDS);
+			Thread.sleep(MagicNumbers.THIRTY_THOUSAND_SECONDS);
 		} catch (InterruptedException e) {
 
 			e.printStackTrace();
@@ -4786,6 +4816,7 @@ public class AppScreen extends BaseScreen{
 			waitForElementPresent(phrescoUiConst.getPdfName(), methodName);
 			getXpathWebElement(phrescoUiConst.getPdfName());
 			click();
+			clear();	
 			sendKeys(sitecoreConst.getSitecoreArchetypeOverAllReportName());
 			
 			Thread.sleep(MagicNumbers.HALF_SECONDS);
@@ -5092,7 +5123,7 @@ public class AppScreen extends BaseScreen{
 			waitForElementPresent(phrescoUiConst.getCodeValidateBtn(), methodName);
 			getXpathWebElement(phrescoUiConst.getCodeValidateBtn());
 			click();
-			Thread.sleep(MagicNumbers.TWENTY_THOUSAND_SECONDS);
+			Thread.sleep(MagicNumbers.THIRTY_THOUSAND_SECONDS);
 		} catch (InterruptedException e) {
 
 			e.printStackTrace();
@@ -5162,7 +5193,7 @@ public class AppScreen extends BaseScreen{
 			waitForElementPresent(phrescoUiConst.getCodeValidateBtn(), methodName);
 			getXpathWebElement(phrescoUiConst.getCodeValidateBtn());
 			click();
-			Thread.sleep(MagicNumbers.TWENTY_THOUSAND_SECONDS);
+			Thread.sleep(MagicNumbers.THIRTY_THOUSAND_SECONDS);
 		} catch (InterruptedException e) {
 
 			e.printStackTrace();
@@ -5196,7 +5227,7 @@ public class AppScreen extends BaseScreen{
 			waitForElementPresent(phrescoUiConst.getCodeValidateBtn(), methodName);
 			getXpathWebElement(phrescoUiConst.getCodeValidateBtn());
 			click();
-			Thread.sleep(MagicNumbers.TWENTY_THOUSAND_SECONDS);
+			Thread.sleep(MagicNumbers.THIRTY_THOUSAND_SECONDS);
 		} catch (InterruptedException e) {
 
 			e.printStackTrace();
@@ -5413,6 +5444,7 @@ public class AppScreen extends BaseScreen{
 			waitForElementPresent(phrescoUiConst.getPdfName(), methodName);
 			getXpathWebElement(phrescoUiConst.getPdfName());
 			click();
+			clear();	
 			sendKeys(sharePointConst.getSharepointArchetypeOverAllReportName());
 			
 			Thread.sleep(MagicNumbers.HALF_SECONDS);
@@ -5762,7 +5794,7 @@ public class AppScreen extends BaseScreen{
 			waitForElementPresent(phrescoUiConst.getCodeValidateBtn(), methodName);
 			getXpathWebElement(phrescoUiConst.getCodeValidateBtn());
 			click();
-			Thread.sleep(MagicNumbers.TWENTY_THOUSAND_SECONDS);
+			Thread.sleep(MagicNumbers.THIRTY_THOUSAND_SECONDS);
 		} catch (InterruptedException e) {
 
 			e.printStackTrace();
@@ -5808,7 +5840,7 @@ public class AppScreen extends BaseScreen{
 			waitForElementPresent(phrescoUiConst.getCodeValidateBtn(), methodName);
 			getXpathWebElement(phrescoUiConst.getCodeValidateBtn());
 			click();
-			Thread.sleep(MagicNumbers.TWENTY_THOUSAND_SECONDS);
+			Thread.sleep(MagicNumbers.THIRTY_THOUSAND_SECONDS);
 		} catch (InterruptedException e) {
 
 			e.printStackTrace();
@@ -6023,6 +6055,7 @@ public class AppScreen extends BaseScreen{
 			waitForElementPresent(phrescoUiConst.getPdfName(), methodName);
 			getXpathWebElement(phrescoUiConst.getPdfName());
 			click();
+			clear();	
 			sendKeys(aspDotnetConst.getAspDotnetArchetypeOverAllReportName());
 			
 			Thread.sleep(MagicNumbers.HALF_SECONDS);
@@ -6090,39 +6123,7 @@ public class AppScreen extends BaseScreen{
 	}
 
 
-	public boolean successFailureLoop() throws InterruptedException,
-	IOException, Exception {
-		String foundString = buildStatusVerifier();
-		if (foundString.equalsIgnoreCase("BUILD SUCCESS")) {
-			return true;
-		} else
-			return false;
-	}
-
-	private String buildStatusVerifier() {
-		String BUILD_SUCCESS = "BUILD SUCCESS";
-		String BUILD_FAILURE = "BUILD FAILURE";
-		String RUN_AGAINST_SOURCE = "server started";
-		String RUN_AGAINST_SOURCE_FAILED = "server started";
-		boolean statusStringFound = false;
-		while (!statusStringFound) {
-			if (driver.findElement(By.tagName("body")).getText()
-					.contains(BUILD_SUCCESS)) {
-				return BUILD_SUCCESS;
-			} else if (driver.findElement(By.tagName("body")).getText()
-					.contains(BUILD_FAILURE)) {
-				return BUILD_FAILURE;
-			} else if (driver.findElement(By.tagName("body")).getText()
-					.contains(RUN_AGAINST_SOURCE)) {
-				return BUILD_SUCCESS;
-			} else if (driver.findElement(By.tagName("body")).getText()
-					.contains(RUN_AGAINST_SOURCE_FAILED)) {
-				return BUILD_FAILURE;
-			}
-
-		}
-		return null;
-	}
+	
 
 
 
@@ -6149,6 +6150,37 @@ public class AppScreen extends BaseScreen{
 		return timeout;
 	}
 
+
+	public boolean successFailureLoop() throws InterruptedException,
+	IOException, Exception {
+		String foundString = buildStatusVerifier();
+		if (foundString.equalsIgnoreCase(phrescoData.getBuildSuccessMsg())) {
+			return true;
+		} else
+			return false;
+	}
+
+	private String buildStatusVerifier() throws InterruptedException {
+		String BUILD_SUCCESS = phrescoData.getBuildSuccessMsg();
+		String BUILD_FAILURE = phrescoData.getBuildFailuresMsg();
+		String RUN_AGAINST_SOURCE = "server started";
+		String timeout = "timeout";
+		for(int i =0; i<=40;i++)
+		{
+			if (driver.findElement(By.tagName("body")).getText()
+					.contains(BUILD_SUCCESS)) {
+				return BUILD_SUCCESS;
+			} else if (driver.findElement(By.tagName("body")).getText()
+					.contains(BUILD_FAILURE)) {
+				return BUILD_FAILURE;
+			} else if (driver.findElement(By.tagName("body")).getText()
+					.contains(RUN_AGAINST_SOURCE)) {
+				return BUILD_SUCCESS;
+		}
+			Thread.sleep(MagicNumbers.ONE_THOUSAND_SECONDS);
+		}
+		return timeout;
+	}
 
 
 

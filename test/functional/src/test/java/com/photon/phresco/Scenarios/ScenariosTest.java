@@ -120,6 +120,22 @@ public class ScenariosTest {
 		}
 	}
 	
+	@Test
+	public void testProjectDeletion() throws InterruptedException,
+	IOException, Exception {
+		try {
+
+			System.out
+			.println("---------testProjectDeletion()-------------");
+			methodName = Thread.currentThread().getStackTrace()[1]
+			                                                    .getMethodName();
+			scenariosScreen.deleteProjects(methodName);
+		} catch (Exception t) {
+			t.printStackTrace();
+
+		}
+	}
+	
 	
 	@AfterTest
 	public void tearDown() {

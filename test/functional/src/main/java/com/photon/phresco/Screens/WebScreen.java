@@ -415,9 +415,9 @@ public class WebScreen extends BaseScreen {
 			sendKeys(multiYuiConst.getConfigContext());
 
 			Thread.sleep(MagicNumbers.HALF_SECONDS);
-			waitForElementPresent(phrescoUiConst.getAppUpdateButton(),
+			waitForElementPresent(phrescoUiConst.getConfigUpdateButton(),
 					methodName);
-			getXpathWebElement(phrescoUiConst.getAppUpdateButton());
+			getXpathWebElement(phrescoUiConst.getConfigUpdateButton());
 			click();
 			Thread.sleep(MagicNumbers.TWENTY_THOUSAND_SECONDS);
 
@@ -982,9 +982,9 @@ public class WebScreen extends BaseScreen {
 			sendKeys(multiJQueryConst.getConfigContext());
 
 			Thread.sleep(MagicNumbers.HALF_SECONDS);
-			waitForElementPresent(phrescoUiConst.getAppUpdateButton(),
+			waitForElementPresent(phrescoUiConst.getConfigUpdateButton(),
 					methodName);
-			getXpathWebElement(phrescoUiConst.getAppUpdateButton());
+			getXpathWebElement(phrescoUiConst.getConfigUpdateButton());
 			click();
 			Thread.sleep(20000);
 
@@ -1547,9 +1547,9 @@ public class WebScreen extends BaseScreen {
 			sendKeys(yuiMobConst.getConfigContext());
 
 			Thread.sleep(MagicNumbers.HALF_SECONDS);
-			waitForElementPresent(phrescoUiConst.getAppUpdateButton(),
+			waitForElementPresent(phrescoUiConst.getConfigUpdateButton(),
 					methodName);
-			getXpathWebElement(phrescoUiConst.getAppUpdateButton());
+			getXpathWebElement(phrescoUiConst.getConfigUpdateButton());
 			click();
 			Thread.sleep(MagicNumbers.FOURTY_SECONDS);
 
@@ -2105,9 +2105,9 @@ public class WebScreen extends BaseScreen {
 			sendKeys(jQueryMobConst.getConfigContext());
 
 			Thread.sleep(MagicNumbers.HALF_SECONDS);
-			waitForElementPresent(phrescoUiConst.getAppUpdateButton(),
+			waitForElementPresent(phrescoUiConst.getConfigUpdateButton(),
 					methodName);
-			getXpathWebElement(phrescoUiConst.getAppUpdateButton());
+			getXpathWebElement(phrescoUiConst.getConfigUpdateButton());
 			click();
 			Thread.sleep(MagicNumbers.FOURTY_SECONDS);
 			
@@ -2536,6 +2536,36 @@ public class WebScreen extends BaseScreen {
 			getXpathWebElement(phrescoUiConst.getCodeValidateBtn());
 			click();
 			Thread.sleep(MagicNumbers.FOURTY_SECONDS);
+		} catch (InterruptedException e) {
+
+			e.printStackTrace();
+		}
+	}
+	
+	public void componentTest(String methodName) throws Exception {
+		if (StringUtils.isEmpty(methodName)) {
+			methodName = Thread.currentThread().getStackTrace()[1]
+			                                                    .getMethodName();
+		}
+		log.info("@componentTest executing");
+		try {
+			Thread.sleep(MagicNumbers.THREE_THOUSAND_SECONDS);
+			waitForElementPresent(phrescoUiConst.getQualityAssuranceButton(), methodName);
+			getXpathWebElement(phrescoUiConst.getQualityAssuranceButton());
+			click();
+
+			Thread.sleep(MagicNumbers.HALF_SECONDS);
+			waitForElementPresent(phrescoUiConst.getComponentButton(), methodName);
+			getXpathWebElement(phrescoUiConst.getComponentButton());
+			click();
+			
+			Thread.sleep(MagicNumbers.HALF_SECONDS);
+			waitForElementPresent(phrescoUiConst.getComponentTestButton(), methodName);
+			getXpathWebElement(phrescoUiConst.getComponentTestButton());
+			click();
+
+			Thread.sleep(MagicNumbers.FOURTY_SECONDS);
+
 		} catch (InterruptedException e) {
 
 			e.printStackTrace();

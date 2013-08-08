@@ -127,7 +127,7 @@
 		<!-- Code Validation -->
 		
 		<codeQualityTab>//a[contains(text(),'Code Quality')]</codeQualityTab>
-		<codeAnalysisTab>//input[@value='Code Analysis']</codeAnalysisTab>
+		<codeAnalysisTab>//div[@class='code_anal']/input</codeAnalysisTab>
 		<codeValidateAgainstDropdown>//li[@id='sonarLi']/div/button</codeValidateAgainstDropdown>
 		<codeValidateCs>//li/a/span[contains(text(),'cs')]</codeValidateCs>
 		<codeValidateJs>//li/a/span[contains(text(),'js')]</codeValidateJs>
@@ -165,7 +165,7 @@
 		<configDbUsername>//input[@name='username']</configDbUsername>
 		<configDbPwd>//input[@name='password']</configDbPwd>
 		<configDbName>//input[@name='dbname']</configDbName>
-		<configUpdateButton>//input[@class='btn btn_style update_btn']</configUpdateButton>
+		<configUpdateButton>//section[@class='content_end']/div/input</configUpdateButton>
 		
 		
 		<!-- Clone Environment -->
@@ -194,20 +194,54 @@
 		<deployBuild>//img[@name='deployBuild']</deployBuild>
 		<deployButton>//input[@name='deploy']</deployButton>
 		
-		<!-- Unit Test -->
+		<!-- Quality Tab -->
 		<qualityAssuranceButton>//a[contains(text(),'Quality Assurance')]</qualityAssuranceButton>
 		<unitButton>//a[contains(text(),'Unit')]</unitButton>
+		<componentButton>//a[contains(text(),'Component')]</componentButton>
+		<functionalButton>//a[contains(text(),'Functional')]</functionalButton>
+		<manualButton>//a[contains(text(),'Manual')]</manualButton>
+		<performanceButton>//a[contains(text(),'Performance')]</performanceButton>
+		<loadButton>//a[contains(text(),'Load')]</loadButton>
+		
+		<!-- Unit Test -->	
 		<unitTestButton>//input[@id='unitTestBtn']</unitTestButton>
 		<unitTestAgainst>//li[@id='testAgainstLi']/div/button</unitTestAgainst>
 		<unitTestRun>//input[@id='runUnitTest']</unitTestRun>
+		
+		<!-- Performance Test -->
+		<perfjmxType>//button[@type='button']</perfjmxType>
+		<perftestAgainst>//li[@id='testAgainstLi']/div/button</perftestAgainst>
+		<perfauthManager>//input[@id='authManager']</perfauthManager>
+		<perfRampupPeriod>//input[@id='rampUpPeriod']</perfRampupPeriod>
+		<perfHttpName>//input[@name='httpName']</perfHttpName>
+		<perfContext>//input[@name='context']</perfContext>
+		<perfDataType>//select[@name='contextType']</perfDataType>
+		<perfEncodingType>//select[@name='encodingType']</perfEncodingType>
+		<perfRedirect>//input[@name='redirectAutomatically']</perfRedirect>
+		<perfFollowRedirect>//input[@name='followRedirects']</perfFollowRedirect>
+		<perfKeepAlive>//input[@name='keepAlive']</perfKeepAlive>
+		<perHeaderKey>xpath=(//input[@type='text'])[15]</perHeaderKey>
+		<perfHeaderValue>xpath=(//input[@type='text'])[16]</perfHeaderValue>
+		<perfHeaderAddButton>xpath=(//input[@value='Add'])[3]</perfHeaderAddButton>
+		<perParameterKey>//input[@name='parameterName']</perParameterKey>
+		<perfParameterValue>//input[@name='parameterValue']</perfParameterValue>
+		<perfTestButton>//input[@id='performanceRun']</perfTestButton>
+		
+		<!--Component Test  -->		
+		<componentTestButton>//div/input[@id='componentTestBtn']</componentTestButton>
+		<componentKillProcessBtn>//input[@value='Kill Process']</componentKillProcessBtn>
 		
 		<!--Pdf Report  -->
 		<pdfReportTypeDropDown>//select[@name='reportDataType']</pdfReportTypeDropDown>
 		<pdfName>//input[@name='pdfName']</pdfName>
 		<pdfGenerateBtn>//input[@name='generate']</pdfGenerateBtn>
-		<pdfCloseBtn>//form[@id='pdfReport']/div[2]/input[2]</pdfCloseBtn>
+		<pdfCloseBtn>//form/div/input[@class='btn btn_style dyn_popup_close']</pdfCloseBtn>
 		<pdfOverAllReport>Overall Report</pdfOverAllReport>
 		<pdfDetailReport>Detailed Report</pdfDetailReport>
+		
+		<!--Delete Projects -->
+		<projectDeleteIcon>//img[@src='themes/default/images/helios/delete_row_icon.png']</projectDeleteIcon>
+		<projectDeletePopUpYesBtn>//input[@name='holeDelete']</projectDeletePopUpYesBtn>
 		
 		
 

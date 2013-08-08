@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testResults version="1.2">
+<httpSample t="10" lt="10" ts="1375876277501" s="false" lb="Login" rc="404" rm="Not Found" tn="Phresco-3.0 Performance  1-1" dt="text" by="1166"/>
+<httpSample t="3" lt="3" ts="1375876277546" s="false" lb="ProjectList" rc="404" rm="Not Found" tn="Phresco-3.0 Performance  1-1" dt="text" by="1188"/>
+<httpSample t="2" lt="2" ts="1375876277550" s="false" lb="ProjectAdd" rc="404" rm="Not Found" tn="Phresco-3.0 Performance  1-1" dt="text" by="1209"/>
+<httpSample t="2" lt="2" ts="1375876277553" s="false" lb="ProjectCreate" rc="404" rm="Not Found" tn="Phresco-3.0 Performance  1-1" dt="text" by="1194"/>
+<httpSample t="2" lt="2" ts="1375876277555" s="false" lb="ProjectEdit" rc="404" rm="Not Found" tn="Phresco-3.0 Performance  1-1" dt="text" by="1188"/>
+<httpSample t="3" lt="3" ts="1375876277558" s="false" lb="ProjectUpdate" rc="403" rm="Forbidden" tn="Phresco-3.0 Performance  1-1" dt="text" by="1133"/>
+<httpSample t="2" lt="2" ts="1375876277562" s="false" lb="ProjectListForCI" rc="404" rm="Not Found" tn="Phresco-3.0 Performance  1-1" dt="text" by="1188"/>
+<httpSample t="2" lt="2" ts="1375876277565" s="false" lb="ProjectEditForCI" rc="404" rm="Not Found" tn="Phresco-3.0 Performance  1-1" dt="text" by="1188"/>
+<httpSample t="2" lt="2" ts="1375876277568" s="false" lb="CI-JobTab" rc="404" rm="Not Found" tn="Phresco-3.0 Performance  1-1" dt="text" by="1188"/>
+<httpSample t="2" lt="2" ts="1375876277571" s="false" lb="CI-JobAppInfos" rc="404" rm="Not Found" tn="Phresco-3.0 Performance  1-1" dt="text" by="1200"/>
+<httpSample t="2" lt="2" ts="1375876277574" s="false" lb="CI-JobCreate" rc="404" rm="Not Found" tn="Phresco-3.0 Performance  1-1" dt="text" by="1188"/>
+<httpSample t="2" lt="2" ts="1375876277576" s="false" lb="CI-JobEditTab" rc="404" rm="Not Found" tn="Phresco-3.0 Performance  1-1" dt="text" by="1209"/>
+<httpSample t="2" lt="2" ts="1375876277579" s="false" lb="CI-JobEditUpdate" rc="403" rm="Forbidden" tn="Phresco-3.0 Performance  1-1" dt="text" by="1133"/>
+<httpSample t="3" lt="3" ts="1375876277582" s="false" lb="CI-JobDelete" rc="403" rm="Forbidden" tn="Phresco-3.0 Performance  1-1" dt="text" by="1133"/>
+<httpSample t="2" lt="2" ts="1375876277585" s="false" lb="CI-CDList" rc="404" rm="Not Found" tn="Phresco-3.0 Performance  1-1" dt="text" by="1173"/>
+<httpSample t="2" lt="2" ts="1375876277588" s="false" lb="CI-CDAlive" rc="404" rm="Not Found" tn="Phresco-3.0 Performance  1-1" dt="text" by="1182"/>
+<httpSample t="2" lt="2" ts="1375876277591" s="false" lb="ApplicationEdit" rc="404" rm="Not Found" tn="Phresco-3.0 Performance  1-1" dt="text" by="1209"/>
+<httpSample t="3" lt="3" ts="1375876277593" s="false" lb="ApplicationTechOption" rc="404" rm="Not Found" tn="Phresco-3.0 Performance  1-1" dt="text" by="1200"/>
+<httpSample t="2" lt="2" ts="1375876277597" s="false" lb="ApplicationAppInfo" rc="404" rm="Not Found" tn="Phresco-3.0 Performance  1-1" dt="text" by="1194"/>
+<httpSample t="3" lt="3" ts="1375876277599" s="false" lb="ApplicationAppInfoWebService" rc="404" rm="Not Found" tn="Phresco-3.0 Performance  1-1" dt="text" by="1215"/>
+<httpSample t="2" lt="2" ts="1375876277603" s="false" lb="UpdateAppInfo" rc="403" rm="Forbidden" tn="Phresco-3.0 Performance  1-1" dt="text" by="1133"/>
+<httpSample t="2" lt="2" ts="1375876277606" s="false" lb="FeatureList" rc="404" rm="Not Found" tn="Phresco-3.0 Performance  1-1" dt="text" by="1191"/>
+<httpSample t="2" lt="2" ts="1375876277609" s="false" lb="FeatureDescription" rc="404" rm="Not Found" tn="Phresco-3.0 Performance  1-1" dt="text" by="1215"/>
+<httpSample t="1" lt="1" ts="1375876277612" s="false" lb="Selected feature" rc="404" rm="Not Found" tn="Phresco-3.0 Performance  1-1" dt="text" by="1230"/>
+<httpSample t="2" lt="2" ts="1375876277614" s="false" lb="UpdateFeature" rc="403" rm="Forbidden" tn="Phresco-3.0 Performance  1-1" dt="text" by="1133"/>
+<httpSample t="2" lt="2" ts="1375876277617" s="false" lb="CodeQualityTab" rc="404" rm="Not Found" tn="Phresco-3.0 Performance  1-1" dt="text" by="1257"/>
+<httpSample t="8" lt="8" ts="1375876277619" s="false" lb="CodeiFramework" rc="404" rm="Not Found" tn="Phresco-3.0 Performance  1-1" dt="text" by="1218"/>
+<httpSample t="2" lt="2" ts="1375876277628" s="false" lb="CodeAnalysisTab" rc="404" rm="Not Found" tn="Phresco-3.0 Performance  1-1" dt="text" by="1203"/>
+<httpSample t="2" lt="2" ts="1375876277631" s="false" lb="CodeAnalysisSource" rc="404" rm="Not Found" tn="Phresco-3.0 Performance  1-1" dt="text" by="1200"/>
+<httpSample t="2" lt="2" ts="1375876277634" s="false" lb="ConfigurationTab" rc="404" rm="Not Found" tn="Phresco-3.0 Performance  1-1" dt="text" by="1239"/>
+<httpSample t="1" lt="1" ts="1375876277637" s="false" lb="ConfigureIcon" rc="404" rm="Not Found" tn="Phresco-3.0 Performance  1-1" dt="text" by="1191"/>
+<httpSample t="2" lt="2" ts="1375876277639" s="false" lb="ConfigurationAddServer" rc="404" rm="Not Found" tn="Phresco-3.0 Performance  1-1" dt="text" by="1242"/>
+<httpSample t="2" lt="2" ts="1375876277642" s="false" lb="ConfigurationCreate" rc="404" rm="Not Found" tn="Phresco-3.0 Performance  1-1" dt="text" by="1230"/>
+<httpSample t="1" lt="1" ts="1375876277645" s="false" lb="EditConfiguration" rc="404" rm="Not Found" tn="Phresco-3.0 Performance  1-1" dt="text" by="1242"/>
+<httpSample t="2" lt="2" ts="1375876277647" s="false" lb="ConnectionAliveCheck" rc="404" rm="Not Found" tn="Phresco-3.0 Performance  1-1" dt="text" by="1254"/>
+<httpSample t="2" lt="2" ts="1375876277650" s="false" lb="ConfigurationUpdate" rc="404" rm="Not Found" tn="Phresco-3.0 Performance  1-1" dt="text" by="1230"/>
+<httpSample t="2" lt="2" ts="1375876277652" s="false" lb="CloneEnvironment" rc="404" rm="Not Found" tn="Phresco-3.0 Performance  1-1" dt="text" by="1242"/>
+<httpSample t="2" lt="2" ts="1375876277655" s="false" lb="EnvironmentDelete" rc="403" rm="Forbidden" tn="Phresco-3.0 Performance  1-1" dt="text" by="1133"/>
+<httpSample t="2" lt="2" ts="1375876277657" s="false" lb="DynamicParameter" rc="404" rm="Not Found" tn="Phresco-3.0 Performance  1-1" dt="text" by="1227"/>
+<httpSample t="2" lt="2" ts="1375876277660" s="false" lb="BuildInfoList" rc="404" rm="Not Found" tn="Phresco-3.0 Performance  1-1" dt="text" by="1194"/>
+<httpSample t="1" lt="1" ts="1375876277663" s="false" lb="BuildCheckStatus" rc="404" rm="Not Found" tn="Phresco-3.0 Performance  1-1" dt="text" by="1215"/>
+<httpSample t="2" lt="2" ts="1375876277665" s="false" lb="BuildParameter" rc="404" rm="Not Found" tn="Phresco-3.0 Performance  1-1" dt="text" by="1203"/>
+<httpSample t="1" lt="1" ts="1375876277668" s="false" lb="GenerateBuild" rc="404" rm="Not Found" tn="Phresco-3.0 Performance  1-1" dt="text" by="1179"/>
+<httpSample t="2" lt="2" ts="1375876277670" s="false" lb="BuildReadLog" rc="404" rm="Not Found" tn="Phresco-3.0 Performance  1-1" dt="text" by="1185"/>
+<httpSample t="2" lt="2" ts="1375876277672" s="false" lb="BuildDownload" rc="404" rm="Not Found" tn="Phresco-3.0 Performance  1-1" dt="text" by="1233"/>
+<httpSample t="1" lt="1" ts="1375876277675" s="false" lb="DeployParameter" rc="404" rm="Not Found" tn="Phresco-3.0 Performance  1-1" dt="text" by="1203"/>
+<httpSample t="2" lt="2" ts="1375876277677" s="false" lb="Deploy" rc="404" rm="Not Found" tn="Phresco-3.0 Performance  1-1" dt="text" by="1182"/>
+<httpSample t="2" lt="2" ts="1375876277679" s="false" lb="DeployReadLog" rc="404" rm="Not Found" tn="Phresco-3.0 Performance  1-1" dt="text" by="1185"/>
+<httpSample t="2" lt="2" ts="1375876277681" s="false" lb="BuildDelete" rc="403" rm="Forbidden" tn="Phresco-3.0 Performance  1-1" dt="text" by="1133"/>
+<httpSample t="1" lt="1" ts="1375876277684" s="false" lb="BuildOpenFolder" rc="404" rm="Not Found" tn="Phresco-3.0 Performance  1-1" dt="text" by="1197"/>
+<httpSample t="2" lt="2" ts="1375876277686" s="false" lb="BuildCopyPath" rc="404" rm="Not Found" tn="Phresco-3.0 Performance  1-1" dt="text" by="1191"/>
+<httpSample t="2" lt="2" ts="1375876277689" s="false" lb="BuildCopyToClipBoard" rc="404" rm="Not Found" tn="Phresco-3.0 Performance  1-1" dt="text" by="1212"/>
+<httpSample t="2" lt="2" ts="1375876277691" s="false" lb="UnitTab" rc="404" rm="Not Found" tn="Phresco-3.0 Performance  1-1" dt="text" by="1188"/>
+<httpSample t="1" lt="1" ts="1375876277694" s="false" lb="UnitTestSuites" rc="404" rm="Not Found" tn="Phresco-3.0 Performance  1-1" dt="text" by="1206"/>
+<httpSample t="2" lt="2" ts="1375876277696" s="false" lb="UnitTestParameter" rc="404" rm="Not Found" tn="Phresco-3.0 Performance  1-1" dt="text" by="1203"/>
+<httpSample t="3" lt="3" ts="1375876277699" s="false" lb="UnitTest" rc="404" rm="Not Found" tn="Phresco-3.0 Performance  1-1" dt="text" by="1197"/>
+<httpSample t="2" lt="2" ts="1375876277702" s="false" lb="UnitReadLog" rc="404" rm="Not Found" tn="Phresco-3.0 Performance  1-1" dt="text" by="1185"/>
+<httpSample t="3" lt="3" ts="1375876277705" s="false" lb="UnitTestReports" rc="404" rm="Not Found" tn="Phresco-3.0 Performance  1-1" dt="text" by="1206"/>
+<httpSample t="2" lt="2" ts="1375876277709" s="false" lb="FunctionalTestSuite" rc="404" rm="Not Found" tn="Phresco-3.0 Performance  1-1" dt="text" by="1206"/>
+<httpSample t="2" lt="2" ts="1375876277711" s="false" lb="FunctionalHubParameter" rc="404" rm="Not Found" tn="Phresco-3.0 Performance  1-1" dt="text" by="1203"/>
+<httpSample t="2" lt="2" ts="1375876277714" s="false" lb="FunctionalCheckForHub" rc="404" rm="Not Found" tn="Phresco-3.0 Performance  1-1" dt="text" by="1197"/>
+<httpSample t="2" lt="2" ts="1375876277716" s="false" lb="FunctionalStartHub" rc="404" rm="Not Found" tn="Phresco-3.0 Performance  1-1" dt="text" by="1188"/>
+<httpSample t="1" lt="1" ts="1375876277719" s="false" lb="FunctionalNodeParameter" rc="404" rm="Not Found" tn="Phresco-3.0 Performance  1-1" dt="text" by="1203"/>
+<httpSample t="2" lt="2" ts="1375876277721" s="false" lb="FunctionalStartNode" rc="404" rm="Not Found" tn="Phresco-3.0 Performance  1-1" dt="text" by="1191"/>
+<httpSample t="2" lt="2" ts="1375876277724" s="false" lb="FunctionalNodeCheckAlive" rc="404" rm="Not Found" tn="Phresco-3.0 Performance  1-1" dt="text" by="1236"/>
+<httpSample t="2" lt="2" ts="1375876277726" s="false" lb="FunctionalTestParameter" rc="404" rm="Not Found" tn="Phresco-3.0 Performance  1-1" dt="text" by="1203"/>
+<httpSample t="2" lt="2" ts="1375876277728" s="false" lb="FunctionalTestRun" rc="404" rm="Not Found" tn="Phresco-3.0 Performance  1-1" dt="text" by="1215"/>
+<httpSample t="2" lt="2" ts="1375876277731" s="false" lb="FunctionalStopNode" rc="404" rm="Not Found" tn="Phresco-3.0 Performance  1-1" dt="text" by="1212"/>
+<httpSample t="2" lt="2" ts="1375876277734" s="false" lb="FunctionalStopHub" rc="404" rm="Not Found" tn="Phresco-3.0 Performance  1-1" dt="text" by="1185"/>
+<httpSample t="2" lt="2" ts="1375876277736" s="false" lb="FunctionalTestReadLog" rc="404" rm="Not Found" tn="Phresco-3.0 Performance  1-1" dt="text" by="1185"/>
+<httpSample t="1" lt="1" ts="1375876277739" s="false" lb="FunctionalFramework" rc="404" rm="Not Found" tn="Phresco-3.0 Performance  1-1" dt="text" by="1233"/>
+<httpSample t="2" lt="2" ts="1375876277741" s="false" lb="ManualTestSuite" rc="404" rm="Not Found" tn="Phresco-3.0 Performance  1-1" dt="text" by="1203"/>
+<httpSample t="2" lt="2" ts="1375876277743" s="false" lb="ManualTestUpload" rc="404" rm="Not Found" tn="Phresco-3.0 Performance  1-1" dt="text" by="1203"/>
+<httpSample t="1" lt="1" ts="1375876277746" s="false" lb="PerformanceTab" rc="404" rm="Not Found" tn="Phresco-3.0 Performance  1-1" dt="text" by="1209"/>
+<httpSample t="2" lt="2" ts="1375876277748" s="false" lb="PerformanceParameter" rc="404" rm="Not Found" tn="Phresco-3.0 Performance  1-1" dt="text" by="1203"/>
+<httpSample t="2" lt="2" ts="1375876277750" s="false" lb="PerformanceRun" rc="404" rm="Not Found" tn="Phresco-3.0 Performance  1-1" dt="text" by="1209"/>
+<httpSample t="2" lt="2" ts="1375876277753" s="false" lb="PerformanceReadLog" rc="404" rm="Not Found" tn="Phresco-3.0 Performance  1-1" dt="text" by="1185"/>
+<httpSample t="2" lt="2" ts="1375876277755" s="false" lb="PerformanceTestReport" rc="404" rm="Not Found" tn="Phresco-3.0 Performance  1-1" dt="text" by="1242"/>
+<httpSample t="2" lt="2" ts="1375876277758" s="false" lb="LoadTab" rc="404" rm="Not Found" tn="Phresco-3.0 Performance  1-1" dt="text" by="1188"/>
+<httpSample t="2" lt="2" ts="1375876277760" s="false" lb="LoadParameter" rc="404" rm="Not Found" tn="Phresco-3.0 Performance  1-1" dt="text" by="1203"/>
+<httpSample t="6" lt="6" ts="1375876277763" s="false" lb="LoadRun" rc="404" rm="Not Found" tn="Phresco-3.0 Performance  1-1" dt="text" by="1188"/>
+<httpSample t="2" lt="2" ts="1375876277770" s="false" lb="LoadReadLog" rc="404" rm="Not Found" tn="Phresco-3.0 Performance  1-1" dt="text" by="1185"/>
+<httpSample t="2" lt="2" ts="1375876277773" s="false" lb="PDFShowPopUp" rc="404" rm="Not Found" tn="Phresco-3.0 Performance  1-1" dt="text" by="1191"/>
+<httpSample t="1" lt="1" ts="1375876277776" s="false" lb="PDFGenerate" rc="404" rm="Not Found" tn="Phresco-3.0 Performance  1-1" dt="text" by="1194"/>
+<httpSample t="2" lt="2" ts="1375876277778" s="false" lb="PDFDownload" rc="404" rm="Not Found" tn="Phresco-3.0 Performance  1-1" dt="text" by="1206"/>
+<httpSample t="1" lt="1" ts="1375876277781" s="false" lb="PDFDelete" rc="403" rm="Forbidden" tn="Phresco-3.0 Performance  1-1" dt="text" by="1133"/>
+<httpSample t="2" lt="2" ts="1375876277783" s="false" lb="ProjectListForAdditionalFunctionality" rc="404" rm="Not Found" tn="Phresco-3.0 Performance  1-1" dt="text" by="1188"/>
+<httpSample t="1" lt="1" ts="1375876277786" s="false" lb="AddToRepo" rc="404" rm="Not Found" tn="Phresco-3.0 Performance  1-1" dt="text" by="1233"/>
+<httpSample t="2" lt="2" ts="1375876277788" s="false" lb="Import" rc="404" rm="Not Found" tn="Phresco-3.0 Performance  1-1" dt="text" by="1236"/>
+<httpSample t="2" lt="2" ts="1375876277790" s="false" lb="ProjectDelete" rc="403" rm="Forbidden" tn="Phresco-3.0 Performance  1-1" dt="text" by="1133"/>
+
+</testResults>

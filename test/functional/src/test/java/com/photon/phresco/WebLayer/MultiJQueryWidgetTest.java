@@ -283,6 +283,20 @@ public class MultiJQueryWidgetTest {
 			t.printStackTrace();
 		}
 	} 
+	
+	@Test
+	public void testMultiJQueryWidgetArchetypeComponentTest()
+	throws InterruptedException, IOException, Exception {
+		try {
+			
+			System.out.println("---------testMultiJQueryWidgetArchetypeComponentTest()-------------");
+			methodName = Thread.currentThread().getStackTrace()[1].getMethodName();
+			webBaseScreen.componentTest(methodName);
+		
+		} catch (Exception t) {
+			t.printStackTrace();
+		}
+	} 
 
 	@AfterTest
 	public  void tearDown() {

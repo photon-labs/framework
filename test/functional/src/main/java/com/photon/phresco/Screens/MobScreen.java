@@ -492,6 +492,7 @@ public class MobScreen extends BaseScreen {
 			waitForElementPresent(phrescoUiConst.getPdfName(), methodName);
 			getXpathWebElement(phrescoUiConst.getPdfName());
 			click();
+			clear();
 			sendKeys(iPhoneNativeConst.getiPhoneNatArchetypeDetailReportName());
 			
 			Thread.sleep(MagicNumbers.HALF_SECONDS);
@@ -913,6 +914,7 @@ public class MobScreen extends BaseScreen {
 			waitForElementPresent(phrescoUiConst.getPdfName(), methodName);
 			getXpathWebElement(phrescoUiConst.getPdfName());
 			click();
+			clear();
 			sendKeys(iPhoneHybridConst.getiPhoneHybArchetypeDetailReportName());
 			
 			Thread.sleep(MagicNumbers.HALF_SECONDS);
@@ -1286,6 +1288,7 @@ public class MobScreen extends BaseScreen {
 			waitForElementPresent(phrescoUiConst.getPdfName(), methodName);
 			getXpathWebElement(phrescoUiConst.getPdfName());
 			click();
+			clear();
 			sendKeys(iPhoneLibraryConst.getiPhoneLibArchetypeDetailReportName());
 			
 			Thread.sleep(MagicNumbers.HALF_SECONDS);
@@ -1687,6 +1690,7 @@ public class MobScreen extends BaseScreen {
 			waitForElementPresent(phrescoUiConst.getPdfName(), methodName);
 			getXpathWebElement(phrescoUiConst.getPdfName());
 			click();
+			clear();
 			sendKeys(iPhoneWorkspaceConst.getiPhoneWorkspaceArchetypeDetailReportName());
 			
 			Thread.sleep(MagicNumbers.HALF_SECONDS);
@@ -2114,6 +2118,7 @@ public class MobScreen extends BaseScreen {
 			waitForElementPresent(phrescoUiConst.getPdfName(), methodName);
 			getXpathWebElement(phrescoUiConst.getPdfName());
 			click();
+			clear();
 			sendKeys(androidNativeConst.getAndroidNatArchetypeDetailReportName());
 			
 			Thread.sleep(MagicNumbers.HALF_SECONDS);
@@ -2521,6 +2526,7 @@ public class MobScreen extends BaseScreen {
 			waitForElementPresent(phrescoUiConst.getPdfName(), methodName);
 			getXpathWebElement(phrescoUiConst.getPdfName());
 			click();
+			clear();
 			sendKeys(androidHybConst.getAndroidHybArchetypeDetailReportName());
 			
 			Thread.sleep(MagicNumbers.HALF_SECONDS);
@@ -2896,6 +2902,7 @@ public class MobScreen extends BaseScreen {
 			waitForElementPresent(phrescoUiConst.getPdfName(), methodName);
 			getXpathWebElement(phrescoUiConst.getPdfName());
 			click();
+			clear();
 			sendKeys(androidLibraryConst.getAndroidLibArchetypeDetailReportName());
 			
 			Thread.sleep(MagicNumbers.HALF_SECONDS);
@@ -3292,6 +3299,7 @@ public class MobScreen extends BaseScreen {
 			waitForElementPresent(phrescoUiConst.getPdfName(), methodName);
 			getXpathWebElement(phrescoUiConst.getPdfName());
 			click();
+			clear();
 			sendKeys(blackBerryHybConst.getBlackBerryHybArchetypeDetailReportName());
 			
 			Thread.sleep(MagicNumbers.HALF_SECONDS);
@@ -3694,6 +3702,7 @@ public class MobScreen extends BaseScreen {
 			waitForElementPresent(phrescoUiConst.getPdfName(), methodName);
 			getXpathWebElement(phrescoUiConst.getPdfName());
 			click();
+			clear();
 			sendKeys(windowsMetroConst.getWindowsMetroArchetypeDetailReportName());
 			
 			Thread.sleep(MagicNumbers.HALF_SECONDS);
@@ -4142,6 +4151,7 @@ public class MobScreen extends BaseScreen {
 			waitForElementPresent(phrescoUiConst.getPdfName(), methodName);
 			getXpathWebElement(phrescoUiConst.getPdfName());
 			click();
+			clear();
 			sendKeys(windowsMobileConst.getWindowsPhoneArchetypeDetailReportName());
 			
 			Thread.sleep(MagicNumbers.HALF_SECONDS);
@@ -4175,7 +4185,7 @@ public class MobScreen extends BaseScreen {
 			getXpathWebElement(phrescoUiConst.getCodeQualityTab());
 			click();
 			
-			Thread.sleep(MagicNumbers.HALF_SECONDS);
+			Thread.sleep(MagicNumbers.TWO_THOUSAND_SECONDS);
 			waitForElementPresent(phrescoUiConst.getCodeAnalysisTab(), methodName);
 			getXpathWebElement(phrescoUiConst.getCodeAnalysisTab());
 			click();

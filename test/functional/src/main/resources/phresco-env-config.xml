@@ -1,6 +1,6 @@
 <environment>
 
-	<Browser>firefox</Browser>
+	<Browser>chrome</Browser>
 	<Resolution>1280x960</Resolution>
 
 	<Server desc="" name="server">

@@ -26,7 +26,10 @@ public class ScenariosScreen extends BaseScreen {
 	private UserInfoConstants userInfoConst;
 	private PhrescoframeworkData phrescoData;
 
-	public ScenariosScreen(String selectedBrowser, String applicationURL,String applicationContext, phresco_env_config phrscEnv,PhrescoUiConstants phrescoUiConst, UserInfoConstants userInfoConst,	PhrescoframeworkData phrescoData) throws ScreenException {
+	public ScenariosScreen(String selectedBrowser, String applicationURL,
+			String applicationContext, phresco_env_config phrscEnv,
+			PhrescoUiConstants phrescoUiConst, UserInfoConstants userInfoConst,
+			PhrescoframeworkData phrescoData) throws ScreenException {
 		BaseScreen.phrscEnv = phrscEnv;
 		this.phrescoUiConst = phrescoUiConst;
 		this.userInfoConst = userInfoConst;
@@ -37,7 +40,7 @@ public class ScenariosScreen extends BaseScreen {
 	public void loginPage(String methodName) throws Exception {
 		if (StringUtils.isEmpty(methodName)) {
 			methodName = Thread.currentThread().getStackTrace()[1]
-			                                                    .getMethodName();
+					.getMethodName();
 		}
 		log.info("@testLoginPage scenario****");
 		try {
@@ -59,7 +62,8 @@ public class ScenariosScreen extends BaseScreen {
 			click();
 
 			Thread.sleep(2000);
-			waitForElementPresent(phrescoUiConst.getCustomerDropdown(),	methodName);
+			waitForElementPresent(phrescoUiConst.getCustomerDropdown(),
+					methodName);
 			getXpathWebElement(phrescoUiConst.getCustomerDropdown());
 			click();
 
@@ -78,7 +82,7 @@ public class ScenariosScreen extends BaseScreen {
 			ScenariosConstants scenarioConst) throws Exception {
 		if (StringUtils.isEmpty(methodName)) {
 			methodName = Thread.currentThread().getStackTrace()[1]
-			                                                    .getMethodName();
+					.getMethodName();
 		}
 		log.info("@androidNative executing");
 		try {
@@ -88,14 +92,16 @@ public class ScenariosScreen extends BaseScreen {
 			click();
 
 			Thread.sleep(MagicNumbers.HALF_SECONDS);
-			waitForElementPresent(phrescoUiConst.getAddProjectButton(),	methodName);
+			waitForElementPresent(phrescoUiConst.getAddProjectButton(),
+					methodName);
 			getXpathWebElement(phrescoUiConst.getAddProjectButton());
 			click();
 			Thread.sleep(MagicNumbers.ONE_THOUSAND_SECONDS);
 			click();
-			
+
 			Thread.sleep(MagicNumbers.ONE_THOUSAND_SECONDS);
-			waitForElementPresent(phrescoUiConst.getRemoveWebLayer(), methodName);
+			waitForElementPresent(phrescoUiConst.getRemoveWebLayer(),
+					methodName);
 			getXpathWebElement(phrescoUiConst.getRemoveWebLayer());
 			click();
 
@@ -107,31 +113,36 @@ public class ScenariosScreen extends BaseScreen {
 			sendKeys(scenarioConst.getAndroidNativeName());
 
 			Thread.sleep(MagicNumbers.HALF_SECONDS);
-			waitForElementPresent(phrescoUiConst.getProjectDescription(),methodName);
+			waitForElementPresent(phrescoUiConst.getProjectDescription(),
+					methodName);
 			getXpathWebElement(phrescoUiConst.getProjectDescription());
 			click();
 			clear();
 			sendKeys(scenarioConst.getAndroidNativeDesc());
 
 			Thread.sleep(MagicNumbers.ONE_THOUSAND_SECONDS);
-			waitForElementPresent(phrescoUiConst.getAppLayerAppCode(),methodName);
+			waitForElementPresent(phrescoUiConst.getAppLayerAppCode(),
+					methodName);
 			getXpathWebElement(phrescoUiConst.getAppLayerAppCode());
 			click();
 			clear();
 			sendKeys(scenarioConst.getAndroidNativeAppCode());
 
 			Thread.sleep(MagicNumbers.HALF_SECONDS);
-			waitForElementPresent(phrescoUiConst.getAppLayerTechnology(), methodName);
+			waitForElementPresent(phrescoUiConst.getAppLayerTechnology(),
+					methodName);
 			getXpathWebElement(phrescoUiConst.getAppLayerTechnology());
 			click();
-			
+
 			Thread.sleep(MagicNumbers.HALF_SECONDS);
-			waitForElementPresent(phrescoUiConst.getAppTechnologyNodeJS(), methodName);
+			waitForElementPresent(phrescoUiConst.getAppTechnologyNodeJS(),
+					methodName);
 			getXpathWebElement(phrescoUiConst.getAppTechnologyNodeJS());
 			click();
 
 			Thread.sleep(MagicNumbers.ONE_THOUSAND_SECONDS);
-			waitForElementPresent(phrescoUiConst.getMobLayerAppCode(),methodName);
+			waitForElementPresent(phrescoUiConst.getMobLayerAppCode(),
+					methodName);
 			getXpathWebElement(phrescoUiConst.getMobLayerAppCode());
 			click();
 			clear();
@@ -141,24 +152,27 @@ public class ScenariosScreen extends BaseScreen {
 			waitForElementPresent(phrescoUiConst.getMobLayer(), methodName);
 			getXpathWebElement(phrescoUiConst.getMobLayer());
 			click();
-			
+
 			Thread.sleep(MagicNumbers.HALF_SECONDS);
-			waitForElementPresent(phrescoUiConst.getMobTechnologyAndroid(),methodName);
+			waitForElementPresent(phrescoUiConst.getMobTechnologyAndroid(),
+					methodName);
 			getXpathWebElement(phrescoUiConst.getMobTechnologyAndroid());
-			click();		
+			click();
 
 			Thread.sleep(MagicNumbers.HALF_SECONDS);
 			waitForElementPresent(phrescoUiConst.getMobileType(), methodName);
 			getXpathWebElement(phrescoUiConst.getMobileType());
 			click();
-								
+
 			Thread.sleep(MagicNumbers.HALF_SECONDS);
-			waitForElementPresent(phrescoUiConst.getMobTechnologyAndroidNative(), methodName);
+			waitForElementPresent(
+					phrescoUiConst.getMobTechnologyAndroidNative(), methodName);
 			getXpathWebElement(phrescoUiConst.getMobTechnologyAndroidNative());
-			click();		
+			click();
 
 			Thread.sleep(MagicNumbers.ONE_THOUSAND_SECONDS);
-			waitForElementPresent(phrescoUiConst.getProjectCreateButton(), methodName);
+			waitForElementPresent(phrescoUiConst.getProjectCreateButton(),
+					methodName);
 			getXpathWebElement(phrescoUiConst.getProjectCreateButton());
 			click();
 			Thread.sleep(MagicNumbers.TWENTY_THOUSAND_SECONDS);
@@ -170,10 +184,10 @@ public class ScenariosScreen extends BaseScreen {
 	}
 
 	public void iPhoneNative(String methodName, ScenariosConstants scenarioConst)
-	throws Exception {
+			throws Exception {
 		if (StringUtils.isEmpty(methodName)) {
 			methodName = Thread.currentThread().getStackTrace()[1]
-			                                                    .getMethodName();
+					.getMethodName();
 		}
 		log.info("@iPhoneNative executing");
 		try {
@@ -189,9 +203,10 @@ public class ScenariosScreen extends BaseScreen {
 			click();
 			Thread.sleep(MagicNumbers.ONE_THOUSAND_SECONDS);
 			click();
-			
+
 			Thread.sleep(MagicNumbers.ONE_THOUSAND_SECONDS);
-			waitForElementPresent(phrescoUiConst.getRemoveWebLayer(), methodName);
+			waitForElementPresent(phrescoUiConst.getRemoveWebLayer(),
+					methodName);
 			getXpathWebElement(phrescoUiConst.getRemoveWebLayer());
 			click();
 
@@ -219,12 +234,14 @@ public class ScenariosScreen extends BaseScreen {
 			sendKeys(scenarioConst.getiPhoneNativeAppCode());
 
 			Thread.sleep(MagicNumbers.HALF_SECONDS);
-			waitForElementPresent(phrescoUiConst.getAppLayerTechnology(), methodName);
+			waitForElementPresent(phrescoUiConst.getAppLayerTechnology(),
+					methodName);
 			getXpathWebElement(phrescoUiConst.getAppLayerTechnology());
 			click();
-			
+
 			Thread.sleep(MagicNumbers.HALF_SECONDS);
-			waitForElementPresent(phrescoUiConst.getAppTechnologyNodeJS(), methodName);
+			waitForElementPresent(phrescoUiConst.getAppTechnologyNodeJS(),
+					methodName);
 			getXpathWebElement(phrescoUiConst.getAppTechnologyNodeJS());
 			click();
 
@@ -240,19 +257,21 @@ public class ScenariosScreen extends BaseScreen {
 			waitForElementPresent(phrescoUiConst.getMobLayer(), methodName);
 			getXpathWebElement(phrescoUiConst.getMobLayer());
 			click();
-			
+
 			Thread.sleep(MagicNumbers.HALF_SECONDS);
-			waitForElementPresent(phrescoUiConst.getMobTechnologyIphone(),methodName);
+			waitForElementPresent(phrescoUiConst.getMobTechnologyIphone(),
+					methodName);
 			getXpathWebElement(phrescoUiConst.getMobTechnologyIphone());
-			click();		
+			click();
 
 			Thread.sleep(MagicNumbers.HALF_SECONDS);
 			waitForElementPresent(phrescoUiConst.getMobileType(), methodName);
 			getXpathWebElement(phrescoUiConst.getMobileType());
 			click();
-								
+
 			Thread.sleep(MagicNumbers.HALF_SECONDS);
-			waitForElementPresent(phrescoUiConst.getMobTechnologyIphoneNative(), methodName);
+			waitForElementPresent(
+					phrescoUiConst.getMobTechnologyIphoneNative(), methodName);
 			getXpathWebElement(phrescoUiConst.getMobTechnologyIphoneNative());
 			click();
 
@@ -273,7 +292,7 @@ public class ScenariosScreen extends BaseScreen {
 			ScenariosConstants scenarioConst) throws Exception {
 		if (StringUtils.isEmpty(methodName)) {
 			methodName = Thread.currentThread().getStackTrace()[1]
-			                                                    .getMethodName();
+					.getMethodName();
 		}
 		log.info("@androidHybrid executing");
 		try {
@@ -314,17 +333,20 @@ public class ScenariosScreen extends BaseScreen {
 			sendKeys(scenarioConst.getAndroidHybridAppCode());
 
 			Thread.sleep(MagicNumbers.HALF_SECONDS);
-			waitForElementPresent(phrescoUiConst.getAppLayerTechnology(), methodName);
+			waitForElementPresent(phrescoUiConst.getAppLayerTechnology(),
+					methodName);
 			getXpathWebElement(phrescoUiConst.getAppLayerTechnology());
 			click();
-			
+
 			Thread.sleep(MagicNumbers.HALF_SECONDS);
-			waitForElementPresent(phrescoUiConst.getAppTechnologyNodeJS(), methodName);
+			waitForElementPresent(phrescoUiConst.getAppTechnologyNodeJS(),
+					methodName);
 			getXpathWebElement(phrescoUiConst.getAppTechnologyNodeJS());
 			click();
 
 			Thread.sleep(MagicNumbers.ONE_THOUSAND_SECONDS);
-			waitForElementPresent(phrescoUiConst.getWebLayerAppCode(), methodName);
+			waitForElementPresent(phrescoUiConst.getWebLayerAppCode(),
+					methodName);
 			getXpathWebElement(phrescoUiConst.getWebLayerAppCode());
 			click();
 			clear();
@@ -334,23 +356,24 @@ public class ScenariosScreen extends BaseScreen {
 			waitForElementPresent(phrescoUiConst.getWebLayer(), methodName);
 			getXpathWebElement(phrescoUiConst.getWebLayer());
 			click();
-			
+
 			Thread.sleep(MagicNumbers.HALF_SECONDS);
-			waitForElementPresent(phrescoUiConst.getWebTechnologyHTML5(), methodName);
+			waitForElementPresent(phrescoUiConst.getWebTechnologyHTML5(),
+					methodName);
 			getXpathWebElement(phrescoUiConst.getWebTechnologyHTML5());
-			click();			
+			click();
 
 			Thread.sleep(MagicNumbers.HALF_SECONDS);
 			waitForElementPresent(phrescoUiConst.getWebLayerWidget(),
 					methodName);
 			getXpathWebElement(phrescoUiConst.getWebLayerWidget());
 			click();
-			
+
 			Thread.sleep(MagicNumbers.HALF_SECONDS);
 			waitForElementPresent(phrescoUiConst.getWebTechnologyYMW(),
 					methodName);
 			getXpathWebElement(phrescoUiConst.getWebTechnologyYMW());
-			click();		
+			click();
 
 			Thread.sleep(MagicNumbers.ONE_THOUSAND_SECONDS);
 			waitForElementPresent(phrescoUiConst.getMobLayerAppCode(),
@@ -364,22 +387,24 @@ public class ScenariosScreen extends BaseScreen {
 			waitForElementPresent(phrescoUiConst.getMobLayer(), methodName);
 			getXpathWebElement(phrescoUiConst.getMobLayer());
 			click();
-			
+
 			Thread.sleep(MagicNumbers.HALF_SECONDS);
-			waitForElementPresent(phrescoUiConst.getMobTechnologyAndroid(),methodName);
+			waitForElementPresent(phrescoUiConst.getMobTechnologyAndroid(),
+					methodName);
 			getXpathWebElement(phrescoUiConst.getMobTechnologyAndroid());
-			click();		
+			click();
 
 			Thread.sleep(MagicNumbers.HALF_SECONDS);
 			waitForElementPresent(phrescoUiConst.getMobileType(), methodName);
 			getXpathWebElement(phrescoUiConst.getMobileType());
 			click();
-								
+
 			Thread.sleep(MagicNumbers.HALF_SECONDS);
-			waitForElementPresent(phrescoUiConst.getMobTechnologyAndroidHybrid(), methodName);
+			waitForElementPresent(
+					phrescoUiConst.getMobTechnologyAndroidHybrid(), methodName);
 			getXpathWebElement(phrescoUiConst.getMobTechnologyAndroidHybrid());
-			click();				
-			
+			click();
+
 			Thread.sleep(MagicNumbers.ONE_THOUSAND_SECONDS);
 			waitForElementPresent(phrescoUiConst.getProjectCreateButton(),
 					methodName);
@@ -394,10 +419,10 @@ public class ScenariosScreen extends BaseScreen {
 	}
 
 	public void iPhoneHybrid(String methodName, ScenariosConstants scenarioConst)
-	throws Exception {
+			throws Exception {
 		if (StringUtils.isEmpty(methodName)) {
 			methodName = Thread.currentThread().getStackTrace()[1]
-			                                                    .getMethodName();
+					.getMethodName();
 		}
 		log.info("@iPhoneHybrid executing");
 		try {
@@ -438,17 +463,20 @@ public class ScenariosScreen extends BaseScreen {
 			sendKeys(scenarioConst.getiPhoneHybridAppCode());
 
 			Thread.sleep(MagicNumbers.HALF_SECONDS);
-			waitForElementPresent(phrescoUiConst.getAppLayerTechnology(), methodName);
+			waitForElementPresent(phrescoUiConst.getAppLayerTechnology(),
+					methodName);
 			getXpathWebElement(phrescoUiConst.getAppLayerTechnology());
 			click();
-			
+
 			Thread.sleep(MagicNumbers.HALF_SECONDS);
-			waitForElementPresent(phrescoUiConst.getAppTechnologyNodeJS(), methodName);
+			waitForElementPresent(phrescoUiConst.getAppTechnologyNodeJS(),
+					methodName);
 			getXpathWebElement(phrescoUiConst.getAppTechnologyNodeJS());
 			click();
 
 			Thread.sleep(MagicNumbers.ONE_THOUSAND_SECONDS);
-			waitForElementPresent(phrescoUiConst.getWebLayerAppCode(), methodName);
+			waitForElementPresent(phrescoUiConst.getWebLayerAppCode(),
+					methodName);
 			getXpathWebElement(phrescoUiConst.getWebLayerAppCode());
 			click();
 			clear();
@@ -458,23 +486,24 @@ public class ScenariosScreen extends BaseScreen {
 			waitForElementPresent(phrescoUiConst.getWebLayer(), methodName);
 			getXpathWebElement(phrescoUiConst.getWebLayer());
 			click();
-			
+
 			Thread.sleep(MagicNumbers.HALF_SECONDS);
-			waitForElementPresent(phrescoUiConst.getWebTechnologyHTML5(), methodName);
+			waitForElementPresent(phrescoUiConst.getWebTechnologyHTML5(),
+					methodName);
 			getXpathWebElement(phrescoUiConst.getWebTechnologyHTML5());
-			click();			
+			click();
 
 			Thread.sleep(MagicNumbers.HALF_SECONDS);
 			waitForElementPresent(phrescoUiConst.getWebLayerWidget(),
 					methodName);
 			getXpathWebElement(phrescoUiConst.getWebLayerWidget());
 			click();
-			
+
 			Thread.sleep(MagicNumbers.HALF_SECONDS);
 			waitForElementPresent(phrescoUiConst.getWebTechnologyYMW(),
 					methodName);
 			getXpathWebElement(phrescoUiConst.getWebTechnologyYMW());
-			click();		
+			click();
 
 			Thread.sleep(MagicNumbers.ONE_THOUSAND_SECONDS);
 			waitForElementPresent(phrescoUiConst.getMobLayerAppCode(),
@@ -488,21 +517,23 @@ public class ScenariosScreen extends BaseScreen {
 			waitForElementPresent(phrescoUiConst.getMobLayer(), methodName);
 			getXpathWebElement(phrescoUiConst.getMobLayer());
 			click();
-			
+
 			Thread.sleep(MagicNumbers.HALF_SECONDS);
-			waitForElementPresent(phrescoUiConst.getMobTechnologyIphone(),methodName);
+			waitForElementPresent(phrescoUiConst.getMobTechnologyIphone(),
+					methodName);
 			getXpathWebElement(phrescoUiConst.getMobTechnologyIphone());
-			click();		
+			click();
 
 			Thread.sleep(MagicNumbers.HALF_SECONDS);
 			waitForElementPresent(phrescoUiConst.getMobileType(), methodName);
 			getXpathWebElement(phrescoUiConst.getMobileType());
 			click();
-								
+
 			Thread.sleep(MagicNumbers.HALF_SECONDS);
-			waitForElementPresent(phrescoUiConst.getMobTechnologyIphoneHybrid(), methodName);
+			waitForElementPresent(
+					phrescoUiConst.getMobTechnologyIphoneHybrid(), methodName);
 			getXpathWebElement(phrescoUiConst.getMobTechnologyIphoneHybrid());
-			click();			
+			click();
 
 			Thread.sleep(MagicNumbers.ONE_THOUSAND_SECONDS);
 			waitForElementPresent(phrescoUiConst.getProjectCreateButton(),
@@ -511,18 +542,17 @@ public class ScenariosScreen extends BaseScreen {
 			click();
 			Thread.sleep(MagicNumbers.TWENTY_THOUSAND_SECONDS);
 
-
 		} catch (InterruptedException e) {
 
 			e.printStackTrace();
 		}
 	}
 
-	public void yuiMobileWidget(String methodName, ScenariosConstants scenarioConst)
-	throws Exception {
+	public void yuiMobileWidget(String methodName,
+			ScenariosConstants scenarioConst) throws Exception {
 		if (StringUtils.isEmpty(methodName)) {
 			methodName = Thread.currentThread().getStackTrace()[1]
-			                                                    .getMethodName();
+					.getMethodName();
 		}
 		log.info("@mobileWidget executing");
 		try {
@@ -563,17 +593,20 @@ public class ScenariosScreen extends BaseScreen {
 			sendKeys(scenarioConst.getMobileWidgetAppcode());
 
 			Thread.sleep(MagicNumbers.HALF_SECONDS);
-			waitForElementPresent(phrescoUiConst.getAppLayerTechnology(), methodName);
+			waitForElementPresent(phrescoUiConst.getAppLayerTechnology(),
+					methodName);
 			getXpathWebElement(phrescoUiConst.getAppLayerTechnology());
 			click();
-			
+
 			Thread.sleep(MagicNumbers.HALF_SECONDS);
-			waitForElementPresent(phrescoUiConst.getAppTechnologyJ2EE(), methodName);
+			waitForElementPresent(phrescoUiConst.getAppTechnologyJ2EE(),
+					methodName);
 			getXpathWebElement(phrescoUiConst.getAppTechnologyJ2EE());
 			click();
-			
+
 			Thread.sleep(MagicNumbers.ONE_THOUSAND_SECONDS);
-			waitForElementPresent(phrescoUiConst.getWebLayerAppCode(), methodName);
+			waitForElementPresent(phrescoUiConst.getWebLayerAppCode(),
+					methodName);
 			getXpathWebElement(phrescoUiConst.getWebLayerAppCode());
 			click();
 			clear();
@@ -583,26 +616,28 @@ public class ScenariosScreen extends BaseScreen {
 			waitForElementPresent(phrescoUiConst.getWebLayer(), methodName);
 			getXpathWebElement(phrescoUiConst.getWebLayer());
 			click();
-			
+
 			Thread.sleep(MagicNumbers.HALF_SECONDS);
-			waitForElementPresent(phrescoUiConst.getWebTechnologyHTML5(), methodName);
+			waitForElementPresent(phrescoUiConst.getWebTechnologyHTML5(),
+					methodName);
 			getXpathWebElement(phrescoUiConst.getWebTechnologyHTML5());
-			click();			
+			click();
 
 			Thread.sleep(MagicNumbers.HALF_SECONDS);
 			waitForElementPresent(phrescoUiConst.getWebLayerWidget(),
 					methodName);
 			getXpathWebElement(phrescoUiConst.getWebLayerWidget());
 			click();
-			
+
 			Thread.sleep(MagicNumbers.HALF_SECONDS);
 			waitForElementPresent(phrescoUiConst.getWebTechnologyYMW(),
 					methodName);
 			getXpathWebElement(phrescoUiConst.getWebTechnologyYMW());
-			click();		
+			click();
 
 			Thread.sleep(MagicNumbers.ONE_THOUSAND_SECONDS);
-			waitForElementPresent(phrescoUiConst.getRemoveMobileLayer(),methodName);
+			waitForElementPresent(phrescoUiConst.getRemoveMobileLayer(),
+					methodName);
 			getXpathWebElement(phrescoUiConst.getRemoveMobileLayer());
 			click();
 
@@ -613,7 +648,6 @@ public class ScenariosScreen extends BaseScreen {
 			click();
 			Thread.sleep(MagicNumbers.TWENTY_THOUSAND_SECONDS);
 
-
 		} catch (InterruptedException e) {
 
 			e.printStackTrace();
@@ -621,10 +655,10 @@ public class ScenariosScreen extends BaseScreen {
 	}
 
 	public void jQueryWidget(String methodName, ScenariosConstants scenarioConst)
-	throws Exception {
+			throws Exception {
 		if (StringUtils.isEmpty(methodName)) {
 			methodName = Thread.currentThread().getStackTrace()[1]
-			                                                    .getMethodName();
+					.getMethodName();
 		}
 		log.info("@jQueryWidget executing");
 		try {
@@ -665,17 +699,20 @@ public class ScenariosScreen extends BaseScreen {
 			sendKeys(scenarioConst.getjQueryWidgetAppcode());
 
 			Thread.sleep(MagicNumbers.HALF_SECONDS);
-			waitForElementPresent(phrescoUiConst.getAppLayerTechnology(), methodName);
+			waitForElementPresent(phrescoUiConst.getAppLayerTechnology(),
+					methodName);
 			getXpathWebElement(phrescoUiConst.getAppLayerTechnology());
 			click();
-			
+
 			Thread.sleep(MagicNumbers.HALF_SECONDS);
-			waitForElementPresent(phrescoUiConst.getAppTechnologyJ2EE(), methodName);
+			waitForElementPresent(phrescoUiConst.getAppTechnologyJ2EE(),
+					methodName);
 			getXpathWebElement(phrescoUiConst.getAppTechnologyJ2EE());
 			click();
 
 			Thread.sleep(MagicNumbers.ONE_THOUSAND_SECONDS);
-			waitForElementPresent(phrescoUiConst.getWebLayerAppCode(), methodName);
+			waitForElementPresent(phrescoUiConst.getWebLayerAppCode(),
+					methodName);
 			getXpathWebElement(phrescoUiConst.getWebLayerAppCode());
 			click();
 			clear();
@@ -685,27 +722,28 @@ public class ScenariosScreen extends BaseScreen {
 			waitForElementPresent(phrescoUiConst.getWebLayer(), methodName);
 			getXpathWebElement(phrescoUiConst.getWebLayer());
 			click();
-			
+
 			Thread.sleep(MagicNumbers.HALF_SECONDS);
-			waitForElementPresent(phrescoUiConst.getWebTechnologyHTML5(), methodName);
+			waitForElementPresent(phrescoUiConst.getWebTechnologyHTML5(),
+					methodName);
 			getXpathWebElement(phrescoUiConst.getWebTechnologyHTML5());
-			click();			
+			click();
 
 			Thread.sleep(MagicNumbers.HALF_SECONDS);
 			waitForElementPresent(phrescoUiConst.getWebLayerWidget(),
 					methodName);
 			getXpathWebElement(phrescoUiConst.getWebLayerWidget());
 			click();
-			
+
 			Thread.sleep(MagicNumbers.HALF_SECONDS);
 			waitForElementPresent(phrescoUiConst.getWebTechnologyMJW(),
 					methodName);
 			getXpathWebElement(phrescoUiConst.getWebTechnologyMJW());
-			click();		
-
+			click();
 
 			Thread.sleep(MagicNumbers.ONE_THOUSAND_SECONDS);
-			waitForElementPresent(phrescoUiConst.getRemoveMobileLayer(),methodName);
+			waitForElementPresent(phrescoUiConst.getRemoveMobileLayer(),
+					methodName);
 			getXpathWebElement(phrescoUiConst.getRemoveMobileLayer());
 			click();
 
@@ -715,9 +753,7 @@ public class ScenariosScreen extends BaseScreen {
 			getXpathWebElement(phrescoUiConst.getProjectCreateButton());
 			click();
 
-
 			Thread.sleep(MagicNumbers.TWENTY_THOUSAND_SECONDS);
-
 
 		} catch (InterruptedException e) {
 
@@ -725,12 +761,11 @@ public class ScenariosScreen extends BaseScreen {
 		}
 	}
 
-
-	public void createProjectUseNumericValues(String methodName, ScenariosConstants scenarioConst)
-	throws Exception {
+	public void createProjectUseNumericValues(String methodName,
+			ScenariosConstants scenarioConst) throws Exception {
 		if (StringUtils.isEmpty(methodName)) {
 			methodName = Thread.currentThread().getStackTrace()[1]
-			                                                    .getMethodName();
+					.getMethodName();
 		}
 		log.info("@createProjectUseNumericValues executing");
 		try {
@@ -768,31 +803,31 @@ public class ScenariosScreen extends BaseScreen {
 			getXpathWebElement(phrescoUiConst.getWebLayerAppCode());
 			click();
 			clear();
-			sendKeys(scenarioConst.getNumericAppCode());		
-
+			sendKeys(scenarioConst.getNumericAppCode());
 
 			Thread.sleep(MagicNumbers.HALF_SECONDS);
 			waitForElementPresent(phrescoUiConst.getWebLayer(), methodName);
 			getXpathWebElement(phrescoUiConst.getWebLayer());
 			click();
-			
+
 			Thread.sleep(MagicNumbers.HALF_SECONDS);
-			waitForElementPresent(phrescoUiConst.getWebTechnologyHTML5(), methodName);
+			waitForElementPresent(phrescoUiConst.getWebTechnologyHTML5(),
+					methodName);
 			getXpathWebElement(phrescoUiConst.getWebTechnologyHTML5());
-			click();			
+			click();
 
 			Thread.sleep(MagicNumbers.HALF_SECONDS);
 			waitForElementPresent(phrescoUiConst.getWebLayerWidget(),
 					methodName);
 			getXpathWebElement(phrescoUiConst.getWebLayerWidget());
 			click();
-			
+
 			Thread.sleep(MagicNumbers.HALF_SECONDS);
 			waitForElementPresent(phrescoUiConst.getWebTechnologyYMW(),
 					methodName);
 			getXpathWebElement(phrescoUiConst.getWebTechnologyYMW());
-			click();		
-			
+			click();
+
 			Thread.sleep(MagicNumbers.ONE_THOUSAND_SECONDS);
 			waitForElementPresent(phrescoUiConst.getRemoveAppLayer(),
 					methodName);
@@ -818,11 +853,11 @@ public class ScenariosScreen extends BaseScreen {
 		}
 	}
 
-	public void createProjectUseAlphaNumericValues(String methodName, ScenariosConstants scenarioConst)
-	throws Exception {
+	public void createProjectUseAlphaNumericValues(String methodName,
+			ScenariosConstants scenarioConst) throws Exception {
 		if (StringUtils.isEmpty(methodName)) {
 			methodName = Thread.currentThread().getStackTrace()[1]
-			                                                    .getMethodName();
+					.getMethodName();
 		}
 		log.info("@createProjectUseNumericValues executing");
 		try {
@@ -860,31 +895,30 @@ public class ScenariosScreen extends BaseScreen {
 			getXpathWebElement(phrescoUiConst.getWebLayerAppCode());
 			click();
 			clear();
-			sendKeys(scenarioConst.getAlphaNumericAppCode());	
-
+			sendKeys(scenarioConst.getAlphaNumericAppCode());
 
 			Thread.sleep(MagicNumbers.HALF_SECONDS);
 			waitForElementPresent(phrescoUiConst.getWebLayer(), methodName);
 			getXpathWebElement(phrescoUiConst.getWebLayer());
 			click();
-			
+
 			Thread.sleep(MagicNumbers.HALF_SECONDS);
-			waitForElementPresent(phrescoUiConst.getWebTechnologyHTML5(), methodName);
+			waitForElementPresent(phrescoUiConst.getWebTechnologyHTML5(),
+					methodName);
 			getXpathWebElement(phrescoUiConst.getWebTechnologyHTML5());
-			click();			
+			click();
 
 			Thread.sleep(MagicNumbers.HALF_SECONDS);
 			waitForElementPresent(phrescoUiConst.getWebLayerWidget(),
 					methodName);
 			getXpathWebElement(phrescoUiConst.getWebLayerWidget());
 			click();
-			
+
 			Thread.sleep(MagicNumbers.HALF_SECONDS);
 			waitForElementPresent(phrescoUiConst.getWebTechnologyYMW(),
 					methodName);
 			getXpathWebElement(phrescoUiConst.getWebTechnologyYMW());
-			click();		
-			
+			click();
 
 			Thread.sleep(MagicNumbers.ONE_THOUSAND_SECONDS);
 			waitForElementPresent(phrescoUiConst.getRemoveAppLayer(),
@@ -911,11 +945,11 @@ public class ScenariosScreen extends BaseScreen {
 		}
 	}
 
-	public void createProjectSpecialChar(String methodName, ScenariosConstants scenarioConst)
-	throws Exception {
+	public void createProjectSpecialChar(String methodName,
+			ScenariosConstants scenarioConst) throws Exception {
 		if (StringUtils.isEmpty(methodName)) {
 			methodName = Thread.currentThread().getStackTrace()[1]
-			                                                    .getMethodName();
+					.getMethodName();
 		}
 		log.info("@createProjectUseNumericValues executing");
 		try {
@@ -953,30 +987,30 @@ public class ScenariosScreen extends BaseScreen {
 			getXpathWebElement(phrescoUiConst.getWebLayerAppCode());
 			click();
 			clear();
-			sendKeys(scenarioConst.getSpecialChar());			
+			sendKeys(scenarioConst.getSpecialChar());
 
 			Thread.sleep(MagicNumbers.HALF_SECONDS);
 			waitForElementPresent(phrescoUiConst.getWebLayer(), methodName);
 			getXpathWebElement(phrescoUiConst.getWebLayer());
 			click();
-			
+
 			Thread.sleep(MagicNumbers.HALF_SECONDS);
-			waitForElementPresent(phrescoUiConst.getWebTechnologyHTML5(), methodName);
+			waitForElementPresent(phrescoUiConst.getWebTechnologyHTML5(),
+					methodName);
 			getXpathWebElement(phrescoUiConst.getWebTechnologyHTML5());
-			click();			
+			click();
 
 			Thread.sleep(MagicNumbers.HALF_SECONDS);
 			waitForElementPresent(phrescoUiConst.getWebLayerWidget(),
 					methodName);
 			getXpathWebElement(phrescoUiConst.getWebLayerWidget());
 			click();
-			
+
 			Thread.sleep(MagicNumbers.HALF_SECONDS);
 			waitForElementPresent(phrescoUiConst.getWebTechnologyYMW(),
 					methodName);
 			getXpathWebElement(phrescoUiConst.getWebTechnologyYMW());
-			click();		
-			
+			click();
 
 			Thread.sleep(MagicNumbers.ONE_THOUSAND_SECONDS);
 			waitForElementPresent(phrescoUiConst.getRemoveAppLayer(),
@@ -1002,8 +1036,10 @@ public class ScenariosScreen extends BaseScreen {
 			e.printStackTrace();
 		}
 	}
+
 	public void multiYuiWidgetArchetypeCreate(String methodName,
-			MultiYuiWidgetConstants multiYuiConst,ScenariosConstants scenarioConst) throws Exception {
+			MultiYuiWidgetConstants multiYuiConst,
+			ScenariosConstants scenarioConst) throws Exception {
 		if (StringUtils.isEmpty(methodName)) {
 			methodName = Thread.currentThread().getStackTrace()[1]
 					.getMethodName();
@@ -1059,18 +1095,19 @@ public class ScenariosScreen extends BaseScreen {
 			waitForElementPresent(phrescoUiConst.getWebLayer(), methodName);
 			getXpathWebElement(phrescoUiConst.getWebLayer());
 			click();
-			
+
 			Thread.sleep(MagicNumbers.HALF_SECONDS);
-			waitForElementPresent(phrescoUiConst.getWebTechnologyHTML5(), methodName);
+			waitForElementPresent(phrescoUiConst.getWebTechnologyHTML5(),
+					methodName);
 			getXpathWebElement(phrescoUiConst.getWebTechnologyHTML5());
-			click();			
+			click();
 
 			Thread.sleep(MagicNumbers.HALF_SECONDS);
 			waitForElementPresent(phrescoUiConst.getWebLayerWidget(),
 					methodName);
 			getXpathWebElement(phrescoUiConst.getWebLayerWidget());
 			click();
-			
+
 			Thread.sleep(MagicNumbers.HALF_SECONDS);
 			waitForElementPresent(phrescoUiConst.getWebTechnologyMYW(),
 					methodName);
@@ -1095,8 +1132,9 @@ public class ScenariosScreen extends BaseScreen {
 			getXpathWebElement(phrescoUiConst.getProjectCreateButton());
 			click();
 			Thread.sleep(MagicNumbers.ONE_THOUSAND_SECONDS);
-			boolean projectCreateVerify = updateSuccessFailureLoop(methodName,phrescoData.getProjectCreateMsg());
-			System.out.println("projectCreateVerify:::"+projectCreateVerify);
+			boolean projectCreateVerify = updateSuccessFailureLoop(methodName,
+					phrescoData.getProjectCreateMsg());
+			System.out.println("projectCreateVerify:::" + projectCreateVerify);
 			Assert.assertTrue(projectCreateVerify);
 			Thread.sleep(MagicNumbers.TWO_THOUSAND_SECONDS);
 			waitForElementPresent(scenarioConst.getMultiYuiEditProj(),
@@ -1107,7 +1145,7 @@ public class ScenariosScreen extends BaseScreen {
 			e.printStackTrace();
 		}
 	}
-	
+
 	public void multiYuiWidgetArchetypeEditProject(String methodName,
 			ScenariosConstants scenarioConst) throws Exception {
 		if (StringUtils.isEmpty(methodName)) {
@@ -1117,7 +1155,8 @@ public class ScenariosScreen extends BaseScreen {
 		log.info("@multiYuiWidgetScenarioEditProject executing");
 		try {
 			Thread.sleep(MagicNumbers.HALF_SECONDS);
-			waitForElementPresent(scenarioConst.getMultiYuiEditProj(), methodName);
+			waitForElementPresent(scenarioConst.getMultiYuiEditProj(),
+					methodName);
 			getXpathWebElement(scenarioConst.getMultiYuiEditProj());
 			click();
 
@@ -1133,9 +1172,10 @@ public class ScenariosScreen extends BaseScreen {
 			e.printStackTrace();
 		}
 	}
-	
+
 	public void yuiMobileWidgetArchetypeCreate(String methodName,
-			YuiMobileWidgetConstants yuiMobConst, ScenariosConstants scenarioConst) throws Exception {
+			YuiMobileWidgetConstants yuiMobConst,
+			ScenariosConstants scenarioConst) throws Exception {
 		if (StringUtils.isEmpty(methodName)) {
 			methodName = Thread.currentThread().getStackTrace()[1]
 					.getMethodName();
@@ -1191,23 +1231,24 @@ public class ScenariosScreen extends BaseScreen {
 			waitForElementPresent(phrescoUiConst.getWebLayer(), methodName);
 			getXpathWebElement(phrescoUiConst.getWebLayer());
 			click();
-			
+
 			Thread.sleep(MagicNumbers.HALF_SECONDS);
-			waitForElementPresent(phrescoUiConst.getWebTechnologyHTML5(), methodName);
+			waitForElementPresent(phrescoUiConst.getWebTechnologyHTML5(),
+					methodName);
 			getXpathWebElement(phrescoUiConst.getWebTechnologyHTML5());
-			click();			
+			click();
 
 			Thread.sleep(MagicNumbers.HALF_SECONDS);
 			waitForElementPresent(phrescoUiConst.getWebLayerWidget(),
 					methodName);
 			getXpathWebElement(phrescoUiConst.getWebLayerWidget());
 			click();
-			
+
 			Thread.sleep(MagicNumbers.HALF_SECONDS);
 			waitForElementPresent(phrescoUiConst.getWebTechnologyYMW(),
 					methodName);
 			getXpathWebElement(phrescoUiConst.getWebTechnologyYMW());
-			click();		
+			click();
 
 			Thread.sleep(MagicNumbers.HALF_SECONDS);
 			waitForElementPresent(phrescoUiConst.getRemoveAppLayer(),
@@ -1227,8 +1268,9 @@ public class ScenariosScreen extends BaseScreen {
 			getXpathWebElement(phrescoUiConst.getProjectCreateButton());
 			click();
 			Thread.sleep(MagicNumbers.ONE_THOUSAND_SECONDS);
-			boolean projectCreateVerify = updateSuccessFailureLoop(methodName,phrescoData.getProjectCreateMsg());
-			System.out.println("projectCreateVerify:::"+projectCreateVerify);
+			boolean projectCreateVerify = updateSuccessFailureLoop(methodName,
+					phrescoData.getProjectCreateMsg());
+			System.out.println("projectCreateVerify:::" + projectCreateVerify);
 			Assert.assertTrue(projectCreateVerify);
 			Thread.sleep(MagicNumbers.TWO_THOUSAND_SECONDS);
 			waitForElementPresent(yuiMobConst.getYUIMobileArchetypeEditApp(),
@@ -1239,7 +1281,7 @@ public class ScenariosScreen extends BaseScreen {
 			e.printStackTrace();
 		}
 	}
-	
+
 	public void yuiMobileWidgetArchetypeEditProject(String methodName,
 			ScenariosConstants scenarioConst) throws Exception {
 		if (StringUtils.isEmpty(methodName)) {
@@ -1265,8 +1307,10 @@ public class ScenariosScreen extends BaseScreen {
 			e.printStackTrace();
 		}
 	}
+
 	public void configurationCreate(String methodName,
-			MultiJQueryWidgetConstants multiJQueryConst, ScenariosConstants scenarioConst) throws Exception {
+			MultiJQueryWidgetConstants multiJQueryConst,
+			ScenariosConstants scenarioConst) throws Exception {
 		if (StringUtils.isEmpty(methodName)) {
 			methodName = Thread.currentThread().getStackTrace()[1]
 					.getMethodName();
@@ -1289,7 +1333,8 @@ public class ScenariosScreen extends BaseScreen {
 			click();
 
 			Thread.sleep(MagicNumbers.HALF_SECONDS);
-			waitForElementPresent(phrescoUiConst.getConfigChooseServer(), methodName);
+			waitForElementPresent(phrescoUiConst.getConfigChooseServer(),
+					methodName);
 			getXpathWebElement(phrescoUiConst.getConfigChooseServer());
 			click();
 
@@ -1301,27 +1346,28 @@ public class ScenariosScreen extends BaseScreen {
 			sendKeys(multiJQueryConst.getConfigName());
 
 			Thread.sleep(MagicNumbers.HALF_SECONDS);
-			waitForElementPresent(phrescoUiConst.getConfigServerHost(), methodName);
+			waitForElementPresent(phrescoUiConst.getConfigServerHost(),
+					methodName);
 			getXpathWebElement(phrescoUiConst.getConfigServerHost());
 			click();
 			clear();
 			sendKeys(multiJQueryConst.getConfigHost());
 
-			if(methodName=="testMultiYuiWidgetArchetypeRunAgainstSource"){
-				
-			
-			Thread.sleep(MagicNumbers.HALF_SECONDS);
-			waitForElementPresent(phrescoUiConst.getConfigServerPort(), methodName);
-			getXpathWebElement(phrescoUiConst.getConfigServerPort());
-			click();
-			clear();
-			sendKeys(scenarioConst.getMultiYuiConfigPort());
-			
-			}
-			else if (methodName=="testYuiMobileWidgetArchetypeRunAgainstSource") {
-				
+			if (methodName == "testMultiYuiWidgetArchetypeRunAgainstSource") {
+
 				Thread.sleep(MagicNumbers.HALF_SECONDS);
-				waitForElementPresent(phrescoUiConst.getConfigServerPort(), methodName);
+				waitForElementPresent(phrescoUiConst.getConfigServerPort(),
+						methodName);
+				getXpathWebElement(phrescoUiConst.getConfigServerPort());
+				click();
+				clear();
+				sendKeys(scenarioConst.getMultiYuiConfigPort());
+
+			} else if (methodName == "testYuiMobileWidgetArchetypeRunAgainstSource") {
+
+				Thread.sleep(MagicNumbers.HALF_SECONDS);
+				waitForElementPresent(phrescoUiConst.getConfigServerPort(),
+						methodName);
 				getXpathWebElement(phrescoUiConst.getConfigServerPort());
 				click();
 				clear();
@@ -1337,14 +1383,16 @@ public class ScenariosScreen extends BaseScreen {
 			sendKeys(multiJQueryConst.getConfigDeployDir());
 
 			Thread.sleep(MagicNumbers.HALF_SECONDS);
-			waitForElementPresent(phrescoUiConst.getConfigServerContext(), methodName);
+			waitForElementPresent(phrescoUiConst.getConfigServerContext(),
+					methodName);
 			getXpathWebElement(phrescoUiConst.getConfigServerContext());
 			click();
 			clear();
 			sendKeys(multiJQueryConst.getConfigContext());
 
 			Thread.sleep(MagicNumbers.HALF_SECONDS);
-			waitForElementPresent(phrescoUiConst.getAppUpdateButton(), methodName);
+			waitForElementPresent(phrescoUiConst.getAppUpdateButton(),
+					methodName);
 			getXpathWebElement(phrescoUiConst.getAppUpdateButton());
 			click();
 			Thread.sleep(20000);
@@ -1354,8 +1402,8 @@ public class ScenariosScreen extends BaseScreen {
 			e.printStackTrace();
 		}
 	}
-	
-	public void runAgainstSource(String methodName)throws Exception {
+
+	public void runAgainstSource(String methodName) throws Exception {
 		if (StringUtils.isEmpty(methodName)) {
 			methodName = Thread.currentThread().getStackTrace()[1]
 					.getMethodName();
@@ -1366,26 +1414,53 @@ public class ScenariosScreen extends BaseScreen {
 			waitForElementPresent(phrescoUiConst.getBuildTab(), methodName);
 			getXpathWebElement(phrescoUiConst.getBuildTab());
 			click();
-			
+
 			Thread.sleep(MagicNumbers.THREE_THOUSAND_SECONDS);
-			waitForElementPresent(phrescoUiConst.getRunAgainstSourceButton(), methodName);
+			waitForElementPresent(phrescoUiConst.getRunAgainstSourceButton(),
+					methodName);
 			getXpathWebElement(phrescoUiConst.getRunAgainstSourceButton());
 			click();
-			
+
 			Thread.sleep(MagicNumbers.THREE_THOUSAND_SECONDS);
-			waitForElementPresent(phrescoUiConst.getRunAgainstRunButton(), methodName);
+			waitForElementPresent(phrescoUiConst.getRunAgainstRunButton(),
+					methodName);
 			getXpathWebElement(phrescoUiConst.getRunAgainstRunButton());
 			click();
-			
+
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
-		
+
 	}
 
+	public void deleteProjects(String methodName) throws Exception {
+		if (StringUtils.isEmpty(methodName)) {
+			methodName = Thread.currentThread().getStackTrace()[1]
+					.getMethodName();
+		}
+		log.info("@deleteProjects executing");
+
+		boolean deleteProject = getXpathWebElement(
+				phrescoUiConst.getProjectDeleteIcon()).isDisplayed();
+
+		while (deleteProject) {
+
+			Thread.sleep(MagicNumbers.THREE_THOUSAND_SECONDS);
+			waitForElementPresent(phrescoUiConst.getProjectDeleteIcon(),
+					methodName);
+			getXpathWebElement(phrescoUiConst.getProjectDeleteIcon());
+			click();
+			Thread.sleep(MagicNumbers.THREE_THOUSAND_SECONDS);
+			waitForElementPresent(phrescoUiConst.getProjectDeletePopUpYesBtn(),
+					methodName);
+			getXpathWebElement(phrescoUiConst.getProjectDeletePopUpYesBtn());
+			click();
+		}
+
+	}
 
 	public boolean isTextPresentBuild(String text) throws InterruptedException,
-	ScreenException {
+			ScreenException {
 
 		if (text != null) {
 			String build_failure = "ERROR";
@@ -1397,7 +1472,7 @@ public class ScenariosScreen extends BaseScreen {
 				} else {
 					if (i == 200) {
 						throw new RuntimeException(
-						"---- Time out for finding the Text----");
+								"---- Time out for finding the Text----");
 					} else if (driver.findElement(By.tagName("body")).getText()
 							.contains(build_failure)) {
 						System.out.println("*****Build Failure*****");
@@ -1417,7 +1492,7 @@ public class ScenariosScreen extends BaseScreen {
 	}
 
 	public boolean successFailureLoop() throws InterruptedException,
-	IOException, Exception {
+			IOException, Exception {
 		String foundString = buildStatusVerifier();
 		if (foundString.equalsIgnoreCase("BUILD SUCCESS")) {
 			return true;
@@ -1446,7 +1521,7 @@ public class ScenariosScreen extends BaseScreen {
 		}
 		return null;
 	}
-	
+
 	public boolean updateSuccessFailureLoop(String methodName, String updateMsg)
 			throws InterruptedException, IOException, Exception {
 		String foundString = updateStatusVerifier(updateMsg);
@@ -1461,15 +1536,13 @@ public class ScenariosScreen extends BaseScreen {
 		String UPDATE_SUCCESS = updateMsg;
 		String timeout = "timeout";
 		for (int i = 0; i <= 40; i++) {
-			if (driver.findElement(By.tagName("body")).getText().contains(
-					UPDATE_SUCCESS)) {
+			if (driver.findElement(By.tagName("body")).getText()
+					.contains(UPDATE_SUCCESS)) {
 				return UPDATE_SUCCESS;
 			}
 			Thread.sleep(MagicNumbers.ONE_THOUSAND_SECONDS);
 		}
 		return timeout;
 	}
-
-	
 
 }
