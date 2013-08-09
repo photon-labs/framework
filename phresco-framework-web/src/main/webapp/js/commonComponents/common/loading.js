@@ -43,26 +43,17 @@ define(["framework/base"], function(){
 		 *
 		 */
 		showLoading: function(isPartialLoading) {
-			var maskMain = $('div.widget-mask-main');
-			var maskContent = $('div.widget-mask-mid-content');
-
+			var maskMain = $('div.widget-mask-main'), maskContent = $('div.widget-mask-mid-content');
 			if(maskMain.length < 1 && maskContent.length < 1){
-				if($(commonVariables.contentPlaceholder).find('div[active="true"]').length > 0){
-					isPartialLoading = $(commonVariables.contentPlaceholder).find('div[active="true"]');
+				if (isPartialLoading !== undefined && isPartialLoading !== null) {
+					var maskMain = $('<div class="widget-mask-mid-content" style="margin-top:130px;	margin-bottom:27px;"></div>');
+					maskMain.append(this.getPartialLoading());
+					$(isPartialLoading).append(maskMain);
+				} else {
+					var maskMain = $('<div class="widget-mask-main"></div>');
+					maskMain.append(this.getWidgetContent());
+					$("basepage\\:widget").append(maskMain);
 				}
-
-				if (maskMain.length == 0) {
-					if (isPartialLoading != undefined && isPartialLoading != null) {
-						var maskMain = $('<div class="widget-mask-mid-content" style="margin-top:130px;	margin-bottom:27px;"></div>');
-						maskMain.append(this.getPartialLoading());
-						$(isPartialLoading).append(maskMain);
-					} else {
-						var maskMain = $('<div class="widget-mask-main"></div>');
-						maskMain.append(this.getWidgetContent());
-						$("basepage\\:widget").append(maskMain);
-					}
-				}
-
 				maskMain.show();
 			}
 		}
