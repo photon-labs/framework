@@ -42,34 +42,34 @@
             <apiKey>Bearer TXuk45IV_fFoCou1pzu15l2jEgka</apiKey>
         </Other>
     </environment>
-    <environment appliesTo="" default="false" desc="" name="Development">
+    <environment appliesTo="" default="true" desc="" name="Development">
         <Server desc="" name="server">
             <context>framework</context>
-            <deploy_dir>D:/Softwares/apache-tomcat-7.0.14/webapps/</deploy_dir>
-            <admin_username/>
+            <deploy_dir/>
+            <admin_username>admin</admin_username>
             <additional_context>/</additional_context>
-            <port>3030</port>
-            <admin_password/>
+            <port>8080</port>
+            <admin_password>admin</admin_password>
             <version>7.0.x</version>
             <type>Apache Tomcat</type>
-            <remoteDeployment>false</remoteDeployment>
+            <remoteDeployment>true</remoteDeployment>
             <protocol>http</protocol>
-            <host>localhost</host>
+            <host>172.16.17.227</host>
         </Server>
-        <WebService name="webservice">
-            <port>3030</port>
+        <WebService desc="" name="webservice">
+            <port>8080</port>
             <password/>
             <context>service</context>
-            <additional_context>/rest/api</additional_context>
-            <host>localhost</host>
+            <host>172.16.17.227</host>
             <protocol>http</protocol>
             <username/>
+            <additional_context>/rest/api</additional_context>
         </WebService>
         <Other name="Apikey">
             <apiKey>Bearer TXuk45IV_fFoCou1pzu15l2jEgka</apiKey>
         </Other>
     </environment>
-    <environment appliesTo="" default="true" desc="" name="Testing">
+    <environment appliesTo="" default="false" desc="" name="Testing">
         <Server desc="" name="server">
             <context>framework</context>
             <deploy_dir>D:/Softwares/apache-tomcat-7.0.14/webapps/</deploy_dir>
