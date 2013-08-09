@@ -48,7 +48,7 @@
 	
 		<WebService desc="" name="webservice">
             <protocol>http</protocol>
-            <host>172.16.8.250</host>
+            <host>172.16.17.117</host>
             <port>7070</port>
             <username/>
             <password/>
@@ -78,9 +78,9 @@
             <additional_context>/</additional_context>
         </Server>
 	
-	<WebService desc="" name="webservice">
+	<WebService desc="true" name="webservice">
             <protocol>http</protocol>
-            <host>172.16.8.250</host>
+            <host>172.16.17.117</host>
             <port>7070</port>
             <username/>
             <password/>
