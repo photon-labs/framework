@@ -62,7 +62,6 @@ import com.photon.phresco.commons.FrameworkConstants;
 import com.photon.phresco.commons.model.ApplicationInfo;
 import com.photon.phresco.commons.model.ArtifactGroup;
 import com.photon.phresco.commons.model.ArtifactInfo;
-import com.photon.phresco.commons.model.BuildInfo;
 import com.photon.phresco.commons.model.Customer;
 import com.photon.phresco.commons.model.RepoInfo;
 import com.photon.phresco.exception.ConfigurationException;
@@ -72,7 +71,6 @@ import com.photon.phresco.framework.PhrescoFrameworkFactory;
 import com.photon.phresco.framework.commons.FrameworkUtil;
 import com.photon.phresco.framework.model.CodeValidationReportType;
 import com.photon.phresco.framework.model.DependantParameters;
-import com.photon.phresco.framework.model.Parameters;
 import com.photon.phresco.framework.model.PerformanceDetails;
 import com.photon.phresco.framework.param.impl.IosTargetParameterImpl;
 import com.photon.phresco.framework.rest.api.util.FrameworkServiceUtil;
@@ -346,66 +344,69 @@ public class ParameterService extends RestBase implements FrameworkConstants, Se
 	 * @return the code validation report types
 	 */
 	@GET
-	@Path("/codeValidationReportTypes")
-	@Produces(MediaType.APPLICATION_JSON)
-	public Response getCodeValidationReportTypes(@QueryParam(REST_QUERY_APPDIR_NAME) String appDirName,
-			@QueryParam(REST_QUERY_GOAL) String goal, @QueryParam(REST_QUERY_PHASE) String phase,
-			@Context HttpServletRequest request) {
-		ResponseInfo<PossibleValues> responseData = new ResponseInfo<PossibleValues>();
-		try {
-			int responseCode = setSonarServerStatus(request);
-			if (responseCode != 200) {
-				ResponseInfo<PossibleValues> finalOutput = responseDataEvaluation(responseData, null,
-						"Sonar not yet Started", null);
-				return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN,
-						ALL_HEADER).build();
-			}
-			String infoFileDir = getInfoFileDir(appDirName, goal, phase);
-			ApplicationInfo appInfo = FrameworkServiceUtil.getApplicationInfo(appDirName);
-			List<CodeValidationReportType> codeValidationReportTypes = new ArrayList<CodeValidationReportType>();
+    @Path("/codeValidationReportTypes")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getCodeValidationReportTypes(@QueryParam(REST_QUERY_APPDIR_NAME) String appDirName,
+            @QueryParam(REST_QUERY_GOAL) String goal, @QueryParam(REST_QUERY_PHASE) String phase,
+            @Context HttpServletRequest request) {
+        ResponseInfo<List<CodeValidationReportType>> responseData = new ResponseInfo<List<CodeValidationReportType>>();
+        try {
+            int responseCode = setSonarServerStatus(request);
+            if (responseCode != 200) {
+                ResponseInfo<List<CodeValidationReportType>> finalOutput = responseDataEvaluation(responseData, null,
+                        "Sonar not yet Started", null);
+                return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN,
+                        ALL_HEADER).build();
+            }
+            String infoFileDir = getInfoFileDir(appDirName, goal, phase);
+            ApplicationInfo appInfo = FrameworkServiceUtil.getApplicationInfo(appDirName);
+            List<CodeValidationReportType> codeValidationReportTypes = new ArrayList<CodeValidationReportType>();
 
-			// To get parameter values for Iphone technology
-			PomProcessor pomProcessor = FrameworkServiceUtil.getPomProcessor(appDirName);
-			String validateReportUrl = pomProcessor.getProperty(Constants.POM_PROP_KEY_VALIDATE_REPORT);
-			if (StringUtils.isNotEmpty(validateReportUrl)) {
-				CodeValidationReportType codeValidationReportType = new CodeValidationReportType();
-				List<Value> clangReports = getClangReports(appInfo);
-				for (Value value : clangReports) {
+            // To get parameter values for Iphone technology
+            PomProcessor pomProcessor = FrameworkServiceUtil.getPomProcessor(appDirName);
+            String validateReportUrl = pomProcessor.getProperty(Constants.POM_PROP_KEY_VALIDATE_REPORT);
+            if (StringUtils.isNotEmpty(validateReportUrl)) {
+                List<Value> clangReports = getClangReports(appInfo);
+                for (Value value : clangReports) {
+        			CodeValidationReportType codeValidationReportType = new CodeValidationReportType();
 					codeValidationReportType.setValidateAgainst(value);
-				}
-				codeValidationReportTypes.add(codeValidationReportType);
-			}
-			MojoProcessor processor = new MojoProcessor(new File(infoFileDir));
-			Parameter parameter = processor.getParameter(Constants.PHASE_VALIDATE_CODE, "sonar");
-			PossibleValues possibleValues = parameter.getPossibleValues();
-			List<Value> values = possibleValues.getValue();
-			for (Value value : values) {
-				CodeValidationReportType codeValidationReportType = new CodeValidationReportType();
-				String key = value.getKey();
-				Parameter depParameter = processor.getParameter(Constants.PHASE_VALIDATE_CODE, key);
-				if (depParameter != null && depParameter.getPossibleValues() != null) {
-					PossibleValues depPossibleValues = depParameter.getPossibleValues();
-					List<Value> depValues = depPossibleValues.getValue();
-					codeValidationReportType.setOptions(depValues);
-				}
-				codeValidationReportType.setValidateAgainst(value);
-				codeValidationReportTypes.add(codeValidationReportType);
-			}
-			ResponseInfo<CodeValidationReportType> finalOutput = responseDataEvaluation(responseData, null,
-					DEPENDENCY_RETURNED_SUCCESSFULLY, codeValidationReportTypes);
-			return Response.ok(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, ALL_HEADER).build();
-		} catch (PhrescoException e) {
-			ResponseInfo<PossibleValues> finalOutput = responseDataEvaluation(responseData, e,
-					DEPENDENCY_NOT_FETCHED, null);
-			return Response.status(Status.BAD_REQUEST).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, ALL_HEADER)
-					.build();
-		} catch (PhrescoPomException e) {
-			ResponseInfo<PossibleValues> finalOutput = responseDataEvaluation(responseData, e,
-					DEPENDENCY_NOT_FETCHED, null);
-			return Response.status(Status.BAD_REQUEST).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, ALL_HEADER)
-					.build();
-		}
-	}
+					codeValidationReportTypes.add(codeValidationReportType);
+                }
+//                ResponseInfo<List<CodeValidationReportType>> finalOutput = responseDataEvaluation(responseData, null,
+//                        DEPENDENCY_RETURNED_SUCCESSFULLY, codeValidationReportTypes);
+                return Response.ok(codeValidationReportTypes).header(ACCESS_CONTROL_ALLOW_ORIGIN, ALL_HEADER).build();
+            }
+            MojoProcessor processor = new MojoProcessor(new File(infoFileDir));
+            Parameter parameter = processor.getParameter(Constants.PHASE_VALIDATE_CODE, "sonar");
+            PossibleValues possibleValues = parameter.getPossibleValues();
+            List<Value> values = possibleValues.getValue();
+            for (Value value : values) {
+                CodeValidationReportType codeValidationReportType = new CodeValidationReportType();
+                String key = value.getKey();
+                Parameter depParameter = processor.getParameter(Constants.PHASE_VALIDATE_CODE, key);
+                if (depParameter != null && depParameter.getPossibleValues() != null) {
+                    PossibleValues depPossibleValues = depParameter.getPossibleValues();
+                    List<Value> depValues = depPossibleValues.getValue();
+                    codeValidationReportType.setOptions(depValues);
+                }
+                codeValidationReportType.setValidateAgainst(value);
+                codeValidationReportTypes.add(codeValidationReportType);
+            }
+//            ResponseInfo<List<CodeValidationReportType>> finalOutput = responseDataEvaluation(responseData, null,
+//                    DEPENDENCY_RETURNED_SUCCESSFULLY, codeValidationReportTypes);
+            return Response.ok(codeValidationReportTypes).header(ACCESS_CONTROL_ALLOW_ORIGIN, ALL_HEADER).build();
+        } catch (PhrescoException e) {
+            ResponseInfo<List<CodeValidationReportType>> finalOutput = responseDataEvaluation(responseData, e,
+                    DEPENDENCY_NOT_FETCHED, null);
+            return Response.status(Status.BAD_REQUEST).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, ALL_HEADER)
+                    .build();
+        } catch (PhrescoPomException e) {
+            ResponseInfo<List<CodeValidationReportType>> finalOutput = responseDataEvaluation(responseData, e,
+                    DEPENDENCY_NOT_FETCHED, null);
+            return Response.status(Status.BAD_REQUEST).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, ALL_HEADER)
+                    .build();
+        }
+    }
 
 	/**
 	 * Gets the iframe report.

@@ -28,7 +28,6 @@
                             <tbody>
                                 <tr>
                                     <td colspan="2">
-										<div class="popup_scroll scroll_height">
 										<ul class="connected list" id="content_Env" name="envList">
 											{{#configurationList}}
 												{{#if name}}
@@ -46,7 +45,6 @@
 												{{/if}}
 											{{/configurationList}}
                                         </ul>
-										</div>
                                     </td>
                                 </tr>
                             </tbody>
