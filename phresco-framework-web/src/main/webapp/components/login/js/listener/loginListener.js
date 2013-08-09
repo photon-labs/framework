@@ -36,7 +36,7 @@ define([], function() {
 				var self = this, header = self.getRequestHeader();
 				self.enterKeyDisable = true;
 				if(self.loginValidation()){
-					//commonVariables.loadingScreen.showLoading();
+					commonVariables.continueloading = true;
 					//TODO: call login service here and call appendPlaceholder in the success function
 					commonVariables.api.ajaxRequest(header, 
 						function(response){

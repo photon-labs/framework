@@ -605,12 +605,13 @@ define(["build/listener/buildListener"], function() {
 				}
 				self.onProgressEvent.dispatch(this);
 			});
-			
+
 			//To open the build directory
 			$('#openFolder').unbind('click');
 			$("#openFolder").click(function() {
 				var paramJson = {};
 				paramJson.type = commonVariables.typeBuild;
+				commonVariables.hideloading = true;
 				commonVariables.navListener.openFolder(paramJson);
 			});
 			
@@ -619,12 +620,14 @@ define(["build/listener/buildListener"], function() {
 			$("#copyPath").click(function() {
 				var paramJson = {};
 				paramJson.type = commonVariables.typeBuild;
+				commonVariables.hideloading = true;
 				commonVariables.navListener.copyPath(paramJson);
 			});
 			
 			//To copy the console log content to the clip-board
 			$('#buildCopyLog').unbind("click");
 			$('#buildCopyLog').click(function() {
+				commonVariables.hideloading = true;
 				commonVariables.navListener.copyToClipboard($('#logContent'));
 			});
 			

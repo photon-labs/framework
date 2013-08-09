@@ -2,8 +2,8 @@
         <div class="alert_div" style="display:none;" data-i18n="build.label.ProgressMsg"></div>
         
         <div class="flt_right">
-            <div class="icon_images"><a class="tooltiptop" title="" data-placement="bottom" data-toggle="tooltip" href="#" data-original-title="Open Folder" id="openFolder"><img src="themes/default/images/helios/openfolder_icon.png" ></a></div>
-			<div class="icon_images copy_path_icon"><a class="tooltiptop" title="" data-placement="bottom" data-toggle="tooltip" href="#" data-original-title="Copy Path" id="copyPath"><img src="themes/default/images/helios/copypath_icon.png" ></a></div>	
+            <div class="icon_images"><a title="" href="#" id="openFolder"><img src="themes/default/images/helios/openfolder_icon.png" ></a></div>
+			<div class="icon_images copy_path_icon"><a title="" href="#" id="copyPath"><img src="themes/default/images/helios/copypath_icon.png" ></a></div>	
 			<div class="build_genbuild">
 			{{#if userPermissions.manageBuilds}}
 				<input type="submit" data-i18n="[value]build.label.runagainstsource" name="build_runagsource" class="btn btn_style">
@@ -209,7 +209,7 @@
 						<td>
 							<div class="flt_right">
 								<input type="button" class="btn btn_style kill_btn" value="Kill Process" data-i18n="[value]build.label.killprocess">
-								<a href="#" class="tooltiptop" title="" data-placement="bottom" data-toggle="tooltip" href="#" data-original-title="Copy" id="buildCopyLog">
+								<a href="#" title="" href="#" id="buildCopyLog">
 									<img src="themes/default/images/helios/buildreport_icon.png" width="15" height="18" border="0" alt="">
 								</a>
 							</div>
