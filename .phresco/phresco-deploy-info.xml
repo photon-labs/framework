@@ -9,22 +9,22 @@
         <aggregator>false</aggregator>
         <requiresOnline>false</requiresOnline>
         <inheritedByDefault>true</inheritedByDefault>
-		<implementation>
-           <dependency>
-               <groupId>com.photon.phresco.plugins</groupId>
-               <artifactId>java-phresco-plugin</artifactId>
-               <type>jar</type>
-               <version>2.3.1.6000</version>
-               <class>com.photon.phresco.plugins.java.JavaPlugin</class>
-           </dependency>
-       </implementation>
+        <implementation>
+            <dependency>
+                <groupId>com.photon.phresco.plugins</groupId>
+                <artifactId>java-phresco-plugin</artifactId>
+                <type>jar</type>
+                <version>2.3.1.6000</version>
+                <class>com.photon.phresco.plugins.java.JavaPlugin</class>
+            </dependency>
+        </implementation>
         <language>java</language>
         <instantiationStrategy>per-lookup</instantiationStrategy>
         <executionStrategy>once-per-session</executionStrategy>
         <threadSafe>false</threadSafe>
         <configuration>
             <parameters>
-				<parameter>
+                <parameter>
                     <name>
                         <value lang="en">Build Number</value>
                     </name>
@@ -33,10 +33,10 @@
                     <editable>true</editable>
                     <description></description>
                     <key>buildNumber</key>
-					<multiple>false</multiple>
-					<sort>false</sort>
-					<show>true</show>
-                    <value></value>
+                    <multiple>false</multiple>
+                    <value>1</value>
+                    <sort>false</sort>
+                    <show>true</show>
                 </parameter>
                 <parameter>
                     <name>
@@ -48,20 +48,20 @@
                         <class>com.photon.phresco.impl.BuildInfoEnvironmentsImpl</class>
                         <dependencies>
                             <dependency>
-								<groupId>com.photon.phresco.commons</groupId>
-								<artifactId>phresco-commons</artifactId>
-								<type>jar</type>
-								<version>2.3.1.6000</version>
+<groupId>com.photon.phresco.commons</groupId>
+<artifactId>phresco-commons</artifactId>
+<type>jar</type>
+<version>2.3.1.6000</version>
                             </dependency>
                         </dependencies>
                     </dynamicParameter>
                     <required>true</required>
                     <editable>true</editable>
                     <key>environmentName</key>
-					<multiple>false</multiple>
-					<sort>false</sort>
-					<show>true</show>
-                    <value>Testing</value>
+                    <multiple>false</multiple>
+                    <value>Development</value>
+                    <sort>false</sort>
+                    <show>true</show>
                 </parameter>
                 <parameter>
                     <pluginParameter>framework</pluginParameter>
@@ -92,9 +92,9 @@
                         <value key="showDebug">Show Debug</value>
                     </possibleValues>
                     <multiple>false</multiple>
-					<sort>false</sort>
-					<show>true</show>
-                    <value></value>
+                    <value>showErrors</value>
+                    <sort>false</sort>
+                    <show>true</show>
                 </parameter>
             </parameters>
         </configuration>

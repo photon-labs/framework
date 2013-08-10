@@ -142,43 +142,6 @@
                    </deployables>
                 </configuration>
             </plugin>
- <plugin>
-                <groupId>net.awired.jstest</groupId>
-                <artifactId>jstest-maven-plugin</artifactId>
-                <version>3.0.0.20002</version>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>test</goal>
-                        </goals>
-                    </execution>
-                </executions>
-                <configuration>
-                    <runnerType xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">ALMOND</runnerType>
-                    <coverage xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">true</coverage>
-                    <skipTests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">${js.skipTest}</skipTests>
-                    <sourceExcludes xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-                        <sourceExclude>eshop/widgets/Init.js</sourceExclude>
-					</sourceExcludes>
-                    <reportDir>${project.basedir}/do_not_checkin/reports/jstest</reportDir>
-                </configuration>
-            </plugin>
-            <plugin>
-                <groupId>net.alchim31.maven</groupId>
-                <artifactId>yuicompressor-maven-plugin</artifactId>
-                <version>1.3.0</version>
-                <executions>
-                    <execution>
-                        <id>yuicompressor-default</id>
-                        <goals>
-                            <goal>compress</goal>
-                        </goals>
-                    </execution>
-                </executions>
-                <configuration>
-                    <skip xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">true</skip>
-                </configuration>
-            </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>

@@ -87,7 +87,7 @@
                     <editable>true</editable>
                     <key>environmentName</key>
                     <multiple>true</multiple>
-                    <value>Testing</value>
+                    <value>Development,Testing</value>
                     <sort>false</sort>
                     <show>true</show>
                 </parameter>

@@ -824,7 +824,6 @@
 			    	
                 </dependencies>
             </plugin>
-		
 	    		<plugin>
 				<groupId>net.awired.jstest</groupId>
 				<artifactId>jstest-maven-plugin</artifactId>
@@ -854,9 +853,7 @@
 
 				</configuration>
 			</plugin>
-            
         </plugins>
-        
         <resources>
           <resource>
             <directory>src/main/resources</directory>
