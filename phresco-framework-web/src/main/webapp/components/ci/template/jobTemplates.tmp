@@ -74,16 +74,19 @@
         </div>
   </div>
     </section>
-    <section class="features_content_main create_proj">
+    <section class="features_content_main">
         {{#if jobTemplates}}
-          <table id="jobTemplateList" class="table table-striped table_border table-bordered jobs_table" cellpadding="0" cellspacing="0" border="0">
-              <thead>
+          <div class="fixed-table-container">
+          <div class="header-background"></div>
+          <div class="fixed-table-container-inner">
+		  <table id="jobTemplateList" class="table table-striped table_border table-bordered jobs_table" cellpadding="0" cellspacing="0" border="0">
+              <thead class="height_th">
                 <tr>
-                  <th data-i18n="ci.name"/>
-                  <th data-i18n="ci.type"/>
-                  <th data-i18n="ci.application"/>
-                  <th data-i18n="ci.edit"/>
-                  <th data-i18n="ci.delete"/>
+                  <th><div class="th-inner" data-i18n="ci.name"/></div></th>
+                  <th><div class="th-inner" data-i18n="ci.type"/></div></th>
+                  <th><div class="th-inner" data-i18n="ci.application"/></div></th>
+                  <th><div class="th-inner" data-i18n="ci.edit"/></div></th>
+                  <th><div class="th-inner" data-i18n="ci.delete"/></div></th>
                 </tr>
               </thead>
               <tbody>
@@ -108,6 +111,8 @@
                   {{/jobTemplates}}
               </tbody>
         </table>
+		</div>
+		</div>
         {{else}}
             <div class="alert alert-block" style="text-align: center; margin: auto 0;" data-i18n="ci.jobtempnotavailable"></div>
         {{/if}}

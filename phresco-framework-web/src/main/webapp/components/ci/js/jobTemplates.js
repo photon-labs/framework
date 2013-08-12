@@ -309,6 +309,7 @@ define(["ci/listener/ciListener", "lib/jquery-tojson-1.0"], function() {
 			$("select[name=appIds]").on("change", function(){				
 				self.removeDangerEvent.dispatch($("select[name=appIds]"));			
 			});
+			self.tableScrollbar();
 		}
 	});
 

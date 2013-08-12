@@ -360,8 +360,13 @@ define(["features/listener/featuresListener"], function() {
 						featureUpdatedata.dispName = $(currentVal).parent().attr("dispName");
 						featureUpdatedata.packaging = $(currentVal).parent().attr("packaging");
 						featureUpdatedata.type = $(currentVal).parent().attr("type");					
+<<<<<<< HEAD
 					//	featureUpdatedata.defaultModule = true;
 						featureUpdatedata.scope = $(currentVal).parent().children('div.flt_right').children('select.jarscope').find(':selected').val();
+=======
+						//featureUpdatedata.defaultModule = true;
+						featureUpdatedata.scope = $(currentVal).parent().children('div.flt_right').children('select.input-mini').find(':selected').attr("scope");
+>>>>>>> 5946873bc7623bb3f9089a19c31a6150d5b0a5a7
 						featureUpdatedata.versionID = $(currentVal).parent().children('div.flt_right').children('select.input-mini').find(':selected').val();
 						featureUpdatedata.dispValue = $(currentVal).parent().children('div.flt_right').children('select.input-mini').find(':selected').text();
 						var moduleId = $(currentVal).parent().children('div.flt_right').children('.moduleId').val();
