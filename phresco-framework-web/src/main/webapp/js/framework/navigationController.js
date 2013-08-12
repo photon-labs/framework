@@ -219,7 +219,9 @@ define(["framework/base", "framework/animationProvider"], function() {
 				});
 			}else{
 				if(!commonVariables.continueloading)
+				if(commonVariables.animation) {
 					$(self.jQueryContainer).find('.widget-maincontent-div').remove();
+				}
 				
 				// render in its container
 				$(self.jQueryContainer).append(newDiv);

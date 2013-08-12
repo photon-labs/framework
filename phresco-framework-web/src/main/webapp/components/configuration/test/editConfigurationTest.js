@@ -48,9 +48,23 @@ define(["configuration/editConfiguration"], function(EditConfiguration) {
 			setTimeout(function() {
 				start();
 				equal($(commonVariables.contentPlaceholder).find('.row_bg').attr('configtype'), "Server", "Add Configuration Tested");
-				self.serverChangeEvent(editConfiguration);
+				self.addServerConfigurationValidation(editConfiguration);
 			}, 1500);
 		});
+	},
+	
+	addServerConfigurationValidation : function(editConfiguration) {
+		var self=this;
+		asyncTest("Test - Server already added Test", function() {
+			
+			editConfiguration.configurationlistener.addConfiguration("Server");
+			setTimeout(function() {
+				start();
+				equal($(commonVariables.contentPlaceholder).find('.row_bg').length, 1, "Server already added Test");
+				self.serverChangeEvent(editConfiguration);
+			}, 1500);
+		}); 
+		
 	},
 	
 	serverChangeEvent : function(editConfiguration) {
@@ -209,10 +223,41 @@ define(["configuration/editConfiguration"], function(EditConfiguration) {
 			setTimeout(function() {
 				start();
 				equal($(commonVariables.contentPlaceholder).find('.row_bg').attr('configtype'), "Other", "Add Other Configuration Tested");
+				self.validationForConfiguration(editConfiguration);
+			}, 1500);
+		}); 
+	},
+	
+	validationForConfiguration : function(editConfiguration) {
+		var self=this;
+		asyncTest("Test - Validation for Configuration Test", function() {
+			
+			editConfiguration.configurationlistener.validation();
+			
+			setTimeout(function() {
+				start();
+				equal($(commonVariables.contentPlaceholder).find("#ConfigOther").attr('placeholder'), "Enter Configuration Name", "Validation for Configuration Tested");
+				self.validationForKey(editConfiguration);
+			}, 1500);
+		}); 
+	},
+	
+	validationForKey : function(editConfiguration) {
+		var self=this;
+		asyncTest("Test - Validation for Other Configuration key Test", function() {
+			
+			$("#ConfigOther").val('testOther');
+			$("input[name=UpdateConfiguration]").click();
+			
+			setTimeout(function() {
+				start();
+				equal($(commonVariables.contentPlaceholder).find('.otherKey').attr('placeholder'), "Enter Key", "Validation for Other Configuration key Test");
+				equal($(commonVariables.contentPlaceholder).find('.otherKeyValue').attr('placeholder'), "Enter Value", "Validation for Other Configuration key Value Test");
 				self.addOtherConfigurationKeyValue(editConfiguration);
 			}, 1500);
 		}); 
 	},
+	
 	
 	addOtherConfigurationKeyValue : function(editConfiguration) {
 		var self=this;
@@ -237,28 +282,54 @@ define(["configuration/editConfiguration"], function(EditConfiguration) {
 			setTimeout(function() {
 				start();
 				equal($(commonVariables.contentPlaceholder).find('tbody[name=ConfigurationLists] tr').length, 3, "Remove Other Configuration Key Tested");
-				self.validationForConfiguration(editConfiguration);
+				self.addDatabaseConfiguration(editConfiguration);
 			}, 1500);
 		}); 
 	},
 	
-	validationForConfiguration : function(editConfiguration) {
+	addDatabaseConfiguration : function(editConfiguration) {
 		var self=this;
-		asyncTest("Test - Validation for Configuration Test", function() {
+			$("a[name=removeConfig]").click();
+		asyncTest("Test - Add Database Configuration Test", function() {
+			$.mockjax({
+				url:  commonVariables.webserviceurl+commonVariables.configuration+"/settingsTemplate?appDirName=wordpress-WordPress&customerId=photon&userId=admin&type=Database&techId=tech-html5-jquery-mobile-widget",
+				type:'GET',
+				contentType: 'application/json',
+				status: 200,
+				response: function() {
+					this.responseText = JSON.stringify({"message":null,"exception":null,"responseCode":"PHR600004","data":{"downloadInfo":{"DB":["10"],"MYSQL":["2008"]},"settingsTemplate":{"envSpecific":true,"favourite":false,"possibleTypes":[],"appliesToTechs":[{"creationDate":1359036654000,"helpText":null,"system":false,"name":"Drupal6","id":"tech-phpdru6","displayName":null,"description":null,"status":null},{"creationDate":1359036654000,"helpText":null,"system":false,"name":"Drupal7","id":"tech-phpdru7","displayName":null,"description":null,"status":null},{"creationDate":1359036654000,"helpText":null,"system":false,"name":"HTML5 JQuery Mobile Widget","id":"tech-html5-jquery-mobile-widget","displayName":null,"description":null,"status":null},{"creationDate":1359036654000,"helpText":null,"system":false,"name":"HTML5 Multichannel JQuery Widget","id":"tech-html5-jquery-widget","displayName":null,"description":null,"status":null},{"creationDate":1359036654000,"helpText":null,"system":false,"name":"HTML5 Multichannel YUI Widget","id":"tech-html5","displayName":null,"description":null,"status":null},{"creationDate":1359036654000,"helpText":null,"system":false,"name":"HTML5 YUI Mobile Widget","id":"tech-html5-mobile-widget","displayName":null,"description":null,"status":null},{"creationDate":1359036654000,"helpText":null,"system":false,"name":"Java WebService","id":"tech-java-webservice","displayName":null,"description":null,"status":null},{"creationDate":1359036654000,"helpText":null,"system":false,"name":"Node JS Web Service","id":"tech-nodejs-webservice","displayName":null,"description":null,"status":null},{"creationDate":1359036654000,"helpText":null,"system":false,"name":"PHP","id":"tech-php","displayName":null,"description":null,"status":null},{"creationDate":1359036654000,"helpText":null,"system":false,"name":"php test","id":"f746e81f-1b44-4ce0-9899-6c9e32c6924f","displayName":null,"description":null,"status":null},{"creationDate":1359036654000,"helpText":null,"system":false,"name":"WordPress","id":"tech-wordpress","displayName":null,"description":null,"status":null},{"creationDate":1359036240000,"helpText":null,"system":false,"name":"estee html jquery","id":"74a3c4e0-d8ba-47fb-9325-4f6f1be612e8","displayName":null,"description":null,"status":null},{"creationDate":1349685730000,"helpText":null,"system":false,"name":"Metlife html5 jquery archetype","id":"3bfc67a1-588d-41f0-9b8a-2807317d5c70","displayName":null,"description":null,"status":null}],"customProp":false,"properties":[{"required":true,"appliesTo":["tech-phpdru6","tech-phpdru7","tech-html5-jquery-mobile-widget","tech-html5-jquery-widget","tech-html5","tech-html5-mobile-widget","tech-nodejs-webservice","tech-php","tech-wordpress","74a3c4e0-d8ba-47fb-9325-4f6f1be612e8","3bfc67a1-588d-41f0-9b8a-2807317d5c70","tech-java-webservice","tech-java-standalone"],"possibleValues":[],"propertyTemplates":null,"settingsTemplateId":"config_Database","multiple":false,"key":"dbname","type":"String","defaultValue":null,"creationDate":1359036654000,"helpText":"","system":false,"name":"DB Name","id":"207740c7-175b-4ece-aac9-c5b03a0bd495","displayName":null,"description":null,"status":null},{"required":true,"appliesTo":["tech-phpdru6","tech-phpdru7","tech-html5-jquery-mobile-widget","tech-html5-jquery-widget","tech-html5","tech-html5-mobile-widget","tech-nodejs-webservice","tech-php","tech-wordpress","74a3c4e0-d8ba-47fb-9325-4f6f1be612e8","3bfc67a1-588d-41f0-9b8a-2807317d5c70","tech-java-webservice","tech-java-standalone"],"possibleValues":[],"propertyTemplates":null,"settingsTemplateId":"config_Database","multiple":false,"key":"type","type":"String","defaultValue":null,"creationDate":1359036654000,"helpText":"","system":false,"name":"DB Type","id":"c8747e03-e22f-4b22-bffa-8c67b4bea342","displayName":null,"description":null,"status":null},{"required":true,"appliesTo":["tech-phpdru6","tech-phpdru7","tech-html5-jquery-mobile-widget","tech-html5-jquery-widget","tech-html5","tech-html5-mobile-widget","tech-nodejs-webservice","tech-php","tech-wordpress","74a3c4e0-d8ba-47fb-9325-4f6f1be612e8","3bfc67a1-588d-41f0-9b8a-2807317d5c70","tech-java-webservice","tech-java-standalone"],"possibleValues":[],"propertyTemplates":null,"settingsTemplateId":"config_Database","multiple":false,"key":"username","type":"String","defaultValue":null,"creationDate":1359036654000,"helpText":"","system":false,"name":"Username","id":"808536dd-f6fe-4114-a11b-d23e52ff8628","displayName":null,"description":null,"status":null},{"required":true,"appliesTo":["tech-phpdru6","tech-phpdru7","tech-html5-jquery-mobile-widget","tech-html5-jquery-widget","tech-html5","tech-html5-mobile-widget","tech-nodejs-webservice","tech-php","tech-wordpress","74a3c4e0-d8ba-47fb-9325-4f6f1be612e8","3bfc67a1-588d-41f0-9b8a-2807317d5c70","tech-java-webservice","tech-java-standalone"],"possibleValues":[],"propertyTemplates":null,"settingsTemplateId":"config_Database","multiple":false,"key":"version","type":"String","defaultValue":null,"creationDate":1359036654000,"helpText":"","system":false,"name":"Version","id":"c8747e03-e22f-4b22-bffa-8c67sb4bea342","displayName":null,"description":null,"status":null},{"required":true,"appliesTo":["tech-phpdru6","tech-phpdru7","tech-html5-jquery-mobile-widget","tech-html5-jquery-widget","tech-html5","tech-html5-mobile-widget","tech-nodejs-webservice","tech-php","tech-wordpress","74a3c4e0-d8ba-47fb-9325-4f6f1be612e8","3bfc67a1-588d-41f0-9b8a-2807317d5c70","tech-java-webservice","tech-java-standalone"],"possibleValues":[],"propertyTemplates":null,"settingsTemplateId":"config_Database","multiple":false,"key":"host","type":"String","defaultValue":null,"creationDate":1359036654000,"helpText":"","system":false,"name":"Host","id":"117ab816-32d6-4186-8a0e-c845154d4526","displayName":null,"description":null,"status":null},{"required":true,"appliesTo":["tech-phpdru6","tech-phpdru7","tech-html5-jquery-mobile-widget","tech-html5-jquery-widget","tech-html5","tech-html5-mobile-widget","tech-nodejs-webservice","tech-php","tech-wordpress","74a3c4e0-d8ba-47fb-9325-4f6f1be612e8","3bfc67a1-588d-41f0-9b8a-2807317d5c70","tech-java-webservice","tech-java-standalone"],"possibleValues":[],"propertyTemplates":null,"settingsTemplateId":"config_Database","multiple":false,"key":"port","type":"Number","defaultValue":null,"creationDate":1359036654000,"helpText":"","system":false,"name":"Port","id":"6e6e7c5d-d5ec-4aec-8c3c-4a61acce96aa","displayName":null,"description":null,"status":null},{"required":false,"appliesTo":["tech-phpdru6","tech-phpdru7","tech-html5-jquery-mobile-widget","tech-html5-jquery-widget","tech-html5","tech-html5-mobile-widget","tech-nodejs-webservice","tech-php","tech-wordpress","74a3c4e0-d8ba-47fb-9325-4f6f1be612e8","3bfc67a1-588d-41f0-9b8a-2807317d5c70","tech-java-webservice","tech-java-standalone"],"possibleValues":[],"propertyTemplates":null,"settingsTemplateId":"config_Database","multiple":false,"key":"password","type":"Password","defaultValue":null,"creationDate":1359036654000,"helpText":"","system":false,"name":"Password","id":"aecfb889-53c1-40c3-af71-24df5a271ed2","displayName":null,"description":null,"status":null}],"type":null,"displayName":null,"customerIds":["photon","c32171c4-90e5-4ede-9c51-0ff370eae974","05c80933-95d4-46c8-a58d-ceceb4bcce48"],"used":false,"creationDate":1359036654000,"helpText":null,"system":true,"name":"Database","id":"config_Database","description":"Database Configuration","status":null}},"status":"success"});
+				}
+
+			});
 			
-			editConfiguration.configurationlistener.validation();
+			editConfiguration.configurationlistener.addConfiguration("Database");
+			setTimeout(function() {
+				start();
+				equal($(commonVariables.contentPlaceholder).find('.row_bg').attr('configtype'), "Database", "Add Database Configuration Tested");
+				self.databaseChangeEvent(editConfiguration);
+			}, 1500);
+		});
+	},
+	
+	databaseChangeEvent : function(editConfiguration) {
+		var self=this;
+		asyncTest("Test - Database Change Event Test", function() {
+			
+			$('select[name=type]').val('MYSQL');
+			$('select[name=type]').change();
 			
 			setTimeout(function() {
 				start();
-				equal($(commonVariables.contentPlaceholder).find("#ConfigOther").attr('placeholder'), "Enter Configuration Name", "Validation for Configuration Tested");
-				self.updateConfiguration(editConfiguration);
+				equal($(commonVariables.contentPlaceholder).find("select[currentconfig=Database1]").val(), "2008", "Database Change Event Tested");
+				self.addEmailConfiguration(editConfiguration);
 			}, 1500);
 		}); 
+		
 	},
 	
-	updateConfiguration : function(editConfiguration) {
+	addEmailConfiguration : function(editConfiguration) {
 		var self=this;
-		asyncTest("Test - Update Configuration Test", function() {
+		asyncTest("Test - Email Configuration Validation Test", function() {
 			
 			$("a[name=removeConfig]").click();
 			
@@ -274,6 +345,54 @@ define(["configuration/editConfiguration"], function(EditConfiguration) {
 			});
 			
 			editConfiguration.configurationlistener.addConfiguration("Email");
+			
+			setTimeout(function() {
+				start();
+				$(".configName").val('');
+				$("input[name=UpdateConfiguration]").click();
+				equal($(commonVariables.contentPlaceholder).find(".configName").attr('placeholder'), "Enter Configuration Name", "Email Configuration Validation Tested");
+				self.addEmailConfigurationTextBoxValidation(editConfiguration);
+			}, 1500);
+		}); 
+	},
+	
+	addEmailConfigurationTextBoxValidation : function(editConfiguration) {
+		var self=this;
+		asyncTest("Test - Email Configuration Text Box Validation Test", function() {
+			
+			$(".configName").val('web');
+			$("input[configkey=configKeyEmailhost]").val('');
+			$("input[name=UpdateConfiguration]").click();
+			setTimeout(function() {
+				start();	
+				equal($(commonVariables.contentPlaceholder).find("input[name=host]").attr('placeholder'), "Enter Value", "Email Configuration text box Validation Tested");
+				self.addEmailConfigurationEmailValidation(editConfiguration);
+			}, 1500);
+		}); 
+	}, 
+	
+	addEmailConfigurationEmailValidation : function(editConfiguration) {
+		var self=this;
+		asyncTest("Test - Email Configuration Email Validation Test", function() {
+			
+			$(".configName").val('web');
+			$("input[name=host]").val('localhost');
+			$("input[name=port]").val('3030');
+			$("input[name=username]").val('ssss');
+			$("input[name=password]").val('ssss');
+			$("input[name=emailid]").val('ssss');
+			$("input[name=UpdateConfiguration]").click();
+			setTimeout(function() {
+				start();	
+				equal($(commonVariables.contentPlaceholder).find("input[name=emailid]").attr('placeholder'), "Please Enter valid email address", "Email Configuration Email Validation Tested");
+				self.updateConfiguration(editConfiguration);
+			}, 1500);
+		}); 
+	}, 
+	
+	updateConfiguration : function(editConfiguration) {
+		var self=this;
+		asyncTest("Test - Update Configuration Test", function() {
 			
 			$.mockjax({
 				url:  commonVariables.webserviceurl+commonVariables.configuration+"/updateConfig?appDirName=wordpress-WordPress&envName=Production&customerId=photon&userId=admin",
@@ -296,9 +415,33 @@ define(["configuration/editConfiguration"], function(EditConfiguration) {
 				$("input[name=emailid]").val('ssss@gmail.com');
 				$("input[name=UpdateConfiguration]").click();
 				equal($(commonVariables.contentPlaceholder).find(".configName").val(), "email", "Update Configuration Tested");
+				self.addEmailConfigurationValidation(editConfiguration);
+			}, 1500);
+		}); 
+	},
+	
+	addEmailConfigurationValidation : function(editConfiguration) {
+		var self=this;
+		asyncTest("Test - Email already added Test", function() {
+		
+			$.mockjax({
+				url:  commonVariables.webserviceurl+commonVariables.configuration+"/allEnvironments?appDirName=wordpress-WordPress",
+				type:'GET',
+				contentType: 'application/json',
+				status: 200,
+				response: function() {
+					this.responseText = JSON.stringify({"response":null,"message":"Environments Listed","exception":null,"data":[{"defaultEnv":true,"appliesTo":[""],"delete":true,"name":"Production","desc":"Production Environment is used for Development purpose only","configurations":[]}]});
+				}
+			});
+			
+			editConfiguration.configurationlistener.addConfiguration("Email");
+			setTimeout(function() {
+				start();
+				equal($(commonVariables.contentPlaceholder).find('.row_bg').length, 1, "Email already added Test");
 				self.nonEnvEditConfigurationRender(editConfiguration);
 			}, 1500);
 		}); 
+		
 	},
 	
 	nonEnvEditConfigurationRender : function(editConfiguration) {
@@ -371,7 +514,6 @@ define(["configuration/editConfiguration"], function(EditConfiguration) {
 			
 			setTimeout(function() {
 				start();
-				console.info("Done ################# ", $("#configurationPage").attr('id'));
 				equal($("#configurationPage").attr('id'), "configurationPage", "Cancel Event Configuration Test");
 			}, 1500);
 		}); 

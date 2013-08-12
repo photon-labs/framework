@@ -201,6 +201,7 @@
     		{{/if}}
             <input type="submit" value="Cancel" data-i18n="[value]common.btn.close" id="cancelUpdate" class="btn btn_style cancel_icon_btn">
         </div>
+		<div class="msgdisplay"></div>
     	<!--content_title ends here -->
     </section>
 </section>	

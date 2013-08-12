@@ -295,4 +295,7 @@
 				<div class="alert" style="text-align: center;" data-i18n="projectlist.label.nodata"></div>
 			{{/if}}
             </section>
+			<section class="content_end" style="display:none;">
+			<div class="msgdisplay"></div>
+			</section>
           

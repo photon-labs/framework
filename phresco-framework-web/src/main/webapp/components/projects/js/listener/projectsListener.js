@@ -112,55 +112,44 @@ define([], function() {
 				commonVariables.api.ajaxRequest(header,
 					function(response) {
 						if (response !== null && response.status !== "error" && response.status !== "failure") {
-							if(response.responseCode === "PHR200004") {
-								$(".blinkmsg").removeClass("poperror").addClass("popsuccess");
-								self.effectFadeOut('popsuccess', (''));
-								$(".popsuccess").attr('data-i18n', 'project.successmessage.projectcreated');
-								self.renderlocales(commonVariables.basePlaceholder);
-							} else if(response.responseCode === "PHR200006") {
-								$(".blinkmsg").removeClass("poperror").addClass("popsuccess");
-								self.effectFadeOut('popsuccess', (''));
-								$(".popsuccess").attr('data-i18n', 'project.successmessage.projectupdated');
-								self.renderlocales(commonVariables.basePlaceholder);
-							} 
-							callback(response);
+							if(response.responseCode !== null && response.responseCode !== 'PHR200005' && response.responseCode !== 'PHR200001') {
+								$(".msgdisplay").removeClass("error").addClass("success");
+								$(".success").attr('data-i18n', 'successCodes.' + response.responseCode);
+								self.renderlocales(commonVariables.contentPlaceholder);	
+								$(".success").show();
+								$(".success").fadeIn(500).fadeOut(500).fadeIn(500).fadeOut(500).fadeIn(500).fadeOut(5);
+							}
+							
+							if(response.responseCode === "PHR200004" || response.responseCode === "PHR200006"){
+								setTimeout(function() {
+									$(".success").hide();
+									callback(response);
+								},1200);
+							} else {
+								callback(response);
+							}	
 							//commonVariables.loadingScreen.removeLoading();
 						} else {
-							 if(response.responseCode === "PHR210004") {
-								$(".blinkmsg").removeClass("popsuccess").addClass("poperror");
-								self.effectFadeOut('poperror', (''));
-								$(".poperror").attr('data-i18n', 'project.errormessage.projectcreatefailed');
-								self.renderlocales(commonVariables.basePlaceholder);
-							} else if(response.responseCode === "PHR210005") {
-								$(".blinkmsg").removeClass("popsuccess").addClass("poperror");
-								self.effectFadeOut('poperror', (''));
-								$(".poperror").attr('data-i18n', 'project.errormessage.projecteditfailed');
-								self.renderlocales(commonVariables.basePlaceholder);
-							} else if(response.responseCode === "PHR210006") { 
-								$(".blinkmsg").removeClass("popsuccess").addClass("poperror");
-								self.effectFadeOut('poperror', (''));
-								$(".poperror").attr('data-i18n', 'project.errormessage.projectupdatefailed');
-								self.renderlocales(commonVariables.basePlaceholder);
-							} else if(response.responseCode === "PHR210003") {
-								$(".blinkmsg").removeClass("popsuccess").addClass("poperror");
-								self.effectFadeOut('poperror', (''));
-								$(".poperror").attr('data-i18n', 'project.errormessage.unauthorizeduser');
-								self.renderlocales(commonVariables.basePlaceholder);
-							} else if(response.responseCode === "PHR000000") {
-								$(".blinkmsg").removeClass("popsuccess").addClass("poperror");
-								self.effectFadeOut('poperror', (''));
-								$(".poperror").attr('data-i18n', 'commonlabel.errormessage.unexpectedfailure');
-								self.renderlocales(commonVariables.basePlaceholder);
-							}
+							$(".msgdisplay").removeClass("success").addClass("error");
+							$(".error").attr('data-i18n', 'errorCodes.' + response.responseCode);
+							self.renderlocales(commonVariables.contentPlaceholder);	
+							$(".error").show();
+							$(".error").fadeIn(500).fadeOut(500).fadeIn(500).fadeOut(500).fadeIn(500).fadeOut(5);
+							setTimeout(function() {
+								$(".error").hide();
+							},2500);
 						}
 
 					},
 
 					function(textStatus) {
-						$(".blinkmsg").removeClass("popsuccess").addClass("poperror");
-						self.effectFadeOut('poperror', (''));
-						$(".poperror").attr('data-i18n', 'commonlabel.errormessage.serviceerror');
-						self.renderlocales(commonVariables.basePlaceholder);
+						$(".msgdisplay").removeClass("success").addClass("error");
+						$(".error").attr('data-i18n', 'commonlabel.errormessage.serviceerror');
+						self.renderlocales(commonVariables.contentPlaceholder);	
+						$(".error").show();
+						setTimeout(function() {
+							$(".error").hide();
+						},2500);
 						//commonVariables.loadingScreen.removeLoading();
 					}
 				);

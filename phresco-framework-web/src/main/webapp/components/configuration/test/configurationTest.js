@@ -17,12 +17,14 @@ define(["configuration/configuration"], function(Configuration) {
 				}
 			});
 				
+				commonVariables.api.localVal.setSession("appDirName","wordpress-WordPress");
+				
 				require(["navigation/navigation"], function(){
 					commonVariables.navListener = new Clazz.com.components.navigation.js.listener.navigationListener();
 				});
 
 				commonVariables.navListener.onMytabEvent("configuration");
-			
+				
 				setTimeout(function() {
 					start();
 					equal($(commonVariables.contentPlaceholder).find(".envlistname").text(), "Production", "Configuration Page render Tested");

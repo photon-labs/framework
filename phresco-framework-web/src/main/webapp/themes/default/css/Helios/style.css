@@ -1425,6 +1425,14 @@ img[name="close"] {
 	margin-top:9px;
 }
 
+.jarscope {
+	padding:2px !important;
+	height:23px;
+	font-size:11px;
+	width:70px !important;
+	margin-top:9px;
+}
+
 .features_box .box_div ul li span {
 	margin-right:12px;
 }
@@ -2488,7 +2496,7 @@ margin-left: 10px;
 
 #crone_triggered {
 	z-index: 1;
-	width:31%;
+	width:65%;
 }
 
 #crone_triggered span
@@ -4180,6 +4188,20 @@ button::-moz-focus-inner {
 
 .poperror {
 	background: #F00;
+}
+
+.success {
+	color: #298A08;
+	text-align: center;
+	font-size:13px;
+	font-weight:bold;
+}
+
+.error {
+	color: #F00;
+	text-align: center;
+	font-size:13px;
+	font-weight:bold;
 }
 
 

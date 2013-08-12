@@ -192,12 +192,12 @@ define(["projectlist/projectList"], function(ProjectList) {
 					start();
 					var password = $(commonVariables.contentPlaceholder).find('#pwd_294187d7-f75a-4adc-bb25-ce9465e0e82f').attr('class');
 					notEqual("errormessage", password, 'Password div error class added test');
-					self.projectaddrepoVerification(projectlist);
+					self.projectCommitUiVerification(projectlist);
 				}, 1000);
 			}); 
 		},
 
-		projectaddrepoVerification : function(projectlist) {
+		/* projectaddrepoVerification : function(projectlist) {
 			var self=this;
 			asyncTest("Test -Add to Repo trigger", function() {
 				$("input[name='repoUrl']").val('https://insight.photoninfotech.com/svn/repos/phresco-svn-projects/ci/3.0.0');
@@ -216,12 +216,12 @@ define(["projectlist/projectList"], function(ProjectList) {
 				$("input[name='addrepobtn']").click();
 				setTimeout(function() {
 					start();
-					var getval = $(".popsuccess").text();
+					var getval = $(".success").text();
 					equal("Project added successfully", getval, "Addrepo service call");
 					self.projectCommitUiVerification(projectlist);
 				}, 2500);
 			});
-		},
+		}, */
 		
 		projectCommitUiVerification : function(projectlist) {
 			var self = this;
@@ -243,12 +243,12 @@ define(["projectlist/projectList"], function(ProjectList) {
 					var visibility =  $('#commit294187d7-f75a-4adc-bb25-ce9465e0e82f').css('display').trim();
 					equal("block", visibility, "Add to Commit popup shown");
 					equal("svn", getval, "Commit type svn listed");
-					self.projectcommitVerification(projectlist);
+					self.projectSVNUiVerification(projectlist);
 				}, 2500);
 			});
 		},
 		
-		projectcommitVerification : function(projectlist) {
+		/* projectcommitVerification : function(projectlist) {
 			var self=this;
 			asyncTest("Test -Commit trigger", function() {
 				$("input[name='repoUrl']").val('https://insight.photoninfotech.com/svn/repos/phresco-svn-projects/ci/3.0.0/wordpress-WordPress');
@@ -267,12 +267,12 @@ define(["projectlist/projectList"], function(ProjectList) {
 				$("input[name='commitbtn']").click();
 				setTimeout(function() {
 					start();
-					var getvalue = $(".popsuccess").text();
+					var getvalue = $(".success").text();
 					equal("Project committed successfully", getvalue, "Commit service call");
 					self.projectSVNUiVerification(projectlist);
 				}, 2500);
 			});
-		},
+		}, */
 		
 		projectSVNUiVerification : function(projectlist) {
 			var self = this;
@@ -284,12 +284,12 @@ define(["projectlist/projectList"], function(ProjectList) {
 					var visibility =  $('#svn_update294187d7-f75a-4adc-bb25-ce9465e0e82f').css('display').trim();
 					equal("block", visibility, "Add to Commit popup shown");
 					equal("svn", getval, "Project List SVNUPDATE popup rendered");
-					self.projectSVNUpdateVerification(projectlist);
+					self.projectImportAppSuccessVerification(projectlist);
 				}, 2500);
 			});
 		},
 		
-		projectSVNUpdateVerification : function(projectlist) {
+		/* projectSVNUpdateVerification : function(projectlist) {
 			var self = this;
 			asyncTest("Test -SVNUpdate trigger", function() {
 				$("input[name='repoUrl']").val('https://insight.photoninfotech.com/svn/repos/phresco-svn-projects/ci/3.0.0');
@@ -308,12 +308,12 @@ define(["projectlist/projectList"], function(ProjectList) {
 				$("input[name='updatebtn']").click();
 				setTimeout(function() {
 					start();
-					var getval = $(".popsuccess").text();
+					var getval = $(".success").text();
 					equal("Project updated successfully", getval, "SVNUpdate service call");
 					self.projectImportAppSuccessVerification(projectlist);
 				}, 2500);
 			});
-		},
+		}, */
 		
 		projectImportAppSuccessVerification : function(projectlist) {
 			var self = this;
@@ -341,7 +341,7 @@ define(["projectlist/projectList"], function(ProjectList) {
 					start();
 					var techid = $(commonVariables.contentPlaceholder).find(".wordpress-WordPress").attr("techid");
 					equal("tech-wordpress", techid, "Project List Service Tested");
-					self.projectListTest(projectlist);
+					self.projectDeleteSuccessVerification(projectlist);
 				}, 2500);
 			});
 		}, 

@@ -117,37 +117,36 @@ define(["features/features",  "application/application",  "projectlist/projectLi
 				commonVariables.api.ajaxRequest(header,
 					function(response) {
 						if (response !== null && response.status !== "error" && response.status !== "failure") {
-							//commonVariables.loadingScreen.removeLoading();
+							commonVariables.loadingScreen.removeLoading();
 							callback(response);
 						} else {
-							//commonVariables.loadingScreen.removeLoading();
-							$(".blinkmsg").removeClass("popsuccess").addClass("poperror");
-							var failuremsg = null;
-							if(response.responseCode === "PHR410001") {
-								self.effectFadeOut('poperror', (''));
-								failuremsg = 'features.errormessage.unauthorizeduser';
-							} else if(response.responseCode === "PHR410002") {
-								self.effectFadeOut('poperror', (''));
-								failuremsg = 'features.errormessage.applicationfeaturesfailed';
-							} else if(response.responseCode === "PHR410003") {
-								self.effectFadeOut('poperror', (''));
-								failuremsg = 'features.errormessage.fetchdescriptionfailed';
-							} else if(response.responseCode === "PHR410006") {
-								self.effectFadeOut('poperror', (''));
-								failuremsg = 'features.errormessage.selectedfeaturesfailed';
-							}
-							self.renderlocales(commonVariables.basePlaceholder);
-
+							commonVariables.loadingScreen.removeLoading();
+							$(".msgdisplay").removeClass("success").addClass("error");
+							$(".error").attr('data-i18n', 'errorCodes.' + response.responseCode);
+							self.renderlocales(commonVariables.contentPlaceholder);	
+							$(".error").show();
+							$(".error").fadeIn(500).fadeOut(500).fadeIn(500).fadeOut(500).fadeIn(500).fadeOut(5);
+							setTimeout(function() {
+								$(".error").hide();
+							},2500);
 						}
 
 					},
 
 					function(textStatus) {
-						//commonVariables.loadingScreen.removeLoading();
+						commonVariables.loadingScreen.removeLoading();
+						$(".msgdisplay").removeClass("success").addClass("error");
+						$(".error").attr('data-i18n', 'commonlabel.errormessage.serviceerror');
+						self.renderlocales(commonVariables.contentPlaceholder);	
+						$(".error").show();
+						$(".error").fadeIn(500).fadeOut(500).fadeIn(500).fadeOut(500).fadeIn(500).fadeOut(5);
+						setTimeout(function() {
+							$(".error").hide();
+						},2500);
 					}
 				);
 			} catch(exception) {
-				//commonVariables.loadingScreen.removeLoading();
+				commonVariables.loadingScreen.removeLoading();
 			}
 
 		},
@@ -159,46 +158,47 @@ define(["features/features",  "application/application",  "projectlist/projectLi
 				commonVariables.api.ajaxRequest(header,
 					function(response) {
 						if (response !== null && response.status !== "error" && response.status !== "failure") {
-							//commonVariables.loadingScreen.removeLoading();
+							commonVariables.loadingScreen.removeLoading();
 							if(response.responseCode === "PHR200007") {
-								$(".blinkmsg").removeClass("poperror").addClass("popsuccess");
-								self.effectFadeOut('popsuccess', (''));
-								$(".popsuccess").attr('data-i18n', 'features.successmessage.featuresupdated');
-								self.renderlocales(commonVariables.basePlaceholder);
-							}
+								$(".msgdisplay").removeClass("error").addClass("success");
+								$(".success").attr('data-i18n', 'successCodes.' + response.responseCode);
+								self.renderlocales(commonVariables.contentPlaceholder);	
+								$(".success").show();
+								$(".success").fadeIn(500).fadeOut(500).fadeIn(500).fadeOut(500).fadeIn(500).fadeOut(5);
+								setTimeout(function() {
+									$(".success").hide();
+								},2500);
+							}	
 							callback(response);
 						} else {
-							//commonVariables.loadingScreen.removeLoading();
-							$(".blinkmsg").removeClass("popsuccess").addClass("poperror");
-							var failuremsg = null;
+							commonVariables.loadingScreen.removeLoading();
 							if(response.responseCode === "PHR210008") {
-								self.effectFadeOut('poperror', (''));
-								failuremsg = 'features.errormessage.featuresupdatefailed';
-							} else if(response.responseCode === "PHR210007") {
-								self.effectFadeOut('poperror', (''));
-								failuremsg = 'features.errormessage.openprojectinfofailed';
-							} else if(response.responseCode === "PHR410001") {
-								self.effectFadeOut('poperror', (''));
-								failuremsg = 'features.errormessage.unauthorizeduser';
-							} else if(response.responseCode === "PHR000000") {
-								self.effectFadeOut('poperror', (''));
-								failuremsg = 'commonlabel.errormessage.unexpectedfailure';
-							}
-							$(".poperror").attr('data-i18n', failuremsg);
-							self.renderlocales(commonVariables.basePlaceholder);
+								$(".msgdisplay").removeClass("success").addClass("error");
+								$(".error").attr('data-i18n', 'errorCodes.' + response.responseCode);
+								self.renderlocales(commonVariables.contentPlaceholder);	
+								$(".error").show();
+								$(".error").fadeIn(500).fadeOut(500).fadeIn(500).fadeOut(500).fadeIn(500).fadeOut(5);
+								setTimeout(function() {
+									$(".error").hide();
+								},2500);
+							}	
 							
 						}
 					},
 
 					function(textStatus) {
-						$(".blinkmsg").removeClass("popsuccess").addClass("poperror");
-						self.effectFadeOut('poperror', (''));
-						$(".poperror").attr('data-i18n', 'commonlabel.errormessage.serviceerror');
-						self.renderlocales(commonVariables.basePlaceholder);
+						$(".msgdisplay").removeClass("success").addClass("error");
+						$(".error").attr('data-i18n', 'commonlabel.errormessage.serviceerror');
+						self.renderlocales(commonVariables.contentPlaceholder);	
+						$(".error").show();
+						$(".error").fadeIn(500).fadeOut(500).fadeIn(500).fadeOut(500).fadeIn(500).fadeOut(5);
+						setTimeout(function() {
+							$(".error").hide();
+						},2500);
 					}
 				);
 			} catch(exception) {
-				//commonVariables.loadingScreen.removeLoading();
+				commonVariables.loadingScreen.removeLoading();
 			}
 		},
 		
@@ -245,7 +245,7 @@ define(["features/features",  "application/application",  "projectlist/projectLi
 				val = eachList;
 			}
 			val.each(function() {
-				if($(this).attr("class") === "switch switchOn default" || $(this).attr("class") === "switch default switchOn" || $(this).attr("class") === "switch switchOn"){
+				if($(this).attr("class") === "switch switchOn default" || $(this).attr("class") === "switch default switchOn" || $(this).attr("class") === "switch switchOn" || $(this).attr("class") === "switch default switchOff"){
 					$(this).parent().show();
 					self.scrollbarUpdate();					
 				}
@@ -298,7 +298,7 @@ define(["features/features",  "application/application",  "projectlist/projectLi
 
 		hideLoad : function(){
 			var self = this;
-			//commonVariables.loadingScreen.removeLoading();
+			commonVariables.loadingScreen.removeLoading();
 		},
 
 		getRequestHeader : function(projectRequestBody, type, descid) {

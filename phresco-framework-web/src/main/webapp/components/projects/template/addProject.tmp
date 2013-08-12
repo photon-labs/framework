@@ -207,6 +207,7 @@
         	<input type="submit" value="Create" data-i18n="[value]common.btn.create" name="Create" class="btn btn_style add_icon_btn">
             <input type="submit" value="Cancel" data-i18n="[value]common.btn.close" name="Cancel" class="btn btn_style cancel_icon_btn">
         </div>
+		<div class="msgdisplay"></div>
     	<!--content_title ends here -->
     </section>
 </section>	

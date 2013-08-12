@@ -27,8 +27,8 @@ define([], function() {
 					$(target).toggle();
 					var a = target.height()/2;
 					var b = clicked.height()/2;
-					var t=clicked.offset().top + (b+12) - (a+12) ;
-					var l=clicked.offset().left + clicked.width()+ 4;
+					var t=clicked.offset().top + (b+12) - (a+12) + 50 ;
+					var l=clicked.offset().left + clicked.width() - 44;
 					$(target).offset({
 						top: t,
 						left: l

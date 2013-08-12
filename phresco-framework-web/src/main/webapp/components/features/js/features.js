@@ -64,7 +64,7 @@ define(["features/listener/featuresListener"], function() {
 						if(JSON.stringify(value.appliesTo) !== "null"){
 							$.each(value.appliesTo, function(index, value){
 								if(value.required === true){
-									fieldset = '<fieldset class="switch switchOn default" id="feature_'+ id +'" value="false"><label value="false"></label><label class="on" value="true"></label></fieldset>';
+									fieldset = '<fieldset class="switch default" id="feature_'+ id +'" value="false"><label value="false"></label><label class="on" value="true"></label></fieldset>';
 								} else {							
 									fieldset = '<fieldset class="switch switchOff" id="feature_'+ id +'" value="false"><label class="off" name="on_off" value="false"></label><label class="on" name="on_off" value="true"></label></fieldset>';
 								}
@@ -95,6 +95,15 @@ define(["features/listener/featuresListener"], function() {
 					});
 					return fieldset;
 				}
+			});
+
+			Handlebars.registerHelper('scopeShowHide',function(packaging,scope) {
+				var fieldset;
+				if(packaging === "jar"){
+					fieldset = '<select class="jarscope"><option value="Provide">Provide</option><option value="Test">Test</option><option value="RunTime">RunTime</option></select> ';
+				}
+				return fieldset;
+				
 			});
 			
 			Handlebars.registerHelper('idtrime', function(id) {
@@ -135,22 +144,25 @@ define(["features/listener/featuresListener"], function() {
 					});
 					$.each(response.data, function(index, value){
 						$("#feature_"+this.moduleId).addClass("switchOn").removeClass('switchOff');
-						$("#version_"+this.moduleId).show();					
+						$("#version_"+this.moduleId).show();		
+						$('li[name='+value.name+']').children('div').children('.jarscope').val(value.scope);
+						self.selectedCount();
 					});
 				});
 				
 			//}
-			setTimeout(function(){
+			/* setTimeout(function(){
 					self.selectedCount();
-			},3000);
+			},3000); */
 
 		},
 		
 		
 		selectedCount : function(){
-			var jsLibCount = $("#jsibrariesContent").find(".switchOn").size(), 
-			moduleCount = $("#moduleContent").find(".switchOn").size(),
-			componentCount = $("#componentsContent").find(".switchOn").size();
+			var jsLibCount = null, moduleCount = null, componentCount = null;
+			jsLibCount = $("#jsibrariesContent").find(".switchOn").size() + $("#jsibrariesContent").find(".default").size();
+			moduleCount = $("#moduleContent").find(".switchOn").size() + $("#moduleContent").find(".default").size();
+			componentCount = $("#componentsContent").find(".switchOn").size() + $("#componentsContent").find(".default").size();
 			$(".totalModules").text(moduleCount);
 			$(".totalComponent").text(componentCount);
 			$(".totalJslibraries").text(jsLibCount);
@@ -269,9 +281,12 @@ define(["features/listener/featuresListener"], function() {
 				var classval = $("#search").attr("class");
 				$("#"+temp).val('');
 				self.onSearchEvent.dispatch('', temp+'content', classval);
-				$("#norecord1").hide();	
-				$("#norecord2").hide();	
-				$("#norecord3").hide();	
+				if(temp === 'module')
+					$("#norecord1").hide();	
+				else if(temp === 'jsibraries')
+					$("#norecord2").hide();	
+				else if(temp === 'components')
+					$("#norecord3").hide();	
 			});
 
            	$('#switchoffbutton').on("click", function(event) {
@@ -338,15 +353,15 @@ define(["features/listener/featuresListener"], function() {
 			self.featuresListener.scrollbarEnable();
 			$('#featureUpdate').on("click", function() {
 				self.featureUpdatedArray = [];
-				$(".switchOn").each(function(index, currentVal) {
+				$(".switchOn, .default").each(function(index, currentVal) {
 					var featureUpdatedata = {};
 					if($(currentVal).parent().attr("type") !== undefined){
 						featureUpdatedata.name = $(currentVal).parent().attr("name");
 						featureUpdatedata.dispName = $(currentVal).parent().attr("dispName");
 						featureUpdatedata.packaging = $(currentVal).parent().attr("packaging");
 						featureUpdatedata.type = $(currentVal).parent().attr("type");					
-						featureUpdatedata.defaultModule = true;
-						featureUpdatedata.scope = $(currentVal).parent().children('div.flt_right').children('select.input-mini').find(':selected').attr("scope");
+					//	featureUpdatedata.defaultModule = true;
+						featureUpdatedata.scope = $(currentVal).parent().children('div.flt_right').children('select.jarscope').find(':selected').val();
 						featureUpdatedata.versionID = $(currentVal).parent().children('div.flt_right').children('select.input-mini').find(':selected').val();
 						featureUpdatedata.dispValue = $(currentVal).parent().children('div.flt_right').children('select.input-mini').find(':selected').text();
 						var moduleId = $(currentVal).parent().children('div.flt_right').children('.moduleId').val();

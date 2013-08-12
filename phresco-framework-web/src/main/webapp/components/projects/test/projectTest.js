@@ -686,6 +686,9 @@ define(["projects/addproject", "projects/editproject"], function(addProject, edi
 				setTimeout(function() {
 					start();
 					equal(applnLayer, "hidden", "Edit Project - Close Image Event Test for Mobile Layer");
+					require(["configurationTest"], function(configurationTest){
+						configurationTest.runTests();
+					});
 				}, 1500);
 			});
 		}

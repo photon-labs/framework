@@ -58,24 +58,25 @@ define([], function() {
 							callback(response);
 							//commonVariables.loadingScreen.removeLoading();
 						} else {
-							if(response.responseCode === "PHR210001") {
-								$(".blinkmsg").removeClass("popsuccess").addClass("poperror");
-								self.effectFadeOut('poperror', (''));
-								$(".poperror").attr('data-i18n', 'projectlist.errormessage.projectlistfailed');
-								self.renderlocales(commonVariables.basePlaceholder);
-							} else if(response.responseCode === "PHR000000") {
-								$(".blinkmsg").removeClass("popsuccess").addClass("poperror");
-								self.effectFadeOut('poperror', (''));
-								$(".poperror").attr('data-i18n', 'commonlabel.errormessage.unexpectedfailure');
-								self.renderlocales(commonVariables.basePlaceholder);
-							}							
+							$(".content_end").show();
+							$(".msgdisplay").removeClass("success").addClass("error");
+							$(".error").attr('data-i18n', 'errorCodes.' + response.responseCode);
+							self.renderlocales(commonVariables.contentPlaceholder);	
+							$(".error").fadeIn(500).fadeOut(500).fadeIn(500).fadeOut(500).fadeIn(500).fadeOut(5);
+							setTimeout(function() {
+								$(".content_end").hide();
+							},2500);
 						}
 					},
 					function(textStatus) {
-						$(".blinkmsg").removeClass("popsuccess").addClass("poperror");
-						self.effectFadeOut('poperror', (''));
-						$(".poperror").attr('data-i18n', 'commonlabel.errormessage.serviceerror');
-						self.renderlocales(commonVariables.basePlaceholder);
+						$(".content_end").show();
+						$(".msgdisplay").removeClass("success").addClass("error");
+						$(".error").attr('data-i18n', 'commonlabel.errormessage.serviceerror');
+						self.renderlocales(commonVariables.contentPlaceholder);		
+						$(".error").fadeIn(500).fadeOut(500).fadeIn(500).fadeOut(500).fadeIn(500).fadeOut(5);
+						setTimeout(function() {
+							$(".content_end").hide();
+						},2500);
 						//commonVariables.loadingScreen.removeLoading();
 					}
 				);
@@ -96,139 +97,43 @@ define([], function() {
 					function(response) {
 						if(response !== null && response.status !== "error" && response.status !== "failure"){
 							self.hidePopupLoad();
-							$(".blinkmsg").removeClass("poperror").addClass("popsuccess");
-							var successmsg = null;
-							if(response.responseCode === "PHR200010") {
-								self.effectFadeOut('popsuccess', (''));
-								successmsg = 'projectlist.successmessage.applicationdeleted';
-							} else if(response.responseCode === "PHR200013") {
-								self.effectFadeOut('popsuccess', (''));
-								successmsg = 'projectlist.successmessage.reportdeleted';
-							} else if(response.responseCode === "PHR200012") {
-								self.effectFadeOut('popsuccess', (''));
-								successmsg = 'projectlist.successmessage.noreporttodownload'
-							} else if(response.responseCode === "PHR200014") {
-								self.effectFadeOut('popsuccess', (''));
-								successmsg = 'projectlist.successmessage.noreporttodelete';
-							} else if(response.responseCode === "PHR200015") {
-								$('input[name=generate]').removeClass('disabled').addClass('btn_style');
-								$('input[name=generate]').removeAttr('disabled');
-							} else if(response.responseCode === "PHR200016") {
-								self.effectFadeOut('popsuccess', (''));
-								successmsg = 'projectlist.successmessage.reportgenerated';
-							} else if(response.responseCode === "PHR200018") {
-								self.effectFadeOut('popsuccess', (''));
-								successmsg = 'projectlist.successmessage.projectupdated';
-							} else if(response.responseCode === "PHR200019") {
-								self.effectFadeOut('popsuccess', (''));
-								successmsg = 'projectlist.successmessage.projectadded';
-							} else if(response.responseCode === "PHR200020") {
-								self.effectFadeOut('popsuccess', (''));
-								successmsg = 'projectlist.successmessage.projectcommited';
-							} else if(response.responseCode === "PHR200023") {
-								self.effectFadeOut('popsuccess', (''));
-								successmsg = 'projectlist.successmessage.logmsgsuccess';
-							}
-							$(".popsuccess").attr('data-i18n', successmsg);
-							self.renderlocales(commonVariables.basePlaceholder);
-							self.hidePopupLoad();
+							if(response.responseCode !== 'PHR200015' && response.responseCode !== 'PHR200021' && response.responseCode !== 'PHR600004' && response.responseCode !== null && response.responseCode !== undefined) {
+								$(".content_end").show();
+								$(".msgdisplay").removeClass("error").addClass("success");
+								$(".success").attr('data-i18n', 'successCodes.' + response.responseCode);
+								self.renderlocales(commonVariables.contentPlaceholder);	
+								$(".success").fadeIn(500).fadeOut(500).fadeIn(500).fadeOut(500).fadeIn(500).fadeOut(5);
+								setTimeout(function() {
+									$(".content_end").hide();
+								},2500);
+							}	
 							callback(response);		
 						} else {
-							$(".blinkmsg").removeClass("popsuccess").addClass("poperror");
-							var failuremsg = null;
-							if(response.responseCode === "PHR210012") {
-								self.effectFadeOut('poperror', (''));
-								failuremsg = 'projectlist.errormessage.applicationdeletefailed';
-							} else if(response.responseCode === "PHR210011") {
-								self.effectFadeOut('poperror', (''));
-								failuremsg = 'projectlist.errormessage.connectionalive';
-							} else if(response.responseCode === "PHR210015") {
-								self.effectFadeOut('poperror', (''));
-								failuremsg = 'projectlist.errormessage.downloadfailed';
-							} else if(response.responseCode === "PHR210016") {
-								self.effectFadeOut('poperror', (''));
-								failuremsg = 'projectlist.errormessage.readreportfailed';
-							} else if(response.responseCode === "PHR210017") {
-								self.effectFadeOut('poperror', (''));
-								failuremsg = 'projectlist.errormessage.reportdeletefailed';
-							} else if(response.responseCode === "PHR210018") {
-								self.effectFadeOut('poperror', (''));
-								failuremsg = 'projectlist.errormessage.deleteaccessfailed';
-							} else if(response.responseCode === "PHR210019") {
-								self.effectFadeOut('poperror', (''));
-								failuremsg = 'projectlist.errormessage.fetchreportfailed';
-							} else if(response.responseCode === "PHR210013") {
-								self.effectFadeOut('poperror', (''));
-								failuremsg = 'projectlist.errormessage.runagainstsource';
-							} else if(response.responseCode === "PHR210020") {
-								self.effectFadeOut('poperror', (''));
-								failuremsg = 'projectlist.errormessage.atleastonereport';
-								$('input[name=generate]').addClass('disabled').removeClass('btn_style');
-								$('input[name=generate]').attr('disabled', 'disabled');
-							}  else if(response.responseCode === "PHR210021") {
-								self.effectFadeOut('poperror', (''));
-								failuremsg = 'projectlist.errormessage.generatereportfailed';
-							} else if(response.responseCode === "PHR210023") {
-								self.effectFadeOut('poperror', (''));
-								failuremsg = 'navigation.errormessage.invalidcredentials';
-							} else if(response.responseCode === "PHR210024") {
-								self.effectFadeOut('poperror', (''));
-								failuremsg = 'navigation.errormessage.invalidurl';
-							} else if(response.responseCode === "PHR210025") {
-								self.effectFadeOut('poperror', (''));
-								failuremsg = 'navigation.errormessage.invalidrevision';
-							} else if(response.responseCode === "PHR210027") {
-								self.effectFadeOut('poperror', (''));
-								failuremsg = 'navigation.errormessage.projectalreadyexists';
-							} else if(response.responseCode === "PHR210028") {
-								self.effectFadeOut('poperror', (''));
-								failuremsg = 'projectlist.errormessage.projectupdatefailed';
-							} else if(response.responseCode === "PHR210029") {
-								self.effectFadeOut('poperror', (''));
-								failuremsg = 'projectlist.errormessage.notworkingcopy';
-							} else if(response.responseCode === "PHR210030") {
-								self.effectFadeOut('poperror', (''));
-								failuremsg = 'projectlist.errormessage.nofilestoupdate';
-							} else if(response.responseCode === "PHR210031") {
-								self.effectFadeOut('poperror', (''));
-								failuremsg = 'projectlist.errormessage.addprojectfailed';
-							} else if(response.responseCode === "PHR210032") {
-								self.effectFadeOut('poperror', (''));
-								failuremsg = 'projectlist.errormessage.repositoryexistsnot';
-							} else if(response.responseCode === "PHR210033") {
-								self.effectFadeOut('poperror', (''));
-								failuremsg = 'projectlist.errormessage.commitfailed';
-							} else if(response.responseCode === "PHR210034") {
-								self.effectFadeOut('poperror', (''));
-								failuremsg = 'projectlist.errormessage.nofilestocommit';
-							} else if(response.responseCode === "PHR210036") {
-								self.effectFadeOut('poperror', (''));
-								failuremsg = 'projectlist.errormessage.repositoryfailed';
-							} else if(response.responseCode === "PHR210035") {
+							if(response.responseCode === "PHR210035") {
 								callback(response);
-							} else if(response.responseCode === "PHR210037") {
-								self.effectFadeOut('poperror', (''));
-								failuremsg = 'projectlist.errormessage.updaterepositoryfailed';
-							} else if(response.responseCode === "PHR210039") {
-								self.effectFadeOut('poperror', (''));
-								failuremsg = 'projectlist.errormessage.logmessagefailure';
-							} else if(response.responseCode === "PHR210038") {
-								self.effectFadeOut('poperror', (''));
-								failuremsg = 'projectlist.errormessage.logurlfailure';
-							} else if(response.responseCode === "PHR000000") {
-								self.effectFadeOut('poperror', (''));
-								failuremsg = 'commonlabel.errormessage.unexpectedfailure';
+								self.hidePopupLoad();
+							} else {
+								$(".content_end").show();
+								$(".msgdisplay").removeClass("success").addClass("error");
+								$(".error").attr('data-i18n', 'errorCodes.' + response.responseCode);
+								self.renderlocales(commonVariables.contentPlaceholder);	
+								$(".error").fadeIn(500).fadeOut(500).fadeIn(500).fadeOut(500).fadeIn(500).fadeOut(5);
+								setTimeout(function() {
+									$(".content_end").hide();
+								},2500);
+								self.hidePopupLoad();
 							}
-							$(".poperror").attr('data-i18n', failuremsg);
-							self.renderlocales(commonVariables.basePlaceholder);
-							self.hidePopupLoad();
 						}
 					},					
 					function(textStatus) {
-						$(".blinkmsg").removeClass("popsuccess").addClass("poperror");
-						self.effectFadeOut('poperror', (''));
-						$(".poperror").attr('data-i18n', 'commonlabel.errormessage.serviceerror');
-						self.renderlocales(commonVariables.basePlaceholder);
+						$(".content_end").show();
+						$(".msgdisplay").removeClass("success").addClass("error");
+						$(".error").attr('data-i18n', 'commonlabel.errormessage.serviceerror');
+						self.renderlocales(commonVariables.contentPlaceholder);	
+						$(".error").fadeIn(500).fadeOut(500).fadeIn(500).fadeOut(500).fadeIn(500).fadeOut(5);
+						setTimeout(function() {
+							$(".content_end").hide();
+						},2500);
 						self.hidePopupLoad();
 					}
 				);
@@ -446,6 +351,18 @@ define([], function() {
 			$('#commitLoading_'+dynamicId).show();
 			commonVariables.hideloading = true;
 	      	self.projectListAction(self.getActionHeader(data, "getCommitableFiles"), $('#commitLoading_'+dynamicId), function(response) {
+				var halfheight= window.innerHeight/2;
+				var halfwidth= window.innerWidth/2;
+				if ($(obj).offset().top > halfheight && $(obj).offset().left > halfwidth){
+					var temp = $(obj).attr('name');
+					if(response.responseCode === 'PHR200021') {
+						var temp2 = $(obj).position().top - 397;
+						$("#"+temp).css('top',temp2);
+					} else {
+						var temp2 = $(obj).position().top - 118;
+						$("#"+temp).css('top',temp2);
+					}	
+				}
 	      		$("#dummyCommit_"+dynamicId).css("height","0");
 				var commitableFiles = "";
 				$('.commit_data_'+dynamicId).hide();

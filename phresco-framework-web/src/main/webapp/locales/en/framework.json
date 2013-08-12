@@ -1,4 +1,155 @@
 {
+	"errorCodes" : {
+		"PHR000000": "Unexpected Failure at server end",	 
+		"PHR1C10001" : "No parameter available",
+		"PHR1C10002" : "Parameter not fetched",
+		"PHR1C10003" : "Unable to read 'phresco.functionalTest.selenium.tool' property in project's pom.xml",
+		"PHR2C10003" : "Log copy failed",
+		"PHR3C10001" : "Failed to open folder",
+		"PHR4C10001" : "Failed to copy path",
+		"PHR110001" : "'user' object does not exist or is empty",
+		"PHR110002" : "Unauthorized user for Phresco",
+		"PHR110003" : "Invalid Credentials",
+		"PHR110004" : "Auth Service is down",
+		"PHR110005" : "'user.json' file not found",
+		"PHR110006" : "Parsing failed for file 'user.json'",
+		"PHR110007" : "User doesn't have valid permissions",
+		"PHR210001" : " Failed to list projects",
+		"PHR210003" : "Unauthorized user",
+		"PHR210004" : "Project creation failed",
+		"PHR210005" : "Failed to edit project",
+		"PHR210006" :"Failed to update project",
+		"PHR210007" : "Could not open file 'project.info'",
+		"PHR210008" : "Failed to update features",
+		"PHR210009" : "Failed to update application",
+		"PHR210010" : "I/O error while closing BufferedReader",
+		"PHR210011" : "Could not delete application, connection still alive",
+		"PHR210012" : "Unable to delete application",
+		"PHR210013" : "Could not open file 'runagainstsource.info'",
+		"PHR210015" : "Unable to download report",
+		"PHR210016" : "Unable to access or read report",
+		"PHR210017" : "Failed to delete report",
+		"PHR210018" : "Could not access application home to delete report",
+		"PHR210019" : "Unable to fetch reports",
+		"PHR210020" : "Atleast one test report should be available or sonar report should be available",
+		"PHR210021" : "Failed to generate report",
+		"PHR210022" : "Phresco compliant project does not exist",
+		"PHR210023" : "Invalid credentials",
+		"PHR210024" : "Invalid URL",
+		"PHR210025" : "Invalid revision",
+		"PHR210026" : "Failed to import project",
+		"PHR210027" : "Project already exists",
+		"PHR210028" : "Failed to update project",
+		"PHR210029" : "This is not a working copy",
+		"PHR210030" : "No files to update",
+		"PHR210031" : "Failed to add project",
+		"PHR210032" : "This git repository does not exist",
+		"PHR210033" : "Failed to commit project to repository",
+		"PHR210034" : "No files to commit",
+		"PHR210035" : "Repository does not exist for commit",
+		"PHR210036" : "Repository does not exist",
+		"PHR210037" : "Repository does not exist for update",
+		"PHR210038" : "Invalid URL or repository moved temporarily",
+		"PHR210039" : "Failed to fetch log messages",
+		"PHR210040" : "Invalid name",
+		"PHR210041" : "Project name already exists",
+		"PHR210042" : "Project code already exists",
+		"PHR210043" : "App code already exists",
+		"PHR210044" : "App directory already exists",
+		"PHR310001" : "Unauthorized user",
+		"PHR310002" : "Unable to fetch server/database configuration",
+		"PHR310003" : "Unable to fetch webservice configuration",
+		"PHR310004" : "Failed to get technology options",
+		"PHR310005" : "Unable to fetch functional frameworks",
+		"PHR410001" : "Unauthorized user",
+		"PHR410002" : "Unable to fetch application features",
+		"PHR410003" : "Unable to fetch description",
+		"PHR410006" : "Unable to fetch selected features",
+		"PHR510001" : "Sonar not yet started",
+		"PHR510002" : "Dependency not fetched",
+		"PHR510003" : "Report not available",
+		"PHR510004" : "Code validation failed",
+		"PHR510005" : "Unable to fetch 'phresco.code.validate.report' property in project's pom.xml",
+		"PHR510006" : "Failed to read functional test dir from project's pom.xml or create pom.xml in that dir",
+		"PHR510007" : "No IP address for the host could be found",
+		"PHR510008" : "An I/O exception has occurred",
+		"PHR610001" : "Failed to add environments",
+		"PHR610002" : "Failed to list environments",
+		"PHR610003" : "Default environment cannot be deleted",
+		"PHR610004" : "Failed to delete environment",
+		"PHR610005" : "Environment not available to delete",
+		"PHR610006" : "Unauthorized user",
+		"PHR610007" : "Unable to fetch configuration template",
+		"PHR610008" : "URL parameter is missing",
+		"PHR610009" : "Unable to check connection",
+		"PHR610010" : "Failed to update configurations for the environment",
+		"PHR610011" : "Failed to clone environment",
+		"PHR610012" : "Cron expression not available",
+		"PHR610013" : "Could not fetch app infos in order to list environments",
+		"PHR610014" : "No certificate found",
+		"PHR610015" : "No certificate to add",
+		"PHR610016" : "Unable to add https server certificate",
+		"PHR610017" : "Failed to upload file",
+		"PHR610018" : "No file to upload",
+		"PHR610019" : "No file structure found",
+		"PHR610020" : "Failed to return file structure for browsing",
+		"PHR610021" : "File cannot be iterated",
+		"PHR610022" : "Unable to return entire file structure for browsing",
+		"PHR610023" : "Configuration not available to delete",
+		"PHR610024" : "Configurations fail on validation",
+		"PHR610025" : "Failed to list environments for particular envName",
+		"PHR610026" : "Failed to read environments from phresco-env-config.xml",
+		"PHR610027" : "Failed to get environments from phresco-fav-config.xml",
+		"PHR610028" : "Unable to fetch environments",
+		"PHR610029" : "Failed to clone environment during manipulation of phresco-env-config.xml",
+		"PHR610030" : "Failed to read zip file while uploading", 
+		"PHR710001" : "No build available",
+		"PHR710002" : "Buildinfo list failed",
+		"PHR710003" : "Failed to read zipped buildinfo file",
+		"PHR710004" : "Failed to delete build",
+		"PHR710005" : "Run against source not yet performed",
+		"PHR710006" : "Connection not alive",
+		"PHR710007" : "Failed to check status",
+		"PHR710008" : "Unable to build application",
+		"PHR710009" : "Unable to deploy application",
+		"PHR710010" : "Run against source failed",
+		"PHR710011" : "Could not retrieve particular buildinfo file",
+		"PHR710012" : "Unable to download IPA since build number is empty",
+		"PHR710013" : "Could not read the project info path or the IPA download path",
+		"PHR710014" : "Failed to download IPA",
+		"PHRQ010001" : "Test result not available",
+		"PHRQ010002" : "Failed to list test suites",
+		"PHRQ010003" : "Test case not available",
+		"PHRQ010004" : "Failed to list test cases",
+		"PHRQ110001" : "Unable to get unit test report options",
+		"PHRQ110002" : "Failed to execute unit test",
+		"PHRQ210001" : "Failed to execute component test"
+	},
+	"successCodes" : {
+		"PHR200004" : "Project created successfully",
+		"PHR200006" : "Project updated successfully",
+		"PHR200007" : "Features updated successfully", 	
+		"PHR200008" : "Application updated successfully",
+		"PHR200010" : "Application deleted successfully",
+		"PHR200012" : "No report to download",
+		"PHR200013" : "Report deleted successfully",
+		"PHR200014" : "No report to delete",
+		"PHR200016" : "Report generated successfully",
+		"PHR200017" : "Project imported successfully",
+		"PHR200018" : "Project updated successfully",
+		"PHR200019" : "Project added successfully",
+		"PHR200020" : "Project committed successfully",
+		"PHR200023" : "Log messages returned successfully",
+		"PHR600001" : "Environments added successfully",
+		"PHR600003" : "Environment deleted successfully",
+		"PHR600006" : "Configurations updated successfully",
+		"PHR600007" : "Environment cloned successfully",
+		"PHR600009" : "Https server certificate returned successfully",
+		"PHR600010" : "Https server certificate added successfully",
+		"PHR600014" : "Configuration deleted successfully",
+		"PHR600015" : "Configurations created successfully",
+		"PHR700002" : "Build deleted successfully"
+	},
 	"navigation" : {
 		"application" : {
 			"qa" : "Quality Assurance",
@@ -24,17 +175,6 @@
 			"apprepourl" : "Application Repo URL",
 			"testcheckout" : "Test Checkout",
 			"testrepourl" : "Test Repo Url"
-		},
-		"errormessage" : {
-			"invalidcredentials" : "Invalid credentials",
-			"invalidurl" : "Invalid URL",
-			"invalidrevision" : "Invalid revision",
-			"importfailed" : "Failed to import project",
-			"projectalreadyexists" : "Project already exists",
-			"doesnotexist" : "Phresco compliant project does not exist"
-		},
-		"successmessage" : {
-			"importsuccess" : "Project imported successfully"
 		}
 	},
 	"codequality" : {
@@ -105,16 +245,6 @@
 					"createproject" : "Create Project"
 				}
 			}
-		},
-		"successmessage" : {
-			"projectcreated" : "Project created successfully",
-			"projectupdated" : "Project updated successfully"
-		},
-		"errormessage" : {
-			"projectcreatefailed" : "Project creation failed",
-			"projecteditfailed" : "Failed to edit project",
-			"projectupdatefailed" :"Failed to update project",
-			"unauthorizeduser" : "Unauthorized user"
 		}
 	},
 	"projectlist" : {
@@ -143,39 +273,7 @@
 		"btn" : {
 			"addrepo" : "Add To Repo",
 			"validate" : "Validate"
-		},
-		"successmessage" : {
-			"applicationdeleted" : "Application deleted successfully",
-			"reportdeleted" : "Report deleted successfully",
-			"noreporttodelete" : "No report to delete",
-			"noreporttodownload" : "No report to download",
-			"reportgenerated" : "Report generated successfully",
-			"projectupdated" : "Project updated successfully",
-			"projectadded" : "Project added successfully",
-			"projectcommited" : "Project committed successfully"
-		},
-		"errormessage" : {
-			"projectlistfailed": " Failed to list projects",
-			"applicationdeletefailed" : "Unable to delete application",
-			"reportdeletefailed" : "Failed to delete report",
-			"atleastonereport" : "Atleast one test report should be available or sonar report should be available",
-			"deleteaccessfailed" : "Could not access application home to delete report",
-			"fetchreportfailed" : "Unable to fetch reports",
-			"generatereportfailed" : "Failed to generate report",
-			"downloadfailed" : "Unable to download report",
-			"readreportfailed" : "Unable to access or read report",
-			"connectionalive" : "Could not delete application, connection still alive",
-			"runagainstsource" : "Could not open file 'runagainstsource.info'",
-			"projectupdatefailed" : "Failed to update project",
-			"notworkingcopy" : "This is not a working copy",
-			"nofilestoupdate" : "No files to update",
-			"addprojectfailed" : "Failed to add project",
-			"repositoryexistsnot" : "This git repository does not exist",
-			"commitfailed" : "Failed to commit project to repository",
-			"nofilestocommit" : "No files to commit",
-			"repositoryfailed" : "Repository does not exist",
-			"updaterepositoryfailed" : "Repository does not exist for update"
-		}
+		}			
 	},
 	"configuration" : {
 		"label" : {
@@ -265,8 +363,7 @@
 			 "module"  	      : "Module" 	
 		},
 		"errormessage" : {
-			"serviceerror" : "Service Error",
-			"unexpectedfailure": "Unexpected Failure at server end"	 
+			"serviceerror" : "Service Error"
 		}
 	},
 	
@@ -285,15 +382,6 @@
 			"username" : "Username",
 			"enterusername" : "Enter Username",
 			"enterpassword" : "Enter Password"
-		},
-		"errormessage" : {
-			"isempty": "'user' object does not exist or is empty",
-			"unauthorizeduser": "Unauthorized user for Phresco",
-			"invalidcredential": "Invalid Credentials",
-			"authservicedown": "Auth Service is down",
-			"jsonnotfound": "'user.json' file not found",
-			"parsingfailed": "Parsing failed for file 'user.json'",
-			"invalidpermissions": "User doesn't have valid permissions"
 		},
 		"title" : "USER LOGIN"
 	},
@@ -366,18 +454,6 @@
 		"btn" : {
 			"cancel" : "Cancel",
 			"update" : "Update"
-		},
-		"successmessage" : {
-			"applicationupdated" : "Application updated successfully"
-		},
-		"errormessage" : {
-			"applicationupdatefailed" : "Failed to update application",
-			"openprojectinfofailed" : "Could not open file 'project.info'",
-			"unauthorizeduser" : "Unauthorized user",
-			"ioerror" : "I/O error while closing BufferedReader",
-			"configurationfetchfailed" : "Unable to fetch configuration",
-			"wsconfigurationfetchfailed" : "Unable to fetch webservice configuration",
-			"techoptionsfailed" : "Failed to get technology options"
 		}
 	},
 	"features" : {
@@ -393,18 +469,7 @@
 			"jslibraries" : "JS Libraries",
 			"components" : "Components"
 		},
-		"placeholder" : "Search",
-		"successmessage" : {
-			"featuresupdated" : "Features updated successfully" 
-		},
-		"errormessage" : {
-			"featuresupdatefailed" : "Failed to update features",
-			"openprojectinfofailed" : "Could not open file 'project.info'",
-			"unauthorizeduser" : "Unauthorized user",
-			"applicationfeaturesfailed" : "Unable to fetch application features",
-			"fetchdescriptionfailed" : "Unable to fetch description",
-			"selectedfeaturesfailed" : "Unable to fetch selected features"
-		}
+		"placeholder" : "Search"
 	},
 	"ci" : {
         "jobtemplates" : "Job Templates",

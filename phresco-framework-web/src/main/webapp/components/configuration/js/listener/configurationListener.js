@@ -316,7 +316,7 @@ define(["croneExpression/croneExpression"], function() {
 						inputCtrl = '<input value="'+ label +'" class="'+configTemplate.name+self.count+'Configuration btn btn_style" name="'+key+'" mandatory="'+required+'" type="button" />';
 						fCheck = true;
 					} else if (key === "scheduler") {
-						inputCtrl = '<input value="'+ configValue +'" class="'+configTemplate.name+self.count+'Configuration" name="'+key+'" mandatory="'+required+'" type="text" placeholder=""/><a name="cron_expression"><img src="themes/default/images/helios/settings_icon.png" width="23" height="22" border="0" alt=""></a><div id="cron_expression" class="dyn_popup" style="display:none"></div>';
+						inputCtrl = '<input value="'+ configValue +'" class="'+configTemplate.name+self.count+'Configuration" temp="'+configTemplate.name+key+self.count+'" name="'+key+'" mandatory="'+required+'" type="text" placeholder=""/><a name="cron_expression"><img src="themes/default/images/helios/settings_icon.png" width="23" height="22" border="0" alt=""></a><div id="cron_expression" class="dyn_popup" style="display:none"></div>';
 					} else if (type === "Boolean") {
 						var checked = "";
 						if(configValue === "true") {
