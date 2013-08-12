@@ -30,7 +30,7 @@
         </Other>
     </environment>
     
-	<environment default="true" name="Development">
+	<environment default="false" name="Development">
         <Server appliesTo="tech-html5-widget" desc="" name="server">
             <protocol>http</protocol>
             <host>localhost</host>
@@ -62,7 +62,7 @@
         
     </environment>
     
-    <environment default="false" name="Testing">
+    <environment default="true" name="Testing">
 	 <Server appliesTo="tech-html5-widget" desc="" name="server">
             <protocol>http</protocol>
             <host>localhost</host>
