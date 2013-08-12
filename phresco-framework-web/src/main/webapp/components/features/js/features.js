@@ -338,14 +338,14 @@ define(["features/listener/featuresListener"], function() {
 			self.featuresListener.scrollbarEnable();
 			$('#featureUpdate').on("click", function() {
 				self.featureUpdatedArray = [];
-				$(".switchOn").each(function(index, currentVal) {
+				$(".switchOn, .default").each(function(index, currentVal) {
 					var featureUpdatedata = {};
 					if($(currentVal).parent().attr("type") !== undefined){
 						featureUpdatedata.name = $(currentVal).parent().attr("name");
 						featureUpdatedata.dispName = $(currentVal).parent().attr("dispName");
 						featureUpdatedata.packaging = $(currentVal).parent().attr("packaging");
 						featureUpdatedata.type = $(currentVal).parent().attr("type");					
-						featureUpdatedata.defaultModule = true;
+						//featureUpdatedata.defaultModule = true;
 						featureUpdatedata.scope = $(currentVal).parent().children('div.flt_right').children('select.input-mini').find(':selected').attr("scope");
 						featureUpdatedata.versionID = $(currentVal).parent().children('div.flt_right').children('select.input-mini').find(':selected').val();
 						featureUpdatedata.dispValue = $(currentVal).parent().children('div.flt_right').children('select.input-mini').find(':selected').text();

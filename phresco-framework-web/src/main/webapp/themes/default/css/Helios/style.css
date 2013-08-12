@@ -2691,7 +2691,7 @@ html>body tbody.scrollContent {
 }
 
 .qual_unit .code_func {
-	padding: 4px 10px 0 8px;
+	padding: 4px 1px 0 8px;
     width: auto;
 }
 
@@ -3844,6 +3844,14 @@ img.add_test_icon
 
 .performanceGraphNav {
 	width: 134px;
+}
+
+.perf_load_table tr td
+{
+	width:5%;
+}
+.perf_load_table .th-inner{
+	padding-left:5px !important;
 }
 
 /* *************************************************************** STYLES FOR QUALITY_MANUAL TEST PAGE ************************************************************* */

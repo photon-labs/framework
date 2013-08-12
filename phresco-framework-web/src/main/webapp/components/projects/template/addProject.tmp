@@ -166,7 +166,7 @@
 									<tr class="mobilelayercontent" name="staticMobileLayer">
 										<td class="mobileappcode"><input type="text" id="mobileappcode" maxlength="30" title="30 characters only" class="mobile-appcode appCodeText" count=3></td>
 										<td name="mobile" class="mobile">
-											<select name="mobile_layer" class="mobile_layer selectpicker" title="Select Model">
+											<select name="mobile_layer" class="mobile_layer selectpicker" bottomHeight="60" title="Select Model">
 											   <option value="Select Technology">Select Technology</option>
 											   {{#each mobilelayerData.techGroups}}
 												  <option value="{{id}}">{{name}}</option>
@@ -174,12 +174,12 @@
 											</select>
 										 </td>
 										 <td name="types" class="types">
-											<select name="mobile_types" class="mobile_types selectpicker" title="Select Type">
+											<select name="mobile_types" class="mobile_types selectpicker" bottomHeight="60" title="Select Type">
 											   <option value="Select Platform">Select Platform</option>
 											</select>
 										 </td>
 										 <td colspan="2" name="mobileversion" class="mobileversion">
-											<select name="mobile_version" class="mobile_version selectpicker" title="Select Version">
+											<select name="mobile_version" class="mobile_version selectpicker" bottomHeight="60" title="Select Version">
 											   <option value="Select Version">Select Version</option>
 											</select>
 										 </td>
