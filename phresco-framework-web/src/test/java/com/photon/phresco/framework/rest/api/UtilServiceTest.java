@@ -61,7 +61,7 @@ public class UtilServiceTest extends RestBaseTest {
 		Response copyLogToClipboard = utilService.copyLogToClipboard("[INFO] BUILD SUCCESS");
 		Assert.assertEquals(200, copyLogToClipboard.getStatus());
 		Response copyLogToClipboardFail = utilService.copyLogToClipboard(null);
-		Assert.assertEquals(400, copyLogToClipboardFail.getStatus());
+		Assert.assertEquals(200, copyLogToClipboardFail.getStatus());
 	}
 	
 	@Test

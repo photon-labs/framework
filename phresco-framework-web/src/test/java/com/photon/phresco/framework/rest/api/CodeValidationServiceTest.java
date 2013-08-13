@@ -89,7 +89,7 @@ public class CodeValidationServiceTest extends RestBaseTest  {
 		HttpServletRequest httprequest = (HttpServletRequest)request;
 		Response response  = service.codeValidate(httprequest);
 		ActionResponse entity = (ActionResponse) response.getEntity();
-		assertEquals("ERROR", entity.getStatus());
+		assertEquals("error", entity.getStatus());
 	}
 
 	@Test
@@ -103,7 +103,7 @@ public class CodeValidationServiceTest extends RestBaseTest  {
 			HttpServletRequest httprequest = (HttpServletRequest)request;
 			Response response  = service.codeValidate(httprequest);
 			ActionResponse entity = (ActionResponse) response.getEntity();
-			assertEquals("ERROR", entity.getStatus());
+			assertEquals("error", entity.getStatus());
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new PhrescoException(e);
@@ -132,6 +132,6 @@ public class CodeValidationServiceTest extends RestBaseTest  {
 		HttpServletRequest httprequest = (HttpServletRequest)request;
 		Response response  = service.codeValidate(httprequest);
 		ActionResponse entity = (ActionResponse) response.getEntity();
-		assertEquals("ERROR", entity.getStatus());
+		assertEquals("error", entity.getStatus());
 	}
 }

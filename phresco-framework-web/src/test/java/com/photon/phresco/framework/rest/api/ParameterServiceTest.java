@@ -37,13 +37,12 @@ public class ParameterServiceTest extends RestBaseTest {
 		Assert.assertEquals(200, responsePackage.getStatus());
 		Response responseFunctional = parameterService.getParameter(appDirName,"", "functional-test", "", userId, customerId, "");
 		Assert.assertEquals(200, responseFunctional.getStatus());
-		getDynamicParamsFail();
 	}
 	
 	@Test
 	public void getDynamicParamsFail() {
 		Response responseFailure = parameterService.getParameter(appDirName, "","deploy", "", "", customerId, "");
-		Assert.assertEquals(400, responseFailure.getStatus());
+		Assert.assertEquals(200, responseFailure.getStatus());
 	}
 	
 	
