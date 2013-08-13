@@ -47,7 +47,7 @@ public interface ResponseCodes {
 	String PHR110001 = "PHR110001"; // 'user' object does not exist or is empty
 	String PHR110002 = "PHR110002"; // unauthorized user for phresco
 	String PHR110003 = "PHR110003"; // invalid credentials or auth service is down
-	String PHR110004 = "PHR110004"; // auth service is down
+	String PHR110004 = "PHR110004"; // service is down
 	String PHR110005 = "PHR110005"; // 'user.json' file not found
 	String PHR110006 = "PHR110006"; // parsing failed for file 'user.json'
 	String PHR110007 = "PHR110007"; // user doesn't have valid permissions
@@ -161,6 +161,8 @@ public interface ResponseCodes {
 	String PHR510006 = "PHR510006"; // failed to read functional test dir from project's pom.xml or create pom.xml in that dir
 	String PHR510007 = "PHR510007"; // no IP address for the host could be found
 	String PHR510008 = "PHR510008"; // an I/O exception has occurred
+	String PHR500003 = "PHR500003"; // report fetched successfully
+	String PHR510009 = "PHR510009"; // report not fetched
 	
 	
 	/*
@@ -195,12 +197,12 @@ public interface ResponseCodes {
 	String PHR600011 = "PHR600011"; // file uploaded successfully
 	String PHR610017 = "PHR610017"; // failed to upload file
 	String PHR610018 = "PHR610018"; // no file to upload
-	String PHR610019 = "PHR610019"; // no browse file structure found
-	String PHR600012 = "PHR600012"; // browse file structure returned
-	String PHR610020 = "PHR610020"; // failed to return browse file structure
+	String PHR610019 = "PHR610019"; // no file structure found
+	String PHR600012 = "PHR600012"; // file structure returned for browsing
+	String PHR610020 = "PHR610020"; // failed to return file structure for browsing
 	String PHR610021 = "PHR610021"; // file cannot be iterated
-	String PHR600013 = "PHR600013"; // file browse entire structure returned successfully
-	String PHR610022 = "PHR610022"; // unable to return file browse entire structure
+	String PHR600013 = "PHR600013"; // entire file structure returned successfully
+	String PHR610022 = "PHR610022"; // unable to return entire file structure for browsing
 	String PHR600014 = "PHR600014"; // configuration deleted successfully
 	String PHR610023 = "PHR610023"; // configuration not available to delete
 	String PHR610024 = "PHR610024"; // configurations fail on validation
@@ -210,6 +212,7 @@ public interface ResponseCodes {
 	String PHR610027 = "PHR610027"; // failed to get environments from phresco-fav-config.xml
 	String PHR610028 = "PHR610028"; // unable to fetch environments
 	String PHR610029 = "PHR610029"; // failed to clone environment during manipulation of phresco-env-config.xml
+	String PHR610030 = "PHR610030"; // failed to read zip file while uploading
 	
 	/*
 	 * Build Page
@@ -217,19 +220,23 @@ public interface ResponseCodes {
 	String PHR710001 = "PHR710001"; // no build available
 	String PHR700001 = "PHR700001"; // buildinfo listed successfully
 	String PHR710002 = "PHR710002"; // buildinfo list failed
-	String PHR710003 = "PHR710003"; // zip download failed
+	String PHR710003 = "PHR710003"; // failed to read zipped buildinfo file
 	String PHR710004 = "PHR710004"; // failed to delete build
 	String PHR700002 = "PHR700002"; // build deleted successfully
 	String PHR710005 = "PHR710005"; // run against source not yet performed
 	String PHR700003 = "PHR700003"; // connection alive
 	String PHR710006 = "PHR710006"; // connection not alive
-	String PHR710007 = "PHR710007"; // 'runagainstsource.info' not found error
+	String PHR710007 = "PHR710007"; // failed to check status
 	String PHR710008 = "PHR710008"; // unable to build application
 	String PHR700004 = "PHR700004"; // application built successfully
 	String PHR700005 = "PHR700005"; // application deployed successfully
 	String PHR710009 = "PHR710009"; // unable to deploy application
 	String PHR700006 = "PHR700006"; // run against source executed successfully
 	String PHR710010 = "PHR710010"; // run against source failed
+	String PHR710011 = "PHR710011"; // could not retrieve particular buildinfo file
+	String PHR710012 = "PHR710012"; // unable to download IPA since build number is empty
+	String PHR710013 = "PHR710013"; // could not read the project info path or the IPA download path
+	String PHR710014 = "PHR710014"; // failed to download IPA
 	
 	/*
 	 * Quality Assurance Page
