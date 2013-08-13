@@ -77,7 +77,7 @@ public class CodeValidationServiceTest extends RestBaseTest  {
 		HttpServletRequest httprequest = (HttpServletRequest)request;
 		Response response  = service.codeValidate(httprequest);
 		ActionResponse entity = (ActionResponse) response.getEntity();
-		assertEquals("ERROR", entity.getStatus());
+		assertEquals("error", entity.getStatus());
 	}
 
 	@Test

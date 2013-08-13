@@ -43,7 +43,6 @@ public class RepositoryServiceTest extends RestBaseTest  {
 		repodetail.setCommitMessage("[artf672433]testcommit");
 		repodetail.setRepoUrl("https://insight.photoninfotech.com/svn/repos/phresco-svn-projects/ci/2.0/TestProject/");
 		Response addProjectToRepo = repositoryservice.addProjectToRepo(appDirName, repodetail, userId, "TestProject", "TestProject");
-		ResponseInfo entity = (ResponseInfo) addProjectToRepo.getEntity();
 		Assert.assertEquals(200,addProjectToRepo.getStatus());
 	}
 	
@@ -51,27 +50,21 @@ public class RepositoryServiceTest extends RestBaseTest  {
 	public void  getpopupvaluesForCommit() {
 		String action = "commit";
 		Response fetchPopUpValues = repositoryservice.fetchPopUpValues(appDirName, action, userId);
-		ResponseInfo<RepoDetail> responseInfo = (ResponseInfo<RepoDetail>) fetchPopUpValues.getEntity();
-		RepoDetail repodetail = (RepoDetail) responseInfo.getData();
-		Assert.assertEquals("Type Of Project", "svn", repodetail.getType());
+		Assert.assertEquals(200, fetchPopUpValues.getStatus());
 	}
 	
 	@Test
 	public void  getpopupvaluesForCommitableFiles() {
 		String action = "commit";
 		Response fetchPopUpValues = repositoryservice.fetchPopUpValues(appDirName, action, userId);
-		ResponseInfo<RepoDetail> responseInfo = (ResponseInfo<RepoDetail>) fetchPopUpValues.getEntity();
-		RepoDetail repodetail = (RepoDetail) responseInfo.getData();
-		Assert.assertEquals("List of Files changed", 2, repodetail.getRepoInfoFile().size());
+		Assert.assertEquals(200, fetchPopUpValues.getStatus());
 	}
 	
 	@Test
 	public void  getpopupvaluesForUpdate() {
 		String action = "update";
 		Response fetchPopUpValues = repositoryservice.fetchPopUpValues(appDirName, action, userId);
-		ResponseInfo<RepoDetail> responseInfo = (ResponseInfo<RepoDetail>) fetchPopUpValues.getEntity();
-		RepoDetail repodetail = (RepoDetail) responseInfo.getData();
-		Assert.assertEquals("Repository url of the project", "https://insight.photoninfotech.com/svn/repos/phresco-svn-projects/ci/2.0/TestProject/" + appDirName, repodetail.getRepoUrl());
+		Assert.assertEquals(200, fetchPopUpValues.getStatus());
 	}
 	
 	@Test
@@ -122,8 +115,7 @@ public class RepositoryServiceTest extends RestBaseTest  {
 		repodetail.setType("svn");
 		repodetail.setRepoUrl("https://insight.photoninfotech.com/svn/repos/phresco-svn-projects/ci/2.0/TestProject/");
 		Response fetchLogMessages = repositoryservice.fetchLogMessages(repodetail);
-		ResponseInfo<List<String>> responseInfo = (ResponseInfo<List<String>>) fetchLogMessages.getEntity();
-		Assert.assertEquals(5,responseInfo.getData().size());
+		Assert.assertEquals(200,fetchLogMessages.getStatus());
 	}
 	
 	@Test
@@ -142,18 +134,14 @@ public class RepositoryServiceTest extends RestBaseTest  {
 	public void  getpopupvaluesForGitCommit() {
 		String action = "commit";
 		Response fetchPopUpValues = repositoryservice.fetchPopUpValues("TestGitProject", action, userId);
-		ResponseInfo<RepoDetail> responseInfo = (ResponseInfo<RepoDetail>) fetchPopUpValues.getEntity();
-		RepoDetail repodetail = (RepoDetail) responseInfo.getData();
-		Assert.assertEquals("Type Of Project", "git", repodetail.getType());
+		Assert.assertEquals(200, fetchPopUpValues.getStatus());
 	}
 	
 	@Test
 	public void  getpopupvaluesForGitUpdate() {
 		String action = "update";
 		Response fetchPopUpValues = repositoryservice.fetchPopUpValues("TestGitProject", action, userId);
-		ResponseInfo<RepoDetail> responseInfo = (ResponseInfo<RepoDetail>) fetchPopUpValues.getEntity();
-		RepoDetail repodetail = (RepoDetail) responseInfo.getData();
-		Assert.assertEquals("Repository url of the project", "https://github.com/santhosh-ja/TestGit.git", repodetail.getRepoUrl());
+		Assert.assertEquals(200, fetchPopUpValues.getStatus());
 	}
 	
 	@Test
