@@ -84,7 +84,7 @@
 								List<ArtifactInfo> artifactInfos = artifactGroup.getVersions();
 								for (ArtifactInfo artifactInfo : artifactInfos) {
 							%>
-									<option value="<%= artifactInfo.getId() %>" ><%= artifactInfo.getVersion() %></option>
+									<option dependencyIds="<%= artifactInfo.getDependencyIds() %>" value="<%= artifactInfo.getId() %>" ><%= artifactInfo.getVersion() %></option>
 							<% } %>
 							<div style="clear: both;"></div>
 						</select>
@@ -162,8 +162,8 @@
 		for (i in defaultModules) {  //To check the default feature
 			$("input:checkbox[value='" + defaultModules[i] + "']").attr('checked', true);
 			
-			if (from != undefined && !isBlank(from) && from === "defaultFeature") {
-				$("input:checkbox[value='" + defaultModules[i] + "']").attr('defaultModule', true);
+			if (from != undefined && !isBlank(from) && from === "fetchDependentFeatures") {
+				//$("input:checkbox[value='" + defaultModules[i] + "']").attr('defaultModule', true);
 			}
 		}
 		for (i in defaultModules) {  //To select the default version

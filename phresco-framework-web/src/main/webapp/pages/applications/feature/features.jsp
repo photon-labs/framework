@@ -197,7 +197,7 @@ if (CollectionUtils.isNotEmpty(defaultfeatures)) {
 	        showImage = true;
 	    }
 %>
-		constructFeaturesDiv('<%= feature.getName() %>', '<%= feature.getDispName() %>', '<%= feature.getDispValue() %>', '<%= feature.getType() %>', '<%= feature.getVersionID() %>', '<%= feature.getModuleId() %>', <%= feature.isCanConfigure() %>, <%= showImage %>, <%= feature.isDefaultModule() %>, '<%= feature.getArtifactGroupId() %>', '<%= feature.getPackaging() %>', '<%= feature.getScope() %>'); 
+		constructFeaturesDiv('<%= feature.getName() %>', '<%= feature.getDispName() %>', '<%= feature.getDispValue() %>', '<%= feature.getType() %>', '<%= feature.getVersionID() %>', '<%= feature.getModuleId() %>', <%= feature.isCanConfigure() %>, <%= showImage %>, <%= feature.isDefaultModule() %>, '<%= feature.getArtifactGroupId() %>', '<%= feature.getPackaging() %>', '<%= feature.getScope() %>', '<%= feature.getDependencyIds()%>'); 
 <%		
  	}
 }
@@ -214,7 +214,7 @@ if (CollectionUtils.isNotEmpty(defaultfeatures)) {
 		        showImage = true;
 		    }
 %>
-			constructFeaturesDiv('<%= feature.getName() %>', '<%= feature.getDispName() %>', '<%= feature.getDispValue() %>', '<%= feature.getType() %>', '<%= feature.getVersionID() %>', '<%= feature.getModuleId() %>', <%= feature.isCanConfigure() %>, <%= showImage %>, <%= feature.isDefaultModule() %>, '<%= feature.getArtifactGroupId() %>', '<%= feature.getPackaging() %>', '<%= feature.getScope() %>'); 
+			constructFeaturesDiv('<%= feature.getName() %>', '<%= feature.getDispName() %>', '<%= feature.getDispValue() %>', '<%= feature.getType() %>', '<%= feature.getVersionID() %>', '<%= feature.getModuleId() %>', <%= feature.isCanConfigure() %>, <%= showImage %>, <%= feature.isDefaultModule() %>, '<%= feature.getArtifactGroupId() %>', '<%= feature.getPackaging() %>', '<%= feature.getScope() %>', '<%= feature.getDependencyIds()%>'); 
 <%		
 	 	}
 	}
@@ -284,13 +284,14 @@ if (CollectionUtils.isNotEmpty(defaultfeatures)) {
         	//var canConfigure = Boolean($(this).attr("canConfigure"));
         	var canConfigure = $(this).attr("canConfigure");
         	var defaultModule =$(this).attr("defaultModule");
+        	var dependencyIds =$("#" + id + " option:selected").attr("dependencyIds");
         	var isDefault = defaultModule.toLowerCase()=="true"?true:false;
-        	constructFeaturesDiv(name, dispName, dispValue, selectedType, hiddenFieldVersion, moduleId, canConfigure,'', isDefault, artifactGroupId, packaging, scope);
+        	constructFeaturesDiv(name, dispName, dispValue, selectedType, hiddenFieldVersion, moduleId, canConfigure,'', isDefault, artifactGroupId, packaging, scope, dependencyIds);
         });
     }
     
     // Function to construct the hidden fields for selected features
-    function constructFeaturesDiv(name, dispName, dispValue, hiddenFieldname, hiddenFieldVersion, moduleId, canConfigure, showImage, isDefault, artifactGroupId, packaging, scope) {
+    function constructFeaturesDiv(name, dispName, dispValue, hiddenFieldname, hiddenFieldVersion, moduleId, canConfigure, showImage, isDefault, artifactGroupId, packaging, scope, dependencyIds) {
 		var jsonParamObj = {};
 		jsonParamObj.name = name;
 		jsonParamObj.dispName = dispName;
@@ -329,7 +330,7 @@ if (CollectionUtils.isNotEmpty(defaultfeatures)) {
 					selectClass = "scopeGearCrossList";
 				}
 				var displayName = featuresTextTrim(featureName);
-				$("#result").append('<div id="'+ctrlClass+'Div" title="'+ featureName +'" class="'+divName+'">'+displayName+
+				$("#result").append('<div id="'+ctrlClass+'Div" title="'+ featureName +'" versionId="'+hiddenFieldVersion+'" dependencyIds="'+dependencyIds+'" class="'+divName+'">'+displayName+
 						'<a href="#" class="crossImg" onclick="removed(this);">'+ removeImg +'</a>'+
 						'<input type="hidden" class="'+ctrlClass+'" name="jsonData">'+
 						'<select id="'+ctrlClass+'Select" temp="'+ctrlClass+'" class="'+ selectClass +'" onchange="selectBoxChangeEvent(this);" >'+
@@ -338,7 +339,7 @@ if (CollectionUtils.isNotEmpty(defaultfeatures)) {
 				getScopeVal(ctrlClass, scope);
 			} else if (showImage && packaging != "jar") {
 				var displayName = featuresTextTrim(featureName);
-				$("#result").append('<div id="'+ctrlClass+'Div" title="'+ featureName +'" class="'+divName+'">'+displayName+
+				$("#result").append('<div id="'+ctrlClass+'Div" title="'+ featureName +'" versionId="'+hiddenFieldVersion+'" dependencyIds="'+dependencyIds+'" class="'+divName+'">'+displayName+
 						'<a href="#" onclick="removed(this);">'+ removeImg +'</a>'+
 						'<input type="hidden" class="'+ctrlClass+'" name="jsonData">' +
 <%-- 						<% --%>
@@ -352,7 +353,7 @@ if (CollectionUtils.isNotEmpty(defaultfeatures)) {
 						'</div>');
 			} else if (showImage && packaging == "jar") {
 				var displayName = featuresTextTrim(featureName);
-				$("#result").append('<div id="'+ctrlClass+'Div" title="'+ featureName +'" class="'+divName+'">'+displayName+
+				$("#result").append('<div id="'+ctrlClass+'Div" title="'+ featureName +'" versionId="'+hiddenFieldVersion+'" dependencyIds="'+dependencyIds+'" class="'+divName+'">'+displayName+
 						'<a href="#" class="crossImg" onclick="removed(this);">'+ removeImg +'</a>'+
 						'<input type="hidden" class="'+ctrlClass+'" name="jsonData">' +
 						'<a href="#" class="'+ gearClass +'" id="'+name+'" onclick="showFeatureConfigPopup(this);">'+ 
@@ -363,7 +364,7 @@ if (CollectionUtils.isNotEmpty(defaultfeatures)) {
 				getScopeVal(ctrlClass, scope);
 			} else if(!showImage && packaging != "jar") {
 				var displayName = featuresTextTrim(featureName);
-				$("#result").append('<div id="'+ctrlClass+'Div" title="'+ featureName +'" class="'+divName+'">'+displayName+
+				$("#result").append('<div id="'+ctrlClass+'Div" title="'+ featureName +'" versionId="'+hiddenFieldVersion+'" dependencyIds="'+dependencyIds+'" class="'+divName+'">'+displayName+
 						'<a href="#" onclick="removed(this);">'+ removeImg +'</a>'+
 						'<input type="hidden" class="'+ctrlClass+'" name="jsonData"></div>');
 			}
@@ -400,7 +401,47 @@ if (CollectionUtils.isNotEmpty(defaultfeatures)) {
     
     // Function to remove the final features in right tab  
     function removed(thisObj) {
-    	$(thisObj).closest('div').remove();
+    	 var allDependent =[];
+         var hasError = false, name;
+         var depende = $(thisObj).closest('div').attr("dependencyids");
+         var featu = $(thisObj).closest('div').attr("title");
+         var dependencyArray = depende.replace("[","").replace("]","").split(",");
+         var trimmedArray = [];
+         for (i in dependencyArray) {
+        	 trimmedArray.push(dependencyArray[i].trim()); 
+         }
+         $('.feature').each(function () {
+        	 var dependency = $(this).attr("versionId");
+        	 if ($.inArray(dependency, trimmedArray) != -1) {
+        		 name = $(this).closest('div').attr("title");
+        		 allDependent.push(name);
+        		 hasError = true;
+        	 }
+         });
+         
+         $('.javascript').each(function () {
+        	 var dependency = $(this).attr("versionId");
+        	 if ($.inArray(dependency, trimmedArray) != -1) {
+        		 name = $(this).closest('div').attr("title");
+        		 allDependent.push(name);
+        		 hasError = true;
+        	 }
+         });
+         
+         $('.component').each(function () {
+        	 var dependency = $(this).attr("versionId");
+        	 if ($.inArray(dependency, trimmedArray) != -1) {
+        		 name = $(this).closest('div').attr("title");
+        		 allDependent.push(name);
+        		 hasError = true;
+        	 }
+         });
+         
+         if(!hasError) {
+        	$(thisObj).closest('div').remove();
+         } else {
+        	 showWarningMsg('<s:text name="lbl.app.warnin.title"/>', featu +" has dependencies "+allDependent +".So you can't delete the " +featu);
+         }
     	updateFeatureNotification();
     }
     

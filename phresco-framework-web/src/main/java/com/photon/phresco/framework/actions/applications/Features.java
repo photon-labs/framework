@@ -492,6 +492,7 @@ public class Features extends DynamicParameterModule {
 		slctFeature.setType(artifactGroupInfo.getType().name());
 		slctFeature.setArtifactGroupId(artifactGroupInfo.getId());
 		slctFeature.setPackaging(artifactGroupInfo.getPackaging());
+		slctFeature.setDependencyIds(artifactInfo.getDependencyIds());
 		getScope(appInfo, artifactInfo.getId(), slctFeature);
 		
 		List<CoreOption> appliesTo = artifactGroupInfo.getAppliesTo();
