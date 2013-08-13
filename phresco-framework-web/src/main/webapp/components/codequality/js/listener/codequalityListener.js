@@ -194,12 +194,12 @@ define([], function() {
 					$.each(response, function(index, resdata) {
 						var innerUl = '';
 						if(resdata.options === null){
-							typeLi += "<li name='selectType' key="+resdata.validateAgainst.key+" data="+resdata.validateAgainst.value+" style='padding-left:8px;cursor:pointer;'>"+resdata.validateAgainst.value+"</li>";
+							typeLi += "<li class='dropdown-key' name='selectType' key="+resdata.validateAgainst.key+" data="+resdata.validateAgainst.value+" style='padding-left:8px;cursor:pointer;'>"+resdata.validateAgainst.value+"</li>";
 						}else{
 							validateAgainst = resdata.options[0].key;
 							 repTypesData = resdata.options[0].value;
 							$.each(resdata.options, function(index, optvalue) {
-								innerUl += "<li name='selectType' key="+optvalue.key+" data="+optvalue.value+" style='padding-left:8px;cursor:pointer;'>"+optvalue.value+"</li>";
+								innerUl += "<li class='dropdown-key' name='selectType' key="+optvalue.key+" data="+optvalue.value+" style='padding-left:8px;cursor:pointer;'>"+optvalue.value+"</li>";
 							});
 							typeLi += "<li disabled='disabled' key="+resdata.validateAgainst.key+" data="+resdata.validateAgainst.value+" style='padding-left:4px;'>"+resdata.validateAgainst.value+'<ul>'+innerUl+"</ul></li>";
 						}
