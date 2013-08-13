@@ -136,24 +136,22 @@ define(["features/listener/featuresListener"], function() {
 		 */
 		postRender : function(element) {
 			var self = this;
-			//if(self.updateFlag === 1){
-				self.featuresListener.getFeaturesList(self.featuresListener.getRequestHeader(self.featureRequestBody, "SELECTED"), function(response) {
-					var responseData = response.data;
-					$(".switchOn").each(function(index, currentVal) {
-						$(currentVal).removeClass('switchOn').addClass('switchOff');
-					});
-					$.each(response.data, function(index, value){
-						$("#feature_"+this.moduleId).addClass("switchOn").removeClass('switchOff');
-						$("#version_"+this.moduleId).show();		
-						$('li[name='+value.name+']').children('div').children('.jarscope').val(value.scope);
-						self.selectedCount();
-					});
+			self.featuresListener.getFeaturesList(self.featuresListener.getRequestHeader(self.featureRequestBody, "SELECTED"), function(response) {
+				var responseData = response.data;
+				$(".switchOn").each(function(index, currentVal) {
+					$(currentVal).removeClass('switchOn').addClass('switchOff');
 				});
-				
-			//}
-			/* setTimeout(function(){
+				$.each(response.data, function(index, value){
+					$("#feature_"+this.moduleId).addClass("switchOn").removeClass('switchOff');
+					$("#version_"+this.moduleId).show();		
+					$('li[name='+value.name+']').children('div').children('.jarscope').val(value.scope);
 					self.selectedCount();
-			},3000); */
+				});
+			});
+				
+			setTimeout(function(){
+					self.selectedCount();
+			},1500);
 
 		},
 		
