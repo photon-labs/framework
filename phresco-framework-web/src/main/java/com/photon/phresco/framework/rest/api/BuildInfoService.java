@@ -24,13 +24,18 @@ import java.io.FileReader;
 import java.io.InputStream;
 import java.net.URL;
 import java.net.URLConnection;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Date;
 import java.util.List;
 import java.util.Properties;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
-import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
@@ -85,6 +90,7 @@ public class BuildInfoService extends RestBase implements FrameworkConstants, Se
 				return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*")
 						.build();
 			}
+			Collections.sort(builds, new BuildComparator());
 			ResponseInfo<List<BuildInfo>> finalOutput = responseDataEvaluation(responseData, null,
 					"Buildinfo listed Successfully", builds);
 			return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
@@ -247,5 +253,19 @@ public class BuildInfoService extends RestBase implements FrameworkConstants, Se
 		File dotPhrescoFolder = new File(Utility.getProjectHome() + File.separator +appDirName + File.separator + FrameworkConstants.FOLDER_DOT_PHRESCO);
 		return dotPhrescoFolder.getPath();
 	}
+}
 
+class BuildComparator implements Comparator<BuildInfo> {
+	public int compare(BuildInfo buildInfo1, BuildInfo buildInfo2) {
+		DateFormat formatter = new SimpleDateFormat("dd/MMM/yyyy hh:mm:ss");
+		Date  buildTime1 = new Date();
+		Date buildTime2 = new Date();
+		try {
+			buildTime1 = (Date)formatter.parse(buildInfo1.getTimeStamp());
+			buildTime2 = (Date)formatter.parse(buildInfo2.getTimeStamp());
+		} catch (ParseException e) {
+		}
+		
+		return buildTime2.compareTo(buildTime1);
+	}
 }

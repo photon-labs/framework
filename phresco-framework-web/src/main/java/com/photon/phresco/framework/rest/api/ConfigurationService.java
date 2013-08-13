@@ -50,12 +50,7 @@ import javax.ws.rs.core.Response;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerConfigurationException;
-import javax.xml.transform.TransformerException;
-import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.stream.StreamResult;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
@@ -121,6 +116,12 @@ public class ConfigurationService extends RestBase implements FrameworkConstants
 		try {
 			String configFileDir = FrameworkServiceUtil.getConfigFileDir(appDirName);
 			ConfigManager configManager = new ConfigManagerImpl(new File(configFileDir));
+			if(configManager.getEnvironments().size() == environments.size()) {
+				configManager.addEnvironments(environments);
+				ResponseInfo<Environment> finalOuptut = responseDataEvaluation(responseData, null,
+						"Environments updated Successfully", environments);
+				return Response.ok(finalOuptut).header("Access-Control-Allow-Origin", "*").build();
+			}
 			configManager.addEnvironments(environments);
 			ResponseInfo<Environment> finalOuptut = responseDataEvaluation(responseData, null,
 					"Environments added Successfully", environments);
