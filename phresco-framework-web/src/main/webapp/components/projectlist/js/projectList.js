@@ -259,17 +259,22 @@ define(["projectlist/listener/projectListListener"], function() {
 					checkObj = $("#repocredential_"+dynamicId);
 					usrObj = $("#uname_"+dynamicId);
 					pwdObj = $("#pwd_"+dynamicId);
+					$("input[name='repoUrl']").val('');
+					$("textarea[name='commitMsg']").val('');
 				} else if (action === "Commit") {
 					selectObj = $('.co_Select');
 					checkObj = $("#commitCredential_"+dynamicId);
 					usrObj = $("#commitUsername_"+dynamicId);
 					pwdObj = $("#commitPassword_"+dynamicId);
+					$("textarea[name='commitMsg']").val('');
 				} else if (action === "Update") {
 					selectObj = $('.up_Select');
 					checkObj = $("#updateCredential_"+dynamicId);
 					usrObj = $("#updateUsername_"+dynamicId);
 					pwdObj = $("#updatePassword_"+dynamicId);
-				} 
+					$("input[name='repoUrl']").val('');
+					$(".revision").val('');
+					} 
 				
 				if(checkObj !== null  && checkObj !== undefined && checkObj !== '') {
 					self.makeCredReadOnly(checkObj, usrObj, pwdObj);
@@ -293,7 +298,7 @@ define(["projectlist/listener/projectListListener"], function() {
 				var data = JSON.parse(commonVariables.api.localVal.getSession('userInfo'));
 				userId = data.id;
 				$('.uname').val(data.id);
-				$('.pwd').val(data.password);
+				$('.pwd').val('');
 				$('.commit').hide();
 				$('.add_repo').hide();
 				$('.svn_update').hide();
@@ -412,7 +417,7 @@ define(["projectlist/listener/projectListListener"], function() {
 				} else {
 					var data = JSON.parse(commonVariables.api.localVal.getSession('userInfo'));
 					$(".uname").val(data.id);
-					$(".pwd").val(data.password);
+					$(".pwd").val('');
 				}
 			});			
 					

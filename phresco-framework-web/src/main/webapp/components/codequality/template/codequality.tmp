@@ -59,3 +59,6 @@
 			</table>
 		</div>
     </section>
+	<section class="content_end" style="display:none;">
+	<div class="msgdisplay"></div>
+	</section>

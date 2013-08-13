@@ -70,7 +70,7 @@ define(["projectlist/projectList"], function(ProjectList) {
 				setTimeout(function() {
 					start();
 					var username = $(commonVariables.contentPlaceholder).find('#uname_294187d7-f75a-4adc-bb25-ce9465e0e82f').attr('class');
-					equal("uname errormessage", username, 'username div error class added test');
+					equal("uname", username, 'username div error class added test');
 					self.runValidationAddrepoPasswordTest(projectlist);
 				}, 1000);
 			});
@@ -122,7 +122,7 @@ define(["projectlist/projectList"], function(ProjectList) {
 				setTimeout(function() {
 					start();
 					var username = $(commonVariables.contentPlaceholder).find('#uname_294187d7-f75a-4adc-bb25-ce9465e0e82f').attr('class');
-					equal("uname errormessage", username, 'username div error class added test');
+					equal("uname", username, 'username div error class added test');
 					self.runValidationCommiPasswordTest(projectlist);
 				}, 1000);
 			});
@@ -174,7 +174,7 @@ define(["projectlist/projectList"], function(ProjectList) {
 				setTimeout(function() {
 					start();
 					var username = $(commonVariables.contentPlaceholder).find('#uname_294187d7-f75a-4adc-bb25-ce9465e0e82f').attr('class');
-					equal("uname errormessage", username, 'username div error class added test');
+					equal("uname", username, 'username div error class added test');
 					self.runValidationSVNupdatePasswordTest(projectlist);
 				}, 1000);
 			});

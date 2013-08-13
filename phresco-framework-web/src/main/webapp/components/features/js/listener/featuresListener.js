@@ -245,7 +245,8 @@ define(["features/features",  "application/application",  "projectlist/projectLi
 				val = eachList;
 			}
 			val.each(function() {
-				if($(this).attr("class") === "switch switchOn default" || $(this).attr("class") === "switch default switchOn" || $(this).attr("class") === "switch switchOn" || $(this).attr("class") === "switch default switchOff"){
+				console.info("dfdfdf", $(this).attr("class"));
+				if($(this).attr("class") === "switch default" || $(this).attr("class") === "switch default switchOn" || $(this).attr("class") === "switch switchOn" || $(this).attr("class") === "switch default switchOff"){
 					$(this).parent().show();
 					self.scrollbarUpdate();					
 				}

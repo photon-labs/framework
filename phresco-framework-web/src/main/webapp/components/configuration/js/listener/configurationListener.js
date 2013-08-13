@@ -78,11 +78,32 @@ define(["croneExpression/croneExpression"], function() {
 				commonVariables.api.ajaxRequest(header,
 					function(response) {
 						self.hidePopupLoad();
-						if (response !== null) {
-							callback(response);
+						if (response !== null && response.status !== "error" && response.status !== "failure") {
+							if(response.responseCode === "PHR600006" || response.responseCode === "PHR600015") {
+								$(".msgdisplay").removeClass("error").addClass("success");
+								$(".success").attr('data-i18n', 'successCodes.' + response.responseCode);
+								self.renderlocales(commonVariables.contentPlaceholder);	
+								$(".success").show();
+								$(".success").fadeIn(500).fadeOut(500).fadeIn(500).fadeOut(500).fadeIn(500).fadeOut(5);
+								setTimeout(function() {
+									$(".success").hide();
+									callback(response);
+								},1200);
+							}
+							else {
+								callback(response);
+							}
 						} else {
 							self.hidePopupLoad();
-							callback({ "status" : "service failure"});
+							//self.loadingScreen.removeLoading();
+							$(".msgdisplay").removeClass("success").addClass("error");
+							$(".error").attr('data-i18n', 'errorCodes.' + response.responseCode);
+							self.renderlocales(commonVariables.contentPlaceholder);	
+							$(".error").show();
+							$(".error").fadeIn(500).fadeOut(500).fadeIn(500).fadeOut(500).fadeIn(500).fadeOut(5);
+							setTimeout(function() {
+								$(".error").hide();
+							},2500);
 						}
 
 					},
@@ -91,6 +112,14 @@ define(["croneExpression/croneExpression"], function() {
 						self.hidePopupLoad();
 						if (self.bcheck === false) {
 						}
+						$(".msgdisplay").removeClass("success").addClass("error");
+						$(".error").attr('data-i18n', 'errorCodes.' + response.responseCode);
+						self.renderlocales(commonVariables.contentPlaceholder);	
+						$(".error").show();
+						$(".error").fadeIn(500).fadeOut(500).fadeIn(500).fadeOut(500).fadeIn(500).fadeOut(5);
+						setTimeout(function() {
+							$(".error").hide();
+						},2500);
 					}
 				);
 			} catch(exception) {
@@ -229,19 +258,29 @@ define(["croneExpression/croneExpression"], function() {
 						$("tbody[name=ConfigurationLists]").children('tr.row_bg').each(function(){
 							if(currentConfig === 'Server') {
 								if($(this).attr('configType') === currentConfig) {
-									bCheck = true;
-									$(".blinkmsg").removeClass("poperror").addClass("popsuccess");
-									self.effectFadeOut('popsuccess', ("Server Already Added"));			
+									bCheck = true;									
+									$(".msgdisplay").removeClass("error").addClass("success");
+									$(".success").text("Server Already Added");
+									$(".success").show();
+									$(".success").fadeIn(500).fadeOut(500).fadeIn(500).fadeOut(500).fadeIn(500).fadeOut(5);
+									setTimeout(function() {
+										$(".success").hide();
+									},2500);
 									flag = 1;
 								}
 							}
 							
 							if(currentConfig === 'Email') {
 								if($(this).attr('configType') === currentConfig) {
-									bCheck = true;
-									$(".blinkmsg").removeClass("poperror").addClass("popsuccess");
-									self.effectFadeOut('popsuccess', ("Email Already Added"));			
-							}
+									bCheck = true;		
+									$(".msgdisplay").removeClass("error").addClass("success");
+									$(".success").text("Email Already Added");
+									$(".success").show();
+									$(".success").fadeIn(500).fadeOut(500).fadeIn(500).fadeOut(500).fadeIn(500).fadeOut(5);
+									setTimeout(function() {
+										$(".success").hide();
+									},2500);
+								}
 							}
 						});
 					}
@@ -340,8 +379,13 @@ define(["croneExpression/croneExpression"], function() {
 								});
 							
 								 if ((options1 === "") && (flag === 0)){ 
-								$(".blinkmsg").removeClass("poperror").addClass("popsuccess");
-								self.effectFadeOut('popsuccess', ("Choose the Server Type from App Info"));
+									$(".msgdisplay").removeClass("error").addClass("success");
+									$(".success").text("Choose the Server Type from App Info");
+									$(".success").show();
+									$(".success").fadeIn(500).fadeOut(500).fadeIn(500).fadeOut(500).fadeIn(500).fadeOut(5);
+									setTimeout(function() {
+										$(".success").hide();
+									},2500);
 								} 
 							} else if(currentConfig === 'Database') {
 								$.each(self.databaseTypeVersion, function(key, value){
@@ -353,8 +397,14 @@ define(["croneExpression/croneExpression"], function() {
 								});
 							
 								 if (options1 === ""){
-								 	$(".blinkmsg").removeClass("poperror").addClass("popsuccess");
-									self.effectFadeOut('popsuccess',("Choose the DB Type from App Info"));		
+									$(".msgdisplay").removeClass("error").addClass("success");
+									$(".success").text("Choose the DB Type from App Info");
+									$(".success").show();
+									$(".success").fadeIn(500).fadeOut(500).fadeIn(500).fadeOut(500).fadeIn(500).fadeOut(5);
+									setTimeout(function() {
+										$(".success").hide();
+									},2500);
+									
 								}
 							}
 							inputCtrl = inputCtrl.concat(options1);
@@ -635,8 +685,14 @@ define(["croneExpression/croneExpression"], function() {
 				certificateJson.propValue = value;
 				self.configRequestBody = certificateJson;
 				self.getConfigurationList(self.getRequestHeader(self.configRequestBody, "addCertificate", ''), function(response) {
-					$(".blinkmsg").removeClass("poperror").addClass("popsuccess");
-					self.effectFadeOut('popsuccess', (response.message));	
+					$(".msgdisplay").removeClass("error").addClass("success");
+					$(".success").attr('data-i18n', 'successCodes.' + response.responseCode);
+					self.renderlocales(commonVariables.contentPlaceholder);	
+					$(".success").show();
+					$(".success").fadeIn(500).fadeOut(500).fadeIn(500).fadeOut(500).fadeIn(500).fadeOut(5);
+					setTimeout(function() {
+						$(".success").hide();
+					},2500);
 					$("#remote_deploy").hide();
 					self.closeTreePopup();
 				});
@@ -692,7 +748,7 @@ define(["croneExpression/croneExpression"], function() {
 				self.configRequestBody = aliveJson;
 				self.getConfigurationList(self.getRequestHeader(self.configRequestBody, "isAliveCheck", ''), function(response) {
 					var typeMatch = aliveJson.type;
-					if(response === true) {
+					if(response.status === "success") {
 						$(".row_bg").each(function() {
 							var type = $(this).attr("type");
 							if (type === typeMatch) {
@@ -903,10 +959,6 @@ define(["croneExpression/croneExpression"], function() {
 			if(self.validation()) {
 				self.getConfigurationList(self.getRequestHeader(self.configRequestBody, "saveConfig", envrName), function(response) {
 					Clazz.navigationController.jQueryContainer = commonVariables.contentPlaceholder;
-					setTimeout(function(){
-						$(".blinkmsg").removeClass("poperror").addClass("popsuccess");
-						self.effectFadeOut('popsuccess', (response.message));		
-					},1000);
 					if(self.configListPage === null) {
 						commonVariables.navListener.getMyObj(commonVariables.configuration, function(retVal) {
 							self.configListPage = retVal;

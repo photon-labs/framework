@@ -70,14 +70,7 @@ define(["codequality/listener/codequalityListener"], function() {
 					var projectlist = {};
 					projectlist.projectlist = response;	
 					self.renderedData = response;
-					if(response.message === "Sonar not yet Started"){
-						$('#codeAnalysis').hide();
-						$(".code_report").hide();
-						$(".code_report_icon").hide();
-						$("#codereportTypes").hide();	
-					}else{
-						self.codequalityListener.constructHtml(self.renderedData);
-					}
+					self.codequalityListener.constructHtml(self.renderedData);
 				});
 			}, 200);
 			

@@ -87,10 +87,24 @@ define(["configuration/listener/configurationListener"], function() {
 			self.configurationlistener.getConfigurationList(self.configurationlistener.getRequestHeader(self.configRequestBody, action, deleteEnvironment), function(response) {
 				if (action === "delete" || action === "deleteConfig") {
 					self.deleteEnv(value);
+					$(".content_end").show();
+					$(".msgdisplay").removeClass("error").addClass("success");
+					$(".success").attr('data-i18n', 'successCodes.' + response.responseCode);
+					self.renderlocales(commonVariables.contentPlaceholder);	
+					$(".success").fadeIn(500).fadeOut(500).fadeIn(500).fadeOut(500).fadeIn(500).fadeOut(5);
+					setTimeout(function() {
+						$(".content_end").hide();
+					},2500);
 				} else {
-					$(".blinkmsg").removeClass("poperror").addClass("popsuccess");
-					self.effectFadeOut('popsuccess', response.message);	
-					self.loadPage(commonVariables.animation);
+					$(".content_end").show();
+					$(".msgdisplay").removeClass("error").addClass("success");
+					$(".success").attr('data-i18n', 'successCodes.' + response.responseCode);
+					self.renderlocales(commonVariables.contentPlaceholder);
+					$(".success").fadeIn(500).fadeOut(500).fadeIn(500).fadeOut(500).fadeIn(500).fadeOut(5);					
+					setTimeout(function() {
+						$(".content_end").hide();
+						self.loadPage(commonVariables.animation);
+					},1200);
 				}
 			});
 		},

@@ -43,6 +43,9 @@ define([], function() {
 					self.mavenServiceListener = retVal;
 					self.mavenServiceListener.mvnCodeValidation(queryString, '#iframePart', function(returnVal){
 						var validateAgainst = $("#src").find(':selected').val();
+						if(validateAgainst === undefined){
+							validateAgainst = $("#sonar").find(':selected').val();
+						}						
 						self.getIframeReport(validateAgainst);
 						callback(returnVal);
 					});
@@ -50,6 +53,9 @@ define([], function() {
 			}else{
 				self.mavenServiceListener.mvnCodeValidation(queryString, '#iframePart', function(returnVal){
 					var validateAgainst = $("#src").find(':selected').val();
+					if(validateAgainst === undefined){
+						validateAgainst = $("#sonar").find(':selected').val();
+					}
 					self.getIframeReport(validateAgainst);
 					callback(returnVal);
 				});
@@ -118,19 +124,46 @@ define([], function() {
 				//commonVariables.loadingScreen.showLoading();
 				commonVariables.api.ajaxRequest(header,
 					function(response) {
-						if (response !== null) {
+						if (response !== null && response.status !== "error" && response.status !== "failure") {
 							commonVariables.loadingScreen.removeLoading();
 							callback(response);
 						} else {
 							commonVariables.loadingScreen.removeLoading();
-							callback({ "status" : "service failure"});
+							if(response.responseCode === "PHR510001" ) {
+								$('#content_div').html('<div class="alert" style="text-align: center; width:98%"></div>');
+								$(".alert").attr('data-i18n', 'errorCodes.' + response.responseCode);
+								$('#codeAnalysis').hide();
+								$(".code_report").hide();
+								$(".code_report_icon").hide();
+								$("#codereportTypes").hide();	
+								self.renderlocales(commonVariables.contentPlaceholder);
+							}else if(response.responseCode === "PHR510002" ) {
+								$('#content_div').html('<div class="alert" style="text-align: center; width:98%"></div>');
+								$(".alert").attr('data-i18n', 'errorCodes.' + response.responseCode);
+								self.renderlocales(commonVariables.contentPlaceholder);
+							} else {
+								$(".content_end").show();
+								$(".msgdisplay").removeClass("success").addClass("error");
+								$(".error").attr('data-i18n', 'errorCodes.' + response.responseCode);
+								self.renderlocales(commonVariables.contentPlaceholder);	
+								$(".error").fadeIn(500).fadeOut(500).fadeIn(500).fadeOut(500).fadeIn(500).fadeOut(5);
+								setTimeout(function() {
+									$(".content_end").hide();
+								},2500);
+							}
 						}
 					},
 
 					function(textStatus) {
 						commonVariables.loadingScreen.removeLoading();
-						var data = $.parseJSON(textStatus);
-						$('#content_div').html('<div class="alert" style="text-align: center; width:98%">'+data.message+'</div>');
+						$(".content_end").show();
+						$(".msgdisplay").removeClass("success").addClass("error");
+						$(".error").attr('data-i18n', 'commonlabel.errormessage.serviceerror');
+						self.renderlocales(commonVariables.contentPlaceholder);	
+						$(".error").fadeIn(500).fadeOut(500).fadeIn(500).fadeOut(500).fadeIn(500).fadeOut(5);
+						setTimeout(function() {
+							$(".content_end").hide();
+						},2500);
 						$('#codeAnalysis').hide();
 						$(".code_report").hide();
 						$(".code_report_icon").hide();
@@ -139,7 +172,14 @@ define([], function() {
 				);
 			} catch(exception) {
 				commonVariables.loadingScreen.removeLoading();
-				$('#content_div').html('<div class="alert" style="text-align: center; width:98%">'+exception+'</div>');
+				$(".content_end").show();
+				$(".msgdisplay").removeClass("success").addClass("error");
+				$(".error").attr('data-i18n', 'commonlabel.errormessage.serviceerror');
+				self.renderlocales(commonVariables.contentPlaceholder);	
+				$(".error").fadeIn(500).fadeOut(500).fadeIn(500).fadeOut(500).fadeIn(500).fadeOut(5);
+				setTimeout(function() {
+					$(".content_end").hide();
+				},2500);
 				$('#codeAnalysis').hide();
 			}
 		},
@@ -173,13 +213,6 @@ define([], function() {
 					}
 					self.onProjects();
 					self.getIframeReport(validateAgainst);
-				}else {
-					$('#content_div').html('');
-					$('#codeAnalysis').hide();
-					$(".code_report").hide();
-					$(".code_report_icon").hide();
-					$("#codereportTypes").hide();
-					$('#content_div').append('<div class="alert" style="text-align: center; width:98%">Dependency not returned.</div>');
 				}
 		},
 		
@@ -202,16 +235,46 @@ define([], function() {
 							var iframedata = "<iframe src="+iframereport.data+" style=width:98%;height:450px;></iframe>";
 							$('#content_div').html(iframedata);
 						}else{
-							$('#content_div').html('<div class="alert" style="text-align: center; width:98%">'+iframereport.message+'</div>');
+							if(iframereport.responseCode === "PHR510003" ) {
+								$('#content_div').html('<div class="alert" style="text-align: center; width:98%"></div>');
+								$(".alert").attr('data-i18n', 'errorCodes.' + iframereport.responseCode);
+								self.renderlocales(commonVariables.contentPlaceholder);
+							} else if(iframereport.responseCode === "PHR510002" ) {
+								$('#content_div').html('<div class="alert" style="text-align: center; width:98%"></div>');
+								$(".alert").attr('data-i18n', 'errorCodes.' + iframereport.responseCode);
+								self.renderlocales(commonVariables.contentPlaceholder);
+							} else {
+								$(".content_end").show();
+								$(".msgdisplay").removeClass("success").addClass("error");
+								$(".error").attr('data-i18n', 'errorCodes.' + response.responseCode);
+								self.renderlocales(commonVariables.contentPlaceholder);	
+								$(".error").fadeIn(500).fadeOut(500).fadeIn(500).fadeOut(500).fadeIn(500).fadeOut(5);
+								setTimeout(function() {
+									$(".content_end").hide();
+								},2500);
+							}	
 						}
 					},
 					function(textStatus) {
-						var data = $.parseJSON(textStatus);
-						$('#content_div').html('<div class="alert" style="text-align: center; width:98%">'+data.message+'</div>');
+						$(".content_end").show();
+						$(".msgdisplay").removeClass("success").addClass("error");
+						$(".error").attr('data-i18n', 'commonlabel.errormessage.serviceerror');
+						self.renderlocales(commonVariables.contentPlaceholder);	
+						$(".error").fadeIn(500).fadeOut(500).fadeIn(500).fadeOut(500).fadeIn(500).fadeOut(5);
+						setTimeout(function() {
+							$(".content_end").hide();
+						},2500);
 					}
 				);
 			} catch(exception) {
-				$('#content_div').html('<div class="alert" style="text-align: center; width:98%">'+exception+'</div>');
+				$(".content_end").show();
+				$(".msgdisplay").removeClass("success").addClass("error");
+				$(".error").attr('data-i18n', 'commonlabel.errormessage.serviceerror');
+				self.renderlocales(commonVariables.contentPlaceholder);	
+				$(".error").fadeIn(500).fadeOut(500).fadeIn(500).fadeOut(500).fadeIn(500).fadeOut(5);
+				setTimeout(function() {
+					$(".content_end").hide();
+				},2500);
 			}	
 		}
 		
