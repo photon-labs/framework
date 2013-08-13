@@ -59,6 +59,7 @@ import org.xml.sax.SAXException;
 import com.photon.phresco.api.DynamicPageParameter;
 import com.photon.phresco.api.DynamicParameter;
 import com.photon.phresco.commons.FrameworkConstants;
+import com.photon.phresco.commons.ResponseCodes;
 import com.photon.phresco.commons.model.ApplicationInfo;
 import com.photon.phresco.commons.model.ArtifactGroup;
 import com.photon.phresco.commons.model.ArtifactInfo;
@@ -94,7 +95,7 @@ import com.sun.jersey.api.client.ClientResponse.Status;
  * The Class ParameterService.
  */
 @Path("/parameter")
-public class ParameterService extends RestBase implements FrameworkConstants, ServiceConstants {
+public class ParameterService extends RestBase implements FrameworkConstants, ServiceConstants, ResponseCodes {
 	private static final String COLORS_CUSTOMER_COLOR = "&colors=customerColor";
 	private static final String CSS_PHRESCO_STYLE = "css=phresco_style";
 	private static Map<String, PhrescoDynamicLoader> pdlMap = new HashMap<String, PhrescoDynamicLoader>();
@@ -135,21 +136,21 @@ public class ParameterService extends RestBase implements FrameworkConstants, Se
 				setPossibleValuesInReq(mojo, appInfo, parameters, watcherMap, goal, userId, customerId, buildNumber);
 				
 				ResponseInfo<List<Parameter>> finalOutput = responseDataEvaluation(responseData, null,
-						PARAMETER_RETURNED_SUCCESSFULLY, parameters);
+						parameters, RESPONSE_STATUS_SUCCESS, PHR1C00001);
 				return Response.ok(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, ALL_HEADER).build();
 			}
 			ResponseInfo<List<Parameter>> finalOutput = responseDataEvaluation(responseData, null,
-					NO_PARAMETER_AVAILABLE, null);
+					null, RESPONSE_STATUS_FAILURE, PHR1C10001);
 			return Response.ok(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, ALL_HEADER).build();
 		} catch (PhrescoException e) {
 			ResponseInfo<List<Parameter>> finalOutput = responseDataEvaluation(responseData, e,
-					PARAMETER_NOT_FETCHED, null);
-			return Response.status(Status.BAD_REQUEST).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, ALL_HEADER)
+					null, RESPONSE_STATUS_ERROR, PHR1C10002);
+			return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, ALL_HEADER)
 					.build();
 		} catch (PhrescoPomException e) {
 			ResponseInfo<List<Parameter>> finalOutput = responseDataEvaluation(responseData, e,
-					PARAMETER_NOT_FETCHED, null);
-			return Response.status(Status.BAD_REQUEST).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, ALL_HEADER)
+					null, RESPONSE_STATUS_ERROR, PHR1C10003);
+			return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, ALL_HEADER)
 					.build();
 		}
 	}
@@ -354,7 +355,7 @@ public class ParameterService extends RestBase implements FrameworkConstants, Se
             int responseCode = setSonarServerStatus(request);
             if (responseCode != 200) {
                 ResponseInfo<List<CodeValidationReportType>> finalOutput = responseDataEvaluation(responseData, null,
-                        "Sonar not yet Started", null);
+                        null, RESPONSE_STATUS_FAILURE, PHR510001);
                 return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN,
                         ALL_HEADER).build();
             }
@@ -393,17 +394,17 @@ public class ParameterService extends RestBase implements FrameworkConstants, Se
                 codeValidationReportTypes.add(codeValidationReportType);
             }
 //            ResponseInfo<List<CodeValidationReportType>> finalOutput = responseDataEvaluation(responseData, null,
-//                    DEPENDENCY_RETURNED_SUCCESSFULLY, codeValidationReportTypes);
+//                    codeValidationReportTypes, RESPONSE_STATUS_SUCCESS, PHR500001);
             return Response.ok(codeValidationReportTypes).header(ACCESS_CONTROL_ALLOW_ORIGIN, ALL_HEADER).build();
         } catch (PhrescoException e) {
             ResponseInfo<List<CodeValidationReportType>> finalOutput = responseDataEvaluation(responseData, e,
-                    DEPENDENCY_NOT_FETCHED, null);
-            return Response.status(Status.BAD_REQUEST).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, ALL_HEADER)
+                    null, RESPONSE_STATUS_ERROR, PHR510002);
+            return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, ALL_HEADER)
                     .build();
         } catch (PhrescoPomException e) {
             ResponseInfo<List<CodeValidationReportType>> finalOutput = responseDataEvaluation(responseData, e,
-                    DEPENDENCY_NOT_FETCHED, null);
-            return Response.status(Status.BAD_REQUEST).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, ALL_HEADER)
+                    null, RESPONSE_STATUS_ERROR, PHR510005);
+            return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, ALL_HEADER)
                     .build();
         }
     }
@@ -457,12 +458,12 @@ public class ParameterService extends RestBase implements FrameworkConstants, Se
 					sb.append(FrameworkConstants.FORWARD_SLASH);
 					sb.append(INDEX_HTML);
 					ResponseInfo<String> finalOutput = responseDataEvaluation(responseData, null,
-							DEPENDENCY_RETURNED_SUCCESSFULLY, sb.toString());
+							sb.toString(), RESPONSE_STATUS_SUCCESS, PHR500003);
 					return Response.ok(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, ALL_HEADER).build();
 				} else {
 					ResponseInfo<PossibleValues> finalOutput = responseDataEvaluation(responseData, null,
-							DEPENDENCY_NOT_FETCHED, null);
-					return Response.status(Status.BAD_REQUEST).entity(finalOutput).header(
+							null, RESPONSE_STATUS_ERROR, PHR510009);
+					return Response.status(Status.OK).entity(finalOutput).header(
 							ACCESS_CONTROL_ALLOW_ORIGIN, ALL_HEADER).build();
 				}
 			}
@@ -495,7 +496,7 @@ public class ParameterService extends RestBase implements FrameworkConstants, Se
 			int responseCode = connection.getResponseCode();
 			if (responseCode != 200) {
 				ResponseInfo<PossibleValues> finalOutput = responseDataEvaluation(responseData, null,
-						"Report not available", null);
+						null, RESPONSE_STATUS_ERROR, PHR510003);
 				return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN,
 						ALL_HEADER).build();
 			}
@@ -515,27 +516,27 @@ public class ParameterService extends RestBase implements FrameworkConstants, Se
 			}
 		} catch (PhrescoException e) {
 			ResponseInfo<PossibleValues> finalOutput = responseDataEvaluation(responseData, e,
-					DEPENDENCY_NOT_FETCHED, null);
-			return Response.status(Status.BAD_REQUEST).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, ALL_HEADER)
+					null, RESPONSE_STATUS_ERROR, PHR510009);
+			return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, ALL_HEADER)
 					.build();
 		} catch (PhrescoPomException e) {
 			ResponseInfo<PossibleValues> finalOutput = responseDataEvaluation(responseData, e,
-					DEPENDENCY_NOT_FETCHED, null);
-			return Response.status(Status.BAD_REQUEST).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, ALL_HEADER)
+					null, RESPONSE_STATUS_ERROR, PHR510006);
+			return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, ALL_HEADER)
 					.build();
 		} catch (UnknownHostException e) {
 			ResponseInfo<PossibleValues> finalOutput = responseDataEvaluation(responseData, e,
-					DEPENDENCY_NOT_FETCHED, null);
-			return Response.status(Status.BAD_REQUEST).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, ALL_HEADER)
+					null, RESPONSE_STATUS_ERROR, PHR510007);
+			return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, ALL_HEADER)
 					.build();
 		} catch (IOException e) {
 			ResponseInfo<PossibleValues> finalOutput = responseDataEvaluation(responseData, e,
-					DEPENDENCY_NOT_FETCHED, null);
-			return Response.status(Status.BAD_REQUEST).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, ALL_HEADER)
+					null, RESPONSE_STATUS_ERROR, PHR510008);
+			return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, ALL_HEADER)
 					.build();
 		}
 		ResponseInfo<String> finalOutput = responseDataEvaluation(responseData, null,
-				DEPENDENCY_RETURNED_SUCCESSFULLY, sb.toString());
+				sb.toString(), RESPONSE_STATUS_SUCCESS, PHR500003);
 		return Response.ok(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, ALL_HEADER).build();
 	}
 

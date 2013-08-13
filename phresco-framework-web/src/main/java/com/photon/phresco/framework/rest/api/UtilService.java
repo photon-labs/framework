@@ -137,11 +137,11 @@ public class UtilService extends RestBase implements FrameworkConstants, Service
 		ResponseInfo<String> responseData = new ResponseInfo<String>();
 		try {
 			copyToClipboard(log);
-			ResponseInfo<String> finalOutput = responseDataEvaluation(responseData, null, "Log copied successfully", null);
+			ResponseInfo<String> finalOutput = responseDataEvaluation(responseData, null, null, RESPONSE_STATUS_SUCCESS, PHR2C00001);
 			return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
 		} catch (Exception e) {
-			ResponseInfo<ProjectInfo> finalOutput = responseDataEvaluation(responseData, e, "Log copy failed", null);
-			return Response.status(Status.BAD_REQUEST).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
+			ResponseInfo<ProjectInfo> finalOutput = responseDataEvaluation(responseData, e, null, RESPONSE_STATUS_ERROR, PHR2C10001);
+			return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
 		}
 	}
 

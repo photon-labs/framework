@@ -26,13 +26,13 @@
 	<property name="checkers.home" value="${phresco.home}/workspace/tools/checker"/>
 	<property name="chief.home" value="${phresco.home}/workspace/tools/chief"/>
 	<property name="ios-sim.home" value="${phresco.home}/workspace/tools/ios-sim"/>
-	<property name="phresco.war.dir" value="${phresco.home}/workspace/tools/war/${framework.context}.war"/>
 	<property name="sonar.war.dir" value="${phresco.home}/workspace/tools/war/sonar.war"/>
 	<property name="phresco.upgrade.file" value="${phresco.home}/workspace/temp/upgrade.properties"/>
 	<property name="phresco.file.server.home" value="${phresco.home}/workspace/projects"/>
 	<property name="phresco.file.server" value="PhrescoFileServer"/>
     <property file = "${phresco.home}/conf/service.properties"/>
     <property file = "${phresco.home}/bin/framework.properties"/>
+ <property name="phresco.war.dir" value="${phresco.home}/workspace/tools/war/${framework.context}.war"/>
 	<property name="phresco.url" value="http://localhost:${framework.http.port}"/>
     <property name="waxsim.home" value="${phresco.home}/workspace/tools/waxsim"/>
 	

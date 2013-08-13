@@ -63,6 +63,7 @@ import org.w3c.dom.Element;
 import com.photon.phresco.api.ConfigManager;
 import com.photon.phresco.api.NonEnvConfigManager;
 import com.photon.phresco.commons.FrameworkConstants;
+import com.photon.phresco.commons.ResponseCodes;
 import com.photon.phresco.commons.model.ApplicationInfo;
 import com.photon.phresco.commons.model.ArtifactGroup;
 import com.photon.phresco.commons.model.ArtifactGroupInfo;
@@ -93,8 +94,8 @@ import com.sun.jersey.api.client.ClientResponse.Status;
  * The Class ConfigurationService.
  */
 @Path("/configuration")
-public class ConfigurationService extends RestBase implements FrameworkConstants, ServiceConstants {
-
+public class ConfigurationService extends RestBase implements FrameworkConstants, ServiceConstants, ResponseCodes {
+	
 	/** The Constant S_LOGGER. */
 	private static final Logger S_LOGGER = Logger.getLogger(ConfigurationService.class);
 	
@@ -124,12 +125,12 @@ public class ConfigurationService extends RestBase implements FrameworkConstants
 			}
 			configManager.addEnvironments(environments);
 			ResponseInfo<Environment> finalOuptut = responseDataEvaluation(responseData, null,
-					"Environments added Successfully", environments);
+					environments, RESPONSE_STATUS_SUCCESS, PHR600001);
 			return Response.ok(finalOuptut).header("Access-Control-Allow-Origin", "*").build();
 		} catch (ConfigurationException e) {
 			ResponseInfo<Environment> finalOuptut = responseDataEvaluation(responseData, e,
-					"Environments Failed to add", null);
-			return Response.status(Status.EXPECTATION_FAILED).entity(finalOuptut).header("Access-Control-Allow-Origin",
+					null, RESPONSE_STATUS_ERROR, PHR610001);
+			return Response.status(Status.OK).entity(finalOuptut).header("Access-Control-Allow-Origin",
 					"*").build();
 		}
 	}
@@ -151,8 +152,8 @@ public class ConfigurationService extends RestBase implements FrameworkConstants
 				String nonEnvConfigFile = FrameworkServiceUtil.getnonEnvConfigFileDir(appDirName);
 				NonEnvConfigManager nonConfigManager = new NonEnvConfigManagerImpl(new File(nonEnvConfigFile));
 				Configuration configurations = nonConfigManager.getConfiguration(configName);
-				ResponseInfo<Configuration> finalOuptut = responseDataEvaluation(responseData, null, "Configurations Listed",
-						configurations);
+				ResponseInfo<Configuration> finalOuptut = responseDataEvaluation(responseData, null,
+						configurations, RESPONSE_STATUS_SUCCESS, PHR600002);
 				return Response.ok(finalOuptut).header("Access-Control-Allow-Origin", "*").build();
 			}
 			String configFileDir = FrameworkServiceUtil.getConfigFileDir(appDirName);
@@ -162,28 +163,28 @@ public class ConfigurationService extends RestBase implements FrameworkConstants
 				if (CollectionUtils.isNotEmpty(environments)) {
 					Environment environment = environments.get(0);
 					ResponseInfo<Environment> finalOuptut = responseDataEvaluation(responseData, null,
-							"Environments Listed", environment);
+							environment, RESPONSE_STATUS_SUCCESS, PHR600002);
 					return Response.ok(finalOuptut).header("Access-Control-Allow-Origin", "*").build();
 				} else {
 					ResponseInfo<Environment> finalOuptut = responseDataEvaluation(responseData, null,
-							"Environments Failed to List for envName : " + envName, null);
-					return Response.status(Status.EXPECTATION_FAILED).entity(finalOuptut).header(
+							null, RESPONSE_STATUS_ERROR, PHR610025);
+					return Response.status(Status.OK).entity(finalOuptut).header(
 							"Access-Control-Allow-Origin", "*").build();
 				}
 			}
 			List<Environment> environments = configManager.getEnvironmentsAlone();
-			ResponseInfo<Environment> finalOuptut = responseDataEvaluation(responseData, null, "Environments Listed",
-					environments);
+			ResponseInfo<Environment> finalOuptut = responseDataEvaluation(responseData, null,
+					environments, RESPONSE_STATUS_SUCCESS, PHR600002);
 			return Response.ok(finalOuptut).header("Access-Control-Allow-Origin", "*").build();
 		} catch (ConfigurationException e) {
 			ResponseInfo<Environment> finalOuptut = responseDataEvaluation(responseData, e,
-					"Environments Failed to List", null);
-			return Response.status(Status.EXPECTATION_FAILED).entity(finalOuptut).header("Access-Control-Allow-Origin",
+					null, RESPONSE_STATUS_ERROR, PHR610002);
+			return Response.status(Status.OK).entity(finalOuptut).header("Access-Control-Allow-Origin",
 					"*").build();
 		} catch (PhrescoException e) {
 			ResponseInfo<Configuration> finalOuptut = responseDataEvaluation(responseData, e,
-					"Configuration Failed to List", null);
-			return Response.status(Status.EXPECTATION_FAILED).entity(finalOuptut).header("Access-Control-Allow-Origin",
+					null, RESPONSE_STATUS_ERROR, PHR610026);
+			return Response.status(Status.OK).entity(finalOuptut).header("Access-Control-Allow-Origin",
 					"*").build();
 		}
 	}
@@ -204,25 +205,25 @@ public class ConfigurationService extends RestBase implements FrameworkConstants
 				String nonEnvConfigFile = FrameworkServiceUtil.getnonEnvConfigFileDir(appDirName);
 				NonEnvConfigManager nonConfigManager = new NonEnvConfigManagerImpl(new File(nonEnvConfigFile));
 				List<Configuration> configurations = nonConfigManager.getConfigurations(configType);
-				ResponseInfo<List<Configuration>> finalOuptut = responseDataEvaluation(responseData, null, "Configurations Listed",
-						configurations);
+				ResponseInfo<List<Configuration>> finalOuptut = responseDataEvaluation(responseData, null,
+						configurations, RESPONSE_STATUS_SUCCESS, PHR600002);
 				return Response.ok(finalOuptut).header("Access-Control-Allow-Origin", "*").build();
 			}
 			String configFileDir = FrameworkServiceUtil.getConfigFileDir(appDirName);
 			ConfigManager configManager = new ConfigManagerImpl(new File(configFileDir));
 			List<Environment> environments = configManager.getEnvironments();
-			ResponseInfo<Environment> finalOuptut = responseDataEvaluation(responseData, null, "Environments Listed",
-					environments);
+			ResponseInfo<Environment> finalOuptut = responseDataEvaluation(responseData, null,
+					environments, RESPONSE_STATUS_SUCCESS, PHR600002);
 			return Response.ok(finalOuptut).header("Access-Control-Allow-Origin", "*").build();
 		} catch (ConfigurationException e) {
 			ResponseInfo<Environment> finalOuptut = responseDataEvaluation(responseData, e,
-					"Environments Failed to List", null);
-			return Response.status(Status.EXPECTATION_FAILED).entity(finalOuptut).header("Access-Control-Allow-Origin",
+					null, RESPONSE_STATUS_ERROR, PHR610002);
+			return Response.status(Status.OK).entity(finalOuptut).header("Access-Control-Allow-Origin",
 					"*").build();
 		} catch (PhrescoException e) {
 			ResponseInfo<List<Configuration>> finalOuptut = responseDataEvaluation(responseData, e,
-					"Configuration Failed to List", null);
-			return Response.status(Status.EXPECTATION_FAILED).entity(finalOuptut).header("Access-Control-Allow-Origin",
+					null, RESPONSE_STATUS_ERROR, PHR610027);
+			return Response.status(Status.OK).entity(finalOuptut).header("Access-Control-Allow-Origin",
 					"*").build();
 		}
 	}
@@ -249,24 +250,24 @@ public class ConfigurationService extends RestBase implements FrameworkConstants
 				Environment environment = environments.get(0);
 				if (environment.isDefaultEnv()) {
 					ResponseInfo<Environment> finalOuptut = responseDataEvaluation(responseData, null,
-							"Default Environment can not be deleted", null);
-					return Response.status(Status.EXPECTATION_FAILED).entity(finalOuptut).header(
+							null, RESPONSE_STATUS_FAILURE, PHR610003);
+					return Response.status(Status.OK).entity(finalOuptut).header(
 							"Access-Control-Allow-Origin", "*").build();
 				}
 				configManager.deleteEnvironment(envName);
 				ResponseInfo<Environment> finalOuptut = responseDataEvaluation(responseData, null,
-						"Environment Deleted successfully", null);
+						null, RESPONSE_STATUS_SUCCESS, PHR600003);
 				return Response.ok(finalOuptut).header("Access-Control-Allow-Origin", "*").build();
 			}
 		} catch (ConfigurationException e) {
 			ResponseInfo<Environment> finalOuptut = responseDataEvaluation(responseData, e,
-					"Environment Failed to Delete", null);
-			return Response.status(Status.EXPECTATION_FAILED).entity(finalOuptut).header("Access-Control-Allow-Origin",
+					null, RESPONSE_STATUS_ERROR, PHR610004);
+			return Response.status(Status.OK).entity(finalOuptut).header("Access-Control-Allow-Origin",
 					"*").build();
 		}
 		ResponseInfo<Environment> finalOuptut = responseDataEvaluation(responseData, null,
-				"Environment Not available to Delete", null);
-		return Response.status(Status.EXPECTATION_FAILED).entity(finalOuptut)
+				null, RESPONSE_STATUS_ERROR, PHR610005);
+		return Response.status(Status.OK).entity(finalOuptut)
 				.header("Access-Control-Allow-Origin", "*").build();
 	}
 	
@@ -282,12 +283,12 @@ public class ConfigurationService extends RestBase implements FrameworkConstants
 			NonEnvConfigManager nonConfigManager = new NonEnvConfigManagerImpl(new File(nonEnvConfigFie));
 			nonConfigManager.deleteConfiguration(configName);
 			ResponseInfo<Environment> finalOuptut = responseDataEvaluation(responseData, null,
-					"Configuration Deleted successfully", null);
+					null, RESPONSE_STATUS_SUCCESS, PHR600014);
 			return Response.ok(finalOuptut).header("Access-Control-Allow-Origin", "*").build();
 		} catch (PhrescoException e) {
 			ResponseInfo<Environment> finalOuptut = responseDataEvaluation(responseData, null,
-					"Configuraiotn Not available to Delete", null);
-			return Response.status(Status.EXPECTATION_FAILED).entity(finalOuptut)
+					null, RESPONSE_STATUS_ERROR, PHR610023);
+			return Response.status(Status.OK).entity(finalOuptut)
 					.header("Access-Control-Allow-Origin", "*").build();
 		}
 	}
@@ -313,8 +314,8 @@ public class ConfigurationService extends RestBase implements FrameworkConstants
 			ServiceManager serviceManager = CONTEXT_MANAGER_MAP.get(userId);
 			if (serviceManager == null) {
 				ResponseInfo<List<SettingsTemplate>> finalOutput = responseDataEvaluation(responseData, null,
-						"UnAuthorized User", null);
-				return Response.status(Status.BAD_REQUEST).entity(finalOutput).header("Access-Control-Allow-Origin",
+						null, RESPONSE_STATUS_FAILURE, PHR610006);
+				return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin",
 						"*").build();
 			}
 			SettingsTemplate settingsTemplate = serviceManager.getConfigTemplateByTechId(techId, type);
@@ -322,17 +323,17 @@ public class ConfigurationService extends RestBase implements FrameworkConstants
 			templateMap.put("settingsTemplate", settingsTemplate);
 			templateMap.put("downloadInfo", downloadInfo);
 			ResponseInfo<List<SettingsTemplate>> finalOutput = responseDataEvaluation(responseData, null,
-					"confuguration Template Fetched successfully", templateMap);
+					templateMap, RESPONSE_STATUS_SUCCESS, PHR600004);
 			return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
 		} catch (PhrescoException e) {
 			ResponseInfo<List<SettingsTemplate>> finalOutput = responseDataEvaluation(responseData, e,
-					"confuguration Template Not Fetched", null);
-			return Response.status(Status.BAD_REQUEST).entity(finalOutput).header("Access-Control-Allow-Origin", "*")
+					null, RESPONSE_STATUS_ERROR, PHR610007);
+			return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*")
 					.build();
 		} catch (Exception e) {
 			ResponseInfo<List<SettingsTemplate>> finalOutput = responseDataEvaluation(responseData, e,
-					"confuguration Template Not Fetched", null);
-			return Response.status(Status.BAD_REQUEST).entity(finalOutput).header("Access-Control-Allow-Origin", "*")
+					null, RESPONSE_STATUS_ERROR, PHR610007);
+			return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*")
 					.build();
 		}
 	}
@@ -355,8 +356,8 @@ public class ConfigurationService extends RestBase implements FrameworkConstants
 			ServiceManager serviceManager = CONTEXT_MANAGER_MAP.get(userId);
 			if (serviceManager == null) {
 				ResponseInfo<List<TemplateInfo>> finalOutput = responseDataEvaluation(responseData, null,
-						"UnAuthorized User", null);
-				return Response.status(Status.BAD_REQUEST).entity(finalOutput).header("Access-Control-Allow-Origin",
+						null, RESPONSE_STATUS_FAILURE, PHR610006);
+				return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin",
 						"*").build();
 			}
 			List<TemplateInfo> settingsTypes = new ArrayList<TemplateInfo>();
@@ -371,12 +372,12 @@ public class ConfigurationService extends RestBase implements FrameworkConstants
 				}
 			}
 			ResponseInfo<List<TemplateInfo>> finalOutput = responseDataEvaluation(responseData, null,
-					"confuguration Template Fetched successfully", settingsTypes);
+					settingsTypes, RESPONSE_STATUS_SUCCESS, PHR600004);
 			return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
 		} catch (PhrescoException e) {
 			ResponseInfo<List<TemplateInfo>> finalOutput = responseDataEvaluation(responseData, e,
-					"confuguration Template not Fetched", null);
-			return Response.status(Status.BAD_REQUEST).entity(finalOutput).header("Access-Control-Allow-Origin", "*")
+					null, RESPONSE_STATUS_ERROR, PHR610007);
+			return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*")
 					.build();
 		}
 	}
@@ -391,12 +392,15 @@ public class ConfigurationService extends RestBase implements FrameworkConstants
 	@Path("/connectionAliveCheck")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response connectionAliveCheck(@QueryParam(REST_QUERY_URL) String url) {
+		ResponseInfo<Boolean> responseData = new ResponseInfo<Boolean>();
 		if (is_debugEnabled) {
 			S_LOGGER.debug("Entering Method  Configurationservice.connectionAliveCheck()");
 		}
 
 		if (url == null || ("".equals(url)) == true) {
-			return Response.status(Status.BAD_REQUEST).entity(null).header("Access-Control-Allow-Origin", "*").build();
+			ResponseInfo<Boolean> finalOutput = responseDataEvaluation(responseData, null,
+					null, RESPONSE_STATUS_FAILURE, PHR610008);
+			return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
 		}
 
 		boolean connection_status = false;
@@ -408,12 +412,15 @@ public class ConfigurationService extends RestBase implements FrameworkConstants
 			boolean tempConnectionAlive = isConnectionAlive(lprotocol, lhost, lport);
 			connection_status = tempConnectionAlive == true ? true : false;
 		} catch (Exception e) {
+			ResponseInfo<Boolean> finalOutput = responseDataEvaluation(responseData, null,
+					null, RESPONSE_STATUS_ERROR, PHR610009);
 			S_LOGGER.error("Entered into catch block of Configurationservice.connectionAliveCheck()"
 					+ FrameworkUtil.getStackTraceAsString(e));
-			return Response.status(Status.BAD_REQUEST).entity(null).header("Access-Control-Allow-Origin", "*").build();
+			return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
 		}
-
-		return Response.status(Status.OK).entity(connection_status).header("Access-Control-Allow-Origin", "*").build();
+		ResponseInfo<Boolean> finalOutput = responseDataEvaluation(responseData, null,
+				connection_status, RESPONSE_STATUS_SUCCESS, PHR600005);
+		return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
 	}
 
 	/**
@@ -448,7 +455,7 @@ public class ConfigurationService extends RestBase implements FrameworkConstants
 			String validateConfiguration = validateConfiguration(userId, customerId, appDirName, configurationlist);
 			if(StringUtils.isNotEmpty(validateConfiguration)) {
 				ResponseInfo<String> finalOuptut = responseDataEvaluation(responseData, null,
-    					"Configurations Fails on validation", validateConfiguration);
+    					validateConfiguration, RESPONSE_STATUS_FAILURE, PHR610024);
     			return Response.ok(finalOuptut).header("Access-Control-Allow-Origin", "*").build();
 			}
 			for (Configuration configuration_temp : listofconfiguration) {
@@ -463,34 +470,34 @@ public class ConfigurationService extends RestBase implements FrameworkConstants
 	    		if(StringUtils.isEmpty(configName)) {
 	    			nonConfigManager.createConfiguration(configurationlist.get(0));
 	    			ResponseInfo<String> finalOuptut = responseDataEvaluation(responseData, null,
-	    					"Configurations created Successfully", "Success");
+	    					"Success", RESPONSE_STATUS_SUCCESS, PHR600015);
 	    			return Response.ok(finalOuptut).header("Access-Control-Allow-Origin", "*").build();
 	    		} else {
 	    		nonConfigManager.updateConfiguration(configName, configurationlist.get(0));
 	    		}
 	    	}
 			ResponseInfo<String> finalOuptut = responseDataEvaluation(responseData, null,
-					"Configurations Updated Successfully", "Success");
+					"Success", RESPONSE_STATUS_SUCCESS, PHR600006);
 			return Response.ok(finalOuptut).header("Access-Control-Allow-Origin", "*").build();
 		} catch (ConfigurationException e) {
 			S_LOGGER.error("Entered into Configuration catch block of Configurationservice.updateConfiguration()"
 					+ FrameworkUtil.getStackTraceAsString(e));
 			ResponseInfo<Configuration> finalOuptut = responseDataEvaluation(responseData, e,
-					"Configurations failed to be updated for the Environment", "Failure");
-			return Response.status(Status.EXPECTATION_FAILED).entity(finalOuptut).header("Access-Control-Allow-Origin",
+					"Failure", RESPONSE_STATUS_ERROR, PHR610010);
+			return Response.status(Status.OK).entity(finalOuptut).header("Access-Control-Allow-Origin",
 					"*").build();
 		} catch (PhrescoException e) {
 			S_LOGGER.error("Entered into PhrescoException catch block of Configurationservice.updateConfiguration()"
 					+ FrameworkUtil.getStackTraceAsString(e));
-			ResponseInfo<Configuration> finalOuptut = responseDataEvaluation(responseData, e, e.getMessage(), "Failure");
-			return Response.status(Status.BAD_REQUEST).entity(finalOuptut).header("Access-Control-Allow-Origin", "*")
+			ResponseInfo<Configuration> finalOuptut = responseDataEvaluation(responseData, e, "Failure", RESPONSE_STATUS_ERROR, PHR610010);
+			return Response.status(Status.OK).entity(finalOuptut).header("Access-Control-Allow-Origin", "*")
 					.build();
 		} catch (Exception e) {
 			S_LOGGER.error("Entered into catch block of Configurationservice.updateConfiguration()"
 					+ FrameworkUtil.getStackTraceAsString(e));
 			ResponseInfo<Configuration> finalOuptut = responseDataEvaluation(responseData, e,
-					"Configurations failed to be updated for the Environment", "Failure");
-			return Response.status(Status.EXPECTATION_FAILED).entity(finalOuptut).header("Access-Control-Allow-Origin",
+					"Failure", RESPONSE_STATUS_ERROR, PHR610010);
+			return Response.status(Status.OK).entity(finalOuptut).header("Access-Control-Allow-Origin",
 					"*").build();
 		}
 
@@ -518,25 +525,25 @@ public class ConfigurationService extends RestBase implements FrameworkConstants
 			ConfigManager configManager = new ConfigManagerImpl(new File(configFile));
 			clonedEnvironment = configManager.cloneEnvironment(envName, cloneEnvironment);
 			ResponseInfo<String> finalOuptut = responseDataEvaluation(responseData, null,
-					"Clone Environment Done Successfully", clonedEnvironment);
+					clonedEnvironment, RESPONSE_STATUS_SUCCESS, PHR600007);
 			return Response.ok(finalOuptut).header("Access-Control-Allow-Origin", "*").build();
 
 		} catch (ConfigurationException e) {
 			ResponseInfo<Configuration> finalOuptut = responseDataEvaluation(responseData, e,
-					"Clone Environment Failed", clonedEnvironment);
-			return Response.status(Status.EXPECTATION_FAILED).entity(finalOuptut).header("Access-Control-Allow-Origin",
+					clonedEnvironment, RESPONSE_STATUS_ERROR, PHR610029);
+			return Response.status(Status.OK).entity(finalOuptut).header("Access-Control-Allow-Origin",
 					"*").build();
 
 		} catch (PhrescoException e) {
 			ResponseInfo<Configuration> finalOuptut = responseDataEvaluation(responseData, e,
-					"Clone Environment Failed", clonedEnvironment);
-			return Response.status(Status.EXPECTATION_FAILED).entity(finalOuptut).header("Access-Control-Allow-Origin",
+					clonedEnvironment, RESPONSE_STATUS_ERROR, PHR610011);
+			return Response.status(Status.OK).entity(finalOuptut).header("Access-Control-Allow-Origin",
 					"*").build();
 
 		} catch (Exception e) {
 			ResponseInfo<Configuration> finalOuptut = responseDataEvaluation(responseData, e,
-					"Clone Environment Failed", clonedEnvironment);
-			return Response.status(Status.EXPECTATION_FAILED).entity(finalOuptut).header("Access-Control-Allow-Origin",
+					clonedEnvironment, RESPONSE_STATUS_ERROR, PHR610011);
+			return Response.status(Status.OK).entity(finalOuptut).header("Access-Control-Allow-Origin",
 					"*").build();
 		}
 	}
@@ -622,15 +629,14 @@ public class ConfigurationService extends RestBase implements FrameworkConstants
 				
 			}
 			cronResult.setCronExpression(cronExpression);
-
 			ResponseInfo<CronExpressionInfo> finalOutput = responseDataEvaluation(responseData, null,
-					"Cron Expression calculated successfully", cronResult);
+					cronResult, RESPONSE_STATUS_SUCCESS, PHR600008);
 			return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
 
 		} catch (PhrescoException e) {
-			ResponseInfo<CronExpressionInfo> finalOutput = responseDataEvaluation(responseData, e, "Cron Expression not Available",
-					null);
-			return Response.status(Status.BAD_REQUEST).entity(finalOutput).header("Access-Control-Allow-Origin", "*")
+			ResponseInfo<CronExpressionInfo> finalOutput = responseDataEvaluation(responseData, e,
+					null, RESPONSE_STATUS_ERROR, PHR610012);
+			return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*")
 					.build();
 		}
 	}
@@ -658,15 +664,15 @@ public class ConfigurationService extends RestBase implements FrameworkConstants
 				}
 			}
 			ResponseInfo<String> finalOutput = responseDataEvaluation(responseData, null,
-					"Environments Listed successfully", environmentSet);
+					environmentSet, RESPONSE_STATUS_SUCCESS, PHR600002);
 			return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
 		} catch (PhrescoException e) {
-			ResponseInfo<String> finalOutput = responseDataEvaluation(responseData, e, "Environmets not Fetched", null);
-			return Response.status(Status.BAD_REQUEST).entity(finalOutput).header("Access-Control-Allow-Origin", "*")
+			ResponseInfo<String> finalOutput = responseDataEvaluation(responseData, e, null, RESPONSE_STATUS_ERROR, PHR610013);
+			return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*")
 					.build();
 		} catch (ConfigurationException e) {
-			ResponseInfo<String> finalOutput = responseDataEvaluation(responseData, e, "Environmets not Fetched", null);
-			return Response.status(Status.BAD_REQUEST).entity(finalOutput).header("Access-Control-Allow-Origin", "*")
+			ResponseInfo<String> finalOutput = responseDataEvaluation(responseData, e, null, RESPONSE_STATUS_ERROR, PHR610028);
+			return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*")
 					.build();
 		}
 	}
@@ -687,11 +693,11 @@ public class ConfigurationService extends RestBase implements FrameworkConstants
 				environmentSet.add(environment.getName());
 			}
 			ResponseInfo<String> finalOutput = responseDataEvaluation(responseData, null,
-					"Environments Listed successfully", environmentSet);
+					environmentSet, RESPONSE_STATUS_SUCCESS, PHR600002);
 			return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
 		} catch (ConfigurationException e) {
-			ResponseInfo<String> finalOutput = responseDataEvaluation(responseData, e, "Environmets not Fetched", null);
-			return Response.status(Status.BAD_REQUEST).entity(finalOutput).header("Access-Control-Allow-Origin", "*")
+			ResponseInfo<String> finalOutput = responseDataEvaluation(responseData, e, null, RESPONSE_STATUS_ERROR, PHR610028);
+			return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*")
 					.build();
 		}
 	}
@@ -724,12 +730,12 @@ public class ConfigurationService extends RestBase implements FrameworkConstants
 	    				remoteCertificateInfo.setProjectLocation(projectLocation);
 	    				remoteCertificateInfo.setCertificateAvailable(isCertificateAvailable);
 	    				ResponseInfo<RemoteCertificateInfo> finalOutput = responseDataEvaluation(responseData, null,
-	    						"Https server certificate returned successfully", remoteCertificateInfo);
+	    						remoteCertificateInfo, RESPONSE_STATUS_SUCCESS, PHR600009);
 	    				return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
 	    			}
 	    		}
 	    		ResponseInfo<RemoteCertificateInfo> finalOutput = responseDataEvaluation(responseData, null,
-						"No certificate found", null);
+						null, RESPONSE_STATUS_FAILURE, PHR610014);
 				return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
 	    }
 
@@ -751,18 +757,17 @@ public class ConfigurationService extends RestBase implements FrameworkConstants
 				} else if (fromPage.equals(SETTINGS)) {
 					certificatePath = settingsCertificateSave(file, appDirName, addCertificateInfo);
 				}
-
 				ResponseInfo<String> finalOutput = responseDataEvaluation(responseData, null,
-						"Https server certificate added successfully", certificatePath);
+						certificatePath, RESPONSE_STATUS_SUCCESS, PHR600010);
 				return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*")
 						.build();
 			}
-			ResponseInfo<String> finalOutput = responseDataEvaluation(responseData, null, "Nothin to add", null);
+			ResponseInfo<String> finalOutput = responseDataEvaluation(responseData, null, null, RESPONSE_STATUS_FAILURE, PHR610015);
 			return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
 		} catch (PhrescoException e) {
 			ResponseInfo<String> finalOutput = responseDataEvaluation(responseData, e,
-					"Https server certificate not Added", null);
-			return Response.status(Status.BAD_REQUEST).entity(finalOutput).header("Access-Control-Allow-Origin", "*")
+					null, RESPONSE_STATUS_ERROR, PHR610016);
+			return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*")
 					.build();
 		}
 	}
@@ -797,19 +802,19 @@ public class ConfigurationService extends RestBase implements FrameworkConstants
 				inputStream.close();
 				out.flush();
 				out.close();
-				ResponseInfo finalOuptut = responseDataEvaluation(responseData, null, "file uploaded", true);
+				ResponseInfo finalOuptut = responseDataEvaluation(responseData, null, true, RESPONSE_STATUS_SUCCESS, PHR600011);
 				return Response.status(Status.OK).entity(finalOuptut).header("Access-Control-Allow-Origin", "*").build();
 			}
 		} catch (FileNotFoundException e) {
-			ResponseInfo<Environment> finalOuptut = responseDataEvaluation(responseData, e, "upload Failed", false);
-			return Response.status(Status.EXPECTATION_FAILED).entity(finalOuptut).header("Access-Control-Allow-Origin",
+			ResponseInfo<Environment> finalOuptut = responseDataEvaluation(responseData, e, false, RESPONSE_STATUS_ERROR, PHR610030);
+			return Response.status(Status.OK).entity(finalOuptut).header("Access-Control-Allow-Origin",
 					"*").build();
 		} catch (IOException e) {
-			ResponseInfo<Environment> finalOuptut = responseDataEvaluation(responseData, e, "upload Failed", false);
-			return Response.status(Status.EXPECTATION_FAILED).entity(finalOuptut).header("Access-Control-Allow-Origin",
+			ResponseInfo<Environment> finalOuptut = responseDataEvaluation(responseData, e, false, RESPONSE_STATUS_ERROR, PHR610017);
+			return Response.status(Status.OK).entity(finalOuptut).header("Access-Control-Allow-Origin",
 					"*").build();
 		}
-		ResponseInfo finalOuptut = responseDataEvaluation(responseData, null, "No File to upload", false);
+		ResponseInfo finalOuptut = responseDataEvaluation(responseData, null, false, RESPONSE_STATUS_FAILURE, PHR610018);
 		return Response.ok(finalOuptut).header("Access-Control-Allow-Origin", "*").build();
 	}
 
@@ -817,12 +822,14 @@ public class ConfigurationService extends RestBase implements FrameworkConstants
 	@Path("/fileBrowseFolder")
 	@Produces(MediaType.APPLICATION_XML)
 	public Response returnFileBorwseFolderStructure(@QueryParam("browsePath") String browsePath) {
+		ResponseInfo<DOMSource> responseData = new ResponseInfo<DOMSource>();
 		try {
 			List<FileBrowseInfo> browseList = new ArrayList<FileBrowseInfo>();
 			File browseFile = new File(browsePath);
 			File[] files = browseFile.listFiles();
 			if (files == null) {
-				return Response.status(Status.OK).entity("No Browse File Structure Found").header(
+				ResponseInfo<String> finalOuptut = responseDataEvaluation(responseData, null, null, RESPONSE_STATUS_FAILURE, PHR610019);
+				return Response.status(Status.OK).entity(finalOuptut).header(
 						"Access-Control-Allow-Origin", "*").build();
 			}
 			for (int i = 0; i < files.length; i++) {
@@ -839,11 +846,12 @@ public class ConfigurationService extends RestBase implements FrameworkConstants
 					browseList.add(fileBrowse);
 				}
 			}
-
 			DOMSource outputContent = constructXml(browseFile.getName(), browsePath.toString(), browseList);
+			ResponseInfo<DOMSource> finalOuptut = responseDataEvaluation(responseData, null, outputContent, RESPONSE_STATUS_SUCCESS, PHR600012);
 			return Response.status(Status.OK).entity(outputContent).header("Access-Control-Allow-Origin", "*").build();
 		} catch (PhrescoException e) {
-			return Response.status(Status.BAD_REQUEST).entity(e).header("Access-Control-Allow-Origin", "*").build();
+			ResponseInfo<String> finalOuptut = responseDataEvaluation(responseData, e, null, RESPONSE_STATUS_ERROR, PHR610020);
+			return Response.status(Status.OK).entity(finalOuptut).header("Access-Control-Allow-Origin", "*").build();
 		}
 
 	}
@@ -852,15 +860,19 @@ public class ConfigurationService extends RestBase implements FrameworkConstants
 	@Path("/fileBrowse")
 	@Produces(MediaType.APPLICATION_XML)
 	public Response returnFileBorwseEntireStructure(@QueryParam("appDirName") String appDirName) {
+		ResponseInfo<DOMSource> responseData = new ResponseInfo<DOMSource>();
 		try {
 			String browsePath = Utility.getProjectHome()  + appDirName;
 			DOMSource outputContent = createXML(browsePath);
 			if(outputContent == null) {
-				return Response.status(Status.OK).entity("File cannot be Iterated").header("Access-Control-Allow-Origin", "*").build();
+				ResponseInfo<DOMSource> finalOuptut = responseDataEvaluation(responseData, null, null, RESPONSE_STATUS_FAILURE, PHR610021);
+				return Response.status(Status.OK).entity(finalOuptut).header("Access-Control-Allow-Origin", "*").build();
 			}
+			ResponseInfo<DOMSource> finalOuptut = responseDataEvaluation(responseData, null, outputContent, RESPONSE_STATUS_SUCCESS, PHR600013);
 			return Response.status(Status.OK).entity(outputContent).header("Access-Control-Allow-Origin", "*").build();
 		} catch (PhrescoException e) {
-			return Response.status(Status.BAD_REQUEST).entity(e).header("Access-Control-Allow-Origin", "*").build();	
+			ResponseInfo<DOMSource> finalOuptut = responseDataEvaluation(responseData, null, null, RESPONSE_STATUS_ERROR, PHR610022);
+			return Response.status(Status.OK).entity(finalOuptut).header("Access-Control-Allow-Origin", "*").build();	
 		}
 
 	}
