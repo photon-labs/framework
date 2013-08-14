@@ -19,6 +19,7 @@ define(["performanceLoadListener/listener/performanceLoadListener"], function() 
 		getResultFilesEvent : null,
 		whereToRender : null,
 		dynamicpage : null,
+		validation : null,
 		dynamicPageListener : null,
 		preTriggerPerformanceTest : null,
 		onGeneratePdfEvent : null,
@@ -113,6 +114,12 @@ define(["performanceLoadListener/listener/performanceLoadListener"], function() 
 
 		testTriggerSignals : function () {
 			var self = this;
+
+			if (self.validation === null) {
+				self.validation = new signals.Signal();
+			}
+			self.validation.add(self.performanceTestListener.mandatoryValidation, self.performanceTestListener);
+
 			if (self.preTriggerPerformanceTest === null) {
 				self.preTriggerPerformanceTest = new signals.Signal();
 			}
@@ -415,9 +422,7 @@ define(["performanceLoadListener/listener/performanceLoadListener"], function() 
 			
 
 			$("#performanceRun").click(function() {
-				$('.progress_loading').show();
-				self.performanceTestListener.setConsoleScrollbar(true);
-				self.preTriggerPerformanceTest.dispatch();
+				self.validation.dispatch("performance-test", $('#performanceForm').serialize(), self.dynamicpage);
 			});
 
 			Clazz.navigationController.mainContainer = commonVariables.contentPlaceholder;

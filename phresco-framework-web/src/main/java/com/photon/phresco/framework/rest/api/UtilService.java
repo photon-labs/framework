@@ -25,12 +25,14 @@ import java.io.File;
 import java.io.UnsupportedEncodingException;
 import java.util.List;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
@@ -40,11 +42,16 @@ import com.photon.phresco.commons.model.ApplicationInfo;
 import com.photon.phresco.commons.model.ProjectInfo;
 import com.photon.phresco.commons.model.Technology;
 import com.photon.phresco.exception.PhrescoException;
+import com.photon.phresco.framework.commons.FrameworkUtil;
+import com.photon.phresco.framework.rest.api.util.ActionResponse;
+import com.photon.phresco.framework.rest.api.util.ActionServiceConstant;
 import com.photon.phresco.framework.rest.api.util.FrameworkServiceUtil;
 import com.photon.phresco.service.client.api.ServiceManager;
 import com.photon.phresco.util.ServiceConstants;
 import com.photon.phresco.util.Utility;
 import com.sun.jersey.api.client.ClientResponse.Status;
+
+import fr.opensagres.xdocreport.utils.StringUtils;
 
 /**
  * The Class UtilService.
@@ -233,4 +240,34 @@ public class UtilService extends RestBase implements FrameworkConstants, Service
 			throw new PhrescoException(e);
 		}
 	}
+	
+	@GET
+	@Path("/validation")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response checkMandatoryValidation(@Context HttpServletRequest request,
+			@QueryParam("appDirName") String appDirName, @QueryParam("phase") String phase,
+			@QueryParam("customerId") String customerId) {
+		FrameworkServiceUtil futil = new FrameworkServiceUtil();
+		ActionResponse response = null;
+		String envNames = request.getParameter("environmentName");
+		try {
+			response = futil.mandatoryValidation(request, phase, appDirName);
+			if (response.isErrorFound()) {	
+				return Response.status(Status.OK).entity(response).header("Access-Control-Allow-Origin", "*").build();
+			}
+			if (StringUtils.isNotEmpty(envNames)) {
+				response = FrameworkServiceUtil.checkForConfigurations(appDirName, envNames, customerId);
+				if (response.isErrorFound()) {
+					return Response.status(Status.OK).entity(response).header("Access-Control-Allow-Origin", "*").build();
+				}
+			}
+		} catch (PhrescoException e) {
+			response.setStatus(ActionServiceConstant.ERROR);
+			response.setService_exception(FrameworkUtil.getStackTraceAsString(e));
+		}
+		return Response.status(Status.OK).entity(response).header("Access-Control-Allow-Origin", "*").build();
+	}
+
+	
+	
 }

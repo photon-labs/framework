@@ -115,7 +115,6 @@ define(["framework/widgetWithTemplate", "common/loading", "lib/customcombobox-1.
                         self.constructFileBrowseCtrl(parameter, whereToRender, goal);
                     }
                 });
-                whereToRender.append('<li></li>');
                 if (!self.isBlank(btnObj) && openccObj !== 'jobConfigure') {
                     self.opencc(btnObj, openccObj);
                 } else if(!self.isBlank(btnObj) && openccObj === 'jobConfigure') {
@@ -813,7 +812,7 @@ define(["framework/widgetWithTemplate", "common/loading", "lib/customcombobox-1.
         //To show or hide controls while popup loads
         showParameters : function() {
             var self=this;
-            $(':input, .dynamicControls > li').each(function(index, value) {
+            $('.dynamicControls > li :input').each(function(index, value) {
                 var currentObjType = $(this).prop('tagName');
                 var multipleAttr = $(this).attr('multiple');
                 var id = $(this).attr('id');

@@ -26,20 +26,8 @@
 	                </span>    
 	            </div>  
             {{/showIcons}}
-            
-			<div class="icon_images">
-				<a class="tooltiptop" title="" data-placement="bottom" data-toggle="tooltip" href="#" data-original-title="Open Folder" id="openLoadFolder">
-					<img src="themes/default/images/helios/openfolder_icon.png" >
-				</a>
-			</div>
-		
-			<div class="icon_images">
-				<a class="tooltiptop" title="" data-placement="bottom" data-toggle="tooltip" href="#" data-original-title="Copy Path" id="copyLoadPath">
-					<img src="themes/default/images/helios/copypath_icon.png" >
-				</a>
-			</div>	
 
-        	{{#showIcons resultAvailable testResultFiles}}
+            {{#showIcons resultAvailable testResultFiles}}
 	           <div class="icon_images"><a class="tooltiptop loadPDF" from="load" title="" data-placement="bottom" data-toggle="tooltip" href="#" data-original-title="PDF Report" id="pdfIcon"><img src="themes/default/images/helios/pdf_icon_white.png" ></a>
 	        		<!--Pdf report popup starts here -->
 					<div id="pdf_report" class="dyn_popup hideContent">
@@ -91,7 +79,19 @@
 	        	<div class="icon_images hideContent"><a class="tooltiptop" title="" data-placement="bottom" data-toggle="tooltip" href="#" data-original-title="PDF Report" id="pdfIcon"><img src="themes/default/images/helios/pdf_icon_white.png" ></a></div>
             {{/showIcons}}
         	<div class="icon_images performanceScreenShotDiv" style="display: none;"><a class="tooltiptop performanceScreenShot" title="" data-placement="bottom" data-toggle="tooltip" href="#" data-original-title="Screen Shot"><img src="themes/default/images/helios/screenshot_white.png" ></a></div>
-        	
+            
+			<div class="icon_images">
+				<a class="tooltiptop" title="" data-placement="bottom" data-toggle="tooltip" href="#" data-original-title="Open Folder" id="openLoadFolder">
+					<img src="themes/default/images/helios/openfolder_icon.png" >
+				</a>
+			</div>
+		
+			<div class="icon_images copy_path_icon">
+				<a class="tooltiptop" title="" data-placement="bottom" data-toggle="tooltip" href="#" data-original-title="Copy Path" id="copyLoadPath">
+					<img src="themes/default/images/helios/copypath_icon.png" >
+				</a>
+			</div>	
+
 			{{#showResultFiles testResultFiles}}
 	            <div class="code_report type_report testResultDropdown">
 	            	Results

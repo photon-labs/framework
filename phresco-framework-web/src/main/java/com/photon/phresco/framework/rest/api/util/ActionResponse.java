@@ -16,9 +16,23 @@ public class ActionResponse {
 	String uniquekey;
 	boolean connectionAlive = false;
 	boolean errorFound;
+	boolean configErr = false;
 	String configErrorMsg;
 	String responseCode;
+	String parameterKey;
 	
+	public boolean isConfigErr() {
+		return configErr;
+	}
+	public void setConfigErr(boolean configErr) {
+		this.configErr = configErr;
+	}
+	public String getParameterKey() {
+		return parameterKey;
+	}
+	public void setParameterKey(String parameterKey) {
+		this.parameterKey = parameterKey;
+	}
 	public String getResponseCode() {
 		return responseCode;
 	}

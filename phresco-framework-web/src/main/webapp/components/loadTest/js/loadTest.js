@@ -14,10 +14,9 @@ define(["performanceLoadListener/listener/performanceLoadListener"], function() 
 		onShowHideConsoleEvent : null,
 		onShowPdfPopupEvent : null,
 		getResultEvent : null,
-		getDeviceEvent : null,
-		onDeviceChangeEvent : null,
 		getResultFilesEvent : null,
 		whereToRender : null,
+		validation : null,
 		dynamicpage : null,
 		dynamicPageListener : null,
 		preTriggerloadTest : null,
@@ -37,7 +36,6 @@ define(["performanceLoadListener/listener/performanceLoadListener"], function() 
 			self.getDynamicPageObject();
 			self.resultViewSignals();
 			self.getResultEventSignals();
-			self.deviceEventSignals();
 			self.pdfReportEventSignals();
 			self.testTriggerSignals();
 			self.registerEvents(self.loadTestListener);
@@ -84,19 +82,6 @@ define(["performanceLoadListener/listener/performanceLoadListener"], function() 
 			self.getResultFilesEvent.add(self.loadTestListener.getResultFiles, self.loadTestListener);
 		},
 
-		deviceEventSignals : function () {
-			var self = this;
-			if (self.getDeviceEvent === null) {
-				self.getDeviceEvent = new signals.Signal();
-			}
-			self.getDeviceEvent.add(self.loadTestListener.getDevices, self.loadTestListener);
-
-			if (self.onDeviceChangeEvent === null) {
-				self.onDeviceChangeEvent = new signals.Signal();
-			}
-			self.onDeviceChangeEvent.add(self.loadTestListener.getResultOnChangeEvent, self.loadTestListener);
-		},
-
 		pdfReportEventSignals : function () {
 			var self = this;
 			if (self.onShowPdfPopupEvent === null) {
@@ -113,6 +98,11 @@ define(["performanceLoadListener/listener/performanceLoadListener"], function() 
 
 		testTriggerSignals : function () {
 			var self = this;
+			if (self.validation === null) {
+				self.validation = new signals.Signal();
+			}
+			self.validation.add(self.loadTestListener.mandatoryValidation, self.loadTestListener);
+
 			if (self.preTriggerloadTest === null) {
 				self.preTriggerloadTest = new signals.Signal();
 			}
@@ -176,35 +166,6 @@ define(["performanceLoadListener/listener/performanceLoadListener"], function() 
 					});
 				}
 				return returnVal;
-			});
-			
-			//To load devices drop down
-			Handlebars.registerHelper('devices', function(showDevice, devices, testResultFiles, firstValue, id) {
-				var returnVal = "";
-				if (showDevice && testResultFiles !== undefined && testResultFiles.length > 0 && !$.isEmptyObject(devices)) {
-					if (firstValue && id) {
-						returnVal = devices[0].split("#SEP#")[0];
-					} else if (firstValue && !id) {
-						returnVal = devices[0].split("#SEP#")[1];
-					} else {
-						$.each(devices, function(i, value){
-							returnVal += '<li class="devicesOption"><a href="#" name="devices" deviceId="'+ value.split("#SEP#")[0] +'">'+ value.split("#SEP#")[1] +'</a></li>';
-						});
-						returnVal += '<li class="devicesOption"><a href="#" name="devices" deviceId="">All</a></li>';
-					} 
-				} 
-				
-				return returnVal;
-			});
-			
-			//To show/hide device dropdown
-			Handlebars.registerHelper('showDeviceDropDown', function(showDevice, devices, options) {
-				var returnVal = "";
-				if (showDevice && devices.length > 0) {
-					return options.fn(this);
-				} else {
-					return options.inverse(this);
-				} 
 			});
 			
 			//To load result file in results drop down
@@ -281,17 +242,6 @@ define(["performanceLoadListener/listener/performanceLoadListener"], function() 
 			self.getResultFilesEvent.dispatch(currentOption, commonVariables.contentPlaceholder);
 		},
 
-		deviceChangeEvent : function (obj) {
-			var self = this, previousDevice = $("#deviceDropDown").attr("value");
-			var currentDevice = obj.attr("deviceid");
-			if (previousDevice !== currentDevice) {
-				$("#deviceDropDown").html(obj.text()  + '<b class="caret"></b>');
-				$("#deviceDropDown").attr("value", currentDevice);
-				self.onDeviceChangeEvent.dispatch('',$("#testResultFileDrop").text(), '', currentDevice, commonVariables.contentPlaceholder, function(response) {
-					self.loadTestListener.setResponseTime();	
-				});
-			}
-		},
 		/***
 		 * Bind the action listeners. The bindUI() is called automatically after the render is complete 
 		 *
@@ -400,11 +350,6 @@ define(["performanceLoadListener/listener/performanceLoadListener"], function() 
 				self.graphDropDownChangeEvent($(this));
 			});
 
-			$('li a[name="devices"]').unbind("click");
-			$('li a[name="devices"]').click(function() {
-				self.deviceChangeEvent($(this));
-			});
-
 			//To select testAgainst value
 			$('li a[name="testAgainst"]').unbind("click");
 			$('li a[name="testAgainst"]').click(function() {
@@ -413,9 +358,7 @@ define(["performanceLoadListener/listener/performanceLoadListener"], function() 
 			
 
 			$("#loadRun").click(function() {
-				$('.progress_loading').show();
-				self.loadTestListener.setConsoleScrollbar(true);
-				self.preTriggerloadTest.dispatch();
+				self.validation.dispatch("load-test", $('#loadForm').serialize(), self.dynamicpage);
 			});
 
 			Clazz.navigationController.mainContainer = commonVariables.contentPlaceholder;

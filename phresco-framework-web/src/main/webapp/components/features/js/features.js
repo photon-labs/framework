@@ -100,7 +100,7 @@ define(["features/listener/featuresListener"], function() {
 			Handlebars.registerHelper('scopeShowHide',function(packaging,scope) {
 				var fieldset;
 				if(packaging === "jar"){
-					fieldset = '<select class="jarscope"><option value="Provide">Provide</option><option value="Test">Test</option><option value="RunTime">RunTime</option></select> ';
+					fieldset = '<select class="jarscope"><option value="provided">Provided</option><option value="compile">Compile</option><option value="test">Test</option><option value="runtime">RunTime</option></select> ';
 				}
 				return fieldset;
 				

@@ -4,13 +4,43 @@ define(["performanceTest/performanceTest", "lib/jquery_magnific_popup_min-1.0"],
 		runTests: function (configData) {
 			module("PerformanceTest.js");
 			var performanceTest = new PerformanceTest(), self = this;
-			self.renderPerformanceTemplateTest(performanceTest);
+			self.runNoResultAvailableTest(performanceTest);
+		},
+
+		runNoResultAvailableTest : function(performanceTest) {
+			module("PerformanceTest.js");
+			var self = this;
+			asyncTest("No result available test", function() {
+				$.mockjax({
+				  url: commonVariables.webserviceurl+commonVariables.qualityContext+"/"+commonVariables.performance+"?appDirName=PF_TEST_PHP",
+				  type: "GET",
+				  dataType: "json",
+				  contentType: "application/json",
+				  status: 200,
+				  response : function() {
+					  this.responseText = JSON.stringify({"message":"Parameter returned successfully","exception":null,"responseCode":null,"data":{"resultAvailable":false,"testResultFiles":null,"showDevice":false,"devices":[],"testAgainsts":["server","webservice","database"]},"status":null});
+				  }
+				});
+				
+				require(["navigation/navigation"], function(){
+					commonVariables.navListener = new Clazz.com.components.navigation.js.listener.navigationListener();
+				});			
+				commonVariables.api.localVal.setSession("appDirName" , "PF_TEST_PHP");
+				commonVariables.navListener.onMytabEvent("performanceTest");
+				setTimeout(function() {
+					start();
+					equal($('.perfError').attr("data-i18n").trim(), "testresult.label.performancenotexecuted", "No result available test");
+					self.renderPerformanceTemplateTest(performanceTest);
+				}, 800);
+			});
 		},
 
 		renderPerformanceTemplateTest : function(performanceTest) {
 			module("PerformanceTest.js");
 			var self = this;
 			asyncTest("Performance template & Result table render test", function() {
+				$(commonVariables.contentPlaceholder).find('.performanceTemp').remove();
+				$.mockjaxClear();
 				$.mockjax({
 				  url: commonVariables.webserviceurl+commonVariables.qualityContext+"/"+commonVariables.performance+"?appDirName=PF_TEST_PHP",
 				  type: "GET",
@@ -45,11 +75,39 @@ define(["performanceTest/performanceTest", "lib/jquery_magnific_popup_min-1.0"],
 					equal($("#testResultTable tr").length, 8, "Result table render test");
 					equal($(commonVariables.contentPlaceholder).find('.testAgainstOption').length, 3, "Test Against Dropdown test");
 					equal($(commonVariables.contentPlaceholder).find('.testResultFilesOption').length, 3, "Result Files Dropdown test");
-					self.runTestAgainstChangeEvent(performanceTest);
+					self.runResultNotExecuted(performanceTest);
 				}, 1500);
 			});
 		},
 		
+		runResultNotExecuted : function(performanceTest) {
+			module("PerformanceTest.js");
+			var self = this;
+			asyncTest("Test not executed test", function() {
+				$.mockjax({
+				  url: commonVariables.webserviceurl+commonVariables.qualityContext+"/testResultFiles?actionType=performance-test&appDirName=PF_TEST_PHP",
+				  type: "POST",
+				  dataType: "json",
+				  contentType: "application/json",
+				  status: 200,
+				  response : function() {
+					  this.responseText = JSON.stringify({"message":"Test not yet executed for webservice","exception":null,"responseCode":null,"data":null,"status":null});
+				  }
+				});
+
+				$(commonVariables.contentPlaceholder).find('.testAgainstNav').find('#testAgainstsDrop').attr("value", "server");
+				commonVariables.api.localVal.setSession("appDirName" , "PF_TEST_PHP");
+				performanceTest.testAgainstChangeEvent($(commonVariables.contentPlaceholder).find('.testAgainstNav').find('#testAgainstsDrop').parent().find('a[value=database]'));
+				setTimeout(function() {
+					start();
+					console.info();
+					equal($(".perfError").css("display"), "block", "Test not executed error msg test");
+					self.runTestAgainstChangeEvent(performanceTest);
+				}, 800);
+
+			});	
+		},
+
 		runTestAgainstChangeEvent : function(performanceTest) {
 			module("PerformanceTest.js");
 			var self = this;
@@ -187,8 +245,33 @@ define(["performanceTest/performanceTest", "lib/jquery_magnific_popup_min-1.0"],
 				setTimeout(function() {
 					start();
 					equal($(".contextDivParent").find(".contextDivClass").size(), 1, "Remove context url test");
-					self.runTriggerPerformanceTest(performanceTest);
+					self.runMandatoryValidationTest(performanceTest);
 				}, 50);
+			});
+		},
+
+		runMandatoryValidationTest : function () {
+			module("PerformanceTest.js");
+			var self = this;
+			asyncTest("Performance popup mandatory validation test", function() {
+				$.mockjaxClear();
+				$.mockjax({
+				  url: commonVariables.webserviceurl+"util/validation?appDirName=PF_TEST_PHP&customerId=photon&phase=performance-test&testBasis=parameters&testAgainst=server&customTestAgainst=server&testName=testServer&environmentName=Production&configurations=server&rampUpPeriod=&authorizationUrl=&authorizationUserName=&authorizationPassword=&authorizationDomain=&authorizationRealm=&availableJmx=tests%2Fcustom%2F%23SEP%23Custom.jmx&availableJmx=tests%2Fcustom%2F%23SEP%23LoginTest.jmx&httpName=cd&context=admin%2Flogin&contextType=GET&encodingType=UTF-8&parameterName=&parameterValue=&dbName=&queryType=Select+Statement&query=",
+				  type: "GET",
+				  dataType: "json",
+				  contentType: "application/json",
+				  status: 200,
+				  response : function() {
+					  this.responseText = JSON.stringify({"connectionAlive":false,"errorFound":true,"configErr":false,"parameterKey":"rampUpPeriod","uniquekey":null,"service_exception":null,"configErrorMsg":"Ramp-Up Period is missing","responseCode":null,"status":null,"log":null});
+				  }
+				});
+				$(".dynamicControls").find('#rampUpPeriod').attr("value", "");
+				$('#performanceRun').click();
+				setTimeout(function() {
+					start();
+					equal(true, $("#rampUpPeriod").hasClass("errormessage"), "performance popup mandatory validation tested succesfully");
+					self.runTriggerPerformanceTest(performanceTest);
+				},1000);
 			});
 		},
 
@@ -198,6 +281,17 @@ define(["performanceTest/performanceTest", "lib/jquery_magnific_popup_min-1.0"],
 			var requestPostBody = JSON.stringify({"contextUrls":[{"name":"cd","context":"admin/login","contextType":"GET","encodingType":"UTF-8","redirectAutomatically":false,"followRedirects":false,"keepAlive":false,"multipartData":false,"compatibleHeaders":false,"headers":[],"parameters":[{"name":"","value":"","encode":false}]}],"dbContextUrls":[{"name":"","queryType":"Select Statement","query":""}]});
 			asyncTest("Performance - trigger test", function() {
 				$.mockjaxClear();
+				$.mockjax({
+				  url: commonVariables.webserviceurl+"util/validation?appDirName=PF_TEST_PHP&customerId=photon&phase=performance-test&testBasis=parameters&testAgainst=server&customTestAgainst=server&testName=testServer&environmentName=Production&configurations=server&rampUpPeriod=10&authorizationUrl=&authorizationUserName=&authorizationPassword=&authorizationDomain=&authorizationRealm=&availableJmx=tests%2Fcustom%2F%23SEP%23Custom.jmx&availableJmx=tests%2Fcustom%2F%23SEP%23LoginTest.jmx&httpName=cd&context=admin%2Flogin&contextType=GET&encodingType=UTF-8&parameterName=&parameterValue=&dbName=&queryType=Select+Statement&query=",
+				  type: "GET",
+				  dataType: "json",
+				  contentType: "application/json",
+				  status: 200,
+				  response : function() {
+					  this.responseText = JSON.stringify({"connectionAlive":false,"errorFound":false,"configErr":false,"parameterKey":"","uniquekey":null,"service_exception":null,"configErrorMsg":"","responseCode":null,"status":null,"log":null});
+				  }
+				});
+
 				$.mockjax({
 				  url: commonVariables.webserviceurl+commonVariables.mvnPerformanceTest+"?testBasis=parameters&testAgainst=server&customTestAgainst=server&testName=testServer&environmentName=Production&configurations=server&rampUpPeriod=10&authorizationUrl=&authorizationUserName=&authorizationPassword=&authorizationDomain=&authorizationRealm=&availableJmx=tests%2Fcustom%2F%23SEP%23Custom.jmx&availableJmx=tests%2Fcustom%2F%23SEP%23LoginTest.jmx&httpName=cd&context=admin%2Flogin&contextType=GET&encodingType=UTF-8&parameterName=&parameterValue=&dbName=&queryType=Select+Statement&query=&testAction=performance&customerId=photon&appId=7fd5aee1-0042-4e85-91ce-1b9493231019&projectId=b9e456e8-ccb8-458c-a559-f90cd2af48a1&username=rajeshkumar_ra",
 				  type: "POST",
@@ -245,12 +339,13 @@ define(["performanceTest/performanceTest", "lib/jquery_magnific_popup_min-1.0"],
 
 				commonVariables.api.localVal.setSession("appdetails", appdetails);
 				commonVariables.api.localVal.setSession("username", "rajeshkumar_ra");
+				$(".dynamicControls").find('#rampUpPeriod').attr("value", "10");
 				$('#performanceRun').click();
 				setTimeout(function() {
 					start();
 					equal($('#testConsole').text(), "STARTED", "trigger performance tested succesfully");
 					self.runShowPdfPopup(performanceTest);
-				}, 1000);
+				}, 1500);
 			});
 		},
 

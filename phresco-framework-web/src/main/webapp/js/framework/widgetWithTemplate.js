@@ -643,6 +643,7 @@ define(["framework/widget", "framework/templateProvider"], function() {
 				$('#myModal').html(msg);
 				setTimeout("$('#myModal').modal('hide')", 3000);
 			},
+			
 			effectFadeOut : function (classname, msg) {
 				$("."+classname).css("left", Math.max(0, (($(window).width() - $("."+classname).outerWidth()) / 2) +    $(window).scrollLeft()) + "px");
 				$("."+classname).html(msg);
@@ -670,6 +671,29 @@ define(["framework/widget", "framework/templateProvider"], function() {
 				callback(true);
 			},
 			
+			showErrorPopUp : function(configErrorMsg){
+				var self = this;
+				$(".blinkmsg").removeClass("popsuccess").addClass("poperror");
+				self.effectFadeOut('poperror', configErrorMsg);
+			},
+
+	        //Show mandatory validation error msg
+	        showDynamicErrors : function(response) {
+	            $('.dynamicControls > li :input').removeClass("errormessage").attr("placeholder", "");
+	            var self = this, control = $("#" + response.parameterKey);
+	            if (response.configErr) {
+	            	self.showErrorPopUp(response.configErrorMsg);
+	            } else {
+	            	control.focus();
+		            control.addClass("errormessage");
+		            if (control.prop('tagName') === "INPUT") {
+		            	control.attr("placeholder", response.configErrorMsg);
+		            } else if (control.prop('tagName') === "SELECT") {
+		            	control.selectpicker('refresh')
+		            }	
+	            }
+	        }, 
+
 			multiselect : function() {
 				$('.selectpicker').selectpicker();
 			},

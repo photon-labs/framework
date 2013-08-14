@@ -104,6 +104,9 @@ define(["lib/jquery-tojson-1.0",'lib/RGraph_common_core-1.0','lib/RGraph_common_
 			} else if(action === "getDevices") {
 				header.requestMethod = "GET";
 				header.webserviceurl = commonVariables.webserviceurl + commonVariables.qualityContext + "/devices?appDirName="+appDirName+"&resultFileName="+requestBody.resultFileName;
+			} else if (action === "validation") {
+				header.requestMethod = "GET";
+				header.webserviceurl = commonVariables.webserviceurl + "util/validation?appDirName="+appDirName+"&customerId="+self.getCustomer()+"&phase="+requestBody.phase+"&"+requestBody.queryString;
 			}
 
 			return header;
@@ -434,7 +437,6 @@ define(["lib/jquery-tojson-1.0",'lib/RGraph_common_core-1.0','lib/RGraph_common_
 			$('.perfError').text(errorMessage);
 			$('.testResultDropdown').hide();
 			$('.testResultDiv').hide();
-			// $('.performancePdf').parent().hide();
 			$('.performanceView').hide();
 			$('#graphView').hide();
 			$('.performanceScreenShotDiv').hide();
@@ -445,7 +447,6 @@ define(["lib/jquery-tojson-1.0",'lib/RGraph_common_core-1.0','lib/RGraph_common_
 			$('.perfError').text("");
 			$('.testResultDropdown').show();
 			$('.testResultDiv').show();
-			// $('.performancePdf').parent().show();
 			$('.performanceView').show();
 		},
 
@@ -650,6 +651,30 @@ define(["lib/jquery-tojson-1.0",'lib/RGraph_common_core-1.0','lib/RGraph_common_
 				});
 			}
 		},	
+
+		mandatoryValidation : function (phase, queryString, dynamicPageObject) {
+			var self = this, requestBody = {};
+			requestBody.phase = phase;
+			requestBody.queryString = queryString;
+			self.performAction(self.getActionHeader(requestBody, "validation"), function(response) {
+				if (response.errorFound) {
+					dynamicPageObject.showDynamicErrors(response);
+				} else {
+					self.preTest(phase);
+				}
+			}); 
+		},
+
+		preTest : function(phase) {
+			var self = this;
+
+			self.setConsoleScrollbar(true);
+			if ("performance-test" === phase) {
+				self.preTriggerPerformanceTest();
+			} else {
+				self.preTriggerloadTest();
+			}
+		},
 
 		preTriggerPerformanceTest : function () {
 			var self = this, testBasis = "", testAgainst = "", redirect = true, jsonString = "";

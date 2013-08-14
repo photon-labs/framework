@@ -582,6 +582,7 @@ public class FrameworkServiceUtil implements Constants, FrameworkConstants {
 					} if(CollectionUtils.isNotEmpty(nullConfig)) {
 						String errMsg = environment.getName() + " environment in global settings doesnot have "+ nullConfig + " configurations";
 						actionresponse.setErrorFound(true);
+						actionresponse.setConfigErr(true);
 						actionresponse.setConfigErrorMsg(errMsg);
 					}
 				} 
@@ -600,7 +601,9 @@ public class FrameworkServiceUtil implements Constants, FrameworkConstants {
 				} if(CollectionUtils.isNotEmpty(nullConfig)) {
 					String errMsg = environment.getName() + " environment in " + baseDir.getName() + " doesnot have "+ nullConfig + " configurations";
 					actionresponse.setErrorFound(true);
+					actionresponse.setConfigErr(true);
 					actionresponse.setConfigErrorMsg(errMsg);
+					
 				}
 			} 
 			return actionresponse;
@@ -852,9 +855,10 @@ public class FrameworkServiceUtil implements Constants, FrameworkConstants {
 		}
 	   
 	   private static ActionResponse textSingleSelectValidate(Parameter parameter, String lableTxt, HttpServletRequest request, ActionResponse actionResponse) {
-			if (StringUtils.isEmpty(request.getParameter(parameter.getKey()))) {
+			if (StringUtils.isEmpty(request.getParameter(parameter.getKey())) && Boolean.parseBoolean(parameter.getRequired())) {
 				actionResponse.setErrorFound(true);
 				actionResponse.setConfigErrorMsg(lableTxt + " " + "is missing"); 
+				actionResponse.setParameterKey(parameter.getKey());
 			}
 			return actionResponse;
 		}
@@ -863,9 +867,10 @@ public class FrameworkServiceUtil implements Constants, FrameworkConstants {
 			String value = request.getParameter(parameter.getKey());
 			value = value.replaceAll("\\s+", "").toLowerCase();
 			
-			if (StringUtils.isEmpty(value) || "typeorselectfromthelist".equalsIgnoreCase(value)) {
+			if ((StringUtils.isEmpty(value) || "typeorselectfromthelist".equalsIgnoreCase(value)) && Boolean.parseBoolean(parameter.getRequired())) {
 				actionResponse.setErrorFound(true);
 				actionResponse.setConfigErrorMsg(lableTxt + " " + "is missing");
+				actionResponse.setParameterKey(parameter.getKey());
 			} 
 			return actionResponse;
 		}
@@ -886,11 +891,13 @@ public class FrameworkServiceUtil implements Constants, FrameworkConstants {
 					childLabel = childs.get(0).getName().getValue().getValue();
 					actionResponse.setErrorFound(true);
 					actionResponse.setConfigErrorMsg(childLabel + " " + "is missing");
+					actionResponse.setParameterKey(parameter.getKey());
 					break;
 				} else if (StringUtils.isEmpty(values[i]) && Boolean.parseBoolean(childs.get(1).getRequired())) {
 					childLabel = childs.get(1).getName().getValue().getValue();
 					actionResponse.setErrorFound(true);
 					actionResponse.setConfigErrorMsg(childLabel + " " + "is missing");
+					actionResponse.setParameterKey(parameter.getKey());
 					break;
 				}
 			}
@@ -905,9 +912,10 @@ public class FrameworkServiceUtil implements Constants, FrameworkConstants {
 		 * @return
 		 */
 		private static ActionResponse multiSelectValidate(Parameter parameter, String lableTxt, HttpServletRequest request, ActionResponse actionResponse) {
-			if (request.getParameterValues(parameter.getKey()) == null) {//for multi select list box
+			if (request.getParameterValues(parameter.getKey()) == null && Boolean.parseBoolean(parameter.getRequired())) {//for multi select list box
 				actionResponse.setErrorFound(true);
 				actionResponse.setConfigErrorMsg(lableTxt + " " + "is missing");
+				actionResponse.setParameterKey(parameter.getKey());
 			}
 			return actionResponse;
 		}
