@@ -34,32 +34,66 @@ define([], function() {
 			try{
 				
 				var self = this, header = self.getRequestHeader();
-				self.enterKeyDisable = true;
-				if(self.loginValidation()){
-					commonVariables.continueloading = true;
-					//TODO: call login service here and call appendPlaceholder in the success function
-					commonVariables.api.ajaxRequest(header, 
-						function(response){
-							if(response !== undefined && response !== null && response.status !== "error" && response.status !== "failure"){
-								self.enterKeyDisable = false;
-								self.setUserInfo(response.data);
-								self.appendPlaceholder();
-								self.renderNavigation();
-							} else {
-								//authentication failed
+				
+				if(self.enterKeyDisable === false){
+					self.enterKeyDisable = true;
+					if(self.loginValidation()){
+						commonVariables.continueloading = true;
+						//TODO: call login service here and call appendPlaceholder in the success function
+						commonVariables.api.ajaxRequest(header, 
+							function(response){
+								if(response !== undefined && response !== null && response.status !== "error" && response.status !== "failure"){
+									self.enterKeyDisable = false;
+									self.setUserInfo(response.data);
+									self.appendPlaceholder();
+									self.renderNavigation();
+								} else {
+									//authentication failed
+									//commonVariables.loadingScreen.removeLoading();
+									if(response.responseCode === "PHR110001") {
+										self.enterKeyDisable = false;
+										$(".login_error_msg").attr('data-i18n', 'login.errormessage.isempty');
+										self.renderlocales(commonVariables.basePlaceholder);
+									} else if(response.responseCode === "PHR110002") {
+										self.enterKeyDisable = false;
+										$(".login_error_msg").attr('data-i18n', 'login.errormessage.unauthorizeduser');
+										self.renderlocales(commonVariables.basePlaceholder);
+									} else if(response.responseCode === "PHR110003") {
+										self.enterKeyDisable = false;
+										$(".login_error_msg").attr('data-i18n', 'login.errormessage.invalidcredential');
+										self.renderlocales(commonVariables.basePlaceholder);
+									} else if(response.responseCode === "PHR110004") {
+										self.enterKeyDisable = false;
+										$(".login_error_msg").attr('data-i18n', 'login.errormessage.authservicedown');
+										self.renderlocales(commonVariables.basePlaceholder);
+									} else if(response.responseCode === "PHR110005") {
+										self.enterKeyDisable = false;
+										$(".login_error_msg").attr('data-i18n', 'login.errormessage.jsonnotfound');
+										self.renderlocales(commonVariables.basePlaceholder);
+									} else if(response.responseCode === "PHR110006") {
+										self.enterKeyDisable = false;
+										$(".login_error_msg").attr('data-i18n', 'login.errormessage.parsingfailed');
+										self.renderlocales(commonVariables.basePlaceholder);
+									} else if(response.responseCode === "PHR110007") {
+										self.enterKeyDisable = false;
+										$(".login_error_msg").attr('data-i18n', 'login.errormessage.invalidpermissions');
+										self.renderlocales(commonVariables.basePlaceholder);
+									} else if(response.responseCode === "PHR000000") {
+										self.enterKeyDisable = false;
+										$(".login_error_msg").attr('data-i18n', 'commonlabel.errormessage.unexpectedfailure');
+										self.renderlocales(commonVariables.basePlaceholder);
+									}
+								}
+							}, 
+							function(serviceError){
+								//service access failed
 								//commonVariables.loadingScreen.removeLoading();
 								self.enterKeyDisable = false;
 								$(".login_error_msg").attr('data-i18n', 'errorCodes.' + response.responseCode);
 								self.renderlocales(commonVariables.basePlaceholder);
 							}
-						}, 
-						function(serviceError){
-							//service access failed
-							//commonVariables.loadingScreen.removeLoading();
-							$(".login_error_msg").attr('data-i18n', 'commonlabel.errormessage.serviceerror');
-							self.renderlocales(commonVariables.basePlaceholder);
-						}
-					);
+						);
+					} 
 				}
 			}catch(error){
 				//Exception

@@ -150,12 +150,14 @@ define(["projects/listener/projectsListener"], function() {
 		},
 		
 		postRender : function(element) {
+			var projectname = $("#editPrjprojectname").val();
+			$("#editprojecttitle").html("Edit - "+projectname);
 			var self=this;
 			self.multiselect();
 			commonVariables.navListener.currentTab = commonVariables.editproject;
 			self.projectsListener.editSeriveTechnolyEvent(self.getData);
 			self.projectsListener.enablebuttonEdit();
-			},
+		},
 		
 		/***
 		 * Bind the action listeners. The bindUI() is called automatically after the render is complete 

@@ -106,6 +106,7 @@ define(["projectlist/listener/projectListListener"], function() {
 		 * @element: Element as the result of the template + data binding
 		 */
 		postRender : function(element) {
+			$("#editprojecttitle").html("");
 			commonVariables.navListener.currentTab = commonVariables.projectlist;
 			commonVariables.navListener.showHideControls(commonVariables.projectlist);
 		},

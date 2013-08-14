@@ -941,6 +941,14 @@ define([], function() {
 					 $("select[name='builtmyselfapps']").css('display' , 'inline-block');
 					 $("input[name='startdate']").attr("disabled", false);
 					 $("input[name='enddate']").attr("disabled", false);
+					 $("select[name='appln_technology']").attr('disabled', false);
+					 $("select[name='appln_version']").attr('disabled', false);
+					 $("select[name='weblayer']").attr('disabled', false);
+					 $("select[name='web_widget']").attr('disabled', false);
+					 $("select[name='web_version']").attr('disabled', false);
+					 $("select[name='mobile_layer']").attr('disabled', false);
+					 $("select[name='mobile_types']").attr('disabled', false);
+					 $("select[name='mobile_version']").attr('disabled', false);
 					 $("select[name='prebuiltapps']").hide();
 					 $("#applicationlayer").show();
 					 $("#weblayer").show();
@@ -1013,20 +1021,27 @@ define([], function() {
 				$("tr.mobLayer").hide();
 				$("tr.mobLayer").attr('key','hidden');
 				$.each(selectedPilotData.appInfos, function(index, appInfo){
-					
 					if(appInfo.techInfo.appTypeId === "app-layer"){
 						$("select[name='appln_technology'] option").each(function(index, value) {
 							$(value).removeAttr('selected');	
-							if($(value).val() === appInfo.techInfo.id) {
+							if($(value).val() === appInfo.techInfo.id.toLowerCase()) {
 								$(value).attr('selected', 'selected');
-								$("select[name='appln_technology']").val($(value).val());
 								$("select[name='appln_technology']").attr('appInfoId', appInfo.id);
+								$("select[name='appln_technology']").val($(value).val());
+								if (appInfo.techInfo.id === 'tech-java-webservice'){
+									$("select[name='appln_technology']").val('tech-java-webservice');
+								} else if(appInfo.techInfo.id === 'tech-nodejs-webservice'){
+									$("select[name='appln_technology']").val('tech-nodejs-webservice');
+								}	
+								$("select[name='appln_technology']").attr('disabled', 'disabled');
 								$("select[name='appln_technology']").selectpicker('refresh');
 							}
 						});
 						var techId = $("select[name='appln_technology']").val();
 						var versionplaceholder = $("select[name='appln_technology']").parents("td[name='technology']").siblings("td[name='version']").children("select[name='appln_version']");
 						self.gettechnologyversion(techId, versionplaceholder);
+						$("select[name='appln_version']").attr('disabled', 'disabled');
+						$("select[name='appln_version']").selectpicker('refresh');
 						$("tr[name=applicationlayer]").show();
 						$("tr.applnLayer").show();
 						$("tr.applnLayer").attr('key','displayed');
@@ -1038,6 +1053,7 @@ define([], function() {
 								$(value).attr('selected', 'selected');
 								$("select[name='weblayer']").val($(value).val());
 								$("select[name='weblayer']").attr('appInfoId', appInfo.id);
+								$("select[name='weblayer']").attr('disabled', 'disabled');
 								$("select[name='weblayer']").selectpicker('refresh');
 							}
 						});
@@ -1049,12 +1065,15 @@ define([], function() {
 							if($(value).val() === appInfo.techInfo.id) {
 								$(value).attr('selected', 'selected');
 								$("select[name='web_widget']").val($(value).val());
+								$("select[name='web_widget']").attr('disabled', 'disabled');
 								$("select[name='web_widget']").selectpicker('refresh');
 							}
 						});
 						var widgetType = $("select[name='web_widget']").val();
 						var widgetTypePlaceholder = $("select[name='web_widget']").parents("td[name='widget']").siblings("td[name='widgetversion']").children("select[name='web_version']");
 						self.getwidgetversion(widgetType, widgetTypePlaceholder);
+						$("select[name='web_version']").attr('disabled', 'disabled');
+						$("select[name='web_version']").selectpicker('refresh');
 						$("tr[name=weblayer]").show();
 						$("tr.webLayer").show();
 						$("tr.webLayer").attr('key','displayed');
@@ -1065,6 +1084,7 @@ define([], function() {
 								$(value).attr('selected', 'selected');
 								$("select[name='mobile_layer']").val($(value).val());
 								$("select[name='mobile_layer']").attr('appInfoId', appInfo.id);
+								$("select[name='mobile_layer']").attr('disabled', 'disabled');
 								$("select[name='mobile_layer']").selectpicker('refresh');
 							}
 						});
@@ -1076,12 +1096,15 @@ define([], function() {
 							if($(value).val() === appInfo.techInfo.id) {
 								$(value).attr('selected', 'selected');
 								$("select[name='mobile_types']").val($(value).val());
+								$("select[name='mobile_types']").attr('disabled', 'disabled');
 								$("select[name='mobile_types']").selectpicker('refresh');
 							}
 						});
 						var mobileType = $("select[name='mobile_types']").val();
 						var mobileTypePlaceholder = $("select[name='mobile_types']").parents("td[name='types']").siblings("td[name='mobileversion']").children("select[name='mobile_version']");
 						self.getmobileversion(mobileType, mobileTypePlaceholder);
+						$("select[name='mobile_version']").attr('disabled', 'disabled');
+						$("select[name='mobile_version']").selectpicker('refresh');
 						$("tr[name=mobilelayer]").show();	
 						$("tr.mobLayer").show();
 						$("tr.mobLayer").attr('key','displayed');
@@ -1452,8 +1475,13 @@ define([], function() {
 				var startdate = $("input[name='startdate']").val();
 				var enddate = $("input[name='enddate']").val();
 				//To convert dd/mm//yyyy to (month date,year) format
-				var myStartDate = new Date(startdate);
-				var myEndDate = new Date(enddate);
+				if((startdate.length !== 0) && (enddate.length !== 0)){
+					var myStartDate = new Date(startdate);
+					var myEndDate = new Date(enddate);
+				} else {
+					var myStartDate = null;
+					var myEndDate = null;
+				}	
 				var multimodule = $("input[name='multimodule']").val() === "true"? true:false;
 				if($("select[name=builtmyself]").find(":selected").val() !== undefined) {
 					var	preBuilt = $("select[name=builtmyself]").find(":selected").val() === "custom"? false:true;
