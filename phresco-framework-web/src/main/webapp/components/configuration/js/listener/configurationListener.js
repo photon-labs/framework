@@ -78,7 +78,7 @@ define(["croneExpression/croneExpression"], function() {
 				commonVariables.api.ajaxRequest(header,
 					function(response) {
 						self.hidePopupLoad();
-						if (response !== null && response.status !== "error" && response.status !== "failure") {
+						if (response !== null && (response.status !== "error" || response.status !== "failure")) {
 							if(response.responseCode === "PHR600006" || response.responseCode === "PHR600015") {
 								$(".msgdisplay").removeClass("error").addClass("success");
 								$(".success").attr('data-i18n', 'successCodes.' + response.responseCode);
