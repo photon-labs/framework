@@ -85,7 +85,7 @@ define(["configuration/configuration"], function(Configuration) {
 				contentType: 'application/json',
 				status: 200,
 				response: function() {
-					this.responseText = JSON.stringify({"response":null,"message":"Environments Listed","exception":null,"data":[{"defaultEnv":true,"appliesTo":[""],"delete":true,"name":"Production","desc":"Production Environment is used for Development purpose only","configurations":[]},{"defaultEnv":false,"appliesTo":[""],"delete":true,"name":"test","desc":"test","configurations":[]}]});
+					this.responseText = JSON.stringify({"response":null,"message":"Environments Listed","exception":null,"data":[{"defaultEnv":true,"appliesTo":[""],"delete":true,"name":"Production","desc":"Production Environment is used for Development purpose only","configurations":[]}]});
 				}
 			});
 			
@@ -101,20 +101,11 @@ define(["configuration/configuration"], function(Configuration) {
 	
 	cloneEnvironment : function(configuration) {
 		var self=this;
+		$("#content").html('');
 		asyncTest("Test - Clone Environment Test", function() {
 			$.mockjaxClear(self.configList);
 			$.mockjax({
 				url:  commonVariables.webserviceurl+commonVariables.configuration+"/cloneEnvironment?appDirName=wordpress-WordPress&envName=Production",
-				type:'POST',
-				contentType: 'application/json',
-				status: 200,
-				response: function() {
-					this.responseText = JSON.stringify({"response":null,"message":"Clone Environment Done Successfully","exception":null,"data":{"defaultEnv":false,"appliesTo":[""],"delete":true,"name":"sample","desc":"sample","configurations":[]}});
-				}
-			});
-			
-			$.mockjax({
-				url:  commonVariables.webserviceurl+commonVariables.configuration+"/cloneEnvironment?appDirName=wordpress-WordPress&envName=test",
 				type:'POST',
 				contentType: 'application/json',
 				status: 200,
@@ -129,16 +120,47 @@ define(["configuration/configuration"], function(Configuration) {
 				contentType: 'application/json',
 				status: 200,
 				response: function() {
-					this.responseText = JSON.stringify({"response":null,"message":"Environments Listed","exception":null,"data":[{"defaultEnv":false,"appliesTo":[""],"delete":true,"name":"Production","desc":"Production Environment is used for Development purpose only","configurations":[]},{"defaultEnv":true,"appliesTo":[""],"delete":true,"name":"test","desc":"test","configurations":[]},{"defaultEnv":false,"appliesTo":[""],"delete":true,"name":"sample","desc":"sample","configurations":[]}]});
+					this.responseText = JSON.stringify({"response":null,"message":"Environments Listed","exception":null,"data":[{"defaultEnv":false,"appliesTo":[""],"delete":true,"name":"Production","desc":"Production Environment is used for Development purpose only","configurations":[]},{"defaultEnv":false,"appliesTo":[""],"delete":true,"name":"sample","desc":"sample","configurations":[]}]});
 				}
 			});
 			
-			$("input[name=envrName]").val('sample');
-			$("input[name=envrDesc]").val('sample');
+			require(["navigation/navigation"], function(){
+					commonVariables.navListener = new Clazz.com.components.navigation.js.listener.navigationListener();
+				});
+
+			commonVariables.navListener.onMytabEvent("configuration");
+			
+			setTimeout(function() {
+				$("input[name=envrName]").val('sample');
+				$("input[name=envrDesc]").val('sample');
 			$("input[name=cloneEnvr]").click();
+				start();
+				equal($(commonVariables.contentPlaceholder).find(".envlistname").text(),"Productionsample", "Clone Environment Tested");
+				self.cloneValidationEnvironment(configuration);
+			}, 1500);
+		});
+	},
+	
+	cloneValidationEnvironment : function(configuration) {
+		var self=this, output;
+		asyncTest("Test - Clone Validation Test", function() {
+			$.mockjaxClear(self.configList);
+			$.mockjax({
+				url:  commonVariables.webserviceurl+commonVariables.configuration+"/cloneEnvironment?appDirName=wordpress-WordPress&envName=Production",
+				type:'POST',
+				contentType: 'application/json',
+				status: 200,
+				response: function() {
+					this.responseText = JSON.stringify({"response":null,"message":"Clone Environment Done Successfully","exception":null,"data":{"defaultEnv":false,"appliesTo":[""],"delete":true,"name":"sample","desc":"sample","configurations":[]}});
+				}
+			});
+			
+			configuration.configurationlistener.cloneEnv("cloneEnv", "", function(res){
+				output = res.defaultEnv;
+			});
 			setTimeout(function() {
 				start();
-				equal($(commonVariables.contentPlaceholder).find(".envlistname").text(),"ProductiontestProductiontestsample", "Clone Environment Tested");
+				equal(output,false, "Clone Validation Test");
 				self.deleteEnvironment(configuration);
 			}, 1500);
 		});
@@ -150,16 +172,6 @@ define(["configuration/configuration"], function(Configuration) {
 		
 			$.mockjax({
 				url:  commonVariables.webserviceurl+commonVariables.configuration+"/deleteEnv?appDirName=wordpress-WordPress&envName=Production",
-				type:'DELETE',
-				contentType: 'application/json',
-				status: 200,
-				response: function() {
-					this.responseText = JSON.stringify({"response":null,"message":"Environment Deleted successfully","exception":null,"data":null});
-				}
-			});
-			
-			$.mockjax({
-				url:  commonVariables.webserviceurl+commonVariables.configuration+"/deleteEnv?appDirName=wordpress-WordPress&envName=test",
 				type:'DELETE',
 				contentType: 'application/json',
 				status: 200,

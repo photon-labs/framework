@@ -728,7 +728,7 @@ ul.nav li.dropdown:hover > .test_options{
 }
 
 .copy_path_icon{
-	margin-right:2px;
+	margin-right:6px;
 }
 
 .performanceScreenShotDiv {
@@ -2122,7 +2122,7 @@ select[name="builtmyself"] {
 }
 
 .buildtitle .icon_images {
-	margin-top:4px;
+	margin-top:2px;
 }
 
 .buildtitle .alert_div {

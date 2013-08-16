@@ -748,7 +748,7 @@ define(["croneExpression/croneExpression"], function() {
 				self.configRequestBody = aliveJson;
 				self.getConfigurationList(self.getRequestHeader(self.configRequestBody, "isAliveCheck", ''), function(response) {
 					var typeMatch = aliveJson.type;
-					if(response.status === "success") {
+					if(response.data === true) {
 						$(".row_bg").each(function() {
 							var type = $(this).attr("type");
 							if (type === typeMatch) {
@@ -1120,7 +1120,7 @@ define(["croneExpression/croneExpression"], function() {
 			var flag = 1;
 			var arr = [];
 			var array = [];
-			  if(ename === "") {	
+			if(ename === "") {	
 				$("input[name='envrName']").focus();
 				$("input[name='envrName']").attr('placeholder','Enter Environment Name');
 			} else {

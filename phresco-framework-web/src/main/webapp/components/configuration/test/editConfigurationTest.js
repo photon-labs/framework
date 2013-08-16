@@ -6,7 +6,7 @@ define(["configuration/editConfiguration"], function(EditConfiguration) {
 		module("EditConfiguration.js;EditConfiguration");
 		
 
-		var editConfiguration = new EditConfiguration(), editConfig, self=this, certificate;
+		var editConfiguration = new EditConfiguration(), editConfig, self=this, certificate, serverAlive;
 
 		asyncTest("Test - Edit Configuration Render Test", function() {
 		
@@ -168,23 +168,23 @@ define(["configuration/editConfiguration"], function(EditConfiguration) {
 			setTimeout(function() {
 				start();
 				equal($(commonVariables.contentPlaceholder).find('input[name=certificate]').val(), "CN=kumar_s", "Save Certificate Tested");
-				self.serverAliveEvent(editConfiguration);
+				self.serverActiveEvent(editConfiguration);
 			}, 1500);
 		}); 
 		
 	},
 	
-	serverAliveEvent : function(editConfiguration) {
+	serverActiveEvent : function(editConfiguration) {
 		var self=this;
-		asyncTest("Test - Server Alive Event Test", function() {
+		asyncTest("Test - Server Active Event Test", function() {
 		
-			$.mockjax({
+			self.serverAlive = $.mockjax({
 				url:  commonVariables.webserviceurl+commonVariables.configuration+"/connectionAliveCheck?url=http,localhost,3030",
 				type:'GET',
 				contentType: 'application/json',
 				status: 200,
 				response: function() {
-					this.responseText = false;
+					this.responseText = JSON.stringify({"message":null,"exception":null,"responseCode":"PHR600005","data":true,"status":"success"});
 				}
 			});
 			
@@ -192,7 +192,33 @@ define(["configuration/editConfiguration"], function(EditConfiguration) {
 			
 			setTimeout(function() {
 				start();
-				equal($(commonVariables.contentPlaceholder).find(".inactive").text(), "In Active", "Server Alive Event Tested");
+				equal($(commonVariables.contentPlaceholder).find(".active").text(), "Active", "Server Active Event Tested");
+				self.serverInActiveEvent(editConfiguration);
+			}, 1500);
+		}); 
+		
+	},
+	
+	serverInActiveEvent : function(editConfiguration) {
+		var self=this;
+		asyncTest("Test - Server In Active Event Test", function() {
+			$.mockjaxClear(self.serverAlive);
+			self.serverAlive = $.mockjax({
+				url:  commonVariables.webserviceurl+commonVariables.configuration+"/connectionAliveCheck?url=http,localhost,3030",
+				type:'GET',
+				contentType: 'application/json',
+				status: 200,
+				response: function() {
+					this.responseText = JSON.stringify({"message":null,"exception":null,"responseCode":"PHR600005","data":false,"status":"success"});
+				}
+			});
+			
+			editConfiguration.configurationlistener.isAliveCheck('localhost', '3030','Server','http');
+			
+			setTimeout(function() {
+				start();
+				console.info('value..', $(commonVariables.contentPlaceholder));
+				equal($(commonVariables.contentPlaceholder).find(".inactive").text(), "In Active", "Server In Active Event Tested");
 				self.removeConfiguration(editConfiguration);
 			}, 1500);
 		}); 
