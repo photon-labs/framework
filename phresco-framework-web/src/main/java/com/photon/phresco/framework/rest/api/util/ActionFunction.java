@@ -1333,7 +1333,8 @@ public class ActionFunction extends RestBase implements Constants ,FrameworkCons
 				String host = hubConfig.getHost();
 				int port = hubConfig.getPort();
 				setConnectionAlive(Utility.isConnectionAlive(HTTP_PROTOCOL, host, port));
-				response.setStatus(ActionServiceConstant.SUCCESS);
+				response.setStatus(RESPONSE_STATUS_SUCCESS);
+				response.setResponseCode(PHRQ300007);
 				response.setService_exception("");
 				response.setConnectionAlive(isConnectionAlive());
 			}
@@ -1370,7 +1371,8 @@ public class ActionFunction extends RestBase implements Constants ,FrameworkCons
 				String host = nodeConfiguration.getConfiguration().getHost();
 				int port = nodeConfiguration.getConfiguration().getPort();
 				setConnectionAlive(Utility.isConnectionAlive(HTTP_PROTOCOL, host, port));
-				response.setStatus(ActionServiceConstant.SUCCESS);
+				response.setStatus(RESPONSE_STATUS_SUCCESS);
+				response.setResponseCode(PHRQ300008);
 				response.setService_exception("");
 				response.setConnectionAlive(isConnectionAlive());
 			}

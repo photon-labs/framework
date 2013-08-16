@@ -66,7 +66,7 @@ public class ManualTestServiceTest extends RestBaseTest {
 		ResponseInfo<List<TestSuite>> response = (ResponseInfo<List<TestSuite>>) testSuites.getEntity();
 		
 		Assert.assertEquals(200, testSuites.getStatus());
-		Assert.assertEquals("Testsuites returned Successfully", response.getMessage());
+		Assert.assertEquals("PHRQ400002", response.getResponseCode());
 	}
 
 	@Test
@@ -77,7 +77,7 @@ public class ManualTestServiceTest extends RestBaseTest {
 		List<TestCase> data = response.getData();
 		
 		Assert.assertEquals(200, testCase.getStatus());
-		Assert.assertEquals("Testcases returned Successfully", response.getMessage());
+		Assert.assertEquals("PHRQ400003", response.getResponseCode());
 		Assert.assertNotNull(data);
 	}
 
@@ -87,7 +87,7 @@ public class ManualTestServiceTest extends RestBaseTest {
 		Response response = service.createTestSuite(testSuiteName, appDirName);
 		ResponseInfo responseInfo = (ResponseInfo) response.getEntity();
 		Assert.assertEquals(200, response.getStatus());
-		Assert.assertEquals("Testsuite Added Successfully", responseInfo.getMessage());
+		Assert.assertEquals("PHRQ400004", responseInfo.getResponseCode());
 	}
 
 	@Test
@@ -96,7 +96,7 @@ public class ManualTestServiceTest extends RestBaseTest {
 		Response response = service.createTestCase(createTestCase() , testSuiteName, appDirName);
 		ResponseInfo responseInfo = (ResponseInfo) response.getEntity();
 		Assert.assertEquals(200, response.getStatus());
-		Assert.assertEquals("Testcase Added Successfully", responseInfo.getMessage());
+		Assert.assertEquals("PHRQ400005", responseInfo.getResponseCode());
 	}
 
 	@Test
@@ -110,7 +110,7 @@ public class ManualTestServiceTest extends RestBaseTest {
 		ResponseInfo responseInfo = (ResponseInfo) response.getEntity();
 		
 		Assert.assertEquals(200, response.getStatus());
-		Assert.assertEquals("Testcase Updated Successfully", responseInfo.getMessage());
+		Assert.assertEquals("PHRQ400006", responseInfo.getResponseCode());
 	}
 	
 	private TestCase createTestCase() {

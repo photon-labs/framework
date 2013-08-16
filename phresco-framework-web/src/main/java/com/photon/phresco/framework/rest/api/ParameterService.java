@@ -244,12 +244,12 @@ public class ParameterService extends RestBase implements FrameworkConstants, Se
 			watcherMap.put(key, currentParameters);
 			valueMap.put(applicationInfo.getId() + goal, watcherMap);
 			ResponseInfo<String> finalOutput = responseDataEvaluation(responseData, null,
-					MAP_UPDATED_SUCCESSFULLY, SUCCESS);
+					SUCCESS, RESPONSE_STATUS_SUCCESS, PHR5C00001);
 			return Response.ok(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, ALL_HEADER).build();
 		} catch (PhrescoException e) {
 			ResponseInfo<PossibleValues> finalOutput = responseDataEvaluation(responseData, e,
-					MAP_NOT_UPDATED, FAILURE);
-			return Response.status(Status.BAD_REQUEST).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, ALL_HEADER)
+					FAILURE, RESPONSE_STATUS_ERROR, PHR5C10001);
+			return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, ALL_HEADER)
 					.build();
 		} 
 	}
@@ -289,7 +289,7 @@ public class ParameterService extends RestBase implements FrameworkConstants, Se
             if (TYPE_DYNAMIC_PARAMETER.equalsIgnoreCase(dependentParameter.getType()) && dependentParameter.getDynamicParameter() != null) {
             	dependentPossibleValues = getDynamicPossibleValues(constructMapForDynVals, dependentParameter, userId, customerId);
             	 finalOutput = responseDataEvaluation(responseData, null,
-    					DEPENDENCY_RETURNED_SUCCESSFULLY, dependentPossibleValues);
+    					dependentPossibleValues, RESPONSE_STATUS_SUCCESS, PHR6C00001);
             } else if (TYPE_DYNAMIC_PAGE_PARAMETER.equalsIgnoreCase(dependentParameter.getType()) && dependentParameter.getDynamicParameter() != null) {
             	Map<String, Object> dynamicPageParameterMap = getDynamicPageParameter(applicationInfo, watcherMap, dependentParameter, userId, customerId);
     			List<? extends Object> dynamicPageParameter = (List<? extends Object>) dynamicPageParameterMap.get(REQ_VALUES_FROM_JSON);
@@ -298,7 +298,7 @@ public class ParameterService extends RestBase implements FrameworkConstants, Se
     			StringTemplate constructDynamicTemplate = new StringTemplate();
     			constructDynamicTemplate = constructDynamicTemplate(customerId, userId, dependentParameter, templateDetails);
     			 finalOutput = responseDataEvaluation(responseData, null,
-    					DEPENDENCY_RETURNED_SUCCESSFULLY, constructDynamicTemplate.toString());
+    					constructDynamicTemplate.toString(), RESPONSE_STATUS_SUCCESS, PHR6C00001);
             }
             
             if (TYPE_DYNAMIC_PARAMETER.equalsIgnoreCase(dependentParameter.getType())) {
@@ -309,8 +309,8 @@ public class ParameterService extends RestBase implements FrameworkConstants, Se
 			return Response.ok(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, ALL_HEADER).build();
 		} catch (Exception e) {
 			 finalOutput = responseDataEvaluation(responseData, new PhrescoException(e),
-					DEPENDENCY_NOT_FETCHED, null);
-			return Response.status(Status.BAD_REQUEST).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, ALL_HEADER)
+					null, RESPONSE_STATUS_ERROR, PHR6C10001);
+			return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, ALL_HEADER)
 					.build();
 		}
 	}
@@ -796,13 +796,13 @@ public class ParameterService extends RestBase implements FrameworkConstants, Se
 				constructDynamicTemplate = constructDynamicTemplate(customerId, userId, templateParameter, performanceDetails);
 			}
 			ResponseInfo<String> finalOutput = responseDataEvaluation(responseData, null,
-					"Template content returned succesfully", constructDynamicTemplate.toString());
+					constructDynamicTemplate.toString(), RESPONSE_STATUS_SUCCESS, PHR7C00001);
 			return Response.ok(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, ALL_HEADER).build();
 
 		} catch (Exception e) {
 			ResponseInfo<String> finalOutput = responseDataEvaluation(responseData, e,
-					"Template content not fetched", null);
-			return Response.status(Status.BAD_REQUEST).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, ALL_HEADER)
+					null,RESPONSE_STATUS_ERROR, PHR7C10001);
+			return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, ALL_HEADER)
 					.build();
 		}
 	}

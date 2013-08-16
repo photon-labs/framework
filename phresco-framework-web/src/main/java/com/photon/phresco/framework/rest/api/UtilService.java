@@ -58,10 +58,6 @@ import fr.opensagres.xdocreport.utils.StringUtils;
  */
 @Path("/util")
 public class UtilService extends RestBase implements FrameworkConstants, ServiceConstants, ResponseCodes {
-	
-	String status;
-	String errorCode;
-	String successCode;
 
 	/**
 	 * Open folder.
@@ -87,12 +83,12 @@ public class UtilService extends RestBase implements FrameworkConstants, Service
 					Desktop.getDesktop().open(new File(sbOpenPath.toString()));
 				}
 			}
-			ResponseInfo<String> finalOutput = responseDataEvaluation(responseData, null, "Folder opened successfully",
-					null);
+			ResponseInfo<String> finalOutput = responseDataEvaluation(responseData, null,
+					null, RESPONSE_STATUS_SUCCESS, PHR3C00001);
 			return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
 		} catch (Exception e) {
-			ResponseInfo<ProjectInfo> finalOutput = responseDataEvaluation(responseData, e, "Open folder failed", null);
-			return Response.status(Status.BAD_REQUEST).entity(finalOutput).header("Access-Control-Allow-Origin", "*")
+			ResponseInfo<ProjectInfo> finalOutput = responseDataEvaluation(responseData, e, null, RESPONSE_STATUS_ERROR, PHR3C10001);
+			return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*")
 					.build();
 		}
 	}
@@ -121,12 +117,12 @@ public class UtilService extends RestBase implements FrameworkConstants, Service
 				pathToCopy = Utility.getProjectHome() + sbCopyPath.toString();
 			}
 			copyToClipboard(pathToCopy);
-			ResponseInfo<String> finalOutput = responseDataEvaluation(responseData, null, "Path copied successfully",
-					null);
+			ResponseInfo<String> finalOutput = responseDataEvaluation(responseData, null,
+					null, RESPONSE_STATUS_SUCCESS, PHR4C00001);
 			return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
 		} catch (Exception e) {
-			ResponseInfo<ProjectInfo> finalOutput = responseDataEvaluation(responseData, e, "Copy path failed", null);
-			return Response.status(Status.BAD_REQUEST).entity(finalOutput).header("Access-Control-Allow-Origin", "*")
+			ResponseInfo<ProjectInfo> finalOutput = responseDataEvaluation(responseData, e, null, RESPONSE_STATUS_ERROR, PHR4C10001);
+			return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*")
 					.build();
 		}
 	}
@@ -168,25 +164,19 @@ public class UtilService extends RestBase implements FrameworkConstants, Service
 		try {
 			ServiceManager serviceManager = CONTEXT_MANAGER_MAP.get(userId);
 			if (serviceManager == null) {
-				status = RESPONSE_STATUS_FAILURE;
-				errorCode = PHR310001;
 				ResponseInfo<List<ApplicationInfo>> finalOutput = responseDataEvaluation(responseData, null,
-						null, status, errorCode);
+						null, RESPONSE_STATUS_FAILURE, PHR310001);
 				return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin",
 						"*").build();
 			}
 			Technology technology = serviceManager.getTechnology(techId);
 			List<String> archetypeFeatures = technology.getOptions();
-			status = RESPONSE_STATUS_SUCCESS;
-			successCode = PHR300002;
 			ResponseInfo<List<String>> finalOutput = responseDataEvaluation(responseData, null,
-					archetypeFeatures, status, successCode);
+					archetypeFeatures, RESPONSE_STATUS_SUCCESS, PHR300002);
 			return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
 		} catch (PhrescoException e) {
-			status = RESPONSE_STATUS_ERROR;
-			errorCode = PHR310004;
 			ResponseInfo<ProjectInfo> finalOutput = responseDataEvaluation(responseData, e,
-					null, status, errorCode);
+					null, RESPONSE_STATUS_ERROR, PHR310004);
 			return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*")
 					.build();
 		}
