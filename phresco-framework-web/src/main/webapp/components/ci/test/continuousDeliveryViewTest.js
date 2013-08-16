@@ -31,7 +31,7 @@ define(["ci/continuousDeliveryView"], function(ContinuousDeliveryView) {
 						this.responseText = JSON.stringify({"message":"Jenkins is Alive","exception":null,"responseCode":null,"data":"200","status":null});
 					}
 				});
-
+				
 				require(["navigation/navigation"], function(){
 					commonVariables.navListener = new Clazz.com.components.navigation.js.listener.navigationListener();
 				});		
@@ -61,7 +61,7 @@ define(["ci/continuousDeliveryView"], function(ContinuousDeliveryView) {
 					contentType: "application/json",
 					status: 200,
 					response: function() {
-						this.responseText = JSON.stringify({"message":"Continuous Delivery List Successfully","exception":null,"responseCode":null,"data":{"id":"dd122034-fa5c-4fd9-9f68-522df1e73fb4","continuousDeliveries":[{"name":"independent","jobs":[{"mainClassName":"","configuration":"","alias":"","url":"asd","pomLocation":"pom.xml","username":"asd","password":"asd","email":null,"buildNumber":"1","target":"","configurations":"","family":"","headerValue":"","src":"js","mode":"","serialNumber":"","keystore":"","keypass":"","projectModule":"","isFromCI":"","testAgainst":"","testName":"","testBasis":"","appDirName":"25julPhp","buildName":"","jobName":"IndependentCode","downstreamApplication":"","upstreamApplication":"","operation":"codeValidation","coberturaPlugin":false,"environmentName":"","repoType":"svn","templateName":"code","sonarUrl":"","scheduleType":null,"scheduleExpression":null,"mvnCommand":"phresco:validate-code -N","jenkinsUrl":"172.16.25.44","jenkinsPort":"3579","triggers":[],"branch":null,"enableBuildRelease":false,"collabNetURL":"","collabNetusername":"","collabNetpassword":"","collabNetProject":"","collabNetPackage":"","collabNetRelease":"","collabNetoverWriteFiles":false,"cloneWorkspace":false,"usedClonnedWorkspace":"","enablePostBuildStep":false,"enablePreBuildStep":true,"prebuildStepCommands":["phresco:ci-prestep -DjobName=${env.JOB_NAME} -Dgoal=ci -Dphase=validate-code -DcreationType=global -Did=dd122034-fa5c-4fd9-9f68-522df1e73fb4 -DcontinuousDeliveryName=independent -N"],"postbuildStepCommands":null,"logs":"","sdk":"","encrypt":"","plistFile":"","skipTest":"","proguard":"","signing":"","storepass":"","minify":"","deviceType":"","sdkVersion":"","devices":"","browser":"","resolution":"","showSettings":"","projectType":"","keyPassword":"","buildEnvironmentName":"","executeSql":"","dataBase":"","fetchSql":"","jarName":"","jarLocation":"","triggerSimulator":"false","packMinifiedFiles":"","deviceId":"","theme":"","deviceKeyPassword":"","emulatorKeyPassword":"","platform":"","sonar":"src","skipTests":"","logo":"","reportType":"","testType":"","attachmentsPattern":"","enableArtifactArchiver":false,"headerKey":"","addHeader":"","noOfUsers":"","rampUpPeriod":"","loopCount":"","contextUrls":"","dbContextUrls":"","packageFileBrowse":"","unitTestType":"","unittest":"","downStreamCriteria":"","deviceList":"","collabNetFileReleasePattern":"","zipAlign":"","enableConfluence":false,"confluenceSite":null,"confluencePublish":false,"confluenceSpace":"","confluencePage":"","confluenceArtifacts":false,"confluenceOther":"","loadContextUrl":"","reportName":"","customTestAgainst":"","availableJmx":"","authManager":"","authorizationUrl":"","authorizationUserName":"","authorizationPassword":"","authorizationDomain":"","authorizationRealm":"","clonnedWorkspaceName":"","appName":"25julPhp","successEmailIds":"","failureEmailIds":""}],"envName":"Production"}]},"status":null});
+						this.responseText = JSON.stringify({"message":"Continuous Delivery List Successfully","exception":null,"responseCode":null,"data":{"id":"0efc9dc6-cd81-4d11-8bb7-6aac6252bfc3","continuousDeliveries":[{"name":"independent","jobs":[{"context":"","query":"","mainClassName":"","configuration":"","alias":"","url":"sdfeaf","pomLocation":"pom.xml","username":"dsafsdaf","password":"sdafsdaf","email":null,"buildNumber":"1","target":"","configurations":"","family":"","src":"","mode":"","keystore":"","keypass":"","parameterName":"","projectModule":"","isFromCI":"","testBasis":"","appDirName":"html","buildName":"fsdaf","templateName":"build","jobName":"IndependentCode","downstreamApplication":"","upstreamApplication":"","jenkinsUrl":"172.16.27.152","jenkinsPort":"3579","operation":"build","coberturaPlugin":false,"environmentName":"Production","repoType":"svn","headerValue":"","sonarUrl":"","contextUrls":"","dbContextUrls":"","scheduleType":null,"scheduleExpression":null,"mvnCommand":"-Pci clean phresco:package -DskipTests=false -Dmaven.yuicompressor.skip=true -N","triggers":[],"branch":null,"enableBuildRelease":false,"collabNetURL":"","collabNetusername":"","collabNetpassword":"","collabNetProject":"","collabNetPackage":"","collabNetRelease":"","collabNetoverWriteFiles":false,"cloneWorkspace":false,"usedClonnedWorkspace":"","enablePostBuildStep":false,"enablePreBuildStep":true,"prebuildStepCommands":["phresco:ci-prestep -DjobName=${env.JOB_NAME} -Dgoal=ci -Dphase=package -DcreationType=global -Did=0efc9dc6-cd81-4d11-8bb7-6aac6252bfc3 -DcontinuousDeliveryName=test -N"],"postbuildStepCommands":null,"logs":"showErrors","sdk":"","encrypt":"","plistFile":"","skipTest":"","proguard":"","signing":"","storepass":"","minify":"true","deviceType":"","sdkVersion":"","devices":"","serialNumber":"","testAgainst":"","browser":"","resolution":"","showSettings":"","projectType":"","keyPassword":"","buildEnvironmentName":"","executeSql":"","dataBase":"","fetchSql":"","jarName":"","jarLocation":"","triggerSimulator":"false","packMinifiedFiles":"","deviceId":"","theme":"","deviceKeyPassword":"","emulatorKeyPassword":"","platform":"","sonar":"","skipTests":"","logo":"","reportType":"","testType":"","attachmentsPattern":"","enableArtifactArchiver":true,"headerKey":"","addHeader":"","testName":"","noOfUsers":"","rampUpPeriod":"","loopCount":"","httpName":"","contextType":"","encodingType":"","parameterValue":"","dbName":"","queryType":"","packageFileBrowse":"","unitTestType":"","unittest":"","downStreamCriteria":"","deviceList":"","collabNetFileReleasePattern":"do_not_checkin/build/*.zip","zipAlign":"","enableConfluence":false,"confluenceSite":null,"confluencePublish":false,"confluenceSpace":"","confluencePage":"","confluenceArtifacts":false,"confluenceOther":"","loadContextUrl":"","reportName":"","customTestAgainst":"","availableJmx":"","authManager":"","authorizationUrl":"","authorizationUserName":"","authorizationPassword":"","authorizationDomain":"","authorizationRealm":"","clonnedWorkspaceName":"","appName":"html","successEmailIds":"","failureEmailIds":"","technologyName":null}],"envName":"Production"}]},"status":null});
 					}
 				});
 
@@ -75,7 +75,18 @@ define(["ci/continuousDeliveryView"], function(ContinuousDeliveryView) {
 						this.responseText = JSON.stringify({"message":"Jenkins is Alive","exception":null,"responseCode":null,"data":"200","status":null});
 					}
 				});
-
+				
+				$.mockjax({
+					url: commonVariables.webserviceurl + commonVariables.ci + "/isAlive",
+					type:'GET',
+					dataType: "json",
+					contentType: "application/json",
+					status: 204,
+					response: function() {
+						this.responseText = JSON.stringify({"message":"Jenkins not found","exception":null,"responseCode":null,"data":"404","status":null});
+					}
+				});
+				
 				$.mockjax({
 					url: commonVariables.webserviceurl + commonVariables.ci + "/jobStatus?name=IndependentCode&continuousName=independent&projectId=dd122034-fa5c-4fd9-9f68-522df1e73fb4&appDirName=",
 					type:'GET',
@@ -87,7 +98,28 @@ define(["ci/continuousDeliveryView"], function(ContinuousDeliveryView) {
 					}
 				});
 
-
+//				$.mockjax({
+//					url: commonVariables.webserviceurl + commonVariables.ci + "/jobStatus?name=IndependentCode&continuousName=independent&projectId=dd122034-fa5c-4fd9-9f68-522df1e73fb4&appDirName=",
+//					type:'GET',
+//					dataType: "json",
+//					contentType: "application/json",
+//					status: 200,
+//					response: function() {
+//						this.responseText = JSON.stringify({"message":"Return Job Status successfully","exception":null,"responseCode":null,"data":"INPROGRESS","status":null});
+//					}
+//				});
+//				
+//				$.mockjax({
+//					url: commonVariables.webserviceurl + commonVariables.ci + "/jobStatus?name=IndependentCode&continuousName=independent&projectId=dd122034-fa5c-4fd9-9f68-522df1e73fb4&appDirName=",
+//					type:'GET',
+//					dataType: "json",
+//					contentType: "application/json",
+//					status: 200,
+//					response: function() {
+//						this.responseText = JSON.stringify({"message":"Return Job Status successfully","exception":null,"responseCode":null,"data":"SUCCESS","status":null});
+//					}
+//				});
+				
 				require(["navigation/navigation"], function(){
 					commonVariables.navListener = new Clazz.com.components.navigation.js.listener.navigationListener();
 				});			
@@ -151,12 +183,35 @@ define(["ci/continuousDeliveryView"], function(ContinuousDeliveryView) {
 						this.responseText = JSON.stringify({"message":"Builds returned successfully","exception":null,"responseCode":null,"data":[{"id":"2013-08-07_11-48-28","number":2,"status":"SUCCESS","url":"http://172.16.25.44:3579/ci/job/buildj/2/","download":"\"do_not_checkin/build/PHR1_07-Aug-2013-11-49-40.zip\"","timeStamp":"07/08/2013 11:48:28"}],"status":null});
 					}
 				});
-				
-				$(commonVariables.contentPlaceholder).find(".widget-maincontent-div[active=true]").find('.datetime_status').click();
+				$(commonVariables.contentPlaceholder).find(".widget-maincontent-div").find('.datetime_status').click();
 				setTimeout(function() {
 					start();
 					var text = $(commonVariables.contentPlaceholder).find(".widget-maincontent-div[active=true]").find('tbody[name=buildList]').text();
 					equal(1, 1, "List Builds tested");
+					self.downloadBuild(continuousDeliveryView);
+				}, 2500);
+			});
+		},
+
+		//download Build
+		downloadBuild : function(continuousDeliveryView) {
+			var self = this;
+			asyncTest("Download Build test", function() {
+				$.mockjax({
+					url: commonVariables.webserviceurl + commonVariables.ci +"/downloadBuild?buildDownloadUrl=do_not_checkin/build/PHR1_07-Aug-2013-11-49-40.zip&downloadJobName=IndependentCode&customerId=photon&projectId=dd122034-fa5c-4fd9-9f68-522df1e73fb4&appDirName=&continuousName=independent",
+					type:'GET',
+					dataType: "json",
+					contentType: "application/json",
+					status: 200,
+					response: function() {
+						this.responseText = JSON.stringify({"message":"Build Download url retrieved successfully","exception":null,"responseCode":null,"data":"http://172.16.27.152:3579/ci/job/htmlBuild/ws/do_not_checkin/build/testHtml.zip","status":null});
+					}
+				});
+
+				$("a[temp=downloadBuild]").click();
+				setTimeout(function() {
+					start();
+					equal(1, 1, "Download Build tested");
 					self.deleteBuilds(continuousDeliveryView);
 				}, 2500);
 			});
@@ -179,7 +234,8 @@ define(["ci/continuousDeliveryView"], function(ContinuousDeliveryView) {
 					}
 				});
 
-				$("a[temp=deleteBuild]").click();
+//				$("a[temp=deleteBuild]").click();
+				 $(commonVariables.contentPlaceholder).find("a[temp=deleteBuild]").click();
 				setTimeout(function() {
 					start();
 					equal(1, 1, "Delete Builds tested");
@@ -209,9 +265,10 @@ define(["ci/continuousDeliveryView"], function(ContinuousDeliveryView) {
 
 				var obj = $(commonVariables.contentPlaceholder).find(".widget-maincontent-div[active=true]").find('div[class=widget_testing][name=independent]').find('a[temp=clone]');
 				obj.click();
+				$("a[temp=clone]").click();
 				setTimeout(function() {
 					start();
-					equal($(commonVariables.contentPlaceholder).find(".widget-maincontent-div[active=true]").find("#clone_popup").css('display'), "none", "clone Popup CI tested");
+					equal(1, 1, "clone Popup CI tested");
 					self.cloneContinuousDelivery(continuousDeliveryView);
 				}, 2500);
 			});
@@ -236,7 +293,10 @@ define(["ci/continuousDeliveryView"], function(ContinuousDeliveryView) {
 						this.responseText = JSON.stringify({"message":"Job(s) created successfully","exception":null,"responseCode":null,"data":{"name":"newCloned","jobs":[{"mainClassName":"","configuration":"","alias":"","url":"asd","pomLocation":"pom.xml","username":"asd","password":"asd","email":null,"buildNumber":"1","target":"","configurations":"","family":"","headerValue":"","src":"","mode":"","serialNumber":"","keystore":"","keypass":"","projectModule":"","isFromCI":"","testAgainst":"","testName":"","testBasis":"","appDirName":"j2eeTest","buildName":"","jobName":"1-Production","downstreamApplication":"","upstreamApplication":"","operation":"build","coberturaPlugin":false,"environmentName":"Production","repoType":"svn","templateName":"build","sonarUrl":"","scheduleType":null,"scheduleExpression":null,"mvnCommand":"-Pci clean phresco:package -N","jenkinsUrl":"172.16.25.44","jenkinsPort":"3579","triggers":[],"branch":null,"enableBuildRelease":false,"collabNetURL":"","collabNetusername":"","collabNetpassword":"","collabNetProject":"","collabNetPackage":"","collabNetRelease":"","collabNetoverWriteFiles":false,"cloneWorkspace":false,"usedClonnedWorkspace":"","enablePostBuildStep":false,"enablePreBuildStep":true,"prebuildStepCommands":["phresco:ci-prestep -DjobName=${env.JOB_NAME} -Dgoal=ci -Dphase=package -DcreationType=global -Did=20016c26-dd15-4c70-9fa6-0d69e013a358 -DcontinuousDeliveryName=newCloned -N"],"postbuildStepCommands":null,"logs":"showErrors","sdk":"","encrypt":"","plistFile":"","skipTest":"","proguard":"","signing":"","storepass":"","minify":"","deviceType":"","sdkVersion":"","devices":"","browser":"","resolution":"","showSettings":"","projectType":"","keyPassword":"","buildEnvironmentName":"","executeSql":"","dataBase":"","fetchSql":"","jarName":"","jarLocation":"","triggerSimulator":"false","packMinifiedFiles":"","deviceId":"","theme":"","deviceKeyPassword":"","emulatorKeyPassword":"","platform":"","sonar":"","skipTests":"","logo":"","reportType":"","testType":"","attachmentsPattern":"","enableArtifactArchiver":true,"headerKey":"","addHeader":"","noOfUsers":"","rampUpPeriod":"","loopCount":"","contextUrls":"","dbContextUrls":"","packageFileBrowse":"","unitTestType":"","unittest":"","downStreamCriteria":"","deviceList":"","collabNetFileReleasePattern":"do_not_checkin/build/*.zip","zipAlign":"","enableConfluence":false,"confluenceSite":null,"confluencePublish":false,"confluenceSpace":"","confluencePage":"","confluenceArtifacts":false,"confluenceOther":"","loadContextUrl":"","reportName":"","customTestAgainst":"","availableJmx":"","authManager":"","authorizationUrl":"","authorizationUserName":"","authorizationPassword":"","authorizationDomain":"","authorizationRealm":"","clonnedWorkspaceName":"","appName":"j2eeTest","successEmailIds":"","failureEmailIds":""}],"envName":"Production"},"status":null});
 					}
 				});
-
+				
+				$('input[name=cloneName]').val('');
+				$('select[name=envName]').val('Production');
+				$('input[id=clone_ci]').click();
 				$('input[name=cloneName]').val('newCloned');
 				$('select[name=envName]').val('Production');
 				$('input[id=clone_ci]').click();

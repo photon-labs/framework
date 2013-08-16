@@ -334,6 +334,33 @@ public class ActionService implements ActionServiceConstant, FrameworkConstants,
 	}
 	
 	/**
+	 * Performance test.
+	 *
+	 * @param request the request
+	 * @return the response
+	 * @throws PhrescoException the phresco exception
+	 */
+	@POST
+	@Path("/ciPerformanceTest")
+	@Produces(MediaType.APPLICATION_JSON)
+	 public Response ciPerformanceTest(@Context HttpServletRequest request, PerformanceUrls performanceUrls) throws PhrescoException  {
+		ActionFunction actionFunction = new ActionFunction();
+		ActionResponse response = new ActionResponse();
+		try	{
+			//actionFunction.prePopulateModelData(request);
+			String jsonWriterForCi = actionFunction.jsonWriterForCi(request, performanceUrls);
+			response.setStatus(jsonWriterForCi);
+		} catch (Exception e) {
+			S_LOGGER.error(e.getMessage());
+			response.setStatus(ERROR);
+			response.setLog("");
+			response.setService_exception(FrameworkUtil.getStackTraceAsString(e));
+			response.setUniquekey("");
+		}
+		return Response.status(Status.OK).entity(response).header("Access-Control-Allow-Origin", "*").build();
+	}
+	
+	/**
 	 * Load test.
 	 *
 	 * @param request the request

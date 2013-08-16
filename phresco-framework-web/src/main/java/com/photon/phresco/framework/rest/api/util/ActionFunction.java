@@ -28,6 +28,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -1793,7 +1794,79 @@ public class ActionFunction extends RestBase implements Constants ,FrameworkCons
 		parent.appendChild(childElement);
 		return childElement;
 	}
-
+	
+	public String jsonWriterForCi(@Context HttpServletRequest request ,PerformanceUrls performanceUrls) throws PhrescoException {
+		FileWriter fw = null;
+		String property = "";
+		try {
+			if(REQ_PARAMETERS.equalsIgnoreCase(request.getParameter("testBasis")) && StringUtils.isNotEmpty("testAgainst")
+					|| (StringUtils.isEmpty(request.getParameter("testBasis")) && StringUtils.isNotEmpty("testAgainst"))) {
+				if (LOAD.equals(request.getParameter("testAction"))) {
+					property = POM_PROP_KEY_LOADTEST_DIR;
+				} else {
+					property = POM_PROP_KEY_PERFORMANCETEST_DIR;					
+				}
+				ApplicationInfo applicationInfo = FrameworkServiceUtil.getApplicationInfo(request.getParameter("appDir"));
+				File pomFile = getPOMFile(applicationInfo.getAppDirName());
+				PomProcessor processor = new PomProcessor(pomFile);					
+		        String performTestDir = processor.getProperty(property);	        
+				FileOutputStream fop;
+				boolean success = false;
+				StringBuilder filepath = new StringBuilder(Utility.getProjectHome())
+				.append(applicationInfo.getAppDirName())
+				.append(performTestDir)
+				.append(File.separator)
+				.append(request.getParameter("testAgainst"))
+				.append(File.separator)
+				.append(Constants.FOLDER_JSON);
+				
+				success = new File(filepath.toString()).mkdirs();
+				filepath.append(File.separator)
+				.append(request.getParameter("testName"))
+				.append(DOT_JSON);
+				File file = new File(filepath.toString());
+				fop = new FileOutputStream(file);
+				if (!file.exists()) {
+					file.createNewFile();
+				}
+				Gson gson = new Gson();
+				String string = gson.toJson(performanceUrls).toString();
+				byte[] contentInBytes = string.getBytes();				 
+				fop.write(contentInBytes);
+				fop.flush();
+				fop.close();				
+									
+				StringBuilder infofilepath = new StringBuilder(Utility.getProjectHome())
+				.append(applicationInfo.getAppDirName())
+				.append(performTestDir)
+				.append(File.separator)
+				.append(request.getParameter("testAgainst"))
+				.append(File.separator)
+				.append(Constants.FOLDER_JSON)				
+				.append(File.separator)
+				.append("ci")
+				.append(".info");					
+				file = new File(infofilepath.toString());	
+				if (!file.exists()) {
+					file.createNewFile();
+					fw = new FileWriter(file);
+					fw.write(request.getParameter("testName")+DOT_JSON);
+				} else {
+					fw = new FileWriter(infofilepath.toString(),true);
+					StringBuilder jsonFileName = new StringBuilder()
+					.append(",")
+					.append(request.getParameter("testName"));
+					fw.write(jsonFileName.toString()+DOT_JSON);						
+				}
+			}	
+		} catch (Exception e) {	
+			throw new PhrescoException(e);
+		} finally {
+			Utility.closeStream(fw);
+		}
+		return SUCCESS;
+	}
+	
 	public String jsonWriter(PerformanceUrls performanceUrls) throws PhrescoException {
 		FileWriter fw = null;
 		String property = "";
@@ -1812,19 +1885,17 @@ public class ActionFunction extends RestBase implements Constants ,FrameworkCons
 		        String performTestDir = processor.getProperty(property);	        
 				FileOutputStream fop;
 				boolean success = false;
-				if(getIsFromCI().equalsIgnoreCase("true")) {	
-					StringBuilder filepath = new StringBuilder(Utility.getProjectHome())
-					.append(applicationInfo.getAppDirName())
-					.append(performTestDir)
-					.append(File.separator)
-					.append(request.getParameter("testAgainst"))
-					.append(File.separator)
-					.append(Constants.FOLDER_JSON);
-					
-					success = new File(filepath.toString()).mkdirs();
+				StringBuilder filepath = new StringBuilder(Utility.getProjectHome())
+				.append(applicationInfo.getAppDirName())
+				.append(performTestDir)
+				.append(File.separator)
+				.append(request.getParameter("testAgainst"))
+				.append(File.separator)
+				.append(Constants.FOLDER_JSON);			
+				if (new File(filepath.toString()).exists()) {
 					filepath.append(File.separator)
 					.append(request.getParameter("testName"))
-					.append(DOT_JSON);
+					.append(DOT_JSON);				
 					File file = new File(filepath.toString());
 					fop = new FileOutputStream(file);
 					if (!file.exists()) {
@@ -1836,55 +1907,7 @@ public class ActionFunction extends RestBase implements Constants ,FrameworkCons
 					fop.write(contentInBytes);
 					fop.flush();
 					fop.close();				
-										
-					StringBuilder infofilepath = new StringBuilder(Utility.getProjectHome())
-					.append(applicationInfo.getAppDirName())
-					.append(performTestDir)
-					.append(File.separator)
-					.append(request.getParameter("testAgainst"))
-					.append(File.separator)
-					.append(Constants.FOLDER_JSON)				
-					.append(File.separator)
-					.append("ci")
-					.append(".info");					
-					file = new File(infofilepath.toString());	
-					if (!file.exists()) {
-						file.createNewFile();
-						fw = new FileWriter(file);
-						fw.write(request.getParameter("testName")+DOT_JSON);
-					} else {
-						fw = new FileWriter(infofilepath.toString(),true);
-						StringBuilder jsonFileName = new StringBuilder()
-						.append(",")
-						.append(request.getParameter("testName"));
-						fw.write(jsonFileName.toString()+DOT_JSON);						
-					}
-					
-				} else {		
-					StringBuilder filepath = new StringBuilder(Utility.getProjectHome())
-					.append(applicationInfo.getAppDirName())
-					.append(performTestDir)
-					.append(File.separator)
-					.append(request.getParameter("testAgainst"))
-					.append(File.separator)
-					.append(Constants.FOLDER_JSON);			
-					if (new File(filepath.toString()).exists()) {
-						filepath.append(File.separator)
-						.append(request.getParameter("testName"))
-						.append(DOT_JSON);				
-						File file = new File(filepath.toString());
-						fop = new FileOutputStream(file);
-						if (!file.exists()) {
-							file.createNewFile();
-						}
-						Gson gson = new Gson();
-						String string = gson.toJson(performanceUrls).toString();
-						byte[] contentInBytes = string.getBytes();				 
-						fop.write(contentInBytes);
-						fop.flush();
-						fop.close();				
-					}
-				}				
+				}
 			}
 		} catch (Exception e) {	
 			throw new PhrescoException(e);

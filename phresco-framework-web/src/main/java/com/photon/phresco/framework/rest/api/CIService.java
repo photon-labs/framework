@@ -18,6 +18,7 @@
 package com.photon.phresco.framework.rest.api;
 
 import java.io.File;
+import java.io.IOException;
 import java.net.ConnectException;
 import java.net.HttpURLConnection;
 import java.net.InetAddress;
@@ -40,6 +41,15 @@ import javax.ws.rs.core.Response;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.ResponseHandler;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.BasicResponseHandler;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import com.photon.phresco.commons.FrameworkConstants;
 import com.photon.phresco.commons.model.ApplicationInfo;
@@ -140,6 +150,7 @@ public class CIService extends RestBase implements FrameworkConstants, ServiceCo
 				projectId = projectInfo.getId();
 			}
 			List<CIJob> jobs = continuousDelivery.getJobs();
+			//boolean validate = jobNameValidation(jobs);
 			boolean coreCreateJob = coreCreateJob(continuousDelivery, projectId, appDir, userId);
 			if (coreCreateJob) {
 				finalOutput = responseDataEvaluation(responseData, null, "Job(s) created successfully", continuousDelivery);
@@ -154,6 +165,55 @@ public class CIService extends RestBase implements FrameworkConstants, ServiceCo
 		}
 	}
 	
+	@GET
+	@Path("/validation")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response jobNameValidataion(@QueryParam(REST_QUERY_NAME) String jobName, @QueryParam("flag") String flag, @QueryParam(REST_QUERY_USERID) String userId)
+					throws PhrescoException, JSONException, ClientProtocolException, IOException {
+		ResponseInfo<String> responseData = new ResponseInfo<String>();
+		boolean hasTrue = true;
+		String job = null;
+		try {
+			if(!flag.equalsIgnoreCase("update")) {
+				JSONArray jobs = new JSONArray("["+jobName+"]");
+				InetAddress thisIp = InetAddress.getLocalHost();
+				String port = FrameworkServiceUtil.getJenkinsPortNo();
+				String jenkinsUrl = HTTP_PROTOCOL + PROTOCOL_POSTFIX + thisIp.getHostAddress() + ":" + port + "/" + CI + "/api/json";
+				HttpClient httpClient = new DefaultHttpClient();
+				HttpGet httpget = new HttpGet(jenkinsUrl);
+				ResponseHandler<String> responseHandler = new BasicResponseHandler();
+				String execute = httpClient.execute(httpget, responseHandler);
+				
+				JSONArray jsonArray = new JSONArray("["+execute.toString()+"]");
+			    JSONObject jsonObject = jsonArray.getJSONObject(0);
+			    String json = jsonObject.getString("jobs");
+			    JSONArray json1 = new JSONArray(json);
+			    for (int k = 0; k<jobs.length(); k++) {
+				    for (int j = 0; j<json1.length(); j++) {
+				    	 JSONObject jsonObject1 = json1.getJSONObject(j);
+				    	 if(jobs.get(k).equals(jsonObject1.getString("name"))) {
+				    		 hasTrue = false;
+				    		 job = (String) jobs.get(k);
+				    		 break;
+				    	 }
+				    }
+				}
+			}
+		    if(hasTrue) {
+				ResponseInfo<Boolean> finalOutput = responseDataEvaluation(responseData, null, "Job Validation completed successfully", hasTrue);
+				return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
+		    } else {
+		    	ResponseInfo<Boolean> finalOutput = responseDataEvaluation(responseData, null, job+" Job Already Exists", hasTrue);
+				return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
+		    }
+		} catch (PhrescoException e) {
+			ResponseInfo<Boolean> finalOutput = responseDataEvaluation(responseData, e, job+" Job Already Exists",	null);
+			return Response.status(Status.NOT_FOUND).entity(finalOutput).header("Access-Control-Allow-Origin", "*")
+			.build();
+		}
+	}
+
 	/**
 	 * @param cloneName
 	 * @param envName
