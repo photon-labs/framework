@@ -39,6 +39,12 @@ public interface ResponseCodes {
 	String PHR3C10001 = "PHR3C10001"; // failed to open folder
 	String PHR4C00001 = "PHR4C00001"; // path copied successfully
 	String PHR4C10001 = "PHR4C10001"; // failed to copy path
+	String PHR5C00001 = "PHR5C00001"; // map updated successfully
+	String PHR5C10001 = "PHR5C10001"; // failed to update map as appinfos could not be retrieved
+	String PHR6C00001 = "PHR6C00001"; // dependency fetched successfully
+	String PHR6C10001 = "PHR6C10001"; // unable to fetch dependency
+	String PHR7C00001 = "PHR7C00001"; // template content returned successfully
+	String PHR7C10001 = "PHR7C10001"; // unable to fetch template content
 	
 	/*
 	 * Login page
@@ -228,15 +234,25 @@ public interface ResponseCodes {
 	String PHR710006 = "PHR710006"; // connection not alive
 	String PHR710007 = "PHR710007"; // failed to check status
 	String PHR710008 = "PHR710008"; // unable to build application
-	String PHR700004 = "PHR700004"; // application built successfully
-	String PHR700005 = "PHR700005"; // application deployed successfully
+	String PHR700004 = "PHR700004"; // application build started successfully
+	String PHR700005 = "PHR700005"; // application deploy started successfully
 	String PHR710009 = "PHR710009"; // unable to deploy application
-	String PHR700006 = "PHR700006"; // run against source executed successfully
+	String PHR700006 = "PHR700006"; // run against source started successfully
 	String PHR710010 = "PHR710010"; // run against source failed
 	String PHR710011 = "PHR710011"; // could not retrieve particular buildinfo file
 	String PHR710012 = "PHR710012"; // unable to download IPA since build number is empty
 	String PHR710013 = "PHR710013"; // could not read the project info path or the IPA download path
 	String PHR710014 = "PHR710014"; // failed to download IPA
+	String PHR700007 = "PHR700007"; // process build started successfully
+	String PHR710015 = "PHR710015"; // failed to complete process-build
+	String PHR700008 = "PHR700008"; // stop server process started successfully
+	String PHR710016 = "PHR710016"; // stop server failed
+	String PHR700009 = "PHR700009"; // restart server process started successfully
+	String PHR710017 = "PHR710017"; // restart server failed
+	String PHR710018 = "PHR710018"; // build name already exists
+	String PHR710019 = "PHR710019"; // build number already exists
+	String PHR710020 = "PHR710020"; // selected environment in global settings does not have selected configurations
+	String PHR710021 = "PHR710021"; // selected environment in this app does not have selected configurations
 	
 	/*
 	 * Quality Assurance Page
@@ -247,7 +263,7 @@ public interface ResponseCodes {
 	 */
 	String PHRQ010001 = "PHRQ010001"; // test result not available
 	String PHRQ000001 = "PHRQ000001"; // test suites listed successfully
-	String PHRQ010002 = "PHRQ010002"; // failed to list test suites
+	String PHRQ010002 = "PHRQ010002"; // failed to retrieve test suites
 	String PHRQ000002 = "PHRQ000002"; // test cases listed successfully
 	String PHRQ010003 = "PHRQ010003"; // test case not available
 	String PHRQ010004 = "PHRQ010004"; // failed to list test cases
@@ -257,13 +273,132 @@ public interface ResponseCodes {
 	 */
 	String PHRQ100001 = "PHRQ100001"; // parameter returned successfully
 	String PHRQ110001 = "PHRQ110001"; // unable to get unit test report options
-	String PHRQ100002 = "PHRQ100002"; // unit test executed successfully
-	String PHRQ110002 = "PHRQ110002"; // failed to execute unit test
+	String PHRQ100002 = "PHRQ100002"; // unit test started successfully
+	String PHRQ110002 = "PHRQ110002"; // failed to complete unit test
 	
 	/*
 	 * Component
 	 */
 	String PHRQ200001 = "PHRQ200001"; // component test executed successfully
-	String PHRQ210001 = "PHRQ210001"; // failed to execute component test 
+	String PHRQ210001 = "PHRQ210001"; // failed to execute component test
 	
+	/*
+	 * Functional
+	 */
+	String PHRQ300001 = "PHRQ300001"; // functional test framework fetched successfully
+	String PHRQ310001 = "PHRQ310001"; // failed to get the functional test framework
+	String PHRQ300002 = "PHRQ300002"; // 'start hub' process started successfully
+	String PHRQ310002 = "PHRQ310002"; // failed to start hub
+	String PHRQ300003 = "PHRQ300003"; // 'start node' process started successfully
+	String PHRQ310003 = "PHRQ310003"; // failed to start node
+	String PHRQ300004 = "PHRQ300004"; // functional test started successfully
+	String PHRQ310004 = "PHRQ310004"; // failed to complete functional test
+	String PHRQ300005 = "PHRQ300005"; // 'stop hub' process started successfully
+	String PHRQ310005 = "PHRQ310005"; // failed to stop hub
+	String PHRQ300006 = "PHRQ300006"; // 'stop node' process started successfully
+	String PHRQ310006 = "PHRQ310006"; // failed to stop node
+	String PHRQ300007 = "PHRQ300007"; // 'check for hub' done successfully
+	String PHRQ310007 = "PHRQ310007"; // failed to check for hub
+	String PHRQ300008 = "PHRQ300008"; // 'check for node' done successfully
+	String PHRQ310008 = "PHRQ310008"; // failed to check for node
+	String PHRQ300009 = "PHRQ300009"; // 'show started hub log' started successfully
+	String PHRQ310009 = "PHRQ310009"; // failed to show started hub log
+	String PHRQ300010 = "PHRQ300010"; // 'show started node log' started successfully
+	String PHRQ310010 = "PHRQ310010"; // failed to show started node log
+	
+	/*
+	 * Manual
+	 */
+	String PHRQ410001 = "PHRQ410001"; // failed to get manual template
+	String PHRQ410002 = "PHRQ410002"; // failed to upload template
+	String PHRQ400001 = "PHRQ400001"; // template uploaded successfully
+	String PHRQ410003 = "PHRQ410003"; // manual test file does not exist
+	String PHRQ400002 = "PHRQ400002"; // test suites returned successfully
+	String PHRQ410004 = "PHRQ410004"; // failed to retrieve test suites
+	String PHRQ400003 = "PHRQ400003"; // test cases returned successfully
+	String PHRQ410005 = "PHRQ410005"; // failed to retrieve test cases
+	String PHRQ400004 = "PHRQ400004"; // test suite added successfully
+	String PHRQ410006 = "PHRQ410006"; // failed to add test suite
+	String PHRQ400005 = "PHRQ400005"; // test case added successfully
+	String PHRQ410007 = "PHRQ410007"; // failed to add test case
+	String PHRQ400006 = "PHRQ400006"; // test case updated successfully
+	String PHRQ410008 = "PHRQ410008"; // failed to update test case
+	
+	/*
+	 * Performance
+	 */
+	String PHRQ500001 = "PHRQ500001"; // performance test options returned successfully
+	String PHRQ510001 = "PHRQ510001"; // unable to get performance test result options
+	String PHRQ500002 = "PHRQ500002"; // test result files returned successfully
+	String PHRQ510002 = "PHRQ510002"; // test not yet executed for this particular type
+	String PHRQ510003 = "PHRQ510003"; // failed to return test result files
+	String PHRQ500003 = "PHRQ500003"; // devices returned successfully
+	String PHRQ510004 = "PHRQ510004"; // failed to return devices
+	String PHRQ500004 = "PHRQ500004"; // performance test results returned successfully
+	String PHRQ510005 = "PHRQ510005"; // unable to get performance test results
+	String PHRQ500005 = "PHRQ500005"; // performance test started successfully
+	String PHRQ510006 = "PHRQ510006"; // could not perform performance test
+	
+	/*
+	 * Load
+	 */
+	String PHRQ600001 = "PHRQ600001"; // load test options returned successfully
+	String PHRQ610001 = "PHRQ610001"; // unable to get load test result options
+	String PHRQ600002 = "PHRQ600002"; // load test results returned successfully
+	String PHRQ610002 = "PHRQ610002"; // unable to get load test results
+	String PHRQ600003 = "PHRQ600003"; // load test started successfully
+	String PHRQ610003 = "PHRQ610003"; // could not perform load test
+	
+	/*
+	 * CI Page
+	 */
+	String PHR800001 = "PHR800001"; // builds returned successfully
+	String PHR810001 = "PHR810001"; // could not retrieve builds
+	String PHR800002 = "PHR800002"; // job(s) created successfully
+	String PHR810002 = "PHR810002"; // no job(s) found or failed to write job(s) in file
+	String PHR810003 = "PHR810003"; // unable to create job(s)
+	String PHR800003 = "PHR800003"; // job(s) created successfully
+	String PHR810004 = "PHR810004"; // failed to write job(s) in file
+	String PHR810005 = "PHR810005"; // unable to update job(s)
+	String PHR800004 = "PHR800004"; // continuous delivery fetched successfully
+	String PHR810006 = "PHR810006"; // could not find delivery with this particular name
+	String PHR810007 = "PHR810007"; // failed to fetch continuous delivery
+	String PHR800005 = "PHR800005"; // continuous delivery listed successfully
+	String PHR810008 = "PHR810008"; // failed to fetch required info while listing continuous delivery
+	String PHR800006 = "PHR800006"; // job deleted successfully
+	String PHR810009 = "PHR810009"; // failed to delete job
+	String PHR800007 = "PHR800007"; // build deleted successfully
+	String PHR810010 = "PHR810010"; // could not find the job for this build
+	String PHR810011 = "PHR810011"; // failed to delete build
+	String PHR800008 = "PHR800008"; // build triggered successfully
+	String PHR810012 = "PHR810012"; // failed to trigger build
+	String PHR810013 = "PHR810013"; // build failed
+	String PHR810014 = "PHR810014"; // failed to return mail configuration
+	String PHR800009 = "PHR800009"; // mail configuration saved successfully
+	String PHR810015 = "PHR810015"; // unable to save mail configuration
+	String PHR800010 = "PHR800010"; // build download URL retrieved successfully
+	String PHR810016 = "PHR810016"; // failed to access 'ciJob.info' file
+	String PHR810017 = "PHR810017"; // jenkins not found
+	String PHR800011 = "PHR800011"; // jenkins is alive
+	String PHR800012 = "PHR800012"; // job status returned successfully
+	String PHR810018 = "PHR810018"; // failed to get job status
+	String PHR800013 = "PHR800013"; // job templates listed successfully
+	String PHR810019 = "PHR810019"; // failed to fetch job templates from file
+	String PHR800014 = "PHR800014"; // job template retrieved successfully
+	String PHR810020 = "PHR810020"; // job template not found
+	String PHR810021 = "PHR810021"; // failed to retrieve job templates from file
+	String PHR800015 = "PHR800015"; // name validated successfully
+	String PHR810022 = "PHR810022"; // failed to retrieve job templates for validation
+	String PHR800016 = "PHR800016"; // job template added successfully
+	String PHR810023 = "PHR810023"; // failed to write job template in file
+	String PHR810024 = "PHR810024"; // failure while editing job templates
+	String PHR800017 = "PHR800017"; // job templates updated successfully
+	String PHR810025 = "PHR810025"; // unable to update job templates
+	String PHR800018 = "PHR800018"; // job template deleted successfully
+	String PHR810026 = "PHR810026"; // job template is empty
+	String PHR810027 = "PHR810027"; // failed to delete job template
+	String PHR800019 = "PHR800019"; // job templates fetched successfully
+	String PHR810028 = "PHR810028"; // failed to fetch job templates
+	String PHR810029 = "PHR810029"; // failed to fetch environments
+	String PHR810030 = "PHR810030"; // json exception returned while fetching job templates
 }

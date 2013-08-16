@@ -72,13 +72,17 @@ public class ActionService implements ActionServiceConstant, FrameworkConstants,
 		try	{
 			actionFunction.prePopulateBuildModelData(request);
 			response = actionFunction.build(request);
+			if(response.getStatus() != RESPONSE_STATUS_FAILURE) {
+				response.setResponseCode(PHR700004);
+			}
 		} catch (Exception e) {
 
 			S_LOGGER.error(e.getMessage());
-			response.setStatus(ERROR);
+			response.setStatus(RESPONSE_STATUS_ERROR);
 			response.setLog("");
 			response.setService_exception(FrameworkUtil.getStackTraceAsString(e));
 			response.setUniquekey("");
+			response.setResponseCode(PHR710008);
 		}
 		return Response.status(Status.OK).entity(response).header("Access-Control-Allow-Origin", "*").build();
 	}
@@ -101,12 +105,16 @@ public class ActionService implements ActionServiceConstant, FrameworkConstants,
 		try	{
 			actionFunction.prePopulateModelData(request);
 			response = actionFunction.deploy(request);
+			if(response.getStatus() != RESPONSE_STATUS_FAILURE) {
+				response.setResponseCode(PHR700005);
+			}
 		} catch (Exception e) {
 			S_LOGGER.error(e.getMessage());
-			response.setStatus(ERROR);
+			response.setStatus(RESPONSE_STATUS_ERROR);
 			response.setLog("");
 			response.setService_exception(FrameworkUtil.getStackTraceAsString(e));
 			response.setUniquekey("");
+			response.setResponseCode(PHR710009);
 		}
 		return Response.status(Status.OK).entity(response).header("Access-Control-Allow-Origin", "*").build();
 	
@@ -127,12 +135,14 @@ public class ActionService implements ActionServiceConstant, FrameworkConstants,
 		try	{
 			actionFunction.prePopulateBuildProcessData(request);
 			response = actionFunction.processBuild(request);
+			response.setResponseCode(PHR700007);
 		} catch (Exception e) {
 			S_LOGGER.error(e.getMessage());
-			response.setStatus(ERROR);
+			response.setStatus(RESPONSE_STATUS_ERROR);
 			response.setLog("");
 			response.setService_exception(FrameworkUtil.getStackTraceAsString(e));
 			response.setUniquekey("");
+			response.setResponseCode(PHR710015);
 		}
 		return Response.status(Status.OK).entity(response).header("Access-Control-Allow-Origin", "*").build();
 	
@@ -156,12 +166,14 @@ public class ActionService implements ActionServiceConstant, FrameworkConstants,
 		try	{
 			actionFunction.prePopulateModelData(request);
 			response = actionFunction.runUnitTest(request);
+			response.setResponseCode(PHRQ100002);
 		} catch (Exception e) {
 			S_LOGGER.error(e.getMessage());
-			response.setStatus(ERROR);
+			response.setStatus(RESPONSE_STATUS_ERROR);
 			response.setLog("");
 			response.setService_exception(FrameworkUtil.getStackTraceAsString(e));
 			response.setUniquekey("");
+			response.setResponseCode(PHRQ110002);
 		}
 		return Response.status(Status.OK).entity(response).header("Access-Control-Allow-Origin", "*").build();
 	}
@@ -182,12 +194,14 @@ public class ActionService implements ActionServiceConstant, FrameworkConstants,
 		try	{
 			actionFunction.prePopulateModelData(request);
 			response = actionFunction.runComponentTest(request);
+			response.setResponseCode(PHRQ200001);
 		} catch (Exception e) {
 			S_LOGGER.error(e.getMessage());
-			response.setStatus(ERROR);
+			response.setStatus(RESPONSE_STATUS_ERROR);
 			response.setLog("");
 			response.setService_exception(FrameworkUtil.getStackTraceAsString(e));
 			response.setUniquekey("");
+			response.setResponseCode(PHRQ210001);
 		}
 		return Response.status(Status.OK).entity(response).header("Access-Control-Allow-Origin", "*").build();
 	}
@@ -239,12 +253,16 @@ public class ActionService implements ActionServiceConstant, FrameworkConstants,
 		try	{
 			actionFunction.prePopulateModelData(request);
 			response = actionFunction.runAgainstSource(request);
+			if(response.getStatus() != RESPONSE_STATUS_FAILURE) {
+				response.setResponseCode(PHR700006);
+			}
 		} catch (Exception e) {
 			S_LOGGER.error(e.getMessage());
-			response.setStatus(ERROR);
+			response.setStatus(RESPONSE_STATUS_ERROR);
 			response.setLog("");
 			response.setService_exception(FrameworkUtil.getStackTraceAsString(e));
 			response.setUniquekey("");
+			response.setResponseCode(PHR710010);
 		}
 		return Response.status(Status.OK).entity(response).header("Access-Control-Allow-Origin", "*").build();
 	}
@@ -267,12 +285,14 @@ public class ActionService implements ActionServiceConstant, FrameworkConstants,
 		try	{
 			actionFunction.prePopulateModelData(request);
 			response = actionFunction.stopServer(request);
+			response.setResponseCode(PHR700008);
 		} catch (Exception e) {
 			S_LOGGER.error(e.getMessage());
-			response.setStatus(ERROR);
+			response.setStatus(RESPONSE_STATUS_ERROR);
 			response.setLog("");
 			response.setService_exception(FrameworkUtil.getStackTraceAsString(e));
 			response.setUniquekey("");
+			response.setResponseCode(PHR710016);
 		}
 		return Response.status(Status.OK).entity(response).header("Access-Control-Allow-Origin", "*").build();
 	
@@ -296,12 +316,14 @@ public class ActionService implements ActionServiceConstant, FrameworkConstants,
 		try	{
 			actionFunction.prePopulateModelData(request);
 			response = actionFunction.restartServer(request);
+			response.setResponseCode(PHR700009);
 		} catch (Exception e) {
 			S_LOGGER.error(e.getMessage());
-			response.setStatus(ERROR);
+			response.setStatus(RESPONSE_STATUS_ERROR);
 			response.setLog("");
 			response.setService_exception(FrameworkUtil.getStackTraceAsString(e));
 			response.setUniquekey("");
+			response.setResponseCode(PHR710017);
 		}
 		return Response.status(Status.OK).entity(response).header("Access-Control-Allow-Origin", "*").build();
 	}
@@ -323,6 +345,35 @@ public class ActionService implements ActionServiceConstant, FrameworkConstants,
 		try	{
 			actionFunction.prePopulateModelData(request);
 			response = actionFunction.performanceTest(request, performanceUrls);
+			response.setResponseCode(PHRQ500005);
+		} catch (Exception e) {
+			S_LOGGER.error(e.getMessage());
+			response.setStatus(RESPONSE_STATUS_ERROR);
+			response.setLog("");
+			response.setService_exception(FrameworkUtil.getStackTraceAsString(e));
+			response.setUniquekey("");
+			response.setResponseCode(PHRQ510006);
+		}
+		return Response.status(Status.OK).entity(response).header("Access-Control-Allow-Origin", "*").build();
+	}
+	
+	/**
+	 * Performance test.
+	 *
+	 * @param request the request
+	 * @return the response
+	 * @throws PhrescoException the phresco exception
+	 */
+	@POST
+	@Path("/ciPerformanceTest")
+	@Produces(MediaType.APPLICATION_JSON)
+	 public Response ciPerformanceTest(@Context HttpServletRequest request, PerformanceUrls performanceUrls) throws PhrescoException  {
+		ActionFunction actionFunction = new ActionFunction();
+		ActionResponse response = new ActionResponse();
+		try	{
+			//actionFunction.prePopulateModelData(request);
+			String jsonWriterForCi = actionFunction.jsonWriterForCi(request, performanceUrls);
+			response.setStatus(jsonWriterForCi);
 		} catch (Exception e) {
 			S_LOGGER.error(e.getMessage());
 			response.setStatus(ERROR);
@@ -350,12 +401,14 @@ public class ActionService implements ActionServiceConstant, FrameworkConstants,
 		try	{
 			actionFunction.prePopulateModelData(request);
 			response = actionFunction.loadTest(request, performanceUrls);
+			response.setResponseCode(PHRQ600003);
 		} catch (Exception e) {
 			S_LOGGER.error(e.getMessage());
-			response.setStatus(ERROR);
+			response.setStatus(RESPONSE_STATUS_ERROR);
 			response.setLog("");
 			response.setService_exception(FrameworkUtil.getStackTraceAsString(e));
 			response.setUniquekey("");
+			response.setResponseCode(PHRQ610003);
 		}
 		return Response.status(Status.OK).entity(response).header("Access-Control-Allow-Origin", "*").build();
 	}
@@ -406,12 +459,14 @@ public class ActionService implements ActionServiceConstant, FrameworkConstants,
 		try	{
 			actionFunction.prePopulateModelData(request);
 			response = actionFunction.startHub(request);
+			response.setResponseCode(PHRQ300002);
 		} catch (Exception e) {
 			S_LOGGER.error(e.getMessage());
-			response.setStatus(ERROR);
+			response.setStatus(RESPONSE_STATUS_ERROR);
 			response.setLog("");
 			response.setService_exception(FrameworkUtil.getStackTraceAsString(e));
 			response.setUniquekey("");
+			response.setResponseCode(PHRQ310002);
 		}
 		return Response.status(Status.OK).entity(response).header("Access-Control-Allow-Origin", "*").build();
 		
@@ -434,12 +489,14 @@ public class ActionService implements ActionServiceConstant, FrameworkConstants,
 		try	{
 			actionFunction.prePopulateModelData(request);
 			response = actionFunction.startNode(request);
+			response.setResponseCode(PHRQ300003);
 		} catch (Exception e) {
 			S_LOGGER.error(e.getMessage());
-			response.setStatus(ERROR);
+			response.setStatus(RESPONSE_STATUS_ERROR);
 			response.setLog("");
 			response.setService_exception(FrameworkUtil.getStackTraceAsString(e));
 			response.setUniquekey("");
+			response.setResponseCode(PHRQ310003);
 		}
 		return Response.status(Status.OK).entity(response).header("Access-Control-Allow-Origin", "*").build();
 	}
@@ -462,12 +519,14 @@ public class ActionService implements ActionServiceConstant, FrameworkConstants,
 		try	{
 			actionFunction.prePopulateModelData(request);
 			response = actionFunction.runFunctionalTest(request);
+			response.setResponseCode(PHRQ300004);
 		} catch (Exception e) {
 			S_LOGGER.error(e.getMessage());
-			response.setStatus(ERROR);
+			response.setStatus(RESPONSE_STATUS_ERROR);
 			response.setLog("");
 			response.setService_exception(FrameworkUtil.getStackTraceAsString(e));
 			response.setUniquekey("");
+			response.setResponseCode(PHRQ310004);
 		}
 		return Response.status(Status.OK).entity(response).header("Access-Control-Allow-Origin", "*").build();
 	}
@@ -489,12 +548,14 @@ public class ActionService implements ActionServiceConstant, FrameworkConstants,
 		try	{
 			actionFunction.prePopulateModelData(request);
 			response = actionFunction.stopHub(request);
+			response.setResponseCode(PHRQ300005);
 		} catch (Exception e) {
 			S_LOGGER.error(e.getMessage());
-			response.setStatus(ERROR);
+			response.setStatus(RESPONSE_STATUS_ERROR);
 			response.setLog("");
 			response.setService_exception(FrameworkUtil.getStackTraceAsString(e));
 			response.setUniquekey("");
+			response.setResponseCode(PHRQ310005);
 		}
 		return Response.status(Status.OK).entity(response).header("Access-Control-Allow-Origin", "*").build();
 	}
@@ -516,12 +577,14 @@ public class ActionService implements ActionServiceConstant, FrameworkConstants,
 		try	{
 			actionFunction.prePopulateModelData(request);
 			response = actionFunction.stopNode(request);
+			response.setResponseCode(PHRQ300006);
 		} catch (Exception e) {
 			S_LOGGER.error(e.getMessage());
-			response.setStatus(ERROR);
+			response.setStatus(RESPONSE_STATUS_ERROR);
 			response.setLog("");
 			response.setService_exception(FrameworkUtil.getStackTraceAsString(e));
 			response.setUniquekey("");
+			response.setResponseCode(PHRQ310006);
 		}
 		return Response.status(Status.OK).entity(response).header("Access-Control-Allow-Origin", "*").build();
 	}
@@ -545,10 +608,11 @@ public class ActionService implements ActionServiceConstant, FrameworkConstants,
 			response = actionFunction.checkForHub(request);
 		} catch (Exception e) {
 			S_LOGGER.error(e.getMessage());
-			response.setStatus(ERROR);
+			response.setStatus(RESPONSE_STATUS_ERROR);
 			response.setLog("");
 			response.setService_exception(FrameworkUtil.getStackTraceAsString(e));
 			response.setUniquekey("");
+			response.setResponseCode(PHRQ310007);
 		}
 		return Response.status(Status.OK).entity(response).header("Access-Control-Allow-Origin", "*").build();
 	
@@ -575,10 +639,11 @@ public class ActionService implements ActionServiceConstant, FrameworkConstants,
 			response = actionFunction.checkForNode(request);
 		} catch (Exception e) {
 			S_LOGGER.error(e.getMessage());
-			response.setStatus(ERROR);
+			response.setStatus(RESPONSE_STATUS_ERROR);
 			response.setLog("");
 			response.setService_exception(FrameworkUtil.getStackTraceAsString(e));
 			response.setUniquekey("");
+			response.setResponseCode(PHRQ310008);
 		}
 		return Response.status(Status.OK).entity(response).header("Access-Control-Allow-Origin", "*").build();
 		
@@ -599,15 +664,17 @@ public class ActionService implements ActionServiceConstant, FrameworkConstants,
 
 		ActionFunction actionFunction = new ActionFunction();
 		ActionResponse response = new ActionResponse();
+		response.setResponseCode(PHRQ300009);
 		try	{
 			actionFunction.prePopulateModelData(request);
 			response = actionFunction.showStartedHubLog(request);
 		} catch (Exception e) {
 			S_LOGGER.error(e.getMessage());
-			response.setStatus(ERROR);
+			response.setStatus(RESPONSE_STATUS_ERROR);
 			response.setLog("");
 			response.setService_exception(FrameworkUtil.getStackTraceAsString(e));
 			response.setUniquekey("");
+			response.setResponseCode(PHRQ310009);
 		}
 		return Response.status(Status.OK).entity(response).header("Access-Control-Allow-Origin", "*").build();
 	}
@@ -629,12 +696,14 @@ public class ActionService implements ActionServiceConstant, FrameworkConstants,
 		try	{
 			actionFunction.prePopulateModelData(request);
 			response = actionFunction.showStartedNodeLog(request);
+			response.setResponseCode(PHRQ300010);
 		} catch (Exception e) {
 			S_LOGGER.error(e.getMessage());
-			response.setStatus(ERROR);
+			response.setStatus(RESPONSE_STATUS_ERROR);
 			response.setLog("");
 			response.setService_exception(FrameworkUtil.getStackTraceAsString(e));
 			response.setUniquekey("");
+			response.setResponseCode(PHRQ310010);
 		}
 		return Response.status(Status.OK).entity(response).header("Access-Control-Allow-Origin", "*").build();
 	}

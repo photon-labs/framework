@@ -141,13 +141,13 @@ public class BuildInfoTest extends RestBaseTest {
 		buildInfoFile.renameTo(tempBuildFile);
 		Response parameter = buildinfoservice.buildInfoZip(appDirName, 1);
 		tempBuildFile.renameTo(buildInfoFile);
-		assertEquals(404, parameter.getStatus());
+		assertEquals(200, parameter.getStatus());
 	}
 	
 //	@Test
 	public void downloadBuildFailure() {
 		Response parameter = buildinfoservice.buildInfoZip("xx", 1);
-		assertEquals(404, parameter.getStatus());
+		assertEquals(200, parameter.getStatus());
 	}
 	
 	@Test
@@ -162,7 +162,7 @@ public class BuildInfoTest extends RestBaseTest {
 	public void deleteBuildFailure() {
 		String[] buildNumbers = {"3"};
 		Response parameter = buildinfoservice.deleteBuild(buildNumbers, "TestProject", customerId, "TestProject");
-		assertEquals(404, parameter.getStatus());
+		assertEquals(200, parameter.getStatus());
 	}
 
 	@Test

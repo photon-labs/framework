@@ -189,6 +189,8 @@
                     <div id="dynamicContent" class="performance_pop_cont ci_dynamic_cont">
                         <ul class="row dynamicControls">
                         </ul>
+                        <div class="templates">
+                        </div>
                         <div class="dynamicPopupLoading" style="display:none;">&nbsp</div>
                         <div class="hiddenControls"></div>
                     </div>

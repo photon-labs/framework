@@ -56,6 +56,7 @@ import com.google.gson.JsonIOException;
 import com.google.gson.JsonSyntaxException;
 import com.photon.phresco.api.ConfigManager;
 import com.photon.phresco.commons.FrameworkConstants;
+import com.photon.phresco.commons.ResponseCodes;
 import com.photon.phresco.commons.model.ApplicationInfo;
 import com.photon.phresco.commons.model.BuildInfo;
 import com.photon.phresco.commons.model.CertificateInfo;
@@ -81,7 +82,7 @@ import com.phresco.pom.exception.PhrescoPomException;
 import com.phresco.pom.model.Model.Modules;
 import com.phresco.pom.util.PomProcessor;
 
-public class FrameworkServiceUtil implements Constants, FrameworkConstants {
+public class FrameworkServiceUtil implements Constants, FrameworkConstants, ResponseCodes {
 	
 	/**
 	 * To get the application info of the given appDirName
@@ -585,6 +586,8 @@ public class FrameworkServiceUtil implements Constants, FrameworkConstants {
 							actionresponse.setErrorFound(true);
 							actionresponse.setConfigErr(true);
 							actionresponse.setConfigErrorMsg(errMsg);
+							actionresponse.setStatus(RESPONSE_STATUS_FAILURE);
+							actionresponse.setResponseCode(PHR710020);
 						}
 					} 
 				} 
@@ -604,6 +607,8 @@ public class FrameworkServiceUtil implements Constants, FrameworkConstants {
 						actionresponse.setErrorFound(true);
 						actionresponse.setConfigErr(true);
 						actionresponse.setConfigErrorMsg(errMsg);
+						actionresponse.setStatus(RESPONSE_STATUS_FAILURE);
+						actionresponse.setResponseCode(PHR710021);
 
 					}
 				} 
@@ -731,11 +736,15 @@ public class FrameworkServiceUtil implements Constants, FrameworkConstants {
 										if (name.equalsIgnoreCase(bldName)) {	
 											actionresponse.setErrorFound(true);
 											actionresponse.setConfigErrorMsg("Build Name Already Exsist");
+											actionresponse.setStatus(RESPONSE_STATUS_FAILURE);
+											actionresponse.setResponseCode(PHR710018);
 										}
 									}
 								} else if(buildName.equalsIgnoreCase(FilenameUtils.removeExtension(build.getBuildName()))) {
 									actionresponse.setErrorFound(true);
 									actionresponse.setConfigErrorMsg("Build Name Already Exsist");
+									actionresponse.setStatus(RESPONSE_STATUS_FAILURE);
+									actionresponse.setResponseCode(PHR710018);
 								}
 							}
 						}
@@ -746,6 +755,8 @@ public class FrameworkServiceUtil implements Constants, FrameworkConstants {
 								if(Integer.parseInt(buildNumber) == build.getBuildNo()) {
 									actionresponse.setErrorFound(true);
 									actionresponse.setConfigErrorMsg("Build Number Already Exsist");
+									actionresponse.setStatus(RESPONSE_STATUS_FAILURE);
+									actionresponse.setResponseCode(PHR710019);
 								}
 							}
 						}

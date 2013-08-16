@@ -150,11 +150,6 @@ define([], function() {
 				} else {
 					header.webserviceurl = commonVariables.webserviceurl + commonVariables.configuration + "/listEnvironmentsByProjectId" + "?customerId="+ customerId + "&projectId=" + projectId;
 				}
-				// For Testing Purpose - Remove this when service calls get ready
-				if (params !== null && params !== undefined && params !== '') {
-					params = $.param(params);
-					header.webserviceurl = header.webserviceurl + "&" + params;
-				}
 			}  else if (action === "getJobTemplatesByEnvironment") {
 				header.requestMethod = "GET";
 				header.webserviceurl = commonVariables.webserviceurl + commonVariables.jobTemplates + "/getJobTemplatesByEnvironment" + "?customerId="+ customerId + "&projectId=" + projectId+"&appDirName="+appDir;	
@@ -167,19 +162,11 @@ define([], function() {
 				header.requestMethod = "POST";
 				header.requestPostBody = JSON.stringify(ciRequestBody);
 				header.webserviceurl = commonVariables.webserviceurl + commonVariables.ci + "/create" + "?customerId="+ customerId + "&projectId=" + projectId+"&appDirName="+ appDir + "&userId=" +userId;
-				if (params !== null && params !== undefined && params !== '') {
-					params = $.param(params);
-					header.webserviceurl = header.webserviceurl + "&" + params;
-				}
 			} else if (action === "updateContinuousDelivery") {
 				// update the continuos delivery with all the drag and dropped job templates
 				header.requestMethod = "PUT";
 				header.requestPostBody = JSON.stringify(ciRequestBody);
 				header.webserviceurl = commonVariables.webserviceurl + commonVariables.ci + "/update" + "?customerId="+ customerId + "&projectId=" + projectId+"&appDirName="+appDir + "&userId=" +userId;
-				if (params !== null && params !== undefined && params !== '') {
-					params = $.param(params);
-					header.webserviceurl = header.webserviceurl + "&" + params;					
-				}				
 			}  else if (action === "getBuilds") {
 				header.requestMethod = "GET";
 				header.webserviceurl = commonVariables.webserviceurl + commonVariables.ci + "/builds?projectId="+projectId+"&name="+ciRequestBody.jobName+"&appDirName="+appDir+"&continuousName="+ciRequestBody.continuousName;
@@ -198,10 +185,6 @@ define([], function() {
 			} else if (action === "deleteContinuousDelivery") {
 				header.requestMethod = "DELETE";
 				header.webserviceurl = commonVariables.webserviceurl + commonVariables.ci + "/delete?continuousName="+ciRequestBody.cdName+"&customerId="+ customerId + "&projectId=" + projectId+"&appDirName="+appDir;
-				if (params !== null && params !== undefined && params !== '') {
-					params = $.param(params);
-					header.webserviceurl = header.webserviceurl + "&" + params;
-				}
 			} else if (action === "cronExpression") {
 				self.bcheck = true;
 				header.requestMethod = "POST";
@@ -216,6 +199,13 @@ define([], function() {
 			} else if(action === "jenkinsStatus") {
 				header.requestMethod = "GET";
 				header.webserviceurl = commonVariables.webserviceurl + commonVariables.ci + "/isAlive";
+			} else if(action === "writeJson") {
+				header.requestMethod = "POST";
+				header.webserviceurl = commonVariables.webserviceurl+"app/ciPerformanceTest?"+ciRequestBody.data;
+				header.requestPostBody = ciRequestBody.jsondata;
+			} else if(action === "jobValidation") {
+				header.requestMethod = "GET";
+				header.webserviceurl = commonVariables.webserviceurl + commonVariables.ci + "/validation?name="+ciRequestBody.jobName+"&flag="+ciRequestBody.flag+"&userId=" + userId; 
 			}
 
 			return header;
@@ -362,8 +352,6 @@ define([], function() {
 			ciRequestBody.buildNumber = obj.attr("buildNumber");
 			ciRequestBody.continuousName = obj.attr('continuousName');
 			ciRequestBody.buildDownloadUrl = obj.attr('buildDownloadUrl');
-//			continuousName = ciRequestBody.continuousName;
-//			jobName = ciRequestBody.jobName;
 			self.getHeaderResponse(self.getRequestHeader(ciRequestBody, 'download'), function (response) {
 				window.open(response.data);
 			});
@@ -377,7 +365,7 @@ define([], function() {
 				$("select[name=envName]").empty();
 				if(response.data !== undefined && response.data !== null && response.data !== "" && response.data.length > 0) {
 					for(var i =0; i < response.data.length; i++) {
-						var headerTr = '<option value="'+response.data[i]+'">'+response.data[i]+'</option>'
+						var headerTr = '<option value="'+response.data[i]+'">'+response.data[i]+'</option>';
 						content = content.concat(headerTr);
 					}
 					$("select[name=envName]").append(content);
@@ -435,7 +423,7 @@ define([], function() {
 			var enableUpload = $('input[name=enableUploadSettings]').is(':checked');
 			if (enableUpload) {
 				var uploads = $('select[name=uploadTypes] :selected').length;
-				if (uploads == 0) {
+				if (uploads === 0) {
 					$('#errMsg').html('Select atleast one Uploader');
 					$("select[name='uploadTypes']").focus();
 					$('#errMsg').addClass("errormessage");
@@ -847,6 +835,25 @@ define([], function() {
 						self.restoreFormValues($("#jonConfiguration"), jobJsonData);
 					}
 					self.popForCi(thisObj, 'jobConfigure');
+					if (commonVariables.goal === commonVariables.performanceTestGoal || commonVariables.goal === commonVariables.loadTestGoal) {
+						var sectionHeight = $('.content_main').height();
+						//$('.content_end').height();
+						$('#jobConfigure').css("max-height", sectionHeight+ 'px');
+						$('#jonConfiguration').css("max-height", sectionHeight -34+ 'px');
+	                	/*$("#jonConfiguration").mCustomScrollbar({
+							autoHideScrollbar:true,
+							theme:"light-thin",
+							advanced:{ updateOnContentResize: true}
+						});*/
+					} else {
+						$('#jobConfigure').css("max-height", 'auto');
+						$('#jonConfiguration').css("max-height", 'auto');
+						/*$("#jonConfiguration").mCustomScrollbar({
+							autoHideScrollbar:true,
+							theme:"light-thin",
+							advanced:{ updateOnContentResize: true}
+						});*/
+					}
 				});
 			});
 		},
@@ -1166,7 +1173,7 @@ define([], function() {
 
 			var confluence = $("#confluenceUploadSettings input, #confluenceUploadSettings select").not("#confluenceUploadSettings input[type=checkbox], input[name=confluenceOther]");
 			confluence.each(function() {
-				if (self.isBlank(this.value) && (this.name == 'confluenceSite')) {
+				if (self.isBlank(this.value) && (this.name === 'confluenceSite')) {
 					$('#errMsg').html('Select atleast One Site');
 					$('select[name=confluenceSite]').focus();
 					$('#errMsg').addClass("errormessage");
@@ -1204,7 +1211,27 @@ define([], function() {
 				});		
 				emptyFound = true;			
 			}
-
+			if(templateJsonData.type === "performanceTest" || templateJsonData.type === "loadTest") {
+				var ciRequestBody = {}, redirect = true, templJsonStr="",testAction;
+				redirect = self.contextUrlsMandatoryVal();
+				if(redirect) {
+					emptyFound = false;
+					templJsonStr = self.contextUrls() + "," + self.dbContextUrls();
+					var json = '{' + templJsonStr + '}'	;
+					if(templateJsonData.type === "loadTest") {
+						testAction = "load";
+					} else {
+						testAction = "performance";
+					}
+					ciRequestBody.data = $('#jonConfiguration').serialize()+"&appDir="+appDirName+"&testAction="+testAction;
+					ciRequestBody.jsondata = json;
+					self.getHeaderResponse(self.getRequestHeader(ciRequestBody, 'writeJson'), function (response) {
+					});
+				} else {
+					emptyFound = true;
+				}
+			}
+			
 			//scheduler validation
 
 			//mail settings validation
@@ -1243,6 +1270,82 @@ define([], function() {
 			} 			
 		},
 
+		contextUrlsMandatoryVal : function () {
+			var self = this, redirect = true;
+			$('.contextDivClass').each(function() {
+				if (self.isBlank($(this).find($('input[name=httpName]')).val())) {
+					redirect = false;
+					$(this).find($('input[name=httpName]')).val('');
+					$(this).find($('input[name=httpName]')).focus();
+					$(this).find($('input[name=httpName]')).attr('placeholder','Http name is missing');
+					$(this).find($('input[name=httpName]')).addClass("errormessage");
+				} 
+			});
+			
+			return redirect;
+		},
+		
+		dbContextUrls : function () {
+			var dbContextUrls = [];
+			$('.dbContextDivClass').each(function() {
+				var jsonObject = {};
+				jsonObject.name = $(this).find($("input[name=dbName]")).val();
+				jsonObject.queryType = $(this).find($("select[name=queryType]")).val();
+				jsonObject.query = $(this).find($("textarea[name=query]")).val(); 
+				var dbContexts = JSON.stringify(jsonObject);
+				dbContextUrls.push(dbContexts);
+			});
+			var jsonStrFromTemplate = '"dbContextUrls":[' + dbContextUrls + ']';
+			return jsonStrFromTemplate;
+		},
+		
+		contextUrls : function () {
+			var contextUrls = [];
+			var contexts = "";
+			$('.contextDivClass').each(function() {
+				var jsonObject = {};
+				jsonObject.name = $(this).find($("input[name=httpName]")).val();
+				jsonObject.context = $(this).find($("input[name=context]")).val();
+				jsonObject.contextType = $(this).find($("select[name=contextType]")).val();
+				jsonObject.encodingType = $(this).find($("select[name=encodingType]")).val();
+				jsonObject.contextPostData = $(this).find($("textarea[name=contextPostData]")).val(); 
+
+				jsonObject.redirectAutomatically = $(this).find($("input[name=redirectAutomatically]")).is(':checked'); 
+				jsonObject.followRedirects = $(this).find($("input[name=followRedirects]")).is(':checked'); 
+				jsonObject.keepAlive = $(this).find($("input[name=keepAlive]")).is(':checked'); 
+				jsonObject.multipartData = $(this).find($("input[name=multipartData]")).is(':checked'); 
+				jsonObject.compatibleHeaders = $(this).find($("input[name=compatibleHeaders]")).is(':checked');  			
+				
+				var headers = [];
+				$(this).find($('.headers')).each(function() {
+					var key = $(this).find($("input[name=headerKey]")).val();
+					var value = $(this).find($("input[name=headerValue]")).val();
+					var keyValueObj = {};
+					keyValueObj.key=key;
+					keyValueObj.value=value;
+					headers.push(keyValueObj);
+				});
+				jsonObject.headers=headers;
+				
+				var parameters = [];
+				$(this).find($('.parameterRow')).each(function() {
+					var name = $(this).find($("input[name=parameterName]")).val();
+					var value = $(this).find($("input[name=parameterValue]")).val();
+					var encode = $(this).find($("input[name=parameterEncode]")).is(':checked');
+					var nameValueObj = {};
+					nameValueObj.name=name;
+					nameValueObj.value=value;
+					nameValueObj.encode=encode;
+					parameters.push(nameValueObj);
+				});
+				jsonObject.parameters=parameters;
+
+				contextUrls.push(JSON.stringify(jsonObject));
+			});
+			var jsonStrFromTemplate = '"contextUrls":[' + contextUrls + ']';
+			return jsonStrFromTemplate;
+		},
+		
 		constructJobTemplateViewByEnvironment : function (response, callback) {			
 			var self = this;			
 			var data = response.data;			
@@ -1259,7 +1362,7 @@ define([], function() {
 					// job tesmplate key and value
 					$.each(value, function(jobTemplateKey, jobTemplateValue) {
 						var jobTemplateGearHtml = '<a href="javascript:;" id="'+ appName + jobTemplateValue.name +'" class="validate_icon" jobTemplateName="'+ jobTemplateValue.name +'" appName="'+ appName +'" appDirName="'+ appDirName +'" name="jobConfigurePopup" style="display: none;"><img src="themes/default/images/helios/validate_image.png" width="19" height="19" border="0"></a>';
-                		var jobTemplateHtml = '<li class="ui-state-default" temp="ci"><span>' + jobTemplateValue.name + ' - ' + jobTemplateValue.type + '</span>' + jobTemplateGearHtml + '</li>'
+                		var jobTemplateHtml = '<li class="ui-state-default" temp="ci"><span>' + jobTemplateValue.name + ' - ' + jobTemplateValue.type + '</span>' + jobTemplateGearHtml + '</li>';
                 		sort.append(jobTemplateHtml);
                 		// set json value on attribute
                 		var jobTemplateJsonVal = jobTemplateValue;
@@ -1285,7 +1388,7 @@ define([], function() {
 				    var jobJsonData = $(anchorElem).data("jobJson");
 				    // upstream and downstream and clone workspace except last job
 				    
-				    var preli = $(thisObj).prev('li')
+				    var preli = $(thisObj).prev('li');
 				    var preAnchorElem = $(preli).find('a');
 				    var preTemplateJsonData = $(preAnchorElem).data("templateJson");
 				    var preJobJsonData = $(preAnchorElem).data("jobJson");
@@ -1295,12 +1398,12 @@ define([], function() {
 				    var nextTemplateJsonData = $(nextAnchorElem).data("templateJson");
 				    var nextJobJsonData = $(nextAnchorElem).data("jobJson");
 
-				    if (jobJsonData == undefined && jobJsonData == null) {
+				    if (jobJsonData === undefined && jobJsonData === null) {
 				        jobJsonData = {};
 				    }
 
 				    // Downstream
-				    if (nextJobJsonData != undefined && nextJobJsonData != null) {
+				    if (nextJobJsonData !== undefined && nextJobJsonData !== null) {
 				    	// downstream specifies the next job which needs to be triggered after this job
 				        jobJsonData.downstreamApplication = nextJobJsonData.jobName;
 				        //jobJsonData.downStreamProject = nextJobJsonData.jobName;
@@ -1310,7 +1413,7 @@ define([], function() {
 				    }
 
 				    // No use parent job
-				    if (preJobJsonData != undefined && preJobJsonData != null) {
+				    if (preJobJsonData !== undefined && preJobJsonData !== null) {
 				    	// upstream job specifies the from where this app will be triggered, this will be based on assumption, only for UI purpose
 				        jobJsonData.upstreamApplication = preJobJsonData.jobName;
 				    } else {
@@ -1335,7 +1438,7 @@ define([], function() {
 			  				workspaceAppFound = true;
 			  				// from where this jobs source code have to come from
 			  				// Upstream app
-			  				if (thisJobJsonData != undefined && thisJobJsonData != null) {
+			  				if (thisJobJsonData !== undefined && thisJobJsonData !== null) {
 				        		jobJsonData.usedClonnedWorkspace = thisJobJsonData.jobName;
 				        		thisJobJsonData.cloneWorkspace = true;
 				        		$(thisAnchorElem).data("jobJson", thisJobJsonData);
@@ -1369,6 +1472,7 @@ define([], function() {
 			var envName = $("select[name=environments]").val();
 			var sortable2LiObj = $("#sortable2 li[temp=ci]");
 			var sortable2Obj = $("#sortable2");
+			var name = [];
 			if(!self.isBlank(contDeliveryName) && $(sortable2LiObj).length !== 0) {				
 				var hasError = false;
 				$(sortable2LiObj).each(function(index) {
@@ -1387,30 +1491,44 @@ define([], function() {
 							self.showConfigureJob(thisAnchorElem);
 							hasError = true;
 							return false;
-						}
+						} 
+					}
+					name.push(thisJobJsonData.jobName);
+				});
+				var ciRequestBody = {};
+				ciRequestBody.jobName =name;
+				ciRequestBody.flag =$(thisObj).val();
+				self.getHeaderResponse(self.getRequestHeader(ciRequestBody, 'jobValidation'), function (response) {
+					if(response.data === false) {
+						$(".blinkmsg").removeClass("popsuccess").addClass("poperror");
+						self.effectFadeOut('poperror', (''));
+						$(".poperror").text(response.message);
+						hasError = true;
+						return false;
+					} 
+
+					if(!hasError) {
+						var jobs = [];
+						var contDelivery = {};
+						// Upstream and downstream config auto population goes here
+						self.streamConfig(sortable2Obj, function() {
+							// construct the job json data here once all the data are validated
+							$(sortable2LiObj).each(function(index) {
+								var thisAnchorElem = $(this).find('a');
+								var thisTemplateJsonData = $(thisAnchorElem).data("templateJson");
+								var thisJobJsonData = $(thisAnchorElem).data("jobJson");
+								jobs.push(thisJobJsonData);
+							});
+						});
+						
+						contDelivery.name = contDeliveryName;
+						contDelivery.envName = envName;
+						contDelivery.jobs = jobs;
+
+						callback(contDelivery);
 					}
 				});
-
-				if(!hasError) {
-					var jobs = [];
-					var contDelivery = {};
-					// Upstream and downstream config auto population goes here
-					self.streamConfig(sortable2Obj, function() {
-						// construct the job json data here once all the data are validated
-						$(sortable2LiObj).each(function(index) {
-							var thisAnchorElem = $(this).find('a');
-							var thisTemplateJsonData = $(thisAnchorElem).data("templateJson");
-							var thisJobJsonData = $(thisAnchorElem).data("jobJson");
-							jobs.push(thisJobJsonData);
-						});
-					});
-					
-					contDelivery.name = contDeliveryName;
-					contDelivery.envName = envName;
-					contDelivery.jobs = jobs;
-
-					callback(contDelivery);
-				}
+				
 			} else if(self.isBlank(contDeliveryName)){
 				$("[name=continuousDeliveryName]").focus();
 				$("[name=continuousDeliveryName]").attr('placeholder','Enter Name');

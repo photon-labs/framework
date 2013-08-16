@@ -124,13 +124,6 @@ define(["framework/widgetWithTemplate", "ci/listener/ciListener", "lib/jquery-to
 					});
 			});
 			
-			/*$(".jobConfigure").mCustomScrollbar({
-				autoHideScrollbar:true,
-				theme:"light-thin",
-				advanced: {
-					updateOnContentResize: true
-				}
-			});*/
 		},
 		
 		getAction : function(ciRequestBody, action, params, callback) {			
@@ -140,74 +133,6 @@ define(["framework/widgetWithTemplate", "ci/listener/ciListener", "lib/jquery-to
 			}); 
 		},
 
-		/***
-		 * This method automatically manipulates upstream and downstream as well as validation
-		 *
-		 */
-		streamConfig : function(thisObj) {
-	  		// third Construct upstream and downstream validations
-	  		// all li elemnts of this
-			$($(thisObj).find('li').get().reverse()).each(function() {
-				    var anchorElem = $(thisObj).find('a');
-				    var appName = $(anchorElem).attr("appname");
-				    var templateJsonData = $(anchorElem).data("templateJson");
-				    var jobJsonData = $(anchorElem).data("jobJson");
-				    // upstream and downstream and clone workspace except last job
-				    
-				    var preli = $(thisObj).prev('li');
-				    var preAnchorElem = $(preli).find('a');
-				    var preTemplateJsonData = $(preAnchorElem).data("templateJson");
-				    var preJobJsonData = $(preAnchorElem).data("jobJson");
-				    
-				    var nextli = $(thisObj).next('li');
-				    var nextAnchorElem = $(nextli).find('a');
-				    var nextTemplateJsonData = $(nextAnchorElem).data("templateJson");
-				    var nextJobJsonData = $(nextAnchorElem).data("jobJson");
-
-
-				    if (jobJsonData !== undefined && jobJsonData !== null) {
-				        jobJsonData = {};
-				    }
-
-				    // Downstream
-				    if (nextJobJsonData !== undefined && nextJobJsonData !== null) {
-				        jobJsonData.downstreamApplication = nextJobJsonData.name;
-				    }
-
-				    // No use parent job
-				    if (preJobJsonData !== undefined && preJobJsonData !== null) {
-				        jobJsonData.upstreamApplication = preJobJsonData.name;
-				    }
-
-				    // Is parent app available for this app job
-				    var parentAppFound = false;
-				    var workspaceAppFound = false;
-			  		$(thisObj).prevAll('li').each(function(index) {
-					    var thisAnchorElem = $(thisObj).find('a');
-			  			var thisTemplateJsonData = $(thisAnchorElem).data("templateJson");
-			  			var thisJobJsonData = $(thisAnchorElem).data("jobJson");
-			  			var thisAppName = $(thisAnchorElem).attr("appname");
-
-			  			if (thisAppName === appName && thisTemplateJsonData.enableRepo) {
-			  				parentAppFound = true;
-			  				return false;
-			  			}
-
-			  			if (thisAppName === appName && !workspaceAppFound) {
-			  				workspaceAppFound = true;
-			  				// Upstream app
-			  				if (thisJobJsonData !== undefined && thisJobJsonData !== null) {
-				        		jobJsonData.workspaceApp = thisJobJsonData.name;
-				        		thisJobJsonData.clonetheWrokspace = true;
-				        		$(thisAnchorElem).data("jobJson", thisJobJsonData);
-				    		}
-			  			}
-					});
-				    // Store value in data
-				    $(anchorElem).data("jobJson", jobJsonData);
-
-			});
-		},
 
 		/***
 		 * Bind the action listeners. The bindUI() is called automatically after the render is complete 
@@ -319,6 +244,12 @@ define(["framework/widgetWithTemplate", "ci/listener/ciListener", "lib/jquery-to
 					},
 
 					receive: function( event, ui ) {
+						var tt = $("#sortable2 li.ui-state-default").length;
+						if(tt === 2) {
+							$("#sortable2 li.ui-state-default").each(function( index ) {
+								$(ui.item).insertAfter($(this));
+							});
+						}
 						// For gear icons alone
 						$("#sortable2 li.ui-state-default a").show();
 						$("#sortable1 li.ui-state-default a").hide();	

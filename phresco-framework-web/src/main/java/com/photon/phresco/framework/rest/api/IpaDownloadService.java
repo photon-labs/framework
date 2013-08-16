@@ -24,6 +24,7 @@ import org.apache.commons.lang.StringUtils;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.photon.phresco.commons.FrameworkConstants;
+import com.photon.phresco.commons.ResponseCodes;
 import com.photon.phresco.commons.model.ApplicationInfo;
 import com.photon.phresco.commons.model.BuildInfo;
 import com.photon.phresco.commons.model.ProjectInfo;
@@ -36,7 +37,7 @@ import com.photon.phresco.util.ServiceConstants;
 import com.sun.jersey.api.client.ClientResponse.Status;
 
 @Path(ServiceConstants.REST_API_DOWNLOADIPA)
-public class IpaDownloadService extends RestBase implements ServiceConstants {
+public class IpaDownloadService extends RestBase implements ServiceConstants, FrameworkConstants, ResponseCodes {
 	
 	@GET
 	@Produces(MediaType.MULTIPART_FORM_DATA)
@@ -53,7 +54,7 @@ public class IpaDownloadService extends RestBase implements ServiceConstants {
 			ApplicationInfo applicationInfo = info.getAppInfos().get(0);
 			
 			if (StringUtils.isEmpty(buildNumber)) {
-				ResponseInfo finalOutput = responseDataEvaluation(responseData, null, "IPA Download Failed", null);
+				ResponseInfo finalOutput = responseDataEvaluation(responseData, null, null, RESPONSE_STATUS_FAILURE, PHR710012);
 				return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
 			}
 			String ipaFileName = applicationInfo.getName();
@@ -85,11 +86,11 @@ public class IpaDownloadService extends RestBase implements ServiceConstants {
 			return Response.status(Status.OK).entity(fileInputStream).header("Content-Disposition", "attachment; filename=" + new File(ipaPath).getName())
 			.build();
 		} catch (FileNotFoundException e) {
-			ResponseInfo finalOutput = responseDataEvaluation(responseData, e, "IPA Download Failed", null);
-			return Response.status(Status.NOT_FOUND).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
+			ResponseInfo finalOutput = responseDataEvaluation(responseData, e, null, RESPONSE_STATUS_ERROR, PHR710013);
+			return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
 		} catch (IOException e) {
-			ResponseInfo finalOutput = responseDataEvaluation(responseData, e, "IPA Download Failed", null);
-			return Response.status(Status.NOT_FOUND).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
+			ResponseInfo finalOutput = responseDataEvaluation(responseData, e, null, RESPONSE_STATUS_ERROR, PHR710014);
+			return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
 		}
 	}
 	

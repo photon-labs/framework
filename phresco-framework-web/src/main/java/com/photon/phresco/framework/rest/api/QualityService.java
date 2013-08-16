@@ -73,6 +73,7 @@ import org.xml.sax.SAXException;
 import com.google.gson.Gson;
 import com.photon.phresco.commons.FileListFilter;
 import com.photon.phresco.commons.FrameworkConstants;
+import com.photon.phresco.commons.ResponseCodes;
 import com.photon.phresco.commons.model.ApplicationInfo;
 import com.photon.phresco.configuration.Configuration;
 import com.photon.phresco.exception.PhrescoException;
@@ -104,7 +105,7 @@ import com.sun.jersey.api.client.ClientResponse.Status;
  * The Class QualityService.
  */
 @Path("/quality")
-public class QualityService extends RestBase implements ServiceConstants, FrameworkConstants {
+public class QualityService extends RestBase implements ServiceConstants, FrameworkConstants, ResponseCodes {
 	/** The test suite map. */
 	private static Map<String, Map<String, NodeList>> testSuiteMap = Collections
 			.synchronizedMap(new HashMap<String, Map<String, NodeList>>(8));
@@ -141,12 +142,12 @@ public class QualityService extends RestBase implements ServiceConstants, Framew
 			unitTestOptionsMap.put(REPORT_OPTIONS, unitReportOptions);
 			unitTestOptionsMap.put(PROJECT_MODULES, projectModules);
 			ResponseInfo<List<String>> finalOutput = responseDataEvaluation(responseData, null,
-					PARAMETER_RETURNED_SUCCESSFULLY, unitTestOptionsMap);
+					unitTestOptionsMap, RESPONSE_STATUS_SUCCESS, PHRQ100001);
 			return Response.ok(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, "*").build();
 		} catch (PhrescoException e) {
 			ResponseInfo<List<String>> finalOutput = responseDataEvaluation(responseData, e,
-					"Unable to get unit test report options", null);
-			return Response.status(Status.BAD_REQUEST).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, "*")
+					null, RESPONSE_STATUS_ERROR, PHRQ110001);
+			return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, "*")
 					.build();
 		}
 	}
@@ -179,15 +180,15 @@ public class QualityService extends RestBase implements ServiceConstants, Framew
 					testSuitePath, testCasePath, ALL);
 			if (CollectionUtils.isEmpty(testSuites)) {
 				ResponseInfo<Configuration> finalOuptut = responseDataEvaluation(responseData, null,
-						TEST_RESULT_NOT_AVAILABLE, testSuites);
+						testSuites, RESPONSE_STATUS_FAILURE, PHRQ010001);
 				return Response.status(Status.OK).entity(finalOuptut).header(ACCESS_CONTROL_ALLOW_ORIGIN, "*").build();
 			}
 			ResponseInfo<List<String>> finalOutput = responseDataEvaluation(responseData, null,
-					TEST_SUITES_LISTED_SUCCESSFULLY, testSuites);
+					testSuites, RESPONSE_STATUS_SUCCESS, PHRQ000001);
 			return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, "*").build();
 		} catch (Exception e) {
-			ResponseInfo<List<TestSuite>> finalOutput = responseDataEvaluation(responseData, e,	TEST_SUITES_LISTED_FAILED, null);
-			return Response.status(Status.BAD_REQUEST).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN,ALL_HEADER).build();
+			ResponseInfo<List<TestSuite>> finalOutput = responseDataEvaluation(responseData, e,	null, RESPONSE_STATUS_ERROR, PHRQ010002);
+			return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN,ALL_HEADER).build();
 		}
 	}
 
@@ -354,12 +355,12 @@ public class QualityService extends RestBase implements ServiceConstants, Framew
 				}
 			}
 			ResponseInfo<Map<String, Object>> finalOutput = responseDataEvaluation(responseData, null,
-					FUNCTIONAL_TEST_FRAMEWORK_FETCHED_SUCCESSFULLY, map);
+					map, RESPONSE_STATUS_SUCCESS, PHRQ300001);
 			return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, "*").build();
 		} catch (Exception e) {
 			ResponseInfo<Map<String, Object>> finalOutput = responseDataEvaluation(responseData, e,
-					FAILED_TO_GET_FUNCTIONAL_FRAMEWORK, null);
-			return Response.status(Status.BAD_REQUEST).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, "*")
+					null, PHRQ310001);
+			return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, "*")
 					.build();
 		}
 	}
@@ -393,7 +394,7 @@ public class QualityService extends RestBase implements ServiceConstants, Framew
 				}
 			}
 		} catch (Exception e) {
-			return Response.status(Status.BAD_REQUEST).entity(null).header("Access-Control-Allow-Origin", "*").build();
+			return Response.status(Status.OK).entity(null).header("Access-Control-Allow-Origin", "*").build();
 		}
 
 		return Response.status(Status.OK).entity(connection_status).header("Access-Control-Allow-Origin", "*").build();
@@ -574,7 +575,7 @@ public class QualityService extends RestBase implements ServiceConstants, Framew
 				result.setTestReports(testSuitesResultMap);
 				createTestReportResult(testSuitesResultMap, result);
 				ResponseInfo<TestReportResult> finalOutput = responseDataEvaluation(responseDataAll, null,
-						TEST_CASES_LISTED_SUCCESSFULLY, result);
+						result, RESPONSE_STATUS_SUCCESS, PHRQ000002);
 				return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, "*")
 						.build();
 			} else {
@@ -583,7 +584,7 @@ public class QualityService extends RestBase implements ServiceConstants, Framew
 					testCases = getTestCases(appDirName, testSuites, testSuitePath, testCasePath);
 					if (CollectionUtils.isEmpty(testCases)) {
 						ResponseInfo<List<TestCase>> finalOutput = responseDataEvaluation(responseData, null,
-								TEST_CASE_NOT_AVAILABLE, testCases);
+								testCases, RESPONSE_STATUS_FAILURE, PHRQ010003);
 						return Response.status(Status.OK).entity(finalOutput)
 								.header(ACCESS_CONTROL_ALLOW_ORIGIN, "*").build();
 					} else {
@@ -595,15 +596,15 @@ public class QualityService extends RestBase implements ServiceConstants, Framew
 							}
 						}
 						ResponseInfo<List<TestCase>> finalOutput = responseDataEvaluation(responseData, null,
-								TEST_CASES_LISTED_SUCCESSFULLY, testCases);
+								testCases, RESPONSE_STATUS_SUCCESS, PHRQ000002);
 						return Response.status(Status.OK).entity(finalOutput)
 								.header(ACCESS_CONTROL_ALLOW_ORIGIN, "*").build();
 					}
 				}
 			}
 		} catch (PhrescoException e) {
-			ResponseInfo<List<TestCase>> finalOutput = responseDataEvaluation(responseData, e, TEST_CASES_LISTED_FAILED, null);
-			return Response.status(Status.BAD_REQUEST).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN,ALL_HEADER).build();
+			ResponseInfo<List<TestCase>> finalOutput = responseDataEvaluation(responseData, e, null, RESPONSE_STATUS_ERROR, PHRQ010004);
+			return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN,ALL_HEADER).build();
 		}
 		return null;
 	}
@@ -1447,12 +1448,12 @@ public class QualityService extends RestBase implements ServiceConstants, Framew
             performanceMap.put(DEVICES, devices);
             
 			ResponseInfo<Map> finalOutput = responseDataEvaluation(responseData, null,
-					PARAMETER_RETURNED_SUCCESSFULLY, performanceMap);
+					performanceMap, RESPONSE_STATUS_SUCCESS, PHRQ500001);
 			return Response.ok(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, "*").build();
 		} catch (Exception e) {
 			ResponseInfo<Map> finalOutput = responseDataEvaluation(responseData, e,
-					UNABLE_TO_GET_PERFORMANCE_TEST_RESULT_OPTIONS, null);
-			return Response.status(Status.BAD_REQUEST).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, "*")
+					null, RESPONSE_STATUS_ERROR, PHRQ510001);
+			return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, "*")
 					.build();
 		}
 	}
@@ -1477,16 +1478,16 @@ public class QualityService extends RestBase implements ServiceConstants, Framew
 				testResultFiles = testResultFiles(appDirName, testAgainsts, showDevice,
 						actionType);
 				ResponseInfo<List<String>> finalOutput = responseDataEvaluation(responseData, null,
-						TEST_RESULT_FILES_RETURNED_SUCCESSFULLY, testResultFiles);
+						testResultFiles, RESPONSE_STATUS_SUCCESS, PHRQ500002);
 				return Response.ok(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, "*").build();
 			}
 			ResponseInfo<List<String>> finalOutput = responseDataEvaluation(responseData, null,
-					TEST_NOT_YET_EXECUTED_FOR + testAgainsts.get(0), testResultFiles);
+					testResultFiles, RESPONSE_STATUS_FAILURE, PHRQ510002);
 			return Response.ok(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, "*").build();
 		} catch (PhrescoException e) {
 			ResponseInfo<List<String>> finalOutput = responseDataEvaluation(responseData, e,
-					TEST_RESULT_FILES_RETURNED_FAILED, null);
-			return Response.status(Status.BAD_REQUEST).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, "*")
+					null, RESPONSE_STATUS_ERROR, PHRQ510003);
+			return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, "*")
 					.build();
 		}
 	}
@@ -1505,12 +1506,12 @@ public class QualityService extends RestBase implements ServiceConstants, Framew
 			devices = QualityUtil.getDeviceNames(document);
 
 			ResponseInfo<List<String>> finalOutput = responseDataEvaluation(responseData, null,
-					DEVICES_RETURNED_SUCCESSFULLY, devices);
+					devices, RESPONSE_STATUS_SUCCESS, PHRQ500003);
 			return Response.ok(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, "*").build();
 		} catch (Exception e) {
 			ResponseInfo<List<String>> finalOutput = responseDataEvaluation(responseData, e,
-					DEVICES_RETURNED_FAILED, null);
-			return Response.status(Status.BAD_REQUEST).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, "*")
+					null, RESPONSE_STATUS_ERROR, PHRQ510004);
+			return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, "*")
 			.build();
 		}
 	}
@@ -1738,12 +1739,12 @@ public class QualityService extends RestBase implements ServiceConstants, Framew
             performanceResultInfo.setImages(screenShots);
             
             ResponseInfo<List<PerformanceTestResult>> finalOutput = responseDataEvaluation(responseData, null,
-					PARAMETER_RETURNED_SUCCESSFULLY, performanceResultInfo);
+					performanceResultInfo, RESPONSE_STATUS_SUCCESS, PHRQ500004);
 			return Response.ok(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, "*").build();
 		} catch (Exception e) {
 			ResponseInfo<List<PerformanceTestResult>> finalOutput = responseDataEvaluation(responseData, e,
-					UNABLE_TO_GET_PERFORMANCE_TEST_RESULTS, null);
-			return Response.status(Status.BAD_REQUEST).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, "*")
+					null, RESPONSE_STATUS_ERROR, PHRQ510005);
+			return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, "*")
 					.build();
 		}
     }
@@ -1830,12 +1831,12 @@ public class QualityService extends RestBase implements ServiceConstants, Framew
             loadMap.put(TEST_RESULT_FILES, testResultFiles);
             
 			ResponseInfo<List<String>> finalOutput = responseDataEvaluation(responseData, null,
-					PARAMETER_RETURNED_SUCCESSFULLY, loadMap);
+					loadMap, RESPONSE_STATUS_SUCCESS, PHRQ600001);
 			return Response.ok(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, "*").build();
 		} catch (Exception e) {
 			ResponseInfo<List<String>> finalOutput = responseDataEvaluation(responseData, e,
-					UNABLE_TO_GET_LOAD_TEST_RESULT_OPTIONS, null);
-			return Response.status(Status.BAD_REQUEST).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, "*")
+					null, RESPONSE_STATUS_ERROR, PHRQ610001);
+			return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, "*")
 					.build();
 		}
 	}
@@ -1888,12 +1889,12 @@ public class QualityService extends RestBase implements ServiceConstants, Framew
 			script.append("var flagData = '';");
 			script.append(SCRIPT_END);
 			ResponseInfo<List<String>> finalOutput = responseDataEvaluation(responseData, null,
-					PARAMETER_RETURNED_SUCCESSFULLY, testResults);
+					testResults, RESPONSE_STATUS_SUCCESS, PHRQ600002);
 			return Response.ok(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, "*").build();
 		} catch (Exception e) {
 			ResponseInfo<List<String>> finalOutput = responseDataEvaluation(responseData, e,
-					UNABLE_TO_GET_LOAD_TEST_REULTS, null);
-			return Response.status(Status.BAD_REQUEST).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, "*")
+					null, RESPONSE_STATUS_ERROR, PHRQ610002);
+			return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, "*")
 					.build();
 		}
 	}

@@ -49,6 +49,7 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 
 import com.photon.phresco.commons.FrameworkConstants;
+import com.photon.phresco.commons.ResponseCodes;
 import com.photon.phresco.commons.model.BuildInfo;
 import com.photon.phresco.commons.model.ProjectInfo;
 import com.photon.phresco.configuration.Configuration;
@@ -66,7 +67,7 @@ import com.sun.jersey.api.client.ClientResponse.Status;
  */
 @Path("/buildinfo")
 @SuppressWarnings({ "unchecked", "rawtypes" })
-public class BuildInfoService extends RestBase implements FrameworkConstants, ServiceConstants {
+public class BuildInfoService extends RestBase implements FrameworkConstants, ServiceConstants, ResponseCodes {
 	
 	/**
 	 * List of buildinfos.
@@ -86,18 +87,18 @@ public class BuildInfoService extends RestBase implements FrameworkConstants, Se
 			List<BuildInfo> builds = applicationManager.getBuildInfos(buildInfoFile);
 			if (CollectionUtils.isEmpty(builds)) {
 				ResponseInfo<List<BuildInfo>> finalOutput = responseDataEvaluation(responseData, null,
-						"No build available", null);
+						null, RESPONSE_STATUS_FAILURE, PHR710001);
 				return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*")
 						.build();
 			}
 			Collections.sort(builds, new BuildComparator());
 			ResponseInfo<List<BuildInfo>> finalOutput = responseDataEvaluation(responseData, null,
-					"Buildinfo listed Successfully", builds);
+					builds, RESPONSE_STATUS_SUCCESS, PHR700001);
 			return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
 		} catch (PhrescoException e) {
 			ResponseInfo<List<BuildInfo>> finalOutput = responseDataEvaluation(responseData, e,
-					"Buildinfo list Failed", null);
-			return Response.status(Status.NOT_FOUND).entity(finalOutput).header("Access-Control-Allow-Origin", "*")
+					null, RESPONSE_STATUS_ERROR, PHR710002);
+			return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*")
 					.build();
 		}
 	}
@@ -150,12 +151,12 @@ public class BuildInfoService extends RestBase implements FrameworkConstants, Se
 			}
 			return Response.status(Status.OK).entity(fileInputStream).header("Content-Disposition", "attachment; filename=" + fileName).build();
 		} catch (FileNotFoundException e) {
-			ResponseInfo finalOutput = responseDataEvaluation(responseData, e, "Zip Download Failed", null);
-			return Response.status(Status.NOT_FOUND).entity(finalOutput).header("Access-Control-Allow-Origin", "*")
+			ResponseInfo finalOutput = responseDataEvaluation(responseData, e, null, RESPONSE_STATUS_ERROR, PHR710003);
+			return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*")
 					.build();
 		} catch (PhrescoException e) {
-			ResponseInfo finalOutput = responseDataEvaluation(responseData, e, "Zip Download Failed", null);
-			return Response.status(Status.NOT_FOUND).entity(finalOutput).header("Access-Control-Allow-Origin", "*")
+			ResponseInfo finalOutput = responseDataEvaluation(responseData, e, null, RESPONSE_STATUS_ERROR, PHR710011);
+			return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*")
 					.build();
 		}
 	}
@@ -186,11 +187,11 @@ public class BuildInfoService extends RestBase implements FrameworkConstants, Se
 			ApplicationManager applicationManager = PhrescoFrameworkFactory.getApplicationManager();
 			applicationManager.deleteBuildInfos(project, buildInts);
 		} catch (PhrescoException e) {
-			ResponseInfo finalOutput = responseDataEvaluation(responseData, e, "Deletion of build Failed", null);
-			return Response.status(Status.NOT_FOUND).entity(finalOutput).header("Access-Control-Allow-Origin", "*")
+			ResponseInfo finalOutput = responseDataEvaluation(responseData, e, null, RESPONSE_STATUS_ERROR, PHR710004);
+			return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*")
 					.build();
 		}
-		ResponseInfo finalOutput = responseDataEvaluation(responseData, null, "Build deleted Successfully", null);
+		ResponseInfo finalOutput = responseDataEvaluation(responseData, null, null, RESPONSE_STATUS_SUCCESS, PHR700002);
 		return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
 	}
 
@@ -205,7 +206,7 @@ public class BuildInfoService extends RestBase implements FrameworkConstants, Se
 			File configurationInfo = new File(getDotPhrescoFolder(appDirName)+ File.separator + PHRESCO_ENV_CONFIG_FILE_NAME);
 			File runAgainsSourceInfo = new File(getDotPhrescoFolder(appDirName)+ File.separator + RUNAGNSRC_INFO_FILE);
 			if (!runAgainsSourceInfo.exists()) {
-			ResponseInfo<Boolean> finalOutput = responseDataEvaluation(responseData, null, "Run against source not yet performed", connectionAlive);
+			ResponseInfo<Boolean> finalOutput = responseDataEvaluation(responseData, null, connectionAlive, RESPONSE_STATUS_FAILURE, PHR710005);
 			return Response.status(Response.Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
 			}
 				FileReader readers = new FileReader(runAgainsSourceInfo);
@@ -223,16 +224,16 @@ public class BuildInfoService extends RestBase implements FrameworkConstants, Se
 				}
 			connectionAlive = isConnectionAlive(protocol, host, Integer.parseInt(port));
 			if (connectionAlive) {
-				ResponseInfo<Boolean> finalOutput = responseDataEvaluation(responseData, null, "Connection Alive", connectionAlive);
+				ResponseInfo<Boolean> finalOutput = responseDataEvaluation(responseData, null, connectionAlive, RESPONSE_STATUS_SUCCESS, PHR700003);
 				return Response.status(Response.Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
 			} else {
-				ResponseInfo<Boolean> finalOutput = responseDataEvaluation(responseData, null, "Connection Not Alive", connectionAlive);
+				ResponseInfo<Boolean> finalOutput = responseDataEvaluation(responseData, null, connectionAlive, RESPONSE_STATUS_ERROR, PHR710006);
 				return Response.status(Response.Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
 			}
 
 		} catch (Exception e) {
-			ResponseInfo<Boolean> finalOutput = responseDataEvaluation(responseData, e, "runagainstsource.info File or  Not found error", null);
-			return Response.status(Response.Status.BAD_REQUEST).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
+			ResponseInfo<Boolean> finalOutput = responseDataEvaluation(responseData, e, null, RESPONSE_STATUS_ERROR, PHR710007);
+			return Response.status(Response.Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
 		}
 	}
 

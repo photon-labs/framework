@@ -148,10 +148,7 @@ define(["ci/listener/ciListener", "lib/jquery-tojson-1.0"], function() {
 
 		pageRefresh: function() {
 			var self = this;
-			self.ciListener.listJobTemplate(self.ciListener.getRequestHeader(self.ciRequestBody, "list"), function(response) {
-				self.data.jobTemplates = response.data;
-				self.loadPage();		
-			});
+			self.loadPage();	
 		},
 
 		getAction : function(ciRequestBody, action, param, callback) {
@@ -165,7 +162,13 @@ define(["ci/listener/ciListener", "lib/jquery-tojson-1.0"], function() {
 					callback(response);
 				} else {
 					// For add, update and delete
-					self.pageRefresh();
+					if(response.data !== false) {
+						self.pageRefresh();
+					} else if(response.data === false) {
+						$(".blinkmsg").removeClass("popsuccess").addClass("poperror");
+						self.effectFadeOut('poperror', (''));
+						$(".poperror").text(response.message);
+					}
 				}
 			});	
 		},

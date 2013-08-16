@@ -42,6 +42,9 @@ import org.apache.commons.lang.StringUtils;
 
 import com.photon.phresco.api.ConfigManager;
 import com.photon.phresco.commons.model.ApplicationInfo;
+import com.photon.phresco.commons.model.CIJob;
+import com.photon.phresco.commons.model.ContinuousDelivery;
+import com.photon.phresco.commons.model.ProjectDelivery;
 import com.photon.phresco.configuration.Environment;
 import com.photon.phresco.exception.ConfigurationException;
 import com.photon.phresco.exception.PhrescoException;
@@ -51,6 +54,7 @@ import com.photon.phresco.commons.model.CIJobTemplate;
 import com.photon.phresco.framework.rest.api.util.FrameworkServiceUtil;
 import com.photon.phresco.impl.ConfigManagerImpl;
 import com.photon.phresco.util.ServiceConstants;
+import com.photon.phresco.util.Utility;
 import com.sun.jersey.api.client.ClientResponse.Status;
 
 /**
@@ -216,22 +220,77 @@ public class CIJobTemplateService extends RestBase implements ServiceConstants {
 		try {
 			CIJobTemplate ciJobTemplate = null;
 			CIManager ciManager = PhrescoFrameworkFactory.getCIManager();
-			boolean deleteJobTemplate = ciManager.deleteJobTemplate(name, projId);
-			if (deleteJobTemplate) {
+			List<CIJobTemplate> jobTemplates = ciManager.getJobTemplates();
+			boolean validate = validate(name, jobTemplates, projId);
+			if(validate) {
+				boolean deleteJobTemplate = ciManager.deleteJobTemplate(name, projId);
+				if (deleteJobTemplate) {
+					ResponseInfo<CIJobTemplate> finalOutput = responseDataEvaluation(responseData, null,
+							"Job Template deleted successfully", ciJobTemplate);
+					return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*")
+							.build();
+				}
 				ResponseInfo<CIJobTemplate> finalOutput = responseDataEvaluation(responseData, null,
-						"Job Template deleted successfully", ciJobTemplate);
-				return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*")
-						.build();
+						"Job Templates deletion failed", ciJobTemplate);
+				return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
+			} else {
+				ResponseInfo<CIJobTemplate> finalOutput = responseDataEvaluation(responseData, null,
+						"Job is created using "+ name +" Template", validate);
+				return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
 			}
-			ResponseInfo<CIJobTemplate> finalOutput = responseDataEvaluation(responseData, null,
-					"Job Templates deletion failed", ciJobTemplate);
-			return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
 		} catch (Exception e) {
 			ResponseInfo<CIJobTemplate> finalOutput = responseDataEvaluation(responseData, e,
 					"Job Templates deletion failed", null);
 			return Response.status(Status.EXPECTATION_FAILED).entity(finalOutput).header("Access-Control-Allow-Origin",
 					"*").build();
 		}
+	}
+
+	private boolean validate(String name, List<CIJobTemplate> jobTemplates, String projId) throws PhrescoException {
+		CIJobTemplate jobTemplate = new CIJobTemplate();
+		for (CIJobTemplate ciJobTemplate2 : jobTemplates) {
+			if(ciJobTemplate2.getName().equals(name)) {
+				jobTemplate = ciJobTemplate2;
+			}
+		}
+		CIManager ciManager = PhrescoFrameworkFactory.getCIManager();
+		List<ProjectDelivery> projectDeliveries = ciManager.getCiJobInfo(null);
+		if (CollectionUtils.isNotEmpty(projectDeliveries)) {
+			ProjectDelivery projectDelivery = Utility.getProjectDelivery(projId, projectDeliveries);
+			if (projectDelivery != null) {
+				List<ContinuousDelivery> continuousDeliveries = projectDelivery.getContinuousDeliveries();
+				if (CollectionUtils.isNotEmpty(continuousDeliveries)) {
+					for (ContinuousDelivery continuousDelivery : continuousDeliveries) {
+						List<CIJob> jobs = continuousDelivery.getJobs();
+						for (CIJob ciJob : jobs) {
+							if(ciJob.getTemplateName().equals(name)) {
+								return false;
+							}
+						}
+					}
+				}
+			}
+		}
+		
+		List<String> appIds = jobTemplate.getAppIds();
+		for (String appId : appIds) {
+			List<ProjectDelivery> ciJobInfo = ciManager.getCiJobInfo(appId);
+			if (CollectionUtils.isNotEmpty(ciJobInfo)) {
+				ProjectDelivery appDelivery = Utility.getProjectDelivery(projId, ciJobInfo);
+				if (appDelivery != null) {
+					List<ContinuousDelivery> continuousDelivery = appDelivery.getContinuousDeliveries();
+					for (ContinuousDelivery cd : continuousDelivery) {
+						List<CIJob> jobs = cd.getJobs();
+						for (CIJob ciJob : jobs) {
+							if(ciJob.getTemplateName().equals(name)) {
+								return false;
+							}
+						}
+					}
+				}
+			}
+		}
+		return true;
 	}
 
 	/**

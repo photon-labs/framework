@@ -32,7 +32,7 @@ public class UnitServiceTest extends RestBaseTest {
 	public void testUnitTestReportOptionWithoutDirName() throws PhrescoException, IOException {
 		Response response = service.unit("", userId);
 		ResponseInfo<List<String>> responseInfo = (ResponseInfo<List<String>>) response.getEntity();
-		Assert.assertEquals(400, response.getStatus());
+		Assert.assertEquals(200, response.getStatus());
 	}
 	
 	@Test
@@ -117,7 +117,7 @@ public class UnitServiceTest extends RestBaseTest {
 	public void testGetTestSuitesWithOutAppDir() throws PhrescoException, IOException {
 		Response response = service.getTestSuites("", "unit", "java", "");
 		ResponseInfo<List<String>> responseInfo =  (ResponseInfo<List<String>>) response.getEntity();
-		Assert.assertEquals(400, response.getStatus() );
+		Assert.assertEquals(200, response.getStatus() );
 	}
 
 	
@@ -133,7 +133,7 @@ public class UnitServiceTest extends RestBaseTest {
 	public void testGetTestSuitesWithOutTestReport() throws PhrescoException, IOException {
 		Response response = service.getTestSuites(appDirName, "unit", "", "");
 		ResponseInfo<List<String>> responseInfo =  (ResponseInfo<List<String>>) response.getEntity();
-		Assert.assertEquals(400, response.getStatus() );
+		Assert.assertEquals(200, response.getStatus() );
 	}
 	
 	

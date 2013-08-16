@@ -14,8 +14,7 @@
      	{{#if projectDelivery.continuousDeliveries}}
      		{{#each projectDelivery.continuousDeliveries}}
     	<div class="widget_testing" name="{{name}}">
-        		<h4>{{name}} 
-        		<span style="float: none;">[ {{envName}} ]</span> 
+        		<h4>{{name}}-[ {{envName}} ]
                 	
                 	<span class="aliveOpts">
                     	<a temp="clone" name="{{name}}" class="clone_popup" title="" data-placement="bottom" data-toggle="tooltip" href="#" data-original-title="clone">
@@ -97,6 +96,8 @@
        
         {{/each}}
         	           {{/each}}
+        	 {{else}}
+            <div class="alert alert-block" style="text-align: center; margin: auto 0;" data-i18n="ci.cdjobsnotavailable"></div>
           {{/if}} 
         {{else}}
             <div class="alert alert-block" style="text-align: center; margin: auto 0;" data-i18n="ci.cdjobsnotavailable"></div>
