@@ -97,17 +97,32 @@ define([], function() {
 				//commonVariables.loadingScreen.showLoading();
 				commonVariables.api.ajaxRequest(header,
 						function(response) {
-					if (response !== null) {
+					if (response !== null && (response.status !== "error" || response.status !== "failure")) {
 						//commonVariables.loadingScreen.removeLoading();
 						callback(response);
 					} else {
 						//self.loadingScreen.removeLoading();
-						callback({"status" : "service failure"});
+						$(".content_end").show();
+						$(".msgdisplay").removeClass("success").addClass("error");
+						$(".error").attr('data-i18n', 'errorCodes.' + response.responseCode);
+						self.renderlocales(commonVariables.contentPlaceholder);	
+						$(".error").fadeIn(500).fadeOut(500).fadeIn(500).fadeOut(500).fadeIn(500).fadeOut(5);
+						setTimeout(function() {
+							$(".content_end").hide();
+						},2500);
 					}
 				},
 
 				function(textStatus) {
 					//commonVariables.loadingScreen.removeLoading();
+					$(".content_end").show();
+					$(".msgdisplay").removeClass("success").addClass("error");
+					$(".error").attr('data-i18n', 'commonlabel.errormessage.serviceerror');
+					self.renderlocales(commonVariables.contentPlaceholder);		
+					$(".error").fadeIn(500).fadeOut(500).fadeIn(500).fadeOut(500).fadeIn(500).fadeOut(5);
+					setTimeout(function() {
+						$(".content_end").hide();
+					},2500);
 				}
 				);
 			} catch(exception) {

@@ -2,7 +2,7 @@ define([], function() {
 
 	Clazz.createPackage("com.components.mavenService.js.listener");
 
-	Clazz.com.components.mavenService.js.listener.MavenServiceListener = Clazz.extend(Clazz.Widget, {
+	Clazz.com.components.mavenService.js.listener.MavenServiceListener = Clazz.extend(Clazz.WidgetWithTemplate, {
 		localStorageAPI : null,
 		//self : this,
 		/***
@@ -146,11 +146,21 @@ define([], function() {
 								callback(response);
 							}else if(response.status === 'COMPLETED'){
 								callback(response);
-							}else if(response.status === 'ERROR'){
+							}else if(response.status === 'error'){
 								$(divId).append('<font style = "color:red">' + response.service_exception + '</font><br>');
 								callback(response.service_exception);
-							}else if(response.status === 'SUCCESS'){
+							}else if(response.status === 'success'){
 								callback(response.connectionAlive);
+							}else if(response.status === 'failure'){
+								$(".content_end").show();
+								$(".msgdisplay").removeClass("success").addClass("error");
+								$(".error").attr('data-i18n', 'errorCodes.' + response.responseCode);
+								self.renderlocales(commonVariables.contentPlaceholder);	
+								$(".error").fadeIn(500).fadeOut(500).fadeIn(500).fadeOut(500).fadeIn(500).fadeOut(5);
+								setTimeout(function() {
+									$(".content_end").hide();
+								},2500); 
+				
 							}else if(response.status === null){
 								callback(response);
 							}
@@ -158,12 +168,27 @@ define([], function() {
 							//$(divId).mCustomScrollbar("update");
 						}else {
 							commonVariables.loadingScreen.removeLoading();
+							$(".content_end").show();
+							$(".msgdisplay").removeClass("success").addClass("error");
+							$(".error").attr('data-i18n', 'errorCodes.' + response.responseCode);
+							self.renderlocales(commonVariables.contentPlaceholder);	
+							$(".error").fadeIn(500).fadeOut(500).fadeIn(500).fadeOut(500).fadeIn(500).fadeOut(5);
+							setTimeout(function() {
+								$(".content_end").hide();
+							},2500);
 							callback(false);
 						}
 					}, 
 					function(serviceerror){
 						commonVariables.loadingScreen.removeLoading();
-						callback('Service Connection Exception');
+						$(".content_end").show();
+						$(".msgdisplay").removeClass("success").addClass("error");
+						$(".error").attr('data-i18n', 'commonlabel.errormessage.serviceerror');
+						self.renderlocales(commonVariables.contentPlaceholder);	
+						$(".error").fadeIn(500).fadeOut(500).fadeIn(500).fadeOut(500).fadeIn(500).fadeOut(5);
+						setTimeout(function() {
+							$(".content_end").hide();
+						},2500);
 					});
 			}catch(exception){
 				//Exception
@@ -204,11 +229,11 @@ define([], function() {
 								}
 							}else if(response.status === 'COMPLETED'){
 								callback(response);
-							}else if(response.status === 'ERROR'){
+							}else if(response.status === 'error'){
 								$(divId).append('<font style = "color:red">' + data.service_exception + '</font><br>');
 								$('.progress_loading').css('display','none');
 								callback(response);
-							}else if(response.status === 'SUCCESS'){
+							}else if(response.status === 'success'){
 								$('.progress_loading').css('display','none');
 								callback(response);
 							}else if(response.status === null){
@@ -219,11 +244,27 @@ define([], function() {
 							//$(divId).mCustomScrollbar("update");
 						}else {
 							$('.progress_loading').css('display','none');
+							$(".content_end").show();
+							$(".msgdisplay").removeClass("success").addClass("error");
+							$(".error").attr('data-i18n', 'errorCodes.' + response.responseCode);
+							self.renderlocales(commonVariables.contentPlaceholder);	
+							$(".error").fadeIn(500).fadeOut(500).fadeIn(500).fadeOut(500).fadeIn(500).fadeOut(5);
+							setTimeout(function() {
+								$(".content_end").hide();
+							},2500);
 							callback(response);
 						}
 					}, 
 					function(serviceerror){
 						$('.progress_loading').css('display','none');
+						$(".content_end").show();
+						$(".msgdisplay").removeClass("success").addClass("error");
+						$(".error").attr('data-i18n', 'commonlabel.errormessage.serviceerror');
+						self.renderlocales(commonVariables.contentPlaceholder);	
+						$(".error").fadeIn(500).fadeOut(500).fadeIn(500).fadeOut(500).fadeIn(500).fadeOut(5);
+						setTimeout(function() {
+							$(".content_end").hide();
+						},2500);
 					});
 			}catch(exception){
 				$('.progress_loading').css('display','none');

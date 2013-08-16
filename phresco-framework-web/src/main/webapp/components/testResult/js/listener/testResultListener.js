@@ -517,11 +517,18 @@ define(['lib/RGraph_common_core-1.0','lib/RGraph_common_tooltips-1.0','lib/RGrap
 			try {
 				commonVariables.api.ajaxRequest(header,
 					function(response) {
-						if (response !== null) {
+						if (response !== null && (response.status !== "error" || response.status !== "failure")) {
 							callback(response);
 						} else {
 							//commonVariables.loadingScreen.removeLoading();
-							callback({ "status" : "service failure"});
+							$(".content_end").show();
+							$(".msgdisplay").removeClass("success").addClass("error");
+							$(".error").attr('data-i18n', 'errorCodes.' + response.responseCode);
+							self.renderlocales(commonVariables.contentPlaceholder);	
+							$(".error").fadeIn(500).fadeOut(500).fadeIn(500).fadeOut(500).fadeIn(500).fadeOut(5);
+							setTimeout(function() {
+								$(".content_end").hide();
+							},2500);
 						}
 					}
 				);

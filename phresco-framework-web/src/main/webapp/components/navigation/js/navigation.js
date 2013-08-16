@@ -107,11 +107,16 @@ define(["navigation/listener/navigationListener"], function() {
 				$('#qualityMenu').addClass("act");
 				self.onMytabEvent.dispatch(this.id);
 			});
-			
+			var counter = 0;
 			$("#importApp").click(function() {
 				var currentPrjName = "";
-				$('#importUserName').val(data.id);
-				$('#importPassword').val(data.password);
+				if(counter === 1) {
+					$('#importUserName').val('');
+					$('#importPassword').val('');
+				} else {				
+					$('#importUserName').val(data.id);
+					$('#importPassword').val(data.password);
+				}
 				$("#importRepourl").val("");
 				$("#importRepourl").removeClass("errormessage");
 				$("#importUserName").removeClass("errormessage");
@@ -128,7 +133,7 @@ define(["navigation/listener/navigationListener"], function() {
 				self.navigationListener.validateTextBox($("#testImportUserName"),"");
 				self.navigationListener.validateTextBox($("#testImportPassword"),"");
 				self.navigationListener.validateTextBox($("#testRepoUrl"),"");
-
+				counter = 1;
 				self.opencc(this, "project_list_import", currentPrjName);
 			});
 			

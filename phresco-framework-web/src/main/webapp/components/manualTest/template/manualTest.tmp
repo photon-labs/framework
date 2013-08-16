@@ -170,3 +170,6 @@
 </section>
 
 <div class="mainContent manualTemp" id="testResult"></div>
+<section class="content_end" style="display:none;">
+	<div class="msgdisplay"></div>
+</section>

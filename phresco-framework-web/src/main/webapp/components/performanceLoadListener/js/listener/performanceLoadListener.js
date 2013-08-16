@@ -124,7 +124,14 @@ define(["lib/jquery-tojson-1.0",'lib/RGraph_common_core-1.0','lib/RGraph_common_
 					}
 				},
 				function(textStatus){
-					callback({"status" : "service failure"});
+					$(".content_end").show();
+					$(".msgdisplay").removeClass("success").addClass("error");
+					$(".error").attr('data-i18n', 'commonlabel.errormessage.serviceerror');
+					self.renderlocales(commonVariables.contentPlaceholder);		
+					$(".error").fadeIn(500).fadeOut(500).fadeIn(500).fadeOut(500).fadeIn(500).fadeOut(5);
+					setTimeout(function() {
+						$(".content_end").hide();
+					},2500);
 				});
 			} catch (exception) {
 			}
@@ -342,8 +349,8 @@ define(["lib/jquery-tojson-1.0",'lib/RGraph_common_core-1.0','lib/RGraph_common_
 					self.setResponseTime();
 					self.fileNameChangeEvent(whereToRender);
 					self.getResultOnChangeEvent(testAgainst, response.data[0], '', '', whereToRender);
-				} else if (!self.isBlank(response.message)) {
-					self.showErrorAndHideControls(response.message);
+				} else if (response.status === "error" || response.status === "failure") {
+					self.showErrorAndHideControls(response.responseCode);
 				}
 			});
 		},
@@ -434,7 +441,8 @@ define(["lib/jquery-tojson-1.0",'lib/RGraph_common_core-1.0','lib/RGraph_common_
 
 		showErrorAndHideControls : function (errorMessage) {
 			$('.perfError').show();
-			$('.perfError').text(errorMessage);
+			$(".perfError").attr('data-i18n', 'errorCodes.' + errorCode);
+			self.renderlocales(commonVariables.contentPlaceholder);
 			$('.testResultDropdown').hide();
 			$('.testResultDiv').hide();
 			$('.performanceView').hide();
@@ -474,7 +482,7 @@ define(["lib/jquery-tojson-1.0",'lib/RGraph_common_core-1.0','lib/RGraph_common_
 			}
 
 			self.getTestResults(self.getActionHeader(reqData, "getTestResultsOnChange"), function(response) {
-				if(response.message === "Parameter returned successfully"){
+				if(response.responseCode === "PHRQ500001" || response.responseCode === "PHRQ500004"){
 					var resultData = response.data;
 					self.constructResultTable(resultData, whereToRender);
 					self.drawChart(resultData);
@@ -505,7 +513,7 @@ define(["lib/jquery-tojson-1.0",'lib/RGraph_common_core-1.0','lib/RGraph_common_
 			}
 
 			self.performAction(self.getActionHeader(reqData, "getDevices"), function(response) {
-				if (response.message === "Devices returned successfully") {
+				if (response.responseCode === "PHRQ500003") {
 					$("#deviceDropDown").attr("value", response.data[0].split("#SEP#")[0]);
 					$("#deviceDropDown").html(response.data[0].split("#SEP#")[1] + '<b class="caret"></b>');
 					var returnVal = "";
@@ -526,11 +534,25 @@ define(["lib/jquery-tojson-1.0",'lib/RGraph_common_core-1.0','lib/RGraph_common_
 					if (response !== null) {
 						callback(response);
 					} else {
-						callback({"status" : "service failure"});
+						$(".content_end").show();
+						$(".msgdisplay").removeClass("success").addClass("error");
+						$(".error").attr('data-i18n', 'errorCodes.' + response.responseCode);
+						self.renderlocales(commonVariables.contentPlaceholder);	
+						$(".error").fadeIn(500).fadeOut(500).fadeIn(500).fadeOut(500).fadeIn(500).fadeOut(5);
+						setTimeout(function() {
+							$(".content_end").hide();
+						},2500);
 					}
 				},
 				function(textStatus){
-					callback({"status" : "service failure"});
+					$(".content_end").show();
+					$(".msgdisplay").removeClass("success").addClass("error");
+					$(".error").attr('data-i18n', 'commonlabel.errormessage.serviceerror');
+					self.renderlocales(commonVariables.contentPlaceholder);		
+					$(".error").fadeIn(500).fadeOut(500).fadeIn(500).fadeOut(500).fadeIn(500).fadeOut(5);
+					setTimeout(function() {
+						$(".content_end").hide();
+					},2500);
 				}
 				);
 			} catch (exception) {
@@ -545,11 +567,25 @@ define(["lib/jquery-tojson-1.0",'lib/RGraph_common_core-1.0','lib/RGraph_common_
 					if (response !== null) {
 						callback(response);
 					} else {
-						callback({"status" : "service failure"});
+						$(".content_end").show();
+						$(".msgdisplay").removeClass("success").addClass("error");
+						$(".error").attr('data-i18n', 'errorCodes.' + response.responseCode);
+						self.renderlocales(commonVariables.contentPlaceholder);	
+						$(".error").fadeIn(500).fadeOut(500).fadeIn(500).fadeOut(500).fadeIn(500).fadeOut(5);
+						setTimeout(function() {
+							$(".content_end").hide();
+						},2500);
 					}
 				},
 				function(textStatus){
-					callback({"status" : "service failure"});
+					$(".content_end").show();
+					$(".msgdisplay").removeClass("success").addClass("error");
+					$(".error").attr('data-i18n', 'commonlabel.errormessage.serviceerror');
+					self.renderlocales(commonVariables.contentPlaceholder);		
+					$(".error").fadeIn(500).fadeOut(500).fadeIn(500).fadeOut(500).fadeIn(500).fadeOut(5);
+					setTimeout(function() {
+						$(".content_end").hide();
+					},2500);
 				}
 				);
 			} catch (exception) {

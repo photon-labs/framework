@@ -167,10 +167,16 @@ define(["build/listener/buildListener"], function() {
 			});
 		},
 		
-		showErrorPopUp : function(configErrorMsg){
+		showErrorPopUp : function(responseCode){
 			var self = this;
-			$(".blinkmsg").removeClass("popsuccess").addClass("poperror");
-			self.effectFadeOut('poperror', configErrorMsg);
+			$(".content_end").show();
+			$(".msgdisplay").removeClass("success").addClass("error");
+			$(".error").attr('data-i18n', 'errorCodes.' + responseCode);
+			self.renderlocales(commonVariables.contentPlaceholder);	
+			$(".error").fadeIn(500).fadeOut(500).fadeIn(500).fadeOut(500).fadeIn(500).fadeOut(5);
+			setTimeout(function() {
+				$(".content_end").hide();
+			},2500);
 		},
 		
 		sqlQueryParam : function(ststus, control, callback){
@@ -343,7 +349,7 @@ define(["build/listener/buildListener"], function() {
 							//self.setConsoleScrollbar(false);
 							if(response !== null && response.errorFound === true){
 								$(current).closest('tr').find('form[name=deployForm]').show();
-								self.showErrorPopUp(response.configErrorMsg);
+								self.showErrorPopUp(response.responseCode);
 							}
 						});
 					});
@@ -380,7 +386,7 @@ define(["build/listener/buildListener"], function() {
 					//self.setConsoleScrollbar(false);
 					if(response !== null && response.errorFound === true){
 						$(current).closest('tr').find('form[name=deployForm]').show();
-						self.showErrorPopUp(response.configErrorMsg);
+						self.showErrorPopUp(response.responseCode);
 					}
 				});
 			});
@@ -397,7 +403,7 @@ define(["build/listener/buildListener"], function() {
 				var current = this, divId = $(this).closest('tr').find('td:eq(0)').text();
 				self.clearLogContent();
 				self.onDeleteEvent.dispatch(divId, function(response){
-					if(response.message === "Build deleted Successfully"){
+					if(response.responseCode === "PHR700002"){
 						$(current).closest('tr').remove();
 
 						if($("#buildRow tbody tr").length < 1){
@@ -405,6 +411,15 @@ define(["build/listener/buildListener"], function() {
 							$('.qual_unit_main').html('<div class="alert" style="text-align: center;" data-i18n="build.label.nodata"></div>');
 							self.renderlocales(commonVariables.contentPlaceholder);
 						}
+						
+						$(".content_end").show();
+						$(".msgdisplay").removeClass("error").addClass("success");
+						$(".success").attr('data-i18n', 'successCodes.' + response.responseCode);
+						self.renderlocales(commonVariables.contentPlaceholder);	
+						$(".success").fadeIn(500).fadeOut(500).fadeIn(500).fadeOut(500).fadeIn(500).fadeOut(5);
+						setTimeout(function() {
+							$(".content_end").hide();
+						},2500);
 					}
 				});
 			});
@@ -443,7 +458,7 @@ define(["build/listener/buildListener"], function() {
 				if(response !== null && response.errorFound === true){
 					$('.alert_div').hide();
 					self.closeConsole();
-					self.showErrorPopUp(response.configErrorMsg);
+					self.showErrorPopUp(response.responseCode);
 				}else if(response !== null && response.errorFound === false){
 					self.refreshContent(true);
 				}
@@ -508,7 +523,7 @@ define(["build/listener/buildListener"], function() {
 					if(response !== null && response.errorFound === true) {
 						self.closeConsole();
 						$("form[name=runAgainstForm] #build_runagsource").show();
-						self.showErrorPopUp(response.configErrorMsg);
+						self.showErrorPopUp(response.responseCode);
 					}else if(response !== null && response.errorFound === false) { 	
 						self.runAgainSourceStatus();
 					}
@@ -577,7 +592,7 @@ define(["build/listener/buildListener"], function() {
 						$('.alert_div').hide();
 						self.closeConsole();
 						$("form[name=buildForm] #build_genbuild").show();
-						self.showErrorPopUp(response.configErrorMsg);
+						self.showErrorPopUp(response.responseCode);
 					}else if(response !== null && response.errorFound === false) {
 						self.refreshContent(true);
 					}

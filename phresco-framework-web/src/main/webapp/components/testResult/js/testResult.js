@@ -97,7 +97,7 @@ define(["testResult/listener/testResultListener"], function() {
 				} else {
 					data.testSuites = response.data;
 				}
-				data.message = response.message;
+				//data.message = response.message;
 				commonVariables.testSuites = response.data;
 				renderFunction(data, $('#testResult div.widget-maincontent-div'));
 				//commonVariables.loadingScreen.removeLoading();
@@ -116,8 +116,12 @@ define(["testResult/listener/testResultListener"], function() {
 					$('#pdfDiv').show();
 				} else {
 					setTimeout(function() {
-						var noReportContent = '<div class="alert alert-block" style="text-align: center; margin: auto 0;">' + response.message + '</div>';
+						var noReportContent = '<div class="alert alert-block" style="text-align: center; margin: auto 0;"></div>';
+						$(".alert").attr('data-i18n', 'errorCodes.' + response.responseCode);
+						self.renderlocales(commonVariables.contentPlaceholder);
 						$('#graphView').html(noReportContent);
+						$('.alert').attr('data-i18n', 'errorCodes.' + response.responseCode);
+						self.renderlocales(commonVariables.contentPlaceholder);
 					}, 400);
 					$('#pdfDiv').hide();
 				}

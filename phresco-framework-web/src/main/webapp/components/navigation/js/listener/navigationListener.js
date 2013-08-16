@@ -719,22 +719,39 @@ define([], function() {
 				commonVariables.api.ajaxRequest(header,
 					function(response) {
 						//commonVariables.loadingScreen.removeLoading();
-						if (response !== null ) {
-							if(self.act==='importpost') {
-								$(".blinkmsg").removeClass("poperror").addClass("popsuccess");
-								self.effectFadeOut('popsuccess', (response.message));
+						if (response !== null && response.status !== "error" && response.status !== "failure") {
+							if(response.responseCode === "PHR200017") {
+								$(".content_end").show();
+								$(".msgdisplay").removeClass("error").addClass("success");
+								$(".success").attr('data-i18n', 'successCodes.' + response.responseCode);
+								self.renderlocales(commonVariables.contentPlaceholder);	
+								$(".success").fadeIn(500).fadeOut(500).fadeIn(500).fadeOut(500).fadeIn(500).fadeOut(5);
+								setTimeout(function() {
+									$(".content_end").hide();
+								},2500);
 							}
 							callback(response);						
 						} else {
-							callback({ "status" : "service failure"});
+							$(".content_end").show();
+							$(".msgdisplay").removeClass("success").addClass("error");
+							$(".error").attr('data-i18n', 'errorCodes.' + response.responseCode);
+							self.renderlocales(commonVariables.contentPlaceholder);	
+							$(".error").fadeIn(500).fadeOut(500).fadeIn(500).fadeOut(500).fadeIn(500).fadeOut(5);
+							setTimeout(function() {
+								$(".content_end").hide();
+							},2500);
 						}
 					},
 					function(textStatus) {
 						//commonVariables.loadingScreen.removeLoading();
-						if(self.act==='importpost') {
-						$(".blinkmsg").removeClass("popsuccess").addClass("poperror");
-						self.effectFadeOut('poperror', 'Project Import failed');
-						}
+						$(".content_end").show();
+						$(".msgdisplay").removeClass("success").addClass("error");
+						$(".error").attr('data-i18n', 'commonlabel.errormessage.serviceerror');
+						self.renderlocales(commonVariables.contentPlaceholder);	
+						$(".error").fadeIn(500).fadeOut(500).fadeIn(500).fadeOut(500).fadeIn(500).fadeOut(5);
+						setTimeout(function() {
+							$(".content_end").hide();
+						},2500);			
 					}
 				);
 			} catch(exception) {
@@ -858,7 +875,7 @@ define([], function() {
 					$("#project_list_import").hide();	
 					self.getMyObj(commonVariables.projectlist, function(returnVal){
 						self.projectlist = returnVal;
-						Clazz.navigationController.push(self.projectlist, commonVaraibles.animation);
+						Clazz.navigationController.push(self.projectlist, commonVariables.animation);
 					});
 				}
 			});
