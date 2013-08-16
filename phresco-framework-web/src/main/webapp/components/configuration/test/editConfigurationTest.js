@@ -217,7 +217,6 @@ define(["configuration/editConfiguration"], function(EditConfiguration) {
 			
 			setTimeout(function() {
 				start();
-				console.info('value..', $(commonVariables.contentPlaceholder));
 				equal($(commonVariables.contentPlaceholder).find(".inactive").text(), "In Active", "Server In Active Event Tested");
 				self.removeConfiguration(editConfiguration);
 			}, 1500);

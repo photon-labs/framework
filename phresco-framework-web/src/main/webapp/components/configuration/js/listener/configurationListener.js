@@ -598,6 +598,7 @@ define(["croneExpression/croneExpression"], function() {
 				val.port = $("input[configKey=configKeyServerport]").val();
 				self.configRequestBody = val;
 				self.getConfigurationList(self.getRequestHeader(self.configRequestBody, "certificate", ''), function(response) {
+					$("#certificateValue").css("height", "250px");
 					$("#certificateValue").html('');
 					if(response.data !== null) {
 						disName = response.data.certificates[0].displayName.split(",");
@@ -624,7 +625,6 @@ define(["croneExpression/croneExpression"], function() {
 										$("#certificateValue").append(temptree);
 										self.treeclickEvent();	
 										self.popupforTree(current, $(current).attr('name'));
-										$("#certificateValue").css("height", "250px");
 										$("#certificateValue").mCustomScrollbar({
 											autoHideScrollbar:true,
 											theme:"light-thin",

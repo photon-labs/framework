@@ -117,10 +117,10 @@ define(["features/features",  "application/application",  "projectlist/projectLi
 				commonVariables.api.ajaxRequest(header,
 					function(response) {
 						if (response !== null && response.status !== "error" && response.status !== "failure") {
-							commonVariables.loadingScreen.removeLoading();
+							//commonVariables.loadingScreen.removeLoading();
 							callback(response);
 						} else {
-							commonVariables.loadingScreen.removeLoading();
+							//commonVariables.loadingScreen.removeLoading();
 							$(".msgdisplay").removeClass("success").addClass("error");
 							$(".error").attr('data-i18n', 'errorCodes.' + response.responseCode);
 							self.renderlocales(commonVariables.contentPlaceholder);	
@@ -134,7 +134,7 @@ define(["features/features",  "application/application",  "projectlist/projectLi
 					},
 
 					function(textStatus) {
-						commonVariables.loadingScreen.removeLoading();
+						//commonVariables.loadingScreen.removeLoading();
 						$(".msgdisplay").removeClass("success").addClass("error");
 						$(".error").attr('data-i18n', 'commonlabel.errormessage.serviceerror');
 						self.renderlocales(commonVariables.contentPlaceholder);	
@@ -146,7 +146,7 @@ define(["features/features",  "application/application",  "projectlist/projectLi
 					}
 				);
 			} catch(exception) {
-				commonVariables.loadingScreen.removeLoading();
+				//commonVariables.loadingScreen.removeLoading();
 			}
 
 		},
@@ -158,7 +158,7 @@ define(["features/features",  "application/application",  "projectlist/projectLi
 				commonVariables.api.ajaxRequest(header,
 					function(response) {
 						if (response !== null && response.status !== "error" && response.status !== "failure") {
-							commonVariables.loadingScreen.removeLoading();
+							//commonVariables.loadingScreen.removeLoading();
 							if(response.responseCode === "PHR200007") {
 								$(".msgdisplay").removeClass("error").addClass("success");
 								$(".success").attr('data-i18n', 'successCodes.' + response.responseCode);
@@ -171,7 +171,7 @@ define(["features/features",  "application/application",  "projectlist/projectLi
 							}	
 							callback(response);
 						} else {
-							commonVariables.loadingScreen.removeLoading();
+							//commonVariables.loadingScreen.removeLoading();
 							if(response.responseCode === "PHR210008") {
 								$(".msgdisplay").removeClass("success").addClass("error");
 								$(".error").attr('data-i18n', 'errorCodes.' + response.responseCode);
@@ -198,7 +198,7 @@ define(["features/features",  "application/application",  "projectlist/projectLi
 					}
 				);
 			} catch(exception) {
-				commonVariables.loadingScreen.removeLoading();
+				//commonVariables.loadingScreen.removeLoading();
 			}
 		},
 		
@@ -299,7 +299,7 @@ define(["features/features",  "application/application",  "projectlist/projectLi
 
 		hideLoad : function(){
 			var self = this;
-			commonVariables.loadingScreen.removeLoading();
+			//commonVariables.loadingScreen.removeLoading();
 		},
 
 		getRequestHeader : function(projectRequestBody, type, descid) {
