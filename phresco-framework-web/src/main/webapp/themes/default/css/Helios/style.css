@@ -1267,6 +1267,11 @@ img[name="close"] {
 	background:#F5F5F5 !important;
 }
 
+.btn.btn-danger:hover, .btn.btn-danger:focus
+{
+background:#DA4F49 !important;
+}
+
 #appinfo .dropdown-menu {
 	max-height: 93px !important;
 }

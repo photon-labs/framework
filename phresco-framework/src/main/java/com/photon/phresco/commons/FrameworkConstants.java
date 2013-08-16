@@ -625,6 +625,7 @@ public interface FrameworkConstants {
 	String REQ_CLASS_NAME = "className";
 	String REQ_VALUES_FROM_JSON = "valuesFromJson";
 	String PERFORMANCE_TEST = "performance-test";
+	String PHASE_LOAD = "load-test";
 	String REQ_CUSTOM_TEST_AGAINST = "customTestAgainst";
 
 	
@@ -1847,6 +1848,7 @@ public interface FrameworkConstants {
 		String PLUGIN_PARAMETER_FRAMEWORK = "framework";
 		String REQ_DYNAMIC_PARAMETERS = "dynamicParameters";
 		String REQ_PARAMETERS = "parameters";
+		String REQ_TEST_BASIS = "testBasis";
 		String REQ_DYNAMIC_PAGE_PARAMETER  = "dynamicPageParameter";
 		String REQ_DYNAMIC_POSSIBLE_VALUES = "possibleValues";
 		String SESSION_WATCHER_MAP = "sessionDynamicParamMap";
