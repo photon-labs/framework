@@ -399,8 +399,8 @@
         <trilead-ssh2.version xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">build212-hudson-5</trilead-ssh2.version>
         <maven-jar-plugin.version xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">2.3.2</maven-jar-plugin.version>
         <tools-maven-plugin.version xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">1.1</tools-maven-plugin.version>
-        <jersey-client.version xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">1.12</jersey-client.version>
-        <jersey-json.version xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">1.12</jersey-json.version>
+        <jersey-client.version xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">1.8</jersey-client.version>
+        <jersey-json.version xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">1.8</jersey-json.version>
         <cli.version xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">1.442</cli.version>
         <gson.version xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">1.7.1</gson.version>
         <commons-lang.version xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">2.2</commons-lang.version>
