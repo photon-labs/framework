@@ -689,7 +689,7 @@ define(["framework/widget", "framework/templateProvider"], function() {
 		            if (control.prop('tagName') === "INPUT") {
 		            	control.attr("placeholder", response.configErrorMsg);
 		            } else if (control.prop('tagName') === "SELECT") {
-		            	control.selectpicker('refresh')
+		            	control.parent().find('button').addClass("btn-danger");
 		            }	
 	            }
 	        }, 

@@ -564,11 +564,31 @@ public class FrameworkServiceUtil implements Constants, FrameworkConstants {
 			File baseDir = new File(Utility.getProjectHome() + appDirName);
 			File configFile = new File(baseDir +  File.separator + Constants.DOT_PHRESCO_FOLDER + File.separator + Constants.CONFIGURATION_INFO_FILE);
 			File settingsFile = new File(Utility.getProjectHome()+ customerId + SETTINGS_INFO_FILE_NAME);
-			List<String> selectedEnvs = csvToList(environmentName);
-			List<String> selectedConfigTypeList = getSelectedConfigTypeList(baseDir.getName());
-			List<String> nullConfig = new ArrayList<String>();
-			if (settingsFile.exists()) {
-				configManager = PhrescoFrameworkFactory.getConfigManager(settingsFile);
+			if (StringUtils.isNotEmpty(environmentName)) {
+				List<String> selectedEnvs = csvToList(environmentName);
+				List<String> selectedConfigTypeList = getSelectedConfigTypeList(baseDir.getName());
+				List<String> nullConfig = new ArrayList<String>();
+				if (settingsFile.exists()) {
+					configManager = PhrescoFrameworkFactory.getConfigManager(settingsFile);
+					List<Environment> environments = configManager.getEnvironments();
+					for (Environment environment : environments) {
+						if (selectedEnvs.contains(environment.getName())) {
+							if (CollectionUtils.isNotEmpty(selectedConfigTypeList)) {
+								for (String selectedConfigType : selectedConfigTypeList) {
+									if(CollectionUtils.isEmpty(configManager.getConfigurations(environment.getName(), selectedConfigType))) {
+										nullConfig.add(selectedConfigType);
+									}
+								}
+							}
+						} if(CollectionUtils.isNotEmpty(nullConfig)) {
+							String errMsg = environment.getName() + " environment in global settings doesnot have "+ nullConfig + " configurations";
+							actionresponse.setErrorFound(true);
+							actionresponse.setConfigErr(true);
+							actionresponse.setConfigErrorMsg(errMsg);
+						}
+					} 
+				} 
+				configManager = PhrescoFrameworkFactory.getConfigManager(configFile);
 				List<Environment> environments = configManager.getEnvironments();
 				for (Environment environment : environments) {
 					if (selectedEnvs.contains(environment.getName())) {
@@ -580,32 +600,14 @@ public class FrameworkServiceUtil implements Constants, FrameworkConstants {
 							}
 						}
 					} if(CollectionUtils.isNotEmpty(nullConfig)) {
-						String errMsg = environment.getName() + " environment in global settings doesnot have "+ nullConfig + " configurations";
+						String errMsg = environment.getName() + " environment in " + baseDir.getName() + " doesnot have "+ nullConfig + " configurations";
 						actionresponse.setErrorFound(true);
 						actionresponse.setConfigErr(true);
 						actionresponse.setConfigErrorMsg(errMsg);
+
 					}
 				} 
-			} 
-			configManager = PhrescoFrameworkFactory.getConfigManager(configFile);
-			List<Environment> environments = configManager.getEnvironments();
-			for (Environment environment : environments) {
-				if (selectedEnvs.contains(environment.getName())) {
-					if (CollectionUtils.isNotEmpty(selectedConfigTypeList)) {
-						for (String selectedConfigType : selectedConfigTypeList) {
-							if(CollectionUtils.isEmpty(configManager.getConfigurations(environment.getName(), selectedConfigType))) {
-								nullConfig.add(selectedConfigType);
-							}
-						}
-					}
-				} if(CollectionUtils.isNotEmpty(nullConfig)) {
-					String errMsg = environment.getName() + " environment in " + baseDir.getName() + " doesnot have "+ nullConfig + " configurations";
-					actionresponse.setErrorFound(true);
-					actionresponse.setConfigErr(true);
-					actionresponse.setConfigErrorMsg(errMsg);
-					
-				}
-			} 
+			}
 			return actionresponse;
 		} catch (PhrescoException e) {
 			throw new PhrescoException(e);

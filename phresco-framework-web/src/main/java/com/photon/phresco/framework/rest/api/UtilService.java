@@ -255,7 +255,13 @@ public class UtilService extends RestBase implements FrameworkConstants, Service
 			if (response.isErrorFound()) {	
 				return Response.status(Status.OK).entity(response).header("Access-Control-Allow-Origin", "*").build();
 			}
-			if (StringUtils.isNotEmpty(envNames)) {
+			
+			if ((PHASE_LOAD.equals(phase) || PERFORMANCE_TEST.equals(phase)) && REQ_PARAMETERS.equals(request.getParameter(REQ_TEST_BASIS))) {
+				response = FrameworkServiceUtil.checkForConfigurations(appDirName, envNames, customerId);
+				if (response.isErrorFound()) {
+					return Response.status(Status.OK).entity(response).header("Access-Control-Allow-Origin", "*").build();
+				}
+			} else if (!PHASE_LOAD.equals(phase) && !PERFORMANCE_TEST.equals(phase)) {
 				response = FrameworkServiceUtil.checkForConfigurations(appDirName, envNames, customerId);
 				if (response.isErrorFound()) {
 					return Response.status(Status.OK).entity(response).header("Access-Control-Allow-Origin", "*").build();
