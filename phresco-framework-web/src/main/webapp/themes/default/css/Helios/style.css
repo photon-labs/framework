@@ -613,25 +613,33 @@ ul.nav li.dropdown:hover > .test_options{
 /* ********************************************** CSS related to Icons in all buttons ************************************************************************************** */
 
 .add_icon_btn {
-	background:url(../../images/helios/add_icon.png) #ed7940 no-repeat 6px 7px !important;
+	background-image:url(../../images/helios/add_icon.png)!important ;
+	background-repeat:no-repeat !important;
+	background-position:6px 7px  !important;
 	padding-left:22px !important;
 	padding-right:8px !important;
 }
 
 .cancel_icon_btn {
-	background:url(../../images/helios/cancel_icon.png) #ed7940 no-repeat 6px 8px !important;
+	background-image:url(../../images/helios/cancel_icon.png)!important ;
+	background-repeat:no-repeat !important;
+	background-position:6px 8px  !important;
 	padding-left:22px !important;
 	padding-right:8px !important;
 }
 
 .next_icon_btn {
-	background:url(../../images/helios/next_icon.png) #ed7940 no-repeat 6px 8px !important;
+	background-image:url(../../images/helios/next_icon.png)!important ;
+	background-repeat:no-repeat !important;
+	background-position:6px 8px  !important;
 	padding-left:28px !important;
 	padding-right:8px !important;
 }
 
 .prev_icon_btn {
-	background:url(../../images/helios/prev_icon.png) #ed7940 no-repeat 6px 8px !important;
+	background-image:url(../../images/helios/prev_icon.png)!important ;
+	background-repeat:no-repeat !important;
+	background-position:6px 8px  !important;
 	padding-left:28px !important;
 	padding-right:8px !important;
 }
@@ -649,62 +657,82 @@ ul.nav li.dropdown:hover > .test_options{
 }*/
 
 .pdf_icon_btn {
-	background:url(../../images/helios/pdf_icon_white.png) #ed7940 no-repeat 6px 4px !important;
+	background-image:url(../../images/helios/pdf_icon_white.png)!important ;
+	background-repeat:no-repeat !important;
+	background-position:6px 4px  !important;
 	padding-left:22px !important;
 	padding-right:8px !important;
 }
 
 
 .import_icon_btn {
-	background:url(../../images/helios/import_icon.png) #ed7940 no-repeat 6px 7px !important;
+	background-image:url(../../images/helios/import_icon.png)!important ;
+	background-repeat:no-repeat !important;
+	background-position:6px 7px  !important;
 	padding-left:22px !important;
 	padding-right:8px !important;
 }
 
 .app_layer_icon_btn {
-	background:url(../../images/helios/app_layer_icon.png) #ed7940 no-repeat 6px 3px !important;
+	background-image:url(../../images/helios/app_layer_icon.png)!important ;
+	background-repeat:no-repeat !important;
+	background-position:6px 3px  !important;
 	padding-left:30px !important;
 	padding-right:8px !important;
 }
 
 .web_layer_icon_btn {
-	background:url(../../images/helios/web_layer_icon.png) #ed7940 no-repeat 6px 4px !important;
+	background-image:url(../../images/helios/web_layer_icon.png)!important ;
+	background-repeat:no-repeat !important;
+	background-position:6px 4px  !important;
 	padding-left:32px !important;
 	padding-right:8px !important;
 }
 
 .mobile_layer_icon_btn {
-	background:url(../../images/helios/mobile_layer_icon.png) #ed7940 no-repeat 6px 3px !important;
+	background-image:url(../../images/helios/mobile_layer_icon.png)!important ;
+	background-repeat:no-repeat !important;
+	background-position:6px 3px  !important;
 	padding-left:25px !important;
 	padding-right:8px !important;
 }
 
 .update_btn {
-	background:url(../../images/helios/update_icon.png) #ed7940 no-repeat 6px 8px !important;
+	background-image:url(../../images/helios/update_icon.png)!important ;
+	background-repeat:no-repeat !important;
+	background-position:6px 8px  !important;
 	padding-left:25px !important;
 	padding-right:8px !important;
 }
 
 .server_btn {
-	background:url(../../images/helios/server_icon.png) #ed7940 no-repeat 3px 5px !important;
+	background-image:url(../../images/helios/server_icon.png)!important ;
+	background-repeat:no-repeat !important;
+	background-position:3px 5px  !important;
 	padding-left:28px !important;
 	padding-right:8px !important;
 }
 
 .database_btn {
-	background:url(../../images/helios/database_icon.png) #ed7940 no-repeat 5px 4px !important;
+	background-image:url(../../images/helios/database_icon.png)!important ;
+	background-repeat:no-repeat !important;
+	background-position:5px 4px  !important;
 	padding-left:22px !important;
 	padding-right:8px !important;
 }
 
 .webservice_btn {
-	background:url(../../images/helios/webservice_icon.png) #ed7940 no-repeat 3px 3px !important;
+	background-image:url(../../images/helios/webservice_icon.png)!important ;
+	background-repeat:no-repeat !important;
+	background-position:3px 3px  !important;
 	padding-left:26px !important;
 	padding-right:8px !important;
 }
 
 .arrow_down_icon {
-	background:url(../../images/helios/arrow_down.png) #ed7940 no-repeat right !important;
+	background-image:url(../../images/helios/arrow_down.png)!important ;
+	background-repeat:no-repeat !important;
+	background-position:right !important;
 	padding-right:20px !important;
 }
 
@@ -728,7 +756,7 @@ ul.nav li.dropdown:hover > .test_options{
 }
 
 .copy_path_icon{
-	margin-right:6px;
+	margin-right:2px;
 }
 
 .performanceScreenShotDiv {
@@ -1277,7 +1305,7 @@ background:#DA4F49 !important;
 }
 
 .show-tick.open ul{
-	margin-top: 8px;	
+	/*margin-top: 8px;*/
 }
 
 .app_info_img {
@@ -2435,6 +2463,10 @@ select[name="builtmyself"] {
 	width: 180px;	
 }
 
+#cron_expression{
+	z-index:1;
+}
+
 #cron_expression table tr td
 {
 	padding:5px;
@@ -2496,7 +2528,7 @@ margin-left: 10px;
 }
 
 #cron_expression table {
-	margin-bottom: 10px;	
+	margin-bottom: 10px !important;	
 }
 
 #crone_triggered {
@@ -3506,7 +3538,7 @@ html>body tbody.scrollContent {
 .node_table tr td
 {
 	border-top:none;
-	padding:0px 30px 0px 0px;
+	padding:0px 30px 5px 0px;
 }
 
 .node_table tr td [type="text"]
@@ -3706,7 +3738,7 @@ html>body tbody.scrollContent {
 
 #contextAdd, #dbContextAdd {
 	float: right;
-    margin-bottom: 10px;
+    margin-bottom: 10px !important;
 }
 
 .test_table tr td select
@@ -3830,7 +3862,7 @@ img.add_test_icon
 
 .header_table tr td [type="button"]
 {
-	margin-bottom:11px;
+	margin-bottom:11px !important;
 }
 
 .header_table tr td:first-child
@@ -3947,6 +3979,10 @@ tfoot {
 
 #template_download ul li {
 padding-bottom: 5px;
+}
+
+#show_manualTestSuite_popup{
+	margin-right:10px;
 }
 
 /* *************************************************************** STYLES FOR DYNAMIC PARAMETER ENDS ************************************************************************** */

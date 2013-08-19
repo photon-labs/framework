@@ -6,7 +6,7 @@
 	border-radius: 4px 4px 4px 4px;
     width: 95px; padding: 5px 0; text-align:center;    
     border-bottom:1px solid #ddd;color:#fff;
-    /*margin-top: 10px;*/
+    margin-top: 5px;
 }
 .qq-upload-button-hover {background:#cc0000;}
 .qq-upload-button-focus {outline:1px dotted black;}
