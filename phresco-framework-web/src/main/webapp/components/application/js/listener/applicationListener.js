@@ -343,7 +343,10 @@ define([], function() {
 				appInfo.tabletEnabled = renderData.appdetails.data.appInfos[0].tabletEnabled;
 				appInfo.pilot = renderData.appdetails.data.appInfos[0].pilot;
 				appInfo.id = renderData.appdetails.data.appInfos[0].id;
-				appInfo.description = $("#appDesc").val();;
+				appInfo.description = $("#appDesc").val();
+				appInfo.selectedModules = renderData.appdetails.data.appInfos[0].selectedModules;
+				appInfo.selectedJSLibs = renderData.appdetails.data.appInfos[0].selectedJSLibs;
+				appInfo.selectedComponents = renderData.appdetails.data.appInfos[0].selectedComponents;
 				
 				var selectedDatabases = [];
 				var selectedServers = [];
@@ -414,21 +417,33 @@ define([], function() {
 						var frameworkGroupId = $("select[name=func_framework]").val();
 						var frameworkIds = $("select[name=func_framework_tools]").val();
 						var version = $("select[name=tools_version]").val();
-						 if(frameworkGroupId !== "0" && frameworkIds === "0"){
+						if(frameworkGroupId === "0"){
 							$("#fferror").focus();
 							$("#fferror").addClass("errormessage");
-							$("#fferror").text('Please select tools');
-							$("select[name='func_framework_tools']").bind('change', function() {
+							$("#fferror").text('Please select functional framework');
+							$("select[name='func_framework']").bind('change', function() {
 								$("#fferror").text("");
 								$("#fferror").removeClass("errormessage");
 							});
 							submitFlag = 1;
-						} else {
-							functionalFrameworkInfo = {};							
-							functionalFrameworkInfo.frameworkGroupId = frameworkGroupId;
-							functionalFrameworkInfo.frameworkIds = frameworkIds;
-							functionalFrameworkInfo.version = version;
-						}	
+							
+						}else{
+							 if(frameworkGroupId !== "0" && frameworkIds === "0"){
+								$("#fferror").focus();
+								$("#fferror").addClass("errormessage");
+								$("#fferror").text('Please select tools');
+								$("select[name='func_framework_tools']").bind('change', function() {
+									$("#fferror").text("");
+									$("#fferror").removeClass("errormessage");
+								});
+								submitFlag = 1;
+							} else {
+								functionalFrameworkInfo = {};							
+								functionalFrameworkInfo.frameworkGroupId = frameworkGroupId;
+								functionalFrameworkInfo.frameworkIds = frameworkIds;
+								functionalFrameworkInfo.version = version;
+							}	
+						}	 
 					}					
 				});
 				if (appInfo.code !== '') {

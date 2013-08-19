@@ -1434,7 +1434,7 @@ define([], function() {
 					} else {
 						$(".webdependencyTd div.webdependencySelect").show();
 					}
-				} else if (value.techInfo.appTypeId === "mobile-layer") {
+				} else if (value.techInfo.appTypeId === "mobile-layer" || value.techInfo.appTypeId === "mob-layer") {
 					$("#mobLayers").show();
 					$("tr.mobLayer").show();
 					$('img[name="close"]').hide();

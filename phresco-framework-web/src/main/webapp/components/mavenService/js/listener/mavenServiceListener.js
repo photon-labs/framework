@@ -220,7 +220,7 @@ define([], function() {
 							if(response.status === 'STARTED'){
 								callback(response);
 							}else if(response.status === 'INPROGRESS'){
-								if (response.log.indexOf("AbstractConnector:Started") != -1) {//For start hub
+								if (response.log.indexOf("SocketConnector@0.0.0.0:") != -1) {//For start hub
 									callback(response);
 								} else if (response.log.indexOf("Done: /status") != -1) {//For start node
 									callback(response);
