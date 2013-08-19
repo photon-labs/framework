@@ -78,7 +78,7 @@
 		<input type="button" class="btn <%= per_disabledClass %>" <%= per_disabledStr %> name="importAppln" id="importAppln" 
 			value="<s:text name='lbl.app.import'/>"/>
 
-		<input type="button" class="btn" id="deleteBtn" disabled value="<s:text name='lbl.delete'/>" data-toggle="modal" href="#popupPage"/>
+		<input type="button" class="btn" id="deleteBtn" onclick="enableButtons();" disabled value="<s:text name='lbl.delete'/>" data-toggle="modal" href="#popupPage"/>
 			
 		<s:if test="hasActionMessages()">
 			<div class="alert alert-success alert-message" id="successmsg" >
@@ -507,5 +507,10 @@
 	function popupOnCancel(obj) {
 		var params = $(obj).attr("params");
 		loadContent("killProcess", '', '', params);
+	}
+	
+	function enableButtons() {
+		$("#popupPage").find("#deleteProject").show();
+		$("#popupPage").find(".popupCancel").show();
 	}
 </script>

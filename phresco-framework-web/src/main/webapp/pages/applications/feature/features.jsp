@@ -402,46 +402,88 @@ if (CollectionUtils.isNotEmpty(defaultfeatures)) {
     // Function to remove the final features in right tab  
     function removed(thisObj) {
     	 var allDependent =[];
-         var hasError = false, name;
+         var hasError = false, name = "";
          var depende = $(thisObj).closest('div').attr("dependencyids");
          var featu = $(thisObj).closest('div').attr("title");
          var dependencyArray = depende.replace("[","").replace("]","").split(",");
+         var versionId = $(thisObj).closest('div').attr("versionid");
          var trimmedArray = [];
          for (i in dependencyArray) {
         	 trimmedArray.push(dependencyArray[i].trim()); 
          }
+
          $('.feature').each(function () {
-        	 var dependency = $(this).attr("versionId");
-        	 if ($.inArray(dependency, trimmedArray) != -1) {
-        		 name = $(this).closest('div').attr("title");
-        		 allDependent.push(name);
+        	 var depIds = $(this).attr("dependencyids").replace("[","").replace("]","");
+        	 var depIdsArray = [];
+        	 if (depIds != undefined && depIds != null && depIds != "" && depIds != "null") {
+        		 depIdsArray = depIds.split(",");
+        	 }
+        	 
+        	 var trimdDepArray = [];
+        	 for (i in depIdsArray) {
+        		 trimdDepArray.push(depIdsArray[i].trim());
+        	 }
+        	 
+        	 //version id is present in trimdDepArray
+        	 if ($.inArray(versionId, trimdDepArray) != -1) {
+        		 name = $(this).closest('div').attr("title")
         		 hasError = true;
+        		 return false;
+        	 } else {
+        		 hasError = false;
         	 }
          });
          
          $('.javascript').each(function () {
-        	 var dependency = $(this).attr("versionId");
-        	 if ($.inArray(dependency, trimmedArray) != -1) {
-        		 name = $(this).closest('div').attr("title");
-        		 allDependent.push(name);
+        	 var depIds = $(this).attr("dependencyids").replace("[","").replace("]","");
+        	 var depIdsArray = [];
+        	 if (depIds != undefined && depIds != null && depIds != "" && depIds != "null") {
+        		 depIdsArray = depIds.split(",");
+        	 }
+        	 
+        	 var trimdDepArray = [];
+        	 for (i in depIdsArray) {
+        		 trimdDepArray.push(depIdsArray[i].trim());
+        	 }
+        	 
+        	 //version id is present in trimdDepArray
+        	 if ($.inArray(versionId, trimdDepArray) != -1) {
+        		 name = $(this).closest('div').attr("title")
         		 hasError = true;
+        		 return false;
+        	 } else {
+        		 hasError = false;
         	 }
          });
          
          $('.component').each(function () {
-        	 var dependency = $(this).attr("versionId");
-        	 if ($.inArray(dependency, trimmedArray) != -1) {
-        		 name = $(this).closest('div').attr("title");
-        		 allDependent.push(name);
+        	 var depIds = $(this).attr("dependencyids").replace("[","").replace("]","");
+        	 var depIdsArray = [];
+        	 if (depIds != undefined && depIds != null && depIds != "" && depIds != "null") {
+        		 depIdsArray = depIds.split(",");
+        	 }
+        	 
+        	 var trimdDepArray = [];
+        	 for (i in depIdsArray) {
+        		 trimdDepArray.push(depIdsArray[i].trim());
+        	 }
+        	 
+        	 //version id is present in trimdDepArray
+        	 if ($.inArray(versionId, trimdDepArray) != -1) {
+        		 name = $(this).closest('div').attr("title")
         		 hasError = true;
+        		 return false;
+        	 } else {
+        		 hasError = false;
         	 }
          });
          
          if(!hasError) {
-        	$(thisObj).closest('div').remove();
-         } else {
-        	 showWarningMsg('<s:text name="lbl.app.warnin.title"/>', featu +" has dependencies "+allDependent +".So you can't delete the " +featu);
-         }
+         	$(thisObj).closest('div').remove();
+          } else {
+         	 showWarningMsg('<s:text name="lbl.app.warnin.title"/>', featu +" is dependent to "+ name +". So you can't delete it.");
+          } 
+         
     	updateFeatureNotification();
     }
     
