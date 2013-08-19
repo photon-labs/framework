@@ -31,7 +31,13 @@ define(["projectlist/projectList"], function(ProjectList) {
 					}
 				});
 				
-				$(commonVariables.headerPlaceholder).find(".header_left ul li").click();
+				require(["navigation/navigation"], function(){
+					commonVariables.navListener = new Clazz.com.components.navigation.js.listener.navigationListener();
+				});		
+
+				commonVariables.navListener.getMyObj(commonVariables.projectlist, function(retVal){	
+					Clazz.navigationController.push(retVal, commonVariables.animation);
+				});
 				setTimeout(function() {
 					start();
 					var techid = $(commonVariables.contentPlaceholder).find(".wordpress-WordPress").attr("techid");
