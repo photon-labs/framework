@@ -4295,6 +4295,24 @@ vertical-align: middle;
 	overflow:hidden;
 }
 
+/**************************** STYLES FOR GLOBAL SETTINGS STARTS *************************************/
+
+.settings_tab table {
+	margin-bottom:0 !important;
+}
+
+.settings_tab td {
+	border:none !important;
+}
+
+.settings_tab input {
+	margin-bottom:0 !important;
+}
+
+/**************************** STYLES FOR GLOBAL SETTINGS ENDS *************************************/
+
+
+
 
 /**************************** STYLES FOR TREEVIEW STARTS *************************************/
 

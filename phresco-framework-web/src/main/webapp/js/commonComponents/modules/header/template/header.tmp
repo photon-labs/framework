@@ -5,7 +5,7 @@
 		<ul>
 			<li><a href="#" data-i18n="header.menu.dashboard"></a></li>
 			<li><a href="#" id="pojectList" class="nav_active" data-i18n="header.menu.projects"></a></li>
-			<li><a href="#" data-i18n="header.menu.settings"></a></li>
+			<li><a href="#" id="settings" data-i18n="header.menu.settings"></a></li>
 			<li><a href="#" data-i18n="header.menu.downloads"></a></li>
 			<li><a href="#" data-i18n="header.menu.admin"></a></li>
 		</ul>

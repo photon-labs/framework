@@ -892,8 +892,8 @@ public class CIManagerImpl implements CIManager, FrameworkConstants {
 	}
 
 	public CIJob getJob(String jobName, String projectId, List<ProjectDelivery> projectDeliveries, String continuousName) {
-		ContinuousDelivery specificContinuousDelivery = Utility.getContinuousDelivery(projectId, continuousName, projectDeliveries);
-		List<CIJob> jobs = specificContinuousDelivery.getJobs();
+		ContinuousDelivery continuousDelivery = Utility.getContinuousDelivery(projectId, continuousName, projectDeliveries);
+		List<CIJob> jobs = continuousDelivery.getJobs();
 		for (CIJob ciJob : jobs) {
 			if(ciJob.getJobName().equals(jobName)) {
 				return ciJob;
@@ -1509,7 +1509,7 @@ public class CIManagerImpl implements CIManager, FrameworkConstants {
 		}
 	}
 
-	public boolean setGlobalConfiguration(String jenkinsUrl, String submitUrl, JSONObject confluenceObj, String emailAddress, String emailPassword) throws PhrescoException {
+	public boolean setGlobalConfiguration(String jenkinsUrl, String submitUrl, org.json.JSONArray confluenceObj, String emailAddress, String emailPassword) throws PhrescoException {	
 		if (debugEnabled) {
 			S_LOGGER.debug("Entering Method CIManagerImpl.setGlobalConfiguration()");
 		}

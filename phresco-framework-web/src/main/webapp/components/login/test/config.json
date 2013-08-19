@@ -161,6 +161,11 @@
 			"path" : "components/ci/js"
 		},
 		
+		"settings" : {
+			"moduleName":"settings",
+			"path" : "components/settings/js"
+		},
+		
 		"testResult" : {
 			"moduleName":"testResult",
 			"path" : "components/testResult/js"
@@ -254,6 +259,11 @@
 		"continuousDeliveryConfigureTest" : {
 			"moduleName":"continuousDeliveryConfigureTest",
 			"path" : "components/ci/test/continuousDeliveryConfigureTest"
+		},
+		
+		"SettingsTest" : {
+			"moduleName":"SettingsTest",
+			"path" : "components/settings/test/SettingsTest"
 		}
 	}
 }

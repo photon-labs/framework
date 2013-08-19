@@ -1488,7 +1488,7 @@ public class ActionFunction extends RestBase implements Constants ,FrameworkCons
 		}
 		try {
 			CIManager ciManager = PhrescoFrameworkFactory.getCIManager();
-			ProjectInfo projectInfo = getProjectInfo();
+//			ProjectInfo projectInfo = getProjectInfo();
 			if (isDebugEnabled) {
 				S_LOGGER.debug("Jenkins Home " + Utility.getJenkinsHome().toString());
 			}
@@ -1496,7 +1496,7 @@ public class ActionFunction extends RestBase implements Constants ,FrameworkCons
 			List<String> buildArgCmds = new ArrayList<String>(1);
 			buildArgCmds.add(SKIP_TESTS);
 			String workingDirectory = Utility.getJenkinsHome();
-			reader = ciManager.setup(projectInfo, ActionType.INSTALL, buildArgCmds , workingDirectory);
+			reader = ciManager.setup(null, ActionType.INSTALL, buildArgCmds , workingDirectory);
 
 		} catch (PhrescoException e) {
 			S_LOGGER.error("Entered into catch block of MavenFunctions CI setup()" + FrameworkUtil.getStackTraceAsString(e));
@@ -1514,7 +1514,7 @@ public class ActionFunction extends RestBase implements Constants ,FrameworkCons
 		}
 		try {
 			CIManager ciManager = PhrescoFrameworkFactory.getCIManager();
-			ProjectInfo projectInfo = getProjectInfo();
+//			ProjectInfo projectInfo = getProjectInfo();
 			if (isDebugEnabled) {
 				S_LOGGER.debug("Jenkins Home " + Utility.getJenkinsHome().toString());
 			}
@@ -1522,7 +1522,7 @@ public class ActionFunction extends RestBase implements Constants ,FrameworkCons
 			List<String> buildArgCmds = null;
 			String workingDirectory = Utility.getJenkinsHome();
 
-			reader = ciManager.start(projectInfo, ActionType.START, buildArgCmds , workingDirectory);
+			reader = ciManager.start(null, ActionType.START, buildArgCmds , workingDirectory);
 
 		} catch (PhrescoException e) {
 			S_LOGGER.error("Entered into catch block of CI.startJenkins()" + FrameworkUtil.getStackTraceAsString(e));
@@ -1539,14 +1539,14 @@ public class ActionFunction extends RestBase implements Constants ,FrameworkCons
 		}
 		try {
 			CIManager ciManager = PhrescoFrameworkFactory.getCIManager();
-			ProjectInfo projectInfo = getProjectInfo();
+//			ProjectInfo projectInfo = getProjectInfo();
 			if (isDebugEnabled) {
 				S_LOGGER.debug("Jenkins Home " + Utility.getJenkinsHome().toString());
 			}
 
 			List<String> buildArgCmds = null;
 			String workingDirectory = Utility.getJenkinsHome();
-			reader = ciManager.stop(projectInfo, ActionType.STOP, buildArgCmds , workingDirectory);
+			reader = ciManager.stop(null, ActionType.STOP, buildArgCmds , workingDirectory);
 
 		} catch (PhrescoException e) {
 			S_LOGGER.error("Entered into catch block of CI.stopJenkins()" + FrameworkUtil.getStackTraceAsString(e));

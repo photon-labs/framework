@@ -325,6 +325,11 @@
             <version>0.8.0</version>
             <type>js</type>
         </dependency>
+		<dependency>
+			<groupId>org.json</groupId>
+			<artifactId>json</artifactId>
+			<version>20090211</version>
+		</dependency>
     </dependencies>
     <reporting>
         <plugins>

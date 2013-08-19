@@ -17,6 +17,7 @@
  */
 package com.photon.phresco.framework.rest.api;
 
+import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.net.ConnectException;
@@ -67,6 +68,7 @@ import com.photon.phresco.framework.api.ApplicationManager;
 import com.photon.phresco.framework.api.CIManager;
 import com.photon.phresco.framework.commons.FrameworkUtil;
 import com.photon.phresco.framework.impl.CIManagerImpl;
+import com.photon.phresco.framework.model.RepoDetail;
 import com.photon.phresco.framework.rest.api.util.FrameworkServiceUtil;
 import com.photon.phresco.plugins.model.Mojos.Mojo.Configuration.Parameters.Parameter;
 import com.photon.phresco.plugins.util.MojoProcessor;
@@ -633,27 +635,107 @@ public class CIService extends RestBase implements FrameworkConstants, ServiceCo
 	 * @return
 	 * @throws PhrescoException
 	 */
-	@POST
+	@GET
 	@Path("/mail")
 	@Produces(MediaType.APPLICATION_JSON)
 	@Consumes(MediaType.APPLICATION_JSON)
-	public Response getEmailConfiguration(@QueryParam(REST_QUERY_CUSTOMERID) String customerId,
-			@QueryParam(REST_QUERY_PROJECTID) String projectId, @QueryParam(REST_QUERY_APPID) String appId)
+	public Response getEmailConfiguration()
 	throws PhrescoException {
 		ResponseInfo responseData = new ResponseInfo();
+		ResponseInfo finalOutput = null;
+		List<RepoDetail> confluenceDetail = new ArrayList<RepoDetail>();
 		try {
 			CIManager ciManager = PhrescoFrameworkFactory.getCIManager();
-			ApplicationManager applicationManager = PhrescoFrameworkFactory.getApplicationManager();
-			ApplicationInfo applicationInfo = applicationManager.getApplicationInfo(customerId, projectId, appId);
-			String smtpAuthUsername = ciManager.getMailConfiguration(SMTP_AUTH_USERNAME);
-			String smtpAuthPassword = ciManager.getMailConfiguration(SMTP_AUTH_PASSWORD);
+			String[] cred = new String[2];
+			cred[0] = ciManager.getMailConfiguration(SMTP_AUTH_USERNAME);
+			cred[1] = ciManager.decyPassword(ciManager.getMailConfiguration(SMTP_AUTH_PASSWORD));
+			finalOutput = responseDataEvaluation(responseData, null, "Mail configuration retrieved successfully", cred);
 		} catch (PhrescoException e) {
-			ResponseInfo finalOutput = responseDataEvaluation(responseData, e, "Returned mail confiuration Failed",
-					null);
+			finalOutput = responseDataEvaluation(responseData, e, "Returned mail configuration Failed", null);
 			return Response.status(Status.NOT_FOUND).entity(finalOutput).header("Access-Control-Allow-Origin", "*")
 			.build();
 		}
-		return null;
+		return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*")
+		.build();
+	}
+	
+	
+	/**
+	 * @return
+	 * @throws PhrescoException
+	 */
+	@GET
+	@Path("/confluence")
+	@Produces(MediaType.APPLICATION_JSON)
+	@Consumes(MediaType.APPLICATION_JSON)
+	public Response getConfluenceConfiguration()	throws PhrescoException {
+		ResponseInfo responseData = new ResponseInfo();
+		ResponseInfo finalOutput = null;
+		List<RepoDetail> confluenceDetail = new ArrayList<RepoDetail>();
+		try {
+			CIManager ciManager = PhrescoFrameworkFactory.getCIManager();
+			org.codehaus.jettison.json.JSONArray confluenceConfiguration = ciManager.getConfluenceConfiguration();
+			if (confluenceConfiguration != null) {
+				for (int i = 0; i < confluenceConfiguration.length(); i++) {
+					RepoDetail repo = new RepoDetail();
+					org.codehaus.jettison.json.JSONObject JSONobject = (org.codehaus.jettison.json.JSONObject) confluenceConfiguration.get(i);
+					repo.setRepoUrl(JSONobject.getString(REPO_URL));
+					repo.setUserName(JSONobject.getString(USERNAME));
+					repo.setPassword(JSONobject.getString(FrameworkConstants.PASSWORD));
+					confluenceDetail.add(repo);
+				}
+			}
+			finalOutput = responseDataEvaluation(responseData, null, "Confluence configuration retrieved successfully", confluenceDetail);
+		} catch (PhrescoException e) {
+			finalOutput = responseDataEvaluation(responseData, e, "Returned Confluence configuration Failed", null);
+			return Response.status(Status.NOT_FOUND).entity(finalOutput).header("Access-Control-Allow-Origin", "*")
+			.build();
+		} catch (org.codehaus.jettison.json.JSONException e) {
+			finalOutput = responseDataEvaluation(responseData, e, "Returned Confluence configuration Failed", null);
+			return Response.status(Status.NOT_FOUND).entity(finalOutput).header("Access-Control-Allow-Origin", "*")
+			.build();
+		}
+		return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*")
+		.build();
+	}
+	
+	/**
+	 * @return
+	 * @throws PhrescoException
+	 */
+	@POST
+	@Path("/global")
+	@Produces(MediaType.APPLICATION_JSON)
+	@Consumes(MediaType.APPLICATION_JSON)
+	public Response setGlobalConfiguration(List<RepoDetail> repodetails, @QueryParam(REST_QUERY_EMAIL_ADDRESS) String emailAddress, @QueryParam(REST_QUERY_EMAIL_PASSWORD) String emailPassword) throws PhrescoException {
+		ResponseInfo responseData = new ResponseInfo();
+		ResponseInfo finalOutput = null;
+		boolean setGlobalConfiguration = false;
+		try {
+			CIManager ciManager = PhrescoFrameworkFactory.getCIManager();
+			String jenkinsUrl = HTTP_PROTOCOL + PROTOCOL_POSTFIX + LOCALHOST + FrameworkConstants.COLON + 3579 + FrameworkConstants.FORWARD_SLASH + CI ;
+			String submitUrl = jenkinsUrl + FrameworkConstants.FORWARD_SLASH + CONFIG_SUBMIT;
+			org.json.JSONArray JSONarray = new org.json.JSONArray();
+			for (RepoDetail repodetail : repodetails) {
+				org.json.JSONObject confluenceObj = new org.json.JSONObject();
+				confluenceObj.put(CONFLUENCE_SITE_URL, repodetail.getRepoUrl());
+				confluenceObj.put(CONFLUENCE_USERNAME, repodetail.getUserName());
+				confluenceObj.put(FrameworkConstants.PASSWORD, repodetail.getPassword());
+				JSONarray.put(confluenceObj);
+			}
+			setGlobalConfiguration = ciManager.setGlobalConfiguration(jenkinsUrl, submitUrl, JSONarray, emailAddress, emailPassword);
+		} catch (PhrescoException e) {
+			finalOutput = responseDataEvaluation(responseData, e, "Returned Confluence configuration Failed", setGlobalConfiguration);
+			return Response.status(Status.NOT_FOUND).entity(finalOutput).header("Access-Control-Allow-Origin", "*")
+			.build();
+		} catch (org.json.JSONException e) {
+			finalOutput = responseDataEvaluation(responseData, e, "Returned Confluence configuration Failed", setGlobalConfiguration);
+			return Response.status(Status.NOT_FOUND).entity(finalOutput).header("Access-Control-Allow-Origin", "*")
+			.build();
+		}
+		finalOutput = responseDataEvaluation(responseData, null, "Confluence configuration saved successfully", setGlobalConfiguration);
+		return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*")
+		.build();
 	}
 
 	/**
@@ -670,14 +752,11 @@ public class CIService extends RestBase implements FrameworkConstants, ServiceCo
 	@Produces(MediaType.APPLICATION_JSON)
 	@Consumes(MediaType.APPLICATION_JSON)
 	public Response saveEmailConfiguration(@QueryParam(REST_QUERY_SENDER_MAIL_ID) String senderEmailId,
-			@QueryParam(REST_QUERY_SENDER_MAIL_PWD) String senderEmailPassword, @QueryParam(REST_QUERY_CUSTOMERID) String customerId,
-			@QueryParam(REST_QUERY_PROJECTID) String projectId, @QueryParam(REST_QUERY_APPID) String appId)
+			@QueryParam(REST_QUERY_SENDER_MAIL_PWD) String senderEmailPassword)
 	throws PhrescoException {
 		ResponseInfo responseData = new ResponseInfo();
 		try {
 			CIManager ciManager = PhrescoFrameworkFactory.getCIManager();
-			//			ApplicationManager applicationManager = PhrescoFrameworkFactory.getApplicationManager();
-			//			ApplicationInfo applicationInfo = applicationManager.getApplicationInfo(customerId, projectId, appId);
 			String jenkinsPort = FrameworkServiceUtil.getJenkinsPortNo();
 			ciManager.saveMailConfiguration(jenkinsPort, senderEmailId, senderEmailPassword);
 			ResponseInfo finalOutput = responseDataEvaluation(responseData, null, "Mail Configuration saved successfully",
@@ -782,6 +861,7 @@ public class CIService extends RestBase implements FrameworkConstants, ServiceCo
 	public Response getStatus(@QueryParam(REST_QUERY_NAME) String jobName, @QueryParam(REST_QUERY_CONTINOUSNAME) String continuousName,
 			@QueryParam(REST_QUERY_PROJECTID) String projectId, @QueryParam(REST_QUERY_APPDIR_NAME) String appDir) {
 		ResponseInfo<String> responseData = new ResponseInfo<String>();
+		ResponseInfo<Boolean> finalOutput = null;
 		try {
 			if(projectId.equals("null")) {
 				ProjectInfo projectInfo = FrameworkServiceUtil.getProjectInfo(appDir);
@@ -797,10 +877,10 @@ public class CIService extends RestBase implements FrameworkConstants, ServiceCo
 				}
 			}
 			String jobStatus = ciManager.getJobStatus(job);
-			ResponseInfo<Boolean> finalOutput = responseDataEvaluation(responseData, null, "Return Job Status successfully", jobStatus);
+			finalOutput = responseDataEvaluation(responseData, null, "Return Job Status successfully", jobStatus);
 			return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
 		} catch (PhrescoException e) {
-			ResponseInfo<Boolean> finalOutput = responseDataEvaluation(responseData, e, "Failed to get Job Status",	null);
+			finalOutput = responseDataEvaluation(responseData, e, "Failed to get Job Status",	null);
 			return Response.status(Status.NOT_FOUND).entity(finalOutput).header("Access-Control-Allow-Origin", "*")
 			.build();
 		}
@@ -830,7 +910,6 @@ public class CIService extends RestBase implements FrameworkConstants, ServiceCo
 			}
 			return createJsonJobs;
 		} catch (PhrescoException e) {
-			e.printErrorStack();
 			throw new PhrescoException();
 		}
 	}

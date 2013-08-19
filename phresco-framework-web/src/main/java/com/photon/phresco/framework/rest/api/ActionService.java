@@ -750,7 +750,7 @@ public class ActionService implements ActionServiceConstant, FrameworkConstants,
 		ActionFunction actionFunction = new ActionFunction();
 		ActionResponse response = new ActionResponse();
 		try	{
-			actionFunction.prePopulateModelData(request);
+//			actionFunction.prePopulateModelData(request);
 			response = actionFunction.ciSetup(request);
 		} catch (Exception e) {
 			S_LOGGER.error(e.getMessage());
@@ -777,7 +777,7 @@ public class ActionService implements ActionServiceConstant, FrameworkConstants,
 		ActionFunction actionFunction = new ActionFunction();
 		ActionResponse response = new ActionResponse();
 		try	{
-			actionFunction.prePopulateModelData(request);
+//			actionFunction.prePopulateModelData(request);
 			response = actionFunction.ciStart(request);
 		} catch (Exception e) {
 			S_LOGGER.error(e.getMessage());
@@ -804,7 +804,7 @@ public class ActionService implements ActionServiceConstant, FrameworkConstants,
 		ActionFunction actionFunction = new ActionFunction();
 		ActionResponse response = new ActionResponse();
 		try	{
-			actionFunction.prePopulateModelData(request);
+//			actionFunction.prePopulateModelData(request);
 			response = actionFunction.ciStop(request);
 		} catch (Exception e) {
 			S_LOGGER.error(e.getMessage());

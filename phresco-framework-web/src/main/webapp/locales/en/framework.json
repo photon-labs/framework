@@ -563,6 +563,13 @@
 		"daily" : "Daily",
 		"weekly" : "Weekly",	
 		"monthly" : "Monthly",
+		"setup" : "Setup",
+		"start" : "Start",
+		"stop" : "Stop",
+		"settings" : "Settings",
+		"emailid" : "EmailId",
+		"paswword" : "Password",
+		"save" : "Save",
 		"placeholder" : {
 			"jobname" : "Job Name",
 			"svnurl" : "SVN Url",
@@ -571,7 +578,9 @@
 			"package" : "Package",
 			"release" : "Release",
 			"whensuccess" : "When Success",
-			"whenfailure" : "When Failure"
+			"whenfailure" : "When Failure",
+			"emailid" : "EmailId",
+			"paswword" : "Password"
 		}
     }, 
 	"edit" : {

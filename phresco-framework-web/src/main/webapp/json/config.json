@@ -126,6 +126,11 @@
 			"path" : "../components/ci/js"
 		},
 		
+		"settings" : {
+			"moduleName":"settings",
+			"path" : "../components/settings/js"
+		},
+		
 		"testResult" : {
 			"moduleName":"testResult",
 			"path" : "../components/testResult/js"

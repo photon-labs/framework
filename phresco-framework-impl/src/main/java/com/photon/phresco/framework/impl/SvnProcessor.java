@@ -331,8 +331,8 @@ public class SvnProcessor implements FrameworkConstants{
     					} else if (PASSWORD.equalsIgnoreCase(passNode)) {
     						password = nodes.item(i).getNextSibling().getNextSibling().getNextSibling().getNextSibling().getTextContent();
     					}
-    					json.put(CONFLUENCE_SITE_URL, url);
-    					json.put(CONFLUENCE_USERNAME, userName);
+    					json.put(REPO_URL, url);
+    					json.put(USERNAME, userName);
     					json.put(PASSWORD, decyPassword(password));
     					jsonarray.put(json);
     				}

@@ -83,6 +83,8 @@ var commonVariables = {
 	continuousDeliveryView : "continuousDeliveryView",
 	continuousDeliveryConfigure : "continuousDeliveryConfigure",
 	
+	settings : "settings", 
+	
 	customerTheme : null,
 	defaultcustomer : "Photon",
 	customerInfoContext : "technology/customerinfo?customerName=",
@@ -115,6 +117,7 @@ var commonVariables = {
 	optionsPerformanceTest : "Performance_Test",
 	optionsLoadTest : "Load_Test",
 	optionsManualTest : "Manual_Test",
+	optionsSettings : "settings",
 	optionsCI : "CI",
 	optionsRunAgainstSrc : "Run_Against_Source",
 	optionsMinification : "Minification",
@@ -168,6 +171,9 @@ var commonVariables = {
 	mvnStopNode : "app/stopNode",
 	mvnCheckNode : "app/checkForNode",
 	mvnShowStartedNode : "app/showStartedNodeLog",
+	mvnCiSetup : "app/ciSetup",
+	mvnCiStart : "app/ciStart",
+	mvnCiStop : "app/ciStop",
 	
 	/******** mvn Context end****/
 	

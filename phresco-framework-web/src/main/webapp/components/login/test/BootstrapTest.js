@@ -60,6 +60,7 @@ var commonVariables = {
 	functionalTest : "functionalTest",
 	featurelist : "featurelist",
 	
+	settings : "settings", 
 	dynamicPage : "dynamicPage",
 	dynamicPageContext : "dynamic",
 	templateContext : "template",

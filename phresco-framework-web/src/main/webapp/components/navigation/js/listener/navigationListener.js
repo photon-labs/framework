@@ -16,6 +16,7 @@ define([], function() {
 		currentTab : null,
 		manualTest : null,
 		editproject : null,
+		settings : null,
 		unitTest : null,
 		functionalTest : null,
 		componentTest : null,
@@ -375,6 +376,19 @@ define([], function() {
 							});
 						}else{
 							callback(self.manualTest);
+						}
+						
+						break;
+						
+					case commonVariables.settings :
+						
+						if (self.settings === null) {
+							require(["settings/settings"], function() {
+								self.settings = new Clazz.com.components.settings.js.Settings();
+								callback(self.settings);	
+							});
+						}else{
+							callback(self.settings);
 						}
 						
 						break;

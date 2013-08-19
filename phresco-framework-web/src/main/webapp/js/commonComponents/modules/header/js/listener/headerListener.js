@@ -44,16 +44,32 @@ define(["header/api/headerAPI"], function() {
 				if (currentObj === null) {
 					commonVariables.navListener.getMyObj(commonVariables.projectlist, function(retVal) {
 						currentObj = retVal;
+						self.loadTabRender(currentObj);
+						$(".add_cancel").show();
+						$("#projectList").find('span').text('Projects');
 					});
 				}
 			}else if(self.currentTab === "Settings"){
+				if (currentObj === null) {
+					commonVariables.navListener.getMyObj(commonVariables.settings, function(retVal) {
+						currentObj = retVal;
+						self.loadTabRender(currentObj);
+						$(".add_cancel").hide();
+						$("#projectList").find('span').text('Settings');
+					});
+				} 
 			}else if(self.currentTab === "Downloads"){
 			}else if(self.currentTab === "Admin"){
 			}	
-
+			
+		},
+		
+		loadTabRender : function(currentObj){
+			var self=this;
 			if(currentObj !== null){
 				Clazz.navigationController.push(currentObj, commonVariables.animation);
 			}
+			
 		},
 
 		removePlaceholder : function() {

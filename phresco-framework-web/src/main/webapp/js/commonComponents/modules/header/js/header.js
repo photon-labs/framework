@@ -82,9 +82,10 @@ define(["header/listener/headerListener"] , function(template) {
 			});
 			
 			$(".header_left ul li").click(function(){
-
-					self.headerListener.currentTab = $(this).text();
-					self.onTabChangeEvent.dispatch();
+				$(".header_left ul li a").removeClass('nav_active');
+				$(this).children().addClass('nav_active');
+				self.headerListener.currentTab = $(this).text();
+				self.onTabChangeEvent.dispatch();
 			});
 			
 			$('a[name=customers]').click(function(){

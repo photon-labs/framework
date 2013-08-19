@@ -1,0 +1,15 @@
+{
+    "info":{
+        "widgetId":"101",
+        "widgetName":"Settings"
+    },
+    "components":{
+        "login":{
+            "moduleName":"Settings",
+            "host":"http://localhost",
+            "port":"2020"
+        }
+    },
+	
+	"theme" : "default"
+}

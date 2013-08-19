@@ -96,7 +96,9 @@ public class ApplicationManagerImpl implements ApplicationManager {
 		if (isDebugEnabled) {
 			S_LOGGER.debug("Entering Method ApplicationManagerImpl.performAction(" +
 					"Project project, ActionType action, Map<String, String> paramsMap,CallBack callBack)");
-			S_LOGGER.debug("performAction() ProjectInformation = "+projectInfo.getAppInfos().get(0));
+			if (projectInfo != null) {
+				S_LOGGER.debug("performAction() ProjectInformation = "+projectInfo.getAppInfos().get(0));
+			}
 		}
 		StringBuilder command = buildMavenCommand(action, mavenArgCommands);
     	return executeMavenCommand(projectInfo, action, command, workingDirectory);

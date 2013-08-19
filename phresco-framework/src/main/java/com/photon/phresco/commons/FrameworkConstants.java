@@ -334,6 +334,7 @@ public interface FrameworkConstants {
     String BACK_SLASH = "\\";
     String GITIGNORE_FILE = "/.gitignore";
     String LOCALHOST = "localhost";
+    String CONFIG_SUBMIT = "configSubmit";
     String JENKINS_START = "JenkinsStart";
     String JENKINS_STOP = "JenkinsStop";
     String NODE_START = "start";

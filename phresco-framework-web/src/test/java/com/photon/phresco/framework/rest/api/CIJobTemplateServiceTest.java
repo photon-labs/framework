@@ -115,7 +115,7 @@ public class CIJobTemplateServiceTest extends RestBaseTest {
 //		Assert.assertEquals(417, jobTemplateFail.getStatus());
 	}
 
-	@Test
+//	@Test
 	public void delete() {
 		Response delete = ciJobTemplateService.delete("deployJob", projectId);
 		Assert.assertEquals(200, delete.getStatus());

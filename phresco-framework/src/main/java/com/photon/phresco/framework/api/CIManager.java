@@ -306,4 +306,15 @@ public interface CIManager {
 	 * @return
 	 */
 	public CIJob getJob(String jobName, String projectId, List<ProjectDelivery> projectDeliveries, String continuousName);
+	
+	/**
+	 * @param jenkinsUrl
+	 * @param submitUrl
+	 * @param confluenceObj
+	 * @param emailAddress
+	 * @param emailPassword
+	 * @return
+	 * @throws PhrescoException
+	 */
+	public boolean setGlobalConfiguration(String jenkinsUrl, String submitUrl, org.json.JSONArray confluenceObj, String emailAddress, String emailPassword) throws PhrescoException;
 }
