@@ -376,7 +376,7 @@ public class ProjectService extends RestBase implements FrameworkConstants, Serv
 			applicationInfo.setSelectedModules(selectedFeatures);
 			applicationInfo.setSelectedJSLibs(selectedJsLibs);
 			applicationInfo.setSelectedComponents(selectedComponents);
-
+			applicationInfo.setCreated(true);
 			projectinfo.setAppInfos(Collections.singletonList(applicationInfo));
 			ProjectManager projectManager = PhrescoFrameworkFactory.getProjectManager();
 			projectManager.update(projectinfo, serviceManager, appDirName);
@@ -528,7 +528,7 @@ public class ProjectService extends RestBase implements FrameworkConstants, Serv
 			}.getType();
 			ProjectInfo projectInfo = gson.fromJson(bufferedReader, type);
 			ApplicationInfo applicationInfo = projectInfo.getAppInfos().get(0);
-
+			appInfo.setCreated(true);
 			bufferedReader.close();
 			deleteSqlFolder(applicationInfo, selectedDatabases, serviceManager, oldAppDirName);
 
