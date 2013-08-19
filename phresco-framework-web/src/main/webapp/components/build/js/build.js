@@ -672,7 +672,7 @@ define(["build/listener/buildListener"], function() {
 			
 			//call content div events
 			self.contentDivEvents();
-			//self.customScroll($(".consolescrolldiv"));
+			self.customScroll($(".consolescrolldiv"));
 
 			//Show tool tip
 			$(".tooltiptop").tooltip();

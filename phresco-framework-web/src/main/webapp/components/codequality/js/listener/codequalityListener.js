@@ -130,6 +130,7 @@ define([], function() {
 						} else {
 							commonVariables.loadingScreen.removeLoading();
 							if(response.responseCode === "PHR510001" ) {
+								$(".alert").show();
 								$('#content_div').html('<div class="alert" style="text-align: center; width:98%"></div>');
 								$(".alert").attr('data-i18n', 'errorCodes.' + response.responseCode);
 								$('#codeAnalysis').hide();
@@ -138,6 +139,7 @@ define([], function() {
 								$("#codereportTypes").hide();	
 								self.renderlocales(commonVariables.contentPlaceholder);
 							}else if(response.responseCode === "PHR510002" ) {
+								$(".alert").show();
 								$('#content_div').html('<div class="alert" style="text-align: center; width:98%"></div>');
 								$(".alert").attr('data-i18n', 'errorCodes.' + response.responseCode);
 								self.renderlocales(commonVariables.contentPlaceholder);
@@ -228,6 +230,7 @@ define([], function() {
 		getIframeReport : function(validateAgainst){
 			var self = this;
 			self.closeConsole();
+			$(".alert").hide();
 			try {
 				commonVariables.api.ajaxRequest(self.getRequestHeader(validateAgainst , "iframereport"), 
 					function(iframereport) {
@@ -236,10 +239,12 @@ define([], function() {
 							$('#content_div').html(iframedata);
 						}else{
 							if(iframereport.responseCode === "PHR510003" ) {
+								$(".alert").show();
 								$('#content_div').html('<div class="alert" style="text-align: center; width:98%"></div>');
 								$(".alert").attr('data-i18n', 'errorCodes.' + iframereport.responseCode);
 								self.renderlocales(commonVariables.contentPlaceholder);
 							} else if(iframereport.responseCode === "PHR510002" ) {
+								$(".alert").show();
 								$('#content_div').html('<div class="alert" style="text-align: center; width:98%"></div>');
 								$(".alert").attr('data-i18n', 'errorCodes.' + iframereport.responseCode);
 								self.renderlocales(commonVariables.contentPlaceholder);

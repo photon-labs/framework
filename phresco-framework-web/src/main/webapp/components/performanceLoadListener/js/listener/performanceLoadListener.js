@@ -439,7 +439,8 @@ define(["lib/jquery-tojson-1.0",'lib/RGraph_common_core-1.0','lib/RGraph_common_
 			});
 		},
 
-		showErrorAndHideControls : function (errorMessage) {
+		showErrorAndHideControls : function (errorCode) {
+			var self = this;
 			$('.perfError').show();
 			$(".perfError").attr('data-i18n', 'errorCodes.' + errorCode);
 			self.renderlocales(commonVariables.contentPlaceholder);
@@ -647,7 +648,6 @@ define(["lib/jquery-tojson-1.0",'lib/RGraph_common_core-1.0','lib/RGraph_common_
 			var check = $('#consoleImg').attr('data-flag');
 			if (check === "true") {
 				self.openConsole();
-				self.setConsoleScrollbar(false);
 			} else {
 				self.closeConsole();
 			}
@@ -662,31 +662,6 @@ define(["lib/jquery-tojson-1.0",'lib/RGraph_common_core-1.0','lib/RGraph_common_
 			resultvalue = resultvalue + $('.footer_section').height() + 65;
 			$('.performanceTestResults').height($(window).height() - (resultvalue + 80));
 		},
-
-		setConsoleScrollbar : function(bcheck){
-			if(bcheck){
-				$("#unit_progress .scrollContent").mCustomScrollbar("destroy");
-				$("#unit_progress .scrollContent").mCustomScrollbar({
-					autoHideScrollbar: false,
-					scrollInertia: 1000,
-					theme:"light-thin",
-					advanced:{ updateOnContentResize: true},
-					callbacks:{
-						onScrollStart:function(){
-							$("#unit_progress .scrollContent").mCustomScrollbar("scrollTo","bottom");
-						}
-					}
-				});
-			}else{
-				$("#unit_progress .scrollContent").mCustomScrollbar("destroy");
-				$("#unit_progress .scrollContent").mCustomScrollbar({
-					autoHideScrollbar:true,
-					scrollInertia: 200,
-					theme:"light-thin",
-					advanced:{ updateOnContentResize: true}
-				});
-			}
-		},	
 
 		mandatoryValidation : function (phase, queryString, dynamicPageObject) {
 			var self = this, requestBody = {};
@@ -703,8 +678,6 @@ define(["lib/jquery-tojson-1.0",'lib/RGraph_common_core-1.0','lib/RGraph_common_
 
 		preTest : function(phase) {
 			var self = this;
-
-			self.setConsoleScrollbar(true);
 			if ("performance-test" === phase) {
 				self.preTriggerPerformanceTest();
 			} else {

@@ -356,7 +356,8 @@ define(["performanceLoadListener/listener/performanceLoadListener"], function() 
 				self.testAgainstChangeEvent($(this));
 			});
 			
-
+			self.customScroll($(".consolescrolldiv")); 
+			
 			$("#loadRun").click(function() {
 				self.validation.dispatch("load-test", $('#loadForm').serialize(), self.dynamicpage);
 			});

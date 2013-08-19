@@ -96,30 +96,6 @@ define(["codequality/listener/codequalityListener"], function() {
 		
 		},
 		
-		setConsoleScrollbar : function(bcheck){
-			if(bcheck){
-				$("#unit_progress .scrollContent").mCustomScrollbar("destroy");
-				$("#unit_progress .scrollContent").mCustomScrollbar({
-					autoHideScrollbar: false,
-					scrollInertia: 1000,
-					theme:"light-thin",
-					advanced:{ updateOnContentResize: true},
-					callbacks:{
-						onScrollStart:function(){
-							$("#unit_progress .scrollContent").mCustomScrollbar("scrollTo","bottom");
-						}
-					}
-				});
-			}else{
-				$("#unit_progress .scrollContent").mCustomScrollbar("destroy");
-				$("#unit_progress .scrollContent").mCustomScrollbar({
-					autoHideScrollbar:true,
-					scrollInertia: 200,
-					theme:"light-thin",
-					advanced:{ updateOnContentResize: true}
-				});
-			}
-		},
 		/***
 		 * Bind the action listeners. The bindUI() is called automatically after the render is complete 
 		 *
@@ -137,12 +113,10 @@ define(["codequality/listener/codequalityListener"], function() {
 			});
 			
 			$("#validate").click(function() {
-				self.setConsoleScrollbar(true);
 				$('.progress_loading').css('display','block');
 				$(".dyn_popup").hide();
 				self.readLogEvent.dispatch(function(){
 					$('.progress_loading').css('display','none');
-					self.setConsoleScrollbar(false);
 				});
 			});
 			
@@ -185,6 +159,8 @@ define(["codequality/listener/codequalityListener"], function() {
 				theme:"light-thin",
 				advanced:{ updateOnContentResize: true}
 			});
+
+			self.customScroll($(".consolescrolldiv"));
 						
 		}
 	});

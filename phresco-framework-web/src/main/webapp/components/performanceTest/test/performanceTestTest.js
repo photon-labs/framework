@@ -1,4 +1,4 @@
-define(["performanceTest/performanceTest", "lib/jquery_magnific_popup_min-1.0"], function(PerformanceTest) {
+	define(["performanceTest/performanceTest", "lib/jquery_magnific_popup_min-1.0"], function(PerformanceTest) {
 
 	return {
 		runTests: function (configData) {
@@ -76,7 +76,7 @@ define(["performanceTest/performanceTest", "lib/jquery_magnific_popup_min-1.0"],
 					equal($(commonVariables.contentPlaceholder).find('.testAgainstOption').length, 3, "Test Against Dropdown test");
 					equal($(commonVariables.contentPlaceholder).find('.testResultFilesOption').length, 3, "Result Files Dropdown test");
 					self.runResultNotExecuted(performanceTest);
-				}, 1500);
+				}, 1700);
 			});
 		},
 		
@@ -91,7 +91,7 @@ define(["performanceTest/performanceTest", "lib/jquery_magnific_popup_min-1.0"],
 				  contentType: "application/json",
 				  status: 200,
 				  response : function() {
-					  this.responseText = JSON.stringify({"message":"Test not yet executed for webservice","exception":null,"responseCode":null,"data":null,"status":null});
+					  this.responseText = JSON.stringify({"message":null,"exception":null,"responseCode":"PHRQ510002","data":null,"status":"failure"});
 				  }
 				});
 
@@ -100,10 +100,9 @@ define(["performanceTest/performanceTest", "lib/jquery_magnific_popup_min-1.0"],
 				performanceTest.testAgainstChangeEvent($(commonVariables.contentPlaceholder).find('.testAgainstNav').find('#testAgainstsDrop').parent().find('a[value=database]'));
 				setTimeout(function() {
 					start();
-					console.info();
 					equal($(".perfError").css("display"), "block", "Test not executed error msg test");
 					self.runTestAgainstChangeEvent(performanceTest);
-				}, 800);
+				}, 1800);
 
 			});	
 		},
@@ -271,7 +270,7 @@ define(["performanceTest/performanceTest", "lib/jquery_magnific_popup_min-1.0"],
 					start();
 					equal(true, $("#rampUpPeriod").hasClass("errormessage"), "performance popup mandatory validation tested succesfully");
 					self.runTriggerPerformanceTest(performanceTest);
-				},1000);
+				},1200);
 			});
 		},
 

@@ -51,12 +51,11 @@
 						</td>
 					</tr>
 				</thead>
-				<tbody class="scrollContent">
-					<tr>
-						<td id="iframePart" colspan="2"></td>
-					</tr>
-				</tbody>
 			</table>
+			<div class="consolescrolldiv" autoscroll="true">
+				<div id="iframePart" class="console_pad">
+				</div>
+			</div>
 		</div>
     </section>
 	<section class="content_end" style="display:none;">

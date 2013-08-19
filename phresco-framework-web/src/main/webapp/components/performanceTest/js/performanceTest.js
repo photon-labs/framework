@@ -420,7 +420,8 @@ define(["performanceLoadListener/listener/performanceLoadListener"], function() 
 				self.testAgainstChangeEvent($(this));
 			});
 			
-
+			self.customScroll($(".consolescrolldiv")); 
+			
 			$("#performanceRun").click(function() {
 				self.validation.dispatch("performance-test", $('#performanceForm').serialize(), self.dynamicpage);
 			});
