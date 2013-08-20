@@ -607,7 +607,9 @@ define(["build/listener/buildListener"], function() {
 			
 			//Log console div click event
 			$("#buildConsole").click(function() {
-				if($('#logContent').text().match("INFO: Starting Coyote HTTP/1.1")){
+				if($('#logContent').text().toLowerCase().match("info: starting coyote http/1.1") ||
+					$('#logContent').text().toLowerCase().match("server running at https://") ||
+					$('#logContent').text().toLowerCase().match("server running at http://")){
 					$("input[name=build_runagsource]").removeClass('btn_style');
 					$("input[name=build_runagsource]").addClass('btn_style_off');
 					$('.progress_loading').css('display','none');
@@ -616,7 +618,7 @@ define(["build/listener/buildListener"], function() {
 					$("#restart").removeClass('btn_style_off');
 					$("#restart").addClass('btn_style');
 					//self.setConsoleScrollbar(false);
-					self.runAgainSourceStatus();
+					//self.runAgainSourceStatus();
 				}
 				self.onProgressEvent.dispatch(this);
 			});

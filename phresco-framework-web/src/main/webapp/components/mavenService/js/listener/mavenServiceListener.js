@@ -235,12 +235,15 @@ define([], function() {
 							if(response.status === 'STARTED'){
 								callback(response);
 							}else if(response.status === 'INPROGRESS'){
-								if (response.log.indexOf("SocketConnector@0.0.0.0:") != -1) {//For start hub
-									callback(response);
-								} else if (response.log.indexOf("Done: /status") != -1) {//For start node
+								if (response.log.indexOf("SocketConnector@0.0.0.0:") != -1 || 
+									response.log.indexOf("Done: /status") != -1 ||
+									response.log.toLowerCase().match("info: starting coyote http/1.1") ||
+									response.log.toLowerCase().match("server running at https://") ||
+									response.log.toLowerCase().match("server running at http://")) {
+									//For start node
 									callback(response);
 								} else {
-									self.mvnlogService(response.uniquekey, divId, callback);									
+									self.mvnlogService(response.uniquekey, divId, callback);
 								}
 							}else if(response.status === 'COMPLETED'){
 								callback(response);

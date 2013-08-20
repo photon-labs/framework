@@ -46,15 +46,22 @@ define(["framework/base", "api/localStorageAPI"], function(){
 				cache: false,
 				async: true,
 				
-				success : function(response, e ,xhr) {
-					if (callbackFunction) {
+				success : function(response, e ,xhr){
+					if (callbackFunction){
 						callbackFunction(response);
 					}
 				},
 				
-				error : function(jqXHR, textStatus, errorThrown) {
-					if (errorHandler) {
+				error : function(jqXHR, textStatus, errorThrown){
+					if (errorHandler){
 						errorHandler(jqXHR.responseText);
+					}
+				},
+				
+				complete : function(){
+					if(!Clazz.navigationController.loadingActive && !commonVariables.continueloading){
+						commonVariables.hideloading = false;
+						commonVariables.loadingScreen.removeLoading();
 					}
 				}
 			});
