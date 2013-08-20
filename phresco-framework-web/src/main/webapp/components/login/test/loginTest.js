@@ -89,13 +89,8 @@ define(["login/login"], function(Login) {
 					start();
 					equal($(commonVariables.headerPlaceholder).find("font:first").text(), "Admin", "Login Service Tested");
 					equal($("#footer").attr('id'), "footer", "Footer Rendering Tested");
-					require(["unitTestTest"], function(unitTestTest){
-						unitTestTest.runTests();
-//						functionalTestTest.runTests();
-//						componentTestTest.runTests();
-//						manualTestTest.runTests();
-//						manualTestTest.runTests();
-//						projectlistTest.runTests();
+					require(["projectlistTest"], function(projectlistTest){
+						projectlistTest.runTests();
 					});
 				}, 4000);
 			});
