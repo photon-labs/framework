@@ -741,6 +741,7 @@ define(["framework/widget", "framework/templateProvider"], function() {
 				$(".unit_progress").css("height", finalHeight + 10);
 				//$('.unit_progress').find('#logContent').css("height", finalHeight - 20);
 			},
+			
 			// Close console window - Added by sudhakar
 			closeConsole : function() {
 				var value = $('.unit_info').width();

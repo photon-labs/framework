@@ -31,7 +31,7 @@
 					start();
 					equal($('.perfError').attr("data-i18n").trim(), "testresult.label.performancenotexecuted", "No result available test");
 					self.renderPerformanceTemplateTest(performanceTest);
-				}, 800);
+				}, 1800);
 			});
 		},
 

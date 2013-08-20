@@ -91,7 +91,7 @@ public class LoginService extends RestBase implements FrameworkConstants, Respon
 			}
 
 			List<Customer> customers = user.getCustomers();
-			Collections.sort(customers, sortCusNameInAlphaOrder());
+			//Collections.sort(customers, sortCusNameInAlphaOrder());
 
 			File tempPath = new File(Utility.getPhrescoTemp() + File.separator + "user.json");
 			String userId = user.getId();

@@ -1,12 +1,10 @@
 
 define(["configuration/configuration",  "framework/navigationController", "framework/widgetWithTemplate"], function(Configuration, navigation, WidgetWithTemplate) {
 
-	return { runTests: function (configData) {
-		
+	return { 
+		runTests: function (configData) {
 		module("configuration.js;Configuration");
-		
 		asyncTest("Test - Configuration Page design", function() {
-		
 			var configuration, navigationController, widgetWithTemplate, configurationId;
 			 
 			Clazz.config = configData;
@@ -28,5 +26,9 @@ define(["configuration/configuration",  "framework/navigationController", "frame
 			
 		});
 		
-	}};
+	}
+
+	
+	}
+	
 });

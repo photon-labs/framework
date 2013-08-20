@@ -1,58 +1,51 @@
-{".login_left img":{
- 	"margin-top": "loginlogo"
-},
-".header_section" :{
-"background": "linear-gradient(to bottom, gradientTop 1%,gradientBottom 100%) !important",
-"filter": "progid:DXImageTransform.Microsoft.gradient( startColorstr=gradientTop, endColorstr=gradientBottom,GradientType=0 ) !important"
-},
-".header_left figure img": {
-	"padding-top":"logopadding"	
-}, 
-".header_right" :{
-"color": "labelColor"
-},
-".user_login a, .user_login a:hover":{
- "color":"labelColor"
-},
-".header_section ul li a:hover, .header_section ul li a.nav_active": {
- 	"color":"pageHeaderColor"
-},
-".table_border tr.proj_title td":{
-"color":"brandingColor"
-},
-".footer_section":{
-"background": "linear-gradient(to bottom, gradientTop 1%,gradientBottom 100%) !important",
-"filter": "progid:DXImageTransform.Microsoft.gradient( startColorstr=gradientTop, endColorstr=gradientBottom,GradientType=0 ) !important"
-},
-".cust_sel ul li a.selected, .cust_sel ul li a:hover":{
- "background-color": "brandingColor"
-},
-".code_report" :{
- "background": "brandingColor"
-},
-".features_box h1":{
- "color": "brandingColor"
-},
-".features_right":{
-"color": "brandingColor"
-},
-".btn_style": {
-"background": "buttonColor"
-},
-".row_bg": {
-"color":"brandingColor"
-},
-".dyn_popup": {
-"border": "1px solid brandingColor"
-},
-".speakstyletopright:before":{
-"border-bottom-color": "brandingColor"
-},
-".title_nav .cust_sel ul li a:hover":{
-"background": "brandingColor"
-},
-".speakstyleleft:before":{
-"border-bottom-color":"brandingColor"
-}
-}
+{
 
+    ".login_left img":{
+        "margin-top":"loginlogo"
+    },
+    ".header_section":{
+        "background":"linear-gradient(to bottom, gradientTop 1%,gradientBottom 100%) !important",
+        "filter":"progid:DXImageTransform.Microsoft.gradient( startColorstr=gradientTop, endColorstr=gradientBottom,GradientType=0 ) !important"
+    },
+    ".header_left figure img":{
+        "padding-top":"logopadding"
+    },
+    ".user_login a, .user_login a:hover, .header_right":{
+        "color":"labelColor"
+    },
+    ".header_section ul li a:hover, .header_section ul li a.nav_active":{
+        "color":"pageHeaderColor"
+    },
+    ".table_border tr.proj_title td, .row_bg":{
+        "color":"brandingColor"
+    },
+    ".footer_section":{
+        "background":"linear-gradient(to bottom, gradientTop 1%,gradientBottom 100%) !important",
+        "filter":"progid:DXImageTransform.Microsoft.gradient( startColorstr=gradientTop, endColorstr=gradientBottom,GradientType=0 ) !important"
+    },
+    ".cust_sel ul li a.selected, .cust_sel ul li a:hover":{
+        "background-color":"brandingColor"
+    },
+    ".code_report":{
+        "background":"brandingColor"
+    },
+    ".features_right, .features_box h1":{
+        "color":"brandingColor"
+    },
+    ".btn_style":{
+        "background":"buttonColor"
+    },
+    ".dyn_popup":{
+        "border":"1px solid brandingColor"
+    },
+    ".speakstyletopright:before":{
+        "border-bottom-color":"brandingColor"
+    },
+    ".title_nav .cust_sel ul li a:hover, .btn_style":{
+        "background":"brandingColor"
+    },
+    ".speakstyleleft:before":{
+        "border-bottom-color":"brandingColor"
+    }
+
+}
