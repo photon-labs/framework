@@ -26,16 +26,6 @@ define([], function() {
 			}
 		},
 		
-		onGraphicalView : function() {
-			var self = this;
-			self.testResultListener.showGraphicalView();
-		},
-		
-		onTabularView : function() {
-			var self = this;
-			self.testResultListener.showTabularView();
-		},
-		
 		/***
 		 * provides the request header
 		 *
@@ -131,21 +121,18 @@ define([], function() {
 			
 			$('#testConsole').html('');
 			self.testResultListener.openConsoleDiv();//To open the console
-			self.testResultListener.setConsoleScrollbar(true);//To apply for auto scroll for console window
 			if (self.mavenServiceListener === null) {
 				commonVariables.navListener.getMyObj(commonVariables.mavenService, function(retVal){
 					self.mavenServiceListener = retVal;
 					self.mavenServiceListener.mvnUnitTest(queryString, '#testConsole', function(response) {
 						self.testResultListener.closeConsole();
 						callback(response);
-						self.testResultListener.setConsoleScrollbar(false);
 					});
 				});
 			} else {
 				self.mavenServiceListener.mvnUnitTest(queryString, '#testConsole', function(response) {
-					self.testResultListener.closeConsole();
+//					self.testResultListener.closeConsole();
 					callback(response);
-					self.testResultListener.setConsoleScrollbar(false);
 				});
 			}
 		}

@@ -40,8 +40,7 @@ var commonVariables = {
 	
 	loadingScreen : null,
     
-	testResult : "testResult",
-    projectlist : "projectlist",
+	projectlist : "projectlist",
     projectlistContext : "project",
 	addproject : "addproject",
 	editproject : "editproject",
@@ -59,6 +58,14 @@ var commonVariables = {
 	performanceTestResults : "performanceTestResults",
 	functionalTest : "functionalTest",
 	featurelist : "featurelist",
+	unitTest : "unitTest",
+	unit : "unit",
+	testsuiteResult : "testsuiteResult",
+	testcaseResult	: "testcaseResult",
+	componentTest : "componentTest",
+	mvnUnitTest : "app/runUnitTest",
+	mvnComponentTest : "app/runComponentTest",
+	mvnFunctionalTest : "app/runFunctionalTest",
 	
 	settings : "settings", 
 	dynamicPage : "dynamicPage",
@@ -80,6 +87,8 @@ var commonVariables = {
 	loadTestGoal : "load-test",
 	pdfReportGoal : "pdf-report",
 
+	testSuiteName : "Downloads",
+	
 	startHubGoal : "start-hub",
 	startNodeGoal : "start-node",
 	
@@ -132,7 +141,7 @@ define([], function() {
 			// setup require.js
 			var requireConfig = requirejs.config(configJson);
 
-			require(["framework/class", "framework/widget", "lib/jslib_bootstrap_datepicker-1.0.0", "lib/bootstrap_select_min-1.0", "framework/widgetWithTemplate", "framework/navigationController", "common/loading", "api/api", "lib/jquery_mockjax-1.0", "lib/json2-1.0", "lib/jslib_jss_min-1.0.0", "lib/i18next-1.6.0", "lib/signal-1.0.1", "lib/signalbinding-1.0.1", "lib/main-1.0", "lib/scrollbars-1.0", "lib/jquery_mousewheel-1.0", "lib/jquery_mousehold-1.0", "lib/jquery_ba_resize_min-1.0", "lib/jquery_event_drag_min-2.0", "lib/jquery_mCustomScrollbar_concat_min-2.8.1", "lib/jquery_ui-1.10.3"], function () {
+			require(["framework/class", "framework/widget", "lib/jslib_bootstrap_datepicker-1.0.0", "lib/bootstrap_select_min-1.0", "framework/widgetWithTemplate", "framework/navigationController", "common/loading", "api/api", "lib/jquery_mockjax-1.0", "lib/json2-1.0", "lib/jslib_jss_min-1.0.0", "lib/i18next-1.6.0", "lib/signal-1.0.1", "lib/signalbinding-1.0.1", "lib/main-1.0", "lib/scrollbars-1.0", "lib/jquery_mousewheel-1.0", "lib/jquery_mousehold-1.0", "lib/jquery_ba_resize_min-1.0", "lib/jquery_event_drag_min-2.0", "lib/jquery_mCustomScrollbar_concat_min-2.8.1", "lib/jquery_ui-1.10.3", "lib/jquery_magnific_popup_min-1.0"], function () {
 				Clazz.config = data;
 				Clazz.navigationController = new Clazz.NavigationController({
 					mainContainer : "basepage\\:widget",

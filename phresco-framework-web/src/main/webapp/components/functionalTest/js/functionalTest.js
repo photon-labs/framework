@@ -8,10 +8,8 @@ define(["functionalTest/listener/functionalTestListener", "testResult/listener/t
 		configUrl: "components/functionalTest/config/config.json",
 		name : commonVariables.functionalTest,
 		functionalTestListener : null,
-		testResult : null,
+		testsuiteResult : null,
 		testResultListener : null,
-		onTabularViewEvent : null,
-		onGraphicalViewEvent : null,
 		onDynamicPageEvent : null,
 		onPerformActionEvent : null,
 		onStopHubEvent : null,
@@ -31,15 +29,6 @@ define(["functionalTest/listener/functionalTestListener", "testResult/listener/t
 			if (self.testResultListener === null) {
 				self.testResultListener = new Clazz.com.components.testResult.js.listener.TestResultListener();
 			}
-			if (self.onTabularViewEvent === null) {
-				self.onTabularViewEvent = new signals.Signal();
-			}
-			self.onTabularViewEvent.add(self.functionalTestListener.onTabularView, self.functionalTestListener);
-			
-			if (self.onGraphicalViewEvent === null) {
-				self.onGraphicalViewEvent = new signals.Signal();
-			}
-			self.onGraphicalViewEvent.add(self.functionalTestListener.onGraphicalView, self.functionalTestListener);
 			
 			if (self.onDynamicPageEvent === null) {
 				self.onDynamicPageEvent = new signals.Signal();
@@ -113,16 +102,10 @@ define(["functionalTest/listener/functionalTestListener", "testResult/listener/t
 		 */
 		postRender : function(element) {
 			var self = this;
-			commonVariables.navListener.getMyObj(commonVariables.testResult, function(retVal){
-				self.testResult = retVal;
+			commonVariables.navListener.getMyObj(commonVariables.testsuiteResult, function(retVal){
+				self.testsuiteResult = retVal;
 				Clazz.navigationController.jQueryContainer = '#testResult';
-				Clazz.navigationController.push(self.testResult, false);
-			});
-			
-			$("#testResult .scrollContent").mCustomScrollbar({
-				autoHideScrollbar:true,
-				theme:"light-thin",
-				advanced:{ updateOnContentResize: true}
+				Clazz.navigationController.push(self.testsuiteResult, false);
 			});
 		},
 		
@@ -210,26 +193,14 @@ define(["functionalTest/listener/functionalTestListener", "testResult/listener/t
 				commonVariables.navListener.copyPath(paramJson);
 			});
 			
-			//Shows the tabular view of the test result
-			$("#tabularView").unbind("click");
-			$("#tabularView").click(function() {
-				self.onTabularViewEvent.dispatch();
-			});
-			
-			//Shows the graphical view of the test result
-			$("#graphicalView").unbind("click");
-			$("#graphicalView").click(function() {
-				self.onGraphicalViewEvent.dispatch();
-			});
-			
 			//To run the Functional test
 			$("#runFunctionalTest").unbind("click");
 			$("#runFunctionalTest").click(function() {
 				self.onPerformActionEvent.dispatch("runFunctionalTest", function() {
-					self.testResult.logContent = $('#testConsole').html();
+					self.testsuiteResult.logContent = $('#testConsole').html();
 					$('#testResult').empty();
 					Clazz.navigationController.jQueryContainer = '#testResult';
-					Clazz.navigationController.push(self.testResult, false);
+					Clazz.navigationController.push(self.testsuiteResult, false);
 				});
 			});
 			

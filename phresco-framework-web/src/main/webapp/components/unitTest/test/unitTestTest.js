@@ -1,368 +1,217 @@
 define(["unitTest/unitTest"], function(UnitTest) {
-	
-	return { runTests: function (configData) {
-		module("UnitTest.js;UnitTest");
-		var unitTest = new UnitTest();
-		
-		asyncTest("Unit test technology options dropdown verification", function() {
-			mockGetUnitTestOptions = mockFunction();
+	return { 
+		runTests : function (configData) {
+			module("UnitTest.js");
+			var unitTest = new UnitTest(), self = this, unitTestMock, testsuitesMock;
 			
-			when(mockGetUnitTestOptions)(anything()).then(function(arg) {
-				var response =  {"message":"Unit test report returned successfully","exception":null,"data":{"reportOptions":["js","java"],"projectModules":null},"response":null};
-				
-				var userPermissions = {"manageApplication":true,"importApplication":true,"manageRepo":true,"updateRepo":false,"managePdfReports":true,"manageCodeValidation":true,"manageConfiguration":true,"manageBuilds":true,"manageTests":true,"manageCIJobs":true,"executeCIJobs":false,"manageMavenReports":false};
-				
-				var data = {};
-				data.reportOptions = response.data.reportOptions;
-				data.projectModules = response.data.projectModules;
-				data.userPermissions = userPermissions;
-				
-				unitTest.renderTemplate(data, commonVariables.contentPlaceholder);
-			});
-			
-			unitTest.preRender = mockGetUnitTestOptions;
-			
-			mockGetTestsuites = mockFunction();
-			when(mockGetTestsuites)(anything()).then(function(arg) {
-				var response =  {"message":"Test Suites listed successfully","exception":null,"data":[{"name":"Phpunittest","file":null,"total":1.0,"time":"0.003561","errors":0.0,"assertions":null,"success":1.0,"failures":0.0,"notApplicable":0.0,"blocked":0.0,"notExecuted":0.0,"testCoverage":0.0,"testCases":null,"tests":0.0,"testSteps":null}],"response":null};
-				var data = {};
-				data.testSuites = response.data;
-				unitTest.testResult.renderTemplate(data, $(commonVariables.contentPlaceholder).find('#testResult div.widget-maincontent-div')); 
-			});
-			
-			commonVariables.navListener.getMyObj(commonVariables.testResult, function(retVal) {
-				retVal.preRender = mockGetTestsuites;
-			});
-			
-			unitTest.loadPage(false);
-			
-			setTimeout(function() {
-				start();
-				equal($(commonVariables.contentPlaceholder).find('#reportOptionsDrop').text(), "js", "Unit test technology options dropdown verified");
-			}, 1500);
-		});
-		
-		asyncTest("Unit test modules options dropdown verification", function() {
-			mockGetUnitTestOptions = mockFunction();
-			
-			when(mockGetUnitTestOptions)(anything()).then(function(arg) {
-				var response =  {"message":"Unit test report returned successfully","exception":null,"data":{"reportOptions":null,"projectModules":["phresco-framework","phresco-framework-impl", "phresco-framework-web"]},"response":null};
-				
-				var userPermissions = {"manageApplication":true,"importApplication":true,"manageRepo":true,"updateRepo":false,"managePdfReports":true,"manageCodeValidation":true,"manageConfiguration":true,"manageBuilds":true,"manageTests":true,"manageCIJobs":true,"executeCIJobs":false,"manageMavenReports":false};
-				
-				var data = {};
-				data.reportOptions = response.data.reportOptions;
-				data.projectModules = response.data.projectModules;
-				data.userPermissions = userPermissions;
-				
-				unitTest.renderTemplate(data, commonVariables.contentPlaceholder);
-			});
-			
-			unitTest.preRender = mockGetUnitTestOptions;
-			
-			mockGetTestsuites = mockFunction();
-			when(mockGetTestsuites)(anything()).then(function(arg) {
-				var response =  {"message":"Test Suites listed successfully","exception":null,"data":[{"name":"Phpunittest","file":null,"total":1.0,"time":"0.003561","errors":0.0,"assertions":null,"success":1.0,"failures":0.0,"notApplicable":0.0,"blocked":0.0,"notExecuted":0.0,"testCoverage":0.0,"testCases":null,"tests":0.0,"testSteps":null}],"response":null};
-				var data = {};
-				data.testSuites = response.data;
-				unitTest.testResult.renderTemplate(data, $(commonVariables.contentPlaceholder).find('#testResult div.widget-maincontent-div')); 
-			});
-			
-			commonVariables.navListener.getMyObj(commonVariables.testResult, function(retVal) {
-				retVal.preRender = mockGetTestsuites;
-			});
-			
-			unitTest.loadPage(false);
-			
-			setTimeout(function() {
-				start();
-				equal($(commonVariables.contentPlaceholder).find('#modulesDrop').text(), "phresco-framework", "Unit test modules options dropdown verified");
-			}, 1500);
-		});
-		
-		asyncTest("Unit test execution permission verification", function() {
-			mockGetUnitTestOptions = mockFunction();
-			
-			when(mockGetUnitTestOptions)(anything()).then(function(arg) {
-				var response =  {"message":"Unit test report returned successfully","exception":null,"data":{"reportOptions":null,"projectModules":null},"response":null};
-				
-				var userPermissions = {"manageApplication":true,"importApplication":true,"manageRepo":true,"updateRepo":false,"managePdfReports":true,"manageCodeValidation":true,"manageConfiguration":true,"manageBuilds":true,"manageTests":true,"manageCIJobs":true,"executeCIJobs":false,"manageMavenReports":false};
-				
-				var data = {};
-				data.reportOptions = response.data.reportOptions;
-				data.projectModules = response.data.projectModules;
-				data.userPermissions = userPermissions;
-				
-				unitTest.renderTemplate(data, commonVariables.contentPlaceholder);
-			});
-			
-			unitTest.preRender = mockGetUnitTestOptions;
-			
-			mockGetTestsuites = mockFunction();
-			when(mockGetTestsuites)(anything()).then(function(arg) {
-				var response =  {"message":"Test Suites listed successfully","exception":null,"data":[{"name":"Phpunittest","file":null,"total":1.0,"time":"0.003561","errors":0.0,"assertions":null,"success":1.0,"failures":0.0,"notApplicable":0.0,"blocked":0.0,"notExecuted":0.0,"testCoverage":0.0,"testCases":null,"tests":0.0,"testSteps":null}],"response":null};
-				var data = {};
-				data.testSuites = response.data;
-				unitTest.testResult.renderTemplate(data, $(commonVariables.contentPlaceholder).find('#testResult div.widget-maincontent-div')); 
-			});
-			
-			commonVariables.navListener.getMyObj(commonVariables.testResult, function(retVal) {
-				retVal.preRender = mockGetTestsuites;
-			});
-			
-			unitTest.loadPage(false);
-			
-			setTimeout(function() {
-				start();
-				equal($(commonVariables.contentPlaceholder).find('#unitTestBtn').is(':disabled'), false, "Unit test execution permission verified");
-			}, 1500);
-		});
-		
-		asyncTest("Unit test result view permission verification", function() {
-			mockGetUnitTestOptions = mockFunction();
-			
-			when(mockGetUnitTestOptions)(anything()).then(function(arg) {
-				var response =  {"message":"Unit test report returned successfully","exception":null,"data":{"reportOptions":null,"projectModules":null},"response":null};
-				
-				var userPermissions = {"manageApplication":true,"importApplication":true,"manageRepo":true,"updateRepo":false,"managePdfReports":true,"manageCodeValidation":true,"manageConfiguration":true,"manageBuilds":true,"manageTests":true,"manageCIJobs":true,"executeCIJobs":false,"manageMavenReports":false};
-				
-				var data = {};
-				data.reportOptions = response.data.reportOptions;
-				data.projectModules = response.data.projectModules;
-				data.userPermissions = userPermissions;
-				
-				unitTest.renderTemplate(data, commonVariables.contentPlaceholder);
-			});
-			
-			unitTest.preRender = mockGetUnitTestOptions;
-			
-			mockGetTestsuites = mockFunction();
-			when(mockGetTestsuites)(anything()).then(function(arg) {
-				var response =  {"message":"Test Suites listed successfully","exception":null,"data":[{"name":"Phpunittest","file":null,"total":1.0,"time":"0.003561","errors":0.0,"assertions":null,"success":1.0,"failures":0.0,"notApplicable":0.0,"blocked":0.0,"notExecuted":0.0,"testCoverage":0.0,"testCases":null,"tests":0.0,"testSteps":null}],"response":null};
-				var data = {};
-				data.testSuites = response.data;
-				unitTest.testResult.renderTemplate(data, $(commonVariables.contentPlaceholder).find('#testResult div.widget-maincontent-div')); 
-			});
-			
-			commonVariables.navListener.getMyObj(commonVariables.testResult, function(retVal) {
-				retVal.preRender = mockGetTestsuites;
-			});
-			
-			unitTest.loadPage(false);
-			
-			setTimeout(function() {
-				start();
-				equal($(commonVariables.contentPlaceholder).find('#unitTestBtn').is(':disabled'), false, "Unit test result view permission verified");
-			}, 1500);
-		});
-		
-		asyncTest("Unit test testsuites list verification", function() {
-			mockGetUnitTestOptions = mockFunction();
-			
-			when(mockGetUnitTestOptions)(anything()).then(function(arg) {
-				var response =  {"message":"Unit test report returned successfully","exception":null,"data":{"reportOptions":null,"projectModules":null},"response":null};
-				
-				var userPermissions = {"manageApplication":true,"importApplication":true,"manageRepo":true,"updateRepo":false,"managePdfReports":true,"manageCodeValidation":true,"manageConfiguration":true,"manageBuilds":true,"manageTests":true,"manageCIJobs":true,"executeCIJobs":false,"manageMavenReports":false};
-				
-				var data = {};
-				data.reportOptions = response.data.reportOptions;
-				data.projectModules = response.data.projectModules;
-				data.userPermissions = userPermissions;
-				
-				unitTest.renderTemplate(data, commonVariables.contentPlaceholder);
-			});
-			
-			unitTest.preRender = mockGetUnitTestOptions;
-			
-			mockGetTestsuites = mockFunction();
-			when(mockGetTestsuites)(anything()).then(function(arg) {
-				var response =  {"message":"Test Suites listed successfully","exception":null,"data":[{"name":"Phpunittest","file":null,"total":1.0,"time":"0.003561","errors":0.0,"assertions":null,"success":1.0,"failures":0.0,"notApplicable":0.0,"blocked":0.0,"notExecuted":0.0,"testCoverage":0.0,"testCases":null,"tests":0.0,"testSteps":null}],"response":null};
-				var data = {};
-				data.testSuites = response.data;
-				unitTest.testResult.renderTemplate(data, $(commonVariables.contentPlaceholder).find('#testResult div.widget-maincontent-div')); 
-			});
-			
-			commonVariables.navListener.getMyObj(commonVariables.testResult, function(retVal) {
-				retVal.preRender = mockGetTestsuites;
-			});
-			
-			unitTest.loadPage(false);
-
-			setTimeout(function() {
-				start();
-				equal($(commonVariables.contentPlaceholder).find('#testResult div.widget-maincontent-div').find('a[name=testDescription]').text(), "Phpunittest", "Unit test testsuites list verified");
-			}, 1500);
-		});
-		
-		asyncTest("Unit test testcases list verification", function() {
-			mockGetUnitTestOptions = mockFunction();
-			
-			when(mockGetUnitTestOptions)(anything()).then(function(arg) {
-				var response =  {"message":"Unit test report returned successfully","exception":null,"data":{"reportOptions":null,"projectModules":null},"response":null};
-				
-				var userPermissions = {"manageApplication":true,"importApplication":true,"manageRepo":true,"updateRepo":false,"managePdfReports":true,"manageCodeValidation":true,"manageConfiguration":true,"manageBuilds":true,"manageTests":true,"manageCIJobs":true,"executeCIJobs":false,"manageMavenReports":false};
-				
-				var data = {};
-				data.reportOptions = response.data.reportOptions;
-				data.projectModules = response.data.projectModules;
-				data.userPermissions = userPermissions;
-				
-				unitTest.renderTemplate(data, commonVariables.contentPlaceholder);
-			});
-			
-			unitTest.preRender = mockGetUnitTestOptions;
-			
-			mockGetTestsuites = mockFunction();
-			when(mockGetTestsuites)(anything()).then(function(arg) {
-				var response =  {"message":"Test Suites listed successfully","exception":null,"data":[{"name":"Phpunittest","file":null,"total":1.0,"time":"0.003561","errors":0.0,"assertions":null,"success":1.0,"failures":0.0,"notApplicable":0.0,"blocked":0.0,"notExecuted":0.0,"testCoverage":0.0,"testCases":null,"tests":0.0,"testSteps":null}],"response":null};
-				var data = {};
-				data.testSuites = response.data;
-				unitTest.testResult.renderTemplate(data, $(commonVariables.contentPlaceholder).find('#testResult div.widget-maincontent-div')); 
-			});
-			
-			commonVariables.navListener.getMyObj(commonVariables.testResult, function(retVal) {
-				retVal.preRender = mockGetTestsuites;
-			});
-			
-			unitTest.loadPage(false);
-
-			setTimeout(function() {
-				var response = {"message":"Test Cases listed successfully","exception":null,"data":[{"name":"testString","file":"C:\\Documents and Settings\\test\\workspace\\projects\\php\\test\\unit\\src\\test\\php\\phresco\\tests\\Home.php","time":"0.002949","assertions":1.0,"testClass":"Home","line":30.0,"testCaseFailure":null,"testCaseError":null}],"response":null};
-				$(commonVariables.contentPlaceholder).find('a[name=testDescription]').click(unitTest.testResult.testResultListener.constructTestReport(response.data));
-				
-				start();
-				equal($(commonVariables.contentPlaceholder).find('#testCases table tbody tr:first td:first').text(), "testString", "Unit test testcases list verified");
-			}, 1500);
-		});
-		
-		asyncTest("Unit test no testsuites warning msg verification", function() {
-			mockGetUnitTestOptions = mockFunction();
-			
-			when(mockGetUnitTestOptions)(anything()).then(function(arg) {
-				var response =  {"message":"Unit test report returned successfully","exception":null,"data":{"reportOptions":null,"projectModules":null},"response":null};
-				
-				var userPermissions = {"manageApplication":true,"importApplication":true,"manageRepo":true,"updateRepo":false,"managePdfReports":true,"manageCodeValidation":true,"manageConfiguration":true,"manageBuilds":true,"manageTests":true,"manageCIJobs":true,"executeCIJobs":false,"manageMavenReports":false};
-				
-				var data = {};
-				data.reportOptions = response.data.reportOptions;
-				data.projectModules = response.data.projectModules;
-				data.userPermissions = userPermissions;
-				
-				unitTest.renderTemplate(data, commonVariables.contentPlaceholder);
-			});
-			
-			unitTest.preRender = mockGetUnitTestOptions;
-			
-			mockGetTestsuites = mockFunction();
-			when(mockGetTestsuites)(anything()).then(function(arg) {
-				var response =  {"message":"Test Result not available","exception":null,"data":null,"response":null};
-				var data = {};
-				data.testSuites = response.data;
-				data.message = response.message;
-				unitTest.testResult.renderTemplate(data, $(commonVariables.contentPlaceholder).find('#testResult div.widget-maincontent-div')); 
-			});
-			
-			commonVariables.navListener.getMyObj(commonVariables.testResult, function(retVal) {
-				retVal.preRender = mockGetTestsuites;
-			});
-			
-			unitTest.loadPage(false);
-			
-			setTimeout(function() {
-				start();
-				equal($(commonVariables.contentPlaceholder).find('#testSuites').find('.alert-block').html(), "Test Result not available", "Unit test no testsuites warning msg verified");
-			}, 1500);
-		});
-		
-		asyncTest("Unit test pdf report list verification", function() {
-			mockGetUnitTestOptions = mockFunction();
-			
-			when(mockGetUnitTestOptions)(anything()).then(function(arg) {
-				var response =  {"message":"Unit test report returned successfully","exception":null,"data":{"reportOptions":null,"projectModules":null},"response":null};
-				
-				var userPermissions = {"manageApplication":true,"importApplication":true,"manageRepo":true,"updateRepo":false,"managePdfReports":true,"manageCodeValidation":true,"manageConfiguration":true,"manageBuilds":true,"manageTests":true,"manageCIJobs":true,"executeCIJobs":false,"manageMavenReports":false};
-				
-				var data = {};
-				data.reportOptions = response.data.reportOptions;
-				data.projectModules = response.data.projectModules;
-				data.userPermissions = userPermissions;
-				
-				unitTest.renderTemplate(data, commonVariables.contentPlaceholder);
-			});
-			
-			unitTest.preRender = mockGetUnitTestOptions;
-			
-			mockGetTestsuites = mockFunction();
-			when(mockGetTestsuites)(anything()).then(function(arg) {
-				var response =  {"message":"Test Result not available","exception":null,"data":null,"response":null};
-				var data = {};
-				data.testSuites = response.data;
-				data.message = response.message;
-				unitTest.testResult.renderTemplate(data, $(commonVariables.contentPlaceholder).find('#testResult div.widget-maincontent-div')); 
-			});
-			
-			commonVariables.navListener.getMyObj(commonVariables.testResult, function(retVal) {
-				retVal.preRender = mockGetTestsuites;
-			});
-			
-			unitTest.loadPage(false);
-			
-			setTimeout(function() {
-				var response =  [{"time":"May 23 2013 10.05","type":"detail","fileName":"unit_detail_May 23 2013 10.05.pdf"}];
-				$(commonVariables.contentPlaceholder).find('#pdfIcon').click(unitTest.testResult.testResultListener.listPdfReports(response));
-				start();
-				equal($(commonVariables.contentPlaceholder).find('#availablePdfRptsTbdy').find('tr:first td:first').html(), "May 23 2013 10.05", "Unit test pdf report list verified");
-			}, 1500);
-		});
-		
-		/* asyncTest("Unit test dynamic param verification", function() {
-			mockGetUnitTestOptions = mockFunction();
-			
-			when(mockGetUnitTestOptions)(anything()).then(function(arg) {
-				var response =  {"message":"Unit test report returned successfully","exception":null,"data":{"reportOptions":null,"projectModules":null},"response":null};
-				
-				var userPermissions = {"manageApplication":true,"importApplication":true,"manageRepo":true,"updateRepo":false,"managePdfReports":true,"manageCodeValidation":true,"manageConfiguration":true,"manageBuilds":true,"manageTests":true,"manageCIJobs":true,"executeCIJobs":false,"manageMavenReports":false};
-				
-				var data = {};
-				data.reportOptions = response.data.reportOptions;
-				data.projectModules = response.data.projectModules;
-				data.userPermissions = userPermissions;
-				
-				unitTest.renderTemplate(data, commonVariables.contentPlaceholder);
-			});
-			
-			unitTest.preRender = mockGetUnitTestOptions;
-			
-			mockGetTestsuites = mockFunction();
-			when(mockGetTestsuites)(anything()).then(function(arg) {
-				var response =  {"message":"Test Result not available","exception":null,"data":null,"response":null};
-				var data = {};
-				data.testSuites = response.data;
-				data.message = response.message
-				unitTest.testResult.renderTemplate(data, $(commonVariables.contentPlaceholder).find('#testResult div.widget-maincontent-div')); 
-			});
-			
-			commonVariables.navListener.getMyObj(commonVariables.testResult, function(retVal) {
-				retVal.preRender = mockGetTestsuites;
-			});
-			
-			mockGetDynamicParams = mockFunction();
-			when(mockGetDynamicParams)(anything()).then(function(arg) {
-				var response =  {"response":null,"message":"Parameter returned successfully","exception":null,"data":[{"pluginParameter":"plugin","mavenCommands":{"mavenCommand":[{"key":"java","value":"-Pjava"},{"key":"js","value":"-Pjs -DskipTests"}]},"name":{"value":[{"value":"Test Against","lang":"en"}]},"type":"List","childs":null,"dynamicParameter":null,"required":"true","editable":"true","description":null,"key":"testAgainst","possibleValues":{"value":[{"value":"java","key":"java","dependency":null},{"value":"js","key":"js","dependency":"environmentName,showSettings"}]},"multiple":"false","value":"","sort":false,"show":true},{"pluginParameter":null,"mavenCommands":null,"name":{"value":[{"value":"Show Settings","lang":"en"}]},"type":"Boolean","childs":null,"dynamicParameter":null,"required":"false","editable":"true","description":"","key":"showSettings","possibleValues":null,"multiple":"false","value":"false","sort":false,"show":true,"dependency":"environmentName"},{"pluginParameter":null,"mavenCommands":null,"name":{"value":[{"value":"Environment","lang":"en"}]},"type":"DynamicParameter","childs":null,"dynamicParameter":{"dependencies":{"dependency":{"groupId":"com.photon.phresco.commons","artifactId":"phresco-commons","type":"jar","version":"3.0.0.12000"}},"class":"com.photon.phresco.impl.EnvironmentsParameterImpl"},"required":"true","editable":"true","description":null,"key":"environmentName","possibleValues":{"value":[{"value":"test","key":null,"dependency":null},{"value":"Production","key":null,"dependency":null}]},"multiple":"false","value":"Production","sort":false,"show":true}]};
-				commonVariables.navListener.getMyObj(commonVariables.testResult, function(retVal) {
-					
+			asyncTest("Unit Test Template Render Test", function() {
+				self.unitTestMock = $.mockjax({
+				  	url: commonVariables.webserviceurl+commonVariables.qualityContext+"/unit?userId=admin&appDirName=test",
+				 	type: "GET",
+				  	dataType: "json",
+				  	contentType: "application/json",
+				  	status: 200,
+				  	response : function() {
+					  	this.responseText = JSON.stringify({"message":null,"exception":null,"responseCode":"PHRQ100001","data":{"reportOptions":["js","java"],"projectModules":["phresco-framework","phresco-framework-impl", "phresco-framework-web"]},"status":"success"});
+				  	}
 				});
+
+				self.testsuitesMock = $.mockjax({
+					url: commonVariables.webserviceurl+commonVariables.qualityContext+"/testsuites?appDirName=test&testType=unit&techReport=js&moduleName=phresco-framework",
+				  	type: "GET",
+				  	dataType: "json",
+				  	contentType: "application/json",
+				  	status: 200,
+				  	response : function() {
+					  	this.responseText = JSON.stringify({"message":null,"exception":null,"responseCode":"PHRQ010001","data":null,"status":"failure"});
+				  	}
+				});
+
+				require(["navigation/navigation"], function() {
+					commonVariables.navListener = new Clazz.com.components.navigation.js.listener.navigationListener();
+				});
+				commonVariables.api.localVal.setSession("appDirName", "test");
+				commonVariables.navListener.onMytabEvent("unitTest");
+				setTimeout(function() {
+					start();
+					equal($('.unit_text').text().trim(), "Unit Test", "Unit test template rendering tested");
+					self.techOptionsTest();
+				}, 1500);
 			});
-			
-			unitTest.loadPage(false);
-			
-			setTimeout(function() {
-				
-				$(commonVariables.contentPlaceholder).find("#dynamicContent").html(response);
-				
-				start();
-				equal($(commonVariables.contentPlaceholder).find('#dynamicContent').find('#testAgainst').val(), "java", "Unit test dynamic param verified");
-			}, 1500);
-		});*/
-	}};
+		},
+		
+		techOptionsTest : function() {
+			var self = this;
+			asyncTest("Unit Test Technology Options Render Test", function() {
+				setTimeout(function() {
+					start();
+					equal($('#reportOptionsDrop').text(), "js", "Unit test tech options rendering tested");
+					self.moduleOptionsTest();
+				}, 1500);
+			});
+		},
+
+		moduleOptionsTest : function() {
+			var self = this;
+			asyncTest("Unit Test Module Options Render Test", function() {
+				setTimeout(function() {
+					start();
+					equal($('#modulesDrop').text(), "phresco-framework", "Unit test module options rendering tested");
+					self.noTestsuitesTest();
+				}, 1500);
+			});
+		},
+
+		noTestsuitesTest : function() {
+			var self = this;
+			asyncTest("Unit Test No Testsuites Test", function() {
+				setTimeout(function() {
+					start();
+					equal($('.alert-block').length, 1, "Unit test no testsuites tested");
+					self.testsuitesRenderTest();
+				}, 1500);
+			});
+		},
+
+		testsuitesRenderTest : function() {
+			var self = this;
+			asyncTest("Unit Test Testsuites Render Test", function() {
+				$(commonVariables.contentPlaceholder).html("");
+				$.mockjaxClear(self.unitTestMock);
+				self.unitTestMock = $.mockjax({
+				  	url: commonVariables.webserviceurl+commonVariables.qualityContext+"/unit?userId=admin&appDirName=test",
+				 	type: "GET",
+				  	dataType: "json",
+				  	contentType: "application/json",
+				  	status: 200,
+				  	response : function() {
+					  	this.responseText = JSON.stringify({"message":null,"exception":null,"responseCode":"PHRQ100001","data":{"reportOptions":["js","java"],"projectModules":["phresco-framework","phresco-framework-impl", "phresco-framework-web"]},"status":"success"});
+				  	}
+				});
+
+				$.mockjaxClear(self.testsuitesMock);
+				self.testsuitesMock = $.mockjax({
+					url: commonVariables.webserviceurl+commonVariables.qualityContext+"/testsuites?appDirName=test&testType=unit&techReport=js&moduleName=phresco-framework",
+				  	type: "GET",
+				  	dataType: "json",
+				  	contentType: "application/json",
+				  	status: 200,
+				  	response : function() {
+					  	this.responseText = JSON.stringify({"message":"Test Suites listed successfully","exception":null,"data":[{"name":"SampleUnitTest","file":null,"total":1.0,"time":"0.003561","errors":0.0,"assertions":null,"success":1.0,"failures":0.0,"notApplicable":0.0,"blocked":0.0,"notExecuted":0.0,"testCoverage":0.0,"testCases":null,"tests":0.0,"testSteps":null}],"response":null});
+				  	}
+				});
+
+				require(["navigation/navigation"], function() {
+					commonVariables.navListener = new Clazz.com.components.navigation.js.listener.navigationListener();
+				});
+				commonVariables.api.localVal.setSession("appDirName", "test");
+				commonVariables.navListener.onMytabEvent("unitTest");
+				setTimeout(function() {
+					start();
+					equal($('.testsuiteClm a[name=testDescription]').text(), "SampleUnitTest", "Unit test testsuites render tested");
+					self.techOptionChangeTest();
+				}, 3000);
+			});
+		},
+
+		techOptionChangeTest : function() {
+			var self = this;
+			asyncTest("Unit Test Tech Options Change Test", function() {
+				$('#testResult').html("");
+				$(commonVariables.contentPlaceholder).find('.reportOption:first').click();
+				setTimeout(function() {
+					start();
+					equal($('.testsuiteClm a[name=testDescription]').text(), "SampleUnitTest", "Unit test tech options change tested");
+					self.moduleOptionChangeTest();
+				}, 1500);
+			});
+		},
+
+		moduleOptionChangeTest : function() {
+			var self = this;
+			asyncTest("Unit Test Module Options Change Test", function() {
+				$('#testResult').html("");
+				$(commonVariables.contentPlaceholder).find('.projectModule:first').click();
+				setTimeout(function() {
+					start();
+					equal($('.testsuiteClm a[name=testDescription]').text(), "SampleUnitTest", "Unit test module options change tested");
+					self.testBtnClickTest();
+				}, 1500);
+			});
+		},
+
+		testBtnClickTest : function() {
+			var self = this;
+			asyncTest("Unit Test Test-Btn Click Test", function() {
+				$.mockjax({
+					url: commonVariables.webserviceurl+"parameter/dynamic?appDirName=test&goal=unit-test&phase=unit-test&customerId=photon&userId=admin",
+				  	type: "GET",
+				  	dataType: "json",
+				  	contentType: "application/json",
+				  	status: 200,
+				  	response : function() {
+					  	this.responseText = JSON.stringify({"message":null,"exception":null,"responseCode":"PHR1C00001","data":[{"pluginParameter":"plugin","mavenCommands":{"mavenCommand":[{"key":"java","value":"-Pjava"},{"key":"js","value":"-Pjs -DskipTests"}]},"name":{"value":[{"value":"Test Against","lang":"en"}]},"type":"List","childs":null,"dynamicParameter":null,"required":"true","editable":"true","description":null,"key":"testAgainst","possibleValues":{"value":[{"value":"java","key":"java","dependency":null},{"value":"js","key":"js","dependency":"showSettings,environmentName"}]},"multiple":"false","value":"java","sort":false,"show":true},{"pluginParameter":null,"mavenCommands":null,"name":{"value":[{"value":"Show Settings","lang":"en"}]},"type":"Boolean","childs":null,"dynamicParameter":null,"required":"false","editable":"true","description":"","key":"showSettings","possibleValues":null,"multiple":"false","value":"false","sort":false,"show":false,"dependency":"environmentName"},{"pluginParameter":null,"mavenCommands":null,"name":{"value":[{"value":"Environment","lang":"en"}]},"type":"DynamicParameter","childs":null,"dynamicParameter":{"dependencies":{"dependency":{"groupId":"com.photon.phresco.commons","artifactId":"phresco-commons","type":"jar","version":"2.3.0.8001-SNAPSHOT"}},"class":"com.photon.phresco.impl.EnvironmentsParameterImpl"},"required":"true","editable":"true","description":null,"key":"environmentName","possibleValues":{"value":[{"value":"Production","key":null,"dependency":null}]},"multiple":"false","value":"Production","sort":false,"show":true}],"status":"success"});
+				  	}
+				});
+				commonVariables.appDirName = "test";
+				$(commonVariables.contentPlaceholder).find("#unitTestBtn").click();
+				setTimeout(function() {
+					start();
+					equal($('#testAgainst').length, 1, "Unit test test-btn click tested");
+					self.runUnitTestBtnClickTest();
+				}, 2000);
+			});
+		},
+
+		runUnitTestBtnClickTest : function() {
+			var self = this;
+			asyncTest("Unit Test Run Test-Btn Click Test", function() {
+				$.mockjax({
+					url: commonVariables.webserviceurl+"app/runUnitTest?username=admin&appId=5bf18d69-3902-497b-8cd2-65dbdc9cd377&customerId=photon&goal=unit-test&phase=unit-test&projectId=b1a829b3-bbfa-45c4-b5f0-003eca66abf5&testAgainst=java&environmentName=Production",
+				  	type: "POST",
+				  	dataType: "json",
+				  	contentType: "application/json",
+				  	status: 200,
+				  	response : function() {
+					  	this.responseText = JSON.stringify({"responseCode":"PHRQ100002","status":"STARTED","log":"STARTED","connectionAlive":false,"errorFound":false,"configErr":false,"parameterKey":null,"uniquekey":"8f141cf7-31ff-4522-868a-743ba9188e17","service_exception":"","configErrorMsg":null});
+				  	}
+				});
+
+				var projectInfo = {"message":null,"exception":null,"responseCode":"PHR200009","data":{"version":"1.0","appInfos":[{"version":"1.0","modules":null,"pomFile":null,"code":"Component-html5jquerymobilewidget","appDirName":"Component-html5jquerymobilewidget","techInfo":{"version":"1.6","multiModule":false,"appTypeId":"web-layer","techGroupId":null,"techVersions":null,"customerIds":null,"used":false,"name":null,"id":"tech-html5-jquery-mobile-widget","displayName":null,"status":null,"description":null,"creationDate":1374049645000,"helpText":null,"system":false},"functionalFramework":"grid","selectedServers":[],"selectedDatabases":[],"selectedModules":[],"selectedJSLibs":["jslib_jquery-amd","jslib_jquery-ui-amd","jslib_jsonpath-amd","jslib_xml2json-amd"],"selectedComponents":["75b584d5-ebe0-48b4-beca-caf97469f812"],"selectedWebservices":null,"functionalFrameworkInfo":null,"pilotInfo":null,"selectedFrameworks":null,"emailSupported":false,"pilotContent":null,"embedAppId":"","phoneEnabled":false,"tabletEnabled":false,"pilot":false,"dependentModules":null,"customerIds":null,"used":false,"name":"Component-html5jquerymobilewidget","id":"5bf18d69-3902-497b-8cd2-65dbdc9cd377","displayName":null,"status":null,"description":"","creationDate":1374044561000,"helpText":null,"system":false}],"projectCode":"Component","noOfApps":1,"startDate":null,"endDate":null,"preBuilt":false,"multiModule":false,"customerIds":["photon"],"used":false,"name":"Component","id":"b1a829b3-bbfa-45c4-b5f0-003eca66abf5","displayName":null,"status":null,"description":"","creationDate":1374044561000,"helpText":null,"system":false},"status":"success"};
+				commonVariables.api.localVal.setJson('appdetails', projectInfo);
+				commonVariables.api.localVal.setSession('username', "admin");
+				$(commonVariables.contentPlaceholder).find("#runUnitTest").click();
+				setTimeout(function() {
+					start();
+					equal($('#testConsole').text(), "STARTED", "Unit test run test-btn click tested");
+					self.testcasesRenderTest();
+				}, 2000);
+			});
+		},
+
+		testcasesRenderTest : function() {
+			var self = this;
+			asyncTest("Unit Test Testcases Render Test", function() {
+				$.mockjax({
+					url: commonVariables.webserviceurl+commonVariables.qualityContext+"/testreports?appDirName=test&testType=unit&testSuite=SampleUnitTest&techReport=js&moduleName=phresco-framework",
+				 	type: "GET",
+				  	dataType: "json",
+				  	contentType: "application/json",
+				  	status: 200,
+				  	response : function() {
+					  	this.responseText = JSON.stringify({"message":null,"exception":null,"responseCode":"PHRQ000002","data":[{"name":"hello","file":null,"time":"0.015","assertions":0.0,"testClass":"com.photon.phresco.service.TestCase","line":0.0,"testCaseFailure":null,"testCaseError":null}],"status":"success"});
+				  	}
+				});
+
+				$(commonVariables.contentPlaceholder).find("a[name=testDescription]:first").click();
+				setTimeout(function() {
+					start();
+					equal($('#testcases').length, 1, "Unit test testcases render tested");
+					require(["componentTestTest"], function(componentTestTest){
+						componentTestTest.runTests();
+					});
+				}, 2000);
+			});
+		}
+	};
 });

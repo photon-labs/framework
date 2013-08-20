@@ -366,10 +366,29 @@
 	  }
 	},
 	
+	"testcase" : {
+		  "name"			: "Name",
+		  "class"			: "Class",
+		  "time"			: "Time",
+		  "log"				: "Log",
+		  "screenshot"		: "Screenshot",
+	  	  "features" 		: "Features",
+	  	  "testScenarios"	: "Test Scenarios",
+	  	  "TestCaseId"		: "TestCases",
+	  	  "status"			: "Status",
+	  	  "testcaseDescription"		: "TestCase Description",
+	  	  "testSteps"				: "Test Steps",
+	  	  "expectedResult"			: "Expected Result",
+	  	  "actualResult"				: "Actual Result",
+	  	  "BugIdComments"				: "Bug ID/Comments"
+	  	  
+	  },
+	
 	"testresult" : {
 	  "label" : {
 	      "testeddate" : "Tested Date",
 		  "testsuite"  : "Test Suite",
+		  "testScenarios"  : "Test Senarios",
 		  "total"      : "Total",
 		  "success"    : "Success",
           "failure"    : "Failure",

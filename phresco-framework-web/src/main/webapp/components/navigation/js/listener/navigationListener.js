@@ -23,7 +23,8 @@ define([], function() {
 		integrationTest : null,
 		performanceTest : null,
 		loadTest : null,
-		testResult : null,
+		testsuiteResult : null,
+		testcaseResult : null,
 		dynamicpage : null,
 		editConfiguration : null,
 		jobTemplates : null,
@@ -254,15 +255,27 @@ define([], function() {
 						
 						break;
 						
-					case commonVariables.testResult :
-						
-						if (self.testResult === null) {
-							require(["testResult/testResult"], function() {
-								self.testResult = new Clazz.com.components.testResult.js.TestResult();
-								callback(self.testResult);	
+					case commonVariables.testsuiteResult :
+						if (self.testsuiteResult === null) {
+							require(["testResult/testsuite"], function() {
+								self.testsuiteResult = new Clazz.com.components.testResult.js.Testsuite();
+								callback(self.testsuiteResult);	
 							});
 						} else {
-							callback(self.testResult);
+							callback(self.testsuiteResult);
+						}
+						
+						break;
+						
+					case commonVariables.testcaseResult :
+						
+						if (self.testcaseResult === null) {
+							require(["testResult/testcase"], function() {
+								self.testcaseResult = new Clazz.com.components.testResult.js.Testcase();
+								callback(self.testcaseResult);	
+							});
+						} else {
+							callback(self.testcaseResult);
 						}
 						
 						break;

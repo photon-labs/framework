@@ -8,10 +8,8 @@ define(["componentTest/listener/componentTestListener", "testResult/listener/tes
 		configUrl: "components/componentTest/config/config.json",
 		name : commonVariables.componentTest,
 		componentTestListener : null,
-		testResult : null,
+		testsuiteResult : null,
 		testResultListener : null,
-		onTabularViewEvent : null,
-		onGraphicalViewEvent : null,
 		onDynamicPageEvent : null,
 		onRunComponentTestEvent : null,
 		
@@ -29,15 +27,6 @@ define(["componentTest/listener/componentTestListener", "testResult/listener/tes
 			if (self.testResultListener === null) {
 				self.testResultListener = new Clazz.com.components.testResult.js.listener.TestResultListener();
 			}
-			if (self.onTabularViewEvent === null) {
-				self.onTabularViewEvent = new signals.Signal();
-			}
-			self.onTabularViewEvent.add(self.componentTestListener.onTabularView, self.componentTestListener);
-			
-			if (self.onGraphicalViewEvent === null) {
-				self.onGraphicalViewEvent = new signals.Signal();
-			}
-			self.onGraphicalViewEvent.add(self.componentTestListener.onGraphicalView, self.componentTestListener);
 			
 			if (self.onDynamicPageEvent === null) {
 				self.onDynamicPageEvent = new signals.Signal();
@@ -73,16 +62,10 @@ define(["componentTest/listener/componentTestListener", "testResult/listener/tes
 		 */
 		postRender : function(element) {
 			var self = this;
-			commonVariables.navListener.getMyObj(commonVariables.testResult, function(retVal) {
-				self.testResult = retVal;
+			commonVariables.navListener.getMyObj(commonVariables.testsuiteResult, function(retVal) {
+				self.testsuiteResult = retVal;
 				Clazz.navigationController.jQueryContainer = $(commonVariables.contentPlaceholder).find('#testResult');
-				Clazz.navigationController.push(self.testResult, false);
-			});
-			
-			$("#testResult .scrollContent").mCustomScrollbar({
-				autoHideScrollbar:true,
-				theme:"light-thin",
-				advanced:{ updateOnContentResize: true}
+				Clazz.navigationController.push(self.testsuiteResult, false);
 			});
 		},
 		
@@ -105,10 +88,10 @@ define(["componentTest/listener/componentTestListener", "testResult/listener/tes
 			$("#componentTestBtn").unbind("click");
 			$("#componentTestBtn").click(function() {
 				self.onDynamicPageEvent.dispatch(this, function() {
-					self.testResult.logContent = $('#testConsole').html();
+					self.testsuiteResult.logContent = $('#testConsole').html();
 					$('#testResult').empty();
 					Clazz.navigationController.jQueryContainer = '#testResult';
-					Clazz.navigationController.push(self.testResult, false);
+					Clazz.navigationController.push(self.testsuiteResult, false);
 				});
 			});
 			
@@ -134,26 +117,14 @@ define(["componentTest/listener/componentTestListener", "testResult/listener/tes
 				commonVariables.navListener.copyPath(paramJson);
 			});
 			
-			//Shows the tabular view of the test result
-			$("#tabularView").unbind("click");
-			$("#tabularView").click(function() {
-				self.onTabularViewEvent.dispatch();
-			});
-			
-			//Shows the graphical view of the test result
-			$("#graphicalView").unbind("click");
-			$("#graphicalView").click(function() {
-				self.onGraphicalViewEvent.dispatch();
-			});
-			
 			//To run the component test
 			$("#runComponentTest").unbind("click");
 			$("#runComponentTest").click(function() {
 				self.onRunComponentTestEvent.dispatch(function() {
-					self.testResult.logContent = $('#testConsole').html();
+					self.testsuiteResult.logContent = $('#testConsole').html();
 					$('#testResult').empty();
 					Clazz.navigationController.jQueryContainer = '#testResult';
-					Clazz.navigationController.push(self.testResult, false);
+					Clazz.navigationController.push(self.testsuiteResult, false);
 				});
 				$("#componentTest_popup").toggle();
 			});

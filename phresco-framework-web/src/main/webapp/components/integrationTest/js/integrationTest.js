@@ -8,7 +8,7 @@ define(["integrationTest/listener/integrationTestListener", "testResult/listener
 		configUrl: "components/integrationTest/config/config.json",
 		name : commonVariables.integrationTest,
 		integrationTestListener : null,
-		testResult : null,
+		testsuiteResult : null,
 		testResultListener : null,
 		onTabularViewEvent : null,
 		onGraphicalViewEvent : null,
@@ -67,10 +67,10 @@ define(["integrationTest/listener/integrationTestListener", "testResult/listener
 		 */
 		postRender : function(element) {
 			var self = this;
-			commonVariables.navListener.getMyObj(commonVariables.testResult, function(retVal) {
-				self.testResult = retVal;
+			commonVariables.navListener.getMyObj(commonVariables.testsuiteResult, function(retVal) {
+				self.testsuiteResult = retVal;
 				Clazz.navigationController.jQueryContainer = $(commonVariables.contentPlaceholder).find('#testResult');
-				Clazz.navigationController.push(self.testResult, false);
+				Clazz.navigationController.push(self.testsuiteResult, false);
 			});
 		},
 		

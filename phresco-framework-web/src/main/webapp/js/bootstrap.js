@@ -73,8 +73,9 @@ var commonVariables = {
 
 	load : "load",
 	loadTest : "loadTest",
-	
-	testResult : "testResult",
+	testsuiteResult : "testsuiteResult",
+	testcaseResult	: "testcaseResult",
+//	testResult : "testResult",
 	manual : "manual",
 	manualTest : "manualTest",
 

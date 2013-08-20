@@ -987,6 +987,7 @@ define(["croneExpression/croneExpression"], function() {
 									$("#"+id).attr('placeholder','Enter Configuration Name');
 									$("#"+id).addClass("errormessage");
 									$("#"+id).focus();
+									$("#"+id).val('');
 									$("#"+id).bind('keypress', function() {
 									$(this).removeClass("errormessage");
 									});
@@ -1046,6 +1047,7 @@ define(["croneExpression/croneExpression"], function() {
 							$("#"+id).attr('placeholder','Enter Configuration Name');
 							$("#"+id).addClass("errormessage");
 							$("#"+id).focus();
+							$("#"+id).val('');
 							$("#"+id).bind('keypress', function() {
 							$(this).removeClass("errormessage");
 							});

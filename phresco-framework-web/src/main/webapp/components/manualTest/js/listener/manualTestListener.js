@@ -1,4 +1,4 @@
-define([], function() {
+define(["lib/fileuploader-2.0"], function() {
 
 	Clazz.createPackage("com.components.manualTest.js.listener");
 
@@ -25,16 +25,6 @@ define([], function() {
 				});
 			}
 		},
-		
-		onGraphicalView : function() {
-			var self = this;
-			self.testResultListener.showGraphicalView();
-		},
-		
-		onTabularView : function() {
-			var self = this;
-			self.testResultListener.showTabularView();
-		},
 	
 		/***
 		 * provides the request header
@@ -53,10 +43,7 @@ define([], function() {
 				webserviceurl: ''
 			}
 
-			if(action === "get") {
-				header.requestMethod = "GET";
-				header.webserviceurl = commonVariables.webserviceurl + commonVariables.manual + '/testsuites?appDirName=' + appDirName;
-			} else if (action === "addTestSuite") {
+			if (action === "addTestSuite") {
 				header.requestMethod = "POST";
 				header.requestPostBody = JSON.stringify(requestBody);
 				header.webserviceurl = commonVariables.webserviceurl + commonVariables.manual + '/testsuites?testSuiteName=' + requestBody.testSuiteName + '&appDirName=' + appDirName;
@@ -67,14 +54,7 @@ define([], function() {
 			} else if (action === "downloadTemplate") {
 				header.requestMethod = "GET";
 				header.webserviceurl = commonVariables.webserviceurl + "manual/manualTemplate?fileType="+requestBody.format;
-			} 
-			
-			/*else if (action === "updateTestcase") {
-				header.requestMethod = "PUT";
-				header.requestPostBody = JSON.stringify(requestBody);
-				header.webserviceurl = commonVariables.webserviceurl + commonVariables.manual + '/testcases?testSuiteName=aaaaaaa&appDirName=' + appDirName;
-				console.info("header.webserviceurl ... " + header.webserviceurl);
-			}*/
+			}
 			return header;
 		},
 		
@@ -172,22 +152,20 @@ define([], function() {
 			if(!self.validationTestcase()) {
 				data = $("#manualTestTestCaseForm").serializeObject();
 				self.manualRequestBody = data;
+				self.manualRequestBody.testSuiteName = testsuiteName;
 				$("#show_manualTestCase_popup").toggle();
 				self.getManualTestReport(self.getActionHeader(self.manualRequestBody, "addTestcase"), function(response) {
-					self.testResultListener.onTestResultDesc(response);
+					commonVariables.navListener.getMyObj(commonVariables.testcaseResult, function(retVal) {
+						self.testcaseResult = retVal;
+						Clazz.navigationController.jQueryContainer = $(commonVariables.contentPlaceholder).find('#testResult');
+						Clazz.navigationController.push(self.testcaseResult, false);
+					});
 				});
 			}
 		},
 		
-		updateManualTestcase : function(testcaseVal) {
-			var self = this, data = {};
-			data.testSuiteName = testcaseVal;
-			self.manualRequestBody = data.testSuiteName;
-			self.getManualTestReport(self.getActionHeader(self.manualRequestBody, "updateTestcase"), function(response) {
-			});
-		},
-		
-		createUploader : function() {     
+		createUploader : function() {  
+			var self = this;
 			var appDirName = commonVariables.api.localVal.getSession("appDirName");
 			var uploadFileUrl =commonVariables.webserviceurl + commonVariables.manual + '/uploadTemplate?appDirName=' + appDirName;
             var uploader = new qq.FileUploader({
@@ -197,9 +175,15 @@ define([], function() {
 				appDirName : appDirName,
 				allowedExtensions : ['xls','xlsx'],
 				buttonLabel: "Upload File",
+				testListener : self.testResultListener,
 				multiple: false,
+				selfObj : self,
 				debug: true
             });           
+        },
+        
+        uploadCallBack : function () {
+			commonVariables.navListener.onMytabEvent("manualTest");
         },
         
 		openPopUpToEdit : function(obj) {

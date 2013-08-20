@@ -5,6 +5,7 @@ define(['lib/RGraph_common_core-1.0','lib/RGraph_common_tooltips-1.0','lib/RGrap
 	Clazz.com.components.testResult.js.listener.TestResultListener = Clazz.extend(Clazz.WidgetWithTemplate, {
 		
 		allTestCases : null,
+		hasError: false,
 		
 		/***
 		 * Called in initialization time of this class 
@@ -13,10 +14,6 @@ define(['lib/RGraph_common_core-1.0','lib/RGraph_common_tooltips-1.0','lib/RGrap
 		 */
 		initialize : function(config) {
 			var self = this;
-		},
-		
-		onTestResult : function() {
-			$(".unit_view").show();
 		},
 		
 		getBarChartGraphData : function(testSuites, callback) {
@@ -65,7 +62,6 @@ define(['lib/RGraph_common_core-1.0','lib/RGraph_common_tooltips-1.0','lib/RGrap
 		// for manual
 		getManualPieChartGraphData : function(callback) {
 			var testSuites = commonVariables.testSuites.testSuites;
-			
 			for (i in testSuites) {
 				if (testSuites[i].name === commonVariables.testSuiteName) {
 					var graphData = {};
@@ -79,62 +75,6 @@ define(['lib/RGraph_common_core-1.0','lib/RGraph_common_tooltips-1.0','lib/RGrap
 					break;
 				}
 			}
-		},
-		
-		showGraphicalView : function() {
-			var self = this;
-			$("#graphicalView").html('<img src="themes/default/images/helios/quality_graph_on.png" width="25" height="25" border="0" alt=""><b>Graph View</b>');
-			$("#tabularView").html('<img src="themes/default/images/helios/quality_table_off.png" width="25" height="25" border="0" alt="">Table View');
-			$("#testSuites").hide();
-			$("#testCases").hide();
-			$("#graphView").show();
-			if (commonVariables.from === "all") {
-				$('#bar').show();
-				$('#pie').hide();
-			} else {
-				self.getPieChartGraphData(function(graphData) {
-					self.createPieChart(graphData);
-				});
-				$('#bar').hide();
-				$('#pie').show();
-			}
-		},
-		
-		showTabularView : function() {
-			var self = this;
-			$("#graphicalView").html('<img src="themes/default/images/helios/quality_graph_off.png" width="25" height="25" border="0" alt="">Graph View');
-			$("#tabularView").html('<img src="themes/default/images/helios/quality_table_on.png" width="25" height="25" border="0" alt=""><b>Table View</b>');
-			$("#graphView").hide();
-			if (commonVariables.from === "all") {
-				$("#testSuites").show();
-				$("#testCases").hide();
-			} else {
-				$("#testSuites").hide();
-				$("#testCases").show();
-			}
-		},
-		
-		onTestResultDesc : function(callback) {
-			var self = this;
-			var requestBody = {};
-			var currentTab = commonVariables.navListener.currentTab;
-			requestBody.testSuite = commonVariables.testSuiteName;
-			self.performAction(self.getActionHeader(requestBody, "getTestReport"), function(response) {
-				$("#testSuites").hide();
-				$("#testCases").show();
-				self.allTestCases = response.data;
-				self.constructTestReport(response.data);
-				//commonVariables.loadingScreen.removeLoading();
-				if ("manualTest" === currentTab) {
-					self.getManualPieChartGraphData(function(graphData) {
-						self.createManualPieChart(graphData);
-					});
-				} else {
-					self.getPieChartGraphData(function(graphData) {
-						self.createPieChart(graphData);
-					});
-				}
-			});
 		},
 		
 		createBarChart : function(graphData, testSuiteLabels) {
@@ -313,102 +253,6 @@ define(['lib/RGraph_common_core-1.0','lib/RGraph_common_tooltips-1.0','lib/RGrap
 			}
 		},
 		
-		constructTestReport : function(data) {
-			var self = this;
-			var currentTab = commonVariables.navListener.currentTab;
-			var imgArray = [];
-			var resultTemplate = "";
-			if ("manualTest" === currentTab) {
-				resultTemplate = self.constructManualTestCaseTbl(resultTemplate, data);
-			} else {
-				resultTemplate = '<table class="table table-striped table_border table-bordered" cellpadding="0" cellspacing="0" border="0">'+
-				'<thead class="fixedHeader"><tr><th>Name</th><th>Class</th><th>Time</th><th>Status</th><th>Log</th>';
-				if ("functionalTest" === currentTab) {
-					resultTemplate = resultTemplate.concat('<th>Screenshot</th>');
-				}
-				resultTemplate = resultTemplate.concat('</tr></thead><tbody class="scrollContent" style="height:475px;">');
-				for (i in data) {
-					var result = data[i];
-					resultTemplate = resultTemplate.concat('<tr><td>'+ result.name +'</td>');
-					resultTemplate = resultTemplate.concat('<td>'+ result.testClass +'</td>');
-					resultTemplate = resultTemplate.concat('<td>'+ result.time +'</td>');
-					resultTemplate = resultTemplate.concat('<td class="list_img">');
-					if (result.testCaseFailure !== null) {
-						resultTemplate = resultTemplate.concat('<img src="themes/default/images/helios/cross_red.png" width="16" height="13" border="0" alt=""></td>');
-						resultTemplate = resultTemplate.concat('<td class="list_img"><a href="#" type="failure" resultName="'+result.name+'" class="log"><img src="themes/default/images/helios/log_icon.png" width="16" height="13" border="0" alt=""></a>');
-						resultTemplate = resultTemplate.concat('<div id="'+result.name+'" style="display: none; width:500px"><div style="word-wrap: break-word;"><b>'+result.testCaseFailure.failureType+' : </b>'+ result.testCaseFailure.description+'</div><div class="flt_right">');
-						resultTemplate = resultTemplate.concat('<input type="button" value="Close" class="btn btn_style dyn_popup_close"></div></div></td>');
-					}  else if (result.testCaseError !== null) {
-						resultTemplate = resultTemplate.concat('<img src="themes/default/images/helios/cross_red.png" width="16" height="13" border="0" alt=""></td>');
-						resultTemplate = resultTemplate.concat('<td class="list_img"><a href="#" type="error" resultName="'+result.name+'" class="log"><img src="themes/default/images/helios/log_icon.png" width="16" height="13" border="0" alt=""></a>');
-						resultTemplate = resultTemplate.concat('<div id="'+result.name+'" style="display: none; width:500px"><div style="word-wrap: break-word;"><b>'+result.testCaseError.errorType+' : </b>'+ result.testCaseError.description+'</div><div class="flt_right">');
-						resultTemplate = resultTemplate.concat('<input type="button" value="Close" class="btn btn_style dyn_popup_close"></div></div></td>');
-					} else {
-						resultTemplate = resultTemplate.concat('<img src="themes/default/images/helios/tick_green.png" width="16" height="13" border="0" alt=""></td><td>&nbsp;</td>');
-					}
-					
-					if ("functionalTest" === currentTab) {
-						var json = {};
-						json.eventClass = result.name;
-						if (result.testCaseFailure !== null && result.testCaseFailure.hasFailureImg) {
-							json.filePath = result.testCaseFailure.screenshotPath;
-							imgArray.push(json);
-							resultTemplate = resultTemplate.concat('<td><a href="#" class="'+result.name+'"><img src="themes/default/images/helios/screenshot_icon.png" width="19" height="16" border="0" alt="" /></a></td>');
-						} else if (result.testCaseError !== null && result.testCaseError.hasErrorImg) {
-							json.filePath = result.testCaseFailure.screenshotPath;
-							imgArray.push(json);
-							resultTemplate = resultTemplate.concat('<td><a href="#" class="'+result.name+'"><img src="themes/default/images/helios/screenshot_icon.png" width="19" height="16" border="0" alt="" /></a></td>');
-						} else {
-							resultTemplate = resultTemplate.concat('<td>&nbsp;</td>');
-						}
-					}
-					resultTemplate = resultTemplate.concat('</tr>');
-				}
-				resultTemplate = resultTemplate.concat('</tbody></table>');
-			}
-			
-			$(commonVariables.contentPlaceholder).find('#testCases').html(resultTemplate);
-		
-			setTimeout(function() {
-				self.resizeTestResultColumn("testCases");
-				self.showErrorLog();
-				$("#testResult .scrollContent").mCustomScrollbar({
-					autoHideScrollbar:true,
-					theme:"light-thin",
-					advanced:{ updateOnContentResize: true}
-				});
-			}, 400);
-
-			self.resizeTestResultDiv();
-			self.showScreenShot(imgArray);
-			self.tableScrollbar();
-		},
-		
-		constructManualTestCaseTbl : function(resultTemplate, data) {
-			var self = this;
-			$("#addTestCase").show();
-			$("#addTestSuite").hide();
-			if (data.length > 0) {
-				resultTemplate = '<table class="table table-striped table_border table-bordered" cellpadding="0" cellspacing="0" border="0">'+
-				'<thead class="fixedHeader"><tr><th>Feature Id</th><th>Test Cases</th><th>Expected Result</th><th>Actual Result</th><th class="">Status</th><th class="">Bug Comments</th><th>Edit</th>';
-				resultTemplate = resultTemplate.concat('</tr></thead><tbody class="scrollContent" name="manualTest" style="height:475px;">');
-				for (i in data) {
-					var result = data[i];
-					resultTemplate = resultTemplate.concat('<tr><td>'+ result.featureId +'</td>');
-					resultTemplate = resultTemplate.concat('<td>'+ result.testCaseId +'</td>');
-					resultTemplate = resultTemplate.concat('<td>'+ result.expectedResult +'</td>');
-					resultTemplate = resultTemplate.concat('<td>'+ result.actualResult +'</td>');
-					resultTemplate = resultTemplate.concat('<td>'+ result.status +'</td>');
-					resultTemplate = resultTemplate.concat('<td>'+ result.bugComment +'</td>');
-					resultTemplate = resultTemplate.concat('<td><a class="editManualTestcase" name="updateManualTestCase_popup" href="#" testcaseName="'+ result.testCaseId +'"><img alt="Edit" src="themes/default/images/helios/edit_icon.png"/></a></td></tr>');
-				}
-				resultTemplate = resultTemplate.concat('</tbody></table>');
-			} else {
-				resultTemplate = '<div class="alert alert-block" style="text-align: center; margin: auto;">No Testcases available</div>';
-			}
-			return resultTemplate;
-		},
-		
 		showScreenShot : function(imgArray) {
 			for (i in imgArray) {
 				var data = imgArray[i];
@@ -464,6 +308,8 @@ define(['lib/RGraph_common_core-1.0','lib/RGraph_common_tooltips-1.0','lib/RGrap
 				testType = "functional";
 			} else if ("componentTest" === currentTab) {
 				testType = "component";
+			} else if ("manualTest" === currentTab) {
+				testType = "manual";
 			}
 			if (action === "getTestSuite") {
 				header.requestMethod = "GET";
@@ -508,6 +354,10 @@ define(['lib/RGraph_common_core-1.0','lib/RGraph_common_tooltips-1.0','lib/RGrap
 			} else if (action === "downloadPdfReport") {
 				header.requestMethod = "GET";
 				header.webserviceurl = commonVariables.webserviceurl + "pdf/downloadReport?appDirName=" + appDirName + "&fromPage=" + testType + "&reportFileName=" + requestBody.fileName;
+			} else if (action === "updateTestcase") {
+				header.requestMethod = "PUT";
+				header.requestPostBody = JSON.stringify(requestBody);
+				header.webserviceurl = commonVariables.webserviceurl + commonVariables.manual + "/testcases?appDirName=" + appDirName+"&testSuiteName=" + requestBody.testSuite;
 			}
 			return header;
 		},
@@ -546,28 +396,7 @@ define(['lib/RGraph_common_core-1.0','lib/RGraph_common_tooltips-1.0','lib/RGrap
 				self.closeConsole();
 				$('.progress_loading').hide();
 			}
-		},
-		
-		resizeTestResultColumn : function(divId) {
-			var w1 = $("#" + divId + " .scrollContent tr td:first-child").width();
-			var w2 = $("#" + divId + " .scrollContent tr td:nth-child(2)").width();
-			var w3 = $("#" + divId + " .scrollContent tr td:nth-child(3)").width();
-			var w4 = $("#" + divId + " .scrollContent tr td:nth-child(4)").width();
-			var w5 = $("#" + divId + " .scrollContent tr td:nth-child(5)").width();
-			var w6 = $("#" + divId + " .scrollContent tr td:nth-child(6)").width();
-			var w7 = $("#" + divId + " .scrollContent tr td:nth-child(7)").width();
-			var w8 = $("#" + divId + " .scrollContent tr td:nth-child(8)").width();
-			var w9 = $("#" + divId + " .scrollContent tr td:nth-child(9)").width();
 			
-			$("#" + divId + " .fixedHeader tr th:first-child").css("width", w1);
-			$("#" + divId + " .fixedHeader tr th:nth-child(2)").css("width", w2);
-			$("#" + divId + " .fixedHeader tr th:nth-child(3)").css("width", w3);
-			$("#" + divId + " .fixedHeader tr th:nth-child(4)").css("width", w4);
-			$("#" + divId + " .fixedHeader tr th:nth-child(5)").css("width", w5);
-			$("#" + divId + " .fixedHeader tr th:nth-child(6)").css("width", w6);
-			$("#" + divId + " .fixedHeader tr th:nth-child(7)").css("width", w7);
-			$("#" + divId + " .fixedHeader tr th:nth-child(8)").css("width", w8);
-			$("#" + divId + " .fixedHeader tr th:nth-child(9)").css("width", w9);
 		},
 		
 		//To get the existing pdf reports
@@ -615,6 +444,23 @@ define(['lib/RGraph_common_core-1.0','lib/RGraph_common_tooltips-1.0','lib/RGrap
 			});
 		},
 		
+		getTestsuites : function(callback) {
+			var self = this;
+			self.performAction(self.getActionHeader(self.requestBody, "getTestSuite"), function(response) {
+				callback(response);
+			});
+		},
+		
+		updateManualTestCase_popup : function() {
+			var self = this;
+			// update testcase
+			$('.dyn_popup_close').unbind("click");
+			$('.dyn_popup_close').click(function() {
+				var dynClass = $('a[name=updateManualTestCase_popup]').attr('class');
+				$('div[id=' + dynClass + ']').hide();
+			});
+		},
+		
 		pdfReportEvents : function() {
 			var self = this;
 			//To delete the selected pdf report
@@ -658,63 +504,17 @@ define(['lib/RGraph_common_core-1.0','lib/RGraph_common_tooltips-1.0','lib/RGrap
 				self.openccpl(this, 'updateManualTestCase_popup','');
 //				var updateTemplate = "";
 //				updateTemplate = updateTemplate.concat('<div id="show_manualTestCase_popup" class="dyn_popup" style="display:none">');
-//				
-//	            <form id="manualTestTestCaseForm">
-//					<table class="table node_table" cellpadding="0" cellspacing="0" border="0">
-//						<tbody>
-//							<tr>
-//								<td>Test Scenarios<br>
-//									<input type="text" id="testSuiteName" placeholder="TestSuite Name" name="testSuiteName" value="">
-//								</td>
-//								<td>Features<sup>*</sup><br>
-//									<input type="text" placeholder="Name of the Features" name="featureId" value="">
-//								</td>
-//							</tr>
-//							<tr>
-//								<td>TestCases<sup>*</sup><br>
-//									<input type="text" placeholder="Name of the TestCases" name="testCaseId" value="">
-//								</td>
-//								<td>Status<br>
-//									<select name="status">
-//										<option value="success">Success</option>
-//										<option value="failure">Failure</option>
-//									</select>
-//								</td>
-//							</tr>
-//							<tr>
-//								<td>TestCase Description<br>
-//									<textarea name="description"></textarea>
-//								</td>
-//								<td>Test Steps<br>
-//									<textarea name="steps"></textarea>
-//								</td>
-//							</tr>
-//							<tr>
-//								<td>Expected Result<br>
-//									<textarea name="expectedResult"></textarea>
-//								</td>
-//								<td>Actual Result<br>
-//									<textarea name="actualResult"></textarea>
-//								</td>
-//							</tr>
-//							<tr>
-//								<td colspan="2">Bug ID/Comments<br>
-//									<textarea name="bugComment"></textarea>
-//								</td>
-//							 </tr>
-//						</tbody>
-//					</table>
-//					<div class="flt_right">
-//						<input type="button" value="Save" class="btn btn_style" name="addTestCase">
-//						<input type="button" value="Close" class="btn btn_style dyn_popup_close">
-//					</div>
-//				</form>
-//			</div>
-//			});
 		},
 		
 		
-		
+		valid : function(item, msg) {
+			$(item).focus();
+			$(item).attr('placeholder', msg);
+			$(item).addClass("errormessage");
+			$(item).bind('keypress', function() {
+				$(this).removeClass("errormessage");
+			});
+		},
 		
 		
 		openConsoleDiv : function() {
@@ -730,9 +530,6 @@ define(['lib/RGraph_common_core-1.0','lib/RGraph_common_tooltips-1.0','lib/RGrap
 			$('.unit_close').animate({right: value1+10},500);
 			$('.unit_info table').removeClass("big").addClass("small");
 			$('#consoleImg').attr('data-flag','false');
-
-			var height = $('#testResult table').height();
-			$('.unit_progress').height(height);
 			$('.progress_loading').show();
 		},
 
@@ -751,35 +548,9 @@ define(['lib/RGraph_common_core-1.0','lib/RGraph_common_tooltips-1.0','lib/RGrap
 			var deductionHeight = Number(marginTop) + Number(footerHeight) + Number(paddingTop) + Number(paddingTop);
 			deductionHeight = windowHeight - deductionHeight;
 			$('.testSuiteTable').height(deductionHeight);
-			$('#testSuites').height(deductionHeight);
-			deductionHeight = deductionHeight - (Number(paddingTop) + Number(paddingTop) + Number(paddingTop));
-			$('.testSuiteTable .scrollContent').height(deductionHeight);
-		},
-		
-		setConsoleScrollbar : function(bcheck){
-			if(bcheck){
-				$("#unit_progress .scrollContent").mCustomScrollbar("destroy");
-				$("#unit_progress .scrollContent").mCustomScrollbar({
-					autoHideScrollbar: false,
-					scrollInertia: 1000,
-					theme:"light-thin",
-					advanced:{ updateOnContentResize: true},
-					callbacks:{
-						onScrollStart:function(){
-							$("#unit_progress .scrollContent").mCustomScrollbar("scrollTo","bottom");
-						}
-					}
-				});
-			}else{
-				$("#unit_progress .scrollContent").mCustomScrollbar("destroy");
-				$("#unit_progress .scrollContent").mCustomScrollbar({
-					autoHideScrollbar:true,
-					scrollInertia: 200,
-					theme:"light-thin",
-					advanced:{ updateOnContentResize: true}
-				});
-			}
+			$('.unit_progress').height(deductionHeight);
 		}
+		
 	});
 
 	return Clazz.com.components.testResult.js.listener.TestResultListener;

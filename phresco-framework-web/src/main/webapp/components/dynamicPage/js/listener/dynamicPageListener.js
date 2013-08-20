@@ -372,7 +372,7 @@ define(["framework/widgetWithTemplate", "common/loading", "lib/customcombobox-1.
             var mapCtrl = '<table class="table table-striped table_border table-bordered browser_table" cellpadding="0" cellspacing="0" border="0">'+
                         '<thead><tr><th>'+childs[0].name.value.value+'</th><th>'+childs[1].name.value.value+'</th></tr></thead><tbody><tr>';
             if ("List" === childs[0].type) {
-                mapCtrl =  mapCtrl.concat('<td><select name="'+childs[0].key+'" class="selectpicker">');
+                mapCtrl =  mapCtrl.concat('<td class="browse_td"><select name="'+childs[0].key+'" class="selectpicker">');
                 var possibleValues = childs[0].possibleValues.value;
                 $.each(possibleValues, function(index, value) {
                     mapCtrl =  mapCtrl.concat('<option value="'+value.key+'">'+value.value+'</option>');
@@ -439,7 +439,8 @@ define(["framework/widgetWithTemplate", "common/loading", "lib/customcombobox-1.
         	var self = this;
         	$('.addBrowserInfo').unbind('click');
     		$('.addBrowserInfo').click(function() {
-    			var ctrl = '<tr><td><select class="selectpicker">' + $(this).parent().prev().children().filter(":first").html() + '</select></td>';
+                var selectBoxName = $(this).parent().prev().children().filter(":first").attr("name");
+    			var ctrl = '<tr><td class="browse_td"><select name="'+selectBoxName+'" class="selectpicker">' + $(this).parent().prev().children().filter(":first").html() + '</select></td>';
     			var ctrl = ctrl.concat('<td>' + $(this).parent().html() + '</td></tr>');
     			$(this).parent().parent().parent().append(ctrl);
     			$(ctrl).find('input').empty();

@@ -475,7 +475,6 @@ html, body {
 	padding:1%;
 	position:absolute;
 	margin-top:132px;
-	z-index:0;
 	border-top: 1px solid #d2d2d2;
 }
 
@@ -1122,7 +1121,7 @@ ul.nav li.dropdown:hover > .test_options{
 }
 
 .table th, .table td {
-	padding: 6px;
+	padding: 6px 6px 6px 8px;
 }
 
 img[name="close"] {
@@ -1670,6 +1669,7 @@ background:#DA4F49 !important;
 	background: #ffffff;
 	border-radius: 6px;
 	padding: 10px;
+	z-index: 1;
 }
 
 .dyn_popup table tr td {
@@ -3538,7 +3538,7 @@ html>body tbody.scrollContent {
 .node_table tr td
 {
 	border-top:none;
-	padding:0px 30px 5px 0px;
+	padding:0px 30px 0px 0px;
 }
 
 .node_table tr td [type="text"]
@@ -3609,6 +3609,16 @@ html>body tbody.scrollContent {
 #startNodeForm .browser_table tr td:last-child input, #startNodeForm .browser_table tr td:last-child .dropdown-toggle {
 	width: 70px !important;
 }
+
+td.browse_td .bootstrap-select {
+	width: 150px !important;
+}
+
+td.browse_td .bootstrap-select.btn-group .dropdown-menu {
+	min-width: 150px !important;
+}
+
+
 
 /* *************************************************************** STYLES FOR DYNAMIC PARAMETER STARTS ************************************************************************************ */
 

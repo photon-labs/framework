@@ -1,7 +1,5 @@
 <section class="optiontitle qual_unit">
-	<div class="unit_text" data-i18n="unit.label.unittest">
-    	
-	</div>
+	<div class="unit_text" data-i18n="unit.label.unittest"></div>
     <div class="flt_right">
 		<div class="unit_view hideContent">
 			<div class="code_report_icon" id="pdfDiv">

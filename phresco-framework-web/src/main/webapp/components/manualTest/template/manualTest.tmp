@@ -62,15 +62,68 @@
          
 		 
         <div class="unit_path">
-        <!--Add TestCase popup starts here -->
-    		<input type="button" value="Add TestCase" id="addTestCase" name="show_manualTestCase_popup" class="btn btn_style" style="display:none">
+			<!--upload popup starts here -->
+			<input type="button" value="Upload" title="Template Upload" id="show_uploadTemplate_popup" name="template_upload" class="btn btn_style">
+			<div id="template_upload" class="dyn_popup" style="display:none">
+				<form id="manualUploadForm">
+					<ul>
+						<li>Upload File<br/></li>
+						<li>
+							<div id="manual_temp_upload" class="file-uploader"><noscript><p>Please enable JavaScript to use file uploader.</p><!-- or put a simple form for upload here --></noscript>  </div>
+						</li>
+					</ul>
+				</form>
+			</div>
+			<!--upload popup ends here -->	
+			
+			<!--download popup starts here -->
+			<input type="button" value="Download" title="template download" id="show_downloadTemplate_popup" name="template_download" class="btn btn_style">
+			<div id="template_download" class="dyn_popup" style="display:none">
+				<form id="manualDownloadForm">
+					<ul>
+						<li>Select Format<br/></li>
+						<li>
+							<label><input type="radio" name="format" checked value="xls">.xls</label>
+							<label><input type="radio" name="format" value="xlsx">.xlsx</label>
+						</li>
+					</ul>
+					<div class="flt_right">
+						<input type="button" value="Download" id="downloadTemplate" class="btn btn_style">
+						<input type="button" value="Close" class="btn btn_style dyn_popup_close">
+					 </div>
+				</form>
+			</div>
+			<!--download popup ends here -->
+				
+			<!--Add TestSuite popup starts here -->
+			<input type="button" value="Add" title="Add Testsuite" id="addTestSuite" name="show_manualTestSuite_popup" class="btn btn_style">
+			<div id="show_manualTestSuite_popup" class="dyn_popup" style="display:none">
+				<form id="manualTestSuiteForm">
+					<table class="table node_table" cellpadding="0" cellspacing="0" border="0">
+						<tbody>
+							<tr>
+								<td style="vertical-align: middle;">Test Scenarios<sup>*</sup> &nbsp;&nbsp;
+								<input type="text" placeholder="TestSuite Name" name="testSuiteName" id="testSuiteId" ></td>
+							</tr>
+						</tbody>
+					</table>
+					<div class="flt_right">
+						<input type="button" value="Save" class="btn btn_style" name="saveTestSuite">
+						<input type="button" value="Close" class="btn btn_style dyn_popup_close">
+					</div>
+				</form>
+			</div>
+			<!--Add TestSuite popup ends here -->
+			
+			<!--Add TestCase popup starts here -->
+    		<input type="button" value="Add" id="addTestCase" name="show_manualTestCase_popup" class="btn btn_style" style="display:none">
 	            <div id="show_manualTestCase_popup" class="dyn_popup" style="display:none">
 		            <form id="manualTestTestCaseForm">
 						<table class="table node_table" cellpadding="0" cellspacing="0" border="0">
 							<tbody>
 								<tr>
 									<td>Test Scenarios<br>
-										<input type="text" id="testSuiteName" placeholder="TestSuite Name" name="testSuiteName" value="">
+										<input type="text" id="testSuiteName" readonly=readonly placeholder="TestSuite Name" name="testSuiteName" value="">
 									</td>
 									<td>Features<sup>*</sup><br>
 										<input type="text" placeholder="Name of the Features" id="featureId" name="featureId" value="">
@@ -84,6 +137,8 @@
 										<select name="status">
 											<option value="success">Success</option>
 											<option value="failure">Failure</option>
+											<option value="notApplicable">Not Applicable</option>
+											<option value="blocked">Blocked</option>
 										</select>
 									</td>
 								</tr>
@@ -117,53 +172,6 @@
 					</form>
 				</div>
 			<!--Add TestCase popup ends here -->
-				
-				<!--download popup starts here -->
-				<input type="button" value="Download" title="template download" id="show_downloadTemplate_popup" name="template_download" class="btn btn_style">
-					<div id="template_download" class="dyn_popup" style="display:none">
-						<form id="manualDownloadForm">
-							<ul>
-								<li>Select Format<br/></li>
-								<li>
-									<label><input type="radio" name="format" checked value="xls">.xls</label>
-									<label><input type="radio" name="format" value="xlsx">.xlsx</label>
-								</li>
-							</ul>
-							<div class="flt_right">
-								<input type="button" value="Download" id="downloadTemplate" class="btn btn_style">
-								<input type="button" value="Close" class="btn btn_style dyn_popup_close">
-							 </div>
-						</form>
-					</div>
-				<!--download popup ends here -->
-				
-				
-				
-				<!--Add TestSuite popup starts here -->
-				<input type="button" value="Add" title="Add Testsuite" id="addTestSuite" name="show_manualTestSuite_popup" class="btn btn_style">
-				<div id="show_manualTestSuite_popup" class="dyn_popup" style="display:none">
-					<form id="manualTestSuiteForm">
-						<table class="table node_table" cellpadding="0" cellspacing="0" border="0">
-							<tbody>
-								<tr>
-									<td style="vertical-align: middle;">Test Scenarios<sup>*</sup> &nbsp;&nbsp;
-									<input type="text" placeholder="TestSuite Name" name="testSuiteName" id="testSuiteId" ></td>
-								</tr>
-								<tr>
-									<td style="vertical-align: middle;"><label class="uploadTemp" title="upload template">Upload</label>
-										<div id="manual_temp_upload" class="file-uploader"><noscript><p>Please enable JavaScript to use file uploader.</p><!-- or put a simple form for upload here --></noscript>  </div>
-									</td>
-								</tr>
-							</tbody>
-						</table>
-						<div class="flt_right">
-							<input type="button" value="Save" class="btn btn_style" name="saveTestSuite">
-							<input type="button" value="Close" class="btn btn_style dyn_popup_close">
-						</div>
-					</form>
-				</div>
-				<!--Add TestSuite popup ends here -->
-				
         </div>
 	</div>	
 		

@@ -8,7 +8,7 @@ define(["manualTest/listener/manualTestListener", "testResult/listener/testResul
 		configUrl: "components/manualTest/config/config.json",
 		name : commonVariables.manualTest,
 		manualTestListener : null,
-		testResult : null,
+		testsuiteResult : null,
 		testResultListener : null,
 		onTabularViewEvent : null,
 		onGraphicalViewEvent : null,
@@ -23,7 +23,7 @@ define(["manualTest/listener/manualTestListener", "testResult/listener/testResul
 		 */
 		initialize : function(globalConfig) {
 			var self = this;
-			commonVariables.testType = commonVariables.component;
+			commonVariables.testType = commonVariables.manual;
 		
 			if (self.manualTestListener === null ) {
 				self.manualTestListener = new Clazz.com.components.manualTest.js.listener.manualTestListener();
@@ -33,29 +33,17 @@ define(["manualTest/listener/manualTestListener", "testResult/listener/testResul
 			if (self.testResultListener === null) {
 				self.testResultListener = new Clazz.com.components.testResult.js.listener.TestResultListener();
 			}
-			
-			if (self.onTabularViewEvent === null) {
-				self.onTabularViewEvent = new signals.Signal();
-			}
-			self.onTabularViewEvent.add(self.manualTestListener.onTabularView, self.manualTestListener);
-			
-			if (self.onGraphicalViewEvent === null) {
-				self.onGraphicalViewEvent = new signals.Signal();
-			}
-			self.onGraphicalViewEvent.add(self.manualTestListener.onGraphicalView, self.manualTestListener);
 		},
 
 		registerEvents : function(manualTestListener) {
 			var self=this;
 			self.addManualTestcase = new signals.Signal();
 			self.addManualTestcase.add(manualTestListener.addManualTestcase, manualTestListener);
-//			
+			
 			self.addManualTestSuite = new signals.Signal();
 			self.addManualTestSuite.add(manualTestListener.addManualTestSuite, manualTestListener);
-			
-			self.updateManualTestcase = new signals.Signal();
-			self.updateManualTestcase.add(manualTestListener.updateManualTestcase, manualTestListener);
 		},
+		
 		/***
 		 * Called in once the login is success
 		 *
@@ -73,12 +61,13 @@ define(["manualTest/listener/manualTestListener", "testResult/listener/testResul
 		 */
 		postRender : function(element) {
 			var self = this;
-			commonVariables.navListener.getMyObj(commonVariables.testResult, function(retVal) {
-				self.testResult = retVal;
+			commonVariables.navListener.getMyObj(commonVariables.testsuiteResult, function(retVal) {
+				self.testsuiteResult = retVal;
 				Clazz.navigationController.jQueryContainer = $(commonVariables.contentPlaceholder).find('#testResult');
-				Clazz.navigationController.push(self.testResult, false);
+				Clazz.navigationController.push(self.testsuiteResult, false);
 			});
 			self.manualTestListener.createUploader();
+			
 		},
 		
 		preRender: function(whereToRender, renderFunction) {
@@ -97,13 +86,6 @@ define(["manualTest/listener/manualTestListener", "testResult/listener/testResul
 			var self = this;
 			$(".tooltiptop").tooltip();
 			self.windowResize();
-			
-			$(".scrollContent").mCustomScrollbar({
-				autoHideScrollbar:true,
-				theme:"light-thin",
-				advanced:{ updateOnContentResize: true}
-			});
-			
 			//show manual TestSuite popup
 			$("#addTestSuite").click(function() {
 				self.openccpl(this, 'show_manualTestSuite_popup','');
@@ -124,7 +106,13 @@ define(["manualTest/listener/manualTestListener", "testResult/listener/testResul
 			//show download template popup
 			$('#show_downloadTemplate_popup').click(function() {
 				self.openccpl(this, 'template_download','');
-			});	
+			});
+			
+			//show upload template popup
+			$('#show_uploadTemplate_popup').click(function() {
+				self.openccpl(this, 'template_upload','');
+				
+			});
 			
 			//download template
 			$('#downloadTemplate').click(function() {
@@ -141,7 +129,7 @@ define(["manualTest/listener/manualTestListener", "testResult/listener/testResul
 			//add testcases to testsuite
 			$("input[name=saveTestCase]").unbind("click");
 			$("input[name=saveTestCase]").click(function() {
-				var testSuiteName = $('input[name=testSuiteName]').val();
+				var testSuiteName = commonVariables.testSuiteName;
 				self.addManualTestcase.dispatch(testSuiteName);
 			});
 			

@@ -8,10 +8,8 @@ define(["unitTest/listener/unitTestListener", "testResult/listener/testResultLis
 		configUrl: "components/unitTest/config/config.json",
 		name : commonVariables.unitTest,
 		unitTestListener : null,
-		testResult : null,
+		testsuiteResult : null,
 		testResultListener : null,
-		onTabularViewEvent : null,
-		onGraphicalViewEvent : null,
 		onDynamicPageEvent : null,
 		onRunUnitTestEvent : null,
 		
@@ -29,15 +27,6 @@ define(["unitTest/listener/unitTestListener", "testResult/listener/testResultLis
 			if (self.testResultListener === null) {
 				self.testResultListener = new Clazz.com.components.testResult.js.listener.TestResultListener();
 			}
-			if (self.onTabularViewEvent === null) {
-				self.onTabularViewEvent = new signals.Signal();
-			}
-			self.onTabularViewEvent.add(self.unitTestListener.onTabularView, self.unitTestListener);
-			
-			if (self.onGraphicalViewEvent === null) {
-				self.onGraphicalViewEvent = new signals.Signal();
-			}
-			self.onGraphicalViewEvent.add(self.unitTestListener.onGraphicalView, self.unitTestListener);
 			
 			if (self.onDynamicPageEvent === null) {
 				self.onDynamicPageEvent = new signals.Signal();
@@ -48,7 +37,6 @@ define(["unitTest/listener/unitTestListener", "testResult/listener/testResultLis
 				self.onRunUnitTestEvent = new signals.Signal();
 			}
 			self.onRunUnitTestEvent.add(self.unitTestListener.runUnitTest, self.unitTestListener);
-			
 			self.registerEvents(self.unitTestListener);
 		},
 		
@@ -96,16 +84,10 @@ define(["unitTest/listener/unitTestListener", "testResult/listener/testResultLis
 		 */
 		postRender : function(element) {
 			var self = this;
-			commonVariables.navListener.getMyObj(commonVariables.testResult, function(retVal) {
-				self.testResult = retVal;
+			commonVariables.navListener.getMyObj(commonVariables.testsuiteResult, function(retVal) {
+				self.testsuiteResult = retVal;
 				Clazz.navigationController.jQueryContainer = $(commonVariables.contentPlaceholder).find('#testResult');
-				Clazz.navigationController.push(self.testResult, false);
-			});
-			
-			$("#testResult .scrollContent").mCustomScrollbar({
-				autoHideScrollbar:true,
-				theme:"light-thin",
-				advanced:{ updateOnContentResize: true}
+				Clazz.navigationController.push(self.testsuiteResult, false);
 			});
 		},
 		
@@ -130,23 +112,17 @@ define(["unitTest/listener/unitTestListener", "testResult/listener/testResultLis
 			var self = this;
 			$(".tooltiptop").tooltip();
 
-			self.windowResize();
+//			self.windowResize();
 			
 			$("#unitTestBtn").unbind("click");
 			$("#unitTestBtn").click(function() {
 				self.onDynamicPageEvent.dispatch(this, function() {
-					self.testResult.logContent = $('#testConsole').html();
+					self.testsuiteResult.logContent = $('#testConsole').html();
 					$('#testResult').empty();
 					Clazz.navigationController.jQueryContainer = '#testResult';
-					Clazz.navigationController.push(self.testResult, false);
+					Clazz.navigationController.push(self.testsuiteResult, false);
 				});
 			});
-			
-			$("#testSuites").css("display", "none");
-			$("#testCases").css("display", "none");
-			$("#unitTestTab").css("display", "block");
-			$(".unit_view").css("display", "none");
-			$("#graphView").css("display", "none");
 			
 			//Change event of the report type to get the report
 			$('.projectModule').click(function() {
@@ -155,7 +131,7 @@ define(["unitTest/listener/unitTestListener", "testResult/listener/testResultLis
 				
 				$('#testResult').empty();
 				Clazz.navigationController.jQueryContainer = '#testResult';
-				Clazz.navigationController.push(self.testResult, false);
+				Clazz.navigationController.push(self.testsuiteResult, false);
 			});
 			
 			//Change event of the report type to get the report
@@ -165,7 +141,7 @@ define(["unitTest/listener/unitTestListener", "testResult/listener/testResultLis
 				
 				$('#testResult').empty();
 				Clazz.navigationController.jQueryContainer = '#testResult';
-				Clazz.navigationController.push(self.testResult, false);
+				Clazz.navigationController.push(self.testsuiteResult, false);
 			});
 			
 			//To open the unit test directory
@@ -184,26 +160,14 @@ define(["unitTest/listener/unitTestListener", "testResult/listener/testResultLis
 				commonVariables.navListener.copyPath(paramJson);
 			});
 			
-			//Shows the tabular view of the test result
-			$("#tabularView").unbind("click");
-			$("#tabularView").click(function() {
-				self.onTabularViewEvent.dispatch();
-			});
-			
-			//Shows the graphical view of the test result
-			$("#graphicalView").unbind("click");
-			$("#graphicalView").click(function() {
-				self.onGraphicalViewEvent.dispatch();
-			});
-			
 			//To run the unit test
 			$("#runUnitTest").unbind("click");
 			$("#runUnitTest").click(function() {
 				self.onRunUnitTestEvent.dispatch(function() {
-					self.testResult.logContent = $('#testConsole').html();
+					self.testsuiteResult.logContent = $('#testConsole').html();
 					$('#testResult').empty();
 					Clazz.navigationController.jQueryContainer = '#testResult';
-					Clazz.navigationController.push(self.testResult, false);
+					Clazz.navigationController.push(self.testsuiteResult, false);
 				});
 				$("#unit_popup").toggle();
 			});

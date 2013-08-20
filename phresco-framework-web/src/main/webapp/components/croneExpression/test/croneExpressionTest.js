@@ -169,9 +169,6 @@ define(["jquery", "croneExpression/croneExpression", "configuration/editConfigur
 					start();
 					var temp = $(commonVariables.contentPlaceholder).find("input[name=scheduler]").val();
 					notEqual(temp,"2 * * * *","OK click failure event tested successfully");
-					require(["dynamicPageTest"], function(dynamicPageTest){
-						dynamicPageTest.runTests();
-					});
 				},1000);
 			});
 		}
