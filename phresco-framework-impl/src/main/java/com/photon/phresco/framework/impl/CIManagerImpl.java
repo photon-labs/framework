@@ -87,6 +87,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.google.gson.reflect.TypeToken;
 import com.photon.phresco.commons.FrameworkConstants;
+import com.photon.phresco.commons.model.ApplicationInfo;
 import com.photon.phresco.commons.model.CIBuild;
 import com.photon.phresco.commons.model.CIJob;
 import com.photon.phresco.commons.model.CIJobStatus;
@@ -761,10 +762,10 @@ public class CIManagerImpl implements CIManager, FrameworkConstants {
 		}
 		if (job.isEnablePreBuildStep()) {
 			//iterate over loop
-			List<String> preBuildStepCommands = job.getPrebuildStepCommands(); // clean install, clean package
-			//        	shell#SEP#cmd, mvn#SEP#clean install
+			List<String> preBuildStepCommands = job.getPrebuildStepCommands(); 
+			//shell#SEP#cmd, mvn#SEP#clean install
 			for (String preBuildStepCommand : preBuildStepCommands) {
-				processor.enablePreBuildStep(job.getPomLocation(), preBuildStepCommand); // shell#SEP#cmd, mvn#SEP#clean install
+				processor.enablePreBuildStep(job.getPomLocation(), preBuildStepCommand); 
 			}
 		}
 
@@ -778,13 +779,13 @@ public class CIManagerImpl implements CIManager, FrameworkConstants {
 		List<String> argList = new ArrayList<String>();
 		S_LOGGER.debug("job name " + job.getJobName());
 		S_LOGGER.debug("Builds " + builds);
-		if(StringUtils.isEmpty(builds)) {	// delete job
+		if(StringUtils.isEmpty(builds)) {	
 			S_LOGGER.debug("Job deletion started");
 			S_LOGGER.debug("Command " + FrameworkConstants.CI_JOB_DELETE_COMMAND);
 			deleteType = DELETE_TYPE_JOB;
 			argList.add(FrameworkConstants.CI_JOB_DELETE_COMMAND);
 			argList.add(job.getJobName());
-		} else {								// delete Build
+		} else {								
 			S_LOGGER.debug("Build deletion started");
 			deleteType = DELETE_TYPE_BUILD;
 			argList.add(FrameworkConstants.CI_BUILD_DELETE_COMMAND);
@@ -968,52 +969,35 @@ public class CIManagerImpl implements CIManager, FrameworkConstants {
 		}
 	}
 
-	public boolean isJobTemplateNameExists(String jobTemplateName)  throws PhrescoException {
-		if (debugEnabled) {
-			S_LOGGER.debug("Entering Method CIManagerImpl.isjobTemplateNameExists(String jobTemplateName)");
-		}
-		try {
-			List<CIJobTemplate> jobTemplates = getJobTemplates();
-			if (CollectionUtils.isNotEmpty(jobTemplates)) {
-				for (CIJobTemplate ciJobTemplate : jobTemplates) {
-					if (ciJobTemplate.getName().equals(jobTemplateName)) {
-						return true;
-					}
-				}
-			}
-		} catch (Exception e) {
-			if (debugEnabled) {
-				S_LOGGER.error("Entered into catch block of CI.isjobTemplateNameExists()" + e.getLocalizedMessage());
-			}
-			throw new PhrescoException(e);
-		}
-		return false;
-	}
-
-	public boolean createJobTemplates(List<CIJobTemplate> ciJobTemplates, boolean createNewFile) throws PhrescoException {
+	public boolean createJobTemplates(List<CIJobTemplate> ciJobTemplates, boolean createNewFile, List<ApplicationInfo> appInfos) throws PhrescoException {
 		if (debugEnabled) {
 			S_LOGGER.debug("Entering Method CIManagerImpl.createJobTemplate(List<CIJobTemplate> ciJobTemplates, boolean createNewFile)");
 		}
 		FileWriter fw = null;
 		BufferedWriter bw = null;
 		try {
-			File jobTemplateFile = getJobTemplateFile();
-			if (ciJobTemplates == null) {
-				return false;
+			List<String> appIds = ciJobTemplates.get(0).getAppIds();
+			for (ApplicationInfo applicationInfo : appInfos) {
+				for (String appId : appIds) {
+					if(appId.equals(applicationInfo.getAppDirName())) {
+						File jobTemplateFile = getJobTemplateFile(applicationInfo.getAppDirName());
+						List<CIJobTemplate> jobTemplates = getJobTemplates(applicationInfo.getAppDirName());
+						if (CollectionUtils.isEmpty(jobTemplates) || createNewFile) {
+							jobTemplates = new ArrayList<CIJobTemplate>();
+						}
+						ciJobTemplates.get(0).setAppIds(Arrays.asList(applicationInfo.getAppDirName()));
+						jobTemplates.addAll(ciJobTemplates);
+		
+						Gson gson = new Gson();
+						fw = new FileWriter(jobTemplateFile);
+						bw = new BufferedWriter(fw);
+						String templatesJson = gson.toJson(jobTemplates);
+						bw.write(templatesJson);
+						bw.flush();
+						bw.close();
+					}
+				}
 			}
-
-			List<CIJobTemplate> jobTemplates = getJobTemplates();
-			if (CollectionUtils.isEmpty(jobTemplates) || createNewFile) {
-				jobTemplates = new ArrayList<CIJobTemplate>();
-			}
-			jobTemplates.addAll(ciJobTemplates);
-
-			Gson gson = new Gson();
-			fw = new FileWriter(jobTemplateFile);
-			bw = new BufferedWriter(fw);
-			String templatesJson = gson.toJson(jobTemplates);
-			bw.write(templatesJson);
-			bw.flush();
 			return true;
 		} catch (Exception e) {
 			if (debugEnabled) {
@@ -1033,7 +1017,7 @@ public class CIManagerImpl implements CIManager, FrameworkConstants {
 		}
 	}
 
-	public List<CIJobTemplate> getJobTemplates() throws PhrescoException {
+	public List<CIJobTemplate> getJobTemplates(String appId) throws PhrescoException {
 		if (debugEnabled) {
 			S_LOGGER.debug("Entering Method CIManagerImpl.getJobTemplates()");
 		}
@@ -1041,7 +1025,7 @@ public class CIManagerImpl implements CIManager, FrameworkConstants {
 		BufferedReader br = null;
 		List<CIJobTemplate> ciJobTemplates = null;
 		try {
-			File jobTemplateFile = getJobTemplateFile();
+			File jobTemplateFile = getJobTemplateFile(appId);
 			if (!jobTemplateFile.exists()) {
 				return ciJobTemplates;
 			}
@@ -1113,7 +1097,7 @@ public class CIManagerImpl implements CIManager, FrameworkConstants {
 				return ciJobTemplates;
 			}
 
-			List<CIJobTemplate> jobTemplates = getJobTemplates();
+			List<CIJobTemplate> jobTemplates = getJobTemplates(appId);
 			if (CollectionUtils.isEmpty(jobTemplates)) {
 				return ciJobTemplates;
 			}
@@ -1138,30 +1122,47 @@ public class CIManagerImpl implements CIManager, FrameworkConstants {
 		return ciJobTemplates;
 	}
 
-	public List<CIJobTemplate> getJobTemplatesByProjId(String projId)
-	throws PhrescoException {
+	public List<CIJobTemplate> getJobTemplatesByProjId(String projId, List<ApplicationInfo> appInfos)
+			throws PhrescoException {
 		if (debugEnabled) {
 			S_LOGGER.debug("Entering Method CIManagerImpl.getJobTemplatesByProjId(String projId)");
 		}
-		List<CIJobTemplate> ciJobTemplates = null;
+		List<CIJobTemplate> jobTemplates = null;
 		try {
 			if (StringUtils.isEmpty(projId)) {
-				return ciJobTemplates;
+				return jobTemplates;
 			}
+			for (ApplicationInfo appInfo : appInfos) {
+				List<CIJobTemplate> appJobTemplates = getJobTemplates(appInfo.getAppDirName());
 
-			List<CIJobTemplate> jobTemplates = getJobTemplates();
-			if (CollectionUtils.isEmpty(jobTemplates)) {
-				return ciJobTemplates;
-			}
+				if (CollectionUtils.isNotEmpty(appJobTemplates)) {
+					if (CollectionUtils.isEmpty(jobTemplates)) {
+						jobTemplates = new ArrayList<CIJobTemplate>();
+						jobTemplates.addAll(appJobTemplates);
+					} else {
 
-			ciJobTemplates = new ArrayList<CIJobTemplate>(jobTemplates.size());
+						for (CIJobTemplate appJobTemplate : appJobTemplates) { 
 
-			for (CIJobTemplate ciJobTemplate : jobTemplates) {
-				String selProjId = ciJobTemplate.getProjectId();
-				if (projId.equals(selProjId)) {
-					ciJobTemplates.add(ciJobTemplate);
+							boolean isFound = false;
+							for (CIJobTemplate jobTemplate : jobTemplates) {
+								if (appJobTemplate.getName().equals(jobTemplate.getName())) {
+									String appIdOfAppJobTemplate = appJobTemplate.getAppIds().get(0);
+									jobTemplate.getAppIds().add(appIdOfAppJobTemplate);
+									isFound = true;
+									break;
+								}
+							}
+							// if application job template is not found need to add it
+							if (!isFound) {
+								jobTemplates.add(appJobTemplate);
+							}
+
+						}
+					}
+
 				}
 			}
+
 		} catch (Exception e) {
 			if (debugEnabled) {
 				S_LOGGER.error("Entered into catch block of CI.getJobTemplatesByProjId()"
@@ -1169,42 +1170,10 @@ public class CIManagerImpl implements CIManager, FrameworkConstants {
 			}
 			throw new PhrescoException(e);
 		}
-		return ciJobTemplates;
+		return jobTemplates;
 	}
 
-	public CIJobTemplate getJobTemplateByName(String jobTemplateName)
-	throws PhrescoException {
-		if (debugEnabled) {
-			S_LOGGER.debug("Entering Method CIManagerImpl.getJobTemplateByName(String jobTemplateName)");
-		}
-		CIJobTemplate ciJobTemplates = null;
-		try {
-			if (StringUtils.isEmpty(jobTemplateName)) {
-				return ciJobTemplates;
-			}
-
-			List<CIJobTemplate> jobTemplates = getJobTemplates();
-			if (CollectionUtils.isEmpty(jobTemplates)) {
-				return ciJobTemplates;
-			}
-
-			for (CIJobTemplate ciJobTemplate : jobTemplates) {
-				String selJobTemplateName = ciJobTemplate.getName();
-				if (jobTemplateName.equals(selJobTemplateName)) {
-					return ciJobTemplate;
-				}
-			}
-		} catch (Exception e) {
-			if (debugEnabled) {
-				S_LOGGER.error("Entered into catch block of CI.getJobTemplateByName(String jobTemplateName)"
-						+ e.getLocalizedMessage());
-			}
-			throw new PhrescoException(e);
-		}
-		return ciJobTemplates;
-	}
-
-	public boolean updateJobTemplate(CIJobTemplate ciJobTemplate, String oldName, String projId) throws PhrescoException {
+	public boolean updateJobTemplate(CIJobTemplate ciJobTemplate, String oldName, String projId,  List<ApplicationInfo> appInfos) throws PhrescoException {
 		if (debugEnabled) {
 			S_LOGGER.debug("Entering Method CIManagerImpl.updateJobTemplate(CIJobTemplate ciJobTemplate, String oldName, String projId)");
 		}
@@ -1212,9 +1181,9 @@ public class CIManagerImpl implements CIManager, FrameworkConstants {
 			if (StringUtils.isEmpty(oldName)) {
 				return false;
 			}
-			boolean deleteJobTemplate = deleteJobTemplate(oldName, projId);
+			boolean deleteJobTemplate = deleteJobTemplate(oldName, projId, appInfos);//need to handle
 			if (deleteJobTemplate) {
-				boolean createJobTemplates = createJobTemplates(Arrays.asList(ciJobTemplate), false);
+				boolean createJobTemplates = createJobTemplates(Arrays.asList(ciJobTemplate), false, appInfos);
 				return createJobTemplates;
 			}
 			return false;
@@ -1227,78 +1196,70 @@ public class CIManagerImpl implements CIManager, FrameworkConstants {
 		}
 	}
 
-	public boolean deleteJobTemplates(List<CIJobTemplate> ciJobTemplates) throws PhrescoException {
-		if (debugEnabled) {
-			S_LOGGER.debug("Entering Method CIManagerImpl.deleteJobTemplates(List<CIJobTemplate> ciJobTemplates)");
-		}
-		try {
-			if (CollectionUtils.isEmpty(ciJobTemplates)) {
-				return false; 
-			}
-
-			List<CIJobTemplate> jobTemplates = getJobTemplates();
-			Iterator<CIJobTemplate> jobTemplatesIterator = jobTemplates.iterator();
-
-			for (CIJobTemplate ciJobTemplate : ciJobTemplates) {
-				while (jobTemplatesIterator.hasNext()) {
-					CIJobTemplate jobTemplate = (CIJobTemplate) jobTemplatesIterator.next();
-					if (jobTemplate.getName().equals(ciJobTemplate.getName())) {
-						jobTemplatesIterator.remove();
-						break;
-					}
-				}
-			}
-
-			boolean deleteJobTemplates = createJobTemplates(jobTemplates, true);
-			return deleteJobTemplates;
-		} catch (Exception e) {
-			if (debugEnabled) {
-				S_LOGGER.error("Entered into catch block of CI.deleteJobTemplates(List<CIJobTemplate> ciJobTemplates)"
-						+ e.getLocalizedMessage());
-			}
-			throw new PhrescoException(e);
-		}
-	}
-
-	public boolean deleteJobTemplate(String jobTemplateName, String projId) throws PhrescoException {
+	public boolean deleteJobTemplate(String jobTemplateName, String projId, List<ApplicationInfo> appInfos) throws PhrescoException {
 		if (debugEnabled) {
 			S_LOGGER.debug("Entering Method CIManagerImpl.deleteJobTemplates()");
 		}
+		FileWriter fw = null;
+		BufferedWriter bw = null;
 		try {
 			if (StringUtils.isEmpty(jobTemplateName)) {
 				return false; 
 			}
 
-			List<CIJobTemplate> jobTemplates = getJobTemplates();
-			Iterator<CIJobTemplate> jobTemplateIterator = jobTemplates.iterator();
-			while (jobTemplateIterator.hasNext()) {
-				CIJobTemplate jobTemplate = (CIJobTemplate) jobTemplateIterator.next();
-				if (jobTemplate.getName().equals(jobTemplateName) && jobTemplate.getProjectId().equalsIgnoreCase(projId)) {
-					jobTemplateIterator.remove();
-					break;
+			for (ApplicationInfo applicationInfo : appInfos) {
+				File jobTemplateFile = getJobTemplateFile(applicationInfo.getAppDirName());
+				List<CIJobTemplate> jobTemplates = getJobTemplates(applicationInfo.getAppDirName());
+				if(CollectionUtils.isNotEmpty(jobTemplates)) {
+					Iterator<CIJobTemplate> jobTemplateIterator = jobTemplates.iterator();
+					while (jobTemplateIterator.hasNext()) {
+						CIJobTemplate jobTemplate = (CIJobTemplate) jobTemplateIterator.next();
+						if (jobTemplate.getName().equals(jobTemplateName) && jobTemplate.getProjectId().equalsIgnoreCase(projId)) {
+							jobTemplateIterator.remove();
+							break;
+						}
+					}
+
+					Gson gson = new Gson();
+					fw = new FileWriter(jobTemplateFile);
+					bw = new BufferedWriter(fw);
+					String templatesJson = gson.toJson(jobTemplates);
+					bw.write(templatesJson);
+					bw.flush();
+					bw.close();
 				}
 			}
-
-			boolean deleteJobTemplates = createJobTemplates(jobTemplates, true);
-			return deleteJobTemplates;
+			return true;
 		} catch (Exception e) {
 			if (debugEnabled) {
 				S_LOGGER.error("Entered into catch block of CI.deleteJobTemplates()"
 						+ e.getLocalizedMessage());
 			}
 			throw new PhrescoException(e);
+		} finally {
+			try {
+				if (bw != null) {
+					bw.close();
+				}
+			} catch (IOException e) {
+				throw new PhrescoException(e);
+			}
+			Utility.closeStream(fw);
 		}
 	}
 
-	private String getJobTemplatePath() {
+	private String getJobTemplatePath(String appId) {
 		StringBuilder builder = new StringBuilder(Utility.getProjectHome());		
+		builder.append(appId);
+		builder.append(PHRESCO);
+		builder.append(File.separator);
 		builder.append(CI_JOB_TEMPLATE_NAME);
 		return builder.toString();
 	}
 
-	private File getJobTemplateFile() {
+	private File getJobTemplateFile(String appId) {
 		File jobTemplateFile = null;
-		String jobTemplatePath = getJobTemplatePath();
+		String jobTemplatePath = getJobTemplatePath(appId);
 		jobTemplateFile = new File(jobTemplatePath);
 		return jobTemplateFile;
 	}
@@ -1400,7 +1361,6 @@ public class CIManagerImpl implements CIManager, FrameworkConstants {
 		}
 		try {
 			HttpClient client = new DefaultHttpClient();
-			//			String uri = "http://localhost:3579/ci/scm/SubversionSCM/postCredential";
 			HttpPost post = new HttpPost(submitUrl);
 			HttpContext httpContext = new BasicHttpContext();
 			BasicCookieStore cookieStore =  new BasicCookieStore();
@@ -1444,7 +1404,6 @@ public class CIManagerImpl implements CIManager, FrameworkConstants {
 		try {
 			// TODO : jenkinsUrl should end with /
 			HttpClient client = new DefaultHttpClient();
-			//		    String uri = "http://localhost:3579/ci/configSubmit";
 			HttpPost post = new HttpPost(submitUrl);
 			HttpContext httpContext = new BasicHttpContext();
 			CookieStore cookieStore =  new BasicCookieStore();
@@ -1463,14 +1422,13 @@ public class CIManagerImpl implements CIManager, FrameworkConstants {
 				String smtpServer="smtp.gmail.com";
 				JSONObject mailConfiguration = new JSONObject();
 				// Mail config
-				//				String string = "http://localhost:3579/ci/"; jenkins url
 				mailConfiguration.put("url", jenkinsUrl);
 				mailConfiguration.put("smtpServer", smtpServer);
 				mailConfiguration.put("defaultSuffix", "");
-				mailConfiguration.put("adminAddress", emailAddress); //Sender E-mail Address
+				mailConfiguration.put("adminAddress", emailAddress); 
 				// UseSMTPAuth
 				JSONObject emailCrdential = new JSONObject();
-				emailCrdential.put("smtpAuthUserName", emailAddress); //User Name
+				emailCrdential.put("smtpAuthUserName", emailAddress); 
 				emailCrdential.put("smtpAuthPassword", emailPassword);
 				mailConfiguration.put("useSMTPAuth", emailCrdential);
 				// Basic
@@ -1491,7 +1449,7 @@ public class CIManagerImpl implements CIManager, FrameworkConstants {
 				confluenceConfig.put("password", confluencePassword);
 
 				JSONObject confluenceSites = new JSONObject();
-				confluenceSites.put("sites", confluenceConfig); // here site is a array
+				confluenceSites.put("sites", confluenceConfig); 
 				jsonObj.put("com-myyearbook-hudson-plugins-confluence-ConfluencePublisher", confluenceSites);
 
 				// array
@@ -1516,7 +1474,6 @@ public class CIManagerImpl implements CIManager, FrameworkConstants {
 		try {
 			// TODO : jenkinsUrl should end with /
 			HttpClient client = new DefaultHttpClient();
-			//		    String uri = "http://localhost:3579/ci/configSubmit";
 			HttpPost post = new HttpPost(submitUrl);
 			HttpContext httpContext = new BasicHttpContext();
 			CookieStore cookieStore =  new BasicCookieStore();
@@ -1539,10 +1496,10 @@ public class CIManagerImpl implements CIManager, FrameworkConstants {
 				mailConfiguration.put("url", jenkinsUrl);
 				mailConfiguration.put("smtpServer", smtpServer);
 				mailConfiguration.put("defaultSuffix", "");
-				mailConfiguration.put("adminAddress", emailAddress); //Sender E-mail Address
+				mailConfiguration.put("adminAddress", emailAddress); 
 				// UseSMTPAuth
 				JSONObject emailCrdential = new JSONObject();
-				emailCrdential.put("smtpAuthUserName", emailAddress); //User Name
+				emailCrdential.put("smtpAuthUserName", emailAddress); 
 				emailCrdential.put("smtpAuthPassword", emailPassword);
 				mailConfiguration.put("useSMTPAuth", emailCrdential);
 				// Basic
@@ -1558,7 +1515,7 @@ public class CIManagerImpl implements CIManager, FrameworkConstants {
 			// Confluence list need to be handled
 			if(confluenceObj != null) {
 				JSONObject confluenceSites = new JSONObject();
-				confluenceSites.put("sites", confluenceObj); // here site is a array
+				confluenceSites.put("sites", confluenceObj);
 				jsonObj.put("com-myyearbook-hudson-plugins-confluence-ConfluencePublisher", confluenceSites);
 			}
 

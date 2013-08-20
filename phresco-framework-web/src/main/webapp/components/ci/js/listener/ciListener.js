@@ -107,7 +107,7 @@ define([], function() {
 				ciRequestBody.customerId = customerId;
 				ciRequestBody.projectId = projectId;
 				header.requestPostBody = JSON.stringify(ciRequestBody);
-				header.webserviceurl = commonVariables.webserviceurl + commonVariables.jobTemplates;
+				header.webserviceurl = commonVariables.webserviceurl + commonVariables.jobTemplates+ "?customerId="+ customerId + "&projectId=" + projectId;
 			} else if (action === "continuousDeliveryList") {
 				header.requestMethod = "GET";
 				header.webserviceurl = commonVariables.webserviceurl + commonVariables.ci+"/list?projectId="+projectId+"&appDirName="+appDir;
@@ -117,7 +117,7 @@ define([], function() {
 				ciRequestBody.projectId = projectId;
 				header.requestPostBody = JSON.stringify(ciRequestBody);
 				var oldname = $('[name="oldname"]').val();				
-				header.webserviceurl = commonVariables.webserviceurl + commonVariables.jobTemplates + "?oldname=" + oldname + "&projectId=" + projectId;
+				header.webserviceurl = commonVariables.webserviceurl + commonVariables.jobTemplates + "?oldname=" + oldname + "&customerId="+ customerId+"&projectId=" + projectId;
 			} else if (action === "edit") {
 				header.requestMethod = "GET";
 				header.webserviceurl = commonVariables.webserviceurl + commonVariables.jobTemplates;

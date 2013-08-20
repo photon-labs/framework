@@ -26,6 +26,7 @@ import java.io.OutputStream;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import org.apache.commons.collections.CollectionUtils;
@@ -40,8 +41,11 @@ import org.junit.Test;
 
 import com.google.gson.Gson;
 import com.photon.phresco.commons.FrameworkConstants;
+import com.photon.phresco.commons.model.ApplicationInfo;
+import com.photon.phresco.commons.model.ArtifactGroupInfo;
 import com.photon.phresco.commons.model.CIJob;
 import com.photon.phresco.commons.model.CIJobTemplate;
+import com.photon.phresco.commons.model.TechnologyInfo;
 import com.photon.phresco.service.client.api.ServiceManager;
 
 public class CIManagerImplTest implements FrameworkConstants{
@@ -109,29 +113,106 @@ public class CIManagerImplTest implements FrameworkConstants{
 		String jsonStr = gson.toJson(ciJobTemplats);
 		System.out.println(jsonStr);
 		
-		boolean createJobTemplates = ciManager.createJobTemplates(ciJobTemplats, true); // True should passed only for testing purpose
+		boolean createJobTemplates = ciManager.createJobTemplates(ciJobTemplats, true, Arrays.asList(getApplicationInfo())); // True should passed only for testing purpose
 		Assert.assertTrue(createJobTemplates);
 	}
+	
+	private static ApplicationInfo getApplicationInfo() {
+		ApplicationInfo info = new ApplicationInfo();
+		info.setAppDirName("TestProject");
+		info.setCode("TestProject");
+		info.setId("TestProject");
+		info.setCustomerIds(getCollections("photon"));
+		info.setEmailSupported(false);
+		info.setPhoneEnabled(false);
+		info.setTabletEnabled(false);
+		info.setDescription("Simple java web service Project");
+		info.setHelpText("Help");
+		info.setName("TestProject");
+		info.setPilot(false);
+		info.setUsed(false);
+		info.setDisplayName("TestProject");
+		info.setSelectedJSLibs(getCollections("99aa3901-a088-4142-8158-000f1e80f1bf"));
+		info.setVersion("1.0");
+
+		// TechnologyInfo
+
+		TechnologyInfo techInfo = new TechnologyInfo();
+		techInfo.setAppTypeId("web-layer");
+		techInfo.setVersion("1.6");
+		techInfo.setId("tech-java-webservice");
+		techInfo.setSystem(false);
+		info.setTechInfo(techInfo);
+
+		// selected Modules
+
+		List<String> selectedModules = new ArrayList<String>();
+		selectedModules.add("a69c6875-0bb0-462c-86d5-e361d02157cc");
+		info.setSelectedModules(selectedModules);
+
+
+		// server 
+
+		List<ArtifactGroupInfo> servers =  new ArrayList<ArtifactGroupInfo>();
+		ArtifactGroupInfo serverArtifactGroupInfo = new ArtifactGroupInfo();
+		serverArtifactGroupInfo.setArtifactGroupId("downloads_apache-tomcat");
+		serverArtifactGroupInfo.setDescription("Apache Tomcat");
+		serverArtifactGroupInfo.setDisplayName("Tomcat");
+		serverArtifactGroupInfo.setId("523c8806-86a8-4e61-937f-f27c8b32aa5c");
+		serverArtifactGroupInfo.setName("Eshop");
+		serverArtifactGroupInfo.setSystem(false);
+
+		List<String> serverArtifactInfoId = new ArrayList<String>();
+		serverArtifactInfoId.add("apachetomcat");
+		serverArtifactGroupInfo.setArtifactInfoIds(serverArtifactInfoId);
+
+		servers.add(serverArtifactGroupInfo);
+		info.setSelectedServers(servers);
+
+		// database
+
+		List<ArtifactGroupInfo> databases =  new ArrayList<ArtifactGroupInfo>();
+		ArtifactGroupInfo databaseArtifactGroupInfos = new ArtifactGroupInfo();
+		databaseArtifactGroupInfos.setArtifactGroupId("downloads_mysql");
+		databaseArtifactGroupInfos.setDescription("MYSQl");
+		databaseArtifactGroupInfos.setDisplayName("MySql");
+		databaseArtifactGroupInfos.setId("downloads_mysql");
+		databaseArtifactGroupInfos.setName("MySQL");
+		databaseArtifactGroupInfos.setSystem(false);
+		//		databaseArtifactGroupInfos.setArtifactGroupId("downloads.files");
+
+
+		List<String> databaseArtifactInfoId = new ArrayList<String>();
+		databaseArtifactInfoId.add("26bb9f28-e847-4099-b255-429706ceb7b9");
+		databaseArtifactGroupInfos.setArtifactInfoIds(databaseArtifactInfoId);
+
+		databases.add(databaseArtifactGroupInfos);
+		info.setSelectedDatabases(databases);
+
+		
+		// webService
+
+		List<String> webServices = new ArrayList<String>();
+		webServices.add("restjson");
+		info.setSelectedWebservices(webServices);
+		
+		return info;
+	}
+
+	private static List<String> getCollections(String value) {
+		return Collections.singletonList(value);
+	} 
 	
 //	@Test
 	public void testListAllJobTemplates() throws Exception {
 		System.out.println("ListAll job template ");
-		List<CIJobTemplate> jobTemplates = ciManager.getJobTemplates();
+		List<CIJobTemplate> jobTemplates = ciManager.getJobTemplates("TestProject");
 		if (CollectionUtils.isEmpty(jobTemplates)) {
 			Assert.assertTrue(false);
 		}
 		int size = jobTemplates.size();
 		System.out.println("Size => " + size);
 		Assert.assertTrue(size > 0 && size < 2);
-	}
-	
-//	@Test
-	public void testpListByNameJobTemplates() throws Exception {
-		System.out.println("ListByName job template ");
-		String name = "Test";
-		CIJobTemplate jobTemplate = ciManager.getJobTemplateByName(name);
-		System.out.println("jobTemplate.getName() name => " + jobTemplate.getName());
-		Assert.assertTrue(name.equals(jobTemplate.getName()));
 	}
 	
 //	@Test
@@ -154,7 +235,7 @@ public class CIManagerImplTest implements FrameworkConstants{
 	public void testpListByProjIdJobTemplates() throws Exception {
 		System.out.println("ListByProjId job template ");
 		String projId = "p123";
-		List<CIJobTemplate> jobTemplatesByProjId = ciManager.getJobTemplatesByProjId(projId);
+		List<CIJobTemplate> jobTemplatesByProjId = ciManager.getJobTemplatesByProjId(projId,Arrays.asList(getApplicationInfo()));
 		Assert.assertTrue(jobTemplatesByProjId.size() > 0 && jobTemplatesByProjId.size() < 2);
 	}
 	
@@ -165,31 +246,29 @@ public class CIManagerImplTest implements FrameworkConstants{
 //		
 //	}
 	
-	
-//	@Test
-	public void testUpdateJobTemplates() throws Exception {
-		System.out.println("Update job template ");
-		String name = "Test";
-		String projId = ""; //ur projId
-		String oldName = ""; //ur oldName here
-		CIJobTemplate jobTemplate = ciManager.getJobTemplateByName(name);
-		jobTemplate.setEnableEmailSettings(false);
-		boolean updateJobTemplate = ciManager.updateJobTemplate(jobTemplate, oldName, projId);
-//		Assert.assertTrue(updateJobTemplate);
-		
-		CIJobTemplate jobTemplateByName = ciManager.getJobTemplateByName(name);
-		Assert.assertTrue(!jobTemplateByName.isEnableEmailSettings()); // retrive obje vallue and check
-	}
-	
+//	
+////	@Test
+//	public void testUpdateJobTemplates() throws Exception {
+//		System.out.println("Update job template ");
+//		String name = "Test";
+//		String projId = ""; //ur projId
+//		String oldName = ""; //ur oldName here
+//		CIJobTemplate jobTemplate = ciManager.getJobTemplateByName(name);
+//		jobTemplate.setEnableEmailSettings(false);
+//		boolean updateJobTemplate = ciManager.updateJobTemplate(jobTemplate, oldName, projId);
+////		Assert.assertTrue(updateJobTemplate);
+//		
+//		CIJobTemplate jobTemplateByName = ciManager.getJobTemplateByName(name);
+//		Assert.assertTrue(!jobTemplateByName.isEnableEmailSettings()); // retrive obje vallue and check
+//	}
+//	
 //	@Test
 	public void testDeleteJobTemplates() throws Exception {
 		System.out.println("Delete job template ");
 		String name = "Test";
 		String projId = ""; //ur projId
-		boolean deleteJobTemplate = ciManager.deleteJobTemplate(name, projId);
+		boolean deleteJobTemplate = ciManager.deleteJobTemplate(name, projId,Arrays.asList(getApplicationInfo()));
 //		Assert.assertTrue(deleteJobTemplate);
-		CIJobTemplate jobTemplateByName = ciManager.getJobTemplateByName(name);
-		Assert.assertTrue(jobTemplateByName == null); // retrive obje vallue and check
 	}
 
 	//@Test

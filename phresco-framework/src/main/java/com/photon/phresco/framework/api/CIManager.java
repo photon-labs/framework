@@ -164,25 +164,18 @@ public interface CIManager {
 	public String decyPassword(String encryptedText) throws PhrescoException;
 
 	/**
-	 * @param jobTemplateName
-	 * @return
-	 * @throws PhrescoException
-	 */
-	boolean isJobTemplateNameExists(String jobTemplateName) throws PhrescoException;
-
-	/**
 	 * @param ciJobTemplates
 	 * @param createNewFile
 	 * @return
 	 * @throws PhrescoException
 	 */
-	boolean createJobTemplates(List<CIJobTemplate> ciJobTemplates, boolean createNewFile) throws PhrescoException;
+	boolean createJobTemplates(List<CIJobTemplate> ciJobTemplates, boolean createNewFile, List<ApplicationInfo> appInfos) throws PhrescoException;
 
 	/**
 	 * @return
 	 * @throws PhrescoException
 	 */
-	List<CIJobTemplate> getJobTemplates() throws PhrescoException;
+	List<CIJobTemplate> getJobTemplates(String appId) throws PhrescoException;
 
 	/**
 	 * @param appId
@@ -196,14 +189,7 @@ public interface CIManager {
 	 * @return
 	 * @throws PhrescoException
 	 */
-	List<CIJobTemplate> getJobTemplatesByProjId(String projId) throws PhrescoException;
-
-	/**
-	 * @param jobTemplateName
-	 * @return
-	 * @throws PhrescoException
-	 */
-	CIJobTemplate getJobTemplateByName(String jobTemplateName) throws PhrescoException;
+	List<CIJobTemplate> getJobTemplatesByProjId(String projId, List<ApplicationInfo> appInfos) throws PhrescoException;
 
 	/**
 	 * @param ciJobTemplate
@@ -212,14 +198,7 @@ public interface CIManager {
 	 * @return
 	 * @throws PhrescoException
 	 */
-	boolean updateJobTemplate(CIJobTemplate ciJobTemplate, String oldName, String projId) throws PhrescoException;
-
-	/**
-	 * @param ciJobTemplates
-	 * @return
-	 * @throws PhrescoException
-	 */
-	boolean deleteJobTemplates(List<CIJobTemplate> ciJobTemplates) throws PhrescoException;
+	boolean updateJobTemplate(CIJobTemplate ciJobTemplate, String oldName, String projId, List<ApplicationInfo> appInfos) throws PhrescoException;
 
 	/**
 	 * @param jobTemplateName
@@ -227,7 +206,7 @@ public interface CIManager {
 	 * @return
 	 * @throws PhrescoException
 	 */
-	boolean deleteJobTemplate(String jobTemplateName, String projId) throws PhrescoException;
+	boolean deleteJobTemplate(String jobTemplateName, String projId, List<ApplicationInfo> appInfos) throws PhrescoException;
 
 	/**
 	 * @param continuousDelivery

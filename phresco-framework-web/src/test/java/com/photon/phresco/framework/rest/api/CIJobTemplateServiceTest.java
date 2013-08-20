@@ -41,7 +41,7 @@ public class CIJobTemplateServiceTest extends RestBaseTest {
 		ciTemplate.setRepoTypes("svn");
 		ciTemplate.setType("build");
 		ciTemplate.setUploadTypes(Arrays.asList("collabnet"));
-		Response add = ciJobTemplateService.add(ciTemplate);
+		Response add = ciJobTemplateService.add(ciTemplate,projectId,customerId);
 		Assert.assertEquals(200, add.getStatus());
 		
 		CIJobTemplate ciTemplate1 = new CIJobTemplate();
@@ -55,15 +55,28 @@ public class CIJobTemplateServiceTest extends RestBaseTest {
 		ciTemplate1.setRepoTypes("git");
 		ciTemplate1.setType("deploy");
 		ciTemplate1.setUploadTypes(Arrays.asList("confluence"));
-		Response addnew = ciJobTemplateService.add(ciTemplate1);
+		Response addnew = ciJobTemplateService.add(ciTemplate1,projectId,customerId);
 		Assert.assertEquals(200, addnew.getStatus());
+		
+		CIJobTemplate ciTemplate2 = new CIJobTemplate();
+		ciTemplate2.setCustomerId(customerId);
+		ciTemplate2.setEnableEmailSettings(true);
+		ciTemplate2.setEnableRepo(true);
+		ciTemplate2.setName("pdf");
+		ciTemplate2.setProjectId(projectId);
+		ciTemplate2.setAppIds(Arrays.asList(appId));
+		ciTemplate2.setRepoTypes("svn");
+		ciTemplate2.setType("pdfReport");
+		ciTemplate2.setUploadTypes(Arrays.asList("collabnet"));
+		Response add1 = ciJobTemplateService.add(ciTemplate2,projectId,customerId);
+		Assert.assertEquals(200, add1.getStatus());
 	}
 
 	@Test
 	public void list() {
-		Response list = ciJobTemplateService.list(projectId);
+		Response list = ciJobTemplateService.list(projectId,customerId);
 		Assert.assertEquals(200, list.getStatus());
-//		Response listFail = ciJobTemplateService.list("Te");
+		Response listFail = ciJobTemplateService.list("projectId","");
 //		Assert.assertEquals(417, listFail.getStatus());
 	}
 
@@ -73,7 +86,7 @@ public class CIJobTemplateServiceTest extends RestBaseTest {
 		Assert.assertEquals(200, list.getStatus());
 		Response listEmpty = ciJobTemplateService.list("sampleJob", appId, projectId, customerId, userId);
 		Assert.assertEquals(200, listEmpty.getStatus());
-//		Response listFail = ciJobTemplateService.list("", appId, "Te", customerId, userId);
+		Response listFail = ciJobTemplateService.list("", "", "sample", "tt", userId);
 //		Assert.assertEquals(417, listFail.getStatus());
 	}
 
@@ -81,8 +94,8 @@ public class CIJobTemplateServiceTest extends RestBaseTest {
 	public void validateName() {
 		Response validateName = ciJobTemplateService.validateName(projectId, customerId, "buildJob", "buildJob");
 		Assert.assertEquals(200, validateName.getStatus());
-		Response validateNameEmpty = ciJobTemplateService.validateName("Te", customerId, "build", "buildJob");
-		Assert.assertEquals(200, validateNameEmpty.getStatus());
+		Response validateNameEmpty = ciJobTemplateService.validateName("sample", "tt", "", "");
+//		Assert.assertEquals(200, validateNameEmpty.getStatus());
 	}
 
 	
@@ -101,25 +114,28 @@ public class CIJobTemplateServiceTest extends RestBaseTest {
 		ciTemplate.setType("deploy");
 		ciTemplate.setUploadTypes(Arrays.asList("confluence","collabnet"));
 		
-		Response update = ciJobTemplateService.update(ciTemplate, "deployJob", projectId);
+		Response update = ciJobTemplateService.update(ciTemplate, "deployJob", projectId, customerId);
 		Assert.assertEquals(200, update.getStatus());
-		Response updateFail = ciJobTemplateService.update(ciTemplate, "deployJob", "Te");
-		Assert.assertEquals(200, updateFail.getStatus());
+		Response updateFail = ciJobTemplateService.update(ciTemplate, "", "sample", "tt");
+//		Assert.assertEquals(200, updateFail.getStatus());
 	}
 
 	@Test
 	public void getJobTemplatesByEnvironemnt() {
 		Response jobTemplate = ciJobTemplateService.getJobTemplatesByEnvironemnt(customerId, projectId, "Production","");
 		Assert.assertEquals(200, jobTemplate.getStatus());
-//		Response jobTemplateFail = ciJobTemplateService.getJobTemplatesByEnvironemnt(customerId, "Te", "");
+		Response jobTemplateFail = ciJobTemplateService.getJobTemplatesByEnvironemnt("", "sample",  "tt","");
 //		Assert.assertEquals(417, jobTemplateFail.getStatus());
 	}
 
-//	@Test
+	@Test
 	public void delete() {
-		Response delete = ciJobTemplateService.delete("deployJob", projectId);
+		Response delete = ciJobTemplateService.delete("deployJob", projectId, customerId);
 		Assert.assertEquals(200, delete.getStatus());
-		Response deleteFail = ciJobTemplateService.delete("", projectId);
-		Assert.assertEquals(200, deleteFail.getStatus());
+		Response deleteFail = ciJobTemplateService.delete("", "", customerId);
+//		Assert.assertEquals(200, deleteFail.getStatus());
+		Response deleteBuildJob = ciJobTemplateService.delete("buildJob", projectId, customerId);
+		
+		Response deleteCodeJob = ciJobTemplateService.delete("pdf", projectId, customerId);
 	}
 }
