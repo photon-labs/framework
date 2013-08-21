@@ -1102,13 +1102,13 @@ define(["croneExpression/croneExpression"], function() {
 		
 		spclCharValidation : function() {
 			var self = this;
-			$("input[name=port]").bind('input propertychange', function (e) {
+			$("input[name=port]").focusout(function (e) {
 				var str = $(this).val();
 				str = str.replace(/[^0-9]+/g, '');
 				$(this).val(str);
 			});
 			
-			$("input[name=host]").bind('input propertychange', function (e) {
+			$("input[name=host]").focusout(function (e) {
 				var str = $(this).val();
 				str = str.replace(/[^a-zA-Z 0-9\.\-\_]+/g, '');
 				$(this).val(str);

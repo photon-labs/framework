@@ -192,16 +192,16 @@ define(["projects/listener/projectsListener"], function() {
 			});
 
 
-			$("input[name='projectname']").bind('input',function() {
+			$("input[name='projectname']").focusout(function() {
 				$(this).val(self.specialCharValidation($(this).val().replace(/\s/g, "")));
 				$("input[name='projectcode']").val(self.specialCharValidation($(this).val().replace(/\s/g, "")));
 			});
 
-			$("input[name='projectcode']").bind('input',function() {
+			$("input[name='projectcode']").focusout(function() {
 				$(this).val(self.specialCharValidation($(this).val().replace(/\s/g, "")));
 			});
 			
-			$("input[name='projectversion']").on('keyup',function() {
+			$("input[name='projectversion']").focusout(function() {
 				$("input[name='projectversion']").val(self.specialCharValidation($(this).val().replace(/\s/g, "")));
 			});
 
