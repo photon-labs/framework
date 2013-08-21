@@ -1,51 +1,101 @@
 {
-
-    ".login_left img":{
-        "margin-top":"loginlogo"
+  ".login_left img":{
+        "margin-top":"loginLogoMargin"
     },
-    ".header_section":{
-        "background":"linear-gradient(to bottom, gradientTop 1%,gradientBottom 100%) !important",
-        "filter":"progid:DXImageTransform.Microsoft.gradient( startColorstr=gradientTop, endColorstr=gradientBottom,GradientType=0 ) !important"
+	 ".header_left figure img":{
+        "padding-top":"pageLogoPadding"
     },
-    ".header_left figure img":{
-        "padding-top":"logopadding"
+	".header_section":{
+        "background":"linear-gradient(to bottom, headerBackGroundcolorTop 1%,headerBackGroundcolorBottom 100%) !important",
+        "filter":"progid:DXImageTransform.Microsoft.gradient( startColorstr=headerBackGroundcolorTop, endColorstr=headerBackGroundcolorBottom,GradientType=0 ) !important"
     },
-    ".user_login a, .user_login a:hover, .header_right":{
-        "color":"labelColor"
+	".footer_section":{
+        "background":"linear-gradient(to bottom, footerBackGroundcolorTop 1%,footerBackGroundcolorBottom 100%) !important",
+        "filter":"progid:DXImageTransform.Microsoft.gradient( startColorstr=footerBackGroundcolorTop, endColorstr=footerBackGroundcolorBottom,GradientType=0 ) !important"
     },
-    ".header_section ul li a:hover, .header_section ul li a.nav_active":{
-        "color":"pageHeaderColor"
-    },
-    ".table_border tr.proj_title td, .row_bg":{
-        "color":"brandingColor"
-    },
-    ".footer_section":{
-        "background":"linear-gradient(to bottom, gradientTop 1%,gradientBottom 100%) !important",
-        "filter":"progid:DXImageTransform.Microsoft.gradient( startColorstr=gradientTop, endColorstr=gradientBottom,GradientType=0 ) !important"
-    },
-    ".cust_sel ul li a.selected, .cust_sel ul li a:hover":{
-        "background-color":"brandingColor"
-    },
-    ".code_report":{
-        "background":"brandingColor"
-    },
-    ".features_right, .features_box h1":{
-        "color":"brandingColor"
-    },
-    ".btn_style":{
-        "background":"buttonColor"
-    },
-    ".dyn_popup":{
-        "border":"1px solid brandingColor"
-    },
-    ".speakstyletopright:before":{
-        "border-bottom-color":"brandingColor"
-    },
-    ".title_nav .cust_sel ul li a:hover, .btn_style":{
-        "background":"brandingColor"
-    },
-    ".speakstyleleft:before":{
-        "border-bottom-color":"brandingColor"
-    }
-
+	".header_section ul li a": {
+       "color": "headerLinkColor"
+	},
+	".header_right .navbar .nav > li > a": {
+       "color": "headerLinkColor"
+	},
+	".header_right": {
+       "color": "headerActiveLinkColor"
+	},
+	".user_login a": {
+       "color": "headerActiveLinkColor"
+	},
+	".user_login a:hover": {
+       "color": "headerActiveLinkColor"
+	},
+	".header_section ul li a:hover": {
+       "color": "headerActiveLinkColor"
+	},
+	".header_section ul li a.nav_active": {
+       "color": "headerActiveLinkColor"
+	},
+	".content_title" :{
+      "background":"linear-gradient(to bottom, pageTitleBackGroundTop 1%,pageTitleBackGroundBottom 100%) !important",
+        "filter":"progid:DXImageTransform.Microsoft.gradient( startColorstr=pageTitleBackGroundTop, endColorstr=pageTitleBackGroundBottom,GradientType=0 ) !important"
+	},
+	".btn_style": {
+     "background-color": "buttonBackGroundColor"
+	},
+	".icon_images": {
+     "background-color": "buttonBackGroundColor"
+	},
+	"title_nav ul a": {
+      "Color":"editNavigationLink"
+	},
+	".title_nav ul a:hover": {
+      "background":"linear-gradient(to bottom, editNavigationActiveBackGroundTop 1%,editNavigationActiveBackGroundBottom 100%) !important",
+        "filter":"progid:DXImageTransform.Microsoft.gradient( startColorstr=editNavigationActiveBackGroundTop, endColorstr=editNavigationActiveBackGroundBottom,GradientType=0 ) !important"
+	},
+	".title_nav ul a.act" :{
+      "background":"linear-gradient(to bottom, editNavigationActiveBackGroundTop 1%,editNavigationActiveBackGroundBottom 100%) !important",
+        "filter":"progid:DXImageTransform.Microsoft.gradient( startColorstr=editNavigationActiveBackGroundTop, endColorstr=editNavigationActiveBackGroundBottom,GradientType=0 ) !important"
+	},
+	".header-background": {
+     "background":"linear-gradient(to bottom, tableHeaderBackGroundColorTop 1%,tableHeaderBackGroundColorBottom 100%) !important",
+        "filter":"progid:DXImageTransform.Microsoft.gradient( startColorstr=tableHeaderBackGroundColorTop, endColorstr=tableHeaderBackGroundColorBottom,GradientType=0 ) !important"
+	},
+	".table_border thead th div.th-inner" : {
+     "color":"tableHeaderLabelColor"
+	},
+	".table_border tr.proj_title td": {
+     "background":"linear-gradient(to bottom, projectTitleBackGroundColorTop 1%,projectTitleBackGroundColorBottom 100%) !important",
+        "filter":"progid:DXImageTransform.Microsoft.gradient( startColorstr=projectTitleBackGroundColorTop, endColorstr=projectTitleBackGroundColorBottom,GradientType=0 ) !important",
+		"color":"customerBaseColor"
+	},
+	".content_end": {
+		"background":"linear-gradient(to bottom, bottomButtonPanelTop 1%,bottomButtonPanelBottom 100%) !important",
+			"filter":"progid:DXImageTransform.Microsoft.gradient( startColorstr=bottomButtonPanelTop, endColorstr=bottomButtonPanelBottom,GradientType=0 ) !important"
+	},
+	".features_box h1":{
+	 "color":"customerBaseColor"
+	} ,
+	" .features_right": {
+	 "color":"customerBaseColor"
+	},
+	 ".row_bg":{
+	 "color":"customerBaseColor"
+	 },
+	 ".cust_sel ul li a.selected": {
+		"background":"customerBaseColor"
+	 }, 
+	 ".title_nav .cust_sel ul li a:hover" : {
+		"background":"customerBaseColor"
+	 },
+	 ".dropdown-menu > li > a:hover":{
+		"background":"customerBaseColor"
+	 },
+	 ".code_report" : {
+		"background":"customerBaseColor"
+	 },
+	 ".dyn_popup":{
+		"border":"1px solid  customerBaseColor"
+	 },
+	 ".unit_text":{
+		"color":"customerBaseColor"
+	 }
 }
