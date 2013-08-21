@@ -25,6 +25,7 @@ html,body {
 	font-family: 'luxi_sansregular' !important;
 	width:100%;
 	font-size:12px !important;
+	overflow: hidden;
 }
 
 /* Basic Styles for all Pages */
@@ -413,6 +414,26 @@ html, body {
 	font-size:13px;
 	text-align:right;
 }
+
+.user_icon {
+	background-image:url(../../images/helios/user_icon.png);
+	background-repeat:no-repeat;
+	background-position:-15px 0px;
+	width:15px;
+	height:15px;
+	float:left;
+	margin-right:8px;
+}
+
+.logout_icon {
+	background-image:url(../../images/helios/logout_icon.png);
+	background-repeat:no-repeat;
+	background-position:-15px 0px;
+	width:14px;
+	height:15px;
+	float:right;
+	margin-left:8px;
+}	
 
 .add_cancel {
 	padding-top:8px;
@@ -1155,7 +1176,7 @@ img[name="close"] {
 	color: #747474;
 	text-align:left;
 	border:none;
-	/*width: 5%;*/
+	width: 5%;
 }
 
 .errormessage {
@@ -1927,6 +1948,7 @@ select[name="builtmyself"] {
 	 width: 186px;
 }
 
+
 select[name="builtmyself"] {
 	width: 115px !important;
 }
@@ -1974,7 +1996,7 @@ select[name="builtmyself"] {
 	width: 182px;	
 }
 
- , .bootstrap-select .btn,  {
+ .bootstrap-select .btn  {
 	width: 182px !important; 
  }
  
@@ -1989,6 +2011,7 @@ select[name="builtmyself"] {
 	 .create_proj table tr td input[type=text], .features_content_main table tr td input[type=text], .features_content_main table tr td input[type=password], .bootstrap-select .btn, .features_content_main table tr td select {
 		width: 220px;	
 	}
+	
 }
 
 /* *************************************************************************** STYLES FOR DIV SCROLL ************************************************************************** */
@@ -2100,6 +2123,7 @@ select[name="builtmyself"] {
   line-height: 35px; /* height of header */
   text-align: left;
   padding-left:8px;
+  color:#323232;
 }
 
 
@@ -4485,5 +4509,11 @@ select[name="reportDataType"], input[name="pdfName"] {
 	width: 45%;
 }
 .dropdown-key:hover {
-background:#EF7B43 !important;
+	background:#EF7B43 !important;
+}
+
+@-moz-document url-prefix() {
+	table tr td {
+        width ; 4%;
+    }
 }
