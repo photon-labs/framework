@@ -644,6 +644,13 @@ define(["build/listener/buildListener"], function() {
 			//To copy the console log content to the clip-board
 			$('#buildCopyLog').unbind("click");
 			$('#buildCopyLog').click(function() {
+			
+			$("#buildCopyLog").zclip({
+				path: "lib/ZeroClipboard.swf",
+				copy: function(){
+					return $(".console_pad").text();
+					}
+			});
 				commonVariables.hideloading = true;
 				commonVariables.navListener.copyToClipboard($('#logContent'));
 			});
