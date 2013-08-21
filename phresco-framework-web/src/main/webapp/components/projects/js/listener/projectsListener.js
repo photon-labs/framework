@@ -995,15 +995,26 @@ define([], function() {
 		setPilotData : function(callback) {
 			var self=this, option = '';
 			self.getEditProject(self.getRequestHeader(self.projectRequestBody, "", "pilotlist"), function(response) {
-				$.each(response.data, function(index, value){
-					commonVariables.api.localVal.setJson(value.name, value);
-					if(value.displayName !== undefined && value.displayName !== null && value.displayName !== '') {
-						option += '<option>'+ value.displayName +'</option>';
-					}
-					if(response.data.length === (index + 1)){
-						callback(option);
-					} 
-				});
+				if (response !== null && (response.status !== "error" || response.status !== "failure")){
+					$.each(response.data, function(index, value){
+						commonVariables.api.localVal.setJson(value.name, value);
+						if(value.displayName !== undefined && value.displayName !== null && value.displayName !== '') {
+							option += '<option>'+ value.displayName +'</option>';
+						}
+						if(response.data.length === (index + 1)){
+							callback(option);
+						} 
+					});
+				} else {
+					$(".msgdisplay").removeClass("success").addClass("error");
+					$(".error").attr('data-i18n', 'errorCodes.' + response.responseCode);
+					self.renderlocales(commonVariables.contentPlaceholder);	
+					$(".error").show();
+					$(".error").fadeIn(500).fadeOut(500).fadeIn(500).fadeOut(500).fadeIn(500).fadeOut(5);
+					setTimeout(function() {
+						$(".error").hide();
+					},2500);
+				}
 			});
 		},
 		
