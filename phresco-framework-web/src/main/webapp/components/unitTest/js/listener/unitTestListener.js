@@ -131,7 +131,7 @@ define([], function() {
 				});
 			} else {
 				self.mavenServiceListener.mvnUnitTest(queryString, '#testConsole', function(response) {
-//					self.testResultListener.closeConsole();
+					self.testResultListener.closeConsole();
 					callback(response);
 				});
 			}
