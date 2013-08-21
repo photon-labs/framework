@@ -2384,6 +2384,7 @@ select[name="builtmyself"] {
 	color:#e15432;
 	font-size:15px;
 	font-weight:bold;
+	border:1px solid red;
 }
 .tab_line {
 	padding-bottom:60px;
@@ -3179,7 +3180,7 @@ html>body tbody.scrollContent {
 
 
 .z_index_ci {
-	z-index: 7;	
+	z-index: 1;	
 }
 
 .ci_envtable table:first-child {
@@ -3614,7 +3615,7 @@ td.browse_td .bootstrap-select {
 	width: 150px !important;
 }
 
-td.browse_td .bootstrap-select.btn-group .dropdown-menu {
+td.browse_td .bootstrap-select.btn-group .dropdown-menu, .dynamic_cont .bootstrap-select.btn-group .dropdown-menu {
 	min-width: 150px !important;
 }
 

@@ -333,7 +333,7 @@ define(["framework/widgetWithTemplate", "common/loading", "lib/customcombobox-1.
             }
 
             li = $('<li type="selectbox" class="ctrl selectCtrl '+columnClass+'" ' +optionalAttrs.show+'  id="'+parameter.key+'Li"><label>'+parameter.name.value[0].value+optionalAttrs.required+'</label></li>');
-            select = $('<select data-selected-text-format="count>1" '+selection+' id="'+parameter.key+'" '+selectWidth+' showHide="'+parameter.show+'" dependencyAttr="'+parameterDependency+'" name="'+parameter.key+'" parameterEditable="'+parameter.editable+'" parameterType="'+ parameter.type+'" class="'+selectBoxClass+'" '+multiple+' ' + 
+            select = $('<select data-selected-text-format="count>1" '+selection+' id="'+parameter.key+'" '+selectWidth+' showHide="'+parameter.show+'" dependencyAttr="'+parameterDependency+'" name="'+parameter.key+'" parameterEditable="'+parameter.editable+'" parameterType="'+ parameter.type+'" class="dynamic_selectbox '+selectBoxClass+'" '+multiple+' ' + 
                      'enableOnchangeFunction="'+ enableOnchangeFunction +'"  data-selected-text-format="count>2" ' +optionalAttrs.editable+' ></select>');
             li.append(select);
             whereToRender.append(li);
