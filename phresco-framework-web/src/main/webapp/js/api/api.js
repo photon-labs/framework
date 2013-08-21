@@ -41,10 +41,16 @@ define(["framework/base", "api/localStorageAPI"], function(){
 				header : "Access-Control-Allow-Headers: x-requested-with",
 				contentType : header.contentType,
 				data : header.requestPostBody,
-				timeout: 1000000,
-				crossDomain: true,
-				cache: false,
-				async: true,
+				timeout : 1000000,
+				crossDomain : true,
+				cache : false,
+				async : true,
+				
+				beforeSend : function(){
+					if(!Clazz.navigationController.loadingActive && !commonVariables.continueloading && !commonVariables.hideloading){
+						commonVariables.loadingScreen.showLoading($(commonVariables.contentPlaceholder));
+					}
+				},
 				
 				success : function(response, e ,xhr){
 					if (callbackFunction){
@@ -53,6 +59,10 @@ define(["framework/base", "api/localStorageAPI"], function(){
 				},
 				
 				error : function(jqXHR, textStatus, errorThrown){
+					Clazz.navigationController.loadingActive = false;
+					commonVariables.continueloading = false;
+					commonVariables.hideloading = false;
+					
 					if (errorHandler){
 						errorHandler(jqXHR.responseText);
 					}

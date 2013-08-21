@@ -250,18 +250,18 @@ $(document).ready(function(){
 			commonVariables.loadingScreen =new Clazz.com.js.widget.common.Loading();
 			commonVariables.api = new Clazz.com.js.api.API();
 			
-			$(document).ajaxStart(function() {
+			/* $(document).ajaxStart(function() {
 				if(!Clazz.navigationController.loadingActive && !commonVariables.continueloading && !commonVariables.hideloading){
 					commonVariables.loadingScreen.showLoading($(commonVariables.contentPlaceholder));
 				}
-			});
+			}); 
 			
 			$(document).ajaxStop(function() {
 				if(!Clazz.navigationController.loadingActive && !commonVariables.continueloading){
 					commonVariables.hideloading = false;
 					commonVariables.loadingScreen.removeLoading();
 				}
-			});
+			});*/
 			
 			app.initialize();
 		});

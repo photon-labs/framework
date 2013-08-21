@@ -235,32 +235,10 @@ define(["build/listener/buildListener"], function() {
 		},
 		
 		clearLogContent : function(){
+			var self = this;
 			$('#logContent').html('');
-		},
-		
-		setConsoleScrollbar : function(bcheck){
-			/* if(bcheck){
-				$("#build_progress .scrollContent").mCustomScrollbar("destroy");
-				$("#build_progress .scrollContent").mCustomScrollbar({
-					autoHideScrollbar: false,
-					scrollInertia: 1000,
-					theme:"light-thin",
-					advanced:{ updateOnContentResize: true},
-					callbacks:{
-						onScrollStart:function(){
-							$("#build_progress .scrollContent").mCustomScrollbar("scrollTo","bottom");
-						}
-					}
-				});
-			}else{
-				$("#build_progress .scrollContent").mCustomScrollbar("destroy");
-				$("#build_progress .scrollContent").mCustomScrollbar({
-					autoHideScrollbar:true,
-					scrollInertia: 200,
-					theme:"light-thin",
-					advanced:{ updateOnContentResize: true}
-				});
-			} */
+			self.openConsole();
+			$("#buildConsole").attr('data-flag','false');
 		},
 		
 		refreshContent : function(loadContent){
@@ -311,7 +289,6 @@ define(["build/listener/buildListener"], function() {
 						$("#buildRow tbody").html(tbody);
 						$('.dyn_popup').css('display', 'none');
 						self.contentDivEvents();
-						//self.setConsoleScrollbar(false);
 						self.renderlocales(commonVariables.contentPlaceholder);
 						commonVariables.navListener.showHideTechOptions();
 						$(window).resize();
@@ -337,16 +314,13 @@ define(["build/listener/buildListener"], function() {
 
 				if(deviceDeploy === "true"){
 					// call device deployment service
-					
 					self.dynamicpage.getHtml(whereToRender, this, '', function(retVal){
 						self.clearLogContent();
-						//self.setConsoleScrollbar(true);
-						self.openConsole();
+						
 						$('input[name=buildDelete]').hide();
 						self.onDeployEvent.dispatch("", function(response){
 							$('input[name=buildDelete]').show();
 							$('.progress_loading').css('display','none');
-							//self.setConsoleScrollbar(false);
 							if(response !== null && response.errorFound === true){
 								$(current).closest('tr').find('form[name=deployForm]').show();
 								self.showErrorPopUp(response.responseCode);
@@ -369,8 +343,6 @@ define(["build/listener/buildListener"], function() {
 			$("input[name=deploy]").click(function(){
 				var current = this, sqlParam = "", queryStr = "";;
 				self.clearLogContent();
-				//self.setConsoleScrollbar(true);
-				self.openConsole();
 				$('input[name=buildDelete]').hide();
 
 				self.sqlQueryParam($(this).closest('tr').find('form[name=deployForm] #executeSql').is(':checked'), $(this).closest('tr').find('form[name=deployForm] ul[name=sortable2] li'), function(retVal){
@@ -383,7 +355,6 @@ define(["build/listener/buildListener"], function() {
 				self.onDeployEvent.dispatch(queryStr, function(response){
 					$('input[name=buildDelete]').show();
 					$('.progress_loading').css('display','none');
-					//self.setConsoleScrollbar(false);
 					if(response !== null && response.errorFound === true){
 						$(current).closest('tr').find('form[name=deployForm]').show();
 						self.showErrorPopUp(response.responseCode);
@@ -401,7 +372,6 @@ define(["build/listener/buildListener"], function() {
 			$('input[name=buildDelete]').unbind('click');
 			$('input[name=buildDelete]').click(function(){
 				var current = this, divId = $(this).closest('tr').find('td:eq(0)').text();
-				self.clearLogContent();
 				self.onDeleteEvent.dispatch(divId, function(response){
 					if(response.responseCode === "PHR700002"){
 						$(current).closest('tr').remove();
@@ -450,8 +420,6 @@ define(["build/listener/buildListener"], function() {
 			$('input[name=processBuild]').unbind('click');
 			$('input[name=processBuild]').click(function(){
 				self.clearLogContent();
-				//self.setConsoleScrollbar(true);
-				self.openConsole();
 				$(".dyn_popup").hide();
 				self.onProcessBuildEvent.dispatch($(this).closest('tr').find('form[name=prcBForm]').serialize(), function(response){
 				$('.progress_loading').css('display','none');
@@ -497,7 +465,6 @@ define(["build/listener/buildListener"], function() {
 							cancel: ".ui-state-disabled"
 						});
 					});
-					$("#buildConsole").attr('data-flag','false');
 				}	
 			});
 			
@@ -506,9 +473,6 @@ define(["build/listener/buildListener"], function() {
 				var sqlParam = "", queryStr = "";
 				$(".dyn_popup").hide();
 				self.clearLogContent();
-				//self.setConsoleScrollbar(true);
-				self.openConsole();
-
 				self.sqlQueryParam($('form[name=runAgainstForm] #executeSql').is(':checked'), $('form[name=runAgainstForm] ul[name=sortable2] li'), function(retVal){
 					sqlParam = retVal;
 				});
@@ -518,7 +482,6 @@ define(["build/listener/buildListener"], function() {
 				
 				self.onRASEvent.dispatch(queryStr, function(response){
 					$('.progress_loading').css('display','none');
-					//self.setConsoleScrollbar(false);
 					
 					if(response !== null && response.errorFound === true) {
 						self.closeConsole();
@@ -534,12 +497,8 @@ define(["build/listener/buildListener"], function() {
 			$("#stop").click(function() {
 				if($(this).attr("class") === "btn btn_style"){
 					self.clearLogContent();
-					//self.setConsoleScrollbar(true);
-					self.openConsole();
-					$("#buildConsole").attr('data-flag','false');
 					self.onStopEvent.dispatch(function(response){
 						$('.progress_loading').css('display','none');
-						//self.setConsoleScrollbar(false);
 						self.runAgainSourceStatus();
 					});					
 				}
@@ -549,12 +508,8 @@ define(["build/listener/buildListener"], function() {
 			$("#restart").click(function() {
 				if($(this).attr("class") === "btn btn_style"){
 					self.clearLogContent();
-					//self.setConsoleScrollbar(true);
-					self.openConsole();
-					$("#buildConsole").attr('data-flag','false');
 					self.onRestartEvent.dispatch(function(response){
 						$('.progress_loading').css('display','none');
-						//self.setConsoleScrollbar(false);
 						self.runAgainSourceStatus();						
 					});
 				}
@@ -580,9 +535,6 @@ define(["build/listener/buildListener"], function() {
 			$("#buildRun").click(function(){
 				$('.alert_div').show();
 				self.clearLogContent();
-				//self.setConsoleScrollbar(true);
-				self.openConsole();
-				
 				var sqlParam = "";
 				queryStr = $('form[name=buildForm]').serialize().replace("=on", "=true");
 				
@@ -617,7 +569,6 @@ define(["build/listener/buildListener"], function() {
 					$("#stop").addClass('btn_style');
 					$("#restart").removeClass('btn_style_off');
 					$("#restart").addClass('btn_style');
-					//self.setConsoleScrollbar(false);
 					//self.runAgainSourceStatus();
 				}
 				self.onProgressEvent.dispatch(this);
@@ -644,13 +595,6 @@ define(["build/listener/buildListener"], function() {
 			//To copy the console log content to the clip-board
 			$('#buildCopyLog').unbind("click");
 			$('#buildCopyLog').click(function() {
-			
-			$("#buildCopyLog").zclip({
-				path: "lib/ZeroClipboard.swf",
-				copy: function(){
-					return $(".console_pad").text();
-					}
-			});
 				commonVariables.hideloading = true;
 				commonVariables.navListener.copyToClipboard($('#logContent'));
 			});
@@ -676,7 +620,6 @@ define(["build/listener/buildListener"], function() {
 			});
 			
 			//set log console scroll content event
-			//self.setConsoleScrollbar(false);
 			self.tableScrollbar();
 			
 			//call content div events

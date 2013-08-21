@@ -983,14 +983,18 @@ define(["framework/widgetWithTemplate", "common/loading", "lib/customcombobox-1.
             var self = this;
 
             try {
+				commonVariables.continueloading = true;
                 commonVariables.api.ajaxRequest(header, function(response) {
                     if (response !== null)   {
+						commonVariables.continueloading = false;
                         callback(response, whereToRender);
                     } else {
+						commonVariables.continueloading = false;
                         callback({"status" : "service failure"}, whereToRender);
                     }
                 });
             } catch (exception) {
+				commonVariables.continueloading = false;
             }
         },
         

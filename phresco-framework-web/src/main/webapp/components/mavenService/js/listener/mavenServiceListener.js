@@ -145,13 +145,12 @@ define([], function() {
 			try{
 				var self = this;
 				$(divId).html('');
-				commonVariables.loadingScreen.showLoading();
-				
+
 				commonVariables.api.ajaxRequest(header, 
 					function(response){
 						if(response !==  undefined && response !==  null){
 							commonVariables.loadingScreen.removeLoading();
-							
+
 							if(response.status === 'STARTED'){
 								$(divId).append(response.status + '<br>');
 								self.mvnlogService(response.uniquekey, divId, function(retVal){
@@ -216,7 +215,7 @@ define([], function() {
 			try{
 				var self = this, header = self.getRequestHeader("GET", '&uniquekey=' + key, commonVariables.mvnlogService, "");
 				$('.progress_loading').css('display','block');
-				
+				commonVariables.hideloading = true;
 				commonVariables.api.ajaxRequest(header, 
 					function(response){
 						if(response !==  undefined && response !== null){
@@ -258,8 +257,6 @@ define([], function() {
 								$('.progress_loading').css('display','none');
 								callback(response);
 							}
-							
-							//$(divId).mCustomScrollbar("update");
 						}else {
 							$('.progress_loading').css('display','none');
 							$(".content_end").show();
@@ -274,6 +271,7 @@ define([], function() {
 						}
 					}, 
 					function(serviceerror){
+						commonVariables.hideloading = false;
 						$('.progress_loading').css('display','none');
 						$(".content_end").show();
 						$(".msgdisplay").removeClass("success").addClass("error");
@@ -285,8 +283,9 @@ define([], function() {
 						},2500);
 					});
 			}catch(exception){
-				$('.progress_loading').css('display','none');
 				//Exception
+				$('.progress_loading').css('display','none');
+				commonVariables.hideloading = false;
 			}
 		},
 

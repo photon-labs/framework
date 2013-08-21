@@ -80,13 +80,15 @@ define([], function() {
 					} else if (goal === commonVariables.startNodeGoal) {
 						formObj = $('#startNodeForm');
 					}
-
+					
 					formObj.css("max-height", height - 92 + 'px');
-					formObj.mCustomScrollbar({
-						autoHideScrollbar:true,
-						theme:"light-thin",
-						advanced:{updateOnContentResize: true}
-					});
+					if (formObj.find('li').length > 5) {
+						formObj.mCustomScrollbar({
+							autoHideScrollbar:true,
+							theme:"light-thin",
+							advanced:{updateOnContentResize: true}
+						});
+					}
 				});
 			});
 		},

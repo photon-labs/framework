@@ -279,8 +279,9 @@ public class QualityService extends RestBase implements ServiceConstants, Framew
 							suite.setName(tstSuite.getName());
 							suite.setSuccess(success);
 							suite.setErrors(errors);
+							suite.setFailures(tstSuite.getFailures());
 							suite.setTime(tstSuite.getTime());
-							suite.setTotal(totalTestSuites);
+							suite.setTotal(tstSuite.getTests());
 							suite.setTestCases(tstSuite.getTestCases());
 							suites.add(suite);
 						}
