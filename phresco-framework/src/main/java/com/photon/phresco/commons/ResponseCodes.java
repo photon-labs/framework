@@ -45,6 +45,9 @@ public interface ResponseCodes {
 	String PHR6C10001 = "PHR6C10001"; // unable to fetch dependency
 	String PHR7C00001 = "PHR7C00001"; // template content returned successfully
 	String PHR7C10001 = "PHR7C10001"; // unable to fetch template content
+	String PHR8C10001 = "PHR8C10001"; // mandatory parameter check failed
+	String PHR9C10001 = "PHR9C10001"; // unable to complete validation
+	String PHR9C00001 = "PHR9C00001"; // completed validation successfully
 	
 	/*
 	 * Login page
@@ -128,6 +131,10 @@ public interface ResponseCodes {
 	String PHR210042 = "PHR210042"; // project code already exists
 	String PHR210043 = "PHR210043"; // app code already exists
 	String PHR210044 = "PHR210044"; // app directory already exists
+	String PHR200024 = "PHR200024"; // apptypes listed successfully
+	String PHR210045 = "PHR210045"; // unable to fetch apptypes
+	String PHR200025 = "PHR200025"; // application pilots listed successfully
+	String PHR210046 = "PHR210046"; // failed to fetch list of application pilots
 	
 	/*
 	 * App Info Page
@@ -401,4 +408,8 @@ public interface ResponseCodes {
 	String PHR810028 = "PHR810028"; // failed to fetch job templates
 	String PHR810029 = "PHR810029"; // failed to fetch environments
 	String PHR810030 = "PHR810030"; // json exception returned while fetching job templates
+	String PHR800020 = "PHR800020"; // job validation completed successfully
+	String PHR810031 = "PHR810031"; // job already exists
+	String PHR810032 = "PHR810032"; // could not retrieve jenkins info
+	String PHR810033 = "PHR810033"; // job(s) have already been created using this job template
 }

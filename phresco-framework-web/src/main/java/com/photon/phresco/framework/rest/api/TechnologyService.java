@@ -38,6 +38,8 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
+import com.photon.phresco.commons.FrameworkConstants;
+import com.photon.phresco.commons.ResponseCodes;
 import com.photon.phresco.commons.model.ApplicationType;
 import com.photon.phresco.commons.model.Customer;
 import com.photon.phresco.commons.model.TechnologyGroup;
@@ -57,7 +59,7 @@ import com.sun.jersey.api.client.WebResource;
  * The Class TechnologyService.
  */
 @Path("/technology")
-public class TechnologyService extends RestBase implements ServiceConstants {
+public class TechnologyService extends RestBase implements ServiceConstants, FrameworkConstants, ResponseCodes {
 	
 	/**
 	 * List apptypes.
@@ -76,18 +78,18 @@ public class TechnologyService extends RestBase implements ServiceConstants {
 			ServiceManager serviceManager = RestBase.CONTEXT_MANAGER_MAP.get(userId);
 			if (serviceManager == null) {
 				ResponseInfo<List<ApplicationType>> finalOutput = responseDataEvaluation(responseData, null,
-						"UnAuthorized User", null);
-				return Response.status(Status.BAD_REQUEST).entity(finalOutput).header("Access-Control-Allow-Origin",
+						null, RESPONSE_STATUS_FAILURE, PHR210003);
+				return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin",
 						"*").build();
 			}
 			List<ApplicationType> applicationTypes = serviceManager.getApplicationTypes(customerId);
 			ResponseInfo<List<ApplicationType>> finalOutput = responseDataEvaluation(responseData, null,
-					"Apptypes listed successfully", applicationTypes);
+					applicationTypes, RESPONSE_STATUS_SUCCESS, PHR200024);
 			return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
 		} catch (PhrescoException e) {
 			ResponseInfo<List<ApplicationType>> finalOutput = responseDataEvaluation(responseData, e,
-					"appTypes not fetched", null);
-			return Response.status(Status.BAD_REQUEST).entity(finalOutput).header("Access-Control-Allow-Origin", "*")
+					null, RESPONSE_STATUS_ERROR, PHR210045);
+			return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*")
 					.build();
 		}
 	}

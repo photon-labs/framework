@@ -257,9 +257,12 @@ public class UtilService extends RestBase implements FrameworkConstants, Service
 					return Response.status(Status.OK).entity(response).header("Access-Control-Allow-Origin", "*").build();
 				}
 			}
+			response.setStatus(RESPONSE_STATUS_SUCCESS);
+			response.setResponseCode(PHR9C00001);
 		} catch (PhrescoException e) {
-			response.setStatus(ActionServiceConstant.ERROR);
+			response.setStatus(RESPONSE_STATUS_ERROR);
 			response.setService_exception(FrameworkUtil.getStackTraceAsString(e));
+			response.setResponseCode(PHR9C10001);
 		}
 		return Response.status(Status.OK).entity(response).header("Access-Control-Allow-Origin", "*").build();
 	}

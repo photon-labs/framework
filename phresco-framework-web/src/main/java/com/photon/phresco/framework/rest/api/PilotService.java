@@ -29,6 +29,7 @@ import javax.ws.rs.core.Response;
 import org.apache.commons.collections.CollectionUtils;
 
 import com.photon.phresco.commons.FrameworkConstants;
+import com.photon.phresco.commons.ResponseCodes;
 import com.photon.phresco.commons.model.ApplicationInfo;
 import com.photon.phresco.commons.model.ArtifactGroupInfo;
 import com.photon.phresco.commons.model.ProjectInfo;
@@ -41,7 +42,7 @@ import com.sun.jersey.api.client.ClientResponse.Status;
  * The Class PilotService.
  */
 @Path("/pilot")
-public class PilotService extends RestBase implements ServiceConstants {
+public class PilotService extends RestBase implements ServiceConstants, FrameworkConstants, ResponseCodes {
 
 	/**
 	 * List the pilot projects.
@@ -139,18 +140,18 @@ public class PilotService extends RestBase implements ServiceConstants {
 			ServiceManager serviceManager = CONTEXT_MANAGER_MAP.get(userId);
 			if (serviceManager == null) {
 				ResponseInfo<List<ProjectInfo>> finalOutput = responseDataEvaluation(responseData, null,
-						"UnAuthorized User", null);
-				return Response.status(Status.BAD_REQUEST).entity(finalOutput).header("Access-Control-Allow-Origin",
+						null, RESPONSE_STATUS_FAILURE, PHR210003);
+				return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin",
 						"*").build();
 			}
 			List<ProjectInfo> preBuilts = serviceManager.getPrebuiltProjects(customerId);
 			ResponseInfo<List<ProjectInfo>> finalOutput = responseDataEvaluation(responseData, null,
-					"Application pilot listed successfully", preBuilts);
+					preBuilts, RESPONSE_STATUS_SUCCESS, PHR200025);
 			return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
 		} catch (PhrescoException e) {
 			ResponseInfo<List<ProjectInfo>> finalOutput = responseDataEvaluation(responseData, e,
-					"Application pilot list not fetched", null);
-			return Response.status(Status.BAD_REQUEST).entity(finalOutput).header("Access-Control-Allow-Origin", "*")
+					null, RESPONSE_STATUS_ERROR, PHR210046);
+			return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*")
 					.build();
 		}
 	}

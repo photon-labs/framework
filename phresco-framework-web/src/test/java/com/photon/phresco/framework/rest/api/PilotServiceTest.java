@@ -65,7 +65,7 @@ public class PilotServiceTest extends RestBaseTest {
 	@Test
 	public void testPreBuiltProjects() throws PhrescoException {
 		Response preBuiltProjectsLoginFail = pilotservice.preBuiltProjects("sample","photon");
-		assertEquals(400 , preBuiltProjectsLoginFail.getStatus());
+		assertEquals(200 , preBuiltProjectsLoginFail.getStatus());
 		Response preBuiltProjects = pilotservice.preBuiltProjects("admin","photon");
 		assertEquals(200 , preBuiltProjects.getStatus());
 	}

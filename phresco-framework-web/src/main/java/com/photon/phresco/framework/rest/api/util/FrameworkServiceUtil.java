@@ -872,6 +872,8 @@ public class FrameworkServiceUtil implements Constants, FrameworkConstants, Resp
 				actionResponse.setErrorFound(true);
 				actionResponse.setConfigErrorMsg(lableTxt + " " + "is missing"); 
 				actionResponse.setParameterKey(parameter.getKey());
+				actionResponse.setStatus(RESPONSE_STATUS_FAILURE);
+				actionResponse.setResponseCode(PHR8C10001);
 			}
 			return actionResponse;
 		}
@@ -884,6 +886,8 @@ public class FrameworkServiceUtil implements Constants, FrameworkConstants, Resp
 				actionResponse.setErrorFound(true);
 				actionResponse.setConfigErrorMsg(lableTxt + " " + "is missing");
 				actionResponse.setParameterKey(parameter.getKey());
+				actionResponse.setStatus(RESPONSE_STATUS_FAILURE);
+				actionResponse.setResponseCode(PHR8C10001);
 			} 
 			return actionResponse;
 		}
@@ -905,12 +909,16 @@ public class FrameworkServiceUtil implements Constants, FrameworkConstants, Resp
 					actionResponse.setErrorFound(true);
 					actionResponse.setConfigErrorMsg(childLabel + " " + "is missing");
 					actionResponse.setParameterKey(parameter.getKey());
+					actionResponse.setStatus(RESPONSE_STATUS_FAILURE);
+					actionResponse.setResponseCode(PHR8C10001);
 					break;
 				} else if (StringUtils.isEmpty(values[i]) && Boolean.parseBoolean(childs.get(1).getRequired())) {
 					childLabel = childs.get(1).getName().getValue().getValue();
 					actionResponse.setErrorFound(true);
 					actionResponse.setConfigErrorMsg(childLabel + " " + "is missing");
 					actionResponse.setParameterKey(parameter.getKey());
+					actionResponse.setStatus(RESPONSE_STATUS_FAILURE);
+					actionResponse.setResponseCode(PHR8C10001);
 					break;
 				}
 			}
@@ -929,6 +937,8 @@ public class FrameworkServiceUtil implements Constants, FrameworkConstants, Resp
 				actionResponse.setErrorFound(true);
 				actionResponse.setConfigErrorMsg(lableTxt + " " + "is missing");
 				actionResponse.setParameterKey(parameter.getKey());
+				actionResponse.setStatus(RESPONSE_STATUS_FAILURE);
+				actionResponse.setResponseCode(PHR8C10001);
 			}
 			return actionResponse;
 		}
