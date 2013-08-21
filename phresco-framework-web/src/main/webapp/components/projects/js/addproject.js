@@ -119,12 +119,23 @@ define(["projects/listener/projectsListener"], function() {
 			var self=this;
 			self.userInfo = JSON.parse(commonVariables.api.localVal.getSession('userInfo'));
 			self.projectsListener.getEditProject(self.projectsListener.getRequestHeader(self.projectRequestBody, '', 'apptypes'), function(response) {
-				$.each(response.data, function(index, value){
-					commonVariables.api.localVal.setJson(value.name, value);
-					if(response.data.length === (index + 1)){
-						callback(true);
-					}
-				});
+				if (response !== null && (response.status !== "error" || response.status !== "failure")){
+					$.each(response.data, function(index, value){
+						commonVariables.api.localVal.setJson(value.name, value);
+						if(response.data.length === (index + 1)){
+							callback(true);
+						}
+					});
+				} else {
+					$(".msgdisplay").removeClass("success").addClass("error");
+					$(".error").attr('data-i18n', 'errorCodes.' + response.responseCode);
+					self.renderlocales(commonVariables.contentPlaceholder);	
+					$(".error").show();
+					$(".error").fadeIn(500).fadeOut(500).fadeIn(500).fadeOut(500).fadeIn(500).fadeOut(5);
+					setTimeout(function() {
+						$(".error").hide();
+					},2500);
+				}
 			});
 		},
 		

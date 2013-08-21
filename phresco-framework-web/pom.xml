@@ -269,6 +269,20 @@
 			<version>1.0.0</version>
 			<type>js</type>
 		</dependency>
+		
+		<dependency>
+             <groupId>jslibraries.files</groupId>
+			 <artifactId>jquery_zclip</artifactId>
+		     <version>2.0</version>
+			 <type>js</type>
+		</dependency>
+
+		<dependency>
+		  <groupId>jslibraries.files</groupId>
+		  <artifactId>zeroclipboard</artifactId>
+		  <version>1.0</version>
+		  <type>swf</type>
+		</dependency>
 
 	   <!--  <dependency>
 	      <groupId>org.cometd.javascript</groupId>

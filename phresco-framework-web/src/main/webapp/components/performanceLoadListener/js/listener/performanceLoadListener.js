@@ -667,8 +667,17 @@ define(["lib/jquery-tojson-1.0",'lib/RGraph_common_core-1.0','lib/RGraph_common_
 			var self = this, requestBody = {};
 			requestBody.phase = phase;
 			requestBody.queryString = queryString;
-			self.performAction(self.getActionHeader(requestBody, "validation"), function(response) {
-				if (response.errorFound) {
+			self.performAction(self.getActionHeader(requestBody, "validation"), function(response) {console.info(response);
+				if ((response.errorFound) || (response.status === "error") || (response.status === "failure")){
+					$(".content_end").show();
+					$(".msgdisplay").removeClass("success").addClass("error");
+					$(".error").attr('data-i18n', 'errorCodes.' + response.responseCode);
+					self.renderlocales(commonVariables.contentPlaceholder);	
+					$(".error").show();
+					$(".error").fadeIn(500).fadeOut(500).fadeIn(500).fadeOut(500).fadeIn(500).fadeOut(5);
+					setTimeout(function() {
+						$(".content_end").hide();
+					},2500);
 					dynamicPageObject.showDynamicErrors(response);
 				} else {
 					self.preTest(phase);
