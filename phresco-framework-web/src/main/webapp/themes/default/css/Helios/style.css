@@ -1976,7 +1976,6 @@ select[name="builtmyself"] {
 
  , .bootstrap-select .btn,  {
 	width: 182px !important; 
-	border:1px solid red !important;
  }
  
  .custon_dropdown {
@@ -2384,7 +2383,6 @@ select[name="builtmyself"] {
 	color:#e15432;
 	font-size:15px;
 	font-weight:bold;
-	border:1px solid red;
 }
 .tab_line {
 	padding-bottom:60px;
