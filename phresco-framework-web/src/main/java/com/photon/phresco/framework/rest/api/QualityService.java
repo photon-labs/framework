@@ -1021,14 +1021,14 @@ public class QualityService extends RestBase implements ServiceConstants, Framew
 		String testSuitesMapKey = appDirName + testType + moduleName + techReport;
 		Map<String, NodeList> testResultNameMap = testSuiteMap.get(testSuitesMapKey);
 		List<String> resultTestSuiteNames = null;
-		if (MapUtils.isEmpty(testResultNameMap)) {
+		//if (MapUtils.isEmpty(testResultNameMap)) {
 			File[] resultFiles = getTestResultFiles(testResultPath);
 			if (!ArrayUtils.isEmpty(resultFiles)) {
 				QualityUtil.sortResultFile(resultFiles);
 				updateCache(appDirName, testType, moduleName, techReport, resultFiles, testSuitePath);
 			}
 			testResultNameMap = testSuiteMap.get(testSuitesMapKey);
-		}
+		//}
 		if (testResultNameMap != null) {
 			resultTestSuiteNames = new ArrayList<String>(testResultNameMap.keySet());
 		}
