@@ -64,7 +64,7 @@ define([], function() {
 		 	$("input[name="+layerType+"]").hide();
 		 	$("tr[name="+ layerType +"]").show('slow');
 			$("tr[name="+ layerType +"]").closest('tr').next().show('slow');
-			$("tr[name="+ layerType +"]").closest('tr').attr('key', 'displayed');
+			$("tr[name="+ layerType +"]").closest('tr').next().attr('key', 'displayed');
 		 	/* var clasname = $("tr[name="+ layerType +"]").closest('tr').next().attr('class');
 		 	$("tr[class="+clasname+"]").each(function() {
 		 		$(this).show('slow');
@@ -535,12 +535,6 @@ define([], function() {
 					$('tr[name=staticApplnLayer]').find('a[name="addApplnLayer"]').html(addIcon);
 					$("a[name=removeApplnLayer]").html('');
 				}
-				var removedAppcode = $(this).parents('tr.applnlayercontent').children('td.applnappcode').children('input.appln-appcode').val();
-				var index = $.inArray(removedAppcode, self.appDepsArray);
-				if (index >= 0) {
-				   self.appDepsArray.splice(index, 1);
-				}
-				self.removedLayerDependency(removedAppcode);
 			});
 
 			$("a[name=removeWebLayer]").click(function(){
@@ -695,25 +689,6 @@ define([], function() {
 					self.constructWebDependencyOptions();
 					self.depsOptionsClick();
 				} 	
-			});
-		},
-		
-		depsOptionsClick : function() {
-			var self = this;
-			$('.appdependencyTd .dropdown-menu li').unbind('click');
-			$('.appdependencyTd .dropdown-menu li').click(function(){
-				var selectedOption = $(this).find('span').text();
-				var selectedAppcode = $(this).parents('td.appdependencyTd').siblings('td.applnappcode').children('input.appln-appcode').val();
-				
-				if(selectedOption !== "" && jQuery.inArray(selectedOption, self.selectedVal) === -1){
-					self.selectedVal.push(selectedOption);
-				}
-				
-				if($(this).attr('class') !== "selected"){
-				   self.removeSelectedDependecy(selectedOption, selectedAppcode);
-				} else {
-					self.constructRemovedDependency(selectedOption, selectedAppcode);
-				}  	
 			});
 		},
 		
@@ -1125,247 +1100,6 @@ define([], function() {
 			}		
 		}, 
 		
-		multiModuleEvent : function(multimodule){
-			var self = this;
-			if(multimodule === "true"){
-				$("span[name=appdependency]").show();
-				$("span[name=webdependency]").show();
-				$("span[name=artifactId-lbl]").show();
-				$("input[name=artifactId]").show();
-				self.showDependency();
-			} else {
-				$("span[name=appdependency]").hide();
-				$("span[name=webdependency]").hide();
-				$("span[name=artifactId-lbl]").hide();
-				$("input[name=artifactId]").hide();
-				self.hideDependency();
-			}
-		},
-		
-		showDependency : function() {
-			var self = this, appdependencyDiv, webdependencyDiv;
-			$.each($("tbody[name='layercontents'] > div.mCustomScrollBox > div.mCSB_container").children(), function(index, value){
-				if($(value).attr('class') === "applnLayer" && $(value).attr('key') === "displayed") {
-					var applnlayerDiv = $(value).children('td.appln').children('table.applnlayer').children('tbody.applnlayer');
-					$.each($(applnlayerDiv).children(), function(index, value){
-						appdependencyDiv = $(value).children("td.appdependencyTd");
-						$(appdependencyDiv).find("div.appdependencySelect").show();
-					});
-				} else if($(value).attr('class') === "webLayer" && $(value).attr('key') === "displayed") {
-					var weblayerDiv = $(value).children('td.WebLayer').children('table.WebLayer').children('tbody.WebLayer');
-					$.each($(weblayerDiv).children(), function(index, value){
-						webdependencyDiv = $(value).children("td.webdependencyTd");
-						$(webdependencyDiv).find("div.webdependencySelect").show();
-					});
-				}
-			});
-		},
-
-		hideDependency : function() {
-			$.each($("tbody[name='layercontents'] > div.mCustomScrollBox > div.mCSB_container").children(), function(index, value){
-				if($(value).attr('class') === "applnLayer" && $(value).attr('key') === "displayed") {
-					var applnlayerDiv = $(value).children('td.appln').children('table.applnlayer').children('tbody.applnlayer');
-					$.each($(applnlayerDiv).children(), function(index, value){
-					var appdependencyDiv = $(value).children("td.appdependencyTd");
-					$(appdependencyDiv).find("div.appdependencySelect").hide();
-					});
-					} else if($(value).attr('class') === "webLayer" && $(value).attr('key') === "displayed") {
-					var weblayerDiv = $(value).children('td.WebLayer').children('table.WebLayer').children('tbody.WebLayer');
-					$.each($(weblayerDiv).children(), function(index, value){
-						var webdependencyDiv = $(value).children("td.webdependencyTd");
-						$(webdependencyDiv).find("div.webdependencySelect").hide();
-					});
-				}
-			});
-		},
-
-		
-		constructDepsArray : function(applnAppcode) {
-			var self = this;
-			$.each($("tbody[name='layercontents'] > div.mCustomScrollBox > div.mCSB_container").children(), function(index, value){
-				if($(value).attr('class') === "applnLayer" && $(value).attr('key') === "displayed") {
-					var applnlayerDiv = $(value).children('td.appln').children('table.applnlayer').children('tbody.applnlayer');
-					$.each($(applnlayerDiv).children(), function(index, value){
-						if(applnAppcode !== "" && jQuery.inArray(applnAppcode, self.appDepsArray) === -1){
-							self.appDepsArray.push(applnAppcode);
-						} 
-					});
-				}	
-			});
-		},
-		
-		constructAppDependencyOptions : function() {
-		
-			var self = this, depsSelectPlaceholder;
-			$.each($("tbody[name='layercontents'] > div.mCustomScrollBox > div.mCSB_container").children(), function(index, value){
-				if($(value).attr('class') === "applnLayer" && $(value).attr('key') === "displayed") {
-					var applnlayerDiv = $(value).children('td.appln').children('table.applnlayer').children('tbody.applnlayer');
-					$.each($(applnlayerDiv).children(), function(index, value){
-						var code = $(value).children("td.applnappcode").children("input.appln-appcode").val();
-						depsSelectPlaceholder = $(value).children('td.appdependencyTd').children("select.appdependencySelect");
-						if(depsSelectPlaceholder !== undefined && depsSelectPlaceholder !== null) {
-							var option = '';
-							$.each(self.appDepsArray, function(index, depsValue){
-								var exists = false;
-								$(depsSelectPlaceholder).find("option").each(function(index, value){
-									if($(value).val() !== 0){
-										if($(value).val() === depsValue) {
-											exists = true;
-											return false;
-										}
-									}
-								});
-								if(!exists && code !== depsValue) {
-									$(depsSelectPlaceholder).append($('<option/>').attr('name','selectedVal').val(depsValue).text(depsValue));
-									$(depsSelectPlaceholder).selectpicker('refresh');
-								}
-							});	
-						}
-					});
-				}
-			});
-		},
-		
-		constructWebDependencyOptions : function(){
-		
-			var self = this, depsSelectPlaceholder;
-			$.each($("tbody[name='layercontents'] > div.mCustomScrollBox > div.mCSB_container").children(), function(index, value){
-				if($(value).attr('class') === "webLayer" && $(value).attr('key') === "displayed") {
-					var weblayerDiv = $(value).children('td.WebLayer').children('table.WebLayer').children('tbody.WebLayer');
-					$.each($(weblayerDiv).children(), function(index, value){
-						var code = $(value).children("td.webappcode").children("input.web-appcode").val();
-						depsSelectPlaceholder = $(value).children('td.webdependencyTd').children("select.webdependencySelect");
-						if(depsSelectPlaceholder !== undefined && depsSelectPlaceholder !== null) {
-							var option = '';
-							$.each(self.appDepsArray, function(index, depsValue){
-								var exists = false;
-								$(depsSelectPlaceholder).find("option").each(function(index, value){
-									if($(value).val() !== 0){
-										if($(value).val() === depsValue) {
-											exists = true;
-											return false;
-										}
-									}
-								});
-								if(!exists) {
-									$(depsSelectPlaceholder).append($('<option/>').attr('name','selectedVal').val(depsValue).text(depsValue));
-									$(depsSelectPlaceholder).selectpicker('refresh');
-								}
-							});	
-						}
-					});
-				}
-			});
-		},
-		
-		removeSelectedDependecy : function(selectedOption, selectedAppcode){
-			
-			var self = this, depsSelectPlaceholder;
-			$.each($("tbody[name='layercontents'] > div.mCustomScrollBox > div.mCSB_container").children(), function(index, value){
-				if($(value).attr('class') === "applnLayer" && $(value).attr('key') === "displayed") {
-					var applnlayerDiv = $(value).children('td.appln').children('table.applnlayer').children('tbody.applnlayer');
-					$.each($(applnlayerDiv).children(), function(index, value){
-						var code = $(value).children("td.applnappcode").children("input.appln-appcode").val();
-						depsSelectPlaceholder = $(value).children('td.appdependencyTd').children("select.appdependencySelect");
-						if(depsSelectPlaceholder !== undefined && depsSelectPlaceholder !== null){
-							if(code === selectedOption){
-								$(depsSelectPlaceholder).find("option").each(function(index, value){
-									if($(value).val() !== 0){
-										if($(value).val() === selectedAppcode) {
-											$(value).remove();
-											$(depsSelectPlaceholder).selectpicker('refresh');
-											self.depsOptionsClick();
-										}
-									}
-								});
-							}
-						}
-					});
-				}	
-			});
-		},
-		
-		removedLayerDependency : function(removedAppcode){
-			
-			var self=this, depsSelectPlaceholder;
-			$.each($("tbody[name='layercontents'] > div.mCustomScrollBox > div.mCSB_container").children(), function(index, value){
-				if($(value).attr('class') === "applnLayer" && $(value).attr('key') === "displayed") {
-					var applnlayerDiv = $(value).children('td.appln').children('table.applnlayer').children('tbody.applnlayer');
-					$.each($(applnlayerDiv).children(), function(index, value){
-						var code = $(value).children("td.applnappcode").children("input.appln-appcode").val();
-						depsSelectPlaceholder = $(value).children('td.appdependencyTd').children("select.appdependencySelect");
-						if(depsSelectPlaceholder !== undefined && depsSelectPlaceholder !== null){
-							$(depsSelectPlaceholder).find("option").each(function(index, value){
-								if($(value).val() !== 0){
-									if($(value).val() === removedAppcode) {
-										$(value).remove();
-										$(depsSelectPlaceholder).selectpicker('refresh');
-										self.depsOptionsClick();
-									}
-								}
-							});
-						}
-					});
-				}
-				
-				if($(value).attr('class') === "webLayer" && $(value).attr('key') === "displayed") {
-					var weblayerDiv = $(value).children('td.WebLayer').children('table.WebLayer').children('tbody.WebLayer');
-					$.each($(weblayerDiv).children(), function(index, value){
-						var code = $(value).children("td.webappcode").children("input.web-appcode").val();
-						depsSelectPlaceholder = $(value).children('td.webdependencyTd').children("select.webdependencySelect");
-						if(depsSelectPlaceholder !== undefined && depsSelectPlaceholder !== null) {
-							$(depsSelectPlaceholder).find("option").each(function(index, value){
-								if($(value).val() !== 0){
-									if($(value).val() === removedAppcode) {
-										$(value).remove();
-										$(depsSelectPlaceholder).selectpicker('refresh');
-										self.depsOptionsClick();
-									}
-								}
-							});
-						}
-					});
-				}	
-			});
-		},
-		
-		constructRemovedDependency : function(selectedOption, selectedAppcode){
-			 
-			 var self = this, depsSelectPlaceholder;
-			 $.each($("tbody[name='layercontents'] > div.mCustomScrollBox > div.mCSB_container").children(), function(index, value){
-				if($(value).attr('class') === "applnLayer" && $(value).attr('key') === "displayed") {
-					var applnlayerDiv = $(value).children('td.appln').children('table.applnlayer').children('tbody.applnlayer');
-					$.each($(applnlayerDiv).children(), function(index, value){
-						var code = $(value).children("td.applnappcode").children("input.appln-appcode").val();
-						depsSelectPlaceholder = $(value).children('td.appdependencyTd').children("select.appdependencySelect");
-						if(code === selectedOption){
-							if(depsSelectPlaceholder !== undefined && depsSelectPlaceholder !== null) {
-								var exists = false;
-								$(depsSelectPlaceholder).find("option").each(function(index, value){
-									if($(value).val() !== 0){
-										if($(value).val() === selectedAppcode) {
-											exists = true;
-											return false;
-										}
-									}
-								});
-								if(!exists) {
-									$(depsSelectPlaceholder).append($('<option/>').attr('name','selectedVal').val(selectedAppcode).text(selectedAppcode));
-									self.depsOptionsClick();
-									var index = $.inArray(selectedOption, self.selectedVal);
-									 if (index >= 0) {
-										self.selectedVal.splice(index, 1);
-									 }
-									$(depsSelectPlaceholder).selectpicker('refresh');
-									self.depsOptionsClick();
-								}
-							}
-						}	
-					});
-			     }
-             }); 				
-		},
-		
 		enablebuttonAdd : function() {
 			if($('tr.applnLayer').attr('key') === "hidden") {
 				$("input[name='applicationlayer']").show();
@@ -1691,6 +1425,7 @@ define([], function() {
 				self.getEditProject(self.getRequestHeader(self.projectRequestBody, "", action), function(response) {
 					self.counter = null;
 					self.projectRequestBody = {};
+					commonVariables.api.localVal.deleteSession("projectId");
 					self.getEditProject(self.getRequestHeader(self.projectRequestBody, "", "projectlist"), function(response) {
 						self.pageRefresh(response);
 					});

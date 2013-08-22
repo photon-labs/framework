@@ -511,7 +511,7 @@ define(["projects/addproject", "projects/editproject"], function(addProject, edi
 				var applnLayerTrDisplay = $("tr[class=applnLayer]").attr('key');
 				setTimeout(function() {
 					start();
-					equal(applnLayerTrDisplay, "hidden", "Add Project - Input button Event Test for Application Layer");
+					equal(applnLayerTrDisplay, "displayed", "Add Project - Input button Event Test for Application Layer");
 					self.runPilotProjectEventTest();
 				}, 1500);
 			});
@@ -685,10 +685,10 @@ define(["projects/addproject", "projects/editproject"], function(addProject, edi
 				var applnLayer = $("tr[id=MobLayer]").attr('key');
 				setTimeout(function() {
 					start();
-					equal(applnLayer, "hidden", "Edit Project - Close Image Event Test for Mobile Layer");
-					require(["configurationTest"], function(configurationTest){
+					equal(applnLayer, "hidden", "Edit Project - Edit Project Close Image Test");
+					/* require(["configurationTest"], function(configurationTest){
 						configurationTest.runTests();
-					});
+					}); */
 				}, 1500);
 			});
 		}

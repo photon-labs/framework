@@ -68,25 +68,26 @@ define(["projects/listener/projectsListener"], function() {
 				self.projectsListener.getEditProject(self.projectsListener.getRequestHeader(self.projectRequestBody, commonVariables.projectId), function(response) {
 					var responseData = response.data;
 					//To change start date into the format of (dd/mm/yyyy)
-					var startdate = responseData.startDate;
-					if (startdate !== null) {
-						var sd = new Date(startdate);
-						var startDateformat = [ sd.getMonth()+1, sd.getDate(), sd.getFullYear()].join('/');
-						responseData.startDate = startDateformat;
-					} else {
-						responseData.startDate = "";
+					if(responseData !== null || responseData !== '') {
+						var startdate = responseData.startDate;
+						if (startdate !== null) {
+							var sd = new Date(startdate);
+							var startDateformat = [ sd.getMonth()+1, sd.getDate(), sd.getFullYear()].join('/');
+							responseData.startDate = startDateformat;
+						} else {
+							responseData.startDate = "";
+						}
+						
+						//To change end date into the format of (dd/mm/yyyy)
+						var enddate = responseData.endDate;
+						if (enddate !== null) {
+							var ed = new Date(enddate);
+							var endDateformat = [ ed.getMonth()+1, ed.getDate(), ed.getFullYear()].join('/');
+							responseData.endDate = endDateformat;
+						} else {
+							responseData.endDate = "";
+						}
 					}
-					
-					//To change end date into the format of (dd/mm/yyyy)
-					var enddate = responseData.endDate;
-					if (enddate !== null) {
-						var ed = new Date(enddate);
-						var endDateformat = [ ed.getMonth()+1, ed.getDate(), ed.getFullYear()].join('/');
-						responseData.endDate = endDateformat;
-					} else {
-						responseData.endDate = "";
-					}
-					
 					self.templateData.editProject = responseData;
 					// Setting project id in local storage for future use in job templates
 					commonVariables.api.localVal.setSession("projectId", responseData.id);
@@ -107,25 +108,26 @@ define(["projects/listener/projectsListener"], function() {
 					self.projectsListener.getEditProject(self.projectsListener.getRequestHeader(self.projectRequestBody, commonVariables.projectId), function(response) {
 						var responseData = response.data;
 						//To change start date into the format of (dd/mm/yyyy)
-						var startdate = responseData.startDate;
-						if (startdate !== null) {
-							var sd = new Date(startdate);
-							var startDateformat = [ sd.getMonth()+1, sd.getDate(), sd.getFullYear()].join('/');
-							responseData.startDate = startDateformat;
-						} else {
-							responseData.startDate = "";
+						if(responseData !== null || responseData !== '') {
+							var startdate = responseData.startDate;
+							if (startdate !== null) {
+								var sd = new Date(startdate);
+								var startDateformat = [ sd.getMonth()+1, sd.getDate(), sd.getFullYear()].join('/');
+								responseData.startDate = startDateformat;
+							} else {
+								responseData.startDate = "";
+							}
+							
+							//To change end date into the format of (dd/mm/yyyy)
+							var enddate = responseData.endDate;
+							if (enddate !== null) {
+								var ed = new Date(enddate);
+								var endDateformat = [ ed.getMonth()+1, ed.getDate(), ed.getFullYear()].join('/');
+								responseData.endDate = endDateformat;
+							} else {
+								responseData.endDate = "";
+							}
 						}
-						
-						//To change end date into the format of (dd/mm/yyyy)
-						var enddate = responseData.endDate;
-						if (enddate !== null) {
-							var ed = new Date(enddate);
-							var endDateformat = [ ed.getMonth()+1, ed.getDate(), ed.getFullYear()].join('/');
-							responseData.endDate = endDateformat;
-						} else {
-							responseData.endDate = "";
-						}
-						
 						self.templateData.editProject = responseData;
 						// Setting project id in local storage for future use in job templates
 						commonVariables.api.localVal.setSession("projectId", responseData.id);
@@ -170,7 +172,6 @@ define(["projects/listener/projectsListener"], function() {
 			self.projectsListener.addLayersEvent();
 			self.projectsListener.removeLayersEvent();
 			self.projectsListener.technologyAndVersionChangeEvent();
-			self.projectsListener.multiModuleEvent("false");
 			self.windowResize();
 			
 			$("#updateProject").unbind('click');
@@ -210,11 +211,6 @@ define(["projects/listener/projectsListener"], function() {
 				$("#endDate").focus();
 			});
 			
-			$("input[name='multimodule']").click(function() {
-				$(this).is(':checked')?$(this).val(true):$(this).val(false);
-				var multimodule = $("input[name=multimodule]").val();
-				self.projectsListener.multiModuleEvent(multimodule);
-			});
 			this.customScroll($(".scrolldiv"));
 		}
 	});

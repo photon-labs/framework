@@ -112,7 +112,6 @@ define(["projects/listener/projectsListener"], function() {
 			var self=this;
 			self.multiselect();
 			commonVariables.navListener.currentTab = commonVariables.addproject;
-			self.projectsListener.multiModuleEvent("false");
 		},
 		
 		setTechnologyData : function(callback) {
@@ -149,7 +148,6 @@ define(["projects/listener/projectsListener"], function() {
 			self.projectsListener.removeLayersEvent();
 			self.projectsListener.technologyAndVersionChangeEvent();
 			self.projectsListener.pilotprojectsEvent();
-			self.projectsListener.multiModuleEvent("false");
 			if(commonVariables.animation) {
 				self.setDateTimePicker();
 			}
@@ -204,7 +202,7 @@ define(["projects/listener/projectsListener"], function() {
 
 
 			$("input[name='projectname']").focusout(function() {
-				$(this).val(self.specialCharValidation($(this).val().replace(/\s/g, "")));
+				$(this).val(self.specialCharValidation($(this).val()));
 				$("input[name='projectcode']").val(self.specialCharValidation($(this).val().replace(/\s/g, "")));
 			});
 
@@ -214,12 +212,6 @@ define(["projects/listener/projectsListener"], function() {
 			
 			$("input[name='projectversion']").focusout(function() {
 				$("input[name='projectversion']").val(self.specialCharValidation($(this).val().replace(/\s/g, "")));
-			});
-
-			$("input[name='multimodule']").click(function() {
-				$(this).is(':checked')?$(this).val(true):$(this).val(false);
-				var multimodule = $("input[name=multimodule]").val();
-				self.projectsListener.multiModuleEvent(multimodule);
 			});
 
 			$("#strdt").click(function() {

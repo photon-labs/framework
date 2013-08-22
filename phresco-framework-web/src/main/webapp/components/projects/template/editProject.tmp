@@ -21,18 +21,6 @@
                     <td data-i18n="project.create.label.enddate" name="enddate-lbl"></td>
                     <td colspan="2" class="enddate" name="enddateholder"><input name="enddate" value="{{endDate}}" id="endDate" type="text"><span class="add-on"><span class="add-on"><img id="enddt" class="cal_img1" src="themes/default/images/helios/cal_icon.png" border="0" alt=""></span></span></td>
                 </tr>
-				<tr>
-					{{#if editProject.multiModule}}
-                	   <td colspan="2"><input type="checkbox" name="multimodule" value="true" checked><b><span data-i18n="project.create.label.multimodule"></span></b></td>
-					   <td><span name="artifactId-lbl" data-i18n="project.create.label.artifactId"></span></td>
-					   <td><input name="artifactId" type="text" data-i18n="[placeholder]project.create.label.artifactId"></td>
-					{{else}}
-						<td colspan="2"><input type="checkbox" name="multimodule" value="false"><b><span data-i18n="project.create.label.multimodule"></span></b></td>
-						<td><span name="artifactId-lbl" data-i18n="project.create.label.artifactId" style="display:none;"></span></td>
-					   <td><input name="artifactId" type="text" data-i18n="[placeholder]project.create.label.artifactId" style="display:none;"></td>
-					{{/if}}   
-                    <td colspan="6"></td>
-                </tr>
 			{{/editProject}}
                <tr id="appLayaer" class="proj_title">
 				  <td colspan="3">{{applicationlayerData.name}}</td>
