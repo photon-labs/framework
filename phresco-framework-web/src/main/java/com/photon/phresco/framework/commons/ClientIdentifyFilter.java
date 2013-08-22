@@ -184,7 +184,6 @@ public class ClientIdentifyFilter implements Filter , ClientIdentifyFilterConsta
 				String headerLinkColor = theme.get("headerLinkColor");
 				String headerActiveLinkColor = theme.get("headerActiveLinkColor");
 				String editNavigationLink = theme.get("editNavigationLink");
-				String tableHeaderLabelColor = theme.get("tableHeaderLabelColor");
 				String buttonBackGroundColor = theme.get("buttonBackGroundColor");
 				String consoleHeaderColor = theme.get("consoleHeaderColor");
 				String copyrightLabelColor = theme.get("copyrightLabelColor");
@@ -196,10 +195,6 @@ public class ClientIdentifyFilter implements Filter , ClientIdentifyFilterConsta
 				String pageTitleBackGroundBottom = theme.get("pageTitleBackGroundBottom");
 				String editNavigationActiveBackGroundTop = theme.get("editNavigationActiveBackGroundTop");
 				String editNavigationActiveBackGroundBottom = theme.get("editNavigationActiveBackGroundBottom");
-				String tableHeaderBackGroundColorTop = theme.get("tableheaderBackGroundcolorTop");
-				String tableHeaderBackGroundColorBottom = theme.get("tableheaderBackGroundcolorBottom");
-				String projectTitleBackGroundColorTop = theme.get("projectTitleBackGroundColorTop");
-				String projectTitleBackGroundColorBottom = theme.get("projectTitleBackGroundColorBottom");
 				String bottomButtonPanelTop = theme.get("bottomButtonPanelTop");
 				String bottomButtonPanelBottom = theme.get("bottomButtonPanelBottom");
 				String customerBaseColor = theme.get("customerBaseColor");
@@ -224,6 +219,9 @@ public class ClientIdentifyFilter implements Filter , ClientIdentifyFilterConsta
 						if (customercolor.equals("pageLogoPadding") && StringUtils.isNotEmpty(pageLogoPadding)) {
 							fields.put(key,  customercolor.replace("pageLogoPadding", pageLogoPadding) + " !important");
 						}
+						if (customercolor.equals("copyrightLabelColor") && StringUtils.isNotEmpty(copyrightLabelColor)) {
+							fields.put(key,  customercolor.replace("copyrightLabelColor", copyrightLabelColor) + " !important");
+						}
 						if (customercolor.contains("headerLinkColor") && StringUtils.isNotEmpty(headerLinkColor)) {
 							fields.put(key,  customercolor.replace("headerLinkColor", headerLinkColor) + " !important");
 						}
@@ -232,9 +230,6 @@ public class ClientIdentifyFilter implements Filter , ClientIdentifyFilterConsta
 						}
 						if (customercolor.contains("editNavigationLink") && StringUtils.isNotEmpty(editNavigationLink)) {
 							fields.put(key,  customercolor.replace("editNavigationLink", editNavigationLink) + " !important");
-						}
-						if (customercolor.contains("tableHeaderLabelColor") && StringUtils.isNotEmpty(tableHeaderLabelColor)) {
-							fields.put(key,  customercolor.replace("tableHeaderLabelColor", tableHeaderLabelColor) + " !important");
 						}
 						if (customercolor.contains("welcomeUserIcon") && StringUtils.isNotEmpty(welcomeUserIcon)) {
 							fields.put(key,  customercolor.replace("welcomeUserIcon", welcomeUserIcon) + " !important");
@@ -256,12 +251,6 @@ public class ClientIdentifyFilter implements Filter , ClientIdentifyFilterConsta
 						}
 						if (customercolor.contains("editNavigationActiveBackGroundTop") && StringUtils.isNotEmpty(editNavigationActiveBackGroundTop)) {
 							fields.put(key,  customercolor.replace("editNavigationActiveBackGroundTop", editNavigationActiveBackGroundTop).replaceAll("editNavigationActiveBackGroundBottom", editNavigationActiveBackGroundBottom));
-						}
-						if (customercolor.contains("tableHeaderBackGroundColorTop") && StringUtils.isNotEmpty(tableHeaderBackGroundColorTop)) {
-							fields.put(key,  customercolor.replace("tableHeaderBackGroundColorTop", tableHeaderBackGroundColorTop).replaceAll("tableHeaderBackGroundColorBottom", tableHeaderBackGroundColorBottom));
-						}
-						if (customercolor.contains("projectTitleBackGroundColorTop") && StringUtils.isNotEmpty(projectTitleBackGroundColorTop)) {
-							fields.put(key,  customercolor.replace("projectTitleBackGroundColorTop", projectTitleBackGroundColorTop).replaceAll("projectTitleBackGroundColorBottom", projectTitleBackGroundColorBottom));
 						}
 						if (customercolor.contains("bottomButtonPanelTop") && StringUtils.isNotEmpty(bottomButtonPanelTop)) {
 							fields.put(key,  customercolor.replace("bottomButtonPanelTop", bottomButtonPanelTop).replaceAll("bottomButtonPanelBottom", bottomButtonPanelBottom));

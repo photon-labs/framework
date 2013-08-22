@@ -55,16 +55,7 @@
       "background":"linear-gradient(to bottom, editNavigationActiveBackGroundTop 1%,editNavigationActiveBackGroundBottom 100%) !important",
         "filter":"progid:DXImageTransform.Microsoft.gradient( startColorstr=editNavigationActiveBackGroundTop, endColorstr=editNavigationActiveBackGroundBottom,GradientType=0 ) !important"
 	},
-	".header-background": {
-     "background":"linear-gradient(to bottom, tableHeaderBackGroundColorTop 1%,tableHeaderBackGroundColorBottom 100%) !important",
-        "filter":"progid:DXImageTransform.Microsoft.gradient( startColorstr=tableHeaderBackGroundColorTop, endColorstr=tableHeaderBackGroundColorBottom,GradientType=0 ) !important"
-	},
-	".table_border thead th div.th-inner" : {
-     "color":"tableHeaderLabelColor"
-	},
 	".table_border tr.proj_title td": {
-     "background":"linear-gradient(to bottom, projectTitleBackGroundColorTop 1%,projectTitleBackGroundColorBottom 100%) !important",
-        "filter":"progid:DXImageTransform.Microsoft.gradient( startColorstr=projectTitleBackGroundColorTop, endColorstr=projectTitleBackGroundColorBottom,GradientType=0 ) !important",
 		"color":"customerBaseColor"
 	},
 	".content_end": {
