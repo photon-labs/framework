@@ -361,6 +361,13 @@ define(["performanceLoadListener/listener/performanceLoadListener"], function() 
 			$("#loadRun").click(function() {
 				self.validation.dispatch("load-test", $('#loadForm').serialize(), self.dynamicpage);
 			});
+			
+			//To copy the console log content to the clip-board
+			$('#copyLog').unbind("click");
+			$('#copyLog').click(function() {
+				commonVariables.hideloading = true;
+				commonVariables.navListener.copyToClipboard($('#testConsole'));
+			});
 
 			Clazz.navigationController.mainContainer = commonVariables.contentPlaceholder;
 		}

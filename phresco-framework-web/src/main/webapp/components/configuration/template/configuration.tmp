@@ -52,7 +52,6 @@
                             
 							<!--env_border div ends here -->	
                         </div>
-						<div class="flt_left" id="errdisplay" > </div>
                         <div class="flt_right">
                             <input type="button" value="Ok" data-i18n="[value]common.btn.ok" name="saveEnvironment" class="btn btn_style">
                             <input type="button" value="Close" data-i18n="[value]common.btn.close" class="btn btn_style dyn_popup_close">
@@ -111,7 +110,6 @@
                         <table class="clonetable" width="100%" border="0" cellspacing="0" cellpadding="5">
                             <tr>
                                 <td><span data-i18n="configuration.label.name"></span><sup>*</sup></td>
-							<!--	<span class="display" style="display:none;"> <font style="vertical-align: -3px;"> &nbsp;&nbsp;&nbsp; Enter unique Name. </font></span>-->
 								<td data-i18n="configuration.label.description"></td>
                                 <td>&nbsp;</td>
                             </tr>
@@ -121,9 +119,8 @@
                             </tr>
                             <tr>
                                <td>
-                                    <input type="checkbox" class="checkboxStyle" name="cloneName{{name}}" value="Set as Default"><label data-i18n="configuration.label.setdefault"></label>
+                                    <input type="checkbox" class="checkboxStyle" name="cloneName{{name}}" value="Set as Default"><label class="labelfont" data-i18n="configuration.label.setdefault"></label>
                                 </td>
-                                <td><span class="display" style="display:none;"> <font style="vertical-align: -3px;"> &nbsp;&nbsp;&nbsp; Enter unique Name. </font></span></td>
                                 <!--<td>&nbsp;</td>-->
                                 <td name={{name}}>
                                 	<input type="button" name="cloneEnvr" class="btn btn_style" value="Clone" data-i18n="[value]configuration.label.clone">	

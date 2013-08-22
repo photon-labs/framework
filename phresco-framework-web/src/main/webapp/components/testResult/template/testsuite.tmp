@@ -40,7 +40,7 @@
 	    		</div>
     		</div>
     	{{else}}
-			<div class="alert alert-block" style="text-align: center; margin: auto 0;">{{message}}</div>
+			<div id="messagedisp" class="alert alert-block" style="text-align: center; margin: auto 0;">{{message}}</div>
 		{{/if}}
     </div>
     <!-- Testsuites div ends here -->

@@ -18,6 +18,7 @@ var commonVariables = {
 	
 	environmentName : "",
 	techId : "",
+	logContent : "",
 	
 	login : "login",
 	loginContext : "login",

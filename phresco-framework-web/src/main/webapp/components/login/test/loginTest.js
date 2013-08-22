@@ -87,7 +87,7 @@ define(["login/login"], function(Login) {
 				$('#login').click();
 				setTimeout(function() {
 					start();
-					equal($(commonVariables.headerPlaceholder).find("font:first").text(), "Admin", "Login Service Tested");
+					equal($(commonVariables.headerPlaceholder).find("font:first").text(), "Photon", "Login Service Tested");
 					equal($("#footer").attr('id'), "footer", "Footer Rendering Tested");
 					require(["projectlistTest"], function(projectlistTest){
 						projectlistTest.runTests();

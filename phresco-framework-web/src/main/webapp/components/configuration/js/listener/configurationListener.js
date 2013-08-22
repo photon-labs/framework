@@ -1137,10 +1137,13 @@ define(["croneExpression/croneExpression"], function() {
 					}		
 				};
 				if (flag === 0) {
-					$(".display").show();
+					$(".content_end").show();
+					$(".msgdisplay").removeClass("success").addClass("error");
+					$(".error").text('Enter Unique Name.');
+					$(".error").fadeIn(500).fadeOut(500).fadeIn(500).fadeOut(500).fadeIn(500).fadeOut(5);
 					setTimeout(function() {
-						$(".display").hide();
-					}, 1500);
+						$(".content_end").hide();
+					},2500);
 					$(val).closest('tr').prev('tr').find('td:first').find('input').focus(); 
 				} else {
 					var desc = $(".cloneEnvDesc"+envName).val();

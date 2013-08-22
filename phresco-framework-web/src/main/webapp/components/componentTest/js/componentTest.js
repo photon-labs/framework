@@ -88,7 +88,7 @@ define(["componentTest/listener/componentTestListener", "testResult/listener/tes
 			$("#componentTestBtn").unbind("click");
 			$("#componentTestBtn").click(function() {
 				self.onDynamicPageEvent.dispatch(this, function() {
-					self.testsuiteResult.logContent = $('#testConsole').html();
+					commonVariables.logContent = $('#testConsole').html();
 					$('#testResult').empty();
 					Clazz.navigationController.jQueryContainer = '#testResult';
 					Clazz.navigationController.push(self.testsuiteResult, false);
@@ -121,7 +121,7 @@ define(["componentTest/listener/componentTestListener", "testResult/listener/tes
 			$("#runComponentTest").unbind("click");
 			$("#runComponentTest").click(function() {
 				self.onRunComponentTestEvent.dispatch(function() {
-					self.testsuiteResult.logContent = $('#testConsole').html();
+					commonVariables.logContent = $('#testConsole').html();
 					$('#testResult').empty();
 					Clazz.navigationController.jQueryContainer = '#testResult';
 					Clazz.navigationController.push(self.testsuiteResult, false);

@@ -12,7 +12,6 @@ define(["testResult/listener/testResultListener"], function() {
 		requestBody : {},
 		onTabularViewEvent : null,
 		onShowHideConsoleEvent : null,
-		logContent : "",
 		onPrintPdfEvent : null,
 		onGeneratePdfEvent : null,
 		/***
@@ -61,6 +60,14 @@ define(["testResult/listener/testResultListener"], function() {
 				data.message = response.message;
 				commonVariables.testSuites = response.data;
 				renderFunction(data, $('#testResult div.widget-maincontent-div'));
+				
+				if(response.responseCode === "PHRQ010001") {
+					setTimeout(function() {
+						$("#messagedisp").attr('data-i18n', 'errorCodes.' + response.responseCode);
+						self.renderlocales(commonVariables.contentPlaceholder);
+					}, 400);
+					
+				}	
 			});
 		},
 		
@@ -95,8 +102,8 @@ define(["testResult/listener/testResultListener"], function() {
 			}
 			
 			//To show the log after reloading the test result once the test execution is completed
-			$('#testConsole').html(self.logContent);
-			self.logContent = '';
+			$('#testConsole').html(commonVariables.logContent);
+			commonVariables.logContent = '';
 			
 			self.testResultListener.resizeTestResultDiv();
 			self.resizeConsoleWindow();
@@ -151,9 +158,10 @@ define(["testResult/listener/testResultListener"], function() {
 			});
 			
 			//To copy the console log content to the clip-board
-			$('#copyLog').unbind("click");
-			$('#copyLog').click(function() {
-				commonVariables.navListener.copyToClipboard($('#testConsole'));
+			$("#buildCopyLog").unbind("click");
+			$("#buildCopyLog").click(function() {
+				commonVariables.hideloading = true;
+				commonVariables.navListener.copyToClipboard($("#testConsole"));
 			});
 			
 			//Shows the tabular view of the test result

@@ -122,10 +122,7 @@ define(["configuration/listener/configurationListener"], function() {
 		 *
 		 */
 		bindUI : function() {
-			var self = this;
-			var array=[];
-			var defaultEnv=[];
-			var count=0;
+			var self = this, array=[], defaultEnv=[], count=0;
 			array[count]=$('.envlistname').text();
 			$("input[name='optionsRadiosfd']").each(function() {
 				defaultEnv[count] = $(this).is(':checked');
@@ -170,11 +167,13 @@ define(["configuration/listener/configurationListener"], function() {
 						$("input[name='envName']").attr('placeholder','Environment Name');
 						$("input[name='envDesc']").attr('placeholder','Environment Description');
 					} else {
-						$("#errdisplay").show();
-						$("#errdisplay").text("Environment already Exist");
+						$(".content_end").show();
+						$(".msgdisplay").removeClass("success").addClass("error");
+						$(".error").text('Environment Already Exists.');
+						$(".error").fadeIn(500).fadeOut(500).fadeIn(500).fadeOut(500).fadeIn(500).fadeOut(5);
 						setTimeout(function() {
-							$("#errdisplay").hide();
-						}, 1000);
+							$(".content_end").hide();
+						},2500);
 						$("input[name='envName']").focus();
 					}
 				}

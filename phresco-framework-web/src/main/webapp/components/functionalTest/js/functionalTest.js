@@ -197,7 +197,7 @@ define(["functionalTest/listener/functionalTestListener", "testResult/listener/t
 			$("#runFunctionalTest").unbind("click");
 			$("#runFunctionalTest").click(function() {
 				self.onPerformActionEvent.dispatch("runFunctionalTest", function() {
-					self.testsuiteResult.logContent = $('#testConsole').html();
+					commonVariables.logContent = $('#testConsole').html();
 					$('#testResult').empty();
 					Clazz.navigationController.jQueryContainer = '#testResult';
 					Clazz.navigationController.push(self.testsuiteResult, false);
