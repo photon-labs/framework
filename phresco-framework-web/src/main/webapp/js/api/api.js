@@ -5,8 +5,9 @@ define(["framework/base", "api/localStorageAPI"], function(){
 		localVal : null,
 
 		/***
-		 * Called in initialization time of this class 
+		 * Written by Kavinraj.M Date - 23/08/2013
 		 *
+		 * Called in initialization time of this class 
 		 * @globalConfig: global configurations for this class
 		 */
 		initialize : function(){
@@ -19,7 +20,7 @@ define(["framework/base", "api/localStorageAPI"], function(){
 			var date = new Date();
 			return date.getTime(); 
 		},
-
+		
 		// This method is used to send the request to web service.
 		// module is the identical key that is used to be inserted in the apiHost.
 		// requestMethod is the method to send web service. It can be "POST" or "GET".
@@ -27,6 +28,7 @@ define(["framework/base", "api/localStorageAPI"], function(){
 		// callbackFunction is the method sent to handle the response.
 		// errorHandler is used to handle the error happened.
 		ajaxRequest : function(header, callbackFunction, errorHandler){
+			var self = this;
 			$.support.cors = true;
 			
 			//cancel/abort existing ajax call
@@ -53,28 +55,41 @@ define(["framework/base", "api/localStorageAPI"], function(){
 				},
 				
 				success : function(response, e ,xhr){
-					if (callbackFunction){
+					if(response === undefined || response === null){
+						self.showError("Unexpected Failure at server end");
+					}else if(response.status === "error" && (Clazz.navigationController.loadingActive || commonVariables.continueloading)){
+						$.get(commonVariables.globalconfig.environments.locales, function(data){
+							if(data !== undefined && data !== null){
+								self.showError(data.errorCodes[response.responseCode]);
+							}
+						}, 'JSON');
+					}else if(callbackFunction){
 						callbackFunction(response);
 					}
 				},
 				
 				error : function(jqXHR, textStatus, errorThrown){
-					Clazz.navigationController.loadingActive = false;
-					commonVariables.continueloading = false;
-					commonVariables.hideloading = false;
-					
+					self.showError("Unexpected Failure at server end");
 					if (errorHandler){
 						errorHandler(jqXHR.responseText);
 					}
 				},
 				
-				complete : function(){
+				complete : function(response, e ,xhr){
 					if(!Clazz.navigationController.loadingActive && !commonVariables.continueloading){
 						commonVariables.hideloading = false;
 						commonVariables.loadingScreen.removeLoading();
 					}
 				}
 			});
+		},
+		
+		showError : function(errorMsg){
+			Clazz.navigationController.loadingActive = false;
+			commonVariables.continueloading = false;
+			commonVariables.hideloading = false;
+			commonVariables.loadingScreen.removeLoading();
+			$(Clazz.navigationController.jQueryContainer).html('<section class="content_end" style="display:block;"><div class="msgdisplay error">'+ errorMsg +'</div></section>');
 		}
 	});
 

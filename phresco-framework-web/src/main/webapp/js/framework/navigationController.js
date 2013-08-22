@@ -158,14 +158,9 @@ define(["framework/base", "framework/animationProvider"], function() {
 							}
 						});
 					});
-					
-					var name = view.name ? view.name : "page1", data = {};
-					if (history.pushState !== undefined){
-						history.pushState({}, "#" + name, "#" + name);
-					}
-					
+	
 					// update browser history
-					/* var name = view.name ? view.name : "page1", data = {};
+					var name = view.name ? view.name : "page1", data = {};
 					if(!self.browserBack){
 						
 						data = {
@@ -179,9 +174,9 @@ define(["framework/base", "framework/animationProvider"], function() {
 						}
 						
 					}else{
-						delete self.stack[name];
+						//delete self.stack[name];
 						self.browserBack = false;
-					} */ 
+					}
 				}else{
 					if((commonVariables.ajaxXhr == null || commonVariables.ajaxXhr.readyState == 4) && !commonVariables.continueloading){
 						commonVariables.loadingScreen.removeLoading();
@@ -218,10 +213,8 @@ define(["framework/base", "framework/animationProvider"], function() {
 					}
 				});
 			}else{
-				if(!commonVariables.continueloading)
-				if(commonVariables.animation) {
+				if(!commonVariables.continueloading && commonVariables.animation)
 					$(self.jQueryContainer).find('.widget-maincontent-div').remove();
-				}
 				
 				// render in its container
 				$(self.jQueryContainer).append(newDiv);

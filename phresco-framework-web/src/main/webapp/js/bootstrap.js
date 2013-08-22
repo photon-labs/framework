@@ -282,35 +282,42 @@ $(document).ready(function(){
         }  
     },
     handleChanges: function(newHash, oldHash){
-		var flag=false;
-
-		if(newHash !== undefined && newHash !== null && newHash !==""){
-			if(localStorage.getItem("userInfo") === null){
-				location.hash = '';
-				if(commonVariables.loginView === null)
-					commonVariables.loginView = new Clazz.com.components.login.js.Login();
-				commonVariables.loginView.loadPage();
-			} else {
-				if(!$.isEmptyObject(Clazz.navigationController.stack)){
-					if(!$.isEmptyObject(Clazz.navigationController.stack[newHash])){
-						var data = Clazz.navigationController.stack[newHash];
-						if(data !== undefined && data !== null && !$.isEmptyObject(data) && data !== ""){
-							Clazz.navigationController.browserBack = true;
-							Clazz.navigationController.push(data.view, true, true);
-						}
-					}
-				}else{
-					if(commonVariables.loginlistenerObj === null)
-						commonVariables.loginlistenerObj = new Clazz.com.components.login.js.listener.LoginListener();
-					commonVariables.loginlistenerObj.pageRefresh(commonVariables.projectlist);
+		if((localStorage.getItem("userInfo") === null) || ((newHash === undefined || newHash === null || newHash === "") && (oldHash === undefined || oldHash === null || oldHash === ""))){
+			location.hash = '';
+			this.app.loadDefault();
+		}else{
+			if(newHash !== undefined && newHash !== null && newHash !==""){
+				this.app.loadComponent(newHash);
+			}else if((newHash === undefined || newHash === null || newHash === "") && 
+			(oldHash !== undefined && oldHash !== null && oldHash !== "")){
+				this.app.loadComponent(oldHash);
+			}
+		}
+	},
+	
+	loadComponent : function(hashVal){
+		if(!$.isEmptyObject(Clazz.navigationController.stack)){
+			if(!$.isEmptyObject(Clazz.navigationController.stack[hashVal])){
+				var data = Clazz.navigationController.stack[hashVal];
+				if(data !== undefined && data !== null && !$.isEmptyObject(data) && data !== ""){
+					Clazz.navigationController.browserBack = true;
+					Clazz.navigationController.jQueryContainer = commonVariables.contentPlaceholder;
+					Clazz.navigationController.push(data.view, true, true);
+					$(commonVariables.navigationPlaceholder).find('ul li a').removeClass('act');
+					$(commonVariables.navigationPlaceholder).find('ul li#' + hashVal + ' a').addClass('act')
 				}
 			}
-		}else if((newHash === undefined || newHash === null || newHash === "") && 
-		(oldHash === undefined || oldHash === null || oldHash === "")){
-			if(commonVariables.loginView === null)
-					commonVariables.loginView = new Clazz.com.components.login.js.Login();
-			commonVariables.loginView.loadPage();
+		}else{
+			if(commonVariables.loginlistenerObj === null)
+				commonVariables.loginlistenerObj = new Clazz.com.components.login.js.listener.LoginListener();
+			commonVariables.loginlistenerObj.pageRefresh(commonVariables.projectlist);
 		}
+	},
+	
+	loadDefault : function(){
+		if(commonVariables.loginView === null)
+			commonVariables.loginView = new Clazz.com.components.login.js.Login();
+		commonVariables.loginView.loadPage();
 	}
 };
 
