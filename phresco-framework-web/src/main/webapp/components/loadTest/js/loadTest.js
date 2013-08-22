@@ -259,14 +259,17 @@ define(["performanceLoadListener/listener/performanceLoadListener"], function() 
                 commonVariables.phase = "load-test";
                 if (whereToRender.children().length < 1) {
                 	self.dynamicpage.getHtml(whereToRender, this, $(this).attr('name'), function() {
-	                	var sectionHeight = $('.performanceTestResults').height();
-						$('#loadPopup').css("max-height", sectionHeight - 40 + 'px');
-						$('#loadForm').css("max-height", sectionHeight - 92 + 'px');
-	                	$("#loadForm").mCustomScrollbar({
-							autoHideScrollbar:true,
-							theme:"light-thin",
-							advanced:{ updateOnContentResize: true}
-						});
+                		var totalControls = whereToRender.find('li.ctrl').length;
+                		if (totalControls > 3) {
+		                	var sectionHeight = $('.performanceTestResults').height();
+							$('#loadPopup').css("max-height", sectionHeight - 40 + 'px');
+							$('#loadForm').css("max-height", sectionHeight - 92 + 'px');
+		                	$("#loadForm").mCustomScrollbar({
+								autoHideScrollbar:true,
+								theme:"light-thin",
+								advanced:{ updateOnContentResize: true}
+							});
+						}	
                 	});
                 } else {
                 	self.opencc(this, $(this).attr('name'));

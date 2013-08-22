@@ -82,7 +82,7 @@ define([], function() {
 					}
 					
 					formObj.css("max-height", height - 92 + 'px');
-					if (formObj.find('li').length > 5) {
+					if (formObj.find('li.ctrl').length > 5) {
 						formObj.mCustomScrollbar({
 							autoHideScrollbar:true,
 							theme:"light-thin",

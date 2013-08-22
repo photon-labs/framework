@@ -316,7 +316,7 @@ define(["performanceLoadListener/listener/performanceLoadListener"], function() 
 
                 if (whereToRender.children().length < 1) {
                 	self.dynamicpage.getHtml(whereToRender, this, $(this).attr('name'), function() {
-                		var totalControls = whereToRender.find('.ctrl').length;
+                		var totalControls = whereToRender.find('li.ctrl').length;
                 		if (totalControls > 3) {
         					var sectionHeight = $('.performanceTestResults').height();
 							$('#performancePopup').css("max-height", sectionHeight - 40 + 'px');
