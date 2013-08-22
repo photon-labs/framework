@@ -228,7 +228,7 @@
 		<dependency>
 			<groupId>jslibraries.files</groupId>
 			<artifactId>bootstrap_select_min</artifactId>
-			<version>2.0</version>
+			<version>3.0</version>
 			<type>js</type>
 		</dependency>
 

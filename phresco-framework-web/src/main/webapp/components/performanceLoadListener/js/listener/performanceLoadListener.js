@@ -148,7 +148,7 @@ define(["lib/jquery-tojson-1.0",'lib/RGraph_common_core-1.0','lib/RGraph_common_
 			loadTestOptions.userPermissions = userPermissions;
 			renderFunction(loadTestOptions, whereToRender);
 			if (loadTestOptions.testAgainsts.length !== 0 && !self.isBlank(loadTestOptions.testResultFiles) && loadTestOptions.testResultFiles.length !== 0) {
-				self.getTestResults(self.getActionHeader(loadTestOptions, "getTestResults"), function(response) {
+				self.performAction(self.getActionHeader(loadTestOptions, "getTestResults"), function(response) {
 					var resultData = response.data;
 					if (resultData.perfromanceTestResult.length > 0) {
 						self.constructResultTable(resultData, whereToRender);
@@ -175,7 +175,7 @@ define(["lib/jquery-tojson-1.0",'lib/RGraph_common_core-1.0','lib/RGraph_common_
 			performanceTestOptions.from = 'performance-test';
 			renderFunction(performanceTestOptions, whereToRender);
 			if ((performanceTestOptions.testAgainsts.length !== 0 || performanceTestOptions.devices.length !== 0) && !self.isBlank(performanceTestOptions.testResultFiles) && performanceTestOptions.testResultFiles.length !== 0) {
-				self.getTestResults(self.getActionHeader(performanceTestOptions, "getTestResults"), function(response) {
+				self.performAction(self.getActionHeader(performanceTestOptions, "getTestResults"), function(response) {
 					var resultData = response.data;
 					if (!self.isBlank(resultData)	 && resultData.perfromanceTestResult.length > 0) {
 						self.constructResultTable(resultData, whereToRender);
@@ -250,7 +250,6 @@ define(["lib/jquery-tojson-1.0",'lib/RGraph_common_core-1.0','lib/RGraph_common_
 	        bar.Set('chart.labels', labelString.split(","));
 	        bar.Set('chart.units.post', chartUnit);
 	        bar.Draw();
-
         	if (data.graphFor ===  "all") {
 				var line = new RGraph.Line('allData', [values]);
 		        line.Set('chart.background.grid', true);
@@ -336,7 +335,7 @@ define(["lib/jquery-tojson-1.0",'lib/RGraph_common_core-1.0','lib/RGraph_common_
 
 		getResultFiles : function (testAgainst, whereToRender) {
 			var self = this;
-			self.getTestResults(self.getActionHeader(JSON.stringify([testAgainst]), "getfiles"), function(response) {
+			self.performAction(self.getActionHeader(JSON.stringify([testAgainst]), "getfiles"), function(response) {
 				if(response.data !== null){
 					self.hideErrorAndShowControls();
 					var returnVal = '';
@@ -435,6 +434,7 @@ define(["lib/jquery-tojson-1.0",'lib/RGraph_common_core-1.0','lib/RGraph_common_
 			$('.donloadPdfReport').on("click", function() {
 				var fileName = $(this).attr("fileName"), from=$(this).attr("from"), appDirName = commonVariables.api.localVal.getSession("appDirName");
 				var pdfDownloadUrl = commonVariables.webserviceurl + "pdf/downloadReport?appDirName="+appDirName+"&reportFileName="+fileName+"&fromPage="+from;
+				console.info("pdfDownloadUrl>> ",pdfDownloadUrl);
 				window.open(pdfDownloadUrl, '_self');
 			});
 		},
@@ -482,7 +482,7 @@ define(["lib/jquery-tojson-1.0",'lib/RGraph_common_core-1.0','lib/RGraph_common_
 				reqData.showGraphFor = showGraphFor;
 			}
 
-			self.getTestResults(self.getActionHeader(reqData, "getTestResultsOnChange"), function(response) {
+			self.performAction(self.getActionHeader(reqData, "getTestResultsOnChange"), function(response) {
 				if(response.responseCode === "PHRQ500001" || response.responseCode === "PHRQ500004"){
 					var resultData = response.data;
 					self.constructResultTable(resultData, whereToRender);
@@ -526,39 +526,6 @@ define(["lib/jquery-tojson-1.0",'lib/RGraph_common_core-1.0','lib/RGraph_common_
 					self.deviceChangeEvent(whereToRender);
 				}
 			}); 
-		},
-
-		getTestResults : function (header, callback) {
-			var self = this;
-			try {
-				commonVariables.api.ajaxRequest(header, function(response) {
-					if (response !== null) {
-						callback(response);
-					} else {
-						$(".content_end").show();
-						$(".msgdisplay").removeClass("success").addClass("error");
-						$(".error").attr('data-i18n', 'errorCodes.' + response.responseCode);
-						self.renderlocales(commonVariables.contentPlaceholder);	
-						$(".error").fadeIn(500).fadeOut(500).fadeIn(500).fadeOut(500).fadeIn(500).fadeOut(5);
-						setTimeout(function() {
-							$(".content_end").hide();
-						},2500);
-					}
-				},
-				function(textStatus){
-					$(".content_end").show();
-					$(".msgdisplay").removeClass("success").addClass("error");
-					$(".error").attr('data-i18n', 'commonlabel.errormessage.serviceerror');
-					self.renderlocales(commonVariables.contentPlaceholder);		
-					$(".error").fadeIn(500).fadeOut(500).fadeIn(500).fadeOut(500).fadeIn(500).fadeOut(5);
-					setTimeout(function() {
-						$(".content_end").hide();
-					},2500);
-				}
-				);
-			} catch (exception) {
-				
-			}
 		},
 
 		performAction : function (header, callback) {
@@ -667,7 +634,7 @@ define(["lib/jquery-tojson-1.0",'lib/RGraph_common_core-1.0','lib/RGraph_common_
 			var self = this, requestBody = {};
 			requestBody.phase = phase;
 			requestBody.queryString = queryString;
-			self.performAction(self.getActionHeader(requestBody, "validation"), function(response) {console.info(response);
+			self.performAction(self.getActionHeader(requestBody, "validation"), function(response) {
 				if ((response.errorFound) || (response.status === "error") || (response.status === "failure")){
 					$(".content_end").show();
 					$(".msgdisplay").removeClass("success").addClass("error");

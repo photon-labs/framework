@@ -165,8 +165,33 @@
 				setTimeout(function() {
 					start();
 					equal($(commonVariables.contentPlaceholder).find('#graphView').css('display'), "block", "Graphical view test");
-					self.runShowPerformancePopup(performanceTest);
+					self.runGraphBasedChangeEvent(performanceTest);
 				}, 50);
+			});
+		},
+
+		runGraphBasedChangeEvent : function (performanceTest) {
+			var self = this;
+			asyncTest("Graph based on change event", function() {
+				$.mockjaxClear();
+				$.mockjax({
+				  url: commonVariables.webserviceurl+commonVariables.qualityContext+"/"+commonVariables.performanceTestResults+"?appDirName=PF_TEST_PHP&testAgainst=server&resultFileName=testServer.jtl&deviceId=&showGraphFor=all&from=performance-test",
+				  type: "GET",
+				  dataType: "json",
+				  contentType: "application/json",
+				  status: 200,
+				  response : function() {
+					  this.responseText = JSON.stringify({"message":null,"exception":null,"responseCode":"PHRQ500004","data":{"perfromanceTestResult":[{"totalBytes":5804.0,"max":16,"throughtPut":62.5,"min":16,"avg":16.0,"noOfSamples":1,"times":[16],"totalTime":16,"err":0.0,"maxTs":1.376829431344E12,"lastTime":16,"minTs":1.376829431344E12,"avgBytes":5804.0,"kbPerSec":354.25,"stdDev":0.0,"totalStdDev":0.0,"totalThroughput":0.0,"label":"login"}],"graphData":"[62.5]","graphAlldata":"[0.016], [0.016], [0.016]","aggregateResult":{"error":"0.00","max":16,"min":16,"avgBytes":5804.0,"stdDev":0.0,"average":16.0,"throughput":62.5,"kb":354.25,"sample":1},"totalStdDev":0.0,"totalThroughput":0.0,"graphFor":"all","label":"['login']","images":[]},"status":"success"});
+				  }
+				});
+				$("#testResultFileDrop").attr("value", "testServer.jtl");
+				commonVariables.api.localVal.setSession("appDirName" , "PF_TEST_PHP");
+				performanceTest.graphDropDownChangeEvent($(commonVariables.contentPlaceholder).find('.performanceGraphNav').find('#graphForList').find('a[value=all]'));
+				setTimeout(function() {
+					start();
+					equal($("#graphForDrop").attr("value"), "all", "graph based change event tested");
+					self.runShowPerformancePopup(performanceTest);
+				}, 1200);
 			});
 		},
 
@@ -343,8 +368,33 @@
 				setTimeout(function() {
 					start();
 					equal($('#testConsole').text(), "STARTED", "trigger performance tested succesfully");
-					self.runShowPdfPopup(performanceTest);
+					self.runNoPDFAvailabaleTest(performanceTest);	
 				}, 1500);
+			});
+		},
+
+		runNoPDFAvailabaleTest : function(performanceTest) {
+			module("PerformanceTest.js");
+			var self = this;
+			asyncTest("No pdf available test", function() {
+				$.mockjaxClear();
+				$.mockjax({
+				  url: commonVariables.webserviceurl+"pdf/showPopUp?appDirName=PF_TEST_PHP&fromPage=performance",
+				  type: "GET",
+				  dataType: "json",
+				  contentType: "application/json",
+				  status: 200,
+				  response : function() {
+					  this.responseText = JSON.stringify({"message":null,"exception":null,"responseCode":"PHR200015","data":null,"status":"success"});
+				  }
+				});
+				commonVariables.api.localVal.setSession("appDirName" , "PF_TEST_PHP");
+				$('.performancePDF').click();
+				setTimeout(function() {
+					start();
+					equal($("#pdf_report").css("display") , "block", "Pdf empty list tested");
+					self.runShowPdfPopup(performanceTest);
+				}, 500);
 			});
 		},
 
@@ -508,37 +558,11 @@
 				setTimeout(function() {
 					start();
 					equal($(commonVariables.contentPlaceholder).find('#deviceDropDown').attr("value"), "emulator-5554", "Device list Dropdown change event test");
-					self.runGraphBasedOnChangeEvent(performanceTest);
-				}, 500);
-			});	
-		},
-
-		runGraphBasedOnChangeEvent : function (performanceTest) {
-			module("PerformanceTest.js");
-			var self = this;
-			asyncTest("Graph based on change event", function() {
-				$.mockjax({
-			      url: commonVariables.webserviceurl+commonVariables.qualityContext+"/"+commonVariables.performanceTestResults+"?appDirName=native_none-androidnative&testAgainst=&resultFileName=Sample.xml&deviceId=emulator-5554&showGraphFor=all&from=performance-test",
-				  type: "GET",
-				  dataType: "json",
-				  contentType: "application/json",
-				  status: 200,
-				  response : function() {
-					  this.responseText = JSON.stringify({"message":"Parameter returned successfully","exception":null,"responseCode":null,"data":{"perfromanceTestResult":[{"totalBytes":0.0,"max":12516,"throughtPut":0.1,"min":12516,"avg":12516.0,"noOfSamples":1,"times":[12516],"totalTime":12516,"err":0.0,"maxTs":1.337325718E12,"lastTime":12516,"minTs":1.337325718E12,"avgBytes":0.0,"kbPerSec":0.0,"stdDev":0.0,"totalStdDev":0.0,"totalThroughput":0.0,"label":"SSStestMain"}],"graphData":"[0.1]","graphAlldata":"[12.516], [12.516], [12.516]","aggregateResult":{"error":"0.00","max":12516,"min":12516,"avgBytes":0.0,"stdDev":0.0,"average":12516.0,"throughput":0.1,"kb":0.0,"sample":1},"totalStdDev":0.0,"totalThroughput":0.0,"graphFor":"all","label":"['SSStestMain']","images":[]},"status":null});
-				  }
-				});
-				commonVariables.api.localVal.setSession("appDirName" , "native_none-androidnative");
-				$(commonVariables.contentPlaceholder).find('#graphView').find('.performanceGraphNav').find('.graphForDrop').click();
-				performanceTest.graphDropDownChangeEvent($(commonVariables.contentPlaceholder).find('#graphView').find('.performanceGraphNav').find('a[value=all]'));
-				setTimeout(function() {
-					start();
-					equal($(commonVariables.contentPlaceholder).find('#graphView').find('.performanceGraphNav').find('#graphForDrop').attr("value"),"all","GraphFor dropdown change event test");
-					$('.performanceTemp').remove();
 					require(["loadTestTest"], function(loadTestTest){
 						loadTestTest.runTests();
 					});
-				}, 1500);
-			});
+				}, 800);
+			});	
 		},
-	};
+		};
 });

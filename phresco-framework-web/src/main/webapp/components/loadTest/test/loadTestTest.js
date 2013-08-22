@@ -5,7 +5,7 @@ define(["loadTest/loadTest"], function(LoadTest) {
 			module("LoadTest.js");
 			var self = this;
 			var loadTest = new LoadTest();
-			
+			$(".performanceTemp").remove();
 			self.renderLoadTemplateTest(loadTest);
 		},
 
@@ -48,11 +48,38 @@ define(["loadTest/loadTest"], function(LoadTest) {
 					equal($("#testResultTable tbody tr").length, 1, "Result table render test");
 					equal($(commonVariables.contentPlaceholder).find('.testAgainstOption').length, 2, "Test Against Dropdown test");
 					equal($(commonVariables.contentPlaceholder).find('.testResultFilesOption').length, 3, "Result Files Dropdown test");
-					self.runTestAgainstChangeEvent(loadTest);
+					self.runOpenConsoleTest(loadTest);
 				}, 1500);
 			});
 		},
 		
+		runOpenConsoleTest : function(loadTest) {
+			module("LoadTest.js");
+			var self = this;
+			asyncTest("Open console test", function() {
+				$("#consoleImg").click();
+				setTimeout(function() {
+					start();
+					equal($("#consoleImg").attr('data-flag'),"false", "Open console test");
+					self.runCloseConsoleTest(loadTest);
+				}, 100);
+			});	
+		},
+
+
+		runCloseConsoleTest : function(loadTest) {
+			module("LoadTest.js");
+			var self = this;
+			asyncTest("Close console test", function() {
+				$("#consoleImg").click();
+				setTimeout(function() {
+					start();
+					equal($("#consoleImg").attr('data-flag'),"true", "Close console test");
+					self.runTestAgainstChangeEvent(loadTest);
+				}, 100);
+			});	
+		},
+
 		runTestAgainstChangeEvent : function(loadTest) {
 			module("LoadTest.js");
 			var self = this;
