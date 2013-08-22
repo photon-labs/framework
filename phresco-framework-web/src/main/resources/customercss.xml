@@ -97,5 +97,11 @@
 	 },
 	 ".unit_text":{
 		"color":"customerBaseColor"
+	 },
+	 ".user_icon" : {
+		"background-position":"welcomeUserIcon"
+	 },
+	 ".logout_icon" : {
+		"background-position":"welcomeUserIcon"
 	 }
 }
