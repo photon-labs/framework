@@ -439,11 +439,6 @@ define([], function() {
 				
 				dynamicValue = $(applicationlayer).insertAfter(whereToAppend);
 				self.multiselect();
-				if($("input[name=multimodule]").val() === "false") {
-					$(".appdependencyTd div.appdependencySelect").hide();
-				} else {
-					$(".appdependencyTd div.appdependencySelect").show();
-				}	
 				if (dynamicValue.prev('tr').attr("name") !== "dynamicAppLayer") {
 					dynamicValue.prev('tr').find('a[name="addApplnLayer"]').html('');
 					dynamicValue.prev('tr').find('a[name="removeApplnLayer"]').html(minusIcon);
@@ -457,11 +452,6 @@ define([], function() {
 				
 				dynamicValue = $(weblayer).insertAfter(whereToAppend);
 				self.multiselect();
-				if($("input[name=multimodule]").val() === "false") {
-					$(".webdependencyTd div.webdependencySelect").hide();
-				} else {
-					$(".webdependencyTd div.webdependencySelect").show();
-				}
 				if (dynamicValue.prev('tr').attr("name") !== "dynamicWebLayer") {
 					dynamicValue.prev('tr').find('a[name="addWebLayer"]').html('');
 					dynamicValue.prev('tr').find('a[name="removeWebLayer"]').html(minusIcon);
@@ -671,25 +661,6 @@ define([], function() {
 				self.getmobileversion(mobileType, mobileTypePlaceholder);
 			});
 			
-			/***
-			 **	AppLayer - Appcode Focus Event For Dependency 
-			 */
-			$("input.appln-appcode").bind('focusout', function(){
-				if($(this).val() !== null && $(this).val() !== ''){
-					var code = $(this).val();
-					self.constructDepsArray(code);
-					self.constructAppDependencyOptions();
-					self.depsOptionsClick();
-				}
-			});
-			
-			$("input.web-appcode").bind('focusout', function(){
-				if($(this).val() !== null && $(this).val() !== ''){
-					var code = $(this).val();
-					self.constructWebDependencyOptions();
-					self.depsOptionsClick();
-				} 	
-			});
 		},
 		
 		getTechnology : function(id) {
@@ -1155,30 +1126,13 @@ define([], function() {
 					var appendData = '<tr class="applnlayercontent" name="dynamicAppLayer"><td><input type="text" value="'+value.code+'" disabled></td><td><select disabled>'+ self.getTechnology(value.techInfo.id) +'</select></td><td colspan="3"><select disabled><option>'+value.techInfo.version+'</option></select></td><td colspan="2" class="appdependencyTd"><select class="selectpicker appdependencySelect" multiple title="Select Dependency" data-selected-text-format="count>2"><option value="0" disabled>Select Dependency</option>'+ option +'</select></td><td><div class="flt_right icon_center"><a name="addApplnLayer"></a><a href="javascript:;" name="removeApplnLayer"></a></div></td></tr>';
 					$("tbody.applnLayer").append(appendData);
 					self.multiselect();
-					if($("input[name=multimodule]").val() === "false") {
-						$(".appdependencyTd div.appdependencySelect").hide();
-					} else {
-						$(".appdependencyTd div.appdependencySelect").show();
-					}
 				} else if (value.techInfo.appTypeId === "web-layer") {
 					$("#webLayers").show();
 					$("tr.webLayer").show();
 					$('img[name="close"]').hide();
-					if(value.dependentModules !== null) {
-						$.each(value.dependentModules, function(index, value){
-							option += '<option selected>'+ value +'</option>';
-						});
-					} else {
-						option = '';
-					}
 					var appendData = '<tr class="weblayercontent" name="dynamicWebLayer"><td><input type="text" value="'+value.code+'" disabled></td><td><select name="weblayer" disabled><option>'+value.techInfo.techGroupId+'</option></select></td><td name="widget"><select name="web_widget" disabled> '+ self.editgetwidgettype(value.techInfo.id) +'</select></td> <td name="widgetversion"><select name="web_version" disabled><option>'+value.techInfo.version+'</option></select></td><td class="webdependencyTd"><select class="selectpicker webdependencySelect" multiple data-selected-text-format="count>2" title="Select Dependency"><option value="0" disabled>Select Dependency</option>'+ option +'</select></td><td><div class="flt_right icon_center"><a href="javascript:;" name="addWebLayer"></a><a href="javascript:;" name="removeWebLayer"></a></div></td></tr>';
 					$("tbody.WebLayer").append(appendData);
 					self.multiselect();
-					if($("input[name=multimodule]").val() === "false") {
-						$(".webdependencyTd div.webdependencySelect").hide();
-					} else {
-						$(".webdependencyTd div.webdependencySelect").show();
-					}
 				} else if (value.techInfo.appTypeId === "mobile-layer" || value.techInfo.appTypeId === "mob-layer") {
 					$("#mobLayers").show();
 					$("tr.mobLayer").show();
