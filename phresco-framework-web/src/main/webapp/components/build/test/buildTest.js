@@ -107,7 +107,7 @@ define(["build/build"], function(Build) {
 				  contentType: "application/json",
 				  status: 200,
 				  response : function() {
-					  this.responseText = JSON.stringify({"message":"Build deleted Successfully","exception":null,"responseCode":null,"data":null,"status":null});
+					  this.responseText = JSON.stringify({"message":"Build deleted Successfully","exception":null,"responseCode":"PHR700002","data":null,"status":null});
 				  }
 				});
 		
@@ -166,6 +166,17 @@ define(["build/build"], function(Build) {
 				  }
 				});
 				
+				var paramValidation = $.mockjax({
+				  url: commonVariables.webserviceurl + 'util/validation?appDirName=HTML&customerId=photon&phase=package&buildName=&buildNumber=&environmentName=Production&logs=showErrors&package-type=war&minify=true',
+				  type: "GET",
+				  dataType: "json",
+				  contentType: "application/json",
+				  status: 200,
+				  response : function() {
+					  this.responseText = JSON.stringify({"log":null,"connectionAlive":false,"errorFound":false,"uniquekey":null,"configErrorMsg":null,"service_exception":null,"parameterKey":null,"configErr":false,"responseCode":"PHR9C00001","status":"success"});
+				  }
+				});
+				
 				var getBuild = $.mockjax({
 				  url: commonVariables.webserviceurl + 'buildinfo/list?appDirName=HTML',
 				  type: "GET",
@@ -173,19 +184,19 @@ define(["build/build"], function(Build) {
 				  contentType: "application/json",
 				  status: 200,
 				  response : function() {
-					  this.responseText = JSON.stringify({"message":"Buildinfo listed Successfully","exception":null,"responseCode":null,"data":[{"options":null,"serverName":null,"environments":["Production"],"buildNo":1,"deliverables":null,"buildName":"PHR125_01-Aug-2013-13-34-23.zip","moduleName":null,"deployLocation":null,"importsql":null,"buildStatus":"SUCCESS","databaseName":null,"filePath":null,"webServiceName":null,"context":null,"timeStamp":"01/Aug/2013 13:34:23"}],"status":null});
+					  this.responseText = JSON.stringify({"message":null,"exception":null,"responseCode":"PHR700001","data":[{"options":null,"serverName":null,"environments":["Production"],"buildNo":1,"deliverables":null,"buildName":"PHR125_01-Aug-2013-13-34-23.zip","moduleName":null,"deployLocation":null,"importsql":null,"buildStatus":"SUCCESS","databaseName":null,"filePath":null,"webServiceName":null,"context":null,"timeStamp":"01/Aug/2013 13:34:23"}],"status":"success"});
 				  }
 				});
 				
 				$("#buildRun").click();
-				buildListener.onPrgoress();
-				$("#buildConsole").click();
+				//buildListener.onPrgoress();
+				//$("#buildConsole").click();
 				setTimeout(function() {
 					start();
 					output = $('#buildRow tr td:first').text();
 					equal("1", output, "Build Generater Successfully");
 					self.downloadBuild(build, self, buildListener); 
-				}, 1500);
+				}, 2000);
 			});
 		},
 		

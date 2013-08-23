@@ -14,6 +14,7 @@ define(["build/listener/buildListener"], function() {
 		onDeleteEvent : null,
 		onDeployEvent : null,
 		onBuildEvent : null,
+		onValidationEvent : null,
 		onProcessBuildEvent : null,
 		dynamicpage : null,
 		dynamicPageListener : null,
@@ -88,6 +89,9 @@ define(["build/listener/buildListener"], function() {
 			if(self.onRestartEvent === null){
 				self.onRestartEvent = new signals.Signal();
 			}
+			if(self.onValidationEvent === null){
+				self.onValidationEvent = new signals.Signal();
+			}
 			
 			self.onProgressEvent.add(self.buildListener.onPrgoress, self.buildListener);
 			self.onDownloadEvent.add(self.buildListener.downloadBuild, self.buildListener);
@@ -99,6 +103,7 @@ define(["build/listener/buildListener"], function() {
 			self.onRASEvent.add(self.buildListener.runAgainstSource, self.buildListener);
 			self.onStopEvent.add(self.buildListener.stopServer, self.buildListener);
 			self.onRestartEvent.add(self.buildListener.restartServer, self.buildListener);
+			self.onValidationEvent.add(self.buildListener.mandatoryValidation, self.buildListener);
 		},
 		
 		/***
@@ -237,6 +242,7 @@ define(["build/listener/buildListener"], function() {
 		clearLogContent : function(){
 			var self = this;
 			$('#logContent').html('');
+			$('.progress_loading').css('display','block');
 			self.openConsole();
 			$("#buildConsole").attr('data-flag','false');
 		},
@@ -304,8 +310,7 @@ define(["build/listener/buildListener"], function() {
 			//Deploy build popup click event
 			$("img[name=deployBuild]").unbind('click');
 			$("img[name=deployBuild]").click(function(){
-				var current = this, divId = $(this).closest('tr').find('td:eq(0)').text(),
-				whereToRender = $('#deploye_' + divId + ' ul'), deviceDeploy = $(this).attr("deviceDeploy");
+				var current = this,  sqlParam = "", queryStr = "", divId = $(this).closest('tr').find('td:eq(0)').text(), whereToRender = $('#deploye_' + divId + ' ul'), deviceDeploy = $(this).attr("deviceDeploy");
 				
 				commonVariables.goal = "deploy";
 				commonVariables.phase = "deploy";
@@ -316,9 +321,19 @@ define(["build/listener/buildListener"], function() {
 					// call device deployment service
 					self.dynamicpage.getHtml(whereToRender, this, '', function(retVal){
 						self.clearLogContent();
-						
 						$('input[name=buildDelete]').hide();
-						self.onDeployEvent.dispatch("", function(response){
+
+						self.clearLogContent();
+						$('input[name=buildDelete]').hide();
+
+						self.sqlQueryParam($(current).closest('tr').find('form[name=deployForm] #executeSql').is(':checked'), $(current).closest('tr').find('form[name=deployForm] ul[name=sortable2] li'), function(retVal){
+							sqlParam = retVal;
+						});
+						
+						queryStr = $(current).closest('tr').find('form[name=deployForm]').serialize().replace("=on", "=true");
+						queryStr += '&fetchSql=' + ($.isEmptyObject(sqlParam) === true ? "" : sqlParam);
+						
+						self.onDeployEvent.dispatch(queryStr, function(response){
 							$('input[name=buildDelete]').show();
 							$('.progress_loading').css('display','none');
 							if(response !== null && response.errorFound === true){
@@ -341,7 +356,7 @@ define(["build/listener/buildListener"], function() {
 			//build deploy click event
 			$("input[name=deploy]").unbind('click');
 			$("input[name=deploy]").click(function(){
-				var current = this, sqlParam = "", queryStr = "";;
+				var current = this, sqlParam = "", queryStr = "";
 				self.clearLogContent();
 				$('input[name=buildDelete]').hide();
 
@@ -464,6 +479,7 @@ define(["build/listener/buildListener"], function() {
 							connectWith: '.connectedSortable',
 							cancel: ".ui-state-disabled"
 						});
+						$("form[name=runAgainstForm] #build_runagsource").show();
 					});
 				}	
 			});
@@ -471,8 +487,7 @@ define(["build/listener/buildListener"], function() {
 			//run again source click event
 			$("#runSource").click(function(){
 				var sqlParam = "", queryStr = "";
-				$(".dyn_popup").hide();
-				self.clearLogContent();
+
 				self.sqlQueryParam($('form[name=runAgainstForm] #executeSql').is(':checked'), $('form[name=runAgainstForm] ul[name=sortable2] li'), function(retVal){
 					sqlParam = retVal;
 				});
@@ -480,15 +495,20 @@ define(["build/listener/buildListener"], function() {
 				queryStr = $('form[name=runAgainstForm]').serialize().replace("=on", "=true");
 				queryStr += '&fetchSql=' + ($.isEmptyObject(sqlParam) === true ? "" : sqlParam);
 				
-				self.onRASEvent.dispatch(queryStr, function(response){
-					$('.progress_loading').css('display','none');
-					
-					if(response !== null && response.errorFound === true) {
-						self.closeConsole();
-						$("form[name=runAgainstForm] #build_runagsource").show();
-						self.showErrorPopUp(response.responseCode);
-					}else if(response !== null && response.errorFound === false) { 	
-						self.runAgainSourceStatus();
+				self.onValidationEvent.dispatch('run-against-source', queryStr, function(response){
+					if (!response.errorFound && response.status !== "error" && response.status !== "failure"){
+						$("form[name=runAgainstForm] #build_runagsource").hide();
+						$(".dyn_popup").hide();
+						self.clearLogContent();
+						self.onRASEvent.dispatch(queryStr, function(response){
+							$('.progress_loading').css('display','none');
+							if(response.errorFound && response.status === "error" && response.status === "failure"){
+								self.showErrorPopUp(response.responseCode);
+							}else{ 	
+								self.runAgainSourceStatus();
+								self.closeConsole();
+							}
+						});
 					}
 				});
 			});
@@ -519,7 +539,7 @@ define(["build/listener/buildListener"], function() {
 			$("input[name=build_genbuild]").unbind("click");
 			$("input[name=build_genbuild]").click(function() {
                 var whereToRender = $('#build_genbuild ul');
-				
+				$("form[name=buildForm]").show();
 				if(whereToRender.children().length < 1){
 					commonVariables.goal = "package";
 					commonVariables.phase = "package";
@@ -533,20 +553,20 @@ define(["build/listener/buildListener"], function() {
 			
 			//build run click event
 			$("#buildRun").click(function(){
-				$('.alert_div').show();
-				self.clearLogContent();
 				var sqlParam = "";
 				queryStr = $('form[name=buildForm]').serialize().replace("=on", "=true");
 				
-				self.onBuildEvent.dispatch(queryStr, function(response){
-					$('.progress_loading').css('display','none');
-					if(response !== null && response.errorFound === true) {
-						$('.alert_div').hide();
-						self.closeConsole();
-						$("form[name=buildForm] #build_genbuild").show();
-						self.showErrorPopUp(response.responseCode);
-					}else if(response !== null && response.errorFound === false) {
-						self.refreshContent(true);
+				self.onValidationEvent.dispatch('package', queryStr, function(response){
+					if (!response.errorFound && response.status !== "error" && response.status !== "failure"){
+						$("form[name=buildForm]").hide();
+						$('.alert_div').show();
+						self.clearLogContent();
+						self.onBuildEvent.dispatch(queryStr, function(response){
+							$('.progress_loading').css('display','none');
+							if (!response.errorFound && response.status !== "error" && response.status !== "failure"){
+								self.refreshContent(true);
+							}
+						});
 					}
 				});
 			});

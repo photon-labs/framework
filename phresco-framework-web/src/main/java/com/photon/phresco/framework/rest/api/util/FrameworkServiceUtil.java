@@ -734,6 +734,7 @@ public class FrameworkServiceUtil implements Constants, FrameworkConstants, Resp
 								if (bldName .contains(METRO_BUILD_SEPARATOR) && CollectionUtils.isNotEmpty(platforms)) {	
 									for (String name : platforms) {
 										if (name.equalsIgnoreCase(bldName)) {	
+											actionresponse.setParameterKey("buildName");
 											actionresponse.setErrorFound(true);
 											actionresponse.setConfigErrorMsg("Build Name Already Exsist");
 											actionresponse.setStatus(RESPONSE_STATUS_FAILURE);
@@ -742,6 +743,7 @@ public class FrameworkServiceUtil implements Constants, FrameworkConstants, Resp
 									}
 								} else if(buildName.equalsIgnoreCase(FilenameUtils.removeExtension(build.getBuildName()))) {
 									actionresponse.setErrorFound(true);
+									actionresponse.setParameterKey("buildName");
 									actionresponse.setConfigErrorMsg("Build Name Already Exsist");
 									actionresponse.setStatus(RESPONSE_STATUS_FAILURE);
 									actionresponse.setResponseCode(PHR710018);
@@ -753,6 +755,7 @@ public class FrameworkServiceUtil implements Constants, FrameworkConstants, Resp
 						if(!buildNumber.isEmpty()) {
 							for (BuildInfo build : builds) {
 								if(Integer.parseInt(buildNumber) == build.getBuildNo()) {
+									actionresponse.setParameterKey(BUILD_NUMBER);
 									actionresponse.setErrorFound(true);
 									actionresponse.setConfigErrorMsg("Build Number Already Exsist");
 									actionresponse.setStatus(RESPONSE_STATUS_FAILURE);

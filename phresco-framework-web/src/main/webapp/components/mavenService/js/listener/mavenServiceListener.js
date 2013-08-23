@@ -174,7 +174,7 @@ define([], function() {
 								setTimeout(function() {
 									$(".content_end").hide();
 								},2500); 
-				
+								callback(response);
 							}else if(response.status === null){
 								callback(response);
 							}

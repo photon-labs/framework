@@ -38,7 +38,7 @@
                         <div class="dynamicPopupLoading" style="display:none;">&nbsp</div>
 						<div class="hiddenControls"></div>
                         <div class="flt_right">
-                            <input id="buildRun" type="button" value="Build" data-i18n="[value]navigation.application.build" class="btn btn_style dyn_popup_close">
+                            <input id="buildRun" type="button" value="Build" data-i18n="[value]navigation.application.build" class="btn btn_style">
                             <input type="button" value="Close" data-i18n="[value]common.btn.close" class="btn btn_style dyn_popup_close">
                         </div>
                     </div>
@@ -149,23 +149,19 @@
 										<a href="#">
 											{{{devicedploy options.deviceDeploy}}}
 										</a>
-										{{#if options.deviceDeploy}}
-											<div class="dyn_popup popup_bg" style="display:none;"></div>
-										{{else}}
-											<div id="deploye_{{buildNo}}" class="dyn_popup popup_bg" style="display:none;">
-												<div id="bdeploy_{{buildNo}}">
-													<form name="deployForm">
-														<ul class="row dynamicControls">
-														</ul>
-														<input type="hidden" name="buildNumber" value="{{buildNo}}" />
-													</form>
-													<div class="flt_right">
-														<input type="button" name="deploy" data-i18n="[value]build.label.deploy" class="btn btn_style dyn_popup_close">
-														<input type="button" data-i18n="[value]build.label.close" class="btn btn_style dyn_popup_close">
-													</div>
+										<div id="deploye_{{buildNo}}" class="dyn_popup popup_bg" style="display:none;">
+											<div id="bdeploy_{{buildNo}}">
+												<form name="deployForm">
+													<ul class="row dynamicControls">
+													</ul>
+													<input type="hidden" name="buildNumber" value="{{buildNo}}" />
+												</form>
+												<div class="flt_right">
+													<input type="button" name="deploy" data-i18n="[value]build.label.deploy" class="btn btn_style dyn_popup_close">
+													<input type="button" data-i18n="[value]build.label.close" class="btn btn_style dyn_popup_close">
 												</div>
 											</div>
-										{{/if}}
+										</div>
 									{{else}}
 										<img src="themes/default/images/helios/deploy_icon_off.png" width="16" height="20" border="0" alt="">
 									{{/if}}

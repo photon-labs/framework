@@ -78,7 +78,7 @@ define([], function() {
 		
 		deployBuild : function(queryString, callback){
 			var self = this, appInfo = commonVariables.api.localVal.getJson('appdetails');
-			
+
 			if(appInfo !== null){
 				queryString +=	'&customerId='+ self.getCustomer() +'&appId='+ appInfo.data.appInfos[0].id +'&projectId=' + appInfo.data.id + '&username=' + commonVariables.api.localVal.getSession('username');
 			}
@@ -121,6 +121,7 @@ define([], function() {
 		
 		processBuild : function(queryString, callback) {
 			var self = this, appInfo = commonVariables.api.localVal.getJson('appdetails');
+			
 			if(appInfo !== null){
 				queryString +=	'&customerId='+ self.getCustomer() +'&appId='+ appInfo.data.appInfos[0].id +'&projectId=' + appInfo.data.id + '&username=' + commonVariables.api.localVal.getSession('username');
 			}
@@ -238,6 +239,45 @@ define([], function() {
 			}
 		},
 		
+		mandatoryValidation : function (phase, queryString, callback){
+			var self = this, appInfo = commonVariables.api.localVal.getJson('appdetails'), header;
+			
+			try {
+				header = self.getRequestHeader('','','validation');
+				header.webserviceurl += '&phase='+ phase +'&' + queryString;
+				
+				commonVariables.api.ajaxRequest(header,
+					function(response) {
+						if (response.errorFound || response.status === "error" || response.status === "failure"){
+							$(".content_end").show();
+							$(".msgdisplay").removeClass("success").addClass("error");
+							$(".error").attr('data-i18n', 'errorCodes.' + response.responseCode);
+							self.renderlocales(commonVariables.contentPlaceholder);	
+							$(".error").show();
+							$(".error").fadeIn(500).fadeOut(500).fadeIn(500).fadeOut(500).fadeIn(500).fadeOut(5);
+							setTimeout(function() {
+								$(".content_end").hide();
+							},2500);
+							self.showDynamicErrors(response);
+						}
+						callback(response);
+					},
+
+					function(textStatus) {
+						$(".content_end").show();
+						$(".msgdisplay").removeClass("success").addClass("error");
+						$(".error").attr('data-i18n', 'commonlabel.errormessage.serviceerror');
+						self.renderlocales(commonVariables.contentPlaceholder);	
+						$(".error").fadeIn(500).fadeOut(500).fadeIn(500).fadeOut(500).fadeIn(500).fadeOut(5);
+						setTimeout(function() {
+							$(".content_end").hide();
+						},2500);
+					}
+				);
+			} catch(exception) {
+				callback({ "status" : "service exception"});
+			}
+		},
 		
 		/***
 		 * provides the request header
@@ -251,7 +291,7 @@ define([], function() {
 			if(commonVariables.api.localVal.getSession('appDirName') !== null){
 				appdirName = commonVariables.api.localVal.getSession('appDirName');
 			}
-			
+
 			if (action === "getList") {
 				method = "GET";
 				url = 'buildinfo/list?appDirName=' + appdirName;
@@ -272,8 +312,11 @@ define([], function() {
 			} else if(action === "serverstatus") {
 				method = "GET";
 				url = 'buildinfo/checkstatus?appDirName=' + appdirName;
-			} 
-			
+			} else if (action === "validation") {
+				method = "GET";
+				url ='util/validation?appDirName=' + appdirName + '&customerId=' + self.getCustomer();
+			}
+
 			header = {
 				contentType: contType,
 				requestMethod: method,
