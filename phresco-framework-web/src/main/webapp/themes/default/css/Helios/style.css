@@ -28,6 +28,10 @@ html,body {
 	overflow: hidden;
 }
 
+label, input, button, select, textarea {
+	font-size: 12px;
+}
+
 /* Basic Styles for all Pages */
 
 @font-face {
@@ -421,8 +425,8 @@ html, body {
 	background-position:-15px 0px;
 	width:15px;
 	height:15px;
-	float:left;
-	margin-right:8px;
+	display:inline-block;
+	margin-right:6px;
 }
 
 .logout_icon {
@@ -497,6 +501,7 @@ html, body {
 	position:absolute;
 	margin-top:132px;
 	border-top: 1px solid #d2d2d2;
+	z-index:-2;
 }
 
 .content_main table {
@@ -564,6 +569,8 @@ a.dropdown-toggle b.caret  {
 
 .cus_themes {
 	width:175px !important;
+    max-height: 200px;
+    overflow-y: auto;
 }
 
 .cust_sel:after {
@@ -1162,6 +1169,11 @@ img[name="close"] {
 	/*margin-left: 8px !important;*/
 }
 
+.bootstrap-select:not([class*="span"]) {
+	width: 137px;
+}
+
+
 .create_proj .table_border tr td img {
 	margin:0;
 }
@@ -1172,6 +1184,14 @@ img[name="close"] {
 }
 
 .create_proj table tr td {
+	vertical-align:middle;	
+	color: #747474;
+	text-align:left;
+	border:none;
+	width: 5%;
+}
+
+.appInfo table tr td {
 	vertical-align:middle;	
 	color: #747474;
 	text-align:left;
@@ -1214,7 +1234,7 @@ img[name="close"] {
 	padding-top:8px;
 	position:fixed;
 	bottom: 27px;
-	z-index:1;	
+	z-index:0;	
 }
 .title_nav {
 	float:right;
@@ -1268,8 +1288,10 @@ img[name="close"] {
 	text-decoration: none;
 }
 .custon_dropdown {
-	width:137px !important;
+/* width:137px !important; */
+	width: 162px !important;
 }
+
 
 .optional_dropdown {
 	margin-left: 16px;
@@ -1867,142 +1889,168 @@ background:#DA4F49 !important;
 
 @media screen and (min-width: 978px) and (max-width: 1024px) {
 
-.func_framewrk {
-	width: 10% !important;
-}
-
-.optiontitle .alert_div {
-	font-size: 9px !important;
-	width: 28%;	
-	margin: 0 4px !important;
-}
-
-.startdate input, .enddate input {
-	width: 120px !important;
-	margin-right: 4px;
-}
-
-.create_proj table tr td input[type=text], .features_content_main table tr td input[type=text], .features_content_main table tr td input[type=password], .bootstrap-select .btn, .features_content_main table tr td select {
-	width: 144px;
-}
-
-select[name="builtmyself"] {
-	width:86px !important;
-}
- 
-.custon_dropdown  {
-	width:100px !important;
-}
-
-.optional_dropdown  {
-	margin-left: 6px;
-	width:110px !important;
-}
-
-.title_nav ul a {
-	padding: 12px 7px !important;
-}
+	.func_framewrk {
+		width: 10% !important;
+	}
+	
+	.optiontitle .alert_div {
+		font-size: 9px !important;
+		width: 28%;	
+		margin: 0 4px !important;
+	}
+	
+	.startdate input, .enddate input {
+		width: 120px !important;
+		margin-right: 4px;
+	}
+	
+	.create_proj table tr td input[type=text], .create_proj table tr td select, .features_content_main table tr td input[type=text], .features_content_main table tr td input[type=password], .bootstrap-select .btn, .features_content_main table tr td select {
+		width: 144px;
+	}
+	
+	.create_proj table tr td {
+		 width: 0%;
+	}
+		
+	select[name="builtmyself"] {
+		width:86px !important;
+	}
+	 
+	.custon_dropdown  {
+		width:100px !important;
+	}
+	
+	.optional_dropdown  {
+		margin-left: 6px;
+		width:110px !important;
+	}
+	
+	.title_nav ul a {
+		padding: 12px 7px !important;
+	}
+	
+	.bootstrap-select:not([class*="span"]) {
+		width: 137px;
+	}
 
 }
 @media screen and (min-width: 1025px) and (max-width: 1152px) {
 
-.func_framewrk {
-	width: 8% !important;
-}
-
-.startdate input, .enddate input {
-	width: 163px !important;
-	margin-right: 4px;
-}
-
-.create_proj table tr td input[type=text], .features_content_main table tr td input[type=text], .features_content_main table tr td input[type=password], .bootstrap-select .btn, .features_content_main table tr td select {
-	width: 187px;	
-}
-
-select[name="builtmyself"] {
-	width: 112px !important;
-}
-
-.optional_dropdown {
-	margin-left: 9px;
-	width: 128px !important;
-}
-
-.title_nav ul a {
-	padding: 12px 8px !important;
-}
+	.func_framewrk {
+		width: 8% !important;
+	}
+	
+	.startdate input, .enddate input {
+		width: 140px !important;
+		margin-right: 4px;
+	}
+	
+	.create_proj table tr td input[type=text], .features_content_main table tr td input[type=text], .features_content_main table tr td input[type=password], .bootstrap-select .btn, .features_content_main table tr td select {
+		width: 144px;
+	}
+		
+	select[name="builtmyself"] {
+		width: 108px !important;
+	}
+	
+	.right-align {
+		text-align: right !important;
+	}
+		
+	.create_proj table tr td {
+		width : 0%;
+	}
+		
+	.optional_dropdown {
+		margin-left: 9px;
+		width:110px !important;
+	}
+	
+	.title_nav ul a {
+		padding: 12px 8px !important;
+	}
+		
+	select {
+	    padding: 3px 6px 4px 2px !important;
+	    width: 175px !important;
+	}
+	
+	.bootstrap-select:not([class*="span"]) {
+		width:144px;
+	}
+	
 }
 
 @media screen and (min-width: 1153px) and (max-width: 1280px) {
 
-.func_framewrk {
-	width: 6% !important;
-}
-
-.startdate input, .enddate input {
-	width: 161px !important;
-	margin-right: 4px;
-}
-
-.create_proj table tr td input[type=text], .features_content_main table tr td input[type=text], .features_content_main table tr td input[type=password], .bootstrap-select .btn, .features_content_main table tr td select {
-	 width: 186px;
-}
-
-
-select[name="builtmyself"] {
-	width: 115px !important;
-}
-
-.optional_dropdown {
-	margin-left: 11px;
-	width: 141px !important;
-}
-
-.title_nav ul a {
-	padding: 12px 13px !important;
-	font-size: 13px;
-}
+	.func_framewrk {
+		width: 6% !important;
+	}
+	
+	.startdate input, .enddate input {
+		width: 161px !important;
+		margin-right: 4px;
+	}
+	
+	.create_proj table tr td input[type=text], .features_content_main table tr td input[type=text], .features_content_main table tr td input[type=password], .bootstrap-select .btn, .features_content_main table tr td select {
+		 width: 186px;
+	}
+	
+	
+	select[name="builtmyself"] {
+		width: 115px !important;
+	}
+	
+	.optional_dropdown {
+		margin-left: 11px;
+		width: 141px !important;
+	}
+	
+	.title_nav ul a {
+		padding: 12px 13px !important;
+		font-size: 13px;
+	}
 }
 
 @media screen and (min-width: 1281px) and (max-width: 1366px) {
 
-.startdate input, .enddate input {
-	width: 160px !important;
-	margin-right: 4px;
-}
-
-.create_proj table tr td input[type=text], .features_content_main table tr td input[type=text], .features_content_main table tr td input[type=password], .bootstrap-select .btn, .features_content_main table tr td select {
-	width: 184px;	
-}
-
-select[name="builtmyself"] {
-	width : 115px !important;
-}
-
-.optional_dropdown  {
-	margin-left: 10px;
-	width : 156px !important;
-}
+	.startdate input, .enddate input {
+		width: 160px !important;
+		margin-right: 4px;
+	}
+	
+	.create_proj table tr td input[type=text], .features_content_main table tr td input[type=text], .features_content_main table tr td input[type=password], .bootstrap-select .btn, .features_content_main table tr td select {
+		width: 184px;	
+	}
+	
+	select[name="builtmyself"] {
+		width : 115px !important;
+	}
+	
+	.optional_dropdown  {
+		margin-left: 10px;
+		width : 156px !important;
+	}
 }
 
 @media screen and (min-width: 1367px) and (max-width: 1440px) {
 
-.startdate input, .enddate input {
-	width: 152px !important;
-	margin-right: 4px;
-}
-
-.create_proj table tr td input[type=text], .features_content_main table tr td input[type=text], .features_content_main table tr td input[type=password], .bootstrap-select .btn, .features_content_main table tr td select {
-	width: 182px;	
-}
-
- .bootstrap-select .btn  {
-	width: 182px !important; 
- }
- 
- .custon_dropdown {
-	width: 141px !important;
-}
+	.startdate input, .enddate input {
+		width: 152px !important;
+		margin-right: 4px;
+	}
+	
+	.create_proj table tr td input[type=text], .features_content_main table tr td input[type=text], .features_content_main table tr td input[type=password], .bootstrap-select .btn, .features_content_main table tr td select {
+		width: 182px;	
+	}
+	
+	 .bootstrap-select .btn  {
+		width: 182px !important; 
+	 }
+	 
+	 .custon_dropdown {
+		width: 141px !important;
+	}
 
 }
 
@@ -2160,6 +2208,9 @@ select[name="builtmyself"] {
 	border:1px solid #cdcdcd !important;
 }
 
+.optional_dropdown {
+	 width: 186px;	
+}
 
 /* *************************************************************************** STYLES FOR BUILD PAGE ************************************************************************** */
 
@@ -2834,38 +2885,38 @@ html>body tbody.scrollContent {
 }
 
 .datepicker {
-  top: 0;
-  left: 0;
-  padding: 4px;
-  margin-top: 1px;
-  -webkit-border-radius: 4px;
-  -moz-border-radius: 4px;
-  border-radius: 4px;
-  /*.dow {
-    border-top: 1px solid #ddd !important;
-  }*/
+	top: 0;
+	left: 0;
+	padding: 4px;
+	margin-top: 1px;
+	-webkit-border-radius: 4px;
+	-moz-border-radius: 4px;
+	border-radius: 4px;
+	/*.dow {
+	  border-top: 1px solid #ddd !important;
+	}*/
 
 }
 .datepicker:before {
-  content: '';
-  display: inline-block;
-  border-left: 7px solid transparent;
-  border-right: 7px solid transparent;
-  border-bottom: 7px solid #ccc;
-  border-bottom-color: rgba(0, 0, 0, 0.2);
-  position: absolute;
-  top: -7px;
-  left: 6px;
+	content: '';
+	display: inline-block;
+	border-left: 7px solid transparent;
+	border-right: 7px solid transparent;
+	border-bottom: 7px solid #ccc;
+	border-bottom-color: rgba(0, 0, 0, 0.2);
+	position: absolute;
+	top: -7px;
+	left: 6px;
 }
 .datepicker:after {
-  content: '';
-  display: inline-block;
-  border-left: 6px solid transparent;
-  border-right: 6px solid transparent;
-  border-bottom: 6px solid #ffffff;
-  position: absolute;
-  top: -6px;
-  left: 7px;
+	content: '';
+	display: inline-block;
+	border-left: 6px solid transparent;
+	border-right: 6px solid transparent;
+	border-bottom: 6px solid #ffffff;
+	position: absolute;
+	top: -6px;
+	left: 7px;
 }
 .datepicker > div {
   display: none;
@@ -4517,8 +4568,3 @@ select[name="reportDataType"], input[name="pdfName"] {
 	background:#EF7B43 !important;
 }
 
-@-moz-document url-prefix() {
-	table tr td {
-        width ; 4%;
-    }
-}

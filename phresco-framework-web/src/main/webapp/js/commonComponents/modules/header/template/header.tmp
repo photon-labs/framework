@@ -21,7 +21,7 @@
 				<li><a href="#" data-i18n="header.userinfo.about"></a></li>
 				<li id="fat-menu" class="dropdown customerDropdown">
 				  <a href="#" id="drop3" role="button" class="dropdown-toggle" data-toggle="dropdown"><font id="selectedCustomer">Photon</font><b class="caret"></b></a>
-				  <div class="dropdown-menu cust_sel cus_themes" role="menu" aria-labelledby="drop3">
+				  <div class="dropdown-menu cust_sel cus_themes scrolldiv" role="menu" aria-labelledby="drop3">
 					<ul id="customer">
 						{{#each customers}}<li><a href="javascript:;" id="{{id}}" name="customers">{{name}}</a></li>{{/each}}
 					</ul>
