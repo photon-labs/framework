@@ -425,7 +425,6 @@ define([], function() {
 					break;
 					
 				case commonVariables.settings :
-					console.info("settings called");
 					$("#settingsNav").show();
 					$("#projectList").hide();
 					$("#createProject").hide();
