@@ -363,8 +363,8 @@ public interface ResponseCodes {
 	String PHR810001 = "PHR810001"; // could not retrieve builds
 	String PHR800002 = "PHR800002"; // job(s) created successfully
 	String PHR810002 = "PHR810002"; // no job(s) found or failed to write job(s) in file
-	String PHR810003 = "PHR810003"; // unable to create job(s)
-	String PHR800003 = "PHR800003"; // job(s) created successfully
+	String PHR810003 = "PHR810003"; // Job(s) creation Failed
+	String PHR800003 = "PHR800003"; // Job Validation completed successfully
 	String PHR810004 = "PHR810004"; // failed to write job(s) in file
 	String PHR810005 = "PHR810005"; // unable to update job(s)
 	String PHR800004 = "PHR800004"; // continuous delivery fetched successfully
@@ -381,7 +381,7 @@ public interface ResponseCodes {
 	String PHR810012 = "PHR810012"; // failed to trigger build
 	String PHR810013 = "PHR810013"; // build failed
 	String PHR810014 = "PHR810014"; // failed to return mail configuration
-	String PHR800009 = "PHR800009"; // mail configuration saved successfully
+	String PHR800009 = "PHR800009"; // Mail configuration retrieved successfully
 	String PHR810015 = "PHR810015"; // unable to save mail configuration
 	String PHR800010 = "PHR800010"; // build download URL retrieved successfully
 	String PHR810016 = "PHR810016"; // failed to access 'ciJob.info' file
@@ -408,8 +408,12 @@ public interface ResponseCodes {
 	String PHR810028 = "PHR810028"; // failed to fetch job templates
 	String PHR810029 = "PHR810029"; // failed to fetch environments
 	String PHR810030 = "PHR810030"; // json exception returned while fetching job templates
-	String PHR800020 = "PHR800020"; // job validation completed successfully
 	String PHR810031 = "PHR810031"; // job already exists
 	String PHR810032 = "PHR810032"; // could not retrieve jenkins info
 	String PHR810033 = "PHR810033"; // job(s) have already been created using this job template
+	String PHR800020 = "PHR800020"; // job(s) Updated successfully
+	String PHR800021 = "PHR800021"; // confluence configuration retrieved successfully
+	String PHR810034 = "PHR810034"; // returned Confluence configuration Failed
+	String PHR800022 = "PHR800022"; // confluence configuration saved successfully
+	String PHR810035 = "PHR810035"; // build download url retrieve failed
 }

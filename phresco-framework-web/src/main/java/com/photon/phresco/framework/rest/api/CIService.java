@@ -17,7 +17,6 @@
  */
 package com.photon.phresco.framework.rest.api;
 
-import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.net.ConnectException;
@@ -29,6 +28,7 @@ import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -37,6 +37,7 @@ import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
@@ -53,6 +54,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.photon.phresco.commons.FrameworkConstants;
+import com.photon.phresco.commons.ResponseCodes;
 import com.photon.phresco.commons.model.ApplicationInfo;
 import com.photon.phresco.commons.model.CIBuild;
 import com.photon.phresco.commons.model.CIJob;
@@ -64,7 +66,6 @@ import com.photon.phresco.commons.model.Technology;
 import com.photon.phresco.exception.PhrescoException;
 import com.photon.phresco.framework.PhrescoFrameworkFactory;
 import com.photon.phresco.framework.api.ActionType;
-import com.photon.phresco.framework.api.ApplicationManager;
 import com.photon.phresco.framework.api.CIManager;
 import com.photon.phresco.framework.commons.FrameworkUtil;
 import com.photon.phresco.framework.impl.CIManagerImpl;
@@ -84,7 +85,7 @@ import com.sun.jersey.api.client.ClientResponse.Status;
  */
 
 @Path("/ci")
-public class CIService extends RestBase implements FrameworkConstants, ServiceConstants,Constants {
+public class CIService extends RestBase implements FrameworkConstants, ServiceConstants, Constants, ResponseCodes {
 
 	
 	/**
@@ -105,7 +106,7 @@ public class CIService extends RestBase implements FrameworkConstants, ServiceCo
 		List<CIBuild> builds = null;
 		CIJob job = null;
 		try {
-			if(projectId.equals("null")) {
+			if(projectId == null || projectId.equals("null") || projectId.equals("")) {
 				ProjectInfo projectInfo = FrameworkServiceUtil.getProjectInfo(appDir);
 				projectId = projectInfo.getId();
 			}
@@ -118,13 +119,12 @@ public class CIService extends RestBase implements FrameworkConstants, ServiceCo
 				}
 			}
 			builds = ciManager.getBuilds(job);
-			ResponseInfo<List<CIBuild>> finalOutput = responseDataEvaluation(responseData, null, "Builds returned successfully", builds);
-			return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*")
+			ResponseInfo<List<CIBuild>> finalOutput = responseDataEvaluation(responseData, null, builds, RESPONSE_STATUS_SUCCESS, PHR800001);
+			return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, ALL_HEADER)
 					.build();
 		} catch (PhrescoException e) {
-			ResponseInfo<List<CIBuild>> finalOutput = responseDataEvaluation(responseData, e, "No Builds to return",
-					null);
-			return Response.status(Status.NOT_FOUND).entity(finalOutput).header("Access-Control-Allow-Origin", "*")
+			ResponseInfo<List<CIBuild>> finalOutput = responseDataEvaluation(responseData, e, null, RESPONSE_STATUS_ERROR, PHR810001);
+			return Response.status(Status.NOT_FOUND).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, ALL_HEADER)
 					.build();
 		}
 	}
@@ -141,28 +141,28 @@ public class CIService extends RestBase implements FrameworkConstants, ServiceCo
 	@Path("/create")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response createJob(ContinuousDelivery continuousDelivery, @QueryParam(REST_QUERY_CUSTOMERID) String customerId,
+	public Response createJob(@Context HttpServletRequest request, ContinuousDelivery continuousDelivery, @QueryParam(REST_QUERY_CUSTOMERID) String customerId,
 			@QueryParam(REST_QUERY_PROJECTID) String projectId, @QueryParam(REST_QUERY_APPDIR_NAME) String appDir, @QueryParam(REST_QUERY_USERID) String userId)
 	throws PhrescoException {
 		ResponseInfo<ContinuousDelivery> responseData = new ResponseInfo<ContinuousDelivery>();
 		ResponseInfo<ContinuousDelivery> finalOutput;
 		try {
-			if(projectId.equals("null")) {
+			if(projectId == null || projectId.equals("null") || projectId.equals("")) {
 				ProjectInfo projectInfo = FrameworkServiceUtil.getProjectInfo(appDir);
 				projectId = projectInfo.getId();
 			}
 			List<CIJob> jobs = continuousDelivery.getJobs();
 			//boolean validate = jobNameValidation(jobs);
-			boolean coreCreateJob = coreCreateJob(continuousDelivery, projectId, appDir, userId);
+			boolean coreCreateJob = coreCreateJob(continuousDelivery, projectId, appDir, userId, request);
 			if (coreCreateJob) {
-				finalOutput = responseDataEvaluation(responseData, null, "Job(s) created successfully", continuousDelivery);
+				finalOutput = responseDataEvaluation(responseData, null, continuousDelivery, RESPONSE_STATUS_SUCCESS, PHR800002);
 			} else {
-				finalOutput = responseDataEvaluation(responseData, null, "Job(s) creation Failed", null);
+				finalOutput = responseDataEvaluation(responseData, null, continuousDelivery, RESPONSE_STATUS_ERROR, PHR810003);
 			}
-			return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
+			return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, ALL_HEADER).build();
 		} catch (PhrescoException e) {
-			finalOutput = responseDataEvaluation(responseData, e, "Job creation Failed", null);
-			return Response.status(Status.NOT_FOUND).entity(finalOutput).header("Access-Control-Allow-Origin", "*")
+			finalOutput = responseDataEvaluation(responseData, e, null, RESPONSE_STATUS_ERROR, PHR810003);
+			return Response.status(Status.NOT_FOUND).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, ALL_HEADER)
 			.build();
 		}
 	}
@@ -203,15 +203,15 @@ public class CIService extends RestBase implements FrameworkConstants, ServiceCo
 				}
 			}
 		    if(hasTrue) {
-				ResponseInfo<Boolean> finalOutput = responseDataEvaluation(responseData, null, "Job Validation completed successfully", hasTrue);
-				return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
+				ResponseInfo<Boolean> finalOutput = responseDataEvaluation(responseData, null, hasTrue, RESPONSE_STATUS_SUCCESS, PHR800003);
+				return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, ALL_HEADER).build();
 		    } else {
-		    	ResponseInfo<Boolean> finalOutput = responseDataEvaluation(responseData, null, job+" Job Already Exists", hasTrue);
-				return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
+		    	ResponseInfo<Boolean> finalOutput = responseDataEvaluation(responseData, null, hasTrue, RESPONSE_STATUS_ERROR, PHR810031);
+				return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, ALL_HEADER).build();
 		    }
 		} catch (PhrescoException e) {
-			ResponseInfo<Boolean> finalOutput = responseDataEvaluation(responseData, e, job+" Job Already Exists",	null);
-			return Response.status(Status.NOT_FOUND).entity(finalOutput).header("Access-Control-Allow-Origin", "*")
+			ResponseInfo<Boolean> finalOutput = responseDataEvaluation(responseData, e, null, RESPONSE_STATUS_ERROR, PHR810031);
+			return Response.status(Status.NOT_FOUND).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, ALL_HEADER)
 			.build();
 		}
 	}
@@ -230,14 +230,14 @@ public class CIService extends RestBase implements FrameworkConstants, ServiceCo
 	@Path("/clone")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response createClone(@QueryParam(REST_QUERY_CLONE_NAME) String cloneName, @QueryParam(REST_QUERY_ENV_NAME) String envName,
+	public Response createClone(@Context HttpServletRequest request, @QueryParam(REST_QUERY_CLONE_NAME) String cloneName, @QueryParam(REST_QUERY_ENV_NAME) String envName,
 			@QueryParam(REST_QUERY_CONTINOUSNAME) String continuousName, @QueryParam(REST_QUERY_CUSTOMERID) String customerId,
 			@QueryParam(REST_QUERY_PROJECTID) String projectId, @QueryParam(REST_QUERY_APPDIR_NAME) String appDir, @QueryParam(REST_QUERY_USERID) String userId)
 	throws PhrescoException {
 		ResponseInfo<ContinuousDelivery> responseData = new ResponseInfo<ContinuousDelivery>();
 		ResponseInfo<ContinuousDelivery> finalOutput;
 		try {
-			if(projectId.equals("null")) {
+			if(projectId == null || projectId.equals("null") || projectId.equals("")) {
 				ProjectInfo projectInfo = FrameworkServiceUtil.getProjectInfo(appDir);
 				projectId = projectInfo.getId();
 			}
@@ -270,17 +270,17 @@ public class CIService extends RestBase implements FrameworkConstants, ServiceCo
 				ciJobs.add(cijob);
 			}
 			continuousDelivery.setJobs(ciJobs);
-			boolean coreCreateJob = coreCreateJob(continuousDelivery, projectId, appDir, userId);
+			boolean coreCreateJob = coreCreateJob(continuousDelivery, projectId, appDir, userId, request);
 
 			if (coreCreateJob) {
-				finalOutput = responseDataEvaluation(responseData, null, "Job(s) created successfully", continuousDelivery);
+				finalOutput = responseDataEvaluation(responseData, null, continuousDelivery, RESPONSE_STATUS_SUCCESS, PHR800002);
 			} else {
-				finalOutput = responseDataEvaluation(responseData, null, "Job(s) creation Failed", null);
+				finalOutput = responseDataEvaluation(responseData, null, null, RESPONSE_STATUS_ERROR, PHR810003);
 			}
-			return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
+			return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, ALL_HEADER).build();
 		} catch (PhrescoException e) {
-			finalOutput = responseDataEvaluation(responseData, e, "Job creation Failed", null);
-			return Response.status(Status.NOT_FOUND).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
+			finalOutput = responseDataEvaluation(responseData, e, null, RESPONSE_STATUS_ERROR, PHR810003);
+			return Response.status(Status.NOT_FOUND).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, ALL_HEADER).build();
 		}
 	}
 	
@@ -296,7 +296,7 @@ public class CIService extends RestBase implements FrameworkConstants, ServiceCo
 	@Path("/update")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response updateJob(ContinuousDelivery continuousDelivery, @QueryParam(REST_QUERY_CUSTOMERID) String customerId,
+	public Response updateJob(@Context HttpServletRequest request, ContinuousDelivery continuousDelivery, @QueryParam(REST_QUERY_CUSTOMERID) String customerId,
 			@QueryParam(REST_QUERY_PROJECTID) String projectId, @QueryParam(REST_QUERY_APPDIR_NAME) String appDir, @QueryParam(REST_QUERY_USERID) String userId)
 	throws PhrescoException {
 		ResponseInfo<CIJobStatus> responseData = new ResponseInfo<CIJobStatus>();
@@ -304,7 +304,7 @@ public class CIService extends RestBase implements FrameworkConstants, ServiceCo
 		CIJobStatus status = null;
 		try {
 			CIManager ciManager = PhrescoFrameworkFactory.getCIManager();
-			if(projectId.equals("null")) {
+			if(projectId == null || projectId.equals("null") || projectId.equals("")) {
 				ProjectInfo projectInfo = FrameworkServiceUtil.getProjectInfo(appDir);
 				projectId = projectInfo.getId();
 			}
@@ -314,9 +314,9 @@ public class CIService extends RestBase implements FrameworkConstants, ServiceCo
 			List<CIJob> oldJobs = ciManager.getOldJobs(projectId, continuousDelivery, appDir);
 			tempCiJobs.addAll(oldJobs);
 
-			for (CIJob ciJob : newJobs) {//t1,t2,t3	
+			for (CIJob ciJob : newJobs) {
 				boolean exists = false;
-				for (CIJob oldCiJob : oldJobs) {//t1,t3,t2
+				for (CIJob oldCiJob : oldJobs) {
 					if(oldCiJob.getJobName().equals(ciJob.getJobName())) {
 						boolean equals = ciJob.equals(oldCiJob);
 						//tempCiJobs.add(ciJob);
@@ -326,7 +326,7 @@ public class CIService extends RestBase implements FrameworkConstants, ServiceCo
 							if(StringUtils.isNotEmpty(ciJob.getAppDirName())) {
 								applicationInfo = FrameworkServiceUtil.getApplicationInfo(ciJob.getAppDirName());
 							}
-							CIJob job = setPreBuildCmds(ciJob,  applicationInfo, appDir, projectId, continuousDelivery.getName(), userId);
+							CIJob job = setPreBuildCmds(ciJob,  applicationInfo, appDir, projectId, continuousDelivery.getName(), userId, request);
 							updateJob = ciManager.updateJob(job);
 							//						if(updateJob) {
 							tempJobs.add(ciJob);
@@ -342,7 +342,7 @@ public class CIService extends RestBase implements FrameworkConstants, ServiceCo
 					if(StringUtils.isNotEmpty(ciJob.getAppDirName())) {
 						applicationInfo = FrameworkServiceUtil.getApplicationInfo(ciJob.getAppDirName());
 					}
-					CIJob jobWithCmds = setPreBuildCmds(ciJob,  applicationInfo, appDir, projectId, continuousDelivery.getName(), userId);
+					CIJob jobWithCmds = setPreBuildCmds(ciJob,  applicationInfo, appDir, projectId, continuousDelivery.getName(), userId, request);
 					boolean createJob = ciManager.createJob(jobWithCmds);
 					if(createJob) {
 						tempJobs.add(ciJob);
@@ -368,15 +368,14 @@ public class CIService extends RestBase implements FrameworkConstants, ServiceCo
 			}
 			ResponseInfo<CIJobStatus> finalOutput;
 			if (createJsonJobs) {
-				finalOutput = responseDataEvaluation(responseData, null, "Job(s) Updated successfully", continuousDelivery);
+				finalOutput = responseDataEvaluation(responseData, null, continuousDelivery, RESPONSE_STATUS_SUCCESS, PHR800020);
 			} else {
-				finalOutput = responseDataEvaluation(responseData, null, "Job(s) updation Failed", null);
+				finalOutput = responseDataEvaluation(responseData, null, null, RESPONSE_STATUS_ERROR, PHR810005);
 			}
-			return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
+			return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, ALL_HEADER).build();
 		} catch (PhrescoException e) {
-			ResponseInfo<Boolean> finalOutput = responseDataEvaluation(responseData, e, "Job updation Failed",
-					null);
-			return Response.status(Status.NOT_FOUND).entity(finalOutput).header("Access-Control-Allow-Origin", "*")
+			ResponseInfo<Boolean> finalOutput = responseDataEvaluation(responseData, e, null, RESPONSE_STATUS_ERROR, PHR810005);
+			return Response.status(Status.NOT_FOUND).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, ALL_HEADER)
 			.build();
 		}
 	}
@@ -397,7 +396,7 @@ public class CIService extends RestBase implements FrameworkConstants, ServiceCo
 		ResponseInfo<ContinuousDelivery> responseData = new ResponseInfo<ContinuousDelivery>();
 		ContinuousDelivery matchingContinuous = null;
 		boolean exist = false;
-		if(projectId.equals("null")) {
+		if(projectId == null || projectId.equals("null") || projectId.equals("")) {
 			ProjectInfo projectInfo = FrameworkServiceUtil.getProjectInfo(appDir);
 			projectId = projectInfo.getId();
 		}
@@ -411,11 +410,11 @@ public class CIService extends RestBase implements FrameworkConstants, ServiceCo
 
 		ResponseInfo<ContinuousDelivery> finalOutput;
 		if(exist) {
-			finalOutput= responseDataEvaluation(responseData, null, "Continuous Delivery Fetched successfully",	matchingContinuous);
+			finalOutput= responseDataEvaluation(responseData, null, matchingContinuous, RESPONSE_STATUS_SUCCESS, PHR800004);
 		} else {
-			finalOutput = responseDataEvaluation(responseData, null, "Could not find Delivery named "+continuousName,	matchingContinuous);
+			finalOutput = responseDataEvaluation(responseData, null, matchingContinuous, RESPONSE_STATUS_ERROR, PHR810006);
 		}
-		return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
+		return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, ALL_HEADER).build();
 	}
 	
 	/**
@@ -432,7 +431,7 @@ public class CIService extends RestBase implements FrameworkConstants, ServiceCo
 	throws PhrescoException {
 		ResponseInfo<Boolean> responseData = new ResponseInfo<Boolean>();
 		try {
-			if(projectId.equals("null")) {
+			if(projectId == null || projectId.equals("null") || projectId.equals("")) {
 				ProjectInfo projectInfo = FrameworkServiceUtil.getProjectInfo(appDir);
 				projectId = projectInfo.getId();
 			}
@@ -492,13 +491,11 @@ public class CIService extends RestBase implements FrameworkConstants, ServiceCo
 				projectContinuousDelivery.setId(projectId);
 			}
 
-			ResponseInfo<ProjectDelivery> finalOutput = responseDataEvaluation(responseData, null,
-					"Continuous Delivery List Successfully", projectContinuousDelivery);
-			return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
+			ResponseInfo<ProjectDelivery> finalOutput = responseDataEvaluation(responseData, null, projectContinuousDelivery, RESPONSE_STATUS_SUCCESS, PHR800005);
+			return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, ALL_HEADER).build();
 		} catch (PhrescoException e) {
-			ResponseInfo<Boolean> finalOutput = responseDataEvaluation(responseData, e, "Job creation Failed",
-					null);
-			return Response.status(Status.NOT_FOUND).entity(finalOutput).header("Access-Control-Allow-Origin", "*")
+			ResponseInfo<Boolean> finalOutput = responseDataEvaluation(responseData, e, null, RESPONSE_STATUS_ERROR, PHR810007);
+			return Response.status(Status.NOT_FOUND).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, ALL_HEADER)
 			.build();
 		}
 	}
@@ -519,7 +516,7 @@ public class CIService extends RestBase implements FrameworkConstants, ServiceCo
 			@QueryParam(REST_QUERY_PROJECTID) String projectId, @QueryParam(REST_QUERY_APPDIR_NAME) String appDir) throws PhrescoException {
 		ResponseInfo<CIJobStatus> responseData = new ResponseInfo<CIJobStatus>();
 		try {
-			if(projectId.equals("null")) {
+			if(projectId == null || projectId.equals("null") || projectId.equals("")) {
 				ProjectInfo projectInfo = FrameworkServiceUtil.getProjectInfo(appDir);
 				projectId = projectInfo.getId();
 			}
@@ -529,14 +526,12 @@ public class CIService extends RestBase implements FrameworkConstants, ServiceCo
 			List<CIJob> jobs = Utility.getJobs(continuousName, projectId, ciJobInfo);
 			ciJobStatus = ciManager.deleteJobs(appDir, jobs, projectId, continuousName);
 			ciManager.clearContinuousDelivery(continuousName, projectId, appDir);
-			ResponseInfo<CIJobStatus> finalOutput = responseDataEvaluation(responseData, null, "Job deleted successfully",
-					ciJobStatus);
-			return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*")
+			ResponseInfo<CIJobStatus> finalOutput = responseDataEvaluation(responseData, null, ciJobStatus, RESPONSE_STATUS_SUCCESS, PHR800006);
+			return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, ALL_HEADER)
 			.build();
 		} catch (PhrescoException e) {
-			ResponseInfo<CIJobStatus> finalOutput = responseDataEvaluation(responseData, e, "Job deletion Failed",
-					null);
-			return Response.status(Status.NOT_FOUND).entity(finalOutput).header("Access-Control-Allow-Origin", "*")
+			ResponseInfo<CIJobStatus> finalOutput = responseDataEvaluation(responseData, e, null, RESPONSE_STATUS_ERROR, PHR810009);
+			return Response.status(Status.NOT_FOUND).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, ALL_HEADER)
 			.build();
 		}
 	}
@@ -561,7 +556,7 @@ public class CIService extends RestBase implements FrameworkConstants, ServiceCo
 		ResponseInfo<CIJobStatus> responseData = new ResponseInfo<CIJobStatus>();
 		ResponseInfo<CIJobStatus> finalOutput ;
 		try {
-			if(projectId.equals("null")) {
+			if(projectId == null || projectId.equals("null") || projectId.equals("")) {
 				ProjectInfo projectInfo = FrameworkServiceUtil.getProjectInfo(appDir);
 				projectId = projectInfo.getId();
 			}
@@ -571,17 +566,16 @@ public class CIService extends RestBase implements FrameworkConstants, ServiceCo
 			CIJob specificJob = ciManager.getJob(jobName, projectId, ciJobInfo, continuousName);
 			if (specificJob != null) {
 				deleteBuilds = ciManager.deleteBuilds(specificJob, buildNumber);
-				finalOutput = responseDataEvaluation(responseData, null, "Build deleted successfully",	deleteBuilds);
+				finalOutput = responseDataEvaluation(responseData, null, deleteBuilds, RESPONSE_STATUS_SUCCESS, PHR800007);
 			} else {
-				finalOutput = responseDataEvaluation(responseData, null, "Build deletion Failed",	deleteBuilds);
+				finalOutput = responseDataEvaluation(responseData, null, deleteBuilds, RESPONSE_STATUS_ERROR, PHR810011);
 			}
 
-			return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*")
+			return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, ALL_HEADER)
 			.build();
 		} catch (PhrescoException e) {
-			finalOutput = responseDataEvaluation(responseData, e, "Build deletion Failed",
-					null);
-			return Response.status(Status.NOT_FOUND).entity(finalOutput).header("Access-Control-Allow-Origin", "*")
+			finalOutput = responseDataEvaluation(responseData, e, null, RESPONSE_STATUS_ERROR, PHR810011);
+			return Response.status(Status.NOT_FOUND).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, ALL_HEADER)
 			.build();
 		}
 	}
@@ -602,7 +596,7 @@ public class CIService extends RestBase implements FrameworkConstants, ServiceCo
 			@QueryParam(REST_QUERY_PROJECTID) String projectId, @QueryParam(REST_QUERY_APPDIR_NAME) String appDir, @QueryParam(REST_QUERY_CONTINOUSNAME) String continuousName) throws PhrescoException {
 		ResponseInfo<CIJobStatus> responseData = new ResponseInfo<CIJobStatus>();
 		try {
-			if(projectId.equals("null")) {
+			if(projectId == null || projectId.equals("null") || projectId.equals("")) {
 				ProjectInfo projectInfo = FrameworkServiceUtil.getProjectInfo(appDir);
 				projectId = projectInfo.getId();
 			}
@@ -613,17 +607,16 @@ public class CIService extends RestBase implements FrameworkConstants, ServiceCo
 			CIJob specificJob = ciManager.getJob(name, projectId, ciJobInfo, continuousName);
 			if (specificJob != null) {
 				buildJobs = ciManager.generateBuild(specificJob);
-				finalOutput = responseDataEvaluation(responseData, null, "Build Triggered success", buildJobs);
+				finalOutput = responseDataEvaluation(responseData, null, buildJobs, RESPONSE_STATUS_SUCCESS, PHR800008);
 			} else {
-				finalOutput = responseDataEvaluation(responseData, null, "Build Triggered Failed", buildJobs);
+				finalOutput = responseDataEvaluation(responseData, null, buildJobs, RESPONSE_STATUS_ERROR, PHR810012);
 			}
 
-			return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*")
+			return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, ALL_HEADER)
 			.build();
 		} catch (PhrescoException e) {
-			ResponseInfo<CIJobStatus> finalOutput = responseDataEvaluation(responseData, e, "Build failed",
-					null);
-			return Response.status(Status.NOT_FOUND).entity(finalOutput).header("Access-Control-Allow-Origin", "*")
+			ResponseInfo<CIJobStatus> finalOutput = responseDataEvaluation(responseData, e, null, RESPONSE_STATUS_ERROR, PHR810013);
+			return Response.status(Status.NOT_FOUND).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, ALL_HEADER)
 			.build();
 		}
 	}
@@ -649,13 +642,13 @@ public class CIService extends RestBase implements FrameworkConstants, ServiceCo
 			String[] cred = new String[2];
 			cred[0] = ciManager.getMailConfiguration(SMTP_AUTH_USERNAME);
 			cred[1] = ciManager.decyPassword(ciManager.getMailConfiguration(SMTP_AUTH_PASSWORD));
-			finalOutput = responseDataEvaluation(responseData, null, "Mail configuration retrieved successfully", cred);
+			finalOutput = responseDataEvaluation(responseData, null, cred, RESPONSE_STATUS_SUCCESS, PHR800009);
 		} catch (PhrescoException e) {
-			finalOutput = responseDataEvaluation(responseData, e, "Returned mail configuration Failed", null);
-			return Response.status(Status.NOT_FOUND).entity(finalOutput).header("Access-Control-Allow-Origin", "*")
+			finalOutput = responseDataEvaluation(responseData, e, null, RESPONSE_STATUS_ERROR, PHR810014);
+			return Response.status(Status.NOT_FOUND).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, ALL_HEADER)
 			.build();
 		}
-		return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*")
+		return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, ALL_HEADER)
 		.build();
 	}
 	
@@ -685,17 +678,17 @@ public class CIService extends RestBase implements FrameworkConstants, ServiceCo
 					confluenceDetail.add(repo);
 				}
 			}
-			finalOutput = responseDataEvaluation(responseData, null, "Confluence configuration retrieved successfully", confluenceDetail);
+			finalOutput = responseDataEvaluation(responseData, null, confluenceDetail, RESPONSE_STATUS_SUCCESS, PHR800021);
 		} catch (PhrescoException e) {
-			finalOutput = responseDataEvaluation(responseData, e, "Returned Confluence configuration Failed", null);
-			return Response.status(Status.NOT_FOUND).entity(finalOutput).header("Access-Control-Allow-Origin", "*")
+			finalOutput = responseDataEvaluation(responseData, e, null, RESPONSE_STATUS_ERROR, PHR810034);
+			return Response.status(Status.NOT_FOUND).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, ALL_HEADER)
 			.build();
 		} catch (org.codehaus.jettison.json.JSONException e) {
-			finalOutput = responseDataEvaluation(responseData, e, "Returned Confluence configuration Failed", null);
-			return Response.status(Status.NOT_FOUND).entity(finalOutput).header("Access-Control-Allow-Origin", "*")
+			finalOutput = responseDataEvaluation(responseData, e, null, RESPONSE_STATUS_ERROR, PHR810034);
+			return Response.status(Status.NOT_FOUND).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, ALL_HEADER)
 			.build();
 		}
-		return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*")
+		return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, ALL_HEADER)
 		.build();
 	}
 	
@@ -725,50 +718,17 @@ public class CIService extends RestBase implements FrameworkConstants, ServiceCo
 			}
 			setGlobalConfiguration = ciManager.setGlobalConfiguration(jenkinsUrl, submitUrl, JSONarray, emailAddress, emailPassword);
 		} catch (PhrescoException e) {
-			finalOutput = responseDataEvaluation(responseData, e, "Returned Confluence configuration Failed", setGlobalConfiguration);
-			return Response.status(Status.NOT_FOUND).entity(finalOutput).header("Access-Control-Allow-Origin", "*")
+			finalOutput = responseDataEvaluation(responseData, e, setGlobalConfiguration, RESPONSE_STATUS_ERROR, PHR810034);
+			return Response.status(Status.NOT_FOUND).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, ALL_HEADER)
 			.build();
 		} catch (org.json.JSONException e) {
-			finalOutput = responseDataEvaluation(responseData, e, "Returned Confluence configuration Failed", setGlobalConfiguration);
-			return Response.status(Status.NOT_FOUND).entity(finalOutput).header("Access-Control-Allow-Origin", "*")
+			finalOutput = responseDataEvaluation(responseData, e, setGlobalConfiguration, RESPONSE_STATUS_ERROR, PHR810034);
+			return Response.status(Status.NOT_FOUND).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, ALL_HEADER)
 			.build();
 		}
-		finalOutput = responseDataEvaluation(responseData, null, "Confluence configuration saved successfully", setGlobalConfiguration);
-		return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*")
+		finalOutput = responseDataEvaluation(responseData, null, setGlobalConfiguration, RESPONSE_STATUS_SUCCESS, PHR800022);
+		return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, ALL_HEADER)
 		.build();
-	}
-
-	/**
-	 * @param senderEmailId
-	 * @param senderEmailPassword
-	 * @param customerId
-	 * @param projectId
-	 * @param appId
-	 * @return
-	 * @throws PhrescoException
-	 */
-	@POST
-	@Path("/savemail")
-	@Produces(MediaType.APPLICATION_JSON)
-	@Consumes(MediaType.APPLICATION_JSON)
-	public Response saveEmailConfiguration(@QueryParam(REST_QUERY_SENDER_MAIL_ID) String senderEmailId,
-			@QueryParam(REST_QUERY_SENDER_MAIL_PWD) String senderEmailPassword)
-	throws PhrescoException {
-		ResponseInfo responseData = new ResponseInfo();
-		try {
-			CIManager ciManager = PhrescoFrameworkFactory.getCIManager();
-			String jenkinsPort = FrameworkServiceUtil.getJenkinsPortNo();
-			ciManager.saveMailConfiguration(jenkinsPort, senderEmailId, senderEmailPassword);
-			ResponseInfo finalOutput = responseDataEvaluation(responseData, null, "Mail Configuration saved successfully",
-					null);
-			return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*")
-			.build();
-		} catch (PhrescoException e) {
-			ResponseInfo finalOutput = responseDataEvaluation(responseData, e, "Save mail Configuration failed",
-					null);
-			return Response.status(Status.NOT_FOUND).entity(finalOutput).header("Access-Control-Allow-Origin", "*")
-			.build();
-		}
 	}
 	
 	/**
@@ -800,12 +760,12 @@ public class CIService extends RestBase implements FrameworkConstants, ServiceCo
 			String jenkinsUrl = HTTP_PROTOCOL + PROTOCOL_POSTFIX + job.getJenkinsUrl() + ":" + job.getJenkinsPort() + "/" + CI + "/job/";
 			buildDownloadUrl = buildDownloadUrl.replace(" ", "%20");
 			String url = jenkinsUrl+job.getJobName()+"/ws/"+buildDownloadUrl;
-			finalOutput = responseDataEvaluation(responseData, null, "Build Download url retrieved successfully", url);
-			return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*")
+			finalOutput = responseDataEvaluation(responseData, null, url, RESPONSE_STATUS_SUCCESS, PHR800010);
+			return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, ALL_HEADER)
 			.build();
 		} catch (Exception e) {
-			finalOutput = responseDataEvaluation(responseData, e, "Build Download url retrieve failed", null);
-			return Response.status(Status.NOT_FOUND).entity(finalOutput).header("Access-Control-Allow-Origin", "*")
+			finalOutput = responseDataEvaluation(responseData, e, null, RESPONSE_STATUS_ERROR, PHR810035);
+			return Response.status(Status.NOT_FOUND).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, ALL_HEADER)
 					.build();
 		}
 	}
@@ -830,20 +790,17 @@ public class CIService extends RestBase implements FrameworkConstants, ServiceCo
 			localJenkinsAlive = code + "";
 		} catch (ConnectException e) {
 			localJenkinsAlive = CODE_404;
-			ResponseInfo<String> finalOutput = responseDataEvaluation(responseData, null, "Jenkins not found",
-					localJenkinsAlive);
-			return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*")
+			ResponseInfo<String> finalOutput =responseDataEvaluation(responseData, e, localJenkinsAlive, RESPONSE_STATUS_ERROR, PHR810017);
+			return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, ALL_HEADER)
 			.build();
 		} catch (Exception e) {
 			localJenkinsAlive = CODE_404;
-			ResponseInfo<String> finalOutput = responseDataEvaluation(responseData, null, "Jenkins not found",
-					localJenkinsAlive);
-			return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*")
+			ResponseInfo<String> finalOutput = responseDataEvaluation(responseData, e, localJenkinsAlive, RESPONSE_STATUS_ERROR, PHR810017);
+			return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, ALL_HEADER)
 			.build();
 		}
-		ResponseInfo<String> finalOutput = responseDataEvaluation(responseData, null, "Jenkins is Alive",
-				localJenkinsAlive);
-		return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*")
+		ResponseInfo<String> finalOutput = responseDataEvaluation(responseData, null, localJenkinsAlive, RESPONSE_STATUS_SUCCESS, PHR800011);
+		return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, ALL_HEADER)
 		.build();
 	}
 
@@ -863,7 +820,7 @@ public class CIService extends RestBase implements FrameworkConstants, ServiceCo
 		ResponseInfo<String> responseData = new ResponseInfo<String>();
 		ResponseInfo<Boolean> finalOutput = null;
 		try {
-			if(projectId.equals("null")) {
+			if(projectId == null || projectId.equals("null") || projectId.equals("")) {
 				ProjectInfo projectInfo = FrameworkServiceUtil.getProjectInfo(appDir);
 				projectId = projectInfo.getId();
 			}
@@ -877,17 +834,17 @@ public class CIService extends RestBase implements FrameworkConstants, ServiceCo
 				}
 			}
 			String jobStatus = ciManager.getJobStatus(job);
-			finalOutput = responseDataEvaluation(responseData, null, "Return Job Status successfully", jobStatus);
-			return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
+			finalOutput = responseDataEvaluation(responseData, null, jobStatus, RESPONSE_STATUS_SUCCESS, PHR800012);
+			return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, ALL_HEADER).build();
 		} catch (PhrescoException e) {
-			finalOutput = responseDataEvaluation(responseData, e, "Failed to get Job Status",	null);
-			return Response.status(Status.NOT_FOUND).entity(finalOutput).header("Access-Control-Allow-Origin", "*")
+			finalOutput = responseDataEvaluation(responseData, e, null, RESPONSE_STATUS_ERROR, PHR810018);
+			return Response.status(Status.NOT_FOUND).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, ALL_HEADER)
 			.build();
 		}
 	}
 	
 	//core method used to create jobs in contDelivery
-	private boolean coreCreateJob(ContinuousDelivery continuousDelivery, String  projectId, String appDir, String userId) throws PhrescoException {
+	private boolean coreCreateJob(ContinuousDelivery continuousDelivery, String  projectId, String appDir, String userId, HttpServletRequest request) throws PhrescoException {
 		CIManagerImpl ciManager = null;
 		boolean createJsonJobs = false;
 		try {
@@ -899,7 +856,7 @@ public class CIService extends RestBase implements FrameworkConstants, ServiceCo
 				if(StringUtils.isNotEmpty(job.getAppDirName())) {
 					applicationInfo = FrameworkServiceUtil.getApplicationInfo(job.getAppDirName());
 				}
-				CIJob jobWithCmds = setPreBuildCmds(job,  applicationInfo, appDir, projectId, continuousDelivery.getName(), userId);
+				CIJob jobWithCmds = setPreBuildCmds(job,  applicationInfo, appDir, projectId, continuousDelivery.getName(), userId, request);
 				boolean createJob = ciManager.createJob(job);
 				if (createJob) {
 					ciJobs.add(job);
@@ -914,7 +871,7 @@ public class CIService extends RestBase implements FrameworkConstants, ServiceCo
 		}
 	}
 	
-	public CIJob setPreBuildCmds(CIJob job, ApplicationInfo appInfo, String appDir, String id, String name, String userId) throws PhrescoException {
+	public CIJob setPreBuildCmds(CIJob job, ApplicationInfo appInfo, String appDir, String id, String name, String userId, HttpServletRequest request) throws PhrescoException {
 		try {
 			List<String> preBuildStepCmds = new ArrayList<String>();
 
@@ -999,8 +956,8 @@ public class CIService extends RestBase implements FrameworkConstants, ServiceCo
 				// here we can set necessary values in request and we can change object value as well...
 				// getting sonar url
 				
-				FrameworkUtil frameworkUtil = FrameworkUtil.getInstance();
-				String usingSonarUrl = frameworkUtil.getSonarURL();
+//				FrameworkUtil frameworkUtil = FrameworkUtil.getInstance();
+				String usingSonarUrl = FrameworkServiceUtil.getSonarURL(request);
 				// logo and theme
 				//				String logoImageString = getLogoImageString();
 				//				String themeColorJson = getThemeColorJson();

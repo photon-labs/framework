@@ -104,8 +104,6 @@ define([], function() {
 				}
 			} else if (action === "add") {
 				header.requestMethod = "POST";
-				ciRequestBody.customerId = customerId;
-				ciRequestBody.projectId = projectId;
 				header.requestPostBody = JSON.stringify(ciRequestBody);
 				header.webserviceurl = commonVariables.webserviceurl + commonVariables.jobTemplates+ "?customerId="+ customerId + "&projectId=" + projectId;
 			} else if (action === "continuousDeliveryList") {
@@ -113,8 +111,6 @@ define([], function() {
 				header.webserviceurl = commonVariables.webserviceurl + commonVariables.ci+"/list?projectId="+projectId+"&appDirName="+appDir;
 			} else if (action === "update") {
 				header.requestMethod = "PUT";
-				ciRequestBody.customerId = customerId;
-				ciRequestBody.projectId = projectId;
 				header.requestPostBody = JSON.stringify(ciRequestBody);
 				var oldname = $('[name="oldname"]').val();				
 				header.webserviceurl = commonVariables.webserviceurl + commonVariables.jobTemplates + "?oldname=" + oldname + "&customerId="+ customerId+"&projectId=" + projectId;
@@ -244,11 +240,12 @@ define([], function() {
 			ciRequestBody.cdName = obj.parent().parent("div").attr("name");
 			commonVariables.loadingScreen.removeLoading();
 			self.getHeaderResponse(self.getRequestHeader(ciRequestBody, 'jobStatus'), function (response) {
-				if(response.data === "FAILURE") {
+				var parseJson = $.parseJSON(response.data);
+				if(parseJson === "red") {
 					obj.find('.img_process').attr('src',"themes/default/images/helios/cross_red.png");
-				} else if (response.data === "INPROGRESS") {
+				} else if (parseJson === "red_anime" || parseJson === "blue_anime") {
 					obj.find('.img_process').attr('src',"themes/default/images/helios/processing.gif");
-				} else if (response.data === "SUCCESS") {
+				} else if (parseJson === "blue") {
 					obj.find('.img_process').attr('src',"themes/default/images/helios/tick_green.png");
 				}
 			});
@@ -508,19 +505,33 @@ define([], function() {
 			try {
 				commonVariables.loadingScreen.showLoading();
 				commonVariables.api.ajaxRequest(header, function(response) {
-						if (response !== null) {
+						if (response !== null && (response.status !== "error" || response.status !== "failure")) {
 							commonVariables.loadingScreen.removeLoading();
 							callback(response);
 						} else {
 							commonVariables.loadingScreen.removeLoading();
-							callback({ "status" : "service failure"});
+							$(".content_end").show();
+							$(".msgdisplay").removeClass("success").addClass("error");
+							$(".error").attr('data-i18n', 'errorCodes.' + response.responseCode);
+							self.renderlocales(commonVariables.contentPlaceholder);	
+							$(".error").fadeIn(500).fadeOut(500).fadeIn(500).fadeOut(500).fadeIn(500).fadeOut(5);
+							setTimeout(function() {
+								$(".content_end").hide();
+							},2500);
 						}
 
 					},
 
 					function(textStatus) {
 						commonVariables.loadingScreen.removeLoading();
-						callback({ "status" : "Connection failure"});
+						$(".content_end").show();
+						$(".msgdisplay").removeClass("success").addClass("error");
+						$(".error").attr('data-i18n', 'commonlabel.errormessage.serviceerror');
+						self.renderlocales(commonVariables.contentPlaceholder);		
+						$(".error").fadeIn(500).fadeOut(500).fadeIn(500).fadeOut(500).fadeIn(500).fadeOut(5);
+						setTimeout(function() {
+							$(".content_end").hide();
+						},2500);
 					}
 				);
 			} catch(exception) {
@@ -533,16 +544,30 @@ define([], function() {
 			var self = this;
 			try {
 				commonVariables.api.ajaxRequest(header, function(response) {
-						if (response !== null) {
+						if (response !== null && (response.status !== "error" || response.status !== "failure")) {
 							callback(response);
 						} else {
-							callback({ "status" : "service failure"});
+							$(".content_end").show();
+							$(".msgdisplay").removeClass("success").addClass("error");
+							$(".error").attr('data-i18n', 'errorCodes.' + response.responseCode);
+							self.renderlocales(commonVariables.contentPlaceholder);	
+							$(".error").fadeIn(500).fadeOut(500).fadeIn(500).fadeOut(500).fadeIn(500).fadeOut(5);
+							setTimeout(function() {
+								$(".content_end").hide();
+							},2500);
 						}
 
 					},
 
 					function(textStatus) {						
-						callback({ "status" : "Connection failure"});
+						$(".content_end").show();
+						$(".msgdisplay").removeClass("success").addClass("error");
+						$(".error").attr('data-i18n', 'commonlabel.errormessage.serviceerror');
+						self.renderlocales(commonVariables.contentPlaceholder);		
+						$(".error").fadeIn(500).fadeOut(500).fadeIn(500).fadeOut(500).fadeIn(500).fadeOut(5);
+						setTimeout(function() {
+							$(".content_end").hide();
+						},2500);
 					}
 				);
 			} catch(exception) {
@@ -1500,9 +1525,14 @@ define([], function() {
 				ciRequestBody.flag =$(thisObj).val();
 				self.getHeaderResponse(self.getRequestHeader(ciRequestBody, 'jobValidation'), function (response) {
 					if(response.data === false) {
-						$(".blinkmsg").removeClass("popsuccess").addClass("poperror");
-						self.effectFadeOut('poperror', (''));
-						$(".poperror").text(response.message);
+						$(".msgdisplay").removeClass("success").addClass("error");
+						$(".error").attr('data-i18n', 'errorCodes.' + response.responseCode);
+						self.renderlocales(commonVariables.contentPlaceholder);	
+						$(".error").show();
+						$(".error").fadeIn(500).fadeOut(500).fadeIn(500).fadeOut(500).fadeIn(500).fadeOut(5);
+						setTimeout(function() {
+							$(".error").hide();
+						},2500);		
 						hasError = true;
 						return false;
 					} 
@@ -1537,9 +1567,13 @@ define([], function() {
 					$(this).removeClass("errormessage");
 				});
 			} else if($(sortable2LiObj).length === 0) {
-				$(".blinkmsg").removeClass("popsuccess").addClass("poperror");
-				self.effectFadeOut('poperror', (''));
-				$(".poperror").text("Configure atleast one Job!");
+				$(".msgdisplay").removeClass("success").addClass("error");
+				$(".error").text("Configure atleast one Job!");
+				$(".error").show();
+				$(".error").fadeIn(500).fadeOut(500).fadeIn(500).fadeOut(500).fadeIn(500).fadeOut(5);
+				setTimeout(function() {
+					$(".error").hide();
+				},2500);
 			}
 		},
 

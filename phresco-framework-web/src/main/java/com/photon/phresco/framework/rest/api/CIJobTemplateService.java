@@ -42,10 +42,13 @@ import org.codehaus.jettison.json.JSONObject;
 import org.apache.commons.lang.StringUtils;
 
 import com.photon.phresco.api.ConfigManager;
+import com.photon.phresco.commons.FrameworkConstants;
+import com.photon.phresco.commons.ResponseCodes;
 import com.photon.phresco.commons.model.ApplicationInfo;
 import com.photon.phresco.commons.model.CIJob;
 import com.photon.phresco.commons.model.ContinuousDelivery;
 import com.photon.phresco.commons.model.ProjectDelivery;
+import com.photon.phresco.commons.model.ProjectInfo;
 import com.photon.phresco.configuration.Environment;
 import com.photon.phresco.exception.ConfigurationException;
 import com.photon.phresco.exception.PhrescoException;
@@ -62,7 +65,7 @@ import com.sun.jersey.api.client.ClientResponse.Status;
  * The Class CIJobTemplateService.
  */
 @Path("/jobTemplates")
-public class CIJobTemplateService extends RestBase implements ServiceConstants {
+public class CIJobTemplateService extends RestBase implements FrameworkConstants, ServiceConstants, ResponseCodes {
 	
 	/**
 	 * List the jobTemplates.
@@ -78,13 +81,14 @@ public class CIJobTemplateService extends RestBase implements ServiceConstants {
 			List<CIJobTemplate> jobTemplates = new ArrayList<CIJobTemplate>();
 			List<ApplicationInfo> appInfos = FrameworkServiceUtil.getAppInfos(customerId, projectId);
 			jobTemplates = ciManager.getJobTemplatesByProjId(projectId, appInfos);
-			ResponseInfo<List<CIJobTemplate>> finalOutput = responseDataEvaluation(responseData, null, "Job Templates listed successfully", jobTemplates);
-			return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
+			ResponseInfo<List<CIJobTemplate>> finalOutput = responseDataEvaluation(responseData, null,
+					jobTemplates, RESPONSE_STATUS_SUCCESS, PHR800013);
+			return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, ALL_HEADER).build();
 		} catch (Exception e) {
 			ResponseInfo<List<CIJobTemplate>> finalOutput = responseDataEvaluation(responseData, e,
-					"Job Templates failed to list", null);
-			return Response.status(Status.EXPECTATION_FAILED).entity(finalOutput).header("Access-Control-Allow-Origin",
-					"*").build();
+					null, RESPONSE_STATUS_ERROR, PHR810019);
+			return Response.status(Status.EXPECTATION_FAILED).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN,
+					ALL_HEADER).build();
 		}
 	}
 
@@ -115,26 +119,27 @@ public class CIJobTemplateService extends RestBase implements ServiceConstants {
 			if (CollectionUtils.isNotEmpty(jobTemplates)) {
 				for (CIJobTemplate jobTemplate : jobTemplates) {
 					if (name.equalsIgnoreCase(jobTemplate.getName())) {
-						ResponseInfo<CIJobTemplate> finalOutput = responseDataEvaluation(responseData, null, "Job Template retrived successfully", jobTemplate);
-						return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
+						ResponseInfo<CIJobTemplate> finalOutput = responseDataEvaluation(responseData, null, jobTemplate, RESPONSE_STATUS_SUCCESS, PHR800014);
+						
+						return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, ALL_HEADER).build();
 					} 
 				}
 			}
-			ResponseInfo<CIJobTemplate> finalOutput = responseDataEvaluation(responseData, null, "Cannot Find jobTemplate", null);
-			return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
+			ResponseInfo<CIJobTemplate> finalOutput = responseDataEvaluation(responseData, null, null, RESPONSE_STATUS_SUCCESS, PHR810020);
+			return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, ALL_HEADER).build();
 			
 		} catch (Exception e) {
-			ResponseInfo<CIJobTemplate> finalOutput = responseDataEvaluation(responseData, e,
-					"Job Templates failed to retrive", null);
-			return Response.status(Status.EXPECTATION_FAILED).entity(finalOutput).header("Access-Control-Allow-Origin",
-					"*").build();
+			ResponseInfo<CIJobTemplate> finalOutput = responseDataEvaluation(responseData, e, null, RESPONSE_STATUS_ERROR, PHR810021);
+			return Response.status(Status.EXPECTATION_FAILED).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN,
+					ALL_HEADER).build();
 		}
 	}
 
 	@GET
 	@Path("/validate")
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response validateName(@QueryParam(REST_QUERY_PROJECTID) String projectId, @QueryParam(REST_QUERY_CUSTOMERID) String customerId, @QueryParam(REST_QUERY_NAME) String name, @QueryParam(REST_QUERY_OLDNAME) String oldName) {
+	public Response validateName(@QueryParam(REST_QUERY_PROJECTID) String projectId, @QueryParam(REST_QUERY_CUSTOMERID) String customerId, 
+			@QueryParam(REST_QUERY_NAME) String name, @QueryParam(REST_QUERY_OLDNAME) String oldName) {
 		ResponseInfo<Boolean> responseData = new ResponseInfo<Boolean>();
 		try {
 			boolean status = true;
@@ -149,11 +154,11 @@ public class CIJobTemplateService extends RestBase implements ServiceConstants {
 					}
 				}
 			}
-			ResponseInfo<Boolean> finalOutput = responseDataEvaluation(responseData, null, "", status);
-			return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
+			ResponseInfo<Boolean> finalOutput = responseDataEvaluation(responseData, null, status, RESPONSE_STATUS_SUCCESS, PHR800015);
+			return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, ALL_HEADER).build();
 		} catch (Exception e) {
-			ResponseInfo<Boolean> finalOutput = responseDataEvaluation(responseData, e, "", null);
-			return Response.status(Status.EXPECTATION_FAILED).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
+			ResponseInfo<Boolean> finalOutput = responseDataEvaluation(responseData, e, null, RESPONSE_STATUS_ERROR, PHR810022);
+			return Response.status(Status.EXPECTATION_FAILED).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, ALL_HEADER).build();
 		}
 	}
 
@@ -173,14 +178,13 @@ public class CIJobTemplateService extends RestBase implements ServiceConstants {
 			List<CIJobTemplate> jobTemplates = Arrays.asList(ciJobTemplate);
 			List<ApplicationInfo> appInfos = FrameworkServiceUtil.getAppInfos(customerId, projectId);
 			ciManager.createJobTemplates(jobTemplates, false, appInfos);
-			ResponseInfo<CIJobTemplate> finalOutput = responseDataEvaluation(responseData, null,
-					"Job Template added successfully", ciJobTemplate);
-			return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
+			ResponseInfo<CIJobTemplate> finalOutput = responseDataEvaluation(responseData, null, ciJobTemplate, RESPONSE_STATUS_SUCCESS, PHR800016);
+			return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, ALL_HEADER).build();
 		} catch (Exception e) {
 			ResponseInfo<CIJobTemplate> finalOutput = responseDataEvaluation(responseData, e,
-					"Job Templates failed to add", null);
-			return Response.status(Status.EXPECTATION_FAILED).entity(finalOutput).header("Access-Control-Allow-Origin",
-					"*").build();
+					null, RESPONSE_STATUS_ERROR, PHR810023);
+			return Response.status(Status.EXPECTATION_FAILED).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN,
+					ALL_HEADER).build();
 		}
 	}
 
@@ -200,16 +204,16 @@ public class CIJobTemplateService extends RestBase implements ServiceConstants {
 			List<ApplicationInfo> appInfos = FrameworkServiceUtil.getAppInfos(customerId, projId);
 			boolean updateJobTemplate = ciManager.updateJobTemplate(ciJobTemplate, oldName, projId, appInfos);
 			if (!updateJobTemplate) {
-			ResponseInfo<CIJobTemplate> finalOutput = responseDataEvaluation(responseData, null, "Job Template updation failed", updateJobTemplate);
-			return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
+			ResponseInfo<CIJobTemplate> finalOutput = responseDataEvaluation(responseData, null, updateJobTemplate, RESPONSE_STATUS_ERROR, PHR810024);
+			return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, ALL_HEADER).build();
 			} 			
-			ResponseInfo<CIJobTemplate> finalOutput = responseDataEvaluation(responseData, null, "Job Template updated successfully", updateJobTemplate);
-			return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
+			ResponseInfo<CIJobTemplate> finalOutput = responseDataEvaluation(responseData, null, updateJobTemplate, RESPONSE_STATUS_SUCCESS, PHR800017);
+			return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, ALL_HEADER).build();
 		} catch (Exception e) {
-			ResponseInfo<CIJobTemplate> finalOutput = responseDataEvaluation(responseData, e,
-					"Job Templates updation failed", null);
-			return Response.status(Status.EXPECTATION_FAILED).entity(finalOutput).header("Access-Control-Allow-Origin",
-					"*").build();
+			e.printStackTrace();
+			ResponseInfo<CIJobTemplate> finalOutput = responseDataEvaluation(responseData, e, null, RESPONSE_STATUS_ERROR, PHR810024);
+			return Response.status(Status.EXPECTATION_FAILED).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN,
+					ALL_HEADER).build();
 		}
 	}
 
@@ -232,24 +236,20 @@ public class CIJobTemplateService extends RestBase implements ServiceConstants {
 			if(validate) {
 				boolean deleteJobTemplate = ciManager.deleteJobTemplate(name, projId, appInfos);
 				if (deleteJobTemplate) {
-					ResponseInfo<CIJobTemplate> finalOutput = responseDataEvaluation(responseData, null,
-							"Job Template deleted successfully", ciJobTemplate);
-					return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*")
+					ResponseInfo<CIJobTemplate> finalOutput = responseDataEvaluation(responseData, null, ciJobTemplate, RESPONSE_STATUS_SUCCESS, PHR800018);
+					return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, ALL_HEADER)
 							.build();
 				}
-				ResponseInfo<CIJobTemplate> finalOutput = responseDataEvaluation(responseData, null,
-						"Job Templates deletion failed", ciJobTemplate);
-				return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
+				ResponseInfo<CIJobTemplate> finalOutput = responseDataEvaluation(responseData, null, ciJobTemplate, RESPONSE_STATUS_ERROR, PHR810027);
+				return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, ALL_HEADER).build();
 			} else {
-				ResponseInfo<CIJobTemplate> finalOutput = responseDataEvaluation(responseData, null,
-						"Job is created using "+ name +" Template", validate);
-				return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
+				ResponseInfo<CIJobTemplate> finalOutput = responseDataEvaluation(responseData, null, validate, RESPONSE_STATUS_ERROR, PHR810033);
+				return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, ALL_HEADER).build();
 			}
 		} catch (Exception e) {
-			ResponseInfo<CIJobTemplate> finalOutput = responseDataEvaluation(responseData, e,
-					"Job Templates deletion failed", null);
-			return Response.status(Status.EXPECTATION_FAILED).entity(finalOutput).header("Access-Control-Allow-Origin",
-					"*").build();
+			ResponseInfo<CIJobTemplate> finalOutput = responseDataEvaluation(responseData, e, null, RESPONSE_STATUS_ERROR, PHR810027);
+			return Response.status(Status.EXPECTATION_FAILED).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN,
+					ALL_HEADER).build();
 		}
 	}
 
@@ -327,20 +327,18 @@ public class CIJobTemplateService extends RestBase implements ServiceConstants {
 					getJobTemplateByAppDir(envName, jobTemplateMap, ciManager, appInfo);
 				}
 			}
-			ResponseInfo<CIJobTemplate> finalOutput = responseDataEvaluation(responseData, null,
-					"Job Templates Fetched Successfully", jobTemplateMap);
-			return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
+			ResponseInfo<CIJobTemplate> finalOutput = responseDataEvaluation(responseData, null, jobTemplateMap, RESPONSE_STATUS_SUCCESS, PHR800019);
+			return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, ALL_HEADER).build();
 		} catch (PhrescoException e) {
-			ResponseInfo<CIJobTemplate> finalOutput = responseDataEvaluation(responseData, e,
-					"Job Templates Failed to Fetch", null);
-			return Response.status(Status.EXPECTATION_FAILED).entity(finalOutput).header("Access-Control-Allow-Origin",
-					"*").build();
+			ResponseInfo<CIJobTemplate> finalOutput = responseDataEvaluation(responseData, e, null, RESPONSE_STATUS_ERROR, PHR810028);
+			return Response.status(Status.EXPECTATION_FAILED).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN,
+					ALL_HEADER).build();
 		} catch (ConfigurationException e) {
-			ResponseInfo<CIJobTemplate> finalOutput = responseDataEvaluation(responseData, e, "Job Templates Failed to Fetch", null);
-			return Response.status(Status.EXPECTATION_FAILED).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
+			ResponseInfo<CIJobTemplate> finalOutput = responseDataEvaluation(responseData, e, null, RESPONSE_STATUS_ERROR, PHR810028);
+			return Response.status(Status.EXPECTATION_FAILED).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, ALL_HEADER).build();
 		} catch (JSONException e) {
-			ResponseInfo<CIJobTemplate> finalOutput = responseDataEvaluation(responseData, e, "Job Templates Failed to Fetch", null);
-			return Response.status(Status.EXPECTATION_FAILED).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
+			ResponseInfo<CIJobTemplate> finalOutput = responseDataEvaluation(responseData, e, null, RESPONSE_STATUS_ERROR, PHR810028);
+			return Response.status(Status.EXPECTATION_FAILED).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, ALL_HEADER).build();
 		}
 	}
 

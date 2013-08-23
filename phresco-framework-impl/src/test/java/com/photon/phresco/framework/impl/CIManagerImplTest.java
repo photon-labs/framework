@@ -92,7 +92,6 @@ public class CIManagerImplTest implements FrameworkConstants{
 		appIds.add("a456");
 		ciJobTemplate.setAppIds(appIds);
 		
-		ciJobTemplate.setProjectId("p123");
 		
 		ciJobTemplate.setEnableRepo(true);
 		List<String> repoTypes = new ArrayList<String>(2);

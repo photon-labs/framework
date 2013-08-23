@@ -469,16 +469,22 @@ public class CIManagerImpl implements CIManager, FrameworkConstants {
 			S_LOGGER.debug("Entering Method CIManagerImpl.getStatus(CIJob job)");
 		}
 		String jsonResponse = null;
+		String color = null;
 		try {
-			String jenkinsUrl = HTTP_PROTOCOL + PROTOCOL_POSTFIX + job.getJenkinsUrl() + COLON + job.getJenkinsPort() + FORWARD_SLASH + CI + FORWARD_SLASH + CI_JOB + FORWARD_SLASH + job.getJobName()+ FORWARD_SLASH +  JOB_STATUS_COMMAND;
+			String jenkinsUrl = HTTP_PROTOCOL + PROTOCOL_POSTFIX + job.getJenkinsUrl() + COLON + job.getJenkinsPort() + FORWARD_SLASH + CI + FORWARD_SLASH + CI_JOB + FORWARD_SLASH + job.getJobName()+ FORWARD_SLASH +  "api/json/color";
 			jsonResponse = getJsonResponse(jenkinsUrl);
+
+			JsonParser parser = new JsonParser();
+			JsonElement jsonElement = parser.parse(jsonResponse);
+			JsonObject jsonObject = jsonElement.getAsJsonObject();
+			color = jsonObject.get("color").toString();
 
 		} catch (Exception e) {
 			if (debugEnabled) {
 				S_LOGGER.debug("Entering catch block of CIManagerImpl.getBuildsArray "+e.getLocalizedMessage());
 			}
 		}
-		return jsonResponse;
+		return color;
 	}
 
 	private CIJobStatus buildJob(CIJob job) throws PhrescoException {
@@ -985,7 +991,8 @@ public class CIManagerImpl implements CIManager, FrameworkConstants {
 						if (CollectionUtils.isEmpty(jobTemplates) || createNewFile) {
 							jobTemplates = new ArrayList<CIJobTemplate>();
 						}
-						ciJobTemplates.get(0).setAppIds(Arrays.asList(applicationInfo.getAppDirName()));
+						
+						ciJobTemplates.get(0).setAppIds(Arrays.asList(""));
 						jobTemplates.addAll(ciJobTemplates);
 		
 						Gson gson = new Gson();
@@ -1101,7 +1108,10 @@ public class CIManagerImpl implements CIManager, FrameworkConstants {
 			if (CollectionUtils.isEmpty(jobTemplates)) {
 				return ciJobTemplates;
 			}
-
+			
+			for (CIJobTemplate ciJobTemplate : jobTemplates) {
+				ciJobTemplate.setAppIds(Arrays.asList(appId));
+			}
 			ciJobTemplates = new ArrayList<CIJobTemplate>(jobTemplates.size());
 
 			for (CIJobTemplate ciJobTemplate : jobTemplates) {
@@ -1136,18 +1146,27 @@ public class CIManagerImpl implements CIManager, FrameworkConstants {
 				List<CIJobTemplate> appJobTemplates = getJobTemplates(appInfo.getAppDirName());
 
 				if (CollectionUtils.isNotEmpty(appJobTemplates)) {
+					
+					for (CIJobTemplate ciJobTemplate : appJobTemplates) {
+						ciJobTemplate.setAppIds(Arrays.asList(appInfo.getAppDirName()));
+					}
 					if (CollectionUtils.isEmpty(jobTemplates)) {
 						jobTemplates = new ArrayList<CIJobTemplate>();
 						jobTemplates.addAll(appJobTemplates);
 					} else {
-
+						
 						for (CIJobTemplate appJobTemplate : appJobTemplates) { 
 
 							boolean isFound = false;
 							for (CIJobTemplate jobTemplate : jobTemplates) {
 								if (appJobTemplate.getName().equals(jobTemplate.getName())) {
+									appJobTemplate.setAppIds(Arrays.asList(appInfo.getAppDirName()));
 									String appIdOfAppJobTemplate = appJobTemplate.getAppIds().get(0);
-									jobTemplate.getAppIds().add(appIdOfAppJobTemplate);
+									List<String> appids = new ArrayList<String>();
+									List<String> jobTemplateAppIds = jobTemplate.getAppIds();
+									appids.add(appIdOfAppJobTemplate);
+									appids.addAll(jobTemplateAppIds);
+									jobTemplate.setAppIds(appids);
 									isFound = true;
 									break;
 								}
@@ -1214,7 +1233,7 @@ public class CIManagerImpl implements CIManager, FrameworkConstants {
 					Iterator<CIJobTemplate> jobTemplateIterator = jobTemplates.iterator();
 					while (jobTemplateIterator.hasNext()) {
 						CIJobTemplate jobTemplate = (CIJobTemplate) jobTemplateIterator.next();
-						if (jobTemplate.getName().equals(jobTemplateName) && jobTemplate.getProjectId().equalsIgnoreCase(projId)) {
+						if (jobTemplate.getName().equals(jobTemplateName)) {
 							jobTemplateIterator.remove();
 							break;
 						}

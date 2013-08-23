@@ -204,10 +204,14 @@ define(["framework/widgetWithTemplate", "ci/listener/ciListener", "lib/jquery-to
 							}
 							if (upTemplateJsonData === null) {
 								if(downTemplateJsonData !== undefined && downTemplateJsonData!== null && !downTemplateJsonData.enableRepo) {
-									$(".blinkmsg").removeClass("popsuccess").addClass("poperror");
+									$(".msgdisplay").removeClass("success").addClass("error");
+									$(".error").text("DownStream "+downTemplateJsonData.name+" job Doesn't have the Repo!");
+									$(".error").show();
+									$(".error").fadeIn(500).fadeOut(500).fadeIn(500).fadeOut(500).fadeIn(500).fadeOut(5);
+									setTimeout(function() {
+										$(".error").hide();
+									},2500);
 									$(ui.sender).sortable('cancel');
-									self.effectFadeOut('poperror', (''));
-									$(".poperror").text("DownStream "+downTemplateJsonData.name+" job Doesn't have the Repo!");
 								}
 							}
 						}
@@ -236,9 +240,13 @@ define(["framework/widgetWithTemplate", "ci/listener/ciListener", "lib/jquery-to
 						// Initial validation
 						if (sortable2Len === 1 && !templateJsonData.enableRepo) {
 							$(ui.sender).sortable('cancel');
-							$(".blinkmsg").removeClass("popsuccess").addClass("poperror");
-							self.effectFadeOut('poperror', (''));
-							$(".poperror").text(templateJsonData.name + " job Doesn't have the Repo!");
+							$(".msgdisplay").removeClass("success").addClass("error");
+							$(".error").text(templateJsonData.name + " job Doesn't have the Repo!");
+							$(".error").show();
+							$(".error").fadeIn(500).fadeOut(500).fadeIn(500).fadeOut(500).fadeIn(500).fadeOut(5);
+							setTimeout(function() {
+								$(".error").hide();
+							},2500);
 						}
 						
 					},
@@ -286,9 +294,13 @@ define(["framework/widgetWithTemplate", "ci/listener/ciListener", "lib/jquery-to
 							if (!parentAppFound) {
 								$(ui.item).find('span').text(itemText);
 								$(ui.sender).sortable('cancel');
-								$(".blinkmsg").removeClass("popsuccess").addClass("poperror");
-								self.effectFadeOut('poperror', (''));
-								$(".poperror").text("Parent object not found for "+templateJsonData.name+" template!");
+								$(".msgdisplay").removeClass("success").addClass("error");
+								$(".error").text("Parent object not found for "+templateJsonData.name+" template!");
+								$(".error").show();
+								$(".error").fadeIn(500).fadeOut(500).fadeIn(500).fadeOut(500).fadeIn(500).fadeOut(5);
+								setTimeout(function() {
+									$(".error").hide();
+								},2500);
 							}
 
 						}

@@ -154,8 +154,8 @@ define(["ci/listener/ciListener", "lib/jquery-tojson-1.0"], function() {
 		getAction : function(ciRequestBody, action, param, callback) {
 			var self = this;
 			// Content place holder for the Job template
-			self.ciListener.listJobTemplate(self.ciListener.getRequestHeader(self.ciRequestBody, action, param), function(response) {
-				if (action === "edit") {
+			self.ciListener.listJobTemplate(self.ciListener.getRequestHeader(self.ciRequestBody, action, param), function(response) {			
+				if (action === "edit") {				
 					// only for edit popup value population
 					self.editEvent.dispatch(response.data);
 				} else if (action === "getAppInfos") {
@@ -165,9 +165,14 @@ define(["ci/listener/ciListener", "lib/jquery-tojson-1.0"], function() {
 					if(response.data !== false) {
 						self.pageRefresh();
 					} else if(response.data === false) {
-						$(".blinkmsg").removeClass("popsuccess").addClass("poperror");
-						self.effectFadeOut('poperror', (''));
-						$(".poperror").text(response.message);
+						$(".content_end").show();
+						$(".msgdisplay").removeClass("success").addClass("error");
+						$(".error").attr('data-i18n', 'errorCodes.' + response.responseCode);
+						self.renderlocales(commonVariables.contentPlaceholder);	
+						$(".error").fadeIn(500).fadeOut(500).fadeIn(500).fadeOut(500).fadeIn(500).fadeOut(5);
+						setTimeout(function() {
+							$(".content_end").hide();
+						},2500);
 					}
 				}
 			});	
