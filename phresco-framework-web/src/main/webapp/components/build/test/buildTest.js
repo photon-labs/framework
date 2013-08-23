@@ -189,8 +189,8 @@ define(["build/build"], function(Build) {
 				});
 				
 				$("#buildRun").click();
-				//buildListener.onPrgoress();
-				//$("#buildConsole").click();
+				buildListener.onPrgoress();
+				$("#buildConsole").click();
 				setTimeout(function() {
 					start();
 					output = $('#buildRow tr td:first').text();
