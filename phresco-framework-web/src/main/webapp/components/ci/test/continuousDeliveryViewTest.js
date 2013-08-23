@@ -3,6 +3,7 @@ define(["ci/continuousDeliveryView"], function(ContinuousDeliveryView) {
 	return {
 		// view continuous delivery test
 		runTests: function (configData) {
+			
 			module("ContinuousDeliveryView.js");
 			var continuousDeliveryView = new ContinuousDeliveryView(), self = this, contViewList;
 			var ciAPI = commonVariables.api;
@@ -10,6 +11,7 @@ define(["ci/continuousDeliveryView"], function(ContinuousDeliveryView) {
 			ciAPI.localVal.setSession("appDirName" , "");
 
 			asyncTest("Continuous Delivery View empty template render test", function() {
+				$(commonVariables.contentPlaceholder).html('');
 				self.contViewList = $.mockjax({
 					url: commonVariables.webserviceurl + commonVariables.ci +"/list?projectId=dd122034-fa5c-4fd9-9f68-522df1e73fb4&appDirName=",
 					type:'GET',
@@ -39,7 +41,7 @@ define(["ci/continuousDeliveryView"], function(ContinuousDeliveryView) {
 				commonVariables.navListener.onMytabEvent(commonVariables.continuousDeliveryView);
 				setTimeout(function() {
 					start();
-					equal(1, 1, "List Empty Continuous Delivery - UI Tested");
+					equal($(commonVariables.contentPlaceholder).find(".aliveOpts").css('display'), 'block', "List Empty Continuous Delivery - UI Tested");
 					self.viewContinuousDelivery(continuousDeliveryView);
 				}, 2500);
 			});
@@ -98,28 +100,6 @@ define(["ci/continuousDeliveryView"], function(ContinuousDeliveryView) {
 					}
 				});
 
-//				$.mockjax({
-//					url: commonVariables.webserviceurl + commonVariables.ci + "/jobStatus?name=IndependentCode&continuousName=independent&projectId=dd122034-fa5c-4fd9-9f68-522df1e73fb4&appDirName=",
-//					type:'GET',
-//					dataType: "json",
-//					contentType: "application/json",
-//					status: 200,
-//					response: function() {
-//						this.responseText = JSON.stringify({"message":"Return Job Status successfully","exception":null,"responseCode":null,"data":"INPROGRESS","status":null});
-//					}
-//				});
-//				
-//				$.mockjax({
-//					url: commonVariables.webserviceurl + commonVariables.ci + "/jobStatus?name=IndependentCode&continuousName=independent&projectId=dd122034-fa5c-4fd9-9f68-522df1e73fb4&appDirName=",
-//					type:'GET',
-//					dataType: "json",
-//					contentType: "application/json",
-//					status: 200,
-//					response: function() {
-//						this.responseText = JSON.stringify({"message":"Return Job Status successfully","exception":null,"responseCode":null,"data":"SUCCESS","status":null});
-//					}
-//				});
-				
 				require(["navigation/navigation"], function(){
 					commonVariables.navListener = new Clazz.com.components.navigation.js.listener.navigationListener();
 				});			
@@ -157,8 +137,7 @@ define(["ci/continuousDeliveryView"], function(ContinuousDeliveryView) {
 				$("a[jobname=IndependentCode][temp=generate_build]").click();
 				setTimeout(function() {
 					start();
-					equal(1, 1, "Continuous Delivery View trigger build tested");
-//					self.listBuilds(continuousDeliveryView);
+					equal($(commonVariables.contentPlaceholder).find('.widget_testing').attr('name'), "independent", "Continuous Delivery View trigger build tested");
 					self.listBuilds(continuousDeliveryView);
 				}, 2500);
 			});
@@ -186,8 +165,8 @@ define(["ci/continuousDeliveryView"], function(ContinuousDeliveryView) {
 				$(commonVariables.contentPlaceholder).find(".widget-maincontent-div").find('.datetime_status').click();
 				setTimeout(function() {
 					start();
-					var text = $(commonVariables.contentPlaceholder).find(".widget-maincontent-div[active=true]").find('tbody[name=buildList]').text();
-					equal(1, 1, "List Builds tested");
+					var text = $(commonVariables.contentPlaceholder).find(".widget-maincontent-div").find('tbody[name=buildList]').text();
+					equal(text, "07/08/2013 11:48:28", "List Builds tested");
 					self.downloadBuild(continuousDeliveryView);
 				}, 2500);
 			});
@@ -238,7 +217,8 @@ define(["ci/continuousDeliveryView"], function(ContinuousDeliveryView) {
 				 $(commonVariables.contentPlaceholder).find("a[temp=deleteBuild]").click();
 				setTimeout(function() {
 					start();
-					equal(1, 1, "Delete Builds tested");
+					var length = $(commonVariables.contentPlaceholder).find(".widget-maincontent-div").find('tbody[name=buildList]').length;
+					equal(length, 1, "Delete Builds tested");
 					self.openClonePopup(continuousDeliveryView);
 				}, 2500);
 			});
@@ -268,7 +248,7 @@ define(["ci/continuousDeliveryView"], function(ContinuousDeliveryView) {
 				$("a[temp=clone]").click();
 				setTimeout(function() {
 					start();
-					equal(1, 1, "clone Popup CI tested");
+					equal($(commonVariables.contentPlaceholder).find('div[id=clone_popup]').css('display'), "block", "clone Popup CI tested");
 					self.cloneContinuousDelivery(continuousDeliveryView);
 				}, 2500);
 			});
@@ -290,7 +270,7 @@ define(["ci/continuousDeliveryView"], function(ContinuousDeliveryView) {
 					contentType: "application/json",
 					status: 200,
 					response: function() {
-						this.responseText = JSON.stringify({"message":"Job(s) created successfully","exception":null,"responseCode":null,"data":{"name":"newCloned","jobs":[{"mainClassName":"","configuration":"","alias":"","url":"asd","pomLocation":"pom.xml","username":"asd","password":"asd","email":null,"buildNumber":"1","target":"","configurations":"","family":"","headerValue":"","src":"","mode":"","serialNumber":"","keystore":"","keypass":"","projectModule":"","isFromCI":"","testAgainst":"","testName":"","testBasis":"","appDirName":"j2eeTest","buildName":"","jobName":"1-Production","downstreamApplication":"","upstreamApplication":"","operation":"build","coberturaPlugin":false,"environmentName":"Production","repoType":"svn","templateName":"build","sonarUrl":"","scheduleType":null,"scheduleExpression":null,"mvnCommand":"-Pci clean phresco:package -N","jenkinsUrl":"172.16.25.44","jenkinsPort":"3579","triggers":[],"branch":null,"enableBuildRelease":false,"collabNetURL":"","collabNetusername":"","collabNetpassword":"","collabNetProject":"","collabNetPackage":"","collabNetRelease":"","collabNetoverWriteFiles":false,"cloneWorkspace":false,"usedClonnedWorkspace":"","enablePostBuildStep":false,"enablePreBuildStep":true,"prebuildStepCommands":["phresco:ci-prestep -DjobName=${env.JOB_NAME} -Dgoal=ci -Dphase=package -DcreationType=global -Did=20016c26-dd15-4c70-9fa6-0d69e013a358 -DcontinuousDeliveryName=newCloned -N"],"postbuildStepCommands":null,"logs":"showErrors","sdk":"","encrypt":"","plistFile":"","skipTest":"","proguard":"","signing":"","storepass":"","minify":"","deviceType":"","sdkVersion":"","devices":"","browser":"","resolution":"","showSettings":"","projectType":"","keyPassword":"","buildEnvironmentName":"","executeSql":"","dataBase":"","fetchSql":"","jarName":"","jarLocation":"","triggerSimulator":"false","packMinifiedFiles":"","deviceId":"","theme":"","deviceKeyPassword":"","emulatorKeyPassword":"","platform":"","sonar":"","skipTests":"","logo":"","reportType":"","testType":"","attachmentsPattern":"","enableArtifactArchiver":true,"headerKey":"","addHeader":"","noOfUsers":"","rampUpPeriod":"","loopCount":"","contextUrls":"","dbContextUrls":"","packageFileBrowse":"","unitTestType":"","unittest":"","downStreamCriteria":"","deviceList":"","collabNetFileReleasePattern":"do_not_checkin/build/*.zip","zipAlign":"","enableConfluence":false,"confluenceSite":null,"confluencePublish":false,"confluenceSpace":"","confluencePage":"","confluenceArtifacts":false,"confluenceOther":"","loadContextUrl":"","reportName":"","customTestAgainst":"","availableJmx":"","authManager":"","authorizationUrl":"","authorizationUserName":"","authorizationPassword":"","authorizationDomain":"","authorizationRealm":"","clonnedWorkspaceName":"","appName":"j2eeTest","successEmailIds":"","failureEmailIds":""}],"envName":"Production"},"status":null});
+						this.responseText = JSON.stringify({"message":"Job(s) created successfully","exception":null,"responseCode":null,"data":{"name":"newCloned","jobs":[{"mainClassName":"","configuration":"","alias":"","url":"asd","pomLocation":"pom.xml","username":"asd","password":"asd","email":null,"buildNumber":"1","target":"","configurations":"","family":"","headerValue":"","src":"","mode":"","serialNumber":"","keystore":"","keypass":"","projectModule":"","isFromCI":"","testAgainst":"","testName":"","testBasis":"","appDirName":"J2ee","buildName":"","jobName":"1-Production","downstreamApplication":"","upstreamApplication":"","operation":"build","coberturaPlugin":false,"environmentName":"Production","repoType":"svn","templateName":"build","sonarUrl":"","scheduleType":null,"scheduleExpression":null,"mvnCommand":"-Pci clean phresco:package -N","jenkinsUrl":"172.16.25.44","jenkinsPort":"3579","triggers":[],"branch":null,"enableBuildRelease":false,"collabNetURL":"","collabNetusername":"","collabNetpassword":"","collabNetProject":"","collabNetPackage":"","collabNetRelease":"","collabNetoverWriteFiles":false,"cloneWorkspace":false,"usedClonnedWorkspace":"","enablePostBuildStep":false,"enablePreBuildStep":true,"prebuildStepCommands":["phresco:ci-prestep -DjobName=${env.JOB_NAME} -Dgoal=ci -Dphase=package -DcreationType=global -Did=20016c26-dd15-4c70-9fa6-0d69e013a358 -DcontinuousDeliveryName=newCloned -N"],"postbuildStepCommands":null,"logs":"showErrors","sdk":"","encrypt":"","plistFile":"","skipTest":"","proguard":"","signing":"","storepass":"","minify":"","deviceType":"","sdkVersion":"","devices":"","browser":"","resolution":"","showSettings":"","projectType":"","keyPassword":"","buildEnvironmentName":"","executeSql":"","dataBase":"","fetchSql":"","jarName":"","jarLocation":"","triggerSimulator":"false","packMinifiedFiles":"","deviceId":"","theme":"","deviceKeyPassword":"","emulatorKeyPassword":"","platform":"","sonar":"","skipTests":"","logo":"","reportType":"","testType":"","attachmentsPattern":"","enableArtifactArchiver":true,"headerKey":"","addHeader":"","noOfUsers":"","rampUpPeriod":"","loopCount":"","contextUrls":"","dbContextUrls":"","packageFileBrowse":"","unitTestType":"","unittest":"","downStreamCriteria":"","deviceList":"","collabNetFileReleasePattern":"do_not_checkin/build/*.zip","zipAlign":"","enableConfluence":false,"confluenceSite":null,"confluencePublish":false,"confluenceSpace":"","confluencePage":"","confluenceArtifacts":false,"confluenceOther":"","loadContextUrl":"","reportName":"","customTestAgainst":"","availableJmx":"","authManager":"","authorizationUrl":"","authorizationUserName":"","authorizationPassword":"","authorizationDomain":"","authorizationRealm":"","clonnedWorkspaceName":"","appName":"J2ee","successEmailIds":"","failureEmailIds":""}],"envName":"Production"},"status":null});
 					}
 				});
 				
@@ -302,13 +282,14 @@ define(["ci/continuousDeliveryView"], function(ContinuousDeliveryView) {
 				$('input[id=clone_ci]').click();
 				setTimeout(function() {
 					start();
-					equal(3, 3, "Clone CI test");
+					notEqual($(".widget_testing").length, 8, "Continuous Delivery View list length");
 					self.editContinuousDelivery(continuousDeliveryView);
 				}, 2500);
 			});
 		},
 
 		editContinuousDelivery : function(continuousDeliveryView) {
+			$(commonVariables.contentPlaceholder).html("");
 			var self = this;
 			asyncTest("editContinuousDelivery test", function() {
 				$.mockjax({
@@ -318,7 +299,7 @@ define(["ci/continuousDeliveryView"], function(ContinuousDeliveryView) {
 					contentType: "application/json",
 					status: 200,
 					response: function() {
-						this.responseText = JSON.stringify({"message":"Job Templates Fetched Successfully","exception":null,"responseCode":null,"data":{"{\"appName\":\"j2eeTest\",\"appDirName\":\"j2eeTest\"}":[{"name":"code","type":"codeValidation","projectId":"20016c26-dd15-4c70-9fa6-0d69e013a358","customerId":"photon","appIds":["j2eeTest"],"enableRepo":true,"repoTypes":"svn","enableSheduler":false,"enableEmailSettings":false,"enableUploadSettings":false,"uploadTypes":[]},{"name":"deploy","type":"deploy","projectId":"20016c26-dd15-4c70-9fa6-0d69e013a358","customerId":"photon","appIds":["j2eeTest"],"enableRepo":false,"repoTypes":"svn","enableSheduler":false,"enableEmailSettings":false,"enableUploadSettings":false,"uploadTypes":[]},{"name":"unit","type":"unittest","projectId":"20016c26-dd15-4c70-9fa6-0d69e013a358","customerId":"photon","appIds":["j2eeTest"],"enableRepo":false,"repoTypes":"svn","enableSheduler":false,"enableEmailSettings":false,"enableUploadSettings":false,"uploadTypes":[]},{"name":"functional","type":"functionalTest","projectId":"20016c26-dd15-4c70-9fa6-0d69e013a358","customerId":"photon","appIds":["j2eeTest"],"enableRepo":false,"repoTypes":"svn","enableSheduler":false,"enableEmailSettings":false,"enableUploadSettings":false,"uploadTypes":[]},{"name":"build","type":"build","projectId":"20016c26-dd15-4c70-9fa6-0d69e013a358","customerId":"photon","appIds":["j2eeTest"],"enableRepo":true,"repoTypes":"svn","enableSheduler":false,"enableEmailSettings":false,"enableUploadSettings":false,"uploadTypes":[]}]},"status":null});
+						this.responseText = JSON.stringify({"message":"Job Templates Fetched Successfully","exception":null,"responseCode":null,"data":{"{\"appName\":\"J2ee\",\"appDirName\":\"J2ee\"}":[{"name":"code","type":"codeValidation","projectId":"20016c26-dd15-4c70-9fa6-0d69e013a358","customerId":"photon","appIds":["J2ee"],"enableRepo":true,"repoTypes":"svn","enableSheduler":false,"enableEmailSettings":false,"enableUploadSettings":false,"uploadTypes":[]},{"name":"deploy","type":"deploy","projectId":"20016c26-dd15-4c70-9fa6-0d69e013a358","customerId":"photon","appIds":["J2ee"],"enableRepo":false,"repoTypes":"svn","enableSheduler":false,"enableEmailSettings":false,"enableUploadSettings":false,"uploadTypes":[]},{"name":"unit","type":"unittest","projectId":"20016c26-dd15-4c70-9fa6-0d69e013a358","customerId":"photon","appIds":["J2ee"],"enableRepo":false,"repoTypes":"svn","enableSheduler":false,"enableEmailSettings":false,"enableUploadSettings":false,"uploadTypes":[]},{"name":"functional","type":"functionalTest","projectId":"20016c26-dd15-4c70-9fa6-0d69e013a358","customerId":"photon","appIds":["J2ee"],"enableRepo":false,"repoTypes":"svn","enableSheduler":false,"enableEmailSettings":false,"enableUploadSettings":false,"uploadTypes":[]},{"name":"build","type":"build","projectId":"20016c26-dd15-4c70-9fa6-0d69e013a358","customerId":"photon","appIds":["J2ee"],"enableRepo":true,"repoTypes":"svn","enableSheduler":false,"enableEmailSettings":false,"enableUploadSettings":false,"uploadTypes":[]}]},"status":null});
 					}
 				});
 
@@ -329,7 +310,7 @@ define(["ci/continuousDeliveryView"], function(ContinuousDeliveryView) {
 					contentType: "application/json",
 					status: 200,
 					response: function() {
-						this.responseText = JSON.stringify({"message":"Job Templates Fetched Successfully","exception":null,"responseCode":null,"data":{"{\"appName\":\"j2eeTest\",\"appDirName\":\"j2eeTest\"}":[{"name":"code","type":"codeValidation","projectId":"20016c26-dd15-4c70-9fa6-0d69e013a358","customerId":"photon","appIds":["j2eeTest"],"enableRepo":true,"repoTypes":"svn","enableSheduler":false,"enableEmailSettings":false,"enableUploadSettings":false,"uploadTypes":[]},{"name":"deploy","type":"deploy","projectId":"20016c26-dd15-4c70-9fa6-0d69e013a358","customerId":"photon","appIds":["j2eeTest"],"enableRepo":false,"repoTypes":"svn","enableSheduler":false,"enableEmailSettings":false,"enableUploadSettings":false,"uploadTypes":[]},{"name":"unit","type":"unittest","projectId":"20016c26-dd15-4c70-9fa6-0d69e013a358","customerId":"photon","appIds":["j2eeTest"],"enableRepo":false,"repoTypes":"svn","enableSheduler":false,"enableEmailSettings":false,"enableUploadSettings":false,"uploadTypes":[]},{"name":"functional","type":"functionalTest","projectId":"20016c26-dd15-4c70-9fa6-0d69e013a358","customerId":"photon","appIds":["j2eeTest"],"enableRepo":false,"repoTypes":"svn","enableSheduler":false,"enableEmailSettings":false,"enableUploadSettings":false,"uploadTypes":[]},{"name":"build","type":"build","projectId":"20016c26-dd15-4c70-9fa6-0d69e013a358","customerId":"photon","appIds":["j2eeTest"],"enableRepo":true,"repoTypes":"svn","enableSheduler":false,"enableEmailSettings":false,"enableUploadSettings":false,"uploadTypes":[]}]},"status":null});
+						this.responseText = JSON.stringify({"message":"Job Templates Fetched Successfully","exception":null,"responseCode":null,"data":{"{\"appName\":\"J2ee\",\"appDirName\":\"J2ee\"}":[{"name":"code","type":"codeValidation","projectId":"20016c26-dd15-4c70-9fa6-0d69e013a358","customerId":"photon","appIds":["J2ee"],"enableRepo":true,"repoTypes":"svn","enableSheduler":false,"enableEmailSettings":false,"enableUploadSettings":false,"uploadTypes":[]},{"name":"deploy","type":"deploy","projectId":"20016c26-dd15-4c70-9fa6-0d69e013a358","customerId":"photon","appIds":["J2ee"],"enableRepo":false,"repoTypes":"svn","enableSheduler":false,"enableEmailSettings":false,"enableUploadSettings":false,"uploadTypes":[]},{"name":"unit","type":"unittest","projectId":"20016c26-dd15-4c70-9fa6-0d69e013a358","customerId":"photon","appIds":["J2ee"],"enableRepo":false,"repoTypes":"svn","enableSheduler":false,"enableEmailSettings":false,"enableUploadSettings":false,"uploadTypes":[]},{"name":"functional","type":"functionalTest","projectId":"20016c26-dd15-4c70-9fa6-0d69e013a358","customerId":"photon","appIds":["J2ee"],"enableRepo":false,"repoTypes":"svn","enableSheduler":false,"enableEmailSettings":false,"enableUploadSettings":false,"uploadTypes":[]},{"name":"build","type":"build","projectId":"20016c26-dd15-4c70-9fa6-0d69e013a358","customerId":"photon","appIds":["J2ee"],"enableRepo":true,"repoTypes":"svn","enableSheduler":false,"enableEmailSettings":false,"enableUploadSettings":false,"uploadTypes":[]}]},"status":null});
 					}
 				});
 
@@ -347,7 +328,8 @@ define(["ci/continuousDeliveryView"], function(ContinuousDeliveryView) {
 				continuousDeliveryView.ciListener.editContinuousDeliveryConfigure("independent");
 				setTimeout(function() {
 					start();
-					equal(1, 1, "editContinuousDelivery tested");
+					var length = $(commonVariables.contentPlaceholder).find('ul[id=sortable1]').find('li').length;
+					notEqual(7, length, "ContinuousDeliveryView - UI Tested");
 					self.openDeletePopUp(continuousDeliveryView);
 				}, 2500);
 			});
@@ -388,7 +370,8 @@ define(["ci/continuousDeliveryView"], function(ContinuousDeliveryView) {
 				obj.click();
 				setTimeout(function() {
 					start();
-					equal(1, 1, "confirmDelete CI tested");
+					var display = $(commonVariables.contentPlaceholder).find('div[id=deleteCI]').css('display');
+					notEqual("none", display, "confirmDelete CI tested");
 					self.callConfigureTest(continuousDeliveryView);
 				}, 2500);
 			});
@@ -437,7 +420,8 @@ define(["ci/continuousDeliveryView"], function(ContinuousDeliveryView) {
 				$('#createContinuousDelivery').click();
 				setTimeout(function() {
 					start();
-					equal(1, 1, "callConfigureTest CI tested");
+					var length = $(commonVariables.contentPlaceholder).find('ul[id=sortable1]').find('li').length;
+					notEqual(7, length, "callConfigureTest CI Tested");
 				}, 2500);
 			});
 		},

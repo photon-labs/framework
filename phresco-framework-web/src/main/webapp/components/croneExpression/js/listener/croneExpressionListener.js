@@ -137,7 +137,14 @@ define([], function() {
 				croneJson.minutes = $('select[name=minutes]').val();
 				self.cronExpressionLoad(croneJson);
 				$('select[name=weeks], select[name=hours], select[name=minutes]').bind('change', function(){
-					croneJson.week = $('select[name=weeks]').val();
+					var weeks = [];
+					if ($('select[name=weeks]').val() === null) {
+						val = '*';
+						weeks.push(val);
+						croneJson.week = weeks;
+					} else {
+						croneJson.week = $('select[name=weeks]').val();
+					}
 					croneJson.hours = $('select[name=hours]').val();
 					croneJson.minutes = $('select[name=minutes]').val();
 					self.cronExpressionLoad(croneJson);

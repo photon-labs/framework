@@ -17,6 +17,8 @@ define(["framework/widgetWithTemplate", "ci/listener/ciListener", "lib/jquery-to
 		onSaveEvent : null, 
 		editContinuousViewTable : null,  
 		name : null,
+		downStreamCriteria : null,
+		lastChild : null,
 
 		/***
 		 * Called in initialization time of this class 
@@ -61,6 +63,14 @@ define(["framework/widgetWithTemplate", "ci/listener/ciListener", "lib/jquery-to
 			 if (self.editContinuousViewTable === null) {
 			 	self.editContinuousViewTable = new signals.Signal();
 			 }
+			 
+			 if (self.downStreamCriteria === null) {
+				 	self.downStreamCriteria = new signals.Signal();
+			 }
+			 
+			 if (self.lastChild === null) {
+				 	self.lastChild = new signals.Signal();
+			 }
 				
 			 // Trigger registered events
 			 self.onLoadEnvironmentEvent.add(ciListener.loadEnvironmentEvent, ciListener);
@@ -68,6 +78,8 @@ define(["framework/widgetWithTemplate", "ci/listener/ciListener", "lib/jquery-to
 			 self.onConfigureJobEvent.add(self.ciListener.configureJob, self.ciListener);
 			 self.onSaveEvent.add(self.ciListener.saveContinuousDelivery, self.ciListener);
 		  	 self.editContinuousViewTable.add(self.ciListener.editContinuousViewTable, self.ciListener);
+		  	 self.downStreamCriteria.add(self.ciListener.downStreamCriteria, self.ciListener);
+		  	 self.lastChild.add(self.ciListener.lastChild, self.ciListener);
 
 
 			 // Handle bars
@@ -164,6 +176,8 @@ define(["framework/widgetWithTemplate", "ci/listener/ciListener", "lib/jquery-to
 						$(".dyn_popup").hide();
 						$('#header').css('z-index','7');
 						$('.content_title').css('z-index','6');
+						self.downStreamCriteria.dispatch();
+						self.lastChild.dispatch();
 					},
 
 					receive: function( event, ui ) {			

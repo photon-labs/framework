@@ -8,16 +8,16 @@ define(["ci/jobTemplates"], function(JobTemplates) {
 			var jobTemplates = new JobTemplates(), templateData = {}, self = this, jobTempList;
 			asyncTest("List Job Templates - UI Test", function() {
 				var ciAPI = commonVariables.api;
-				ciAPI.localVal.setSession("projectId" , "a4329529-3c9d-476d-a310-e0cf4436e021");
+				ciAPI.localVal.setSession("projectId" , "86b654c9-daae-4e07-82d3-720169e93827");
 				ciAPI.localVal.setSession("appDirName" , "");
-				self.jobTempList = $.mockjax({						
-					url: commonVariables.webserviceurl + commonVariables.jobTemplates + "?customerId=photon&projectId=a4329529-3c9d-476d-a310-e0cf4436e021&appDirName=",
+				self.jobTempList = $.mockjax({	
+					url: commonVariables.webserviceurl + commonVariables.jobTemplates + "?customerId=photon&projectId=86b654c9-daae-4e07-82d3-720169e93827&appDirName=",
 					type:'GET',
 					dataType: "json",
 					contentType: "application/json",
 					status: 200,
 					response: function() {
-						this.responseText = JSON.stringify({"message":"Job Templates listed successfully","exception":null,"data":[{"name":"bld","type":"build","projectId":"a4329529-3c9d-476d-a310-e0cf4436e021","customerId":"photon","appIds":["1","2","3","SVNCHECK-wordpress"],"enableRepo":false,"repoTypes":"svn","enableSheduler":false,"enableEmailSettings":false,"enableUploadSettings":false,"uploadTypes":[]},{"name":"code","type":"codeValidation","projectId":"a4329529-3c9d-476d-a310-e0cf4436e021","customerId":"photon","appIds":["2","3","SVNCHECK-wordpress"],"enableRepo":true,"repoTypes":"svn","enableSheduler":false,"enableEmailSettings":false,"enableUploadSettings":false,"uploadTypes":[]}],"response":null});
+						this.responseText = JSON.stringify({"message":"Job Templates listed successfully","exception":null,"responseCode":null,"data":[{"name":"code","type":"codeValidation","projectId":"86b654c9-daae-4e07-82d3-720169e93827","customerId":"photon","appIds":["TodayProject"],"enableRepo":true,"repoTypes":"svn","enableSheduler":true,"enableEmailSettings":true,"enableUploadSettings":false,"uploadTypes":[]},{"name":"build","type":"build","projectId":"86b654c9-daae-4e07-82d3-720169e93827","customerId":"photon","appIds":["TodayProject"],"enableRepo":false,"repoTypes":"svn","enableSheduler":false,"enableEmailSettings":false,"enableUploadSettings":false,"uploadTypes":[]},{"name":"deploy","type":"deploy","projectId":"86b654c9-daae-4e07-82d3-720169e93827","customerId":"photon","appIds":["TodayProject"],"enableRepo":false,"repoTypes":"svn","enableSheduler":false,"enableEmailSettings":false,"enableUploadSettings":false,"uploadTypes":[]},{"name":"unit","type":"unittest","projectId":"86b654c9-daae-4e07-82d3-720169e93827","customerId":"photon","appIds":["TodayProject"],"enableRepo":false,"repoTypes":"svn","enableSheduler":false,"enableEmailSettings":false,"enableUploadSettings":false,"uploadTypes":[]},{"name":"functional","type":"functionalTest","projectId":"86b654c9-daae-4e07-82d3-720169e93827","customerId":"photon","appIds":["TodayProject"],"enableRepo":false,"repoTypes":"svn","enableSheduler":false,"enableEmailSettings":false,"enableUploadSettings":false,"uploadTypes":[]},{"name":"performance","type":"performanceTest","projectId":"86b654c9-daae-4e07-82d3-720169e93827","customerId":"photon","appIds":["TodayProject"],"enableRepo":false,"repoTypes":"svn","enableSheduler":false,"enableEmailSettings":false,"enableUploadSettings":false,"uploadTypes":[]},{"name":"load","type":"loadTest","projectId":"86b654c9-daae-4e07-82d3-720169e93827","customerId":"photon","appIds":["TodayProject"],"enableRepo":false,"repoTypes":"svn","enableSheduler":false,"enableEmailSettings":false,"enableUploadSettings":false,"uploadTypes":[]},{"name":"pdf","type":"pdfReport","projectId":"86b654c9-daae-4e07-82d3-720169e93827","customerId":"photon","appIds":["TodayProject"],"enableRepo":false,"repoTypes":"svn","enableSheduler":false,"enableEmailSettings":false,"enableUploadSettings":false,"uploadTypes":[]}],"status":null});
 					}
 				});
 				require(["navigation/navigation"], function(){
@@ -41,12 +41,12 @@ define(["ci/jobTemplates"], function(JobTemplates) {
 
 				$.mockjax({
 					url: commonVariables.webserviceurl + commonVariables.projectlistContext + 
-					"/appinfos?customerId=photon&projectId=a4329529-3c9d-476d-a310-e0cf4436e021",							
+					"/appinfos?customerId=photon&projectId=86b654c9-daae-4e07-82d3-720169e93827",							
 					type:'GET',
 					contentType: 'application/json',
 					status: 200,
 					response: function() {
-						this.responseText = JSON.stringify({"message":"Application infos returned Successfully","exception":null,"data":[{"version":"1.0","pomFile":null,"code":"1","appDirName":"1","techInfo":{"version":"1.7","appTypeId":"app-layer","techGroupId":null,"techVersions":null,"customerIds":null,"used":false,"name":"Java Standalone","id":"tech-java-standalone","displayName":null,"status":null,"description":null,"creationDate":1371734906000,"helpText":null,"system":false},"selectedServers":null,"selectedDatabases":null,"selectedModules":null,"selectedJSLibs":null,"selectedComponents":null,"selectedWebservices":null,"pilotInfo":null,"selectedFrameworks":null,"emailSupported":false,"pilotContent":null,"embedAppId":null,"phoneEnabled":false,"tabletEnabled":false,"pilot":false,"functionalFramework":null,"dependentModules":null,"customerIds":null,"used":false,"name":"1","id":"efc37f82-3611-4be2-816b-38b2c7331a60","displayName":null,"status":null,"description":null,"creationDate":1371734906000,"helpText":null,"system":false},{"version":"1.0","pomFile":null,"code":"2","appDirName":"2","techInfo":{"version":"1.7","appTypeId":"app-layer","techGroupId":null,"techVersions":null,"customerIds":null,"used":false,"name":"J2EE","id":"tech-java-webservice","displayName":null,"status":null,"description":null,"creationDate":1371734906000,"helpText":null,"system":false},"selectedServers":null,"selectedDatabases":null,"selectedModules":null,"selectedJSLibs":null,"selectedComponents":null,"selectedWebservices":null,"pilotInfo":null,"selectedFrameworks":null,"emailSupported":false,"pilotContent":null,"embedAppId":null,"phoneEnabled":false,"tabletEnabled":false,"pilot":false,"functionalFramework":null,"dependentModules":null,"customerIds":null,"used":false,"name":"2","id":"0ef72126-263c-4330-ac63-2c11e40080ae","displayName":null,"status":null,"description":null,"creationDate":1371734906000,"helpText":null,"system":false},{"version":"1.0","pomFile":null,"code":"3","appDirName":"3","techInfo":{"version":"0.10.9","appTypeId":"app-layer","techGroupId":null,"techVersions":null,"customerIds":null,"used":false,"name":"Node JS","id":"tech-nodejs-webservice","displayName":null,"status":null,"description":null,"creationDate":1371734906000,"helpText":null,"system":false},"selectedServers":null,"selectedDatabases":null,"selectedModules":null,"selectedJSLibs":null,"selectedComponents":null,"selectedWebservices":null,"pilotInfo":null,"selectedFrameworks":null,"emailSupported":false,"pilotContent":null,"embedAppId":null,"phoneEnabled":false,"tabletEnabled":false,"pilot":false,"functionalFramework":null,"dependentModules":null,"customerIds":null,"used":false,"name":"3","id":"0b1f55a8-4f73-4759-836f-d7cc32e83e07","displayName":null,"status":null,"description":null,"creationDate":1371734906000,"helpText":null,"system":false},{"version":"1.2","pomFile":null,"code":"SVNCHECK-wordpress","appDirName":"SVNCHECK-wordpress","techInfo":{"version":"3.4.2","appTypeId":"app-layer","techGroupId":null,"techVersions":null,"customerIds":null,"used":false,"name":null,"id":"tech-wordpress","displayName":null,"status":null,"description":null,"creationDate":1364980309000,"helpText":null,"system":false},"selectedServers":null,"selectedDatabases":null,"selectedModules":null,"selectedJSLibs":null,"selectedComponents":null,"selectedWebservices":null,"pilotInfo":null,"selectedFrameworks":null,"emailSupported":false,"pilotContent":null,"embedAppId":null,"phoneEnabled":false,"tabletEnabled":false,"pilot":false,"functionalFramework":null,"dependentModules":null,"customerIds":null,"used":false,"name":"SVNCHECK-wordpress","id":"bbb7805f-00ce-4350-8b86-81a5d89b2fb5","displayName":null,"status":null,"description":null,"creationDate":1364980309000,"helpText":null,"system":false}],"response":null});
+						this.responseText = JSON.stringify({"message":null,"exception":null,"responseCode":"PHR200002","data":[{"version":"1.0","modules":null,"pomFile":null,"code":"TodayProject","appDirName":"TodayProject","techInfo":{"version":"0.10.9","appTypeId":"app-layer","techGroupId":null,"techVersions":null,"customerIds":null,"used":false,"name":"Node JS","id":"tech-nodejs-webservice","displayName":null,"status":null,"description":null,"creationDate":1376927360000,"helpText":null,"system":false},"functionalFramework":null,"selectedServers":null,"selectedDatabases":null,"selectedModules":null,"selectedJSLibs":null,"selectedComponents":null,"selectedWebservices":null,"functionalFrameworkInfo":null,"pilotInfo":null,"selectedFrameworks":null,"emailSupported":false,"pilotContent":null,"embedAppId":null,"phoneEnabled":false,"tabletEnabled":false,"pilot":false,"dependentModules":null,"created":false,"customerIds":null,"used":false,"name":"TodayProject","id":"cf25973d-9e0e-4455-9ed3-af8371b3b3db","displayName":null,"status":null,"description":null,"creationDate":1376927360000,"helpText":null,"system":false}],"status":"success"});
 					}
 				});
 
@@ -89,23 +89,23 @@ define(["ci/jobTemplates"], function(JobTemplates) {
 					start();
 					var repoType = $(commonVariables.contentPlaceholder).find("select[class=selectpicker][name=repoTypes]").next().css('display');
 					notEqual(repoType, 'block', "jobTemplates - select/deselect Repo Event Tested");
-					self.runCloseButtonTest(jobTemplates);
+					self.errorNotificationTest(jobTemplates);
 				}, 3000);
 			});
 		},
 
-		runCloseButtonTest : function(jobTemplates) {
-			var self=this;
-			asyncTest("jobTemplates - Close Button Event Test", function() {
-				$("input[name='save']").eq(0).next().click();
-				setTimeout(function() {
-					start();
-					var jobTemplatePopup = $(commonVariables.contentPlaceholder).find("#jobTemplatePopup").css('display');
-					equal(jobTemplatePopup, "none", "jobTemplates - open Create Popup Tested");					
-					self.errorNotificationTest(jobTemplates);
-				}, 2500);
-			});
-		},
+//		runCloseButtonTest : function(jobTemplates) {
+//			var self=this;
+//			asyncTest("jobTemplates - Close Button Event Test", function() {
+//				$("input[name='save']").eq(0).next().click();
+//				setTimeout(function() {
+//					start();
+//					var jobTemplatePopup = $(commonVariables.contentPlaceholder).find("#jobTemplatePopup").css('display');
+//					equal(jobTemplatePopup, "none", "jobTemplates - open Create Popup Tested");					
+//					self.errorNotificationTest(jobTemplates);
+//				}, 2500);
+//			});
+//		},
 
 		errorNotificationTest : function(jobTemplates) {
 			var self=this;
@@ -124,8 +124,8 @@ define(["ci/jobTemplates"], function(JobTemplates) {
 
 					equal(name, "errormessage", "jobTemplates - save without values Event Tested");	
 					equal(span, "flt_left errormessage", "jobTemplates - save without values Event Tested");	
-					equal(appSelect, "dropdown-toggle btn btn-danger", "jobTemplates - save without values Event Tested");	
-					equal(uploadSelect, "dropdown-toggle btn btn-danger", "jobTemplates - save without values Event Tested");			
+					equal(appSelect, "btn-default dropdown-toggle btn btn-danger", "jobTemplates - save without values Event Tested");	
+					equal(uploadSelect, "btn-default dropdown-toggle btn btn-danger", "jobTemplates - save without values Event Tested");			
 
 					self.createJobTemplateTest(jobTemplates);
 				}, 2500);
@@ -133,21 +133,26 @@ define(["ci/jobTemplates"], function(JobTemplates) {
 		},
 
 		createJobTemplateTest : function(jobTemplates) {
+//			$(commonVariables.contentPlaceholder).html("");
 			var self=this;
 			$.mockjaxClear(self.jobTempList);
 			var ciAPI = commonVariables.api;
-			ciAPI.localVal.setSession("projectId" , "a4329529-3c9d-476d-a310-e0cf4436e021");
+			ciAPI.localVal.setSession("projectId" , "86b654c9-daae-4e07-82d3-720169e93827");
 			ciAPI.localVal.setSession("appDirName" , "");
 			asyncTest("jobTemplates - save with values Event Test", function() {
-				$('input[name=name]').val('Test');
-				$("select[name=type]").selectpicker('val', 'codeValidation');
-				$("select[name=appIds]").selectpicker('val', ['SVNCHECK-wordpress']);				
+//				$('input[name=name]').val('Test');
+//				$("select[name=type]").selectpicker('val', 'codeValidation');
+//				$("select[name=appIds]").selectpicker('val', ['SVNCHECK-wordpress']);				
 				$("input[name=enableRepo]").prop('checked', true);
+				$('input[name=name]').val('newTemplate');
+				$("select[name=appIds]").selectpicker('val', ['TodayProject']);
+				$("select[name=type]").selectpicker('val', 'codeValidation');
+//				$("input[name=enableUploadSettings]").prop('checked', true);
 				var name = $('input[name="name"]').val();
 				var oldname = $('[name="oldname"]').val();
 
 				$.mockjax({
-					url : commonVariables.webserviceurl + commonVariables.jobTemplates + "/validate?customerId=photon&oldname=&projectId=a4329529-3c9d-476d-a310-e0cf4436e021&name=Test",
+					url : commonVariables.webserviceurl + commonVariables.jobTemplates + "/validate?customerId=photon&oldname=&projectId=86b654c9-daae-4e07-82d3-720169e93827&name=newTemplate",
 					type:'GET',
 					contentType:'application/json',
 					status: 200,
@@ -157,37 +162,32 @@ define(["ci/jobTemplates"], function(JobTemplates) {
 				});
 
 				$.mockjax({
-					url: commonVariables.webserviceurl + commonVariables.jobTemplates,
+					url: commonVariables.webserviceurl + commonVariables.jobTemplates + "?customerId=photon&projectId=86b654c9-daae-4e07-82d3-720169e93827",
 					type:'POST',
 					contentType:'application/json',
 					status: 200,
 					response: function() {
-						this.responseText = JSON.stringify({"message":"Job Template added successfully","exception":null,"responseCode":null,"data":{"name":"Bild","type":"build","projectId":"28352211-a3d6-4ff9-8b55-2734942993b0","customerId":"photon","appIds":["htm"],"enableRepo":true,"repoTypes":"svn","enableSheduler":true,"enableEmailSettings":true,"enableUploadSettings":true,"uploadTypes":["Collabnet"]},"status":null});	
+						this.responseText = JSON.stringify({"message":"Job Template added successfully","exception":null,"responseCode":null,"data":{"name":"newTemplate","type":"codeValidation","projectId":"86b654c9-daae-4e07-82d3-720169e93827","customerId":"photon","appIds":["TodayProject"],"enableRepo":false,"repoTypes":"svn","enableSheduler":false,"enableEmailSettings":false,"enableUploadSettings":false,"uploadTypes":[]},"status":null});	
 					}
 				}); 
-
+				
 				$.mockjax({
-					url: commonVariables.webserviceurl + commonVariables.jobTemplates +"?customerId=photon&projectId=a4329529-3c9d-476d-a310-e0cf4436e021&appDirName=",
+//					http://localhost:2468/framework/rest/api/jobTemplates?customerId=photon&projectId=86b654c9-daae-4e07-82d3-720169e93827&appDirName=&_=1377251111646
+					url: commonVariables.webserviceurl + commonVariables.jobTemplates +"?customerId=photon&projectId=86b654c9-daae-4e07-82d3-720169e93827&appDirName=",
 					type:'GET',
 					dataType: "json",
 					contentType: "application/json",
 					status: 200,
 					response: function() {
-						this.responseText = JSON.stringify({"message":"Job Templates listed successfully","exception":null,"data":[{"name":"bld","type":"build","projectId":"a4329529-3c9d-476d-a310-e0cf4436e021","customerId":"photon","appIds":["1","2","3","SVNCHECK-wordpress"],"enableRepo":false,"repoTypes":"svn","enableSheduler":false,"enableEmailSettings":false,"enableUploadSettings":false,"uploadTypes":[]},{"name":"code","type":"codeValidation","projectId":"a4329529-3c9d-476d-a310-e0cf4436e021","customerId":"photon","appIds":["2","3","SVNCHECK-wordpress"],"enableRepo":true,"repoTypes":"svn","enableSheduler":false,"enableEmailSettings":false,"enableUploadSettings":false,"uploadTypes":[]},{"name":"Test","type":"codeValidation","projectId":"a4329529-3c9d-476d-a310-e0cf4436e021","customerId":"photon","appIds":["SVNCHECK-wordpress"],"enableRepo":true,"repoTypes":"svn","enableSheduler":false,"enableEmailSettings":false,"enableUploadSettings":false,"uploadTypes":[]}],"response":null});	
+						this.responseText = JSON.stringify({"message":"Job Templates listed successfully","exception":null,"responseCode":null,"data":[{"name":"code","type":"codeValidation","projectId":"86b654c9-daae-4e07-82d3-720169e93827","customerId":"photon","appIds":["TodayProject"],"enableRepo":true,"repoTypes":"svn","enableSheduler":true,"enableEmailSettings":true,"enableUploadSettings":false,"uploadTypes":[]},{"name":"build","type":"build","projectId":"86b654c9-daae-4e07-82d3-720169e93827","customerId":"photon","appIds":["TodayProject"],"enableRepo":false,"repoTypes":"svn","enableSheduler":false,"enableEmailSettings":false,"enableUploadSettings":false,"uploadTypes":[]},{"name":"deploy","type":"deploy","projectId":"86b654c9-daae-4e07-82d3-720169e93827","customerId":"photon","appIds":["TodayProject"],"enableRepo":false,"repoTypes":"svn","enableSheduler":false,"enableEmailSettings":false,"enableUploadSettings":false,"uploadTypes":[]},{"name":"unit","type":"unittest","projectId":"86b654c9-daae-4e07-82d3-720169e93827","customerId":"photon","appIds":["TodayProject"],"enableRepo":false,"repoTypes":"svn","enableSheduler":false,"enableEmailSettings":false,"enableUploadSettings":false,"uploadTypes":[]},{"name":"functional","type":"functionalTest","projectId":"86b654c9-daae-4e07-82d3-720169e93827","customerId":"photon","appIds":["TodayProject"],"enableRepo":false,"repoTypes":"svn","enableSheduler":false,"enableEmailSettings":false,"enableUploadSettings":false,"uploadTypes":[]},{"name":"performance","type":"performanceTest","projectId":"86b654c9-daae-4e07-82d3-720169e93827","customerId":"photon","appIds":["TodayProject"],"enableRepo":false,"repoTypes":"svn","enableSheduler":false,"enableEmailSettings":false,"enableUploadSettings":false,"uploadTypes":[]},{"name":"pdf","type":"pdfReport","projectId":"86b654c9-daae-4e07-82d3-720169e93827","customerId":"photon","appIds":["TodayProject"],"enableRepo":false,"repoTypes":"svn","enableSheduler":false,"enableEmailSettings":false,"enableUploadSettings":false,"uploadTypes":[]},{"name":"load","type":"loadTest","projectId":"86b654c9-daae-4e07-82d3-720169e93827","customerId":"photon","appIds":["TodayProject"],"enableRepo":false,"repoTypes":"svn","enableSheduler":false,"enableEmailSettings":false,"enableUploadSettings":false,"uploadTypes":[]},{"name":"newTemplate","type":"codeValidation","projectId":"86b654c9-daae-4e07-82d3-720169e93827","customerId":"photon","appIds":["TodayProject"],"enableRepo":false,"repoTypes":"svn","enableSheduler":false,"enableEmailSettings":false,"enableUploadSettings":false,"uploadTypes":[]}],"status":null});	
 					}
 				});
 
-				require(["navigation/navigation"], function(){
-					commonVariables.navListener = new Clazz.com.components.navigation.js.listener.navigationListener();
-				});		
-
-				commonVariables.navListener.onMytabEvent(commonVariables.jobTemplates);
-
-				$("input[name='save']").eq(0).click();
+				$("input[name='save']").click();
 				setTimeout(function() {
 					start();
-					var createdTr = $(commonVariables.contentPlaceholder).find(".widget-maincontent-div[active=true]").find("table[id=jobTemplateList]").find("tr:last").find("td:first").text();
-					equal(1, 1, "jobTemplates - save with values Event Tested");
+					var createdTr = $(commonVariables.contentPlaceholder).find(".widget-maincontent-div").find("table[id=jobTemplateList]").find("tr:last").find("td:first").text();
+					equal("pdfnewTemplate", createdTr, "jobTemplates - save with values Event Tested");
 					self.editJobTemplateTest(jobTemplates);
 				}, 3000);
 			});
@@ -198,31 +198,32 @@ define(["ci/jobTemplates"], function(JobTemplates) {
 			asyncTest("jobTemplates - edit Event Test", function() {
 
 				$.mockjax({
-					url: commonVariables.webserviceurl + commonVariables.jobTemplates,
+					url: commonVariables.webserviceurl + commonVariables.projectlistContext + 
+					"/appinfos?customerId=photon&projectId=86b654c9-daae-4e07-82d3-720169e93827",
 					type:'GET',
 					dataType: "json",
 					contentType: "application/json",
 					status: 200,
 					response: function() {
-						this.responseText = JSON.stringify({"message":null,"exception":null,"responseCode":"PHR200002","data":[{"version":"1.0","modules":null,"pomFile":null,"code":"htm","appDirName":"htm","techInfo":{"version":"2.0.2","appTypeId":"web-layer","techGroupId":"HTML5","techVersions":null,"customerIds":null,"used":false,"name":"JQuery Mobile Widget","id":"tech-html5-jquery-mobile-widget","displayName":null,"status":null,"description":null,"creationDate":1375339017000,"helpText":null,"system":false},"selectedServers":[{"artifactGroupId":"downloads_apache-tomcat","artifactInfoIds":["0e34ab53-1b9e-493d-aa72-6ecacddc5338"],"name":null,"id":"d21ae84a-4560-47be-bac7-4e60975cb2ff","displayName":null,"status":null,"description":null,"creationDate":1375339257000,"helpText":null,"system":false}],"selectedDatabases":[{"artifactGroupId":"downloads_db2","artifactInfoIds":["3e49bbaf-79f8-41d0-af71-190e094a1b06"],"name":null,"id":"7eacae6b-3851-4583-b61c-af33485c1f72","displayName":null,"status":null,"description":null,"creationDate":1375339257000,"helpText":null,"system":false}],"selectedModules":null,"selectedJSLibs":null,"selectedComponents":null,"selectedWebservices":[],"pilotInfo":null,"selectedFrameworks":null,"emailSupported":false,"pilotContent":null,"embedAppId":null,"phoneEnabled":false,"tabletEnabled":false,"pilot":false,"functionalFramework":null,"dependentModules":null,"functionalFrameworkInfo":null,"customerIds":null,"used":false,"name":"htm","id":"698137b4-acac-4fcd-841e-a521c4dd3ec4","displayName":null,"status":null,"description":"","creationDate":1375339257000,"helpText":null,"system":false},{"version":"1.0","modules":null,"pomFile":null,"code":"J2ee","appDirName":"J2ee","techInfo":{"version":"1.7","appTypeId":"app-layer","techGroupId":null,"techVersions":null,"customerIds":null,"used":false,"name":"J2EE","id":"tech-java-webservice","displayName":null,"status":null,"description":null,"creationDate":1375339017000,"helpText":null,"system":false},"selectedServers":[{"artifactGroupId":"downloads_apache-tomcat","artifactInfoIds":["0e34ab53-1b9e-493d-aa72-6ecacddc5338"],"name":null,"id":"9b786236-07f7-4b5a-877b-11e26757f16d","displayName":null,"status":null,"description":null,"creationDate":1375339413000,"helpText":null,"system":false}],"selectedDatabases":[{"artifactGroupId":"downloads_db2","artifactInfoIds":["3e49bbaf-79f8-41d0-af71-190e094a1b06"],"name":null,"id":"de0c7913-75e0-4d13-a1aa-28611902d826","displayName":null,"status":null,"description":null,"creationDate":1375339413000,"helpText":null,"system":false}],"selectedModules":null,"selectedJSLibs":null,"selectedComponents":null,"selectedWebservices":[],"pilotInfo":null,"selectedFrameworks":null,"emailSupported":false,"pilotContent":null,"embedAppId":null,"phoneEnabled":false,"tabletEnabled":false,"pilot":false,"functionalFramework":null,"dependentModules":null,"functionalFrameworkInfo":null,"customerIds":null,"used":false,"name":"J2ee","id":"8411b808-abb2-4fd6-ba3a-7afff9b94f62","displayName":null,"status":null,"description":"","creationDate":1375339413000,"helpText":null,"system":false}],"status":"success"});	
+						this.responseText = JSON.stringify({"message":null,"exception":null,"responseCode":"PHR200002","data":[{"version":"1.0","modules":null,"pomFile":null,"code":"TodayProject","appDirName":"TodayProject","techInfo":{"version":"0.10.9","appTypeId":"app-layer","techGroupId":null,"techVersions":null,"customerIds":null,"used":false,"name":"Node JS","id":"tech-nodejs-webservice","displayName":null,"status":null,"description":null,"creationDate":1376927360000,"helpText":null,"system":false},"functionalFramework":null,"selectedServers":null,"selectedDatabases":null,"selectedModules":null,"selectedJSLibs":null,"selectedComponents":null,"selectedWebservices":null,"functionalFrameworkInfo":null,"pilotInfo":null,"selectedFrameworks":null,"emailSupported":false,"pilotContent":null,"embedAppId":null,"phoneEnabled":false,"tabletEnabled":false,"pilot":false,"dependentModules":null,"created":false,"customerIds":null,"used":false,"name":"TodayProject","id":"cf25973d-9e0e-4455-9ed3-af8371b3b3db","displayName":null,"status":null,"description":null,"creationDate":1376927360000,"helpText":null,"system":false}],"status":"success"});	
 					}
 				});
 
 				$.mockjax({
-					url: commonVariables.webserviceurl + commonVariables.jobTemplates + "/bld?customerId=photon&projectId=a4329529-3c9d-476d-a310-e0cf4436e021",
+					url: commonVariables.webserviceurl + commonVariables.jobTemplates + "/load?customerId=photon&projectId=86b654c9-daae-4e07-82d3-720169e93827",
 					type:'GET',
 					dataType: "json",
 					contentType: "application/json",
 					status: 200,
 					response: function() {
-						this.responseText = JSON.stringify({"message":"Job Template retrived successfully","exception":null,"responseCode":null,"data":{"name":"codeValidate","type":"codeValidation","projectId":"28352211-a3d6-4ff9-8b55-2734942993b0","customerId":"photon","appIds":["htm","J2ee"],"enableRepo":true,"repoTypes":"svn","enableSheduler":true,"enableEmailSettings":false,"enableUploadSettings":false,"uploadTypes":[]},"status":null});	
+						this.responseText = JSON.stringify({"message":"Job Template retrived successfully","exception":null,"responseCode":null,"data":{"name":"load","type":"loadTest","projectId":"86b654c9-daae-4e07-82d3-720169e93827","customerId":"photon","appIds":["TodayProject"],"enableRepo":false,"repoTypes":"svn","enableSheduler":false,"enableEmailSettings":false,"enableUploadSettings":false,"uploadTypes":[]},"status":null});	
 					}
 				});
-
-				$("a[name=editpopup]").eq(0).click();
+				$("a[name=editpopup][id=edit_load]").click();
 				setTimeout(function() {
 					start();
-					equal(1, 1, "jobTemplates - edit Event Test");
+					var display = $(commonVariables.contentPlaceholder).find(".widget-maincontent-div").find('div[id=jobTemplatePopup]').css('display');
+					equal("block", display, "jobTemplates - edit Event Test");
 					self.updateJobTemplateTest(jobTemplates);
 				}, 3000);
 			});
@@ -232,51 +233,43 @@ define(["ci/jobTemplates"], function(JobTemplates) {
 		updateJobTemplateTest : function(jobTemplates) {
 			var self=this;
 			asyncTest("jobTemplates - update Event Test", function() {
-				$('input[name=name]').val('Test');
-				$("input[name=oldname]").val('oldName');
-				$("select[name=type]").selectpicker('val', 'codeValidation');
-				$("select[name=appIds]").selectpicker('val', ['SVNCHECK-wordpress']);				
-				$("input[name=enableRepo]").prop('checked', true);
-				var name = $('input[name="name"]').val();
-				var oldname = $('[name="oldname"]').val();
-
 				$.mockjax({
-					url : commonVariables.webserviceurl + commonVariables.jobTemplates + "/validate?customerId=photon&oldname=oldName&projectId=a4329529-3c9d-476d-a310-e0cf4436e021&name=Test",
+					url : commonVariables.webserviceurl + commonVariables.jobTemplates + "/validate?customerId=photon&oldname=load&projectId=86b654c9-daae-4e07-82d3-720169e93827&name=load",
 					type:'GET',
 					contentType:'application/json',
 					status: 200,
 					response: function() {
-						this.responseText = JSON.stringify({"message":"","exception":null,"data":true,"response":null});	
+						this.responseText = JSON.stringify({"message":"","exception":null,"responseCode":null,"data":true,"status":null});	
 					}
 				});
 
 				$.mockjax({
-					url: commonVariables.webserviceurl + commonVariables.jobTemplates + "?oldname=oldName&projectId=a4329529-3c9d-476d-a310-e0cf4436e021", 
+					url: commonVariables.webserviceurl + commonVariables.jobTemplates + "?oldname=load&customerId=photon&projectId=86b654c9-daae-4e07-82d3-720169e93827", 
 					type:'PUT',
 					contentType:'application/json',
 					status: 200,
 					response: function() {
-						this.responseText = JSON.stringify({"message":"Job Template added successfully","exception":null,"data":{"name":"Test","type":"codeValidation","projectId":"a4329529-3c9d-476d-a310-e0cf4436e021","customerId":"photon","appIds":["SVNCHECK-wordpress"],"enableRepo":true,"repoTypes":"svn","enableSheduler":false,"enableEmailSettings":false,"enableUploadSettings":false,"uploadTypes":[]},"response":null});	
+						this.responseText = JSON.stringify({"message":"Job Template updated successfully","exception":null,"responseCode":null,"data":true,"status":null});	
 					}
 				}); 
 
 				$.mockjax({
-					url: commonVariables.webserviceurl + commonVariables.jobTemplates +"?customerId=photon&projectId=a4329529-3c9d-476d-a310-e0cf4436e021&appDirName=",
+					url: commonVariables.webserviceurl + commonVariables.jobTemplates +"?customerId=photon&projectId=86b654c9-daae-4e07-82d3-720169e93827&appDirName=",
 					type:'GET',
 					dataType: "json",
 					contentType: "application/json",
 					status: 200,
 					response: function() {
-						this.responseText = JSON.stringify({"message":"Job Templates listed successfully","exception":null,"data":[{"name":"bld","type":"build","projectId":"a4329529-3c9d-476d-a310-e0cf4436e021","customerId":"photon","appIds":["1","2","3","SVNCHECK-wordpress"],"enableRepo":false,"repoTypes":"svn","enableSheduler":false,"enableEmailSettings":false,"enableUploadSettings":false,"uploadTypes":[]},{"name":"code","type":"codeValidation","projectId":"a4329529-3c9d-476d-a310-e0cf4436e021","customerId":"photon","appIds":["2","3","SVNCHECK-wordpress"],"enableRepo":true,"repoTypes":"svn","enableSheduler":false,"enableEmailSettings":false,"enableUploadSettings":false,"uploadTypes":[]},{"name":"Test","type":"codeValidation","projectId":"a4329529-3c9d-476d-a310-e0cf4436e021","customerId":"photon","appIds":["SVNCHECK-wordpress"],"enableRepo":true,"repoTypes":"svn","enableSheduler":false,"enableEmailSettings":false,"enableUploadSettings":false,"uploadTypes":[]}],"response":null});	
+						this.responseText = JSON.stringify({"message":"Job Templates listed successfully","exception":null,"responseCode":null,"data":[{"name":"code","type":"codeValidation","projectId":"86b654c9-daae-4e07-82d3-720169e93827","customerId":"photon","appIds":["TodayProject"],"enableRepo":true,"repoTypes":"svn","enableSheduler":true,"enableEmailSettings":true,"enableUploadSettings":false,"uploadTypes":[]},{"name":"build","type":"build","projectId":"86b654c9-daae-4e07-82d3-720169e93827","customerId":"photon","appIds":["TodayProject"],"enableRepo":false,"repoTypes":"svn","enableSheduler":false,"enableEmailSettings":false,"enableUploadSettings":false,"uploadTypes":[]},{"name":"deploy","type":"deploy","projectId":"86b654c9-daae-4e07-82d3-720169e93827","customerId":"photon","appIds":["TodayProject"],"enableRepo":false,"repoTypes":"svn","enableSheduler":false,"enableEmailSettings":false,"enableUploadSettings":false,"uploadTypes":[]},{"name":"unit","type":"unittest","projectId":"86b654c9-daae-4e07-82d3-720169e93827","customerId":"photon","appIds":["TodayProject"],"enableRepo":false,"repoTypes":"svn","enableSheduler":false,"enableEmailSettings":false,"enableUploadSettings":false,"uploadTypes":[]},{"name":"functional","type":"functionalTest","projectId":"86b654c9-daae-4e07-82d3-720169e93827","customerId":"photon","appIds":["TodayProject"],"enableRepo":false,"repoTypes":"svn","enableSheduler":false,"enableEmailSettings":false,"enableUploadSettings":false,"uploadTypes":[]},{"name":"performance","type":"performanceTest","projectId":"86b654c9-daae-4e07-82d3-720169e93827","customerId":"photon","appIds":["TodayProject"],"enableRepo":false,"repoTypes":"svn","enableSheduler":false,"enableEmailSettings":false,"enableUploadSettings":false,"uploadTypes":[]},{"name":"pdf","type":"pdfReport","projectId":"86b654c9-daae-4e07-82d3-720169e93827","customerId":"photon","appIds":["TodayProject"],"enableRepo":false,"repoTypes":"svn","enableSheduler":false,"enableEmailSettings":false,"enableUploadSettings":false,"uploadTypes":[]},{"name":"load","type":"loadTest","projectId":"86b654c9-daae-4e07-82d3-720169e93827","customerId":"photon","appIds":["TodayProject"],"enableRepo":false,"repoTypes":"svn","enableSheduler":false,"enableEmailSettings":false,"enableUploadSettings":false,"uploadTypes":[]},{"name":"newTemplate","type":"codeValidation","projectId":"86b654c9-daae-4e07-82d3-720169e93827","customerId":"photon","appIds":["TodayProject"],"enableRepo":false,"repoTypes":"svn","enableSheduler":false,"enableEmailSettings":false,"enableUploadSettings":false,"uploadTypes":[]}],"status":null});	
 					}
 				});
-
 				$(commonVariables.contentPlaceholder).find('input[name=save]').prop('name', 'update');
-				$('input[name=update]').eq(0).click();
+				$('input[name=update]').click();
 
 				setTimeout(function() {
 					start();
-					equal(1, 1, "jobTemplates - update Event Tested");
+					var createdTr = $(commonVariables.contentPlaceholder).find(".widget-maincontent-div").find("table[id=jobTemplateList]").find("tr:last").find("td:first").text();
+					equal(true, createdTr.indexOf('newTemplate') !== -1, "jobTemplates - save with values Event Tested");
 					self.deleteJobTemplatesTest(jobTemplates);
 				}, 2500);
 			});
@@ -288,7 +281,8 @@ define(["ci/jobTemplates"], function(JobTemplates) {
 			asyncTest("jobTemplates - Delete Event Test", function() {
 
 				$.mockjax({
-					url: commonVariables.webserviceurl + commonVariables.jobTemplates +"?customerId=photon&projectId=a4329529-3c9d-476d-a310-e0cf4436e021&name=bld",
+//					http://localhost:2468/framework/rest/api/jobTemplates?customerId=photon&projectId=86b654c9-daae-4e07-82d3-720169e93827&name=newTemplate
+					url: commonVariables.webserviceurl + commonVariables.jobTemplates +"?customerId=photon&projectId=86b654c9-daae-4e07-82d3-720169e93827&name=newTemplate",
 					type:'DELETE',
 					dataType: "json",
 					contentType: "application/json",
@@ -297,8 +291,19 @@ define(["ci/jobTemplates"], function(JobTemplates) {
 						this.responseText = JSON.stringify({"message":"Job Template deleted successfully","exception":null,"responseCode":null,"data":null,"status":null});	
 					}
 				});
-
-				$("input[name=delete]").eq(0).click();
+				
+				$.mockjax({
+//					http://localhost:2468/framework/rest/api/jobTemplates?customerId=photon&projectId=86b654c9-daae-4e07-82d3-720169e93827&appDirName=&_=1377166377256
+					url: commonVariables.webserviceurl + commonVariables.jobTemplates +"?customerId=photon&projectId=86b654c9-daae-4e07-82d3-720169e93827&appDirName=",
+					type:'GET',
+					dataType: "json",
+					contentType: "application/json",
+					status: 200,
+					response: function() {
+						this.responseText = JSON.stringify({"message":"Job Templates listed successfully","exception":null,"responseCode":null,"data":[{"name":"code","type":"codeValidation","projectId":"86b654c9-daae-4e07-82d3-720169e93827","customerId":"photon","appIds":["TodayProject"],"enableRepo":true,"repoTypes":"svn","enableSheduler":true,"enableEmailSettings":true,"enableUploadSettings":false,"uploadTypes":[]},{"name":"build","type":"build","projectId":"86b654c9-daae-4e07-82d3-720169e93827","customerId":"photon","appIds":["TodayProject"],"enableRepo":false,"repoTypes":"svn","enableSheduler":false,"enableEmailSettings":false,"enableUploadSettings":false,"uploadTypes":[]},{"name":"deploy","type":"deploy","projectId":"86b654c9-daae-4e07-82d3-720169e93827","customerId":"photon","appIds":["TodayProject"],"enableRepo":false,"repoTypes":"svn","enableSheduler":false,"enableEmailSettings":false,"enableUploadSettings":false,"uploadTypes":[]},{"name":"unit","type":"unittest","projectId":"86b654c9-daae-4e07-82d3-720169e93827","customerId":"photon","appIds":["TodayProject"],"enableRepo":false,"repoTypes":"svn","enableSheduler":false,"enableEmailSettings":false,"enableUploadSettings":false,"uploadTypes":[]},{"name":"functional","type":"functionalTest","projectId":"86b654c9-daae-4e07-82d3-720169e93827","customerId":"photon","appIds":["TodayProject"],"enableRepo":false,"repoTypes":"svn","enableSheduler":false,"enableEmailSettings":false,"enableUploadSettings":false,"uploadTypes":[]},{"name":"performance","type":"performanceTest","projectId":"86b654c9-daae-4e07-82d3-720169e93827","customerId":"photon","appIds":["TodayProject"],"enableRepo":false,"repoTypes":"svn","enableSheduler":false,"enableEmailSettings":false,"enableUploadSettings":false,"uploadTypes":[]},{"name":"pdf","type":"pdfReport","projectId":"86b654c9-daae-4e07-82d3-720169e93827","customerId":"photon","appIds":["TodayProject"],"enableRepo":false,"repoTypes":"svn","enableSheduler":false,"enableEmailSettings":false,"enableUploadSettings":false,"uploadTypes":[]},{"name":"load","type":"loadTest","projectId":"86b654c9-daae-4e07-82d3-720169e93827","customerId":"photon","appIds":["TodayProject"],"enableRepo":false,"repoTypes":"svn","enableSheduler":false,"enableEmailSettings":false,"enableUploadSettings":false,"uploadTypes":[]}],"status":null});	
+					}
+				});
+				$('#delete_newTemplate').next().find('input[name=delete]').click();
 				setTimeout(function() {
 					start();
 					equal(1, 1, "jobTemplates - Delete Event Tested");	

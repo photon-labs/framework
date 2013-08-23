@@ -105,6 +105,11 @@
     	<!--content_title ends here -->
     </section>
 	
+	<section class="content_title" name="navigation" id="settingsNav" style="display:none">
+    	<h1><span data-i18n="header.menu.settings"></span></h1>
+    	<!--content_title ends here -->
+    </section>
+	
 	 <section class="content_title" name="navigation" id="editprojectTab" style="display:none">
     	<div class="title_nav">
         	<ul class="nav">

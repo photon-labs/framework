@@ -2,7 +2,7 @@ define(["header/api/headerAPI"], function() {
 
 	Clazz.createPackage("com.commonComponents.modules.header.js.listener");
 
-	Clazz.com.commonComponents.modules.header.js.listener.HeaderListener = Clazz.extend(Clazz.Widget, {
+	Clazz.com.commonComponents.modules.header.js.listener.HeaderListener = Clazz.extend(Clazz.WidgetWithTemplate, {
 		//loadingScreen : null,
 		headerAPI : null,
 		projectListContent: null,
@@ -36,32 +36,21 @@ define(["header/api/headerAPI"], function() {
 		},
 		
 		loadTab : function(){
-			var self = this, currentObj = null;
+			var self = this;
 			Clazz.navigationController.jQueryContainer = commonVariables.contentPlaceholder;
 			
 			if(self.currentTab === "Dashboard"){
 			}else if(self.currentTab === "Projects"){
-				if (currentObj === null) {
-					commonVariables.navListener.getMyObj(commonVariables.projectlist, function(retVal) {
-						currentObj = retVal;
-						self.loadTabRender(currentObj);
-						$(".add_cancel").show();
-						$("#projectList").find('span').text('Projects');
-					});
-				}
+				commonVariables.navListener.getMyObj(commonVariables.projectlist, function(retVal) {
+					self.loadTabRender(retVal);
+				});
 			}else if(self.currentTab === "Settings"){
-				if (currentObj === null) {
-					commonVariables.navListener.getMyObj(commonVariables.settings, function(retVal) {
-						currentObj = retVal;
-						self.loadTabRender(currentObj);
-						$(".add_cancel").hide();
-						$("#projectList").find('span').text('Settings');
-					});
-				} 
+				commonVariables.navListener.getMyObj(commonVariables.settings, function(retVal) {
+					self.loadTabRender(retVal);
+				});
 			}else if(self.currentTab === "Downloads"){
 			}else if(self.currentTab === "Admin"){
 			}	
-			
 		},
 		
 		loadTabRender : function(currentObj){

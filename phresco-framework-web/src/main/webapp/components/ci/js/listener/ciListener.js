@@ -73,7 +73,9 @@ define([], function() {
 					$("#sortable2 li.ui-state-default a").show();
 					$("#sortable1 li.ui-state-default a").hide();
 					$('#'+id).data("jobJson", value);
-				});				
+					self.downStreamCriteria();
+				});	
+				self.lastChild();
 			}
 		},
 
@@ -692,14 +694,92 @@ define([], function() {
 			callback(dataObj);
 		},
 
-
+		cronReverser : function(Obj) {
+			var self = this;
+			var schedule = Obj.scheduleType;
+			self.currentEvent(schedule, '');
+			var dailyEvery = "";
+			var dailyHour = "";
+			var dailyMinute = "";
+			
+			var weeklyWeek = "";
+			var weeklyHour = "";
+			var weeklyMinute = "";
+			
+			var monthlyDay = "";
+			var monthlyMonth = "";
+			var monthlyHour = "";
+			var monthlyMinute = "";
+			
+			var CronExpre = Obj.scheduleExpression;
+			var cronSplit = [];
+			cronSplit = CronExpre.split(" ");
+			if(schedule === "Daily") {
+				$('input[name=scheduleType][value=Daily]').attr('checked',true);
+				if(CronExpre.indexOf("/") != -1) {
+//					dailyEvery = "checked";
+					var every = $('#schedule_daily').find('input[name=everyAt]');
+					every.prop('checked', true);
+				}
+				
+	            if (cronSplit[0].indexOf("/") != -1) {
+	            	var hours = $('#schedule_daily').find('select[class=selectpicker][name=hours]');
+	            	hours.selectpicker('val', cronSplit[0].substring(2) + "");
+//	            	dailyMinute = cronSplit[0].substring(2) + "";
+	            } else {
+	            	var hours = $('#schedule_daily').find('select[class=selectpicker][name=hours]');
+	            	hours.selectpicker('val', cronSplit[0]);
+//	            	dailyMinute = cronSplit[0];
+	            }
+	            
+				if (cronSplit[1].indexOf("/") != -1) {
+					var minutes = $('#schedule_daily').find('select[class=selectpicker][name=minutes]');
+	            	minutes.selectpicker('val', cronSplit[1].substring(2) + "");
+//					dailyHour = cronSplit[1].substring(2) + "";
+	            } else {
+	            	var minutes = $('#schedule_daily').find('select[class=selectpicker][name=minutes]');
+	            	minutes.selectpicker('val', cronSplit[1]);
+//	            	dailyHour = cronSplit[1];
+	            }
+			} else if(schedule === "Weekly") {
+				$('input[name=scheduleType][value=Weekly]').attr('checked',true);
+				var weeks = $('#schedule_weekly').find('select[class=selectpicker][name=weeks]');
+				var hours = $('#schedule_weekly').find('select[class=selectpicker][name=hours]');
+				var minutes = $('#schedule_weekly').find('select[class=selectpicker][name=minutes]');
+				weeks.selectpicker('val', cronSplit[4]);
+				hours.selectpicker('val', cronSplit[1]);
+				minutes.selectpicker('val', cronSplit[0]);
+//				weeklyWeek = cronSplit[4];
+//				weeklyHour = cronSplit[1];
+//				weeklyMinute = cronSplit[0];
+				
+			} else if(schedule === "Monthly") {
+				$('input[name=scheduleType][value=Monthly]').attr('checked',true);
+				var day = $('#schedule_monthly').find('select[class=selectpicker][name=days]');
+				var month = $('#schedule_monthly').find('select[class=selectpicker][name=months]');
+				var hour = $('#schedule_monthly').find('select[class=selectpicker][name=hours]');
+				var minute = $('#schedule_monthly').find('select[class=selectpicker][name=minutes]');
+				day.selectpicker('val', cronSplit[2]);
+				month.selectpicker('val', cronSplit[3]);
+				hour.selectpicker('val', cronSplit[1]);
+				minute.selectpicker('val', cronSplit[0]);
+//				monthlyDay = cronSplit[2];
+//				monthlyMonth = cronSplit[3];
+//				monthlyHour = cronSplit[1];
+//				monthlyMinute = cronSplit[0];
+				
+			}
+		},
+		
 		showConfigureJob : function(thisObj) {
 			$('input[name=jobName]').removeClass('errormessage');
 			$('input[name=jobName]').val('');
 			$('#errMsg').html('');
 			$('#errMsg').removeClass('errormessage');
-			//enable scheduler options 
-			$("input[name=scheduleOption]").attr('disabled', false);
+			//enable scheduler & downStreamCriteria options 
+			$("select[name=downStreamCriteria]").attr('disabled', false);
+			$('[name=scheduleExpression]').attr('disabled', false);
+//			$("input[name=scheduleType]").attr('disabled', false);
 			$("input[name=everyAt]").attr('disabled', false);
 			$("select[name=minutes]").attr('disabled', false);
 			$("select[name=hours]").attr('disabled', false);	
@@ -733,6 +813,12 @@ define([], function() {
 				//set label value
 				$(repoTypeTitleElem).html("Clonned workspace");
 			}
+			
+			if(!templateJsonData.enableCriteria) {
+				$('#criteria').hide();
+			} else {
+				$('#criteria').show();
+			}
 
 			// Upload configurations
 			$("#uploadSettings").empty();
@@ -765,7 +851,7 @@ define([], function() {
 	                    '<thead><tr><th colspan="3">Confluence Upload Settings</th></tr></thead>'+
 	                    '<tbody>'+
 	                    '<tr>'+  
-                    	'<tr><td>Confluence Site<br><select name="confluenceSite"><option>172.16.25.44</option></select></td></tr>'+
+                    	'<tr><td>Confluence Site<br><input name="confluenceSite" type="text" placeholder="Ip"></td></tr>'+
 	                    '<tr><td><input name="confluenceSpace" type="text" placeholder="Space"></td><td><input name="confluencePage" type="text" placeholder="Page"></td></tr>'+
 	                    '<tr><td><input name="confluenceOther" type="text" placeholder="Other files to attach"></td></tr>'+
                     	'<td colspan="3">'+                                       
@@ -792,8 +878,11 @@ define([], function() {
 
 			//scheduler
 			if (!templateJsonData.enableSheduler) {
-				$("#scheduler").remove();
-				$("#cronPreview").remove();
+				$("#scheduler").hide();
+				$("#cronPreview").hide();
+			} else {
+				$("#scheduler").show();
+				$("#cronPreview").show();
 			}
 
 			//mail
@@ -841,6 +930,9 @@ define([], function() {
 			commonVariables.phase = commonVariables.ciPhase + commonVariables.goal; // ci phase
 			commonVariables.appDirName = appDirName;
 			self.CroneExpression();
+			if (!self.isBlank(jobJsonData) && templateJsonData.enableSheduler) {
+				self.cronReverser(jobJsonData);
+			}
 			$('#dynamicContent ul').empty();
 			$('#dynamicContent div[class=hiddenControls]').empty();
 			commonVariables.navListener.getMyObj(commonVariables.dynamicPage, function(dynamicPageObject) {
@@ -927,8 +1019,8 @@ define([], function() {
 				$(this).parent().parent().hide();
 			});
 			
-			self.currentEvent($('input[name=scheduleOption]:checked').val(), '');
-			$('input[name=scheduleOption]').bind('click', function() {
+			self.currentEvent($('input[name=scheduleType]:checked').val(), '');
+			$('input[name=scheduleType]').bind('click', function() {
 				$(this).attr('checked', true);
 				self.currentEvent($(this).val(), '');
 			});
@@ -1010,7 +1102,14 @@ define([], function() {
 				croneJson.minutes = $('select[name=minutes]').val();
 				self.cronExpressionLoad(croneJson);
 				$('select[name=weeks], select[name=hours], select[name=minutes]').bind('change', function(){
-					croneJson.week = $('select[name=weeks]').val();
+					var weeks = [];
+					if ($('select[name=weeks]').val() === null) {
+						val = '*';
+						weeks.push(val);
+						croneJson.week = weeks;
+					} else {
+						croneJson.week = $('select[name=weeks]').val();
+					}
 					croneJson.hours = $('select[name=hours]').val();
 					croneJson.minutes = $('select[name=minutes]').val();
 					self.cronExpressionLoad(croneJson);
@@ -1153,13 +1252,27 @@ define([], function() {
 			            	}
 			                break;
 			            case 'select-one':
-			            	$('[name="'+ key +'"]').val(value);
+			            	var className = $('[name="'+ key +'"]').attr('class');
+			            	if(className.indexOf("selectpicker") != -1) {
+				                $('[name="'+ key +'"]').selectpicker('val', value);
+			            	} else {
+			            		$('[name="'+ key +'"]').val(value);
+			            	}
 			                break;
 			            case 'select-multiple':
-							if ($.type(value) === "array") {
-			            		$('[name="'+ key +'"]').val(value);
-			            	} else if ($.type() === "string") {
-			            		$('[name="'+ key +'"]').val(value);
+			            	var className = $('[name="'+ key +'"]').attr('class');
+			            	if(className.indexOf("selectpicker") != -1) {
+								if ($.type(value) === "array") {
+				            		$('[name="'+ key +'"]').selectpicker('val', value);
+				            	} else if ($.type() === "string") {
+				            		$('[name="'+ key +'"]').selectpicker('val', value);
+				            	} 
+							} else {
+								if ($.type(value) === "array") {
+				            		$('[name="'+ key +'"]').val(value);
+				            	} else if ($.type() === "string") {
+				            		$('[name="'+ key +'"]').val(value);
+				            	} 
 			            	}
 			                break;
 			        }
@@ -1200,7 +1313,7 @@ define([], function() {
 			confluence.each(function() {
 				if (self.isBlank(this.value) && (this.name === 'confluenceSite')) {
 					$('#errMsg').html('Select atleast One Site');
-					$('select[name=confluenceSite]').focus();
+					$('input[name=confluenceSite]').focus();
 					$('#errMsg').addClass("errormessage");
 					emptyFound = true;
 				} else if (self.isBlank(this.value)) {
@@ -1236,6 +1349,7 @@ define([], function() {
 				});		
 				emptyFound = true;			
 			}
+			
 			if(templateJsonData.type === "performanceTest" || templateJsonData.type === "loadTest") {
 				var ciRequestBody = {}, redirect = true, templJsonStr="",testAction;
 				redirect = self.contextUrlsMandatoryVal();
@@ -1258,6 +1372,9 @@ define([], function() {
 			}
 			
 			//scheduler validation
+			if (!templateJsonData.enableSheduler) {
+				$('[name=scheduleExpression]').attr('disabled', true);
+			} 
 
 			//mail settings validation
 
@@ -1267,9 +1384,11 @@ define([], function() {
 				$.each($("input:checkbox[name=triggers]:checked"), function(key, value) {
 					 triggers.push($(this).val());
 				});
-				
+				if(!templateJsonData.enableCriteria) {
+					$("select[name=downStreamCriteria]").attr('disabled', true);
+				} 
 				//disable scheduler options
-				$("input[name=scheduleOption]").attr('disabled', true);
+//				$("input[name=scheduleType]").attr('disabled', true);
 				$("input[name=everyAt]").attr('disabled', true);
 				$("select[name=minutes]").attr('disabled', true);
 				$("select[name=hours]").attr('disabled', true);	
@@ -1432,7 +1551,7 @@ define([], function() {
 				    	// downstream specifies the next job which needs to be triggered after this job
 				        jobJsonData.downstreamApplication = nextJobJsonData.jobName;
 				        //jobJsonData.downStreamProject = nextJobJsonData.jobName;
-				        jobJsonData.downStreamCriteria = "SUCCESS";
+//				        jobJsonData.downStreamCriteria = "SUCCESS";
 				    } else {
 				    	jobJsonData.downstreamApplication ="";
 				    }
@@ -1582,6 +1701,31 @@ define([], function() {
 		saveContinuousDeliveryValidation : function (thisObj, callback) {
 			var self = this;
 			callback();
+		},
+		
+		downStreamCriteria : function() {
+			var self = this;
+			var sortable2LiObj = $("#sortable2 li");
+			$(sortable2LiObj).each(function(index) {
+				var thisAnchorElem = $(this).find('a');
+				var thisTemplateJsonData = $(thisAnchorElem).data("templateJson");
+				var thisJobJsonData = $(thisAnchorElem).data("jobJson");
+				if (!self.isBlank(thisJobJsonData) && thisJobJsonData.downStreamCriteria === "") {
+					thisJobJsonData.downStreamCriteria = "SUCCESS";
+				}
+				thisTemplateJsonData.enableCriteria = true;
+			});
+		},
+		
+		lastChild : function() {
+			var self =this;
+			var lastChild = $("#sortable2 li:last-child").find('a');
+			var lastTemplateJsonData = lastChild.data("templateJson");
+			var lastJobJsonData = lastChild.data("jobJson");
+			if (!self.isBlank(lastJobJsonData)) {
+				lastJobJsonData.downStreamCriteria = "";
+			}
+			lastTemplateJsonData.enableCriteria = false;
 		}
 				
 	});

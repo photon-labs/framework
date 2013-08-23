@@ -415,11 +415,22 @@ define([], function() {
 				case commonVariables.projectlist :
 					$("#projectList").show();
 					$("#createProject").hide();
+					$("#settingsNav").hide();
 					self.applyRBAC(keyword);
 					break;
 					
 				case commonVariables.editApplication :
 					$("#applicationedit").show();
+					$("#settingsNav").hide();
+					break;
+					
+				case commonVariables.settings :
+					console.info("settings called");
+					$("#settingsNav").show();
+					$("#projectList").hide();
+					$("#createProject").hide();
+					$("#applicationedit").hide();
+					$('#editprojectTab').hide();
 			}
 		},
 		

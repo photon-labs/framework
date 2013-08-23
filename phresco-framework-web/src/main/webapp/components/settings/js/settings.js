@@ -88,6 +88,7 @@ define(["framework/widgetWithTemplate", "settings/listener/settingsListener"], f
 			var self = this;
 			self.resizeConsoleWindow();
 			self.settingsListener.getSettings();
+			commonVariables.navListener.showHideControls(commonVariables.settings);
 		},
 		
 		/* dynamicEvent : function() {
