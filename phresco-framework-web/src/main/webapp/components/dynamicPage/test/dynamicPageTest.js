@@ -99,11 +99,37 @@ define(["dynamicPage/dynamicPage"], function(DyanmicPage) {
 				setTimeout(function() {
 					start();
 					equal("single", divElement.find('li').find("select").attr("selection"), "construct single select element tested");
-					self.testMultiSelect(dyanmicPage, self);
+					self.testEditableCombo(dyanmicPage, self);
 				}, 200);
 			});
 		},
-	
+		
+		testEditableCombo : function(dynamicPage, self) {
+			asyncTest("Test - construct editable combo box", function() {
+				var divElement = $("<div id='testEditableCombo'></div>");
+				var parameter = {"pluginParameter":null,"mavenCommands":null,"name":{"value":[{"value":"Test Result Name","lang":"en"}]},"type":"DynamicParameter","childs":null,"dynamicParameter":{"dependencies":{"dependency":{"groupId":"com.photon.phresco.framework","artifactId":"phresco-framework-impl","type":"jar","version":"3.0.0.20000"}},"class":"com.photon.phresco.framework.param.impl.PerformanceTestResultNamesImpl"},"required":"true","editable":"edit","description":"","key":"testName","possibleValues":{"value":[{"value":"test-server","key":"test-server","dependency":"contextUrls"}]},"multiple":"false","value":"test-server","sort":false,"show":false};
+				dynamicPage.dynamicPageListener.constructDynamicCtrl(parameter, "", parameter.possibleValues, divElement);
+				setTimeout(function() {
+					start();
+					equal(true, divElement.find('select').hasClass('editableComboBox'), "editable combo box test");
+					self.testDragDropControl(dynamicPage, self);
+				}, 200);
+			});
+		},
+
+		testDragDropControl : function(dynamicPage, self) {
+			asyncTest("Test - drag & drop control", function() {
+				var divElement = $("<div id='testEditableCombo'></div>");
+				var parameter = {"pluginParameter":null,"mavenCommands":null,"name":{"value":[{"value":"FetchSql","lang":"en"}]},"type":"DynamicParameter","childs":null,"dynamicParameter":{"dependencies":{"dependency":{"groupId":"com.photon.phresco.framework","artifactId":"phresco-framework-impl","type":"jar","version":"3.0.0.22004"}},"class":"com.photon.phresco.framework.param.impl.DynamicFetchSqlImpl"},"required":"false","editable":"true","description":"","key":"fetchSql","possibleValues":{"value":[{"value":"/source/sql/mysql/5.5.1/custom.sql","key":"mysql","dependency":null},{"value":"/source/sql/mysql/5.5.1/site.sql","key":"mysql","dependency":null}]},"multiple":"false","value":"{\"mysql\":[\"/source/sql/mysql/5.5.1/custom.sql\"]}","sort":true,"show":false};
+				dynamicPage.dynamicPageListener.consDragnDropcnt(parameter, "", divElement);				
+				setTimeout(function() {
+					start();
+					equal("fetchSql_table", divElement.find('table').attr('name'), "drap and drop control test");
+					self.testMultiSelect(dynamicPage, self);
+				}, 200);
+			});
+		},
+
 		testMultiSelect : function (dyanmicPage, self) {
 			asyncTest("Test - construct multi select element", function() {
 				var divElement = $("<div id='testDynamicMultiSelect'></div>");

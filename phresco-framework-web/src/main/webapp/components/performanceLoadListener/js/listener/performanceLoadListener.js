@@ -72,10 +72,9 @@ define(["lib/jquery-tojson-1.0",'lib/RGraph_common_core-1.0','lib/RGraph_common_
 					testAgainst = requestBody.testAgainsts[0];
 				} 
 				
-				if (!self.isBlank(requestBody.device) && requestBody.devices.length !== 0) {
+				if (requestBody.showDevice && requestBody.devices.length !== 0) {
 					deviceId = requestBody.devices[0].split("#SEP#")[0];
 				}
-
 				header.requestMethod = "GET";
 				header.webserviceurl = commonVariables.webserviceurl + commonVariables.qualityContext + "/" + commonVariables.performanceTestResults + "?appDirName="+appDirName+
 					"&testAgainst=" + testAgainst + "&resultFileName=" + resultFileName + "&deviceId=" + deviceId + "&showGraphFor=responseTime&from=" + requestBody.from;
@@ -434,7 +433,6 @@ define(["lib/jquery-tojson-1.0",'lib/RGraph_common_core-1.0','lib/RGraph_common_
 			$('.donloadPdfReport').on("click", function() {
 				var fileName = $(this).attr("fileName"), from=$(this).attr("from"), appDirName = commonVariables.api.localVal.getSession("appDirName");
 				var pdfDownloadUrl = commonVariables.webserviceurl + "pdf/downloadReport?appDirName="+appDirName+"&reportFileName="+fileName+"&fromPage="+from;
-				console.info("pdfDownloadUrl>> ",pdfDownloadUrl);
 				window.open(pdfDownloadUrl, '_self');
 			});
 		},

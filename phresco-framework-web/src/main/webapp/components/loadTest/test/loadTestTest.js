@@ -238,7 +238,7 @@ define(["loadTest/loadTest"], function(LoadTest) {
 				  requestPostBody: requestPostBody,
 				  status: 200,
 				  response : function() {
-					  this.responseText = JSON.stringify({"connectionAlive":false,"errorFound":false,"configErr":false,"parameterKey":null,"uniquekey":"72bea107-3799-48e6-bd5f-08c50c05646f","service_exception":"","configErrorMsg":null,"responseCode":null,"status":"STARTED","log":"STARTED"});
+					  this.responseText = JSON.stringify({"connectionAlive":false,"errorFound":false,"configErr":false,"parameterKey":null,"uniquekey":"72bea107-3799-48e6-bd5f-08c50c05646f","service_exception":"","configErrorMsg":null,"responseCode":null,"status":"COMPLETED","log":"COMPLETED"});
 				  }
 				});
 
@@ -247,7 +247,7 @@ define(["loadTest/loadTest"], function(LoadTest) {
 				$('#loadRun').click();
 				setTimeout(function() {
 					start();
-					equal($('#testConsole').text(), "STARTED", "trigger load tested succesfully");
+					equal($('#testConsole').text(), "", "trigger load tested succesfully");
 				}, 1500);	
 			});	
 		},

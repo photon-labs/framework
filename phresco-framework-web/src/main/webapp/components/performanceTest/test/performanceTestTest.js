@@ -312,7 +312,7 @@
 				  contentType: "application/json",
 				  status: 200,
 				  response : function() {
-					  this.responseText = JSON.stringify({"connectionAlive":false,"errorFound":false,"configErr":false,"parameterKey":"","uniquekey":null,"service_exception":null,"configErrorMsg":"","responseCode":null,"status":null,"log":null});
+					  this.responseText = JSON.stringify({"connectionAlive":false,"errorFound":false,"configErr":false,"parameterKey":null,"uniquekey":null,"service_exception":null,"configErrorMsg":null,"responseCode":"PHR9C00001","status":"success","log":null});
 				  }
 				});
 
@@ -324,7 +324,7 @@
 				  requestPostBody: requestPostBody,
 				  status: 200,
 				  response : function() {
-					  this.responseText = JSON.stringify({"connectionAlive":false,"errorFound":false,"uniquekey":"d80dbdb5-d88e-4852-be84-662fca1ae6ce","service_exception":"","configErrorMsg":null,"responseCode":null,"status":"STARTED","log":"STARTED"});
+					  this.responseText = JSON.stringify({"connectionAlive":false,"errorFound":false,"configErr":false,"parameterKey":null,"uniquekey":"7711f876-e859-4b70-bf4a-87b25d53adb9","service_exception":"","configErrorMsg":null,"responseCode":"PHRQ500005","status":"COMPLETED","log":"COMPLETED"});
 				  }
 				});
 
@@ -367,9 +367,9 @@
 				$('#performanceRun').click();
 				setTimeout(function() {
 					start();
-					equal($('#testConsole').text(), "STARTED", "trigger performance tested succesfully");
+					equal($('#testConsole').text(), "", "trigger performance tested succesfully");
 					self.runNoPDFAvailabaleTest(performanceTest);	
-				}, 1500);
+				}, 2000);
 			});
 		},
 
@@ -502,6 +502,7 @@
 			var performanceTest = new PerformanceTest(), self = this;
 			asyncTest("Device list render test", function() {
 				$(commonVariables.contentPlaceholder).find('.performanceTemp').remove();
+				$.mockjaxClear();
 				$.mockjax({
 				  url: commonVariables.webserviceurl+commonVariables.qualityContext+"/"+commonVariables.performance+"?appDirName=native_none-androidnative",
 				  type: "GET",
@@ -509,7 +510,7 @@
 				  contentType: "application/json",
 				  status: 200,
 				  response : function() {
-					  this.responseText = JSON.stringify({"message":"Parameter returned successfully","exception":null,"responseCode":null,"data":{"resultAvailable":true,"testResultFiles":["Sample.xml","alltests.xml"],"showDevice":true,"devices":["emulator-5554#SEP#sample_google_sdk","emulator-5551#SEP#sampple_Android_sdk"],"testAgainsts":[]},"status":null});
+					  this.responseText = JSON.stringify({"message":null,"exception":null,"responseCode":"PHRQ500001","data":{"resultAvailable":true,"testResultFiles":["Sample.xml","alltests.xml"],"showDevice":true,"devices":["emulator-5554#SEP#sample_google_sdk","emulator-5551#SEP#sampple_Android_sdk"],"testAgainsts":[]},"status":"success"});
 				  }
 				});
 
@@ -527,7 +528,6 @@
 					commonVariables.navListener = new Clazz.com.components.navigation.js.listener.navigationListener();
 				});			
 				commonVariables.api.localVal.setSession("appDirName" , "native_none-androidnative");
-				
 				commonVariables.navListener.onMytabEvent("performanceTest");
 				setTimeout(function() {
 					start();
