@@ -155,22 +155,22 @@
 								</td>
 								<td class="list_img logTd">
 									{{#if testCaseFailure}}
-										<a href="#" type="failure" resultName="{{name}}" class="log">
+										<a href="#" type="failure" resultName="{{removeDot name}}" class="log">
 											<img src="themes/default/images/helios/log_icon.png" width="13" height="13" border="0" alt="">
 										</a>
-										<div id="{{name}}" style="display: none; width:500px">
-											<div style="word-wrap: break-word;"><b>{{testCaseFailure.failureType}} : </b>{{testCaseFailure.description}}</div>
+										<div id="{{removeDot name}}" style="display: none; width:500px">
+											<div class="testcaseLogDiv" style="word-wrap: break-word; max-height: 200px;"><b>{{testCaseFailure.failureType}} : </b>{{testCaseFailure.description}}</div>
 											<div class="flt_right">
 												<input type="button" value="Close" class="btn btn_style dyn_popup_close">
 											</div>
 										</div>
 									{{else}}
 										{{#if testCaseError}}
-											<a href="#" type="failure" resultName="{{name}}" class="log">
+											<a href="#" type="failure" resultName="{{removeDot name}}" class="log">
 												<img src="themes/default/images/helios/log_icon.png" width="13" height="13" border="0" alt="">
 											</a>
-											<div id="{{name}}" style="display: none; width:500px">
-												<div style="word-wrap: break-word;"><b>{{testCaseError.failureType}} : </b>{{testCaseError.description}}</div>
+											<div id="{{removeDot name}}" style="display: none; width:500px;">
+												<div class="testcaseLogDiv" style="word-wrap: break-word; max-height: 200px;"><b>{{testCaseError.errorType}} : </b>{{testCaseError.description}}</div>
 												<div class="flt_right">
 													<input type="button" value="Close" class="btn btn_style dyn_popup_close">
 												</div>

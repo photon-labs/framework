@@ -26,6 +26,15 @@ define(["testResult/listener/testResultListener"], function() {
 				self.onShowHideConsoleEvent = new signals.Signal();
 			}
 			self.onShowHideConsoleEvent.add(self.testResultListener.showHideConsole, self.testResultListener);
+
+			self.registerEvents();
+		},
+
+		registerEvents : function() {
+			var self = this;
+			Handlebars.registerHelper('removeDot', function(string) {
+				return string.replace(/\./g, '');
+			});
 		},
 		
 		loadPage : function() {
@@ -182,6 +191,14 @@ define(["testResult/listener/testResultListener"], function() {
 			$('.log').unbind("click");
 			$('.log').bind("click", function() {
 				var id = $(this).attr("resultname");
+				if (!$('.testcaseLogDiv').hasClass('mCustomScrollbar _mCS_2')) {
+					$('.testcaseLogDiv').mCustomScrollbar({
+						autoHideScrollbar:true,
+						theme:"light-thin",
+						advanced:{updateOnContentResize: true}
+					});	
+				}
+				
 				self.opencc(this, id);
 			});
 			
