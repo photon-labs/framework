@@ -91,6 +91,8 @@ define(["header/listener/headerListener"] , function(template) {
 			$('a[name=customers]').click(function(){
 				self.onSelectCustomerEvent.dispatch($(this).text());
 			});
+			
+			this.customScroll($(".scrolldiv"));
 		}
 	});
 
