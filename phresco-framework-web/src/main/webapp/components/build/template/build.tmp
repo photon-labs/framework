@@ -51,7 +51,7 @@
 					<input id="minifier" type="submit" data-i18n="[value]build.label.minifer"  name="build_minifier" class="btn btn_style" disabled>
 				{{/if}}
 					  <div id="build_minifier" class="dyn_popup" style="display:none;">
-                        <table class="table table-striped table_border table-bordered border_div" cellpadding="0" cellspacing="0" border="0">
+                        <table id="jsmin" class="table table-striped table_border table-bordered border_div" cellpadding="0" cellspacing="0" border="0">
                             <thead>
                                 <tr>
                                 	<th colspan="2" data-i18n="build.label.jsminification"></th>
@@ -59,15 +59,16 @@
                             </thead>
                             <tbody>
                                 <tr>
-                                    <td><input type="text"></td>
+                                    <td><input type="text" name="jsMinName"></td>
                                     <td>
-										<input type="text"><input type="button" value="Browse" data-i18n="[value]build.label.browse" class="btn btn_style">
-										<img src="themes/default/images/helios/plus_icon.png" alt="">
+										<input type="text" name="jsMinFiles" disabled>
+										<input type="button" value="Browse" data-i18n="[value]build.label.browse" class="btn btn_style">
+										<img src="themes/default/images/helios/plus_icon.png" alt=""  name="jsAdd">
 									</td>
                                 </tr>
                             </tbody>
                           </table>
-                          <table class="table table-striped table_border table-bordered border_div" cellpadding="0" cellspacing="0" border="0">
+                          <table id="cssmin" class="table table-striped table_border table-bordered border_div" cellpadding="0" cellspacing="0" border="0">
                             <thead>
                                 <tr>
                                 	<th colspan="2" data-i18n="build.label.cssminification"></th>
@@ -75,15 +76,17 @@
                             </thead>
                             <tbody>
                                 <tr>
-                                    <td><input type="text"></td>
+                                    <td><input type="text" name="cssMinName"></td>
                                     <td>
-										<input type="text"><input type="button" value="Browse" data-i18n="[value]build.label.browse" class="btn btn_style"><img src="themes/default/images/helios/plus_icon.png" alt="">
+										<input type="text" name="cssMinFiles" disabled>
+										<input type="button" value="Browse" data-i18n="[value]build.label.browse" class="btn btn_style">
+										<img src="themes/default/images/helios/plus_icon.png" alt="" name="cssAdd">
 									</td>
                                 </tr>
                             </tbody>
                           </table>
                          <div class="flt_right">
-                            <input type="button" value="Minify" data-i18n="[value]build.label.minify" class="btn btn_style dyn_popup_close">
+                            <input type="button" value="Minify" data-i18n="[value]build.label.minify" class="btn btn_style dyn_popup_close" name="btnMinifer" id="btnMinifer">
                             <input type="button" value="Close" data-i18n="[value]common.btn.close" class="btn btn_style dyn_popup_close">
                          </div>
                       </div>

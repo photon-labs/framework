@@ -49,6 +49,7 @@ define(["framework/base", "api/localStorageAPI"], function(){
 				async : true,
 				
 				beforeSend : function(){
+					$('#serviceError').remove();
 					if(!Clazz.navigationController.loadingActive && !commonVariables.continueloading && !commonVariables.hideloading){
 						commonVariables.loadingScreen.showLoading($(commonVariables.contentPlaceholder));
 					}
@@ -57,7 +58,8 @@ define(["framework/base", "api/localStorageAPI"], function(){
 				success : function(response, e ,xhr){
 					if(response === undefined || response === null){
 						self.showError("Unexpected Failure at server end");
-					}else if(response.status === "error" && (Clazz.navigationController.loadingActive || commonVariables.continueloading)){
+					}else if((response.status === "error" || response.status === "failure") && (Clazz.navigationController.loadingActive || commonVariables.continueloading)){
+						$('#login').removeAttr('disabled');
 						$.get(commonVariables.globalconfig.environments.locales, function(data){
 							if(data !== undefined && data !== null){
 								self.showError(data.errorCodes[response.responseCode]);
@@ -89,7 +91,7 @@ define(["framework/base", "api/localStorageAPI"], function(){
 			commonVariables.continueloading = false;
 			commonVariables.hideloading = false;
 			commonVariables.loadingScreen.removeLoading();
-			$(Clazz.navigationController.jQueryContainer).html('<section class="content_end" style="display:block;"><div class="msgdisplay error">'+ errorMsg +'</div></section>');
+			$(Clazz.navigationController.jQueryContainer).html('<section id="serviceError" class="content_end" style="display:block;"><div class="msgdisplay error">'+ errorMsg +'</div></section>');
 		}
 	});
 

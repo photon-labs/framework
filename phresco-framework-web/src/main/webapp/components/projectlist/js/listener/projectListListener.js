@@ -159,7 +159,7 @@ define([], function() {
 			var customerId = self.getCustomer();
 			customerId = (customerId === "") ? "photon" : customerId;
 			data = JSON.parse(commonVariables.api.localVal.getSession('userInfo'));
-			if(data !== "") { userId = data.id; }
+			if(data !== undefined && data !== null && data !== "") { userId = data.id; }
 			header = {
 				contentType: "application/json",				
 				dataType: "json",

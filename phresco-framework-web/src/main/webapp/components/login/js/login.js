@@ -75,6 +75,7 @@ define(["framework/widgetWithTemplate", "login/listener/loginListener"], functio
 			
 			//Login btn click Event
 			$('#login').click(function(){
+				$('#login').attr('disabled', '');
 				self.onLoginEvent.dispatch();
 				$(".login_error_msg").text('');
 				$(".login_error_msg").css('color','red');
@@ -87,6 +88,7 @@ define(["framework/widgetWithTemplate", "login/listener/loginListener"], functio
 				} else {
 					evt = evt || window.event;
 					if (evt.keyCode === 13) {
+						$('#login').attr('disabled', '');
 						self.onLoginEvent.dispatch();
 					}
 				}
@@ -98,6 +100,7 @@ define(["framework/widgetWithTemplate", "login/listener/loginListener"], functio
 					if(self.loginListener.enterKeyDisable) {
 						return true;
 					} else {
+						$('#login').attr('disabled', '');
 						self.onLoginEvent.dispatch();
 					}	
 				}	

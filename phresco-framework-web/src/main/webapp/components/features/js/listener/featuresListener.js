@@ -313,20 +313,20 @@ define(["features/features",  "application/application",  "projectlist/projectLi
 			};
 			if(type === "FEATURE" || type === "JAVASCRIPT" || type === "COMPONENT"){
 				header.requestMethod = "GET";
-				header.webserviceurl = commonVariables.webserviceurl+commonVariables.featurePageContext+"/list?customerId=photon&techId="+ techId +"&type="+type+"&userId="+userId.id;
+				header.webserviceurl = commonVariables.webserviceurl+commonVariables.featurePageContext+"/list?customerId=photon&techId="+ (techId !== null? techId : "") +"&type="+type+"&userId="+ (userId !== null? userId.id : "");
 			} else if (type === "desc") {
 				header.requestMethod = "GET";
-				header.webserviceurl = commonVariables.webserviceurl+commonVariables.featurePageContext+"/desc?artifactGroupId="+descid+"&userId="+userId.id;
+				header.webserviceurl = commonVariables.webserviceurl+commonVariables.featurePageContext+"/desc?artifactGroupId="+descid+"&userId="+(userId !== null? userId.id : "");
 			} else if (type === "SELECTED") {
 				header.requestMethod = "GET";
-				header.webserviceurl = commonVariables.webserviceurl+commonVariables.featurePageContext+"/selectedFeature?userId="+userId.id+"&appDirName="+appDirName;
+				header.webserviceurl = commonVariables.webserviceurl+commonVariables.featurePageContext+"/selectedFeature?userId="+(userId !== null? userId.id : "")+"&appDirName="+(appDirName !== null? appDirNamed : "");
 			} else if (type === "UPDATE") {
 				header.requestMethod = "PUT";
 				header.requestPostBody = JSON.stringify(projectRequestBody);
-				header.webserviceurl = commonVariables.webserviceurl+commonVariables.projectlistContext + "/updateFeature?customerId=photon&userId="+userId.id+"&appDirName="+appDirName;
+				header.webserviceurl = commonVariables.webserviceurl+commonVariables.projectlistContext + "/updateFeature?customerId=photon&userId="+(userId !== null? userId.id : "")+"&appDirName="+(appDirName !== null? appDirNamed : "");
 			} else if (type === "DEPENDENCY") {
 				header.requestMethod = "GET";
-				header.webserviceurl = commonVariables.webserviceurl+commonVariables.featurePageContext + "/dependencyFeature?userId="+userId.id+"&versionId="+descid; // descid is versionId
+				header.webserviceurl = commonVariables.webserviceurl+commonVariables.featurePageContext + "/dependencyFeature?userId="+(userId !== null? userId.id : "")+"&versionId="+descid; // descid is versionId
 			}
 			return header;
 		}

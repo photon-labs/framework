@@ -437,21 +437,23 @@ define([], function() {
 		applyRBAC : function(keyword) {
 			var self = this;
 			var userPermissions = JSON.parse(commonVariables.api.localVal.getSession('userPermissions'));
-			switch(keyword) {
-				case commonVariables.projectlist :
-					if (!userPermissions.importApplication) {
-						$("#importApp").prop("disabled", true);
-					}
-					if (!userPermissions.manageApplication) {
-						$("#addproject").prop("disabled", true);
-					}
-					break;
-					
-				case commonVariables.configuration :
-					if (!userPermissions.manageConfiguration) {
-						$("input[name=env_pop]").prop("disabled", true);
-					}
-					break;
+			if(userPermissions){
+				switch(keyword) {
+					case commonVariables.projectlist :
+						if (!userPermissions.importApplication) {
+							$("#importApp").prop("disabled", true);
+						}
+						if (!userPermissions.manageApplication) {
+							$("#addproject").prop("disabled", true);
+						}
+						break;
+						
+					case commonVariables.configuration :
+						if (!userPermissions.manageConfiguration) {
+							$("input[name=env_pop]").prop("disabled", true);
+						}
+						break;
+				}
 			}
 		},
 		

@@ -76,7 +76,7 @@ define(["codequality/listener/codequalityListener"], function() {
 			
 			//RBAC
 			var userPermissions = JSON.parse(commonVariables.api.localVal.getSession('userPermissions'));
-			if (!userPermissions.manageCodeValidation) {
+			if (userPermissions && !userPermissions.manageCodeValidation) {
 				$("#codeAnalysis").prop("disabled", true);
 			} else {
 				$("#codeAnalysis").prop("disabled", false);

@@ -32,7 +32,6 @@ define([], function() {
 		 */
 		doLogin : function() {
 			try{
-				
 				var self = this, header = self.getRequestHeader();
 				self.enterKeyDisable = true;
 				if(self.loginValidation()){
@@ -47,7 +46,8 @@ define([], function() {
 								self.renderNavigation();
 							} else {
 								//authentication failed
-								//commonVariables.loadingScreen.removeLoading();
+									console.info('else part')
+								$('#login').removeAttr('disabled');
 								self.enterKeyDisable = false;
 								$(".login_error_msg").attr('data-i18n', 'errorCodes.' + response.responseCode);
 								self.renderlocales(commonVariables.basePlaceholder);	
@@ -55,16 +55,16 @@ define([], function() {
 						}, 
 						function(serviceError){
 							//service access failed
-							//commonVariables.loadingScreen.removeLoading();
+							$('#login').removeAttr('disabled');
 							self.enterKeyDisable = false;
 							$(".login_error_msg").attr('data-i18n', 'errorCodes.' + response.responseCode);
 							self.renderlocales(commonVariables.basePlaceholder);
 						}
 					);
-				} 
+				}else{$('#login').removeAttr('disabled');}
 			}catch(error){
 				//Exception
-				//commonVariables.loadingScreen.removeLoading();
+				$('#login').removeAttr('disabled');
 			}
 		},
 		
