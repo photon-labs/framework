@@ -3268,7 +3268,7 @@ html>body tbody.scrollContent {
 
 
 .z_index_ci {
-	z-index: 1;	
+	z-index: 0;	
 }
 
 .ci_envtable table:first-child {
