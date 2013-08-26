@@ -1909,7 +1909,7 @@ background:#DA4F49 !important;
 		margin-right: 4px;
 	}
 	
-	.create_proj table tr td input[type=text], .create_proj table tr td select, .features_content_main table tr td input[type=text], .features_content_main table tr td input[type=password], .bootstrap-select .btn, .features_content_main table tr td select {
+	.create_proj table tr td input[type=text], .create_proj table tr td select, .features_content_main table tr td input[type=text], .features_content_main table tr td input[type=password], .bootstrap-select .btn {
 		width: 144px;
 	}
 	
@@ -1950,7 +1950,7 @@ background:#DA4F49 !important;
 		margin-right: 4px;
 	}
 	
-	.create_proj table tr td input[type=text], .features_content_main table tr td input[type=text], .features_content_main table tr td input[type=password], .bootstrap-select .btn, .features_content_main table tr td select {
+	.create_proj table tr td input[type=text], .features_content_main table tr td input[type=text], .features_content_main table tr td input[type=password], .bootstrap-select .btn {
 		width: 144px;
 	}
 		
@@ -1997,7 +1997,7 @@ background:#DA4F49 !important;
 		margin-right: 4px;
 	}
 	
-	.create_proj table tr td input[type=text], .features_content_main table tr td input[type=text], .features_content_main table tr td input[type=password], .bootstrap-select .btn, .features_content_main table tr td select {
+	.create_proj table tr td input[type=text], .features_content_main table tr td input[type=text], .features_content_main table tr td input[type=password], .bootstrap-select .btn {
 		 width: 186px;
 	}
 	
@@ -2024,7 +2024,7 @@ background:#DA4F49 !important;
 		margin-right: 4px;
 	}
 	
-	.create_proj table tr td input[type=text], .features_content_main table tr td input[type=text], .features_content_main table tr td input[type=password], .bootstrap-select .btn, .features_content_main table tr td select {
+	.create_proj table tr td input[type=text], .features_content_main table tr td input[type=text], .features_content_main table tr td input[type=password], .bootstrap-select .btn {
 		width: 184px;	
 	}
 	
@@ -2045,7 +2045,7 @@ background:#DA4F49 !important;
 		margin-right: 4px;
 	}
 	
-	.create_proj table tr td input[type=text], .features_content_main table tr td input[type=text], .features_content_main table tr td input[type=password], .bootstrap-select .btn, .features_content_main table tr td select {
+	.create_proj table tr td input[type=text], .features_content_main table tr td input[type=text], .features_content_main table tr td input[type=password], .bootstrap-select .btn {
 		width: 182px;	
 	}
 	
@@ -2061,7 +2061,7 @@ background:#DA4F49 !important;
 
 @media screen and (min-width: 1441px) and (max-width: 1680px) {
 
-	 .create_proj table tr td input[type=text], .features_content_main table tr td input[type=text], .features_content_main table tr td input[type=password], .bootstrap-select .btn, .features_content_main table tr td select {
+	 .create_proj table tr td input[type=text], .features_content_main table tr td input[type=text], .features_content_main table tr td input[type=password], .bootstrap-select .btn {
 		width: 220px;	
 	}
 	
