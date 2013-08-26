@@ -1,8 +1,8 @@
 
     <section class="content_main appInfo" id="appinfo">
           <div class="scrolldiv">
-		  <table class="table table-striped table_border table-bordered" cellpadding="0" cellspacing="0" border="0">  
-		    <tbody name="layercontents" class="scrollContent"> 
+		  <table class="table table-striped table_border table-bordered create_edit_table" cellpadding="0" cellspacing="0" border="0">  
+		    <tbody name="layercontents"> 
 			{{#each projectlist.appdetails.data.appInfos}}
             	<tr>
                     <td><span data-i18n="application.edit.name"></span><sup>*</sup></td>

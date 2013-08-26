@@ -80,7 +80,7 @@ header, aside, figure, footer, ul, li {
 }
 
 .btn_style_off {
-	padding: 4px 12px !important;
+	padding: 6px 12px !important;
 	background: #dddddd !important;
 	color: #ffffff !important;
 	text-shadow: none !important;
@@ -88,6 +88,7 @@ header, aside, figure, footer, ul, li {
 	border: 0 !important;
 	border-radius: 5px !important;
 	font-family: 'luxi_sansregular' !important;
+	margin-right:3px !important;
 }
 
 sup { color:#FF0000; }
@@ -1324,6 +1325,10 @@ img[name="close"] {
 	background-color:#f6f6f6;
 }
 
+.create_edit_table tbody>tr:nth-child(even)>td {
+	background-color:#F9F9F9;
+}
+
 .btn.dropdown-toggle {
 	margin-bottom: -8px;
 	font-size: 12px;
@@ -2219,6 +2224,11 @@ background:#DA4F49 !important;
 	font-size: 13px;
 }
 
+.build_genbuild #run_src {
+	margin-top:3px;
+	margin-left:5px;	
+}
+
 .build_genbuild, .build_minifier {
 	display: inline-block;
 }
@@ -2229,7 +2239,7 @@ background:#DA4F49 !important;
 }
 
 .buildtitle .icon_images {
-	margin-top:2px;
+	margin-top:4px;
 }
 
 .buildtitle .alert_div {
@@ -3431,6 +3441,11 @@ html>body tbody.scrollContent {
 	min-width: 120px;
 	line-height: 21px;
 }
+
+.pipeline_box:hover {
+	background:#d4d4d4;
+}
+
 .pipeline_box a:first-child
 {
 	float:right;
@@ -3482,6 +3497,10 @@ html>body tbody.scrollContent {
 .pipeline_grey
 {
 	background:#eaeaea;
+}
+.failureinfo {
+	color: red;
+	font-weight: bold;	
 }
 
 .completedinfo {

@@ -6,9 +6,9 @@
 			<div class="icon_images copy_path_icon"><a title="" href="#" id="copyPath"><img src="themes/default/images/helios/copypath_icon.png" ></a></div>	
 			<div class="build_genbuild">
 			{{#if userPermissions.manageBuilds}}
-				<input type="submit" data-i18n="[value]build.label.runagainstsource" name="build_runagsource" class="btn btn_style">
+				<input type="submit" data-i18n="[value]build.label.runagainstsource" name="build_runagsource" class="btn btn_style" id="run_src">
 			{{else}}
-				<input type="submit" data-i18n="[value]build.label.runagainstsource" name="build_runagsource" class="btn btn_style" disabled>
+				<input type="submit" data-i18n="[value]build.label.runagainstsource" name="build_runagsource" class="btn btn_style" id="run_src" disabled>
 			{{/if}}	
 			  <form name="runAgainstForm">
 				  <div id="build_runagsource" class="dyn_popup dynamic_cont" style="display:none;width:310px;">
