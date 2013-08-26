@@ -384,7 +384,7 @@ define(["projectlist/projectList"], function(ProjectList) {
 				setTimeout(function() {
 					start();					
 					var techid = $(commonVariables.contentPlaceholder).find(".wordpress-WordPress").attr("techid");
-					equal(undefined, techid, "Project List Service Tested");
+					notEqual(undefined, techid, "Project List Service Tested");
 					self.setConfigurationTypeTests(projectlist);
 				}, 1500);
 			}); 
