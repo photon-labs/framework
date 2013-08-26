@@ -169,12 +169,12 @@ define([], function() {
 					contentType: "application/json",
 					requestMethod: "GET",
 					dataType: "json",
-					webserviceurl: commonVariables.webserviceurl + "project/edit?userId="+userId+"&customerId=photon&projectId="+id
+					webserviceurl: commonVariables.webserviceurl + "project/edit?userId="+userId+"&customerId="+self.getCustomer()+"&projectId="+id
 				};
 
 				if(action === "projectlist"){
 					header.requestMethod = "GET";
-					header.webserviceurl = commonVariables.webserviceurl + commonVariables.projectlistContext +"/list?customerId=photon";
+					header.webserviceurl = commonVariables.webserviceurl + commonVariables.projectlistContext +"/list?customerId="+ self.getCustomer();
 				}
 
 				if(action === "update"){

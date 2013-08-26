@@ -126,8 +126,10 @@ define(["framework/widgetWithTemplate", "common/loading", "lib/customcombobox-1.
                     } else if (type === "dynamicpageparameter") {
                         self.getDynamicTemplate(parameter, whereToRender);
                     } else if (type === "filetype") {
-                        self.constructFileBrowseCtrl(parameter, whereToRender, goal);
-                    }
+                        self.constructFileUploadCtrl(parameter, whereToRender, goal);
+                    } else if(type === "filebrowse") {
+						self.constructFileBrowseCtrl(parameter, whereToRender, goal);
+					}
                 });
                 if (!self.isBlank(btnObj) && openccObj !== 'jobConfigure') {
                     self.opencc(btnObj, openccObj);
@@ -214,12 +216,18 @@ define(["framework/widgetWithTemplate", "common/loading", "lib/customcombobox-1.
 			$('ul[name=sortable1]').html(sortable1Val);
 		}, 
 		
-        constructFileBrowseCtrl : function (parameter, whereToRender, goal) {
+        constructFileUploadCtrl : function (parameter, whereToRender, goal) {
             var self = this, allowedExtensions = [];
             whereToRender.append('<li id="'+parameter.key+'Li" class="ctrl"><label>&nbsp;</label><div id="'+parameter.key+'" class="'+parameter.key+'-file-uploader"><noscript><p>Please enable JavaScript to use file uploader.</p></noscript></div></li>');
             allowedExtensions = parameter.fileType.split(',');
             self.createFileUploader(parameter, goal, allowedExtensions); 
         },
+		
+		constructFileBrowseCtrl : function (parameter, whereToRender, goal) {
+			var self=this;
+			whereToRender.append('<li id="'+parameter.key+'Li" class="ctrl"><label>'+parameter.name.value[0].value+'</label><input type="text" name="'+parameter.key+'" id="'+parameter.key+'" style="width: 120px ! important;"><a href="#" name="browse"><img src="themes/default/images/helios/settings_icon.png" width="23" height="22" border="0" alt=""></a><div id="browse" class="dyn_popup" style="display:none"><div id="keystoreValue"></div><div class="flt_right"><input type="button" name="selectFilePath" class="btn btn_style" value="Ok">&nbsp;&nbsp;<input type="button" value="Close" name="treePopupClose" class="btn btn_style dyn_popup_close"></div></div></li>');
+			self.signingFileTreeEvent(parameter.key);
+		},
 
         createFileUploader : function (parameter, goal, allowedExtensions) {
             var self = this, appDirName, dependency = "";
@@ -587,6 +595,13 @@ define(["framework/widgetWithTemplate", "common/loading", "lib/customcombobox-1.
                 self.dynamicControlEvents($(checkBoxCtrl), key, showFlag);
             }
 			self.chkSQLCheck();
+			if (key === "signing") {
+				self.signingCheck();
+			} else if (key === "zipAlign") {
+				self.zipAlignCheck();
+			}
+			/* self.zipAlignCheck();
+			self.signingCheck(); */
 			commonVariables.hideloading = false;
         },
         
@@ -884,6 +899,8 @@ define(["framework/widgetWithTemplate", "common/loading", "lib/customcombobox-1.
             });
 			
 			self.chkSQLCheck();
+			self.zipAlignCheck();
+			self.signingCheck();
             self.removeFormOverflowHidden();
         },
 		
@@ -898,6 +915,35 @@ define(["framework/widgetWithTemplate", "common/loading", "lib/customcombobox-1.
 			}
 		},
 		
+		signingCheck : function(){
+			if(!$("#signing").is(':checked')){
+				$("#keystoreLi").hide();
+				$("#storepassLi").hide();
+				$("#keypassLi").hide();
+				$("#aliasLi").hide();
+			} else {
+				$("#keystoreLi").show();
+				$("#storepassLi").show();
+				$("#keypassLi").show();
+				$("#aliasLi").show();
+			}
+		},
+		
+		zipAlignCheck : function(){
+			if($("#zipAlign").is(':checked')){
+				$("#signing").prop("checked", true);
+				$("#keystoreLi").show();
+				$("#storepassLi").show();
+				$("#keypassLi").show();
+				$("#aliasLi").show();
+			} else {
+				$("#signing").prop("checked", false);
+				$("#keystoreLi").hide();
+				$("#storepassLi").hide();
+				$("#keypassLi").hide();
+				$("#aliasLi").hide();
+			}
+		},
         
         showCheckBoxDependencies : function (dependencyArr) {
             var self = this;
@@ -997,6 +1043,62 @@ define(["framework/widgetWithTemplate", "common/loading", "lib/customcombobox-1.
 				commonVariables.continueloading = false;
             }
         },
+		
+		signingFileTreeEvent : function(id) {
+			var self = this;
+			$("a[name=browse]").click(function(){
+				var current = this;
+				self.configRequestBody = {};
+				commonVariables.api.ajaxRequest(self.getRequestHeader(self.projectRequestBody, "", "", "fileBrowse"), function(response) {
+					$("#keystoreValue").css("height", "240px");
+					$("#keystoreValue").html('');
+					self.fileTree(response, function(res){
+						var temptree = $('<div></div>');
+						temptree.append('<ul id="keyStorefiletree" class="filetree"><li><span><strong>Click here to select file path </strong></span>' + res + '</li></ul>');
+						setTimeout(function(){
+							$(temptree).jstree({
+							"themes": {
+								"theme": "default",
+								"dots": false,
+								"icons": false,
+								"url": "themes/default/css/Helios/style.css"
+							}
+							}).bind("init.jstree", function(event, data){ 
+							}).bind("loaded.jstree", function (event, data) {
+								$("#keystoreValue").append(temptree);
+								self.treeclickEvent(id);	
+								self.popupforTree(current, $(current).attr('name'));
+								$("#keystoreValue").mCustomScrollbar({
+									autoHideScrollbar:true,
+									theme:"light-thin",
+									advanced:{ updateOnContentResize: true}
+								});	
+							}); 
+						}, 100);
+					});
+				});
+			});
+			
+		},
+		
+		treeclickEvent : function(id) {
+			var self=this;
+			$('span.folder').click(function(e){
+				$("span.folder a").removeClass("selected");
+				$(this).find("a").attr("class", "selected");
+				var path = $(this).parent().attr('value');
+				path = path.replace(/\+/g,' ');
+				self.saveFilePath(id, path);
+			});
+		},
+		
+		saveFilePath : function(id, path) {
+			var self=this;
+			$("input[name=selectFilePath]").click(function() {
+				$("#"+id).val(path);
+				$("#browse").hide();
+			});
+		},
         
         /********************************** TEMPLATE METHODS STARTS ***********************************************/
          bindTemplateEvents : function () {
@@ -1210,7 +1312,12 @@ define(["framework/widgetWithTemplate", "common/loading", "lib/customcombobox-1.
             } else if (action === "template") {
                 header.requestMethod = "GET";
                 header.webserviceurl = commonVariables.webserviceurl + commonVariables.paramaterContext + "/" + commonVariables.templateContext + "?appDirName="+appDirName+"&goal="+ goal+"&phase="+phase+"&customerId="+customerId+"&userId="+userId+"&parameterKey="+ key;                
-            }
+            } else if (action === "fileBrowse") {
+				header.requestMethod = "GET";
+				header.dataType = "xml";
+				header.contentType = "application/xml",
+				header.webserviceurl = commonVariables.webserviceurl+commonVariables.configuration+"/fileBrowse?&appDirName="+appDirName;
+			}
             
             return header;
         }
