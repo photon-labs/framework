@@ -87,7 +87,7 @@ public class BuildInfoService extends RestBase implements FrameworkConstants, Se
 			List<BuildInfo> builds = applicationManager.getBuildInfos(buildInfoFile);
 			if (CollectionUtils.isEmpty(builds)) {
 				ResponseInfo<List<BuildInfo>> finalOutput = responseDataEvaluation(responseData, null,
-						null, RESPONSE_STATUS_FAILURE, PHR710001);
+						null, RESPONSE_STATUS_SUCCESS, PHR700010);
 				return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*")
 						.build();
 			}

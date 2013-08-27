@@ -120,7 +120,7 @@ public class ConfigurationService extends RestBase implements FrameworkConstants
 			if(configManager.getEnvironments().size() == environments.size()) {
 				configManager.addEnvironments(environments);
 				ResponseInfo<Environment> finalOuptut = responseDataEvaluation(responseData, null,
-						"Environments updated Successfully", environments);
+						environments, RESPONSE_STATUS_SUCCESS, PHR600020);
 				return Response.ok(finalOuptut).header("Access-Control-Allow-Origin", "*").build();
 			}
 			configManager.addEnvironments(environments);
@@ -735,7 +735,7 @@ public class ConfigurationService extends RestBase implements FrameworkConstants
 	    			}
 	    		}
 	    		ResponseInfo<RemoteCertificateInfo> finalOutput = responseDataEvaluation(responseData, null,
-						null, RESPONSE_STATUS_FAILURE, PHR610014);
+						null, RESPONSE_STATUS_SUCCESS, PHR600016);
 				return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
 	    }
 
@@ -762,7 +762,7 @@ public class ConfigurationService extends RestBase implements FrameworkConstants
 				return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*")
 						.build();
 			}
-			ResponseInfo<String> finalOutput = responseDataEvaluation(responseData, null, null, RESPONSE_STATUS_FAILURE, PHR610015);
+			ResponseInfo<String> finalOutput = responseDataEvaluation(responseData, null, null, RESPONSE_STATUS_SUCCESS, PHR600017);
 			return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
 		} catch (PhrescoException e) {
 			ResponseInfo<String> finalOutput = responseDataEvaluation(responseData, e,
@@ -828,7 +828,7 @@ public class ConfigurationService extends RestBase implements FrameworkConstants
 			File browseFile = new File(browsePath);
 			File[] files = browseFile.listFiles();
 			if (files == null) {
-				ResponseInfo<String> finalOuptut = responseDataEvaluation(responseData, null, null, RESPONSE_STATUS_FAILURE, PHR610019);
+				ResponseInfo<String> finalOuptut = responseDataEvaluation(responseData, null, null, RESPONSE_STATUS_SUCCESS, PHR600019);
 				return Response.status(Status.OK).entity(finalOuptut).header(
 						"Access-Control-Allow-Origin", "*").build();
 			}

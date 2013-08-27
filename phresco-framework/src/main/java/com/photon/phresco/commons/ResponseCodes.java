@@ -17,7 +17,6 @@
  */
 package com.photon.phresco.commons;
 
-
 public interface ResponseCodes {
 	
 	/*
@@ -33,6 +32,7 @@ public interface ResponseCodes {
 	String PHR1C10001 = "PHR1C10001"; // no parameter available
 	String PHR1C10002 = "PHR1C10002"; // parameter not fetched
 	String PHR1C10003 = "PHR1C10003"; // unable to read 'phresco.functionalTest.selenium.tool' property in project's pom.xml
+	String PHR1C00002 = "PHR1C00002"; // no parameter available
 	String PHR2C00001 = "PHR2C00001"; // log copied successfully
 	String PHR2C10001 = "PHR2C10001"; // log copy failed
 	String PHR3C00001 = "PHR3C00001"; // folder opened successfully
@@ -226,6 +226,11 @@ public interface ResponseCodes {
 	String PHR610028 = "PHR610028"; // unable to fetch environments
 	String PHR610029 = "PHR610029"; // failed to clone environment during manipulation of phresco-env-config.xml
 	String PHR610030 = "PHR610030"; // failed to read zip file while uploading
+	String PHR600016 = "PHR600016"; // no certificate found
+	String PHR600017 = "PHR600017"; // no certificate to add
+	String PHR600018 = "PHR600018"; // no file to upload
+	String PHR600019 = "PHR600019"; // no file structure found
+	String PHR600020 = "PHR600020"; // environments updated successfully
 	
 	/*
 	 * Build Page
@@ -260,6 +265,7 @@ public interface ResponseCodes {
 	String PHR710019 = "PHR710019"; // build number already exists
 	String PHR710020 = "PHR710020"; // selected environment in global settings does not have selected configurations
 	String PHR710021 = "PHR710021"; // selected environment in this app does not have selected configurations
+	String PHR700010 = "PHR700010"; // no builds available
 	
 	/*
 	 * Quality Assurance Page
@@ -274,6 +280,8 @@ public interface ResponseCodes {
 	String PHRQ000002 = "PHRQ000002"; // test cases listed successfully
 	String PHRQ010003 = "PHRQ010003"; // test case not available
 	String PHRQ010004 = "PHRQ010004"; // failed to list test cases
+	String PHRQ000003 = "PHRQ000003"; // test result not available
+	String PHRQ000004 = "PHRQ000004"; // test case not available
 	
 	/*
 	 * Unit

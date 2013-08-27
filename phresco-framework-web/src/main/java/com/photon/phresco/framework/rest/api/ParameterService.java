@@ -140,7 +140,7 @@ public class ParameterService extends RestBase implements FrameworkConstants, Se
 				return Response.ok(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, ALL_HEADER).build();
 			}
 			ResponseInfo<List<Parameter>> finalOutput = responseDataEvaluation(responseData, null,
-					null, RESPONSE_STATUS_FAILURE, PHR1C10001);
+					null, RESPONSE_STATUS_SUCCESS, PHR1C00002);
 			return Response.ok(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, ALL_HEADER).build();
 		} catch (PhrescoException e) {
 			ResponseInfo<List<Parameter>> finalOutput = responseDataEvaluation(responseData, e,

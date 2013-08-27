@@ -180,7 +180,7 @@ public class QualityService extends RestBase implements ServiceConstants, Framew
 					testSuitePath, testCasePath, ALL);
 			if (CollectionUtils.isEmpty(testSuites)) {
 				ResponseInfo<Configuration> finalOuptut = responseDataEvaluation(responseData, null,
-						testSuites, RESPONSE_STATUS_FAILURE, PHRQ010001);
+						testSuites, RESPONSE_STATUS_SUCCESS, PHRQ000003);
 				return Response.status(Status.OK).entity(finalOuptut).header(ACCESS_CONTROL_ALLOW_ORIGIN, "*").build();
 			}
 			ResponseInfo<List<String>> finalOutput = responseDataEvaluation(responseData, null,
@@ -585,7 +585,7 @@ public class QualityService extends RestBase implements ServiceConstants, Framew
 					testCases = getTestCases(appDirName, testSuites, testSuitePath, testCasePath);
 					if (CollectionUtils.isEmpty(testCases)) {
 						ResponseInfo<List<TestCase>> finalOutput = responseDataEvaluation(responseData, null,
-								testCases, RESPONSE_STATUS_FAILURE, PHRQ010003);
+								testCases, RESPONSE_STATUS_SUCCESS, PHRQ000004);
 						return Response.status(Status.OK).entity(finalOutput)
 								.header(ACCESS_CONTROL_ALLOW_ORIGIN, "*").build();
 					} else {
