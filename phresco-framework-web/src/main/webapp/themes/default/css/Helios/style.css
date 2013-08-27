@@ -554,7 +554,7 @@ html, body {
 
 .navbar .nav li.dropdown.open>.dropdown-toggle {
 	background-color: inherit !important;
-	color:#FFF !important;
+	color:#000;
 }
 
 a.dropdown-toggle b.caret  {
@@ -1143,6 +1143,9 @@ ul.nav li.dropdown:hover > .test_options{
 	width:3px !important;
 }
 
+.left_add_repo{
+	margin-left:0px !important;
+}
 /* ******************************************************************* CSS related to create project page ********************************************************************** */
 
 .datepicker  {
@@ -1151,6 +1154,7 @@ ul.nav li.dropdown:hover > .test_options{
 
 .table th, .table td {
 	padding: 6px 6px 6px 8px;
+	word-wrap: break-word; word-break: break-all; white-space: -moz-pre-wrap !important; white-space: -o-pre-wrap;
 }
 
 img[name="close"] {
@@ -1332,14 +1336,14 @@ img[name="close"] {
 .btn.dropdown-toggle {
 	margin-bottom: -8px;
 	font-size: 12px;
-	background-image:none !important;
 	box-shadow: none !important;
 	border:1px solid #cccccc !important;
+	background:#FFFFFF !important;
 }
 
 .btn.dropdown-toggle:hover, .btn.dropdown-toggle:focus
 {
-	background:#F5F5F5 !important;
+	background:#FFF !important;
 }
 
 .btn.btn-danger:hover, .btn.btn-danger:focus
@@ -1650,7 +1654,8 @@ background:#DA4F49 !important;
 	float: left;
 	color: #000;
 	height: 25px !important;
-	width: 122px;
+	/*width: 122px;*/
+	min-width:34px;
 	border-top-right-radius: 6px;
 	border-bottom-right-radius: 6px;
 	margin: 6px 0 0 0 !important;
@@ -1909,8 +1914,11 @@ background:#DA4F49 !important;
 		margin-right: 4px;
 	}
 	
-	.create_proj table tr td input[type=text], .create_proj table tr td select, .features_content_main table tr td input[type=text], .features_content_main table tr td input[type=password], .bootstrap-select .btn {
-		width: 144px;
+	.create_proj table tr td input[type=text], .create_proj table tr td select, .features_content_main table tr td input[type=text], 
+	.features_content_main table tr td input[type=password], 
+	.create_proj table tr td .bootstrap-select button.dropdown-toggle, 
+	.appInfo table tr td .bootstrap-select button.dropdown-toggle, .create_edit_table tr td div.dropdown-menu {
+		width: 144px !important;
 	}
 	
 	.create_proj table tr td {
@@ -1934,11 +1942,11 @@ background:#DA4F49 !important;
 		padding: 12px 7px !important;
 	}
 	
-	.bootstrap-select:not([class*="span"]) {
-		width: 137px;
-	}
-
+	#code_popup .dropdown-menu { 
+		width: 100% !important;
+	}	
 }
+
 @media screen and (min-width: 1025px) and (max-width: 1152px) {
 
 	.func_framewrk {
@@ -1950,8 +1958,11 @@ background:#DA4F49 !important;
 		margin-right: 4px;
 	}
 	
-	.create_proj table tr td input[type=text], .features_content_main table tr td input[type=text], .features_content_main table tr td input[type=password], .bootstrap-select .btn {
-		width: 144px;
+	.create_proj table tr td input[type=text], .features_content_main table tr td input[type=text], 
+	.features_content_main table tr td input[type=password], 
+	.create_proj table tr td .bootstrap-select button.dropdown-toggle, 
+	.appInfo table tr td .bootstrap-select button.dropdown-toggle, .create_edit_table tr td div.dropdown-menu {
+		width: 144px !important;	
 	}
 		
 	select[name="builtmyself"] {
@@ -1980,8 +1991,8 @@ background:#DA4F49 !important;
 	    width: 175px !important;
 	}
 	
-	.bootstrap-select:not([class*="span"]) {
-		width:144px;
+	#code_popup .dropdown-menu { 
+		width: 100% !important;
 	}
 	
 }
@@ -1997,10 +2008,12 @@ background:#DA4F49 !important;
 		margin-right: 4px;
 	}
 	
-	.create_proj table tr td input[type=text], .features_content_main table tr td input[type=text], .features_content_main table tr td input[type=password], .bootstrap-select .btn {
-		 width: 186px;
+	.create_proj table tr td input[type=text], .features_content_main table tr td input[type=text], 
+	.features_content_main table tr td input[type=password],
+	.create_proj table tr td .bootstrap-select button.dropdown-toggle, 
+	.appInfo table tr td .bootstrap-select button.dropdown-toggle, .create_edit_table tr td div.dropdown-menu {		
+	 	width: 186px !important;
 	}
-	
 	
 	select[name="builtmyself"] {
 		width: 115px !important;
@@ -2015,17 +2028,23 @@ background:#DA4F49 !important;
 		padding: 12px 13px !important;
 		font-size: 13px;
 	}
+	
+	#code_popup .dropdown-menu { 
+		width: 100% !important;
+	}
 }
 
 @media screen and (min-width: 1281px) and (max-width: 1366px) {
-
+	
 	.startdate input, .enddate input {
 		width: 160px !important;
 		margin-right: 4px;
 	}
 	
-	.create_proj table tr td input[type=text], .features_content_main table tr td input[type=text], .features_content_main table tr td input[type=password], .bootstrap-select .btn {
-		width: 184px;	
+	.create_proj table tr td input[type=text], .features_content_main table tr td input[type=text], .features_content_main table tr td input[type=password],
+	.create_proj table tr td .bootstrap-select button.dropdown-toggle, 
+	.appInfo table tr td .bootstrap-select button.dropdown-toggle, .create_edit_table tr td div.dropdown-menu {
+		width: 184px !important;	
 	}
 	
 	select[name="builtmyself"] {
@@ -2036,6 +2055,10 @@ background:#DA4F49 !important;
 		margin-left: 10px;
 		width : 156px !important;
 	}
+	
+	#code_popup .dropdown-menu { 
+		width: 100% !important;
+	}
 }
 
 @media screen and (min-width: 1367px) and (max-width: 1440px) {
@@ -2045,8 +2068,10 @@ background:#DA4F49 !important;
 		margin-right: 4px;
 	}
 	
-	.create_proj table tr td input[type=text], .features_content_main table tr td input[type=text], .features_content_main table tr td input[type=password], .bootstrap-select .btn {
-		width: 182px;	
+	.create_proj table tr td input[type=text], .features_content_main table tr td input[type=text], .features_content_main table tr td input[type=password],
+	.create_proj table tr td .bootstrap-select button.dropdown-toggle, 
+	.appInfo table tr td .bootstrap-select button.dropdown-toggle, .create_edit_table tr td div.dropdown-menu {
+		width: 182px !important;	
 	}
 	
 	 .bootstrap-select .btn  {
@@ -2056,13 +2081,24 @@ background:#DA4F49 !important;
 	 .custon_dropdown {
 		width: 141px !important;
 	}
+	
+	#code_popup .dropdown-menu { 
+		width: 100% !important;
+	}
 
 }
 
 @media screen and (min-width: 1441px) and (max-width: 1680px) {
-
-	 .create_proj table tr td input[type=text], .features_content_main table tr td input[type=text], .features_content_main table tr td input[type=password], .bootstrap-select .btn {
-		width: 220px;	
+	
+	.create_edit_table tr td input[type=text], .features_content_main table tr td input[type=text], 
+	.features_content_main table tr td input[type=password], 
+	.create_proj table tr td .bootstrap-select button.dropdown-toggle, 
+	.appInfo table tr td .bootstrap-select button.dropdown-toggle, .create_edit_table tr td div.dropdown-menu {
+		width: 220px !important;	
+	}
+	
+	#code_popup .dropdown-menu { 
+		width: 100% !important;
 	}
 	
 }

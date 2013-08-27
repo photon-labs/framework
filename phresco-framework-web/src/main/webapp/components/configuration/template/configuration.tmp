@@ -93,7 +93,7 @@
 				{{#configurationList}}
 			  <tr class="envlist">
 				<td name='envNames'>{{name}} {{#if defaultEnv}} (Default) {{else}} &nbsp; {{/if}}</td>  
-				<td>{{#if desc }} {{desc}} {{else}} &nbsp {{/if}}</td>
+				<td width="50%">{{#if desc }} {{desc}} {{else}} &nbsp {{/if}}</td>
 				<td class="list_img"><a class="tooltiptop" href="#" data-toggle="tooltip" data-placement="bottom" data-original-title="Configure" envSpecificValue="{{#if ../envSpecific}}true{{else}}false{{/if}}" name="editConfiguration" key={{name}}>
 				<img src="themes/default/images/helios/configure_icon.png" width="15" height="16" border="0" alt=""></a></td>
 				{{#if ../envSpecific}}

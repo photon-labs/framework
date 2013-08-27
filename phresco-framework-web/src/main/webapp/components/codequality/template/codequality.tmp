@@ -3,7 +3,7 @@
             <div class="code_report">
             	<font data-i18n="codequality.report"></font>
             </div>
-            <div class="navbar navbar-static code_func" id="codereportTypes" style="width:92px;">
+            <div class="navbar navbar-static code_func" id="codereportTypes">
                 <ul class="nav"></ul>
             </div>
            
@@ -15,7 +15,7 @@
                        			</ul>
                         		<div class="dynamicPopupLoading" style="display:none;">&nbsp</div>
 								<div class="hiddenControls"></div>
-								<div class="flt_right">
+								<div class="flt_right" style="margin-top:4px;">
 									<input type="button" data-i18n="[value]codequality.btn.validate" class="btn btn_style" name="validate" id="validate">
 									<input type="button" data-i18n="[value]codequality.btn.close" class="btn btn_style dyn_popup_close" name="close">
 								</div>
@@ -25,7 +25,7 @@
             
         </div>
         <div class="code_report_icon" style="margin:0;">
-			<div class="icon_images"><a class="tooltiptop" title="" data-placement="bottom" data-toggle="tooltip" href="#" data-original-title="PDF Report"><img src="themes/default/images/helios/pdf_icon_white.png"></a></div>
+			<div class="icon_images" style="margin-right:0;"><a class="tooltiptop" title="" data-placement="bottom" data-toggle="tooltip" href="#" data-original-title="PDF Report"><img src="themes/default/images/helios/pdf_icon_white.png"></a></div>
 		</div>
     </section>
 
