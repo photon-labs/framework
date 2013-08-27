@@ -6,8 +6,6 @@ define([], function() {
 		
 		testResultListener : null,
 		dynamicpage : null,
-		dynamicPageListener : null,
-		mavenServiceListener : null,
 		
 		/***
 		 * Called in initialization time of this class 
@@ -19,45 +17,6 @@ define([], function() {
 			if (self.testResultListener === null) {
 				self.testResultListener = new Clazz.com.components.testResult.js.listener.TestResultListener();
 			}
-			if (self.mavenServiceListener === null)	{
-				commonVariables.navListener.getMyObj(commonVariables.mavenService, function(retVal){
-					self.mavenServiceListener = retVal;
-				});
-			}
-		},
-		
-		onGraphicalView : function() {
-			var self = this;
-			self.testResultListener.showGraphicalView();
-		},
-		
-		onTabularView : function() {
-			var self = this;
-			self.testResultListener.showTabularView();
-		},
-		
-		/***
-		 * provides the request header
-		 *
-		 * @synonymRequestBody: request body of synonym
-		 * @return: returns the contructed header
-		 */
-		getActionHeader : function(requestBody, action) {
-			var self = this, header, data = {}, userId;
-			data = JSON.parse(commonVariables.api.localVal.getSession('userInfo'));
-			userId = data.id;
-			appDirName = commonVariables.api.localVal.getSession("appDirName");
-			header = {
-				contentType: "application/json",				
-				dataType: "json",
-				webserviceurl: ''
-			}
-					
-			if(action === "get") {
-				header.requestMethod = "GET";
-				header.webserviceurl = commonVariables.webserviceurl + commonVariables.qualityContext + "/" + commonVariables.component + "?userId="+userId+"&appDirName="+appDirName;				
-			}
-			return header;
 		},
 		
 		getDynamicParams : function(thisObj, callback) {
@@ -92,20 +51,12 @@ define([], function() {
 			
 			$('#testConsole').html('');
 			self.testResultListener.openConsoleDiv();//To open the console
-			if (self.mavenServiceListener === null) {
-				commonVariables.navListener.getMyObj(commonVariables.mavenService, function(retVal){
-					self.mavenServiceListener = retVal;
-					self.mavenServiceListener.mvnComponentTest(queryString, '#testConsole', function(response) {
-						self.testResultListener.closeConsole();
-						callback(response);
-					});
-				});
-			} else {
-				self.mavenServiceListener.mvnComponentTest(queryString, '#testConsole', function(response) {
+			commonVariables.navListener.getMyObj(commonVariables.mavenService, function(retVal) {
+				retVal.mvnComponentTest(queryString, '#testConsole', function(response) {
 					self.testResultListener.closeConsole();
 					callback(response);
 				});
-			}
+			});
 		}
 	});
 

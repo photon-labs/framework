@@ -356,7 +356,7 @@ define([], function() {
 				var functionalFrameworkInfo = null;
 				var submitFlag = 0;
 				//console.log($("tbody[name='layercontents']").children().children().children());
-				$.each($("tbody[name='layercontents']").children().children().children(), function(index, value){
+				$.each($("tbody[name='layercontents']").children(), function(index, value){
 				
 					if($(value).attr('class') === "servers" && $(value).css('display') !== "none") {
 						var serverId = {};
@@ -453,6 +453,7 @@ define([], function() {
 					appInfo.selectedWebservices = selectedWebServices;
 					appInfo.functionalFrameworkInfo = functionalFrameworkInfo;
 				}
+
 				if(submitFlag === 0){
 					self.editAppInfo(self.getRequestHeader(JSON.stringify(appInfo), "editApplication"), function(response) {
 						if(response.responseCode === "PHR200008"){

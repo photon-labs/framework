@@ -164,17 +164,6 @@ define(["functionalTest/listener/functionalTestListener", "testResult/listener/t
 			$(".unit_view").css("display", "none");
 			$("#graphView").css("display", "none");
 			
-			
-			$("a[name=unittestResult]").unbind("click");
-			$("a[name=unittestResult]").click(function() {
-				self.onUnitTestResultEvent.dispatch();
-			});
-			
-			$("a[name=unitTestDescription]").unbind("click");
-			$("a[name=unitTestDescription]").click(function() {
-				self.onUnitTestDescEvent.dispatch();
-			});
-			
 			Clazz.navigationController.mainContainer = commonVariables.contentPlaceholder;
 			
 			//To open the functional test directory

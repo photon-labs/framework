@@ -7,8 +7,7 @@ define([], function() {
 		testResultListener : null,
 		dynamicpage : null,
 		dynamicPageListener : null,
-		mavenServiceListener : null,
-
+		
 		/***
 		 * Called in initialization time of this class 
 		 *
@@ -19,21 +18,6 @@ define([], function() {
 			if (self.testResultListener === null) {
 				self.testResultListener = new Clazz.com.components.testResult.js.listener.TestResultListener();
 			}
-			if (self.mavenServiceListener === null)	{
-				commonVariables.navListener.getMyObj(commonVariables.mavenService, function(retVal){
-					self.mavenServiceListener = retVal;
-				});
-			}
-		},
-
-		onGraphicalView : function() {
-			var self = this;
-			self.testResultListener.showGraphicalView();
-		},
-
-		onTabularView : function() {
-			var self = this;
-			self.testResultListener.showTabularView();
 		},
 
 		/***
@@ -56,7 +40,8 @@ define([], function() {
 			if (action === "getFunctionalTestOptions") {
 				header.requestMethod = "GET";
 				header.webserviceurl = commonVariables.webserviceurl + commonVariables.qualityContext + "/functionalFramework?appDirName="+appDirName;				
-			} else if (action === "status") {
+			}
+			if (action === "status") {
 				header.requestMethod = "GET";
 				header.webserviceurl = commonVariables.webserviceurl + commonVariables.qualityContext + "/connectionAliveCheck?appDirName="+appDirName+"&fromPage="+requestBody.from;				
 			}
@@ -75,9 +60,11 @@ define([], function() {
 					var formObj;
 					if (goal === commonVariables.functionalTestGoal) {
 						formObj = $('#functionalTestForm');
-					} else if (goal === commonVariables.startHubGoal) {
+					}
+					if (goal === commonVariables.startHubGoal) {
 						formObj = $('#startHubForm');
-					} else if (goal === commonVariables.startNodeGoal) {
+					}
+					if (goal === commonVariables.startNodeGoal) {
 						formObj = $('#startNodeForm');
 					}
 					
@@ -96,14 +83,11 @@ define([], function() {
 		getFunctionalTestOptions : function(header, callback) {
 			var self = this;
 			try {
-				//commonVariables.loadingScreen.showLoading();
 				commonVariables.api.ajaxRequest(header,
 						function(response) {
 					if (response !== null && (response.status !== "error" || response.status !== "failure")) {
-						//commonVariables.loadingScreen.removeLoading();
 						callback(response);
 					} else {
-						//self.loadingScreen.removeLoading();
 						$(".content_end").show();
 						$(".msgdisplay").removeClass("success").addClass("error");
 						$(".error").attr('data-i18n', 'errorCodes.' + response.responseCode);
@@ -116,7 +100,6 @@ define([], function() {
 				},
 
 				function(textStatus) {
-					//commonVariables.loadingScreen.removeLoading();
 					$(".content_end").show();
 					$(".msgdisplay").removeClass("success").addClass("error");
 					$(".error").attr('data-i18n', 'commonlabel.errormessage.serviceerror');
@@ -128,7 +111,6 @@ define([], function() {
 				}
 				);
 			} catch(exception) {
-				//commonVariables.loadingScreen.removeLoading();
 			}
 		},
 
@@ -138,10 +120,12 @@ define([], function() {
 			if (from === "startHub") {
 				$("#startHub_popup").toggle();
 				testData = $('#startHubForm').serialize();
-			} else if (from === "startNode") {
+			} 
+			if (from === "startNode") {
 				$("#startNode_popup").toggle();
 				testData = $('#startNodeForm').serialize();
-			} else if (from === "runFunctionalTest") {
+			}
+			if (from === "runFunctionalTest") {
 				$("#functionalTest_popup").toggle();
 				testData = $('#functionalTestForm').serialize();
 			}
@@ -153,61 +137,43 @@ define([], function() {
 			username = commonVariables.api.localVal.getSession('username');
 
 			if (appdetails !== null) {
-				queryString ="username="+username+"&appId="+appId+"&customerId="+customerId+"&goal=functional-test&phase=functional-test&projectId="+projectId+"&"+testData;
+				queryString ="username="+username+"&appId="+appId+"&customerId="+customerId+"&goal=functional-test&phase=functional-test&projectId="+projectId;
 			}
 
+			if (testData !== undefined) {
+				queryString = queryString+"&"+testData;
+			}
+			
 			$('#testConsole').html('');
 			self.testResultListener.openConsoleDiv();//To open the console
-			if (self.mavenServiceListener === null) {
-				commonVariables.navListener.getMyObj(commonVariables.mavenService, function(retVal) {
-					self.mavenServiceListener = retVal;
-					if (from === "startHub") {
-						self.mavenServiceListener.mvnStartHub(queryString, '#testConsole', function(response) {
-							self.postStartHub();
-						});
-					} else if (from === "startNode") {
-						self.mavenServiceListener.mvnStartNode(queryString, '#testConsole', function(response) {
-							self.postStartNode();
-						});
-					} else if (from === "runFunctionalTest") {
-						self.mavenServiceListener.mvnFunctionalTest(queryString, '#testConsole', function(response) {
-							self.testResultListener.closeConsole();
-							callback();
-						});
-					} else if (from === "stopHub") {
-						self.mavenServiceListener.mvnStopHub(queryString, '#testConsole', function(response) {
-							self.postStopHub(response);
-						});
-					} else if (from === "stopNode") {
-						self.mavenServiceListener.mvnStopNode(queryString, '#testConsole', function(response) {
-							self.postStopNode();
-						});
-					}
-				});
-			} else {
+			commonVariables.navListener.getMyObj(commonVariables.mavenService, function(retVal) {
 				if (from === "startHub") {
-					self.mavenServiceListener.mvnStartHub(queryString, '#testConsole', function(response) {
+					retVal.mvnStartHub(queryString, '#testConsole', function(response) {
 						self.postStartHub();
 					});
-				} else if (from === "startNode") {
-					self.mavenServiceListener.mvnStartNode(queryString, '#testConsole', function(response) {
+				} 
+				if (from === "startNode") {
+					retVal.mvnStartNode(queryString, '#testConsole', function(response) {
 						self.postStartNode();
 					});
-				} else if (from === "runFunctionalTest") {
-					self.mavenServiceListener.mvnFunctionalTest(queryString, '#testConsole', function(response) {
+				}
+				if (from === "runFunctionalTest") {
+					retVal.mvnFunctionalTest(queryString, '#testConsole', function(response) {
 						self.testResultListener.closeConsole();
 						callback();
 					});
-				} else if (from === "stopHub") {
-					self.mavenServiceListener.mvnStopHub(queryString, '#testConsole', function(response) {
-						self.postStopHub();
+				}
+				if (from === "stopHub") {
+					retVal.mvnStopHub(queryString, '#testConsole', function(response) {
+						self.postStopHub(response);
 					});
-				} else if (from === "stopNode") {
-					self.mavenServiceListener.mvnStopNode(queryString, '#testConsole', function(response) {
+				}
+				if (from === "stopNode") {
+					retVal.mvnStopNode(queryString, '#testConsole', function(response) {
 						self.postStopNode();
 					});
 				}
-			}
+			});
 		},
 
 		postStartHub : function() {

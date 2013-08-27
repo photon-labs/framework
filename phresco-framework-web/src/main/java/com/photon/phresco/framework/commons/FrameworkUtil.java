@@ -33,6 +33,7 @@ import java.io.PrintWriter;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.math.BigDecimal;
+import java.net.InetAddress;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.UnknownHostException;
@@ -339,28 +340,33 @@ public class FrameworkUtil implements Constants, FrameworkConstants {
     }
 
     
-    //get server Url for sonar
-    public String getSonarHomeURL() throws PhrescoException {
-    	FrameworkConfiguration frameworkConfig = PhrescoFrameworkFactory.getFrameworkConfig();
-    	String serverUrl = "";
-    	
-	    if (StringUtils.isNotEmpty(frameworkConfig.getSonarUrl())) {
-	    	serverUrl = frameworkConfig.getSonarUrl();
-	    	S_LOGGER.debug("if condition serverUrl  " + serverUrl);
-	    } else {
-	    	serverUrl = request.getRequestURL().toString();
-	    	StringBuilder tobeRemoved = new StringBuilder();
-	    	tobeRemoved.append(request.getContextPath());
-	    	tobeRemoved.append(request.getServletPath());
-	    	tobeRemoved.append(request.getPathInfo());
+	// get server Url for sonar
+	public String getSonarHomeURL() throws PhrescoException {
+		FrameworkConfiguration frameworkConfig = PhrescoFrameworkFactory.getFrameworkConfig();
+		String serverUrl = "";
+		StringBuffer sb = null;
+		try {
+			if (StringUtils.isNotEmpty(frameworkConfig.getSonarUrl())) {
+				serverUrl = frameworkConfig.getSonarUrl();
+				S_LOGGER.debug("if condition serverUrl " + serverUrl);
+			} else {
+				serverUrl = request.getRequestURL().toString();
+				URL url = new URL(serverUrl);
+				InetAddress ip = InetAddress.getLocalHost();
 
-	    	Pattern pattern = Pattern.compile(tobeRemoved.toString());
-	    	Matcher matcher = pattern.matcher(serverUrl);
-	    	serverUrl = matcher.replaceAll("");
-	    	S_LOGGER.debug("else condition serverUrl  " + serverUrl);
-	    }
-	    return serverUrl;
-    }
+				sb = new StringBuffer();
+				sb.append(url.getProtocol());
+				sb.append(PROTOCOL_POSTFIX);
+				sb.append(ip.getHostAddress());
+				sb.append(COLON);
+				sb.append(url.getPort());
+				serverUrl = sb.toString();
+			}
+		} catch (Exception e) {
+			S_LOGGER.debug("Url is not valid --> " + serverUrl);
+		}
+		return serverUrl;
+	}
     
     //get server Url for sonar
     public String getSonarURL() throws PhrescoException {

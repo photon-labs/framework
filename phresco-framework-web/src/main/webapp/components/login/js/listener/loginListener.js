@@ -46,7 +46,6 @@ define([], function() {
 								self.renderNavigation();
 							} else {
 								//authentication failed
-									console.info('else part')
 								$('#login').removeAttr('disabled');
 								self.enterKeyDisable = false;
 								$(".login_error_msg").attr('data-i18n', 'errorCodes.' + response.responseCode);

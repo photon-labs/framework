@@ -66,6 +66,7 @@ var commonVariables = {
 	mvnUnitTest : "app/runUnitTest",
 	mvnComponentTest : "app/runComponentTest",
 	mvnFunctionalTest : "app/runFunctionalTest",
+	logContent : "",
 	
 	settings : "settings", 
 	dynamicPage : "dynamicPage",
@@ -84,6 +85,10 @@ var commonVariables = {
 	componentTestGoal : "component-test",
 	functionalTestGoal : "functional-test",
 	performanceTestGoal : "performance-test",
+	mvnStartHub : "app/startHub",
+	mvnStopHub : "app/stopHub",
+	mvnStartNode : "app/startNode",
+	mvnStopNode : "app/stopNode",
 	loadTestGoal : "load-test",
 	pdfReportGoal : "pdf-report",
 

@@ -112,8 +112,6 @@ define(["unitTest/listener/unitTestListener", "testResult/listener/testResultLis
 			var self = this;
 			$(".tooltiptop").tooltip();
 
-//			self.windowResize();
-			
 			$("#unitTestBtn").unbind("click");
 			$("#unitTestBtn").click(function() {
 				self.onDynamicPageEvent.dispatch(this, function() {
