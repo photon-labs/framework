@@ -24,6 +24,10 @@ import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.net.InetAddress;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.UnknownHostException;
 import java.security.KeyStore;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
@@ -413,26 +417,31 @@ public class FrameworkServiceUtil implements Constants, FrameworkConstants, Resp
 	    return serverUrl;
     }
     
-    //get server Url for sonar
-    public static String getSonarHomeURL(HttpServletRequest request) throws PhrescoException {
-    	FrameworkConfiguration frameworkConfig = PhrescoFrameworkFactory.getFrameworkConfig();
-    	String serverUrl = "";
-    	
-	    if (StringUtils.isNotEmpty(frameworkConfig.getSonarUrl())) {
-	    	serverUrl = frameworkConfig.getSonarUrl();
-	    } else {
-	    	serverUrl = request.getRequestURL().toString();
-	    	StringBuilder tobeRemoved = new StringBuilder();
-	    	tobeRemoved.append(request.getContextPath());
-	    	tobeRemoved.append(request.getServletPath());
-	    	tobeRemoved.append(request.getPathInfo());
+	// get server Url for sonar
+	public static String getSonarHomeURL(HttpServletRequest request) throws PhrescoException {
+		FrameworkConfiguration frameworkConfig = PhrescoFrameworkFactory.getFrameworkConfig();
+		String serverUrl = "";
+		StringBuffer sb = null;
+		try {
+			if (StringUtils.isNotEmpty(frameworkConfig.getSonarUrl())) {
+				serverUrl = frameworkConfig.getSonarUrl();
+			} else {
+				serverUrl = request.getRequestURL().toString();
+				URL url = new URL(serverUrl);
+				InetAddress ip = InetAddress.getLocalHost();
 
-	    	Pattern pattern = Pattern.compile(tobeRemoved.toString());
-	    	Matcher matcher = pattern.matcher(serverUrl);
-	    	serverUrl = matcher.replaceAll("");
-	    }
-	    return serverUrl;
-    }
+				sb = new StringBuffer();
+				sb.append(url.getProtocol());
+				sb.append(PROTOCOL_POSTFIX);
+				sb.append(ip.getHostAddress());
+				sb.append(COLON);
+				sb.append(url.getPort());
+				serverUrl = sb.toString();
+			}
+		} catch (Exception e) {
+		}
+		return serverUrl;
+	}
     
     public static String getBuildInfosFilePath(String appDirName) throws PhrescoException {
     	return getApplicationHome(appDirName) + FILE_SEPARATOR + BUILD_DIR + FILE_SEPARATOR +BUILD_INFO_FILE_NAME;
