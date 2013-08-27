@@ -95,11 +95,11 @@ define([], function() {
 		
 		mvnStartHub : function(paramData, divId, callback){
 			var self = this, header = self.getRequestHeader("POST", "", commonVariables.mvnStartHub, paramData);
-			self.mvnCheckHub(paramData, divId, function(response){
-				if(response === false){
+			// self.mvnCheckHub(paramData, divId, function(response){
+			// 	if(response === false){
 					self.mvnService(header, divId, callback);
-				}
-			});
+			//	}
+			//});
 		},
 		
 		mvnStopHub : function(paramData, divId, callback){

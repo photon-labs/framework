@@ -333,22 +333,26 @@ define(["projectlist/listener/projectListListener"], function() {
 				
 				$('.search').unbind("click");
 				$('.search').bind("click", function() {
-					var actionBody = {};
-					actionBody.repoUrl = $("#repourl_"+dynamicId).val();
-					actionBody.userName = $("#uname_"+dynamicId).val();
-					actionBody.password = $("#pwd_"+dynamicId).val();
-					commonVariables.hideloading = true;
-					self.projectslistListener.showpopupLoad($("#addRepoLoading_"+dynamicId));
-					self.projectslistListener.projectListAction(self.projectslistListener.getActionHeader(actionBody, "searchlogmessage"), "" , function(response) {
-						 $.each(response.data, function(index, value) {
-							$('.searchdropdown').append('<option value='+value+'>'+value+'</option>');
+					self.projectslistListener.flag1 = 1;
+					var idval = $(this).parent().parent().parent().parent().next('div').next().children('input').attr('id');
+					if(!(self.projectslistListener.validation(idval))) {
+						var actionBody = {};
+						actionBody.repoUrl = $("#repourl_"+dynamicId).val();
+						actionBody.userName = $("#uname_"+dynamicId).val();
+						actionBody.password = $("#pwd_"+dynamicId).val();
+						commonVariables.hideloading = true;
+						self.projectslistListener.showpopupLoad($("#addRepoLoading_"+dynamicId));
+						self.projectslistListener.projectListAction(self.projectslistListener.getActionHeader(actionBody, "searchlogmessage"), "" , function(response) {
+							 $.each(response.data, function(index, value) {
+								$('.searchdropdown').append('<option value='+value+'>'+value+'</option>');
+							});
+							commonVariables.hideloading = false;
+							self.projectslistListener.hidePopupLoad();
 						});
-						commonVariables.hideloading = false;
-						self.projectslistListener.hidePopupLoad();
-					});
-					$('.searchdropdown').show();
+						$('.searchdropdown').show();
+					}
 				});
-				$('.searchdropdown').focusout(function() {
+				$('.searchdropdown').change(function() {
 					$('.searchdropdown').hide();
 					var temp = $(this).find(':selected').text();
 					$("#repomessage_"+dynamicId).val(temp);

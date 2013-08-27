@@ -66,7 +66,7 @@ define(["features/features",  "application/application",  "projectlist/projectLi
 					var hasRecord = false;				
 					var i=0;
 					$("#"+divId+" li").each(function(index, value) {//To search for the txtSearch and search option thru all td
-						if($(value).find("fieldset").attr('class') === "switch switchOn default" || $(value).find("fieldset").attr('class') === "switch switchOn"){
+						if($(value).find("fieldset").attr('class') === "switch switchOn default" || $(value).find("fieldset").attr('class') === "switch switchOn" || $(value).find("fieldset").attr('class') === "switch default switchOn"){
 							var tdText = $(this).text().toLowerCase();
 							if (tdText.match(txtSearch)) {
 								$(this).show();
@@ -90,7 +90,7 @@ define(["features/features",  "application/application",  "projectlist/projectLi
 				}
 				else {
 					$("#"+divId+" li").each(function(index, value) {
-						if($(value).find("fieldset").attr('class') === "switch switchOn default" || $(value).find("fieldset").attr('class') === "switch switchOn"){
+						if($(value).find("fieldset").attr('class') === "switch switchOn default" || $(value).find("fieldset").attr('class') === "switch switchOn" || $(value).find("fieldset").attr('class') === "switch default switchOn"){
 							$(this).show();
 							self.norecordHide(divId);
 						}
@@ -245,7 +245,6 @@ define(["features/features",  "application/application",  "projectlist/projectLi
 				val = eachList;
 			}
 			val.each(function() {
-				console.info("dfdfdf", $(this).attr("class"));
 				if($(this).attr("class") === "switch default" || $(this).attr("class") === "switch default switchOn" || $(this).attr("class") === "switch switchOn" || $(this).attr("class") === "switch default switchOff"){
 					$(this).parent().show();
 					self.scrollbarUpdate();					
@@ -319,11 +318,11 @@ define(["features/features",  "application/application",  "projectlist/projectLi
 				header.webserviceurl = commonVariables.webserviceurl+commonVariables.featurePageContext+"/desc?artifactGroupId="+descid+"&userId="+(userId !== null? userId.id : "");
 			} else if (type === "SELECTED") {
 				header.requestMethod = "GET";
-				header.webserviceurl = commonVariables.webserviceurl+commonVariables.featurePageContext+"/selectedFeature?userId="+(userId !== null? userId.id : "")+"&appDirName="+(appDirName !== null? appDirNamed : "");
+				header.webserviceurl = commonVariables.webserviceurl+commonVariables.featurePageContext+"/selectedFeature?userId="+(userId !== null? userId.id : "")+"&appDirName="+(appDirName !== null? appDirName : "");
 			} else if (type === "UPDATE") {
 				header.requestMethod = "PUT";
 				header.requestPostBody = JSON.stringify(projectRequestBody);
-				header.webserviceurl = commonVariables.webserviceurl+commonVariables.projectlistContext + "/updateFeature?customerId=photon&userId="+(userId !== null? userId.id : "")+"&appDirName="+(appDirName !== null? appDirNamed : "");
+				header.webserviceurl = commonVariables.webserviceurl+commonVariables.projectlistContext + "/updateFeature?customerId=photon&userId="+(userId !== null? userId.id : "")+"&appDirName="+(appDirName !== null? appDirName : "");
 			} else if (type === "DEPENDENCY") {
 				header.requestMethod = "GET";
 				header.webserviceurl = commonVariables.webserviceurl+commonVariables.featurePageContext + "/dependencyFeature?userId="+(userId !== null? userId.id : "")+"&versionId="+descid; // descid is versionId

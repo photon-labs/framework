@@ -7,7 +7,6 @@ define([], function() {
 		testResultListener : null,
 		dynamicpage : null,
 		dynamicPageListener : null,
-		mavenServiceListener : null,
 		
 		/***
 		 * Called in initialization time of this class 
@@ -18,11 +17,6 @@ define([], function() {
 			var self = this;
 			if (self.testResultListener === null) {
 				self.testResultListener = new Clazz.com.components.testResult.js.listener.TestResultListener();
-			}
-			if (self.mavenServiceListener === null)	{
-				commonVariables.navListener.getMyObj(commonVariables.mavenService, function(retVal){
-					self.mavenServiceListener = retVal;
-				});
 			}
 		},
 		
@@ -53,39 +47,15 @@ define([], function() {
 		getUnitTestReportOptions : function(header, callback) {
 			var self = this;
 			try {
-				//commonVariables.loadingScreen.showLoading();
 				commonVariables.api.ajaxRequest(header,
 					function(response) {
-						if (response !== null && (response.status !== "error" || response.status !== "failure")) {
-							//commonVariables.loadingScreen.removeLoading();
-							callback(response);
-						} else {
-							//self.loadingScreen.removeLoading();
-							$(".content_end").show();
-							$(".msgdisplay").removeClass("success").addClass("error");
-							$(".error").attr('data-i18n', 'errorCodes.' + response.responseCode);
-							self.renderlocales(commonVariables.contentPlaceholder);	
-							$(".error").fadeIn(500).fadeOut(500).fadeIn(500).fadeOut(500).fadeIn(500).fadeOut(5);
-							setTimeout(function() {
-								$(".content_end").hide();
-							},2500);
-						}
+						callback(response);
 					},
 
 					function(textStatus) {
-						//commonVariables.loadingScreen.removeLoading();
-						$(".content_end").show();
-						$(".msgdisplay").removeClass("success").addClass("error");
-						$(".error").attr('data-i18n', 'commonlabel.errormessage.serviceerror');
-						self.renderlocales(commonVariables.contentPlaceholder);		
-						$(".error").fadeIn(500).fadeOut(500).fadeIn(500).fadeOut(500).fadeIn(500).fadeOut(5);
-						setTimeout(function() {
-							$(".content_end").hide();
-						},2500);
 					}
 				);
 			} catch(exception) {
-				//commonVariables.loadingScreen.removeLoading();
 			}
 		},
 		
@@ -121,20 +91,12 @@ define([], function() {
 			
 			$('#testConsole').html('');
 			self.testResultListener.openConsoleDiv();//To open the console
-			if (self.mavenServiceListener === null) {
-				commonVariables.navListener.getMyObj(commonVariables.mavenService, function(retVal){
-					self.mavenServiceListener = retVal;
-					self.mavenServiceListener.mvnUnitTest(queryString, '#testConsole', function(response) {
-						self.testResultListener.closeConsole();
-						callback(response);
-					});
-				});
-			} else {
-				self.mavenServiceListener.mvnUnitTest(queryString, '#testConsole', function(response) {
+			commonVariables.navListener.getMyObj(commonVariables.mavenService, function(retVal){
+				retVal.mvnUnitTest(queryString, '#testConsole', function(response) {
 					self.testResultListener.closeConsole();
 					callback(response);
 				});
-			}
+			});
 		}
 	});
 

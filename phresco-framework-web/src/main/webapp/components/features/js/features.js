@@ -158,9 +158,9 @@ define(["features/listener/featuresListener"], function() {
 		
 		selectedCount : function(){
 			var jsLibCount = null, moduleCount = null, componentCount = null;
-			jsLibCount = $("#jsibrariesContent").find(".switchOn").size() + $("#jsibrariesContent").find(".default").size();
-			moduleCount = $("#moduleContent").find(".switchOn").size() + $("#moduleContent").find(".default").size();
-			componentCount = $("#componentsContent").find(".switchOn").size() + $("#componentsContent").find(".default").size();
+			jsLibCount = $("#jsibrariesContent").find(".switchOn").size();
+			moduleCount = $("#moduleContent").find(".switchOn").size();
+			componentCount = $("#componentsContent").find(".switchOn").size();
 			$(".totalModules").text(moduleCount);
 			$(".totalComponent").text(componentCount);
 			$(".totalJslibraries").text(jsLibCount);
