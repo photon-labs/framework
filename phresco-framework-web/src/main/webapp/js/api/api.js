@@ -49,9 +49,13 @@ define(["framework/base", "api/localStorageAPI"], function(){
 				async : true,
 				
 				beforeSend : function(){
-					$('#serviceError').remove();
+					$('section#serviceError').remove();
 					if(!Clazz.navigationController.loadingActive && !commonVariables.continueloading && !commonVariables.hideloading){
-						commonVariables.loadingScreen.showLoading($(commonVariables.contentPlaceholder));
+						if($(commonVariables.basePlaceholder).find(commonVariables.contentPlaceholder).length > 0){
+							commonVariables.loadingScreen.showLoading($(commonVariables.contentPlaceholder));
+						}else{
+							commonVariables.loadingScreen.showLoading();
+						}
 					}
 				},
 				
@@ -59,15 +63,13 @@ define(["framework/base", "api/localStorageAPI"], function(){
 					if(response === undefined || response === null){
 						self.showError("Unexpected Failure at server end");
 					}else if((response.status === "error" || response.status === "failure") && (Clazz.navigationController.loadingActive || commonVariables.continueloading)){
-						$('#login').removeAttr('disabled');
 						$.get(commonVariables.globalconfig.environments.locales, function(data){
 							if(data !== undefined && data !== null){
 								self.showError(data.errorCodes[response.responseCode]);
 							}
 						}, 'JSON');
-					}else if(callbackFunction){
-						callbackFunction(response);
 					}
+					callbackFunction(response);
 				},
 				
 				error : function(jqXHR, textStatus, errorThrown){
@@ -91,7 +93,7 @@ define(["framework/base", "api/localStorageAPI"], function(){
 			commonVariables.continueloading = false;
 			commonVariables.hideloading = false;
 			commonVariables.loadingScreen.removeLoading();
-			$(Clazz.navigationController.jQueryContainer).html('<section id="serviceError" class="content_end" style="display:block;"><div class="msgdisplay error">'+ errorMsg +'</div></section>');
+			$(commonVariables.basePlaceholder).append('<section id="serviceError" class="content_end" style="display:block;"><div class="msgdisplay error">'+ errorMsg +'</div></section>');
 		}
 	});
 

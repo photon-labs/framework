@@ -155,7 +155,7 @@ require(["framework/base"], function() {
 				container.animate({
 					left: "+=1660px"
 				}, {
-					duration : 1200, 
+					duration : 1000, 
 					complete: function() {
 						callback(container);
 					}		

@@ -196,20 +196,21 @@ define(["framework/base", "framework/animationProvider"], function() {
 					container: animateConten
 				});
 				self.loadingActive = false;
-				animationProviderSub.animate(self.pushAnimationTypeForGoingOut, function(container) {
-					container.hide('fast');
-					$(container).remove();
-					
-					// render in its container
-					$(self.jQueryContainer).append(newDiv);
-					
-					if(!commonVariables.hideloading && !commonVariables.continueloading){
-						commonVariables.loadingScreen.showLoading($(self.jQueryContainer));
-					}
-					
+				animationProviderSub.animate(self.pushAnimationTypeForGoingOut, function(container){
 					if(!self.loadingActive){
 						self.loadingActive = true;
+
+						container.hide('fast');
+						$(container).remove();
+						
+						if(!commonVariables.hideloading && !commonVariables.continueloading){
+							commonVariables.loadingScreen.showLoading($(self.jQueryContainer));
+						}
+						
 						view.render(newDiv);
+						
+						// render in its container
+						$(self.jQueryContainer).append(newDiv);
 					}
 				});
 			}else{

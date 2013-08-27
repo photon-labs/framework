@@ -7,9 +7,6 @@ define([], function() {
 		headerContent : null,
 		footerContent : null,
 		navigationContent : null,
-		//loginAPI : null,
-		enterKeyDisable : false,
-		//self : this,
 		/***
 		 * Called in initialization time of this class 
 		 *
@@ -33,21 +30,18 @@ define([], function() {
 		doLogin : function() {
 			try{
 				var self = this, header = self.getRequestHeader();
-				self.enterKeyDisable = true;
 				if(self.loginValidation()){
-					commonVariables.continueloading = true;
 					//TODO: call login service here and call appendPlaceholder in the success function
 					commonVariables.api.ajaxRequest(header, 
 						function(response){
 							if(response !== undefined && response !== null && response.status !== "error" && response.status !== "failure"){
-								self.enterKeyDisable = false;
+								commonVariables.continueloading = true;
 								self.setUserInfo(response.data);
 								self.appendPlaceholder();
 								self.renderNavigation();
 							} else {
 								//authentication failed
 								$('#login').removeAttr('disabled');
-								self.enterKeyDisable = false;
 								$(".login_error_msg").attr('data-i18n', 'errorCodes.' + response.responseCode);
 								self.renderlocales(commonVariables.basePlaceholder);	
 							}
@@ -55,7 +49,6 @@ define([], function() {
 						function(serviceError){
 							//service access failed
 							$('#login').removeAttr('disabled');
-							self.enterKeyDisable = false;
 							$(".login_error_msg").attr('data-i18n', 'errorCodes.' + response.responseCode);
 							self.renderlocales(commonVariables.basePlaceholder);
 						}

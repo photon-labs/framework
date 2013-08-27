@@ -83,26 +83,18 @@ define(["framework/widgetWithTemplate", "login/listener/loginListener"], functio
 			
 			//Enter Key Press Event
 			document.onkeydown = function(evt) {
-				if(self.loginListener.enterKeyDisable) {
-					return true;
-				} else {
-					evt = evt || window.event;
-					if (evt.keyCode === 13) {
-						$('#login').attr('disabled', '');
-						self.onLoginEvent.dispatch();
-					}
+				evt = evt || window.event;
+				if (evt.keyCode === 13) {
+					$('#login').attr('disabled', '');
+					self.onLoginEvent.dispatch();
 				}
 			};
 			
 			//Key press Event
 			$('#login, #rememberMe').keypress(function(e){
 				if(e.keyCode === 13){
-					if(self.loginListener.enterKeyDisable) {
-						return true;
-					} else {
-						$('#login').attr('disabled', '');
-						self.onLoginEvent.dispatch();
-					}	
+					$('#login').attr('disabled', '');
+					self.onLoginEvent.dispatch();
 				}	
 			});
 			

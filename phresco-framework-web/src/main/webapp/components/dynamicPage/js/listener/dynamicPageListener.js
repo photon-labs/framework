@@ -37,7 +37,7 @@ define(["framework/widgetWithTemplate", "common/loading", "lib/customcombobox-1.
                     commonVariables.api.ajaxRequest(header, 
                         function(response){
                             self.responseData = response.data;
-                            if(response !== undefined && response !== null){
+                            if(response !== undefined && response !== null && response.status !== "error" && response.status !== "failure"){
                                 if (response.data === null || response.data.length === 0) {
                                     callback("No parameters available");
                                 } else {
@@ -758,7 +758,18 @@ define(["framework/widgetWithTemplate", "common/loading", "lib/customcombobox-1.
         changeEveDependancyListener : function(selectedOption, currentParamKey) {
             var self = this;
             commonVariables.api.ajaxRequest(self.getRequestHeader(self.projectRequestBody, currentParamKey, selectedOption, "updateWatcher"), function(response) {
-				if(response.responseCode === "PHR5C10001") {
+				if(response !== undefined && response !== null && response.status !== "error" && response.status !== "failure"){
+				//if(response.responseCode === "PHR5C10001") {
+					$(".content_end").show();
+					$(".msgdisplay").removeClass("success").addClass("error");
+					$(".error").attr('data-i18n', 'errorCodes.' + response.responseCode);
+					self.renderlocales(commonVariables.contentPlaceholder);	
+					$(".error").fadeIn(500).fadeOut(500).fadeIn(500).fadeOut(500).fadeIn(500).fadeOut(5);
+					setTimeout(function() {
+						$(".content_end").hide();
+					},2500);
+				}else {
+					//responce value failed
 					$(".content_end").show();
 					$(".msgdisplay").removeClass("success").addClass("error");
 					$(".error").attr('data-i18n', 'errorCodes.' + response.responseCode);
@@ -776,8 +787,19 @@ define(["framework/widgetWithTemplate", "common/loading", "lib/customcombobox-1.
             var self = this;
             self.showDynamicPopupLoading();
             commonVariables.api.ajaxRequest(self.getRequestHeader(self.projectRequestBody, dependency, "", "dependency"), function(response) {
-                self.updateDependancySuccEvent(response.data, dependency);
-				if(response.responseCode === "PHR6C10001") {
+				 if(response !== undefined && response !== null && response.status !== "error" && response.status !== "failure"){
+					self.updateDependancySuccEvent(response.data, dependency);
+				//if(response.responseCode === "PHR6C10001") {
+					$(".content_end").show();
+					$(".msgdisplay").removeClass("success").addClass("error");
+					$(".error").attr('data-i18n', 'errorCodes.' + response.responseCode);
+					self.renderlocales(commonVariables.contentPlaceholder);	
+					$(".error").fadeIn(500).fadeOut(500).fadeIn(500).fadeOut(500).fadeIn(500).fadeOut(5);
+					setTimeout(function() {
+						$(".content_end").hide();
+					},2500);
+				}else {
+					//responce value failed
 					$(".content_end").show();
 					$(".msgdisplay").removeClass("success").addClass("error");
 					$(".error").attr('data-i18n', 'errorCodes.' + response.responseCode);
@@ -1031,10 +1053,20 @@ define(["framework/widgetWithTemplate", "common/loading", "lib/customcombobox-1.
             try {
 				commonVariables.continueloading = true;
                 commonVariables.api.ajaxRequest(header, function(response) {
-                    if (response !== null)   {
+                     if(response !== undefined && response !== null && response.status !== "error" && response.status !== "failure"){
 						commonVariables.continueloading = false;
                         callback(response, whereToRender);
                     } else {
+						//responce value failed
+						$(".content_end").show();
+						$(".msgdisplay").removeClass("success").addClass("error");
+						$(".error").attr('data-i18n', 'errorCodes.' + response.responseCode);
+						self.renderlocales(commonVariables.contentPlaceholder);	
+						$(".error").fadeIn(500).fadeOut(500).fadeIn(500).fadeOut(500).fadeIn(500).fadeOut(5);
+						setTimeout(function() {
+							$(".content_end").hide();
+						},2500);
+
 						commonVariables.continueloading = false;
                         callback({"status" : "service failure"}, whereToRender);
                     }
@@ -1050,32 +1082,44 @@ define(["framework/widgetWithTemplate", "common/loading", "lib/customcombobox-1.
 				var current = this;
 				self.configRequestBody = {};
 				commonVariables.api.ajaxRequest(self.getRequestHeader(self.projectRequestBody, "", "", "fileBrowse"), function(response) {
-					$("#keystoreValue").css("height", "240px");
-					$("#keystoreValue").html('');
-					self.fileTree(response, function(res){
-						var temptree = $('<div></div>');
-						temptree.append('<ul id="keyStorefiletree" class="filetree"><li><span><strong>Click here to select file path </strong></span>' + res + '</li></ul>');
-						setTimeout(function(){
-							$(temptree).jstree({
-							"themes": {
-								"theme": "default",
-								"dots": false,
-								"icons": false,
-								"url": "themes/default/css/Helios/style.css"
-							}
-							}).bind("init.jstree", function(event, data){ 
-							}).bind("loaded.jstree", function (event, data) {
-								$("#keystoreValue").append(temptree);
-								self.treeclickEvent(id);	
-								self.popupforTree(current, $(current).attr('name'));
-								$("#keystoreValue").mCustomScrollbar({
-									autoHideScrollbar:true,
-									theme:"light-thin",
-									advanced:{ updateOnContentResize: true}
-								});	
-							}); 
-						}, 100);
-					});
+					 if(response !== undefined && response !== null && response.status !== "error" && response.status !== "failure"){
+						$("#keystoreValue").css("height", "240px");
+						$("#keystoreValue").html('');
+						self.fileTree(response, function(res){
+							var temptree = $('<div></div>');
+							temptree.append('<ul id="keyStorefiletree" class="filetree"><li><span><strong>Click here to select file path </strong></span>' + res + '</li></ul>');
+							setTimeout(function(){
+								$(temptree).jstree({
+								"themes": {
+									"theme": "default",
+									"dots": false,
+									"icons": false,
+									"url": "themes/default/css/Helios/style.css"
+								}
+								}).bind("init.jstree", function(event, data){ 
+								}).bind("loaded.jstree", function (event, data) {
+									$("#keystoreValue").append(temptree);
+									self.treeclickEvent(id);	
+									self.popupforTree(current, $(current).attr('name'));
+									$("#keystoreValue").mCustomScrollbar({
+										autoHideScrollbar:true,
+										theme:"light-thin",
+										advanced:{ updateOnContentResize: true}
+									});	
+								}); 
+							}, 100);
+						});
+					}else {
+						//responce value failed
+						$(".content_end").show();
+						$(".msgdisplay").removeClass("success").addClass("error");
+						$(".error").attr('data-i18n', 'errorCodes.' + response.responseCode);
+						self.renderlocales(commonVariables.contentPlaceholder);	
+						$(".error").fadeIn(500).fadeOut(500).fadeIn(500).fadeOut(500).fadeIn(500).fadeOut(5);
+						setTimeout(function() {
+							$(".content_end").hide();
+						},2500);
+					}
 				});
 			});
 			
