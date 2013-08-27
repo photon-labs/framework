@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0">
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>com.photon.phresco</groupId>
+    <artifactId>create-project</artifactId>
+    <packaging>pom</packaging>
+    <name>create project</name>
+    <version>3.0.0</version>
+    <inceptionYear>1999</inceptionYear>
+    <organization>
+        <name>Photon Infotech Inc.</name>
+    </organization>
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>com.photon.phresco.plugins</groupId>
+                <artifactId>phresco-maven-plugin</artifactId>
+                <version>3.0.0.22002</version>
+                <extensions>true</extensions>
+            </plugin>
+        </plugins>
+    </build>
+</project>
