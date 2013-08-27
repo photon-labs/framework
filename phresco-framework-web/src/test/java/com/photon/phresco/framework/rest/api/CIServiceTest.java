@@ -286,6 +286,21 @@ public class CIServiceTest {
 	}
 	
 	@Test
+	public void getBuildStatusTest() throws PhrescoException {
+		
+		String jenkinsAlive = isJenkinsAlive();
+		if(jenkinsAlive.equals("200")) {
+			Response lastBuildStatus = ciservice.getLastBuildStatus("testJob", "testContinuousDelivery", "TestProject", "");
+//			Response buildsApp = ciservice.getBuilds("", "TestProject", "testJobApp", "testContinuousDeliveryApp");
+//			ResponseInfo<CIService> responseInfo =  (ResponseInfo<CIService>) builds.getEntity();
+			Assert.assertEquals(200, lastBuildStatus.getStatus());
+		} else {
+			Assert.assertNotSame("200", jenkinsAlive);
+		}
+	}
+	
+	
+	@Test
 	public void getDownloadBuildTest() throws PhrescoException {
 		String url = "do_not_checkin/build/PHR1_07-Aug-2013-11-49-40.zip";	
 		String jenkinsAlive = isJenkinsAlive();

@@ -22,6 +22,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
@@ -49,8 +50,11 @@ import com.photon.phresco.commons.model.ApplicationInfo;
 import com.photon.phresco.commons.model.ArtifactGroup;
 import com.photon.phresco.commons.model.ArtifactGroupInfo;
 import com.photon.phresco.commons.model.ArtifactInfo;
+import com.photon.phresco.commons.model.CIJob;
+import com.photon.phresco.commons.model.ContinuousDelivery;
 import com.photon.phresco.commons.model.Customer;
 import com.photon.phresco.commons.model.DownloadInfo;
+import com.photon.phresco.commons.model.ProjectDelivery;
 import com.photon.phresco.commons.model.ProjectInfo;
 import com.photon.phresco.commons.model.RepoInfo;
 import com.photon.phresco.commons.model.WebService;
@@ -316,6 +320,9 @@ public class ProjectManagerImpl implements ProjectManager, FrameworkConstants, C
 					oldDir.renameTo(projectInfoFile);
 					extractArchive(response, projectInfo);
 					updateProjectPom(projectInfo);
+					
+					updateCiInfoFile(projectInfo, oldAppDirName);
+					
 					StringBuilder dotPhrescoPathSb = new StringBuilder(projectInfoFile.getPath());
 					dotPhrescoPathSb.append(File.separator);
 					dotPhrescoPathSb.append(DOT_PHRESCO_FOLDER);
@@ -386,6 +393,63 @@ public class ProjectManagerImpl implements ProjectManager, FrameworkConstants, C
 		return projectInfo;
 	}
 
+	private void updateCiInfoFile(ProjectInfo projectInfo, String oldDir) throws PhrescoException {
+		ApplicationInfo applicationInfo = projectInfo.getAppInfos().get(0);
+		
+		String ciJobInfoPath = Utility.getCiJobInfoPath(applicationInfo.getAppDirName());
+		File ciJobInfoFile = new File(ciJobInfoPath);
+		if(ciJobInfoFile.exists()) {
+			updateCiInfo(applicationInfo, ciJobInfoPath, ciJobInfoFile, oldDir, projectInfo.getId());
+		}
+		
+		String ciInfoPath = Utility.getCiJobInfoPath(null);
+		
+		File ciJobInfoFilePath = new File(ciInfoPath);
+		if(ciJobInfoFilePath.exists()) {
+			updateCiInfo(applicationInfo, ciInfoPath, ciJobInfoFilePath, oldDir, projectInfo.getId());
+		}
+		
+	}
+
+	private void updateCiInfo(ApplicationInfo applicationInfo, String ciJobInfoPath, File ciJobInfoFile, String oldDir, String projectId) throws PhrescoException {
+		List<ProjectDelivery> projectDeliveries = Utility.getProjectDeliveries(ciJobInfoFile);
+		if(CollectionUtils.isNotEmpty(projectDeliveries)) {
+			for (ProjectDelivery projectDelivery : projectDeliveries) {
+				if(projectDelivery.getId().equals(projectId)) {
+					List<ContinuousDelivery> continuousDeliveries = projectDelivery.getContinuousDeliveries();
+					if(CollectionUtils.isNotEmpty(continuousDeliveries)) {
+						for (ContinuousDelivery continuousDelivery : continuousDeliveries) {
+							List<CIJob> jobs = continuousDelivery.getJobs();
+							if(CollectionUtils.isNotEmpty(jobs)) {
+								for (CIJob ciJob : jobs) {
+									if(ciJob.getAppDirName().equals(oldDir)) {
+										ciJob.setAppDirName(applicationInfo.getAppDirName());
+										ciJob.setAppName(applicationInfo.getName());
+									}
+								}
+							}
+						}
+						ciInfoFileWriter(ciJobInfoPath, projectDeliveries);
+					}
+				}
+			}
+		}
+	}
+	
+	private boolean ciInfoFileWriter(String filePath, Object object ) throws PhrescoException {
+		Gson gson = new Gson();
+		FileWriter writer = null;
+		try {
+			writer = new FileWriter(filePath);
+			String json = gson.toJson(object);
+			writer.write(json);
+			writer.flush();
+			return true;
+		} catch (IOException e) {
+			return false;
+		}
+	}
+	
 	private void updateSelectedConfiguration(MojoProcessor mojoProcessor, ApplicationInfo appInfo, ServiceManager serviceManager) throws PhrescoException {
 		//To write selected Database into phresco-application-Handler-info.xml
 		List<ArtifactGroupInfo> selectedDatabases = appInfo.getSelectedDatabases();

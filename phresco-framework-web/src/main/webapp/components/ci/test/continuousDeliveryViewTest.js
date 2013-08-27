@@ -167,11 +167,37 @@ define(["ci/continuousDeliveryView"], function(ContinuousDeliveryView) {
 					start();
 					var text = $(commonVariables.contentPlaceholder).find(".widget-maincontent-div").find('tbody[name=buildList]').text();
 					equal(text, "07/08/2013 11:48:28", "List Builds tested");
-					self.downloadBuild(continuousDeliveryView);
+					self.lastBuildStatus(continuousDeliveryView);
 				}, 2500);
 			});
 		},
 
+
+		//lastBuildStatus
+		lastBuildStatus : function(continuousDeliveryView) {
+			var self = this;
+			asyncTest("Last Build Status test", function() {
+				$.mockjax({
+					//http://localhost:8234/framework/rest/api/ci/lastBuildStatus?name=IndependentCode&projectId=dd122034-fa5c-4fd9-9f68-522df1e73fb4&appDirName=&continuousName=independent&_=1377586625663
+					url: commonVariables.webserviceurl + commonVariables.ci + "/lastBuildStatus?name=IndependentCode&projectId=dd122034-fa5c-4fd9-9f68-522df1e73fb4&appDirName=&continuousName=independent",
+					type:'GET',
+					dataType: "json",
+					contentType: "application/json",
+					status: 200,
+					response: function() {
+						this.responseText = JSON.stringify({"message":null,"exception":null,"responseCode":"PHR800023","data":{"id":"2013-08-26_13-46-37","number":3,"status":"FAILURE","url":"http://172.16.27.152:3579/ci/job/build/3/","timeStamp":"26/08/2013 01:46:37","download":null},"status":"success"});
+					}
+				});
+
+				$("a[temp=buildStatus]").click();
+				setTimeout(function() {
+					start();
+					equal(1, 1, "Last Build Status tested");
+					self.downloadBuild(continuousDeliveryView);
+				}, 2500);
+			});
+		},
+		
 		//download Build
 		downloadBuild : function(continuousDeliveryView) {
 			var self = this;
@@ -334,6 +360,7 @@ define(["ci/continuousDeliveryView"], function(ContinuousDeliveryView) {
 				}, 2500);
 			});
 		},
+		
 
 		// delete continuous delivery test
 		openDeletePopUp : function (continuousDeliveryView) {

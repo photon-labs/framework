@@ -17,6 +17,7 @@ define(["framework/widgetWithTemplate", "ci/listener/ciListener", "lib/jquery-to
 		generateBuildEvent : null,
 		deleteJobEvent : null,
 		cloneCiEvent : null,
+		lastBuildStatusEvent : null,
 		listEnvironmentsEvent : null,
 		ciStatusEvent : null,
 		jenkinsStatus : null,
@@ -68,6 +69,10 @@ define(["framework/widgetWithTemplate", "ci/listener/ciListener", "lib/jquery-to
 				self.cloneCiEvent = new signals.Signal();
 			}
 			
+			if (self.lastBuildStatusEvent === null) {
+				self.lastBuildStatusEvent = new signals.Signal();
+			}
+			
 			if (self.listEnvironmentsEvent === null) {
 				self.listEnvironmentsEvent = new signals.Signal();
 			}
@@ -86,6 +91,7 @@ define(["framework/widgetWithTemplate", "ci/listener/ciListener", "lib/jquery-to
 			self.generateBuildEvent.add(ciListener.generateBuild, ciListener);
 			self.deleteJobEvent.add(ciListener.deleteContinuousDelivery, ciListener);
 			self.cloneCiEvent.add(ciListener.cloneCi, ciListener);
+			self.lastBuildStatusEvent.add(ciListener.lastBuildStatus, ciListener);
 			self.listEnvironmentsEvent.add(ciListener.listEnvironment, ciListener);
 			self.ciStatusEvent.add(ciListener.ciStatus, ciListener);
 			self.jenkinsStatus.add(ciListener.jenkinsStatus, ciListener);
@@ -212,6 +218,10 @@ define(["framework/widgetWithTemplate", "ci/listener/ciListener", "lib/jquery-to
 			
 			$("#clone_ci").click(function() {
 				self.cloneCiEvent.dispatch($(this));
+			});
+			
+			$("a[temp=buildStatus]").click(function() {
+				self.lastBuildStatusEvent.dispatch($(this));
 			});
 			
 			$("a[temp=list_builds]").click(function() {

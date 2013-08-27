@@ -843,6 +843,38 @@ public class CIService extends RestBase implements FrameworkConstants, ServiceCo
 		}
 	}
 	
+	@GET
+	@Path("/lastBuildStatus")
+	@Produces(MediaType.APPLICATION_JSON)
+	@Consumes(MediaType.APPLICATION_JSON)
+	public Response getLastBuildStatus(@QueryParam(REST_QUERY_NAME) String jobName, @QueryParam(REST_QUERY_CONTINOUSNAME) String continuousName,
+			@QueryParam(REST_QUERY_PROJECTID) String projectId, @QueryParam(REST_QUERY_APPDIR_NAME) String appDir) {
+		ResponseInfo<String> responseData = new ResponseInfo<String>();
+		ResponseInfo<Boolean> finalOutput = null;
+		try {
+			if(projectId == null || projectId.equals("null") || projectId.equals("")) {
+				ProjectInfo projectInfo = FrameworkServiceUtil.getProjectInfo(appDir);
+				projectId = projectInfo.getId();
+			}
+			CIManager ciManager = PhrescoFrameworkFactory.getCIManager();
+			CIJob job = null;
+			List<ProjectDelivery> ciJobInfo = ciManager.getCiJobInfo(appDir);
+			List<CIJob> ciJobs = Utility.getJobs(continuousName, projectId, ciJobInfo);
+			for (CIJob ciJob : ciJobs) {
+				if(ciJob.getJobName().equals(jobName)) {
+					job = ciJob;
+				}
+			}
+			CIBuild build = ciManager.getStatusInfo(job);
+			finalOutput = responseDataEvaluation(responseData, null, build, RESPONSE_STATUS_SUCCESS, PHR800023);
+			return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, ALL_HEADER).build();
+		} catch (PhrescoException e) {
+			finalOutput = responseDataEvaluation(responseData, e, null, RESPONSE_STATUS_ERROR, PHR810036);
+			return Response.status(Status.NOT_FOUND).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, ALL_HEADER)
+			.build();
+		}
+	}
+	
 	//core method used to create jobs in contDelivery
 	private boolean coreCreateJob(ContinuousDelivery continuousDelivery, String  projectId, String appDir, String userId, HttpServletRequest request) throws PhrescoException {
 		CIManagerImpl ciManager = null;

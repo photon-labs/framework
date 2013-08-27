@@ -349,7 +349,7 @@ public class CIJobTemplateService extends RestBase implements FrameworkConstants
 		List<Environment> environments = getEnvironments(applicationInfo);
 		for (Environment environment : environments) {
 			if (envName.equals(environment.getName())) {
-				List<CIJobTemplate> jobTemplates = ciManager.getJobTemplatesByAppId(applicationInfo.getName());
+				List<CIJobTemplate> jobTemplates = ciManager.getJobTemplatesByAppId(applicationInfo.getAppDirName());
 				if (CollectionUtils.isNotEmpty(jobTemplates)) {
 					JSONObject jsonObject = new JSONObject();
 					jsonObject.put("appName", applicationInfo.getName());

@@ -171,6 +171,9 @@ define([], function() {
 			} else if (action === "generateBuild") {
 				header.requestMethod = "POST";
 				header.webserviceurl = commonVariables.webserviceurl + commonVariables.ci + "/build?name="+ciRequestBody.jobName+"&projectId="+projectId+"&appDirName="+appDir+"&continuousName="+ciRequestBody.continuousName;
+			} else if (action === "lastBuildStatus") {
+				header.requestMethod = "GET";
+				header.webserviceurl = commonVariables.webserviceurl + commonVariables.ci + "/lastBuildStatus?name="+ciRequestBody.jobName+"&projectId="+projectId+"&appDirName="+appDir+"&continuousName="+ciRequestBody.continuousName;
 			} else if (action === "deleteBuild") {
 				header.requestMethod = "DELETE";
 				header.webserviceurl = commonVariables.webserviceurl + commonVariables.ci + "/deletebuilds?buildNumber="+ciRequestBody.buildNumber+"&name="+ciRequestBody.jobName+"&projectId="+projectId+"&appDirName="+appDir+"&continuousName="+ciRequestBody.continuousName;
@@ -240,12 +243,12 @@ define([], function() {
 			var ciRequestBody = {},name;
 			ciRequestBody.jobName=obj.attr("id");
 			ciRequestBody.cdName = obj.parent().parent("div").attr("name");
-			commonVariables.loadingScreen.removeLoading();
+			commonVariables.hideloading = true;
 			self.getHeaderResponse(self.getRequestHeader(ciRequestBody, 'jobStatus'), function (response) {
 				var parseJson = $.parseJSON(response.data);
 				if(parseJson === "red") {
 					obj.find('.img_process').attr('src',"themes/default/images/helios/cross_red.png");
-				} else if (parseJson === "red_anime" || parseJson === "blue_anime") {
+				} else if (parseJson === "red_anime" || parseJson === "blue_anime" || parseJson ==="grey_anime") {
 					obj.find('.img_process').attr('src',"themes/default/images/helios/processing.gif");
 				} else if (parseJson === "blue") {
 					obj.find('.img_process').attr('src',"themes/default/images/helios/tick_green.png");
@@ -379,6 +382,39 @@ define([], function() {
 			jobName = ciRequestBody.jobName;
 			ciRequestBody.continuousName = obj.closest('div[class=widget_testing]').attr('name');
 			self.getHeaderResponse(self.getRequestHeader(ciRequestBody, 'generateBuild'), function (response) {
+			});
+		},
+		
+		lastBuildStatus: function(obj) {
+			var self = this;
+			var ciRequestBody = {},jobName;
+			ciRequestBody.jobName = obj.attr("jobName");
+			jobName = ciRequestBody.jobName;
+			ciRequestBody.continuousName = obj.closest('div[class=widget_testing]').attr('name');
+			self.getHeaderResponse(self.getRequestHeader(ciRequestBody, 'lastBuildStatus'), function (response) {
+				$("#buildStatus").empty();
+				var content = "";
+				var timeStamp = "Nil";
+				var number = "Nil";
+				var status = "Nil";
+				if(response.data !== undefined && response.data !=="" && response.data !==null) {
+					timeStamp = response.data.timeStamp;
+					number = response.data.number;
+					status = response.data.status;
+				}
+				
+				var headerTr = '<h1>Info</h1><div><b>Executed:</b>'+timeStamp+'<br><b>BuildNumber:</b>'+number+'<br>';
+				content = content.concat(headerTr);
+				if(status === "SUCCESS") {
+					headerTr = '<b>Status:</b><span class=completedinfo>'+status+"<span></div>";
+				} else if(status === "FAILURE"){
+					headerTr = '<b>Status:</b><span class=failureinfo>'+status+"<span></div>";
+				} else {
+					headerTr = '<b>Status:</b><span>'+status+"<span></div>";
+				}
+				content = content.concat(headerTr);
+				$("#buildStatus").append(content);
+				
 			});
 		},
 		
@@ -1720,12 +1756,18 @@ define([], function() {
 		lastChild : function() {
 			var self =this;
 			var lastChild = $("#sortable2 li:last-child").find('a');
-			var lastTemplateJsonData = lastChild.data("templateJson");
-			var lastJobJsonData = lastChild.data("jobJson");
-			if (!self.isBlank(lastJobJsonData)) {
-				lastJobJsonData.downStreamCriteria = "";
+			if(!self.isBlank(lastChild)) {
+				var lastTemplateJsonData = lastChild.data("templateJson");
+				var lastJobJsonData = lastChild.data("jobJson");
+				if (!self.isBlank(lastJobJsonData)) {
+					lastJobJsonData.downStreamCriteria = "";
+				}
+				if(!self.isBlank(lastTemplateJsonData)) {
+					lastTemplateJsonData.enableCriteria = false;
+				}
+				
 			}
-			lastTemplateJsonData.enableCriteria = false;
+			
 		}
 				
 	});

@@ -12,8 +12,8 @@
                                 </tr>
                                 <tr>
                                   <td>
-                                    <input type="text" data-i18n="[placeholder]ci.placeholder.jobname" name="name" value="">
-                                    <input type="hidden" name="oldname" value="">
+                                    <input type="text" data-i18n="[placeholder]ci.placeholder.jobname" name="name" value=""></input>
+                                    <input type="hidden" name="oldname" value=""></input>
                                   </td>
                                   <td>
                                       <select name="type" class="selectpicker">

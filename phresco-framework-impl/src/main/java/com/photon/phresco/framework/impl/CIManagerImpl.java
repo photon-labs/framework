@@ -486,7 +486,38 @@ public class CIManagerImpl implements CIManager, FrameworkConstants {
 		}
 		return color;
 	}
+	
+	public CIBuild getStatusInfo(CIJob job) throws PhrescoException {
+		if (debugEnabled) {
+			S_LOGGER.debug("Entering Method CIManagerImpl.getStatus(CIJob job)");
+		}
+		String jsonResponse = null;
+		CIBuild ciBuild = null;
+		try {
+			String jenkinsUrl = HTTP_PROTOCOL + PROTOCOL_POSTFIX + job.getJenkinsUrl() + COLON + job.getJenkinsPort() + FORWARD_SLASH + CI + FORWARD_SLASH + CI_JOB + FORWARD_SLASH + job.getJobName()+ FORWARD_SLASH +  "api/json";
+			jsonResponse = getJsonResponse(jenkinsUrl);
 
+			JsonParser parser = new JsonParser();
+			JsonElement jsonElement = parser.parse(jsonResponse);
+			JsonObject jsonObject = jsonElement.getAsJsonObject();
+			JsonElement element = jsonObject.get(FrameworkConstants.LAST_BUILD);
+			if (element != null) {
+				Gson gson = new Gson();
+				ciBuild = gson.fromJson(element, CIBuild.class);
+				setBuildStatus(ciBuild, job);
+				String buildUrl = ciBuild.getUrl();
+				String jenkinUrl = job.getJenkinsUrl() + ":" + job.getJenkinsPort();
+				buildUrl = buildUrl.replaceAll("localhost:" + job.getJenkinsPort(), jenkinUrl); // when displaying url it should display setup machine ip
+				ciBuild.setUrl(buildUrl);
+			}
+		} catch (Exception e) {
+			if (debugEnabled) {
+				S_LOGGER.debug("Entering catch block of CIManagerImpl.getBuildsArray "+e.getLocalizedMessage());
+			}
+		}
+		return ciBuild;
+	}
+	
 	private CIJobStatus buildJob(CIJob job) throws PhrescoException {
 		if (debugEnabled) {
 			S_LOGGER.debug("Entering Method CIManagerImpl.buildJob(CIJob job)");
@@ -848,7 +879,7 @@ public class CIManagerImpl implements CIManager, FrameworkConstants {
 
 	public boolean createJsonJobs(ContinuousDelivery continuousDelivery, List<CIJob> jobs, String projId, String appDir) throws PhrescoException {
 		try {
-			String ciJobInfoPath = getCiJobInfoPath(appDir);
+			String ciJobInfoPath = Utility.getCiJobInfoPath(appDir);
 			File infoFile = new File(ciJobInfoPath);
 
 			//create new info file if not exists
@@ -920,7 +951,7 @@ public class CIManagerImpl implements CIManager, FrameworkConstants {
 	public boolean clearContinuousDelivery(String continuousDeliveryName, String projId, String appDir) throws PhrescoException {
 		try {
 			List<ProjectDelivery> ciJobInfo = getCiJobInfo(appDir);
-			String ciJobInfoPath = getCiJobInfoPath(appDir);
+			String ciJobInfoPath = Utility.getCiJobInfoPath(appDir);
 			if (CollectionUtils.isNotEmpty(ciJobInfo)) {
 				ProjectDelivery projectDelivery = Utility.getProjectDelivery(projId, ciJobInfo);
 				if (projectDelivery != null) {
@@ -968,7 +999,7 @@ public class CIManagerImpl implements CIManager, FrameworkConstants {
 					}
 				}
 			}
-			String ciJobInfoPath = getCiJobInfoPath(appDir);
+			String ciJobInfoPath = Utility.getCiJobInfoPath(appDir);
 			ciInfoFileWriter(ciJobInfoPath, ciJobInfo);
 		} catch (Exception e) {
 			throw new PhrescoException(e);
@@ -1062,36 +1093,13 @@ public class CIManagerImpl implements CIManager, FrameworkConstants {
 			S_LOGGER.debug("Entering Method CIManagerImpl.getCiJobInfo(String appDir)");
 		}
 		List<ProjectDelivery> projectDelivery = new ArrayList<ProjectDelivery>();
-		String ciJobInfoPath = getCiJobInfoPath(appDir);
+		String ciJobInfoPath = Utility.getCiJobInfoPath(appDir);
 		File ciJobInfoFile = new File(ciJobInfoPath);
 		if(!ciJobInfoFile.exists()) {
 			return new ArrayList<ProjectDelivery>();
 		}
 		projectDelivery = Utility.getProjectDeliveries(ciJobInfoFile);
 		return projectDelivery;
-	}
-
-	public String getCiJobInfoPath(String appDir) throws PhrescoException {
-		if (debugEnabled) {
-			S_LOGGER.debug("Entering Method CIManagerImpl.getCiJobInfoPath(String appDir)");
-		}
-		try {
-			StringBuilder builder = new StringBuilder(Utility.getProjectHome());
-			if (!StringUtils.isEmpty(appDir)) {		
-				builder.append(appDir);
-				builder.append(File.separator);
-				builder.append(PHRESCO);
-				builder.append(File.separator);	
-			}
-			builder.append(CI_JOB_INFO_NAME);
-			File ciJobInfoFile = new File(builder.toString());
-			if(!ciJobInfoFile.exists()) {
-				ciJobInfoFile.createNewFile();
-			}
-			return ciJobInfoFile.getPath();
-		} catch (IOException e) {
-			throw new PhrescoException(e);
-		}
 	}
 
 	public List<CIJobTemplate> getJobTemplatesByAppId(String appId) throws PhrescoException {

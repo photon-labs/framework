@@ -424,4 +424,6 @@ public interface ResponseCodes {
 	String PHR810034 = "PHR810034"; // returned Confluence configuration Failed
 	String PHR800022 = "PHR800022"; // confluence configuration saved successfully
 	String PHR810035 = "PHR810035"; // build download url retrieve failed
+	String PHR800023 = "PHR800023"; // last build status returned successfully
+	String PHR810036 = "PHR810036"; // failed to get last build status
 }

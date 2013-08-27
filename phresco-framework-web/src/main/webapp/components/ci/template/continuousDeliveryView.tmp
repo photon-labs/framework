@@ -2,8 +2,8 @@
 	<div class="unit_text" data-i18n="ci.continuousintegration"> </div>
 	<div class="flt_right">
 		<div class="unit_path">
-			<a class = "aliveOpts"> <input id="createContinuousDelivery" type="submit" value="Create a New Continuous Delivery" data-i18n="[value]ci.create"class="btn btn_style"></a>
-			<a class = "deadOpts"> <input id="createContinuousDelivery" type="submit" value="Create a New Continuous Delivery" data-i18n="[value]ci.create"class="btn btn_style" disabled></a>
+			<a class = "aliveOpts"> <input id="createContinuousDelivery" type="submit" value="Create a New Continuous Delivery" data-i18n="[value]ci.create" class="btn btn_style"></a>
+			<a class = "deadOpts"> <input id="createContinuousDelivery" type="submit" value="Create a New Continuous Delivery" data-i18n="[value]ci.create" class="btn btn_style" disabled></a>
 		</div>    
 	</div>   
 </section>
@@ -47,7 +47,7 @@
                             	<img class="img_process" src="themes/default/images/helios/queue_icon.png">{{operation}}
                           	<div >
 	                          	<span class="aliveOpts">
-	                                <a href="javascript:;" class="ci_info execute_button"><img class="wait_button" src="themes/default/images/helios/wait.png"></a>
+	                                <a href="javascript:;" jobName="{{jobName}}" class="ci_info" temp="buildStatus"><img class="wait_button" src="themes/default/images/helios/wait.png"></a>
 	                                 <a href="javascript:;" class="wait_button" temp="generate_build" jobName="{{jobName}}" projectId="{{projectDelivery.id}}"><img class="execute_button" src="themes/default/images/helios/execute_icon.png"></a>
 	                                <a temp="list_builds" jobName="{{jobName}}" projectId="{{projectDelivery.id}}" href="javascript:;" class="datetime_status" operation={{operation}}><img class="time_button" src="themes/default/images/helios/time.png"></a>
 	                             </span>
@@ -83,13 +83,8 @@
         	</table>
         </div>
         <div id="ci_info" class="dyn_popup popup_bg">
-            <div class="ci_inner_info">
-                <h1>Info</h1>
-                <div>
-                	<b>Executed:</b> Apr 18, 2012, 12:45PM<br>
-                    <b>Duration:</b> 18 Mins 15 Secs<br>
-                    <b>Status:</b> <span class="completedinfo">Completed</span>
-                </div> 
+            <div class="ci_inner_info" id="buildStatus">
+               
              </div> 
         </div>
         {{#each jobs}}

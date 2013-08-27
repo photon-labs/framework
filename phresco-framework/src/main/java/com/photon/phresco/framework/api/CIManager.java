@@ -296,4 +296,11 @@ public interface CIManager {
 	 * @throws PhrescoException
 	 */
 	public boolean setGlobalConfiguration(String jenkinsUrl, String submitUrl, org.json.JSONArray confluenceObj, String emailAddress, String emailPassword) throws PhrescoException;
+	
+	/**
+	 * @param job
+	 * @return
+	 * @throws PhrescoException
+	 */
+	public CIBuild getStatusInfo(CIJob job) throws PhrescoException;
 }
