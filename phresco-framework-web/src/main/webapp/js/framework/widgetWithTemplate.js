@@ -114,6 +114,7 @@ define(["framework/widget", "framework/templateProvider"], function() {
 			},
 			
 			fixScrollHeight : function(divId) {
+
 				if ($(divId).find('.fixed-table-container-inner').offset() !== undefined) {
 					var height = $(window).height() - $('.fixed-table-container-inner').offset().top - 40;
 					$('.fixed-table-container, .fixed-table-container-inner, .scroll-bar').css('height', height);
@@ -128,10 +129,13 @@ define(["framework/widget", "framework/templateProvider"], function() {
 					$(divId).find('.scroll-bar').css('height', divId.css('height'));
 						/*if ($('.consolescrolldiv').offset() !== undefined) {
 							var scrollTo = $('.consolescrolldiv').find('.scroll-content').height() + $('.consolescrolldiv').offset().top; 
-							console.info('scr con ', $('.consolescrolldiv').find('.scroll-content'));
 							$('.consolescrolldiv').animate({scrollTop: scrollTo});
 						}*/
 					}
+
+				if ($(divId).hasClass('cus_themes')) {
+					$(divId).find('.scroll-bar').css('height', '200px');
+				}	
 			},
 		 
 			/***
