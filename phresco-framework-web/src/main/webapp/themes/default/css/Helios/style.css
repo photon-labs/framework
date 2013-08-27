@@ -4623,3 +4623,15 @@ select[name="reportDataType"], input[name="pdfName"] {
 	background:#EF7B43 !important;
 }
 
+#manualUploadForm {
+	margin: 0;
+}
+
+#manual_temp_upload .btn_style {
+	padding: 3px 12px !important;
+	width: auto;
+	margin-top: 0px;
+	font-size: 12px;
+}
+
+

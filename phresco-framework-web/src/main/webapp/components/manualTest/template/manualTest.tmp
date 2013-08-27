@@ -69,7 +69,8 @@
 					<ul>
 						<li>Upload File<br/></li>
 						<li>
-							<div id="manual_temp_upload" class="file-uploader"><noscript><p>Please enable JavaScript to use file uploader.</p><!-- or put a simple form for upload here --></noscript>  </div>
+							<div id="manual_temp_upload" class="file-uploader align" style="float:left"><noscript><p>Please enable JavaScript to use file uploader.</p><!-- or put a simple form for upload here --></noscript> </div>
+							<input type="button" value="Close" class="btn btn_style dyn_popup_close" style="margin:0">
 						</li>
 					</ul>
 				</form>
