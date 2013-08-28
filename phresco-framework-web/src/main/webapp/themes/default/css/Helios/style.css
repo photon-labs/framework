@@ -1193,7 +1193,7 @@ img[name="close"] {
 	color: #747474;
 	text-align:left;
 	border:none;
-	width: 5%;
+	width: 4%;
 }
 
 .appInfo table tr td {
@@ -1201,7 +1201,7 @@ img[name="close"] {
 	color: #747474;
 	text-align:left;
 	border:none;
-	width: 5%;
+	width:4%;
 }
 
 .errormessage {
@@ -1352,7 +1352,7 @@ background:#DA4F49 !important;
 }
 
 #appinfo .dropdown-menu {
-	max-height: 93px !important;
+	/*max-height: 93px !important;*/
 }
 
 .show-tick.open ul{
@@ -1363,7 +1363,7 @@ background:#DA4F49 !important;
 	margin-left: 10px;	
 }
 
-.dropdown-menu > li > a:hover {
+.dropdown-menu > li > a:hover, .dropdown-menu > li > a:focus, .dropdown-submenu:hover > a, .dropdown-submenu:focus > a{
 	background:#EF7B43 !important;
 }
 
@@ -1391,6 +1391,7 @@ background:#DA4F49 !important;
 .title_nav ul li a.drop-qual:hover {
 	color: #ffffff;
 }
+
 .title_nav ul li a.drop-qual b.caret {
 	border-bottom-color: #353535 !important;
 	border-top-color: #353535 !important;
@@ -1945,6 +1946,10 @@ background:#DA4F49 !important;
 	#code_popup .dropdown-menu { 
 		width: 100% !important;
 	}	
+	
+	.appInfo table tr td{
+		width:10%;
+	}
 }
 
 @media screen and (min-width: 1025px) and (max-width: 1152px) {
@@ -2848,7 +2853,7 @@ html>body tbody.scrollContent {
 
 .unit_path input:first-child{
 	margin-right: 3px;
-	font-size: 12px;
+	/*font-size: 12px;*/
 }
 
 .unit_path input:last-child{
@@ -2862,13 +2867,16 @@ html>body tbody.scrollContent {
 
 .qual_unit .code_func {
 	padding: 4px 1px 0 8px;
-    width: auto;
+    width: auto; 
 }
 
 .qual_unit .code_func.module {
 	margin-right: 5px !important;
 }
 
+.report_type tr td{
+	padding-bottom:10px !important;
+}
 
 /* *************************************************************** STYLES FOR QUALITY_UNIT_RESULT PAGE ************************************************************************************ */
 
@@ -3136,7 +3144,7 @@ html>body tbody.scrollContent {
 }
 .job_template table tr td .bootstrap-select .btn, .job_template table tr td input[type="text"]
 {
-	width:151px !important;
+	width:140px !important;
 	margin: 0 5px 0 0 !important;
 }
 .job_template table tr td select
@@ -3217,6 +3225,13 @@ html>body tbody.scrollContent {
 .job_configure #schedule_monthly  td:nth-child(2) [type="button"]{
 	width:135px !important;
 }
+
+.cont_delivery table input[name="url"][type="text"] {
+	width: 485px;
+	margin-bottom: 0;
+}
+
+
 /* *************************************************************** STYLES FOR CI-CON_DELIVERY PAGE ************************************************************************************ */
 
 #ci_configure select {

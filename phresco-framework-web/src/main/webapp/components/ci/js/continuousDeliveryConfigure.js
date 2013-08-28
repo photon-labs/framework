@@ -170,12 +170,14 @@ define(["framework/widgetWithTemplate", "ci/listener/ciListener", "lib/jquery-to
 						$(".dyn_popup").hide();
 						$('#header').css('z-index','7');
 						$('.content_title').css('z-index','6');
+						$('.qual_unit').css('z-index','6');
 					},
 
 					stop: function( event, ui ) {
 						$(".dyn_popup").hide();
 						$('#header').css('z-index','7');
 						$('.content_title').css('z-index','6');
+						$('.qual_unit').css('z-index','6');
 						self.downStreamCriteria.dispatch();
 						self.lastChild.dispatch();
 					},
@@ -340,6 +342,7 @@ define(["framework/widgetWithTemplate", "ci/listener/ciListener", "lib/jquery-to
    			$('#sortable2').on('click', 'a[name=jobConfigurePopup]', function() {
 				$('#header').css('z-index','0');
 				$('.content_title').css('z-index','0');
+				$('.qual_unit').css('z-index','0');
    				var envName = $("[name=environments]").val();
    				$(this).attr("envName",envName);
    				self.onConfigureJobPopupEvent.dispatch(this);

@@ -80,17 +80,8 @@
             {{/showIcons}}
         	<div class="icon_images performanceScreenShotDiv" style="display: none;"><a class="tooltiptop performanceScreenShot" title="" data-placement="bottom" data-toggle="tooltip" href="#" data-original-title="Screen Shot"><img src="themes/default/images/helios/screenshot_white.png" ></a></div>
             
-			<div class="icon_images">
-				<a class="tooltiptop" title="" data-placement="bottom" data-toggle="tooltip" href="#" data-original-title="Open Folder" id="openLoadFolder">
-					<img src="themes/default/images/helios/openfolder_icon.png" >
-				</a>
-			</div>
-		
-			<div class="icon_images copy_path_icon">
-				<a class="tooltiptop" title="" data-placement="bottom" data-toggle="tooltip" href="#" data-original-title="Copy Path" id="copyLoadPath">
-					<img src="themes/default/images/helios/copypath_icon.png" >
-				</a>
-			</div>	
+			<div class="icon_images"><a class="tooltiptop" title="" data-placement="bottom" data-toggle="tooltip" href="#" data-original-title="Open Folder" id="openFolder"><img src="themes/default/images/helios/openfolder_icon.png" ></a></div>
+			<div class="icon_images copy_path_icon"><a class="tooltiptop" title="" data-placement="bottom" data-toggle="tooltip" href="#" data-original-title="Copy Path" id="copyPath"><img src="themes/default/images/helios/copypath_icon.png" ></a></div>
 
 			{{#showResultFiles testResultFiles}}
 	            <div class="code_report type_report testResultDropdown">

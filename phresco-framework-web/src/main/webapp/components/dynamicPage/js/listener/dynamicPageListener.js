@@ -377,7 +377,7 @@ define(["framework/widgetWithTemplate", "common/loading", "lib/customcombobox-1.
         constructMapControls : function(parameter, whereToRender) {
             var self = this;
             var childs = parameter.childs.child;
-            var mapCtrl = '<table class="table table-striped table_border table-bordered browser_table" cellpadding="0" cellspacing="0" border="0">'+
+            var mapCtrl = '<table class="table table-striped table_border table-bordered browser_table border_div" cellpadding="0" cellspacing="0" border="0">'+
                         '<thead><tr><th>'+childs[0].name.value.value+'</th><th>'+childs[1].name.value.value+'</th></tr></thead><tbody><tr>';
             if ("List" === childs[0].type) {
                 mapCtrl =  mapCtrl.concat('<td class="browse_td"><select name="'+childs[0].key+'" class="selectpicker">');

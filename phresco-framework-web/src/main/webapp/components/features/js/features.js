@@ -144,7 +144,7 @@ define(["features/listener/featuresListener"], function() {
 				$.each(response.data, function(index, value){
 					$("#feature_"+this.moduleId).addClass("switchOn").removeClass('switchOff');
 					$("#version_"+this.moduleId).show();		
-					$('li[name='+value.name+']').children('div').children('.jarscope').val(value.scope);
+					$('#feature_'+value.moduleId+'').parent('li').children('div').children('.jarscope').val(value.scope);
 					self.selectedCount();
 				});
 			});
