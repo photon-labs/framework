@@ -2,24 +2,24 @@ Introduction:
 
 ---------------
 
-HeliOS framework can be run on any platform. It requires Java to be present on the machine. Check if JAVA_HOME ( E.g., Dir:\Java\jdk1.6.0_18) is set and Java bin is included in the PATH (Dir:\Java\jdk1.6.0_18\bin).
+Phresco framework can be run on any platform. It requires Java to be present on the machine. Check if JAVA_HOME ( E.g., Dir:\Java\jdk1.6.0_18) is set and Java bin is included in the PATH (Dir:\Java\jdk1.6.0_18\bin).
 
 
-Steps to start the HeliOS Framework
+Steps to start the Phresco Framework
 
 -------------------------------------
 
 In Windows,
 
-	1.Unzip HeliOS-build-<version>.zip containing the HeliOS Framework   
-	2.Open the command prompt and run the batch script , Dir:\HeliOS\HeliOS-framework\bin>start-framework-server.bat
+	1.Unzip phresco-framework-<version>.zip containing the Phresco Framework   
+	2.Open the command prompt and run the batch script , Dir:\phresco-framework\bin>start-framework-server.bat
         to start the framework.
 
 In Mac or Linux,
 
-	1.Unzip HeliOS-build-<version>.zip containing the HeliOS Framework 
+	1.Unzip Phresco-build-<version>.zip containing the Phresco Framework 
 	2.Open the terminal and run the shell script , 
-	i.e., "sh/Users/admin/HeliOS/HeliOS-framework/bin/start-framework-server.sh" to start the framework
+	i.e., "sh/Users/phresco-framework/bin/start-framework-server.sh" to start the framework
 
 For Android development,
 
@@ -30,7 +30,7 @@ For Android development,
 
 For Nodejs development,
 
-	Install the correct version of nodejs from the HeliOS downloads.
+	Install the correct version of nodejs from the Phresco downloads.
 
 For Iphone development,
 
@@ -38,15 +38,15 @@ For Iphone development,
 
 For Blackberry:
 
-	Refer to section "5.17 Blackberry prerequisites" in the HeliOS Framework 2.1 user guide.
+	Refer to section "5.15 Blackberry prerequisites" in the Phresco Framework 3.0 user guide.
 	
 For Windows Phone:
 
-	Refer to section "5.18 Prerequisites for Windows Phone " in the HeliOS Framework 2.1 user guide.
+	Refer to section "5.16 Prerequisites for Windows Phone " in the Phresco Framework 3.0 user guide.
 
 For Windows Metro:
 
-	Refer to section "5.19 Prerequisites for Windows Metro" in the HeliOS Framework 2.1 user guide.
+	Refer to section "5.17 Prerequisites for Windows Metro" in the Phresco Framework 3.0 user guide.
 	
 
 Pear Setup:
@@ -72,7 +72,7 @@ In Mac & Linux,
 
 Drupal & Wordpress Standards:
 
-	1. Go to HeliOS downloads and download Drupal & Wordpress standards which is mandatory for performing code validation. This is applicable for both Windows and Mac.
+	1. Go to Phresco downloads and download Drupal & Wordpress standards which is mandatory for performing code validation. This is applicable for both Windows and Mac.
 
 In Windows,
 
