@@ -198,12 +198,12 @@ define(["projectlist/projectList"], function(ProjectList) {
 					start();
 					var password = $(commonVariables.contentPlaceholder).find('#pwd_294187d7-f75a-4adc-bb25-ce9465e0e82f').attr('class');
 					notEqual("errormessage", password, 'Password div error class added test');
-					self.projectCommitUiVerification(projectlist);
+					self.projectaddrepoVerification(projectlist);
 				}, 1000);
 			}); 
 		},
 
-		/* projectaddrepoVerification : function(projectlist) {
+		 projectaddrepoVerification : function(projectlist) {
 			var self=this;
 			asyncTest("Test -Add to Repo trigger", function() {
 				$("input[name='repoUrl']").val('https://insight.photoninfotech.com/svn/repos/phresco-svn-projects/ci/3.0.0');
@@ -227,7 +227,7 @@ define(["projectlist/projectList"], function(ProjectList) {
 					self.projectCommitUiVerification(projectlist);
 				}, 2500);
 			});
-		}, */
+		}, 
 		
 		projectCommitUiVerification : function(projectlist) {
 			var self = this;
@@ -249,12 +249,52 @@ define(["projectlist/projectList"], function(ProjectList) {
 					var visibility =  $('#commit294187d7-f75a-4adc-bb25-ce9465e0e82f').css('display').trim();
 					equal("block", visibility, "Add to Commit popup shown");
 					equal("svn", getval, "Commit type svn listed");
-					self.projectSVNUiVerification(projectlist);
+					projectlist.projectslistListener.trimValue("randomtestvalues12345");
+					$("#type_294187d7-f75a-4adc-bb25-ce9465e0e82f").change();
+					$("#repourl_294187d7-f75a-4adc-bb25-ce9465e0e82f").val('https://insight.photoninfotech.com/svn/repos/phresco-svn-projects/ci/3.0.0/wordpress-WordPress');
+					$("#uname_294187d7-f75a-4adc-bb25-ce9465e0e82f").val('aaa');
+					$("#pwd_294187d7-f75a-4adc-bb25-ce9465e0e82f").val('aaa');
+					$(".search").click();
+					$('.searchdropdown').change();
+					self.generatereport(projectlist);
 				}, 2500);
 			});
 		},
 		
-		/* projectcommitVerification : function(projectlist) {
+		 generatereport : function(projectlist) {
+			var self=this;
+			asyncTest("Test -Generate Report", function() {
+				var printaspdf = $.mockjax({
+					url: commonVariables.webserviceurl + 'app/printAsPdf?appDirName=wordpress-WordPress&'+$("input[name='generate']").closest("form").serialize()+'&userId=admin',
+					type:'POST',
+					contentType: 'application/json',
+					status: 200,
+					response: function() {
+						this.responseText = JSON.stringify({"service_exception":null,"data":null});
+					}
+				});
+				
+				var pdfshow = $.mockjax({
+					url: commonVariables.webserviceurl + 'pdf/showPopUp?appDirName=wordpress-WordPress&fromPage=All',
+					type:'GET',
+					contentType: 'application/json',
+					status: 200,
+					response: function() {
+						this.responseText = JSON.stringify([{"time":"Aug 23 2013 12.03","type":"detail","fileName":"yuimobilewidgetttt_detail_23Aug2013_12.03PM.pdf"}]);
+					}
+				});
+				
+				$("input[name='generate']").click();
+				setTimeout(function() {
+					start();
+					var getvalue = $('.existing_report').children('tbody').children('tr').attr('class');
+					equal("generatedRow", getvalue, "Generate Report tested successfully.");
+					self.projectcommitVerification(projectlist);
+				}, 3000);
+			});
+		}, 
+		
+		 projectcommitVerification : function(projectlist) {
 			var self=this;
 			asyncTest("Test -Commit trigger", function() {
 				$("input[name='repoUrl']").val('https://insight.photoninfotech.com/svn/repos/phresco-svn-projects/ci/3.0.0/wordpress-WordPress');
@@ -278,7 +318,7 @@ define(["projectlist/projectList"], function(ProjectList) {
 					self.projectSVNUiVerification(projectlist);
 				}, 2500);
 			});
-		}, */
+		}, 
 		
 		projectSVNUiVerification : function(projectlist) {
 			var self = this;
@@ -290,12 +330,12 @@ define(["projectlist/projectList"], function(ProjectList) {
 					var visibility =  $('#svn_update294187d7-f75a-4adc-bb25-ce9465e0e82f').css('display').trim();
 					equal("block", visibility, "Add to Commit popup shown");
 					equal("svn", getval, "Project List SVNUPDATE popup rendered");
-					self.projectImportAppSuccessVerification(projectlist);
+					self.projectSVNUpdateVerification(projectlist);
 				}, 2500);
 			});
 		},
 		
-		/* projectSVNUpdateVerification : function(projectlist) {
+		 projectSVNUpdateVerification : function(projectlist) {
 			var self = this;
 			asyncTest("Test -SVNUpdate trigger", function() {
 				$("input[name='repoUrl']").val('https://insight.photoninfotech.com/svn/repos/phresco-svn-projects/ci/3.0.0');
@@ -319,7 +359,7 @@ define(["projectlist/projectList"], function(ProjectList) {
 					self.projectImportAppSuccessVerification(projectlist);
 				}, 2500);
 			});
-		}, */
+		}, 
 		
 		projectImportAppSuccessVerification : function(projectlist) {
 			var self = this;
@@ -347,7 +387,8 @@ define(["projectlist/projectList"], function(ProjectList) {
 					start();
 					var techid = $(commonVariables.contentPlaceholder).find(".wordpress-WordPress").attr("techid");
 					equal("tech-wordpress", techid, "Project List Service Tested");
-					self.projectDeleteSuccessVerification(projectlist);
+					//self.projectDeleteSuccessVerification(projectlist);
+					self.setConfigurationTypeTests(projectlist);
 				}, 2500);
 			});
 		}, 
@@ -384,7 +425,7 @@ define(["projectlist/projectList"], function(ProjectList) {
 				setTimeout(function() {
 					start();					
 					var techid = $(commonVariables.contentPlaceholder).find(".wordpress-WordPress").attr("techid");
-					notEqual(undefined, techid, "Project List Service Tested");
+					equal(undefined, techid, "Project List Service Tested");
 					self.setConfigurationTypeTests(projectlist);
 				}, 1500);
 			}); 
@@ -402,6 +443,7 @@ define(["projectlist/projectList"], function(ProjectList) {
 						this.responseText = JSON.stringify({"message":"confuguration Template Fetched successfully","exception":null,"responseCode":null,"data":[{"envSpecific":true,"favourite":false,"templateName":"Scheduler"},{"envSpecific":true,"favourite":false,"templateName":"Server"},{"envSpecific":true,"favourite":false,"templateName":"Database"},{"envSpecific":true,"favourite":false,"templateName":"Email"},{"envSpecific":false,"favourite":false,"templateName":"SAP"}],"status":null});
 					}
 				});
+				$('a[name=editApplication]').click();
 				projectlist.projectslistListener.editApplication("wordpress-WordPress", "tech-html5-jquery-mobile-widget");
 				setTimeout(function() {
 					start();
