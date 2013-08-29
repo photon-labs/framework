@@ -175,7 +175,7 @@ define(["projects/addproject", "projects/editproject"], function(addProject, edi
 				setTimeout(function() {
 					start();
 					var appText = $("a[name=editApplication]").text();
-					notEqual(appText, "wordpress-WordPress", "Add Project - Cancel Button Event Tested");
+					equal(appText, "wordpress-WordPress", "Add Project - Cancel Button Event Tested");
 					self.runEmptyProjectNameTest();
 				}, 1500);
 			});
