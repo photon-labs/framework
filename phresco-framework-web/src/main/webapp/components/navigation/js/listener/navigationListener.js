@@ -704,6 +704,11 @@ define([], function() {
 					currentObj = returnVal;
 					self.myTabRenderFunction(currentObj, keyword);
 				});
+			}  else if (keyword === commonVariables.editproject) {
+				self.getMyObj(commonVariables.editproject, function(returnVal){
+					currentObj = returnVal;
+					self.myTabRenderFunction(currentObj, keyword);
+				});
 			}
 
 		},
