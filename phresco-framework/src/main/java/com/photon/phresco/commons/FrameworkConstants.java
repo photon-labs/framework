@@ -1873,6 +1873,7 @@ public interface FrameworkConstants {
 		 * Constants for Changing sonar theme colors
 		 */
 		String PHOTON = "photon";
+		String CUST_BASE_COLOR = "customerBaseColor=";
 		String CUST_DISABLED_LABEL_COLOR = "disabledLabelColor";
 		String CUST_LABEL_COLOR = "labelColor";
 		String CUST_MENUFONT_COLOR = "menufontColor";
