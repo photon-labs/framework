@@ -3,7 +3,7 @@
 	<groupId>com.photon.phresco.ci</groupId>
 	<artifactId>ci</artifactId>
 	<packaging>war</packaging>
-	<version>3.0.0.23004-SNPSHOT</version>
+	<version>3.0.0.23004-SNAPSHOT</version>
 	<name>CI Web Application</name>
    
 	<dependencies>
