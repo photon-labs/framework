@@ -24,7 +24,8 @@ var commonVariables = {
 	loginContext : "login",
 	loginView : null,
 	loginlistenerObj : null,
-	
+	upgrade : "upgrade",
+	upgradeAvailable : "upgradeAvailable",
 	projectlist : "projectlist",
 	projectlistContext : "project",
 

@@ -5,7 +5,7 @@ define(["loadTest/loadTest"], function(LoadTest) {
 			module("LoadTest.js");
 			var self = this;
 			var loadTest = new LoadTest();
-			$(".performanceTemp").remove();
+			$(commonVariables.contentPlaceholder).find('.performanceHolder').parent().remove();
 			self.renderLoadTemplateTest(loadTest);
 		},
 

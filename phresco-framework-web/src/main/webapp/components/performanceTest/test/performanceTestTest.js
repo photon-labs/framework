@@ -39,7 +39,7 @@
 			module("PerformanceTest.js");
 			var self = this;
 			asyncTest("Performance template & Result table render test", function() {
-				$(commonVariables.contentPlaceholder).find('.performanceTemp').remove();
+				$(commonVariables.contentPlaceholder).find('.performanceHolder').parent().remove();
 				$.mockjaxClear();
 				$.mockjax({
 				  url: commonVariables.webserviceurl+commonVariables.qualityContext+"/"+commonVariables.performance+"?appDirName=PF_TEST_PHP",
@@ -399,6 +399,7 @@
 		},
 
 		runShowPdfPopup : function (performanceTest) {
+			$(commonVariables.contentPlaceholder).find('.performanceHolder:last').parent().remove();
 			module("PerformanceTest.js");
 			var performanceTest = new PerformanceTest(), self = this;
 			asyncTest("Render Performance PDF popup and Existing PDF list test", function() {
@@ -501,7 +502,7 @@
 			module("PerformanceTest.js");
 			var performanceTest = new PerformanceTest(), self = this;
 			asyncTest("Device list render test", function() {
-				$(commonVariables.contentPlaceholder).find('.performanceTemp').remove();
+				$(commonVariables.contentPlaceholder).find('.performanceHolder').parent().remove();
 				$.mockjaxClear();
 				$.mockjax({
 				  url: commonVariables.webserviceurl+commonVariables.qualityContext+"/"+commonVariables.performance+"?appDirName=native_none-androidnative",
