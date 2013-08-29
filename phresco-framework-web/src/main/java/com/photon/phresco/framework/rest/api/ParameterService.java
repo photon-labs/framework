@@ -500,16 +500,12 @@ public class ParameterService extends RestBase implements FrameworkConstants, Se
 				return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN,
 						ALL_HEADER).build();
 			}
+			
 			Map<String, String> theme = customer.getFrameworkTheme();
 			if (MapUtils.isNotEmpty(theme)) {
 				sb.append("?");
-				sb.append(CUST_BODY_BACK_GROUND_COLOR + "=" + theme.get("bodyBackGroundColor"));
-				sb.append("&" + CUST_BRANDING_COLOR + "=" + theme.get("brandingColor"));
-				sb.append("&" + CUST_MENU_BACK_GROUND + "=" + theme.get("MenuBackGround"));
-				sb.append("&" + CUST_MENUFONT_COLOR + "=" + theme.get("MenufontColor"));
-				sb.append("&" + CUST_DISABLED_LABEL_COLOR + "=" + theme.get("DisabledLabelColor"));
+				sb.append(CUST_BASE_COLOR + theme.get("customerBaseColor"));
 				sb.append("&" + CSS_PHRESCO_STYLE);
-				sb.append(COLORS_CUSTOMER_COLOR);
 			} else {
 				sb.append("?");
 				sb.append(CSS_PHRESCO_STYLE);
