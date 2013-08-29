@@ -1968,6 +1968,9 @@ public interface FrameworkConstants {
 	    String TEST_MANUAL = "manualTest";
 	    String TEST_LOAD = "loadTest";
 	    String TEST_PERFORMANCE = "performanceTest";
+	    
+	    String LOGO = "logo";
+		String THEME = "theme";
 
 		 /**
 	    * Manual Test Extensions

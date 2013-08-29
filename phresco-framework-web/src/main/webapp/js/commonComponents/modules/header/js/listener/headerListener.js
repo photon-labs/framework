@@ -75,7 +75,7 @@ define(["header/api/headerAPI"], function() {
 			$(commonVariables.footerPlaceholder).empty();
 		},
 		
-		selectCoustomer : function(customerValue) {
+		selectCoustomer : function(customerValue, customerId) {
 			var self=this;
 			self.headerAPI.localVal.deleteSession("Application Layer");
 			self.headerAPI.localVal.deleteSession("Web Layer");
@@ -88,6 +88,13 @@ define(["header/api/headerAPI"], function() {
 					Clazz.navigationController.push(obj, commonVariables.animation);
 				});
 			}
+
+			var data = {};
+			data.customerId = customerId;
+			self.performAction(self.getActionHeader("getCustomerTheme", data), function(response) {
+				$('#bannerlogo').attr("src", "data:image/png;base64," + response.data.logo);
+				JSS.css(response.data.theme);
+			});
 
 			self.showHideMainMenu(customerValue);
 		},
@@ -174,8 +181,10 @@ define(["header/api/headerAPI"], function() {
 			});
 		},
 
-		getActionHeader : function(action) {
-			var self = this,header = {
+		getActionHeader : function(action, requestBody) {
+			var self = this, header;
+			
+			header = {
 				contentType: "application/json",				
 				dataType: "json",
 				webserviceurl: ''
@@ -185,10 +194,15 @@ define(["header/api/headerAPI"], function() {
 			if (action === "upgradeAvailable") {
 				header.requestMethod = "GET";
 				header.webserviceurl = commonVariables.webserviceurl + commonVariables.upgrade + '/' +commonVariables.upgradeAvailable + "?userId="+userId;				
-			} else if (action === "upgradePhresco") {
+			}
+			if (action === "upgradePhresco") {
 				var newVersion = $("#latestVersion").text();
 				header.requestMethod = "GET";
 				header.webserviceurl = commonVariables.webserviceurl + commonVariables.upgrade + "?newVersion="+ newVersion + "&userId=" +userId+ "&customerId="+self.getCustomer();
+			}
+			if (action === "getCustomerTheme") {
+				header.requestMethod = "GET";
+				header.webserviceurl = commonVariables.webserviceurl+ "customer/theme?userId="+userId+"&customerId="+requestBody.customerId;				
 			}
 			return header;
 		},
