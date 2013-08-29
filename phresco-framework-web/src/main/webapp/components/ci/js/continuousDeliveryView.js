@@ -125,6 +125,8 @@ define(["framework/widgetWithTemplate", "ci/listener/ciListener", "lib/jquery-to
 		 */
 		postRender : function(element) {
 			var self = this; 
+			//to hide all opts @ startup in view page
+			$(".opts").hide();
 			self.jenkinsStatus.dispatch(function(callback) {
 				$(".pipeline_box").each(function() {
 	   				self.ciStatusEvent.dispatch($(this));

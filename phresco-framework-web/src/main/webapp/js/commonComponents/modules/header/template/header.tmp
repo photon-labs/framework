@@ -3,11 +3,11 @@
 	<div class="header_left">
 		<figure><img id="bannerlogo" src="" border="0"></figure>
 		<ul>
-			<li><a href="#" data-i18n="header.menu.dashboard"></a></li>
+			<li><a href="#" id="dashboard" data-i18n="header.menu.dashboard"></a></li>
 			<li><a href="#" id="pojectList" class="nav_active" data-i18n="header.menu.projects"></a></li>
 			<li><a href="#" id="settings" data-i18n="header.menu.settings"></a></li>
-			<li><a href="#" data-i18n="header.menu.downloads"></a></li>
-			<li><a href="#" data-i18n="header.menu.admin"></a></li>
+			<li><a href="#" id="downloads" data-i18n="header.menu.downloads"></a></li>
+			<li><a href="#" id="admin" data-i18n="header.menu.admin"></a></li>
 		</ul>
 	</div>
 	<div class="header_right flt_right">
@@ -18,7 +18,35 @@
 		<div class="navbar navbar-static">
 			<ul class="nav">
 				<li><a href="#" data-i18n="header.userinfo.help"></a></li>
-				<li><a href="#" data-i18n="header.userinfo.about"></a></li>
+				<li class="aboutPhrescoLi"><a href="#" data-i18n="header.userinfo.about"></a></li>
+				<div id="aboutPopup" class="dyn_popup speakstyletopright" style="display:none; width: 170% !important;">
+				  <div class="header_left">
+					<figure><img id="aboutlogo" src="themes/default/images/helios/helios_logo.png" border="0"></figure>	
+				  </div>		
+				  <div id="aboutDesc">Phrseco is a platform for creating next generation web, mobile, and multi channel presences leveraging your existing investments combined with accepted industry best practices
+				  </div>
+				  <table class="table_border availablePdfRptsTbl" border="0" cellspacing="0" cellpadding="5" width="100%" id="versionTable">
+                		<thead>
+                        	<tr>
+	                            <th>Current version</th>
+	                            <th>Latest version</th>
+                        	</tr>    
+                    	</thead>
+                    	<tbody id="availablePdfRptsTbdy">
+                    	    <tr>
+                    	    	<td id="currentVersion"></td>
+                    	    	<td id="latestVersion"></td>
+                    	    </tr>
+                   	 	</tbody>    
+                	</table>
+                	<div id="upgradeSuccess" style="display:none"></div>
+					<div class="flt_right">
+						<div id="upgradeStatus"></div>
+                        <input type="button" name="upgradeDisable" value="Upgrade" id="upgradeDisable" class="btn btn_style" disabled>
+                        <input type="button" name="upgrade" value="Upgrade" id="upgrade" class="btn btn_style hideContent">
+                        <input type="button" value="Close" class="btn btn_style dyn_popup_close">
+                  	</div>
+				</div>
 				<li id="fat-menu" class="dropdown customerDropdown">
 				  <a href="#" id="drop3" role="button" class="dropdown-toggle" data-toggle="dropdown"><font id="selectedCustomer">Photon</font><b class="caret"></b></a>
 				  <div class="dropdown-menu cust_sel cus_themes" role="menu" aria-labelledby="drop3">

@@ -758,17 +758,7 @@ define(["framework/widgetWithTemplate", "common/loading", "lib/customcombobox-1.
         changeEveDependancyListener : function(selectedOption, currentParamKey) {
             var self = this;
             commonVariables.api.ajaxRequest(self.getRequestHeader(self.projectRequestBody, currentParamKey, selectedOption, "updateWatcher"), function(response) {
-				if(response !== undefined && response !== null && response.status !== "error" && response.status !== "failure"){
-				//if(response.responseCode === "PHR5C10001") {
-					$(".content_end").show();
-					$(".msgdisplay").removeClass("success").addClass("error");
-					$(".error").attr('data-i18n', 'errorCodes.' + response.responseCode);
-					self.renderlocales(commonVariables.contentPlaceholder);	
-					$(".error").fadeIn(500).fadeOut(500).fadeIn(500).fadeOut(500).fadeIn(500).fadeOut(5);
-					setTimeout(function() {
-						$(".content_end").hide();
-					},2500);
-				}else {
+				if(response === undefined || response === null || response.status === "error" || response.status === "failure"){
 					//responce value failed
 					$(".content_end").show();
 					$(".msgdisplay").removeClass("success").addClass("error");
@@ -787,18 +777,8 @@ define(["framework/widgetWithTemplate", "common/loading", "lib/customcombobox-1.
             var self = this;
             self.showDynamicPopupLoading();
             commonVariables.api.ajaxRequest(self.getRequestHeader(self.projectRequestBody, dependency, "", "dependency"), function(response) {
-				 if(response !== undefined && response !== null && response.status !== "error" && response.status !== "failure"){
+				 if(response === undefined || response === null || response.status === "error" || response.status !== "failure"){
 					self.updateDependancySuccEvent(response.data, dependency);
-				//if(response.responseCode === "PHR6C10001") {
-					$(".content_end").show();
-					$(".msgdisplay").removeClass("success").addClass("error");
-					$(".error").attr('data-i18n', 'errorCodes.' + response.responseCode);
-					self.renderlocales(commonVariables.contentPlaceholder);	
-					$(".error").fadeIn(500).fadeOut(500).fadeIn(500).fadeOut(500).fadeIn(500).fadeOut(5);
-					setTimeout(function() {
-						$(".content_end").hide();
-					},2500);
-				}else {
 					//responce value failed
 					$(".content_end").show();
 					$(".msgdisplay").removeClass("success").addClass("error");

@@ -19,6 +19,10 @@ define(["framework/widgetWithTemplate", "ci/listener/ciListener", "lib/jquery-to
 		name : null,
 		downStreamCriteria : null,
 		lastChild : null,
+		sortableOneReceive : null,
+		sortableTwoReceive : null,
+		sortableOneChange : null,
+		sortableTwoChange : null,
 
 		/***
 		 * Called in initialization time of this class 
@@ -71,6 +75,22 @@ define(["framework/widgetWithTemplate", "ci/listener/ciListener", "lib/jquery-to
 			 if (self.lastChild === null) {
 				 	self.lastChild = new signals.Signal();
 			 }
+			 
+			 if (self.sortableOneReceive === null) {
+				 	self.sortableOneReceive = new signals.Signal();
+			 }
+			 
+			 if (self.sortableTwoReceive === null) {
+				 	self.sortableTwoReceive = new signals.Signal();
+			 }
+			 
+			 if (self.sortableOneChange === null) {
+				 	self.sortableOneChange = new signals.Signal();
+			 }
+			 
+			 if (self.sortableTwoChange === null) {
+				 	self.sortableTwoChange = new signals.Signal();
+			 }
 				
 			 // Trigger registered events
 			 self.onLoadEnvironmentEvent.add(ciListener.loadEnvironmentEvent, ciListener);
@@ -80,6 +100,10 @@ define(["framework/widgetWithTemplate", "ci/listener/ciListener", "lib/jquery-to
 		  	 self.editContinuousViewTable.add(self.ciListener.editContinuousViewTable, self.ciListener);
 		  	 self.downStreamCriteria.add(self.ciListener.downStreamCriteria, self.ciListener);
 		  	 self.lastChild.add(self.ciListener.lastChild, self.ciListener);
+		  	 self.sortableOneReceive.add(self.ciListener.sortableOneReceive, self.ciListener);
+		  	 self.sortableTwoReceive.add(self.ciListener.sortableTwoReceive, self.ciListener);
+		  	 self.sortableOneChange.add(self.ciListener.sortableOneChange, self.ciListener);
+		  	 self.sortableTwoChange.add(self.ciListener.sortableTwoChange, self.ciListener);
 
 
 			 // Handle bars
@@ -182,55 +206,12 @@ define(["framework/widgetWithTemplate", "ci/listener/ciListener", "lib/jquery-to
 						self.lastChild.dispatch();
 					},
 
-					receive: function( event, ui ) {			
-						// For gear icons alone
-						$("#sortable2 li.ui-state-default a").show();
-						$("#sortable1 li.ui-state-default a").hide();	
-						$(".dyn_popup").hide();
-
-						// Remove application name text
-						var itemText = $(ui.item).find('span').text();
-						var anchorElem = $(ui.item).find('a');
-						var appName = $(anchorElem).attr("appname");						
-						$(ui.item).find('span').text($(ui.item).find('span').text().replace(appName + " - ", ""));
-						$( ".sorthead" ).each(function( index ) {
-							if(appName === $(this).text()) {
-								$(ui.item).insertAfter($(this));
-							} 
-						});
+					receive: function( event, ui ) {
+						self.sortableOneReceive.dispatch(ui);
 					},
 
-					change: function( event, ui ) {		
-						var itemText = $(ui.item).find('span').text();
-						var anchorElem = $(ui.item).find('a');
-						var templateJsonData = $(anchorElem).data("templateJson");
-						var id = $(ui.item).parent("ul").attr("id");
-						if(id === "sortable2") {
-							var nextItem = $(ui.item).next();
-							var nextAnchorElem = $(ui.item).next().find('a');
-							var nextAnchorElem = $(ui.item).next().find('a');
-							var downTemplateJsonData = $(nextAnchorElem).data("templateJson");
-							
-							var prevItem = $(ui.item).prev();
-							var upTemplateJsonData;
-							if(prevItem !== null && prevItem!== undefined) {
-								var prevAnchorElem = $(ui.item).prev().find('a');
-								var prevAnchorElem = $(ui.item).prev().find('a');
-								upTemplateJsonData = $(prevAnchorElem).data("templateJson");
-							}
-							if (upTemplateJsonData === null) {
-								if(downTemplateJsonData !== undefined && downTemplateJsonData!== null && !downTemplateJsonData.enableRepo) {
-									$(".msgdisplay").removeClass("success").addClass("error");
-									$(".error").text("DownStream "+downTemplateJsonData.name+" job Doesn't have the Repo!");
-									$(".error").show();
-									$(".error").fadeIn(500).fadeOut(500).fadeIn(500).fadeOut(500).fadeIn(500).fadeOut(5);
-									setTimeout(function() {
-										$(".error").hide();
-									},2500);
-									$(ui.sender).sortable('cancel');
-								}
-							}
-						}
+					change: function( event, ui ) {	
+						self.sortableOneChange.dispatch(ui);
 					}
 				});
 
@@ -246,80 +227,12 @@ define(["framework/widgetWithTemplate", "ci/listener/ciListener", "lib/jquery-to
 						$(".dyn_popup").hide();
 					},
 
-					change: function( event, ui ) {		
-						var itemText = $(ui.item).find('span').text();
-						
-						var anchorElem = $(ui.item).find('a');
-						var templateJsonData = $(anchorElem).data("templateJson");
-						var appName = $(anchorElem).attr("appname");
-						var sortable2Len = $('#sortable2 > li').length;
-						// Initial validation
-						if (sortable2Len === 1 && !templateJsonData.enableRepo) {
-							$(ui.sender).sortable('cancel');
-							$(".msgdisplay").removeClass("success").addClass("error");
-							$(".error").text(templateJsonData.name + " job Doesn't have the Repo!");
-							$(".error").show();
-							$(".error").fadeIn(500).fadeOut(500).fadeIn(500).fadeOut(500).fadeIn(500).fadeOut(5);
-							setTimeout(function() {
-								$(".error").hide();
-							},2500);
-						}
-						
+					change: function( event, ui ) {
+						self.sortableTwoChange.dispatch(ui);
 					},
 
 					receive: function( event, ui ) {
-						var tt = $("#sortable2 li.ui-state-default").length;
-						if(tt === 2) {
-							$("#sortable2 li.ui-state-default").each(function( index ) {
-								$(ui.item).insertAfter($(this));
-							});
-						}
-						// For gear icons alone
-						$("#sortable2 li.ui-state-default a").show();
-						$("#sortable1 li.ui-state-default a").hide();	
-
-						// Append application name text
-						var itemText = $(ui.item).find('span').text();
-						var anchorElem = $(ui.item).find('a');
-						var templateJsonData = $(anchorElem).data("templateJson");
-						var appName = $(anchorElem).attr("appname");
-
-						// Application name construct
-						$(ui.item).find('span').text(appName  + " - " + itemText);
-
-
-						var sortable2Len = $('#sortable2 > li').length;
-
-						// Second level validation
-						// when the repo is not available check for parent project in sortable2
-						if ( templateJsonData !== undefined && !templateJsonData.enableRepo) {
-							var parentAppFound = false;
-
-							// Previous elemets
-							$(ui.item).prevAll('li').each(function(index) {
-								var thisAnchorElem = $(this).find('a');
-								var thisTemplateJsonData = $(thisAnchorElem).data("templateJson");
-								var thisAppName = $(thisAnchorElem).attr("appname");
-
-								if (thisAppName === appName && thisTemplateJsonData.enableRepo) {
-									parentAppFound = true;
-									return false;
-								}
-							});
-
-							if (!parentAppFound) {
-								$(ui.item).find('span').text(itemText);
-								$(ui.sender).sortable('cancel');
-								$(".msgdisplay").removeClass("success").addClass("error");
-								$(".error").text("Parent object not found for "+templateJsonData.name+" template!");
-								$(".error").show();
-								$(".error").fadeIn(500).fadeOut(500).fadeIn(500).fadeOut(500).fadeIn(500).fadeOut(5);
-								setTimeout(function() {
-									$(".error").hide();
-								},2500);
-							}
-
-						}
+						self.sortableTwoReceive.dispatch(ui);
 					}
 				}); 
 			});

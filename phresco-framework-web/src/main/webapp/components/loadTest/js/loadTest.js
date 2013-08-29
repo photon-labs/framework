@@ -289,7 +289,7 @@ define(["performanceLoadListener/listener/performanceLoadListener"], function() 
 			$('#copyLoadPath').unbind('click');
 			$("#copyLoadPath").click(function() {
 				var paramJson = {};
-				paramJson.type =  commonVariables.typeloadTest;
+				paramJson.type =  commonVariables.typeLoadTest;
 				commonVariables.navListener.copyPath(paramJson);
 			});
 

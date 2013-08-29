@@ -87,25 +87,12 @@ define(["ci/jobTemplates"], function(JobTemplates) {
 
 				setTimeout(function() {
 					start();
-					var repoType = $(commonVariables.contentPlaceholder).find("select[class=selectpicker][name=repoTypes]").next().css('display');
-					notEqual(repoType, 'block', "jobTemplates - select/deselect Repo Event Tested");
+					var repoType = $(commonVariables.contentPlaceholder).find("select[class=selectpicker][name=repoTypes]").next().css('display');				
+					equal(repoType, 'block', "jobTemplates - select/deselect Repo Event Tested");
 					self.errorNotificationTest(jobTemplates);
 				}, 3000);
 			});
 		},
-
-//		runCloseButtonTest : function(jobTemplates) {
-//			var self=this;
-//			asyncTest("jobTemplates - Close Button Event Test", function() {
-//				$("input[name='save']").eq(0).next().click();
-//				setTimeout(function() {
-//					start();
-//					var jobTemplatePopup = $(commonVariables.contentPlaceholder).find("#jobTemplatePopup").css('display');
-//					equal(jobTemplatePopup, "none", "jobTemplates - open Create Popup Tested");					
-//					self.errorNotificationTest(jobTemplates);
-//				}, 2500);
-//			});
-//		},
 
 		errorNotificationTest : function(jobTemplates) {
 			var self=this;
@@ -113,7 +100,8 @@ define(["ci/jobTemplates"], function(JobTemplates) {
 				$('input[name=name]').val('');
 				$("select[name=appIds]").selectpicker('val', '');
 				$("select[name=type]").selectpicker('val', 'build');
-				$("input[name=enableUploadSettings]").prop('checked', true);
+				$("select[name=features]").selectpicker('val', ['enableRepo','enableSheduler','enableEmailSettings','enableUploadSettings']);
+				$('select[name=uploadTypes]').selectpicker('val', ['collabnet']);
 				$("input[name='save']").eq(0).click();
 				setTimeout(function() {
 					start();
@@ -125,7 +113,6 @@ define(["ci/jobTemplates"], function(JobTemplates) {
 					equal(name, "errormessage", "jobTemplates - save without values Event Tested");	
 					equal(span, "flt_left errormessage", "jobTemplates - save without values Event Tested");	
 					equal(appSelect, "btn-default dropdown-toggle btn btn-danger", "jobTemplates - save without values Event Tested");	
-					equal(uploadSelect, "btn-default dropdown-toggle btn btn-danger", "jobTemplates - save without values Event Tested");			
 
 					self.createJobTemplateTest(jobTemplates);
 				}, 2500);
@@ -133,21 +120,18 @@ define(["ci/jobTemplates"], function(JobTemplates) {
 		},
 
 		createJobTemplateTest : function(jobTemplates) {
-//			$(commonVariables.contentPlaceholder).html("");
 			var self=this;
 			$.mockjaxClear(self.jobTempList);
 			var ciAPI = commonVariables.api;
 			ciAPI.localVal.setSession("projectId" , "86b654c9-daae-4e07-82d3-720169e93827");
 			ciAPI.localVal.setSession("appDirName" , "");
 			asyncTest("jobTemplates - save with values Event Test", function() {
-//				$('input[name=name]').val('Test');
-//				$("select[name=type]").selectpicker('val', 'codeValidation');
-//				$("select[name=appIds]").selectpicker('val', ['SVNCHECK-wordpress']);				
-				$("input[name=enableRepo]").prop('checked', true);
+//				$("input[name=enableRepo]").prop('checked', true);
+				$("select[name=features]").selectpicker('val', ['enableRepo', 'enableSheduler', 'enableEmailSettings', 'enableUploadSettings']);
+				$('select[name=uploadTypes]').selectpicker('val', ['collabnet']);
 				$('input[name=name]').val('newTemplate');
 				$("select[name=appIds]").selectpicker('val', ['TodayProject']);
 				$("select[name=type]").selectpicker('val', 'codeValidation');
-//				$("input[name=enableUploadSettings]").prop('checked', true);
 				var name = $('input[name="name"]').val();
 				var oldname = $('[name="oldname"]').val();
 
@@ -172,7 +156,6 @@ define(["ci/jobTemplates"], function(JobTemplates) {
 				}); 
 				
 				$.mockjax({
-//					http://localhost:2468/framework/rest/api/jobTemplates?customerId=photon&projectId=86b654c9-daae-4e07-82d3-720169e93827&appDirName=&_=1377251111646
 					url: commonVariables.webserviceurl + commonVariables.jobTemplates +"?customerId=photon&projectId=86b654c9-daae-4e07-82d3-720169e93827&appDirName=",
 					type:'GET',
 					dataType: "json",
@@ -187,7 +170,7 @@ define(["ci/jobTemplates"], function(JobTemplates) {
 				setTimeout(function() {
 					start();
 					var createdTr = $(commonVariables.contentPlaceholder).find(".widget-maincontent-div").find("table[id=jobTemplateList]").find("tr:last").find("td:first").text();
-					equal("pdfnewTemplate", createdTr, "jobTemplates - save with values Event Tested");
+					equal(true, createdTr.indexOf('pdf') !== -1, "jobTemplates - save with values Event Tested");
 					self.editJobTemplateTest(jobTemplates);
 				}, 3000);
 			});
@@ -281,7 +264,6 @@ define(["ci/jobTemplates"], function(JobTemplates) {
 			asyncTest("jobTemplates - Delete Event Test", function() {
 
 				$.mockjax({
-//					http://localhost:2468/framework/rest/api/jobTemplates?customerId=photon&projectId=86b654c9-daae-4e07-82d3-720169e93827&name=newTemplate
 					url: commonVariables.webserviceurl + commonVariables.jobTemplates +"?customerId=photon&projectId=86b654c9-daae-4e07-82d3-720169e93827&name=newTemplate",
 					type:'DELETE',
 					dataType: "json",
@@ -293,7 +275,6 @@ define(["ci/jobTemplates"], function(JobTemplates) {
 				});
 				
 				$.mockjax({
-//					http://localhost:2468/framework/rest/api/jobTemplates?customerId=photon&projectId=86b654c9-daae-4e07-82d3-720169e93827&appDirName=&_=1377166377256
 					url: commonVariables.webserviceurl + commonVariables.jobTemplates +"?customerId=photon&projectId=86b654c9-daae-4e07-82d3-720169e93827&appDirName=",
 					type:'GET',
 					dataType: "json",

@@ -19,9 +19,8 @@ define(["ci/listener/ciListener", "lib/jquery-tojson-1.0"], function() {
 		validateName : null,
 		preOpenEvent : null,
 		preEditEvent : null,
-		changeUploaderEvent : null,
-		showHideUploadEvent : null,
-		showHideRepoEvent : null,
+		changeOperationEvent : null,
+		changeFeaturesEvent : null,
 		removeDangerEvent : null,
 	
 		/***
@@ -83,16 +82,12 @@ define(["ci/listener/ciListener", "lib/jquery-tojson-1.0"], function() {
 				self.preEditEvent = new signals.Signal();
 			}
 
-			if (self.changeUploaderEvent === null) {
-				self.changeUploaderEvent = new signals.Signal();
+			if (self.changeOperationEvent === null) {
+				self.changeOperationEvent = new signals.Signal();
 			}
-
-			if (self.showHideUploadEvent === null) {
-				self.showHideUploadEvent = new signals.Signal();
-			}
-
-			if (self.showHideRepoEvent === null) {
-				self.showHideRepoEvent = new signals.Signal();
+			
+			if (self.changeFeaturesEvent === null) {
+				self.changeFeaturesEvent = new signals.Signal();
 			}
 
 			if (self.removeDangerEvent === null) {
@@ -109,9 +104,8 @@ define(["ci/listener/ciListener", "lib/jquery-tojson-1.0"], function() {
 			self.validateName.add(ciListener.validateName, ciListener);
 			self.preOpenEvent.add(ciListener.preOpen, ciListener);
 			self.preEditEvent.add(ciListener.preEdit, ciListener);
-			self.changeUploaderEvent.add(ciListener.changeUpload, ciListener);
-			self.showHideUploadEvent.add(ciListener.showHideUpload, ciListener);
-			self.showHideRepoEvent.add(ciListener.showHideRepo, ciListener);
+			self.changeOperationEvent.add(ciListener.changeOperation, ciListener);
+			self.changeFeaturesEvent.add(ciListener.changeFeatures, ciListener);
 			self.removeDangerEvent.add(ciListener.removeDangerClass, ciListener);
 		},
 		/***
@@ -257,7 +251,7 @@ define(["ci/listener/ciListener", "lib/jquery-tojson-1.0"], function() {
 				self.constructApplicationsHtml(jobTemplateName, function() {
 					self.preEditEvent.dispatch( function() {	
 						// show edit popup
-						self.openccci(thisElem, "jobTemplatePopup");
+						self.openccci(thisElem, "jobTemplatePopup", "jobTemplates");
 					});
 				});
    			});
@@ -284,32 +278,25 @@ define(["ci/listener/ciListener", "lib/jquery-tojson-1.0"], function() {
 				self.opencc(this, "yesnopopup_" + $(this).attr('value'));
 			});
 			
-			// show/hide repo types
-   			$("input[name=enableRepo]").unbind("click");
-			$("input[name=enableRepo]").click(function() {
-				self.showHideRepoEvent.dispatch();
-			});
-			
 			$("input[name=name]").on("keypress keyup paste", function(e) {
-				this.value = this.value.replace(/[^a-zA-Z0-9]/g, '');
+				this.value = this.value.replace(/[^-_a-zA-Z0-9]/g, '');
 			});
 
-			// show/hide upload types
-   			$("input[name=enableUploadSettings]").unbind("click");
-			$("input[name=enableUploadSettings]").click(function() {
-				self.showHideUploadEvent.dispatch();
-			});				
-			
 			//enable/disable uploads on operation change
 			$("select[name=type]").unbind("change");
 			$("select[name=type]").on("change", function(){					
-				self.changeUploaderEvent.dispatch();
+				self.changeOperationEvent.dispatch();
 			});
 
 			//remove danger class for uploads
 			$("select[name=uploadTypes]").unbind("change");
 			$("select[name=uploadTypes]").on("change", function(){				
 				self.removeDangerEvent.dispatch($("select[name=uploadTypes]"));			
+			});
+			
+			$("select[name=features]").unbind("change");
+			$("select[name=features]").on("change", function() {		
+				self.changeFeaturesEvent.dispatch();
 			});
 
 			//remove danger class for appIds

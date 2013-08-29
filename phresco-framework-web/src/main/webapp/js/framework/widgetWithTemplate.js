@@ -317,12 +317,15 @@ define(["framework/widget", "framework/templateProvider"], function() {
 					$(target).removeClass('speakstyletopright').removeClass('speakstylebottomright').removeClass('speakstylebottomleft').addClass('speakstyletopleft').addClass('dyn_popup');
 				} else if (clicked.offset().top < halfheight && clicked.offset().left > halfwidth){
 					var d= ($(window).width() - (clicked.offset().left + clicked.outerWidth()));
-					
-					if(adjestVal != undefined && adjestVal != null){
+					var mtop = 10;
+					if(adjestVal !== undefined && adjestVal !== null && adjestVal !== "upgrade"){
 						d = d -50;
+					} else if (adjestVal === "upgrade") {
+						d= 67;
+						mtop = 25;
 					}
 						
-					$(target).css({"right":d ,"margin-top":10,"left": "auto","top": "auto"});
+					$(target).css({"right":d ,"margin-top":mtop,"left": "auto","top": "auto"});
 					$(target).toggle();
 					$(target).removeClass('speakstyletopleft').removeClass('speakstylebottomright').removeClass('speakstylebottomleft').addClass('speakstyletopright').addClass('dyn_popup');
 				} else if (clicked.offset().top > halfheight && clicked.offset().left < halfwidth){
@@ -347,7 +350,7 @@ define(["framework/widget", "framework/templateProvider"], function() {
 				self.closeAll(placeId);
 			},
 			
-			openccci : function(ee, placeId, currentPrjName) {
+			openccci : function(ee, placeId, paramVal) {
 				var self=this;
 				$(".dyn_popup").hide();
 				
@@ -358,7 +361,6 @@ define(["framework/widget", "framework/templateProvider"], function() {
 				var t= clicked.offset().top + 33;
 				var halfheight= window.innerHeight/2;
 				var halfwidth= window.innerWidth/2;
-				$(target).attr('currentPrjName',currentPrjName);
 				
 				if (clicked.offset().top < halfheight && clicked.offset().left < halfwidth) {
 					$(target).css({"left":clicked.offset().left ,"margin-top":10,"right": "auto"});
@@ -366,7 +368,7 @@ define(["framework/widget", "framework/templateProvider"], function() {
 					$(target).removeClass('speakstyletopright').removeClass('speakstylebottomright').removeClass('speakstylebottomleft').addClass('speakstyletopleft').addClass('dyn_popup');
 				} else if (clicked.offset().top < halfheight && clicked.offset().left > halfwidth){
 					var d= ($(window).width() - (clicked.offset().left + clicked.outerWidth()))-11;
-					var BottomHeight = clicked.position().top + clicked.height() + 10;
+					var BottomHeight = clicked.position().top + clicked.height() +  (paramVal === undefined ? 10 : 97 );
 					$(target).css({"right":d,"left": "auto","top": BottomHeight});
 					$(target).toggle();
 					$(target).removeClass('speakstyletopleft').removeClass('speakstylebottomright').removeClass('speakstylebottomleft').addClass('speakstyletopright').addClass('dyn_popup');
@@ -378,10 +380,10 @@ define(["framework/widget", "framework/templateProvider"], function() {
 				} else if (clicked.offset().top > halfheight && clicked.offset().left > halfwidth){
 					var d = null,BottomHeight = null;
 					d= ($(window).width() - (clicked.offset().left + clicked.outerWidth()))-11;
-					BottomHeight = clicked.position().top - (target.height() + 30 );
+					BottomHeight = clicked.position().top - (target.height() + (paramVal === undefined ? 30 : (-57)));
 					$(target).css({"right":d,"left": "auto","top": BottomHeight});
 					$(target).toggle();
-					$(target).removeClass('speakstyletopleft').removeClass('speakstyletopright').removeClass('speakstylebottomleft').addClass('speakstylebottomright').addClass('dyn_popup');	
+					$(target).removeClass('speakstyletopleft').removeClass('speakstyletopright').removeClass('speakstylebottomleft').addClass('speakstylebottomright').addClass('dyn_popup');
 				} 
 
 				self.closeAll(placeId);

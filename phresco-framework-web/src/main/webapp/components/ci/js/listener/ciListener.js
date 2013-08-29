@@ -67,7 +67,20 @@ define([], function() {
 					var id = value.appName + value.templateName;
 					var parentli = $('#'+id).parent();
 					var itemText = parentli.find('span').text();
-					parentli.find('span').text(value.appName  + " - " + itemText);
+					
+					
+					var fullName = value.appName  + " - " + itemText;
+					var finalText;
+					if (fullName.length > 40) {
+						finalText = fullName.substring(0,40) + "...";
+					} else {
+						finalText = fullName;
+					}
+					
+					// Application name construct
+					parentli.find('span').text(finalText);
+					parentli.attr('title', fullName);
+					
 					sort.append(parentli);
 					// For gear icons alone
 					$("#sortable2 li.ui-state-default a").show();
@@ -212,22 +225,6 @@ define([], function() {
 			return header;
 		},
 
-		showHideRepo : function(callback) {
-			if ($("input[name=enableRepo]").is(':checked')) {
-				$("select[name=repoTypes]").next().show();
-			} else {
-				$("select[name=repoTypes]").next().hide();
-			}
-		},
-		
-		showHideUpload : function(callback) {
-			if ($("input[name=enableUploadSettings]").is(':checked')) {
-				$("select[name=uploadTypes]").next().show();
-			} else {
-				$("select[name=uploadTypes]").next().hide();
-			}
-		},
-		
 		deleteContinuousDelivery: function(obj) {
 			var self = this;
 			var ciRequestBody = {},name;
@@ -454,18 +451,19 @@ define([], function() {
 			$("#errMsg").removeClass("errormessage");
 			$('input[name=name]').removeClass("errormessage");	
 			$('#errMsg').html('');
-			
-			var enableUpload = $('input[name=enableUploadSettings]').is(':checked');
-			if (enableUpload) {
-				var uploads = $('select[name=uploadTypes] :selected').length;
-				if (uploads === 0) {
-					$('#errMsg').html('Select atleast one Uploader');
-					$("select[name='uploadTypes']").focus();
-					$('#errMsg').addClass("errormessage");
-					$('select[name=uploadTypes]').next().find('button.dropdown-toggle').addClass("btn-danger");
-					status = false;	 
-				}
-			}
+			var features = $("select[name=features]").val();
+			if (features !== null) {
+				if (features.indexOf('enableUploadSettings') > -1) {
+					var uploads = $('select[name=uploadTypes] :selected').length;
+					if (uploads === 0) {
+						$('#errMsg').html('Select atleast one Uploader');
+						$("select[name='uploadTypes']").focus();
+						$('#errMsg').addClass("errormessage");
+						$('select[name=uploadTypes]').next().find('button.dropdown-toggle').addClass("btn-danger");
+						status = false;	 
+					}
+				} 
+			} 
 			
 			var appIds = $('select[name=appIds] :selected').length;
 			if(appIds === 0) {
@@ -626,16 +624,38 @@ define([], function() {
 
 		constructJobTemplate : function () {
 			var formObj = $("#jobTemplate"); 
-			$('#jobTemplate #features :checkbox:not(:checked)').attr('value', false); 
-			$('#jobTemplate #features :checkbox:checked').attr('value', true); 
 
-			var jobTemplate = $('#jobTemplate :input[name!=oldname]').serializeObject();
+			var jobTemplate = $('#jobTemplate :input[name!=oldname][name!=features][name!=repoTypes]').serializeObject();
 
+			jobTemplate.enableRepo = false;
+			jobTemplate.enableSheduler = false;
+			jobTemplate.enableEmailSettings = false;
+			jobTemplate.enableUploadSettings = false;
 			// Convert appIds to array
 			jobTemplate.appIds = [];
 			$('select[name=appIds] :selected').each(function(i, selected) {
 				jobTemplate.appIds.push(this.value);
 			});
+
+			var features = $("select[name=features]").val();
+			if (features !== null) {
+				if (features.indexOf('enableRepo') > -1) {
+					jobTemplate.enableRepo = true;
+					jobTemplate.repoTypes = $('select[name=repoTypes]').val();
+				} 
+				
+				if (features.indexOf('enableSheduler') > -1) {
+					jobTemplate.enableSheduler = true;
+				} 
+				
+				if (features.indexOf('enableEmailSettings') > -1) {
+					jobTemplate.enableEmailSettings = true;
+				} 
+				
+				if (features.indexOf('enableUploadSettings') > -1) {
+					jobTemplate.enableUploadSettings = true;
+				} 
+			} 
 			
 			jobTemplate.uploadTypes = [];
 			if(jobTemplate.enableUploadSettings) {
@@ -649,12 +669,12 @@ define([], function() {
 
 		preOpen : function (callback) {
 			var self = this;
-			
-			$("select[name=repoTypes]").next().hide();
-			$("select[name=uploadTypes]").next().hide();
+			$(".repoDiv").hide();
+			$(".uploadDiv").hide();
+			$('select[name=features]').selectpicker('deselectAll');
 			$('select[name=appIds]').selectpicker('deselectAll');
 			$('select[name=uploadTypes]').selectpicker('deselectAll');
-			$('.selectpicker').selectpicker('render');
+//			$('.selectpicker').selectpicker('render');
 			self.removeDangerClass($('select[name=appIds]'));
 			self.removeDangerClass($('select[name=uploadTypes]'));
 			$("input[name=enableUploadSettings]").attr("disabled","disabled");
@@ -669,22 +689,43 @@ define([], function() {
 			$('#errMsg').html('');
 			$('select[name=appIds]').selectpicker('deselectAll');
 			$('select[name=uploadTypes]').selectpicker('deselectAll');
-			$('.selectpicker').selectpicker('render');
+			$('select[name=features]').selectpicker('deselectAll');
+//			$('.selectpicker').selectpicker('render');
 			self.removeDangerClass($('select[name=appIds]'));
 			self.removeDangerClass($('select[name=uploadTypes]'));
 			callback();
 		},
 
-		changeUpload : function() {
-			var operation = $("select[name=type]").val();			
+		changeOperation : function() {
+			var self = this;
+			var operation = $("select[name=type]").val();
+			$("select[name=features]").selectpicker('deselectAll');
 			if (operation === 'build' || operation === 'pdfReport') {
-				$("input[name=enableUploadSettings]").removeAttr("disabled");
+				$("#upload").removeAttr("disabled");
 			} else {
-				$("input[name=enableUploadSettings]").attr("checked", false);
-				$("input[name=enableUploadSettings]").attr("disabled","disabled");
-				$('select[name=uploadTypes]').selectpicker('deselectAll');
-				$('.selectpicker').selectpicker('render');
-				$("select[name=uploadTypes]").next().hide();
+				$("#upload").attr("disabled", "disabled");
+			}
+			self.changeFeatures();
+		},
+		
+		changeFeatures : function() {
+			var features = $("select[name=features]").val();
+			if (features !== null) {
+				
+				if (features.indexOf('enableRepo') > -1) {
+					$('.repoDiv').show();
+				} else {
+					$('.repoDiv').hide();
+				}
+				
+				if (features.indexOf('enableUploadSettings') > -1) {
+					$('.uploadDiv').show();
+				} else {
+					$('.uploadDiv').hide();
+				}
+			} else {
+				$('.repoDiv').hide();
+				$('.uploadDiv').hide();
 			}
 		},
 
@@ -697,17 +738,34 @@ define([], function() {
 			$("select[name=appIds]").selectpicker('val', data.appIds);
 			
 			$("[name=repoTypes]").val(data.repoTypes);
-
-			$('[name=enableRepo]').prop('checked', data.enableRepo);
-			$('[name=enableSheduler]').prop('checked', data.enableSheduler);
-			$('[name=enableEmailSettings]').prop('checked', data.enableEmailSettings);
-			$('[name=enableUploadSettings]').prop('checked', data.enableUploadSettings);
-			//Uploaders
-			$("select[name=uploadTypes]").selectpicker('val', data.uploadTypes);
-			$('.selectpicker').selectpicker('render');
 			
-			self.showHideRepo();
-			self.showHideUpload();
+			var features = [];
+			if(data.enableRepo) {
+				features.push('enableRepo');
+				$(".repoDiv").show();
+			}  else {
+				$(".repoDiv").hide();
+			}
+			
+			if(data.enableSheduler) {
+				features.push('enableSheduler');
+			} 
+			
+			if(data.enableEmailSettings) {
+				features.push('enableEmailSettings');
+			} 
+			
+			//Uploaders
+			if(data.enableUploadSettings) {
+				features.push('enableUploadSettings');
+				$("select[name=uploadTypes]").selectpicker('val', data.uploadTypes);
+				$(".uploadDiv").show();
+			}  else {
+				$(".uploadDiv").hide();
+			}
+			
+			$("select[name=features]").selectpicker('val', features);
+			
 			// button name change
 			$('input[name=save]').prop("value", "Update");
 			$('input[name=save]').prop("name", "update");
@@ -734,18 +792,6 @@ define([], function() {
 			var self = this;
 			var schedule = Obj.scheduleType;
 			self.currentEvent(schedule, '');
-			var dailyEvery = "";
-			var dailyHour = "";
-			var dailyMinute = "";
-			
-			var weeklyWeek = "";
-			var weeklyHour = "";
-			var weeklyMinute = "";
-			
-			var monthlyDay = "";
-			var monthlyMonth = "";
-			var monthlyHour = "";
-			var monthlyMinute = "";
 			
 			var CronExpre = Obj.scheduleExpression;
 			var cronSplit = [];
@@ -753,29 +799,24 @@ define([], function() {
 			if(schedule === "Daily") {
 				$('input[name=scheduleType][value=Daily]').attr('checked',true);
 				if(CronExpre.indexOf("/") != -1) {
-//					dailyEvery = "checked";
 					var every = $('#schedule_daily').find('input[name=everyAt]');
 					every.prop('checked', true);
 				}
 				
-	            if (cronSplit[0].indexOf("/") != -1) {
+	            if (cronSplit[1].indexOf("/") != -1) {
 	            	var hours = $('#schedule_daily').find('select[class=selectpicker][name=hours]');
-	            	hours.selectpicker('val', cronSplit[0].substring(2) + "");
-//	            	dailyMinute = cronSplit[0].substring(2) + "";
+	            	hours.selectpicker('val', cronSplit[1].substring(2) + "");
 	            } else {
 	            	var hours = $('#schedule_daily').find('select[class=selectpicker][name=hours]');
-	            	hours.selectpicker('val', cronSplit[0]);
-//	            	dailyMinute = cronSplit[0];
+	            	hours.selectpicker('val', cronSplit[1]);
 	            }
 	            
-				if (cronSplit[1].indexOf("/") != -1) {
+				if (cronSplit[0].indexOf("/") != -1) {
 					var minutes = $('#schedule_daily').find('select[class=selectpicker][name=minutes]');
-	            	minutes.selectpicker('val', cronSplit[1].substring(2) + "");
-//					dailyHour = cronSplit[1].substring(2) + "";
+	            	minutes.selectpicker('val', cronSplit[0].substring(2) + "");
 	            } else {
 	            	var minutes = $('#schedule_daily').find('select[class=selectpicker][name=minutes]');
-	            	minutes.selectpicker('val', cronSplit[1]);
-//	            	dailyHour = cronSplit[1];
+	            	minutes.selectpicker('val', cronSplit[0]);
 	            }
 			} else if(schedule === "Weekly") {
 				$('input[name=scheduleType][value=Weekly]').attr('checked',true);
@@ -785,10 +826,6 @@ define([], function() {
 				weeks.selectpicker('val', cronSplit[4]);
 				hours.selectpicker('val', cronSplit[1]);
 				minutes.selectpicker('val', cronSplit[0]);
-//				weeklyWeek = cronSplit[4];
-//				weeklyHour = cronSplit[1];
-//				weeklyMinute = cronSplit[0];
-				
 			} else if(schedule === "Monthly") {
 				$('input[name=scheduleType][value=Monthly]').attr('checked',true);
 				var day = $('#schedule_monthly').find('select[class=selectpicker][name=days]');
@@ -799,11 +836,6 @@ define([], function() {
 				month.selectpicker('val', cronSplit[3]);
 				hour.selectpicker('val', cronSplit[1]);
 				minute.selectpicker('val', cronSplit[0]);
-//				monthlyDay = cronSplit[2];
-//				monthlyMonth = cronSplit[3];
-//				monthlyHour = cronSplit[1];
-//				monthlyMinute = cronSplit[0];
-				
 			}
 		},
 		
@@ -827,25 +859,30 @@ define([], function() {
 			var templateJsonData = $(thisObj).data("templateJson");
 			var jobJsonData = $(thisObj).data("jobJson");			
 			// elements
-			var repoTypeElem = $("#repoType tbody tr");
+			var repoTypeElemUrl = $("#repoType tbody tr[id='url']");
+			var repoTypeElemCred = $("#repoType tbody tr[id='cred']");
 			var jobNameTrElem = $("#jobName tbody tr td");
 			var repoTypeTitleElem = $("#repoType thead tr th");
 
 			// Repo types			
 			if (templateJsonData.enableRepo && templateJsonData.repoTypes === "svn") {
 				// For svn
-				$(repoTypeElem).html('<td><input type="text" placeholder="SVN Url" name="url"><input name="repoType" type="hidden" value="'+ templateJsonData.repoTypes +'"></td>'+
-                        '<td><input type="text" placeholder="Username" name="username"></td>'+
+				$(repoTypeElemUrl).html('<td colspan="2"><input type="text" placeholder="SVN Url" name="url"><input name="repoType" type="hidden" value="'+ templateJsonData.repoTypes +'"></td>');
+				
+				
+				$(repoTypeElemCred).html('<td><input type="text" placeholder="Username" name="username"></td>'+
                         '<td><input type="password" placeholder="Password" name="password"></td>');
 			} else if (templateJsonData.enableRepo && templateJsonData.repoTypes === "git") {
 				// For GIT
-				$(repoTypeElem).html('<td><input type="text" placeholder="GIT Url" name="url"><input name="repoType" type="hidden" value="'+ templateJsonData.repoTypes +'"></td>'+
-                        '<td><input type="text" placeholder="Username" name="username"></td>'+
-                        '<td><input type="text" placeholder="Branch" name="branch"></td>'+
-                        '<td><input type="password" placeholder="Password" name="password"></td>');
+				$(repoTypeElemUrl).html('<td colspan="3"><input type="text" placeholder="GIT Url" name="url"><input name="repoType" type="hidden" value="'+ templateJsonData.repoTypes +'"></td>');
+				
+				$(repoTypeElemCred).html('<td><input type="text" placeholder="Username" name="username"></td>'+
+                      '<td><input type="text" placeholder="Branch" name="branch"></td>'+
+                      '<td><input type="password" placeholder="Password" name="password"></td>');
 			} else {				
 				//For clonned workspace
-				$(repoTypeElem).html('<input name="repoType" type="hidden" value="clonedWorkspace">');
+				$(repoTypeElemUrl).html('<input name="repoType" type="hidden" value="clonedWorkspace">');
+				$(repoTypeElemCred).html('');
 				//set label value
 				$(repoTypeTitleElem).html("Clonned workspace");
 			}
@@ -867,7 +904,6 @@ define([], function() {
 				var upload = templateJsonData.uploadTypes;
 				for (var i=0; i < upload.length; i++) {
    				 // Iterates over numeric indexes from 0 to 5, as everyone expects
-				
 					if (upload[i] === "Collabnet") {
 						var uploadSettingsHtml = '<table id="collabnetUploadSettings" class="table table-striped table_border table-bordered" cellpadding="0" cellspacing="0" border="0">'+
 	                    '<thead><tr><th colspan="3">CollabNet Upload Settings</th></tr></thead>'+
@@ -1542,7 +1578,7 @@ define([], function() {
 					// job tesmplate key and value
 					$.each(value, function(jobTemplateKey, jobTemplateValue) {
 						var jobTemplateGearHtml = '<a href="javascript:;" id="'+ appName + jobTemplateValue.name +'" class="validate_icon" jobTemplateName="'+ jobTemplateValue.name +'" appName="'+ appName +'" appDirName="'+ appDirName +'" name="jobConfigurePopup" style="display: none;"><img src="themes/default/images/helios/validate_image.png" width="19" height="19" border="0"></a>';
-                		var jobTemplateHtml = '<li class="ui-state-default" temp="ci"><span>' + jobTemplateValue.name + ' - ' + jobTemplateValue.type + '</span>' + jobTemplateGearHtml + '</li>';
+                		var jobTemplateHtml = '<li class="ui-state-default" title="" temp="ci"><span>' + jobTemplateValue.name + ' - ' + jobTemplateValue.type + '</span>' + jobTemplateGearHtml + '</li>';
                 		sort.append(jobTemplateHtml);
                 		// set json value on attribute
                 		var jobTemplateJsonVal = jobTemplateValue;
@@ -1765,10 +1801,151 @@ define([], function() {
 				if(!self.isBlank(lastTemplateJsonData)) {
 					lastTemplateJsonData.enableCriteria = false;
 				}
-				
+			}
+		},
+		
+		sortableOneReceive : function(ui) {
+			console.info("Entering sortable 1", ui);
+			console.info("item ", $(ui.item));
+			// For gear icons alone
+			$("#sortable2 li.ui-state-default a").show();
+			$("#sortable1 li.ui-state-default a").hide();	
+			$(".dyn_popup").hide();
+
+			// Remove application name text
+			var itemText = $(ui.item).find('span').text();
+			var anchorElem = $(ui.item).find('a');
+			var appName = $(anchorElem).attr("appname");						
+			$(ui.item).find('span').text($(ui.item).find('span').text().replace(appName + " - ", ""));
+			$( ".sorthead" ).each(function( index ) {
+				if(appName === $(this).text()) {
+					$(ui.item).insertAfter($(this));
+				} 
+			});
+		},
+		
+		sortableTwoReceive : function(ui) {
+			console.info("Entering sortable 2", ui);
+			console.info("item ", $(ui.item));
+			
+			var tt = $("#sortable2 li.ui-state-default").length;
+			if(tt === 2) {
+				$("#sortable2 li.ui-state-default").each(function( index ) {
+					$(ui.item).insertAfter($(this));
+				});
+			}
+			// For gear icons alone
+			$("#sortable2 li.ui-state-default a").show();
+			$("#sortable1 li.ui-state-default a").hide();	
+
+			// Append application name text
+			var itemText = $(ui.item).find('span').text();
+			var anchorElem = $(ui.item).find('a');
+			var templateJsonData = $(anchorElem).data("templateJson");
+			var appName = $(anchorElem).attr("appname");
+			
+			var fullName = appName  + " - " + itemText;
+			var finalText;
+			if (fullName.length > 40) {
+				finalText = fullName.substring(0,40) + "...";
+			} else {
+				finalText = fullName;
 			}
 			
-		}
+			// Application name construct
+			$(ui.item).find('span').text(finalText);
+			$(ui.item).attr('title', fullName);
+
+			var sortable2Len = $('#sortable2 > li').length;
+
+			// Second level validation
+			// when the repo is not available check for parent project in sortable2
+			if ( templateJsonData !== undefined && !templateJsonData.enableRepo) {
+				var parentAppFound = false;
+
+				// Previous elemets
+				$(ui.item).prevAll('li').each(function(index) {
+					var thisAnchorElem = $(this).find('a');
+					var thisTemplateJsonData = $(thisAnchorElem).data("templateJson");
+					var thisAppName = $(thisAnchorElem).attr("appname");
+
+					if (thisAppName === appName && thisTemplateJsonData.enableRepo) {
+						parentAppFound = true;
+						return false;
+					}
+				});
+
+				if (!parentAppFound) {
+					$(ui.item).find('span').text(itemText);
+					$(ui.sender).sortable('cancel');
+					$(".msgdisplay").removeClass("success").addClass("error");
+					$(".error").text("Parent object not found for "+templateJsonData.name+" template!");
+					$(".error").show();
+					$(".error").fadeIn(500).fadeOut(500).fadeIn(500).fadeOut(500).fadeIn(500).fadeOut(5);
+					setTimeout(function() {
+						$(".error").hide();
+					},2500);
+				}
+			}
+		},
+		
+		sortableOneChange : function(ui) {
+			console.info("Entering sortable change1", ui);
+			console.info("item ", $(ui.item));
+			var itemText = $(ui.item).find('span').text();
+			var anchorElem = $(ui.item).find('a');
+			var templateJsonData = $(anchorElem).data("templateJson");
+			var id = $(ui.item).parent("ul").attr("id");
+			if(id === "sortable2") {
+				var nextItem = $(ui.item).next();
+				var nextAnchorElem = $(ui.item).next().find('a');
+				var nextAnchorElem = $(ui.item).next().find('a');
+				var downTemplateJsonData = $(nextAnchorElem).data("templateJson");
+				
+				var prevItem = $(ui.item).prev();
+				var upTemplateJsonData;
+				if(prevItem !== null && prevItem!== undefined) {
+					var prevAnchorElem = $(ui.item).prev().find('a');
+					var prevAnchorElem = $(ui.item).prev().find('a');
+					upTemplateJsonData = $(prevAnchorElem).data("templateJson");
+				}
+				if (upTemplateJsonData === null) {
+					if(downTemplateJsonData !== undefined && downTemplateJsonData!== null && !downTemplateJsonData.enableRepo) {
+						$(".msgdisplay").removeClass("success").addClass("error");
+						$(".error").text("DownStream "+downTemplateJsonData.name+" job Doesn't have the Repo!");
+						$(".error").show();
+						$(".error").fadeIn(500).fadeOut(500).fadeIn(500).fadeOut(500).fadeIn(500).fadeOut(5);
+						setTimeout(function() {
+							$(".error").hide();
+						},2500);
+						$(ui.sender).sortable('cancel');
+					}
+				}
+			}
+		},
+		
+		sortableTwoChange : function(ui) {
+			console.info("Entering sortable change2", ui);
+			console.info("item ", $(ui.item));
+			var itemText = $(ui.item).find('span').text();
+			
+			var anchorElem = $(ui.item).find('a');
+			var templateJsonData = $(anchorElem).data("templateJson");
+			var appName = $(anchorElem).attr("appname");
+			var sortable2Len = $('#sortable2 > li').length;
+			// Initial validation
+			if (sortable2Len === 1 && !templateJsonData.enableRepo) {
+				$(ui.sender).sortable('cancel');
+				$(".msgdisplay").removeClass("success").addClass("error");
+				$(".error").text(templateJsonData.name + " job Doesn't have the Repo!");
+				$(".error").show();
+				$(".error").fadeIn(500).fadeOut(500).fadeIn(500).fadeOut(500).fadeIn(500).fadeOut(5);
+				setTimeout(function() {
+					$(".error").hide();
+				},2500);
+			}
+		},
+		
 				
 	});
 
