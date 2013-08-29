@@ -431,7 +431,7 @@
 			asyncTest("Generate Performance result as PDF", function() {
 				$.mockjaxClear();
 				$.mockjax({
-				  url: commonVariables.webserviceurl+"app/printAsPdf?appDirName=PF_TEST_PHP&reportDataType=detail&pdfName=TestGeneratePDF&fromPage=performance&userId=admin",
+				  url: commonVariables.webserviceurl+"app/printAsPdf?appDirName=PF_TEST_PHP&reportDataType=detail&pdfName=TestGeneratePDF&fromPage=Performance&userId=admin",
 				  type: "POST",
 				  dataType: "json",
 				  contentType: "application/json",
@@ -451,7 +451,6 @@
 					  this.responseText = JSON.stringify([{"time":"Jul 23 2013 16.28","type":"crisp","fileName":"Raj_crisp.pdf"},{"time":"Jul 23 2013 16.08","type":"crisp","fileName":"tech_overall_crisp.pdf"},{"time":"Jul 23 2013 16.08","type":"crisp","fileName":"TestGenerate_crisp.pdf"}]);
 				  }
 				});
-
 				$(commonVariables.contentPlaceholder).find("#pdf_report").find('input[name=pdfName]').val("TestGeneratePDF");
 				$(commonVariables.contentPlaceholder).find("#pdf_report").find("#generatePdf").click();
 				setTimeout(function () {

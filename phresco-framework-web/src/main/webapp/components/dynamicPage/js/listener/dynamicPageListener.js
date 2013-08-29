@@ -777,8 +777,7 @@ define(["framework/widgetWithTemplate", "common/loading", "lib/customcombobox-1.
             var self = this;
             self.showDynamicPopupLoading();
             commonVariables.api.ajaxRequest(self.getRequestHeader(self.projectRequestBody, dependency, "", "dependency"), function(response) {
-				 if(response === undefined || response === null || response.status === "error" || response.status !== "failure"){
-					self.updateDependancySuccEvent(response.data, dependency);
+				 if(response === undefined || response === null || response.status === "error" || response.status === "failure"){
 					//responce value failed
 					$(".content_end").show();
 					$(".msgdisplay").removeClass("success").addClass("error");
@@ -788,7 +787,9 @@ define(["framework/widgetWithTemplate", "common/loading", "lib/customcombobox-1.
 					setTimeout(function() {
 						$(".content_end").hide();
 					},2500);
-				}
+				} else if (response.status === "success") {
+                    self.updateDependancySuccEvent(response.data, dependency);
+                }
             });
         },
         

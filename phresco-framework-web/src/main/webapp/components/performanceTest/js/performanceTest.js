@@ -268,9 +268,12 @@ define(["performanceLoadListener/listener/performanceLoadListener"], function() 
 			var previousOption = $("#graphForDrop").attr("value");
 			var currentOption = obj.attr("value");
 			if (previousOption !== currentOption) {
-				$("#graphForDrop").html(obj.text()  + '<b class="caret"></b>');
-				$("#graphForDrop").attr("value", obj.attr("value"));
-				self.getResultEvent.dispatch($("#testAgainstsDrop").attr("value"),$("#testResultFileDrop").attr("value"), currentOption, $("#deviceDropDown").attr("value"), commonVariables.contentPlaceholder);
+				self.getResultEvent.dispatch($("#testAgainstsDrop").attr("value"),$("#testResultFileDrop").attr("value"), currentOption, $("#deviceDropDown").attr("value"), commonVariables.contentPlaceholder, function(response) {
+					if(response.status === "success") {
+						$("#graphForDrop").html(obj.text()  + '<b class="caret"></b>');
+						$("#graphForDrop").attr("value", obj.attr("value"));
+					}
+				});
 				if (currentOption !== "all") {
 					$("#allData").hide();
 				} else {

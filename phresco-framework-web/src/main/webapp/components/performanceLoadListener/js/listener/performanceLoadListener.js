@@ -519,6 +519,7 @@ define(["lib/jquery-tojson-1.0",'lib/RGraph_common_core-1.0','lib/RGraph_common_
 					$.each(response.data, function(index, value){
 						returnVal += '<li class="devicesOption"><a href="#" name="devices" deviceid="'+value.split("#SEP#")[0]+'">'+ value.split("#SEP#")[1] +'</a></li>';
 					});
+					returnVal += '<li class="devicesOption"><a href="#" name="devices" deviceId="">All</a></li>';
 					$("#deviceDropUL").html(returnVal);
 					self.getResultOnChangeEvent('',resultFileName, showGraphFor, response.data[0].split("#SEP#")[0], whereToRender);
 					self.deviceChangeEvent(whereToRender);
@@ -564,8 +565,8 @@ define(["lib/jquery-tojson-1.0",'lib/RGraph_common_core-1.0','lib/RGraph_common_
 			var resultTable = "";
 			var totalValue = resultData.length, NoOfSample = 0, avg = 0, min = 0, max = 0, StdDev = 0, Err = 0, KbPerSec = 0, sumOfBytes = 0;
 			resultTable += '<div class="fixed-table-container"><div class="header-background"></div><div class="fixed-table-container-inner"><table cellspacing="0" cellpadding="0" border="0" class="table table-striped table_border table-bordered perf_load_table" id="testResultTable">'+
-						  '<thead class="height_th"><tr><th><div class="th-inner">Label</div></th><th><div class="th-inner">Samples</div></th><th><div class="th-inner">Averages</div></th><th><div class="th-inner">Min</div></th><th><div class="th-inner">Max</div></th><th><div class="th-inner">Std.Dev</div></th><th><div class="th-inner">Error %</div></th><th><div class="th-inner">Throughput /sec </div></th>' +
-						  '<th><div class="th-inner">KB / sec</div></th><th><div class="th-inner">Avg.Bytes</div></th></tr></thead><tbody>';	
+						  '<thead class="height_th"><tr><th><div class="th-inner" data-i18n=performanceLoad.label></div></th><th><div class="th-inner" data-i18n=performanceLoad.samples></div></th><th><div class="th-inner"data-i18n=performanceLoad.averages></div></th><th><div class="th-inner"data-i18n=performanceLoad.min></div></th><th><div class="th-inner"data-i18n=performanceLoad.max></div></th><th><div class="th-inner" data-i18n=performanceLoad.stddev></div></th><th><div class="th-inner" data-i18n=performanceLoad.error%></div></th><th><div class="th-inner" data-i18n=performanceLoad.throughput/sec> </div></th>' +
+						  '<th><div class="th-inner" data-i18n=performanceLoad.kb/sec></div></th><th><div class="th-inner" data-i18n=performanceLoad.avgBytes></div></th></tr></thead><tbody>';	
 			$.each(resultData.perfromanceTestResult, function(index, value) {
 				NoOfSample = parseInt(NoOfSample) + parseInt(value.noOfSamples);
 				avg = avg + value.avg;
@@ -596,6 +597,7 @@ define(["lib/jquery-tojson-1.0",'lib/RGraph_common_core-1.0','lib/RGraph_common_
 			
 			self.tableScrollbar();
 			self.resizeConsoleWindow();
+			self.renderlocales(commonVariables.contentPlaceholder);
 		},
 		
 		resizeConsoleWindow : function() {
@@ -634,16 +636,19 @@ define(["lib/jquery-tojson-1.0",'lib/RGraph_common_core-1.0','lib/RGraph_common_
 			requestBody.queryString = queryString;
 			self.performAction(self.getActionHeader(requestBody, "validation"), function(response) {
 				if ((response.errorFound) || (response.status === "error") || (response.status === "failure")){
-					$(".content_end").show();
-					$(".msgdisplay").removeClass("success").addClass("error");
-					$(".error").attr('data-i18n', 'errorCodes.' + response.responseCode);
-					self.renderlocales(commonVariables.contentPlaceholder);	
-					$(".error").show();
-					$(".error").fadeIn(500).fadeOut(500).fadeIn(500).fadeOut(500).fadeIn(500).fadeOut(5);
-					setTimeout(function() {
-						$(".content_end").hide();
-					},2500);
-					dynamicPageObject.showDynamicErrors(response);
+					if (response.configErr) {
+						$(".content_end").show();
+						$(".msgdisplay").removeClass("success").addClass("error");
+						$(".error").attr('data-i18n', 'errorCodes.' + response.responseCode);
+						self.renderlocales(commonVariables.contentPlaceholder);	
+						$(".error").show();
+						$(".error").fadeIn(500).fadeOut(500).fadeIn(500).fadeOut(500).fadeIn(500).fadeOut(5);
+						setTimeout(function() {
+							$(".content_end").hide();
+						},2500);
+					} else {
+						dynamicPageObject.showDynamicErrors(response);
+					}
 				} else {
 					self.preTest(phase);
 				}
@@ -778,18 +783,20 @@ define(["lib/jquery-tojson-1.0",'lib/RGraph_common_core-1.0','lib/RGraph_common_
 		},
 
 		dbContextUrlsMandatoryVal : function () {
-			var redirect = true;
-			$('.perDBContextUrlFieldset').each(function() {
-				if ($(this).find($('input[name=dbName]')).val() === "" || isBlank($(this).find($('input[name=dbName]')).val())) {
+			var redirect = true, self = this;
+			$('.dbContextDivClass').each(function() {
+				if ($(this).find($('input[name=dbName]')).val() === "" || self.isBlank($(this).find($('input[name=dbName]')).val())) {
 					redirect = false;
-					$('.yesNoPopupErr').text('Name is missing');
 					$(this).find($('input[name=dbName]')).val('');
 					$(this).find($('input[name=dbName]')).focus();
-				} else if ($(this).find($('textarea[name=query]')).val() === "" || isBlank($(this).find($('textarea[name=query]')).val())) {
+					$(this).find($('input[name=dbName]')).attr('placeholder','Name is missing');
+					$(this).find($('input[name=dbName]')).addClass("errormessage");
+				} else if ($(this).find($('textarea[name=query]')).val() === "" || self.isBlank($(this).find($('textarea[name=query]')).val())) {
 					redirect = false;
-					$('.yesNoPopupErr').text('Query is missing');
 					$(this).find($('textarea[name=query]')).val('');
 					$(this).find($('textarea[name=query]')).focus();
+					$(this).find($('textarea[name=query]')).attr('placeholder','Query is missing');
+					$(this).find($('textarea[name=query]')).addClass("errormessage");
 				} 
 			});
 			

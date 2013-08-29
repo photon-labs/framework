@@ -687,17 +687,13 @@ define(["framework/widget", "framework/templateProvider"], function() {
 	        showDynamicErrors : function(response) {
 	            $('.dynamicControls > li :input').removeClass("errormessage").attr("placeholder", "");
 	            var self = this, control = $("#" + response.parameterKey);
-	            if (response.configErr) {
-	            	self.showErrorPopUp(response.configErrorMsg);
-	            } else {
-	            	control.focus();
-		            control.addClass("errormessage");
-		            if (control.prop('tagName') === "INPUT") {
-		            	control.attr("placeholder", response.configErrorMsg);
-		            } else if (control.prop('tagName') === "SELECT") {
-		            	control.parent().find('button').addClass("btn-danger");
-		            }	
-	            }
+            	control.focus();
+	            control.addClass("errormessage");
+	            if (control.prop('tagName') === "INPUT") {
+	            	control.attr("placeholder", response.configErrorMsg);
+	            } else if (control.prop('tagName') === "SELECT") {
+	            	control.parent().find('button').addClass("btn-danger");
+	            }	
 	        }, 
 
 			multiselect : function() {

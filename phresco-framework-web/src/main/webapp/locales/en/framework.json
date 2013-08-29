@@ -404,6 +404,26 @@
 	  }
 	},
 	
+	"performanceLoad" : {
+		"basedon"			:	"Based on",
+		"aggrresponsetime"	:	"Aggr Response Time",
+		"responsetime"		: "Response Time",
+		"throughput"		:"Throughput",
+		"minresponsetime" 	:"Min Response Time",
+		"maxresponsetime"	:"Max Response Time",
+		"all"				:"All",
+		"label"				:"Label",
+		"samples"			:"Samples",
+		"averages"			:"Averages",
+		"stddev"			:"Std.Dev",
+		"min"				:"Min",
+		"max"				:"Max",
+		"error%"			:"Error %",
+		"throughput/sec"	:"Throughput /sec",
+		"kb/sec" 			:"KB / sec",
+		"avgBytes"			:"Avg.Bytes"
+		},
+
 	"testcase" : {
 		  "name"			: "Name",
 		  "class"			: "Class",
