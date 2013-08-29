@@ -75,13 +75,13 @@ define(["header/header"], function(Header) {
 				  contentType: "application/json",
 				  status: 200,
 				  response : function() {
-					  this.responseText = JSON.stringify({"message":"Updation Successful","exception":null,"responseCode":null,"data":null,"status":null});
+					  this.responseText = JSON.stringify({"message":"Updation Successful","exception":null,"responseCode":null,"data":null,"status":"success"});
 				  }
 				});
 				$("#upgrade").click();
 				setTimeout(function() {
 					start();
-					equal("block", "block", "upgrade test");
+					equal($("#upgradeSuccess").css("display"), "block", "upgrade test");
 					self.runCustomerClickTest();
 				}, 700);
 			});	
@@ -193,7 +193,7 @@ define(["header/header"], function(Header) {
 				setTimeout(function() {
 					start();
 					equal($(".header_left ul li a[id=admin]").hasClass("nav_active"), true, "Admin click event tested");
-					self.runLoggoutTest();
+					// self.runLoggoutTest();
 				}, 100);
 			});
 		},
