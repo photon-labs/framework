@@ -15,6 +15,8 @@ define(["header/listener/headerListener"] , function(template) {
 		onLogoutEvent: null,
 		onTabChangeEvent: null,
 		onSelectCustomerEvent: null,
+		onAboutClickEvent: null,
+		onUpgradeEvent: null,
 		
 		initialize : function(globalConfig){
 			var self = this;
@@ -65,9 +67,17 @@ define(["header/listener/headerListener"] , function(template) {
 			if(self.onSelectCustomerEvent === null){
 				self.onSelectCustomerEvent = new signals.Signal();
 			}
+			if (self.onAboutClickEvent === null) {
+				self.onAboutClickEvent =new signals.Signal();
+			}
+			if (self.onUpgradeEvent === null) {
+				self.onUpgradeEvent =new signals.Signal();
+			}
 			self.onLogoutEvent.add(headerListener.doLogout, headerListener);
 			self.onTabChangeEvent.add(headerListener.loadTab, headerListener);
 			self.onSelectCustomerEvent.add(headerListener.selectCoustomer, headerListener);
+			self.onAboutClickEvent.add(headerListener.aboutPhresco, headerListener);
+			self.onUpgradeEvent.add(headerListener.upgradePhresco, headerListener);
         },
 		
 		/***
@@ -88,6 +98,17 @@ define(["header/listener/headerListener"] , function(template) {
 				self.onTabChangeEvent.dispatch();
 			});
 			
+			$(".header_right ul li").click(function(){
+				var currentTab = $(this).text();
+				if ("About" === currentTab) {
+					self.onAboutClickEvent.dispatch(this);
+				}
+			});
+
+			$("#upgrade").click(function() {
+				self.onUpgradeEvent.dispatch();
+			});
+
 			$('a[name=customers]').click(function(){
 				self.onSelectCustomerEvent.dispatch($(this).text());
 			});

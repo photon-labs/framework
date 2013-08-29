@@ -11,7 +11,9 @@ var commonVariables = {
 
 	header : "header",
 	headerContext : "header",
-	
+	upgrade : "upgrade",
+	upgradeAvailable : "upgradeAvailable",
+
 	footer : "footer",
 	footerContext : "footer",
 	

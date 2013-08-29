@@ -317,12 +317,15 @@ define(["framework/widget", "framework/templateProvider"], function() {
 					$(target).removeClass('speakstyletopright').removeClass('speakstylebottomright').removeClass('speakstylebottomleft').addClass('speakstyletopleft').addClass('dyn_popup');
 				} else if (clicked.offset().top < halfheight && clicked.offset().left > halfwidth){
 					var d= ($(window).width() - (clicked.offset().left + clicked.outerWidth()));
-					
-					if(adjestVal != undefined && adjestVal != null){
+					var mtop = 10;
+					if(adjestVal !== undefined && adjestVal !== null && adjestVal !== "upgrade"){
 						d = d -50;
+					} else if (adjestVal === "upgrade") {
+						d= 67;
+						mtop = 25;
 					}
 						
-					$(target).css({"right":d ,"margin-top":10,"left": "auto","top": "auto"});
+					$(target).css({"right":d ,"margin-top":mtop,"left": "auto","top": "auto"});
 					$(target).toggle();
 					$(target).removeClass('speakstyletopleft').removeClass('speakstylebottomright').removeClass('speakstylebottomleft').addClass('speakstyletopright').addClass('dyn_popup');
 				} else if (clicked.offset().top > halfheight && clicked.offset().left < halfwidth){

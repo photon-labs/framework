@@ -1,4 +1,4 @@
-<section class="optiontitle qual_unit performanceTemp">
+<div class="performanceHolder"><section class="optiontitle qual_unit performanceTemp">
 	<div class="unit_text" data-i18n="ci.performancetest">
     </div>
     <input type="hidden" class="testingType" value="performance-test"/>
@@ -251,3 +251,4 @@
 	<section class="content_end" style="display:none;">
 		<div class="msgdisplay"></div>
 	</section>
+</div>

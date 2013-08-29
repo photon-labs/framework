@@ -88,7 +88,100 @@ define(["header/api/headerAPI"], function() {
 					Clazz.navigationController.push(obj, commonVariables.animation);
 				});
 			}
-		}
+		}, 
+
+		aboutPhresco : function(openccObj) {
+			var self = this;
+			self.performAction(self.getActionHeader("upgradeAvailable"), function(response) {
+				if (response.data !== null && response.status === "success") {
+					$("#currentVersion").text(response.data.currentVersion);
+					$("#latestVersion").text(response.data.latestVersion);
+					$("#upgradeSuccess").hide();
+					$("#aboutDesc").show();
+					$("#versionTable").show();
+					$("#upgradeStatus").empty();
+					$("#upgradeStatus").hide();
+					if (response.data.updateAvaillable) {
+						$("#upgradeDisable").hide();
+						$("#upgrade").show();
+					} else {
+						$("#upgradeDisable").show();
+						$("#upgrade").hide();
+					}
+					self.opencc(openccObj, "aboutPopup", '', 'upgrade');
+				}
+			});
+
+		},
+
+		upgradePhresco : function() {
+			var self = this;
+			self.performAction(self.getActionHeader("upgradePhresco"), function(response) {
+				if (response.status === "success") {
+					$("#upgradeSuccess").show();
+					$("#aboutDesc").hide();
+					$("#versionTable").hide();
+					$("#upgrade").hide();
+					$("#upgradeStatus").text("Upgraded successfully. Please restart your framework");
+				} else if (response.status === "error") {
+					$("#upgradeStatus").text("Failed to upgrade");
+				}	
+				$("#upgradeStatus").show();
+				
+			});
+		},
+
+		getActionHeader : function(action) {
+			var self = this,header = {
+				contentType: "application/json",				
+				dataType: "json",
+				webserviceurl: ''
+			};
+			var userInfo = JSON.parse(commonVariables.api.localVal.getSession('userInfo'));
+			var userId = userInfo.id;
+			if (action === "upgradeAvailable") {
+				header.requestMethod = "GET";
+				header.webserviceurl = commonVariables.webserviceurl + commonVariables.upgrade + '/' +commonVariables.upgradeAvailable + "?userId="+userId;				
+			} else if (action === "upgradePhresco") {
+				var newVersion = $("#latestVersion").text();
+				header.requestMethod = "GET";
+				header.webserviceurl = commonVariables.webserviceurl + commonVariables.upgrade + "?newVersion="+ newVersion + "&userId=" +userId+ "&customerId="+self.getCustomer();
+			}
+			return header;
+		},
+
+		performAction : function (header, callback) {
+			var self = this;
+			try {
+				commonVariables.api.ajaxRequest(header, function(response) {
+					if (response !== null) {
+						callback(response);
+					} else {
+						$(".content_end").show();
+						$(".msgdisplay").removeClass("success").addClass("error");
+						$(".error").attr('data-i18n', 'errorCodes.' + response.responseCode);
+						self.renderlocales(commonVariables.contentPlaceholder);	
+						$(".error").fadeIn(500).fadeOut(500).fadeIn(500).fadeOut(500).fadeIn(500).fadeOut(5);
+						setTimeout(function() {
+							$(".content_end").hide();
+						},2500);
+					}
+				},
+				function(textStatus){
+					$(".content_end").show();
+					$(".msgdisplay").removeClass("success").addClass("error");
+					$(".error").attr('data-i18n', 'commonlabel.errormessage.serviceerror');
+					self.renderlocales(commonVariables.contentPlaceholder);		
+					$(".error").fadeIn(500).fadeOut(500).fadeIn(500).fadeOut(500).fadeIn(500).fadeOut(5);
+					setTimeout(function() {
+						$(".content_end").hide();
+					},2500);
+				}
+				);
+			} catch (exception) {
+				
+			}
+		},
 	});
 
 	return Clazz.com.commonComponents.modules.header.js.listener.HeaderListener;
