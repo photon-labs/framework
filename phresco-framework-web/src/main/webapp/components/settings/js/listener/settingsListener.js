@@ -137,12 +137,6 @@ define([], function() {
 			}
 		},
 		
-//		setup : function() { 
-//			var self = this;
-//			self.getHeaderResponse(self.getRequestHeader(self.ciRequestBody, 'setup'), function(response) {
-//			
-//			});
-//		},
 		setup : function() {
 			var self = this;
 			var queryString = '';
@@ -162,6 +156,7 @@ define([], function() {
 				});
 			}
 		},
+
 		start : function() {
 			var self = this;
 			var queryString = '';

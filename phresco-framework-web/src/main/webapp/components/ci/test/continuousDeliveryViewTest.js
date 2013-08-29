@@ -30,7 +30,7 @@ define(["ci/continuousDeliveryView"], function(ContinuousDeliveryView) {
 					contentType: "application/json",
 					status: 200,
 					response: function() {
-						this.responseText = JSON.stringify({"message":"Jenkins is Alive","exception":null,"responseCode":null,"data":"200","status":null});
+						this.responseText = JSON.stringify({"message":"Jenkins not found","exception":null,"responseCode":null,"data":"404","status":null});
 					}
 				});
 				
@@ -309,11 +309,56 @@ define(["ci/continuousDeliveryView"], function(ContinuousDeliveryView) {
 				setTimeout(function() {
 					start();
 					notEqual($(".widget_testing").length, 8, "Continuous Delivery View list length");
+					self.openDeletePopUp(continuousDeliveryView);
+				}, 2500);
+			});
+		},
+
+		// delete continuous delivery test
+		openDeletePopUp : function (continuousDeliveryView) {
+			var self = this;
+			asyncTest("Delete Popup CI test", function() {
+				$("a[temp=deleteCI]").click();
+				setTimeout(function() {
+					start();
+					equal(1, 1, "openDeletePopUp tested");
+					self.confirmDelete(continuousDeliveryView);
+				}, 2500);
+			});
+		},
+
+		confirmDelete : function (continuousDeliveryView) {
+			var self = this;
+			var ciAPI = commonVariables.api;
+			ciAPI.localVal.setSession("projectId" , "dd122034-fa5c-4fd9-9f68-522df1e73fb4");
+			ciAPI.localVal.setSession("appDirName" , "");
+			ciAPI.localVal.setSession("customerId" , "photon");
+			asyncTest("confirmDelete CI", function() {
+				$.mockjax({
+					url: commonVariables.webserviceurl + commonVariables.ci +"/delete?continuousName=independent&customerId=photon&projectId=dd122034-fa5c-4fd9-9f68-522df1e73fb4&appDirName=",
+					type:'DELETE',
+					dataType: "json",
+					contentType: "application/json",
+					status: 200,
+					response: function() {
+						this.responseText = JSON.stringify({"message":"Job deleted successfully","exception":null,"responseCode":null,"data":{"message":"Job has successfully deleted in jenkins","code":0},"status":null});
+					}
+				});
+
+				var obj = $(commonVariables.contentPlaceholder).find("#deleteCI").find('input[type=hidden][value=independent]').next();
+				console.info("Obj verify", $(commonVariables.contentPlaceholder));
+				console.info("obj ",obj);
+				obj.click();
+				setTimeout(function() {
+					start();
+					var display = $(commonVariables.contentPlaceholder).find('div[id=deleteCI]').css('display');
+					equal("none", display, "confirmDelete CI tested");
 					self.editContinuousDelivery(continuousDeliveryView);
 				}, 2500);
 			});
 		},
 
+		
 		editContinuousDelivery : function(continuousDeliveryView) {
 			$(commonVariables.contentPlaceholder).html("");
 			var self = this;
@@ -356,53 +401,11 @@ define(["ci/continuousDeliveryView"], function(ContinuousDeliveryView) {
 					start();
 					var length = $(commonVariables.contentPlaceholder).find('ul[id=sortable1]').find('li').length;
 					notEqual(7, length, "ContinuousDeliveryView - UI Tested");
-					self.openDeletePopUp(continuousDeliveryView);
-				}, 2500);
-			});
-		},
-		
-
-		// delete continuous delivery test
-		openDeletePopUp : function (continuousDeliveryView) {
-			var self = this;
-			asyncTest("Delete Popup CI test", function() {
-				$("a[temp=deleteCI]").click();
-				setTimeout(function() {
-					start();
-					equal(1, 1, "openDeletePopUp tested");
-					self.confirmDelete(continuousDeliveryView);
-				}, 2500);
-			});
-		},
-
-		confirmDelete : function (continuousDeliveryView) {
-			var self = this;
-			var ciAPI = commonVariables.api;
-			ciAPI.localVal.setSession("projectId" , "dd122034-fa5c-4fd9-9f68-522df1e73fb4");
-			ciAPI.localVal.setSession("appDirName" , "");
-			ciAPI.localVal.setSession("customerId" , "photon");
-			asyncTest("confirmDelete CI", function() {
-				$.mockjax({
-					url: commonVariables.webserviceurl + commonVariables.ci +"/delete?continuousName=independent&customerId=photon&projectId=dd122034-fa5c-4fd9-9f68-522df1e73fb4&appDirName=",
-					type:'DELETE',
-					dataType: "json",
-					contentType: "application/json",
-					status: 200,
-					response: function() {
-						this.responseText = JSON.stringify({"message":"Job deleted successfully","exception":null,"responseCode":null,"data":{"message":"Job has successfully deleted in jenkins","code":0},"status":null});
-					}
-				});
-
-				var obj = $(commonVariables.contentPlaceholder).find("#deleteCI").find('input[type=hidden][value=independent]').next();
-				obj.click();
-				setTimeout(function() {
-					start();
-					var display = $(commonVariables.contentPlaceholder).find('div[id=deleteCI]').css('display');
-					notEqual("none", display, "confirmDelete CI tested");
 					self.callConfigureTest(continuousDeliveryView);
 				}, 2500);
 			});
 		},
+		
 
 		callConfigureTest : function (continuousDeliveryView) {
 			var self = this;

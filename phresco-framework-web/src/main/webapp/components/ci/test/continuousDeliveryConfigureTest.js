@@ -123,6 +123,32 @@ define(["ci/continuousDeliveryConfigure"], function(ContinuousDeliveryConfigure)
 					start();
 					var envName = $(commonVariables.contentPlaceholder).find('select[name=environments]').val();
 					equal("Testing", envName, "changeEnvironmentTest - UI Tested");
+					self.sortableTest(continuousDeliveryConfigure);
+				}, 2500);
+			});
+		},
+		
+		sortableTest : function(continuousDeliveryConfigure) {
+			var self=this;
+			asyncTest("sortableTest - UI Test", function() {
+				//sort1
+				var sortable1LiObj = $("#sortable1 li[temp=ci]");
+				var code = sortable1LiObj.find('a[id=javaCodeValidation]');
+				var ui = {};
+				ui.item = code.parent();
+				continuousDeliveryConfigure.ciListener.sortableTwoChange(ui);
+				continuousDeliveryConfigure.ciListener.sortableTwoReceive(ui);
+				//sort2
+				var sortable2LiObj = $("#sortable2 li[temp=ci]");
+				var code = sortable1LiObj.find('a[id=javaCodeValidation]');
+				var ui = {};
+				ui.item = code.parent();
+				continuousDeliveryConfigure.ciListener.sortableOneChange(ui);
+				continuousDeliveryConfigure.ciListener.sortableOneReceive(ui);
+				setTimeout(function() {
+					start();
+					var text = $("#sortable1 li[temp=ci]").eq(0).find('span').text();
+					equal("CodeValidation - codeValidation", text, "sortableTest - UI Tested");
 					self.codeJobsTest(continuousDeliveryConfigure);
 				}, 2500);
 			});

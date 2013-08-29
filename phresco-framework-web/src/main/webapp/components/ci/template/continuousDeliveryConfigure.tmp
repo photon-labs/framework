@@ -81,10 +81,12 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <tr>
+                            <tr id="url">
                                 <td>
                                     <input name="svnUrl" type="text" data-i18n="[placeholder]ci.placeholder.svnurl">
                                 </td>
+                            </tr>
+                            <tr id="cred">
                                 <td><input name="username" type="text" data-i18n="[placeholder]login.placeholder.username"></td>
                                 <td><input name="password" type="password" data-i18n="[placeholder]login.placeholder.password"></td>
                             </tr>

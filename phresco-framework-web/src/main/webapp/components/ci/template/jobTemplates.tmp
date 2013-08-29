@@ -12,7 +12,7 @@
                                 </tr>
                                 <tr>
                                   <td>
-                                    <input type="text" data-i18n="[placeholder]ci.placeholder.jobname" name="name" value=""></input>
+                                    <input type="text" data-i18n="[placeholder]ci.placeholder.jobname" name="name" value="" maxlength="18"></input>
                                     <input type="hidden" name="oldname" value=""></input>
                                   </td>
                                   <td>
@@ -30,32 +30,29 @@
                                   </td>
                                 </tr>
                                 <tr>
-									<td><span data-i18n="ci.application" colspan="2"></span><sup>*</sup></td>
+									<td><span data-i18n="ci.application"></span><sup>*</sup></td>
+									<td><span data-i18n="ci.features"></span></td>
                                 </tr>
 								<tr>
-									<td colspan="2"><select id="appIds" name="appIds" class="selectpicker" multiple data-selected-text-format="count>1"></select></td>
+									<td><select id="appIds" name="appIds" class="selectpicker" multiple data-selected-text-format="count>1"></select></td>
+									<td><select id="features" name="features" class="selectpicker" multiple data-selected-text-format="count>1">
+										<option value="enableRepo" data-i18n="ci.repo"></option>
+										<option value="enableSheduler" data-i18n="ci.scheduler"></option>
+										<option value="enableEmailSettings" data-i18n="ci.emailsettings"></option>
+										<option id="upload" value="enableUploadSettings" data-i18n="ci.uploadsettings" disabled="disabled"></option>
+									</select></td>
 								</tr>
-							</tbody>
-                         </table>
-                         <table id="features" class="table table_template" cellpadding="0" cellspacing="0" border="0">
-                            <tbody>
+								<tr>
+									<td class="repoDiv"><span data-i18n="ci.repotype"></span></td>
+									<td class="uploadDiv"><span data-i18n="ci.uploadsettings"></span></td>
+                                </tr>
                                 <tr>
-                                    <td><input name="enableRepo" type="checkbox"><span data-i18n="ci.repo"></span></td>
-                                    <td><select name="repoTypes" class="selectpicker">
+                                    <td class="repoDiv"><select name="repoTypes" class="selectpicker">
                                               <option value="svn" data-i18n="projectlist.label.svn"></option>
 											  <option value="git" data-i18n="projectlist.label.git"></option>
                                         </select>
                                     </td>
-                                </tr>
-                                <tr>
-                                    <td><input type="checkbox" name="enableSheduler"><span data-i18n="ci.scheduler"></span></td>
-                                </tr>
-                                <tr>
-                                    <td><input type="checkbox" name="enableEmailSettings"><span data-i18n="ci.emailsettings"></span></td>
-                                </tr>
-                                <tr>
-                                    <td><input type="checkbox" name="enableUploadSettings"><span data-i18n="ci.uploadsettings"></span></td>
-									<td>
+                                    <td class="uploadDiv">
 										<select name="uploadTypes" class="selectpicker" multiple data-selected-text-format="count>1">
 										 	<option value="Collabnet" data-i18n="ci.collabnet"></option>
 											<option value="Confluence" data-i18n="ci.confluence"></option>
@@ -63,8 +60,9 @@
 										</select>
 									</td>
                                 </tr>
-                            </tbody>
-                          </table>
+							</tbody>
+                         </table>
+                       
 						  <span id='errMsg' class="flt_left"/>						
                           <div class="flt_right">							
 							<input type="button" data-i18n="[value]ci.create;" name="save" class="btn btn_style">
