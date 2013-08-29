@@ -3342,7 +3342,7 @@ html>body tbody.scrollContent {
 }
 
 .ci_envtable table:last-child td:first-child {
-	padding-left: 6%;
+	padding-left: 8%;
 }
 
 .ci_envtable table:first-child td:last-child {
