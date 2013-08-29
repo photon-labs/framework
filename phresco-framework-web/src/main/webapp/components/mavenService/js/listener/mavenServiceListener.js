@@ -241,6 +241,9 @@ define([], function() {
 									response.log.toLowerCase().match("server running at http://")) {
 									//For start node
 									callback(response);
+								} else if (response.log.contains("tomcatProcess stopped.")) {
+									$('.progress_loading').css('display','none');
+									callback(response);
 								} else {
 									self.mvnlogService(response.uniquekey, divId, callback);
 								}
