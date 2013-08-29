@@ -241,7 +241,7 @@ define([], function() {
 									response.log.toLowerCase().match("server running at http://")) {
 									//For start node
 									callback(response);
-								} else if (response.log.contains("tomcatProcess stopped.")) {
+								} else if (response.log.indexOf("tomcatProcess stopped.") != -1) {
 									$('.progress_loading').css('display','none');
 									callback(response);
 								} else {
