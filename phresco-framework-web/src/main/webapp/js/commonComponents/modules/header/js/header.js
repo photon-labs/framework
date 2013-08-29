@@ -48,6 +48,8 @@ define(["header/listener/headerListener"] , function(template) {
 				$("#selectedCustomer").text(customername);
 				$('.customerDropdown').hide();
 			}
+
+			self.headerListener.showHideMainMenu($("#selectedCustomer").text());
 		},
 		
 		/***

@@ -3,11 +3,11 @@
 	<div class="header_left">
 		<figure><img id="bannerlogo" src="" border="0"></figure>
 		<ul>
-			<li><a href="#" id="dashboard" data-i18n="header.menu.dashboard"></a></li>
+			<li id="dashboardMenu"><a href="#" id="dashboard" data-i18n="header.menu.dashboard"></a></li>
 			<li><a href="#" id="pojectList" class="nav_active" data-i18n="header.menu.projects"></a></li>
-			<li><a href="#" id="settings" data-i18n="header.menu.settings"></a></li>
-			<li><a href="#" id="downloads" data-i18n="header.menu.downloads"></a></li>
-			<li><a href="#" id="admin" data-i18n="header.menu.admin"></a></li>
+			<li id="settingsMenu"><a href="#" id="settings" data-i18n="header.menu.settings"></a></li>
+			<li id="downloadsMenu"><a href="#" id="downloads" data-i18n="header.menu.downloads"></a></li>
+			<li id="adminMenu"><a href="#" id="admin" data-i18n="header.menu.admin"></a></li>
 		</ul>
 	</div>
 	<div class="header_right flt_right">
@@ -17,7 +17,7 @@
 		</div>
 		<div class="navbar navbar-static">
 			<ul class="nav">
-				<li><a href="#" data-i18n="header.userinfo.help"></a></li>
+				<li id="helpMenu"><a href="#" data-i18n="header.userinfo.help"></a></li>
 				<li class="aboutPhrescoLi"><a href="#" data-i18n="header.userinfo.about"></a></li>
 				<div id="aboutPopup" class="dyn_popup speakstyletopright" style="display:none; width: 170% !important;">
 				  <div class="header_left">

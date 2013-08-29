@@ -133,6 +133,13 @@ var commonVariables = {
 	optionsRemoteDeployment : "Remote_Deployment",
 	optionsEmbedApplication : "Embed_Application",
 	optionsThemeBuilder : "Theme_Builder",
+
+	/******* Customer main menu options constants *******/
+	optionsDashboard : "Home",
+    optionsHelp : "Help",
+    optionsSettings : "Settings",
+    optionsDownload : "Download",
+    optionsAdmin : "Admin",
 	
 	/******* Phase *********/
 	ciPhase : "ci-",

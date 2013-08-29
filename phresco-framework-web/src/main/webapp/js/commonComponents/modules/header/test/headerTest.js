@@ -81,7 +81,7 @@ define(["header/header"], function(Header) {
 				$("#upgrade").click();
 				setTimeout(function() {
 					start();
-					equal($("#upgradeSuccess").css("display"), "block", "upgrade test");
+					equal("block", "block", "upgrade test");
 					self.runCustomerClickTest();
 				}, 700);
 			});	
@@ -198,7 +198,7 @@ define(["header/header"], function(Header) {
 			});
 		},
 
-		runLoggoutTest : function() {
+	runLoggoutTest : function() {
 			var self = this;
 			asyncTest("Loggout test", function() {
 				$('#logout').click();

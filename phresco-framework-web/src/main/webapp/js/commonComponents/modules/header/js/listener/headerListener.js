@@ -88,7 +88,50 @@ define(["header/api/headerAPI"], function() {
 					Clazz.navigationController.push(obj, commonVariables.animation);
 				});
 			}
-		}, 
+
+			self.showHideMainMenu(customerValue);
+		},
+
+		//To show hide the main menu(Dashboard, Projects, Settings, Downloads, Admin) based on the customer
+		showHideMainMenu : function (customerName) {
+			var userInfo = JSON.parse(commonVariables.api.localVal.getSession('userInfo'));
+			var customers = userInfo.customers;
+			$.each(customers, function(index, value) {
+				if (value.name === customerName) {
+					var customerOptions = value.options;
+					if (jQuery.inArray(commonVariables.optionsDashboard, customerOptions) === -1) {
+						$('#dashboardMenu').hide();
+					} else {
+						$('#dashboardMenu').show();
+					}
+
+					if (jQuery.inArray(commonVariables.optionsHelp, customerOptions) === -1) {
+						$('#helpMenu').hide();
+					} else {
+						$('#helpMenu').show();
+					}
+
+					if (jQuery.inArray(commonVariables.optionsSettings, customerOptions) === -1) {
+						$('#settingsMenu').hide();
+					} else {
+						$('#settingsMenu').show();
+					}
+
+					if (jQuery.inArray(commonVariables.optionsDownload, customerOptions) === -1) {
+						$('#downloadsMenu').hide();
+					} else {
+						$('#downloadsMenu').show();
+					}
+
+					if (jQuery.inArray(commonVariables.optionsAdmin, customerOptions) === -1) {
+						$('#adminMenu').hide();
+					} else {
+						$('#adminMenu').show();
+					}
+					return false;
+				}
+			});
+		},
 
 		aboutPhresco : function(openccObj) {
 			var self = this;

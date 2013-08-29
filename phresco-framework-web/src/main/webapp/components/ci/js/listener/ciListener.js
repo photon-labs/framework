@@ -1805,8 +1805,6 @@ define([], function() {
 		},
 		
 		sortableOneReceive : function(ui) {
-			console.info("Entering sortable 1", ui);
-			console.info("item ", $(ui.item));
 			// For gear icons alone
 			$("#sortable2 li.ui-state-default a").show();
 			$("#sortable1 li.ui-state-default a").hide();	
@@ -1825,9 +1823,6 @@ define([], function() {
 		},
 		
 		sortableTwoReceive : function(ui) {
-			console.info("Entering sortable 2", ui);
-			console.info("item ", $(ui.item));
-			
 			var tt = $("#sortable2 li.ui-state-default").length;
 			if(tt === 2) {
 				$("#sortable2 li.ui-state-default").each(function( index ) {
@@ -1890,8 +1885,6 @@ define([], function() {
 		},
 		
 		sortableOneChange : function(ui) {
-			console.info("Entering sortable change1", ui);
-			console.info("item ", $(ui.item));
 			var itemText = $(ui.item).find('span').text();
 			var anchorElem = $(ui.item).find('a');
 			var templateJsonData = $(anchorElem).data("templateJson");
@@ -1925,10 +1918,7 @@ define([], function() {
 		},
 		
 		sortableTwoChange : function(ui) {
-			console.info("Entering sortable change2", ui);
-			console.info("item ", $(ui.item));
 			var itemText = $(ui.item).find('span').text();
-			
 			var anchorElem = $(ui.item).find('a');
 			var templateJsonData = $(anchorElem).data("templateJson");
 			var appName = $(anchorElem).attr("appname");
