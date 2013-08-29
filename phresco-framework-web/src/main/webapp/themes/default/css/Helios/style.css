@@ -3342,7 +3342,7 @@ html>body tbody.scrollContent {
 }
 
 .ci_envtable table:last-child td:first-child {
-	padding-left: 6%;
+	padding-left: 8%;
 }
 
 .ci_envtable table:first-child td:last-child {
@@ -4619,7 +4619,7 @@ select[name="reportDataType"], input[name="pdfName"] {
 /* sonar iframe css */
 .iframe_sonar {
 	border:1px solid #ccc;
-	width: 99.5%;%;
+	width: 99.5%;
 	height:450px;
 }
 
