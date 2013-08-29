@@ -874,7 +874,7 @@ define([], function() {
                         '<td><input type="password" placeholder="Password" name="password"></td>');
 			} else if (templateJsonData.enableRepo && templateJsonData.repoTypes === "git") {
 				// For GIT
-				$(repoTypeElemUrl).html('<td colspan="2"><input type="text" placeholder="GIT Url" name="url"><input name="repoType" type="hidden" value="'+ templateJsonData.repoTypes +'"></td>');
+				$(repoTypeElemUrl).html('<td colspan="3"><input type="text" placeholder="GIT Url" name="url"><input name="repoType" type="hidden" value="'+ templateJsonData.repoTypes +'"></td>');
 				
 				$(repoTypeElemCred).html('<td><input type="text" placeholder="Username" name="username"></td>'+
                       '<td><input type="text" placeholder="Branch" name="branch"></td>'+
