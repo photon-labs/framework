@@ -45,7 +45,7 @@ public interface ResponseCodes {
 	String PHR6C10001 = "PHR6C10001"; // unable to fetch dependency
 	String PHR7C00001 = "PHR7C00001"; // template content returned successfully
 	String PHR7C10001 = "PHR7C10001"; // unable to fetch template content
-	String PHR8C10001 = "PHR8C10001"; // mandatory parameter check failed
+	String PHR8C00001 = "PHR8C00001"; // mandatory parameter check failed
 	String PHR9C10001 = "PHR9C10001"; // unable to complete validation
 	String PHR9C00001 = "PHR9C00001"; // completed validation successfully
 	
@@ -426,4 +426,14 @@ public interface ResponseCodes {
 	String PHR810035 = "PHR810035"; // build download url retrieve failed
 	String PHR800023 = "PHR800023"; // last build status returned successfully
 	String PHR810036 = "PHR810036"; // failed to get last build status
+	
+	/*
+	 * Upgrade Service
+	 */
+	String PHR910001 = "PHR910001"; //  unauthorized user
+	String PHR900001 = "PHR900001"; // update info returned successfuly
+	String PHR910002 = "PHR910002"; // failed to look f or update avaliable
+	String PHR900002 = "PHR900002"; // framework upgraded successfully
+	String PHR910003 = "PHR910003"; // unauthorized user
+	String PHR910004 = "PHR910004"; // failed to upgrade framework
 }
