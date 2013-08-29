@@ -4619,7 +4619,7 @@ select[name="reportDataType"], input[name="pdfName"] {
 /* sonar iframe css */
 .iframe_sonar {
 	border:1px solid #ccc;
-	width: 99.5%;%;
+	width: 99.5%;
 	height:450px;
 }
 
