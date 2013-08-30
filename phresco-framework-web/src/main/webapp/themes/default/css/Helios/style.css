@@ -2887,7 +2887,7 @@ html>body tbody.scrollContent {
 
 .unit_view {
 	float: left;
-	padding-top: 9px;	
+	padding-top: 8px;	
 }
 
 .unit_view span {
@@ -2897,8 +2897,7 @@ html>body tbody.scrollContent {
 }
 
 .unit_view span img {
-	margin-right: 5px;	
-}
+	margin: -2px;}
 
 .unit_view span b {
 	color: #ef7b43 !important;

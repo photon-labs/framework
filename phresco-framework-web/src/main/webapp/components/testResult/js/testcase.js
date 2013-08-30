@@ -150,13 +150,19 @@ define(["testResult/listener/testResultListener"], function() {
 			//Shows the tabular view of the test result
 			$("#tabularView").unbind("click");
 			$("#tabularView").click(function() {
-				self.showTabularView();
+				$("#testcases").hide();
+				$("#graphView").show();
+				$(this).toggle();
+				$("#graphicalView").toggle();
 			});
 			
 			//Shows the graphical view of the test result
 			$("#graphicalView").unbind("click");
 			$("#graphicalView").click(function() {
-				self.showGraphicalView();
+				$(this).toggle();
+				$("#tabularView").toggle();
+				$("#graphView").hide();
+				$("#testcases").show();
 			});
 			
 			$('a[name=updateManualTestCase_popup]').click(function() {
@@ -212,20 +218,6 @@ define(["testResult/listener/testResultListener"], function() {
 			Clazz.navigationController.mainContainer = commonVariables.contentPlaceholder;
 			self.tableScrollbar();
 			self.customScroll($(".consolescrolldiv"));
-		},
-		
-		showGraphicalView : function() {
-			$("#graphicalView").html('<img src="themes/default/images/helios/quality_graph_on.png" width="25" height="25" border="0" alt=""><b>Graph View</b>');
-			$("#tabularView").html('<img src="themes/default/images/helios/quality_table_off.png" width="25" height="25" border="0" alt="">Table View');
-			$("#testcases").hide();
-			$("#graphView").show();
-		},
-		
-		showTabularView : function() {
-			$("#graphicalView").html('<img src="themes/default/images/helios/quality_graph_off.png" width="25" height="25" border="0" alt="">Graph View');
-			$("#tabularView").html('<img src="themes/default/images/helios/quality_table_on.png" width="25" height="25" border="0" alt=""><b>Table View</b>');
-			$("#graphView").hide();
-			$("#testcases").show();
 		},
 	});
 

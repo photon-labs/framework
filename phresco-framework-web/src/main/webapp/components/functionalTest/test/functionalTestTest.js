@@ -57,7 +57,7 @@ define(["functionalTest/functionalTest"], function(FunctionalTest) {
 				$(commonVariables.contentPlaceholder).find('#graphicalView').click();
 				setTimeout(function() {
 					start();
-					equal($("#graphView").css("display"), "block", "Functional test graphical view tested");
+					equal($("#testSuites").css("display"), "block", "Functional test graphical view tested");
 					self.tabularViewTest();
 				}, 1500);
 			});
@@ -69,7 +69,7 @@ define(["functionalTest/functionalTest"], function(FunctionalTest) {
 				$(commonVariables.contentPlaceholder).find('#tabularView').click();
 				setTimeout(function() {
 					start();
-					equal($("#testSuites").css("display"), "block", "Functional test tabular view tested");
+					equal($("#graphView").css("display"), "block", "Functional test tabular view tested");
 					self.showConsole();
 				}, 1500);
 			});

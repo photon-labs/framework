@@ -18,10 +18,18 @@ define(["lib/jquery-tojson-1.0",'lib/RGraph_common_core-1.0','lib/RGraph_common_
 			var self = this;
 		},
 		
-		onGraphicalView : function() {
+		onGraphicalView : function(thisObj) {
 			var self = this;
-			$("#graphicalView").html('<img src="themes/default/images/helios/quality_graph_on.png" width="25" height="25" border="0" alt=""><b>Graph View</b>');
-			$("#tabularView").html('<img src="themes/default/images/helios/quality_table_off.png" width="25" height="25" border="0" alt="">Table View');
+			$('#graphView').hide();
+			$('.perfResultInfo').show();
+			$(thisObj).toggle();
+			$("#tabularView").toggle();
+		},
+		
+		onTabularView : function(thisObj) {
+			var self = this;
+			$("#graphicalView").html('<img src="themes/default/images/helios/graph_active.png" width="213" height="29" border="0" alt="">');
+			$("#tabularView").html('<img src="themes/default/images/helios/table_active.png" width="213" height="29" border="0" alt="">');
 			$('.perfResultInfo').hide();
 			$('#graphView').show();
 
@@ -30,15 +38,8 @@ define(["lib/jquery-tojson-1.0",'lib/RGraph_common_core-1.0','lib/RGraph_common_
 			} else {
 				$("#allData").show();
 			}
-		},
-		
-		onTabularView : function() {
-			var self = this;
-			$("#graphicalView").html('<img src="themes/default/images/helios/quality_graph_off.png" width="25" height="25" border="0" alt="">Graph View');
-			$("#tabularView").html('<img src="themes/default/images/helios/quality_table_on.png" width="25" height="25" border="0" alt=""><b>Table View</b>');
-			$('#graphView').hide();
-			$('.perfResultInfo').show();
-
+			$(thisObj).toggle();
+			$("#graphicalView").toggle();
 		},
 		
 		/***

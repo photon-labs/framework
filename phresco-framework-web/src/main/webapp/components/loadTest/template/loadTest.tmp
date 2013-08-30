@@ -5,25 +5,21 @@
         <div class="flt_right">
         	{{#showIcons resultAvailable testResultFiles}}
 	        	<div class="unit_view performanceView">
-	                <span id="tabularView">
-	                	<a href="#"><img class="tableIcon" src="themes/default/images/helios/quality_table_on.png" width="25" height="25" border="0" alt=""></a>
-	                    <a href="#"><b>Table View</b></a>
-	                </span>
-	                <span id="graphicalView">
-	                	<a href="#"><img class="graphIcon" src="themes/default/images/helios/quality_graph_off.png" width="26" height="24" border="0" alt=""></a>
-	                	<a href="#">Graph View</a>
-	                </span>
+	                 <span id="tabularView" style="cursor: pointer;">
+            			<a href="#"><img class="tableIcon" src="themes/default/images/helios/table_active.png" width="213" height="29" border="0" alt=""></a>
+            		</span>
+           			<span id="graphicalView" class="hideContent" style="cursor: pointer;">
+            			<a href="#"><img class="tableIcon" src="themes/default/images/helios/graph_active.png" width="213" height="29" border="0" alt=""></a>
+            		</span>
 	            </div>
 	        {{else}}  
 	        	<div class="unit_view performanceView hideContent">
-	                <span id="tabularView">
-	                	<a href="#"><img class="tableIcon" src="themes/default/images/helios/quality_table_on.png" width="25" height="25" border="0" alt=""></a>
-	                    <a href="#"><b>Table View</b></a>
-	                </span>
-	                <span id="graphicalView">
-	                	<a href="#"><img class="graphIcon" src="themes/default/images/helios/quality_graph_off.png" width="26" height="24" border="0" alt=""></a>
-	                	<a href="#">Graph View</a>
-	                </span>    
+	                 <span id="tabularView" style="cursor: pointer;">
+            			<a href="#"><img class="tableIcon" src="themes/default/images/helios/table_active.png" width="213" height="29" border="0" alt=""></a>
+            		</span>
+           			<span id="graphicalView" class="hideContent" style="cursor: pointer;">
+            			<a href="#"><img class="tableIcon" src="themes/default/images/helios/graph_active.png" width="213" height="29" border="0" alt=""></a>
+            		</span>
 	            </div>  
             {{/showIcons}}
 
@@ -35,10 +31,10 @@
 	                	<table class="table_border availablePdfRptsTbl hideContent" border="0" cellspacing="0" cellpadding="5" width="100%" id="availablePdfRptsTbl">
 	                		<thead>
 	                        	<tr>
-		                            <th>Existing Reports</th>
-		                            <th>Type</th>
-		                            <th>Download</th>
-		                            <th>Delete</th>
+		                            <th data-i18n=commonlabel.label.existingreport></th>
+		                            <th data-i18n=commonlabel.label.type></th>
+		                            <th data-i18n=commonlabel.label.download></th>
+		                            <th data-i18n=commonlabel.label.delete></th>
 	                        	</tr>    
 	                    	</thead>
 	                    	<tbody id="availablePdfRptsTbdy">
@@ -49,7 +45,7 @@
 		                   	<table class="report_type" style="border: none; margin-top:4px;">
 		                    	<tbody>
 		                        	<tr>
-		                            	<td>Report Type</td>
+		                            	<td data-i18n=commonlabel.label.reporttype></td>
 		                            	<td>
 		                                	<select name="reportDataType">
 		                                    	<option value="detail">Detailed Report</option>
@@ -58,17 +54,17 @@
 		                            	</td>
 		                        	</tr>
 									<tr>
-		                            	<td>Pdf Report Name</td>
+		                            	<td data-i18n=projectlist.label.pdfreportname></td>
 			                            <td>
-			                               <input type="text" placeholder="Pdf report name" name="pdfName">
+			                               <input type="text" placeholder="Pdf report data-i18n=[placeholder]projectlist.label.pdfreportname  name" name="pdfName">
 			                            </td>
 		                        	</tr>	                        	
 		                    	</tbody>
 		                   	</table>
 		                   	<div class="popuploading" id="pdfReportLoading">&nbsp</div>
 			               	<div class="flt_right">
-			                 	<input type="button" value="Generate" class="btn btn_style" id="generatePdf">
-			                 	<input type="button" value="Close" class="btn btn_style dyn_popup_close">
+			                 	<input type="button" data-i18n=[value]commonlabel.label.generate class="btn btn_style" id="generatePdf">
+			                 	<input type="button" data-i18n=[value]commonlabel.label.generate  class="btn btn_style dyn_popup_close">
 			                 	<input type="hidden" name="fromPage" value="load"/>
 			               	</div>
 	           			</form>
@@ -100,8 +96,8 @@
 	                </ul>
 	            </div>
 	        {{else}}
-	        	<div class="code_report type_report hideContent testResultDropdown">
-	            	Results
+	        	<div class="code_report type_report hideContent testResultDropdown"
+	            	data-i18n=testresult.label.results>
 	            </div>
 	            <div class="navbar navbar-static code_func logintest hideContent testResultDiv">
 	                <ul class="nav">
@@ -118,8 +114,7 @@
             {{/showResultFiles}}
             
             {{#showTestAgainst showDevice resultAvailable}}
-            <div class="code_report type_report">
-            	Type
+            <div class="code_report type_report" data-i18n=testresult.label.results>
             </div>
             <div class="navbar navbar-static code_func">
                 <ul class="nav testAgainstNav">
@@ -180,14 +175,14 @@
 		    	<div class="navbar navbar-static code_func logintest graphFor performanceGraphNav">
 	                <ul class="nav">
 	                    <li class="dropdown" id="fat-menu">
-	                      <a value="responseTime" data-toggle="dropdown" class="dropdown-toggle" role="button" id="graphForDrop" href="#">Aggr Response Time<b class="caret"></b></a>
+	                      <a value="responseTime" data-toggle="dropdown" class="dropdown-toggle" role="button" id="graphForDrop" href="#"data-i18n=performanceLoad.aggrresponsetime><b class="caret"></b></a>
 	                      <div aria-labelledby="drop5" role="menu" class="dropdown-menu cust_sel code_test_opt">
 	                      	<ul id="graphForList">
-	                        	<li class="graphForDrop"><a name="graphForDrop" value="responseTime" href="#">Response Time</a></li>
-	                        	<li class="graphForDrop"><a name="graphForDrop" value="throughPut" href="#">Throughput</a></li>
-	                        	<li class="graphForDrop"><a name="graphForDrop" value="minResponseTime" href="#">Min Response Time</a></li>
-	                        	<li class="graphForDrop"><a name="graphForDrop" value="maxResponseTime" href="#">Max Response Time</a></li>
-	                        	<li class="graphForDrop"><a name="graphForDrop" value="all" href="#">All</a></li>
+	                        	<li class="graphForDrop"><a name="graphForDrop" value="responseTime" href="#"data-i18n=performanceLoad.responsetime></a></li>
+	                        	<li class="graphForDrop"><a name="graphForDrop" value="throughPut" href="#"data-i18n=performanceLoad.throughput></a></li>
+	                        	<li class="graphForDrop"><a name="graphForDrop" value="minResponseTime" href="#"data-i18n=performanceLoad.minresponsetime></a></li>
+	                        	<li class="graphForDrop"><a name="graphForDrop" value="maxResponseTime" href="#"data-i18n=performanceLoad.maxresponsetime></a></li>
+	                        	<li class="graphForDrop"><a name="graphForDrop" value="all" href="#"data-i18n=performanceLoad.all></a></li>
 	                        </ul>
 	                      </div>
 	                    </li>

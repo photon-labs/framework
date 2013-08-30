@@ -151,7 +151,7 @@
 				$(commonVariables.contentPlaceholder).find('#tabularView').click();
 				setTimeout(function() {
 					start();
-					equal($(commonVariables.contentPlaceholder).find('.perfResultInfo').css('display'), "block", "Tabular view test");
+					equal($(commonVariables.contentPlaceholder).find('#graphView').css('display'), "block", "Tabular view test");
 					self.runGraphViewClickTest(performanceTest);
 				}, 50);
 			});
@@ -164,7 +164,7 @@
 				$(commonVariables.contentPlaceholder).find('#graphicalView').click();
 				setTimeout(function() {
 					start();
-					equal($(commonVariables.contentPlaceholder).find('#graphView').css('display'), "block", "Graphical view test");
+					equal($(commonVariables.contentPlaceholder).find('.perfResultInfo').css('display'), "block", "Graphical view test");
 					self.runGraphBasedChangeEvent(performanceTest);
 				}, 50);
 			});

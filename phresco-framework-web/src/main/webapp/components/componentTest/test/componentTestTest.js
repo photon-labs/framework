@@ -46,7 +46,7 @@ define(["componentTest/componentTest"], function(ComponentTest) {
 				$(commonVariables.contentPlaceholder).find('#graphicalView').click();
 				setTimeout(function() {
 					start();
-					equal($("#graphView").css("display"), "block", "Component test graphical view tested");
+					equal($("#testSuites").css("display"), "block", "Component test graphical view tested");
 					self.tabularViewTest();
 				}, 1500);
 			});
@@ -58,7 +58,7 @@ define(["componentTest/componentTest"], function(ComponentTest) {
 				$(commonVariables.contentPlaceholder).find('#tabularView').click();
 				setTimeout(function() {
 					start();
-					equal($("#testSuites").css("display"), "block", "Component test tabular view tested");
+					equal($("#graphView").css("display"), "block", "Component test tabular view tested");
 					self.showConsole();
 				}, 1500);
 			});
@@ -183,9 +183,9 @@ define(["componentTest/componentTest"], function(ComponentTest) {
 				setTimeout(function() {
 					start();
 					equal($('.testsuiteClm a[name=testDescription]').text(), "SampleComponentTest", "Component test run test-btn click tested");
-					/*require(["functionalTestTest"], function(functionalTestTest){
+					require(["functionalTestTest"], function(functionalTestTest){
 						functionalTestTest.runTests();
-					});*/
+					});
 				}, 4000);
 			});
 		}
