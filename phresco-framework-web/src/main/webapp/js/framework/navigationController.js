@@ -42,6 +42,7 @@ define(["framework/base", "framework/animationProvider"], function() {
 		mainContainer : null,
 		currentIndex: -1,
 		loadingActive: false,
+		callActive: false,
 		jQueryContainer : null,
 		transitionType : null,
 		cancelTransitionType : null,
@@ -140,7 +141,6 @@ define(["framework/base", "framework/animationProvider"], function() {
 			newDiv.addClass("widget-maincontent-div");
 			
 			view.doMore = function(element){
-
 				if(bCheck) {
 					var animationProviderMain = new Clazz.AnimationProvider({
 						isNative: self.isNative,
@@ -182,6 +182,7 @@ define(["framework/base", "framework/animationProvider"], function() {
 						commonVariables.loadingScreen.removeLoading();
 					}
 				}
+				
 				self.loadingActive = false;
 			};
 			
@@ -195,28 +196,30 @@ define(["framework/base", "framework/animationProvider"], function() {
 					isNative: self.isNative,
 					container: animateConten
 				});
-				self.loadingActive = false;
+				
+				self.callActive = false;
 				animationProviderSub.animate(self.pushAnimationTypeForGoingOut, function(container){
-					if(!self.loadingActive){
-						self.loadingActive = true;
+					if(!self.callActive){
+						self.callActive = true;
 
 						container.hide('fast');
 						$(container).remove();
 						
+						// render in its container
+						$(self.jQueryContainer).append(newDiv);
+						
 						if(!commonVariables.hideloading && !commonVariables.continueloading){
 							commonVariables.loadingScreen.showLoading($(self.jQueryContainer));
+							self.loadingActive = true;
 						}
 						
 						view.render(newDiv);
-						
-						// render in its container
-						$(self.jQueryContainer).append(newDiv);
 					}
 				});
 			}else{
 				if(!commonVariables.continueloading && commonVariables.animation)
 					$(self.jQueryContainer).find('.widget-maincontent-div').remove();
-				
+
 				// render in its container
 				$(self.jQueryContainer).append(newDiv);
 
@@ -224,7 +227,6 @@ define(["framework/base", "framework/animationProvider"], function() {
 					commonVariables.loadingScreen.showLoading();
 					self.loadingActive = true;
 				}
-
 				view.render(newDiv);
 			}
 		}

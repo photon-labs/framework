@@ -75,6 +75,7 @@ define(["framework/widgetWithTemplate", "login/listener/loginListener"], functio
 			
 			//Login btn click Event
 			$('#login').click(function(){
+				$('#login').focus();
 				$('#login').attr('disabled', '');
 				self.onLoginEvent.dispatch();
 				$(".login_error_msg").text('');
@@ -85,6 +86,7 @@ define(["framework/widgetWithTemplate", "login/listener/loginListener"], functio
 			document.onkeydown = function(evt) {
 				evt = evt || window.event;
 				if (evt.keyCode === 13) {
+					$('#login').focus();
 					$('#login').attr('disabled', '');
 					self.onLoginEvent.dispatch();
 				}
@@ -93,6 +95,7 @@ define(["framework/widgetWithTemplate", "login/listener/loginListener"], functio
 			//Key press Event
 			$('#login, #rememberMe').keypress(function(e){
 				if(e.keyCode === 13){
+					$('#login').focus();
 					$('#login').attr('disabled', '');
 					self.onLoginEvent.dispatch();
 				}	

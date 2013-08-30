@@ -163,9 +163,9 @@ define([], function() {
 		},
 		
 		stopServer : function(callback){
-			var self = this, appInfo = commonVariables.api.localVal.getJson('appdetails');
+			var self = this, appInfo = commonVariables.api.localVal.getJson('appdetails'), queryString = '';
 			if(appInfo !== null){
-				queryString =	'&customerId='+ self.getCustomer() +'&appId='+ appInfo.data.appInfos[0].id +'&projectId=' + appInfo.data.id + '&username=' + commonVariables.api.localVal.getSession('username');
+				queryString = 'customerId='+ self.getCustomer() +'&appId='+ appInfo.data.appInfos[0].id +'&projectId=' + appInfo.data.id + '&username=' + commonVariables.api.localVal.getSession('username');
 			}
 			
 			if(self.mavenServiceListener === null)	{
@@ -184,9 +184,9 @@ define([], function() {
 		},
 
 		restartServer : function(callback){
-			var self = this, appInfo = commonVariables.api.localVal.getJson('appdetails');
+			var self = this, appInfo = commonVariables.api.localVal.getJson('appdetails'), queryString = '';
 			if(appInfo !== null){
-				queryString =	'&customerId='+ self.getCustomer() +'&appId='+ appInfo.data.appInfos[0].id +'&projectId=' + appInfo.data.id + '&username=' + commonVariables.api.localVal.getSession('username');
+				queryString = 'customerId='+ self.getCustomer() +'&appId='+ appInfo.data.appInfos[0].id +'&projectId=' + appInfo.data.id + '&username=' + commonVariables.api.localVal.getSession('username');
 			}
 			
 			if(self.mavenServiceListener === null)	{
@@ -236,6 +236,26 @@ define([], function() {
 				);
 			} catch(exception) {
 				callback({ "status" : "service exception"});
+			}
+		},
+		
+		minifyFiles : function(minAll, bodyContent, callback){
+			var self = this, appInfo = commonVariables.api.localVal.getJson('appdetails'), queryString = '';
+			if(appInfo !== null){
+				queryString = 'minifyAll='+ minAll +'&customerId='+ self.getCustomer() +'&appId='+ appInfo.data.appInfos[0].id +'&projectId=' + appInfo.data.id + '&username=' + commonVariables.api.localVal.getSession('username');
+			}
+			
+			if(self.mavenServiceListener === null)	{
+				commonVariables.navListener.getMyObj(commonVariables.mavenService, function(retVal){
+					self.mavenServiceListener = retVal;
+					self.mavenServiceListener.mvnMinification(queryString, '#logContent', bodyContent, function(returnVal){
+						callback(returnVal);
+					});
+				});
+			}else{
+				self.mavenServiceListener.mvnMinification(queryString, '#logContent', bodyContent, function(returnVal){
+					callback(returnVal);
+				});
 			}
 		},
 		
@@ -315,6 +335,9 @@ define([], function() {
 			} else if (action === "validation") {
 				method = "GET";
 				url ='util/validation?appDirName=' + appdirName + '&customerId=' + self.getCustomer();
+			} else if (action === "minifyList") {
+				method = "GET";
+				url ='buildinfo/minifer?appDirName=' + appdirName;
 			}
 
 			header = {

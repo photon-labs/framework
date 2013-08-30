@@ -88,8 +88,8 @@ define([], function() {
 			self.mvnService(header, divId, callback);
 		},
 		
-		mvnMinification : function(paramData, divId, callback){
-			var self = this, header = self.getRequestHeader("POST", "", commonVariables.mvnMinification, paramData);
+		mvnMinification : function(paramData, divId, bodyContent, callback){
+			var self = this, header = self.getRequestHeader("POST", bodyContent, commonVariables.mvnMinification, paramData);
 			self.mvnService(header, divId, callback);
 		},
 		

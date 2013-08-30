@@ -41,6 +41,7 @@ define([], function() {
 								self.renderNavigation();
 							} else {
 								//authentication failed
+								console.info('response else',response);
 								$('#login').removeAttr('disabled');
 								$(".login_error_msg").attr('data-i18n', 'errorCodes.' + response.responseCode);
 								self.renderlocales(commonVariables.basePlaceholder);	
@@ -120,7 +121,7 @@ define([], function() {
 				contentType: "application/json",
 				requestMethod: "POST",
 				dataType: "json",
-				requestPostBody: JSON.stringify({"username" : $("#username").val(), "password" : $("#password").val()}),
+				requestPostBody: JSON.stringify({"username" : $("#username").val().trim(), "password" : $("#password").val().trim()}),
 				webserviceurl: commonVariables.webserviceurl + commonVariables.loginContext
 			};
 

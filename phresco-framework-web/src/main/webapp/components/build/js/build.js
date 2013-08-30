@@ -14,6 +14,7 @@ define(["build/listener/buildListener"], function() {
 		onDeleteEvent : null,
 		onDeployEvent : null,
 		onBuildEvent : null,
+		onMinifyEvent : null,
 		onValidationEvent : null,
 		onProcessBuildEvent : null,
 		dynamicpage : null,
@@ -77,6 +78,9 @@ define(["build/listener/buildListener"], function() {
 			if(self.onBuildEvent === null){
 				self.onBuildEvent = new signals.Signal();
 			}
+			if(self.onMinifyEvent === null){
+				self.onMinifyEvent = new signals.Signal();
+			}
 			if(self.onProcessBuildEvent === null){
 				self.onProcessBuildEvent = new signals.Signal();
 			}
@@ -99,6 +103,7 @@ define(["build/listener/buildListener"], function() {
 			self.onDeleteEvent.add(self.buildListener.deleteBuild, self.buildListener);
 			self.onDeployEvent.add(self.buildListener.deployBuild, self.buildListener);
 			self.onBuildEvent.add(self.buildListener.buildProject, self.buildListener);
+			self.onMinifyEvent.add(self.buildListener.minifyFiles, self.buildListener);
 			self.onProcessBuildEvent.add(self.buildListener.processBuild, self.buildListener);
 			self.onRASEvent.add(self.buildListener.runAgainstSource, self.buildListener);
 			self.onStopEvent.add(self.buildListener.stopServer, self.buildListener);
@@ -118,7 +123,7 @@ define(["build/listener/buildListener"], function() {
 		
 		preRender: function(whereToRender, renderFunction){
 			var self = this;
-			self.buildListener.getBuildInfo(self.buildListener.getRequestHeader("", '', 'getList'), function(response) {
+			self.buildListener.getBuildInfo(self.buildListener.getRequestHeader("", '', 'getList'), function(response){
 			var buildObject = {};
 			var userPermissions = JSON.parse(commonVariables.api.localVal.getSession('userPermissions'));
 				buildObject.buildInfos = response.data;
@@ -460,7 +465,130 @@ define(["build/listener/buildListener"], function() {
 				self.opencc(this, $(this).attr('name'), '', 50);
 			});
 		},
+		
+		miniferClickEvents : function(){
+			var self = this;
 
+			//Minifier click event
+			$("#btnMinifer").unbind("click");
+			$("#btnMinifer").click(function() {
+				var finalArray = [], fileInfo = {}, type = '', compressName = '', files = '', path = '',validation = false;
+				
+				$.each($('#build_minifier table'), function(tIndex, tCurrent){
+					$.each($(tCurrent).find('tbody tr'), function(rIndex, rCurrent){
+						fileInfo = {}, type = $(rCurrent).find('input[name=fileType]').val().trim(),
+						compressName = $(rCurrent).find('input[name='+ type +'MinName]').val().trim(),
+						files = $(rCurrent).find('input[name='+ type +'MinFiles]').val().trim(),
+						path = $(rCurrent).find('input[name='+ type +'filePath]').val().trim();
+						
+						if(type !== '' && files !== '' && path !== ''){
+							if(compressName === ''){
+								$(rCurrent).find('input[name='+ type +'MinName]').addClass('errormessage')
+								validation = true;
+								return true;
+							}else{
+								fileInfo.type = type;
+								fileInfo.compressName = compressName;
+								fileInfo.files = files;
+								fileInfo.path = path;
+								finalArray.push(fileInfo);
+							}
+						}
+					});
+					
+					if(validation){
+						return true;
+					}
+				});
+				
+				if(!validation){
+					$('#build_minifier').hide();
+					self.clearLogContent();
+					self.onMinifyEvent.dispatch($('#minAllchk').is(':checked'), finalArray, function(response){
+						$('.progress_loading').css('display','none');
+					});
+				}
+			});
+
+			self.addJSMinRow();	
+		},
+		
+		addJSMinRow : function(){
+			var self =this;
+			
+			$('img[name=jsAdd]').unbind('click');
+			$('img[name=jsAdd]').click(function(){
+				self.appendMinifyRow({"opFileLoc": "", "csvFileName": "", "compressName": "", "fileType": "js"});
+			});
+			
+			$('img[name=cssAdd]').unbind('click');
+			$('img[name=cssAdd]').click(function(){
+				self.appendMinifyRow({"opFileLoc": "", "csvFileName": "", "compressName": "", "fileType": "css"});
+			});
+			
+			$('img[name=jsRemove]').unbind('click');
+			$('img[name=jsRemove]').click(function(){
+				$(this).closest('tr').remove();
+			});
+			
+			$('img[name=cssRemove]').unbind('click');
+			$('img[name=cssRemove]').click(function(){
+				$(this).closest('tr').remove();
+			});
+			
+			$('input[name=jsBrowse]').unbind("click");
+			$('input[name=jsBrowse]').click(function(){
+				self.hideTreeContent();
+				if($(this).closest('tr').find('div[name=treeContent]').children().length > 0){
+					self.showTreeContent(this);
+				}else{self.loadTreeview(this, 'jsMinFiles', 'jsfilePath');}
+			});
+			
+			$('input[name=cssBrowse]').unbind("click");
+			$('input[name=cssBrowse]').click(function(){	
+				self.hideTreeContent();
+				if($(this).closest('tr').find('div[name=treeContent]').children().length > 0){
+					self.showTreeContent(this);
+				}else{self.loadTreeview(this, 'cssMinFiles', 'cssfilePath');}
+			});
+			
+			$('input[name=treePopupClose], input[name=selectFilePath]').unbind('click');
+			$('input[name=treePopupClose], input[name=selectFilePath]').click(function(){
+				self.hideTreeContent();
+			});
+			
+			self.renderlocales(commonVariables.contentPlaceholder);	
+		},
+		
+		appendMinifyRow : function(current){
+			if(current !== null && current.fileType.toLowerCase() === "js" || current.fileType.toLowerCase() === "css"){
+				var minusImg = '<img src="themes/default/images/helios/minus_icon.png" alt="" name="'+ current.fileType.toLowerCase() +'Remove">';
+			
+				if(current.minusImg){minusImg = '';}
+				$('table#'+ current.fileType.toLowerCase() +'min tbody').append('<tr><td><input type="text" name="'+ current.fileType.toLowerCase() +'MinName" value="'+ current.compressName +'"></td><td><input type="text" name="'+ current.fileType.toLowerCase() +'MinFiles" value="'+ current.csvFileName +'" disabled><input type="hidden" name="'+ current.fileType.toLowerCase() +'filePath" value="'+ current.opFileLoc +'"><input type="hidden" name="fileType" value="'+ current.fileType.toLowerCase() +'"><input type="button" name="'+ current.fileType.toLowerCase() +'Browse" value="Browse" data-i18n="[value]build.label.browse" class="btn btn_style"><img src="themes/default/images/helios/plus_icon.png" alt="" name="'+ current.fileType.toLowerCase() +'Add">'+ minusImg +'<div name="treeTop" class="dyn_popup"><div name="treeContent"></div><div class="flt_right"><input type="button" name="selectFilePath" class="btn btn_style" value="Ok">&nbsp;&nbsp;<input type="button" value="Close" name="treePopupClose" class="btn btn_style"></div></div></td></tr>');
+				
+				self.hideTreeContent();
+				self.addJSMinRow();
+			}
+		},
+		
+		
+		hideTreeContent : function(){
+			$('div[name=treeTop]').hide();
+			$('div[name=treeContent]').hide();
+		},
+		
+		showTreeContent : function(current){
+			$(current).closest('tr').find('div[name=treeTop]').show();
+			$(current).closest('tr').find('div[name=treeContent]').show();
+		},
+		
+		loadTreeview : function(current, filetype, filePath){
+			var self = this;
+			self.dynamicPageListener.loadTree(current, $(current).closest('tr').find('input[name='+ filetype +']'), $(current).closest('tr').find('div[name=treeContent]'), $(current).closest('tr').find('input[name='+ filePath +']'), true);
+			self.showTreeContent(current);
+		},
+		
 		/***
 		 * Bind the action listeners. The bindUI() is called automatically after the render is complete 
 		 *
@@ -575,6 +703,19 @@ define(["build/listener/buildListener"], function() {
 			//Minifier popup click event
 			$("input[name=build_minifier]").unbind("click");
 			$("input[name=build_minifier]").click(function() {
+				$("#build_minifier").html('<input type="checkbox" id="minAllchk"> Compress All Files <table id="jsmin" class="table table-striped table_border table-bordered border_div" cellpadding="0" cellspacing="0" border="0" style="margin-top:8px;"><thead><tr><th colspan="2" data-i18n="build.label.jsminification"></th></tr></thead><tbody></tbody></table><table id="cssmin" class="table table-striped table_border table-bordered border_div" cellpadding="0" cellspacing="0" border="0"><thead><tr><th colspan="2" data-i18n="build.label.cssminification"></th></tr></thead><tbody></tbody></table><div class="flt_right"><input type="button" value="Minify" data-i18n="[value]build.label.minify" class="btn btn_style" name="btnMinifer" id="btnMinifer"><input type="button" value="Close" data-i18n="[value]common.btn.close" class="btn btn_style dyn_popup_close"></div>');
+				self.appendMinifyRow({"opFileLoc": "", "csvFileName": "", "compressName": "", "fileType": "js", 'minusImg': true});
+				self.appendMinifyRow({"opFileLoc": "", "csvFileName": "", "compressName": "", "fileType": "css", 'minusImg': true});
+				
+				self.buildListener.getBuildInfo(self.buildListener.getRequestHeader("", '', 'minifyList'), function(response){
+					if(response !== null){
+						$.each(response.data, function(index, current){
+							self.appendMinifyRow(current);
+						});
+					}
+				});
+
+				self.miniferClickEvents();
 				self.opencc(this, $(this).attr('name'));
 			});
 			

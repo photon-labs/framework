@@ -81,11 +81,11 @@ define(["framework/widget", "framework/templateProvider"], function() {
 					var templateProvider = new Clazz.TemplateProvider({ templateEngine : this.templateProvider});
 					templateProvider.merge(this.templateUrl, data, function(element) {
 						$(whereToRender).html(element);
-						self.bindUI();
-						self.postRender(element);
 						self.renderlocales(whereToRender);
-						self.element = element;
+						self.bindUI();
 						self.doMore(element);
+						self.postRender(element);
+						self.element = element;
 					});
 				}
 			},

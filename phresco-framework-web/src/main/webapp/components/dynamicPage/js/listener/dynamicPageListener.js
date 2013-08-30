@@ -226,7 +226,7 @@ define(["framework/widgetWithTemplate", "common/loading", "lib/customcombobox-1.
 		constructFileBrowseCtrl : function (parameter, whereToRender, goal) {
 			var self=this;
 			whereToRender.append('<li id="'+parameter.key+'Li" class="ctrl"><label>'+parameter.name.value[0].value+'</label><input type="text" name="'+parameter.key+'" id="'+parameter.key+'" style="width: 120px ! important;"><a href="#" name="browse"><img src="themes/default/images/helios/settings_icon.png" width="23" height="22" border="0" alt=""></a><div id="browse" class="dyn_popup" style="display:none"><div id="keystoreValue"></div><div class="flt_right"><input type="button" name="selectFilePath" class="btn btn_style" value="Ok">&nbsp;&nbsp;<input type="button" value="Close" name="treePopupClose" class="btn btn_style dyn_popup_close"></div></div></li>');
-			self.signingFileTreeEvent(parameter.key);
+			self.signingFileTreeEvent($("#"+parameter.key), $("#keystoreValue"));
 		},
 
         createFileUploader : function (parameter, goal, allowedExtensions) {
@@ -1057,15 +1057,20 @@ define(["framework/widgetWithTemplate", "common/loading", "lib/customcombobox-1.
             }
         },
 		
-		signingFileTreeEvent : function(id) {
+		signingFileTreeEvent : function(placeCnt, divId) {
 			var self = this;
 			$("a[name=browse]").click(function(){
-				var current = this;
-				self.configRequestBody = {};
+				self.loadTree(this, placeCnt, divId);
+			});
+		},
+		
+		loadTree : function(current, placeCnt, divId, hiddenCnt, minify){
+			var self = this;
+			self.configRequestBody = {};
 				commonVariables.api.ajaxRequest(self.getRequestHeader(self.projectRequestBody, "", "", "fileBrowse"), function(response) {
 					 if(response !== undefined && response !== null && response.status !== "error" && response.status !== "failure"){
-						$("#keystoreValue").css("height", "240px");
-						$("#keystoreValue").html('');
+						divId.css("height", "240px");
+						divId.html('');
 						self.fileTree(response, function(res){
 							var temptree = $('<div></div>');
 							temptree.append('<ul id="keyStorefiletree" class="filetree"><li><span><strong>Click here to select file path </strong></span>' + res + '</li></ul>');
@@ -1079,10 +1084,14 @@ define(["framework/widgetWithTemplate", "common/loading", "lib/customcombobox-1.
 								}
 								}).bind("init.jstree", function(event, data){ 
 								}).bind("loaded.jstree", function (event, data) {
-									$("#keystoreValue").append(temptree);
-									self.treeclickEvent(id);	
+									divId.append(temptree);
+									
+									if(minify){self.minifyTreeclickEvent(current, divId, placeCnt, hiddenCnt);}else{
+										self.treeclickEvent(placeCnt);	
+									}
+										
 									self.popupforTree(current, $(current).attr('name'));
-									$("#keystoreValue").mCustomScrollbar({
+									divId.mCustomScrollbar({
 										autoHideScrollbar:true,
 										theme:"light-thin",
 										advanced:{ updateOnContentResize: true}
@@ -1102,26 +1111,62 @@ define(["framework/widgetWithTemplate", "common/loading", "lib/customcombobox-1.
 						},2500);
 					}
 				});
-			});
-			
-		},
 		
-		treeclickEvent : function(id) {
+		}, 
+		
+		treeclickEvent : function(placeCnt) {
 			var self=this;
 			$('span.folder').click(function(e){
 				$("span.folder a").removeClass("selected");
 				$(this).find("a").attr("class", "selected");
 				var path = $(this).parent().attr('value');
 				path = path.replace(/\+/g,' ');
-				self.saveFilePath(id, path);
+				self.saveFilePath(placeCnt, path);
 			});
 		},
 		
-		saveFilePath : function(id, path) {
+		saveFilePath : function(placeCnt, path) {
 			var self=this;
 			$("input[name=selectFilePath]").click(function() {
-				$("#"+id).val(path);
+				placeCnt.val(path);
 				$("#browse").hide();
+			});
+		},
+		
+		minifyTreeclickEvent : function(current, divId, placeCnt, hiddenCnt) {
+			var self=this;
+			$(divId).find('span.folder').unbind('click');
+			$(divId).find('span.folder').click(function(e){
+				if($(this).find("a").attr('class') === "selected"){
+					$(this).find("a").removeClass('selected');
+					$(this).removeAttr("selected");
+				} else {
+					$(this).find("a").attr("class", "selected");
+					$(this).attr("selected", "selected");
+				}
+
+				var path = $(this).parent().attr('value');
+				path = path.replace(/\+/g,' ');
+				self.minifySaveFilePath(current, divId, placeCnt, hiddenCnt, path);
+				console.info('tree clicked');
+			});
+		},
+		
+		minifySaveFilePath : function(current, divId, placeCnt, hiddenCnt, path) {
+			var self=this;
+			$(current).closest('tr').find("input[name=selectFilePath]").unbind('click');
+			$(current).closest('tr').find("input[name=selectFilePath]").click(function() {
+				console.info('ok btn clicked');
+				var nameList = '';
+				$.each($(divId).find('span.folder'), function(index, value){
+					if($(value).attr('selected') !== undefined) {
+						nameList += (nameList === ''? $(value).text() : ',' + $(value).text());
+					}
+				});
+				placeCnt.val(nameList);
+				hiddenCnt.val(path);
+				$('div[name=treeTop]').hide();
+				$('div[name=treeContent]').hide();
 			});
 		},
         
