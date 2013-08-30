@@ -186,6 +186,7 @@ define(["projectlist/listener/projectListListener"], function() {
 			var self = this;
 			$(".tooltiptop").tooltip();
 			$(".dyn_popup").hide();
+			$(".pdf_popup").hide();
 			
 			var w1 = $(".scrollContent tr:nth-child(2) td:first-child").width();
 			var w2 = $(".scrollContent tr:nth-child(2) td:nth-child(2)").width();
