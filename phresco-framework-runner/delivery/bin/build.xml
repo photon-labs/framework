@@ -84,11 +84,22 @@
 		</parallel>
 	</target>
 
-	<target name="copy-phresco">
+	<target name="copy-phresco" >
 		<echo message="copying ${framework.context} war into tomcat"/>
-		<copy todir="${tomcat.home}/webapps/${framework.context}">
-			<fileset dir="${phresco.war.dir}"/>
+        <if>
+        <available file="${tomcat.home}/webapps/${framework.context}" type="dir" />
+        <then>
+            <echo message="${framework.context} exists" />
+        </then>
+        <else>
+        <echo message="${framework.context} does not exist" />
+        <copy todir="${tomcat.home}/webapps/${framework.context}" overwrite="false">
+			<fileset dir="${phresco.war.dir}">
+                <include name="**/*" />
+            </fileset>
 		</copy>
+        </else>
+        </if>
 	</target>
 	
 	<target name="copy-security">
