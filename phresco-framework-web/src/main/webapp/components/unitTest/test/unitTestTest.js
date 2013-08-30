@@ -120,7 +120,7 @@ define(["unitTest/unitTest"], function(UnitTest) {
 				$(commonVariables.contentPlaceholder).find('#graphicalView').click();
 				setTimeout(function() {
 					start();
-					equal($("#graphView").css("display"), "block", "Unit test graphical view tested");
+					equal($("#testSuites").css("display"), "block", "Unit test graphical view tested");
 					self.tabularViewTest();
 				}, 3000);
 			});
@@ -132,7 +132,7 @@ define(["unitTest/unitTest"], function(UnitTest) {
 				$(commonVariables.contentPlaceholder).find('#tabularView').click();
 				setTimeout(function() {
 					start();
-					equal($("#testSuites").css("display"), "block", "Unit test tabular view tested");
+					equal($("#graphView").css("display"), "block", "Unit test tabular view tested");
 					self.techOptionChangeTest();
 				}, 3000);
 			});
@@ -325,7 +325,7 @@ define(["unitTest/unitTest"], function(UnitTest) {
 				  	contentType: "application/json",
 				  	status: 200,
 				  	response : function() {
-					  	this.responseText = JSON.stringify({"message":null,"exception":null,"responseCode":"PHRQ110001","data":null,"status":"error"});
+					  	this.responseText = JSON.stringify({"message":null,"exception":null,"responseCode":"PHRQ110001","data":"","status":"error"});
 				  	}
 				});
 

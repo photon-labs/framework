@@ -69,7 +69,10 @@ define(["framework/base", "api/localStorageAPI"], function(){
 							}
 						}, 'JSON');
 					}
-					callbackFunction(response);
+					
+					if (response !== undefined && response !== null && response.status !== "error") {
+						callbackFunction(response);
+					}
 				},
 				
 				error : function(jqXHR, textStatus, errorThrown){

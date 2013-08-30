@@ -55,13 +55,11 @@
 				</div>
 			</div>
             <span id="tabularView" style="cursor: pointer;">
-            	<a href="#"><img class="tableIcon" src="themes/default/images/helios/quality_table_on.png" width="25" height="25" border="0" alt=""></a>
-                <a href="#"><b data-i18n="commonlabel.label.tableview"></b></a>
+            	<a href="#"><img class="tableIcon" src="themes/default/images/helios/table_active.png" width="213" height="29" border="0" alt=""></a>
             </span>
-            <span id="graphicalView" style="cursor: pointer;">
-            	<a href="#"><img class="graphIcon" src="themes/default/images/helios/quality_graph_off.png" width="26" height="24" border="0" alt=""></a>
-            	<a href="#" data-i18n="commonlabel.label.graphview"></a>
-            </span>    
+           	<span id="graphicalView" class="hideContent" style="cursor: pointer;">
+            	<a href="#"><img class="tableIcon" src="themes/default/images/helios/graph_active.png" width="213" height="29" border="0" alt=""></a>
+            </span>
         </div>
     	<div class="icon_images"><a class="tooltiptop" title="" data-placement="bottom" data-toggle="tooltip" href="#" data-original-title="Open Folder" id="openFolder"><img src="themes/default/images/helios/openfolder_icon.png"></a></div>
 		<div class="icon_images copy_path_icon" style="margin-right:2px;"><a class="tooltiptop" title="" data-placement="bottom" data-toggle="tooltip" href="#" data-original-title="Copy Path" id="copyPath"><img src="themes/default/images/helios/copypath_icon.png" ></a></div>	

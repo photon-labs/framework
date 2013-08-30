@@ -52,15 +52,14 @@
 					<!--Pdf report popup ends here -->
 				</div>
 			</div>
-            <span>
-            	<a id="tabularView" href="#"><img src="themes/default/images/helios/quality_table_on.png" width="25" height="25" border="0" alt=""><b>Table View</b></a>
+            <span id="tabularView" style="cursor: pointer;">
+            	<a href="#"><img class="tableIcon" src="themes/default/images/helios/table_active.png" width="213" height="29" border="0" alt=""></a>
             </span>
-            <span>
-            	<a id="graphicalView" href="#"><img src="themes/default/images/helios/quality_graph_off.png" width="26" height="24" border="0" alt="">Graph View</a>
-            </span>    
+           	<span id="graphicalView" class="hideContent" style="cursor: pointer;">
+            	<a href="#"><img class="tableIcon" src="themes/default/images/helios/graph_active.png" width="213" height="29" border="0" alt=""></a>
+            </span>
         </div>
          
-		 
         <div class="unit_path">
 			<!--upload popup starts here -->
 			<input type="button" value="Upload" title="Template Upload" id="show_uploadTemplate_popup" name="template_upload" class="btn btn_style">

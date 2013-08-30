@@ -376,13 +376,13 @@ define(["performanceLoadListener/listener/performanceLoadListener"], function() 
 			//Shows the tabular view of the test result
 			$("#tabularView").unbind("click");
 			$("#tabularView").click(function() {
-				self.onTabularViewEvent.dispatch($(this));
+				self.onTabularViewEvent.dispatch(this);
 			});
 			
 			//Shows the graphical view of the test result
 			$("#graphicalView").unbind("click");
 			$("#graphicalView").click(function() {
-				self.onGraphicalViewEvent.dispatch($(this));
+				self.onGraphicalViewEvent.dispatch(this);
 			});
 			
 			//To show hide the console content when the console is clicked

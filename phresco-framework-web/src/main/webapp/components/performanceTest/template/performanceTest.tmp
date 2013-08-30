@@ -5,25 +5,21 @@
         <div class="flt_right">
         	{{#showIcons resultAvailable testResultFiles}}
 	        	<div class="unit_view performanceView">
-	                <span id="tabularView">
-	                	<a href="#"><img class="tableIcon" src="themes/default/images/helios/quality_table_on.png" width="25" height="25" border="0" alt=""></a>
-	                    <a href="#"><b>Table View</b></a>
-	                </span>
-	                <span id="graphicalView">
-	                	<a href="#"><img class="graphIcon" src="themes/default/images/helios/quality_graph_off.png" width="26" height="24" border="0" alt=""></a>
-	                	<a href="#">Graph View</a>
-	                </span>
-	            </div>
+	                <span id="tabularView" style="cursor: pointer;">
+						<a href="#"><img class="tableIcon" src="themes/default/images/helios/table_active.png" width="213" height="29" border="0" alt=""></a>
+					</span>
+					<span id="graphicalView" class="hideContent" style="cursor: pointer;">
+						<a href="#"><img class="tableIcon" src="themes/default/images/helios/graph_active.png" width="213" height="29" border="0" alt=""></a>
+					</span>
+				</div>	
 	        {{else}}  
 	        	<div class="unit_view performanceView hideContent">
-	                <span id="tabularView">
-	                	<a href="#"><img class="tableIcon" src="themes/default/images/helios/quality_table_on.png" width="25" height="25" border="0" alt=""></a>
-	                    <a href="#"<b>data-i18n=commonlabel.label.tableview</b>></a>
-	                </span>
-	                <span id="graphicalView">
-	                	<a href="#"><img class="graphIcon" src="themes/default/images/helios/quality_graph_off.png" width="26" height="24" border="0" alt=""></a>
-	                	<a href="#"data-i18n=commonlabel.label.graphview></a>
-	                </span>    
+	                <span id="tabularView" style="cursor: pointer;">
+						<a href="#"><img class="tableIcon" src="themes/default/images/helios/table_active.png" width="213" height="29" border="0" alt=""></a>
+					</span>
+					<span id="graphicalView" class="hideContent" style="cursor: pointer;">
+						<a href="#"><img class="tableIcon" src="themes/default/images/helios/graph_active.png" width="213" height="29" border="0" alt=""></a>
+					</span>
 	            </div>  
             {{/showIcons}}
             
@@ -68,7 +64,7 @@
 		                   	<div class="popuploading" id="pdfReportLoading">&nbsp</div>
 			               	<div class="flt_right">
 			                 	<input type="button" data-i18n=[value]commonlabel.label.generate  class="btn btn_style" id="generatePdf">
-			                 	<input type="button" data-i18n=[value]commonlabel.label.generate class="btn btn_style dyn_popup_close">
+			                 	<input type="button" data-i18n=[value]commonlabel.label.close class="btn btn_style dyn_popup_close">
 			                 	<input type="hidden" name="fromPage" data-i18n=[value]navigation.application.performance />
 			               	</div>
 	           			</form>
