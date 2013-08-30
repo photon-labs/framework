@@ -445,6 +445,7 @@ define([], function() {
 				$("thead[name=pdfHeader_"+dynamicId+"]").removeClass("hideContent");
 				$("thead[name=pdfHeader_"+dynamicId+"]").show();
 				for(var i =0; i < response.length; i++) {
+					var idgenerate = Date.now();
 					var headerTr = '<tr class="generatedRow" fileName="'+response[i].fileName+'" appdirname = "'+temp+'"><td>' + response[i].time + '</td><td>'+response[i].type+'</td>';
 					content = content.concat(headerTr);
 					headerTr = '<td class="list_img"><a class="tooltiptop" fileName="'+response[i].fileName+'" fromPage="All" href="#" data-toggle="tooltip" data-placement="top" name="downLoad" data-original-title="Download Pdf" title=""><img src="themes/default/images/helios/download_icon.png" width="15" height="18" border="0" alt="0"></a></td>';
