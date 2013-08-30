@@ -359,7 +359,7 @@ define([], function() {
 						var temp2 = $(obj).position().top - 397;
 						$("#"+temp).css('top',temp2);
 					} else {
-						var temp2 = $(obj).position().top - 118;
+						var temp2 = $(obj).position().top - 88;
 						$("#"+temp).css('top',temp2);
 					}	
 				}
@@ -450,7 +450,7 @@ define([], function() {
 					headerTr = '<td class="list_img"><a class="tooltiptop" fileName="'+response[i].fileName+'" fromPage="All" href="#" data-toggle="tooltip" data-placement="top" name="downLoad" data-original-title="Download Pdf" title=""><img src="themes/default/images/helios/download_icon.png" width="15" height="18" border="0" alt="0"></a></td>';
 					content = content.concat(headerTr);
 					if(userPermissions.managePdfReports) {
-						headerTr = '<td class="list_img"><a class="tooltiptop" fileName="'+response[i].fileName+'" fromPage="All" href="#" data-toggle="tooltip" data-placement="top" name="delete" data-original-title="Delete Pdf" title=""><img src="themes/default/images/helios/delete_row.png" width="14" height="18" border="0" alt="0"></a></td></tr>';
+						headerTr = '<td class="list_img"><a class="tooltiptop" name="deletepdf_'+idgenerate+i+'" fileName="'+response[i].fileName+'" fromPage="All" href="#" data-toggle="tooltip" data-placement="top" namedel="delete" data-original-title="Delete Pdf" title=""><img src="themes/default/images/helios/delete_row.png" width="14" height="18" border="0" alt="0"></a><div style="display:none;" id="deletepdf_'+idgenerate+i+'" class="delete_msg tohide">Are you sure to delete ?<div><input type="button" value="Yes" data-i18n="[value]common.btn.yes" class="btn btn_style dlt" name="delpdf"><input type="button" value="No" data-i18n="[value]common.btn.no" class="btn btn_style dyn_popup_close"></div></div></td></tr>';
 					} else {
 						headerTr = '<td class="list_img"><a class="tooltiptop" fileName="'+response[i].fileName+'" fromPage="All" href="#" data-toggle="tooltip" data-placement="top" data-original-title="Delete Pdf" title=""><img src="themes/default/images/helios/delete_row_off.png" width="14" height="18" border="0" alt="0"></a></td></tr>';
 					}
@@ -467,35 +467,42 @@ define([], function() {
 		
 		clickFunction : function(dynamicId){
 			var self = this;
-			$("a[name=delete]").click(function() {
+			$("a[namedel=delete]").click(function() {
+				var temp = $(this).attr('name');
+				self.openccpl(this, $(this).attr('name'));
+				$('#'+temp).show();
 				var deletedata = {}, actionBody = {}, action;
 				deletedata.fileName = $(this).attr("fileName");
 				deletedata.fromPage = $(this).attr("frompage");
 				deletedata.appDir = $(this).closest('tr').attr("appdirname");
-				$(".generatedRow").each(function() {
-					var pdfFileName = $(this).attr("fileName");
-					if(pdfFileName === deletedata.fileName){
-						$("tr[fileName='"+pdfFileName+"']").remove();
+				$('input[name="delpdf"]').unbind();
+				$('input[name="delpdf"]').click(function() {	
+					$(".generatedRow").each(function() {						
+						var pdfFileName = $(this).attr("fileName");
+						if(pdfFileName === deletedata.fileName){
+							$("tr[fileName='"+pdfFileName+"']").remove();
+						}
+					});
+					var size = $(".generatedRow").size();
+					if(size === 0) {
+						$("thead[name=pdfHeader_"+dynamicId+"]").hide();
+						$("#noReport_"+dynamicId).removeClass("hideContent");
+						$("#noReport_"+dynamicId).show();
+						$("#noReport_"+dynamicId).html("No Reports are Available");
 					}
-				});
-				var size = $(".generatedRow").size();
-				if(size === 0) {
-					$("thead[name=pdfHeader_"+dynamicId+"]").hide();
-					$("#noReport_"+dynamicId).removeClass("hideContent");
-					$("#noReport_"+dynamicId).show();
-					$("#noReport_"+dynamicId).html("No Reports are Available");
-				}
-				actionBody = deletedata;
-				self.projectListAction(self.getActionHeader(actionBody, "deleteReport"), "", function(response){
-				});
+					actionBody = deletedata;  
+					self.projectListAction(self.getActionHeader(actionBody, "deleteReport"), "", function(response){
+					});  
+				});	
 			});
 			
-			$("a[name=downLoad]").click(function() {
+			$("a[name=downLoad]").click(function() {			
 				var actionBody = {};
 				actionBody.fileName = $(this).attr("fileName");
 				actionBody.fromPage = $(this).attr("frompage");
 				actionBody.appDir = $(this).closest('tr').attr("appdirname");
 				var pdfDownloadUrl = commonVariables.webserviceurl + "pdf/downloadReport?appDirName="+actionBody.appDir+"&reportFileName="+actionBody.fileName+"&fromPage="+actionBody.fromPage;
+				if(commonVariables.animation)
 				window.open(pdfDownloadUrl, '_self');
 			});
 			

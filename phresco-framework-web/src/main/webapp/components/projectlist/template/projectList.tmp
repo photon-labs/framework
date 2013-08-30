@@ -212,7 +212,6 @@
 				 	<div class="dummyCommit" id="dummyCommit_{{id}}"></div>
 				 	<div class="popuploading" id="commitLoading_{{id}}">&nbsp</div>
 					<div class="hideContent commitErr_{{id}} popup_btn" width="100%" border="0" cellspacing="0" cellpadding="0">
-						<p>Repository does not exist for commit.</p>
 						<p><span data-i18n="projectlist.label.notworkingcopy"></span></p>
 						<div class="popupCloseBtn">
 							<input type="button" value="Close" data-i18n="[value]common.btn.close" class="btn btn_style dyn_popup_close">

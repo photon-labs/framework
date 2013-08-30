@@ -432,11 +432,13 @@ define(["framework/widget", "framework/templateProvider"], function() {
 			
 			openccpl : function(ee, placeId, currentPrjName) {
 				var self=this;
-				$(".dyn_popup").hide();
-				
 				$('.features_content_main').removeClass('z_index');
 				var act = $(ee).attr("data-original-title");
-
+				if(act === 'Delete Pdf') {
+					$(".tohide").hide();
+				} else {
+					$(".dyn_popup").hide();
+				}	
 				var clicked = $(ee);
 				var target = $("#" + placeId);
 				var t= clicked.offset().top + 33;
@@ -450,12 +452,16 @@ define(["framework/widget", "framework/templateProvider"], function() {
 					$(target).toggle();
 					$(target).removeClass('speakstyletopright').removeClass('speakstylebottomright').removeClass('speakstylebottomleft').addClass('speakstyletopleft').addClass('dyn_popup');
 				} else if (clicked.offset().top < halfheight && clicked.offset().left > halfwidth){
-					var d= ($(window).width() - (clicked.offset().left + clicked.outerWidth())) - 18;
-					if(($(ee).parent('td').attr('class')!='delimages') && (act === "Delete "+currentPrjName)) {
+					var d = null;
+					if(act === 'Delete Pdf') {
+						d= ($(window).width() - (clicked.offset().left + clicked.outerWidth())) - 300;
+						$(target).css({"right":d,"left": "auto","top": BottomHeight});						
+					} else if(($(ee).parent('td').attr('class')!='delimages') && (act === "Delete "+currentPrjName)) {
+						d= ($(window).width() - (clicked.offset().left + clicked.outerWidth())) - 18;
 						var BottomHeight = clicked.position().top + clicked.height() ;
 						$(target).css({"right":d,"left": "auto","top": BottomHeight});
-					}
-					else {		
+					} else {		
+						d= ($(window).width() - (clicked.offset().left + clicked.outerWidth())) - 18;
 						$(target).css({"right":d ,"margin-top":10,"left": "auto","top": "auto"});
 					}
 					$(target).toggle();
@@ -468,13 +474,18 @@ define(["framework/widget", "framework/templateProvider"], function() {
 				} else if (clicked.offset().top > halfheight && clicked.offset().left > halfwidth){
 					var d = null,BottomHeight = null;
 					d = ($(window).width() - (clicked.offset().left + clicked.outerWidth())) - 15;
-					if(($(ee).parent('td').attr('class')!='delimages') && (act === "Delete "+currentPrjName)) {
+					if(act === 'Delete Pdf') {
+						d = ($(window).width() - (clicked.offset().left + clicked.outerWidth())) - 300;
 						BottomHeight = clicked.position().top - 70;
 						$(target).css({"right":d ,"top":BottomHeight,"left": "auto"});
 						$(target).toggle();
 						$(target).removeClass('speakstyletopleft').removeClass('speakstyletopright').removeClass('speakstylebottomleft').addClass('speakstylebottomright').addClass('dyn_popup');
-					}
-						else {
+					} else if(($(ee).parent('td').attr('class')!='delimages') && (act === "Delete "+currentPrjName)) {
+						BottomHeight = clicked.position().top - 70;
+						$(target).css({"right":d ,"top":BottomHeight,"left": "auto"});
+						$(target).toggle();
+						$(target).removeClass('speakstyletopleft').removeClass('speakstyletopright').removeClass('speakstylebottomleft').addClass('speakstylebottomright').addClass('dyn_popup');
+					} else {
 							BottomHeight = clicked.position().top - (target.height() + 28 );
 							$(target).css({"right":d ,"top":BottomHeight,"left": "auto"});
 							$(target).toggle();
@@ -590,12 +601,12 @@ define(["framework/widget", "framework/templateProvider"], function() {
 					onRender: function(date) {return date.valueOf();}
 				}).on('changeDate', function(ev) {
 				   if ((ev.date.valueOf() > checkout.date.valueOf())||(flag === 1)) {
-						var newDate = new Date(ev.date);
+						/* var newDate = new Date(ev.date);
 						newDate.setDate(newDate.getDate() + 1);
-						checkout.setValue(newDate);
+						checkout.setValue(newDate); */
 					}
 					checkin.hide();
-					$('#endDate')[0].focus();
+					//$('#endDate')[0].focus();
 					$('#endDate').removeAttr('disabled');
 				}).data('datepicker');
 				
@@ -677,11 +688,11 @@ define(["framework/widget", "framework/templateProvider"], function() {
 				callback(true);
 			},
 			
-			showErrorPopUp : function(configErrorMsg){
+			/* showErrorPopUp : function(configErrorMsg){
 				var self = this;
 				$(".blinkmsg").removeClass("popsuccess").addClass("poperror");
 				self.effectFadeOut('poperror', configErrorMsg);
-			},
+			}, */
 
 	        //Show mandatory validation error msg
 	        showDynamicErrors : function(response) {
