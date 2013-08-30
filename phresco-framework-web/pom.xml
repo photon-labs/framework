@@ -25,7 +25,13 @@
     </distributionManagement>
     
   <dependencies>
-  
+	           
+  		<dependency>
+			<groupId>org.easymock</groupId>
+			<artifactId>easymock</artifactId>
+			<version>3.2</version>
+		</dependency>
+
 		<dependency>
 			<groupId>net.awired.js</groupId>
 			<artifactId>requirejs</artifactId>

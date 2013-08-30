@@ -27,7 +27,9 @@ import com.photon.phresco.framework.rest.api.util.BufferMapTest;
 @RunWith(Suite.class)
 @SuiteClasses({
 	LoginServiceTest.class,
-	ProjectServiceTest.class,
+	UpgradeServiceTest.class,
+	UtilServiceTest.class
+/*	ProjectServiceTest.class,
 	ConfigurationServiceTest.class,
 	BuildInfoTest.class,
 	CIServiceTest.class,
@@ -47,7 +49,7 @@ import com.photon.phresco.framework.rest.api.util.BufferMapTest;
 	CIJobTemplateServiceTest.class,
 	BufferMapTest.class,
 	ErrorHandlerTest.class,
-	ProjectDeleteServiceTest.class
+	ProjectDeleteServiceTest.class*/
 	}
 )
 

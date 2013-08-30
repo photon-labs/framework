@@ -48,6 +48,15 @@ public interface ResponseCodes {
 	String PHR8C00001 = "PHR8C00001"; // mandatory parameter check failed
 	String PHR9C10001 = "PHR9C10001"; // unable to complete validation
 	String PHR9C00001 = "PHR9C00001"; // completed validation successfully
+	String PHR10C00001 = "PHR10C00001"; // Lock details returned successfully
+	String PHR10C00002 = "PHR10C00002"; // No Lock details to return
+	String PHR10C10001 = "PHR10C10001"; // failed to return lock details
+	String PHR11C00001 = "PHR11C00001"; // No process is running
+	String PHR11C00002 = "PHR11C00002"; // process stopped successfully
+	String PHR11C10001 = "PHR11C10001"; // failed to read the process.json
+	String PHR11C10002 = "PHR11C10002"; // unable to parse the process.json
+	String PHR11C10003 = "PHR11C10003"; // failed to kill the process
+	
 	
 	/*
 	 * Login page
@@ -266,7 +275,10 @@ public interface ResponseCodes {
 	String PHR710020 = "PHR710020"; // selected environment in global settings does not have selected configurations
 	String PHR710021 = "PHR710021"; // selected environment in this app does not have selected configurations
 	String PHR700010 = "PHR700010"; // no builds available
-	
+	String PHR700011 = "PHR700011"; // minified files returned successfully
+	String PHR700012 = "PHR700012"; // No minified files to return
+	String PHR710022 = "PHR710022"; // fail to return  minified files
+	String PHR710023 = "PHR710023"; // fail to load pom.xml
 	/*
 	 * Quality Assurance Page
 	 */

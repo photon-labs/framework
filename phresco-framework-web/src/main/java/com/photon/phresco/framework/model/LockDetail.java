@@ -11,15 +11,17 @@ public class LockDetail {
     private String userName = "";
     private Date startedDate;
     private String appId = "";
+    private String uniqueKey = "";
 	
     public LockDetail() {
     	
     }
-    
-    public LockDetail(String appId, String actionType, String userName) {
+
+	public LockDetail(String appId, String actionType, String userName, String uniqueKey) {
     	this.setAppId(appId);
 		this.setActionType(actionType);
 		this.setUserName(userName);
+		this.setUniqueKey(uniqueKey);
 		this.setStartedDate(new Date());
 	}
 
@@ -47,14 +49,22 @@ public class LockDetail {
 		return startedDate;
 	}
 
+	public String getAppId() {
+		return appId;
+	}
+
 	public void setAppId(String appId) {
 		this.appId = appId;
 	}
 
-	public String getAppId() {
-		return appId;
+	public String getUniqueKey() {
+		return uniqueKey;
 	}
-	
+
+	public void setUniqueKey(String uniqueKey) {
+		this.uniqueKey = uniqueKey;
+	}
+
 	public String toString() {
         return new ToStringBuilder(this,
                 ToStringStyle.DEFAULT_STYLE)
@@ -63,6 +73,7 @@ public class LockDetail {
                 .append("userName", getUserName())
                 .append("startedDate", getStartedDate())
                 .append("appId", getAppId())
+                .append("uniqueKey", getUniqueKey())
                 .toString();
     }
 }

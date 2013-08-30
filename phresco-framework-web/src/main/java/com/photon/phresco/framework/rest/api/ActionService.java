@@ -18,6 +18,7 @@
 package com.photon.phresco.framework.rest.api;
 
 import java.io.IOException;
+import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.GET;
@@ -35,6 +36,7 @@ import com.photon.phresco.commons.ResponseCodes;
 import com.photon.phresco.commons.model.ApplicationInfo;
 import com.photon.phresco.exception.PhrescoException;
 import com.photon.phresco.framework.commons.FrameworkUtil;
+import com.photon.phresco.framework.model.MinifyInfo;
 import com.photon.phresco.framework.model.PerformanceUrls;
 import com.photon.phresco.framework.rest.api.util.ActionFunction;
 import com.photon.phresco.framework.rest.api.util.ActionResponse;
@@ -423,14 +425,14 @@ public class ActionService implements ActionServiceConstant, FrameworkConstants,
 	@POST
 	@Path("/minification")
 	@Produces(MediaType.APPLICATION_JSON)
-	 public Response minification(@Context HttpServletRequest request) throws PhrescoException  {
+	 public Response minification(@Context HttpServletRequest request, List<MinifyInfo> files) throws PhrescoException  {
 		
 		ActionFunction actionFunction = new ActionFunction();
 		ActionResponse response = new ActionResponse();
 		try	{
 			actionFunction.prePopulateModelData(request);
-			actionFunction.prePopulateMinificationData(request);
-			response = actionFunction.minification(request);
+//			actionFunction.prePopulateMinificationData(request);
+			response = actionFunction.minification(request, files);
 		} catch (Exception e) {
 			S_LOGGER.error(e.getMessage());
 			response.setStatus(ERROR);
@@ -903,6 +905,7 @@ public class ActionService implements ActionServiceConstant, FrameworkConstants,
 				}
 				BufferMap.removeBufferReader(uniquekey);
 				status=COMPLETED;
+				FrameworkServiceUtil.removeLock(uniquekey);
 			}
 			else{
 				

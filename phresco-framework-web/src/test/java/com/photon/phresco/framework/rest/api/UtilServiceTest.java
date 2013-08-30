@@ -1,15 +1,81 @@
 package com.photon.phresco.framework.rest.api;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.Arrays;
+
+import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.core.Response;
 
 import junit.framework.Assert;
 
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
+import org.junit.BeforeClass;
 import org.junit.Test;
+import org.springframework.mock.web.MockHttpServletRequest;
 
+import com.google.gson.Gson;
+import com.photon.phresco.exception.PhrescoException;
+import com.photon.phresco.framework.model.LockDetail;
+import com.photon.phresco.util.Utility;
 public class UtilServiceTest extends RestBaseTest {
 	
 	UtilService utilService = new UtilService();
+	static StringBuilder sb = new StringBuilder(Utility.getPhrescoHome()).append(File.separator).append("workspace").append(
+			File.separator).append("process.lock");
+	static File processFile = new File(sb.toString());
 	
+	static StringBuilder sbs = new StringBuilder(Utility.getProjectHome()).append(File.separator).append("TestProject").append(
+			File.separator).append("do_not_checkin").append(File.separator).append("process.json");
+	static File processjson = new File(sbs.toString());
+	
+	
+	@BeforeClass
+	public static void setUp() {
+		BufferedWriter out = null;
+		FileWriter fstream = null;
+		try {
+			LockDetail lock = new LockDetail("TestProject", "update", "admin_user", "4321");
+			processFile.createNewFile();
+			Gson gson = new Gson();
+			String infoJSON = gson.toJson(Arrays.asList(lock));
+			fstream = new FileWriter(processFile);
+			out = new BufferedWriter(fstream);
+			out.write(infoJSON);
+			
+			JSONObject jsonObject = new JSONObject();
+			JSONParser parser = new JSONParser();
+			if(processjson.exists()) {
+			FileReader reader = new FileReader(processjson);
+			jsonObject = (JSONObject) parser.parse(reader);
+			}
+			jsonObject.put("build", "8765");
+			FileWriter writer = new FileWriter(processjson);
+			writer.write(jsonObject.toString());
+			writer.close();
+			
+		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (ParseException e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				if (out != null) {
+					out.close();
+				}
+				if (fstream != null) {
+					fstream.close();
+				}
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+	}
 	@Test
 	public void openFolder() {
 		Response openFolderUnit = utilService.openFolder(appDirName, "unitTest");
@@ -28,7 +94,7 @@ public class UtilServiceTest extends RestBaseTest {
 		Assert.assertEquals(200, openFolderBuild.getStatus());
 		Response openFolderDirFail = utilService.openFolder(appDirName, null);
 		Assert.assertEquals(200, openFolderDirFail.getStatus());
-		Response openFolderFail = utilService.openFolder("", "");
+		Response openFolderFail = utilService.openFolder(appDirName, "");
 		Assert.assertEquals(200, openFolderFail.getStatus());
 		
 	}
@@ -51,7 +117,7 @@ public class UtilServiceTest extends RestBaseTest {
 		Assert.assertEquals(200, openFolderBuild.getStatus());
 		Response openFolderDirFail = utilService.copyPath(appDirName, null);
 		Assert.assertEquals(200, openFolderDirFail.getStatus());
-		Response openFolderFail = utilService.copyPath("", "");
+		Response openFolderFail = utilService.copyPath(appDirName, "");
 		Assert.assertEquals(200, openFolderFail.getStatus());
 		
 	}
@@ -73,4 +139,72 @@ public class UtilServiceTest extends RestBaseTest {
 //		Response copyLogToClipboardFail = utilService.getTecnologyOptions(userId, "");
 //		Assert.assertEquals(400, copyLogToClipboardFail.getStatus());
 	}
+	
+	@Test
+	public void checkLockTest() throws PhrescoException {
+		
+		Response checkForLock = utilService.checkForLock("code", "TestProject1");
+		Assert.assertEquals(200, checkForLock.getStatus());
+		Response checkForLock2 = utilService.checkForLock("build", "TestProject1");
+		Assert.assertEquals(200, checkForLock2.getStatus());
+		Response checkForLock3 = utilService.checkForLock("Start", "TestProject1");
+		Assert.assertEquals(200, checkForLock3.getStatus());
+		Response checkForLock4 = utilService.checkForLock("unit", "TestProject1");
+		Assert.assertEquals(200, checkForLock4.getStatus());
+		Response checkForLock5 = utilService.checkForLock("Deploy", "TestProject1");
+		Assert.assertEquals(200, checkForLock5.getStatus());
+		Response checkForLock6 = utilService.checkForLock("addToRepo", "TestProject1");
+		Assert.assertEquals(200, checkForLock6.getStatus());
+		Response checkForLock7 = utilService.checkForLock("commit", "TestProject1");
+		Assert.assertEquals(200, checkForLock7.getStatus());
+		
+		Response checkForLock8 = utilService.checkForLock("create", "TestProject");
+		Assert.assertEquals(200, checkForLock8.getStatus());
+		
+		Response checkForLock9 = utilService.checkForLock("update", "TestProject");
+		Assert.assertEquals(200, checkForLock9.getStatus());
+		processFile.delete();
+		
+	}
+	
+	@Test
+	public void killprocessTest() {
+		Response killProcess = utilService.killProcess("create", appDirName);
+		Assert.assertEquals(200, killProcess.getStatus());
+	}
+	
+	@Test
+	public void killprocess() {
+		Response killProcess = utilService.killProcess("build", appDirName);
+		Assert.assertEquals(200, killProcess.getStatus());
+	}
+
+	@Test
+	public void checkLockException() {
+		 Response checkForLock = utilService.checkForLock("build", "TestProject");
+		 Assert.assertEquals(200, checkForLock.getStatus());
+	}
+	
+	@Test
+	public void checkValidation() {
+		MockHttpServletRequest request = new MockHttpServletRequest();
+		request.setParameter("buildName", "sample");
+		request.setParameter("environmentName", "Production");
+		request.setParameter("logs", "showErrors");
+		request.setParameter("skipTest", "true");
+		request.setParameter("customerId", customerId);
+		request.setParameter("projectId", "TestProject");
+		request.setParameter("appId", "TestProject");
+		request.setParameter("username", userId);
+		request.setParameter("buildNumber", "");
+		request.setParameter("testBasis", "parameters");
+		HttpServletRequest httpServletRequest = (HttpServletRequest)request;
+		Response checkMandatory = utilService.checkMandatoryValidation(httpServletRequest, appDirName, "package", customerId);
+		Assert.assertEquals(200, checkMandatory.getStatus());
+		Response checkMandatoryValidation = utilService.checkMandatoryValidation(httpServletRequest, appDirName, "performance-test", customerId);
+		Assert.assertEquals(200, checkMandatoryValidation.getStatus());
+	}
+	
+	
+	
 }

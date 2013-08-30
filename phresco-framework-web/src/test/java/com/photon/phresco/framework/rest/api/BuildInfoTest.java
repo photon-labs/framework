@@ -4,6 +4,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 
 import java.io.File;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -21,6 +22,7 @@ import com.photon.phresco.commons.model.BuildInfo;
 import com.photon.phresco.commons.model.ProjectInfo;
 import com.photon.phresco.commons.model.TechnologyInfo;
 import com.photon.phresco.exception.PhrescoException;
+import com.photon.phresco.framework.model.MinifyInfo;
 import com.photon.phresco.framework.rest.api.util.ActionResponse;
 import com.photon.phresco.util.Utility;
 
@@ -230,6 +232,32 @@ public class BuildInfoTest extends RestBaseTest {
 		Response response = buildinfoservice.checkStatus(appDirName);
 		Assert.assertEquals(200, response.getStatus());
 	}
+
+	@Test
+	public void doMinification() throws PhrescoException {
+		MockHttpServletRequest request = new MockHttpServletRequest();
+		request.setParameter("minifyAll", "false");
+		request.setParameter("appId", "TestJquery");
+		request.setParameter("projectId", "TestJquery");
+		request.setParameter("username", "admin");
+		request.setParameter("customerId", customerId);
+		MinifyInfo minify = new MinifyInfo();
+		minify.setCompressName("JsCompress");
+		minify.setFileType("js");
+		minify.setCsvFileName("Base-min.js,LoginWidget-min.js");
+		minify.setOpFileLoc(Utility.getProjectHome() + "TestJquery/app/src/main/webapp/js/framework/");
+		HttpServletRequest httpServletRequest = (HttpServletRequest)request;
+		
+		Response minification = actionservice.minification(httpServletRequest, Arrays.asList(minify));
+		Assert.assertEquals(200, minification.getStatus());
+	}
+	
+	@Test
+	public void getminifiedFiles() {
+		Response minifer = buildinfoservice.minifer("TestJquery");
+		Assert.assertEquals(200, minifer.getStatus());
+	}
+	
 	
 //	@Test
 	public void iphoneDevicebuildTest() throws PhrescoException {

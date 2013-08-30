@@ -42,7 +42,7 @@ public class RepositoryServiceTest extends RestBaseTest  {
 		repodetail.setType("svn");
 		repodetail.setCommitMessage("[artf672433]testcommit");
 		repodetail.setRepoUrl("https://insight.photoninfotech.com/svn/repos/phresco-svn-projects/ci/2.0/TestProject/");
-		Response addProjectToRepo = repositoryservice.addProjectToRepo(appDirName, repodetail, userId, "TestProject", "TestProject");
+		Response addProjectToRepo = repositoryservice.addProjectToRepo(appDirName, repodetail, userId, "TestProject", "TestProject", "admin_user");
 		Assert.assertEquals(200,addProjectToRepo.getStatus());
 	}
 	
@@ -77,7 +77,7 @@ public class RepositoryServiceTest extends RestBaseTest  {
 		repodetail.setRepoUrl("https://insight.photoninfotech.com/svn/repos/phresco-svn-projects/ci/2.0/TestProject/" + appDirName);
 		
 		repodetail.setCommitableFiles(Arrays.asList(Utility.getProjectHome() + appDirName +"\\pom.xml"));
-		Response commitImportedProject = repositoryservice.commitImportedProject(repodetail, appDirName);
+		Response commitImportedProject = repositoryservice.commitImportedProject(repodetail, appDirName, "admin_user");
 		Assert.assertEquals(200,commitImportedProject.getStatus());
 	}
 	
@@ -89,7 +89,7 @@ public class RepositoryServiceTest extends RestBaseTest  {
 		repodetail.setRevision("head");
 		repodetail.setType("svn");
 		repodetail.setRepoUrl("https://insight.photoninfotech.com/svn/repos/phresco-svn-projects/ci/2.0/TestProject/" + appDirName);
-		Response updateImportedApplicaion = repositoryservice.updateImportedApplicaion(appDirName, repodetail);
+		Response updateImportedApplicaion = repositoryservice.updateImportedApplicaion(appDirName,"admin_user", repodetail );
 		Assert.assertEquals(200,updateImportedApplicaion.getStatus());
 	}
 	
@@ -126,7 +126,7 @@ public class RepositoryServiceTest extends RestBaseTest  {
 		repodetail.setType("git");
 		repodetail.setCommitMessage("commit for test");
 		repodetail.setRepoUrl("https://github.com/santhosh-ja/TestGit.git");
-		Response addProjectToRepo = repositoryservice.addProjectToRepo("TestGitProject", repodetail, userId, "TestGitProject", "TestGitProject");
+		Response addProjectToRepo = repositoryservice.addProjectToRepo("TestGitProject", repodetail, userId, "TestGitProject", "TestGitProject", "admin_user");
 		Assert.assertEquals(200,  addProjectToRepo.getStatus());
 	}
 	
@@ -154,7 +154,7 @@ public class RepositoryServiceTest extends RestBaseTest  {
 		repodetail.setRepoUrl("https://github.com/santhosh-ja/TestGit.git");
 		
 		repodetail.setCommitableFiles(Arrays.asList(Utility.getProjectHome() + "TestGitProject" +"\\pom.xml"));
-		Response commitImportedProject = repositoryservice.commitImportedProject(repodetail, "TestGitProject");
+		Response commitImportedProject = repositoryservice.commitImportedProject(repodetail, "TestGitProject" ,"admin_user");
 		Assert.assertEquals(200,commitImportedProject.getStatus());
 	}
 	
@@ -165,7 +165,7 @@ public class RepositoryServiceTest extends RestBaseTest  {
 		repodetail.setPassword("santJ!23");
 		repodetail.setType("git");
 		repodetail.setRepoUrl("https://github.com/santhosh-ja/TestGit.git");
-		Response updateImportedApplicaion = repositoryservice.updateImportedApplicaion("TestGitProject", repodetail);
+		Response updateImportedApplicaion = repositoryservice.updateImportedApplicaion("TestGitProject","admin_user", repodetail);
 		Assert.assertEquals(200,updateImportedApplicaion.getStatus());
 	}
 	

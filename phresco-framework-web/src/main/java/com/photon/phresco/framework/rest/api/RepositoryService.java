@@ -22,7 +22,9 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.UUID;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
@@ -111,19 +113,21 @@ public class RepositoryService extends RestBase implements FrameworkConstants, S
 	@Path("/updateImportedApplication")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response updateImportedApplicaion(@QueryParam(REST_QUERY_APPDIR_NAME) String appDirName,
+	public Response updateImportedApplicaion(@QueryParam(REST_QUERY_APPDIR_NAME) String appDirName, @QueryParam("displayName") String displayName,
 			RepoDetail repodetail) {
 		Response response = null;
 		ResponseInfo responseData = new ResponseInfo();
 		try {
+			UUID uniqueKey = UUID.randomUUID();
+			String unique_key = uniqueKey.toString();
 			ApplicationInfo applicationInfo = FrameworkServiceUtil.getApplicationInfo(appDirName);
 			String type = repodetail.getType();
 			if (type.equals(SVN)) {
-				response = updateSVNProject(responseData, type, applicationInfo, repodetail);
+				response = updateSVNProject(responseData, type, applicationInfo, repodetail, unique_key, displayName);
 			} else if (type.equals(GIT)) {
-				response = updateGitProject(responseData, type, applicationInfo, repodetail);
+				response = updateGitProject(responseData, type, applicationInfo, repodetail, unique_key, displayName);
 			} else if (type.equals(BITKEEPER)) {
-				response = updateBitKeeperProject(type, applicationInfo, repodetail);
+				response = updateBitKeeperProject(type, applicationInfo, repodetail, unique_key, displayName);
 			}
 			return response;
 		} catch (PhrescoException e) {
@@ -151,13 +155,15 @@ public class RepositoryService extends RestBase implements FrameworkConstants, S
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response addProjectToRepo(@QueryParam(REST_QUERY_APPDIR_NAME) String appDirName, RepoDetail repodetail,
 			@QueryParam(REST_QUERY_USERID) String userId, @QueryParam(REST_QUERY_PROJECTID) String projectId,
-			@QueryParam(REST_QUERY_APPID) String appId) {
+			@QueryParam(REST_QUERY_APPID) String appId, @QueryParam("displayName") String displayName) {
 		Response response = null;
 		String type = repodetail.getType();
+		UUID uniqueKey = UUID.randomUUID();
+		String unique_key = uniqueKey.toString();
 		if (type.equals(SVN)) {
-			response = addSVNProject(appDirName, repodetail, userId, projectId, appId, type);
+			response = addSVNProject(appDirName, repodetail, userId, projectId, appId, type, unique_key, displayName);
 		} else if (type.equals(GIT)) {
-			response = addGitProject(userId, projectId, appId, appDirName, repodetail, type);
+			response = addGitProject(userId, projectId, appId, appDirName, repodetail, type, unique_key, displayName);
 		}
 		return response;
 	}
@@ -173,15 +179,17 @@ public class RepositoryService extends RestBase implements FrameworkConstants, S
 	@Path("/commitProjectToRepo")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response commitImportedProject(RepoDetail repodetail, @QueryParam(REST_QUERY_APPDIR_NAME) String appDirName) {
+	public Response commitImportedProject(RepoDetail repodetail, @QueryParam(REST_QUERY_APPDIR_NAME) String appDirName,  @QueryParam("displayName") String displayName) {
 		Response response = null;
 		String type = repodetail.getType();
+		UUID uniqueKey = UUID.randomUUID();
+		String unique_key = uniqueKey.toString();
 		if (type.equals(SVN)) {
-			response = commitSVNProject(repodetail);
+			response = commitSVNProject(repodetail, appDirName, unique_key, displayName);
 		} else if (type.equals(GIT)) {
-			response = commitGitProject(appDirName, repodetail, type);
+			response = commitGitProject(appDirName, repodetail, type, unique_key, displayName);
 		} else if (type.equals(BITKEEPER)) {
-			response = commitBitKeeperProject(appDirName, repodetail, type);
+			response = commitBitKeeperProject(appDirName, repodetail, type, unique_key, displayName);
 		}
 		return response;
 	}
@@ -473,9 +481,12 @@ public class RepositoryService extends RestBase implements FrameworkConstants, S
 	 * @return the response
 	 */
 	private Response updateGitProject(ResponseInfo responseData, String type, ApplicationInfo applicationInfo,
-			RepoDetail repodetail) {
+			RepoDetail repodetail, String uniqueKey, String displayName) {
 		SCMManagerImpl scmi = new SCMManagerImpl();
 		try {
+			//To generate the lock for the particular operation
+			FrameworkUtil.generateLock(Collections.singletonList(FrameworkServiceUtil.getLockDetail(applicationInfo.getId(), FrameworkConstants.UPDATE, displayName, uniqueKey)), true);
+			
 			scmi.updateProject(type, repodetail.getRepoUrl(), repodetail.getUserName(), repodetail.getPassword(),
 					MASTER, null, applicationInfo);
 			
@@ -540,6 +551,12 @@ public class RepositoryService extends RestBase implements FrameworkConstants, S
 			ResponseInfo finalOutput = responseDataEvaluation(responseData, new Exception(e.getMessage()), null, status, errorCode);
 			return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*")
 					.build();
+		} finally {
+			try {
+				FrameworkServiceUtil.removeLock(uniqueKey);
+			} catch (PhrescoException e) {
+
+			}
 		}
 	}
 
@@ -553,12 +570,14 @@ public class RepositoryService extends RestBase implements FrameworkConstants, S
 	 * @return the response
 	 */
 	private Response updateSVNProject(ResponseInfo responseData, String type, ApplicationInfo applicationInfo,
-			RepoDetail repodetail) {
+			RepoDetail repodetail, String uniqueKey, String displayName) {
 		SCMManagerImpl scmi = new SCMManagerImpl();
 		String revision = "";
 		revision = !HEAD_REVISION.equals(repodetail.getRevision()) ? repodetail.getRevisionVal() : repodetail
 				.getRevision();
 		try {
+			//To generate the lock for the particular operation
+			FrameworkUtil.generateLock(Collections.singletonList(FrameworkServiceUtil.getLockDetail(applicationInfo.getId(), FrameworkConstants.UPDATE, displayName, uniqueKey)), true);
 			scmi.updateProject(type, repodetail.getRepoUrl(), repodetail.getUserName(), repodetail.getPassword(), null,
 					revision, applicationInfo);
 			status = RESPONSE_STATUS_SUCCESS;
@@ -629,6 +648,12 @@ public class RepositoryService extends RestBase implements FrameworkConstants, S
 			ResponseInfo finalOutput = responseDataEvaluation(responseData, new Exception(e.getMessage()), null, status, errorCode);
 			return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*")
 					.build();
+		} finally {
+			try {
+				FrameworkServiceUtil.removeLock(uniqueKey);
+			} catch (PhrescoException e) {
+
+			}
 		}
 	}
 
@@ -640,10 +665,12 @@ public class RepositoryService extends RestBase implements FrameworkConstants, S
 	 * @param repodetail the repodetail
 	 * @return the response
 	 */
-	private Response updateBitKeeperProject(String type, ApplicationInfo applicationInfo, RepoDetail repodetail) {
+	private Response updateBitKeeperProject(String type, ApplicationInfo applicationInfo, RepoDetail repodetail, String uniqueKey, String displayName) {
 		SCMManagerImpl scmi = new SCMManagerImpl();
 		ResponseInfo responseData = new ResponseInfo();
 		try {
+	    	//To generate the lock for the particular operation
+			FrameworkUtil.generateLock(Collections.singletonList(FrameworkServiceUtil.getLockDetail(applicationInfo.getId(), FrameworkConstants.UPDATE, displayName, uniqueKey)), true);
 			scmi.updateProject(type, repodetail.getRepoUrl(), repodetail.getUserName(), repodetail.getPassword(), null,
 					repodetail.getRevision(), applicationInfo);
 			status = RESPONSE_STATUS_SUCCESS;
@@ -671,6 +698,12 @@ public class RepositoryService extends RestBase implements FrameworkConstants, S
 			ResponseInfo finalOutput = responseDataEvaluation(responseData, new Exception(e.getMessage()), null, status, errorCode);
 			return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*")
 					.build();
+		} finally {
+			try {
+				FrameworkServiceUtil.removeLock(uniqueKey);
+			} catch (PhrescoException e) {
+
+			}
 		}
 	}
 
@@ -686,11 +719,13 @@ public class RepositoryService extends RestBase implements FrameworkConstants, S
 	 * @return the response
 	 */
 	private Response addSVNProject(String appDirName, RepoDetail repodetail, String userId, String projectId,
-			String appId, String type) {
+			String appId, String type, String uniqueKey, String displayName) {
 		SCMManagerImpl scmi = new SCMManagerImpl();
 		ResponseInfo responseData = new ResponseInfo();
 		try {
 			ApplicationInfo applicationInfo = FrameworkServiceUtil.getApplicationInfo(appDirName);
+			//To generate the lock for the particular operation
+			FrameworkUtil.generateLock(Collections.singletonList(FrameworkServiceUtil.getLockDetail(applicationInfo.getId(), ADD_TO_REPO, displayName, uniqueKey)), true);
 			scmi.importToRepo(type, repodetail.getRepoUrl(), repodetail.getUserName(), repodetail.getPassword(), null,
 					null, applicationInfo, repodetail.getCommitMessage());
 			User user = ServiceManagerImpl.USERINFO_MANAGER_MAP.get(userId);
@@ -706,6 +741,12 @@ public class RepositoryService extends RestBase implements FrameworkConstants, S
 			ResponseInfo finalOutput = responseDataEvaluation(responseData, new Exception(e.getMessage()), null, status, errorCode);
 			return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*")
 					.build();
+		} finally {
+			try {
+				FrameworkServiceUtil.removeLock(uniqueKey);
+			} catch (PhrescoException e) {
+
+			}
 		}
 	}
 
@@ -721,11 +762,13 @@ public class RepositoryService extends RestBase implements FrameworkConstants, S
 	 * @return the response
 	 */
 	private Response addGitProject(String userId, String projectId, String appId, String appDirName,
-			RepoDetail repodetail, String type) {
+			RepoDetail repodetail, String type, String uniqueKey, String displayName) {
 		ResponseInfo responseData = new ResponseInfo();
 		SCMManagerImpl scmi = new SCMManagerImpl();
 		try {
 			ApplicationInfo applicationInfo = FrameworkServiceUtil.getApplicationInfo(appDirName);
+			//To generate the lock for the particular operation
+			FrameworkUtil.generateLock(Collections.singletonList(FrameworkServiceUtil.getLockDetail(applicationInfo.getId(), ADD_TO_REPO, displayName, uniqueKey)), true);
 			scmi.importToRepo(type, repodetail.getRepoUrl(), repodetail.getUserName(), repodetail.getPassword(), null,
 					null, applicationInfo, repodetail.getCommitMessage());
 			User user = ServiceManagerImpl.USERINFO_MANAGER_MAP.get(userId);
@@ -750,6 +793,12 @@ public class RepositoryService extends RestBase implements FrameworkConstants, S
 				return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin",
 						"*").build();
 			}
+		} finally {
+			try {
+				FrameworkServiceUtil.removeLock(uniqueKey);
+			} catch (PhrescoException e) {
+
+			}
 		}
 	}
 
@@ -759,16 +808,19 @@ public class RepositoryService extends RestBase implements FrameworkConstants, S
 	 * @param repodetail the repodetail
 	 * @return the response
 	 */
-	public Response commitSVNProject(RepoDetail repodetail) {
+	public Response commitSVNProject(RepoDetail repodetail, String appDirName, String uniqueKey, String displayName) {
 		ResponseInfo responseData = new ResponseInfo();
 		SCMManagerImpl scmi = new SCMManagerImpl();
 		try {
+			ApplicationInfo applicationInfo = FrameworkServiceUtil.getApplicationInfo(appDirName);
 			if (CollectionUtils.isNotEmpty(repodetail.getCommitableFiles())) {
 				List<File> listModifiedFiles = new ArrayList<File>(repodetail.getCommitableFiles().size());
 				for (String commitableFile : repodetail.getCommitableFiles()) {
 					listModifiedFiles.add(new File(commitableFile));
 				}
-
+				//To generate the lock for the particular operation
+				FrameworkUtil.generateLock(Collections.singletonList(FrameworkServiceUtil.getLockDetail(applicationInfo.getId(), COMMIT, displayName, uniqueKey)), true);
+				
 				scmi.commitSpecifiedFiles(listModifiedFiles, repodetail.getUserName(), repodetail.getPassword(),
 						repodetail.getCommitMessage());
 			}
@@ -783,6 +835,12 @@ public class RepositoryService extends RestBase implements FrameworkConstants, S
 			ResponseInfo finalOutput = responseDataEvaluation(responseData, new Exception(e.getMessage()), null, status, errorCode);
 			return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*")
 					.build();
+		} finally {
+			try {
+				FrameworkServiceUtil.removeLock(uniqueKey);
+			} catch (PhrescoException e) {
+
+			}
 		}
 	}
 
@@ -794,11 +852,14 @@ public class RepositoryService extends RestBase implements FrameworkConstants, S
 	 * @param type the type
 	 * @return the response
 	 */
-	public Response commitBitKeeperProject(String appDirName, RepoDetail repodetail, String type) {
+	public Response commitBitKeeperProject(String appDirName, RepoDetail repodetail, String type, String uniqueKey, String displayName) {
 		ResponseInfo responseData = new ResponseInfo();
 		SCMManagerImpl scmi = new SCMManagerImpl();
 		try {
+			ApplicationInfo applicationInfo = FrameworkServiceUtil.getApplicationInfo(appDirName);
 			File appDir = new File(Utility.getProjectHome() + appDirName);
+			//To generate the lock for the particular operation
+			FrameworkUtil.generateLock(Collections.singletonList(FrameworkServiceUtil.getLockDetail(applicationInfo.getId(), COMMIT , displayName, uniqueKey)), true);
 			scmi.commitToRepo(type, repodetail.getRepoUrl(), repodetail.getUserName(), repodetail.getPassword(), null,
 					null, appDir, repodetail.getCommitMessage());
 			status = RESPONSE_STATUS_SUCCESS;
@@ -825,6 +886,12 @@ public class RepositoryService extends RestBase implements FrameworkConstants, S
 			ResponseInfo finalOutput = responseDataEvaluation(responseData, new Exception(e.getMessage()), null, status, errorCode);
 			return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*")
 					.build();
+		} finally {
+			try {
+				FrameworkServiceUtil.removeLock(uniqueKey);
+			} catch (PhrescoException e) {
+
+			}
 		}
 	}
 
@@ -836,10 +903,13 @@ public class RepositoryService extends RestBase implements FrameworkConstants, S
 	 * @param type the type
 	 * @return the response
 	 */
-	public Response commitGitProject(String appDirName, RepoDetail repodetail, String type) {
+	public Response commitGitProject(String appDirName, RepoDetail repodetail, String type, String uniqueKey, String displayName) {
 		ResponseInfo responseData = new ResponseInfo();
 		SCMManagerImpl scmi = new SCMManagerImpl();
 		try {
+			ApplicationInfo applicationInfo = FrameworkServiceUtil.getApplicationInfo(appDirName);
+			//To generate the lock for the particular operation
+			FrameworkUtil.generateLock(Collections.singletonList(FrameworkServiceUtil.getLockDetail(applicationInfo.getId(), COMMIT , displayName, uniqueKey)), true);
 			String applicationHome = Utility.getProjectHome() + appDirName;
 			File appDir = new File(applicationHome);
 			if (!repodetail.getCommitableFiles().isEmpty()) {
@@ -856,6 +926,12 @@ public class RepositoryService extends RestBase implements FrameworkConstants, S
 			ResponseInfo finalOutput = responseDataEvaluation(responseData, new Exception(e.getMessage()), null, status, errorCode);
 			return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*")
 					.build();
+		} finally {
+			try {
+				FrameworkServiceUtil.removeLock(uniqueKey);
+			} catch (PhrescoException e) {
+
+			}
 		}
 	}
 

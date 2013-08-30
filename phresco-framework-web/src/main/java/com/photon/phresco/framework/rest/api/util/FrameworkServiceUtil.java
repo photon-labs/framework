@@ -18,10 +18,13 @@
 package com.photon.phresco.framework.rest.api.util;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.InetAddress;
@@ -54,6 +57,7 @@ import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang.StringUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
+import com.google.gson.reflect.TypeToken;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonIOException;
@@ -65,6 +69,7 @@ import com.photon.phresco.commons.model.ApplicationInfo;
 import com.photon.phresco.commons.model.BuildInfo;
 import com.photon.phresco.commons.model.CertificateInfo;
 import com.photon.phresco.commons.model.ProjectInfo;
+import com.photon.phresco.commons.model.User;
 import com.photon.phresco.configuration.ConfigReader;
 import com.photon.phresco.configuration.Configuration;
 import com.photon.phresco.configuration.Environment;
@@ -75,6 +80,7 @@ import com.photon.phresco.framework.PhrescoFrameworkFactory;
 import com.photon.phresco.framework.api.ApplicationManager;
 import com.photon.phresco.framework.api.ProjectManager;
 import com.photon.phresco.framework.commons.ApplicationsUtil;
+import com.photon.phresco.framework.model.LockDetail;
 import com.photon.phresco.plugins.model.Mojos.Mojo.Configuration.Parameters.Parameter;
 import com.photon.phresco.plugins.model.Mojos.Mojo.Configuration.Parameters.Parameter.Childs.Child;
 import com.photon.phresco.plugins.model.Mojos.Mojo.Configuration.Parameters.Parameter.MavenCommands.MavenCommand;
@@ -954,6 +960,96 @@ public class FrameworkServiceUtil implements Constants, FrameworkConstants, Resp
 			}
 			return actionResponse;
 		}
+		
+	public static LockDetail getLockDetail(String appid, String actionType, String displayName, String uniqueKey) throws PhrescoException {
+		try {
+//			User user = (User) getSessionAttribute(SESSION_USER_INFO);
+			LockDetail lockDetail = new LockDetail(appid, actionType, displayName, uniqueKey);
+			return lockDetail;
+		} catch (Exception e) {
+			throw new PhrescoException(e);
+		}
+	}
+	
+	 public static void generateLock(List<LockDetail> lockDetails, boolean toGenerate) throws PhrescoException {
+	    	BufferedWriter out = null;
+			FileWriter fstream = null;
+			try {
+				List<LockDetail> newLockDetails = new ArrayList<LockDetail>();
+				newLockDetails.addAll(lockDetails);
+				List<LockDetail> availableLockDetails = getLockDetails();
+				if (toGenerate && CollectionUtils.isNotEmpty(availableLockDetails)) {
+					newLockDetails.addAll(availableLockDetails);
+				}
+				
+				Gson gson = new Gson();
+				String infoJSON = gson.toJson(lockDetails);
+				fstream = new FileWriter(getLockFilePath());
+				out = new BufferedWriter(fstream);
+				out.write(infoJSON);
+			} catch (IOException e) {
+				throw new PhrescoException(e);
+			} finally {
+				try {
+					if (out != null) {
+						out.close();
+					}
+					if (fstream != null) {
+						fstream.close();
+					}
+				} catch (IOException e) {
+					throw new PhrescoException(e);
+				}
+			}
+	    }
+	
+	/**
+	 * To remove the lock once the initiated operation has been completed
+	 * @throws PhrescoException
+	 */
+	public  static void removeLock(String uniqueKey) throws PhrescoException {
+		try {
+			List<LockDetail> lockDetails = getLockDetails();
+			if (CollectionUtils.isNotEmpty(lockDetails)) {
+				List<LockDetail> availableLockDetails = new ArrayList<LockDetail>();
+				for (LockDetail lockDetail : lockDetails) {
+					if (!lockDetail.getUniqueKey().equalsIgnoreCase(uniqueKey)) {
+						availableLockDetails.add(lockDetail);
+					} 
+				}
+				generateLock(availableLockDetails, false);
+			}
+		} catch (PhrescoException e) {
+			throw new PhrescoException(e);
+		}
+	}
+	
+	 public static List<LockDetail> getLockDetails() throws PhrescoException {
+			FileReader reader = null;
+			try {
+				File file = new File(getLockFilePath());
+				if (file.exists()) {
+					reader = new FileReader(file);
+					Gson gson = new Gson();
+					List<LockDetail> lockDetails = gson.fromJson(reader, new TypeToken<List<LockDetail>>(){}.getType());
+					return lockDetails;
+				}
+			} catch (FileNotFoundException e) {
+				throw new PhrescoException(e);
+			} finally {
+				Utility.closeStream(reader);
+			}
+			return null;
+		}
+	 
+	    private static String getLockFilePath() {
+	    	StringBuilder sb = new StringBuilder(Utility.getPhrescoHome())
+			.append(File.separator)
+			.append(PROJECTS_WORKSPACE)
+			.append(File.separator)
+	    	.append(LOCK_FILE);
+	    	return sb.toString();
+	    }
 		
 }
 

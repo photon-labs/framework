@@ -22,7 +22,11 @@ import java.awt.Toolkit;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
 import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -36,6 +40,11 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import org.apache.commons.collections.CollectionUtils;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
+
 import com.photon.phresco.commons.FrameworkConstants;
 import com.photon.phresco.commons.ResponseCodes;
 import com.photon.phresco.commons.model.ApplicationInfo;
@@ -43,15 +52,16 @@ import com.photon.phresco.commons.model.ProjectInfo;
 import com.photon.phresco.commons.model.Technology;
 import com.photon.phresco.exception.PhrescoException;
 import com.photon.phresco.framework.commons.FrameworkUtil;
+import com.photon.phresco.framework.model.CheckLockInfo;
+import com.photon.phresco.framework.model.LockDetail;
 import com.photon.phresco.framework.rest.api.util.ActionResponse;
-import com.photon.phresco.framework.rest.api.util.ActionServiceConstant;
 import com.photon.phresco.framework.rest.api.util.FrameworkServiceUtil;
 import com.photon.phresco.service.client.api.ServiceManager;
+import com.photon.phresco.util.Constants;
+import com.photon.phresco.util.FileUtil;
 import com.photon.phresco.util.ServiceConstants;
 import com.photon.phresco.util.Utility;
 import com.sun.jersey.api.client.ClientResponse.Status;
-
-import fr.opensagres.xdocreport.utils.StringUtils;
 
 /**
  * The Class UtilService.
@@ -181,6 +191,202 @@ public class UtilService extends RestBase implements FrameworkConstants, Service
 					.build();
 		}
 	}
+	
+	
+	/**
+	 * To check whether lock exists for the current process
+	 * 
+	 * @return
+	 */
+	@GET
+	@Path("/checkLock")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response checkForLock(@QueryParam("actionType") String actionType, @QueryParam("appId") String appId) {
+		ResponseInfo<CheckLockInfo> responseData = new ResponseInfo<CheckLockInfo>();
+		try {
+			List<LockDetail> lockDetails = FrameworkUtil.getLockDetails();
+			CheckLockInfo lockInfo = new CheckLockInfo();
+			if (CollectionUtils.isNotEmpty(lockDetails)) {
+				List<String> actionTypesToCheck = new ArrayList<String>();
+				if (actionType.equals(REQ_CODE)) {
+					actionTypesToCheck.add(ADD_TO_REPO);
+					actionTypesToCheck.add(COMMIT);
+					actionTypesToCheck.add(FrameworkConstants.UPDATE);
+					actionTypesToCheck.add(BUILD);
+					actionTypesToCheck.add(REQ_START);
+					actionTypesToCheck.add(UNIT);
+					actionTypesToCheck.add(REQ_CODE);
+				} else if (actionType.equals(BUILD)) {
+					actionTypesToCheck.add(ADD_TO_REPO);
+					actionTypesToCheck.add(COMMIT);
+					actionTypesToCheck.add(FrameworkConstants.UPDATE);
+					actionTypesToCheck.add(BUILD);
+					actionTypesToCheck.add(REQ_CODE);
+					actionTypesToCheck.add(REQ_START);
+					actionTypesToCheck.add(UNIT);
+				} else if (actionType.equals(REQ_START)) {
+					actionTypesToCheck.add(BUILD);
+					actionTypesToCheck.add(REQ_CODE);
+					actionTypesToCheck.add(ADD_TO_REPO);
+					actionTypesToCheck.add(COMMIT);
+					actionTypesToCheck.add(FrameworkConstants.UPDATE);
+				} else if (actionType.equals(UNIT)) {
+					actionTypesToCheck.add(ADD_TO_REPO);
+					actionTypesToCheck.add(COMMIT);
+					actionTypesToCheck.add(FrameworkConstants.UPDATE);
+					actionTypesToCheck.add(BUILD);
+					actionTypesToCheck.add(REQ_CODE);
+					actionTypesToCheck.add(REQ_START);
+					actionTypesToCheck.add(UNIT);
+				} else if (actionType.equals(REQ_FROM_TAB_DEPLOY)) {
+					actionTypesToCheck.add(BUILD);
+					actionTypesToCheck.add(REQ_FROM_TAB_DEPLOY);
+				} else if (actionType.equals(ADD_TO_REPO)) {
+					actionTypesToCheck.add(ADD_TO_REPO);
+					actionTypesToCheck.add(FrameworkConstants.UPDATE);
+					actionTypesToCheck.add(COMMIT);
+					actionTypesToCheck.add(BUILD);
+					actionTypesToCheck.add(REQ_CODE);
+					actionTypesToCheck.add(UNIT);
+					actionTypesToCheck.add(REQ_START);
+				} else if (actionType.equals(COMMIT)) {
+					actionTypesToCheck.add(ADD_TO_REPO);
+					actionTypesToCheck.add(FrameworkConstants.UPDATE);
+					actionTypesToCheck.add(COMMIT);
+					actionTypesToCheck.add(BUILD);
+					actionTypesToCheck.add(REQ_CODE);
+					actionTypesToCheck.add(UNIT);
+					actionTypesToCheck.add(REQ_START);
+				} else if (actionType.equals(FrameworkConstants.UPDATE)) {
+					actionTypesToCheck.add(ADD_TO_REPO);
+					actionTypesToCheck.add(COMMIT);
+					actionTypesToCheck.add(FrameworkConstants.UPDATE);
+					actionTypesToCheck.add(BUILD);
+					actionTypesToCheck.add(REQ_CODE);
+					actionTypesToCheck.add(UNIT);
+					actionTypesToCheck.add(REQ_START);
+				} else {
+					actionTypesToCheck.add(actionType);
+				}
+				for (LockDetail lockDetail : lockDetails) {
+					if (lockDetail.getAppId().equals(appId) && actionTypesToCheck.contains(lockDetail.getActionType())) {
+						lockInfo.setLock(true);
+						lockInfo.setLockedBy(lockDetail.getUserName());
+						lockInfo.setLockedDate(lockDetail.getStartedDate().toString());
+						break;
+					}
+				}
+				ResponseInfo<List<String>> finalOutput = responseDataEvaluation(responseData, null, lockInfo,
+						RESPONSE_STATUS_SUCCESS, PHR10C00001);
+				return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*")
+						.build();
+			}
+		} catch (PhrescoException e) {
+			ResponseInfo<ProjectInfo> finalOutput = responseDataEvaluation(responseData, e, null,
+					RESPONSE_STATUS_ERROR, PHR10C10001);
+			return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
+		}
+		ResponseInfo<List<String>> finalOutput = responseDataEvaluation(responseData, null, null,
+				RESPONSE_STATUS_SUCCESS, PHR10C00002);
+		return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
+	}
+
+	@GET
+	@Path("/killProcess")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response killProcess(@QueryParam("actionType") String actionType, @QueryParam(REST_QUERY_APPDIR_NAME) String appDirName) {
+		ResponseInfo responseData = new ResponseInfo();
+		try {
+		String applicationHome = FrameworkServiceUtil.getApplicationHome(appDirName);
+		File do_not_checkin = new File(applicationHome + File.separator + Constants.DO_NOT_CHECKIN_DIRY);
+		File jsonFile = new File(do_not_checkin.getPath() + File.separator + "process.json");
+		if(!jsonFile.exists()) {
+			ResponseInfo<List<ApplicationInfo>> finalOutput = responseDataEvaluation(responseData, null,
+					null, RESPONSE_STATUS_SUCCESS, PHR11C00001);
+			return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin",
+					"*").build();
+		}
+			JSONObject jsonObject = new JSONObject();
+			JSONParser parser = new JSONParser();
+			FileReader reader = new FileReader(jsonFile);
+			jsonObject = (JSONObject)parser.parse(reader);
+			Object processId = jsonObject.get(actionType);
+			if (processId == null) {
+				ResponseInfo<List<ApplicationInfo>> finalOutput = responseDataEvaluation(responseData, null,
+						null, RESPONSE_STATUS_SUCCESS, PHR11C00001);
+				return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin",
+						"*").build();
+			}
+			if (System.getProperty(Constants.OS_NAME).startsWith(Constants.WINDOWS_PLATFORM)) {
+				Runtime.getRuntime().exec("cmd /X /C taskkill /F /T /PID " + processId.toString());
+			} else if (System.getProperty(Constants.OS_NAME).startsWith("Mac")) {
+				Runtime.getRuntime().exec(Constants.JAVA_UNIX_PROCESS_KILL_CMD + processId.toString());
+			} else {
+				Runtime.getRuntime().exec(Constants.JAVA_UNIX_PROCESS_KILL_CMD + processId.toString());
+			}
+			jsonObject.remove(actionType);
+			FileWriter writer = new FileWriter(jsonFile);
+			writer.write(jsonObject.toString());
+			writer.close();
+			reader.close();
+			if(jsonObject.size() <= 0) {
+				FileUtil.delete(jsonFile);
+			}
+			ResponseInfo<List<String>> finalOutput = responseDataEvaluation(responseData, null, null,
+					RESPONSE_STATUS_SUCCESS, PHR11C00002);
+			return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*")
+					.build();
+		} catch (IOException e) {
+			ResponseInfo<ProjectInfo> finalOutput = responseDataEvaluation(responseData, e, null,
+					RESPONSE_STATUS_ERROR, PHR11C10001);
+			return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
+		} catch (ParseException e) {
+			ResponseInfo<ProjectInfo> finalOutput = responseDataEvaluation(responseData, e, null,
+					RESPONSE_STATUS_ERROR, PHR11C10002);
+			return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
+		} catch (PhrescoException e) {
+			ResponseInfo<ProjectInfo> finalOutput = responseDataEvaluation(responseData, e, null,
+					RESPONSE_STATUS_ERROR, PHR11C10003);
+			return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
+		}
+	}
+	
+	@GET
+	@Path("/validation")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response checkMandatoryValidation(@Context HttpServletRequest request,
+			@QueryParam("appDirName") String appDirName, @QueryParam("phase") String phase,
+			@QueryParam("customerId") String customerId) {
+		FrameworkServiceUtil futil = new FrameworkServiceUtil();
+		ActionResponse response = null;
+		String envNames = request.getParameter("environmentName");
+		try {
+			response = futil.mandatoryValidation(request, phase, appDirName);
+			if (response.isErrorFound()) {	
+				return Response.status(Status.OK).entity(response).header("Access-Control-Allow-Origin", "*").build();
+			}
+			
+			if ((PHASE_LOAD.equals(phase) || PERFORMANCE_TEST.equals(phase)) && REQ_PARAMETERS.equals(request.getParameter(REQ_TEST_BASIS))) {
+				response = FrameworkServiceUtil.checkForConfigurations(appDirName, envNames, customerId);
+				if (response.isErrorFound()) {
+					return Response.status(Status.OK).entity(response).header("Access-Control-Allow-Origin", "*").build();
+				}
+			} else if (!PHASE_LOAD.equals(phase) && !PERFORMANCE_TEST.equals(phase)) {
+				response = FrameworkServiceUtil.checkForConfigurations(appDirName, envNames, customerId);
+				if (response.isErrorFound()) {
+					return Response.status(Status.OK).entity(response).header("Access-Control-Allow-Origin", "*").build();
+				}
+			}
+			response.setStatus(RESPONSE_STATUS_SUCCESS);
+			response.setResponseCode(PHR9C00001);
+		} catch (PhrescoException e) {
+			response.setStatus(RESPONSE_STATUS_ERROR);
+			response.setService_exception(FrameworkUtil.getStackTraceAsString(e));
+			response.setResponseCode(PHR9C10001);
+		}
+		return Response.status(Status.OK).entity(response).header("Access-Control-Allow-Origin", "*").build();
+	}
+
 
 	/**
 	 * Gets the path of test directory.
@@ -230,43 +436,4 @@ public class UtilService extends RestBase implements FrameworkConstants, Service
 			throw new PhrescoException(e);
 		}
 	}
-	
-	@GET
-	@Path("/validation")
-	@Produces(MediaType.APPLICATION_JSON)
-	public Response checkMandatoryValidation(@Context HttpServletRequest request,
-			@QueryParam("appDirName") String appDirName, @QueryParam("phase") String phase,
-			@QueryParam("customerId") String customerId) {
-		FrameworkServiceUtil futil = new FrameworkServiceUtil();
-		ActionResponse response = null;
-		String envNames = request.getParameter("environmentName");
-		try {
-			response = futil.mandatoryValidation(request, phase, appDirName);
-			if (response.isErrorFound()) {	
-				return Response.status(Status.OK).entity(response).header("Access-Control-Allow-Origin", "*").build();
-			}
-			
-			if ((PHASE_LOAD.equals(phase) || PERFORMANCE_TEST.equals(phase)) && REQ_PARAMETERS.equals(request.getParameter(REQ_TEST_BASIS))) {
-				response = FrameworkServiceUtil.checkForConfigurations(appDirName, envNames, customerId);
-				if (response.isErrorFound()) {
-					return Response.status(Status.OK).entity(response).header("Access-Control-Allow-Origin", "*").build();
-				}
-			} else if (!PHASE_LOAD.equals(phase) && !PERFORMANCE_TEST.equals(phase)) {
-				response = FrameworkServiceUtil.checkForConfigurations(appDirName, envNames, customerId);
-				if (response.isErrorFound()) {
-					return Response.status(Status.OK).entity(response).header("Access-Control-Allow-Origin", "*").build();
-				}
-			}
-			response.setStatus(RESPONSE_STATUS_SUCCESS);
-			response.setResponseCode(PHR9C00001);
-		} catch (PhrescoException e) {
-			response.setStatus(RESPONSE_STATUS_ERROR);
-			response.setService_exception(FrameworkUtil.getStackTraceAsString(e));
-			response.setResponseCode(PHR9C10001);
-		}
-		return Response.status(Status.OK).entity(response).header("Access-Control-Allow-Origin", "*").build();
-	}
-
-	
-	
 }

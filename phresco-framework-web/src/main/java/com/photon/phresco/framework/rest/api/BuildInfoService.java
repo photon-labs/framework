@@ -27,6 +27,7 @@ import java.net.URLConnection;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
@@ -47,6 +48,8 @@ import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang.StringUtils;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
+import org.w3c.dom.Element;
+import org.w3c.dom.NodeList;
 
 import com.photon.phresco.commons.FrameworkConstants;
 import com.photon.phresco.commons.ResponseCodes;
@@ -58,8 +61,12 @@ import com.photon.phresco.framework.PhrescoFrameworkFactory;
 import com.photon.phresco.framework.api.ApplicationManager;
 import com.photon.phresco.framework.api.ProjectManager;
 import com.photon.phresco.framework.impl.ConfigurationReader;
+import com.photon.phresco.framework.model.MinifyInfo;
+import com.photon.phresco.framework.rest.api.util.FrameworkServiceUtil;
 import com.photon.phresco.util.ServiceConstants;
 import com.photon.phresco.util.Utility;
+import com.phresco.pom.exception.PhrescoPomException;
+import com.phresco.pom.util.PomProcessor;
 import com.sun.jersey.api.client.ClientResponse.Status;
 
 /**
@@ -102,6 +109,48 @@ public class BuildInfoService extends RestBase implements FrameworkConstants, Se
 					.build();
 		}
 	}
+
+	@GET
+	@Path("/minifer")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response minifer(@QueryParam(REST_QUERY_APPDIR_NAME) String appDirName) {
+		ResponseInfo<List<BuildInfo>> responseData = new ResponseInfo<List<BuildInfo>>();
+		try {
+			String pomPath = FrameworkServiceUtil.getAppPom(appDirName);
+			PomProcessor pomProcessor = new PomProcessor(new File(pomPath));
+			com.phresco.pom.model.Plugin.Configuration pluginConfig = pomProcessor.getPlugin(MINIFY_PLUGIN_GROUPID,
+					MINIFY_PLUGIN_ARTFACTID).getConfiguration();
+			// To check for availability of minification plugin in pom.xml
+			if (pluginConfig != null) {
+				List<Element> elements = pluginConfig.getAny();
+				if (elements != null) {
+					for (Element element : elements) {
+						List<MinifyInfo> includesFiles = includesFiles(element, appDirName);// To read already minified details from pom
+						if(CollectionUtils.isNotEmpty(includesFiles)) {
+							ResponseInfo<List<BuildInfo>> finalOutput = responseDataEvaluation(responseData, null,
+									includesFiles, RESPONSE_STATUS_SUCCESS, PHR700011);
+							return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
+						}
+					}
+				}
+			}
+			ResponseInfo<List<BuildInfo>> finalOutput = responseDataEvaluation(responseData, null,
+					null, RESPONSE_STATUS_SUCCESS, PHR700012);
+			return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*")
+					.build();
+		} catch (PhrescoException e) {
+			ResponseInfo<List<BuildInfo>> finalOutput = responseDataEvaluation(responseData, e,
+					null, RESPONSE_STATUS_ERROR, PHR710022);
+			return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*")
+					.build();
+		} catch (PhrescoPomException e) {
+			ResponseInfo<List<BuildInfo>> finalOutput = responseDataEvaluation(responseData, e,
+					null, RESPONSE_STATUS_ERROR, PHR710023);
+			return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*")
+					.build();
+		}
+	}
+	
 
 	/**
 	 * Builds the info zip.
@@ -236,6 +285,54 @@ public class BuildInfoService extends RestBase implements FrameworkConstants, Se
 			return Response.status(Response.Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
 		}
 	}
+	
+	private List<MinifyInfo> includesFiles(Element element, String appDirName) throws PhrescoException {
+		List<MinifyInfo> consoldateInfo = new ArrayList<MinifyInfo>();
+		String opFileLoc = "";
+		try {
+			if (POM_AGGREGATIONS.equals(element.getNodeName())) {
+				NodeList aggregationList = element.getElementsByTagName(POM_AGGREGATION);
+				for (int i = 0; i < aggregationList.getLength(); i++) {
+					MinifyInfo minifyInfo = new MinifyInfo();
+					Element childNode = (Element) aggregationList.item(i);
+					NodeList includeList = childNode.getElementsByTagName(POM_INCLUDES).item(0).getChildNodes();
+					StringBuilder csvFileNames = new StringBuilder(); 
+					String sep = "";
+					for (int j = 0; j < includeList.getLength()-1; j++) {//To convert select files to Comma seperated value
+						Element include = (Element) includeList.item(j);
+						String file = include.getTextContent().substring(include.getTextContent().lastIndexOf(FILE_SEPARATOR)+1);
+						csvFileNames.append(sep);
+						csvFileNames.append(file);
+						sep = COMMA;
+					}
+					Element outputElement = (Element) childNode.getElementsByTagName(POM_OUTPUT).item(0);
+					//To get compressed name with extension
+					String opFileName = outputElement.getTextContent().substring(outputElement.getTextContent().lastIndexOf(FILE_SEPARATOR)+1);
+					String compressName = opFileName.substring(0, opFileName.indexOf("."));//To get only the compressed name without extension
+					String compressedExtension = opFileName.substring(opFileName.lastIndexOf(FrameworkConstants.DOT)+1);//To get extension of compressed file
+					opFileLoc = outputElement.getTextContent().substring(0, outputElement.getTextContent().lastIndexOf(FILE_SEPARATOR)+1);
+					opFileLoc = opFileLoc.replace(MINIFY_OUTPUT_DIRECTORY, FrameworkServiceUtil.getApplicationHome(appDirName).replace(File.separator, FrameworkConstants.FORWARD_SLASH));
+					
+					if (JS.equals(compressedExtension)) {//if extension is js , add minified details to jsMap
+						minifyInfo.setFileType(JS);
+						minifyInfo.setCompressName(compressName);
+						minifyInfo.setCsvFileName(csvFileNames.toString().replace(HYPHEN_MIN, ""));
+						minifyInfo.setOpFileLoc(opFileLoc);
+					} else {//if extension is CSS , add minified details to cssMap
+						minifyInfo.setFileType("css");
+						minifyInfo.setCompressName(compressName);
+						minifyInfo.setCsvFileName(csvFileNames.toString().replace(HYPHEN_MIN, ""));
+						minifyInfo.setOpFileLoc(opFileLoc);
+					}
+					consoldateInfo.add(minifyInfo);
+				}
+			}
+		} catch (Exception e) {
+			throw new PhrescoException(e);
+		}
+		return consoldateInfo;
+	}
+	
 
 	private  boolean isConnectionAlive(String protocol, String host, int port) {
 		boolean isAlive = true;

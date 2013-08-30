@@ -11,7 +11,6 @@ import javax.ws.rs.core.Response;
 
 import org.junit.Test;
 
-import com.google.gson.Gson;
 import com.photon.phresco.commons.model.ApplicationInfo;
 import com.photon.phresco.commons.model.ArtifactGroupInfo;
 import com.photon.phresco.commons.model.ProjectInfo;
@@ -34,6 +33,12 @@ public class ProjectServiceTest extends LoginServiceTest {
 	public void createProjectForGitTest() {
 		ProjectInfo projectInfo = projectInfo();
 		Response response = projectService.createProject(projectInfo, userId);
+		assertEquals(200 , response.getStatus());
+	}
+	
+	@Test
+	public void createProjectForminify() {
+		Response response = projectService.createProject(createMinifyProjectInfo(), userId);
 		assertEquals(200 , response.getStatus());
 	}
 	
@@ -243,6 +248,48 @@ public class ProjectServiceTest extends LoginServiceTest {
 		projectInfo.setProjectCode("TestProject");
 		projectInfo.setAppInfos(Collections.singletonList(getApplicationInfo()));
 		return projectInfo;
+	}
+	
+	private ProjectInfo createMinifyProjectInfo() {
+		ProjectInfo projectInfo = new ProjectInfo();
+		projectInfo.setCustomerIds(getCustomer());
+		projectInfo.setId("TestJquery");
+		projectInfo.setName("TestJquery");
+		projectInfo.setNoOfApps(1);
+		projectInfo.setProjectCode("TestJquery");
+		projectInfo.setVersion("1.0");
+		projectInfo.setProjectCode("TestJquery");
+		projectInfo.setAppInfos(Collections.singletonList(getMinifyApplicationInfo()));
+		return projectInfo;
+	}
+	
+	private static ApplicationInfo getMinifyApplicationInfo() {
+		ApplicationInfo info = new ApplicationInfo();
+		info.setAppDirName("TestJquery");
+		info.setCode("TestJquery");
+		info.setId("TestJquery");
+		info.setCustomerIds(getCollections("photon"));
+		info.setEmailSupported(false);
+		info.setPhoneEnabled(false);
+		info.setTabletEnabled(false);
+		info.setDescription("Simple TestJquery Project");
+		info.setHelpText("Help");
+		info.setName("TestJquery");
+		info.setPilot(false);
+		info.setUsed(false);
+		info.setDisplayName("TestJquery");
+		info.setVersion("1.0");
+
+		// TechnologyInfo
+
+		TechnologyInfo techInfo = new TechnologyInfo();
+		techInfo.setAppTypeId("web-layer");
+		techInfo.setVersion("3.10.3");
+		techInfo.setId("tech-html5-jquery-widget");
+		techInfo.setSystem(false);
+		info.setTechInfo(techInfo);
+		
+		return info;
 	}
 	
 	private ProjectInfo projectInfo() {
