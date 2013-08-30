@@ -1290,7 +1290,8 @@ img[name="close"] {
 
 .tooltiptop, .tooltiptop:hover {
 	color: #000000;
-	text-decoration: none;
+	text-decoration: none !important;
+	outline:none !important;
 }
 .custon_dropdown {
 /* width:137px !important; */
@@ -1592,7 +1593,7 @@ background:#DA4F49 !important;
 }
 
 .cleartext{
-	margin:8px 5px 0px 0px;
+	margin:8px 5px 0px 7px;
 	cursor: pointer;
 }
 
@@ -1724,6 +1725,10 @@ background:#DA4F49 !important;
 	border-radius: 6px;
 	padding: 10px;
 	z-index: 1;
+}
+
+.dyn_popup form {
+	margin-bottom:0 !important;
 }
 
 .dyn_popup table tr td {
@@ -3402,11 +3407,11 @@ html>body tbody.scrollContent {
 
 .cont_delivery table input[type="text"], .cont_delivery table input[type="password"], .cont_delivery table select {
 	width: 132px;
-	margin-bottom: 0;	
+	margin-bottom: 0px !important;	
 }
 
 .cont_delivery table {
-	margin-bottom: 10px;	
+	margin-bottom: 10px !important;	
 }
 .build_trigger
 {
@@ -3647,6 +3652,10 @@ html>body tbody.scrollContent {
 
 .clone_text{
 	width:220px !important;
+}
+
+#cred td{
+	border-top:none !important;
 }
 
 /* *************************************************************** STYLES FOR DOWNLOAD PAGE ************************************************************************************ */

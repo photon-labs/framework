@@ -17,13 +17,13 @@
         		<h4>{{name}}-[ {{envName}} ]
                 	
                 	<span class="aliveOpts opts">
-                    	<a temp="clone" name="{{name}}" class="clone_popup" title="" data-placement="bottom" data-toggle="tooltip" href="#" data-original-title="clone">
+                    	<a temp="clone" name="{{name}}" class="clone_popup tooltiptop" title="" data-placement="bottom" data-toggle="tooltip" href="#" data-original-title="Clone">
                     		<img src="themes/default/images/helios/stack.png" width="29" height="23" border="0" alt="">
                     	</a>
                     	<a class="tooltiptop" title="" data-placement="bottom" data-toggle="tooltip" continuousName="{{name}}" name="editContinuousDelivery" data-original-title="Edit">
                     		<img src="themes/default/images/helios/edit_row_icon.png" width="29" height="23" border="0" alt="">
                     	</a> 
-                    	<a temp="deleteCI" name="{{name}}" class="deleteCI" title="" data-placement="bottom" data-toggle="tooltip" href="#" data-original-title="Delete">
+                    	<a temp="deleteCI" name="{{name}}" class="deleteCI tooltiptop" title="" data-placement="bottom" data-toggle="tooltip" href="#" data-original-title="Delete">
                     		<img src="themes/default/images/helios/delete_row_icon.png" width="29" height="23" border="0" alt="0">
                     	</a>
                 	</span>

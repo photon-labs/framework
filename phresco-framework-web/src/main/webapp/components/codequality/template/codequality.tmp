@@ -32,7 +32,7 @@
 
  <section class="content_main code_content testSuiteTable">
 	<div class="qual_unit_main unit_info" id="testSuites" style="width:98%">
-		<div id="content_div" style="padding-left:1%;"></div>
+		<div id="content_div" class="scrolldiv"></div> 
 	</div>
 		<div class="unit_close">
 				<a href="#" data-flag="true" id="codeValidateConsole">

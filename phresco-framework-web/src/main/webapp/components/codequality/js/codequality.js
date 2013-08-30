@@ -149,19 +149,8 @@ define(["codequality/listener/codequalityListener"], function() {
 			
 			$(window).resize();
 		
-			$("#content_div").mCustomScrollbar({
-				autoHideScrollbar:true,
-				theme:"light-thin"
-			});			
-			
-			$(".scrollContent").mCustomScrollbar({
-				autoHideScrollbar:true,
-				theme:"light-thin",
-				advanced:{ updateOnContentResize: true}
-			});
-
 			self.customScroll($(".consolescrolldiv"));
-						
+			this.customScroll($(".scrolldiv")); 					
 		}
 	});
 

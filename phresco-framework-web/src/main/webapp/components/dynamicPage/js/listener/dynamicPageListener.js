@@ -184,7 +184,7 @@ define(["framework/widgetWithTemplate", "common/loading", "lib/customcombobox-1.
 						}
 					})
 				}
-				whereToRender.append('<table name="'+ parameter.key +'_table" class="table table-striped table_border table-bordered fetchSql_table" cellpadding="0" cellspacing="0" border="0"><thead><tr><th colspan="2">DB Script Execution</th></tr></thead><tbody><tr><td><ul name="sortable1" class="sortable1 connectedSortable">' + sortable1Val + '</ul></td><td><ul name="sortable2" class="sortable2 connectedSortable">' + sortable2Val + '</ul></td></tr></tbody></table>');
+				whereToRender.append('<table name="'+ parameter.key +'_table" class="table table-striped table_border table-bordered fetchSql_table border_div" cellpadding="0" cellspacing="0" border="0"><thead><tr><th colspan="2">DB Script Execution</th></tr></thead><tbody><tr><td><ul name="sortable1" class="sortable1 connectedSortable">' + sortable1Val + '</ul></td><td><ul name="sortable2" class="sortable2 connectedSortable">' + sortable2Val + '</ul></td></tr></tbody></table>');
 			}
 		},
 		
