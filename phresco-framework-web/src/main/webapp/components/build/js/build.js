@@ -280,7 +280,7 @@ define(["build/listener/buildListener"], function() {
 							}
 
 							if(buildObject.userPermissions.manageBuilds !== null && buildObject.userPermissions.manageBuilds === true){
-								manageBuilds = '<a href="#"><img name="deployBuild" deviceDeploy="' + (current.options === null ? "" : current.options.deviceDeploy) + '" src="themes/default/images/helios/deploy_icon.png" width="16" height="20" border="0" alt=""></a>' + deviceDeploy;
+								manageBuilds = '<a href="#" class="tooltiptop" title="" data-placement="bottom" data-toggle="tooltip" href="#" data-original-title="IPA Download"><img name="deployBuild" deviceDeploy="' + (current.options === null ? "" : current.options.deviceDeploy) + '" src="themes/default/images/helios/deploy_icon.png" width="16" height="20" border="0" alt=""></a>' + deviceDeploy;
 								
 								deleteOpt ='<a name="delete_'+ current.buildNo +'" class="tooltiptop" title="" data-placement="top" data-toggle="tooltip" href="#" data-original-title="Delete Row"><img name="deleteBuild" src="themes/default/images/helios/delete_icon.png" width="16" height="20" border="0" alt=""></a><div id="delete_'+ current.buildNo +'" class="dyn_popup"><div data-i18n="build.label.deleteConform"></div><div><input type="button" name="buildDelete" data-i18n="[value]build.label.yes" class="btn btn_style dyn_popup_close" /><input type="button" data-i18n="[value]build.label.no" class="btn btn_style dyn_popup_close" /></div></div>';
 								
@@ -467,6 +467,7 @@ define(["build/listener/buildListener"], function() {
 		 */
 		bindUI : function() {
 			var self = this;
+			$(".tooltiptop").tooltip();
 			
 			//Run again source popup click event
 			$("input[name=build_runagsource]").unbind("click");
@@ -647,7 +648,6 @@ define(["build/listener/buildListener"], function() {
 			self.customScroll($(".consolescrolldiv"));
 
 			//Show tool tip
-			$(".tooltiptop").tooltip();
 
 			Clazz.navigationController.mainContainer = commonVariables.contentPlaceholder;
 		}

@@ -46,7 +46,7 @@
 			                 	<input type="button" value="Generate" data-i18n="[value]projectlist.label.generate"  class="btn btn_style" id="generatePdf">
 		                 		<input type="button" value="Close" data-i18n="[value]common.btn.close" class="btn btn_style dyn_popup_close">
 		               		</div>
-	               			<input type="hidden" name="fromPage" value="functional" data-i18n="navigation.application.functional"/>
+	               			<input type="hidden" name="fromPage" value="manual" />
 	           			</form>
 					</div>
 					<!--Pdf report popup ends here -->

@@ -199,13 +199,13 @@ define(["framework/widgetWithTemplate", "ci/listener/ciListener", "lib/jquery-to
 			$("a[temp=deleteCI]").click(function() {
 				var name = $(this).attr('name');
 				$("input[name=cdName]").val(name);
-				self.openccci(this, $(this).attr('class'));
+				self.openccci(this, 'deleteCI');
 			});
 			
 			$("a[temp=clone]").click(function() {
 				var name = $(this).attr('name');
 				$("input[name=continuousName]").val(name);
-				self.openccci(this, $(this).attr('class'));
+				self.openccci(this, 'clone_popup');
 				self.listEnvironmentsEvent.dispatch($(this));
 			});
 			

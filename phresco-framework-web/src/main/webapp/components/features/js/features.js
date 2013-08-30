@@ -382,13 +382,13 @@ define(["features/listener/featuresListener"], function() {
 			});
 			if(counter === 1){
 				$('.features_box').parent('td').addClass('onefeature');
-				$('.search_box').css('width', '17%');
+				//$('.search_box').css('width', '17%');
 			} else if(counter === 2){
 				$('.features_box').parent('td').addClass('twofeatures');
-				$('.search_box').css('width', '35%');
+				//$('.search_box').css('width', '35%');
 			} else if(counter === 3){
 				$('.features_box').parent('td').addClass('threefeatures');
-				$('.search_box').css('width', '45%');
+				//$('.search_box').css('width', '45%');
 			}
 		}		
 	});
