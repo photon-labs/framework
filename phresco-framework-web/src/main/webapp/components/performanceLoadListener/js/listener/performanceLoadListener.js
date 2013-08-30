@@ -561,36 +561,15 @@ define(["lib/jquery-tojson-1.0",'lib/RGraph_common_core-1.0','lib/RGraph_common_
 		},
 		
 		constructResultTable : function(resultData, whereToRender) {
-			var self = this;
-			var resultTable = "";
-			var totalValue = resultData.length, NoOfSample = 0, avg = 0, min = 0, max = 0, StdDev = 0, Err = 0, KbPerSec = 0, sumOfBytes = 0;
+			var self = this, resultTable = "", top = whereToRender.find('.perf_load_header').find('tr').find('th:first').find('.top_hold').css('top');
 			resultTable += '<div class="fixed-table-container"><div class="header-background"></div><div class="fixed-table-container-inner"><table cellspacing="0" cellpadding="0" border="0" class="table table-striped table_border table-bordered perf_load_table" id="testResultTable">'+
-						  '<thead class="height_th"><tr><th><div class="th-inner" data-i18n=performanceLoad.label></div></th><th><div class="th-inner" data-i18n=performanceLoad.samples></div></th><th><div class="th-inner"data-i18n=performanceLoad.averages></div></th><th><div class="th-inner"data-i18n=performanceLoad.min></div></th><th><div class="th-inner"data-i18n=performanceLoad.max></div></th><th><div class="th-inner" data-i18n=performanceLoad.stddev></div></th><th><div class="th-inner" data-i18n=performanceLoad.error%></div></th><th><div class="th-inner" data-i18n=performanceLoad.throughput/sec> </div></th>' +
+						  '<thead class="height_th perf_load_header"><tr><th><div class="th-inner top_hold" data-i18n=performanceLoad.label></div></th><th><div class="th-inner" data-i18n=performanceLoad.samples></div></th><th><div class="th-inner"data-i18n=performanceLoad.averages></div></th><th><div class="th-inner"data-i18n=performanceLoad.min></div></th><th><div class="th-inner"data-i18n=performanceLoad.max></div></th><th><div class="th-inner" data-i18n=performanceLoad.stddev></div></th><th><div class="th-inner" data-i18n=performanceLoad.error%></div></th><th><div class="th-inner" data-i18n=performanceLoad.throughput/sec> </div></th>' +
 						  '<th><div class="th-inner" data-i18n=performanceLoad.kb/sec></div></th><th><div class="th-inner" data-i18n=performanceLoad.avgBytes></div></th></tr></thead><tbody>';	
 			$.each(resultData.perfromanceTestResult, function(index, value) {
-				NoOfSample = parseInt(NoOfSample) + parseInt(value.noOfSamples);
-				avg = avg + value.avg;
-				if (index === 0) {
-					min = value.min;
-            		max = value.max;
-				}
-				if (index !== 0 && value.min < min) {
-            		min = value.min;
-            	}
-				if (index !== 0 && value.max > max) {
-            		max = value.max;
-            	}
-				StdDev = parseInt(StdDev) + parseInt(value.stdDev);
-				Err = parseInt(Err) + parseInt(value.err);
-            	sumOfBytes = parseInt(sumOfBytes) + parseInt(value.avgBytes);
-            	
 				resultTable += '<tr><td>'+ value.label +'</td><td>' + value.noOfSamples + '</td><td>' + value.avg + '</td><td>' + value.min + '</td>' + 
                     		  '<td>' + value.max + '</td><td>'+ value.stdDev +'</td><td>' + value.err.toFixed(2) + ' %</td><td>' + value.throughtPut + '</td>' + 
                     		  '<td>' + value.kbPerSec + '</td><td>' + value.avgBytes + '</td></tr>';
 			});
-			
-			var avgBytes = parseInt(sumOfBytes) / parseInt(totalValue);
-          	var totAvg = parseInt(avg) / parseInt(totalValue);
 			resultTable += '</tbody><tfoot><tr><td>Total</td><td>'+ resultData.aggregateResult.sample +'</td><td>'+resultData.aggregateResult.average+'</td><td>'+resultData.aggregateResult.min+'</td><td>'+resultData.aggregateResult.max+'</td>'+
 			'<td>'+resultData.aggregateResult.stdDev+'</td><td>'+ resultData.aggregateResult.error+' %</td><td>'+resultData.aggregateResult.throughput+'</td><td>'+resultData.aggregateResult.kb+'</td><td>'+resultData.aggregateResult.avgBytes+'</td></tr></tfoot></table></div></div>';
 			whereToRender.find(".perfResultInfo").html(resultTable);
@@ -598,6 +577,7 @@ define(["lib/jquery-tojson-1.0",'lib/RGraph_common_core-1.0','lib/RGraph_common_
 			self.tableScrollbar();
 			self.resizeConsoleWindow();
 			self.renderlocales(commonVariables.contentPlaceholder);
+			top !== undefined ? whereToRender.find('.perf_load_header').find('.th-inner').css('top', top) : "";
 		},
 		
 		resizeConsoleWindow : function() {
