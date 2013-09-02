@@ -246,7 +246,8 @@ define(["projectlist/listener/projectListListener"], function() {
 				var selectObj;
 				var checkObj;
 				var usrObj;
-				var pwdObj;			
+				var pwdObj;		
+				var counter;				
 				var action = $(this).attr("data-original-title");
 				var currentPrjName = $(this).closest("tr").attr("class");
 				var dynamicId = $(this).attr("dynamicId");
@@ -337,6 +338,8 @@ define(["projectlist/listener/projectListListener"], function() {
 					self.projectslistListener.flag1 = 1;
 					var idval = $(this).parent().parent().parent().parent().next('div').next().children('input').attr('id');
 					if(!(self.projectslistListener.validation(idval))) {
+						$('.searchdropdown').empty();
+						counter = 0;
 						var actionBody = {};
 						actionBody.repoUrl = $("#repourl_"+dynamicId).val();
 						actionBody.userName = $("#uname_"+dynamicId).val();
@@ -353,11 +356,21 @@ define(["projectlist/listener/projectListListener"], function() {
 						$('.searchdropdown').show();
 					}
 				});
-				$('.searchdropdown').change(function() {
-					$('.searchdropdown').hide();
-					var temp = $(this).find(':selected').text();
-					$("#repomessage_"+dynamicId).val(temp);
+				counter = 0;
+				$('.searchdropdown').click(function() {
+					counter++;
+					if(counter == 2) {
+						$('.searchdropdown').hide();
+						var temp = $(this).find(':selected').text();
+						$("#repomessage_"+dynamicId).val(temp);
+						counter = 0;
+					}	
 				});	
+				
+				$('.searchdropdown').focusout(function() {
+					counter = 0;
+				});
+				
 				//end of functionality for search log messages
 			});
 			

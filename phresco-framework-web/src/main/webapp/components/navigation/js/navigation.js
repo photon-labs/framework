@@ -108,6 +108,7 @@ define(["navigation/listener/navigationListener"], function() {
 				self.onMytabEvent.dispatch(this.id);
 			});
 			var counter = 0;
+			$("#importApp").unbind("click");
 			$("#importApp").click(function() {
 				var currentPrjName = "";
 				if(counter === 1) {
@@ -115,9 +116,9 @@ define(["navigation/listener/navigationListener"], function() {
 					$('#importPassword').val('');
 				} else {				
 					$('#importUserName').val(data.id);
-					$('#importPassword').val(data.password);
+					//$('#importPassword').val(data.password);
 				}
-				$("#importRepourl").val("");
+				$("#importRepourl").val('');
 				$("#importRepourl").removeClass("errormessage");
 				$("#importUserName").removeClass("errormessage");
 				$("#importPassword").removeClass("errormessage");
@@ -186,7 +187,7 @@ define(["navigation/listener/navigationListener"], function() {
 					$('#importPassword').val('');
 				} else {
 					$('#importUserName').val(data.id);
-					$('#importPassword').val(data.password);
+					//$('#importPassword').val(data.password);
 					$('#importUserName').attr('readonly','readonly');
 					$('#importPassword').attr('readonly','readonly');
 				}	
@@ -213,6 +214,7 @@ define(["navigation/listener/navigationListener"], function() {
 			
 			$("input[name='importbtn']").unbind("click");
 			$("input[name='importbtn']").click(function() {
+				$("#importRepourl").val('');
 				self.navigationListener.validateImport(function(response) {
 					if (!response) {
 						self.onImportEvent.dispatch();
