@@ -149,8 +149,10 @@ define(["header/api/headerAPI"], function() {
 					$("#upgradeSuccess").hide();
 					$("#aboutDesc").show();
 					$("#versionTable").show();
-					$("#upgradeStatus").empty();
-					$("#upgradeStatus").hide();
+					$("#upgradeSuccess").empty();
+					$("#upgradeSuccess").hide();
+					$("#upgradeError").empty();
+					$("#upgradeError").hide();
 					if (response.data.updateAvaillable) {
 						$("#upgradeDisable").hide();
 						$("#upgrade").show();
@@ -167,17 +169,19 @@ define(["header/api/headerAPI"], function() {
 		upgradePhresco : function() {
 			var self = this;
 			self.performAction(self.getActionHeader("upgradePhresco"), function(response) {
+				$("#upgrade").hide();
 				if (response.status === "success") {
-					$("#upgradeSuccess").show();
+					var currentVersion  = $("#currentVersion").text();
 					$("#aboutDesc").hide();
 					$("#versionTable").hide();
-					$("#upgrade").hide();
-					$("#upgradeStatus").text("Upgraded successfully. Please restart your framework");
-				} else if (response.status === "error") {
-					$("#upgradeStatus").text("Failed to upgrade");
+					$("#upgradeError").hide();
+					$("#upgradeSuccess").html(currentVersion + " has been upgraded successfully.<br> Phresco is up to date. Please restart.");
+					$("#upgradeSuccess").show();
+				} else if (response.status === "error" || response.status === "failure") {
+					$("#upgradeSuccess").hide();
+					$("#upgradeError").text("Failed to upgrade");
+					$("#upgradeError").show();
 				}	
-				$("#upgradeStatus").show();
-				
 			});
 		},
 

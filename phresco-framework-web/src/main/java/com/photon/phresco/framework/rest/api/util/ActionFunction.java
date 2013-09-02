@@ -983,11 +983,15 @@ public class ActionFunction extends RestBase implements Constants ,FrameworkCons
 		try {
 			ApplicationInfo appInfo = getApplicationInfo();
 			StringBuilder workingDirectory = new StringBuilder(getAppDirectoryPath(appInfo));
-			MojoProcessor mojo = new MojoProcessor(new File(getPhrescoPluginInfoFilePath(PHASE_UNIT_TEST)));
-			persistValuesToXml(mojo, PHASE_UNIT_TEST);
-			List<Parameter> parameters = getMojoParameters(mojo, PHASE_UNIT_TEST);
-			List<String> buildArgCmds = getMavenArgCommands(parameters);
-			buildArgCmds.add(HYPHEN_N);
+			String phrescoUnitInfoFilePath = getPhrescoPluginInfoFilePath(PHASE_UNIT_TEST);
+			List<String> buildArgCmds = new ArrayList<String>();
+			if (new File(phrescoUnitInfoFilePath).exists()) {
+				MojoProcessor mojo = new MojoProcessor(new File(phrescoUnitInfoFilePath));
+				persistValuesToXml(mojo, PHASE_UNIT_TEST);
+				List<Parameter> parameters = getMojoParameters(mojo, PHASE_UNIT_TEST);
+				buildArgCmds = getMavenArgCommands(parameters);
+				buildArgCmds.add(HYPHEN_N);
+			}
 			ApplicationManager applicationManager = PhrescoFrameworkFactory.getApplicationManager();
 			reader = applicationManager.performAction(getProjectInfo(), ActionType.UNIT_TEST, buildArgCmds, workingDirectory.toString());
 			 //To generate the lock for the particular operation

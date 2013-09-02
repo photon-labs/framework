@@ -19,13 +19,16 @@
 			<ul class="nav">
 				<li id="helpMenu"><a href="#" data-i18n="header.userinfo.help"></a></li>
 				<li class="aboutPhrescoLi"><a href="#" data-i18n="header.userinfo.about"></a></li>
-				<div id="aboutPopup" class="dyn_popup speakstyletopright" style="display:none; width: 170% !important;">
-				  <div class="header_left">
-					<figure><img id="aboutlogo" src="themes/default/images/helios/helios_logo.png" border="0"></figure>	
-				  </div>		
-				  <div id="aboutDesc">Phrseco is a platform for creating next generation web, mobile, and multi channel presences leveraging your existing investments combined with accepted industry best practices
-				  </div>
-				  <table class="table_border availablePdfRptsTbl" border="0" cellspacing="0" cellpadding="5" width="100%" id="versionTable">
+				<div id="aboutPopup" class="dyn_popup speakstyletopright" style="display:none; width: 393px;">
+				  
+				  <table border="0" class="about_cont" cellpadding="0" cellspacing="0">
+				  <tr>
+				  	<td valign="middle"><img src="themes/default/images/helios/about_logo.png" border="0"></td>
+				  	<td>Phrseco is a platform for creating next generation web, mobile, and multi channel presences leveraging your existing investments combined with accepted industry best practices.</td>
+				  </tr>
+				  </table>
+				  
+				  <table class="table_border border_div availablePdfRptsTbl" border="0" cellspacing="0" cellpadding="5" width="100%" id="versionTable">
                 		<thead>
                         	<tr>
 	                            <th>Current version</th>
@@ -39,7 +42,8 @@
                     	    </tr>
                    	 	</tbody>    
                 	</table>
-                	<div id="upgradeSuccess" style="display:none"></div>
+                	<div id="upgradeSuccess" class="update_success" style="display:none">3.0.0.23001 Upgraded Successfully.<br> Phresco is up to Date</div>
+					<div id="upgradeError" class="update_error" style="display:none">3.0.0.23001 Upgraded Successfully.<br> Phresco is up to Date</div>
 					<div class="flt_right">
 						<div id="upgradeStatus"></div>
                         <input type="button" name="upgradeDisable" value="Upgrade" id="upgradeDisable" class="btn btn_style" disabled>
