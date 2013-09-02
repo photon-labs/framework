@@ -460,10 +460,10 @@ define(["build/listener/buildListener"], function() {
 			});
 			
 			//Show tooltip event
-			$(".tooltiptop").unbind("click");
+			/* $(".tooltiptop").unbind("click");
 			$(".tooltiptop").click(function() {
 				self.opencc(this, $(this).attr('name'), '', 50);
-			});
+			}); */
 		},
 		
 		miniferClickEvents : function(){
@@ -708,7 +708,7 @@ define(["build/listener/buildListener"], function() {
 				self.appendMinifyRow({"opFileLoc": "", "csvFileName": "", "compressName": "", "fileType": "css", 'minusImg': true});
 				
 				self.buildListener.getBuildInfo(self.buildListener.getRequestHeader("", '', 'minifyList'), function(response){
-					if(response !== null){
+					if(response !== null && response.data !== null){
 						$.each(response.data, function(index, current){
 							self.appendMinifyRow(current);
 						});

@@ -89,6 +89,7 @@ define([], function() {
 		},
 		
 		mvnMinification : function(paramData, divId, bodyContent, callback){
+			console.info('bodyContent',bodyContent);
 			var self = this, header = self.getRequestHeader("POST", bodyContent, commonVariables.mvnMinification, paramData);
 			self.mvnService(header, divId, callback);
 		},
@@ -151,21 +152,21 @@ define([], function() {
 						if(response !==  undefined && response !==  null){
 							commonVariables.loadingScreen.removeLoading();
 
-							if(response.status === 'STARTED'){
+							if(response.status.toUpperCase() === 'STARTED'){
 								$(divId).append(response.status + '<br>');
 								self.mvnlogService(response.uniquekey, divId, function(retVal){
 									callback(retVal);
 								});
-							}else if(response.status === 'INPROGRESS'){
+							}else if(response.status.toUpperCase() === 'INPROGRESS'){
 								callback(response);
-							}else if(response.status === 'COMPLETED'){
+							}else if(response.status.toUpperCase() === 'COMPLETED'){
 								callback(response);
-							}else if(response.status === 'error'){
+							}else if(response.status.toUpperCase() === 'ERROR'){
 								$(divId).append('<font style = "color:red">' + response.service_exception + '</font><br>');
 								callback(response.service_exception);
-							}else if(response.status === 'success'){
+							}else if(response.status.toUpperCase() === 'SUCCESS'){
 								callback(response.connectionAlive);
-							}else if(response.status === 'failure'){
+							}else if(response.status.toUpperCase() === 'FAILURE'){
 								$(".content_end").show();
 								$(".msgdisplay").removeClass("success").addClass("error");
 								$(".error").attr('data-i18n', 'errorCodes.' + response.responseCode);
@@ -231,9 +232,9 @@ define([], function() {
 									}
 								});
 							}
-							if(response.status === 'STARTED'){
+							if(response.status.toUpperCase() === 'STARTED'){
 								callback(response);
-							}else if(response.status === 'INPROGRESS'){
+							}else if(response.status.toUpperCase() === 'INPROGRESS'){
 								if (response.log.indexOf("SocketConnector@0.0.0.0:") != -1 || 
 									response.log.indexOf("Done: /status") != -1 ||
 									response.log.toLowerCase().match("info: starting coyote http/1.1") ||
@@ -247,14 +248,24 @@ define([], function() {
 								} else {
 									self.mvnlogService(response.uniquekey, divId, callback);
 								}
-							}else if(response.status === 'COMPLETED'){
+							}else if(response.status.toUpperCase() === 'COMPLETED'){
 								callback(response);
-							}else if(response.status === 'error'){
+							}else if(response.status.toUpperCase() === 'ERROR'){
 								$(divId).append('<font style = "color:red">' + data.service_exception + '</font><br>');
 								$('.progress_loading').css('display','none');
 								callback(response);
-							}else if(response.status === 'success'){
+							}else if(response.status.toUpperCase() === 'SUCCESS'){
 								$('.progress_loading').css('display','none');
+								callback(response);
+							}else if(response.status.toUpperCase() === 'FAILURE'){
+								$(".content_end").show();
+								$(".msgdisplay").removeClass("success").addClass("error");
+								$(".error").attr('data-i18n', 'errorCodes.' + response.responseCode);
+								self.renderlocales(commonVariables.contentPlaceholder);	
+								$(".error").fadeIn(500).fadeOut(500).fadeIn(500).fadeOut(500).fadeIn(500).fadeOut(5);
+								setTimeout(function() {
+									$(".content_end").hide();
+								},2500); 
 								callback(response);
 							}else if(response.status === null){
 								$('.progress_loading').css('display','none');
@@ -301,7 +312,7 @@ define([], function() {
 				contentType: "application/json",
 				requestMethod: type,
 				dataType: "json",
-				requestPostBody: body,
+				requestPostBody: JSON.stringify(body),
 				webserviceurl: commonVariables.webserviceurl + urlContext + "?" + paramData
 			};
 

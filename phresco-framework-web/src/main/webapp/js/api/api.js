@@ -3,7 +3,7 @@ define(["framework/base", "api/localStorageAPI"], function(){
 
 	Clazz.com.js.api.API = Clazz.extend(Clazz.Base, {
 		localVal : null,
-
+		bCheck : false,
 		/***
 		 * Written by Kavinraj.M Date - 23/08/2013
 		 *
@@ -72,10 +72,19 @@ define(["framework/base", "api/localStorageAPI"], function(){
 					
 					if (response !== undefined && response !== null && response.status !== "error") {
 						callbackFunction(response);
+					}else if(self.bCheck){
+						$('#login').removeAttr('disabled');
+						$.get(commonVariables.globalconfig.environments.locales, function(data){
+							if(data !== undefined && data !== null){
+								self.showError(data.errorCodes[response.responseCode]);
+							}
+						}, 'JSON');
 					}
+					self.bCheck = false;
 				},
 				
 				error : function(jqXHR, textStatus, errorThrown){
+					self.bCheck = false;
 					self.showError("Unexpected Failure at server end");
 					if (errorHandler){
 						errorHandler(jqXHR.responseText);

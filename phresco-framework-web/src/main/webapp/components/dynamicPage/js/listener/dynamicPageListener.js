@@ -1148,7 +1148,6 @@ define(["framework/widgetWithTemplate", "common/loading", "lib/customcombobox-1.
 				var path = $(this).parent().attr('value');
 				path = path.replace(/\+/g,' ');
 				self.minifySaveFilePath(current, divId, placeCnt, hiddenCnt, path);
-				console.info('tree clicked');
 			});
 		},
 		
@@ -1156,7 +1155,6 @@ define(["framework/widgetWithTemplate", "common/loading", "lib/customcombobox-1.
 			var self=this;
 			$(current).closest('tr').find("input[name=selectFilePath]").unbind('click');
 			$(current).closest('tr').find("input[name=selectFilePath]").click(function() {
-				console.info('ok btn clicked');
 				var nameList = '';
 				$.each($(divId).find('span.folder'), function(index, value){
 					if($(value).attr('selected') !== undefined) {
