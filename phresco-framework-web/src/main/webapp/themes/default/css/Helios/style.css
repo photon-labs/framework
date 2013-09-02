@@ -93,7 +93,7 @@ header, aside, figure, footer, ul, li {
 
 sup { color:#FF0000; }
 
-div, button, img { outline:none; }
+a, div, button, img { outline:none; !important; }
 /*=== Loading ===*/
 .widget-mask-main,.widget-mask-mid-content,.mask{
     width: 100%;
@@ -2887,17 +2887,19 @@ html>body tbody.scrollContent {
 
 .unit_view {
 	float: left;
-	padding-top: 8px;	
+	padding-top: 9px;	
 }
 
 .unit_view span {
 	font-weight:bold;
-	margin-right: 10px;	
+	margin-right: 4px;	
 	padding-top: 8px;
+	cursor:pointer;
 }
 
 .unit_view span img {
-	margin: -2px;}
+	margin-right: 5px;	
+}
 
 .unit_view span b {
 	color: #ef7b43 !important;
@@ -4618,6 +4620,42 @@ a.selected { background:#dcdcdc; }
 }
 
 /* **************************Manual test starts**********************************************************/
+
+
+
+
+/* **************************Abouts Us Starts**********************************************************/
+
+.about_cont {
+	font-size:12px;
+	text-align:left;
+	line-height:22px;
+	color:#333333;
+	margin-bottom:6px;
+}
+
+.about_cont tr td img { margin-right:15px; }
+
+.update_success {
+	background: #e3f8c0 !important;
+	text-align:center;
+	color:#4b6d13;
+	border:1px solid #cee5a7;
+	padding:3px;
+}
+
+.update_error {
+	background: #F2DEDE !important;
+	text-align:center;
+	color:#B94A48;
+	border:1px solid #EED3D7;
+	padding:3px;
+}
+
+
+
+
+/* **************************Abouts Us Ends**********************************************************/
 .hideManualColumns { display: none !important; }
 
 select[name="reportDataType"], input[name="pdfName"] {

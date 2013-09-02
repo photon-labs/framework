@@ -5,12 +5,14 @@
         <div class="flt_right">
         	{{#showIcons resultAvailable testResultFiles}}
 	        	<div class="unit_view performanceView">
-	                <span id="tabularView" style="cursor: pointer;">
+					<div class="flt_left" style="margin-top:-3px;">
+	                <span id="tabularView">
 						<a href="#"><img class="tableIcon" src="themes/default/images/helios/table_active.png" width="213" height="29" border="0" alt=""></a>
 					</span>
-					<span id="graphicalView" class="hideContent" style="cursor: pointer;">
+					<span id="graphicalView" class="hideContent">
 						<a href="#"><img class="tableIcon" src="themes/default/images/helios/graph_active.png" width="213" height="29" border="0" alt=""></a>
 					</span>
+					</div>
 				</div>	
 	        {{else}}  
 	        	<div class="unit_view performanceView hideContent">
