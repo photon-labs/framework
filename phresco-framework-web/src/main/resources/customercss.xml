@@ -94,5 +94,8 @@
 	 },
 	 ".logout_icon" : {
 		"background-position":"welcomeUserIcon"
+	 },
+	 ".cust_sel ul li a.selected, .cust_sel ul li a:hover" : {
+	 	"background-color": "customerBaseColor"
 	 }
 }
