@@ -859,11 +859,11 @@ public class ConfigurationService extends RestBase implements FrameworkConstants
 	@GET
 	@Path("/fileBrowse")
 	@Produces(MediaType.APPLICATION_XML)
-	public Response returnFileBorwseEntireStructure(@QueryParam("appDirName") String appDirName) {
+	public Response returnFileBorwseEntireStructure(@QueryParam("appDirName") String appDirName , @QueryParam("fileType") String fileType) {
 		ResponseInfo<DOMSource> responseData = new ResponseInfo<DOMSource>();
 		try {
 			String browsePath = Utility.getProjectHome()  + appDirName;
-			DOMSource outputContent = createXML(browsePath);
+			DOMSource outputContent = createXML(browsePath, fileType);
 			if(outputContent == null) {
 				ResponseInfo<DOMSource> finalOuptut = responseDataEvaluation(responseData, null, null, RESPONSE_STATUS_FAILURE, PHR610021);
 				return Response.status(Status.OK).entity(finalOuptut).header("Access-Control-Allow-Origin", "*").build();
@@ -878,7 +878,7 @@ public class ConfigurationService extends RestBase implements FrameworkConstants
 	}
 
 	// for the return of entire project structure as single xml
-	private static DOMSource createXML(String browsePath) throws PhrescoException {
+	private static DOMSource createXML(String browsePath, String fileType) throws PhrescoException {
 		try {
 			File inputPath = new File(browsePath);
 			if (inputPath.isFile()) {
@@ -896,7 +896,7 @@ public class ConfigurationService extends RestBase implements FrameworkConstants
 			mainFolder.setAttribute("type", "Folder");
 			rootElement.appendChild(mainFolder);
 
-			listDirectories(mainFolder, document, inputPath);
+			listDirectories(mainFolder, document, inputPath, fileType);
 
 			DOMSource source = new DOMSource(document);
 			return source;
@@ -907,8 +907,7 @@ public class ConfigurationService extends RestBase implements FrameworkConstants
 		}
 	}
 	
-	private static void listDirectories(Element rootElement, Document document, File dir) {
-
+	private static void listDirectories(Element rootElement, Document document, File dir, String fileType) {
 		for (File childFile : dir.listFiles()) {
 			if (childFile.isDirectory()) {
 				Element childElement = document.createElement("Item");
@@ -917,17 +916,21 @@ public class ConfigurationService extends RestBase implements FrameworkConstants
 				childElement.setAttribute("type", "Folder");
 				rootElement.appendChild(childElement);
 
-				listDirectories(childElement, document, childFile.getAbsoluteFile());
+				listDirectories(childElement, document, childFile.getAbsoluteFile(), fileType);
 			} else { 
+				String fileName = childFile.getName();
+				 fileName = fileName.substring(fileName.lastIndexOf('.')+1,fileName.length());
+				if(StringUtils.isEmpty(fileType) || fileName.equals(fileType)) {
 				Element childElement = document.createElement("Item");
 				childElement.setAttribute("name", childFile.getName());
 				childElement.setAttribute("path", childFile.getPath());
 				childElement.setAttribute("type", "File");
 				rootElement.appendChild(childElement);
+				}
 			}
 		}
 	}
-		
+	
 	// for the return of project structure on individual folders
 	private DOMSource constructXml(String name, String path, List<FileBrowseInfo> browseList) throws PhrescoException {
 		try {

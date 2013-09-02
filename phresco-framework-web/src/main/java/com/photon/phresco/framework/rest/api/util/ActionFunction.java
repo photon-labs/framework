@@ -721,7 +721,8 @@ public class ActionFunction extends RestBase implements Constants ,FrameworkCons
 		BufferedInputStream server_logs=null;
 		UUID uniqueKey = UUID.randomUUID();
 		String unique_key = uniqueKey.toString();
-		server_logs = minification(files);
+		String minifyParam = request.getParameter("minifyAll");
+		server_logs = minification(files, minifyParam);
 		if (server_logs != null) {
 			return generateResponse(server_logs, unique_key);
 		} else {
@@ -837,7 +838,6 @@ public class ActionFunction extends RestBase implements Constants ,FrameworkCons
 		BufferedInputStream server_logs=null;
 		UUID uniqueKey = UUID.randomUUID();
 		String unique_key = uniqueKey.toString();
-		server_logs = showStartedNodeLog();
 		server_logs = generateSiteReport();
 		if (server_logs != null) {
 			return generateResponse(server_logs, unique_key);
@@ -851,7 +851,6 @@ public class ActionFunction extends RestBase implements Constants ,FrameworkCons
 		BufferedInputStream server_logs=null;
 		UUID uniqueKey = UUID.randomUUID();
 		String unique_key = uniqueKey.toString();
-		server_logs = showStartedNodeLog();
 		server_logs = ciSetup();
 		if (server_logs != null) {
 			return generateResponse(server_logs, unique_key);
@@ -865,7 +864,6 @@ public class ActionFunction extends RestBase implements Constants ,FrameworkCons
 		BufferedInputStream server_logs=null;
 		UUID uniqueKey = UUID.randomUUID();
 		String unique_key = uniqueKey.toString();
-		server_logs = showStartedNodeLog();
 		server_logs = ciStart();
 		if (server_logs != null) {
 			return generateResponse(server_logs, unique_key);
@@ -879,7 +877,6 @@ public class ActionFunction extends RestBase implements Constants ,FrameworkCons
 		BufferedInputStream server_logs=null;
 		UUID uniqueKey = UUID.randomUUID();
 		String unique_key = uniqueKey.toString();
-		server_logs = showStartedNodeLog();
 		server_logs = ciStop();
 		if (server_logs != null) {
 			return generateResponse(server_logs, unique_key);
@@ -1207,7 +1204,7 @@ public class ActionFunction extends RestBase implements Constants ,FrameworkCons
 		return reader;
 	}
 
-	public BufferedInputStream minification(List<MinifyInfo> files) throws PhrescoException {
+	public BufferedInputStream minification(List<MinifyInfo> files, String minifyParam) throws PhrescoException {
 
 		BufferedInputStream reader = null;
 		try {
@@ -1222,11 +1219,11 @@ public class ActionFunction extends RestBase implements Constants ,FrameworkCons
 			List<Element> configList = new ArrayList<Element>();
 //			List<String> files = getMinifyFileNames();
 			createExcludesTagInPom(doc, configList);
-			if (Boolean.parseBoolean(getMinifyAll()) && CollectionUtils.isEmpty(files)) { // Only Minify all is selected
+			if (Boolean.parseBoolean(minifyParam) && CollectionUtils.isEmpty(files)) { // Only Minify all is selected
 				configList.add(createElement(doc, POM_OUTPUTDIR, POM_SOURCE_DIRECTORY));
 			} else if (CollectionUtils.isNotEmpty(files)) {
 				String dynamicIncludeDir = "";
-				if (Boolean.parseBoolean(getMinifyAll())) {//if Minify all is selected
+				if (Boolean.parseBoolean(minifyParam)) {//if Minify all is selected
 					dynamicIncludeDir = POM_SOURCE_DIRECTORY;
 					configList.add(createElement(doc, POM_OUTPUTDIR, POM_SOURCE_DIRECTORY));
 				} else {//if Minify all not is selected
