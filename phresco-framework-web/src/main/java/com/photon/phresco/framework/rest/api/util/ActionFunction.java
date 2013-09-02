@@ -1818,11 +1818,9 @@ public class ActionFunction extends RestBase implements Constants ,FrameworkCons
 	private void createAggregationTagInPom(ApplicationInfo applicationInfo, Document doc, List<Element> configList, List<MinifyInfo> files,
 			String dynamicIncludeDir) throws PhrescoException {
 		Element aggregationsElement = doc.createElement(POM_AGGREGATIONS);
-		//files -- change
 		for (MinifyInfo file : files) {
-			String newFileName = ""; //compress name
+			String newFileName = ""; 
 			String extension = "";
-//			String csvJsFile = getHttpRequest().getParameter(file);// selected files array
 			String csvJsFile = file.getCsvFileName();
 			List<String> chosenFiles = Arrays.asList(csvJsFile.split(CSV_PATTERN));
 			Element agrigationElement = appendChildElement(doc, aggregationsElement, POM_AGGREGATION, null);
@@ -1835,11 +1833,10 @@ public class ActionFunction extends RestBase implements Constants ,FrameworkCons
 				appendChildElement(doc, includesElement, POM_INCLUDE, "**/" + newFileName + HYPEN_MIN_DOT + extension);
 				agrigationElement.appendChild(includesElement);
 			}
-//			String location = getHttpRequest().getParameter(file + MINIFY_FILE_LOCATION);//path
 			String location = file.getOpFileLoc();
 			String[] splitted = location.split(applicationInfo.getAppDirName());
 			String minificationDir = splitted[1];
-			appendChildElement(doc, agrigationElement, POM_OUTPUT, MINIFY_OUTPUT_DIRECTORY + minificationDir + file.getCompressName() + DOT_MIN_DOT + file.getFileType());
+			appendChildElement(doc, agrigationElement, POM_OUTPUT, MINIFY_OUTPUT_DIRECTORY + minificationDir.replace("\\", "/") + file.getCompressName() + DOT_MIN_DOT + file.getFileType());
 		}
 		configList.add(aggregationsElement);
 	}
