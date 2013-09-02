@@ -32,6 +32,7 @@ define([], function() {
 				var self = this, header = self.getRequestHeader();
 				if(self.loginValidation()){
 					//TODO: call login service here and call appendPlaceholder in the success function
+					commonVariables.api.bCheck = true;
 					commonVariables.api.ajaxRequest(header, 
 						function(response){
 							if(response !== undefined && response !== null && response.status !== "error" && response.status !== "failure"){
@@ -69,8 +70,8 @@ define([], function() {
 		
 		setUserInfo : function(data){
 			var self = this, userInfo = JSON.stringify(data);
-			commonVariables.api.localVal.setSession("username",$("#username").val());
-			commonVariables.api.localVal.setSession("password",$("#password").val());
+			commonVariables.api.localVal.setSession("username",$("#username").val().trim());
+			commonVariables.api.localVal.setSession("password",$("#password").val().trim());
 			commonVariables.api.localVal.setSession("rememberMe",$("#rememberMe").is(":checked"));
 			commonVariables.api.localVal.setSession("userInfo",userInfo);
 			commonVariables.api.localVal.setSession("userPermissions", JSON.stringify(data.permissions));

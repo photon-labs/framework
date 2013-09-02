@@ -427,6 +427,20 @@ define([], function() {
 			
 			commonVariables.hideloading = true;
 			self.projectListAction(self.getActionHeader(actionBody, action), $("#pdfReportLoading_"+dynamicId), function(response) {
+				 if(fromPage !== 'All') {
+					var halfheight= window.innerHeight/2;
+					var halfwidth= window.innerWidth/2;
+					if ($(obj).offset().top > halfheight && $(obj).offset().left > halfwidth){
+						var nameval = $(obj).attr('name');
+						if(response.responseCode === 'PHR200015' || response.length === 0) {
+							var temp2 = $(obj).position().top - 197;
+							$("#"+nameval).css('top',temp2);
+						} else {			
+							var temp2 = $(obj).position().top - 230;
+							$("#"+nameval).css('top',temp2);
+						}	
+					}
+				} 	
 				self.listPdfReports(response, temp, dynamicId);
 				self.clickFunction(dynamicId);
 				commonVariables.hideloading = false;
