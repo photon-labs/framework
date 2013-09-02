@@ -479,7 +479,7 @@ define(["build/listener/buildListener"], function() {
 						fileInfo = {}, type = $(rCurrent).find('input[name=fileType]').val().trim(),
 						compressName = $(rCurrent).find('input[name='+ type +'MinName]').val().trim(),
 						files = $(rCurrent).find('input[name='+ type +'MinFiles]').val().trim(),
-						path = $(rCurrent).find('input[name='+ type +'filePath]').val().trim();
+						path = $(rCurrent).find('input[name='+ type +'filePath]').val().trim().replace(($(rCurrent).find('input[name='+ type +'filePath]').val().trim().split('\\').pop()), '');
 						
 						if(type !== '' && files !== '' && path !== ''){
 							if(compressName === ''){
@@ -487,10 +487,10 @@ define(["build/listener/buildListener"], function() {
 								validation = true;
 								return true;
 							}else{
-								fileInfo.type = type;
+								fileInfo.fileType = type;
 								fileInfo.compressName = compressName;
-								fileInfo.files = files;
-								fileInfo.path = path;
+								fileInfo.csvFileName = files;
+								fileInfo.opFileLoc = path;
 								finalArray.push(fileInfo);
 							}
 						}

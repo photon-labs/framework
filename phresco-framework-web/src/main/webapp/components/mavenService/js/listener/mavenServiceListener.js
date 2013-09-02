@@ -251,7 +251,7 @@ define([], function() {
 							}else if(response.status.toUpperCase() === 'COMPLETED'){
 								callback(response);
 							}else if(response.status.toUpperCase() === 'ERROR'){
-								$(divId).append('<font style = "color:red">' + data.service_exception + '</font><br>');
+								$(divId).append('<font style = "color:red">' + response.service_exception + '</font><br>');
 								$('.progress_loading').css('display','none');
 								callback(response);
 							}else if(response.status.toUpperCase() === 'SUCCESS'){
@@ -312,7 +312,7 @@ define([], function() {
 				contentType: "application/json",
 				requestMethod: type,
 				dataType: "json",
-				requestPostBody: JSON.stringify(body),
+				requestPostBody: body,
 				webserviceurl: commonVariables.webserviceurl + urlContext + "?" + paramData
 			};
 
