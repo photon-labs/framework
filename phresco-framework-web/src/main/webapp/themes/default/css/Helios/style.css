@@ -999,7 +999,7 @@ ul.nav li.dropdown:hover > .test_options{
 
 .report_type select
 {
-		width:250px !important;
+		width:245px !important;
 }
 
 .report_type tr td {
@@ -3009,6 +3009,7 @@ html>body tbody.scrollContent {
 }
 .datepicker td.active,
 .datepicker td.active:hover {
+	
   color: #ffffff;
   background-color: #ED7940;
   background-image: -moz-linear-gradient(top, #ED7940, #ED7940);
