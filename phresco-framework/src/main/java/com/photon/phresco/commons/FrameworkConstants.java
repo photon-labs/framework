@@ -1971,7 +1971,7 @@ public interface FrameworkConstants {
 	    
 	    String LOGO = "logo";
 		String THEME = "theme";
-
+		String TECHNOLOGY_NAME = "technologyName";
 		 /**
 	    * Manual Test Extensions
 	    */

@@ -842,7 +842,7 @@ public class ActionService implements ActionServiceConstant, FrameworkConstants,
 			
 			// is sonar report available
 			if ((FrameworkConstants.ALL).equals(fromPage)) {
-			isReportAvailable = actionFunction.isSonarReportAvailable(frameworkUtil, appInfo, request);
+				isReportAvailable = actionFunction.isSonarReportAvailable(frameworkUtil, appInfo, request);
 			}
 
 			// is test report available

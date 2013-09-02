@@ -1639,6 +1639,7 @@ public class ActionFunction extends RestBase implements Constants ,FrameworkCons
 			
 			ApplicationManager applicationManager = PhrescoFrameworkFactory.getApplicationManager();
 			ProjectInfo projectInfo = FrameworkServiceUtil.getProjectInfo(appDirName);
+			String sonarURL = FrameworkServiceUtil.getSonarURL(request);
 			String customerId = projectInfo.getCustomerIds().get(0);
 
 			ApplicationInfo applicationInfo = projectInfo.getAppInfos().get(0);
@@ -1660,7 +1661,7 @@ public class ActionFunction extends RestBase implements Constants ,FrameworkCons
 			sb.append(INFO_XML);
 			MojoProcessor mojo = new MojoProcessor(new File(sb.toString()));
 			List<Parameter> parameters = getMojoParameters(mojo, PHASE_PDF_REPORT);
-			//String sonarUrl = (String) getReqAttribute(REQ_SONAR_URL);
+
 			if (CollectionUtils.isNotEmpty(parameters)) {
 				for (Parameter parameter : parameters) {
 					String key = parameter.getKey();
@@ -1671,15 +1672,15 @@ public class ActionFunction extends RestBase implements Constants ,FrameworkCons
 							setFromPage(FROMPAGE_ALL);
 						}
 						parameter.setValue(fromPage);
-					} /*else if (REQ_SONAR_URL.equals(key)) {
-	            		parameter.setValue(sonarUrl);
-	            	}*/ else if ("logo".equals(key)) {
+					} else if (REQ_SONAR_URL.equals(key)) {
+	            		parameter.setValue(sonarURL);
+	            	} else if (LOGO.equals(key)) {
 	            		parameter.setValue(getLogoImageString(userId, customerId));
-	            	} else if ("theme".equals(key)) {
+	            	} else if (THEME.equals(key)) {
 	            		parameter.setValue(getThemeColorJson(userId, customerId));
 	            	} else if (REQ_REPORT_NAME.equals(key)) {
 	            		parameter.setValue(pdfName);
-	            	} else if ("technologyName".equals(key)) {
+	            	} else if (TECHNOLOGY_NAME.equals(key)) {
 	            		parameter.setValue(technology.getName());
 	            	}
 				}
