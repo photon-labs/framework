@@ -89,8 +89,7 @@ define([], function() {
 		},
 		
 		mvnMinification : function(paramData, divId, bodyContent, callback){
-			console.info('bodyContent',bodyContent);
-			var self = this, header = self.getRequestHeader("POST", bodyContent, commonVariables.mvnMinification, paramData);
+			var self = this, header = self.getRequestHeader("POST", JSON.stringify(bodyContent), commonVariables.mvnMinification, paramData);
 			self.mvnService(header, divId, callback);
 		},
 		
