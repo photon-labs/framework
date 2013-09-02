@@ -572,13 +572,14 @@ public class ConfigurationServiceTest extends LoginServiceTest {
 	}
 	
 	@Test
-	public void fileBrowseTest() {
+		public void fileBrowseTest() {
 		Response fileStructure = configurationService.returnFileBorwseFolderStructure(Utility.getProjectHome()
-				+ appDirName);
+		+ appDirName);
 		Assert.assertEquals(200, fileStructure.getStatus());
-		Response fileEntireStructure = configurationService.returnFileBorwseEntireStructure(appDirName);
+		Response fileEntireStructure = configurationService.returnFileBorwseEntireStructure(appDirName, null);
 		Assert.assertEquals(200, fileEntireStructure.getStatus());
-	}
+		}
+
 	
 	private String getConnectionUrl(String envName, String type, String configName) throws PhrescoException {
 		String configFileDir = FrameworkServiceUtil.getConfigFileDir(appDirName);
