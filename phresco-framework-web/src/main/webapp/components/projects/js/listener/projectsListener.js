@@ -215,7 +215,7 @@ define([], function() {
 		appvalid : function() {
 			var textboxval,techval,verval,count1 = 0,flagnew1 = 0,arr1 = [],flag = 0;
 			$('.applnlayercontent').each(function(index,value) {
-				if(($(value).css('display') !== 'none') && ($(value).attr('name') === 'staticApplnLayer')){
+				if($(value).is(":visible") && $(value).attr('name') === 'staticApplnLayer'){
 					textboxval = $(this).children('td.applnappcode').children('input.appln-appcode').val();
 					techval = $(this).children('td.technology').children('select.appln_technology').val();
 					techvalObj = $(this).children('td.technology').children('select.appln_technology');
@@ -263,7 +263,7 @@ define([], function() {
 			$(".errmsg1").hide();
 			var textbox2val,tech2val,widgetval,webverval,count2 = 0,flagged = 0,flagg = 0,flagnew2 = 0,arr2 = [];
 			$('.weblayercontent').each(function(index,value) {
-				if(($(value).css('display') !== 'none') && ($(value).attr('name') === 'staticWebLayer')){
+				if($(value).is(":visible") && $(value).attr('name') === 'staticWebLayer'){
 					textbox2val = $(this).children('td.webappcode').children('input.web-appcode').val();
 					tech2val = $(this).children('td.web').children('select.weblayer').val();
 					widgetval = $(this).children('td.widget').children('select.web_widget').val();
@@ -284,21 +284,21 @@ define([], function() {
 						}
 						if(flagg !== 1) {
 							if(tech2val !== undefined || tech2val !== 'undefined') { 
-								if(tech2val === 'Select Layer' || tech2val === null) {
+								if(tech2val === 'Select Group' || tech2val === null) {
 									flagged=1;
 									flagnew2 = 1;
 									$(".errmsg2").show();
-									$(".errmsg2").text("Select Layer.");
+									$(".errmsg2").text("Select Group.");
 									$(tech2valobj).focus();	
 								}
 							}
 
 							if(flagged !== 1) {
 								if(widgetval !== undefined || widgetval !== 'undefined' ) {
-									if(widgetval === 'Select Widget' || widgetval ===null) {
+									if(widgetval === 'Select Technology' || widgetval ===null) {
 										flagnew2 = 1;
 										$(".errmsg2").show();
-										$(".errmsg2").text("Select Widget.");
+										$(".errmsg2").text("Select Technology.");
 										$(widgetvalobj).focus();
 										setTimeout(function() {
 											$(".errmsg2").hide();
@@ -326,7 +326,7 @@ define([], function() {
 			$(".errmsg2").hide();
 			var textbox3val,layerval,typeval,mobverval,count3 = 0,flagger = 0,flaggg = 0,flagnew3 = 0,arr3 = [];
 			$('.mobilelayercontent').each(function(index,value) {
-				if(($(value).css('display') !== 'none') && ($(value).attr('name') === 'staticMobileLayer')){
+				if($(value).is(":visible") && $(value).attr('name') === 'staticMobileLayer'){
 					textbox3val = $(this).children('td.mobileappcode').children('input.mobile-appcode').val();
 					layerval = $(this).children('td.mobile').children('select.mobile_layer').val();
 					typeval = $(this).children('td.types').children('select.mobile_types').val();
@@ -357,10 +357,10 @@ define([], function() {
 							}
 							if(flagger !== 1) {
 								if(typeval !== undefined || typeval !=='undefined') {
-									if(typeval === 'Select Platform' || typeval === null) {
+									if(typeval === 'Select Technology' || typeval === null) {
 										flagnew3=1;
 										$(".errmsg3").show();
-										$(".errmsg3").text("Select Platform.");
+										$(".errmsg3").text("Select Technology.");
 										$(typevalobj).focus();
 										setTimeout(function() {
 											$(".errmsg2").hide();
@@ -392,7 +392,7 @@ define([], function() {
 			 var appcode = $("#appcode").val();
 			 var webappcode = $("#webappcode").val();
 			 var mobileappcode = $("#mobileappcode").val();
-
+			 	
 			    if(name === ""){
 					self.valid("input[name='projectname']", "Enter Name");
 					self.hasError = true;
@@ -412,7 +412,6 @@ define([], function() {
 					self.hasError=false;
 					return self.hasError;
 				}		
-			
 			return self.hasError;	
 		},
 
@@ -435,7 +434,7 @@ define([], function() {
 			
 			if (layerType === "addApplnLayer") {
 				self.count++;
-				var applicationlayer = '<tr class="applnlayercontent" name="staticApplnLayer"><td class="applnappcode"><input type="text" id="appcode" maxlength="30" title="30 Characters only" class="appln-appcode appCodeText" count='+ self.count +'></td><td name="technology" class="technology"><select name="appln_technology" class="appln_technology selectpicker"><option>Select Technology</option>'+ self.getTechnology() +'</select></td><td colspan="3" name="version" class="version"><select name="appln_version" class="appln_version selectpicker"><option>Select Version</option></select></td><td class="appdependencyTd" colspan="2"><select class="selectpicker appdependencySelect" name="appdependencySelect" style="display:none" title="Select Dependency" multiple><option value="0" disabled>Select Dependency</option></select></td><td><div class="flt_right icon_center"><a name="addApplnLayer"><img src="themes/default/images/helios/plus_icon.png" border="0" alt=""></a> <a href="javascript:;" name="removeApplnLayer"><img src="themes/default/images/helios/minus_icon.png" border="0" alt=""></a></div></td></tr>';
+				var applicationlayer = '<tr class="applnlayercontent" name="staticApplnLayer"><td class="applnappcode"><input type="text" id="appcode" maxlength="30" title="30 Characters only" class="appln-appcode appCodeText" count='+ self.count +'></td><td name="frontEnd" class="frontEnd"><select name="frontEnd" class="frontEnd selectpicker" title="Select Group"><option value="Select Group" selected disabled>Select Group</option>'+self.getFrontEndTechGrp()+'</select></td><td name="technology" class="technology"><select name="appln_technology" class="appln_technology selectpicker"><option disabled>Select Technology</option></select></td><td name="version" class="version"><select name="appln_version" class="appln_version selectpicker"><option disabled>Select Version</option></select></td><td><div class="flt_right icon_center"><a name="addApplnLayer"><img src="themes/default/images/helios/plus_icon.png" border="0" alt=""></a> <a href="javascript:;" name="removeApplnLayer"><img src="themes/default/images/helios/minus_icon.png" border="0" alt=""></a></div></td></tr>';
 				
 				dynamicValue = $(applicationlayer).insertAfter(whereToAppend);
 				self.multiselect();
@@ -448,7 +447,7 @@ define([], function() {
 
 			} else if (layerType === "addWebLayer") {
 				self.count++;
-				var weblayer ='<tr class="weblayercontent" name="staticWebLayer"><td class="webappcode"><input type="text" id="webappcode" maxlength="30" title="30 Characters only" class="web-appcode appCodeText" count='+ self.count +'></td><td name="web" class="web"><select name="weblayer" class="weblayer selectpicker"><option>Select Layer</option>'+self.getWidget() +'</select></td><td name="widget" class="widget"><select name="web_widget" class="web_widget selectpicker"><option>Select Widget</option> </select></td><td name="widgetversion" class="widgetversion"><select name="web_version" class="web_version selectpicker"><option>Select Version</option></select></td><td class="webdependencyTd"><select class="selectpicker webdependencySelect" title="Select Dependency" name="webdependencySelect" style="display:none" multiple><option disabled>Select Dependency</option></select></td><td> <div class="flt_right icon_center"><a href="javascript:;" name="addWebLayer"><img src="themes/default/images/helios/plus_icon.png" border="0" alt=""></a> <a href="javascript:;" name="removeWebLayer"><img src="themes/default/images/helios/minus_icon.png" border="0" alt=""></a></div></td></tr>';
+				var weblayer ='<tr class="weblayercontent" name="staticWebLayer"><td class="webappcode"><input type="text" id="webappcode" maxlength="30" title="30 Characters only" class="web-appcode appCodeText" count='+ self.count +'></td><td name="web" class="web"><select name="weblayer" class="weblayer selectpicker"><option selected disabled>Select Group</option>'+self.getWidget() +'</select></td><td name="widget" class="widget"><select name="web_widget" class="web_widget selectpicker"><option disabled>Select Technology</option> </select></td><td name="widgetversion" class="widgetversion"><select name="web_version" class="web_version selectpicker"><option disabled>Select Version</option></select></td><td> <div class="flt_right icon_center"><a href="javascript:;" name="addWebLayer"><img src="themes/default/images/helios/plus_icon.png" border="0" alt=""></a> <a href="javascript:;" name="removeWebLayer"><img src="themes/default/images/helios/minus_icon.png" border="0" alt=""></a></div></td></tr>';
 				
 				dynamicValue = $(weblayer).insertAfter(whereToAppend);
 				self.multiselect();
@@ -460,7 +459,7 @@ define([], function() {
 				}
 			} else {
 				self.count++;
-				var mobilelayer = '<tr class="mobilelayercontent" name="staticMobileLayer"><td class="mobileappcode"><input type="text" id="mobileappcode" maxlength="30" title="30 Characters only" class="mobile-appcode appCodeText" count='+ self.count +'></td><td name="mobile" class="mobile"><select name="mobile_layer" class="mobile_layer selectpicker"><option>Select Model</option>'+self.getMobile() +'</select></td><td name="types" class="types"><select name="mobile_types" class="mobile_types selectpicker"><option>Select Type</option></select></td><td colspan="2" name="mobileversion" class="mobileversion selectpicker"><select name="mobile_version" class="mobile_version selectpicker"><option>Select Version</option></select></td><td><div class="flt_right icon_center"><a href="javascript:;" name="addMobileLayer"><img src="themes/default/images/helios/plus_icon.png" border="0" alt=""></a> <a href="javascript:;" name="removeMobileLayer"><img src="themes/default/images/helios/minus_icon.png" border="0" alt=""></a></div></td></tr>';
+				var mobilelayer = '<tr class="mobilelayercontent" name="staticMobileLayer"><td class="mobileappcode"><input type="text" id="mobileappcode" maxlength="30" title="30 Characters only" class="mobile-appcode appCodeText" count='+ self.count +'></td><td name="mobile" class="mobile"><select name="mobile_layer" class="mobile_layer selectpicker"><option selected disabled>Select Group</option>'+self.getMobile() +'</select></td><td name="types" class="types"><select name="mobile_types" class="mobile_types selectpicker"><option disabled>Select Technology</option></select></td><td colspan="2" name="mobileversion" class="mobileversion selectpicker"><select name="mobile_version" class="mobile_version selectpicker"><option disabled>Select Version</option></select></td><td><div class="flt_right icon_center"><a href="javascript:;" name="addMobileLayer"><img src="themes/default/images/helios/plus_icon.png" border="0" alt=""></a> <a href="javascript:;" name="removeMobileLayer"><img src="themes/default/images/helios/minus_icon.png" border="0" alt=""></a></div></td></tr>';
 				
 				$(mobilelayer).find('input.appCodeText').attr('count', self.count);
 				dynamicValue = $(mobilelayer).insertAfter(whereToAppend);
@@ -556,10 +555,22 @@ define([], function() {
 				var currentCount = $(this).attr('count');
 				var currentVal =  $(this).val();
 				var appCodeTextObj = $(this);
+				var totalLength = $(this).val().length;
+				if($(this).val().match(/[._-]/g).length !== null){ 
+					var charLength =  $(this).val().match(/[._-]/g).length; 
+				}
 				if(currentVal === '' || currentVal === null) {
-					$(appCodeTextObj).focus();
 					$(appCodeTextObj).addClass('errormessage');
 					$(appCodeTextObj).attr('placeholder', 'Enter Appcode');
+				} else if(charLength !== null && totalLength === charLength){
+					$(this).val('');
+					$(this).focus();
+					$(this).addClass('errormessage');
+					$(this).attr('placeholder', 'Invalid Code');
+					$(this).bind('input', function() {
+						$(this).removeClass("errormessage");
+						$(this).removeAttr("placeholder");
+					});
 				} else {
 					$(".appCodeText").each(function(index, value){
 						var keyAttr = $(value).parents('tr[name=appvalidation]').attr('key');
@@ -576,7 +587,7 @@ define([], function() {
 						}
 					});
 				}	
-				$(appCodeTextObj).bind('keypress', function() {
+				$(appCodeTextObj).bind('input', function() {
 					$(this).removeClass("errormessage");
 					$(this).removeAttr("placeholder");
 				});
@@ -616,7 +627,16 @@ define([], function() {
 			});
 			
 			/***
-			 ** Application Layer - Technology Change Event For Technology version
+			 ** Front End Change Event For Technology
+			 */
+			$("select[name='frontEnd']").bind('change', function(){
+				var group = $(this).val();
+				var frontEndTechPlaceholder = $(this).parent().parent().find("select[name='appln_technology']");
+				self.getFrontEndTechnology(group, frontEndTechPlaceholder);
+			});
+			
+			/***
+			 ** Front End - Technology Change Event For Technology version
 			 */
 			$("select[name='appln_technology']").bind('change', function(){
 				var techId = $(this).val();
@@ -643,7 +663,7 @@ define([], function() {
 			});
 
 			/***
-			 ** Mobile Layer - Mobile Change Event For Mobile Type
+			 ** CMS - Mobile Change Event For Mobile Type
 			 */
 			$("select[name='mobile_layer']").bind('change', function(){
 				var mobile = $(this).val();
@@ -652,7 +672,7 @@ define([], function() {
 			});
 			
 			/***
-			 **	Mobile Layer - Type Change Event For Mobile Version
+			 **	CMS - Type Change Event For Mobile Version
 			 */
 			$("select[name='mobile_types']").unbind('change');
 			$("select[name='mobile_types']").bind('change', function(){
@@ -663,9 +683,20 @@ define([], function() {
 			
 		},
 		
+		getFrontEndTechGrp : function() {
+			var self=this, option;
+			self.applicationlayerData = commonVariables.api.localVal.getJson("Front End");
+			option = '';
+			$.each(self.applicationlayerData.techGroups, function(index, value){
+				option += '<option value='+ value.id +'>'+ value.name +'</option>';
+			});
+			
+			return option;
+		},
+		
 		getTechnology : function(id) {
 			var self=this, option;
-			self.applicationlayerData = commonVariables.api.localVal.getJson("Application Layer");
+			self.applicationlayerData = commonVariables.api.localVal.getJson("Front End");
 			option = '';
 			$.each(self.applicationlayerData.techGroups, function(index, value){
 				$.each(value.techInfos, function(index, value){
@@ -682,7 +713,7 @@ define([], function() {
 		
 		getWidget : function() {
 			var self=this, option;
-			self.weblayerData = commonVariables.api.localVal.getJson("Web Layer");
+			self.weblayerData = commonVariables.api.localVal.getJson("Middle Tier");
 			option = '';
 			$.each(self.weblayerData.techGroups, function(index, value){
 				option += '<option value='+ value.id +'>'+ value.name +'</option>';
@@ -693,7 +724,7 @@ define([], function() {
 		
 		getMobile : function(id) {
 			var self=this, option;
-			self.mobilelayerData = commonVariables.api.localVal.getJson("Mobile Layer");
+			self.mobilelayerData = commonVariables.api.localVal.getJson("CMS");
 			option = '';
 			$.each(self.mobilelayerData.techGroups, function(index, value){
 				if (id === value.id) {
@@ -708,19 +739,40 @@ define([], function() {
 			return option;
 		},
 		
+		getFrontEndTechnology : function(groupId, versionplaceholder) {
+			var self=this, option;
+			self.applicationlayerData = commonVariables.api.localVal.getJson("Front End");
+			$.each(self.applicationlayerData.techGroups, function(index, value) {
+				if (value.id === groupId) {
+					option = '<option value="">Select Technology</option>';
+					$.each(value.techInfos, function(index, value){
+						option += '<option value="'+value.id+'">'+ value.name +'</option>';
+					});
+					$(versionplaceholder).html(option);
+					$(versionplaceholder).selectpicker('refresh');
+					return false;
+				}
+			});
+		},
+		
 		gettechnologyversion : function(technologyId, versionplaceholder) {
 			var self=this, option;
-			self.applicationlayerData = commonVariables.api.localVal.getJson("Application Layer");
+			self.applicationlayerData = commonVariables.api.localVal.getJson("Front End");
 			$.each(self.applicationlayerData.techGroups, function(index, value){
 				$.each(value.techInfos, function(index, value){
 				    if(value.id === technologyId){
 						option = '';
-						$.each(value.techVersions, function(index, value){
-							option += '<option>'+ value +'</option>';
-						});
+						if (value.techVersions !== null && value.techVersions !== null && value.techVersions.length > 0) {
+							$.each(value.techVersions, function(index, value){
+								option += '<option>'+ value +'</option>';
+							});
+						} else {
+							option += '<option value="">No Versions Available</option>';
+						}
 						
 						$(versionplaceholder).html(option);
 						$(versionplaceholder).selectpicker('refresh');
+						return false;
 					}
 				});
 			});
@@ -728,11 +780,11 @@ define([], function() {
 		
 		getwidgettype : function(type, widgetTypePlaceholder) {
 			var self=this, option;
-			self.weblayerData = commonVariables.api.localVal.getJson("Web Layer");
+			self.weblayerData = commonVariables.api.localVal.getJson("Middle Tier");
 			$.each(self.weblayerData.techGroups, function(index, value){
 				if(value.id === type){
 					option = '';
-					option += '<option disabled selected>Select Widget</option>';
+					option += '<option disabled selected>Select Technology</option>';
 					$.each(value.techInfos, function(index, value){
 						option += '<option value='+ value.id +'>'+ value.name +'</option>';
 					});
@@ -745,7 +797,7 @@ define([], function() {
 		
 		editgetwidgettype : function(id) {
 			var self=this, option;
-			self.weblayerData = commonVariables.api.localVal.getJson("Web Layer");
+			self.weblayerData = commonVariables.api.localVal.getJson("Middle Tier");
 			$.each(self.weblayerData.techGroups, function(index, value){
 				$.each(value.techInfos, function(index, value){
 					if (id === value.id) {
@@ -761,7 +813,7 @@ define([], function() {
 		
 		getwidgetversion : function(widgettype, widgetTypePlaceholder) {
 			var self=this, option;
-			self.weblayerData = commonVariables.api.localVal.getJson("Web Layer");
+			self.weblayerData = commonVariables.api.localVal.getJson("Middle Tier");
 			$.each(self.weblayerData.techGroups, function(index, value){
 				$.each(value.techInfos, function(index, value){
 					if(value.id === widgettype){
@@ -779,11 +831,11 @@ define([], function() {
 		
 		getmobiletype : function(mobile, mobileTypePlaceholder) {
 			var self=this, option;
-			self.mobilelayerData = commonVariables.api.localVal.getJson("Mobile Layer");
+			self.mobilelayerData = commonVariables.api.localVal.getJson("CMS");
 			$.each(self.mobilelayerData.techGroups, function(index, value){
 				if(value.id === mobile){
 					option = '';
-					option += '<option disabled selected>Select Type</option>';
+					option += '<option disabled selected>Select Technology</option>';
 					$.each(value.techInfos, function(index, value){
 						option += '<option value='+ value.id +'>'+ value.name +'</option>';
 					});
@@ -796,7 +848,7 @@ define([], function() {
 		
 		editgetmobiletype : function(id) {
 			var self=this, option;
-			self.mobilelayerData = commonVariables.api.localVal.getJson("Mobile Layer");
+			self.mobilelayerData = commonVariables.api.localVal.getJson("CMS");
 			$.each(self.mobilelayerData.techGroups, function(index, value){
 				$.each(value.techInfos, function(index, value){
 					if (id === value.id) {
@@ -812,7 +864,7 @@ define([], function() {
 		
 		getmobileversion : function(mobileType, mobileTypePlaceholder) {
 			var self=this, option;
-			self.mobilelayerData = commonVariables.api.localVal.getJson("Mobile Layer");
+			self.mobilelayerData = commonVariables.api.localVal.getJson("CMS");
 			$.each(self.mobilelayerData.techGroups, function(index, value){
 				$.each(value.techInfos, function(index, value){
 					if(value.id === mobileType){
@@ -843,6 +895,7 @@ define([], function() {
 		pilotprojectsEvent : function() {
 			var self=this;
 			$("select[name='prebuiltapps']").hide();
+			$("select[name='builtmyself']").unbind('change');
 			$("select[name='builtmyself']").bind('change', function(){
 				$("input.appln-appcode").val('');
 				$("input.web-appcode").val('');
@@ -853,28 +906,25 @@ define([], function() {
 				self.counter = null;
 				var selectedText = $(this).find(':selected').val();
 				if(selectedText === "prebuilt"){
-					 $("tr[name=applicationlayer]").hide();
-					 $("tr.applnLayer").hide();
-					 $("tr.applnLayer").attr('key','hidden');	
-					 $("tr[name=weblayer]").hide();
-					 $("tr.webLayer").hide();
-					 $("tr.webLayer").attr('key','hidden');	
-					 $("tr[name=mobilelayer]").hide();
-					 $("tr.mobLayer").hide();
-					 $("tr.mobLayer").attr('key','hidden');	
-					 $("input[name='startdate']").attr("disabled", true);
-					 $("input[name='enddate']").attr("disabled", true);
-					 $("select[name='builtmyselfapps']").hide();
-					 $("#applicationlayer").hide();
-					 $("#weblayer").hide();
-					 $("#mobilelayer").hide();
-					 self.setPilotData(function(Option){
+					$("select[name='builtmyselfapps']").hide();
+					
+					self.setPilotData(function(Option){
 						$("select[name='prebuiltapps']").css('display' , 'inline-block');
 						$("select[name='prebuiltapps']").html(Option);
 						var selectedPilot = $("select[name='prebuiltapps']").find(':selected').text();
 						self.layerRender(selectedPilot);
-					 });
+					});
 				} else {
+					$("tr[name=applicationlayer]").show();
+					$("tr.applnLayer").show();
+					$(".applnlayercontent").show();
+					
+					$("tr[name=weblayer]").show();
+					$("tr.webLayer").show();
+					
+					$("tr[name=mobilelayer]").show();
+					$("tr.mobLayer").show();
+					
 					 $("tr[name=applicationlayer]").show();
 					 $("tr.applnLayer").show();
 					 $("tr.applnLayer").attr('key','displayed');	
@@ -899,19 +949,24 @@ define([], function() {
 					 $("#applicationlayer").show();
 					 $("#weblayer").show();
 					 $("#mobilelayer").show();
-					 self.revertSelectValues($("select[name='appln_technology']"),"Select Technology");
+					 self.revertSelectValues($("select[name=appln_technology]"),"Select Technology");
 					 $("select[name=appln_version]").html('<option>Select Version</option>');
 					 $("select[name=appln_version]").selectpicker('refresh');
-					 self.revertSelectValues($("select[name='weblayer']"),"Select Layer");
-					 self.revertSelectValues($("select[name='mobile_layer']"),"Select Model");
-					 $("select[name=web_widget]").html('<option>Select Widget</option>');
+					 self.revertSelectValues($("select[name=weblayer]"),"Select Group");
+					 self.revertSelectValues($("select[name=mobile_layer]"),"Select Group");
+					 $("select[name=web_widget]").html('<option>Select Technology</option>');
 					 $("select[name=web_widget]").selectpicker('refresh');
 					 $("select[name=web_version]").html('<option>Select Version</option>');
 					 $("select[name=web_version]").selectpicker('refresh');
-					 $("select[name=mobile_types]").html('<option>Select Type</option>');
+					 $("select[name=mobile_types]").html('<option>Select Technology</option>');
 					 $("select[name=mobile_types]").selectpicker('refresh');
 					 $("select[name=mobile_version]").html('<option>Select Version</option>');
-					 $("select[name=mobile_version]").selectpicker('refresh');	
+					 $("select[name=mobile_version]").selectpicker('refresh');
+					 
+					 $("tr.applnlayercontent:not(:first)").remove();
+					 $("tr.weblayercontent:not(:first)").remove();
+					 $("tr.mobilelayercontent:not(:first)").remove();
+					 $("tr.weblayercontent").show();
 				}
 			});
 			
@@ -968,102 +1023,141 @@ define([], function() {
 			var self=this;
 			var selectedPilotData = commonVariables.api.localVal.getJson(selectedPilot);
 			if(selectedPilotData !== undefined && selectedPilotData !== null) {
+				$('#applicationlayer').hide();
+				$('#weblayer').hide();
+				$('#mobilelayer').hide();
+				
 				$("tr[name=applicationlayer]").hide();
 				$("tr.applnLayer").hide();
-				$("tr.applnLayer").attr('key','hidden');	
+				
 				$("tr[name=weblayer]").hide();
 				$("tr.webLayer").hide();
-				$("tr.webLayer").attr('key','hidden');	
+				
 				$("tr[name=mobilelayer]").hide();
 				$("tr.mobLayer").hide();
-				$("tr.mobLayer").attr('key','hidden');
+				
+				$("tr.applnlayercontent:not(:first)").remove();
+				$("tr.weblayercontent:not(:first)").remove();
+				$("tr.mobilelayercontent:not(:first)").remove();
+				
 				$.each(selectedPilotData.appInfos, function(index, appInfo){
-					if(appInfo.techInfo.appTypeId === "app-layer"){
-						$("select[name='appln_technology'] option").each(function(index, value) {
+					if (appInfo.techInfo.appTypeId === "1dbcf61c-e7b7-4267-8431-822c4580f9cf") {
+						$("tr[name=applicationlayer]").show();
+						$("tr.applnLayer").show();
+						var frontEnd = '<tr class="applnlayercontent" name="staticApplnLayer"><td class="applnappcode"><input type="text" id="appcode" maxlength="30" title="30 Characters only" class="appln-appcode appCodeText"></td><td name="frontEnd" class="frontEnd"><select name="frontEnd" class="frontEnd selectpicker" title="Select Group"><option value="Select Group" selected disabled>Select Group</option>'+self.getFrontEndTechGrp()+'</select></td><td name="technology" class="technology"><select name="appln_technology" class="appln_technology selectpicker"><option disabled>Select Technology</option></select></td><td name="version" class="version"><select name="appln_version" class="appln_version selectpicker"><option disabled>Select Version</option></select></td><td><div class="flt_right icon_center"><a name="addApplnLayer" class="hideContent"><img src="themes/default/images/helios/plus_icon.png" border="0" alt=""></a> <a href="javascript:;" name="removeApplnLayer" class="hideContent"><img src="themes/default/images/helios/minus_icon.png" border="0" alt=""></a></div></td></tr>';
+						$(frontEnd).insertAfter("tr.applnlayercontent:last");
+						$("tr.applnlayercontent:first").hide();
+						$("tr.applnlayercontent:last").show();
+						
+						$("select[name='frontEnd']:last option").each(function(index, value) {
+							if ($(value).val() === appInfo.techInfo.techGroupId.toLowerCase()) {
+								$(value).attr('selected', 'selected');
+								$("select[name='frontEnd']:last").attr('appInfoId', appInfo.id);
+								$("select[name='frontEnd']:last").val($(value).val());
+								$("select[name='frontEnd']:last").attr('disabled', 'disabled');
+								$("select[name='frontEnd']:last").selectpicker('refresh');
+							}
+						});
+						
+						var frontEndGrp = $("select[name='frontEnd']:last").val();
+						var frontEndTechPlaceholder = $("select[name='frontEnd']:last").parents("td[name='frontEnd']:last").siblings("td[name='technology']:last").children("select[name='appln_technology']:last");
+						self.getFrontEndTechnology(frontEndGrp, frontEndTechPlaceholder);
+						
+						$("select[name='appln_technology']:last option").each(function(index, value) {
 							$(value).removeAttr('selected');	
 							if($(value).val() === appInfo.techInfo.id.toLowerCase()) {
 								$(value).attr('selected', 'selected');
-								$("select[name='appln_technology']").attr('appInfoId', appInfo.id);
-								$("select[name='appln_technology']").val($(value).val());
-								if (appInfo.techInfo.id === 'tech-java-webservice'){
+								$("select[name='appln_technology']:last").attr('appInfoId', appInfo.id);
+								$("select[name='appln_technology']:last").val($(value).val());
+								/*if (appInfo.techInfo.id === 'tech-java-webservice'){
 									$("select[name='appln_technology']").val('tech-java-webservice');
 								} else if(appInfo.techInfo.id === 'tech-nodejs-webservice'){
 									$("select[name='appln_technology']").val('tech-nodejs-webservice');
-								}	
-								$("select[name='appln_technology']").attr('disabled', 'disabled');
-								$("select[name='appln_technology']").selectpicker('refresh');
+								}*/	
+								$("select[name='appln_technology']:last").attr('disabled', 'disabled');
+								$("select[name='appln_technology']:last").selectpicker('refresh');
 							}
 						});
-						var techId = $("select[name='appln_technology']").val();
-						var versionplaceholder = $("select[name='appln_technology']").parents("td[name='technology']").siblings("td[name='version']").children("select[name='appln_version']");
+						
+						var techId = $("select[name='appln_technology']:last").val();
+						var versionplaceholder = $("select[name='appln_technology']:last").parents("td[name='technology']:last").siblings("td[name='version']:last").children("select[name='appln_version']:last");
 						self.gettechnologyversion(techId, versionplaceholder);
-						$("select[name='appln_version']").attr('disabled', 'disabled');
-						$("select[name='appln_version']").selectpicker('refresh');
-						$("tr[name=applicationlayer]").show();
-						$("tr.applnLayer").show();
+						$("select[name='appln_version']:last").attr('disabled', 'disabled');
+						$("select[name='appln_version']:last").selectpicker('refresh');
 						$("tr.applnLayer").attr('key','displayed');
-					} else if (appInfo.techInfo.appTypeId === "web-layer") {
-						$("select[name='weblayer'] option").each(function(index, value) {
+					} else if (appInfo.techInfo.appTypeId === "e1af3f5b-7333-487d-98fa-46305b9dd6ee") {
+						$("tr[name=weblayer]").show();
+						$("tr.webLayer").show();
+						
+						var middleTier ='<tr class="weblayercontent" name="staticWebLayer"><td class="webappcode"><input type="text" id="webappcode" maxlength="30" title="30 Characters only" class="web-appcode appCodeText"></td><td name="web" class="web"><select name="weblayer" class="weblayer selectpicker"><option selected disabled>Select Group</option>'+self.getWidget() +'</select></td><td name="widget" class="widget"><select name="web_widget" class="web_widget selectpicker"><option disabled>Select Technology</option></select></td><td name="widgetversion" class="widgetversion"><select name="web_version" class="web_version selectpicker"><option disabled>Select Version</option></select></td><td> <div class="flt_right icon_center"><a href="javascript:;" name="addWebLayer" class="hideContent"><img src="themes/default/images/helios/plus_icon.png" border="0" alt=""></a> <a href="javascript:;" name="removeWebLayer" class="hideContent"><img src="themes/default/images/helios/minus_icon.png" border="0" alt=""></a></div></td></tr>';
+						$(middleTier).insertAfter("tr.weblayercontent:last");
+						$("tr.weblayercontent:first").hide();
+						$("tr.weblayercontent:last").show();
+						
+						$("select[name='weblayer']:last option").each(function(index, value) {
 							$(value).removeAttr('selected');
 							var techGroupId = appInfo.techInfo.techGroupId;	
 							if($(value).val() === techGroupId.toLowerCase()) {
 								$(value).attr('selected', 'selected');
-								$("select[name='weblayer']").val($(value).val());
-								$("select[name='weblayer']").attr('appInfoId', appInfo.id);
-								$("select[name='weblayer']").attr('disabled', 'disabled');
-								$("select[name='weblayer']").selectpicker('refresh');
+								$("select[name='weblayer']:last").val($(value).val());
+								$("select[name='weblayer']:last").attr('appInfoId', appInfo.id);
+								$("select[name='weblayer']:last").attr('disabled', 'disabled');
+								$("select[name='weblayer']:last").selectpicker('refresh');
 							}
 						});
-						var type = $("select[name='weblayer']").val();
-						var widgetTypePlaceholder = $("select[name='weblayer']").parents("td[name='web']").siblings("td[name='widget']").children("select[name='web_widget']");
+						var type = $("select[name='weblayer']:last").val();
+						var widgetTypePlaceholder = $("select[name='weblayer']:last").parents("td[name='web']:last").siblings("td[name='widget']:last").children("select[name='web_widget']:last");
 						self.getwidgettype(type, widgetTypePlaceholder);
-						$("select[name='web_widget'] option").each(function(index, value) {
+						$("select[name='web_widget']:last option").each(function(index, value) {
 							$(value).removeAttr('selected');	
 							if($(value).val() === appInfo.techInfo.id) {
 								$(value).attr('selected', 'selected');
-								$("select[name='web_widget']").val($(value).val());
-								$("select[name='web_widget']").attr('disabled', 'disabled');
-								$("select[name='web_widget']").selectpicker('refresh');
+								$("select[name='web_widget']:last").val($(value).val());
+								$("select[name='web_widget']:last").attr('disabled', 'disabled');
+								$("select[name='web_widget']:last").selectpicker('refresh');
 							}
 						});
-						var widgetType = $("select[name='web_widget']").val();
-						var widgetTypePlaceholder = $("select[name='web_widget']").parents("td[name='widget']").siblings("td[name='widgetversion']").children("select[name='web_version']");
+						var widgetType = $("select[name='web_widget']:last").val();
+						var widgetTypePlaceholder = $("select[name='web_widget']:last").parents("td[name='widget']:last").siblings("td[name='widgetversion']:last").children("select[name='web_version']:last");
 						self.getwidgetversion(widgetType, widgetTypePlaceholder);
-						$("select[name='web_version']").attr('disabled', 'disabled');
-						$("select[name='web_version']").selectpicker('refresh');
-						$("tr[name=weblayer]").show();
-						$("tr.webLayer").show();
-						$("tr.webLayer").attr('key','displayed');
-					} else if(appInfo.techInfo.appTypeId === "mob-layer") {
-						$("select[name='mobile_layer'] option").each(function(index, value){
+						$("select[name='web_version']:last").attr('disabled', 'disabled');
+						$("select[name='web_version']:last").selectpicker('refresh');
+						$("tr.webLayer:last").attr('key','displayed');
+					} else if(appInfo.techInfo.appTypeId === "99d55693-dacd-4f77-994a-f02a66176ff9") {
+						$("tr[name=mobilelayer]").show();
+						$("tr.mobLayer").show();
+						var cmsLayer = '<tr class="mobilelayercontent" name="staticMobileLayer"><td class="mobileappcode"><input type="text" id="mobileappcode" maxlength="30" title="30 Characters only" class="mobile-appcode appCodeText"></td><td name="mobile" class="mobile"><select name="mobile_layer" class="mobile_layer selectpicker"><option selected disabled>Select Group</option>'+self.getMobile() +'</select></td><td name="types" class="types"><select name="mobile_types" class="mobile_types selectpicker"><option disabled>Select Technology</option></select></td><td colspan="2" name="mobileversion" class="mobileversion selectpicker"><select name="mobile_version" class="mobile_version selectpicker"><option disabled>Select Version</option></select></td><td><div class="flt_right icon_center"><a href="javascript:;" name="addMobileLayer" class="hideContent"><img src="themes/default/images/helios/plus_icon.png" border="0" alt=""></a> <a href="javascript:;" name="removeMobileLayer" class="hideContent"><img src="themes/default/images/helios/minus_icon.png" border="0" alt=""></a></div></td></tr>';
+						$(cmsLayer).insertAfter("tr.mobilelayercontent:last");
+						$("tr.mobilelayercontent:first").hide();
+						$("tr.mobilelayercontent:last").show();
+					
+						$("select[name='mobile_layer']:last option").each(function(index, value){
 							$(value).removeAttr('selected');	
 							if($(value).val() === appInfo.techInfo.techGroupId) {
 								$(value).attr('selected', 'selected');
-								$("select[name='mobile_layer']").val($(value).val());
-								$("select[name='mobile_layer']").attr('appInfoId', appInfo.id);
-								$("select[name='mobile_layer']").attr('disabled', 'disabled');
-								$("select[name='mobile_layer']").selectpicker('refresh');
+								$("select[name='mobile_layer']:last").val($(value).val());
+								$("select[name='mobile_layer']:last").attr('appInfoId', appInfo.id);
+								$("select[name='mobile_layer']:last").attr('disabled', 'disabled');
+								$("select[name='mobile_layer']:last").selectpicker('refresh');
 							}
 						});
-						var mobile = $("select[name='mobile_layer']").val();
-						var mobileTypePlaceholder = $("select[name='mobile_layer']").parents("td[name='mobile']").siblings("td[name='types']").children("select[name='mobile_types']");
+						var mobile = $("select[name='mobile_layer']:last").val();
+						var mobileTypePlaceholder = $("select[name='mobile_layer']:last").parents("td[name='mobile']:last").siblings("td[name='types']:last").children("select[name='mobile_types']:last");
 						self.getmobiletype(mobile, mobileTypePlaceholder);
-						$("select[name='mobile_types'] option").each(function(index, value){
+						$("select[name='mobile_types']:last option").each(function(index, value){
 							$(value).removeAttr('selected');	
 							if($(value).val() === appInfo.techInfo.id) {
 								$(value).attr('selected', 'selected');
-								$("select[name='mobile_types']").val($(value).val());
-								$("select[name='mobile_types']").attr('disabled', 'disabled');
-								$("select[name='mobile_types']").selectpicker('refresh');
+								$("select[name='mobile_types']:last").val($(value).val());
+								$("select[name='mobile_types']:last").attr('disabled', 'disabled');
+								$("select[name='mobile_types']:last").selectpicker('refresh');
 							}
 						});
-						var mobileType = $("select[name='mobile_types']").val();
-						var mobileTypePlaceholder = $("select[name='mobile_types']").parents("td[name='types']").siblings("td[name='mobileversion']").children("select[name='mobile_version']");
+						var mobileType = $("select[name='mobile_types']:last").val();
+						var mobileTypePlaceholder = $("select[name='mobile_types']:last").parents("td[name='types']:last").siblings("td[name='mobileversion']:last").children("select[name='mobile_version']:last");
 						self.getmobileversion(mobileType, mobileTypePlaceholder);
-						$("select[name='mobile_version']").attr('disabled', 'disabled');
-						$("select[name='mobile_version']").selectpicker('refresh');
-						$("tr[name=mobilelayer]").show();	
-						$("tr.mobLayer").show();
+						$("select[name='mobile_version']:last").attr('disabled', 'disabled');
+						$("select[name='mobile_version']:last").selectpicker('refresh');
 						$("tr.mobLayer").attr('key','displayed');
 					}
 					self.enablebuttonAdd();
@@ -1089,15 +1183,17 @@ define([], function() {
 			}
 		},
 		
-		enablebuttonEdit : function() {
-			if($('#appLayaer').css('display') === "none") {
-					$("input[name='appLayaer']").show();
-			}	
-			if($('#webLayers').css('display') === "none") {
-					$("input[name='webLayers']").show();
-			}	
-			if($('#mobLayers').css('display') === "none") {
-					$("input[name='mobLayers']").show();
+		enablebuttonEdit : function(preBuilt) {
+			if (preBuilt !== "true") {
+				if($('#appLayaer').css('display') === "none") {
+						$("input[name='appLayaer']").show();
+				}	
+				if($('#webLayers').css('display') === "none") {
+						$("input[name='webLayers']").show();
+				}	
+				if($('#mobLayers').css('display') === "none") {
+						$("input[name='mobLayers']").show();
+				}
 			}
 		},
 		
@@ -1111,7 +1207,7 @@ define([], function() {
 			$("tr.mobLayer").hide();
 
 			$.each(getData, function(index, value) {
-				if (value.techInfo.appTypeId === "app-layer") {
+				if (value.techInfo.appTypeId === "1dbcf61c-e7b7-4267-8431-822c4580f9cf") {
 					$("#appLayaer").show();
 					$("tr.applnLayer").show();
 					$('img[name="close"]').hide();
@@ -1122,23 +1218,27 @@ define([], function() {
 						});
 					} else {
 						option = '';
-					}	
-					var appendData = '<tr class="applnlayercontent" name="dynamicAppLayer"><td><input type="text" value="'+value.code+'" disabled></td><td><select disabled>'+ self.getTechnology(value.techInfo.id) +'</select></td><td colspan="3"><select disabled><option>'+value.techInfo.version+'</option></select></td><td colspan="2" class="appdependencyTd"><select class="selectpicker appdependencySelect" multiple title="Select Dependency" data-selected-text-format="count>2"><option value="0" disabled>Select Dependency</option>'+ option +'</select></td><td><div class="flt_right icon_center"><a name="addApplnLayer"></a><a href="javascript:;" name="removeApplnLayer"></a></div></td></tr>';
+					}
+					var versionMsg = value.techInfo.version;
+					if(versionMsg === "" || versionMsg === null || versionMsg === undefined){
+						versionMsg = "No Version Available";
+					}
+					var appendData = '<tr class="applnlayercontent" name="dynamicAppLayer"><td><input type="text" value="'+value.code+'" disabled></td><td name="frontEnd" class="frontEnd"><select name="frontEnd" class="frontEnd" title="Select Group" disabled><option>'+value.techInfo.techGroupId+'</option></select></td><td><select disabled>'+ self.getTechnology(value.techInfo.id) +'</select></td><td><select disabled><option>'+versionMsg+'</option></select></td><td><div class="flt_right icon_center"><a name="addApplnLayer"></a><a href="javascript:;" name="removeApplnLayer"></a></div></td></tr>';
 					$("tbody.applnLayer").append(appendData);
 					self.multiselect();
-				} else if (value.techInfo.appTypeId === "web-layer") {
+				} else if (value.techInfo.appTypeId === "e1af3f5b-7333-487d-98fa-46305b9dd6ee") {
 					$("#webLayers").show();
 					$("tr.webLayer").show();
 					$('img[name="close"]').hide();
-					var appendData = '<tr class="weblayercontent" name="dynamicWebLayer"><td><input type="text" value="'+value.code+'" disabled></td><td><select name="weblayer" disabled><option>'+value.techInfo.techGroupId+'</option></select></td><td name="widget"><select name="web_widget" disabled> '+ self.editgetwidgettype(value.techInfo.id) +'</select></td> <td name="widgetversion"><select name="web_version" disabled><option>'+value.techInfo.version+'</option></select></td><td class="webdependencyTd"><select class="selectpicker webdependencySelect" multiple data-selected-text-format="count>2" title="Select Dependency"><option value="0" disabled>Select Dependency</option>'+ option +'</select></td><td><div class="flt_right icon_center"><a href="javascript:;" name="addWebLayer"></a><a href="javascript:;" name="removeWebLayer"></a></div></td></tr>';
+					var appendData = '<tr class="weblayercontent" name="dynamicWebLayer"><td><input type="text" value="'+value.code+'" disabled></td><td><select name="weblayer" disabled><option>'+value.techInfo.techGroupId+'</option></select></td><td name="widget"><select name="web_widget" disabled> '+ self.editgetwidgettype(value.techInfo.id) +'</select></td> <td name="widgetversion"><select name="web_version" disabled><option>'+value.techInfo.version+'</option></select></td><td><div class="flt_right icon_center"><a href="javascript:;" name="addWebLayer"></a><a href="javascript:;" name="removeWebLayer"></a></div></td></tr>';
 					$("tbody.WebLayer").append(appendData);
 					self.multiselect();
-				} else if (value.techInfo.appTypeId === "mobile-layer" || value.techInfo.appTypeId === "mob-layer") {
+				} else if (value.techInfo.appTypeId === "99d55693-dacd-4f77-994a-f02a66176ff9") {
 					$("#mobLayers").show();
 					$("tr.mobLayer").show();
 					$('img[name="close"]').hide();
 					var versionMsg = value.techInfo.version;
-					if(versionMsg === ""){
+					if(versionMsg === "" || versionMsg === null || versionMsg === undefined || versionMsg === "null"){
 						versionMsg = "No Version Available";
 					}
 					var appendData = '<tr class="mobilelayercontent" name="dynamicMobileLayer"><td><input type="text" value="'+value.code+'" disabled></td><td><select disabled><option>'+value.techInfo.techGroupId+'</option></select></td><td><select name="mobile_types" disabled>'+self.editgetmobiletype(value.techInfo.id)+'</select></td><td colspan="2"><select disabled><option>'+versionMsg +'</option></select></td><td><div class="flt_right icon_center"><a href="javascript:;" name="addMobileLayer"></a><a href="javascript:;" name="removeMobileLayer"></a> </div></td></tr>';
@@ -1182,9 +1282,8 @@ define([], function() {
 					var myEndDate = null;
 				}	
 				var multimodule = $("input[name='multimodule']").val() === "true"? true:false;
-				if($("select[name=builtmyself]").find(":selected").val() !== undefined) {
-					var	preBuilt = $("select[name=builtmyself]").find(":selected").val() === "custom"? false:true;
-				}	
+				var	preBuilt = $("select[name=builtmyself]").val() === "custom"? false:true;
+					
 				var count = 0;
 				self.customerIds = [];
 				self.appInfos = [];
@@ -1213,10 +1312,10 @@ define([], function() {
 					var mobdata = {};
 					var versionText = "";
 					
-					if($(value).attr('class') === "applnLayer" && $(value).attr('key') === "displayed") {
+					if($(value).attr('class') === "applnLayer" && $(value).is(":visible")) {
 						var applnlayerDiv = $(value).children('td.appln').children('table.applnlayer').children('tbody.applnlayer');
 						$.each($(applnlayerDiv).children(), function(index, value){
-							if(($(value).css('display') !== "none") && ($(value).attr('name') === "staticApplnLayer")) {
+							if($(value).is(":visible") && $(value).attr('name') === "staticApplnLayer") {
 								var appInfo = {};
 								var techInfo = {};
 								tech = $(value).children("td.technology").children("select.appln_technology");
@@ -1231,11 +1330,9 @@ define([], function() {
 								appInfo.appDirName = code;
 								appInfo.version = projectversion;
 								appInfo.name = code;
-								if(dependency !== null){
-									appInfo.dependentModules = dependency;
-								}	
 								techInfo.id = $(value).children("td.technology").children("select.appln_technology").val();
-								techInfo.appTypeId = "app-layer";
+								techInfo.appTypeId = "1dbcf61c-e7b7-4267-8431-822c4580f9cf";
+								techInfo.techGroupId = $(value).children("td.frontEnd").children("select.frontEnd").find(":selected").text();
 								techInfo.name = $(value).children("td.technology").children("select.appln_technology").find(":selected").text();
 								techInfo.version = $(value).children("td.version").children("select.appln_version").val();
 								if (appInfo.code !== undefined && appInfo.code !== null) {
@@ -1244,8 +1341,7 @@ define([], function() {
 										var selectedPilot = $("select[name='prebuiltapps']").find(':selected').text();
 										var selectedPilotData = commonVariables.api.localVal.getJson(selectedPilot);
 										$.each(selectedPilotData.appInfos, function(index, appInfo){
-											if(appInfo.techInfo.appTypeId === "app-layer"){
-												//console.info('appInfo.techInfo.appTypeId = '  , appInfo.techInfo.appTypeId);
+											if(appInfo.techInfo.appTypeId === "1dbcf61c-e7b7-4267-8431-822c4580f9cf" && appInfo.techInfo.id === techInfo.id){
 												appInfo.appDirName = code;
 												appInfo.code = code;
 												appInfo.name = code;
@@ -1258,14 +1354,14 @@ define([], function() {
 									}
 									count++;
 								}
-							}	
+							}
 						});	
 					} 
 					
-					if(($(value).attr('class') === "webLayer") && ($(value).attr('key') === "displayed")) {
+					if($(value).attr('class') === "webLayer" && $(value).is(":visible")) {
 						var weblayerDiv = $(value).children('td.WebLayer').children('table.WebLayer').children('tbody.WebLayer');
 						$.each($(weblayerDiv).children(), function(index, value){
-							if($(value).css('display') !== "none" && $(value).attr('name') === "staticWebLayer") {
+							if($(value).is(":visible") && $(value).attr('name') === "staticWebLayer") {
 								var appInfo = {};
 								var techInfo = {};
 								tech = $(value).children("td.widget").children("select.web_widget");
@@ -1284,7 +1380,7 @@ define([], function() {
 									appInfo.dependentModules = dependency;
 								}		
 								techInfo.id = $(value).children("td.widget").children("select.web_widget").val();
-								techInfo.appTypeId = "web-layer";
+								techInfo.appTypeId = "e1af3f5b-7333-487d-98fa-46305b9dd6ee";
 								techInfo.techGroupId = $(value).children("td.web").children("select.weblayer").find(":selected").text();
 								techInfo.version = $(value).children("td.widgetversion").children("select.web_version").find(":selected").text();
 								techInfo.name = $(value).children("td.widget").children("select.web_widget").find(":selected").text();
@@ -1293,11 +1389,8 @@ define([], function() {
 									if(preBuilt){
 										var selectedPilot = $("select[name='prebuiltapps']").find(':selected').text();
 										var selectedPilotData = commonVariables.api.localVal.getJson(selectedPilot);
-										//console.info('selectedPilotData  web layer = ' , selectedPilotData.appInfos);
 										$.each(selectedPilotData.appInfos, function(index, appInfo){
-											if(appInfo.techInfo.appTypeId === "web-layer"){
-												//console.info('appdirname = '  , appInfo.appDirName)
-												//console.info('appInfo.techInfo.appTypeId = '  , appInfo.techInfo.appTypeId);
+											if(appInfo.techInfo.appTypeId === "e1af3f5b-7333-487d-98fa-46305b9dd6ee" && appInfo.techInfo.id === techInfo.id){
 												appInfo.appDirName = code;
 												appInfo.code = code;
 												appInfo.name = code;
@@ -1314,10 +1407,10 @@ define([], function() {
 						});	
 					}  
 
-					if(($(value).attr('class') === "mobLayer") && ($(value).attr('key') === "displayed")) {
+					if($(value).attr('class') === "mobLayer" && $(value).is(":visible")) {
 						var mobilelayerDiv = $(value).children('td.mob').children('table.mob-table').children('tbody');
 						$.each($(mobilelayerDiv).children(), function(index, value){
-							if($(value).css('display') !== "none" && $(value).attr('name') === "staticMobileLayer") {
+							if($(value).is(":visible") && $(value).attr('name') === "staticMobileLayer") {
 								var appInfo = {};
 								var techInfo = {};
 								versionText = $(value).children("td.mobileversion").children("select.mobile_version").find(":selected").text();
@@ -1333,7 +1426,7 @@ define([], function() {
 								appInfo.version = projectversion;
 								appInfo.name = code; 
 								techInfo.id = $(value).children("td.types").children("select.mobile_types").find(':selected').val();
-								techInfo.appTypeId = "mobile-layer";
+								techInfo.appTypeId = "99d55693-dacd-4f77-994a-f02a66176ff9";
 								techInfo.techGroupId = $(value).children("td.mobile").children("select.mobile_layer").find(':selected').text();
 								techInfo.name = $(value).children("td.types").children("select.mobile_types").find(':selected').text();
 								if(versionText === "No Versions available") {
@@ -1347,8 +1440,7 @@ define([], function() {
 										var selectedPilot = $("select[name='prebuiltapps']").find(':selected').text();
 										var selectedPilotData = commonVariables.api.localVal.getJson(selectedPilot);
 										$.each(selectedPilotData.appInfos, function(index, appInfo){
-											if(appInfo.techInfo.appTypeId === "mob-layer"){
-												//console.info('appInfo.techInfo.appTypeId = '  , appInfo.techInfo.appTypeId);
+											if(appInfo.techInfo.appTypeId === "99d55693-dacd-4f77-994a-f02a66176ff9" && appInfo.techInfo.id === techInfo.id){
 												appInfo.appDirName = code;
 												appInfo.code = code;
 												appInfo.name = code;

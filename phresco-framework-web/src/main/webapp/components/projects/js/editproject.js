@@ -56,9 +56,9 @@ define(["projects/listener/projectsListener"], function() {
 		
 		preRender: function(whereToRender, renderFunction){
 			var self = this;
-				self.applicationlayerData = commonVariables.api.localVal.getJson("Application Layer");
-				self.weblayerData = commonVariables.api.localVal.getJson("Web Layer");
-				self.mobilelayerData = commonVariables.api.localVal.getJson("Mobile Layer");
+				self.applicationlayerData = commonVariables.api.localVal.getJson("Front End");
+				self.weblayerData = commonVariables.api.localVal.getJson("Middle Tier");
+				self.mobilelayerData = commonVariables.api.localVal.getJson("CMS");
 			if (self.applicationlayerData !== null && self.weblayerData !== null && self.mobilelayerData !== null) {
 				self.templateData.applicationlayerData = self.applicationlayerData;
 				self.templateData.weblayerData = self.weblayerData;
@@ -97,9 +97,9 @@ define(["projects/listener/projectsListener"], function() {
 			} else {
 				self.setTechnologyData(function(bCheck){
 				if(bCheck){
-					self.applicationlayerData = commonVariables.api.localVal.getJson("Application Layer");
-					self.weblayerData = commonVariables.api.localVal.getJson("Web Layer");
-					self.mobilelayerData = commonVariables.api.localVal.getJson("Mobile Layer");
+					self.applicationlayerData = commonVariables.api.localVal.getJson("Front End");
+					self.weblayerData = commonVariables.api.localVal.getJson("Middle Tier");
+					self.mobilelayerData = commonVariables.api.localVal.getJson("CMS");
 					self.templateData.applicationlayerData = self.applicationlayerData;
 					self.templateData.weblayerData = self.weblayerData;
 					self.templateData.mobilelayerData = self.mobilelayerData;
@@ -158,7 +158,7 @@ define(["projects/listener/projectsListener"], function() {
 			self.multiselect();
 			commonVariables.navListener.currentTab = commonVariables.editproject;
 			self.projectsListener.editSeriveTechnolyEvent(self.getData);
-			self.projectsListener.enablebuttonEdit();
+			self.projectsListener.enablebuttonEdit($("#editPrjprojectname").attr("preBuilt"));
 		},
 		
 		/***

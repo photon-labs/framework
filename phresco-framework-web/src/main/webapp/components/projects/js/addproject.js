@@ -79,9 +79,9 @@ define(["projects/listener/projectsListener"], function() {
 			$("#createProject").show();
 			var self=this;
 			self.projectsListener.counter = null;
-			self.applicationlayerData = commonVariables.api.localVal.getJson("Application Layer");
-			self.weblayerData = commonVariables.api.localVal.getJson("Web Layer");
-			self.mobilelayerData = commonVariables.api.localVal.getJson("Mobile Layer");
+			self.applicationlayerData = commonVariables.api.localVal.getJson("Front End");
+			self.weblayerData = commonVariables.api.localVal.getJson("Middle Tier");
+			self.mobilelayerData = commonVariables.api.localVal.getJson("CMS");
 			if(self.applicationlayerData !== null &&  self.weblayerData !== null && self.mobilelayerData !== null) {
 				self.templateData.applicationlayerData = self.applicationlayerData;
 				self.templateData.weblayerData = self.weblayerData;
@@ -90,9 +90,9 @@ define(["projects/listener/projectsListener"], function() {
 			} else {
 				self.setTechnologyData(function(bCheck){
 					if(bCheck){
-						self.applicationlayerData = commonVariables.api.localVal.getJson("Application Layer");
-						self.weblayerData = commonVariables.api.localVal.getJson("Web Layer");
-						self.mobilelayerData = commonVariables.api.localVal.getJson("Mobile Layer");
+						self.applicationlayerData = commonVariables.api.localVal.getJson("Front End");
+						self.weblayerData = commonVariables.api.localVal.getJson("Middle Tier");
+						self.mobilelayerData = commonVariables.api.localVal.getJson("CMS");
 						self.templateData.applicationlayerData = self.applicationlayerData;
 						self.templateData.weblayerData = self.weblayerData;
 						self.templateData.mobilelayerData = self.mobilelayerData;
@@ -167,6 +167,21 @@ define(["projects/listener/projectsListener"], function() {
 			$(".appln-appcode, .web-appcode, .mobile-appcode").bind('input', function(){
 				$(this).val(self.specialCharValidation($(this).val().replace(/\s/g, "")));
 			});
+			
+			$(".appln-appcode, .web-appcode, .mobile-appcode").focusout(function(){
+				var totalLength = $(this).val().length;
+				var charLength = $(this).val().match(/[._-]/g).length;
+				if(charLength !== null && totalLength === charLength){
+					$(this).val('');
+					$(this).focus();
+					$(this).addClass('errormessage');
+					$(this).attr('placeholder', 'Invalid Code');
+				}
+				$(this).bind('input', function() {
+					$(this).removeClass("errormessage");
+					$(this).removeAttr("placeholder");
+				});
+			});
 
 			$("input[name='Create']").unbind('click');
 			$("input[name='Create']").bind('click', function(){
@@ -201,13 +216,25 @@ define(["projects/listener/projectsListener"], function() {
 			});
 
 
-			$("input[name='projectname']").focusout(function() {
+			$("input[name='projectname']").bind('input', function() {
 				$(this).val(self.specialCharValidation($(this).val()));
 				$("input[name='projectcode']").val(self.specialCharValidation($(this).val().replace(/\s/g, "")));
 			});
 
 			$("input[name='projectcode']").focusout(function() {
 				$(this).val(self.specialCharValidation($(this).val().replace(/\s/g, "")));
+				var totalLength = $(this).val().length;
+				var charLength = $(this).val().match(/[._-]/g).length;
+				if(totalLength === charLength){
+					$(this).val('');
+					$(this).focus();
+					$(this).addClass('errormessage');
+					$(this).attr('placeholder', 'Invalid Code');
+				}
+				$(this).bind('input', function() {
+					$(this).removeClass("errormessage");
+					$(this).removeAttr("placeholder");
+				});
 			});
 			
 			$("input[name='projectversion']").focusout(function() {

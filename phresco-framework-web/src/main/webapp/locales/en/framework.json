@@ -307,6 +307,7 @@
 				"description" : "Description",
 				"module" : "Module",
 				"selwidget" : "Select Widget",
+				"group" : "Group",
 				"seldependency" : "Select Dependency",
 				"selversion" : "Select Version",
 				"selmodel" : "Select Technology",

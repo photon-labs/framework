@@ -77,9 +77,9 @@ define(["header/api/headerAPI"], function() {
 		
 		selectCoustomer : function(customerValue, customerId) {
 			var self=this;
-			self.headerAPI.localVal.deleteSession("Application Layer");
-			self.headerAPI.localVal.deleteSession("Web Layer");
-			self.headerAPI.localVal.deleteSession("Mobile Layer");
+			self.headerAPI.localVal.deleteSession("Front End");
+			self.headerAPI.localVal.deleteSession("Middle Tier");
+			self.headerAPI.localVal.deleteSession("CMS");
 			Clazz.navigationController.jQueryContainer = commonVariables.contentPlaceholder;
 			$("#selectedCustomer").text(customerValue);
 			if (commonVariables.navListener.currentTab === "projectlist" || commonVariables.navListener.currentTab === "addproject" || commonVariables.navListener.currentTab === "editproject") {

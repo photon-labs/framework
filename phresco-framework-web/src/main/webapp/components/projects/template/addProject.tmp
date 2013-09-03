@@ -31,13 +31,7 @@
                     <td data-i18n="project.create.label.enddate" name="enddate-lbl"></td>
                     <td colspan="2" class="enddate" name="enddateholder"><input name="enddate" id="endDate" type="text" disabled><span class="add-on"><span class="add-on"><img id="enddt" src="themes/default/images/helios/cal_icon.png" border="0" alt=""></span></span></td>
                 </tr>
-				<tr>	
-                	<td colspan="2"><input type="checkbox" name="multimodule" value="false"><b data-i18n="project.create.label.multimodule"></b></td>
-                    <td><span name="artifactId-lbl" data-i18n="project.create.label.artifactId" style="display:none;"></span></td>
-					<td><input name="artifactId" type="text" maxlength="150" data-i18n="[placeholder]project.create.label.artifactId" style="display:none;"></td>
-                    <td colspan="6"></td>
-                </tr>
-                {{#if applicationlayerData.techGroups}}
+				{{#if applicationlayerData.techGroups}}
 				<tr class="proj_title" name="applicationlayer">
 					<td colspan="3">{{applicationlayerData.name}}</td>
 					<td colspan="3"><span class="errmsg1"></span></td>
@@ -49,34 +43,31 @@
 							<thead>
 								<tr>
 									<th><span data-i18n="project.create.label.module"></span><sup>*</sup></th>
+									<th><span data-i18n="project.create.label.group"></span></th>
 									<th><span data-i18n="project.create.label.technology"></span></th>
 									<th><span data-i18n="project.create.label.version"></span></th>
 									<th></th>
-									<th></th>
-									<th colspan="3"><span name="appdependency" data-i18n="project.create.label.dependency" style="display:none;"></span></th>
 								</tr>
 							</thead>
 							<tbody class="applnlayer">
 								<tr class="applnlayercontent" name="staticApplnLayer">
 									<td class="applnappcode"><input type="text" id="appcode"  maxlength="30" title="30 characters only" class="appln-appcode appCodeText" count=1></td>
-									<td name="technology" class="technology">
-										<select name="appln_technology" class="appln_technology selectpicker" title="Select Technology">
-										   <option value="Select Technology">Select Technology</option>
-										   {{#each applicationlayerData.techGroups}}
-												{{#each techInfos}}
-												  <option value="{{id}}">{{name}}</option>
-												{{/each}}	
+									<td name="frontEnd" class="frontEnd">
+										<select name="frontEnd" class="frontEnd selectpicker" title="Select Group">
+											<option selected disabled value="">Select Group</option>
+											{{#each applicationlayerData.techGroups}}
+												<option value="{{id}}">{{name}}</option>
 											{{/each}}
 										</select>
-									 </td>
-									 <td colspan="3" name="version" class="version">
-										<select name="appln_version" class="appln_version selectpicker" title="Select Version">
-										   <option value="Select Version">Select Version</option>
+									</td>
+									<td name="technology" class="technology">
+										<select name="appln_technology" class="appln_technology selectpicker" title="Select Technology">
+										   <option disabled value="Select Technology">Select Technology</option>
 										</select>
 									 </td>
-									 <td colspan="2" class="appdependencyTd">
-										<select class="selectpicker appdependencySelect" name="appdependencySelect" multiple title="Select Dependency" data-selected-text-format="count>2">
-										   <option value="0" disabled data-i18n="project.create.label.seldependency"></option>
+									 <td name="version" class="version">
+										<select name="appln_version" class="appln_version selectpicker" title="Select Version">
+										   <option disabled value="Select Version">Select Version</option>
 										</select>
 									 </td>
 									 <td>
@@ -100,10 +91,9 @@
 							<thead>
 								<tr>
 									<th><span data-i18n="project.create.label.module"></span><sup>*</sup></th>
-									<th><span data-i18n="project.create.label.weblayer"></span></th>
-									<th><span data-i18n="project.create.label.widget"></span></th>
+									<th><span data-i18n="project.create.label.group"></span></th>
+									<th><span data-i18n="project.create.label.technology"></span></th>
 									<th><span data-i18n="project.create.label.version"></span></th>
-									<th><span name="webdependency" data-i18n="project.create.label.dependency" style="display:none;"></span></th>
 									<th></th>
 								</tr>
 							</thead>
@@ -111,28 +101,23 @@
 								<tr class="weblayercontent" name="staticWebLayer">
 									<td class="webappcode"><input type="text" id="webappcode"  maxlength="30" title="30 characters only" class="web-appcode appCodeText" count=2></td>
 									<td name="web" class="web">
-										<select name="weblayer" class="weblayer selectpicker" title="Select Layer">
-											<option value="Select Layer">Select Layer</option>
+										<select name="weblayer" class="weblayer selectpicker" title="Select Group">
+											<option selected disabled value="Select Group">Select Group</option>
 											{{#each weblayerData.techGroups}}
 												<option value="{{id}}">{{name}}</option>
 											{{/each}}
 										</select>
 									 </td>
 									 <td name="widget" class="widget">
-										<select name="web_widget" class="web_widget selectpicker" title="Select Widget">
-											<option value="Select Widget">Select Widget</option>
+										<select name="web_widget" class="web_widget selectpicker" title="Select Technology">
+											<option disabled value="Select Technology">Select Technology</option>
 										 </select>
 									 </td>
 									 <td name="widgetversion" class="widgetversion">
 										<select name="web_version" class="web_version selectpicker" title="Select Version">
-											<option value="Select Version">Select Version</option>
+											<option disabled value="Select Version">Select Version</option>
 										</select>
 									 </td>
-									<td class="webdependencyTd">
-											<select class="webdependencySelect selectpicker" name="webdependencySelect"  multiple data-selected-text-format="count>2" title="Select Dependency">
-											   <option disabled data-i18n="project.create.label.seldependency"></option>
-											</select>
-										 </td>
 									 <td>
 										<div class="flt_right icon_center"><a href="javascript:;" name="addWebLayer"><img src="themes/default/images/helios/plus_icon.png" border="0" alt=""></a><a href="javascript:;" name="removeWebLayer"></a></div>
 									 </td>
@@ -154,8 +139,8 @@
 								<thead>
 									<tr>
 										<th><span data-i18n="project.create.label.module"></span><sup>*</sup></th>
+										<th><span data-i18n="project.create.label.group"></span></th>
 										<th><span data-i18n="project.create.label.technology"></span></th>
-										<th><span data-i18n="project.create.label.platform"></span></th>
 										<th><span data-i18n="project.create.label.version"></span></th>
 										<th></th>
 										<th></th>
@@ -166,20 +151,20 @@
 										<td class="mobileappcode"><input type="text" id="mobileappcode" maxlength="30" title="30 characters only" class="mobile-appcode appCodeText" count=3></td>
 										<td name="mobile" class="mobile">
 											<select name="mobile_layer" class="mobile_layer selectpicker" title="Select Model">
-											   <option value="Select Technology">Select Technology</option>
+											   <option disabled selected value="Select Group">Select Group</option>
 											   {{#each mobilelayerData.techGroups}}
 												  <option value="{{id}}">{{name}}</option>
 											   {{/each}}
 											</select>
 										 </td>
 										 <td name="types" class="types">
-											<select name="mobile_types" class="mobile_types selectpicker" title="Select Type">
-											   <option value="Select Platform">Select Platform</option>
+											<select name="mobile_types" class="mobile_types selectpicker" title="Select Technology">
+											   <option disabled value="Select Technology">Select Technology</option>
 											</select>
 										 </td>
 										 <td colspan="2" name="mobileversion" class="mobileversion">
 											<select name="mobile_version" class="mobile_version selectpicker" title="Select Version">
-											   <option value="Select Version">Select Version</option>
+											   <option disabled value="Select Version">Select Version</option>
 											</select>
 										 </td>
 										 <td>
@@ -198,9 +183,9 @@
     </section>
     <section class="content_end">
     	<div class="flt_left">
-        	<input type="submit" name="applicationlayer" value="Application Layer" data-i18n="[value]project.create.title.label.applicationlayer" class="btn btn_style app_layer_icon_btn" style="display:none;">
-            <input type="submit" name="weblayer" value="Web Layer" data-i18n="[value]project.create.title.label.weblayer" class="btn btn_style web_layer_icon_btn" style="display:none;">
-            <input type="submit" name="mobilelayer" value="Mobile Layer" data-i18n="[value]project.create.title.label.mobilelayer" class="btn btn_style mobile_layer_icon_btn" style="display:none;">
+        	<input type="submit" name="applicationlayer" value="{{applicationlayerData.name}}" class="btn btn_style app_layer_icon_btn hideContent">
+            <input type="submit" name="weblayer" value="{{weblayerData.name}}" class="btn btn_style web_layer_icon_btn hideContent">
+            <input type="submit" name="mobilelayer" value="{{mobilelayerData.name}}" class="btn btn_style mobile_layer_icon_btn hideContent">
         </div>
         <div class="flt_right">
         	<input type="submit" value="Create" data-i18n="[value]common.btn.create" name="Create" class="btn btn_style add_icon_btn">
