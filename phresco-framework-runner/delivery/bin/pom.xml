@@ -8,7 +8,7 @@
 	<name>Phresco Framework Web Application</name>
 
     <properties>
-		<phresco.framework.version>3.0.0.24002-SNAPSHOT</phresco.framework.version>		
+		<phresco.framework.version>3.0.0.24003-SNAPSHOT</phresco.framework.version>		
 		<tomcat.version>7.0.21.2</tomcat.version>
 		<sonar.version>3.5.1</sonar.version>
 		<checker.version>0.1</checker.version>
