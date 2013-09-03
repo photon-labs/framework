@@ -1022,6 +1022,10 @@ define([], function() {
 					if (!self.isBlank(jobJsonData)) {
 						$('input[name=jobName]').val(jobJsonData.jobName);
 						self.restoreFormValues($("#jonConfiguration"), jobJsonData);
+						var fetchSql = true;
+						if (jobJsonData.fetchSql === "{}") {
+							fetchSql = false;
+						} 	
 					}
 					self.popForCi(thisObj, 'jobConfigure');
 					if (commonVariables.goal === commonVariables.performanceTestGoal || commonVariables.goal === commonVariables.loadTestGoal) {
@@ -1043,6 +1047,8 @@ define([], function() {
 							advanced:{ updateOnContentResize: true}
 						});*/
 					}
+					self.dragDrop();
+					self.chkSQLCheck();
 				});
 			});
 		},
@@ -1349,7 +1355,28 @@ define([], function() {
 			                break;
 			        }
 			    }
+		    	if(data.operation === 'deploy') {
+		       		self.consDragnDropcnt(data, $('.jobConfigure').find('.row'));
+		       	}
 		    }
+		},
+		
+		consDragnDropcnt : function(parameter, whereToRender){
+			var self = this;
+			if(parameter != null && parameter != ""){
+				var sortable1Val = "", sortable2Val = "", sort2 ={};
+				$('table[name=fetchSql_table]').remove();
+				if(parameter.fetchSql != null && parameter.fetchSql != ""){
+					$.each(JSON.parse(parameter.fetchSql), function(key, currentDbList){
+						sort2[key] = [];
+						$.each(currentDbList, function(index, current){
+							sortable2Val += '<li class="ui-state-default '+ ($("#dataBase").val() == key ? "" : "ui-state-disabled")+'" path="'+ current +'" dbName="' + key + '">'+ current.split('/').pop() +'</li>';
+							sort2[key].push(current);
+						});
+					});
+				} 
+				whereToRender.append('<table name="fetchSql_table" class="table table-striped table_border table-bordered fetchSql_table border_div" cellpadding="0" cellspacing="0" border="0"><thead><tr><th colspan="2">DB Script Execution</th></tr></thead><tbody><tr><td><ul name="sortable1" class="sortable1 connectedSortable">' + sortable1Val + '</ul></td><td><ul name="sortable2" class="sortable2 connectedSortable">' + sortable2Val + '</ul></td></tr></tbody></table>');
+			}
 		},
 
 		configureJob : function (thisObj) {
@@ -1477,6 +1504,21 @@ define([], function() {
 				jobConfiguration.appDirName=appDirName;
 				jobConfiguration.appName = appName;
 				
+				
+				self.sqlQueryParam($('form[id=jonConfiguration] #executeSql').is(':checked'), $('form[id=jonConfiguration] ul[name=sortable2] li'), function(sqlParam){
+					jobConfiguration.fetchSql = sqlParam;
+				});
+				if($('form[id=jonConfiguration] #executeSql').is(':checked')) {
+					jobConfiguration.executeSql = "true";
+				} else {
+					jobConfiguration.executeSql = "false";
+				}
+				if($('form[id=jonConfiguration] #showSettings').is(':checked')) {
+					jobConfiguration.showSettings = "true";
+				} else {
+					jobConfiguration.showSettings = "false";
+				}
+
 				//Checking
 				$('[appname="'+ appName +'"][jobtemplatename="'+ jobtemplatename +'"]').data("jobJson", jobConfiguration);
 	            // Hide popup
@@ -1933,6 +1975,43 @@ define([], function() {
 				setTimeout(function() {
 					$(".error").hide();
 				},2500);
+			}
+		},
+
+
+		dragDrop : function(){
+			$('.connectedSortable').sortable({
+				connectWith: '.connectedSortable',
+				cancel: ".ui-state-disabled"
+			});
+		},
+
+		sqlQueryParam : function(ststus, control, callback){
+			var sqlParamVal = "";
+			
+			if(ststus){
+				sqlParamVal = {};
+				$.each(control, function(index, current){
+					if(sqlParamVal.hasOwnProperty($(current).attr('dbName'))){
+						sqlParamVal[$(current).attr('dbName')].push($(current).attr('path'));
+					}else{
+						sqlParamVal[$(current).attr('dbName')] = []
+						sqlParamVal[$(current).attr('dbName')].push($(current).attr('path'));
+					}
+				});			
+				callback(JSON.stringify(sqlParamVal));
+			} else {
+				callback(sqlParamVal);
+			}
+		}, 
+
+		chkSQLCheck : function(){
+			if(!$('#executeSql').is(':checked')){
+				$('table[name=fetchSql_table]').hide();
+				$('#dataBaseLi').hide();
+			}else{
+				$('table[name=fetchSql_table]').show();
+				$('#dataBaseLi').show();
 			}
 		},
 		

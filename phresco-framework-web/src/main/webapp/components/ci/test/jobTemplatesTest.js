@@ -126,12 +126,10 @@ define(["ci/jobTemplates"], function(JobTemplates) {
 			ciAPI.localVal.setSession("projectId" , "86b654c9-daae-4e07-82d3-720169e93827");
 			ciAPI.localVal.setSession("appDirName" , "");
 			asyncTest("jobTemplates - save with values Event Test", function() {
-//				$("input[name=enableRepo]").prop('checked', true);
-				$("select[name=features]").selectpicker('val', ['enableRepo', 'enableSheduler', 'enableEmailSettings', 'enableUploadSettings']);
-				$('select[name=uploadTypes]').selectpicker('val', ['collabnet']);
+				$("select[name=type]").selectpicker('val', 'codeValidation');
+				$("select[name=features]").selectpicker('val', ['enableRepo', 'enableSheduler', 'enableEmailSettings']);
 				$('input[name=name]').val('newTemplate');
 				$("select[name=appIds]").selectpicker('val', ['TodayProject']);
-				$("select[name=type]").selectpicker('val', 'codeValidation');
 				var name = $('input[name="name"]').val();
 				var oldname = $('[name="oldname"]').val();
 

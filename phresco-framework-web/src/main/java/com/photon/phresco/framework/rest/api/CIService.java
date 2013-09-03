@@ -781,6 +781,8 @@ public class CIService extends RestBase implements FrameworkConstants, ServiceCo
 	public Response localJenkinsLocalAlive() {
 		ResponseInfo<String> responseData = new ResponseInfo<String>();
 		String localJenkinsAlive = "";
+		ResponseInfo<String> finalOutput;
+		String statusCode= "";
 		try {
 			URL url = new URL(HTTP_PROTOCOL + PROTOCOL_POSTFIX + LOCALHOST + FrameworkConstants.COLON
 					+ Integer.parseInt(FrameworkServiceUtil.getJenkinsPortNo()) + FrameworkConstants.FORWARD_SLASH + CI);
@@ -788,18 +790,15 @@ public class CIService extends RestBase implements FrameworkConstants, ServiceCo
 			HttpURLConnection httpConnection = (HttpURLConnection) connection;
 			int code = httpConnection.getResponseCode();
 			localJenkinsAlive = code + "";
+			statusCode = PHR800011;
 		} catch (ConnectException e) {
 			localJenkinsAlive = CODE_404;
-			ResponseInfo<String> finalOutput =responseDataEvaluation(responseData, e, localJenkinsAlive, RESPONSE_STATUS_ERROR, PHR810017);
-			return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, ALL_HEADER)
-			.build();
+			statusCode = PHR810017;
 		} catch (Exception e) {
 			localJenkinsAlive = CODE_404;
-			ResponseInfo<String> finalOutput = responseDataEvaluation(responseData, e, localJenkinsAlive, RESPONSE_STATUS_ERROR, PHR810017);
-			return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, ALL_HEADER)
-			.build();
+			statusCode = PHR810017;
 		}
-		ResponseInfo<String> finalOutput = responseDataEvaluation(responseData, null, localJenkinsAlive, RESPONSE_STATUS_SUCCESS, PHR800011);
+		finalOutput = responseDataEvaluation(responseData, null, localJenkinsAlive, RESPONSE_STATUS_SUCCESS, statusCode);
 		return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, ALL_HEADER)
 		.build();
 	}

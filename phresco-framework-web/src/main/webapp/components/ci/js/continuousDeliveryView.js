@@ -128,6 +128,21 @@ define(["framework/widgetWithTemplate", "ci/listener/ciListener", "lib/jquery-to
 			//to hide all opts @ startup in view page
 			$(".opts").hide();
 			self.jenkinsStatus.dispatch(function(callback) {
+				if(callback.data !== "200") {
+					var errorMessage = callback.responseCode;
+					if(callback.data === "503") {
+						errorMessage = "PHR800011";
+					} 
+					commonVariables.loadingScreen.removeLoading();
+					$(".content_end").show();
+					$(".msgdisplay").removeClass("success").addClass("error");
+					$(".error").attr('data-i18n', 'errorCodes.' + errorMessage);
+					self.renderlocales(commonVariables.contentPlaceholder);	
+					$(".error").fadeIn(500).fadeOut(500).fadeIn(500).fadeOut(500).fadeIn(500).fadeOut(5);
+					setTimeout(function() {
+						$(".content_end").hide();
+					},5000);
+				}
 				$(".pipeline_box").each(function() {
 	   				self.ciStatusEvent.dispatch($(this));
 	   			});

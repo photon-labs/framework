@@ -287,6 +287,7 @@ define(["framework/widgetWithTemplate", "ci/listener/ciListener", "lib/jquery-to
 				if ( $(this).val() === 'Add') {
    					self.onSaveEvent.dispatch(this, function(addJobsParams) {
 	   					self.ciRequestBody = addJobsParams;
+	   					commonVariables.showloading = true;
 	   					self.getAction(self.ciRequestBody, 'saveContinuousDelivery', '', function(response) {	   						
 							self.ciListener.loadContinuousDeliveryView();
 	   					});
@@ -296,6 +297,7 @@ define(["framework/widgetWithTemplate", "ci/listener/ciListener", "lib/jquery-to
    				if ( $(this).val() === 'Update') {
 	   				self.onSaveEvent.dispatch(this, function(editJobParams) {
 	   					self.ciRequestBody = editJobParams;
+	   					commonVariables.showloading = true;
 	   					self.getAction(self.ciRequestBody, 'updateContinuousDelivery', '', function(response) {
 	   						self.ciListener.loadContinuousDeliveryView();
 	   					});
