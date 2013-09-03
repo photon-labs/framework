@@ -234,7 +234,7 @@
 		<dependency>
 			<groupId>jslibraries.files</groupId>
 			<artifactId>bootstrap_select_min</artifactId>
-			<version>3.0</version>
+			<version>3.1</version>
 			<type>js</type>
 		</dependency>
 
