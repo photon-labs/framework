@@ -265,7 +265,7 @@
 		<dependency>
 			<groupId>jslibraries.files</groupId>
 			<artifactId>fileuploader</artifactId>
-			<version>2.1</version>
+			<version>2.2</version>
 			<type>js</type>
 		</dependency>
 
