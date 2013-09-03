@@ -4,7 +4,7 @@
 	<groupId>com.photon.phresco.framework</groupId>
 	<artifactId>PhrescoFrameworkRuntime</artifactId>
 	<packaging>pom</packaging>
-	<version>3.0.0.24002-SNAPSHOT</version>
+	<version>3.0.0.23003-SNAPSHOT</version>
 	<name>Phresco Framework Web Application</name>
 
     <properties>
@@ -13,6 +13,7 @@
 		<sonar.version>3.5.1</sonar.version>
 		<checker.version>0.1</checker.version>
 		<device.deploy.version>1.0</device.deploy.version>
+		<phantomjs.version>1.5.0</phantomjs.version>
 		<ios-sim.version>1.0</ios-sim.version>
 	</properties>
 
@@ -368,7 +369,17 @@
 									<outputDirectory>../workspace/tools/chief</outputDirectory>
 								</artifactItem>
                                 
-								
+								<!-- extracting Phantomjs  -->
+								<artifactItem>
+									<groupId>binaries</groupId>
+									<artifactId>phantomjs</artifactId>
+									<version>${phantomjs.version}</version>
+                                    <classifier>${phantomjs.classifier}</classifier>
+									<type>zip</type>
+									<overWrite>false</overWrite>
+									<outputDirectory>../workspace/tools</outputDirectory>
+								</artifactItem>
+
 								<!--extracting ios-sim zip file-->
 								<artifactItem>
 									  <groupId>softwares.iphone.files</groupId>
