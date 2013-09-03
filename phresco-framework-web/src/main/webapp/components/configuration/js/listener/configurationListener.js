@@ -655,8 +655,8 @@ define(["croneExpression/croneExpression"], function() {
 		
 		treeclickEvent : function() {
 			var self=this;
-			$('span.folder').click(function(e){
-				$("span.folder a").removeClass("selected");
+			$('span.folder, span.file').click(function(e){
+				$("span.folder a, span.file a").removeClass("selected");
 				$(this).find("a").attr("class", "selected");
 				var path = $(this).parent().attr('value');
 				path = path.replace(/\+/g,' ');

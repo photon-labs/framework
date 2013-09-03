@@ -13,7 +13,7 @@
 	<div class="header_right flt_right">
 		<div class="user_login">
 			<div class="user_icon">&nbsp;</div><span id="displayname">{{displayName}}</span>&nbsp;&nbsp; | &nbsp;&nbsp; 
-			<a href="javascript:;"><span id="logout" data-i18n="header.userinfo.logout"></span><div class="logout_icon">&nbsp;</div></a>
+			<a id="logout" href="javascript:;"><span data-i18n="header.userinfo.logout"></span><div class="logout_icon">&nbsp;</div></a>
 		</div>
 		<div class="navbar navbar-static">
 			<ul class="nav">

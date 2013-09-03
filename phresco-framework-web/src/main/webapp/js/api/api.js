@@ -70,16 +70,10 @@ define(["framework/base", "api/localStorageAPI"], function(){
 						}, 'JSON');
 					}
 					
-					if (response !== undefined && response !== null && response.status !== "error") {
+					if ((response !== undefined && response !== null && response.status !== "error") || self.bCheck) {
 						callbackFunction(response);
-					}else if(self.bCheck){
-						$('#login').removeAttr('disabled');
-						$.get(commonVariables.globalconfig.environments.locales, function(data){
-							if(data !== undefined && data !== null){
-								self.showError(data.errorCodes[response.responseCode]);
-							}
-						}, 'JSON');
 					}
+					
 					self.bCheck = false;
 				},
 				

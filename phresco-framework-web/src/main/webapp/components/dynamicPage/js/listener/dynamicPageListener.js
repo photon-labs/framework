@@ -1060,14 +1060,14 @@ define(["framework/widgetWithTemplate", "common/loading", "lib/customcombobox-1.
 		signingFileTreeEvent : function(placeCnt, divId) {
 			var self = this;
 			$("a[name=browse]").click(function(){
-				self.loadTree(this, placeCnt, divId);
+				self.loadTree(this, placeCnt, divId, null);
 			});
 		},
 		
-		loadTree : function(current, placeCnt, divId, hiddenCnt, minify){
+		loadTree : function(current, placeCnt, divId, fileType, hiddenCnt, minify){
 			var self = this;
 			self.configRequestBody = {};
-				commonVariables.api.ajaxRequest(self.getRequestHeader(self.projectRequestBody, "", "", "fileBrowse"), function(response) {
+				commonVariables.api.ajaxRequest(self.getRequestHeader(self.projectRequestBody, "", "", "fileBrowse", fileType), function(response) {
 					 if(response !== undefined && response !== null && response.status !== "error" && response.status !== "failure"){
 						divId.css("height", "240px");
 						divId.html('');
@@ -1116,8 +1116,8 @@ define(["framework/widgetWithTemplate", "common/loading", "lib/customcombobox-1.
 		
 		treeclickEvent : function(placeCnt) {
 			var self=this;
-			$('span.folder').click(function(e){
-				$("span.folder a").removeClass("selected");
+			$('span.folder, span.file').click(function(e){
+				$("span.folder a, span.file a").removeClass("selected");
 				$(this).find("a").attr("class", "selected");
 				var path = $(this).parent().attr('value');
 				path = path.replace(/\+/g,' ');
@@ -1135,8 +1135,10 @@ define(["framework/widgetWithTemplate", "common/loading", "lib/customcombobox-1.
 		
 		minifyTreeclickEvent : function(current, divId, placeCnt, hiddenCnt) {
 			var self=this;
-			$(divId).find('span.folder').unbind('click');
-			$(divId).find('span.folder').click(function(e){
+			self.renderlocales(commonVariables.contentPlaceholder);	
+
+			$(divId).find('span.file').unbind('click');
+			$(divId).find('span.file').click(function(e){
 				if($(this).find("a").attr('class') === "selected"){
 					$(this).find("a").removeClass('selected');
 					$(this).removeAttr("selected");
@@ -1149,6 +1151,9 @@ define(["framework/widgetWithTemplate", "common/loading", "lib/customcombobox-1.
 				path = path.replace(/\+/g,' ');
 				self.minifySaveFilePath(current, divId, placeCnt, hiddenCnt, path);
 			});
+			
+			$(current).closest('tr').find('div[name=treeTop]').show();
+			$(current).closest('tr').find('div[name=treeContent]').show();
 		},
 		
 		minifySaveFilePath : function(current, divId, placeCnt, hiddenCnt, path) {
@@ -1156,7 +1161,7 @@ define(["framework/widgetWithTemplate", "common/loading", "lib/customcombobox-1.
 			$(current).closest('tr').find("input[name=selectFilePath]").unbind('click');
 			$(current).closest('tr').find("input[name=selectFilePath]").click(function() {
 				var nameList = '';
-				$.each($(divId).find('span.folder'), function(index, value){
+				$.each($(divId).find('span.file'), function(index, value){
 					if($(value).attr('selected') !== undefined) {
 						nameList += (nameList === ''? $(value).text() : ',' + $(value).text());
 					}
@@ -1348,7 +1353,7 @@ define(["framework/widgetWithTemplate", "common/loading", "lib/customcombobox-1.
          * provides the request header
          * @return: returns the contructed header
          */
-        getRequestHeader : function(projectRequestBody, key, selectedOption, action) {
+        getRequestHeader : function(projectRequestBody, key, selectedOption, action, fileType) {
             var self = this;
             var appDirName = commonVariables.appDirName;
             var goal = commonVariables.goal;
@@ -1384,7 +1389,7 @@ define(["framework/widgetWithTemplate", "common/loading", "lib/customcombobox-1.
 				header.requestMethod = "GET";
 				header.dataType = "xml";
 				header.contentType = "application/xml",
-				header.webserviceurl = commonVariables.webserviceurl+commonVariables.configuration+"/fileBrowse?&appDirName="+appDirName;
+				header.webserviceurl = commonVariables.webserviceurl+commonVariables.configuration+"/fileBrowse?&appDirName="+ appDirName + (fileType === undefined || fileType === null ? "" : "&fileType=" + fileType);
 			}
             
             return header;

@@ -164,7 +164,7 @@ define(["build/listener/buildListener"], function() {
 		runAgainSourceStatus : function(){
 			var self = this;
 			if($("input[name=build_runagsource]").is(':visible')){
-				self.buildListener.getBuildInfo(self.buildListener.getRequestHeader("", '', 'serverstatus'), function(response) {
+				self.buildListener.getBuildInfo(self.buildListener.getRequestHeader("", '', 'serverstatus'), function(response){
 					self.changeBtnStatus(response);
 				});
 			}
@@ -210,7 +210,7 @@ define(["build/listener/buildListener"], function() {
 		
 		changeBtnStatus : function(response){
 			var show = "btn_style", hide = "btn_style_off";
-		
+
 			if(!response.data){
 				show = "btn_style_off";
 				hide = "btn_style";
@@ -541,7 +541,7 @@ define(["build/listener/buildListener"], function() {
 				self.hideTreeContent();
 				if($(this).closest('tr').find('div[name=treeContent]').children().length > 0){
 					self.showTreeContent(this);
-				}else{self.loadTreeview(this, 'jsMinFiles', 'jsfilePath');}
+				}else{self.loadTreeview(this, 'jsMinFiles', 'jsfilePath', 'js');}
 			});
 			
 			$('input[name=cssBrowse]').unbind("click");
@@ -549,15 +549,13 @@ define(["build/listener/buildListener"], function() {
 				self.hideTreeContent();
 				if($(this).closest('tr').find('div[name=treeContent]').children().length > 0){
 					self.showTreeContent(this);
-				}else{self.loadTreeview(this, 'cssMinFiles', 'cssfilePath');}
+				}else{self.loadTreeview(this, 'cssMinFiles', 'cssfilePath', 'css');}
 			});
 			
 			$('input[name=treePopupClose], input[name=selectFilePath]').unbind('click');
 			$('input[name=treePopupClose], input[name=selectFilePath]').click(function(){
 				self.hideTreeContent();
 			});
-			
-			self.renderlocales(commonVariables.contentPlaceholder);	
 		},
 		
 		appendMinifyRow : function(current){
@@ -565,7 +563,7 @@ define(["build/listener/buildListener"], function() {
 				var minusImg = '<img src="themes/default/images/helios/minus_icon.png" alt="" name="'+ current.fileType.toLowerCase() +'Remove">';
 			
 				if(current.minusImg){minusImg = '';}
-				$('table#'+ current.fileType.toLowerCase() +'min tbody').append('<tr><td><input type="text" name="'+ current.fileType.toLowerCase() +'MinName" value="'+ current.compressName +'"></td><td><input type="text" name="'+ current.fileType.toLowerCase() +'MinFiles" value="'+ current.csvFileName +'" disabled><input type="hidden" name="'+ current.fileType.toLowerCase() +'filePath" value="'+ current.opFileLoc +'"><input type="hidden" name="fileType" value="'+ current.fileType.toLowerCase() +'"><input type="button" name="'+ current.fileType.toLowerCase() +'Browse" value="Browse" data-i18n="[value]build.label.browse" class="btn btn_style"><img src="themes/default/images/helios/plus_icon.png" alt="" name="'+ current.fileType.toLowerCase() +'Add">'+ minusImg +'<div name="treeTop" class="dyn_popup"><div name="treeContent"></div><div class="flt_right"><input type="button" name="selectFilePath" class="btn btn_style" value="Ok">&nbsp;&nbsp;<input type="button" value="Close" name="treePopupClose" class="btn btn_style"></div></div></td></tr>');
+				$('table#'+ current.fileType.toLowerCase() +'min tbody').append('<tr><td><input type="text" name="'+ current.fileType.toLowerCase() +'MinName" value="'+ current.compressName +'"></td><td><input type="text" name="'+ current.fileType.toLowerCase() +'MinFiles" value="'+ current.csvFileName +'" disabled><input type="hidden" name="'+ current.fileType.toLowerCase() +'filePath" value="'+ current.opFileLoc +'"><input type="hidden" name="fileType" value="'+ current.fileType.toLowerCase() +'"><input type="button" name="'+ current.fileType.toLowerCase() +'Browse" value="Browse" data-i18n="[value]build.label.browse" class="btn btn_style"><img src="themes/default/images/helios/plus_icon.png" alt="" name="'+ current.fileType.toLowerCase() +'Add">'+ minusImg +'<div name="treeTop" class="speakstyletopright dyn_popup" style="right:70px;"><div name="treeContent"></div><div class="flt_right"><input type="button" name="selectFilePath" class="btn btn_style" value="Ok">&nbsp;&nbsp;<input type="button" value="Close" name="treePopupClose" class="btn btn_style"></div></div></td></tr>');
 				
 				self.hideTreeContent();
 				self.addJSMinRow();
@@ -583,10 +581,10 @@ define(["build/listener/buildListener"], function() {
 			$(current).closest('tr').find('div[name=treeContent]').show();
 		},
 		
-		loadTreeview : function(current, filetype, filePath){
+		loadTreeview : function(current, filetype, filePath, type){
 			var self = this;
-			self.dynamicPageListener.loadTree(current, $(current).closest('tr').find('input[name='+ filetype +']'), $(current).closest('tr').find('div[name=treeContent]'), $(current).closest('tr').find('input[name='+ filePath +']'), true);
-			self.showTreeContent(current);
+			self.dynamicPageListener.loadTree(current, $(current).closest('tr').find('input[name='+ filetype +']'), $(current).closest('tr').find('div[name=treeContent]'), type, $(current).closest('tr').find('input[name='+ filePath +']'), true);
+			//self.showTreeContent(current);
 		},
 		
 		/***
@@ -629,6 +627,11 @@ define(["build/listener/buildListener"], function() {
 						$("form[name=runAgainstForm] #build_runagsource").hide();
 						$(".dyn_popup").hide();
 						self.clearLogContent();
+						
+						$("input[name=build_runagsource]").addClass("btn_style_off");
+						$("#stop").addClass("btn_style_off");
+						$("#restart").addClass("btn_style_off");
+						
 						self.onRASEvent.dispatch(queryStr, function(response){
 							$('.progress_loading').css('display','none');
 							if(response.errorFound && response.status === "error" && response.status === "failure"){
@@ -645,6 +648,10 @@ define(["build/listener/buildListener"], function() {
 			//Run again source stop click event
 			$("#stop").click(function() {
 				if($(this).attr("class") === "btn btn_style"){
+					$("input[name=build_runagsource]").addClass("btn_style_off");
+					$("#stop").addClass("btn_style_off");
+					$("#restart").addClass("btn_style_off");
+				
 					self.clearLogContent();
 					self.onStopEvent.dispatch(function(response){
 						$('.progress_loading').css('display','none');
@@ -656,6 +663,10 @@ define(["build/listener/buildListener"], function() {
 			//Run again source restart click event
 			$("#restart").click(function() {
 				if($(this).attr("class") === "btn btn_style"){
+					$("input[name=build_runagsource]").addClass("btn_style_off");
+					$("#stop").addClass("btn_style_off");
+					$("#restart").addClass("btn_style_off");
+					
 					self.clearLogContent();
 					self.onRestartEvent.dispatch(function(response){
 						$('.progress_loading').css('display','none');

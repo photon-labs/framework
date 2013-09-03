@@ -255,7 +255,7 @@ public class BuildInfoService extends RestBase implements FrameworkConstants, Se
 			File configurationInfo = new File(getDotPhrescoFolder(appDirName)+ File.separator + PHRESCO_ENV_CONFIG_FILE_NAME);
 			File runAgainsSourceInfo = new File(getDotPhrescoFolder(appDirName)+ File.separator + RUNAGNSRC_INFO_FILE);
 			if (!runAgainsSourceInfo.exists()) {
-			ResponseInfo<Boolean> finalOutput = responseDataEvaluation(responseData, null, connectionAlive, RESPONSE_STATUS_FAILURE, PHR710005);
+			ResponseInfo<Boolean> finalOutput = responseDataEvaluation(responseData, null, connectionAlive, RESPONSE_STATUS_SUCCESS, PHR710005);
 			return Response.status(Response.Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
 			}
 				FileReader readers = new FileReader(runAgainsSourceInfo);
@@ -276,7 +276,7 @@ public class BuildInfoService extends RestBase implements FrameworkConstants, Se
 				ResponseInfo<Boolean> finalOutput = responseDataEvaluation(responseData, null, connectionAlive, RESPONSE_STATUS_SUCCESS, PHR700003);
 				return Response.status(Response.Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
 			} else {
-				ResponseInfo<Boolean> finalOutput = responseDataEvaluation(responseData, null, connectionAlive, RESPONSE_STATUS_ERROR, PHR710006);
+				ResponseInfo<Boolean> finalOutput = responseDataEvaluation(responseData, null, connectionAlive, RESPONSE_STATUS_SUCCESS, PHR710006);
 				return Response.status(Response.Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
 			}
 

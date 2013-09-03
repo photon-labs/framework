@@ -32,7 +32,7 @@ define([], function() {
 		
 		getBuildInfo : function(header, callback){
 			var self = this;
-			
+
 			try {
 				commonVariables.api.ajaxRequest(header,
 					function(response) {

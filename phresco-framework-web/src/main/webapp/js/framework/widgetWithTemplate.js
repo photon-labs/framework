@@ -848,7 +848,7 @@ define(["framework/widget", "framework/templateProvider"], function() {
 						strItems += '<li value='+$(value).attr('path').replace(/\s/g,"+")+'><span class="folder"><a>' + strRoot + '</a></span>' + strCollection +'</li>';
 					} else { 
 						
-						strItems += '<li value='+$(value).attr('path').replace(/\s/g,"+")+'><span class="folder"><a>' + $(value).attr('name') + '</a></span></li>';
+						strItems += '<li value='+$(value).attr('path').replace(/\s/g,"+")+'><span class="file"><a>' + $(value).attr('name') + '</a></span></li>';
 					}
 				});
 				
