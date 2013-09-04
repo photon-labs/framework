@@ -117,7 +117,7 @@ define(["unitTest/unitTest"], function(UnitTest) {
 		graphicalViewTest : function() {
 			var self = this;
 			asyncTest("Unit Test Graphical View Test", function() {
-				$(commonVariables.contentPlaceholder).find('#graphicalView').click();
+				$(commonVariables.contentPlaceholder).find('.table1, .table2').click();
 				setTimeout(function() {
 					start();
 					equal($("#testSuites").css("display"), "block", "Unit test graphical view tested");
@@ -129,7 +129,7 @@ define(["unitTest/unitTest"], function(UnitTest) {
 		tabularViewTest : function() {
 			var self = this;
 			asyncTest("Unit Test Tabular View Test", function() {
-				$(commonVariables.contentPlaceholder).find('#tabularView').click();
+				$(commonVariables.contentPlaceholder).find('.graph1, .graph2').click();
 				setTimeout(function() {
 					start();
 					equal($("#graphView").css("display"), "block", "Unit test tabular view tested");

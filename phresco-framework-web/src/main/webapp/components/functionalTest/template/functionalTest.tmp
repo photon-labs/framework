@@ -51,14 +51,21 @@
 					<!--Pdf report popup ends here -->
 				</div>
 			</div>
-			<div class="flt_left" style="margin-top:-3px;">
-			<span id="tabularView">
-            	<a href="#"><img class="tableIcon" src="themes/default/images/helios/table_active.png" width="213" height="29" border="0" alt=""></a>
+			<span id="tabularView" class="table" style="cursor: pointer;">
+            	<a href="#"><img class="tableIcon" src="themes/default/images/helios/table_active.png" width="213" height="29" border="0" alt="" usemap="#tabularViewMap"></a>
+            	 <map name="tabularViewMap">
+                      <area class="table1" shape="rect" coords="3,1,104,29">
+                      <area class="graph1" shape="rect" coords="106,3,215,29">
+                 </map>
             </span>
-           	<span id="graphicalView" class="hideContent">
-            	<a href="#"><img class="tableIcon" src="themes/default/images/helios/graph_active.png" width="213" height="29" border="0" alt=""></a>
+           	<span id="graphicalView" class="newclas table hideContent" style="cursor: pointer;">
+            	<a href="#"><img class="tableIcon" src="themes/default/images/helios/graph_active.png" width="213" height="29" border="0" alt="" usemap="#graphicalViewMap"></a>
+                    <map name="graphicalViewMap">
+                      <area class="table2" shape="rect" coords="3,1,104,29">
+                      <area class="graph2" shape="rect" coords="106,3,215,29">
+                    </map>
             </span>
-			</div>
+			
         </div>
     	<div class="icon_images"><a class="tooltiptop" title="" data-placement="bottom" data-toggle="tooltip" href="#" data-original-title="Open Folder" id="openFolder"><img src="themes/default/images/helios/openfolder_icon.png" ></a></div>
 		<div class="icon_images copy_path_icon" style="margin-right:2px;"><a class="tooltiptop" title="" data-placement="bottom" data-toggle="tooltip" href="#" data-original-title="Copy Path" id="copyPath"><img src="themes/default/images/helios/copypath_icon.png" ></a></div>

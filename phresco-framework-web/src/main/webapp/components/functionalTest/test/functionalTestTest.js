@@ -54,7 +54,7 @@ define(["functionalTest/functionalTest"], function(FunctionalTest) {
 		graphicalViewTest : function() {
 			var self = this;
 			asyncTest("Functional Test Graphical View Test", function() {
-				$(commonVariables.contentPlaceholder).find('#graphicalView').click();
+				$(commonVariables.contentPlaceholder).find('.table1, .table2').click();
 				setTimeout(function() {
 					start();
 					equal($("#testSuites").css("display"), "block", "Functional test graphical view tested");
@@ -66,7 +66,7 @@ define(["functionalTest/functionalTest"], function(FunctionalTest) {
 		tabularViewTest : function() {
 			var self = this;
 			asyncTest("Functional Test Tabular View Test", function() {
-				$(commonVariables.contentPlaceholder).find('#tabularView').click();
+				$(commonVariables.contentPlaceholder).find('.graph1, .graph2').click();
 				setTimeout(function() {
 					start();
 					equal($("#graphView").css("display"), "block", "Functional test tabular view tested");

@@ -374,14 +374,14 @@ define(["performanceLoadListener/listener/performanceLoadListener"], function() 
 			});
 
 			//Shows the tabular view of the test result
-			$("#tabularView").unbind("click");
-			$("#tabularView").click(function() {
+			$(".table1, .table2").unbind("click");
+			$(".table1, .table2").click(function() {
 				self.onTabularViewEvent.dispatch(this);
 			});
 			
 			//Shows the graphical view of the test result
-			$("#graphicalView").unbind("click");
-			$("#graphicalView").click(function() {
+			$(".graph1, .graph2").unbind("click");
+			$(".graph1, .graph2").click(function() {
 				self.onGraphicalViewEvent.dispatch(this);
 			});
 			

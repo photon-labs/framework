@@ -148,21 +148,21 @@ define(["testResult/listener/testResultListener"], function() {
 			});
 			
 			//Shows the tabular view of the test result
-			$("#tabularView").unbind("click");
-			$("#tabularView").click(function() {
-				$("#testcases").hide();
-				$("#graphView").show();
-				$(this).toggle();
-				$("#graphicalView").toggle();
+			$(".table1, .table2").unbind("click");
+			$(".table1, .table2").click(function() {
+				$("#graphicalView").hide();
+				$("#tabularView").show();
+				$("#graphView").hide();
+				$("#testcases").show();
 			});
 			
 			//Shows the graphical view of the test result
-			$("#graphicalView").unbind("click");
-			$("#graphicalView").click(function() {
-				$(this).toggle();
-				$("#tabularView").toggle();
-				$("#graphView").hide();
-				$("#testcases").show();
+			$(".graph1, .graph2").unbind("click");
+			$(".graph1, .graph2").click(function() {
+				$("#testcases").hide();
+				$("#graphView").show();
+				$("#tabularView").hide();
+				$("#graphicalView").show();
 			});
 			
 			$('a[name=updateManualTestCase_popup]').click(function() {
