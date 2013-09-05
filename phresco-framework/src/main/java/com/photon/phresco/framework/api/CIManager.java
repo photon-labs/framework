@@ -182,7 +182,7 @@ public interface CIManager {
 	 * @return
 	 * @throws PhrescoException
 	 */
-	List<CIJobTemplate> getJobTemplatesByAppId(String appId) throws PhrescoException;
+	List<CIJobTemplate> getJobTemplatesByAppId(String appId, String appName) throws PhrescoException;
 
 	/**
 	 * @param projId

@@ -1016,7 +1016,7 @@ public class CIManagerImpl implements CIManager, FrameworkConstants {
 			List<String> appIds = ciJobTemplates.get(0).getAppIds();
 			for (ApplicationInfo applicationInfo : appInfos) {
 				for (String appId : appIds) {
-					if(appId.equals(applicationInfo.getAppDirName())) {
+					if(appId.equals(applicationInfo.getName())) {
 						File jobTemplateFile = getJobTemplateFile(applicationInfo.getAppDirName());
 						List<CIJobTemplate> jobTemplates = getJobTemplates(applicationInfo.getAppDirName());
 						if (CollectionUtils.isEmpty(jobTemplates) || createNewFile) {
@@ -1102,30 +1102,30 @@ public class CIManagerImpl implements CIManager, FrameworkConstants {
 		return projectDelivery;
 	}
 
-	public List<CIJobTemplate> getJobTemplatesByAppId(String appId) throws PhrescoException {
+	public List<CIJobTemplate> getJobTemplatesByAppId(String appDirName, String appName) throws PhrescoException {
 		if (debugEnabled) {
 			S_LOGGER.debug("Entering Method CIManagerImpl.getJobTemplatesByAppid(String appDir)");
 		}
 		List<CIJobTemplate> ciJobTemplates = null;
 		try {
-			if (StringUtils.isEmpty(appId)) {
+			if (StringUtils.isEmpty(appDirName)) {
 				return ciJobTemplates;
 			}
 
-			List<CIJobTemplate> jobTemplates = getJobTemplates(appId);
+			List<CIJobTemplate> jobTemplates = getJobTemplates(appDirName);
 			if (CollectionUtils.isEmpty(jobTemplates)) {
 				return ciJobTemplates;
 			}
 			
 			for (CIJobTemplate ciJobTemplate : jobTemplates) {
-				ciJobTemplate.setAppIds(Arrays.asList(appId));
+				ciJobTemplate.setAppIds(Arrays.asList(appName));
 			}
 			ciJobTemplates = new ArrayList<CIJobTemplate>(jobTemplates.size());
 
 			for (CIJobTemplate ciJobTemplate : jobTemplates) {
 				List<String> appIds = ciJobTemplate.getAppIds();
 				for (String selAppId : appIds) {
-					if (appId.equals(selAppId)) {
+					if (appDirName.equals(selAppId) || appName.equals(selAppId)) {
 						ciJobTemplates.add(ciJobTemplate);
 					}
 				}
@@ -1156,7 +1156,7 @@ public class CIManagerImpl implements CIManager, FrameworkConstants {
 				if (CollectionUtils.isNotEmpty(appJobTemplates)) {
 					
 					for (CIJobTemplate ciJobTemplate : appJobTemplates) {
-						ciJobTemplate.setAppIds(Arrays.asList(appInfo.getAppDirName()));
+						ciJobTemplate.setAppIds(Arrays.asList(appInfo.getName()));
 					}
 					if (CollectionUtils.isEmpty(jobTemplates)) {
 						jobTemplates = new ArrayList<CIJobTemplate>();
@@ -1168,7 +1168,7 @@ public class CIManagerImpl implements CIManager, FrameworkConstants {
 							boolean isFound = false;
 							for (CIJobTemplate jobTemplate : jobTemplates) {
 								if (appJobTemplate.getName().equals(jobTemplate.getName())) {
-									appJobTemplate.setAppIds(Arrays.asList(appInfo.getAppDirName()));
+									appJobTemplate.setAppIds(Arrays.asList(appInfo.getName()));
 									String appIdOfAppJobTemplate = appJobTemplate.getAppIds().get(0);
 									List<String> appids = new ArrayList<String>();
 									List<String> jobTemplateAppIds = jobTemplate.getAppIds();
@@ -1275,18 +1275,18 @@ public class CIManagerImpl implements CIManager, FrameworkConstants {
 		}
 	}
 
-	private String getJobTemplatePath(String appId) {
+	private String getJobTemplatePath(String appDirName) {
 		StringBuilder builder = new StringBuilder(Utility.getProjectHome());		
-		builder.append(appId);
+		builder.append(appDirName);
 		builder.append(PHRESCO);
 		builder.append(File.separator);
 		builder.append(CI_JOB_TEMPLATE_NAME);
 		return builder.toString();
 	}
 
-	private File getJobTemplateFile(String appId) {
+	private File getJobTemplateFile(String appDirName) {
 		File jobTemplateFile = null;
-		String jobTemplatePath = getJobTemplatePath(appId);
+		String jobTemplatePath = getJobTemplatePath(appDirName);
 		jobTemplateFile = new File(jobTemplatePath);
 		return jobTemplateFile;
 	}
