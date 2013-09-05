@@ -496,7 +496,7 @@ public class ParameterService extends RestBase implements FrameworkConstants, Se
 			int responseCode = connection.getResponseCode();
 			if (responseCode != 200) {
 				ResponseInfo<PossibleValues> finalOutput = responseDataEvaluation(responseData, null,
-						null, RESPONSE_STATUS_ERROR, PHR510003);
+						null, RESPONSE_STATUS_FAILURE, PHR510003);
 				return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN,
 						ALL_HEADER).build();
 			}

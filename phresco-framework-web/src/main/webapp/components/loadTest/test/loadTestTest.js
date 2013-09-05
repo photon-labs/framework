@@ -121,7 +121,7 @@ define(["loadTest/loadTest"], function(LoadTest) {
 			module("LoadTest.js");
 			var self = this;
 			asyncTest("Tabular view click test", function() {
-				$(commonVariables.contentPlaceholder).find('#tabularView').click();
+				$(commonVariables.contentPlaceholder).find('.graph1, .graph2').click();
 				setTimeout(function() {
 					start();
 					equal($(commonVariables.contentPlaceholder).find('#graphView').css('display'), "block", "Tabular view test");
@@ -134,7 +134,7 @@ define(["loadTest/loadTest"], function(LoadTest) {
 			module("LoadTest.js");
 			var self = this;
 			asyncTest("Graphical view click test", function() {
-				$(commonVariables.contentPlaceholder).find('#graphicalView').click();
+				$(commonVariables.contentPlaceholder).find('.table1, .table2').click();
 				setTimeout(function() {
 					start();
 					equal($(commonVariables.contentPlaceholder).find('.perfResultInfo').css('display'), "block", "Graphical view test");

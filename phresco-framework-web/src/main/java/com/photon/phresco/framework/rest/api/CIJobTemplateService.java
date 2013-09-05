@@ -232,7 +232,7 @@ public class CIJobTemplateService extends RestBase implements FrameworkConstants
 			CIManager ciManager = PhrescoFrameworkFactory.getCIManager();
 			List<ApplicationInfo> appInfos = FrameworkServiceUtil.getAppInfos(customerId, projId);
 			List<CIJobTemplate> jobTemplates = ciManager.getJobTemplatesByProjId(projId, appInfos);
-			boolean validate = validate(name, jobTemplates, projId);
+			boolean validate = validate(name, jobTemplates, projId, appInfos);
 			if(validate) {
 				boolean deleteJobTemplate = ciManager.deleteJobTemplate(name, projId, appInfos);
 				if (deleteJobTemplate) {
@@ -240,10 +240,10 @@ public class CIJobTemplateService extends RestBase implements FrameworkConstants
 					return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, ALL_HEADER)
 							.build();
 				}
-				ResponseInfo<CIJobTemplate> finalOutput = responseDataEvaluation(responseData, null, ciJobTemplate, RESPONSE_STATUS_ERROR, PHR810027);
+				ResponseInfo<CIJobTemplate> finalOutput = responseDataEvaluation(responseData, null, ciJobTemplate, RESPONSE_STATUS_FAILURE, PHR810027);
 				return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, ALL_HEADER).build();
 			} else {
-				ResponseInfo<CIJobTemplate> finalOutput = responseDataEvaluation(responseData, null, validate, RESPONSE_STATUS_ERROR, PHR810033);
+				ResponseInfo<CIJobTemplate> finalOutput = responseDataEvaluation(responseData, null, validate, RESPONSE_STATUS_FAILURE, PHR810033);
 				return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, ALL_HEADER).build();
 			}
 		} catch (Exception e) {
@@ -253,7 +253,7 @@ public class CIJobTemplateService extends RestBase implements FrameworkConstants
 		}
 	}
 
-	private boolean validate(String name, List<CIJobTemplate> jobTemplates, String projId) throws PhrescoException {
+	private boolean validate(String name, List<CIJobTemplate> jobTemplates, String projId, List<ApplicationInfo> appInfos) throws PhrescoException {
 		CIJobTemplate jobTemplate = new CIJobTemplate();
 		for (CIJobTemplate ciJobTemplate2 : jobTemplates) {
 			if(ciJobTemplate2.getName().equals(name)) {
@@ -281,16 +281,20 @@ public class CIJobTemplateService extends RestBase implements FrameworkConstants
 		
 		List<String> appIds = jobTemplate.getAppIds();
 		for (String appId : appIds) {
-			List<ProjectDelivery> ciJobInfo = ciManager.getCiJobInfo(appId);
-			if (CollectionUtils.isNotEmpty(ciJobInfo)) {
-				ProjectDelivery appDelivery = Utility.getProjectDelivery(projId, ciJobInfo);
-				if (appDelivery != null) {
-					List<ContinuousDelivery> continuousDelivery = appDelivery.getContinuousDeliveries();
-					for (ContinuousDelivery cd : continuousDelivery) {
-						List<CIJob> jobs = cd.getJobs();
-						for (CIJob ciJob : jobs) {
-							if(ciJob.getTemplateName().equals(name)) {
-								return false;
+			for (ApplicationInfo appInfo : appInfos) {
+				if(appInfo.getName().equals(appId)){
+					List<ProjectDelivery> ciJobInfo = ciManager.getCiJobInfo(appInfo.getAppDirName());
+					if (CollectionUtils.isNotEmpty(ciJobInfo)) {
+						ProjectDelivery appDelivery = Utility.getProjectDelivery(projId, ciJobInfo);
+						if (appDelivery != null) {
+							List<ContinuousDelivery> continuousDelivery = appDelivery.getContinuousDeliveries();
+							for (ContinuousDelivery cd : continuousDelivery) {
+								List<CIJob> jobs = cd.getJobs();
+								for (CIJob ciJob : jobs) {
+									if(ciJob.getTemplateName().equals(name)) {
+										return false;
+									}
+								}
 							}
 						}
 					}
@@ -349,7 +353,7 @@ public class CIJobTemplateService extends RestBase implements FrameworkConstants
 		List<Environment> environments = getEnvironments(applicationInfo);
 		for (Environment environment : environments) {
 			if (envName.equals(environment.getName())) {
-				List<CIJobTemplate> jobTemplates = ciManager.getJobTemplatesByAppId(applicationInfo.getAppDirName());
+				List<CIJobTemplate> jobTemplates = ciManager.getJobTemplatesByAppId(applicationInfo.getAppDirName(), applicationInfo.getName());
 				if (CollectionUtils.isNotEmpty(jobTemplates)) {
 					JSONObject jsonObject = new JSONObject();
 					jsonObject.put("appName", applicationInfo.getName());

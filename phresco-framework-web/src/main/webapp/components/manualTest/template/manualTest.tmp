@@ -52,14 +52,21 @@
 					<!--Pdf report popup ends here -->
 				</div>
 			</div>
-			<div class="flt_left" style="margin-top:-2px;">
-            <span id="tabularView">
-            	<a href="#"><img class="tableIcon" src="themes/default/images/helios/table_active.png" width="213" height="29" border="0" alt=""></a>
+            <span id="tabularView" class="table" style="cursor: pointer;">
+            	<a href="#"><img class="tableIcon" src="themes/default/images/helios/table_active.png" width="213" height="29" border="0" alt="" usemap="#tabularViewMap"></a>
+            	 <map name="tabularViewMap">
+                      <area class="table1" shape="rect" coords="3,1,104,29">
+                      <area class="graph1" shape="rect" coords="106,3,215,29">
+                 </map>
             </span>
-           	<span id="graphicalView" class="hideContent">
-            	<a href="#"><img class="tableIcon" src="themes/default/images/helios/graph_active.png" width="213" height="29" border="0" alt=""></a>
+           	<span id="graphicalView" class="newclas table hideContent" style="cursor: pointer;">
+            	<a href="#"><img class="tableIcon" src="themes/default/images/helios/graph_active.png" width="213" height="29" border="0" alt="" usemap="#graphicalViewMap"></a>
+                    <map name="graphicalViewMap">
+                      <area class="table2" shape="rect" coords="3,1,104,29">
+                      <area class="graph2" shape="rect" coords="106,3,215,29">
+                    </map>
             </span>
-			</div>
+			
         </div>
          
         <div class="unit_path">

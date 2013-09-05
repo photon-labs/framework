@@ -224,7 +224,7 @@ public class CIManagerImplTest implements FrameworkConstants{
 	public void testpListByAppIdJobTemplates() throws Exception {
 		System.out.println("ListByAppId job template ");
 		String appId = "a123";
-		List<CIJobTemplate> jobTemplatesByAppId = ciManager.getJobTemplatesByAppId(appId);
+		List<CIJobTemplate> jobTemplatesByAppId = ciManager.getJobTemplatesByAppId(appId, "TestProject");
 		System.out.println("jobTemplatesByAppId size " + jobTemplatesByAppId.size());
 		Assert.assertTrue(jobTemplatesByAppId.size() > 0 && jobTemplatesByAppId.size() < 2);
 		

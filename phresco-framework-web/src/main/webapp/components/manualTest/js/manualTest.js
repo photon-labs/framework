@@ -133,24 +133,6 @@ define(["manualTest/listener/manualTestListener", "testResult/listener/testResul
 				self.addManualTestcase.dispatch(testSuiteName);
 			});
 			
-			$("#testSuites").css("display", "none");
-			$("#testCases").css("display", "none");
-			$("#unitTestTab").css("display", "block");
-			$(".unit_view").css("display", "none");
-			$("#graphView").css("display", "none");
-			
-			//Shows the tabular view of the test result
-			$("#tabularView").unbind("click");
-			$("#tabularView").click(function() {
-				self.onTabularViewEvent.dispatch();
-			});
-			
-			//Shows the graphical view of the test result
-			$("#graphicalView").unbind("click");
-			$("#graphicalView").click(function() {
-				self.onGraphicalViewEvent.dispatch();
-			});
-			
 			Clazz.navigationController.mainContainer = commonVariables.contentPlaceholder;
 		}
 	});

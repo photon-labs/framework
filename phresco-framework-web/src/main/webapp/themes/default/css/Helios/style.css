@@ -2892,13 +2892,13 @@ html>body tbody.scrollContent {
 
 .unit_view span {
 	font-weight:bold;
-	margin-right: 4px;	
 	padding-top: 8px;
 	cursor:pointer;
 }
 
 .unit_view span img {
-	margin-right: 5px;	
+	margin-right: 7px;
+	margin-top: -2px;
 }
 
 .unit_view span b {

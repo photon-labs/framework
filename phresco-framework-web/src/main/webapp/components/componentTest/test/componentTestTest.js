@@ -43,7 +43,7 @@ define(["componentTest/componentTest"], function(ComponentTest) {
 		graphicalViewTest : function() {
 			var self = this;
 			asyncTest("Component Test Graphical View Test", function() {
-				$(commonVariables.contentPlaceholder).find('#graphicalView').click();
+				$(commonVariables.contentPlaceholder).find('.table1, .table2').click();
 				setTimeout(function() {
 					start();
 					equal($("#testSuites").css("display"), "block", "Component test graphical view tested");
@@ -55,7 +55,7 @@ define(["componentTest/componentTest"], function(ComponentTest) {
 		tabularViewTest : function() {
 			var self = this;
 			asyncTest("Component Test Tabular View Test", function() {
-				$(commonVariables.contentPlaceholder).find('#tabularView').click();
+				$(commonVariables.contentPlaceholder).find('.graph1, .graph2').click();
 				setTimeout(function() {
 					start();
 					equal($("#graphView").css("display"), "block", "Component test tabular view tested");

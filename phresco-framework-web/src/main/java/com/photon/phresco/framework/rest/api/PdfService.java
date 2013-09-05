@@ -145,7 +145,7 @@ public class PdfService extends RestBase implements FrameworkConstants, Constant
 					return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*")
 							.build();
 				} else {
-					status = RESPONSE_STATUS_ERROR;
+					status = RESPONSE_STATUS_FAILURE;
 					errorCode = PHR210017;
 					ResponseInfo finalOutput = responseDataEvaluation(responseData, null,
 							null, status, errorCode);

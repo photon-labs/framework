@@ -18,18 +18,19 @@ define(["lib/jquery-tojson-1.0",'lib/RGraph_common_core-1.0','lib/RGraph_common_
 			var self = this;
 		},
 		
-		onGraphicalView : function(thisObj) {
-			var self = this;
-			$('#graphView').hide();
-			$('.perfResultInfo').show();
-			$(thisObj).toggle();
-			$("#tabularView").toggle();
-		},
-		
 		onTabularView : function(thisObj) {
 			var self = this;
-			$("#graphicalView").html('<img src="themes/default/images/helios/graph_active.png" width="213" height="29" border="0" alt="">');
-			$("#tabularView").html('<img src="themes/default/images/helios/table_active.png" width="213" height="29" border="0" alt="">');
+			$("#tabularView").show();
+			$("#graphicalView").hide();
+			$('#graphView').hide();
+			$('.perfResultInfo').show();
+		},
+		
+		
+		onGraphicalView : function(thisObj) {
+			var self = this;
+			$("#tabularView").hide();
+			$("#graphicalView").show();
 			$('.perfResultInfo').hide();
 			$('#graphView').show();
 
@@ -38,8 +39,6 @@ define(["lib/jquery-tojson-1.0",'lib/RGraph_common_core-1.0','lib/RGraph_common_
 			} else {
 				$("#allData").show();
 			}
-			$(thisObj).toggle();
-			$("#graphicalView").toggle();
 		},
 		
 		/***
@@ -488,7 +487,7 @@ define(["lib/jquery-tojson-1.0",'lib/RGraph_common_core-1.0','lib/RGraph_common_
 					self.drawChart(resultData);
 					self.showScreenShot(resultData.images);
 					//tabular view
-					if($("#tabularView").find('img').attr('src') === "themes/default/images/helios/quality_table_on.png") {
+					if($("#tabularView").find('img').attr('src') === "themes/default/images/helios/table_active.png") {
 						$(".perfResultInfo").show();
 						$("#graphView").hide();
 					} else {

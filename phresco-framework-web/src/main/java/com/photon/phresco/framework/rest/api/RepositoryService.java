@@ -237,7 +237,7 @@ public class RepositoryService extends RestBase implements FrameworkConstants, S
 			restrictedLogs = restrictLogs(svnLogMessages);
 		} catch (PhrescoException e) {
 			if (e.getLocalizedMessage().contains("Authorization Realm")) {
-				status = RESPONSE_STATUS_ERROR;
+				status = RESPONSE_STATUS_FAILURE;
 				errorCode = PHR210023;
 				ResponseInfo<List<String>> finalOutput = responseDataEvaluation(responseData, new Exception(e.getMessage()),
 						null, status, errorCode);
@@ -329,20 +329,20 @@ public class RepositoryService extends RestBase implements FrameworkConstants, S
 						"*").build();
 			}
 		} catch (SVNAuthenticationException e) {
-			status = RESPONSE_STATUS_ERROR;
+			status = RESPONSE_STATUS_FAILURE;
 			errorCode = PHR210023;
 			ResponseInfo finalOutput = responseDataEvaluation(responseData, new Exception(e.getMessage()), null, status, errorCode);
 			return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*")
 					.build();
 		} catch (SVNException e) {
 			if (e.getMessage().indexOf(SVN_FAILED) != -1) {
-				status = RESPONSE_STATUS_ERROR;
+				status = RESPONSE_STATUS_FAILURE;
 				errorCode = PHR210024;
 				ResponseInfo finalOutput = responseDataEvaluation(responseData, new Exception(e.getMessage()), null, status, errorCode);
 				return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin",
 						"*").build();
 			} else if (e.getMessage().indexOf(SVN_INTERNAL) != -1) {
-				status = RESPONSE_STATUS_ERROR;
+				status = RESPONSE_STATUS_FAILURE;
 				errorCode = PHR210025;
 				ResponseInfo finalOutput = responseDataEvaluation(responseData, new Exception(e.getMessage()), null, status, errorCode);
 				return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin",
@@ -355,7 +355,7 @@ public class RepositoryService extends RestBase implements FrameworkConstants, S
 						"*").build();
 			}
 		} catch (FileExistsException e) {
-			status = RESPONSE_STATUS_ERROR;
+			status = RESPONSE_STATUS_FAILURE;
 			errorCode = PHR210027;
 			ResponseInfo finalOutput = responseDataEvaluation(responseData, new Exception(e.getMessage()), null, status, errorCode);
 			return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*")
@@ -402,7 +402,7 @@ public class RepositoryService extends RestBase implements FrameworkConstants, S
 						"*").build();
 			}
 		} catch (FileExistsException e) {
-			status = RESPONSE_STATUS_ERROR;
+			status = RESPONSE_STATUS_FAILURE;
 			errorCode = PHR210027;
 			ResponseInfo finalOutput = responseDataEvaluation(responseData, new Exception(e.getMessage()), null, status, errorCode);
 			return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*")
@@ -450,7 +450,7 @@ public class RepositoryService extends RestBase implements FrameworkConstants, S
 			}
 		} catch (Exception e) {
 			if ("Project already imported".equals(e.getLocalizedMessage())) {
-				status = RESPONSE_STATUS_ERROR;
+				status = RESPONSE_STATUS_FAILURE;
 				errorCode = PHR210027;
 				ResponseInfo finalOutput = responseDataEvaluation(responseData, new Exception(e.getMessage()), null, status, errorCode);
 				return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin",
@@ -496,32 +496,32 @@ public class RepositoryService extends RestBase implements FrameworkConstants, S
 			return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
 
 		} catch (InvalidRemoteException e) {
-			status = RESPONSE_STATUS_ERROR;
+			status = RESPONSE_STATUS_FAILURE;
 			errorCode = PHR210024;
 			ResponseInfo finalOutput = responseDataEvaluation(responseData, new Exception(e.getMessage()), null, status, errorCode);
 			return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*")
 					.build();
 		} catch (TransportException e) {
-			status = RESPONSE_STATUS_ERROR;
+			status = RESPONSE_STATUS_FAILURE;
 			errorCode = PHR210024;
 			ResponseInfo finalOutput = responseDataEvaluation(responseData, new Exception(e.getMessage()), null, status, errorCode);
 			return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*")
 					.build();
 		} catch (SVNAuthenticationException e) {
-			status = RESPONSE_STATUS_ERROR;
+			status = RESPONSE_STATUS_FAILURE;
 			errorCode = PHR210023;
 			ResponseInfo finalOutput = responseDataEvaluation(responseData, new Exception(e.getMessage()), null, status, errorCode);
 			return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*")
 					.build();
 		} catch (SVNException e) {
 			if (e.getMessage().indexOf(SVN_FAILED) != -1) {
-				status = RESPONSE_STATUS_ERROR;
+				status = RESPONSE_STATUS_FAILURE;
 				errorCode = PHR210024;
 				ResponseInfo finalOutput = responseDataEvaluation(responseData, new Exception(e.getMessage()), null, status, errorCode);
 				return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin",
 						"*").build();
 			} else if (e.getMessage().indexOf(SVN_INTERNAL) != -1) {
-				status = RESPONSE_STATUS_ERROR;
+				status = RESPONSE_STATUS_FAILURE;
 				errorCode = PHR210025;
 				ResponseInfo finalOutput = responseDataEvaluation(responseData, new Exception(e.getMessage()), null, status, errorCode);
 				return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin",
@@ -534,7 +534,7 @@ public class RepositoryService extends RestBase implements FrameworkConstants, S
 						"*").build();
 			}
 		} catch (FileExistsException e) {
-			status = RESPONSE_STATUS_ERROR;
+			status = RESPONSE_STATUS_FAILURE;
 			errorCode = PHR210027;
 			ResponseInfo finalOutput = responseDataEvaluation(responseData, new Exception(e.getMessage()), null, status, errorCode);
 			return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*")
@@ -587,32 +587,32 @@ public class RepositoryService extends RestBase implements FrameworkConstants, S
 			return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
 
 		} catch (InvalidRemoteException e) {
-			status = RESPONSE_STATUS_ERROR;
+			status = RESPONSE_STATUS_FAILURE;
 			errorCode = PHR210024;
 			ResponseInfo finalOutput = responseDataEvaluation(responseData, new Exception(e.getMessage()), null, status, errorCode);
 			return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*")
 					.build();
 		} catch (TransportException e) {
-			status = RESPONSE_STATUS_ERROR;
+			status = RESPONSE_STATUS_FAILURE;
 			errorCode = PHR210024;
 			ResponseInfo finalOutput = responseDataEvaluation(responseData, new Exception(e.getMessage()), null, status, errorCode);
 			return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*")
 					.build();
 		} catch (SVNAuthenticationException e) {
-			status = RESPONSE_STATUS_ERROR;
+			status = RESPONSE_STATUS_FAILURE;
 			errorCode = PHR210023;
 			ResponseInfo finalOutput = responseDataEvaluation(responseData, new Exception(e.getMessage()), null, status, errorCode);
 			return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*")
 					.build();
 		} catch (SVNException e) {
 			if (e.getMessage().indexOf(SVN_FAILED) != -1) {
-				status = RESPONSE_STATUS_ERROR;
+				status = RESPONSE_STATUS_FAILURE;
 				errorCode = PHR210024;
 				ResponseInfo finalOutput = responseDataEvaluation(responseData, new Exception(e.getMessage()), null, status, errorCode);
 				return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin",
 						"*").build();
 			} else if (e.getMessage().indexOf(SVN_INTERNAL) != -1) {
-				status = RESPONSE_STATUS_ERROR;
+				status = RESPONSE_STATUS_FAILURE;
 				errorCode = PHR210025;
 				ResponseInfo finalOutput = responseDataEvaluation(responseData, new Exception(e.getMessage()), null, status, errorCode);
 				return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin",
@@ -631,7 +631,7 @@ public class RepositoryService extends RestBase implements FrameworkConstants, S
 						"*").build();
 			}
 		} catch (FileExistsException e) {
-			status = RESPONSE_STATUS_ERROR;
+			status = RESPONSE_STATUS_FAILURE;
 			errorCode = PHR210027;
 			ResponseInfo finalOutput = responseDataEvaluation(responseData, new Exception(e.getMessage()), null, status, errorCode);
 			return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*")
