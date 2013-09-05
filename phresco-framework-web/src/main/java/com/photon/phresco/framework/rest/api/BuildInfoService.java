@@ -17,10 +17,12 @@
  */
 package com.photon.phresco.framework.rest.api;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.net.URLConnection;
@@ -284,6 +286,86 @@ public class BuildInfoService extends RestBase implements FrameworkConstants, Se
 			ResponseInfo<Boolean> finalOutput = responseDataEvaluation(responseData, e, null, RESPONSE_STATUS_ERROR, PHR710007);
 			return Response.status(Response.Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
 		}
+	}
+
+	@GET
+	@Path("/logContent")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response logContent(@QueryParam("status") String status, @QueryParam("appDirName") String appDirName) {
+		ResponseInfo<String> responseData = new ResponseInfo<String>();
+		String readLogFile = "";
+		try {
+			if (StringUtils.isNotEmpty(status) && status.equals("true")) {
+				readLogFile = readRunAgsSrcLogFile(appDirName);
+			} else {
+				deleteLogFile(appDirName);
+			}
+
+			ResponseInfo<Boolean> finalOutput = responseDataEvaluation(responseData, null, readLogFile,
+					RESPONSE_STATUS_SUCCESS, "");
+			return Response.status(Response.Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*")
+					.build();
+		} catch (PhrescoException e) {
+			ResponseInfo<Boolean> finalOutput = responseDataEvaluation(responseData, e, null, RESPONSE_STATUS_ERROR, "");
+			return Response.status(Response.Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*")
+					.build();
+		}
+	}
+	
+	public void deleteLogFile(String appDirName) throws PhrescoException {
+		try {
+			File logFile = new File(getLogFilePath(appDirName));
+			File infoFile = new File(getLogFolderPath(appDirName) + File.separator + RUN_AGS_LOG_FILE);
+			if (logFile.isFile() && logFile.exists()) {
+				logFile.delete();
+			}
+			if (infoFile.isFile() && infoFile.exists()) {
+				infoFile.delete();
+			}
+		} catch (PhrescoException e) {
+			throw new PhrescoException(e);
+		}
+	}
+
+	private String getLogFilePath(String appDirName) throws PhrescoException {
+		StringBuilder builder = new StringBuilder(getLogFolderPath(appDirName));
+		builder.append(File.separator);
+		builder.append(LOG_FILE);
+		return builder.toString();
+	}
+
+	private String readRunAgsSrcLogFile(String appDirName) throws PhrescoException {
+		BufferedReader reader = null;
+		try {
+			File runAgsLogfile = new File(getLogFolderPath(appDirName) + File.separator + RUN_AGS_LOG_FILE);
+			if (runAgsLogfile.exists()) {
+				reader = new BufferedReader(new FileReader(runAgsLogfile));
+				String text = "";
+				StringBuffer contents = new StringBuffer();
+				while ((text = reader.readLine()) != null) {
+					contents.append(text).append(System.getProperty(LINE_SEPERATOR));
+				}
+				return contents.toString();
+			}
+		} catch (FileNotFoundException e) {
+			throw new PhrescoException(e);
+		} catch (IOException e) {
+			throw new PhrescoException(e);
+		} finally {
+			Utility.closeReader(reader);
+		}
+
+		return "";
+	}
+	
+	private String getLogFolderPath(String appDirName) throws PhrescoException {
+		StringBuilder builder = new StringBuilder(Utility.getProjectHome());
+		builder.append(appDirName);
+		builder.append(File.separator);
+		builder.append(DO_NOT_CHECKIN_DIR);
+		builder.append(File.separator);
+		builder.append(LOG_DIR);
+		return builder.toString();
 	}
 	
 	private List<MinifyInfo> includesFiles(Element element, String appDirName) throws PhrescoException {

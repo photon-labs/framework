@@ -190,6 +190,9 @@ public interface ResponseCodes {
 	String PHR510008 = "PHR510008"; // an I/O exception has occurred
 	String PHR500003 = "PHR500003"; // report fetched successfully
 	String PHR510009 = "PHR510009"; // report not fetched
+	String PHR500004 = "PHR500004"; // sonar url returned successfully
+	String PHR510010 = "PHR510010"; // Error in sonar url 
+	String PHR510011 = "PHR510011"; // sonar url returned failed
 	
 	
 	/*
@@ -284,6 +287,9 @@ public interface ResponseCodes {
 	String PHR700012 = "PHR700012"; // No minified files to return
 	String PHR710022 = "PHR710022"; // fail to return  minified files
 	String PHR710023 = "PHR710023"; // fail to load pom.xml
+	String PHR700013 = "PHR700013"; // minification done successfully
+	String PHR710024 = "PHR710024"; // fail to perfrom minification
+
 	/*
 	 * Quality Assurance Page
 	 */

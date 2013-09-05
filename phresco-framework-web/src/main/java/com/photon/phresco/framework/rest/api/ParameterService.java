@@ -26,6 +26,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.InetAddress;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
@@ -352,13 +353,13 @@ public class ParameterService extends RestBase implements FrameworkConstants, Se
             @Context HttpServletRequest request) {
         ResponseInfo<List<CodeValidationReportType>> responseData = new ResponseInfo<List<CodeValidationReportType>>();
         try {
-            int responseCode = setSonarServerStatus(request);
-            if (responseCode != 200) {
-                ResponseInfo<List<CodeValidationReportType>> finalOutput = responseDataEvaluation(responseData, null,
-                        null, RESPONSE_STATUS_FAILURE, PHR510001);
-                return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN,
-                        ALL_HEADER).build();
-            }
+//            int responseCode = setSonarServerStatus(request);
+//            if (responseCode != 200) {
+//                ResponseInfo<List<CodeValidationReportType>> finalOutput = responseDataEvaluation(responseData, null,
+//                        null, RESPONSE_STATUS_FAILURE, PHR510001);
+//                return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN,
+//                        ALL_HEADER).build();
+//            }
             String infoFileDir = getInfoFileDir(appDirName, goal, phase);
             ApplicationInfo appInfo = FrameworkServiceUtil.getApplicationInfo(appDirName);
             List<CodeValidationReportType> codeValidationReportTypes = new ArrayList<CodeValidationReportType>();
@@ -408,6 +409,32 @@ public class ParameterService extends RestBase implements FrameworkConstants, Se
                     .build();
         }
     }
+
+	@GET
+	@Path("/sonarUrl")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response getSonarUrl(@Context HttpServletRequest request) {
+		FrameworkUtil frameworkUtil = new FrameworkUtil(request);
+		 ResponseInfo<String> responseData = new ResponseInfo<String>();
+			try {
+				URL sonarURL = new URL(frameworkUtil.getSonarHomeURL());
+				System.out.println("sonart :"+ sonarURL.toString());
+				ResponseInfo<String> finalOutput = responseDataEvaluation(responseData, null,
+						sonarURL.toString(), RESPONSE_STATUS_SUCCESS, PHR500004);
+				return Response.ok(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, ALL_HEADER).build();
+			} catch (MalformedURLException e) {
+				 ResponseInfo<String> finalOutput = responseDataEvaluation(responseData, e,
+		                    null, RESPONSE_STATUS_ERROR, PHR510010);
+		            return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, ALL_HEADER)
+		                    .build();
+			} catch (PhrescoException e) {
+				 ResponseInfo<String> finalOutput = responseDataEvaluation(responseData, e,
+		                    null, RESPONSE_STATUS_ERROR, PHR510011);
+		            return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, ALL_HEADER)
+		                    .build();
+			}
+	}
+	
 
 	/**
 	 * Gets the iframe report.

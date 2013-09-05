@@ -433,12 +433,14 @@ public class ActionService implements ActionServiceConstant, FrameworkConstants,
 			actionFunction.prePopulateModelData(request);
 //			actionFunction.prePopulateMinificationData(request);
 			response = actionFunction.minification(request, files);
+			response.setResponseCode(PHR700013);
 		} catch (Exception e) {
 			S_LOGGER.error(e.getMessage());
 			response.setStatus(ERROR);
 			response.setLog("");
 			response.setService_exception(FrameworkUtil.getStackTraceAsString(e));
 			response.setUniquekey("");
+			response.setResponseCode(PHR710024);
 		}
 		return Response.status(Status.OK).entity(response).header("Access-Control-Allow-Origin", "*").build();
 		
@@ -895,7 +897,6 @@ public class ActionService implements ActionServiceConstant, FrameworkConstants,
 		
 		
 		try {
-			
 			log = BufferMap.readBufferReader(uniquekey);
 			
 			if(log == null){

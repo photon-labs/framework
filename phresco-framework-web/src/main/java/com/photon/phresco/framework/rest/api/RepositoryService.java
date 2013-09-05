@@ -1017,9 +1017,12 @@ public class RepositoryService extends RestBase implements FrameworkConstants, S
 		RepoDetail repodetail = new RepoDetail();
 		ResponseInfo<RepoDetail> responseData = new ResponseInfo<RepoDetail>();
 		try {
+			repodetail.setRepoExist(true);
 			ApplicationInfo applicationInfo = FrameworkServiceUtil.getApplicationInfo(appDirName);
 			String repoUrl = getConnectionUrl(applicationInfo);
-			repodetail = updateProjectPopup(appDirName, action, repodetail);
+			if(StringUtils.isEmpty(repoUrl)) {
+				repodetail.setRepoExist(false);
+			}
 			repodetail.setType(getRepoType(repoUrl));
 			repodetail.setRepoUrl(repoUrl);
 			repodetail.setUserName(userId);

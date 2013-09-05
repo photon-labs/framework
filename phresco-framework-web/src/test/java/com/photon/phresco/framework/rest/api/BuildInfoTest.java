@@ -203,6 +203,12 @@ public class BuildInfoTest extends RestBaseTest {
 		Assert.assertEquals(200, response.getStatus());
 	}
 	
+	@Test
+	public void getLogContent() {
+		Response logContent = buildinfoservice.logContent("true", appDirName);
+		Assert.assertEquals(200, logContent.getStatus());
+	}
+	
 	
 	@Test
 	public void  stopServer() throws PhrescoException {
@@ -231,6 +237,12 @@ public class BuildInfoTest extends RestBaseTest {
 	public void  checkStopStatus() {
 		Response response = buildinfoservice.checkStatus(appDirName);
 		Assert.assertEquals(200, response.getStatus());
+	}
+	
+	@Test
+	public void getLogContentNone() {
+		Response logContent = buildinfoservice.logContent("false", appDirName);
+		Assert.assertEquals(200, logContent.getStatus());
 	}
 
 	@Test

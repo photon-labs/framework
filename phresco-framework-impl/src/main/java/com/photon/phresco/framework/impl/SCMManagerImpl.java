@@ -959,7 +959,6 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 		Repository repository = builder.setGitDir(path).readEnvironment().findGitDir().build(); 
 		Git git = new Git(repository);
 		List<RepoFileInfo> fileslist = new ArrayList<RepoFileInfo>();
-		RepoFileInfo repoFileInfo = new RepoFileInfo();
 		InitCommand initCommand = Git.init();
 		initCommand.setDirectory(path);
 		git = initCommand.call();
@@ -975,6 +974,7 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 		
 		if (!added.isEmpty()) {
 			for (String add : added) {
+				RepoFileInfo repoFileInfo = new RepoFileInfo();
 				String filePath = path + BACK_SLASH + add;
 				repoFileInfo.setCommitFilePath(filePath);
 				repoFileInfo.setStatus("A");
@@ -984,6 +984,7 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 
 		if (!changed.isEmpty()) {
 			for (String change : changed) {
+				RepoFileInfo repoFileInfo = new RepoFileInfo();
 				String filePath = path + BACK_SLASH + change;
 				repoFileInfo.setCommitFilePath(filePath);
 				repoFileInfo.setStatus("M");
@@ -993,6 +994,7 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 
 		if (!conflicting.isEmpty()) {
 			for (String conflict : conflicting) {
+				RepoFileInfo repoFileInfo = new RepoFileInfo();
 				String filePath = path + BACK_SLASH + conflict;
 				repoFileInfo.setCommitFilePath(filePath);
 				repoFileInfo.setStatus("C");
@@ -1002,6 +1004,7 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 
 		if (!missing.isEmpty()) {
 			for (String miss : missing) {
+				RepoFileInfo repoFileInfo = new RepoFileInfo();
 				String filePath = path + BACK_SLASH + miss;
 				repoFileInfo.setCommitFilePath(filePath);
 				repoFileInfo.setStatus("!");
@@ -1011,6 +1014,7 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 
 		if (!modified.isEmpty()) {
 			for (String modify : modified) {
+				RepoFileInfo repoFileInfo = new RepoFileInfo();
 				String filePath = path + BACK_SLASH + modify;
 				repoFileInfo.setCommitFilePath(filePath);
 				repoFileInfo.setStatus("M");
@@ -1020,6 +1024,7 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 
 		if (!removed.isEmpty()) {
 			for (String remove : removed) {
+				RepoFileInfo repoFileInfo = new RepoFileInfo();
 				String filePath = path + BACK_SLASH + remove;
 				repoFileInfo.setCommitFilePath(filePath);
 				repoFileInfo.setStatus("D");
@@ -1029,6 +1034,7 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 
 		if (!untracked.isEmpty()) {
 			for (String untrack : untracked) {
+				RepoFileInfo repoFileInfo = new RepoFileInfo();
 				String filePath = path + BACK_SLASH + untrack;
 				repoFileInfo.setCommitFilePath(filePath);
 				repoFileInfo.setStatus("?");

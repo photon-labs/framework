@@ -22,6 +22,7 @@ import javax.ws.rs.core.Response;
 import junit.framework.Assert;
 
 import org.junit.Test;
+import org.springframework.mock.web.MockHttpServletRequest;
 
 public class ParameterServiceTest extends RestBaseTest {
 	
@@ -68,4 +69,11 @@ public class ParameterServiceTest extends RestBaseTest {
 		Response dependency = parameterService.getDependencyPossibleValue(appDirName, customerId, userId, "package", "environmentName", "package");
 		Assert.assertEquals(200, dependency.getStatus());
 	}
+	 
+	 @Test
+	 public void getSonarUrl() {
+			MockHttpServletRequest request = new MockHttpServletRequest();
+			Response sonarUrl = parameterService.getSonarUrl(request);
+			Assert.assertEquals(200, sonarUrl.getStatus());
+	 }
 }

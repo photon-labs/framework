@@ -27,6 +27,9 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -41,6 +44,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.StringUtils;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
@@ -48,6 +52,8 @@ import org.json.simple.parser.ParseException;
 import com.photon.phresco.commons.FrameworkConstants;
 import com.photon.phresco.commons.ResponseCodes;
 import com.photon.phresco.commons.model.ApplicationInfo;
+import com.photon.phresco.commons.model.ArtifactInfo;
+import com.photon.phresco.commons.model.DownloadInfo;
 import com.photon.phresco.commons.model.ProjectInfo;
 import com.photon.phresco.commons.model.Technology;
 import com.photon.phresco.exception.PhrescoException;
@@ -386,6 +392,37 @@ public class UtilService extends RestBase implements FrameworkConstants, Service
 		}
 		return Response.status(Status.OK).entity(response).header("Access-Control-Allow-Origin", "*").build();
 	}
+	
+	
+	@GET
+	@Path("/downloads")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response getDownloads(@QueryParam("customerId") String customerId, @QueryParam("userId") String userId) {
+		ResponseInfo<List<DownloadInfo>> responseData = new ResponseInfo<List<DownloadInfo>>();
+		try {
+			ServiceManager serviceManager = CONTEXT_MANAGER_MAP.get(userId);
+			if (serviceManager == null) {
+				ResponseInfo<List<DownloadInfo>> finalOutput = responseDataEvaluation(responseData, null, null,
+						RESPONSE_STATUS_FAILURE, "");
+				return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*")
+						.build();
+			}
+			List<DownloadInfo> downloadInfos = serviceManager.getDownloads(customerId);
+			if (CollectionUtils.isNotEmpty(downloadInfos)) {
+				Collections.sort(downloadInfos, sortByNameInAlphaOrder());
+				ResponseInfo<ProjectInfo> finalOutput = responseDataEvaluation(responseData, null, downloadInfos,
+						RESPONSE_STATUS_SUCCESS, "");
+				return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
+			}
+			ResponseInfo<ProjectInfo> finalOutput = responseDataEvaluation(responseData, null, downloadInfos,
+					RESPONSE_STATUS_FAILURE, "");
+			return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
+		} catch (PhrescoException e) {
+			ResponseInfo<ProjectInfo> finalOutput = responseDataEvaluation(responseData, e, null,
+					RESPONSE_STATUS_ERROR, "");
+			return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
+		}
+	}
 
 
 	/**
@@ -435,5 +472,20 @@ public class UtilService extends RestBase implements FrameworkConstants, Service
 		} catch (Exception e) {
 			throw new PhrescoException(e);
 		}
+	}
+	
+	/**
+	 * Sort by name in alphabetic order.
+	 *
+	 * @return the comparator
+	 */
+	public Comparator sortByNameInAlphaOrder() {
+		return new Comparator() {
+			public int compare(Object firstObject, Object secondObject) {
+				DownloadInfo downloadinfo1 = (DownloadInfo) firstObject;
+				DownloadInfo downloadinfo2 = (DownloadInfo) secondObject;
+				return downloadinfo1.getName().compareToIgnoreCase(downloadinfo2.getName());
+			}
+		};
 	}
 }
