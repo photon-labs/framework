@@ -69,12 +69,13 @@ public class UpgradeService extends RestBase implements FrameworkConstants, Serv
 				return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, "*").build();
 			}
 			UpgradeManager updateManager = PhrescoFrameworkFactory.getUpdateManager();
-			updateManager.doUpdate(serviceManager, newVersion, ServiceConstants.DEFAULT_CUSTOMER_NAME);
+			updateManager.doUpdate(serviceManager, newVersion, customerId);
 			ResponseInfo<List<ProjectInfo>> finalOutput = responseDataEvaluation(responseData, null, null,
 					RESPONSE_STATUS_SUCCESS, PHR900002);
 			return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, ALL_HEADER)
 					.build();
 		} catch (PhrescoException e) {
+			e.printStackTrace();
 			ResponseInfo<List<ProjectInfo>> finalOutput = responseDataEvaluation(responseData, null, null,
 					RESPONSE_STATUS_ERROR, PHR910004);
 			return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, ALL_HEADER)

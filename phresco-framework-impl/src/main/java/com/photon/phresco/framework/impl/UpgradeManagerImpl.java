@@ -17,17 +17,25 @@
  */
 package com.photon.phresco.framework.impl;
 
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.Collections;
 
 import org.apache.log4j.Logger;
 import org.codehaus.plexus.util.FileUtils;
 
+import com.google.gson.Gson;
 import com.photon.phresco.commons.FrameworkConstants;
+import com.photon.phresco.commons.model.ApplicationInfo;
+import com.photon.phresco.commons.model.ProjectInfo;
+import com.photon.phresco.commons.model.Technology;
+import com.photon.phresco.commons.model.TechnologyInfo;
 import com.photon.phresco.commons.model.VersionInfo;
 import com.photon.phresco.exception.PhrescoException;
 import com.photon.phresco.framework.api.UpgradeManager;
@@ -89,11 +97,51 @@ public class UpgradeManagerImpl implements UpgradeManager, FrameworkConstants   
 			
 			extractUpdate(tempFile);
 			markVersionUpdated(newVersion);
+			updateProjects(serviceManager);
 		} catch (IOException e) {
 			throw new PhrescoException(e);
 		} finally {
 			Utility.closeStream(latestVersionZip);
 			Utility.closeStream(outPutFile);
+		}
+	}
+
+	private void updateProjects(ServiceManager serviceManager) throws PhrescoException {
+		File projectsHome = new File(Utility.getProjectHome());
+		File[] appDirs = projectsHome.listFiles();
+		for (File appDir : appDirs) {
+			if(appDir.isDirectory()) {
+				File dotPhresco = new File(appDir, ".phresco/project.info");
+				FileWriter fstream = null;
+				BufferedWriter out = null;
+				FileReader reader = null;
+				try {
+					reader = new FileReader(dotPhresco);
+					ProjectInfo projectInfo = new Gson().fromJson(reader, ProjectInfo.class);
+					ApplicationInfo applicationInfo = projectInfo.getAppInfos().get(0);
+					TechnologyInfo techInfo = applicationInfo.getTechInfo();
+					String appTypeId = techInfo.getAppTypeId();
+					if(appTypeId.equals("app-layer") || appTypeId.equals("web-layer") || appTypeId.equals("mob-layer")) {
+						Technology technology = serviceManager.getTechnology(techInfo.getId());
+						if(technology != null) {
+							techInfo.setAppTypeId(technology.getAppTypeId());
+							applicationInfo.setTechInfo(techInfo);
+							projectInfo.setAppInfos(Collections.singletonList(applicationInfo));
+							Gson gson = new Gson();
+							String infoJSON = gson.toJson(projectInfo);
+							fstream = new FileWriter(dotPhresco);
+							out = new BufferedWriter(fstream);
+							out.write(infoJSON);
+						}
+					}
+				} catch (IOException e) {
+					throw new PhrescoException(e);
+				} finally {
+					Utility.closeWriter(out);
+					Utility.closeStream(reader);
+					Utility.closeStream(fstream);
+				}
+			}
 		}
 	}
 
