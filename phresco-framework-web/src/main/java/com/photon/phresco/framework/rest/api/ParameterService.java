@@ -353,13 +353,13 @@ public class ParameterService extends RestBase implements FrameworkConstants, Se
             @Context HttpServletRequest request) {
         ResponseInfo<List<CodeValidationReportType>> responseData = new ResponseInfo<List<CodeValidationReportType>>();
         try {
-//            int responseCode = setSonarServerStatus(request);
-//            if (responseCode != 200) {
-//                ResponseInfo<List<CodeValidationReportType>> finalOutput = responseDataEvaluation(responseData, null,
-//                        null, RESPONSE_STATUS_FAILURE, PHR510001);
-//                return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN,
-//                        ALL_HEADER).build();
-//            }
+            int responseCode = setSonarServerStatus(request);
+            if (responseCode != 200) {
+                ResponseInfo<List<CodeValidationReportType>> finalOutput = responseDataEvaluation(responseData, null,
+                        null, RESPONSE_STATUS_FAILURE, PHR510001);
+                return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN,
+                        ALL_HEADER).build();
+            }
             String infoFileDir = getInfoFileDir(appDirName, goal, phase);
             ApplicationInfo appInfo = FrameworkServiceUtil.getApplicationInfo(appDirName);
             List<CodeValidationReportType> codeValidationReportTypes = new ArrayList<CodeValidationReportType>();
