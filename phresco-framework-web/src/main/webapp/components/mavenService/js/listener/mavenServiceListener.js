@@ -13,17 +13,17 @@ define([], function() {
 		initialize : function(config) {
 		},
 
-		mvnBuild : function(paramData, divId, callback){
+		mvnBuild : function(paramData, divId, bodyContent, callback){
 			var self = this, header = self.getRequestHeader("POST", "", commonVariables.mvnBuild, paramData);
 			self.mvnService(header, divId, callback);
 		},
 		
-		mvnDeploy : function(paramData, divId, callback){
+		mvnDeploy : function(paramData, divId, bodyContent, callback){
 			var self = this, header = self.getRequestHeader("POST", "", commonVariables.mvnDeploy, paramData);
 			self.mvnService(header, divId, callback);
 		},
 		
-		mvnProcessBuild : function(paramData, divId, callback){
+		mvnProcessBuild : function(paramData, divId, bodyContent, callback){
 			var self = this, header = self.getRequestHeader("POST", "", commonVariables.mvnProcessBuild, paramData);
 			self.mvnService(header, divId, callback);
 		},
@@ -58,17 +58,17 @@ define([], function() {
 			self.mvnService(header, divId, callback);
 		},
 		
-		mvnRunagainstSource : function(paramData, divId, callback){
+		mvnRunagainstSource : function(paramData, divId, bodyContent, callback){
 			var self = this, header = self.getRequestHeader("POST", "", commonVariables.mvnRunagainstSource, paramData);
 			self.mvnService(header, divId, callback);
 		},
 		
-		mvnStopServer : function(paramData, divId, callback){
+		mvnStopServer : function(paramData, divId, bodyContent, callback){
 			var self = this, header = self.getRequestHeader("POST", "", commonVariables.mvnStopServer, paramData);
 			self.mvnService(header, divId, callback);
 		},
 		
-		mvnRestartServer : function(paramData, divId, callback){
+		mvnRestartServer : function(paramData, divId, bodyContent, callback){
 			var self = this, header = self.getRequestHeader("POST", "", commonVariables.mvnRestartServer, paramData);
 			self.mvnService(header, divId, callback);
 		},

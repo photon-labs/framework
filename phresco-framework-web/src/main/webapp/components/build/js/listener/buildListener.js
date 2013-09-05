@@ -4,11 +4,7 @@ define([], function() {
 
 	Clazz.com.components.build.js.listener.BuildListener = Clazz.extend(Clazz.WidgetWithTemplate, {
 		mavenServiceListener : null,		
-		/***
-		 * Called in initialization time of this class 
-		 *
-		 * @config: configurations for this listener
-		 */
+
 		initialize : function(config) {
 			var self = this;
 			
@@ -30,7 +26,7 @@ define([], function() {
 			}
 		},
 		
-		getBuildInfo : function(header, callback){
+		getInfo : function(header, callback){
 			var self = this;
 
 			try {
@@ -38,227 +34,40 @@ define([], function() {
 					function(response) {
 						if (response !== null && (response.status !== "error" || response.status !== "failure")) {
 							callback(response);
-						} else {
-							$(".content_end").show();
-							$(".msgdisplay").removeClass("success").addClass("error");
-							$(".error").attr('data-i18n', 'errorCodes.' + response.responseCode);
-							self.renderlocales(commonVariables.contentPlaceholder);	
-							$(".error").fadeIn(500).fadeOut(500).fadeIn(500).fadeOut(500).fadeIn(500).fadeOut(5);
-							setTimeout(function() {
-								$(".content_end").hide();
-							},2500);
-						}
+						} else {commonVariables.api.showError(response.responseCode ,"error", true);}
 					},
 
-					function(textStatus) {
-						$(".content_end").show();
-						$(".msgdisplay").removeClass("success").addClass("error");
-						$(".error").attr('data-i18n', 'commonlabel.errormessage.serviceerror');
-						self.renderlocales(commonVariables.contentPlaceholder);	
-						$(".error").fadeIn(500).fadeOut(500).fadeIn(500).fadeOut(500).fadeIn(500).fadeOut(5);
-						setTimeout(function() {
-							$(".content_end").hide();
-						},2500);
-					}
+					function(textStatus) {commonVariables.api.showError(response.responseCode ,"error", true);}
 				);
-			} catch(exception) {
-				callback({ "status" : "service exception"});
-			}
+			} catch(exception){callback({ "status" : "service exception"});}
 		},
 		
-		downloadBuild : function(buildNo, callback){
-			var self = this, header = self.getRequestHeader("", {'buildNo':buildNo}, 'download');
+		downloadBuild : function(buildNo, type, callback){
+			var self = this, header = self.getRequestHeader("", {'buildNo':buildNo}, type);
 			window.open(header.webserviceurl);
 		},
-		
-		ipadownload : function(buildNo, callback){
-			var self = this, header = self.getRequestHeader("", {'buildNo':buildNo}, 'ipadownload');
-			window.open(header.webserviceurl);
-		},
-		
-		deployBuild : function(queryString, callback){
+
+		mavenServiceCall : function(functionName, queryString, minAll, bodyContent, callback){
 			var self = this, appInfo = commonVariables.api.localVal.getJson('appdetails');
 
 			if(appInfo !== null){
-				queryString +=	'&customerId='+ self.getCustomer() +'&appId='+ appInfo.data.appInfos[0].id +'&projectId=' + appInfo.data.id + '&username=' + commonVariables.api.localVal.getSession('username');
+				queryString +=	'&customerId='+ self.getCustomer() +'&appId='+ appInfo.data.appInfos[0].id +'&projectId=' + appInfo.data.id + '&username=' + commonVariables.api.localVal.getSession('username') + (minAll === ""? "" : '&minifyAll='+ minAll);
 			}
 			if(self.mavenServiceListener === null)	{
 				commonVariables.navListener.getMyObj(commonVariables.mavenService, function(retVal){
 					self.mavenServiceListener = retVal;
 					
-					self.mavenServiceListener.mvnDeploy(queryString, '#logContent', function(returnVal){
+					self.mavenServiceListener[functionName](queryString, '#logContent', bodyContent, function(returnVal){
 						callback(returnVal);
 					});
 				});
 			}else{
-				self.mavenServiceListener.mvnDeploy(queryString, '#logContent', function(returnVal){
-					callback(returnVal);
-				});
-			}
-		},
-		
-		buildProject : function(queryString, callback){
-			var self = this, appInfo = commonVariables.api.localVal.getJson('appdetails');
-			
-			if(appInfo !== null){
-				queryString +=	'&customerId='+ self.getCustomer() +'&appId='+ appInfo.data.appInfos[0].id +'&projectId=' + appInfo.data.id + '&username=' + commonVariables.api.localVal.getSession('username');
-			}
-			
-			if(self.mavenServiceListener === null)	{
-				commonVariables.navListener.getMyObj(commonVariables.mavenService, function(retVal){
-					self.mavenServiceListener = retVal;
-					
-					self.mavenServiceListener.mvnBuild(queryString, '#logContent', function(returnVal){
-						callback(returnVal);
-					});
-				});
-			}else{
-				self.mavenServiceListener.mvnBuild(queryString, '#logContent', function(returnVal){
-					callback(returnVal);
-				});
-			}
-		},
-		
-		processBuild : function(queryString, callback) {
-			var self = this, appInfo = commonVariables.api.localVal.getJson('appdetails');
-			
-			if(appInfo !== null){
-				queryString +=	'&customerId='+ self.getCustomer() +'&appId='+ appInfo.data.appInfos[0].id +'&projectId=' + appInfo.data.id + '&username=' + commonVariables.api.localVal.getSession('username');
-			}
-			if(self.mavenServiceListener === null)	{
-				commonVariables.navListener.getMyObj(commonVariables.mavenService, function(retVal){
-					self.mavenServiceListener = retVal;
-					
-					self.mavenServiceListener.mvnProcessBuild(queryString, '#logContent', function(returnVal){
-						callback(returnVal);
-					});
-				});
-			}else{
-				self.mavenServiceListener.mvnProcessBuild(queryString, '#logContent', function(returnVal){
-					callback(returnVal);
-				});
-			}
-		},
-		
-		runAgainstSource : function(queryString, callback){
-			var self = this, appInfo = commonVariables.api.localVal.getJson('appdetails');
-			
-			if(appInfo !== null){
-				queryString +=	'&customerId='+ self.getCustomer() +'&appId='+ appInfo.data.appInfos[0].id +'&projectId=' + appInfo.data.id + '&username=' + commonVariables.api.localVal.getSession('username');
-			}
-
-			if(self.mavenServiceListener === null)	{
-				commonVariables.navListener.getMyObj(commonVariables.mavenService, function(retVal){
-					self.mavenServiceListener = retVal;
-					
-					self.mavenServiceListener.mvnRunagainstSource(queryString, '#logContent', function(returnVal){
-						callback(returnVal);
-					});
-				});
-			}else{
-				self.mavenServiceListener.mvnRunagainstSource(queryString, '#logContent', function(returnVal){
-					callback(returnVal);
-				});
-			}
-		},
-		
-		stopServer : function(callback){
-			var self = this, appInfo = commonVariables.api.localVal.getJson('appdetails'), queryString = '';
-			if(appInfo !== null){
-				queryString = 'customerId='+ self.getCustomer() +'&appId='+ appInfo.data.appInfos[0].id +'&projectId=' + appInfo.data.id + '&username=' + commonVariables.api.localVal.getSession('username');
-			}
-			
-			if(self.mavenServiceListener === null)	{
-				commonVariables.navListener.getMyObj(commonVariables.mavenService, function(retVal){
-					self.mavenServiceListener = retVal;
-					
-					self.mavenServiceListener.mvnStopServer(queryString, '#logContent', function(returnVal){
-						callback(returnVal);
-					});
-				});
-			}else{
-				self.mavenServiceListener.mvnStopServer(queryString, '#logContent', function(returnVal){
+				self.mavenServiceListener[functionName](queryString, '#logContent', bodyContent, function(returnVal){
 					callback(returnVal);
 				});
 			}
 		},
 
-		restartServer : function(callback){
-			var self = this, appInfo = commonVariables.api.localVal.getJson('appdetails'), queryString = '';
-			if(appInfo !== null){
-				queryString = 'customerId='+ self.getCustomer() +'&appId='+ appInfo.data.appInfos[0].id +'&projectId=' + appInfo.data.id + '&username=' + commonVariables.api.localVal.getSession('username');
-			}
-			
-			if(self.mavenServiceListener === null)	{
-				commonVariables.navListener.getMyObj(commonVariables.mavenService, function(retVal){
-					self.mavenServiceListener = retVal;
-					
-					self.mavenServiceListener.mvnRestartServer(queryString, '#logContent', function(returnVal){
-						callback(returnVal);
-					});
-				});
-			}else{
-				self.mavenServiceListener.mvnRestartServer(queryString, '#logContent', function(returnVal){
-					callback(returnVal);
-				});
-			}
-		},
-
-		deleteBuild : function(buildNo, callback){
-			var self = this, header = self.getRequestHeader(JSON.stringify([buildNo]), '', 'delete');
-			try {
-				commonVariables.api.ajaxRequest(header,
-					function(response) {
-						if (response !== null && (response.status !== "error" && response.status !== "failure")) {
-							callback(response);
-						} else {
-							$(".content_end").show();
-							$(".msgdisplay").removeClass("success").addClass("error");
-							$(".error").attr('data-i18n', 'errorCodes.' + response.responseCode);
-							self.renderlocales(commonVariables.contentPlaceholder);	
-							$(".error").fadeIn(500).fadeOut(500).fadeIn(500).fadeOut(500).fadeIn(500).fadeOut(5);
-							setTimeout(function() {
-								$(".content_end").hide();
-							},2500);
-						}
-					},
-
-					function(textStatus) {
-						$(".content_end").show();
-						$(".msgdisplay").removeClass("success").addClass("error");
-						$(".error").attr('data-i18n', 'commonlabel.errormessage.serviceerror');
-						self.renderlocales(commonVariables.contentPlaceholder);	
-						$(".error").fadeIn(500).fadeOut(500).fadeIn(500).fadeOut(500).fadeIn(500).fadeOut(5);
-						setTimeout(function() {
-							$(".content_end").hide();
-						},2500);
-					}
-				);
-			} catch(exception) {
-				callback({ "status" : "service exception"});
-			}
-		},
-		
-		minifyFiles : function(minAll, bodyContent, callback){
-			var self = this, appInfo = commonVariables.api.localVal.getJson('appdetails'), queryString = '';
-			if(appInfo !== null){
-				queryString = 'minifyAll='+ minAll +'&customerId='+ self.getCustomer() +'&appId='+ appInfo.data.appInfos[0].id +'&projectId=' + appInfo.data.id + '&username=' + commonVariables.api.localVal.getSession('username');
-			}
-			
-			if(self.mavenServiceListener === null)	{
-				commonVariables.navListener.getMyObj(commonVariables.mavenService, function(retVal){
-					self.mavenServiceListener = retVal;
-					self.mavenServiceListener.mvnMinification(queryString, '#logContent', bodyContent, function(returnVal){
-						callback(returnVal);
-					});
-				});
-			}else{
-				self.mavenServiceListener.mvnMinification(queryString, '#logContent', bodyContent, function(returnVal){
-					callback(returnVal);
-				});
-			}
-		},
-		
 		mandatoryValidation : function (phase, queryString, callback){
 			var self = this, appInfo = commonVariables.api.localVal.getJson('appdetails'), header;
 			
@@ -269,42 +78,17 @@ define([], function() {
 				commonVariables.api.ajaxRequest(header,
 					function(response) {
 						if (response.errorFound || response.status === "error" || response.status === "failure"){
-							$(".content_end").show();
-							$(".msgdisplay").removeClass("success").addClass("error");
-							$(".error").attr('data-i18n', 'errorCodes.' + response.responseCode);
-							self.renderlocales(commonVariables.contentPlaceholder);	
-							$(".error").show();
-							$(".error").fadeIn(500).fadeOut(500).fadeIn(500).fadeOut(500).fadeIn(500).fadeOut(5);
-							setTimeout(function() {
-								$(".content_end").hide();
-							},2500);
+							commonVariables.api.showError(response.responseCode ,"error", true);
 							self.showDynamicErrors(response);
 						}
 						callback(response);
 					},
 
-					function(textStatus) {
-						$(".content_end").show();
-						$(".msgdisplay").removeClass("success").addClass("error");
-						$(".error").attr('data-i18n', 'commonlabel.errormessage.serviceerror');
-						self.renderlocales(commonVariables.contentPlaceholder);	
-						$(".error").fadeIn(500).fadeOut(500).fadeIn(500).fadeOut(500).fadeIn(500).fadeOut(5);
-						setTimeout(function() {
-							$(".content_end").hide();
-						},2500);
-					}
+					function(textStatus) {commonVariables.api.showError(response.responseCode ,"error", true);}
 				);
-			} catch(exception) {
-				callback({ "status" : "service exception"});
-			}
+			} catch(exception) {callback({ "status" : "service exception"});}
 		},
 		
-		/***
-		 * provides the request header
-		 *
-		 * @BuildRequestBody: request body of Build
-		 * @return: returns the contructed header
-		 */
 		getRequestHeader : function(BuildRequestBody, buildInfo, action) {
 			var self=this, header, appdirName = '', url = '', method = "GET", contType = "application/json", conte;
 			
@@ -338,6 +122,9 @@ define([], function() {
 			} else if (action === "minifyList") {
 				method = "GET";
 				url ='buildinfo/minifer?appDirName=' + appdirName;
+			} else if (action === "logContent") {
+				method = "GET";
+				url = 'buildinfo/logContent?status=' + buildInfo + '&appDirName=' + appdirName;
 			}
 
 			header = {

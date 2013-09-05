@@ -10,19 +10,11 @@ define(["build/listener/buildListener"], function() {
 		buildListener : null,
 		onProgressEvent : null,
 		onDownloadEvent : null,
-		onipaDownloadEvent : null,
-		onDeleteEvent : null,
-		onDeployEvent : null,
-		onBuildEvent : null,
-		onMinifyEvent : null,
 		onValidationEvent : null,
-		onProcessBuildEvent : null,
 		dynamicpage : null,
 		dynamicPageListener : null,
 		generateBuildContent : "",
-		onRASEvent : null,
-		onStopEvent : null,
-		onRestartEvent : null,
+		onMavenServiceEvent : null,
 		
 		/***
 		 * Called in initialization time of this class 
@@ -66,49 +58,17 @@ define(["build/listener/buildListener"], function() {
 			if(self.onDownloadEvent === null){
 				self.onDownloadEvent = new signals.Signal();
 			}
-			if(self.onipaDownloadEvent === null){
-				self.onipaDownloadEvent = new signals.Signal();
-			}
-			if(self.onDeleteEvent === null){
-				self.onDeleteEvent = new signals.Signal();
-			}
-			if(self.onDeployEvent === null){
-				self.onDeployEvent = new signals.Signal();
-			}
-			if(self.onBuildEvent === null){
-				self.onBuildEvent = new signals.Signal();
-			}
-			if(self.onMinifyEvent === null){
-				self.onMinifyEvent = new signals.Signal();
-			}
-			if(self.onProcessBuildEvent === null){
-				self.onProcessBuildEvent = new signals.Signal();
-			}
-			if(self.onRASEvent === null){
-				self.onRASEvent = new signals.Signal();
-			}
-			if(self.onStopEvent === null){
-				self.onStopEvent = new signals.Signal();
-			}
-			if(self.onRestartEvent === null){
-				self.onRestartEvent = new signals.Signal();
-			}
 			if(self.onValidationEvent === null){
 				self.onValidationEvent = new signals.Signal();
+			}
+			if(self.onMavenServiceEvent === null){
+				self.onMavenServiceEvent = new signals.Signal();
 			}
 			
 			self.onProgressEvent.add(self.buildListener.onPrgoress, self.buildListener);
 			self.onDownloadEvent.add(self.buildListener.downloadBuild, self.buildListener);
-			self.onipaDownloadEvent.add(self.buildListener.ipadownload, self.buildListener);
-			self.onDeleteEvent.add(self.buildListener.deleteBuild, self.buildListener);
-			self.onDeployEvent.add(self.buildListener.deployBuild, self.buildListener);
-			self.onBuildEvent.add(self.buildListener.buildProject, self.buildListener);
-			self.onMinifyEvent.add(self.buildListener.minifyFiles, self.buildListener);
-			self.onProcessBuildEvent.add(self.buildListener.processBuild, self.buildListener);
-			self.onRASEvent.add(self.buildListener.runAgainstSource, self.buildListener);
-			self.onStopEvent.add(self.buildListener.stopServer, self.buildListener);
-			self.onRestartEvent.add(self.buildListener.restartServer, self.buildListener);
 			self.onValidationEvent.add(self.buildListener.mandatoryValidation, self.buildListener);
+			self.onMavenServiceEvent.add(self.buildListener.mavenServiceCall, self.buildListener);
 		},
 		
 		/***
@@ -123,7 +83,7 @@ define(["build/listener/buildListener"], function() {
 		
 		preRender: function(whereToRender, renderFunction){
 			var self = this;
-			self.buildListener.getBuildInfo(self.buildListener.getRequestHeader("", '', 'getList'), function(response){
+			self.buildListener.getInfo(self.buildListener.getRequestHeader("", '', 'getList'), function(response){
 			var buildObject = {};
 			var userPermissions = JSON.parse(commonVariables.api.localVal.getSession('userPermissions'));
 				buildObject.buildInfos = response.data;
@@ -142,7 +102,7 @@ define(["build/listener/buildListener"], function() {
 			var self = this;
             commonVariables.navListener.showHideTechOptions();
 			$("#build_genbuild ul").find(".selectpicker").selectpicker();
-			self.runAgainSourceStatus();
+			self.runAgainSourceStatus(true);
 			self.loadPostContent();
 			self.resizeConsoleWindow();
 			self.closeConsole();
@@ -161,13 +121,23 @@ define(["build/listener/buildListener"], function() {
 			$('.testSuiteTable').height(finalHeight);
 		},
 		
-		runAgainSourceStatus : function(){
+		runAgainSourceStatus : function(bootup){
 			var self = this;
 			if($("input[name=build_runagsource]").is(':visible')){
-				self.buildListener.getBuildInfo(self.buildListener.getRequestHeader("", '', 'serverstatus'), function(response){
+				self.buildListener.getInfo(self.buildListener.getRequestHeader("", '', 'serverstatus'), function(response){
 					self.changeBtnStatus(response);
+					if(bootup){self.retainLogcontent(response.data);}
 				});
 			}
+		},
+		
+		retainLogcontent : function(status){
+			self.buildListener.getInfo(self.buildListener.getRequestHeader("", status, 'logContent'), function(response){
+				if(response.data !== null){
+					$('#logContent').html('');
+					$('#logContent').html(response.data);
+				}
+			});
 		},
 		
 		dragDrop : function(){
@@ -257,7 +227,7 @@ define(["build/listener/buildListener"], function() {
 
 			$('.alert_div').hide();
 			if(loadContent){
-				self.buildListener.getBuildInfo(self.buildListener.getRequestHeader("", '', 'getList'), function(response) {
+				self.buildListener.getInfo(self.buildListener.getRequestHeader("", '', 'getList'), function(response) {
 					if(response !== undefined && response !== null && response.data !== null && response.data.length > 0){
 						var tbody = "", buildObject = {}, userPermissions = JSON.parse(commonVariables.api.localVal.getSession('userPermissions'));
 						buildObject.buildInfos = response.data;
@@ -275,7 +245,7 @@ define(["build/listener/buildListener"], function() {
 							var deleteOpt = "";
 
 							if(current.options !== null && current.options.canCreateIpa === true){
-								cancreateIpa = '<a href="#"><img name="ipaDownload" src="themes/default/images/helios/ipa_icon.png" width="13" height="18" border="0" alt=""></a>';
+								cancreateIpa = '<a href="#" class="tooltiptop" title="" data-placement="bottom" data-toggle="tooltip" data-original-title="IPA Download"><img name="ipaDownload" src="themes/default/images/helios/ipa_icon.png" width="13" height="18" border="0" alt=""></a>';
 							}
 
 							if(current.options === null || current.options.deviceDeploy === false){
@@ -285,16 +255,16 @@ define(["build/listener/buildListener"], function() {
 							}
 
 							if(buildObject.userPermissions.manageBuilds !== null && buildObject.userPermissions.manageBuilds === true){
-								manageBuilds = '<a href="#" class="tooltiptop" title="" data-placement="bottom" data-toggle="tooltip" href="#" data-original-title="IPA Download"><img name="deployBuild" deviceDeploy="' + (current.options === null ? "" : current.options.deviceDeploy) + '" src="themes/default/images/helios/deploy_icon.png" width="16" height="20" border="0" alt=""></a>' + deviceDeploy;
+								manageBuilds = '<a href="#" class="tooltiptop" title="" data-placement="bottom" data-toggle="tooltip" data-original-title="Deploy"><img name="deployBuild" deviceDeploy="' + (current.options === null ? "" : current.options.deviceDeploy) + '" src="themes/default/images/helios/deploy_icon.png" width="16" height="20" border="0" alt=""></a>' + deviceDeploy;
 								
-								deleteOpt ='<a name="delete_'+ current.buildNo +'" class="tooltiptop" title="" data-placement="top" data-toggle="tooltip" href="#" data-original-title="Delete Row"><img name="deleteBuild" src="themes/default/images/helios/delete_icon.png" width="16" height="20" border="0" alt=""></a><div id="delete_'+ current.buildNo +'" class="dyn_popup"><div data-i18n="build.label.deleteConform"></div><div><input type="button" name="buildDelete" data-i18n="[value]build.label.yes" class="btn btn_style dyn_popup_close" /><input type="button" data-i18n="[value]build.label.no" class="btn btn_style dyn_popup_close" /></div></div>';
+								deleteOpt ='<a name="delete_'+ current.buildNo +'" class="tooltiptop" title="" data-placement="bottom" data-toggle="tooltip" href="#" data-original-title="Delete Row"><img name="deleteBuild" src="themes/default/images/helios/delete_icon.png" width="16" height="20" border="0" alt=""></a><div id="delete_'+ current.buildNo +'" class="dyn_popup"><div data-i18n="build.label.deleteConform"></div><div><input type="button" name="buildDelete" data-i18n="[value]build.label.yes" class="btn btn_style dyn_popup_close" /><input type="button" data-i18n="[value]build.label.no" class="btn btn_style dyn_popup_close" /></div></div>';
 								
 							}else{
 								manageBuilds = '<img src="themes/default/images/helios/deploy_icon_off.png" width="16" height="20" border="0" alt="">';
 								deleteOpt ='<img src="themes/default/images/helios/delete_row_off.png" width="16" height="20" border="0" alt="">';
 							}
 						
-							tbody += '<tr><td name="'+ current.buildNo +'">'+ current.buildNo +'</td><td>'+ current.timeStamp +'</td><td class="list_img"><a href="#"><img name="downloadBuild" src="themes/default/images/helios/download_icon.png" width="15" height="18" border="0" alt=""></a>'+ cancreateIpa +'</td><td name="prcBuild" class="list_img"><a href="#"><img name="procBuild" src="themes/default/images/helios/download_icon.png" width="15" height="18" border="0" alt=""></a><div id="prcBuild_'+ current.buildNo +'" class="dyn_popup popup_bg" style="display:none; width:30%;"><div id="prcBuild_'+ current.buildNo +'"><form name="prcBForm"><ul class="row dynamicControls"></ul><input type="hidden" name="buildNumber" value="'+ current.buildNo +'"/></form><div class="flt_right"><input class="btn btn_style" type="button" name="processBuild" data-i18n="[value]common.btn.ok"><input class="btn btn_style dyn_popup_close" type="button"  data-i18n="[value]common.btn.close"></div></div></div></td><td name="buildDep" class="list_img">'+ manageBuilds +'</td><td class="list_img">'+ deleteOpt +'</td></tr>';
+							tbody += '<tr><td name="'+ current.buildNo +'">'+ current.buildNo +'</td><td>'+ current.timeStamp +'</td><td class="list_img"><a href="#" class="tooltiptop" title="" data-placement="bottom" data-toggle="tooltip" data-original-title="Download"><img name="downloadBuild" src="themes/default/images/helios/download_icon.png" width="15" height="18" border="0" alt=""></a>'+ cancreateIpa +'</td><td name="prcBuild" class="list_img"><a href="#" class="tooltiptop" title="" data-placement="bottom" data-toggle="tooltip" data-original-title="Process build"><img name="procBuild" src="themes/default/images/helios/download_icon.png" width="15" height="18" border="0" alt=""></a><div id="prcBuild_'+ current.buildNo +'" class="dyn_popup popup_bg" style="display:none; width:30%;"><div id="prcBuild_'+ current.buildNo +'"><form name="prcBForm"><ul class="row dynamicControls"></ul><input type="hidden" name="buildNumber" value="'+ current.buildNo +'"/></form><div class="flt_right"><input class="btn btn_style" type="button" name="processBuild" data-i18n="[value]common.btn.ok"><input class="btn btn_style dyn_popup_close" type="button"  data-i18n="[value]common.btn.close"></div></div></div></td><td name="buildDep" class="list_img">'+ manageBuilds +'</td><td class="list_img">'+ deleteOpt +'</td></tr>';
 						});
 						
 						$("#buildRow tbody").html(tbody);
@@ -338,7 +308,7 @@ define(["build/listener/buildListener"], function() {
 						queryStr = $(current).closest('tr').find('form[name=deployForm]').serialize().replace("=on", "=true");
 						queryStr += '&fetchSql=' + ($.isEmptyObject(sqlParam) === true ? "" : sqlParam);
 						
-						self.onDeployEvent.dispatch(queryStr, function(response){
+						self.onMavenServiceEvent.dispatch('mvnDeploy', queryStr, '', '', function(response){
 							$('input[name=buildDelete]').show();
 							$('.progress_loading').css('display','none');
 							if(response !== null && response.errorFound === true){
@@ -372,7 +342,7 @@ define(["build/listener/buildListener"], function() {
 				queryStr = $(this).closest('tr').find('form[name=deployForm]').serialize().replace("=on", "=true");
 				queryStr += '&fetchSql=' + ($.isEmptyObject(sqlParam) === true ? "" : sqlParam);
 				
-				self.onDeployEvent.dispatch(queryStr, function(response){
+				self.onMavenServiceEvent.dispatch('mvnDeploy', queryStr, '', '', function(response){
 					$('input[name=buildDelete]').show();
 					$('.progress_loading').css('display','none');
 					if(response !== null && response.errorFound === true){
@@ -385,14 +355,14 @@ define(["build/listener/buildListener"], function() {
 			//Build download click event
 			$("img[name=downloadBuild]").unbind('click');
 			$("img[name=downloadBuild]").click(function(){
-				self.onDownloadEvent.dispatch($(this).parent().parent().siblings(":first").text(), function(response){});
+				self.onDownloadEvent.dispatch($(this).parent().parent().siblings(":first").text(), 'download', function(response){});
 			});
 			
 			//build delete click event
 			$('input[name=buildDelete]').unbind('click');
 			$('input[name=buildDelete]').click(function(){
 				var current = this, divId = $(this).closest('tr').find('td:eq(0)').text();
-				self.onDeleteEvent.dispatch(divId, function(response){
+				self.buildListener.getInfo(self.buildListener.getRequestHeader(JSON.stringify([divId]), '', 'delete'), function(response){
 					if(response.responseCode === "PHR700002"){
 						$(current).closest('tr').remove();
 
@@ -441,7 +411,7 @@ define(["build/listener/buildListener"], function() {
 			$('input[name=processBuild]').click(function(){
 				self.clearLogContent();
 				$(".dyn_popup").hide();
-				self.onProcessBuildEvent.dispatch($(this).closest('tr').find('form[name=prcBForm]').serialize(), function(response){
+				self.onMavenServiceEvent.dispatch('mvnProcessBuild', $(this).closest('tr').find('form[name=prcBForm]').serialize(), '', '', function(response){
 				$('.progress_loading').css('display','none');
 				if(response !== null && response.errorFound === true){
 					$('.alert_div').hide();
@@ -456,14 +426,17 @@ define(["build/listener/buildListener"], function() {
 			//ipa download click event
 			$('img[name=ipaDownload]').unbind('click');
 			$('img[name=ipaDownload]').click(function(){
-				self.onipaDownloadEvent.dispatch($(this).parent().parent().siblings(":first").text(), function(response){});
+				self.onDownloadEvent.dispatch($(this).parent().parent().siblings(":first").text(), 'ipadownload', function(response){});
 			});
 			
-			//Show tooltip event
-			/* $(".tooltiptop").unbind("click");
-			$(".tooltiptop").click(function() {
+			//Delete build popup event
+			$(".deletebuildRow").unbind("click");
+			$(".deletebuildRow").click(function() {
 				self.opencc(this, $(this).attr('name'), '', 50);
-			}); */
+			});
+			
+			//Show tool tip
+			$(".tooltiptop").tooltip();
 		},
 		
 		miniferClickEvents : function(){
@@ -504,7 +477,7 @@ define(["build/listener/buildListener"], function() {
 				if(!validation){
 					$('#build_minifier').hide();
 					self.clearLogContent();
-					self.onMinifyEvent.dispatch($('#minAllchk').is(':checked'), finalArray, function(response){
+					self.onMavenServiceEvent.dispatch('mvnMinification', queryStr, $('#minAllchk').is(':checked'),  finalArray, function(response){
 						$('.progress_loading').css('display','none');
 					});
 				}
@@ -593,8 +566,7 @@ define(["build/listener/buildListener"], function() {
 		 */
 		bindUI : function() {
 			var self = this;
-			$(".tooltiptop").tooltip();
-			
+
 			//Run again source popup click event
 			$("input[name=build_runagsource]").unbind("click");
 			$("input[name=build_runagsource]").click(function() {
@@ -612,6 +584,7 @@ define(["build/listener/buildListener"], function() {
 			});
 			
 			//run again source click event
+			$("#runSource").unbind("click");
 			$("#runSource").click(function(){
 				var sqlParam = "", queryStr = "";
 
@@ -632,7 +605,7 @@ define(["build/listener/buildListener"], function() {
 						$("#stop").addClass("btn_style_off");
 						$("#restart").addClass("btn_style_off");
 						
-						self.onRASEvent.dispatch(queryStr, function(response){
+						self.onMavenServiceEvent.dispatch('mvnRunagainstSource', queryStr, '', '', function(response){
 							$('.progress_loading').css('display','none');
 							if(response.errorFound && response.status === "error" && response.status === "failure"){
 								self.showErrorPopUp(response.responseCode);
@@ -646,6 +619,7 @@ define(["build/listener/buildListener"], function() {
 			});
 			
 			//Run again source stop click event
+			$("#stop").unbind("click");
 			$("#stop").click(function() {
 				if($(this).attr("class") === "btn btn_style"){
 					$("input[name=build_runagsource]").addClass("btn_style_off");
@@ -653,7 +627,7 @@ define(["build/listener/buildListener"], function() {
 					$("#restart").addClass("btn_style_off");
 				
 					self.clearLogContent();
-					self.onStopEvent.dispatch(function(response){
+					self.onMavenServiceEvent.dispatch('mvnStopServer', '', '', '', function(response){
 						$('.progress_loading').css('display','none');
 						self.runAgainSourceStatus();
 					});					
@@ -661,6 +635,7 @@ define(["build/listener/buildListener"], function() {
 			});		
 			
 			//Run again source restart click event
+			$("#restart").unbind("click");
 			$("#restart").click(function() {
 				if($(this).attr("class") === "btn btn_style"){
 					$("input[name=build_runagsource]").addClass("btn_style_off");
@@ -668,7 +643,7 @@ define(["build/listener/buildListener"], function() {
 					$("#restart").addClass("btn_style_off");
 					
 					self.clearLogContent();
-					self.onRestartEvent.dispatch(function(response){
+					self.onMavenServiceEvent.dispatch('mvnRestartServer', '', '', '', function(response){
 						$('.progress_loading').css('display','none');
 						self.runAgainSourceStatus();						
 					});
@@ -692,6 +667,7 @@ define(["build/listener/buildListener"], function() {
 			});
 			
 			//build run click event
+			$("#buildRun").unbind("click");
 			$("#buildRun").click(function(){
 				var sqlParam = "";
 				queryStr = $('form[name=buildForm]').serialize().replace("=on", "=true");
@@ -701,7 +677,7 @@ define(["build/listener/buildListener"], function() {
 						$("form[name=buildForm]").hide();
 						$('.alert_div').show();
 						self.clearLogContent();
-						self.onBuildEvent.dispatch(queryStr, function(response){
+						self.onMavenServiceEvent.dispatch('mvnBuild', queryStr, '', '', function(response){
 							$('.progress_loading').css('display','none');
 							if (!response.errorFound && response.status !== "error" && response.status !== "failure"){
 								self.refreshContent(true);
@@ -718,7 +694,7 @@ define(["build/listener/buildListener"], function() {
 				self.appendMinifyRow({"opFileLoc": "", "csvFileName": "", "compressName": "", "fileType": "js", 'minusImg': true});
 				self.appendMinifyRow({"opFileLoc": "", "csvFileName": "", "compressName": "", "fileType": "css", 'minusImg': true});
 				
-				self.buildListener.getBuildInfo(self.buildListener.getRequestHeader("", '', 'minifyList'), function(response){
+				self.buildListener.getInfo(self.buildListener.getRequestHeader("", '', 'minifyList'), function(response){
 					if(response !== null && response.data !== null){
 						$.each(response.data, function(index, current){
 							self.appendMinifyRow(current);
@@ -731,6 +707,7 @@ define(["build/listener/buildListener"], function() {
 			});
 			
 			//Log console div click event
+			$("#buildConsole").unbind("click");
 			$("#buildConsole").click(function() {
 				if($('#logContent').text().toLowerCase().match("info: starting coyote http/1.1") ||
 					$('#logContent').text().toLowerCase().match("server running at https://") ||
@@ -798,8 +775,6 @@ define(["build/listener/buildListener"], function() {
 			//call content div events
 			self.contentDivEvents();
 			self.customScroll($(".consolescrolldiv"));
-
-			//Show tool tip
 
 			Clazz.navigationController.mainContainer = commonVariables.contentPlaceholder;
 		}

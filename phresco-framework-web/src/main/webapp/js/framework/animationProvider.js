@@ -217,7 +217,7 @@ require(["framework/base"], function() {
 				container.animate({
 					opacity: 1
 				}, {
-					duration : 500, 
+					duration : 1500, 
 					complete: function() {
 						callback(container);
 					}		
@@ -241,7 +241,7 @@ require(["framework/base"], function() {
 				container.animate({
 					opacity: 0.0
 				}, {
-					duration : 600, 
+					duration : 900, 
 					complete: function() {
 						callback(container);
 					}		

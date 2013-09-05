@@ -4,6 +4,9 @@ define(["framework/base", "api/localStorageAPI"], function(){
 	Clazz.com.js.api.API = Clazz.extend(Clazz.Base, {
 		localVal : null,
 		bCheck : false,
+		error : null,
+		success : null,
+		
 		/***
 		 * Written by Kavinraj.M Date - 23/08/2013
 		 *
@@ -11,7 +14,15 @@ define(["framework/base", "api/localStorageAPI"], function(){
 		 * @globalConfig: global configurations for this class
 		 */
 		initialize : function(){
+			var self = this;
 			this.localVal = new Clazz.com.js.api.LocalStorageAPI();
+			
+			$.get(commonVariables.globalconfig.environments.locales, function(data){
+				if(data !== undefined && data !== null){
+					self.error = data.errorCodes; 
+					self.success = data.successCodes; 
+				}
+			}, 'JSON');
 		},
 
 		//to solve caching issue for iOS 6
@@ -61,13 +72,9 @@ define(["framework/base", "api/localStorageAPI"], function(){
 				
 				success : function(response, e ,xhr){
 					if(response === undefined || response === null){
-						self.showError("Unexpected Failure at server end");
+						self.showError("PHR000000", 'error', false);
 					}else if((response.status === "error" || response.status === "failure") && (Clazz.navigationController.loadingActive || commonVariables.continueloading)){
-						$.get(commonVariables.globalconfig.environments.locales, function(data){
-							if(data !== undefined && data !== null){
-								self.showError(data.errorCodes[response.responseCode]);
-							}
-						}, 'JSON');
+						self.showError(response.responseCode, 'error', false);
 					}
 					
 					if ((response !== undefined && response !== null && response.status !== "error") || self.bCheck) {
@@ -79,7 +86,7 @@ define(["framework/base", "api/localStorageAPI"], function(){
 				
 				error : function(jqXHR, textStatus, errorThrown){
 					self.bCheck = false;
-					self.showError("Unexpected Failure at server end");
+					self.showError("PHR000000", 'error', false);
 					if (errorHandler){
 						errorHandler(jqXHR.responseText);
 					}
@@ -94,12 +101,35 @@ define(["framework/base", "api/localStorageAPI"], function(){
 			});
 		},
 		
-		showError : function(errorMsg){
+		showError : function(errorCode, msgType, timeOut, noCode){
+			var self = this, errorMsg = '';
+			
+			try {
+				if(noCode){ errorMsg = errorCode; }else{errorMsg = self[msgType][errorCode];}
+			} catch(ex) {
+				errorMsg = '';
+			}
+			$('section#serviceError').remove();
 			Clazz.navigationController.loadingActive = false;
 			commonVariables.continueloading = false;
 			commonVariables.hideloading = false;
 			commonVariables.loadingScreen.removeLoading();
-			$(commonVariables.basePlaceholder).append('<section id="serviceError" class="content_end" style="display:block;"><div class="msgdisplay error">'+ errorMsg +'</div></section>');
+			
+			if($(commonVariables.contentPlaceholder).find('.content_end .msgdisplay').length > 0){	
+				$(commonVariables.contentPlaceholder).find('.content_end').show();
+				$(commonVariables.contentPlaceholder).find('.content_end .msgdisplay').addClass(msgType).html(errorMsg);
+				$(commonVariables.contentPlaceholder).find('.content_end .msgdisplay').show();
+			}else{
+				$(commonVariables.basePlaceholder).append('<section id="serviceError" class="content_end" style="display:block;"><div class="msgdisplay '+ msgType +'">'+   errorMsg +'</div></section>');
+				msgType = 'content_end';
+			}
+			
+			if(timeOut){
+				setTimeout(function(){
+					$("." + msgType).parent().hide();
+					$("." + msgType).css("display", "none");
+				}, 2000);
+			}
 		}
 	});
 

@@ -440,6 +440,18 @@ define(["build/build"], function(Build) {
 				
 				self.setNodeAppInfo();
 				
+				var paramValidation = $.mockjax({
+				  url: commonVariables.webserviceurl + 'util/validation?appDirName=node&customerId=photon&phase=run-against-source&environmentName=Production&executeSql=true&dataBase=mysql&fetchSql={}',
+				  type: "GET",
+				  dataType: "json",
+				  contentType: "application/json",
+				  status: 200,
+				  response : function() {
+					  this.responseText = JSON.stringify({"log":null,"connectionAlive":false,"errorFound":false,"uniquekey":null,"configErrorMsg":null,"service_exception":null,"parameterKey":null,"configErr":false,"responseCode":"PHR9C00001","status":"success"});
+				  }
+				});
+				
+				
 				//mock Run Again Source status ajax call 
 				var checkRAS = $.mockjax({
 				  url: commonVariables.webserviceurl + 'buildinfo/checkstatus?appDirName=node',

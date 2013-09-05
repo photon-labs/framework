@@ -9,8 +9,8 @@
 	
 	"navigation" : {
 		"animation" : true,
-		"transitionType" : 1,
-		"cancelTransitionType" : 2,
+		"transitionType" :11,
+		"cancelTransitionType" : 11,
 		"isNative" : false
 	},
 
