@@ -235,8 +235,10 @@ define([], function() {
 				commonVariables.api.ajaxRequest(self.getRequestHeader(validateAgainst , "iframereport"), 
 					function(iframereport) {
 						if(iframereport.data !== null){
-							var iframedata = "<iframe class='iframe_sonar' src="+iframereport.data+ " ></iframe>";
+							var iframedata = "<iframe id='iframe' class='iframe' src="+iframereport.data+ " ></iframe>";
 							$('#content_div').html(iframedata);
+							var dynHeight = $('#content_div').height();
+							$('#iframe').css('height', dynHeight);
 						}else{
 							if(iframereport.responseCode === "PHR510003" ) {
 								$(".alert").show();

@@ -423,7 +423,7 @@ html, body {
 .user_icon {
 	background-image:url(../../images/helios/user_icon.png);
 	background-repeat:no-repeat;
-	background-position:-15px 0px;
+	background-position:0px 0px;
 	width:15px;
 	height:15px;
 	display:inline-block;
@@ -433,7 +433,7 @@ html, body {
 .logout_icon {
 	background-image:url(../../images/helios/logout_icon.png);
 	background-repeat:no-repeat;
-	background-position:-15px 0px;
+	background-position:0px 0px;
 	width:14px;
 	height:15px;
 	float:right;
@@ -889,9 +889,10 @@ ul.nav li.dropdown:hover > .test_options{
 	text-align:right !important;
 }
 
-.table_border input {
+.table_border input[type="checkbox"] {
 	/*margin-left:8px !important;*/
 	/*color:#939393 !important;*/
+	margin-bottom:5px !important;
 }
 
 .table_border td img {
@@ -1133,6 +1134,7 @@ ul.nav li.dropdown:hover > .test_options{
 
 .list_img img {
 	margin-left:9px;
+	margin-top:2px;
 }
 
 .centre_img {
@@ -1599,6 +1601,7 @@ background:#DA4F49 !important;
 
 .search_box{
 	border: 1px solid #CCCCCC;
+	width: 216px;
 }
 
 .search_text{
@@ -1954,6 +1957,14 @@ background:#DA4F49 !important;
 	
 	.appInfo table tr td{
 		width:10%;
+	}
+	
+	.sortablecont_one{
+		width:30%;
+	}
+	
+	.sortablecont_two{
+		width:30%;
 	}
 }
 
@@ -2397,7 +2408,7 @@ background:#DA4F49 !important;
 	border-bottom: none;	
 }
 
-.fetchSql_table td {
+.dyn_popup .fetchSql_table tr td {
 	width:45% !important;
 }
 .fetchSql_table td ul {
@@ -2432,6 +2443,10 @@ background:#DA4F49 !important;
 
 .dyn_popup  input[value="Browse"] {
 	margin-left: 10px !important;	
+}
+
+#build_minifier input[type="checkbox"] {
+	margin-bottom:4px !important;
 }
 
 /* ****************************************************************** STYLES FOR CONFIGUARATION PAGE ************************************************************************** */
@@ -3197,10 +3212,6 @@ html>body tbody.scrollContent {
 	padding-left: 15px !important;	
 }
 
-.type_test li a {
-    padding-top: 6px;
-}
-
 #jobConfigure table td select {
     margin-bottom: 0px;
 }
@@ -3269,14 +3280,10 @@ html>body tbody.scrollContent {
 
 .type_test
 {
-	width:24%;
-	float:left;
-	border:1px solid #cdcdcd;
-	border-radius:7px;
+	height:500px;
 	overflow:auto;
-	margin-right:1%;
-	height:430px;
-	margin-top:15px;
+	border:1px solid #CDCDCD;
+	border-radius:6px;
 	padding:0;
 	margin:0;
 }
@@ -3287,7 +3294,6 @@ html>body tbody.scrollContent {
 
 .type_test li
 {
-	padding-left: 10px;
 	line-height: 32px;
 	border-bottom:1px solid #d8d8d8;
 	background:#f7f7f7; /* Old browsers */
@@ -3304,14 +3310,32 @@ html>body tbody.scrollContent {
 	cursor: default !important;
 }
 
-.code_content .type_test:first-child {
-	margin-right: 1%;	
+.sortablecont_one{
+	width:24%;
+	float:left;
 }
 
 .type_test li a
 {
+    padding-top: 6px;
 	float:right;
 	padding-right: 10px;
+}
+.sortablecont_two{
+	width:25%;
+	float:left;
+	margin-left:1%;
+}
+
+.sortablecont_one input[type=text]{
+	margin: 8px 0 8px 10px !important
+}
+.sortablecont_two select{
+	margin: 8px 0 8px 10px;
+	width:206px;
+}
+.sortablecont_one span, .sortablecont_two span {
+	margin-left: 10px;
 }
 
 .controls label {
@@ -3329,7 +3353,7 @@ html>body tbody.scrollContent {
 	z-index: 0;	
 }
 
-.ci_envtable table:first-child {
+/*.ci_envtable table:first-child {
 	width: 24%;
 	float:left;	
 }
@@ -3363,7 +3387,7 @@ html>body tbody.scrollContent {
 .ci_envtable table td input[type="text"], .ci_envtable table td select {
 	width: 100%;
 	margin-bottom: 0px;
-}
+}*/
 
 .ci_envtable .popuptextarea {
 	border: 1px solid #c7c7c7;
@@ -4508,7 +4532,7 @@ vertical-align: middle;
 .jstree-default .jstree-no-dots li, 
 .jstree-default .jstree-no-dots .jstree-leaf > ins { background:transparent; }
 .jstree-default .jstree-no-dots .jstree-open > ins { background-position:-18px 0; }
-.jstree-default .jstree-no-dots .jstree-closed > ins { background-position:0 0; }
+.jstree-default .jstree-no-dots .jstree-closed > ins { background-position:0 4px; }
 
 .jstree-default .jstree-no-icons a .jstree-icon { display:none; }
 
@@ -4694,6 +4718,11 @@ select[name="reportDataType"], input[name="pdfName"] {
 	width: auto;
 	margin-top: 0px;
 	font-size: 12px;
+}
+	
+.iframe {
+    border: medium none;
+    width: 100% !important;
 }
 
 
