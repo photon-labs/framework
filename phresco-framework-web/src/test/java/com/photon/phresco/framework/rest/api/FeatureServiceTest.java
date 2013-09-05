@@ -1,19 +1,27 @@
 package com.photon.phresco.framework.rest.api;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.core.Response;
 
 import junit.framework.Assert;
 
+import org.apache.commons.io.FileUtils;
 import org.junit.Test;
+import org.springframework.mock.web.MockHttpServletRequest;
 
 import com.photon.phresco.commons.model.ArtifactInfo;
+import com.photon.phresco.commons.model.FeatureConfigure;
 import com.photon.phresco.commons.model.RequiredOption;
 import com.photon.phresco.commons.model.SelectedFeature;
 import com.photon.phresco.exception.PhrescoException;
+import com.photon.phresco.util.FileUtil;
+import com.photon.phresco.util.Utility;
 
 public class FeatureServiceTest extends RestBaseTest {
 	
@@ -104,5 +112,114 @@ public class FeatureServiceTest extends RestBaseTest {
 		Assert.assertEquals(200, selectedFeaturesLoginFail.getStatus());
 		Response selectedFeatures = featureService.selectedFeatures(userId, appDirName);
 		Assert.assertEquals(200, selectedFeatures.getStatus());
+	}
+	
+	@Test
+	public void configureFeature() throws PhrescoException {
+		MockHttpServletRequest request = new MockHttpServletRequest();
+		File newFile = new File(Utility.getProjectHome()+"/TestJquery/src/main/webapp/components/testFeature/config");
+		if (!newFile.exists()) {
+			boolean result = newFile.mkdirs();  
+
+			if(result) {
+				String[] keys = {"1","3"};
+				String[] values = {"one","three"};
+				request.setParameter("key", keys);
+				request.setParameter("value", values);
+				HttpServletRequest httpServletRequest = (HttpServletRequest)request;
+				Response response = featureService.configureFeature(httpServletRequest, "admin", "photon", "testFeature", "TestJquery");
+				Assert.assertEquals(200, response.getStatus());
+			}
+		}
+	}
+	
+	@Test
+	public void showFeatureConfigPopup() throws PhrescoException, IOException {
+		MockHttpServletRequest request = new MockHttpServletRequest();
+		String[] keys = {"1","3"};
+		String[] values = {"one","three"};
+		request.setParameter("key", keys);
+		request.setParameter("value", values);
+		Response response = featureService.showFeatureConfigPopup("admin", "photon", "testFeature", "TestJquery");
+		Assert.assertEquals(200, response.getStatus());
+	}
+	
+	@Test
+	public void configureFeatureCoverFileAccess() throws PhrescoException {
+		MockHttpServletRequest request = new MockHttpServletRequest();
+		File newFile = new File(Utility.getProjectHome()+"/TestJquery/src/main/webapp/components/testFeature/config");
+		if (newFile.exists()) {
+				request.setParameter("1", "re-one");
+				request.setParameter("3", "re-three");
+				HttpServletRequest httpServletRequest = (HttpServletRequest)request;
+				Response response = featureService.configureFeature(httpServletRequest, "admin", "photon", "testFeature", "TestJquery");
+				Assert.assertEquals(200, response.getStatus());
+			}
+	}
+	
+	@Test
+	public void showFeatureConfigPopupWrongUser() throws PhrescoException, IOException {
+		Response response = featureService.showFeatureConfigPopup("jhsdfj", "photon", "testFeature", "TestJquery");
+		Assert.assertEquals(200, response.getStatus());
+	}
+	
+	@Test
+	public void configureFeatureWrongUser() throws PhrescoException {
+		MockHttpServletRequest request = new MockHttpServletRequest();
+		File newFile = new File(Utility.getProjectHome()+"/TestJquery/src/main/webapp/components/testFeature/config");
+		if (newFile.exists()) {
+				request.setParameter("1", "1re-one");
+				request.setParameter("3", "3re-three");
+				HttpServletRequest httpServletRequest = (HttpServletRequest)request;
+				Response response = featureService.configureFeature(httpServletRequest, "dsfghsdf", "photon", "testFeature", "TestJquery");
+				Assert.assertEquals(200, response.getStatus());
+			}
+	}
+	
+	@Test
+	public void configureFeatureWrongDir() throws PhrescoException, IOException {
+		MockHttpServletRequest request = new MockHttpServletRequest();
+		File newFile = new File(Utility.getProjectHome()+"/TestJquery/src/main/webapp/components/testFeature/config");
+		if (newFile.exists()) {
+				request.setParameter("1", "1re-one");
+				request.setParameter("3", "3re-three");
+				HttpServletRequest httpServletRequest = (HttpServletRequest)request;
+				Response response = featureService.configureFeature(httpServletRequest, "admin", "photon", "testFeature", "4565");
+				Assert.assertEquals(200, response.getStatus());
+			}
+	}
+	
+	@Test
+	public void showFeatureConfigPopupWrongDir() throws PhrescoException, IOException {
+			Response response = featureService.showFeatureConfigPopup("admin", "photon", "testFeature", "4565");
+			Assert.assertEquals(200, response.getStatus());
+	}
+	
+	@Test
+	public void fetchDependencyFeatureDummyVersion() {
+		Response dependencyFeaturefailonLogin = featureService.getDependencyFeature("admin", "b4ce2df7-71e7-4f34-bab2-d4f0ef3217e1");
+		Assert.assertEquals(200, dependencyFeaturefailonLogin.getStatus());
+	}
+	
+	@Test
+	public void configureFeatureExpandableTrue() throws PhrescoException, IOException {
+		MockHttpServletRequest request = new MockHttpServletRequest();
+		File oldFile = new File(Utility.getProjectHome()+"/TestJquery/src/main/webapp/components");
+		File newFile = new File(Utility.getProjectHome()+"/TestJquery/src/main/webapp/components/testFeature/config");
+		FileUtils.deleteDirectory(oldFile);
+		if (!newFile.exists()) {
+			boolean result = newFile.mkdirs();  
+
+			if(result) {
+				String[] keys = {"1","3","expandable"};
+				String[] values = {"one","three","true"};
+				request.setParameter("key", keys);
+				request.setParameter("value", values);
+				HttpServletRequest httpServletRequest = (HttpServletRequest)request;
+				featureService.configureFeature(httpServletRequest, "admin", "photon", "testFeature", "TestJquery");
+				Response response = featureService.showFeatureConfigPopup("admin", "photon", "testFeature", "TestJquery");
+				Assert.assertEquals(200, response.getStatus());
+			}
+		}
 	}
 }

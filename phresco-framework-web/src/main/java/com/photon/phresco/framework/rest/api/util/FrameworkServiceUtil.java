@@ -62,13 +62,18 @@ import com.google.gson.reflect.TypeToken;
 import com.google.gson.Gson;
 import com.google.gson.JsonIOException;
 import com.google.gson.JsonSyntaxException;
+import com.photon.phresco.api.ApplicationProcessor;
 import com.photon.phresco.api.ConfigManager;
 import com.photon.phresco.commons.FrameworkConstants;
 import com.photon.phresco.commons.ResponseCodes;
 import com.photon.phresco.commons.model.ApplicationInfo;
+import com.photon.phresco.commons.model.ArtifactGroup;
+import com.photon.phresco.commons.model.ArtifactInfo;
 import com.photon.phresco.commons.model.BuildInfo;
 import com.photon.phresco.commons.model.CertificateInfo;
+import com.photon.phresco.commons.model.Customer;
 import com.photon.phresco.commons.model.ProjectInfo;
+import com.photon.phresco.commons.model.RepoInfo;
 import com.photon.phresco.commons.model.User;
 import com.photon.phresco.configuration.ConfigReader;
 import com.photon.phresco.configuration.Configuration;
@@ -81,12 +86,15 @@ import com.photon.phresco.framework.api.ApplicationManager;
 import com.photon.phresco.framework.api.ProjectManager;
 import com.photon.phresco.framework.commons.ApplicationsUtil;
 import com.photon.phresco.framework.model.LockDetail;
+import com.photon.phresco.plugins.model.Mojos.ApplicationHandler;
 import com.photon.phresco.plugins.model.Mojos.Mojo.Configuration.Parameters.Parameter;
 import com.photon.phresco.plugins.model.Mojos.Mojo.Configuration.Parameters.Parameter.Childs.Child;
 import com.photon.phresco.plugins.model.Mojos.Mojo.Configuration.Parameters.Parameter.MavenCommands.MavenCommand;
 import com.photon.phresco.plugins.model.Mojos.Mojo.Configuration.Parameters.Parameter.PossibleValues.Value;
 import com.photon.phresco.plugins.util.MojoProcessor;
+import com.photon.phresco.service.client.api.ServiceManager;
 import com.photon.phresco.util.Constants;
+import com.photon.phresco.util.PhrescoDynamicLoader;
 import com.photon.phresco.util.Utility;
 import com.phresco.pom.exception.PhrescoPomException;
 import com.phresco.pom.model.Model.Modules;
@@ -1049,6 +1057,44 @@ public class FrameworkServiceUtil implements Constants, FrameworkConstants, Resp
 			.append(File.separator)
 	    	.append(LOCK_FILE);
 	    	return sb.toString();
+	    }
+	    
+	    public ApplicationProcessor getApplicationProcessor(String appDirName, String customerId, ServiceManager serviceManager) throws PhrescoException {
+	        ApplicationProcessor applicationProcessor = null;
+	        try {
+	            Customer customer = serviceManager.getCustomer(customerId);
+	            RepoInfo repoInfo = customer.getRepoInfo();
+	            StringBuilder sb = new StringBuilder(getApplicationHome(appDirName))
+	            .append(File.separator)
+	            .append(Constants.DOT_PHRESCO_FOLDER)
+	            .append(File.separator)
+	            .append(Constants.APPLICATION_HANDLER_INFO_FILE);
+	            MojoProcessor mojoProcessor = new MojoProcessor(new File(sb.toString()));
+	            ApplicationHandler applicationHandler = mojoProcessor.getApplicationHandler();
+	            if (applicationHandler != null) {
+	                List<ArtifactGroup> plugins = setArtifactGroup(applicationHandler);
+	                PhrescoDynamicLoader dynamicLoader = new PhrescoDynamicLoader(repoInfo, plugins);
+	                applicationProcessor = dynamicLoader.getApplicationProcessor(applicationHandler.getClazz());
+	            }
+	        } catch (PhrescoException e) {
+	           throw new PhrescoException(e);
+	        }
+
+	        return applicationProcessor;
+	    }
+	    
+	    private List<ArtifactGroup> setArtifactGroup(ApplicationHandler applicationHandler) {
+	        List<ArtifactGroup> plugins = new ArrayList<ArtifactGroup>();
+	        ArtifactGroup artifactGroup = new ArtifactGroup();
+	        artifactGroup.setGroupId(applicationHandler.getGroupId());
+	        artifactGroup.setArtifactId(applicationHandler.getArtifactId());
+	        List<ArtifactInfo> artifactInfos = new ArrayList<ArtifactInfo>();
+	        ArtifactInfo artifactInfo = new ArtifactInfo();
+	        artifactInfo.setVersion(applicationHandler.getVersion());
+	        artifactInfos.add(artifactInfo);
+	        artifactGroup.setVersions(artifactInfos);
+	        plugins.add(artifactGroup);
+	        return plugins;
 	    }
 		
 }

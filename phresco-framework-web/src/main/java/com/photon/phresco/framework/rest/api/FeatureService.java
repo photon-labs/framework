@@ -17,6 +17,8 @@
  */
 package com.photon.phresco.framework.rest.api;
 
+import static org.apache.commons.lang.StringEscapeUtils.escapeHtml;
+
 import java.io.File;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
@@ -24,21 +26,28 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
+import java.util.Set;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import com.photon.phresco.api.ApplicationProcessor;
+import com.photon.phresco.api.ConfigManager;
 import com.photon.phresco.commons.FrameworkConstants;
 import com.photon.phresco.commons.ResponseCodes;
 import com.photon.phresco.commons.model.ApplicationInfo;
@@ -46,17 +55,33 @@ import com.photon.phresco.commons.model.ArtifactElement;
 import com.photon.phresco.commons.model.ArtifactGroup;
 import com.photon.phresco.commons.model.ArtifactInfo;
 import com.photon.phresco.commons.model.CoreOption;
+import com.photon.phresco.commons.model.Customer;
+import com.photon.phresco.commons.model.FeatureConfigure;
+import com.photon.phresco.commons.model.ProjectInfo;
+import com.photon.phresco.commons.model.PropertyTemplate;
+import com.photon.phresco.commons.model.RepoInfo;
 import com.photon.phresco.commons.model.RequiredOption;
 import com.photon.phresco.commons.model.SelectedFeature;
+import com.photon.phresco.configuration.Configuration;
+import com.photon.phresco.configuration.Environment;
 import com.photon.phresco.exception.PhrescoException;
+import com.photon.phresco.framework.PhrescoFrameworkFactory;
+import com.photon.phresco.framework.api.ProjectManager;
+import com.photon.phresco.framework.model.DependantParameters;
 import com.photon.phresco.framework.rest.api.util.FrameworkServiceUtil;
+import com.photon.phresco.plugins.model.Module.Configurations.Configuration.Parameter;
 import com.photon.phresco.plugins.model.Mojos.ApplicationHandler;
+import com.photon.phresco.plugins.util.ModulesProcessor;
 import com.photon.phresco.plugins.util.MojoProcessor;
 import com.photon.phresco.service.client.api.ServiceManager;
 import com.photon.phresco.util.Constants;
+import com.photon.phresco.util.PhrescoDynamicLoader;
 import com.photon.phresco.util.ServiceConstants;
 import com.photon.phresco.util.Utility;
+import com.phresco.pom.exception.PhrescoPomException;
+import com.phresco.pom.util.PomProcessor;
 import com.sun.jersey.api.client.ClientResponse.Status;
+import com.photon.phresco.exception.ConfigurationException;
 
 /**
  * The Class FeatureService.
@@ -267,7 +292,168 @@ public class FeatureService extends RestBase implements ServiceConstants, Consta
 					.build();
 		}
 	}
-
+	
+	/**
+	 * Populates the feature configuration pop-up
+	 *
+	 * @param userId the user id
+	 * @param customerId the customer id
+	 * @param featureName the feature name
+	 * @param appDirName the app directory name
+	 * @return the FeatureConfigure object
+	 */
+	@GET
+	@Path("/populate")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response showFeatureConfigPopup(@QueryParam(REST_QUERY_USERID) String userId, @QueryParam(REST_QUERY_CUSTOMERID) String customerId,
+			@QueryParam(REST_QUERY_FEATURENAME) String featureName, @QueryParam(REST_QUERY_APPDIR_NAME) String appDirName) {
+		ResponseInfo<FeatureConfigure> responseData = new ResponseInfo<FeatureConfigure>();
+		try {
+			ServiceManager serviceManager = CONTEXT_MANAGER_MAP.get(userId);
+			if (serviceManager == null) {
+				ResponseInfo<FeatureConfigure> finalOutput = responseDataEvaluation(responseData, null,
+						null, RESPONSE_STATUS_FAILURE, PHR410001);
+				return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin",
+						"*").build();
+			}
+			FeatureConfigure featureConfigure = new FeatureConfigure();
+			featureConfigure = getTemplateConfigFile(appDirName, customerId, serviceManager, featureName);
+			ResponseInfo<FeatureConfigure> finalOutput = responseDataEvaluation(responseData, null,
+					featureConfigure, RESPONSE_STATUS_SUCCESS, PHR400005);
+			return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
+		} catch (PhrescoException e) {
+			ResponseInfo<FeatureConfigure> finalOutput = responseDataEvaluation(responseData, e,
+					null, RESPONSE_STATUS_ERROR, PHR410007);
+			return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*")
+					.build();
+		}
+	}
+	
+	private FeatureConfigure getTemplateConfigFile(String appDirName, String customerId, ServiceManager serviceManager, String featureName) throws PhrescoException {
+	    List<PropertyTemplate> propertyTemplates = new ArrayList<PropertyTemplate>();
+	    try {
+	    	FeatureConfigure featureConfigure = new FeatureConfigure();
+	        FrameworkServiceUtil frameworkServiceUtil = new FrameworkServiceUtil();
+	    	List<Configuration> featureConfigurations = frameworkServiceUtil.getApplicationProcessor(appDirName, customerId, serviceManager).preFeatureConfiguration(FrameworkServiceUtil.getApplicationInfo(appDirName), featureName);
+	    	Properties properties = null;
+	        boolean hasCustomProperty = false;
+	        if (CollectionUtils.isNotEmpty(featureConfigurations)) {
+	            for (Configuration featureConfiguration : featureConfigurations) {
+	                properties = featureConfiguration.getProperties();
+	                String expandableProp = properties.getProperty("expandable");
+	                if (StringUtils.isEmpty(expandableProp)) {
+	                	hasCustomProperty = true;
+	                } else {
+	                	hasCustomProperty = Boolean.valueOf(expandableProp);
+	                }
+                	if (properties.containsKey("expandable")) {
+                		properties.remove("expandable");
+                	}
+	                Set<Object> keySet = properties.keySet();
+	                for (Object key : keySet) {
+	                    String keyStr = (String) key;
+	                    if (!"expandable".equalsIgnoreCase(keyStr)) {
+	                    	String dispName = keyStr.replace(".", " ");
+	                    	PropertyTemplate propertyTemplate = new PropertyTemplate();
+	                    	propertyTemplate.setKey(keyStr);
+	                    	propertyTemplate.setName(dispName);
+	                    	propertyTemplates.add(propertyTemplate);
+	                    }
+	                }
+	            }
+	        }
+	        featureConfigure.setHasCustomProperty(hasCustomProperty);
+	        featureConfigure.setProperties(properties);
+	        featureConfigure.setPropertyTemplates(propertyTemplates);
+	        return featureConfigure;
+	    } catch (PhrescoException e) {
+	        throw new PhrescoException(e);
+	    }
+	}
+	
+	/**
+	 * Updates the feature configurations
+	 *
+	 * @param request the request
+	 * @param userId the user id
+	 * @param customerId the customer id
+	 * @param featureName the feature name
+	 * @param featureType the feature type
+	 * @param appDirName the app directory name
+	 */	
+	@POST
+	@Path("/configureFeature")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response configureFeature(@Context HttpServletRequest request, @QueryParam(REST_QUERY_USERID) String userId, @QueryParam(REST_QUERY_CUSTOMERID) String customerId,
+			@QueryParam(REST_QUERY_FEATURENAME) String featureName, @QueryParam(REST_QUERY_APPDIR_NAME) String appDirName) {
+		ResponseInfo<FeatureConfigure> responseData = new ResponseInfo<FeatureConfigure>();
+	    try {
+	    	ServiceManager serviceManager = CONTEXT_MANAGER_MAP.get(userId);
+			if (serviceManager == null) {
+				ResponseInfo<FeatureConfigure> finalOutput = responseDataEvaluation(responseData, null,
+						null, RESPONSE_STATUS_FAILURE, PHR410001);
+				return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin",
+						"*").build();
+			}
+	    	ApplicationInfo appInfo = FrameworkServiceUtil.getApplicationInfo(appDirName);
+	    	FeatureConfigure featureConfigure = new FeatureConfigure();
+			featureConfigure = getTemplateConfigFile(appDirName, customerId, serviceManager, featureName);
+            Properties properties = new Properties();
+            if (CollectionUtils.isNotEmpty(featureConfigure.getPropertyTemplates())) {
+            	for (PropertyTemplate propertyTemplate : featureConfigure.getPropertyTemplates()) {
+            		String key  = propertyTemplate.getKey();
+            		String value = request.getParameter(key);
+            		properties.setProperty(key, escapeHtml(value));
+            	}
+            }
+            String[] keys = request.getParameterValues(REQ_KEY);
+            String[] values = request.getParameterValues(REQ_VALUE);
+            if (!ArrayUtils.isEmpty(keys) && !ArrayUtils.isEmpty(values)) {
+                for (int i = 0; i < keys.length; i++) {
+                    if (StringUtils.isNotEmpty(keys[i]) && StringUtils.isNotEmpty(values[i])) {
+                        properties.setProperty(keys[i], escapeHtml(values[i]));
+                    }
+                }
+            }
+            Configuration configuration = new Configuration();
+            configuration.setName(featureName);
+            List<Environment> allEnvironments = getAllEnvironments(appInfo);
+	        for (Environment environment : allEnvironments) {
+	        	if(environment.isDefaultEnv()) {
+	        		configuration.setEnvName(environment.getName());
+	        	}
+	        }
+            configuration.setProperties(properties);
+            List<Configuration> configs = new ArrayList<Configuration>();
+            configs.add(configuration);
+            FrameworkServiceUtil frameworkServiceUtil = new FrameworkServiceUtil();
+	    	frameworkServiceUtil.getApplicationProcessor(appDirName, customerId, serviceManager).postFeatureConfiguration(FrameworkServiceUtil.getApplicationInfo(appDirName), configs, featureName);
+	    	ResponseInfo<FeatureConfigure> finalOutput = responseDataEvaluation(responseData, null,
+					null, RESPONSE_STATUS_SUCCESS, PHR400006);
+			return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
+        } catch (PhrescoException  e) {
+        	ResponseInfo<FeatureConfigure> finalOutput = responseDataEvaluation(responseData, e,
+					null, RESPONSE_STATUS_ERROR, PHR410008);
+			return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
+        } catch (ConfigurationException e) {
+        	ResponseInfo<FeatureConfigure> finalOutput = responseDataEvaluation(responseData, e,
+					null, RESPONSE_STATUS_ERROR, PHR410009);
+			return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
+		}
+	}
+	
+	private List<Environment> getAllEnvironments(ApplicationInfo appInfo) throws PhrescoException, ConfigurationException {
+		String configPath = Utility.getProjectHome() + appInfo.getAppDirName() + File.separator + FOLDER_DOT_PHRESCO + File.separator + PHRESCO_ENV_CONFIG_FILE_NAME ;
+		ConfigManager configManager = getConfigManager(configPath);
+		return configManager.getEnvironments();
+	}
+	
+	private ConfigManager getConfigManager(String configPath) throws PhrescoException {
+        File appDir = new File(configPath);
+        return PhrescoFrameworkFactory.getConfigManager(appDir);
+}
+	
 	/**
 	 * Creates the artifact information.
 	 *

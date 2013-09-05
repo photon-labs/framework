@@ -169,6 +169,11 @@ public interface ResponseCodes {
 	String PHR410005 = "PHR410005"; // unable to fetch artifact infos for dependency features
 	String PHR400004 = "PHR400004"; // selected features listed successfully
 	String PHR410006 = "PHR410006"; // unable to fetch selected features
+	String PHR400005 = "PHR400005"; // feature configuration popup returned successfully
+	String PHR410007 = "PHR410007"; // error occurred while fetching feature configurations
+	String PHR400006 = "PHR400006"; // feature configurations updated successfully
+	String PHR410008 = "PHR410008"; // unable to update feature configurations
+	String PHR410009 = "PHR410009"; // failed to fetch environments from configuration file
 	
 	/*
 	 * Code Quality Page
