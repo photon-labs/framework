@@ -199,6 +199,9 @@ public class ClientIdentifyFilter implements Filter , ClientIdentifyFilterConsta
 				String bottomButtonPanelBottom = theme.get("bottomButtonPanelBottom");
 				String customerBaseColor = theme.get("customerBaseColor");
 				String welcomeUserIcon = theme.get("welcomeUserIcon");
+				String pageTitleColor = theme.get("pageTitleColor");
+				String copyRightLabel = theme.get("copyRightLabel");
+				String customerTitle = theme.get("customerTitle");
 				
 			    InputStream stream =   this.getClass().getClassLoader().getResourceAsStream("customercss.xml");
 			    String result = getStringFromInputStream(stream);
@@ -215,6 +218,9 @@ public class ClientIdentifyFilter implements Filter , ClientIdentifyFilterConsta
 						String customercolor = value.toString();
 						if (customercolor.contains("loginLogoMargin") && StringUtils.isNotEmpty(loginLogoMargin)) {
 							fields.put(key,  customercolor.replace("pageLogoPadding", pageLogoPadding) + " !important");
+						}
+						if (customercolor.contains("pageTitleColor") && StringUtils.isNotEmpty(pageTitleColor)) {
+							fields.put(key,  customercolor.replace("pageTitleColor", pageTitleColor) + " !important");
 						}
 						if (customercolor.equals("pageLogoPadding") && StringUtils.isNotEmpty(pageLogoPadding)) {
 							fields.put(key,  customercolor.replace("pageLogoPadding", pageLogoPadding) + " !important");
