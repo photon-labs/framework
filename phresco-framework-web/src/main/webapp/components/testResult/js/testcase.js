@@ -83,7 +83,9 @@ define(["testResult/listener/testResultListener"], function() {
 					self.testResultListener.getPieChartGraphData(function(graphData) {
 						self.testResultListener.createPieChart(graphData);
 					});
-					self.showScreenShot();
+					if ("functionalTest" === currentTab) {
+						self.showScreenShot();
+					}
 				}
 			} else {
 				$('.unit_view').hide();

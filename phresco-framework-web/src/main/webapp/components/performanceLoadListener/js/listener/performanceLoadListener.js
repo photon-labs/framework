@@ -487,13 +487,16 @@ define(["lib/jquery-tojson-1.0",'lib/RGraph_common_core-1.0','lib/RGraph_common_
 					self.drawChart(resultData);
 					self.showScreenShot(resultData.images);
 					//tabular view
-					if($("#tabularView").find('img').attr('src') === "themes/default/images/helios/table_active.png") {
+					if($("#tabularView").css("display") === "inline") {
 						$(".perfResultInfo").show();
 						$("#graphView").hide();
 					} else {
 						$("#graphView").show();
 						$(".perfResultInfo").hide();
 					}
+
+					var graphForText = $("#graphForList").find($('a[value='+reqData.showGraphFor+']')).text();
+					$('a[id=graphForDrop]').text(graphForText);
 
 					if (callback !== undefined) {
 						callback(response);

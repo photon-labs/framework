@@ -23,7 +23,7 @@ define(["unitTest/unitTest"], function(UnitTest) {
 				  	contentType: "application/json",
 				  	status: 200,
 				  	response : function() {
-					  	this.responseText = JSON.stringify({"message":null,"exception":null,"responseCode":"PHRQ010001","data":null,"status":"failure"});
+					  	this.responseText = JSON.stringify({"message":null,"exception":null,"responseCode":"PHRQ010001","data":null,"status":"success"});
 				  	}
 				});
 
@@ -67,7 +67,7 @@ define(["unitTest/unitTest"], function(UnitTest) {
 			asyncTest("Unit Test No Testsuites Test", function() {
 				setTimeout(function() {
 					start();
-					equal($('#serviceError').length, 1, "Unit test no testsuites tested");
+					equal($('#messagedisp').length, 1, "Unit test no testsuites tested");
 					self.testsuitesRenderTest();
 				}, 1500);
 			});

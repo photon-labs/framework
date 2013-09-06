@@ -61,7 +61,7 @@ define(["testResult/listener/testResultListener"], function() {
 				commonVariables.testSuites = response.data;
 				renderFunction(data, $('#testResult div.widget-maincontent-div'));
 				
-				if(response.responseCode === "PHRQ010001") {
+				if(response.responseCode === "PHRQ000003") {
 					setTimeout(function() {
 						$("#messagedisp").attr('data-i18n', 'errorCodes.' + response.responseCode);
 						self.renderlocales(commonVariables.contentPlaceholder);

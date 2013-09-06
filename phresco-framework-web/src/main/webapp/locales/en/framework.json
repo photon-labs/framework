@@ -132,7 +132,7 @@
 		"PHR710019" : "Build number already exists",
 		"PHR710020" : "Selected environment in global settings does not have selected configurations",
 		"PHR710021" : "Selected environment in this app does not have selected configurations",
-		"PHRQ010001" : "Test result not available",
+		"PHRQ000003" : "Test result not available",
 		"PHRQ010002" : "Failed to retrieve  test suites",
 		"PHRQ010003" : "Test case not available",
 		"PHRQ010004" : "Failed to list test cases",
