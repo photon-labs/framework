@@ -93,7 +93,7 @@ header, aside, figure, footer, ul, li {
 
 sup { color:#FF0000; }
 
-a, div, button, img { outline:none; !important; }
+a, div, button, img { outline: none !important; }
 /*=== Loading ===*/
 .widget-mask-main,.widget-mask-mid-content,.mask{
     width: 100%;
@@ -893,6 +893,7 @@ ul.nav li.dropdown:hover > .test_options{
 	/*margin-left:8px !important;*/
 	/*color:#939393 !important;*/
 	margin-bottom:5px !important;
+	margin-right:3px;
 }
 
 .table_border td img {
@@ -1601,7 +1602,7 @@ background:#DA4F49 !important;
 
 .search_box{
 	border: 1px solid #CCCCCC;
-	width: 216px;
+	width: 220px;
 }
 
 .search_text{
@@ -2449,6 +2450,18 @@ background:#DA4F49 !important;
 	margin-bottom:4px !important;
 }
 
+#bdeploy_2 li{
+	margin:5px 0 5px 2px !important;
+}
+
+#bdeploy_2 li input[type="checkbox"]{
+	margin-bottom:1px !important;
+}
+
+#bdeploy_2 .fetchSql_table{
+	margin-bottom:10px !important;
+	/*width:230px;*/
+}
 /* ****************************************************************** STYLES FOR CONFIGUARATION PAGE ************************************************************************** */
 
 .env_border {
@@ -2691,7 +2704,11 @@ margin-left: 10px;
 .labelfont 
 {
 	font-size:12px;
-}	
+}
+
+.edit_config_tab tr td .bootstrap-select, #deploye_2 .bootstrap-select {
+	width:185px !important;
+}
 
 
 /* *************************************************************************** STYLES FOR SETTINGS & ADD SETTINGS ************************************************************************** */
@@ -2924,6 +2941,12 @@ html>body tbody.scrollContent {
 	color: #333;
 	text-decoration:none;
 }
+
+.table1, .graph2 {
+	cursor:default !important;
+}
+
+
 /* *************************************************************** STYLES FOR QUALITY_UNIT_GRAPH PAGE ************************************************************************************ */
 
 .graph_area {
@@ -3280,10 +3303,9 @@ html>body tbody.scrollContent {
 
 .type_test
 {
-	height:500px;
-	overflow:auto;
-	border:1px solid #CDCDCD;
+	border:1px solid #cdcdcd;
 	border-radius:6px;
+	overflow-y:scroll;
 	padding:0;
 	margin:0;
 }
@@ -3404,7 +3426,10 @@ html>body tbody.scrollContent {
 .jobConfigure {
 	height: auto;
 	max-height: 300px;
-    overflow-y: auto;
+}
+
+.jobConfigure form {
+	overflow-y:auto !important;
 }
 
 .ci_envtable .popuptextarea input[type="checkbox"] {
@@ -3802,6 +3827,9 @@ td.browse_td .bootstrap-select.btn-group .dropdown-menu, .dynamic_cont .bootstra
 	min-width: 150px !important;
 }
 
+#startHub_popup .mCSB_scrollTools, #startNode_popup .mCSB_scrollTools {
+	width:5px !important;
+}
 
 
 /* *************************************************************** STYLES FOR DYNAMIC PARAMETER STARTS ************************************************************************************ */

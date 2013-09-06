@@ -305,8 +305,8 @@ define(["framework/widgetWithTemplate", "ci/listener/ciListener", "lib/jquery-to
 	   			}
 
    			});
-			//Clazz.navigationController.jQueryContainer = commonVariables.contentPlaceholder;
-			this.customScroll($(".scroll_cont"));
+			Clazz.navigationController.jQueryContainer = commonVariables.contentPlaceholder;
+			//this.customScroll($(".scroll_cont"));
 		}
 	});
 
