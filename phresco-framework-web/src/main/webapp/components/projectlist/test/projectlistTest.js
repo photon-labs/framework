@@ -412,12 +412,12 @@ define(["projectlist/projectList"], function(ProjectList) {
 					start();
 					var countlen = $(commonVariables.contentPlaceholder).find("commitable_files_31b571c0-85fd-485d-afa4-6bd6cac1e3f8 tr").length;
 					equal(0, countlen, "Commit service call");
-					self.projectupdateVerification(projectlist);
+					self.projectSVNUiVerification(projectlist);
 				}, 2500);
 			});
 		}, 
 		
-		projectupdateVerification : function(projectlist) {
+		/* projectupdateVerification : function(projectlist) {
 			var self=this;
 			asyncTest("Test -update Sucess trigger", function() {
 				$.mockjax({
@@ -441,7 +441,7 @@ define(["projectlist/projectList"], function(ProjectList) {
 					self.projectSVNUiVerification(projectlist);
 				}, 2500);
 			});
-		}, 
+		},  */
 		
 		projectSVNUiVerification : function(projectlist) {
 			var self = this;
@@ -630,9 +630,9 @@ define(["projectlist/projectList"], function(ProjectList) {
 				setTimeout(function() {
 					start();
 					equal("", "", 'Configuration type Test');
-					/* require(["projectTest"], function(projectTest){
+					require(["projectTest"], function(projectTest){
 						projectTest.runTests();
-					}) */;
+					}) ;
 				}, 1000);
 			});
 		}
