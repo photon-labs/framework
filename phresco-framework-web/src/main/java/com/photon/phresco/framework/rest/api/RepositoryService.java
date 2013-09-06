@@ -322,7 +322,7 @@ public class RepositoryService extends RestBase implements FrameworkConstants, S
 				return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*")
 						.build();
 			} else {
-				status = RESPONSE_STATUS_ERROR;
+				status = RESPONSE_STATUS_FAILURE;
 				errorCode = PHR210022;
 				ResponseInfo finalOutput = responseDataEvaluation(responseData, null, null, status, errorCode);
 				return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin",
@@ -395,7 +395,7 @@ public class RepositoryService extends RestBase implements FrameworkConstants, S
 				return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*")
 						.build();
 			} else {
-				status = RESPONSE_STATUS_ERROR;
+				status = RESPONSE_STATUS_FAILURE;
 				errorCode = PHR210022;
 				ResponseInfo finalOutput = responseDataEvaluation(responseData, null, null, status, errorCode);
 				return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin",
@@ -442,7 +442,7 @@ public class RepositoryService extends RestBase implements FrameworkConstants, S
 				return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*")
 						.build();
 			} else {
-				status = RESPONSE_STATUS_ERROR;
+				status = RESPONSE_STATUS_FAILURE;
 				errorCode = PHR210022;
 				ResponseInfo finalOutput = responseDataEvaluation(responseData, null, null, status, errorCode);
 				return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin",

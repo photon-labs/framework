@@ -489,7 +489,7 @@ public class ParameterService extends RestBase implements FrameworkConstants, Se
 					return Response.ok(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, ALL_HEADER).build();
 				} else {
 					ResponseInfo<PossibleValues> finalOutput = responseDataEvaluation(responseData, null,
-							null, RESPONSE_STATUS_ERROR, PHR510009);
+							null, RESPONSE_STATUS_FAILURE, PHR510009);
 					return Response.status(Status.OK).entity(finalOutput).header(
 							ACCESS_CONTROL_ALLOW_ORIGIN, ALL_HEADER).build();
 				}

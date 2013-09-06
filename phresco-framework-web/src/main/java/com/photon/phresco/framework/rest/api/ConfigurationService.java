@@ -167,7 +167,7 @@ public class ConfigurationService extends RestBase implements FrameworkConstants
 					return Response.ok(finalOuptut).header("Access-Control-Allow-Origin", "*").build();
 				} else {
 					ResponseInfo<Environment> finalOuptut = responseDataEvaluation(responseData, null,
-							null, RESPONSE_STATUS_ERROR, PHR610025);
+							null, RESPONSE_STATUS_FAILURE, PHR610025);
 					return Response.status(Status.OK).entity(finalOuptut).header(
 							"Access-Control-Allow-Origin", "*").build();
 				}
@@ -266,7 +266,7 @@ public class ConfigurationService extends RestBase implements FrameworkConstants
 					"*").build();
 		}
 		ResponseInfo<Environment> finalOuptut = responseDataEvaluation(responseData, null,
-				null, RESPONSE_STATUS_ERROR, PHR610005);
+				null, RESPONSE_STATUS_FAILURE, PHR610005);
 		return Response.status(Status.OK).entity(finalOuptut)
 				.header("Access-Control-Allow-Origin", "*").build();
 	}
@@ -286,7 +286,7 @@ public class ConfigurationService extends RestBase implements FrameworkConstants
 					null, RESPONSE_STATUS_SUCCESS, PHR600014);
 			return Response.ok(finalOuptut).header("Access-Control-Allow-Origin", "*").build();
 		} catch (PhrescoException e) {
-			ResponseInfo<Environment> finalOuptut = responseDataEvaluation(responseData, null,
+			ResponseInfo<Environment> finalOuptut = responseDataEvaluation(responseData, e,
 					null, RESPONSE_STATUS_ERROR, PHR610023);
 			return Response.status(Status.OK).entity(finalOuptut)
 					.header("Access-Control-Allow-Origin", "*").build();
@@ -412,7 +412,7 @@ public class ConfigurationService extends RestBase implements FrameworkConstants
 			boolean tempConnectionAlive = isConnectionAlive(lprotocol, lhost, lport);
 			connection_status = tempConnectionAlive == true ? true : false;
 		} catch (Exception e) {
-			ResponseInfo<Boolean> finalOutput = responseDataEvaluation(responseData, null,
+			ResponseInfo<Boolean> finalOutput = responseDataEvaluation(responseData, e,
 					null, RESPONSE_STATUS_ERROR, PHR610009);
 			S_LOGGER.error("Entered into catch block of Configurationservice.connectionAliveCheck()"
 					+ FrameworkUtil.getStackTraceAsString(e));
@@ -871,7 +871,7 @@ public class ConfigurationService extends RestBase implements FrameworkConstants
 			ResponseInfo<DOMSource> finalOuptut = responseDataEvaluation(responseData, null, outputContent, RESPONSE_STATUS_SUCCESS, PHR600013);
 			return Response.status(Status.OK).entity(outputContent).header("Access-Control-Allow-Origin", "*").build();
 		} catch (PhrescoException e) {
-			ResponseInfo<DOMSource> finalOuptut = responseDataEvaluation(responseData, null, null, RESPONSE_STATUS_ERROR, PHR610022);
+			ResponseInfo<DOMSource> finalOuptut = responseDataEvaluation(responseData, e, null, RESPONSE_STATUS_ERROR, PHR610022);
 			return Response.status(Status.OK).entity(finalOuptut).header("Access-Control-Allow-Origin", "*").build();	
 		}
 
