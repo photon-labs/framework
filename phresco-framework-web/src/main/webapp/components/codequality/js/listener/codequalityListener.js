@@ -42,20 +42,23 @@ define([], function() {
 				commonVariables.navListener.getMyObj(commonVariables.mavenService, function(retVal){
 					self.mavenServiceListener = retVal;
 					self.mavenServiceListener.mvnCodeValidation(queryString, '#iframePart', function(returnVal){
-						var validateAgainst = $("#src").find(':selected').val();
+						/* var validateAgainst = $("#src").find(':selected').val();
 						if(validateAgainst === undefined){
 							validateAgainst = $("#sonar").find(':selected').val();
-						}						
+						} */
+						
+						var validateAgainst = $("#repTypes").attr("key");
 						self.getIframeReport(validateAgainst);
 						callback(returnVal);
 					});
 				});
 			}else{
 				self.mavenServiceListener.mvnCodeValidation(queryString, '#iframePart', function(returnVal){
-					var validateAgainst = $("#src").find(':selected').val();
+					/* var validateAgainst = $("#src").find(':selected').val();
 					if(validateAgainst === undefined){
 						validateAgainst = $("#sonar").find(':selected').val();
-					}
+					} */
+					var validateAgainst = $("#repTypes").attr("key");
 					self.getIframeReport(validateAgainst);
 					callback(returnVal);
 				});
@@ -206,7 +209,7 @@ define([], function() {
 							typeLi += "<li disabled='disabled' key="+resdata.validateAgainst.key+" data="+resdata.validateAgainst.value+" style='padding-left:4px;'>"+resdata.validateAgainst.value+'<ul>'+innerUl+"</ul></li>";
 						}
 					});
-					var dropdownLi = '<ul class="nav"><li id="fat-menu" class="dropdown"><a href="#" id="drop5" role="button" class="dropdown-toggle" data-toggle="dropdown"><b id="repTypes" >'+repTypesData+'</b><b class="caret"></b></a> <div class="dropdown-menu cust_sel code_test_opt" role="menu" aria-labelledby="drop5"> <ul id="reportUl">'+typeLi+'</ul></div></li></ul>';
+					var dropdownLi = '<ul class="nav"><li id="fat-menu" class="dropdown"><a href="#" id="drop5" role="button" class="dropdown-toggle" data-toggle="dropdown"><b id="repTypes" key='+validateAgainst+'>'+repTypesData+'</b><b class="caret"></b></a> <div class="dropdown-menu cust_sel code_test_opt" role="menu" aria-labelledby="drop5"> <ul id="reportUl">'+typeLi+'</ul></div></li></ul>';
 					var codeReport = $("#codereportTypes").attr("class");
 					if(codeReport !== undefined) {
 						$("#codereportTypes").append(dropdownLi);
@@ -223,6 +226,7 @@ define([], function() {
 			$("#reportUl li[name=selectType]").click(function() {
 				validateAgainst = $(this).attr('key');
 				$("#repTypes").html($(this).attr('data'));
+				$("#repTypes").attr("key",validateAgainst);
 				self.getIframeReport(validateAgainst);
 			});
 		},

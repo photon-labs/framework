@@ -4,7 +4,6 @@
             	<font data-i18n="codequality.report"></font>
             </div>
             <div class="navbar navbar-static code_func" id="codereportTypes">
-                <ul class="nav"></ul>
             </div>
            
 				<div class="code_anal">
