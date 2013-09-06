@@ -165,8 +165,8 @@ define(["testResult/listener/testResultListener"], function() {
 			});
 			
 			//Shows the tabular view of the test result
-			$(".table1, .table2").unbind("click");
-			$(".table1, .table2").click(function() {
+			$(".table2").unbind("click");
+			$(".table2").click(function() {
 				$("#graphicalView").hide();
 				$("#tabularView").show();
 				$("#graphView").hide();
@@ -174,8 +174,8 @@ define(["testResult/listener/testResultListener"], function() {
 			});
 			
 			//Shows the graphical view of the test result
-			$(".graph1, .graph2").unbind("click");
-			$(".graph1, .graph2").click(function() {
+			$(".graph1").unbind("click");
+			$(".graph1").click(function() {
 				$("#testSuites").hide();
 				$("#graphView").show();
 				$("#tabularView").hide();

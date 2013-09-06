@@ -1132,7 +1132,7 @@ define(["croneExpression/croneExpression"], function() {
 					count++;
 				});
 				for (var i=0; i<array.length; i++) {
-					if($.trim(ename) === $.trim(array[i])) {
+					if($.trim(ename.toUpperCase()) === $.trim(array[i].toUpperCase())) {
 						flag = 0;
 					}		
 				};

@@ -121,7 +121,7 @@ define(["framework/widgetWithTemplate", "login/listener/loginListener"], functio
 			$('#username').focus();
 			Clazz.navigationController.jQueryContainer = commonVariables.contentPlaceholder;
 			
-			$('#password').keypress(function(e) {
+			$('#username, #password').keypress(function(e) {
 				if (e.which === 32) {
 					e.preventDefault();
 				} 
