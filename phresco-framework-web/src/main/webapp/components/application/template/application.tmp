@@ -29,11 +29,12 @@
 					<td colspan="3"></td>
                 </tr>
 				{{/each}}	  
-				
-                <tr class="proj_title">
-                      <td colspan="2" data-i18n="application.edit.servers"></td><td colspan="2"><span id="servererror"></span></td>
-                      <td colspan="3"><img name="close" id="servers" src="themes/default/images/helios/close_icon.png"  border="0" alt=""></td>
-                    </tr>
+					{{#if projectlist.serverData}}
+						<tr class="proj_title">
+							<td colspan="2" data-i18n="application.edit.servers"></td><td colspan="2"><span id="servererror"></span></td>
+							<td colspan="3"><img name="close" id="servers" src="themes/default/images/helios/close_icon.png"  border="0" alt=""></td>
+						</tr>
+					{{/if}}
 					{{#each projectlist.appdetails.data.appInfos}}
 						{{#each selectedServers}}
 							 <tr class="servers" key="displayed">
@@ -71,7 +72,7 @@
 							
 						{{/each}}
 					{{/each}}
-					
+					{{#if projectlist.serverData}}
 					{{#unless projectlist.appdetails.data.appInfos.0.selectedServers}}
 						<tr class="servers" key="displayed">
 						  <td><span data-i18n="application.edit.servers"></span>&nbsp;<span class="paid">{{positionouter projectlist.appdetails.data.appInfos}}</span></td>
@@ -93,12 +94,14 @@
 						  </td>
 						</tr>
                      {{/unless}}
-					 
-                    <tr class="proj_title">
-                      <td colspan="2" data-i18n="application.edit.database"></td><td colspan="2"><span id="dberror"></span></td>
-                      <td colspan="3"><img name="close" id="database" src="themes/default/images/helios/close_icon.png"  border="0" alt=""></td>
-                     </tr>
-
+					{{/if}}
+					
+					{{#if projectlist.databaseData}}
+						<tr class="proj_title">
+							<td colspan="2" data-i18n="application.edit.database"></td><td colspan="2"><span id="dberror"></span></td>
+							<td colspan="3"><img name="close" id="database" src="themes/default/images/helios/close_icon.png"  border="0" alt=""></td>
+						</tr>
+					{{/if}}
 					{{#each projectlist.appdetails.data.appInfos}}
 						{{#each selectedDatabases}}
 							  <tr class="database" key="displayed">
@@ -133,7 +136,7 @@
 							</tr>
 						{{/each}}
 					{{/each}}
-					
+					{{#if projectlist.databaseData}}
 					{{#unless projectlist.appdetails.data.appInfos.0.selectedDatabases}}
 						<tr class="database" key="displayed">
 						  <td><span data-i18n="application.edit.database"></span>&nbsp;<span class="paid">{{dbouter projectlist.appdetails.data.appInfos}}</span></td>
@@ -156,7 +159,8 @@
 						  </td>
 						</tr>
 					{{/unless}}
-										
+					{{/if}}
+					{{#if projectlist.webserviceData}}
                     <tr class="proj_title">
                       <td colspan="3" data-i18n="application.edit.webservice"></td>
                       <td colspan="4"><img  name="close" id="webservice" src="themes/default/images/helios/close_icon.png"  border="0" alt=""></td>
@@ -176,14 +180,15 @@
 							</tr>
                           </table>
                       </td>
-                      </tr>
+                    </tr>
+					{{/if}}  
 				{{#if projectlist.functionalFrameworkData}} 
 					<tr class="proj_title">
                           <td colspan="2" data-i18n="application.edit.testing"></td><td colspan="2"><span id="fferror"></span></td>
                           <td colspan="3"><img name="close" id="testing" src="themes/default/images/helios/close_icon.png" border="0" alt=""></td>
                        </tr>
                        <tr class="functionalFramework" key="displayed">
-                            <td class="func_framewrk" data-i18n="application.edit.funcframework"></td>		
+                            <td class="func_framewrk"> <span data-i18n="application.edit.funcframework"></span><sup>*</sup></td>
                             <td name="servers">
                                 <select name= "func_framework" class="func_framework selectpicker">
 									<option value=0>Select</option>

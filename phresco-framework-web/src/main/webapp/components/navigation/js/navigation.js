@@ -214,7 +214,6 @@ define(["navigation/listener/navigationListener"], function() {
 			
 			$("input[name='importbtn']").unbind("click");
 			$("input[name='importbtn']").click(function() {
-				$("#importRepourl").val('');
 				self.navigationListener.validateImport(function(response) {
 					if (!response) {
 						self.onImportEvent.dispatch();

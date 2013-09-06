@@ -221,6 +221,7 @@
                    <!--commit div ends here -->	
                    
                   <div id="svn_update{{id}}" class="svn_update dyn_popup popup_bg" name="updatepopup">
+				   <div class="hideContent update_data_{{id}}">
 					<table width="100%" border="0" cellspacing="0" cellpadding="0">
                         <tbody>
                                     <tr>
@@ -258,11 +259,19 @@
                                     </tr>
                                 </tbody>
                      </table> 
-                     <div class="popuploading" id="updateRepoLoading_{{id}}">&nbsp</div>
                      <div class="flt_right" style=margin-top:5px;" appDirName="{{appDirName}}">
                          <input type="button" value="Update Application" data-i18n="[value]common.btn.updateapp"  id="{{id}}" class="btn btn_style" name="updatebtn">
                          <input type="button" value="Close" data-i18n="[value]common.btn.close" class="btn btn_style dyn_popup_close">
-                     </div>               
+                     </div>    
+					</div>
+					<div class="dummyUpdate" id="dummyUpdate_{{id}}"></div>
+				 	<div class="popuploading" id="updateLoading_{{id}}">&nbsp</div>
+					<div class="hideContent updateErr_{{id}} popup_btn" width="100%" border="0" cellspacing="0" cellpadding="0">
+						<p><span data-i18n="projectlist.label.notworkingupdate"></span></p>
+						<div class="popupCloseBtn">
+							<input type="button" value="Close" data-i18n="[value]common.btn.close" class="btn btn_style dyn_popup_close">
+						</div>		
+					 </div>	
                     <!--svn_update div ends here -->	
                   </div>
                   </td>

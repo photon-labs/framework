@@ -765,37 +765,15 @@ define([], function() {
 						//commonVariables.loadingScreen.removeLoading();
 						if (response !== null && response.status !== "error" && response.status !== "failure") {
 							if(response.responseCode === "PHR200017") {
-								$(".content_end").show();
-								$(".msgdisplay").removeClass("error").addClass("success");
-								$(".success").attr('data-i18n', 'successCodes.' + response.responseCode);
-								self.renderlocales(commonVariables.contentPlaceholder);	
-								$(".success").fadeIn(500).fadeOut(500).fadeIn(500).fadeOut(500).fadeIn(500).fadeOut(5);
-								setTimeout(function() {
-									$(".content_end").hide();
-								},2500);
+								commonVariables.api.showError(response.responseCode ,"success", true);
 							}
 							callback(response);						
 						} else {
-							$(".content_end").show();
-							$(".msgdisplay").removeClass("success").addClass("error");
-							$(".error").attr('data-i18n', 'errorCodes.' + response.responseCode);
-							self.renderlocales(commonVariables.contentPlaceholder);	
-							$(".error").fadeIn(500).fadeOut(500).fadeIn(500).fadeOut(500).fadeIn(500).fadeOut(5);
-							setTimeout(function() {
-								$(".content_end").hide();
-							},2500);
+							commonVariables.api.showError(response.responseCode ,"error", true);
 						}
 					},
 					function(textStatus) {
-						//commonVariables.loadingScreen.removeLoading();
-						$(".content_end").show();
-						$(".msgdisplay").removeClass("success").addClass("error");
-						$(".error").attr('data-i18n', 'commonlabel.errormessage.serviceerror');
-						self.renderlocales(commonVariables.contentPlaceholder);	
-						$(".error").fadeIn(500).fadeOut(500).fadeIn(500).fadeOut(500).fadeIn(500).fadeOut(5);
-						setTimeout(function() {
-							$(".content_end").hide();
-						},2500);			
+						commonVariables.api.showError(response.responseCode ,"error", true);		
 					}
 				);
 			} catch(exception) {
@@ -815,7 +793,7 @@ define([], function() {
 				$("#importRepourl").val('');
 				self.validateTextBox($("#importRepourl"), 'Invalid Application Url');	
 				setTimeout(function() { 
-				$("#importRepourl").val(importRepourl); 
+				//$("#importRepourl").val(importRepourl); 
 				}, 4000);				
 			}
 			

@@ -12,6 +12,7 @@ define([], function() {
 		flag2:null,
 		flag3:null,
 		act:null,
+		iddynamic : [],
 
 		/***
 		 * Called in initialization time of this class 
@@ -58,26 +59,11 @@ define([], function() {
 							callback(response);
 							//commonVariables.loadingScreen.removeLoading();
 						} else {
-							$(".content_end").show();
-							$(".msgdisplay").removeClass("success").addClass("error");
-							$(".error").attr('data-i18n', 'errorCodes.' + response.responseCode);
-							self.renderlocales(commonVariables.contentPlaceholder);	
-							$(".error").fadeIn(500).fadeOut(500).fadeIn(500).fadeOut(500).fadeIn(500).fadeOut(5);
-							setTimeout(function() {
-								$(".content_end").hide();
-							},2500);
+							commonVariables.api.showError(response.responseCode ,"error", true);
 						}
 					},
 					function(textStatus) {
-						$(".content_end").show();
-						$(".msgdisplay").removeClass("success").addClass("error");
-						$(".error").attr('data-i18n', 'commonlabel.errormessage.serviceerror');
-						self.renderlocales(commonVariables.contentPlaceholder);		
-						$(".error").fadeIn(500).fadeOut(500).fadeIn(500).fadeOut(500).fadeIn(500).fadeOut(5);
-						setTimeout(function() {
-							$(".content_end").hide();
-						},2500);
-						//commonVariables.loadingScreen.removeLoading();
+						commonVariables.api.showError("serviceerror" ,"error", true);
 					}
 				);
 			} catch(exception) {
@@ -98,42 +84,24 @@ define([], function() {
 						if(response !== null && response.status !== "error" && response.status !== "failure"){
 							self.hidePopupLoad();
 							if(response.responseCode !== 'PHR200015' && response.responseCode !== 'PHR200021' && response.responseCode !== 'PHR600004' && response.responseCode !== null && response.responseCode !== undefined) {
-								$(".content_end").show();
-								$(".msgdisplay").removeClass("error").addClass("success");
-								$(".success").attr('data-i18n', 'successCodes.' + response.responseCode);
-								self.renderlocales(commonVariables.contentPlaceholder);	
-								$(".success").fadeIn(500).fadeOut(500).fadeIn(500).fadeOut(500).fadeIn(500).fadeOut(5);
-								setTimeout(function() {
-									$(".content_end").hide();
-								},2500);
+								commonVariables.api.showError(response.responseCode ,"success", true);
 							}	
 							callback(response);		
 						} else {
 							if(response.responseCode === "PHR210035") {
 								callback(response);
 								self.hidePopupLoad();
+							} else if(response.responseCode === "PHR210037") {
+								callback(response);
+								self.hidePopupLoad();
 							} else {
-								$(".content_end").show();
-								$(".msgdisplay").removeClass("success").addClass("error");
-								$(".error").attr('data-i18n', 'errorCodes.' + response.responseCode);
-								self.renderlocales(commonVariables.contentPlaceholder);	
-								$(".error").fadeIn(500).fadeOut(500).fadeIn(500).fadeOut(500).fadeIn(500).fadeOut(5);
-								setTimeout(function() {
-									$(".content_end").hide();
-								},2500);
+								commonVariables.api.showError(response.responseCode ,"error", true);
 								self.hidePopupLoad();
 							}
 						}
 					},					
 					function(textStatus) {
-						$(".content_end").show();
-						$(".msgdisplay").removeClass("success").addClass("error");
-						$(".error").attr('data-i18n', 'commonlabel.errormessage.serviceerror');
-						self.renderlocales(commonVariables.contentPlaceholder);	
-						$(".error").fadeIn(500).fadeOut(500).fadeIn(500).fadeOut(500).fadeIn(500).fadeOut(5);
-						setTimeout(function() {
-							$(".content_end").hide();
-						},2500);
+						commonVariables.api.showError("serviceerror" ,"error", true);
 						self.hidePopupLoad();
 					}
 				);
@@ -229,6 +197,10 @@ define([], function() {
 				header.requestMethod = "GET";
 				header.webserviceurl = commonVariables.webserviceurl + "repository/popupValues?appDirName="+projectRequestBody.appdirname+"&userId=" + userId + "&action=commit";
 			} 
+			if (action === "getUpdatableFiles") {
+				header.requestMethod = "GET";
+				header.webserviceurl = commonVariables.webserviceurl + "repository/popupValues?appDirName="+projectRequestBody.appdirname+"&userId=" + userId + "&action=update";
+			}
 			if(action === "searchlogmessage") {
 				header.requestMethod = "POST";
 				header.requestPostBody = JSON.stringify(projectRequestBody);
@@ -275,6 +247,11 @@ define([], function() {
 			var repodata = {}, actionBody, action;
 			self.flag1=1;
 			if(!self.validation(dynid)) {
+				if($("#repomessage_"+dynid).val() === '') {
+					var drop = obj.parent().prev().prev().find('tbody').find('.searchdropdown option:first-child').text();
+					$("#repomessage_"+dynid).val(drop);
+				}
+				
 				repodata.type = $("#type_"+dynid).val();
 				repodata.repoUrl = $("#repourl_"+dynid).val();
 				repodata.userName = $("#uname_"+dynid).val();
@@ -339,6 +316,11 @@ define([], function() {
 				if (response.service_exception !== null) {
 				} else {
 					self.getReportEvent(response, appDir, "All", dynamicId);
+					if(self.iddynamic[dynamicId] === 1) {
+						var topval2 = parseInt($("#pdf_report_"+dynamicId).css('top'));
+						topval2 =topval2 - 20;
+						$("#pdf_report_"+dynamicId).css('top',topval2);
+					}	
 				}
 				commonVariables.hideloading = false;
 			});
@@ -404,6 +386,42 @@ define([], function() {
 			});
 		},
 		
+		getUpdatableFiles : function(data, obj) {
+			var self = this;
+			var dynamicId = data.dynamicId;
+			self.openccpl(obj, $(obj).attr('name'), '');
+			$('#updateLoading_'+dynamicId).show();
+			commonVariables.hideloading = true;
+	      	self.projectListAction(self.getActionHeader(data, "getUpdatableFiles"), $('#updateLoading_'+dynamicId), function(response) {
+
+				var halfheight= window.innerHeight/2;
+				var halfwidth= window.innerWidth/2;
+				if ($(obj).offset().top > halfheight && $(obj).offset().left > halfwidth){
+					var temp = $(obj).attr('name');
+					if(response.responseCode === 'PHR200022') {
+						var temp2 = $(obj).position().top - 270;
+						$("#"+temp).css('top',temp2);
+					} else {
+						var temp2 = $(obj).position().top - 88;
+						$("#"+temp).css('top',temp2);
+					}	
+				} 
+	      		$("#dummyUpdate_"+dynamicId).css("height","0");
+				var updatableFiles = "";
+				$('.update_data_'+dynamicId).hide();
+				$('.updateErr_'+dynamicId).hide();      
+				if (response.data !== undefined && !response.data.repoExist) {
+					$('.updateErr_'+dynamicId).show();
+				} else if (response.data !== undefined) {
+					$('.update_data_'+dynamicId).show();
+				}
+				if (!self.isBlank(response.data.repoInfoFile)) {
+					$('.update_data_'+dynamicId).show();
+				}
+				commonVariables.hideloading = false;
+			});
+		},
+		
 		getReportEvent : function(obj, appDir, fromPage, dynamicId){
 			var self = this;
 			var getreportdata = {}, actionBody, action, temp;	
@@ -428,19 +446,25 @@ define([], function() {
 			commonVariables.hideloading = true;
 			self.projectListAction(self.getActionHeader(actionBody, action), $("#pdfReportLoading_"+dynamicId), function(response) {
 				 if(fromPage !== 'All') {
-					var halfheight= window.innerHeight/2;
-					var halfwidth= window.innerWidth/2;
-					if ($(obj).offset().top > halfheight && $(obj).offset().left > halfwidth){
-						var nameval = $(obj).attr('name');
-						if(response.responseCode === 'PHR200015' || response.length === 0) {
-							var temp2 = $(obj).position().top - 197;
-							$("#"+nameval).css('top',temp2);
-						} else {			
-							var temp2 = $(obj).position().top - 230;
-							$("#"+nameval).css('top',temp2);
-						}	
-					}
-				} 	
+						var halfheight= window.innerHeight/2;
+						var halfwidth= window.innerWidth/2;
+						if ($(obj).offset().top > halfheight && $(obj).offset().left > halfwidth){
+							self.iddynamic[dynamicId] = 1;
+							var nameval = $(obj).attr('name');
+							if(response.responseCode === 'PHR200015' || response.length === 0) {
+								var temp2 = $(obj).position().top - 197;
+								$("#"+nameval).css('top',temp2);
+							} else {			
+								var temp2 = $(obj).position().top - 230;
+								$("#"+nameval).css('top',temp2);
+								for(var i =0; i < response.length; i++) {
+									var topval = parseInt($("#pdf_report_"+dynamicId).css('top'));
+									topval =topval - 21;
+									$("#pdf_report_"+dynamicId).css('top',topval);
+								};
+							}	
+						}
+				}
 				self.listPdfReports(response, temp, dynamicId);
 				self.clickFunction(dynamicId);
 				commonVariables.hideloading = false;
@@ -491,11 +515,16 @@ define([], function() {
 				deletedata.fromPage = $(this).attr("frompage");
 				deletedata.appDir = $(this).closest('tr').attr("appdirname");
 				$('input[name="delpdf"]').unbind();
-				$('input[name="delpdf"]').click(function() {	
-					$(".generatedRow").each(function() {						
+				$('input[name="delpdf"]').click(function() {
+					$(".generatedRow").each(function() {
 						var pdfFileName = $(this).attr("fileName");
 						if(pdfFileName === deletedata.fileName){
 							$("tr[fileName='"+pdfFileName+"']").remove();
+							if(self.iddynamic[dynamicId] === 1) {
+								var topval3 = parseInt($("#pdf_report_"+dynamicId).css('top'));
+								topval3 =topval3 + 30;
+								$("#pdf_report_"+dynamicId).css('top',topval3);
+							}	
 						}
 					});
 					var size = $(".generatedRow").size();
@@ -511,7 +540,8 @@ define([], function() {
 				});	
 			});
 			
-			$("a[name=downLoad]").click(function() {			
+			$("a[name=downLoad]").click(function() {
+				console.info("2222222222222");
 				var actionBody = {};
 				actionBody.fileName = $(this).attr("fileName");
 				actionBody.fromPage = $(this).attr("frompage");

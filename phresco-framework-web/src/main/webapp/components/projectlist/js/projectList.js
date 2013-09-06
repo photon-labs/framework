@@ -306,7 +306,6 @@ define(["projectlist/listener/projectListListener"], function() {
 				$('.add_repo').hide();
 				$('.svn_update').hide();
 				$("#addRepoLoading_"+dynamicId).hide();
-				$("#updateRepoLoading_"+dynamicId).hide();
 				var action = $(this).attr("data-original-title");
 				if (action === "Commit") {
 					var appDirName = $(this).parent().parent().attr("class");
@@ -315,6 +314,13 @@ define(["projectlist/listener/projectListListener"], function() {
 					data.dynamicId = dynamicId;
 					$("#dummyCommit_"+dynamicId).css("height","10px");
 					self.projectslistListener.getCommitableFiles(data, this);
+				} else if (action === "Update") {
+					var appDirName = $(this).parent().parent().attr("class");
+					var data = {};
+					data.appdirname = appDirName;
+					data.dynamicId = dynamicId;
+					$("#dummyUpdate_"+dynamicId).css("height","10px");
+					self.projectslistListener.getUpdatableFiles(data, this);
 				} else {
 					self.openccpl(this, $(this).attr('name'), currentPrjName);
 				}
