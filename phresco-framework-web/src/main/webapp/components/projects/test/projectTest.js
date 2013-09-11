@@ -163,7 +163,9 @@ define(["projects/addproject", "projects/editproject"], function(addProject, edi
 					start();
 					var Msg = $(".blinkmsg").hasClass('popsuccess');
 					notEqual(Msg, true, "Add Project- show SuccessMessage After Creation Test");
-					self.runCancelButtonTest();
+					//self.runCancelButtonTest();
+					self.runEmptyProjectNameTest();
+					
 				}, 1500);	
 			});
 		},
