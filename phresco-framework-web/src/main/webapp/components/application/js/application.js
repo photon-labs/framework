@@ -203,7 +203,7 @@ define(["application/listener/applicationListener"], function() {
 			});
 			var appdetails = commonVariables.api.localVal.getJson('appdetails');
 			if (appdetails !== null) {
-				var appId = appdetails.data.appInfos[0].id;
+				var appId = appdetails.data.projectInfo.appInfos[0].id;
 				$('.headerAppId').val(appId);
 			}
 		},
