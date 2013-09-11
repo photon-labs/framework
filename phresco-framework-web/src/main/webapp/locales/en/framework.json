@@ -12,6 +12,8 @@
 		"PHR7C10001" : "Unable to fetch template content",
 		"PHR8C10001" : "Mandatory parameter check failed",
 		"PHR9C10001" : "Unable to complete validation",
+		"PHR10C00001" : "The process has been locked by ",
+		"PHR10C00111" : " on ",
 		"PHR110001" : "'user' object does not exist or is empty",
 		"PHR110002" : "Unauthorized user for Phresco",
 		"PHR110003" : "Invalid Credentials",
@@ -253,8 +255,9 @@
 			"apistatus" : "API Status",
 			"apprepourl" : "Application Repo URL",
 			"testcheckout" : "Test Checkout",
-			"testrepourl" : "Test Repo Url"
-		}
+			"testrepourl" : "Test Repo Url",
+			"processlockby" : "The process has been locked by "
+ 		}
 	},
 	"codequality" : {
 		"report" : "Report",

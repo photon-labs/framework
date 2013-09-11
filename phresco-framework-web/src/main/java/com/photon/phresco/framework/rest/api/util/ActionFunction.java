@@ -66,6 +66,7 @@ import com.photon.phresco.framework.api.ApplicationManager;
 import com.photon.phresco.framework.api.CIManager;
 import com.photon.phresco.framework.api.ProjectManager;
 import com.photon.phresco.framework.commons.FrameworkUtil;
+import com.photon.phresco.framework.model.LockDetail;
 import com.photon.phresco.framework.model.MinifyInfo;
 import com.photon.phresco.framework.model.PerformanceUrls;
 import com.photon.phresco.framework.rest.api.QualityService;
@@ -529,18 +530,6 @@ public class ActionFunction extends RestBase implements Constants ,FrameworkCons
 	public ActionResponse build(HttpServletRequest request) throws PhrescoException {
 		printLogs();
 		BufferedInputStream server_logs = null;
-		FrameworkServiceUtil futil = new FrameworkServiceUtil();
-		ActionResponse response = null;
-		String envNames = request.getParameter("environmentName");
-		response = futil.mandatoryValidation(request, PHASE_PACKAGE, getApplicationInfo().getAppDirName());
-		if (response.isErrorFound()) {
-			return response;
-		}
-		response = FrameworkServiceUtil.checkForConfigurations(getApplicationInfo().getAppDirName(),
-				envNames, getCustomerId());
-		if (response.isErrorFound()) {
-			return response;
-		}
 		String displayName = request.getParameter("displayName");
 		UUID uniqueKey = UUID.randomUUID();
 		String unique_key = uniqueKey.toString();
@@ -556,18 +545,6 @@ public class ActionFunction extends RestBase implements Constants ,FrameworkCons
 	public ActionResponse deploy(HttpServletRequest request) throws PhrescoException {
 		printLogs();
 		BufferedInputStream server_logs=null;
-		FrameworkServiceUtil futil = new FrameworkServiceUtil();
-		ActionResponse response = null;
-		String envNames = request.getParameter("environmentName");
-		response = futil.mandatoryValidation(request, PHASE_DEPLOY, getApplicationInfo().getAppDirName());
-		if (response.isErrorFound()) {
-			return response;
-		}
-		response = FrameworkServiceUtil.checkForConfigurations(getApplicationInfo().getAppDirName(),
-				envNames, getCustomerId());
-		if (response.isErrorFound()) {
-			return response;
-		}
 		String displayName = request.getParameter("displayName");
 		UUID uniqueKey = UUID.randomUUID();
 		String unique_key = uniqueKey.toString();
@@ -637,18 +614,6 @@ public class ActionFunction extends RestBase implements Constants ,FrameworkCons
 	public ActionResponse runAgainstSource(HttpServletRequest request) throws PhrescoException, IOException {
 		printLogs();
 		BufferedInputStream server_logs=null;
-		FrameworkServiceUtil futil = new FrameworkServiceUtil();
-		ActionResponse response = null;
-		String envNames = request.getParameter("environmentName");
-		response = futil.mandatoryValidation(request, PHASE_RUNGAINST_SRC_START, getApplicationInfo().getAppDirName());
-		if (response.isErrorFound()) {
-			return response;
-		}
-		response = FrameworkServiceUtil.checkForConfigurations(getApplicationInfo().getAppDirName(),
-				envNames, getCustomerId());
-		if (response.isErrorFound()) {
-			return response;
-		}
 		String displayName = request.getParameter("displayName");
 		UUID uniqueKey = UUID.randomUUID();
 		String unique_key = uniqueKey.toString();
@@ -1128,14 +1093,30 @@ public class ActionFunction extends RestBase implements Constants ,FrameworkCons
 			S_LOGGER.debug("Entering Method Build.handleStopServer()");
 		}
 		BufferedInputStream reader = null;
+		boolean success = true;
 		try {
 			reader = handleStopServer(false);
 		} catch (PhrescoException e) {
+			success =  false;
 			S_LOGGER.error("Entered into catch block of MavenFunctions.stopServer()" + FrameworkUtil.getStackTraceAsString(e));
 			throw new PhrescoException("Exception occured in the stopServer process");
 		} catch (Exception e) {
+			success =  false;
 			S_LOGGER.error("Entered into catch block of MavenFunctions.runAgainstSource()" + FrameworkUtil.getStackTraceAsString(e));
 			throw new PhrescoException("Exception occured in the runAgainstSource process");
+		} finally {
+			if (success) {
+				String uniqueKey = "";
+				List<LockDetail> lockDetails = FrameworkServiceUtil.getLockDetails();
+				for (LockDetail lockDetail : lockDetails) {
+					if("Start".equalsIgnoreCase(lockDetail.getActionType()) && getAppId().equals(lockDetail.getAppId())) {
+						uniqueKey = lockDetail.getUniqueKey();
+					}
+				}
+				if (StringUtils.isNotEmpty(uniqueKey)) {
+					FrameworkServiceUtil.removeLock(uniqueKey);
+				}
+			}
 		}
 
 		return reader;

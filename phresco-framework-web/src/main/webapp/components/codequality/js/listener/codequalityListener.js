@@ -25,14 +25,15 @@ define([], function() {
 			var self = this;
 			var ipjson = $("#codeValidateForm").serialize();
 			var appdetails = commonVariables.api.localVal.getJson('appdetails');
+			var userInfo = JSON.parse(commonVariables.api.localVal.getSession('userInfo'));
 			var queryString = '';
 			appId = appdetails.data.appInfos[0].id;
 			projectId = appdetails.data.id;
 			customerId = appdetails.data.customerIds[0];
 			username = commonVariables.api.localVal.getSession('username');
 						
-			if(appdetails !== null){
-				queryString ="username="+username+"&appId="+appId+"&customerId="+customerId+"&goal=validate-code&phase=validate-code&projectId="+projectId+"&"+ipjson;
+			if(appdetails !== null && userInfo !== null){
+				queryString ="username="+username+"&appId="+appId+"&customerId="+customerId+"&goal=validate-code&phase=validate-code&projectId="+projectId+"&"+ipjson+'&displayName='+userInfo.displayName;
 			}
 			$('#iframePart').html('');
 			self.openConsole();//To open the console

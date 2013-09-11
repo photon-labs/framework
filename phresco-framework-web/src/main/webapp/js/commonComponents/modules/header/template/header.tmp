@@ -10,6 +10,7 @@
 			<li id="adminMenu"><a href="#" id="admin" data-i18n="header.menu.admin"></a></li>
 		</ul>
 	</div>
+	<input type="hidden" class="headerAppId" value=""/>
 	<div class="header_right flt_right">
 		<div class="user_login">
 			<div class="user_icon">&nbsp;</div><span id="displayname">{{displayName}}</span>&nbsp;&nbsp; | &nbsp;&nbsp; 

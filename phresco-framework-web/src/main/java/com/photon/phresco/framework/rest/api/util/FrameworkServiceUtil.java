@@ -991,7 +991,7 @@ public class FrameworkServiceUtil implements Constants, FrameworkConstants, Resp
 				}
 				
 				Gson gson = new Gson();
-				String infoJSON = gson.toJson(lockDetails);
+				String infoJSON = gson.toJson(newLockDetails);
 				fstream = new FileWriter(getLockFilePath());
 				out = new BufferedWriter(fstream);
 				out.write(infoJSON);
