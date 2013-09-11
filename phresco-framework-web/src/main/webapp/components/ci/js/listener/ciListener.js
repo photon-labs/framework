@@ -1449,25 +1449,6 @@ define([], function() {
 				emptyFound = true;			
 			}
 			
-			var selectedJobLiObj = $("#sortable2 li[temp=ci]");
-			
-			$(selectedJobLiObj).each(function(index) {
-				var thisAnchorElem = $(this).find('a');
-				var thisJobJsonData = $(thisAnchorElem).data("jobJson");
-				if(thisJobJsonData !== undefined) {
-					if(thisJobJsonData.jobName === $("input[name=jobName]").val()) {
-						$("input[name=jobName]").focus();
-						$("input[name=jobName]").val("");
-						$("input[name=jobName]").attr('placeholder','Job Already Existss');
-						$("input[name=jobName]").addClass("errormessage");
-						$("input[name=jobName]").bind('keypress', function() {
-							$(this).removeClass("errormessage");
-						});		
-						emptyFound = true;		
-					}
-				}
-			});
-			
 			if(templateJsonData.type === "performanceTest" || templateJsonData.type === "loadTest") {
 				var ciRequestBody = {}, redirect = true, templJsonStr="",testAction;
 				redirect = self.contextUrlsMandatoryVal();
