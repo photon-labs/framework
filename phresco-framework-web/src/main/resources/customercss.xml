@@ -44,7 +44,7 @@
 	".icon_images": {
      "background-color": "buttonBackGroundColor"
 	},
-	"title_nav ul a": {
+	".title_nav ul a": {
       "Color":"editNavigationLink"
 	},
 	".title_nav ul a:hover": {
