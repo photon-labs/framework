@@ -199,7 +199,8 @@ define(["projectlist/projectList"], function(ProjectList) {
 					start();
 					var password = $(commonVariables.contentPlaceholder).find('#pwd_294187d7-f75a-4adc-bb25-ce9465e0e82f').attr('class');
 					notEqual("errormessage", password, 'Password div error class added test');
-					self.projectaddrepoVerification(projectlist);
+					//self.projectaddrepoVerification(projectlist);
+					self.projectCommitUiVerification(projectlist);
 				}, 1000);
 			}); 
 		},
@@ -343,7 +344,8 @@ define(["projectlist/projectList"], function(ProjectList) {
 					start();
 					var getval = $(commonVariables.contentPlaceholder).find("#noReport_294187d7-f75a-4adc-bb25-ce9465e0e82f").text();
 					equal("No Reports are Available", getval, "Delete pdf successfully.");
-					self.projectcommitVerification(projectlist);
+					//self.projectcommitVerification(projectlist);
+					self.projectcommitSucessVerification(projectlist);
 				}, 2500);
 			});
 		},
@@ -453,7 +455,8 @@ define(["projectlist/projectList"], function(ProjectList) {
 					var visibility =  $('#svn_update294187d7-f75a-4adc-bb25-ce9465e0e82f').css('display').trim();
 					equal("block", visibility, "Add to Commit popup shown");
 					equal("svn", getval, "Project List SVNUPDATE popup rendered");
-					self.projectSVNUpdateVerification(projectlist);
+					//self.projectSVNUpdateVerification(projectlist);
+					self.projectImportAppSuccessVerification(projectlist);
 				}, 2500);
 			});
 		},
