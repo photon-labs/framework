@@ -25,13 +25,15 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Properties;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.core.Response;
-import javax.xml.transform.dom.DOMSource;
 
 import junit.framework.Assert;
 
 import org.apache.commons.io.FileUtils;
+import org.junit.BeforeClass;
 import org.junit.Test;
+import org.springframework.mock.web.MockHttpServletRequest;
 
 import com.photon.phresco.api.ConfigManager;
 import com.photon.phresco.configuration.Configuration;
@@ -43,10 +45,19 @@ import com.photon.phresco.framework.model.CronExpressionInfo;
 import com.photon.phresco.framework.rest.api.util.FrameworkServiceUtil;
 import com.photon.phresco.impl.ConfigManagerImpl;
 import com.photon.phresco.util.Utility;
+import com.phresco.pom.exception.PhrescoPomException;
+import com.phresco.pom.util.PomProcessor;
 
 public class ConfigurationServiceTest extends LoginServiceTest {
 	
 	ConfigurationService configurationService = new ConfigurationService();
+	
+	@BeforeClass	
+    public static void oneTimeSetUp() throws PhrescoException, PhrescoPomException {
+    	PomProcessor pomProcessor = FrameworkServiceUtil.getPomProcessor("TestProject");
+    	pomProcessor.setProperty("phresco.theme.target.dir", "/do_not_checkin/theme");
+    	pomProcessor.save();
+    }
 	
 	@Test
 	public void getAllEnvironmentsTest() {
@@ -81,7 +92,7 @@ public class ConfigurationServiceTest extends LoginServiceTest {
 		Properties propProd = new Properties();
 		propProd.setProperty("protocol", "http");
 		propProd.setProperty("host", "localhost");
-		propProd.setProperty("port", "8654");
+		propProd.setProperty("port", "80");
 		propProd.setProperty("admin_username", "");
 		propProd.setProperty("admin_password", "");
 		propProd.setProperty("remoteDeployment", "false");
@@ -108,7 +119,7 @@ public class ConfigurationServiceTest extends LoginServiceTest {
 		prodWebService.setType("WebService");
 		Properties propProdWs= new Properties();
 		propProdWs.setProperty("host", "localhost");
-		propProdWs.setProperty("port", "3306");
+		propProdWs.setProperty("port", "5674");
 		propProdWs.setProperty("username", "root");
 		propProdWs.setProperty("password", "");
 		propProdWs.setProperty("context", "webservice");
@@ -183,6 +194,10 @@ public class ConfigurationServiceTest extends LoginServiceTest {
 		List<Environment> data = environmentList.getData();
 		Assert.assertEquals(200, response.getStatus());
 		Assert.assertEquals(3, data.size());
+		
+		Response responseSame = configurationService.addEnvironment(appDirName, environments);
+		Assert.assertEquals(200, responseSame.getStatus());
+		
 		Response responseFail = configurationService.addEnvironment("", environments);
 		Assert.assertEquals(200, responseFail.getStatus());
 	}
@@ -270,6 +285,9 @@ public class ConfigurationServiceTest extends LoginServiceTest {
 		Response responseNonEnvList = configurationService.getAllEnvironments(appDirName, "false", "Server");
 		Assert.assertEquals(200, responseNonEnvList.getStatus());
 		
+		Response environmentList = configurationService.getEnvironmentList(customerId, appDirName);
+		Assert.assertEquals(200, environmentList.getStatus());
+		
 	}
 	
 	@Test
@@ -297,6 +315,9 @@ public class ConfigurationServiceTest extends LoginServiceTest {
 		Response response = configurationService.deleteEnv(appDirName, envName);
 		Assert.assertEquals(200, response.getStatus());
 		
+//		Response responseFail = configurationService.deleteEnv(appDirName, envName);
+//		Assert.assertEquals(200, responseFail.getStatus());
+		
 		Response responsedel = configurationService.deleteConfiguraion(appDirName, "Configs");
 		Assert.assertEquals(200, responsedel.getStatus());
 		
@@ -307,6 +328,8 @@ public class ConfigurationServiceTest extends LoginServiceTest {
 	public void  getSettingsTemplateTest() {
 		Response templateLoginFail = configurationService.getSettingsTemplate(appDirName, techId, "sample", "Server");
 		Assert.assertEquals(200, templateLoginFail.getStatus());
+		Response templateServer = configurationService.getSettingsTemplate(appDirName, techId, userId, "Server");
+		Assert.assertEquals(200, templateServer.getStatus());
 		Response responseDb = configurationService.getSettingsTemplate(appDirName, techId, userId, "Database");
 		Assert.assertEquals(200, responseDb.getStatus());
 		Response responseServer = configurationService.getSettingsTemplate(appDirName, techId, userId, "Email");
@@ -342,14 +365,71 @@ public class ConfigurationServiceTest extends LoginServiceTest {
 		Response cronValidation = configurationService.cronValidation(cron);
 		assertEquals(200 , cronValidation.getStatus());
 		
-		CronExpressionInfo cron1 = new CronExpressionInfo();
-		cron1.setCronBy("Daily");
-		cron1.setEvery("true");
-		cron1.setHours("5");
-		cron1.setMinutes("23");
-		cron1.setDay("8");
-		Response cronValdaily = configurationService.cronValidation(cron1);
+		CronExpressionInfo cron2 = new CronExpressionInfo();
+		cron2.setCronBy("Daily");
+		cron2.setEvery("false");
+		cron2.setHours("*");
+		cron2.setMinutes("*");
+		cron2.setDay("8");
+		Response cronValidation2 = configurationService.cronValidation(cron2);
+		assertEquals(200 , cronValidation2.getStatus());
+		
+		CronExpressionInfo cron3 = new CronExpressionInfo();
+		cron3.setCronBy("Daily");
+		cron3.setEvery("false");
+		cron3.setHours("*");
+		cron3.setMinutes("23");
+		cron3.setDay("8");
+		Response cronValidation3 = configurationService.cronValidation(cron3);
+		assertEquals(200 , cronValidation3.getStatus());
+		
+		CronExpressionInfo cron4 = new CronExpressionInfo();
+		cron4.setCronBy("Daily");
+		cron4.setEvery("false");
+		cron4.setHours("4");
+		cron4.setMinutes("*");
+		cron4.setDay("8");
+		Response cronValidation4 = configurationService.cronValidation(cron4);
+		assertEquals(200 , cronValidation4.getStatus());
+		
+		
+		CronExpressionInfo cronExp = new CronExpressionInfo();
+		cronExp.setCronBy("Daily");
+		cronExp.setEvery("true");
+		cronExp.setHours("5");
+		cronExp.setMinutes("23");
+		cronExp.setDay("8");
+		Response cronValdaily = configurationService.cronValidation(cronExp);
 		assertEquals(200 , cronValdaily.getStatus());
+		
+		CronExpressionInfo cronExp1 = new CronExpressionInfo();
+		cronExp1.setCronBy("Daily");
+		cronExp1.setEvery("true");
+		cronExp1.setHours("*");
+		cronExp1.setMinutes("*");
+		cronExp1.setDay("8");
+		Response cronValdaily1 = configurationService.cronValidation(cronExp1);
+		assertEquals(200 , cronValdaily1.getStatus());
+		
+		CronExpressionInfo cronExp2 = new CronExpressionInfo();
+		cronExp2.setCronBy("Daily");
+		cronExp2.setEvery("true");
+		cronExp2.setHours("*");
+		cronExp2.setMinutes("23");
+		cronExp2.setDay("8");
+		Response cronValdaily2 = configurationService.cronValidation(cronExp2);
+		assertEquals(200 , cronValdaily2.getStatus());
+		
+		
+		CronExpressionInfo cronExp3 = new CronExpressionInfo();
+		cronExp3.setCronBy("Daily");
+		cronExp3.setEvery("true");
+		cronExp3.setHours("6");
+		cronExp3.setMinutes("*");
+		cronExp3.setDay("8");
+		Response cronValdaily3 = configurationService.cronValidation(cronExp3);
+		assertEquals(200 , cronValdaily3.getStatus());
+		
 	}
 	
 	@Test
@@ -403,27 +483,52 @@ public class ConfigurationServiceTest extends LoginServiceTest {
 	@Test
 	public void configurationValidationTest() {
 		Properties propertiesServer = new Properties();
+		Properties propertiesSerDupl = new Properties();
 		Properties propertiesEmail = new Properties();
+		Properties propertiesDupl = new Properties();
 		Properties propertiesSiteCore = new Properties();
+		
 		propertiesServer.setProperty("context", "CometDTesting");
-		propertiesServer.setProperty("admin_username", "");
-		propertiesServer.setProperty("deploy_dir", "D:/server for phresco testing/New Folder/");
 		propertiesServer.setProperty("additional_context", "");
 		propertiesServer.setProperty("port", "8888");
-		propertiesServer.setProperty("admin_password", "");
+		propertiesServer.setProperty("remoteDeployment", "true");
+		propertiesServer.setProperty("admin_password", "sade");
+		propertiesServer.setProperty("admin_username", "");
 		propertiesServer.setProperty("version", "7.0.x");
-		propertiesServer.setProperty("type", "Apache Tomcat");
-		propertiesServer.setProperty("remoteDeployment", "false");
+		propertiesServer.setProperty("type", "NodeJs");
 		propertiesServer.setProperty("host", "localhost");
 		propertiesServer.setProperty("protocol", "http");
 		
+		
+		propertiesSerDupl.setProperty("context", "CometDTesting");
+		propertiesSerDupl.setProperty("admin_username", "");
+		propertiesSerDupl.setProperty("deploy_dir", "D:/server for phresco testing/New Folder/");
+		propertiesSerDupl.setProperty("additional_context", "");
+		propertiesSerDupl.setProperty("port", "6525");
+		propertiesSerDupl.setProperty("admin_password", "");
+		propertiesSerDupl.setProperty("version", "6.0.x");
+		propertiesSerDupl.setProperty("type", "Apache Tomcat");
+		propertiesSerDupl.setProperty("remoteDeployment", "false");
+		propertiesSerDupl.setProperty("admin_username", "vvvv");
+		propertiesSerDupl.setProperty("host", "localhost");
+		propertiesSerDupl.setProperty("protocol", "http");
+		
 		propertiesEmail.setProperty("port", "8596");
-		propertiesEmail.setProperty("emailid", "test@gmail.com");
+		propertiesEmail.setProperty("emailid", "");
 		propertiesEmail.setProperty("password", "test");
 		propertiesEmail.setProperty("incoming_mail_server", "test");
 		propertiesEmail.setProperty("incoming_mail_port", "test");
 		propertiesEmail.setProperty("host", "test");
 		propertiesEmail.setProperty("username", "test");
+		
+		
+		propertiesDupl.setProperty("port", "8596");
+		propertiesDupl.setProperty("emailid", "sam.as@yahoo.com");
+		propertiesDupl.setProperty("password", "test");
+		propertiesDupl.setProperty("incoming_mail_server", "test");
+		propertiesDupl.setProperty("incoming_mail_port", "test");
+		propertiesDupl.setProperty("host", "test");
+		propertiesDupl.setProperty("username", "test");
 		
 		propertiesSiteCore.setProperty("siteCoreInstPath", "");
 		propertiesSiteCore.setProperty("protocol", "http");
@@ -438,46 +543,139 @@ public class ConfigurationServiceTest extends LoginServiceTest {
 		
 		
 		
-		Configuration configurationServer = new Configuration("Server", "Serverconfig", "dev", "Server", propertiesServer);
+		Configuration configurationServer = new Configuration("", "serverconfig", "dev", "Server", propertiesServer);
+		Configuration configuration = new Configuration("ServerConfig", "serverconfig", "dev", "Server", propertiesSerDupl);
 		Configuration configurationEmail = new Configuration("Email", "Emailconfig", "dev", "Email", propertiesEmail);
+		Configuration configurationEmailDup = new Configuration("Email", "Emailconfig", "dev", "Email", propertiesDupl);
 		Configuration configurationSiteCorePath = new Configuration("Server", "Testconfig", "dev", "Server", propertiesSiteCore);
-		Configuration configurationServerDuplicate = new Configuration("Server2", "Serverconfig", "dev", "Server", propertiesServer);
-		Configuration configurationEmailDuplicate = new Configuration("Email2", "Emailconfig", "dev", "Email", propertiesEmail);
-		Configuration configurationServerName = new Configuration("Server", "Serverconfig", "dev", "Server", propertiesServer);
+		Configuration configurationServerDuplicate = new Configuration("Server2", "Serverconfig", "dev", "Server", propertiesSerDupl);
+		Configuration configurationEmailDuplicate = new Configuration("Email2", "Emailconfig", "dev", "Email", propertiesDupl);
+		Configuration configurationServerName = new Configuration("Server", "Serverconfig", "dev", "Server", propertiesSerDupl);
 		List<Configuration> configListServer = new ArrayList<Configuration>();
 		List<Configuration> configListEmail = new ArrayList<Configuration>();
 		List<Configuration> configListSiteCore = new ArrayList<Configuration>();
 		List<Configuration> configListPass = new ArrayList<Configuration>();
 		List<Configuration> configListName = new ArrayList<Configuration>();
+		
 		configListServer.add(configurationServer);
 		configListServer.add(configurationServerDuplicate);
 		
 		configListEmail.add(configurationEmail);
 		configListEmail.add(configurationEmailDuplicate);
 		
+			
 		configListSiteCore.add(configurationSiteCorePath);
-		configListSiteCore.add(configurationServer);
+		configListSiteCore.add(configuration);
 		
-		configListPass.add(configurationServer);
-		configListPass.add(configurationEmail);
+		configListPass.add(configuration);
+		configListPass.add(configurationEmailDup);
 		
-		configListName.add(configurationServerName);
-		configListName.add(configurationServer);
+		configListName.add(configuration);
+		configListName.add(configurationEmailDup);
 		
-		Response responseServer = configurationService.updateConfiguration(userId, customerId, appDirName, "dev", configListServer,"","");
+		
+		Response failName = configurationService.updateConfiguration(userId, customerId, appDirName, "dev", configListServer,"","");
+		Assert.assertEquals(200, failName.getStatus());
+		
+		Configuration configurationServer1 = new Configuration("Server2", "serverconfig", "dev", "rett", propertiesServer);
+		List<Configuration> configListServer1 = new ArrayList<Configuration>();
+		configListServer1.add(configurationServerDuplicate);
+		configListServer1.add(configurationServer1);
+		Response failType = configurationService.updateConfiguration(userId, customerId, appDirName, "dev", configListServer1,"","");
+		Assert.assertEquals(200, failType.getStatus());
+		Properties propertiesServer1 = new Properties();
+		propertiesServer1.setProperty("context", "CometDTesting");
+		propertiesServer1.setProperty("admin_username", "");
+		propertiesServer1.setProperty("deploy_dir", "D:/server for phresco testing/New Folder/");
+		propertiesServer1.setProperty("additional_context", "");
+		propertiesServer1.setProperty("port", "8888");
+		propertiesServer1.setProperty("admin_password", "pwd");
+		propertiesServer1.setProperty("version", "7.0.x");
+		propertiesServer1.setProperty("type", "Apache Tomcat");
+		propertiesServer1.setProperty("remoteDeployment", "false");
+		propertiesServer1.setProperty("admin_username", "vvvv");
+		propertiesServer1.setProperty("host", "localhost");
+		propertiesServer1.setProperty("protocol", "http");
+		
+		Configuration configurationServer2 = new Configuration("Serverconfig", "serverconfig", "dev", "", propertiesServer1);
+		List<Configuration> configListServer2 = new ArrayList<Configuration>();
+		configListServer2.add(configurationServer2);
+		configListServer2.add(configurationServerDuplicate);
+		Response failmailEmp = configurationService.updateConfiguration(userId, customerId, appDirName, "dev", configListServer2,"","");
+		Assert.assertEquals(200, failmailEmp.getStatus());
+		
+		Configuration configurationServer3 = new Configuration("Serverconfig", "serverconfig", "dev", "Server", propertiesServer);
+		List<Configuration> configListServer3 = new ArrayList<Configuration>();
+		configListServer3.add(configurationServer3);
+		configListServer3.add(configurationEmailDup);
+		Response failmailEmp3 = configurationService.updateConfiguration(userId, customerId, appDirName, "dev", configListServer3,"","");
+		Assert.assertEquals(200, failmailEmp3.getStatus());
+		
+		
+		Configuration configurationServer6 = new Configuration("Serverconfig", "serverconfig", "dev", "Server", propertiesServer1);
+		List<Configuration> configListServer6 = new ArrayList<Configuration>();
+		configListServer6.add(configurationServer6);
+		configListServer6.add(configurationServerDuplicate);
+		Response failmailEmp6 = configurationService.updateConfiguration(userId, customerId, appDirName, "dev", configListServer6,"","");
+		Assert.assertEquals(200, failmailEmp6.getStatus());
+		
+		
+		Response failmailEmp7 = configurationService.updateConfiguration(userId, customerId, appDirName, "dev", configListEmail,"","");
+		Assert.assertEquals(200, failmailEmp7.getStatus());
+		
+		
+		List<Configuration> configListEmail3 = new ArrayList<Configuration>();
+		Properties propertiesEmail1 = new Properties();
+		
+		propertiesEmail1.setProperty("port", "8596");
+		propertiesEmail1.setProperty("emailid", "test@!#gmail.com");
+		propertiesEmail1.setProperty("password", "test");
+		propertiesEmail1.setProperty("incoming_mail_server", "test");
+		propertiesEmail1.setProperty("incoming_mail_port", "test");
+		propertiesEmail1.setProperty("host", "test");
+		propertiesEmail1.setProperty("username", "test");
+		Configuration configurationEmail1 = new Configuration("Email", "Emailconfig", "dev", "Email", propertiesEmail1);
+		configListEmail3.add(configurationEmail1);
+		configListEmail3.add(configurationEmailDuplicate);
+		Response failmailVal = configurationService.updateConfiguration(userId, customerId, appDirName, "dev", configListEmail3,"","");
+		Assert.assertEquals(200, failmailVal.getStatus());
+		
+		List<Configuration> configListEmail4 = new ArrayList<Configuration>();
+		Properties propertiesEmail2 = new Properties();
+		
+		propertiesEmail2.setProperty("port", "8596");
+		propertiesEmail2.setProperty("emailid", "test@gmail.com");
+		propertiesEmail2.setProperty("password", "test");
+		propertiesEmail2.setProperty("incoming_mail_server", "test");
+		propertiesEmail2.setProperty("incoming_mail_port", "test");
+		propertiesEmail2.setProperty("host", "test");
+		propertiesEmail2.setProperty("username", "test");
+		
+		Configuration configurationEmail2 = new Configuration("Email", "Emailconfig", "dev", "Email", propertiesEmail2);
+		configListEmail4.add(configurationEmailDuplicate);
+		configListEmail4.add(configurationEmail2);
+		Response responseServer = configurationService.updateConfiguration(userId, customerId, appDirName, "dev", configListEmail4,"","");
 		Assert.assertEquals(200, responseServer.getStatus());
+		Configuration configurationEmail3 = new Configuration("Email", "Emailconfig", "dev", "Email", propertiesEmail2);
+		List<Configuration> configListEmail5 = new ArrayList<Configuration>();
+		configListEmail5.add(configurationEmail3);
+		configListEmail5.add(configurationEmailDuplicate);
 		
-		Response responseEmail = configurationService.updateConfiguration(userId, customerId, appDirName, "dev", configListEmail,"","");
+		Response responseEmail = configurationService.updateConfiguration(userId, customerId, appDirName, "dev", configListEmail5,"","");
 		Assert.assertEquals(200, responseEmail.getStatus());
+		
 		
 		Response responseSiteCore = configurationService.updateConfiguration(userId, customerId, appDirName, "dev", configListSiteCore,"","");
 		Assert.assertEquals(200, responseSiteCore.getStatus());
 		
+		
 		Response responseName = configurationService.updateConfiguration(userId, customerId, appDirName, "dev", configListName,"","");
 		Assert.assertEquals(200, responseName.getStatus());
 		
+		
 		Response responsePass = configurationService.updateConfiguration(userId, customerId, appDirName, "dev", configListPass,"","");
 		Assert.assertEquals(200, responsePass.getStatus());
+		
 		
 	}
 	
@@ -486,6 +684,9 @@ public class ConfigurationServiceTest extends LoginServiceTest {
 		String connectionUrl = getConnectionUrl("Production", "Server", "serverconfig");
 		Response response = configurationService.connectionAliveCheck(connectionUrl);
 		Assert.assertEquals(200, response.getStatus());
+		String connection = getConnectionUrl("Production", "WebService", "ws");
+		Response urlFail = configurationService.connectionAliveCheck(connection);
+		Assert.assertEquals(200, urlFail.getStatus());
 		String connectionUrlFail = "htp" + "," + "localhost" + "," + "7o9o";
 		Response responseFail = configurationService.connectionAliveCheck(connectionUrlFail);
 		Assert.assertEquals(200, responseFail.getStatus());
@@ -502,8 +703,8 @@ public class ConfigurationServiceTest extends LoginServiceTest {
 	
 //	@Test
 	public void returnCertificate() throws PhrescoException {
-		Response authenticateServer = configurationService.authenticateServer("kumar_s", "8443", "TestProject");
-		Assert.assertEquals(200, authenticateServer.getStatus());
+//		Response authenticateServer = configurationService.authenticateServer("kumar_s", "8443", "TestProject");
+//		Assert.assertEquals(200, authenticateServer.getStatus());
 	}
 	
 	@Test
@@ -539,8 +740,8 @@ public class ConfigurationServiceTest extends LoginServiceTest {
 		add4.setPort("6356");
 		add4.setFromPage("configuraiton");
 		add4.setPropValue("");
-		Response addFailsonValue = configurationService.addCertificate(add4);
-		Assert.assertEquals(200, addFailsonValue.getStatus());
+//		Response addFailsonValue = configurationService.addCertificate(add4);
+//		Assert.assertEquals(200, addFailsonValue.getStatus());
 		 
 		File certFile = FileUtils.toFile(this.getClass().getResource("/Production-Server.crt"));
 		AddCertificateInfo add5 = new AddCertificateInfo();
@@ -553,8 +754,8 @@ public class ConfigurationServiceTest extends LoginServiceTest {
 		add5.setEnvironmentName("Production");
 		add5.setConfigName("Server");
 		add5.setCustomerId("photon");
-		Response authenticateServerPath = configurationService.addCertificate(add5);
-		Assert.assertEquals(200, authenticateServerPath.getStatus());
+//		Response authenticateServerPath = configurationService.addCertificate(add5);
+//		Assert.assertEquals(200, authenticateServerPath.getStatus());
 		
 		AddCertificateInfo add6 = new AddCertificateInfo();
 		add6.setAppDirName("TestProject");
@@ -566,20 +767,108 @@ public class ConfigurationServiceTest extends LoginServiceTest {
 		add6.setEnvironmentName("Production");
 		add6.setConfigName("Server");
 		add6.setCustomerId("photon");
-		Response authenticateServersettings = configurationService.addCertificate(add6);
-		Assert.assertEquals(200, authenticateServersettings.getStatus());
+//		Response authenticateServersettings = configurationService.addCertificate(add6);
+//		Assert.assertEquals(200, authenticateServersettings.getStatus());
 		
 	}
 	
-	@Test
+		@Test
 		public void fileBrowseTest() {
 		Response fileStructure = configurationService.returnFileBorwseFolderStructure(Utility.getProjectHome()
 		+ appDirName);
 		Assert.assertEquals(200, fileStructure.getStatus());
+		
+		Response fileStructureFail = configurationService.returnFileBorwseFolderStructure("D:\\temp\\");
+		Assert.assertEquals(200, fileStructureFail.getStatus());
+		
 		Response fileEntireStructure = configurationService.returnFileBorwseEntireStructure(appDirName, null);
 		Assert.assertEquals(200, fileEntireStructure.getStatus());
+		
+		Response fileEntireStructureFail = configurationService.returnFileBorwseEntireStructure("test", null);
+		Assert.assertEquals(200, fileEntireStructureFail.getStatus());
+		
 		}
+	
+	
+	@Test
+	public void uploadFileOnTarget() {
+		MockHttpServletRequest request = new MockHttpServletRequest();
+		request.addHeader("appDirName", appDirName);
+		request.addHeader("actionType", "editconfig");
+		request.addHeader("envName", "Production");
+		request.addHeader("configType", "Theme");
+		request.addHeader("configName", "serverconfig");
+		request.addHeader("oldName", "test");
+		request.addHeader("propName", "port");
+		request.addHeader("X-File-Name", "test.zip");
+		HttpServletRequest httpServletRequest = (HttpServletRequest)request;
+		Response uploadFile = configurationService.uploadFile(httpServletRequest);
+		Assert.assertEquals(200, uploadFile.getStatus());
+	}
+	
+	@Test
+	public void removeFileOnTarget() {
+		Response removeConfigFile = configurationService.removeConfigFile(appDirName, "Theme", "sample", "test.zip", "Production", "Server");
+		Assert.assertEquals(200, removeConfigFile.getStatus());
+	}
+	
+	@Test
+	public void removeThemeProperty() throws PhrescoException, PhrescoPomException {
+		PomProcessor pomProcessor = FrameworkServiceUtil.getPomProcessor("TestProject");
+		boolean removeProperty = pomProcessor.removeProperty("phresco.theme.target.dir");
+    	pomProcessor.save();
+    	Assert.assertEquals(true, removeProperty);
+	}
+	
+	@Test
+	public void uploadFile() {
+		MockHttpServletRequest request = new MockHttpServletRequest();
+		request.addHeader("appDirName", appDirName);
+		request.addHeader("actionType", "editconfig");
+		request.addHeader("envName", "Production");
+		request.addHeader("configType", "Server");
+		request.addHeader("configName", "serverconfig");
+		request.addHeader("oldName", "test");
+		request.addHeader("propName", "port");
+		request.addHeader("X-File-Name", "test.zip");
+		HttpServletRequest httpServletRequest = (HttpServletRequest)request;
+		Response uploadFile = configurationService.uploadFile(httpServletRequest);
+		Assert.assertEquals(200, uploadFile.getStatus());
+		
+		MockHttpServletRequest request1 = new MockHttpServletRequest();
+		request1.addHeader("appDirName", appDirName);
+		request1.addHeader("actionType", "editconfig");
+		request1.addHeader("envName", "Production");
+		request1.addHeader("configType", "Server");
+		request1.addHeader("configName", "serverconfig");
+		request1.addHeader("oldName", "");
+		request1.addHeader("propName", "port");
+		request1.addHeader("X-File-Name", "test.zip");
+		HttpServletRequest httpServletRequest1 = (HttpServletRequest)request1;
+		Response uploadFile1 = configurationService.uploadFile(httpServletRequest1);
+		Assert.assertEquals(200, uploadFile1.getStatus());
+		
+		request1.addHeader("oldName", "serverconfig");
+		HttpServletRequest httpServletRequest2 = (HttpServletRequest)request1;
+		Response uploadFile2 = configurationService.uploadFile(httpServletRequest2);
+		Assert.assertEquals(200, uploadFile2.getStatus());
+		
+	}
 
+	@Test
+	public void listFiles() {
+		Response listUploadedFiles = configurationService.listUploadedFiles(appDirName, "Production", "Server", "server", "true");
+		Assert.assertEquals(200, listUploadedFiles.getStatus());
+		Response listUploadedFile = configurationService.listUploadedFiles(appDirName, "Production", "Server", "serverconfig", "false");
+		Assert.assertEquals(200, listUploadedFile.getStatus());
+		
+	}
+	
+	@Test
+	public void removeFile() {
+		Response removeConfigFile = configurationService.removeConfigFile(appDirName, "content", "sample", "test.zip", "Production", "Server");
+		Assert.assertEquals(200, removeConfigFile.getStatus());
+	}
 	
 	private String getConnectionUrl(String envName, String type, String configName) throws PhrescoException {
 		String configFileDir = FrameworkServiceUtil.getConfigFileDir(appDirName);

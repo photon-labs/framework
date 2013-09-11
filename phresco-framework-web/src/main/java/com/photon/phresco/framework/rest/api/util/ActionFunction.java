@@ -113,14 +113,12 @@ public class ActionFunction extends RestBase implements Constants ,FrameworkCons
 	private String message="";
 	private String isFromCI = "";
 	private List<String> minifyFileNames = null;
-	private String minifyAll = "";
 	private String projectModule = "";
 	private String fromPage = "";
 	private String pdfName = "";
 	private String reportDataType = "";
 	private String testBasis = "";
 	private String testAction = "";
-	private String displayName = "";
 	boolean connectionAlive = false;
 	private ServiceManager serviceManager = null;
 	HttpServletRequest request;
@@ -266,14 +264,6 @@ public class ActionFunction extends RestBase implements Constants ,FrameworkCons
 				}
 			} else {
 				throw new PhrescoException("No valid MINIFYFILENAMES Passed");
-			}
-
-			String minifyAll = request.getParameter(MINIFY_ALL);
-			if (StringUtils.isNotEmpty(minifyAll) && !"null".equalsIgnoreCase(request.getParameter(MINIFY_ALL))) {
-				setMinifyAll(minifyAll);	
-			} else {
-				//To avoid parser exception incase minifyall is not selected.
-				setMinifyAll("false");
 			}
 		} catch (Exception e) {
 			throw new PhrescoException(e.getMessage());
@@ -551,9 +541,10 @@ public class ActionFunction extends RestBase implements Constants ,FrameworkCons
 		if (response.isErrorFound()) {
 			return response;
 		}
+		String displayName = request.getParameter("displayName");
 		UUID uniqueKey = UUID.randomUUID();
 		String unique_key = uniqueKey.toString();
-		server_logs = build(unique_key);
+		server_logs = build(unique_key, displayName);
 		if (server_logs != null) {
 			return generateResponse(server_logs, unique_key);
 		} else {
@@ -577,9 +568,10 @@ public class ActionFunction extends RestBase implements Constants ,FrameworkCons
 		if (response.isErrorFound()) {
 			return response;
 		}
+		String displayName = request.getParameter("displayName");
 		UUID uniqueKey = UUID.randomUUID();
 		String unique_key = uniqueKey.toString();
-		server_logs = deploy(unique_key);
+		server_logs = deploy(unique_key, displayName);
 		if (server_logs != null) {
 			return generateResponse(server_logs, unique_key);
 		} else {
@@ -603,9 +595,10 @@ public class ActionFunction extends RestBase implements Constants ,FrameworkCons
 	public ActionResponse runUnitTest(HttpServletRequest request) throws PhrescoException {
 		printLogs();
 		BufferedInputStream server_logs=null;
+		String displayName = request.getParameter("displayName");
 		UUID uniqueKey = UUID.randomUUID();
 		String unique_key = uniqueKey.toString();
-		server_logs = runUnitTest(unique_key);
+		server_logs = runUnitTest(unique_key, displayName);
 		if (server_logs != null) {
 			return generateResponse(server_logs, unique_key);
 		} else {
@@ -616,9 +609,10 @@ public class ActionFunction extends RestBase implements Constants ,FrameworkCons
 	public ActionResponse runComponentTest(HttpServletRequest request) throws PhrescoException {
 		printLogs();
 		BufferedInputStream server_logs=null;
+		String displayName = request.getParameter("displayName");
 		UUID uniqueKey = UUID.randomUUID();
 		String unique_key = uniqueKey.toString();
-		server_logs = runComponentTest(unique_key);
+		server_logs = runComponentTest(unique_key, displayName);
 		if (server_logs != null) {
 			return generateResponse(server_logs, unique_key);
 		} else {
@@ -629,9 +623,10 @@ public class ActionFunction extends RestBase implements Constants ,FrameworkCons
 	public ActionResponse codeValidate(HttpServletRequest request) throws PhrescoException {
 		printLogs();
 		BufferedInputStream server_logs=null;
+		String displayName = request.getParameter("displayName");
 		UUID uniqueKey = UUID.randomUUID();
 		String unique_key = uniqueKey.toString();
-		server_logs = codeValidate(unique_key);
+		server_logs = codeValidate(unique_key, displayName);
 		if (server_logs != null) {
 			return generateResponse(server_logs, unique_key);
 		} else {
@@ -654,9 +649,10 @@ public class ActionFunction extends RestBase implements Constants ,FrameworkCons
 		if (response.isErrorFound()) {
 			return response;
 		}
+		String displayName = request.getParameter("displayName");
 		UUID uniqueKey = UUID.randomUUID();
 		String unique_key = uniqueKey.toString();
-		server_logs = runAgainstSource(unique_key);
+		server_logs = runAgainstSource(unique_key, displayName);
 		if (server_logs != null) {
 			return generateResponse(server_logs, unique_key);
 		} else {
@@ -676,6 +672,32 @@ public class ActionFunction extends RestBase implements Constants ,FrameworkCons
 			throw new PhrescoException("No stopServer logs obatined");
 		}
 	}
+	
+	public ActionResponse validateTheme(HttpServletRequest request) throws PhrescoException {
+		printLogs();
+		BufferedInputStream server_logs=null;
+		UUID uniqueKey = UUID.randomUUID();
+		String unique_key = uniqueKey.toString();
+		server_logs = validateTheme();
+		if (server_logs != null) {
+			return generateResponse(server_logs, unique_key);
+		} else {
+			throw new PhrescoException("No validateTheme logs obatined");
+		}
+	}
+
+	public ActionResponse validateContent(HttpServletRequest request) throws PhrescoException {
+		printLogs();
+		BufferedInputStream server_logs=null;
+		UUID uniqueKey = UUID.randomUUID();
+		String unique_key = uniqueKey.toString();
+		server_logs = validateContent();
+		if (server_logs != null) {
+			return generateResponse(server_logs, unique_key);
+		} else {
+			throw new PhrescoException("No validateContent logs obatined");
+		}
+	}
 
 	public ActionResponse restartServer(HttpServletRequest request) throws PhrescoException, IOException {
 		printLogs();
@@ -693,9 +715,10 @@ public class ActionFunction extends RestBase implements Constants ,FrameworkCons
 	public ActionResponse performanceTest(HttpServletRequest request, PerformanceUrls performanceUrls) throws PhrescoException, IOException {
 		printLogs();
 		BufferedInputStream server_logs=null;
+		String displayName = request.getParameter("displayName");
 		UUID uniqueKey = UUID.randomUUID();
 		String unique_key = uniqueKey.toString();
-		server_logs = performanceTest(performanceUrls, unique_key);
+		server_logs = performanceTest(performanceUrls, unique_key, displayName);
 		if (server_logs != null) {
 			return generateResponse(server_logs, unique_key);
 		} else {
@@ -706,9 +729,10 @@ public class ActionFunction extends RestBase implements Constants ,FrameworkCons
 	public ActionResponse loadTest(HttpServletRequest request, PerformanceUrls performanceUrls) throws PhrescoException, IOException {
 		printLogs();
 		BufferedInputStream server_logs=null;
+		String displayName = request.getParameter("displayName");
 		UUID uniqueKey = UUID.randomUUID();
 		String unique_key = uniqueKey.toString();
-		server_logs = loadTest(performanceUrls, unique_key);
+		server_logs = loadTest(performanceUrls, unique_key, displayName);
 		if (server_logs != null) {
 			return generateResponse(server_logs, unique_key);
 		} else {
@@ -759,9 +783,10 @@ public class ActionFunction extends RestBase implements Constants ,FrameworkCons
 	public ActionResponse runFunctionalTest(HttpServletRequest request) throws PhrescoException, IOException {
 		printLogs();
 		BufferedInputStream server_logs=null;
+		String displayName = request.getParameter("displayName");
 		UUID uniqueKey = UUID.randomUUID();
 		String unique_key = uniqueKey.toString();
-		server_logs = runFunctionalTest(unique_key);
+		server_logs = runFunctionalTest(unique_key, displayName);
 		if (server_logs != null) {
 			return generateResponse(server_logs, unique_key);
 		} else {
@@ -891,7 +916,7 @@ public class ActionFunction extends RestBase implements Constants ,FrameworkCons
 		return printAsPdf(response, request);
 	}
 
-	public BufferedInputStream build(String uniqueKey) throws PhrescoException {
+	public BufferedInputStream build(String uniqueKey, String displayName) throws PhrescoException {
 		BufferedInputStream reader=null;
 		try {
 			ApplicationManager applicationManager = PhrescoFrameworkFactory.getApplicationManager();
@@ -908,7 +933,7 @@ public class ActionFunction extends RestBase implements Constants ,FrameworkCons
 			reader = applicationManager.performAction(projectInfo, ActionType.BUILD, buildArgCmds, workingDirectory);
 			
 			//To generate the lock for the particular operation
-			FrameworkUtil.generateLock(Collections.singletonList(FrameworkServiceUtil.getLockDetail(applicationInfo.getId(), REQ_BUILD, getDisplayName(), uniqueKey)), true);
+			FrameworkUtil.generateLock(Collections.singletonList(FrameworkServiceUtil.getLockDetail(applicationInfo.getId(), REQ_BUILD, displayName, uniqueKey)), true);
 		} catch (PhrescoException e) {
 			S_LOGGER.error(FrameworkUtil.getStackTraceAsString(e));
 			throw new PhrescoException("Exception occured in the build process"+e.getMessage());
@@ -917,7 +942,7 @@ public class ActionFunction extends RestBase implements Constants ,FrameworkCons
 		return reader;
 	}
 
-	public BufferedInputStream deploy(String uniqueKey) throws PhrescoException {
+	public BufferedInputStream deploy(String uniqueKey ,String  displayName) throws PhrescoException {
 		if (isDebugEnabled) {
 			S_LOGGER.debug("Entering Method  MavenFunctions.deploy()");
 		}
@@ -937,7 +962,7 @@ public class ActionFunction extends RestBase implements Constants ,FrameworkCons
 			reader = applicationManager.performAction(projectInfo, ActionType.DEPLOY, buildArgCmds, workingDirectory);
 			
 			//To generate the lock for the particular operation
-			FrameworkUtil.generateLock(Collections.singletonList(FrameworkServiceUtil.getLockDetail(applicationInfo.getId(), REQ_FROM_TAB_DEPLOY, getDisplayName(), uniqueKey)), true);
+			FrameworkUtil.generateLock(Collections.singletonList(FrameworkServiceUtil.getLockDetail(applicationInfo.getId(), REQ_FROM_TAB_DEPLOY, displayName, uniqueKey)), true);
 		} catch (PhrescoException e) {
 			if (isDebugEnabled) {
 				S_LOGGER.error("Exception occured in the deploy process()" + FrameworkUtil.getStackTraceAsString(e));
@@ -972,7 +997,7 @@ public class ActionFunction extends RestBase implements Constants ,FrameworkCons
 		return reader;
 	}
 	
-	public BufferedInputStream runUnitTest(String uniqueKey) throws PhrescoException {
+	public BufferedInputStream runUnitTest(String uniqueKey, String displayName) throws PhrescoException {
 		if (isDebugEnabled) {
 			S_LOGGER.debug("Entering Method MavenFunctions.runUnitTest()");
 		}
@@ -992,7 +1017,7 @@ public class ActionFunction extends RestBase implements Constants ,FrameworkCons
 			ApplicationManager applicationManager = PhrescoFrameworkFactory.getApplicationManager();
 			reader = applicationManager.performAction(getProjectInfo(), ActionType.UNIT_TEST, buildArgCmds, workingDirectory.toString());
 			 //To generate the lock for the particular operation
-			FrameworkUtil.generateLock(Collections.singletonList(FrameworkServiceUtil.getLockDetail(appInfo.getId(), UNIT, getDisplayName(), uniqueKey)), true);
+			FrameworkUtil.generateLock(Collections.singletonList(FrameworkServiceUtil.getLockDetail(appInfo.getId(), UNIT, displayName, uniqueKey)), true);
 		} catch (PhrescoException e) {
 			if (isDebugEnabled) {
 				S_LOGGER.error("Exception occured in the unit test process()" + FrameworkUtil.getStackTraceAsString(e));
@@ -1003,7 +1028,7 @@ public class ActionFunction extends RestBase implements Constants ,FrameworkCons
 		return reader;
 	}
 
-	public BufferedInputStream runComponentTest(String uniqueKey) throws PhrescoException {
+	public BufferedInputStream runComponentTest(String uniqueKey, String displayName) throws PhrescoException {
 		if (isDebugEnabled) {
 			S_LOGGER.debug("Entering Method MavenFunctions.runComponentTest:Entry");
 		}
@@ -1019,7 +1044,7 @@ public class ActionFunction extends RestBase implements Constants ,FrameworkCons
 			ApplicationManager applicationManager = PhrescoFrameworkFactory.getApplicationManager();
 			reader = applicationManager.performAction(getProjectInfo(), ActionType.COMPONENT_TEST, buildArgCmds, workingDirectory.toString());
 			 //To generate the lock for the particular operation
-			FrameworkUtil.generateLock(Collections.singletonList(FrameworkServiceUtil.getLockDetail(appInfo.getId(), COMPONENT, getDisplayName(), uniqueKey)), true);
+			FrameworkUtil.generateLock(Collections.singletonList(FrameworkServiceUtil.getLockDetail(appInfo.getId(), COMPONENT, displayName, uniqueKey)), true);
 		} catch (PhrescoException e) {
 			if (isDebugEnabled) {
 				S_LOGGER.error("Exception occured in the Component test process()" + FrameworkUtil.getStackTraceAsString(e));
@@ -1030,7 +1055,7 @@ public class ActionFunction extends RestBase implements Constants ,FrameworkCons
 		return reader;
 	}
 
-	public BufferedInputStream codeValidate(String uniqueKey) throws PhrescoException {
+	public BufferedInputStream codeValidate(String uniqueKey, String displayName) throws PhrescoException {
 		if (isDebugEnabled) {
 			S_LOGGER.debug("Entering Method MavenFunctions.codeValidate()");
 		}
@@ -1049,7 +1074,7 @@ public class ActionFunction extends RestBase implements Constants ,FrameworkCons
 
 			reader = applicationManager.performAction(projectInfo, ActionType.CODE_VALIDATE, buildArgCmds, workingDirectory);
 			//To generate the lock for the particular operation
-			FrameworkUtil.generateLock(Collections.singletonList(FrameworkServiceUtil.getLockDetail(applicationInfo.getId(), REQ_CODE, getDisplayName(), uniqueKey)), true);
+			FrameworkUtil.generateLock(Collections.singletonList(FrameworkServiceUtil.getLockDetail(applicationInfo.getId(), REQ_CODE, displayName, uniqueKey)), true);
 		} catch (PhrescoException e) {
 			if (isDebugEnabled) {
 				S_LOGGER.error("Exception occured in the codeValidate process()" + FrameworkUtil.getStackTraceAsString(e));
@@ -1060,7 +1085,7 @@ public class ActionFunction extends RestBase implements Constants ,FrameworkCons
 		return reader;
 	}
 
-	public BufferedInputStream runAgainstSource(String uniqueKey) throws IOException, PhrescoException {
+	public BufferedInputStream runAgainstSource(String uniqueKey, String displayName) throws IOException, PhrescoException {
 		if (isDebugEnabled) {
 			S_LOGGER.debug("Entering Method MavenFunctions.javaRunAgainstSource()");
 		}
@@ -1085,7 +1110,7 @@ public class ActionFunction extends RestBase implements Constants ,FrameworkCons
 			
 			//To generate the lock for the particular operation
 			ApplicationInfo appInfo = getApplicationInfo();
-			FrameworkUtil.generateLock(Collections.singletonList(FrameworkServiceUtil.getLockDetail(appInfo.getId(), REQ_START, getDisplayName(), uniqueKey)), true);
+			FrameworkUtil.generateLock(Collections.singletonList(FrameworkServiceUtil.getLockDetail(appInfo.getId(), REQ_START, displayName, uniqueKey)), true);
 			
 		} catch (PhrescoException e) {
 			S_LOGGER.error("Entered into catch block of Build.runAgainstSource()" + FrameworkUtil.getStackTraceAsString(e));
@@ -1148,7 +1173,7 @@ public class ActionFunction extends RestBase implements Constants ,FrameworkCons
 	}
 
 
-	public BufferedInputStream performanceTest(PerformanceUrls performanceUrls, String uniqueKey) throws PhrescoException {
+	public BufferedInputStream performanceTest(PerformanceUrls performanceUrls, String uniqueKey, String displayName) throws PhrescoException {
 
 		BufferedInputStream reader=null;
 
@@ -1169,7 +1194,7 @@ public class ActionFunction extends RestBase implements Constants ,FrameworkCons
 			jsonWriter(performanceUrls);    			
 			reader = applicationManager.performAction(projectInfo, ActionType.PERFORMANCE_TEST, buildArgCmds, workingDirectory);
 			//To generate the lock for the particular operation
-			FrameworkUtil.generateLock(Collections.singletonList(FrameworkServiceUtil.getLockDetail(applicationInfo.getId(), PERFORMACE, getDisplayName(), uniqueKey)), true);
+			FrameworkUtil.generateLock(Collections.singletonList(FrameworkServiceUtil.getLockDetail(applicationInfo.getId(), PERFORMACE, displayName, uniqueKey)), true);
 		} catch (PhrescoException e) {
 			throw new PhrescoException(e);
 		}
@@ -1178,7 +1203,7 @@ public class ActionFunction extends RestBase implements Constants ,FrameworkCons
 	}
 
 
-	public BufferedInputStream loadTest(PerformanceUrls performanceUrls, String uniqueKey) throws PhrescoException {
+	public BufferedInputStream loadTest(PerformanceUrls performanceUrls, String uniqueKey, String displayName) throws PhrescoException {
 
 		BufferedInputStream reader = null;
 		if (isDebugEnabled) {
@@ -1196,7 +1221,7 @@ public class ActionFunction extends RestBase implements Constants ,FrameworkCons
 			ApplicationManager applicationManager = PhrescoFrameworkFactory.getApplicationManager();
 			reader = applicationManager.performAction(getProjectInfo(), ActionType.LOAD_TEST, buildArgCmds, workingDirectory.toString());
 			 //To generate the lock for the particular operation
-			FrameworkUtil.generateLock(Collections.singletonList(FrameworkServiceUtil.getLockDetail(appInfo.getId(), LOAD, getDisplayName(), uniqueKey)), true);
+			FrameworkUtil.generateLock(Collections.singletonList(FrameworkServiceUtil.getLockDetail(appInfo.getId(), LOAD, displayName, uniqueKey)), true);
 		} catch(PhrescoException e) {
 			S_LOGGER.error("Entered into catch block of MavenFunctions.LoadTest()"+ FrameworkUtil.getStackTraceAsString(e));
 			throw new PhrescoException("Exception occured in the MavenFunctions.LoadTest process");
@@ -1298,9 +1323,52 @@ public class ActionFunction extends RestBase implements Constants ,FrameworkCons
 
 		return reader;
 	}
+	
+	public BufferedInputStream validateTheme() throws PhrescoException {
+		BufferedInputStream reader = null;
+		try {
+			ProjectInfo projectInfo = getProjectInfo();
+			ApplicationInfo applicationInfo = getApplicationInfo();
+			StringBuilder workingDirectory = new StringBuilder(FrameworkServiceUtil.getApplicationHome(applicationInfo.getAppDirName()));
+			ApplicationManager applicationManager = PhrescoFrameworkFactory.getApplicationManager();
+			List<String> buildArgCmds = new ArrayList<String>();
+			String pomFileName = Utility.getPomFileName(applicationInfo);
+			if (!Constants.POM_NAME.equals(pomFileName)) {
+				buildArgCmds.add(Constants.HYPHEN_F);
+				buildArgCmds.add(pomFileName);
+			}
+			reader = applicationManager.performAction(projectInfo, ActionType.THEME_VALIDATOR,
+					buildArgCmds, workingDirectory.toString());
+		} catch (Exception e) {
+			S_LOGGER.error("Entered into catch block of MavenFunctions.validateTheme()"+ FrameworkUtil.getStackTraceAsString(e));
+			throw new PhrescoException("Exception occured in the MavenFunctions.validateTheme process");
+		}
+		return reader;
+	}
+	
+	public BufferedInputStream validateContent() throws PhrescoException {
+		BufferedInputStream reader = null;
+		try {
+			ProjectInfo projectInfo = getProjectInfo();
+			ApplicationInfo applicationInfo = getApplicationInfo();
+			StringBuilder workingDirectory = new StringBuilder(FrameworkServiceUtil.getApplicationHome(applicationInfo.getAppDirName()));
+			ApplicationManager applicationManager = PhrescoFrameworkFactory.getApplicationManager();
+			List<String> buildArgCmds = new ArrayList<String>();
+			String pomFileName = Utility.getPomFileName(applicationInfo);
+			if (!Constants.POM_NAME.equals(pomFileName)) {
+				buildArgCmds.add(Constants.HYPHEN_F);
+				buildArgCmds.add(pomFileName);
+			}
+			reader = applicationManager.performAction(projectInfo,
+					ActionType.CONTENT_VALIDATOR, buildArgCmds, workingDirectory.toString());
+		} catch (Exception e) {
+			S_LOGGER.error("Entered into catch block of MavenFunctions.validateContent()"+ FrameworkUtil.getStackTraceAsString(e));
+			throw new PhrescoException("Exception occured in the MavenFunctions.validateContent process");
+		}
+		return reader;
+	}
 
-
-	public BufferedInputStream runFunctionalTest(String uniqueKey) throws PhrescoException {
+	public BufferedInputStream runFunctionalTest(String uniqueKey, String displayName) throws PhrescoException {
 
 		BufferedInputStream reader = null;
 
@@ -1325,7 +1393,7 @@ public class ActionFunction extends RestBase implements Constants ,FrameworkCons
 			ApplicationManager applicationManager = PhrescoFrameworkFactory.getApplicationManager();
 			reader = applicationManager.performAction(getProjectInfo(), ActionType.FUNCTIONAL_TEST, buildArgCmds, workingDirectory.toString());
 			 //To generate the lock for the particular operation
-	        FrameworkUtil.generateLock(Collections.singletonList(FrameworkServiceUtil.getLockDetail(appInfo.getId(), FUNCTIONAL, getDisplayName(), uniqueKey)), true);
+	        FrameworkUtil.generateLock(Collections.singletonList(FrameworkServiceUtil.getLockDetail(appInfo.getId(), FUNCTIONAL, displayName, uniqueKey)), true);
 		} catch (PhrescoException e) {
 
 			S_LOGGER.error("Entered into catch block of Quality.runFunctionalTest()"+ FrameworkUtil.getStackTraceAsString(e));
@@ -2682,12 +2750,6 @@ return isSonarReportAvailable;
 	public void setMinifyFileNames(List<String> minifyFileNames) {
 		this.minifyFileNames = minifyFileNames;
 	}
-	public String getMinifyAll() {
-		return minifyAll;
-	}
-	public void setMinifyAll(String minifyAll) {
-		this.minifyAll = minifyAll;
-	}
 	public String getIsFromCI() {
 		return isFromCI;
 	}
@@ -2797,14 +2859,6 @@ return isSonarReportAvailable;
 
 	public void setTestBasis(String testBasis) {
 		this.testBasis = testBasis;
-	}
-
-	public String getDisplayName() {
-		return displayName;
-	}
-
-	public void setDisplayName(String displayName) {
-		this.displayName = displayName;
 	}
 
 	/* protected ServiceManager getServiceManager(String username) {

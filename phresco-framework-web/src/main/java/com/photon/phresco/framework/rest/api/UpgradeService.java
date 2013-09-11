@@ -75,8 +75,7 @@ public class UpgradeService extends RestBase implements FrameworkConstants, Serv
 			return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, ALL_HEADER)
 					.build();
 		} catch (PhrescoException e) {
-			e.printStackTrace();
-			ResponseInfo<List<ProjectInfo>> finalOutput = responseDataEvaluation(responseData, null, null,
+			ResponseInfo<List<ProjectInfo>> finalOutput = responseDataEvaluation(responseData, e, null,
 					RESPONSE_STATUS_ERROR, PHR910004);
 			return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, ALL_HEADER)
 					.build();

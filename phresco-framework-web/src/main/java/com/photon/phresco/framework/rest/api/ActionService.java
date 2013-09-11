@@ -873,6 +873,47 @@ public class ActionService implements ActionServiceConstant, FrameworkConstants,
 		
 	}
 	
+	@GET
+	@Path("/validateTheme")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response validateTheme(@Context HttpServletRequest request) {
+		ActionFunction actionFunction = new ActionFunction();
+		ActionResponse response = new ActionResponse();
+		try {
+			actionFunction.prePopulateModelData(request);
+			response = actionFunction.validateTheme(request);
+			response.setResponseCode(PHR600021);
+		} catch (Exception e) {
+			S_LOGGER.error(e.getMessage());
+			response.setStatus(RESPONSE_STATUS_ERROR);
+			response.setLog("");
+			response.setService_exception(FrameworkUtil.getStackTraceAsString(e));
+			response.setUniquekey("");
+			response.setResponseCode(PHR610031);
+		}
+		return Response.status(Status.OK).entity(response).header("Access-Control-Allow-Origin", "*").build();
+	}
+	
+	@GET
+	@Path("/validateContent")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response validateContent(@Context HttpServletRequest request) {
+		ActionFunction actionFunction = new ActionFunction();
+		ActionResponse response = new ActionResponse();
+		try {
+			actionFunction.prePopulateModelData(request);
+			response = actionFunction.validateContent(request);
+			response.setResponseCode(PHR600023);
+		} catch (Exception e) {
+			S_LOGGER.error(e.getMessage());
+			response.setStatus(RESPONSE_STATUS_ERROR);
+			response.setLog("");
+			response.setService_exception(FrameworkUtil.getStackTraceAsString(e));
+			response.setUniquekey("");
+			response.setResponseCode(PHR610033);
+		}
+		return Response.status(Status.OK).entity(response).header("Access-Control-Allow-Origin", "*").build();
+	}
 	
 	/**
 	 * Read.

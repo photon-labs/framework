@@ -248,6 +248,20 @@ public interface ResponseCodes {
 	String PHR600018 = "PHR600018"; // no file to upload
 	String PHR600019 = "PHR600019"; // no file structure found
 	String PHR600020 = "PHR600020"; // environments updated successfully
+	String PHR600021 = "PHR600021"; // theme validated  successfully
+	String PHR610031 = "PHR610031"; // theme validation failed
+	String PHR600023 = "PHR600023"; // content validated successfully
+	String PHR610033 = "PHR610033"; // content validation failed
+	String PHR600025 = "PHR600025"; // upload File successfully
+	String PHR610035 = "PHR610035"; // unable to upload file
+	String PHR610036 = "PHR610036"; // upload File failed
+	String PHR610037 = "PHR610037"; // unble to get configuration
+	String PHR610038 = "PHR610038"; // unable to get input stream File
+	String PHR600026 = "PHR600026"; // upload File listed successfully
+	String PHR610039 = "PHR610039"; // unable to get target directory
+	String PHR610040 = "PHR610040"; // unable to get configuartion
+	String PHR600027 = "PHR600027"; // upload File removed successfully
+	String PHR610041 = "PHR610041"; // unable to remove the uploaded file
 	
 	/*
 	 * Build Page

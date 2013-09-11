@@ -32,6 +32,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -53,6 +54,7 @@ import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.dom.DOMSource;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.quartz.CronExpression;
@@ -86,8 +88,10 @@ import com.photon.phresco.impl.ConfigManagerImpl;
 import com.photon.phresco.impl.NonEnvConfigManagerImpl;
 import com.photon.phresco.service.client.api.ServiceManager;
 import com.photon.phresco.util.Constants;
+import com.photon.phresco.util.FileUtil;
 import com.photon.phresco.util.ServiceConstants;
 import com.photon.phresco.util.Utility;
+import com.phresco.pom.exception.PhrescoPomException;
 import com.sun.jersey.api.client.ClientResponse.Status;
 
 /**
@@ -165,11 +169,6 @@ public class ConfigurationService extends RestBase implements FrameworkConstants
 					ResponseInfo<Environment> finalOuptut = responseDataEvaluation(responseData, null,
 							environment, RESPONSE_STATUS_SUCCESS, PHR600002);
 					return Response.ok(finalOuptut).header("Access-Control-Allow-Origin", "*").build();
-				} else {
-					ResponseInfo<Environment> finalOuptut = responseDataEvaluation(responseData, null,
-							null, RESPONSE_STATUS_FAILURE, PHR610025);
-					return Response.status(Status.OK).entity(finalOuptut).header(
-							"Access-Control-Allow-Origin", "*").build();
 				}
 			}
 			List<Environment> environments = configManager.getEnvironmentsAlone();
@@ -330,11 +329,6 @@ public class ConfigurationService extends RestBase implements FrameworkConstants
 					null, RESPONSE_STATUS_ERROR, PHR610007);
 			return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*")
 					.build();
-		} catch (Exception e) {
-			ResponseInfo<List<SettingsTemplate>> finalOutput = responseDataEvaluation(responseData, e,
-					null, RESPONSE_STATUS_ERROR, PHR610007);
-			return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*")
-					.build();
 		}
 	}
 
@@ -393,10 +387,6 @@ public class ConfigurationService extends RestBase implements FrameworkConstants
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response connectionAliveCheck(@QueryParam(REST_QUERY_URL) String url) {
 		ResponseInfo<Boolean> responseData = new ResponseInfo<Boolean>();
-		if (is_debugEnabled) {
-			S_LOGGER.debug("Entering Method  Configurationservice.connectionAliveCheck()");
-		}
-
 		if (url == null || ("".equals(url)) == true) {
 			ResponseInfo<Boolean> finalOutput = responseDataEvaluation(responseData, null,
 					null, RESPONSE_STATUS_FAILURE, PHR610008);
@@ -414,8 +404,6 @@ public class ConfigurationService extends RestBase implements FrameworkConstants
 		} catch (Exception e) {
 			ResponseInfo<Boolean> finalOutput = responseDataEvaluation(responseData, e,
 					null, RESPONSE_STATUS_ERROR, PHR610009);
-			S_LOGGER.error("Entered into catch block of Configurationservice.connectionAliveCheck()"
-					+ FrameworkUtil.getStackTraceAsString(e));
 			return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
 		}
 		ResponseInfo<Boolean> finalOutput = responseDataEvaluation(responseData, null,
@@ -441,9 +429,6 @@ public class ConfigurationService extends RestBase implements FrameworkConstants
 			@QueryParam(REST_QUERY_CUSTOMERID) String customerId,
 			@QueryParam(REST_QUERY_APPDIR_NAME) String appDirName, @QueryParam(REST_QUERY_ENV_NAME) String envName,
 			List<Configuration> configurationlist, @QueryParam("isEnvSpecific") String isEnvSpecific, @QueryParam("configName") String configName) {
-		if (is_debugEnabled) {
-			S_LOGGER.debug("Entering Method  Configurationservice.updateConfiguration()");
-		}
 
 		String configFile = FrameworkServiceUtil.getConfigFileDir(appDirName);
 		ResponseInfo<Configuration> responseData = new ResponseInfo<Configuration>();
@@ -480,25 +465,14 @@ public class ConfigurationService extends RestBase implements FrameworkConstants
 					"Success", RESPONSE_STATUS_SUCCESS, PHR600006);
 			return Response.ok(finalOuptut).header("Access-Control-Allow-Origin", "*").build();
 		} catch (ConfigurationException e) {
-			S_LOGGER.error("Entered into Configuration catch block of Configurationservice.updateConfiguration()"
-					+ FrameworkUtil.getStackTraceAsString(e));
 			ResponseInfo<Configuration> finalOuptut = responseDataEvaluation(responseData, e,
 					"Failure", RESPONSE_STATUS_ERROR, PHR610010);
 			return Response.status(Status.OK).entity(finalOuptut).header("Access-Control-Allow-Origin",
 					"*").build();
 		} catch (PhrescoException e) {
-			S_LOGGER.error("Entered into PhrescoException catch block of Configurationservice.updateConfiguration()"
-					+ FrameworkUtil.getStackTraceAsString(e));
 			ResponseInfo<Configuration> finalOuptut = responseDataEvaluation(responseData, e, "Failure", RESPONSE_STATUS_ERROR, PHR610010);
 			return Response.status(Status.OK).entity(finalOuptut).header("Access-Control-Allow-Origin", "*")
 					.build();
-		} catch (Exception e) {
-			S_LOGGER.error("Entered into catch block of Configurationservice.updateConfiguration()"
-					+ FrameworkUtil.getStackTraceAsString(e));
-			ResponseInfo<Configuration> finalOuptut = responseDataEvaluation(responseData, e,
-					"Failure", RESPONSE_STATUS_ERROR, PHR610010);
-			return Response.status(Status.OK).entity(finalOuptut).header("Access-Control-Allow-Origin",
-					"*").build();
 		}
 
 	}
@@ -540,11 +514,6 @@ public class ConfigurationService extends RestBase implements FrameworkConstants
 			return Response.status(Status.OK).entity(finalOuptut).header("Access-Control-Allow-Origin",
 					"*").build();
 
-		} catch (Exception e) {
-			ResponseInfo<Configuration> finalOuptut = responseDataEvaluation(responseData, e,
-					clonedEnvironment, RESPONSE_STATUS_ERROR, PHR610011);
-			return Response.status(Status.OK).entity(finalOuptut).header("Access-Control-Allow-Origin",
-					"*").build();
 		}
 	}
 
@@ -771,52 +740,6 @@ public class ConfigurationService extends RestBase implements FrameworkConstants
 					.build();
 		}
 	}
-	
-	@POST
-	@Path("/upload")
-	@Produces(MediaType.APPLICATION_JSON)
-	@Consumes(MediaType.APPLICATION_OCTET_STREAM)
-	public Response fileUpload(@Context HttpServletRequest request) {
-		ResponseInfo<Boolean> responseData = new ResponseInfo<Boolean>();
-		try {
-			InputStream inputStream = request.getInputStream();
-			String actionType = request.getHeader("actionType");
-			String appDirName = request.getHeader("appDirName");
-			if (actionType.equals("configuration")) {
-				File tempZipFile = new File(Utility.getProjectHome() + appDirName + File.separator 
-						+ FrameworkConstants.DO_NOT_CHECKIN_DIR + File.separator + FrameworkConstants.TARGET_DIR
-					+ File.separator + request.getHeader("X-File-Name"));
-			
-			 	if (!tempZipFile.getParentFile().exists()) {
-					tempZipFile.getParentFile().mkdirs();
-			} 
-				if (!tempZipFile.exists()) {
-					tempZipFile.createNewFile();
-				}
-				OutputStream out = new FileOutputStream(tempZipFile);
-				int read = 0;
-				byte[] bytes = new byte[1024];
-				while ((read = inputStream.read(bytes)) != -1) {
-					out.write(bytes, 0, read);
-				}
-				inputStream.close();
-				out.flush();
-				out.close();
-				ResponseInfo finalOuptut = responseDataEvaluation(responseData, null, true, RESPONSE_STATUS_SUCCESS, PHR600011);
-				return Response.status(Status.OK).entity(finalOuptut).header("Access-Control-Allow-Origin", "*").build();
-			}
-		} catch (FileNotFoundException e) {
-			ResponseInfo<Environment> finalOuptut = responseDataEvaluation(responseData, e, false, RESPONSE_STATUS_ERROR, PHR610030);
-			return Response.status(Status.OK).entity(finalOuptut).header("Access-Control-Allow-Origin",
-					"*").build();
-		} catch (IOException e) {
-			ResponseInfo<Environment> finalOuptut = responseDataEvaluation(responseData, e, false, RESPONSE_STATUS_ERROR, PHR610017);
-			return Response.status(Status.OK).entity(finalOuptut).header("Access-Control-Allow-Origin",
-					"*").build();
-		}
-		ResponseInfo finalOuptut = responseDataEvaluation(responseData, null, false, RESPONSE_STATUS_FAILURE, PHR610018);
-		return Response.ok(finalOuptut).header("Access-Control-Allow-Origin", "*").build();
-	}
 
 	@GET
 	@Path("/fileBrowseFolder")
@@ -871,17 +794,258 @@ public class ConfigurationService extends RestBase implements FrameworkConstants
 			ResponseInfo<DOMSource> finalOuptut = responseDataEvaluation(responseData, null, outputContent, RESPONSE_STATUS_SUCCESS, PHR600013);
 			return Response.status(Status.OK).entity(outputContent).header("Access-Control-Allow-Origin", "*").build();
 		} catch (PhrescoException e) {
-			ResponseInfo<DOMSource> finalOuptut = responseDataEvaluation(responseData, e, null, RESPONSE_STATUS_ERROR, PHR610022);
+			ResponseInfo<DOMSource> finalOuptut = responseDataEvaluation(responseData, null, null, RESPONSE_STATUS_ERROR, PHR610022);
 			return Response.status(Status.OK).entity(finalOuptut).header("Access-Control-Allow-Origin", "*").build();	
 		}
+	}
+	
+	@POST
+	@Path("/uploadFile")
+	@Produces(MediaType.APPLICATION_JSON)
+	@Consumes(MediaType.APPLICATION_OCTET_STREAM)
+	public Response uploadFile(@Context HttpServletRequest request) {
+		ResponseInfo<String> responseData = new ResponseInfo<String>();
+		InputStream inputStream = null;
+		try {
+			String appDirName = request.getHeader("appDirName");
+			String actionType = request.getHeader("actionType");
+			String envName = request.getHeader("envName");
+			String configType = request.getHeader("configType");
+			String configName = request.getHeader("configName");
+			String oldName = request.getHeader("oldName");
+			String propName = request.getHeader("propName");
+			inputStream = request.getInputStream();
+			if (getTargetDir(configType, appDirName) == null) {
+				ConfigManager configManager = new ConfigManagerImpl(new File(FrameworkServiceUtil
+						.getConfigFileDir(appDirName)));
+				List<Configuration> configurations = configManager.getConfigurations(envName, configType);
+				boolean isNameExists = false;
+				boolean needNameValidation = true;
+				if (StringUtils.isEmpty(oldName) && FrameworkConstants.EDIT_CONFIG.equals(actionType)) {
+					oldName = configName;
+				}
+				if (configName.equalsIgnoreCase(oldName)) {
+					needNameValidation = false;
+				}
+				if (CollectionUtils.isNotEmpty(configurations) && needNameValidation) {
+					for (Configuration configuration : configurations) {
+						if (configName.trim().equalsIgnoreCase(configuration.getName())) {
+							isNameExists = true;
+							break;
+						}
+					}
+				}
+				if (!isNameExists) {
+					StringBuilder sb = new StringBuilder(Utility.getPhrescoTemp()).append(File.separator).append(
+							DO_NOT_CHECKIN_DIR).append(File.separator).append(envName).append(File.separator).append(
+							configName).append(File.separator).append(propName).append(File.separator).append(
+							request.getHeader("X-File-Name"));
+					File file = new File(sb.toString());
+					if (!file.exists()) {
+						file.mkdirs();
+					}
+					uploadZip(inputStream, file);
+					ResponseInfo finalOuptut = responseDataEvaluation(responseData, null, false,
+							RESPONSE_STATUS_SUCCESS, PHR600025);
+					return Response.ok(finalOuptut).header("Access-Control-Allow-Origin", "*").build();
+				} else {
+					ResponseInfo finalOuptut = responseDataEvaluation(responseData, null, false,
+							RESPONSE_STATUS_FAILURE, PHR610035);
+					return Response.ok(finalOuptut).header("Access-Control-Allow-Origin", "*").build();
+				}
+			} else {
+				StringBuilder sb = getTargetDir(configType, appDirName);
+				File file = new File(sb.toString() + File.separator + request.getHeader("X-File-Name"));
+				if (!file.getParentFile().exists()) {
+					file.getParentFile().mkdirs();
+				}
+				if (!file.exists()) {
+					file.createNewFile();
+				}
+				uploadZip(inputStream, file);
+				ResponseInfo finalOuptut = responseDataEvaluation(responseData, null, false, RESPONSE_STATUS_SUCCESS,
+						PHR600025);
+				return Response.ok(finalOuptut).header("Access-Control-Allow-Origin", "*").build();
+			}
+		} catch (PhrescoException e) {
+			ResponseInfo<String> finalOuptut = responseDataEvaluation(responseData, null, null, RESPONSE_STATUS_ERROR,
+					PHR610036);
+			return Response.status(Status.OK).entity(finalOuptut).header("Access-Control-Allow-Origin", "*").build();
+		} catch (ConfigurationException e) {
+			ResponseInfo<String> finalOuptut = responseDataEvaluation(responseData, null, null, RESPONSE_STATUS_ERROR,
+					PHR610037);
+			return Response.status(Status.OK).entity(finalOuptut).header("Access-Control-Allow-Origin", "*").build();
+		} catch (IOException e) {
+			ResponseInfo<String> finalOuptut = responseDataEvaluation(responseData, null, null, RESPONSE_STATUS_ERROR,
+					PHR610038);
+			return Response.status(Status.OK).entity(finalOuptut).header("Access-Control-Allow-Origin", "*").build();
+		}
+	}
 
+	@GET
+	@Path("/listUploadedFiles")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response listUploadedFiles(@QueryParam("appDirName") String appDirName,
+			@QueryParam("envName") String envName, @QueryParam("configType") String configType,
+			@QueryParam("configName") String configName, @QueryParam("isEnvSpecific") String isEnvSpecific) {
+		List<String> uploadedFiles = new ArrayList<String>();
+		ResponseInfo<String> responseData = new ResponseInfo<String>();
+		try {
+			StringBuilder builder = new StringBuilder(Utility.getProjectHome());
+			builder.append(appDirName);
+			builder.append(File.separator);
+			builder.append(FOLDER_DOT_PHRESCO);
+			builder.append(File.separator);
+			Configuration configuration = null;
+			if (StringUtils.isNotEmpty(isEnvSpecific) && "true".equals(isEnvSpecific)) {
+				builder.append(PHRESCO_ENV_CONFIG_FILE_NAME);
+				ConfigManager configManager = new ConfigManagerImpl(new File(builder.toString()));
+				configuration = configManager.getConfiguration(envName, configType, configName);
+			} else {
+				builder.append(PHRESCO_CONFIG_FILE_NAME);
+				NonEnvConfigManager configManager = new NonEnvConfigManagerImpl(new File(builder.toString()));
+				configuration = configManager.getConfiguration(configName);
+			}
+			if (configuration != null) {
+				Properties properties = configuration.getProperties();
+				String property = properties.getProperty(FILES);
+				if (StringUtils.isNotEmpty(property)) {
+					String[] splits = property.split(Constants.STR_COMMA);
+					for (String split : splits) {
+						split = split.replace("\\", "/");
+						StringBuilder sb = new StringBuilder(FrameworkServiceUtil.getApplicationHome(appDirName));
+						StringBuilder targetDir = getTargetDir(configType, appDirName);
+						if (targetDir == null) {
+							sb.append(File.separator);
+							sb.append(DO_NOT_CHECKIN_DIR);
+							sb.append(File.separator);
+							sb.append(envName);
+							sb.append(File.separator);
+							sb.append(configName);
+							sb.append(File.separator);
+						}
+						sb.append(split);
+						File file = new File(sb.toString());
+						if (file.exists() && !file.isDirectory()) {
+							uploadedFiles.add("" + split);
+						}
+					}
+				}
+			}
+			ResponseInfo finalOuptut = responseDataEvaluation(responseData, null, uploadedFiles,
+					RESPONSE_STATUS_SUCCESS, PHR600026);
+			return Response.ok(finalOuptut).header("Access-Control-Allow-Origin", "*").build();
+		} catch (PhrescoException e) {
+			ResponseInfo<String> finalOuptut = responseDataEvaluation(responseData, null, null, RESPONSE_STATUS_ERROR,
+					PHR610039);
+			return Response.status(Status.OK).entity(finalOuptut).header("Access-Control-Allow-Origin", "*").build();
+		} catch (ConfigurationException e) {
+			ResponseInfo<String> finalOuptut = responseDataEvaluation(responseData, null, null, RESPONSE_STATUS_ERROR,
+					PHR610040);
+			return Response.status(Status.OK).entity(finalOuptut).header("Access-Control-Allow-Origin", "*").build();
+		}
+	}
+
+	@GET
+	@Path("/removeFile")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response removeConfigFile(@QueryParam("appDirName") String appDirName,
+			@QueryParam("configType") String configType, @QueryParam("propName") String propName,
+			@QueryParam("fileName") String fileName, @QueryParam("envName") String envName,
+			@QueryParam("configName") String configName) {
+		ResponseInfo<String> responseData = new ResponseInfo<String>();
+		try {
+			if (getTargetDir(configType, appDirName) != null) {
+				StringBuilder sb = getTargetDir(configType, appDirName).append(File.separator).append(fileName);
+				FileUtil.delete(new File(sb.toString()));
+			} else {
+				StringBuilder sb = new StringBuilder(FrameworkServiceUtil.getApplicationHome(appDirName)).append(
+						File.separator).append(DO_NOT_CHECKIN_DIR).append(File.separator).append(envName);
+				File envNameDir = new File(sb.toString());
+				sb.append(File.separator).append(configName);
+				File configNameDir = new File(sb.toString());
+				sb.append(File.separator).append(propName);
+				File propNameDir = new File(sb.toString());
+				sb.append(File.separator).append(fileName);
+				File file = new File(sb.toString());
+				FileUtil.delete(file);
+				if (ArrayUtils.isEmpty(propNameDir.listFiles())) {
+					FileUtil.delete(propNameDir);
+				}
+				if (ArrayUtils.isEmpty(configNameDir.listFiles())) {
+					FileUtil.delete(configNameDir);
+				}
+				if (ArrayUtils.isEmpty(envNameDir.listFiles())) {
+					FileUtil.delete(envNameDir);
+				}
+			}
+			ResponseInfo finalOuptut = responseDataEvaluation(responseData, null, false, RESPONSE_STATUS_SUCCESS, PHR600027);
+			return Response.ok(finalOuptut).header("Access-Control-Allow-Origin", "*").build();
+		} catch (PhrescoException e) {
+			ResponseInfo<String> finalOuptut = responseDataEvaluation(responseData, null, null, RESPONSE_STATUS_ERROR,
+					PHR610041);
+			return Response.status(Status.OK).entity(finalOuptut).header("Access-Control-Allow-Origin", "*").build();
+		}
+	}
+
+	private void uploadZip(InputStream inputStream, File tempZipFile) throws PhrescoException {
+		OutputStream out = null;
+		try {
+			out = new FileOutputStream(tempZipFile);
+			int read = 0;
+			byte[] bytes = new byte[1024];
+			if (inputStream != null) {
+				while ((read = inputStream.read(bytes)) != -1) {
+					out.write(bytes, 0, read);
+				}
+			}
+			out.flush();
+		} catch (FileNotFoundException e) {
+			throw new PhrescoException(e);
+		} catch (IOException e) {
+			throw new PhrescoException(e);
+		} finally {
+			Utility.closeStream(inputStream);
+			Utility.closeStream(out);
+		}
+	}
+
+	private StringBuilder getTargetDir(String configType, String appDirName) throws PhrescoException {
+		StringBuilder sb = null;
+		try {
+			String targetDir = getTargetDirFromPom(configType, appDirName);
+			if (StringUtils.isEmpty(targetDir)) {
+				return null;
+			}
+			sb = new StringBuilder(Utility.getProjectHome()).append(appDirName).append(File.separator)
+					.append(targetDir);
+		} catch (PhrescoException e) {
+			throw new PhrescoException(e);
+		}
+
+		return sb;
+	}
+
+	private String getTargetDirFromPom(String configTempType, String appDirName) throws PhrescoException {
+		String targetDir = "";
+		try {
+			String dynamicType = configTempType.toLowerCase().replaceAll("\\s", "");
+			targetDir = FrameworkServiceUtil.getPomProcessor(appDirName).getProperty(
+					PHRESCO_DOT + dynamicType + DOT_TARGET_DIR);
+		} catch (PhrescoException e) {
+			throw new PhrescoException(e);
+		} catch (PhrescoPomException e) {
+			throw new PhrescoException(e);
+		}
+
+		return targetDir;
 	}
 
 	// for the return of entire project structure as single xml
 	private static DOMSource createXML(String browsePath, String fileType) throws PhrescoException {
 		try {
 			File inputPath = new File(browsePath);
-			if (inputPath.isFile()) {
+			if (!inputPath.isDirectory() || inputPath.isFile()) {
 				return null;
 			}
 			DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
@@ -1043,6 +1207,7 @@ public class ConfigurationService extends RestBase implements FrameworkConstants
 		int emailCount = 0;
 		boolean serverTypeValidation = false;
 		boolean isRequired = false;
+		String isRemote = "false";
 		String techId = "";
 		String dynamicError = "";
 		for (int i = 0; i < configurationlist.size(); i++) {
@@ -1061,11 +1226,11 @@ public class ConfigurationService extends RestBase implements FrameworkConstants
 		}
 
 		for (Configuration configuration : configurationlist) {
-			SettingsTemplate configTemplateByType = serviceManager.getConfigTemplateByType(customerId, configuration
-					.getType());
 			if (StringUtils.isEmpty(configuration.getType())) {
 				return "Configuration Type is Empty";
 			}
+			SettingsTemplate configTemplateByType = serviceManager.getConfigTemplateByType(customerId, configuration
+					.getType());
 
 //			if (FrameworkConstants.SERVER.equals(configuration.getType())
 //					|| FrameworkConstants.EMAIL.equals(configuration.getType())) {
@@ -1099,6 +1264,11 @@ public class ConfigurationService extends RestBase implements FrameworkConstants
 				List<PropertyTemplate> properties = configTemplateByType.getProperties();
 				for (PropertyTemplate propertyTemplate : properties) {
 					String propKey = propertyTemplate.getKey();
+					if(FrameworkConstants.SERVER.equals(configuration.getType())) {
+						if(propKey.equals(FrameworkConstants.REMOTE_DEPLOYMENT)) {
+							isRemote = configuration.getProperties().getProperty(propKey);
+						}
+					}
 					String propValue = configuration.getProperties().getProperty(propKey);
 					if (FrameworkConstants.REQ_TYPE.equals(propKey)
 							&& FrameworkConstants.NODEJS_SERVER.equals(propValue)
@@ -1122,8 +1292,7 @@ public class ConfigurationService extends RestBase implements FrameworkConstants
 
 					// validation for UserName & Password for RemoteDeployment
 
-					if (FrameworkConstants.REMOTE_DEPLOYMENT.equals(propKey)
-							&& FrameworkConstants.TRUE.equals(propValue)) {
+					if (FrameworkConstants.TRUE.equals(isRemote)) {
 						if (FrameworkConstants.ADMIN_USERNAME.equals(propKey)
 								|| FrameworkConstants.ADMIN_PASSWORD.equals(propKey)) {
 							isRequired = true;
