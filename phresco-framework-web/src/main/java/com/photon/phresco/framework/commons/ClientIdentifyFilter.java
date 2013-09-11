@@ -264,6 +264,8 @@ public class ClientIdentifyFilter implements Filter , ClientIdentifyFilterConsta
 					}
 				}
 				jsonObject.put("customerid", customer.getId());
+				jsonObject.put("copyRightLabel", copyRightLabel);
+				jsonObject.put("customerTitle", customerTitle);
 				return jsonObject;
 	        }
 		} catch (PhrescoException e) {
