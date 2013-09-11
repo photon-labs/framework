@@ -135,7 +135,15 @@ define(["functionalTest/listener/functionalTestListener", "testResult/listener/t
 			
 			$("#functionalTestBtn").unbind("click");
 			$("#functionalTestBtn").click(function() {
-				self.onDynamicPageEvent.dispatch(this, $('#functionalTestDynCtrls'), 'functionalTest_popup', commonVariables.functionalTestGoal);
+				var openccObj = this;
+				self.checkForLock("functional", '', function(response){
+					if (response.status === "success" && response.responseCode === "PHR10C00002") {
+						self.onDynamicPageEvent.dispatch(openccObj, $('#functionalTestDynCtrls'), 'functionalTest_popup', commonVariables.functionalTestGoal);
+					} else if (response.status === "success" && response.responseCode === "PHR10C00001") {
+						var errMsg = commonVariables.api.error[response.responseCode] + response.data.lockedBy + commonVariables.api.error["PHR10C00111"] + response.data.lockedDate;
+						commonVariables.api.showError(errMsg, 'error', true, true);
+					}	
+				});				
 			});
 			
 			$("#startHub").unbind("click");

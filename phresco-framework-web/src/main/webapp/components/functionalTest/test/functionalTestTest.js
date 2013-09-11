@@ -291,6 +291,16 @@ define(["functionalTest/functionalTest"], function(FunctionalTest) {
 			var self = this;
 			asyncTest("Functional Test Test-Btn Click Test", function() {
 				$.mockjax({
+				  url: commonVariables.webserviceurl+"util/checkLock?actionType=functional&appId=6d6753e8-b081-48d8-9924-70a14f3663d4",
+				  type: "GET",
+				  dataType: "json",
+				  contentType: "application/json",
+				  status: 200,
+				  response : function() {
+					  this.responseText = JSON.stringify({"message":null,"exception":null,"responseCode":"PHR10C00002","data":null,"status":"success"});
+				  }
+				});
+				$.mockjax({
 					url: commonVariables.webserviceurl+"parameter/dynamic?appDirName=test&goal=functional-test&phase=functional-test&customerId=photon&userId=admin",
 				  	type: "GET",
 				  	dataType: "json",
@@ -301,6 +311,7 @@ define(["functionalTest/functionalTest"], function(FunctionalTest) {
 				  	}
 				});
 				commonVariables.appDirName = "test";
+				$(".headerAppId").attr("value","6d6753e8-b081-48d8-9924-70a14f3663d4");	
 				$(commonVariables.contentPlaceholder).find("#functionalTestBtn").click();
 				setTimeout(function() {
 					start();
@@ -314,7 +325,7 @@ define(["functionalTest/functionalTest"], function(FunctionalTest) {
 			var self = this;
 			asyncTest("Functional Test Run Test-Btn Click Test", function() {
 				$.mockjax({
-					url: commonVariables.webserviceurl+"app/runFunctionalTest?username=admin&appId=5bf18d69-3902-497b-8cd2-65dbdc9cd377&customerId=photon&goal=functional-test&phase=functional-test&projectId=b1a829b3-bbfa-45c4-b5f0-003eca66abf5&devices=usb&serialNumber=",
+					url: commonVariables.webserviceurl+"app/runFunctionalTest?username=admin&appId=5bf18d69-3902-497b-8cd2-65dbdc9cd377&customerId=photon&goal=functional-test&phase=functional-test&projectId=b1a829b3-bbfa-45c4-b5f0-003eca66abf5&devices=usb&serialNumber=&displayName=Admin",
 				  	type: "POST",
 				  	dataType: "json",
 				  	contentType: "application/json",

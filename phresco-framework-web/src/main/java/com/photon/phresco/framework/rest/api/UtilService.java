@@ -279,13 +279,12 @@ public class UtilService extends RestBase implements FrameworkConstants, Service
 						lockInfo.setLock(true);
 						lockInfo.setLockedBy(lockDetail.getUserName());
 						lockInfo.setLockedDate(lockDetail.getStartedDate().toString());
-						break;
+						ResponseInfo<List<String>> finalOutput = responseDataEvaluation(responseData, null, lockInfo,
+								RESPONSE_STATUS_SUCCESS, PHR10C00001);
+						return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*")
+								.build();
 					}
 				}
-				ResponseInfo<List<String>> finalOutput = responseDataEvaluation(responseData, null, lockInfo,
-						RESPONSE_STATUS_SUCCESS, PHR10C00001);
-				return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*")
-						.build();
 			}
 		} catch (PhrescoException e) {
 			ResponseInfo<ProjectInfo> finalOutput = responseDataEvaluation(responseData, e, null,

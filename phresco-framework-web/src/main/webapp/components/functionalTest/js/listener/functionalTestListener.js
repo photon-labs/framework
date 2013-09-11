@@ -158,6 +158,10 @@ define([], function() {
 					});
 				}
 				if (from === "runFunctionalTest") {
+					var userInfo = JSON.parse(commonVariables.api.localVal.getSession('userInfo'));
+					if (userInfo !== null) {
+						queryString += "&displayName=" + userInfo.displayName;
+					}
 					retVal.mvnFunctionalTest(queryString, '#testConsole', function(response) {
 						self.testResultListener.closeConsole();
 						callback();

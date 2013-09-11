@@ -151,7 +151,7 @@ define([], function() {
 				addrepo.password = projectRequestBody.password;
 				addrepo.commitMessage = projectRequestBody.commitMessage;
 				header.requestPostBody = JSON.stringify(addrepo);			
-				header.webserviceurl = commonVariables.webserviceurl + "repository/addProjectToRepo?appDirName="+projectRequestBody.appdirname+"&userId="+userId+"&appId="+projectRequestBody.appid+"&projectId="+projectRequestBody.projectid;				
+				header.webserviceurl = commonVariables.webserviceurl + "repository/addProjectToRepo?appDirName="+projectRequestBody.appdirname+"&userId="+userId+"&appId="+projectRequestBody.appid+"&projectId="+projectRequestBody.projectid+"&displayName="+data.displayName;				
 			} else if(action === "commitget") {
 				header.requestMethod = "POST";
 				var addcommit ={};
@@ -162,7 +162,7 @@ define([], function() {
 				addcommit.commitMessage = projectRequestBody.commitMessage;
 				addcommit.commitableFiles = projectRequestBody.commitableFiles;
 				header.requestPostBody = JSON.stringify(addcommit);
-				header.webserviceurl = commonVariables.webserviceurl + "repository/commitProjectToRepo?appDirName="+projectRequestBody.appdirname;
+				header.webserviceurl = commonVariables.webserviceurl + "repository/commitProjectToRepo?appDirName="+projectRequestBody.appdirname+"&displayName="+data.displayName;
 			} else if(action === "updateget") {
 				var addupdate ={};
 				header.requestMethod = "POST";
@@ -172,7 +172,7 @@ define([], function() {
 				addupdate.password = projectRequestBody.password;
 				addupdate.version = projectRequestBody.revision;
 				header.requestPostBody = JSON.stringify(addupdate);
-				header.webserviceurl = commonVariables.webserviceurl + "repository/updateImportedApplication?appDirName="+projectRequestBody.appdirname;
+				header.webserviceurl = commonVariables.webserviceurl + "repository/updateImportedApplication?appDirName="+projectRequestBody.appdirname+"&displayName="+data.displayName;
 			} else if (action === "configTypes") {
 				self.bcheck = true;
 				header.webserviceurl = commonVariables.webserviceurl+commonVariables.configuration+"/types?customerId="+customerId+"&userId="+userId+"&techId="+projectRequestBody.techid;
@@ -541,7 +541,6 @@ define([], function() {
 			});
 			
 			$("a[name=downLoad]").click(function() {
-				console.info("2222222222222");
 				var actionBody = {};
 				actionBody.fileName = $(this).attr("fileName");
 				actionBody.fromPage = $(this).attr("frompage");

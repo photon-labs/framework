@@ -2,6 +2,7 @@
 
 	return {
 		runTests: function (configData) {
+			$(commonVariables.contentPlaceholder).empty();
 			module("PerformanceTest.js");
 			var performanceTest = new PerformanceTest(), self = this;
 			self.runNoResultAvailableTest(performanceTest);
@@ -199,7 +200,16 @@
 			module("PerformanceTest.js");
 			var performanceTest = new PerformanceTest(), self = this;
 			asyncTest("Render Performance popup", function() {
-
+				$.mockjax({
+				  url: commonVariables.webserviceurl+"util/checkLock?actionType=performance&appId=6d6753e8-b081-48d8-9924-70a14f3663d4",
+				  type: "GET",
+				  dataType: "json",
+				  contentType: "application/json",
+				  status: 200,
+				  response : function() {
+					  this.responseText = JSON.stringify({"message":null,"exception":null,"responseCode":"PHR10C00002","data":null,"status":"success"});
+				  }
+				});
 				$.mockjax({
 				  url: commonVariables.webserviceurl+commonVariables.paramaterContext+"/"+commonVariables.dynamicPageContext+"?appDirName=PF_TEST_PHP&goal=performance-test&phase=performance-test&customerId=photon&userId=rajeshkumar_ra",
 				  type: "GET",
@@ -236,6 +246,7 @@
 					  this.responseText = JSON.stringify({"message":"Template content returned succesfully","exception":null,"responseCode":null,"data":"<div class=\"middle_div\">\t<span>DB Context URLs</span>\t<span><input type=\"button\" value=\"Add\" id=\"dbContextAdd\" class=\"btn btn_style add_icon_btn\"></span>\t<div class=\"clear\"></div></div><script type=\"text/javascript\">\tvar dbJsonFlag = true;</script><div id=\"dbContextDivParent\">\t\t\t\t</div>\t<script type=\"text/javascript\">\tif(dbJsonFlag) {\t\tvar newTextBoxDiv = jQuery(document.createElement('div')).attr('id', 'dbContextDiv').attr('class','dbContextDivClass');\t\tnewTextBoxDiv.html(\"<table class='table table-striped table_border table-bordered context_table border_div' cellpadding='0' cellspacing='0' border='0'>\t\t\t<thead><tr><th colspan='4'><div class='delete_icon removeDBContext'><img class='removeContextImg' src='themes/default/images/helios/delete_row.png'></div></th></tr>\t\t\t</thead><tbody><tr>\t\t\t<td><label>Name<sup>*</sup></label><input type='text' name='dbName' value=''></td><td><label>Query Type<sup>*</sup></label><select name='queryType'><option value='Select Statement'>Select Statement</option><option value='Update Statement'>Update Statement</option></select></td><td><label>Query<sup>*</sup></label><textarea name='query' id='query'></textarea></td></tr></tbody></table>\");\t\tnewTextBoxDiv.appendTo(\"#dbContextDivParent\");\t\t}</script>\t","status":null});
 				  }
 				});
+				$(".headerAppId").attr("value","6d6753e8-b081-48d8-9924-70a14f3663d4");	
 				$('input[name=performancePopup]').click();
 				setTimeout(function() {
 					start();
@@ -317,7 +328,7 @@
 				});
 
 				$.mockjax({
-				  url: commonVariables.webserviceurl+commonVariables.mvnPerformanceTest+"?testBasis=parameters&testAgainst=server&customTestAgainst=server&testName=testServer&environmentName=Production&configurations=server&rampUpPeriod=10&authorizationUrl=&authorizationUserName=&authorizationPassword=&authorizationDomain=&authorizationRealm=&availableJmx=tests%2Fcustom%2F%23SEP%23Custom.jmx&availableJmx=tests%2Fcustom%2F%23SEP%23LoginTest.jmx&httpName=cd&context=admin%2Flogin&contextType=GET&encodingType=UTF-8&parameterName=&parameterValue=&dbName=&queryType=Select+Statement&query=&testAction=performance&customerId=photon&appId=7fd5aee1-0042-4e85-91ce-1b9493231019&projectId=b9e456e8-ccb8-458c-a559-f90cd2af48a1&username=rajeshkumar_ra",
+				  url: commonVariables.webserviceurl+commonVariables.mvnPerformanceTest+"?testBasis=parameters&testAgainst=server&customTestAgainst=server&testName=testServer&environmentName=Production&configurations=server&rampUpPeriod=10&authorizationUrl=&authorizationUserName=&authorizationPassword=&authorizationDomain=&authorizationRealm=&availableJmx=tests%2Fcustom%2F%23SEP%23Custom.jmx&availableJmx=tests%2Fcustom%2F%23SEP%23LoginTest.jmx&httpName=cd&context=admin%2Flogin&contextType=GET&encodingType=UTF-8&parameterName=&parameterValue=&dbName=&queryType=Select+Statement&query=&testAction=performance&customerId=photon&appId=7fd5aee1-0042-4e85-91ce-1b9493231019&projectId=b9e456e8-ccb8-458c-a559-f90cd2af48a1&username=rajeshkumar_ra&displayName=Admin",
 				  type: "POST",
 				  dataType: "json",
 				  contentType: "application/json",
