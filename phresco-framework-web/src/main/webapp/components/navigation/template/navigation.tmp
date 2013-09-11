@@ -84,8 +84,8 @@
 									<td><span data-i18n="login.placeholder.password"></span><sup>*</sup></td>
                                 </tr>
                                 <tr>
-                                    <td id="gitName"><input type="text" data-i18n="[placeholder]login.placeholder.username"></td>
-                                    <td><input type="password" placeholder="*******"></td>
+                                    <td id="gitName"><input type="text" data-i18n="[placeholder]login.placeholder.username" id="gitUserName"></td>
+                                    <td><input type="password" placeholder="*******" id="gitPassword"></td>
                                 </tr>
                             </tbody>
                          </table>

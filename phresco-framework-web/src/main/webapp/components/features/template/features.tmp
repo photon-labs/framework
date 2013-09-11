@@ -43,7 +43,7 @@
                                 </select>
                                 {{#scopeShowHide packaging scope}}{{/scopeShowHide}}
 								</div>
-								{{#packagedata packaging versions appliesTo}}{{/packagedata}}
+								<span class="settings_icon"><img src="themes/default/images/helios/settings_icon.png" width="23" height="22" border="0" alt=""></span>
                         </li>
 						<div class="clear"></div>
                   {{/each}}  
@@ -88,7 +88,7 @@
 								{{/if}} 
                                 {{#scopeShowHide packaging scope}}{{/scopeShowHide}}
 							</div>
-							{{#packagedata packaging versions appliesTo}}{{/packagedata}}								
+							<span class="settings_icon"><img src="themes/default/images/helios/settings_icon.png" width="23" height="22" border="0" alt=""></span>								
                         </li>
 						 <div class="clear"></div>
                   {{/each}}
@@ -133,7 +133,7 @@
 								{{/if}}
                                 {{#scopeShowHide packaging scope}}{{/scopeShowHide}}
 							</div>
-							{{#packagedata packaging versions appliesTo}}{{/packagedata}}								
+							<span class="settings_icon"><img src="themes/default/images/helios/settings_icon.png" width="23" height="22" border="0" alt=""></span>								
 
                         </li>
 						<div class="clear"></div>

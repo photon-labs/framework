@@ -210,17 +210,6 @@ define(["features/features",  "application/application",  "projectlist/projectLi
 		scrollbarEnable : function(){
 			var self=this;
 			if(self.flagged === 2) {
-				/*$("#content_1,#content_2,#content_3").mCustomScrollbar({
-					scrollInertia:600,
-					autoHideScrollbar:true,
-					callbacks:{
-						onScrollStart: function(){
-							$(".dyn_popup").hide();		
-						}
-					},
-					theme:"light-thin",
-					updateOnContentResize: true
-				});*/
 				self.customScroll($(".features_box").find(".feature_content"));
 				$(".dyn_popup").hide();
 			}

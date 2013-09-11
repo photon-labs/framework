@@ -21,6 +21,15 @@ define(["features/listener/featuresListener"], function() {
 			requestPostBody: null,
 			webserviceurl: null
 		},
+		modulearray1 : [],
+		modulearray2 : [],
+		jslibarray1 : [],
+		jslibarray2 : [],
+		comparray1 : [],
+		comparray2 : [],
+		temp1 : null,
+		temp2 : null,
+		temp3 : null,
 	
 		/***
 		 * Called in initialization time of this class 
@@ -56,6 +65,8 @@ define(["features/listener/featuresListener"], function() {
 
 		registerHandlebars : function () {
 			var self = this;
+			var appdetails = commonVariables.api.localVal.getJson('appdetails');
+			var techid = appdetails.data.appInfos[0].techInfo.id;
 			Handlebars.registerHelper('versiondata', function(versions, id) {
 				var selectedList = commonVariables.api.localVal.getSession("selectedFeatures");				
 				var fieldset;
@@ -63,15 +74,15 @@ define(["features/listener/featuresListener"], function() {
 					$.each(versions, function(index, value){
 						if(JSON.stringify(value.appliesTo) !== "null"){
 							$.each(value.appliesTo, function(index, value){
-								if(value.required === true){
+								if(value.required === true && value.techId === techid){
 									fieldset = '<fieldset class="switch default" id="feature_'+ id +'" value="false"><label value="false"></label><label class="on" value="true"></label></fieldset>';
-								} else {							
+									return false;
+								} else {
 									fieldset = '<fieldset class="switch switchOff" id="feature_'+ id +'" value="false"><label class="off" name="on_off" value="false"></label><label class="on" name="on_off" value="true"></label></fieldset>';
 								}
+								
 							});							
-						}/* else {							
-							fieldset = '<fieldset class="switch switchOff" id="feature_'+ id +'" value="false"><label class="off" name="on_off" value="false"></label><label class="on" name="on_off" value="true"></label></fieldset>';
-						} */
+						}
 					});
 				}else {							
 					fieldset = '<fieldset class="switch switchOff" id="feature_'+ id +'" value="false"><label class="off" name="on_off" value="false"></label><label class="on" name="on_off" value="true" ></label></fieldset>';
@@ -81,13 +92,16 @@ define(["features/listener/featuresListener"], function() {
 			
 			Handlebars.registerHelper('versionShowHide', function(versions, id) {
 				var fieldset;
+				var appdetails = commonVariables.api.localVal.getJson('appdetails');
+				var techid = appdetails.data.appInfos[0].techInfo.id;
 				if(versions.length > 0){
-					$.each(versions, function(index, value){
+ 					$.each(versions, function(index, value){
 						if(JSON.stringify(value.appliesTo) !== "null"){
 							$.each(value.appliesTo, function(index, value){
-								if(value.required === true){
+								if(value.required === true && value.techId === techid){
 									fieldset = '<div class="flt_right" id="version_'+ id +'" style="display:block;">';
-								}else{							
+									return false;
+								}else{						
 									fieldset = '<div class="flt_right" id="version_'+ id +'" style="display:none;">';
 								}
 							});
@@ -136,22 +150,45 @@ define(["features/listener/featuresListener"], function() {
 		 */
 		postRender : function(element) {
 			var self = this;
-			self.featuresListener.getFeaturesList(self.featuresListener.getRequestHeader(self.featureRequestBody, "SELECTED"), function(response) {
-				var responseData = response.data;
-				$(".switchOn").each(function(index, currentVal) {
-					$(currentVal).removeClass('switchOn').addClass('switchOff');
+			if(self.updateFlag === 1){
+				self.featuresListener.getFeaturesList(self.featuresListener.getRequestHeader(self.featureRequestBody, "SELECTED"), function(response) {
+					var responseData = response.data;
+					$(".switchOn").each(function(index, currentVal) {
+						$(currentVal).removeClass('switchOn').addClass('switchOff');
+					});
+					$.each(response.data, function(index, value){
+						$("#feature_"+this.moduleId).addClass("switchOn").removeClass('switchOff');
+						$("#version_"+this.moduleId).show();		
+						$('#feature_'+value.moduleId+'').parent('li').children('div').children('.jarscope').val(value.scope);
+						self.selectedCount();
+					});
 				});
-				$.each(response.data, function(index, value){
-					$("#feature_"+this.moduleId).addClass("switchOn").removeClass('switchOff');
-					$("#version_"+this.moduleId).show();		
-					$('#feature_'+value.moduleId+'').parent('li').children('div').children('.jarscope').val(value.scope);
-					self.selectedCount();
-				});
-			});
-				
+			}	
+			var i =0;		
+			self.temp1 = $('#moduleContent').children('li').length;	
+			self.temp2 = $('#jsibrariesContent').children('li').length;	
+			self.temp3 = $('#componentsContent').children('li').length;	
+					
 			setTimeout(function(){
 					self.selectedCount();
 			},1500);
+			setTimeout(function(){
+				var count1=0,count2=0,count3=0;
+				$('#moduleContent').children('li').each(function() {
+					self.modulearray1[count1]= $(this).children('fieldset').attr('class');
+					count1++;
+				});
+				
+				$('#jsibrariesContent').children('li').each(function() {
+					self.jslibarray1[count2]= $(this).children('fieldset').attr('class');
+					count2++;
+				});
+				
+				$('#componentsContent').children('li').each(function() {
+					self.comparray1[count3]= $(this).children('fieldset').attr('class');
+					count3++;
+				});
+			},5000);
 
 		},
 		
@@ -221,6 +258,7 @@ define(["features/listener/featuresListener"], function() {
 		 */
 		bindUI : function(){
 			var self=this;
+			$('.settings_icon').hide();
 			var counter=0;
 			$(window).resize(function() {
 				$(".dyn_popup").hide();
@@ -366,14 +404,93 @@ define(["features/listener/featuresListener"], function() {
 						featureUpdatedata.moduleId = moduleId; 
 						featureUpdatedata.artifactGroupId = moduleId;
 						self.featureUpdatedArray.push(featureUpdatedata);
-						//self.updateFlag = 1;
+						self.updateFlag = 1;
 					}
 				});				
 				
 				
 				self.featuresListener.getFeaturesUpdate(self.featuresListener.getRequestHeader(self.featureUpdatedArray, "UPDATE", ""), function(response) {
 					self.selectedCount();
-					}); 
+				}); 
+				var temparray1 = [], temparray2 = [], temparray3 = [];
+				var count1 = 0, count2 = 0,count3 = 0;
+				$('#moduleContent').children('li').each(function() {
+					self.modulearray2[count1]= $(this).find('.switch').attr('class');
+					temparray1[count1] = $(this).children('.switch').attr('id');
+					count1++;
+				});	
+				
+				$('#jsibrariesContent').children('li').each(function() {
+					self.jslibarray2[count2]= $(this).find('.switch').attr('class');
+					temparray2[count2] = $(this).children('.switch').attr('id');
+					count2++;
+				});	
+				
+				$('#componentsContent').children('li').each(function() {
+					self.comparray2[count3]= $(this).find('.switch').attr('class');
+					temparray3[count3] = $(this).children('.switch').attr('id');
+					count3++;
+				});	
+				for(var i=0;i<self.temp1;i++) {
+					if(self.modulearray1[i]!=self.modulearray2[i]) {
+						if(($('#'+temparray1[i]+'').parent().attr('packaging') === "zip")){
+						$('#'+temparray1[i]+'').parent().children('.settings_icon').show();
+						}
+					}
+					if(self.modulearray1[i] === 'switch default' || self.modulearray1[i] === 'switch default switchOn' || self.modulearray1[i] === 'switch default switchOff') {
+						if(($('#'+temparray1[i]+'').parent().attr('packaging') === "zip")){
+							$('#'+temparray1[i]+'').parent().children('.settings_icon').show();
+						}	
+					}
+					
+				};
+				
+				for(var i=0;i<self.temp2;i++) {
+					if(self.comparray1[i]!=self.comparray2[i]) {
+						if(($('#'+temparray3[i]+'').parent().attr('packaging') === "zip")){
+						$('#'+temparray3[i]+'').parent().children('.settings_icon').show();
+						}
+					}
+					if(self.comparray1[i] === 'switch default' || self.comparray1[i] === 'switch default switchOn' || self.comparray1[i] === 'switch default switchOff') {
+						if(($('#'+temparray3[i]+'').parent().attr('packaging') === "zip")){
+							$('#'+temparray3[i]+'').parent().children('.settings_icon').show();
+						}	
+					}
+					
+				};
+				
+				for(var j=0;j<self.temp2;j++) {
+					if(self.jslibarray1[j]!=self.jslibarray2[j]) {
+						if(($('#'+temparray2[j]+'').parent().attr('packaging') === "zip")){
+						$('#'+temparray2[j]+'').parent().children('.settings_icon').show();
+						}
+					}
+					if(self.jslibarray1[j] === 'switch default' || self.jslibarray1[j] === 'switch default switchOn' || self.jslibarray1[j] === 'switch default switchOff') {
+						if(($('#'+temparray2[j]+'').parent().attr('packaging') === "zip")){
+							$('#'+temparray2[j]+'').parent().children('.settings_icon').show();
+						}	
+					}
+					
+				};
+								
+				var counter1 = 0, counter2 = 0, counter3 = 0;
+				$('#moduleContent').children('li').each(function() {
+					self.modulearray1[counter1]= $(this).children('fieldset').attr('class');
+					counter1++;
+				});
+				
+				$('#jsibrariesContent').children('li').each(function() {
+					self.jslibarray1[counter2]= $(this).children('fieldset').attr('class');
+					counter2++;
+				});
+				
+				$('#componentsContent').children('li').each(function() {
+					self.comparray1[counter3]= $(this).children('fieldset').attr('class');
+					counter3++;
+				});
+				
+				
+				
 			});
 			self.windowResize();
 
@@ -382,13 +499,10 @@ define(["features/listener/featuresListener"], function() {
 			});
 			if(counter === 1){
 				$('.features_box').parent('td').addClass('onefeature');
-				//$('.search_box').css('width', '17%');
 			} else if(counter === 2){
 				$('.features_box').parent('td').addClass('twofeatures');
-				//$('.search_box').css('width', '35%');
 			} else if(counter === 3){
 				$('.features_box').parent('td').addClass('threefeatures');
-				//$('.search_box').css('width', '45%');
 			}
 		}		
 	});

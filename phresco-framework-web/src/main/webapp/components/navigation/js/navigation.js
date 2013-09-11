@@ -122,6 +122,10 @@ define(["navigation/listener/navigationListener"], function() {
 				$("#importRepourl").removeClass("errormessage");
 				$("#importUserName").removeClass("errormessage");
 				$("#importPassword").removeClass("errormessage");
+				$("#gitUserName").val("");
+				$("#gitPassword").val("");
+				$("#gitUserName").removeClass("errormessage");
+				$("#gitPassword").removeClass("errormessage");
 				$("#revision").removeClass("errormessage");
 				$("#testRepoUrl").removeClass("errormessage");
 				$("#testImportUserName").removeClass("errormessage");

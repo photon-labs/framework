@@ -840,8 +840,19 @@ define([], function() {
 						self.validateTextBox($("#testRevision"), 'Enter revision');
 					} 
 				}
+			} else if ('git' === importType || 'bitkeeper' === importType) {
+				$("#gitUserName").removeClass("errormessage");
+				$("#gitPassword").removeClass("errormessage");
+				var bituserName = $("#gitUserName").val().replace(/\s/g, '');
+				var bitpwd = $("#gitPassword").val();
+				if (bituserName === "") {
+					error = true;
+					self.validateTextBox($("#gitUserName"), 'Enter user name');
+				} else if (bitpwd === "") {
+					error = true;
+					self.validateTextBox($("#gitPassword"), 'Enter password');
+				}
 			}
-			
 			callback(error);
 		},
 		

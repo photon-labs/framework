@@ -719,7 +719,8 @@ define(["framework/widget", "framework/templateProvider"], function() {
 			},
 			
 			isValidUrl : function (url) {
-				var urlPattern = /^(((ht|f){1}((tp|tps):[/][/]){1}))[-a-zA-Z0-9@:%_\+.~#!?&amp;//=]+$/;				
+				//var urlPattern = /^(((ht|f){1}((tp|tps):[/][/]){1}))[-a-zA-Z0-9@:%_\+.~#!?&amp;//=]+$/;
+				var urlPattern = /^(((htt|ss|http){1}((p|h|s):[/][/]){1}))[-a-zA-Z0-9@:%_\+.~#!?&amp;//=]+$/;
 				if( !urlPattern.test(url)) {
 					return false;
 				} else {
