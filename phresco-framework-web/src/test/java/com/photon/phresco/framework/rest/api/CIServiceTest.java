@@ -3,6 +3,7 @@ package com.photon.phresco.framework.rest.api;
 import static org.junit.Assert.assertEquals;
 
 import java.io.IOException;
+import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -33,6 +34,11 @@ public class CIServiceTest {
 		ResponseInfo<String> response = (ResponseInfo<String>) localJenkinsLocalAlive.getEntity();
 		String data = response.getData();
 		return data;
+	}
+	
+	@Test
+	public void getJenkinsUrl() throws PhrescoException, UnknownHostException {
+		Response build = ciservice.getJenkinsUrl();
 	}
 	
 	@Test

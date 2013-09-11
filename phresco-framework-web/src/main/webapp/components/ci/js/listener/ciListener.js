@@ -245,7 +245,7 @@ define([], function() {
 				var parseJson = $.parseJSON(response.data);
 				if(parseJson === "red") {
 					obj.find('.img_process').attr('src',"themes/default/images/helios/cross_red.png");
-				} else if (parseJson === "red_anime" || parseJson === "blue_anime" || parseJson ==="grey_anime") {
+				} else if (parseJson === "red_anime" || parseJson === "blue_anime" || parseJson ==="grey_anime" || parseJson === "notbuilt_anime") {
 					obj.find('.img_process').attr('src',"themes/default/images/helios/processing.gif");
 				} else if (parseJson === "blue") {
 					obj.find('.img_process').attr('src',"themes/default/images/helios/tick_green.png");

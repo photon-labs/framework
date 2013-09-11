@@ -53,7 +53,10 @@ define([], function() {
 				requestMethod : "",
 				webserviceurl : '',
 			};
-			if (action === "getMail") {
+			if (action === "jenkinsUrl") {
+				header.requestMethod = "GET";
+				header.webserviceurl = commonVariables.webserviceurl + commonVariables.ci + "/jenkinsUrl";
+			} else if (action === "getMail") {
 				header.requestMethod = "GET";
 				header.webserviceurl = commonVariables.webserviceurl + commonVariables.ci + "/mail";
 			} else if (action === "getConfluence") {
@@ -81,6 +84,11 @@ define([], function() {
 		
 		getSettings : function() {
 			var self = this;
+			
+			self.getHeaderResponse(self.getRequestHeader(self.ciRequestBody, 'jenkinsUrl'), function(response) {
+				$('input[name=jenkinsUrl]').val(response.data);
+			});
+			
 			self.getHeaderResponse(self.getRequestHeader(self.ciRequestBody, 'getMail'), function(response) {
 				$('input[name=username][temp=email]').val(response.data[0]);
 				$('input[name=password][temp=email]').val(response.data[1]);

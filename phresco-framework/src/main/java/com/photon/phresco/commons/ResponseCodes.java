@@ -449,6 +449,8 @@ public interface ResponseCodes {
 	String PHR810035 = "PHR810035"; // build download url retrieve failed
 	String PHR800023 = "PHR800023"; // last build status returned successfully
 	String PHR810036 = "PHR810036"; // failed to get last build status
+	String PHR800024 = "PHR800024"; // Returned Jenkins url successfully
+	String PHR810037 = "PHR810037"; // failed to get jenkins url
 	
 	/*
 	 * Upgrade Service

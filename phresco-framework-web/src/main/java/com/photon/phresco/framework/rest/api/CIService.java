@@ -124,7 +124,7 @@ public class CIService extends RestBase implements FrameworkConstants, ServiceCo
 					.build();
 		} catch (PhrescoException e) {
 			ResponseInfo<List<CIBuild>> finalOutput = responseDataEvaluation(responseData, e, null, RESPONSE_STATUS_ERROR, PHR810001);
-			return Response.status(Status.NOT_FOUND).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, ALL_HEADER)
+			return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, ALL_HEADER)
 					.build();
 		}
 	}
@@ -157,12 +157,12 @@ public class CIService extends RestBase implements FrameworkConstants, ServiceCo
 			if (coreCreateJob) {
 				finalOutput = responseDataEvaluation(responseData, null, continuousDelivery, RESPONSE_STATUS_SUCCESS, PHR800002);
 			} else {
-				finalOutput = responseDataEvaluation(responseData, null, continuousDelivery, RESPONSE_STATUS_ERROR, PHR810003);
+				finalOutput = responseDataEvaluation(responseData, null, continuousDelivery, RESPONSE_STATUS_FAILURE, PHR810003);
 			}
 			return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, ALL_HEADER).build();
 		} catch (PhrescoException e) {
 			finalOutput = responseDataEvaluation(responseData, e, null, RESPONSE_STATUS_ERROR, PHR810003);
-			return Response.status(Status.NOT_FOUND).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, ALL_HEADER)
+			return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, ALL_HEADER)
 			.build();
 		}
 	}
@@ -175,7 +175,6 @@ public class CIService extends RestBase implements FrameworkConstants, ServiceCo
 					throws PhrescoException, JSONException, ClientProtocolException, IOException {
 		ResponseInfo<String> responseData = new ResponseInfo<String>();
 		boolean hasTrue = true;
-		String job = null;
 		try {
 			if(!flag.equalsIgnoreCase("update")) {
 				JSONArray jobs = new JSONArray("["+jobName+"]");
@@ -194,9 +193,8 @@ public class CIService extends RestBase implements FrameworkConstants, ServiceCo
 			    for (int k = 0; k<jobs.length(); k++) {
 				    for (int j = 0; j<json1.length(); j++) {
 				    	 JSONObject jsonObject1 = json1.getJSONObject(j);
-				    	 if(jobs.get(k).equals(jsonObject1.getString("name"))) {
+				    	 if(jobs.get(k).toString().equals(jsonObject1.getString("name"))) {
 				    		 hasTrue = false;
-				    		 job = (String) jobs.get(k);
 				    		 break;
 				    	 }
 				    }
@@ -206,12 +204,12 @@ public class CIService extends RestBase implements FrameworkConstants, ServiceCo
 				ResponseInfo<Boolean> finalOutput = responseDataEvaluation(responseData, null, hasTrue, RESPONSE_STATUS_SUCCESS, PHR800003);
 				return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, ALL_HEADER).build();
 		    } else {
-		    	ResponseInfo<Boolean> finalOutput = responseDataEvaluation(responseData, null, hasTrue, RESPONSE_STATUS_ERROR, PHR810031);
+		    	ResponseInfo<Boolean> finalOutput = responseDataEvaluation(responseData, null, hasTrue, RESPONSE_STATUS_FAILURE, PHR810031);
 				return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, ALL_HEADER).build();
 		    }
 		} catch (PhrescoException e) {
 			ResponseInfo<Boolean> finalOutput = responseDataEvaluation(responseData, e, null, RESPONSE_STATUS_ERROR, PHR810031);
-			return Response.status(Status.NOT_FOUND).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, ALL_HEADER)
+			return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, ALL_HEADER)
 			.build();
 		}
 	}
@@ -275,12 +273,12 @@ public class CIService extends RestBase implements FrameworkConstants, ServiceCo
 			if (coreCreateJob) {
 				finalOutput = responseDataEvaluation(responseData, null, continuousDelivery, RESPONSE_STATUS_SUCCESS, PHR800002);
 			} else {
-				finalOutput = responseDataEvaluation(responseData, null, null, RESPONSE_STATUS_ERROR, PHR810003);
+				finalOutput = responseDataEvaluation(responseData, null, null, RESPONSE_STATUS_FAILURE, PHR810003);
 			}
 			return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, ALL_HEADER).build();
 		} catch (PhrescoException e) {
 			finalOutput = responseDataEvaluation(responseData, e, null, RESPONSE_STATUS_ERROR, PHR810003);
-			return Response.status(Status.NOT_FOUND).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, ALL_HEADER).build();
+			return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, ALL_HEADER).build();
 		}
 	}
 	
@@ -370,12 +368,12 @@ public class CIService extends RestBase implements FrameworkConstants, ServiceCo
 			if (createJsonJobs) {
 				finalOutput = responseDataEvaluation(responseData, null, continuousDelivery, RESPONSE_STATUS_SUCCESS, PHR800020);
 			} else {
-				finalOutput = responseDataEvaluation(responseData, null, null, RESPONSE_STATUS_ERROR, PHR810005);
+				finalOutput = responseDataEvaluation(responseData, null, null, RESPONSE_STATUS_FAILURE, PHR810005);
 			}
 			return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, ALL_HEADER).build();
 		} catch (PhrescoException e) {
 			ResponseInfo<Boolean> finalOutput = responseDataEvaluation(responseData, e, null, RESPONSE_STATUS_ERROR, PHR810005);
-			return Response.status(Status.NOT_FOUND).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, ALL_HEADER)
+			return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, ALL_HEADER)
 			.build();
 		}
 	}
@@ -412,7 +410,7 @@ public class CIService extends RestBase implements FrameworkConstants, ServiceCo
 		if(exist) {
 			finalOutput= responseDataEvaluation(responseData, null, matchingContinuous, RESPONSE_STATUS_SUCCESS, PHR800004);
 		} else {
-			finalOutput = responseDataEvaluation(responseData, null, matchingContinuous, RESPONSE_STATUS_ERROR, PHR810006);
+			finalOutput = responseDataEvaluation(responseData, null, matchingContinuous, RESPONSE_STATUS_FAILURE, PHR810006);
 		}
 		return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, ALL_HEADER).build();
 	}
@@ -495,7 +493,7 @@ public class CIService extends RestBase implements FrameworkConstants, ServiceCo
 			return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, ALL_HEADER).build();
 		} catch (PhrescoException e) {
 			ResponseInfo<Boolean> finalOutput = responseDataEvaluation(responseData, e, null, RESPONSE_STATUS_ERROR, PHR810007);
-			return Response.status(Status.NOT_FOUND).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, ALL_HEADER)
+			return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, ALL_HEADER)
 			.build();
 		}
 	}
@@ -531,7 +529,7 @@ public class CIService extends RestBase implements FrameworkConstants, ServiceCo
 			.build();
 		} catch (PhrescoException e) {
 			ResponseInfo<CIJobStatus> finalOutput = responseDataEvaluation(responseData, e, null, RESPONSE_STATUS_ERROR, PHR810009);
-			return Response.status(Status.NOT_FOUND).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, ALL_HEADER)
+			return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, ALL_HEADER)
 			.build();
 		}
 	}
@@ -568,14 +566,14 @@ public class CIService extends RestBase implements FrameworkConstants, ServiceCo
 				deleteBuilds = ciManager.deleteBuilds(specificJob, buildNumber);
 				finalOutput = responseDataEvaluation(responseData, null, deleteBuilds, RESPONSE_STATUS_SUCCESS, PHR800007);
 			} else {
-				finalOutput = responseDataEvaluation(responseData, null, deleteBuilds, RESPONSE_STATUS_ERROR, PHR810011);
+				finalOutput = responseDataEvaluation(responseData, null, deleteBuilds, RESPONSE_STATUS_FAILURE, PHR810011);
 			}
 
 			return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, ALL_HEADER)
 			.build();
 		} catch (PhrescoException e) {
 			finalOutput = responseDataEvaluation(responseData, e, null, RESPONSE_STATUS_ERROR, PHR810011);
-			return Response.status(Status.NOT_FOUND).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, ALL_HEADER)
+			return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, ALL_HEADER)
 			.build();
 		}
 	}
@@ -609,14 +607,14 @@ public class CIService extends RestBase implements FrameworkConstants, ServiceCo
 				buildJobs = ciManager.generateBuild(specificJob);
 				finalOutput = responseDataEvaluation(responseData, null, buildJobs, RESPONSE_STATUS_SUCCESS, PHR800008);
 			} else {
-				finalOutput = responseDataEvaluation(responseData, null, buildJobs, RESPONSE_STATUS_ERROR, PHR810012);
+				finalOutput = responseDataEvaluation(responseData, null, buildJobs, RESPONSE_STATUS_FAILURE, PHR810012);
 			}
 
 			return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, ALL_HEADER)
 			.build();
 		} catch (PhrescoException e) {
 			ResponseInfo<CIJobStatus> finalOutput = responseDataEvaluation(responseData, e, null, RESPONSE_STATUS_ERROR, PHR810013);
-			return Response.status(Status.NOT_FOUND).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, ALL_HEADER)
+			return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, ALL_HEADER)
 			.build();
 		}
 	}
@@ -645,13 +643,40 @@ public class CIService extends RestBase implements FrameworkConstants, ServiceCo
 			finalOutput = responseDataEvaluation(responseData, null, cred, RESPONSE_STATUS_SUCCESS, PHR800009);
 		} catch (PhrescoException e) {
 			finalOutput = responseDataEvaluation(responseData, e, null, RESPONSE_STATUS_ERROR, PHR810014);
-			return Response.status(Status.NOT_FOUND).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, ALL_HEADER)
+			return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, ALL_HEADER)
 			.build();
 		}
 		return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, ALL_HEADER)
 		.build();
 	}
 	
+	/**
+	 * @return
+	 * @throws PhrescoException
+	 * @throws UnknownHostException
+	 */
+	@GET
+	@Path("/jenkinsUrl")
+	@Produces(MediaType.APPLICATION_JSON)
+	@Consumes(MediaType.APPLICATION_JSON)
+	public Response getJenkinsUrl()throws PhrescoException, UnknownHostException {
+		ResponseInfo responseData = new ResponseInfo();
+		ResponseInfo finalOutput = null;
+		InetAddress thisIp;
+		try {
+			thisIp = InetAddress.getLocalHost();
+			String host = thisIp.getHostAddress();
+			String port = FrameworkServiceUtil.getJenkinsPortNo();
+			String jenkinsUrl = HTTP_PROTOCOL + PROTOCOL_POSTFIX + host + FrameworkConstants.COLON + port + FrameworkConstants.FORWARD_SLASH + CI ;
+			finalOutput = responseDataEvaluation(responseData, null, jenkinsUrl, RESPONSE_STATUS_SUCCESS, PHR800024);
+		} catch (PhrescoException e) {
+			finalOutput = responseDataEvaluation(responseData, e, null, RESPONSE_STATUS_ERROR, PHR810037);
+			return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, ALL_HEADER)
+			.build();
+		}
+		return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, ALL_HEADER)
+				.build();
+	}
 	
 	/**
 	 * @return
@@ -681,11 +706,11 @@ public class CIService extends RestBase implements FrameworkConstants, ServiceCo
 			finalOutput = responseDataEvaluation(responseData, null, confluenceDetail, RESPONSE_STATUS_SUCCESS, PHR800021);
 		} catch (PhrescoException e) {
 			finalOutput = responseDataEvaluation(responseData, e, null, RESPONSE_STATUS_ERROR, PHR810034);
-			return Response.status(Status.NOT_FOUND).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, ALL_HEADER)
+			return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, ALL_HEADER)
 			.build();
 		} catch (org.codehaus.jettison.json.JSONException e) {
 			finalOutput = responseDataEvaluation(responseData, e, null, RESPONSE_STATUS_ERROR, PHR810034);
-			return Response.status(Status.NOT_FOUND).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, ALL_HEADER)
+			return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, ALL_HEADER)
 			.build();
 		}
 		return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, ALL_HEADER)
@@ -719,11 +744,11 @@ public class CIService extends RestBase implements FrameworkConstants, ServiceCo
 			setGlobalConfiguration = ciManager.setGlobalConfiguration(jenkinsUrl, submitUrl, JSONarray, emailAddress, emailPassword);
 		} catch (PhrescoException e) {
 			finalOutput = responseDataEvaluation(responseData, e, setGlobalConfiguration, RESPONSE_STATUS_ERROR, PHR810034);
-			return Response.status(Status.NOT_FOUND).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, ALL_HEADER)
+			return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, ALL_HEADER)
 			.build();
 		} catch (org.json.JSONException e) {
 			finalOutput = responseDataEvaluation(responseData, e, setGlobalConfiguration, RESPONSE_STATUS_ERROR, PHR810034);
-			return Response.status(Status.NOT_FOUND).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, ALL_HEADER)
+			return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, ALL_HEADER)
 			.build();
 		}
 		finalOutput = responseDataEvaluation(responseData, null, setGlobalConfiguration, RESPONSE_STATUS_SUCCESS, PHR800022);
@@ -765,7 +790,7 @@ public class CIService extends RestBase implements FrameworkConstants, ServiceCo
 			.build();
 		} catch (Exception e) {
 			finalOutput = responseDataEvaluation(responseData, e, null, RESPONSE_STATUS_ERROR, PHR810035);
-			return Response.status(Status.NOT_FOUND).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, ALL_HEADER)
+			return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, ALL_HEADER)
 					.build();
 		}
 	}
@@ -837,7 +862,7 @@ public class CIService extends RestBase implements FrameworkConstants, ServiceCo
 			return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, ALL_HEADER).build();
 		} catch (PhrescoException e) {
 			finalOutput = responseDataEvaluation(responseData, e, null, RESPONSE_STATUS_ERROR, PHR810018);
-			return Response.status(Status.NOT_FOUND).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, ALL_HEADER)
+			return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, ALL_HEADER)
 			.build();
 		}
 	}
@@ -869,7 +894,7 @@ public class CIService extends RestBase implements FrameworkConstants, ServiceCo
 			return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, ALL_HEADER).build();
 		} catch (PhrescoException e) {
 			finalOutput = responseDataEvaluation(responseData, e, null, RESPONSE_STATUS_ERROR, PHR810036);
-			return Response.status(Status.NOT_FOUND).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, ALL_HEADER)
+			return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, ALL_HEADER)
 			.build();
 		}
 	}

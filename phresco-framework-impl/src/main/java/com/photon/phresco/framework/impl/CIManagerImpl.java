@@ -1381,7 +1381,6 @@ public class CIManagerImpl implements CIManager, FrameworkConstants {
 		}
 	}
 
-	@Override
 	public boolean setSVNCredentials(String submitUrl, String svnUrl, String username, String password) throws PhrescoException {
 		if (debugEnabled) {
 			S_LOGGER.debug("Entering Method CIManagerImpl.setSVNCredentials()");

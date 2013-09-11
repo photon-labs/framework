@@ -281,7 +281,7 @@
     <section class="content_end">        
         <div class="flt_right">
             <a href="javascript:;"><input type="submit" value="Add" data-i18n="[value]common.btn.add" class="btn btn_style add_icon_btn"></a>
-            <input type="submit" value="Cancel" data-i18n="[value]common.btn.close" class="btn btn_style cancel_icon_btn">
+            <input type="submit" value="Cancel" data-i18n="[value]common.btn.cancel" class="btn btn_style cancel_icon_btn">
         </div>
         <!--content_title ends here -->
 		<div class="msgdisplay"></div>

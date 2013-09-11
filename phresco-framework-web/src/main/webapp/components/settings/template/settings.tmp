@@ -18,7 +18,7 @@
                             </thead>
                             <tbody>
                                 <tr>
-                                    <td><input type="text" value="http://localhost:3579/ci" disabled></td>
+                                    <td><input type="text" name="jenkinsUrl" disabled></td>
                                     <td><input type="button" name="setup" value="Setup" class="btn btn_style">&nbsp;&nbsp;<input type="button" name="switch" value="Start" class="btn btn_style"></td>
                                 </tr>
                           </tbody>
