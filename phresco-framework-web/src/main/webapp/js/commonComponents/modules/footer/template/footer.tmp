@@ -1,4 +1,4 @@
-<footer class="footer_section" id="footer">&copy;<font data-i18n="footer.label.copyrights"></font></footer>
+<footer class="footer_section" id="footer"><font data-i18n="footer.label.copyrights" id="copyRightText"></font></footer>
 <div id="myModal" class="modal hide fade alert text-center" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
 </div>
 

@@ -50,6 +50,16 @@ define(["header/listener/headerListener"] , function(template) {
 			}
 
 			self.headerListener.showHideMainMenu($("#selectedCustomer").text());
+			var data = {};
+			data.customerId = self.getCustomer();
+			self.headerListener.performAction(self.headerListener.getActionHeader("getCustomerTheme", data), function(response) {
+				$("#copyRightText").html(response.data.theme.copyRightLabel);
+				var pageTitle = response.data.theme.customerTitle;
+				if (self.isBlank(pageTitle)) {
+					pageTitle = "Phresco";
+				}
+				$(document).attr('title', pageTitle);
+			});
 		},
 		
 		/***
