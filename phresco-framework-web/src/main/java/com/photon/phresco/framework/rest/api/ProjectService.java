@@ -27,7 +27,9 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
@@ -43,11 +45,12 @@ import javax.ws.rs.core.Response;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
+import org.json.JSONObject;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-import com.photon.phresco.commons.ResponseCodes;
 import com.photon.phresco.commons.FrameworkConstants;
+import com.photon.phresco.commons.ResponseCodes;
 import com.photon.phresco.commons.model.ApplicationInfo;
 import com.photon.phresco.commons.model.ArtifactGroup;
 import com.photon.phresco.commons.model.ArtifactGroupInfo;
@@ -59,6 +62,7 @@ import com.photon.phresco.commons.model.FunctionalFrameworkInfo;
 import com.photon.phresco.commons.model.FunctionalFrameworkProperties;
 import com.photon.phresco.commons.model.ProjectInfo;
 import com.photon.phresco.commons.model.SelectedFeature;
+import com.photon.phresco.commons.model.Technology;
 import com.photon.phresco.commons.model.User;
 import com.photon.phresco.commons.model.UserPermissions;
 import com.photon.phresco.commons.model.WebService;
@@ -614,21 +618,47 @@ public class ProjectService extends RestBase implements FrameworkConstants, Serv
 	@GET
 	@Path(REST_API_EDIT_APPLICATION)
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response editApplication(@QueryParam(REST_QUERY_APPDIR_NAME) String appDirName) {
+	public Response editApplication(@QueryParam(REST_QUERY_APPDIR_NAME) String appDirName, @QueryParam(REST_QUERY_USERID) String userId) {
 		File projectInfoFile = new File(Utility.getProjectHome() + appDirName + File.separator + FOLDER_DOT_PHRESCO
 				+ File.separator + PROJECT_INFO);
 		BufferedReader reader = null;
-		ResponseInfo<ProjectInfo> responseData = new ResponseInfo<ProjectInfo>();
+		ResponseInfo<JSONObject> responseData = new ResponseInfo<JSONObject>();
+		Map json = new HashMap();
 		try {
+			ProjectManager projectManager = PhrescoFrameworkFactory.getProjectManager();
 			reader = new BufferedReader(new FileReader(projectInfoFile));
 			ProjectInfo projectInfo = (ProjectInfo) new Gson().fromJson(reader, ProjectInfo.class);
+			ServiceManager serviceManager = CONTEXT_MANAGER_MAP.get(userId);
+			ProjectInfo parentProjectInfo = null;
+			Map<String, String> embedList = new HashMap<String, String>();
+			if (projectInfo != null) {
+				String technologyId = projectInfo.getAppInfos().get(0).getTechInfo().getId();
+				Technology technology = serviceManager.getTechnology(technologyId);
+				List<String> options = technology.getOptions();
+				if (options.contains(EMBED_APPLICATION)) {
+					List<String> applicableEmbedTechnology = technology.getApplicableEmbedTechnology();
+					parentProjectInfo = projectManager.getProject(projectInfo.getId(), projectInfo.getCustomerIds().get(0));
+					List<ApplicationInfo> allChildAppinfos = parentProjectInfo.getAppInfos();
+					for (ApplicationInfo allAppinfo : allChildAppinfos) {
+						String techId = allAppinfo.getTechInfo().getId();
+						if (applicableEmbedTechnology.contains(techId) && !allAppinfo.getAppDirName().equals(appDirName)) {
+							String EmbedName = allAppinfo.getName();
+							String EmbedAppId = allAppinfo.getId();
+							embedList.put(EmbedName, EmbedAppId);
+						}
+					}
+				}
+			}
+			json.put("embedList", embedList);
+			
 			List<ApplicationInfo> appInfos = projectInfo.getAppInfos();
 			for (ApplicationInfo applicationInfo : appInfos) {
 				if (applicationInfo.getAppDirName().equals(appDirName)) {
 					status = RESPONSE_STATUS_SUCCESS;
 					successCode = PHR200009;
+					json.put("projectInfo", projectInfo);
 					ResponseInfo<ProjectInfo> finalOutput = responseDataEvaluation(responseData, null,
-							projectInfo, status, successCode);
+							json, status, successCode);
 					return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN,ALL_HEADER)
 							.build();
 				}
@@ -640,7 +670,14 @@ public class ProjectService extends RestBase implements FrameworkConstants, Serv
 					null, status, errorCode);
 			return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN,ALL_HEADER)
 					.build();
-		}
+		} catch (PhrescoException e) {
+			status = RESPONSE_STATUS_ERROR;
+			errorCode = PHR210007;
+			ResponseInfo<ProjectInfo> finalOutput = responseDataEvaluation(responseData, e,
+					null, status, errorCode);
+			return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN,ALL_HEADER)
+					.build();
+		} 
 		return null;
 	}
 

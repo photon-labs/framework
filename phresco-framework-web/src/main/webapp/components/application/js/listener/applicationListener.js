@@ -249,27 +249,13 @@ define([], function() {
 								});
 							});
 						} else {
-							$(".msgdisplay").removeClass("success").addClass("error");
-							$(".error").attr('data-i18n', 'errorCodes.' + response.responseCode);
-							self.renderlocales(commonVariables.contentPlaceholder);	
-							$(".error").show();
-							$(".error").fadeIn(500).fadeOut(500).fadeIn(500).fadeOut(500).fadeIn(500).fadeOut(5);
-							setTimeout(function() {
-								$(".error").hide();
-							},2500);					
+							commonVariables.api.showError(response.responseCode ,"error", true);			
 						}
 
 					},
 
 					function(textStatus) {
-						$(".msgdisplay").removeClass("success").addClass("error");
-						$(".error").attr('data-i18n', 'commonlabel.errormessage.serviceerror');
-						self.renderlocales(commonVariables.contentPlaceholder);	
-						$(".error").show();
-						$(".error").fadeIn(500).fadeOut(500).fadeIn(500).fadeOut(500).fadeIn(500).fadeOut(5);
-						setTimeout(function() {
-							$(".error").hide();
-						},2500);	
+						commonVariables.api.showError("serviceerror" ,"error", true);
 					}
 				);
 			} catch(exception) {
@@ -280,8 +266,8 @@ define([], function() {
 		getAppConfig : function(appInfo , type, callback){
 			var self=this, header, data = {}, userId, techId, customerId;
 			userId = commonVariables.api.localVal.getSession('username');
-			techId = appInfo.data.appInfos[0].techInfo.id;
-			customerId = appInfo.data.customerIds[0];
+			techId = appInfo.data.projectInfo.appInfos[0].techInfo.id;
+			customerId = appInfo.data.projectInfo.customerIds[0];
 			header = {
 				contentType: "application/json",
 				requestMethod: "GET",
@@ -299,27 +285,13 @@ define([], function() {
 						if (response !== null && response.status !== "error" && response.status !== "failure") {
 							callback(response);
 						} else {
-							$(".msgdisplay").removeClass("success").addClass("error");
-							$(".error").attr('data-i18n', 'errorCodes.' + response.responseCode);
-							self.renderlocales(commonVariables.contentPlaceholder);	
-							$(".error").show();
-							$(".error").fadeIn(500).fadeOut(500).fadeIn(500).fadeOut(500).fadeIn(500).fadeOut(5);
-							setTimeout(function() {
-								$(".error").hide();
-							},2500);	
+							commonVariables.api.showError(response.responseCode ,"error", true);	
 						}
 
 					},
 
 					function(textStatus) {
-						$(".msgdisplay").removeClass("success").addClass("error");
-						$(".error").attr('data-i18n', 'commonlabel.errormessage.serviceerror');
-						self.renderlocales(commonVariables.contentPlaceholder);	
-						$(".error").show();
-						$(".error").fadeIn(500).fadeOut(500).fadeIn(500).fadeOut(500).fadeIn(500).fadeOut(5);
-						setTimeout(function() {
-							$(".error").hide();
-						},2500);
+						commonVariables.api.showError("serviceerror" ,"error", true);
 					}
 				);
 			} catch(exception) {
@@ -338,16 +310,16 @@ define([], function() {
 				appInfo.appDirName = $("input[name='appDirName']").val();
 				appInfo.version = $("input[name='appVersion']").val();
 				appInfo.name = $("input[name='appName']").val();
-				appInfo.emailSupported = renderData.appdetails.data.appInfos[0].emailSupported;
-				appInfo.phoneEnabled = renderData.appdetails.data.appInfos[0].phoneEnabled;
-				appInfo.tabletEnabled = renderData.appdetails.data.appInfos[0].tabletEnabled;
-				appInfo.pilot = renderData.appdetails.data.appInfos[0].pilot;
-				appInfo.id = renderData.appdetails.data.appInfos[0].id;
+				appInfo.emailSupported = renderData.appdetails.data.projectInfo.appInfos[0].emailSupported;
+				appInfo.phoneEnabled = renderData.appdetails.data.projectInfo.appInfos[0].phoneEnabled;
+				appInfo.tabletEnabled = renderData.appdetails.data.projectInfo.appInfos[0].tabletEnabled;
+				appInfo.pilot = renderData.appdetails.data.projectInfo.appInfos[0].pilot;
+				appInfo.id = renderData.appdetails.data.projectInfo.appInfos[0].id;
 				appInfo.description = $("#appDesc").val();
-				appInfo.selectedModules = renderData.appdetails.data.appInfos[0].selectedModules;
-				appInfo.selectedJSLibs = renderData.appdetails.data.appInfos[0].selectedJSLibs;
-				appInfo.selectedComponents = renderData.appdetails.data.appInfos[0].selectedComponents;
-				
+				appInfo.selectedModules = renderData.appdetails.data.projectInfo.appInfos[0].selectedModules;
+				appInfo.selectedJSLibs = renderData.appdetails.data.projectInfo.appInfos[0].selectedJSLibs;
+				appInfo.selectedComponents = renderData.appdetails.data.projectInfo.appInfos[0].selectedComponents;
+				appInfo.embedAppId = $("#embed").val();
 				var selectedDatabases = [];
 				var selectedServers = [];
 				var selectedWebServices = [];
@@ -413,7 +385,6 @@ define([], function() {
 					}
 					
 					if($(value).attr('class') === "functionalFramework" && $(value).css('display') !== "none") {
-						
 						var frameworkGroupId = $("select[name=func_framework]").val();
 						var frameworkIds = $("select[name=func_framework_tools]").val();
 						var version = $("select[name=tools_version]").val();
@@ -447,7 +418,7 @@ define([], function() {
 					}					
 				});
 				if (appInfo.code !== '') {
-					appInfo.techInfo = renderData.appdetails.data.appInfos[0].techInfo;
+					appInfo.techInfo = renderData.appdetails.data.projectInfo.appInfos[0].techInfo;
 					appInfo.selectedDatabases = selectedDatabases;
 					appInfo.selectedServers = selectedServers;
 					appInfo.selectedWebservices = selectedWebServices;
@@ -467,14 +438,7 @@ define([], function() {
 								commonVariables.api.localVal.setJson('appdetails', response.data.appInfos);
 								Clazz.navigationController.push(self.editAplnContent, true);
 								setTimeout(function(){
-									$(".msgdisplay").removeClass("error").addClass("success");
-									$(".success").attr('data-i18n', 'successCodes.' + response.responseCode);
-									self.renderlocales(commonVariables.contentPlaceholder);	
-									$(".success").show();
-									$(".success").fadeIn(500).fadeOut(500).fadeIn(500).fadeOut(500).fadeIn(500).fadeOut(5);
-									setTimeout(function() {
-										$(".success").hide();
-									},2500);
+									commonVariables.api.showError(response.responseCode ,"success", true);
 								},3000);
 							});
 						}
@@ -486,8 +450,8 @@ define([], function() {
 		getWSConfig : function(appInfo , callback){
 			var self=this, header, data = {}, userId, techId, customerId;
 			userId = commonVariables.api.localVal.getSession('username');
-			techId = appInfo.data.appInfos[0].techInfo.id;
-			customerId = appInfo.data.customerIds[0];
+			techId = appInfo.data.projectInfo.appInfos[0].techInfo.id;
+			customerId = appInfo.data.projectInfo.customerIds[0];
 			header = {
 				contentType: "application/json",
 				requestMethod: "GET",
@@ -502,27 +466,13 @@ define([], function() {
 						if (response !== null && response.status !== "error" && response.status !== "failure") {
 							callback(response);
 						} else {
-							$(".msgdisplay").removeClass("success").addClass("error");
-							$(".error").attr('data-i18n', 'errorCodes.' + response.responseCode);
-							self.renderlocales(commonVariables.contentPlaceholder);	
-							$(".error").show();
-							$(".error").fadeIn(500).fadeOut(500).fadeIn(500).fadeOut(500).fadeIn(500).fadeOut(5);
-							setTimeout(function() {
-								$(".error").hide();
-							},2500);
+							commonVariables.api.showError(response.responseCode ,"error", true);
 						}
 
 					},
 
 					function(textStatus) {
-						$(".msgdisplay").removeClass("success").addClass("error");
-						$(".error").attr('data-i18n', 'commonlabel.errormessage.serviceerror');
-						self.renderlocales(commonVariables.contentPlaceholder);	
-						$(".error").show();
-						$(".error").fadeIn(500).fadeOut(500).fadeIn(500).fadeOut(500).fadeIn(500).fadeOut(5);
-						setTimeout(function() {
-							$(".error").hide();
-						},2500);
+						commonVariables.api.showError("serviceerror" ,"error", true);
 						
 					}
 				);
@@ -543,7 +493,7 @@ define([], function() {
 				data: ''
 			};
 			if(action === 'getappinfo'){
-				header.webserviceurl = commonVariables.webserviceurl+"project/editApplication?appDirName="+appDirName;
+				header.webserviceurl = commonVariables.webserviceurl+"project/editApplication?appDirName="+appDirName+"&userId="+userId;
 			}	
 			if(action === 'editApplication'){
 				header.requestMethod ="PUT";
@@ -568,27 +518,13 @@ define([], function() {
 							callback(response);
 							//commonVariables.loadingScreen.removeLoading();
 						} else {
-							$(".msgdisplay").removeClass("success").addClass("error");
-							$(".error").attr('data-i18n', 'errorCodes.' + response.responseCode);
-							self.renderlocales(commonVariables.contentPlaceholder);	
-							$(".error").show();
-							$(".error").fadeIn(500).fadeOut(500).fadeIn(500).fadeOut(500).fadeIn(500).fadeOut(5);
-							setTimeout(function() {
-								$(".error").hide();
-							},2500);
+							commonVariables.api.showError(response.responseCode ,"error", true);
 						}
 					},
 
 					function(textStatus) {
 						//commonVariables.loadingScreen.removeLoading();
-						$(".msgdisplay").removeClass("success").addClass("error");
-						$(".error").attr('data-i18n', 'commonlabel.errormessage.serviceerror');
-						self.renderlocales(commonVariables.contentPlaceholder);	
-						$(".error").show();
-						$(".error").fadeIn(500).fadeOut(500).fadeIn(500).fadeOut(500).fadeIn(500).fadeOut(5);
-						setTimeout(function() {
-							$(".error").hide();
-						},2500);
+						commonVariables.api.showError("serviceerror" ,"error", true);
 					}
 				);
 			} catch(exception) {
@@ -648,14 +584,7 @@ define([], function() {
 							//commonVariables.loadingScreen.removeLoading();
 						} else {
 							//commonVariables.loadingScreen.removeLoading();
-							$(".msgdisplay").removeClass("success").addClass("error");
-							$(".error").attr('data-i18n', 'errorCodes.' + response.responseCode);
-							self.renderlocales(commonVariables.contentPlaceholder);
-							$(".error").show();
-							$(".error").fadeIn(500).fadeOut(500).fadeIn(500).fadeOut(500).fadeIn(500).fadeOut(5);
-							setTimeout(function() {
-								$(".error").hide();
-							},2500);
+							commonVariables.api.showError(response.responseCode ,"error", true);
 						}
 
 					}

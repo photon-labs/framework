@@ -160,6 +160,19 @@ define(["application/listener/applicationListener"], function() {
 				return option;
 			});
 			
+			
+			Handlebars.registerHelper('embedselect', function(embedList, selectedEmbed) {
+				var option = '';
+				$.each(embedList, function(index, value){
+					if(selectedEmbed === value) {
+						option +='<option selected="selected" value='+value+'>'+ index +'</option>';
+					} else {
+						option +='<option value='+value+'>'+ index +'</option>';
+					}
+				});				
+				return option;
+			});
+			
 						
 		},
 		 
@@ -199,10 +212,18 @@ define(["application/listener/applicationListener"], function() {
 					var userPermissions = JSON.parse(commonVariables.api.localVal.getSession('userPermissions'));
 					projectlist.userPermissions = userPermissions;
 					self.renderData = response;
-					var techId = response.appdetails.data.appInfos[0].techInfo.id;
+					var techId = response.appdetails.data.projectInfo.appInfos[0].techInfo.id;
 					self.editApplicationListener.getApplicableOptions(self.editApplicationListener.getRequestHeader(self.appDirName, "getApplicableOptions", techId), function(response) {
 						commonVariables.api.localVal.setSession("applicableOptions", JSON.stringify(response.data));
 						renderFunction(projectlist, whereToRender);
+						setTimeout(function() {
+							if(response.data.indexOf('Embed_Application') !== -1) {
+								$('.embed').show();
+							} else {
+								$('.embed').hide();
+							}
+						}, 500);
+						
 					});
 				});
 			}, 200);	

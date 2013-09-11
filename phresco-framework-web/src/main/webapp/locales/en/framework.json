@@ -500,6 +500,7 @@
 		"placeholder" : {
 			"password" : "Password",
 			"username" : "Username",
+			"branch" : "Branch",
 			"enterusername" : "Enter Username",
 			"enterpassword" : "Enter Password"
 		},
@@ -569,7 +570,8 @@
 			"cucumber" : "Cucumber",
 			"entername" : "Enter Name",
 			"entercode" : "Enter Code",
-			"enterappdir" : "Enter app directory"
+			"enterappdir" : "Enter app directory",
+			"embedapplication" : "EmbedApplication"
 		},
 		"btn" : {
 			"cancel" : "Cancel",

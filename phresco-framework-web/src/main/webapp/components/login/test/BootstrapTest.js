@@ -25,6 +25,12 @@ var commonVariables = {
 	configuration : "configuration",
 	editConfiguration : "editConfiguration",
 	
+	editApplication : "appinfo",
+	codequality : "codequality",
+	goal : "validate-code",
+	phase : "validate-code",
+	appDirName : null,
+	mvnCodeValidation : "app/codeValidate",
 	croneExpression : "croneExpression",
 
 	techId : "tech-html5-jquery-mobile-widget",
