@@ -704,7 +704,7 @@ ul.nav li.dropdown:hover > .test_options{
 .app_layer_icon_btn {
 	background-image:url(../../images/helios/app_layer_icon.png)!important ;
 	background-repeat:no-repeat !important;
-	background-position:6px 3px  !important;
+	background-position:6px 6px  !important;
 	padding-left:30px !important;
 	padding-right:8px !important;
 }
@@ -712,7 +712,7 @@ ul.nav li.dropdown:hover > .test_options{
 .web_layer_icon_btn {
 	background-image:url(../../images/helios/web_layer_icon.png)!important ;
 	background-repeat:no-repeat !important;
-	background-position:6px 4px  !important;
+	background-position:6px 6px  !important;
 	padding-left:32px !important;
 	padding-right:8px !important;
 }
