@@ -79,14 +79,15 @@ define([], function() {
 			var self = this;
 			var testData = $("#unitTestForm").serialize();
 			var appdetails = commonVariables.api.localVal.getJson('appdetails');
+			var userInfo = JSON.parse(commonVariables.api.localVal.getSession('userInfo'));
 			var queryString = '';
 			appId = appdetails.data.appInfos[0].id;
 			projectId = appdetails.data.id;
 			customerId = appdetails.data.customerIds[0];
 			username = commonVariables.api.localVal.getSession('username');
 						
-			if (appdetails !== null) {
-				queryString ="username="+username+"&appId="+appId+"&customerId="+customerId+"&goal=unit-test&phase=unit-test&projectId="+projectId+"&"+testData;
+			if (appdetails !== null && userInfo !== null) {
+				queryString ="username="+username+"&appId="+appId+"&customerId="+customerId+"&goal=unit-test&phase=unit-test&projectId="+projectId+"&"+testData+'&displayName='+userInfo.displayName;
 			}
 			
 			$('#testConsole').html('');

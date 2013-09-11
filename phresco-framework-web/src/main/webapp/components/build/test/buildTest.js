@@ -126,6 +126,16 @@ define(["build/build"], function(Build) {
 			asyncTest("Dynamic param for generate build", function(){
 				var output;
 				self.setuserInfo();
+				$.mockjax({
+				  url: commonVariables.webserviceurl+"util/checkLock?actionType=build&appId=6d6753e8-b081-48d8-9924-70a14f3663d4",
+				  type: "GET",
+				  dataType: "json",
+				  contentType: "application/json",
+				  status: 200,
+				  response : function() {
+					  this.responseText = JSON.stringify({"message":null,"exception":null,"responseCode":"PHR10C00002","data":null,"status":"success"});
+				  }
+				});
 				//mock gen build dynamic param ajax call 
 				var buildparam = $.mockjax({
 				  url: commonVariables.webserviceurl + 'parameter/dynamic?appDirName=HTML&goal=package&phase=package&customerId=photon&userId=kavinraj_m',
@@ -137,13 +147,13 @@ define(["build/build"], function(Build) {
 					  this.responseText = JSON.stringify({"message":"Parameter returned successfully","exception":null,"responseCode":null,"data":[{"pluginParameter":null,"mavenCommands":null,"name":{"value":[{"value":"Build Name","lang":"en"}]},"type":"String","childs":null,"dynamicParameter":null,"required":"false","editable":"true","description":"","key":"buildName","possibleValues":null,"multiple":"false","value":"","sort":false,"show":true},{"pluginParameter":null,"mavenCommands":null,"name":{"value":[{"value":"Build Number","lang":"en"}]},"type":"Number","childs":null,"dynamicParameter":null,"required":"false","editable":"true","description":"","key":"buildNumber","possibleValues":null,"multiple":"false","value":"","sort":false,"show":true},{"pluginParameter":null,"mavenCommands":null,"name":{"value":[{"value":"Show Settings","lang":"en"}]},"type":"Boolean","childs":null,"dynamicParameter":null,"required":"false","editable":"true","description":"","key":"showSettings","possibleValues":null,"multiple":"false","value":"false","sort":false,"show":true,"dependency":"environmentName"},{"pluginParameter":null,"mavenCommands":null,"name":{"value":[{"value":"Environment","lang":"en"}]},"type":"DynamicParameter","childs":null,"dynamicParameter":{"dependencies":{"dependency":{"groupId":"com.photon.phresco.commons","artifactId":"phresco-commons","type":"jar","version":"3.0.0.14003"}},"class":"com.photon.phresco.impl.EnvironmentsParameterImpl"},"required":"true","editable":"true","description":null,"key":"environmentName","possibleValues":{"value":[{"value":"Production","key":null,"dependency":null}]},"multiple":"true","value":"Production","sort":false,"show":true},{"pluginParameter":"plugin","mavenCommands":{"mavenCommand":[{"key":"true","value":"-DskipTests=true"},{"key":"false","value":"-DskipTests=false"}]},"name":{"value":[{"value":"Skip Unit Test","lang":"en"}]},"type":"Boolean","childs":null,"dynamicParameter":null,"required":"false","editable":"true","description":"","key":"skipTest","possibleValues":null,"multiple":"false","value":"false","sort":false,"show":true},{"pluginParameter":"framework","mavenCommands":{"mavenCommand":[{"key":"showErrors","value":"-e"},{"key":"hideLogs","value":"-q"},{"key":"showDebug","value":"-X"}]},"name":{"value":[{"value":"Logs","lang":"en"}]},"type":"List","childs":null,"dynamicParameter":null,"required":"false","editable":"true","description":null,"key":"logs","possibleValues":{"value":[{"value":"Show Errors","key":"showErrors","dependency":null},{"value":"Hide Logs","key":"hideLogs","dependency":null},{"value":"Show Debug","key":"showDebug","dependency":null}]},"multiple":"false","value":"showErrors","sort":false,"show":true},{"pluginParameter":"plugin","mavenCommands":{"mavenCommand":[{"key":"true","value":"-Dmaven.yuicompressor.skip=true"},{"key":"false","value":"-Dmaven.yuicompressor.skip=false"}]},"name":{"value":[{"value":"Minify","lang":"en"}]},"type":"Hidden","childs":null,"dynamicParameter":null,"required":"false","editable":"true","description":"","key":"minify","possibleValues":null,"multiple":"false","value":"true","sort":false,"show":false},{"pluginParameter":null,"mavenCommands":null,"name":{"value":[{"value":"Pack Minified Files","lang":"en"}]},"type":"Boolean","childs":null,"dynamicParameter":null,"required":"false","editable":"true","description":"","key":"packMinifiedFiles","possibleValues":null,"multiple":"false","value":"false","sort":false,"show":true},{"pluginParameter":null,"mavenCommands":null,"name":{"value":[{"value":"Build Type","lang":"en"}]},"type":"List","childs":null,"dynamicParameter":null,"required":"false","editable":"true","description":null,"key":"package-type","possibleValues":{"value":[{"value":"war","key":"war","dependency":null},{"value":"zip","key":"zip","dependency":null}]},"multiple":"false","value":"war","sort":false,"show":true},{"pluginParameter":null,"mavenCommands":null,"name":{"value":[{"value":"Package File Browse","lang":"en"}]},"type":"packageFileBrowse","childs":null,"dynamicParameter":null,"required":"false","editable":"true","description":"","key":"packageFileBrowse","possibleValues":null,"multiple":"false","sort":false,"show":true}],"status":null});
 				  }
 				});
-				
+				$(".headerAppId").attr("value","6d6753e8-b081-48d8-9924-70a14f3663d4");	
 				$("input[name=build_genbuild]").click();
 				setTimeout(function() {
 					start();
 					output = $('#build_genbuild ul.row li:first').attr('id');
 					equal("buildNameLi", output, "Build dynamic param render Successfully");
-					self.generateBuild(build, self, buildListener); 
+					self.downloadBuild(build, self, buildListener); 
 				}, 1500);
 			});
 		},
@@ -156,7 +166,7 @@ define(["build/build"], function(Build) {
 				
 				//mock generate build ajax call 
 				var genBuild = $.mockjax({
-				  url: commonVariables.webserviceurl + 'app/build?buildName=&buildNumber=&environmentName=Production&logs=showErrors&package-type=war&minify=true&customerId=photon&appId=137223b6-8454-4041-b52d-07c110ab57fb&projectId=d6528c06-b2f6-4388-8001-54e7e25d59db&username=kavinraj_m',
+				  url: commonVariables.webserviceurl + 'app/build?buildName=&buildNumber=&environmentName=Production&logs=showErrors&package-type=war&minify=true&displayName=Admin&customerId=photon&appId=137223b6-8454-4041-b52d-07c110ab57fb&projectId=d6528c06-b2f6-4388-8001-54e7e25d59db&username=kavinraj_m',
 				  type: "POST",
 				  dataType: "json",
 				  contentType: "application/json",
@@ -167,7 +177,7 @@ define(["build/build"], function(Build) {
 				});
 				
 				var paramValidation = $.mockjax({
-				  url: commonVariables.webserviceurl + 'util/validation?appDirName=HTML&customerId=photon&phase=package&buildName=&buildNumber=&environmentName=Production&logs=showErrors&package-type=war&minify=true',
+				  url: commonVariables.webserviceurl + 'util/validation?appDirName=HTML&customerId=photon&phase=package&buildName=&buildNumber=&environmentName=Production&logs=showErrors&package-type=war&minify=true&displayName=Admin',
 				  type: "GET",
 				  dataType: "json",
 				  contentType: "application/json",
@@ -195,7 +205,7 @@ define(["build/build"], function(Build) {
 					start();
 					output = $('#buildRow tr td:first').text();
 					equal("1", output, "Build Generater Successfully");
-					self.downloadBuild(build, self, buildListener); 
+					// self.downloadBuild(build, self, buildListener); 
 				}, 2000);
 			});
 		},
@@ -407,7 +417,16 @@ define(["build/build"], function(Build) {
 				commonVariables.appDirName = "node";
 				
 				self.setNodeAppInfo();
-				
+				$.mockjax({
+				  url: commonVariables.webserviceurl+"util/checkLock?actionType=Start&appId=6d6753e8-b081-48d8-9924-70a14f3663d4",
+				  type: "GET",
+				  dataType: "json",
+				  contentType: "application/json",
+				  status: 200,
+				  response : function() {
+					  this.responseText = JSON.stringify({"message":null,"exception":null,"responseCode":"PHR10C00002","data":null,"status":"success"});
+				  }
+				});
 				//mock RAS popup ajax call 
 				var RASPopUp = $.mockjax({
 				  url: commonVariables.webserviceurl + 'parameter/dynamic?appDirName=node&goal=start&phase=run-against-source&customerId=photon&userId=kavinraj_m',
@@ -419,13 +438,13 @@ define(["build/build"], function(Build) {
 					  this.responseText = JSON.stringify({"message":"Parameter returned successfully","exception":null,"responseCode":null,"data":[{"pluginParameter":null,"mavenCommands":null,"name":{"value":[{"value":"Show Settings","lang":"en"}]},"type":"Boolean","childs":null,"dynamicParameter":null,"required":"false","editable":"true","description":"","key":"showSettings","possibleValues":null,"multiple":"false","value":"false","sort":false,"show":true,"dependency":"environmentName"},{"pluginParameter":null,"mavenCommands":null,"name":{"value":[{"value":"Environment","lang":"en"}]},"type":"DynamicParameter","childs":null,"dynamicParameter":{"dependencies":{"dependency":{"groupId":"com.photon.phresco.commons","artifactId":"phresco-commons","type":"jar","version":"3.0.0.18001"}},"class":"com.photon.phresco.impl.EnvironmentsParameterImpl"},"required":"true","editable":"true","description":null,"key":"environmentName","possibleValues":{"value":[{"value":"Production","key":null,"dependency":null}]},"multiple":"false","value":"Production","sort":false,"show":true,"dependency":"dataBase,fetchSql"},{"pluginParameter":null,"mavenCommands":null,"name":{"value":[{"value":"Execute Sql","lang":"en"}]},"type":"Boolean","childs":null,"dynamicParameter":null,"required":"false","editable":"true","description":"","key":"executeSql","possibleValues":null,"value":"true","sort":false,"show":true,"dependency":"dataBase"},{"pluginParameter":null,"mavenCommands":null,"name":{"value":[{"value":"DataBase","lang":"en"}]},"type":"DynamicParameter","childs":null,"dynamicParameter":{"dependencies":{"dependency":{"groupId":"com.photon.phresco.framework","artifactId":"phresco-framework-impl","type":"jar","version":"3.0.0.18001"}},"class":"com.photon.phresco.framework.param.impl.DynamicDataBaseImpl"},"required":"false","editable":"true","description":"","key":"dataBase","possibleValues":{"value":[{"value":"mysql","key":null,"dependency":null}]},"multiple":"false","value":"","sort":false,"show":false,"dependency":"fetchSql"},{"pluginParameter":null,"mavenCommands":null,"name":{"value":[{"value":"","lang":"en"}]},"type":"DynamicParameter","childs":null,"dynamicParameter":{"dependencies":{"dependency":{"groupId":"com.photon.phresco.framework","artifactId":"phresco-framework-impl","type":"jar","version":"3.0.0.19004-SNAPSHOT"}},"class":"com.photon.phresco.framework.param.impl.DynamicFetchSqlImpl"},"required":"false","editable":"true","description":"","key":"fetchSql","possibleValues":{"value":[{"value":"/source/sql/mysql/5.5.1/site.sql","key":"site.sql","dependency":null}]},"multiple":"false","value":"","sort":true,"show":false}],"status":null});
 				  }
 				});
-				
+				$(".headerAppId").attr("value","6d6753e8-b081-48d8-9924-70a14f3663d4");	
 				$("input[name=build_runagsource]").click();
 				setTimeout(function() {
 					start();
 					output = $('#build_runagsource ul li:first').attr('id');
 					equal("showSettingsLi", output, "Run again source pop up render Successfully");
-					self.rasRun(build, self, buildListener); 
+					// self.rasRun(build, self, buildListener); 
 				}, 1500);
 			});
 		},

@@ -114,12 +114,20 @@ define(["unitTest/listener/unitTestListener", "testResult/listener/testResultLis
 
 			$("#unitTestBtn").unbind("click");
 			$("#unitTestBtn").click(function() {
-				self.onDynamicPageEvent.dispatch(this, function() {
-					commonVariables.logContent = $('#testConsole').html();
-					$('#testResult').empty();
-					Clazz.navigationController.jQueryContainer = '#testResult';
-					Clazz.navigationController.push(self.testsuiteResult, false);
-				});
+				var btnObj = this;
+				self.checkForLock("unit", '', function(response){
+					if (response.status === "success" && response.responseCode === "PHR10C00002") {
+						self.onDynamicPageEvent.dispatch(btnObj, function() {
+							commonVariables.logContent = $('#testConsole').html();
+							$('#testResult').empty();
+							Clazz.navigationController.jQueryContainer = '#testResult';
+							Clazz.navigationController.push(self.testsuiteResult, false);
+						});
+					} else if (response.status === "success" && response.responseCode === "PHR10C00001") {
+						var errMsg = commonVariables.api.error[response.responseCode] + response.data.lockedBy + commonVariables.api.error["PHR10C00111"] + response.data.lockedDate;
+						commonVariables.api.showError(errMsg, 'error', true, true);
+					}	
+				});	
 			});
 			
 			//Change event of the report type to get the report

@@ -256,28 +256,36 @@ define(["performanceLoadListener/listener/performanceLoadListener"], function() 
 			//To show performance popup
 			$("input[name=loadPopup]").unbind("click");
 			$("input[name=loadPopup]").click(function() {
-				self.closeConsole();
-                var whereToRender = $('#loadPopup ul');
-                commonVariables.goal = "load-test";
-                commonVariables.phase = "load-test";
-                if (whereToRender.children().length < 1) {
-                	self.dynamicpage.getHtml(whereToRender, this, $(this).attr('name'), function() {
-                		var totalControls = whereToRender.find('li.ctrl').length;
-                		if (totalControls > 3) {
-		                	var sectionHeight = $('.performanceTestResults').height();
-							$('#loadPopup').css("max-height", sectionHeight - 40 + 'px');
-							$('#loadForm').css("max-height", sectionHeight - 92 + 'px');
-		                	$("#loadForm").mCustomScrollbar({
-								autoHideScrollbar:true,
-								theme:"light-thin",
-								advanced:{ updateOnContentResize: true}
-							});
-						}	
-                	});
-                } else {
-                	self.opencc(this, $(this).attr('name'));
-                }
-                
+				var openccObj = this, openccObjName = $(this).attr('name');
+				self.checkForLock("load", '', function(response){
+					if (response.status === "success" && response.responseCode === "PHR10C00002") {
+						self.closeConsole();
+		                var whereToRender = $('#loadPopup ul');
+		                commonVariables.goal = "load-test";
+		                commonVariables.phase = "load-test";
+		                if (whereToRender.children().length < 1) {
+		                	self.dynamicpage.getHtml(whereToRender, openccObj, openccObjName, function() {
+		                		var totalControls = whereToRender.find('li.ctrl').length;
+		                		if (totalControls > 3) {
+				                	var sectionHeight = $('.performanceTestResults').height();
+									$('#loadPopup').css("max-height", sectionHeight - 40 + 'px');
+									$('#loadForm').css("max-height", sectionHeight - 92 + 'px');
+				                	$("#loadForm").mCustomScrollbar({
+										autoHideScrollbar:true,
+										theme:"light-thin",
+										advanced:{ updateOnContentResize: true}
+									});
+								}	
+		                	});
+		                } else {
+		                	commonVariables.api.hideLoading();
+		                	self.opencc(openccObj, openccObjName);
+		                }
+	                } else if (response.status === "success" && response.responseCode === "PHR10C00001") {
+						var errMsg = commonVariables.api.error[response.responseCode] + response.data.lockedBy + commonVariables.api.error["PHR10C00111"] + response.data.lockedDate;
+						commonVariables.api.showError(errMsg, 'error', true, true);
+					}	
+				});	
 			});
 			
 			//To open the performance test directory

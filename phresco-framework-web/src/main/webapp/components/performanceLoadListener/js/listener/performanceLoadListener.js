@@ -703,10 +703,11 @@ define(["lib/jquery-tojson-1.0",'lib/RGraph_common_core-1.0','lib/RGraph_common_
 		executeTest : function (queryString, json, testAction, popupObj, callback) {
 			queryString = queryString.concat("&testAction=" +testAction);
 			var self = this, appInfo = commonVariables.api.localVal.getJson('appdetails');
+			var userInfo = JSON.parse(commonVariables.api.localVal.getSession('userInfo'));
 			popupObj.toggle();
 			self.openConsole();
-			if(appInfo !== null){
-				queryString +=	'&customerId='+ self.getCustomer() +'&appId='+ appInfo.data.appInfos[0].id +'&projectId=' + appInfo.data.id + '&username=' + commonVariables.api.localVal.getSession('username');
+			if(appInfo !== null && userInfo!== null){
+				queryString +=	'&customerId='+ self.getCustomer() +'&appId='+ appInfo.data.appInfos[0].id +'&projectId=' + appInfo.data.id + '&username=' + commonVariables.api.localVal.getSession('username')+'&displayName='+userInfo.displayName;
 			}
 			self.callMavenService(queryString, json, testAction, callback);
 		},
