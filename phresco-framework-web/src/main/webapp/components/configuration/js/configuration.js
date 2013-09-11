@@ -180,7 +180,7 @@ define(["configuration/listener/configurationListener"], function() {
 			});
 			
 			$('input[name=envName]').keypress(function(e) {
-				if ((e.which >= 65 && e.which <= 90) ||(e.which >= 97 && e.which <= 122) || (e.which === 8)) {
+				if ((e.which >= 40 && e.which <= 95) ||(e.which >= 97 && e.which <= 122) || (e.which === 8) || (e.which === 0)) {
 					return true;
 				} else {
 					e.preventDefault();
@@ -237,7 +237,7 @@ define(["configuration/listener/configurationListener"], function() {
 			});
 			
 			$('input[name=envrName]').keypress(function(e) {
-				if ((e.which >= 65 && e.which <= 90) ||(e.which >= 97 && e.which <= 122) || (e.which === 8)) {
+				if ((e.which >= 40 && e.which <= 95) ||(e.which >= 97 && e.which <= 122) || (e.which === 8) || (e.which === 0)) {
 					return true;
 				} else {
 					e.preventDefault();

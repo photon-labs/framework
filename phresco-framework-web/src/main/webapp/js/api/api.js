@@ -6,6 +6,7 @@ define(["framework/base", "api/localStorageAPI"], function(){
 		bCheck : false,
 		error : null,
 		success : null,
+		successResponse: null,
 		
 		/***
 		 * Written by Kavinraj.M Date - 23/08/2013
@@ -61,10 +62,10 @@ define(["framework/base", "api/localStorageAPI"], function(){
 				
 				beforeSend : function(){
 					$('section#serviceError').remove();
-					if(!Clazz.navigationController.loadingActive && !commonVariables.continueloading && !commonVariables.hideloading){
+					if(commonVariables.requireLoading && !Clazz.navigationController.loadingActive && !commonVariables.continueloading && !commonVariables.hideloading){
 						if($(commonVariables.basePlaceholder).find(commonVariables.contentPlaceholder).length > 0){
 							commonVariables.loadingScreen.showLoading($(commonVariables.contentPlaceholder));
-						}else{
+						}else if (commonVariables.requireLoading){
 							commonVariables.loadingScreen.showLoading();
 						}
 					}
@@ -76,9 +77,9 @@ define(["framework/base", "api/localStorageAPI"], function(){
 					}else if((response.status === "error" || response.status === "failure") && (Clazz.navigationController.loadingActive || commonVariables.continueloading)){
 						self.showError(response.responseCode, 'error', false);
 					}
-					
 					if ((response !== undefined && response !== null && response.status !== "error") || self.bCheck) {
-						callbackFunction(response);
+						// callbackFunction(response);
+						self.successResponse = response;
 					}
 					
 					self.bCheck = false;
@@ -86,6 +87,7 @@ define(["framework/base", "api/localStorageAPI"], function(){
 				
 				error : function(jqXHR, textStatus, errorThrown){
 					self.bCheck = false;
+					self.successResponse = null;
 					self.showError("PHR000000", 'error', false);
 					if (errorHandler){
 						errorHandler(jqXHR.responseText);
@@ -93,14 +95,59 @@ define(["framework/base", "api/localStorageAPI"], function(){
 				},
 				
 				complete : function(response, e ,xhr){
-					if(!Clazz.navigationController.loadingActive && !commonVariables.continueloading){
+					if(commonVariables.requireLoading && !Clazz.navigationController.loadingActive && !commonVariables.continueloading){
 						commonVariables.hideloading = false;
 						commonVariables.loadingScreen.removeLoading();
+					}
+					if ((self.successResponse !== undefined && self.successResponse !== null && self.successResponse.status !== "error") || self.bCheck) {
+						callbackFunction(self.successResponse);
+						self.successResponse = null;
 					}
 				}
 			});
 		},
 		
+		ajaxForDynamicParam : function(header, whereToRender, callbackFunction, errorHandler) {
+			var self = this, btnObj = '';
+			if (whereToRender !== "") {
+				btnObj = $(whereToRender).closest('form').parent().find('.alignright').find('input[value=Test]');
+			}
+
+			$.ajax({
+				url: header.webserviceurl,
+				type : header.requestMethod,
+				dataType : header.dataType,
+				header : "Access-Control-Allow-Headers: x-requested-with",
+				contentType : header.contentType,
+				data : header.requestPostBody,
+				timeout : 1000000,
+				crossDomain : true,
+				cache : false,
+				async : false,
+				success : function(response) {
+					if(response === undefined || response === null){
+						self.showError("PHR000000", 'error', false);
+					}else if((response.status === "error" || response.status === "failure") && (Clazz.navigationController.loadingActive || commonVariables.continueloading)){
+						self.showError(response.responseCode, 'error', true);
+						if (response.responseCode === "PHR7C10001" && btnObj !== "") {
+							$(btnObj).prop("disabled", true);
+						}
+					}
+					
+					if ((response !== undefined && response !== null && response.status !== "error") || self.bCheck) {
+						callbackFunction(response);
+					}
+					
+					self.bCheck = false;
+				}
+			});
+		},
+
+		hideLoading : function() {
+			var self = this;
+			commonVariables.loadingScreen.removeLoading();
+		},
+
 		showError : function(errorCode, msgType, timeOut, noCode){
 			var self = this, errorMsg = '';
 			

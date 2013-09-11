@@ -283,7 +283,7 @@ public class ProjectServiceTest extends LoginServiceTest {
 		// TechnologyInfo
 
 		TechnologyInfo techInfo = new TechnologyInfo();
-		techInfo.setAppTypeId("web-layer");
+		techInfo.setAppTypeId("1dbcf61c-e7b7-4267-8431-822c4580f9cf");
 		techInfo.setVersion("3.10.3");
 		techInfo.setId("tech-html5-jquery-widget");
 		techInfo.setSystem(false);
@@ -313,7 +313,7 @@ public class ProjectServiceTest extends LoginServiceTest {
 		appInfo.setName("TestGitProject");
 		appInfo.setVersion("1.0");
 		TechnologyInfo info = new TechnologyInfo();
-		info.setAppTypeId("web-layer");
+		info.setAppTypeId("e1af3f5b-7333-487d-98fa-46305b9dd6ee");
 		info.setId(techId);
 		info.setVersion("1.0");
 		appInfo.setTechInfo(info);
@@ -356,7 +356,7 @@ public class ProjectServiceTest extends LoginServiceTest {
 		// TechnologyInfo
 
 		TechnologyInfo techInfo = new TechnologyInfo();
-		techInfo.setAppTypeId("web-layer");
+		techInfo.setAppTypeId("e1af3f5b-7333-487d-98fa-46305b9dd6ee");
 		techInfo.setVersion("1.6");
 		techInfo.setId("tech-java-webservice");
 		techInfo.setSystem(false);

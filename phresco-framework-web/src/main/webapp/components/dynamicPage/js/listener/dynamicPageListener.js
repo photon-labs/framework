@@ -34,7 +34,7 @@ define(["framework/widgetWithTemplate", "common/loading", "lib/customcombobox-1.
                 var goal = commonVariables.goal;
                 
                 if(self.parameterValidation(appDirName, goal)){
-                    commonVariables.api.ajaxRequest(header, 
+                    commonVariables.api.ajaxForDynamicParam(header, '', 
                         function(response){
                             self.responseData = response.data;
                             if(response !== undefined && response !== null && response.status !== "error" && response.status !== "failure"){
@@ -124,6 +124,8 @@ define(["framework/widgetWithTemplate", "common/loading", "lib/customcombobox-1.
                     } else if (type === "map") {
                     	self.constructMapControls(parameter, whereToRender);
                     } else if (type === "dynamicpageparameter") {
+                        
+                        commonVariables.continueloading = true;
                         self.getDynamicTemplate(parameter, whereToRender);
                     } else if (type === "filetype") {
                         self.constructFileUploadCtrl(parameter, whereToRender, goal);
@@ -143,6 +145,7 @@ define(["framework/widgetWithTemplate", "common/loading", "lib/customcombobox-1.
             }
 			
 			if(callback !== undefined && callback !== null){
+                commonVariables.loadingScreen.removeLoading();
 				callback(true);
 			}
         },
@@ -1032,10 +1035,11 @@ define(["framework/widgetWithTemplate", "common/loading", "lib/customcombobox-1.
             var self = this;
 
             try {
-				commonVariables.continueloading = true;
-                commonVariables.api.ajaxRequest(header, function(response) {
+                commonVariables.loadingScreen.showLoading($(commonVariables.contentPlaceholder));
+                commonVariables.api.ajaxForDynamicParam(header, whereToRender, function(response) {
                      if(response !== undefined && response !== null && response.status !== "error" && response.status !== "failure"){
 						commonVariables.continueloading = false;
+                        commonVariables.loadingScreen.removeLoading();
                         callback(response, whereToRender);
                     } else {
 						//responce value failed

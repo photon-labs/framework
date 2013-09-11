@@ -106,10 +106,20 @@ define(["codequality/listener/codequalityListener"], function() {
 			$(".dyn_popup").hide();
 			
 			$("#codeAnalysis").click(function() {
-				var whereToRender = $('#code_popup ul');
-                commonVariables.goal = "validate-code";
-                commonVariables.phase = "validate-code";
-                self.dynamicpage.getHtml(whereToRender, this, 'code_popup');
+				var openccObj = this;
+				self.checkForLock("code", '', function(response){
+					if (response.status === "success" && response.responseCode === "PHR10C00002") {
+						var whereToRender = $('#code_popup ul');
+		                commonVariables.goal = "validate-code";
+		                commonVariables.phase = "validate-code";
+		                self.dynamicpage.getHtml(whereToRender, openccObj, 'code_popup', function(response) {
+		                	commonVariables.api.hideLoading();
+		                });
+		             } else if (response.status === "success" && response.responseCode === "PHR10C00001") {
+						var errMsg = commonVariables.api.error[response.responseCode] + response.data.lockedBy + commonVariables.api.error["PHR10C00111"] + response.data.lockedDate;
+						commonVariables.api.showError(errMsg, 'error', true, true);
+					}	
+				});	   
 			});
 			
 			$("#validate").click(function() {

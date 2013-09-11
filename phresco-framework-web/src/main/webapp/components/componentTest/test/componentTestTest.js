@@ -102,6 +102,16 @@ define(["componentTest/componentTest"], function(ComponentTest) {
 		runComponentTestWithNoParamTest : function() {
 			var self = this;
 			asyncTest("Component Test Run Test Without Parameters Test", function() {
+				$.mockjax({
+				  url: commonVariables.webserviceurl+"util/checkLock?actionType=component&appId=6d6753e8-b081-48d8-9924-70a14f3663d4",
+				  type: "GET",
+				  dataType: "json",
+				  contentType: "application/json",
+				  status: 200,
+				  response : function() {
+					  this.responseText = JSON.stringify({"message":null,"exception":null,"responseCode":"PHR10C00002","data":null,"status":"success"});
+				  }
+				});
 				self.parametersMock = $.mockjax({
 					url: commonVariables.webserviceurl+"parameter/dynamic?appDirName=test&goal=component-test&phase=component-test&customerId=photon&userId=admin",
 				  	type: "GET",
@@ -114,7 +124,7 @@ define(["componentTest/componentTest"], function(ComponentTest) {
 				});
 
 				self.executeTestMock = $.mockjax({
-					url: commonVariables.webserviceurl+"app/runComponentTest?username=admin&appId=5bf18d69-3902-497b-8cd2-65dbdc9cd377&customerId=photon&goal=component-test&phase=component-test&projectId=b1a829b3-bbfa-45c4-b5f0-003eca66abf5&",
+					url: commonVariables.webserviceurl+"app/runComponentTest?username=admin&appId=5bf18d69-3902-497b-8cd2-65dbdc9cd377&customerId=photon&goal=component-test&phase=component-test&projectId=b1a829b3-bbfa-45c4-b5f0-003eca66abf5&&displayName=Admin",
 				  	type: "POST",
 				  	dataType: "json",
 				  	contentType: "application/json",
@@ -128,6 +138,7 @@ define(["componentTest/componentTest"], function(ComponentTest) {
 				commonVariables.api.localVal.setJson('appdetails', projectInfo);
 				commonVariables.api.localVal.setSession('username', "admin");
 				commonVariables.appDirName = "test";
+				$(".headerAppId").attr("value","6d6753e8-b081-48d8-9924-70a14f3663d4");	
 				$(commonVariables.contentPlaceholder).find("#componentTestBtn").click();
 				
 				setTimeout(function() {
@@ -166,7 +177,7 @@ define(["componentTest/componentTest"], function(ComponentTest) {
 			var self = this;
 			asyncTest("Component Test Run Test-Btn Click Test", function() {
 				$.mockjax({
-					url: commonVariables.webserviceurl+"app/runComponentTest?username=admin&appId=5bf18d69-3902-497b-8cd2-65dbdc9cd377&customerId=photon&goal=component-test&phase=component-test&projectId=b1a829b3-bbfa-45c4-b5f0-003eca66abf5&testAgainst=java&environmentName=Production",
+					url: commonVariables.webserviceurl+"app/runComponentTest?username=admin&appId=5bf18d69-3902-497b-8cd2-65dbdc9cd377&customerId=photon&goal=component-test&phase=component-test&projectId=b1a829b3-bbfa-45c4-b5f0-003eca66abf5&testAgainst=java&environmentName=Production&displayName=Admin",
 				  	type: "POST",
 				  	dataType: "json",
 				  	contentType: "application/json",

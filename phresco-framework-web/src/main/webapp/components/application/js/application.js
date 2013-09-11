@@ -201,6 +201,11 @@ define(["application/listener/applicationListener"], function() {
 				theme:"light-thin",
 				advanced:{ updateOnContentResize: true}
 			});
+			var appdetails = commonVariables.api.localVal.getJson('appdetails');
+			if (appdetails !== null) {
+				var appId = appdetails.data.appInfos[0].id;
+				$('.headerAppId').val(appId);
+			}
 		},
 		
 		preRender: function(whereToRender, renderFunction){

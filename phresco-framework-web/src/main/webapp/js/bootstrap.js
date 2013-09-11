@@ -195,6 +195,7 @@ var commonVariables = {
 	loadingScreen : null,
 	hideloading : false,
 	continueloading : false,
+	requireLoading : true,
 	api : null,
 	ajaxXhr : null,
 	

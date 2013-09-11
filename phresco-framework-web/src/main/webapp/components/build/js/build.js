@@ -291,41 +291,47 @@ define(["build/listener/buildListener"], function() {
 				commonVariables.phase = "deploy";
 				commonVariables.buildNo = divId;
 				commonVariables.iphoneDeploy = $(this).attr("deviceDeploy");
+				self.checkForLock("Deploy", '', function(response){
+					if (response.status === "success" && response.responseCode === "PHR10C00002") {
+						if(deviceDeploy === "true"){
+							// call device deployment service
+							self.dynamicpage.getHtml(whereToRender, current, '', function(retVal){
+								self.clearLogContent();
+								$('input[name=buildDelete]').hide();
 
-				if(deviceDeploy === "true"){
-					// call device deployment service
-					self.dynamicpage.getHtml(whereToRender, this, '', function(retVal){
-						self.clearLogContent();
-						$('input[name=buildDelete]').hide();
+								self.clearLogContent();
+								$('input[name=buildDelete]').hide();
 
-						self.clearLogContent();
-						$('input[name=buildDelete]').hide();
-
-						self.sqlQueryParam($(current).closest('tr').find('form[name=deployForm] #executeSql').is(':checked'), $(current).closest('tr').find('form[name=deployForm] ul[name=sortable2] li'), function(retVal){
-							sqlParam = retVal;
-						});
-						
-						queryStr = $(current).closest('tr').find('form[name=deployForm]').serialize().replace("=on", "=true");
-						queryStr += '&fetchSql=' + ($.isEmptyObject(sqlParam) === true ? "" : sqlParam);
-						
-						self.onMavenServiceEvent.dispatch('mvnDeploy', queryStr, '', '', function(response){
-							$('input[name=buildDelete]').show();
-							$('.progress_loading').css('display','none');
-							if(response !== null && response.errorFound === true){
-								$(current).closest('tr').find('form[name=deployForm]').show();
-								self.showErrorPopUp(response.responseCode);
+								self.sqlQueryParam($(current).closest('tr').find('form[name=deployForm] #executeSql').is(':checked'), $(current).closest('tr').find('form[name=deployForm] ul[name=sortable2] li'), function(retVal){
+									sqlParam = retVal;
+								});
+								
+								queryStr = $(current).closest('tr').find('form[name=deployForm]').serialize().replace("=on", "=true");
+								queryStr += '&fetchSql=' + ($.isEmptyObject(sqlParam) === true ? "" : sqlParam);
+								
+								self.onMavenServiceEvent.dispatch('mvnDeploy', queryStr, '', '', function(response){
+									$('input[name=buildDelete]').show();
+									$('.progress_loading').css('display','none');
+									if(response !== null && response.errorFound === true){
+										$(current).closest('tr').find('form[name=deployForm]').show();
+										self.showErrorPopUp(response.responseCode);
+									}
+								});
+							});
+						}else{
+							if(whereToRender.children().length < 1){
+								self.dynamicpage.getHtml(whereToRender, current, '', function(retVal){
+									self.callDepOpencc(current, divId);
+								});
+							}else {
+								self.callDepOpencc(current, divId);
 							}
-						});
-					});
-				}else{
-					if(whereToRender.children().length < 1){
-						self.dynamicpage.getHtml(whereToRender, this, '', function(retVal){
-							self.callDepOpencc(current, divId);
-						});
-					}else {
-						self.callDepOpencc(current, divId);
+						}
+					} else if (response.status === "success" && response.responseCode === "PHR10C00001") {
+						var errMsg = commonVariables.api.error[response.responseCode] + response.data.lockedBy + commonVariables.api.error["PHR10C00111"] + response.data.lockedDate;
+						commonVariables.api.showError(errMsg, 'error', true, true);
 					}
-				}
+				});		
 			});
 			
 			//build deploy click event
@@ -341,7 +347,11 @@ define(["build/listener/buildListener"], function() {
 				
 				queryStr = $(this).closest('tr').find('form[name=deployForm]').serialize().replace("=on", "=true");
 				queryStr += '&fetchSql=' + ($.isEmptyObject(sqlParam) === true ? "" : sqlParam);
-				
+				var displayName="", userInfo = JSON.parse(commonVariables.api.localVal.getSession('userInfo'));
+				if (userInfo !== null) {
+					displayName = userInfo.displayName;
+				}
+				queryStr += '&displayName=' + displayName;
 				self.onMavenServiceEvent.dispatch('mvnDeploy', queryStr, '', '', function(response){
 					$('input[name=buildDelete]').show();
 					$('.progress_loading').css('display','none');
@@ -570,17 +580,23 @@ define(["build/listener/buildListener"], function() {
 			//Run again source popup click event
 			$("input[name=build_runagsource]").unbind("click");
 			$("input[name=build_runagsource]").click(function() {
-				if($(this).attr("class") === "btn btn_style"){
-					commonVariables.goal = "start";
-					commonVariables.phase = "run-against-source";
-					self.dynamicpage.getHtml($('#build_runagsource ul'), this, $(this).attr('name'), function(retVal){
-						$('.connectedSortable').sortable({
-							connectWith: '.connectedSortable',
-							cancel: ".ui-state-disabled"
-						});
-						$("form[name=runAgainstForm] #build_runagsource").show();
-					});
-				}	
+				var openccObj = this, openccObjName = $(this).attr('name');
+				self.checkForLock("Start", '', function(response){
+					if (response.status === "success" && response.responseCode === "PHR10C00002" && $(openccObj).attr("class") === "btn btn_style") {
+							commonVariables.goal = "start";
+							commonVariables.phase = "run-against-source";
+							self.dynamicpage.getHtml($('#build_runagsource ul'), openccObj, openccObjName, function(retVal){
+								$('.connectedSortable').sortable({
+									connectWith: '.connectedSortable',
+									cancel: ".ui-state-disabled"
+								});
+								$("form[name=runAgainstForm] #build_runagsource").show();
+							});
+					} else if (response.status === "success" && response.responseCode === "PHR10C00001") {
+						var errMsg = commonVariables.api.error[response.responseCode] + response.data.lockedBy + commonVariables.api.error["PHR10C00111"] + response.data.lockedDate;
+						commonVariables.api.showError(errMsg, 'error', true, true);
+					}	
+				});		
 			});
 			
 			//run again source click event
@@ -594,7 +610,11 @@ define(["build/listener/buildListener"], function() {
 				
 				queryStr = $('form[name=runAgainstForm]').serialize().replace("=on", "=true");
 				queryStr += '&fetchSql=' + ($.isEmptyObject(sqlParam) === true ? "" : sqlParam);
-				
+				var displayName="", userInfo = JSON.parse(commonVariables.api.localVal.getSession('userInfo'));
+				if (userInfo !== null) {
+					displayName = userInfo.displayName;
+				}
+				queryStr += '&displayName=' + displayName;
 				self.onValidationEvent.dispatch('run-against-source', queryStr, function(response){
 					if (!response.errorFound && response.status !== "error" && response.status !== "failure"){
 						$("form[name=runAgainstForm] #build_runagsource").hide();
@@ -653,17 +673,26 @@ define(["build/listener/buildListener"], function() {
 			//Generate build popup click event
 			$("input[name=build_genbuild]").unbind("click");
 			$("input[name=build_genbuild]").click(function() {
-                var whereToRender = $('#build_genbuild ul');
-				$("form[name=buildForm]").show();
-				if(whereToRender.children().length < 1){
-					commonVariables.goal = "package";
-					commonVariables.phase = "package";
-					self.dynamicpage.getHtml(whereToRender, this, $(this).attr('name'), function(retVal){
-						$("#buildNumber").bind('keypress',function(e) {
-							if((e.which >= 48 && e.which <= 57) || (e.which === 8)){return true;}else {e.preventDefault();}
-						});
-					});
-				}else{self.opencc(this,$(this).attr('name'));}
+				var openccObj = this;
+				var openccObjName = $(this).attr('name');
+				self.checkForLock("build", '', function(response){
+					if (response.status === "success" && response.responseCode === "PHR10C00002") {
+						var whereToRender = $('#build_genbuild ul');
+						$("form[name=buildForm]").show();
+						if(whereToRender.children().length < 1){
+							commonVariables.goal = "package";
+							commonVariables.phase = "package";
+							self.dynamicpage.getHtml(whereToRender, openccObj, openccObjName, function(retVal){
+								$("#buildNumber").bind('keypress',function(e) {
+									if((e.which >= 48 && e.which <= 57) || (e.which === 8)){return true;}else {e.preventDefault();}
+								});
+							});
+						}else{self.opencc(openccObj,openccObjName);}
+					} else if (response.status === "success" && response.responseCode === "PHR10C00001") {
+						var errMsg = commonVariables.api.error[response.responseCode] + response.data.lockedBy + commonVariables.api.error["PHR10C00111"] + response.data.lockedDate;
+						commonVariables.api.showError(errMsg, 'error', true, true);
+					}
+				});
 			});
 			
 			//build run click event
@@ -671,7 +700,11 @@ define(["build/listener/buildListener"], function() {
 			$("#buildRun").click(function(){
 				var sqlParam = "";
 				queryStr = $('form[name=buildForm]').serialize().replace("=on", "=true");
-				
+				var displayName="", userInfo = JSON.parse(commonVariables.api.localVal.getSession('userInfo'));
+				if (userInfo !== null) {
+					displayName = userInfo.displayName;
+				}
+				queryStr += '&displayName=' + displayName;
 				self.onValidationEvent.dispatch('package', queryStr, function(response){
 					if (!response.errorFound && response.status !== "error" && response.status !== "failure"){
 						$("form[name=buildForm]").hide();

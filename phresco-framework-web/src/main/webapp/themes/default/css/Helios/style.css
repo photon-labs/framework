@@ -3308,6 +3308,7 @@ html>body tbody.scrollContent {
 	overflow-y:scroll;
 	padding:0;
 	margin:0;
+	height:400px;
 }
 
 .type_test ul:last-child {
@@ -3423,13 +3424,10 @@ html>body tbody.scrollContent {
 	margin-bottom: 0px !important;
 }
 
-.jobConfigure {
-	height: auto;
-	max-height: 300px;
-}
 
 .jobConfigure form {
-	overflow-y:auto !important;
+	max-height: 300px !important;
+    overflow-y: auto !important;
 }
 
 .ci_envtable .popuptextarea input[type="checkbox"] {

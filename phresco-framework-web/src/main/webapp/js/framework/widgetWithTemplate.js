@@ -836,7 +836,40 @@ define(["framework/widget", "framework/templateProvider"], function() {
 					callback('<div>'+ returnValue +'</div>');
 				});
 			},
-			
+
+			checkForLock : function(actionType, repoAppId, callback) {
+				var self = this;
+				try {
+					var requestBody = {};
+					commonVariables.requireLoading = false;
+					requestBody.actionType = actionType;
+					commonVariables.api.ajaxRequest(self.getRequestHeader(requestBody, repoAppId, "checkForLock"), function(response) {
+						if (response !== null && callback !== undefined) {
+							commonVariables.requireLoading = true;
+							callback(response);
+						}
+					});
+				} catch(exception) {
+					commonVariables.requireLoading = true;
+					callback({ "status" : "service exception"});
+				}
+			},
+
+			getRequestHeader : function(requestBody, repoAppId, action) {
+				var self = this,
+				header = {
+					contentType: "application/json",				
+					dataType: "json",
+					webserviceurl: ''
+				}, appId = self.isBlank(repoAppId) ? $('.headerAppId').val() : repoAppId;
+				if (action === "checkForLock") {
+					header.requestMethod = "GET";
+					header.webserviceurl = commonVariables.webserviceurl + "util/checkLock?actionType="+requestBody.actionType+"&appId="+appId;
+				}
+
+				return header;
+			}, 
+
 			getList : function(ItemList, callback) {
 				var self=this, strUl = "", strRoot ="", strItems ="", strCollection = "";
 				$(ItemList).each(function(index, value){

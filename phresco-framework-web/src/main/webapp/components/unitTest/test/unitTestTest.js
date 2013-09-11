@@ -167,6 +167,16 @@ define(["unitTest/unitTest"], function(UnitTest) {
 		runUnitTestWithNoParamTest : function() {
 			var self = this;
 			asyncTest("Unit Test Run Test Without Parameters Test", function() {
+				$.mockjax({
+				  url: commonVariables.webserviceurl+"util/checkLock?actionType=unit&appId=6d6753e8-b081-48d8-9924-70a14f3663d4",
+				  type: "GET",
+				  dataType: "json",
+				  contentType: "application/json",
+				  status: 200,
+				  response : function() {
+					  this.responseText = JSON.stringify({"message":null,"exception":null,"responseCode":"PHR10C00002","data":null,"status":"success"});
+				  }
+				});
 				self.parametersMock = $.mockjax({
 					url: commonVariables.webserviceurl+"parameter/dynamic?appDirName=test&goal=unit-test&phase=unit-test&customerId=photon&userId=admin",
 				  	type: "GET",
@@ -179,7 +189,7 @@ define(["unitTest/unitTest"], function(UnitTest) {
 				});
 
 				self.executeTestMock = $.mockjax({
-					url: commonVariables.webserviceurl+"app/runUnitTest?username=admin&appId=5bf18d69-3902-497b-8cd2-65dbdc9cd377&customerId=photon&goal=unit-test&phase=unit-test&projectId=b1a829b3-bbfa-45c4-b5f0-003eca66abf5&",
+					url: commonVariables.webserviceurl+"app/runUnitTest?username=admin&appId=5bf18d69-3902-497b-8cd2-65dbdc9cd377&customerId=photon&goal=unit-test&phase=unit-test&projectId=b1a829b3-bbfa-45c4-b5f0-003eca66abf5&&displayName=Admin",
 				  	type: "POST",
 				  	dataType: "json",
 				  	contentType: "application/json",
@@ -193,6 +203,7 @@ define(["unitTest/unitTest"], function(UnitTest) {
 				commonVariables.api.localVal.setJson('appdetails', projectInfo);
 				commonVariables.api.localVal.setSession('username', "admin");
 				commonVariables.appDirName = "test";
+				$(".headerAppId").attr("value","6d6753e8-b081-48d8-9924-70a14f3663d4");	
 				$(commonVariables.contentPlaceholder).find("#unitTestBtn").click();
 				
 				setTimeout(function() {
@@ -232,7 +243,7 @@ define(["unitTest/unitTest"], function(UnitTest) {
 			asyncTest("Unit Test Run Test-Btn Click Test", function() {
 				$.mockjaxClear(self.executeTestMock);
 				self.executeTestMock = $.mockjax({
-					url: commonVariables.webserviceurl+"app/runUnitTest?username=admin&appId=5bf18d69-3902-497b-8cd2-65dbdc9cd377&customerId=photon&goal=unit-test&phase=unit-test&projectId=b1a829b3-bbfa-45c4-b5f0-003eca66abf5&testAgainst=java&environmentName=Production",
+					url: commonVariables.webserviceurl+"app/runUnitTest?username=admin&appId=5bf18d69-3902-497b-8cd2-65dbdc9cd377&customerId=photon&goal=unit-test&phase=unit-test&projectId=b1a829b3-bbfa-45c4-b5f0-003eca66abf5&testAgainst=java&environmentName=Production&displayName=Admin",
 				  	type: "POST",
 				  	dataType: "json",
 				  	contentType: "application/json",

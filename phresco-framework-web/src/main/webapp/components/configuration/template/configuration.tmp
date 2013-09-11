@@ -115,7 +115,7 @@
                             </tr>
                             <tr>
                                 <td><input type="text" class="cloneEnvName{{name}} dyn_popup_text envrName" data-i18n="[placeholder]configuration.placeholder.envname" name="envrName" maxlength="30" title="30 Characters only"></td>
-                                <td><input type="text" class="cloneEnvDesc{{name}} dyn_popup_text" data-i18n="[placeholder]configuration.placeholder.envdescription" name="envrDesc" maxlength="30" title="30 Characters only"></td>
+                                <td><input type="text" class="cloneEnvDesc{{name}} dyn_popup_text" data-i18n="[placeholder]configuration.placeholder.envdescription" name="envrDesc" maxlength="150" title="30 Characters only"></td>
                             </tr>
                             <tr>
                                <td>
