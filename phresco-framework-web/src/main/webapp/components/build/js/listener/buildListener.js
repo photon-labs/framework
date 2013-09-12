@@ -48,10 +48,10 @@ define([], function() {
 		},
 
 		mavenServiceCall : function(functionName, queryString, minAll, bodyContent, callback){
-			var self = this, appInfo = commonVariables.api.localVal.getJson('appdetails');
+			var self = this, appInfo = commonVariables.api.localVal.getProjectInfo();
 
 			if(appInfo !== null){
-				queryString +=	'&customerId='+ self.getCustomer() +'&appId='+ appInfo.data.projectInfo.appInfos[0].id +'&projectId=' + appInfo.data.projectInfo.id + '&username=' + commonVariables.api.localVal.getSession('username') + (minAll === ""? "" : '&minifyAll='+ minAll);
+				queryString += (queryString === "" ? "" : "&") + 'customerId='+ self.getCustomer() +'&appId='+ appInfo.data.projectInfo.appInfos[0].id +'&projectId=' + appInfo.data.projectInfo.id + '&username=' + commonVariables.api.localVal.getSession('username') + (minAll === ""? "" : '&minifyAll='+ minAll);
 			}
 			if(self.mavenServiceListener === null)	{
 				commonVariables.navListener.getMyObj(commonVariables.mavenService, function(retVal){
@@ -69,7 +69,7 @@ define([], function() {
 		},
 
 		mandatoryValidation : function (phase, queryString, callback){
-			var self = this, appInfo = commonVariables.api.localVal.getJson('appdetails'), header;
+			var self = this, appInfo = commonVariables.api.localVal.getProjectInfo(), header;
 			
 			try {
 				header = self.getRequestHeader('','','validation');
@@ -92,8 +92,9 @@ define([], function() {
 		getRequestHeader : function(BuildRequestBody, buildInfo, action) {
 			var self=this, header, appdirName = '', url = '', method = "GET", contType = "application/json", conte;
 			
-			if(commonVariables.api.localVal.getSession('appDirName') !== null){
-				appdirName = commonVariables.api.localVal.getSession('appDirName');
+			if(commonVariables.api.localVal.getProjectInfo() !== null){
+				var projectInfo = commonVariables.api.localVal.getProjectInfo();
+				appdirName = projectInfo.data.projectInfo.appInfos[0].appDirName;
 			}
 
 			if (action === "getList") {
@@ -109,7 +110,7 @@ define([], function() {
 				url = 'Ipadownload?appDirName=' + appdirName + '&buildNumber=' + buildInfo.buildNo;
 			} else if(action === "delete") {
 				method = "DELETE";
-				var appInfo = commonVariables.api.localVal.getJson('appdetails');
+				var appInfo = commonVariables.api.localVal.getProjectInfo();
 				if(appInfo !== null){
 					url = 'buildinfo/deletebuild?customerId='+ self.getCustomer() +'&appId='+ appInfo.data.projectInfo.appInfos[0].id +'&projectId=' + appInfo.data.projectInfo.id;
 				}

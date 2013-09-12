@@ -37,6 +37,24 @@ define(["framework/base"], function(){
 			if(key !== '' && value !== '' && value !== undefined) {
 				localStorage.setItem(key, JSON.stringify(value));
 			}
+		},
+		
+		getProjectInfo : function(){
+			if ($('.headerAppId').val() !== undefined && $('.headerAppId').val() !== null &&
+			    $('.headerAppId').val() !== '') {
+				return JSON.parse(localStorage.getItem($('.headerAppId').val()));
+			}else{
+				return JSON.parse('appdetails');
+			}
+		},
+		
+		setProjectInfo : function(value){
+			if ($('.headerAppId').val() !== undefined && $('.headerAppId').val() !== null &&
+			    $('.headerAppId').val() !== '') {
+				localStorage.setItem($('.headerAppId').val(), JSON.stringify(value));
+			}else{
+				localStorage.setItem('appdetails', JSON.stringify(value));
+			}
 		}
 	});
 	

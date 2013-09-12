@@ -24,7 +24,7 @@ define([], function() {
 		codeValidate : function(callback) {
 			var self = this;
 			var ipjson = $("#codeValidateForm").serialize();
-			var appdetails = commonVariables.api.localVal.getJson('appdetails');
+			var appdetails = commonVariables.api.localVal.getProjectInfo();
 			var userInfo = JSON.parse(commonVariables.api.localVal.getSession('userInfo'));
 			var queryString = '';
 			appId = appdetails.data.projectInfo.appInfos[0].id;
@@ -94,7 +94,7 @@ define([], function() {
 				data: ''
 			};
 			if(action === "validate-code"){
-				var appdetails = commonVariables.api.localVal.getJson('appdetails');
+				var appdetails = commonVariables.api.localVal.getProjectInfo();
 				appId = appdetails.data.projectInfo.appInfos[0].id;
 				projectId = appdetails.data.projectInfo.id;
 				username = commonVariables.api.localVal.getSession('username');

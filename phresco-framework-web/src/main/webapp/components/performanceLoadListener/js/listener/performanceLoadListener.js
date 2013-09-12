@@ -702,7 +702,7 @@ define(["lib/jquery-tojson-1.0",'lib/RGraph_common_core-1.0','lib/RGraph_common_
 
 		executeTest : function (queryString, json, testAction, popupObj, callback) {
 			queryString = queryString.concat("&testAction=" +testAction);
-			var self = this, appInfo = commonVariables.api.localVal.getJson('appdetails');
+			var self = this, appInfo = commonVariables.api.localVal.getProjectInfo();
 			var userInfo = JSON.parse(commonVariables.api.localVal.getSession('userInfo'));
 			popupObj.toggle();
 			self.openConsole();

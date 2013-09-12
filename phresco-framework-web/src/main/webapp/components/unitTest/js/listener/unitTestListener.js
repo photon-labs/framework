@@ -78,7 +78,7 @@ define([], function() {
 		runUnitTest : function(callback) {
 			var self = this;
 			var testData = $("#unitTestForm").serialize();
-			var appdetails = commonVariables.api.localVal.getJson('appdetails');
+			var appdetails = commonVariables.api.localVal.getProjectInfo();
 			var userInfo = JSON.parse(commonVariables.api.localVal.getSession('userInfo'));
 			var queryString = '';
 			appId = appdetails.data.projectInfo.appInfos[0].id;

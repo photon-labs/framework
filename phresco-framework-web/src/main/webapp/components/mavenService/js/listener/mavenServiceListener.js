@@ -213,7 +213,7 @@ define([], function() {
 		
 		mvnlogService : function(key, divId, callback){
 			try{
-				var self = this, header = self.getRequestHeader("GET", '&uniquekey=' + key, commonVariables.mvnlogService, "");
+				var self = this, header = self.getRequestHeader("GET", "", commonVariables.mvnlogService, 'uniquekey=' + key);
 				$('.progress_loading').css('display','block');
 				commonVariables.hideloading = true;
 				commonVariables.api.ajaxRequest(header, 

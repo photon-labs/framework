@@ -80,6 +80,8 @@ define(["framework/base", "api/localStorageAPI"], function(){
 					if ((response !== undefined && response !== null && response.status !== "error") || self.bCheck) {
 						// callbackFunction(response);
 						self.successResponse = response;
+					} else {
+						self.errorpopupshow(response);
 					}
 					
 					self.bCheck = false;
@@ -147,6 +149,46 @@ define(["framework/base", "api/localStorageAPI"], function(){
 			var self = this;
 			commonVariables.loadingScreen.removeLoading();
 		},
+		
+		errorpopupshow : function(response) {
+			var self = this;
+			$('#errpopup').remove();
+			$(commonVariables.basePlaceholder).append('<div id="errpopup" class="modal fade" tabindex="-1" style="display: none;"><div class="modal-body temp"></div><div class="modal-footer"><div><a href="#" title="" id="copytoclip" class="flt_left padding_img" href="#"><img class="padding_img" src="themes/default/images/helios/buildreport_icon.png" width="15" height="18" border="0" alt=""></a><div class="errorpopuploading" id="copyloadicon" style="display:none;">&nbsp</div></div><button type="button" data-dismiss="modal" class="btn btn_style">Close</button></div></div>');
+			if(response.service_exception !== null && response.service_exception !== undefined) { 
+				$(".modal-body").append(response.service_exception);
+			}else if(response.exception !== null && response.exception !== undefined) {
+				$.each(response.exception.stackTrace, function(index, value){
+					$(".modal-body").append(' '+value.className+' '+value.fileName+' '+' '+value.lineNumber+' '+value.methodName);
+				});
+			}
+			$("#errpopup").modal();	
+			$("#copytoclip").click(function() {
+				$("#copyloadicon").show();
+				commonVariables.navListener.copyToClipboard($('.temp'));
+			});		
+			$(".popuploading").hide();
+		},
+		
+		urlExists : function(url, callbackfunction, errorHandler){
+			commonVariables.ajaxXhr = $.ajax({
+				type: 'GET',
+				url: url,
+				status: 200,
+				timeout : 2000,
+				async : true,
+				beforeSend : function(){	
+					commonVariables.loadingScreen.showLoading($(commonVariables.contentPlaceholder));
+				},
+				success: function () {
+					commonVariables.loadingScreen.removeLoading();
+					callbackfunction(true);
+				},
+				error: function () {
+					commonVariables.loadingScreen.removeLoading();
+					callbackfunction(false);
+				},	
+			});	
+		},
 
 		showError : function(errorCode, msgType, timeOut, noCode){
 			var self = this, errorMsg = '';
@@ -161,9 +203,11 @@ define(["framework/base", "api/localStorageAPI"], function(){
 			commonVariables.continueloading = false;
 			commonVariables.hideloading = false;
 			commonVariables.loadingScreen.removeLoading();
-			
+			$("." + msgType).css("display", "block");
 			if($(commonVariables.contentPlaceholder).find('.content_end .msgdisplay').length > 0){	
-				$(commonVariables.contentPlaceholder).find('.content_end').show();
+				if($(commonVariables.contentPlaceholder).find('.content_end').css("display") === "none") {
+					$(commonVariables.contentPlaceholder).find('.content_end').css("display","block");
+				}
 				$(commonVariables.contentPlaceholder).find('.content_end .msgdisplay').addClass(msgType).html(errorMsg);
 				$(commonVariables.contentPlaceholder).find('.content_end .msgdisplay').show();
 			}else{

@@ -4751,4 +4751,19 @@ select[name="reportDataType"], input[name="pdfName"] {
     width: 100% !important;
 }
 
+.modal-body {
+	overflow-x: hidden;
+}
+.padding_img {
+	padding-top: 7px !important;
+}
+.errorpopuploading {
+	background-image : url(../../images/helios/loading.gif);
+	background-repeat : no-repeat;
+	position : absolute;
+	bottom : 36px;
+	width: 17px;
+	float: left;
+}	
+
 
