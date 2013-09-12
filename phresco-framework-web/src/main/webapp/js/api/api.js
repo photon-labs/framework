@@ -62,10 +62,10 @@ define(["framework/base", "api/localStorageAPI"], function(){
 				
 				beforeSend : function(){
 					$('section#serviceError').remove();
-					if(commonVariables.requireLoading && !Clazz.navigationController.loadingActive && !commonVariables.continueloading && !commonVariables.hideloading){
+					if(!Clazz.navigationController.loadingActive && !commonVariables.continueloading && !commonVariables.hideloading){
 						if($(commonVariables.basePlaceholder).find(commonVariables.contentPlaceholder).length > 0){
 							commonVariables.loadingScreen.showLoading($(commonVariables.contentPlaceholder));
-						}else if (commonVariables.requireLoading){
+						}else {
 							commonVariables.loadingScreen.showLoading();
 						}
 					}
@@ -95,7 +95,7 @@ define(["framework/base", "api/localStorageAPI"], function(){
 				},
 				
 				complete : function(response, e ,xhr){
-					if(commonVariables.requireLoading && !Clazz.navigationController.loadingActive && !commonVariables.continueloading){
+					if(!Clazz.navigationController.loadingActive && !commonVariables.continueloading){
 						commonVariables.hideloading = false;
 						commonVariables.loadingScreen.removeLoading();
 					}

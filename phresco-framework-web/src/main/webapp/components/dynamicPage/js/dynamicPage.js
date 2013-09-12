@@ -39,7 +39,6 @@ define(["framework/widgetWithTemplate", "dynamicPage/listener/dynamicPageListene
 		
 		getHtml : function(whereToRender, btnObj, openccObj, callback){
 			var self = this;
-			commonVariables.requireLoading = true;
 			commonVariables.loadingScreen.showLoading($(commonVariables.contentPlaceholder));
 			self.dynamicPageListener.getServiceContent(whereToRender, btnObj, openccObj, callback);
 		},

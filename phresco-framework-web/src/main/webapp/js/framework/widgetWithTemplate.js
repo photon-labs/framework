@@ -842,16 +842,13 @@ define(["framework/widget", "framework/templateProvider"], function() {
 				var self = this;
 				try {
 					var requestBody = {};
-					commonVariables.requireLoading = false;
 					requestBody.actionType = actionType;
 					commonVariables.api.ajaxRequest(self.getRequestHeader(requestBody, repoAppId, "checkForLock"), function(response) {
 						if (response !== null && callback !== undefined) {
-							commonVariables.requireLoading = true;
 							callback(response);
 						}
 					});
 				} catch(exception) {
-					commonVariables.requireLoading = true;
 					callback({ "status" : "service exception"});
 				}
 			},
