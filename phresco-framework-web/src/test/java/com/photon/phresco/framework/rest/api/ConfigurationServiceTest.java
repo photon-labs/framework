@@ -150,7 +150,7 @@ public class ConfigurationServiceTest extends LoginServiceTest {
 		testServer.setProperty("certificate", "");
 		testServer.setProperty("type", "Apache Tomcat");
 		testServer.setProperty("version", "6.0.x");
-		testServer.setProperty("deploy_dir", "c:\\wamp\\www");
+		testServer.setProperty("deploy_dir", "c:\\wamp");
 		testServer.setProperty("context", "serverprtod");
 		testConfigServer.setProperties(testServer);
 		
@@ -502,7 +502,7 @@ public class ConfigurationServiceTest extends LoginServiceTest {
 		
 		propertiesSerDupl.setProperty("context", "CometDTesting");
 		propertiesSerDupl.setProperty("admin_username", "");
-		propertiesSerDupl.setProperty("deploy_dir", "D:/server for phresco testing/New Folder/");
+		propertiesSerDupl.setProperty("deploy_dir", "C:\\wamp");
 		propertiesSerDupl.setProperty("additional_context", "");
 		propertiesSerDupl.setProperty("port", "6525");
 		propertiesSerDupl.setProperty("admin_password", "");
@@ -586,7 +586,7 @@ public class ConfigurationServiceTest extends LoginServiceTest {
 		Properties propertiesServer1 = new Properties();
 		propertiesServer1.setProperty("context", "CometDTesting");
 		propertiesServer1.setProperty("admin_username", "");
-		propertiesServer1.setProperty("deploy_dir", "D:/server for phresco testing/New Folder/");
+		propertiesServer1.setProperty("deploy_dir", "C:\\wamp");
 		propertiesServer1.setProperty("additional_context", "");
 		propertiesServer1.setProperty("port", "8888");
 		propertiesServer1.setProperty("admin_password", "pwd");
