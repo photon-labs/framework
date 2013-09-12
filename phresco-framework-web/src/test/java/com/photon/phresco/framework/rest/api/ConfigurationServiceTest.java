@@ -20,6 +20,8 @@ package com.photon.phresco.framework.rest.api;
 import static org.junit.Assert.assertEquals;
 
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -31,11 +33,13 @@ import javax.ws.rs.core.Response;
 import junit.framework.Assert;
 
 import org.apache.commons.io.FileUtils;
+import org.json.simple.parser.ParseException;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
 
 import com.photon.phresco.api.ConfigManager;
+import com.photon.phresco.commons.model.ApplicationInfo;
 import com.photon.phresco.configuration.Configuration;
 import com.photon.phresco.configuration.Environment;
 import com.photon.phresco.exception.ConfigurationException;
@@ -44,6 +48,7 @@ import com.photon.phresco.framework.model.AddCertificateInfo;
 import com.photon.phresco.framework.model.CronExpressionInfo;
 import com.photon.phresco.framework.rest.api.util.FrameworkServiceUtil;
 import com.photon.phresco.impl.ConfigManagerImpl;
+import com.photon.phresco.impl.HtmlApplicationProcessor;
 import com.photon.phresco.util.Utility;
 import com.phresco.pom.exception.PhrescoPomException;
 import com.phresco.pom.util.PomProcessor;
@@ -66,6 +71,12 @@ public class ConfigurationServiceTest extends LoginServiceTest {
 //		Response responseFail = configurationService.getAllEnvironments(null);
 //		ResponseInfo<List<Environment>> entity = (ResponseInfo<List<Environment>>)responseFail.getEntity();
 //		Assert.assertEquals(400, responseFail.getStatus());
+	}
+	
+	@Test
+	public void getAllEnvironmentsTestError() {
+		Response response = configurationService.getAllEnvironments("dfgdfg","false","");
+		Assert.assertEquals(200, response.getStatus());
 	}
 	
 	@Test
@@ -297,6 +308,12 @@ public class ConfigurationServiceTest extends LoginServiceTest {
 		Response responseFail = configurationService.listEnvironments("", "Production","","");
 		Assert.assertEquals(200, responseFail.getStatus());
 		
+	}
+	
+	@Test
+	public void listEnvironmentError() {
+		Response response = configurationService.listEnvironments("dnf", "Production", "false","");
+		Assert.assertEquals(200, response.getStatus());
 	}
 	
 	@Test
@@ -788,7 +805,17 @@ public class ConfigurationServiceTest extends LoginServiceTest {
 		Assert.assertEquals(200, fileEntireStructureFail.getStatus());
 		
 		}
-	
+		
+		@Test
+		public void fileBrowseErrorTest() {
+		Response fileStructure = configurationService.returnFileBorwseFolderStructure(Utility.getProjectHome()
+		+ "dfjh");
+		Assert.assertEquals(200, fileStructure.getStatus());
+		
+		Response fileEntireStructure = configurationService.returnFileBorwseEntireStructure("ffjgh", null);
+		Assert.assertEquals(200, fileEntireStructure.getStatus());
+		
+		}	
 	
 	@Test
 	public void uploadFileOnTarget() {
@@ -865,11 +892,85 @@ public class ConfigurationServiceTest extends LoginServiceTest {
 	}
 	
 	@Test
+	public void listFilesError() {
+		Response listUploadedFiles = configurationService.listUploadedFiles("dfsdf", "Production", "Server", "server", "true");
+		Assert.assertEquals(200, listUploadedFiles.getStatus());
+		Response listUploadedFile = configurationService.listUploadedFiles("dsfdsf", "Production", "Server", "serverconfig", "false");
+		Assert.assertEquals(200, listUploadedFile.getStatus());
+		
+	}
+	
+	@Test
 	public void removeFile() {
 		Response removeConfigFile = configurationService.removeConfigFile(appDirName, "content", "sample", "test.zip", "Production", "Server");
 		Assert.assertEquals(200, removeConfigFile.getStatus());
 	}
 	
+	@Test
+	public void removeFileError() {
+		Response removeConfigFile = configurationService.removeConfigFile("hdsf", "content", "sample", "test.zip", "Production", "Server");
+		Assert.assertEquals(200, removeConfigFile.getStatus());
+	}
+	
+	@Test
+	public void showPropertiesFeaturesTest() {
+		Response names = configurationService.showProperties("admin", "Features", "TestJquery", "addconfig", "photon");
+		Assert.assertEquals(200, names.getStatus());
+	}
+	
+	@Test
+	public void showPropertiesComponentsTest() throws PhrescoException, FileNotFoundException, IOException, ParseException {
+		Response names = configurationService.showProperties("admin", "Components", "TestJquery", "addconfig", "photon");
+		Assert.assertEquals(200, names.getStatus());
+	}
+	
+	@Test
+	public void showPropertiesFeaturesErrorTest() {
+		Response names = configurationService.showProperties("admin", "Features", "dfhgdf", "addconfig", "photon");
+		Assert.assertEquals(200, names.getStatus());
+	}
+	
+	@Test
+	public void showFeatureConfigsNonEmptyTest() throws PhrescoException {
+		ApplicationInfo appInfo = FrameworkServiceUtil.getApplicationInfo("TestJquery");
+		List<Configuration> configurations = new ArrayList<Configuration>();
+		Configuration config = new Configuration();
+		config.setEnvName("production");
+		config.setName("test");
+		config.setType("FEATURES");
+		Properties prop = new Properties();
+		prop.setProperty("featureName", "testFeature");
+		prop.setProperty("this works", "yes");
+		config.setProperties(prop);
+		configurations.add(config);
+		
+		List<Configuration> configurations2 = new ArrayList<Configuration>();
+		Configuration config2 = new Configuration();
+		config2.setEnvName("production");
+		config2.setName("test2");
+		config2.setType("COMPONENTS");
+		Properties prop2 = new Properties();
+		prop2.setProperty("featureName", "testComponent");
+		prop2.setProperty("this works", "yes");
+		config2.setProperties(prop2);
+		configurations2.add(config2);
+		
+		HtmlApplicationProcessor writeToJson = new HtmlApplicationProcessor();
+		File jsonDir = new File(Utility.getProjectHome() + 
+				appInfo.getAppDirName() + File.separator + "src/main/webapp/json");
+		jsonDir.mkdirs();
+		writeToJson.postConfiguration(appInfo, configurations);
+		writeToJson.postConfiguration(appInfo, configurations2);
+		Response names = configurationService.showFeatureConfigs("admin", "photon", "testComponent", "TestJquery", "production");
+		Assert.assertEquals(200, names.getStatus());
+	}
+	
+	@Test
+	public void showFeatureConfigsErrorTest() throws PhrescoException {
+		Response names = configurationService.showFeatureConfigs("admin", "photon", "testFeature", "dsfd", "production");
+		Assert.assertEquals(200, names.getStatus());
+	}
+
 	private String getConnectionUrl(String envName, String type, String configName) throws PhrescoException {
 		String configFileDir = FrameworkServiceUtil.getConfigFileDir(appDirName);
 		try {

@@ -250,8 +250,12 @@ public interface ResponseCodes {
 	String PHR600020 = "PHR600020"; // environments updated successfully
 	String PHR600021 = "PHR600021"; // theme validated  successfully
 	String PHR610031 = "PHR610031"; // theme validation failed
-	String PHR600023 = "PHR600023"; // content validated successfully
-	String PHR610033 = "PHR610033"; // content validation failed
+	String PHR600022 = "PHR600022"; // content validated successfully
+	String PHR610032 = "PHR610032"; // content validation failed
+	String PHR600023 = "PHR600023"; // configuration types returned successfully
+	String PHR610033 = "PHR610033"; // failed to retrieve configuration types
+	String PHR600024 = "PHR600024"; // feature configurations returned successfully
+	String PHR610034 = "PHR610034"; // failed to fetch the list of feature configurations
 	String PHR600025 = "PHR600025"; // upload File successfully
 	String PHR610035 = "PHR610035"; // unable to upload file
 	String PHR610036 = "PHR610036"; // upload File failed

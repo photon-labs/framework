@@ -71,6 +71,8 @@ import com.photon.phresco.commons.model.ArtifactGroup;
 import com.photon.phresco.commons.model.ArtifactGroupInfo;
 import com.photon.phresco.commons.model.ArtifactInfo;
 import com.photon.phresco.commons.model.CertificateInfo;
+import com.photon.phresco.commons.model.CoreOption;
+import com.photon.phresco.commons.model.FeatureConfigure;
 import com.photon.phresco.commons.model.PropertyTemplate;
 import com.photon.phresco.commons.model.SettingsTemplate;
 import com.photon.phresco.configuration.Configuration;
@@ -1040,6 +1042,150 @@ public class ConfigurationService extends RestBase implements FrameworkConstants
 
 		return targetDir;
 	}
+
+	/**
+	 * Fetches the list of properties (features or configurations)
+	 *
+	 * @param userId the user Id
+	 * @param type the type of property (component or feature)
+	 * @param appDirName the app dir name
+	 * @param fromPage the source page (add or edit)
+	 * @param customerId the customerId
+	 * @return the response
+	 */
+	@POST
+	@Path("/configType")
+	@Produces(MediaType.APPLICATION_JSON)
+	@Consumes(MediaType.APPLICATION_JSON)
+	public Response showProperties(@QueryParam(REST_QUERY_USERID) String userId, @QueryParam(REST_QUERY_TYPE) String type, @QueryParam(REST_QUERY_APPDIR_NAME) String appDirName,
+			@QueryParam(REST_QUERY_FROM_PAGE) String fromPage, @QueryParam(REST_QUERY_CUSTOMERID) String customerId) {
+		ResponseInfo<List<String>> responseData = new ResponseInfo<List<String>>();
+		try {
+			ServiceManager serviceManager = CONTEXT_MANAGER_MAP.get(userId);
+			SettingsTemplate settingsTemplate = serviceManager.getConfigTemplateByType(customerId, type);
+			ApplicationInfo appInfo = FrameworkServiceUtil.getApplicationInfo(appDirName);
+			List<String> names = new ArrayList<String>();
+			if ((ADD_CONFIG.equals(fromPage) || EDIT_CONFIG.equals(fromPage))) {
+			    if (CONFIG_FEATURES.equals(settingsTemplate.getId())) {
+			        names = setCustomModNamesInReq(appInfo, serviceManager);
+			    } else if (CONFIG_COMPONENTS.equals(settingsTemplate.getId())) {
+			        names = setComponentNamesInReq(appInfo, serviceManager);
+			    }
+			}
+			ResponseInfo<List<String>> finalOuptut = responseDataEvaluation(responseData, null, names, RESPONSE_STATUS_SUCCESS, PHR600023);
+			return Response.status(Status.OK).entity(finalOuptut).header("Access-Control-Allow-Origin", "*").build();
+		} catch (PhrescoException e) {
+			ResponseInfo<List<String>> finalOuptut = responseDataEvaluation(responseData, e, null, RESPONSE_STATUS_ERROR, PHR610033);
+			return Response.status(Status.OK).entity(finalOuptut).header("Access-Control-Allow-Origin", "*").build();
+		}		
+	}
+	
+	private List<String> setCustomModNamesInReq(ApplicationInfo appInfo, ServiceManager serviceManager) throws PhrescoException {
+        try {
+            List<String> selectedModules = appInfo.getSelectedModules();
+            List<String> custFeatureNames = new ArrayList<String>();
+            if (CollectionUtils.isNotEmpty(selectedModules)) {
+                for (String selectedModule : selectedModules) {
+                    ArtifactInfo artifactInfo = serviceManager.getArtifactInfo(selectedModule);
+                    ArtifactGroup artifactGroup = serviceManager.getArtifactGroupInfo(artifactInfo.getArtifactGroupId());
+                    List<CoreOption> appliesTo = artifactGroup.getAppliesTo();
+                    for (CoreOption coreOption : appliesTo) {
+                        if (coreOption.getTechId().equals(appInfo.getTechInfo().getId()) && !coreOption.isCore()) {
+                            custFeatureNames.add(artifactGroup.getName());
+                        }
+                    }
+                }
+            }
+            return custFeatureNames;
+        } catch (PhrescoException e) {
+            throw new PhrescoException(e);
+        }
+    }
+    
+    private List<String> setComponentNamesInReq(ApplicationInfo appInfo, ServiceManager serviceManager) throws PhrescoException {
+        try {
+            List<String> selectedComponents = appInfo.getSelectedComponents();
+            List<String> componentNames = new ArrayList<String>();
+            if (CollectionUtils.isNotEmpty(selectedComponents)) {
+                for (String selectedComponent : selectedComponents) {
+                    ArtifactInfo artifactInfo = serviceManager.getArtifactInfo(selectedComponent);
+                    ArtifactGroup artifactGroup = serviceManager.getArtifactGroupInfo(artifactInfo.getArtifactGroupId());
+                    List<CoreOption> appliesTo = artifactGroup.getAppliesTo();
+                    for (CoreOption coreOption : appliesTo) {
+                        if (coreOption.getTechId().equals(appInfo.getTechInfo().getId())) {
+                            componentNames.add(artifactGroup.getName());
+                        }
+                    }
+                }
+            }
+            return componentNames;
+        } catch (PhrescoException e) {
+            throw new PhrescoException(e);
+        }
+    }
+	
+    /**
+	 * Fetches the options of a particular property
+	 *
+	 * @param userId the user Id
+	 * @param customerId the customerId
+	 * @param featureName the name of the feature
+	 * @param appDirName the app dir name
+	 * @param envName the environment name
+	 * 
+	 * @return the response
+	 */
+	@POST
+	@Path("/showFeatureConfigs")
+	@Produces(MediaType.APPLICATION_JSON)
+	@Consumes(MediaType.APPLICATION_JSON)
+	public Response showFeatureConfigs(@QueryParam(REST_QUERY_USERID) String userId, @QueryParam(REST_QUERY_CUSTOMERID) String customerId,
+			@QueryParam(REST_QUERY_FEATURENAME) String featureName, @QueryParam(REST_QUERY_APPDIR_NAME) String appDirName, @QueryParam(REST_QUERY_EVN_NAME) String envName) {
+		ResponseInfo<FeatureConfigure> responseData = new ResponseInfo<FeatureConfigure>();
+        try {
+        	ServiceManager serviceManager = CONTEXT_MANAGER_MAP.get(userId);
+        	FeatureConfigure featureConfigure = new FeatureConfigure();
+			featureConfigure = getPropTemplateFromConfigFile(appDirName, customerId, serviceManager, featureName, envName);
+			ResponseInfo<FeatureConfigure> finalOutput = responseDataEvaluation(responseData, null,
+					featureConfigure, RESPONSE_STATUS_SUCCESS, PHR600024);
+			return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
+        } catch (PhrescoException e) {
+			ResponseInfo<FeatureConfigure> finalOutput = responseDataEvaluation(responseData, e,
+					null, RESPONSE_STATUS_ERROR, PHR610034);
+			return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*")
+					.build();
+		}
+	}
+	
+	private FeatureConfigure getPropTemplateFromConfigFile(String appDirName, String customerId, ServiceManager serviceManager, String featureName, String envName) throws PhrescoException {
+        List<PropertyTemplate> propertyTemplates = new ArrayList<PropertyTemplate>();
+        try {
+        	FeatureConfigure featureConfigure = new FeatureConfigure();
+	        FrameworkServiceUtil frameworkServiceUtil = new FrameworkServiceUtil();
+            List<Configuration> featureConfigurations = frameworkServiceUtil.getApplicationProcessor(appDirName, customerId, serviceManager).preConfiguration(FrameworkServiceUtil.getApplicationInfo(appDirName), featureName, envName);
+            Properties properties = null;
+            if (CollectionUtils.isNotEmpty(featureConfigurations)) {
+                for (Configuration featureConfiguration : featureConfigurations) {
+                    properties = featureConfiguration.getProperties();
+                    Set<Object> keySet = properties.keySet();
+                    for (Object objectKey : keySet) {
+                        String keyStr = (String) objectKey;
+                        String dispName = keyStr.replace(".", " ");
+                        PropertyTemplate propertyTemplate = new PropertyTemplate();
+                        propertyTemplate.setKey(keyStr);
+                        propertyTemplate.setName(dispName);
+                        propertyTemplates.add(propertyTemplate);
+                    }
+                }
+            }
+            featureConfigure.setHasCustomProperty(true);
+	        featureConfigure.setProperties(properties);
+	        featureConfigure.setPropertyTemplates(propertyTemplates);
+	        return featureConfigure;
+        } catch (PhrescoException e) {
+            throw new PhrescoException(e);
+        }
+    }
 
 	// for the return of entire project structure as single xml
 	private static DOMSource createXML(String browsePath, String fileType) throws PhrescoException {

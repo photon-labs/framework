@@ -903,14 +903,14 @@ public class ActionService implements ActionServiceConstant, FrameworkConstants,
 		try {
 			actionFunction.prePopulateModelData(request);
 			response = actionFunction.validateContent(request);
-			response.setResponseCode(PHR600023);
+			response.setResponseCode(PHR600022);
 		} catch (Exception e) {
 			S_LOGGER.error(e.getMessage());
 			response.setStatus(RESPONSE_STATUS_ERROR);
 			response.setLog("");
 			response.setService_exception(FrameworkUtil.getStackTraceAsString(e));
 			response.setUniquekey("");
-			response.setResponseCode(PHR610033);
+			response.setResponseCode(PHR610032);
 		}
 		return Response.status(Status.OK).entity(response).header("Access-Control-Allow-Origin", "*").build();
 	}
