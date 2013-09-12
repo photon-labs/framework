@@ -51,7 +51,7 @@ define([], function() {
 			var self = this, appInfo = commonVariables.api.localVal.getJson('appdetails');
 
 			if(appInfo !== null){
-				queryString +=	'&customerId='+ self.getCustomer() +'&appId='+ appInfo.data.appInfos[0].id +'&projectId=' + appInfo.data.id + '&username=' + commonVariables.api.localVal.getSession('username') + (minAll === ""? "" : '&minifyAll='+ minAll);
+				queryString +=	'&customerId='+ self.getCustomer() +'&appId='+ appInfo.data.projectInfo.appInfos[0].id +'&projectId=' + appInfo.data.projectInfo.id + '&username=' + commonVariables.api.localVal.getSession('username') + (minAll === ""? "" : '&minifyAll='+ minAll);
 			}
 			if(self.mavenServiceListener === null)	{
 				commonVariables.navListener.getMyObj(commonVariables.mavenService, function(retVal){
@@ -111,7 +111,7 @@ define([], function() {
 				method = "DELETE";
 				var appInfo = commonVariables.api.localVal.getJson('appdetails');
 				if(appInfo !== null){
-					url = 'buildinfo/deletebuild?customerId='+ self.getCustomer() +'&appId='+ appInfo.data.appInfos[0].id +'&projectId=' + appInfo.data.id;
+					url = 'buildinfo/deletebuild?customerId='+ self.getCustomer() +'&appId='+ appInfo.data.projectInfo.appInfos[0].id +'&projectId=' + appInfo.data.projectInfo.id;
 				}
 			} else if(action === "serverstatus") {
 				method = "GET";

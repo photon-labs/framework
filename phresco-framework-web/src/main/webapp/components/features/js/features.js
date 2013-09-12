@@ -66,7 +66,7 @@ define(["features/listener/featuresListener"], function() {
 		registerHandlebars : function () {
 			var self = this;
 			var appdetails = commonVariables.api.localVal.getJson('appdetails');
-			var techid = appdetails.data.appInfos[0].techInfo.id;
+			var techid = appdetails.data.projectInfo.appInfos[0].techInfo.id;
 			Handlebars.registerHelper('versiondata', function(versions, id) {
 				var selectedList = commonVariables.api.localVal.getSession("selectedFeatures");				
 				var fieldset;
@@ -93,7 +93,7 @@ define(["features/listener/featuresListener"], function() {
 			Handlebars.registerHelper('versionShowHide', function(versions, id) {
 				var fieldset;
 				var appdetails = commonVariables.api.localVal.getJson('appdetails');
-				var techid = appdetails.data.appInfos[0].techInfo.id;
+				var techid = appdetails.data.projectInfo.appInfos[0].techInfo.id;
 				if(versions.length > 0){
  					$.each(versions, function(index, value){
 						if(JSON.stringify(value.appliesTo) !== "null"){

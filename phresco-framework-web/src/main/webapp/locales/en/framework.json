@@ -574,7 +574,7 @@
 			"entername" : "Enter Name",
 			"entercode" : "Enter Code",
 			"enterappdir" : "Enter app directory",
-			"embedapplication" : "EmbedApplication"
+			"embedapplication" : "Embed"
 		},
 		"btn" : {
 			"cancel" : "Cancel",

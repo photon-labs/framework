@@ -707,7 +707,7 @@ define(["lib/jquery-tojson-1.0",'lib/RGraph_common_core-1.0','lib/RGraph_common_
 			popupObj.toggle();
 			self.openConsole();
 			if(appInfo !== null && userInfo!== null){
-				queryString +=	'&customerId='+ self.getCustomer() +'&appId='+ appInfo.data.appInfos[0].id +'&projectId=' + appInfo.data.id + '&username=' + commonVariables.api.localVal.getSession('username')+'&displayName='+userInfo.displayName;
+				queryString +=	'&customerId='+ self.getCustomer() +'&appId='+ appInfo.data.projectInfo.appInfos[0].id +'&projectId=' + appInfo.data.projectInfo.id + '&username=' + commonVariables.api.localVal.getSession('username')+'&displayName='+userInfo.displayName;
 			}
 			self.callMavenService(queryString, json, testAction, callback);
 		},

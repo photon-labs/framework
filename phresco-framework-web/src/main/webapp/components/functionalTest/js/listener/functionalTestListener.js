@@ -131,9 +131,9 @@ define([], function() {
 			}
 			var appdetails = commonVariables.api.localVal.getJson('appdetails');
 			var queryString = '';
-			appId = appdetails.data.appInfos[0].id;
-			projectId = appdetails.data.id;
-			customerId = appdetails.data.customerIds[0];
+			appId = appdetails.data.projectInfo.appInfos[0].id;
+			projectId = appdetails.data.projectInfo.id;
+			customerId = appdetails.data.projectInfo.customerIds[0];
 			username = commonVariables.api.localVal.getSession('username');
 
 			if (appdetails !== null) {

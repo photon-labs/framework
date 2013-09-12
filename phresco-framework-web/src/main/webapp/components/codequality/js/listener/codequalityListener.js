@@ -27,9 +27,9 @@ define([], function() {
 			var appdetails = commonVariables.api.localVal.getJson('appdetails');
 			var userInfo = JSON.parse(commonVariables.api.localVal.getSession('userInfo'));
 			var queryString = '';
-			appId = appdetails.data.appInfos[0].id;
-			projectId = appdetails.data.id;
-			customerId = appdetails.data.customerIds[0];
+			appId = appdetails.data.projectInfo.appInfos[0].id;
+			projectId = appdetails.data.projectInfo.id;
+			customerId = appdetails.data.projectInfo.customerIds[0];
 			username = commonVariables.api.localVal.getSession('username');
 						
 			if(appdetails !== null && userInfo !== null){
@@ -95,8 +95,8 @@ define([], function() {
 			};
 			if(action === "validate-code"){
 				var appdetails = commonVariables.api.localVal.getJson('appdetails');
-				appId = appdetails.data.appInfos[0].id;
-				projectId = appdetails.data.id;
+				appId = appdetails.data.projectInfo.appInfos[0].id;
+				projectId = appdetails.data.projectInfo.id;
 				username = commonVariables.api.localVal.getSession('username');
 				
 				header.requestMethod ="POST";
