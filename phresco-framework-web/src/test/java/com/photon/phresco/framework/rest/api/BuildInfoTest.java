@@ -176,7 +176,7 @@ public class BuildInfoTest extends RestBaseTest {
 	@Test
 	public void  runServer() throws PhrescoException {
 		MockHttpServletRequest request = new MockHttpServletRequest();
-		request.setParameter("environmentName", "Production");
+		request.setParameter("environmentName", "dev");
 		request.setParameter("logs", "showErrors");
 		request.setParameter("skipTest", "true");
 		request.setParameter("customerId", customerId);
@@ -213,7 +213,7 @@ public class BuildInfoTest extends RestBaseTest {
 	@Test
 	public void  stopServer() throws PhrescoException {
 		MockHttpServletRequest request = new MockHttpServletRequest();
-		request.setParameter("environmentName", "Production");
+		request.setParameter("environmentName", "dev");
 		request.setParameter("logs", "showErrors");
 		request.setParameter("skipTest", "true");
 		request.setParameter("customerId", customerId);
