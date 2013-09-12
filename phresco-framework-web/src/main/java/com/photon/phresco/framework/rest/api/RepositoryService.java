@@ -387,7 +387,7 @@ public class RepositoryService extends RestBase implements FrameworkConstants, S
 		ResponseInfo responseData = new ResponseInfo();
 		try {
 			ApplicationInfo importProject = scmi.importProject(type, repodetail.getRepoUrl(), repodetail.getUserName(),
-					repodetail.getPassword(), MASTER, repodetail.getRevision());
+					repodetail.getPassword(), repodetail.getBranch(), repodetail.getRevision());
 			if (importProject != null) {
 				status = RESPONSE_STATUS_SUCCESS;
 				successCode = PHR200017;

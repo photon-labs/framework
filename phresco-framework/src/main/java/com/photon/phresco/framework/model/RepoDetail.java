@@ -30,6 +30,7 @@ public class RepoDetail implements Serializable {
 	private String testPassword;
 	private String testRevision;
 	private String testRevisionVal;
+	private String branch;
 	
 	private boolean repoExist;
 
@@ -176,6 +177,14 @@ public class RepoDetail implements Serializable {
 
 	public void setTestRevision(String testRevision) {
 		this.testRevision = testRevision;
+	}
+
+	public void setBranch(String branch) {
+		this.branch = branch;
+	}
+
+	public String getBranch() {
+		return branch;
 	}
 
 	public String toString() {

@@ -28,7 +28,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Properties;
 import java.util.Set;
 import java.util.UUID;
 
@@ -38,30 +37,20 @@ import org.apache.commons.io.filefilter.FileFilterUtils;
 import org.apache.commons.io.filefilter.TrueFileFilter;
 import org.apache.log4j.Logger;
 import org.eclipse.jgit.api.AddCommand;
-import org.eclipse.jgit.api.CheckoutCommand;
-import org.eclipse.jgit.api.CloneCommand;
 import org.eclipse.jgit.api.CommitCommand;
-import org.eclipse.jgit.api.FetchCommand;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.InitCommand;
-import org.eclipse.jgit.api.ListBranchCommand.ListMode;
-import org.eclipse.jgit.api.ResetCommand.ResetType;
-import org.eclipse.jgit.api.PullCommand;
 import org.eclipse.jgit.api.PushCommand;
 import org.eclipse.jgit.api.ResetCommand;
-import org.eclipse.jgit.api.RevertCommand;
+import org.eclipse.jgit.api.ResetCommand.ResetType;
 import org.eclipse.jgit.api.Status;
-import org.eclipse.jgit.api.errors.CheckoutConflictException;
 import org.eclipse.jgit.api.errors.GitAPIException;
-import org.eclipse.jgit.lib.ObjectId;
-import org.eclipse.jgit.lib.Ref;
 import org.eclipse.jgit.lib.Repository;
 import org.eclipse.jgit.lib.StoredConfig;
-import org.eclipse.jgit.revwalk.RevCommit;
-import org.eclipse.jgit.revwalk.RevWalk;
 import org.eclipse.jgit.storage.file.FileRepositoryBuilder;
 import org.eclipse.jgit.transport.CredentialsProvider;
 import org.eclipse.jgit.transport.UsernamePasswordCredentialsProvider;
+import org.springframework.util.StringUtils;
 import org.tmatesoft.svn.core.SVNCommitInfo;
 import org.tmatesoft.svn.core.SVNDepth;
 import org.tmatesoft.svn.core.SVNDirEntry;
@@ -94,7 +83,6 @@ import com.photon.phresco.commons.model.ApplicationInfo;
 import com.photon.phresco.commons.model.ProjectInfo;
 import com.photon.phresco.exception.PhrescoException;
 import com.photon.phresco.framework.api.SCMManager;
-import com.photon.phresco.framework.model.RepoDetail;
 import com.photon.phresco.framework.model.RepoFileInfo;
 import com.photon.phresco.util.FileUtil;
 import com.photon.phresco.util.Utility;
@@ -152,7 +140,7 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 			if(debugEnabled){
 				S_LOGGER.debug("gitImportTemp " + gitImportTemp);
 			}
-			importFromGit(url, gitImportTemp, username, password);
+			importFromGit(url, gitImportTemp, username, password, branch);
 			if(debugEnabled){
 				S_LOGGER.debug("Validating Phresco Definition");
 			}
@@ -472,26 +460,26 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 		return dotphresco;
 	}
 
-	private void importFromGit(String url, File gitImportTemp, String username, String password)throws Exception {
+	private void importFromGit(String url, File gitImportTemp, String username, String password, String branch)throws Exception {
 		if(debugEnabled){
 			S_LOGGER.debug("Entering Method  SCMManagerImpl.importFromGit()");
-		}
+		}		
+			if (StringUtils.isEmpty(branch)) {
+				branch = "master";
+			}
+			UsernamePasswordCredentialsProvider userCredential = new UsernamePasswordCredentialsProvider(username, password);
 			if(debugEnabled){
 				S_LOGGER.debug("importing git " + url);
 			}
-			Git repo = null;
-			CloneCommand cloneRepository = Git.cloneRepository();
-			CloneCommand cloneCommand = null;
-				if (username != null && password != null) {
-					UsernamePasswordCredentialsProvider userCredential = new UsernamePasswordCredentialsProvider(username, password);
-					cloneCommand = cloneRepository.setCredentialsProvider(userCredential);
-				}
-				CloneCommand callCommand = cloneRepository.setURI(url).setDirectory(gitImportTemp);
-				repo = callCommand.call();
-				for (Ref b : repo.branchList().setListMode(ListMode.ALL).call()) {
-		            S_LOGGER.debug("(standard): cloned branch " + b.getName());
-		        }
-		        repo.getRepository().close();
+			Git r = Git.cloneRepository().setDirectory(gitImportTemp)
+			.setURI(url)
+			.setCredentialsProvider(userCredential)
+//			.setProgressMonitor(new TextProgressMonitor())
+			.call();
+			if (!MASTER.equalsIgnoreCase(branch) && !StringUtils.isEmpty(branch)) {
+				r.checkout().setName("origin/"+branch).call();
+			} 
+	        r.getRepository().close();      
 	}
 	
 	private ApplicationInfo importFromBitKeeper(String repoUrl) throws PhrescoException {
