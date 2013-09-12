@@ -440,7 +440,7 @@ define([], function() {
 								commonVariables.api.localVal.setProjectInfo(response);
 								Clazz.navigationController.push(self.editAplnContent, true);
 								setTimeout(function(){
-									commonVariables.api.showError(response.responseCode ,"success", true);
+									commonVariables.api.showError(response.responseCode ,"success", true, false, true);
 								},3000);
 							});
 						}
@@ -498,9 +498,14 @@ define([], function() {
 				header.webserviceurl = commonVariables.webserviceurl+"project/editApplication?appDirName="+appDirName+"&userId="+userId;
 			}	
 			if(action === 'editApplication'){
+				var displayName="", userInfo = JSON.parse(commonVariables.api.localVal.getSession('userInfo'));
+				if (userInfo !== null) {
+					displayName = userInfo.displayName;
+				}
+
 				header.requestMethod ="PUT";
 				header.requestPostBody = appDirName;
-				header.webserviceurl = commonVariables.webserviceurl+"project/updateApplication?userId="+userId+"&oldAppDirName="+oldAppDirName+"&customerId=photon";
+				header.webserviceurl = commonVariables.webserviceurl+"project/updateApplication?userId="+userId+"&oldAppDirName="+oldAppDirName+"&customerId=photon&displayName="+displayName;
 			}
 			if (action === 'getApplicableOptions') {
 				header.requestMethod ="GET";

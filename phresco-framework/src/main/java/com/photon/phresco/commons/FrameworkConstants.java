@@ -216,6 +216,10 @@ public interface FrameworkConstants {
     String UPDATE = "update";
     String DELETE_APPLN = "deleteAppln";
     String DELETE_PROJ = "deleteProj";
+    String APPLN_UPDATE = "applnUpdate";
+    String FEATURE_UPDATE = "featureUpdate";
+    String CONFIG_UPDATE = "configUpdate";
+    
     String REMOTE = "remote";
     String ORIGIN = "origin";
     String FETCH = "fetch";

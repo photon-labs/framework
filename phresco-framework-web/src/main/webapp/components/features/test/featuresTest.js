@@ -216,7 +216,18 @@ define(["features/features"], function(Features) {
 			var self = this;
 			asyncTest("Test - Module Update Service Verification Tested", function() {
 				$.mockjax({
-					url:  commonVariables.webserviceurl+commonVariables.projectlistContext + "/updateFeature?customerId=photon&userId=admin&appDirName=wordpress-WordPress",
+				  url: commonVariables.webserviceurl+"util/checkLock?actionType=featureUpdate&appId=2159a829-9316-4351-ada1-0098bc6712a1",
+				  type: "GET",
+				  dataType: "json",
+				  contentType: "application/json",
+				  status: 200,
+				  response : function() {
+					  this.responseText = JSON.stringify({"message":null,"exception":null,"responseCode":"PHR10C00002","data":null,"status":"success"});
+				  }
+				});
+
+				$.mockjax({
+					url:  commonVariables.webserviceurl+commonVariables.projectlistContext + "/updateFeature?customerId=photon&userId=admin&appDirName=wordpress-WordPress&displayName=Admin",
 					type:'PUT',
 					contentType: 'application/json',
 					status: 200,
@@ -235,14 +246,14 @@ define(["features/features"], function(Features) {
 				});
 				//var featuresAPI = new Clazz.com.components.features.js.api.FeaturesAPI();
 				commonVariables.api.localVal.setSession("appDirName" , "wordpress-WordPress");
-				
+				$(".headerAppId").attr("value","2159a829-9316-4351-ada1-0098bc6712a1");	
 				commonVariables.navListener.onMytabEvent("featurelist");
 				$('#featureUpdate').click();		
 				setTimeout(function() { 
 					start();
 					//var successmsg = $(".popsuccess").text();
 					var selectoption = $(commonVariables.contentPlaceholder).find("#feature_c2c74b7d-a6b6-4e61-b0e0-a44db1dfb3de").attr("class");
-					equal(selectoption, "switch switchOn default", " Select Service Verification Tested");
+					equal(selectoption, "switch switchOff", " Select Service Verification Tested");
 					self.FeatureSelectVerification(feature);
 				}, 2000);
 			});
@@ -267,7 +278,7 @@ define(["features/features"], function(Features) {
 				setTimeout(function() { 
 					start();					
 					var selectoption = $(commonVariables.contentPlaceholder).find("#feature_c2c74b7d-a6b6-4e61-b0e0-a44db1dfb3de").attr("class");
-					equal(selectoption, "switch switchOn default", " Select Service Verification Tested");
+					equal(selectoption, "switch switchOff", " Select Service Verification Tested");
 					self.FeatureSelectFailureVerification(feature);
 				}, 2000);
 			});
@@ -315,10 +326,10 @@ define(["features/features"], function(Features) {
 				setTimeout(function() { 
 					start();
 					var selectoption = $(commonVariables.contentPlaceholder).find("#feature_7077da20-a2cc-41bc-b822-84c66ee1fe4e").attr("class"); 
-					equal(selectoption, "switch switchOn", "Defentent Service Verification Tested");
-					require(["croneExpressionTest"], function(croneExpressionTest){
+					equal(selectoption, "switch switchOff", "Defentent Service Verification Tested");
+					/*require(["croneExpressionTest"], function(croneExpressionTest){
 						croneExpressionTest.runTests();
-					});
+					});*/
 				}, 2000);
 			});
 		}

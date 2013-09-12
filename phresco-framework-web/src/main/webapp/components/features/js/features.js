@@ -388,109 +388,113 @@ define(["features/listener/featuresListener"], function() {
 			self.featuresListener.flagged = 2;
 			self.featuresListener.scrollbarEnable();
 			$('#featureUpdate').on("click", function() {
-				self.featureUpdatedArray = [];
-				$(".switchOn, .default").each(function(index, currentVal) {
-					var featureUpdatedata = {};
-					if($(currentVal).parent().attr("type") !== undefined){
-						featureUpdatedata.name = $(currentVal).parent().attr("name");
-						featureUpdatedata.dispName = $(currentVal).parent().attr("dispName");
-						featureUpdatedata.packaging = $(currentVal).parent().attr("packaging");
-						featureUpdatedata.type = $(currentVal).parent().attr("type");					
-					//	featureUpdatedata.defaultModule = true;
-						featureUpdatedata.scope = $(currentVal).parent().children('div.flt_right').children('select.jarscope').find(':selected').val();
-						featureUpdatedata.versionID = $(currentVal).parent().children('div.flt_right').children('select.input-mini').find(':selected').val();
-						featureUpdatedata.dispValue = $(currentVal).parent().children('div.flt_right').children('select.input-mini').find(':selected').text();
-						var moduleId = $(currentVal).parent().children('div.flt_right').children('.moduleId').val();
-						featureUpdatedata.moduleId = moduleId; 
-						featureUpdatedata.artifactGroupId = moduleId;
-						self.featureUpdatedArray.push(featureUpdatedata);
-						self.updateFlag = 1;
-					}
-				});				
-				
-				
-				self.featuresListener.getFeaturesUpdate(self.featuresListener.getRequestHeader(self.featureUpdatedArray, "UPDATE", ""), function(response) {
-					self.selectedCount();
-				}); 
-				var temparray1 = [], temparray2 = [], temparray3 = [];
-				var count1 = 0, count2 = 0,count3 = 0;
-				$('#moduleContent').children('li').each(function() {
-					self.modulearray2[count1]= $(this).find('.switch').attr('class');
-					temparray1[count1] = $(this).children('.switch').attr('id');
-					count1++;
+				self.checkForLock("featureUpdate", '', function(response) {
+					if (response.status === "success" && response.responseCode === "PHR10C00002") {
+						self.featureUpdatedArray = [];
+						$(".switchOn, .default").each(function(index, currentVal) {
+							var featureUpdatedata = {};
+							if($(currentVal).parent().attr("type") !== undefined){
+								featureUpdatedata.name = $(currentVal).parent().attr("name");
+								featureUpdatedata.dispName = $(currentVal).parent().attr("dispName");
+								featureUpdatedata.packaging = $(currentVal).parent().attr("packaging");
+								featureUpdatedata.type = $(currentVal).parent().attr("type");					
+							//	featureUpdatedata.defaultModule = true;
+								featureUpdatedata.scope = $(currentVal).parent().children('div.flt_right').children('select.jarscope').find(':selected').val();
+								featureUpdatedata.versionID = $(currentVal).parent().children('div.flt_right').children('select.input-mini').find(':selected').val();
+								featureUpdatedata.dispValue = $(currentVal).parent().children('div.flt_right').children('select.input-mini').find(':selected').text();
+								var moduleId = $(currentVal).parent().children('div.flt_right').children('.moduleId').val();
+								featureUpdatedata.moduleId = moduleId; 
+								featureUpdatedata.artifactGroupId = moduleId;
+								self.featureUpdatedArray.push(featureUpdatedata);
+								self.updateFlag = 1;
+							}
+						});				
+						
+						
+						self.featuresListener.getFeaturesUpdate(self.featuresListener.getRequestHeader(self.featureUpdatedArray, "UPDATE", ""), function(response) {
+							self.selectedCount();
+						}); 
+						var temparray1 = [], temparray2 = [], temparray3 = [];
+						var count1 = 0, count2 = 0,count3 = 0;
+						$('#moduleContent').children('li').each(function() {
+							self.modulearray2[count1]= $(this).find('.switch').attr('class');
+							temparray1[count1] = $(this).children('.switch').attr('id');
+							count1++;
+						});	
+						
+						$('#jsibrariesContent').children('li').each(function() {
+							self.jslibarray2[count2]= $(this).find('.switch').attr('class');
+							temparray2[count2] = $(this).children('.switch').attr('id');
+							count2++;
+						});	
+						
+						$('#componentsContent').children('li').each(function() {
+							self.comparray2[count3]= $(this).find('.switch').attr('class');
+							temparray3[count3] = $(this).children('.switch').attr('id');
+							count3++;
+						});	
+						for(var i=0;i<self.temp1;i++) {
+							if(self.modulearray1[i]!=self.modulearray2[i]) {
+								if(($('#'+temparray1[i]+'').parent().attr('packaging') === "zip")){
+								$('#'+temparray1[i]+'').parent().children('.settings_icon').show();
+								}
+							}
+							if(self.modulearray1[i] === 'switch default' || self.modulearray1[i] === 'switch default switchOn' || self.modulearray1[i] === 'switch default switchOff') {
+								if(($('#'+temparray1[i]+'').parent().attr('packaging') === "zip")){
+									$('#'+temparray1[i]+'').parent().children('.settings_icon').show();
+								}	
+							}
+							
+						};
+						
+						for(var i=0;i<self.temp2;i++) {
+							if(self.comparray1[i]!=self.comparray2[i]) {
+								if(($('#'+temparray3[i]+'').parent().attr('packaging') === "zip")){
+								$('#'+temparray3[i]+'').parent().children('.settings_icon').show();
+								}
+							}
+							if(self.comparray1[i] === 'switch default' || self.comparray1[i] === 'switch default switchOn' || self.comparray1[i] === 'switch default switchOff') {
+								if(($('#'+temparray3[i]+'').parent().attr('packaging') === "zip")){
+									$('#'+temparray3[i]+'').parent().children('.settings_icon').show();
+								}	
+							}
+							
+						};
+						
+						for(var j=0;j<self.temp2;j++) {
+							if(self.jslibarray1[j]!=self.jslibarray2[j]) {
+								if(($('#'+temparray2[j]+'').parent().attr('packaging') === "zip")){
+								$('#'+temparray2[j]+'').parent().children('.settings_icon').show();
+								}
+							}
+							if(self.jslibarray1[j] === 'switch default' || self.jslibarray1[j] === 'switch default switchOn' || self.jslibarray1[j] === 'switch default switchOff') {
+								if(($('#'+temparray2[j]+'').parent().attr('packaging') === "zip")){
+									$('#'+temparray2[j]+'').parent().children('.settings_icon').show();
+								}	
+							}
+							
+						};
+										
+						var counter1 = 0, counter2 = 0, counter3 = 0;
+						$('#moduleContent').children('li').each(function() {
+							self.modulearray1[counter1]= $(this).children('fieldset').attr('class');
+							counter1++;
+						});
+						
+						$('#jsibrariesContent').children('li').each(function() {
+							self.jslibarray1[counter2]= $(this).children('fieldset').attr('class');
+							counter2++;
+						});
+						
+						$('#componentsContent').children('li').each(function() {
+							self.comparray1[counter3]= $(this).children('fieldset').attr('class');
+							counter3++;
+						});
+					} else if (response.status === "success" && response.responseCode === "PHR10C00001") {
+						var errMsg = commonVariables.api.error[response.responseCode] + response.data.lockedBy + commonVariables.api.error["PHR10C00111"] + response.data.lockedDate;
+						commonVariables.api.showError(errMsg, 'error', true, true, true);
+					}	
 				});	
-				
-				$('#jsibrariesContent').children('li').each(function() {
-					self.jslibarray2[count2]= $(this).find('.switch').attr('class');
-					temparray2[count2] = $(this).children('.switch').attr('id');
-					count2++;
-				});	
-				
-				$('#componentsContent').children('li').each(function() {
-					self.comparray2[count3]= $(this).find('.switch').attr('class');
-					temparray3[count3] = $(this).children('.switch').attr('id');
-					count3++;
-				});	
-				for(var i=0;i<self.temp1;i++) {
-					if(self.modulearray1[i]!=self.modulearray2[i]) {
-						if(($('#'+temparray1[i]+'').parent().attr('packaging') === "zip")){
-						$('#'+temparray1[i]+'').parent().children('.settings_icon').show();
-						}
-					}
-					if(self.modulearray1[i] === 'switch default' || self.modulearray1[i] === 'switch default switchOn' || self.modulearray1[i] === 'switch default switchOff') {
-						if(($('#'+temparray1[i]+'').parent().attr('packaging') === "zip")){
-							$('#'+temparray1[i]+'').parent().children('.settings_icon').show();
-						}	
-					}
-					
-				};
-				
-				for(var i=0;i<self.temp2;i++) {
-					if(self.comparray1[i]!=self.comparray2[i]) {
-						if(($('#'+temparray3[i]+'').parent().attr('packaging') === "zip")){
-						$('#'+temparray3[i]+'').parent().children('.settings_icon').show();
-						}
-					}
-					if(self.comparray1[i] === 'switch default' || self.comparray1[i] === 'switch default switchOn' || self.comparray1[i] === 'switch default switchOff') {
-						if(($('#'+temparray3[i]+'').parent().attr('packaging') === "zip")){
-							$('#'+temparray3[i]+'').parent().children('.settings_icon').show();
-						}	
-					}
-					
-				};
-				
-				for(var j=0;j<self.temp2;j++) {
-					if(self.jslibarray1[j]!=self.jslibarray2[j]) {
-						if(($('#'+temparray2[j]+'').parent().attr('packaging') === "zip")){
-						$('#'+temparray2[j]+'').parent().children('.settings_icon').show();
-						}
-					}
-					if(self.jslibarray1[j] === 'switch default' || self.jslibarray1[j] === 'switch default switchOn' || self.jslibarray1[j] === 'switch default switchOff') {
-						if(($('#'+temparray2[j]+'').parent().attr('packaging') === "zip")){
-							$('#'+temparray2[j]+'').parent().children('.settings_icon').show();
-						}	
-					}
-					
-				};
-								
-				var counter1 = 0, counter2 = 0, counter3 = 0;
-				$('#moduleContent').children('li').each(function() {
-					self.modulearray1[counter1]= $(this).children('fieldset').attr('class');
-					counter1++;
-				});
-				
-				$('#jsibrariesContent').children('li').each(function() {
-					self.jslibarray1[counter2]= $(this).children('fieldset').attr('class');
-					counter2++;
-				});
-				
-				$('#componentsContent').children('li').each(function() {
-					self.comparray1[counter3]= $(this).children('fieldset').attr('class');
-					counter3++;
-				});
-				
-				
-				
 			});
 			self.windowResize();
 

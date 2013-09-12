@@ -294,6 +294,33 @@ public class UtilService extends RestBase implements FrameworkConstants, Service
 					actionTypesToCheck.add(FrameworkConstants.UPDATE);
 					actionTypesToCheck.add(COMMIT);
 					actionTypesToCheck.add(FrameworkConstants.DELETE_PROJ);
+				} else if (actionType.equals(FrameworkConstants.APPLN_UPDATE)) {
+					actionTypesToCheck.add(REQ_CODE);
+					actionTypesToCheck.add(BUILD);
+					actionTypesToCheck.add(REQ_START);
+					actionTypesToCheck.add(UNIT);
+					actionTypesToCheck.add(REQ_FROM_TAB_DEPLOY);
+					actionTypesToCheck.add(ADD_TO_REPO);
+					actionTypesToCheck.add(FrameworkConstants.UPDATE);
+					actionTypesToCheck.add(COMMIT);
+				} else if (actionType.equals(FrameworkConstants.FEATURE_UPDATE)) {
+					actionTypesToCheck.add(REQ_CODE);
+					actionTypesToCheck.add(BUILD);
+					actionTypesToCheck.add(REQ_START);
+					actionTypesToCheck.add(UNIT);
+					actionTypesToCheck.add(REQ_FROM_TAB_DEPLOY);
+					actionTypesToCheck.add(ADD_TO_REPO);
+					actionTypesToCheck.add(FrameworkConstants.UPDATE);
+					actionTypesToCheck.add(COMMIT);
+				} else if (actionType.equals(FrameworkConstants.CONFIG_UPDATE)) {
+					actionTypesToCheck.add(REQ_CODE);
+					actionTypesToCheck.add(BUILD);
+					actionTypesToCheck.add(REQ_START);
+					actionTypesToCheck.add(UNIT);
+					actionTypesToCheck.add(REQ_FROM_TAB_DEPLOY);
+					actionTypesToCheck.add(ADD_TO_REPO);
+					actionTypesToCheck.add(FrameworkConstants.UPDATE);
+					actionTypesToCheck.add(COMMIT);
 				} else {
 					actionTypesToCheck.add(actionType);
 				}

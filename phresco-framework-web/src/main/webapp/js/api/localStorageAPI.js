@@ -44,7 +44,7 @@ define(["framework/base"], function(){
 			    $('.hProjectId').val() !== '') {
 				return JSON.parse(localStorage.getItem($('.hProjectId').val()));
 			}else{
-				return JSON.parse('appdetails');
+				return JSON.parse(localStorage.getItem('appdetails'));
 			}
 		},
 		

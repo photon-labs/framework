@@ -309,9 +309,13 @@ define(["features/features",  "application/application",  "projectlist/projectLi
 				header.requestMethod = "GET";
 				header.webserviceurl = commonVariables.webserviceurl+commonVariables.featurePageContext+"/selectedFeature?userId="+(userId !== null? userId.id : "")+"&appDirName="+(appDirName !== null? appDirName : "");
 			} else if (type === "UPDATE") {
+				var displayName="", userInfo = JSON.parse(commonVariables.api.localVal.getSession('userInfo'));
+				if (userInfo !== null) {
+					displayName = userInfo.displayName;
+				}
 				header.requestMethod = "PUT";
 				header.requestPostBody = JSON.stringify(projectRequestBody);
-				header.webserviceurl = commonVariables.webserviceurl+commonVariables.projectlistContext + "/updateFeature?customerId=photon&userId="+(userId !== null? userId.id : "")+"&appDirName="+(appDirName !== null? appDirName : "");
+				header.webserviceurl = commonVariables.webserviceurl+commonVariables.projectlistContext + "/updateFeature?customerId=photon&userId="+(userId !== null? userId.id : "")+"&appDirName="+(appDirName !== null? appDirName : "")+"&displayName="+displayName;
 			} else if (type === "DEPENDENCY") {
 				header.requestMethod = "GET";
 				header.webserviceurl = commonVariables.webserviceurl+commonVariables.featurePageContext + "/dependencyFeature?userId="+(userId !== null? userId.id : "")+"&versionId="+descid; // descid is versionId

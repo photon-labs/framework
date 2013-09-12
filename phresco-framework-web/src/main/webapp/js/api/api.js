@@ -190,7 +190,7 @@ define(["framework/base", "api/localStorageAPI"], function(){
 			});	
 		},
 
-		showError : function(errorCode, msgType, timeOut, noCode){
+		showError : function(errorCode, msgType, timeOut, noCode, hideErrorOnly){
 			var self = this, errorMsg = '';
 			
 			try {
@@ -217,8 +217,13 @@ define(["framework/base", "api/localStorageAPI"], function(){
 			
 			if(timeOut){
 				setTimeout(function(){
-					$("." + msgType).parent().hide();
-					$("." + msgType).css("display", "none");
+					if(hideErrorOnly) {
+						$("." + msgType).empty();
+						$("." + msgType).css("display", "none");
+					} else {
+						$("." + msgType).parent().hide();
+						$("." + msgType).css("display", "none");
+					}
 				}, 2000);
 			}
 		}

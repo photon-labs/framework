@@ -30,6 +30,7 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
@@ -297,7 +298,7 @@ public class ProjectService extends RestBase implements FrameworkConstants, Serv
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response updateApplicationFeatures(List<SelectedFeature> selectedFeaturesFromUI,
 			@QueryParam(REST_QUERY_APPDIR_NAME) String appDirName, @QueryParam(REST_QUERY_USERID) String userId,
-			@QueryParam(REST_QUERY_CUSTOMERID) String customerId) {
+			@QueryParam(REST_QUERY_CUSTOMERID) String customerId, @QueryParam("displayName") String displayName) {
 		File filePath = null;
 		BufferedReader bufferedReader = null;
 		Gson gson = new Gson();
@@ -306,6 +307,7 @@ public class ProjectService extends RestBase implements FrameworkConstants, Serv
 		List<String> selectedJsLibs = new ArrayList<String>();
 		List<String> selectedComponents = new ArrayList<String>();
 		List<ArtifactGroup> listArtifactGroup = new ArrayList<ArtifactGroup>();
+		String unique_key = "";
 		try {
 			ServiceManager serviceManager = CONTEXT_MANAGER_MAP.get(userId);
 			if (serviceManager == null) {
@@ -316,6 +318,7 @@ public class ProjectService extends RestBase implements FrameworkConstants, Serv
 						"*").build();
 			}
 			StringBuilder sbs = null;
+			
 			if (StringUtils.isNotEmpty(appDirName)) {
 				sbs = new StringBuilder(Utility.getProjectHome()).append(appDirName).append(File.separator).append(
 						Constants.DOT_PHRESCO_FOLDER).append(File.separator).append(PROJECT_INFO);
@@ -325,6 +328,9 @@ public class ProjectService extends RestBase implements FrameworkConstants, Serv
 			}.getType();
 			ProjectInfo projectinfo = gson.fromJson(bufferedReader, type);
 			ApplicationInfo applicationInfo = projectinfo.getAppInfos().get(0);
+			UUID uniqueKey = UUID.randomUUID();
+			unique_key = uniqueKey.toString();
+			FrameworkUtil.generateLock(Collections.singletonList(FrameworkServiceUtil.getLockDetail(applicationInfo.getId(), FrameworkConstants.FEATURE_UPDATE, displayName, unique_key)), true);
 			if (CollectionUtils.isNotEmpty(selectedFeaturesFromUI)) {
 				for (SelectedFeature selectedFeatureFromUI : selectedFeaturesFromUI) {
 					String artifactGroupId = selectedFeatureFromUI.getModuleId();
@@ -396,6 +402,11 @@ public class ProjectService extends RestBase implements FrameworkConstants, Serv
 			ResponseInfo finalOutput = responseDataEvaluation(responseData, e, null, status, errorCode);
 			return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN,ALL_HEADER)
 					.build();
+		} finally {
+			try {
+				FrameworkServiceUtil.removeLock(unique_key);
+			} catch (PhrescoException e) {
+			}
 		}
 		status = RESPONSE_STATUS_SUCCESS;
 		successCode = PHR200007;
@@ -419,11 +430,15 @@ public class ProjectService extends RestBase implements FrameworkConstants, Serv
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response updateApplication(@QueryParam(REST_QUERY_OLD_APPDIR_NAME) String oldAppDirName,
 			ApplicationInfo appInfo, @QueryParam(REST_QUERY_USERID) String userId,
-			@QueryParam(REST_QUERY_CUSTOMERID) String customerId) {
+			@QueryParam(REST_QUERY_CUSTOMERID) String customerId,  @QueryParam("displayName") String displayName) {
 		ResponseInfo<ApplicationInfo> responseData = new ResponseInfo<ApplicationInfo>();
 		BufferedReader bufferedReader = null;
 		File filePath = null;
+		String unique_key = "";
 		try {
+			UUID uniqueKey = UUID.randomUUID();
+			unique_key = uniqueKey.toString();
+			
 			if (validateAppInfo(oldAppDirName,appInfo) != null) {
 				ResponseInfo validationResponse = validateAppInfo(oldAppDirName,appInfo);
 				ResponseInfo<List<String>> finalOutput = responseDataEvaluation(responseData, null,
@@ -440,9 +455,13 @@ public class ProjectService extends RestBase implements FrameworkConstants, Serv
 				return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN,
 						"*").build();
 			}
+			
+			//To generate the lock for the particular operation
+			FrameworkUtil.generateLock(Collections.singletonList(FrameworkServiceUtil.getLockDetail(appInfo.getId(), FrameworkConstants.APPLN_UPDATE, displayName, unique_key)), true);
+			
 			List<DownloadInfo> selectedServerGroup = new ArrayList<DownloadInfo>();
 			List<DownloadInfo> selectedDatabaseGroup = new ArrayList<DownloadInfo>();
-
+			
 			Gson gson = new Gson();
 
 			StringBuilder sb = new StringBuilder(Utility.getProjectHome()).append(oldAppDirName).append(File.separator)
@@ -568,6 +587,10 @@ public class ProjectService extends RestBase implements FrameworkConstants, Serv
 					"*").build();
 		} finally {
 			Utility.closeReader(bufferedReader);
+			try {
+				FrameworkServiceUtil.removeLock(unique_key);
+			} catch (PhrescoException e) {
+			}
 		}
 		status = RESPONSE_STATUS_SUCCESS;
 		successCode = PHR200008;

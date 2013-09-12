@@ -66,7 +66,6 @@ define(["jquery", "application/application"], function($, Application) {
 			});
 			
 			$.mockjax({
-//				http://localhost:8234/framework/rest/api/util/techOptions?userId=admin&techId=tech-phpdru7&_=1378893014781
 			  url: commonVariables.webserviceurl+"util/techOptions?userId=admin&techId=tech-phpdru7",
 			  type: "GET",
 			  dataType: "json",
@@ -87,44 +86,85 @@ define(["jquery", "application/application"], function($, Application) {
 					start();
 					var output = $("input[name=appName]").val();
 					equal("PhpDru7",output,"Application page rendered successfully");
-					self.validationcheck(application);
+					self.appCodeValidationcheck(application);
 				}, 4000);
 			});
 		},
 		
-		validationcheck : function(application) {
+		appCodeValidationcheck : function(application) {
 			var self = this;
-			asyncTest("Test for checking Validation", function() {
-				$("input[name='appCode']").bind('input');	
-				$("input[name='appDirName']").bind('input');
-				$("input[name='appName']").val('');
-				$("#updatebutton").click();
-				$("input[name='appName']").val('a');
+			asyncTest("Test for app code Validation", function() {
+				$.mockjax({
+				  url: commonVariables.webserviceurl+"util/checkLock?actionType=applnUpdate&appId=2159a829-9316-4351-ada1-0098bc6712a1",
+				  type: "GET",
+				  dataType: "json",
+				  contentType: "application/json",
+				  status: 200,
+				  response : function() {
+					  this.responseText = JSON.stringify({"message":null,"exception":null,"responseCode":"PHR10C00002","data":null,"status":"success"});
+				  }
+				});
 				$("input[name='appCode']").val('');
-				$("#updatebutton").click();
 				$("input[name='appName']").val('a');
-				$("input[name='appCode']").val('b');
-				$("input[name='appDirName']").val('');
+				$("input[name='appDirName']").val('c');
+				$("#updatebutton").click();
+				setTimeout(function() {
+					start();
+					var b = $("input[name='appCode']").attr('class');
+					equal('errormessage', b, "Appcode Validation done successfully");
+					self.appNameValidation(application);
+				}, 500);
+			});
+		},
+		
+		
+		appNameValidation : function(application) {
+			var self = this;
+			asyncTest("Test for app name Validation", function() {
+				$("input[name='appCode']").val('a');	
+				$("input[name='appDirName']").val('b');
+				$("input[name='appName']").val('');
 				$("#updatebutton").click();
 				setTimeout(function() {
 					start();
 					var a = $("input[name='appName']").attr('class');
-					var b = $("input[name='appCode']").attr('class');
-					var c = $("input[name='appDirName']").attr('class');
 					equal('errormessage', a, "Appname Validation done successfully");
-					equal('errormessage', b, "Appcode Validation done successfully");
-					equal('errormessage', c, "AppDirName Validation done successfully");
-					self.updateapplication(application);
-				}, 3000);
+					self.appDirNameValidation(application);
+				}, 500);
 			});
 		},
-		
+
+		appDirNameValidation : function(application) {
+			var self = this;
+			asyncTest("Test for app dir name Validation", function() {
+				$("input[name='appCode']").val('a');	
+				$("input[name='appName']").val('b');
+				$("input[name='appDirName']").val('');
+				$("#updatebutton").click();
+				setTimeout(function() {
+					start();
+					var a = $("input[name='appDirName']").attr('class');
+					equal('errormessage', a, "Appname Validation done successfully");
+					self.updateapplication(application);
+				}, 500);
+			});
+		},
+
 		updateapplication : function(application) {
 			var self = this;
 			asyncTest("Test for Update Application event", function() {
 				$.mockjax({
-//					http://localhost:2468/framework/rest/api/project/updateApplication?userId=admin&oldAppDirName=PhpDru7&customerId=photon
-				  url: commonVariables.webserviceurl+"project/updateApplication?userId=admin&oldAppDirName=PhpDru7&customerId=photon",
+				  url: commonVariables.webserviceurl+"util/checkLock?actionType=applnUpdate&appId=2159a829-9316-4351-ada1-0098bc6712a1",
+				  type: "GET",
+				  dataType: "json",
+				  contentType: "application/json",
+				  status: 200,
+				  response : function() {
+					  this.responseText = JSON.stringify({"message":null,"exception":null,"responseCode":"PHR10C00002","data":null,"status":"success"});
+				  }
+				});
+				$.mockjax({
+				  url: commonVariables.webserviceurl+"project/updateApplication?userId=admin&oldAppDirName=PhpDru7&customerId=photon&displayName=Admin",
 				  type: "PUT",
 				  dataType: "json",
 				  contentType: "application/json",
