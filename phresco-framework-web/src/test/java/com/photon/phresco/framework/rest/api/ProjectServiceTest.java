@@ -381,7 +381,7 @@ public class ProjectServiceTest extends LoginServiceTest {
 		serverArtifactGroupInfo.setSystem(false);
 
 		List<String> serverArtifactInfoId = new ArrayList<String>();
-		serverArtifactInfoId.add("apachetomcat");
+		serverArtifactInfoId.add("0e34ab53-1b9e-493d-aa72-6ecacddc5338");
 		serverArtifactGroupInfo.setArtifactInfoIds(serverArtifactInfoId);
 
 		servers.add(serverArtifactGroupInfo);
