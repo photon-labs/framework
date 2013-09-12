@@ -40,18 +40,18 @@ define(["framework/base"], function(){
 		},
 		
 		getProjectInfo : function(){
-			if ($('.headerAppId').val() !== undefined && $('.headerAppId').val() !== null &&
-			    $('.headerAppId').val() !== '') {
-				return JSON.parse(localStorage.getItem($('.headerAppId').val()));
+			if ($('.hProjectId').val() !== undefined && $('.hProjectId').val() !== null &&
+			    $('.hProjectId').val() !== '') {
+				return JSON.parse(localStorage.getItem($('.hProjectId').val()));
 			}else{
 				return JSON.parse('appdetails');
 			}
 		},
 		
 		setProjectInfo : function(value){
-			if ($('.headerAppId').val() !== undefined && $('.headerAppId').val() !== null &&
-			    $('.headerAppId').val() !== '') {
-				localStorage.setItem($('.headerAppId').val(), JSON.stringify(value));
+			if ($('.hProjectId').val() !== undefined && $('.hProjectId').val() !== null &&
+			    $('.hProjectId').val() !== '') {
+				localStorage.setItem($('.hProjectId').val(), JSON.stringify(value));
 			}else{
 				localStorage.setItem('appdetails', JSON.stringify(value));
 			}

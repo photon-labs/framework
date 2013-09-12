@@ -201,11 +201,11 @@ define(["application/listener/applicationListener"], function() {
 				theme:"light-thin",
 				advanced:{ updateOnContentResize: true}
 			});
-			/* var appdetails = commonVariables.api.localVal.getProjectInfo();
+			var appdetails = commonVariables.api.localVal.getProjectInfo();
 			if (appdetails !== null) {
-				var appId = appdetails.data.projectInfo.id;
+				var appId = appdetails.data.projectInfo.appInfos[0].id;
 				$('.headerAppId').val(appId);
-			} */
+			}
 		},
 		
 		preRender: function(whereToRender, renderFunction){
