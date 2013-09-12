@@ -210,6 +210,7 @@ public class UtilService extends RestBase implements FrameworkConstants, Service
 	public Response checkForLock(@QueryParam("actionType") String actionType, @QueryParam("appId") String appId) {
 		ResponseInfo<CheckLockInfo> responseData = new ResponseInfo<CheckLockInfo>();
 		try {
+			List<String> appIds = StringUtils.isNotEmpty(appId) ? Arrays.asList(appId.split(COMMA)) : new ArrayList<String>();
 			List<LockDetail> lockDetails = FrameworkUtil.getLockDetails();
 			CheckLockInfo lockInfo = new CheckLockInfo();
 			if (CollectionUtils.isNotEmpty(lockDetails)) {
@@ -271,11 +272,31 @@ public class UtilService extends RestBase implements FrameworkConstants, Service
 					actionTypesToCheck.add(REQ_CODE);
 					actionTypesToCheck.add(UNIT);
 					actionTypesToCheck.add(REQ_START);
+				} else if (actionType.equals(FrameworkConstants.DELETE_APPLN)) {
+					actionTypesToCheck.add(REQ_CODE);
+					actionTypesToCheck.add(BUILD);
+					actionTypesToCheck.add(REQ_START);
+					actionTypesToCheck.add(UNIT);
+					actionTypesToCheck.add(REQ_FROM_TAB_DEPLOY);
+					actionTypesToCheck.add(ADD_TO_REPO);
+					actionTypesToCheck.add(FrameworkConstants.UPDATE);
+					actionTypesToCheck.add(COMMIT);
+					actionTypesToCheck.add(FrameworkConstants.DELETE_APPLN);
+				} else if (actionType.equals(FrameworkConstants.DELETE_PROJ)) {
+					actionTypesToCheck.add(REQ_CODE);
+					actionTypesToCheck.add(BUILD);
+					actionTypesToCheck.add(REQ_START);
+					actionTypesToCheck.add(UNIT);
+					actionTypesToCheck.add(REQ_FROM_TAB_DEPLOY);
+					actionTypesToCheck.add(ADD_TO_REPO);
+					actionTypesToCheck.add(FrameworkConstants.UPDATE);
+					actionTypesToCheck.add(COMMIT);
+					actionTypesToCheck.add(FrameworkConstants.DELETE_PROJ);
 				} else {
 					actionTypesToCheck.add(actionType);
 				}
 				for (LockDetail lockDetail : lockDetails) {
-					if (lockDetail.getAppId().equals(appId) && actionTypesToCheck.contains(lockDetail.getActionType())) {
+					if (appIds.contains(lockDetail.getAppId()) && actionTypesToCheck.contains(lockDetail.getActionType())) {
 						lockInfo.setLock(true);
 						lockInfo.setLockedBy(lockDetail.getUserName());
 						lockInfo.setLockedDate(lockDetail.getStartedDate().toString());

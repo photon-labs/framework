@@ -24,7 +24,7 @@
                         		<img name="editproject" key="{{id}}" src="themes/default/images/helios/edit_row_icon.png" width="29" height="23" border="0" alt="">
                     		</a> 
                     		{{#if ../userPermissions.manageApplication}}
-	                    		<a name="{{id}}" class="tooltiptop" title="" data-placement="bottom" data-toggle="tooltip" href="#" data-original-title="Delete {{name}}">
+	                    		<a name="{{id}}" appIds="{{#appIds appInfos}}{{/appIds}}" class="tooltiptop del_project" title="" data-placement="bottom" data-toggle="tooltip" href="#" data-original-title="Delete {{name}}">
 	                    			<img src="themes/default/images/helios/delete_row_icon.png" width="29" height="23" border="0" alt="0">
 	                			</a>
                 			{{else}}
@@ -277,7 +277,7 @@
                   </td>
                   <td class="list_img">
                   	{{#if ../../userPermissions.manageApplication}}
-	                  	<a name="{{creationDate}}" class="tooltiptop" title="" data-placement="bottom" data-toggle="tooltip" href="#" data-original-title="Delete {{appDirName}}">
+	                  	<a name="{{creationDate}}" dynamicid="{{id}}"  class="tooltiptop del_appln" title="" data-placement="bottom" data-toggle="tooltip" href="#" data-original-title="Delete {{appDirName}}">
 	                  		<img name="delete" src="themes/default/images/helios/delete_row.png" width="14" height="18" border="0" alt="">
 	              		</a>
               		{{else}}

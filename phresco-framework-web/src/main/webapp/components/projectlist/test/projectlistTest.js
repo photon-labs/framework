@@ -6,6 +6,47 @@ define(["projectlist/projectList"], function(ProjectList) {
 			var projectlist = new ProjectList();
 			module("projectlist.js;projectlist");
 			asyncTest("Test - Project List addrepo popup rendered", function() {
+				$.mockjax({
+				  url: commonVariables.webserviceurl+"util/checkLock?actionType=addToRepo&appId=294187d7-f75a-4adc-bb25-ce9465e0e82f",
+				  type: "GET",
+				  dataType: "json",
+				  contentType: "application/json",
+				  status: 200,
+				  response : function() {
+					  this.responseText = JSON.stringify({"message":null,"exception":null,"responseCode":"PHR10C00002","data":null,"status":"success"});
+				  }
+				});
+				$.mockjax({
+				  url: commonVariables.webserviceurl+"util/checkLock?actionType=commit&appId=294187d7-f75a-4adc-bb25-ce9465e0e82f",
+				  type: "GET",
+				  dataType: "json",
+				  contentType: "application/json",
+				  status: 200,
+				  response : function() {
+					  this.responseText = JSON.stringify({"message":null,"exception":null,"responseCode":"PHR10C00002","data":null,"status":"success"});
+				  }
+				});
+				$.mockjax({
+				  url: commonVariables.webserviceurl+"util/checkLock?actionType=update&appId=294187d7-f75a-4adc-bb25-ce9465e0e82f",
+				  type: "GET",
+				  dataType: "json",
+				  contentType: "application/json",
+				  status: 200,
+				  response : function() {
+					  this.responseText = JSON.stringify({"message":null,"exception":null,"responseCode":"PHR10C00002","data":null,"status":"success"});
+				  }
+				});
+				$.mockjax({
+				  url: commonVariables.webserviceurl+"util/checkLock?actionType=deleteAppln&appId=294187d7-f75a-4adc-bb25-ce9465e0e82f",
+				  type: "GET",
+				  dataType: "json",
+				  contentType: "application/json",
+				  status: 200,
+				  response : function() {
+					  this.responseText = JSON.stringify({"message":null,"exception":null,"responseCode":"PHR10C00002","data":null,"status":"success"});
+				  }
+				});
+
 				$('.tooltiptop[name^="addRepo"]').click();
 				setTimeout(function() {
 					start();
@@ -50,6 +91,7 @@ define(["projectlist/projectList"], function(ProjectList) {
 		runValidationAddrepoTest : function (projectlist){
 			var self = this;			
 				asyncTest("addRepo URL Validation Test", function() {
+					
 					$('#uname_294187d7-f75a-4adc-bb25-ce9465e0e82f').val('');
 					$('#uname_294187d7-f75a-4adc-bb25-ce9465e0e82f').bind('input');
 					$('input#pwd_294187d7-f75a-4adc-bb25-ce9465e0e82f').val(''); 

@@ -97,6 +97,19 @@ define(["projectlist/listener/projectListListener"], function() {
 				}		
 				return descri;
 			});
+
+			Handlebars.registerHelper('appIds', function(appinfos) {
+				var appIds = "";
+				if (appinfos !== null && appinfos !== undefined && appinfos.length !== 0) {
+					$.each(appinfos, function(index, appinfo){
+						appIds += appinfo.id;
+						if (index < appinfos.length - 1) {
+							appIds += ",";
+						}
+					});
+				}
+				return appIds;
+			});
 		},
 		
 		/***
@@ -306,25 +319,51 @@ define(["projectlist/listener/projectListListener"], function() {
 				$('.add_repo').hide();
 				$('.svn_update').hide();
 				$("#addRepoLoading_"+dynamicId).hide();
-				var action = $(this).attr("data-original-title");
+				var action = $(this).attr("data-original-title"), openccObj = this;
 				if (action === "Commit") {
-					var appDirName = $(this).parent().parent().attr("class");
-					var data = {};
-					data.appdirname = appDirName;
-					data.dynamicId = dynamicId;
-					$("#dummyCommit_"+dynamicId).css("height","10px");
-					self.projectslistListener.getCommitableFiles(data, this);
+					self.checkForLock("commit", dynamicId, function(response){
+						if (response.status === "success" && response.responseCode === "PHR10C00002") {
+							var appDirName = $(openccObj).parent().parent().attr("class");
+							var data = {};
+							data.appdirname = appDirName;
+							data.dynamicId = dynamicId;
+							$("#dummyCommit_"+dynamicId).css("height","10px");
+							commonVariables.loadingScreen.removeLoading();
+							self.projectslistListener.getCommitableFiles(data, openccObj);
+						} else if (response.status === "success" && response.responseCode === "PHR10C00001") {
+							var errMsg = commonVariables.api.error[response.responseCode] + response.data.lockedBy + commonVariables.api.error["PHR10C00111"] + response.data.lockedDate;
+							commonVariables.api.showError(errMsg, 'error', true, true);
+						}	
+					});		
 				} else if (action === "Update") {
-					var appDirName = $(this).parent().parent().attr("class");
-					var data = {};
-					data.appdirname = appDirName;
-					data.dynamicId = dynamicId;
-					$("#dummyUpdate_"+dynamicId).css("height","10px");
-					self.projectslistListener.getUpdatableFiles(data, this);
+					var openccName = $(this).attr('name');
+					self.checkForLock("update", dynamicId, function(response){
+						if (response.status === "success" && response.responseCode === "PHR10C00002") {
+							var appDirName = $(openccObj).parent().parent().attr("class");
+							var data = {};
+							data.appdirname = appDirName;
+							data.dynamicId = dynamicId;
+							$("#dummyUpdate_"+dynamicId).css("height","10px");
+							self.projectslistListener.getUpdatableFiles(data, openccObj);
+						} else if (response.status === "success" && response.responseCode === "PHR10C00001") {
+							var errMsg = commonVariables.api.error[response.responseCode] + response.data.lockedBy + commonVariables.api.error["PHR10C00111"] + response.data.lockedDate;
+							commonVariables.api.showError(errMsg, 'error', true, true);
+						}	
+					});		
+				} else if (action === "Add Repo" || $(this).hasClass('del_appln') || $(this).hasClass('del_project')){
+					var openccName = $(this).attr('name'), lockAction = action ===  "Add Repo" ? "addToRepo" : ($(this).hasClass('del_appln') ? "deleteAppln" : "deleteProj");
+					var applnids = $(this).hasClass('del_project') ? $(this).attr('appids') : dynamicId;
+					self.checkForLock(lockAction, applnids, function(response){
+						if (response.status === "success" && response.responseCode === "PHR10C00002") {
+							self.openccpl(openccObj, openccName, currentPrjName);
+						} else if (response.status === "success" && response.responseCode === "PHR10C00001") {
+							var errMsg = commonVariables.api.error[response.responseCode] + response.data.lockedBy + commonVariables.api.error["PHR10C00111"] + response.data.lockedDate;
+							commonVariables.api.showError(errMsg, 'error', true, true);
+						}	
+					});			
 				} else {
 					self.openccpl(this, $(this).attr('name'), currentPrjName);
-				}
-				
+				} 
 				//functionality for search log messages
 				$("#type_"+dynamicId).bind('change',function() {
 					if($(this).val() !== 'svn') {

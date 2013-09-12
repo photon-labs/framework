@@ -214,6 +214,8 @@ public interface FrameworkConstants {
     String SVN = "svn";
     String MASTER = "master";
     String UPDATE = "update";
+    String DELETE_APPLN = "deleteAppln";
+    String DELETE_PROJ = "deleteProj";
     String REMOTE = "remote";
     String ORIGIN = "origin";
     String FETCH = "fetch";
