@@ -30,7 +30,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Consumes;
@@ -48,11 +50,11 @@ import org.apache.commons.lang.StringUtils;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
-
 import com.photon.phresco.commons.FrameworkConstants;
 import com.photon.phresco.commons.ResponseCodes;
 import com.photon.phresco.commons.model.ApplicationInfo;
 import com.photon.phresco.commons.model.ArtifactInfo;
+import com.photon.phresco.commons.model.Category;
 import com.photon.phresco.commons.model.DownloadInfo;
 import com.photon.phresco.commons.model.ProjectInfo;
 import com.photon.phresco.commons.model.Technology;
@@ -427,18 +429,56 @@ public class UtilService extends RestBase implements FrameworkConstants, Service
 				return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*")
 						.build();
 			}
-			List<DownloadInfo> downloadInfos = serviceManager.getDownloads(customerId);
-			if (CollectionUtils.isNotEmpty(downloadInfos)) {
-				Collections.sort(downloadInfos, sortByNameInAlphaOrder());
-				ResponseInfo<ProjectInfo> finalOutput = responseDataEvaluation(responseData, null, downloadInfos,
+			
+			Map<String, List<DownloadInfo>> downloadInfoMap = new HashMap<String, List<DownloadInfo>>();
+			String platform = FrameworkUtil.findPlatform();
+			List<DownloadInfo> serverDownloadInfo = serviceManager.getDownloads(customerId, "", Category.SERVER.name(), platform);
+			if (CollectionUtils.isNotEmpty(serverDownloadInfo)) {
+				Collections.sort(serverDownloadInfo, sortByNameInAlphaOrder());
+				downloadInfoMap.put(Category.SERVER.name(), serverDownloadInfo);
+
+			}
+			
+			
+			List<DownloadInfo> dbDownloadInfo = serviceManager.getDownloads(customerId, "", Category.DATABASE.name(), platform);
+			if (CollectionUtils.isNotEmpty(dbDownloadInfo)) {
+				Collections.sort(dbDownloadInfo, sortByNameInAlphaOrder());
+				downloadInfoMap.put(Category.DATABASE.name(), dbDownloadInfo);
+
+			}
+			
+			List<DownloadInfo> editorDownloadInfo = serviceManager.getDownloads(customerId, "", Category.EDITOR.name(), platform);
+			if (CollectionUtils.isNotEmpty(editorDownloadInfo)) {
+				Collections.sort(editorDownloadInfo, sortByNameInAlphaOrder());
+				downloadInfoMap.put(Category.EDITOR.name(), editorDownloadInfo);
+
+			}
+			
+			List<DownloadInfo> toolsDownloadInfo = serviceManager.getDownloads(customerId, "", Category.TOOLS.name(), platform);
+			if (CollectionUtils.isNotEmpty(toolsDownloadInfo)) {
+				Collections.sort(toolsDownloadInfo, sortByNameInAlphaOrder());
+				downloadInfoMap.put(Category.TOOLS.name(), toolsDownloadInfo);
+
+			}
+			
+			List<DownloadInfo> othersDownloadInfo = serviceManager.getDownloads(customerId, "", Category.OTHERS.name(), platform);
+			if (CollectionUtils.isNotEmpty(othersDownloadInfo)) {
+				Collections.sort(othersDownloadInfo, sortByNameInAlphaOrder());
+				downloadInfoMap.put(Category.OTHERS.name(), othersDownloadInfo);
+
+			}			
+			
+			if (!downloadInfoMap.isEmpty()) {
+				
+				ResponseInfo<Map<String, List<DownloadInfo>>> finalOutput = responseDataEvaluation(responseData, null, downloadInfoMap,
 						RESPONSE_STATUS_SUCCESS, "");
 				return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
 			}
-			ResponseInfo<ProjectInfo> finalOutput = responseDataEvaluation(responseData, null, downloadInfos,
+			ResponseInfo<Map<String, List<DownloadInfo>>> finalOutput = responseDataEvaluation(responseData, null, downloadInfoMap,
 					RESPONSE_STATUS_FAILURE, "");
 			return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
 		} catch (PhrescoException e) {
-			ResponseInfo<ProjectInfo> finalOutput = responseDataEvaluation(responseData, e, null,
+			ResponseInfo<Map<String, List<DownloadInfo>>> finalOutput = responseDataEvaluation(responseData, e, null,
 					RESPONSE_STATUS_ERROR, "");
 			return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
 		}
