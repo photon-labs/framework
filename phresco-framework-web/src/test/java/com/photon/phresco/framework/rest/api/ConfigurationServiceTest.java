@@ -584,7 +584,34 @@ public class ConfigurationServiceTest extends LoginServiceTest {
 		configListSiteCore.add(configurationSiteCorePath);
 		configListSiteCore.add(configuration);
 		
+		Configuration prodConfigDb = new Configuration();
+		Configuration prodWebService = new Configuration();
+		prodConfigDb.setName("db");
+		prodConfigDb.setType("Database");
+		Properties propProddb = new Properties();
+		propProddb.setProperty("host", "localhost");
+		propProddb.setProperty("port", "3306");
+		propProddb.setProperty("username", "root");
+		propProddb.setProperty("password", "");
+		propProddb.setProperty("dbname", "testjava");
+		propProddb.setProperty("type", "MySQL");
+		propProddb.setProperty("version", "5.5.1");
+		prodConfigDb.setProperties(propProddb);
+		
+		prodWebService.setName("ws");
+		prodWebService.setType("WebService");
+		Properties propProdWs= new Properties();
+		propProdWs.setProperty("host", "localhost");
+		propProdWs.setProperty("port", "5674");
+		propProdWs.setProperty("username", "root");
+		propProdWs.setProperty("password", "");
+		propProdWs.setProperty("context", "webservice");
+		propProdWs.setProperty("protocol", "http");
+		prodWebService.setProperties(propProdWs);
+		
 		configListPass.add(configuration);
+		configListPass.add(prodConfigDb);
+		configListPass.add(prodWebService);
 		configListPass.add(configurationEmailDup);
 		
 		configListName.add(configuration);
