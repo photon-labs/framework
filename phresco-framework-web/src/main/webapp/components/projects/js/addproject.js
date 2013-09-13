@@ -64,16 +64,6 @@ define(["projects/listener/projectsListener"], function() {
 			self.onCancelCreateEvent.add(projectsListener.cancelCreateproject, projectsListener);
 		},
 		
-		/***
-		 *
-		 *	Called once to create the projects listener
-		 *
-		 */
-		loadPage:function(){
-			Clazz.navigationController.jQueryContainer = commonVariables.contentPlaceholder;
-			Clazz.navigationController.push(this, commonVariables.animation);
-		},
-		
 		preRender : function(whereToRender, renderFunction) {
 			$("#projectList").hide();
 			$("#createProject").show();
@@ -168,21 +158,6 @@ define(["projects/listener/projectsListener"], function() {
 				$(this).val(self.specialCharValidation($(this).val().replace(/\s/g, "")));
 			});
 			
-			$(".appln-appcode, .web-appcode, .mobile-appcode").focusout(function(){
-				var totalLength = $(this).val().length;
-				var charLength = $(this).val().match(/[._-]/g).length;
-				if(charLength !== null && totalLength === charLength){
-					$(this).val('');
-					$(this).focus();
-					$(this).addClass('errormessage');
-					$(this).attr('placeholder', 'Invalid Code');
-				}
-				$(this).bind('input', function() {
-					$(this).removeClass("errormessage");
-					$(this).removeAttr("placeholder");
-				});
-			});
-
 			$("input[name='Create']").unbind('click');
 			$("input[name='Create']").bind('click', function(){
 				self.onCreateEvent.dispatch('', 'create');
@@ -215,16 +190,21 @@ define(["projects/listener/projectsListener"], function() {
 				}
 			});
 
-
 			$("input[name='projectname']").bind('input', function() {
 				$(this).val(self.specialCharValidation($(this).val()));
 				$("input[name='projectcode']").val(self.specialCharValidation($(this).val().replace(/\s/g, "")));
+			});
+			
+			$("input[name='projectcode']").bind('input', function() {
+				$(this).val(self.specialCharValidation($(this).val().replace(/\s/g, "")));
 			});
 
 			$("input[name='projectcode']").focusout(function() {
 				$(this).val(self.specialCharValidation($(this).val().replace(/\s/g, "")));
 				var totalLength = $(this).val().length;
-				var charLength = $(this).val().match(/[._-]/g).length;
+				if($(this).val().match(/[._-]/g).length !== null){ 
+					var charLength =  $(this).val().match(/[._-]/g).length; 
+				}
 				if(totalLength === charLength){
 					$(this).val('');
 					$(this).focus();

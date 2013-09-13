@@ -33,7 +33,7 @@
 
                             <div id="{{id}}" class="dyn_popup deleteproj_msg"> Are you sure to delete this ?
                                 <div>
-                                    <input type="button" value="Yes" data-i18n="[value]common.btn.yes" class="btn btn_style" name="holeDelete">
+                                    <input type="button" value="Yes" data-i18n="[value]common.btn.yes" class="btn btn_style" name="holeDelete" deleteAppname="{{name}}">
                                     <input type="button" value="No" data-i18n="[value]common.btn.no" class="btn btn_style dyn_popup_close">
                                 </div>
                             </div>
@@ -286,7 +286,7 @@
                     <div id="{{creationDate}}" class="dyn_popup delete_msg" currentprjname={{appDirName}}>
                       Are you sure to delete ?
                         <div>
-                            <input type="button" value="Yes" data-i18n="[value]common.btn.yes" class="btn btn_style dlt" name="deleteConfirm">
+                            <input type="button" value="Yes" data-i18n="[value]common.btn.yes" class="btn btn_style dlt" name="deleteConfirm" deleteAppname="{{appDirName}}">
                             <input type="button" value="No" data-i18n="[value]common.btn.no" class="btn btn_style dyn_popup_close">
                         </div>
                     </div>

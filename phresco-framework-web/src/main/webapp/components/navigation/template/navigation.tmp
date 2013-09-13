@@ -87,6 +87,13 @@
                                     <td id="gitName"><input type="text" data-i18n="[placeholder]login.placeholder.username" id="gitUserName"></td>
                                     <td><input type="password" placeholder="*******" id="gitPassword"></td>
                                 </tr>
+								
+								<tr>
+									<td><label name="branch" value="branch">Branch</label></td>
+								</tr>
+								<tr>	
+									<td><input type="text" class="branchval"></td>
+								</tr>
                             </tbody>
                          </table>
                   	 </div>

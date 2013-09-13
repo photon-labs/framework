@@ -270,6 +270,16 @@ define(["projectlist/listener/projectListListener"], function() {
 				$('.searchdropdown').hide();
 				$('.searchdropdown').html('');
 				//end for hiding and clearing dropdown value
+				$("#uname_"+dynamicId).keypress(function(e) {
+						if($("#type_"+dynamicId).val() === 'git') {
+							if (e.which !== 95) {
+								return true;
+							} else {
+								e.preventDefault();
+							}
+						}	
+					});
+				
 				if (action === "Add Repo") {
 					selectObj = $('.ad_Select');
 					checkObj = $("#repocredential_"+dynamicId);
@@ -425,6 +435,7 @@ define(["projectlist/listener/projectListListener"], function() {
 			});
 			$("input[name='deleteConfirm']").unbind('click');
 			$("input[name='deleteConfirm']").click(function(e) {
+				self.projectslistListener.delprojectname = $(this).attr('deleteAppname');
 				var deletearray = [], deleteproject, imgname1, imgname2;
 				deleteproject = $(this).parent().parent().attr('currentPrjName');
 				deletearray.push(deleteproject);
@@ -439,6 +450,7 @@ define(["projectlist/listener/projectListListener"], function() {
 
 			$("input[name='holeDelete']").unbind('click');
 			$("input[name='holeDelete']").click(function(e) {
+				self.projectslistListener.delprojectname = $(this).attr('deleteAppname');
 				var projectnameArray = [], cls, temp, temp1, temp2, classname, curr, currentRow;
 				temp = $(this).parents().parent("td.delimages").parent('tr');
 				curr =  $(this).parents().parent("td.delimages").parent().next('tr');

@@ -65,7 +65,7 @@ define(["features/listener/featuresListener"], function() {
 
 		registerHandlebars : function () {
 			var self = this;
-			var appdetails = commonVariables.api.localVal.getJson('appdetails');
+			var appdetails = commonVariables.api.localVal.getProjectInfo();
 			var techid = appdetails.data.projectInfo.appInfos[0].techInfo.id;
 			Handlebars.registerHelper('versiondata', function(versions, id) {
 				var selectedList = commonVariables.api.localVal.getSession("selectedFeatures");				
@@ -92,7 +92,7 @@ define(["features/listener/featuresListener"], function() {
 			
 			Handlebars.registerHelper('versionShowHide', function(versions, id) {
 				var fieldset;
-				var appdetails = commonVariables.api.localVal.getJson('appdetails');
+				var appdetails = commonVariables.api.localVal.getProjectInfo();
 				var techid = appdetails.data.projectInfo.appInfos[0].techInfo.id;
 				if(versions.length > 0){
  					$.each(versions, function(index, value){
@@ -150,7 +150,7 @@ define(["features/listener/featuresListener"], function() {
 		 */
 		postRender : function(element) {
 			var self = this;
-			if(self.updateFlag === 1){
+			//if(self.updateFlag === 1){
 				self.featuresListener.getFeaturesList(self.featuresListener.getRequestHeader(self.featureRequestBody, "SELECTED"), function(response) {
 					var responseData = response.data;
 					$(".switchOn").each(function(index, currentVal) {
@@ -163,7 +163,7 @@ define(["features/listener/featuresListener"], function() {
 						self.selectedCount();
 					});
 				});
-			}	
+			//}	
 			var i =0;		
 			self.temp1 = $('#moduleContent').children('li').length;	
 			self.temp2 = $('#jsibrariesContent').children('li').length;	

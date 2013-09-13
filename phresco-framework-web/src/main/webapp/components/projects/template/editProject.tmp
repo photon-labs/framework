@@ -30,13 +30,13 @@
 
                     <td data-i18n="project.create.label.startdate" name="startdate-lbl"></td>
 					{{#if preBuilt}}
-						<td class="startdate" name="startdateholder" disabled><input name="startdate" type="text" value="{{startDate}}" id="startDate"><span class="add-on"><img id="strdt" src="themes/default/images/helios/cal_icon.png" border="0" alt=""></span></td>
+						<td class="startdate" name="startdateholder"><input name="startdate" type="text" value="{{startDate}}" id="startDate" disabled><span class="add-on" disabled><img id="strdt" src="themes/default/images/helios/cal_icon.png" border="0" alt=""></span></td>
 					{{else}}
 						<td class="startdate" name="startdateholder"><input name="startdate" type="text" value="{{startDate}}" id="startDate"><span class="add-on"><img id="strdt" src="themes/default/images/helios/cal_icon.png" border="0" alt=""></span></td>
 				    {{/if}}
                     <td data-i18n="project.create.label.enddate" name="enddate-lbl"></td>
 					{{#if preBuilt}}	
-						<td colspan="2" class="enddate" name="enddateholder" disabled><input name="enddate" value="{{endDate}}" id="endDate" type="text"><span class="add-on"><span class="add-on"><img id="enddt" class="cal_img1" src="themes/default/images/helios/cal_icon.png" border="0" alt=""></span></span></td>
+						<td colspan="2" class="enddate" name="enddateholder"><input name="enddate" value="{{endDate}}" id="endDate" type="text" disabled><span class="add-on" disabled><span class="add-on"><img id="enddt" class="cal_img1" src="themes/default/images/helios/cal_icon.png" border="0" alt=""></span></span></td>
 					{{else}}
 						<td colspan="2" class="enddate" name="enddateholder"><input name="enddate" value="{{endDate}}" id="endDate" type="text"><span class="add-on"><span class="add-on"><img id="enddt" class="cal_img1" src="themes/default/images/helios/cal_icon.png" border="0" alt=""></span></span></td>
 				    {{/if}}

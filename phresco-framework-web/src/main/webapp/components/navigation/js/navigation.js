@@ -151,6 +151,8 @@ define(["navigation/listener/navigationListener"], function() {
 					$(".gitdata").show();
 					$(".seperatetd").hide();
 					$(".testCheckoutData").hide();
+					$("label[name='branch']").hide();
+					$(".branchval").hide();
 				}
 
 				else if($(this).val() === "git") {
@@ -160,6 +162,8 @@ define(["navigation/listener/navigationListener"], function() {
 					$(".gitdata").show();
 					$(".seperatetd").hide();
 					$(".testCheckoutData").hide();
+					$("label[name='branch']").show();
+					$(".branchval").show();
 				}
 
 				else if($(this).val() === "svn") {

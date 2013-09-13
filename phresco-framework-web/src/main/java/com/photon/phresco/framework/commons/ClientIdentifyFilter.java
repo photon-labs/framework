@@ -173,8 +173,6 @@ public class ClientIdentifyFilter implements Filter , ClientIdentifyFilterConsta
 		
 		String customerName = customer.getName();
 		try {
-	        if (!customerName.equalsIgnoreCase("Photon")) {
-		        
 	        	Map<String, String> theme = customer.getFrameworkTheme();
 				String loginLogoMargin = theme.get("loginLogoMargin");
 				String pageLogoPadding = theme.get("pageLogoPadding");
@@ -267,7 +265,6 @@ public class ClientIdentifyFilter implements Filter , ClientIdentifyFilterConsta
 				jsonObject.put("copyRightLabel", copyRightLabel);
 				jsonObject.put("customerTitle", customerTitle);
 				return jsonObject;
-	        }
 		} catch (PhrescoException e) {
 			S_LOGGER.error(e.getMessage());
 		} catch (ParseException e) {

@@ -93,10 +93,28 @@ define(["header/api/headerAPI"], function() {
 			data.customerId = customerId;
 			self.performAction(self.getActionHeader("getCustomerTheme", data), function(response) {
 				$('#bannerlogo').attr("src", "data:image/png;base64," + response.data.logo);
-				JSS.css(response.data.theme);
+				if (response.data.theme == null) {
+					JSS.css({"":""});
+				} else if (response.data.theme != null || response.data.theme != undefined || response.data.theme != '') {
+					JSS.css(response.data.theme);
+				}
+				self.changeCustomerTitle(response.data.theme);
 			});
-
 			self.showHideMainMenu(customerValue);
+		},
+		
+		changeCustomerTitle : function (theme) {
+			var self = this;
+			var copyRightLabel = theme.copyRightLabel;
+			var pageTitle = theme.customerTitle;
+			if (theme == null || theme == undefined || theme == '' || self.isBlank(copyRightLabel)) {
+				copyRightLabel = "2013.Photon Infotech Pvt Ltd. | <a href='http://www.photon.in' target='_blank'>www.photon.in</a>";
+			}
+			if (theme == null || theme == undefined || theme == '' || self.isBlank(pageTitle)) {
+				pageTitle = "Phresco";
+			}
+			$("#copyRightText").html(copyRightLabel);
+			$(document).attr('title', pageTitle);
 		},
 
 		//To show hide the main menu(Dashboard, Projects, Settings, Downloads, Admin) based on the customer
