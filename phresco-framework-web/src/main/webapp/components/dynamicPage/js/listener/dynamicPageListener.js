@@ -1095,11 +1095,19 @@ define(["framework/widgetWithTemplate", "common/loading", "lib/customcombobox-1.
 									}
 										
 									self.popupforTree(current, $(current).attr('name'));
+									$('#header').css('z-index','0');
+									$('.content_title').css('z-index','0');
+									$('.qual_unit').removeAttr('style');
 									divId.mCustomScrollbar({
 										autoHideScrollbar:true,
 										theme:"light-thin",
 										advanced:{ updateOnContentResize: true}
 									});	
+									
+									$('.dyn_popup_close').click( function() {
+										$('#header').css('z-index','7');
+										$('.content_title').css('z-index','6');
+									});
 								}); 
 							}, 100);
 						});
