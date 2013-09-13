@@ -773,7 +773,7 @@ define([], function() {
 						}
 					},
 					function(textStatus) {
-						commonVariables.api.showError(response.responseCode ,"error", true);		
+						commonVariables.api.showError("serviceerror" ,"error", true);		
 					}
 				);
 			} catch(exception) {
@@ -890,7 +890,9 @@ define([], function() {
 			importdata.userName = $("#importUserName").val();
 			importdata.password = $("#importPassword").val();
 			importdata.revision = revision;
-			
+			if('git' === importdata.type) {
+				importdata.branch = $(".branchval").val();
+			}
 			if ('svn' === importdata.type && $(".testCheckout").is(":checked")) {
 				importdata.testCheckOut = true;
 				importdata.testRepoUrl = $("#testRepoUrl").val();

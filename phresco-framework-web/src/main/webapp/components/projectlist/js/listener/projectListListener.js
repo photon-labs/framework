@@ -13,6 +13,7 @@ define([], function() {
 		flag3:null,
 		act:null,
 		iddynamic : [],
+		delprojectname : null,
 
 		/***
 		 * Called in initialization time of this class 
@@ -85,6 +86,9 @@ define([], function() {
 							self.hidePopupLoad();
 							if(response.responseCode !== 'PHR200015' && response.responseCode !== 'PHR200021' && response.responseCode !== 'PHR600004' && response.responseCode !== null && response.responseCode !== undefined) {
 								commonVariables.api.showError(response.responseCode ,"success", true);
+								if(response.responseCode === 'PHR200010') {
+									$('.msgdisplay').prepend(self.delprojectname+' ');
+								}	
 							}	
 							callback(response);		
 						} else {
