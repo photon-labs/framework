@@ -100,9 +100,9 @@ public class FeatureServiceTest extends RestBaseTest {
 		selectedFeature.setArtifactGroupId("0e3cbd2a-4fe3-415f-8bc3-419c56aa6ca3");
 		selectedFeature.setPackaging("jar");
 		selectedFeatures.add(selectedFeature);
-		Response updateApplicationFeatures = projectService.updateApplicationFeatures(selectedFeatures, appDirName, userId, customerId);
+		Response updateApplicationFeatures = projectService.updateApplicationFeatures(selectedFeatures, appDirName, userId, customerId, "admin");
 		Assert.assertEquals(200, updateApplicationFeatures.getStatus());
-		Response updateApplicationFeatures2 = projectService.updateApplicationFeatures(selectedFeatures, appDirName, "sample", customerId);
+		Response updateApplicationFeatures2 = projectService.updateApplicationFeatures(selectedFeatures, appDirName, "sample", customerId, "admin");
 		Assert.assertEquals(200, updateApplicationFeatures2.getStatus());
 	}
 	
