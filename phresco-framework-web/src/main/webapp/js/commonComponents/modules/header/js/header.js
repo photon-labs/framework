@@ -48,17 +48,13 @@ define(["header/listener/headerListener"] , function(template) {
 				$("#selectedCustomer").text(customername);
 				$('.customerDropdown').hide();
 			}
-
 			self.headerListener.showHideMainMenu($("#selectedCustomer").text());
+			
+			var customerId = self.getCustomer();
 			var data = {};
-			data.customerId = self.getCustomer();
+			data.customerId = customerId; 
 			self.headerListener.performAction(self.headerListener.getActionHeader("getCustomerTheme", data), function(response) {
-				$("#copyRightText").html(response.data.theme.copyRightLabel);
-				var pageTitle = response.data.theme.customerTitle;
-				if (self.isBlank(pageTitle)) {
-					pageTitle = "Phresco";
-				}
-				$(document).attr('title', pageTitle);
+				self.headerListener.changeCustomerTitle(response.data.theme);
 			});
 		},
 		
