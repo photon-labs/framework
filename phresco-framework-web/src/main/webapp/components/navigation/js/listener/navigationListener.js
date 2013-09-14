@@ -887,12 +887,17 @@ define([], function() {
 			
 			importdata.type = $("#importType").val();
 			importdata.repoUrl = $("#importRepourl").val();
-			importdata.userName = $("#importUserName").val();
-			importdata.password = $("#importPassword").val();
-			importdata.revision = revision;
+			
 			if('git' === importdata.type) {
 				importdata.branch = $(".branchval").val();
+				importdata.userName = $("#gitUserName").val();
+				importdata.password = $("#gitPassword").val();
+			} else {
+				importdata.userName = $("#importUserName").val();
+				importdata.password = $("#importPassword").val();
+				importdata.revision = revision;
 			}
+			
 			if ('svn' === importdata.type && $(".testCheckout").is(":checked")) {
 				importdata.testCheckOut = true;
 				importdata.testRepoUrl = $("#testRepoUrl").val();
