@@ -1354,8 +1354,9 @@ public class ConfigurationService extends RestBase implements FrameworkConstants
 		boolean serverTypeValidation = false;
 		boolean isRequired = false;
 		String isRemote = "false";
-		String techId = "";
 		String dynamicError = "";
+		
+		String techId = FrameworkServiceUtil.getApplicationInfo(appDirName).getTechInfo().getId();
 		for (int i = 0; i < configurationlist.size(); i++) {
 			if (StringUtils.isEmpty(configurationlist.get(i).getName())) {
 				return "Name is Empty";
@@ -1375,7 +1376,7 @@ public class ConfigurationService extends RestBase implements FrameworkConstants
 			if (StringUtils.isEmpty(configuration.getType())) {
 				return "Configuration Type is Empty";
 			}
-			SettingsTemplate configTemplateByType = serviceManager.getConfigTemplateByType(customerId, configuration
+			SettingsTemplate configTemplateByType = serviceManager.getConfigTemplateByTechId(techId, configuration
 					.getType());
 
 //			if (FrameworkConstants.SERVER.equals(configuration.getType())
@@ -1425,7 +1426,6 @@ public class ConfigurationService extends RestBase implements FrameworkConstants
 						serverTypeValidation = true;
 					}
 
-					techId = FrameworkServiceUtil.getApplicationInfo(appDirName).getTechInfo().getId();
 					if (techId != null && techId.equals(FrameworkConstants.TECH_SITE_CORE)) {
 						if (FrameworkConstants.DEPLOY_DIR.equals(propKey)) {
 							isRequired = false;
