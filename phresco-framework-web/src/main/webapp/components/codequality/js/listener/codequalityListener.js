@@ -21,9 +21,9 @@ define([], function() {
 			}				
 		},
 		
-		codeValidate : function(callback) {
+		codeValidate : function(ipjson , callback) {
 			var self = this;
-			var ipjson = $("#codeValidateForm").serialize();
+			//var ipjson = $("#codeValidateForm").serialize();
 			var appdetails = commonVariables.api.localVal.getProjectInfo();
 			var userInfo = JSON.parse(commonVariables.api.localVal.getSession('userInfo'));
 			var queryString = '';
@@ -93,15 +93,15 @@ define([], function() {
 				webserviceurl: '',
 				data: ''
 			};
-			if(action === "validate-code"){
-				var appdetails = commonVariables.api.localVal.getProjectInfo();
-				appId = appdetails.data.projectInfo.appInfos[0].id;
-				projectId = appdetails.data.projectInfo.id;
+			/* if(action === "validate-code"){
+				var appdetails = commonVariables.api.localVal.getJson('appdetails');
+				appId = appdetails.data.appInfos[0].id;
+				projectId = appdetails.data.id;
 				username = commonVariables.api.localVal.getSession('username');
 				
 				header.requestMethod ="POST";
 				header.webserviceurl = commonVariables.webserviceurl+"app/codeValidate?username="+username+"&appId="+appId+"&customerId="+customerId+"&goal=validate-code&phase=validate-code&projectId="+projectId+"&"+inputData;
-			}
+			} */
 			if(action === "readlog"){
 				var uniquekey = inputData.uniquekey;
 				header.webserviceurl = commonVariables.webserviceurl+"app/readlog?uniquekey="+uniquekey;
@@ -112,6 +112,10 @@ define([], function() {
 				header.webserviceurl = commonVariables.webserviceurl+"parameter/codeValidationReportTypes?appDirName="+appDirName+"&goal=validate-code";
 			}
 			
+			if(action === "sonarurl"){
+				header.webserviceurl = commonVariables.webserviceurl+"parameter/sonarUrl";
+			}
+			
 			if(action === "iframereport"){
 				var appDirName = commonVariables.api.localVal.getSession('appDirName');
 				username = commonVariables.api.localVal.getSession('username');
@@ -120,7 +124,22 @@ define([], function() {
 
 			return header;
 		},
-				
+		
+		getSonarStatus : function(url , callback){
+			var self = this;
+			
+			try {
+				commonVariables.api.urlExists(url, 
+				function(response){
+					callback(response);
+				},
+				function(response){
+					callback(response);
+				});
+			} catch(exception) {
+				console.info('exception');
+			}
+		},				
 		getReportTypes : function(header, callback) {
 			var self = this;
 			self.closeConsole();
@@ -148,28 +167,14 @@ define([], function() {
 								$(".alert").attr('data-i18n', 'errorCodes.' + response.responseCode);
 								self.renderlocales(commonVariables.contentPlaceholder);
 							} else {
-								$(".content_end").show();
-								$(".msgdisplay").removeClass("success").addClass("error");
-								$(".error").attr('data-i18n', 'errorCodes.' + response.responseCode);
-								self.renderlocales(commonVariables.contentPlaceholder);	
-								$(".error").fadeIn(500).fadeOut(500).fadeIn(500).fadeOut(500).fadeIn(500).fadeOut(5);
-								setTimeout(function() {
-									$(".content_end").hide();
-								},2500);
+								commonVariables.api.showError(response.responseCode ,"error", true);
 							}
 						}
 					},
 
 					function(textStatus) {
 						commonVariables.loadingScreen.removeLoading();
-						$(".content_end").show();
-						$(".msgdisplay").removeClass("success").addClass("error");
-						$(".error").attr('data-i18n', 'commonlabel.errormessage.serviceerror');
-						self.renderlocales(commonVariables.contentPlaceholder);	
-						$(".error").fadeIn(500).fadeOut(500).fadeIn(500).fadeOut(500).fadeIn(500).fadeOut(5);
-						setTimeout(function() {
-							$(".content_end").hide();
-						},2500);
+						commonVariables.api.showError("serviceerror" ,"error", true);
 						$('#codeAnalysis').hide();
 						$(".code_report").hide();
 						$(".code_report_icon").hide();
@@ -178,14 +183,7 @@ define([], function() {
 				);
 			} catch(exception) {
 				commonVariables.loadingScreen.removeLoading();
-				$(".content_end").show();
-				$(".msgdisplay").removeClass("success").addClass("error");
-				$(".error").attr('data-i18n', 'commonlabel.errormessage.serviceerror');
-				self.renderlocales(commonVariables.contentPlaceholder);	
-				$(".error").fadeIn(500).fadeOut(500).fadeIn(500).fadeOut(500).fadeIn(500).fadeOut(5);
-				setTimeout(function() {
-					$(".content_end").hide();
-				},2500);
+				commonVariables.api.showError("serviceerror" ,"error", true);
 				$('#codeAnalysis').hide();
 			}
 		},
@@ -196,6 +194,9 @@ define([], function() {
 					var typeLi = '';
 					var validateAgainst = response[0].validateAgainst.key;
 					var repTypesData = response[0].validateAgainst.value;
+					$('#codeAnalysis').show();
+					$(".code_report").show();
+					$(".code_report_icon").show();
 					$("#codereportTypes").show();
 					$.each(response, function(index, resdata) {
 						var innerUl = '';
@@ -256,37 +257,16 @@ define([], function() {
 								$(".alert").attr('data-i18n', 'errorCodes.' + iframereport.responseCode);
 								self.renderlocales(commonVariables.contentPlaceholder);
 							} else {
-								$(".content_end").show();
-								$(".msgdisplay").removeClass("success").addClass("error");
-								$(".error").attr('data-i18n', 'errorCodes.' + response.responseCode);
-								self.renderlocales(commonVariables.contentPlaceholder);	
-								$(".error").fadeIn(500).fadeOut(500).fadeIn(500).fadeOut(500).fadeIn(500).fadeOut(5);
-								setTimeout(function() {
-									$(".content_end").hide();
-								},2500);
+								commonVariables.api.showError(response.responseCode ,"error", true);
 							}	
 						}
 					},
 					function(textStatus) {
-						$(".content_end").show();
-						$(".msgdisplay").removeClass("success").addClass("error");
-						$(".error").attr('data-i18n', 'commonlabel.errormessage.serviceerror');
-						self.renderlocales(commonVariables.contentPlaceholder);	
-						$(".error").fadeIn(500).fadeOut(500).fadeIn(500).fadeOut(500).fadeIn(500).fadeOut(5);
-						setTimeout(function() {
-							$(".content_end").hide();
-						},2500);
+						commonVariables.api.showError("serviceerror" ,"error", true);
 					}
 				);
 			} catch(exception) {
-				$(".content_end").show();
-				$(".msgdisplay").removeClass("success").addClass("error");
-				$(".error").attr('data-i18n', 'commonlabel.errormessage.serviceerror');
-				self.renderlocales(commonVariables.contentPlaceholder);	
-				$(".error").fadeIn(500).fadeOut(500).fadeIn(500).fadeOut(500).fadeIn(500).fadeOut(5);
-				setTimeout(function() {
-					$(".content_end").hide();
-				},2500);
+				commonVariables.api.showError("serviceerror" ,"error", true);
 			}	
 		}
 		

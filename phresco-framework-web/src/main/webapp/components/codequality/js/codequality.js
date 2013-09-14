@@ -64,16 +64,33 @@ define(["codequality/listener/codequalityListener"], function() {
 			var appDirName = commonVariables.api.localVal.getSession('appDirName');
 			var goal = "validate-code";
 			commonVariables.goal = goal;
-			
-			setTimeout(function() {
-				self.codequalityListener.getReportTypes(self.codequalityListener.getRequestHeader(self.appDirName , "reporttypes"), function(response) {
-					var projectlist = {};
-					projectlist.projectlist = response;	
-					self.renderedData = response;
-					self.codequalityListener.constructHtml(self.renderedData);
-				});
-			}, 200);
-			
+			//setTimeout(function() {
+			$('#codeAnalysis').hide();
+			$(".code_report").hide();
+			$(".code_report_icon").hide();
+			$("#codereportTypes").hide();
+			self.codequalityListener.getReportTypes(self.codequalityListener.getRequestHeader(self.appDirName , "sonarurl"), function(response) {
+				if(response.data !== null){
+					self.codequalityListener.getSonarStatus(response.data, function(status) {
+						if(status === true){
+							//setTimeout(function() {
+								self.codequalityListener.getReportTypes(self.codequalityListener.getRequestHeader(self.appDirName , "reporttypes"), function(response) {
+									var projectlist = {};
+									projectlist.projectlist = response;	
+									self.renderedData = response;
+									self.codequalityListener.constructHtml(self.renderedData);
+								});
+						//	}, 200);
+						} else {
+							$(".alert").show();
+							self.closeConsole();
+							$('#content_div').html('<div class="alert" style="text-align: center; width:98%"></div>');
+							$(".alert").attr('data-i18n', 'errorCodes.' + 'PHR510001');
+							self.renderlocales(commonVariables.contentPlaceholder);	
+						}
+					}, 200);
+				}	
+			});
 			//RBAC
 			var userPermissions = JSON.parse(commonVariables.api.localVal.getSession('userPermissions'));
 			if (userPermissions && !userPermissions.manageCodeValidation) {
@@ -125,7 +142,8 @@ define(["codequality/listener/codequalityListener"], function() {
 			$("#validate").click(function() {
 				$('.progress_loading').css('display','block');
 				$(".dyn_popup").hide();
-				self.readLogEvent.dispatch(function(){
+				var ipjson = $("#codeValidateForm").serialize();
+				self.readLogEvent.dispatch(ipjson , function(){
 					$('.progress_loading').css('display','none');
 				});
 			});

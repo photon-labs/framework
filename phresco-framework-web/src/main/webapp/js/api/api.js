@@ -173,18 +173,26 @@ define(["framework/base", "api/localStorageAPI"], function(){
 			commonVariables.ajaxXhr = $.ajax({
 				type: 'GET',
 				url: url,
-				status: 200,
+				header : "Access-Control-Allow-Headers: x-requested-with",
+				dataType: "script",
 				timeout : 2000,
 				async : true,
-				beforeSend : function(){	
+				beforeSend : function(jqXHR, settings) {
 					commonVariables.loadingScreen.showLoading($(commonVariables.contentPlaceholder));
 				},
-				success: function () {
+				success: function(data, textStatus, jqXHR){
 					commonVariables.loadingScreen.removeLoading();
+					//callbackfunction(jqXHR.status);
 					callbackfunction(true);
 				},
-				error: function () {
+				error: function(jqXHR, textStatus, errorThrown) {
 					commonVariables.loadingScreen.removeLoading();
+					//callbackfunction(jqXHR.status);
+					callbackfunction(false);
+				},					
+				complete: function (jqXHR, textStatus) {
+					commonVariables.loadingScreen.removeLoading();
+					//callbackfunction(jqXHR.status);
 					callbackfunction(false);
 				},	
 			});	
