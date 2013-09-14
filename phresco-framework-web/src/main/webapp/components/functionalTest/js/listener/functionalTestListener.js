@@ -30,7 +30,8 @@ define([], function() {
 			var self = this, header, data = {}, userId;
 			data = JSON.parse(commonVariables.api.localVal.getSession('userInfo'));
 			userId = data.id;
-			appDirName = commonVariables.api.localVal.getSession("appDirName");
+			var projectInfo = commonVariables.api.localVal.getProjectInfo();
+			appDirName = projectInfo.data.projectInfo.appInfos[0].appDirName;
 			header = {
 					contentType: "application/json",				
 					dataType: "json",
@@ -129,14 +130,15 @@ define([], function() {
 				$("#functionalTest_popup").toggle();
 				testData = $('#functionalTestForm').serialize();
 			}
-			var appdetails = commonVariables.api.localVal.getJson('appdetails');
-			var queryString = '';
-			appId = appdetails.data.projectInfo.appInfos[0].id;
-			projectId = appdetails.data.projectInfo.id;
-			customerId = appdetails.data.projectInfo.customerIds[0];
-			username = commonVariables.api.localVal.getSession('username');
+			var projectInfo = commonVariables.api.localVal.getProjectInfo();
+			appId = projectInfo.data.projectInfo.appInfos[0].appDirName;
+			appId = projectInfo.data.projectInfo.appInfos[0].id;
+			projectId = projectInfo.data.projectInfo.id;
+			customerId = projectInfo.data.projectInfo.customerIds[0];
 
-			if (appdetails !== null) {
+			username = commonVariables.api.localVal.getSession('username');
+			var queryString = '';
+			if (projectInfo !== null) {
 				queryString ="username="+username+"&appId="+appId+"&customerId="+customerId+"&goal=functional-test&phase=functional-test&projectId="+projectId;
 			}
 

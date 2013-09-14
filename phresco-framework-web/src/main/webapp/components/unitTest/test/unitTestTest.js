@@ -30,7 +30,10 @@ define(["unitTest/unitTest"], function(UnitTest) {
 				require(["navigation/navigation"], function() {
 					commonVariables.navListener = new Clazz.com.components.navigation.js.listener.navigationListener();
 				});
-				commonVariables.api.localVal.setSession("appDirName", "test");
+
+				$('.hProjectId').val("7406c2c3-4de1-4d19-a709-961764a65485");
+				commonVariables.api.localVal.setProjectInfo({"message":null,"exception":null,"responseCode":"PHR200009","data":{"embedList":{},"projectInfo":{"version":"1.0","appInfos":[{"version":"1.0","modules":null,"pomFile":null,"code":"cccccc","appDirName":"test","techInfo":{"version":"7.x","multiModule":false,"appTypeId":"1dbcf61c-e7b7-4267-8431-822c4580f9cf","techGroupId":"Black Berry","techVersions":null,"customerIds":null,"used":false,"name":"mobile-app-bb10","id":"tech-blackberry-hybrid","displayName":null,"status":null,"description":null,"creationDate":1378204910000,"helpText":null,"system":false},"functionalFramework":null,"selectedModules":[],"selectedComponents":[],"selectedServers":null,"selectedDatabases":null,"selectedJSLibs":["4f889fa1-fe7a-4dee-8ed8-fb95605dcc85"],"selectedWebservices":null,"functionalFrameworkInfo":null,"pilotInfo":null,"selectedFrameworks":null,"emailSupported":false,"pilotContent":null,"embedAppId":null,"phoneEnabled":false,"tabletEnabled":false,"pilot":false,"dependentModules":null,"created":false,"customerIds":null,"used":false,"name":"cccccc","id":"5bc15f33-faba-49fc-95fa-bcc9b3d0e93a","displayName":null,"status":null,"description":null,"creationDate":1378204910000,"helpText":null,"system":false}],"projectCode":"ccccccc","noOfApps":1,"startDate":null,"endDate":null,"preBuilt":false,"multiModule":false,"customerIds":["photon"],"used":false,"name":"ccccccc","id":"7406c2c3-4de1-4d19-a709-961764a65485","displayName":null,"status":null,"description":"","creationDate":1378204910000,"helpText":null,"system":false}},"status":"success"});
+
 				commonVariables.navListener.onMytabEvent("unitTest");
 				setTimeout(function() {
 					start();
@@ -243,7 +246,7 @@ define(["unitTest/unitTest"], function(UnitTest) {
 			asyncTest("Unit Test Run Test-Btn Click Test", function() {
 				$.mockjaxClear(self.executeTestMock);
 				self.executeTestMock = $.mockjax({
-					url: commonVariables.webserviceurl+"app/runUnitTest?username=admin&appId=5bf18d69-3902-497b-8cd2-65dbdc9cd377&customerId=photon&goal=unit-test&phase=unit-test&projectId=b1a829b3-bbfa-45c4-b5f0-003eca66abf5&testAgainst=java&environmentName=Production&displayName=Admin",
+					url: commonVariables.webserviceurl+"app/runUnitTest?username=admin&appId=5bc15f33-faba-49fc-95fa-bcc9b3d0e93a&customerId=photon&goal=unit-test&phase=unit-test&projectId=7406c2c3-4de1-4d19-a709-961764a65485&testAgainst=java&environmentName=Production&displayName=Admin",
 				  	type: "POST",
 				  	dataType: "json",
 				  	contentType: "application/json",
@@ -253,8 +256,6 @@ define(["unitTest/unitTest"], function(UnitTest) {
 				  	}
 				});
 
-				var projectInfo = {"message":null,"exception":null,"responseCode":"PHR200009","data":{"version":"1.0","appInfos":[{"version":"1.0","modules":null,"pomFile":null,"code":"Component-html5jquerymobilewidget","appDirName":"Component-html5jquerymobilewidget","techInfo":{"version":"1.6","multiModule":false,"appTypeId":"web-layer","techGroupId":null,"techVersions":null,"customerIds":null,"used":false,"name":null,"id":"tech-html5-jquery-mobile-widget","displayName":null,"status":null,"description":null,"creationDate":1374049645000,"helpText":null,"system":false},"functionalFramework":"grid","selectedServers":[],"selectedDatabases":[],"selectedModules":[],"selectedJSLibs":["jslib_jquery-amd","jslib_jquery-ui-amd","jslib_jsonpath-amd","jslib_xml2json-amd"],"selectedComponents":["75b584d5-ebe0-48b4-beca-caf97469f812"],"selectedWebservices":null,"functionalFrameworkInfo":null,"pilotInfo":null,"selectedFrameworks":null,"emailSupported":false,"pilotContent":null,"embedAppId":"","phoneEnabled":false,"tabletEnabled":false,"pilot":false,"dependentModules":null,"customerIds":null,"used":false,"name":"Component-html5jquerymobilewidget","id":"5bf18d69-3902-497b-8cd2-65dbdc9cd377","displayName":null,"status":null,"description":"","creationDate":1374044561000,"helpText":null,"system":false}],"projectCode":"Component","noOfApps":1,"startDate":null,"endDate":null,"preBuilt":false,"multiModule":false,"customerIds":["photon"],"used":false,"name":"Component","id":"b1a829b3-bbfa-45c4-b5f0-003eca66abf5","displayName":null,"status":null,"description":"","creationDate":1374044561000,"helpText":null,"system":false},"status":"success"};
-				commonVariables.api.localVal.setJson('appdetails', projectInfo);
 				commonVariables.api.localVal.setSession('username', "admin");
 				$(commonVariables.contentPlaceholder).find("#runUnitTest").click();
 				setTimeout(function() {

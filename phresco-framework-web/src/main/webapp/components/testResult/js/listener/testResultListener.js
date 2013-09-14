@@ -291,7 +291,8 @@ define(['lib/RGraph_common_core-1.0','lib/RGraph_common_tooltips-1.0','lib/RGrap
 			var header, userId;
 			var userInfo = JSON.parse(commonVariables.api.localVal.getSession('userInfo'));
 			var userId = userInfo.id;
-			var appDirName = commonVariables.api.localVal.getSession('appDirName');
+			var projectInfo = commonVariables.api.localVal.getProjectInfo();
+			var appDirName = projectInfo.data.projectInfo.appInfos[0].appDirName;
 			var techReport = $('#reportOptionsDrop').attr("value");
 			var moduleName = $('#modulesDrop').attr("value");
 			header = {

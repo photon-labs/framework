@@ -36,7 +36,8 @@ define(["lib/fileuploader-2.2"], function() {
 			var self = this, header, data = {}, userId;
 			data = JSON.parse(commonVariables.api.localVal.getSession('userInfo'));
 			userId = data.id;
-			appDirName = commonVariables.api.localVal.getSession("appDirName");
+			var projectInfo = commonVariables.api.localVal.getProjectInfo();
+			appDirName = projectInfo.data.projectInfo.appInfos[0].appDirName;
 			header = {
 				contentType: "application/json",				
 				dataType: "json",
@@ -166,7 +167,8 @@ define(["lib/fileuploader-2.2"], function() {
 		
 		createUploader : function() {  
 			var self = this;
-			var appDirName = commonVariables.api.localVal.getSession("appDirName");
+			var projectInfo = commonVariables.api.localVal.getProjectInfo();
+			var appDirName = projectInfo.data.projectInfo.appInfos[0].appDirName;
 			var uploadFileUrl =commonVariables.webserviceurl + commonVariables.manual + '/uploadTemplate?appDirName=' + appDirName;
             var uploader = new qq.FileUploader({
                 element: document.getElementById('manual_temp_upload'),

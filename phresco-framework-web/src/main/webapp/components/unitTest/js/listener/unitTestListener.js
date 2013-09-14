@@ -30,7 +30,8 @@ define([], function() {
 			var self = this, header, data = {}, userId;
 			data = JSON.parse(commonVariables.api.localVal.getSession('userInfo'));
 			userId = data.id;
-			appDirName = commonVariables.api.localVal.getSession("appDirName");
+			var projectInfo = commonVariables.api.localVal.getProjectInfo();
+			appDirName = projectInfo.data.projectInfo.appInfos[0].appDirName;
 			header = {
 				contentType: "application/json",				
 				dataType: "json",
