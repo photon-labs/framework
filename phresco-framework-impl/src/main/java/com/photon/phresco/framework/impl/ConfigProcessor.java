@@ -110,7 +110,7 @@ public class ConfigProcessor implements FrameworkConstants {
 			element.addContent(createElement(CI_FILE_RELEASE_OVERRIDE_AUTH_NODE, TRUE));
 			element.addContent(createElement(CI_FILE_RELEASE_URL, job.getCollabNetURL()));
 			element.addContent(createElement(CI_FILE_RELEASE_USERNAME, job.getCollabNetusername()));
-			element.addContent(createElement(CI_FILE_RELEASE_PASSWORD, encyPassword(CIPasswordScrambler.unmask(job.getCollabNetpassword()))));
+			element.addContent(createElement(CI_FILE_RELEASE_PASSWORD, encyPassword(job.getCollabNetpassword())));
 			element.addContent(createElement(CI_FILE_RELEASE_PROJECT, job.getCollabNetProject()));
 			element.addContent(createElement(CI_FILE_RELEASE_PACKAGE, job.getCollabNetPackage()));
 			element.addContent(createElement(CI_FILE_RELEASE_RELEASE, job.getCollabNetRelease()));
