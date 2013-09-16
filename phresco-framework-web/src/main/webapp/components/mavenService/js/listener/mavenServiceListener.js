@@ -140,6 +140,11 @@ define([], function() {
 			var self = this, header = self.getRequestHeader("POST", "", commonVariables.mvnShowStartedNode, paramData);
 			self.mvnService(header, divId, callback);
 		},
+		
+		mvnValidateTheme : function(paramData, divId, callback){
+			var self = this, header = self.getRequestHeader("GET", "", commonVariables.mvnValidateTheme, paramData);
+			self.mvnService(header, divId, callback);
+		},
 
 		mvnService : function(header, divId, callback){
 			try{

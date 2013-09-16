@@ -33,28 +33,59 @@
 			<!--second_title div ends here -->
 		</div>
 		
-		<section class="features_content_main tab_line">
-			<div class="scrolldiv">
-			<table class="table table_border table-bordered edit_config_tab" cellpadding="0" cellspacing="0" border="0">  
-				<tbody name="ConfigurationLists"> 
-					{{#if envSpecificVal}}
-						<tr>
-							{{#configurations}}
-								<td>Name</td>
-								<td><input type="text" name="EnvName" maxlength="30" title="30 Characters only" value="{{name}}"/></td>
-								<td>Description</td>
-								<td colspan="3"><input type="text"  maxlength="150" title="150 Characters only" value="{{desc}}"/></td>
-							{{/configurations}}
-						</tr>
-					{{/if}}
-				</tbody>
-			</table>
+		<section class="features_content_main tab_line testSuiteTable">
+			<div class="qual_unit_main unit_info" style="width:98%">
+				<div class="scrolldiv">
+				<table class="table table_border table-bordered edit_config_tab" cellpadding="0" cellspacing="0" border="0">  
+					<tbody name="ConfigurationLists"> 
+						{{#if envSpecificVal}}
+							<tr>
+								{{#configurations}}
+									<td>Name</td>
+									<td><input type="text" name="EnvName" maxlength="30" title="30 Characters only" value="{{name}}"/></td>
+									<td>Description</td>
+									<td colspan="3"><input type="text"  maxlength="150" title="150 Characters only" value="{{desc}}"/></td>
+								{{/configurations}}
+							</tr>
+						{{/if}}
+					</tbody>
+				</table>
+				</div>
 			</div>
 			
 			
 			<!--features_content_main div ends here -->
+				<div id="validationConsole" style="display:none">
+					<div class="unit_close">
+						<a href="#" data-flag="true" id="themeValidation">
+							<img src="themes/default/images/helios/console_img.png" width="33" height="92" border="0" alt="">
+							<div class="progress_loading" style="display:none;"><img src="themes/default/images/helios/progress_load.gif" border="0"></div>
+						</a>
+					</div>
+					<div class="unit_progress build_progress">
+						<table class="table table-striped table_border table-bordered" cellpadding="0" cellspacing="0" border="0">
+							<thead>
+								<tr>
+									<td>
+										<div class="flt_right">
+											<input type="button" class="btn btn_style kill_btn" value="Kill Process" data-i18n="[value]build.label.killprocess">
+											<a href="#" title="" href="#" id="buildCopyLog">
+												<img src="themes/default/images/helios/buildreport_icon.png" width="15" height="18" border="0" alt="">
+											</a>
+										</div>
+										<div class="flt_left" data-i18n="build.label.progress"></div>
+									</td>
+								</tr>
+							 </thead>
+						</table>
+						<div class="consolescrolldiv" autoscroll="true">
+							<div id="logContent" class="console_pad">
+							</div>
+						</div>
+					</div>
+				</div>
 		</section>
-		<section class="content_end">
+		<section class="content_end" name="configContent">
 			<div class="flt_right">
 				{{#if userPermissions.manageConfiguration}}
 					<input type="submit" name="UpdateConfiguration" value="Update" data-i18n="[value]common.btn.update" class="btn btn_style update_btn">

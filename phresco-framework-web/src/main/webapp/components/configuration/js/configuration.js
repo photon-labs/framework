@@ -87,22 +87,10 @@ define(["configuration/listener/configurationListener"], function() {
 			self.configurationlistener.getConfigurationList(self.configurationlistener.getRequestHeader(self.configRequestBody, action, deleteEnvironment), function(response) {
 				if (action === "delete" || action === "deleteConfig") {
 					self.deleteEnv(value);
-					$(".content_end").show();
-					$(".msgdisplay").removeClass("error").addClass("success");
-					$(".success").attr('data-i18n', 'successCodes.' + response.responseCode);
-					self.renderlocales(commonVariables.contentPlaceholder);	
-					$(".success").fadeIn(500).fadeOut(500).fadeIn(500).fadeOut(500).fadeIn(500).fadeOut(5);
-					setTimeout(function() {
-						$(".content_end").hide();
-					},2500);
+					commonVariables.api.showError(response.responseCode ,"success", true);
 				} else {
-					$(".content_end").show();
-					$(".msgdisplay").removeClass("error").addClass("success");
-					$(".success").attr('data-i18n', 'successCodes.' + response.responseCode);
-					self.renderlocales(commonVariables.contentPlaceholder);
-					$(".success").fadeIn(500).fadeOut(500).fadeIn(500).fadeOut(500).fadeIn(500).fadeOut(5);					
+					commonVariables.api.showError(response.responseCode ,"success", true);				
 					setTimeout(function() {
-						$(".content_end").hide();
 						self.loadPage(commonVariables.animation);
 					},1200);
 				}
@@ -167,13 +155,7 @@ define(["configuration/listener/configurationListener"], function() {
 						$("input[name='envName']").attr('placeholder','Environment Name');
 						$("input[name='envDesc']").attr('placeholder','Environment Description');
 					} else {
-						$(".content_end").show();
-						$(".msgdisplay").removeClass("success").addClass("error");
-						$(".error").text('Environment Already Exists.');
-						$(".error").fadeIn(500).fadeOut(500).fadeIn(500).fadeOut(500).fadeIn(500).fadeOut(5);
-						setTimeout(function() {
-							$(".content_end").hide();
-						},2500);
+						commonVariables.api.showError("envalreadyexists" ,"success", true);	
 						$("input[name='envName']").focus();
 					}
 				}

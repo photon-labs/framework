@@ -80,13 +80,8 @@ define(["croneExpression/croneExpression"], function() {
 						self.hidePopupLoad();
 						if (response !== null && (response.status !== "error" || response.status !== "failure")) {
 							if(response.responseCode === "PHR600006" || response.responseCode === "PHR600015") {
-								$(".msgdisplay").removeClass("error").addClass("success");
-								$(".success").attr('data-i18n', 'successCodes.' + response.responseCode);
-								self.renderlocales(commonVariables.contentPlaceholder);	
-								$(".success").show();
-								$(".success").fadeIn(500).fadeOut(500).fadeIn(500).fadeOut(500).fadeIn(500).fadeOut(5);
+								commonVariables.api.showError(response.responseCode ,"success", true, false, true);
 								setTimeout(function() {
-									$(".success").hide();
 									callback(response);
 								},1200);
 							}
@@ -96,14 +91,7 @@ define(["croneExpression/croneExpression"], function() {
 						} else {
 							self.hidePopupLoad();
 							//self.loadingScreen.removeLoading();
-							$(".msgdisplay").removeClass("success").addClass("error");
-							$(".error").attr('data-i18n', 'errorCodes.' + response.responseCode);
-							self.renderlocales(commonVariables.contentPlaceholder);	
-							$(".error").show();
-							$(".error").fadeIn(500).fadeOut(500).fadeIn(500).fadeOut(500).fadeIn(500).fadeOut(5);
-							setTimeout(function() {
-								$(".error").hide();
-							},2500);
+							commonVariables.api.showError(response.responseCode ,"error", true, false, true);
 						}
 
 					},
@@ -112,14 +100,7 @@ define(["croneExpression/croneExpression"], function() {
 						self.hidePopupLoad();
 						if (self.bcheck === false) {
 						}
-						$(".msgdisplay").removeClass("success").addClass("error");
-						$(".error").attr('data-i18n', 'errorCodes.' + response.responseCode);
-						self.renderlocales(commonVariables.contentPlaceholder);	
-						$(".error").show();
-						$(".error").fadeIn(500).fadeOut(500).fadeIn(500).fadeOut(500).fadeIn(500).fadeOut(5);
-						setTimeout(function() {
-							$(".error").hide();
-						},2500);
+						commonVariables.api.showError("serviceerror" ,"error", true, false, true);
 					}
 				);
 			} catch(exception) {
@@ -199,6 +180,12 @@ define(["croneExpression/croneExpression"], function() {
 			} else if (action === "isAliveCheck") {
 					header.requestMethod = "GET";
 					header.webserviceurl = commonVariables.webserviceurl+commonVariables.configuration+"/connectionAliveCheck?url="+configRequestBody.protocol+","+configRequestBody.host+","+configRequestBody.port;
+			} else if (action === "listUploadedFiles") {
+					header.requestMethod = "GET";
+					header.webserviceurl = commonVariables.webserviceurl+commonVariables.configuration+"/listUploadedFiles?appDirName="+appDirName+"&isEnvSpecific="+commonVariables.envSpecifig+"&configName="+configRequestBody.name+"&envName="+configRequestBody.envName+"&configType="+configRequestBody.type;
+			} else if (action === "deleteFile") {
+					header.requestMethod = "GET";
+					header.webserviceurl = commonVariables.webserviceurl+commonVariables.configuration+"/removeFile?appDirName="+appDirName+"&configType="+configRequestBody.configType+"&propName="+configRequestBody.propertyName+"&fileName="+configRequestBody.fileName+"&envName="+configRequestBody.envName+"&configName="+configRequestBody.configName;
 			} else if (action === "fileBrowse") {
 					header.requestMethod = "GET";
 					header.dataType = "xml";
@@ -259,13 +246,7 @@ define(["croneExpression/croneExpression"], function() {
 							if(currentConfig === 'Server') {
 								if($(this).attr('configType') === currentConfig) {
 									bCheck = true;									
-									$(".msgdisplay").removeClass("error").addClass("success");
-									$(".success").text("Server Already Added");
-									$(".success").show();
-									$(".success").fadeIn(500).fadeOut(500).fadeIn(500).fadeOut(500).fadeIn(500).fadeOut(5);
-									setTimeout(function() {
-										$(".success").hide();
-									},2500);
+									commonVariables.api.showError("serveralreadyadded" ,"success", true, false, true);
 									flag = 1;
 								}
 							}
@@ -273,13 +254,7 @@ define(["croneExpression/croneExpression"], function() {
 							if(currentConfig === 'Email') {
 								if($(this).attr('configType') === currentConfig) {
 									bCheck = true;		
-									$(".msgdisplay").removeClass("error").addClass("success");
-									$(".success").text("Email Already Added");
-									$(".success").show();
-									$(".success").fadeIn(500).fadeOut(500).fadeIn(500).fadeOut(500).fadeIn(500).fadeOut(5);
-									setTimeout(function() {
-										$(".success").hide();
-									},2500);
+									commonVariables.api.showError("emailalready" ,"success", true, false, true);
 								}
 							}
 						});
@@ -314,7 +289,6 @@ define(["croneExpression/croneExpression"], function() {
 					var type = value.type;
 					
 					var configValue = "";
-					
 					if (configProperties[key] !== undefined) {
 						configValue = configProperties[key];
 					}
@@ -349,10 +323,10 @@ define(["croneExpression/croneExpression"], function() {
 					} else if (type === "Password") {
 						inputCtrl = '<input value="'+ configValue +'" class="'+configTemplate.name+self.count+'Configuration" name="'+key+'" mandatory="'+required+'" type="password" temp="'+configTemplate.name+key+self.count+'" placeholder=""/>';
 					} else if (type === "FileType") {
-						inputCtrl = '<div id="file-uploader'+currentConfig+'" class="file-uploader" propTempName="'+key+'"><noscript><p>Please enable JavaScript to use file uploader.</p><!-- or put a simple form for upload here --></noscript>  </div>';
+						inputCtrl = '<div id="file-uploader'+currentConfig+'" currentConfig="'+currentConfig+'" class="'+configTemplate.name+self.count+'Configuration" mandatory="'+required+'" class="file-uploader" propTempName="'+key+'"><noscript><p>Please enable JavaScript to use file uploader.</p><!-- or put a simple form for upload here --></noscript>  </div>';
 						fCheck = true;
 					} else if (type === "Actions") {
-						inputCtrl = '<input value="'+ label +'" class="'+configTemplate.name+self.count+'Configuration btn btn_style" name="'+key+'" mandatory="'+required+'" type="button" />';
+						inputCtrl = '<input value="'+ label +'" validateButton="validate" class="'+configTemplate.name+self.count+'Configuration btn btn_style" name="'+key+'" mandatory="'+required+'" type="button" />';
 						fCheck = true;
 					} else if (key === "scheduler") {
 						inputCtrl = '<input value="'+ configValue +'" class="'+configTemplate.name+self.count+'Configuration" temp="'+configTemplate.name+key+self.count+'" name="'+key+'" mandatory="'+required+'" type="text" placeholder=""/><a name="cron_expression"><img src="themes/default/images/helios/settings_icon.png" width="23" height="22" border="0" alt=""></a><div id="cron_expression" class="dyn_popup" style="display:none"></div>';
@@ -379,13 +353,7 @@ define(["croneExpression/croneExpression"], function() {
 								});
 							
 								 if ((options1 === "") && (flag === 0)){ 
-									$(".msgdisplay").removeClass("error").addClass("success");
-									$(".success").text("Choose the Server Type from App Info");
-									$(".success").show();
-									$(".success").fadeIn(500).fadeOut(500).fadeIn(500).fadeOut(500).fadeIn(500).fadeOut(5);
-									setTimeout(function() {
-										$(".success").hide();
-									},2500);
+									commonVariables.api.showError("chooseserver" ,"success", true, false, true);									
 								} 
 							} else if(currentConfig === 'Database') {
 								$.each(self.databaseTypeVersion, function(key, value){
@@ -397,14 +365,7 @@ define(["croneExpression/croneExpression"], function() {
 								});
 							
 								 if (options1 === ""){
-									$(".msgdisplay").removeClass("error").addClass("success");
-									$(".success").text("Choose the DB Type from App Info");
-									$(".success").show();
-									$(".success").fadeIn(500).fadeOut(500).fadeIn(500).fadeOut(500).fadeIn(500).fadeOut(5);
-									setTimeout(function() {
-										$(".success").hide();
-									},2500);
-									
+									commonVariables.api.showError("choosedb" ,"success", true, false, true);
 								}
 							}
 							inputCtrl = inputCtrl.concat(options1);
@@ -502,30 +463,135 @@ define(["croneExpression/croneExpression"], function() {
 				self.removeConfiguration();
 				self.spclCharValidation();
 				if (fCheck === true) {
-					self.createUploader("file-uploader"+currentConfig);
+					var strFile = '';
+					var configFileData = '';
+					if (configuration.properties !== undefined) {
+						configFileData = configuration;
+						var arr = configuration.properties.files.split("\\");
+						strFile = arr[arr.length-1];
+					}
+					self.createUploader("file-uploader"+currentConfig, currentConfig, strFile, configFileData);
 				}
 			}
 		},
 		
-		createUploader : function(id) {     
-			var self = this, appDirName;
+		createUploader : function(id, configType, file, configFileData) {     
+			var self = this, appDirName, propertyName, envName;
+			propertyName = $("#"+id).attr('proptempname');
+			envName = $('input[name=EnvName]').val();
+			$("input[validateButton=validate]").attr("disabled", true);
 			appDirName = commonVariables.api.localVal.getSession("appDirName");
             var uploader = new qq.FileUploader({
                 element: document.getElementById(id),
-                action: commonVariables.webserviceurl+commonVariables.configuration+'/upload',
+                action: commonVariables.webserviceurl+commonVariables.configuration+'/uploadFile',
 				actionType : "configuration",
+				envName : envName,
 				appDirName : appDirName,
+				configType : configType,
+				oldName : "oldName",
+				propName : propertyName,
 				buttonLabel: "Upload File",
 				multiple: false,
 				debug: true,	
 				onComplete: function (id, fileName, responseJSON) {
-					$("img[name=removeFile]").click(function(){
-						$(this).parent().remove();
-					});
+					if ($("ul.qq-upload-list li").length > 0 ) {
+						$("div[name=qq-upload-file]").attr("disabled", true).children().attr("disabled", true);
+						$("input[validateButton=validate]").attr("disabled", false);
+					} else {
+						$("div[name=qq-upload-file]").attr("disabled", false).children().attr("disabled", false);
+						$("input[validateButton=validate]").attr("disabled", true);
+					}
+					self.removeFile(configType, propertyName, envName, $(".configName").val());
 				}
+            }); 
 
-            });  
+			if ($(".configName").val() === "") {
+				$("div[name=qq-upload-file]").attr("disabled", true).children().attr("disabled", true);
+			}
+			$(".configName").bind('input', function() {
+				if ($(this).val() === "") {
+					$("div[name=qq-upload-file]").attr("disabled", true).children().attr("disabled", true);
+				} else {
+					$("div[name=qq-upload-file]").attr("disabled", false).children().attr("disabled", false);
+				}
+			});
+			
+			if (file !== '' && file !== undefined) {
+				var val = {};
+				val.name = configFileData.name;
+				val.type = configFileData.type;
+				if (configFileData.envName !== null) {
+					val.envName = configFileData.envName;
+				} else {
+					val.envName = '';
+				}
+				self.configRequestBody = val;
+				self.getConfigurationList(self.getRequestHeader(self.configRequestBody, "listUploadedFiles", ''), function(response) {
+					if(response.data[0] !== undefined) {
+						var arr = response.data[0].split("/");
+						var strFile = arr[arr.length-1];
+						$("ul.qq-upload-list").append('<li><span class="qq-upload-file">'+strFile+'</span><a name="removeFile" href="#"><img src="themes/default/images/helios/cross_red.png" border="0" alt=""></a></li>');
+						$("div[name=qq-upload-file]").attr("disabled", true).children().attr("disabled", true);
+						$("input[validateButton=validate]").attr("disabled", false);
+						self.removeFile(configType, propertyName, envName, $(".configName").val());
+					} else {
+						$("div[name=qq-upload-file]").attr("disabled", false).children().attr("disabled", false);
+						$("input[validateButton=validate]").attr("disabled", true);
+					}
+				});
+				$("#validationConsole").css("display", "block");
+				
+			}
+			$("input[validateButton=validate]").click(function(){
+				self.ValidateTheme();
+			});
         },
+		
+		removeFile : function(configType, propertyName, envName, configName) {
+			var self=this, val = {}, fileName;
+			$("a[name=removeFile]").click(function(){
+				fileName = $(this).parent().find(".qq-upload-file").text();
+				val.configType = configType;
+				val.propertyName = propertyName;
+				if (envName === '' || envName === undefined || envName === null) {
+					val.envName = '';
+				} else {
+					val.envName = envName;
+				}
+				val.configName = configName;
+				val.fileName = fileName;
+				self.configRequestBody = val;
+				self.getConfigurationList(self.getRequestHeader(self.configRequestBody, "deleteFile", ''), function(response) {
+					commonVariables.api.showError(response.responseCode ,"success", true, false, true);
+				});
+				$(this).parent().remove();
+				$("div[name=qq-upload-file]").attr("disabled", false).children().attr("disabled", false);
+				$("input[validateButton=validate]").attr("disabled", true);
+			});
+		},
+		
+		ValidateTheme : function() {
+			var self=this;
+			var appdetails = commonVariables.api.localVal.getProjectInfo();
+			var queryString = '';
+			appId = appdetails.data.projectInfo.appInfos[0].id;
+			projectId = appdetails.data.projectInfo.id;
+			customerId = appdetails.data.projectInfo.customerIds[0];
+			username = commonVariables.api.localVal.getSession('username');
+						
+			if (appdetails !== null) {
+				queryString ="username="+username+"&appId="+appId+"&customerId="+customerId+"&goal=unit-test&phase=unit-test&projectId="+projectId;
+			}
+			$('#logContent').html('');
+			self.openConsole();//To open the console
+			$("section[name=configContent]").hide();
+			commonVariables.navListener.getMyObj(commonVariables.mavenService, function(retVal){
+				retVal.mvnValidateTheme(queryString, '#logContent', function(response) {
+					self.closeConsole();
+					$("section[name=configContent]").show();
+				});
+			});
+		},
 		
 		severDbOnChangeEvent : function () {
 			var self=this;	
@@ -685,14 +751,7 @@ define(["croneExpression/croneExpression"], function() {
 				certificateJson.propValue = value;
 				self.configRequestBody = certificateJson;
 				self.getConfigurationList(self.getRequestHeader(self.configRequestBody, "addCertificate", ''), function(response) {
-					$(".msgdisplay").removeClass("error").addClass("success");
-					$(".success").attr('data-i18n', 'successCodes.' + response.responseCode);
-					self.renderlocales(commonVariables.contentPlaceholder);	
-					$(".success").show();
-					$(".success").fadeIn(500).fadeOut(500).fadeIn(500).fadeOut(500).fadeIn(500).fadeOut(5);
-					setTimeout(function() {
-						$(".success").hide();
-					},2500);
+					commonVariables.api.showError(response.responseCode ,"success", true, false, true);
 					$("#remote_deploy").hide();
 					self.closeTreePopup();
 				});
@@ -921,32 +980,47 @@ define(["croneExpression/croneExpression"], function() {
 				properties = {};
 				configJson = {};
 				var type = $(this).attr("type");
-				$("." + type).each(function() {
-					if ($(this).children().find('.configName').val() !== undefined) {
-						configJson.name = $(this).children().find('.configName').val();
-					}
-					if ($(this).children().find('.configDesc').val() !== undefined) {
-						configJson.desc = $(this).children().find('.configDesc').val();
-					}
-					$(this).find("." + type + "Configuration").each(function() {
-						var proValue = $(this).attr("name");
-						if(proValue !== undefined) {
-							properties[proValue] = $(this).val();
+				if (($(this).attr("configtype") === "Theme") || ($(this).attr("configtype") === "Content")) {
+					$("." + type).each(function() {
+						if ($(this).children().find('.configName').val() !== undefined) {
+							configJson.name = $(this).children().find('.configName').val();
 						}
+						if ($(this).children().find('.configDesc').val() !== undefined) {
+							configJson.desc = $(this).children().find('.configDesc').val();
+						}
+						properties.files = $("li span.qq-upload-file").text();
+						configJson.properties = properties;
+						configJson.type = $(this).attr("name");
 					});
-					
-					var otherKey = $(this).children().find('.otherKey').val();
-					var otherKeyValue = $(this).children().find('.otherKeyValue').val();
-					if (otherKey !== undefined && otherKeyValue !== undefined) {
-						properties[otherKey] = otherKeyValue;
-						configJson.properties = properties;
-					} else {
-						configJson.properties = properties;
-					}
-					configJson.type = $(this).attr("name");
-				});
+				} else {
+					$("." + type).each(function() {
+						if ($(this).children().find('.configName').val() !== undefined) {
+							configJson.name = $(this).children().find('.configName').val();
+						}
+						if ($(this).children().find('.configDesc').val() !== undefined) {
+							configJson.desc = $(this).children().find('.configDesc').val();
+						}
+						$(this).find("." + type + "Configuration").each(function() {
+							var proValue = $(this).attr("name");
+							if(proValue !== undefined) {
+								properties[proValue] = $(this).val();
+							}
+						});
+						
+						var otherKey = $(this).children().find('.otherKey').val();
+						var otherKeyValue = $(this).children().find('.otherKeyValue').val();
+						if (otherKey !== undefined && otherKeyValue !== undefined) {
+							properties[otherKey] = otherKeyValue;
+							configJson.properties = properties;
+						} else {
+							configJson.properties = properties;
+						}
+						configJson.type = $(this).attr("name");
+					});
+				}
 				self.configList.push(configJson);
 			});
+
 			
 			var envrName = "";
 			if ($('input[name=EnvName]').val() !== undefined) {
@@ -1000,6 +1074,18 @@ define(["croneExpression/croneExpression"], function() {
 								return bCheck;
 							}
 							var mandatory = $(this).attr("mandatory");
+							if (($(this).attr("currentconfig") === "Theme") || ($(this).attr("currentconfig") === "Content")) {
+								if ($(this).find('ul.qq-upload-list').html() === "") {
+									$(this).append('<div class="fileValidation">Please Upload File</div>');
+									setTimeout(function(){
+										$(".fileValidation").remove();
+									}, 1000);
+									bCheck = false;
+								} else {
+									bCheck = true;
+								}
+								return bCheck;
+							}
 							var val = $(this).attr("name");
 							if(mandatory === 'true') {
 								if($(this).val() !== undefined && $(this).val() !== null && $.trim($(this).val()) !== ""){
@@ -1095,7 +1181,6 @@ define(["croneExpression/croneExpression"], function() {
 					return bCheck;
 				}
 			});
-
 			return bCheck;
 		},
 
@@ -1131,19 +1216,15 @@ define(["croneExpression/croneExpression"], function() {
 					array[count] = (arr[count].replace(/\s*\(.*?\)\s*/g, ''));
 					count++;
 				});
-				for (var i=0; i<array.length; i++) {
-					if($.trim(ename.toUpperCase()) === $.trim(array[i].toUpperCase())) {
-						flag = 0;
-					}		
-				};
+				if(ename !== undefined) {
+					for (var i=0; i<array.length; i++) {
+						if($.trim(ename.toUpperCase()) === $.trim(array[i].toUpperCase())) {
+							flag = 0;
+						}		
+					};
+				}
 				if (flag === 0) {
-					$(".content_end").show();
-					$(".msgdisplay").removeClass("success").addClass("error");
-					$(".error").text('Enter Unique Name.');
-					$(".error").fadeIn(500).fadeOut(500).fadeIn(500).fadeOut(500).fadeIn(500).fadeOut(5);
-					setTimeout(function() {
-						$(".content_end").hide();
-					},2500);
+					commonVariables.api.showError("enteruniquename" ,"error", true, false, true);					
 					$(val).closest('tr').prev('tr').find('td:first').find('input').focus(); 
 				} else {
 					var desc = $(".cloneEnvDesc"+envName).val();
@@ -1173,6 +1254,21 @@ define(["croneExpression/croneExpression"], function() {
 				self.nonEnvEditConfigurations.envSpecificVal = (envSpecificVal === "false") ? false : true;
 				Clazz.navigationController.push(self.nonEnvEditConfigurations, true);
 			});
+		},
+		
+		validationConsole : function(clicked) {
+			var check = $(clicked).attr('data-flag');
+			var self = this;
+			if(check === "true") {
+				self.openConsole();
+				$("section[name=configContent]").hide();
+				$(clicked).attr('data-flag','false');
+			} else {
+				self.closeConsole();
+				$("section[name=configContent]").show();
+				$(clicked).attr('data-flag','true');
+				$(window).resize();
+			}
 		}
 		
 	});

@@ -38,7 +38,9 @@ define(["configuration/listener/configurationListener"], function() {
 		preRender: function(whereToRender, renderFunction){
 			var self = this, res = {};
 			if (self.configClick === "EditConfiguration") {
+				self.configName = ""; 
 				self.configRequestBody.envSpecific = self.envSpecificVal;
+				commonVariables.envSpecifig = self.envSpecificVal;
 				self.configurationlistener.getConfigurationList(self.configurationlistener.getRequestHeader(self.configRequestBody, "edit"), function(response) {
 					if(response.data.configurations !== undefined) {
 					$.each(response.data.configurations, function(index, value){
@@ -90,7 +92,11 @@ define(["configuration/listener/configurationListener"], function() {
 		 */
 		postRender : function(element) {	
 			var self = this;
+			self.resizeConsoleWindow();
 			commonVariables.navListener.currentTab = self.name;
+			if(self.configName === "Content" || self.configName === "Theme") {
+				$("#validationConsole").css("display", "block");
+			}
 		},
 		
 		registerEvents : function(configurationlistener) {
@@ -99,10 +105,12 @@ define(["configuration/listener/configurationListener"], function() {
 			self.addConfigurationEvent = new signals.Signal();
 			self.updateConfigEvent = new signals.Signal();
 			self.addNonEnvirinmentConfigEvent = new signals.Signal();
+			self.validationConsoleEvent = new signals.Signal();
 			self.cancelEditConfigurationEvent.add(configurationlistener.cancelEditConfiguration, configurationlistener);
 			self.addNonEnvirinmentConfigEvent.add(configurationlistener.addConfiguration, configurationlistener);
 			self.addConfigurationEvent.add(configurationlistener.addConfiguration, configurationlistener);
 			self.updateConfigEvent.add(configurationlistener.updateConfig, configurationlistener);
+			self.validationConsoleEvent.add(configurationlistener.validationConsole, configurationlistener);
 		},
 
 		/***
@@ -120,6 +128,10 @@ define(["configuration/listener/configurationListener"], function() {
 			
 			$("ul[name=configurations] li").click(function() {
 				self.addConfigurationEvent.dispatch($(this).attr('name'));
+			});
+			
+			$("#themeValidation").click(function() {
+				self.validationConsoleEvent.dispatch($(this));
 			});
 			
 			$("input[name=UpdateConfiguration]").unbind('click');

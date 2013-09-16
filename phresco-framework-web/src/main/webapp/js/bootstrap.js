@@ -52,6 +52,7 @@ var commonVariables = {
 	configuration : "configuration",
 	editConfiguration : "editConfiguration",
 	updateConfigName : '',
+	envSpecifig : '',
 	
 	croneExpression : "croneExpression",
 	
@@ -189,6 +190,7 @@ var commonVariables = {
 	mvnCiSetup : "app/ciSetup",
 	mvnCiStart : "app/ciStart",
 	mvnCiStop : "app/ciStop",
+	mvnValidateTheme : "app/validateTheme",
 	
 	/******** mvn Context end****/
 	
