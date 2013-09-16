@@ -123,7 +123,10 @@ define(["croneExpression/croneExpression"], function() {
 			var self = this, header, appDirName;
 			var customerId = self.getCustomer();
 			customerId = (customerId === "") ? "photon" : customerId;
-			appDirName = commonVariables.api.localVal.getSession("appDirName");
+			if(commonVariables.api.localVal.getProjectInfo() !== null){
+				var projectInfo = commonVariables.api.localVal.getProjectInfo();
+				appDirName = projectInfo.data.projectInfo.appInfos[0].appDirName;
+			}
 			data = JSON.parse(commonVariables.api.localVal.getSession('userInfo'));
 			if(data !== null) {
 				var userId = data.id;
@@ -480,7 +483,10 @@ define(["croneExpression/croneExpression"], function() {
 			propertyName = $("#"+id).attr('proptempname');
 			envName = $('input[name=EnvName]').val();
 			$("input[validateButton=validate]").attr("disabled", true);
-			appDirName = commonVariables.api.localVal.getSession("appDirName");
+			if(commonVariables.api.localVal.getProjectInfo() !== null){
+				var projectInfo = commonVariables.api.localVal.getProjectInfo();
+				appDirName = projectInfo.data.projectInfo.appInfos[0].appDirName;
+			}
             var uploader = new qq.FileUploader({
                 element: document.getElementById(id),
                 action: commonVariables.webserviceurl+commonVariables.configuration+'/uploadFile',
@@ -738,7 +744,10 @@ define(["croneExpression/croneExpression"], function() {
 				$("input[name=certificate]").val(cerficate);
 				var customerId = self.getCustomer();
 				customerId = (customerId === "") ? "photon" : customerId;
-				var appDirName = commonVariables.api.localVal.getSession("appDirName");
+				if(commonVariables.api.localVal.getProjectInfo() !== null){
+					var projectInfo = commonVariables.api.localVal.getProjectInfo();
+					appDirName = projectInfo.data.projectInfo.appInfos[0].appDirName;
+				}
 				var certificateJson = {};
 				certificateJson.customerId = customerId;
 				certificateJson.host = $("input[configKey=configKeyServerhost]").val();
