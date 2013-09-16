@@ -235,12 +235,12 @@ define([], function() {
 		
 		getIframeReport : function(validateAgainst){
 			var self = this;
-			self.closeConsole();
 			$(".alert").hide();
 			try {
 				commonVariables.api.ajaxRequest(self.getRequestHeader(validateAgainst , "iframereport"), 
 					function(iframereport) {
 						if(iframereport.data !== null){
+							self.closeConsole();
 							var iframedata = "<iframe id='iframe' class='iframe' src="+iframereport.data+ " ></iframe>";
 							$('#content_div').html(iframedata);
 							var dynHeight = $('#content_div').height();
