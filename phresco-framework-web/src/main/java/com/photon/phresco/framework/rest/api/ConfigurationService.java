@@ -454,14 +454,19 @@ public class ConfigurationService extends RestBase implements FrameworkConstants
 	    	} else {
 	    		String nonEnvConfigFie = FrameworkServiceUtil.getnonEnvConfigFileDir(appDirName);
 	    		NonEnvConfigManager nonConfigManager = new NonEnvConfigManagerImpl(new File(nonEnvConfigFie));
-	    		if(StringUtils.isEmpty(configName)) {
-	    			nonConfigManager.createConfiguration(configurationlist.get(0));
-	    			ResponseInfo<String> finalOuptut = responseDataEvaluation(responseData, null,
-	    					"Success", RESPONSE_STATUS_SUCCESS, PHR600015);
-	    			return Response.ok(finalOuptut).header("Access-Control-Allow-Origin", "*").build();
-	    		} else {
-	    		nonConfigManager.updateConfiguration(configName, configurationlist.get(0));
-	    		}
+				if(StringUtils.isEmpty(configName)) {
+					Configuration config = configurationlist.get(0);
+					Configuration addFilesToConfigFile = addFilesToConfigFile(appDirName, config);
+					nonConfigManager.createConfiguration(addFilesToConfigFile);
+
+					ResponseInfo<String> finalOuptut = responseDataEvaluation(responseData, null,
+					"Success", RESPONSE_STATUS_SUCCESS, PHR600015);
+					return Response.ok(finalOuptut).header("Access-Control-Allow-Origin", "*").build();
+				} else {
+					Configuration config = configurationlist.get(0);
+					Configuration addFilesToConfigFile = addFilesToConfigFile(appDirName, config);
+					nonConfigManager.updateConfiguration(configName, addFilesToConfigFile);
+				}
 	    	}
 			ResponseInfo<String> finalOuptut = responseDataEvaluation(responseData, null,
 					"Success", RESPONSE_STATUS_SUCCESS, PHR600006);
@@ -1575,4 +1580,13 @@ public class ConfigurationService extends RestBase implements FrameworkConstants
 		}
 		return nameMap;
 	}
+	
+	private Configuration addFilesToConfigFile(String appDirName, Configuration config) throws PhrescoException {
+		String files = config.getProperties().getProperty("files");
+		String targetDirFromPom = getTargetDirFromPom(config.getType(), appDirName);
+		files = targetDirFromPom + File.separator + files;
+		config.getProperties().setProperty("files", files);
+		return config;
+	}
+
 }
