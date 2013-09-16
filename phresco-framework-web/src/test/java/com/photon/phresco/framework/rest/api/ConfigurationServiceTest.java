@@ -941,19 +941,19 @@ public class ConfigurationServiceTest extends LoginServiceTest {
 	
 	@Test
 	public void showPropertiesFeaturesTest() {
-		Response names = configurationService.showProperties("admin", "Features", "TestJquery", "addconfig", "photon");
+		Response names = configurationService.showProperties("admin", "Features", "TestJquery", "photon");
 		Assert.assertEquals(200, names.getStatus());
 	}
 	
 	@Test
 	public void showPropertiesComponentsTest() throws PhrescoException, FileNotFoundException, IOException, ParseException {
-		Response names = configurationService.showProperties("admin", "Components", "TestJquery", "addconfig", "photon");
+		Response names = configurationService.showProperties("admin", "Components", "TestJquery", "photon");
 		Assert.assertEquals(200, names.getStatus());
 	}
 	
 	@Test
 	public void showPropertiesFeaturesErrorTest() {
-		Response names = configurationService.showProperties("admin", "Features", "dfhgdf", "addconfig", "photon");
+		Response names = configurationService.showProperties("admin", "Features", "dfhgdf", "photon");
 		Assert.assertEquals(200, names.getStatus());
 	}
 	

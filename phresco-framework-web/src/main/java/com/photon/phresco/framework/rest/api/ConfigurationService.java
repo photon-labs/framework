@@ -1058,19 +1058,17 @@ public class ConfigurationService extends RestBase implements FrameworkConstants
 	@Produces(MediaType.APPLICATION_JSON)
 	@Consumes(MediaType.APPLICATION_JSON)
 	public Response showProperties(@QueryParam(REST_QUERY_USERID) String userId, @QueryParam(REST_QUERY_TYPE) String type, @QueryParam(REST_QUERY_APPDIR_NAME) String appDirName,
-			@QueryParam(REST_QUERY_FROM_PAGE) String fromPage, @QueryParam(REST_QUERY_CUSTOMERID) String customerId) {
+			@QueryParam(REST_QUERY_CUSTOMERID) String customerId) {
 		ResponseInfo<List<String>> responseData = new ResponseInfo<List<String>>();
 		try {
 			ServiceManager serviceManager = CONTEXT_MANAGER_MAP.get(userId);
 			SettingsTemplate settingsTemplate = serviceManager.getConfigTemplateByType(customerId, type);
 			ApplicationInfo appInfo = FrameworkServiceUtil.getApplicationInfo(appDirName);
 			List<String> names = new ArrayList<String>();
-			if ((ADD_CONFIG.equals(fromPage) || EDIT_CONFIG.equals(fromPage))) {
-			    if (CONFIG_FEATURES.equals(settingsTemplate.getId())) {
-			        names = setCustomModNamesInReq(appInfo, serviceManager);
-			    } else if (CONFIG_COMPONENTS.equals(settingsTemplate.getId())) {
-			        names = setComponentNamesInReq(appInfo, serviceManager);
-			    }
+			if (CONFIG_FEATURES.equals(settingsTemplate.getId())) {
+				names = setCustomModNamesInReq(appInfo, serviceManager);
+			} else if (CONFIG_COMPONENTS.equals(settingsTemplate.getId())) {
+				names = setComponentNamesInReq(appInfo, serviceManager);
 			}
 			ResponseInfo<List<String>> finalOuptut = responseDataEvaluation(responseData, null, names, RESPONSE_STATUS_SUCCESS, PHR600023);
 			return Response.status(Status.OK).entity(finalOuptut).header("Access-Control-Allow-Origin", "*").build();
