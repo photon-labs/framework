@@ -43,7 +43,7 @@
                                 </select>
                                 {{#scopeShowHide packaging scope}}{{/scopeShowHide}}
 								</div>
-								<span class="settings_icon"><img src="themes/default/images/helios/settings_icon.png" width="23" height="22" border="0" alt=""></span>
+								<span class="settings_icon" settingsid="s_{{id}}"><img src="themes/default/images/helios/settings_icon.png" width="23" height="22" border="0" alt=""></span>
                         </li>
 						<div class="clear"></div>
                   {{/each}}  
@@ -88,7 +88,7 @@
 								{{/if}} 
                                 {{#scopeShowHide packaging scope}}{{/scopeShowHide}}
 							</div>
-							<span class="settings_icon"><img src="themes/default/images/helios/settings_icon.png" width="23" height="22" border="0" alt=""></span>								
+							<span class="settings_icon" settingsid="s_{{id}}"><img src="themes/default/images/helios/settings_icon.png" width="23" height="22" border="0" alt=""></span>								
                         </li>
 						 <div class="clear"></div>
                   {{/each}}
@@ -133,7 +133,7 @@
 								{{/if}}
                                 {{#scopeShowHide packaging scope}}{{/scopeShowHide}}
 							</div>
-							<span class="settings_icon"><img src="themes/default/images/helios/settings_icon.png" width="23" height="22" border="0" alt=""></span>								
+							<span class="settings_icon" settingsid="s_{{id}}"><img src="themes/default/images/helios/settings_icon.png" width="23" height="22" border="0" alt=""></span>								
 
                         </li>
 						<div class="clear"></div>
@@ -152,6 +152,7 @@
     </section>
 
     <div id="desc"></div>
+	<div id="settingspopup"></div>
     <section class="content_end">
         <div class="flt_right">
         	{{#if userPermissions.manageApplication}}

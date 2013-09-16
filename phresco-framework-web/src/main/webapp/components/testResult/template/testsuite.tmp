@@ -23,8 +23,8 @@
 			          	<tbody>
 			          		{{#each testSuites}}
 				              	<tr>
-				                	<td class="manual hideContent"><a href="#" name="testDescription" id="{{name}}">{{name}}</a></td>
-				                	<td class="testsuiteClm"><a href="#" name="testDescription" id="{{name}}">{{name}}</a></td>    
+				                	<td class="manual hideContent"><a href="javascript:void(0)" name="testDescription" id="{{name}}">{{name}}</a></td>
+				                	<td class="testsuiteClm"><a href="javascript:void(0)" name="testDescription" id="{{name}}">{{name}}</a></td>    
 				                	<td>{{total}}</td>
 				                	<td>{{success}}</td>
 				                	<td>{{failures}}</td>
@@ -55,7 +55,7 @@
 
     <!-- Progress div starts here-->
     <div class="unit_close">
-    	<a href="#" data-flag="true" id="consoleImg">
+    	<a href="javascript:void(0)" data-flag="true" id="consoleImg">
 			<img src="themes/default/images/helios/console_img.png" width="33" height="92" border="0" alt="">
 			<div class="progress_loading" style="display:none;"><img src="themes/default/images/helios/progress_load.gif" border="0"></div>
 		</a>
@@ -67,7 +67,7 @@
 					<td>
 						<div class="flt_right">
 							<input type="button" class="btn btn_style kill_btn" value="Kill Process" data-i18n="[value]build.label.killprocess">
-							<a href="#" id="buildCopyLog">
+							<a href="javascript:void(0)" id="buildCopyLog">
 								<img src="themes/default/images/helios/buildreport_icon.png" width="15" height="18" border="0" alt="">
 							</a>
 						</div>

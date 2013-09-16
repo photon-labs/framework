@@ -153,7 +153,7 @@ define(["framework/base", "api/localStorageAPI"], function(){
 		errorpopupshow : function(response) {
 			var self = this;
 			$('#errpopup').remove();
-			$(commonVariables.basePlaceholder).append('<div id="errpopup" class="modal fade" tabindex="-1" style="display: none;"><div class="modal-body temp"></div><div class="modal-footer"><div><a href="#" title="" id="copytoclip" class="flt_left padding_img" href="#"><img class="padding_img" src="themes/default/images/helios/buildreport_icon.png" width="15" height="18" border="0" alt=""></a><div class="errorpopuploading" id="copyloadicon" style="display:none;">&nbsp</div></div><button type="button" data-dismiss="modal" class="btn btn_style">Close</button></div></div>');
+			$(commonVariables.basePlaceholder).append('<div id="errpopup" class="modal fade" tabindex="-1" style="display: none;"><div class="modal-body temp"></div><div class="modal-footer"><div><a href="javascript:void(0)" title="" id="copytoclip" class="flt_left padding_img" href="javascript:void(0)"><img class="padding_img" src="themes/default/images/helios/buildreport_icon.png" width="15" height="18" border="0" alt=""></a><div class="errorpopuploading" id="copyloadicon" style="display:none;">&nbsp</div></div><button type="button" data-dismiss="modal" class="btn btn_style">Close</button></div></div>');
 			if(response.service_exception !== null && response.service_exception !== undefined) { 
 				$(".modal-body").append(response.service_exception);
 			}else if(response.exception !== null && response.exception !== undefined) {

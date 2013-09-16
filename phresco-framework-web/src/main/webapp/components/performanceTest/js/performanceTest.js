@@ -179,7 +179,7 @@ define(["performanceLoadListener/listener/performanceLoadListener"], function() 
 					returnVal = data[0];
 				} else {
 					$.each(data, function(index, value){
-						returnVal += '<li class="testAgainstOption"><a href="#" name="testAgainst" value="'+value+'">'+ value +'</a></li>';
+						returnVal += '<li class="testAgainstOption"><a href="javascript:void(0)" name="testAgainst" value="'+value+'">'+ value +'</a></li>';
 					});
 				}
 				return returnVal;
@@ -195,9 +195,9 @@ define(["performanceLoadListener/listener/performanceLoadListener"], function() 
 						returnVal = devices[0].split("#SEP#")[1];
 					} else {
 						$.each(devices, function(i, value){
-							returnVal += '<li class="devicesOption"><a href="#" name="devices" deviceId="'+ value.split("#SEP#")[0] +'">'+ value.split("#SEP#")[1] +'</a></li>';
+							returnVal += '<li class="devicesOption"><a href="javascript:void(0)" name="devices" deviceId="'+ value.split("#SEP#")[0] +'">'+ value.split("#SEP#")[1] +'</a></li>';
 						});
-						returnVal += '<li class="devicesOption"><a href="#" name="devices" deviceId="">All</a></li>';
+						returnVal += '<li class="devicesOption"><a href="javascript:void(0)" name="devices" deviceId="">All</a></li>';
 					} 
 				} 
 				
@@ -221,7 +221,7 @@ define(["performanceLoadListener/listener/performanceLoadListener"], function() 
 					returnVal = data[0];
 				} else if ( data !== null) {
 					$.each(data, function(index, value){
-						returnVal += '<li class="testResultFilesOption"><a href="#" name="resultFileName">'+ value +'</a></li>';
+						returnVal += '<li class="testResultFilesOption"><a href="javascript:void(0)" name="resultFileName">'+ value +'</a></li>';
 					});
 				}
 				return returnVal;

@@ -123,19 +123,19 @@
 	 <section class="content_title" name="navigation" id="editprojectTab" style="display:none">
     	<div class="title_nav">
         	<ul class="nav">
-            	<li id="editproject"><a href="#" class="act"><span data-i18n="navigation.application.projectinfo"></span></a></li>
-                <li id="integrationTest"><a href="#"><span data-i18n="navigation.application.integrationtest"></span></a></li>
+            	<li id="editproject"><a href="javascript:void(0)" class="act"><span data-i18n="navigation.application.projectinfo"></span></a></li>
+                <li id="integrationTest"><a href="javascript:void(0)"><span data-i18n="navigation.application.integrationtest"></span></a></li>
                 <li class="dropdown">
-                    <a href="#" id="drop4" role="quality" class="dropdown-toggle drop-qual" data-toggle="dropdown"><span data-i18n="navigation.application.continuousintegration"></span><b class="caret"></b></a>
+                    <a href="javascript:void(0)" id="drop4" role="quality" class="dropdown-toggle drop-qual" data-toggle="dropdown"><span data-i18n="navigation.application.continuousintegration"></span><b class="caret"></b></a>
                     <div class="dropdown-menu cust_sel test_options" role="quality" aria-labelledby="drop4">
                         <ul id="ci" class="ci_dropdown">
-                            <li id="jobTemplates"><a href="#"><span data-i18n="navigation.application.jobs"></span></a></li>
-                            <!--<li id="pipeline"><a href="#">Pipeline</a></li>-->
-                            <li id="continuousDeliveryView"><a href="#"><span data-i18n="navigation.application.continuousintegration"></span></a></li>
+                            <li id="jobTemplates"><a href="javascript:void(0)"><span data-i18n="navigation.application.jobs"></span></a></li>
+                            <!--<li id="pipeline"><a href="javascript:void(0)">Pipeline</a></li>-->
+                            <li id="continuousDeliveryView"><a href="javascript:void(0)"><span data-i18n="navigation.application.continuousintegration"></span></a></li>
                         </ul>
                     </div>
                 </li>
-                <li><a href="#"><span data-i18n="navigation.application.apistatus"></span></a></li>
+                <li><a href="javascript:void(0)"><span data-i18n="navigation.application.apistatus"></span></a></li>
         	</ul>
         </div>	
         <h1 id="editprojecttitle"></h1>
@@ -144,27 +144,27 @@
 	<section class="content_title" id="applicationedit" style="display:none">
     	<div class="title_nav navbar navbar-static">
         	<ul class="nav" id="myTab">
-            	<li id="appinfo" name="editMenu"><a href="#" class="act" data-i18n="navigation.application.appinfo"></a></li>
-                <li id="featurelist" name="editMenu"><a href="#" data-i18n="navigation.application.features"></a></li>
-                <li id="codequality" name="editMenu"><a href="#" data-i18n="navigation.application.codequality"></a></li>
+            	<li id="appinfo" name="editMenu"><a href="javascript:void(0)" class="act" data-i18n="navigation.application.appinfo"></a></li>
+                <li id="featurelist" name="editMenu"><a href="javascript:void(0)" data-i18n="navigation.application.features"></a></li>
+                <li id="codequality" name="editMenu"><a href="javascript:void(0)" data-i18n="navigation.application.codequality"></a></li>
 				<li id="configuration" class="dropdown" name="editMenu">
                 </li>
-                <li id="build" name="editMenu"><a href="#" data-i18n="navigation.application.build"></a></li>
+                <li id="build" name="editMenu"><a href="javascript:void(0)" data-i18n="navigation.application.build"></a></li>
 				<li class="dropdown" name="editMenu">
-                	<a href="#" id="drop4" role="quality" class="dropdown-toggle drop-qual" id="qualityMenu" data-toggle="dropdown">Quality Assurance<b class="caret"></b></a>
+                	<a href="javascript:void(0)" id="drop4" role="quality" class="dropdown-toggle drop-qual" id="qualityMenu" data-toggle="dropdown">Quality Assurance<b class="caret"></b></a>
                 	<div class="dropdown-menu cust_sel test_options" role="quality" aria-labelledby="drop4">
                       	<ul id="qualityAssurance">
-                        	<li id="unitTest" name="qualityMenu"><a href="#" data-i18n="navigation.application.unit"></a></li>
-                        	<li id="componentTest" name="qualityMenu"><a href="#" data-i18n="navigation.application.component"></a></li>
-                            <li id="functionalTest" name="qualityMenu"><a href="#" data-i18n="navigation.application.functional"></a></li>
-                            <li id="manualTest" name="qualityMenu"><a href="#" data-i18n="navigation.application.manual"></a></li>
-							<li id="performanceTest" name="qualityMenu"><a href="#" data-i18n="navigation.application.performance"></a></li>
-                            <li id="loadTest" name="qualityMenu"><a href="#" data-i18n="navigation.application.load"></a></li>
+                        	<li id="unitTest" name="qualityMenu"><a href="javascript:void(0)" data-i18n="navigation.application.unit"></a></li>
+                        	<li id="componentTest" name="qualityMenu"><a href="javascript:void(0)" data-i18n="navigation.application.component"></a></li>
+                            <li id="functionalTest" name="qualityMenu"><a href="javascript:void(0)" data-i18n="navigation.application.functional"></a></li>
+                            <li id="manualTest" name="qualityMenu"><a href="javascript:void(0)" data-i18n="navigation.application.manual"></a></li>
+							<li id="performanceTest" name="qualityMenu"><a href="javascript:void(0)" data-i18n="navigation.application.performance"></a></li>
+                            <li id="loadTest" name="qualityMenu"><a href="javascript:void(0)" data-i18n="navigation.application.load"></a></li>
                         </ul>
                       </div>
                 </li>
-                <li id="continuousDeliveryView" name="editMenu"><a href="#" data-i18n="navigation.application.ci"></a></li>
-                <li id="mavenReport" name="editMenu"><a href="#" data-i18n="navigation.application.report"></a></li>
+                <li id="continuousDeliveryView" name="editMenu"><a href="javascript:void(0)" data-i18n="navigation.application.ci"></a></li>
+                <li id="mavenReport" name="editMenu"><a href="javascript:void(0)" data-i18n="navigation.application.report"></a></li>
         	</ul>
         </div>
     	<h1 id="aplntitle"></h1>

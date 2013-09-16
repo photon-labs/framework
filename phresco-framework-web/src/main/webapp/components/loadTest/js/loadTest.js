@@ -162,7 +162,7 @@ define(["performanceLoadListener/listener/performanceLoadListener"], function() 
 					returnVal = data[0];
 				} else {
 					$.each(data, function(index, value){
-						returnVal += '<li class="testAgainstOption"><a href="#" name="testAgainst" value="'+value+'">'+ value +'</a></li>';
+						returnVal += '<li class="testAgainstOption"><a href="javascript:void(0)" name="testAgainst" value="'+value+'">'+ value +'</a></li>';
 					});
 				}
 				return returnVal;
@@ -175,7 +175,7 @@ define(["performanceLoadListener/listener/performanceLoadListener"], function() 
 					returnVal = data[0];
 				} else if ( data !== null) {
 					$.each(data, function(index, value){
-						returnVal += '<li class="testResultFilesOption"><a href="#" name="resultFileName">'+ value +'</a></li>';
+						returnVal += '<li class="testResultFilesOption"><a href="javascript:void(0)" name="resultFileName">'+ value +'</a></li>';
 					});
 				}
 				return returnVal;

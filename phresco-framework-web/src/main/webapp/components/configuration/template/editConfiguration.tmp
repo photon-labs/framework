@@ -6,7 +6,7 @@
 					<ul class="nav">
 						<li id="fat-menu" class="dropdown">
 							{{#if envSpecificVal}}
-								<a href="#" id="drop3" role="button" class="dropdown-toggle drop-qual" data-toggle="dropdown">
+								<a href="javascript:void(0)" id="drop3" role="button" class="dropdown-toggle drop-qual" data-toggle="dropdown">
 									{{#if userPermissions.manageConfiguration}}
 										<input type="submit" data-i18n="[value]configuration.label.addconfig" class="btn btn_style arrow_down_icon">
 									{{else}}
@@ -17,12 +17,12 @@
 								<ul name="configurations">
 									{{#configType}}
 									{{#if envSpecific}}
-									<li name="{{templateName}}"><a href="#">{{templateName}}</a></li>
+									<li name="{{templateName}}"><a href="javascript:void(0)">{{templateName}}</a></li>
 									{{else}}
-									<li name="{{templateName}}" style="display:none"><a href="#">{{templateName}}</a></li>
+									<li name="{{templateName}}" style="display:none"><a href="javascript:void(0)">{{templateName}}</a></li>
 									{{/if}}
 									{{/configType}}
-									<li name="Other"><a href="#">Other</a></li>
+									<li name="Other"><a href="javascript:void(0)">Other</a></li>
 								{{/if}}
 							</ul>
 						  </div>
@@ -57,7 +57,7 @@
 			<!--features_content_main div ends here -->
 				<div id="validationConsole" style="display:none">
 					<div class="unit_close">
-						<a href="#" data-flag="true" id="themeValidation">
+						<a href="javascript:void(0)" data-flag="true" id="themeValidation">
 							<img src="themes/default/images/helios/console_img.png" width="33" height="92" border="0" alt="">
 							<div class="progress_loading" style="display:none;"><img src="themes/default/images/helios/progress_load.gif" border="0"></div>
 						</a>
@@ -69,7 +69,7 @@
 									<td>
 										<div class="flt_right">
 											<input type="button" class="btn btn_style kill_btn" value="Kill Process" data-i18n="[value]build.label.killprocess">
-											<a href="#" title="" href="#" id="buildCopyLog">
+											<a href="javascript:void(0)" title="" href="javascript:void(0)" id="buildCopyLog">
 												<img src="themes/default/images/helios/buildreport_icon.png" width="15" height="18" border="0" alt="">
 											</a>
 										</div>

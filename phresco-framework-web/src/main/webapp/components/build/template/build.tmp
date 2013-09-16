@@ -2,8 +2,8 @@
         <div class="alert_div" style="display:none;" data-i18n="build.label.ProgressMsg"></div>
         
         <div class="flt_right">
-            <div class="icon_images"><a title="" class="tooltiptop" title="" data-placement="bottom" data-toggle="tooltip" data-original-title="Open Folder" href="#" id="openFolder"><img src="themes/default/images/helios/openfolder_icon.png" ></a></div>
-			<div class="icon_images copy_path_icon"><a title=""  class="tooltiptop" title="" data-placement="bottom" data-toggle="tooltip" data-original-title="Copy Path" href="#" id="copyPath"><img src="themes/default/images/helios/copypath_icon.png" ></a></div>	
+            <div class="icon_images"><a title="" class="tooltiptop" title="" data-placement="bottom" data-toggle="tooltip" data-original-title="Open Folder" href="javascript:void(0)" id="openFolder"><img src="themes/default/images/helios/openfolder_icon.png" ></a></div>
+			<div class="icon_images copy_path_icon"><a title=""  class="tooltiptop" title="" data-placement="bottom" data-toggle="tooltip" data-original-title="Copy Path" href="javascript:void(0)" id="copyPath"><img src="themes/default/images/helios/copypath_icon.png" ></a></div>	
 			<div class="build_genbuild">
 			{{#if userPermissions.manageBuilds}}
 				<input type="submit" data-i18n="[value]build.label.runagainstsource" name="build_runagsource" class="btn btn_style" id="run_src">
@@ -79,17 +79,17 @@
 								<td name="{{buildNo}}">{{buildNo}}</td>
 								<td>{{timeStamp}}</td>
 								<td class="list_img">
-									<a href="#" class="tooltiptop" title="" data-placement="bottom" data-toggle="tooltip" data-original-title="Download">
+									<a href="javascript:void(0)" class="tooltiptop" title="" data-placement="bottom" data-toggle="tooltip" data-original-title="Download">
 										<img name="downloadBuild" src="themes/default/images/helios/download_icon.png" width="15" height="18" border="0" alt="">
 									</a>
 									{{#if options.canCreateIpa}}
-										<a href="#" class="tooltiptop" title="" data-placement="bottom" data-toggle="tooltip" data-original-title="IPA Download">
+										<a href="javascript:void(0)" class="tooltiptop" title="" data-placement="bottom" data-toggle="tooltip" data-original-title="IPA Download">
 											<img name="ipaDownload" src="themes/default/images/helios/ipa_icon.png" width="13" height="18" border="0" alt="">
 										</a>
 									{{/if}}
 								</td>
 								<td name="prcBuild" class="list_img">
-									<a href="#" class="tooltiptop" title="" data-placement="bottom" data-toggle="tooltip" data-original-title="Process build">
+									<a href="javascript:void(0)" class="tooltiptop" title="" data-placement="bottom" data-toggle="tooltip" data-original-title="Process build">
 										<img name="procBuild" src="themes/default/images/helios/download_icon.png" width="15" height="18" border="0" alt="">
 									</a>
 									<div id="prcBuild_{{buildNo}}" class="dyn_popup popup_bg" style="display:none;">
@@ -110,7 +110,7 @@
 								</td>
 								<td name="buildDep" class="list_img">
 									{{#if ../userPermissions.manageBuilds}}
-										<a href="#" class="tooltiptop" title="" data-placement="bottom" data-toggle="tooltip" data-original-title="Deploy">
+										<a href="javascript:void(0)" class="tooltiptop" title="" data-placement="bottom" data-toggle="tooltip" data-original-title="Deploy">
 											{{{devicedploy options.deviceDeploy}}}
 										</a>
 										<div id="deploye_{{buildNo}}" class="dyn_popup popup_bg" style="display:none;">
@@ -132,7 +132,7 @@
 								</td>
 								<td class="list_img">
 									{{#if ../userPermissions.manageBuilds}}
-										<a name="delete_{{buildNo}}" class="deletebuildRow tooltiptop" title="" data-placement="bottom" data-toggle="tooltip" href="#" data-original-title="Delete Row">
+										<a name="delete_{{buildNo}}" class="deletebuildRow tooltiptop" title="" data-placement="bottom" data-toggle="tooltip" href="javascript:void(0)" data-original-title="Delete Row">
 											<img name="deleteBuild" src="themes/default/images/helios/delete_row.png" width="14" height="18" border="0" alt="">
 										</a>
 										<div id="delete_{{buildNo}}" class="dyn_popup deleteproj_msg">
@@ -157,7 +157,7 @@
 			{{/if}}	
 		</div>
 		<div class="unit_close">
-			<a href="#" data-flag="true" id="buildConsole">
+			<a href="javascript:void(0)" data-flag="true" id="buildConsole">
 				<img src="themes/default/images/helios/console_img.png" width="33" height="92" border="0" alt="">
 				<div class="progress_loading" style="display:none;"><img src="themes/default/images/helios/progress_load.gif" border="0"></div>
 			</a>
@@ -169,7 +169,7 @@
 						<td>
 							<div class="flt_right">
 								<input type="button" class="btn btn_style kill_btn" value="Kill Process" data-i18n="[value]build.label.killprocess">
-								<a href="#" class="tooltiptop" title="" data-placement="bottom" data-toggle="tooltip" data-original-title="Copy Log" id="buildCopyLog">
+								<a href="javascript:void(0)" class="tooltiptop" title="" data-placement="bottom" data-toggle="tooltip" data-original-title="Copy Log" id="buildCopyLog">
 									<img src="themes/default/images/helios/buildreport_icon.png" width="15" height="18" border="0" alt="">
 								</a>
 							</div>

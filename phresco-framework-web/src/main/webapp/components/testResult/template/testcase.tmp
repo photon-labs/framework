@@ -90,7 +90,7 @@
 									{{bugComment}}
 								</td>
 								<td class="manual hideContent">
-									<a class="dynPopup{{@index}}" href="#" name="updateManualTestCase_popup" testcaseName="{{testCaseId}}">
+									<a class="dynPopup{{@index}}" href="javascript:void(0)" name="updateManualTestCase_popup" testcaseName="{{testCaseId}}">
 										<img alt="Edit" src="themes/default/images/helios/edit_icon.png"/>
 										<!-- edit testcase popup starts -->
 										<div id="dynPopup{{@index}}" class="dyn_popup hideContent">
@@ -155,7 +155,7 @@
 								</td>
 								<td class="list_img logTd">
 									{{#if testCaseFailure}}
-										<a href="#" type="failure" resultName="{{removeDot name}}" class="log">
+										<a href="javascript:void(0)" type="failure" resultName="{{removeDot name}}" class="log">
 											<img src="themes/default/images/helios/log_icon.png" width="13" height="13" border="0" alt="">
 										</a>
 										<div id="{{removeDot name}}" style="display: none; width:500px">
@@ -166,7 +166,7 @@
 										</div>
 									{{else}}
 										{{#if testCaseError}}
-											<a href="#" type="failure" resultName="{{removeDot name}}" class="log">
+											<a href="javascript:void(0)" type="failure" resultName="{{removeDot name}}" class="log">
 												<img src="themes/default/images/helios/log_icon.png" width="13" height="13" border="0" alt="">
 											</a>
 											<div id="{{removeDot name}}" style="display: none; width:500px;">
@@ -180,12 +180,12 @@
 								</td>
 								<td class="functional hideContent">
 									{{#if testCaseFailure.hasFailureImg}}
-										<a href="#" class="{{name}}">
+										<a href="javascript:void(0)" class="{{name}}">
 											<img src="themes/default/images/helios/screenshot_icon.png" width="19" height="16" border="0" alt="" />
 										</a>
 									{{else}}
 										{{#if testCaseError.hasFailureImg}}
-											<a href="#" class="{{name}}">
+											<a href="javascript:void(0)" class="{{name}}">
 												<img src="themes/default/images/helios/screenshot_icon.png" width="19" height="16" border="0" alt="" />
 											</a>
 										{{/if}}
@@ -210,7 +210,7 @@
 
     <!-- Progress div starts here-->
     <div class="unit_close">
-    	<a href="#" data-flag="true" id="consoleImg">
+    	<a href="javascript:void(0)" data-flag="true" id="consoleImg">
 			<img src="themes/default/images/helios/console_img.png" width="33" height="92" border="0" alt="">
 			<div class="progress_loading" style="display:none;"><img src="themes/default/images/helios/progress_load.gif" border="0"></div>
 		</a>
@@ -222,7 +222,7 @@
 					<td>
 						<div class="flt_right">
 							<input type="button" class="btn btn_style kill_btn" value="Kill Process" data-i18n="[value]build.label.killprocess">
-							<a href="#" id="buildCopyLog">
+							<a href="javascript:void(0)" id="buildCopyLog">
 								<img src="themes/default/images/helios/buildreport_icon.png" width="15" height="18" border="0" alt="">
 							</a>
 						</div>

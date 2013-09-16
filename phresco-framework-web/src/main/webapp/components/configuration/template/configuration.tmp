@@ -94,12 +94,12 @@
 			  <tr class="envlist">
 				<td name='envNames'>{{name}} {{#if defaultEnv}} (Default) {{else}} &nbsp; {{/if}}</td>  
 				<td width="50%">{{#if desc }} {{desc}} {{else}} &nbsp {{/if}}</td>
-				<td class="list_img"><a class="tooltiptop" href="#" data-toggle="tooltip" data-placement="bottom" data-original-title="Configure" envSpecificValue="{{#if ../envSpecific}}true{{else}}false{{/if}}" name="editConfiguration" key={{name}}>
+				<td class="list_img"><a class="tooltiptop" href="javascript:void(0)" data-toggle="tooltip" data-placement="bottom" data-original-title="Configure" envSpecificValue="{{#if ../envSpecific}}true{{else}}false{{/if}}" name="editConfiguration" key={{name}}>
 				<img src="themes/default/images/helios/configure_icon.png" width="15" height="16" border="0" alt=""></a></td>
 				{{#if ../envSpecific}}
 				<td class="list_img">
 					{{#if ../../userPermissions.manageConfiguration}}
-						<a class="tooltiptop" href="#" data-placement="bottom" data-toggle="tooltip" data-original-title="Clone" name="clone_popup{{name}}">
+						<a class="tooltiptop" href="javascript:void(0)" data-placement="bottom" data-toggle="tooltip" data-original-title="Clone" name="clone_popup{{name}}">
 							<img src="themes/default/images/helios/clone_icon.png" width="20" height="18" border="0" alt="">
 						</a>
 					{{else}}
@@ -138,7 +138,7 @@
 						{{#if defaultEnv}}
 							<img src="themes/default/images/helios/delete_row_off.png" border="0" alt="">
 						{{else}}
-						<a name="{{name}}" class="tooltiptop" title="" data-placement="bottom" data-toggle="tooltip" href="#" data-original-title="Delete Row">
+						<a name="{{name}}" class="tooltiptop" title="" data-placement="bottom" data-toggle="tooltip" href="javascript:void(0)" data-original-title="Delete Row">
 							<img src="themes/default/images/helios/delete_row.png" border="0" alt=""></a>
 						{{/if}}	
 					{{else}}

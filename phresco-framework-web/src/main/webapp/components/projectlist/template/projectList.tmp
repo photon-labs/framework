@@ -20,11 +20,11 @@
                       <tr class="proj_title"> 
                         <td colspan="4">{{name}}</td>  
                         <td colspan="3" align="right" class="delimages">
-                        	<a href="#" class="tooltiptop" title="" data-placement="bottom" data-toggle="tooltip"  data-original-title="Edit Project">
+                        	<a href="javascript:void(0)" class="tooltiptop" title="" data-placement="bottom" data-toggle="tooltip"  data-original-title="Edit Project">
                         		<img name="editproject" key="{{id}}" src="themes/default/images/helios/edit_row_icon.png" width="29" height="23" border="0" alt="">
                     		</a> 
                     		{{#if ../userPermissions.manageApplication}}
-	                    		<a name="{{id}}" appIds="{{#appIds appInfos}}{{/appIds}}" class="tooltiptop del_project" title="" data-placement="bottom" data-toggle="tooltip" href="#" data-original-title="Delete {{name}}">
+	                    		<a name="{{id}}" appIds="{{#appIds appInfos}}{{/appIds}}" class="tooltiptop del_project" title="" data-placement="bottom" data-toggle="tooltip" href="javascript:void(0)" data-original-title="Delete {{name}}">
 	                    			<img src="themes/default/images/helios/delete_row_icon.png" width="29" height="23" border="0" alt="0">
 	                			</a>
                 			{{else}}
@@ -44,7 +44,7 @@
                         <td width="25%"><a name="editApplication" href="javascript:;">{{name}}</a></td>
                         <td width="25%">{{#descriptionshow description}}{{/descriptionshow}}</td>
                         <td width="25%">{{techInfo.name}}</td>
-                       <td class="list_img"><a name="pdf_report_{{id}}" temp="pdf_report" fromPage="All" class="tooltiptop" title="" dynamicId="{{id}}" data-placement="bottom" data-t="tooltip" href="#" data-original-title="PDF Report"><img src="themes/default/images/helios/pdf_icon.png" width="14" height="16" border="0" alt=""></a>
+                       <td class="list_img"><a name="pdf_report_{{id}}" temp="pdf_report" fromPage="All" class="tooltiptop" title="" dynamicId="{{id}}" data-placement="bottom" data-t="tooltip" href="javascript:void(0)" data-original-title="PDF Report"><img src="themes/default/images/helios/pdf_icon.png" width="14" height="16" border="0" alt=""></a>
                   
               <div id="pdf_report_{{id}}" class="dyn_popup pdf_report">
               <div id="noReport_{{id}}" class="alert noReport hideContent" style="text-align: center;"></div>
@@ -96,11 +96,11 @@
                   </td>
                         <td class="list_img">
                         {{#if ../../userPermissions.manageRepo}}
-							<a name="addRepo_{{id}}" dynamicId="{{id}}" class="tooltiptop" title="" data-placement="bottom" data-toggle="tooltip" href="#" data-original-title="Add Repo" >
+							<a name="addRepo_{{id}}" dynamicId="{{id}}" class="tooltiptop" title="" data-placement="bottom" data-toggle="tooltip" href="javascript:void(0)" data-original-title="Add Repo" >
 								<img src="themes/default/images/helios/add_repo_icon.png" width="18" height="15" border="0" alt="" class="left_add_repo">
 							</a> 
 
-                        	<a name="commit{{id}}" dynamicId="{{id}}" class="tooltiptop" title="" data-placement="bottom" data-toggle="tooltip" href="#" data-original-title="Commit" >
+                        	<a name="commit{{id}}" dynamicId="{{id}}" class="tooltiptop" title="" data-placement="bottom" data-toggle="tooltip" href="javascript:void(0)" data-original-title="Commit" >
                         		<img src="themes/default/images/helios/commit_icon.png" width="16" height="15" border="0" alt="" class="centre_img">
                     		</a> 
 						{{else}}
@@ -109,7 +109,7 @@
                         {{/if}}
                         
                         {{#if ../../userPermissions.manageRepo}}
-                        	<a name="svn_update{{id}}" dynamicId="{{id}}" class="tooltiptop" title="" data-placement="bottom" data-toggle="tooltip" href="#" data-original-title="Update" >
+                        	<a name="svn_update{{id}}" dynamicId="{{id}}" class="tooltiptop" title="" data-placement="bottom" data-toggle="tooltip" href="javascript:void(0)" data-original-title="Update" >
                         		<img src="themes/default/images/helios/update_svn_icon.png" width="22" height="15" border="0" alt="">
                     		</a>
               			{{else}}
@@ -277,7 +277,7 @@
                   </td>
                   <td class="list_img">
                   	{{#if ../../userPermissions.manageApplication}}
-	                  	<a name="{{creationDate}}" dynamicid="{{id}}"  class="tooltiptop del_appln" title="" data-placement="bottom" data-toggle="tooltip" href="#" data-original-title="Delete {{appDirName}}">
+	                  	<a name="{{creationDate}}" dynamicid="{{id}}"  class="tooltiptop del_appln" title="" data-placement="bottom" data-toggle="tooltip" href="javascript:void(0)" data-original-title="Delete {{appDirName}}">
 	                  		<img name="delete" src="themes/default/images/helios/delete_row.png" width="14" height="18" border="0" alt="">
 	              		</a>
               		{{else}}

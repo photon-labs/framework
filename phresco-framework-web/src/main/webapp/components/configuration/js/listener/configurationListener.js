@@ -426,7 +426,7 @@ define(["croneExpression/croneExpression"], function() {
 							inputCtrl = inputCtrl.concat(options1);
 							inputCtrl = inputCtrl.concat("</select></td>"); 
 						} else if (key === 'certificate') { 
-							inputCtrl = '<input mandatory="'+required+'" value="'+ configValue +'" class="'+configTemplate.name+self.count+'Configuration" name="'+key+'" temp="'+configTemplate.name+key+self.count+'" type="text" placeholder=""/><a href="#" name="remote_deploy"><img src="themes/default/images/helios/settings_icon.png" width="23" height="22" border="0" alt=""></a><div id="remote_deploy" class="dyn_popup" style="display:none"><div id="certificateValue"></div><div class="flt_right"><input type="button" name="selectFilePath" class="btn btn_style" value="Ok">&nbsp;&nbsp;<input type="button" value="Close" name="treePopupClose" class="btn btn_style dyn_popup_close"></div></div>';
+							inputCtrl = '<input mandatory="'+required+'" value="'+ configValue +'" class="'+configTemplate.name+self.count+'Configuration" name="'+key+'" temp="'+configTemplate.name+key+self.count+'" type="text" placeholder=""/><a href="javascript:void(0)" name="remote_deploy"><img src="themes/default/images/helios/settings_icon.png" width="23" height="22" border="0" alt=""></a><div id="remote_deploy" class="dyn_popup" style="display:none"><div id="certificateValue"></div><div class="flt_right"><input type="button" name="selectFilePath" class="btn btn_style" value="Ok">&nbsp;&nbsp;<input type="button" value="Close" name="treePopupClose" class="btn btn_style dyn_popup_close"></div></div>';
 						} else {
 							inputCtrl = '<input mandatory="'+required+'" value="'+ configValue +'" configKey ="configKey'+configTemplate.name+key+'" class="'+configTemplate.name+self.count+'Configuration" name="'+key+'" temp="'+configTemplate.name+key+self.count+'" type="text" placeholder=""/>';
 						}
@@ -530,7 +530,7 @@ define(["croneExpression/croneExpression"], function() {
 					if(response.data[0] !== undefined) {
 						var arr = response.data[0].split("/");
 						var strFile = arr[arr.length-1];
-						$("ul.qq-upload-list").append('<li><span class="qq-upload-file">'+strFile+'</span><a name="removeFile" href="#"><img src="themes/default/images/helios/cross_red.png" border="0" alt=""></a></li>');
+						$("ul.qq-upload-list").append('<li><span class="qq-upload-file">'+strFile+'</span><a name="removeFile" href="javascript:void(0)"><img src="themes/default/images/helios/cross_red.png" border="0" alt=""></a></li>');
 						$("div[name=qq-upload-file]").attr("disabled", true).children().attr("disabled", true);
 						$("input[validateButton=validate]").attr("disabled", false);
 						self.removeFile(configType, propertyName, envName, $(".configName").val());

@@ -228,7 +228,7 @@ define(["framework/widgetWithTemplate", "common/loading", "lib/customcombobox-1.
 		
 		constructFileBrowseCtrl : function (parameter, whereToRender, goal) {
 			var self=this;
-			whereToRender.append('<li id="'+parameter.key+'Li" class="ctrl"><label>'+parameter.name.value[0].value+'</label><input type="text" name="'+parameter.key+'" id="'+parameter.key+'" style="width: 120px ! important;"><a href="#" name="browse"><img src="themes/default/images/helios/settings_icon.png" width="23" height="22" border="0" alt=""></a><div id="browse" class="dyn_popup" style="display:none"><div id="keystoreValue"></div><div class="flt_right"><input type="button" name="selectFilePath" class="btn btn_style" value="Ok">&nbsp;&nbsp;<input type="button" value="Close" name="treePopupClose" class="btn btn_style dyn_popup_close"></div></div></li>');
+			whereToRender.append('<li id="'+parameter.key+'Li" class="ctrl"><label>'+parameter.name.value[0].value+'</label><input type="text" name="'+parameter.key+'" id="'+parameter.key+'" style="width: 120px ! important;"><a href="javascript:void(0)" name="browse"><img src="themes/default/images/helios/settings_icon.png" width="23" height="22" border="0" alt=""></a><div id="browse" class="dyn_popup" style="display:none"><div id="keystoreValue"></div><div class="flt_right"><input type="button" name="selectFilePath" class="btn btn_style" value="Ok">&nbsp;&nbsp;<input type="button" value="Close" name="treePopupClose" class="btn btn_style dyn_popup_close"></div></div></li>');
 			self.signingFileTreeEvent($("#"+parameter.key), $("#keystoreValue"));
 		},
 
@@ -402,8 +402,8 @@ define(["framework/widgetWithTemplate", "common/loading", "lib/customcombobox-1.
                 mapCtrl =  mapCtrl.concat('</select></td>');
             } else if ("String" === childs[1].type) {
                 mapCtrl =  mapCtrl.concat('<td><input type="text" name="'+childs[1].key+'">');
-                mapCtrl =  mapCtrl.concat('<a href="#" class="addBrowserInfo"><img src="themes/default/images/helios/plus_icon.png" alt=""></a>');
-                mapCtrl =  mapCtrl.concat('<a href="#" class="removeBrowserInfo hideContent"><img src="themes/default/images/helios/minus_icon.png" alt=""></a>');
+                mapCtrl =  mapCtrl.concat('<a href="javascript:void(0)" class="addBrowserInfo"><img src="themes/default/images/helios/plus_icon.png" alt=""></a>');
+                mapCtrl =  mapCtrl.concat('<a href="javascript:void(0)" class="removeBrowserInfo hideContent"><img src="themes/default/images/helios/minus_icon.png" alt=""></a>');
                 mapCtrl =  mapCtrl.concat('</td>');
             }
             mapCtrl =  mapCtrl.concat('</tr></tbody></table>');

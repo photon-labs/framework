@@ -302,12 +302,12 @@ define([], function() {
 						content = content.concat(headerTr);
 						if(response.data[i].status === "SUCCESS" && (operation === 'build' || operation === 'pdfReport')) {
 							var url = (response.data[i].download).replace(/\"/g, ""); 
-							headerTr = '<td><center><a href="#" data-placement="top" continuousName="'+continuousName+'" jobName="'+jobName+'"buildNumber="'+response.data[i].number+'"buildDownloadUrl="'+ url +'"temp="downloadBuild"><img src="themes/default/images/helios/download_icon.png" width="14" height="18" border="0" alt="0"></a><center></td>';
+							headerTr = '<td><center><a href="javascript:void(0)" data-placement="top" continuousName="'+continuousName+'" jobName="'+jobName+'"buildNumber="'+response.data[i].number+'"buildDownloadUrl="'+ url +'"temp="downloadBuild"><img src="themes/default/images/helios/download_icon.png" width="14" height="18" border="0" alt="0"></a><center></td>';
 						} else {
 							headerTr = '<td><center><img src="themes/default/images/helios/cross_red.png" width="14" height="18" border="0" alt="0"><center></td>';
 						}
 						content = content.concat(headerTr);
-						headerTr = '<td><a href="#" data-placement="top" continuousName="'+continuousName+'" jobName="'+jobName+'"buildNumber="'+response.data[i].number+'"temp="deleteBuild"><img src="themes/default/images/helios/delete_row.png" width="14" height="18" border="0" alt="0"></a></td></tr>';
+						headerTr = '<td><a href="javascript:void(0)" data-placement="top" continuousName="'+continuousName+'" jobName="'+jobName+'"buildNumber="'+response.data[i].number+'"temp="deleteBuild"><img src="themes/default/images/helios/delete_row.png" width="14" height="18" border="0" alt="0"></a></td></tr>';
 						content = content.concat(headerTr);
 					}
 					

@@ -48,7 +48,7 @@ define(["unitTest/listener/unitTestListener", "testResult/listener/testResultLis
 					returnVal = data[0];
 				} else {
 					$.each(data, function(index, current){
-						returnVal += '<li class="reportOption"><a href="#">'+ current +'</a></li>';
+						returnVal += '<li class="reportOption"><a href="javascript:void(0)">'+ current +'</a></li>';
 					});
 				}
 				return returnVal;
@@ -60,7 +60,7 @@ define(["unitTest/listener/unitTestListener", "testResult/listener/testResultLis
 					returnVal = data[0];
 				} else {
 					$.each(data, function(index, current){
-						returnVal += '<li class="projectModule"><a href="#">'+ current +'</a></li>';
+						returnVal += '<li class="projectModule"><a href="javascript:void(0)">'+ current +'</a></li>';
 					});
 				}
 				return returnVal;

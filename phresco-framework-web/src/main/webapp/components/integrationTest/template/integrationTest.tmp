@@ -5,7 +5,7 @@
     <div class="flt_right">
 		<div class="unit_view hideContent">
 			<div class="code_report_icon" id="pdfDiv">
-				div class="icon_images"><a class="tooltiptop" title="" data-placement="bottom" data-toggle="tooltip" href="#" data-original-title="PDF Report" id="pdfIcon"><img src="themes/default/images/helios/pdf_icon_white.png" ></a>
+				div class="icon_images"><a class="tooltiptop" title="" data-placement="bottom" data-toggle="tooltip" href="javascript:void(0)" data-original-title="PDF Report" id="pdfIcon"><img src="themes/default/images/helios/pdf_icon_white.png" ></a>
 				<!--Pdf report popup starts here -->
 				<div id="pdf_report" class="dyn_popup hideContent">
 					<div id="noPdfReport" class="noReport"></div>
@@ -53,14 +53,14 @@
 				<!--Pdf report popup ends here -->	
 			</div>
             <span>
-            	<a id="tabularView" href="#"><img src="themes/default/images/helios/quality_table_on.png" width="25" height="25" border="0" alt=""><b data-i18n="commonlabel.label.tableview"></b></a>
+            	<a id="tabularView" href="javascript:void(0)"><img src="themes/default/images/helios/quality_table_on.png" width="25" height="25" border="0" alt=""><b data-i18n="commonlabel.label.tableview"></b></a>
             </span>
             <span>
-            	<a id="graphicalView" href="#"><img src="themes/default/images/helios/quality_graph_off.png" width="26" height="24" border="0" alt="" data-i18n="[value]commonlabel.label.graphview"></a>
+            	<a id="graphicalView" href="javascript:void(0)"><img src="themes/default/images/helios/quality_graph_off.png" width="26" height="24" border="0" alt="" data-i18n="[value]commonlabel.label.graphview"></a>
             </span>    
         </div>
-    	<div class="icon_images"><a class="tooltiptop" title="" data-placement="bottom" data-toggle="tooltip" href="#" data-original-title="Open Folder" id="openFolder"><img src="themes/default/images/helios/openfolder_icon.png" ></a></div>
-		<div class="icon_images copy_path_icon"><a class="tooltiptop" title="" data-placement="bottom" data-toggle="tooltip" href="#" data-original-title="Copy Path" id="copyPath"><img src="themes/default/images/helios/copypath_icon.png" ></a></div>	
+    	<div class="icon_images"><a class="tooltiptop" title="" data-placement="bottom" data-toggle="tooltip" href="javascript:void(0)" data-original-title="Open Folder" id="openFolder"><img src="themes/default/images/helios/openfolder_icon.png" ></a></div>
+		<div class="icon_images copy_path_icon"><a class="tooltiptop" title="" data-placement="bottom" data-toggle="tooltip" href="javascript:void(0)" data-original-title="Copy Path" id="copyPath"><img src="themes/default/images/helios/copypath_icon.png" ></a></div>	
             
         {{#if projectModules}}
             <div class="code_report">
@@ -69,7 +69,7 @@
             <div class="navbar navbar-static code_func module">
                 <ul class="nav">
                     <li id="fat-menu" class="dropdown">
-						<a href="#" id="modulesDrop" role="button" class="dropdown-toggle" data-toggle="dropdown" 
+						<a href="javascript:void(0)" id="modulesDrop" role="button" class="dropdown-toggle" data-toggle="dropdown" 
 							value="{{#modules projectModules true}}{{/modules}}">{{#modules projectModules true}}{{/modules}}<b class="caret"></b></a>
                       	<div class="dropdown-menu cust_sel code_test_opt" role="menu" aria-labelledby="modulesDrop">
 	                      	<ul>
@@ -88,7 +88,7 @@
             <div class="navbar navbar-static code_func">
                 <ul class="nav">
                     <li id="fat-menu" class="dropdown">
-						<a href="#" id="reportOptionsDrop" role="button" class="dropdown-toggle" data-toggle="dropdown" 
+						<a href="javascript:void(0)" id="reportOptionsDrop" role="button" class="dropdown-toggle" data-toggle="dropdown" 
 							value="{{#report reportOptions true}}{{/report}}">{{#report reportOptions true}}{{/report}}<b class="caret"></b></a>
 						<div class="dropdown-menu cust_sel code_test_opt" role="menu" aria-labelledby="reportOptionsDrop">
 	                      	<ul>

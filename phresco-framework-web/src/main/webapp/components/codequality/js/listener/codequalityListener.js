@@ -211,7 +211,7 @@ define([], function() {
 							typeLi += "<li disabled='disabled' key="+resdata.validateAgainst.key+" data="+resdata.validateAgainst.value+" style='padding-left:4px;'>"+resdata.validateAgainst.value+'<ul>'+innerUl+"</ul></li>";
 						}
 					});
-					var dropdownLi = '<ul class="nav"><li id="fat-menu" class="dropdown"><a href="#" id="drop5" role="button" class="dropdown-toggle" data-toggle="dropdown"><b id="repTypes" key='+validateAgainst+'>'+repTypesData+'</b><b class="caret"></b></a> <div class="dropdown-menu cust_sel code_test_opt" role="menu" aria-labelledby="drop5"> <ul id="reportUl">'+typeLi+'</ul></div></li></ul>';
+					var dropdownLi = '<ul class="nav"><li id="fat-menu" class="dropdown"><a href="javascript:void(0)" id="drop5" role="button" class="dropdown-toggle" data-toggle="dropdown"><b id="repTypes" key='+validateAgainst+'>'+repTypesData+'</b><b class="caret"></b></a> <div class="dropdown-menu cust_sel code_test_opt" role="menu" aria-labelledby="drop5"> <ul id="reportUl">'+typeLi+'</ul></div></li></ul>';
 					var codeReport = $("#codereportTypes").attr("class");
 					if(codeReport !== undefined) {
 						$("#codereportTypes").append(dropdownLi);
@@ -257,7 +257,7 @@ define([], function() {
 								$(".alert").attr('data-i18n', 'errorCodes.' + iframereport.responseCode);
 								self.renderlocales(commonVariables.contentPlaceholder);
 							} else {
-								commonVariables.api.showError(response.responseCode ,"error", true);
+								commonVariables.api.showError(iframereport.responseCode ,"error", true);
 							}	
 						}
 					},

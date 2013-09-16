@@ -230,7 +230,7 @@ define([], function() {
 						if (response !== null && response.status !== "error" && response.status !== "failure") {
 						var data = {};
 							data.appdetails = response;
-							if (response){$('.hProjectId').val(response.data.projectInfo.id);}
+							if (response){$('.hProjectId').val(response.data.projectInfo.appInfos[0].id);}
 							commonVariables.api.localVal.setProjectInfo(response);
 							self.getAppConfig(response , 'SERVER', function(appInfo){
 								data.serverData = appInfo.data;
@@ -436,7 +436,7 @@ define([], function() {
 								self.editAplnContent.appDirName = response.data.appDirName;
 								commonVariables.appDirName = response.data.appDirName;
 								commonVariables.api.localVal.setSession('appDirName', response.data.appDirName);
-								if (response){$('.hProjectId').val(response.data.projectInfo.id);}
+								if (response){$('.hProjectId').val(response.data.projectInfo.appInfos[0].id);}
 								commonVariables.api.localVal.setProjectInfo(response);
 								Clazz.navigationController.push(self.editAplnContent, true);
 								setTimeout(function(){

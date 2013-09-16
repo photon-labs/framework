@@ -341,7 +341,7 @@ define(["lib/jquery-tojson-1.0",'lib/RGraph_common_core-1.0','lib/RGraph_common_
 					$("#testResultFileDrop").html(response.data[0] + "<b class='caret'></b>");
 					$("#testResultFileDrop").attr("value", response.data[0]);
 					$.each(response.data, function(index, value){
-						returnVal += '<li class="testResultFilesOption"><a href="#" name="resultFileName">'+ value +'</a></li>';
+						returnVal += '<li class="testResultFilesOption"><a href="javascript:void(0)" name="resultFileName">'+ value +'</a></li>';
 					});
 					$("#resultFiles").html(returnVal);
 					self.setResponseTime();
@@ -393,10 +393,10 @@ define(["lib/jquery-tojson-1.0",'lib/RGraph_common_core-1.0','lib/RGraph_common_
 				for (var i = 0; i < pdfReports.length; i++) {
 					content = content.concat('<tr class="generatedRow"><td>' + pdfReports[i].time + '</td>');
 					content = content.concat('<td>' + pdfReports[i].type + '</td>');
-					content = content.concat('<td><a class="tooltiptop donloadPdfReport" from="'+from+'" fileName="' + pdfReports[i].fileName + '" href="#"');
+					content = content.concat('<td><a class="tooltiptop donloadPdfReport" from="'+from+'" fileName="' + pdfReports[i].fileName + '" href="javascript:void(0)"');
 					content = content.concat(' data-toggle="tooltip" data-placement="top" name="downLoad" data-original-title="Download Pdf" title="">');
 					content = content.concat('<img src="themes/default/images/helios/download_icon.png" width="15" height="18" border="0" alt="0"></a></td>');
-					content = content.concat('<td><a class="tooltiptop deletePdf" from="'+from+'" fileName="' + pdfReports[i].fileName + '" href="#"');
+					content = content.concat('<td><a class="tooltiptop deletePdf" from="'+from+'" fileName="' + pdfReports[i].fileName + '" href="javascript:void(0)"');
 					content = content.concat(' data-toggle="tooltip" data-placement="top" name="delete" data-original-title="Delete Pdf" title="">');
 					content = content.concat('<img src="themes/default/images/helios/delete_row.png" width="14" height="18" border="0" alt="0"></a></td></tr>');
 				}
@@ -520,9 +520,9 @@ define(["lib/jquery-tojson-1.0",'lib/RGraph_common_core-1.0','lib/RGraph_common_
 					$("#deviceDropDown").html(response.data[0].split("#SEP#")[1] + '<b class="caret"></b>');
 					var returnVal = "";
 					$.each(response.data, function(index, value){
-						returnVal += '<li class="devicesOption"><a href="#" name="devices" deviceid="'+value.split("#SEP#")[0]+'">'+ value.split("#SEP#")[1] +'</a></li>';
+						returnVal += '<li class="devicesOption"><a href="javascript:void(0)" name="devices" deviceid="'+value.split("#SEP#")[0]+'">'+ value.split("#SEP#")[1] +'</a></li>';
 					});
-					returnVal += '<li class="devicesOption"><a href="#" name="devices" deviceId="">All</a></li>';
+					returnVal += '<li class="devicesOption"><a href="javascript:void(0)" name="devices" deviceId="">All</a></li>';
 					$("#deviceDropUL").html(returnVal);
 					self.getResultOnChangeEvent('',resultFileName, showGraphFor, response.data[0].split("#SEP#")[0], whereToRender);
 					self.deviceChangeEvent(whereToRender);

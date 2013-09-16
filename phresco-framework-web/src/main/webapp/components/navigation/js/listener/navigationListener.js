@@ -967,13 +967,13 @@ define([], function() {
 			$.each(val, function(index, value){
 				if (value.favourite === true || value.envSpecific === false) {
 					flag = true;
-					favConfigList += '<li name="configuration" configType="'+value.templateName+'" favourite='+value.favourite+' envSpecific='+value.envSpecific+'><a href="#">'+value.templateName+'</a></li>';
+					favConfigList += '<li name="configuration" configType="'+value.templateName+'" favourite='+value.favourite+' envSpecific='+value.envSpecific+'><a href="javascript:void(0)">'+value.templateName+'</a></li>';
 				}
 			});
 			if (flag === true) {
-				favConfig = '<a href="#" id="drop4Config" role="quality" class="dropdown-toggle drop-qual" data-toggle="dropdown">Configuration<b class="caret"></b></a><div class="dropdown-menu cust_sel test_options" role="quality" aria-labelledby="drop4"><ul name="configurationList">'+favConfigList+'</ul></div>';
+				favConfig = '<a href="javascript:void(0)" id="drop4Config" role="quality" class="dropdown-toggle drop-qual" data-toggle="dropdown">Configuration<b class="caret"></b></a><div class="dropdown-menu cust_sel test_options" role="quality" aria-labelledby="drop4"><ul name="configurationList">'+favConfigList+'</ul></div>';
 			} else {
-				favConfig = '<a href="#" id="drop4Config" role="quality" class="dropdown-toggle drop-qual" data-toggle="dropdown">Configuration</b></a>';
+				favConfig = '<a href="javascript:void(0)" id="drop4Config" role="quality" class="dropdown-toggle drop-qual" data-toggle="dropdown">Configuration</b></a>';
 			}
 			$("#configuration").append(favConfig);
 			self.clickEvent();

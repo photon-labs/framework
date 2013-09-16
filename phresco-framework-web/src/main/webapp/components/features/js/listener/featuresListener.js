@@ -121,28 +121,14 @@ define(["features/features",  "application/application",  "projectlist/projectLi
 							callback(response);
 						} else {
 							//commonVariables.loadingScreen.removeLoading();
-							$(".msgdisplay").removeClass("success").addClass("error");
-							$(".error").attr('data-i18n', 'errorCodes.' + response.responseCode);
-							self.renderlocales(commonVariables.contentPlaceholder);	
-							$(".error").show();
-							$(".error").fadeIn(500).fadeOut(500).fadeIn(500).fadeOut(500).fadeIn(500).fadeOut(5);
-							setTimeout(function() {
-								$(".error").hide();
-							},2500);
+							commonVariables.api.showError(response.responseCode ,"error", true, false, true);	
 						}
 
 					},
 
 					function(textStatus) {
 						//commonVariables.loadingScreen.removeLoading();
-						$(".msgdisplay").removeClass("success").addClass("error");
-						$(".error").attr('data-i18n', 'commonlabel.errormessage.serviceerror');
-						self.renderlocales(commonVariables.contentPlaceholder);	
-						$(".error").show();
-						$(".error").fadeIn(500).fadeOut(500).fadeIn(500).fadeOut(500).fadeIn(500).fadeOut(5);
-						setTimeout(function() {
-							$(".error").hide();
-						},2500);
+						commonVariables.api.showError("serviceerror" ,"error", true, false, true);	
 					}
 				);
 			} catch(exception) {
@@ -160,41 +146,20 @@ define(["features/features",  "application/application",  "projectlist/projectLi
 						if (response !== null && response.status !== "error" && response.status !== "failure") {
 							//commonVariables.loadingScreen.removeLoading();
 							if(response.responseCode === "PHR200007") {
-								$(".msgdisplay").removeClass("error").addClass("success");
-								$(".success").attr('data-i18n', 'successCodes.' + response.responseCode);
-								self.renderlocales(commonVariables.contentPlaceholder);	
-								$(".success").show();
-								$(".success").fadeIn(500).fadeOut(500).fadeIn(500).fadeOut(500).fadeIn(500).fadeOut(5);
-								setTimeout(function() {
-									$(".success").hide();
-								},2500);
+								commonVariables.api.showError(response.responseCode ,"success", true, false, true);
 							}	
 							callback(response);
 						} else {
 							//commonVariables.loadingScreen.removeLoading();
 							if(response.responseCode === "PHR210008") {
-								$(".msgdisplay").removeClass("success").addClass("error");
-								$(".error").attr('data-i18n', 'errorCodes.' + response.responseCode);
-								self.renderlocales(commonVariables.contentPlaceholder);	
-								$(".error").show();
-								$(".error").fadeIn(500).fadeOut(500).fadeIn(500).fadeOut(500).fadeIn(500).fadeOut(5);
-								setTimeout(function() {
-									$(".error").hide();
-								},2500);
+								commonVariables.api.showError(response.responseCode ,"error", true, false, true);
 							}	
 							
 						}
 					},
 
 					function(textStatus) {
-						$(".msgdisplay").removeClass("success").addClass("error");
-						$(".error").attr('data-i18n', 'commonlabel.errormessage.serviceerror');
-						self.renderlocales(commonVariables.contentPlaceholder);	
-						$(".error").show();
-						$(".error").fadeIn(500).fadeOut(500).fadeIn(500).fadeOut(500).fadeIn(500).fadeOut(5);
-						setTimeout(function() {
-							$(".error").hide();
-						},2500);
+						commonVariables.api.showError("serviceerror" ,"error", true, false, true);
 					}
 				);
 			} catch(exception) {
@@ -292,6 +257,7 @@ define(["features/features",  "application/application",  "projectlist/projectLi
 
 		getRequestHeader : function(projectRequestBody, type, descid) {
 			var url, self = this;
+			var custname = self.getCustomer();
 			var userId = JSON.parse(commonVariables.api.localVal.getSession("userInfo"));
 			var appDirName = commonVariables.api.localVal.getSession("appDirName");
 			var techId = commonVariables.techId;
@@ -301,7 +267,7 @@ define(["features/features",  "application/application",  "projectlist/projectLi
 			};
 			if(type === "FEATURE" || type === "JAVASCRIPT" || type === "COMPONENT"){
 				header.requestMethod = "GET";
-				header.webserviceurl = commonVariables.webserviceurl+commonVariables.featurePageContext+"/list?customerId=photon&techId="+ (techId !== null? techId : "") +"&type="+type+"&userId="+ (userId !== null? userId.id : "");
+				header.webserviceurl = commonVariables.webserviceurl+commonVariables.featurePageContext+"/list?customerId="+custname+"&techId="+ (techId !== null? techId : "") +"&type="+type+"&userId="+ (userId !== null? userId.id : "");
 			} else if (type === "desc") {
 				header.requestMethod = "GET";
 				header.webserviceurl = commonVariables.webserviceurl+commonVariables.featurePageContext+"/desc?artifactGroupId="+descid+"&userId="+(userId !== null? userId.id : "");
@@ -315,11 +281,11 @@ define(["features/features",  "application/application",  "projectlist/projectLi
 				}
 				header.requestMethod = "PUT";
 				header.requestPostBody = JSON.stringify(projectRequestBody);
-				header.webserviceurl = commonVariables.webserviceurl+commonVariables.projectlistContext + "/updateFeature?customerId=photon&userId="+(userId !== null? userId.id : "")+"&appDirName="+(appDirName !== null? appDirName : "")+"&displayName="+displayName;
+				header.webserviceurl = commonVariables.webserviceurl+commonVariables.projectlistContext + "/updateFeature?customerId="+custname+"&userId="+(userId !== null? userId.id : "")+"&appDirName="+(appDirName !== null? appDirName : "")+"&displayName="+displayName;
 			} else if (type === "DEPENDENCY") {
 				header.requestMethod = "GET";
 				header.webserviceurl = commonVariables.webserviceurl+commonVariables.featurePageContext + "/dependencyFeature?userId="+(userId !== null? userId.id : "")+"&versionId="+descid; // descid is versionId
-			}
+			} 
 			return header;
 		}
 		

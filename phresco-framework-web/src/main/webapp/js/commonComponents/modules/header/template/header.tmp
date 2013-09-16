@@ -3,11 +3,11 @@
 	<div class="header_left">
 		<figure><img id="bannerlogo" src="" border="0"></figure>
 		<ul>
-			<li id="dashboardMenu"><a href="#" id="dashboard" data-i18n="header.menu.dashboard"></a></li>
-			<li><a href="#" id="pojectList" class="nav_active" data-i18n="header.menu.projects"></a></li>
-			<li id="settingsMenu"><a href="#" id="settings" data-i18n="header.menu.settings"></a></li>
-			<li id="downloadsMenu"><a href="#" id="downloads" data-i18n="header.menu.downloads"></a></li>
-			<li id="adminMenu"><a href="#" id="admin" data-i18n="header.menu.admin"></a></li>
+			<li id="dashboardMenu"><a href="javascript:void(0)" id="dashboard" data-i18n="header.menu.dashboard"></a></li>
+			<li><a href="javascript:void(0)" id="pojectList" class="nav_active" data-i18n="header.menu.projects"></a></li>
+			<li id="settingsMenu"><a href="javascript:void(0)" id="settings" data-i18n="header.menu.settings"></a></li>
+			<li id="downloadsMenu"><a href="javascript:void(0)" id="downloads" data-i18n="header.menu.downloads"></a></li>
+			<li id="adminMenu"><a href="javascript:void(0)" id="admin" data-i18n="header.menu.admin"></a></li>
 		</ul>
 	</div>
 	<input type="hidden" class="headerAppId" value=""/>
@@ -19,8 +19,8 @@
 		</div>
 		<div class="navbar navbar-static">
 			<ul class="nav">
-				<li id="helpMenu"><a href="#" data-i18n="header.userinfo.help"></a></li>
-				<li class="aboutPhrescoLi"><a href="#" data-i18n="header.userinfo.about"></a></li>
+				<li id="helpMenu"><a href="javascript:void(0)" data-i18n="header.userinfo.help"></a></li>
+				<li class="aboutPhrescoLi"><a href="javascript:void(0)" data-i18n="header.userinfo.about"></a></li>
 				<div id="aboutPopup" class="dyn_popup speakstyletopright" style="display:none; width: 393px;">
 				  
 				  <table border="0" class="about_cont" cellpadding="0" cellspacing="0">
@@ -54,7 +54,7 @@
                   	</div>
 				</div>
 				<li id="fat-menu" class="dropdown customerDropdown">
-				  <a href="#" id="drop3" role="button" class="dropdown-toggle" data-toggle="dropdown"><font id="selectedCustomer">Photon</font><b class="caret"></b></a>
+				  <a href="javascript:void(0)" id="drop3" role="button" class="dropdown-toggle" data-toggle="dropdown"><font id="selectedCustomer">Photon</font><b class="caret"></b></a>
 				  <div class="dropdown-menu cust_sel cus_themes" role="menu" aria-labelledby="drop3">
 					<ul id="customer">
 						{{#each customers}}<li><a href="javascript:;" id="{{id}}" name="customers">{{name}}</a></li>{{/each}}

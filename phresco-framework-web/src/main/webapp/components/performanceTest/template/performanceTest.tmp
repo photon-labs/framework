@@ -6,14 +6,14 @@
         	{{#showIcons resultAvailable testResultFiles}}
 	        	<div class="unit_view performanceView">
 	                <span id="tabularView" class="table" style="cursor: pointer;">
-            	<a href="#"><img class="tableIcon" src="themes/default/images/helios/table_active.png" width="213" height="29" border="0" alt="" usemap="#tabularViewMap"></a>
+            	<a href="javascript:void(0)"><img class="tableIcon" src="themes/default/images/helios/table_active.png" width="213" height="29" border="0" alt="" usemap="#tabularViewMap"></a>
             	 <map name="tabularViewMap">
                       <area class="table1" shape="rect" coords="3,1,104,29">
                       <area class="graph1" shape="rect" coords="106,3,215,29">
                  </map>
             </span>
            	<span id="graphicalView" class="newclas table hideContent" style="cursor: pointer;">
-            	<a href="#"><img class="tableIcon" src="themes/default/images/helios/graph_active.png" width="213" height="29" border="0" alt="" usemap="#graphicalViewMap"></a>
+            	<a href="javascript:void(0)"><img class="tableIcon" src="themes/default/images/helios/graph_active.png" width="213" height="29" border="0" alt="" usemap="#graphicalViewMap"></a>
                     <map name="graphicalViewMap">
                       <area class="table2" shape="rect" coords="3,1,104,29">
                       <area class="graph2" shape="rect" coords="106,3,215,29">
@@ -23,14 +23,14 @@
 	        {{else}}  
 	        	<div class="unit_view performanceView hideContent">
 	                span id="tabularView" class="table" style="cursor: pointer;">
-            	<a href="#"><img class="tableIcon" src="themes/default/images/helios/table_active.png" width="213" height="29" border="0" alt="" usemap="#tabularViewMap"></a>
+            	<a href="javascript:void(0)"><img class="tableIcon" src="themes/default/images/helios/table_active.png" width="213" height="29" border="0" alt="" usemap="#tabularViewMap"></a>
             	 <map name="tabularViewMap">
                       <area class="table1" shape="rect" coords="3,1,104,29">
                       <area class="graph1" shape="rect" coords="106,3,215,29">
                  </map>
             </span>
            	<span id="graphicalView" class="newclas table hideContent" style="cursor: pointer;">
-            	<a href="#"><img class="tableIcon" src="themes/default/images/helios/graph_active.png" width="213" height="29" border="0" alt="" usemap="#graphicalViewMap"></a>
+            	<a href="javascript:void(0)"><img class="tableIcon" src="themes/default/images/helios/graph_active.png" width="213" height="29" border="0" alt="" usemap="#graphicalViewMap"></a>
                     <map name="graphicalViewMap">
                       <area class="table2" shape="rect" coords="3,1,104,29">
                       <area class="graph2" shape="rect" coords="106,3,215,29">
@@ -40,7 +40,7 @@
             {{/showIcons}}
             
             {{#showIcons resultAvailable testResultFiles}}
-	           <div class="icon_images"><a class="tooltiptop performancePDF" from="performance" title="" data-placement="bottom" data-toggle="tooltip" href="#" data-original-title="PDF Report" id="pdfIcon"><img src="themes/default/images/helios/pdf_icon_white.png" ></a>
+	           <div class="icon_images"><a class="tooltiptop performancePDF" from="performance" title="" data-placement="bottom" data-toggle="tooltip" href="javascript:void(0)" data-original-title="PDF Report" id="pdfIcon"><img src="themes/default/images/helios/pdf_icon_white.png" ></a>
 	        		<!--Pdf report popup starts here -->
 					<div id="pdf_report" class="dyn_popup hideContent">
 						<div id="noPdfReport" class="alert noReport"></div>
@@ -88,12 +88,12 @@
 					<!--Pdf report popup ends here -->
 	    		</div>
 			{{else}}  
-	        	<div class="icon_images hideContent"><a class="tooltiptop" title="" data-placement="bottom" data-toggle="tooltip" href="#" data-original-title="PDF Report" id="pdfIcon"><img src="themes/default/images/helios/pdf_icon_white.png" ></a></div>
+	        	<div class="icon_images hideContent"><a class="tooltiptop" title="" data-placement="bottom" data-toggle="tooltip" href="javascript:void(0)" data-original-title="PDF Report" id="pdfIcon"><img src="themes/default/images/helios/pdf_icon_white.png" ></a></div>
             {{/showIcons}}
-        	<div class="icon_images performanceScreenShotDiv" style="display: none;"><a class="tooltiptop performanceScreenShot" title="" data-placement="bottom" data-toggle="tooltip" href="#" data-original-title="Screen Shot"><img src="themes/default/images/helios/screenshot_white.png" ></a></div>
+        	<div class="icon_images performanceScreenShotDiv" style="display: none;"><a class="tooltiptop performanceScreenShot" title="" data-placement="bottom" data-toggle="tooltip" href="javascript:void(0)" data-original-title="Screen Shot"><img src="themes/default/images/helios/screenshot_white.png" ></a></div>
 
-			<div class="icon_images"><a class="tooltiptop" title="" data-placement="bottom" data-toggle="tooltip" href="#" data-original-title="Open Folder" id="openFolder"><img src="themes/default/images/helios/openfolder_icon.png" ></a></div>
-			<div class="icon_images copy_path_icon"><a class="tooltiptop" title="" data-placement="bottom" data-toggle="tooltip" href="#" data-original-title="Copy Path" id="copyPath"><img src="themes/default/images/helios/copypath_icon.png" ></a></div>	
+			<div class="icon_images"><a class="tooltiptop" title="" data-placement="bottom" data-toggle="tooltip" href="javascript:void(0)" data-original-title="Open Folder" id="openFolder"><img src="themes/default/images/helios/openfolder_icon.png" ></a></div>
+			<div class="icon_images copy_path_icon"><a class="tooltiptop" title="" data-placement="bottom" data-toggle="tooltip" href="javascript:void(0)" data-original-title="Copy Path" id="copyPath"><img src="themes/default/images/helios/copypath_icon.png" ></a></div>	
 
             {{#showDeviceDropDown showDevice devices}}
 	            <div class="code_report device_list">
@@ -102,7 +102,7 @@
 	            <div class="navbar navbar-static code_func logintest">
 	                <ul class="nav">
 	                    <li id="fat-menu" class="dropdown">
-	                      <a href="#" id="deviceDropDown" role="button" class="dropdown-toggle" data-toggle="dropdown" value={{#devices showDevice devices testResultFiles true true}}{{/devices}}>{{#devices showDevice devices testResultFiles true false}}{{/devices}}<b class="caret"></b></a>
+	                      <a href="javascript:void(0)" id="deviceDropDown" role="button" class="dropdown-toggle" data-toggle="dropdown" value={{#devices showDevice devices testResultFiles true true}}{{/devices}}>{{#devices showDevice devices testResultFiles true false}}{{/devices}}<b class="caret"></b></a>
 	                      <div class="dropdown-menu cust_sel code_test_opt" role="menu" aria-labelledby="drop5">
 	                      	<ul id="deviceDropUL">
 	                      		{{#devices showDevice devices testResultFiles false false}}{{/devices}}
@@ -120,7 +120,7 @@
 	            <div class="navbar navbar-static code_func logintest testResultDiv">
 	                <ul class="nav">
 	                    <li id="fat-menu" class="dropdown">
-	                      <a href="#" id="testResultFileDrop" role="button" class="dropdown-toggle" data-toggle="dropdown" value={{#testResultFiles testResultFiles true}}{{/testResultFiles}}>{{#testResultFiles testResultFiles true}}{{/testResultFiles}}<b class="caret"></b></a>
+	                      <a href="javascript:void(0)" id="testResultFileDrop" role="button" class="dropdown-toggle" data-toggle="dropdown" value={{#testResultFiles testResultFiles true}}{{/testResultFiles}}>{{#testResultFiles testResultFiles true}}{{/testResultFiles}}<b class="caret"></b></a>
 	                      <div class="dropdown-menu cust_sel code_test_opt" role="menu" aria-labelledby="drop5">
 	                      	<ul id="resultFiles">
 	                        	{{#testResultFiles testResultFiles false}}{{/testResultFiles}}
@@ -135,7 +135,7 @@
 	            <div class="navbar navbar-static code_func logintest hideContent testResultDiv">
 	                <ul class="nav">
 	                    <li id="fat-menu" class="dropdown">
-	                      <a href="#" id="testResultFileDrop" role="button" class="dropdown-toggle" data-toggle="dropdown" value={{#testResultFiles testResultFiles true}}{{/testResultFiles}}>{{#testResultFiles testResultFiles true}}{{/testResultFiles}}<b class="caret"></b></a>
+	                      <a href="javascript:void(0)" id="testResultFileDrop" role="button" class="dropdown-toggle" data-toggle="dropdown" value={{#testResultFiles testResultFiles true}}{{/testResultFiles}}>{{#testResultFiles testResultFiles true}}{{/testResultFiles}}<b class="caret"></b></a>
 	                      <div class="dropdown-menu cust_sel code_test_opt" role="menu" aria-labelledby="drop5">
 	                      	<ul id="resultFiles">
 	                        	{{#testResultFiles testResultFiles false}}{{/testResultFiles}}
@@ -153,7 +153,7 @@
             <div class="navbar navbar-static code_func">
                 <ul class="nav testAgainstNav">
                     <li id="fat-menu" class="dropdown">
-                      <a href="#" id="testAgainstsDrop" role="button" class="dropdown-toggle" data-toggle="dropdown" value={{#testAgainsts testAgainsts true}}{{/testAgainsts}}>{{#testAgainsts testAgainsts true}}{{/testAgainsts}}<b class="caret"></b></a>
+                      <a href="javascript:void(0)" id="testAgainstsDrop" role="button" class="dropdown-toggle" data-toggle="dropdown" value={{#testAgainsts testAgainsts true}}{{/testAgainsts}}>{{#testAgainsts testAgainsts true}}{{/testAgainsts}}<b class="caret"></b></a>
                       <div class="dropdown-menu cust_sel code_test_opt" role="menu" aria-labelledby="drop5">
 	                      	<ul>	
 	                      		{{#testAgainsts testAgainsts false}}{{/testAgainsts}}
@@ -209,14 +209,14 @@
 		    	<div class="navbar navbar-static code_func logintest graphFor performanceGraphNav">
 	                <ul class="nav">
 	                    <li class="dropdown" id="fat-menu">
-	                      <a value="responseTime" data-toggle="dropdown" class="dropdown-toggle" role="button" id="graphForDrop" href="#" data-i18n=performanceLoad.aggrresponsetime><b class="caret"></b></a>
+	                      <a value="responseTime" data-toggle="dropdown" class="dropdown-toggle" role="button" id="graphForDrop" href="javascript:void(0)" data-i18n=performanceLoad.aggrresponsetime><b class="caret"></b></a>
 	                      <div aria-labelledby="drop5" role="menu" class="dropdown-menu cust_sel code_test_opt">
 	                      	<ul id="graphForList">
-	                        	<li class="graphForDrop"><a name="graphForDrop" value="responseTime" href="#" data-i18n=performanceLoad.responsetime></a></li>
-	                        	<li class="graphForDrop"><a name="graphForDrop" value="throughPut" href="#" data-i18n=performanceLoad.throughput></a></li>
-	                        	<li class="graphForDrop"><a name="graphForDrop" value="minResponseTime" href="#" data-i18n=performanceLoad.minresponsetime></a></li>
-	                        	<li class="graphForDrop"><a name="graphForDrop" value="maxResponseTime" href="#" data-i18n=performanceLoad.maxresponsetime></a></li>
-	                        	<li class="graphForDrop"><a name="graphForDrop" value="all" href="#" data-i18n=performanceLoad.all></a></li>
+	                        	<li class="graphForDrop"><a name="graphForDrop" value="responseTime" href="javascript:void(0)" data-i18n=performanceLoad.responsetime></a></li>
+	                        	<li class="graphForDrop"><a name="graphForDrop" value="throughPut" href="javascript:void(0)" data-i18n=performanceLoad.throughput></a></li>
+	                        	<li class="graphForDrop"><a name="graphForDrop" value="minResponseTime" href="javascript:void(0)" data-i18n=performanceLoad.minresponsetime></a></li>
+	                        	<li class="graphForDrop"><a name="graphForDrop" value="maxResponseTime" href="javascript:void(0)" data-i18n=performanceLoad.maxresponsetime></a></li>
+	                        	<li class="graphForDrop"><a name="graphForDrop" value="all" href="javascript:void(0)" data-i18n=performanceLoad.all></a></li>
 	                        </ul>
 	                      </div>
 	                    </li>
@@ -231,7 +231,7 @@
     
 	     <!-- Progress div starts here-->
 		    <div class="unit_close performance_close">
-		    	<a href="#" data-flag="true" id="consoleImg">
+		    	<a href="javascript:void(0)" data-flag="true" id="consoleImg">
 		    		<img src="themes/default/images/helios/console_img.png" width="33" height="92" border="0" alt="">
 		    		<div class="progress_loading" style="display:none;"><img src="themes/default/images/helios/progress_load.gif" border="0"></div>
 				</a>
@@ -243,7 +243,7 @@
 						<td>
 							<div class="flt_right">
 								<input type="button" class="btn btn_style kill_btn" value="Kill Process" data-i18n="build.label.killprocess">
-								<a href="#" id="copyLog">
+								<a href="javascript:void(0)" id="copyLog">
 									<img src="themes/default/images/helios/buildreport_icon.png" width="15" height="18" border="0" alt="">
 								</a>
 							</div>

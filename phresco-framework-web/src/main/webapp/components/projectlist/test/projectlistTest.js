@@ -454,7 +454,7 @@ define(["projectlist/projectList"], function(ProjectList) {
 				var data = {};
 				data.appdirname="wordpress-WordPress";
 				data.dynamicId="294187d7-f75a-4adc-bb25-ce9465e0e82f";
-				var obj = '<a class="tooltiptop" data-original-title="Commit" href="#" data-toggle="tooltip" data-placement="bottom" title="" dynamicid="294187d7-f75a-4adc-bb25-ce9465e0e82f" name="commit294187d7-f75a-4adc-bb25-ce9465e0e82f">';
+				var obj = '<a class="tooltiptop" data-original-title="Commit" href="javascript:void(0)" data-toggle="tooltip" data-placement="bottom" title="" dynamicid="294187d7-f75a-4adc-bb25-ce9465e0e82f" name="commit294187d7-f75a-4adc-bb25-ce9465e0e82f">';
 				projectlist.projectslistListener.getCommitableFiles(data, obj);
 				setTimeout(function() {
 					start();
@@ -481,7 +481,7 @@ define(["projectlist/projectList"], function(ProjectList) {
 				var data = {};
 				data.appdirname="wordpress-WordPress";
 				data.dynamicId="294187d7-f75a-4adc-bb25-ce9465e0e82f";
-				var obj = '<a class="tooltiptop" data-original-title="Update" href="#" data-toggle="tooltip" data-placement="bottom" title="" dynamicid="294187d7-f75a-4adc-bb25-ce9465e0e82f" name="svn_update294187d7-f75a-4adc-bb25-ce9465e0e82f">';
+				var obj = '<a class="tooltiptop" data-original-title="Update" href="javascript:void(0)" data-toggle="tooltip" data-placement="bottom" title="" dynamicid="294187d7-f75a-4adc-bb25-ce9465e0e82f" name="svn_update294187d7-f75a-4adc-bb25-ce9465e0e82f">';
 				projectlist.projectslistListener.getUpdatableFiles(data, obj);
 				setTimeout(function() {
 					start();
