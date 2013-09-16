@@ -894,6 +894,8 @@ define([], function() {
 						}	
 					});
 				} else {
+				
+					$("input[name=Create]").attr('disabled', false);
 					$("tr[name=applicationlayer]").show();
 					$("tr.applnLayer").show();
 					$(".applnlayercontent").show();
