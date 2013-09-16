@@ -1,0 +1,15 @@
+{
+    "info":{
+        "widgetId":"101",
+        "widgetName":"Downloads"
+    },
+    "components":{
+        "login":{
+            "moduleName":"Downloads",
+            "host":"http://localhost",
+            "port":"2020"
+        }
+    },
+	
+	"theme" : "default"
+}

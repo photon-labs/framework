@@ -75,6 +75,7 @@ var commonVariables = {
 	mvnComponentTest : "app/runComponentTest",
 	mvnFunctionalTest : "app/runFunctionalTest",
 	logContent : "",
+	downloads : "downloads",
 	
 	settings : "settings", 
 	dynamicPage : "dynamicPage",

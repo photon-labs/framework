@@ -229,7 +229,9 @@
 		"PHR700002" : "Build deleted successfully",
 		"PHRQ400004" : "Test suite added successfully",
 		"PHRQ400005" : "Test case added successfully",
-		"PHRQ400006" : "Test case updated successfully"
+		"PHRQ400006" : "Test case updated successfully",
+		"PHR12C00001" : "No Downloads available"
+
 	},
 	"navigation" : {
 		"application" : {
@@ -490,6 +492,15 @@
 		}
 	},
 	
+	"downloads"	: {
+		"label" : {
+		 	"name"			: "Name",
+		 	"version"		: "Version",
+		 	"size"			: "Size",
+		 	"download"		: "Download",
+		 	"downloadstest"	:"Downloads Test"
+	 	}
+	},
 	
 	"login" : {
 		"label" : {

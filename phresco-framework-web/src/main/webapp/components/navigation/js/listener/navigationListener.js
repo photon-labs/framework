@@ -17,6 +17,7 @@ define([], function() {
 		manualTest : null,
 		editproject : null,
 		settings : null,
+		downloads : null,
 		unitTest : null,
 		functionalTest : null,
 		componentTest : null,
@@ -405,6 +406,18 @@ define([], function() {
 						}
 						
 						break;
+
+					case commonVariables.downloads :
+						if (self.downloads === null) {
+							require(["downloads/downloads"], function() {
+								self.downloads = new Clazz.com.components.downloads.js.Downloads();
+								callback(self.downloads);	
+							});
+						}else{
+							callback(self.downloads);
+						}
+						
+						break;
 				}
 		},
 
@@ -416,20 +429,35 @@ define([], function() {
 					$("#projectList").show();
 					$("#createProject").hide();
 					$("#settingsNav").hide();
+					$("#downloadsNav").hide();
 					self.applyRBAC(keyword);
 					break;
 					
 				case commonVariables.editApplication :
 					$("#applicationedit").show();
 					$("#settingsNav").hide();
+					$("#downloadsNav").hide();
 					break;
 					
 				case commonVariables.settings :
 					$("#settingsNav").show();
+					$("#downloadsNav").hide();
 					$("#projectList").hide();
 					$("#createProject").hide();
 					$("#applicationedit").hide();
 					$('#editprojectTab').hide();
+
+				case commonVariables.downloads :
+					$("#downloadsNav").show();
+					$("#settingsNav").hide();
+					$("#projectList").hide();
+					$("#createProject").hide();
+					$("#applicationedit").hide();
+					$('#editprojectTab').hide();
+					self.applyRBAC(keyword);
+					break;
+				
+
 			}
 		},
 		

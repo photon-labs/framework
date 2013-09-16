@@ -130,6 +130,11 @@
 			"moduleName":"settings",
 			"path" : "../components/settings/js"
 		},
+
+		"downloads" : {
+			"moduleName":"downloads",
+			"path" : "../components/downloads/js"
+		},
 		
 		"testResult" : {
 			"moduleName":"testResult",

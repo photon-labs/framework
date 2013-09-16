@@ -105,7 +105,10 @@
         </div>
         </div>
     	<!--content_title ends here -->
-    </section>	
+    </section>
+    <section class="content_title" name="navigation" id="downloadsNav" style="display:none">
+        <h1><span data-i18n="header.menu.downloads"></span></h1>
+    </section>
 	
 	<section class="content_title" name="navigation" id="createProject" style="display:none">
     	<h1><span data-i18n="project.create.title.label.createproject"></span></h1>

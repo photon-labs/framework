@@ -166,6 +166,11 @@
 			"path" : "components/settings/js"
 		},
 		
+		"downloads" : {
+			"moduleName":"downloads",
+			"path" : "components/downloads/js"
+		},
+		
 		"testResult" : {
 			"moduleName":"testResult",
 			"path" : "components/testResult/js"
@@ -264,6 +269,12 @@
 		"SettingsTest" : {
 			"moduleName":"SettingsTest",
 			"path" : "components/settings/test/SettingsTest"
+		},
+		
+		"downloadsTest" : {
+			"moduleName":"downloadsTests",
+			"path" : "components/downloads/test/downloadsTest"
 		}
+		
 	}
 }

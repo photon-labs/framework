@@ -17,6 +17,7 @@ define(["header/listener/headerListener"] , function(template) {
 		onSelectCustomerEvent: null,
 		onAboutClickEvent: null,
 		onUpgradeEvent: null,
+		downloads: null,
 		
 		initialize : function(globalConfig){
 			var self = this;
@@ -54,7 +55,9 @@ define(["header/listener/headerListener"] , function(template) {
 			var data = {};
 			data.customerId = customerId; 
 			self.headerListener.performAction(self.headerListener.getActionHeader("getCustomerTheme", data), function(response) {
-				self.headerListener.changeCustomerTitle(response.data.theme);
+				if (response.data.theme !== null) {
+					self.headerListener.changeCustomerTitle(response.data.theme);
+				}
 			});
 		},
 		

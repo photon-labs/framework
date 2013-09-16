@@ -56,6 +56,10 @@ public interface ResponseCodes {
 	String PHR11C10001 = "PHR11C10001"; // failed to read the process.json
 	String PHR11C10002 = "PHR11C10002"; // unable to parse the process.json
 	String PHR11C10003 = "PHR11C10003"; // failed to kill the process
+	String PHR12C00001 = "PHR12C00001"; // Downloads returned successfully
+	String PHR12C00002 = "PHR12C00002"; // No downloads available
+	String PHR12C10001 = "PHR12C10001"; // unauthorized user
+	String PHR12C10002 = "PHR12C10002"; // Failed to return downloads
 	
 	
 	/*

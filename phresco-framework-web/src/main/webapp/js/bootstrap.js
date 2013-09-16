@@ -87,12 +87,17 @@ var commonVariables = {
 	continuousDeliveryConfigure : "continuousDeliveryConfigure",
 	
 	settings : "settings", 
+
+	downloads : "downloads",
 	
 	customerTheme : null,
 	defaultcustomer : "Photon",
 	customerInfoContext : "technology/customerinfo?customerName=",
 	
 	build : "build",
+
+	megabyte : "MB",
+	kilobyte : "KB",
 	
 	mavenService : "mavenService",
 	mavenServiceContext : "mavenService",

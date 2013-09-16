@@ -49,6 +49,10 @@ define(["header/api/headerAPI"], function() {
 					self.loadTabRender(retVal);
 				});
 			}else if(self.currentTab === "Downloads"){
+				commonVariables.navListener.currentTab = "Downloads";
+				commonVariables.navListener.getMyObj(commonVariables.downloads, function(retVal) {
+					self.loadTabRender(retVal);
+				});
 			}else if(self.currentTab === "Admin"){
 			}	
 		},
@@ -77,12 +81,25 @@ define(["header/api/headerAPI"], function() {
 		
 		selectCoustomer : function(customerValue, customerId) {
 			var self=this;
+			self.showHideMainMenu(customerValue);
+
 			self.headerAPI.localVal.deleteSession("Front End");
 			self.headerAPI.localVal.deleteSession("Middle Tier");
 			self.headerAPI.localVal.deleteSession("CMS");
+			
 			Clazz.navigationController.jQueryContainer = commonVariables.contentPlaceholder;
+			
 			$("#selectedCustomer").text(customerValue);
-			if (commonVariables.navListener.currentTab === "projectlist" || commonVariables.navListener.currentTab === "addproject" || commonVariables.navListener.currentTab === "editproject") {
+			$(".header_left ul li a").removeClass('nav_active');
+			if (commonVariables.navListener.currentTab === "Downloads" && $('#downloads').is(':visible')) {				
+					$('#downloads').addClass('nav_active');
+				
+				commonVariables.navListener.getMyObj(commonVariables.downloads, function(retVal) {
+					obj = retVal;
+					Clazz.navigationController.push(obj, commonVariables.animation);
+				});
+			} else {
+				$('#pojectList').addClass('nav_active');
 				commonVariables.navListener.getMyObj(commonVariables.projectlist, function(retVal) {
 					obj = retVal;
 					Clazz.navigationController.push(obj, commonVariables.animation);
@@ -100,7 +117,7 @@ define(["header/api/headerAPI"], function() {
 				}
 				self.changeCustomerTitle(response.data.theme);
 			});
-			self.showHideMainMenu(customerValue);
+			
 		},
 		
 		changeCustomerTitle : function (theme) {

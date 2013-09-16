@@ -452,7 +452,7 @@ public class UtilService extends RestBase implements FrameworkConstants, Service
 			ServiceManager serviceManager = CONTEXT_MANAGER_MAP.get(userId);
 			if (serviceManager == null) {
 				ResponseInfo<List<DownloadInfo>> finalOutput = responseDataEvaluation(responseData, null, null,
-						RESPONSE_STATUS_FAILURE, "");
+						RESPONSE_STATUS_FAILURE, PHR12C10001);
 				return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*")
 						.build();
 			}
@@ -496,17 +496,16 @@ public class UtilService extends RestBase implements FrameworkConstants, Service
 			}			
 			
 			if (!downloadInfoMap.isEmpty()) {
-				
 				ResponseInfo<Map<String, List<DownloadInfo>>> finalOutput = responseDataEvaluation(responseData, null, downloadInfoMap,
-						RESPONSE_STATUS_SUCCESS, "");
+						RESPONSE_STATUS_SUCCESS, PHR12C00002);
 				return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
 			}
 			ResponseInfo<Map<String, List<DownloadInfo>>> finalOutput = responseDataEvaluation(responseData, null, downloadInfoMap,
-					RESPONSE_STATUS_FAILURE, "");
+					RESPONSE_STATUS_SUCCESS, PHR12C00001);
 			return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
 		} catch (PhrescoException e) {
 			ResponseInfo<Map<String, List<DownloadInfo>>> finalOutput = responseDataEvaluation(responseData, e, null,
-					RESPONSE_STATUS_ERROR, "");
+					RESPONSE_STATUS_ERROR, PHR12C10002);
 			return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
 		}
 	}
