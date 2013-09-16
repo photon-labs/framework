@@ -1,15 +1,21 @@
 
 define(["configuration/editConfiguration"], function(EditConfiguration) {
 
-	return { runTests: function (runOtherTests) {
+	return {
+	
+	setUserInfo : function(){
+		console.info("insie..");
+		commonVariables.api.localVal.setSession('a20e25b3-61be-499f-8108-ae170a94b4c0', '{"message":null,"exception":null,"responseCode":"PHR200009","data":{"embedList":{},"projectInfo":{"appInfos":[{"pomFile":null,"modules":null,"appDirName":"wordpress-WordPress","techInfo":{"appTypeId":"e1af3f5b-7333-487d-98fa-46305b9dd6ee","techGroupId":"PHP","techVersions":null,"version":"3.4.2","customerIds":null,"used":false,"creationDate":1379325938000,"helpText":null,"system":false,"name":"php-Wordpress","id":"tech-wordpress","displayName":null,"description":null,"status":null},"functionalFramework":null,"selectedModules":[],"selectedComponents":[],"selectedServers":null,"selectedDatabases":null,"selectedJSLibs":[],"selectedWebservices":null,"functionalFrameworkInfo":null,"pilotInfo":null,"selectedFrameworks":null,"emailSupported":false,"pilotContent":null,"embedAppId":null,"phoneEnabled":false,"tabletEnabled":false,"pilot":false,"dependentModules":null,"created":false,"version":"1.0","code":"wordpress-WordPress","customerIds":null,"used":false,"creationDate":1379325938000,"helpText":null,"system":false,"name":"wordpress-WordPress","id":"e5fe85d7-f01b-4d3d-8a58-3c3ae75cc0d2","displayName":null,"description":null,"status":null}],"projectCode":"test","noOfApps":1,"startDate":null,"endDate":null,"preBuilt":false,"multiModule":false,"version":"1.0","customerIds":["photon"],"used":false,"creationDate":1379325938000,"helpText":null,"system":false,"name":"test","id":"a20e25b3-61be-499f-8108-ae170a94b4c0","displayName":null,"description":"","status":null}},"status":"success"}');
+		$('.hProjectId').val('a20e25b3-61be-499f-8108-ae170a94b4c0');
+	},
+	
+	runTests: function (runOtherTests) {
 		
 		module("EditConfiguration.js;EditConfiguration");
-		
-
 		var editConfiguration = new EditConfiguration(), editConfig, self=this, certificate, serverAlive;
 
 		asyncTest("Test - Edit Configuration Render Test", function() {
-		
+			self.setUserInfo();
 			self.editConfig = $.mockjax({
 				url:  commonVariables.webserviceurl+commonVariables.configuration+"?appDirName=wordpress-WordPress&envName=Production",
 				type:'GET',
@@ -21,7 +27,6 @@ define(["configuration/editConfiguration"], function(EditConfiguration) {
 			});
 			
 			editConfiguration.configurationlistener.editConfiguration("Production", "true");
-			
 			setTimeout(function() {
 				start();
 				equal($(commonVariables.contentPlaceholder).find('input[name=EnvName]').val(), "Production", "Edit Configuration Render Tested");
