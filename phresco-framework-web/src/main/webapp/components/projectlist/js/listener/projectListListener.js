@@ -468,6 +468,9 @@ define([], function() {
 								};
 							}	
 						}
+					if(response.responseCode === 'PHR200015' || response.length === 0) {
+						$('input[name="generate"]').attr('disabled','disabled');
+					}	
 				}
 				self.listPdfReports(response, temp, dynamicId);
 				self.clickFunction(dynamicId);
@@ -598,7 +601,6 @@ define([], function() {
 				updateUsername= $("#updateUsername_"+dynid).val();
 				updatePassword = $("#updatePassword_"+dynid).val();
 				revision = $("#revision_"+dynid).val();
-				
 				if(self.flag1 === 1)
 				{	
 					if(!self.isValidUrl(repourl)){
@@ -666,6 +668,7 @@ define([], function() {
 							$("#updateRepourl_"+dynid).val(updateRepourl); 
 						}, 4000);
 						self.hasError = true;
+					
 					} else if(updateUsername === ""){
 						$("#updateUsername_"+dynid).focus();
 						$("#updateUsername_"+dynid).attr('placeholder','Enter UserName');

@@ -215,6 +215,10 @@ define(["projectlist/projectList"], function(ProjectList) {
 		runValidationSVNupdateusernameTest : function (projectlist){
 			var self = this;
 			asyncTest("SVNupdate username Validation Test", function() {
+				$("#type_294187d7-f75a-4adc-bb25-ce9465e0e82f").val('svn');
+				$("#uname_294187d7-f75a-4adc-bb25-ce9465e0e82f").keypress();
+				projectlist.counter = 2;
+				$('.searchdropdown').click();
 				$('input#repourl_294187d7-f75a-4adc-bb25-ce9465e0e82f').val('http://localhost');
 				$('input#uname_294187d7-f75a-4adc-bb25-ce9465e0e82f').val('');
 				$('.tooltiptop[name^="addRepo"]').click();
@@ -299,7 +303,7 @@ define(["projectlist/projectList"], function(ProjectList) {
 					$("#uname_294187d7-f75a-4adc-bb25-ce9465e0e82f").val('aaa');
 					$("#pwd_294187d7-f75a-4adc-bb25-ce9465e0e82f").val('aaa');
 					$(".search").click();
-					$('.searchdropdown').change();
+					$('.searchdropdown').click();
 					self.projectAddPdfUiVerification(projectlist);
 				}, 2500);
 			});
@@ -555,6 +559,42 @@ define(["projectlist/projectList"], function(ProjectList) {
 					start();
 					var techid = $(commonVariables.contentPlaceholder).find(".wordpress-WordPress").attr("techid");
 					equal("tech-wordpress", techid, "Project List Service Tested");
+					self.addrepofailure(projectlist);
+				}, 2500);
+			});
+		}, 
+		
+		addrepofailure : function(projectlist) {
+			var self=this;
+			asyncTest("Test -Add to Repo Failure", function() {
+				$("input#repourl_294187d7-f75a-4adc-bb25-ce9465e0e82f").val("http://localhost:8080/framework/");
+				$("input#uname_294187d7-f75a-4adc-bb25-ce9465e0e82f").val("admin");
+				$("input#pwd_294187d7-f75a-4adc-bb25-ce9465e0e82f").val("manage");
+				projectlist.projectslistListener.flag1 =1;
+				projectlist.projectslistListener.addRepoEvent($("input[name='addrepobtn']"),"294187d7-f75a-4adc-bb25-ce9465e0e82f");
+				setTimeout(function() {
+					start();
+					var getval = $(".success").text();
+					notEqual("Added successfully", getval, "Addrepo service call");
+					self.addupdatefailure(projectlist);
+				}, 2500);
+			});
+		}, 
+		
+		addupdatefailure : function(projectlist) {
+			var self=this;
+			asyncTest("Test -Add to Repo Failure", function() {
+				$("#updateRepourl_294187d7-f75a-4adc-bb25-ce9465e0e82f").val("http://localhost:8080/framework/");
+				$("#updateUsername_294187d7-f75a-4adc-bb25-ce9465e0e82f").val('admin');
+				$("#updatePassword_294187d7-f75a-4adc-bb25-ce9465e0e82f").val('manage');
+				$("#revision_294187d7-f75a-4adc-bb25-ce9465e0e82f").val('asdsad');
+				projectlist.projectslistListener.flag1 =0;
+				projectlist.projectslistListener.flag3 =1;
+				projectlist.projectslistListener.addUpdateEvent ($("input[name='updatebtn']"),"294187d7-f75a-4adc-bb25-ce9465e0e82f","");
+				setTimeout(function() {
+					start();
+					var getval = $(".success").text();
+					notEqual("Added successfully", getval, "Addrepo service call");
 					self.projectDeleteSuccessVerification(projectlist);
 				}, 2500);
 			});
@@ -675,9 +715,9 @@ define(["projectlist/projectList"], function(ProjectList) {
 				setTimeout(function() {
 					start();
 					equal("", "", 'Configuration type Test');
-					require(["projectTest"], function(projectTest){
+					 /* require(["projectTest"], function(projectTest){
 						projectTest.runTests();
-					}) ;
+					}) ;  */
 				}, 1000);
 			});
 		}

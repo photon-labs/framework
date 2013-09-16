@@ -868,7 +868,7 @@ define([], function() {
 						self.validateTextBox($("#testRevision"), 'Enter revision');
 					} 
 				}
-			} else if ('git' === importType || 'bitkeeper' === importType) {
+			} else if ('bitkeeper' === importType) {
 				$("#gitUserName").removeClass("errormessage");
 				$("#gitPassword").removeClass("errormessage");
 				var bituserName = $("#gitUserName").val().replace(/\s/g, '');
@@ -880,6 +880,9 @@ define([], function() {
 					error = true;
 					self.validateTextBox($("#gitPassword"), 'Enter password');
 				}
+			} else if ('git' === importType) {
+				$("#gitUserName").removeClass("errormessage");
+				$("#gitPassword").removeClass("errormessage");
 			}
 			callback(error);
 		},
