@@ -270,7 +270,7 @@ define(["projectlist/projectList"], function(ProjectList) {
 				$("input[name='addrepobtn']").click();
 				setTimeout(function() {
 					start();
-					var getval = $(".success").text();
+					var getval = $(".msgdisplay,.success").text();
 					equal("Project added successfully", getval, "Addrepo service call");
 					self.projectCommitUiVerification(projectlist);
 				}, 2500);
@@ -415,7 +415,7 @@ define(["projectlist/projectList"], function(ProjectList) {
 				$("input[name='commitbtn']").click();
 				setTimeout(function() {
 					start();
-					var getvalue = $(".success").text();
+					var getvalue = $(".msgdisplay,.success").text();
 					equal("Project committed successfully", getvalue, "Commit service call");
 					self.projectcommitSucessVerification(projectlist);
 				}, 2500);
@@ -526,7 +526,7 @@ define(["projectlist/projectList"], function(ProjectList) {
 				$("input[name='updatebtn']").click();
 				setTimeout(function() {
 					start();
-					var getval = $(".success").text();
+					var getval = $(".msgdisplay,.success").text();
 					equal("Project updated successfully", getval, "SVNUpdate service call");
 					self.projectImportAppSuccessVerification(projectlist);
 				}, 2500);
