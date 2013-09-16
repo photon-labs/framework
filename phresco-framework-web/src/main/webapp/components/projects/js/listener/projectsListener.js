@@ -100,7 +100,7 @@ define([], function() {
 				commonVariables.api.ajaxRequest(header,
 					function(response) {
 						if (response !== null && response.status !== "error" && response.status !== "failure") {
-							if(response.responseCode !== null && response.responseCode !== 'PHR200005' && response.responseCode !== 'PHR200001') {
+							if(response.responseCode !== null && response.responseCode !== 'PHR200005' && response.responseCode !== 'PHR200001' && response.responseCode !== 'PHR200025') {
 								$(".msgdisplay").removeClass("error").addClass("success");
 								$(".success").attr('data-i18n', 'successCodes.' + response.responseCode);
 								self.renderlocales(commonVariables.contentPlaceholder);	
