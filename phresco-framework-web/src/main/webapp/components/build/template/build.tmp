@@ -98,7 +98,7 @@
 												<div id="process_build">
 													<ul class="row dynamicControls">
 													</ul>
-													<input type="hidden" name="buildNumber" value="{{buildNo}}" />
+													<div class="hiddenControls"></div>
 												</div>
 											</form>
 											<div class="flt_right">
@@ -118,7 +118,7 @@
 												<form name="deployForm">
 													<ul class="row dynamicControls">
 													</ul>
-													<input type="hidden" name="buildNumber" value="{{buildNo}}" />
+													<div class="hiddenControls"></div>
 												</form>
 												<div class="flt_right">
 													<input type="button" name="deploy" data-i18n="[value]build.label.deploy" class="btn btn_style dyn_popup_close">
