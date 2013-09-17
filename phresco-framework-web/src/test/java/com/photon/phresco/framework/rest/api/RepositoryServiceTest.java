@@ -101,7 +101,7 @@ public class RepositoryServiceTest extends RestBaseTest  {
 		repodetail.setRevision("head");
 		repodetail.setType("svn");
 		repodetail.setRepoUrl("https://insight.photoninfotech.com/svn/repos/phresco-svn-projects/ci/3.0.0/239/");
-		Response importApplication = repositoryservice.importApplication(repodetail);
+		Response importApplication = repositoryservice.importApplication(repodetail, "Admin");
 		Assert.assertEquals(200,importApplication.getStatus());
 	}
 	
@@ -176,7 +176,7 @@ public class RepositoryServiceTest extends RestBaseTest  {
 		repodetail.setPassword("santJ!23");
 		repodetail.setType("git");
 		repodetail.setRepoUrl("https://github.com/santhosh-ja/GitAdd.git");
-		Response importApplication = repositoryservice.importApplication(repodetail);
+		Response importApplication = repositoryservice.importApplication(repodetail, "Admin");
 		Assert.assertEquals(200,importApplication.getStatus());
 	}
 }

@@ -15,12 +15,18 @@ define(["header/api/headerAPI"], function() {
 		},
 		
 		doLogout : function(){
+			var url = location.href;
+			if (commonVariables.customerContext == undefined) {
+				commonVariables.customerContext = '#';
+			}
+			url = url.substr(0, url.lastIndexOf('/')) + "/" + commonVariables.customerContext;
 			this.clearSession();
 			Clazz.navigationController.jQueryContainer = commonVariables.basePlaceholder;
 			this.removePlaceholder();
 			this.headerAPI.localVal.setSession('loggedout', 'true');
 			location.hash = '';
-			location.reload();
+			commonVariables.customerContext = '';
+			location.href = url;
 		},
 		
 		clearSession : function(){
@@ -113,11 +119,11 @@ define(["header/api/headerAPI"], function() {
 				if (response.data.theme == null) {
 					JSS.css({"":""});
 				} else if (response.data.theme != null || response.data.theme != undefined || response.data.theme != '') {
+					commonVariables.customerContext = response.data.theme.context;
+					self.changeCustomerTitle(response.data.theme);
 					JSS.css(response.data.theme);
 				}
-				self.changeCustomerTitle(response.data.theme);
 			});
-			
 		},
 		
 		changeCustomerTitle : function (theme) {

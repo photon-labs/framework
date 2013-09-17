@@ -13,6 +13,8 @@ var commonVariables = {
 	header : "header",
 	headerContext : "",
 	
+	customerContext : "",
+	
 	footer : "footer",
 	footerContext : "",
 	

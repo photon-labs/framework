@@ -51,6 +51,7 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 import com.photon.phresco.commons.FrameworkConstants;
+import com.photon.phresco.commons.LockUtil;
 import com.photon.phresco.commons.ResponseCodes;
 import com.photon.phresco.commons.model.ApplicationInfo;
 import com.photon.phresco.commons.model.ArtifactInfo;
@@ -213,7 +214,7 @@ public class UtilService extends RestBase implements FrameworkConstants, Service
 		ResponseInfo<CheckLockInfo> responseData = new ResponseInfo<CheckLockInfo>();
 		try {
 			List<String> appIds = StringUtils.isNotEmpty(appId) ? Arrays.asList(appId.split(COMMA)) : new ArrayList<String>();
-			List<LockDetail> lockDetails = FrameworkUtil.getLockDetails();
+			List<LockDetail> lockDetails = LockUtil.getLockDetails();
 			CheckLockInfo lockInfo = new CheckLockInfo();
 			if (CollectionUtils.isNotEmpty(lockDetails)) {
 				List<String> actionTypesToCheck = new ArrayList<String>();
@@ -321,6 +322,8 @@ public class UtilService extends RestBase implements FrameworkConstants, Service
 					actionTypesToCheck.add(ADD_TO_REPO);
 					actionTypesToCheck.add(FrameworkConstants.UPDATE);
 					actionTypesToCheck.add(COMMIT);
+				} else if (actionType.equals(FrameworkConstants.EDIT_APPLN)) {
+					actionTypesToCheck.add(IMPORT);
 				} else {
 					actionTypesToCheck.add(actionType);
 				}
@@ -329,6 +332,7 @@ public class UtilService extends RestBase implements FrameworkConstants, Service
 						lockInfo.setLock(true);
 						lockInfo.setLockedBy(lockDetail.getUserName());
 						lockInfo.setLockedDate(lockDetail.getStartedDate().toString());
+						lockInfo.setLockActionCode(getLockActionCode(lockDetail.getActionType()));
 						ResponseInfo<List<String>> finalOutput = responseDataEvaluation(responseData, null, lockInfo,
 								RESPONSE_STATUS_SUCCESS, PHR10C00001);
 						return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*")
@@ -345,7 +349,40 @@ public class UtilService extends RestBase implements FrameworkConstants, Service
 				RESPONSE_STATUS_SUCCESS, PHR10C00002);
 		return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
 	}
-
+	
+	private String getLockActionCode(String actionType) {
+		String actionCode = "";
+		
+		if (actionType.equals(REQ_CODE)) {
+			actionCode = PHR10LC0001;
+		} else if (actionType.equals(BUILD)) {
+			actionCode = PHR10LB0001;
+		} else if (actionType.equals(REQ_START)) {
+			actionCode = PHR10LR0001;
+		} else if (actionType.equals(REQ_FROM_TAB_DEPLOY)) {
+			actionCode = PHR10LD0001;
+		} else if (actionType.equals(UNIT)) {
+			actionCode = PHR10LUT001;
+		} else if (actionType.equals(COMPONENT)) {
+			actionCode = PHR10LCT001;
+		} else if (actionType.equals(FUNCTIONAL)) {
+			actionCode = PHR10LFT001;
+		} else if (actionType.equals(LOAD)) {
+			actionCode = PHR10LLT001;
+		} else if (actionType.equals(PERFORMACE)) {
+			actionCode = PHR10LPT001;
+		} else if (actionType.equals(ADD_TO_REPO)) {
+			actionCode = PHR10LAR001;
+		} else if (actionType.equals(COMMIT)) {
+			actionCode = PHR10LCR001;
+		} else if (actionType.equals(FrameworkConstants.UPDATE)) {
+			actionCode = PHR10LUR001;
+		} else if (actionType.equals(IMPORT)) {
+			actionCode = PHR10LIM001;
+		} 
+		
+		return actionCode;
+	}
 	@GET
 	@Path("/killProcess")
 	@Produces(MediaType.APPLICATION_JSON)

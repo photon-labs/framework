@@ -98,7 +98,7 @@ define(["projectlist/listener/projectListListener"], function() {
 				return descri;
 			});
 
-			Handlebars.registerHelper('appIds', function(appinfos) {
+			Handlebars.registerHelper('csvAppIds', function(appinfos) {
 				var appIds = "";
 				if (appinfos !== null && appinfos !== undefined && appinfos.length !== 0) {
 					$.each(appinfos, function(index, appinfo){
@@ -245,13 +245,20 @@ define(["projectlist/listener/projectListListener"], function() {
 			
 			$("#myTab li a").removeClass("act");
 			$('a[name=editApplication]').click(function(){
-				$(".dyn_popup").hide();
-				commonVariables.appDirName = $(this).closest("tr").attr("class");
-				var value = $(this).closest("tr").attr("class");
-				var techid = $(this).closest("tr").attr("techid");
-				commonVariables.techId = techid;
-				$("#myTab li#appinfo a").addClass("act");
-				self.onProjectsEvent.dispatch(value , techid);
+				var thisObj = this; appid = $(this).attr("appid");
+				self.checkForLock("editAppln", appid, function(response){
+					if (response.status === "success" && response.responseCode === "PHR10C00002") {
+						$(".dyn_popup").hide();
+						commonVariables.appDirName = $(thisObj).closest("tr").attr("class");
+						var value = $(thisObj).closest("tr").attr("class");
+						var techid = $(thisObj).closest("tr").attr("techid");
+						commonVariables.techId = techid;
+						$("#myTab li#appinfo a").addClass("act");
+						self.onProjectsEvent.dispatch(value , techid);
+					} else if (response.status === "success" && response.responseCode === "PHR10C00001") {
+						commonVariables.api.showError(self.getLockErrorMsg(response), 'error', true, true);
+					}	
+				});		
 			});
 
 			$(".tooltiptop").unbind("click");
@@ -341,8 +348,7 @@ define(["projectlist/listener/projectListListener"], function() {
 							commonVariables.loadingScreen.removeLoading();
 							self.projectslistListener.getCommitableFiles(data, openccObj);
 						} else if (response.status === "success" && response.responseCode === "PHR10C00001") {
-							var errMsg = commonVariables.api.error[response.responseCode] + response.data.lockedBy + commonVariables.api.error["PHR10C00111"] + response.data.lockedDate;
-							commonVariables.api.showError(errMsg, 'error', true, true);
+							commonVariables.api.showError(self.getLockErrorMsg(response), 'error', true, true);
 						}	
 					});		
 				} else if (action === "Update") {
@@ -356,8 +362,7 @@ define(["projectlist/listener/projectListListener"], function() {
 							$("#dummyUpdate_"+dynamicId).css("height","10px");
 							self.projectslistListener.getUpdatableFiles(data, openccObj);
 						} else if (response.status === "success" && response.responseCode === "PHR10C00001") {
-							var errMsg = commonVariables.api.error[response.responseCode] + response.data.lockedBy + commonVariables.api.error["PHR10C00111"] + response.data.lockedDate;
-							commonVariables.api.showError(errMsg, 'error', true, true);
+							commonVariables.api.showError(self.getLockErrorMsg(response), 'error', true, true);
 						}	
 					});		
 				} else if (action === "Add Repo" || $(this).hasClass('del_appln') || $(this).hasClass('del_project')){
@@ -367,8 +372,7 @@ define(["projectlist/listener/projectListListener"], function() {
 						if (response.status === "success" && response.responseCode === "PHR10C00002") {
 							self.openccpl(openccObj, openccName, currentPrjName);
 						} else if (response.status === "success" && response.responseCode === "PHR10C00001") {
-							var errMsg = commonVariables.api.error[response.responseCode] + response.data.lockedBy + commonVariables.api.error["PHR10C00111"] + response.data.lockedDate;
-							commonVariables.api.showError(errMsg, 'error', true, true);
+							commonVariables.api.showError(self.getLockErrorMsg(response), 'error', true, true);
 						}	
 					});			
 				} else {

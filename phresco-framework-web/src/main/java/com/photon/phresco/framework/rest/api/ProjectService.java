@@ -51,6 +51,7 @@ import org.json.JSONObject;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.photon.phresco.commons.FrameworkConstants;
+import com.photon.phresco.commons.LockUtil;
 import com.photon.phresco.commons.ResponseCodes;
 import com.photon.phresco.commons.model.ApplicationInfo;
 import com.photon.phresco.commons.model.ArtifactGroup;
@@ -330,7 +331,7 @@ public class ProjectService extends RestBase implements FrameworkConstants, Serv
 			ApplicationInfo applicationInfo = projectinfo.getAppInfos().get(0);
 			UUID uniqueKey = UUID.randomUUID();
 			unique_key = uniqueKey.toString();
-			FrameworkUtil.generateLock(Collections.singletonList(FrameworkServiceUtil.getLockDetail(applicationInfo.getId(), FrameworkConstants.FEATURE_UPDATE, displayName, unique_key)), true);
+			LockUtil.generateLock(Collections.singletonList(LockUtil.getLockDetail(applicationInfo.getId(), FrameworkConstants.FEATURE_UPDATE, displayName, unique_key)), true);
 			if (CollectionUtils.isNotEmpty(selectedFeaturesFromUI)) {
 				for (SelectedFeature selectedFeatureFromUI : selectedFeaturesFromUI) {
 					String artifactGroupId = selectedFeatureFromUI.getModuleId();
@@ -404,7 +405,7 @@ public class ProjectService extends RestBase implements FrameworkConstants, Serv
 					.build();
 		} finally {
 			try {
-				FrameworkServiceUtil.removeLock(unique_key);
+				LockUtil.removeLock(unique_key);
 			} catch (PhrescoException e) {
 			}
 		}
@@ -457,7 +458,7 @@ public class ProjectService extends RestBase implements FrameworkConstants, Serv
 			}
 			
 			//To generate the lock for the particular operation
-			FrameworkUtil.generateLock(Collections.singletonList(FrameworkServiceUtil.getLockDetail(appInfo.getId(), FrameworkConstants.APPLN_UPDATE, displayName, unique_key)), true);
+			LockUtil.generateLock(Collections.singletonList(LockUtil.getLockDetail(appInfo.getId(), FrameworkConstants.APPLN_UPDATE, displayName, unique_key)), true);
 			
 			List<DownloadInfo> selectedServerGroup = new ArrayList<DownloadInfo>();
 			List<DownloadInfo> selectedDatabaseGroup = new ArrayList<DownloadInfo>();
@@ -588,7 +589,7 @@ public class ProjectService extends RestBase implements FrameworkConstants, Serv
 		} finally {
 			Utility.closeReader(bufferedReader);
 			try {
-				FrameworkServiceUtil.removeLock(unique_key);
+				LockUtil.removeLock(unique_key);
 			} catch (PhrescoException e) {
 			}
 		}

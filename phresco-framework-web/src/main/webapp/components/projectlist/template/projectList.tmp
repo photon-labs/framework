@@ -24,7 +24,7 @@
                         		<img name="editproject" key="{{id}}" src="themes/default/images/helios/edit_row_icon.png" width="29" height="23" border="0" alt="">
                     		</a> 
                     		{{#if ../userPermissions.manageApplication}}
-	                    		<a name="{{id}}" appIds="{{#appIds appInfos}}{{/appIds}}" class="tooltiptop del_project" title="" data-placement="bottom" data-toggle="tooltip" href="javascript:void(0)" data-original-title="Delete {{name}}">
+	                    		<a name="{{id}}" appIds="{{#csvAppIds appInfos}}{{/csvAppIds}}" class="tooltiptop del_project" title="" data-placement="bottom" data-toggle="tooltip" href="#" data-original-title="Delete {{name}}">
 	                    			<img src="themes/default/images/helios/delete_row_icon.png" width="29" height="23" border="0" alt="0">
 	                			</a>
                 			{{else}}
@@ -41,7 +41,7 @@
                       </tr>
 					         {{#each appInfos}}
                       <tr class="{{appDirName}}" techid="{{techInfo.id}}">
-                        <td width="25%"><a name="editApplication" href="javascript:;">{{name}}</a></td>
+                        <td width="25%"><a name="editApplication" appid="{{id}}" href="javascript:;">{{name}}</a></td>
                         <td width="25%">{{#descriptionshow description}}{{/descriptionshow}}</td>
                         <td width="25%">{{techInfo.name}}</td>
                        <td class="list_img"><a name="pdf_report_{{id}}" temp="pdf_report" fromPage="All" class="tooltiptop" title="" dynamicId="{{id}}" data-placement="bottom" data-t="tooltip" href="javascript:void(0)" data-original-title="PDF Report"><img src="themes/default/images/helios/pdf_icon.png" width="14" height="16" border="0" alt=""></a>

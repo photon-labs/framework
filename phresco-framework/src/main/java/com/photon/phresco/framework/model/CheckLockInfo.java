@@ -17,6 +17,7 @@ public class CheckLockInfo implements Serializable {
 	private boolean lock;
 	private String lockedBy;
 	private String lockedDate;
+	private String lockActionCode;
 	
 	public CheckLockInfo() {
 		super();
@@ -46,6 +47,14 @@ public class CheckLockInfo implements Serializable {
 		this.lockedDate = lockedDate;
 	}
 	
+	public void setLockActionCode(String lockActionCode) {
+		this.lockActionCode = lockActionCode;
+	}
+
+	public String getLockActionCode() {
+		return lockActionCode;
+	}
+
 	public String toString() {
 		 return new ToStringBuilder(this,
 	                ToStringStyle.DEFAULT_STYLE)

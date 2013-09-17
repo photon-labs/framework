@@ -483,4 +483,21 @@ public interface ResponseCodes {
 	String PHR900002 = "PHR900002"; // framework upgraded successfully
 	String PHR910003 = "PHR910003"; // unauthorized user
 	String PHR910004 = "PHR910004"; // failed to upgrade framework
+	
+	/*
+	 * Process Lock 
+	 */
+	String PHR10LC0001 = "PHR10LC0001"; // Code in progress
+	String PHR10LB0001 = "PHR10LB0001"; // Build in progress
+	String PHR10LR0001 = "PHR10LR0001"; // Run against source in progress
+	String PHR10LD0001 = "PHR10LD0001"; // Deploy in progress
+	String PHR10LUT001 = "PHR10LUT001"; // Unit testing in progress
+	String PHR10LCT001 = "PHR10LCT001"; // Component testing in progress
+	String PHR10LFT001 = "PHR10LFT001"; // Functional testing in progress
+	String PHR10LPT001 = "PHR10LPT001"; // Performance testing in progress
+	String PHR10LLT001 = "PHR10LLT001"; // Load testing in progress
+	String PHR10LAR001 = "PHR10LAR001"; // Add to repo in progress
+	String PHR10LUR001 = "PHR10LUR001"; // commit in progress
+	String PHR10LCR001 = "PHR10LCR001"; // update in progress
+	String PHR10LIM001 = "PHR10LIM001"; // import in progress
 }

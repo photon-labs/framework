@@ -34,7 +34,7 @@ public interface SCMManager {
 	 
 	 */
 	ApplicationInfo importProject(String type, String url, String username,
-			String password, String branch, String revision) throws Exception ;
+			String password, String branch, String revision, String displayName, String uniqueKey) throws Exception ;
 
 	/**
 	 * 

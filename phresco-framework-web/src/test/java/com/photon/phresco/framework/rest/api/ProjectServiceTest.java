@@ -80,7 +80,7 @@ public class ProjectServiceTest extends LoginServiceTest {
 
 	@Test
 	public void updateProjectTest() {
-		ProjectInfo projectInfo = createProjectInfo();
+		ProjectInfo projectInfo = createProjectInfo1();
 		Response response = projectService.updateProject(projectInfo, userId);
 		assertEquals(200 , response.getStatus());
 	}
@@ -101,7 +101,7 @@ public class ProjectServiceTest extends LoginServiceTest {
 
 	@Test
 	public void updateApplication() {
-		ApplicationInfo appInfo = getApplicationInfo();
+		ApplicationInfo appInfo = getApplicationInfo1();
 		Response response  = projectService.updateApplication(appDirName, appInfo, userId, customerId, "admin");
 		assertEquals(200 , response.getStatus());
 //		appInfo.setAppDirName("TestGitProject");
@@ -416,6 +416,93 @@ public class ProjectServiceTest extends LoginServiceTest {
 		
 		return info;
 	}
+	
+	private ProjectInfo createProjectInfo1() {
+		ProjectInfo projectInfo = new ProjectInfo();
+		projectInfo.setCustomerIds(getCustomer());
+		projectInfo.setId("TestProject");
+		projectInfo.setName("TestProject");
+		projectInfo.setNoOfApps(1);
+		projectInfo.setProjectCode("TestProject");
+		projectInfo.setVersion("1.0");
+		projectInfo.setProjectCode("TestProject");
+		projectInfo.setAppInfos(Collections.singletonList(getApplicationInfo1()));
+		return projectInfo;
+	}
+	
+	private static ApplicationInfo getApplicationInfo1() {
+		ApplicationInfo info = new ApplicationInfo();
+		info.setAppDirName("TestProject");
+		info.setCode("TestProject");
+		info.setId("TestProject");
+		info.setCustomerIds(getCollections("photon"));
+		info.setEmailSupported(false);
+		info.setPhoneEnabled(false);
+		info.setTabletEnabled(false);
+		info.setDescription("Simple java web service Project");
+		info.setHelpText("Help");
+		info.setName("TestProject");
+		info.setPilot(false);
+		info.setUsed(false);
+		info.setDisplayName("TestProject");
+		info.setSelectedJSLibs(getCollections("99aa3901-a088-4142-8158-000f1e80f1bf"));
+		info.setVersion("1.0");
+
+		// TechnologyInfo
+
+		TechnologyInfo techInfo = new TechnologyInfo();
+		techInfo.setAppTypeId("e1af3f5b-7333-487d-98fa-46305b9dd6ee");
+		techInfo.setVersion("1.6");
+		techInfo.setId("tech-java-webservice");
+		techInfo.setSystem(false);
+		info.setTechInfo(techInfo);
+
+		// selected Modules
+
+		List<String> selectedModules = new ArrayList<String>();
+		selectedModules.add("a69c6875-0bb0-462c-86d5-e361d02157cc");
+		info.setSelectedModules(selectedModules);
+
+
+		// server 
+
+		List<ArtifactGroupInfo> servers =  new ArrayList<ArtifactGroupInfo>();
+		ArtifactGroupInfo serverArtifactGroupInfo = new ArtifactGroupInfo();
+		serverArtifactGroupInfo.setArtifactGroupId("downloads_apache-tomcat");
+		serverArtifactGroupInfo.setDescription("Apache Tomcat");
+		serverArtifactGroupInfo.setDisplayName("Tomcat");
+		serverArtifactGroupInfo.setId("523c8806-86a8-4e61-937f-f27c8b32aa5c");
+		serverArtifactGroupInfo.setName("Eshop");
+		serverArtifactGroupInfo.setSystem(false);
+
+		List<String> serverArtifactInfoId = new ArrayList<String>();
+		serverArtifactInfoId.add("0e34ab53-1b9e-493d-aa72-6ecacddc5338");
+		serverArtifactGroupInfo.setArtifactInfoIds(serverArtifactInfoId);
+
+		servers.add(serverArtifactGroupInfo);
+		info.setSelectedServers(servers);
+
+		// database
+
+		List<ArtifactGroupInfo> databases =  new ArrayList<ArtifactGroupInfo>();
+		ArtifactGroupInfo databaseArtifactGroupInfos = new ArtifactGroupInfo();
+		databaseArtifactGroupInfos.setArtifactGroupId("downloads_mysql");
+		databaseArtifactGroupInfos.setDescription("MYSQl");
+		databaseArtifactGroupInfos.setDisplayName("MySql");
+		databaseArtifactGroupInfos.setId("downloads_mysql");
+		databaseArtifactGroupInfos.setName("MySQL");
+		databaseArtifactGroupInfos.setSystem(false);
+
+
+		List<String> databaseArtifactInfoId = new ArrayList<String>();
+		databaseArtifactInfoId.add("26bb9f28-e847-4099-b255-429706ceb7b9");
+		databaseArtifactGroupInfos.setArtifactInfoIds(databaseArtifactInfoId);
+
+		databases.add(databaseArtifactGroupInfos);
+		info.setSelectedDatabases(databases);
+		return info;
+	}
+	
 
 	private static List<String> getCollections(String value) {
 		return Collections.singletonList(value);
