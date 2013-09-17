@@ -78,13 +78,8 @@ define(["framework/base", "api/localStorageAPI"], function(){
 						self.showError(response.responseCode, 'error', false);
 					}
 					if ((response !== undefined && response !== null && response.status !== "error") || self.bCheck) {
-						// callbackFunction(response);
 						self.successResponse = response;
-					} else {
-						self.errorpopupshow(response);
-					}
-					
-					self.bCheck = false;
+					} else {self.errorpopupshow(response);}
 				},
 				
 				error : function(jqXHR, textStatus, errorThrown){
@@ -101,10 +96,11 @@ define(["framework/base", "api/localStorageAPI"], function(){
 						commonVariables.hideloading = false;
 						commonVariables.loadingScreen.removeLoading();
 					}
-					if ((self.successResponse !== undefined && self.successResponse !== null && self.successResponse.status !== "error") || self.bCheck) {
+					if((self.successResponse !== undefined && self.successResponse !== null && self.successResponse.status !== "error") || self.bCheck){
 						callbackFunction(self.successResponse);
 						self.successResponse = null;
 					}
+					self.bCheck = false;
 				}
 			});
 		},
