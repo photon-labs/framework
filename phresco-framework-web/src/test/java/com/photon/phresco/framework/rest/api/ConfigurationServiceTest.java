@@ -611,7 +611,7 @@ public class ConfigurationServiceTest extends LoginServiceTest {
 		
 		configListPass.add(configuration);
 		configListPass.add(prodConfigDb);
-		configListPass.add(prodWebService);
+//		configListPass.add(prodWebService);
 		configListPass.add(configurationEmailDup);
 		
 		configListName.add(configuration);

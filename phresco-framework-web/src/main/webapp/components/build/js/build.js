@@ -209,6 +209,7 @@ define(["build/listener/buildListener"], function() {
 			var self = this;
 			
 			if($('#deploye_' + divId).find('form[name=deployForm] ul').children().length > 0){
+				$('#deploye_' + divId).find('form[name=deployForm] div #buildNumber').val(divId);
 				self.dragDrop();
 				self.opencc(current,'deploye_' + divId, '' , 50);
 			}else{$('#deploye_' + divId).hide();}
@@ -249,7 +250,7 @@ define(["build/listener/buildListener"], function() {
 							}
 
 							if(current.options === null || current.options.deviceDeploy === false){
-								deviceDeploy = '<div id="deploye_'+ current.buildNo +'" class="dyn_popup popup_bg" style="display:none;"><div id="bdeploy_'+ current.buildNo +'"><form name="deployForm"><ul class="row dynamicControls"></ul><input type="hidden" name="buildNumber" value="'+ current.buildNo +'" /></form><div class="flt_right"><input type="button" name="deploy" data-i18n="[value]build.label.deploy" class="btn btn_style dyn_popup_close"><input type="button" data-i18n="[value]build.label.close" class="btn btn_style dyn_popup_close"></div></div></div>';
+								deviceDeploy = '<div id="deploye_'+ current.buildNo +'" class="dyn_popup popup_bg" style="display:none;"><div id="bdeploy_'+ current.buildNo +'"><form name="deployForm"><ul class="row dynamicControls"></ul><div class="hiddenControls"></div></form><div class="flt_right"><input type="button" name="deploy" data-i18n="[value]build.label.deploy" class="btn btn_style dyn_popup_close"><input type="button" data-i18n="[value]build.label.close" class="btn btn_style dyn_popup_close"></div></div></div>';
 							}else{
 								deviceDeploy = '<div class="dyn_popup popup_bg" style="display:none;"></div>';
 							}
@@ -264,7 +265,7 @@ define(["build/listener/buildListener"], function() {
 								deleteOpt ='<img src="themes/default/images/helios/delete_row_off.png" width="14" height="18" border="0" alt="">';
 							}
 						
-							tbody += '<tr><td name="'+ current.buildNo +'">'+ current.buildNo +'</td><td>'+ current.timeStamp +'</td><td class="list_img"><a href="javascript:void(0)" class="tooltiptop" title="" data-placement="bottom" data-toggle="tooltip" data-original-title="Download"><img name="downloadBuild" src="themes/default/images/helios/download_icon.png" width="15" height="18" border="0" alt=""></a>'+ cancreateIpa +'</td><td name="prcBuild" class="list_img"><a href="javascript:void(0)" class="tooltiptop" title="" data-placement="bottom" data-toggle="tooltip" data-original-title="Process build"><img name="procBuild" src="themes/default/images/helios/download_icon.png" width="15" height="18" border="0" alt=""></a><div id="prcBuild_'+ current.buildNo +'" class="dyn_popup popup_bg" style="display:none; width:30%;"><div id="prcBuild_'+ current.buildNo +'"><form name="prcBForm"><ul class="row dynamicControls"></ul><input type="hidden" name="buildNumber" value="'+ current.buildNo +'"/></form><div class="flt_right"><input class="btn btn_style" type="button" name="processBuild" data-i18n="[value]common.btn.ok"><input class="btn btn_style dyn_popup_close" type="button"  data-i18n="[value]common.btn.close"></div></div></div></td><td name="buildDep" class="list_img">'+ manageBuilds +'</td><td class="list_img">'+ deleteOpt +'</td></tr>';
+							tbody += '<tr><td name="'+ current.buildNo +'">'+ current.buildNo +'</td><td>'+ current.timeStamp +'</td><td class="list_img"><a href="javascript:void(0)" class="tooltiptop" title="" data-placement="bottom" data-toggle="tooltip" data-original-title="Download"><img name="downloadBuild" src="themes/default/images/helios/download_icon.png" width="15" height="18" border="0" alt=""></a>'+ cancreateIpa +'</td><td name="prcBuild" class="list_img"><a href="javascript:void(0)" class="tooltiptop" title="" data-placement="bottom" data-toggle="tooltip" data-original-title="Process build"><img name="procBuild" src="themes/default/images/helios/download_icon.png" width="15" height="18" border="0" alt=""></a><div id="prcBuild_'+ current.buildNo +'" class="dyn_popup popup_bg" style="display:none; width:30%;"><div id="prcBuild_'+ current.buildNo +'"><form name="prcBForm"><ul class="row dynamicControls"></ul><div class="hiddenControls"></div></form><div class="flt_right"><input class="btn btn_style" type="button" name="processBuild" data-i18n="[value]common.btn.ok"><input class="btn btn_style dyn_popup_close" type="button"  data-i18n="[value]common.btn.close"></div></div></div></td><td name="buildDep" class="list_img">'+ manageBuilds +'</td><td class="list_img">'+ deleteOpt +'</td></tr>';
 						});
 						
 						$("#buildRow tbody").html(tbody);
@@ -328,8 +329,7 @@ define(["build/listener/buildListener"], function() {
 							}
 						}
 					} else if (response.status === "success" && response.responseCode === "PHR10C00001") {
-						var errMsg = commonVariables.api.error[response.responseCode] + response.data.lockedBy + commonVariables.api.error["PHR10C00111"] + response.data.lockedDate;
-						commonVariables.api.showError(errMsg, 'error', true, true);
+						commonVariables.api.showError(self.getLockErrorMsg(response), 'error', true, true);
 					}
 				});		
 			});
@@ -593,8 +593,7 @@ define(["build/listener/buildListener"], function() {
 								$("form[name=runAgainstForm] #build_runagsource").show();
 							});
 					} else if (response.status === "success" && response.responseCode === "PHR10C00001") {
-						var errMsg = commonVariables.api.error[response.responseCode] + response.data.lockedBy + commonVariables.api.error["PHR10C00111"] + response.data.lockedDate;
-						commonVariables.api.showError(errMsg, 'error', true, true);
+						commonVariables.api.showError(self.getLockErrorMsg(response), 'error', true, true);
 					}	
 				});		
 			});
@@ -689,8 +688,7 @@ define(["build/listener/buildListener"], function() {
 							});
 						}else{self.opencc(openccObj,openccObjName);}
 					} else if (response.status === "success" && response.responseCode === "PHR10C00001") {
-						var errMsg = commonVariables.api.error[response.responseCode] + response.data.lockedBy + commonVariables.api.error["PHR10C00111"] + response.data.lockedDate;
-						commonVariables.api.showError(errMsg, 'error', true, true);
+						commonVariables.api.showError(self.getLockErrorMsg(response), 'error', true, true);
 					}
 				});
 			});

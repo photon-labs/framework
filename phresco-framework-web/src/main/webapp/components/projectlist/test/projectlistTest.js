@@ -46,6 +46,16 @@ define(["projectlist/projectList"], function(ProjectList) {
 					  this.responseText = JSON.stringify({"message":null,"exception":null,"responseCode":"PHR10C00002","data":null,"status":"success"});
 				  }
 				});
+					$.mockjax({
+				  url: commonVariables.webserviceurl+"util/checkLock?actionType=deleteProj&appId=294187d7-f75a-4adc-bb25-ce9465e0e82f",
+				  type: "GET",
+				  dataType: "json",
+				  contentType: "application/json",
+				  status: 200,
+				  response : function() {
+					  this.responseText = JSON.stringify({"message":null,"exception":null,"responseCode":"PHR10C00002","data":null,"status":"success"});
+				  }
+				});
 
 				$('.tooltiptop[name^="addRepo"]').click();
 				setTimeout(function() {
@@ -537,7 +547,7 @@ define(["projectlist/projectList"], function(ProjectList) {
 			var self = this;
 			asyncTest("Import Application Success Service Test", function() {
 				var importAppAjax = $.mockjax({
-					url: commonVariables.webserviceurl + 'repository/importApplication',			
+					url: commonVariables.webserviceurl + 'repository/importApplication?displayName=Admin',			
 					type:'POST',
 					contentType: 'application/json',
 					status: 200,

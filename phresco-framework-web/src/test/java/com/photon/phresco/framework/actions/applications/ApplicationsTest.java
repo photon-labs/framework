@@ -57,7 +57,7 @@ public class ApplicationsTest {
 //  @Test
 	public void gitPrivateRepoClone() throws Exception {
 		ApplicationInfo importProject = scmi.importProject("git","https://github.com/bestbuymobileapps/bby-digital-deals.git",
-				"nikhilkumar-a", "phresco123", "master", null);
+				"nikhilkumar-a", "phresco123", "master", null, "Admin", "");
 		if (importProject != null) {
 			Assert.assertEquals(true, true );
 		}
@@ -66,7 +66,7 @@ public class ApplicationsTest {
 	
 //	@Test
 	public void gitPublicRepoClone() throws Exception {
-		ApplicationInfo importProject = scmi.importProject("git","https://github.com/santhosh-ja/Test2.git", null, null, "master", null);
+		ApplicationInfo importProject = scmi.importProject("git","https://github.com/santhosh-ja/Test2.git", null, null, "master", null, "Admin", "");
 		if (importProject != null) {
 			Assert.assertEquals(true, true );
 		}
@@ -74,7 +74,7 @@ public class ApplicationsTest {
 	
 //  @Test
 	public void svnSingleFileCheckout() throws Exception {
-		ApplicationInfo importProject = scmi.importProject("svn","https://insight.photoninfotech.com/svn/repos/phresco-svn-projects/ci/IphoneAutomationInJe/2.0/phresco-test/sample applayer-tech-php/", "santhosh_ja", "santJ!23", null, "HEAD");
+		ApplicationInfo importProject = scmi.importProject("svn","https://insight.photoninfotech.com/svn/repos/phresco-svn-projects/ci/IphoneAutomationInJe/2.0/phresco-test/sample applayer-tech-php/", "santhosh_ja", "santJ!23", null, "HEAD", "Admin", "");
 		if (importProject != null) {
 			Assert.assertEquals(true, true );
 		}
@@ -82,7 +82,7 @@ public class ApplicationsTest {
 	
 //  @Test
 	public void svnMultipleFileCheckout() throws Exception {
-		ApplicationInfo importProject = scmi.importProject("svn","https://insight.photoninfotech.com/svn/repos/phresco-svn-projects/ci/IphoneAutomationInJe/2.0/phresco-test/", "santhosh_ja", "santJ!23", null, "HEAD");
+		ApplicationInfo importProject = scmi.importProject("svn","https://insight.photoninfotech.com/svn/repos/phresco-svn-projects/ci/IphoneAutomationInJe/2.0/phresco-test/", "santhosh_ja", "santJ!23", null, "HEAD","Admin", "");
 		if (importProject != null) {
 			Assert.assertEquals(true, true );
 		}
@@ -105,7 +105,7 @@ public class ApplicationsTest {
     //Clone/Checkout a non phresco-compliance projects
 //	@Test
 	public void gitClonePhrescoComplianceFail() throws Exception {
-		 ApplicationInfo importProject = scmi.importProject("git","https://github.com/santhosh-ja/Test.git", null, null, "master", null);
+		 ApplicationInfo importProject = scmi.importProject("git","https://github.com/santhosh-ja/Test.git", null, null, "master", null, "Admin", "");
 		if (importProject != null) {
 			Assert.assertEquals(true, true );
 		}
@@ -113,7 +113,7 @@ public class ApplicationsTest {
 	
 //  @Test
 	public void svnCheckoutPhrescoComplianceFail() throws Exception {
-		 ApplicationInfo importProject = scmi.importProject("svn","https://insight.photoninfotech.com/svn/repos/phresco-svn-projects/ci/IphoneAutomationInJe/2.0/", "santhosh_ja", "santJ!23", null, "HEAD");
+		 ApplicationInfo importProject = scmi.importProject("svn","https://insight.photoninfotech.com/svn/repos/phresco-svn-projects/ci/IphoneAutomationInJe/2.0/", "santhosh_ja", "santJ!23", null, "HEAD", "Admin", "");
 		 if (importProject != null) {
 				Assert.assertEquals(true, true );
 			}

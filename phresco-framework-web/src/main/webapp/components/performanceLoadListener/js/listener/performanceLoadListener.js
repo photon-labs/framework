@@ -48,7 +48,8 @@ define(["lib/jquery-tojson-1.0",'lib/RGraph_common_core-1.0','lib/RGraph_common_
 		 * @return: returns the contructed header
 		 */
 		getActionHeader : function(requestBody, action) {
-			var self = this, appDirName = commonVariables.api.localVal.getSession("appDirName"),
+			var appInfo = commonVariables.api.localVal.getProjectInfo();
+			var self = this, appDirName = appInfo.data.projectInfo.appInfos[0].appDirName,
 			header = {
 				contentType: "application/json",				
 				dataType: "json",
@@ -431,7 +432,8 @@ define(["lib/jquery-tojson-1.0",'lib/RGraph_common_core-1.0','lib/RGraph_common_
 		downloadPdfReport : function () {
 			var self = this;
 			$('.donloadPdfReport').on("click", function() {
-				var fileName = $(this).attr("fileName"), from=$(this).attr("from"), appDirName = commonVariables.api.localVal.getSession("appDirName");
+				var appInfo = commonVariables.api.localVal.getProjectInfo();
+				var fileName = $(this).attr("fileName"), from=$(this).attr("from"), appDirName = appInfo.data.projectInfo.appInfos[0].appDirName;
 				var pdfDownloadUrl = commonVariables.webserviceurl + "pdf/downloadReport?appDirName="+appDirName+"&reportFileName="+fileName+"&fromPage="+from;
 				window.open(pdfDownloadUrl, '_self');
 			});
@@ -537,14 +539,7 @@ define(["lib/jquery-tojson-1.0",'lib/RGraph_common_core-1.0','lib/RGraph_common_
 					if (response !== null) {
 						callback(response);
 					} else {
-						$(".content_end").show();
-						$(".msgdisplay").removeClass("success").addClass("error");
-						$(".error").attr('data-i18n', 'errorCodes.' + response.responseCode);
-						self.renderlocales(commonVariables.contentPlaceholder);	
-						$(".error").fadeIn(500).fadeOut(500).fadeIn(500).fadeOut(500).fadeIn(500).fadeOut(5);
-						setTimeout(function() {
-							$(".content_end").hide();
-						},2500);
+						commonVariables.api.showError(response.responseCode ,"error", true);
 					}
 				},
 				function(textStatus){
@@ -620,15 +615,7 @@ define(["lib/jquery-tojson-1.0",'lib/RGraph_common_core-1.0','lib/RGraph_common_
 			self.performAction(self.getActionHeader(requestBody, "validation"), function(response) {
 				if ((response.errorFound) || (response.status === "error") || (response.status === "failure")){
 					if (response.configErr) {
-						$(".content_end").show();
-						$(".msgdisplay").removeClass("success").addClass("error");
-						$(".error").attr('data-i18n', 'errorCodes.' + response.responseCode);
-						self.renderlocales(commonVariables.contentPlaceholder);	
-						$(".error").show();
-						$(".error").fadeIn(500).fadeOut(500).fadeIn(500).fadeOut(500).fadeIn(500).fadeOut(5);
-						setTimeout(function() {
-							$(".content_end").hide();
-						},2500);
+						commonVariables.api.showError(response.responseCode ,"error", true)
 					} else {
 						dynamicPageObject.showDynamicErrors(response);
 					}

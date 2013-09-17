@@ -555,66 +555,6 @@ public class FrameworkUtil implements Constants, FrameworkConstants {
 		return permissions;
     }
 
-    
-    public static void generateLock(List<LockDetail> lockDetails, boolean toGenerate) throws PhrescoException {
-    	BufferedWriter out = null;
-		FileWriter fstream = null;
-		try {
-			List<LockDetail> newLockDetails = new ArrayList<LockDetail>();
-			newLockDetails.addAll(lockDetails);
-			List<LockDetail> availableLockDetails = getLockDetails();
-			if (toGenerate && CollectionUtils.isNotEmpty(availableLockDetails)) {
-				newLockDetails.addAll(availableLockDetails);
-			}
-			
-			Gson gson = new Gson();
-			String infoJSON = gson.toJson(newLockDetails);
-			fstream = new FileWriter(getLockFilePath());
-			out = new BufferedWriter(fstream);
-			out.write(infoJSON);
-		} catch (IOException e) {
-			throw new PhrescoException(e);
-		} finally {
-			try {
-				if (out != null) {
-					out.close();
-				}
-				if (fstream != null) {
-					fstream.close();
-				}
-			} catch (IOException e) {
-				throw new PhrescoException(e);
-			}
-		}
-    }
-    
-    public static List<LockDetail> getLockDetails() throws PhrescoException {
-		FileReader reader = null;
-		try {
-			File file = new File(getLockFilePath());
-			if (file.exists()) {
-				reader = new FileReader(file);
-				Gson gson = new Gson();
-				List<LockDetail> lockDetails = gson.fromJson(reader, new TypeToken<List<LockDetail>>(){}.getType());
-				return lockDetails;
-			}
-		} catch (FileNotFoundException e) {
-			throw new PhrescoException(e);
-		} finally {
-			Utility.closeStream(reader);
-		}
-		return null;
-	}
-    
-    private static String getLockFilePath() {
-    	StringBuilder sb = new StringBuilder(Utility.getPhrescoHome())
-		.append(File.separator)
-		.append(PROJECTS_WORKSPACE)
-		.append(File.separator)
-    	.append(LOCK_FILE);
-    	return sb.toString();
-    }
-
 	public List<TestSuite> readManualTestSuiteFile(String filePath) {
 		List<TestSuite> testSuites = readTestSuites(filePath);
 		return testSuites;

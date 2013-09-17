@@ -26,6 +26,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
@@ -79,6 +80,7 @@ import org.tmatesoft.svn.core.wc.SVNWCUtil;
 
 import com.google.gson.Gson;
 import com.photon.phresco.commons.FrameworkConstants;
+import com.photon.phresco.commons.LockUtil;
 import com.photon.phresco.commons.model.ApplicationInfo;
 import com.photon.phresco.commons.model.ProjectInfo;
 import com.photon.phresco.exception.PhrescoException;
@@ -97,7 +99,7 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 	SVNClientManager cm = null;
 
 	public ApplicationInfo importProject(String type, String url, String username,
-			String password, String branch, String revision) throws Exception {
+			String password, String branch, String revision, String displayName, String uniqueKey) throws Exception {
 		if(debugEnabled){
 			S_LOGGER.debug("Entering Method  SCMManagerImpl.importProject()");
 		}
@@ -110,7 +112,7 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 			DAVRepositoryFactory.setup();
 			DefaultSVNOptions options = new DefaultSVNOptions();
 			cm = SVNClientManager.newInstance(options, username, password);
-			boolean valid = checkOutFilter(url, username, password, revision, svnURL);
+			boolean valid = checkOutFilter(url, username, password, revision, svnURL, displayName, uniqueKey);
 			if(debugEnabled){
 				S_LOGGER.debug("Completed");
 			}
@@ -144,7 +146,7 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 			if(debugEnabled){
 				S_LOGGER.debug("Validating Phresco Definition");
 			}
-			ApplicationInfo applicationInfo = cloneFilter(gitImportTemp, url, true);
+			ApplicationInfo applicationInfo = cloneFilter(gitImportTemp, url, true, displayName, uniqueKey);
 			if (gitImportTemp.exists()) {
 				if(debugEnabled){
 					S_LOGGER.debug("Deleting ~Temp");
@@ -158,7 +160,7 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 				return applicationInfo;
 			} 
 		} else if (BITKEEPER.equals(type)) {
-		    return importFromBitKeeper(url);
+		    return importFromBitKeeper(url, displayName, uniqueKey);
 		}
 		
 		return null;
@@ -361,7 +363,7 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 		FSRepositoryFactory.setup();
 	}
 
-	private boolean checkOutFilter(String url, String name, String password,String revision, SVNURL svnURL) throws Exception {
+	private boolean checkOutFilter(String url, String name, String password,String revision, SVNURL svnURL, String displayName, String uniqueKey) throws Exception {
 		if(debugEnabled){
 			S_LOGGER.debug("Entering Method  SCMManagerImpl.checkOutFilter()");
 		}
@@ -384,12 +386,12 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 				S_LOGGER.debug("Repository Root: " + repository.getRepositoryRoot(true));
 				S_LOGGER.debug("Repository UUID: " + repository.getRepositoryUUID(true));
 			}
-			boolean valid = validateDir(repository, "", revision, svnURL, true);
+			boolean valid = validateDir(repository, "", revision, svnURL, true, displayName, uniqueKey);
 			return valid;
 	}
 
 	private boolean validateDir(SVNRepository repository, String path,
-			String revision, SVNURL svnURL, boolean recursive)throws Exception {
+			String revision, SVNURL svnURL, boolean recursive, String displayName, String uniqueKey)throws Exception {
 		if(debugEnabled){
 			S_LOGGER.debug("Entering Method  SCMManagerImpl.validateDir()");
 		}
@@ -409,6 +411,7 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 							S_LOGGER.debug("Entry Path " + entry.getURL());
 						}
 						ProjectInfo projectInfo = getSvnAppInfo(revision, svnURL);
+						
 						if(debugEnabled){
 							S_LOGGER.debug("AppInfo " + projectInfo);
 						}
@@ -430,6 +433,10 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 						File file = new File(Utility.getProjectHome(), appInfo.getAppDirName());
 						if (file.exists()) {
 							throw new PhrescoException(PROJECT_ALREADY);
+			            } else {
+			            	//generate import lock
+			            	String appId = appInfo.getId();
+			            	LockUtil.generateLock(Collections.singletonList(LockUtil.getLockDetail(appId, FrameworkConstants.IMPORT, displayName, uniqueKey)), true);
 			            }
 						if(debugEnabled){
 							S_LOGGER.debug("Checking out...");
@@ -453,7 +460,7 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 							S_LOGGER.debug("checking subdirectories");
 						}
 						validateDir(repository,(path.equals("")) ? entry.getName() : path
-										+ FORWARD_SLASH + entry.getName(), revision,svnnewURL, false);
+										+ FORWARD_SLASH + entry.getName(), revision,svnnewURL, false, displayName, uniqueKey);
 					}
 				}
 			}
@@ -482,7 +489,7 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 	        r.getRepository().close();      
 	}
 	
-	private ApplicationInfo importFromBitKeeper(String repoUrl) throws PhrescoException {
+	private ApplicationInfo importFromBitKeeper(String repoUrl, String displayName, String uniqueKey) throws PhrescoException {
 	    BufferedReader reader = null;
 	    File file = new File(Utility.getPhrescoTemp() + "bitkeeper.info");
 	    boolean isImported = false;
@@ -517,6 +524,9 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 	        	if (projectInfo != null) {
 	        		ApplicationInfo appInfo = returnAppInfo(projectInfo);
 	        		if (appInfo != null) {
+	        			//generate import lock
+	                	String appId = appInfo.getId();
+	                	LockUtil.generateLock(Collections.singletonList(LockUtil.getLockDetail(appId, FrameworkConstants.IMPORT, displayName, uniqueKey)), true);
 	        			importToWorkspace(bkImportTemp, Utility.getProjectHome(), appInfo.getAppDirName());
 	        			return appInfo;
 	        		}
@@ -541,7 +551,7 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 	    }
 	}
 
-	private ApplicationInfo cloneFilter(File appDir, String url, boolean recursive)throws Exception {
+	private ApplicationInfo cloneFilter(File appDir, String url, boolean recursive, String displayName, String uniqueKey)throws Exception {
 		if(debugEnabled){
 			S_LOGGER.debug("Entering Method  SCMManagerImpl.cloneFilter()");
 		}
@@ -565,6 +575,9 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 			}
 			ApplicationInfo appInfo = appInfos.get(0);
 			if (appInfo != null) {
+				//generate import lock
+            	String appId = appInfo.getId();
+            	LockUtil.generateLock(Collections.singletonList(LockUtil.getLockDetail(appId, FrameworkConstants.IMPORT, displayName, uniqueKey)), true);
 				importToWorkspace(appDir, Utility.getProjectHome(),	appInfo.getAppDirName());
 				if(debugEnabled){
 					S_LOGGER.debug("updating pom.xml");

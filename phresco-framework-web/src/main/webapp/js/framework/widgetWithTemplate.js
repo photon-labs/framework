@@ -887,6 +887,11 @@ define(["framework/widget", "framework/templateProvider"], function() {
 				callback(strUl); 
 			},
 			
+			getLockErrorMsg : function(response) {
+				var errorMsg = commonVariables.api.error[response.data.lockActionCode] + commonVariables.api.error[response.responseCode] + response.data.lockedBy + commonVariables.api.error["PHR10C00111"] + response.data.lockedDate ;
+				return errorMsg;
+			}, 
+
 			CSVToArray : function(strData, strDelimiter) {
 				// Check to see if the delimiter is defined. If not,
 				// then default to comma.

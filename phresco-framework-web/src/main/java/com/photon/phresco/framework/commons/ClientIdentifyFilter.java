@@ -264,6 +264,7 @@ public class ClientIdentifyFilter implements Filter , ClientIdentifyFilterConsta
 				jsonObject.put("customerid", customer.getId());
 				jsonObject.put("copyRightLabel", copyRightLabel);
 				jsonObject.put("customerTitle", customerTitle);
+				jsonObject.put("context", customer.getContext());
 				return jsonObject;
 		} catch (PhrescoException e) {
 			S_LOGGER.error(e.getMessage());

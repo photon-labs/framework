@@ -253,6 +253,7 @@ public class BuildInfoService extends RestBase implements FrameworkConstants, Se
 		ResponseInfo<Boolean> responseData = new ResponseInfo<Boolean>();
 		String host = null, protocol = null, environmentName = null, port = null;
 		Boolean connectionAlive = false;
+		FileReader readers = null;
 		try {
 			File configurationInfo = new File(getDotPhrescoFolder(appDirName)+ File.separator + PHRESCO_ENV_CONFIG_FILE_NAME);
 			File runAgainsSourceInfo = new File(getDotPhrescoFolder(appDirName)+ File.separator + RUNAGNSRC_INFO_FILE);
@@ -260,7 +261,7 @@ public class BuildInfoService extends RestBase implements FrameworkConstants, Se
 			ResponseInfo<Boolean> finalOutput = responseDataEvaluation(responseData, null, connectionAlive, RESPONSE_STATUS_SUCCESS, PHR710005);
 			return Response.status(Response.Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
 			}
-				FileReader readers = new FileReader(runAgainsSourceInfo);
+				readers = new FileReader(runAgainsSourceInfo);
 				JSONObject jsonobject = new JSONObject();
 				JSONParser parser = new JSONParser();
 				jsonobject = (JSONObject)parser.parse(readers);
@@ -285,6 +286,15 @@ public class BuildInfoService extends RestBase implements FrameworkConstants, Se
 		} catch (Exception e) {
 			ResponseInfo<Boolean> finalOutput = responseDataEvaluation(responseData, e, null, RESPONSE_STATUS_ERROR, PHR710007);
 			return Response.status(Response.Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
+		} finally {
+			try {
+				if(readers != null) {
+					readers.close();
+				}
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			
 		}
 	}
 
@@ -299,6 +309,7 @@ public class BuildInfoService extends RestBase implements FrameworkConstants, Se
 				readLogFile = readRunAgsSrcLogFile(appDirName);
 			} else {
 				deleteLogFile(appDirName);
+				deleteInfoFile(appDirName);
 			}
 
 			ResponseInfo<Boolean> finalOutput = responseDataEvaluation(responseData, null, readLogFile,
@@ -312,6 +323,17 @@ public class BuildInfoService extends RestBase implements FrameworkConstants, Se
 		}
 	}
 	
+	private void deleteInfoFile(String appDirName) throws PhrescoException {
+		try {
+			File infoFile = new File(FrameworkServiceUtil.getApplicationHome(appDirName) + File.separator + FOLDER_DOT_PHRESCO + File.separator + RUNAGNSRC_INFO_FILE);
+			if (infoFile.isFile() && infoFile.exists()) {
+				infoFile.delete();
+			}
+		} catch (PhrescoException e) {
+			throw new PhrescoException(e);
+		}
+	}
+
 	public void deleteLogFile(String appDirName) throws PhrescoException {
 		try {
 			File logFile = new File(getLogFilePath(appDirName));
