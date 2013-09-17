@@ -43,7 +43,7 @@
                                 </select>
                                 {{#scopeShowHide packaging scope}}{{/scopeShowHide}}
 								</div>
-								<span class="settings_icon" settingsid="s_{{id}}"><img src="themes/default/images/helios/settings_icon.png" width="23" height="22" border="0" alt=""></span>
+								{{#packagedata packaging versions appliesTo id}}{{/packagedata}}
                         </li>
 						<div class="clear"></div>
                   {{/each}}  
@@ -88,7 +88,7 @@
 								{{/if}} 
                                 {{#scopeShowHide packaging scope}}{{/scopeShowHide}}
 							</div>
-							<span class="settings_icon" settingsid="s_{{id}}"><img src="themes/default/images/helios/settings_icon.png" width="23" height="22" border="0" alt=""></span>								
+							{{#packagedata packaging versions appliesTo id}}{{/packagedata}}								
                         </li>
 						 <div class="clear"></div>
                   {{/each}}
@@ -133,7 +133,7 @@
 								{{/if}}
                                 {{#scopeShowHide packaging scope}}{{/scopeShowHide}}
 							</div>
-							<span class="settings_icon" settingsid="s_{{id}}"><img src="themes/default/images/helios/settings_icon.png" width="23" height="22" border="0" alt=""></span>								
+							{{#packagedata packaging versions appliesTo id}}{{/packagedata}}								
 
                         </li>
 						<div class="clear"></div>
@@ -149,6 +149,7 @@
         </table>
         
         <!--features_content_main div ends here -->
+         <div class="alert hideContent" id= "notavailable" style="text-align: center;">Features not applicable for this project</div>
     </section>
 
     <div id="desc"></div>

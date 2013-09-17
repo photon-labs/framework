@@ -118,6 +118,9 @@ define(["features/features",  "application/application",  "projectlist/projectLi
 					function(response) {
 						if (response !== null && response.status !== "error" && response.status !== "failure") {
 							//commonVariables.loadingScreen.removeLoading();
+							if(response.responseCode === 'PHR400006') {
+								commonVariables.api.showError(response.responseCode ,"success", true, false, true);	
+							}
 							callback(response);
 						} else {
 							//commonVariables.loadingScreen.removeLoading();
@@ -228,10 +231,10 @@ define(["features/features",  "application/application",  "projectlist/projectLi
 		defendentmodule : function(versionID, button){
 			var self = this;
 			self.getFeaturesUpdate(self.getRequestHeader(self.featureUpdatedArray, "DEPENDENCY", versionID), function(response) {
-				if(response.data === null){
+			if(response.data !== null){
 					$.each(response.data, function(index, value){
 						$("select.input-mini option").each(function(index, currentVal) {
-							var uiId = $(this).val();
+						var uiId = $(this).val();
 							if(value === uiId){
 								if(button === 'true'){
 									$(currentVal).parents("div").siblings("fieldset").removeClass('switchOff').addClass("switchOn");
@@ -256,12 +259,15 @@ define(["features/features",  "application/application",  "projectlist/projectLi
 		},
 
 		getRequestHeader : function(projectRequestBody, type, descid) {
-			var url, self = this;
-			var custname = self.getCustomer();
-			var userId = JSON.parse(commonVariables.api.localVal.getSession("userInfo"));
-			var appDirName = commonVariables.api.localVal.getSession("appDirName");
-			var techId = commonVariables.techId;
-			var header = {
+			var url, self = this, appDirName = '', userId, custname, techId, header, projectInfo;
+			custname = self.getCustomer();
+			userId = JSON.parse(commonVariables.api.localVal.getSession("userInfo"));
+			if(commonVariables.api.localVal.getProjectInfo() !== null){
+				projectInfo = commonVariables.api.localVal.getProjectInfo();
+				appDirName = projectInfo.data.projectInfo.appInfos[0].appDirName;
+			}
+			techId = commonVariables.techId;
+			header = {
 				contentType: "application/json",
 				dataType: "json"
 			};
@@ -285,7 +291,13 @@ define(["features/features",  "application/application",  "projectlist/projectLi
 			} else if (type === "DEPENDENCY") {
 				header.requestMethod = "GET";
 				header.webserviceurl = commonVariables.webserviceurl+commonVariables.featurePageContext + "/dependencyFeature?userId="+(userId !== null? userId.id : "")+"&versionId="+descid; // descid is versionId
-			} 
+			} else if (type === "populate") {
+				header.requestMethod = "GET";
+				header.webserviceurl = commonVariables.webserviceurl+commonVariables.featurePageContext + "/populate?userId="+(userId !== null? userId.id : "")+"&customerId="+custname+"&featureName="+projectRequestBody.featureName+"&appDirName="+(appDirName !== null? appDirName : "");
+			} else if (type === "configureFeature") {
+				header.requestMethod = "POST";
+				header.webserviceurl = commonVariables.webserviceurl+commonVariables.featurePageContext + "/configureFeature?userId="+(userId !== null? userId.id : "")+"&customerId="+custname+"&featureName="+projectRequestBody.featureName+"&appDirName="+(appDirName !== null? appDirName : "")+"&"+projectRequestBody.serval;
+			}
 			return header;
 		}
 		

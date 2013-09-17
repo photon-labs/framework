@@ -1,5 +1,9 @@
 define(["features/features"], function(Features) {
 	return {
+	/* setuserInfo : function(){  
+	commonVariables.api.localVal.setProjectInfo({"message":null,"exception":null,"responseCode":"PHR200009","data":{"embedList":{},"projectInfo":{"appInfos":[{"pomFile":null,"modules":null,"appDirName":"wordpress-WordPress","techInfo":{"appTypeId":"e1af3f5b-7333-487d-98fa-46305b9dd6ee","techGroupId":"PHP","techVersions":null,"version":"3.4.2","customerIds":null,"used":false,"creationDate":1379325938000,"helpText":null,"system":false,"name":"php-Wordpress","id":"tech-wordpress","displayName":null,"description":null,"status":null},"functionalFramework":null,"selectedModules":[],"selectedComponents":[],"selectedServers":null,"selectedDatabases":null,"selectedJSLibs":[],"selectedWebservices":null,"functionalFrameworkInfo":null,"pilotInfo":null,"selectedFrameworks":null,"emailSupported":false,"pilotContent":null,"embedAppId":null,"phoneEnabled":false,"tabletEnabled":false,"pilot":false,"dependentModules":null,"created":false,"version":"1.0","code":"wordpress-WordPress","customerIds":null,"used":false,"creationDate":1379325938000,"helpText":null,"system":false,"name":"wordpress-WordPress","id":"e5fe85d7-f01b-4d3d-8a58-3c3ae75cc0d2","displayName":null,"description":null,"status":null}],"projectCode":"test","noOfApps":1,"startDate":null,"endDate":null,"preBuilt":false,"multiModule":false,"version":"1.0","customerIds":["photon"],"used":false,"creationDate":1379325938000,"helpText":null,"system":false,"name":"test","id":"a20e25b3-61be-499f-8108-ae170a94b4c0","displayName":null,"description":"","status":null}},"status":"success"});	
+	}, */
+		
 		runTests: function () {
 			var self = this;
 			var feature = new Features();
@@ -21,7 +25,7 @@ define(["features/features"], function(Features) {
 					contentType: 'application/json',
 					status: 200,
 					response: function() {
-							this.responseText = JSON.stringify({"response":null,"message":"Application Features listed successfully","exception":null,"data":[{"artifactId":"jslib_jquery_ui","appliesTo":[{"techId":"tech-php","core":false},{"techId":"tech-android-hybrid","core":false},{"techId":"tech-iphone-native","core":false},{"techId":"tech-iphone-hybrid","core":false},{"techId":"tech-html5","core":false},{"techId":"tech-html5-jquery-widget","core":false},{"techId":"tech-html5-jquery-mobile-widget","core":false},{"techId":"tech-html5-mobile-widget","core":false}],"classifier":null,"packaging":"js","groupId":"jslibraries.files","versions":[{"scope":null,"dependencyIds":null,"appliesTo":[{"required":false,"techId":"tech-php"},{"required":false,"techId":"tech-android-hybrid"},{"required":false,"techId":"tech-iphone-native"},{"required":false,"techId":"tech-iphone-hybrid"}],"downloadURL":"http://172.16.17.226:8080/repository/content/groups/public//jslibraries/files/jslib_jquery_ui/1.8.16-alpha-1/jslib_jquery_ui-1.8.16-alpha-1.js","used":false,"artifactGroupId":"jslib_jquery_ui","fileSize":0,"version":"1.8.16-alpha-1","creationDate":1348931139109,"helpText":null,"system":false,"name":"jQuery_UI","id":"jslib_jquery_ui","displayName":null,"description":null,"status":null}],"licenseId":"3ae2a528-5f4c-4686-a6e7-e60968585537","imageURL":null,"type":"JAVASCRIPT","used":false,"customerIds":["photon"],"creationDate":1348931139203,"helpText":"jQuery UI is a JavaScript library that provides abstractions for low-level interaction and animation, advanced effects and high-level, themeable widgets.","system":true,"name":"jQuery_UI","id":"jslib_jquery_ui","displayName":"jQuery_UI","description":"jQuery UI is a JavaScript library that provides abstractions for low-level interaction and animation, advanced effects and high-level, themeable widgets.","status":null},{"artifactId":"jslib_xml2json","appliesTo":[{"techId":"tech-html5-jquery-mobile-widget","core":false},{"techId":"tech-html5-mobile-widget","core":false},{"techId":"tech-html5-jquery-widget","core":false},{"techId":"tech-html5-widget","core":false},{"techId":"tech-html5","core":false}],"classifier":null,"packaging":"zip","groupId":"jslibraries.files","versions":[{"scope":null,"dependencyIds":null,"appliesTo":[{"required":true,"techId":"tech-html5-jquery-mobile-widget"}],"downloadURL":"http://172.16.17.226:8080/repository/content/groups/public//jslibraries/files/jslib_xml2json/0.2.4/jslib_xml2json-0.2.4.zip","used":false,"artifactGroupId":"c2c74b7d-a6b6-4e61-b0e0-a44db1dfb3de","fileSize":0,"version":"0.2.4","creationDate":1355312572937,"helpText":null,"system":false,"name":"xml2json","id":"c4a8d772-305e-441a-993e-703e63795aac","displayName":null,"description":null,"status":null}],"licenseId":"3ae2a528-5f4c-4686-a6e7-e60968585537","imageURL":null,"type":"JAVASCRIPT","used":false,"customerIds":["photon"],"creationDate":1355312572937,"helpText":"A simple tool for taking XML data as an XML object or string and transforming it to a JSON","system":true,"name":"xml2json","id":"c2c74b7d-a6b6-4e61-b0e0-a44db1dfb3de","displayName":"xml2json","description":"A simple tool for taking XML data as an XML object or string and transforming it to a JSON","status":null}]});
+							this.responseText = JSON.stringify({"response":null,"message":"Application Features listed successfully","exception":null,"data":[{"artifactId":"jslib_jquery_ui","appliesTo":[{"techId":"tech-php","core":false},{"techId":"tech-android-hybrid","core":false},{"techId":"tech-iphone-native","core":false},{"techId":"tech-iphone-hybrid","core":false},{"techId":"tech-html5","core":false},{"techId":"tech-html5-jquery-widget","core":false},{"techId":"tech-html5-jquery-mobile-widget","core":false},{"techId":"tech-html5-mobile-widget","core":false}],"classifier":null,"packaging":"js","groupId":"jslibraries.files","versions":[{"scope":null,"dependencyIds":null,"appliesTo":[{"required":false,"techId":"tech-php"},{"required":false,"techId":"tech-android-hybrid"},{"required":false,"techId":"tech-iphone-native"},{"required":false,"techId":"tech-iphone-hybrid"}],"downloadURL":"http://172.16.17.226:8080/repository/content/groups/public//jslibraries/files/jslib_jquery_ui/1.8.16-alpha-1/jslib_jquery_ui-1.8.16-alpha-1.js","used":false,"artifactGroupId":"jslib_jquery_ui","fileSize":0,"version":"1.8.16-alpha-1","creationDate":1348931139109,"helpText":null,"system":false,"name":"jQuery_UI","id":"jslib_jquery_ui","displayName":null,"description":null,"status":null}],"licenseId":"3ae2a528-5f4c-4686-a6e7-e60968585537","imageURL":null,"type":"JAVASCRIPT","used":false,"customerIds":["photon"],"creationDate":1348931139203,"helpText":"jQuery UI is a JavaScript library that provides abstractions for low-level interaction and animation, advanced effects and high-level, themeable widgets.","system":true,"name":"jQuery_UI","id":"jslib_jquery_ui","displayName":"jQuery_UI","description":"jQuery UI is a JavaScript library that provides abstractions for low-level interaction and animation, advanced effects and high-level, themeable widgets.","status":null},{"artifactId":"jslib_xml2json","appliesTo":[{"techId":"tech-html5-jquery-mobile-widget","core":false},{"techId":"tech-html5-mobile-widget","core":false},{"techId":"tech-html5-jquery-widget","core":false},{"techId":"tech-html5-widget","core":false},{"techId":"tech-html5","core":false}],"classifier":null,"packaging":"zip","groupId":"jslibraries.files","versions":[{"scope":null,"dependencyIds":null,"appliesTo":[{"required":false,"techId":"tech-html5-jquery-mobile-widget"}],"downloadURL":"http://172.16.17.226:8080/repository/content/groups/public//jslibraries/files/jslib_xml2json/0.2.4/jslib_xml2json-0.2.4.zip","used":false,"artifactGroupId":"c2c74b7d-a6b6-4e61-b0e0-a44db1dfb3de","fileSize":0,"version":"0.2.4","creationDate":1355312572937,"helpText":null,"system":false,"name":"xml2json","id":"c4a8d772-305e-441a-993e-703e63795aac","displayName":null,"description":null,"status":null}],"licenseId":"3ae2a528-5f4c-4686-a6e7-e60968585537","imageURL":null,"type":"JAVASCRIPT","used":false,"customerIds":["photon"],"creationDate":1355312572937,"helpText":"A simple tool for taking XML data as an XML object or string and transforming it to a JSON","system":true,"name":"xml2json","id":"c2c74b7d-a6b6-4e61-b0e0-a44db1dfb3de","displayName":"xml2json","description":"A simple tool for taking XML data as an XML object or string and transforming it to a JSON","status":null}]});
 						}
 				}); 
 				
@@ -35,11 +39,11 @@ define(["features/features"], function(Features) {
 					}
 				});
 				
+				//self.setuserInfo();
 				(["navigation/navigation"], function(){
 				commonVariables.navListener = new Clazz.com.components.navigation.js.listener.navigationListener();
 				});
-
-				commonVariables.navListener.onMytabEvent("featurelist");				
+				commonVariables.navListener.onMytabEvent("featurelist");			
 				setTimeout(function() {
 					start();
 					equal($(commonVariables.contentPlaceholder).find("li[type = FEATURE]").attr("name"), "jdom", "Feature list Module service Tested");
@@ -227,7 +231,7 @@ define(["features/features"], function(Features) {
 				});
 
 				$.mockjax({
-					url:  commonVariables.webserviceurl+commonVariables.projectlistContext + "/updateFeature?customerId=photon&userId=admin&appDirName=wordpress-WordPress&displayName=Admin",
+					url:  commonVariables.webserviceurl+commonVariables.projectlistContext + "/updateFeature?customerId=photon&userId=admin&appDirName=PhpDru7&displayName=Admin",
 					type:'PUT',
 					contentType: 'application/json',
 					status: 200,
@@ -236,12 +240,12 @@ define(["features/features"], function(Features) {
 					}
 				});
 				$.mockjax({
-					url:  commonVariables.webserviceurl+commonVariables.featurePageContext + "/selectedFeature?userId=admin&appDirName=wordpress-WordPress",
+					url:  commonVariables.webserviceurl+commonVariables.featurePageContext + "/selectedFeature?userId=admin&appDirName=PhpDru7",
 					type:'GET',
 					contentType: 'application/json',
 					status: 200,
 					response: function() {
-						this.responseText = JSON.stringify({"response": null,"message": "Update Features listed successfully","exception": null,"data": null});
+						this.responseText = JSON.stringify({"message":null,"exception":null,"responseCode":"PHR400004","data":[{"scope":null,"packaging":"zip","defaultModule":true,"artifactGroupId":"9cd750b0-fcfb-4210-829c-a03cd970fca8","moduleId":"9cd750b0-fcfb-4210-829c-a03cd970fca8","versionID":"63e031f4-808f-4a5a-9354-f9aedc70bd0b","dispName":"options","dispValue":"7.0","canConfigure":false,"name":"options","type":"FEATURE"},{"scope":null,"packaging":"zip","defaultModule":true,"artifactGroupId":"2746d26d-9c25-42f3-97af-bc353235f499","moduleId":"2746d26d-9c25-42f3-97af-bc353235f499","versionID":"2e35e54c-894c-4a8f-adfa-adc92671648b","dispName":"field_sql_storage","dispValue":"7.0","canConfigure":false,"name":"field_sql_storage","type":"FEATURE"},{"scope":null,"packaging":"zip","defaultModule":true,"artifactGroupId":"82abf692-8389-4d26-8f0f-fa4c80050217","moduleId":"82abf692-8389-4d26-8f0f-fa4c80050217","versionID":"9a54f56b-5161-490f-8985-514f7946632a","dispName":"field","dispValue":"7.0","canConfigure":false,"name":"field","type":"FEATURE"},{"scope":null,"packaging":"zip","defaultModule":true,"artifactGroupId":"836a956f-af5e-48d9-8cff-d1bd5f2a1e68","moduleId":"836a956f-af5e-48d9-8cff-d1bd5f2a1e68","versionID":"ea7cb09e-6dc1-49e1-b5ee-d148362dec11","dispName":"file","dispValue":"7.0","canConfigure":false,"name":"file","type":"FEATURE"},{"scope":null,"packaging":"zip","defaultModule":true,"artifactGroupId":"bb88894f-2c31-4f09-9054-ea84a809e6fe","moduleId":"bb88894f-2c31-4f09-9054-ea84a809e6fe","versionID":"55f384ef-3718-4f12-b4ee-4e41ff9ef6ce","dispName":"text","dispValue":"7.0","canConfigure":false,"name":"text","type":"FEATURE"}],"status":"success"});
 					}
 				});
 				//var featuresAPI = new Clazz.com.components.features.js.api.FeaturesAPI();
@@ -263,12 +267,12 @@ define(["features/features"], function(Features) {
 			var self = this;
 			asyncTest("Test - Select Service Verification Tested", function() {
 				$.mockjax({
-					url:  commonVariables.webserviceurl+commonVariables.featurePageContext + "/selectedFeature?userId=admin&appDirName=wordpress-WordPress",
+					url:  commonVariables.webserviceurl+commonVariables.featurePageContext + "/selectedFeature?userId=admin&appDirName=PhpDru7",
 					type:'GET',
 					contentType: 'application/json',
 					status: 200,
 					response: function() {
-						this.responseText = JSON.stringify({"response":null,"message":"Features updated successfully","exception":null,"data":null});
+						this.responseText = JSON.stringify({"message":null,"exception":null,"responseCode":"PHR400004","data":[{"scope":null,"packaging":"zip","defaultModule":true,"artifactGroupId":"9cd750b0-fcfb-4210-829c-a03cd970fca8","moduleId":"9cd750b0-fcfb-4210-829c-a03cd970fca8","versionID":"63e031f4-808f-4a5a-9354-f9aedc70bd0b","dispName":"options","dispValue":"7.0","canConfigure":false,"name":"options","type":"FEATURE"},{"scope":null,"packaging":"zip","defaultModule":true,"artifactGroupId":"2746d26d-9c25-42f3-97af-bc353235f499","moduleId":"2746d26d-9c25-42f3-97af-bc353235f499","versionID":"2e35e54c-894c-4a8f-adfa-adc92671648b","dispName":"field_sql_storage","dispValue":"7.0","canConfigure":false,"name":"field_sql_storage","type":"FEATURE"},{"scope":null,"packaging":"zip","defaultModule":true,"artifactGroupId":"82abf692-8389-4d26-8f0f-fa4c80050217","moduleId":"82abf692-8389-4d26-8f0f-fa4c80050217","versionID":"9a54f56b-5161-490f-8985-514f7946632a","dispName":"field","dispValue":"7.0","canConfigure":false,"name":"field","type":"FEATURE"},{"scope":null,"packaging":"zip","defaultModule":true,"artifactGroupId":"836a956f-af5e-48d9-8cff-d1bd5f2a1e68","moduleId":"836a956f-af5e-48d9-8cff-d1bd5f2a1e68","versionID":"ea7cb09e-6dc1-49e1-b5ee-d148362dec11","dispName":"file","dispValue":"7.0","canConfigure":false,"name":"file","type":"FEATURE"},{"scope":null,"packaging":"zip","defaultModule":true,"artifactGroupId":"bb88894f-2c31-4f09-9054-ea84a809e6fe","moduleId":"bb88894f-2c31-4f09-9054-ea84a809e6fe","versionID":"55f384ef-3718-4f12-b4ee-4e41ff9ef6ce","dispName":"text","dispValue":"7.0","canConfigure":false,"name":"text","type":"FEATURE"}],"status":"success"});
 					}
 				});
 				//var featuresAPI = new Clazz.com.components.features.js.api.FeaturesAPI();
@@ -287,12 +291,12 @@ define(["features/features"], function(Features) {
 			var self = this;
 			asyncTest("Test - UnSelect Service option Verification Tested", function() {
 				$.mockjax({
-					url:  commonVariables.webserviceurl+commonVariables.featurePageContext + "/selectedFeature?userId=admin&appDirName=wordpress-WordPress",
+					url:  commonVariables.webserviceurl+commonVariables.featurePageContext + "/selectedFeature?userId=admin&appDirName=PhpDru7",
 					type:'GET',
 					contentType: 'application/json',
 					status: 200,
 					response: function() {
-						this.responseText = JSON.stringify({"response": null,"message": "Update Features listed successfully","exception": null,"data": null});
+						this.responseText = JSON.stringify({"message":null,"exception":null,"responseCode":"PHR400004","data":[{"scope":null,"packaging":"zip","defaultModule":true,"artifactGroupId":"9cd750b0-fcfb-4210-829c-a03cd970fca8","moduleId":"9cd750b0-fcfb-4210-829c-a03cd970fca8","versionID":"63e031f4-808f-4a5a-9354-f9aedc70bd0b","dispName":"options","dispValue":"7.0","canConfigure":false,"name":"options","type":"FEATURE"},{"scope":null,"packaging":"zip","defaultModule":true,"artifactGroupId":"2746d26d-9c25-42f3-97af-bc353235f499","moduleId":"2746d26d-9c25-42f3-97af-bc353235f499","versionID":"2e35e54c-894c-4a8f-adfa-adc92671648b","dispName":"field_sql_storage","dispValue":"7.0","canConfigure":false,"name":"field_sql_storage","type":"FEATURE"},{"scope":null,"packaging":"zip","defaultModule":true,"artifactGroupId":"82abf692-8389-4d26-8f0f-fa4c80050217","moduleId":"82abf692-8389-4d26-8f0f-fa4c80050217","versionID":"9a54f56b-5161-490f-8985-514f7946632a","dispName":"field","dispValue":"7.0","canConfigure":false,"name":"field","type":"FEATURE"},{"scope":null,"packaging":"zip","defaultModule":true,"artifactGroupId":"836a956f-af5e-48d9-8cff-d1bd5f2a1e68","moduleId":"836a956f-af5e-48d9-8cff-d1bd5f2a1e68","versionID":"ea7cb09e-6dc1-49e1-b5ee-d148362dec11","dispName":"file","dispValue":"7.0","canConfigure":false,"name":"file","type":"FEATURE"},{"scope":null,"packaging":"zip","defaultModule":true,"artifactGroupId":"bb88894f-2c31-4f09-9054-ea84a809e6fe","moduleId":"bb88894f-2c31-4f09-9054-ea84a809e6fe","versionID":"55f384ef-3718-4f12-b4ee-4e41ff9ef6ce","dispName":"text","dispValue":"7.0","canConfigure":false,"name":"text","type":"FEATURE"}],"status":"success"});
 					}
 				});
 				//var featuresAPI = new Clazz.com.components.features.js.api.FeaturesAPI();
@@ -303,10 +307,72 @@ define(["features/features"], function(Features) {
 					start();	
 					var unselectoption = $(commonVariables.contentPlaceholder).find("#feature_jslib_jquery_ui").attr("class");
 					equal(unselectoption, "switch switchOff", "UnSelect Service option Verification Tested");
-					self.FeaturedepententVerification(feature);					
+					self.settingsiconclickfunction(feature);					
 				}, 2000);
 			});
 		},
+		
+		settingsiconclickfunction : function (feature){
+			var self = this;
+			asyncTest("Test - Settings Icon Click", function() {
+				$.mockjax({
+					url:  commonVariables.webserviceurl+commonVariables.featurePageContext + "/populate?userId=admin&customerId=photon&featureName=jdom&appDirName=PhpDru7",
+					type:'GET',
+					contentType: 'application/json',
+					status: 200,
+					response: function() {
+						this.responseText = JSON.stringify({"message":null,"exception":null,"responseCode":"PHR400005","data":{"properties":{"DashBoard.titleLabel":"[Browse, SpecialOffer, Login, Register]"},"propertyTemplates":[{"key":"DashBoard.titleLabel","type":null,"defaultValue":null,"required":false,"possibleValues":null,"appliesTo":null,"propertyTemplates":null,"multiple":false,"settingsTemplateId":null,"name":"DashBoard titleLabel","id":"8d411d26-82e2-4676-b8d4-2fe0e08399a9","displayName":null,"status":null,"description":null,"creationDate":1378795060421,"helpText":null,"system":false}],"hasCustomProperty":true},"status":"success"});
+					}
+				});
+				
+				$.mockjax({
+					url:  commonVariables.webserviceurl+commonVariables.featurePageContext + "/configureFeature?userId=admin&customerId=photon&featureName=jdom&appDirName=PhpDru7&DashBoard.titleLabel=%5BBrowse%2C",
+					type:'POST',
+					contentType: 'application/json',
+					status: 200,
+					response: function() {
+						this.responseText = JSON.stringify({"message": null,"exception": null,"responseCode": "PHR400006","data": null,"status": "success"});
+					}
+				});
+				commonVariables.navListener.onMytabEvent("featurelist");
+				$('.settings_icon').attr('settingsid','s_31ec87e7-d8f2-43fe-aec2-ac24af57b3aa');
+				$('.settings_icon').parent().attr('name','jdom');
+				$('.settings_icon').click();
+				setTimeout(function() { 
+					start();
+					$("#configure_settings").click();
+					var labelval = $("#settingspopup").find('li:eq(0)').find('label').text();
+					equal("DashBoard.titleLabel", labelval, "Settings Icon Click Tested");
+					self.settingsfailure(feature);	
+				}, 2000);
+			});
+		},
+		
+		settingsfailure : function (feature){
+			var self = this;
+			asyncTest("Test - Settings Icon Failure", function() {
+				$.mockjax({
+					url:  commonVariables.webserviceurl+commonVariables.featurePageContext + "/populate?userId=admin&customerId=photon&featureName=jdom&appDirName=PhpDru7",
+					type:'GET',
+					contentType: 'application/json',
+					status: 200,
+					response: function() {
+						this.responseText = JSON.stringify({"message":null,"exception":null,"responseCode":"PHR400005","data":{"propertyTemplates":null,"hasCustomProperty":true},"status":"success"});
+					}
+				});
+				commonVariables.navListener.onMytabEvent("featurelist");
+				$('.settings_icon').attr('settingsid','s_31ec87e7-d8f2-43fe-aec2-ac24af57b3aa');
+				$('.settings_icon').parent().attr('name','jdom');
+				$('.settings_icon').click();
+				setTimeout(function() { 
+					start();
+					$("#configure_settings").click();
+					equal("", "", "Settings Icon Failure Tested");
+					self.FeaturedepententVerification(feature);	
+				}, 2000);
+			});
+		},
+		
 		FeaturedepententVerification : function (feature){
 			var self = this;
 			var descid = "e75b7088-8d9f-4b00-8077-9e76b5c478fe";
@@ -317,7 +383,7 @@ define(["features/features"], function(Features) {
 					contentType: 'application/json',
 					status: 200,
 					response: function() {
-						this.responseText = JSON.stringify({"message": " Dependency Features listed successfully","exception": null,"responseCode": null,"data": {"e75b7088-8d9f-4b00-8077-9e76b5c478fe": "b4ce2df7-71e7-4f34-bab2-d4f0ef3217e1"},"status": null});
+						this.responseText = JSON.stringify({"message": " Dependency Features listed successfully","exception": null,"responseCode": null,"data": {"e75b7088-8d9f-4b00-8077-9e76b5c478fe": "b4ce2df7-71e7-4f34-bab2-d4f0ef3217e1"},"status": "success"});
 					}
 				});
 				commonVariables.navListener.onMytabEvent("featurelist");
@@ -326,10 +392,46 @@ define(["features/features"], function(Features) {
 				setTimeout(function() { 
 					start();
 					var selectoption = $(commonVariables.contentPlaceholder).find("#feature_7077da20-a2cc-41bc-b822-84c66ee1fe4e").attr("class"); 
-					equal(selectoption, "switch switchOff", "Defentent Service Verification Tested");
-					/*require(["croneExpressionTest"], function(croneExpressionTest){
-						croneExpressionTest.runTests();
-					});*/
+					equal(selectoption, "switch switchOn", "Defentent Service Verification Tested");
+					self.clickfunctions(feature);	
+				}, 2000);
+			});
+		},
+		
+		clickfunctions : function (feature){
+			var self = this;
+			var descid = "e75b7088-8d9f-4b00-8077-9e76b5c478fe";
+			asyncTest("Test - Click functions", function() {
+				commonVariables.navListener.onMytabEvent("featurelist");
+				$("label[name=on_off]").attr('id','abc');
+				$("label[name=on_off]").attr('value','false');
+				$("label[name=on_off]").click();
+				$("label[name=on_off]").attr('id','def');
+				$("label[name=on_off]").attr('value','true');
+				$("label[name=on_off]").click();
+				$("input[name=on_off]").val('off');
+				$("input[name=on_off]").click();
+				$("input[name=on_off]").val('on');
+				$("input[name=on_off]").click();
+				$("#search").attr('class','switch switchOff');
+				$('#module').val('a');
+				$('#module').keyup();
+				$('#jsibraries').val('a');
+				$('#jsibraries').keyup();
+				$('#components').val('a');
+				$('#components').keyup();
+				$('#module').val('');
+				$('#module').keyup();
+				$('.cleartext').attr('name','module');
+				$('.cleartext').click();
+				$('.cleartext').attr('name','jsibraries');
+				$('.cleartext').click();
+				setTimeout(function() { 
+					start();
+					equal('', '', "Click functions Tested");
+					/* require(["configurationTest"], function(configurationTest){
+						configurationTest.runTests();
+					}); */
 				}, 2000);
 			});
 		}

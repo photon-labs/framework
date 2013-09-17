@@ -21,15 +21,8 @@ define(["features/listener/featuresListener"], function() {
 			requestPostBody: null,
 			webserviceurl: null
 		},
-		modulearray1 : [],
-		modulearray2 : [],
-		jslibarray1 : [],
-		jslibarray2 : [],
-		comparray1 : [],
-		comparray2 : [],
-		temp1 : null,
-		temp2 : null,
-		temp3 : null,
+		proptemplate : [], 
+		prop : [],
 	
 		/***
 		 * Called in initialization time of this class 
@@ -64,9 +57,11 @@ define(["features/listener/featuresListener"], function() {
 		},
 
 		registerHandlebars : function () {
-			var self = this;
-			var appdetails = commonVariables.api.localVal.getProjectInfo();
-			var techid = appdetails.data.projectInfo.appInfos[0].techInfo.id;
+			var self = this, appdetails, techid = '';
+			if(commonVariables.api.localVal.getProjectInfo() !== null){
+				appdetails = commonVariables.api.localVal.getProjectInfo();
+				techid = appdetails.data.projectInfo.appInfos[0].techInfo.id;
+			}	
 			Handlebars.registerHelper('versiondata', function(versions, id) {
 				var selectedList = commonVariables.api.localVal.getSession("selectedFeatures");				
 				var fieldset;
@@ -125,14 +120,14 @@ define(["features/listener/featuresListener"], function() {
 				uniqueid = $.trim(id.replace(/ /g,''));
 				return uniqueid;
 			});
-			Handlebars.registerHelper('packagedata', function(packaging, versions, appliesTo) {
+			Handlebars.registerHelper('packagedata', function(packaging, versions, appliesTo, id) {
 				var settingimg;
 				if(packaging === "zip" &&  appliesTo[0].core === false){
 					$.each(versions, function(index, value){
 						if(JSON.stringify(value.appliesTo) !== "null"){
 							$.each(value.appliesTo, function(index, value){
 								if(value.required === false){
-									settingimg = '<span class="settings_icon"><img src="themes/default/images/helios/settings_icon.png" width="23" height="22" border="0" alt=""></span>';
+									settingimg = '<span class="settings_icon"  settingsid="s_'+id+'"><img src="themes/default/images/helios/settings_icon.png" width="23" height="22" border="0" alt=""></span>';
 								}
 							});
 						}		
@@ -148,7 +143,12 @@ define(["features/listener/featuresListener"], function() {
 		 *
 		 * @element: Element as the result of the template + data binding
 		 */
-		postRender : function(element) {
+		postRender : function() {
+			var self = this;
+			self.selectedFeaturesServiceCall();
+		},
+		
+		selectedFeaturesServiceCall : function() {
 			var self = this;
 			//if(self.updateFlag === 1){
 				self.featuresListener.getFeaturesList(self.featuresListener.getRequestHeader(self.featureRequestBody, "SELECTED"), function(response) {
@@ -160,36 +160,18 @@ define(["features/listener/featuresListener"], function() {
 						$("#feature_"+this.moduleId).addClass("switchOn").removeClass('switchOff');
 						$("#version_"+this.moduleId).show();		
 						$('#feature_'+value.moduleId+'').parent('li').children('div').children('.jarscope').val(value.scope);
+						if(value.packaging === 'zip') {
+							$('#feature_'+value.moduleId+'').parent('li').children('.settings_icon').show();
+						}
 						self.selectedCount();
 					});
 				});
 			//}	
 			var i =0;		
-			self.temp1 = $('#moduleContent').children('li').length;	
-			self.temp2 = $('#jsibrariesContent').children('li').length;	
-			self.temp3 = $('#componentsContent').children('li').length;	
 					
 			setTimeout(function(){
 					self.selectedCount();
 			},1500);
-			setTimeout(function(){
-				var count1=0,count2=0,count3=0;
-				$('#moduleContent').children('li').each(function() {
-					self.modulearray1[count1]= $(this).children('fieldset').attr('class');
-					count1++;
-				});
-				
-				$('#jsibrariesContent').children('li').each(function() {
-					self.jslibarray1[count2]= $(this).children('fieldset').attr('class');
-					count2++;
-				});
-				
-				$('#componentsContent').children('li').each(function() {
-					self.comparray1[count3]= $(this).children('fieldset').attr('class');
-					count3++;
-				});
-			},5000);
-
 		},
 		
 		
@@ -211,9 +193,14 @@ define(["features/listener/featuresListener"], function() {
 				renderFunction(responseData, whereToRender);
 				self.featuresListener.hideLoad();
 				setTimeout(function(){
-					$(".ftotal").text(responseData.featureslist.length);
-					$(".jstotal").text(responseData.jsibrarielist.length);
-					$(".comptotal").text(responseData.componentList.length);			
+					if(responseData.featureslist.length=== 0 && responseData.jsibrarielist.length=== 0 && responseData.componentList.length=== 0)
+					{
+						$("#notavailable").show();
+					}else {				
+						$(".ftotal").text(responseData.featureslist.length);						
+						$(".jstotal").text(responseData.jsibrarielist.length);						
+						$(".comptotal").text(responseData.componentList.length);
+					}						
 				},600);
 			});
 		},
@@ -244,13 +231,18 @@ define(["features/listener/featuresListener"], function() {
 			});
 		},
 		
-		getSelectedFeatures : function(collection, callback){
+		/* getSelectedFeatures : function(collection, callback){
 			var self = this;
 			self.featuresListener.getFeaturesList(self.featuresListener.getRequestHeader(self.featureRequestBody, "SELECTED"), function(response) {
 				collection.selectedlist = response.data;
 				callback(collection);
 			});
-		},
+		}, */
+		
+		getPropertyValue : function(key, response, callback) {
+			var property = '';
+			callback(response[key]); 
+		}, 
 		
 		/***
 		 * Bind the action listeners. The bindUI() is called automatically after the render is complete 
@@ -352,7 +344,51 @@ define(["features/listener/featuresListener"], function() {
        		$('#cancelUpdateFeature').click(function() {
 				self.onCancelEvent.dispatch();
            	});
-			
+			$('.settings_icon').unbind('click');
+			$('.settings_icon').click(function() {
+				var z = 0 , y = 0;
+				var settingsid = $(this).attr("settingsid");
+				var actionBody = {};
+				var score = this;
+				actionBody.featureName = $(this).parent().attr('name');
+				var toappend = '<div id="'+settingsid+'" class="dyn_popup"><form class="set"><ul class="row dynamicControls"></ul></form><div class="flt_right"><input id="configure_settings" class="btn btn_style" type="button" value="Configure" name=""><input class="btn btn_style close_conf" type="button" value="Close"></div></div>';
+				$("#settingspopup").children().remove();
+				$("#settingspopup").append(toappend);		
+				self.featuresListener.getFeaturesList(self.featuresListener.getRequestHeader(actionBody, "populate"), function(response) {
+					if(response.data.propertyTemplates.length !== 0) {
+						$.each(response.data.propertyTemplates,function(index, propertyTemplate) {
+							var str = null;
+							self.getPropertyValue(propertyTemplate.key, response.data.properties, function(returnVal){
+								var inputnameval = propertyTemplate.key.replace(/ /g,'_');
+								$(".set").children('ul').append('<li class="ctrl doubleColumn"><label value='+propertyTemplate.key+'>'+propertyTemplate.key+'</label><input class="random" name='+inputnameval+' type="text" value='+returnVal+'></li>');
+							}); 
+						});	
+					} else {
+						$("#settingspopup").find('form').remove();
+						$("#settingspopup").find('.flt_right').remove();
+						$("#settingspopup").children('div').append('<p>Property Template does not exist.</p><div style="float:right;"><input class="btn btn_style confclose" type="button" value="Close"></div>');
+					}
+						
+					var twowidth = window.innerWidth/1.5;;
+					 if ($(score).offset().left > twowidth) {	
+						var t=$(score).offset().top - $("#"+settingsid).height()/2 + 10;
+						var l=$(score).offset().left + $(score).width() - 245;
+						$("#"+settingsid).css('top',t);
+						$("#"+settingsid).css('left',l);
+					} 
+					$("#"+settingsid).show(); 
+				});		
+				self.popupforsettingsicon(this,settingsid);
+				$("#configure_settings").unbind('click');
+				$("#configure_settings").click(function() {
+					var form_ser = $(".set").serialize();
+					form_ser = form_ser.replace(/_/g,' ');
+					actionBody.serval = form_ser;
+					self.featuresListener.getFeaturesList(self.featuresListener.getRequestHeader(actionBody, "configureFeature"), function(response) {
+						
+					}); 
+				});
+			});
        		var flag=1,temp1,temp2;
           	$('.featureinfo_img').on("click", function(event) {
 				var descid = $(this).attr("artifactGroupId");
@@ -414,83 +450,9 @@ define(["features/listener/featuresListener"], function() {
 						
 						self.featuresListener.getFeaturesUpdate(self.featuresListener.getRequestHeader(self.featureUpdatedArray, "UPDATE", ""), function(response) {
 							self.selectedCount();
+							self.selectedFeaturesServiceCall();
 						}); 
-						var temparray1 = [], temparray2 = [], temparray3 = [];
-						var count1 = 0, count2 = 0,count3 = 0;
-						$('#moduleContent').children('li').each(function() {
-							self.modulearray2[count1]= $(this).find('.switch').attr('class');
-							temparray1[count1] = $(this).children('.switch').attr('id');
-							count1++;
-						});	
 						
-						$('#jsibrariesContent').children('li').each(function() {
-							self.jslibarray2[count2]= $(this).find('.switch').attr('class');
-							temparray2[count2] = $(this).children('.switch').attr('id');
-							count2++;
-						});	
-						
-						$('#componentsContent').children('li').each(function() {
-							self.comparray2[count3]= $(this).find('.switch').attr('class');
-							temparray3[count3] = $(this).children('.switch').attr('id');
-							count3++;
-						});	
-						for(var i=0;i<self.temp1;i++) {
-							if(self.modulearray1[i]!=self.modulearray2[i]) {
-								if(($('#'+temparray1[i]+'').parent().attr('packaging') === "zip")){
-								$('#'+temparray1[i]+'').parent().children('.settings_icon').show();
-								}
-							}
-							if(self.modulearray1[i] === 'switch default' || self.modulearray1[i] === 'switch default switchOn' || self.modulearray1[i] === 'switch default switchOff') {
-								if(($('#'+temparray1[i]+'').parent().attr('packaging') === "zip")){
-									$('#'+temparray1[i]+'').parent().children('.settings_icon').show();
-								}	
-							}
-							
-						};
-						
-						for(var i=0;i<self.temp2;i++) {
-							if(self.comparray1[i]!=self.comparray2[i]) {
-								if(($('#'+temparray3[i]+'').parent().attr('packaging') === "zip")){
-								$('#'+temparray3[i]+'').parent().children('.settings_icon').show();
-								}
-							}
-							if(self.comparray1[i] === 'switch default' || self.comparray1[i] === 'switch default switchOn' || self.comparray1[i] === 'switch default switchOff') {
-								if(($('#'+temparray3[i]+'').parent().attr('packaging') === "zip")){
-									$('#'+temparray3[i]+'').parent().children('.settings_icon').show();
-								}	
-							}
-							
-						};
-						
-						for(var j=0;j<self.temp2;j++) {
-							if(self.jslibarray1[j]!=self.jslibarray2[j]) {
-								if(($('#'+temparray2[j]+'').parent().attr('packaging') === "zip")){
-								$('#'+temparray2[j]+'').parent().children('.settings_icon').show();
-								}
-							}
-							if(self.jslibarray1[j] === 'switch default' || self.jslibarray1[j] === 'switch default switchOn' || self.jslibarray1[j] === 'switch default switchOff') {
-								if(($('#'+temparray2[j]+'').parent().attr('packaging') === "zip")){
-									$('#'+temparray2[j]+'').parent().children('.settings_icon').show();
-								}	
-							}
-							
-						};
-										
-						var counter1 = 0, counter2 = 0, counter3 = 0;
-						$('#moduleContent').children('li').each(function() {
-							self.modulearray1[counter1]= $(this).children('fieldset').attr('class');
-							counter1++;
-						});
-						
-						$('#jsibrariesContent').children('li').each(function() {
-							self.jslibarray1[counter2]= $(this).children('fieldset').attr('class');
-							counter2++;
-						});
-						
-						$('#componentsContent').children('li').each(function() {
-							self.comparray1[counter3]= $(this).children('fieldset').attr('class');
-							counter3++;
-						});
 					} else if (response.status === "success" && response.responseCode === "PHR10C00001") {
 						commonVariables.api.showError(self.getLockErrorMsg(response), 'error', true, true, true);
 					}	
