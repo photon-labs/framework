@@ -169,6 +169,7 @@ public interface FrameworkConstants {
 	String APKLIB  = "apklib";
 	String APK  = "apk";
 	String OTHERS = "Others";
+	String OTHER = "Other";
 	
 	String RESPONSE_STATUS_SUCCESS = "success";
 	String RESPONSE_STATUS_FAILURE = "failure";

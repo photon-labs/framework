@@ -25,6 +25,7 @@ import java.io.FileReader;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.InetAddress;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -341,15 +342,16 @@ public class QualityService extends RestBase implements ServiceConstants, Framew
 			map.put(FUNCTIONAL_FRAMEWORK, functionalTestFramework);
 			if (SELENIUM_GRID.equalsIgnoreCase(functionalTestFramework)) {
 				HubConfiguration hubConfig = getHubConfiguration(appDirName);
+				InetAddress ip = InetAddress.getLocalHost();
 				if (hubConfig != null) {
-					String host = hubConfig.getHost();
+					String host = ip.getHostAddress();
 					int port = hubConfig.getPort();
 					boolean isConnectionAlive = Utility.isConnectionAlive(HTTP_PROTOCOL, host, port);
 					map.put(HUB_STATUS, isConnectionAlive);
 				}
 				NodeConfiguration nodeConfig = getNodeConfiguration(appDirName);
 				if (nodeConfig != null) {
-					String host = nodeConfig.getConfiguration().getHost();
+					String host = ip.getHostAddress();
 					int port = nodeConfig.getConfiguration().getPort();
 					boolean isConnectionAlive = Utility.isConnectionAlive(HTTP_PROTOCOL, host, port);
 					map.put(NODE_STATUS, isConnectionAlive);
