@@ -18,6 +18,7 @@ public class ProjectDeleteServiceTest {
 		List<String> projectToDel = new ArrayList<String>();
 		projectToDel.add("239");
 		projectToDel.add("AddGit1-wordpress3.4.2");
+		projectToDel.add("TestJquery");
 		projectToDel.add("TestGitProject");
 		projectToDel.add("TestProject");
 		Response deleteproject = projectservice.deleteproject(projectToDel);
