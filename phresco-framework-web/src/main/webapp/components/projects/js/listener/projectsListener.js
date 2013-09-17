@@ -490,7 +490,7 @@ define([], function() {
 			
 			$(".appln-appcode, .web-appcode, .mobile-appcode").focusout(function(){
 				var totalLength = $(this).val().length;
-				if($(this).val().match(/[._-]/g).length !== null){ 
+				if($(this).val().match(/[._-]/g) !== null){ 
 					var charLength =  $(this).val().match(/[._-]/g).length; 
 				}
 				if(charLength !== null && totalLength === charLength){
