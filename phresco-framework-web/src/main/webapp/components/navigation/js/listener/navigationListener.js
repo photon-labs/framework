@@ -773,9 +773,13 @@ define([], function() {
 				header.requestMethod = "GET";
 				header.webserviceurl = commonVariables.webserviceurl + commonVariables.copyPathContext + "?type=" + type + "&appDirName=" + appDirName;
 			} else if(action === "importpost") {
+				var displayName="", userInfo = JSON.parse(commonVariables.api.localVal.getSession('userInfo'));
+				if (userInfo !== null) {
+					displayName = userInfo.displayName;
+				}
 				header.requestMethod = "POST";
 				header.requestPostBody = JSON.stringify(requestBody);
-				header.webserviceurl = commonVariables.webserviceurl + "repository/importApplication";
+				header.webserviceurl = commonVariables.webserviceurl + "repository/importApplication?displayName="+displayName;
 			} else if (action === "copyToClipboard") {
 				header.requestMethod = "POST";
 				header.webserviceurl = commonVariables.webserviceurl + commonVariables.copyToClipboardContext;

@@ -219,6 +219,7 @@ public interface FrameworkConstants {
     String APPLN_UPDATE = "applnUpdate";
     String FEATURE_UPDATE = "featureUpdate";
     String CONFIG_UPDATE = "configUpdate";
+    String EDIT_APPLN = "editAppln";
     
     String REMOTE = "remote";
     String ORIGIN = "origin";

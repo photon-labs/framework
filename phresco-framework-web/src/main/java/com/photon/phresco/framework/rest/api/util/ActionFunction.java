@@ -48,6 +48,7 @@ import com.google.gson.Gson;
 import com.photon.phresco.api.ApplicationProcessor;
 import com.photon.phresco.api.ConfigManager;
 import com.photon.phresco.commons.FrameworkConstants;
+import com.photon.phresco.commons.LockUtil;
 import com.photon.phresco.commons.ResponseCodes;
 import com.photon.phresco.commons.model.ApplicationInfo;
 import com.photon.phresco.commons.model.ArtifactGroup;
@@ -898,7 +899,7 @@ public class ActionFunction extends RestBase implements Constants ,FrameworkCons
 			reader = applicationManager.performAction(projectInfo, ActionType.BUILD, buildArgCmds, workingDirectory);
 			
 			//To generate the lock for the particular operation
-			FrameworkUtil.generateLock(Collections.singletonList(FrameworkServiceUtil.getLockDetail(applicationInfo.getId(), REQ_BUILD, displayName, uniqueKey)), true);
+			LockUtil.generateLock(Collections.singletonList(LockUtil.getLockDetail(applicationInfo.getId(), REQ_BUILD, displayName, uniqueKey)), true);
 		} catch (PhrescoException e) {
 			S_LOGGER.error(FrameworkUtil.getStackTraceAsString(e));
 			throw new PhrescoException("Exception occured in the build process"+e.getMessage());
@@ -927,7 +928,7 @@ public class ActionFunction extends RestBase implements Constants ,FrameworkCons
 			reader = applicationManager.performAction(projectInfo, ActionType.DEPLOY, buildArgCmds, workingDirectory);
 			
 			//To generate the lock for the particular operation
-			FrameworkUtil.generateLock(Collections.singletonList(FrameworkServiceUtil.getLockDetail(applicationInfo.getId(), REQ_FROM_TAB_DEPLOY, displayName, uniqueKey)), true);
+			LockUtil.generateLock(Collections.singletonList(LockUtil.getLockDetail(applicationInfo.getId(), REQ_FROM_TAB_DEPLOY, displayName, uniqueKey)), true);
 		} catch (PhrescoException e) {
 			if (isDebugEnabled) {
 				S_LOGGER.error("Exception occured in the deploy process()" + FrameworkUtil.getStackTraceAsString(e));
@@ -982,7 +983,7 @@ public class ActionFunction extends RestBase implements Constants ,FrameworkCons
 			ApplicationManager applicationManager = PhrescoFrameworkFactory.getApplicationManager();
 			reader = applicationManager.performAction(getProjectInfo(), ActionType.UNIT_TEST, buildArgCmds, workingDirectory.toString());
 			 //To generate the lock for the particular operation
-			FrameworkUtil.generateLock(Collections.singletonList(FrameworkServiceUtil.getLockDetail(appInfo.getId(), UNIT, displayName, uniqueKey)), true);
+			LockUtil.generateLock(Collections.singletonList(LockUtil.getLockDetail(appInfo.getId(), UNIT, displayName, uniqueKey)), true);
 		} catch (PhrescoException e) {
 			if (isDebugEnabled) {
 				S_LOGGER.error("Exception occured in the unit test process()" + FrameworkUtil.getStackTraceAsString(e));
@@ -1009,7 +1010,7 @@ public class ActionFunction extends RestBase implements Constants ,FrameworkCons
 			ApplicationManager applicationManager = PhrescoFrameworkFactory.getApplicationManager();
 			reader = applicationManager.performAction(getProjectInfo(), ActionType.COMPONENT_TEST, buildArgCmds, workingDirectory.toString());
 			 //To generate the lock for the particular operation
-			FrameworkUtil.generateLock(Collections.singletonList(FrameworkServiceUtil.getLockDetail(appInfo.getId(), COMPONENT, displayName, uniqueKey)), true);
+			LockUtil.generateLock(Collections.singletonList(LockUtil.getLockDetail(appInfo.getId(), COMPONENT, displayName, uniqueKey)), true);
 		} catch (PhrescoException e) {
 			if (isDebugEnabled) {
 				S_LOGGER.error("Exception occured in the Component test process()" + FrameworkUtil.getStackTraceAsString(e));
@@ -1039,7 +1040,7 @@ public class ActionFunction extends RestBase implements Constants ,FrameworkCons
 
 			reader = applicationManager.performAction(projectInfo, ActionType.CODE_VALIDATE, buildArgCmds, workingDirectory);
 			//To generate the lock for the particular operation
-			FrameworkUtil.generateLock(Collections.singletonList(FrameworkServiceUtil.getLockDetail(applicationInfo.getId(), REQ_CODE, displayName, uniqueKey)), true);
+			LockUtil.generateLock(Collections.singletonList(LockUtil.getLockDetail(applicationInfo.getId(), REQ_CODE, displayName, uniqueKey)), true);
 		} catch (PhrescoException e) {
 			if (isDebugEnabled) {
 				S_LOGGER.error("Exception occured in the codeValidate process()" + FrameworkUtil.getStackTraceAsString(e));
@@ -1075,7 +1076,7 @@ public class ActionFunction extends RestBase implements Constants ,FrameworkCons
 			
 			//To generate the lock for the particular operation
 			ApplicationInfo appInfo = getApplicationInfo();
-			FrameworkUtil.generateLock(Collections.singletonList(FrameworkServiceUtil.getLockDetail(appInfo.getId(), REQ_START, displayName, uniqueKey)), true);
+			LockUtil.generateLock(Collections.singletonList(LockUtil.getLockDetail(appInfo.getId(), REQ_START, displayName, uniqueKey)), true);
 			
 		} catch (PhrescoException e) {
 			S_LOGGER.error("Entered into catch block of Build.runAgainstSource()" + FrameworkUtil.getStackTraceAsString(e));
@@ -1107,14 +1108,14 @@ public class ActionFunction extends RestBase implements Constants ,FrameworkCons
 		} finally {
 			if (success) {
 				String uniqueKey = "";
-				List<LockDetail> lockDetails = FrameworkServiceUtil.getLockDetails();
+				List<LockDetail> lockDetails = LockUtil.getLockDetails();
 				for (LockDetail lockDetail : lockDetails) {
 					if("Start".equalsIgnoreCase(lockDetail.getActionType()) && getAppId().equals(lockDetail.getAppId())) {
 						uniqueKey = lockDetail.getUniqueKey();
 					}
 				}
 				if (StringUtils.isNotEmpty(uniqueKey)) {
-					FrameworkServiceUtil.removeLock(uniqueKey);
+					LockUtil.removeLock(uniqueKey);
 				}
 			}
 		}
@@ -1175,7 +1176,7 @@ public class ActionFunction extends RestBase implements Constants ,FrameworkCons
 			jsonWriter(performanceUrls);    			
 			reader = applicationManager.performAction(projectInfo, ActionType.PERFORMANCE_TEST, buildArgCmds, workingDirectory);
 			//To generate the lock for the particular operation
-			FrameworkUtil.generateLock(Collections.singletonList(FrameworkServiceUtil.getLockDetail(applicationInfo.getId(), PERFORMACE, displayName, uniqueKey)), true);
+			LockUtil.generateLock(Collections.singletonList(LockUtil.getLockDetail(applicationInfo.getId(), PERFORMACE, displayName, uniqueKey)), true);
 		} catch (PhrescoException e) {
 			throw new PhrescoException(e);
 		}
@@ -1202,7 +1203,7 @@ public class ActionFunction extends RestBase implements Constants ,FrameworkCons
 			ApplicationManager applicationManager = PhrescoFrameworkFactory.getApplicationManager();
 			reader = applicationManager.performAction(getProjectInfo(), ActionType.LOAD_TEST, buildArgCmds, workingDirectory.toString());
 			 //To generate the lock for the particular operation
-			FrameworkUtil.generateLock(Collections.singletonList(FrameworkServiceUtil.getLockDetail(appInfo.getId(), LOAD, displayName, uniqueKey)), true);
+			LockUtil.generateLock(Collections.singletonList(LockUtil.getLockDetail(appInfo.getId(), LOAD, displayName, uniqueKey)), true);
 		} catch(PhrescoException e) {
 			S_LOGGER.error("Entered into catch block of MavenFunctions.LoadTest()"+ FrameworkUtil.getStackTraceAsString(e));
 			throw new PhrescoException("Exception occured in the MavenFunctions.LoadTest process");
@@ -1374,7 +1375,7 @@ public class ActionFunction extends RestBase implements Constants ,FrameworkCons
 			ApplicationManager applicationManager = PhrescoFrameworkFactory.getApplicationManager();
 			reader = applicationManager.performAction(getProjectInfo(), ActionType.FUNCTIONAL_TEST, buildArgCmds, workingDirectory.toString());
 			 //To generate the lock for the particular operation
-	        FrameworkUtil.generateLock(Collections.singletonList(FrameworkServiceUtil.getLockDetail(appInfo.getId(), FUNCTIONAL, displayName, uniqueKey)), true);
+			LockUtil.generateLock(Collections.singletonList(LockUtil.getLockDetail(appInfo.getId(), FUNCTIONAL, displayName, uniqueKey)), true);
 		} catch (PhrescoException e) {
 
 			S_LOGGER.error("Entered into catch block of Quality.runFunctionalTest()"+ FrameworkUtil.getStackTraceAsString(e));

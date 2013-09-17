@@ -32,6 +32,7 @@ import javax.ws.rs.core.Response;
 import org.apache.log4j.Logger;
 
 import com.photon.phresco.commons.FrameworkConstants;
+import com.photon.phresco.commons.LockUtil;
 import com.photon.phresco.commons.ResponseCodes;
 import com.photon.phresco.commons.model.ApplicationInfo;
 import com.photon.phresco.exception.PhrescoException;
@@ -947,7 +948,7 @@ public class ActionService implements ActionServiceConstant, FrameworkConstants,
 				}
 				BufferMap.removeBufferReader(uniquekey);
 				status=COMPLETED;
-				FrameworkServiceUtil.removeLock(uniquekey);
+				LockUtil.removeLock(uniquekey);
 			}
 			else{
 				

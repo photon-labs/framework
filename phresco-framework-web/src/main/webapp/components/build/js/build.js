@@ -328,8 +328,7 @@ define(["build/listener/buildListener"], function() {
 							}
 						}
 					} else if (response.status === "success" && response.responseCode === "PHR10C00001") {
-						var errMsg = commonVariables.api.error[response.responseCode] + response.data.lockedBy + commonVariables.api.error["PHR10C00111"] + response.data.lockedDate;
-						commonVariables.api.showError(errMsg, 'error', true, true);
+						commonVariables.api.showError(self.getLockErrorMsg(response), 'error', true, true);
 					}
 				});		
 			});
@@ -593,8 +592,7 @@ define(["build/listener/buildListener"], function() {
 								$("form[name=runAgainstForm] #build_runagsource").show();
 							});
 					} else if (response.status === "success" && response.responseCode === "PHR10C00001") {
-						var errMsg = commonVariables.api.error[response.responseCode] + response.data.lockedBy + commonVariables.api.error["PHR10C00111"] + response.data.lockedDate;
-						commonVariables.api.showError(errMsg, 'error', true, true);
+						commonVariables.api.showError(self.getLockErrorMsg(response), 'error', true, true);
 					}	
 				});		
 			});
@@ -689,8 +687,7 @@ define(["build/listener/buildListener"], function() {
 							});
 						}else{self.opencc(openccObj,openccObjName);}
 					} else if (response.status === "success" && response.responseCode === "PHR10C00001") {
-						var errMsg = commonVariables.api.error[response.responseCode] + response.data.lockedBy + commonVariables.api.error["PHR10C00111"] + response.data.lockedDate;
-						commonVariables.api.showError(errMsg, 'error', true, true);
+						commonVariables.api.showError(self.getLockErrorMsg(response), 'error', true, true);
 					}
 				});
 			});
