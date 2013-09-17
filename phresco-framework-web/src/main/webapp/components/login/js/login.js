@@ -64,6 +64,11 @@ define(["framework/widgetWithTemplate", "login/listener/loginListener"], functio
 					$(".login_error_msg").text(commonVariables.api.localVal.getSession('statusmsg'));
 				}
 			}
+			
+			var themeValue = $.parseJSON(commonVariables.api.localVal.getSession('customertheme'));
+			if (themeValue !== null && themeValue !== undefined && themeValue !== '') {
+				commonVariables.customerContext = themeValue.context;
+			}
 		},
 
 		/***
