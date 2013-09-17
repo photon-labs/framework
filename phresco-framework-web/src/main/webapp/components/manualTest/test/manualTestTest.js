@@ -8,7 +8,7 @@ define(["manualTest/manualTest", "lib/jquery-tojson-1.0", "lib/fileuploader-2.2"
 			module(moduleName);
 			asyncTest("Manual test loading template", function() {
 				self.listTestSuites = $.mockjax({
-					  url : commonVariables.webserviceurl + commonVariables.manual + '/testsuites?appDirName=HtmlJquery-html5jquerymobilewidget',
+					  url : commonVariables.webserviceurl + commonVariables.manual + '/testsuites?appDirName=test',
 					  type: "GET",
 					  dataType: "json",
 					  contentType: "application/json",
@@ -22,7 +22,10 @@ define(["manualTest/manualTest", "lib/jquery-tojson-1.0", "lib/fileuploader-2.2"
 					commonVariables.navListener = new Clazz.com.components.navigation.js.listener.navigationListener();
 				});						
 
-				commonVariables.api.localVal.setSession("appDirName" , "HtmlJquery-html5jquerymobilewidget");
+				var projectInfo = {"message":null,"exception":null,"responseCode":"PHR200009","data":{"embedList":{},"projectInfo":{"version":"1.0","appInfos":[{"version":"1.0","modules":null,"pomFile":null,"code":"responsive-web","appDirName":"test","techInfo":{"version":"3.10.3","multiModule":false,"appTypeId":"1dbcf61c-e7b7-4267-8431-822c4580f9cf","techGroupId":"html5","techVersions":null,"customerIds":null,"used":false,"name":"responsive-web","id":"tech-html5-jquery-widget","displayName":null,"status":null,"description":null,"creationDate":1354009498000,"helpText":null,"system":false},"functionalFramework":null,"selectedModules":["2d41a182-85f1-42a3-a67c-a0836792ba02"],"selectedComponents":[],"selectedServers":[{"artifactGroupId":"downloads_apache-tomcat","artifactInfoIds":["0e34ab53-1b9e-493d-aa72-6ecacddc5338"],"name":null,"id":"1e22614f-0490-4600-9f2d-dba1d200e700","displayName":null,"status":null,"description":null,"creationDate":1365682608000,"helpText":null,"system":false}],"selectedDatabases":null,"selectedJSLibs":["402ded74-e007-4cdf-8fe5-ee11ca01b7db","4f889fa1-fe7a-4dee-8ed8-fb95605dcc85","444cd5e9-6d16-4e38-8f95-c3f1d84f3c6e","bb9b5d04-2afe-4722-b87b-c1d9cdefbf8e","c4a8d772-305e-441a-993e-703e63795aac","c7008489-b264-442c-ad8c-2c422284d171","ceb6006b-b7aa-4600-9cdb-d52f5ad724ff","6afdf1d3-80f0-44a5-a9f5-843ce3db7ea0","deda98f8-c350-47f1-8b22-a0816a695127","4f889fa1-fe7a-4dee-8ed8-fb95605dcc85"],"selectedWebservices":["restjson"],"functionalFrameworkInfo":null,"pilotInfo":null,"selectedFrameworks":null,"emailSupported":false,"pilotContent":null,"embedAppId":null,"phoneEnabled":false,"tabletEnabled":false,"pilot":true,"dependentModules":null,"created":false,"customerIds":["photon"],"used":false,"name":"responsive-web","id":"5bf18d69-3902-497b-8cd2-65dbdc9cd377","displayName":null,"status":null,"description":null,"creationDate":1379332579000,"helpText":null,"system":true}],"projectCode":"UNITTest","noOfApps":2,"startDate":null,"endDate":null,"preBuilt":true,"multiModule":false,"customerIds":["photon"],"used":false,"name":"UNITTest","id":"b1a829b3-bbfa-45c4-b5f0-003eca66abf5","displayName":null,"status":null,"description":"","creationDate":1379332635000,"helpText":null,"system":false}},"status":"success"};
+				$('.hProjectId').val(projectInfo.data.projectInfo.appInfos[0].id)
+				commonVariables.api.localVal.setProjectInfo(projectInfo);
+				
 				commonVariables.navListener.onMytabEvent("manualTest");
 				setTimeout(function() {
 					start();
@@ -52,7 +55,7 @@ define(["manualTest/manualTest", "lib/jquery-tojson-1.0", "lib/fileuploader-2.2"
 			asyncTest("Manual test loading template", function() {
 				$.mockjaxClear(self.listTestSuites);
 				$.mockjax({ 
-					  url : commonVariables.webserviceurl + commonVariables.manual + '/testsuites?testSuiteName=sampletestsuite&appDirName=HtmlJquery-html5jquerymobilewidget',
+					  url : commonVariables.webserviceurl + commonVariables.manual + '/testsuites?testSuiteName=sampletestsuite&appDirName=test',
 					  type: "POST",
 					  dataType: "json",
 					  contentType: "application/json",
@@ -63,7 +66,7 @@ define(["manualTest/manualTest", "lib/jquery-tojson-1.0", "lib/fileuploader-2.2"
 				});
 				
 				self.listTestSuites = $.mockjax({
-					  url : commonVariables.webserviceurl + commonVariables.manual + '/testsuites?appDirName=HtmlJquery-html5jquerymobilewidget',
+					  url : commonVariables.webserviceurl + commonVariables.manual + '/testsuites?appDirName=test',
 					  type: "GET",
 					  dataType: "json",
 					  contentType: "application/json",
@@ -73,7 +76,6 @@ define(["manualTest/manualTest", "lib/jquery-tojson-1.0", "lib/fileuploader-2.2"
 					  }
 				});
 				
-				commonVariables.api.localVal.setSession("appDirName", "HtmlJquery-html5jquerymobilewidget");
 				$("#testSuiteId").val("sampletestsuite");
 				$("input[name=saveTestSuite]").click();
 				setTimeout(function() {
