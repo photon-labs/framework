@@ -161,7 +161,7 @@ public class ProjectServiceTest extends LoginServiceTest {
 //	@Test
 	public void deleteprojectTest() {
 		ProjectService service = new ProjectService();
-		Response response = service.deleteproject(getCollections(appDirName));
+		Response response = service.deleteproject(getCollections(appDirName), "project");
 		assertEquals(200, response.getStatus());
 	}
 

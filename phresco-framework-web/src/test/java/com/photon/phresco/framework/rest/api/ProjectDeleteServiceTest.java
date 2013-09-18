@@ -21,7 +21,7 @@ public class ProjectDeleteServiceTest {
 		projectToDel.add("TestJquery");
 		projectToDel.add("TestGitProject");
 		projectToDel.add("TestProject");
-		Response deleteproject = projectservice.deleteproject(projectToDel);
+		Response deleteproject = projectservice.deleteproject(projectToDel, "project");
 		assertEquals(200 , deleteproject.getStatus());
 	}
 }
