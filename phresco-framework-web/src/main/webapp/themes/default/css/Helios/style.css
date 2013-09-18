@@ -4766,4 +4766,9 @@ select[name="reportDataType"], input[name="pdfName"] {
 	float: left;
 }	
 
+.parameterValue {
+    height: 30px;
+    margin: -10px 0 0 !important;
+}
+
 

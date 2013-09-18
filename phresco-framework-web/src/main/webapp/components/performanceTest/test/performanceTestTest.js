@@ -293,7 +293,7 @@
 			asyncTest("Performance popup mandatory validation test", function() {
 				$.mockjaxClear();
 				$.mockjax({
-				  url: commonVariables.webserviceurl+"util/validation?appDirName=PF_TEST_PHP&customerId=photon&phase=performance-test&testBasis=parameters&testAgainst=server&customTestAgainst=server&testName=testServer&environmentName=Production&configurations=server&rampUpPeriod=&authorizationUrl=&authorizationUserName=&authorizationPassword=&authorizationDomain=&authorizationRealm=&availableJmx=tests%2Fcustom%2F%23SEP%23Custom.jmx&availableJmx=tests%2Fcustom%2F%23SEP%23LoginTest.jmx&httpName=cd&context=admin%2Flogin&contextType=GET&encodingType=UTF-8&parameterName=&parameterValue=&dbName=&queryType=Select+Statement&query=",
+				  url: commonVariables.webserviceurl+"util/validation?appDirName=PF_TEST_PHP&customerId=photon&phase=performance-test&testBasis=parameters&testAgainst=server&customTestAgainst=server&testName=testServer&environmentName=Production&configurations=server&rampUpPeriod=&authorizationUrl=&authorizationUserName=&authorizationPassword=&authorizationDomain=&authorizationRealm=&availableJmx=tests%2Fcustom%2F%23SEP%23Custom.jmx&availableJmx=tests%2Fcustom%2F%23SEP%23LoginTest.jmx&httpName=cd&context=admin%2Flogin&contextType=GET&encodingType=UTF-8&parameterName=&dbName=&queryType=Select+Statement&query=",
 				  type: "GET",
 				  dataType: "json",
 				  contentType: "application/json",
@@ -319,7 +319,7 @@
 			asyncTest("Performance - trigger test", function() {
 				$.mockjaxClear();
 				$.mockjax({
-				  url: commonVariables.webserviceurl+"util/validation?appDirName=PF_TEST_PHP&customerId=photon&phase=performance-test&testBasis=parameters&testAgainst=server&customTestAgainst=server&testName=testServer&environmentName=Production&configurations=server&rampUpPeriod=10&authorizationUrl=&authorizationUserName=&authorizationPassword=&authorizationDomain=&authorizationRealm=&availableJmx=tests%2Fcustom%2F%23SEP%23Custom.jmx&availableJmx=tests%2Fcustom%2F%23SEP%23LoginTest.jmx&httpName=cd&context=admin%2Flogin&contextType=GET&encodingType=UTF-8&parameterName=&parameterValue=&dbName=&queryType=Select+Statement&query=",
+				  url: commonVariables.webserviceurl+"util/validation?appDirName=PF_TEST_PHP&customerId=photon&phase=performance-test&testBasis=parameters&testAgainst=server&customTestAgainst=server&testName=testServer&environmentName=Production&configurations=server&rampUpPeriod=10&authorizationUrl=&authorizationUserName=&authorizationPassword=&authorizationDomain=&authorizationRealm=&availableJmx=tests%2Fcustom%2F%23SEP%23Custom.jmx&availableJmx=tests%2Fcustom%2F%23SEP%23LoginTest.jmx&httpName=cd&context=admin%2Flogin&contextType=GET&encodingType=UTF-8&parameterName=&dbName=&queryType=Select+Statement&query=",
 				  type: "GET",
 				  dataType: "json",
 				  contentType: "application/json",
@@ -330,7 +330,7 @@
 				});
 
 				$.mockjax({
-				  url: commonVariables.webserviceurl+commonVariables.mvnPerformanceTest+"?testBasis=parameters&testAgainst=server&customTestAgainst=server&testName=testServer&environmentName=Production&configurations=server&rampUpPeriod=10&authorizationUrl=&authorizationUserName=&authorizationPassword=&authorizationDomain=&authorizationRealm=&availableJmx=tests%2Fcustom%2F%23SEP%23Custom.jmx&availableJmx=tests%2Fcustom%2F%23SEP%23LoginTest.jmx&httpName=cd&context=admin%2Flogin&contextType=GET&encodingType=UTF-8&parameterName=&parameterValue=&dbName=&queryType=Select+Statement&query=&testAction=performance&customerId=photon&appId=7fd5aee1-0042-4e85-91ce-1b9493231019&projectId=b9e456e8-ccb8-458c-a559-f90cd2af48a1&username=rajeshkumar_ra&displayName=Admin",
+				  url: commonVariables.webserviceurl+commonVariables.mvnPerformanceTest+"?testBasis=parameters&testAgainst=server&customTestAgainst=server&testName=testServer&environmentName=Production&configurations=server&rampUpPeriod=10&authorizationUrl=&authorizationUserName=&authorizationPassword=&authorizationDomain=&authorizationRealm=&availableJmx=tests%2Fcustom%2F%23SEP%23Custom.jmx&availableJmx=tests%2Fcustom%2F%23SEP%23LoginTest.jmx&httpName=cd&context=admin%2Flogin&contextType=GET&encodingType=UTF-8&parameterName=&dbName=&queryType=Select+Statement&query=&testAction=performance&customerId=photon&appId=7fd5aee1-0042-4e85-91ce-1b9493231019&projectId=b9e456e8-ccb8-458c-a559-f90cd2af48a1&username=rajeshkumar_ra&displayName=Admin",
 				  type: "POST",
 				  dataType: "json",
 				  contentType: "application/json",
@@ -444,7 +444,7 @@
 			asyncTest("Generate Performance result as PDF", function() {
 				$.mockjaxClear();
 				$.mockjax({
-				  url: commonVariables.webserviceurl+"app/printAsPdf?appDirName=PF_TEST_PHP&reportDataType=detail&pdfName=TestGeneratePDF&fromPage=Performance&userId=admin",
+				  url: commonVariables.webserviceurl+"app/printAsPdf?appDirName=PF_TEST_PHP&reportDataType=detail&pdfName=TestGeneratePDF&fromPage=performance&userId=admin",
 				  type: "POST",
 				  dataType: "json",
 				  contentType: "application/json",

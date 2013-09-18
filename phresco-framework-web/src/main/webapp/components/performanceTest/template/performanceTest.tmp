@@ -81,7 +81,7 @@
 			               	<div class="flt_right">
 			                 	<input type="button" data-i18n=[value]commonlabel.label.generate  class="btn btn_style" id="generatePdf">
 			                 	<input type="button" data-i18n=[value]commonlabel.label.close class="btn btn_style dyn_popup_close">
-			                 	<input type="hidden" name="fromPage" data-i18n=[value]navigation.application.performance />
+			                 	<input type="hidden" name="fromPage" value="performance"/>
 			               	</div>
 	           			</form>
 					</div>
