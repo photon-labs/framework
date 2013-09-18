@@ -1,4 +1,4 @@
-<div class="performanceHolder"><section class="optiontitle qual_unit performanceTemp">
+<div class="performanceHolder"><section class="optiontitle qual_unit performanceTemp features_content_main">
 	<div class="unit_text" data-i18n="ci.performancetest">
     </div>
     <input type="hidden" class="testingType" value="performance-test"/>

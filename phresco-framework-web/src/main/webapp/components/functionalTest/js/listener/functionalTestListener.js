@@ -148,6 +148,7 @@ define([], function() {
 			
 			$('#testConsole').html('');
 			self.testResultListener.openConsoleDiv();//To open the console
+			$('.progress_loading').show();
 			commonVariables.navListener.getMyObj(commonVariables.mavenService, function(retVal) {
 				if (from === "startHub") {
 					retVal.mvnStartHub(queryString, '#testConsole', function(response) {
