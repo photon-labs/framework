@@ -128,12 +128,13 @@ define(["croneExpression/croneExpression"], function() {
 			if(commonVariables.api.localVal.getProjectInfo() !== null){
 				var projectInfo = commonVariables.api.localVal.getProjectInfo();
 				appDirName = projectInfo.data.projectInfo.appInfos[0].appDirName;
+				techId = projectInfo.data.projectInfo.appInfos[0].techInfo.id;
 			}
+
 			data = JSON.parse(commonVariables.api.localVal.getSession('userInfo'));
 			if(data !== null) {
 				var userId = data.id;
 			}
-			var techId = commonVariables.techId;
 			self.bcheck = false;
 			header = {
 				contentType: "application/json",
