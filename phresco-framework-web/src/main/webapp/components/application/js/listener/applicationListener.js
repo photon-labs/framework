@@ -433,9 +433,9 @@ define([], function() {
 							localStorage.setItem(appDir + '_AppUpdateMsg', response.message);
 							commonVariables.navListener.getMyObj(commonVariables.editApplication, function(retVal){
 								self.editAplnContent = retVal;
-								self.editAplnContent.appDirName = response.data.appDirName;
-								commonVariables.appDirName = response.data.appDirName;
-								commonVariables.api.localVal.setSession('appDirName', response.data.appDirName);
+								self.editAplnContent.appDirName = response.data.projectInfo.appInfos[0].appDirName;
+								commonVariables.appDirName = response.data.projectInfo.appInfos[0].appDirName;
+								commonVariables.api.localVal.setSession('appDirName', response.data.projectInfo.appInfos[0].appDirName);
 								if (response){$('.hProjectId').val(response.data.projectInfo.appInfos[0].id);}
 								commonVariables.api.localVal.setProjectInfo(response);
 								Clazz.navigationController.push(self.editAplnContent, true);

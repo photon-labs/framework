@@ -432,10 +432,11 @@ public class ProjectService extends RestBase implements FrameworkConstants, Serv
 	public Response updateApplication(@QueryParam(REST_QUERY_OLD_APPDIR_NAME) String oldAppDirName,
 			ApplicationInfo appInfo, @QueryParam(REST_QUERY_USERID) String userId,
 			@QueryParam(REST_QUERY_CUSTOMERID) String customerId,  @QueryParam("displayName") String displayName) {
-		ResponseInfo<ApplicationInfo> responseData = new ResponseInfo<ApplicationInfo>();
 		BufferedReader bufferedReader = null;
 		File filePath = null;
 		String unique_key = "";
+		ResponseInfo<JSONObject> responseData = new ResponseInfo<JSONObject>();
+		Map json = new HashMap();
 		try {
 			UUID uniqueKey = UUID.randomUUID();
 			unique_key = uniqueKey.toString();
@@ -451,7 +452,7 @@ public class ProjectService extends RestBase implements FrameworkConstants, Serv
 			if (serviceManager == null) {
 				status = RESPONSE_STATUS_FAILURE;
 				errorCode = PHR210003;
-				ResponseInfo<ApplicationInfo> finalOutput = responseDataEvaluation(responseData, null,
+				ResponseInfo<ProjectInfo> finalOutput = responseDataEvaluation(responseData, null,
 						null, status, errorCode);
 				return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN,
 						"*").build();
@@ -565,24 +566,38 @@ public class ProjectService extends RestBase implements FrameworkConstants, Serv
 			if (CollectionUtils.isNotEmpty(projects)) {
 				Collections.sort(projects, sortByDateToLatest());
 			}
+			
+			json = embedApplication(json, projectInfo, serviceManager, projectManager, oldAppDirName);
+			List<ApplicationInfo> appInfos = projectInfo.getAppInfos();
+			for (ApplicationInfo appInfoResponse : appInfos) {
+				if (appInfoResponse.getAppDirName().equals(oldAppDirName)) {
+					status = RESPONSE_STATUS_SUCCESS;
+					successCode = PHR200008;
+					json.put("projectInfo", projectInfo);
+					ResponseInfo<ProjectInfo> finalOutput = responseDataEvaluation(responseData, null,
+							json, status, successCode);
+					return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN,ALL_HEADER)
+							.build();
+				}
+			}
 		} catch (PhrescoException e) {
 			status = RESPONSE_STATUS_ERROR;
 			errorCode = PHR210009;
-			ResponseInfo<ApplicationInfo> finalOutput = responseDataEvaluation(responseData, e,
+			ResponseInfo<ProjectInfo> finalOutput = responseDataEvaluation(responseData, e,
 					null, status, errorCode);
 			return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN,
 					"*").build();
 		} catch (FileNotFoundException e) {
 			status = RESPONSE_STATUS_ERROR;
 			errorCode = PHR210007;
-			ResponseInfo<ApplicationInfo> finalOutput = responseDataEvaluation(responseData, e,
+			ResponseInfo<ProjectInfo> finalOutput = responseDataEvaluation(responseData, e,
 					null, status, errorCode);
 			return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN,
 					"*").build();
 		} catch (IOException e) {
 			status = RESPONSE_STATUS_ERROR;
 			errorCode = PHR210010;
-			ResponseInfo<ApplicationInfo> finalOutput = responseDataEvaluation(responseData, e,
+			ResponseInfo<ProjectInfo> finalOutput = responseDataEvaluation(responseData, e,
 					null, status, errorCode);
 			return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN,
 					"*").build();
@@ -593,11 +608,32 @@ public class ProjectService extends RestBase implements FrameworkConstants, Serv
 			} catch (PhrescoException e) {
 			}
 		}
-		status = RESPONSE_STATUS_SUCCESS;
-		successCode = PHR200008;
-		ResponseInfo<ApplicationInfo> finalOutput = responseDataEvaluation(responseData, null,
-				appInfo, status, successCode);
-		return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN,ALL_HEADER).build();
+		return null;
+	}
+	
+	private Map embedApplication(Map json, ProjectInfo projectInfo, ServiceManager serviceManager, ProjectManager projectManager, String appDirName) throws PhrescoException {
+		ProjectInfo parentProjectInfo = null;
+		Map<String, String> embedList = new HashMap<String, String>();
+		if (projectInfo != null) {
+			String technologyId = projectInfo.getAppInfos().get(0).getTechInfo().getId();
+			Technology technology = serviceManager.getTechnology(technologyId);
+			List<String> options = technology.getOptions();
+			if (options.contains(EMBED_APPLICATION)) {
+				List<String> applicableEmbedTechnology = technology.getApplicableEmbedTechnology();
+				parentProjectInfo = projectManager.getProject(projectInfo.getId(), projectInfo.getCustomerIds().get(0));
+				List<ApplicationInfo> allChildAppinfos = parentProjectInfo.getAppInfos();
+				for (ApplicationInfo allAppinfo : allChildAppinfos) {
+					String techId = allAppinfo.getTechInfo().getId();
+					if (applicableEmbedTechnology.contains(techId) && !allAppinfo.getAppDirName().equals(appDirName)) {
+						String EmbedName = allAppinfo.getName();
+						String EmbedAppId = allAppinfo.getId();
+						embedList.put(EmbedName, EmbedAppId);
+					}
+				}
+			}
+		}
+		json.put("embedList", embedList);
+		return json;
 	}
 	
 	private void updateFunctionalTestProperties(ApplicationInfo appInfo, ServiceManager serviceManager) throws PhrescoException {
@@ -653,28 +689,7 @@ public class ProjectService extends RestBase implements FrameworkConstants, Serv
 			reader = new BufferedReader(new FileReader(projectInfoFile));
 			ProjectInfo projectInfo = (ProjectInfo) new Gson().fromJson(reader, ProjectInfo.class);
 			ServiceManager serviceManager = CONTEXT_MANAGER_MAP.get(userId);
-			ProjectInfo parentProjectInfo = null;
-			Map<String, String> embedList = new HashMap<String, String>();
-			if (projectInfo != null) {
-				String technologyId = projectInfo.getAppInfos().get(0).getTechInfo().getId();
-				Technology technology = serviceManager.getTechnology(technologyId);
-				List<String> options = technology.getOptions();
-				if (options.contains(EMBED_APPLICATION)) {
-					List<String> applicableEmbedTechnology = technology.getApplicableEmbedTechnology();
-					parentProjectInfo = projectManager.getProject(projectInfo.getId(), projectInfo.getCustomerIds().get(0));
-					List<ApplicationInfo> allChildAppinfos = parentProjectInfo.getAppInfos();
-					for (ApplicationInfo allAppinfo : allChildAppinfos) {
-						String techId = allAppinfo.getTechInfo().getId();
-						if (applicableEmbedTechnology.contains(techId) && !allAppinfo.getAppDirName().equals(appDirName)) {
-							String EmbedName = allAppinfo.getName();
-							String EmbedAppId = allAppinfo.getId();
-							embedList.put(EmbedName, EmbedAppId);
-						}
-					}
-				}
-			}
-			json.put("embedList", embedList);
-			
+			json = embedApplication(json, projectInfo, serviceManager, projectManager, appDirName);			
 			List<ApplicationInfo> appInfos = projectInfo.getAppInfos();
 			for (ApplicationInfo applicationInfo : appInfos) {
 				if (applicationInfo.getAppDirName().equals(appDirName)) {

@@ -352,21 +352,20 @@ define(["features/features"], function(Features) {
 			var self = this;
 			asyncTest("Test - Settings Icon Failure", function() {
 				$.mockjax({
-					url:  commonVariables.webserviceurl+commonVariables.featurePageContext + "/populate?userId=admin&customerId=photon&featureName=jdom&appDirName=PhpDru7",
+					url:  commonVariables.webserviceurl+commonVariables.featurePageContext + "/populate?userId=admin&customerId=photon&featureName=xml2json&appDirName=PhpDru7",
 					type:'GET',
 					contentType: 'application/json',
 					status: 200,
 					response: function() {
-						this.responseText = JSON.stringify({"message":null,"exception":null,"responseCode":"PHR400005","data":{"propertyTemplates":null,"hasCustomProperty":true},"status":"success"});
+						this.responseText = JSON.stringify({"message":null,"exception":null,"responseCode":"PHR400005","data":{"propertyTemplates":[],"hasCustomProperty":false,"properties":null},"status":"success"});
 					}
 				});
 				commonVariables.navListener.onMytabEvent("featurelist");
-				$('.settings_icon').attr('settingsid','s_31ec87e7-d8f2-43fe-aec2-ac24af57b3aa');
-				$('.settings_icon').parent().attr('name','jdom');
+				$('.settings_icon').attr('settingsid','s_c2c74b7d-a6b6-4e61-b0e0-a44db1dfb3de');
+				$('.settings_icon').parent().attr('name','xml2json');
 				$('.settings_icon').click();
 				setTimeout(function() { 
 					start();
-					$("#configure_settings").click();
 					equal("", "", "Settings Icon Failure Tested");
 					self.FeaturedepententVerification(feature);	
 				}, 2000);
@@ -403,14 +402,13 @@ define(["features/features"], function(Features) {
 			var descid = "e75b7088-8d9f-4b00-8077-9e76b5c478fe";
 			asyncTest("Test - Click functions", function() {
 				commonVariables.navListener.onMytabEvent("featurelist");
+				feature.loadPage();
 				$("label[name=on_off]").attr('id','abc');
 				$("label[name=on_off]").attr('value','false');
 				$("label[name=on_off]").click();
 				$("label[name=on_off]").attr('id','def');
 				$("label[name=on_off]").attr('value','true');
 				$("label[name=on_off]").click();
-				$("input[name=on_off]").val('off');
-				$("input[name=on_off]").click();
 				$("input[name=on_off]").val('on');
 				$("input[name=on_off]").click();
 				$("#search").attr('class','switch switchOff');
@@ -422,10 +420,16 @@ define(["features/features"], function(Features) {
 				$('#components').keyup();
 				$('#module').val('');
 				$('#module').keyup();
+				$("#search").attr('class','switch switchOn default');
+				$('#module').val('w');
+				$('#module').keyup();
 				$('.cleartext').attr('name','module');
 				$('.cleartext').click();
 				$('.cleartext').attr('name','jsibraries');
 				$('.cleartext').click();
+				$('.cleartext').attr('name','components');
+				$('.cleartext').click();
+				$('#cancelUpdateFeature').click();
 				setTimeout(function() { 
 					start();
 					equal('', '', "Click functions Tested");

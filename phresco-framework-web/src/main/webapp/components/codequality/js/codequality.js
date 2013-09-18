@@ -73,14 +73,14 @@ define(["codequality/listener/codequalityListener"], function() {
 				if(response.data !== null){
 					self.codequalityListener.getSonarStatus(response.data, function(status) {
 						if(status === true){
-							//setTimeout(function() {
+							setTimeout(function() {
 								self.codequalityListener.getReportTypes(self.codequalityListener.getRequestHeader(self.appDirName , "reporttypes"), function(response) {
 									var projectlist = {};
 									projectlist.projectlist = response;	
 									self.renderedData = response;
 									self.codequalityListener.constructHtml(self.renderedData);
 								});
-						//	}, 200);
+							}, 200);
 						} else {
 							$(".alert").show();
 							self.closeConsole();

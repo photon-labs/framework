@@ -283,6 +283,14 @@ define(["framework/widget", "framework/templateProvider"], function() {
 						$(".optiontitle").css("z-index","1");
 					}
 				});
+				setTimeout(function() {
+					$('.confclose').click( function() {
+						$("#" + place).hide();
+						$(".header_section").css("z-index","7");
+						$(".content_title").css("z-index","6");
+						$(".optiontitle").css("z-index","1");
+					});
+				},1500);	
 				
 				$('.close_conf').click( function() {
 					$("#" + place).hide();

@@ -185,12 +185,7 @@ define(["framework/base", "api/localStorageAPI"], function(){
 					commonVariables.loadingScreen.removeLoading();
 					//callbackfunction(jqXHR.status);
 					callbackfunction(false);
-				},					
-				complete: function (jqXHR, textStatus) {
-					commonVariables.loadingScreen.removeLoading();
-					//callbackfunction(jqXHR.status);
-					callbackfunction(false);
-				},	
+				}	
 			});	
 		},
 

@@ -107,18 +107,25 @@ define(["navigation/listener/navigationListener"], function() {
 				$('#qualityMenu').addClass("act");
 				self.onMytabEvent.dispatch(this.id);
 			});
-			var counter = 0;
+			//var counter = 0;
 			$("#importApp").unbind("click");
 			$("#importApp").click(function() {
 				var currentPrjName = "";
-				if(counter === 1) {
+				/* if(counter === 1) {
 					$('#importUserName').val('');
 					$('#importPassword').val('');
-				} else {				
+				} else { */				
 					$('#importUserName').val(data.id);
-					//$('#importPassword').val(data.password);
-				}
-				$("#importRepourl").val('');
+					$('#importPassword').val('');
+				//}
+				if($("#importType").val() === 'svn') {
+					$(".seperatetd").show();
+					$(".seperatetd").parent().show();
+				} else {
+					$(".seperatetd").hide();
+					$(".seperatetd").parent().hide();
+				}	
+				$("#importRepourl").val('');	
 				$("#importRepourl").removeClass("errormessage");
 				$("#importUserName").removeClass("errormessage");
 				$("#importPassword").removeClass("errormessage");
@@ -138,7 +145,7 @@ define(["navigation/listener/navigationListener"], function() {
 				self.navigationListener.validateTextBox($("#testImportUserName"),"");
 				self.navigationListener.validateTextBox($("#testImportPassword"),"");
 				self.navigationListener.validateTextBox($("#testRepoUrl"),"");
-				counter = 1;
+				//counter = 1;
 				self.opencc(this, "project_list_import", currentPrjName);
 			});
 			
@@ -171,6 +178,7 @@ define(["navigation/listener/navigationListener"], function() {
 				else if($(this).val() === "svn") {
 					$(".svndata").show();
 					$(".seperatetd").show();
+					$(".seperatetd").parent().show();
 					$(".svnusr").show();
 					$(".svnpswd").show();
 					$(".gitdata").hide();

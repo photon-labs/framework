@@ -95,6 +95,7 @@ define(["lib/jquery-tojson-1.0",'lib/RGraph_common_core-1.0','lib/RGraph_common_
 				header.requestMethod = "GET";
 				header.webserviceurl = commonVariables.webserviceurl + "pdf/showPopUp?appDirName=" + appDirName + "&fromPage="+requestBody.from;
 			} else if (action === "generatePdfReport") {
+				commonVariables.hideloading = true;
 				var data = $('#pdfReportForm').serialize();
 				header.requestMethod = "POST";
 				header.webserviceurl = commonVariables.webserviceurl + "app/printAsPdf?appDirName=" + appDirName + "&" + data + "&userId=" + userId;
@@ -366,6 +367,7 @@ define(["lib/jquery-tojson-1.0",'lib/RGraph_common_core-1.0','lib/RGraph_common_
 		generatePdfReport : function(from) {
 			var self = this;
 			var requestBody = {};
+			$('#pdfReportLoading').show();
 			self.performAction(self.getActionHeader(requestBody, "generatePdfReport"), function(response) {
 				if (response.status === "success") {
 					self.getPdfReports(from);

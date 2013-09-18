@@ -93,6 +93,7 @@ define([], function() {
 			
 			$('#testConsole').html('');
 			self.testResultListener.openConsoleDiv();//To open the console
+			$('.progress_loading').show();
 			commonVariables.navListener.getMyObj(commonVariables.mavenService, function(retVal){
 				retVal.mvnUnitTest(queryString, '#testConsole', function(response) {
 					self.testResultListener.closeConsole();
