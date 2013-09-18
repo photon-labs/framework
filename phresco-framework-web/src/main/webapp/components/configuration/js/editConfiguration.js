@@ -45,9 +45,15 @@ define(["configuration/listener/configurationListener"], function() {
 					if(response.data.configurations !== undefined) {
 					$.each(response.data.configurations, function(index, value){
 						if (value.type !== "Other") {
-							self.configurationlistener.getConfigurationList(self.configurationlistener.getRequestHeader(self.configRequestBody, "template", value.type), function(response) {
-								self.configurationlistener.constructHtml(response, value, response.data.settingsTemplate.name, self.envSpecificVal);
-							});
+							if(value.type === "Components" || value.type === "Features") {
+								self.configurationlistener.getConfigurationList(self.configurationlistener.getRequestHeader(self.configRequestBody, "configType", value.type), function(response) {
+									self.configurationlistener.htmlForOther(response.data, value, value.type);
+								});
+							} else {
+								self.configurationlistener.getConfigurationList(self.configurationlistener.getRequestHeader(self.configRequestBody, "template", value.type), function(response) {
+									self.configurationlistener.constructHtml(response, value, response.data.settingsTemplate.name, self.envSpecificVal);
+								});
+							}
 						} else {
 							setTimeout(function(){
 								self.configurationlistener.htmlForOther(value);

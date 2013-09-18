@@ -11,8 +11,10 @@ define(["croneExpression/croneExpression"], function() {
 		configRequestBody : {},
 		envJson : [],
 		configTemName : [],
+		configTemp : [],
 		bcheck : null,
-		count : 0,
+		count : '',
+		countVal : 0,
 		serverTypeVersion : null,
 		databaseTypeVersion : null,
 		croneExp : null,
@@ -201,6 +203,14 @@ define(["croneExpression/croneExpression"], function() {
 					header.requestMethod = "POST";
 					header.requestPostBody = JSON.stringify(configRequestBody);
 					header.webserviceurl = commonVariables.webserviceurl+commonVariables.configuration+"/addCertificate";
+			} else if(action === "configType") {
+					header.requestMethod = "POST";
+					header.requestPostBody = {};
+					header.webserviceurl = commonVariables.webserviceurl+commonVariables.configuration+"/configType?userId="+userId+"&type="+deleteEnv+"&customerId="+customerId+"&appDirName="+appDirName;
+			} else if(action === "showFeatureConfigs") {
+					header.requestMethod = "POST";
+					header.requestPostBody = {};
+					header.webserviceurl = commonVariables.webserviceurl+commonVariables.configuration+"/showFeatureConfigs?userId="+userId+"&customerId="+customerId+"&appDirName="+appDirName+"&envName="+deleteEnv+"&featureName="+ configRequestBody;
 			}
 			return header;
 		},
@@ -846,7 +856,19 @@ define(["croneExpression/croneExpression"], function() {
 			});
 		},	
 		
-		htmlForOther : function(value) {
+		getComponentName : function(type, value, callback) {
+			var self = this, selectedVal = '';
+			if(type === "Components" || type === "Features") {
+				$.each(value.properties, function(key, val){
+					if(key === "components" || key === "features") {
+						selectedVal = val;
+					}
+				});
+			}
+			callback(selectedVal);
+		},
+		
+		htmlForOther : function(data, value, types) {
 			var self = this, headerTr, content = '', textBox, apiKey = "", keyValue = "", type="Other", name="", desc="", addIcon = '<img src="themes/default/images/helios/plus_icon.png" border="0" alt="">';
 				if (value !== null && value !== '') {
 					type = value.type;
@@ -854,24 +876,46 @@ define(["croneExpression/croneExpression"], function() {
 					desc = value.desc;
 				}
 				
-				headerTr = '<tr class="row_bg" type="otherConfig" configType="'+type+'"><div class="row"><td colspan="3">' + type + '</td><td colspan="3">'+
-				'<a href="javascript:;" name="removeConfig"><img src="themes/default/images/helios/close_red.png" border="0" alt="" class="flt_right"/></a></td></div></tr>';
-				content = content.concat(headerTr);
-				
-				var defaultTd = '<tr name="configName" class="otherConfig" name="'+type+'"><td class="labelTd">Name <sup>*</sup></td><td><input type="text" id="ConfigOther" maxlength="30" title="30 Characters only" mandatory="true" class="configName" value="'+name+'" placeholder= "Configuration Name"/></td><td class="labelTd">Description</td><td><input type="text" id="ConfigOther" class="configDesc" maxlength="150" title="150 Characters only"  value="'+desc+'" placeholder= "Configuration Description"/></td>';
-				content = content.concat(defaultTd);
-				
-				if (value !== null && value !== '') {
-					$.each(value.properties, function(key, value){
-						textBox = '<tr class="otherConfig" name="'+type+'"><td></td><td><input type="text" placeholder= "key" class="otherKey" value="'+key+'"/><td><input type="text" placeholder= "value" class="otherKeyValue" value="'+value+'"/></td><td><div class="flt_right icon_center"><a href="javascript:;" name="addOther"></a> <a href="javascript:;" name="removeOther"><img src="themes/default/images/helios/minus_icon.png" border="0" alt=""></a></div></td></tr>';
-						content = content.concat(textBox);
-					});
+				if ($.isEmptyObject(self.configTemp)) {
+					self.configTemp.push(types);
 				} else {
-					textBox = '<tr class="otherConfig" name="'+type+'"><td></td><td><input type="text" placeholder= "key" class="otherKey"/><td><input type="text" placeholder= "value" class="otherKeyValue" /></td><td><div class="flt_right icon_center"><a href="javascript:;" name="addOther"><img src="themes/default/images/helios/plus_icon.png" border="0" alt=""></a> <a href="javascript:;" name="removeOther"></a></div></td></tr>';
-					content = content.concat(textBox);
+					var found = $.inArray(types, self.configTemp) > -1;
+					if (found === false) {
+						self.configTemp.push(types);
+					} else {
+						self.countVal++;
+					}
 				}
-
+				 
+				if (types === "") {
+					headerTr = '<tr class="row_bg" type="otherConfig" configType="'+type+'"><div class="row"><td colspan="3">' + type + '</td><td colspan="3">'+'<a href="javascript:;" name="removeConfig"><img src="themes/default/images/helios/close_red.png" border="0" alt="" class="flt_right"/></a></td></div></tr>';
+					content = content.concat(headerTr);
+					
+					var defaultTd = '<tr name="configName" class="otherConfig" name="'+type+'"><td class="labelTd">Name <sup>*</sup></td><td><input type="text" id="ConfigOther" maxlength="30" title="30 Characters only" mandatory="true" class="configName" value="'+name+'" placeholder= "Configuration Name"/></td><td class="labelTd">Description</td><td><input type="text" id="ConfigOther" class="configDesc" maxlength="150" title="150 Characters only"  value="'+desc+'" placeholder= "Configuration Description"/></td>';
+					content = content.concat(defaultTd);
+					
+					if (value !== null && value !== '') {
+						$.each(value.properties, function(key, value){
+							textBox = '<tr class="otherConfig" name="'+type+'"><td></td><td><input type="text" placeholder= "key" class="otherKey" value="'+key+'"/><td><input type="text" placeholder= "value" class="otherKeyValue" value="'+value+'"/></td><td><div class="flt_right icon_center"><a href="javascript:;" name="addOther"></a> <a href="javascript:;" name="removeOther"><img src="themes/default/images/helios/minus_icon.png" border="0" alt=""></a></div></td></tr>';
+							content = content.concat(textBox);
+						});
+					} else {
+						textBox = '<tr class="otherConfig" name="'+type+'"><td></td><td><input type="text" placeholder= "key" class="otherKey"/><td><input type="text" placeholder= "value" class="otherKeyValue" /></td><td><div class="flt_right icon_center"><a href="javascript:;" name="addOther"><img src="themes/default/images/helios/plus_icon.png" border="0" alt=""></a> <a href="javascript:;" name="removeOther"></a></div></td></tr>';
+						content = content.concat(textBox);
+					}
+					
+				} else {
+					headerTr = '<tr class="row_bg" type="'+types+self.countVal+'" configType="'+types+'"><div class="row"><td colspan="3">' + types + '</td><td colspan="3">'+
+					'<a href="javascript:;" name="removeConfig"><img src="themes/default/images/helios/close_red.png" border="0" alt="" class="flt_right"/></a></td></div></tr>';
+					content = content.concat(headerTr);
+					var defaultTd = '<tr name="'+types+'" class="'+types+self.countVal+'" ><td class="labelTd">Name <sup>*</sup></td><td><input type="text" maxlength="30" title="30 Characters only" mandatory="true" id="'+types+self.countVal+'" class="configName" value="'+name+'" placeholder= "Configuration Name"/></td><td class="labelTd">Description</td><td><input type="text" class="configDesc" maxlength="150" title="150 Characters only"  value="'+desc+'" placeholder= "Configuration Description"/></td><td class="labelTd">'+types+'</td><td><select compType="components'+self.countVal+'" name="components" count="'+self.countVal+'" class="'+types+self.countVal+'Configuration" configkey="configkey'+types+'">'+self.ComponentData(data, types, value)+'</select></td>';
+					content = content.concat(defaultTd);
+				}
+				
 				$("tbody[name=ConfigurationLists]").append(content);
+				$("select[compType=components"+self.countVal+"]").unbind("change");
+				self.componentChange(types, self.countVal, value);
+				
 				if (value !== null && value !== '') {
 					$("tr.otherConfig:last").find("a[name=addOther]").html(addIcon);
 					if ($("tr.otherConfig").length === 1) {
@@ -881,6 +925,81 @@ define(["croneExpression/croneExpression"], function() {
 				$("a[name=removeConfig]").unbind("click");
 				self.removeConfiguration();
 				self.addClick();
+		},
+		
+		ComponentData : function(data, types, value) {
+			var self=this, option='', selected = '';
+			option = '<option>Select '+types+'</option>';
+			$.each(data, function(index, val){
+				if(value !== '' && value !== null){
+					self.getComponentName(types, value, function(response){
+						if(response === val){
+							option += '<option value='+val.replace(/ /g, "%20")+' selected>'+val+'</option>';
+						} else {
+							option += '<option value='+val.replace(/ /g, "%20")+'>'+val+'</option>';
+						}
+					});
+				} else {
+					option += '<option value='+val.replace(/ /g, "%20")+'>'+val+'</option>';
+				}
+			});
+			return option;
+		},
+		
+		componentChange : function(types, countValue, value) {
+			var self = this;
+			if(value !== '' && value !== null) {
+				var fName = $("select[compType=components"+countValue+"]").val();
+				self.getProperties(fName, $("select[compType=components"+countValue+"]"), $("select[compType=components"+countValue+"]").attr('count'), types);
+			}
+			
+			$("select[compType=components"+countValue+"]").change(function(){
+				countValue = $(this).attr('count');
+				var current = $(this);
+				var currentRow = $(this).parent().parent().next();
+				$(this).parent().parent().next().addClass('remove');				
+				while(currentRow !== null && currentRow.length > 0) {
+				   if (currentRow.attr('class') !== "row_bg") {
+					   currentRow.addClass('remove');
+					   currentRow = currentRow.next('tr');
+				   } else {
+					   currentRow = null;
+				   }
+				}
+				$('.remove').remove();
+				var featureName = $(this).val();
+				self.getProperties(featureName.replace(/%20/g, " "), current, countValue, types);
+			});
+		},
+		
+		getProperties : function(featureName, current, countValue, types) {
+			var self = this, content='', count = 3;;
+			var envrName = "";
+			if ($('input[name=EnvName]').val() !== undefined) {
+				envrName = $('input[name=EnvName]').val();
+			}
+			self.getConfigurationList(self.getRequestHeader(featureName, "showFeatureConfigs", envrName), function(response) {
+				$.each(response.data.propertyTemplates,function(index, propertyTemplate) {
+					var str = null;
+					self.getPropertyValue(propertyTemplate.key, response.data.properties, function(returnVal){
+						var inputnameval = propertyTemplate.key.replace(/ /g,'_');
+						var control = "";
+						if  (count % 3 === 0) {
+							control = '<tr name="'+types+'" class="'+types+countValue+'"><td class="labelTd">'+propertyTemplate.key+'</td><td><input class="'+types+countValue+'Configuration" name='+inputnameval+' configkey="configkey'+inputnameval+'" temp="'+inputnameval+countValue+'" type="text" value='+returnVal+'></td>';
+						} else {
+							control = '<td class="labelTd">'+propertyTemplate.key+'</td><td><input class="'+types+countValue+'Configuration" name='+inputnameval+' configkey="configkey'+inputnameval+'" type="text" temp="'+inputnameval+countValue+'" value='+returnVal+'></td>';
+						}
+						count++;
+						content = content.concat(control);
+					}); 
+				});
+				$(content).insertAfter(current.parent().parent());
+			});
+		},
+		
+		getPropertyValue : function(key, response, callback) {
+			var property = '';
+			callback(response[key]); 
 		},
 		
 		addOtherConfig : function(toAppend) {
@@ -952,12 +1071,16 @@ define(["croneExpression/croneExpression"], function() {
 		
 		addConfiguration : function(config) {
 			var self=this;
-			if (config !== "Other") {
+			if(config === "Components" || config === "Features") {
+				self.getConfigurationList(self.getRequestHeader(self.configRequestBody, "configType", config), function(response) {
+					self.htmlForOther(response.data, '', config);
+				});
+			} else if (config !== "Other" && (config !== "Components" || config !== "Features")) {
 				self.getConfigurationList(self.getRequestHeader(self.configRequestBody, "template", config), function(response) {
 					self.constructHtml(response, '', config, '', true);
 				});
 			} else {
-				self.htmlForOther('');
+				self.htmlForOther('', '', '');
 			}
 		},
 		
@@ -1012,7 +1135,7 @@ define(["croneExpression/croneExpression"], function() {
 						$(this).find("." + type + "Configuration").each(function() {
 							var proValue = $(this).attr("name");
 							if(proValue !== undefined) {
-								properties[proValue] = $(this).val();
+								properties[proValue] = $(this).val().replace(/%20/g, " ");
 							}
 						});
 						
