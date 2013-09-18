@@ -151,6 +151,7 @@ var commonVariables = {
 	
 	/******* Phase *********/
 	ciPhase : "ci-",
+	projectLevel : false,
 
 	/******* Goals *********/
 	codeValidateGoal : "validate-code",
