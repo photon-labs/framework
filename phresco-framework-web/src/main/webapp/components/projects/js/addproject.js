@@ -198,6 +198,12 @@ define(["projects/listener/projectsListener"], function() {
 			$("input[name='projectcode']").bind('input', function() {
 				$(this).val(self.specialCharValidation($(this).val().replace(/\s/g, "")));
 			});
+			
+			$("input[name='projectversion']").bind('input', function() {
+				var str = $(this).val();
+				str = str.replace(/[^0-9.]+/g, '');
+				$(this).val(str);
+			});
 
 			$("input[name='projectcode']").focusout(function() {
 				$(this).val(self.specialCharValidation($(this).val().replace(/\s/g, "")));
