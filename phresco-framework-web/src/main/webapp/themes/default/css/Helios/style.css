@@ -193,6 +193,10 @@ textarea { resize: none; }
 	padding:5px;
 }
 
+select:focus, input[type="file"]:focus, input[type="radio"]:focus, input[type="checkbox"]:focus{
+	outline:none !important;
+}
+
 /*=== End of Loading ===*/
 
 /* *************************************************************************** LOGIN PAGE STYLES ************************************************************************** */
@@ -606,28 +610,33 @@ a.dropdown-toggle b.caret  {
 	border-bottom: none;
 }
 
-.cust_sel ul li a{
+.header_section .header_right .cust_sel ul li a{
 	color: #000 !important;
 	padding: 0 12px;
 	display:block !important;
 }
 	
-.cust_sel ul li a.selected,.cust_sel ul li a:hover {
-	background-color: #ff844a !important;
+.header_section .header_right .cust_sel ul li a.selected,.header_section .header_right .cust_sel ul li a:hover {
+	background-color: #ff844a;
 	color: #ffffff !important;
 	text-decoration:none;
 }
 
 .cust_sel ul li:first-child a {
 	border-top-left-radius: 4px;
-	border-top-right-radius: 4px;	
+	border-top-right-radius: 4px;
+	padding-left:5px;
 }
 
 .cust_sel ul li:last-child a {
 	border-bottom-left-radius: 4px;
-	border-bottom-right-radius: 4px;	
+	border-bottom-right-radius: 4px;
+	padding-left:5px;
 }
 
+.cust_sel ul li a{
+	padding-left:5px;
+}
 
 ul.nav li.dropdown:hover > .test_options{
     display: block; 
@@ -713,14 +722,14 @@ ul.nav li.dropdown:hover > .test_options{
 	background-image:url(../../images/helios/web_layer_icon.png)!important ;
 	background-repeat:no-repeat !important;
 	background-position:6px 6px  !important;
-	padding-left:32px !important;
+	padding-left:30px !important;
 	padding-right:8px !important;
 }
 
 .mobile_layer_icon_btn {
 	background-image:url(../../images/helios/mobile_layer_icon.png)!important ;
 	background-repeat:no-repeat !important;
-	background-position:6px 3px  !important;
+	background-position:4px 5px  !important;
 	padding-left:25px !important;
 	padding-right:8px !important;
 }
@@ -791,7 +800,9 @@ ul.nav li.dropdown:hover > .test_options{
 	padding:6.7px 9px !important;
 }
 	
-	
+.btn:focus {
+	outline:none !important;
+}
 
 /* ********************************************** CSS related to MODAL ************************************************************************************** */
 
@@ -852,9 +863,9 @@ ul.nav li.dropdown:hover > .test_options{
 	font-size:12px;
 }
 
-.table_border a:hover {
+.table_border a:hover, .table_border a:focus {
 	color:#555555;
-	text-decoration:none;
+	text-decoration:none !important;
 }
 
 .table_border th, .table_border td, table td {
@@ -1312,7 +1323,8 @@ img[name="close"] {
 .loading_bar {
 	margin: 4px 0px 0px 4px;
 	position:absolute;
-}	
+}
+
 
 /* *************************************************************************** CSS for App Info Page ************************************************************************** */
 
@@ -1348,6 +1360,7 @@ img[name="close"] {
 .btn.dropdown-toggle:hover, .btn.dropdown-toggle:focus
 {
 	background:#FFF !important;
+	outline:none !important;
 }
 
 .btn.btn-danger:hover, .btn.btn-danger:focus
@@ -1370,8 +1383,6 @@ background:#DA4F49 !important;
 .dropdown-menu > li > a:hover, .dropdown-menu > li > a:focus, .dropdown-submenu:hover > a, .dropdown-submenu:focus > a{
 	background:#EF7B43 !important;
 }
-
-
 /* *************************************************************************** CSS for Quality selection dropdown ************************************************************************** */
 
 .title_nav .cust_sel ul li a {
@@ -1605,10 +1616,6 @@ background:#DA4F49 !important;
 	width: 220px;
 }
 
-.search_text{
-	border: medium none !important;
-    width: 90% !important;
-}
 
 /* *************************************************************************** CSS for Code validation ************************************************************************** */
 
@@ -1909,6 +1916,10 @@ background:#DA4F49 !important;
 
 @media screen and (min-width: 978px) and (max-width: 1024px) {
 
+	.appInfo table tr td {
+		width:0% !important;
+	}
+
 	.func_framewrk {
 		width: 10% !important;
 	}
@@ -1935,10 +1946,6 @@ background:#DA4F49 !important;
 		 width: 0%;
 	}
 		
-	select[name="builtmyself"] {
-		width:86px !important;
-	}
-	 
 	.custon_dropdown  {
 		width:100px !important;
 	}
@@ -1966,13 +1973,35 @@ background:#DA4F49 !important;
 	
 	.sortablecont_two{
 		width:30%;
-	}
+}
+	#addproject .create_edit_table tr td select{
+		width:95px !important;
+}
+
+	.project_list_popup input[type=text], .project_list_popup select, .project_list_popup input[type=password] {
+		width:145px !important;
+} 
+
+	#project_list_import input[type="checkbox"]{
+		margin:0px 0 5px 10px !important;
+}
+
+	.svndata table tr td span:nth-child(2), .testCheckoutData table tr td span:nth-child(2) {
+		margin-right:58px;
+}
+	#project_list_import .svndata .revtext, #project_list_import .testCheckoutData .revtext { 
+	margin:0px 5px 0px 0px !important;
+}
 }
 
 @media screen and (min-width: 1025px) and (max-width: 1152px) {
 
 	.func_framewrk {
 		width: 8% !important;
+	}
+	
+	.desc {
+		width:5% !important;
 	}
 	
 	.startdate input, .enddate input {
@@ -1987,8 +2016,8 @@ background:#DA4F49 !important;
 		width: 144px !important;	
 	}
 		
-	select[name="builtmyself"] {
-		width: 108px !important;
+	#addproject .create_edit_table tr td select{
+		width:109px !important;
 	}
 	
 	.right-align {
@@ -2017,6 +2046,10 @@ background:#DA4F49 !important;
 		width: 100% !important;
 	}
 	
+	.project_list_popup input[type=text], .project_list_popup select, .project_list_popup input[type=password] {
+		width:165px !important;
+} 
+	
 }
 
 @media screen and (min-width: 1153px) and (max-width: 1280px) {
@@ -2037,9 +2070,9 @@ background:#DA4F49 !important;
 	 	width: 186px !important;
 	}
 	
-	select[name="builtmyself"] {
-		width: 115px !important;
-	}
+	#addproject .create_edit_table tr td select{
+		width:126px !important;
+}
 	
 	.optional_dropdown {
 		margin-left: 11px;
@@ -2069,9 +2102,9 @@ background:#DA4F49 !important;
 		width: 184px !important;	
 	}
 	
-	select[name="builtmyself"] {
-		width : 115px !important;
-	}
+	#addproject .create_edit_table tr td select{
+		width:126px !important;
+}
 	
 	.optional_dropdown  {
 		margin-left: 10px;
@@ -2081,6 +2114,8 @@ background:#DA4F49 !important;
 	#code_popup .dropdown-menu { 
 		width: 100% !important;
 	}
+	
+	
 }
 
 @media screen and (min-width: 1367px) and (max-width: 1440px) {
@@ -2156,6 +2191,7 @@ background:#DA4F49 !important;
     background-position:bottom;
     width:7px   !important;
     left:0px !important;
+	height:50% !important;
 }
 
 .scroll-slider-inner {
@@ -3305,7 +3341,7 @@ html>body tbody.scrollContent {
 {
 	border:1px solid #cdcdcd;
 	border-radius:6px;
-	overflow-y:scroll;
+	overflow-y:auto;
 	padding:0;
 	margin:0;
 	height:400px;
@@ -3745,7 +3781,7 @@ html>body tbody.scrollContent {
 .node_table tr td
 {
 	border-top:none;
-	padding:0px 30px 0px 0px;
+	padding:0px 30px 5px 0px;
 }
 
 .node_table tr td [type="text"]
@@ -4119,6 +4155,9 @@ img.add_test_icon
 	padding-left:5px !important;
 }
 
+#performancePopup .mCSB_scrollTools {
+	width:3px !important;
+}
 /* *************************************************************** STYLES FOR QUALITY_MANUAL TEST PAGE ************************************************************* */
 
 
@@ -4766,4 +4805,13 @@ select[name="reportDataType"], input[name="pdfName"] {
 	float: left;
 }	
 
+.features_content_main .search_box .search_text {
+	border: medium none !important;
+    width: 84% !important;
+}
 
+
+.parameterValue {
+    height: 30px;
+    margin: -10px 0 0 !important;
+}

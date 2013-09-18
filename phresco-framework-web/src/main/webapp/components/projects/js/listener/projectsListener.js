@@ -389,6 +389,9 @@ define([], function() {
 			    }else if(code === ""){
 					self.valid("input[name='projectcode']", "Enter Code");
 					self.hasError = true;
+			    }else if(labelversion === ""){
+					self.valid("input[name='projectversion']", "Enter Version");
+					self.hasError = true;
 			    }else if(self.appvalid()) {
 					self.hasError = true;
 			    }else if(self.webvalid()) {
@@ -563,7 +566,7 @@ define([], function() {
 				var currentVal =  $(this).val();
 				var appCodeTextObj = $(this);
 				var totalLength = $(this).val().length;
-				if($(this).val().match(/[._-]/g).length !== null){ 
+				if($(this).val().match(/[._-]/g) !== null){ 
 					var charLength =  $(this).val().match(/[._-]/g).length; 
 				}
 				if(currentVal === '' || currentVal === null) {
@@ -719,7 +722,7 @@ define([], function() {
 			self.applicationlayerData = commonVariables.api.localVal.getJson("Front End");
 			$.each(self.applicationlayerData.techGroups, function(index, value) {
 				if (value.id === groupId) {
-					option = '<option value="">Select Technology</option>';
+					option = '<option disabled selected value="">Select Technology</option>';
 					$.each(value.techInfos, function(index, value){
 						option += '<option value="'+value.id+'">'+ value.name +'</option>';
 					});

@@ -1315,7 +1315,7 @@ define(["framework/widgetWithTemplate", "common/loading", "lib/customcombobox-1.
         },
 
         addParameterRow : function (thisObj) {
-            var self = this, parameterRow = '<tr class="parameterRow"><td><input type="text" class="parameterName" name="parameterName" placeholder="Name"><input type="text" class="parameterValue" name="parameterValue" placeholder="Value"><input class="parameterEncode" name="parameterEncode" type="checkbox">Encode '+
+            var self = this, parameterRow = '<tr class="parameterRow"><td><input type="text" class="parameterName" name="parameterName" placeholder="Name"><textarea class="parameterValue" name="parameterValue" placeholder="Value"></textarea>&nbsp;<input class="parameterEncode" name="parameterEncode" type="checkbox">Encode '+
                         '<img class="add_test_icon removeParamter" src="themes/default/images/helios/minus_icon.png">'+
                         '<img src="themes/default/images/helios/plus_icon.png" class="add_test_icon addParameter"></td></tr>';
             thisObj.closest('tbody').append(parameterRow);     

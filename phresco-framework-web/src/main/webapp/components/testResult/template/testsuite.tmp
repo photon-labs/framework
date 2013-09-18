@@ -1,4 +1,4 @@
-<section class="content_main code_content testSuiteTable">
+<section class="features_content_main code_content testSuiteTable">
 	<!-- Testsuites div starts here -->
 	<div class="qual_unit_main unit_info" id="testSuites">
 		{{#if testSuites}}

@@ -433,7 +433,7 @@ define(["performanceLoadListener/listener/performanceLoadListener"], function() 
 			self.customScroll($(".consolescrolldiv")); 
 			
 			$("#performanceRun").click(function() {
-				self.validation.dispatch("performance-test", $('#performanceForm').serialize(), self.dynamicpage);
+				self.validation.dispatch("performance-test", $('#performanceForm :input[name!=parameterValue]').serialize(), self.dynamicpage);
 			});
 			
 			//To copy the console log content to the clip-board

@@ -4,7 +4,6 @@ define(["configuration/editConfiguration"], function(EditConfiguration) {
 	return {
 	
 	setUserInfo : function(){
-		console.info("insie..");
 		commonVariables.api.localVal.setSession('a20e25b3-61be-499f-8108-ae170a94b4c0', '{"message":null,"exception":null,"responseCode":"PHR200009","data":{"embedList":{},"projectInfo":{"appInfos":[{"pomFile":null,"modules":null,"appDirName":"wordpress-WordPress","techInfo":{"appTypeId":"e1af3f5b-7333-487d-98fa-46305b9dd6ee","techGroupId":"PHP","techVersions":null,"version":"3.4.2","customerIds":null,"used":false,"creationDate":1379325938000,"helpText":null,"system":false,"name":"php-Wordpress","id":"tech-wordpress","displayName":null,"description":null,"status":null},"functionalFramework":null,"selectedModules":[],"selectedComponents":[],"selectedServers":null,"selectedDatabases":null,"selectedJSLibs":[],"selectedWebservices":null,"functionalFrameworkInfo":null,"pilotInfo":null,"selectedFrameworks":null,"emailSupported":false,"pilotContent":null,"embedAppId":null,"phoneEnabled":false,"tabletEnabled":false,"pilot":false,"dependentModules":null,"created":false,"version":"1.0","code":"wordpress-WordPress","customerIds":null,"used":false,"creationDate":1379325938000,"helpText":null,"system":false,"name":"wordpress-WordPress","id":"e5fe85d7-f01b-4d3d-8a58-3c3ae75cc0d2","displayName":null,"description":null,"status":null}],"projectCode":"test","noOfApps":1,"startDate":null,"endDate":null,"preBuilt":false,"multiModule":false,"version":"1.0","customerIds":["photon"],"used":false,"creationDate":1379325938000,"helpText":null,"system":false,"name":"test","id":"a20e25b3-61be-499f-8108-ae170a94b4c0","displayName":null,"description":"","status":null}},"status":"success"}');
 		$('.hProjectId').val('a20e25b3-61be-499f-8108-ae170a94b4c0');
 	},
@@ -248,7 +247,7 @@ define(["configuration/editConfiguration"], function(EditConfiguration) {
 		var self=this;
 		asyncTest("Test - Add Other Configuration Test", function() {
 			
-			editConfiguration.configurationlistener.htmlForOther("");
+			editConfiguration.configurationlistener.htmlForOther("", "", "");
 			
 			setTimeout(function() {
 				start();
@@ -480,10 +479,82 @@ define(["configuration/editConfiguration"], function(EditConfiguration) {
 			setTimeout(function() {
 				start();
 				equal($(commonVariables.contentPlaceholder).find('.row_bg').length, 1, "Email already added Test");
-				self.nonEnvAddConfigurationRender(editConfiguration);
+				self.componetConfiguration(editConfiguration);
 			}, 1500);
 		}); 
 		
+	},
+	
+	componetConfiguration : function(editConfiguration) {
+		var self=this;
+		asyncTest("Test - Component Configuration Render Test", function() {
+			$("a[name=removeConfig]").click();
+			$.mockjax({
+				url:  commonVariables.webserviceurl+commonVariables.configuration+"/configType?userId=admin&type=Components&customerId=photon&appDirName=wordpress-WordPress",
+				type:'POST',
+				contentType: 'application/json',
+				status: 200,
+				response: function() {
+					this.responseText = JSON.stringify({"message":null,"exception":null,"responseCode":"PHR600023","data":["Coupons","Settings","Shop","Photo"],"status":"success"});
+				}
+			});
+			$(".configName").val('Production');
+			editConfiguration.configurationlistener.addConfiguration("Components");
+			
+			setTimeout(function() {
+				start();
+				equal($(commonVariables.contentPlaceholder).find('tr.row_bg').attr('configtype'), "Components", "Component Configuration Render Tested");
+				self.componetConfigPropertyRender(editConfiguration);
+			}, 1500);
+		}); 
+	},
+	
+	componetConfigPropertyRender : function(editConfiguration) {
+		var self=this;
+		asyncTest("Test - Component Configuration key's Render Test", function() {
+			$.mockjax({
+				url:  commonVariables.webserviceurl+commonVariables.configuration+"/showFeatureConfigs?userId=admin&customerId=photon&appDirName=wordpress-WordPress&envName=Production&featureName=Shop",
+				type:'POST',
+				contentType: 'application/json',
+				status: 200,
+				response: function() {
+					this.responseText = JSON.stringify({"message":null,"exception":null,"responseCode":"PHR600024","data":{"propertyTemplates":[{"required":false,"possibleValues":null,"appliesTo":null,"propertyTemplates":null,"multiple":false,"settingsTemplateId":null,"key":"Environment.SHOPLANDING","type":null,"defaultValue":null,"creationDate":1379418716561,"helpText":null,"system":false,"name":"Environment SHOPLANDING","id":"21ee19e8-e0b0-4bcb-8592-7618c92b2898","displayName":null,"description":null,"status":null}],"hasCustomProperty":true,"properties":{"Environment.SHOPLANDING":"http://staging-apps.usablenet.com/mt/qa1.walgreens.com/store/catalog/shopLanding?un_jtt_redirect"}},"status":"success"});
+				}
+			});
+			
+			$("select[compType=components0]").val('Shop');
+			$("select[compType=components0]").change();
+			setTimeout(function() {
+				start();
+				equal($(commonVariables.contentPlaceholder).find('input.Components0Configuration').val(), "http://staging-apps.usablenet.com/mt/qa1.walgreens.com/store/catalog/shopLanding?un_jtt_redirect", "Component Configuration key's Render Tested");
+				self.editComponetConfig(editConfiguration);
+			}, 1500);
+		}); 
+	},
+	
+	editComponetConfig : function(editConfiguration) {
+		var self=this;
+		$("#content").html('');
+		asyncTest("Test - Edit Component Configuration Render Test", function() {
+			$.mockjaxClear(self.editConfig);
+			self.editConfig = $.mockjax({
+				url:  commonVariables.webserviceurl+commonVariables.configuration+"?appDirName=wordpress-WordPress&envName=Production",
+				type:'GET',
+				contentType: 'application/json',
+				status: 200,
+				response: function() {
+					this.responseText = JSON.stringify({"message":null,"exception":null,"responseCode":"PHR600002","data":{"defaultEnv":true,"appliesTo":[""],"delete":false,"name":"Production","desc":"Production Environment is used for Development purpose only","configurations":[{"envName":"Production","name":"new","properties":{"components":"Shop","Environment.SHOPLANDING":"http://staging-apps.usablenet.com/mt/qa1.walgreens.com/store/catalog/shopLanding?un_jtt_redirect"},"type":"Components","desc":"desc"}]},"status":"success"});
+				}
+			});
+			
+			editConfiguration.configurationlistener.editConfiguration("Production", "true");
+			
+			setTimeout(function() {
+				start();
+				equal($(commonVariables.contentPlaceholder).find('input.Components1Configuration').val(), "http://staging-apps.usablenet.com/mt/qa1.walgreens.com/store/catalog/shopLanding?un_jtt_redirect", "Edit Component Configuration Render Tested");
+				self.nonEnvAddConfigurationRender(editConfiguration);
+			}, 2000);
+		}); 
 	},
 	
 	nonEnvAddConfigurationRender : function(editConfiguration) {
@@ -574,8 +645,8 @@ define(["configuration/editConfiguration"], function(EditConfiguration) {
 	
 	removeFile : function(editConfiguration) {
 		var self=this;
+		
 		asyncTest("Test - Remove file Test", function() {
-			
 			$.mockjax({
 				url:  commonVariables.webserviceurl+commonVariables.configuration+"/removeFile?appDirName=wordpress-WordPress&configType=Theme&propName=themeFile&fileName=test.zip&envName=&configName=test",
 				type:'GET',

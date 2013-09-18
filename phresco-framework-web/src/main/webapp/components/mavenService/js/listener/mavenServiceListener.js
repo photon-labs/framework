@@ -312,12 +312,14 @@ define([], function() {
 		 * @return: returns the contructed header
 		 */
 		getRequestHeader : function(type, body, urlContext, paramData) {
+			var projectInfo = commonVariables.api.localVal.getProjectInfo();
+			var appDirName = projectInfo.data.projectInfo.appInfos[0].appDirName;
 			var header = {
 				contentType: "application/json",
 				requestMethod: type,
 				dataType: "json",
 				requestPostBody: body,
-				webserviceurl: commonVariables.webserviceurl + urlContext + "?" + paramData
+				webserviceurl: commonVariables.webserviceurl + urlContext + "?appDirName=" + appDirName + "&" + paramData
 			};
 
 			return header;

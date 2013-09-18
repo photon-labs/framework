@@ -231,7 +231,7 @@ define(["loadTest/loadTest"], function(LoadTest) {
 				$.mockjaxClear();
 
 				$.mockjax({
-				  url: commonVariables.webserviceurl+"util/validation?appDirName=Load-html5jquerymobilewidget&customerId=photon&phase=load-test&testBasis=parameters&testAgainst=server&customTestAgainst=server&testName=sample-load-test&environmentName=Production&configurations=server&noOfUsers=11&rampUpPeriod=10&loopCount=100&authorizationUrl=&authorizationUserName=&authorizationPassword=&authorizationDomain=&authorizationRealm=&availableJmx=tests%2Fcustom%2F%23SEP%23LoginTest.jmx&httpName=login&context=admin%2Flogin&contextType=GET&encodingType=UTF-8&redirectAutomatically=on&parameterName=&parameterValue=",
+				  url: commonVariables.webserviceurl+"util/validation?appDirName=Load-html5jquerymobilewidget&customerId=photon&phase=load-test&testBasis=parameters&testAgainst=server&customTestAgainst=server&testName=sample-load-test&environmentName=Production&configurations=server&noOfUsers=11&rampUpPeriod=10&loopCount=100&authorizationUrl=&authorizationUserName=&authorizationPassword=&authorizationDomain=&authorizationRealm=&availableJmx=tests%2Fcustom%2F%23SEP%23LoginTest.jmx&httpName=login&context=admin%2Flogin&contextType=GET&encodingType=UTF-8&redirectAutomatically=on&parameterName=",
 				  type: "GET",
 				  dataType: "json",
 				  contentType: "application/json",
@@ -242,7 +242,7 @@ define(["loadTest/loadTest"], function(LoadTest) {
 				});
 
 				$.mockjax({
-				  url: commonVariables.webserviceurl+commonVariables.mvnLoadTest+"?testBasis=parameters&testAgainst=server&customTestAgainst=server&testName=sample-load-test&environmentName=Production&configurations=server&noOfUsers=11&rampUpPeriod=10&loopCount=100&authorizationUrl=&authorizationUserName=&authorizationPassword=&authorizationDomain=&authorizationRealm=&availableJmx=tests%2Fcustom%2F%23SEP%23LoginTest.jmx&httpName=login&context=admin%2Flogin&contextType=GET&encodingType=UTF-8&redirectAutomatically=on&parameterName=&parameterValue=&testAction=load&customerId=photon&appId=b8c9d65d-3e0f-4e9e-8e22-268112ce0f4d&projectId=39924e85-29be-4ee4-91f7-f1b61006960c&username=admin&displayName=Admin",
+				  url: commonVariables.webserviceurl+commonVariables.mvnLoadTest+"?testBasis=parameters&testAgainst=server&customTestAgainst=server&testName=sample-load-test&environmentName=Production&configurations=server&noOfUsers=11&rampUpPeriod=10&loopCount=100&authorizationUrl=&authorizationUserName=&authorizationPassword=&authorizationDomain=&authorizationRealm=&availableJmx=tests%2Fcustom%2F%23SEP%23LoginTest.jmx&httpName=login&context=admin%2Flogin&contextType=GET&encodingType=UTF-8&redirectAutomatically=on&parameterName=&testAction=load&customerId=photon&appId=7fd5aee1-0042-4e85-91ce-1b9493231019&projectId=b9e456e8-ccb8-458c-a559-f90cd2af48a1&username=admin&displayName=Admin",
 				  type: "POST",
 				  dataType: "json",
 				  contentType: "application/json",

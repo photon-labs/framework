@@ -95,6 +95,7 @@ define(["lib/jquery-tojson-1.0",'lib/RGraph_common_core-1.0','lib/RGraph_common_
 				header.requestMethod = "GET";
 				header.webserviceurl = commonVariables.webserviceurl + "pdf/showPopUp?appDirName=" + appDirName + "&fromPage="+requestBody.from;
 			} else if (action === "generatePdfReport") {
+				commonVariables.hideloading = true;
 				var data = $('#pdfReportForm').serialize();
 				header.requestMethod = "POST";
 				header.webserviceurl = commonVariables.webserviceurl + "app/printAsPdf?appDirName=" + appDirName + "&" + data + "&userId=" + userId;
@@ -366,6 +367,7 @@ define(["lib/jquery-tojson-1.0",'lib/RGraph_common_core-1.0','lib/RGraph_common_
 		generatePdfReport : function(from) {
 			var self = this;
 			var requestBody = {};
+			$('#pdfReportLoading').show();
 			self.performAction(self.getActionHeader(requestBody, "generatePdfReport"), function(response) {
 				if (response.status === "success") {
 					self.getPdfReports(from);
@@ -675,7 +677,7 @@ define(["lib/jquery-tojson-1.0",'lib/RGraph_common_core-1.0','lib/RGraph_common_
 				formJsonStr = formJsonStr + ',' + templJsonStr + '}';
 			}
 			var json = JSON.parse('{' + templJsonStr + '}');
-			self.executeTest($('#loadForm').serialize(), json, 'load', $("#loadPopup"),function(response) {
+			self.executeTest($('#loadForm :input[name!=parameterValue]').serialize(), json, 'load', $("#loadPopup"),function(response) {
 				commonVariables.api.localVal.setSession('loadConsole', $('#testConsole').html());
 				$('.progress_loading').hide();
 				commonVariables.navListener.onMytabEvent(commonVariables.loadTest);
@@ -731,7 +733,7 @@ define(["lib/jquery-tojson-1.0",'lib/RGraph_common_core-1.0','lib/RGraph_common_
 				formJsonStr = formJsonStr + ',' + templJsonStr + '}';
 			}
 			var json = JSON.parse('{' + templJsonStr + '}');
-			self.executeTest($('#performanceForm').serialize(), json, 'performance', $("#performancePopup"),function(response) {
+			self.executeTest($('#performanceForm :input[name!=parameterValue]').serialize(), json, 'performance', $("#performancePopup"),function(response) {
 				commonVariables.api.localVal.setSession('performanceConsole', $('#testConsole').html());
 				$('.progress_loading').hide();
 				commonVariables.navListener.onMytabEvent(commonVariables.performanceTest);
@@ -805,7 +807,7 @@ define(["lib/jquery-tojson-1.0",'lib/RGraph_common_core-1.0','lib/RGraph_common_
 			var parameters = [];
 			$(this).find($('.parameterRow')).each(function() {
 				var name = $(this).find($("input[name=parameterName]")).val();
-				var value = $(this).find($("input[name=parameterValue]")).val();
+				var value = $(this).find($("textarea[name=parameterValue]")).val();
 				var encode = $(this).find($("input[name=parameterEncode]")).is(':checked');
 				var nameValueObj = {};
 				nameValueObj.name=name;

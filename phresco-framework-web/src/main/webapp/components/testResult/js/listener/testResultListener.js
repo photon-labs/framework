@@ -342,6 +342,7 @@ define(['lib/RGraph_common_core-1.0','lib/RGraph_common_tooltips-1.0','lib/RGrap
 					header.webserviceurl = header.webserviceurl.concat("&moduleName=" + moduleName);
 				}
 			} else if (action === "generatePdfReport") {
+				commonVariables.hideloading = true;
 				var data = $('#pdfReportForm').serialize();
 				header.requestMethod = "POST";
 				header.webserviceurl = commonVariables.webserviceurl + "app/printAsPdf?appDirName=" + appDirName + "&" + data + "&userId=" + userId;
@@ -404,8 +405,11 @@ define(['lib/RGraph_common_core-1.0','lib/RGraph_common_tooltips-1.0','lib/RGrap
 		getPdfReports : function() {
 			var self = this;
 			var requestBody = {};
+			commonVariables.hideloading = true;
 			self.performAction(self.getActionHeader(requestBody, "getPdfReports"), function(response) {
+				$('.progress_loading').hide();
 				self.listPdfReports(response);
+				commonVariables.hideloading = false;
 			});
 		},
 		
@@ -531,7 +535,6 @@ define(['lib/RGraph_common_core-1.0','lib/RGraph_common_tooltips-1.0','lib/RGrap
 			$('.unit_close').animate({right: value1+10},500);
 			$('.unit_info table').removeClass("big").addClass("small");
 			$('#consoleImg').attr('data-flag','false');
-			$('.progress_loading').show();
 		},
 
 		resizeTestResultDiv : function() {

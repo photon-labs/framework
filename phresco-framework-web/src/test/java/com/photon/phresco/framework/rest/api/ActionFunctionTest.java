@@ -33,7 +33,6 @@ public class ActionFunctionTest implements ActionServiceConstant  {
 	
 	
 	public void login() throws PhrescoException {
-		
  
 		ClientConfig cfg = new DefaultClientConfig();
 		cfg.getClasses().add(JacksonJsonProvider.class);
@@ -41,7 +40,7 @@ public class ActionFunctionTest implements ActionServiceConstant  {
  
 		WebResource webResource = client.resource("http://localhost:2468/framework/rest/api/login");
 		
-		Credentials lCredentials = new Credentials("demouser","phresco");
+		Credentials lCredentials = new Credentials("admin","manage");
 
 		ClientResponse response = webResource.accept(
 			        MediaType.APPLICATION_JSON_TYPE).
@@ -51,7 +50,6 @@ public class ActionFunctionTest implements ActionServiceConstant  {
 		if (response.getStatus() != 200) {
 		   throw new RuntimeException("Failed : HTTP error code : "+ response.getStatus());
 		}
-		
 		GenericType<ResponseInfo<User>> genericType = new GenericType<ResponseInfo<User>>() {};
 		ResponseInfo<User> output = response.getEntity(genericType);
 		User user = output.getData();
@@ -62,7 +60,7 @@ public class ActionFunctionTest implements ActionServiceConstant  {
 		System.out.println("output.getMessage()"+output.getMessage());
 		
 		//fail("login failed");
-		assertEquals("Failed during Login", "Login Successfull", output.getMessage());
+		assertEquals(200, response.getStatus());
 		
 		
 	}
@@ -83,7 +81,7 @@ public class ActionFunctionTest implements ActionServiceConstant  {
 			WebResource webResource = client.resource("http://localhost:2468/framework/rest/api/app/build");
 		
 		   MultivaluedMap queryParams = new MultivaluedMapImpl();
-		   queryParams.add("username", "demouser");
+		   queryParams.add("username", "admin");
 		   queryParams.add("appId", "83e1a937-cf66-4231-84c7-f40e9efdf80f");
 		   queryParams.add("buildName", "clienttesting");
 		   queryParams.add("buildNumber", "555");
@@ -98,6 +96,7 @@ public class ActionFunctionTest implements ActionServiceConstant  {
 		   queryParams.add("skipTest", "true");
 		   queryParams.add("stFileFunction", "");
 		   queryParams.add("targetFolder", "");
+		   queryParams.add("appDirName", "TestProject");
  
 		
 
@@ -138,7 +137,7 @@ public class ActionFunctionTest implements ActionServiceConstant  {
 		
 			
 		   MultivaluedMap queryParams = new MultivaluedMapImpl();
-		   queryParams.add("username", "demouser");
+		   queryParams.add("username", "admin");
 		   queryParams.add("appId", "83e1a937-cf66-4231-84c7-f40e9efdf80f");
 		   queryParams.add("buildNumber", "555");
 		   queryParams.add("customerId", "photon");
@@ -149,6 +148,7 @@ public class ActionFunctionTest implements ActionServiceConstant  {
 		   queryParams.add("projectId", "a20be474-0449-435d-8388-f459c96e9567");
 		   queryParams.add("resultJson", "");
 		   queryParams.add("stFileFunction", "");
+		   queryParams.add("appDirName", "TestProject");
  
 		
 
@@ -197,6 +197,7 @@ public class ActionFunctionTest implements ActionServiceConstant  {
 		   queryParams.add("username", "admin");
 		   queryParams.add("password", "manage");
 		   queryParams.add("projectId", "TestProject");
+		   queryParams.add("appDirName", "TestProject");
  
 		
 
@@ -226,13 +227,14 @@ public class ActionFunctionTest implements ActionServiceConstant  {
 		
 			
 		   MultivaluedMap queryParams = new MultivaluedMapImpl();
-		   queryParams.add("username", "demouser");
+		   queryParams.add("username", "admin");
 		   queryParams.add("appId", "83e1a937-cf66-4231-84c7-f40e9efdf80f");
 		   queryParams.add("customerId", "photon");
 		   queryParams.add("projectId", "a20be474-0449-435d-8388-f459c96e9567");
 		   queryParams.add("resultJson", "");
 		   queryParams.add("stFileFunction", "");
 		   queryParams.add("testAgainst", "java");
+		   queryParams.add("appDirName", "TestProject");
  
 		
 
@@ -273,7 +275,7 @@ public class ActionFunctionTest implements ActionServiceConstant  {
 		
 			
 		   MultivaluedMap queryParams = new MultivaluedMapImpl();
-		   queryParams.add("username", "demouser");
+		   queryParams.add("username", "admin");
 		   queryParams.add("appId", "83e1a937-cf66-4231-84c7-f40e9efdf80f");
 		   queryParams.add("customerId", "photon");
 		   queryParams.add("projectId", "a20be474-0449-435d-8388-f459c96e9567");
@@ -287,6 +289,7 @@ public class ActionFunctionTest implements ActionServiceConstant  {
 		   queryParams.add("src", "java");
 		   queryParams.add("stFileFunction", "");
 		   queryParams.add("stFileFunction", "");
+		   queryParams.add("appDirName", "TestProject");
  
 		
 
@@ -327,7 +330,7 @@ public class ActionFunctionTest implements ActionServiceConstant  {
 		
 			
 		   MultivaluedMap queryParams = new MultivaluedMapImpl();
-		   queryParams.add("username", "demouser");
+		   queryParams.add("username", "admin");
 		   queryParams.add("appId", "83e1a937-cf66-4231-84c7-f40e9efdf80f");
 		   queryParams.add("buildNumber", "555");
 		   queryParams.add("customerId", "photon");
@@ -338,6 +341,7 @@ public class ActionFunctionTest implements ActionServiceConstant  {
 		   queryParams.add("projectId", "a20be474-0449-435d-8388-f459c96e9567");
 		   queryParams.add("resultJson", "");
 		   queryParams.add("stFileFunction", "");
+		   queryParams.add("appDirName", "TestProject");
  
 		
 
@@ -381,10 +385,11 @@ public class ActionFunctionTest implements ActionServiceConstant  {
 	
 		
 	   MultivaluedMap queryParams = new MultivaluedMapImpl();
-	   queryParams.add("username", "demouser");
+	   queryParams.add("username", "admin");
 	   queryParams.add("appId", "83e1a937-cf66-4231-84c7-f40e9efdf80f");
 	   queryParams.add("customerId", "photon");
 	   queryParams.add("projectId", "a20be474-0449-435d-8388-f459c96e9567");
+	   queryParams.add("appDirName", "TestProject");
 
 	
 
@@ -429,10 +434,11 @@ public class ActionFunctionTest implements ActionServiceConstant  {
 	
 		
 	   MultivaluedMap queryParams = new MultivaluedMapImpl();
-	   queryParams.add("username", "demouser");
+	   queryParams.add("username", "admin");
 	   queryParams.add("appId", "83e1a937-cf66-4231-84c7-f40e9efdf80f");
 	   queryParams.add("customerId", "photon");
 	   queryParams.add("projectId", "a20be474-0449-435d-8388-f459c96e9567");
+	   queryParams.add("appDirName", "TestProject");
 
 	
 
@@ -477,7 +483,7 @@ public class ActionFunctionTest implements ActionServiceConstant  {
 	
 		
 	   MultivaluedMap queryParams = new MultivaluedMapImpl();
-	   queryParams.add("username", "demouser");
+	   queryParams.add("username", "admin");
 	   queryParams.add("appId", "83e1a937-cf66-4231-84c7-f40e9efdf80f");
 	   queryParams.add("configurations", "Server");
 	   queryParams.add("context", "yyy");
@@ -500,6 +506,7 @@ public class ActionFunctionTest implements ActionServiceConstant  {
 	   queryParams.add("stFileFunction", "contextUrls,dbContextUrls");
 	   queryParams.add("testAgainst", "server");
 	   queryParams.add("testName", "tttt");
+	   queryParams.add("appDirName", "TestProject");
 	   
 	   
 	   ClientResponse response = webResource.queryParams(queryParams).type("application/x-www-form-urlencoded").post(ClientResponse.class );
@@ -543,7 +550,7 @@ public class ActionFunctionTest implements ActionServiceConstant  {
 	
 		
 	   MultivaluedMap queryParams = new MultivaluedMapImpl();
-	   queryParams.add("username", "demouser");
+	   queryParams.add("username", "admin");
 	   queryParams.add("appId", "83e1a937-cf66-4231-84c7-f40e9efdf80f");
 	   queryParams.add("configurations", "Server");
 	   queryParams.add("configurations", "Server");
@@ -573,6 +580,7 @@ public class ActionFunctionTest implements ActionServiceConstant  {
 	   queryParams.add("testAgainst", "server");
 	   queryParams.add("testName", "tererw");
 	   queryParams.add("testName", "tererw"); 	
+	   queryParams.add("appDirName", "TestProject");
 	   
 	   
 	   ClientResponse response = webResource.queryParams(queryParams).type("application/x-www-form-urlencoded").post(ClientResponse.class );
@@ -616,7 +624,7 @@ public class ActionFunctionTest implements ActionServiceConstant  {
 	
 		
 	   MultivaluedMap queryParams = new MultivaluedMapImpl();
-	   queryParams.add("username", "demouser");
+	   queryParams.add("username", "admin");
 	   queryParams.add("Merge", "Base.js,LoginWidget.js");
 	   queryParams.add("Merge_fileLocation", "C:/Documents and Settings/mohamed_as/workspace/projects/test-html5jquerymobilewidget/src/main/webapp/js/framework/");
 	   queryParams.add("appId", "c57e9d80-47fb-4137-9078-e90c9d46228b");
@@ -628,6 +636,7 @@ public class ActionFunctionTest implements ActionServiceConstant  {
 	   queryParams.add("projectId", "3cabcaa9-134a-4036-ac26-0550a6692612");
 	   queryParams.add("temp", "Merge.min.js");
 	   queryParams.add("temp_fileLocation", "C:/Documents and Settings/mohamed_as/workspace/projects/test-html5jquerymobilewidget/src/main/webapp/js/framework/");
+	   queryParams.add("appDirName", "TestJquery");
 	   
 	    	
 	   
@@ -673,11 +682,11 @@ public class ActionFunctionTest implements ActionServiceConstant  {
 	
 		
 	   MultivaluedMap queryParams = new MultivaluedMapImpl();
-	   queryParams.add("username", "demouser");
+	   queryParams.add("username", "admin");
 	   queryParams.add("appId", "83e1a937-cf66-4231-84c7-f40e9efdf80f");
 	   queryParams.add("customerId", "photon");
 	   queryParams.add("projectId", "a20be474-0449-435d-8388-f459c96e9567");
-	   
+	   queryParams.add("appDirName", "TestProject");
 	    	
 	   
 	   
@@ -722,10 +731,11 @@ public class ActionFunctionTest implements ActionServiceConstant  {
 	
 		
 	   MultivaluedMap queryParams = new MultivaluedMapImpl();
-	   queryParams.add("username", "demouser");
+	   queryParams.add("username", "admin");
 	   queryParams.add("appId", "83e1a937-cf66-4231-84c7-f40e9efdf80f");
 	   queryParams.add("customerId", "photon");
 	   queryParams.add("projectId", "a20be474-0449-435d-8388-f459c96e9567");
+	   queryParams.add("appDirName", "TestProject");
 	   
 	    	
 	   
@@ -771,10 +781,11 @@ public class ActionFunctionTest implements ActionServiceConstant  {
 	
 		
 	   MultivaluedMap queryParams = new MultivaluedMapImpl();
-	   queryParams.add("username", "demouser");
+	   queryParams.add("username", "admin");
 	   queryParams.add("appId", "83e1a937-cf66-4231-84c7-f40e9efdf80f");
 	   queryParams.add("customerId", "photon");
 	   queryParams.add("projectId", "a20be474-0449-435d-8388-f459c96e9567");
+	   queryParams.add("appDirName", "TestProject");
 	   
 	    	
 	   
@@ -820,10 +831,11 @@ public class ActionFunctionTest implements ActionServiceConstant  {
 	
 		
 	   MultivaluedMap queryParams = new MultivaluedMapImpl();
-	   queryParams.add("username", "demouser");
+	   queryParams.add("username", "admin");
 	   queryParams.add("appId", "83e1a937-cf66-4231-84c7-f40e9efdf80f");
 	   queryParams.add("customerId", "photon");
 	   queryParams.add("projectId", "a20be474-0449-435d-8388-f459c96e9567");
+	   queryParams.add("appDirName", "TestProject");
 	   
 	    	
 	   
@@ -869,7 +881,7 @@ public class ActionFunctionTest implements ActionServiceConstant  {
 	
 		
 	   MultivaluedMap queryParams = new MultivaluedMapImpl();
-	   queryParams.add("username", "demouser");
+	   queryParams.add("username", "admin");
 	   queryParams.add("appId", "83e1a937-cf66-4231-84c7-f40e9efdf80f");
 	   queryParams.add("browserTimeout", "0");
 	   queryParams.add("browserTimeout", "0");
@@ -901,6 +913,7 @@ public class ActionFunctionTest implements ActionServiceConstant  {
 	   queryParams.add("throwOnCapabilityNotPresent", "true");
 	   queryParams.add("timeout", "300000");
 	   queryParams.add("timeout", "300000");
+	   queryParams.add("appDirName", "TestProject");
 	   
 	    	
 	   
@@ -946,10 +959,11 @@ public class ActionFunctionTest implements ActionServiceConstant  {
 	
 		
 	   MultivaluedMap queryParams = new MultivaluedMapImpl();
-	   queryParams.add("username", "demouser");
+	   queryParams.add("username", "admin");
 	   queryParams.add("appId", "83e1a937-cf66-4231-84c7-f40e9efdf80f");
 	   queryParams.add("customerId", "photon");
 	   queryParams.add("projectId", "a20be474-0449-435d-8388-f459c96e9567");
+	   queryParams.add("appDirName", "TestProject");
 	   
 	    	
 	   
@@ -994,7 +1008,7 @@ public class ActionFunctionTest implements ActionServiceConstant  {
 	
 		
 	   MultivaluedMap queryParams = new MultivaluedMapImpl();
-	   queryParams.add("username", "demouser");
+	   queryParams.add("username", "admin");
 	   queryParams.add("appId", "83e1a937-cf66-4231-84c7-f40e9efdf80f");
 	   queryParams.add("browserMaxInstances", "2");
 	   queryParams.add("browserMaxInstances", "2");
@@ -1023,7 +1037,8 @@ public class ActionFunctionTest implements ActionServiceConstant  {
 	   queryParams.add("seleniumProtocol", "WebDriver");
 	   queryParams.add("seleniumProtocol", "WebDriver");
 	   queryParams.add("stFileFunction", "");
-	   queryParams.add("stFileFunction", "");	   
+	   queryParams.add("stFileFunction", "");
+	   queryParams.add("appDirName", "TestProject");
 	    	
 	   
 	   
@@ -1067,10 +1082,11 @@ public class ActionFunctionTest implements ActionServiceConstant  {
 	
 		
 	   MultivaluedMap queryParams = new MultivaluedMapImpl();
-	   queryParams.add("username", "demouser");
+	   queryParams.add("username", "admin");
 	   queryParams.add("appId", "83e1a937-cf66-4231-84c7-f40e9efdf80f");
 	   queryParams.add("customerId", "photon");
 	   queryParams.add("projectId", "a20be474-0449-435d-8388-f459c96e9567");
+	   queryParams.add("appDirName", "TestProject");
 	   
 	    	
 	   
@@ -1114,10 +1130,11 @@ public class ActionFunctionTest implements ActionServiceConstant  {
 	
 		
 	   MultivaluedMap queryParams = new MultivaluedMapImpl();
-	   queryParams.add("username", "demouser");
+	   queryParams.add("username", "admin");
 	   queryParams.add("appId", "83e1a937-cf66-4231-84c7-f40e9efdf80f");
 	   queryParams.add("customerId", "photon");
 	   queryParams.add("projectId", "a20be474-0449-435d-8388-f459c96e9567");
+	   queryParams.add("appDirName", "TestProject");
 	    	
 	   
 	   
@@ -1162,10 +1179,11 @@ public class ActionFunctionTest implements ActionServiceConstant  {
 	
 		
 	   MultivaluedMap queryParams = new MultivaluedMapImpl();
-	   queryParams.add("username", "demouser");
+	   queryParams.add("username", "admin");
 	   queryParams.add("appId", "83e1a937-cf66-4231-84c7-f40e9efdf80f");
 	   queryParams.add("customerId", "photon");
 	   queryParams.add("projectId", "a20be474-0449-435d-8388-f459c96e9567");
+	   queryParams.add("appDirName", "TestProject");
 	    	
 	   
 	   
@@ -1210,7 +1228,7 @@ public class ActionFunctionTest implements ActionServiceConstant  {
 	
 		
 	   MultivaluedMap queryParams = new MultivaluedMapImpl();
-	   queryParams.add("username", "demouser");
+	   queryParams.add("username", "admin");
 	   queryParams.add("appId", "83e1a937-cf66-4231-84c7-f40e9efdf80f");
 	   queryParams.add("customerId", "photon");
 	   queryParams.add("environmentName", "Production");
@@ -1224,6 +1242,7 @@ public class ActionFunctionTest implements ActionServiceConstant  {
 	   queryParams.add("stFileFunction", "");
 	   queryParams.add("testAgainst", "server");
 	   queryParams.add("testAgainst", "server");
+	   queryParams.add("appDirName", "TestProject");
 	    	
 	   
 	   
@@ -1268,10 +1287,11 @@ public class ActionFunctionTest implements ActionServiceConstant  {
 	
 		
 	   MultivaluedMap queryParams = new MultivaluedMapImpl();
-	   queryParams.add("username", "demouser");
+	   queryParams.add("username", "admin");
 	   queryParams.add("appId", "83e1a937-cf66-4231-84c7-f40e9efdf80f");
 	   queryParams.add("customerId", "photon");
 	   queryParams.add("projectId", "a20be474-0449-435d-8388-f459c96e9567");
+	   queryParams.add("appDirName", "TestProject");
 	    	
 	   
 	   
@@ -1315,10 +1335,11 @@ public class ActionFunctionTest implements ActionServiceConstant  {
 	
 		
 	   MultivaluedMap queryParams = new MultivaluedMapImpl();
-	   queryParams.add("username", "demouser");
+	   queryParams.add("username", "admin");
 	   queryParams.add("appId", "83e1a937-cf66-4231-84c7-f40e9efdf80f");
 	   queryParams.add("customerId", "photon");
 	   queryParams.add("projectId", "a20be474-0449-435d-8388-f459c96e9567");
+	   queryParams.add("appDirName", "TestProject");
 	    	
 	   
 	   
@@ -1363,14 +1384,15 @@ public class ActionFunctionTest implements ActionServiceConstant  {
 	
 		
 	   MultivaluedMap queryParams = new MultivaluedMapImpl();
-	   queryParams.add("username", "demouser");
+	   queryParams.add("username", "admin");
 	   queryParams.add("appId", "83e1a937-cf66-4231-84c7-f40e9efdf80f");
 	   queryParams.add("customerId", "photon");
 	   queryParams.add("projectId", "a20be474-0449-435d-8388-f459c96e9567");
 	   queryParams.add("fromPage", "functional");
 	   queryParams.add("isReportAvailable", "true");
 	   queryParams.add("reportDataType", "detail");
-	   queryParams.add("sonarUrl", "http://localhost:9000/dashboard");	
+	   queryParams.add("sonarUrl", "http://localhost:9000/dashboard");
+	   queryParams.add("appDirName", "TestProject");
 	   
 	   
 	   ClientResponse response = webResource.queryParams(queryParams).type("application/x-www-form-urlencoded").post(ClientResponse.class );
