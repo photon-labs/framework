@@ -1,4 +1,4 @@
-<section class="optiontitle qual_unit loadTemp features_content_main">
+<section class="optiontitle qual_unit loadTemp">
 	<div class="unit_text" data-i18n="ci.loadtest">
     </div>
     <input type="hidden" class="testingType" value="load-test"/>
