@@ -261,7 +261,7 @@ define(["framework/widgetWithTemplate", "common/loading", "lib/customcombobox-1.
             } 
             optionalAttrs = self.getOptionalAttr(parameter, optionalAttrs);
             whereToRender.append('<li class="ctrl textCtrl '+columnClass+'" ' +optionalAttrs.show+'  id="'+parameter.key+'Li"><label>'+parameter.name.value[0].value+optionalAttrs.required+'</label>' + 
-                                 '<input type="'+inputType+'" parameterType="'+ parameter.type+'" showHide="'+parameter.show+'" name="'+ parameter.key +'" value="'+textBoxValue+'" id="'+parameter.key+'" ' +optionalAttrs.editable+' /></li>');
+                                 '<input type="'+inputType+'" parameterType="'+ parameter.type+'" showHide="'+parameter.show+'" name="'+ parameter.key +'" value="'+textBoxValue+'" id="'+parameter.key+'" ' +optionalAttrs.editable+' maxlength="253" /></li>');
         },
         
         constructHiddenCtrl : function(parameter, columnClass, whereToRender) {
@@ -390,7 +390,7 @@ define(["framework/widgetWithTemplate", "common/loading", "lib/customcombobox-1.
                 });
                 mapCtrl =  mapCtrl.concat('</select></td>');
             } else if ("String" === childs[0].type) {
-                mapCtrl =  mapCtrl.concat('<td><input type="text" name="'+childs[0].key+'"></td>');
+                mapCtrl =  mapCtrl.concat('<td><input type="text" name="'+childs[0].key+'" maxlength="253"></td>');
             }
             
             if ("List" === childs[1].type) {
@@ -401,7 +401,7 @@ define(["framework/widgetWithTemplate", "common/loading", "lib/customcombobox-1.
                 });
                 mapCtrl =  mapCtrl.concat('</select></td>');
             } else if ("String" === childs[1].type) {
-                mapCtrl =  mapCtrl.concat('<td><input type="text" name="'+childs[1].key+'">');
+                mapCtrl =  mapCtrl.concat('<td><input type="text" name="'+childs[1].key+'" maxlength="253">');
                 mapCtrl =  mapCtrl.concat('<a href="javascript:void(0)" class="addBrowserInfo"><img src="themes/default/images/helios/plus_icon.png" alt=""></a>');
                 mapCtrl =  mapCtrl.concat('<a href="javascript:void(0)" class="removeBrowserInfo hideContent"><img src="themes/default/images/helios/minus_icon.png" alt=""></a>');
                 mapCtrl =  mapCtrl.concat('</td>');
@@ -1315,7 +1315,7 @@ define(["framework/widgetWithTemplate", "common/loading", "lib/customcombobox-1.
         },
 
         addParameterRow : function (thisObj) {
-            var self = this, parameterRow = '<tr class="parameterRow"><td><input type="text" class="parameterName" name="parameterName" placeholder="Name"><textarea class="parameterValue" name="parameterValue" placeholder="Value"></textarea>&nbsp;<input class="parameterEncode" name="parameterEncode" type="checkbox">Encode '+
+            var self = this, parameterRow = '<tr class="parameterRow"><td><input type="text" class="parameterName" name="parameterName" placeholder="Name" maxlength="253"><input type="text" class="parameterValue" name="parameterValue" placeholder="Value" maxlength="253"><input class="parameterEncode" name="parameterEncode" type="checkbox">Encode '+
                         '<img class="add_test_icon removeParamter" src="themes/default/images/helios/minus_icon.png">'+
                         '<img src="themes/default/images/helios/plus_icon.png" class="add_test_icon addParameter"></td></tr>';
             thisObj.closest('tbody').append(parameterRow);     

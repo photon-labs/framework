@@ -86,9 +86,9 @@ define([], function() {
 							self.hidePopupLoad();
 							if(response.responseCode !== 'PHR200015' && response.responseCode !== 'PHR200021' && response.responseCode !== 'PHR600004' && response.responseCode !== null && response.responseCode !== undefined) {
 								commonVariables.api.showError(response.responseCode ,"success", true);
-								if(response.responseCode === 'PHR200010') {
+								if(response.responseCode === 'PHR200010' || response.responseCode === 'PHR200026') {
 									$('.msgdisplay').prepend(self.delprojectname+' ');
-								}	
+								}
 							}	
 							callback(response);		
 						} else {
@@ -142,7 +142,7 @@ define([], function() {
 			if(action === "delete") {
 				header.requestMethod = "DELETE";
 				header.requestPostBody = JSON.stringify(projectRequestBody);
-				header.webserviceurl = commonVariables.webserviceurl + commonVariables.projectlistContext + "/delete";
+				header.webserviceurl = commonVariables.webserviceurl + commonVariables.projectlistContext + "/delete"+"?actionType="+projectRequestBody.actionType;
 			} else if(action === "get") {
 				header.requestMethod = "GET";
 				header.webserviceurl = commonVariables.webserviceurl + commonVariables.projectlistContext + "/list?customerId="+customerId;				

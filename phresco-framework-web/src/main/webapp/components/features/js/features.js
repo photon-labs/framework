@@ -87,8 +87,6 @@ define(["features/listener/featuresListener"], function() {
 			
 			Handlebars.registerHelper('versionShowHide', function(versions, id) {
 				var fieldset;
-				var appdetails = commonVariables.api.localVal.getProjectInfo();
-				var techid = appdetails.data.projectInfo.appInfos[0].techInfo.id;
 				if(versions.length > 0){
  					$.each(versions, function(index, value){
 						if(JSON.stringify(value.appliesTo) !== "null"){
@@ -276,12 +274,12 @@ define(["features/listener/featuresListener"], function() {
 				
 			});
 			 
-			$("input[name=on_off]").unbind();
+			/* $("input[name=on_off]").unbind();
 			$("input[name=on_off]").bind("click", function() {
 				var button = $(this).val();
 				if(button === 'off'){ $(this).closest('fieldset').css('background-position', 'right'); }
 				if(button === 'on'){ $(this).closest('fieldset').css('background-position', 'left'); }	
-			});
+			}); */
 
 			$('#module').keyup(function(event) {
 				var classval = $("#search").attr("class");
