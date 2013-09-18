@@ -1379,8 +1379,6 @@ public class ConfigurationService extends RestBase implements FrameworkConstants
 			if (StringUtils.isEmpty(configuration.getType())) {
 				return "Configuration Type is Empty";
 			}
-			SettingsTemplate configTemplateByType = serviceManager.getConfigTemplateByTechId(techId, configuration
-					.getType());
 
 //			if (FrameworkConstants.SERVER.equals(configuration.getType())
 //					|| FrameworkConstants.EMAIL.equals(configuration.getType())) {
@@ -1410,7 +1408,9 @@ public class ConfigurationService extends RestBase implements FrameworkConstants
 				return "Email Configuration type Already Exists";
 			}
 
-			if (!FrameworkConstants.OTHERS.equals(configuration.getType())) {
+			if (!FrameworkConstants.OTHER.equals(configuration.getType())) {
+				SettingsTemplate configTemplateByType = serviceManager.getConfigTemplateByTechId(techId, configuration
+						.getType());
 				List<PropertyTemplate> properties = configTemplateByType.getProperties();
 				for (PropertyTemplate propertyTemplate : properties) {
 					String propKey = propertyTemplate.getKey();
