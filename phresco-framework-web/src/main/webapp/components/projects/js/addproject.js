@@ -202,7 +202,7 @@ define(["projects/listener/projectsListener"], function() {
 			$("input[name='projectcode']").focusout(function() {
 				$(this).val(self.specialCharValidation($(this).val().replace(/\s/g, "")));
 				var totalLength = $(this).val().length;
-				if($(this).val().match(/[._-]/g).length !== null){ 
+				if($(this).val().match(/[._-]/g) !== null){ 
 					var charLength =  $(this).val().match(/[._-]/g).length; 
 				}
 				if(totalLength === charLength){

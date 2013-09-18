@@ -280,7 +280,26 @@ define(["application/listener/applicationListener"], function() {
 					}	
 				});	
 			});
-					
+			
+			$("input[name='appDirName']").focusout(function() {
+				$(this).val(self.specialCharValidation($(this).val().replace(/\s/g, "")));
+				var totalLength = $(this).val().length;
+				if($(this).val().match(/[._-]/g) !== null){
+					var charLength = $(this).val().match(/[._-]/g).length;
+				}
+				if(totalLength === charLength){
+					$(this).val('');
+					$(this).focus();
+					$(this).addClass('errormessage');
+					$(this).attr('placeholder', 'Invalid AppDirectory Name');
+				}
+				$(this).bind('input', function() {
+					$(this).removeClass("errormessage");
+					$(this).removeAttr("placeholder");
+				});
+			});
+
+			
 			self.windowResize();	
 			this.customScroll($(".scrolldiv"));
 		}
