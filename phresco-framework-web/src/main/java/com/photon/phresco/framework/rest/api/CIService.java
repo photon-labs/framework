@@ -189,10 +189,10 @@ public class CIService extends RestBase implements FrameworkConstants, ServiceCo
 				JSONArray jsonArray = new JSONArray("["+execute.toString()+"]");
 			    JSONObject jsonObject = jsonArray.getJSONObject(0);
 			    String json = jsonObject.getString("jobs");
-			    JSONArray json1 = new JSONArray(json);
+			    JSONArray jobJsonArray = new JSONArray(json);
 			    for (int k = 0; k<jobs.length(); k++) {
-				    for (int j = 0; j<json1.length(); j++) {
-				    	 JSONObject jsonObject1 = json1.getJSONObject(j);
+				    for (int j = 0; j<jobJsonArray.length(); j++) {
+				    	 JSONObject jsonObject1 = jobJsonArray.getJSONObject(j);
 				    	 if(jobs.get(k).toString().equals(jsonObject1.getString("name"))) {
 				    		 hasTrue = false;
 				    		 break;
@@ -289,6 +289,9 @@ public class CIService extends RestBase implements FrameworkConstants, ServiceCo
 	 * @param appDir
 	 * @return
 	 * @throws PhrescoException
+	 * @throws JSONException 
+	 * @throws IOException 
+	 * @throws ClientProtocolException 
 	 */
 	@PUT
 	@Path("/update")
@@ -296,7 +299,7 @@ public class CIService extends RestBase implements FrameworkConstants, ServiceCo
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response updateJob(@Context HttpServletRequest request, ContinuousDelivery continuousDelivery, @QueryParam(REST_QUERY_CUSTOMERID) String customerId,
 			@QueryParam(REST_QUERY_PROJECTID) String projectId, @QueryParam(REST_QUERY_APPDIR_NAME) String appDir, @QueryParam(REST_QUERY_USERID) String userId)
-	throws PhrescoException {
+	throws PhrescoException, ClientProtocolException, IOException, JSONException {
 		ResponseInfo<CIJobStatus> responseData = new ResponseInfo<CIJobStatus>();
 		boolean updateJob = false;
 		CIJobStatus status = null;
@@ -341,11 +344,18 @@ public class CIService extends RestBase implements FrameworkConstants, ServiceCo
 						applicationInfo = FrameworkServiceUtil.getApplicationInfo(ciJob.getAppDirName());
 					}
 					CIJob jobWithCmds = setPreBuildCmds(ciJob,  applicationInfo, appDir, projectId, continuousDelivery.getName(), userId, request);
-					boolean createJob = ciManager.createJob(jobWithCmds);
-					if(createJob) {
-						tempJobs.add(ciJob);
+					boolean validateJob = validateJob(jobWithCmds.getJobName());
+					if(validateJob){
+						boolean createJob = ciManager.createJob(jobWithCmds);
+						if(createJob) {
+							tempJobs.add(ciJob);
+						}
+						exists = false;
+					} else {
+						ResponseInfo<Boolean> finalOutput = responseDataEvaluation(responseData, null, validateJob, RESPONSE_STATUS_FAILURE, PHR810031);
+						return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, ALL_HEADER).build();
 					}
-					exists = false;
+					
 				} 
 			}
 			boolean clearContinuousDelivery = ciManager.clearContinuousDelivery(continuousDelivery.getName(), projectId, appDir);
@@ -378,6 +388,31 @@ public class CIService extends RestBase implements FrameworkConstants, ServiceCo
 		}
 	}
 	
+	private boolean validateJob(String jobName) throws PhrescoException, ClientProtocolException, IOException, JSONException {
+		boolean hasTrue = true;
+		InetAddress thisIp = InetAddress.getLocalHost();
+		String port = FrameworkServiceUtil.getJenkinsPortNo();
+		String jenkinsUrl = HTTP_PROTOCOL + PROTOCOL_POSTFIX + thisIp.getHostAddress() + ":" + port + "/" + CI + "/api/json";
+		HttpClient httpClient = new DefaultHttpClient();
+		HttpGet httpget = new HttpGet(jenkinsUrl);
+		ResponseHandler<String> responseHandler = new BasicResponseHandler();
+		String execute = httpClient.execute(httpget, responseHandler);
+		
+		JSONArray jsonArray = new JSONArray("["+execute.toString()+"]");
+	    JSONObject jsonObject = jsonArray.getJSONObject(0);
+	    String json = jsonObject.getString("jobs");
+	    JSONArray jobJsonArray = new JSONArray(json);
+	    for (int j = 0; j<jobJsonArray.length(); j++) {
+	    	 JSONObject jsonObject1 = jobJsonArray.getJSONObject(j);
+	    	 if(jobName.equals(jsonObject1.getString("name"))) {
+	    		 hasTrue = false;
+	    		 break;
+	    	 }
+	    }
+	    return hasTrue;
+		
+	}
+
 	/**
 	 * @param projectId
 	 * @param continuousName

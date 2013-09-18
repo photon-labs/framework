@@ -28,7 +28,8 @@ define([], function() {
 			var self = this;
 			commonVariables.projectId = projectId;
 			commonVariables.navListener.getMyObj(commonVariables.editproject, function(editprojectObject) {
-				commonVariables.api.localVal.setSession('appDirName', '');
+				commonVariables.projectLevel = true;
+				$('.hProjectId').val(projectId);
 				Clazz.navigationController.jQueryContainer = commonVariables.contentPlaceholder;
 				Clazz.navigationController.push(editprojectObject, commonVariables.animation);
 				$("#editprojectTab").css("display", "block");
@@ -219,6 +220,7 @@ define([], function() {
 			jsonVal.techid = techid;
 			self.projectRequestBody = jsonVal;
 			self.projectListAction(self.getActionHeader(self.projectRequestBody, "configTypes"), "", function(response) {
+				commonVariables.projectLevel = false;
 				commonVariables.api.localVal.setJson('configTypes', response.data);
 				commonVariables.navListener.configDropdown(response.data);
 				if(self.editAplnContent === null){

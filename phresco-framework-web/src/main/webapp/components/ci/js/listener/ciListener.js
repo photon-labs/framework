@@ -93,7 +93,7 @@ define([], function() {
 		},
 
 		getRequestHeader : function(ciRequestBody, action, params) {
-			var self = this, header;
+			var self = this, appDir = '', projectId='', header;
 			// basic params for job templates
 			var customerId = self.getCustomer();
 			customerId = (customerId === "") ? "photon" : customerId;
@@ -101,9 +101,16 @@ define([], function() {
 			if(data !== "") { 
 				userId = data.id; 
 			}
-			var projectId = commonVariables.api.localVal.getSession("projectId");
-			var appDir = commonVariables.api.localVal.getSession('appDirName');
-
+			
+			// application level
+			if (commonVariables.api.localVal.getProjectInfo() !== null && !commonVariables.projectLevel){
+				var projectInfo = commonVariables.api.localVal.getProjectInfo();
+				appDir = projectInfo.data.projectInfo.appInfos[0].appDirName;
+			// project level
+			} else if(commonVariables.projectLevel){
+				projectId = $('.hProjectId').val();
+			}
+			
 			header = {
 				contentType: "application/json",
 				dataType: "json",
@@ -1448,6 +1455,30 @@ define([], function() {
 				});		
 				emptyFound = true;			
 			}
+			
+			var selectedJobLiObj = $("#sortable2 li[temp=ci]");
+			var add = $(".content_end").find("input[type=submit]").val();
+//			if(add === "Add") {
+			$(selectedJobLiObj).each(function(index) {
+				var thisAnchorElem = $(this).find('a');
+				var thisJobJsonData = $(thisAnchorElem).data("jobJson");
+				if(thisJobJsonData !== undefined) {
+					var appname = $(thisObj).attr("appname");
+					var templateName = $(thisObj).attr("jobtemplatename");
+					if(thisJobJsonData.jobName === $("input[name=jobName]").val() && $(thisAnchorElem).attr("id") !== (appname+templateName)) {
+						$("input[name=jobName]").focus();
+						$("input[name=jobName]").val("");
+						$("input[name=jobName]").attr('placeholder','Job Already Exists');
+						$("input[name=jobName]").addClass("errormessage");
+						$("input[name=jobName]").bind('keypress', function() {
+							$(this).removeClass("errormessage");
+						});		
+						emptyFound = true;		
+					}
+				}
+			});
+//			}
+
 			
 			if(templateJsonData.type === "performanceTest" || templateJsonData.type === "loadTest") {
 				var ciRequestBody = {}, redirect = true, templJsonStr="",testAction;
