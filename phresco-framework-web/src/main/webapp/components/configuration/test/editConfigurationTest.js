@@ -38,7 +38,7 @@ define(["configuration/editConfiguration"], function(EditConfiguration) {
 		var self=this;
 		asyncTest("Test - Add Configuration Test", function() {
 			$.mockjax({
-				url:  commonVariables.webserviceurl+commonVariables.configuration+"/settingsTemplate?appDirName=wordpress-WordPress&customerId=photon&userId=admin&type=Server&techId=tech-html5-jquery-mobile-widget",
+				url:  commonVariables.webserviceurl+commonVariables.configuration+"/settingsTemplate?appDirName=wordpress-WordPress&customerId=photon&userId=admin&type=Server&techId=tech-wordpress",
 				type:'GET',
 				contentType: 'application/json',
 				status: 200,
@@ -333,7 +333,7 @@ define(["configuration/editConfiguration"], function(EditConfiguration) {
 			$("a[name=removeConfig]").click();
 		asyncTest("Test - Add Database Configuration Test", function() {
 			$.mockjax({
-				url:  commonVariables.webserviceurl+commonVariables.configuration+"/settingsTemplate?appDirName=wordpress-WordPress&customerId=photon&userId=admin&type=Database&techId=tech-html5-jquery-mobile-widget",
+				url:  commonVariables.webserviceurl+commonVariables.configuration+"/settingsTemplate?appDirName=wordpress-WordPress&customerId=photon&userId=admin&type=Database&techId=tech-wordpress",
 				type:'GET',
 				contentType: 'application/json',
 				status: 200,
@@ -375,7 +375,7 @@ define(["configuration/editConfiguration"], function(EditConfiguration) {
 			$("a[name=removeConfig]").click();
 			
 			$.mockjax({
-				url:  commonVariables.webserviceurl+commonVariables.configuration+"/settingsTemplate?appDirName=wordpress-WordPress&customerId=photon&userId=admin&type=Email&techId=tech-html5-jquery-mobile-widget",
+				url:  commonVariables.webserviceurl+commonVariables.configuration+"/settingsTemplate?appDirName=wordpress-WordPress&customerId=photon&userId=admin&type=Email&techId=tech-wordpress",
 				type:'GET',
 				contentType: 'application/json',
 				status: 200,
@@ -562,7 +562,7 @@ define(["configuration/editConfiguration"], function(EditConfiguration) {
 		$("#content").html('');
 		asyncTest("Test - Non Environment Add Configuration Test", function() {
 			$.mockjax({
-				url:  commonVariables.webserviceurl+commonVariables.configuration+"/settingsTemplate?appDirName=wordpress-WordPress&customerId=photon&userId=admin&type=Theme&techId=tech-html5-jquery-mobile-widget",
+				url:  commonVariables.webserviceurl+commonVariables.configuration+"/settingsTemplate?appDirName=wordpress-WordPress&customerId=photon&userId=admin&type=Theme&techId=tech-wordpress",
 				type:'GET',
 				contentType: 'application/json',
 				status: 200,
@@ -602,7 +602,7 @@ define(["configuration/editConfiguration"], function(EditConfiguration) {
 		asyncTest("Test - Non Environment Edit Configuration Test", function() {
 		
 			$.mockjax({
-				url:  commonVariables.webserviceurl+commonVariables.configuration+"/settingsTemplate?appDirName=wordpress-WordPress&customerId=photon&userId=admin&type=Theme&techId=tech-html5-jquery-mobile-widget",
+				url:  commonVariables.webserviceurl+commonVariables.configuration+"/settingsTemplate?appDirName=wordpress-WordPress&customerId=photon&userId=admin&type=Theme&techId=tech-wordpress",
 				type:'GET',
 				contentType: 'application/json',
 				status: 200,
