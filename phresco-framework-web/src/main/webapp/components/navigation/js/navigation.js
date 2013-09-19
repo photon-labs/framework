@@ -126,6 +126,10 @@ define(["navigation/listener/navigationListener"], function() {
 					$(".seperatetd").parent().hide();
 				}	
 				$("#importRepourl").val('');	
+				$("#testRepoUrl").val("");
+				$("#testImportUserName").val("");
+				$("#testImportPassword").val("");
+				$("#testRevision").val("");
 				$("#importRepourl").removeClass("errormessage");
 				$("#importUserName").removeClass("errormessage");
 				$("#importPassword").removeClass("errormessage");
@@ -234,13 +238,14 @@ define(["navigation/listener/navigationListener"], function() {
 			$("input[name='importbtn']").click(function() {
 				self.navigationListener.validateImport(function(response) {
 					if (!response) {
+						$("#importloading").show();
 						self.onImportEvent.dispatch();
 					}
 				});
 			});
 			
 			$('#gitName').keypress(function(e) {
-				if ((e.which >= 65 && e.which <= 90) ||(e.which >= 97 && e.which <= 122) || (e.which === 8) || (e.which === 45)|| (e.which >= 48 && e.which <= 57)) {
+				if ((e.which >= 65 && e.which <= 90) ||(e.which >= 97 && e.which <= 122) || (e.which === 8) || (e.which === 45)|| (e.which >= 48 && e.which <= 57) || (e.which === 95)) {
 					return true;
 				} else {
 					e.preventDefault();

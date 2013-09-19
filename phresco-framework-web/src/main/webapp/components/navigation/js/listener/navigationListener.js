@@ -945,7 +945,9 @@ define([], function() {
 			
 			actionBody = importdata;
 			action = "importpost";
+			commonVariables.hideloading = true;
 			self.navigationAction(self.getActionHeader(actionBody, action), function(response){
+				$("#importloading").hide();
 				if (response.exception === null) {
 					$("#project_list_import").hide();	
 					self.getMyObj(commonVariables.projectlist, function(returnVal){
@@ -953,6 +955,7 @@ define([], function() {
 						Clazz.navigationController.push(self.projectlist, commonVariables.animation);
 					});
 				}
+				commonVariables.hideloading = false;
 			});
 		},
 		
@@ -962,7 +965,11 @@ define([], function() {
 			var logContent = consoleObj.text();
 			var data = {};
 			data.log = escape(logContent);
-			self.navigationAction(self.getActionHeader(data, "copyToClipboard"), function(response) {});
+			self.navigationAction(self.getActionHeader(data, "copyToClipboard"), function(response) {
+				if(consoleObj.attr('class') === 'modal-body temp') {
+					consoleObj.next('div').find("div[id='copyloadicon']").hide();
+				}
+			});
 		},
 		
 		configDropdown : function(val) {

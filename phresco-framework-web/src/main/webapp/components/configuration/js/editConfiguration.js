@@ -56,7 +56,7 @@ define(["configuration/listener/configurationListener"], function() {
 							}
 						} else {
 							setTimeout(function(){
-								self.configurationlistener.htmlForOther(value);
+								self.configurationlistener.htmlForOther('', value, '');
 							},800);
 						}
 					});

@@ -121,15 +121,14 @@ define(["projectlist/projectList"], function(ProjectList) {
 		runValidationAddrepousernameTest : function (projectlist){
 			var self = this;
 			asyncTest("addRepo username Validation Test", function() {
-				$('input#repourl_294187d7-f75a-4adc-bb25-ce9465e0e82f').val('http://localhost');
-				$('input#uname_294187d7-f75a-4adc-bb25-ce9465e0e82f').val('');
-				$('.tooltiptop[name^="addRepo"]').click();
-				$(".credential").click();
-				$("input[name='addrepobtn']").click();
+				$("input#repourl_294187d7-f75a-4adc-bb25-ce9465e0e82f").val("http://localhost:8080/framework/");
+				$("input#uname_294187d7-f75a-4adc-bb25-ce9465e0e82f").val("");
+				projectlist.projectslistListener.flag1 =1;
+				projectlist.projectslistListener.addRepoEvent($("input[name='addrepobtn']"),"294187d7-f75a-4adc-bb25-ce9465e0e82f");
 				setTimeout(function() {
 					start();
 					var username = $(commonVariables.contentPlaceholder).find('#uname_294187d7-f75a-4adc-bb25-ce9465e0e82f').attr('class');
-					equal("uname", username, 'username div error class added test');
+					equal("uname errormessage", username, 'username div error class added test');
 					self.runValidationAddrepoPasswordTest(projectlist);
 				}, 1000);
 			});
@@ -137,16 +136,15 @@ define(["projectlist/projectList"], function(ProjectList) {
 		runValidationAddrepoPasswordTest : function (projectlist){
 			var self = this;
 			asyncTest("addRepo password Validation Test", function() {
-				$('input#repourl_294187d7-f75a-4adc-bb25-ce9465e0e82f').val('http://localhost');
-				$('input[name=username]').val('admin');
-				$('input[name=password]').val('');
-				$('.tooltiptop[name^="addRepo"]').click();
-				$(".credential").click();
-				$("input[name='addrepobtn']").click();
+				$("input#repourl_294187d7-f75a-4adc-bb25-ce9465e0e82f").val("http://localhost:8080/framework/");
+				$("input#uname_294187d7-f75a-4adc-bb25-ce9465e0e82f").val("admin");
+				$("input#pwd_294187d7-f75a-4adc-bb25-ce9465e0e82f").val("");
+				projectlist.projectslistListener.flag1 =1;
+				projectlist.projectslistListener.addRepoEvent($("input[name='addrepobtn']"),"294187d7-f75a-4adc-bb25-ce9465e0e82f");
 				setTimeout(function() {
 					start();
 					var password = $(commonVariables.contentPlaceholder).find('#pwd_294187d7-f75a-4adc-bb25-ce9465e0e82f').attr('class');
-					notEqual("errormessage", password, 'Password div error class added test');
+					equal("pwd errormessage", password, 'Password div error class added test');
 					self.runValidationCommitRepoTest(projectlist);
 				}, 1000);
 			}); 
@@ -173,15 +171,14 @@ define(["projectlist/projectList"], function(ProjectList) {
 		runValidationCommitusernameTest : function (projectlist){
 			var self = this;
 			asyncTest("Commit username Validation Test", function() {
-				$('input#repourl_294187d7-f75a-4adc-bb25-ce9465e0e82f').val('http://localhost');
-				$('input#uname_294187d7-f75a-4adc-bb25-ce9465e0e82f').val('');
-				$('.tooltiptop[name^="addRepo"]').click();
-				$(".credential").click();
-				$("input[name='commitbtn']").click();
+				$("input#commitRepourl_294187d7-f75a-4adc-bb25-ce9465e0e82f").val("http://localhost:8080/framework/");
+				$("input#commitUsername_294187d7-f75a-4adc-bb25-ce9465e0e82f").val("");
+				projectlist.projectslistListener.flag2 =1;
+				projectlist.projectslistListener.addCommitEvent($("input[name='commitbtn']"),"294187d7-f75a-4adc-bb25-ce9465e0e82f");
 				setTimeout(function() {
 					start();
-					var username = $(commonVariables.contentPlaceholder).find('#uname_294187d7-f75a-4adc-bb25-ce9465e0e82f').attr('class');
-					equal("uname", username, 'username div error class added test');
+					var username = $(commonVariables.contentPlaceholder).find('#commitUsername_294187d7-f75a-4adc-bb25-ce9465e0e82f').attr('class');
+					equal("uname errormessage", username, 'username div error class added test');
 					self.runValidationCommiPasswordTest(projectlist);
 				}, 1000);
 			});
@@ -189,16 +186,15 @@ define(["projectlist/projectList"], function(ProjectList) {
 		runValidationCommiPasswordTest : function (projectlist){
 			var self = this;
 			asyncTest("Commit password Validation Test", function() {
-				$('input#repourl_294187d7-f75a-4adc-bb25-ce9465e0e82f').val('http://localhost');
-				$('input[name=username]').val('admin');
-				$('input[name=password]').val('');
-				$('.tooltiptop[name^="addRepo"]').click();
-				$(".credential").click();
-				$("input[name='commitbtn']").click();
+				$("input#commitRepourl_294187d7-f75a-4adc-bb25-ce9465e0e82f").val("http://localhost:8080/framework/");
+				$("input#commitUsername_294187d7-f75a-4adc-bb25-ce9465e0e82f").val("admin");
+				$("input#commitPassword_294187d7-f75a-4adc-bb25-ce9465e0e82f").val("");
+				projectlist.projectslistListener.flag2 =1;
+				projectlist.projectslistListener.addCommitEvent($("input[name='commitbtn']"),"294187d7-f75a-4adc-bb25-ce9465e0e82f");
 				setTimeout(function() {
 					start();
-					var password = $(commonVariables.contentPlaceholder).find('#pwd_294187d7-f75a-4adc-bb25-ce9465e0e82f').attr('class');
-					notEqual("errormessage", password, 'Password div error class added test');
+					var password = $(commonVariables.contentPlaceholder).find('#commitPassword_294187d7-f75a-4adc-bb25-ce9465e0e82f').attr('class');
+					equal("pwd errormessage", password, 'Password div error class added test');
 					self.runValidationSVNupdateTest(projectlist);
 				}, 1000);
 			}); 
@@ -229,15 +225,14 @@ define(["projectlist/projectList"], function(ProjectList) {
 				$("#uname_294187d7-f75a-4adc-bb25-ce9465e0e82f").keypress();
 				projectlist.counter = 2;
 				$('.searchdropdown').click();
-				$('input#repourl_294187d7-f75a-4adc-bb25-ce9465e0e82f').val('http://localhost');
-				$('input#uname_294187d7-f75a-4adc-bb25-ce9465e0e82f').val('');
-				$('.tooltiptop[name^="addRepo"]').click();
-				$(".credential").click();
-				$("input[name='updatebtn']").click();
+				$("input#updateRepourl_294187d7-f75a-4adc-bb25-ce9465e0e82f").val("http://localhost:8080/framework/");
+				$("input#updateUsername_294187d7-f75a-4adc-bb25-ce9465e0e82f").val("");
+				projectlist.projectslistListener.flag3 =1;
+				projectlist.projectslistListener.addUpdateEvent($("input[name='updatebtn']"),"294187d7-f75a-4adc-bb25-ce9465e0e82f");
 				setTimeout(function() {
 					start();
-					var username = $(commonVariables.contentPlaceholder).find('#uname_294187d7-f75a-4adc-bb25-ce9465e0e82f').attr('class');
-					equal("uname", username, 'username div error class added test');
+					var username = $(commonVariables.contentPlaceholder).find('#updateUsername_294187d7-f75a-4adc-bb25-ce9465e0e82f').attr('class');
+					equal("uname errormessage", username, 'username div error class added test');
 					self.runValidationSVNupdatePasswordTest(projectlist);
 				}, 1000);
 			});
@@ -245,18 +240,17 @@ define(["projectlist/projectList"], function(ProjectList) {
 		runValidationSVNupdatePasswordTest : function (projectlist){
 			var self = this;
 			asyncTest("SVNupdate password Validation Test", function() {
-				$('input#repourl_294187d7-f75a-4adc-bb25-ce9465e0e82f').val('http://localhost');
-				$('input[name=username]').val('admin');
-				$('input[name=password]').val('');
-				$('.tooltiptop[name^="addRepo"]').click();
-				$(".credential").click();
-				$("input[name='updatebtn']").click();
+				$("input#updateRepourl_294187d7-f75a-4adc-bb25-ce9465e0e82f").val("http://localhost:8080/framework/");
+				$("input#updateUsername_294187d7-f75a-4adc-bb25-ce9465e0e82f").val("admin");
+				$("input#updatePassword_294187d7-f75a-4adc-bb25-ce9465e0e82f").val("");
+				projectlist.projectslistListener.flag3 =1;
+				projectlist.projectslistListener.addUpdateEvent($("input[name='updatebtn']"),"294187d7-f75a-4adc-bb25-ce9465e0e82f");
 				setTimeout(function() {
 					start();
-					var password = $(commonVariables.contentPlaceholder).find('#pwd_294187d7-f75a-4adc-bb25-ce9465e0e82f').attr('class');
-					notEqual("errormessage", password, 'Password div error class added test');
+					var password = $(commonVariables.contentPlaceholder).find('#updatePassword_294187d7-f75a-4adc-bb25-ce9465e0e82f').attr('class');
+					equal("pwd errormessage", password, 'Password div error class added test');
 					//self.projectaddrepoVerification(projectlist);
-					self.projectCommitUiVerification(projectlist);
+					self.commituiver(projectlist);
 				}, 1000);
 			}); 
 		},
@@ -269,7 +263,7 @@ define(["projectlist/projectList"], function(ProjectList) {
 				$("input[name='password']").val("manage");
 				$("textarea[name='commitMsg']").val("New Project added");
 				var addtorepoAjax = $.mockjax({
-					url: commonVariables.webserviceurl + 'repository/addProjectToRepo?appDirName=wordpress-WordPress&userId=admin&appId=294187d7-f75a-4adc-bb25-ce9465e0e82f&projectId=a58a5358-fa43-4fac-9b98-9bf94b7c4d1f',
+					url: commonVariables.webserviceurl + 'repository/addProjectToRepo?appDirName=wordpress-WordPress&userId=admin&appId=294187d7-f75a-4adc-bb25-ce9465e0e82f&projectId=a58a5358-fa43-4fac-9b98-9bf94b7c4d1f&displayName=Admin',
 					type:'POST',
 					contentType: 'application/json',
 					status: 200,
@@ -282,10 +276,33 @@ define(["projectlist/projectList"], function(ProjectList) {
 					start();
 					var getval = $(".msgdisplay,.success").text();
 					equal("Project added successfully", getval, "Addrepo service call");
-					self.projectCommitUiVerification(projectlist);
+					self.commituiver(projectlist);
 				}, 2500);
 			});
 		}, 
+		
+		commituiver : function(projectlist) {
+			var self = this;
+			asyncTest("Test - Project List Commit popup rendered(Not Working Copy)", function() {
+				var getcommitfile = $.mockjax({
+					url: commonVariables.webserviceurl + 'repository/popupValues?appDirName=wordpress-WordPress&userId=admin&action=commit',
+					type:'GET',
+					contentType: 'application/json',
+					status: 200,
+					response: function() {
+						this.responseText = JSON.stringify({"message":null,"exception":null,"responseCode":"PHR210035","data":{"revision":null,"repoUrl":"","testCheckOut":false,"testUserName":null,"testPassword":null,"testRepoUrl":null,"testRevision":null,"branch":null,"revisionVal":null,"commitMessage":null,"commitableFiles":null,"repoExist":false,"repoInfoFile":null,"type":"","password":null,"userName":"admin"},"status":"failure"});
+					}
+				});
+				
+				$('.tooltiptop[name^="commit"]').click();
+				setTimeout(function() {
+					start();
+					var t = $('.commitErr_294187d7-f75a-4adc-bb25-ce9465e0e82f').css('display');
+					equal("block",t,"Commit Popup Rendered(Not Working Copy)");
+					self.projectCommitUiVerification(projectlist);
+				}, 2500);
+			});
+		},
 		
 		projectCommitUiVerification : function(projectlist) {
 			var self = this;
@@ -370,9 +387,9 @@ define(["projectlist/projectList"], function(ProjectList) {
 				
 				$("input[name='generate']").click();
 				projectlist.projectslistListener.clickFunction('294187d7-f75a-4adc-bb25-ce9465e0e82f');
-				$("a[name=downLoad]").click();
 				setTimeout(function() {
 					start();
+					$("a[name=downLoad]").click();
 					var getvalue = $('.existing_report').children('tbody').children('tr').attr('class');
 					equal("generatedRow", getvalue, "Generate Report tested successfully.");
 					self.projectDelPdfVerification(projectlist);
@@ -414,7 +431,7 @@ define(["projectlist/projectList"], function(ProjectList) {
 				$("input[name='password']").val("manage");
 				$("textarea[name='commitMsg']").val("Project comitted");
 				var addcommitAjax = $.mockjax({
-					url: commonVariables.webserviceurl + 'repository/commitProjectToRepo?appDirName=wordpress-WordPress',
+					url: commonVariables.webserviceurl + 'repository/commitProjectToRepo?appDirName=wordpress-WordPress&displayName=Admin',
 					type:'POST',
 					contentType: 'application/json',
 					status: 200,
@@ -441,7 +458,7 @@ define(["projectlist/projectList"], function(ProjectList) {
 				$("input[name='password']").val("manage");
 				$("textarea[name='commitMsg']").val("Project comitted");
 				var addcommitAjax = $.mockjax({
-					url: commonVariables.webserviceurl + 'repository/commitProjectToRepo?appDirName=wordpress-WordPress',
+					url: commonVariables.webserviceurl + 'repository/commitProjectToRepo?appDirName=wordpress-WordPress&displayName=Admin',
 					type:'POST',
 					contentType: 'application/json',
 					status: 200,
@@ -470,7 +487,7 @@ define(["projectlist/projectList"], function(ProjectList) {
 					start();
 					var countlen = $(commonVariables.contentPlaceholder).find("commitable_files_31b571c0-85fd-485d-afa4-6bd6cac1e3f8 tr").length;
 					equal(0, countlen, "Commit service call");
-					self.projectSVNUiVerification(projectlist);
+					self.updateuiver(projectlist);
 				}, 2500);
 			});
 		}, 
@@ -500,6 +517,28 @@ define(["projectlist/projectList"], function(ProjectList) {
 				}, 2500);
 			});
 		},  */
+		updateuiver : function(projectlist) {
+			var self = this;
+			asyncTest("Test - Project List Update popup rendered(Not Working Copy)", function() {
+				var getcommitfile = $.mockjax({
+					url: commonVariables.webserviceurl + 'repository/popupValues?appDirName=wordpress-WordPress&userId=admin&action=update',
+					type:'GET',
+					contentType: 'application/json',
+					status: 200,
+					response: function() {
+						this.responseText = JSON.stringify({"message":null,"exception":null,"responseCode":"PHR210037","data":{"revision":null,"repoUrl":"","testCheckOut":false,"testUserName":null,"testPassword":null,"testRepoUrl":null,"testRevision":null,"branch":null,"revisionVal":null,"commitMessage":null,"commitableFiles":null,"repoExist":false,"repoInfoFile":null,"type":"","password":null,"userName":"admin"},"status":"failure"});
+					}
+				});
+				
+				$('.tooltiptop[name^="svn_update"]').click();
+				setTimeout(function() {
+					start();
+					var t = $('.updateErr_294187d7-f75a-4adc-bb25-ce9465e0e82f').css('display');
+					equal("block",t,"Update Popup Rendered(Not Working Copy)");
+					self.projectSVNUiVerification(projectlist);
+				}, 2500);
+			});
+		},
 		
 		projectSVNUiVerification : function(projectlist) {
 			var self = this;
@@ -525,7 +564,7 @@ define(["projectlist/projectList"], function(ProjectList) {
 				$("input[name='password']").val("manage");
 				$("input[name='revision']").val("head");	
 				var updateImportAjax = $.mockjax({
-					url: commonVariables.webserviceurl + 'repository/updateImportedApplication?appDirName=wordpress-WordPress',			
+					url: commonVariables.webserviceurl + 'repository/updateImportedApplication?appDirName=wordpress-WordPress&displayName=Admin',		
 					type:'POST',
 					contentType: 'application/json',
 					status: 200,
@@ -584,7 +623,7 @@ define(["projectlist/projectList"], function(ProjectList) {
 				projectlist.projectslistListener.addRepoEvent($("input[name='addrepobtn']"),"294187d7-f75a-4adc-bb25-ce9465e0e82f");
 				setTimeout(function() {
 					start();
-					var getval = $(".success").text();
+					var getval = $(".success").text();	
 					notEqual("Added successfully", getval, "Addrepo service call");
 					self.addupdatefailure(projectlist);
 				}, 2500);
@@ -593,7 +632,7 @@ define(["projectlist/projectList"], function(ProjectList) {
 		
 		addupdatefailure : function(projectlist) {
 			var self=this;
-			asyncTest("Test -Add to Repo Failure", function() {
+			asyncTest("Test -Update to Repo Failure", function() {
 				$("#updateRepourl_294187d7-f75a-4adc-bb25-ce9465e0e82f").val("http://localhost:8080/framework/");
 				$("#updateUsername_294187d7-f75a-4adc-bb25-ce9465e0e82f").val('admin');
 				$("#updatePassword_294187d7-f75a-4adc-bb25-ce9465e0e82f").val('manage');
@@ -601,16 +640,20 @@ define(["projectlist/projectList"], function(ProjectList) {
 				projectlist.projectslistListener.flag1 =0;
 				projectlist.projectslistListener.flag3 =1;
 				projectlist.projectslistListener.addUpdateEvent ($("input[name='updatebtn']"),"294187d7-f75a-4adc-bb25-ce9465e0e82f","");
+				$(".credential").attr('checked','checked');
+				$(".credential").click();
+				projectlist.hideShowCredentials('git');
+				$("input[name='revision']").attr('checked','true');
+				$("input[name='revision']").click();
 				setTimeout(function() {
 					start();
 					var getval = $(".success").text();
-					notEqual("Added successfully", getval, "Addrepo service call");
+					notEqual("Added successfully", getval, "Update service call");
 					self.projectDeleteSuccessVerification(projectlist);
 				}, 2500);
 			});
-		}, 
-		
-		
+		},
+
 		projectDeleteSuccessVerification : function(projectlist) {
 			var self = this;
 			$.mockjaxClear(self.projectlistdata);
@@ -627,20 +670,20 @@ define(["projectlist/projectList"], function(ProjectList) {
 				});
 	
 				var deletefn = $.mockjax({
-				  url: commonVariables.webserviceurl +"project/delete",
+				  url: commonVariables.webserviceurl +"project/delete?actionType=application",
 				  type: "DELETE",
 				  dataType: "json",
 				  contentType: "application/json",
 				  status: 200,
 				  response : function() {
-					  this.responseText = JSON.stringify({"response":null,"message":"Application deleted Successfully","exception":null,"data":null});
+					  this.responseText = JSON.stringify({"response":null,"message":"Application deleted Successfully","exception":null,"data":null,"responseCode":"PHR200026"});
 				  }				
 				});
 				$('.tooltiptop').click();
-				$("input[name='deleteConfirm']").click();
-				projectlist.deleterow("delete", "delete", "wordpress-WordPress" );
 				setTimeout(function() {
-					start();					
+					start();			
+					$("input[name='deleteConfirm']").click();
+					projectlist.deleterow("delete", "delete", "wordpress-WordPress" );					
 					var techid = $(commonVariables.contentPlaceholder).find(".wordpress-WordPress").attr("techid");
 					equal(undefined, techid, "Project List Service Tested");
 					self.projectholeDeleteSuccessVerification(projectlist);
@@ -664,20 +707,20 @@ define(["projectlist/projectList"], function(ProjectList) {
 				});
 	
 				var deletefn = $.mockjax({
-				  url: commonVariables.webserviceurl +"project/delete",
+				  url: commonVariables.webserviceurl +"project/delete?actionType=project",
 				  type: "DELETE",
 				  dataType: "json",
 				  contentType: "application/json",
 				  status: 200,
 				  response : function() {
-					  this.responseText = JSON.stringify({"response":null,"message":"Application deleted Successfully","exception":null,"data":null});
+					  this.responseText = JSON.stringify({"response":null,"message":"Application deleted Successfully","exception":null,"data":null,"responseCode":"PHR200010"});
 				  }				
 				});
 				$('.tooltiptop').click();
-				$("input[name='holeDelete']").click();
-				projectlist.deleterow("delete", "delete", "wordpress-WordPress" );
 				setTimeout(function() {
 					start();
+					$("input[name='holeDelete']").click();
+					projectlist.deleterow("delete", "delete", "wordpress-WordPress" );	
 					var techid = $(commonVariables.contentPlaceholder).find(".wordpress-WordPress").attr("techid");
 					equal(undefined, techid, "Project List Service Tested");
 					self.setConfigurationTypeTests(projectlist);
@@ -725,9 +768,9 @@ define(["projectlist/projectList"], function(ProjectList) {
 				setTimeout(function() {
 					start();
 					equal("", "", 'Configuration type Test');
-					 /* require(["projectTest"], function(projectTest){
-						projectTest.runTests();
-					}) ;  */
+					/*   require(["applicationTest"], function(applicationTest){
+						applicationTest.runTests();
+					}) ;  */ 
 				}, 1000);
 			});
 		}

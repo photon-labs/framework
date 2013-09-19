@@ -948,7 +948,7 @@ define(["croneExpression/croneExpression"], function() {
 		
 		componentChange : function(types, countValue, value) {
 			var self = this;
-			if(value !== '' && value !== null) {
+			if(value !== '' && value !== null && types !== '') {
 				var fName = $("select[compType=components"+countValue+"]").val();
 				self.getProperties(fName, $("select[compType=components"+countValue+"]"), $("select[compType=components"+countValue+"]").attr('count'), types);
 			}
