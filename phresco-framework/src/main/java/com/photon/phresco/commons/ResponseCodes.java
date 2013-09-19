@@ -150,6 +150,7 @@ public interface ResponseCodes {
 	String PHR210046 = "PHR210046"; // failed to fetch list of application pilots
 	String PHR200026 = "PHR200026"; // project deleted successfully
 	String PHR210047 = "PHR210047"; // unable to delete the project
+	String PHR210048 = "PHR210048"; // Project Imported Succesfully.but, test checkout is not applicable for this multi-app Url
 	
 	/*
 	 * App Info Page

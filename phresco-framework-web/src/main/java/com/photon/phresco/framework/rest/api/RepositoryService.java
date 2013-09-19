@@ -307,7 +307,7 @@ public class RepositoryService extends RestBase implements FrameworkConstants, S
 			ApplicationInfo importProject = scmi.importProject(type, repodetail.getRepoUrl(), repodetail.getUserName(),
 					repodetail.getPassword(), null, repodetail.getRevision(), displayName, unique_key);
 			if (importProject != null) {
-				if (repodetail.isTestCheckOut()) {
+				if (repodetail.isTestCheckOut() && !importProject.getId().equals("#SEP#")) {
 					String path = Utility.getProjectHome() + File.separator + importProject.getAppDirName()
 							+ File.separator;
 					File testFolder = new File(path, TEST);
@@ -318,6 +318,12 @@ public class RepositoryService extends RestBase implements FrameworkConstants, S
 					String testSvnCheckout = scmi.svnCheckout(repodetail.getTestUserName(), repodetail
 							.getTestPassword(), repodetail.getTestRepoUrl(), testFolder.getPath(), repodetail
 							.getTestRevision());
+				} else {
+					status = RESPONSE_STATUS_SUCCESS;
+					successCode = PHR210048;
+					ResponseInfo finalOutput = responseDataEvaluation(responseData, null, null, status, successCode);
+					return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*")
+							.build();
 				}
 				status = RESPONSE_STATUS_SUCCESS;
 				successCode = PHR200017;

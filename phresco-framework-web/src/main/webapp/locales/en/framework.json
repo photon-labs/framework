@@ -66,6 +66,7 @@
 		"PHR210045" : "Unable to fetch apptypes",
 		"PHR210046" : "Failed to fetch list of application pilots",
 		"PHR210047" : "Unable to Delete the Project",
+		"PHR210048" : "Project Imported Succesfully.but, test checkout is not applicable for this multi-app Url",
 		"PHR310001" : "Unauthorized user",
 		"PHR310002" : "Unable to fetch server/database configuration",
 		"PHR310003" : "Unable to fetch webservice configuration",

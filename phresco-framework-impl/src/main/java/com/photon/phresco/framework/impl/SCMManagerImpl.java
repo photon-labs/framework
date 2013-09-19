@@ -120,7 +120,13 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 			if (valid) {
 				ProjectInfo projectInfo = getSvnAppInfo(revision, svnURL);
 				if (projectInfo != null) {
-					return returnAppInfo(projectInfo);
+					if (projectInfo.getId().equals("#SEP#")) {
+						ApplicationInfo appInfo = 	new ApplicationInfo();
+						appInfo.setId("#SEP#");
+						return appInfo;
+					} else {
+						return returnAppInfo(projectInfo);
+					}
 				}
 			} 
 			return null;
@@ -627,9 +633,15 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 		}
 		try {
 			SVNUpdateClient uc = cm.getUpdateClient();
+			try {
 			uc.doCheckout(svnURL.appendPath(PHRESCO, true), tempDir,
 					SVNRevision.UNDEFINED, SVNRevision.parse(revision),
 					SVNDepth.UNKNOWN, false);
+			} catch(SVNException er) {
+				ProjectInfo projInfo = new ProjectInfo();
+				projInfo.setId("#SEP#");
+				return projInfo;
+			}
 			File dotProjectFile = new File(tempDir, PROJECT_INFO);
 			if (!dotProjectFile.exists()) {
 				throw new PhrescoException(INVALID_FOLDER);
