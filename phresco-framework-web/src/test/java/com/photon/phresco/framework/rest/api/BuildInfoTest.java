@@ -54,6 +54,7 @@ public class BuildInfoTest extends RestBaseTest {
 		request.setParameter("appId", "TestProject");
 		request.setParameter("username", userId);
 		request.setParameter("buildNumber", "1");
+		request.setParameter("appDirName", "TestProject");
 		HttpServletRequest httpServletRequest = (HttpServletRequest)request;
 		Response build = actionservice.build(httpServletRequest);
 		ActionResponse entity = (ActionResponse) build.getEntity();
@@ -77,6 +78,7 @@ public class BuildInfoTest extends RestBaseTest {
 		request.setParameter("appId", "TestProject");
 		request.setParameter("username", userId);
 		request.setParameter("buildNumber", "1");
+		request.setParameter("appDirName", "TestProject");
 		HttpServletRequest httpServletRequest = (HttpServletRequest)request;
 		Response build = actionservice.processBuild(httpServletRequest);
 		ActionResponse entity = (ActionResponse) build.getEntity();
@@ -102,6 +104,7 @@ public class BuildInfoTest extends RestBaseTest {
 		request.setParameter("buildName", "sample.zip");
 		request.setParameter("buildNumber", "1");
 		request.setParameter("dataBase", "mysql");
+		request.setParameter("appDirName", "TestProject");
 		HttpServletRequest httpServletRequest = (HttpServletRequest)request;
 		Response deploy = actionservice.deploy(httpServletRequest);
 		ActionResponse entity = (ActionResponse) deploy.getEntity();
@@ -183,6 +186,7 @@ public class BuildInfoTest extends RestBaseTest {
 		request.setParameter("projectId", "TestProject");
 		request.setParameter("appId", "TestProject");
 		request.setParameter("username", userId);
+		request.setParameter("appDirName", "TestProject");
 		HttpServletRequest httpServletRequest = (HttpServletRequest)request;
 		Response runAgainstSource = actionservice.runAgainstSource(httpServletRequest);
 		Assert.assertEquals(200, runAgainstSource.getStatus());
@@ -220,6 +224,7 @@ public class BuildInfoTest extends RestBaseTest {
 		request.setParameter("projectId", "TestProject");
 		request.setParameter("appId", "TestProject");
 		request.setParameter("username", userId);
+		request.setParameter("appDirName", "TestProject");
 		HttpServletRequest httpServletRequest = (HttpServletRequest)request;
 		Response runAgainstSource = actionservice.stopServer(httpServletRequest);
 		Assert.assertEquals(200, runAgainstSource.getStatus());
@@ -253,6 +258,7 @@ public class BuildInfoTest extends RestBaseTest {
 		request.setParameter("projectId", "TestJquery");
 		request.setParameter("username", "admin");
 		request.setParameter("customerId", customerId);
+		request.setParameter("appDirName", "TestProject");
 		MinifyInfo minify = new MinifyInfo();
 		minify.setCompressName("JsCompress");
 		minify.setFileType("js");
@@ -290,6 +296,7 @@ public class BuildInfoTest extends RestBaseTest {
 		request.setParameter("projectId", "androidtest-androidnative");
 		request.setParameter("appId", "androidtest-androidnative");
 		request.setParameter("username", userId);
+		request.setParameter("appDirName", "TestProject");
 		request.setParameter("buildNumber", "2");
 		request.setParameter("sdk", "4.1");
 		HttpServletRequest httpServletRequest = (HttpServletRequest)request;
