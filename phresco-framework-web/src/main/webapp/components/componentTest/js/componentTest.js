@@ -111,6 +111,7 @@ define(["componentTest/listener/componentTestListener", "testResult/listener/tes
 			//To open the component test directory
 			$('#openFolder').unbind('click');
 			$("#openFolder").click(function() {
+				commonVariables.hideloading = true;
 				var paramJson = {};
 				paramJson.type =  commonVariables.typeComponentTest;
 				commonVariables.navListener.openFolder(paramJson);
@@ -119,6 +120,7 @@ define(["componentTest/listener/componentTestListener", "testResult/listener/tes
 			//To copy the path of component test directory
 			$('#copyPath').unbind('click');
 			$("#copyPath").click(function() {
+				commonVariables.hideloading = true;
 				var paramJson = {};
 				paramJson.type =  commonVariables.typeComponentTest;
 				commonVariables.navListener.copyPath(paramJson);
