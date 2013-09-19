@@ -23,11 +23,11 @@ Continuous Integration and Remote Deployment.
 <table Border="1" cellpadding="2" cellspacing="2" style="text-align:center" width="100%">
 <tr>
 	<td style="text-align:center"><b>Supported Technologies</font></b></td>
-  	<td style="text-align:center"><b>Code Validation</b></td>
+  	<td style="text-align:center"><b>Static Code Analysis</b></td>
   	<td style="text-align:center"><b>Build & Deploy</b></td>
 	<td style="text-align:center"><b>Unit Test</b></td>
 	<td style="text-align:center"><b>Functional Test</b></td>
-	<td style="text-align:center"><b>Performance Test</b></td>
+	<td style="text-align:center"><b>Perf Test</b></td>
 	<td style="text-align:center"><b>Load Test</b></td>
 	<td style="text-align:center"><b>Continuous Integration</b></td>
 	<td style="text-align:center"><b>Remote Deployment</b></td>
@@ -267,7 +267,7 @@ Continuous Integration and Remote Deployment.
 Quick start
 -----------
 
-Clone the repo, git clone git://github.com/phresco/phresco.git 
+Clone the repo, git clone https://github.com/photon-infotech/framework.git
 
 Versioning
 ----------
