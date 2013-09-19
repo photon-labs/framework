@@ -43,6 +43,7 @@ public class UnitServiceTest extends RestBaseTest {
 		request.setParameter("projectId", projectId);
 		request.setParameter("appId", appCode);
 		request.setParameter("username", userId);
+		request.setParameter("appDirName", "TestProject");
 		HttpServletRequest httpServletRequest = (HttpServletRequest)request;
 		Response response = actionService.runUnitTest(httpServletRequest);
 		ActionResponse entity = (ActionResponse) response.getEntity();
@@ -59,6 +60,7 @@ public class UnitServiceTest extends RestBaseTest {
 		request.setParameter("projectId", projectId);
 		request.setParameter("appId", "");
 		request.setParameter("username", userId);
+		request.setParameter("appDirName", "TestProject");
 		HttpServletRequest httpServletRequest = (HttpServletRequest)request;
 		Response response = actionService.runUnitTest(httpServletRequest);
 		Assert.assertEquals(200, response.getStatus());
@@ -73,6 +75,7 @@ public class UnitServiceTest extends RestBaseTest {
 		request.setParameter("projectId", projectId);
 		request.setParameter("appId", appCode);
 		request.setParameter("username", userId);
+		request.setParameter("appDirName", "TestProject");
 		HttpServletRequest httpServletRequest = (HttpServletRequest)request;
 		Response response = actionService.runUnitTest(httpServletRequest);
 		Assert.assertEquals(200, response.getStatus());
@@ -86,6 +89,7 @@ public class UnitServiceTest extends RestBaseTest {
 		request.setParameter("projectId", "");
 		request.setParameter("appId", appCode);
 		request.setParameter("username", userId);
+		request.setParameter("appDirName", "TestProject");
 		HttpServletRequest httpServletRequest = (HttpServletRequest)request;
 		Response response = actionService.runUnitTest(httpServletRequest);
 		Assert.assertEquals(200, response.getStatus());
@@ -99,6 +103,7 @@ public class UnitServiceTest extends RestBaseTest {
 		request.setParameter("projectId", "");
 		request.setParameter("appId", appCode);
 		request.setParameter("username", "");
+		request.setParameter("appDirName", "TestProject");
 		HttpServletRequest httpServletRequest = (HttpServletRequest)request;
 		Response response = actionService.runUnitTest(httpServletRequest);
 		Assert.assertEquals(200, response.getStatus());

@@ -36,6 +36,7 @@ public class CodeValidationServiceTest extends RestBaseTest  {
 		request.setParameter("sonar", "src");
 		request.setParameter("src", "java");
 		request.setParameter("skipTests", "false");
+		request.setParameter("appDirName", "TestProject");
 		HttpServletRequest httprequest = (HttpServletRequest)request;
 		Response response  = service.codeValidate(httprequest);
 		ActionResponse entity = (ActionResponse) response.getEntity();
@@ -74,6 +75,7 @@ public class CodeValidationServiceTest extends RestBaseTest  {
 		ActionService service = new ActionService();
 		MockHttpServletRequest request = new  MockHttpServletRequest();
 		request.setParameter("appId", "null");
+		request.setParameter("appDirName", "TestProject");
 		HttpServletRequest httprequest = (HttpServletRequest)request;
 		Response response  = service.codeValidate(httprequest);
 		ActionResponse entity = (ActionResponse) response.getEntity();
@@ -86,6 +88,7 @@ public class CodeValidationServiceTest extends RestBaseTest  {
 		MockHttpServletRequest request = new  MockHttpServletRequest();
 		request.setParameter("appId", "TestProject");
 		request.setParameter("projectId", "null");
+		request.setParameter("appDirName", "TestProject");
 		HttpServletRequest httprequest = (HttpServletRequest)request;
 		Response response  = service.codeValidate(httprequest);
 		ActionResponse entity = (ActionResponse) response.getEntity();
@@ -100,6 +103,7 @@ public class CodeValidationServiceTest extends RestBaseTest  {
 			request.setParameter("appId", "TestProject");
 			request.setParameter("projectId", projectId);
 			request.setParameter("customerId", "null");
+			request.setParameter("appDirName", "TestProject");
 			HttpServletRequest httprequest = (HttpServletRequest)request;
 			Response response  = service.codeValidate(httprequest);
 			ActionResponse entity = (ActionResponse) response.getEntity();
@@ -118,6 +122,7 @@ public class CodeValidationServiceTest extends RestBaseTest  {
 		request.setParameter("projectId", projectId);
 		request.setParameter("customerId", customerId);
 		request.setParameter("username", "null");
+		request.setParameter("appDirName", "TestProject");
 		HttpServletRequest httprequest = (HttpServletRequest)request;
 		Response response  = service.codeValidate(httprequest);
 		ActionResponse entity = (ActionResponse) response.getEntity();
