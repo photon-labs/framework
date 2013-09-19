@@ -337,7 +337,7 @@ public class ProjectManagerImpl implements ProjectManager, FrameworkConstants, C
 					MojoProcessor mojoProcessor = new MojoProcessor(new File(pluginInfoFile));
 					ApplicationHandler applicationHandler = mojoProcessor.getApplicationHandler();
 					
-					updateSelectedConfiguration (mojoProcessor, appInfo, serviceManager);
+//					updateSelectedConfiguration (mojoProcessor, appInfo, serviceManager);
 					createSqlFolder(appInfo, projectInfoFile, serviceManager);
 					if (applicationHandler != null) {
 						String selectedFeatures = applicationHandler.getSelectedFeatures();

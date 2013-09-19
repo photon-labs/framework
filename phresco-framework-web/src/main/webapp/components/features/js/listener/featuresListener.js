@@ -263,10 +263,10 @@ define(["features/features",  "application/application",  "projectlist/projectLi
 			custname = self.getCustomer();
 			userId = JSON.parse(commonVariables.api.localVal.getSession("userInfo"));
 			if(commonVariables.api.localVal.getProjectInfo() !== null){
-				projectInfo = commonVariables.api.localVal.getProjectInfo();
-				appDirName = projectInfo.data.projectInfo.appInfos[0].appDirName;
+				appdetails = commonVariables.api.localVal.getProjectInfo();
+				appDirName = appdetails.data.projectInfo.appInfos[0].appDirName;
+				techId = appdetails.data.projectInfo.appInfos[0].techInfo.id;
 			}
-			techId = commonVariables.techId;
 			header = {
 				contentType: "application/json",
 				dataType: "json"

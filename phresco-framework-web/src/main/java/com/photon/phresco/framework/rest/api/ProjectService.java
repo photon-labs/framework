@@ -180,8 +180,8 @@ public class ProjectService extends RestBase implements FrameworkConstants, Serv
 	public Response createProject(ProjectInfo projectinfo, @QueryParam(REST_QUERY_USERID) String userId) {
 		ResponseInfo<ProjectInfo> responseData = new ResponseInfo<ProjectInfo>();
 		try {
-			if (validateProject(projectinfo) != null) {
 				ResponseInfo validationResponse = validateProject(projectinfo);
+				if (validationResponse != null) {
 				ResponseInfo<List<String>> finalOutput = responseDataEvaluation(responseData, null,
 						null, validationResponse.getStatus(), validationResponse.getResponseCode());
 				return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN,ALL_HEADER).build();
@@ -441,8 +441,9 @@ public class ProjectService extends RestBase implements FrameworkConstants, Serv
 			UUID uniqueKey = UUID.randomUUID();
 			unique_key = uniqueKey.toString();
 			
-			if (validateAppInfo(oldAppDirName,appInfo) != null) {
+		//	if (validateAppInfo(oldAppDirName,appInfo) != null) {
 				ResponseInfo validationResponse = validateAppInfo(oldAppDirName,appInfo);
+				if (validationResponse != null) {
 				ResponseInfo<List<String>> finalOutput = responseDataEvaluation(responseData, null,
 						null, validationResponse.getStatus(), validationResponse.getResponseCode());
 				return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN,
@@ -730,7 +731,7 @@ public class ProjectService extends RestBase implements FrameworkConstants, Serv
 	@Path(REST_API_PROJECT_DELETE)
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response deleteproject(List<String> appDirnames) {
+	public Response deleteproject(List<String> appDirnames, @QueryParam("actionType") String actionType) {
 		BufferedReader reader = null;
 		ResponseInfo responseData = new ResponseInfo();
 		try {
@@ -758,7 +759,18 @@ public class ProjectService extends RestBase implements FrameworkConstants, Serv
 					}
 				}
 			}
-			projectManager.delete(appDirnames);
+			
+			boolean status  = projectManager.delete(appDirnames);
+			if(status && actionType.equals("project")) {
+				ResponseInfo finalOutput = responseDataEvaluation(responseData, null, null, RESPONSE_STATUS_SUCCESS, PHR200010);
+				return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN,ALL_HEADER).build();
+			} else if (status && actionType.equals("application")) {
+				ResponseInfo finalOutput = responseDataEvaluation(responseData, null, null, RESPONSE_STATUS_SUCCESS, PHR200026);
+				return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN,ALL_HEADER).build();
+			} else {
+				ResponseInfo finalOutput = responseDataEvaluation(responseData, null, null, RESPONSE_STATUS_FAILURE, PHR210047);
+				return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN,ALL_HEADER).build();
+			}
 		} catch (PhrescoException e) {
 			status = RESPONSE_STATUS_ERROR;
 			errorCode = PHR210012;
@@ -772,10 +784,6 @@ public class ProjectService extends RestBase implements FrameworkConstants, Serv
 			return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN,
 					"*").build();
 		}
-		status = RESPONSE_STATUS_SUCCESS;
-		successCode = PHR200010;
-		ResponseInfo finalOutput = responseDataEvaluation(responseData, null, null, status, successCode);
-		return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN,ALL_HEADER).build();
 	}
 
 	/**

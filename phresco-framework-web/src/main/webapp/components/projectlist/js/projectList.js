@@ -174,8 +174,10 @@ define(["projectlist/listener/projectListListener"], function() {
 		hideShowCredentials : function(val){
 			if(val === 'svn') {
 				$(".seperatetd").parent().show();
+				$(".seperatetd").show();
 			} else {
 				$(".seperatetd").parent().hide();
+				$(".seperatetd").hide();
 			}			
 		}, 
 		
@@ -287,21 +289,21 @@ define(["projectlist/listener/projectListListener"], function() {
 						}	
 					});
 				
-				if (action === "Add Repo") {
-					selectObj = $('.ad_Select');
+				if (action === "Add Repo") {   
+					selectObj = $("#type_"+dynamicId);
 					checkObj = $("#repocredential_"+dynamicId);
 					usrObj = $("#uname_"+dynamicId);
 					pwdObj = $("#pwd_"+dynamicId);
 					$("input[name='repoUrl']").val('');
 					$("textarea[name='commitMsg']").val('');
 				} else if (action === "Commit") {
-					selectObj = $('.co_Select');
+					selectObj = $("#commitType_"+dynamicId);
 					checkObj = $("#commitCredential_"+dynamicId);
 					usrObj = $("#commitUsername_"+dynamicId);
 					pwdObj = $("#commitPassword_"+dynamicId);
 					$("textarea[name='commitMsg']").val('');
 				} else if (action === "Update") {
-					selectObj = $('.up_Select');
+					selectObj = $("#updateType_"+dynamicId);
 					checkObj = $("#updateCredential_"+dynamicId);
 					usrObj = $("#updateUsername_"+dynamicId);
 					pwdObj = $("#updatePassword_"+dynamicId);
@@ -446,7 +448,8 @@ define(["projectlist/listener/projectListListener"], function() {
 				imgname1 = $("tr[class="+deleteproject+"]").next('tr').children('td:eq(5)').children('a').children('img').attr('name');
 				imgname2 = $("tr[class="+deleteproject+"]").prev('tr').children('td:eq(5)').children('a').children('img').attr('name');
 				self.flagged=1;
-				//commonVariables.loadingScreen.showLoading();				
+				//commonVariables.loadingScreen.showLoading();		
+				deletearray.actionType = "application";				
 				self.deleteProjectfn(deletearray, imgname1, imgname2, deleteproject);
 				self.closeAll($(this).attr('name'));
 				
@@ -467,6 +470,7 @@ define(["projectlist/listener/projectListListener"], function() {
 				   }else {currentRow = null;}
 				}
 				self.flagged=1;
+				projectnameArray.actionType = "project";
 				//commonVariables.loadingScreen.showLoading();
 				self.getAction(projectnameArray,"delete",function(response) {
 					//commonVariables.loadingScreen.removeLoading();

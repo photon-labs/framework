@@ -401,7 +401,7 @@ public class CIServiceTest {
 	}
 	
 	@Test
-	public void updateJob() throws PhrescoException {
+	public void updateJob() throws PhrescoException, ClientProtocolException, IOException, JSONException {
 		MockHttpServletRequest request = new MockHttpServletRequest();
 		request.setServletPath("/rest/api");
 		request.setContextPath("/framework");

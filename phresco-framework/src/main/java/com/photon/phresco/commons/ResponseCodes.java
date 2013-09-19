@@ -148,6 +148,8 @@ public interface ResponseCodes {
 	String PHR210045 = "PHR210045"; // unable to fetch apptypes
 	String PHR200025 = "PHR200025"; // application pilots listed successfully
 	String PHR210046 = "PHR210046"; // failed to fetch list of application pilots
+	String PHR200026 = "PHR200026"; // project deleted successfully
+	String PHR210047 = "PHR210047"; // unable to delete the project
 	
 	/*
 	 * App Info Page
