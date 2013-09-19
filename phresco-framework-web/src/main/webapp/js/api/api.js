@@ -166,24 +166,25 @@ define(["framework/base", "api/localStorageAPI"], function(){
 		},
 		
 		urlExists : function(url, callbackfunction, errorHandler){
+			
 			commonVariables.ajaxXhr = $.ajax({
 				type: 'GET',
 				url: url,
+				cache: false,
 				header : "Access-Control-Allow-Headers: x-requested-with",
 				dataType: "script",
-				timeout : 2000,
+				crossDomain: true,
+				timeout : 10000,
 				async : true,
 				beforeSend : function(jqXHR, settings) {
 					commonVariables.loadingScreen.showLoading($(commonVariables.contentPlaceholder));
 				},
 				success: function(data, textStatus, jqXHR){
 					commonVariables.loadingScreen.removeLoading();
-					//callbackfunction(jqXHR.status);
 					callbackfunction(true);
 				},
 				error: function(jqXHR, textStatus, errorThrown) {
 					commonVariables.loadingScreen.removeLoading();
-					//callbackfunction(jqXHR.status);
 					callbackfunction(false);
 				}	
 			});	
