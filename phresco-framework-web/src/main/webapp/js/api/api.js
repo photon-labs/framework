@@ -224,7 +224,7 @@ define(["framework/base", "api/localStorageAPI"], function(){
 						$("." + msgType).parent().hide();
 						$("." + msgType).css("display", "none");
 					}
-				}, 2000);
+				}, 7000);
 			}
 		}
 	});
