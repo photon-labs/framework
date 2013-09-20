@@ -198,6 +198,7 @@ public class UtilServiceTest extends RestBaseTest {
 		request.setParameter("username", userId);
 		request.setParameter("buildNumber", "");
 		request.setParameter("testBasis", "parameters");
+		request.setParameter("appDirName", "TestProject");
 		HttpServletRequest httpServletRequest = (HttpServletRequest)request;
 		Response checkMandatory = utilService.checkMandatoryValidation(httpServletRequest, appDirName, "package", customerId);
 		Assert.assertEquals(200, checkMandatory.getStatus());

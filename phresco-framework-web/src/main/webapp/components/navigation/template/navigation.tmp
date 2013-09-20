@@ -97,7 +97,8 @@
                             </tbody>
                          </table>
                   	 </div>
-               </div>   
+               </div>
+				<div class="popuploading" id="importloading" style="display:none">&nbsp</div>
                   <div class="flt_right">
                         <input class="btn btn_style" type="button" value="Import" name="importbtn" data-i18n="[value]navigation.application.import">
                         <input class="btn btn_style dyn_popup_close" type="button" value="Close" data-i18n="[value]common.btn.close">

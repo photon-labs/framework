@@ -128,8 +128,16 @@ define([], function() {
 		getSonarStatus : function(url , callback){
 			var self = this;
 			
+			var sonarExternalUrl = url;
+			var pathArray = sonarExternalUrl.split( '/' );
+			var protocol = pathArray[0];
+			var host = pathArray[2];
+
+			sonarExternalUrl = sonarExternalUrl.replace(protocol, window.location.protocol);
+			sonarExternalUrl = sonarExternalUrl.replace(host, window.location.host);
+
 			try {
-				commonVariables.api.urlExists(url, 
+				commonVariables.api.urlExists(sonarExternalUrl, 
 				function(response){
 					callback(response);
 				},
@@ -240,12 +248,21 @@ define([], function() {
 				commonVariables.api.ajaxRequest(self.getRequestHeader(validateAgainst , "iframereport"), 
 					function(iframereport) {
 						if(iframereport.data !== null){
+							var sonarExternalUrl = iframereport.data;
+
+							var pathArray = sonarExternalUrl.split( '/' );
+							var protocol = pathArray[0];
+							var host = pathArray[2];
+
+							sonarExternalUrl = sonarExternalUrl.replace(protocol, window.location.protocol);
+							sonarExternalUrl = sonarExternalUrl.replace(host, window.location.host);
+
 							self.closeConsole();
-							var iframedata = "<iframe id='iframe' class='iframe' src="+iframereport.data+ " ></iframe>";
+							var iframedata = "<iframe id='iframe' class='iframe' src="+sonarExternalUrl+ " ></iframe>";
 							$('#content_div').html(iframedata);
 							var dynHeight = $('#content_div').height();
 							$('#iframe').css('height', dynHeight);
-						}else{
+						} else {
 							if(iframereport.responseCode === "PHR510003" ) {
 								$(".alert").show();
 								$('#content_div').html('<div class="alert" style="text-align: center; width:98%"></div>');

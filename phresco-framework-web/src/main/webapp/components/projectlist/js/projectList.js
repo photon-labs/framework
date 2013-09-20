@@ -279,7 +279,7 @@ define(["projectlist/listener/projectListListener"], function() {
 				$('.searchdropdown').hide();
 				$('.searchdropdown').html('');
 				//end for hiding and clearing dropdown value
-				$("#uname_"+dynamicId).keypress(function(e) {
+				/* $("#uname_"+dynamicId).keypress(function(e) {
 						if($("#type_"+dynamicId).val() === 'git') {
 							if (e.which !== 95) {
 								return true;
@@ -287,7 +287,7 @@ define(["projectlist/listener/projectListListener"], function() {
 								e.preventDefault();
 							}
 						}	
-					});
+					}); */
 				
 				if (action === "Add Repo") {   
 					selectObj = $("#type_"+dynamicId);

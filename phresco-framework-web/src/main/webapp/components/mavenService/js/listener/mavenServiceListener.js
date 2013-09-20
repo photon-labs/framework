@@ -312,8 +312,11 @@ define([], function() {
 		 * @return: returns the contructed header
 		 */
 		getRequestHeader : function(type, body, urlContext, paramData) {
+			var appDirName = '';
 			var projectInfo = commonVariables.api.localVal.getProjectInfo();
-			var appDirName = projectInfo.data.projectInfo.appInfos[0].appDirName;
+			if(projectInfo !== null) {
+				appDirName = projectInfo.data.projectInfo.appInfos[0].appDirName;
+			}
 			var header = {
 				contentType: "application/json",
 				requestMethod: type,

@@ -152,6 +152,7 @@ define(["unitTest/listener/unitTestListener", "testResult/listener/testResultLis
 			//To open the unit test directory
 			$('#openFolder').unbind('click');
 			$("#openFolder").click(function() {
+				commonVariables.hideloading = true;
 				var paramJson = {};
 				paramJson.type =  commonVariables.typeUnitTest;
 				commonVariables.navListener.openFolder(paramJson);
@@ -160,6 +161,7 @@ define(["unitTest/listener/unitTestListener", "testResult/listener/testResultLis
 			//To copy the path of unit test directory
 			$('#copyPath').unbind('click');
 			$("#copyPath").click(function() {
+				commonVariables.hideloading = true;
 				var paramJson = {};
 				paramJson.type =  commonVariables.typeUnitTest;
 				commonVariables.navListener.copyPath(paramJson);

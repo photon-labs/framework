@@ -176,6 +176,7 @@ define(["functionalTest/listener/functionalTestListener", "testResult/listener/t
 			//To open the functional test directory
 			$('#openFolder').unbind('click');
 			$("#openFolder").click(function() {
+				commonVariables.hideloading = true;
 				var paramJson = {};
 				paramJson.type =  commonVariables.typeFunctionalTest;
 				commonVariables.navListener.openFolder(paramJson);
@@ -184,6 +185,7 @@ define(["functionalTest/listener/functionalTestListener", "testResult/listener/t
 			//To copy the path of functional test directory
 			$('#copyPath').unbind('click');
 			$("#copyPath").click(function() {
+				commonVariables.hideloading = true;
 				var paramJson = {};
 				paramJson.type =  commonVariables.typeFunctionalTest;
 				commonVariables.navListener.copyPath(paramJson);

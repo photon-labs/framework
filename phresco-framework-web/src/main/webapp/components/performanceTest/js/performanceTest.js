@@ -347,6 +347,7 @@ define(["performanceLoadListener/listener/performanceLoadListener"], function() 
 			//To open the performance test directory
 			$('#openFolder').unbind('click');
 			$("#openFolder").click(function() {
+				commonVariables.hideloading = true;
 				var paramJson = {};
 				paramJson.type =  commonVariables.typePerformanceTest;
 				commonVariables.navListener.openFolder(paramJson);
@@ -355,6 +356,7 @@ define(["performanceLoadListener/listener/performanceLoadListener"], function() 
 			//To copy the path of performance test directory
 			$('#copyPath').unbind('click');
 			$("#copyPath").click(function() {
+				commonVariables.hideloading = true;
 				var paramJson = {};
 				paramJson.type =  commonVariables.typePerformanceTest;
 				commonVariables.navListener.copyPath(paramJson);

@@ -126,6 +126,7 @@ define([], function() {
 				jobTemplatesObject.ciListener.jenkinsStatus(function(response) {
 					if (response.data === "200") {
 						$('input[name=switch]').attr('value', "Stop");
+						$('input[name=setup]').attr('disabled', "disabled");
 					} else if (response.data === "503") {
 						$('input[name=switch]').attr('value', "Starting...");
 						$('input[name=start]').attr('disabled', true);
