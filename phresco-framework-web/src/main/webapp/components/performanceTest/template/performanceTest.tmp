@@ -212,7 +212,7 @@
 	                      <a value="responseTime" data-toggle="dropdown" class="dropdown-toggle" role="button" id="graphForDrop" href="javascript:void(0)" data-i18n=performanceLoad.aggrresponsetime><b class="caret"></b></a>
 	                      <div aria-labelledby="drop5" role="menu" class="dropdown-menu cust_sel code_test_opt">
 	                      	<ul id="graphForList">
-	                        	<li class="graphForDrop"><a name="graphForDrop" value="responseTime" href="javascript:void(0)" data-i18n=performanceLoad.responsetime></a></li>
+	                        	<li class="graphForDrop"><a name="graphForDrop" value="responseTime" href="javascript:void(0)" data-i18n=performanceLoad.aggrresponsetime></a></li>
 	                        	<li class="graphForDrop"><a name="graphForDrop" value="throughPut" href="javascript:void(0)" data-i18n=performanceLoad.throughput></a></li>
 	                        	<li class="graphForDrop"><a name="graphForDrop" value="minResponseTime" href="javascript:void(0)" data-i18n=performanceLoad.minresponsetime></a></li>
 	                        	<li class="graphForDrop"><a name="graphForDrop" value="maxResponseTime" href="javascript:void(0)" data-i18n=performanceLoad.maxresponsetime></a></li>
