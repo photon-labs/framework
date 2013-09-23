@@ -1936,7 +1936,6 @@ define([], function() {
 					var thisAnchorElem = $(this).find('a');
 					var thisTemplateJsonData = $(thisAnchorElem).data("templateJson");
 					var thisAppName = $(thisAnchorElem).attr("appname");
-
 					if (thisAppName === appName && thisTemplateJsonData.enableRepo) {
 						parentAppFound = true;
 						return false;
@@ -1946,6 +1945,7 @@ define([], function() {
 				if (!parentAppFound) {
 					$(ui.item).find('span').text(itemText);
 					$(ui.sender).sortable('cancel');
+					$(ui.item).find("a").hide();
 					$(".msgdisplay").removeClass("success").addClass("error");
 					$(".error").text("Parent object not found for "+templateJsonData.name+" template!");
 					$(".error").show();

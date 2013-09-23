@@ -171,13 +171,19 @@ define(["projectlist/listener/projectListListener"], function() {
 			}
 		},
 		
-		hideShowCredentials : function(val){
+		hideShowCredentials : function(val,usrObj,pwdObj,checkObj){
 			if(val === 'svn') {
 				$(".seperatetd").parent().show();
 				$(".seperatetd").show();
+				if(!checkObj.is(':checked')) {
+					usrObj.attr('readonly','true');
+					pwdObj.attr('readonly','true');
+				}
 			} else {
 				$(".seperatetd").parent().hide();
 				$(".seperatetd").hide();
+				usrObj.removeAttr('readonly');
+				pwdObj.removeAttr('readonly');
 			}			
 		}, 
 		
@@ -323,10 +329,10 @@ define(["projectlist/listener/projectListListener"], function() {
 				}
 				
 				if(selectObj !== null  && selectObj !== undefined && selectObj !== '') {
-					self.hideShowCredentials(selectObj.val());
+					self.hideShowCredentials(selectObj.val(),usrObj,pwdObj,checkObj);
 					selectObj.unbind("change");
 					selectObj.on("change", function(){				
-						self.hideShowCredentials(selectObj.val());			
+						self.hideShowCredentials(selectObj.val(),usrObj,pwdObj,checkObj);			
 					});
 				}
 				

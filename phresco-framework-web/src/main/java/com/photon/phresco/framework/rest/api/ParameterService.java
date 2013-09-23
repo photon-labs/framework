@@ -234,6 +234,10 @@ public class ParameterService extends RestBase implements FrameworkConstants, Se
 			@QueryParam(REST_QUERY_KEY) String key, @QueryParam(REST_QUERY_VALUE) String value) {
 		ResponseInfo<String> responseData = new ResponseInfo<String>();
 		try {
+			if (Constants.PHASE_FUNCTIONAL_TEST.equals(goal)) {
+				String functionalTestFramework = FrameworkServiceUtil.getFunctionalTestFramework(appDirName);
+				goal = goal + HYPHEN + functionalTestFramework;
+			}
 			ApplicationInfo applicationInfo = FrameworkServiceUtil.getApplicationInfo(appDirName);
 			Map<String, DependantParameters> watcherMap = valueMap.get(applicationInfo.getId() + goal);
 			DependantParameters currentParameters = watcherMap.get(key);
@@ -248,6 +252,11 @@ public class ParameterService extends RestBase implements FrameworkConstants, Se
 					SUCCESS, RESPONSE_STATUS_SUCCESS, PHR5C00001);
 			return Response.ok(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, ALL_HEADER).build();
 		} catch (PhrescoException e) {
+			ResponseInfo<PossibleValues> finalOutput = responseDataEvaluation(responseData, e,
+					FAILURE, RESPONSE_STATUS_ERROR, PHR5C10001);
+			return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, ALL_HEADER)
+					.build();
+		} catch (PhrescoPomException e) {
 			ResponseInfo<PossibleValues> finalOutput = responseDataEvaluation(responseData, e,
 					FAILURE, RESPONSE_STATUS_ERROR, PHR5C10001);
 			return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, ALL_HEADER)
@@ -278,6 +287,11 @@ public class ParameterService extends RestBase implements FrameworkConstants, Se
 		PossibleValues possibleValues = null;
 		ResponseInfo finalOutput = new ResponseInfo();
 		try {
+			if (Constants.PHASE_FUNCTIONAL_TEST.equals(goal)) {
+				String functionalTestFramework = FrameworkServiceUtil.getFunctionalTestFramework(appDirName);
+				goal = goal + HYPHEN + functionalTestFramework;
+			}
+			
 			ApplicationInfo applicationInfo = FrameworkServiceUtil.getApplicationInfo(appDirName);
 			Map<String, DependantParameters> watcherMap = valueMap.get(applicationInfo.getId() + goal);
 			Map<String, Object> constructMapForDynVals = constructMapForDynVals(applicationInfo, watcherMap, key, customerId, null);
@@ -300,12 +314,14 @@ public class ParameterService extends RestBase implements FrameworkConstants, Se
     			constructDynamicTemplate = constructDynamicTemplate(customerId, userId, dependentParameter, templateDetails);
     			 finalOutput = responseDataEvaluation(responseData, null,
     					constructDynamicTemplate.toString(), RESPONSE_STATUS_SUCCESS, PHR6C00001);
+            } else {
+            	finalOutput = responseDataEvaluation(responseData, null,
+    					null, RESPONSE_STATUS_SUCCESS, PHR6C00001);
             }
             
             if (TYPE_DYNAMIC_PARAMETER.equalsIgnoreCase(dependentParameter.getType())) {
             	updateDynamicValuesToWathcer(goal, key, applicationInfo, watcherMap, dependentParameter, dependentPossibleValues);
             }
-            
             
 			return Response.ok(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, ALL_HEADER).build();
 		} catch (Exception e) {
@@ -618,69 +634,6 @@ public class ParameterService extends RestBase implements FrameworkConstants, Se
 	}
 
 	/**
-	 * Gets the possible values.
-	 *
-	 * @param processor the processor
-	 * @param goal the goal
-	 * @param dependencyKey the key
-	 * @param value the value
-	 * @param appInfo the app info
-	 * @param customerId the customer id
-	 * @param appDirName the app dir name
-	 * @return the possible values
-	 * @throws PhrescoException the phresco exception
-	 * @throws PhrescoPomException the phresco pom exception
-	 */
-	private PossibleValues getPossibleValues(MojoProcessor processor, String goal, String dependencyKey, String value,
-			ApplicationInfo appInfo, String customerId, String appDirName) throws PhrescoException, PhrescoPomException {
-		if (Constants.PHASE_FUNCTIONAL_TEST.equals(goal)) {
-			String functionalTestFramework = FrameworkServiceUtil.getFunctionalTestFramework(appDirName);
-			goal = goal + HYPHEN + functionalTestFramework;
-		}
-		Parameter parameter = processor.getParameter(goal, dependencyKey);
-		if (TYPE_DYNAMIC_PARAMETER.equalsIgnoreCase(parameter.getType())) {
-			Dependency dependency = parameter.getDynamicParameter().getDependencies().getDependency();
-			String clazz = parameter.getDynamicParameter().getClazz();
-			List<ArtifactGroup> plugins = new ArrayList<ArtifactGroup>();
-			ArtifactGroup artifactGroup = new ArtifactGroup();
-			artifactGroup.setGroupId(dependency.getGroupId());
-			artifactGroup.setArtifactId(dependency.getArtifactId());
-			ArtifactInfo artifactInfos = new ArtifactInfo();
-			artifactInfos.setVersion(dependency.getVersion());
-			artifactGroup.setVersions(Arrays.asList(artifactInfos));
-			plugins.add(artifactGroup);
-			RepoInfo repoInfo = new RepoInfo();
-			PhrescoDynamicLoader loader = new PhrescoDynamicLoader(repoInfo, plugins);
-			DynamicParameter dynamicParameter = loader.getDynamicParameter(clazz);
-			Map<String, DependantParameters> map = valueMap.get(appInfo.getId() + goal);
-			DependantParameters currentParameters = map.get(dependencyKey);
-			if (currentParameters == null) {
-	            currentParameters = new DependantParameters();
-	        }
-	        currentParameters.setValue(value);
-	        map.put(dependencyKey, currentParameters);
-	        
-	        Map<String, Object> constructMapForDynVals = constructMapForDynVals(appInfo, map, parameter.getKey(), customerId, null);
-	        constructMapForDynVals.put(DynamicParameter.KEY_MOJO, processor);
-	        
-	        try {
-				PossibleValues values = dynamicParameter.getValues(constructMapForDynVals);
-				return values;
-
-			} catch (IOException e) {
-				throw new PhrescoException(e);
-			} catch (ParserConfigurationException e) {
-				throw new PhrescoException(e);
-			} catch (SAXException e) {
-				throw new PhrescoException(e);
-			} catch (ConfigurationException e) {
-				throw new PhrescoException(e);
-			}
-		}
-		return null;
-	}
-	
-	/**
 	 * To setPossibleValuesInReq
 	 * @param mojo
 	 * @param appInfo
@@ -778,7 +731,6 @@ public class ParameterService extends RestBase implements FrameworkConstants, Se
             			templateMap.put(appInfo.getId() + parameter.getKey(), templateDetails);
             		}
                 }
-                
                 valueMap.put(appInfo.getId() + goal, watcherMap);
             }
         } catch (Exception e) {

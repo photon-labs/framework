@@ -956,10 +956,12 @@ public class ActionService implements ActionServiceConstant, FrameworkConstants,
 			}
 		
 		} catch (IOException e) {
+			LockUtil.removeLock(uniquekey);
 			status=ERROR;
 			S_LOGGER.error(FrameworkUtil.getStackTraceAsString(e));
 			response.setService_exception(FrameworkUtil.getStackTraceAsString(e));
 		} catch (Exception e) {
+			LockUtil.removeLock(uniquekey);
 			status=ERROR;
 			S_LOGGER.error(FrameworkUtil.getStackTraceAsString(e));
 			response.setService_exception(FrameworkUtil.getStackTraceAsString(e));

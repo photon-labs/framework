@@ -642,7 +642,7 @@ define(["projectlist/projectList"], function(ProjectList) {
 				projectlist.projectslistListener.addUpdateEvent ($("input[name='updatebtn']"),"294187d7-f75a-4adc-bb25-ce9465e0e82f","");
 				$(".credential").attr('checked','checked');
 				$(".credential").click();
-				projectlist.hideShowCredentials('git');
+				projectlist.hideShowCredentials('git',$("#updateUsername_294187d7-f75a-4adc-bb25-ce9465e0e82f"),$("#updatePassword_294187d7-f75a-4adc-bb25-ce9465e0e82f"),$("#updateCredential_294187d7-f75a-4adc-bb25-ce9465e0e82f"));
 				$("input[name='revision']").attr('checked','true');
 				$("input[name='revision']").click();
 				setTimeout(function() {

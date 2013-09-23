@@ -129,7 +129,7 @@ define([], function() {
 						$('input[name=setup]').attr('disabled', "disabled");
 					} else if (response.data === "503") {
 						$('input[name=switch]').attr('value', "Starting...");
-						$('input[name=start]').attr('disabled', true);
+						$('input[name=start]').attr('disabled', "disabled");
 					} else {
 						$('input[name=switch]').attr('value', "Start");
 					}
