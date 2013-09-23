@@ -871,19 +871,19 @@ public class ParameterService extends RestBase implements FrameworkConstants, Se
 					 if (extractedFile.exists()) {
 						 FileUtil.copyFolder(extractedFile, destination);
 					 }
-					 responseDataEvaluation(responseData, null, "File uploaded successfully", true);
+					 responseDataEvaluation(responseData, null, "File uploaded successfully", "success", null);
 				 } else {
-					 responseDataEvaluation(responseData, null, "No jmx file exist", false);
+					 responseDataEvaluation(responseData, null, "No jmx file exist", "failure", null);
 				 }
 			 } else {
-				 responseDataEvaluation(responseData, null, "Unable To Extract", false);
+				 responseDataEvaluation(responseData, null, "Unable To Extract", "failure", null);
 			 }
 			 
 			 //after extracting, delete that zip file
 			 FileUtil.delete(tempZipFile);
 			 
 		} catch (Exception e) {
-			responseDataEvaluation(responseData, e, "Upload Failed", false);
+			responseDataEvaluation(responseData, e, "Upload Failed", "failure", null);
 		} finally {
 			 FileUtil.delete(tempDirectory);
 		}
