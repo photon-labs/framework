@@ -1619,7 +1619,7 @@ define([], function() {
 				var parameters = [];
 				$(this).find($('.parameterRow')).each(function() {
 					var name = $(this).find($("input[name=parameterName]")).val();
-					var value = $(this).find($("input[name=parameterValue]")).val();
+					var value = $(this).find($("textarea[name=parameterValue]")).val();
 					var encode = $(this).find($("input[name=parameterEncode]")).is(':checked');
 					var nameValueObj = {};
 					nameValueObj.name=name;
