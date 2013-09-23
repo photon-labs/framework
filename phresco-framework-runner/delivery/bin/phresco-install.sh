@@ -45,9 +45,9 @@ case "$1" in
      	create)
             	echo "Creating New Project";
 				cd $PHRESCO_HOME/bin
-				echo "Enter ServerProperties";
+				echo "Enter ServerProperties file name";
                 read property
-                read -p "Do you wish interactive mode? (y/n) " RESP
+                read -p "Do you wish Interactive mode? (y/n) " RESP
                 if [ "$RESP" = "y" ]; then
                 mvn phresco:create -Dservice.properties=$property.properties -Dinteractive=true -f pom-create.xml -e
                 else
@@ -57,8 +57,15 @@ case "$1" in
       	build)
                 if [ -d ".phresco/" ];
                 then
-                pwd
                 mvn phresco:package
+                else
+                echo "Invaild Location";
+                fi
+                ;;
+		remote)
+				if [ -d ".phresco/" ];
+                then
+                mvn tomcat:run
                 else
                 echo "Invaild Location";
                 fi
@@ -106,7 +113,12 @@ case "$1" in
         validate)
                 if [ -d ".phresco/" ];
                 then
-                mvn phresco:validate-code
+					if curl --output /dev/null --silent --head --fail "http://localhost:2468/sonar"; then
+						echo "Sonar Started"
+						mvn phresco:validate-code
+					else
+						echo "Sonar not Started"
+					fi
                 else
                 echo "Invalid Location";
                 fi
@@ -127,8 +139,12 @@ case "$1" in
                 echo "Invaild Location";
                 fi
                 ;;
+			help)
+				cd $PHRESCO_HOME/bin
+				cat help.txt
+				;;
 	*)
-echo "Usage: $NAME { install-ui|version|create|build|deploy|validate|unit-test|functional-test|performance|load|pdf-report|site-report }" >&2
+echo "Usage: $NAME { install-ui|version|create|build|deploy|remote|validate|unit-test|functional-test|performance|load|pdf-report|site-report|help }" >&2
         exit 1
         ;;
 esac
