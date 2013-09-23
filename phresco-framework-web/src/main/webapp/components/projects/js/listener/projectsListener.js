@@ -154,7 +154,7 @@ define([], function() {
 					contentType: "application/json",
 					requestMethod: "GET",
 					dataType: "json",
-					webserviceurl: commonVariables.webserviceurl + "project/edit?userId="+userId+"&customerId="+self.getCustomer()+"&projectId="+id
+					webserviceurl: commonVariables.webserviceurl + "project/edit?customerId="+self.getCustomer()+"&projectId="+id
 				};
 
 				if(action === "projectlist"){

@@ -300,9 +300,7 @@ define(["build/listener/buildListener"], function() {
 								self.clearLogContent();
 								$('input[name=buildDelete]').hide();
 
-								self.clearLogContent();
-								$('input[name=buildDelete]').hide();
-
+								$('#deploye_' + divId).find('form[name=deployForm] div #buildNumber').val(divId);
 								self.sqlQueryParam($(current).closest('tr').find('form[name=deployForm] #executeSql').is(':checked'), $(current).closest('tr').find('form[name=deployForm] ul[name=sortable2] li'), function(retVal){
 									sqlParam = retVal;
 								});
