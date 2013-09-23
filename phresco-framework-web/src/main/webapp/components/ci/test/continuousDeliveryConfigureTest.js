@@ -460,7 +460,7 @@ define(["ci/continuousDeliveryConfigure"], function(ContinuousDeliveryConfigure)
 				
 				$.mockjax({
 //					http://localhost:8234/framework/rest/api/app/ciPerformanceTest?jobName=5job&repoType=&downStreamCriteria=SUCCESS&scheduleType=Daily&hours=*&minutes=*&scheduleExpression=&testBasis=parameters&testAgainst=server&customTestAgainst=server&environmentName=Production&testName=&rampUpPeriod=&authorizationUrl=&authorizationUserName=&authorizationPassword=&authorizationDomain=&authorizationRealm=&httpName=localhost&context=&contextType=GET&encodingType=UTF-8&redirectAutomatically=on&parameterName=&parameterValue=&dbName=&queryType=Select+Statement&query=&isFromCI=&appDir=java&testAction=performance
-					url: commonVariables.webserviceurl + "app/ciPerformanceTest?jobName=5job&repoType=&downStreamCriteria=SUCCESS&scheduleType=Weekly&hours=*&minutes=*&scheduleExpression=&testBasis=parameters&testAgainst=server&customTestAgainst=server&environmentName=Production&testName=&rampUpPeriod=&authorizationUrl=&authorizationUserName=&authorizationPassword=&authorizationDomain=&authorizationRealm=&httpName=localhost&context=&contextType=GET&encodingType=UTF-8&redirectAutomatically=on&parameterName=&parameterValue=&dbName=&queryType=Select+Statement&query=&isFromCI=&appDir=java&testAction=performance",
+					url: commonVariables.webserviceurl + "app/ciPerformanceTest?jobName=5job&repoType=&downStreamCriteria=SUCCESS&scheduleType=Weekly&hours=*&minutes=*&scheduleExpression=&testBasis=parameters&testAgainst=server&customTestAgainst=server&environmentName=Production&testName=&rampUpPeriod=&authorizationUrl=&authorizationUserName=&authorizationPassword=&authorizationDomain=&authorizationRealm=&httpName=localhost&context=&contextType=GET&encodingType=UTF-8&redirectAutomatically=on&parameterName=&dbName=&queryType=Select+Statement&query=&isFromCI=&appDir=java&testAction=performance",
 					type:'POST',
 					contentType: 'application/json',
 					status: 200,
@@ -526,7 +526,7 @@ define(["ci/continuousDeliveryConfigure"], function(ContinuousDeliveryConfigure)
 				ciAPI.localVal.setSession("customerId" , "photon");
 				
 				$.mockjax({
-					url: commonVariables.webserviceurl + "app/ciPerformanceTest?jobName=6job&repoType=&downStreamCriteria=SUCCESS&scheduleType=Weekly&hours=*&minutes=*&scheduleExpression=&testBasis=parameters&testAgainst=server&customTestAgainst=server&environmentName=Production&configurations=server&testName=&noOfUsers=&rampUpPeriod=&loopCount=&authorizationUrl=&authorizationUserName=&authorizationPassword=&authorizationDomain=&authorizationRealm=&httpName=localhost&context=admin%2Flogin&contextType=GET&encodingType=UTF-8&parameterName=&parameterValue=&isFromCI=&appDir=java&testAction=load",
+					url: commonVariables.webserviceurl + "app/ciPerformanceTest?jobName=6job&repoType=&downStreamCriteria=SUCCESS&scheduleType=Weekly&hours=*&minutes=*&scheduleExpression=&testBasis=parameters&testAgainst=server&customTestAgainst=server&environmentName=Production&configurations=server&testName=&noOfUsers=&rampUpPeriod=&loopCount=&authorizationUrl=&authorizationUserName=&authorizationPassword=&authorizationDomain=&authorizationRealm=&httpName=localhost&context=admin%2Flogin&contextType=GET&encodingType=UTF-8&parameterName=&isFromCI=&appDir=java&testAction=load",
 					type:'POST',
 					contentType: 'application/json',
 					status: 200,

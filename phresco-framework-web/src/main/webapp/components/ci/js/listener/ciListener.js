@@ -1492,7 +1492,7 @@ define([], function() {
 					} else {
 						testAction = "performance";
 					}
-					ciRequestBody.data = $('#jonConfiguration').serialize()+"&appDirName="+appDirName+"&testAction="+testAction;
+					ciRequestBody.data = $('#jonConfiguration :input[name!=parameterValue]').serialize()+"&appDirName="+appDirName+"&testAction="+testAction;
 					ciRequestBody.jsondata = json;
 					self.getHeaderResponse(self.getRequestHeader(ciRequestBody, 'writeJson'), function (response) {
 					});
