@@ -1,0 +1,17 @@
+
+Usage : phresco [options]
+
+phresco install-ui       - Start Web Console
+phresco version	         - Show version number
+phresco create           - Create new Project
+phresco build            - Build Project
+phresco deploy           - Deploy Porject
+phresco validate         - Code Validation
+phresco unit-test        - Run Unit-test case
+phresco functional-test  - Run Functional-test case
+phresco performance      - Run Performance Test
+phresco load             - Run Load Test
+phresco pdf-report       - Create PDF Report based on results
+phresco site-report      - Create Maven site report
+phresco help             - Print this help message
+       
