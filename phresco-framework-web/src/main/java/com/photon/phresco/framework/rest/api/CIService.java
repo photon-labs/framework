@@ -19,6 +19,7 @@ package com.photon.phresco.framework.rest.api;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.ConnectException;
 import java.net.HttpURLConnection;
 import java.net.InetAddress;
@@ -27,6 +28,7 @@ import java.net.URLConnection;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Consumes;
@@ -41,7 +43,9 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
@@ -53,6 +57,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import com.google.gson.Gson;
 import com.photon.phresco.commons.FrameworkConstants;
 import com.photon.phresco.commons.ResponseCodes;
 import com.photon.phresco.commons.model.ApplicationInfo;
@@ -60,6 +65,7 @@ import com.photon.phresco.commons.model.CIBuild;
 import com.photon.phresco.commons.model.CIJob;
 import com.photon.phresco.commons.model.CIJobStatus;
 import com.photon.phresco.commons.model.ContinuousDelivery;
+import com.photon.phresco.commons.model.Customer;
 import com.photon.phresco.commons.model.ProjectDelivery;
 import com.photon.phresco.commons.model.ProjectInfo;
 import com.photon.phresco.commons.model.Technology;
@@ -87,6 +93,7 @@ import com.sun.jersey.api.client.ClientResponse.Status;
 @Path("/ci")
 public class CIService extends RestBase implements FrameworkConstants, ServiceConstants, Constants, ResponseCodes {
 
+	private ServiceManager serviceManager = null;
 	
 	/**
 	 * @param projectId
@@ -153,7 +160,7 @@ public class CIService extends RestBase implements FrameworkConstants, ServiceCo
 			}
 			List<CIJob> jobs = continuousDelivery.getJobs();
 			//boolean validate = jobNameValidation(jobs);
-			boolean coreCreateJob = coreCreateJob(continuousDelivery, projectId, appDir, userId, request);
+			boolean coreCreateJob = coreCreateJob(continuousDelivery, projectId, appDir, userId, customerId, request);
 			if (coreCreateJob) {
 				finalOutput = responseDataEvaluation(responseData, null, continuousDelivery, RESPONSE_STATUS_SUCCESS, PHR800002);
 			} else {
@@ -268,7 +275,7 @@ public class CIService extends RestBase implements FrameworkConstants, ServiceCo
 				ciJobs.add(cijob);
 			}
 			continuousDelivery.setJobs(ciJobs);
-			boolean coreCreateJob = coreCreateJob(continuousDelivery, projectId, appDir, userId, request);
+			boolean coreCreateJob = coreCreateJob(continuousDelivery, projectId, appDir, userId, customerId, request);
 
 			if (coreCreateJob) {
 				finalOutput = responseDataEvaluation(responseData, null, continuousDelivery, RESPONSE_STATUS_SUCCESS, PHR800002);
@@ -327,7 +334,7 @@ public class CIService extends RestBase implements FrameworkConstants, ServiceCo
 							if(StringUtils.isNotEmpty(ciJob.getAppDirName())) {
 								applicationInfo = FrameworkServiceUtil.getApplicationInfo(ciJob.getAppDirName());
 							}
-							CIJob job = setPreBuildCmds(ciJob,  applicationInfo, appDir, projectId, continuousDelivery.getName(), userId, request);
+							CIJob job = setPreBuildCmds(ciJob,  applicationInfo, appDir, projectId, continuousDelivery.getName(), userId, customerId, request);
 							updateJob = ciManager.updateJob(job);
 							//						if(updateJob) {
 							tempJobs.add(ciJob);
@@ -343,7 +350,7 @@ public class CIService extends RestBase implements FrameworkConstants, ServiceCo
 					if(StringUtils.isNotEmpty(ciJob.getAppDirName())) {
 						applicationInfo = FrameworkServiceUtil.getApplicationInfo(ciJob.getAppDirName());
 					}
-					CIJob jobWithCmds = setPreBuildCmds(ciJob,  applicationInfo, appDir, projectId, continuousDelivery.getName(), userId, request);
+					CIJob jobWithCmds = setPreBuildCmds(ciJob,  applicationInfo, appDir, projectId, continuousDelivery.getName(), userId, customerId, request);
 					boolean validateJob = validateJob(jobWithCmds.getJobName());
 					if(validateJob){
 						boolean createJob = ciManager.createJob(jobWithCmds);
@@ -674,7 +681,13 @@ public class CIService extends RestBase implements FrameworkConstants, ServiceCo
 			CIManager ciManager = PhrescoFrameworkFactory.getCIManager();
 			String[] cred = new String[2];
 			cred[0] = ciManager.getMailConfiguration(SMTP_AUTH_USERNAME);
-			cred[1] = ciManager.decyPassword(ciManager.getMailConfiguration(SMTP_AUTH_PASSWORD));
+			String mailConfiguration = ciManager.getMailConfiguration(SMTP_AUTH_PASSWORD);
+			if(StringUtils.isNotEmpty(mailConfiguration)) {
+				cred[1] = ciManager.decyPassword(mailConfiguration);
+			} else {
+				cred[1] = "";
+			}
+			
 			finalOutput = responseDataEvaluation(responseData, null, cred, RESPONSE_STATUS_SUCCESS, PHR800009);
 		} catch (PhrescoException e) {
 			finalOutput = responseDataEvaluation(responseData, e, null, RESPONSE_STATUS_ERROR, PHR810014);
@@ -935,7 +948,7 @@ public class CIService extends RestBase implements FrameworkConstants, ServiceCo
 	}
 	
 	//core method used to create jobs in contDelivery
-	private boolean coreCreateJob(ContinuousDelivery continuousDelivery, String  projectId, String appDir, String userId, HttpServletRequest request) throws PhrescoException {
+	private boolean coreCreateJob(ContinuousDelivery continuousDelivery, String  projectId, String appDir, String userId, String customerId, HttpServletRequest request) throws PhrescoException {
 		CIManagerImpl ciManager = null;
 		boolean createJsonJobs = false;
 		try {
@@ -947,7 +960,7 @@ public class CIService extends RestBase implements FrameworkConstants, ServiceCo
 				if(StringUtils.isNotEmpty(job.getAppDirName())) {
 					applicationInfo = FrameworkServiceUtil.getApplicationInfo(job.getAppDirName());
 				}
-				CIJob jobWithCmds = setPreBuildCmds(job,  applicationInfo, appDir, projectId, continuousDelivery.getName(), userId, request);
+				CIJob jobWithCmds = setPreBuildCmds(job,  applicationInfo, appDir, projectId, continuousDelivery.getName(), userId, customerId, request);
 				boolean createJob = ciManager.createJob(job);
 				if (createJob) {
 					ciJobs.add(job);
@@ -962,7 +975,7 @@ public class CIService extends RestBase implements FrameworkConstants, ServiceCo
 		}
 	}
 	
-	public CIJob setPreBuildCmds(CIJob job, ApplicationInfo appInfo, String appDir, String id, String name, String userId, HttpServletRequest request) throws PhrescoException {
+	public CIJob setPreBuildCmds(CIJob job, ApplicationInfo appInfo, String appDir, String id, String name, String userId, String customerId, HttpServletRequest request) throws PhrescoException {
 		try {
 			List<String> preBuildStepCmds = new ArrayList<String>();
 
@@ -1055,8 +1068,8 @@ public class CIService extends RestBase implements FrameworkConstants, ServiceCo
 
 				// object change
 				job.setSonarUrl(usingSonarUrl);
-				//				job.setLogo(logoImageString);
-				//				job.setTheme(themeColorJson);
+				job.setLogo(getLogoImageString(userId, customerId));
+				job.setTheme(getThemeColorJson(userId, customerId));
 
 				// set values in request
 //								sonarUrl = usingSonarUrl;
@@ -1234,5 +1247,44 @@ public class CIService extends RestBase implements FrameworkConstants, ServiceCo
 		}
 		return job;
 	}
+	
+	protected String getLogoImageString(String username, String customerId) throws PhrescoException {
+		String encodeImg = "";
+		try {
+			InputStream fileInputStream = null;
+			fileInputStream = getServiceManager(username).getIcon(customerId);
+			if (fileInputStream != null) {
+				byte[] imgByte = null;
+				imgByte = IOUtils.toByteArray(fileInputStream);
+				byte[] encodedImage = Base64.encodeBase64(imgByte);
+				encodeImg = new String(encodedImage);
+			}
+		} catch (Exception e) {
+			throw new PhrescoException(e);
+		}
+		return encodeImg;
+	}
+	
+	protected ServiceManager getServiceManager(String username) throws PhrescoException {
+		this.serviceManager = RestBase.CONTEXT_MANAGER_MAP.get(username);
+		return serviceManager;
+	}
 
+	protected String getThemeColorJson(String username, String customerId) throws PhrescoException {
+		String themeJsonStr = "";
+		try {
+			Customer customer = getServiceManager(username).getCustomer(customerId);
+			if (customer != null) {
+				Map<String, String> frameworkTheme = customer.getFrameworkTheme();
+				if (frameworkTheme != null) {
+					Gson gson = new Gson();
+					themeJsonStr = gson.toJson(frameworkTheme);
+				}
+			}
+		} catch (Exception e) {
+			throw new PhrescoException(e);
+		}
+		return themeJsonStr;
+	}
+	
 }
