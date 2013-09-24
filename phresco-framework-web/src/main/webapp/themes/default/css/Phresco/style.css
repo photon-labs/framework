@@ -19,7 +19,7 @@
  */
  
 html,body {
-	background:url(../../images/helios/bg.jpg) repeat left top;
+	background:url(../../images/Phresco/bg.jpg) repeat left top;
 	padding:0;
 	margin:0;
 	font-family: 'luxi_sansregular' !important;
@@ -137,8 +137,8 @@ a, div, button, img { outline: none !important; }
     width: 100px;
     white-space: nowrap;
     overflow: hidden;
-    -webkit-mask-image: url(../../images/helios/spinner.png);
-	background-image : url(../../images/helios/spinner.png);
+    -webkit-mask-image: url(../../images/Phresco/spinner.png);
+	background-image : url(../../images/Phresco/spinner.png);
   /*  background-color: #fff; */
     -webkit-animation-name: spinnerRotate;
     -webkit-animation-duration: 2s;
@@ -425,7 +425,7 @@ html, body {
 }
 
 .user_icon {
-	background-image:url(../../images/helios/user_icon.png);
+	background-image:url(../../images/Phresco/user_icon.png);
 	background-repeat:no-repeat;
 	background-position:0px 0px;
 	width:15px;
@@ -435,7 +435,7 @@ html, body {
 }
 
 .logout_icon {
-	background-image:url(../../images/helios/logout_icon.png);
+	background-image:url(../../images/Phresco/logout_icon.png);
 	background-repeat:no-repeat;
 	background-position:0px 0px;
 	width:14px;
@@ -474,7 +474,7 @@ html, body {
 	width:98%;
 	height:46px;
 	border-bottom: 1px solid #fff;
-	/* background:url(../../images/helios/content_title_bg.jpg) repeat-x; */	
+	/* background:url(../../images/Phresco/content_title_bg.jpg) repeat-x; */	
 	background: #eeeeee; /* Old browsers */
 	background: -moz-linear-gradient(top,  #eeeeee 0%, #d2d2d2 100%); /* FF3.6+ */
 	background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#eeeeee), color-stop(100%,#d2d2d2)); /* Chrome,Safari4+ */
@@ -636,6 +636,8 @@ a.dropdown-toggle b.caret  {
 
 .cust_sel ul li a{
 	padding-left:5px;
+	color:#000;
+	text-decoration:none;
 }
 
 ul.nav li.dropdown:hover > .test_options{
@@ -650,7 +652,7 @@ ul.nav li.dropdown:hover > .test_options{
 /* ********************************************** CSS related to Icons in all buttons ************************************************************************************** */
 
 .add_icon_btn {
-	background-image:url(../../images/helios/add_icon.png)!important ;
+	background-image:url(../../images/Phresco/add_icon.png)!important ;
 	background-repeat:no-repeat !important;
 	background-position:6px 7px  !important;
 	padding-left:22px !important;
@@ -658,7 +660,7 @@ ul.nav li.dropdown:hover > .test_options{
 }
 
 .cancel_icon_btn {
-	background-image:url(../../images/helios/cancel_icon.png)!important ;
+	background-image:url(../../images/Phresco/cancel_icon.png)!important ;
 	background-repeat:no-repeat !important;
 	background-position:6px 8px  !important;
 	padding-left:22px !important;
@@ -666,7 +668,7 @@ ul.nav li.dropdown:hover > .test_options{
 }
 
 .next_icon_btn {
-	background-image:url(../../images/helios/next_icon.png)!important ;
+	background-image:url(../../images/Phresco/next_icon.png)!important ;
 	background-repeat:no-repeat !important;
 	background-position:6px 8px  !important;
 	padding-left:28px !important;
@@ -674,7 +676,7 @@ ul.nav li.dropdown:hover > .test_options{
 }
 
 .prev_icon_btn {
-	background-image:url(../../images/helios/prev_icon.png)!important ;
+	background-image:url(../../images/Phresco/prev_icon.png)!important ;
 	background-repeat:no-repeat !important;
 	background-position:6px 8px  !important;
 	padding-left:28px !important;
@@ -682,19 +684,19 @@ ul.nav li.dropdown:hover > .test_options{
 }
 
 /*.openfolder_icon_btn {
-	background:url(../../images/helios/openfolder_icon.png) #ed7940 no-repeat 6px 7px !important;
+	background:url(../../images/Phresco/openfolder_icon.png) #ed7940 no-repeat 6px 7px !important;
 	padding-left:28px !important;
 	padding-right:8px !important;
 }
 
 .copypath_icon_btn {
-	background:url(../../images/helios/copypath_icon.png) #ed7940 no-repeat 6px 6px !important;
+	background:url(../../images/Phresco/copypath_icon.png) #ed7940 no-repeat 6px 6px !important;
 	padding-left:30px !important;
 	padding-right:8px !important;
 }*/
 
 .pdf_icon_btn {
-	background-image:url(../../images/helios/pdf_icon_white.png)!important ;
+	background-image:url(../../images/Phresco/pdf_icon_white.png)!important ;
 	background-repeat:no-repeat !important;
 	background-position:6px 4px  !important;
 	padding-left:22px !important;
@@ -703,7 +705,7 @@ ul.nav li.dropdown:hover > .test_options{
 
 
 .import_icon_btn {
-	background-image:url(../../images/helios/import_icon.png)!important ;
+	background-image:url(../../images/Phresco/import_icon.png)!important ;
 	background-repeat:no-repeat !important;
 	background-position:6px 7px  !important;
 	padding-left:22px !important;
@@ -711,7 +713,7 @@ ul.nav li.dropdown:hover > .test_options{
 }
 
 .app_layer_icon_btn {
-	background-image:url(../../images/helios/app_layer_icon.png)!important ;
+	background-image:url(../../images/Phresco/app_layer_icon.png)!important ;
 	background-repeat:no-repeat !important;
 	background-position:6px 6px  !important;
 	padding-left:30px !important;
@@ -719,7 +721,7 @@ ul.nav li.dropdown:hover > .test_options{
 }
 
 .web_layer_icon_btn {
-	background-image:url(../../images/helios/web_layer_icon.png)!important ;
+	background-image:url(../../images/Phresco/web_layer_icon.png)!important ;
 	background-repeat:no-repeat !important;
 	background-position:6px 6px  !important;
 	padding-left:30px !important;
@@ -727,7 +729,7 @@ ul.nav li.dropdown:hover > .test_options{
 }
 
 .mobile_layer_icon_btn {
-	background-image:url(../../images/helios/mobile_layer_icon.png)!important ;
+	background-image:url(../../images/Phresco/mobile_layer_icon.png)!important ;
 	background-repeat:no-repeat !important;
 	background-position:4px 5px  !important;
 	padding-left:25px !important;
@@ -735,7 +737,7 @@ ul.nav li.dropdown:hover > .test_options{
 }
 
 .update_btn {
-	background-image:url(../../images/helios/update_icon.png)!important ;
+	background-image:url(../../images/Phresco/update_icon.png)!important ;
 	background-repeat:no-repeat !important;
 	background-position:6px 8px  !important;
 	padding-left:25px !important;
@@ -743,7 +745,7 @@ ul.nav li.dropdown:hover > .test_options{
 }
 
 .server_btn {
-	background-image:url(../../images/helios/server_icon.png)!important ;
+	background-image:url(../../images/Phresco/server_icon.png)!important ;
 	background-repeat:no-repeat !important;
 	background-position:3px 5px  !important;
 	padding-left:28px !important;
@@ -751,7 +753,7 @@ ul.nav li.dropdown:hover > .test_options{
 }
 
 .database_btn {
-	background-image:url(../../images/helios/database_icon.png)!important ;
+	background-image:url(../../images/Phresco/database_icon.png)!important ;
 	background-repeat:no-repeat !important;
 	background-position:5px 4px  !important;
 	padding-left:22px !important;
@@ -759,7 +761,7 @@ ul.nav li.dropdown:hover > .test_options{
 }
 
 .webservice_btn {
-	background-image:url(../../images/helios/webservice_icon.png)!important ;
+	background-image:url(../../images/Phresco/webservice_icon.png)!important ;
 	background-repeat:no-repeat !important;
 	background-position:3px 3px  !important;
 	padding-left:26px !important;
@@ -767,7 +769,7 @@ ul.nav li.dropdown:hover > .test_options{
 }
 
 .arrow_down_icon {
-	background-image:url(../../images/helios/arrow_down.png)!important ;
+	background-image:url(../../images/Phresco/arrow_down.png)!important ;
 	background-repeat:no-repeat !important;
 	background-position:right !important;
 	padding-right:20px !important;
@@ -874,7 +876,7 @@ ul.nav li.dropdown:hover > .test_options{
 }
 
 .table_border thead {
-	/* background:url(../../images/helios/thead_bg.jpg) repeat-x left bottom; */
+	/* background:url(../../images/Phresco/thead_bg.jpg) repeat-x left bottom; */
 	background: #d8d8d8;
 	color:#323232 !important;
 }
@@ -884,7 +886,7 @@ ul.nav li.dropdown:hover > .test_options{
 }
 
 .table_border tr.proj_title td {
-	background:url(../../images/helios/proj_list_bg.jpg) repeat-x left bottom #f7f7f7;
+	background:url(../../images/Phresco/proj_list_bg.jpg) repeat-x left bottom #f7f7f7;
 	color:#e15432;
 	font-size:14px;
 	font-weight:bold;
@@ -998,7 +1000,7 @@ ul.nav li.dropdown:hover > .test_options{
 }	
 
 .pdf_report {
-	 width: 369px !important;
+	 width: 374px !important;
 }
 
 .existing_report {
@@ -1160,6 +1162,10 @@ ul.nav li.dropdown:hover > .test_options{
 .left_add_repo{
 	margin-left:0px !important;
 }
+
+.pdf_report .pdfheight .scroll-line {
+	height:9% !important;
+}
 /* ******************************************************************* CSS related to create project page ********************************************************************** */
 
 .datepicker  {
@@ -1189,7 +1195,7 @@ img[name="close"] {
 }
 
 .bootstrap-select:not([class*="span"]) {
-	width: 137px;
+	width: 152px;
 }
 
 
@@ -1247,7 +1253,7 @@ img[name="close"] {
 .content_end {
 	width:98%;
 	height:34px;
-	background:url(../../images/helios/btm_btns_bg.jpg) repeat-x top left #d1d1d1;
+	background:url(../../images/Phresco/btm_btns_bg.jpg) repeat-x top left #d1d1d1;
 	padding-left:1%;
 	padding-right:1%;
 	padding-top:8px;
@@ -1267,7 +1273,7 @@ img[name="close"] {
 }
 
 .title_nav ul li {
-	background:url(../../images/helios/nav_divider.jpg) repeat-y top left;
+	background:url(../../images/Phresco/nav_divider.jpg) repeat-y top left;
 	float:left;
 }
 
@@ -1354,7 +1360,7 @@ img[name="close"] {
 	font-size: 12px;
 	box-shadow: none !important;
 	border:1px solid #cccccc !important;
-	background:#FFFFFF !important;
+	background-color:#FFFFFF !important;
 }
 
 .btn.dropdown-toggle:hover, .btn.dropdown-toggle:focus
@@ -1363,9 +1369,9 @@ img[name="close"] {
 	outline:none !important;
 }
 
-.btn.btn-danger:hover, .btn.btn-danger:focus
+.btn-danger, #build_genbuild .btn.btn-danger:hover, #build_genbuild .btn.btn-danger:focus
 {
-background:#DA4F49 !important;
+	background-color:#DA4F49 !important;
 }
 
 #appinfo .dropdown-menu {
@@ -1553,7 +1559,7 @@ background:#DA4F49 !important;
 	line-height:38px;
 }
 .default{
-	background:url(../../images/helios/default_img.png) no-repeat !important;
+	background:url(../../images/Phresco/default_img.png) no-repeat !important;
 	width:78px;
 	height:22px;
 }
@@ -1991,6 +1997,10 @@ background:#DA4F49 !important;
 }
 	#project_list_import .svndata .revtext, #project_list_import .testCheckoutData .revtext { 
 	margin:0px 5px 0px 0px !important;
+}
+
+	.pdf_report .pdfheight .scroll-line {
+	height:13% !important;
 }
 }
 
@@ -2486,15 +2496,15 @@ background:#DA4F49 !important;
 	margin-bottom:4px !important;
 }
 
-#bdeploy_2 li{
+form[name="deployForm"] li{
 	margin:5px 0 5px 2px !important;
 }
 
-#bdeploy_2 li input[type="checkbox"]{
+form[name="deployForm"] li input[type="checkbox"]{
 	margin-bottom:1px !important;
 }
 
-#bdeploy_2 .fetchSql_table{
+form[name="deployForm"] {
 	margin-bottom:10px !important;
 	/*width:230px;*/
 }
@@ -2574,7 +2584,7 @@ background:#DA4F49 !important;
 	margin-left: 0px !important;
 }
 .row_bg {
-	background:url(../../images/helios/proj_list_bg.jpg) repeat-x left bottom #f7f7f7;
+	background:url(../../images/Phresco/proj_list_bg.jpg) repeat-x left bottom #f7f7f7;
 	color:#e15432;
 	font-size:15px;
 	font-weight:bold;
@@ -2742,7 +2752,7 @@ margin-left: 10px;
 	font-size:12px;
 }
 
-.edit_config_tab tr td .bootstrap-select, #deploye_2 .bootstrap-select {
+.edit_config_tab tr td .bootstrap-select, form[name="deployForm"] .bootstrap-select {
 	width:185px !important;
 }
 
@@ -2766,7 +2776,9 @@ margin-left: 10px;
 .hideContent {
 display : none;
 }
-
+.addConfluence, .delete  {
+	cursor:pointer;
+}
 
 
 /* *************************************************************************** STYLES FOR FIXED-HEADER ************************************************************************************ */
@@ -2892,7 +2904,7 @@ html>body tbody.scrollContent {
 }
 
 .progress_loading {
-	background:url(../../images/helios/progress_loading.png) no-repeat;
+	background:url(../../images/Phresco/progress_loading.png) no-repeat;
 	width:33px;
 	height:27px;
 	margin-top:-6px;
@@ -3362,7 +3374,7 @@ html>body tbody.scrollContent {
 .type_test div.sorthead {
 	padding-left: 10px;
 	line-height: 32px;
-	background: url(../../images/helios/content_title_bg.jpg) repeat-x;
+	background: url(../../images/Phresco/content_title_bg.jpg) repeat-x;
 	font-size:14px;
 	font-weight: bold;
 	color: #ef7b43;
@@ -3677,7 +3689,7 @@ html>body tbody.scrollContent {
 	border-top-right-radius: 12px;
 	font-size: 14px;
 	margin: 0px;
-	background:url(../../images/helios/thead_bg.jpg) repeat-x left bottom;
+	background:url(../../images/Phresco/thead_bg.jpg) repeat-x left bottom;
 	color:#323232 !important;
 	padding-left: 12px;	
 }
@@ -3863,6 +3875,11 @@ td.browse_td .bootstrap-select.btn-group .dropdown-menu, .dynamic_cont .bootstra
 
 #startHub_popup .mCSB_scrollTools, #startNode_popup .mCSB_scrollTools {
 	width:5px !important;
+}
+
+#resolution{
+	margin:0px;
+	width:148px !important;
 }
 
 
@@ -4534,7 +4551,7 @@ vertical-align: middle;
 }
 
 .popuploading, .dynamicPopupLoading {
-	background-image : url(../../images/helios/loading.gif);
+	background-image : url(../../images/Phresco/loading.gif);
 	background-repeat : no-repeat;
 	position : absolute;
 	bottom : 6px;
@@ -4576,7 +4593,7 @@ vertical-align: middle;
 /**************************** STYLES FOR TREEVIEW STARTS *************************************/
 
 .jstree-default li, 
-.jstree-default ins { background-image:url(../../images/helios/d.png); background-repeat:no-repeat; background-color:transparent;  }
+.jstree-default ins { background-image:url(../../images/Phresco/d.png); background-repeat:no-repeat; background-color:transparent;  }
 .jstree-default li { background-position:-90px 0; background-repeat:repeat-y; color:#0068A7 !important;  }
 .jstree-default li a ins.jstree-icon { margin-right:5px !important; }
 .jstree-default li a { cursor:pointer; padding:4px 2px 6px 2px; color:#0068A7 !important;  }
@@ -4590,7 +4607,7 @@ vertical-align: middle;
 .jstree-default .jstree-hovered { background:#e7f4f9; border:1px solid #d8f0fa; padding:0 2px 0 1px; }
 .jstree-default .jstree-clicked { background:#beebff; border:1px solid #99defd; padding:0 2px 0 1px; }
 .jstree-default a .jstree-icon { background-position:-57px -17px; }
-.jstree-default a.jstree-loading .jstree-icon { background:url(../../images/helios/throbber.gif) center center no-repeat !important; }
+.jstree-default a.jstree-loading .jstree-icon { background:url(../../images/Phresco/throbber.gif) center center no-repeat !important; }
 
 .jstree-default.jstree-focused { /*background:#ffffee;*/ }
 
@@ -4613,9 +4630,9 @@ vertical-align: middle;
 .jstree-default .jstree-undetermined > a > .jstree-checkbox:hover { background-position:-20px -37px; }
 
 #vakata-dragged.jstree-default ins { background:transparent !important; }
-#vakata-dragged.jstree-default .jstree-ok { background:url(../../images/helios/d.png) -2px -53px no-repeat !important; }
-#vakata-dragged.jstree-default .jstree-invalid { background:url(../../images/helios/d.png) -18px -53px no-repeat !important; }
-#jstree-marker.jstree-default { background:url(../../images/helios/d.png) -41px -57px no-repeat !important; text-indent:-100px; }
+#vakata-dragged.jstree-default .jstree-ok { background:url(../../images/Phresco/d.png) -2px -53px no-repeat !important; }
+#vakata-dragged.jstree-default .jstree-invalid { background:url(../../images/Phresco/d.png) -18px -53px no-repeat !important; }
+#jstree-marker.jstree-default { background:url(../../images/Phresco/d.png) -41px -57px no-repeat !important; text-indent:-100px; }
 
 .jstree-default a.jstree-search { color:aqua; }
 .jstree-default .jstree-locked a { color:silver; cursor:default; }
@@ -4637,7 +4654,7 @@ a.selected { background:#dcdcdc; }
 .jstree-default ins,
 #vakata-dragged.jstree-default .jstree-invalid, 
 #vakata-dragged.jstree-default .jstree-ok, 
-#jstree-marker.jstree-default { _background-image:url(../../images/helios/d.gif); }
+#jstree-marker.jstree-default { _background-image:url(../../images/Phresco/d.gif); }
 .jstree-default .jstree-open ins { _background-position:-72px 0; }
 .jstree-default .jstree-closed ins { _background-position:-54px 0; }
 .jstree-default .jstree-leaf ins { _background-position:-36px 0; }
@@ -4797,7 +4814,7 @@ select[name="reportDataType"], input[name="pdfName"] {
 	padding-top: 7px !important;
 }
 .errorpopuploading {
-	background-image : url(../../images/helios/loading.gif);
+	background-image : url(../../images/Phresco/loading.gif);
 	background-repeat : no-repeat;
 	position : absolute;
 	bottom : 36px;

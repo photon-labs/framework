@@ -127,19 +127,25 @@ define([], function() {
 		
 		getSonarStatus : function(url , callback){
 			var self = this;
-			
-			var sonarExternalUrl = url;
-			var pathArray = sonarExternalUrl.split( '/' );
-			var protocol = pathArray[0];
-			var host = pathArray[2];
-
-			sonarExternalUrl = sonarExternalUrl.replace(protocol, window.location.protocol);
-			sonarExternalUrl = sonarExternalUrl.replace(host, window.location.host);
-
 			try {
-				commonVariables.api.urlExists(sonarExternalUrl, 
+				commonVariables.api.urlExists(url, 
 				function(response){
-					callback(response);
+					if (response === false) {
+						var sonarExternalUrl = url;
+						var pathArray = sonarExternalUrl.split( '/' );
+						var protocol = pathArray[0];
+						var host = pathArray[2];
+						sonarExternalUrl = sonarExternalUrl.replace(protocol, window.location.protocol);
+						sonarExternalUrl = sonarExternalUrl.replace(host, window.location.host);
+						
+						commonVariables.api.urlExists(sonarExternalUrl, function(response){
+							callback(response);
+						}, function(response){
+							callback(response);
+						});
+					} else {
+						callback(response);
+					}
 				},
 				function(response){
 					callback(response);
@@ -147,7 +153,38 @@ define([], function() {
 			} catch(exception) {
 				console.info('exception');
 			}
-		},				
+		},
+		
+		getSonarUrl : function(url , callback){
+			var self = this;
+			try {
+				commonVariables.api.urlExists(url, 
+				function(response){
+					if (response === false) {
+						var sonarExternalUrl = url;
+						var pathArray = sonarExternalUrl.split( '/' );
+						var protocol = pathArray[0];
+						var host = pathArray[2];
+						sonarExternalUrl = sonarExternalUrl.replace(protocol, window.location.protocol);
+						sonarExternalUrl = sonarExternalUrl.replace(host, window.location.host);
+						
+						commonVariables.api.urlExists(sonarExternalUrl, function(response){
+							callback(sonarExternalUrl);
+						}, function(response){
+							callback(sonarExternalUrl);
+						});
+					} else {
+						callback(url);
+					}
+				},
+				function(response){
+					callback(url);
+				});
+			} catch(exception) {
+				console.info('exception');
+			}
+		},
+		
 		getReportTypes : function(header, callback) {
 			var self = this;
 			self.closeConsole();
@@ -248,20 +285,13 @@ define([], function() {
 				commonVariables.api.ajaxRequest(self.getRequestHeader(validateAgainst , "iframereport"), 
 					function(iframereport) {
 						if(iframereport.data !== null){
-							var sonarExternalUrl = iframereport.data;
-
-							var pathArray = sonarExternalUrl.split( '/' );
-							var protocol = pathArray[0];
-							var host = pathArray[2];
-
-							sonarExternalUrl = sonarExternalUrl.replace(protocol, window.location.protocol);
-							sonarExternalUrl = sonarExternalUrl.replace(host, window.location.host);
-
-							self.closeConsole();
-							var iframedata = "<iframe id='iframe' class='iframe' src="+sonarExternalUrl+ " ></iframe>";
-							$('#content_div').html(iframedata);
-							var dynHeight = $('#content_div').height();
-							$('#iframe').css('height', dynHeight);
+							self.getSonarUrl(iframereport.data, function(sonarExternalUrl) {
+								self.closeConsole();
+								var iframedata = "<iframe id='iframe' class='iframe' src="+sonarExternalUrl+ " ></iframe>";
+								$('#content_div').html(iframedata);
+								var dynHeight = $('#content_div').height();
+								$('#iframe').css('height', dynHeight);
+							});
 						} else {
 							if(iframereport.responseCode === "PHR510003" ) {
 								$(".alert").show();

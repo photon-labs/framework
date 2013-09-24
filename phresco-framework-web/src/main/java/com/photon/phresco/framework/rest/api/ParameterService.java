@@ -433,8 +433,8 @@ public class ParameterService extends RestBase implements FrameworkConstants, Se
 		FrameworkUtil frameworkUtil = new FrameworkUtil(request);
 		 ResponseInfo<String> responseData = new ResponseInfo<String>();
 			try {
-				URL sonarURL = new URL(frameworkUtil.getSonarHomeURL());
-				String url = sonarURL.toString() + "/sonar";
+				URL sonarURL = new URL(frameworkUtil.getSonarURL());
+				String url = sonarURL.toString();
 				ResponseInfo<String> finalOutput = responseDataEvaluation(responseData, null,
 						url, RESPONSE_STATUS_SUCCESS, PHR500004);
 				return Response.ok(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, ALL_HEADER).build();

@@ -23,7 +23,7 @@ public class BufferMap {
                 
                 // Empty
                 if (read == -1 ||  buf[available-1] == -1) {
-                	line = null;
+                	line = "";
                 } else {
                 	line = new String(buf, "UTF-8");
                 }

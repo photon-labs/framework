@@ -381,17 +381,18 @@ public class QualityService extends RestBase implements ServiceConstants, Framew
 			@QueryParam(REST_QUERY_FROM_PAGE) String fromPage) {
 		boolean connection_status = false;
 		try {
+			InetAddress ip = InetAddress.getLocalHost();
 			if (HUB_STATUS.equals(fromPage)) {
 				HubConfiguration hubConfig = getHubConfiguration(appDirName);
 				if (hubConfig != null) {
-					String host = hubConfig.getHost();
+					String host = ip.getHostAddress();
 					int port = hubConfig.getPort();
 					connection_status = Utility.isConnectionAlive(HTTP_PROTOCOL, host, port);
 				}
 			} else if (NODE_STATUS.equals(fromPage)) {
 				NodeConfiguration nodeConfig = getNodeConfiguration(appDirName);
 				if (nodeConfig != null) {
-					String host = nodeConfig.getConfiguration().getHost();
+					String host = ip.getHostAddress();
 					int port = nodeConfig.getConfiguration().getPort();
 					connection_status = Utility.isConnectionAlive(HTTP_PROTOCOL, host, port);
 				}

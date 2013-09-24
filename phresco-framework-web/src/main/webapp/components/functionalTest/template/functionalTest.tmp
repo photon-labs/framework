@@ -3,7 +3,7 @@
     <div class="flt_right">
 		<div class="unit_view hideContent">
 			<div class="code_report_icon" id="pdfDiv">
-				<div class="icon_images"><a class="tooltiptop" title="" data-placement="bottom" data-toggle="tooltip" href="javascript:void(0)" data-original-title="PDF Report" id="pdfIcon"><img src="themes/default/images/helios/pdf_icon_white.png" ></a>
+				<div class="icon_images"><a class="tooltiptop" title="" data-placement="bottom" data-toggle="tooltip" href="javascript:void(0)" data-original-title="PDF Report" id="pdfIcon"><img src="themes/default/images/Phresco/pdf_icon_white.png" ></a>
 					<!--Pdf report popup starts here -->
 					<div id="pdf_report" class="dyn_popup hideContent">
 						<div id="noPdfReport" class="noReport"></div>
@@ -52,14 +52,14 @@
 				</div>
 			</div>
 			<span id="tabularView" class="table" style="cursor: pointer;">
-            	<a href="javascript:void(0)"><img class="tableIcon" src="themes/default/images/helios/table_active.png" width="213" height="29" border="0" alt="" usemap="#tabularViewMap"></a>
+            	<a href="javascript:void(0)"><img class="tableIcon" src="themes/default/images/Phresco/table_active.png" width="213" height="29" border="0" alt="" usemap="#tabularViewMap"></a>
             	 <map name="tabularViewMap">
                       <area class="table1" shape="rect" coords="3,1,104,29">
                       <area class="graph1" shape="rect" coords="106,3,215,29">
                  </map>
             </span>
            	<span id="graphicalView" class="newclas table hideContent" style="cursor: pointer;">
-            	<a href="javascript:void(0)"><img class="tableIcon" src="themes/default/images/helios/graph_active.png" width="213" height="29" border="0" alt="" usemap="#graphicalViewMap"></a>
+            	<a href="javascript:void(0)"><img class="tableIcon" src="themes/default/images/Phresco/graph_active.png" width="213" height="29" border="0" alt="" usemap="#graphicalViewMap"></a>
                     <map name="graphicalViewMap">
                       <area class="table2" shape="rect" coords="3,1,104,29">
                       <area class="graph2" shape="rect" coords="106,3,215,29">
@@ -67,8 +67,8 @@
             </span>
 			
         </div>
-    	<div class="icon_images"><a class="tooltiptop" title="" data-placement="bottom" data-toggle="tooltip" href="javascript:void(0)" data-original-title="Open Folder" id="openFolder"><img src="themes/default/images/helios/openfolder_icon.png" ></a></div>
-		<div class="icon_images copy_path_icon" style="margin-right:2px;"><a class="tooltiptop" title="" data-placement="bottom" data-toggle="tooltip" href="javascript:void(0)" data-original-title="Copy Path" id="copyPath"><img src="themes/default/images/helios/copypath_icon.png" ></a></div>
+    	<div class="icon_images"><a class="tooltiptop" title="" data-placement="bottom" data-toggle="tooltip" href="javascript:void(0)" data-original-title="Open Folder" id="openFolder"><img src="themes/default/images/Phresco/openfolder_icon.png" ></a></div>
+		<div class="icon_images copy_path_icon" style="margin-right:2px;"><a class="tooltiptop" title="" data-placement="bottom" data-toggle="tooltip" href="javascript:void(0)" data-original-title="Copy Path" id="copyPath"><img src="themes/default/images/Phresco/copypath_icon.png" ></a></div>
             
         <div class="code_anal">
         	<input type="button" {{#hubButton hubStatus}}{{/hubButton}} class="btn btn_style {{#showHide functionalFramework}}{{/showHide}}">
