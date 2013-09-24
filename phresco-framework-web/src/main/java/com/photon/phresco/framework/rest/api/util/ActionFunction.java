@@ -850,6 +850,10 @@ public class ActionFunction extends RestBase implements Constants ,FrameworkCons
 		}
 		BufferedInputStream reader = null;
 		try {
+			//To generate the lock for the particular operation
+			ApplicationInfo appInfo = FrameworkServiceUtil.getApplicationInfo(getAppDirName());
+			LockUtil.generateLock(Collections.singletonList(LockUtil.getLockDetail(appInfo.getId(), REQ_START, displayName, uniqueKey)), true);
+			
 			BufferedReader compileReader = compileSource();
 			String line = compileReader.readLine();
 			while (StringUtils.isNotEmpty(line) && !line.startsWith("[INFO] BUILD FAILURE")) {
@@ -866,11 +870,6 @@ public class ActionFunction extends RestBase implements Constants ,FrameworkCons
 				String environmentName = configs.get(ENVIRONMENT_NAME);
 				reader = startServer(environmentName);
 			}
-			
-			//To generate the lock for the particular operation
-			ApplicationInfo appInfo = FrameworkServiceUtil.getApplicationInfo(getAppDirName());
-			LockUtil.generateLock(Collections.singletonList(LockUtil.getLockDetail(appInfo.getId(), REQ_START, displayName, uniqueKey)), true);
-			
 		} catch (PhrescoException e) {
 			S_LOGGER.error("Entered into catch block of Build.runAgainstSource()" + FrameworkUtil.getStackTraceAsString(e));
 			throw new PhrescoException("Exception occured in the runAgainstSource process");

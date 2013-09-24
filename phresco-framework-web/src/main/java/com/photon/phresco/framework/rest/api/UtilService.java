@@ -239,6 +239,7 @@ public class UtilService extends RestBase implements FrameworkConstants, Service
 					actionTypesToCheck.add(REQ_CODE);
 					actionTypesToCheck.add(ADD_TO_REPO);
 					actionTypesToCheck.add(COMMIT);
+					actionTypesToCheck.add(REQ_START);
 					actionTypesToCheck.add(FrameworkConstants.UPDATE);
 				} else if (actionType.equals(UNIT)) {
 					actionTypesToCheck.add(ADD_TO_REPO);

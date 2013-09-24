@@ -942,7 +942,7 @@ public class ActionService implements ActionServiceConstant, FrameworkConstants,
 		try {
 			log = BufferMap.readBufferReader(uniquekey);
 			
-			if(log == null){
+			if(log == ""){
 				
 				if (isDebugEnabled) {
 					S_LOGGER.debug("Log has finished and hence removing the bufferreader from the map");
@@ -952,10 +952,8 @@ public class ActionService implements ActionServiceConstant, FrameworkConstants,
 				LockUtil.removeLock(uniquekey);
 			}
 			else{
-				
 				status=ActionServiceConstant.INPROGRESS;
 			}
-		
 		} catch (IOException e) {
 			LockUtil.removeLock(uniquekey);
 			status=ERROR;
