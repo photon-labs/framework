@@ -328,9 +328,8 @@
 					  this.responseText = JSON.stringify({"connectionAlive":false,"errorFound":false,"configErr":false,"parameterKey":null,"uniquekey":null,"service_exception":null,"configErrorMsg":null,"responseCode":"PHR9C00001","status":"success","log":null});
 				  }
 				});
-
 				$.mockjax({
-				  url: commonVariables.webserviceurl+commonVariables.mvnPerformanceTest+"?testBasis=parameters&testAgainst=server&customTestAgainst=server&testName=testServer&environmentName=Production&configurations=server&rampUpPeriod=10&authorizationUrl=&authorizationUserName=&authorizationPassword=&authorizationDomain=&authorizationRealm=&availableJmx=tests%2Fcustom%2F%23SEP%23Custom.jmx&availableJmx=tests%2Fcustom%2F%23SEP%23LoginTest.jmx&httpName=cd&context=admin%2Flogin&contextType=GET&encodingType=UTF-8&parameterName=&dbName=&queryType=Select+Statement&query=&testAction=performance&customerId=photon&appId=7fd5aee1-0042-4e85-91ce-1b9493231019&projectId=b9e456e8-ccb8-458c-a559-f90cd2af48a1&username=rajeshkumar_ra&displayName=Admin",
+				  url: commonVariables.webserviceurl+commonVariables.mvnPerformanceTest+"?appDirName=PF_TEST_PHP&testBasis=parameters&testAgainst=server&customTestAgainst=server&testName=testServer&environmentName=Production&configurations=server&rampUpPeriod=10&authorizationUrl=&authorizationUserName=&authorizationPassword=&authorizationDomain=&authorizationRealm=&availableJmx=tests%2Fcustom%2F%23SEP%23Custom.jmx&availableJmx=tests%2Fcustom%2F%23SEP%23LoginTest.jmx&httpName=cd&context=admin%2Flogin&contextType=GET&encodingType=UTF-8&parameterName=&dbName=&queryType=Select+Statement&query=&testAction=performance&customerId=photon&appId=7fd5aee1-0042-4e85-91ce-1b9493231019&projectId=b9e456e8-ccb8-458c-a559-f90cd2af48a1&username=rajeshkumar_ra&displayName=Admin",
 				  type: "POST",
 				  dataType: "json",
 				  contentType: "application/json",
@@ -398,7 +397,7 @@
 				  contentType: "application/json",
 				  status: 200,
 				  response : function() {
-					  this.responseText = JSON.stringify({"message":null,"exception":null,"responseCode":"PHR200015","data":null,"status":"success"});
+					  this.responseText = JSON.stringify({"message":null,"exception":null,"responseCode":"PHR200015","data":{"value":true,"json":[]},"status":"success"});
 				  }
 				});
 				commonVariables.api.localVal.setSession("appDirName" , "PF_TEST_PHP");
@@ -424,7 +423,7 @@
 				  contentType: "application/json",
 				  status: 200,
 				  response : function() {
-					  this.responseText = JSON.stringify([{"time":"Jul 23 2013 16.28","type":"crisp","fileName":"Raj_crisp.pdf"},{"time":"Jul 23 2013 16.08","type":"crisp","fileName":"tech_overall_crisp.pdf"}]);
+					  this.responseText = JSON.stringify({"message":null,"exception":null,"responseCode":"PHR200015","data":{"value":true,"json":[{"time":"Jul 23 2013 16.28","type":"crisp","fileName":"Raj_crisp.pdf"},{"time":"Jul 23 2013 16.08","type":"crisp","fileName":"tech_overall_crisp.pdf"}]},"status":"success"});
 				  }
 				});
 				commonVariables.api.localVal.setSession("appDirName" , "PF_TEST_PHP");
@@ -461,7 +460,7 @@
 				  contentType: "application/json",
 				  status: 200,
 				  response : function() {
-					  this.responseText = JSON.stringify([{"time":"Jul 23 2013 16.28","type":"crisp","fileName":"Raj_crisp.pdf"},{"time":"Jul 23 2013 16.08","type":"crisp","fileName":"tech_overall_crisp.pdf"},{"time":"Jul 23 2013 16.08","type":"crisp","fileName":"TestGenerate_crisp.pdf"}]);
+					  this.responseText = JSON.stringify({"message":null,"exception":null,"responseCode":"PHR200027","data":{"value":true,"json":[{"time":"Jul 23 2013 16.28","type":"crisp","fileName":"Raj_crisp.pdf"},{"time":"Jul 23 2013 16.08","type":"crisp","fileName":"tech_overall_crisp.pdf"},{"time":"Jul 23 2013 16.08","type":"crisp","fileName":"TestGenerate_crisp.pdf"}]},"status":"success"});
 				  }
 				});
 				$(commonVariables.contentPlaceholder).find("#pdf_report").find('input[name=pdfName]').val("TestGeneratePDF");
@@ -497,7 +496,7 @@
 				  contentType: "application/json",
 				  status: 200,
 				  response : function() {
-					  this.responseText = JSON.stringify([{"time":"Jul 23 2013 16.08","type":"crisp","fileName":"tech_overall_crisp.pdf"}]);
+					  this.responseText = JSON.stringify({"message":null,"exception":null,"responseCode":"PHR200027","data":{"value":true,"json":[{"time":"Jul 23 2013 16.08","type":"crisp","fileName":"tech_overall_crisp.pdf"}]},"status":"success"});
 				  }
 				});
 				commonVariables.api.localVal.setSession("appDirName" , "PF_TEST_PHP");
