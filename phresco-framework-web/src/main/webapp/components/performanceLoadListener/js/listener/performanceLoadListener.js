@@ -381,7 +381,7 @@ define(["lib/jquery-tojson-1.0",'lib/RGraph_common_core-1.0','lib/RGraph_common_
 			var requestBody = {};
 			requestBody.from = from;
 			self.performAction(self.getActionHeader(requestBody, "getPdfReports"), function(response) {
-				self.listPdfReports(response, from);
+				self.listPdfReports(response.data.json, from);
 			});
 		},
 
