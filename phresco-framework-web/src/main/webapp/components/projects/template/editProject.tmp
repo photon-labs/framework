@@ -30,22 +30,22 @@
 
                     <td data-i18n="project.create.label.startdate" name="startdate-lbl"></td>
 					{{#if preBuilt}}
-						<td class="startdate" name="startdateholder"><input name="startdate" type="text" value="{{startDate}}" id="startDate" disabled><span class="add-on" disabled><img id="strdt" src="themes/default/images/helios/cal_icon.png" border="0" alt=""></span></td>
+						<td class="startdate" name="startdateholder"><input name="startdate" type="text" value="{{startDate}}" id="startDate" disabled><span class="add-on" disabled><img id="strdt" src="themes/default/images/Phresco/cal_icon.png" border="0" alt=""></span></td>
 					{{else}}
-						<td class="startdate" name="startdateholder"><input name="startdate" type="text" value="{{startDate}}" id="startDate"><span class="add-on"><img id="strdt" src="themes/default/images/helios/cal_icon.png" border="0" alt=""></span></td>
+						<td class="startdate" name="startdateholder"><input name="startdate" type="text" value="{{startDate}}" id="startDate"><span class="add-on"><img id="strdt" src="themes/default/images/Phresco/cal_icon.png" border="0" alt=""></span></td>
 				    {{/if}}
                     <td data-i18n="project.create.label.enddate" name="enddate-lbl"></td>
 					{{#if preBuilt}}	
-						<td colspan="2" class="enddate" name="enddateholder"><input name="enddate" value="{{endDate}}" id="endDate" type="text" disabled><span class="add-on" disabled><span class="add-on"><img id="enddt" class="cal_img1" src="themes/default/images/helios/cal_icon.png" border="0" alt=""></span></span></td>
+						<td colspan="2" class="enddate" name="enddateholder"><input name="enddate" value="{{endDate}}" id="endDate" type="text" disabled><span class="add-on" disabled><span class="add-on"><img id="enddt" class="cal_img1" src="themes/default/images/Phresco/cal_icon.png" border="0" alt=""></span></span></td>
 					{{else}}
-						<td colspan="2" class="enddate" name="enddateholder"><input name="enddate" value="{{endDate}}" id="endDate" type="text"><span class="add-on"><span class="add-on"><img id="enddt" class="cal_img1" src="themes/default/images/helios/cal_icon.png" border="0" alt=""></span></span></td>
+						<td colspan="2" class="enddate" name="enddateholder"><input name="enddate" value="{{endDate}}" id="endDate" type="text"><span class="add-on"><span class="add-on"><img id="enddt" class="cal_img1" src="themes/default/images/Phresco/cal_icon.png" border="0" alt=""></span></span></td>
 				    {{/if}}
                 </tr>
 			{{/editProject}}
                <tr id="appLayaer" class="proj_title">
 				  <td colspan="3">{{applicationlayerData.name}}</td>
                   <td colspan="3"><span class="errmsg1"></span></td>
-                  <td colspan="2"><img name="close" id="appLayaer" src="themes/default/images/helios/close_icon.png"  border="0" alt=""></td>
+                  <td colspan="2"><img name="close" id="appLayaer" src="themes/default/images/Phresco/close_icon.png"  border="0" alt=""></td>
                 </tr>
                 <tr class="applnLayer" id="applnlayer" name="appvalidation" key="displayed">
 						<td colspan="8" class="appln">
@@ -86,7 +86,7 @@
 											</select>
 										 </td>
 										 <td>
-											<div class="flt_right icon_center"><a name="addApplnLayer"><img src="themes/default/images/helios/plus_icon.png" border="0" alt=""></a><a href="javascript:;" name="removeApplnLayer"></a></div>
+											<div class="flt_right icon_center"><a name="addApplnLayer"><img src="themes/default/images/Phresco/plus_icon.png" border="0" alt=""></a><a href="javascript:;" name="removeApplnLayer"></a></div>
 										 </td>
 								    </tr>
 								</tbody>
@@ -96,7 +96,7 @@
 					 <tr id="webLayers" class="proj_title">
 					  <td colspan="3">{{weblayerData.name}}</td>
                       <td colspan="3"><span class="errmsg2"></span></td>
-                      <td colspan="2"><img name="close" id="webLayers" src="themes/default/images/helios/close_icon.png" border="0" alt=""></td>
+                      <td colspan="2"><img name="close" id="webLayers" src="themes/default/images/Phresco/close_icon.png" border="0" alt=""></td>
                      </tr>
                      <tr class="webLayer" id="WebLayer" name="appvalidation" key="displayed">
 						  <td colspan="8" class="WebLayer">
@@ -137,7 +137,7 @@
 											</select>
 										 </td>
 										 <td>
-											<div class="flt_right icon_center"><a href="javascript:;" name="addWebLayer"><img src="themes/default/images/helios/plus_icon.png" border="0" alt=""></a><a href="javascript:;" name="removeWebLayer"></a></div>
+											<div class="flt_right icon_center"><a href="javascript:;" name="addWebLayer"><img src="themes/default/images/Phresco/plus_icon.png" border="0" alt=""></a><a href="javascript:;" name="removeWebLayer"></a></div>
 										 </td>
 									</tr>
 								</tbody>
@@ -147,7 +147,7 @@
 					  <tr id="mobLayers" class="proj_title">
 						  <td colspan="3">{{mobilelayerData.name}}</td>
 						  <td colspan="3"><span class="errmsg3"></span></td>
-						  <td colspan="2"><img name="close" id="mobLayers" src="themes/default/images/helios/close_icon.png"  border="0" alt=""></td>
+						  <td colspan="2"><img name="close" id="mobLayers" src="themes/default/images/Phresco/close_icon.png"  border="0" alt=""></td>
                      </tr>
                      <tr class="mobLayer" id="MobLayer" name="appvalidation" key="displayed">
                       	<td colspan="8" class="mob">
@@ -184,7 +184,7 @@
 											</select>
 										 </td>
 										 <td>
-											<div class="flt_right icon_center"><a href="javascript:;" name="addMobileLayer"><img src="themes/default/images/helios/plus_icon.png" border="0" alt=""></a><a href="javascript:;" name="removeMobileLayer"></a> </div>
+											<div class="flt_right icon_center"><a href="javascript:;" name="addMobileLayer"><img src="themes/default/images/Phresco/plus_icon.png" border="0" alt=""></a><a href="javascript:;" name="removeMobileLayer"></a> </div>
 										 </td>
 									</tr>
 								</tbody>

@@ -6,14 +6,14 @@
         	{{#showIcons resultAvailable testResultFiles}}
 	        	<div class="unit_view performanceView">
 	                <span id="tabularView" class="table" style="cursor: pointer;">
-            	<a href="javascript:void(0)"><img class="tableIcon" src="themes/default/images/helios/table_active.png" width="213" height="29" border="0" alt="" usemap="#tabularViewMap"></a>
+            	<a href="javascript:void(0)"><img class="tableIcon" src="themes/default/images/Phresco/table_active.png" width="213" height="29" border="0" alt="" usemap="#tabularViewMap"></a>
             	 <map name="tabularViewMap">
                       <area class="table1" shape="rect" coords="3,1,104,29">
                       <area class="graph1" shape="rect" coords="106,3,215,29">
                  </map>
             </span>
            	<span id="graphicalView" class="newclas table hideContent" style="cursor: pointer;">
-            	<a href="javascript:void(0)"><img class="tableIcon" src="themes/default/images/helios/graph_active.png" width="213" height="29" border="0" alt="" usemap="#graphicalViewMap"></a>
+            	<a href="javascript:void(0)"><img class="tableIcon" src="themes/default/images/Phresco/graph_active.png" width="213" height="29" border="0" alt="" usemap="#graphicalViewMap"></a>
                     <map name="graphicalViewMap">
                       <area class="table2" shape="rect" coords="3,1,104,29">
                       <area class="graph2" shape="rect" coords="106,3,215,29">
@@ -23,14 +23,14 @@
 	        {{else}}  
 	        	<div class="unit_view performanceView hideContent">
 	                span id="tabularView" class="table" style="cursor: pointer;">
-            	<a href="javascript:void(0)"><img class="tableIcon" src="themes/default/images/helios/table_active.png" width="213" height="29" border="0" alt="" usemap="#tabularViewMap"></a>
+            	<a href="javascript:void(0)"><img class="tableIcon" src="themes/default/images/Phresco/table_active.png" width="213" height="29" border="0" alt="" usemap="#tabularViewMap"></a>
             	 <map name="tabularViewMap">
                       <area class="table1" shape="rect" coords="3,1,104,29">
                       <area class="graph1" shape="rect" coords="106,3,215,29">
                  </map>
             </span>
            	<span id="graphicalView" class="newclas table hideContent" style="cursor: pointer;">
-            	<a href="javascript:void(0)"><img class="tableIcon" src="themes/default/images/helios/graph_active.png" width="213" height="29" border="0" alt="" usemap="#graphicalViewMap"></a>
+            	<a href="javascript:void(0)"><img class="tableIcon" src="themes/default/images/Phresco/graph_active.png" width="213" height="29" border="0" alt="" usemap="#graphicalViewMap"></a>
                     <map name="graphicalViewMap">
                       <area class="table2" shape="rect" coords="3,1,104,29">
                       <area class="graph2" shape="rect" coords="106,3,215,29">
@@ -40,7 +40,7 @@
             {{/showIcons}}
             
             {{#showIcons resultAvailable testResultFiles}}
-	           <div class="icon_images"><a class="tooltiptop performancePDF" from="performance" title="" data-placement="bottom" data-toggle="tooltip" href="javascript:void(0)" data-original-title="PDF Report" id="pdfIcon"><img src="themes/default/images/helios/pdf_icon_white.png" ></a>
+	           <div class="icon_images"><a class="tooltiptop performancePDF" from="performance" title="" data-placement="bottom" data-toggle="tooltip" href="javascript:void(0)" data-original-title="PDF Report" id="pdfIcon"><img src="themes/default/images/Phresco/pdf_icon_white.png" ></a>
 	        		<!--Pdf report popup starts here -->
 					<div id="pdf_report" class="dyn_popup hideContent">
 						<div id="noPdfReport" class="alert noReport"></div>
@@ -88,12 +88,12 @@
 					<!--Pdf report popup ends here -->
 	    		</div>
 			{{else}}  
-	        	<div class="icon_images hideContent"><a class="tooltiptop" title="" data-placement="bottom" data-toggle="tooltip" href="javascript:void(0)" data-original-title="PDF Report" id="pdfIcon"><img src="themes/default/images/helios/pdf_icon_white.png" ></a></div>
+	        	<div class="icon_images hideContent"><a class="tooltiptop" title="" data-placement="bottom" data-toggle="tooltip" href="javascript:void(0)" data-original-title="PDF Report" id="pdfIcon"><img src="themes/default/images/Phresco/pdf_icon_white.png" ></a></div>
             {{/showIcons}}
-        	<div class="icon_images performanceScreenShotDiv" style="display: none;"><a class="tooltiptop performanceScreenShot" title="" data-placement="bottom" data-toggle="tooltip" href="javascript:void(0)" data-original-title="Screen Shot"><img src="themes/default/images/helios/screenshot_white.png" ></a></div>
+        	<div class="icon_images performanceScreenShotDiv" style="display: none;"><a class="tooltiptop performanceScreenShot" title="" data-placement="bottom" data-toggle="tooltip" href="javascript:void(0)" data-original-title="Screen Shot"><img src="themes/default/images/Phresco/screenshot_white.png" ></a></div>
 
-			<div class="icon_images"><a class="tooltiptop" title="" data-placement="bottom" data-toggle="tooltip" href="javascript:void(0)" data-original-title="Open Folder" id="openFolder"><img src="themes/default/images/helios/openfolder_icon.png" ></a></div>
-			<div class="icon_images copy_path_icon"><a class="tooltiptop" title="" data-placement="bottom" data-toggle="tooltip" href="javascript:void(0)" data-original-title="Copy Path" id="copyPath"><img src="themes/default/images/helios/copypath_icon.png" ></a></div>	
+			<div class="icon_images"><a class="tooltiptop" title="" data-placement="bottom" data-toggle="tooltip" href="javascript:void(0)" data-original-title="Open Folder" id="openFolder"><img src="themes/default/images/Phresco/openfolder_icon.png" ></a></div>
+			<div class="icon_images copy_path_icon"><a class="tooltiptop" title="" data-placement="bottom" data-toggle="tooltip" href="javascript:void(0)" data-original-title="Copy Path" id="copyPath"><img src="themes/default/images/Phresco/copypath_icon.png" ></a></div>	
 
             {{#showDeviceDropDown showDevice devices}}
 	            <div class="code_report device_list">
@@ -232,8 +232,8 @@
 	     <!-- Progress div starts here-->
 		    <div class="unit_close performance_close">
 		    	<a href="javascript:void(0)" data-flag="true" id="consoleImg">
-		    		<img src="themes/default/images/helios/console_img.png" width="33" height="92" border="0" alt="">
-		    		<div class="progress_loading" style="display:none;"><img src="themes/default/images/helios/progress_load.gif" border="0"></div>
+		    		<img src="themes/default/images/Phresco/console_img.png" width="33" height="92" border="0" alt="">
+		    		<div class="progress_loading" style="display:none;"><img src="themes/default/images/Phresco/progress_load.gif" border="0"></div>
 				</a>
 			</div>
 		    <div class="unit_progress performance_progress">
@@ -244,7 +244,7 @@
 							<div class="flt_right">
 								<input type="button" class="btn btn_style kill_btn" value="Kill Process" data-i18n="build.label.killprocess">
 								<a href="javascript:void(0)" id="copyLog">
-									<img src="themes/default/images/helios/buildreport_icon.png" width="15" height="18" border="0" alt="">
+									<img src="themes/default/images/Phresco/buildreport_icon.png" width="15" height="18" border="0" alt="">
 								</a>
 							</div>
 							<div class="flt_left"><span data-i18n="build.label.progress"></span></div>

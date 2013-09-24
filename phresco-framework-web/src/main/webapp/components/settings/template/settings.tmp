@@ -50,7 +50,7 @@
                             <thead>
                                 <tr>
                                 	<th colspan="5">Confluence Configuration &nbsp&nbsp&nbsp
-									<a align="right" class="addConfluence flt_right"><img  src="themes/default/images/helios/plus_icon.png" border="0" alt=""></a></th>
+									<a align="right" class="addConfluence flt_right"><img  src="themes/default/images/Phresco/plus_icon.png" border="0" alt=""></a></th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -59,7 +59,7 @@
                                     <td><input type="text" name="username" placeholder="Username"></td>
                                     <td><input type="password" name="password" placeholder="Password"></td>
                                     <td>
-                                    	<a class="delete flt_right"><img src="themes/default/images/helios/minus_icon.png"  border="0" alt=""></a>
+                                    	<a class="delete flt_right"><img src="themes/default/images/Phresco/minus_icon.png"  border="0" alt=""></a>
                                     </td> 
                                      
                                 </tr>
@@ -80,8 +80,8 @@
     	<!-- Progress div starts here-->
     <div class="unit_close">
     	<a href="javascript:void(0)" data-flag="true" id="consoleImg">
-			<img src="themes/default/images/helios/console_img.png" width="33" height="92" border="0" alt="">
-			<div class="progress_loading" style="display:none;"><img src="themes/default/images/helios/progress_load.gif" border="0"></div>
+			<img src="themes/default/images/Phresco/console_img.png" width="33" height="92" border="0" alt="">
+			<div class="progress_loading" style="display:none;"><img src="themes/default/images/Phresco/progress_load.gif" border="0"></div>
 		</a>
 	</div>
     <div class="unit_progress">
@@ -92,7 +92,7 @@
 						<div class="flt_right">
 							<input type="button" class="btn btn_style kill_btn" value="Kill Process" data-i18n="[value]build.label.killprocess">
 							<a href="javascript:void(0)" id="copyLog">
-								<img src="themes/default/images/helios/buildreport_icon.png" width="15" height="18" border="0" alt="">
+								<img src="themes/default/images/Phresco/buildreport_icon.png" width="15" height="18" border="0" alt="">
 							</a>
 						</div>
 						<div class="flt_left"><span data-i18n="build.label.progress"></span></div>

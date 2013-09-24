@@ -169,21 +169,21 @@ define(["framework/widgetWithTemplate", "ci/listener/ciListener", "lib/jquery-to
 			$('.content_main').height($(window).height() - (resultvalue + 155));
 
 			$(".execute_button").hover(function() {
-				$(this).attr("src","themes/default/images/helios/execute_icon_hover.png");
+				$(this).attr("src","themes/default/images/Phresco/execute_icon_hover.png");
 			}, function() {
-				$(this).attr("src","themes/default/images/helios/execute_icon.png");
+				$(this).attr("src","themes/default/images/Phresco/execute_icon.png");
 			});
 			
 			$(".wait_button").hover(function() {
-				$(this).attr("src","themes/default/images/helios/wait_hover.png");
+				$(this).attr("src","themes/default/images/Phresco/wait_hover.png");
 			}, function() {
-				$(this).attr("src","themes/default/images/helios/wait.png");
+				$(this).attr("src","themes/default/images/Phresco/wait.png");
 			});
 			
 			$(".time_button").hover(function() {
-				$(this).attr("src","themes/default/images/helios/time_hover.png");
+				$(this).attr("src","themes/default/images/Phresco/time_hover.png");
 			}, function() {
-				$(this).attr("src","themes/default/images/helios/time.png");
+				$(this).attr("src","themes/default/images/Phresco/time.png");
 			});
 			
    			$(".dyn_popup").hide();
@@ -246,7 +246,7 @@ define(["framework/widgetWithTemplate", "ci/listener/ciListener", "lib/jquery-to
 			});
 			
 			$("a[temp=generate_build]").click(function() {
-				$(this).parent().parent().parent("div").find(".img_process").attr('src',"themes/default/images/helios/processing.gif");
+				$(this).parent().parent().parent("div").find(".img_process").attr('src',"themes/default/images/Phresco/processing.gif");
 				self.generateBuildEvent.dispatch($(this));
 			});
 			

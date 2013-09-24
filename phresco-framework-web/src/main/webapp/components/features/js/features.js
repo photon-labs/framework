@@ -125,7 +125,7 @@ define(["features/listener/featuresListener"], function() {
 						if(JSON.stringify(value.appliesTo) !== "null"){
 							$.each(value.appliesTo, function(index, value){
 								if(value.required === false){
-									settingimg = '<span class="settings_icon"  settingsid="s_'+id+'"><img src="themes/default/images/helios/settings_icon.png" width="23" height="22" border="0" alt=""></span>';
+									settingimg = '<span class="settings_icon"  settingsid="s_'+id+'"><img src="themes/default/images/Phresco/settings_icon.png" width="23" height="22" border="0" alt=""></span>';
 								}
 							});
 						}		
@@ -265,7 +265,7 @@ define(["features/listener/featuresListener"], function() {
 				}
 			});
 
-			$('.switch').css('background', 'url("themes/default/images/helios/on_off_switch.png")');
+			$('.switch').css('background', 'url("themes/default/images/Phresco/on_off_switch.png")');
 			
 			$("label[name=on_off]").unbind();
 			$("label[name=on_off]").bind("click", function() {
@@ -394,7 +394,7 @@ define(["features/listener/featuresListener"], function() {
 				var currentObj = this;				
 				self.featuresListener.getFeaturesList(self.featuresListener.getRequestHeader(self.featureRequestBody, "desc", descid), function(response) {
 					var descriptionid = $.trim(descid.replace(/ /g,''));
-					var divhtml = '<div id="'+descriptionid+'" class="dyn_popup featureinfo"><h1>Description</h1><a href="javascript:void(0)" class="dyn_popup_close">X</a><div class="features_cont desc_content"><span><img src="themes/default/images/helios/feature_info_logo.png" width="42" height="42" border="0" alt=""></span><span class="features_desc_content">'+response.data+'</span></div></div>';
+					var divhtml = '<div id="'+descriptionid+'" class="dyn_popup featureinfo"><h1>Description</h1><a href="javascript:void(0)" class="dyn_popup_close">X</a><div class="features_cont desc_content"><span><img src="themes/default/images/Phresco/feature_info_logo.png" width="42" height="42" border="0" alt=""></span><span class="features_desc_content">'+response.data+'</span></div></div>';
 					$("#desc").children().remove();
 					$("#desc").append(divhtml);
 					self.popupforDesc(currentObj,descriptionid);

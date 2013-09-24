@@ -251,11 +251,11 @@ define([], function() {
 			self.getHeaderResponse(self.getRequestHeader(ciRequestBody, 'jobStatus'), function (response) {
 				var parseJson = $.parseJSON(response.data);
 				if(parseJson === "red") {
-					obj.find('.img_process').attr('src',"themes/default/images/helios/cross_red.png");
+					obj.find('.img_process').attr('src',"themes/default/images/Phresco/cross_red.png");
 				} else if (parseJson === "red_anime" || parseJson === "blue_anime" || parseJson ==="grey_anime" || parseJson === "notbuilt_anime") {
-					obj.find('.img_process').attr('src',"themes/default/images/helios/processing.gif");
+					obj.find('.img_process').attr('src',"themes/default/images/Phresco/processing.gif");
 				} else if (parseJson === "blue") {
-					obj.find('.img_process').attr('src',"themes/default/images/helios/tick_green.png");
+					obj.find('.img_process').attr('src',"themes/default/images/Phresco/tick_green.png");
 				}
 			});
 		},
@@ -302,19 +302,19 @@ define([], function() {
 						var headerTr = '<tr><td>'+response.data[i].timeStamp;
 						content = content.concat(headerTr);
 						if(response.data[i].status === "FAILURE") {
-							headerTr = '</td><td><img src="themes/default/images/helios/red_deactive.png"></td>';
+							headerTr = '</td><td><img src="themes/default/images/Phresco/red_deactive.png"></td>';
 						} else {
-							headerTr = '</td><td><img src="themes/default/images/helios/green_active.png"></td>';
+							headerTr = '</td><td><img src="themes/default/images/Phresco/green_active.png"></td>';
 						}
 						content = content.concat(headerTr);
 						if(response.data[i].status === "SUCCESS" && (operation === 'build' || operation === 'pdfReport')) {
 							var url = (response.data[i].download).replace(/\"/g, ""); 
-							headerTr = '<td><center><a href="javascript:void(0)" data-placement="top" continuousName="'+continuousName+'" jobName="'+jobName+'"buildNumber="'+response.data[i].number+'"buildDownloadUrl="'+ url +'"temp="downloadBuild"><img src="themes/default/images/helios/download_icon.png" width="14" height="18" border="0" alt="0"></a><center></td>';
+							headerTr = '<td><center><a href="javascript:void(0)" data-placement="top" continuousName="'+continuousName+'" jobName="'+jobName+'"buildNumber="'+response.data[i].number+'"buildDownloadUrl="'+ url +'"temp="downloadBuild"><img src="themes/default/images/Phresco/download_icon.png" width="14" height="18" border="0" alt="0"></a><center></td>';
 						} else {
-							headerTr = '<td><center><img src="themes/default/images/helios/cross_red.png" width="14" height="18" border="0" alt="0"><center></td>';
+							headerTr = '<td><center><img src="themes/default/images/Phresco/cross_red.png" width="14" height="18" border="0" alt="0"><center></td>';
 						}
 						content = content.concat(headerTr);
-						headerTr = '<td><a href="javascript:void(0)" data-placement="top" continuousName="'+continuousName+'" jobName="'+jobName+'"buildNumber="'+response.data[i].number+'"temp="deleteBuild"><img src="themes/default/images/helios/delete_row.png" width="14" height="18" border="0" alt="0"></a></td></tr>';
+						headerTr = '<td><a href="javascript:void(0)" data-placement="top" continuousName="'+continuousName+'" jobName="'+jobName+'"buildNumber="'+response.data[i].number+'"temp="deleteBuild"><img src="themes/default/images/Phresco/delete_row.png" width="14" height="18" border="0" alt="0"></a></td></tr>';
 						content = content.concat(headerTr);
 					}
 					
@@ -1650,7 +1650,7 @@ define([], function() {
 					sort.append(jobTemplateApplicationName);					
 					// job tesmplate key and value
 					$.each(value, function(jobTemplateKey, jobTemplateValue) {
-						var jobTemplateGearHtml = '<a href="javascript:;" id="'+ appName + jobTemplateValue.name +'" class="validate_icon" jobTemplateName="'+ jobTemplateValue.name +'" appName="'+ appName +'" appDirName="'+ appDirName +'" name="jobConfigurePopup" style="display: none;"><img src="themes/default/images/helios/validate_image.png" width="19" height="19" border="0"></a>';
+						var jobTemplateGearHtml = '<a href="javascript:;" id="'+ appName + jobTemplateValue.name +'" class="validate_icon" jobTemplateName="'+ jobTemplateValue.name +'" appName="'+ appName +'" appDirName="'+ appDirName +'" name="jobConfigurePopup" style="display: none;"><img src="themes/default/images/Phresco/validate_image.png" width="19" height="19" border="0"></a>';
                 		var jobTemplateHtml = '<li class="ui-state-default" title="" temp="ci"><span>' + jobTemplateValue.name + ' - ' + jobTemplateValue.type + '</span>' + jobTemplateGearHtml + '</li>';
                 		sort.append(jobTemplateHtml);
                 		// set json value on attribute

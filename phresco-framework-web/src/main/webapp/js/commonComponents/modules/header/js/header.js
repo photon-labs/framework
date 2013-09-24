@@ -42,7 +42,7 @@ define(["header/listener/headerListener"] , function(template) {
 				self.headerListener.headerAPI.localVal.getSession('customerlogo') !== ""){
 				$('#bannerlogo').attr("src", "data:image/png;base64," + self.headerListener.headerAPI.localVal.getSession('customerlogo'));
 			} else {
-				$('#bannerlogo').attr("src", "themes/default/images/helios/helios_logo.png");
+				$('#bannerlogo').attr("src", "themes/default/images/Phresco/helios_logo.png");
 			}
 			var customername = self.headerListener.headerAPI.localVal.getSession('customername');
 			if (customername !== null && customername !== undefined && customername !== "") {

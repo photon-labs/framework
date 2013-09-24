@@ -282,7 +282,7 @@ define(["croneExpression/croneExpression"], function() {
 				if(envSpecificVal === false) { 
 					removeIcon = ''; 
 				} else {
-					removeIcon = '<a href="javascript:;" name="removeConfig"><img src="themes/default/images/helios/close_red.png" border="0" alt="" class="flt_right"/></a>';
+					removeIcon = '<a href="javascript:;" name="removeConfig"><img src="themes/default/images/Phresco/close_red.png" border="0" alt="" class="flt_right"/></a>';
 				}
 				
 				var headerTr = '<tr type="'+configTemplate.name+self.count+'" class="row_bg" envSpecificVal="'+envSpecificVal+'" configType="'+configTemplate.name+'"><td colspan="3">' + configTemplate.name + '</td><td colspan="3">'+removeIcon+'</td></tr>';
@@ -342,7 +342,7 @@ define(["croneExpression/croneExpression"], function() {
 						inputCtrl = '<input value="'+ label +'" validateButton="validate" class="'+configTemplate.name+self.count+'Configuration btn btn_style" name="'+key+'" mandatory="'+required+'" type="button" />';
 						fCheck = true;
 					} else if (key === "scheduler") {
-						inputCtrl = '<input value="'+ configValue +'" class="'+configTemplate.name+self.count+'Configuration" temp="'+configTemplate.name+key+self.count+'" name="'+key+'" mandatory="'+required+'" type="text" placeholder=""/><a name="cron_expression"><img src="themes/default/images/helios/settings_icon.png" width="23" height="22" border="0" alt=""></a><div id="cron_expression" class="dyn_popup" style="display:none"></div>';
+						inputCtrl = '<input value="'+ configValue +'" class="'+configTemplate.name+self.count+'Configuration" temp="'+configTemplate.name+key+self.count+'" name="'+key+'" mandatory="'+required+'" type="text" placeholder=""/><a name="cron_expression"><img src="themes/default/images/Phresco/settings_icon.png" width="23" height="22" border="0" alt=""></a><div id="cron_expression" class="dyn_popup" style="display:none"></div>';
 					} else if (type === "Boolean") {
 						var checked = "";
 						if(configValue === "true") {
@@ -439,7 +439,7 @@ define(["croneExpression/croneExpression"], function() {
 							inputCtrl = inputCtrl.concat(options1);
 							inputCtrl = inputCtrl.concat("</select></td>"); 
 						} else if (key === 'certificate') { 
-							inputCtrl = '<input mandatory="'+required+'" value="'+ configValue +'" class="'+configTemplate.name+self.count+'Configuration" name="'+key+'" temp="'+configTemplate.name+key+self.count+'" type="text" placeholder=""/><a href="javascript:void(0)" name="remote_deploy"><img src="themes/default/images/helios/settings_icon.png" width="23" height="22" border="0" alt=""></a><div id="remote_deploy" class="dyn_popup" style="display:none"><div id="certificateValue"></div><div class="flt_right"><input type="button" name="selectFilePath" class="btn btn_style" value="Ok">&nbsp;&nbsp;<input type="button" value="Close" name="treePopupClose" class="btn btn_style dyn_popup_close"></div></div>';
+							inputCtrl = '<input mandatory="'+required+'" value="'+ configValue +'" class="'+configTemplate.name+self.count+'Configuration" name="'+key+'" temp="'+configTemplate.name+key+self.count+'" type="text" placeholder=""/><a href="javascript:void(0)" name="remote_deploy"><img src="themes/default/images/Phresco/settings_icon.png" width="23" height="22" border="0" alt=""></a><div id="remote_deploy" class="dyn_popup" style="display:none"><div id="certificateValue"></div><div class="flt_right"><input type="button" name="selectFilePath" class="btn btn_style" value="Ok">&nbsp;&nbsp;<input type="button" value="Close" name="treePopupClose" class="btn btn_style dyn_popup_close"></div></div>';
 						} else {
 							inputCtrl = '<input mandatory="'+required+'" value="'+ configValue +'" configKey ="configKey'+configTemplate.name+key+'" class="'+configTemplate.name+self.count+'Configuration" name="'+key+'" temp="'+configTemplate.name+key+self.count+'" type="text" placeholder=""/>';
 						}
@@ -546,7 +546,7 @@ define(["croneExpression/croneExpression"], function() {
 					if(response.data[0] !== undefined) {
 						var arr = response.data[0].split("/");
 						var strFile = arr[arr.length-1];
-						$("ul.qq-upload-list").append('<li><span class="qq-upload-file">'+strFile+'</span><a name="removeFile" href="javascript:void(0)"><img src="themes/default/images/helios/cross_red.png" border="0" alt=""></a></li>');
+						$("ul.qq-upload-list").append('<li><span class="qq-upload-file">'+strFile+'</span><a name="removeFile" href="javascript:void(0)"><img src="themes/default/images/Phresco/cross_red.png" border="0" alt=""></a></li>');
 						$("div[name=qq-upload-file]").attr("disabled", true).children().attr("disabled", true);
 						$("input[validateButton=validate]").attr("disabled", false);
 						self.removeFile(configType, propertyName, envName, $(".configName").val());
@@ -792,7 +792,7 @@ define(["croneExpression/croneExpression"], function() {
 		},
 		
 		showCertificateTab : function () {
-			var self = this, remoteValue = '<img src="themes/default/images/helios/settings_icon.png" width="23" height="22" border="0" alt="">';;
+			var self = this, remoteValue = '<img src="themes/default/images/Phresco/settings_icon.png" width="23" height="22" border="0" alt="">';;
 			$("input[name=certificate]").parent().prev('td').show();
 			$("input[name=certificate]").show();
 			$("a[name=remote_deploy]").html(remoteValue);
@@ -869,7 +869,7 @@ define(["croneExpression/croneExpression"], function() {
 		},
 		
 		htmlForOther : function(data, value, types) {
-			var self = this, headerTr, content = '', textBox, apiKey = "", keyValue = "", type="Other", name="", desc="", addIcon = '<img src="themes/default/images/helios/plus_icon.png" border="0" alt="">';
+			var self = this, headerTr, content = '', textBox, apiKey = "", keyValue = "", type="Other", name="", desc="", addIcon = '<img src="themes/default/images/Phresco/plus_icon.png" border="0" alt="">';
 				if (value !== null && value !== '') {
 					type = value.type;
 					name = value.name;
@@ -888,7 +888,7 @@ define(["croneExpression/croneExpression"], function() {
 				}
 				 
 				if (types === "") {
-					headerTr = '<tr class="row_bg" type="otherConfig" configType="'+type+'"><div class="row"><td colspan="3">' + type + '</td><td colspan="3">'+'<a href="javascript:;" name="removeConfig"><img src="themes/default/images/helios/close_red.png" border="0" alt="" class="flt_right"/></a></td></div></tr>';
+					headerTr = '<tr class="row_bg" type="otherConfig" configType="'+type+'"><div class="row"><td colspan="3">' + type + '</td><td colspan="3">'+'<a href="javascript:;" name="removeConfig"><img src="themes/default/images/Phresco/close_red.png" border="0" alt="" class="flt_right"/></a></td></div></tr>';
 					content = content.concat(headerTr);
 					
 					var defaultTd = '<tr name="configName" class="otherConfig" name="'+type+'"><td class="labelTd">Name <sup>*</sup></td><td><input type="text" id="ConfigOther" maxlength="30" title="30 Characters only" mandatory="true" class="configName" value="'+name+'" placeholder= "Configuration Name"/></td><td class="labelTd">Description</td><td><input type="text" id="ConfigOther" class="configDesc" maxlength="150" title="150 Characters only"  value="'+desc+'" placeholder= "Configuration Description"/></td>';
@@ -896,17 +896,17 @@ define(["croneExpression/croneExpression"], function() {
 					
 					if (value !== null && value !== '') {
 						$.each(value.properties, function(key, value){
-							textBox = '<tr class="otherConfig" name="'+type+'"><td></td><td><input type="text" placeholder= "key" class="otherKey" value="'+key+'"/><td><input type="text" placeholder= "value" class="otherKeyValue" value="'+value+'"/></td><td><div class="flt_right icon_center"><a href="javascript:;" name="addOther"></a> <a href="javascript:;" name="removeOther"><img src="themes/default/images/helios/minus_icon.png" border="0" alt=""></a></div></td></tr>';
+							textBox = '<tr class="otherConfig" name="'+type+'"><td></td><td><input type="text" placeholder= "key" class="otherKey" value="'+key+'"/><td><input type="text" placeholder= "value" class="otherKeyValue" value="'+value+'"/></td><td><div class="flt_right icon_center"><a href="javascript:;" name="addOther"></a> <a href="javascript:;" name="removeOther"><img src="themes/default/images/Phresco/minus_icon.png" border="0" alt=""></a></div></td></tr>';
 							content = content.concat(textBox);
 						});
 					} else {
-						textBox = '<tr class="otherConfig" name="'+type+'"><td></td><td><input type="text" placeholder= "key" class="otherKey"/><td><input type="text" placeholder= "value" class="otherKeyValue" /></td><td><div class="flt_right icon_center"><a href="javascript:;" name="addOther"><img src="themes/default/images/helios/plus_icon.png" border="0" alt=""></a> <a href="javascript:;" name="removeOther"></a></div></td></tr>';
+						textBox = '<tr class="otherConfig" name="'+type+'"><td></td><td><input type="text" placeholder= "key" class="otherKey"/><td><input type="text" placeholder= "value" class="otherKeyValue" /></td><td><div class="flt_right icon_center"><a href="javascript:;" name="addOther"><img src="themes/default/images/Phresco/plus_icon.png" border="0" alt=""></a> <a href="javascript:;" name="removeOther"></a></div></td></tr>';
 						content = content.concat(textBox);
 					}
 					
 				} else {
 					headerTr = '<tr class="row_bg" type="'+types+self.countVal+'" configType="'+types+'"><div class="row"><td colspan="3">' + types + '</td><td colspan="3">'+
-					'<a href="javascript:;" name="removeConfig"><img src="themes/default/images/helios/close_red.png" border="0" alt="" class="flt_right"/></a></td></div></tr>';
+					'<a href="javascript:;" name="removeConfig"><img src="themes/default/images/Phresco/close_red.png" border="0" alt="" class="flt_right"/></a></td></div></tr>';
 					content = content.concat(headerTr);
 					var defaultTd = '<tr name="'+types+'" class="'+types+self.countVal+'" ><td class="labelTd">Name <sup>*</sup></td><td><input type="text" maxlength="30" title="30 Characters only" mandatory="true" id="'+types+self.countVal+'" class="configName" value="'+name+'" placeholder= "Configuration Name"/></td><td class="labelTd">Description</td><td><input type="text" class="configDesc" maxlength="150" title="150 Characters only"  value="'+desc+'" placeholder= "Configuration Description"/></td><td class="labelTd">'+types+'</td><td><select compType="components'+self.countVal+'" name="components" count="'+self.countVal+'" class="'+types+self.countVal+'Configuration" configkey="configkey'+types+'">'+self.ComponentData(data, types, value)+'</select></td>';
 					content = content.concat(defaultTd);
@@ -1003,7 +1003,7 @@ define(["croneExpression/croneExpression"], function() {
 		},
 		
 		addOtherConfig : function(toAppend) {
-			var self = this, dynamicValue, textBox = '<tr class="otherConfig" name="Other"><td></td><td><input type="text" class="otherKey" placeholder= "key"/><td><input type="text" placeholder= "value" class="otherKeyValue"/></td><td><div class="flt_right icon_center"><a href="javascript:;" name="addOther"><img src="themes/default/images/helios/plus_icon.png" border="0" alt=""></a> <a href="javascript:;" name="removeOther"><img src="themes/default/images/helios/minus_icon.png" border="0" alt=""></a></div></td></tr>', minusIcon = '<img src="themes/default/images/helios/minus_icon.png" border="0" alt="">';
+			var self = this, dynamicValue, textBox = '<tr class="otherConfig" name="Other"><td></td><td><input type="text" class="otherKey" placeholder= "key"/><td><input type="text" placeholder= "value" class="otherKeyValue"/></td><td><div class="flt_right icon_center"><a href="javascript:;" name="addOther"><img src="themes/default/images/Phresco/plus_icon.png" border="0" alt=""></a> <a href="javascript:;" name="removeOther"><img src="themes/default/images/Phresco/minus_icon.png" border="0" alt=""></a></div></td></tr>', minusIcon = '<img src="themes/default/images/Phresco/minus_icon.png" border="0" alt="">';
 			dynamicValue = $(textBox).insertAfter(toAppend);
 			dynamicValue.prev('tr').find('a[name="addOther"]').html('');
 			dynamicValue.prev('tr').find('a[name="removeOther"]').html(minusIcon);
@@ -1025,7 +1025,7 @@ define(["croneExpression/croneExpression"], function() {
 		},
 		
 		removeClick : function(removeValue) {
-			var self=this, addIcon = '<img src="themes/default/images/helios/plus_icon.png" border="0" alt="">';
+			var self=this, addIcon = '<img src="themes/default/images/Phresco/plus_icon.png" border="0" alt="">';
 				$("a[name=addOther]").html('');
 				removeValue.parent().parent().parent().remove();
 				$("a[name=removeOther]").parents('tr:last').find('a[name="addOther"]').html(addIcon);
