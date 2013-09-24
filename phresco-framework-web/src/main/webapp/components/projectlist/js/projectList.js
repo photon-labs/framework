@@ -302,12 +302,40 @@ define(["projectlist/listener/projectListListener"], function() {
 					pwdObj = $("#pwd_"+dynamicId);
 					$("input[name='repoUrl']").val('');
 					$("textarea[name='commitMsg']").val('');
+					if($("#repourl_"+dynamicId).hasClass('errormessage')) {
+						$("#repourl_"+dynamicId).removeClass('errormessage');
+						$("#repourl_"+dynamicId).removeAttr('placeholder');
+						$("#repourl_"+dynamicId).attr('placeholder','Repo Url');
+					}
+					if($("#uname_"+dynamicId).hasClass('errormessage')) {
+						$("#uname_"+dynamicId).removeClass('errormessage');
+						$("#uname_"+dynamicId).removeAttr('placeholder');
+					}
+					if($("#pwd_"+dynamicId).hasClass('errormessage')) {
+						$("#pwd_"+dynamicId).removeClass('errormessage');
+						$("#pwd_"+dynamicId).removeAttr('placeholder');
+						$("#pwd_"+dynamicId).attr('placeholder','Password');
+					}
 				} else if (action === "Commit") {
 					selectObj = $("#commitType_"+dynamicId);
 					checkObj = $("#commitCredential_"+dynamicId);
 					usrObj = $("#commitUsername_"+dynamicId);
 					pwdObj = $("#commitPassword_"+dynamicId);
 					$("textarea[name='commitMsg']").val('');
+					if($("#commitRepourl_"+dynamicId).hasClass('errormessage')) {
+						$("#commitRepourl_"+dynamicId).removeClass('errormessage');
+						$("#commitRepourl_"+dynamicId).removeAttr('placeholder');
+						$("#commitRepourl_"+dynamicId).attr('placeholder','Repo Url');
+					}
+					if($("#commitUsername_"+dynamicId).hasClass('errormessage')) {
+						$("#commitUsername_"+dynamicId).removeClass('errormessage');
+						$("#commitUsername_"+dynamicId).removeAttr('placeholder');
+					}
+					if($("#commitPassword_"+dynamicId).hasClass('errormessage')) {
+						$("#commitPassword_"+dynamicId).removeClass('errormessage');
+						$("#commitPassword_"+dynamicId).removeAttr('placeholder');
+						$("#commitPassword_"+dynamicId).attr('placeholder','Password');
+					}
 				} else if (action === "Update") {
 					selectObj = $("#updateType_"+dynamicId);
 					checkObj = $("#updateCredential_"+dynamicId);
@@ -315,7 +343,21 @@ define(["projectlist/listener/projectListListener"], function() {
 					pwdObj = $("#updatePassword_"+dynamicId);
 					$("input[name='repoUrl']").val('');
 					$(".revision").val('');
-					} 
+					if($("#updateRepourl_"+dynamicId).hasClass('errormessage')) {
+						$("#updateRepourl_"+dynamicId).removeClass('errormessage');
+						$("#updateRepourl_"+dynamicId).removeAttr('placeholder');
+						$("#updateRepourl_"+dynamicId).attr('placeholder','Repo Url');
+					}
+					if($("#updateUsername_"+dynamicId).hasClass('errormessage')) {
+						$("#updateUsername_"+dynamicId).removeClass('errormessage');
+						$("#updateUsername_"+dynamicId).removeAttr('placeholder');
+					}
+					if($("#updatePassword_"+dynamicId).hasClass('errormessage')) {
+						$("#updatePassword_"+dynamicId).removeClass('errormessage');
+						$("#updatePassword_"+dynamicId).removeAttr('placeholder');
+						$("#updatePassword_"+dynamicId).attr('placeholder','Password');
+					}
+				} 
 				
 				if(checkObj !== null  && checkObj !== undefined && checkObj !== '') {
 					self.makeCredReadOnly(checkObj, usrObj, pwdObj);
@@ -554,6 +596,7 @@ define(["projectlist/listener/projectListListener"], function() {
 			self.windowResize();
 			self.tableScrollbar();
 			this.customScroll($(".cus_themes"));
+			this.customScroll($(".pdfheight"));
 		}
 	});
 

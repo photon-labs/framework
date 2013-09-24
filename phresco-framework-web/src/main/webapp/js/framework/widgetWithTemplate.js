@@ -292,7 +292,7 @@ define(["framework/widget", "framework/templateProvider"], function() {
 					});
 				},1500);	
 				
-				$('.close_conf').click( function() {
+				$('.close_conf,.newclose').click( function() {
 					$("#" + place).hide();
 					$(".header_section").css("z-index","7");
 					$(".content_title").css("z-index","6");

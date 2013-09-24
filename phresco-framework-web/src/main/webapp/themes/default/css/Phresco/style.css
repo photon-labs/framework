@@ -4832,3 +4832,9 @@ select[name="reportDataType"], input[name="pdfName"] {
     height: 30px;
     margin: -10px 0 0 !important;
 }
+
+.pdfheight{
+	height: 70px !important;
+	overflow: auto;
+}
+}
