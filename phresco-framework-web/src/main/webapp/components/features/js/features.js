@@ -121,15 +121,15 @@ define(["features/listener/featuresListener"], function() {
 			Handlebars.registerHelper('packagedata', function(packaging, versions, appliesTo, id) {
 				var settingimg;
 				if(packaging === "zip" &&  appliesTo[0].core === false){
-					$.each(versions, function(index, value){
-						if(JSON.stringify(value.appliesTo) !== "null"){
-							$.each(value.appliesTo, function(index, value){
-								if(value.required === false){
+					//$.each(versions, function(index, value){
+						//if(JSON.stringify(value.appliesTo) !== "null"){
+							//$.each(value.appliesTo, function(index, value){
+								//if(value.required === false){
 									settingimg = '<span class="settings_icon"  settingsid="s_'+id+'"><a style="cursor: pointer;"><img src="themes/default/images/Phresco/settings_icon.png" width="23" height="22" border="0" alt=""></a></span>';
-								}
-							});
-						}		
-					});
+								//}
+							//});
+						//}		
+					//});
 				}				
 				return settingimg;
 			});

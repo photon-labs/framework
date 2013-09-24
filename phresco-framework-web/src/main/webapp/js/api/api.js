@@ -99,7 +99,7 @@ define(["framework/base", "api/localStorageAPI"], function(){
 					}
 					if((self.successResponse !== undefined && self.successResponse !== null && self.successResponse.status !== "error") || self.bCheck){
 						callbackFunction(self.successResponse);
-					}else if(self.successResponse.status === "error"){self.errorpopupshow(response);}
+					}else if(self.successResponse === null || self.successResponse.status === "error"){self.errorpopupshow(response);}
 					self.bCheck = false;
 				}
 			});
@@ -110,7 +110,7 @@ define(["framework/base", "api/localStorageAPI"], function(){
 			if (whereToRender !== "") {
 				btnObj = $(whereToRender).closest('form').parent().find('.alignright').find('input[value=Test]');
 			}
-
+			
 			$.ajax({
 				url: header.webserviceurl,
 				type : header.requestMethod,
@@ -147,7 +147,7 @@ define(["framework/base", "api/localStorageAPI"], function(){
 					
 					if ((response !== undefined && response !== null && response.status !== "error") || self.bCheck) {
 						callbackFunction(response);
-					}else if(response.status === "error"){self.errorpopupshow(response);}
+					}else if(response === null || response.status === "error"){self.errorpopupshow(response);}
 					
 					self.bCheck = false;
 				},
