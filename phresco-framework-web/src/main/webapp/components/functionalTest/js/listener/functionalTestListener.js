@@ -186,6 +186,7 @@ define([], function() {
 		postStartHub : function() {
 			var self = this;
 			self.closeConsole();
+			$('.progress_loading').hide();
 			var requestBody = {};
 			requestBody.from = "hubStatus";
 			self.getFunctionalTestOptions(self.getActionHeader(requestBody, "status"), function(response) {
@@ -204,6 +205,7 @@ define([], function() {
 		postStartNode : function() {
 			var self = this;
 			self.closeConsole();
+			$('.progress_loading').hide();
 			var requestBody = {};
 			requestBody.from = "nodeStatus";
 			self.getFunctionalTestOptions(self.getActionHeader(requestBody, "status"), function(response) {
@@ -221,6 +223,7 @@ define([], function() {
 		postStopHub : function() {
 			var self = this;
 			self.closeConsole();
+			$('.progress_loading').hide();
 			var requestBody = {};
 			requestBody.from = "hubStatus";
 			self.getFunctionalTestOptions(self.getActionHeader(requestBody, "status"), function(response) {
@@ -239,6 +242,7 @@ define([], function() {
 		postStopNode : function() {
 			var self = this;
 			self.closeConsole();
+			$('.progress_loading').hide();
 			var requestBody = {};
 			requestBody.from = "nodeStatus";
 			self.getFunctionalTestOptions(self.getActionHeader(requestBody, "status"), function(response) {
