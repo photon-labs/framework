@@ -103,7 +103,7 @@ define(["framework/widget", "framework/templateProvider"], function() {
 			customScroll : function(divId) {
 				var self=this;
 				self.fixScrollHeight(divId);
-				if ( $('.header-background').offset() !== undefined) {
+				if ( $('.header-background').offset() !== undefined && $('.header-background').offset().top !== 0) {
 					$('.th-inner').css('top', $('.header-background').offset().top+'px');
 				}
 				$(window).resize(function() {
