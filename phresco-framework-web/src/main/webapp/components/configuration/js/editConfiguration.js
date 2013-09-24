@@ -42,6 +42,8 @@ define(["configuration/listener/configurationListener"], function() {
 				self.configRequestBody.envSpecific = self.envSpecificVal;
 				commonVariables.envSpecifig = self.envSpecificVal;
 				self.configurationlistener.getConfigurationList(self.configurationlistener.getRequestHeader(self.configRequestBody, "edit"), function(response) {
+					self.configurationlistener.defaultEnv = response.data.defaultEnv;
+					self.configurationlistener.oldEnvName = response.data.name;
 					if(response.data.configurations !== undefined) {
 					$.each(response.data.configurations, function(index, value){
 						if (value.type !== "Other") {
