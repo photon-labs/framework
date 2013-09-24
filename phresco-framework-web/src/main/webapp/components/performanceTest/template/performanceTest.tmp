@@ -102,7 +102,7 @@
 	            <div class="navbar navbar-static code_func logintest">
 	                <ul class="nav">
 	                    <li id="fat-menu" class="dropdown">
-	                      <a href="javascript:void(0)" id="deviceDropDown" role="button" class="dropdown-toggle" data-toggle="dropdown" value={{#devices showDevice devices testResultFiles true true}}{{/devices}}>{{#devices showDevice devices testResultFiles true false}}{{/devices}}<b class="caret"></b></a>
+	                      <a href="javascript:void(0)" id="deviceDropDown" role="button" class="dropdown-toggle" data-toggle="dropdown" value="{{#devices showDevice devices testResultFiles true true}}{{/devices}}">{{#devices showDevice devices testResultFiles true false}}{{/devices}}<b class="caret"></b></a>
 	                      <div class="dropdown-menu cust_sel code_test_opt" role="menu" aria-labelledby="drop5">
 	                      	<ul id="deviceDropUL">
 	                      		{{#devices showDevice devices testResultFiles false false}}{{/devices}}
@@ -120,7 +120,7 @@
 	            <div class="navbar navbar-static code_func logintest testResultDiv">
 	                <ul class="nav">
 	                    <li id="fat-menu" class="dropdown">
-	                      <a href="javascript:void(0)" id="testResultFileDrop" role="button" class="dropdown-toggle" data-toggle="dropdown" value={{#testResultFiles testResultFiles true}}{{/testResultFiles}}>{{#testResultFiles testResultFiles true}}{{/testResultFiles}}<b class="caret"></b></a>
+	                      <a href="javascript:void(0)" id="testResultFileDrop" role="button" class="dropdown-toggle" data-toggle="dropdown" value="{{#testResultFiles testResultFiles true}}{{/testResultFiles}}">{{#testResultFiles testResultFiles true}}{{/testResultFiles}}<b class="caret"></b></a>
 	                      <div class="dropdown-menu cust_sel code_test_opt" role="menu" aria-labelledby="drop5">
 	                      	<ul id="resultFiles">
 	                        	{{#testResultFiles testResultFiles false}}{{/testResultFiles}}
@@ -135,7 +135,7 @@
 	            <div class="navbar navbar-static code_func logintest hideContent testResultDiv">
 	                <ul class="nav">
 	                    <li id="fat-menu" class="dropdown">
-	                      <a href="javascript:void(0)" id="testResultFileDrop" role="button" class="dropdown-toggle" data-toggle="dropdown" value={{#testResultFiles testResultFiles true}}{{/testResultFiles}}>{{#testResultFiles testResultFiles true}}{{/testResultFiles}}<b class="caret"></b></a>
+	                      <a href="javascript:void(0)" id="testResultFileDrop" role="button" class="dropdown-toggle" data-toggle="dropdown" value="{{#testResultFiles testResultFiles true}}{{/testResultFiles}}">{{#testResultFiles testResultFiles true}}{{/testResultFiles}}<b class="caret"></b></a>
 	                      <div class="dropdown-menu cust_sel code_test_opt" role="menu" aria-labelledby="drop5">
 	                      	<ul id="resultFiles">
 	                        	{{#testResultFiles testResultFiles false}}{{/testResultFiles}}
@@ -153,7 +153,7 @@
             <div class="navbar navbar-static code_func">
                 <ul class="nav testAgainstNav">
                     <li id="fat-menu" class="dropdown">
-                      <a href="javascript:void(0)" id="testAgainstsDrop" role="button" class="dropdown-toggle" data-toggle="dropdown" value={{#testAgainsts testAgainsts true}}{{/testAgainsts}}>{{#testAgainsts testAgainsts true}}{{/testAgainsts}}<b class="caret"></b></a>
+                      <a href="javascript:void(0)" id="testAgainstsDrop" role="button" class="dropdown-toggle" data-toggle="dropdown" value="{{#testAgainsts testAgainsts true}}{{/testAgainsts}}">{{#testAgainsts testAgainsts true}}{{/testAgainsts}}<b class="caret"></b></a>
                       <div class="dropdown-menu cust_sel code_test_opt" role="menu" aria-labelledby="drop5">
 	                      	<ul>	
 	                      		{{#testAgainsts testAgainsts false}}{{/testAgainsts}}

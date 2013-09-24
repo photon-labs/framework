@@ -448,6 +448,7 @@ define(["features/listener/featuresListener"], function() {
 						
 						self.featuresListener.getFeaturesUpdate(self.featuresListener.getRequestHeader(self.featureUpdatedArray, "UPDATE", ""), function(response) {
 							self.selectedCount();
+							$('.settings_icon').hide();
 							self.selectedFeaturesServiceCall();
 						}); 
 						

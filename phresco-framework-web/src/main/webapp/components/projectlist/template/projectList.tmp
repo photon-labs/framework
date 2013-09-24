@@ -48,18 +48,18 @@
                   
               <div id="pdf_report_{{id}}" class="dyn_popup pdf_report">
               <div id="noReport_{{id}}" class="alert noReport hideContent" style="text-align: center;"></div>
-                <table class="existing_report" width="100%" border="0" cellspacing="0" cellpadding="5">
+			  <table class="existing_report" width="100%" border="0" cellspacing="0" cellpadding="5">
                   <thead class="hideContent" name="pdfHeader_{{id}}" show="true">
                         <tr>
                             <th data-i18n="commonlabel.label.existingreport"></th>
                             <th data-i18n="commonlabel.label.type"></th>
                             <th data-i18n="commonlabel.label.download"></th>
                             <th data-i18n="commonlabel.label.delete"></th>
-                        </tr>    
-                    </thead>
+						</tr>    
+                    </thead>	
                     <tbody name="generatedPdfs_{{id}}" class="scroll">
                     </tbody>    
-                </table>
+              </table>
                 <form id="pdfReport">
                    <table class="report_type">
                     <tbody>

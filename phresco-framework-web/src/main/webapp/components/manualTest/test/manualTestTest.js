@@ -1,4 +1,4 @@
-define(["manualTest/manualTest", "lib/jquery-tojson-1.0", "lib/fileuploader-2.2"], function(ManualTest) {
+define(["manualTest/manualTest", "lib/jquery-tojson-1.0", "lib/fileuploader-2.3"], function(ManualTest) {
 	
 	return {
 		// list test suites 

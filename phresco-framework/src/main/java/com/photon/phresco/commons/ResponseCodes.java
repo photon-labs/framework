@@ -151,6 +151,7 @@ public interface ResponseCodes {
 	String PHR200026 = "PHR200026"; // project deleted successfully
 	String PHR210047 = "PHR210047"; // unable to delete the project
 	String PHR210048 = "PHR210048"; // Project Imported Succesfully.but, test checkout is not applicable for this multi-app Url
+	String PHR200027 = "PHR200027"; // report fetched successfully
 	
 	/*
 	 * App Info Page
