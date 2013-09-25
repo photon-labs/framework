@@ -213,7 +213,7 @@ define([], function() {
 				header.webserviceurl = commonVariables.webserviceurl+commonVariables.configuration+"/cronExpression";
 			} else if (action === "createClone") {
 				header.requestMethod = "POST";
-				header.webserviceurl = commonVariables.webserviceurl+commonVariables.ci+"/clone?projectId="+projectId+"&appDirName=" + appDir + "&userId=" + userId +"&"+ciRequestBody.data;
+				header.webserviceurl = commonVariables.webserviceurl+commonVariables.ci+"/clone?customerId="+ customerId + "&projectId="+projectId+"&appDirName=" + appDir + "&userId=" + userId +"&"+ciRequestBody.data;
 			} else if(action === "editContinuousView") {
 				header.requestMethod = "GET";
 				header.webserviceurl = commonVariables.webserviceurl + commonVariables.ci + "/editContinuousView?projectId="+projectId+"&appDirName="+appDir+"&name=" + params;
@@ -801,49 +801,52 @@ define([], function() {
 			self.currentEvent(schedule, '');
 			
 			var CronExpre = Obj.scheduleExpression;
-			var cronSplit = [];
-			cronSplit = CronExpre.split(" ");
-			if(schedule === "Daily") {
-				$('input[name=scheduleType][value=Daily]').attr('checked',true);
-				if(CronExpre.indexOf("/") != -1) {
-					var every = $('#schedule_daily').find('input[name=everyAt]');
-					every.prop('checked', true);
+			if(CronExpre !== null && CronExpre !== undefined) {
+				var cronSplit = [];
+				cronSplit = CronExpre.split(" ");
+				if(schedule === "Daily") {
+					$('input[name=scheduleType][value=Daily]').attr('checked',true);
+					if(CronExpre.indexOf("/") != -1) {
+						var every = $('#schedule_daily').find('input[name=everyAt]');
+						every.prop('checked', true);
+					}
+					
+		            if (cronSplit[1].indexOf("/") != -1) {
+		            	var hours = $('#schedule_daily').find('select[class=selectpicker][name=hours]');
+		            	hours.selectpicker('val', cronSplit[1].substring(2) + "");
+		            } else {
+		            	var hours = $('#schedule_daily').find('select[class=selectpicker][name=hours]');
+		            	hours.selectpicker('val', cronSplit[1]);
+		            }
+		            
+					if (cronSplit[0].indexOf("/") != -1) {
+						var minutes = $('#schedule_daily').find('select[class=selectpicker][name=minutes]');
+		            	minutes.selectpicker('val', cronSplit[0].substring(2) + "");
+		            } else {
+		            	var minutes = $('#schedule_daily').find('select[class=selectpicker][name=minutes]');
+		            	minutes.selectpicker('val', cronSplit[0]);
+		            }
+				} else if(schedule === "Weekly") {
+					$('input[name=scheduleType][value=Weekly]').attr('checked',true);
+					var weeks = $('#schedule_weekly').find('select[class=selectpicker][name=weeks]');
+					var hours = $('#schedule_weekly').find('select[class=selectpicker][name=hours]');
+					var minutes = $('#schedule_weekly').find('select[class=selectpicker][name=minutes]');
+					weeks.selectpicker('val', cronSplit[4]);
+					hours.selectpicker('val', cronSplit[1]);
+					minutes.selectpicker('val', cronSplit[0]);
+				} else if(schedule === "Monthly") {
+					$('input[name=scheduleType][value=Monthly]').attr('checked',true);
+					var day = $('#schedule_monthly').find('select[class=selectpicker][name=days]');
+					var month = $('#schedule_monthly').find('select[class=selectpicker][name=months]');
+					var hour = $('#schedule_monthly').find('select[class=selectpicker][name=hours]');
+					var minute = $('#schedule_monthly').find('select[class=selectpicker][name=minutes]');
+					day.selectpicker('val', cronSplit[2]);
+					month.selectpicker('val', cronSplit[3]);
+					hour.selectpicker('val', cronSplit[1]);
+					minute.selectpicker('val', cronSplit[0]);
 				}
-				
-	            if (cronSplit[1].indexOf("/") != -1) {
-	            	var hours = $('#schedule_daily').find('select[class=selectpicker][name=hours]');
-	            	hours.selectpicker('val', cronSplit[1].substring(2) + "");
-	            } else {
-	            	var hours = $('#schedule_daily').find('select[class=selectpicker][name=hours]');
-	            	hours.selectpicker('val', cronSplit[1]);
-	            }
-	            
-				if (cronSplit[0].indexOf("/") != -1) {
-					var minutes = $('#schedule_daily').find('select[class=selectpicker][name=minutes]');
-	            	minutes.selectpicker('val', cronSplit[0].substring(2) + "");
-	            } else {
-	            	var minutes = $('#schedule_daily').find('select[class=selectpicker][name=minutes]');
-	            	minutes.selectpicker('val', cronSplit[0]);
-	            }
-			} else if(schedule === "Weekly") {
-				$('input[name=scheduleType][value=Weekly]').attr('checked',true);
-				var weeks = $('#schedule_weekly').find('select[class=selectpicker][name=weeks]');
-				var hours = $('#schedule_weekly').find('select[class=selectpicker][name=hours]');
-				var minutes = $('#schedule_weekly').find('select[class=selectpicker][name=minutes]');
-				weeks.selectpicker('val', cronSplit[4]);
-				hours.selectpicker('val', cronSplit[1]);
-				minutes.selectpicker('val', cronSplit[0]);
-			} else if(schedule === "Monthly") {
-				$('input[name=scheduleType][value=Monthly]').attr('checked',true);
-				var day = $('#schedule_monthly').find('select[class=selectpicker][name=days]');
-				var month = $('#schedule_monthly').find('select[class=selectpicker][name=months]');
-				var hour = $('#schedule_monthly').find('select[class=selectpicker][name=hours]');
-				var minute = $('#schedule_monthly').find('select[class=selectpicker][name=minutes]');
-				day.selectpicker('val', cronSplit[2]);
-				month.selectpicker('val', cronSplit[3]);
-				hour.selectpicker('val', cronSplit[1]);
-				minute.selectpicker('val', cronSplit[0]);
 			}
+			
 		},
 		
 		showConfigureJob : function(thisObj) {
@@ -875,7 +878,6 @@ define([], function() {
 			if (templateJsonData.enableRepo && templateJsonData.repoTypes === "svn") {
 				// For svn
 				$(repoTypeElemUrl).html('<td colspan="2"><input type="text" placeholder="SVN Url" name="url"><input name="repoType" type="hidden" value="'+ templateJsonData.repoTypes +'"></td>');
-				
 				
 				$(repoTypeElemCred).html('<td><input type="text" placeholder="Username" name="username"></td>'+
                         '<td><input type="password" placeholder="Password" name="password"></td>');
@@ -1033,6 +1035,24 @@ define([], function() {
 						if (jobJsonData.fetchSql === "{}") {
 							fetchSql = false;
 						} 	
+					}
+					if (templateJsonData.enableRepo && templateJsonData.repoTypes === "svn" || templateJsonData.enableRepo && templateJsonData.repoTypes === "git") {
+						$("input[name=repoType]").val(templateJsonData.repoTypes);
+					} 
+					
+					if(templateJsonData.enableUploadSettings) {
+						var upload = templateJsonData.uploadTypes;
+						for (var i=0; i < upload.length; i++) {
+							if (upload[i] === "Collabnet") {
+								$("input[name=enableBuildRelease]").val("true");
+							}
+							if (upload[i] === "Confluence") {
+								$("input[name=enableConfluence]").val("true");
+							}
+							if (upload[i] === "Cobertura") {
+								$("input[name=coberturaPlugin]").val("true");
+							}
+						}
 					}
 					self.popForCi(thisObj, 'jobConfigure');
 					if (commonVariables.goal === commonVariables.performanceTestGoal || commonVariables.goal === commonVariables.loadTestGoal) {

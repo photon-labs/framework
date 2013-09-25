@@ -48,18 +48,22 @@
                   
               <div id="pdf_report_{{id}}" class="dyn_popup pdf_report">
               <div id="noReport_{{id}}" class="alert noReport hideContent" style="text-align: center;"></div>
-			  <table class="existing_report" width="100%" border="0" cellspacing="0" cellpadding="5">
-                  <thead class="hideContent" name="pdfHeader_{{id}}" show="true">
-                        <tr>
-                            <th data-i18n="commonlabel.label.existingreport"></th>
-                            <th data-i18n="commonlabel.label.type"></th>
-                            <th data-i18n="commonlabel.label.download"></th>
-                            <th data-i18n="commonlabel.label.delete"></th>
-						</tr>    
-                    </thead>	
-                    <tbody name="generatedPdfs_{{id}}" class="scroll">
-                    </tbody>    
-              </table>
+				  <table class="hideContent table" name="pdfHeader_{{id}}" show="true">
+						  <thead>  
+							<tr>
+								<th class="" data-i18n="commonlabel.label.existingreport"></th>
+								<th class="" data-i18n="commonlabel.label.type"></th>
+								<th class="" data-i18n="commonlabel.label.download"></th>
+								<th class="" data-i18n="commonlabel.label.delete"></th>
+							</tr>
+						  </thead>			
+				  </table>	
+				  <div class = "pdfheight">
+				  <table class="existing_report" width="100%" border="0" cellspacing="0" cellpadding="5">
+						<tbody name="generatedPdfs_{{id}}" class="scroll">
+						</tbody>    
+				  </table>
+				  </div>	  
                 <form id="pdfReport">
                    <table class="report_type">
                     <tbody>
@@ -131,7 +135,7 @@
                                         <option value="git" data-i18n="projectlist.label.git"></option>
                                     </select>
                                 </td>
-                                <td><input type="text" name="repoUrl" id="repourl_{{id}}"></td>
+                                <td><input type="text" name="repoUrl" placeholder="Repo Url" id="repourl_{{id}}"></td>
                             </tr>
                             <tr>
                                 <td class="seperatetd"><span data-i18n="projectlist.label.othercredential"></span><input type="checkbox" id="repocredential_{{id}}" repoDynid="{{id}}" class="credential"></td>
@@ -143,7 +147,7 @@
                             </tr>
                             <tr>
                                 <td><input type="text" name="username" data-i18n="[placeholder]login.placeholder.username" id="uname_{{id}}" class="uname"></td>
-                                <td><input type="password" name="password" placeholder="*******" id="pwd_{{id}}" class="pwd"></td>
+                                <td><input type="password" name="password" placeholder="Password" id="pwd_{{id}}" class="pwd"></td>
                             </tr>
                             <tr>
                                 <td colspan="2">
@@ -182,7 +186,7 @@
                                         		<option value="git" data-i18n="projectlist.label.git"></option>
                                             </select>
                                         </td>
-                                        <td><input type="text" name="repoUrl" id="commitRepourl_{{id}}"></td>
+                                        <td><input type="text" name="repoUrl" placeholder="Repo Url" id="commitRepourl_{{id}}"></td>
                                     </tr>
                                     <tr>
                                         <td class="seperatetd"><span data-i18n="projectlist.label.othercredential"></span><input type="checkbox" id="commitCredential_{{id}}" class="credential"></td>
@@ -194,7 +198,7 @@
                                     </tr>
                                     <tr>
                                         <td><input type="text" data-i18n="[placeholder]login.placeholder.username" id="commitUsername_{{id}}" class="uname" name="username"></td>
-                                        <td><input type="password" placeholder="*******" id="commitPassword_{{id}}" class="pwd" name="password"></td>
+                                        <td><input type="password" placeholder="Password" id="commitPassword_{{id}}" class="pwd" name="password"></td>
                                     </tr>
                                     <tr>
                                         <td colspan="2">
@@ -236,7 +240,7 @@
                                         		<option value="git" data-i18n="projectlist.label.git"></option>
                                             </select>
                                         </td>
-                                        <td><input type="text" id="updateRepourl_{{id}}" name="repoUrl"></td>
+                                        <td><input type="text" placeholder="Repo Url" id="updateRepourl_{{id}}" name="repoUrl"></td>
                                     </tr>
                                     <tr>
                                         <td class="seperatetd"><span data-i18n="projectlist.label.othercredential"></span><input type="checkbox" id="updateCredential_{{id}}" class="credential"></td>
@@ -248,7 +252,7 @@
                                     </tr>
                                     <tr>
                                         <td><input type="text" data-i18n="[placeholder]login.placeholder.username" id="updateUsername_{{id}}" class="uname" name="username"></td>
-                                        <td><input type="password" placeholder="*******" id="updatePassword_{{id}}" class="pwd" name="password"></td>
+                                        <td><input type="password" placeholder="Password" id="updatePassword_{{id}}" class="pwd" name="password"></td>
                                     </tr>
                                     <tr>
                                        <td colspan="2" data-i18n="projectlist.label.revision"></td>

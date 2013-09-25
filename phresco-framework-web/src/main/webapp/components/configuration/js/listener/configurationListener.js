@@ -19,6 +19,7 @@ define(["croneExpression/croneExpression"], function() {
 		databaseTypeVersion : null,
 		croneExp : null,
 		nonEnvEditConfigurations : null,
+		desc : null,
 	
 		/***
 		 * Called in initialization time of this class 
@@ -177,7 +178,7 @@ define(["croneExpression/croneExpression"], function() {
 					if (deleteEnv === "false") {
 						header.webserviceurl = commonVariables.webserviceurl+commonVariables.configuration+"/updateConfig?appDirName="+appDirName+"&isEnvSpecific="+deleteEnv+"&configName="+commonVariables.updateConfigName+"&customerId="+customerId+"&userId="+userId;
 					} else {
-						header.webserviceurl = commonVariables.webserviceurl+commonVariables.configuration+"/updateConfig?appDirName="+appDirName+"&envName="+deleteEnv+"&customerId="+customerId+"&userId="+userId;
+						header.webserviceurl = commonVariables.webserviceurl+commonVariables.configuration+"/updateConfig?appDirName="+appDirName+"&envName="+deleteEnv+"&customerId="+customerId+"&userId="+userId+"&oldEnvName="+self.oldEnvName+"&defaultEnv="+self.defaultEnv+"&desc="+self.desc;
 					}
 			} else if (action === "cloneEnv") {
 					header.requestMethod = "POST";
@@ -1158,6 +1159,7 @@ define(["croneExpression/croneExpression"], function() {
 			var envrName = "";
 			if ($('input[name=EnvName]').val() !== undefined) {
 				envrName = $('input[name=EnvName]').val();
+				self.desc = $('input[name=EnvDesc]').val();
 			} else {
 				envrName = $(".row_bg").attr('envspecificval');
 			}

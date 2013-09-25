@@ -249,11 +249,7 @@ define(["build/listener/buildListener"], function() {
 								cancreateIpa = '<a href="javascript:void(0)" class="tooltiptop" title="" data-placement="bottom" data-toggle="tooltip" data-original-title="IPA Download"><img name="ipaDownload" src="themes/default/images/Phresco/ipa_icon.png" width="13" height="18" border="0" alt=""></a>';
 							}
 
-							if(current.options === null || current.options.deviceDeploy === false){
-								deviceDeploy = '<div id="deploye_'+ current.buildNo +'" class="dyn_popup popup_bg" style="display:none;"><div id="bdeploy_'+ current.buildNo +'"><form name="deployForm"><ul class="row dynamicControls"></ul><div class="hiddenControls"></div></form><div class="flt_right"><input type="button" name="deploy" data-i18n="[value]build.label.deploy" class="btn btn_style dyn_popup_close"><input type="button" data-i18n="[value]build.label.close" class="btn btn_style dyn_popup_close"></div></div></div>';
-							}else{
-								deviceDeploy = '<div class="dyn_popup popup_bg" style="display:none;"></div>';
-							}
+							deviceDeploy = '<div id="deploye_'+ current.buildNo +'" class="dyn_popup popup_bg" style="display:none;"><div id="bdeploy_'+ current.buildNo +'"><form name="deployForm"><ul class="row dynamicControls"></ul><div class="hiddenControls"></div></form><div class="flt_right"><input type="button" name="deploy" data-i18n="[value]build.label.deploy" class="btn btn_style dyn_popup_close"><input type="button" data-i18n="[value]build.label.close" class="btn btn_style dyn_popup_close"></div></div></div>';
 
 							if(buildObject.userPermissions.manageBuilds !== null && buildObject.userPermissions.manageBuilds === true){
 								manageBuilds = '<a href="javascript:void(0)" class="tooltiptop" title="" data-placement="bottom" data-toggle="tooltip" data-original-title="Deploy"><img name="deployBuild" deviceDeploy="' + (current.options === null ? "" : current.options.deviceDeploy) + '" src="themes/default/images/Phresco/deploy_icon.png" width="16" height="20" border="0" alt=""></a>' + deviceDeploy;

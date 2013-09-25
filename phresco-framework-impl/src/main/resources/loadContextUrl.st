@@ -19,7 +19,7 @@
 						<tr>
 							<th colspan="4">
 							<div class="delete_icon removeContext">
-								<img class="removeContextImg" src="themes/default/images/helios/delete_row.png">
+								<img class="removeContextImg" src="themes/default/images/Phresco/delete_row.png">
 							</div>
 							</th>
 						</tr>
@@ -85,7 +85,7 @@
 											<td colspan="4">
 												<div class="add_test">
 													$contextUrlsObj.headers: { headersObj |
-														<div class="add_remove_test headers">$headersObj.key$ : $headersObj.value$<input type="hidden" value="$headersObj.key$" name="headerKey"> <input type="hidden" value="$headersObj.value$" name="headerValue"> <img src="themes/default/images/helios/remove_test.png" class="removeHeaders"></div>
+														<div class="add_remove_test headers">$headersObj.key$ : $headersObj.value$<input type="hidden" value="$headersObj.key$" name="headerKey"> <input type="hidden" value="$headersObj.value$" name="headerValue"> <img src="themes/default/images/Phresco/remove_test.png" class="removeHeaders"></div>
 													}$
 												</div>
 											</td>
@@ -109,8 +109,8 @@
 													<td><input type="text" class="parameterName" value="$parametersObj.name$" placeholder="Name" name="parameterName"/>
 													<textarea class="parameterValue" name="parameterValue" placeholder="Value">$parametersObj.value$</textarea>
 													<input class="parameterEncode" type="checkbox"  name="parameterEncode" checkFlag="$parametersObj.encode$"/>Encode
-													<img src="themes/default/images/helios/minus_icon.png" class="add_test_icon removeParamter" style="display:none;">
-													<img class="add_test_icon addParameter" src="themes/default/images/helios/plus_icon.png"></td>
+													<img src="themes/default/images/Phresco/minus_icon.png" class="add_test_icon removeParamter" style="display:none;">
+													<img class="add_test_icon addParameter" src="themes/default/images/Phresco/plus_icon.png"></td>
 												</tr>
 											}$				
 										</tbody>
@@ -131,9 +131,9 @@
 	if(jsonFlag) {
 		var newTextBoxDiv = jQuery(document.createElement('div')).attr('id', 'contextDiv').attr('class','contextDivClass');
 		newTextBoxDiv.html("<table class='table table-striped table_border table-bordered context_table border_div
-' cellpadding='0' cellspacing='0' 	border='0'><thead><tr><th colspan='4'><div class='delete_icon removeContext'><img class='removeContextImg' src='themes/default/images/helios/delete_row.png'></div></th></tr></thead><tbody><tr><td><label>HTTP Name<sup>*</sup></label><input type='text' value='' name='httpName'></td><td><label>Additional Context</label><input type='text' value='' name='context'></td><td><label>Type</label><select name='contextType'><option value='GET'>GET</option><option value='POST'>POST</option><option value='PUT'>PUT</option><option value='DELETE'>DELETE</option></select></td><td><label>Encoding</label><select name='encodingType'><option value='UTF-8'>UTF-8</option><option value='UTF-16'>UTF-16</option></select></td></tr><tr><td colspan='4'><table class='table' cellpadding='0' cellspacing='0' border='0'><tbody><tr><td><input type='checkbox' name='redirectAutomatically' class='redirectAutomatically' checked>Redirect Automatically</td><td><input type='checkbox'  name='followRedirects' class='followRedirects'>Follow Redirects</td><td><input type='checkbox' name='keepAlive' class='keepAlive'>Use Keep Alive</td></tr><tr><td><input type='checkbox' name='multipartData' class='multipartData'>Use Mulipart data</td><td colspan='2'><input type='checkbox' name='compatibleHeaders' class='compatibleHeaders'>Browser Compatible Headers</td></tr></tbody></table></td></tr><tr><td colspan='4'><table class='table table-striped table_border table-bordered header_table border_div
+' cellpadding='0' cellspacing='0' 	border='0'><thead><tr><th colspan='4'><div class='delete_icon removeContext'><img class='removeContextImg' src='themes/default/images/Phresco/delete_row.png'></div></th></tr></thead><tbody><tr><td><label>HTTP Name<sup>*</sup></label><input type='text' value='' name='httpName'></td><td><label>Additional Context</label><input type='text' value='' name='context'></td><td><label>Type</label><select name='contextType'><option value='GET'>GET</option><option value='POST'>POST</option><option value='PUT'>PUT</option><option value='DELETE'>DELETE</option></select></td><td><label>Encoding</label><select name='encodingType'><option value='UTF-8'>UTF-8</option><option value='UTF-16'>UTF-16</option></select></td></tr><tr><td colspan='4'><table class='table' cellpadding='0' cellspacing='0' border='0'><tbody><tr><td><input type='checkbox' name='redirectAutomatically' class='redirectAutomatically' checked>Redirect Automatically</td><td><input type='checkbox'  name='followRedirects' class='followRedirects'>Follow Redirects</td><td><input type='checkbox' name='keepAlive' class='keepAlive'>Use Keep Alive</td></tr><tr><td><input type='checkbox' name='multipartData' class='multipartData'>Use Mulipart data</td><td colspan='2'><input type='checkbox' name='compatibleHeaders' class='compatibleHeaders'>Browser Compatible Headers</td></tr></tbody></table></td></tr><tr><td colspan='4'><table class='table table-striped table_border table-bordered header_table border_div
 ' cellpadding='0' cellspacing='0' border='0'><thead><tr><th>Headers</th></tr></thead><tbody><tr><td><input type='text' class='headerKey' placeholder='Key'><input class='headerValue' type='text' placeholder='Value'><input type='button' value='Add' class='btn btn_style headerKeyAdd'></td></tr><tr class='headerContent' style='display:none;'><td><div class='add_test'></div></td></tr></tbody></table></td></tr><tr><td colspan='4'><table class='table table-striped table_border table-bordered header_table border_div
-' cellpadding='0' cellspacing='0' border='0'><thead><tr><th>Parameters</th></tr></thead><tbody><tr class='parameterRow'><td><input type='text' class='parameterName' value='' placeholder='Name' name='parameterName'/><textarea class='parameterValue' name='parameterValue' placeholder='Value'></textarea><input class='parameterEncode' type='checkbox'  name='parameterEncode'/>Encode<img src='themes/default/images/helios/minus_icon.png' class='add_test_icon removeParamter' style='display:none;'><img class='add_test_icon addParameter' src='themes/default/images/helios/plus_icon.png'></td></tr></tbody></table></td></tr></tbody></table>");
+' cellpadding='0' cellspacing='0' border='0'><thead><tr><th>Parameters</th></tr></thead><tbody><tr class='parameterRow'><td><input type='text' class='parameterName' value='' placeholder='Name' name='parameterName'/><textarea class='parameterValue' name='parameterValue' placeholder='Value'></textarea><input class='parameterEncode' type='checkbox'  name='parameterEncode'/>Encode<img src='themes/default/images/Phresco/minus_icon.png' class='add_test_icon removeParamter' style='display:none;'><img class='add_test_icon addParameter' src='themes/default/images/Phresco/plus_icon.png'></td></tr></tbody></table></td></tr></tbody></table>");
 		newTextBoxDiv.appendTo("#contextDivParent");
 	}  else {
 		checkEncodeCheckBox();

@@ -38,6 +38,7 @@
 		<div class="unit_close">
 				<a href="javascript:void(0)" data-flag="true" id="codeValidateConsole">
 					<img src="themes/default/images/Phresco/console_img.png" width="33" height="92" border="0" alt="">
+					<div class="progress_loading" style="display:none;"><img src="themes/default/images/Phresco/progress_load.gif" border="0"></div>
 				</a>
 			</div>
 		<div class="unit_progress">

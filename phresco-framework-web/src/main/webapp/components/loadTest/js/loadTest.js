@@ -350,7 +350,6 @@ define(["performanceLoadListener/listener/performanceLoadListener"], function() 
 				var currentOption = $(this).text();
 				$("#testResultFileDrop").html(currentOption  + '<b class="caret"></b>');
 				$("#testResultFileDrop").attr("value", currentOption);
-				$(".perfResultInfo").html('');
 
 				if (!self.isBlank($("#testAgainstsDrop").attr("value"))) {
 					self.getResultEvent.dispatch($("#testAgainstsDrop").attr("value"), $(this).text(), $("#graphForDrop").attr("value"), '', self.whereToRender);

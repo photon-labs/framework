@@ -121,15 +121,15 @@ define(["features/listener/featuresListener"], function() {
 			Handlebars.registerHelper('packagedata', function(packaging, versions, appliesTo, id) {
 				var settingimg;
 				if(packaging === "zip" &&  appliesTo[0].core === false){
-					$.each(versions, function(index, value){
-						if(JSON.stringify(value.appliesTo) !== "null"){
-							$.each(value.appliesTo, function(index, value){
-								if(value.required === false){
-									settingimg = '<span class="settings_icon"  settingsid="s_'+id+'"><img src="themes/default/images/Phresco/settings_icon.png" width="23" height="22" border="0" alt=""></span>';
-								}
-							});
-						}		
-					});
+					//$.each(versions, function(index, value){
+						//if(JSON.stringify(value.appliesTo) !== "null"){
+							//$.each(value.appliesTo, function(index, value){
+								//if(value.required === false){
+									settingimg = '<span class="settings_icon"  settingsid="s_'+id+'"><a style="cursor: pointer;"><img src="themes/default/images/Phresco/settings_icon.png" width="23" height="22" border="0" alt=""></a></span>';
+								//}
+							//});
+						//}		
+					//});
 				}				
 				return settingimg;
 			});
@@ -260,8 +260,10 @@ define(["features/listener/featuresListener"], function() {
 			$('#moduleContent ,#jsibrariesContent, #componentsContent').on('DOMMouseScroll mousewheel', function (e) {
 				if(e.originalEvent.detail > 0 || e.originalEvent.wheelDelta < 0) { 
 					$('.dyn_popup_close').click();
+					$('.newclose').click();
 				} else {
 					$('.dyn_popup_close').click();
+					$('.newclose').click();
 				}
 			});
 
@@ -349,7 +351,7 @@ define(["features/listener/featuresListener"], function() {
 				var actionBody = {};
 				var score = this;
 				actionBody.featureName = $(this).parent().attr('name');
-				var toappend = '<div id="'+settingsid+'" class="dyn_popup"><form class="set"><ul class="row dynamicControls"></ul></form><div class="flt_right"><input id="configure_settings" class="btn btn_style" type="button" value="Configure" name=""><input class="btn btn_style close_conf" type="button" value="Close"></div></div>';
+				var toappend = '<div id="'+settingsid+'" class="dyn_popup"><form class="set"><ul class="row dynamicControls"></ul></form><div class="flt_right"><input id="configure_settings" class="btn btn_style" type="button" value="Configure" name=""><input class="btn btn_style close_conf newclose" type="button" value="Close"></div></div>';
 				$("#settingspopup").children().remove();
 				$("#settingspopup").append(toappend);		
 				self.featuresListener.getFeaturesList(self.featuresListener.getRequestHeader(actionBody, "populate"), function(response) {
@@ -364,7 +366,7 @@ define(["features/listener/featuresListener"], function() {
 					} else {
 						$("#settingspopup").find('form').remove();
 						$("#settingspopup").find('.flt_right').remove();
-						$("#settingspopup").children('div').append('<p>Property Template does not exist.</p><div style="float:right;"><input class="btn btn_style confclose" type="button" value="Close"></div>');
+						$("#settingspopup").children('div').append('<p>Property Template does not exist.</p><div style="float:right;"><input class="btn btn_style confclose newclose" type="button" value="Close"></div>');
 					}
 						
 					var twowidth = window.innerWidth/1.5;;

@@ -145,6 +145,9 @@ define(["testResult/listener/testResultListener"], function() {
 			//To show the print as pdf popup
 			$('#pdfIcon').unbind("click");
 			$('#pdfIcon').click(function() {
+				if ($('#topHidden').val() !== undefined || $('#topHidden').val() !== 0) {
+					$('.th-inner').css('top', $('#topHidden').val()+'px');
+				}
 				self.onPrintPdfEvent.dispatch();
 				self.testResultListener.showPopupLoading($('#pdfReportLoading'));
 				self.opencc(this, 'pdf_report');
@@ -176,7 +179,9 @@ define(["testResult/listener/testResultListener"], function() {
 			//Shows the graphical view of the test result
 			$(".graph1").unbind("click");
 			$(".graph1").click(function() {
+				var top = $('.header-background').offset().top;
 				$("#testSuites").hide();
+				$("#testSuites").append('<input type="hidden" id="topHidden" value="'+top+'">');
 				$("#graphView").show();
 				$("#tabularView").hide();
 				$("#graphicalView").show();

@@ -322,11 +322,6 @@ define([], function() {
 				if (response.service_exception !== null) {
 				} else {
 					self.getReportEvent(response, appDir, "All", dynamicId);
-					if(self.iddynamic[dynamicId] === 1) {
-						var topval2 = parseInt($("#pdf_report_"+dynamicId).css('top'));
-						topval2 =topval2 - 20;
-						$("#pdf_report_"+dynamicId).css('top',topval2);
-					}	
 				}
 				commonVariables.hideloading = false;
 			});
@@ -430,6 +425,7 @@ define([], function() {
 		
 		getReportEvent : function(obj, appDir, fromPage, dynamicId){
 			var self = this;
+			$(".pdfheight").hide();
 			var getreportdata = {}, actionBody, action, temp;	
 			if (fromPage !== undefined && fromPage !== null) {
 				getreportdata.fromPage = fromPage;
@@ -455,21 +451,15 @@ define([], function() {
 						var halfheight= window.innerHeight/2;
 						var halfwidth= window.innerWidth/2;
 						if ($(obj).offset().top > halfheight && $(obj).offset().left > halfwidth){
-							self.iddynamic[dynamicId] = 1;
 							var nameval = $(obj).attr('name');
-							if(response.responseCode === 'PHR200015' || response.length === 0) {
-								var temp2 = $(obj).position().top - 197;
+							if(response.data.json.length === 0) {
+								var temp2 = $(obj).position().top - 196;
 								$("#"+nameval).css('top',temp2);
 							} else {			
-								var temp2 = $(obj).position().top - 230;
+								var temp2 = $(obj).position().top - 262;
 								$("#"+nameval).css('top',temp2);
-								for(var i =0; i < response.length; i++) {
-									var topval = parseInt($("#pdf_report_"+dynamicId).css('top'));
-									topval =topval - 21;
-									$("#pdf_report_"+dynamicId).css('top',topval);
-								};
 							}	
-						}
+						} 
 						$.each(response.data,function(index,value) {
 							if(index === 'value') {
 								if(value === false) {
@@ -477,7 +467,7 @@ define([], function() {
 								}
 							}
 						});	
-				}
+				} 
 				self.listPdfReports(response, temp, dynamicId);
 				self.clickFunction(dynamicId);
 				commonVariables.hideloading = false;
@@ -493,8 +483,9 @@ define([], function() {
 			if (response !== undefined && response !== null && response.data.json.length > 0) {
 				$("#noReport_"+dynamicId).addClass("hideContent");
 				$("#noReport_"+dynamicId).hide();
-				$("thead[name=pdfHeader_"+dynamicId+"]").removeClass("hideContent");
-				$("thead[name=pdfHeader_"+dynamicId+"]").show();
+				$("table[name=pdfHeader_"+dynamicId+"]").removeClass("hideContent");
+				$(".pdfheight").show();
+				$("table[name=pdfHeader_"+dynamicId+"]").show();
 				for(var i =0; i < response.data.json.length; i++) {
 					var idgenerate = Date.now();
 					var headerTr = '<tr class="generatedRow" fileName="'+response.data.json[i].fileName+'" appdirname = "'+temp+'"><td>' + response.data.json[i].time + '</td><td>'+response.data.json[i].type+'</td>';
@@ -510,7 +501,8 @@ define([], function() {
 				}
 				$("tbody[name=generatedPdfs_"+dynamicId+"]").append(content);
 			} else {
-				$("thead[name=pdfHeader_"+dynamicId+"]").hide();
+				$(".pdfheight").hide();
+				$("table[name=pdfHeader_"+dynamicId+"]").hide();
 				$("#noReport_"+dynamicId).removeClass("hideContent");
 				$("#noReport_"+dynamicId).show();
 				$("#noReport_"+dynamicId).html("No Reports are Available");
@@ -533,16 +525,11 @@ define([], function() {
 						var pdfFileName = $(this).attr("fileName");
 						if(pdfFileName === deletedata.fileName){
 							$("tr[fileName='"+pdfFileName+"']").remove();
-							if(self.iddynamic[dynamicId] === 1) {
-								var topval3 = parseInt($("#pdf_report_"+dynamicId).css('top'));
-								topval3 =topval3 + 30;
-								$("#pdf_report_"+dynamicId).css('top',topval3);
-							}	
 						}
 					});
 					var size = $(".generatedRow").size();
 					if(size === 0) {
-						$("thead[name=pdfHeader_"+dynamicId+"]").hide();
+						$("table[name=pdfHeader_"+dynamicId+"]").hide();
 						$("#noReport_"+dynamicId).removeClass("hideContent");
 						$("#noReport_"+dynamicId).show();
 						$("#noReport_"+dynamicId).html("No Reports are Available");

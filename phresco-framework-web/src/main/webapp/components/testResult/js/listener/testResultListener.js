@@ -408,7 +408,7 @@ define(['lib/RGraph_common_core-1.0','lib/RGraph_common_tooltips-1.0','lib/RGrap
 			commonVariables.hideloading = true;
 			self.performAction(self.getActionHeader(requestBody, "getPdfReports"), function(response) {
 				$('.progress_loading').hide();
-				self.listPdfReports(response);
+				self.listPdfReports(response.data.json);
 				commonVariables.hideloading = false;
 			});
 		},

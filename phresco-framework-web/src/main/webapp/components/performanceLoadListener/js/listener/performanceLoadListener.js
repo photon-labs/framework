@@ -290,7 +290,6 @@ define(["lib/jquery-tojson-1.0",'lib/RGraph_common_core-1.0','lib/RGraph_common_
 				var currentOption = $(this).text();
 				$("#testResultFileDrop").html(currentOption   + '<b class="caret"></b>');
 				$("#testResultFileDrop").attr("value", currentOption);
-				$(".perfResultInfo").html('');
 				var showGraphFor = $("#graphForDrop").attr("value");
 				self.getResultOnChangeEvent($("#testAgainstsDrop").attr("value"), $(this).text(), showGraphFor, '', whereToRender);
 			});		
@@ -381,7 +380,7 @@ define(["lib/jquery-tojson-1.0",'lib/RGraph_common_core-1.0','lib/RGraph_common_
 			var requestBody = {};
 			requestBody.from = from;
 			self.performAction(self.getActionHeader(requestBody, "getPdfReports"), function(response) {
-				self.listPdfReports(response, from);
+				self.listPdfReports(response.data.json, from);
 			});
 		},
 
@@ -572,6 +571,7 @@ define(["lib/jquery-tojson-1.0",'lib/RGraph_common_core-1.0','lib/RGraph_common_
 			});
 			resultTable += '</tbody><tfoot><tr><td>Total</td><td>'+ resultData.aggregateResult.sample +'</td><td>'+resultData.aggregateResult.average+'</td><td>'+resultData.aggregateResult.min+'</td><td>'+resultData.aggregateResult.max+'</td>'+
 			'<td>'+resultData.aggregateResult.stdDev+'</td><td>'+ resultData.aggregateResult.error+' %</td><td>'+resultData.aggregateResult.throughput+'</td><td>'+resultData.aggregateResult.kb+'</td><td>'+resultData.aggregateResult.avgBytes+'</td></tr></tfoot></table></div></div>';
+			$(".perfResultInfo").html('');
 			whereToRender.find(".perfResultInfo").html(resultTable);
 			
 			self.tableScrollbar();
