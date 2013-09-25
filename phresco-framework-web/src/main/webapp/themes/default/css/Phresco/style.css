@@ -105,7 +105,7 @@ a, div, button, img { outline: none !important; }
     display: none;
     background-color: rgba(0, 0, 0, .35);
 	position:absolute;
-    z-index: 1000 !important;
+    z-index: 5 !important;
 }
 .widget-mask-main {
 	  position: fixed;

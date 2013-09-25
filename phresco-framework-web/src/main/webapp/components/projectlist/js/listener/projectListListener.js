@@ -33,6 +33,7 @@ define([], function() {
 				Clazz.navigationController.jQueryContainer = commonVariables.contentPlaceholder;
 				Clazz.navigationController.push(editprojectObject, commonVariables.animation);
 				$("#editprojectTab").css("display", "block");
+				$("#editproject a").addClass('act');
 				self.dynamicrenderlocales(commonVariables.contentPlaceholder);
 			});
 		},
