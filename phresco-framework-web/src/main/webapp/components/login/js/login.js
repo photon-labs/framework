@@ -48,7 +48,7 @@ define(["framework/widgetWithTemplate", "login/listener/loginListener"], functio
 				commonVariables.api.localVal.getSession('customerlogo') !== ""){
 				$('#loginlogo').attr("src", "data:image/png;base64," + commonVariables.api.localVal.getSession('customerlogo'));
 			} else {
-				$('#loginlogo').attr("src", "themes/default/images/helios/logo_login.png");
+				$('#loginlogo').attr("src", "themes/default/images/Phresco/logo_login.png");
 			}
 			
 			if(commonVariables.api.localVal.getSession('loggedout') === "true"){

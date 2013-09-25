@@ -724,7 +724,7 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 		}
 		setupLibrary();
 		DefaultSVNOptions defaultSVNOptions = new DefaultSVNOptions();
-        defaultSVNOptions.setIgnorePatterns(new String[] {DO_NOT_CHECKIN_DIR});
+        defaultSVNOptions.setIgnorePatterns(new String[] {DO_NOT_CHECKIN_DIR,RUN});
         final SVNClientManager cm = SVNClientManager.newInstance(defaultSVNOptions, userName, hashedPassword);
         return cm.getCommitClient().doImport(new File(subVersionedDirectory), SVNURL.parseURIEncoded(repositoryURL), commitMessage, null, true, true, SVNDepth.fromRecurse(true));
     }

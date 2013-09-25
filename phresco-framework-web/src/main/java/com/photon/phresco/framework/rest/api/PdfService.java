@@ -21,8 +21,15 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FilenameFilter;
+import java.net.InetAddress;
+import java.net.NetworkInterface;
+import java.net.SocketException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.DELETE;
@@ -35,15 +42,14 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import org.apache.commons.lang.StringUtils;
-import org.codehaus.jettison.json.JSONArray;
-import org.codehaus.jettison.json.JSONException;
-import org.codehaus.jettison.json.JSONObject;
 
 import com.photon.phresco.commons.FrameworkConstants;
 import com.photon.phresco.commons.ResponseCodes;
 import com.photon.phresco.commons.model.ApplicationInfo;
 import com.photon.phresco.exception.PhrescoException;
+import com.photon.phresco.framework.commons.FrameworkUtil;
 import com.photon.phresco.framework.commons.QualityUtil;
+import com.photon.phresco.framework.model.PdfReportInfo;
 import com.photon.phresco.framework.rest.api.util.FrameworkServiceUtil;
 import com.photon.phresco.util.Constants;
 import com.photon.phresco.util.ServiceConstants;
@@ -178,30 +184,46 @@ public class PdfService extends RestBase implements FrameworkConstants, Constant
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response showGeneratePdfPopup(@QueryParam(REST_QUERY_APPDIR_NAME) String appDirName,
 			@QueryParam(REST_QUERY_FROM_PAGE) String fromPage, @Context HttpServletRequest request) {
-		ResponseInfo<JSONArray> responseData = new ResponseInfo<JSONArray>();
+		ResponseInfo<Map<String, Object>> responseData = new ResponseInfo<Map<String, Object>>();
+		 Map<String, Object> paramMap = new HashMap<String, Object>(8);
 		try {
-			JSONArray existingPDFs = null;
+			List<PdfReportInfo> existingPDFs = null;
+			boolean isReportAvailable = false;
+			FrameworkUtil frameworkUtil = FrameworkUtil.getInstance();
+			FrameworkServiceUtil futil = new FrameworkServiceUtil();
 			ApplicationInfo appInfo = FrameworkServiceUtil.getApplicationInfo(appDirName);
 				existingPDFs = getExistingPDFs(fromPage, appInfo);
-			if (existingPDFs != null) {
-				return Response.status(Status.OK).entity(existingPDFs).header("Access-Control-Allow-Origin", "*")
-						.build();
+				
+				// is sonar report available
+				if ((FrameworkConstants.ALL).equals(fromPage)) {
+					isReportAvailable = futil.isSonarReportAvailable(frameworkUtil, appInfo, request);
+				}
+
+				// is test report available
+				if (!isReportAvailable) {
+					isReportAvailable = futil.isTestReportAvailable(frameworkUtil, appInfo, fromPage);
+				}
+			paramMap.put("value", isReportAvailable);
+			if (existingPDFs != null ) {
+				paramMap.put("json", existingPDFs);
+				ResponseInfo<Map<String, Object>> finalOutput = responseDataEvaluation(responseData, null,
+						paramMap, RESPONSE_STATUS_SUCCESS, PHR200027);
+				return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, "*").build();
 			}
 			status = RESPONSE_STATUS_SUCCESS;
 			successCode = PHR200015;
-			ResponseInfo<JSONArray> finalOutput = responseDataEvaluation(responseData, null,
+			ResponseInfo<Map<String, Object>> finalOutput = responseDataEvaluation(responseData, null,
 					null, status, successCode);
 			return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
 		} catch (Exception e) {
 			status = RESPONSE_STATUS_ERROR;
 			errorCode = PHR210019;
-			ResponseInfo<JSONArray> finalOutput = responseDataEvaluation(responseData, e,
+			ResponseInfo<Map<String, Object>> finalOutput = responseDataEvaluation(responseData, e,
 					null, status, errorCode);
 			return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*")
 					.build();
 		}
 	}
-
 
 	/**
 	 * Gets the existing pdfs.
@@ -211,46 +233,43 @@ public class PdfService extends RestBase implements FrameworkConstants, Constant
 	 * @return the existing pd fs
 	 * @throws PhrescoException the phresco exception
 	 */
-	private JSONArray getExistingPDFs(String fromPage, ApplicationInfo appInfo) throws PhrescoException {
-		JSONArray jsonarray = null;
+	private List<PdfReportInfo> getExistingPDFs(String fromPage, ApplicationInfo appInfo) {
+		List<PdfReportInfo> pdfList = new ArrayList<PdfReportInfo>();
+		
 		// popup showing list of pdf's already created
 		String pdfDirLoc = "";
-		try {
-			if (StringUtils.isEmpty(fromPage) || FROMPAGE_ALL.equals(fromPage)) {
-				pdfDirLoc = Utility.getProjectHome() + appInfo.getAppDirName() + File.separator + DO_NOT_CHECKIN_DIR
-						+ File.separator + ARCHIVES + File.separator + CUMULATIVE;
-			} else {
-				pdfDirLoc = Utility.getProjectHome() + appInfo.getAppDirName() + File.separator + DO_NOT_CHECKIN_DIR
-						+ File.separator + ARCHIVES + File.separator + fromPage;
-			}
-			File pdfFileDir = new File(pdfDirLoc);
-			if (pdfFileDir.isDirectory()) {
-				File[] children = pdfFileDir.listFiles(new FileNameFileFilter(FrameworkConstants.DOT + PDF));
-				QualityUtil util = new QualityUtil();
-				if (children != null) {
-					util.sortResultFile(children);
-				}
-				jsonarray = new JSONArray();
-				for (File child : children) {
-					JSONObject json = new JSONObject();
-					// three value
-					DateFormat yymmdd = new SimpleDateFormat("MMM dd yyyy HH.mm");
-					if (child.toString().contains("detail")) {
-						json.put("time", yymmdd.format(child.lastModified()));
-						json.put("type", "detail");
-						json.put("fileName", child.getName());
-					} else if (child.toString().contains("crisp")) {
-						json.put("time", yymmdd.format(child.lastModified()));
-						json.put("type", "crisp");
-						json.put("fileName", child.getName());
-					}
-					jsonarray.put(json);
-				}
-			}
-			return jsonarray;
-		} catch (JSONException e) {
-			throw new PhrescoException(e);
+		if (StringUtils.isEmpty(fromPage) || FROMPAGE_ALL.equals(fromPage)) {
+			pdfDirLoc = Utility.getProjectHome() + appInfo.getAppDirName() + File.separator + DO_NOT_CHECKIN_DIR
+					+ File.separator + ARCHIVES + File.separator + CUMULATIVE;
+		} else {
+			pdfDirLoc = Utility.getProjectHome() + appInfo.getAppDirName() + File.separator + DO_NOT_CHECKIN_DIR
+					+ File.separator + ARCHIVES + File.separator + fromPage;
 		}
+		File pdfFileDir = new File(pdfDirLoc);
+		if (pdfFileDir.isDirectory()) {
+			File[] children = pdfFileDir.listFiles(new FileNameFileFilter(FrameworkConstants.DOT + PDF));
+			QualityUtil util = new QualityUtil();
+			if (children != null) {
+				util.sortResultFile(children);
+			}
+			for (File child : children) {
+				PdfReportInfo report= new PdfReportInfo();
+				// three value
+				DateFormat yymmdd = new SimpleDateFormat("MMM dd yyyy HH.mm");
+				
+				if (child.toString().contains("detail")) {
+					report.setTime(yymmdd.format(child.lastModified()));
+					report.setType("detail");
+					report.setFileName(child.getName());
+				} else if (child.toString().contains("crisp")) {
+					report.setTime(yymmdd.format(child.lastModified()));
+					report.setType("crisp");
+					report.setFileName(child.getName());
+				}
+				pdfList.add(report);
+			}
+		}
+		return pdfList;
 	}
 
 	/**

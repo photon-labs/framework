@@ -42,9 +42,9 @@ define(["build/listener/buildListener"], function() {
 		registerHandlebars : function () {
 			Handlebars.registerHelper('devicedploy', function(paramVal) {
 				if(paramVal === null){
-					return '<img name="deployBuild" deviceDeploy="" src="themes/default/images/helios/deploy_icon.png" width="16" height="20" border="0" alt="">';
+					return '<img name="deployBuild" deviceDeploy="" src="themes/default/images/Phresco/deploy_icon.png" width="16" height="20" border="0" alt="">';
 				}else{							
-					return '<img name="deployBuild" deviceDeploy="' + paramVal + '" src="themes/default/images/helios/deploy_icon.png" width="16" height="20" border="0" alt="">';
+					return '<img name="deployBuild" deviceDeploy="' + paramVal + '" src="themes/default/images/Phresco/deploy_icon.png" width="16" height="20" border="0" alt="">';
 				}		
 			});
 		},
@@ -246,26 +246,22 @@ define(["build/listener/buildListener"], function() {
 							var deleteOpt = "";
 
 							if(current.options !== null && current.options.canCreateIpa === true){
-								cancreateIpa = '<a href="javascript:void(0)" class="tooltiptop" title="" data-placement="bottom" data-toggle="tooltip" data-original-title="IPA Download"><img name="ipaDownload" src="themes/default/images/helios/ipa_icon.png" width="13" height="18" border="0" alt=""></a>';
+								cancreateIpa = '<a href="javascript:void(0)" class="tooltiptop" title="" data-placement="bottom" data-toggle="tooltip" data-original-title="IPA Download"><img name="ipaDownload" src="themes/default/images/Phresco/ipa_icon.png" width="13" height="18" border="0" alt=""></a>';
 							}
 
-							if(current.options === null || current.options.deviceDeploy === false){
-								deviceDeploy = '<div id="deploye_'+ current.buildNo +'" class="dyn_popup popup_bg" style="display:none;"><div id="bdeploy_'+ current.buildNo +'"><form name="deployForm"><ul class="row dynamicControls"></ul><div class="hiddenControls"></div></form><div class="flt_right"><input type="button" name="deploy" data-i18n="[value]build.label.deploy" class="btn btn_style dyn_popup_close"><input type="button" data-i18n="[value]build.label.close" class="btn btn_style dyn_popup_close"></div></div></div>';
-							}else{
-								deviceDeploy = '<div class="dyn_popup popup_bg" style="display:none;"></div>';
-							}
+							deviceDeploy = '<div id="deploye_'+ current.buildNo +'" class="dyn_popup popup_bg" style="display:none;"><div id="bdeploy_'+ current.buildNo +'"><form name="deployForm"><ul class="row dynamicControls"></ul><div class="hiddenControls"></div></form><div class="flt_right"><input type="button" name="deploy" data-i18n="[value]build.label.deploy" class="btn btn_style dyn_popup_close"><input type="button" data-i18n="[value]build.label.close" class="btn btn_style dyn_popup_close"></div></div></div>';
 
 							if(buildObject.userPermissions.manageBuilds !== null && buildObject.userPermissions.manageBuilds === true){
-								manageBuilds = '<a href="javascript:void(0)" class="tooltiptop" title="" data-placement="bottom" data-toggle="tooltip" data-original-title="Deploy"><img name="deployBuild" deviceDeploy="' + (current.options === null ? "" : current.options.deviceDeploy) + '" src="themes/default/images/helios/deploy_icon.png" width="16" height="20" border="0" alt=""></a>' + deviceDeploy;
+								manageBuilds = '<a href="javascript:void(0)" class="tooltiptop" title="" data-placement="bottom" data-toggle="tooltip" data-original-title="Deploy"><img name="deployBuild" deviceDeploy="' + (current.options === null ? "" : current.options.deviceDeploy) + '" src="themes/default/images/Phresco/deploy_icon.png" width="16" height="20" border="0" alt=""></a>' + deviceDeploy;
 								
-								deleteOpt ='<a name="delete_'+ current.buildNo +'" class="deletebuildRow tooltiptop" title="" data-placement="bottom" data-toggle="tooltip" href="javascript:void(0)" data-original-title="Delete Row"><img name="deleteBuild" src="themes/default/images/helios/delete_row.png" width="14" height="18" border="0" alt=""></a><div id="delete_'+ current.buildNo +'" class="dyn_popup deleteproj_msg"><div data-i18n="build.label.deleteConform"></div><div><input type="button" name="buildDelete" data-i18n="[value]build.label.yes" class="btn btn_style dyn_popup_close" /><input type="button" data-i18n="[value]build.label.no" class="btn btn_style dyn_popup_close" /></div></div>';
+								deleteOpt ='<a name="delete_'+ current.buildNo +'" class="deletebuildRow tooltiptop" title="" data-placement="bottom" data-toggle="tooltip" href="javascript:void(0)" data-original-title="Delete Row"><img name="deleteBuild" src="themes/default/images/Phresco/delete_row.png" width="14" height="18" border="0" alt=""></a><div id="delete_'+ current.buildNo +'" class="dyn_popup deleteproj_msg"><div data-i18n="build.label.deleteConform"></div><div><input type="button" name="buildDelete" data-i18n="[value]build.label.yes" class="btn btn_style dyn_popup_close" /><input type="button" data-i18n="[value]build.label.no" class="btn btn_style dyn_popup_close" /></div></div>';
 								
 							}else{
-								manageBuilds = '<img src="themes/default/images/helios/deploy_icon_off.png" width="16" height="20" border="0" alt="">';
-								deleteOpt ='<img src="themes/default/images/helios/delete_row_off.png" width="14" height="18" border="0" alt="">';
+								manageBuilds = '<img src="themes/default/images/Phresco/deploy_icon_off.png" width="16" height="20" border="0" alt="">';
+								deleteOpt ='<img src="themes/default/images/Phresco/delete_row_off.png" width="14" height="18" border="0" alt="">';
 							}
 						
-							tbody += '<tr><td name="'+ current.buildNo +'">'+ current.buildNo +'</td><td>'+ current.timeStamp +'</td><td class="list_img"><a href="javascript:void(0)" class="tooltiptop" title="" data-placement="bottom" data-toggle="tooltip" data-original-title="Download"><img name="downloadBuild" src="themes/default/images/helios/download_icon.png" width="15" height="18" border="0" alt=""></a>'+ cancreateIpa +'</td><td name="prcBuild" class="list_img"><a href="javascript:void(0)" class="tooltiptop" title="" data-placement="bottom" data-toggle="tooltip" data-original-title="Process build"><img name="procBuild" src="themes/default/images/helios/download_icon.png" width="15" height="18" border="0" alt=""></a><div id="prcBuild_'+ current.buildNo +'" class="dyn_popup popup_bg" style="display:none; width:30%;"><div id="prcBuild_'+ current.buildNo +'"><form name="prcBForm"><ul class="row dynamicControls"></ul><div class="hiddenControls"></div></form><div class="flt_right"><input class="btn btn_style" type="button" name="processBuild" data-i18n="[value]common.btn.ok"><input class="btn btn_style dyn_popup_close" type="button"  data-i18n="[value]common.btn.close"></div></div></div></td><td name="buildDep" class="list_img">'+ manageBuilds +'</td><td class="list_img">'+ deleteOpt +'</td></tr>';
+							tbody += '<tr><td name="'+ current.buildNo +'">'+ current.buildNo +'</td><td>'+ current.timeStamp +'</td><td class="list_img"><a href="javascript:void(0)" class="tooltiptop" title="" data-placement="bottom" data-toggle="tooltip" data-original-title="Download"><img name="downloadBuild" src="themes/default/images/Phresco/download_icon.png" width="15" height="18" border="0" alt=""></a>'+ cancreateIpa +'</td><td name="prcBuild" class="list_img"><a href="javascript:void(0)" class="tooltiptop" title="" data-placement="bottom" data-toggle="tooltip" data-original-title="Process build"><img name="procBuild" src="themes/default/images/Phresco/download_icon.png" width="15" height="18" border="0" alt=""></a><div id="prcBuild_'+ current.buildNo +'" class="dyn_popup popup_bg" style="display:none; width:30%;"><div id="prcBuild_'+ current.buildNo +'"><form name="prcBForm"><ul class="row dynamicControls"></ul><div class="hiddenControls"></div></form><div class="flt_right"><input class="btn btn_style" type="button" name="processBuild" data-i18n="[value]common.btn.ok"><input class="btn btn_style dyn_popup_close" type="button"  data-i18n="[value]common.btn.close"></div></div></div></td><td name="buildDep" class="list_img">'+ manageBuilds +'</td><td class="list_img">'+ deleteOpt +'</td></tr>';
 						});
 						
 						$("#buildRow tbody").html(tbody);
@@ -300,9 +296,7 @@ define(["build/listener/buildListener"], function() {
 								self.clearLogContent();
 								$('input[name=buildDelete]').hide();
 
-								self.clearLogContent();
-								$('input[name=buildDelete]').hide();
-
+								$('#deploye_' + divId).find('form[name=deployForm] div #buildNumber').val(divId);
 								self.sqlQueryParam($(current).closest('tr').find('form[name=deployForm] #executeSql').is(':checked'), $(current).closest('tr').find('form[name=deployForm] ul[name=sortable2] li'), function(retVal){
 									sqlParam = retVal;
 								});
@@ -543,10 +537,10 @@ define(["build/listener/buildListener"], function() {
 		
 		appendMinifyRow : function(current){
 			if(current !== null && current.fileType.toLowerCase() === "js" || current.fileType.toLowerCase() === "css"){
-				var minusImg = '<img src="themes/default/images/helios/minus_icon.png" alt="" name="'+ current.fileType.toLowerCase() +'Remove">';
+				var minusImg = '<img src="themes/default/images/Phresco/minus_icon.png" alt="" name="'+ current.fileType.toLowerCase() +'Remove">';
 			
 				if(current.minusImg){minusImg = '';}
-				$('table#'+ current.fileType.toLowerCase() +'min tbody').append('<tr><td><input type="text" name="'+ current.fileType.toLowerCase() +'MinName" value="'+ current.compressName +'"></td><td><input type="text" name="'+ current.fileType.toLowerCase() +'MinFiles" value="'+ current.csvFileName +'" disabled><input type="hidden" name="'+ current.fileType.toLowerCase() +'filePath" value="'+ current.opFileLoc +'"><input type="hidden" name="fileType" value="'+ current.fileType.toLowerCase() +'"><input type="button" name="'+ current.fileType.toLowerCase() +'Browse" value="Browse" data-i18n="[value]build.label.browse" class="btn btn_style"><img src="themes/default/images/helios/plus_icon.png" alt="" name="'+ current.fileType.toLowerCase() +'Add">'+ minusImg +'<div name="treeTop" class="speakstyletopright dyn_popup" style="right:70px;"><div name="treeContent"></div><div class="flt_right"><input type="button" name="selectFilePath" class="btn btn_style" value="Ok">&nbsp;&nbsp;<input type="button" value="Close" name="treePopupClose" class="btn btn_style"></div></div></td></tr>');
+				$('table#'+ current.fileType.toLowerCase() +'min tbody').append('<tr><td><input type="text" name="'+ current.fileType.toLowerCase() +'MinName" value="'+ current.compressName +'"></td><td><input type="text" name="'+ current.fileType.toLowerCase() +'MinFiles" value="'+ current.csvFileName +'" disabled><input type="hidden" name="'+ current.fileType.toLowerCase() +'filePath" value="'+ current.opFileLoc +'"><input type="hidden" name="fileType" value="'+ current.fileType.toLowerCase() +'"><input type="button" name="'+ current.fileType.toLowerCase() +'Browse" value="Browse" data-i18n="[value]build.label.browse" class="btn btn_style"><img src="themes/default/images/Phresco/plus_icon.png" alt="" name="'+ current.fileType.toLowerCase() +'Add">'+ minusImg +'<div name="treeTop" class="speakstyletopright dyn_popup" style="right:70px;"><div name="treeContent"></div><div class="flt_right"><input type="button" name="selectFilePath" class="btn btn_style" value="Ok">&nbsp;&nbsp;<input type="button" value="Close" name="treePopupClose" class="btn btn_style"></div></div></td></tr>');
 				
 				self.hideTreeContent();
 				self.addJSMinRow();

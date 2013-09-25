@@ -23,11 +23,11 @@
 						<div class="sorthead">YUI Multichannel</div>
 						<li class="ui-state-default">YUI - Code Validation
 							<a href="javascript:;" class="validate_icon" name="jobConfigure">
-								<img src="themes/default/images/helios/validate_image.png" width="19" height="19" border="0">
+								<img src="themes/default/images/Phresco/validate_image.png" width="19" height="19" border="0">
 							</a>
 						</li>
 						<li class="ui-state-default">
-								YUI - Build <a href="javascript:;" class="validate_icon" name="jobConfigure"><img src="themes/default/images/helios/validate_image.png" width="19" height="19" border="0"></a>
+								YUI - Build <a href="javascript:;" class="validate_icon" name="jobConfigure"><img src="themes/default/images/Phresco/validate_image.png" width="19" height="19" border="0"></a>
 						</li> -->
 					</ul>
 					<!-- Drag Drop section 1 ends -->
@@ -119,7 +119,7 @@
 									<td>
 										<input id="CroneExpressionValue" type="text" value="* * * * *" name="scheduleExpression">
 										<a href="javascript:;" id="cronepassword"> 
-											<img src="themes/default/images/helios/question_mark.png">
+											<img src="themes/default/images/Phresco/question_mark.png">
 										</a>
 									</td>
 								</tr>

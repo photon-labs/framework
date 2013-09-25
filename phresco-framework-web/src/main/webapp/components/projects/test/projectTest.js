@@ -660,7 +660,7 @@ define(["projects/addproject", "projects/editproject"], function(addProject, edi
 				});
 				
 				$.mockjax({
-				  url: commonVariables.webserviceurl + "project/edit?userId=admin&customerId=photon&projectId=a58a5358-fa43-4fac-9b98-9bf94b7c4d1f",
+				  url: commonVariables.webserviceurl + "project/edit?customerId=photon&projectId=a58a5358-fa43-4fac-9b98-9bf94b7c4d1f",
 				  type:'GET',
 				  contentType:'application/json',
 				  status: 200,
@@ -699,7 +699,7 @@ define(["projects/addproject", "projects/editproject"], function(addProject, edi
 				});
 				
 				$.mockjax({
-				  url: commonVariables.webserviceurl + "project/edit?userId=admin&customerId=photon&projectId=a58a5358-fa43-4fac-9b98-9bf94b7c4d1f",
+				  url: commonVariables.webserviceurl + "project/edit?customerId=photon&projectId=a58a5358-fa43-4fac-9b98-9bf94b7c4d1f",
 				  type:'GET',
 				  contentType:'application/json',
 				  status: 200,
@@ -739,9 +739,9 @@ define(["projects/addproject", "projects/editproject"], function(addProject, edi
 				setTimeout(function() {
 					start();
 					equal(applnLayer, "hidden", "Edit Project - Edit Project Close Image Test");
-					 require(["applicationTest"], function(applicationTest){
+					  require(["applicationTest"], function(applicationTest){
 						applicationTest.runTests();
-					}); 
+					});  
 				}, 1500);
 			});
 		}

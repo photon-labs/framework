@@ -153,15 +153,12 @@ define(["projectlist/projectList"], function(ProjectList) {
 		runValidationCommitRepoTest : function (projectlist){
 			var self = this;			
 				asyncTest("CommitRepo URL Validation Test", function() {
-					$('input#uname_294187d7-f75a-4adc-bb25-ce9465e0e82f').val('');
-					$('input#pwd_294187d7-f75a-4adc-bb25-ce9465e0e82f').val(''); 
-					$('input#repomessage_294187d7-f75a-4adc-bb25-ce9465e0e82f').val('');
-					$('input#repourl_294187d7-f75a-4adc-bb25-ce9465e0e82f').val('');
-					$('.tooltiptop[name^="addRepo"]').click();
-					$("input[name='commitbtn']").click();
+					$("input#commitRepourl_294187d7-f75a-4adc-bb25-ce9465e0e82f").val("");
+					projectlist.projectslistListener.flag2 =1;
+					projectlist.projectslistListener.addCommitEvent($("input[name='commitbtn']"),"294187d7-f75a-4adc-bb25-ce9465e0e82f");
 					setTimeout(function() {
 						start();
-						var repo = $(commonVariables.contentPlaceholder).find('#repourl_294187d7-f75a-4adc-bb25-ce9465e0e82f').attr('class');
+						var repo = $(commonVariables.contentPlaceholder).find('#commitRepourl_294187d7-f75a-4adc-bb25-ce9465e0e82f').attr('class');
 						equal("errormessage", repo, 'URL div error class added test');
 						self.runValidationCommitusernameTest(projectlist);
 					}, 1000);
@@ -203,15 +200,12 @@ define(["projectlist/projectList"], function(ProjectList) {
 		runValidationSVNupdateTest : function (projectlist){
 			var self = this;			
 				asyncTest("SVNupdate URL Validation Test", function() {
-					$('input#uname_294187d7-f75a-4adc-bb25-ce9465e0e82f').val('');
-					$('input#pwd_294187d7-f75a-4adc-bb25-ce9465e0e82f').val(''); 
-					$('input#repomessage_294187d7-f75a-4adc-bb25-ce9465e0e82f').val('');
-					$('input#repourl_294187d7-f75a-4adc-bb25-ce9465e0e82f').val('');
-					$('.tooltiptop[name^="addRepo"]').click();
-					$("input[name='updatebtn']").click();
+					$("input#updateRepourl_294187d7-f75a-4adc-bb25-ce9465e0e82f").val("");
+					projectlist.projectslistListener.flag3 =1;
+					projectlist.projectslistListener.addUpdateEvent($("input[name='updatebtn']"),"294187d7-f75a-4adc-bb25-ce9465e0e82f");
 					setTimeout(function() {
 						start();
-						var repo = $(commonVariables.contentPlaceholder).find('#repourl_294187d7-f75a-4adc-bb25-ce9465e0e82f').attr('class');
+						var repo = $(commonVariables.contentPlaceholder).find('#updateRepourl_294187d7-f75a-4adc-bb25-ce9465e0e82f').attr('class');
 						equal("errormessage", repo, 'URL div error class added test');
 						self.runValidationSVNupdateusernameTest(projectlist);
 					}, 1000);
@@ -346,7 +340,7 @@ define(["projectlist/projectList"], function(ProjectList) {
 					contentType: 'application/json',
 					status: 200,
 					response: function() {
-						this.responseText = JSON.stringify({"message":null,"exception":null,"responseCode":"PHR200015","data":null,"status":"success"});
+						this.responseText = JSON.stringify({"message":null,"exception":null,"responseCode":"PHR200027","data":{"value":false,"json":[]},"status":"success"});
 					}
 				});
 
@@ -381,7 +375,7 @@ define(["projectlist/projectList"], function(ProjectList) {
 					contentType: 'application/json',
 					status: 200,
 					response: function() {
-						this.responseText = JSON.stringify([{"time":"Aug 23 2013 12.03","type":"detail","fileName":"yuimobilewidgetttt_detail_23Aug2013_12.03PM.pdf"}]);
+						this.responseText = JSON.stringify({"message":null,"exception":null,"responseCode":"PHR200027","data":{"value":true,"json":[{"type":"crisp","fileName":"sasasas_crisp_20Sep2013_06.19PM.pdf","time":"Sep 20 2013 18.19"},{"type":"crisp","fileName":"sasasas_crisp_20Sep2013_06.17PM.pdf","time":"Sep 20 2013 18.18"},{"type":"detail","fileName":"sasasas_detail_20Sep2013_04.39PM.pdf","time":"Sep 20 2013 16.39"},{"type":"detail","fileName":"sdsdsd_detail.pdf","time":"Sep 20 2013 15.42"}]},"status":"success"});
 					}
 				});
 				

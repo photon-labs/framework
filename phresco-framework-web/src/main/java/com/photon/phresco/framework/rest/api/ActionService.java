@@ -839,18 +839,19 @@ public class ActionService implements ActionServiceConstant, FrameworkConstants,
 		try	{
 			actionFunction.prePopulatePrintAsPDFData(request);
 			FrameworkUtil frameworkUtil = FrameworkUtil.getInstance();
+			FrameworkServiceUtil futil = new FrameworkServiceUtil();
 			String appDirName = request.getParameter(APPDIR);
 			String fromPage = request.getParameter(FROM_PAGE);
 			ApplicationInfo appInfo = FrameworkServiceUtil.getApplicationInfo(appDirName);
 			
 			// is sonar report available
 			if ((FrameworkConstants.ALL).equals(fromPage)) {
-				isReportAvailable = actionFunction.isSonarReportAvailable(frameworkUtil, appInfo, request);
+				isReportAvailable = futil.isSonarReportAvailable(frameworkUtil, appInfo, request);
 			}
 
 			// is test report available
 			if (!isReportAvailable) {
-				isReportAvailable = actionFunction.isTestReportAvailable(frameworkUtil, appInfo, fromPage);
+				isReportAvailable = futil.isTestReportAvailable(frameworkUtil, appInfo, fromPage);
 			}
 //			boolean testReportAvailable = actionFunction.isTestReportAvailable(frameworkUtil, appInfo, fromPage);
 			if (isReportAvailable) {
@@ -941,7 +942,7 @@ public class ActionService implements ActionServiceConstant, FrameworkConstants,
 		try {
 			log = BufferMap.readBufferReader(uniquekey);
 			
-			if(log == null){
+			if(log == ""){
 				
 				if (isDebugEnabled) {
 					S_LOGGER.debug("Log has finished and hence removing the bufferreader from the map");
@@ -951,10 +952,8 @@ public class ActionService implements ActionServiceConstant, FrameworkConstants,
 				LockUtil.removeLock(uniquekey);
 			}
 			else{
-				
 				status=ActionServiceConstant.INPROGRESS;
 			}
-		
 		} catch (IOException e) {
 			LockUtil.removeLock(uniquekey);
 			status=ERROR;

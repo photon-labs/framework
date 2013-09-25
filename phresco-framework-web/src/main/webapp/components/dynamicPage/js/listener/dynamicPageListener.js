@@ -228,7 +228,7 @@ define(["framework/widgetWithTemplate", "common/loading", "lib/customcombobox-1.
 		
 		constructFileBrowseCtrl : function (parameter, whereToRender, goal) {
 			var self=this;
-			whereToRender.append('<li id="'+parameter.key+'Li" class="ctrl"><label>'+parameter.name.value[0].value+'</label><input type="text" name="'+parameter.key+'" id="'+parameter.key+'" style="width: 120px ! important;"><a href="javascript:void(0)" name="browse"><img src="themes/default/images/helios/settings_icon.png" width="23" height="22" border="0" alt=""></a><div id="browse" class="dyn_popup" style="display:none"><div id="keystoreValue"></div><div class="flt_right"><input type="button" name="selectFilePath" class="btn btn_style" value="Ok">&nbsp;&nbsp;<input type="button" value="Close" name="treePopupClose" class="btn btn_style dyn_popup_close"></div></div></li>');
+			whereToRender.append('<li id="'+parameter.key+'Li" class="ctrl"><label>'+parameter.name.value[0].value+'</label><input type="text" name="'+parameter.key+'" id="'+parameter.key+'" style="width: 120px ! important;"><a href="javascript:void(0)" name="browse"><img src="themes/default/images/Phresco/settings_icon.png" width="23" height="22" border="0" alt=""></a><div id="browse" class="dyn_popup" style="display:none"><div id="keystoreValue"></div><div class="flt_right"><input type="button" name="selectFilePath" class="btn btn_style" value="Ok">&nbsp;&nbsp;<input type="button" value="Close" name="treePopupClose" class="btn btn_style dyn_popup_close"></div></div></li>');
 			self.signingFileTreeEvent($("#"+parameter.key), $("#keystoreValue"));
 		},
 
@@ -402,8 +402,8 @@ define(["framework/widgetWithTemplate", "common/loading", "lib/customcombobox-1.
                 mapCtrl =  mapCtrl.concat('</select></td>');
             } else if ("String" === childs[1].type) {
                 mapCtrl =  mapCtrl.concat('<td><input type="text" name="'+childs[1].key+'" maxlength="253">');
-                mapCtrl =  mapCtrl.concat('<a href="javascript:void(0)" class="addBrowserInfo"><img src="themes/default/images/helios/plus_icon.png" alt=""></a>');
-                mapCtrl =  mapCtrl.concat('<a href="javascript:void(0)" class="removeBrowserInfo hideContent"><img src="themes/default/images/helios/minus_icon.png" alt=""></a>');
+                mapCtrl =  mapCtrl.concat('<a href="javascript:void(0)" class="addBrowserInfo"><img src="themes/default/images/Phresco/plus_icon.png" alt=""></a>');
+                mapCtrl =  mapCtrl.concat('<a href="javascript:void(0)" class="removeBrowserInfo hideContent"><img src="themes/default/images/Phresco/minus_icon.png" alt=""></a>');
                 mapCtrl =  mapCtrl.concat('</td>');
             }
             mapCtrl =  mapCtrl.concat('</tr></tbody></table>');
@@ -1282,10 +1282,10 @@ define(["framework/widgetWithTemplate", "common/loading", "lib/customcombobox-1.
         enableDisableDeleteContext : function (divClass, delIcon) {
             var urlCount = $('.' + divClass).size();
             if (urlCount === 1) {
-                $("." + delIcon).find('img').attr("src", "themes/default/images/helios/delete_row_off.png");
+                $("." + delIcon).find('img').attr("src", "themes/default/images/Phresco/delete_row_off.png");
                 $("." + delIcon).find('img').removeClass("removeContextImg");
             } else {
-                $("." +delIcon).find('img').attr("src", "themes/default/images/helios/delete_row.png");
+                $("." +delIcon).find('img').attr("src", "themes/default/images/Phresco/delete_row.png");
                 $("." +delIcon).find('img').addClass("removeContextImg");
             }
         },
@@ -1293,7 +1293,7 @@ define(["framework/widgetWithTemplate", "common/loading", "lib/customcombobox-1.
         headerKeyAdd : function (btnObj) {
             var self = this, key = btnObj.parent().find('.headerKey').val(), value = btnObj.parent().find('.headerValue').val();
             if (!self.isBlank(key) && !self.isBlank(value)) {
-                var constructHeaders = '<div class="add_remove_test headers">' + key + ' : '+ value+'<input type="hidden" name="headerKey" value="'+key+'"> <input type="hidden" name="headerValue" value="'+value+'"> <img class="removeHeaders" src="themes/default/images/helios/remove_test.png"></div>';
+                var constructHeaders = '<div class="add_remove_test headers">' + key + ' : '+ value+'<input type="hidden" name="headerKey" value="'+key+'"> <input type="hidden" name="headerValue" value="'+value+'"> <img class="removeHeaders" src="themes/default/images/Phresco/remove_test.png"></div>';
                 btnObj.closest('tbody').find(".headerContent").show();
                 btnObj.closest('tbody').find(".add_test").append(constructHeaders);
                 $(".headerKey").val("");
@@ -1316,8 +1316,8 @@ define(["framework/widgetWithTemplate", "common/loading", "lib/customcombobox-1.
 
         addParameterRow : function (thisObj) {
             var self = this, parameterRow = '<tr class="parameterRow"><td><input type="text" class="parameterName" name="parameterName" placeholder="Name" maxlength="253"><input type="text" class="parameterValue" name="parameterValue" placeholder="Value" maxlength="253"><input class="parameterEncode" name="parameterEncode" type="checkbox">Encode '+
-                        '<img class="add_test_icon removeParamter" src="themes/default/images/helios/minus_icon.png">'+
-                        '<img src="themes/default/images/helios/plus_icon.png" class="add_test_icon addParameter"></td></tr>';
+                        '<img class="add_test_icon removeParamter" src="themes/default/images/Phresco/minus_icon.png">'+
+                        '<img src="themes/default/images/Phresco/plus_icon.png" class="add_test_icon addParameter"></td></tr>';
             thisObj.closest('tbody').append(parameterRow);     
 
             $(".addParameter").unbind("click");

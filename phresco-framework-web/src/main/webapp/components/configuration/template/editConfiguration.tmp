@@ -44,7 +44,7 @@
 									<td>Name</td>
 									<td><input type="text" name="EnvName" maxlength="30" title="30 Characters only" value="{{name}}"/></td>
 									<td>Description</td>
-									<td colspan="3"><input type="text"  maxlength="150" title="150 Characters only" value="{{desc}}"/></td>
+									<td colspan="3"><input name="EnvDesc" type="text"  maxlength="150" title="150 Characters only" value="{{desc}}"/></td>
 								{{/configurations}}
 							</tr>
 						{{/if}}
@@ -58,8 +58,8 @@
 				<div id="validationConsole" style="display:none">
 					<div class="unit_close">
 						<a href="javascript:void(0)" data-flag="true" id="themeValidation">
-							<img src="themes/default/images/helios/console_img.png" width="33" height="92" border="0" alt="">
-							<div class="progress_loading" style="display:none;"><img src="themes/default/images/helios/progress_load.gif" border="0"></div>
+							<img src="themes/default/images/Phresco/console_img.png" width="33" height="92" border="0" alt="">
+							<div class="progress_loading" style="display:none;"><img src="themes/default/images/Phresco/progress_load.gif" border="0"></div>
 						</a>
 					</div>
 					<div class="unit_progress build_progress">
@@ -70,7 +70,7 @@
 										<div class="flt_right">
 											<input type="button" class="btn btn_style kill_btn" value="Kill Process" data-i18n="[value]build.label.killprocess">
 											<a href="javascript:void(0)" title="" href="javascript:void(0)" id="buildCopyLog">
-												<img src="themes/default/images/helios/buildreport_icon.png" width="15" height="18" border="0" alt="">
+												<img src="themes/default/images/Phresco/buildreport_icon.png" width="15" height="18" border="0" alt="">
 											</a>
 										</div>
 										<div class="flt_left" data-i18n="build.label.progress"></div>

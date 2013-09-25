@@ -27,15 +27,15 @@
                         </select>
                     </td>
 					<td data-i18n="project.create.label.startdate" name="startdate-lbl"></td>
-                    <td class="startdate" name="startdateholder"><input name="startdate" type="text" id="startDate"><span class="add-on"><img id="strdt" src="themes/default/images/helios/cal_icon.png" border="0" alt=""></span></td>
+                    <td class="startdate" name="startdateholder"><input name="startdate" type="text" id="startDate"><span class="add-on"><img id="strdt" src="themes/default/images/Phresco/cal_icon.png" border="0" alt=""></span></td>
                     <td data-i18n="project.create.label.enddate" name="enddate-lbl"></td>
-                    <td colspan="2" class="enddate" name="enddateholder"><input name="enddate" id="endDate" type="text" disabled><span class="add-on"><span class="add-on"><img id="enddt" src="themes/default/images/helios/cal_icon.png" border="0" alt=""></span></span></td>
+                    <td colspan="2" class="enddate" name="enddateholder"><input name="enddate" id="endDate" type="text" disabled><span class="add-on"><span class="add-on"><img id="enddt" src="themes/default/images/Phresco/cal_icon.png" border="0" alt=""></span></span></td>
                 </tr>
 				{{#if applicationlayerData.techGroups}}
 				<tr class="proj_title" name="applicationlayer">
 					<td colspan="3">{{applicationlayerData.name}}</td>
 					<td colspan="3"><span class="errmsg1"></span></td>
-					<td colspan="2"><img name="close" id="applicationlayer" src="themes/default/images/helios/close_icon.png"  border="0" alt=""></td>
+					<td colspan="2"><img name="close" id="applicationlayer" src="themes/default/images/Phresco/close_icon.png"  border="0" alt=""></td>
 				</tr>
 				<tr class="applnLayer" name="appvalidation" key="displayed">
 					<td colspan="8" class="appln">
@@ -71,7 +71,7 @@
 										</select>
 									 </td>
 									 <td>
-										<div class="flt_right icon_center"><a name="addApplnLayer"><img src="themes/default/images/helios/plus_icon.png" border="0" alt=""></a><a href="javascript:;" name="removeApplnLayer"></a></div>
+										<div class="flt_right icon_center"><a name="addApplnLayer"><img src="themes/default/images/Phresco/plus_icon.png" border="0" alt=""></a><a href="javascript:;" name="removeApplnLayer"></a></div>
 									 </td>
 							    </tr>
 						  </tbody>
@@ -83,7 +83,7 @@
 				<tr class="proj_title" name="weblayer">
 					<td colspan="3">{{weblayerData.name}}</td>
 					<td colspan="3"><span class="errmsg2"></span></td>
-					<td colspan="2"><img name="close" id="weblayer" src="themes/default/images/helios/close_icon.png"   border="0" alt=""></td>
+					<td colspan="2"><img name="close" id="weblayer" src="themes/default/images/Phresco/close_icon.png"   border="0" alt=""></td>
 				</tr>
 				<tr class="webLayer" name="appvalidation" key="displayed">
 					<td colspan="8" class="WebLayer">
@@ -119,7 +119,7 @@
 										</select>
 									 </td>
 									 <td>
-										<div class="flt_right icon_center"><a href="javascript:;" name="addWebLayer"><img src="themes/default/images/helios/plus_icon.png" border="0" alt=""></a><a href="javascript:;" name="removeWebLayer"></a></div>
+										<div class="flt_right icon_center"><a href="javascript:;" name="addWebLayer"><img src="themes/default/images/Phresco/plus_icon.png" border="0" alt=""></a><a href="javascript:;" name="removeWebLayer"></a></div>
 									 </td>
 								</tr>
 							</tbody>
@@ -131,7 +131,7 @@
                     <tr class="proj_title" name="mobilelayer">
                       <td colspan="3">{{mobilelayerData.name}}</td>
                       <td colspan="3"><span class="errmsg3"></span></td>
-                      <td colspan="2"><img name="close" id="mobilelayer" src="themes/default/images/helios/close_icon.png"  border="0" alt=""></td>
+                      <td colspan="2"><img name="close" id="mobilelayer" src="themes/default/images/Phresco/close_icon.png"  border="0" alt=""></td>
                      </tr>
                      <tr class="mobLayer" name="appvalidation" key="displayed">
                       	<td colspan="8" class="mob">
@@ -168,7 +168,7 @@
 											</select>
 										 </td>
 										 <td>
-											<div class="flt_right icon_center"><a href="javascript:;" name="addMobileLayer"><img src="themes/default/images/helios/plus_icon.png" border="0" alt=""></a><a href="javascript:;" name="removeMobileLayer"></a> </div>
+											<div class="flt_right icon_center"><a href="javascript:;" name="addMobileLayer"><img src="themes/default/images/Phresco/plus_icon.png" border="0" alt=""></a><a href="javascript:;" name="removeMobileLayer"></a> </div>
 										 </td>
 									</tr>
 							   </tbody>

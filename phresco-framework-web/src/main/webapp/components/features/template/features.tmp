@@ -19,7 +19,7 @@
                 <h1 data-i18n="features.list.modules"></h1><span class="value_features"> ( <span class="totalModules"></span>&nbsp; of <span class="ftotal"></span> )</span>
 				<div class="search_box flt_right">
 					<input type="text" class="search_text" data-i18n="[placeholder]features.placeholder" id="module">
-					<img class="cleartext flt_right" name="module" src="themes/default/images/helios/cross_cancel.png" border="0" alt="">
+					<img class="cleartext flt_right" name="module" src="themes/default/images/Phresco/cross_cancel.png" border="0" alt="">
 				</div>
                 <div class="clear"></div>
                 <div class="box_div feature_content" id="content_1">
@@ -27,7 +27,7 @@
                     {{#each featureslist}}
                         <li name="{{name}}" dispName="{{dispName}}" packaging="{{packaging}}" type="{{type}}">{{#if displayName}}{{displayName}}{{else}}{{name}}{{/if}}
                         <span class="flt_right" ><a href="javascript:;" class="featureinfo_img" value="{{#idtrime id}}{{/idtrime}}" artifactGroupId="{{id}}" > 
-                        <img src="themes/default/images/helios/info_icon.png" width="15" height="16" border="0" alt=""></a></span>
+                        <img src="themes/default/images/Phresco/info_icon.png" width="15" height="16" border="0" alt=""></a></span>
                                 {{#versiondata versions id}}{{/versiondata}}
 								{{#versionShowHide versions id}}{{/versionShowHide}} 
 								{{#each versions}}
@@ -61,7 +61,7 @@
                 <h1 data-i18n="features.list.jslibraries"></h1><span class="value_features"> ( <span class="totalJslibraries"></span>&nbsp; of <span class="jstotal"></span> )</span>
 				<div class="search_box flt_right">
 					<input type="text" class="search_text" data-i18n="[placeholder]features.placeholder" id="jsibraries" >
-					<img class="cleartext flt_right" name="jsibraries" src="themes/default/images/helios/cross_cancel.png" border="0" alt="">
+					<img class="cleartext flt_right" name="jsibraries" src="themes/default/images/Phresco/cross_cancel.png" border="0" alt="">
 				</div>
                 <div class="clear"></div>
                 <div class="box_div feature_content" id="content_2">
@@ -69,7 +69,7 @@
                     {{#each jsibrarielist}}
                         <li name="{{name}}" dispName="{{dispName}}" packaging="{{packaging}}" type="{{type}}">
                         <span class="flt_right" ><a href="javascript:;" class="featureinfo_img" value="{{#idtrime id}}{{/idtrime}}" artifactGroupId="{{id}}"> 
-                        <img src="themes/default/images/helios/info_icon.png" width="15" height="16" border="0" alt=""></a></span>
+                        <img src="themes/default/images/Phresco/info_icon.png" width="15" height="16" border="0" alt=""></a></span>
                              {{#if displayName}}{{displayName}}{{else}}{{name}}{{/if}}
                                 {{#versiondata versions id}}{{/versiondata}}
 								{{#versionShowHide versions id}}{{/versionShowHide}} 
@@ -107,7 +107,7 @@
                 <h1 data-i18n="features.list.components"></h1><span class="value_features"> ( <span class="totalComponent"></span>&nbsp; of <span class="comptotal"></span> )</span>
 				<div class="search_box flt_right">
 					<input type="text" class="search_text" data-i18n="[placeholder]features.placeholder" id="components">
-					<img class="cleartext flt_right" name="components" src="themes/default/images/helios/cross_cancel.png" border="0" alt="">
+					<img class="cleartext flt_right" name="components" src="themes/default/images/Phresco/cross_cancel.png" border="0" alt="">
 				</div>
                 <div class="clear"></div>
                 <div class="box_div feature_content" id="content_3">
@@ -115,7 +115,7 @@
                     {{#each componentList}}
                         <li name="{{name}}" dispName="{{dispName}}" packaging="{{packaging}}" type="{{type}}">{{#if displayName}}{{displayName}}{{else}}{{name}}{{/if}}
                         <span class="flt_right" ><a href="javascript:;" class="featureinfo_img" value="{{#idtrime id}}{{/idtrime}}" artifactGroupId="{{id}}"> 
-                        <img src="themes/default/images/helios/info_icon.png" width="15" height="16" border="0" alt=""></a></span>
+                        <img src="themes/default/images/Phresco/info_icon.png" width="15" height="16" border="0" alt=""></a></span>
                                 {{#versiondata versions id}}{{/versiondata}}
 								{{#versionShowHide versions id}}{{/versionShowHide}}
 									{{#each versions}}

@@ -61,6 +61,7 @@ define(["framework/base", "api/localStorageAPI"], function(){
 				async : true,
 				
 				beforeSend : function(){
+					self.successResponse = null;
 					$('section#serviceError').remove();
 					if(!Clazz.navigationController.loadingActive && !commonVariables.continueloading && !commonVariables.hideloading){
 						if($(commonVariables.basePlaceholder).find(commonVariables.contentPlaceholder).length > 0){
@@ -98,8 +99,7 @@ define(["framework/base", "api/localStorageAPI"], function(){
 					}
 					if((self.successResponse !== undefined && self.successResponse !== null && self.successResponse.status !== "error") || self.bCheck){
 						callbackFunction(self.successResponse);
-						self.successResponse = null;
-					}
+					}else if(self.successResponse === null || self.successResponse.status === "error"){self.errorpopupshow(response);}
 					self.bCheck = false;
 				}
 			});
@@ -110,7 +110,7 @@ define(["framework/base", "api/localStorageAPI"], function(){
 			if (whereToRender !== "") {
 				btnObj = $(whereToRender).closest('form').parent().find('.alignright').find('input[value=Test]');
 			}
-
+			
 			$.ajax({
 				url: header.webserviceurl,
 				type : header.requestMethod,
@@ -122,6 +122,19 @@ define(["framework/base", "api/localStorageAPI"], function(){
 				crossDomain : true,
 				cache : false,
 				async : false,
+				
+				beforeSend : function(){
+					self.successResponse = null;
+					$('section#serviceError').remove();
+					if(!Clazz.navigationController.loadingActive && !commonVariables.continueloading && !commonVariables.hideloading){
+						if($(commonVariables.basePlaceholder).find(commonVariables.contentPlaceholder).length > 0){
+							commonVariables.loadingScreen.showLoading($(commonVariables.contentPlaceholder));
+						}else {
+							commonVariables.loadingScreen.showLoading();
+						}
+					}
+				},
+				
 				success : function(response) {
 					if(response === undefined || response === null){
 						self.showError("PHR000000", 'error', false);
@@ -134,9 +147,25 @@ define(["framework/base", "api/localStorageAPI"], function(){
 					
 					if ((response !== undefined && response !== null && response.status !== "error") || self.bCheck) {
 						callbackFunction(response);
-					}
+					}else if(response === null || response.status === "error"){self.errorpopupshow(response);}
 					
 					self.bCheck = false;
+				},
+				
+				error : function(jqXHR, textStatus, errorThrown){
+					self.bCheck = false;
+					self.successResponse = null;
+					self.showError("PHR000000", 'error', false);
+					if (errorHandler){
+						errorHandler(jqXHR.responseText);
+					}
+				},
+				
+				complete : function(response, e ,xhr){
+					if(!Clazz.navigationController.loadingActive && !commonVariables.continueloading){
+						commonVariables.hideloading = false;
+						commonVariables.loadingScreen.removeLoading();
+					}
 				}
 			});
 		},
@@ -149,10 +178,15 @@ define(["framework/base", "api/localStorageAPI"], function(){
 		errorpopupshow : function(response) {
 			var self = this;
 			$('#errpopup').remove();
-			$(commonVariables.basePlaceholder).append('<div id="errpopup" class="modal fade" tabindex="-1" style="display: none;"><div class="modal-body temp"></div><div class="modal-footer"><div><a href="javascript:void(0)" title="" id="copytoclip" class="flt_left padding_img" href="javascript:void(0)"><img class="padding_img" src="themes/default/images/helios/buildreport_icon.png" width="15" height="18" border="0" alt=""></a><div class="errorpopuploading" id="copyloadicon" style="display:none;">&nbsp</div></div><button type="button" data-dismiss="modal" class="btn btn_style">Close</button></div></div>');
+			$(commonVariables.basePlaceholder).append('<div id="errpopup" class="modal fade" tabindex="-1" style="display: none;"><div class="modal-body temp"></div><div class="modal-footer"><div><a href="javascript:void(0)" title="" id="copytoclip" class="flt_left padding_img" href="javascript:void(0)"><img class="padding_img" src="themes/default/images/Phresco/buildreport_icon.png" width="15" height="18" border="0" alt=""></a><div class="errorpopuploading" id="copyloadicon" style="display:none;">&nbsp</div></div><button type="button" data-dismiss="modal" class="btn btn_style">Close</button></div></div>');
 			if(response.service_exception !== null && response.service_exception !== undefined) { 
 				$(".modal-body").append(response.service_exception);
 			}else if(response.exception !== null && response.exception !== undefined) {
+				if(response.exception.errorMessage !== null && response.exception.errorMessage !== undefined) {
+					$(".modal-body").append(response.exception.errorMessage+'  ');
+				} else if(response.exception.message !== null && response.exception.message !== undefined) {
+					$(".modal-body").append(response.exception.message+'  ');
+				}
 				$.each(response.exception.stackTrace, function(index, value){
 					$(".modal-body").append(' '+value.className+' '+value.fileName+' '+' '+value.lineNumber+' '+value.methodName);
 				});

@@ -148,6 +148,7 @@ public interface FrameworkConstants {
     String REQ_VALUE = "value";
     
     String DO_NOT_CHECKIN_DIR = "do_not_checkin";
+    String RUN = "run1";
     String FETCH_LOG_MESSAGES = "fetchLogMessages";
     String SETTINGS_XML = "-settings.xml";
     String ARCHIVES = "archives";

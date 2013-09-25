@@ -290,7 +290,6 @@ define(["lib/jquery-tojson-1.0",'lib/RGraph_common_core-1.0','lib/RGraph_common_
 				var currentOption = $(this).text();
 				$("#testResultFileDrop").html(currentOption   + '<b class="caret"></b>');
 				$("#testResultFileDrop").attr("value", currentOption);
-				$(".perfResultInfo").html('');
 				var showGraphFor = $("#graphForDrop").attr("value");
 				self.getResultOnChangeEvent($("#testAgainstsDrop").attr("value"), $(this).text(), showGraphFor, '', whereToRender);
 			});		
@@ -381,7 +380,7 @@ define(["lib/jquery-tojson-1.0",'lib/RGraph_common_core-1.0','lib/RGraph_common_
 			var requestBody = {};
 			requestBody.from = from;
 			self.performAction(self.getActionHeader(requestBody, "getPdfReports"), function(response) {
-				self.listPdfReports(response, from);
+				self.listPdfReports(response.data.json, from);
 			});
 		},
 
@@ -398,10 +397,10 @@ define(["lib/jquery-tojson-1.0",'lib/RGraph_common_core-1.0','lib/RGraph_common_
 					content = content.concat('<td>' + pdfReports[i].type + '</td>');
 					content = content.concat('<td><a class="tooltiptop donloadPdfReport" from="'+from+'" fileName="' + pdfReports[i].fileName + '" href="javascript:void(0)"');
 					content = content.concat(' data-toggle="tooltip" data-placement="top" name="downLoad" data-original-title="Download Pdf" title="">');
-					content = content.concat('<img src="themes/default/images/helios/download_icon.png" width="15" height="18" border="0" alt="0"></a></td>');
+					content = content.concat('<img src="themes/default/images/Phresco/download_icon.png" width="15" height="18" border="0" alt="0"></a></td>');
 					content = content.concat('<td><a class="tooltiptop deletePdf" from="'+from+'" fileName="' + pdfReports[i].fileName + '" href="javascript:void(0)"');
 					content = content.concat(' data-toggle="tooltip" data-placement="top" name="delete" data-original-title="Delete Pdf" title="">');
-					content = content.concat('<img src="themes/default/images/helios/delete_row.png" width="14" height="18" border="0" alt="0"></a></td></tr>');
+					content = content.concat('<img src="themes/default/images/Phresco/delete_row.png" width="14" height="18" border="0" alt="0"></a></td></tr>');
 				}
 				$(commonVariables.contentPlaceholder).find("#availablePdfRptsTbdy").html(content);
 				self.deletePdfReport();
@@ -572,6 +571,7 @@ define(["lib/jquery-tojson-1.0",'lib/RGraph_common_core-1.0','lib/RGraph_common_
 			});
 			resultTable += '</tbody><tfoot><tr><td>Total</td><td>'+ resultData.aggregateResult.sample +'</td><td>'+resultData.aggregateResult.average+'</td><td>'+resultData.aggregateResult.min+'</td><td>'+resultData.aggregateResult.max+'</td>'+
 			'<td>'+resultData.aggregateResult.stdDev+'</td><td>'+ resultData.aggregateResult.error+' %</td><td>'+resultData.aggregateResult.throughput+'</td><td>'+resultData.aggregateResult.kb+'</td><td>'+resultData.aggregateResult.avgBytes+'</td></tr></tfoot></table></div></div>';
+			$(".perfResultInfo").html('');
 			whereToRender.find(".perfResultInfo").html(resultTable);
 			
 			self.tableScrollbar();

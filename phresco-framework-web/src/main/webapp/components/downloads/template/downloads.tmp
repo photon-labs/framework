@@ -26,7 +26,7 @@
 						                	<td>{{#getfilesize fileSize}}{{/getfilesize}}</td>
 						                	<td>
 						                		<a href="{{downloadURL}}" >
-						                			<img src="themes/default/images/helios/download_icon.png" width="15" height="18" border="0" alt="">
+						                			<img src="themes/default/images/Phresco/download_icon.png" width="15" height="18" border="0" alt="">
 					                			</a>
 				                			</td> 
 						                </tr>

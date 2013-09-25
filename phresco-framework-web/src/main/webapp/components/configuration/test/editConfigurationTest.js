@@ -436,7 +436,7 @@ define(["configuration/editConfiguration"], function(EditConfiguration) {
 		asyncTest("Test - Update Configuration Test", function() {
 			
 			$.mockjax({
-				url:  commonVariables.webserviceurl+commonVariables.configuration+"/updateConfig?appDirName=wordpress-WordPress&envName=Production&customerId=photon&userId=admin",
+				url:  commonVariables.webserviceurl+commonVariables.configuration+"/updateConfig?appDirName=wordpress-WordPress&envName=Production&customerId=photon&userId=admin&oldEnvName=Production&defaultEnv=true&desc=Production%20Environment%20is%20used%20for%20Development%20purpose%20only",
 				type:'POST',
 				contentType: 'application/json',
 				status: 200,
