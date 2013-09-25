@@ -411,6 +411,7 @@ define(["lib/jquery-tojson-1.0",'lib/RGraph_common_core-1.0','lib/RGraph_common_
 				$(".noReport").html("No Report are Available");
 			}
 			$('#pdfReportLoading').hide();
+			$(".tooltiptop").tooltip();
 		},
 
 		//To delete the selected pdf report

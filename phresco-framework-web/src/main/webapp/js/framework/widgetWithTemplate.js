@@ -102,14 +102,20 @@ define(["framework/widget", "framework/templateProvider"], function() {
 			
 			customScroll : function(divId) {
 				var self=this;
-				self.fixScrollHeight(divId);
-				if ( $('.header-background').offset() !== undefined && $('.header-background').offset().top !== 0) {
-					$('.th-inner').css('top', $('.header-background').offset().top+'px');
-				}
-				$(window).resize(function() {
+				var flag = 0;
+				if((divId.hasClass('project_list_popup')) && (divId.hasClass('scrollable'))) {
+					flag =1;
+				}	
+				if(flag === 0) {
 					self.fixScrollHeight(divId);
-				});
-				divId.scrollbars();
+					if ( $('.header-background').offset() !== undefined && $('.header-background').offset().top !== 0) {
+						$('.th-inner').css('top', $('.header-background').offset().top+'px');
+					}
+					$(window).resize(function() {
+						self.fixScrollHeight(divId);
+					});
+					divId.scrollbars();
+				}	
 
 			},
 			
@@ -374,7 +380,11 @@ define(["framework/widget", "framework/templateProvider"], function() {
 				if (clicked.offset().top < halfheight && clicked.offset().left < halfwidth) {
 					$(target).css({"left":clicked.offset().left ,"margin-top":10,"right": "auto"});
 					$(target).toggle();
-					$(target).removeClass('speakstyletopright').removeClass('speakstylebottomright').removeClass('speakstylebottomleft').addClass('speakstyletopleft').addClass('dyn_popup');
+					if($(ee).hasClass('import_icon_btn')) {
+						$(target).removeClass('speakstyletopright').removeClass('speakstylebottomright').removeClass('speakstylebottomleft').addClass('speakstyletopleft').addClass('newdyn_popup');
+					} else {
+						$(target).removeClass('speakstyletopright').removeClass('speakstylebottomright').removeClass('speakstylebottomleft').addClass('speakstyletopleft').addClass('dyn_popup');
+					}	
 				} else if (clicked.offset().top < halfheight && clicked.offset().left > halfwidth){
 					var d= ($(window).width() - (clicked.offset().left + clicked.outerWidth()));
 					var mtop = 10;
@@ -387,12 +397,20 @@ define(["framework/widget", "framework/templateProvider"], function() {
 						
 					$(target).css({"right":d ,"margin-top":mtop,"left": "auto","top": "auto"});
 					$(target).toggle();
-					$(target).removeClass('speakstyletopleft').removeClass('speakstylebottomright').removeClass('speakstylebottomleft').addClass('speakstyletopright').addClass('dyn_popup');
+					if($(ee).hasClass('import_icon_btn')) {
+						$(target).removeClass('speakstyletopleft').removeClass('speakstylebottomright').removeClass('speakstylebottomleft').addClass('speakstyletopright').addClass('newdyn_popup');
+					} else {
+						$(target).removeClass('speakstyletopleft').removeClass('speakstylebottomright').removeClass('speakstylebottomleft').addClass('speakstyletopright').addClass('dyn_popup');
+					}					
 				} else if (clicked.offset().top > halfheight && clicked.offset().left < halfwidth){
 					var BottomHeight = clicked.position().top - (target.height() + 33 );
 					$(target).css({"left": clicked.offset().left,"top": BottomHeight ,"right": "auto"});
 					$(target).toggle();
-					$(target).removeClass('speakstyletopleft').removeClass('speakstylebottomright').removeClass('speakstyletopright').addClass('speakstylebottomleft').addClass('dyn_popup');	
+					if($(ee).hasClass('import_icon_btn')) {
+						$(target).removeClass('speakstyletopleft').removeClass('speakstylebottomright').removeClass('speakstyletopright').addClass('speakstylebottomleft').addClass('newdyn_popup');	
+					} else {
+						$(target).removeClass('speakstyletopleft').removeClass('speakstylebottomright').removeClass('speakstyletopright').addClass('speakstylebottomleft').addClass('dyn_popup');
+					}	
 				} else if (clicked.offset().top > halfheight && clicked.offset().left > halfwidth){
 					var d= ($(window).width() - (clicked.offset().left + clicked.outerWidth()));
 					
@@ -403,7 +421,11 @@ define(["framework/widget", "framework/templateProvider"], function() {
 					var BottomHeight = clicked.position().top - (target.height() + 33 );
 					$(target).css({"right":d ,"top":BottomHeight,"left": "auto"});
 					$(target).toggle();
-					$(target).removeClass('speakstyletopleft').removeClass('speakstyletopright').removeClass('speakstylebottomleft').addClass('speakstylebottomright').addClass('dyn_popup');	
+					if($(ee).hasClass('import_icon_btn')) {
+						$(target).removeClass('speakstyletopleft').removeClass('speakstyletopright').removeClass('speakstylebottomleft').addClass('speakstylebottomright').addClass('newdyn_popup');	
+					} else {
+						$(target).removeClass('speakstyletopleft').removeClass('speakstyletopright').removeClass('speakstylebottomleft').addClass('speakstylebottomright').addClass('dyn_popup');	
+					}	
 				} 
 				
 				self.customScroll(target.find('.popup_scroll'));
