@@ -2167,8 +2167,7 @@ img[name="close"] {
 /* *************************************************************************** STYLES FOR DIV SCROLL ************************************************************************** */
 
 .scroll-bar {
-    width:7px !important;
-	height:100% !important;
+    width:4px !important;
 }
 
 .scroll-up {
@@ -2257,6 +2256,7 @@ img[name="close"] {
   overflow-x: hidden;
   overflow-y: hidden;
   height: 100%;
+  border-radius: 0 0 6px 6px
 }
  
 .header-background {
@@ -2928,7 +2928,7 @@ html>body tbody.scrollContent {
 
 .unit_path {
 	float: left;
-	padding-top: 7px;	
+	padding-top: 6px;	
 }
 
 .unit_path input:first-child{

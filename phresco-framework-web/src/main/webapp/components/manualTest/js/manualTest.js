@@ -133,6 +133,24 @@ define(["manualTest/listener/manualTestListener", "testResult/listener/testResul
 				self.addManualTestcase.dispatch(testSuiteName);
 			});
 			
+			//To open the unit test directory
+			$('#openFolder').unbind('click');
+			$("#openFolder").click(function() {
+				commonVariables.hideloading = true;
+				var paramJson = {};
+				paramJson.type =  commonVariables.typeManualTest;
+				commonVariables.navListener.openFolder(paramJson);
+			});
+			
+			//To copy the path of unit test directory
+			$('#copyPath').unbind('click');
+			$("#copyPath").click(function() {
+				commonVariables.hideloading = true;
+				var paramJson = {};
+				paramJson.type =  commonVariables.typeManualTest;
+				commonVariables.navListener.copyPath(paramJson);
+			});
+			
 			Clazz.navigationController.mainContainer = commonVariables.contentPlaceholder;
 		}
 	});
