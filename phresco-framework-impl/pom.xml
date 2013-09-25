@@ -92,11 +92,12 @@
         </dependency>
         
         <!-- import from git plugins -->
-        <dependency>
+       <dependency>
 			<groupId>org.eclipse.jgit</groupId>
 			<artifactId>org.eclipse.jgit</artifactId>
-			<version>2.0.0.201206130900-r</version>
+			<version>3.0.0.201306101825-r</version>
 		</dependency>
+            
 		<!-- import from git plugins -->
 		
         <dependency>

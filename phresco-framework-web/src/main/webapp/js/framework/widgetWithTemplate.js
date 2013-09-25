@@ -583,6 +583,7 @@ define(["framework/widget", "framework/templateProvider"], function() {
 			
 			opencctime : function(ee, placeId) {
 				var self=this;
+				$(".dyn_popup").hide();
 				$('.content_main').addClass('z_index_ci');
 				
 				var clicked = $(ee);
@@ -619,6 +620,7 @@ define(["framework/widget", "framework/templateProvider"], function() {
 
 			openccwait : function(ee, placeId) {
 				var self=this;
+				$(".dyn_popup").hide();
 				$('.content_main').addClass('z_index_ci');
 				
 				var clicked = $(ee);

@@ -480,18 +480,14 @@ public class SCMManagerImpl implements SCMManager, FrameworkConstants {
 			if (StringUtils.isEmpty(branch)) {
 				branch = "master";
 			}
+			
 			UsernamePasswordCredentialsProvider userCredential = new UsernamePasswordCredentialsProvider(username, password);
-			if(debugEnabled){
-				S_LOGGER.debug("importing git " + url);
-			}
 			Git r = Git.cloneRepository().setDirectory(gitImportTemp)
-			.setURI(url)
 			.setCredentialsProvider(userCredential)
-//			.setProgressMonitor(new TextProgressMonitor())
+			.setURI(url)
+			//.setProgressMonitor(new TextProgressMonitor())
+			.setBranch(branch)
 			.call();
-			if (!MASTER.equalsIgnoreCase(branch) && !StringUtils.isEmpty(branch)) {
-				r.checkout().setName("origin/"+branch).call();
-			} 
 	        r.getRepository().close();      
 	}
 	
