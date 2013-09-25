@@ -125,7 +125,7 @@ define(["componentTest/componentTest"], function(ComponentTest) {
 				});
 
 				self.executeTestMock = $.mockjax({
-					url: commonVariables.webserviceurl+"app/runComponentTest?username=admin&appId=5bf18d69-3902-497b-8cd2-65dbdc9cd377&customerId=photon&goal=component-test&phase=component-test&projectId=b1a829b3-bbfa-45c4-b5f0-003eca66abf5&&displayName=Admin",
+					url: commonVariables.webserviceurl+"app/runComponentTest?appDirName=test&username=admin&appId=5bf18d69-3902-497b-8cd2-65dbdc9cd377&customerId=photon&goal=component-test&phase=component-test&projectId=b1a829b3-bbfa-45c4-b5f0-003eca66abf5&&displayName=Admin",
 				  	type: "POST",
 				  	dataType: "json",
 				  	contentType: "application/json",
@@ -149,7 +149,7 @@ define(["componentTest/componentTest"], function(ComponentTest) {
 					start();
 					equal($('.testsuiteClm a[name=testDescription]').text(), "SampleComponentTest", "Component test run test without parameters tested");
 					self.testBtnClickTest();
-				}, 4000);
+				}, 4500);
 			});
 		},
 
@@ -181,7 +181,7 @@ define(["componentTest/componentTest"], function(ComponentTest) {
 			var self = this;
 			asyncTest("Component Test Run Test-Btn Click Test", function() {
 				$.mockjax({
-					url: commonVariables.webserviceurl+"app/runComponentTest?username=admin&appId=5bf18d69-3902-497b-8cd2-65dbdc9cd377&customerId=photon&goal=component-test&phase=component-test&projectId=b1a829b3-bbfa-45c4-b5f0-003eca66abf5&testAgainst=java&environmentName=Production&displayName=Admin",
+					url: commonVariables.webserviceurl+"app/runComponentTest?appDirName=test&username=admin&appId=5bf18d69-3902-497b-8cd2-65dbdc9cd377&customerId=photon&goal=component-test&phase=component-test&projectId=b1a829b3-bbfa-45c4-b5f0-003eca66abf5&testAgainst=java&environmentName=Production&displayName=Admin",
 				  	type: "POST",
 				  	dataType: "json",
 				  	contentType: "application/json",
