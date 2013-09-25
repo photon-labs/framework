@@ -542,6 +542,9 @@ define(["framework/widget", "framework/templateProvider"], function() {
 						d= ($(window).width() - (clicked.offset().left + clicked.outerWidth())) - 18;
 						var BottomHeight = clicked.position().top + clicked.height() ;
 						$(target).css({"right":d,"left": "auto","top": BottomHeight});
+					} else if ($(ee).attr('name') === 'updateManualTestCase_popup') {
+						d= ($(window).width() - (clicked.offset().left + clicked.outerWidth())) - 48;
+						$(target).css({"right":d ,"margin-top":10,"left": "auto","top": "auto"});
 					} else {		
 						d= ($(window).width() - (clicked.offset().left + clicked.outerWidth())) - 18;
 						$(target).css({"right":d ,"margin-top":10,"left": "auto","top": "auto"});
@@ -568,11 +571,11 @@ define(["framework/widget", "framework/templateProvider"], function() {
 						$(target).toggle();
 						$(target).removeClass('speakstyletopleft').removeClass('speakstyletopright').removeClass('speakstylebottomleft').addClass('speakstylebottomright').addClass('dyn_popup');
 					} else {
-							BottomHeight = clicked.position().top - (target.height() + 28 );
-							$(target).css({"right":d ,"top":BottomHeight,"left": "auto"});
-							$(target).toggle();
-							$(target).removeClass('speakstyletopleft').removeClass('speakstyletopright').removeClass('speakstylebottomleft').addClass('speakstylebottomright').addClass('dyn_popup');
-						}
+						BottomHeight = clicked.position().top - (target.height() + 28 );
+						$(target).css({"right":d ,"top":BottomHeight,"left": "auto"});
+						$(target).toggle();
+						$(target).removeClass('speakstyletopleft').removeClass('speakstyletopright').removeClass('speakstylebottomleft').addClass('speakstylebottomright').addClass('dyn_popup');
+					}
 				} 
 
 				self.closeAll(placeId);

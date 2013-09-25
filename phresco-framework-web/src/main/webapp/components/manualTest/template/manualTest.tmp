@@ -66,9 +66,11 @@
                       <area class="graph2" shape="rect" coords="106,3,215,29">
                     </map>
             </span>
-			
         </div>
-         
+        
+        <div class="icon_images"><a class="tooltiptop" title="" data-placement="bottom" data-toggle="tooltip" href="javascript:void(0)" data-original-title="Open Folder" id="openFolder"><img src="themes/default/images/Phresco/openfolder_icon.png" ></a></div>
+		<div class="icon_images"><a class="tooltiptop" title="" data-placement="bottom" data-toggle="tooltip" href="javascript:void(0)" data-original-title="Copy Path" id="copyPath"><img src="themes/default/images/Phresco/copypath_icon.png" ></a></div>
+        
         <div class="unit_path">
 			<!--upload popup starts here -->
 			<input type="button" value="Upload" title="Template Upload" id="show_uploadTemplate_popup" name="template_upload" class="btn btn_style">
