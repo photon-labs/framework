@@ -204,7 +204,7 @@ define(["framework/base", "api/localStorageAPI"], function(){
 			commonVariables.ajaxXhr = $.ajax({
 				type: 'GET',
 				url: url,
-				cache: false,
+				cache: true,
 				header : "Access-Control-Allow-Headers: x-requested-with",
 				dataType: "script",
 				crossDomain: true,
