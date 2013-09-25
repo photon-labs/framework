@@ -4832,4 +4832,11 @@ select[name="reportDataType"], input[name="pdfName"] {
 	height: 70px !important;
 	overflow: auto;
 }
+.newdyn_popup {
+	border: 1px solid #ed7940;
+	position: absolute;
+	background: #ffffff;
+	border-radius: 6px;
+	padding: 10px;
+	z-index: 1;
 }
