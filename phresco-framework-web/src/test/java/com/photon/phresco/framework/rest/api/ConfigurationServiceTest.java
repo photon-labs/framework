@@ -720,9 +720,94 @@ public class ConfigurationServiceTest extends LoginServiceTest {
 		Response responsePass = configurationService.updateConfiguration(userId, customerId, appDirName, "dev","dev", "false", configListPass,"","", "dev env");
 		Assert.assertEquals(200, responsePass.getStatus());
 		
-		
 	}
 	
+	
+	@Test
+	public void addProdEnvironmentTest() {
+		List<Environment> environments = new ArrayList<Environment>();
+		List<Configuration> configList = new ArrayList<Configuration>();
+		List<Configuration> finalList = new ArrayList<Configuration>();
+		Environment env = new Environment();
+		env.setName("Production");
+		env.setDefaultEnv(true);
+		Configuration prodConfigServer = new Configuration();
+		Configuration prodConfigDb = new Configuration();
+		Configuration prodWebService = new Configuration();
+		prodConfigServer.setName("serverconfig");
+		prodConfigServer.setType("Server");
+		Properties propProd = new Properties();
+		propProd.setProperty("protocol", "http");
+		propProd.setProperty("host", "localhost");
+		propProd.setProperty("port", "80");
+		propProd.setProperty("admin_username", "");
+		propProd.setProperty("admin_password", "");
+		propProd.setProperty("remoteDeployment", "false");
+		propProd.setProperty("certificate", "");
+		propProd.setProperty("type", "Apache Tomcat");
+		propProd.setProperty("version", "6.0.x");
+		propProd.setProperty("deploy_dir", "C:\\wamp");
+		propProd.setProperty("context", "serverprtod");
+		prodConfigServer.setProperties(propProd);
+		
+		prodConfigDb.setName("db");
+		prodConfigDb.setType("Database");
+		Properties propProddb = new Properties();
+		propProddb.setProperty("host", "localhost");
+		propProddb.setProperty("port", "3306");
+		propProddb.setProperty("username", "root");
+		propProddb.setProperty("password", "");
+		propProddb.setProperty("dbname", "testjava");
+		propProddb.setProperty("type", "MySQL");
+		propProddb.setProperty("version", "5.5.1");
+		prodConfigDb.setProperties(propProddb);
+		
+		prodWebService.setName("ws");
+		prodWebService.setType("WebService");
+		Properties propProdWs= new Properties();
+		propProdWs.setProperty("host", "localhost");
+		propProdWs.setProperty("port", "5674");
+		propProdWs.setProperty("username", "root");
+		propProdWs.setProperty("password", "");
+		propProdWs.setProperty("context", "webservice");
+		propProdWs.setProperty("protocol", "http");
+		prodWebService.setProperties(propProdWs);
+		
+		configList.add(prodConfigServer);
+		configList.add(prodConfigDb);
+		configList.add(prodWebService);
+		
+		env.setConfigurations(configList);
+		
+		
+		Environment devEnv = new Environment();
+		devEnv.setName("dev");
+		devEnv.setDefaultEnv(false);
+		devEnv.setDesc("dev for validation");
+		Properties propertiesSerDupl = new Properties();
+		propertiesSerDupl.setProperty("context", "CometDTesting");
+		propertiesSerDupl.setProperty("admin_username", "");
+		propertiesSerDupl.setProperty("deploy_dir", "C:\\wamp");
+		propertiesSerDupl.setProperty("additional_context", "");
+		propertiesSerDupl.setProperty("port", "6525");
+		propertiesSerDupl.setProperty("admin_password", "");
+		propertiesSerDupl.setProperty("version", "6.0.x");
+		propertiesSerDupl.setProperty("type", "Apache Tomcat");
+		propertiesSerDupl.setProperty("remoteDeployment", "false");
+		propertiesSerDupl.setProperty("admin_username", "vvvv");
+		propertiesSerDupl.setProperty("host", "localhost");
+		propertiesSerDupl.setProperty("protocol", "http");
+		Configuration configuration = new Configuration("ServerConfig", "serverconfig", "dev", "Server", propertiesSerDupl);
+		finalList.add(configuration);
+		finalList.add(prodConfigDb);
+		devEnv.setConfigurations(finalList);
+		environments.add(env);
+		environments.add(devEnv);
+		Response response = configurationService.addEnvironment(appDirName, environments);
+		ResponseInfo<List<Environment>> environmentList = (ResponseInfo<List<Environment>>) configurationService.getAllEnvironments(appDirName,"true", "").getEntity();
+		Assert.assertEquals(200, response.getStatus());
+	}
+
 	@Test
 	public void connectionAliveTest() throws PhrescoException {
 		String connectionUrl = getConnectionUrl("Production", "Server", "serverconfig");
