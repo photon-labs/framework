@@ -183,9 +183,9 @@ define(["framework/base", "api/localStorageAPI"], function(){
 				$(".modal-body").append(response.service_exception);
 			}else if(response.exception !== null && response.exception !== undefined) {
 				if(response.exception.errorMessage !== null && response.exception.errorMessage !== undefined) {
-					$(".modal-body").append(response.exception.errorMessage+'  ');
+					$(".modal-body").append(response.exception.errorMessage+'<br>');
 				} else if(response.exception.message !== null && response.exception.message !== undefined) {
-					$(".modal-body").append(response.exception.message+'  ');
+					$(".modal-body").append(response.exception.message+'<br>');
 				}
 				$.each(response.exception.stackTrace, function(index, value){
 					$(".modal-body").append(' '+value.className+' '+value.fileName+' '+' '+value.lineNumber+' '+value.methodName);
