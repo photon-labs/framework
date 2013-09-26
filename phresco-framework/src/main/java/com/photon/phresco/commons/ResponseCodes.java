@@ -201,6 +201,7 @@ public interface ResponseCodes {
 	String PHR500004 = "PHR500004"; // sonar url returned successfully
 	String PHR510010 = "PHR510010"; // Error in sonar url 
 	String PHR510011 = "PHR510011"; // sonar url returned failed
+	String PHR500005 = "PHR500005"; //No report available
 	
 	
 	/*

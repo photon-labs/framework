@@ -456,7 +456,13 @@ public class ConfigurationService extends RestBase implements FrameworkConstants
 	env.setDesc(desc);
 	env.setDefaultEnv(defaultBoolValue);
 	env.setConfigurations(configurationlist);
-	configManager.addEnvironments(Arrays.asList(env));
+	List<Environment> environments = configManager.getEnvironments();
+	if(CollectionUtils.isNotEmpty(environments)){
+	environments.add(env);
+	configManager.addEnvironments(environments);
+	}else {
+		configManager.addEnvironments(Arrays.asList(env));
+	}
 	// configManager.deleteConfigurations(envName, configuration_names);
 	// configManager.createConfiguration(envName, configurationlist);
 	} else {
