@@ -446,6 +446,7 @@ define(['lib/RGraph_common_core-1.0','lib/RGraph_common_tooltips-1.0','lib/RGrap
 			var self = this;
 			var requestBody = {};
 			self.performAction(self.getActionHeader(requestBody, "generatePdfReport"), function(response) {
+				$("input[name=pdfName]").val('');
 				self.getPdfReports();
 			});
 		},
