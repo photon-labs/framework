@@ -60,7 +60,6 @@ define(["downloads/listener/downloadsListener"], function() {
 		 */
 		postRender : function(element) {
 			var self = this;
-			//commonVariables.navListener.currentTab = commonVariables.downloads;
 			commonVariables.navListener.showHideControls(commonVariables.downloads);
 		},
 		
