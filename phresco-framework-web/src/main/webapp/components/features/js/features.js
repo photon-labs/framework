@@ -338,9 +338,9 @@ define(["features/listener/featuresListener"], function() {
            	});
 			
            	$('#switchonbutton').on("click", function(event) {
-           		$("ul li").show();
+           		$("#featureTest ul li").show();
            		self.featuresListener.scrollbarUpdate();
-				$("#norecord1, #norecord2, #norecord3").hide();; 
+				$("#norecord1, #norecord2, #norecord3").hide();
            	});
 
        		$('#cancelUpdateFeature').click(function() {
@@ -387,7 +387,7 @@ define(["features/listener/featuresListener"], function() {
 					form_ser = form_ser.replace(/_/g,' ');
 					actionBody.serval = form_ser;
 					self.featuresListener.getFeaturesList(self.featuresListener.getRequestHeader(actionBody, "configureFeature"), function(response) {
-						
+						$("#"+settingsid).hide(); 
 					}); 
 				});
 			});

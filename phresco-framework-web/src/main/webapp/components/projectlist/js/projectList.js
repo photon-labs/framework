@@ -374,7 +374,18 @@ define(["projectlist/listener/projectListListener"], function() {
 					self.hideShowCredentials(selectObj.val(),usrObj,pwdObj,checkObj);
 					selectObj.unbind("change");
 					selectObj.on("change", function(){				
-						self.hideShowCredentials(selectObj.val(),usrObj,pwdObj,checkObj);			
+						self.hideShowCredentials(selectObj.val(),usrObj,pwdObj,checkObj);	
+						if($(selectObj).attr('id') === 'updateType_'+dynamicId) {
+							$('#temporary_'+dynamicId).remove();
+							if(selectObj.val() !== 'svn') {
+								$("#updatePassword_"+dynamicId).parent().parent().next('tr').hide();
+								$("#updatePassword_"+dynamicId).parent().parent().next('tr').next('tr').hide();
+								$("#updatePassword_"+dynamicId).parent().parent().append('<td id="temporary_'+dynamicId+'" style="height: 115px;"></td>');								
+							} else {
+								$("#updatePassword_"+dynamicId).parent().parent().next('tr').show();
+								$("#updatePassword_"+dynamicId).parent().parent().next('tr').next('tr').show();
+							}	
+						}
 					});
 				}
 				
