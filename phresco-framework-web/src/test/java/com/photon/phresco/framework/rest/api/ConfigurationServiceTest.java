@@ -723,7 +723,7 @@ public class ConfigurationServiceTest extends LoginServiceTest {
 	}
 	
 	
-	@Test
+//	@Test
 	public void addProdEnvironmentTest() {
 		List<Environment> environments = new ArrayList<Environment>();
 		List<Configuration> configList = new ArrayList<Configuration>();

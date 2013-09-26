@@ -104,6 +104,7 @@ define(["header/listener/headerListener"] , function(template) {
 			
 			$(".header_left ul li").click(function(){
 				$(".header_left ul li a").removeClass('nav_active');
+				$("#editprojectTab li a").removeClass("act");
 				$(this).children().addClass('nav_active');
 				self.headerListener.currentTab = $(this).text();
 				self.onTabChangeEvent.dispatch();
