@@ -2168,6 +2168,7 @@ img[name="close"] {
 
 .scroll-bar {
     width:4px !important;
+	height:100% !important;
 }
 
 .scroll-up {
