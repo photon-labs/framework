@@ -66,7 +66,7 @@ public class ManualTestServiceTest extends RestBaseTest {
 		ResponseInfo<List<TestSuite>> response = (ResponseInfo<List<TestSuite>>) testSuites.getEntity();
 		
 		Assert.assertEquals(200, testSuites.getStatus());
-		Assert.assertEquals("PHRQ400002", response.getResponseCode());
+		Assert.assertEquals("PHRQ000003", response.getResponseCode());
 	}
 
 	@Test

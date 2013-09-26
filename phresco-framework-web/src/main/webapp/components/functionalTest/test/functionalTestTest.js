@@ -119,7 +119,7 @@ define(["functionalTest/functionalTest"], function(FunctionalTest) {
 			var self = this;
 			asyncTest("Functional Test Run Start Hub Btn Click Test", function() {
 				$.mockjax({
-					url: commonVariables.webserviceurl+"app/startHub?username=admin&appId=5bf18d69-3902-497b-8cd2-65dbdc9cd377&customerId=photon&goal=functional-test&phase=functional-test&projectId=b1a829b3-bbfa-45c4-b5f0-003eca66abf5&port=4444&newSessionWaitTimeout=-1&servlets=&prioritizer=&capabilityMatcher=org.openqa.grid.internal.utils.DefaultCapabilityMatcher&throwOnCapabilityNotPresent=on&nodePolling=5000&cleanUpCycle=5000&timeout=300000&browserTimeout=0&maxSession=5",
+					url: commonVariables.webserviceurl+"app/startHub?appDirName=test&username=admin&appId=5bf18d69-3902-497b-8cd2-65dbdc9cd377&customerId=photon&goal=functional-test&phase=functional-test&projectId=b1a829b3-bbfa-45c4-b5f0-003eca66abf5&port=4444&newSessionWaitTimeout=-1&servlets=&prioritizer=&capabilityMatcher=org.openqa.grid.internal.utils.DefaultCapabilityMatcher&throwOnCapabilityNotPresent=on&nodePolling=5000&cleanUpCycle=5000&timeout=300000&browserTimeout=0&maxSession=5",
 				  	type: "POST",
 				  	dataType: "json",
 				  	contentType: "application/json",
@@ -154,7 +154,7 @@ define(["functionalTest/functionalTest"], function(FunctionalTest) {
 			var self = this;
 			asyncTest("Functional Test Stop Hub Btn Click Test", function() {
 				$.mockjax({
-					url: commonVariables.webserviceurl+"app/stopHub?username=admin&appId=5bf18d69-3902-497b-8cd2-65dbdc9cd377&customerId=photon&goal=functional-test&phase=functional-test&projectId=b1a829b3-bbfa-45c4-b5f0-003eca66abf5",
+					url: commonVariables.webserviceurl+"app/stopHub?appDirName=test&username=admin&appId=5bf18d69-3902-497b-8cd2-65dbdc9cd377&customerId=photon&goal=functional-test&phase=functional-test&projectId=b1a829b3-bbfa-45c4-b5f0-003eca66abf5",
 				  	type: "POST",
 				  	dataType: "json",
 				  	contentType: "application/json",
@@ -217,7 +217,7 @@ define(["functionalTest/functionalTest"], function(FunctionalTest) {
 			asyncTest("Functional Test Run Start Node Btn Click Test", function() {
 				$("input[name=browserMaxInstances]").val("2");
 				$.mockjax({
-					url: commonVariables.webserviceurl+"app/startNode?username=admin&appId=5bf18d69-3902-497b-8cd2-65dbdc9cd377&customerId=photon&goal=functional-test&phase=functional-test&projectId=b1a829b3-bbfa-45c4-b5f0-003eca66abf5&hubHost=localhost&hubPort=4444&nodeport=5555&maxSession=5&seleniumProtocol=WebDriver&register=true&registerCycle=5000&proxy=org.openqa.grid.selenium.proxy.DefaultRemoteProxy&browserName=firefox&browserMaxInstances=2",
+					url: commonVariables.webserviceurl+"app/startNode?appDirName=test&username=admin&appId=5bf18d69-3902-497b-8cd2-65dbdc9cd377&customerId=photon&goal=functional-test&phase=functional-test&projectId=b1a829b3-bbfa-45c4-b5f0-003eca66abf5&hubHost=localhost&hubPort=4444&nodeport=5555&maxSession=5&seleniumProtocol=WebDriver&register=true&registerCycle=5000&proxy=org.openqa.grid.selenium.proxy.DefaultRemoteProxy&browserName=firefox&browserMaxInstances=2",
 				  	type: "POST",
 				  	dataType: "json",
 				  	contentType: "application/json",
@@ -255,7 +255,7 @@ define(["functionalTest/functionalTest"], function(FunctionalTest) {
 			var self = this;
 			asyncTest("Functional Test Stop Node Btn Click Test", function() {
 				$.mockjax({
-					url: commonVariables.webserviceurl+"app/stopNode?username=admin&appId=5bf18d69-3902-497b-8cd2-65dbdc9cd377&customerId=photon&goal=functional-test&phase=functional-test&projectId=b1a829b3-bbfa-45c4-b5f0-003eca66abf5",
+					url: commonVariables.webserviceurl+"app/stopNode?appDirName=test&username=admin&appId=5bf18d69-3902-497b-8cd2-65dbdc9cd377&customerId=photon&goal=functional-test&phase=functional-test&projectId=b1a829b3-bbfa-45c4-b5f0-003eca66abf5",
 				  	type: "POST",
 				  	dataType: "json",
 				  	contentType: "application/json",
@@ -326,7 +326,7 @@ define(["functionalTest/functionalTest"], function(FunctionalTest) {
 			var self = this;
 			asyncTest("Functional Test Run Test-Btn Click Test", function() {
 				$.mockjax({
-					url: commonVariables.webserviceurl+"app/runFunctionalTest?username=admin&appId=5bf18d69-3902-497b-8cd2-65dbdc9cd377&customerId=photon&goal=functional-test&phase=functional-test&projectId=b1a829b3-bbfa-45c4-b5f0-003eca66abf5&devices=usb&serialNumber=&displayName=Admin",
+					url: commonVariables.webserviceurl+"app/runFunctionalTest?appDirName=test&username=admin&appId=5bf18d69-3902-497b-8cd2-65dbdc9cd377&customerId=photon&goal=functional-test&phase=functional-test&projectId=b1a829b3-bbfa-45c4-b5f0-003eca66abf5&devices=usb&serialNumber=&displayName=Admin",
 				  	type: "POST",
 				  	dataType: "json",
 				  	contentType: "application/json",

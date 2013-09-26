@@ -199,8 +199,8 @@ define(["build/listener/buildListener"], function() {
 			var self = this;
 			if(self.dynamicpage === null){
 				commonVariables.navListener.getMyObj(commonVariables.dynamicPage, function(retVal){
-					self.dynamicPage = retVal;
-					self.dynamicPageListener = self.dynamicPage.dynamicPageListener;
+					self.dynamicpage = retVal;
+					self.dynamicPageListener = self.dynamicpage.dynamicPageListener;
 				});
 			}
 		},

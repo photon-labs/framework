@@ -152,7 +152,9 @@ define(["features/listener/featuresListener"], function() {
 				self.featuresListener.getFeaturesList(self.featuresListener.getRequestHeader(self.featureRequestBody, "SELECTED"), function(response) {
 					var responseData = response.data;
 					$(".switchOn").each(function(index, currentVal) {
-						$(currentVal).removeClass('switchOn').addClass('switchOff');
+						if($(currentVal).attr('id') !== 'search') {
+							$(currentVal).removeClass('switchOn').addClass('switchOff');
+						}	
 					});
 					$.each(response.data, function(index, value){
 						$("#feature_"+this.moduleId).addClass("switchOn").removeClass('switchOff');
@@ -448,9 +450,9 @@ define(["features/listener/featuresListener"], function() {
 						});				
 						
 						
-						self.featuresListener.getFeaturesUpdate(self.featuresListener.getRequestHeader(self.featureUpdatedArray, "UPDATE", ""), function(response) {
+						self.featuresListener.getFeaturesUpdate(self.featuresListener.getRequestHeader(self.featureUpdatedArray, "UPDATE", ""), function(response) {						
 							self.selectedCount();
-							$('.settings_icon').hide();
+							$('.settings_icon').hide();							
 							self.selectedFeaturesServiceCall();
 						}); 
 						

@@ -1057,22 +1057,11 @@ define([], function() {
 					self.popForCi(thisObj, 'jobConfigure');
 					if (commonVariables.goal === commonVariables.performanceTestGoal || commonVariables.goal === commonVariables.loadTestGoal) {
 						var sectionHeight = $('.content_main').height();
-						//$('.content_end').height();
 						$('#jobConfigure').css("max-height", sectionHeight+ 'px');
 						$('#jonConfiguration').css("max-height", sectionHeight -34+ 'px');
-	                	/*$("#jonConfiguration").mCustomScrollbar({
-							autoHideScrollbar:true,
-							theme:"light-thin",
-							advanced:{ updateOnContentResize: true}
-						});*/
 					} else {
 						$('#jobConfigure').css("max-height", 'auto');
 						$('#jonConfiguration').css("max-height", 'auto');
-						/*$("#jonConfiguration").mCustomScrollbar({
-							autoHideScrollbar:true,
-							theme:"light-thin",
-							advanced:{ updateOnContentResize: true}
-						});*/
 					}
 					self.dragDrop();
 					self.chkSQLCheck();
@@ -1808,15 +1797,9 @@ define([], function() {
 				ciRequestBody.jobName =name;
 				ciRequestBody.flag =$(thisObj).val();
 				self.getHeaderResponse(self.getRequestHeader(ciRequestBody, 'jobValidation'), function (response) {
-					if(response.data === false) {
-						$(".msgdisplay").removeClass("success").addClass("error");
-						$(".error").attr('data-i18n', 'errorCodes.' + response.responseCode);
-						self.renderlocales(commonVariables.contentPlaceholder);	
-						$(".error").show();
-						$(".error").fadeIn(500).fadeOut(500).fadeIn(500).fadeOut(500).fadeIn(500).fadeOut(5);
-						setTimeout(function() {
-							$(".error").hide();
-						},2500);		
+					if(response.responseCode === "PHR810031") {
+						var msg = response.data + commonVariables.api.error[response.responseCode];
+						commonVariables.api.showError(msg ,"error", true, true, true);
 						hasError = true;
 						return false;
 					} 

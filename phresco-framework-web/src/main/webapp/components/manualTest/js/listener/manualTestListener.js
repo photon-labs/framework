@@ -175,8 +175,8 @@ define(["lib/fileuploader-2.3"], function() {
                 action: uploadFileUrl,
 				actionType : "manualTest",
 				appDirName : appDirName,
-				allowedExtensions : ['xls','xlsx'],
-				buttonLabel: "Upload File",
+				allowedExtensions : ['xls','xlsx','ods'],
+				buttonLabel: "Upload",
 				testListener : self.testResultListener,
 				multiple: false,
 				selfObj : self,
@@ -186,6 +186,12 @@ define(["lib/fileuploader-2.3"], function() {
         
         uploadCallBack : function () {
 			commonVariables.navListener.onMytabEvent("manualTest");
+			setTimeout(function() {
+				$(".content_end").show();
+				$(".msgdisplay").addClass("success").removeClass("error");
+				$(".success").html('File Successfully uploaded');
+				$(".success").fadeIn(500).fadeOut(500).fadeIn(500).fadeOut(500).fadeIn(500).fadeOut(5);
+			},2500);
         },
         
 		openPopUpToEdit : function(obj) {

@@ -438,6 +438,7 @@ define(['lib/RGraph_common_core-1.0','lib/RGraph_common_tooltips-1.0','lib/RGrap
 				$("#noReport").html("No Report are Available");
 			}
 			self.hidePopupLoading($('#pdfReportLoading'));
+			$(".tooltiptop").tooltip();
 		},
 		
 		//To generate the pdf report

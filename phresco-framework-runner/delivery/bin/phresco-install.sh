@@ -62,7 +62,7 @@ case "$1" in
                 echo "Invaild Location";
                 fi
                 ;;
-		remote)
+		run-source)
 				if [ -d ".phresco/" ];
                 then
                 mvn tomcat:run
@@ -144,7 +144,7 @@ case "$1" in
 				cat help.txt
 				;;
 	*)
-echo "Usage: $NAME { install-ui|version|create|build|deploy|remote|validate|unit-test|functional-test|performance|load|pdf-report|site-report|help }" >&2
+echo "Usage: $NAME { install-ui|version|create|build|deploy|run-source|validate|unit-test|functional-test|performance|load|pdf-report|site-report|help }" >&2
         exit 1
         ;;
 esac

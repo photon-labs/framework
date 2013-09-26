@@ -118,6 +118,7 @@ var commonVariables = {
 	typePerformanceTest : "performanceTest",
 	typeComponentTest : "componentTest",
 	typeIntegrationTest : "integrationTest",
+	typeManualTest : "manualTest",
 	
 	/******* Technology options constants *******/
 	optionsCode : "Code",
