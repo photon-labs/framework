@@ -222,11 +222,7 @@ public class QualityService extends RestBase implements ServiceConstants, Framew
 			if (MapUtils.isEmpty(testResultNameMap)) {
 				return null;
 			}
-			Map<String, String> testSuitesResultMap = new HashMap<String, String>();
-			float totalTestSuites = 0;
-			float successTestSuites = 0;
-			float failureTestSuites = 0;
-			float errorTestSuites = 0;
+			
 			// get all nodelist of testType of a project
 			Collection<NodeList> allTestResultNodeLists = testResultNameMap.values();
 			for (NodeList allTestResultNodeList : allTestResultNodeLists) {
@@ -237,10 +233,13 @@ public class QualityService extends RestBase implements ServiceConstants, Framew
 							// testsuite values are set before calling
 							// getTestCases value
 							setTestSuite(tstSuite.getName());
-							getTestCases(appDirName, allTestResultNodeList, testSuitePath, testCasePath);
 							float tests = 0;
 							float failures = 0;
 							float errors = 0;
+							setNodeLength(Math.round(tstSuite.getTests()));
+							setSetFailureTestCases(Math.round(tstSuite.getFailures()));
+							setErrorTestCases(Math.round(tstSuite.getErrors()));
+							
 							tests = Float.parseFloat(String.valueOf(getNodeLength()));
 							failures = Float.parseFloat(String.valueOf(getSetFailureTestCases()));
 							errors = Float.parseFloat(String.valueOf(getErrorTestCases()));
@@ -268,13 +267,6 @@ public class QualityService extends RestBase implements ServiceConstants, Framew
 							} else {
 								success = tests;
 							}
-
-							totalTestSuites = totalTestSuites + tests;
-							failureTestSuites = failureTestSuites + failures;
-							errorTestSuites = errorTestSuites + errors;
-							successTestSuites = successTestSuites + success;
-							String rstValues = tests + Constants.COMMA + success + Constants.COMMA + failures + Constants.COMMA + errors;
-							testSuitesResultMap.put(tstSuite.getName(), rstValues);
 
 							TestSuite suite = new TestSuite();
 							suite.setName(tstSuite.getName());
