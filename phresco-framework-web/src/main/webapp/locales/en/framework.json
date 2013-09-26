@@ -258,7 +258,7 @@
 		"serveralreadyadded" : "Server Already Added",
 		"emailalready" : "Email Already Added",
 		"chooseserver" : "Choose the Server Type from App Info",
-		"choosedb" : "Choose the DB Type from App Info"
+		"choosedb" : "Choose the DB Type from App Info",
 		"PHR500005" : "Report not available"
 
 	},
