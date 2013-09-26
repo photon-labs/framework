@@ -60,6 +60,8 @@ public interface ResponseCodes {
 	String PHR12C00002 = "PHR12C00002"; // No downloads available
 	String PHR12C10001 = "PHR12C10001"; // unauthorized user
 	String PHR12C10002 = "PHR12C10002"; // Failed to return downloads
+	String PHR13C00001 = "PHR13C00001"; // check for remote machine success
+	String PHR13C10001 = "PHR13C10001"; // check for remote machine failed
 	
 	
 	/*
