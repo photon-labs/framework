@@ -190,18 +190,24 @@ define(["projects/listener/projectsListener"], function() {
 				}
 			});
 
-			$("input[name='projectname']").bind('input', function() {
-				$(this).val(self.specialCharValidation($(this).val()));
-				$("input[name='projectcode']").val(self.specialCharValidation($(this).val().replace(/\s/g, "")));
-			});
-			
-			$("input[name='projectcode']").bind('input', function() {
-				$(this).val(self.specialCharValidation($(this).val().replace(/\s/g, "")));
-			});
-			
-			$("input[name='projectversion']").bind('input', function() {
+			$("input[name='projectname']").bind('input propertychange', function (e) {
 				var str = $(this).val();
-				str = str.replace(/[^0-9.]+/g, '');
+				str = self.specialCharValidation(str);
+				str = str.replace(/\s+/g, '');
+				$("input[name='projectcode']").val(str);
+			});
+
+			$("input[name='projectcode']").bind('input propertychange', function() {
+				var str = $(this).val();
+				str = self.specialCharValidation(str);
+				str = str.replace(/\s+/g, '');
+				$(this).val(str);
+			});
+
+			$("input[name='projectversion']").bind('input propertychange', function() {
+				var str = $(this).val();
+				str = self.specialCharValidation(str);
+				str = str.replace(/\s+/g, '');
 				$(this).val(str);
 			});
 

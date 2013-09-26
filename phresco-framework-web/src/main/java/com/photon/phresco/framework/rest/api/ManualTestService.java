@@ -99,12 +99,12 @@ public class ManualTestService extends RestBase implements ServiceConstants, Fra
 			StringBuilder sb = new StringBuilder(Utility.getProjectHome()).append(appDirName).append(manualTestDir);
 			File file = new File(sb.toString());
 			if (! new File(sb.toString()).exists()) {
-				finalOutput = responseDataEvaluation(responseData, null, createManualTestResult, RESPONSE_STATUS_FAILURE, PHRQ410003);
+				finalOutput = responseDataEvaluation(responseData, null, createManualTestResult, RESPONSE_STATUS_FAILURE, PHRQ000003);
 				return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
 			}
 			readManualTestSuiteFile = frameworkUtil.readManualTestSuiteFile(sb.toString());
 			createManualTestResult = createManualTestResult(readManualTestSuiteFile);
-			finalOutput = responseDataEvaluation(responseData, null, createManualTestResult, RESPONSE_STATUS_SUCCESS, PHRQ400002);
+			finalOutput = responseDataEvaluation(responseData, null, createManualTestResult, RESPONSE_STATUS_SUCCESS, PHRQ000003);
 			return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
 		} catch (Exception e) {
 			finalOutput = responseDataEvaluation(responseData, e, null, RESPONSE_STATUS_ERROR, PHRQ410004);

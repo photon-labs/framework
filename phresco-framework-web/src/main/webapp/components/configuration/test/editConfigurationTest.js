@@ -11,7 +11,7 @@ define(["configuration/editConfiguration"], function(EditConfiguration) {
 	runTests: function (runOtherTests) {
 		
 		module("EditConfiguration.js;EditConfiguration");
-		var editConfiguration = new EditConfiguration(), editConfig, self=this, certificate, serverAlive;
+		var editConfiguration = new EditConfiguration(), editConfig, self=this, certificate, serverAlive, settingsTemplate;
 
 		asyncTest("Test - Edit Configuration Render Test", function() {
 			self.setUserInfo();
@@ -374,7 +374,7 @@ define(["configuration/editConfiguration"], function(EditConfiguration) {
 			
 			$("a[name=removeConfig]").click();
 			
-			$.mockjax({
+			self.settingsTemplate = $.mockjax({
 				url:  commonVariables.webserviceurl+commonVariables.configuration+"/settingsTemplate?appDirName=wordpress-WordPress&customerId=photon&userId=admin&type=Email&techId=tech-wordpress",
 				type:'GET',
 				contentType: 'application/json',
@@ -552,8 +552,74 @@ define(["configuration/editConfiguration"], function(EditConfiguration) {
 			setTimeout(function() {
 				start();
 				equal($(commonVariables.contentPlaceholder).find('input.Components1Configuration').val(), "http://staging-apps.usablenet.com/mt/qa1.walgreens.com/store/catalog/shopLanding?un_jtt_redirect", "Edit Component Configuration Render Tested");
-				self.nonEnvAddConfigurationRender(editConfiguration);
+				self.configurationRenderWithCustomProperty(editConfiguration);
 			}, 2000);
+		}); 
+	},
+	
+	configurationRenderWithCustomProperty : function(editConfiguration) {
+		var self=this;
+		$("#content").html('');
+		asyncTest("Test - Configuration Render With Custom Property Test", function() {
+			$.mockjaxClear(self.editConfig);
+			$.mockjaxClear(self.settingsTemplate);
+			self.settingsTemplate = $.mockjax({
+				url:  commonVariables.webserviceurl+commonVariables.configuration+"/settingsTemplate?appDirName=wordpress-WordPress&customerId=photon&userId=admin&type=SAP&techId=tech-wordpress",
+				type:'GET',
+				contentType: 'application/json',
+				status: 200,
+				response: function() {
+					this.responseText = JSON.stringify({"message":null,"exception":null,"responseCode":"PHR600004","data":{"downloadInfo":{},"settingsTemplate":{"envSpecific":true,"favourite":false,"appliesToTechs":[{"creationDate":1380177569799,"helpText":null,"system":false,"name":".net-SharePoint","id":"tech-sharepoint","displayName":null,"description":null,"status":null},{"creationDate":1380177570033,"helpText":null,"system":false,"name":"hybrid-app-android","id":"tech-android-hybrid","displayName":null,"description":null,"status":null},{"creationDate":1380177570268,"helpText":null,"system":false,"name":"hybrid-app-iOS","id":"tech-iphone-hybrid","displayName":null,"description":null,"status":null},{"creationDate":1380177570502,"helpText":null,"system":false,"name":"mobile-app-android","id":"tech-android-native","displayName":null,"description":null,"status":null},{"creationDate":1380177570752,"helpText":null,"system":false,"name":"mobile-app-iOS","id":"tech-iphone-native","displayName":null,"description":null,"status":null},{"creationDate":1380177570986,"helpText":null,"system":false,"name":"mobile-web","id":"tech-html5-jquery-mobile-widget","displayName":null,"description":null,"status":null},{"creationDate":1380177571221,"helpText":null,"system":false,"name":"mobile-web-yui","id":"tech-html5-mobile-widget","displayName":null,"description":null,"status":null},{"creationDate":1380177571439,"helpText":null,"system":false,"name":"php-Drupal6","id":"tech-phpdru6","displayName":null,"description":null,"status":null},{"creationDate":1380177571689,"helpText":null,"system":false,"name":"php-Drupal7","id":"tech-phpdru7","displayName":null,"description":null,"status":null},{"creationDate":1380177571924,"helpText":null,"system":false,"name":"php-raw","id":"tech-php","displayName":null,"description":null,"status":null},{"creationDate":1380177572143,"helpText":null,"system":false,"name":"responsive-web","id":"tech-html5-jquery-widget","displayName":null,"description":null,"status":null},{"creationDate":1380177572361,"helpText":null,"system":false,"name":"responsive-web-yui","id":"tech-html5","displayName":null,"description":null,"status":null}],"possibleTypes":[],"customProp":true,"properties":[{"required":false,"appliesTo":["tech-php","tech-phpdru6","tech-phpdru7","tech-sharepoint","tech-html5","tech-html5-jquery-widget","tech-html5-jquery-mobile-widget","tech-html5-mobile-widget","tech-iphone-native","tech-iphone-hybrid","tech-android-native","tech-android-hybrid","3bfc67a1-588d-41f0-9b8a-2807317d5c70"],"propertyTemplates":null,"possibleValues":[],"multiple":false,"settingsTemplateId":"config_SAP","key":"searchHosts","type":"String","defaultValue":"","creationDate":1380177569564,"helpText":"","system":false,"name":"Search Hosts","id":"c42b96f7-0d91-4a39-bd3a-ea031aad1254","displayName":null,"description":null,"status":null},{"required":false,"appliesTo":["tech-php","tech-phpdru6","tech-phpdru7","tech-sharepoint","tech-html5","tech-html5-jquery-widget","tech-html5-jquery-mobile-widget","tech-html5-mobile-widget","tech-iphone-native","tech-iphone-hybrid","tech-android-native","tech-android-hybrid","3bfc67a1-588d-41f0-9b8a-2807317d5c70"],"propertyTemplates":null,"possibleValues":[],"multiple":false,"settingsTemplateId":"config_SAP","key":"sapSvcHost","type":"String","defaultValue":"","creationDate":1380177569564,"helpText":"","system":false,"name":"SapSvc Host","id":"0f90ccf2-ffb2-4633-9317-48062d3a22e5","displayName":null,"description":null,"status":null},{"required":false,"appliesTo":["tech-php","tech-phpdru6","tech-phpdru7","tech-sharepoint","tech-html5","tech-html5-jquery-widget","tech-html5-jquery-mobile-widget","tech-html5-mobile-widget","tech-iphone-native","tech-iphone-hybrid","tech-android-native","tech-android-hybrid","3bfc67a1-588d-41f0-9b8a-2807317d5c70"],"propertyTemplates":null,"possibleValues":[],"multiple":false,"settingsTemplateId":"config_SAP","key":"sapSvcPort","type":"Number","defaultValue":"","creationDate":1380177569564,"helpText":"","system":false,"name":"SapSvcPort","id":"bf0de51b-4391-4f49-be98-c1d11d4190b3","displayName":null,"description":null,"status":null},{"required":false,"appliesTo":["tech-php","tech-phpdru6","tech-phpdru7","tech-sharepoint","tech-html5","tech-html5-jquery-widget","tech-html5-jquery-mobile-widget","tech-html5-mobile-widget","tech-iphone-native","tech-iphone-hybrid","tech-android-native","tech-android-hybrid","3bfc67a1-588d-41f0-9b8a-2807317d5c70"],"propertyTemplates":null,"possibleValues":[],"multiple":false,"settingsTemplateId":"config_SAP","key":"smtp-host","type":"String","defaultValue":"","creationDate":1380177569564,"helpText":"","system":false,"name":"SmtpHost","id":"11821bc4-eeb5-42b6-b8c4-3fd5ec8f4557","displayName":null,"description":null,"status":null},{"required":false,"appliesTo":["tech-php","tech-phpdru6","tech-phpdru7","tech-sharepoint","tech-html5","tech-html5-jquery-widget","tech-html5-jquery-mobile-widget","tech-html5-mobile-widget","tech-iphone-native","tech-iphone-hybrid","tech-android-native","tech-android-hybrid","3bfc67a1-588d-41f0-9b8a-2807317d5c70"],"propertyTemplates":null,"possibleValues":[],"multiple":false,"settingsTemplateId":"config_SAP","key":"useProductionConfig","type":"String","defaultValue":"","creationDate":1380177569564,"helpText":"","system":false,"name":"UseProductionConfig","id":"90ff8a9d-dfb6-4058-a89d-a4437d0e84e7","displayName":null,"description":null,"status":null},{"required":false,"appliesTo":["tech-php","tech-phpdru6","tech-phpdru7","tech-sharepoint","tech-html5","tech-html5-jquery-widget","tech-html5-jquery-mobile-widget","tech-html5-mobile-widget","tech-iphone-native","tech-iphone-hybrid","tech-android-native","tech-android-hybrid","3bfc67a1-588d-41f0-9b8a-2807317d5c70"],"propertyTemplates":null,"possibleValues":[],"multiple":false,"settingsTemplateId":"config_SAP","key":"auth-token-cache-ttl","type":"String","defaultValue":"","creationDate":1380177569564,"helpText":"","system":false,"name":"AuthTokenCache ttl","id":"0d62a584-f3da-4a7d-b58d-54d76076a85d","displayName":null,"description":null,"status":null}],"type":null,"displayName":"SAP","customerIds":["photon"],"used":false,"creationDate":1380177569564,"helpText":null,"system":false,"name":"SAP","id":"config_SAP","description":"SAP Configuration","status":null}},"status":"success"});
+				}
+
+			});
+			
+			self.editConfig = $.mockjax({
+				url:  commonVariables.webserviceurl+commonVariables.configuration+"?appDirName=wordpress-WordPress&envName=Production",
+				type:'GET',
+				contentType: 'application/json',
+				status: 200,
+				response: function() {
+					this.responseText = JSON.stringify({"message":null,"exception":null,"responseCode":"PHR600002","data":{"defaultEnv":true,"appliesTo":[""],"delete":false,"name":"Production","desc":"Production Environment is used for Development purpose only","configurations":[{"envName":"Production","name":"sap","properties":{"smtp-host":"local","auth-token-cache-ttl":"test","searchHosts":"local","sapSvcPort":"456","useProductionConfig":"test","sapSvcHost":"local","test":"12","tes2":"44"},"type":"SAP","desc":""}]},"status":"success"});
+				}
+			});
+		
+			editConfiguration.configurationlistener.editConfiguration("Production", "true");
+			
+			
+			setTimeout(function() {
+				start();
+				equal($(commonVariables.contentPlaceholder).find(".row_bg").attr('type'), "SAP", "Configuration Render With Custom Property Test");
+				self.addKeyValue(editConfiguration);
+			}, 2500);
+		}); 
+	},
+	
+	addKeyValue : function(editConfiguration) {
+		var self=this;
+		asyncTest("Test - Add Key Value Text Box Test", function() {
+			
+			$("a[name=addSAP]").click();
+			
+			setTimeout(function() {
+				start();
+				equal($(commonVariables.contentPlaceholder).find("tbody[name=ConfigurationLists] tr").length, 9, "Add Key Value Text Box Tested");
+				self.removeKeyValue(editConfiguration);
+			}, 1500);
+		}); 
+	},
+	
+	removeKeyValue : function(editConfiguration) {
+		var self=this;
+		asyncTest("Test - Remove Key Value Text Box Test", function() {
+			
+			$("a[name=removeSAP]").click();
+			
+			setTimeout(function() {
+				start();
+				equal($(commonVariables.contentPlaceholder).find("tbody[name=ConfigurationLists] tr").length, 5, "Remove Key Value Text Box Tested");
+				self.nonEnvAddConfigurationRender(editConfiguration);
+			}, 1500);
 		}); 
 	},
 	
@@ -601,7 +667,7 @@ define(["configuration/editConfiguration"], function(EditConfiguration) {
 		$("#content").html('');
 		asyncTest("Test - Non Environment Edit Configuration Test", function() {
 		
-			$.mockjax({
+			self.settingsTemplate = $.mockjax({
 				url:  commonVariables.webserviceurl+commonVariables.configuration+"/settingsTemplate?appDirName=wordpress-WordPress&customerId=photon&userId=admin&type=Theme&techId=tech-wordpress",
 				type:'GET',
 				contentType: 'application/json',
@@ -676,9 +742,9 @@ define(["configuration/editConfiguration"], function(EditConfiguration) {
 			setTimeout(function() {
 				start();
 				equal($("#configurationPage").attr('id'), "configurationPage", "Cancel Event Configuration Tested");
-				require(["unitTestTest"], function(unitTestTest){
+				/* require(["unitTestTest"], function(unitTestTest){
 					unitTestTest.runTests();
-				});
+				}); */
 			}, 1500);
 		}); 
 	},

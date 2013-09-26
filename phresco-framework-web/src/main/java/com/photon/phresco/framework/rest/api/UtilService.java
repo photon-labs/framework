@@ -26,6 +26,9 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.net.InetAddress;
+import java.net.NetworkInterface;
+import java.net.SocketException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -547,7 +550,40 @@ public class UtilService extends RestBase implements FrameworkConstants, Service
 			return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
 		}
 	}
+	@GET
+	@Path("/checkMachine")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response checkMachine(@Context HttpServletRequest request) throws PhrescoException {
+		ResponseInfo<String> responseData = new ResponseInfo<String>();
+		try {
+			String requestIp = request.getRemoteAddr();
+			InetAddress byName = InetAddress.getByName(requestIp);
+			String localmachine = FALSE;
+			if (isRequestFromLocalMachine(byName)) {
+				localmachine = TRUE;
+			}
+			ResponseInfo<Map<String, List<DownloadInfo>>> finalOutput = responseDataEvaluation(responseData, null, localmachine,
+					RESPONSE_STATUS_SUCCESS, PHR13C00001);
+			return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
+		} catch (Exception e) {
+			ResponseInfo<Map<String, List<DownloadInfo>>> finalOutput = responseDataEvaluation(responseData, e, null,
+					RESPONSE_STATUS_ERROR, PHR13C10001);
+			return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
+		}
+	}
 
+	private boolean isRequestFromLocalMachine(InetAddress addr) {
+		// Check if the address is a valid special local or loop back
+		if (addr.isAnyLocalAddress() || addr.isLoopbackAddress())
+			return true;
+
+		// Check if the address is defined on any interface
+		try {
+			return NetworkInterface.getByInetAddress(addr) != null;
+		} catch (SocketException e) {
+			return false;
+		}
+	}
 
 	/**
 	 * Gets the path of test directory.

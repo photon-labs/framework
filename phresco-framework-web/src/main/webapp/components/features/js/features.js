@@ -152,7 +152,9 @@ define(["features/listener/featuresListener"], function() {
 				self.featuresListener.getFeaturesList(self.featuresListener.getRequestHeader(self.featureRequestBody, "SELECTED"), function(response) {
 					var responseData = response.data;
 					$(".switchOn").each(function(index, currentVal) {
-						$(currentVal).removeClass('switchOn').addClass('switchOff');
+						if($(currentVal).attr('id') !== 'search') {
+							$(currentVal).removeClass('switchOn').addClass('switchOff');
+						}	
 					});
 					$.each(response.data, function(index, value){
 						$("#feature_"+this.moduleId).addClass("switchOn").removeClass('switchOff');
@@ -336,9 +338,9 @@ define(["features/listener/featuresListener"], function() {
            	});
 			
            	$('#switchonbutton').on("click", function(event) {
-           		$("ul li").show();
+           		$("#featureTest ul li").show();
            		self.featuresListener.scrollbarUpdate();
-				$("#norecord1, #norecord2, #norecord3").hide();; 
+				$("#norecord1, #norecord2, #norecord3").hide();
            	});
 
        		$('#cancelUpdateFeature').click(function() {
@@ -385,7 +387,7 @@ define(["features/listener/featuresListener"], function() {
 					form_ser = form_ser.replace(/_/g,' ');
 					actionBody.serval = form_ser;
 					self.featuresListener.getFeaturesList(self.featuresListener.getRequestHeader(actionBody, "configureFeature"), function(response) {
-						
+						$("#"+settingsid).hide(); 
 					}); 
 				});
 			});
@@ -448,9 +450,9 @@ define(["features/listener/featuresListener"], function() {
 						});				
 						
 						
-						self.featuresListener.getFeaturesUpdate(self.featuresListener.getRequestHeader(self.featureUpdatedArray, "UPDATE", ""), function(response) {
+						self.featuresListener.getFeaturesUpdate(self.featuresListener.getRequestHeader(self.featureUpdatedArray, "UPDATE", ""), function(response) {						
 							self.selectedCount();
-							$('.settings_icon').hide();
+							$('.settings_icon').hide();							
 							self.selectedFeaturesServiceCall();
 						}); 
 						

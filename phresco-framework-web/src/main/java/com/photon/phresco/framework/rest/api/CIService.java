@@ -182,6 +182,7 @@ public class CIService extends RestBase implements FrameworkConstants, ServiceCo
 					throws PhrescoException, JSONException, ClientProtocolException, IOException {
 		ResponseInfo<String> responseData = new ResponseInfo<String>();
 		boolean hasTrue = true;
+		String name = null;
 		try {
 			if(!flag.equalsIgnoreCase("update")) {
 				JSONArray jobs = new JSONArray("["+jobName+"]");
@@ -202,6 +203,7 @@ public class CIService extends RestBase implements FrameworkConstants, ServiceCo
 				    	 JSONObject jsonObject1 = jobJsonArray.getJSONObject(j);
 				    	 if(jobs.get(k).toString().equals(jsonObject1.getString("name"))) {
 				    		 hasTrue = false;
+				    		 name = jobs.get(k).toString();
 				    		 break;
 				    	 }
 				    }
@@ -211,7 +213,7 @@ public class CIService extends RestBase implements FrameworkConstants, ServiceCo
 				ResponseInfo<Boolean> finalOutput = responseDataEvaluation(responseData, null, hasTrue, RESPONSE_STATUS_SUCCESS, PHR800003);
 				return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, ALL_HEADER).build();
 		    } else {
-		    	ResponseInfo<Boolean> finalOutput = responseDataEvaluation(responseData, null, hasTrue, RESPONSE_STATUS_FAILURE, PHR810031);
+		    	ResponseInfo<Boolean> finalOutput = responseDataEvaluation(responseData, null, name, RESPONSE_STATUS_FAILURE, PHR810031);
 				return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, ALL_HEADER).build();
 		    }
 		} catch (PhrescoException e) {
@@ -359,7 +361,7 @@ public class CIService extends RestBase implements FrameworkConstants, ServiceCo
 						}
 						exists = false;
 					} else {
-						ResponseInfo<Boolean> finalOutput = responseDataEvaluation(responseData, null, validateJob, RESPONSE_STATUS_FAILURE, PHR810031);
+						ResponseInfo<Boolean> finalOutput = responseDataEvaluation(responseData, null, jobWithCmds.getJobName(), RESPONSE_STATUS_FAILURE, PHR810031);
 						return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, ALL_HEADER).build();
 					}
 					

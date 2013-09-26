@@ -4,7 +4,7 @@
     <parent>
         <groupId>com.photon.phresco.framework</groupId>
         <artifactId>phresco-framework-root</artifactId>
-        <version>3.0.0.27003-SNAPSHOT</version>
+        <version>3.0.0.27005-SNAPSHOT</version>
         <relativePath>../</relativePath>
     </parent>
    
@@ -685,11 +685,11 @@
 		</dependency>
 		
 		<!-- import from git plugins -->
-        <dependency>
+	    <dependency>
 			<groupId>org.eclipse.jgit</groupId>
 			<artifactId>org.eclipse.jgit</artifactId>
-			<version>2.0.0.201206130900-r</version>
-		</dependency>
+			<version>3.0.0.201306101825-r</version>
+		</dependency>            
 		<!-- import from git plugins -->
 		
 		<!--  Times New Roman windows font  -->

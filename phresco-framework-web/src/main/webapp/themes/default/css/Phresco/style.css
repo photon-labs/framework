@@ -1163,9 +1163,6 @@ ul.nav li.dropdown:hover > .test_options{
 	margin-left:0px !important;
 }
 
-.pdf_report .pdfheight .scroll-line {
-	height:9% !important;
-}
 /* ******************************************************************* CSS related to create project page ********************************************************************** */
 
 .datepicker  {
@@ -1999,9 +1996,6 @@ img[name="close"] {
 	margin:0px 5px 0px 0px !important;
 }
 
-	.pdf_report .pdfheight .scroll-line {
-	height:13% !important;
-}
 }
 
 @media screen and (min-width: 1025px) and (max-width: 1152px) {
@@ -2059,7 +2053,7 @@ img[name="close"] {
 	.project_list_popup input[type=text], .project_list_popup select, .project_list_popup input[type=password] {
 		width:165px !important;
 } 
-	
+
 }
 
 @media screen and (min-width: 1153px) and (max-width: 1280px) {
@@ -2173,7 +2167,8 @@ img[name="close"] {
 /* *************************************************************************** STYLES FOR DIV SCROLL ************************************************************************** */
 
 .scroll-bar {
-    width:7px !important;
+    width:4px !important;
+	height:100% !important;
 }
 
 .scroll-up {
@@ -2262,6 +2257,7 @@ img[name="close"] {
   overflow-x: hidden;
   overflow-y: hidden;
   height: 100%;
+  border-radius: 0 0 6px 6px
 }
  
 .header-background {
@@ -2535,7 +2531,7 @@ form[name="deployForm"] {
 }
 
 .env_border ul li .envlistname {
-	padding-left: 64px;
+	padding-left: 70px;
 }
 
 .env_border ul li:last-child {
@@ -2561,7 +2557,7 @@ form[name="deployForm"] {
 
 .add_env .connected li div:first-child{
 	float:left;
-	width: 56px;
+	width: 60px;
 	text-align:center;
 	border-right: 1px solid #d8d8d8;
 	padding-bottom:8px;
@@ -2576,7 +2572,7 @@ form[name="deployForm"] {
 }
 
 .add_env tr th:first-child {
-	width: 45px;
+	width: 50px;
 	border-right: 1px solid #ffffff;
 }
 
@@ -2933,7 +2929,7 @@ html>body tbody.scrollContent {
 
 .unit_path {
 	float: left;
-	padding-top: 7px;	
+	padding-top: 6px;	
 }
 
 .unit_path input:first-child{
@@ -4837,4 +4833,11 @@ select[name="reportDataType"], input[name="pdfName"] {
 	height: 70px !important;
 	overflow: auto;
 }
+.newdyn_popup {
+	border: 1px solid #ed7940;
+	position: absolute;
+	background: #ffffff;
+	border-radius: 6px;
+	padding: 10px;
+	z-index: 1;
 }

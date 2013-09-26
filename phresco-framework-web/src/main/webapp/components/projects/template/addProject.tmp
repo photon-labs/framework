@@ -71,7 +71,7 @@
 										</select>
 									 </td>
 									 <td>
-										<div class="flt_right icon_center"><a name="addApplnLayer"><img src="themes/default/images/Phresco/plus_icon.png" border="0" alt=""></a><a href="javascript:;" name="removeApplnLayer"></a></div>
+										<div class="flt_right icon_center"><a name="addApplnLayer" style="cursor:pointer;"><img src="themes/default/images/Phresco/plus_icon.png" border="0" alt=""></a><a href="javascript:;" name="removeApplnLayer"></a></div>
 									 </td>
 							    </tr>
 						  </tbody>
@@ -119,7 +119,7 @@
 										</select>
 									 </td>
 									 <td>
-										<div class="flt_right icon_center"><a href="javascript:;" name="addWebLayer"><img src="themes/default/images/Phresco/plus_icon.png" border="0" alt=""></a><a href="javascript:;" name="removeWebLayer"></a></div>
+										<div class="flt_right icon_center"><a href="javascript:;" name="addWebLayer" style="cursor:pointer;"><img src="themes/default/images/Phresco/plus_icon.png" border="0" alt=""></a><a href="javascript:;" name="removeWebLayer"></a></div>
 									 </td>
 								</tr>
 							</tbody>
@@ -168,7 +168,7 @@
 											</select>
 										 </td>
 										 <td>
-											<div class="flt_right icon_center"><a href="javascript:;" name="addMobileLayer"><img src="themes/default/images/Phresco/plus_icon.png" border="0" alt=""></a><a href="javascript:;" name="removeMobileLayer"></a> </div>
+											<div class="flt_right icon_center"><a href="javascript:;" name="addMobileLayer" style="cursor:pointer;"><img src="themes/default/images/Phresco/plus_icon.png" border="0" alt=""></a><a href="javascript:;" name="removeMobileLayer"></a> </div>
 										 </td>
 									</tr>
 							   </tbody>

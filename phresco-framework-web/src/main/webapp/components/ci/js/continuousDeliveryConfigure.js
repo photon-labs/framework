@@ -299,8 +299,11 @@ define(["framework/widgetWithTemplate", "ci/listener/ciListener", "lib/jquery-to
 	   					self.ciRequestBody = editJobParams;
 	   					commonVariables.showloading = true;
 	   					self.getAction(self.ciRequestBody, 'updateContinuousDelivery', '', function(response) {
-	   						if(response.data === false) {
-	   							commonVariables.api.showError(response.responseCode ,"error", true, false, true);
+	   						if(response.responseCode === "PHR810005") {
+	   							commonVariables.api.showError(response.responseCode ,"error", true, true, true);
+	   						} else if(response.responseCode === "PHR810031") {
+	   							var msg = response.data + commonVariables.api.error[response.responseCode];
+	   							commonVariables.api.showError(msg ,"error", true, true, true);
 	   						} else {
 	   							self.ciListener.loadContinuousDeliveryView();
 	   						}

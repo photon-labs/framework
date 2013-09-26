@@ -127,7 +127,7 @@ define(["navigation/listener/navigationListener"], function() {
 				}	
 				$("#importRepourl").val('');	
 				$("#testRepoUrl").val("");
-				$("#testImportUserName").val("");
+				$("#testImportUserName").val(data.id);
 				$("#testImportPassword").val("");
 				$("#testRevision").val("");
 				$("#importRepourl").removeClass("errormessage");
@@ -212,6 +212,21 @@ define(["navigation/listener/navigationListener"], function() {
 					//$('#importPassword').val(data.password);
 					$('#importUserName').attr('readonly','readonly');
 					$('#importPassword').attr('readonly','readonly');
+				}	
+			});
+			
+			var checkboxtestcheckout = $("#testCredentials");
+			checkboxtestcheckout.unbind("change");
+			checkboxtestcheckout.on("change", function(){	
+				if(checkboxtestcheckout.is(':checked')) {
+					$('#testImportUserName').removeAttr('readonly');
+					$('#testImportPassword').removeAttr('readonly');
+					$('#testImportUserName').val('');
+					$('#testImportPassword').val('');
+				} else {
+					$('#testImportUserName').val(data.id);
+					$('#testImportUserName').attr('readonly','readonly');
+					$('#testImportPassword').attr('readonly','readonly');
 				}	
 			});
 			

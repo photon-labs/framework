@@ -7,16 +7,16 @@
 				<table class="table table-striped table_border table-bordered" cellpadding="0" cellspacing="0" border="0">
 					<thead class="height_th">
 						<tr>
-							<th width="10%" class="manual hideContent">
+							<th width="15%" class="manual hideContent">
 								<div class="th-inner">Feature Id</div>
 							</th>
-							<th width="10%" class="manual hideContent">
+							<th width="12%" class="manual hideContent">
 								<div class="th-inner">Testcase Id</div>
 							</th>
-							<th width="25%" class="manual hideContent">
+							<th width="24%" class="manual hideContent">
 								<div class="th-inner">Expected Result</div>
 							</th>
-							<th width="25%" class="manual hideContent">
+							<th width="30%" class="manual hideContent">
 								<div class="th-inner">Actual Result</div>
 							</th>
 							<th width="15%" class="defaultHead">
@@ -28,13 +28,13 @@
 							<th width="15%" class="defaultHead">
 								<div class="th-inner" data-i18n="testcase.time"></div>
 							</th>
-							<th width="5%" class="manual hideContent">
+							<th width="6%" class="manual hideContent">
 								<div class="th-inner" data-i18n="testcase.status"></div>
 							</th>
-							<th width="5%" class="defaultHead">
+							<th width="6%" class="defaultHead">
 								<div class="th-inner" data-i18n="testcase.status"></div>
 							</th>
-							<th width="10%" class="manual hideContent">
+							<th width="8%" class="manual hideContent">
 								<div class="th-inner">Bug Comments</div>
 							</th>
 							<th width="5%" class="manual hideContent">
@@ -92,66 +92,58 @@
 								<td class="manual hideContent">
 									<a class="dynPopup{{@index}}" href="javascript:void(0)" name="updateManualTestCase_popup" testcaseName="{{testCaseId}}">
 										<img alt="Edit" src="themes/default/images/Phresco/edit_icon.png"/>
-										<!-- edit testcase popup starts -->
-										<div id="dynPopup{{@index}}" class="dyn_popup hideContent">
-										    <form id="TestCaseForm{{@index}}">
-												<table class="table node_table" cellpadding="0" cellspacing="0" border="0">
-													<tbody>
-														<!--<tr>
-															<td>Test Scenarios<br>
-																<input type="text" disabled id="testSuiteId" name="testSuiteName" value="">
-															</td>
-															<td>Features<sup>*</sup><br>
-																<input type="text" disabled id="featureId" name="featureId" value="{{featureId}}">
-															</td>
-														</tr>-->
-														<tr>
-															<td>Features<sup>*</sup><br>
-																<input type="text" readonly="readonly" id="featureId" name="featureId" value="{{featureId}}">
-															</td>
-															<td>TestCases<br>
-																<input type="text" readonly="readonly" name="testCaseId" id="testCaseId" value="{{testCaseId}}">
-															</td>
-														</tr>
-														<tr>
-															<td>TestCase Description<br>
-																<textarea name="description">{{description}}</textarea>
-															</td>
-															<td colspan="2">Bug ID/Comments<br>
-																<textarea name="bugComment">{{bugComment}}</textarea>
-															</td>
-														</tr>
-														<tr>
-															<td>Test Steps<br>
-																<textarea name="steps">{{steps}}</textarea>
-															</td>
-															<td>Expected Result<br>
-																<textarea name="expectedResult">{{expectedResult}}</textarea>
-															</td>
-														</tr>
-														<tr>
-															<td>Actual Result<br>
-																<textarea name="actualResult">{{actualResult}}</textarea>
-															</td>
-															<td>Status<br>
-																<select name="status">
-																	<option value="success">Success</option>
-																	<option value="failure">Failure</option>
-																	<option value="notApplicable">Not Applicable</option>
-																	<option value="blocked">Blocked</option>
-																</select>
-															</td>
-														</tr>
-													</tbody>
-												</table>
-												<div class="flt_right">
-													<input type="button" value="Save" class="btn btn_style" name="updateTestCase">
-													<input type="button" value="Close" class="btn btn_style dyn_popup_close">
-												</div>
-											</form>
-										</div>
-										<!-- edit testcase popup ends -->
 									</a>
+									<!-- edit testcase popup starts -->
+									<div id="dynPopup{{@index}}" class="dyn_popup hideContent">
+									    <form id="TestCaseForm{{@index}}">
+											<table class="table node_table" cellpadding="0" cellspacing="0" border="0">
+												<tbody>
+													<tr>
+														<td>Features<sup>*</sup><br>
+															<input type="text" readonly="readonly" id="featureId" name="featureId" value="{{featureId}}">
+														</td>
+														<td>TestCases<br>
+															<input type="text" readonly="readonly" name="testCaseId" id="testCaseId" value="{{testCaseId}}">
+														</td>
+													</tr>
+													<tr>
+														<td>TestCase Description<br>
+															<textarea name="description">{{description}}</textarea>
+														</td>
+														<td colspan="2">Bug ID/Comments<br>
+															<textarea name="bugComment">{{bugComment}}</textarea>
+														</td>
+													</tr>
+													<tr>
+														<td>Test Steps<br>
+															<textarea name="steps">{{steps}}</textarea>
+														</td>
+														<td>Expected Result<br>
+															<textarea name="expectedResult">{{expectedResult}}</textarea>
+														</td>
+													</tr>
+													<tr>
+														<td>Actual Result<br>
+															<textarea name="actualResult">{{actualResult}}</textarea>
+														</td>
+														<td>Status<br>
+															<select name="status">
+																<option value="success">Success</option>
+																<option value="failure">Failure</option>
+																<option value="notApplicable">Not Applicable</option>
+																<option value="blocked">Blocked</option>
+															</select>
+														</td>
+													</tr>
+												</tbody>
+											</table>
+											<div class="flt_right">
+												<input type="button" value="Save" class="btn btn_style" name="updateTestCase">
+												<input type="button" value="Close" class="btn btn_style dyn_popup_close">
+											</div>
+										</form>
+									</div>
+									<!-- edit testcase popup ends -->
 								</td>
 								<td class="list_img logTd">
 									{{#if testCaseFailure}}

@@ -116,22 +116,24 @@ public class UpgradeManagerImpl implements UpgradeManager, FrameworkConstants   
 				BufferedWriter out = null;
 				FileReader reader = null;
 				try {
-					reader = new FileReader(dotPhresco);
-					ProjectInfo projectInfo = new Gson().fromJson(reader, ProjectInfo.class);
-					ApplicationInfo applicationInfo = projectInfo.getAppInfos().get(0);
-					TechnologyInfo techInfo = applicationInfo.getTechInfo();
-					String appTypeId = techInfo.getAppTypeId();
-					if(appTypeId.equals("app-layer") || appTypeId.equals("web-layer") || appTypeId.equals("mob-layer")) {
-						Technology technology = serviceManager.getTechnology(techInfo.getId());
-						if(technology != null) {
-							techInfo.setAppTypeId(technology.getAppTypeId());
-							applicationInfo.setTechInfo(techInfo);
-							projectInfo.setAppInfos(Collections.singletonList(applicationInfo));
-							Gson gson = new Gson();
-							String infoJSON = gson.toJson(projectInfo);
-							fstream = new FileWriter(dotPhresco);
-							out = new BufferedWriter(fstream);
-							out.write(infoJSON);
+					if(dotPhresco.exists()) {
+						reader = new FileReader(dotPhresco);
+						ProjectInfo projectInfo = new Gson().fromJson(reader, ProjectInfo.class);
+						ApplicationInfo applicationInfo = projectInfo.getAppInfos().get(0);
+						TechnologyInfo techInfo = applicationInfo.getTechInfo();
+						String appTypeId = techInfo.getAppTypeId();
+						if(appTypeId.equals("app-layer") || appTypeId.equals("web-layer") || appTypeId.equals("mob-layer")) {
+							Technology technology = serviceManager.getTechnology(techInfo.getId());
+							if(technology != null) {
+								techInfo.setAppTypeId(technology.getAppTypeId());
+								applicationInfo.setTechInfo(techInfo);
+								projectInfo.setAppInfos(Collections.singletonList(applicationInfo));
+								Gson gson = new Gson();
+								String infoJSON = gson.toJson(projectInfo);
+								fstream = new FileWriter(dotPhresco);
+								out = new BufferedWriter(fstream);
+								out.write(infoJSON);
+							}
 						}
 					}
 				} catch (IOException e) {

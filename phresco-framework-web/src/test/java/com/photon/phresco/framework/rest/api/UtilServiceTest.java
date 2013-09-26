@@ -5,6 +5,8 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.util.Arrays;
 
 import javax.servlet.http.HttpServletRequest;
@@ -216,6 +218,26 @@ public class UtilServiceTest extends RestBaseTest {
 		Assert.assertEquals(200, downloadFail.getStatus());
 		
 		
+	}
+	
+	@Test
+	public void testGetMachine() throws PhrescoException, UnknownHostException {
+		MockHttpServletRequest request = new MockHttpServletRequest();
+		InetAddress  ip = InetAddress.getLocalHost();
+		request.setRemoteAddr(ip.getHostAddress());
+		HttpServletRequest httpServletRequest = (HttpServletRequest)request;
+		Response checkMachine = utilService.checkMachine(httpServletRequest);
+		Assert.assertEquals(200, checkMachine.getStatus());
+	}
+	
+	
+	@Test
+	public void testGetMachineFail() throws PhrescoException, UnknownHostException {
+		MockHttpServletRequest request = new MockHttpServletRequest();
+		request.setRemoteAddr("172.16.98.26");
+		HttpServletRequest httpServletRequest = (HttpServletRequest)request;
+		Response checkMachine = utilService.checkMachine(httpServletRequest);
+		Assert.assertEquals(200, checkMachine.getStatus());
 	}
 	
 	

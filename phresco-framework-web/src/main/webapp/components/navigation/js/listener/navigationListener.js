@@ -446,6 +446,7 @@ define([], function() {
 					$("#createProject").hide();
 					$("#applicationedit").hide();
 					$('#editprojectTab').hide();
+					break;
 
 				case commonVariables.downloads :
 					$("#downloadsNav").show();
@@ -456,8 +457,6 @@ define([], function() {
 					$('#editprojectTab').hide();
 					self.applyRBAC(keyword);
 					break;
-				
-
 			}
 		},
 		

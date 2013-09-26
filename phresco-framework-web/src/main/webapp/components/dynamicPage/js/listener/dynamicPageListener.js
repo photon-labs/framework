@@ -1209,28 +1209,37 @@ define(["framework/widgetWithTemplate", "common/loading", "lib/customcombobox-1.
             $(".headerKeyAdd").unbind("click");
             $(".headerKeyAdd").click(function() {
                 self.headerKeyAdd($(this));
-            }) ;
+            });
 
-            
+            $(".removeHeaders").unbind("click");
+            $(".removeHeaders").click(function() {
+                self.removeHeaders($(this));
+            });  
+        
             $(".redirectAutomatically").unbind("click");
             $(".redirectAutomatically").click(function() {
                 self.checkUnCheck($(this));
-            }) ;
+            });
 
             $(".followRedirects").unbind("click");
             $(".followRedirects").click(function() {
                 self.checkUnCheck($(this));
-            }) ;
+            });
 
             $(".addParameter").unbind("click");
             $(".addParameter").click(function() {
                 self.addParameterRow($(this));
-            }) ;
+            });
 
             $(".removeParamter").unbind("click");
             $(".removeParamter").click(function() {
                 self.removeParameterRow($(this));
-            }) ;
+            });
+
+            $(".regexExtractor").unbind("click");
+            $(".regexExtractor").click(function() {
+                self.showHideRegexExtractor($(this));
+            });
         },
 
         addContext : function (contextObj) {
@@ -1251,6 +1260,13 @@ define(["framework/widgetWithTemplate", "common/loading", "lib/customcombobox-1.
                 }   
                 j++;
             });
+
+            $("#"+contextUrlsRowId).find('.regexExtractor').prop("checked", false);
+            $("#"+contextUrlsRowId).find('.regexTr').hide();
+            $("#"+contextUrlsRowId).find('input[name=template]').val('$1$');
+            $("#"+contextUrlsRowId).find('input[name=matchNo]').val('1');
+            $("#"+contextUrlsRowId).find('input[name=defaultValue]').val('NOT FOUND');
+
             self.showHideMinus($("#"+contextUrlsRowId).find('.addParameter'), 1);
             self.bindRemoveContextEvent();      
             self.bindContextEvents();
@@ -1302,7 +1318,7 @@ define(["framework/widgetWithTemplate", "common/loading", "lib/customcombobox-1.
                 $(".removeHeaders").unbind("click");
                 $(".removeHeaders").click(function() {
                     self.removeHeaders($(this));
-                }) ;  
+                });  
             }
         },
 
@@ -1315,7 +1331,7 @@ define(["framework/widgetWithTemplate", "common/loading", "lib/customcombobox-1.
         },
 
         addParameterRow : function (thisObj) {
-            var self = this, parameterRow = '<tr class="parameterRow"><td><input type="text" class="parameterName" name="parameterName" placeholder="Name" maxlength="253"><input type="text" class="parameterValue" name="parameterValue" placeholder="Value" maxlength="253"><input class="parameterEncode" name="parameterEncode" type="checkbox">Encode '+
+            var self = this, parameterRow = '<tr class="parameterRow"><td><input type="text" class="parameterName" name="parameterName" placeholder="Name" maxlength="253"><textarea class="parameterValue" value="" name="parameterValue" placeholder="Value"></textarea>&nbsp;<input class="parameterEncode" name="parameterEncode" type="checkbox">Encode '+
                         '<img class="add_test_icon removeParamter" src="themes/default/images/Phresco/minus_icon.png">'+
                         '<img src="themes/default/images/Phresco/plus_icon.png" class="add_test_icon addParameter"></td></tr>';
             thisObj.closest('tbody').append(parameterRow);     
@@ -1358,6 +1374,10 @@ define(["framework/widgetWithTemplate", "common/loading", "lib/customcombobox-1.
             } else if (followRedirects) {
                 $(checkBoxObj).closest('tr').find($(".redirectAutomatically")).prop('checked', false);
             }       
+        },
+
+        showHideRegexExtractor : function(obj) {
+            obj.is(':checked') ? obj.closest('tbody').find('.regexTr').show() : obj.closest('tbody').find('.regexTr').hide();
         },
         /********************************** TEMPLATE METHODS ENDS ***********************************************/
 
