@@ -298,8 +298,11 @@ define(["croneExpression/croneExpression"], function() {
 					configProperties = configuration.properties;
 					configPropertiesType = configProperties.type;
 				}
+				
+				var propTempKeys = [];
 				$.each(configTemplate.properties, function(index, value) {
 					var key = value.key;
+					propTempKeys.push(key);
 					var label = value.name;
 					var type = value.type;
 					
@@ -449,9 +452,36 @@ define(["croneExpression/croneExpression"], function() {
 					control = control.concat(inputCtrl);
 					content = content.concat(control);
 					i = count++;
+					
 				});
+				
+				var bCheckVal = false;
+				if(configTemplate.customProp === true) {
+					var textBox = '<tr keyValue="keyValue'+configTemplate.name+self.count+'" name="'+configTemplate.name+'" class="'+configTemplate.name+self.count+'"><td><input configKey ="configKey'+configTemplate.name+'" class="ConfigKey" name="" temp="'+configTemplate.name+self.count+'" type="text" placeholder="Enter Key" /></td><td><input configKey ="configKey'+configTemplate.name+'" class="ConfigKeyValue" name="" temp="'+configTemplate.name+self.count+'" type="text" placeholder="Enter Value" /></td><td><div class="flt_right icon_center"><a href="javascript:;" name="add'+configTemplate.name+self.count+'"><img src="themes/default/images/Phresco/plus_icon.png" border="0" alt=""></a> <a href="javascript:;" name="remove'+configTemplate.name+self.count+'"><img src="themes/default/images/Phresco/minus_icon.png" border="0" alt=""></a></div></td></tr>';
+					if (configuration.properties !== undefined) {
+						$.each(configuration.properties, function(keyVal, val) {
+							if ($.inArray(keyVal, propTempKeys) === -1) {
+								var textBoxAppend = '<tr keyValue="keyValue'+configTemplate.name+self.count+'" name="'+configTemplate.name+'" class="'+configTemplate.name+self.count+'"><td><input configKey ="configKey'+configTemplate.name+'" class="ConfigKey" name="" temp="'+configTemplate.name+self.count+'" type="text" value="'+keyVal+'" placeholder="Enter Key" /></td><td><input configKey ="configKey'+configTemplate.name+'" class="ConfigKeyValue" name="" temp="'+configTemplate.name+self.count+'" type="text" placeholder="Enter Value" value="'+val+'"/></td><td><div class="flt_right icon_center"><a href="javascript:;" name="add'+configTemplate.name+self.count+'"></a> <a href="javascript:;" name="remove'+configTemplate.name+self.count+'"><img src="themes/default/images/Phresco/minus_icon.png" border="0" alt=""></a></div></td></tr>';
+								content = content.concat(textBoxAppend);
+								bCheckVal = true;
+							}
+						});
+					}
+					if (bCheckVal === false) {	
+						content = content.concat(textBox);
+					}
+				}
+				
 				if (bCheck === false) {
 					$("tbody[name=ConfigurationLists]").append(content);
+					var addIcon = '<img src="themes/default/images/Phresco/plus_icon.png" border="0" alt="">';
+					if(configTemplate.customProp === true) {
+						if (bCheckVal === true) {
+							$('tr[keyValue=keyValue'+configTemplate.name+self.count+']').last('tr[keyValue=keyValue'+configTemplate.name+self.count+']').find("a[name=add"+configTemplate.name+self.count+"]").html(addIcon);
+						}
+						self.addRemoveConfigKeyValue(configTemplate.name+self.count, textBox);
+					}
+					
 					if (currentConfig === 'Server') {
 						self.remoteDeploy();
 					}
@@ -488,6 +518,28 @@ define(["croneExpression/croneExpression"], function() {
 					self.createUploader("file-uploader"+currentConfig, currentConfig, strFile, configFileData);
 				}
 			}
+		},
+		
+		addRemoveConfigKeyValue : function(addConfig, value) {
+			var self = this, addIcon = '<img src="themes/default/images/Phresco/plus_icon.png" border="0" alt="">';
+			$("a[name=add"+addConfig+"]").click(function(){
+				var appendTo = $(this).parent().parent().parent("."+addConfig+":last");
+				$(this).html('');
+				self.addConfigValue(value, appendTo, addConfig);
+			});
+			
+			$("a[name=remove"+addConfig+"]").click(function(){	
+				$(this).parent().parent().parent().remove();
+				$('tr[keyValue=keyValue'+addConfig+']').find("a[name=add"+addConfig+"]").html('');
+				$('tr[keyValue=keyValue'+addConfig+']').last('tr[keyValue=keyValue'+addConfig+']').find("a[name=add"+addConfig+"]").html(addIcon);
+			});
+		},
+		
+		addConfigValue : function (value, appendTo, addConfig) {
+			var self = this;
+			$(value).insertAfter(appendTo);
+			$("a[name=add"+addConfig+"]").unbind('click');
+			self.addRemoveConfigKeyValue(addConfig, value);
 		},
 		
 		createUploader : function(id, configType, file, configFileData) {     
@@ -1149,6 +1201,14 @@ define(["croneExpression/croneExpression"], function() {
 						} else {
 							configJson.properties = properties;
 						}
+						
+						var configKey = $(this).children().find('.ConfigKey').val();
+						var configKeyValue = $(this).children().find('.ConfigKeyValue').val();
+						if (configKey !== undefined && configKeyValue !== undefined) {
+							properties[configKey] = configKeyValue;
+							configJson.properties = properties;
+						}
+						
 						configJson.type = $(this).attr("name");
 					});
 				}
