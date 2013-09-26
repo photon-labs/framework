@@ -6,12 +6,12 @@
         "padding-top":"pageLogoPadding"
     },
 	".header_section":{
-        "background":"linear-gradient(to bottom, headerBackGroundcolorTop 1%,headerBackGroundcolorBottom 100%) !important",
-        "filter":"progid:DXImageTransform.Microsoft.gradient( startColorstr=headerBackGroundcolorTop, endColorstr=headerBackGroundcolorBottom,GradientType=0 ) !important"
-    },
+        " background": "-moz-linear-gradient(top, headerBackGroundcolorTop 1%,headerBackGroundcolorBottom 100%)",
+		"background":"-webkit-linear-gradient(top,  headerBackGroundcolorTop 1%,headerBackGroundcolorBottom 100%)"
+       },
 	".footer_section":{
-        "background":"linear-gradient(to bottom, footerBackGroundcolorTop 1%,footerBackGroundcolorBottom 100%) !important",
-        "filter":"progid:DXImageTransform.Microsoft.gradient( startColorstr=footerBackGroundcolorTop, endColorstr=footerBackGroundcolorBottom,GradientType=0 ) !important"
+        " background": "-moz-linear-gradient(top, footerBackGroundcolorTop 1%,footerBackGroundcolorBottom 100%)",
+		"background":"-webkit-linear-gradient(top,  footerBackGroundcolorTop 1%,footerBackGroundcolorBottom 100%)"
     },
 	".header_section ul li a": {
        "color": "headerLinkColor"
@@ -35,8 +35,8 @@
        "color": "headerActiveLinkColor"
 	},
 	".content_title" :{
-      "background":"linear-gradient(to bottom, pageTitleBackGroundTop 1%,pageTitleBackGroundBottom 100%) !important",
-        "filter":"progid:DXImageTransform.Microsoft.gradient( startColorstr=pageTitleBackGroundTop, endColorstr=pageTitleBackGroundBottom,GradientType=0 ) !important"
+      " background":"-moz-linear-gradient(top, pageTitleBackGroundTop 1%,pageTitleBackGroundBottom 100%) !important",
+      "background":"-webkit-linear-gradient(top,  pageTitleBackGroundTop 1%,pageTitleBackGroundBottom 100%)"
 	},
 	".btn_style": {
      "background-color": "buttonBackGroundColor"
@@ -48,19 +48,19 @@
       "Color":"editNavigationLink"
 	},
 	".title_nav ul a:hover": {
-      "background":"linear-gradient(to bottom, editNavigationActiveBackGroundTop 1%,editNavigationActiveBackGroundBottom 100%) !important",
-        "filter":"progid:DXImageTransform.Microsoft.gradient( startColorstr=editNavigationActiveBackGroundTop, endColorstr=editNavigationActiveBackGroundBottom,GradientType=0 ) !important"
+      " background":"-moz-linear-gradient(top, editNavigationActiveBackGroundTop 1%,editNavigationActiveBackGroundBottom 100%) !important",
+       "background":"-webkit-linear-gradient(top,  editNavigationActiveBackGroundTop 1%,editNavigationActiveBackGroundBottom 100%)"
 	},
 	".title_nav ul a.act" :{
-      "background":"linear-gradient(to bottom, editNavigationActiveBackGroundTop 1%,editNavigationActiveBackGroundBottom 100%) !important",
-        "filter":"progid:DXImageTransform.Microsoft.gradient( startColorstr=editNavigationActiveBackGroundTop, endColorstr=editNavigationActiveBackGroundBottom,GradientType=0 ) !important"
+      " background":"-moz-linear-gradient(top, editNavigationActiveBackGroundTop 1%,editNavigationActiveBackGroundBottom 100%) !important",
+        "background":"-webkit-linear-gradient(top,  editNavigationActiveBackGroundTop 1%,editNavigationActiveBackGroundBottom 100%)"
 	},
 	".table_border tr.proj_title td": {
 		"color":"customerBaseColor"
 	},
 	".content_end": {
-		"background":"linear-gradient(to bottom, bottomButtonPanelTop 1%,bottomButtonPanelBottom 100%) !important",
-			"filter":"progid:DXImageTransform.Microsoft.gradient( startColorstr=bottomButtonPanelTop, endColorstr=bottomButtonPanelBottom,GradientType=0 ) !important"
+		" background":"-moz-linear-gradient(top, bottomButtonPanelTop 1%,bottomButtonPanelBottom 100%) !important",
+		"background":"-webkit-linear-gradient(top,  bottomButtonPanelTop 1%,bottomButtonPanelBottom 100%)"
 	},
 	".features_box h1":{
 	 "color":"customerBaseColor"
