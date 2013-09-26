@@ -530,30 +530,53 @@ define([], function() {
 				$("a[name=addApplnLayer]").html('');
 				$(this).parent().parent().parent().remove();
 				$("a[name=removeApplnLayer]").parent().parent().parent('tr:last').find('a[name="addApplnLayer"]').html(addIcon);
-				if (($("a[name=removeApplnLayer]").parent().parent().parent('tr[name=staticApplnLayer]:visible').length) === 1) {
-					$('tr[name=staticApplnLayer]').find('a[name="addApplnLayer"]').html(addIcon);
-					$("a[name=removeApplnLayer]").html('');
-				}
+				
+				if(commonVariables.navListener.currentTab === "addproject") {
+					if(($("a[name=removeApplnLayer]").parent().parent().parent('tr[name=staticApplnLayer]:visible').length) === 1) {
+						$('tr[name=staticApplnLayer]').find('a[name="addApplnLayer"]').html(addIcon);
+						$("a[name=removeApplnLayer]").html('');
+					}
+				} else {
+					if(($("a[name=removeApplnLayer]").parent().parent().parent('tr[name=staticApplnLayer]').length) === 1) {
+						$('tr[name=dynamicAppLayer]').find('a[name="addApplnLayer"]').html(addIcon);
+						$("a[name=removeApplnLayer]").html('');
+					}
+				}	
 			});
 
 			$("a[name=removeWebLayer]").click(function(){
 				$("a[name=addWebLayer]").html('');
 				$(this).parent().parent().parent().remove();
 				$("a[name=removeWebLayer]").parent().parent().parent('tr:last').find('a[name="addWebLayer"]').html(addIcon);
-				if (($("a[name=removeWebLayer]").parent().parent().parent('tr[name=staticWebLayer]:visible').length) === 1) {
-					$('tr[name=staticWebLayer]').find('a[name="addWebLayer"]').html(addIcon);
-					$("a[name=removeWebLayer]").html('');
-				}
+				
+				if(commonVariables.navListener.currentTab === "addproject") {
+					if(($("a[name=removeWebLayer]").parent().parent().parent('tr[name=staticWebLayer]:visible').length) === 1) {
+						$('tr[name=staticWebLayer]').find('a[name="addWebLayer"]').html(addIcon);
+						$("a[name=removeWebLayer]").html('');
+					}
+				} else {
+					if(($("a[name=removeWebLayer]").parent().parent().parent('tr[name=staticWebLayer]').length) === 1) {
+						$('tr[name=dynamicWebLayer]').find('a[name="addWebLayer"]').html(addIcon);
+						$("a[name=removeWebLayer]").html('');
+					}
+				}	
 			});
 
 			$("a[name=removeMobileLayer]").click(function(){
 				$("a[name=addMobileLayer]").html('');
 				$(this).parent().parent().parent().remove();
 				$("a[name=removeMobileLayer]").parent().parent().parent('tr:last').find('a[name="addMobileLayer"]').html(addIcon);
-				if (($("a[name=removeMobileLayer]").parent().parent().parent('tr[name=staticMobileLayer]:visible').length) === 1) {
-					$('tr[name=staticMobileLayer]').find('a[name="addMobileLayer"]').html(addIcon);
-					$("a[name=removeMobileLayer]").html('');
-				}
+				if(commonVariables.navListener.currentTab === "addproject") {	
+					if(($("a[name=removeMobileLayer]").parent().parent().parent('tr[name=staticMobileLayer]:visible').length) === 1) {
+						$('tr[name=staticMobileLayer]').find('a[name="addMobileLayer"]').html(addIcon);
+						$("a[name=removeMobileLayer]").html('');
+					}
+				} else {
+					if(($("a[name=removeMobileLayer]").parent().parent().parent('tr[name=staticMobileLayer]').length) === 1) {
+						$('tr[name=dynamicMobileLayer]').find('a[name="addMobileLayer"]').html(addIcon);
+						$("a[name=removeMobileLayer]").html('');
+					}
+				}		
 			});
 		},
 		
@@ -1031,7 +1054,7 @@ define([], function() {
 						$("tr[name=applicationlayer]").show();
 						$("tr.applnLayer").show();
 						$("tr.applnLayer").attr('key','displayed');
-						var frontEnd = '<tr class="applnlayercontent" name="staticApplnLayer"><td class="applnappcode"><input type="text" id="appcode" maxlength="30" title="30 Characters only" class="appln-appcode appCodeText"></td><td name="frontEnd" class="frontEnd"><select name="frontEnd" class="frontEnd selectpicker" title="Select Group"><option value="Select Group" selected disabled>Select Group</option>'+self.getFrontEndTechGrp()+'</select></td><td name="technology" class="technology"><select name="appln_technology" class="appln_technology selectpicker"><option disabled>Select Technology</option></select></td><td name="version" class="version"><select name="appln_version" class="appln_version selectpicker"><option disabled>Select Version</option></select></td><td><div class="flt_right icon_center"><a name="addApplnLayer" style="cursor:pointer;"><img src="themes/default/images/Phresco/plus_icon.png" border="0" alt=""></a> <a href="javascript:;" name="removeApplnLayer" style="cursor:pointer;"></a></div></td></tr>';
+						var frontEnd = '<tr class="applnlayercontent" name="staticApplnLayer"><td class="applnappcode"><input type="text" id="appcode" maxlength="30" title="30 Characters only" class="appln-appcode appCodeText"></td><td name="frontEnd" class="frontEnd"><select name="frontEnd" class="frontEnd selectpicker" title="Select Group"><option value="Select Group" selected disabled>Select Group</option>'+self.getFrontEndTechGrp()+'</select></td><td name="technology" class="technology"><select name="appln_technology" class="appln_technology selectpicker"><option disabled>Select Technology</option></select></td><td name="version" class="version"><select name="appln_version" class="appln_version selectpicker"><option disabled>Select Version</option></select></td><td><div class="flt_right icon_center"><a name="addApplnLayer" style="cursor:pointer;"><img src="themes/default/images/Phresco/plus_icon.png" border="0" alt=""></a> <a href="javascript:;" name="removeApplnLayer" style="cursor:pointer;display:none;"></a></div></td></tr>';
 						dynamicValue = $(frontEnd).insertAfter("tr.applnlayercontent:last");
 						
 						if (dynamicValue.prev('tr').attr("name") !== "dynamicAppLayer") {
@@ -1088,7 +1111,7 @@ define([], function() {
 						$("tr.webLayer").show();
 						$("tr.webLayer").attr('key','displayed');
 						
-						var middleTier ='<tr class="weblayercontent" name="staticWebLayer"><td class="webappcode"><input type="text" id="webappcode" maxlength="30" title="30 Characters only" class="web-appcode appCodeText"></td><td name="web" class="web"><select name="weblayer" class="weblayer selectpicker"><option selected disabled>Select Group</option>'+self.getWidget() +'</select></td><td name="widget" class="widget"><select name="web_widget" class="web_widget selectpicker"><option disabled>Select Technology</option></select></td><td name="widgetversion" class="widgetversion"><select name="web_version" class="web_version selectpicker"><option disabled>Select Version</option></select></td><td> <div class="flt_right icon_center"><a href="javascript:;" name="addWebLayer"><img src="themes/default/images/Phresco/plus_icon.png" border="0" alt=""></a> <a href="javascript:;" name="removeWebLayer" style="cursor:pointer;"></a></div></td></tr>';
+						var middleTier ='<tr class="weblayercontent" name="staticWebLayer"><td class="webappcode"><input type="text" id="webappcode" maxlength="30" title="30 Characters only" class="web-appcode appCodeText"></td><td name="web" class="web"><select name="weblayer" class="weblayer selectpicker"><option selected disabled>Select Group</option>'+self.getWidget() +'</select></td><td name="widget" class="widget"><select name="web_widget" class="web_widget selectpicker"><option disabled>Select Technology</option></select></td><td name="widgetversion" class="widgetversion"><select name="web_version" class="web_version selectpicker"><option disabled>Select Version</option></select></td><td> <div class="flt_right icon_center"><a href="javascript:;" name="addWebLayer"><img src="themes/default/images/Phresco/plus_icon.png" border="0" alt=""></a> <a href="javascript:;" name="removeWebLayer" style="cursor:pointer;display:none;"></a></div></td></tr>';
 						dynamicValue = $(middleTier).insertAfter("tr.weblayercontent:last");
 						
 						if (dynamicValue.prev('tr').attr("name") !== "dynamicWebLayer") {
@@ -1145,7 +1168,7 @@ define([], function() {
 						$("tr.mobLayer").show();
 						$("tr.mobLayer").attr('key','displayed');
 						
-						var cmsLayer = '<tr class="mobilelayercontent" name="staticMobileLayer"><td class="mobileappcode"><input type="text" id="mobileappcode" maxlength="30" title="30 Characters only" class="mobile-appcode appCodeText"></td><td name="mobile" class="mobile"><select name="mobile_layer" class="mobile_layer selectpicker"><option selected disabled>Select Group</option>'+self.getMobile() +'</select></td><td name="types" class="types"><select name="mobile_types" class="mobile_types selectpicker"><option disabled>Select Technology</option></select></td><td colspan="2" name="mobileversion" class="mobileversion selectpicker"><select name="mobile_version" class="mobile_version selectpicker"><option disabled>Select Version</option></select></td><td><div class="flt_right icon_center"><a href="javascript:;" name="addMobileLayer" style="cursor:pointer;"><img src="themes/default/images/Phresco/plus_icon.png" border="0" alt=""></a> <a href="javascript:;" name="removeMobileLayer" style="cursor:pointer;"></a></div></td></tr>';
+						var cmsLayer = '<tr class="mobilelayercontent" name="staticMobileLayer"><td class="mobileappcode"><input type="text" id="mobileappcode" maxlength="30" title="30 Characters only" class="mobile-appcode appCodeText"></td><td name="mobile" class="mobile"><select name="mobile_layer" class="mobile_layer selectpicker"><option selected disabled>Select Group</option>'+self.getMobile() +'</select></td><td name="types" class="types"><select name="mobile_types" class="mobile_types selectpicker"><option disabled>Select Technology</option></select></td><td colspan="2" name="mobileversion" class="mobileversion selectpicker"><select name="mobile_version" class="mobile_version selectpicker"><option disabled>Select Version</option></select></td><td><div class="flt_right icon_center"><a href="javascript:;" name="addMobileLayer" style="cursor:pointer;"><img src="themes/default/images/Phresco/plus_icon.png" border="0" alt=""></a> <a href="javascript:;" name="removeMobileLayer" style="cursor:pointer;display:none;"></a></div></td></tr>';
 						dynamicValue = $(cmsLayer).insertAfter("tr.mobilelayercontent:last");
 						
 						if (dynamicValue.prev('tr').attr("name") !== "dynamicMobileLayer") {
