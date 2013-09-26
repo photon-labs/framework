@@ -369,6 +369,7 @@ define(["lib/jquery-tojson-1.0",'lib/RGraph_common_core-1.0','lib/RGraph_common_
 			$('#pdfReportLoading').show();
 			self.performAction(self.getActionHeader(requestBody, "generatePdfReport"), function(response) {
 				if (response.status === "success") {
+					$("input[name=pdfName]").val('');
 					self.getPdfReports(from);
 				}
 			});
