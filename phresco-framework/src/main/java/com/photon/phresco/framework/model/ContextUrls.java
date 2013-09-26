@@ -30,27 +30,56 @@ public class ContextUrls {
     private boolean keepAlive;
     private boolean multipartData;
     private boolean compatibleHeaders;
+    private boolean regexExtractor; 
+    private String applyTo = "";
+    private String responseField = "";
+	private String referenceName = "";
+	private String regex = "";
+	private String template = "";
+	private String matchNo = "";
+	private String defaultValue = "";
     private List<Headers> headers;
     private List<Parameters> parameters;
     
-	public ContextUrls() {
+    public ContextUrls() {
+		super();
 	}
-	
+    
 	public ContextUrls(String name, String context, String contextType,
-			String contextPostData, String encodingType, List<Headers> headers) {
+			String contextPostData, String encodingType,
+			boolean redirectAutomatically, boolean followRedirects,
+			boolean keepAlive, boolean multipartData,
+			boolean compatibleHeaders, boolean regexExtractor, String applyTo,
+			String responseField, String referenceName, String regex,
+			String template, String matchNo, String defaultValue,
+			List<Headers> headers, List<Parameters> parameters) {
 		super();
 		this.name = name;
 		this.context = context;
 		this.contextType = contextType;
 		this.contextPostData = contextPostData;
 		this.encodingType = encodingType;
+		this.redirectAutomatically = redirectAutomatically;
+		this.followRedirects = followRedirects;
+		this.keepAlive = keepAlive;
+		this.multipartData = multipartData;
+		this.compatibleHeaders = compatibleHeaders;
+		this.regexExtractor = regexExtractor;
+		this.applyTo = applyTo;
+		this.responseField = responseField;
+		this.referenceName = referenceName;
+		this.regex = regex;
+		this.template = template;
+		this.matchNo = matchNo;
+		this.defaultValue = defaultValue;
 		this.headers = headers;
+		this.parameters = parameters;
 	}
 
 	public String getName() {
 		return name;
 	}
-
+	
 	public void setName(String name) {
 		this.name = name;
 	}
@@ -85,6 +114,70 @@ public class ContextUrls {
 
 	public void setEncodingType(String encodingType) {
 		this.encodingType = encodingType;
+	}
+
+	public void setRegexExtractor(boolean regexExtractor) {
+		this.regexExtractor = regexExtractor;
+	}
+
+	public boolean isRegexExtractor() {
+		return regexExtractor;
+	}
+
+	public String getResponseField() {
+		return responseField;
+	}
+
+	public void setApplyTo(String applyTo) {
+		this.applyTo = applyTo;
+	}
+
+	public String getApplyTo() {
+		return applyTo;
+	}
+
+	public void setResponseField(String responseField) {
+		this.responseField = responseField;
+	}
+
+	public String getReferenceName() {
+		return referenceName;
+	}
+
+	public void setReferenceName(String referenceName) {
+		this.referenceName = referenceName;
+	}
+
+	public void setRegex(String regex) {
+		this.regex = regex;
+	}
+
+	public String getRegex() {
+		return regex;
+	}
+
+	public String getTemplate() {
+		return template;
+	}
+
+	public void setTemplate(String template) {
+		this.template = template;
+	}
+
+	public String getMatchNo() {
+		return matchNo;
+	}
+
+	public void setMatchNo(String matchNo) {
+		this.matchNo = matchNo;
+	}
+
+	public String getDefaultValue() {
+		return defaultValue;
+	}
+
+	public void setDefaultValue(String defaultValue) {
+		this.defaultValue = defaultValue;
 	}
 
 	public void setHeaders(List<Headers> headers) {
