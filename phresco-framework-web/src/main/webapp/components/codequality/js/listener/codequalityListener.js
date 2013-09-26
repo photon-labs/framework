@@ -293,7 +293,12 @@ define([], function() {
 								$('#iframe').css('height', dynHeight);
 							});
 						} else {
-							if(iframereport.responseCode === "PHR510003" ) {
+							if(iframereport.responseCode === 'PHR500005') {
+							$(".alert").show();
+							$('#content_div').html('<div class="alert" style="text-align: center; width:98%"></div>');
+							$(".alert").attr('data-i18n', 'successCodes.' + iframereport.responseCode);
+							self.renderlocales(commonVariables.contentPlaceholder);
+							} else if(iframereport.responseCode === "PHR510003" ) {
 								$(".alert").show();
 								$('#content_div').html('<div class="alert" style="text-align: center; width:98%"></div>');
 								$(".alert").attr('data-i18n', 'errorCodes.' + iframereport.responseCode);
