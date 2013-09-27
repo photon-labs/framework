@@ -1123,7 +1123,7 @@ public class RepositoryService extends RestBase implements FrameworkConstants, S
 	private String getConnectionUrl(ApplicationInfo applicationInfo) throws PhrescoException {
 		try {
 			FrameworkUtil frameworkUtil = FrameworkUtil.getInstance();
-			PomProcessor processor = frameworkUtil.getPomProcessor(applicationInfo.getAppDirName());
+			PomProcessor processor = frameworkUtil.getPomProcessor(applicationInfo);
 			Scm scm = processor.getSCM();
 			if (scm != null && !scm.getConnection().isEmpty()) {
 				return scm.getConnection();

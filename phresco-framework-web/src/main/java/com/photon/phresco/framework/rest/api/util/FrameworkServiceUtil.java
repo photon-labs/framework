@@ -18,21 +18,16 @@
 package com.photon.phresco.framework.rest.api.util;
 
 import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.FilenameFilter;
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.InetAddress;
-import java.net.MalformedURLException;
 import java.net.URL;
-import java.net.UnknownHostException;
 import java.security.KeyStore;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
@@ -60,7 +55,6 @@ import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
-import com.google.gson.reflect.TypeToken;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonIOException;
@@ -77,7 +71,6 @@ import com.photon.phresco.commons.model.CertificateInfo;
 import com.photon.phresco.commons.model.Customer;
 import com.photon.phresco.commons.model.ProjectInfo;
 import com.photon.phresco.commons.model.RepoInfo;
-import com.photon.phresco.commons.model.User;
 import com.photon.phresco.configuration.ConfigReader;
 import com.photon.phresco.configuration.Configuration;
 import com.photon.phresco.configuration.Environment;
@@ -89,9 +82,7 @@ import com.photon.phresco.framework.api.ApplicationManager;
 import com.photon.phresco.framework.api.ProjectManager;
 import com.photon.phresco.framework.commons.ApplicationsUtil;
 import com.photon.phresco.framework.commons.FrameworkUtil;
-import com.photon.phresco.framework.model.LockDetail;
 import com.photon.phresco.framework.rest.api.QualityService;
-import com.photon.phresco.framework.rest.api.util.ActionFunction.XmlNameFileFilter;
 import com.photon.phresco.plugins.model.Mojos.ApplicationHandler;
 import com.photon.phresco.plugins.model.Mojos.Mojo.Configuration.Parameters.Parameter;
 import com.photon.phresco.plugins.model.Mojos.Mojo.Configuration.Parameters.Parameter.Childs.Child;
@@ -160,11 +151,13 @@ public class FrameworkServiceUtil implements Constants, FrameworkConstants, Resp
 	 */
 	public static PomProcessor getPomProcessor(String appDirName) throws PhrescoException {
 		try {
+			ApplicationInfo applicationInfo = getApplicationInfo(appDirName);
 			StringBuilder builder  = new StringBuilder();
+			String pomFileName = Utility.getPomFileName(applicationInfo);
 			builder.append(Utility.getProjectHome())
-			.append(appDirName)
+			.append(applicationInfo.getAppDirName())
 			.append(File.separatorChar)
-			.append(POM_NAME);
+			.append(pomFileName);
 			return new PomProcessor(new File(builder.toString()));
 		} catch (PhrescoPomException e) {
 			throw new PhrescoException(e);
@@ -186,18 +179,10 @@ public class FrameworkServiceUtil implements Constants, FrameworkConstants, Resp
 	public static String getAppPom(String appDirName) throws PhrescoException {
 		StringBuilder builder = new StringBuilder(getApplicationHome(appDirName));
 		builder.append(File.separator);
-        builder.append(getPomFileName(getApplicationInfo(appDirName)));
+        builder.append(Utility.getPhrescoPomFile(getApplicationInfo(appDirName)));
 		return builder.toString();
 	}
 	
-	 public static String getPomFileName(ApplicationInfo appInfo) {
-	    	File pomFile = new File(Utility.getProjectHome() + appInfo.getAppDirName() + File.separator + appInfo.getPomFile());
-	    	if(pomFile.exists()) {
-	    		return appInfo.getPomFile();
-	    	}
-	    	return Constants.POM_NAME;
-	    }
-
 	/**
 	 * To get the modules of the given application
 	 * @param appDirName

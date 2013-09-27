@@ -178,6 +178,7 @@ public class ApplicationManagerImpl implements ApplicationManager {
     		S_LOGGER.debug("executeMavenCommand() Command = " + command.toString());
     		S_LOGGER.debug("executeMavenCommand() ActionType Name = " + action.getActionType());
 		}
+    	createPomArg(projectInfo, command);
 		Commandline cl = new Commandline(command.toString());
         if (StringUtils.isNotEmpty(workingDirectory)) {
             cl.setWorkingDirectory(workingDirectory);
@@ -189,6 +190,18 @@ public class ApplicationManagerImpl implements ApplicationManager {
             throw new PhrescoException(e);
         }
     }
+	
+	private StringBuilder createPomArg(ProjectInfo projectInfo, StringBuilder builder) {
+		if(projectInfo != null) {
+			ApplicationInfo applicationInfo = projectInfo.getAppInfos().get(0);
+			String pomFileName = Utility.getPomFileName(applicationInfo);
+			builder.append(Constants.SPACE);
+			builder.append("-f");
+			builder.append(Constants.SPACE);
+			builder.append(pomFileName);
+		}
+		return builder;
+	}
 	
 	private List<BuildInfo> readBuildInfo(File path) throws IOException, PhrescoException {
 		 S_LOGGER.debug("Entering Method ApplicationManagerImpl.readBuildInfo(File path)");
@@ -274,7 +287,6 @@ public class ApplicationManagerImpl implements ApplicationManager {
 		 .append(File.separator)
 		 .append(FrameworkConstants.BUILD_DIR)
 		 .append(File.separator);
-		 
 		 return builder.toString();
 	 }
 	 

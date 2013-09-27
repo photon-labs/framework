@@ -656,7 +656,7 @@ public class ProjectService extends RestBase implements FrameworkConstants, Serv
 			FrameworkUtil frameworkUtil = FrameworkUtil.getInstance();
 			
 			try {
-				PomProcessor pomProcessor = frameworkUtil.getPomProcessor(appInfo.getAppDirName());
+				PomProcessor pomProcessor = frameworkUtil.getPomProcessor(appInfo);
                 pomProcessor.setProperty(Constants.POM_PROP_KEY_FUNCTEST_SELENIUM_TOOL, functionalFramework.getName());
 				pomProcessor.setProperty(Constants.POM_PROP_KEY_FUNCTEST_DIR, testDir);
 				pomProcessor.setProperty(Constants.POM_PROP_KEY_FUNCTEST_RPT_DIR, testReportDir);
