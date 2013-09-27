@@ -250,7 +250,10 @@ define(["application/listener/applicationListener"], function() {
 			});*/
 
 			$("input[name='appCode']").bind('input',function() {
-				$("input[name='appCode']").val(self.specialCharValidation($(this).val().replace(/\s/g, "")));
+				var str = $(this).val();
+				str = str.replace(/[^a-zA-Z 0-9\-\_]+/g, '');
+				str = str.replace(/\s+/g, '');
+				$(this).val(str);
 			});
 			
 			$("input[name='appDirName']").bind('input',function() {

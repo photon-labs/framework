@@ -395,15 +395,13 @@ define(["croneExpression/croneExpression"], function() {
 							if(currentConfig === 'Server') {
 								if (configPropertiesType !== "") {
 									$.each(self.serverTypeVersion, function(key, value){
-										if (configPropertiesType === key) {
-											for(var k=0; k<value.length; k++) {
-												var selectedAttr = "";
-												if (value[k] === configValue) {
-													selectedAttr = "selected";
-												}
-												options1 = options1.concat('<option value="' + value[k] + '" '+selectedAttr+'>' + value[k] + '</option>');
+										for(var k=0; k<value.length; k++) {
+											var selectedAttr = "";
+											if (value[k] === configValue && configPropertiesType === key) {
+												selectedAttr = "selected";
 											}
-										} 
+											options1 = options1.concat('<option value="' + value[k] + '" '+selectedAttr+'>' + value[k] + '</option>');
+										}
 									});
 								} else {
 									$.each(self.serverTypeVersion, function(key, value){
@@ -419,15 +417,13 @@ define(["croneExpression/croneExpression"], function() {
 							} else if(currentConfig === 'Database') {
 								if (configPropertiesType !== "") {
 									$.each(self.databaseTypeVersion, function(key, value){
-										if (configPropertiesType === key) {
-											for(var k=0; k<value.length; k++) {
-												var selectedAttr = "";
-												if (value[k] === configValue) {
-													selectedAttr = "selected";
-												}
-												options1 = options1.concat('<option value="' + value[k] + '" '+selectedAttr+'>' + value[k] + '</option>');
+										for(var k=0; k<value.length; k++) {
+											var selectedAttr = "";
+											if (value[k] === configValue && configPropertiesType === key) {
+												selectedAttr = "selected";
 											}
-										} 
+											options1 = options1.concat('<option value="' + value[k] + '" '+selectedAttr+'>' + value[k] + '</option>');
+										}
 									});
 								} else {
 									$.each(self.databaseTypeVersion, function(key, value){

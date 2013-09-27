@@ -487,8 +487,11 @@ define([], function() {
 			var self=this, whereToAppend = '';
 			
 			$(".appln-appcode, .web-appcode, .mobile-appcode").unbind('input');
-			$(".appln-appcode, .web-appcode, .mobile-appcode").bind('input', function(){
-				$(this).val(self.specialCharValidation($(this).val().replace(/\s/g, "")));
+			$(".appln-appcode, .web-appcode, .mobile-appcode").bind('input propertychange', function(){
+				var str = $(this).val();
+				str = str.replace(/[^a-zA-Z 0-9\-\_]+/g, '');
+				str = str.replace(/\s+/g, '');
+				$(this).val(str);
 			});
 			
 			$(".appln-appcode, .web-appcode, .mobile-appcode").focusout(function(){
