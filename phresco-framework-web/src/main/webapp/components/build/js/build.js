@@ -106,6 +106,7 @@ define(["build/listener/buildListener"], function() {
 			self.loadPostContent();
 			self.resizeConsoleWindow();
 			self.closeConsole();
+			self.copyPathVisibleCheck();
 			$(window).resize();
 			
 			var windowHeight = $(document).height(), marginTop = '';
@@ -119,6 +120,16 @@ define(["build/listener/buildListener"], function() {
 			var deductionHeight = Number(marginTop) + Number(footerHeight);
 			var finalHeight = windowHeight - deductionHeight - 6;
 			$('.testSuiteTable').height(finalHeight);
+		},
+		
+		copyPathVisibleCheck : function(){
+			self.buildListener.getInfo(self.buildListener.getRequestHeader("", '', 'checkMachine'), function(res){
+				if(res.data !== null && res.data === "false"){
+					$('.icon_images #openFolder').parent().hide();
+					$('.icon_images #copyPath').parent().hide();
+					$('#buildCopyLog').hide();
+				}
+			});
 		},
 		
 		runAgainSourceStatus : function(bootup){
