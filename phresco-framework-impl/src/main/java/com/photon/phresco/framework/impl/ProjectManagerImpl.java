@@ -17,6 +17,7 @@
  */
 package com.photon.phresco.framework.impl;
 
+import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -207,6 +208,7 @@ public class ProjectManagerImpl implements ProjectManager, FrameworkConstants, C
 			S_LOGGER.debug("Entering Method ProjectManagerImpl.create(ProjectInfo projectInfo)");
 		}
 		ClientResponse response = null;
+		BufferedInputStream eclipseReader = null;
 		try {
 			response = serviceManager.createProject(projectInfo);
 		} catch (Exception e) {
@@ -250,7 +252,18 @@ public class ProjectManagerImpl implements ProjectManager, FrameworkConstants, C
 							buildArgCmds.add(HYPHEN_F);
 							buildArgCmds.add(pomFileName);
 						}
-						applicationManager.performAction(projectInfo, ActionType.ECLIPSE, buildArgCmds, baseDir);
+						eclipseReader = applicationManager.performAction(projectInfo, ActionType.ECLIPSE, buildArgCmds, baseDir);
+						int available = eclipseReader.available();
+						while (available != 0) {
+							byte[] buf = new byte[available];
+			                int read = eclipseReader.read(buf);
+			                if (read == -1 ||  buf[available-1] == -1) {
+			                	break;
+			                } else {
+			                	// 
+			                }
+			                available = eclipseReader.available();
+						}
 					}
 
 				}
@@ -258,6 +271,14 @@ public class ProjectManagerImpl implements ProjectManager, FrameworkConstants, C
 				throw new PhrescoException(e); 
 			} catch (IOException e) {
 				throw new PhrescoException(e);
+			} finally {
+				try {
+					if (eclipseReader != null) {
+						eclipseReader.close();
+					}
+				} catch (IOException e) {
+					throw new PhrescoException(e);
+				}
 			}
 		} else if(response.getStatus() == 401){
 			throw new PhrescoException("Session expired");
