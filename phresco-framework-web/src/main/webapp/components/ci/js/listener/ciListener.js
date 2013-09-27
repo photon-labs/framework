@@ -1490,7 +1490,6 @@ define([], function() {
 			});
 //			}
 
-			
 			if(templateJsonData.type === "performanceTest" || templateJsonData.type === "loadTest") {
 				var ciRequestBody = {}, redirect = true, templJsonStr="",testAction;
 				redirect = self.contextUrlsMandatoryVal();
@@ -1505,6 +1504,7 @@ define([], function() {
 					}
 					ciRequestBody.data = $('#jonConfiguration :input[name!=parameterValue]').serialize()+"&appDirName="+appDirName+"&testAction="+testAction;
 					ciRequestBody.jsondata = json;
+					$("#contextDivParent").remove();
 					self.getHeaderResponse(self.getRequestHeader(ciRequestBody, 'writeJson'), function (response) {
 						
 					});
@@ -1568,7 +1568,7 @@ define([], function() {
 	            $(".dyn_popup").hide();
 				$('#header').css('z-index','7');
 				$('.content_title').css('z-index','6');
-			} 			
+			} 	
 		},
 
 		contextUrlsMandatoryVal : function () {
