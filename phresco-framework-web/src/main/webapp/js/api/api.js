@@ -105,6 +105,67 @@ define(["framework/base", "api/localStorageAPI"], function(){
 			});
 		},
 		
+		
+		ajaxRequestForScm : function(header, callbackFunction, errorHandler){
+			var self = this;
+			$.support.cors = true;
+			
+			$.ajax({
+				url: header.webserviceurl,
+				type : header.requestMethod,
+				dataType : header.dataType,
+				header : "Access-Control-Allow-Headers: x-requested-with",
+				contentType : header.contentType,
+				data : header.requestPostBody,
+				crossDomain : true,
+				cache : false,
+				async : true,
+				
+				beforeSend : function(){
+					self.successResponse = null;
+					$('section#serviceError').remove();
+					if(!Clazz.navigationController.loadingActive && !commonVariables.continueloading && !commonVariables.hideloading){
+						if($(commonVariables.basePlaceholder).find(commonVariables.contentPlaceholder).length > 0){
+							commonVariables.loadingScreen.showLoading($(commonVariables.contentPlaceholder));
+						}else {
+							commonVariables.loadingScreen.showLoading();
+						}
+					}
+				},
+				
+				success : function(response, e ,xhr){
+					if(response === undefined || response === null){
+						self.showError("PHR000000", 'error', false);
+					}else if((response.status === "error" || response.status === "failure") && (Clazz.navigationController.loadingActive || commonVariables.continueloading)){
+						self.showError(response.responseCode, 'error', false);
+					}
+					if ((response !== undefined && response !== null && response.status !== "error") || self.bCheck) {
+						self.successResponse = response;
+					} else {self.errorpopupshow(response);}
+				},
+				
+				error : function(jqXHR, textStatus, errorThrown){
+					self.bCheck = false;
+					self.successResponse = null;
+					self.showError("PHR000000", 'error', false);
+					if (errorHandler){
+						errorHandler(jqXHR.responseText);
+					}
+				},
+				
+				complete : function(response, e ,xhr){
+					if(!Clazz.navigationController.loadingActive && !commonVariables.continueloading){
+						commonVariables.hideloading = false;
+						commonVariables.loadingScreen.removeLoading();
+					}
+					if((self.successResponse !== undefined && self.successResponse !== null && self.successResponse.status !== "error") || self.bCheck){
+						callbackFunction(self.successResponse);
+					}else if(self.successResponse === null || self.successResponse.status === "error"){self.errorpopupshow(response);}
+					self.bCheck = false;
+				}
+			});
+		},
+		
 		ajaxForDynamicParam : function(header, whereToRender, callbackFunction, errorHandler) {
 			var self = this, btnObj = '';
 			if (whereToRender !== "") {

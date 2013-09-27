@@ -42,7 +42,6 @@ define([], function() {
 								self.renderNavigation();
 							} else {
 								//authentication failed
-								console.info('response else',response);
 								$('#login').removeAttr('disabled');
 								$(".login_error_msg").attr('data-i18n', 'errorCodes.' + response.responseCode);
 								self.renderlocales(commonVariables.basePlaceholder);	

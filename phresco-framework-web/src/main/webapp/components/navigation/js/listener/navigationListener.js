@@ -812,6 +812,31 @@ define([], function() {
 			}
 		}, 
 		
+		navigationActionForImport : function(header, callback) {
+			var self = this;			
+			try {
+				//commonVariables.loadingScreen.showLoading();
+				commonVariables.api.ajaxRequestForScm(header,
+					function(response) {
+						//commonVariables.loadingScreen.removeLoading();
+						if (response !== null && response.status !== "error" && response.status !== "failure") {
+							if(response.responseCode === "PHR200017") {
+								commonVariables.api.showError(response.responseCode ,"success", true);
+							}
+							callback(response);						
+						} else {
+							commonVariables.api.showError(response.responseCode ,"error", true);
+						}
+					},
+					function(textStatus) {
+						commonVariables.api.showError("serviceerror" ,"error", true);		
+					}
+				);
+			} catch(exception) {
+				//commonVariables.loadingScreen.removeLoading();
+			}
+		}, 
+		
 		validateImport : function (callback) {
 			var self = this;
 			var importType = $("#importType").val();
@@ -945,7 +970,7 @@ define([], function() {
 			actionBody = importdata;
 			action = "importpost";
 			commonVariables.hideloading = true;
-			self.navigationAction(self.getActionHeader(actionBody, action), function(response){
+			self.navigationActionForImport(self.getActionHeader(actionBody, action), function(response){
 				$("#importloading").hide();
 				if (response.exception === null) {
 					$("#project_list_import").hide();	

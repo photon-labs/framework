@@ -115,6 +115,47 @@ define([], function() {
 				self.hidePopupLoad();
 			}
 		},
+		
+		projectListActionForScm : function(header, loadingObj, callback) {
+			var self = this;			
+			try {
+				if (!self.isBlank(loadingObj)) {
+					self.showpopupLoad(loadingObj);
+				}
+				commonVariables.api.ajaxRequestForScm(header,
+					function(response) {
+						if(response !== null && response.status !== "error" && response.status !== "failure"){
+							self.hidePopupLoad();
+							if(response.responseCode !== 'PHR200015' && response.responseCode !== 'PHR200021' && response.responseCode !== 'PHR600004' && response.responseCode !== null && response.responseCode !== undefined) {
+								commonVariables.api.showError(response.responseCode ,"success", true);
+								if(response.responseCode === 'PHR200010' || response.responseCode === 'PHR200026') {
+									$('.msgdisplay').prepend(self.delprojectname+' ');
+								}
+							}	
+							callback(response);		
+						} else {
+							if(response.responseCode === "PHR210035") {
+								callback(response);
+								self.hidePopupLoad();
+							} else if(response.responseCode === "PHR210037") {
+								callback(response);
+								self.hidePopupLoad();
+							} else {
+								commonVariables.api.showError(response.responseCode ,"error", true);
+								self.hidePopupLoad();
+							}
+						}
+					},					
+					function(textStatus) {
+						commonVariables.api.showError("serviceerror" ,"error", true);
+						self.hidePopupLoad();
+					}
+				);
+			} catch(exception) {
+				self.hidePopupLoad();
+			}
+		},
+		
 		showpopupLoad : function(loadingObj){
 			loadingObj.show();
 		},
@@ -270,7 +311,7 @@ define([], function() {
 				actionBody = repodata;
 				action = "repoget";
 				commonVariables.hideloading = true;
-				self.projectListAction(self.getActionHeader(actionBody, action), $("#addRepoLoading_"+dynid), function(response){
+				self.projectListActionForScm(self.getActionHeader(actionBody, action), $("#addRepoLoading_"+dynid), function(response){
 					if (response.exception === null) {
 						$("#addRepo_"+dynid).hide();
 					}
@@ -300,7 +341,7 @@ define([], function() {
 				actionBody = commitdata;
 				action = "commitget";
 				commonVariables.hideloading = true;
-				self.projectListAction(self.getActionHeader(actionBody, action), $('#commitLoading_'+dynid), function(response){
+				self.projectListActionForScm(self.getActionHeader(actionBody, action), $('#commitLoading_'+dynid), function(response){
 					if (response.exception === null) {
 						$("#commit"+dynid).hide();
 					}
@@ -334,7 +375,7 @@ define([], function() {
 			self.openccpl(obj, $(obj).attr('name'), '');
 			$('#commitLoading_'+dynamicId).show();
 			commonVariables.hideloading = true;
-	      	self.projectListAction(self.getActionHeader(data, "getCommitableFiles"), $('#commitLoading_'+dynamicId), function(response) {
+	      	self.projectListActionForScm(self.getActionHeader(data, "getCommitableFiles"), $('#commitLoading_'+dynamicId), function(response) {
 				var halfheight= window.innerHeight/2;
 				var halfwidth= window.innerWidth/2;
 				if ($(obj).offset().top > halfheight && $(obj).offset().left > halfwidth){
@@ -394,7 +435,7 @@ define([], function() {
 			self.openccpl(obj, $(obj).attr('name'), '');
 			$('#updateLoading_'+dynamicId).show();
 			commonVariables.hideloading = true;
-	      	self.projectListAction(self.getActionHeader(data, "getUpdatableFiles"), $('#updateLoading_'+dynamicId), function(response) {
+	      	self.projectListActionForScm(self.getActionHeader(data, "getUpdatableFiles"), $('#updateLoading_'+dynamicId), function(response) {
 
 				var halfheight= window.innerHeight/2;
 				var halfwidth= window.innerWidth/2;
@@ -571,7 +612,7 @@ define([], function() {
 				actionBody = updatedata;
 				action = "updateget";
 				commonVariables.hideloading = true;
-				self.projectListAction(self.getActionHeader(actionBody, action), $("#updateRepoLoading_"+dynid), function(response){
+				self.projectListActionForScm(self.getActionHeader(actionBody, action), $("#updateRepoLoading_"+dynid), function(response){
 					if (response.exception === null) {
 						$("#svn_update"+dynid).hide();
 					}
