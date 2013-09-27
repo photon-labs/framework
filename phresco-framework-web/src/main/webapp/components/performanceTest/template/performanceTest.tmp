@@ -22,7 +22,7 @@
 				</div>	
 	        {{else}}  
 	        	<div class="unit_view performanceView hideContent">
-	                span id="tabularView" class="table" style="cursor: pointer;">
+	                <span id="tabularView" class="table" style="cursor: pointer;">
             	<a href="javascript:void(0)"><img class="tableIcon" src="themes/default/images/Phresco/table_active.png" width="213" height="29" border="0" alt="" usemap="#tabularViewMap"></a>
             	 <map name="tabularViewMap">
                       <area class="table1" shape="rect" coords="3,1,104,29">
