@@ -69,6 +69,7 @@ define(["projects/listener/projectsListener"], function() {
 			$("#createProject").show();
 			var self=this;
 			self.projectsListener.counter = null;
+			$(".widget-mask-mid-content").addClass('widget-mask-mid-content-altered');
 			self.applicationlayerData = commonVariables.api.localVal.getJson("Front End");
 			self.weblayerData = commonVariables.api.localVal.getJson("Middle Tier");
 			self.mobilelayerData = commonVariables.api.localVal.getJson("CMS");
@@ -77,6 +78,10 @@ define(["projects/listener/projectsListener"], function() {
 				self.templateData.weblayerData = self.weblayerData;
 				self.templateData.mobilelayerData = self.mobilelayerData;
 				renderFunction(self.templateData, whereToRender);
+				setTimeout(function() {
+					$(".widget-mask-mid-content").removeClass('widget-mask-mid-content-altered');
+				},1500);
+				
 			} else {
 				self.setTechnologyData(function(bCheck){
 					if(bCheck){
@@ -87,6 +92,9 @@ define(["projects/listener/projectsListener"], function() {
 						self.templateData.weblayerData = self.weblayerData;
 						self.templateData.mobilelayerData = self.mobilelayerData;
 						renderFunction(self.templateData, whereToRender);
+						setTimeout(function() {
+							$(".widget-mask-mid-content").removeClass('widget-mask-mid-content-altered');
+						},1500);
 					}
 				});
 			}	

@@ -107,6 +107,11 @@ a, div, button, img { outline: none !important; }
 	position:absolute;
     z-index: 1000 !important;
 }
+
+.widget-mask-mid-content-altered{
+	z-index: 5 !important;
+}
+
 .widget-mask-main {
 	  position: fixed;
 }

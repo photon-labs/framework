@@ -97,6 +97,7 @@ define([], function() {
 		getEditProject : function(header, callback) {
 			var self = this;
 			try {
+				$(".widget-mask-mid-content").addClass('widget-mask-mid-content-altered');
 				commonVariables.api.ajaxRequest(header,
 					function(response) {
 						if (response !== null && response.status !== "error" && response.status !== "failure") {
