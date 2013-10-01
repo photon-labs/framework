@@ -287,11 +287,11 @@ define(["features/features",  "application/application",  "projectlist/projectLi
 															}
 														}	
 													});													
-											} else {													
+											} /* else {			
 												$(currentVal).parents("div").siblings("fieldset").removeClass('switchOn').addClass("switchOff");
 												var showversionId = $(currentVal).parents("div").attr("id");
 												$("#"+showversionId).hide();
-											}
+											} */
 										});	
 									}	
 								} 
@@ -333,11 +333,11 @@ define(["features/features",  "application/application",  "projectlist/projectLi
 										}
 									}
 								});													
-							} else {													
+							} /* else {													
 								$(currentVal).parents("div").siblings("fieldset").removeClass('switchOn').addClass("switchOff");
 								var showversionId = $(currentVal).parents("div").attr("id");
 								$("#"+showversionId).hide();
-							}
+							} */
 						});	
 							if(popupcount !==0) {
 								commonVariables.api.showError("hasdependencies" ,"error", true, false, true);	
