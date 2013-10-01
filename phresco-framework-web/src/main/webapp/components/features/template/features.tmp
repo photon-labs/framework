@@ -154,6 +154,7 @@
 
     <div id="desc"></div>
 	<div id="settingspopup"></div>
+	<div id="dependancypopup"></div>
     <section class="content_end">
         <div class="flt_right">
         	{{#if userPermissions.manageApplication}}

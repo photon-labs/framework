@@ -222,6 +222,7 @@
 		"PHR10LIM001" : "Import in progress. ",
 		"enteruniquename" : "Enter Unique Name",
 		"configureatleastonejob" : "Configure atleast one Job!",
+		"hasdependencies" : "Feature has dependencies.",
 		"serviceerror" : "Service Error"
 	},
 	"successCodes" : {

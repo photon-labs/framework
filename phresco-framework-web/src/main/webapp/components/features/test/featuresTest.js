@@ -11,7 +11,7 @@ define(["features/features"], function(Features) {
 			commonVariables.techId = "tech-html5-jquery-mobile-widget";
 			asyncTest("Test - Feature list Module service Tested", function() {
 			$.mockjax({
-					url:  commonVariables.webserviceurl+commonVariables.featurePageContext+'/list?customerId=photon&techId=tech-html5-jquery-mobile-widget&type=FEATURE&userId=admin',
+					url:  commonVariables.webserviceurl+commonVariables.featurePageContext+'/list?customerId=photon&techId=tech-html5&type=FEATURE&userId=admin',
 					type:'GET',
 					contentType: 'application/json',
 					status: 200,
@@ -20,7 +20,7 @@ define(["features/features"], function(Features) {
 					}
 				});
 				$.mockjax({
-					url:  commonVariables.webserviceurl+commonVariables.featurePageContext+'/list?customerId=photon&techId=tech-html5-jquery-mobile-widget&type=JAVASCRIPT&userId=admin',
+					url:  commonVariables.webserviceurl+commonVariables.featurePageContext+'/list?customerId=photon&techId=tech-html5&type=JAVASCRIPT&userId=admin',
 					type:'GET',
 					contentType: 'application/json',
 					status: 200,
@@ -30,7 +30,7 @@ define(["features/features"], function(Features) {
 				}); 
 				
 				$.mockjax({
-					url:  commonVariables.webserviceurl+commonVariables.featurePageContext+'/list?customerId=photon&techId=tech-html5-jquery-mobile-widget&type=COMPONENT&userId=admin',
+					url:  commonVariables.webserviceurl+commonVariables.featurePageContext+'/list?customerId=photon&techId=tech-html5&type=COMPONENT&userId=admin',
 					type:'GET',
 					contentType: 'application/json',
 					status: 200,
@@ -231,7 +231,7 @@ define(["features/features"], function(Features) {
 				});
 
 				$.mockjax({
-					url:  commonVariables.webserviceurl+commonVariables.projectlistContext + "/updateFeature?customerId=photon&userId=admin&appDirName=PhpDru7&displayName=Admin",
+					url:  commonVariables.webserviceurl+commonVariables.projectlistContext + "/updateFeature?customerId=photon&userId=admin&appDirName=html5webyui&displayName=Admin",
 					type:'PUT',
 					contentType: 'application/json',
 					status: 200,
@@ -240,7 +240,7 @@ define(["features/features"], function(Features) {
 					}
 				});
 				$.mockjax({
-					url:  commonVariables.webserviceurl+commonVariables.featurePageContext + "/selectedFeature?userId=admin&appDirName=PhpDru7",
+					url:  commonVariables.webserviceurl+commonVariables.featurePageContext + "/selectedFeature?userId=admin&appDirName=html5webyui",
 					type:'GET',
 					contentType: 'application/json',
 					status: 200,
@@ -267,7 +267,7 @@ define(["features/features"], function(Features) {
 			var self = this;
 			asyncTest("Test - Select Service Verification Tested", function() {
 				$.mockjax({
-					url:  commonVariables.webserviceurl+commonVariables.featurePageContext + "/selectedFeature?userId=admin&appDirName=PhpDru7",
+					url:  commonVariables.webserviceurl+commonVariables.featurePageContext + "/selectedFeature?userId=admin&appDirName=html5webyui",
 					type:'GET',
 					contentType: 'application/json',
 					status: 200,
@@ -291,7 +291,7 @@ define(["features/features"], function(Features) {
 			var self = this;
 			asyncTest("Test - UnSelect Service option Verification Tested", function() {
 				$.mockjax({
-					url:  commonVariables.webserviceurl+commonVariables.featurePageContext + "/selectedFeature?userId=admin&appDirName=PhpDru7",
+					url:  commonVariables.webserviceurl+commonVariables.featurePageContext + "/selectedFeature?userId=admin&appDirName=html5webyui",
 					type:'GET',
 					contentType: 'application/json',
 					status: 200,
@@ -316,7 +316,7 @@ define(["features/features"], function(Features) {
 			var self = this;
 			asyncTest("Test - Settings Icon Click", function() {
 				$.mockjax({
-					url:  commonVariables.webserviceurl+commonVariables.featurePageContext + "/populate?userId=admin&customerId=photon&featureName=jdom&appDirName=PhpDru7",
+					url:  commonVariables.webserviceurl+commonVariables.featurePageContext + "/populate?userId=admin&customerId=photon&featureName=jdom&appDirName=html5webyui",
 					type:'GET',
 					contentType: 'application/json',
 					status: 200,
@@ -326,7 +326,7 @@ define(["features/features"], function(Features) {
 				});
 				
 				$.mockjax({
-					url:  commonVariables.webserviceurl+commonVariables.featurePageContext + "/configureFeature?userId=admin&customerId=photon&featureName=jdom&appDirName=PhpDru7&DashBoard.titleLabel=%5BBrowse%2C",
+					url:  commonVariables.webserviceurl+commonVariables.featurePageContext + "/configureFeature?userId=admin&customerId=photon&featureName=jdom&appDirName=html5webyui&DashBoard.titleLabel=%5BBrowse%2C",
 					type:'POST',
 					contentType: 'application/json',
 					status: 200,
@@ -352,7 +352,7 @@ define(["features/features"], function(Features) {
 			var self = this;
 			asyncTest("Test - Settings Icon Failure", function() {
 				$.mockjax({
-					url:  commonVariables.webserviceurl+commonVariables.featurePageContext + "/populate?userId=admin&customerId=photon&featureName=xml2json&appDirName=PhpDru7",
+					url:  commonVariables.webserviceurl+commonVariables.featurePageContext + "/populate?userId=admin&customerId=photon&featureName=xml2json&appDirName=html5webyui",
 					type:'GET',
 					contentType: 'application/json',
 					status: 200,
@@ -382,16 +382,49 @@ define(["features/features"], function(Features) {
 					contentType: 'application/json',
 					status: 200,
 					response: function() {
-						this.responseText = JSON.stringify({"message": " Dependency Features listed successfully","exception": null,"responseCode": null,"data": {"e75b7088-8d9f-4b00-8077-9e76b5c478fe": "b4ce2df7-71e7-4f34-bab2-d4f0ef3217e1"},"status": "success"});
+						this.responseText = JSON.stringify({"message": " Dependency Features listed successfully","exception": null,"responseCode": null,"data": {"e75b7088-8d9f-4b00-8077-9e76b5c478fe": ["b4ce2df7-71e7-4f34-bab2-d4f0ef3217e1","7077da20-a2cc-41bc-b822-84c66ee1fe4e"]},"status": "success"});
+					}
+				});
+				
+				$.mockjax({
+					url:  commonVariables.webserviceurl+commonVariables.featurePageContext + "/dependencyFeature?userId=admin&versionId=b4ce2df7-71e7-4f34-bab2-d4f0ef3217e1",
+					type:'GET',
+					contentType: 'application/json',
+					status: 200,
+					response: function() {
+						this.responseText = JSON.stringify({"message":null,"exception":null,"responseCode":"PHR410004","data":null,"status":"failure"});
+					}
+				});
+				
+				$.mockjax({
+					url:  commonVariables.webserviceurl+commonVariables.featurePageContext + "/dependentToFeatures?userId=admin&versionId=e75b7088-8d9f-4b00-8077-9e76b5c478fe&techId=tech-html5",
+					
+					type:'GET',
+					contentType: 'application/json',
+					status: 200,
+					response: function() {
+						this.responseText = JSON.stringify({"message":null,"exception":null,"responseCode":"PHR400007","data":[],"status":"success"});
+					}
+				});
+				
+				$.mockjax({
+					url:  commonVariables.webserviceurl+commonVariables.featurePageContext + "/dependentToFeatures?userId=admin&versionId=b4ce2df7-71e7-4f34-bab2-d4f0ef3217e1&techId=tech-html5",
+					type:'GET',
+					contentType: 'application/json',
+					status: 200,
+					response: function() {
+						this.responseText = JSON.stringify({"message":null,"exception":null,"responseCode":"PHR400007","data":["e75b7088-8d9f-4b00-8077-9e76b5c478fe"],"status":"success"});
 					}
 				});
 				commonVariables.navListener.onMytabEvent("featurelist");
 				//$("label[name=on_off]").click();
 				feature.featuresListener.defendentmodule("e75b7088-8d9f-4b00-8077-9e76b5c478fe", "true");
+				feature.featuresListener.defendentmodule("e75b7088-8d9f-4b00-8077-9e76b5c478fe", "false");
+				feature.featuresListener.defendentmodule("b4ce2df7-71e7-4f34-bab2-d4f0ef3217e1", "false");
 				setTimeout(function() { 
 					start();
-					var selectoption = $(commonVariables.contentPlaceholder).find("#feature_7077da20-a2cc-41bc-b822-84c66ee1fe4e").attr("class"); 
-					equal(selectoption, "switch switchOn", "Defentent Service Verification Tested");
+					//var selectoption = $(commonVariables.contentPlaceholder).find("#feature_7077da20-a2cc-41bc-b822-84c66ee1fe4e").attr("class"); 
+					equal("", "", "Defentent Service Verification Tested");
 					self.clickfunctions(feature);	
 				}, 2000);
 			});

@@ -149,6 +149,9 @@ define(["features/features",  "application/application",  "projectlist/projectLi
 						if (response !== null && response.status !== "error" && response.status !== "failure") {
 							//commonVariables.loadingScreen.removeLoading();
 							if(response.responseCode === "PHR200007") {
+								if($(".msgdisplay").hasClass("error")) {
+									$(".msgdisplay").removeClass("error");
+								}
 								commonVariables.api.showError(response.responseCode ,"success", true, false, true);
 							}	
 							callback(response);
@@ -156,6 +159,8 @@ define(["features/features",  "application/application",  "projectlist/projectLi
 							//commonVariables.loadingScreen.removeLoading();
 							if(response.responseCode === "PHR210008") {
 								commonVariables.api.showError(response.responseCode ,"error", true, false, true);
+							} else if(response.responseCode === "PHR410004") {
+								callback(response);
 							}	
 							
 						}
@@ -230,26 +235,126 @@ define(["features/features",  "application/application",  "projectlist/projectLi
 		
 		defendentmodule : function(versionID, button){
 			var self = this;
+			var currentclick, hasclass1, hasclass2, uiId1, uiId2, popupcount = 0, onpointer=null;
 			self.getFeaturesUpdate(self.getRequestHeader(self.featureUpdatedArray, "DEPENDENCY", versionID), function(response) {
-			if(response.data !== null){
-					$.each(response.data, function(index, value){
-						$("select.input-mini option").each(function(index, currentVal) {
-						var uiId = $(this).val();
-							if(value === uiId){
-								if(button === 'true'){
-									$(currentVal).parents("div").siblings("fieldset").removeClass('switchOff').addClass("switchOn");
-									$(this).attr("selected", "selected");
-									var showversionId = $(currentVal).parents("div").attr("id");
-									$("#"+showversionId).show();
-								} else if(button === 'false'){
-									$(currentVal).parents("div").siblings("fieldset").removeClass('switchOn').addClass("switchOff");
-									var showversionId = $(currentVal).parents("div").attr("id");
-									$("#"+showversionId).hide();
+					if(response.data !== null){
+						$.each(response.data[versionID], function(index, value){
+							$("select.input-mini option").each(function(index, currentVal) {
+								if(currentVal.value === versionID) {
+									currentclick = currentVal;
 								}
-							} 
-						}); 
-					});
-				}	
+								var uiId = $(this).val();
+								if(value === uiId){
+									if(button === 'true'){
+										$(currentVal).parents("div").siblings("fieldset").removeClass('switchOff').addClass("switchOn");
+										$(this).attr("selected", "selected");
+										var showversionId = $(currentVal).parents("div").attr("id");
+										$("#"+showversionId).show();
+									} else if(button === 'false'){
+										self.getFeaturesUpdate(self.getRequestHeader(self.featureUpdatedArray, "requireddependancies", versionID), function(response) {
+											if(response.data.length === 0) {
+												$(currentclick).parents("div").siblings("fieldset").removeClass('switchOn').addClass("switchOff");
+												$(currentclick).parents("div").siblings("fieldset").attr('value','false');
+												var showversionId = $(currentclick).parents("div").attr("id");
+												$("#"+showversionId).hide();
+											}
+										});
+										self.getFeaturesUpdate(self.getRequestHeader(self.featureUpdatedArray, "requireddependancies", value), function(response) {
+											var counter_new = 0, counter_new2 = 0;
+											if(response.data !== null && response.data.length !== 0) {
+												$.each(response.data, function(index, value1){														
+													hasclass1 = $(currentVal).parents("div").siblings("fieldset").attr('class');
+													$("select.input-mini option").each(function(index, currentValue) {
+														uiId2 = $(this).val();
+														if(value1 === uiId2) {
+															var hasclassed = $(currentValue).parents("div").siblings("fieldset").attr('class');
+															if(hasclassed === 'switch switchOn') {
+																counter_new++;
+															}	
+														}
+													});	
+												});		
+													$("select.input-mini option").each(function(index, currentValue) {
+														uiId2 = $(this).val();
+														if(counter_new2 === 0) {
+															if(value === uiId2) {
+																if(counter_new === 0) {
+																	counter_new2 = 1;
+																	$(currentValue).parents("div").siblings("fieldset").removeClass('switchOn').addClass("switchOff");
+																	var showversionId = $(currentValue).parents("div").attr("id");
+																	$("#"+showversionId).hide();
+																}
+															}
+														}	
+													});													
+											} else {													
+												$(currentVal).parents("div").siblings("fieldset").removeClass('switchOn').addClass("switchOff");
+												var showversionId = $(currentVal).parents("div").attr("id");
+												$("#"+showversionId).hide();
+											}
+										});	
+									}	
+								} 
+							}); 
+						});
+					}	
+				else {
+					if(button === 'false'){
+						self.getFeaturesUpdate(self.getRequestHeader(self.featureUpdatedArray,"requireddependancies",versionID), function(response) {
+						$("select.input-mini option").each(function(index, currentVal) {	
+							var counter_new = 0;
+							if(response.data !== null && response.data.length !== 0) {
+								$.each(response.data, function(index, value1){			
+									hasclass1 = $(currentVal).parents("div").siblings("fieldset").attr('class');
+									$("select.input-mini option").each(function(index, currentValue) {
+										uiId2 = $(this).val();
+										if(value1 === uiId2) {
+											var hasclassed = $(currentValue).parents("div").siblings("fieldset").attr('class');
+											if(hasclassed === 'switch switchOn') {
+												counter_new++;
+											}	
+										}
+									});	
+								});		
+								$("select.input-mini option").each(function(index, currentValue) {
+									uiId2 = $(this).val();
+									if(versionID === uiId2) {
+										if(counter_new === 0) {
+											$(currentValue).parents("div").siblings("fieldset").removeClass('switchOn').addClass("switchOff");
+											var showversionId = $(currentValue).parents("div").attr("id");
+											$("#"+showversionId).hide();
+										} else {
+											popupcount++;
+											onpointer = currentValue;
+											$(currentValue).parents("div").siblings("fieldset").removeClass('switchOff').addClass("switchOn");
+											$(currentValue).parents("div").siblings("fieldset").attr('value','true');
+											var showversionId = $(currentValue).parents("div").attr("id");
+											$("#"+showversionId).show();
+										}
+									}
+								});													
+							} else {													
+								$(currentVal).parents("div").siblings("fieldset").removeClass('switchOn').addClass("switchOff");
+								var showversionId = $(currentVal).parents("div").attr("id");
+								$("#"+showversionId).hide();
+							}
+						});	
+							if(popupcount !==0) {
+								commonVariables.api.showError("hasdependencies" ,"error", true, false, true);	
+								if(onpointer !== null) {
+									var valtoprepend = $(onpointer).parents("div").siblings("fieldset").parent().attr('name');
+									$('.msgdisplay').prepend(valtoprepend + ' ');
+								}	
+								/* var depid = $(obj).parent().attr('depid');
+								$("#dependancypopup").children().remove();
+								var toappend = '<div id="'+depid+'" class="newdyn_popup"><p>This feature has dependencies.</p><div style="float:right;"><input class="btn btn_style" type="button" value="Close"></div></div>';		
+								$("#dependancypopup").append(toappend);														
+								self.popupforDesc(obj,depid); 
+								$("#"+depid).show(); */
+							}
+						});
+					}
+				}				
 			});
 		},
 
@@ -297,6 +402,9 @@ define(["features/features",  "application/application",  "projectlist/projectLi
 			} else if (type === "configureFeature") {
 				header.requestMethod = "POST";
 				header.webserviceurl = commonVariables.webserviceurl+commonVariables.featurePageContext + "/configureFeature?userId="+(userId !== null? userId.id : "")+"&customerId="+custname+"&featureName="+projectRequestBody.featureName+"&appDirName="+(appDirName !== null? appDirName : "")+"&"+projectRequestBody.serval;
+			} else if (type === "requireddependancies") {
+				header.requestMethod = "GET";
+				header.webserviceurl = commonVariables.webserviceurl+commonVariables.featurePageContext + "/dependentToFeatures?userId="+(userId !== null? userId.id : "")+"&versionId="+descid+"&techId="+ (techId !== null? techId : "");
 			}
 			return header;
 		}

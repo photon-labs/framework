@@ -70,17 +70,17 @@ define(["features/listener/featuresListener"], function() {
 						if(JSON.stringify(value.appliesTo) !== "null"){
 							$.each(value.appliesTo, function(index, value){
 								if(value.required === true && value.techId === techid){
-									fieldset = '<fieldset class="switch default" id="feature_'+ id +'" value="false"><label value="false"></label><label class="on" value="true"></label></fieldset>';
+									fieldset = '<fieldset class="switch default" depid="dep_'+id+'" id="feature_'+ id +'" value="false"><label value="false"></label><label class="on" value="true"></label></fieldset>';
 									return false;
 								} else {
-									fieldset = '<fieldset class="switch switchOff" id="feature_'+ id +'" value="false"><label class="off" name="on_off" value="false"></label><label class="on" name="on_off" value="true"></label></fieldset>';
+									fieldset = '<fieldset class="switch switchOff" depid="dep_'+id+'" id="feature_'+ id +'" value="false"><label class="off" name="on_off" value="false"></label><label class="on" name="on_off" value="true"></label></fieldset>';
 								}
 								
 							});							
 						}
 					});
 				}else {							
-					fieldset = '<fieldset class="switch switchOff" id="feature_'+ id +'" value="false"><label class="off" name="on_off" value="false"></label><label class="on" name="on_off" value="true" ></label></fieldset>';
+					fieldset = '<fieldset class="switch switchOff" depid="dep_'+id+'" id="feature_'+ id +'" value="false"><label class="off" name="on_off" value="false"></label><label class="on" name="on_off" value="true" ></label></fieldset>';
 				}
 				return fieldset;
 			});
@@ -262,13 +262,15 @@ define(["features/listener/featuresListener"], function() {
 			$('#moduleContent ,#jsibrariesContent, #componentsContent').on('DOMMouseScroll mousewheel', function (e) {
 				if(e.originalEvent.detail > 0 || e.originalEvent.wheelDelta < 0) { 
 					$('.dyn_popup_close').click();
-					$('.newclose').click();
+					$('.confclose').parent().parent().hide();
+					$('.confclose').click();
 				} else {
 					$('.dyn_popup_close').click();
-					$('.newclose').click();
+					$('.confclose').parent().parent().hide();
+					$('.confclose').click();
 				}
 			});
-
+			
 			$('.switch').css('background', 'url("themes/default/images/Phresco/on_off_switch.png")');
 			
 			$("label[name=on_off]").unbind();

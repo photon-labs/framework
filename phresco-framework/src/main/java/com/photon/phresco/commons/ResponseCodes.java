@@ -184,6 +184,10 @@ public interface ResponseCodes {
 	String PHR400006 = "PHR400006"; // feature configurations updated successfully
 	String PHR410008 = "PHR410008"; // unable to update feature configurations
 	String PHR410009 = "PHR410009"; // failed to fetch environments from configuration file
+	String PHR410010 = "PHR410010"; // unauthorized user
+	String PHR410011 = "PHR410011"; // unable to fetch dependent features
+	String PHR400007 = "PHR400007"; // dependency features fetched successfully
+	String PHR400008 = "PHR400008"; // dependency features Not available
 	
 	/*
 	 * Code Quality Page

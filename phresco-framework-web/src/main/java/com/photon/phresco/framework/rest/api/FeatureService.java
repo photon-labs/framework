@@ -46,7 +46,6 @@ import org.apache.commons.lang.StringUtils;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-import com.photon.phresco.api.ApplicationProcessor;
 import com.photon.phresco.api.ConfigManager;
 import com.photon.phresco.commons.FrameworkConstants;
 import com.photon.phresco.commons.ResponseCodes;
@@ -55,33 +54,23 @@ import com.photon.phresco.commons.model.ArtifactElement;
 import com.photon.phresco.commons.model.ArtifactGroup;
 import com.photon.phresco.commons.model.ArtifactInfo;
 import com.photon.phresco.commons.model.CoreOption;
-import com.photon.phresco.commons.model.Customer;
 import com.photon.phresco.commons.model.FeatureConfigure;
-import com.photon.phresco.commons.model.ProjectInfo;
 import com.photon.phresco.commons.model.PropertyTemplate;
-import com.photon.phresco.commons.model.RepoInfo;
 import com.photon.phresco.commons.model.RequiredOption;
 import com.photon.phresco.commons.model.SelectedFeature;
 import com.photon.phresco.configuration.Configuration;
 import com.photon.phresco.configuration.Environment;
+import com.photon.phresco.exception.ConfigurationException;
 import com.photon.phresco.exception.PhrescoException;
 import com.photon.phresco.framework.PhrescoFrameworkFactory;
-import com.photon.phresco.framework.api.ProjectManager;
-import com.photon.phresco.framework.model.DependantParameters;
 import com.photon.phresco.framework.rest.api.util.FrameworkServiceUtil;
-import com.photon.phresco.plugins.model.Module.Configurations.Configuration.Parameter;
 import com.photon.phresco.plugins.model.Mojos.ApplicationHandler;
-import com.photon.phresco.plugins.util.ModulesProcessor;
 import com.photon.phresco.plugins.util.MojoProcessor;
 import com.photon.phresco.service.client.api.ServiceManager;
 import com.photon.phresco.util.Constants;
-import com.photon.phresco.util.PhrescoDynamicLoader;
 import com.photon.phresco.util.ServiceConstants;
 import com.photon.phresco.util.Utility;
-import com.phresco.pom.exception.PhrescoPomException;
-import com.phresco.pom.util.PomProcessor;
 import com.sun.jersey.api.client.ClientResponse.Status;
-import com.photon.phresco.exception.ConfigurationException;
 
 /**
  * The Class FeatureService.
@@ -184,7 +173,7 @@ public class FeatureService extends RestBase implements ServiceConstants, Consta
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response getDependencyFeature(@QueryParam(REST_QUERY_USERID) String userId, @QueryParam("versionId") String versionId) {
 		ResponseInfo<Map<String,String>> responseData = new ResponseInfo<Map<String,String>>();
-		Map<String,String> map = new HashMap<String, String>();
+		Map<String,List<String>> map = new HashMap<String, List<String>>();
 		try {
 			ServiceManager serviceManager = CONTEXT_MANAGER_MAP.get(userId);
 			if (serviceManager == null) {
@@ -198,11 +187,13 @@ public class FeatureService extends RestBase implements ServiceConstants, Consta
 			ArtifactInfo artifactInfo = serviceManager.getArtifactInfo(versionId);
 			List<String> dependencyIds = artifactInfo.getDependencyIds();
 			if (CollectionUtils.isNotEmpty(dependencyIds)) {
+				List<String> depVersionIdList = new ArrayList<String>();
 				for (String dependencyId : dependencyIds) {
 					ArtifactInfo artifact = serviceManager.getArtifactInfo(dependencyId);
 					String depeVersionId = artifact.getId();
-					map.put(artifactInfo.getId(), depeVersionId);
+					depVersionIdList.add(depeVersionId);
 				}
+				map.put(artifactInfo.getId(), depVersionIdList);
 				status = RESPONSE_STATUS_SUCCESS;
 				successCode = PHR400003;
 				ResponseInfo<Map<String,String>> finalOutput = responseDataEvaluation(responseData, null,
@@ -221,6 +212,64 @@ public class FeatureService extends RestBase implements ServiceConstants, Consta
 					null, status, errorCode);
 			return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*")
 					.build();
+		}
+	}
+	
+	
+	/**
+	 * To get the dependent to Features
+	 * @param userId
+	 * @param versionId
+	 * @param techId
+	 * @return
+	 */
+	@GET
+	@Path("/dependentToFeatures")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response getDependentToFeatures(@QueryParam(REST_QUERY_USERID) String userId, @QueryParam("versionId") String versionId, @QueryParam("techId") String techId) {
+		ResponseInfo<List<String>> responseData = new ResponseInfo<List<String>>();
+		try {
+			ServiceManager serviceManager = CONTEXT_MANAGER_MAP.get(userId);
+			if (serviceManager == null) {
+				status = RESPONSE_STATUS_FAILURE;
+				errorCode = PHR410010;
+				ResponseInfo<Map<String,String>> finalOutput = responseDataEvaluation(responseData, null,
+						null, status, errorCode);
+				return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin",
+				"*").build();
+			}
+
+			List<ArtifactGroup> artifactGroups = serviceManager.getFeaturesByTechId(techId);
+			List<String> artifactInfoIds = new ArrayList<String>();
+			if (CollectionUtils.isNotEmpty(artifactGroups)) {
+				for (ArtifactGroup artifactGroup : artifactGroups) {
+				
+					List<ArtifactInfo> versions = artifactGroup.getVersions();
+					for (ArtifactInfo artifactInfo : versions) {
+						if (CollectionUtils.isNotEmpty(artifactInfo.getDependencyIds()) && artifactInfo.getDependencyIds().contains(versionId)) {
+						System.out.println("name===> " + artifactGroup.getName());
+							artifactInfoIds.add(artifactInfo.getId());
+						}
+					}
+				}
+				status = RESPONSE_STATUS_SUCCESS;
+				successCode = PHR400007;
+				ResponseInfo<List<String>> finalOutput = responseDataEvaluation(responseData, null,
+						artifactInfoIds, status, successCode);
+				return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
+			}
+			status = RESPONSE_STATUS_SUCCESS;
+			errorCode = PHR400008;
+			ResponseInfo<Map<String,String>> finalOutput = responseDataEvaluation(responseData, null,
+					null, status, errorCode);
+			return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
+		} catch (PhrescoException e) {
+			status = RESPONSE_STATUS_ERROR;
+			errorCode = PHR410011;
+			ResponseInfo<Map<String,String>> finalOutput = responseDataEvaluation(responseData, e,
+					null, status, errorCode);
+			return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*")
+			.build();
 		}
 	}
 
