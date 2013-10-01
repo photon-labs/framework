@@ -841,6 +841,7 @@ define(["framework/widget", "framework/templateProvider"], function() {
 				finalHeight = height - resultvalue;
 				$(".unit_progress").css("height", finalHeight + 10);
 				//$('.unit_progress').find('#logContent').css("height", finalHeight - 20);
+				self.copyLog();
 			},
 			
 			// Close console window - Added by sudhakar
@@ -1058,6 +1059,21 @@ define(["framework/widget", "framework/templateProvider"], function() {
 				}
 				// Return the parsed data.
 				return( arrData );
+			},
+			
+			copyLog : function(){
+				$("#buildCopyLog, #copyLog").zclip({
+					path: "lib/ZeroClipboard.swf",
+					copy: function(){
+						return $("#logContent").text() + $("#testConsole").text();
+					}
+				});
+				$("#codeLog").zclip({
+					path: "lib/ZeroClipboard.swf",
+					copy: function(){
+						return $("#iframePart").text();
+					}
+				});
 			},
 		}
 	);

@@ -575,6 +575,7 @@ define(["build/listener/buildListener"], function() {
 			//self.showTreeContent(current);
 		},
 		
+		
 		/***
 		 * Bind the action listeners. The bindUI() is called automatically after the render is complete 
 		 *
@@ -778,12 +779,6 @@ define(["build/listener/buildListener"], function() {
 				commonVariables.navListener.copyPath(paramJson);
 			});
 			
-			//To copy the console log content to the clip-board
-			$('#buildCopyLog').unbind("click");
-			$('#buildCopyLog').click(function() {
-				commonVariables.hideloading = true;
-				commonVariables.navListener.copyToClipboard($('#logContent'));
-			});
 			
 			$(window).resize(function() {
 				$(".dyn_popup").hide();

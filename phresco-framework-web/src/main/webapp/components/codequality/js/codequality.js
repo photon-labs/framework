@@ -152,10 +152,10 @@ define(["codequality/listener/codequalityListener"], function() {
 			});
 			
 			//To copy the console log content to the clip-board
-			$('#codeLog').unbind("click");
+			/* $('#codeLog').unbind("click");
 			$('#codeLog').click(function() {
 				commonVariables.navListener.copyToClipboard($('#iframePart'));
-			});
+			}); */
 			
 			/* $(window).resize(function() {
 			

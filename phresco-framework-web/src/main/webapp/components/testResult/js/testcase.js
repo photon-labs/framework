@@ -175,10 +175,10 @@ define(["testResult/listener/testResultListener"], function() {
 			});
 			
 			//To copy the console log content to the clip-board
-			$('#copyLog').unbind("click");
+			/* $('#copyLog').unbind("click");
 			$('#copyLog').click(function() {
 				commonVariables.navListener.copyToClipboard($('#testConsole'));
-			});
+			}); */
 			
 			$("input[name=updateTestCase]").unbind("click");
 			$('input[name=updateTestCase]').click(function() {
@@ -211,11 +211,11 @@ define(["testResult/listener/testResultListener"], function() {
 			});
 			
 			//To copy the console log content to the clip-board
-			$("#buildCopyLog").unbind("click");
+			/* $("#buildCopyLog").unbind("click");
 			$("#buildCopyLog").click(function() {
 				commonVariables.hideloading = true;
 				commonVariables.navListener.copyToClipboard($("#testConsole"));
-			});
+			}); */
 			
 			Clazz.navigationController.mainContainer = commonVariables.contentPlaceholder;
 			self.tableScrollbar();

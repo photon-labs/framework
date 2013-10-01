@@ -139,10 +139,10 @@ define(["framework/widgetWithTemplate", "settings/listener/settingsListener"], f
 			});
    			
    		//To copy the console log content to the clip-board
-			$('#copyLog').unbind("click");
+			/* $('#copyLog').unbind("click");
 			$('#copyLog').click(function() {
 				commonVariables.navListener.copyToClipboard($('#testConsole'));
-			});
+			}); */
    			
    			$('input[name=save]').click(function() {
    				self.save.dispatch();
