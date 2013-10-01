@@ -568,7 +568,7 @@ html, body {
 
 a.dropdown-toggle b.caret  {
 	border-bottom-color: #FFF !important;
-    border-top-color: #FFF !important;
+    border-top-color: #cccccc !important;
 }
 
 .cust_sel {
@@ -1376,8 +1376,9 @@ img[name="close"] {
 	background-color:#DA4F49 !important;
 }
 
-#appinfo .dropdown-menu {
-	/*max-height: 93px !important;*/
+.dropdown-scroll {
+	max-height:105px !important;
+	overflow:auto !important;
 }
 
 .show-tick.open ul{
@@ -2173,7 +2174,6 @@ img[name="close"] {
 
 .scroll-bar {
     width:4px !important;
-	height:100% !important;
 }
 
 .scroll-up {
@@ -2187,9 +2187,11 @@ img[name="close"] {
 .scroll-line {
     background-repeat:no-repeat;
     background-position:center;
-    width:7px !important;
     top:7px;
-    height:90%!important;
+	/*background:#929292;*/
+	width:3px !important;
+	/*opacity:.6;*/
+	margin-top:-7px;
 }
 
 .scroll-hold{
@@ -2291,13 +2293,6 @@ img[name="close"] {
 }
 .sort-decoration .th-inner {
   width: 100%;
-}
-.scroll-line {
-	/*background:#929292;*/
-	width:3px !important;
-	/*opacity:.6;*/
-	height:100% !important;
-	margin-top:-7px;
 }
 
 .scroll-slider-inner-stp {
@@ -2457,19 +2452,21 @@ img[name="close"] {
 }
 
 .dyn_popup .fetchSql_table tr td {
-	width:45% !important;
+	width:50% !important;
 }
 .fetchSql_table td ul {
 	border: 1px solid #c7c7c7;
 	border-radius:6px;
-	min-height: 150px;
+	min-height: 65px;
 	cursor: move;
+	overflow:auto;
 }
 
 .fetchSql_table td ul li {
 	border-bottom:1px solid #ccc;
 	line-height:25px !important;
 	padding:0 8px !important;
+	width:159px;
 }
 
 
@@ -2498,7 +2495,9 @@ img[name="close"] {
 }
 
 form[name="deployForm"] li{
-	margin:5px 0 5px 2px !important;
+	margin:0px 0 5px 0px !important;
+	float:left;
+	width:192px;
 }
 
 form[name="deployForm"] li input[type="checkbox"]{
@@ -2506,8 +2505,8 @@ form[name="deployForm"] li input[type="checkbox"]{
 }
 
 form[name="deployForm"] {
-	margin-bottom:10px !important;
-	/*width:230px;*/
+	margin-bottom:7px !important;
+	width:384px;
 }
 /* ****************************************************************** STYLES FOR CONFIGUARATION PAGE ************************************************************************** */
 
