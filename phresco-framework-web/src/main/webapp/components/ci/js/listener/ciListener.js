@@ -1621,7 +1621,7 @@ define([], function() {
 				jsonObject.regexExtractor = $(this).find($("input[name=regexExtractor]")).is(':checked'); 
 				jsonObject.responseField = $(this).find($("select[name=responseField]")).val();
 				jsonObject.referenceName = $(this).find($("input[name=referenceName]")).val();
-				jsonObject.regex = $(this).find($("input[name=regex]")).val();
+				jsonObject.regex = $(this).find($("textarea[name=regex]")).val();
 				jsonObject.template = $(this).find($("input[name=template]")).val();
 				jsonObject.matchNo = $(this).find($("input[name=matchNo]")).val();
 				jsonObject.defaultValue = $(this).find($("input[name=defaultValue]")).val();

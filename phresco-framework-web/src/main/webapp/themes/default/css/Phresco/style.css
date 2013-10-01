@@ -4833,6 +4833,10 @@ select[name="reportDataType"], input[name="pdfName"] {
     margin: -10px 0 0 !important;
 }
 
+textarea[name="regex"] {
+	height: 30px;
+}
+
 .pdfheight{
 	height: 70px !important;
 	overflow: auto;
