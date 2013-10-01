@@ -208,7 +208,7 @@ public class ProjectManagerImpl implements ProjectManager, FrameworkConstants, C
 			S_LOGGER.debug("Entering Method ProjectManagerImpl.create(ProjectInfo projectInfo)");
 		}
 		ClientResponse response = null;
-		BufferedInputStream eclipseReader = null;
+	//	BufferedInputStream eclipseReader = null;
 		try {
 			response = serviceManager.createProject(projectInfo);
 		} catch (Exception e) {
@@ -252,8 +252,8 @@ public class ProjectManagerImpl implements ProjectManager, FrameworkConstants, C
 							buildArgCmds.add(HYPHEN_F);
 							buildArgCmds.add(pomFileName);
 						}
-						eclipseReader = applicationManager.performAction(projectInfo, ActionType.ECLIPSE, buildArgCmds, baseDir);
-						int available = eclipseReader.available();
+						applicationManager.performAction(projectInfo, ActionType.ECLIPSE, buildArgCmds, baseDir);
+						/* int available = eclipseReader.available();
 						while (available != 0) {
 							byte[] buf = new byte[available];
 			                int read = eclipseReader.read(buf);
@@ -263,7 +263,7 @@ public class ProjectManagerImpl implements ProjectManager, FrameworkConstants, C
 			                	// 
 			                }
 			                available = eclipseReader.available();
-						}
+						} */
 					}
 
 				}
@@ -271,7 +271,7 @@ public class ProjectManagerImpl implements ProjectManager, FrameworkConstants, C
 				throw new PhrescoException(e); 
 			} catch (IOException e) {
 				throw new PhrescoException(e);
-			} finally {
+			} /* finally {
 				try {
 					if (eclipseReader != null) {
 						eclipseReader.close();
@@ -279,7 +279,7 @@ public class ProjectManagerImpl implements ProjectManager, FrameworkConstants, C
 				} catch (IOException e) {
 					throw new PhrescoException(e);
 				}
-			}
+			} */
 		} else if(response.getStatus() == 401){
 			throw new PhrescoException("Session expired");
 		} else {

@@ -757,6 +757,8 @@ public class ProjectService extends RestBase implements FrameworkConstants, Serv
 									ACCESS_CONTROL_ALLOW_ORIGIN,ALL_HEADER).build();
 						}
 					}
+					String applicationHome = FrameworkServiceUtil.getApplicationHome(appDirName);
+					Utility.killProcess(applicationHome, "eclipse");
 				}
 			}
 			
