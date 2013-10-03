@@ -116,7 +116,7 @@
             <port>7070</port>
             <username/>
             <password/>
-            <context>service</context>
+            <context>service-test</context>
 	    <additional_context>/rest/api</additional_context>
         </WebService>
         
