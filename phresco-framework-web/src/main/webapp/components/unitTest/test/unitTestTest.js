@@ -112,6 +112,18 @@ define(["unitTest/unitTest"], function(UnitTest) {
 				setTimeout(function() {
 					start();
 					equal($('.testsuiteClm a[name=testDescription]').text(), "SampleUnitTest", "Unit test testsuites render tested");
+					self.showTestsuiteConsole();
+				}, 3000);
+			});
+		},
+
+		showTestsuiteConsole : function() {
+			var self = this;
+			asyncTest("Unit Test Testsuite Open Console Test", function() {
+				$(commonVariables.contentPlaceholder).find('#consoleImg').click();
+				setTimeout(function() {
+					start();
+					equal($('#consoleImg').attr('data-flag'), "false", "Unit test testsuite open console tested");
 					self.graphicalViewTest();
 				}, 3000);
 			});
@@ -119,11 +131,11 @@ define(["unitTest/unitTest"], function(UnitTest) {
 
 		graphicalViewTest : function() {
 			var self = this;
-			asyncTest("Unit Test Graphical View Test", function() {
+			asyncTest("Unit Test Testsuite Graphical View Test", function() {
 				$(commonVariables.contentPlaceholder).find('.table1, .table2').click();
 				setTimeout(function() {
 					start();
-					equal($("#testSuites").css("display"), "block", "Unit test graphical view tested");
+					equal($("#testSuites").css("display"), "block", "Unit test testsuite graphical view tested");
 					self.tabularViewTest();
 				}, 3000);
 			});
@@ -131,11 +143,11 @@ define(["unitTest/unitTest"], function(UnitTest) {
 
 		tabularViewTest : function() {
 			var self = this;
-			asyncTest("Unit Test Tabular View Test", function() {
+			asyncTest("Unit Test Testsuite Tabular View Test", function() {
 				$(commonVariables.contentPlaceholder).find('.graph1, .graph2').click();
 				setTimeout(function() {
 					start();
-					equal($("#graphView").css("display"), "block", "Unit test tabular view tested");
+					equal($("#graphView").css("display"), "block", "Unit test testsuite tabular view tested");
 					self.techOptionChangeTest();
 				}, 3000);
 			});
@@ -262,29 +274,6 @@ define(["unitTest/unitTest"], function(UnitTest) {
 				setTimeout(function() {
 					start();
 					equal($('.testsuiteClm a[name=testDescription]').text(), "SampleUnitTest", "Unit test run test-btn click tested");
-					self.testcasesRenderTest();
-				}, 4000);
-			});
-		},
-
-		testcasesRenderTest : function() {
-			var self = this;
-			asyncTest("Unit Test Testcases Render Test", function() {
-				$.mockjax({
-					url: commonVariables.webserviceurl+commonVariables.qualityContext+"/testreports?appDirName=test&testType=unit&testSuite=SampleUnitTest&techReport=js&moduleName=phresco-framework",
-				 	type: "GET",
-				  	dataType: "json",
-				  	contentType: "application/json",
-				  	status: 200,
-				  	response : function() {
-					  	this.responseText = JSON.stringify({"message":null,"exception":null,"responseCode":"PHRQ000002","data":[{"name":"hello","file":null,"time":"0.015","assertions":0.0,"testClass":"com.photon.phresco.service.TestCase","line":0.0,"testCaseFailure":null,"testCaseError":null}],"status":"success"});
-				  	}
-				});
-
-				$(commonVariables.contentPlaceholder).find("a[name=testDescription]:first").click();
-				setTimeout(function() {
-					start();
-					equal($('#testcases').length, 1, "Unit test testcases render tested");
 					self.noParametersTest();
 				}, 4000);
 			});
@@ -309,21 +298,114 @@ define(["unitTest/unitTest"], function(UnitTest) {
 				setTimeout(function() {
 					start();
 					equal($('.dyn_popup').css("display"), "none", "Unit test no parameters tested");
-					self.showConsole();
+					self.testcasesRenderTest();
 				}, 2000);
 			});
 		},
 
-		showConsole : function() {
+		testcasesRenderTest : function() {
 			var self = this;
-			asyncTest("Unit Test Open Console Test", function() {
+			asyncTest("Unit Test Testcases Render Test", function() {
+				$.mockjax({
+					url: commonVariables.webserviceurl+commonVariables.qualityContext+"/testreports?appDirName=test&testType=unit&testSuite=SampleUnitTest&techReport=js&moduleName=phresco-framework",
+				 	type: "GET",
+				  	dataType: "json",
+				  	contentType: "application/json",
+				  	status: 200,
+				  	response : function() {
+					  	this.responseText = JSON.stringify({"message":null,"exception":null,"responseCode":"PHRQ000002","data":[{"name":"hello","file":null,"time":"0.015","assertions":0.0,"testClass":"com.photon.phresco.service.TestCase","line":0.0,"testCaseFailure":null,"testCaseError":null}],"status":"success"});
+				  	}
+				});
+
+				$(commonVariables.contentPlaceholder).find("a[name=testDescription]:first").click();
+				setTimeout(function() {
+					start();
+					equal($('#testcases').length, 1, "Unit test testcases render tested");
+					self.testcaseGraphicalViewTest();
+				}, 4000);
+			});
+		},
+
+		testcaseGraphicalViewTest : function() {
+			var self = this;
+			asyncTest("Unit Test Testcase Graphical View Test", function() {
+				$(commonVariables.contentPlaceholder).find('.table1, .table2').click();
+				setTimeout(function() {
+					start();
+					equal($("#testcases").css("display"), "block", "Unit test testcase graphical view tested");
+					self.testcaseTabularViewTest();
+				}, 3000);
+			});
+		},
+
+		testcaseTabularViewTest : function() {
+			var self = this;
+			asyncTest("Unit Test Testcase Tabular View Test", function() {
+				$(commonVariables.contentPlaceholder).find('.graph1, .graph2').click();
+				setTimeout(function() {
+					start();
+					equal($("#graphView").css("display"), "block", "Unit test testcase tabular view tested");
+					self.showTestcaseConsole();
+				}, 3000);
+			});
+		},
+
+		showTestcaseConsole : function() {
+			var self = this;
+			asyncTest("Unit Test Testcase Open Console Test", function() {
 				$(commonVariables.contentPlaceholder).find('#consoleImg').click();
 				setTimeout(function() {
 					start();
-					equal("", "", "Unit test open console tested");
-					self.optionsFailureTest();
+					$('#consoleImg').attr('data-flag','false');
+					equal($('#consoleImg').attr('data-flag'), "false", "Unit test testcase open console tested");
+					self.pdfIconBtnClickTest();
 				}, 3000);
 			});
+		},
+
+		pdfIconBtnClickTest : function() {
+			var self = this;
+			asyncTest("Unit Test pdfIcon-Btn Click Test", function() {
+
+				});
+				
+				commonVariables.api.localVal.setSession('username', "admin");
+				$(commonVariables.contentPlaceholder).find("#pdfIcon").click();
+				setTimeout(function() {
+					start();
+					equal('1', '1', "PdfIcon-btn click tested");
+					self.openFolderBtnClickTest();
+				}, 4000);
+		},
+
+		openFolderBtnClickTest : function() {
+			var self = this;
+			asyncTest("Unit Test openFolder-Btn Click Test", function() {
+
+				});
+				
+				commonVariables.api.localVal.setSession('username', "admin");
+				$(commonVariables.contentPlaceholder).find("#pdfIcon").click();
+				setTimeout(function() {
+					start();
+					equal('1', '1', "openFolder-btn click tested");
+					self.copyPathBtnClickTest();
+				}, 4000);
+		},
+
+		copyPathBtnClickTest : function() {
+			var self = this;
+			asyncTest("Unit Test copyPath-Btn Click Test", function() {
+
+				});
+				
+				commonVariables.api.localVal.setSession('username', "admin");
+				$(commonVariables.contentPlaceholder).find("#pdfIcon").click();
+				setTimeout(function() {
+					start();
+					equal('1', '1', "copyPath-btn click tested");
+					self.optionsFailureTest();
+				}, 4000);
 		},
 
 		optionsFailureTest : function() {

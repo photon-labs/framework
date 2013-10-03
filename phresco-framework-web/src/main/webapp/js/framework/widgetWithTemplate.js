@@ -915,6 +915,24 @@ define(["framework/widget", "framework/templateProvider"], function() {
 			hideDynamicPopupLoading : function () {
 				$('.dynamicPopupLoading').hide();
 			},
+
+			showHideSysSpecCtrls : function() {
+				var responseData = JSON.parse(commonVariables.api.localVal.getSession("checkMachine"));
+				if(responseData !== null && responseData !== undefined && responseData.data !== null && responseData.data !== "false"){
+					$('.icon_images #openFolder').parent().show();
+					$('.icon_images #copyPath').parent().show();
+					$('#buildCopyLog').show();
+					$('#codeLog').show();
+					$('#copyLog').show();
+				}else{
+					$('.icon_images #openFolder').parent().hide();
+					$('.icon_images #copyPath').parent().hide();
+					$('#buildCopyLog').hide();
+					$('#codeLog').hide();
+					$('#copyLog').hide();
+				}
+
+			},
 			
 			fileTree : function (retValue, callback) {
 				var self=this;

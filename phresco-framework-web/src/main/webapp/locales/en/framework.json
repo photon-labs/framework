@@ -351,7 +351,8 @@
 				"projectname" : "Project Name",
 				"selpilotproject" : "Select Pilot Project",
 				"seltech" : "Select Technology",
-				"sellayer" : "Select Layer"
+				"sellayer" : "Select Layer",
+				"integrationTest": "IntegrationTest"
 			},
 			"title" : {
 				"label" : {

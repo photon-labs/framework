@@ -36,6 +36,18 @@ define(["build/build"], function(Build) {
 				//set app directory name to local stroage
 				commonVariables.api.localVal.setSession('appDirName', 'NativeApp');
 				
+				//mock remote machine check 
+				var remoteMachine = $.mockjax({
+				  url: commonVariables.webserviceurl + 'util/checkMachine',
+				  type: "GET",
+				  dataType: "json",
+				  contentType: "application/json",
+				  status: 200,
+				  response : function() {
+					  this.responseText = JSON.stringify({"message":null,"exception":null,"responseCode":"PHR13C00001","data":"true","status":"success"});
+				  }
+				});
+				
 				//mock build list ajax call 
 				var buildList = $.mockjax({
 				  url: commonVariables.webserviceurl + 'buildinfo/list?appDirName=NativeApp',
@@ -130,7 +142,7 @@ define(["build/build"], function(Build) {
 				var output;
 				self.setuserInfo();
 				$.mockjax({
-				  url: commonVariables.webserviceurl+"util/checkLock?actionType=build&appId=6d6753e8-b081-48d8-9924-70a14f3663d4",
+				  url: commonVariables.webserviceurl+"util/checkLock?actionType=build&appId=",
 				  type: "GET",
 				  dataType: "json",
 				  contentType: "application/json",
@@ -169,7 +181,7 @@ define(["build/build"], function(Build) {
 				
 				//mock generate build ajax call 
 				var genBuild = $.mockjax({
-				  url: commonVariables.webserviceurl + 'app/build?buildName=&buildNumber=&environmentName=Production&logs=showErrors&package-type=war&minify=true&displayName=Kavinraj Mani&customerId=photon&appId=137223b6-8454-4041-b52d-07c110ab57fb&projectId=d6528c06-b2f6-4388-8001-54e7e25d59db&username=kavinraj_m',
+				  url: commonVariables.webserviceurl + 'app/build?appDirName=HTML&buildName=&buildNumber=&environmentName=Production&logs=showErrors&package-type=war&minify=true&displayName=Kavinraj Mani&customerId=photon&appId=137223b6-8454-4041-b52d-07c110ab57fb&projectId=d6528c06-b2f6-4388-8001-54e7e25d59db&username=kavinraj_m',
 				  type: "POST",
 				  dataType: "json",
 				  contentType: "application/json",
@@ -421,7 +433,7 @@ define(["build/build"], function(Build) {
 				
 				self.setNodeAppInfo();
 				$.mockjax({
-				  url: commonVariables.webserviceurl+"util/checkLock?actionType=Start&appId=6d6753e8-b081-48d8-9924-70a14f3663d4",
+				  url: commonVariables.webserviceurl+"util/checkLock?actionType=Start&appId=",
 				  type: "GET",
 				  dataType: "json",
 				  contentType: "application/json",
@@ -489,7 +501,7 @@ define(["build/build"], function(Build) {
 				//mock RAS run ajax call 
 				var RASPopUp = $.mockjax({
 
-				  url: commonVariables.webserviceurl + 'app/runAgainstSource?environmentName=Production&executeSql=on&dataBase=mysql&customerId=photon&appId=f1aed01f-f4fb-44da-8ae5-e3a74b60e88c&projectId=3b33c6c3-2491-4870-b0a9-693817b5b9f8&username=kavinraj_m',
+				  url: commonVariables.webserviceurl + 'app/runAgainstSource?appDirName=node&environmentName=Production&executeSql=true&dataBase=mysql&fetchSql={}&displayName=Kavinraj Mani&customerId=photon&appId=f1aed01f-f4fb-44da-8ae5-e3a74b60e88c&projectId=3b33c6c3-2491-4870-b0a9-693817b5b9f8&username=kavinraj_m',
 				  type: "POST",
 				  dataType: "json",
 				  contentType: "application/json",
@@ -538,7 +550,7 @@ define(["build/build"], function(Build) {
 				//mock RAS restart ajax call 
 				var RASPopUp = $.mockjax({
 
-				  url: commonVariables.webserviceurl + 'app/restartServer?&customerId=photon&appId=f1aed01f-f4fb-44da-8ae5-e3a74b60e88c&projectId=3b33c6c3-2491-4870-b0a9-693817b5b9f8&username=kavinraj_m',
+				  url: commonVariables.webserviceurl + 'app/restartServer?appDirName=node&customerId=photon&appId=f1aed01f-f4fb-44da-8ae5-e3a74b60e88c&projectId=3b33c6c3-2491-4870-b0a9-693817b5b9f8&username=kavinraj_m',
 				  type: "POST",
 				  dataType: "json",
 				  contentType: "application/json",
@@ -587,7 +599,7 @@ define(["build/build"], function(Build) {
 				//mock RAS restart ajax call 
 				var RASPopUp = $.mockjax({
 
-				  url: commonVariables.webserviceurl + 'app/stopServer?&customerId=photon&appId=f1aed01f-f4fb-44da-8ae5-e3a74b60e88c&projectId=3b33c6c3-2491-4870-b0a9-693817b5b9f8&username=kavinraj_m',
+				  url: commonVariables.webserviceurl + 'app/stopServer?appDirName=node&customerId=photon&appId=f1aed01f-f4fb-44da-8ae5-e3a74b60e88c&projectId=3b33c6c3-2491-4870-b0a9-693817b5b9f8&username=kavinraj_m',
 				  type: "POST",
 				  dataType: "json",
 				  contentType: "application/json",
@@ -601,14 +613,14 @@ define(["build/build"], function(Build) {
 				setTimeout(function() {
 					start();
 					equal("", "", "Run again source stop Successfully");
-					self.Deployebuild(build, self, buildListener); 
+					//self.Deployebuild(build, self, buildListener); 
 				}, 1500);
 			});
-		},
+		}/*,
 		
 		Deployebuild : function(build, self, buildListener){
 			asyncTest("Build Deploy", function(){
 			});
-		}
+		}*/
 	};
 });

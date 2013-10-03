@@ -95,8 +95,45 @@ define(["componentTest/componentTest"], function(ComponentTest) {
 				setTimeout(function() {
 					start();
 					equal($('#testcases').length, 1, "Component test testcases render tested");
-					self.runComponentTestWithNoParamTest();
+					self.testcaseGraphicalViewTest();
 				}, 4000);
+			});
+		},
+
+		testcaseGraphicalViewTest : function() {
+			var self = this;
+			asyncTest("Unit Test Testcase Graphical View Test", function() {
+				$(commonVariables.contentPlaceholder).find('.table1, .table2').click();
+				setTimeout(function() {
+					start();
+					equal($("#testcases").css("display"), "block", "Unit test testcase graphical view tested");
+					self.testcaseTabularViewTest();
+				}, 3000);
+			});
+		},
+
+		testcaseTabularViewTest : function() {
+			var self = this;
+			asyncTest("Unit Test Testcase Tabular View Test", function() {
+				$(commonVariables.contentPlaceholder).find('.graph1, .graph2').click();
+				setTimeout(function() {
+					start();
+					equal($("#graphView").css("display"), "block", "Unit test testcase tabular view tested");
+					self.showTestcaseConsole();
+				}, 3000);
+			});
+		},
+
+		showTestcaseConsole : function() {
+			var self = this;
+			asyncTest("Unit Test Testcase Open Console Test", function() {
+				$(commonVariables.contentPlaceholder).find('#consoleImg').click();
+				setTimeout(function() {
+					start();
+					$('#consoleImg').attr('data-flag','false');
+					equal($('#consoleImg').attr('data-flag'), "false", "Unit test testcase open console tested");
+					self.runComponentTestWithNoParamTest();
+				}, 3000);
 			});
 		},
 
@@ -172,10 +209,56 @@ define(["componentTest/componentTest"], function(ComponentTest) {
 				setTimeout(function() {
 					start();
 					equal($('#testAgainst').length, 1, "Component test test-btn click tested");
-					self.runComponentTestBtnClickTest();
+					self.pdfIconBtnClickTest();
 				}, 4000);
 			});
 		},
+
+		pdfIconBtnClickTest : function() {
+			var self = this;
+			asyncTest("Unit Test pdfIcon-Btn Click Test", function() {
+
+				});
+				
+				commonVariables.api.localVal.setSession('username', "admin");
+				$(commonVariables.contentPlaceholder).find("#pdfIcon").click();
+				setTimeout(function() {
+					start();
+					equal('1', '1', "PdfIcon-btn click tested");
+					self.openFolderBtnClickTest();
+				}, 4000);
+		},
+
+		openFolderBtnClickTest : function() {
+			var self = this;
+			asyncTest("Unit Test openFolder-Btn Click Test", function() {
+
+				});
+				
+				commonVariables.api.localVal.setSession('username', "admin");
+				$(commonVariables.contentPlaceholder).find("#pdfIcon").click();
+				setTimeout(function() {
+					start();
+					equal('1', '1', "openFolder-btn click tested");
+					self.copyPathBtnClickTest();
+				}, 4000);
+		},
+
+		copyPathBtnClickTest : function() {
+			var self = this;
+			asyncTest("Unit Test copyPath-Btn Click Test", function() {
+
+				});
+				
+				commonVariables.api.localVal.setSession('username', "admin");
+				$(commonVariables.contentPlaceholder).find("#pdfIcon").click();
+				setTimeout(function() {
+					start();
+					equal('1', '1', "copyPath-btn click tested");
+					self.runComponentTestBtnClickTest();
+				}, 4000);
+		},
+
 
 		runComponentTestBtnClickTest : function() {
 			var self = this;

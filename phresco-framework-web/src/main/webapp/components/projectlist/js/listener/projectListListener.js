@@ -253,6 +253,10 @@ define([], function() {
 				header.requestPostBody = JSON.stringify(projectRequestBody);
 				header.webserviceurl = commonVariables.webserviceurl +"repository/logMessages";
 			}
+			if (action === "checkMachine") {
+				header.requestMethod = "GET";
+				header.webserviceurl = commonVariables.webserviceurl + 'util/checkMachine';
+			}
 			return header;
 		},
 		

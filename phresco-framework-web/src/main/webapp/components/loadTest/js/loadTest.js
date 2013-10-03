@@ -190,6 +190,7 @@ define(["performanceLoadListener/listener/performanceLoadListener"], function() 
 		 */
 		postRender : function(element) {
 			var self = this, loadLog = "", consoleLog = commonVariables.api.localVal.getSession('loadConsole');
+			self.showHideSysSpecCtrls();
 			self.loadTestListener.resizeConsoleWindow();
 			self.loadTestListener.resultBodyResize();
 			
@@ -288,8 +289,8 @@ define(["performanceLoadListener/listener/performanceLoadListener"], function() 
 			});
 			
 			//To open the performance test directory
-			$('#openLoadFolder').unbind('click');
-			$("#openLoadFolder").click(function() {
+			$('#openFolder').unbind('click');
+			$("#openFolder").click(function() {
 				commonVariables.hideloading = true;
 				var paramJson = {};
 				paramJson.type =  commonVariables.typeLoadTest;
@@ -297,8 +298,8 @@ define(["performanceLoadListener/listener/performanceLoadListener"], function() 
 			});
 			
 			//To copy the path of performance test directory
-			$('#copyLoadPath').unbind('click');
-			$("#copyLoadPath").click(function() {
+			$('#copyPath').unbind('click');
+			$("#copyPath").click(function() {
 				commonVariables.hideloading = true;
 				var paramJson = {};
 				paramJson.type =  commonVariables.typeLoadTest;

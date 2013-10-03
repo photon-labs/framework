@@ -263,6 +263,12 @@ define(["projectlist/listener/projectListListener"], function() {
 						commonVariables.techId = techid;
 						$("#myTab li#appinfo a").addClass("act");
 						self.onProjectsEvent.dispatch(value , techid);
+
+						//To show/hide openfolder, copy path icon and copy to clipboard
+						var actionBody = {};
+						self.projectslistListener.getProjectList(self.projectslistListener.getActionHeader(actionBody, "checkMachine"), function(response) {
+							commonVariables.api.localVal.setSession("checkMachine", JSON.stringify(response));
+						});
 					} else if (response.status === "success" && response.responseCode === "PHR10C00001") {
 						commonVariables.api.showError(self.getLockErrorMsg(response), 'error', true, true);
 					}	

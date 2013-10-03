@@ -64,6 +64,7 @@ define(["testResult/listener/testResultListener"], function() {
 		postRender : function(element) {
 			var self = this;
 			$('#pdfDiv').hide();
+			self.showHideSysSpecCtrls();
 			var currentTab = commonVariables.navListener.currentTab;
 			if ("manualTest" === currentTab) {
 				$('.manual').show();

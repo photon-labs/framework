@@ -237,6 +237,7 @@ define(["performanceLoadListener/listener/performanceLoadListener"], function() 
 		postRender : function(element) {
 			var self = this, performanceLog = "", consoleLog = commonVariables.api.localVal.getSession('performanceConsole');
 			self.performanceTestListener.resizeConsoleWindow();
+			self.showHideSysSpecCtrls();
 			self.performanceTestListener.resultBodyResize();
 			
 			if (!self.isBlank(consoleLog)) {

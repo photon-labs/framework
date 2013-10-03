@@ -64,6 +64,7 @@ define(["codequality/listener/codequalityListener"], function() {
 			var appDirName = commonVariables.api.localVal.getSession('appDirName');
 			var goal = "validate-code";
 			commonVariables.goal = goal;
+			self.showHideSysSpecCtrls();
 			//setTimeout(function() {
 			$('#codeAnalysis').hide();
 			$(".code_report").hide();

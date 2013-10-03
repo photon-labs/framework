@@ -81,54 +81,158 @@ define(["manualTest/manualTest", "lib/jquery-tojson-1.0", "lib/fileuploader-2.3"
 				setTimeout(function() {
 					start();
 					equal(8, 8, "testsuite added successfully and listed");
-//					self.runListManualTestcase(moduleName);
-					require(["performanceTestTest"], function(performanceTestTest){
+					self.runListManualTestcase(moduleName);
+					/*require(["performanceTestTest"], function(performanceTestTest){
 						performanceTestTest.runTests();
-					});
+					});*/
 				}, 1000);
 			});
 		},
 		
 		
-////		 list testcases
-//		runListManualTestcase: function (moduleName) {
-//			module(moduleName);
-//			var self = this, listTestcase;
-//			asyncTest("List Testcases", function() {
-//				self.listTestcase = $.mockjax({ 
-//				  url : commonVariables.webserviceurl + commonVariables.manual + '/testcases?appDirName=HtmlJquery-html5jquerymobilewidget&testSuiteName=Downloads',
-//				  type: "GET",
-//				  dataType: "json",
-//				  contentType: "application/json",
-//				  status: 200,
-//				  response : function() {
-//					  this.responseText = JSON.stringify({"message":null,"exception":null,"responseCode":"PHRQ400003","data":[{"severity":"","featureId":"Download Page","testCaseId":"TC-Download Page-01","steps":"Perform Testcase 18 - Login Sheet[Login]","expectedResult":"","actualResult":"The user should be able to land on Download Page","bugComment":"","requirementId":"","testCaseype":"","testInput":"","priority":"","description":"To verify Download Page","status":""},{"severity":"","featureId":"Download Page - UI validation","testCaseId":"TC-Download Page-02","steps":"Perform Testcase 18 - Login Sheet[Login]","expectedResult":"","actualResult":"The user should be able to view the Download Page with 1.Server accordian\n2.Database accordian\n3.Editor accordian\n4.Tools accordian\n5.Others accordian\n6.Home, Projects, Settings, Download and Help displayed in the left side \nas links \n7. Customer drop down in the settings label,Helios label at \nthe left top corner,and \"© 2013.Photon Infotech Pvt Ltd. | \nwww.photon.in\" label present at the right bottom.","bugComment":"","requirementId":"","testCaseype":"","testInput":"","priority":"","description":"To verify Download Page UI validation","status":""},{"severity":"","featureId":"Download Page - UI validation for listed Server accordian","testCaseId":"TC-Download Page-03","steps":"Perform Testcase 18 - Login Sheet[Login]","expectedResult":"","actualResult":"The user can view the Name, Version , Size and download link for the various servers.","bugComment":"","requirementId":"","testCaseype":"","testInput":"","priority":"","description":"To verify Server accordians UI validation","status":""},{"severity":"","featureId":"Download Page - Download the server","testCaseId":"TC-Download Page-04","steps":"Perform Testcase 18 - Login Sheet[Login]","expectedResult":"","actualResult":"The user should be able to open or save the file","bugComment":"","requirementId":"","testCaseype":"","testInput":"","priority":"","description":"To verify downloading the server","status":""},{"severity":"","featureId":"Download Page - Download the database","testCaseId":"TC-Download Page-05","steps":"Perform Testcase 18 - Login Sheet[Login]","expectedResult":"","actualResult":"The user should be able to open or save the file","bugComment":"","requirementId":"","testCaseype":"","testInput":"","priority":"","description":"To verify downloading the database","status":""},{"severity":"","featureId":"Download Page - Download the Editors","testCaseId":"TC-Download Page-06","steps":"Perform Testcase 18 - Login Sheet[Login]","expectedResult":"","actualResult":"The user should be able to open or save the file","bugComment":"","requirementId":"","testCaseype":"","testInput":"","priority":"","description":"To verify downloading the Editors","status":""},{"severity":"","featureId":"Download Page - Download the Tools","testCaseId":"TC-Download Page-07","steps":"Perform Testcase 18 - Login Sheet[Login]","expectedResult":"","actualResult":"The user should be able to open or save the file","bugComment":"","requirementId":"","testCaseype":"","testInput":"","priority":"","description":"To verify downloading the Tools","status":""},{"severity":"","featureId":"Download Page - Download the Others","testCaseId":"TC-Download Page-08","steps":"Perform Testcase 18 - Login Sheet[Login]","expectedResult":"","actualResult":"The user should be able to open or save the file","bugComment":"","requirementId":"","testCaseype":"","testInput":"","priority":"","description":"To verify downloading the Others","status":""}],"status":"success"});
-//				  }
-//				});
-//				
-//				commonVariables.api.localVal.setSession("appDirName", "HtmlJquery-html5jquerymobilewidget");
-//				$("a[id=Downloads]").click();
-//				setTimeout(function() {
-//					start();
-//					equal(8, 8, "Testcases successfully listed");
-//					self.runShowManualTestcasePopUp(moduleName);
-//				}, 500);
-//			});
-//		},
+
+		/*runUpdateTestsuitePopup : function(moduleName) {
+			module(moduleName);
+			var self = this;
+			asyncTest("show Update Testsuite PopUp", function() {
+				setTimeout(function() {
+					$("#dynPopup8").click();
+					start();
+					equal(11, 10+1, "Update testcase Popup shown");
+					self.runUpdateTestsuite(moduleName);
+				}, 1000);
+			});
+		},
 		
-//		// add testcase
-//		runShowManualTestcasePopUp: function (moduleName) {
-//			module(moduleName);
-//			var self = this;
-//			asyncTest("show Testcase PopUp", function() {
-//				setTimeout(function() {
-//					$("#addTestCase").click();
-//					start();
-//					equal(11, 10+1, "Testcase Popup shown");
-////					self.runAddTestcase(moduleName);
-//				}, 300);
-//			});
-//		},
+		runUpdateTestsuite : function (moduleName) {
+			module(moduleName);
+			var self = this;
+			
+			asyncTest("Update testsuite", function() {
+				$.mockjaxClear(self.listTestcase);
+				$.mockjax({
+				  url : commonVariables.webserviceurl + commonVariables.manual + '/testsuites?appDirName=test&testSuiteName=Downloads',
+				  type: "PUT",
+				  dataType: "json",
+				  contentType: "application/json",
+				  status: 200,
+				  response : function() {
+					  this.responseText = JSON.stringify({"message":null,"exception":null,"responseCode":"PHRQ400006","data":{"severity":"","featureId":"sampletestcase","testCaseId":"sampletestcase","steps":"sampletestcase","expectedResult":"1sampletestcase","actualResult":"sampletestcase","bugComment":"sampletestcase","requirementId":"","testCaseype":"","testInput":"","priority":"","description":"sampletestcase","status":"success"},"status":"success"});
+				  }
+				});
+				
+				$.mockjax({
+				  url : commonVariables.webserviceurl + commonVariables.manual + '/testsuites?appDirName=test&testSuiteName=Downloads',
+				  type: "GET",
+				  dataType: "json",
+				  contentType: "application/json",
+				  status: 200,
+				  response : function() {
+					  this.responseText = JSON.stringify({"message":null,"exception":null,"responseCode":"PHRQ400003","data":[{"severity":"","featureId":"Download Page","testCaseId":"TC-Download Page-01","steps":"Perform Testcase 18 - Login Sheet[Login]","expectedResult":"","actualResult":"The user should be able to land on Download Page","bugComment":"","requirementId":"","testCaseype":"","testInput":"","priority":"","description":"To verify Download Page","status":""},{"severity":"","featureId":"Download Page - UI validation","testCaseId":"TC-Download Page-02","steps":"Perform Testcase 18 - Login Sheet[Login]","expectedResult":"","actualResult":"The user should be able to view the Download Page with 1.Server accordian\n2.Database accordian\n3.Editor accordian\n4.Tools accordian\n5.Others accordian\n6.Home, Projects, Settings, Download and Help displayed in the left side \nas links \n7. Customer drop down in the settings label,Helios label at \nthe left top corner,and \"© 2013.Photon Infotech Pvt Ltd. | \nwww.photon.in\" label present at the right bottom.","bugComment":"","requirementId":"","testCaseype":"","testInput":"","priority":"","description":"To verify Download Page UI validation","status":""},{"severity":"","featureId":"Download Page - UI validation for listed Server accordian","testCaseId":"TC-Download Page-03","steps":"Perform Testcase 18 - Login Sheet[Login]","expectedResult":"","actualResult":"The user can view the Name, Version , Size and download link for the various servers.","bugComment":"","requirementId":"","testCaseype":"","testInput":"","priority":"","description":"To verify Server accordians UI validation","status":""},{"severity":"","featureId":"Download Page - Download the server","testCaseId":"TC-Download Page-04","steps":"Perform Testcase 18 - Login Sheet[Login]","expectedResult":"","actualResult":"The user should be able to open or save the file","bugComment":"","requirementId":"","testCaseype":"","testInput":"","priority":"","description":"To verify downloading the server","status":""},{"severity":"","featureId":"Download Page - Download the database","testCaseId":"TC-Download Page-05","steps":"Perform Testcase 18 - Login Sheet[Login]","expectedResult":"","actualResult":"The user should be able to open or save the file","bugComment":"","requirementId":"","testCaseype":"","testInput":"","priority":"","description":"To verify downloading the database","status":""},{"severity":"","featureId":"Download Page - Download the Editors","testCaseId":"TC-Download Page-06","steps":"Perform Testcase 18 - Login Sheet[Login]","expectedResult":"","actualResult":"The user should be able to open or save the file","bugComment":"","requirementId":"","testCaseype":"","testInput":"","priority":"","description":"To verify downloading the Editors","status":""},{"severity":"","featureId":"Download Page - Download the Tools","testCaseId":"TC-Download Page-07","steps":"Perform Testcase 18 - Login Sheet[Login]","expectedResult":"","actualResult":"The user should be able to open or save the file","bugComment":"","requirementId":"","testCaseype":"","testInput":"","priority":"","description":"To verify downloading the Tools","status":""},{"severity":"","featureId":"Download Page - Download the Others","testCaseId":"TC-Download Page-08","steps":"Perform Testcase 18 - Login Sheet[Login]","expectedResult":"","actualResult":"The user should be able to open or save the file","bugComment":"","requirementId":"","testCaseype":"","testInput":"","priority":"","description":"To verify downloading the Others","status":""},{"severity":"","featureId":"sampletestcase","testCaseId":"sampletestcase","steps":"sampletestcase","expectedResult":"1sampletestcase","actualResult":"sampletestcase","bugComment":"sampletestcase","requirementId":"","testCaseype":"","testInput":"","priority":"","description":"sampletestcase","status":"success"}],"status":"success"});
+				  }
+				});
+				
+				var testSuiteName = commonVariables.testSuiteName;
+				$("#testSuiteName").val(testSuiteName);
+				$("input[name=featureId]").val("sampletestcase");
+				$("input[name=testCaseId]").val("sampletestcase");
+				$("textarea[name=steps]").val("sampletestcase");
+				$("input[name=actualResult]").val("sampletestcase");
+				$("textarea[name=description]").val("sampletestcase");
+				$("textarea[name=expectedResult]").val("1sampletestcase");
+				$("input[name=updateTestCase]").click();
+				
+				setTimeout(function() {
+					start();
+					equal(1, 1, "Update testsuites succeeded");
+					self.runListManualTestcase(moduleName);
+					
+////					require(["dynamicPageTest"], function(dynamicPageTest){
+////						dynamicPageTest.runTests();
+////					});
+			}, 1500);
+		});
+		},*/
+		
+		
+		
+//		 list testcases
+		runListManualTestcase: function (moduleName) {
+			module(moduleName);
+			var self = this, listTestcase;
+			asyncTest("List Testcases", function() {
+				self.listTestcase = $.mockjax({ 
+				  url : commonVariables.webserviceurl + commonVariables.manual + '/testcases?appDirName=test&testSuiteName=Downloads',
+				  type: "GET",
+				  dataType: "json",
+				  contentType: "application/json",
+				  status: 200,
+				  response : function() {
+					  this.responseText = JSON.stringify({"message":null,"exception":null,"responseCode":"PHRQ400003","data":[{"severity":"","featureId":"Download Page","testCaseId":"TC-Download Page-01","steps":"Perform Testcase 18 - Login Sheet[Login]","expectedResult":"","actualResult":"The user should be able to land on Download Page","bugComment":"","requirementId":"","testCaseype":"","testInput":"","priority":"","description":"To verify Download Page","status":""},{"severity":"","featureId":"Download Page - UI validation","testCaseId":"TC-Download Page-02","steps":"Perform Testcase 18 - Login Sheet[Login]","expectedResult":"","actualResult":"The user should be able to view the Download Page with 1.Server accordian\n2.Database accordian\n3.Editor accordian\n4.Tools accordian\n5.Others accordian\n6.Home, Projects, Settings, Download and Help displayed in the left side \nas links \n7. Customer drop down in the settings label,Helios label at \nthe left top corner,and \"© 2013.Photon Infotech Pvt Ltd. | \nwww.photon.in\" label present at the right bottom.","bugComment":"","requirementId":"","testCaseype":"","testInput":"","priority":"","description":"To verify Download Page UI validation","status":""},{"severity":"","featureId":"Download Page - UI validation for listed Server accordian","testCaseId":"TC-Download Page-03","steps":"Perform Testcase 18 - Login Sheet[Login]","expectedResult":"","actualResult":"The user can view the Name, Version , Size and download link for the various servers.","bugComment":"","requirementId":"","testCaseype":"","testInput":"","priority":"","description":"To verify Server accordians UI validation","status":""},{"severity":"","featureId":"Download Page - Download the server","testCaseId":"TC-Download Page-04","steps":"Perform Testcase 18 - Login Sheet[Login]","expectedResult":"","actualResult":"The user should be able to open or save the file","bugComment":"","requirementId":"","testCaseype":"","testInput":"","priority":"","description":"To verify downloading the server","status":""},{"severity":"","featureId":"Download Page - Download the database","testCaseId":"TC-Download Page-05","steps":"Perform Testcase 18 - Login Sheet[Login]","expectedResult":"","actualResult":"The user should be able to open or save the file","bugComment":"","requirementId":"","testCaseype":"","testInput":"","priority":"","description":"To verify downloading the database","status":""},{"severity":"","featureId":"Download Page - Download the Editors","testCaseId":"TC-Download Page-06","steps":"Perform Testcase 18 - Login Sheet[Login]","expectedResult":"","actualResult":"The user should be able to open or save the file","bugComment":"","requirementId":"","testCaseype":"","testInput":"","priority":"","description":"To verify downloading the Editors","status":""},{"severity":"","featureId":"Download Page - Download the Tools","testCaseId":"TC-Download Page-07","steps":"Perform Testcase 18 - Login Sheet[Login]","expectedResult":"","actualResult":"The user should be able to open or save the file","bugComment":"","requirementId":"","testCaseype":"","testInput":"","priority":"","description":"To verify downloading the Tools","status":""},{"severity":"","featureId":"Download Page - Download the Others","testCaseId":"TC-Download Page-08","steps":"Perform Testcase 18 - Login Sheet[Login]","expectedResult":"","actualResult":"The user should be able to open or save the file","bugComment":"","requirementId":"","testCaseype":"","testInput":"","priority":"","description":"To verify downloading the Others","status":""}],"status":"success"});
+				  }
+				});
+				
+				commonVariables.api.localVal.setSession("appDirName", "HtmlJquery-html5jquerymobilewidget");
+				$("a[id=Downloads]").click();
+				setTimeout(function() {
+					console.info("Inside runListManualTestcase.......");
+					start();
+					equal(8, 8, "Testcases successfully listed");
+					self.testcaseGraphicalViewTest(moduleName);
+				}, 500);
+			});
+		},
+
+		testcaseGraphicalViewTest : function() {
+			var self = this;
+			asyncTest("Manual Test Testcase Graphical View Test", function() {
+				$(commonVariables.contentPlaceholder).find('.table1, .table2').click();
+				setTimeout(function() {
+					start();
+					equal($("#testcases").css("display"), "block", "Unit test testcase graphical view tested");
+					self.testcaseTabularViewTest();
+				}, 3000);
+			});
+		},
+
+		testcaseTabularViewTest : function() {
+			var self = this;
+			asyncTest("Manual Test Testcase Tabular View Test", function() {
+				$(commonVariables.contentPlaceholder).find('.graph1, .graph2').click();
+				setTimeout(function() {
+					start();
+					equal($("#graphView").css("display"), "block", "Unit test testcase tabular view tested");
+					//self.showTestcaseConsole();
+				}, 3000);
+			});
+		},
+
+		/*showTestcaseConsole : function() {
+			var self = this;
+			asyncTest("Manual Test Testcase Open Console Test", function() {
+				$(commonVariables.contentPlaceholder).find('#consoleImg').click();
+				setTimeout(function() {
+					start();
+					$('#consoleImg').attr('data-flag','false');
+					equal($('#consoleImg').attr('data-flag'), "false", "Unit test testcase open console tested");
+					//self.runUpdateTestcasePopup();
+				}, 3000);
+			});
+		},*/
+	
+		// add testcase
+		/*runShowManualTestcasePopUp: function (moduleName) {
+			module(moduleName);
+			var self = this;
+			asyncTest("show Testcase PopUp", function() {
+				setTimeout(function() {
+					$("#addTestCase").click();
+					start();
+					equal(11, 10+1, "Testcase Popup shown");
+					self.runUpdateTestcasePopup(moduleName);
+				}, 300);
+			});
+		},*/
 			
 //		runAddTestcase: function (moduleName) {
 //			module(moduleName);
@@ -173,69 +277,70 @@ define(["manualTest/manualTest", "lib/jquery-tojson-1.0", "lib/fileuploader-2.3"
 //			});
 //		},
 //		
-//		runUpdateTestcasePopup : function(moduleName) {
-//			module(moduleName);
-//			var self = this;
-//			asyncTest("show Update Testcase PopUp", function() {
-//				setTimeout(function() {
-//					$("#dynPopup8").click();
-//					start();
-//					equal(11, 10+1, "Update testcase Popup shown");
-//					self.runUpdateTestcase(moduleName);
-//				}, 1000);
-//			});
-//		},
-//		
-//		runUpdateTestcase : function (moduleName) {
-//			module(moduleName);
-//			var self = this;
-//			
-//			asyncTest("Update testcase", function() {
-//				$.mockjaxClear(self.listTestcase);
-//				$.mockjax({
-//				  url : commonVariables.webserviceurl + commonVariables.manual + '/testcases?appDirName=HtmlJquery-html5jquerymobilewidget&testSuiteName=Downloads',
-//				  type: "PUT",
-//				  dataType: "json",
-//				  contentType: "application/json",
-//				  status: 200,
-//				  response : function() {
-//					  this.responseText = JSON.stringify({"message":null,"exception":null,"responseCode":"PHRQ400006","data":{"severity":"","featureId":"sampletestcase","testCaseId":"sampletestcase","steps":"sampletestcase","expectedResult":"1sampletestcase","actualResult":"sampletestcase","bugComment":"sampletestcase","requirementId":"","testCaseype":"","testInput":"","priority":"","description":"sampletestcase","status":"success"},"status":"success"});
-//				  }
-//				});
-//				
-//				$.mockjax({
-//				  url : commonVariables.webserviceurl + commonVariables.manual + '/testcases?appDirName=HtmlJquery-html5jquerymobilewidget&testSuiteName=Downloads',
-//				  type: "GET",
-//				  dataType: "json",
-//				  contentType: "application/json",
-//				  status: 200,
-//				  response : function() {
-//					  this.responseText = JSON.stringify({"message":null,"exception":null,"responseCode":"PHRQ400003","data":[{"severity":"","featureId":"Download Page","testCaseId":"TC-Download Page-01","steps":"Perform Testcase 18 - Login Sheet[Login]","expectedResult":"","actualResult":"The user should be able to land on Download Page","bugComment":"","requirementId":"","testCaseype":"","testInput":"","priority":"","description":"To verify Download Page","status":""},{"severity":"","featureId":"Download Page - UI validation","testCaseId":"TC-Download Page-02","steps":"Perform Testcase 18 - Login Sheet[Login]","expectedResult":"","actualResult":"The user should be able to view the Download Page with 1.Server accordian\n2.Database accordian\n3.Editor accordian\n4.Tools accordian\n5.Others accordian\n6.Home, Projects, Settings, Download and Help displayed in the left side \nas links \n7. Customer drop down in the settings label,Helios label at \nthe left top corner,and \"© 2013.Photon Infotech Pvt Ltd. | \nwww.photon.in\" label present at the right bottom.","bugComment":"","requirementId":"","testCaseype":"","testInput":"","priority":"","description":"To verify Download Page UI validation","status":""},{"severity":"","featureId":"Download Page - UI validation for listed Server accordian","testCaseId":"TC-Download Page-03","steps":"Perform Testcase 18 - Login Sheet[Login]","expectedResult":"","actualResult":"The user can view the Name, Version , Size and download link for the various servers.","bugComment":"","requirementId":"","testCaseype":"","testInput":"","priority":"","description":"To verify Server accordians UI validation","status":""},{"severity":"","featureId":"Download Page - Download the server","testCaseId":"TC-Download Page-04","steps":"Perform Testcase 18 - Login Sheet[Login]","expectedResult":"","actualResult":"The user should be able to open or save the file","bugComment":"","requirementId":"","testCaseype":"","testInput":"","priority":"","description":"To verify downloading the server","status":""},{"severity":"","featureId":"Download Page - Download the database","testCaseId":"TC-Download Page-05","steps":"Perform Testcase 18 - Login Sheet[Login]","expectedResult":"","actualResult":"The user should be able to open or save the file","bugComment":"","requirementId":"","testCaseype":"","testInput":"","priority":"","description":"To verify downloading the database","status":""},{"severity":"","featureId":"Download Page - Download the Editors","testCaseId":"TC-Download Page-06","steps":"Perform Testcase 18 - Login Sheet[Login]","expectedResult":"","actualResult":"The user should be able to open or save the file","bugComment":"","requirementId":"","testCaseype":"","testInput":"","priority":"","description":"To verify downloading the Editors","status":""},{"severity":"","featureId":"Download Page - Download the Tools","testCaseId":"TC-Download Page-07","steps":"Perform Testcase 18 - Login Sheet[Login]","expectedResult":"","actualResult":"The user should be able to open or save the file","bugComment":"","requirementId":"","testCaseype":"","testInput":"","priority":"","description":"To verify downloading the Tools","status":""},{"severity":"","featureId":"Download Page - Download the Others","testCaseId":"TC-Download Page-08","steps":"Perform Testcase 18 - Login Sheet[Login]","expectedResult":"","actualResult":"The user should be able to open or save the file","bugComment":"","requirementId":"","testCaseype":"","testInput":"","priority":"","description":"To verify downloading the Others","status":""},{"severity":"","featureId":"sampletestcase","testCaseId":"sampletestcase","steps":"sampletestcase","expectedResult":"1sampletestcase","actualResult":"sampletestcase","bugComment":"sampletestcase","requirementId":"","testCaseype":"","testInput":"","priority":"","description":"sampletestcase","status":"success"}],"status":"success"});
-//				  }
-//				});
-//				
-//				commonVariables.api.localVal.setSession("appDirName", "HtmlJquery-html5jquerymobilewidget");
-//				var testSuiteName = commonVariables.testSuiteName;
-//				$("#testSuiteName").val(testSuiteName);
-//				$("input[name=featureId]").val("sampletestcase");
-//				$("input[name=testCaseId]").val("sampletestcase");
-//				$("textarea[name=steps]").val("sampletestcase");
-//				$("input[name=actualResult]").val("sampletestcase");
-//				$("textarea[name=description]").val("sampletestcase");
-//				$("textarea[name=expectedResult]").val("1sampletestcase");
-//				$("input[name=updateTestCase]").click();
-//				
-//				setTimeout(function() {
-//					start();
-//					equal(1, 1, "Update testcases succeeded");
-////					self.runShowDownloadPopUp(moduleName);
-//					
+	/*runUpdateTestcasePopup : function(moduleName) {
+			module(moduleName);
+			var self = this;
+			asyncTest("show Update Testcase PopUp", function() {
+				$('a[name=updateManualTestCase_popup]').click();
+				setTimeout(function() {
+					console.info("inside runUpdateTestcasePopup test....");
+					start();
+					equal(11, 10+1, "Update testcase Popup shown");
+					//self.runUpdateTestcase(moduleName);
+				}, 1000);
+			});
+		},*/
+		
+		/*runUpdateTestcase : function (moduleName) {
+			module(moduleName);
+			var self = this;
+			
+			asyncTest("Update testcase", function() {
+				$.mockjaxClear(self.listTestcase);
+				$.mockjax({
+				  url : commonVariables.webserviceurl + commonVariables.manual + '/testcases?appDirName=test&testSuiteName=Downloads',
+				  type: "PUT",
+				  dataType: "json",
+				  contentType: "application/json",
+				  status: 200,
+				  response : function() {
+					  this.responseText = JSON.stringify({"message":null,"exception":null,"responseCode":"PHRQ400006","data":{"severity":"","featureId":"sampletestcase","testCaseId":"sampletestcase","steps":"sampletestcase","expectedResult":"1sampletestcase","actualResult":"sampletestcase","bugComment":"sampletestcase","requirementId":"","testCaseype":"","testInput":"","priority":"","description":"sampletestcase","status":"success"},"status":"success"});
+				  }
+				});
+				
+				$.mockjax({
+				  url : commonVariables.webserviceurl + commonVariables.manual + '/testcases?appDirName=test&testSuiteName=Downloads',
+				  type: "GET",
+				  dataType: "json",
+				  contentType: "application/json",
+				  status: 200,
+				  response : function() {
+					  this.responseText = JSON.stringify({"message":null,"exception":null,"responseCode":"PHRQ400003","data":[{"severity":"","featureId":"Download Page","testCaseId":"TC-Download Page-01","steps":"Perform Testcase 18 - Login Sheet[Login]","expectedResult":"","actualResult":"The user should be able to land on Download Page","bugComment":"","requirementId":"","testCaseype":"","testInput":"","priority":"","description":"To verify Download Page","status":""},{"severity":"","featureId":"Download Page - UI validation","testCaseId":"TC-Download Page-02","steps":"Perform Testcase 18 - Login Sheet[Login]","expectedResult":"","actualResult":"The user should be able to view the Download Page with 1.Server accordian\n2.Database accordian\n3.Editor accordian\n4.Tools accordian\n5.Others accordian\n6.Home, Projects, Settings, Download and Help displayed in the left side \nas links \n7. Customer drop down in the settings label,Helios label at \nthe left top corner,and \"© 2013.Photon Infotech Pvt Ltd. | \nwww.photon.in\" label present at the right bottom.","bugComment":"","requirementId":"","testCaseype":"","testInput":"","priority":"","description":"To verify Download Page UI validation","status":""},{"severity":"","featureId":"Download Page - UI validation for listed Server accordian","testCaseId":"TC-Download Page-03","steps":"Perform Testcase 18 - Login Sheet[Login]","expectedResult":"","actualResult":"The user can view the Name, Version , Size and download link for the various servers.","bugComment":"","requirementId":"","testCaseype":"","testInput":"","priority":"","description":"To verify Server accordians UI validation","status":""},{"severity":"","featureId":"Download Page - Download the server","testCaseId":"TC-Download Page-04","steps":"Perform Testcase 18 - Login Sheet[Login]","expectedResult":"","actualResult":"The user should be able to open or save the file","bugComment":"","requirementId":"","testCaseype":"","testInput":"","priority":"","description":"To verify downloading the server","status":""},{"severity":"","featureId":"Download Page - Download the database","testCaseId":"TC-Download Page-05","steps":"Perform Testcase 18 - Login Sheet[Login]","expectedResult":"","actualResult":"The user should be able to open or save the file","bugComment":"","requirementId":"","testCaseype":"","testInput":"","priority":"","description":"To verify downloading the database","status":""},{"severity":"","featureId":"Download Page - Download the Editors","testCaseId":"TC-Download Page-06","steps":"Perform Testcase 18 - Login Sheet[Login]","expectedResult":"","actualResult":"The user should be able to open or save the file","bugComment":"","requirementId":"","testCaseype":"","testInput":"","priority":"","description":"To verify downloading the Editors","status":""},{"severity":"","featureId":"Download Page - Download the Tools","testCaseId":"TC-Download Page-07","steps":"Perform Testcase 18 - Login Sheet[Login]","expectedResult":"","actualResult":"The user should be able to open or save the file","bugComment":"","requirementId":"","testCaseype":"","testInput":"","priority":"","description":"To verify downloading the Tools","status":""},{"severity":"","featureId":"Download Page - Download the Others","testCaseId":"TC-Download Page-08","steps":"Perform Testcase 18 - Login Sheet[Login]","expectedResult":"","actualResult":"The user should be able to open or save the file","bugComment":"","requirementId":"","testCaseype":"","testInput":"","priority":"","description":"To verify downloading the Others","status":""},{"severity":"","featureId":"sampletestcase","testCaseId":"sampletestcase","steps":"sampletestcase","expectedResult":"1sampletestcase","actualResult":"sampletestcase","bugComment":"sampletestcase","requirementId":"","testCaseype":"","testInput":"","priority":"","description":"sampletestcase","status":"success"}],"status":"success"});
+				  }
+				});
+				
+				var testSuiteName = commonVariables.testSuiteName;
+				$("#testSuiteName").val(testSuiteName);
+				$("input[name=featureId]").val("sampletestcase");
+				$("input[name=testCaseId]").val("sampletestcase");
+				$("textarea[name=steps]").val("sampletestcase");
+				$("input[name=actualResult]").val("sampletestcase");
+				$("textarea[name=description]").val("sampletestcase");
+				$("textarea[name=expectedResult]").val("1sampletestcase");
+				$("input[name=updateTestCase]").click();
+				
+				setTimeout(function() {
+					console.info("Inside runUpdateTestcase test");
+					start();
+					equal(1, 1, "Update testcases succeeded");
+//					self.runShowDownloadPopUp(moduleName);
+					
 ////					require(["dynamicPageTest"], function(dynamicPageTest){
 ////						dynamicPageTest.runTests();
 ////					});
-//				}, 1500);
-//			});
-//		},
+			}, 1500);
+		});
+		},*/
 		
 //		runTestcaseEmptyCheck: function (moduleName) {
 //			module(moduleName);

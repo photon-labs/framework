@@ -126,11 +126,7 @@ define([], function() {
 			} else if (action === "logContent") {
 				method = "GET";
 				url = 'buildinfo/logContent?status=' + buildInfo + '&appDirName=' + appdirName;
-			} else if (action === "checkMachine") {
-				method = "GET";
-				url = 'util/checkMachine';
-			}
-
+			} 
 			header = {
 				contentType: contType,
 				requestMethod: method,

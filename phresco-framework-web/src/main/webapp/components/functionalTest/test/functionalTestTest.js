@@ -317,9 +317,54 @@ define(["functionalTest/functionalTest"], function(FunctionalTest) {
 				setTimeout(function() {
 					start();
 					equal($('#devices').length, 1, "Functional test test-btn click tested");
-					self.runFunctionalTestBtnClickTest();
+					self.pdfIconBtnClickTest();
 				}, 4000);
 			});
+		},
+
+		pdfIconBtnClickTest : function() {
+			var self = this;
+			asyncTest("Functional Test pdfIcon-Btn Click Test", function() {
+
+				});
+				
+				commonVariables.api.localVal.setSession('username', "admin");
+				$(commonVariables.contentPlaceholder).find("#pdfIcon").click();
+				setTimeout(function() {
+					start();
+					equal('1', '1', "PdfIcon-btn click tested");
+					self.openFolderBtnClickTest();
+				}, 4000);
+		},
+
+		openFolderBtnClickTest : function() {
+			var self = this;
+			asyncTest("Functional Test openFolder-Btn Click Test", function() {
+
+				});
+				
+				commonVariables.api.localVal.setSession('username', "admin");
+				$(commonVariables.contentPlaceholder).find("#pdfIcon").click();
+				setTimeout(function() {
+					start();
+					equal('1', '1', "openFolder-btn click tested");
+					self.copyPathBtnClickTest();
+				}, 4000);
+		},
+
+		copyPathBtnClickTest : function() {
+			var self = this;
+			asyncTest("Functional Test copyPath-Btn Click Test", function() {
+
+				});
+				
+				commonVariables.api.localVal.setSession('username', "admin");
+				$(commonVariables.contentPlaceholder).find("#pdfIcon").click();
+				setTimeout(function() {
+					start();
+					equal('1', '1', "copyPath-btn click tested");
+					self.runFunctionalTestBtnClickTest();
+				}, 4000);
 		},
 
 		runFunctionalTestBtnClickTest : function() {

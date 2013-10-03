@@ -81,6 +81,7 @@ define(["testResult/listener/testResultListener"], function() {
 			var self = this;
 			var currentTab = commonVariables.navListener.currentTab;
 			var testsuites = commonVariables.testSuites;
+			self.showHideSysSpecCtrls();
 			if (testsuites !== undefined && testsuites !== null) {
 				if ("manualTest" === currentTab) {
 					self.testResultListener.getManualBarChartGraphData(testsuites, function(graphData) {
