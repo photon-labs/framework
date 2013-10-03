@@ -54,7 +54,7 @@ public class ApplicationsTest {
 		System.out.println("tear down!!!!");
 	}
 
-//  @Test
+/*//  @Test
 	public void gitPrivateRepoClone() throws Exception {
 		ApplicationInfo importProject = scmi.importProject("git","https://github.com/bestbuymobileapps/bby-digital-deals.git",
 				"nikhilkumar-a", "phresco123", "master", null, "Admin", "");
@@ -300,7 +300,7 @@ public class ApplicationsTest {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-	}
+	}*/
 	
 }
 	
