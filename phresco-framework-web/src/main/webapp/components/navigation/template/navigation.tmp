@@ -90,9 +90,11 @@
 								
 								<tr>
 									<td><label name="branch" value="branch">Branch</label></td>
+									<td><label name="branch" value="passPhrase">PassPhrase</label></td>
 								</tr>
 								<tr>	
 									<td><input type="text" class="branchval"></td>
+									<td><input type="password" class="passPhraseval"></td>
 								</tr>
                             </tbody>
                          </table>

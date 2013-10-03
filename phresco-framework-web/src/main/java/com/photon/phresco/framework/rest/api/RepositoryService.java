@@ -304,8 +304,7 @@ public class RepositoryService extends RestBase implements FrameworkConstants, S
 		UUID uniqueKey = UUID.randomUUID();
 		String unique_key = uniqueKey.toString();
 		try {
-			ApplicationInfo importProject = scmi.importProject(type, repodetail.getRepoUrl(), repodetail.getUserName(),
-					repodetail.getPassword(), null, repodetail.getRevision(), displayName, unique_key);
+			ApplicationInfo importProject = scmi.importProject(repodetail, displayName, unique_key);
 			if (importProject != null) {
 				if (repodetail.isTestCheckOut() && !importProject.getId().equals("#SEP#")) {
 					String path = Utility.getProjectHome() + File.separator + importProject.getAppDirName()
@@ -315,9 +314,7 @@ public class RepositoryService extends RestBase implements FrameworkConstants, S
 						testFolder.mkdirs();
 					}
 					FileUtils.cleanDirectory(testFolder);
-					String testSvnCheckout = scmi.svnCheckout(repodetail.getTestUserName(), repodetail
-							.getTestPassword(), repodetail.getTestRepoUrl(), testFolder.getPath(), repodetail
-							.getTestRevision());
+					String testSvnCheckout = scmi.svnCheckout(repodetail, testFolder.getPath());
 				} else {
 					status = RESPONSE_STATUS_SUCCESS;
 					successCode = PHR210048;
@@ -402,8 +399,7 @@ public class RepositoryService extends RestBase implements FrameworkConstants, S
 		UUID uniqueKey = UUID.randomUUID();
 		String unique_key = uniqueKey.toString();
 		try {
-			ApplicationInfo importProject = scmi.importProject(type, repodetail.getRepoUrl(), repodetail.getUserName(),
-					repodetail.getPassword(), repodetail.getBranch(), repodetail.getRevision(), displayName, unique_key);
+			ApplicationInfo importProject = scmi.importProject(repodetail, displayName, unique_key);
 			if (importProject != null) {
 				status = RESPONSE_STATUS_SUCCESS;
 				successCode = PHR200017;
@@ -456,8 +452,7 @@ public class RepositoryService extends RestBase implements FrameworkConstants, S
 		UUID uniqueKey = UUID.randomUUID();
 		String unique_key = uniqueKey.toString();
 		try {
-			ApplicationInfo importProject = scmi.importProject(type, repodetail.getRepoUrl(), repodetail.getUserName(),
-					repodetail.getPassword(), null, null, displayName, unique_key);
+			ApplicationInfo importProject = scmi.importProject(repodetail, displayName, unique_key);
 			if (importProject != null) {
 				status = RESPONSE_STATUS_SUCCESS;
 				successCode = PHR200017;
@@ -515,8 +510,7 @@ public class RepositoryService extends RestBase implements FrameworkConstants, S
 			//To generate the lock for the particular operation
 			LockUtil.generateLock(Collections.singletonList(LockUtil.getLockDetail(applicationInfo.getId(), FrameworkConstants.UPDATE, displayName, uniqueKey)), true);
 			
-			scmi.updateProject(type, repodetail.getRepoUrl(), repodetail.getUserName(), repodetail.getPassword(),
-					MASTER, null, applicationInfo);
+			scmi.updateProject(repodetail, applicationInfo);
 			
 			status = RESPONSE_STATUS_SUCCESS;
 			successCode = PHR200018;
@@ -606,8 +600,7 @@ public class RepositoryService extends RestBase implements FrameworkConstants, S
 		try {
 			//To generate the lock for the particular operation
 			LockUtil.generateLock(Collections.singletonList(LockUtil.getLockDetail(applicationInfo.getId(), FrameworkConstants.UPDATE, displayName, uniqueKey)), true);
-			scmi.updateProject(type, repodetail.getRepoUrl(), repodetail.getUserName(), repodetail.getPassword(), null,
-					revision, applicationInfo);
+			scmi.updateProject(repodetail, applicationInfo);
 			status = RESPONSE_STATUS_SUCCESS;
 			successCode = PHR200018;
 			ResponseInfo finalOutput = responseDataEvaluation(responseData, null,
@@ -699,8 +692,7 @@ public class RepositoryService extends RestBase implements FrameworkConstants, S
 		try {
 	    	//To generate the lock for the particular operation
 			LockUtil.generateLock(Collections.singletonList(LockUtil.getLockDetail(applicationInfo.getId(), FrameworkConstants.UPDATE, displayName, uniqueKey)), true);
-			scmi.updateProject(type, repodetail.getRepoUrl(), repodetail.getUserName(), repodetail.getPassword(), null,
-					repodetail.getRevision(), applicationInfo);
+			scmi.updateProject(repodetail, applicationInfo);
 			status = RESPONSE_STATUS_SUCCESS;
 			successCode = PHR200018;
 			ResponseInfo finalOutput = responseDataEvaluation(responseData, null, null, status, successCode);
@@ -754,8 +746,7 @@ public class RepositoryService extends RestBase implements FrameworkConstants, S
 			ApplicationInfo applicationInfo = FrameworkServiceUtil.getApplicationInfo(appDirName);
 			//To generate the lock for the particular operation
 			LockUtil.generateLock(Collections.singletonList(LockUtil.getLockDetail(applicationInfo.getId(), ADD_TO_REPO, displayName, uniqueKey)), true);
-			scmi.importToRepo(type, repodetail.getRepoUrl(), repodetail.getUserName(), repodetail.getPassword(), null,
-					null, applicationInfo, repodetail.getCommitMessage());
+			scmi.importToRepo(repodetail, applicationInfo);
 			User user = ServiceManagerImpl.USERINFO_MANAGER_MAP.get(userId);
 			// updateLatestProject(user, projectId, appId);
 			status = RESPONSE_STATUS_SUCCESS;
@@ -797,8 +788,7 @@ public class RepositoryService extends RestBase implements FrameworkConstants, S
 			ApplicationInfo applicationInfo = FrameworkServiceUtil.getApplicationInfo(appDirName);
 			//To generate the lock for the particular operation
 			LockUtil.generateLock(Collections.singletonList(LockUtil.getLockDetail(applicationInfo.getId(), ADD_TO_REPO, displayName, uniqueKey)), true);
-			scmi.importToRepo(type, repodetail.getRepoUrl(), repodetail.getUserName(), repodetail.getPassword(), null,
-					null, applicationInfo, repodetail.getCommitMessage());
+			scmi.importToRepo(repodetail, applicationInfo);
 			User user = ServiceManagerImpl.USERINFO_MANAGER_MAP.get(userId);
 			// updateLatestProject(user, projectId, appId);
 			status = RESPONSE_STATUS_SUCCESS;
@@ -888,8 +878,7 @@ public class RepositoryService extends RestBase implements FrameworkConstants, S
 			File appDir = new File(Utility.getProjectHome() + appDirName);
 			//To generate the lock for the particular operation
 			LockUtil.generateLock(Collections.singletonList(LockUtil.getLockDetail(applicationInfo.getId(), COMMIT , displayName, uniqueKey)), true);
-			scmi.commitToRepo(type, repodetail.getRepoUrl(), repodetail.getUserName(), repodetail.getPassword(), null,
-					null, appDir, repodetail.getCommitMessage());
+			scmi.commitToRepo(repodetail, appDir);
 			status = RESPONSE_STATUS_SUCCESS;
 			successCode = PHR200020;
 			ResponseInfo finalOutput = responseDataEvaluation(responseData, null, null, status, successCode);
@@ -941,8 +930,7 @@ public class RepositoryService extends RestBase implements FrameworkConstants, S
 			String applicationHome = Utility.getProjectHome() + appDirName;
 			File appDir = new File(applicationHome);
 			if (!repodetail.getCommitableFiles().isEmpty()) {
-				scmi.commitToRepo(type, repodetail.getRepoUrl(), repodetail.getUserName(), repodetail.getPassword(),
-						null, null, appDir, repodetail.getCommitMessage());
+				scmi.commitToRepo(repodetail, appDir);
 			}
 			status = RESPONSE_STATUS_SUCCESS;
 			successCode = PHR200020;

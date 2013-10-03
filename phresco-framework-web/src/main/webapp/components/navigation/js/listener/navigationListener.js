@@ -951,6 +951,7 @@ define([], function() {
 				importdata.branch = $(".branchval").val();
 				importdata.userName = $("#gitUserName").val();
 				importdata.password = $("#gitPassword").val();
+				importdata.passPhrase = $(".passPhraseval").val();
 			} else {
 				importdata.userName = $("#importUserName").val();
 				importdata.password = $("#importPassword").val();

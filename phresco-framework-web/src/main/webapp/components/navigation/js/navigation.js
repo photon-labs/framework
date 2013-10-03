@@ -107,6 +107,14 @@ define(["navigation/listener/navigationListener"], function() {
 				$('#qualityMenu').addClass("act");
 				self.onMytabEvent.dispatch(this.id);
 			});
+			
+			$("#importType").unbind("change");
+			$("#importType").change(function() {
+				$('.branchval').val('');
+				$('.passPhraseval').val('');
+				$('#revision').val('');
+			});
+			
 			//var counter = 0;
 			$("#importApp").unbind("click");
 			$("#importApp").click(function() {
