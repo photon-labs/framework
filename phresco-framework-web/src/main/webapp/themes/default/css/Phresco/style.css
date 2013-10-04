@@ -3739,6 +3739,9 @@ html>body tbody.scrollContent {
 	float: none;
 }
 
+.ci_info, .wait_button, .datetime_status {
+	text-decoration: none !important;
+}
 .sortable2 li div {
 	float: left;
 }
