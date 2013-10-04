@@ -130,7 +130,7 @@
             {{/showResultFiles}}
             
             {{#showTestAgainst showDevice resultAvailable}}
-            <div class="code_report type_report" data-i18n=testresult.label.results>
+            <div class="code_report type_report" data-i18n=commonlabel.label.type>
             </div>
             <div class="navbar navbar-static code_func">
                 <ul class="nav testAgainstNav">
