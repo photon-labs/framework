@@ -80,6 +80,7 @@ import com.photon.phresco.plugins.util.MojoProcessor;
 import com.photon.phresco.service.client.api.ServiceManager;
 import com.photon.phresco.service.client.impl.ServiceManagerImpl;
 import com.photon.phresco.util.Constants;
+import com.photon.phresco.util.ProjectUtils;
 import com.photon.phresco.util.ServiceConstants;
 import com.photon.phresco.util.Utility;
 import com.phresco.pom.exception.PhrescoPomException;
@@ -259,6 +260,7 @@ public class ProjectService extends RestBase implements FrameworkConstants, Serv
 	public Response updateProject(ProjectInfo projectinfo, @QueryParam(REST_QUERY_USERID) String userId) {
 		ResponseInfo<ProjectInfo> responseData = new ResponseInfo<ProjectInfo>();
 		try {
+			ProjectInfo projectInfo = null;
 			ServiceManager serviceManager = CONTEXT_MANAGER_MAP.get(userId);
 			if (serviceManager == null) {
 				status = RESPONSE_STATUS_FAILURE;
@@ -268,7 +270,23 @@ public class ProjectService extends RestBase implements FrameworkConstants, Serv
 				return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN,
 						"*").build();
 			}
-			ProjectInfo projectInfo = PhrescoFrameworkFactory.getProjectManager().update(projectinfo, serviceManager, null);
+			if(CollectionUtils.isNotEmpty(projectinfo.getAppInfos())) {
+				projectInfo = PhrescoFrameworkFactory.getProjectManager().create(projectinfo, serviceManager);
+			} else {
+				ProjectInfo availableProjectInfo = getProject(projectinfo.getId(), projectinfo.getCustomerIds().get(0));
+				System.out.println("availableProjectInfo : " + availableProjectInfo);
+				List<ApplicationInfo> appInfos = availableProjectInfo.getAppInfos();
+				for (ApplicationInfo applicationInfo : appInfos) {
+					projectinfo.setAppInfos(Collections.singletonList(applicationInfo));
+					StringBuilder sb = new StringBuilder(Utility.getProjectHome())
+					.append(applicationInfo.getAppDirName())
+					.append(File.separator)
+					.append(Constants.DOT_PHRESCO_FOLDER)
+					.append(File.separator)
+					.append(Constants.PROJECT_INFO_FILE);
+					ProjectUtils.updateProjectInfo(projectinfo, new File(sb.toString()));
+				}
+			}
 			status = RESPONSE_STATUS_SUCCESS;
 			successCode = PHR200006;
 			ResponseInfo<ProjectInfo> finalOutput = responseDataEvaluation(responseData, null,
@@ -283,7 +301,17 @@ public class ProjectService extends RestBase implements FrameworkConstants, Serv
 					.build();
 		}
 	}
-
+	
+	private ProjectInfo getProject(String projectId, String customerId) throws PhrescoException {
+		List<ProjectInfo> discover = PhrescoFrameworkFactory.getProjectManager().discover(customerId);
+		for (ProjectInfo projectInfo : discover) {
+			if (projectInfo.getId().equals(projectId)) {
+				return projectInfo;
+			}
+		}
+		return null;
+	}
+	
 	/**
 	 * Update application features.
 	 *
@@ -370,13 +398,11 @@ public class ProjectService extends RestBase implements FrameworkConstants, Serv
 			}
 			MojoProcessor mojo = new MojoProcessor(filePath);
 			ApplicationHandler applicationHandler = mojo.getApplicationHandler();
-			// To write selected Features into
-			// phresco-application-Handler-info.xml
+			// To write selected Features into phresco-application-Handler-info.xml
 			String artifactGroup = gson.toJson(listArtifactGroup);
 			applicationHandler.setSelectedFeatures(artifactGroup);
 
-			// To write Deleted Features into
-			// phresco-application-Handler-info.xml
+			// To write Deleted Features into phresco-application-Handler-info.xml
 			List<ArtifactGroup> removedModules = getRemovedModules(applicationInfo, selectedFeaturesFromUI,	serviceManager);
 			Type jsonType = new TypeToken<Collection<ArtifactGroup>>() {}.getType();
 			String deletedFeatures = gson.toJson(removedModules, jsonType);
@@ -390,7 +416,7 @@ public class ProjectService extends RestBase implements FrameworkConstants, Serv
 			applicationInfo.setCreated(true);
 			projectinfo.setAppInfos(Collections.singletonList(applicationInfo));
 			ProjectManager projectManager = PhrescoFrameworkFactory.getProjectManager();
-			projectManager.update(projectinfo, serviceManager, appDirName);
+			projectManager.updateApplicationFeatures(projectinfo, serviceManager);
 		} catch (FileNotFoundException e) {
 			status = RESPONSE_STATUS_ERROR;
 			errorCode = PHR210007;
@@ -441,7 +467,6 @@ public class ProjectService extends RestBase implements FrameworkConstants, Serv
 			UUID uniqueKey = UUID.randomUUID();
 			unique_key = uniqueKey.toString();
 			
-		//	if (validateAppInfo(oldAppDirName,appInfo) != null) {
 				ResponseInfo validationResponse = validateAppInfo(oldAppDirName,appInfo);
 				if (validationResponse != null) {
 				ResponseInfo<List<String>> finalOutput = responseDataEvaluation(responseData, null,
@@ -560,18 +585,11 @@ public class ProjectService extends RestBase implements FrameworkConstants, Serv
 
 			projectInfo.setAppInfos(Collections.singletonList(appInfo));
 			ProjectManager projectManager = PhrescoFrameworkFactory.getProjectManager();
-			projectManager.update(projectInfo, serviceManager, oldAppDirName);
+			projectManager.updateApplication(projectInfo, serviceManager, oldAppDirName);
 			// to update functional framework in pom.xml
 			updateFunctionalTestProperties(appInfo, serviceManager);
-			List<ProjectInfo> projects = projectManager.discover(customerId);
-			if (CollectionUtils.isNotEmpty(projects)) {
-				Collections.sort(projects, sortByDateToLatest());
-			}
 			
 			json = embedApplication(json, projectInfo, serviceManager, projectManager, oldAppDirName);
-			List<ApplicationInfo> appInfos = projectInfo.getAppInfos();
-			for (ApplicationInfo appInfoResponse : appInfos) {
-				if (appInfoResponse.getAppDirName().equals(oldAppDirName)) {
 					status = RESPONSE_STATUS_SUCCESS;
 					successCode = PHR200008;
 					json.put("projectInfo", projectInfo);
@@ -579,8 +597,6 @@ public class ProjectService extends RestBase implements FrameworkConstants, Serv
 							json, status, successCode);
 					return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN,ALL_HEADER)
 							.build();
-				}
-			}
 		} catch (PhrescoException e) {
 			status = RESPONSE_STATUS_ERROR;
 			errorCode = PHR210009;
@@ -609,7 +625,6 @@ public class ProjectService extends RestBase implements FrameworkConstants, Serv
 			} catch (PhrescoException e) {
 			}
 		}
-		return null;
 	}
 	
 	private Map embedApplication(Map json, ProjectInfo projectInfo, ServiceManager serviceManager, ProjectManager projectManager, String appDirName) throws PhrescoException {
@@ -691,9 +706,6 @@ public class ProjectService extends RestBase implements FrameworkConstants, Serv
 			ProjectInfo projectInfo = (ProjectInfo) new Gson().fromJson(reader, ProjectInfo.class);
 			ServiceManager serviceManager = CONTEXT_MANAGER_MAP.get(userId);
 			json = embedApplication(json, projectInfo, serviceManager, projectManager, appDirName);			
-			List<ApplicationInfo> appInfos = projectInfo.getAppInfos();
-			for (ApplicationInfo applicationInfo : appInfos) {
-				if (applicationInfo.getAppDirName().equals(appDirName)) {
 					status = RESPONSE_STATUS_SUCCESS;
 					successCode = PHR200009;
 					json.put("projectInfo", projectInfo);
@@ -701,8 +713,6 @@ public class ProjectService extends RestBase implements FrameworkConstants, Serv
 							json, status, successCode);
 					return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN,ALL_HEADER)
 							.build();
-				}
-			}
 		} catch (FileNotFoundException e) {
 			status = RESPONSE_STATUS_ERROR;
 			errorCode = PHR210007;
@@ -717,8 +727,7 @@ public class ProjectService extends RestBase implements FrameworkConstants, Serv
 					null, status, errorCode);
 			return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN,ALL_HEADER)
 					.build();
-		} 
-		return null;
+		}
 	}
 
 	/**

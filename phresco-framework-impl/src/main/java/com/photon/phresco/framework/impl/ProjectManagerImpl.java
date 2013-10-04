@@ -17,7 +17,6 @@
  */
 package com.photon.phresco.framework.impl;
 
-import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -58,7 +57,6 @@ import com.photon.phresco.commons.model.DownloadInfo;
 import com.photon.phresco.commons.model.ProjectDelivery;
 import com.photon.phresco.commons.model.ProjectInfo;
 import com.photon.phresco.commons.model.RepoInfo;
-import com.photon.phresco.commons.model.WebService;
 import com.photon.phresco.configuration.Environment;
 import com.photon.phresco.exception.PhrescoException;
 import com.photon.phresco.framework.PhrescoFrameworkFactory;
@@ -208,7 +206,6 @@ public class ProjectManagerImpl implements ProjectManager, FrameworkConstants, C
 			S_LOGGER.debug("Entering Method ProjectManagerImpl.create(ProjectInfo projectInfo)");
 		}
 		ClientResponse response = null;
-	//	BufferedInputStream eclipseReader = null;
 		try {
 			response = serviceManager.createProject(projectInfo);
 		} catch (Exception e) {
@@ -252,18 +249,7 @@ public class ProjectManagerImpl implements ProjectManager, FrameworkConstants, C
 							buildArgCmds.add(HYPHEN_F);
 							buildArgCmds.add(pomFileName);
 						}
-						applicationManager.performAction(projectInfo, ActionType.ECLIPSE, buildArgCmds, baseDir);
-						/* int available = eclipseReader.available();
-						while (available != 0) {
-							byte[] buf = new byte[available];
-			                int read = eclipseReader.read(buf);
-			                if (read == -1 ||  buf[available-1] == -1) {
-			                	break;
-			                } else {
-			                	// 
-			                }
-			                available = eclipseReader.available();
-						} */
+						 applicationManager.performAction(projectInfo, ActionType.ECLIPSE, buildArgCmds, baseDir);
 					}
 
 				}
@@ -271,15 +257,7 @@ public class ProjectManagerImpl implements ProjectManager, FrameworkConstants, C
 				throw new PhrescoException(e); 
 			} catch (IOException e) {
 				throw new PhrescoException(e);
-			} /* finally {
-				try {
-					if (eclipseReader != null) {
-						eclipseReader.close();
-					}
-				} catch (IOException e) {
-					throw new PhrescoException(e);
-				}
-			} */
+			}
 		} else if(response.getStatus() == 401){
 			throw new PhrescoException("Session expired");
 		} else {
@@ -304,45 +282,15 @@ public class ProjectManagerImpl implements ProjectManager, FrameworkConstants, C
 		return false;
 	}
 
-	public ProjectInfo update(ProjectInfo projectInfo, ServiceManager serviceManager, String oldAppDirName) throws PhrescoException {
-		if (projectInfo.getNoOfApps() == 0 && CollectionUtils.isEmpty(projectInfo.getAppInfos())) {
-			try {
-				ProjectInfo availableProjectInfo = getProject(projectInfo.getId(), projectInfo.getCustomerIds().get(0));
-				List<ApplicationInfo> appInfos = availableProjectInfo.getAppInfos();
-				for (ApplicationInfo applicationInfo : appInfos) {
-					projectInfo.setAppInfos(Collections.singletonList(applicationInfo));
-					StringBuilder sb = new StringBuilder(Utility.getProjectHome())
-					.append(applicationInfo.getAppDirName())
-					.append(File.separator)
-					.append(DOT_PHRESCO_FOLDER)
-					.append(File.separator)
-					.append(PROJECT_INFO_FILE);
-					ProjectUtils.updateProjectInfo(projectInfo, new File(sb.toString()));
-				}
-			} catch (Exception e) {
-				throw new PhrescoException(e);
-			}
-		} else {
+	public ProjectInfo updateApplicationFeatures(ProjectInfo projectInfo, ServiceManager serviceManager) throws PhrescoException {
 			ClientResponse response = serviceManager.updateProject(projectInfo);
 			if (response.getStatus() == 200) {
 				File backUpProjectInfoFile = null;
 				try {
-					//application path with old app dir
-					StringBuilder oldAppDirSb = new StringBuilder(Utility.getProjectHome());
-					oldAppDirSb.append(oldAppDirName);
-					File oldDir = new File(oldAppDirSb.toString());
-					backUpProjectInfoFile = backUpProjectInfoFile(oldDir.getPath());
 					//application path with new app dir
 					StringBuilder newAppDirSb = new StringBuilder(Utility.getProjectHome());
 					newAppDirSb.append(projectInfo.getAppInfos().get(0).getAppDirName());
 					File projectInfoFile = new File(newAppDirSb.toString());
-					
-					//rename to application app dir
-					oldDir.renameTo(projectInfoFile);
-					extractArchive(response, projectInfo);
-					updateProjectPom(projectInfo);
-					
-					updateCiInfoFile(projectInfo, oldAppDirName);
 					
 					StringBuilder dotPhrescoPathSb = new StringBuilder(projectInfoFile.getPath());
 					dotPhrescoPathSb.append(File.separator);
@@ -358,8 +306,6 @@ public class ProjectManagerImpl implements ProjectManager, FrameworkConstants, C
 					MojoProcessor mojoProcessor = new MojoProcessor(new File(pluginInfoFile));
 					ApplicationHandler applicationHandler = mojoProcessor.getApplicationHandler();
 					
-//					updateSelectedConfiguration (mojoProcessor, appInfo, serviceManager);
-					createSqlFolder(appInfo, projectInfoFile, serviceManager);
 					if (applicationHandler != null) {
 						String selectedFeatures = applicationHandler.getSelectedFeatures();
 						String deletedFeatures = applicationHandler.getDeletedFeatures();
@@ -372,9 +318,6 @@ public class ProjectManagerImpl implements ProjectManager, FrameworkConstants, C
 						//For Pdf Document Creation In Docs Folder
 						DocumentGenerator documentGenerator = PhrescoFrameworkFactory.getDocumentGenerator();
 						documentGenerator.generate(appInfo, projectInfoFile, artifactGroups, serviceManager);
-						if(! appInfo.getAppDirName().equals(oldAppDirName)) {
-							documentGenerator.deleteOldDocument(projectInfoFile, oldAppDirName);
-						}
 						// Dynamic Class Loading
 						PhrescoDynamicLoader dynamicLoader = new PhrescoDynamicLoader(repoInfo, plugins);
 						ApplicationProcessor applicationProcessor = dynamicLoader
@@ -395,10 +338,6 @@ public class ProjectManagerImpl implements ProjectManager, FrameworkConstants, C
 						}
 						applicationManager.performAction(projectInfo, ActionType.ECLIPSE, buildArgCmds, baseDir);
                     }
-				} catch (FileNotFoundException e) {
-					throw new PhrescoException(e);
-				} catch (IOException e) {
-					throw new PhrescoException(e);
 				} finally {
 					if(backUpProjectInfoFile!= null && backUpProjectInfoFile.exists()) {
 						FileUtil.delete(backUpProjectInfoFile);
@@ -409,8 +348,61 @@ public class ProjectManagerImpl implements ProjectManager, FrameworkConstants, C
 			} else {
 				throw new PhrescoException("Project updation failed");
 			}
+		return projectInfo;
+	}
+	
+	
+	public ProjectInfo updateApplication(ProjectInfo projectInfo, ServiceManager serviceManager, String oldAppDirName) throws PhrescoException {
+			ClientResponse response = serviceManager.updateProject(projectInfo);
+			if (response.getStatus() == 200) {
+				//application path with old app dir
+				StringBuilder oldAppDirSb = new StringBuilder(Utility.getProjectHome());
+				oldAppDirSb.append(oldAppDirName);
+				File oldDir = new File(oldAppDirSb.toString());
+				backUpProjectInfoFile(oldDir.getPath());
+				//application path with new app dir
+				StringBuilder newAppDirSb = new StringBuilder(Utility.getProjectHome());
+				newAppDirSb.append(projectInfo.getAppInfos().get(0).getAppDirName());
+				File projectInfoFile = new File(newAppDirSb.toString());
+				//rename to application app dir
+				boolean renameTo = oldDir.renameTo(projectInfoFile);
+				updateProjectPom(projectInfo);
+				updateCiInfoFile(projectInfo, oldAppDirName);
+				
+				StringBuilder dotPhrescoPathSb = new StringBuilder(projectInfoFile.getPath());
+				dotPhrescoPathSb.append(File.separator);
+				dotPhrescoPathSb.append(DOT_PHRESCO_FOLDER);
+				dotPhrescoPathSb.append(File.separator);
+				ApplicationInfo appInfo = projectInfo.getAppInfos().get(0);
+				String pluginInfoFile = dotPhrescoPathSb.toString() + APPLICATION_HANDLER_INFO_FILE;
+
+				createSqlFolder(appInfo, projectInfoFile, serviceManager);
+				//For Pdf Document Creation In Docs Folder
+					DocumentGenerator documentGenerator = PhrescoFrameworkFactory.getDocumentGenerator();
+					documentGenerator.generate(appInfo, projectInfoFile, null, serviceManager);
+					if(! appInfo.getAppDirName().equals(oldAppDirName)) {
+						documentGenerator.deleteOldDocument(projectInfoFile, oldAppDirName);
+					}
+
+					File projectInfoPath = new File(dotPhrescoPathSb.toString() + PROJECT_INFO_FILE);
+					ProjectUtils.updateProjectInfo(projectInfo, projectInfoPath);
+				if (isCallEclipsePlugin(appInfo)) {
+					ApplicationManager applicationManager = PhrescoFrameworkFactory.getApplicationManager();
+					String baseDir = Utility.getProjectHome() + File.separator + appInfo.getAppDirName();
+					List<String> buildArgCmds = new ArrayList<String>();
+				    String pomFileName = Utility.getPomFileName(appInfo);
+					if(!POM_NAME.equals(pomFileName)) {
+						buildArgCmds.add(HYPHEN_F);
+						buildArgCmds.add(pomFileName);
+					}
+					applicationManager.performAction(projectInfo, ActionType.ECLIPSE, buildArgCmds, baseDir);
+				}
+			} else if (response.getStatus() == 401) {
+				throw new PhrescoException("Session expired");
+			} else {
+				throw new PhrescoException("Project updation failed");
+			}
 			createEnvConfigXml(projectInfo, serviceManager);
-		}
 		return projectInfo;
 	}
 
@@ -469,86 +461,6 @@ public class ProjectManagerImpl implements ProjectManager, FrameworkConstants, C
 		} catch (IOException e) {
 			return false;
 		}
-	}
-	
-	private void updateSelectedConfiguration(MojoProcessor mojoProcessor, ApplicationInfo appInfo, ServiceManager serviceManager) throws PhrescoException {
-		//To write selected Database into phresco-application-Handler-info.xml
-		List<ArtifactGroupInfo> selectedDatabases = appInfo.getSelectedDatabases();
-		List<DownloadInfo> selectedServerGroup = new ArrayList<DownloadInfo>();
-		List<DownloadInfo> selectedDatabaseGroup = new ArrayList<DownloadInfo>();
-		ApplicationHandler applicationHandler = mojoProcessor.getApplicationHandler();
-		Gson gson = new Gson();
-
-		try {
-			if (CollectionUtils.isNotEmpty(selectedDatabases)) {
-				for (ArtifactGroupInfo selectedDatabase : selectedDatabases) {
-					DownloadInfo downloadInfo = serviceManager.getDownloadInfo(selectedDatabase.getArtifactGroupId());
-					String id = downloadInfo.getArtifactGroup().getId();
-					ArtifactGroup artifactGroupInfo = serviceManager.getArtifactGroupInfo(id);
-					List<ArtifactInfo> dbVersionInfos = artifactGroupInfo.getVersions();
-					List<ArtifactInfo> selectedDBVersionInfos = new ArrayList<ArtifactInfo>();
-					for (ArtifactInfo versionInfo : dbVersionInfos) {
-						String versionId = versionInfo.getId();
-						if (selectedDatabase.getArtifactInfoIds().contains(versionId)) {
-							selectedDBVersionInfos.add(versionInfo);
-						}
-					}
-					downloadInfo.getArtifactGroup().setVersions(selectedDBVersionInfos);
-					selectedDatabaseGroup.add(downloadInfo);
-				}
-				if (CollectionUtils.isNotEmpty(selectedDatabaseGroup)) {
-					String databaseGroup = gson.toJson(selectedDatabaseGroup);
-					applicationHandler.setSelectedDatabase(databaseGroup);
-				}
-			} else {
-				applicationHandler.setSelectedDatabase(null);
-			}
-
-			//To write selected Servers into phresco-application-Handler-info.xml
-			List<ArtifactGroupInfo> selectedServers = appInfo.getSelectedServers();
-			if (CollectionUtils.isNotEmpty(selectedServers)) {
-				for (ArtifactGroupInfo selectedServer : selectedServers) {
-					DownloadInfo downloadInfo = serviceManager.getDownloadInfo(selectedServer.getArtifactGroupId());
-					String id = downloadInfo.getArtifactGroup().getId();
-					ArtifactGroup artifactGroupInfo = serviceManager.getArtifactGroupInfo(id);
-					List<ArtifactInfo> serverVersionInfos = artifactGroupInfo.getVersions();
-					List<ArtifactInfo> selectedServerVersionInfos = new ArrayList<ArtifactInfo>();
-					for (ArtifactInfo versionInfo : serverVersionInfos) {
-						String versionId = versionInfo.getId();
-						if (selectedServer.getArtifactInfoIds().contains(versionId)) {
-							selectedServerVersionInfos.add(versionInfo);
-						}
-					}
-					downloadInfo.getArtifactGroup().setVersions(selectedServerVersionInfos);
-					selectedServerGroup.add(downloadInfo);
-				}
-				if (CollectionUtils.isNotEmpty(selectedServerGroup)) {
-					String serverGroup = gson.toJson(selectedServerGroup);
-					applicationHandler.setSelectedServer(serverGroup);
-				}
-			} else {
-				applicationHandler.setSelectedServer(null);
-			}
-
-			//To write selected WebServices info to phresco-plugin-info.xml
-			List<String> selectedWebservices = appInfo.getSelectedWebservices();
-			List<WebService> webServiceList = new ArrayList<WebService>();
-			if (CollectionUtils.isNotEmpty(selectedWebservices)) {
-				for (String selectedWebService : selectedWebservices) {
-					WebService webservice = serviceManager.getWebService(selectedWebService);
-					webServiceList.add(webservice);
-				}
-				if (CollectionUtils.isNotEmpty(webServiceList)) {
-					String serverGroup = gson.toJson(webServiceList);
-					applicationHandler.setSelectedWebService(serverGroup);
-				}
-			} else {
-				applicationHandler.setSelectedWebService(null);
-			}
-		} catch (PhrescoException e) {
-			throw new PhrescoException(e);
-		}
-		mojoProcessor.save();
 	}
 
 	private void createEnvConfigXml(ProjectInfo projectInfo, ServiceManager serviceManager) throws PhrescoException {
@@ -826,4 +738,5 @@ public class ProjectManagerImpl implements ProjectManager, FrameworkConstants, C
 			 return name.endsWith(filter_);
 		 }
 	 }
+
 }

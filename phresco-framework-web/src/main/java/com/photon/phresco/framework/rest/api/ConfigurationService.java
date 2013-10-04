@@ -62,6 +62,7 @@ import org.w3c.dom.DOMException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
+import com.photon.phresco.api.ApplicationProcessor;
 import com.photon.phresco.api.ConfigManager;
 import com.photon.phresco.api.NonEnvConfigManager;
 import com.photon.phresco.commons.FrameworkConstants;
@@ -72,8 +73,10 @@ import com.photon.phresco.commons.model.ArtifactGroupInfo;
 import com.photon.phresco.commons.model.ArtifactInfo;
 import com.photon.phresco.commons.model.CertificateInfo;
 import com.photon.phresco.commons.model.CoreOption;
+import com.photon.phresco.commons.model.Customer;
 import com.photon.phresco.commons.model.FeatureConfigure;
 import com.photon.phresco.commons.model.PropertyTemplate;
+import com.photon.phresco.commons.model.RepoInfo;
 import com.photon.phresco.commons.model.SettingsTemplate;
 import com.photon.phresco.configuration.Configuration;
 import com.photon.phresco.configuration.Environment;
@@ -88,9 +91,11 @@ import com.photon.phresco.framework.model.TemplateInfo;
 import com.photon.phresco.framework.rest.api.util.FrameworkServiceUtil;
 import com.photon.phresco.impl.ConfigManagerImpl;
 import com.photon.phresco.impl.NonEnvConfigManagerImpl;
+import com.photon.phresco.plugins.util.MojoProcessor;
 import com.photon.phresco.service.client.api.ServiceManager;
 import com.photon.phresco.util.Constants;
 import com.photon.phresco.util.FileUtil;
+import com.photon.phresco.util.PhrescoDynamicLoader;
 import com.photon.phresco.util.ServiceConstants;
 import com.photon.phresco.util.Utility;
 import com.phresco.pom.exception.PhrescoPomException;
@@ -428,73 +433,88 @@ public class ConfigurationService extends RestBase implements FrameworkConstants
 	@Produces(MediaType.APPLICATION_JSON)
 	@Consumes(MediaType.APPLICATION_JSON)
 	public Response updateConfiguration(@QueryParam(REST_QUERY_USERID) String userId,
-	@QueryParam(REST_QUERY_CUSTOMERID) String customerId,
-	@QueryParam(REST_QUERY_APPDIR_NAME) String appDirName, @QueryParam(REST_QUERY_ENV_NAME) String envName, @QueryParam("oldEnvName") String oldEnvName, @QueryParam("defaultEnv") String defaultEnv,
-	List<Configuration> configurationlist, @QueryParam("isEnvSpecific") String isEnvSpecific, @QueryParam("configName") String configName, @QueryParam("desc") String desc) {
-	Environment env = new Environment();
-	String configFile = FrameworkServiceUtil.getConfigFileDir(appDirName);
-	ResponseInfo<Configuration> responseData = new ResponseInfo<Configuration>();
-	try {
-	if (StringUtils.isEmpty(isEnvSpecific)) {
-	ConfigManager configManager = new ConfigManagerImpl(new File(configFile));
-	// List<Environment> environments = configManager.getEnvironments(Arrays.asList(envName));
-	// List<Configuration> listofconfiguration = environments.get(0).getConfigurations();
-	// List<String> configuration_names = new ArrayList<String>();
-	String validateConfiguration = validateConfiguration(userId, customerId, appDirName, configurationlist);
-	if(StringUtils.isNotEmpty(validateConfiguration)) {
-	ResponseInfo<String> finalOuptut = responseDataEvaluation(responseData, null,
-	validateConfiguration, RESPONSE_STATUS_FAILURE, PHR610024);
-	return Response.ok(finalOuptut).header("Access-Control-Allow-Origin", "*").build();
-	}
-	// for (Configuration configuration_temp : listofconfiguration) {
-	//
-	// configuration_names.add(configuration_temp.getName());
-	// }
-	boolean defaultBoolValue = Boolean.parseBoolean(defaultEnv);
-	configManager.deleteEnvironment(oldEnvName);
-	env.setName(envName);
-	env.setDesc(desc);
-	env.setDefaultEnv(defaultBoolValue);
-	env.setConfigurations(configurationlist);
-	List<Environment> environments = configManager.getEnvironments();
-	if(CollectionUtils.isNotEmpty(environments)){
-	environments.add(env);
-	configManager.addEnvironments(environments);
-	}else {
-		configManager.addEnvironments(Arrays.asList(env));
-	}
-	// configManager.deleteConfigurations(envName, configuration_names);
-	// configManager.createConfiguration(envName, configurationlist);
-	} else {
-	String nonEnvConfigFie = FrameworkServiceUtil.getnonEnvConfigFileDir(appDirName);
-	NonEnvConfigManager nonConfigManager = new NonEnvConfigManagerImpl(new File(nonEnvConfigFie));
-	if(StringUtils.isEmpty(configName)) {
-	Configuration config = configurationlist.get(0);
-	Configuration addFilesToConfigFile = addFilesToConfigFile(appDirName, config);
-	nonConfigManager.createConfiguration(addFilesToConfigFile);
+			@QueryParam(REST_QUERY_CUSTOMERID) String customerId,
+			@QueryParam(REST_QUERY_APPDIR_NAME) String appDirName, @QueryParam(REST_QUERY_ENV_NAME) String envName,
+			@QueryParam("oldEnvName") String oldEnvName, @QueryParam("defaultEnv") String defaultEnv,
+			List<Configuration> configurationlist, @QueryParam("isEnvSpecific") String isEnvSpecific,
+			@QueryParam("configName") String configName, @QueryParam("desc") String desc) {
+		Environment env = new Environment();
+		String configFile = FrameworkServiceUtil.getConfigFileDir(appDirName);
+		ResponseInfo<Configuration> responseData = new ResponseInfo<Configuration>();
+		try {
+			if (StringUtils.isEmpty(isEnvSpecific)) {
+				ConfigManager configManager = new ConfigManagerImpl(new File(configFile));
+				String validateConfiguration = validateConfiguration(userId, customerId, appDirName, configurationlist);
+				if (StringUtils.isNotEmpty(validateConfiguration)) {
+					ResponseInfo<String> finalOuptut = responseDataEvaluation(responseData, null,
+							validateConfiguration, RESPONSE_STATUS_FAILURE, PHR610024);
+					return Response.ok(finalOuptut).header("Access-Control-Allow-Origin", "*").build();
+				}
+				boolean defaultBoolValue = Boolean.parseBoolean(defaultEnv);
+				configManager.deleteEnvironment(oldEnvName);
+				env.setName(envName);
+				env.setDesc(desc);
+				env.setDefaultEnv(defaultBoolValue);
+				env.setConfigurations(configurationlist);
+				List<Environment> environments = configManager.getEnvironments();
+				if (CollectionUtils.isNotEmpty(environments)) {
+					environments.add(env);
+					configManager.addEnvironments(environments);
+				} else {
+					configManager.addEnvironments(Arrays.asList(env));
+				}
+			} else {
+				String nonEnvConfigFie = FrameworkServiceUtil.getnonEnvConfigFileDir(appDirName);
+				NonEnvConfigManager nonConfigManager = new NonEnvConfigManagerImpl(new File(nonEnvConfigFie));
+				if (StringUtils.isEmpty(configName)) {
+					Configuration config = configurationlist.get(0);
+					Configuration addFilesToConfigFile = addFilesToConfigFile(appDirName, config);
+					nonConfigManager.createConfiguration(addFilesToConfigFile);
 
-	ResponseInfo<String> finalOuptut = responseDataEvaluation(responseData, null,
-	"Success", RESPONSE_STATUS_SUCCESS, PHR600015);
-	return Response.ok(finalOuptut).header("Access-Control-Allow-Origin", "*").build();
-	} else {
-	Configuration config = configurationlist.get(0);
-	Configuration addFilesToConfigFile = addFilesToConfigFile(appDirName, config);
-	nonConfigManager.updateConfiguration(configName, addFilesToConfigFile);
-	}
-	}
-	ResponseInfo<String> finalOuptut = responseDataEvaluation(responseData, null,
-	"Success", RESPONSE_STATUS_SUCCESS, PHR600006);
-	return Response.ok(finalOuptut).header("Access-Control-Allow-Origin", "*").build();
-	} catch (ConfigurationException e) {
-	ResponseInfo<Configuration> finalOuptut = responseDataEvaluation(responseData, e,
-	"Failure", RESPONSE_STATUS_ERROR, PHR610010);
-	return Response.status(Status.OK).entity(finalOuptut).header("Access-Control-Allow-Origin",
-	"*").build();
-	} catch (PhrescoException e) {
-	ResponseInfo<Configuration> finalOuptut = responseDataEvaluation(responseData, e, "Failure", RESPONSE_STATUS_ERROR, PHR610010);
-	return Response.status(Status.OK).entity(finalOuptut).header("Access-Control-Allow-Origin", "*")
-	.build();
-	}
+					ResponseInfo<String> finalOuptut = responseDataEvaluation(responseData, null, "Success",
+							RESPONSE_STATUS_SUCCESS, PHR600015);
+					return Response.ok(finalOuptut).header("Access-Control-Allow-Origin", "*").build();
+				} else {
+					Configuration config = configurationlist.get(0);
+					Configuration addFilesToConfigFile = addFilesToConfigFile(appDirName, config);
+					nonConfigManager.updateConfiguration(configName, addFilesToConfigFile);
+				}
+			}
+
+			String pluginInfoFile = FrameworkServiceUtil.getPluginInfoPath(appDirName);
+			MojoProcessor mojoProcessor = new MojoProcessor(new File(pluginInfoFile));
+			String className = mojoProcessor.getApplicationHandler().getClazz();
+			ServiceManager serviceManager = CONTEXT_MANAGER_MAP.get(userId);
+			Customer customer = serviceManager.getCustomer(customerId);
+			RepoInfo repoInfo = customer.getRepoInfo();
+			List<ArtifactGroup> artifactGroups = new ArrayList<ArtifactGroup>();
+			ArtifactGroup artifactGroup = new ArtifactGroup();
+			artifactGroup.setGroupId(mojoProcessor.getApplicationHandler().getGroupId());
+			artifactGroup.setArtifactId(mojoProcessor.getApplicationHandler().getArtifactId());
+			// To set the versions of Artifact Group.
+			List<ArtifactInfo> artifactInfos = new ArrayList<ArtifactInfo>();
+			ArtifactInfo artifactInfo = new ArtifactInfo();
+			artifactInfo.setVersion(mojoProcessor.getApplicationHandler().getVersion());
+			artifactInfos.add(artifactInfo);
+			artifactGroup.setVersions(artifactInfos);
+
+			artifactGroups.add(artifactGroup);
+			PhrescoDynamicLoader dynamicLoader = new PhrescoDynamicLoader(repoInfo, artifactGroups);
+			ApplicationProcessor applicationProcessor = dynamicLoader.getApplicationProcessor(className);
+			applicationProcessor.postConfiguration(FrameworkServiceUtil.getApplicationInfo(appDirName),
+					configurationlist);
+			ResponseInfo<String> finalOuptut = responseDataEvaluation(responseData, null, "Success",
+					RESPONSE_STATUS_SUCCESS, PHR600006);
+			return Response.ok(finalOuptut).header("Access-Control-Allow-Origin", "*").build();
+		} catch (ConfigurationException e) {
+			ResponseInfo<Configuration> finalOuptut = responseDataEvaluation(responseData, e, "Failure",
+					RESPONSE_STATUS_ERROR, PHR610010);
+			return Response.status(Status.OK).entity(finalOuptut).header("Access-Control-Allow-Origin", "*").build();
+		} catch (PhrescoException e) {
+			ResponseInfo<Configuration> finalOuptut = responseDataEvaluation(responseData, e, "Failure",
+					RESPONSE_STATUS_ERROR, PHR610010);
+			return Response.status(Status.OK).entity(finalOuptut).header("Access-Control-Allow-Origin", "*").build();
+		}
 
 	}
 

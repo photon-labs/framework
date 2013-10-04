@@ -412,6 +412,16 @@ public class FrameworkServiceUtil implements Constants, FrameworkConstants, Resp
 		return builder.toString();
 	}
 	
+    public static String getPluginInfoPath(String appDirName) throws PhrescoException {
+    	StringBuilder builder = new StringBuilder(Utility.getProjectHome());
+    	builder.append(appDirName);
+    	builder.append(File.separator);
+    	builder.append(FOLDER_DOT_PHRESCO);
+    	builder.append(File.separator);
+    	builder.append(Constants.APPLICATION_HANDLER_INFO_FILE);
+    	return builder.toString();
+    }
+	
 	 //get server Url for sonar
     public static String getSonarURL(HttpServletRequest request) throws PhrescoException {
     	FrameworkConfiguration frameworkConfig = PhrescoFrameworkFactory.getFrameworkConfig();

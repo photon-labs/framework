@@ -64,8 +64,10 @@ public interface ProjectManager {
 	 * @return ProjectInfo
 	 * @throws PhrescoException
 	 */
-	ProjectInfo update(ProjectInfo projectInfo, ServiceManager serviceManager, String oldAppDirName) throws PhrescoException;
+	ProjectInfo updateApplication(ProjectInfo projectInfo, ServiceManager serviceManager, String oldAppDirName) throws PhrescoException;
 	
+	
+	ProjectInfo updateApplicationFeatures(ProjectInfo projectInfo, ServiceManager serviceManager) throws PhrescoException;
 	/**
 	 * This method deletes the project in local filesystem and not is server
 	 * @param ProjectInfo

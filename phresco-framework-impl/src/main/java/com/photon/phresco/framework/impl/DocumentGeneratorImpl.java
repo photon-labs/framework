@@ -83,10 +83,10 @@ public class DocumentGeneratorImpl implements DocumentGenerator {
             String techId = info.getTechInfo().getId();
             Technology technology = serviceManager.getTechnology(techId);
             if(StringUtils.isNotEmpty(technology.getDescription())) {
-            	
+                InputStream stringAsPDF = DocumentUtil.getStringAsPDF(technology.getDescription());
+                DocumentUtil.addPages(stringAsPDF, pdfCopy);
             }
-            InputStream stringAsPDF = DocumentUtil.getStringAsPDF(technology.getDescription());
-            DocumentUtil.addPages(stringAsPDF, pdfCopy);
+        
 //			if (StringUtils.isNotEmpty(technology.getDescription())) {
 //				PdfInput convertToPdf = DocConvertor.convertToPdf(technology
 //						.getDescription());
