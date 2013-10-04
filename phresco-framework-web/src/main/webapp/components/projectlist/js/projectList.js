@@ -613,7 +613,7 @@ define(["projectlist/listener/projectListListener"], function() {
 			self.windowResize();
 			self.tableScrollbar();
 			this.customScroll($(".cus_themes"));
-			this.customScroll($(".pdfheight"));
+			//this.customScroll($(".pdfheight"));
 		}
 	});
 

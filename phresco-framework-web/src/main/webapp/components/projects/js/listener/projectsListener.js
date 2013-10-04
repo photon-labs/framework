@@ -199,11 +199,13 @@ define([], function() {
 		},
 
 		appvalid : function() {
-			var textboxval,techval,verval,count1 = 0,flagnew1 = 0,arr1 = [],flag = 0;
+			var textboxval,techval,verval,count1 = 0,flagnew1 = 0,arr1 = [],flag = 0,flagnew = 0;
 			$('.applnlayercontent').each(function(index,value) {
 				if(($(value).css('display') !== 'none') && ($(value).attr('name') === 'staticApplnLayer')){
 					textboxval = $(this).children('td.applnappcode').children('input.appln-appcode').val();
+					groupval = $(this).children('td.frontEnd').children('select.frontEnd').val();
 					techval = $(this).children('td.technology').children('select.appln_technology').val();
+					groupvalObj = $(this).children('td.frontEnd').children('select.frontEnd');
 					techvalObj = $(this).children('td.technology').children('select.appln_technology');
 					verval = $(this).children('td:eq(2)').children().val();
 					if($("tr[class='applnLayer']").attr('key') === 'displayed'){
@@ -219,17 +221,29 @@ define([], function() {
 							});
 						}
 						if(flag !== 1) {
-							if(techval !== undefined || techval !== 'undefined') { 
-								if(techval === 'Select Technology' || techval === null) {
+							if(groupval !== undefined || groupval !== 'undefined') { 
+								if(groupval === 'Select Group' || groupval === null) {
+									flagnew = 1;
 									flagnew1 = 1;
-									$(techvalObj).focus();
 									$(".errmsg1").show();
-									$(".errmsg1").text("Select Technology.");
-									setTimeout(function() {
-										$(".errmsg1").hide();
-									}, 5000);
-								} 
+									$(".errmsg1").text("Select Group.");
+									$(groupvalObj).focus();	
+								}
 							}
+							
+							if(flagnew !== 1) {
+								if(techval !== undefined || techval !== 'undefined') { 
+									if(techval === 'Select Technology' || techval === null) {
+										flagnew1 = 1;
+										$(techvalObj).focus();
+										$(".errmsg1").show();
+										$(".errmsg1").text("Select Technology.");
+										setTimeout(function() {
+											$(".errmsg1").hide();
+										}, 5000);
+									} 
+								}
+							}	
 						}
 					}
 					arr1[count1]=textboxval;

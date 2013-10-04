@@ -42,7 +42,6 @@
                                     {{/each}} 
                                 </select>
                                 {{#scopeShowHide packaging scope}}{{/scopeShowHide}}
-								</div>
 								{{#packagedata packaging versions appliesTo id}}{{/packagedata}}
                         </li>
 						<div class="clear"></div>

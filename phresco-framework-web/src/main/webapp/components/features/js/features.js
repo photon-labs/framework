@@ -196,6 +196,8 @@ define(["features/listener/featuresListener"], function() {
 					if(responseData.featureslist.length=== 0 && responseData.jsibrarielist.length=== 0 && responseData.componentList.length=== 0)
 					{
 						$("#notavailable").show();
+						$("#featureUpdate").attr('disabled','disabled');
+						$("div.features_right").hide();
 					}else {				
 						$(".ftotal").text(responseData.featureslist.length);						
 						$(".jstotal").text(responseData.jsibrarielist.length);						

@@ -398,6 +398,7 @@ define(['lib/RGraph_common_core-1.0','lib/RGraph_common_tooltips-1.0','lib/RGrap
 				self.closeConsole();
 				$('.progress_loading').hide();
 			}
+			self.copyLog();
 			
 		},
 		

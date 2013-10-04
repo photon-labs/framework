@@ -181,6 +181,7 @@ define([], function() {
 					});
 				}
 			});
+			self.copyLog();
 		},
 
 		postStartHub : function() {

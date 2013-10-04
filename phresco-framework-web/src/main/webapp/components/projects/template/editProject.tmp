@@ -62,9 +62,9 @@
 								<tbody class="applnlayer">
 									<tr class="applnlayercontent" name="staticApplnLayer" style="display:none;">
 										<td class="applnappcode"><input type="text" id="appcode" maxlength="30" title="30 Characters only" class="appln-appcode appCodeText"></td>
-										<td name="web" class="web">
+										<td name="frontEnd" class="frontEnd">
 											<select name="frontEnd" class="frontEnd selectpicker" title="Select Group">
-												<option value="Select Group">Select Group</option>
+												<option selected disabled value="">Select Group</option>
 												{{#each applicationlayerData.techGroups}}
 													<option value="{{id}}">{{name}}</option>
 												{{/each}}
@@ -72,7 +72,7 @@
 										</td>
 										<td name="technology" class="technology">
 											<select name="appln_technology" class="appln_technology selectpicker" title="Select Technology">
-											   <option value="Select Technology">Select Technology</option>
+											   <option disabled value="Select Technology">Select Technology</option>
 											   {{#each applicationlayerData.techGroups}}
 													{{#each techInfos}}
 													  <option value="{{id}}">{{name}}</option>

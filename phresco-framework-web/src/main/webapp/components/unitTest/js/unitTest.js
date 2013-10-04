@@ -127,6 +127,7 @@ define(["unitTest/listener/unitTestListener", "testResult/listener/testResultLis
 						commonVariables.api.showError(self.getLockErrorMsg(response), 'error', true, true);
 					}	
 				});	
+				self.copyLog();
 			});
 			
 			//Change event of the report type to get the report

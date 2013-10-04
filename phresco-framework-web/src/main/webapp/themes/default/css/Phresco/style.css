@@ -4841,6 +4841,7 @@ textarea[name="regex"] {
 }
 
 .pdfheight{
+	max-height: 100px !important;
 	height: 70px !important;
 	overflow: auto;
 }
