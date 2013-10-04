@@ -115,6 +115,7 @@ define(["ci/listener/ciListener", "lib/jquery-tojson-1.0"], function() {
 		loadPage :function(){
 			Clazz.navigationController.jQueryContainer = commonVariables.contentPlaceholder;
 			Clazz.navigationController.push(this, commonVariables.animation);
+			
 		},
 
 		loadPageTest :function(){
@@ -140,11 +141,16 @@ define(["ci/listener/ciListener", "lib/jquery-tojson-1.0"], function() {
 			self.multiselect();
 		},
 
-		pageRefresh: function() {
+		pageRefresh : function(response) {
 			var self = this;
-			self.loadPage();	
+			commonVariables.navListener.getMyObj(commonVariables.jobTemplates, function(jobTemplatesObj){
+				jobTemplatesObj.loadPage(true);
+				if(response !== undefined) {
+					commonVariables.api.showError(response.responseCode ,"success", true, false, true);
+				}
+			});
 		},
-
+		
 		getAction : function(ciRequestBody, action, param, callback) {
 			var self = this;
 			// Content place holder for the Job template
@@ -157,16 +163,9 @@ define(["ci/listener/ciListener", "lib/jquery-tojson-1.0"], function() {
 				} else {
 					// For add, update and delete
 					if(response.data !== false) {
-						self.pageRefresh();
+						self.pageRefresh(response);
 					} else if(response.data === false) {
-						$(".content_end").show();
-						$(".msgdisplay").removeClass("success").addClass("error");
-						$(".error").attr('data-i18n', 'errorCodes.' + response.responseCode);
-						self.renderlocales(commonVariables.contentPlaceholder);	
-						$(".error").fadeIn(500).fadeOut(500).fadeIn(500).fadeOut(500).fadeIn(500).fadeOut(5);
-						setTimeout(function() {
-							$(".content_end").hide();
-						},2500);
+						commonVariables.api.showError(commonVariables.api.error[response.responseCode] ,"error", true, true, true);
 					}
 				}
 			});	
@@ -233,8 +232,8 @@ define(["ci/listener/ciListener", "lib/jquery-tojson-1.0"], function() {
 			
 			// Save job template
    			$('#jobTemplate').on('click', '[name=save]', function(e) {	
-				self.validateName.dispatch('save', self, function() {
-					self.pageRefresh();
+				self.validateName.dispatch('save', self, function(response) {
+					self.pageRefresh(response);
 				});
 			});
 
@@ -258,8 +257,8 @@ define(["ci/listener/ciListener", "lib/jquery-tojson-1.0"], function() {
 
    			// Update job template
    			$('#jobTemplate').on('click', '[name=update]', function(e) {				
-				self.validateName.dispatch('update', self, function() {
-					self.pageRefresh();
+				self.validateName.dispatch('update', self, function(response) {
+					self.pageRefresh(response);
 				});
 			});
 

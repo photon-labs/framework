@@ -64,12 +64,13 @@
                                      
                                 </tr>
                                 
-                                <tr id="save"><td colspan="4" align="right"><input type="button" value="Save" name="save" class="btn btn_style flt_right"></td></tr>
+                                <tr id="save"><td colspan="4" align="right"></td></tr>
                           </tbody>
                        </table>
                     </td>
                 </tr>
-                    
+                
+                <tr id="save"><td colspan="4" align="right"><input type="button" value="Save" name="save" class="btn btn_style flt_right"></td></tr>    
                     
                     
                      

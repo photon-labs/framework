@@ -290,7 +290,9 @@ define([], function() {
 					ciRequestBody.push(confluenceObj);
 				});
 				
-				self.getHeaderResponse(self.getRequestHeader(ciRequestBody, 'save'), function(response) {});
+				self.getHeaderResponse(self.getRequestHeader(ciRequestBody, 'save'), function(response) {
+					commonVariables.api.showError(response.responseCode ,"success", true, false, true);
+				});
 			}
 			
 		},

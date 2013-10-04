@@ -817,6 +817,7 @@ define(["framework/widget", "framework/templateProvider"], function() {
 		
 			// Open console window - Added by sudhakar
 			openConsole : function() {
+				var self = this;
 				$('.testSuiteTable').append('<div class="mask"></div>');
 				$('.mask').show();
 				$('.unit_close').css("z-index", 1001);

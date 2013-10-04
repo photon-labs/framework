@@ -35,12 +35,18 @@ define([], function() {
 			}); 
 		},
 
-		loadContinuousDeliveryView : function() {
+		loadContinuousDeliveryView : function(response) {
 			var self = this;
 			Clazz.navigationController.jQueryContainer = commonVariables.contentPlaceholder;
 			commonVariables.navListener.getMyObj(commonVariables.continuousDeliveryView, function(retVal){
-				self.continuousDeliveryView = 	retVal;			
-				Clazz.navigationController.push(retVal, commonVariables.animation);
+				self.continuousDeliveryView = 	retVal;		
+				if(response !== undefined) {
+					commonVariables.api.showError(response.responseCode ,"success", true, false, true);
+				}
+				setTimeout(function() {
+					Clazz.navigationController.push(retVal, commonVariables.animation);
+				},1200);
+				
 			}); 
 		},
 
@@ -238,7 +244,7 @@ define([], function() {
 			ciRequestBody.cdName = obj.prev().attr("value");
 			
 			self.getHeaderResponse(self.getRequestHeader(ciRequestBody, 'deleteContinuousDelivery'), function (response) {
-				self.loadContinuousDeliveryView();
+				self.loadContinuousDeliveryView(response);
 			});
 		},
 		
@@ -407,7 +413,7 @@ define([], function() {
 					status = response.data.status;
 				}
 				
-				var headerTr = '<h1>Info</h1><div><b>Executed:</b>'+timeStamp+'<br><b>BuildNumber:</b>'+number+'<br>';
+				var headerTr = '<h1>Last Build Status</h1><div><b>Executed:</b>'+timeStamp+'<br><b>BuildNumber:</b>'+number+'<br>';
 				content = content.concat(headerTr);
 				if(status === "SUCCESS") {
 					headerTr = '<b>Status:</b><span class=completedinfo>'+status+"<span></div>";
@@ -428,7 +434,7 @@ define([], function() {
 			ciRequestBody.data = obj.closest("form").serialize();
 			if(self.cloneValidation()) {
 				self.getHeaderResponse(self.getRequestHeader(ciRequestBody, 'createClone'), function (response) {
-					self.loadContinuousDeliveryView();
+					self.loadContinuousDeliveryView(response);
 				});
 			}
 		},
@@ -1339,10 +1345,13 @@ define([], function() {
 			            	 	});
 			            	} else if ($.type(value) === "string" && value === "true") {
 			            		$('[name="'+ key +'"]').prop('checked', true);
+			            		$('[name="'+ key +'"]').attr('value', "true");
 			            	} else if ($.type(value) === "string" && value === "false") {
 			            		$('[name="'+ key +'"]').prop('checked', false);
+			            		$('[name="'+ key +'"]').attr('value', "false");
 			            	} else if ($.type(value) === "string") { 
 			            	 	$('[name="'+ key +'"][value="'+ value +'"]').attr("checked", true);
+			            	 	$('[name="'+ key +'"]').attr('value', "true");
 			            	}
 			                break;
 			            case 'select-one':

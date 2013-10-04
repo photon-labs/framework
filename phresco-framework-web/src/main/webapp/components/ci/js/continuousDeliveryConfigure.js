@@ -289,7 +289,7 @@ define(["framework/widgetWithTemplate", "ci/listener/ciListener", "lib/jquery-to
 	   					self.ciRequestBody = addJobsParams;
 	   					commonVariables.showloading = true;
 	   					self.getAction(self.ciRequestBody, 'saveContinuousDelivery', '', function(response) {	   						
-							self.ciListener.loadContinuousDeliveryView();
+							self.ciListener.loadContinuousDeliveryView(response);
 	   					});
 	   				});
    				}
@@ -305,7 +305,7 @@ define(["framework/widgetWithTemplate", "ci/listener/ciListener", "lib/jquery-to
 	   							var msg = response.data + commonVariables.api.error[response.responseCode];
 	   							commonVariables.api.showError(msg ,"error", true, true, true);
 	   						} else {
-	   							self.ciListener.loadContinuousDeliveryView();
+	   							self.ciListener.loadContinuousDeliveryView(response);
 	   						}
 	   						
 	   					});

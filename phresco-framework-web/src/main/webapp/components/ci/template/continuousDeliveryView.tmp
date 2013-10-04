@@ -47,9 +47,9 @@
                             	<img class="img_process" src="themes/default/images/Phresco/queue_icon.png">{{operation}}
                           	<div >
 	                          	<span class="aliveOpts opts">
-	                                <a href="javascript:;" jobName="{{jobName}}" class="ci_info" temp="buildStatus"><img class="wait_button" src="themes/default/images/Phresco/wait.png"></a>
-	                                 <a href="javascript:;" class="wait_button" temp="generate_build" jobName="{{jobName}}" projectId="{{projectDelivery.id}}"><img class="execute_button" src="themes/default/images/Phresco/execute_icon.png"></a>
-	                                <a temp="list_builds" jobName="{{jobName}}" projectId="{{projectDelivery.id}}" href="javascript:;" class="datetime_status" operation={{operation}}><img class="time_button" src="themes/default/images/Phresco/time.png"></a>
+	                                <a href="javascript:;" jobName="{{jobName}}" class="ci_info" temp="buildStatus"><img class="wait_button tooltiptop" title="" data-placement="bottom" data-toggle="tooltip"  data-original-title="LastBuildStatus" src="themes/default/images/Phresco/wait.png"></a>
+	                                 <a href="javascript:;" class="wait_button" temp="generate_build" jobName="{{jobName}}" projectId="{{projectDelivery.id}}"><img class="execute_button tooltiptop" title="" data-placement="bottom" data-toggle="tooltip"  data-original-title="GenerateBuild" src="themes/default/images/Phresco/execute_icon.png"></a>
+	                                <a temp="list_builds" jobName="{{jobName}}" projectId="{{projectDelivery.id}}" href="javascript:;" class="datetime_status " operation={{operation}}><img class="time_button tooltiptop" title="" data-placement="bottom" data-toggle="tooltip"  data-original-title="BuildList" src="themes/default/images/Phresco/time.png"></a>
 	                             </span>
 	                             <span class="deadOpts opts">
 	                                <a href="javascript:;" class="wait_button"><img src="themes/default/images/Phresco/wait.png"></a>
