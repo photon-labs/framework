@@ -60,7 +60,14 @@ define(["framework/widgetWithTemplate", "login/listener/loginListener"], functio
 			if(commonVariables.api.localVal.getSession('statusmsg') !== null){
 				if(commonVariables.api.localVal.getSession('statusmsg') === "Customer Context Required"){
 					$("#contex_er").show();
+				}else if(commonVariables.api.localVal.getSession('statusmsg') === "Invalid Customer"){
+					var finalUrl, oldUrl = location.href.split('/');
+					finalUrl = location.href.replace(oldUrl[oldUrl.length -1], '#');
+					history.pushState('', 'Phresco', finalUrl);
+					$(".login_error_msg").css('color','red');
+					$(".login_error_msg").text(commonVariables.api.localVal.getSession('statusmsg'));
 				}else{
+					$(".login_error_msg").css('color','red');
 					$(".login_error_msg").text(commonVariables.api.localVal.getSession('statusmsg'));
 				}
 			}
@@ -77,14 +84,13 @@ define(["framework/widgetWithTemplate", "login/listener/loginListener"], functio
 		 */
 		bindUI : function(){
 			var self = this;
-			
+
 			//Login btn click Event
 			$('#login').click(function(){
 				$('#login').focus();
 				$('#login').attr('disabled', '');
 				self.onLoginEvent.dispatch();
 				$(".login_error_msg").text('');
-				$(".login_error_msg").css('color','red');
 			});
 			
 			//Enter Key Press Event
@@ -94,6 +100,7 @@ define(["framework/widgetWithTemplate", "login/listener/loginListener"], functio
 					$('#login').focus();
 					$('#login').attr('disabled', '');
 					self.onLoginEvent.dispatch();
+					$(".login_error_msg").text('');
 				}
 			};
 			
@@ -103,6 +110,7 @@ define(["framework/widgetWithTemplate", "login/listener/loginListener"], functio
 					$('#login').focus();
 					$('#login').attr('disabled', '');
 					self.onLoginEvent.dispatch();
+					$(".login_error_msg").text('');
 				}	
 			});
 			

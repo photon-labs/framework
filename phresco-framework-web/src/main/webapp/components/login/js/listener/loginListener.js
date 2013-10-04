@@ -43,6 +43,7 @@ define([], function() {
 							} else {
 								//authentication failed
 								$('#login').removeAttr('disabled');
+								$(".login_error_msg").css('color','red');
 								$(".login_error_msg").attr('data-i18n', 'errorCodes.' + response.responseCode);
 								self.renderlocales(commonVariables.basePlaceholder);	
 							}
@@ -50,6 +51,7 @@ define([], function() {
 						function(serviceError){
 							//service access failed
 							$('#login').removeAttr('disabled');
+							$(".login_error_msg").css('color','red');
 							$(".login_error_msg").attr('data-i18n', 'errorCodes.' + response.responseCode);
 							self.renderlocales(commonVariables.basePlaceholder);
 						}

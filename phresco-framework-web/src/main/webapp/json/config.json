@@ -4,7 +4,8 @@
 			"name":"dev",
 			"default" :true
 		},
-		"locales" : "locales/en/framework.json"
+		"locales" : "locales/en/framework.json",
+		"passKey" : "this is the pass"
 	},
 	
 	"navigation" : {

@@ -122,6 +122,17 @@ define(["header/api/headerAPI"], function() {
 					commonVariables.customerContext = response.data.theme.context;
 					self.changeCustomerTitle(response.data.theme);
 					JSS.css(response.data.theme);
+					
+					var finalUrl, newContext = '', oldContext = '', oldUrl = location.href.split('/');
+					
+					if(oldUrl[oldUrl.length -1].split('#')[0].trim() === ""){
+						oldContext = oldUrl[oldUrl.length -1];
+						newContext = commonVariables.customerContext + oldUrl[oldUrl.length -1];
+					}else{ 
+						oldContext = oldUrl[oldUrl.length -1].split('#')[0];
+						newContext = commonVariables.customerContext; }
+					finalUrl = location.href.replace(oldContext, newContext);
+					history.pushState('', 'Phresco', finalUrl);
 				}
 			});
 		},

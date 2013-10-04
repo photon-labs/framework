@@ -44,7 +44,7 @@ define([], function() {
 		
 		downloadBuild : function(buildNo, type, callback){
 			var self = this, header = self.getRequestHeader("", {'buildNo':buildNo}, type);
-			window.open(header.webserviceurl);
+			$.fileDownload(header.webserviceurl).fail(function () { alert('File download failed!'); });
 		},
 
 		mavenServiceCall : function(functionName, queryString, minAll, bodyContent, callback){
@@ -126,7 +126,8 @@ define([], function() {
 			} else if (action === "logContent") {
 				method = "GET";
 				url = 'buildinfo/logContent?status=' + buildInfo + '&appDirName=' + appdirName;
-			} 
+			}
+			
 			header = {
 				contentType: contType,
 				requestMethod: method,

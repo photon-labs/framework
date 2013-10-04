@@ -182,7 +182,7 @@ define(["framework/base", "api/localStorageAPI"], function(){
 				timeout : 1000000,
 				crossDomain : true,
 				cache : false,
-				async : false,
+				async : true,
 				
 				beforeSend : function(){
 					self.successResponse = null;
