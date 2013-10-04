@@ -1628,7 +1628,7 @@ public class FrameworkUtil implements Constants, FrameworkConstants {
 	public static int getHttpsResponse(String url) throws PhrescoException {
 		URL httpsUrl;
 		try {
-			SSLContext ssl_ctx = SSLContext.getInstance("TLS");
+			SSLContext ssl_ctx = SSLContext.getInstance("SSL");
 			TrustManager[] trust_mgr = get_trust_mgr();
 			ssl_ctx.init(null, trust_mgr, new SecureRandom());
 			HttpsURLConnection.setDefaultSSLSocketFactory(ssl_ctx.getSocketFactory());

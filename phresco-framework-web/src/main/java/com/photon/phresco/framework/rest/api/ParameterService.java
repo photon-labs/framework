@@ -77,7 +77,6 @@ import com.photon.phresco.framework.model.PerformanceDetails;
 import com.photon.phresco.framework.param.impl.IosTargetParameterImpl;
 import com.photon.phresco.framework.rest.api.util.FrameworkServiceUtil;
 import com.photon.phresco.plugins.model.Mojos.Mojo.Configuration.Parameters.Parameter;
-import com.photon.phresco.plugins.model.Mojos.Mojo.Configuration.Parameters.Parameter.DynamicParameter.Dependencies.Dependency;
 import com.photon.phresco.plugins.model.Mojos.Mojo.Configuration.Parameters.Parameter.PossibleValues;
 import com.photon.phresco.plugins.model.Mojos.Mojo.Configuration.Parameters.Parameter.PossibleValues.Value;
 import com.photon.phresco.plugins.util.MojoProcessor;
@@ -534,9 +533,20 @@ public class ParameterService extends RestBase implements FrameworkConstants, Se
 				sb.append(FrameworkConstants.COLON);
 				sb.append(validateAgainst);
 			}
+			
+			int responseCode = 0;
 			URL sonarURL = new URL(sb.toString());
-			HttpURLConnection connection = (HttpURLConnection) sonarURL.openConnection();
-			int responseCode = connection.getResponseCode();
+			String protocol = sonarURL.getProtocol();
+			HttpURLConnection connection = null;
+			
+			
+			if (protocol.equals(HTTP_PROTOCOL)) {
+				connection = (HttpURLConnection) sonarURL.openConnection();
+				responseCode = connection.getResponseCode();
+			} else if (protocol.equals("https")) {
+				responseCode = FrameworkUtil.getHttpsResponse(sb.toString());
+			}
+			
 			if (responseCode != 200) {
 				ResponseInfo<PossibleValues> finalOutput = responseDataEvaluation(responseData, null,
 						null, RESPONSE_STATUS_FAILURE, PHR510003);

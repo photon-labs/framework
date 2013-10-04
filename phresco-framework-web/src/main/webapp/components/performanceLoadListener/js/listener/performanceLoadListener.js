@@ -413,6 +413,11 @@ define(["lib/jquery-tojson-1.0",'lib/RGraph_common_core-1.0','lib/RGraph_common_
 			}
 			$('#pdfReportLoading').hide();
 			$(".tooltiptop").tooltip();
+			
+			$("input[name=pdfName]").unbind('input');
+			$("input[name=pdfName]").bind('input', function() {
+				$(this).val(self.specialCharValidation($(this).val().replace(/\s/g, "")));
+			});
 		},
 
 		//To delete the selected pdf report
