@@ -15,17 +15,17 @@ define(["codequality/codequality"], function(Codequality) {
 			  contentType: "application/json",
 			  status: 200,
 			  response : function() {
-				  this.responseText = JSON.stringify({"message":null,"exception":null,"responseCode":"PHR500004","data":"http://localhost:9000","status":"success"});
+				  this.responseText = JSON.stringify({"message":null,"exception":null,"responseCode":"PHR500004","data":"http://localhost:9000/sonar","status":"success"});
 				  
 			  }
 			});
 			
 			$.mockjax({
-				url: "http://localhost:9000",
+				url: "http://localhost:9000/sonar",
 				type: "GET",
 				status: 200,
 				response : function() {
-					this.responseText = "true";
+					this.responseText = "false";
 				}
 			});
 			
@@ -316,9 +316,9 @@ define(["codequality/codequality"], function(Codequality) {
 					start();
 					output = $("#content_div").text();
 					notEqual('Sonar started', output, "Codequality sonar status check failure test case");
-					require(["buildTest"], function(buildTest){
+					/* require(["buildTest"], function(buildTest){
 						buildTest.runTests();
-					});
+					}); */
 				}, 1500);
 			});
 		},	

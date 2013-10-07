@@ -119,6 +119,9 @@ define(["features/features",  "application/application",  "projectlist/projectLi
 						if (response !== null && response.status !== "error" && response.status !== "failure") {
 							//commonVariables.loadingScreen.removeLoading();
 							if(response.responseCode === 'PHR400006') {
+								if($(".msgdisplay").hasClass("error")) {
+									$(".msgdisplay").removeClass("error");
+								}
 								commonVariables.api.showError(response.responseCode ,"success", true, false, true);	
 							}
 							callback(response);

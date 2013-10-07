@@ -392,6 +392,9 @@ define(["features/listener/featuresListener"], function() {
 					actionBody.serval = form_ser;
 					self.featuresListener.getFeaturesList(self.featuresListener.getRequestHeader(actionBody, "configureFeature"), function(response) {
 						$("#"+settingsid).hide(); 
+						$(".header_section").css("z-index","7");
+						$(".content_title").css("z-index","6");
+						$(".optiontitle").css("z-index","1");
 					}); 
 				});
 			});
