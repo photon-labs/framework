@@ -278,6 +278,9 @@ define(["loadTest/loadTest"], function(LoadTest) {
 				setTimeout(function() {
 					start();
 					equal($('#testConsole').text(), "", "trigger load tested succesfully");
+					require(["ciTest"], function(ciTest){
+						ciTest.runTests();
+					});
 				}, 1500);	
 			});	
 		},

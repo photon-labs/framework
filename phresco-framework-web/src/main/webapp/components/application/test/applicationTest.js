@@ -305,6 +305,9 @@ define(["jquery", "application/application"], function($, Application) {
 					equal('0', serverlength, "Server removed successfully");
 					equal('0', databaselength, "Database removed successfully");
 					//self.updateapplication(application);
+					require(["featuresTest"], function(featuresTest){
+						featuresTest.runTests();
+					});
 				}, 3000);
 			});
 		}, 

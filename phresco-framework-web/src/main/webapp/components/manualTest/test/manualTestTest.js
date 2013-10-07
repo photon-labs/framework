@@ -82,9 +82,9 @@ define(["manualTest/manualTest", "lib/jquery-tojson-1.0", "lib/fileuploader-2.3"
 					start();
 					equal(8, 8, "testsuite added successfully and listed");
 					self.runListManualTestcase(moduleName);
-					/*require(["performanceTestTest"], function(performanceTestTest){
+					require(["performanceTestTest"], function(performanceTestTest){
 						performanceTestTest.runTests();
-					});*/
+					});
 				}, 1000);
 			});
 		},

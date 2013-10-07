@@ -316,6 +316,9 @@ define(["codequality/codequality"], function(Codequality) {
 					start();
 					output = $("#content_div").text();
 					notEqual('Sonar started', output, "Codequality sonar status check failure test case");
+					require(["buildTest"], function(buildTest){
+						buildTest.runTests();
+					});
 				}, 1500);
 			});
 		},	

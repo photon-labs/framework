@@ -614,6 +614,9 @@ define(["build/build"], function(Build) {
 					start();
 					equal("", "", "Run again source stop Successfully");
 					//self.Deployebuild(build, self, buildListener); 
+					require(["unitTestTest"], function(unitTestTest){
+						unitTestTest.runTests();
+					});
 				}, 1500);
 			});
 		}/*,

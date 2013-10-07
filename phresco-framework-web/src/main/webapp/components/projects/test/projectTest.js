@@ -739,7 +739,7 @@ define(["projects/addproject", "projects/editproject"], function(addProject, edi
 				setTimeout(function() {
 					start();
 					equal(applnLayer, "hidden", "Edit Project - Edit Project Close Image Test");
-					  require(["applicationTest"], function(applicationTest){
+					require(["applicationTest"], function(applicationTest){
 						applicationTest.runTests();
 					});  
 				}, 1500);

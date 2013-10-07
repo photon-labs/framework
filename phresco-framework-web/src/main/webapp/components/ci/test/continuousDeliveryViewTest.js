@@ -453,6 +453,9 @@ define(["ci/continuousDeliveryView"], function(ContinuousDeliveryView) {
 					start();
 					var length = $(commonVariables.contentPlaceholder).find('ul[id=sortable1]').find('li').length;
 					notEqual(7, length, "callConfigureTest CI Tested");
+					require(["jobTemplatesTest"], function(jobTemplatesTest){
+						jobTemplatesTest.runTests();
+					});
 				}, 2500);
 			});
 		},

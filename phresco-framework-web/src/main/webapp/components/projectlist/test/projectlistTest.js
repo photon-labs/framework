@@ -762,9 +762,9 @@ define(["projectlist/projectList"], function(ProjectList) {
 				setTimeout(function() {
 					start();
 					equal("", "", 'Configuration type Test');
-					/*   require(["applicationTest"], function(applicationTest){
-						applicationTest.runTests();
-					}) ;  */ 
+					require(["projectTest"], function(projectTest){
+						projectTest.runTests();
+					}); 
 				}, 1000);
 			});
 		}

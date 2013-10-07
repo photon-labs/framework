@@ -22,6 +22,9 @@ define(["jquery", "ci/ci", "framework/navigationController", "framework/widgetWi
 				output = $(Clazz.navigationController.jQueryContainer).find("#ciContent").attr('id');
 				equal("codequalityContent", output, "ci Rendered Successfully");
 				start();
+				require(["continuousDeliveryConfigureTest"], function(continuousDeliveryConfigureTest){
+					continuousDeliveryConfigureTest.runTests();
+				});
 			}, 1500);
 			
 		});

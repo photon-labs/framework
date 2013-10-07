@@ -466,9 +466,9 @@ define(["features/features"], function(Features) {
 				setTimeout(function() { 
 					start();
 					equal('', '', "Click functions Tested");
-					/* require(["configurationTest"], function(configurationTest){
-						configurationTest.runTests();
-					}); */
+					require(["codequalityTest"], function(codequalityTest){
+						codequalityTest.runTests();
+					});
 				}, 2000);
 			});
 		}
