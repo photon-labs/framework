@@ -138,7 +138,6 @@ public class ManualTestService extends RestBase implements ServiceConstants, Fra
 	@POST
 	@Path(REST_API_TESTSUITES)
 	@Produces(MediaType.APPLICATION_JSON)
-	@Consumes (MediaType.APPLICATION_JSON)
 	public Response createTestSuite(@QueryParam("testSuiteName") String testSuiteName, 
 			@QueryParam(REST_QUERY_APPDIR_NAME) String appDirName) throws PhrescoException {
 		ResponseInfo responseData = new ResponseInfo();

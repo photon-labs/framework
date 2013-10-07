@@ -96,6 +96,7 @@
 						<li>
 							<label><input type="radio" name="format" checked value="xls">.xls</label>
 							<label><input type="radio" name="format" value="xlsx">.xlsx</label>
+							<label><input type="radio" name="format" value="ods">.ods</label>
 						</li>
 					</ul>
 					<div class="flt_right">

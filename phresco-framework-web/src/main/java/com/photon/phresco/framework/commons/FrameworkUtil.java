@@ -23,6 +23,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FilenameFilter;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.math.BigDecimal;
@@ -63,6 +64,8 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.jopendocument.dom.ODPackage;
+import org.jopendocument.dom.spreadsheet.SpreadSheet;
 import org.w3c.dom.Element;
 
 import com.photon.phresco.commons.FrameworkConstants;
@@ -573,6 +576,7 @@ public class FrameworkUtil implements Constants, FrameworkConstants {
 								 if (file1.isFile()) {
 									sb.append(File.separator);
 							    	sb.append(file1.getName());
+							    	break;
 							    }
 							}
 							readTestSuiteFromXLSX(excels, sb);
@@ -584,29 +588,113 @@ public class FrameworkUtil implements Constants, FrameworkConstants {
 		   	     	            	if (file2.isFile()) {
 		   	     	            		sb.append(File.separator);
 		   	    	                	sb.append(file2.getName());
+		   	    	                	break;
 		   	     	            	}
 		   	     	            }
 		   	     	            readTestSuitesFromXLS(excels, sb);
-	   	     	            } /*else {
+	   	     	            } else {
 		   	     	            FilenameFilter filterOds = new PhrescoFileFilter("", "ods");
 		   	     	            File[] odsListFiles = testDir.listFiles(filterOds);
 		   	     	            for(File file2 : odsListFiles) {
 		   	     	            	if (file2.isFile()) {
 		   	     	            		sb.append(File.separator);
 		   	    	                	sb.append(file2.getName());
+		   	    	                	break;
 		   	     	            	}
 		   	     	            }
 	   	     	            	readTestSuiteFromODS(sb, excels);
-	   	     	            }*/
+	   	     	            }
 	   	                }
        	        	}
                     
             } catch (Exception e) {
-                   // e.printStackTrace();
+                   e.printStackTrace();
             }
             return excels;
     }
+    
+    private void readTestSuiteFromODS(StringBuilder sb, List<TestSuite> testSuites) throws PhrescoException {
+		File file = new File(sb.toString());
+		org.jopendocument.dom.spreadsheet.Sheet sheet;
+		try {
+			ODPackage createFromFile = ODPackage.createFromFile(file);
+			SpreadSheet spreadSheet = createFromFile.getSpreadSheet();
+			sheet = spreadSheet.getSheet(0);
+			
+			int nRowCount = sheet.getRowCount();
 
+			//Iterating through each row of the selected sheet
+			org.jopendocument.dom.spreadsheet.Cell cell = null;
+			for(int nRowIndex = 3; nRowIndex < nRowCount; nRowIndex++) {
+				//Iterating through each column
+				cell = sheet.getCellAt(1, nRowIndex);
+				if (cell.getValue() != null && cell.getValue() != "") {
+					if(!cell.getValue().equals("Total")) {
+						TestSuite testSuite = readDataFromODS(nRowIndex, sheet);
+						if(testSuite != null) {
+							testSuites.add(testSuite);
+						}
+					}
+				}
+			}
+
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	private TestSuite readDataFromODS(int nRowIndex, org.jopendocument.dom.spreadsheet.Sheet sheet) throws PhrescoException {
+    	TestSuite testSuite = new TestSuite();
+    	org.jopendocument.dom.spreadsheet.Cell cell = null;
+    	cell = sheet.getCellAt(1, nRowIndex);
+    	String name= cell.getTextValue();
+    	testSuite.setName(name);
+    	
+    	cell = sheet.getCellAt(2, nRowIndex);
+    	String passVal = cell.getTextValue();
+    	if(StringUtils.isNotEmpty(passVal)) {
+	    	float pass=Float.parseFloat(passVal);
+	    	testSuite.setTests(pass);
+    	}
+    	
+    	cell = sheet.getCellAt(3, nRowIndex);
+    	String failVal = cell.getTextValue();
+    	if(StringUtils.isNotEmpty(failVal)) {
+	    	float fail=Float.parseFloat(failVal);
+	    	testSuite.setFailures(fail);
+    	}
+    	
+    	cell = sheet.getCellAt(4, nRowIndex);
+    	String notApp = cell.getTextValue();
+    	if(StringUtils.isNotEmpty(notApp)) {
+	    	float notApplicable=Float.parseFloat(notApp);
+	    	testSuite.setNotApplicable(notApplicable);
+    	}
+    	
+    	cell = sheet.getCellAt(5, nRowIndex);
+    	String notExe = cell.getTextValue();
+    	if(StringUtils.isNotEmpty(notExe)) {
+	    	float notExecuted =Float.parseFloat(notExe);
+	    	testSuite.setErrors(notExecuted);
+    	}
+    	
+    	cell = sheet.getCellAt(6, nRowIndex);
+    	String blockedVal = cell.getTextValue();
+    	if(StringUtils.isNotEmpty(blockedVal)) {
+	    	float blocked =Float.parseFloat(blockedVal);
+	    	testSuite.setBlocked(blocked);
+    	}
+    	
+    	cell = sheet.getCellAt(7, nRowIndex);
+    	String totalVal = cell.getTextValue();
+    	if(StringUtils.isNotEmpty(totalVal)) {
+	    	float total=Float.parseFloat(totalVal);
+	    	testSuite.setTotal(total);
+    	}
+    	
+    	return testSuite;
+	}
+	
 	private void readTestSuiteFromXLSX(List<TestSuite> excels, StringBuilder sb)
 			throws FileNotFoundException, InvalidFormatException, IOException,
 			UnknownHostException, PhrescoException {
@@ -746,6 +834,7 @@ public class FrameworkUtil implements Constants, FrameworkConstants {
 							 if (file1.isFile()) {
 								sb.append(File.separator);
 						    	sb.append(file1.getName());
+						    	break;
 						    }
 						}
 						updateTestCaseToXLSX(fileName, tstCase, testCases, sb);
@@ -757,6 +846,7 @@ public class FrameworkUtil implements Constants, FrameworkConstants {
 		   	     	            	if (file2.isFile()) {
 		   	     	            		sb.append(File.separator);
 		   	    	                	sb.append(file2.getName());
+		   	    	                	break;
 		   	     	            	}
 		   	     	            }
 		   	     	            FileInputStream myInput = new FileInputStream(sb.toString());
@@ -779,14 +869,225 @@ public class FrameworkUtil implements Constants, FrameworkConstants {
 						    	         }
 						        	 }
 						         }
+	   	     	            } else {
+		   	     	            FilenameFilter odsFilter = new PhrescoFileFilter("", "ods");
+		   	     	            File[] odsListFiles = testDir.listFiles(odsFilter);
+			   	     	        for(File file2 : odsListFiles) {
+		   	     	            	if (file2.isFile()) {
+		   	     	            		sb.append(File.separator);
+		   	    	                	sb.append(file2.getName());
+		   	    	                	break;
+		   	     	            	}
+		   	     	            }
+			   	     	        testCases = readTestCasesFormODS(sb, testCases, fileName, tstCase);
 	   	     	            }
-   	                }
+   	                } 
     	        }
     	 } catch (Exception e) {
 	     }
          return testCases;
     }
+    
+    private List<TestCase> readTestCasesFormODS(StringBuilder sb, List<TestCase> testCases, String sheetName, com.photon.phresco.commons.model.TestCase tstCase) throws PhrescoException {
+		File file = new File(sb.toString());
+		org.jopendocument.dom.spreadsheet.Sheet sheet;
+		try {
+			ODPackage createFromFile = ODPackage.createFromFile(file);
+			SpreadSheet spreadSheet = createFromFile.getSpreadSheet();
+			sheet = spreadSheet.getSheet(sheetName);
+			
+			int nColCount = sheet.getColumnCount();
+			int nRowCount = sheet.getRowCount();
+			org.jopendocument.dom.spreadsheet.Cell cell = null;
+			for(int nRowIndex = 24; nRowIndex < nRowCount; nRowIndex++) {
+				cell = sheet.getCellAt(1, nRowIndex);
+				if (cell.getValue() != null && cell.getValue() != "") {
+					TestCase testCase = readTestCasesFromODS(nRowIndex, sheet);
+					testCases.add(testCase);
+					if (tstCase != null && testCase.getTestCaseId().equals(tstCase.getTestCaseId())) {
+						sheet.getCellAt(5, nRowIndex).clearValue();
+						sheet.setValueAt(tstCase.getSteps(), 5, nRowIndex);
+	     				
+						sheet.getCellAt(8, nRowIndex).clearValue();
+						sheet.setValueAt(tstCase.getExpectedResult(), 8, nRowIndex);
+	     				
+						sheet.getCellAt(9, nRowIndex).clearValue();
+						sheet.setValueAt(tstCase.getActualResult(), 9, nRowIndex);
+	     				
+						sheet.getCellAt(10, nRowIndex).clearValue();
+						sheet.setValueAt(tstCase.getStatus(), 10, nRowIndex);
+	     				
+						sheet.getCellAt(13, nRowIndex).clearValue();
+						sheet.setValueAt(tstCase.getBugComment(), 13, nRowIndex);
+	     			   
+	     			}
+				}
+				
+			}
+			float totalPass = 0;
+			float totalFail = 0;
+			float totalNotApplicable = 0;
+			float totalBlocked = 0;
+			float notExecuted = 0;
+			float totalTestCases = 0;
+			 if (tstCase != null && StringUtils.isNotEmpty(tstCase.getTestCaseId())) {
+		     		
+		     		for (TestCase testCase: testCases) {
+		     			String testCaseStatus = testCase.getStatus();
+		     			String testId = tstCase.getTestCaseId();
+						String status = tstCase.getStatus();
+		     			if(testCaseStatus.equalsIgnoreCase("Pass") && !testCase.getTestCaseId().equalsIgnoreCase(testId)) {
+							totalPass = totalPass + 1;
+						} else if (testCaseStatus.equalsIgnoreCase("Fail") && !testCase.getTestCaseId().equalsIgnoreCase(testId)) {
+							totalFail = totalFail + 1;
+						} else if (testCaseStatus.equalsIgnoreCase("notApplicable") && !testCase.getTestCaseId().equalsIgnoreCase(testId)) {
+							totalNotApplicable = totalNotApplicable + 1;
+						} else if (testCaseStatus.equalsIgnoreCase("blocked") && !testCase.getTestCaseId().equalsIgnoreCase(testId)) {
+							totalBlocked = totalBlocked + 1;
+						}
+						
+						if (testCase.getTestCaseId().equals(testId) && !testCase.getStatus().equalsIgnoreCase("Pass") 
+								&& !testCase.getStatus().equalsIgnoreCase("success")
+								&& status.equalsIgnoreCase("Pass") || status.equalsIgnoreCase("success")) {
+							totalPass = totalPass +1;
+						} else if (testCase.getTestCaseId().equals(testId)&& !testCase.getStatus().equalsIgnoreCase("Fail") 
+								&& !testCase.getStatus().equalsIgnoreCase("failure")
+								&& status.equalsIgnoreCase("Fail") || status.equalsIgnoreCase("failure")) {
+							totalFail = totalFail + 1;
+						}  else if (testCase.getTestCaseId().equals(testId)&& !testCase.getStatus().equalsIgnoreCase("notApplicable") 
+								&& status.equalsIgnoreCase("notApplicable")) {
+							totalNotApplicable = totalNotApplicable + 1;
+						} else if (testCase.getTestCaseId().equals(testId)&& !testCase.getStatus().equalsIgnoreCase("blocked") 
+								&& status.equalsIgnoreCase("blocked")) {
+							totalBlocked = totalBlocked + 1;
+						} 
+						totalTestCases = totalPass + totalFail + notExecuted + totalNotApplicable + totalBlocked;
+		     		}
+			  }
+			 
+			if (StringUtils.isNotEmpty(tstCase.getTestCaseId())) {
+   	     	    OutputStream out=new FileOutputStream(file);
+   				createFromFile.save(out);
+   				out.close();
+     	    }
+			
+			if (StringUtils.isNotEmpty(tstCase.getTestCaseId())) {
+				ODPackage indexSheet = ODPackage.createFromFile(file);
+				SpreadSheet indexSpreadSheet = indexSheet.getSpreadSheet();
+	     		org.jopendocument.dom.spreadsheet.Sheet sheet2 = indexSpreadSheet.getSheet(0);
+	     		List<TestSuite> testSuites = new ArrayList<TestSuite>();
+	     		int indexColCount = sheet2.getColumnCount();
+				int indexRowCount = sheet2.getRowCount();
+				org.jopendocument.dom.spreadsheet.Cell indexCell = null;
+				for(int rowIndex = 3; rowIndex < indexRowCount; rowIndex++) {
+					//Iterating through each column
+					indexCell = sheet2.getCellAt(1, rowIndex);
+					if (indexCell.getValue() != null && indexCell.getValue() != "") {
+						TestSuite testSuite = readDataFromODS(rowIndex, sheet2);
+						testSuites.add(testSuite);
+						if (testSuite.getName().equalsIgnoreCase(sheetName)) {
+							sheet2.getCellAt(2, rowIndex).clearValue();
+							sheet2.setValueAt(totalPass, 2, rowIndex);
+							
+							sheet2.getCellAt(3, rowIndex).clearValue();
+							sheet2.setValueAt(totalFail, 3, rowIndex);
+							
+							sheet2.getCellAt(4, rowIndex).clearValue();
+							sheet2.setValueAt(totalNotApplicable, 4, rowIndex);
+							
+							sheet2.getCellAt(6, rowIndex).clearValue();
+							sheet2.setValueAt(totalBlocked, 6, rowIndex);
+							
+							indexCell = sheet2.getCellAt(7, rowIndex);
+							String textValue = indexCell.getTextValue();
+							double val = 0;
+							if (StringUtils.isNotEmpty(textValue)) {
+								val = Double.parseDouble(textValue);
+							} else {
+								val = totalTestCases;
+								sheet2.setValueAt(val, 7, rowIndex);
+							}
+							
+							sheet2.getCellAt(5, rowIndex).clearValue();
+							int notExe = (int) (val - (totalPass + totalFail + totalNotApplicable + totalBlocked));
+							sheet2.setValueAt(notExe, 5, rowIndex);
+							
+							sheet2.getCellAt(8, rowIndex).clearValue();
+							int total = (int) val;
+							float notExetd= notExe;
+							float testCovrge = (float)((total-notExetd)/total)*100;
+							sheet2.setValueAt(Math.round(testCovrge), 8, rowIndex);
+							break;
+						}
+					}
+				}
+			 	OutputStream out=new FileOutputStream(file);
+			 	indexSheet.save(out);
+   				out.close();
+			}
+			
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return testCases;
+	}
 
+	private TestCase readTestCasesFromODS(int nRowIndex,
+			org.jopendocument.dom.spreadsheet.Sheet sheet) {
+		TestCase testcase = new TestCase();
+		org.jopendocument.dom.spreadsheet.Cell cell = null;
+		
+		cell = sheet.getCellAt(1, nRowIndex);
+    	String featureId = cell.getTextValue();
+    	if(StringUtils.isNotEmpty(featureId)) {
+    		testcase.setFeatureId(featureId);
+    	}
+    	
+    	
+    	cell = sheet.getCellAt(3, nRowIndex);
+    	String testCaseId = cell.getTextValue();
+    	if(StringUtils.isNotEmpty(testCaseId)) {
+    		testcase.setTestCaseId(testCaseId);
+    	}
+    	
+    	cell = sheet.getCellAt(4, nRowIndex);
+    	String description = cell.getTextValue();
+    	if(StringUtils.isNotEmpty(description)) {
+    		testcase.setDescription(description);
+    	}
+    	
+    	cell = sheet.getCellAt(5, nRowIndex);
+    	String testSteps = cell.getTextValue();
+    	if(StringUtils.isNotEmpty(testSteps)) {
+    		testcase.setSteps(testSteps);
+    	}
+    	
+    	cell = sheet.getCellAt(8, nRowIndex);
+    	String expectedResult = cell.getTextValue();
+    	if(StringUtils.isNotEmpty(expectedResult)) {
+    		testcase.setExpectedResult(expectedResult);
+    	}
+    	
+    	cell = sheet.getCellAt(9, nRowIndex);
+    	String actualResult = cell.getTextValue();
+    	if(StringUtils.isNotEmpty(actualResult)) {
+    		testcase.setActualResult(actualResult);
+    	}
+    	
+    	cell = sheet.getCellAt(10, nRowIndex);
+    	String status = cell.getTextValue();
+    	if(StringUtils.isNotEmpty(status)) {
+    		testcase.setStatus(status);
+    	}
+    	
+    	cell = sheet.getCellAt(13, nRowIndex);
+    	String bugComment = cell.getTextValue();
+    	if(StringUtils.isNotEmpty(bugComment)) {
+    		testcase.setBugComment(bugComment);
+    	}
+    	return testcase;
+	}
+	
 	private void updateTestCaseToXLSX(String fileName,
 			com.photon.phresco.commons.model.TestCase tstCase,
 			List<TestCase> testCases, StringBuilder sb)
@@ -1141,6 +1442,7 @@ public class FrameworkUtil implements Constants, FrameworkConstants {
 							 if (file1.isFile()) {
 								sb.append(File.separator);
 						    	sb.append(file1.getName());
+						    	break;
 						    }
 						}
 						FileInputStream myInput = new FileInputStream(sb.toString());
@@ -1246,6 +1548,7 @@ public class FrameworkUtil implements Constants, FrameworkConstants {
 		   	     				if (file2.isFile()) {
 		   	     					sb.append(File.separator);
 		   	     			    	sb.append(file2.getName());
+		   	     			    	break;
 		   	     				}
 		   	     			}
 		   	     			FileInputStream myInput = new FileInputStream(sb.toString());
@@ -1344,13 +1647,62 @@ public class FrameworkUtil implements Constants, FrameworkConstants {
 							myWorkBook.write(fileOut);
 							myInput.close();
 							fileOut.close();
+	       	        	} else {
+	       	        		FilenameFilter odsFilter = new PhrescoFileFilter("", "ods");
+	   	     	            File[] odsListFiles = testDir.listFiles(odsFilter);
+		   	     	        for (File file1 : odsListFiles) {
+								 if (file1.isFile()) {
+									sb.append(File.separator);
+							    	sb.append(file1.getName());
+							    	break;
+							    }
+							}
+		   	     	        File file = new File(sb.toString());
+			   	     	    addTestSuiteToOds(file, cellValue);
 	       	        	}
    	        	}
    	        }
 		} catch (Exception e) {
 		}
 	}
-
+	
+	private static void addTestSuiteToOds(File file, String cellValue[]) throws IOException {
+		org.jopendocument.dom.spreadsheet.Sheet sheet;
+		try {
+			ODPackage createFromFile = ODPackage.createFromFile(file);
+			SpreadSheet spreadSheet = createFromFile.getSpreadSheet();
+			sheet = spreadSheet.getSheet(0);
+			int nColCount = sheet.getColumnCount();
+			int nRowCount = sheet.getRowCount();
+			
+			org.jopendocument.dom.spreadsheet.Cell cell = null;
+			
+			for(int nRowIndex = 3; nRowIndex < nRowCount; nRowIndex++) {
+				cell = sheet.getCellAt(1, nRowIndex);
+				if(cell.getTextValue().equalsIgnoreCase("Total")){
+					sheet.duplicateRows(nRowIndex-1, 1, 1);
+					int rowCount = sheet.getRowCount();
+					for(int i=1; i<12;i++) {
+						sheet.getCellAt(i, rowCount-2).clearValue();
+					}
+					for(int j=1; j<12;j++) {
+						sheet.setValueAt(cellValue[j+1], j, rowCount-2);
+					}
+					org.jopendocument.dom.spreadsheet.Sheet addSheet = spreadSheet.getSheet(spreadSheet.getSheetCount()-1);
+					addSheet.copy(spreadSheet.getSheetCount(), cellValue[2]).setRowCount(25);
+					for(int i =1;i<12;i++){
+						spreadSheet.getSheet(cellValue[2]).getCellAt(i, 24).clearValue();
+					}
+				}
+			}
+			OutputStream out=new FileOutputStream(file);
+			createFromFile.save(out);
+			out.close();
+		} catch(Exception e) {
+			e.printStackTrace();
+		}
+	}
+	
 	public void addNewTestCase(String filePath, String testSuiteName,String cellValue[], String status) {
 		try {
 			int numCol = 14;
@@ -1383,6 +1735,18 @@ public class FrameworkUtil implements Constants, FrameworkConstants {
 	     	            	}
 	     	            }
 	     	            writeTestCaseToXLS(testSuiteName, cellValue, status, numCol, cellno, tryStyle, sb);
+     	           } else {
+     	        	   	FilenameFilter odsFilter = new PhrescoFileFilter("", "ods");
+       	            	File[] odsListFiles = testDir.listFiles(odsFilter);
+       	            	if (odsListFiles.length != 0) {
+	  	     	            for(File file2 : odsListFiles) {
+	  	     	            	if (file2.isFile()) {
+	  	     	            		sb.append(File.separator);
+	  	    	                	sb.append(file2.getName());
+	  	     	            	}
+	  	     	            }
+	  	     	            writeTestCasesToODS(testSuiteName, cellValue, sb, status);
+       	            	}
      	           }
                 }
    	        }
@@ -1390,7 +1754,127 @@ public class FrameworkUtil implements Constants, FrameworkConstants {
 			//e.printStackTrace();
 		}
 	}
-
+	
+	private void writeTestCasesToODS(String testSuiteName, String[] cellValue, StringBuilder sb, String status) throws PhrescoException {
+		org.jopendocument.dom.spreadsheet.Sheet sheet;
+		File file = new File(sb.toString());
+		try {
+			ODPackage createFromFile = ODPackage.createFromFile(file);
+			SpreadSheet spreadSheet = createFromFile.getSpreadSheet();
+			sheet = spreadSheet.getSheet(testSuiteName);
+			
+			//Get row count and column count
+			int nRowCount = sheet.getRowCount();
+			
+			float totalPass = 0;
+			float totalFail = 0;
+			float totalNotApp = 0;
+			float totalBlocked = 0;
+			float notExecuted = 0;
+			float totalTestCases = 0;
+			
+			//Iterating through each row of the selected sheet
+			org.jopendocument.dom.spreadsheet.Cell cell = null;
+			for(int nRowIndex = 24; nRowIndex < nRowCount; nRowIndex++)
+			{
+				//Iterating through each column
+				cell = sheet.getCellAt(1, nRowIndex);
+				if(nRowIndex == 24 && StringUtils.isEmpty(cell.getTextValue())){
+					sheet.duplicateRows(nRowIndex, 1, 1);
+				}
+				if (StringUtils.isNotEmpty(cell.getTextValue())) {
+					org.jopendocument.dom.spreadsheet.Cell cell1 = sheet.getCellAt(10,nRowIndex);
+					String value = cell1.getTextValue();
+					if (StringUtils.isNotEmpty(value)) {
+						if (value.equalsIgnoreCase("pass") || value.equalsIgnoreCase("success")) {
+							totalPass = totalPass + 1;
+						} else if(value.equalsIgnoreCase("fail") || value.equalsIgnoreCase("failure")) {
+							totalFail = totalFail + 1;
+						} else if(value.equalsIgnoreCase("notApplicable")) {
+							totalNotApp = totalNotApp + 1;
+						} else if(value.equalsIgnoreCase("blocked")) {
+							totalBlocked = totalBlocked + 1;
+						} 
+					}else {
+						notExecuted = notExecuted + 1;
+					}
+				}
+				
+				if(StringUtils.isEmpty(cell.getTextValue())) {
+					if(nRowIndex > 24) {
+						sheet.duplicateRows(nRowIndex-1, 1, 1);
+					}
+					for(int i=0; i<13;i++) {
+						sheet.getCellAt(i, nRowIndex).clearValue();
+					}
+					for(int j=1; j<14;j++) {
+						sheet.setValueAt(cellValue[j], j, nRowIndex);
+					}
+					break;
+				}
+				
+			}
+			if (status.equalsIgnoreCase("pass") || status.equalsIgnoreCase("success")) {
+				totalPass = totalPass + 1;
+			} else if (status.equalsIgnoreCase("fail") || status.equalsIgnoreCase("failure")) {
+				totalFail = totalFail + 1;
+			} else if (status.equalsIgnoreCase("notApplicable")) {
+				totalNotApp = totalNotApp + 1;
+			} else if (status.equalsIgnoreCase("blocked")) {
+				totalBlocked = totalBlocked + 1;
+			} else {
+				notExecuted = notExecuted + 1;
+			}
+			totalTestCases = totalPass + totalFail + totalNotApp + totalBlocked + notExecuted;
+			OutputStream out=new FileOutputStream(file);
+			createFromFile.save(out);
+			Utility.closeStream(out);
+			
+				ODPackage indexSheet = ODPackage.createFromFile(file);
+				SpreadSheet indexSpreadSheet = indexSheet.getSpreadSheet();
+	     		org.jopendocument.dom.spreadsheet.Sheet sheet2 = indexSpreadSheet.getSheet(0);
+	     		List<TestSuite> testSuites = new ArrayList<TestSuite>();
+				int indexRowCount = sheet2.getRowCount();
+				org.jopendocument.dom.spreadsheet.Cell indexCell = null;
+				for(int rowIndex = 3; rowIndex < indexRowCount; rowIndex++) {
+					//Iterating through each column
+					indexCell = sheet2.getCellAt(1, rowIndex);
+					if (indexCell.getValue() != null && indexCell.getValue() != "") {
+						TestSuite testSuite = readDataFromODS(rowIndex, sheet2);
+						testSuites.add(testSuite);
+						if (testSuite.getName().equalsIgnoreCase(testSuiteName)) {
+							sheet2.getCellAt(2, rowIndex).clearValue();
+							sheet2.setValueAt(totalPass, 2, rowIndex);
+							
+							sheet2.getCellAt(3, rowIndex).clearValue();
+							sheet2.setValueAt(totalFail, 3, rowIndex);
+							
+							sheet2.getCellAt(4, rowIndex).clearValue();
+							sheet2.setValueAt(totalNotApp, 4, rowIndex);
+							
+							sheet2.getCellAt(5, rowIndex).clearValue();
+							sheet2.setValueAt(notExecuted, 5, rowIndex);
+							
+							sheet2.getCellAt(6, rowIndex).clearValue();
+							sheet2.setValueAt(totalBlocked, 6, rowIndex);
+							sheet2.getCellAt(7, rowIndex).clearValue();
+							sheet2.setValueAt(totalTestCases, 7, rowIndex);
+					       			   
+							sheet2.getCellAt(8, rowIndex).clearValue();
+							float testCovrge = (float)((totalTestCases-notExecuted)/totalTestCases)*100;
+							sheet2.setValueAt(Math.round(testCovrge), 8, rowIndex);
+							break;
+						}
+					}
+				}
+			 	OutputStream out1=new FileOutputStream(file);
+			 	indexSheet.save(out1);
+			 	Utility.closeStream(out);
+			
+		} catch (IOException e) {
+			//e.printStackTrace();
+		}
+	}
 	private void writeTestCasesToXLSX(String testSuiteName, String[] cellValue,
 			String status, int numCol, int cellno, CellStyle[] tryStyle,
 			StringBuilder sb) throws FileNotFoundException,
