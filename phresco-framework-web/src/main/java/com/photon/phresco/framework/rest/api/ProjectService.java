@@ -274,7 +274,6 @@ public class ProjectService extends RestBase implements FrameworkConstants, Serv
 				projectInfo = PhrescoFrameworkFactory.getProjectManager().create(projectinfo, serviceManager);
 			} else {
 				ProjectInfo availableProjectInfo = getProject(projectinfo.getId(), projectinfo.getCustomerIds().get(0));
-				System.out.println("availableProjectInfo : " + availableProjectInfo);
 				List<ApplicationInfo> appInfos = availableProjectInfo.getAppInfos();
 				for (ApplicationInfo applicationInfo : appInfos) {
 					projectinfo.setAppInfos(Collections.singletonList(applicationInfo));
@@ -694,9 +693,15 @@ public class ProjectService extends RestBase implements FrameworkConstants, Serv
 	@GET
 	@Path(REST_API_EDIT_APPLICATION)
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response editApplication(@QueryParam(REST_QUERY_APPDIR_NAME) String appDirName, @QueryParam(REST_QUERY_USERID) String userId) {
-		File projectInfoFile = new File(Utility.getProjectHome() + appDirName + File.separator + FOLDER_DOT_PHRESCO
-				+ File.separator + PROJECT_INFO);
+	public Response editApplication(@QueryParam(REST_QUERY_APPDIR_NAME) String appDirName, @QueryParam(REST_QUERY_USERID) String userId, @QueryParam(REST_QUERY_TYPE_MODULE) String module) {
+		StringBuilder projectInfoFilePath = new StringBuilder(Utility.getProjectHome());
+		projectInfoFilePath.append(appDirName)
+		.append(File.separator);
+		if(StringUtils.isNotEmpty(module)) {
+			projectInfoFilePath.append(module).append(File.separator);
+		} 
+		projectInfoFilePath.append(FOLDER_DOT_PHRESCO).append(File.separator).append(PROJECT_INFO);
+		File projectInfoFile = new File(projectInfoFilePath.toString());
 		BufferedReader reader = null;
 		ResponseInfo<JSONObject> responseData = new ResponseInfo<JSONObject>();
 		Map json = new HashMap();
@@ -706,12 +711,12 @@ public class ProjectService extends RestBase implements FrameworkConstants, Serv
 			ProjectInfo projectInfo = (ProjectInfo) new Gson().fromJson(reader, ProjectInfo.class);
 			ServiceManager serviceManager = CONTEXT_MANAGER_MAP.get(userId);
 			json = embedApplication(json, projectInfo, serviceManager, projectManager, appDirName);			
-					status = RESPONSE_STATUS_SUCCESS;
-					successCode = PHR200009;
-					json.put("projectInfo", projectInfo);
-					ResponseInfo<ProjectInfo> finalOutput = responseDataEvaluation(responseData, null,
-							json, status, successCode);
-					return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN,ALL_HEADER)
+			status = RESPONSE_STATUS_SUCCESS;
+			successCode = PHR200009;
+			json.put("projectInfo", projectInfo);
+			ResponseInfo<ProjectInfo> finalOutput = responseDataEvaluation(responseData, null,
+					json, status, successCode);
+			return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN,ALL_HEADER)
 							.build();
 		} catch (FileNotFoundException e) {
 			status = RESPONSE_STATUS_ERROR;

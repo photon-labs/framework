@@ -489,6 +489,7 @@ define([], function() {
 			var self=this, header, data = {}, userId, oldAppDirName;
 			userId = commonVariables.api.localVal.getSession('username');
 			oldAppDirName = commonVariables.api.localVal.getSession("appDirName");
+			var moduleParam = self.isBlank($('.moduleName').val()) ? "" : '&module='+$('.moduleName').val();
 			header = {
 				contentType: "application/json",
 				requestMethod: "GET",
@@ -497,7 +498,8 @@ define([], function() {
 				data: ''
 			};
 			if(action === 'getappinfo'){
-				header.webserviceurl = commonVariables.webserviceurl+"project/editApplication?appDirName="+appDirName+"&userId="+userId;
+				
+				header.webserviceurl = commonVariables.webserviceurl+"project/editApplication?appDirName="+appDirName+"&userId="+userId+moduleParam;
 			}	
 			if(action === 'editApplication'){
 				var displayName="", userInfo = JSON.parse(commonVariables.api.localVal.getSession('userInfo'));
@@ -507,7 +509,7 @@ define([], function() {
 
 				header.requestMethod ="PUT";
 				header.requestPostBody = appDirName;
-				header.webserviceurl = commonVariables.webserviceurl+"project/updateApplication?userId="+userId+"&oldAppDirName="+oldAppDirName+"&customerId=photon&displayName="+displayName;
+				header.webserviceurl = commonVariables.webserviceurl+"project/updateApplication?userId="+userId+"&oldAppDirName="+oldAppDirName+"&customerId=photon&displayName="+displayName+moduleParam;
 			}
 			if (action === 'getApplicableOptions') {
 				header.requestMethod ="GET";

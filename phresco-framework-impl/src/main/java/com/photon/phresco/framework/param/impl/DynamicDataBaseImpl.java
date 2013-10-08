@@ -46,6 +46,8 @@ public class DynamicDataBaseImpl implements DynamicParameter, Constants {
 			ApplicationInfo applicationInfo = (ApplicationInfo) paramMap.get(KEY_APP_INFO);
 			String envName = (String) paramMap.get(KEY_ENVIRONMENT);
 			String customer = (String) paramMap.get(KEY_CUSTOMER_ID);
+			boolean isMultiModule = (Boolean) paramMap.get(KEY_MULTI_MODULE);
+        	String rootModule = (String) paramMap.get(KEY_ROOT_MODULE);
 			//To search for db type in settings.xml
 			String settingsPath = getSettingsPath(customer);
 			ConfigManager configManager = new ConfigManagerImpl(new File(settingsPath)); 
@@ -59,7 +61,7 @@ public class DynamicDataBaseImpl implements DynamicParameter, Constants {
 			//To search for db type in phresco-env-config.xml if it doesn't exist in settings.xml
 			if (CollectionUtils.isEmpty(possibleValues.getValue())) {
 				String appDirectory = applicationInfo.getAppDirName();
-				String configPath = getConfigurationPath(appDirectory).toString();
+				String configPath = getConfigurationPath(appDirectory, isMultiModule, rootModule).toString();
 				configManager = new ConfigManagerImpl(new File(configPath)); 
 				configurations = configManager.getConfigurations(envName, Constants.SETTINGS_TEMPLATE_DB);
 				for (Configuration configuration : configurations) {
@@ -87,8 +89,11 @@ public class DynamicDataBaseImpl implements DynamicParameter, Constants {
 		return possibleValues;
     }
     
-    private StringBuilder getConfigurationPath(String projectDirectory) {
+    private StringBuilder getConfigurationPath(String projectDirectory, boolean isMultiModule, String rootModule) {
 		 StringBuilder builder = new StringBuilder(Utility.getProjectHome());
+		 if (isMultiModule) {
+			 builder.append(rootModule).append(File.separator);
+		 }
 		 builder.append(projectDirectory);
 		 builder.append(File.separator);
 		 builder.append(DOT_PHRESCO_FOLDER);

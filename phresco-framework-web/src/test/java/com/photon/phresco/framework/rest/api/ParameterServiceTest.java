@@ -34,15 +34,15 @@ public class ParameterServiceTest extends RestBaseTest {
 	
 	@Test
 	public void getDynamicParameter() {
-		Response responsePackage = parameterService.getParameter(appDirName, "", "package", "package", userId, customerId, "");
+		Response responsePackage = parameterService.getParameter(appDirName, "", "package", "package", userId, customerId, "", "");
 		Assert.assertEquals(200, responsePackage.getStatus());
-		Response responseFunctional = parameterService.getParameter(appDirName,"", "functional-test", "", userId, customerId, "");
+		Response responseFunctional = parameterService.getParameter(appDirName,"", "functional-test", "", userId, customerId, "", "");
 		Assert.assertEquals(200, responseFunctional.getStatus());
 	}
 	
 	@Test
 	public void getDynamicParamsFail() {
-		Response responseFailure = parameterService.getParameter(appDirName, "","deploy", "", "", customerId, "");
+		Response responseFailure = parameterService.getParameter(appDirName, "","deploy", "", "", customerId, "", "");
 		Assert.assertEquals(200, responseFailure.getStatus());
 	}
 	
@@ -57,7 +57,7 @@ public class ParameterServiceTest extends RestBaseTest {
 
 	 @Test
 	public void updateWatcher() {
-		Response updateWatcher = parameterService.updateWatcher(appDirName, "package", "showSettings", "true");
+		Response updateWatcher = parameterService.updateWatcher(appDirName, "package", "showSettings", "true", "");
 		Assert.assertEquals(200, updateWatcher.getStatus());
 //		Response updateWatcherFail = parameterService.updateWatcher(appDirName, "", "showSettings", "");
 //		Assert.assertEquals(400, updateWatcherFail.getStatus());
@@ -66,7 +66,7 @@ public class ParameterServiceTest extends RestBaseTest {
 
 	 @Test
 	public void dependency() {
-		Response dependency = parameterService.getDependencyPossibleValue(appDirName, customerId, userId, "package", "environmentName", "package");
+		Response dependency = parameterService.getDependencyPossibleValue(appDirName, customerId, userId, "package", "environmentName", "package", "");
 		Assert.assertEquals(200, dependency.getStatus());
 	}
 	 

@@ -38,7 +38,7 @@ public class BuildInfoTest extends RestBaseTest {
 		String goal = "package";
 		String phase = "package";
 		
-		Response response = parameterservice.getParameter(appDirName, "", goal, phase, userId, customerId,"");
+		Response response = parameterservice.getParameter(appDirName, "", goal, phase, userId, customerId,"","");
 		assertEquals(200, response.getStatus());
 	}
 	
@@ -119,7 +119,7 @@ public class BuildInfoTest extends RestBaseTest {
 	
 	@Test
 	public void getBuildList() {
-		Response buildList = buildinfoservice.list(appDirName);
+		Response buildList = buildinfoservice.list(appDirName,"");
 		ResponseInfo<List<BuildInfo>> entity = (ResponseInfo<List<BuildInfo>>) buildList.getEntity();
 		List<BuildInfo> data = entity.getData();
 		assertEquals(1, data.size());
@@ -127,13 +127,13 @@ public class BuildInfoTest extends RestBaseTest {
 	
 	@Test
 	public void getBuildListFailure() {
-		Response buildList = buildinfoservice.list("xx");
+		Response buildList = buildinfoservice.list("xx","");
 		assertEquals(200, buildList.getStatus());
 	}
 	
 	@Test
 	public void downloadBuild() {
-		Response parameter = buildinfoservice.buildInfoZip("TestProject", 1);
+		Response parameter = buildinfoservice.buildInfoZip("TestProject", 1, "");
 		assertEquals(200, parameter.getStatus());
 	}
 	
@@ -144,14 +144,14 @@ public class BuildInfoTest extends RestBaseTest {
 		File tempBuildFile = new File(Utility.getProjectHome() + appDirName + File.separator + "do_not_checkin/build" + 
 				 File.separator + "sample.info");
 		buildInfoFile.renameTo(tempBuildFile);
-		Response parameter = buildinfoservice.buildInfoZip(appDirName, 1);
+		Response parameter = buildinfoservice.buildInfoZip(appDirName, 1, "");
 		tempBuildFile.renameTo(buildInfoFile);
 		assertEquals(200, parameter.getStatus());
 	}
 	
 //	@Test
 	public void downloadBuildFailure() {
-		Response parameter = buildinfoservice.buildInfoZip("xx", 1);
+		Response parameter = buildinfoservice.buildInfoZip("xx", 1, "");
 		assertEquals(200, parameter.getStatus());
 	}
 	
@@ -172,7 +172,7 @@ public class BuildInfoTest extends RestBaseTest {
 
 	@Test
 	public void  checkServerStatus() {
-		Response response = buildinfoservice.checkStatus(appDirName);
+		Response response = buildinfoservice.checkStatus(appDirName, "");
 		Assert.assertEquals(200, response.getStatus());
 	}
 	
@@ -203,7 +203,7 @@ public class BuildInfoTest extends RestBaseTest {
 	@Test
 	public void  checkStartStatus() throws InterruptedException {
 		Thread.sleep(3000);
-		Response response = buildinfoservice.checkStatus(appDirName);
+		Response response = buildinfoservice.checkStatus(appDirName, "");
 		Assert.assertEquals(200, response.getStatus());
 	}
 	
@@ -240,7 +240,7 @@ public class BuildInfoTest extends RestBaseTest {
 	
 	@Test
 	public void  checkStopStatus() {
-		Response response = buildinfoservice.checkStatus(appDirName);
+		Response response = buildinfoservice.checkStatus(appDirName, "");
 		Assert.assertEquals(200, response.getStatus());
 	}
 	
@@ -305,10 +305,10 @@ public class BuildInfoTest extends RestBaseTest {
 		uniqueKey = entity.getUniquekey();
 		assertEquals("STARTED", entity.getStatus());
 		
-		Response deployDev = parameterService.getParameter(appDirName, "false", "deploy", "deploy", userId, customerId, "");
+		Response deployDev = parameterService.getParameter(appDirName, "false", "deploy", "deploy", userId, customerId, "", "");
 		Assert.assertEquals(200, deployDev.getStatus());
 		
-		Response deployDevice = parameterService.getParameter(appDirName, "true", "deploy", "deploy", userId, customerId, "");
+		Response deployDevice = parameterService.getParameter(appDirName, "true", "deploy", "deploy", userId, customerId, "", "");
 		Assert.assertEquals(200, deployDevice.getStatus());
 		
 		}

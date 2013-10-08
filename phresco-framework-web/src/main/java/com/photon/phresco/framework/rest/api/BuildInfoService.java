@@ -87,11 +87,11 @@ public class BuildInfoService extends RestBase implements FrameworkConstants, Se
 	@GET
 	@Path("/list")
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response list(@QueryParam(REST_QUERY_APPDIR_NAME) String appDirName) {
+	public Response list(@QueryParam(REST_QUERY_APPDIR_NAME) String appDirName, @QueryParam(REST_QUERY_MODULE_NAME) String module) {
 		ResponseInfo<List<BuildInfo>> responseData = new ResponseInfo<List<BuildInfo>>();
 		try {
-			File buildInfoFile = new File(Utility.getProjectHome() + appDirName + File.separator + BUILD_DIR
-					+ File.separator + BUILD_INFO_FILE_NAME);
+			String buildInfoFilePath = getBuildInfoFilePath(appDirName, module);
+			File buildInfoFile = new File(buildInfoFilePath);
 			ApplicationManager applicationManager = PhrescoFrameworkFactory.getApplicationManager();
 			List<BuildInfo> builds = applicationManager.getBuildInfos(buildInfoFile);
 			if (CollectionUtils.isEmpty(builds)) {
@@ -165,15 +165,15 @@ public class BuildInfoService extends RestBase implements FrameworkConstants, Se
 	@Path("/downloadBuild")
 	@Produces(MediaType.MULTIPART_FORM_DATA)
 	public Response buildInfoZip(@QueryParam(REST_QUERY_APPDIR_NAME) String appDirName,
-			@QueryParam(REST_QUERY_BUILD_NUMBER) int buildNumber) {
+			@QueryParam(REST_QUERY_BUILD_NUMBER) int buildNumber, @QueryParam(REST_QUERY_MODULE_NAME) String module) {
 		InputStream fileInputStream = null;
 		ResponseInfo responseData = new ResponseInfo();
 		StringBuilder builder = new StringBuilder();
 		try {
-			File buildInfoFile = new File(Utility.getProjectHome() + appDirName + File.separator + BUILD_DIR + File.separator + BUILD_INFO_FILE_NAME);
+			String buildInfoFilePath = getBuildInfoFilePath(appDirName, module);
 			String fileName = "";
 			ApplicationManager applicationManager = PhrescoFrameworkFactory.getApplicationManager();
-			BuildInfo buildInfo = applicationManager.getBuildInfo(buildNumber, buildInfoFile.toString());
+			BuildInfo buildInfo = applicationManager.getBuildInfo(buildNumber, buildInfoFilePath);
 			if (buildInfo.getBuildNo() == buildNumber) {
 				String deliverables = buildInfo.getDeliverables();
 				fileName = buildInfo.getBuildName();
@@ -210,6 +210,18 @@ public class BuildInfoService extends RestBase implements FrameworkConstants, Se
 			return Response.status(Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*")
 					.build();
 		}
+	}
+
+	private String getBuildInfoFilePath(String appDirName, String module) {
+		StringBuilder buildInfoFilePath = new StringBuilder(Utility.getProjectHome());
+		buildInfoFilePath.append(appDirName)
+		.append(File.separator);
+		if(StringUtils.isNotEmpty(module)) {
+			buildInfoFilePath.append(module).append(File.separator);
+		} 
+		buildInfoFilePath.append(BUILD_DIR).append(File.separator).append(BUILD_INFO_FILE_NAME);
+		
+		return buildInfoFilePath.toString();
 	}
 
 	/**
@@ -249,14 +261,14 @@ public class BuildInfoService extends RestBase implements FrameworkConstants, Se
 	@GET
 	@Path("/checkstatus")
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response checkStatus(@QueryParam("appDirName") String appDirName){
+	public Response checkStatus(@QueryParam(REST_QUERY_APPDIR_NAME) String appDirName, @QueryParam(REST_QUERY_MODULE_NAME) String module){
 		ResponseInfo<Boolean> responseData = new ResponseInfo<Boolean>();
 		String host = null, protocol = null, environmentName = null, port = null;
 		Boolean connectionAlive = false;
 		FileReader readers = null;
 		try {
-			File configurationInfo = new File(getDotPhrescoFolder(appDirName)+ File.separator + PHRESCO_ENV_CONFIG_FILE_NAME);
-			File runAgainsSourceInfo = new File(getDotPhrescoFolder(appDirName)+ File.separator + RUNAGNSRC_INFO_FILE);
+			File configurationInfo = new File(getDotPhrescoFolder(appDirName, module)+ File.separator + PHRESCO_ENV_CONFIG_FILE_NAME);
+			File runAgainsSourceInfo = new File(getDotPhrescoFolder(appDirName, module)+ File.separator + RUNAGNSRC_INFO_FILE);
 			if (!runAgainsSourceInfo.exists()) {
 			ResponseInfo<Boolean> finalOutput = responseDataEvaluation(responseData, null, connectionAlive, RESPONSE_STATUS_SUCCESS, PHR710005);
 			return Response.status(Response.Status.OK).entity(finalOutput).header("Access-Control-Allow-Origin", "*").build();
@@ -451,8 +463,16 @@ public class BuildInfoService extends RestBase implements FrameworkConstants, Se
 		return isAlive;
 	}
 
-	private String getDotPhrescoFolder(String appDirName) {
-		File dotPhrescoFolder = new File(Utility.getProjectHome() + File.separator +appDirName + File.separator + FrameworkConstants.FOLDER_DOT_PHRESCO);
+	private String getDotPhrescoFolder(String appDirName, String module) {
+		StringBuilder dotPhrescoPath = new StringBuilder(Utility.getProjectHome());
+		dotPhrescoPath.append(File.separator)
+		.append(appDirName).append(File.separator);
+		if (StringUtils.isNotEmpty(module)) {
+			dotPhrescoPath.append(module).append(File.separator);
+		}
+		dotPhrescoPath.append(FrameworkConstants.FOLDER_DOT_PHRESCO);
+		File dotPhrescoFolder = new File(dotPhrescoPath.toString());
+		
 		return dotPhrescoFolder.getPath();
 	}
 }

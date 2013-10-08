@@ -452,11 +452,14 @@ public class UtilService extends RestBase implements FrameworkConstants, Service
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response checkMandatoryValidation(@Context HttpServletRequest request,
 			@QueryParam("appDirName") String appDirName, @QueryParam("phase") String phase,
-			@QueryParam("customerId") String customerId) {
+			@QueryParam("customerId") String customerId, @QueryParam(REST_QUERY_MODULE_NAME) String module) {
 		FrameworkServiceUtil futil = new FrameworkServiceUtil();
 		ActionResponse response = null;
 		String envNames = request.getParameter("environmentName");
 		try {
+			if (StringUtils.isNotEmpty(module)) {
+				appDirName = appDirName + File.separator + module;
+			}
 			response = futil.mandatoryValidation(request, phase, appDirName);
 			if (response.isErrorFound()) {	
 				return Response.status(Status.OK).entity(response).header("Access-Control-Allow-Origin", "*").build();

@@ -77,6 +77,7 @@ import com.photon.phresco.framework.model.PerformanceDetails;
 import com.photon.phresco.framework.param.impl.IosTargetParameterImpl;
 import com.photon.phresco.framework.rest.api.util.FrameworkServiceUtil;
 import com.photon.phresco.plugins.model.Mojos.Mojo.Configuration.Parameters.Parameter;
+import com.photon.phresco.plugins.model.Mojos.Mojo.Configuration.Parameters.Parameter.DynamicParameter.Dependencies.Dependency;
 import com.photon.phresco.plugins.model.Mojos.Mojo.Configuration.Parameters.Parameter.PossibleValues;
 import com.photon.phresco.plugins.model.Mojos.Mojo.Configuration.Parameters.Parameter.PossibleValues.Value;
 import com.photon.phresco.plugins.util.MojoProcessor;
@@ -116,9 +117,14 @@ public class ParameterService extends RestBase implements FrameworkConstants, Se
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response getParameter(@QueryParam(REST_QUERY_APPDIR_NAME) String appDirName, @QueryParam("iphoneDeploy") String iphoneDeploy,
 			@QueryParam(REST_QUERY_GOAL) String goal, @QueryParam(REST_QUERY_PHASE) String phase, 
-			@QueryParam(REST_QUERY_USERID) String userId, @QueryParam(REST_QUERY_CUSTOMERID) String customerId,  @QueryParam("buildNumber") String buildNumber) {
+			@QueryParam(REST_QUERY_USERID) String userId, @QueryParam(REST_QUERY_CUSTOMERID) String customerId,  @QueryParam("buildNumber") String buildNumber,
+			@QueryParam(REST_QUERY_MODULE_NAME) String module) {
 		ResponseInfo<List<Parameter>> responseData = new ResponseInfo<List<Parameter>>();
 		try {
+			String rootModule = appDirName;
+			if (StringUtils.isNotEmpty(module)) {
+				appDirName = appDirName + File.separator + module;
+			}
 			ApplicationInfo appInfo = FrameworkServiceUtil.getApplicationInfo(appDirName);
 			List<Parameter> parameters = null;
 			String filePath = getInfoFileDir(appDirName, goal, phase);
@@ -133,7 +139,7 @@ public class ParameterService extends RestBase implements FrameworkConstants, Se
 				parameters = mojo.getParameters(goal);
 				Map<String, DependantParameters> watcherMap = new HashMap<String, DependantParameters>(8);
 
-				setPossibleValuesInReq(mojo, appInfo, parameters, watcherMap, goal, userId, customerId, buildNumber);
+				setPossibleValuesInReq(mojo, appInfo, parameters, watcherMap, goal, userId, customerId, buildNumber, module, rootModule);
 				
 				ResponseInfo<List<Parameter>> finalOutput = responseDataEvaluation(responseData, null,
 						parameters, RESPONSE_STATUS_SUCCESS, PHR1C00001);
@@ -230,9 +236,12 @@ public class ParameterService extends RestBase implements FrameworkConstants, Se
 	@Produces(MediaType.APPLICATION_JSON)
 	@Consumes(MediaType.APPLICATION_JSON)
 	public Response updateWatcher(@QueryParam(REST_QUERY_APPDIR_NAME) String appDirName, @QueryParam(REST_QUERY_GOAL) String goal,
-			@QueryParam(REST_QUERY_KEY) String key, @QueryParam(REST_QUERY_VALUE) String value) {
+			@QueryParam(REST_QUERY_KEY) String key, @QueryParam(REST_QUERY_VALUE) String value, @QueryParam(REST_QUERY_MODULE_NAME) String module) {
 		ResponseInfo<String> responseData = new ResponseInfo<String>();
 		try {
+			if (StringUtils.isNotEmpty(module)) {
+				appDirName = appDirName + File.separator + module;
+			}
 			if (Constants.PHASE_FUNCTIONAL_TEST.equals(goal)) {
 				String functionalTestFramework = FrameworkServiceUtil.getFunctionalTestFramework(appDirName);
 				goal = goal + HYPHEN + functionalTestFramework;
@@ -281,11 +290,15 @@ public class ParameterService extends RestBase implements FrameworkConstants, Se
 	public Response getDependencyPossibleValue(@QueryParam(REST_QUERY_APPDIR_NAME) String appDirName,
 			@QueryParam(REST_QUERY_CUSTOMERID) String customerId, @QueryParam(REST_QUERY_USERID) String userId,
 			@QueryParam(REST_QUERY_GOAL) String goal, @QueryParam(REST_QUERY_KEY) String key, 
-			@QueryParam(REST_QUERY_PHASE) String phase) {
+			@QueryParam(REST_QUERY_PHASE) String phase, @QueryParam(REST_QUERY_MODULE_NAME) String module) {
 		ResponseInfo responseData = new ResponseInfo();
 		PossibleValues possibleValues = null;
 		ResponseInfo finalOutput = new ResponseInfo();
 		try {
+			String rootModule = appDirName;
+			if (StringUtils.isNotEmpty(module)) {
+				appDirName = appDirName + File.separator + module;
+			}
 			if (Constants.PHASE_FUNCTIONAL_TEST.equals(goal)) {
 				String functionalTestFramework = FrameworkServiceUtil.getFunctionalTestFramework(appDirName);
 				goal = goal + HYPHEN + functionalTestFramework;
@@ -299,6 +312,7 @@ public class ParameterService extends RestBase implements FrameworkConstants, Se
 			Parameter dependentParameter = mojo.getParameter(goal, key);
 			constructMapForDynVals.put(REQ_MOJO, mojo);
             constructMapForDynVals.put(REQ_GOAL, goal);
+            setModuleInfoInMap(rootModule, module, constructMapForDynVals);
             List<Value> dependentPossibleValues = new ArrayList<Value>();
             if (TYPE_DYNAMIC_PARAMETER.equalsIgnoreCase(dependentParameter.getType()) && dependentParameter.getDynamicParameter() != null) {
             	dependentPossibleValues = getDynamicPossibleValues(constructMapForDynVals, dependentParameter, userId, customerId);
@@ -328,6 +342,15 @@ public class ParameterService extends RestBase implements FrameworkConstants, Se
 					null, RESPONSE_STATUS_ERROR, PHR6C10001);
 			return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN, ALL_HEADER)
 					.build();
+		}
+	}
+
+	private void setModuleInfoInMap(String rootModule, String module, Map<String, Object> constructMapForDynVals) {
+		if (StringUtils.isNotEmpty(module)) {
+			constructMapForDynVals.put("rootModule", rootModule);
+			constructMapForDynVals.put("multiModule", true);
+		} else {
+			constructMapForDynVals.put("multiModule", false);
 		}
 	}
 
@@ -364,7 +387,7 @@ public class ParameterService extends RestBase implements FrameworkConstants, Se
     @Path("/codeValidationReportTypes")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getCodeValidationReportTypes(@QueryParam(REST_QUERY_APPDIR_NAME) String appDirName,
-            @QueryParam(REST_QUERY_GOAL) String goal, @QueryParam(REST_QUERY_PHASE) String phase,
+            @QueryParam(REST_QUERY_GOAL) String goal, @QueryParam(REST_QUERY_PHASE) String phase, @QueryParam(REST_QUERY_MODULE_NAME) String module, 
             @Context HttpServletRequest request) {
         ResponseInfo<List<CodeValidationReportType>> responseData = new ResponseInfo<List<CodeValidationReportType>>();
         try {
@@ -375,10 +398,12 @@ public class ParameterService extends RestBase implements FrameworkConstants, Se
 //                return Response.status(Status.OK).entity(finalOutput).header(ACCESS_CONTROL_ALLOW_ORIGIN,
 //                        ALL_HEADER).build();
 //            }
+        	if (StringUtils.isNotEmpty(module)) {
+				appDirName = appDirName + File.separator + module;
+			}
             String infoFileDir = getInfoFileDir(appDirName, goal, phase);
             ApplicationInfo appInfo = FrameworkServiceUtil.getApplicationInfo(appDirName);
             List<CodeValidationReportType> codeValidationReportTypes = new ArrayList<CodeValidationReportType>();
-
             // To get parameter values for Iphone technology
             PomProcessor pomProcessor = FrameworkServiceUtil.getPomProcessor(appDirName);
             String validateReportUrl = pomProcessor.getProperty(Constants.POM_PROP_KEY_VALIDATE_REPORT);
@@ -466,10 +491,13 @@ public class ParameterService extends RestBase implements FrameworkConstants, Se
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response getIframeReport(@QueryParam(REST_QUERY_CUSTOMERID) String customerId,
 			@QueryParam(REST_QUERY_USERID) String userId, @QueryParam(REST_QUERY_APPDIR_NAME) String appDirName,
-			@QueryParam(REST_QUERY_VALIDATE_AGAINST) String validateAgainst, @Context HttpServletRequest request) {
+			@QueryParam(REST_QUERY_VALIDATE_AGAINST) String validateAgainst, @QueryParam(REST_QUERY_MODULE_NAME) String module, @Context HttpServletRequest request) {
 		ResponseInfo<PossibleValues> responseData = new ResponseInfo<PossibleValues>();
 		StringBuilder sb = new StringBuilder();
 		try {
+			if (StringUtils.isNotEmpty(module)) {
+				appDirName = appDirName + File.separator + module;
+			}
 			ApplicationInfo appInfo = FrameworkServiceUtil.getApplicationInfo(appDirName);
 			PomProcessor processor = FrameworkServiceUtil.getPomProcessor(appDirName);
 			String validateReportUrl = processor.getProperty(Constants.POM_PROP_KEY_VALIDATE_REPORT);
@@ -653,7 +681,7 @@ public class ParameterService extends RestBase implements FrameworkConstants, Se
 	 * @throws PhrescoException
 	 */
 	private void setPossibleValuesInReq(MojoProcessor mojo, ApplicationInfo appInfo, List<Parameter> parameters, 
-    		Map<String, DependantParameters> watcherMap, String goal, String userId, String customerId, String buildNumber) throws PhrescoException {
+    		Map<String, DependantParameters> watcherMap, String goal, String userId, String customerId, String buildNumber, String module, String rootModule) throws PhrescoException {
         try {
             if (CollectionUtils.isNotEmpty(parameters)) {
                 StringBuilder paramBuilder = new StringBuilder();
@@ -666,6 +694,8 @@ public class ParameterService extends RestBase implements FrameworkConstants, Se
                         constructMapForDynVals.put(REQ_MOJO, mojo);
                         constructMapForDynVals.put(REQ_GOAL, goal);
 						constructMapForDynVals.put(REQ_SERVICE_MANAGER, serviceManager);
+						setModuleInfoInMap(rootModule, module, constructMapForDynVals);
+						
                         // Get the values from the dynamic parameter class
                         List<Value> dynParamPossibleValues = getDynamicPossibleValues(constructMapForDynVals, parameter, userId, customerId);
                         addValueDependToWatcher(watcherMap, parameterKey, dynParamPossibleValues, parameter.getValue());
@@ -761,9 +791,13 @@ public class ParameterService extends RestBase implements FrameworkConstants, Se
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response getTemplate(@QueryParam(REST_QUERY_APPDIR_NAME) String appDirName,
 			@QueryParam(REST_QUERY_GOAL) String goal, @QueryParam(REST_QUERY_PHASE) String phase, 
-			@QueryParam(REST_QUERY_USERID) String userId, @QueryParam(REST_QUERY_CUSTOMERID) String customerId, @QueryParam("parameterKey") String parameterKey) {
+			@QueryParam(REST_QUERY_USERID) String userId, @QueryParam(REST_QUERY_CUSTOMERID) String customerId, 
+			@QueryParam("parameterKey") String parameterKey, @QueryParam(REST_QUERY_MODULE_NAME) String module) {
 		ResponseInfo<String> responseData = new ResponseInfo<String>();
 		try {
+			if (StringUtils.isNotEmpty(module)) {
+				appDirName = appDirName + File.separator + module;
+			}
 			ApplicationInfo appInfo = FrameworkServiceUtil.getApplicationInfo(appDirName);
 			List<Parameter> parameters = null;
 			StringTemplate constructDynamicTemplate = new StringTemplate();
