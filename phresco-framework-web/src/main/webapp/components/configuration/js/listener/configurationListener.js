@@ -20,6 +20,7 @@ define(["croneExpression/croneExpression"], function() {
 		croneExp : null,
 		nonEnvEditConfigurations : null,
 		desc : null,
+		favourite : null,
 	
 		/***
 		 * Called in initialization time of this class 
@@ -39,11 +40,13 @@ define(["croneExpression/croneExpression"], function() {
 				commonVariables.navListener.getMyObj(commonVariables.editConfiguration, function(retVal) {
 					self.editConfigurations = retVal;
 					self.editConfigurations.envSpecificVal = envSpecific;
+					self.editConfigurations.favourite = self.favourite;
 					self.editConfigurations.configClick = "EditConfiguration";
 					Clazz.navigationController.push(self.editConfigurations, commonVariables.animation);
 				});
 			} else {
 				self.editConfigurations.envSpecificVal = envSpecific;
+				self.editConfigurations.favourite = self.favourite;
 				self.editConfigurations.configClick = "EditConfiguration";
 				Clazz.navigationController.push(self.editConfigurations, commonVariables.animation);
 			}
@@ -178,7 +181,7 @@ define(["croneExpression/croneExpression"], function() {
 					if (deleteEnv === "false") {
 						header.webserviceurl = commonVariables.webserviceurl+commonVariables.configuration+"/updateConfig?appDirName="+appDirName+"&isEnvSpecific="+deleteEnv+"&configName="+commonVariables.updateConfigName+"&customerId="+customerId+"&userId="+userId;
 					} else {
-						header.webserviceurl = commonVariables.webserviceurl+commonVariables.configuration+"/updateConfig?appDirName="+appDirName+"&envName="+deleteEnv+"&customerId="+customerId+"&userId="+userId+"&oldEnvName="+self.oldEnvName+"&defaultEnv="+self.defaultEnv+"&desc="+self.desc;
+						header.webserviceurl = commonVariables.webserviceurl+commonVariables.configuration+"/updateConfig?appDirName="+appDirName+"&envName="+deleteEnv+"&customerId="+customerId+"&userId="+userId+"&oldEnvName="+self.oldEnvName+"&defaultEnv="+self.defaultEnv+"&desc="+self.desc+"&isfavoric="+self.favourite+"&favtype="+commonVariables.favConfig;
 					}
 			} else if (action === "cloneEnv") {
 					header.requestMethod = "POST";
@@ -469,7 +472,14 @@ define(["croneExpression/croneExpression"], function() {
 				}
 				
 				if (bCheck === false) {
-					$("tbody[name=ConfigurationLists]").append(content);
+					if (envSpecificVal === true && self.favourite === true) {
+						if(currentConfig === commonVariables.favConfig) {
+							$("tbody[name=ConfigurationLists]").append(content);
+						}
+					} else {
+						$("tbody[name=ConfigurationLists]").append(content);
+					}
+					
 					var addIcon = '<img src="themes/default/images/Phresco/plus_icon.png" border="0" alt="">';
 					if(configTemplate.customProp === true) {
 						if (bCheckVal === true) {
@@ -1378,13 +1388,13 @@ define(["croneExpression/croneExpression"], function() {
 		
 		spclCharValidation : function() {
 			var self = this;
-			$("input[name=port]").focusout(function (e) {
+			$("input[name=port]").bind('input propertychange', function (e) {
 				var str = $(this).val();
 				str = str.replace(/[^0-9]+/g, '');
 				$(this).val(str);
 			});
 			
-			$("input[name=host]").focusout(function (e) {
+			$("input[name=host]").bind('input propertychange', function (e) {
 				var str = $(this).val();
 				str = str.replace(/[^a-zA-Z 0-9\.\-\_]+/g, '');
 				$(this).val(str);
@@ -1401,6 +1411,10 @@ define(["croneExpression/croneExpression"], function() {
 			if(ename === "") {	
 				$("input[name='envrName']").focus();
 				$("input[name='envrName']").attr('placeholder','Enter Environment Name');
+				$("input[name='envrName']").addClass("errormessage");
+				$("input[name='envrName']").bind('keypress', function() {
+					$("input[name='envrName']").removeClass("errormessage");
+				});
 			} else {
 				$('.envlist').each(function() {
 					arr[count]=$(this).find('td:first').text();

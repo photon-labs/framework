@@ -674,6 +674,7 @@ define([], function() {
 				self.getMyObj(commonVariables.configuration, function(returnVal){
 					currentObj = returnVal;
 					currentObj.envSpecific = true;
+					currentObj.favourite = false;
 					self.myTabRenderFunction(currentObj, keyword);
 				});
 			} else if (self.currentTab !== commonVariables.build && keyword === commonVariables.build) {
@@ -1016,20 +1017,28 @@ define([], function() {
 		},
 		
 		clickEvent : function() {
-			var self=this, envSpec, configType;
+			var self=this, envSpec, configType, favourite;
 			$("ul[name=configurationList] li").unbind("click");
 			$("ul[name=configurationList] li").click(function() {
 				$("#myTab li a").removeClass("act");
 				$("#configuration a#drop4Config").addClass("act");
 				envSpec = $(this).attr('envSpecific');
 				configType = $(this).attr('configType');
+				favourite = $(this).attr('favourite');
 				envSpec = (envSpec === "true") ? true : false;
+				favourite = (favourite === "true") ? true : false;
+				if(favourite === true) {
+					commonVariables.favConfig = configType;
+				} else {
+					commonVariables.favConfig = '';
+				}
 				commonVariables.subtabClicked = true;
 				commonVariables.navListener.currentTab = '';
 				self.getMyObj(commonVariables.configuration, function(returnVal){
 					self.nonEnvConfigurations = returnVal;
 					self.nonEnvConfigurations.envSpecific = envSpec;
 					self.nonEnvConfigurations.configType = configType;
+					self.nonEnvConfigurations.favourite = favourite;
 					Clazz.navigationController.push(self.nonEnvConfigurations, true);
 				});
 			});

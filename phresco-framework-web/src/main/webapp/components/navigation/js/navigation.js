@@ -97,6 +97,7 @@ define(["navigation/listener/navigationListener"], function() {
 					$("#myTab li a").removeClass("act");
 					$(this).children().addClass("act");
 					self.onMytabEvent.dispatch(this.id);
+					commonVariables.favConfig = '';
 				}
 				commonVariables.subtabClicked = false;
 			});
